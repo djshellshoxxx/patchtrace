@@ -1,0 +1,24 @@
+{
+  "reviewed_at": "2026-11-02T09:29:27.861485+00:00",
+  "reviewer": "ci_resume independent read-only",
+  "baseline_head": "eccfb8d587f94e927f857fad248531a002ecc36c",
+  "pyproject_sha256": "beb9e3cd21a713510819a1f77276f540ee64baed75a7eabcbfbf9c6f102de490",
+  "workflow_sha256": "b0bf43ade48affb8d36b3ef45acc5c42f103bb584ec955f29039f6bcae660c1e",
+  "added_dev_dependencies": [
+    "PyYAML>=6,<7"
+  ],
+  "removed_dev_dependencies": [],
+  "runtime_dependencies_unchanged": true,
+  "all_workflow_files_unchanged": true,
+  "install_steps_include_dev_extra": [
+    30,
+    118,
+    130
+  ],
+  "affected_collection_skips": [
+    "tests.test_backend_bundle_workflow",
+    "tests.test_unified_corpus_workflow",
+    "tests.test_unified_live_workflow"
+  ],
+  "validation_scope": "Source and configuration review only. Root runs existing 35 tests; no duplicated run, no source edits or gate changes."
+}

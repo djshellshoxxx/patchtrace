@@ -1,0 +1,139 @@
+{
+  "candidate": "241f445bf3e2e1bc4083aac47ac074b3fd3b795b",
+  "preserved_pr_heads": {
+    "78": "2019a37fa65fc37f4758469143c2daadc07e0098",
+    "79": "9513bc05229dd7a8460fc229d7420154d61498db",
+    "82": "eaa30013794a9bd0fedc9ec34bbe374d6db0cfc9",
+    "85": "6ae2c079e6cafa2b7bd5396cac443cd34ba7138a"
+  },
+  "recipe_control_plan": {
+    "cards": {
+      "total_cases": 83,
+      "ordinary_cards": 83,
+      "aa_card_cases": 0,
+      "noise_card_cases": 0
+    },
+    "noise": {
+      "total_cases": 25,
+      "ordinary_cards": 0,
+      "aa_card_cases": 0,
+      "noise_card_cases": 0
+    },
+    "full": {
+      "total_cases": 908,
+      "ordinary_cards": 83,
+      "aa_card_cases": 0,
+      "noise_card_cases": 0
+    }
+  },
+  "missing_modules": [
+    {
+      "path": "tools/calibration/tier_r/output_store.py",
+      "exists": false
+    },
+    {
+      "path": "tools/calibration/tier_r/training_artifacts.py",
+      "exists": false
+    }
+  ],
+  "scope": "bounded synthetic safeguard audit and preregistration CLI identity repair; no final evaluation",
+  "tests": {
+    "red": {
+      "failed": 18,
+      "passed": 1,
+      "seconds": 1.83
+    },
+    "first_green": {
+      "passed": 19,
+      "seconds": 0.7
+    },
+    "integration": {
+      "passed": 255,
+      "skipped": 1,
+      "seconds": 68.85,
+      "skip": "tier-r-msvc-free: required clang/lld-link/LLVM tools absent on PATH"
+    },
+    "review_red": {
+      "failed": 8,
+      "passed": 1,
+      "deselected": 22,
+      "seconds": 0.75,
+      "source": "46e1bd2758f9b85fe382fe752c26f36ad75fbef7"
+    },
+    "review_final": {
+      "passed": 74,
+      "seconds": 0.88,
+      "scope": "preregistration selection, prereg tools and frozen constants; includes fenced/comment/indented negatives"
+    },
+    "html_review_red": {
+      "failed": 15,
+      "passed": 11,
+      "deselected": 25,
+      "seconds": 0.76,
+      "source": "32603f07e2e09fcdc0088265ccc6ef848776c55e"
+    },
+    "html_review_final": {
+      "passed": 99,
+      "seconds": 1.02,
+      "scope": "selection/tools/constants; actual QA prose compatibility, raw HTML and nested/inline code negatives; no real final evaluation"
+    }
+  },
+  "logs": {
+    "corpus-prereg-red-20261101.log.gz": {
+      "sha256": "e86232dd5a8df9ff5a96b6dffe952c0ace8de26ab39cd81cdb9a7d0de5828cd1",
+      "bytes": 2602,
+      "uncompressed_sha256": "2141686038d2e46f3721343d26e72a8d2b8b950e39be4dc5473d239930cd607a"
+    },
+    "corpus-prereg-green-20261101.log.gz": {
+      "sha256": "0d18ebbaab0c02b7c08d65ef3aa30dfd7c09c607c4d5185f52b50ad149aafaa4",
+      "bytes": 52,
+      "uncompressed_sha256": "2144f7019c31e31876d19f74b069ea36a2ce9d79ef2160a1ec8494a59d6d1e1f"
+    },
+    "corpus-focused-20261101.log.gz": {
+      "sha256": "4c5ade6c534c985305dccd05b7d91cba86600828b67ea10729ef6d2f72d9fa08",
+      "bytes": 232,
+      "uncompressed_sha256": "318ba96365495fcd159c2a02d48b71e9024a4e914bec9a61087babfb51e821b4"
+    },
+    "corpus-review-red-20261101.log.gz": {
+      "sha256": "eb3ba744b122e6db5f52642b5b1ef41df43969ce43b3f3419fa94f4e4aba3e29",
+      "bytes": 1808,
+      "uncompressed_sha256": "04f664c84719c17b93c90652e5f6c3aae26b69693750cb4a74c9a96d20ec196b"
+    },
+    "corpus-review-green-final-20261101.log.gz": {
+      "sha256": "d6bfc6901717a84cc1d1e6bc3ccccc26e7800097903c82ecddcd2ccc742ae846",
+      "bytes": 61,
+      "uncompressed_sha256": "b4cb9381e09ae4d8091f5640a49fce54bb5455d27a6e9df28495d6dc7e69daaa"
+    },
+    "corpus-html-red-20261101.log.gz": {
+      "sha256": "575726b3e895f6cba4cdd02e6d1b7f278e2d03e4acf923bdee20d94a16cd2203",
+      "bytes": 1898,
+      "uncompressed_sha256": "ce96c5fda07c9c4c535792204d07b10746ce111c01112f4a76697f110ef73014"
+    },
+    "corpus-html-green-final-20261101.log.gz": {
+      "sha256": "3a5510725fcaa2e2be947db1a6abeab45710b8c16dd959bd5384d541e6a3b024",
+      "bytes": 61,
+      "uncompressed_sha256": "83d67fd3ec7f29d11635699d011fe96fa999bff9c4000d089b8771acc6e1602c"
+    }
+  },
+  "production_sha256": {
+    "tools/calibration/prereg_gate.py": "67010679b0d49226ca1f5d78a4ad8b8170655e82997b48ab5abd4c31deab4c53",
+    "tools/calibration/train.py": "b2017475ccb96310f2dc1b568f2196e07583ac7bc08560fb83829b8d85ed2f20"
+  },
+  "independent_review": {
+    "reviewer": "cancel_fix",
+    "source_commit": "42a3d5dee13ac4ff87436a66f787c6b3b5e093ad",
+    "source_tree": "943a4dccfbdbc3437d0c3598baa4e82374bb0a9b",
+    "status": "no remaining concrete blocker within recorded-protocol-identity scope",
+    "tests_passed": 102,
+    "seconds": 1.4,
+    "test_scope": "selection/tools/constants plus three early-halt identity/natural-grouping regressions",
+    "additional_checks": [
+      "scoped Ruff and diff hygiene passed",
+      "all original fenced/comment/pre/script/style/nested-list/multiline-HTML probes rejected",
+      "canonical visible row accepted; explicit rehearsal SHA None with draft digest only in summary",
+      "recorded production hashes match reviewed source",
+      "frozen protocol, lineage, guards and final-gate library byte-identical to baseline; pipeline AST unchanged apart from docstring"
+    ],
+    "limitations": "No final evaluation, heavy training, native corpus, full suite or cross-OS acceptance inferred; recorded from independent reviewer report"
+  }
+}

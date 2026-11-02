@@ -203,8 +203,12 @@ PANEL_BATCH_PENDING_TIPS = {
 def test_every_registry_id_is_applied_somewhere(window, qtbot, tmp_path, settings, monkeypatch):
     monkeypatch.setattr(ui_module, 'discover_local_runtimes',
                         lambda: SimpleNamespace(python_executables=[], ghidra_roots=[]))
-    names = set()
-    roots = [window]
+    from patchtrace.kbcorrelation.investigation_qt import InvestigationDialog
+
+    investigation = InvestigationDialog(window, workspace=tmp_path / 'kb-workspace', tasks=window.panels.tasks)
+    qtbot.addWidget(investigation)
+    names = {investigation.status.objectName()}
+    roots = [window, investigation]
     context = build_context(window.project, [window.current_match().id])
     roots += [NewProjectDialog(), AcquisitionDialog(), SetupDialog(settings, None, tmp_path / 'p2'),
               ContextDialog(context, settings, window),
@@ -246,6 +250,14 @@ def test_every_registry_id_is_applied_somewhere(window, qtbot, tmp_path, setting
     window.tabifyDockWidget(first, second)
     name_tab_bars(window)
     names |= {window.panels.strip.objectName()}
+    # Exercise the dirty-profile transition so its real modal buttons are part
+    # of this audit, rather than exempting their registry IDs from coverage.
+    profile_panel = next(root for root in roots if isinstance(root, SetupDialog)).profiles
+    profile_panel.new_profile()
+    profile_panel.weights['BND'].setValue(profile_panel.weights['BND'].value() + 1)
+    with monkeypatch.context() as local:
+        local.setattr(QMessageBox, 'exec', lambda box: roots.append(box) or QMessageBox.StandardButton.Cancel)
+        assert not ui_module.profile_ui.confirm_profile_leave(profile_panel)
     for root in roots + [window]:
         names |= {w.objectName() for w in controls(root)}
         names |= {a.objectName() for a in actions(root)}

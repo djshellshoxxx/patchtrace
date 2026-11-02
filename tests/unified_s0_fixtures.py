@@ -1,5 +1,7 @@
 """Synthetic builders for the SPEC-31 S0 tests (sources, fusion, facts, pipeline). Everything here is made up in code:
-no engine, tool or Microsoft binary was run, so nothing built from it is live evidence."""
+no engine, tool or Microsoft binary was run, so nothing built from it is live evidence. The rz-diff defaults use
+0.9.0 to exercise the existing parser-family policy without the known 0.9.1 quarantine; they do not establish
+native compatibility or side ownership for 0.9.0. Quarantine controls must explicitly request 0.9.1."""
 from __future__ import annotations
 
 import dataclasses
@@ -66,7 +68,7 @@ def bd(older_rva: int, newer_rva: int, algorithm: str = 'function: name hash mat
 
 
 def rz(older_rva: int | None, newer_rva: int | None, sim: int = 500, kind: str = 'PARTIAL',
-       version: str = '0.9.1', base: int = BASE) -> SecondaryMatch:
+       version: str = '0.9.0', base: int = BASE) -> SecondaryMatch:
     return SecondaryMatch(engine='rz-diff', engine_version=version,
                           older_address=None if older_rva is None else base + older_rva,
                           newer_address=None if newer_rva is None else base + newer_rva,
@@ -82,7 +84,7 @@ def bindiff_set(rows, *, alternatives=(), file_sha: str = 'd' * 64, older: str =
                              matches=tuple(rows), alternatives=tuple(alternatives))
 
 
-def rzdiff_set(rows, *, version: str = '0.9.1', file_sha: str = 'e' * 64, older: str = OLD_SHA,
+def rzdiff_set(rows, *, version: str = '0.9.0', file_sha: str = 'e' * 64, older: str = OLD_SHA,
                newer: str = NEW_SHA) -> SecondaryMatchSet:
     return SecondaryMatchSet(contract='secondary/2', engine='rz-diff', engine_version=version, older_sha256=older,
                              newer_sha256=newer, file_sha256=file_sha, matches=tuple(rows))

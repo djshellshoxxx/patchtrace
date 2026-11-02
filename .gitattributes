@@ -50,3 +50,7 @@ tests/fixtures/rules/** text eol=lf
 tests/fixtures/known_answer/** text eol=lf
 docs/plans/c9-preregistration-v1.md text eol=lf
 src/patchtrace/ghidriff_launch/ptlaunch.py text eol=lf
+src/patchtrace/resources/patchtrace-mark.svg text eol=lf
+docs/qa/ExportBinExport20261102.java text eol=lf
+tests/fixtures/old.c text eol=lf
+tests/fixtures/new.c text eol=lf

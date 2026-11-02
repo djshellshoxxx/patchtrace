@@ -12,7 +12,13 @@ from pathlib import Path
 from pydantic import ValidationError
 
 from ...enrichment.identity import domain_id
-from ...secondary.contracts import AlternativeMatch, SecondaryMatch, SecondaryMatchSet
+from ...secondary.contracts import (
+    RZDIFF_ORIENTATION_LIMITATION,
+    AlternativeMatch,
+    SecondaryMatch,
+    SecondaryMatchSet,
+    rzdiff_orientation_unverified,
+)
 from .. import keys
 from ..addressing import AddressMap
 from ..contracts import Atom, SourceRef
@@ -218,6 +224,9 @@ class SecondaryAdapter:
             refs.append(ref)  # every set looked at is an input, a refused one included
             if (match_set.older_sha256, match_set.newer_sha256) != (inputs.older_sha256, inputs.newer_sha256):
                 ledger.flag(f'{engine}-pair-mismatch')
+                continue
+            if engine == 'rz-diff' and rzdiff_orientation_unverified(match_set.engine_version):
+                ledger.flag(RZDIFF_ORIENTATION_LIMITATION)
                 continue
             rows = list(match_set.matches)
             for alt in match_set.alternatives:

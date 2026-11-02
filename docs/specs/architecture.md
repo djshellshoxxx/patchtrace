@@ -24,6 +24,58 @@ flowchart TD
 Build order: contracts → ingestion/persistence/normalization → backend/jobs and context/providers/reports → service → desktop → packaging/acceptance.
 
 ## Interfaces and ownership
+Generic project creation first prepares both immutable input copies and validates
+the initial database snapshot in a private temporary directory. Input validation,
+partial copy, interruption or initial snapshot failure must not mutate the chosen
+destination, including an existing empty directory. Only a complete staged project
+may acquire the destination project lock and publish its fixed artifact paths and
+first snapshot. Each artifact is created exclusively; a file already present is
+reused only after verifying its identity, exact content and PE structure, never
+overwritten. Incomplete publication bytes are retained if their ownership/content
+cannot be proven. Existing committed databases remain refused; existing snapshotless
+database retry compatibility remains under the existing exclusive lock.
+
+On later publication failure, cleanup runs before releasing that lock and removes
+only completed files created by this attempt whose recorded filesystem identities
+and content versions still match. A replaced root/path, pre-existing artifact,
+unknown file or committed first snapshot is preserved. The kernel lock file is
+retained under the existing lock contract; no unlink-after-unlock cleanup or
+recursive deletion of a user-selected root is permitted. Such later failures can
+leave a failed-attempt directory for service retry; the GUI's nonempty-directory
+guard is unchanged, and an explicit validated GUI recovery route is separate work.
+Destination database initialization follows the same rule even before the service
+receives a store: close SQLite, verify the owned root/lock/database identities and
+snapshotless state, clean up while locked, then release the lock in all cases.
+The held lock descriptor supplies the lock identity; the named lock path must
+continue to match that descriptor before publication or cleanup.
+
+Explicit incomplete-creation retry is a separate service operation. It stages both
+inputs privately, then acquires the existing regular 4-KiB project lock without
+creating it or rewriting its bytes. Before any database recycling, validation
+under that held lock permits only `.patchtrace.lock`, an optional `project.sqlite3`,
+and an optional `artifacts` directory. All lexical ancestors and entries must be
+ordinary nonlinked/non-reparse paths; regular files must have one hard link.
+Lexical components before `..` remain visible for these checks: normalization is
+allowed only after recording their identities, which are checked again under the
+held lock before the read-only validator runs.
+Artifacts may contain at most the two exact staged-input SHA-256 `.bin` names;
+every existing file must match its staged size/hash and pass complete static PE
+validation. Nothing is adopted by a directory glob or a recovery receipt.
+
+An existing retry database is limited to 1 MiB, opened read-only/immutable, and
+must have version 1, the exact generated empty snapshot/history/SQLite-sequence
+schema, no other schema objects or rows, and a successful bounded integrity check.
+Zero-byte, malformed, committed, foreign-schema and sidecar-bearing databases are
+refused by this explicit route; legacy direct-service abandoned-database behavior
+is unchanged. Entry sets, identities and content versions are rechecked before
+validation returns. Validation failure or cancellation during preparation or validation leaves
+all destination bytes unchanged and releases the lock. Successful validation may
+recycle only that validated snapshotless database and exclusively create missing
+artifacts, reusing complete matching files without overwriting them. The replacement
+database path is also created exclusively; a newly appeared file is never adopted
+or overwritten, and retry never authorizes deleting SQLite sidecars. Cancellation
+after a committed first snapshot retains the project without adopting it.
+
 Domain models are immutable by convention except project aggregate changes in the service. UUID identifiers are assigned by PatchTrace. Every model forbids extra fields. Database loads validate schema versions and relationships before use. Workers return values to UI thread through queued signals; only service transactions change project state. One active job per window, one writer per project through exclusive lock file. No module imports UI except UI. Cancellation is cooperative for providers and process-tree termination for analysis; delivered remote data cannot be recalled. Logs omit credentials and are capped.
 
 Project directory: `project.sqlite3`, `.patchtrace.lock`, `artifacts/{sha256}.bin`, `runs/{run_id}/raw/`, `exports/`. Relative artifact paths cannot escape root. Each DB commit stores current validated aggregate plus history. Backup uses SQLite backup API and copied artifact/run files. Interrupted runs are marked failed on load. Future schema versions fail closed; v1 needs no legacy migration. Migrations require backup and explicit ordered transforms, never reinterpret future data.
@@ -53,8 +105,11 @@ Reanalysis, orientation swap, manual match change or settings change increments 
 ## Error taxonomy
 PT-INPUT invalid/unreadable/changed/oversize/incompatible input; PT-SCHEMA unknown or malformed contract; PT-BACKEND missing/version/execution/timeout; use the pure `diagnostics.describe_backend_exit(code, sanitized_log_tail)` classifier for a *known* runtime failure (Ghidra dot-prefixed workspace, incompatible Java bytecode/JDK, missing Ghidriff module, Java heap exhaustion, full disk, permissions), and preserve original exit code and full bounded analysis log; unknown failures keep the generic error. Fixed category strings must not echo untrusted or secret-containing log text. PT-CANCEL cancellation; PT-PROVIDER transport/status/malformed/ungrounded; PT-STORAGE lock/corruption/disk-full; PT-EXPORT write failure. UI retains previous committed data, gives actionable message and recovery control. No silent empty success.
 
-## Project-owned report destination protection (2026-11-01)
 
+### Backend output rejection diagnostics (GT-01, 2026-10-30)
+
+Keep the combined 100 MiB JSON ceiling and path guards. A failed output check must retain a distinct fixed reason marker in the PT-BACKEND error and quarantined failure.txt: `[output-limit]` for oversized combined JSON (include the byte ceiling), `[unsafe-output-path]` for a rejected path, and `[output-check-failed]` for unreadable output. Apply the same classification to a guard stop during execution and a rejection found after process exit. Cancellation and timeout keep their existing precedence. Preserve partial diagnostic artifacts and prior completed runs; never import rejected JSON as a completed result.
+## Essential safety continuation: report destinations (2026-10-31)
 
 Project-backed report writes use `ProjectService.export_report` and pass `project_root` to `reports.export_project`. The optional root argument preserves the standalone renderer API used for previews; it does not infer project ownership. Before creating directories, staging or backups, project-backed export refuses any destination inside the project except its `exports/` subtree, and refuses registered artifact/raw evidence paths even if they occur there. Protect the database, WAL/SHM, lock, run/evidence/backup/sidecar stores through this rule. Resolve parent aliases for ownership checks; reject existing aliases to protected evidence. Preserve the existing final-symlink refusal and previous-report backup semantics. Ordinary external destinations and non-evidence files in `exports/` remain supported. GUI export must use the service-owned route; preview stays a throwaway standalone rendering. Refusal preserves project/evidence bytes, creates no report/backup/staging files, and leaves the project reopenable. This adds no wire-schema change and is not an OS-level filesystem sandbox.
 
@@ -62,3 +117,6 @@ Project-backed report writes use `ProjectService.export_report` and pass `projec
 
 Committed report reads are non-mutating: `ProjectStore.load(*, recover_interrupted=True)` retains existing default startup recovery, while service export uses `recover_interrupted=False`. Export must neither mark queued/running records failed nor publish recovery/history changes, including when a destination is refused; normal reopen recovery remains unchanged.
 
+Project adoption in MainWindow retains the original open service until the incoming project renders and recent-project state updates successfully. On failure, restore the original service/preferences/view, close the unsuccessful incoming service, and leave its directory available for retry. A KB creation completion must report retained-path/open failure rather than silently replacing the parent on failed rendering.
+
+The generic adoption implementation is isolated in `gui.qt.project_adoption.adopt_project(window, service)`; MainWindow.set_service delegates without adding feature imports or exceeding its established line budget. The existing rollback/ownership contract remains unchanged.

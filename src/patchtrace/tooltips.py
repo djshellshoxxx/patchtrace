@@ -76,6 +76,12 @@ REGISTRY: dict[str, TooltipEntry] = {
         'Winbindex metadata and the Microsoft symbol server. Availability and signature authenticity are '
         'separate questions.',
         'Disabled while a job is running.'),
+    'action.kb_investigation': _e(
+        'Investigate a KB or CVE using local advisory files and local older/newer binaries.',
+        'Connects an explicitly selected product to a previewed comparison without network access.',
+        'Opens a local-only investigation dialog; a new comparison opens only after successful creation.',
+        'Imported advisory metadata and analyst-selected local files; pairing does not prove vulnerability.',
+        'Disabled while a job is running.'),
     'action.sample': _e(
         'Create a separate synthetic comparison project.',
         'Demonstrates code, evidence and reviews without analyzing actual binaries.',
@@ -290,15 +296,47 @@ REGISTRY: dict[str, TooltipEntry] = {
         'Copy the full text of the older code pane to the clipboard.',
         'Lets you paste the older representation into notes or other tools.',
         'Places plain text on the clipboard; the project is unchanged.',
-        'Exactly what the older pane shows, including display-only alignment gaps.',
+        'Code text, or exact original raw window bytes with physical offsets and provenance; raw display gaps excluded.',
         'Needs a selected match with text shown.'),
     'viewer.copy_newer': _e(
         'Copy the full text of the newer code pane to the clipboard.',
         'Lets you paste the newer representation into notes or other tools.',
         'Places plain text on the clipboard; the project is unchanged.',
-        'Exactly what the newer pane shows, including display-only alignment gaps.',
+        'Code text, or exact original raw window bytes with physical offsets and provenance; raw display gaps excluded.',
         'Needs a selected match with text shown.'),
     'viewer.older_code': _code_pane('older', 'newer'),
+    'viewer.raw_align': _e(
+        'Opt into bounded byte alignment at independent older and newer physical file offsets.',
+        'Inspect local insertions or deletions without implying function or instruction equivalence.',
+        'Reads only verified original bytes; gaps are display-only and Copy excludes them.',
+        'Exact byte anchors in this window only; ambiguity and unresolved reasons remain visible.',
+        'Hex and Binary only; default fixed-offset and Base64 behavior is unchanged.'),
+    'viewer.raw_align_older': _e(
+        'Enter the older physical file offset in hexadecimal, optionally prefixed with 0x.',
+        'Choose an independent verified older byte window.', 'Editing clears the result; Align windows reads it.',
+        'Original on-disk offset, never RVA or inferred continuation.'),
+    'viewer.raw_align_newer': _e(
+        'Enter the newer physical file offset in hexadecimal, optionally prefixed with 0x.',
+        'Choose an independent verified newer byte window.', 'Editing clears the result; Align windows reads it.',
+        'Original on-disk offset, never RVA or inferred continuation.'),
+    'viewer.raw_align_size': _e(
+        'Request 16..4096 bytes per side, in multiples of 16.',
+        'Bounds reads and alignment work.', 'Editing clears the result; EOF clipping is labelled.',
+        'Verified artifact sizes; no bytes are added beyond EOF.'),
+    'viewer.raw_align_run': _e(
+        'Read and align the two explicit physical windows in a background task.',
+        'Inspect bounded byte correspondence and unresolved regions.',
+        'Replaces only this display; no project changes or inferred shift carry.'),
+    'viewer.raw_align_spans': _e(
+        'Select an equal, inserted, deleted, replaced or unresolved byte span.',
+        'Navigate the current bounded result with both physical ranges visible.',
+        'Scrolls both raw panes; offsets and window bytes stay unchanged.'),
+    'viewer.raw_align_previous': _e(
+        'Select the preceding byte span in this window.', 'Review the current bounded result.',
+        'Scrolls both panes; never infers a preceding window or shift.'),
+    'viewer.raw_align_next': _e(
+        'Select the next byte span in this window.', 'Review the current bounded result.',
+        'Scrolls both panes; never infers a following window or shift.'),
     'viewer.newer_code': _code_pane('newer', 'older'),
     'nav.hunk_list': _e(
         'Jump to a particular inserted, removed or replaced region in the selected function.',
@@ -412,6 +450,11 @@ REGISTRY: dict[str, TooltipEntry] = {
         'Create the project from the entered files.', 'Finishes setup of a new comparison.',
         'Validates the inputs, copies the files and opens the new project.',
         availability='Needs a name, two existing files and an absent or empty folder.'),
+    'new_project.retry': _e(
+        'Check and retry a previous incomplete project creation.',
+        'Allows matching partial input copies to be reused after a failed creation.',
+        'Validates the directory and selected inputs in the background; unrelated files or completed projects are refused.',
+        availability='Needs the same input files and an existing incomplete project directory.'),
     'new_project.cancel': _e(
         'Close this dialog without creating a project.', 'Backs out safely.', 'Nothing is created.'),
     # ---- Acquisition dialog ----------------------------------------------------------------
@@ -579,11 +622,17 @@ REGISTRY: dict[str, TooltipEntry] = {
     'profile.list': _e(
         'List of analysis profiles; select one to view or edit it.',
         'Profiles control which detectors rank changes and how.',
-        'Selecting loads the profile into the editor.',
+        'Selecting loads the profile after you save or discard any unsaved edits; Cancel keeps editing.',
         'Profile files in your profile folder. The default profile is read-only.'),
     'profile.new': _e(
         'Create a new profile from the default settings.', 'Start a custom ranking setup.',
         'Adds a profile you can edit and save.'),
+    'profile.discard': _e(
+        'Discard the unsaved profile edits and continue.', 'Leave the saved profile unchanged.',
+        'Loads the requested profile or creates the requested new profile.'),
+    'profile.keep_editing': _e(
+        'Cancel navigation and keep editing this profile.', 'Preserves the unsaved editor values.',
+        'Keeps the original profile selected without saving or discarding edits.'),
     'profile.duplicate': _e(
         'Copy the selected profile under a new name.', 'Tweak a profile without losing the original.',
         'Adds a copy to the list.', availability='Needs a selected profile.'),

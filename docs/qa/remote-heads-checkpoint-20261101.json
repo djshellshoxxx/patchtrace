@@ -1,0 +1,947 @@
+{
+  "date": "2026-11-01",
+  "main": "6579ed83211b7ff2039e3152728ac1cddc3e93d6",
+  "branch_count": 144,
+  "open_pr_count": 45,
+  "branches": [
+    {
+      "branch": "access-test-noprefix",
+      "head": "726a371ab34d4589b0456d059865ade6b82fac88"
+    },
+    {
+      "branch": "audit/ai-reports",
+      "head": "dd6402b9c00d5aae79f152f4fe5ce0fa8597dc24"
+    },
+    {
+      "branch": "audit/core",
+      "head": "fae13b2ed3043ddce00bbf387e386e93e7b3ee06"
+    },
+    {
+      "branch": "audit/desktop",
+      "head": "4d5e48ab7df30f6318a8f3177b37ac98741e2b1f"
+    },
+    {
+      "branch": "audit/enrichment",
+      "head": "cbc5b079ad2c8cdea4ec161b1afe9ac554b8ed39"
+    },
+    {
+      "branch": "audit/integration",
+      "head": "f6505928d8264343caa33f878deb253626752944"
+    },
+    {
+      "branch": "audit/runtime",
+      "head": "9f32a6ecbd056249373b82bc1e814bd938da8c70"
+    },
+    {
+      "branch": "chatgpt/corpus-1",
+      "head": "b7a0f0a45d2de1462367d877b7386091b4d275ce"
+    },
+    {
+      "branch": "chatgpt/deferred-audit-fixes-1",
+      "head": "2174837f3172c3ff2a3c676da106f42b55648a70"
+    },
+    {
+      "branch": "chatgpt/ghidriff-sequential-lock-fix-20261017",
+      "head": "f6b7545bcc7a161440ab7119233c204510571370"
+    },
+    {
+      "branch": "chatgpt/help-docs-1",
+      "head": "e5bee6fe157c90a40f2d9f458768e2169ce123e5"
+    },
+    {
+      "branch": "chatgpt/java-probe-boundaries-20261016",
+      "head": "09bb4519d7d8e9ff8f40abcba7e11cb297d8b61e"
+    },
+    {
+      "branch": "chatgpt/java-probe-ci-fix-20261016",
+      "head": "0254841e3e635ed717e35abcf83021f001d7df29"
+    },
+    {
+      "branch": "chatgpt/java-probe-qa-fix-20261016",
+      "head": "89500e12068656fa1958443ef634064effcbc40b"
+    },
+    {
+      "branch": "chatgpt/kb-fixtures-1",
+      "head": "781b36fb60e775ce01bf0c114e6a17b609fdb475"
+    },
+    {
+      "branch": "chatgpt/lbl30-prereg-guard-20261016",
+      "head": "6ae2c079e6cafa2b7bd5396cac443cd34ba7138a"
+    },
+    {
+      "branch": "chatgpt/lbl31-coff-quoted-rip-20261016",
+      "head": "6e71bfabbf5ef75449b46981e9e822f7e555a6bf"
+    },
+    {
+      "branch": "chatgpt/lbl31-coff-symbol-mask-20261016",
+      "head": "9622704d5c751d55700c4b642111131a7135d139"
+    },
+    {
+      "branch": "chatgpt/lbl31-output-persistence-20261015",
+      "head": "2019a37fa65fc37f4758469143c2daadc07e0098"
+    },
+    {
+      "branch": "chatgpt/lbl31-windows-qa-fixes-20261016-a",
+      "head": "ddb2ff077a21c1f0053ba8079564f6f86c3e155f"
+    },
+    {
+      "branch": "chatgpt/lbl32-card-controls-20261016",
+      "head": "9513bc05229dd7a8460fc229d7420154d61498db"
+    },
+    {
+      "branch": "chatgpt/lbl32-recipe-aa-noise-20261016",
+      "head": "eaa30013794a9bd0fedc9ec34bbe374d6db0cfc9"
+    },
+    {
+      "branch": "chatgpt/merge-first-handoff-20261016",
+      "head": "19153f10780e783bc931739dd26db97d8eaf2b92"
+    },
+    {
+      "branch": "chatgpt/nway-external-note-qa-20261016",
+      "head": "8c7288276d3e49b7794b7fd80db4b02d5891cf00"
+    },
+    {
+      "branch": "chatgpt/panels-1",
+      "head": "cfd7cfff52f4f9b8b1264e8b7d70ef1bbef2d63f"
+    },
+    {
+      "branch": "chatgpt/patchwatch-reuse-roadmap-20261026",
+      "head": "4eabf8dff2c4094681da70c7bd85ecd0da5aed9f"
+    },
+    {
+      "branch": "chatgpt/r5-calibration-research-20261030",
+      "head": "4d9d9051aea87319847a0b321a14d37b95cb8abd"
+    },
+    {
+      "branch": "chatgpt/semantic-analysis-r3-20261030",
+      "head": "2698b9a04d33b2d04f49c1ab737636539c6ef6f7"
+    },
+    {
+      "branch": "chatgpt/ue-r3-retain-decompiled-20261016",
+      "head": "ebbd621d4f557905892aee5f7cf8cb7b0e2addc2"
+    },
+    {
+      "branch": "chatgpt/ue-r7-p15-unresolved-20261016-a",
+      "head": "292dc3953dd2b8f157752d12251aff68b6e5bda5"
+    },
+    {
+      "branch": "chatgpt/ue-r7-strict-worker-report-20261016-a",
+      "head": "9c5f9a42b499133b842b14b9619bf8390010e1ff"
+    },
+    {
+      "branch": "chatgpt/unified-fixture-collection-fix-20261016",
+      "head": "941c617b6854291e2448cad6d7d5710a24a8543d"
+    },
+    {
+      "branch": "chatgpt/unified-fixtures-1",
+      "head": "161a88345efc6484f4d7809fc6963a0193bd0057"
+    },
+    {
+      "branch": "chatgpt/unified-sort-perf-qa-20261016",
+      "head": "27b0a48bb8007f504b4a127a099136a6ea5c00b7"
+    },
+    {
+      "branch": "claude/access-test-1791773355",
+      "head": "726a371ab34d4589b0456d059865ade6b82fac88"
+    },
+    {
+      "branch": "claude/audit-beta",
+      "head": "c93ff945b9b523abe0b829247137105788a5ea27"
+    },
+    {
+      "branch": "claude/awesome-ramanujan-o3pxx3-ci",
+      "head": "0bf1f8309e8425ba34199657009d3055215336f1"
+    },
+    {
+      "branch": "claude/awesome-ramanujan-o3pxx3-hostile",
+      "head": "077b04e681ac74b20c0ff8bf367aa720c277f2d2"
+    },
+    {
+      "branch": "claude/awesome-ramanujan-o3pxx3-win1",
+      "head": "7ac57759f3b9b332eaafb48c82f366566892f1b1"
+    },
+    {
+      "branch": "claude/bugfix-kbc-20261029",
+      "head": "653f384d1ca60b7e943bd658698e0989d826b696"
+    },
+    {
+      "branch": "claude/bugfix-kev-acq-20261029",
+      "head": "fbe58d800da27aff2544c6a478f0a591ff7dad3b"
+    },
+    {
+      "branch": "claude/bugfix-strings-pe-20261029",
+      "head": "7ae041e79e419159299c32df98b8e69ab176e859"
+    },
+    {
+      "branch": "claude/bundle-license-gate",
+      "head": "d3617acf9af7834582b4962a8c149969a7d55a22"
+    },
+    {
+      "branch": "claude/clever-clarke-s4nhi6",
+      "head": "502402684b0d0aa35d7719bb5a3467de035982bc"
+    },
+    {
+      "branch": "claude/compassionate-goldberg-5uuqks",
+      "head": "198eb21e8813b28de361422cfe3c002bdb9e3970"
+    },
+    {
+      "branch": "claude/fix-deadline-test",
+      "head": "22ff025a7710d07d7ad74be2c8f7cc0b4db0daf7"
+    },
+    {
+      "branch": "claude/instance-b-features",
+      "head": "e492092ff360ee22d576ce6266a31dfe8d614ab4"
+    },
+    {
+      "branch": "claude/instance-c-research",
+      "head": "cebf38a30ce3d4967ed00a4773f8f9898a9ea708"
+    },
+    {
+      "branch": "claude/instance-d-gui",
+      "head": "2fa113889d1ffee6b68496993d3b3b6ebb0ba035"
+    },
+    {
+      "branch": "claude/java-version-retry-integration",
+      "head": "45fa67ad7e924cb4e2df1cd487c04a2c0ddab381"
+    },
+    {
+      "branch": "claude/jolly-fermi-eghaxy",
+      "head": "99f8328ce89d02f200cf9fbc5852d9801761af28"
+    },
+    {
+      "branch": "claude/modest-hamilton-kz2gta",
+      "head": "8d958f0a1950a29c1d1cef9525a114654f4c9904"
+    },
+    {
+      "branch": "claude/patchtrace-cli-dotpath-spec-er6hha",
+      "head": "62b9a3de4d1036a6e4b9bd2618372f4042b15f7f"
+    },
+    {
+      "branch": "claude/patchtrace-features",
+      "head": "66e9adc50fb118c04e5e24eacd0c221ca483a130"
+    },
+    {
+      "branch": "claude/patchtrace-haiku-agent-motpbx",
+      "head": "9fddf99e2635e28129b2deda0ff155b00d9ba471"
+    },
+    {
+      "branch": "claude/quirky-curie-n5pxf5",
+      "head": "a5593fa58b2ead6ecf6adfe045db242232cd52a3"
+    },
+    {
+      "branch": "claude/symbol-policy-isolated-settings",
+      "head": "5db597257decc219db520c0dab8369b4d4e2ea5e"
+    },
+    {
+      "branch": "codex/agent-skills-spec56-20261014",
+      "head": "4467d1f3c6e113a7da808a67e8dee9d4aa5083d8"
+    },
+    {
+      "branch": "codex/audit-1",
+      "head": "c2070cf8b4e7b0ade76cb000a5805009754eec55"
+    },
+    {
+      "branch": "codex/audit-2",
+      "head": "08b12f1b279d917736cfc17d4b8e447c8f552616"
+    },
+    {
+      "branch": "codex/autonomous-reconcile-20261101",
+      "head": "22546ab6a993a95c0879319b7fd58acccbfbdcc5"
+    },
+    {
+      "branch": "codex/coordinator-rule-repairs-20261031",
+      "head": "798e11ef345ed7a7a65508a466eaf77ee85ef77c"
+    },
+    {
+      "branch": "codex/deep-review-consolidation-20261030",
+      "head": "95e09548a82202ae4cfd9380522f36513da87a66"
+    },
+    {
+      "branch": "codex/essential-combined-verification-20261030",
+      "head": "a7f13e13ffb512f8e9621753a0ae162d78942f3b"
+    },
+    {
+      "branch": "codex/essential-integration-20261029",
+      "head": "5ed624e91468c410f2cf738ed4e36c2be3e0201d"
+    },
+    {
+      "branch": "codex/essential-project-safety-20261031",
+      "head": "c3868d8335a8f32f676905032dc1a6d0e9f22fd6"
+    },
+    {
+      "branch": "codex/fix-pr110-ci-gates-20261029",
+      "head": "c0d1c38aee74461969ff0a8b4d61179c3dbb9b0b"
+    },
+    {
+      "branch": "codex/gt01-extraction-recovery-20261030",
+      "head": "d76d23372acef4049115e9ae176acbeb538a82e5"
+    },
+    {
+      "branch": "codex/gui-bounded-ambiguous-candidates-20261029",
+      "head": "3287cb3d36052bd6e44420f631ed033baf939d64"
+    },
+    {
+      "branch": "codex/java-version-retry-20261015",
+      "head": "8ee61c623fa37c5a219f912cf7870bfeddcb1f70"
+    },
+    {
+      "branch": "codex/kb-fixture-contract-repairs-20261030",
+      "head": "a4d1e6a38c34d1952584aa65d7f5f908c45547b3"
+    },
+    {
+      "branch": "codex/patchtrace-beta",
+      "head": "c7937246a5bf3f1a09c7d121c0d438088b02040c"
+    },
+    {
+      "branch": "codex/pr110-ci-repairs-20261029",
+      "head": "bb42828d05b775c59b73a7bbd02c0113b9b9bb3b"
+    },
+    {
+      "branch": "codex/pr110-kb-arch-scope-20261029",
+      "head": "40e02daf93c8e13a94b74f5b80d86c1680fea7ad"
+    },
+    {
+      "branch": "codex/pr110-persistence-feedback-20261029",
+      "head": "3e9cedb012b4c82da3b0e5f9bc977ecd7313b64c"
+    },
+    {
+      "branch": "codex/pr110-qa-wbjson-diaphora-help-20261029",
+      "head": "aba4c2001a6b093f7f8cdc8b0ac20ab074ed57b8"
+    },
+    {
+      "branch": "codex/pr111-bounded-nav-into-integration-20261029",
+      "head": "025300f8e169556f84b6a8cfed20413e0a26b019"
+    },
+    {
+      "branch": "codex/project-safe-export-20261101",
+      "head": "e90254424c26ecd00e4c10c3c638e76d11b35841"
+    },
+    {
+      "branch": "codex/r1-ground-truth-research-20261030",
+      "head": "04bd023df566f43939296f7df1766e46186e7fff"
+    },
+    {
+      "branch": "codex/r1-receipt-publication-20261031",
+      "head": "8c9eafc79b007a963453d8edf6cb40c804c9bc3d"
+    },
+    {
+      "branch": "codex/r2-unified-matching-research-20261030",
+      "head": "b3ceb8b30d7a83da5e22c231c3b8c28179246816"
+    },
+    {
+      "branch": "codex/real-msrc-adapter-20261101",
+      "head": "cf6620f0d6977d85c4434d48519e722a1738a7f0"
+    },
+    {
+      "branch": "codex/receipt-parent-race-20261101",
+      "head": "2fdac2ea9042985ac3c98545d38ac3461d00f4cc"
+    },
+    {
+      "branch": "codex/semantic-proof-reconciliation-20261031",
+      "head": "745e93426a16e0a91a961b6e0bbcb71be69f2a7e"
+    },
+    {
+      "branch": "codex/storage-integrity-20261101",
+      "head": "1e7eeff05cf9406c77b51b9b1100c4be2953d1d6"
+    },
+    {
+      "branch": "codex/t9-qa-20261020",
+      "head": "ecc4f2054c00dc2b324bb71134595c48dc4b6a18"
+    },
+    {
+      "branch": "codex/tier-w-fetch-20261015",
+      "head": "5b7b2591e616e8c28c05c7070661b33e2ca0435c"
+    },
+    {
+      "branch": "codex/windows-branding-reconcile-20261030",
+      "head": "8f4c4a2e0021d424d403317c6780b6db026ad76b"
+    },
+    {
+      "branch": "codex/windows-setup-installer-20261017",
+      "head": "9c5fe67bd10a5d1342440bb8ea6a524cca3ce1f2"
+    },
+    {
+      "branch": "docs/claude-autonomous-alpha-handoff-20261013",
+      "head": "1038d3f13f214d55c28ceeb51c1c13c9b43b1d3f"
+    },
+    {
+      "branch": "docs/csaf-patch-intelligence-specs",
+      "head": "24244831ec443fa19555586835e71da6dd4aac98"
+    },
+    {
+      "branch": "docs/diaphora-optional-engine-20261014",
+      "head": "b75ac57d85c75e8d61c61af8d104119bb1c65587"
+    },
+    {
+      "branch": "docs/dockable-workspace-spec-20261030",
+      "head": "6a1e3ce348a7e5f67bbabfe388315812cc830b03"
+    },
+    {
+      "branch": "docs/nway-matches",
+      "head": "f748cc48ea07b9af189d967979aa078610550eea"
+    },
+    {
+      "branch": "docs/post-consolidation-gap-analysis-20261030",
+      "head": "61b5c2bade71a8cec58ca9e1514141f4508b7c79"
+    },
+    {
+      "branch": "docs/readme-and-wiki",
+      "head": "ad8fbe9f2f041653760c02e9d18a91a66dd11c39"
+    },
+    {
+      "branch": "docs/semantic-ghidra-roadmap",
+      "head": "8b9ebc01bb221a60ee65838dfdafd59d66e15f5d"
+    },
+    {
+      "branch": "docs/spec-31-kb-cve-correlation-20261014",
+      "head": "9088bf0e2e452c5d792f2a9e6e879f417e9fc120"
+    },
+    {
+      "branch": "docs/spec-32-kb-patch-search-20261014",
+      "head": "d0ceb56f30f81f881f1f25fb4d1dba772ff476b9"
+    },
+    {
+      "branch": "docs/specs-plan",
+      "head": "a5194581396b67395a0ae8453d73eec5ab024e54"
+    },
+    {
+      "branch": "docs/workbench-search-graph-floss-20261014",
+      "head": "af15701d13b516662a36f20a00ece01b8462160f"
+    },
+    {
+      "branch": "feat/acquisition",
+      "head": "293362a2d8cee7d5cc373439436945888b3b805a"
+    },
+    {
+      "branch": "feat/acquisition-gui",
+      "head": "7ae34d8fa26a6b6c8b7acf40f5c16d99643151ce"
+    },
+    {
+      "branch": "feat/alpha-ui-integration",
+      "head": "c7ed1d90a890afa9eb67c238f9f52f458db96432"
+    },
+    {
+      "branch": "feat/artifact-bytes-seam",
+      "head": "91b35d09afd29e9c78169a3b095d9ea3be6c31b1"
+    },
+    {
+      "branch": "feat/byte-representations",
+      "head": "303bc452d0bb6cd46ee67f731f64ec951e1ee215"
+    },
+    {
+      "branch": "feat/enrichment-cache",
+      "head": "0368fd9b5453ab50166c08cf8dfc493e57b0ee52"
+    },
+    {
+      "branch": "feat/enrichment-contracts",
+      "head": "010d809d2581d3a8ed8208e83325ba29f91b2419"
+    },
+    {
+      "branch": "feat/enrichment-cve",
+      "head": "49bf245583d040a8b29d80daee8666d8c7f7b8d4"
+    },
+    {
+      "branch": "feat/enrichment-signals",
+      "head": "e96441a1a90478d5b06e7b0d9b4320695a2018ed"
+    },
+    {
+      "branch": "feat/enrichment-wil",
+      "head": "9a6999a0e644ef03670d10fc0b08524345c6c709"
+    },
+    {
+      "branch": "feat/local-runtime-discovery",
+      "head": "b9198705ab4c144746214c1e42c15b6098063009"
+    },
+    {
+      "branch": "feat/nway",
+      "head": "44d431788bcc55429a033049ed997fa33c92289b"
+    },
+    {
+      "branch": "feat/pe-overview",
+      "head": "4b78a6d3c0015a5fd46d557cde6cc8f0a583795b"
+    },
+    {
+      "branch": "feat/phase2-finish",
+      "head": "86afe3f6563b71e1fff5ed56a907f29c6703b96e"
+    },
+    {
+      "branch": "feat/phase3-batch",
+      "head": "3581b520207b464b35a7baa39d188fb4f2a08cf1"
+    },
+    {
+      "branch": "feat/profiles",
+      "head": "d21b5917a66041cb1ffa4f46931e551e55f3165a"
+    },
+    {
+      "branch": "feat/raw-cache",
+      "head": "28bc476713fc9b77b876cfc8f5454760ea23d4e0"
+    },
+    {
+      "branch": "feat/secondary",
+      "head": "b932ae1a1c8916aeac7be2d49ce27c24717f2846"
+    },
+    {
+      "branch": "feat/tooltip-registry",
+      "head": "0a3843ea2abe37d42ff0291d621fa9a7c9744bbc"
+    },
+    {
+      "branch": "feat/verified-offline-runtime-bundle",
+      "head": "1724503d01be7aee13cb43a3a7a28b8a9ff54ece"
+    },
+    {
+      "branch": "feature/alpha-file-overview-20261013",
+      "head": "476016590be5cd1315613759af18ff61c7c27851"
+    },
+    {
+      "branch": "feature/evidence-reconciliation-confidence",
+      "head": "ddda35f40b94c145b2a9a9b68509b4ddb76a090a"
+    },
+    {
+      "branch": "feature/gui-inspection-preview",
+      "head": "8b94227a81b71841c65783c775f704a538d35710"
+    },
+    {
+      "branch": "fix/backend-exit-diagnostics",
+      "head": "bc00a6912dde57482a301bf64ef6fbc3f324cb92"
+    },
+    {
+      "branch": "fix/explicit-offline-symbol-policy",
+      "head": "2e6618762ab6e15e5be0be60aec3fb8f56af44f3"
+    },
+    {
+      "branch": "fix/ghidra-dot-paths",
+      "head": "5c3b1df94c0d2a908bb0459caceb336912527555"
+    },
+    {
+      "branch": "fix/isolate-ghidra-scratch",
+      "head": "7ea7272311271a540a188e5d0de6d3aaa8864611"
+    },
+    {
+      "branch": "fix/pe-inspection-row-tooltips-20261013",
+      "head": "0182a8035d64071fc88b5f299edc3ef3760946b5"
+    },
+    {
+      "branch": "fix/pr110-ci-regressions-20261029",
+      "head": "979ddfad860c95ceabeb5b670b771900b5617098"
+    },
+    {
+      "branch": "haiku/cli-help-suppress-20261027",
+      "head": "37940b706f117f9786109433aed7751eca4e52a6"
+    },
+    {
+      "branch": "haiku/phase2-handoff-import-20261027",
+      "head": "4522030ff3ff76d720a5efc33953aaa5e5837398"
+    },
+    {
+      "branch": "haiku/skills-manifest-import-20261027",
+      "head": "039b0ef8a5d0cb5136aca72be5c65d11867c19af"
+    },
+    {
+      "branch": "integration/controlled-consolidation-20261030",
+      "head": "f18687fd035b67961c1072af84f8c2b3442979e0"
+    },
+    {
+      "branch": "integration/kb-fixtures-pr69-20261030",
+      "head": "2fcd627e52a6d784d5c2e5b4ea8105e90b8589b3"
+    },
+    {
+      "branch": "main",
+      "head": "6579ed83211b7ff2039e3152728ac1cddc3e93d6"
+    },
+    {
+      "branch": "repair/gt01-consolidated-native-evidence-20261030",
+      "head": "c04ad725551fe8daa139b37aa2cdf46d6d161b65"
+    },
+    {
+      "branch": "repair/gt01-native-identical-controls-20261030",
+      "head": "fb91cff6d91c77a2c539c896b670d81180dcc637"
+    },
+    {
+      "branch": "repair/gt01-unified-live-gates-20261030",
+      "head": "ca1a36c0caea44a9225e487f3ba7b0828c90a567"
+    },
+    {
+      "branch": "research/r4-vulnerability-correlation-20261030",
+      "head": "ff570bdd784d02f745e4ad21d8aa7b4f1f776344"
+    },
+    {
+      "branch": "research/r6-final-integration-engineering-notes-20261030",
+      "head": "3010f289dbb46a1db62218a35cca03420090e306"
+    },
+    {
+      "branch": "research/r7-advanced-binary-analysis-20261030",
+      "head": "c9d1aab6a78847ce1632fe833d15af2e3b9c6e9b"
+    },
+    {
+      "branch": "research/r8-deep-uncertainty-20261030",
+      "head": "12dd4f2b41b468b0eb566bd502219daa821012df"
+    },
+    {
+      "branch": "security/offline-bundle-no-overwrite-20261013",
+      "head": "a39cab81de3e0eeadf57e6255d2fe3e131b3294a"
+    }
+  ],
+  "open_pull_requests": [
+    {
+      "number": 153,
+      "head": "cf6620f0d6977d85c4434d48519e722a1738a7f0",
+      "branch": "codex/real-msrc-adapter-20261101",
+      "base": "main",
+      "base_sha": "6579ed83211b7ff2039e3152728ac1cddc3e93d6",
+      "draft": false
+    },
+    {
+      "number": 152,
+      "head": "22546ab6a993a95c0879319b7fd58acccbfbdcc5",
+      "branch": "codex/autonomous-reconcile-20261101",
+      "base": "main",
+      "base_sha": "a04f5a299a8d4afef023261e52e08d14678cf1e7",
+      "draft": true
+    },
+    {
+      "number": 151,
+      "head": "1e7eeff05cf9406c77b51b9b1100c4be2953d1d6",
+      "branch": "codex/storage-integrity-20261101",
+      "base": "main",
+      "base_sha": "6579ed83211b7ff2039e3152728ac1cddc3e93d6",
+      "draft": false
+    },
+    {
+      "number": 150,
+      "head": "2fdac2ea9042985ac3c98545d38ac3461d00f4cc",
+      "branch": "codex/receipt-parent-race-20261101",
+      "base": "codex/r1-receipt-publication-20261031",
+      "base_sha": "8c9eafc79b007a963453d8edf6cb40c804c9bc3d",
+      "draft": true
+    },
+    {
+      "number": 148,
+      "head": "c3868d8335a8f32f676905032dc1a6d0e9f22fd6",
+      "branch": "codex/essential-project-safety-20261031",
+      "base": "main",
+      "base_sha": "a04f5a299a8d4afef023261e52e08d14678cf1e7",
+      "draft": true
+    },
+    {
+      "number": 147,
+      "head": "8f4c4a2e0021d424d403317c6780b6db026ad76b",
+      "branch": "codex/windows-branding-reconcile-20261030",
+      "base": "main",
+      "base_sha": "a04f5a299a8d4afef023261e52e08d14678cf1e7",
+      "draft": true
+    },
+    {
+      "number": 146,
+      "head": "798e11ef345ed7a7a65508a466eaf77ee85ef77c",
+      "branch": "codex/coordinator-rule-repairs-20261031",
+      "base": "claude/modest-hamilton-kz2gta",
+      "base_sha": "8d958f0a1950a29c1d1cef9525a114654f4c9904",
+      "draft": true
+    },
+    {
+      "number": 145,
+      "head": "8c9eafc79b007a963453d8edf6cb40c804c9bc3d",
+      "branch": "codex/r1-receipt-publication-20261031",
+      "base": "codex/r1-ground-truth-research-20261030",
+      "base_sha": "04bd023df566f43939296f7df1766e46186e7fff",
+      "draft": true
+    },
+    {
+      "number": 144,
+      "head": "745e93426a16e0a91a961b6e0bbcb71be69f2a7e",
+      "branch": "codex/semantic-proof-reconciliation-20261031",
+      "base": "codex/essential-combined-verification-20261030",
+      "base_sha": "a7f13e13ffb512f8e9621753a0ae162d78942f3b",
+      "draft": true
+    },
+    {
+      "number": 143,
+      "head": "a7f13e13ffb512f8e9621753a0ae162d78942f3b",
+      "branch": "codex/essential-combined-verification-20261030",
+      "base": "integration/controlled-consolidation-20261030",
+      "base_sha": "f18687fd035b67961c1072af84f8c2b3442979e0",
+      "draft": true
+    },
+    {
+      "number": 142,
+      "head": "a4d1e6a38c34d1952584aa65d7f5f908c45547b3",
+      "branch": "codex/kb-fixture-contract-repairs-20261030",
+      "base": "integration/kb-fixtures-pr69-20261030",
+      "base_sha": "2fcd627e52a6d784d5c2e5b4ea8105e90b8589b3",
+      "draft": true
+    },
+    {
+      "number": 141,
+      "head": "d76d23372acef4049115e9ae176acbeb538a82e5",
+      "branch": "codex/gt01-extraction-recovery-20261030",
+      "base": "repair/gt01-native-identical-controls-20261030",
+      "base_sha": "fb91cff6d91c77a2c539c896b670d81180dcc637",
+      "draft": true
+    },
+    {
+      "number": 140,
+      "head": "fb91cff6d91c77a2c539c896b670d81180dcc637",
+      "branch": "repair/gt01-native-identical-controls-20261030",
+      "base": "repair/gt01-consolidated-native-evidence-20261030",
+      "base_sha": "c04ad725551fe8daa139b37aa2cdf46d6d161b65",
+      "draft": true
+    },
+    {
+      "number": 139,
+      "head": "c04ad725551fe8daa139b37aa2cdf46d6d161b65",
+      "branch": "repair/gt01-consolidated-native-evidence-20261030",
+      "base": "integration/controlled-consolidation-20261030",
+      "base_sha": "f18687fd035b67961c1072af84f8c2b3442979e0",
+      "draft": true
+    },
+    {
+      "number": 138,
+      "head": "ca1a36c0caea44a9225e487f3ba7b0828c90a567",
+      "branch": "repair/gt01-unified-live-gates-20261030",
+      "base": "integration/controlled-consolidation-20261030",
+      "base_sha": "f18687fd035b67961c1072af84f8c2b3442979e0",
+      "draft": true
+    },
+    {
+      "number": 137,
+      "head": "61b5c2bade71a8cec58ca9e1514141f4508b7c79",
+      "branch": "docs/post-consolidation-gap-analysis-20261030",
+      "base": "integration/controlled-consolidation-20261030",
+      "base_sha": "f18687fd035b67961c1072af84f8c2b3442979e0",
+      "draft": false
+    },
+    {
+      "number": 136,
+      "head": "2fcd627e52a6d784d5c2e5b4ea8105e90b8589b3",
+      "branch": "integration/kb-fixtures-pr69-20261030",
+      "base": "integration/controlled-consolidation-20261030",
+      "base_sha": "f18687fd035b67961c1072af84f8c2b3442979e0",
+      "draft": true
+    },
+    {
+      "number": 135,
+      "head": "12dd4f2b41b468b0eb566bd502219daa821012df",
+      "branch": "research/r8-deep-uncertainty-20261030",
+      "base": "main",
+      "base_sha": "a04f5a299a8d4afef023261e52e08d14678cf1e7",
+      "draft": true
+    },
+    {
+      "number": 134,
+      "head": "c9d1aab6a78847ce1632fe833d15af2e3b9c6e9b",
+      "branch": "research/r7-advanced-binary-analysis-20261030",
+      "base": "main",
+      "base_sha": "a04f5a299a8d4afef023261e52e08d14678cf1e7",
+      "draft": true
+    },
+    {
+      "number": 133,
+      "head": "3010f289dbb46a1db62218a35cca03420090e306",
+      "branch": "research/r6-final-integration-engineering-notes-20261030",
+      "base": "main",
+      "base_sha": "a04f5a299a8d4afef023261e52e08d14678cf1e7",
+      "draft": true
+    },
+    {
+      "number": 132,
+      "head": "4d9d9051aea87319847a0b321a14d37b95cb8abd",
+      "branch": "chatgpt/r5-calibration-research-20261030",
+      "base": "main",
+      "base_sha": "a04f5a299a8d4afef023261e52e08d14678cf1e7",
+      "draft": true
+    },
+    {
+      "number": 131,
+      "head": "b3ceb8b30d7a83da5e22c231c3b8c28179246816",
+      "branch": "codex/r2-unified-matching-research-20261030",
+      "base": "main",
+      "base_sha": "a04f5a299a8d4afef023261e52e08d14678cf1e7",
+      "draft": true
+    },
+    {
+      "number": 130,
+      "head": "ff570bdd784d02f745e4ad21d8aa7b4f1f776344",
+      "branch": "research/r4-vulnerability-correlation-20261030",
+      "base": "main",
+      "base_sha": "a04f5a299a8d4afef023261e52e08d14678cf1e7",
+      "draft": true
+    },
+    {
+      "number": 129,
+      "head": "2698b9a04d33b2d04f49c1ab737636539c6ef6f7",
+      "branch": "chatgpt/semantic-analysis-r3-20261030",
+      "base": "main",
+      "base_sha": "a04f5a299a8d4afef023261e52e08d14678cf1e7",
+      "draft": true
+    },
+    {
+      "number": 128,
+      "head": "04bd023df566f43939296f7df1766e46186e7fff",
+      "branch": "codex/r1-ground-truth-research-20261030",
+      "base": "main",
+      "base_sha": "a04f5a299a8d4afef023261e52e08d14678cf1e7",
+      "draft": false
+    },
+    {
+      "number": 127,
+      "head": "6a1e3ce348a7e5f67bbabfe388315812cc830b03",
+      "branch": "docs/dockable-workspace-spec-20261030",
+      "base": "main",
+      "base_sha": "a04f5a299a8d4afef023261e52e08d14678cf1e7",
+      "draft": true
+    },
+    {
+      "number": 126,
+      "head": "8d958f0a1950a29c1d1cef9525a114654f4c9904",
+      "branch": "claude/modest-hamilton-kz2gta",
+      "base": "main",
+      "base_sha": "a04f5a299a8d4afef023261e52e08d14678cf1e7",
+      "draft": true
+    },
+    {
+      "number": 125,
+      "head": "198eb21e8813b28de361422cfe3c002bdb9e3970",
+      "branch": "claude/compassionate-goldberg-5uuqks",
+      "base": "main",
+      "base_sha": "5214720716c7afb7952bacbc9afd4b8255574ae8",
+      "draft": true
+    },
+    {
+      "number": 102,
+      "head": "9fddf99e2635e28129b2deda0ff155b00d9ba471",
+      "branch": "claude/patchtrace-haiku-agent-motpbx",
+      "base": "main",
+      "base_sha": "e093ade3e66eebf915d1c93c75cf18c033c2abb5",
+      "draft": true
+    },
+    {
+      "number": 100,
+      "head": "66e9adc50fb118c04e5e24eacd0c221ca483a130",
+      "branch": "claude/patchtrace-features",
+      "base": "main",
+      "base_sha": "e093ade3e66eebf915d1c93c75cf18c033c2abb5",
+      "draft": true
+    },
+    {
+      "number": 98,
+      "head": "ad8fbe9f2f041653760c02e9d18a91a66dd11c39",
+      "branch": "docs/readme-and-wiki",
+      "base": "main",
+      "base_sha": "bb84b2606f0674a1db675645f2db98b3a8d3d789",
+      "draft": true
+    },
+    {
+      "number": 94,
+      "head": "27b0a48bb8007f504b4a127a099136a6ea5c00b7",
+      "branch": "chatgpt/unified-sort-perf-qa-20261016",
+      "base": "chatgpt/lbl31-output-persistence-20261015",
+      "base_sha": "3e62feec9da304953305fe595385c20da4b1869e",
+      "draft": false
+    },
+    {
+      "number": 90,
+      "head": "941c617b6854291e2448cad6d7d5710a24a8543d",
+      "branch": "chatgpt/unified-fixture-collection-fix-20261016",
+      "base": "chatgpt/unified-fixtures-1",
+      "base_sha": "161a88345efc6484f4d7809fc6963a0193bd0057",
+      "draft": false
+    },
+    {
+      "number": 86,
+      "head": "ebbd621d4f557905892aee5f7cf8cb7b0e2addc2",
+      "branch": "chatgpt/ue-r3-retain-decompiled-20261016",
+      "base": "claude/instance-d-gui",
+      "base_sha": "53f366e8b50ac60a95bdb3734b815daac82cd63d",
+      "draft": true
+    },
+    {
+      "number": 85,
+      "head": "6ae2c079e6cafa2b7bd5396cac443cd34ba7138a",
+      "branch": "chatgpt/lbl30-prereg-guard-20261016",
+      "base": "claude/instance-d-gui",
+      "base_sha": "53f366e8b50ac60a95bdb3734b815daac82cd63d",
+      "draft": true
+    },
+    {
+      "number": 82,
+      "head": "eaa30013794a9bd0fedc9ec34bbe374d6db0cfc9",
+      "branch": "chatgpt/lbl32-recipe-aa-noise-20261016",
+      "base": "claude/instance-d-gui",
+      "base_sha": "53f366e8b50ac60a95bdb3734b815daac82cd63d",
+      "draft": true
+    },
+    {
+      "number": 79,
+      "head": "9513bc05229dd7a8460fc229d7420154d61498db",
+      "branch": "chatgpt/lbl32-card-controls-20261016",
+      "base": "chatgpt/lbl31-output-persistence-20261015",
+      "base_sha": "5f30a79119b59e337b11a21d81b5e3b12d2bd92a",
+      "draft": true
+    },
+    {
+      "number": 78,
+      "head": "2019a37fa65fc37f4758469143c2daadc07e0098",
+      "branch": "chatgpt/lbl31-output-persistence-20261015",
+      "base": "claude/instance-d-gui",
+      "base_sha": "53f366e8b50ac60a95bdb3734b815daac82cd63d",
+      "draft": true
+    },
+    {
+      "number": 72,
+      "head": "cfd7cfff52f4f9b8b1264e8b7d70ef1bbef2d63f",
+      "branch": "chatgpt/panels-1",
+      "base": "claude/instance-d-gui",
+      "base_sha": "2ed83e9c2c9c26a1677586d47989aee89cb8a2a6",
+      "draft": true
+    },
+    {
+      "number": 71,
+      "head": "161a88345efc6484f4d7809fc6963a0193bd0057",
+      "branch": "chatgpt/unified-fixtures-1",
+      "base": "claude/instance-d-gui",
+      "base_sha": "2ed83e9c2c9c26a1677586d47989aee89cb8a2a6",
+      "draft": true
+    },
+    {
+      "number": 70,
+      "head": "e5bee6fe157c90a40f2d9f458768e2169ce123e5",
+      "branch": "chatgpt/help-docs-1",
+      "base": "claude/instance-d-gui",
+      "base_sha": "a423d3d580d898e4398990b0790fd41d18dea246",
+      "draft": true
+    },
+    {
+      "number": 69,
+      "head": "781b36fb60e775ce01bf0c114e6a17b609fdb475",
+      "branch": "chatgpt/kb-fixtures-1",
+      "base": "claude/instance-d-gui",
+      "base_sha": "a423d3d580d898e4398990b0790fd41d18dea246",
+      "draft": true
+    },
+    {
+      "number": 68,
+      "head": "b7a0f0a45d2de1462367d877b7386091b4d275ce",
+      "branch": "chatgpt/corpus-1",
+      "base": "claude/instance-d-gui",
+      "base_sha": "a423d3d580d898e4398990b0790fd41d18dea246",
+      "draft": true
+    },
+    {
+      "number": 67,
+      "head": "2174837f3172c3ff2a3c676da106f42b55648a70",
+      "branch": "chatgpt/deferred-audit-fixes-1",
+      "base": "claude/instance-d-gui",
+      "base_sha": "8af0e0effa7628f2bdf1ed8afc6d21f30e816924",
+      "draft": true
+    },
+    {
+      "number": 61,
+      "head": "4467d1f3c6e113a7da808a67e8dee9d4aa5083d8",
+      "branch": "codex/agent-skills-spec56-20261014",
+      "base": "main",
+      "base_sha": "0fb25d8e2ad52d4bfe079c7d31b706d55569c8af",
+      "draft": false
+    }
+  ],
+  "note": "Complete branch pages1-2 and open PR page1 (<100 rows). Original author heads preserved; current main includes merged149. Initial 139-head semantic-disposition snapshot remains historical; no new equivalence claim for unreviewed branches."
+}

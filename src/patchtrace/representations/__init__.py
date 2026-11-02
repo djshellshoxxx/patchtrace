@@ -4,6 +4,7 @@ See docs/specs/byte-representations.md. Pure stdlib, no Qt.
 """
 from __future__ import annotations
 
+from .alignment import AlignmentLimits, AlignmentSpan, ByteAlignment, align_bytes, align_pages
 from .compare import byte_diff_mask
 from .formatters import base64_exact, format_base64, format_binary, format_hex
 from .paging import (
@@ -28,6 +29,7 @@ from .scope import (
 )
 
 __all__ = [
+    'AlignmentLimits', 'AlignmentSpan', 'ByteAlignment', 'align_bytes', 'align_pages',
     'ByteScope', 'DEFAULT_MAX_FUNCTION_LENGTH', 'DEFAULT_PAGE_SIZE', 'FileRangeLike', 'MAX_PAGE_SIZE',
     'MIN_PAGE_SIZE', 'PageBytes', 'RenderedPage', 'Representation', 'SectionMapLike', 'Segment',
     'UNMAPPED_REASON', 'base64_exact', 'byte_diff_mask', 'file_range', 'format_base64', 'format_binary',

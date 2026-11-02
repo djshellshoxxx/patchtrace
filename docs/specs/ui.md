@@ -4,6 +4,17 @@ Default dark neutral palette, cyan accent, monospace 11-point code, text labels 
 
 Start controls: New (Ctrl+N) opens explicit older/newer/name/destination wizard; Open (Ctrl+O) validates database; Sample opens synthetic persisted project; Import opens Ghidriff JSON picker for current artifact pair; Setup displays backend configuration. Recent projects retain paths only. Cancel wizard performs no analysis. New validates paths then creates immutable copies; failure leaves no published project. Swap before creation reverses selected inputs; after creation requires service invalidation. Drag/drop files into explicit older/newer controls if supported, never infer chronological order.
 
+The ordinary Create action continues to require an absent or empty destination.
+A separate “Check and retry incomplete creation” action requests an occupied-root
+retry; it never implies the directory is accepted. Private input staging, strict
+read-only validation under the existing project lock and publication run in the
+existing background worker. Unrelated nonempty directories remain refused. The
+worker closes its SQLite service before returning a path for GUI-thread reopening.
+Cancelled results and results whose originating service/project key changed are
+not adopted; any completed directory is retained and identified in the job log.
+The dialog lives outside `ui.py` and remains re-exported for existing callers;
+the `ui.py` ceiling remains 3,077 lines.
+
 Workspace controls: Run requires pair plus valid backend and idle job. Import requires current project and idle job, preserves raw data and normalizes on background worker. Cancel enabled for active job, transitions to cancelling then cancelled. Search filters names/addresses; category filter distinguishes modified/added/removed/ambiguous/split/merged/unmatched. Review filter separate. Selection displays older/newer headers, code, assembly or metadata tabs. Missing code is labeled. Unified diff hunk list gives next/previous controls; paired text alignment inserts explicit gaps. Synchronized scrolling optional. Copy includes artifact/hash/run/function provenance. Correct Match dialog chooses exact existing function records, relationship and required reason; persists provenance and marks findings stale.
 
 Findings panel: structured summaries/support/counterevidence/unknowns/alternatives; evidence IDs are selectable links to correct side and line. Stale evidence displays stale notice and raw immutable context, does not jump into current code. Review status selector and analyst note Save persist separately from model content. Bookmark selected evidence attaches analyst annotation. Findings table allows selection/navigation and inclusion in export. Job pane shows indeterminate progress when backend lacks counts, elapsed time and sanitized log tail. Errors are actionable dialogs plus persistent status; retry starts new run.
@@ -11,6 +22,15 @@ Findings panel: structured summaries/support/counterevidence/unknowns/alternativ
 Interpret control enabled for selected matches and idle state; builds exact context first, opens preview with selected/omitted/unavailable records and estimated budget, provider/model/endpoint and session credential field. Send initiates explicit request; Cancel preview sends nothing. Running interpretation keeps controls responsive. No provider config required for comparison. Errors/raw malformed response inspectable without accepted finding promotion.
 
 Setup dialog (Backend and desktop tab): external Python executable, Ghidra install directory, optional private Java home, symbol-server lookup opt-in (default off), comparison timeout, code font size, interpretation context budget and synchronized scroll; offline backend ZIP install and local discovery of existing tools run on background workers; diagnose versions without launching target. Saving with unsaved Profile editor edits prompts to save them first. There are no user-visible worker-count or theme settings (future work; the single retained job worker is fixed). The provider kind, model, endpoint and session credential are entered in the interpretation context preview, not in Setup; kind, model and endpoint are remembered in OS settings, the credential never is. A Profiles tab manages analysis profiles. No automatic downloads. Help explains dependency setup and representative workflow.
+
+Profile navigation preserves unsaved editor values until Save, Discard or Cancel
+is chosen. This applies when selecting another profile or creating/duplicating
+one. Save must succeed before navigation; validation/storage failure keeps the
+original selection, editable values and inline error. Discard loads the requested
+profile without modifying the saved original. Cancel (also the default/escape
+choice) leaves the editor and selection unchanged. Programmatic reload after a
+successful save must not trigger another navigation prompt. Existing Setup Save
+and Cancel behavior, built-in defaults and stored profile contracts stay unchanged.
 
 Export dialog: choose Markdown/HTML/JSON, destination, selected/all findings, code default off, notes default on; exact preview before write; success shows destination. Options are: include function code (default off), include analyst notes (default on) and only selected findings; no separate redaction controls exist yet (future work), so exclusion of code and notes is the only content reduction. No raw model text unless separately explicitly included. Imported strings rendered as plain text throughout.
 

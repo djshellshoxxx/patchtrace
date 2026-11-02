@@ -1,0 +1,4 @@
+facts    n=5000     measured generate 6.86s ingest 14.39s context 0.05s facts 3.94s total 4.00s | 506 MiB | l35_facts_5000_s:pass
+pending  read_model: needs measurement, limit informational = 0 (persisted read-model build at 10k and 100k rows (no L-35 build-time limit); missing sizes 10000, 100000)
+pending  ui_calls: needs measurement, limit l35_first_paint_ms|l35_sort_ms|l35_filter_ms = 200 (first paint, sort and filter at 10k and 100k rows; C6 data() ceilings and 100k L-35 timings; missing sizes 10000, 100000)
+verdict pass, counts_sha256 85d38771ad435c0a52c3cc70a65e081077162960fe322005ae7c53a212c0d694

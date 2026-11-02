@@ -94,6 +94,27 @@ def test_the_decompiler_proof_is_listed_and_needs_zero_unmapped_labels():
     assert pair(ev(states, ir=off, deltas=[delta('frame')]))[0] == 'review'
 
 
+def test_r3_ir_pseudo_equality_requires_eh_eq_but_s0_remains_decompiler_relative():
+    """R3-PC01/08: unavailable EH and register-only changes cannot pass the IR pseudo proof."""
+    from dataclasses import replace
+
+    states = {'C0': 'differs', 'C1': 'differs', 'C6': 'equal'}
+    no_structural_proof = IrEvidence(positional_cfg=False, layout_ok=False, mask_unlocated=False)
+    # C4/C5/C6 and all targets are equal, but EH state was not established.
+    assert pair(ev(states, ir=no_structural_proof, eh='unavailable')) == ('review', None)
+    assert pair(ev(states, ir=no_structural_proof, eh='differs')) == ('review', None)
+    assert pair(ev(states, ir=no_structural_proof, eh='equal')) == ('cosmetic', 'COS-PSEUDO/1')
+    assert pair(ev(states, ir=no_structural_proof, eh='absent')) == ('cosmetic', 'COS-PSEUDO/1')
+    # Register changes are observable under the ABI and must not be erased by a similar decompiler result.
+    assert pair(ev(states, ir=no_structural_proof, eh='equal',
+                   deltas=[delta('register-only')])) == ('review', None)
+
+    # The no-IR fallback remains a weak, displayed decompiler-relative proof.
+    s0_states = {'C0': 'unavailable', 'C1': 'unavailable', 'C6': 'equal'}
+    s0 = replace(ev(s0_states, eh='unavailable'), ir=None)
+    assert pair(s0) == ('cosmetic', 'COS-PSEUDO/1')
+
+
 def test_a_semantic_delta_beats_every_proof():
     for cls in ('constant', 'comparison', 'condition', 'callee', 'call-added', 'call-removed', 'data-ref',
                 'struct-offset', 'string'):

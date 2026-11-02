@@ -54,6 +54,18 @@ The sample requires neither Ghidra nor an AI provider.
 
 This is an authored, synthetic bounds-check example with a curated finding. Its presence does not mean a live model has run or a real binary has been analyzed. Each use of Sample creates a separate persistent project; it does not overwrite an existing comparison.
 
+## Investigate a KB or CVE with local files
+
+Choose **Project → Investigate KB/CVE locally…**. This workflow makes no network requests.
+
+1. Choose an advisory workspace and import a supported local advisory JSON file (or supported compressed JSON).
+2. Enter a KB or CVE and click **Search locally**. Choose the product, architecture and release explicitly.
+3. Select older and newer local AMD64 PE files and a new project directory outside the open project. Confirm differently named files are the same component only when you have established that yourself.
+4. Click **Preview local pair** and review the hashes, advisory source references and pairing limitations. Changing an input invalidates the preview.
+5. Click **Create and open comparison**. PatchTrace creates a separate project and opens it after successful attachment. You can then import Ghidriff JSON or use **Run comparison** with the configured backend.
+
+Manual pairing records your selection; it does not establish product lineage, release order or vulnerability. A known architecture contradiction is refused. Failed or stale operations preserve the currently open project. If creation has already started when you cancel or close, PatchTrace finishes the bounded commit and reports a retained project path instead of silently opening it or claiming rollback.
+
 ## Install the comparison backend
 
 **Run comparison** requires a separate analysis environment. Ghidra, Java, Ghidriff, and local AI models are not bundled or downloaded automatically. Docker is not required by PatchTrace's supported desktop workflow.
@@ -377,6 +389,7 @@ The published beta passed 93 Windows tests, 91 Linux tests with two Windows-only
 
 | Documentation | Purpose |
 |---|---|
+| [Wiki-style guides](docs/wiki/Home.md) | Source pages for quick-start, developer orientation, codebase map, and design rationale; these files are versioned here, not automatically published to the separate GitHub Wiki. |
 | [Module index](docs/modules.md) | Module responsibilities, boundaries, dependencies, and test seams. |
 | [Architecture](docs/specs/architecture.md) | Runtime, project, ingestion, process, and alignment contracts. |
 | [Schemas](docs/specs/schemas.md) | Versioned record contracts and generated schema/example links. |

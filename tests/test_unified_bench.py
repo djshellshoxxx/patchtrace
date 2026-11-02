@@ -93,12 +93,12 @@ def test_the_ingest_row_must_have_read_back_every_generated_function_and_instruc
     assert checks(short, 'ingest-complete') == {('ingest', 500): False}
 
 
-def test_stages_that_wait_for_s3_and_s4_are_listed_with_their_limits_and_never_silently_absent():
+def test_unmeasured_stages_are_listed_with_their_limits_and_never_silently_absent():
     built = bench.report([], bench.environment())
     pending = {p.stage: p for p in built.pending}
     assert set(pending) == {'facts', 'read_model', 'ui_calls'}
-    assert pending['facts'].needs == 'S3' and pending['facts'].limit_value == DEFAULT_LIMITS.l35_facts_5000_s
-    assert pending['ui_calls'].needs == 'S4' and 'first_paint' in pending['ui_calls'].limit
+    assert pending['facts'].needs == 'measurement' and pending['facts'].limit_value == DEFAULT_LIMITS.l35_facts_5000_s
+    assert pending['ui_calls'].needs == 'measurement' and 'first_paint' in pending['ui_calls'].limit
     assert built.verdict == 'insufficient-data'                                      # nothing was measured
 
 

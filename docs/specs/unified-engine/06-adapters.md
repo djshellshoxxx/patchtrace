@@ -52,6 +52,12 @@ class SourceSpec:                           # registry row (D-08); adding a sour
 
 ## 4. rz-diff (weak evidence)
 
+2026-11-01 safety amendment: known-affected 0.9.1 sets have unverified conditional side ownership. Preserve
+their SourceRef and raw digest, emit no endpoint atoms/names/links and add the degrading limitation
+`rz-diff-orientation-unverified`. They cannot weakly contest another pairing. Existing cached normalized
+content is not an orientation witness; the matching-policy version is incremented. Other versions keep the
+existing unverified-version policy, without this amendment claiming their native compatibility.
+
 | Aspect | Specification |
 |---|---|
 | Inputs | current `rz-diff` set (`-C -j -t functions`, rizin 0.9.1 pinned by SPEC-28 C2) |

@@ -101,7 +101,7 @@ def test_self_test_failure_releases_project(monkeypatch):
 
     monkeypatch.setattr(ProjectService, 'sample', staticmethod(sample))
     monkeypatch.setattr(sys, 'argv', ['patchtrace', '--self-test'])
-    with pytest.raises(RuntimeError, match='self-test'):
+    with pytest.raises(RuntimeError, match='KB frozen journey: desktop sample matches did not display'):
         entry.main()
     assert created and created[0].store.closed
 

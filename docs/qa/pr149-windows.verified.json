@@ -1,0 +1,23 @@
+{
+  "artifact_id": 13083663511,
+  "file": "pr149-windows.zip",
+  "outer_sha256": "681b5deacaea07cde5b9de20ff3072b1922e4d4c42877219069c6c30744a8d4f",
+  "members": [
+    "PatchTrace-0.1.0-windows-x64.zip",
+    "PatchTrace-Windows-x64-Setup.exe",
+    "PatchTrace-0.1.0-windows-x64.zip.sha256",
+    "PatchTrace-Windows-x64-Setup.exe.sha256"
+  ],
+  "inner_packages": [
+    {
+      "path": "PatchTrace-0.1.0-windows-x64.zip",
+      "sha256": "86240d631fe823b9d39308b05c40b996ed2fe5e5d85a04d162cfdd0738099e74",
+      "bytes": 65474264
+    },
+    {
+      "path": "PatchTrace-Windows-x64-Setup.exe",
+      "sha256": "03d911fae7ffdd933ae7d5158bbbcc3adfead7f87d767049f715268eed1094b9",
+      "bytes": 64309782
+    }
+  ]
+}

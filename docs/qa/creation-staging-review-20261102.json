@@ -1,0 +1,71 @@
+{
+  "reviewer": "review_resume independent helper",
+  "decision": "No remaining blocking findings after the constructor cleanup and locked-descriptor follow-up",
+  "reviewed_head": "86c5b23f9441d4f6d947fc4a59fe6e3ac53c06ac",
+  "reviewed_tree": "d5f565653fc884eade6da87d7390d140d846a157",
+  "base": "ce6002ec36732f2d27e8e6233b8fbe305eeb6112",
+  "required_source_commits": [
+    "0e04915213139ba8cdb8d0f4d9b5a7f5b5e234e1",
+    "86c5b23f9441d4f6d947fc4a59fe6e3ac53c06ac"
+  ],
+  "observed_qa_only_head": "5b247c061c6faba5df2e42876d811807fae9d75f",
+  "worktree": "/workspace/scratch/142cb233d750/lifecycle-116",
+  "changed_paths": [
+    "docs/modules.md",
+    "docs/specs/architecture.md",
+    "src/patchtrace/persistence.py",
+    "src/patchtrace/project_creation.py",
+    "src/patchtrace/service.py",
+    "tests/test_creation_116.py"
+  ],
+  "changed_file_sha256": {
+    "docs/modules.md": "c0ebcb649f42b40a2868a4e4dbd73428bb9c980f54a4e6a90149ae95a956c2d2",
+    "docs/specs/architecture.md": "5d3f7de3b38cae4ceed298e5dfc768b826cdd6a7c2bb91ba7d7c374794ec7e04",
+    "src/patchtrace/persistence.py": "492adf75747c31ed31a5978dc8655705ba5d3d913da49073cefbb80be0718564",
+    "src/patchtrace/project_creation.py": "813950e99ec8c3cc794b7fe770209f3b5de05bd7b8cc161475dbe461fe1e542e",
+    "src/patchtrace/service.py": "fc72eb2a918d411600f0d9c01bcd91635b0d13e0cd1a268c7a4132ee0489c96d",
+    "tests/test_creation_116.py": "4bbb97649de2f76848418dd82ac91d9febbe2a10aec2d8014e443ab5c1658b97"
+  },
+  "scope_and_reasoning": [
+    "Both input copies and the first validated snapshot are prepared in a private temporary project before opening the chosen destination. Malformed input on either side, partial staging, interruption and private snapshot validation failure leave the target absent or unchanged.",
+    "Destination artifact publication uses exclusive creation. Existing artifact files are reused only after exact-content and PE validation with identity/content-version checks; they are not claimed for cleanup or overwritten. Only verified files created by this attempt enter its cleanup ledger.",
+    "Failure cleanup runs while the kernel project lock remains held, checks root/lock/database identities and snapshotless state, and preserves committed snapshots, history, foreign tables, unknown files, replaced directories and changed artifacts. Recursive deletion is limited to private staging; the persistent user-root lock remains.",
+    "Initial source0e049152 still delegated target-initialization errors to an unlock-then-unlink constructor path. A fresh real SQLite fault proved that a competing lock was acquirable during unlink. Follow-up86c5b23 closes SQLite, rechecks ownership and snapshotless state, unlinks before finally releasing the lock, and handles interruptions as well as ordinary failures.",
+    "Constructor and publication lock identities now derive from the held file descriptor and must match the pathname. A real lock-file rename/replacement before publication is refused before artifacts appear, preserving the foreign pathname bytes.",
+    "A successful first destination commit survives later exceptions, KeyboardInterrupt and private cleanup failure, with the lock released and the project reopenable. Existing abandoned-database service retry remains supported."
+  ],
+  "validation": [
+    {
+      "command": "Initial frozen0e049152 authored bounded selection",
+      "result": "111 passed in 4.76 seconds. Independent target CREATE TABLE history failure nevertheless exposed the lock-ordering blocker; initial result was not treated as final acceptance."
+    },
+    {
+      "command": "QT_QPA_PLATFORM=offscreen PYTHONPATH=.:src:tests /workspace/scratch/142cb233d750/venv/bin/python -m pytest -q --tb=short /workspace/scratch/142cb233d750/reviews-resume/test_creation_independent.py tests/test_creation_116.py tests/test_service_storage_audit.py tests/test_core.py tests/test_ingestion_core10.py tests/test_acquisition_quarantine.py tests/test_acquisition_workflow.py tests/test_ui_kb_create_cancellation.py tests/test_ui_kb_current_project.py",
+      "result": "123 passed in 5.10 seconds on frozen86c5b23. The retained control file contained the first three independent cases at collection: constructor lock ordering, same-inode/size/restored-mtime foreign artifact preservation, and postcommit KeyboardInterrupt preservation."
+    },
+    {
+      "command": "QT_QPA_PLATFORM=offscreen PYTHONPATH=.:src:tests /workspace/scratch/142cb233d750/venv/bin/python -m pytest -q --tb=short /workspace/scratch/142cb233d750/reviews-resume/test_creation_independent.py::test_actual_precapture_lock_replacement_is_refused_without_artifact_publication",
+      "result": "1 passed in 0.26 seconds, disjoint from the123 selection; actual Linux pathname replacement retained its foreign bytes and prevented artifact publication."
+    },
+    {
+      "command": "Ruff changed Python files; git diff --check ce6002ec..86c5b23; source equality against QA-only5b247c0",
+      "result": "Passed; six changed paths over the two source commits, clean final worktree."
+    }
+  ],
+  "independent_artifacts": {
+    "/workspace/scratch/142cb233d750/reviews-resume/test_creation_independent.py": "4325b66726e03783efbf8db01e06dc2d5becf90e1efc957d39724d29bae234d1",
+    "/workspace/scratch/142cb233d750/reviews-resume/test_creation_initial_controls.py": "1e870d99575c038cb372a56ad8de3b3937c38b56d5b9d82fd11a98e3c4504d86",
+    "/workspace/scratch/142cb233d750/reviews-resume/creation-initial-finding-20261102.json": "6a8fbf2c2cc4f606d7ab7f7232770a223267ff7de185236e3e102473d9a68984"
+  },
+  "environment": {
+    "python": "3.12.14",
+    "platform": "Linux",
+    "Qt": "offscreen"
+  },
+  "limitations": [
+    "The fixed GUI journey is corrected-input retry after private validation failure. Later destination publication failures can leave a nonempty directory; its explicit GUI recovery route remains separate, with the existing nonempty-directory guard unchanged.",
+    "No native Windows packaging/locking claim, power-loss durability, hostile filesystem writer immunity, full suite, or performance run. Native platforms that refuse open-directory or lock renames require their platform gates.",
+    "Profile/stale-task changes preceding ce6002ec were already separately reviewed and are outside this receipt; this does not close all of issue116.",
+    "No repository source edits, target execution, remote mutation, or GitHub approval performed."
+  ]
+}

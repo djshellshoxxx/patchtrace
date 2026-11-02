@@ -1,0 +1,43 @@
+{
+  "reviewer": "review_resume independent helper",
+  "reviewed_head": "cb22780bffbabf0e6fddfbc7562fe20ee699e35e",
+  "reviewed_tree": "33943045ab70b81423458eac5de6e14a028016f8",
+  "base": "aff72cddc902f31a2cf44dea9c48797edabc1c30",
+  "worktree": "/workspace/scratch/142cb233d750/wt-output-windows",
+  "decision": "no blocking findings in the bounded Windows stat compatibility repair",
+  "source_sha256": "84681fd6a27dcba8caafbc2ffa638b767776a7ff64e937a5b57ecfd3cd2e2c00",
+  "scope": [
+    "read_output_bytes compares full versions within each stat API family",
+    "cross-family comparison retains device/inode/size/mtime and excludes ctime only",
+    "publication, nonreplacement, cleanup ownership, canonical digest and successful-report credit paths unchanged"
+  ],
+  "validation": [
+    {
+      "command": "QT_QPA_PLATFORM=offscreen PYTHONPATH=.:src:tests /workspace/scratch/142cb233d750/venv/bin/python -m pytest -q --tb=short tests/test_tier_r_output_stat_compat.py tests/test_tier_r_output_persistence.py tests/test_tier_r_credited_replay.py",
+      "result": "100 passed, 3 LegacyOutputWarning warnings in 1.75s"
+    },
+    {
+      "command": "PYTHONPATH=.:src:tests /workspace/scratch/142cb233d750/venv/bin/python /workspace/scratch/142cb233d750/reviews-resume/independent_read_races.py output",
+      "result": "same-byte same-size restored-mtime pathname replacement during bounded read refused; original and replacement retained"
+    },
+    {
+      "command": "python -m ruff check tools/calibration/tier_r/output_store.py tests/test_tier_r_output_stat_compat.py",
+      "result": "All checks passed"
+    },
+    {
+      "command": "git diff --check base..head",
+      "result": "passed"
+    }
+  ],
+  "control_script_sha256": "762111202334518f5f2f6d716d5b5d43763582eeddb5d1d042001c23a220fb98",
+  "environment": {
+    "python": "3.12.14",
+    "platform": "Linux"
+  },
+  "limitations": [
+    "Portable API-semantic model and real Linux file controls, not native Windows acceptance",
+    "No remote GitHub review submitted",
+    "No full-suite/performance/native job repeated",
+    "Required exact-head Windows QA still open"
+  ]
+}

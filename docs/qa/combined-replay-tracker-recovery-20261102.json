@@ -1,0 +1,20 @@
+{
+  "source_local_commit": "5cdbd968e77c34dd4194ffe3cc35f42de6df24d3",
+  "source_tracker_blob": "86a77e4494af03b964f54c2b970c3d5839f982bc",
+  "source_tracker_sha256": "e35e8c98e03a31fbd488755e6729ae17a769e55db58c35b1b3c2da1770cc06fe",
+  "common_base_commit": "63d11d316c70e1f1e83baa80acabd3cf3c4c2245",
+  "base_tracker_blob": "c62f9e0f4dc3696ad580875c5393a0b656a76086",
+  "removed_encoded_wrapper": "Warningtruncatedoutputoriginaltokencount54804Totaloutputlines1",
+  "damage_restored_from_base": [
+    {
+      "baseline_first_line": 252,
+      "baseline_last_line": 593,
+      "recovered_first_line": 257,
+      "recovered_last_line": 257
+    }
+  ],
+  "recovered_insertions": 2,
+  "reconstructed_tracker_sha256": "c4da3814ced0abf01abd8685252dc4b0bc078dfce125f5fadcc2d48fb4a2c04b",
+  "recovery": "Base64 re-encode verified binary blob, remove exact warning-prefix characters, decode payload with padding; restore damaged/truncated span from merge-base tracker; retain valid new insertions; three-way union with candidate.",
+  "limitation": "Text that may have existed only in the already-truncated middle is unknown; base restoration does not invent it."
+}

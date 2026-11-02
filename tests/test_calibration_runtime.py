@@ -1,5 +1,6 @@
 """Shipped calibration runtime (calibration-corpus-and-model.md §6, §9.5, §10): features, artifact loader,
 predict, OOD, policy and the display-level seam. All data here is synthetic; no real-data claim."""
+# Unaffected synthetic producer version exercises generic behavior; not native compatibility evidence.
 from __future__ import annotations
 
 import ast
@@ -59,7 +60,7 @@ def gmatch(ident, older, newer, *, category='modified', types=('SymbolsHash',), 
 
 
 def rz(older, newer, sim=800):
-    return SecondaryMatch(engine='rz-diff', engine_version='0.9.1', older_address=older, newer_address=newer,
+    return SecondaryMatch(engine='rz-diff', engine_version='0.9.0', older_address=older, newer_address=newer,
                           older_name=None, newer_name=None, similarity_milli=sim, similarity_text='x',
                           confidence_milli=None, confidence_text=None, flags=(), algorithm='levenshtein-bytes')
 
@@ -113,7 +114,7 @@ def test_golden_vector_g_b_r_from_stored_reconciliation():
     assert v['X.agree_B'] == v['X.agree_R'] == 1.0 and v['X.absent_B'] == 0.0
     assert v['X.log_alternatives'] == pytest.approx(math.log(2))
     assert dict(row.categories)['P.toolchain'] == 'msvc'
-    assert row.engine_versions == ('bindiff 8', 'rz-diff 0.9.1')
+    assert row.engine_versions == ('bindiff 8', 'rz-diff 0.9.0')
 
 
 def test_absent_engine_changes_profile_and_missing_values_are_flagged():
@@ -173,8 +174,8 @@ def make_artifact(profile='G+R', **overrides) -> dict:
            'policy': {'tau': 0.9, 'tau_low': 0.2, 'display': 'none', 'bands': []},
            'ood': {'names': names, 'mu': [0.5, 0.5], 'chol': [[0.2], [0.0, 0.2]], 'd2_soft': 9.0, 'd2_cut': 12.0,
                    'ranges': {'G.ratio': [0.0, 1.0], 'R.similarity': [0.0, 1.0]},
-                   'cat_levels': {'P.arch': ['x64']}, 'engine_versions': ['rz-diff 0.9.1']},
-           'calibration_domain': {'engines': {'rz-diff': ['0.9.1']}, 'toolchains': ['clang'], 'arch': ['x64'],
+                   'cat_levels': {'P.arch': ['x64']}, 'engine_versions': ['rz-diff 0.9.0']},
+           'calibration_domain': {'engines': {'rz-diff': ['0.9.0']}, 'toolchains': ['clang'], 'arch': ['x64'],
                                   'corpus_id': 'synthetic', 'n_pairs': 0, 'n_lineages': 40, 'prevalence': 0.8,
                                   'known_blind_spots': ['synthetic only']},
            'evidence': {'preregistration_sha256': None, 'report_sha256': None, 'corpus_manifest_sha256': None,
@@ -318,7 +319,7 @@ def test_runtime_package_has_no_forbidden_imports_or_dynamic_code():
 
 # ---- predict / ood / policy -----------------------------------------------------------------------------
 
-def _row_for(ratio_meta=0.91, rz_sim=800, arch='x64', rz_version='0.9.1'):
+def _row_for(ratio_meta=0.91, rz_sim=800, arch='x64', rz_version='0.9.0'):
     matches = [gmatch('m', '1000', '1000')]
     matches[0].older[0].metadata['upstream_similarity'] = ratio_meta
     rs = SecondaryMatchSet(contract='secondary/2', engine='rz-diff', engine_version=rz_version, older_sha256=OLD,

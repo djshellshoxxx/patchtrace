@@ -464,7 +464,7 @@ class CallsController(ControllerBase):
         if not self._current(epoch):
             return
         self.rows = rows.view
-        (self.flags.add if rows.view.capped else self.flags.discard)('capped')
+        self._update_capped()
         self.panel.changes.set_prepared(rows.table)
         self._render()
 
@@ -515,11 +515,16 @@ class CallsController(ControllerBase):
             self._apply_found(result)
             if not result.rows:
                 self.flags.add('no-lists')
-            if result.total > len(result.rows) or result.view.truncated:
-                self.flags.add('capped')
         if self.found is None:
             self._clear_views(keep_changes=True)
+        self._update_capped()
         self._render()
+
+    def _update_capped(self) -> None:
+        found = self.found
+        capped = ((self.rows is not None and self.rows.capped)
+                  or (found is not None and (found.total > len(found.rows) or found.view.truncated)))
+        (self.flags.add if capped else self.flags.discard)('capped')
 
     def _apply_found(self, found: pd.Neighbourhood) -> None:
         panel = self.panel
@@ -837,7 +842,8 @@ class CallsController(ControllerBase):
         found, total = self.found, self.found.total if self.found else 0
         shown = len(found.rows) if found else 0
         lines = status_lines(PanelState(frozenset(self.flags), shown=shown, total=total,
-                                        nodes=len(found.view.nodes) if found else 0))
+                                        nodes=len(found.view.nodes) if found else 0,
+                                        query_capped=bool(found and found.view.truncated)))
         if lines:
             return StateModel('partial', ' '.join(lines))
         if self.data is None:

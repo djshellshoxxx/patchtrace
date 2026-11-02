@@ -7,7 +7,7 @@ MAX_LABEL_STORED = 512  # GL-02
 MAX_LABEL_SHOWN = 120
 MAX_PATHS = 5  # GL-04
 MAX_PATH_LENGTH = 12
-PATH_VISIT_BUDGET = 200_000
+PATH_VISIT_BUDGET = 200_000  # GL-04: shared adjacency examinations across all path-query phases
 CANCEL_POP_INTERVAL = 4_096  # GL-12 (queue pops)
 CANCEL_CLAIM_INTERVAL = 200  # GL-12 (claims)
 

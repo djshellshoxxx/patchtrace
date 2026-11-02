@@ -1,0 +1,134 @@
+{
+  "record_type": "scoped checkpoint; not project acceptance",
+  "source_commit_local": "241f445bf3e2e1bc4083aac47ac074b3fd3b795b",
+  "main_at_snapshot": "a04f5a299a8d4afef023261e52e08d14678cf1e7",
+  "source_tree": "e3707ba586a054f687cd37cee07e32c79bb83841",
+  "full_suite": {
+    "candidate": "PR149 source tree 4da0e0ba4b23c5a3c1e582ab931a3160c3608f57",
+    "command": "QT_QPA_PLATFORM=offscreen python -m pytest -q --junitxml=export-full.xml",
+    "passed": 18303,
+    "failed": 3,
+    "skipped": 136,
+    "xfailed": 7,
+    "seconds": 1630.52,
+    "failures": {
+      "tests/test_binexport_isolation.py::test_pure_python_runtime_is_refused_in_a_fresh_interpreter": "symlink interpreter resolves to base without protobuf; baseline reproduces, copied interpreter passes",
+      "tests/test_network_consent_guard.py::test_a_local_unix_socket_is_not_network": "sandbox AF_UNIX creation EPERM, baseline reproduces; remote Linux QA passes",
+      "tests/test_rules_worker.py::test_parent_never_imports_yara_x": "symlink interpreter resolves to base without yara_x; baseline reproduces, copied interpreter passes"
+    }
+  },
+  "native": {
+    "tested_local_commit": "241f445bf3e2e1bc4083aac47ac074b3fd3b795b",
+    "os": "Linux",
+    "authored_cases_evaluated": 5,
+    "passed_scope": 5,
+    "failures": 0,
+    "retries": 0,
+    "verdicts": {
+      "material": 1,
+      "review": 3,
+      "unchanged": 1
+    },
+    "ghidriff_match_counts": [
+      1,
+      1,
+      1,
+      0,
+      0
+    ],
+    "unified_pair_counts": [
+      1,
+      1,
+      1,
+      1,
+      1
+    ],
+    "limits": "Not full GT01, G-U, held-out, Windows, BinDiff, performance or air-gap acceptance; no failed-run recovery evaluated"
+  },
+  "files": {
+    "backup-independent-20261101.log.gz": {
+      "sha256": "9613b8daf6fc12a60acd1787b361d82aacbd8a320168b8ab086664cf3f898d37",
+      "bytes": 52
+    },
+    "branch-dispositions-20261101.md": {
+      "sha256": "ec3eda8819e05dad681888fe893bc6ce14698c6806c94892ea3e0b55273453fa",
+      "bytes": 19644
+    },
+    "completion-inventory-20261101.json.gz": {
+      "sha256": "a3781a73fb47ef325040e4d9699a838ce33f3bdce824cf74db47caa256817724",
+      "bytes": 169904
+    },
+    "export-base-failures-20261101.log.gz": {
+      "sha256": "2d5d6cd6b3c778d91a92b01a58944befd6faff4c40d47a9a0490a7e2779ef234",
+      "bytes": 1837
+    },
+    "export-copies-candidate-20261101.log.gz": {
+      "sha256": "c129ed1a139326bdd39beda8847ef8a784d3874405c75440b230d30ea614cc50",
+      "bytes": 50
+    },
+    "export-copies-failures-20261101.log.gz": {
+      "sha256": "4bd888935014d3895c72236820f925fe72a2f9c81d0a64e526816de1b204a2ba",
+      "bytes": 50
+    },
+    "export-full-20261101.log.gz": {
+      "sha256": "bc97f0c0491deeeeca7c5a43cc87b7adf87e101f0a398bcd156c034d0e082830",
+      "bytes": 3183
+    },
+    "export-full-20261101.xml.gz": {
+      "sha256": "bfb32051e224041bff7fcc78ec5eb139ca3b8f1db7928986eb834a80495ce068",
+      "bytes": 314610
+    },
+    "integration-focused-20261101.log.gz": {
+      "sha256": "08f2ff374f39f5e6f24d0dbd8a14c0475a340ccf5ccd1be449327f5ef374cf12",
+      "bytes": 869
+    },
+    "integration-focused-final-20261101.log.gz": {
+      "sha256": "88faa6d30b19d0e886e1dec6fdb9ffb37f7d610a4d9b702c33e4a97a3b43f57f",
+      "bytes": 78
+    },
+    "issue-dispositions-20261101.md": {
+      "sha256": "1221e12b1ac18a36651e09e2aac2bf973e7c0d039a2750df5596432652dac80d",
+      "bytes": 10906
+    },
+    "native-reconciliation-20261101-compile-evidence.json": {
+      "sha256": "f68f78e6bdb57b5968f155d794d82e6ef23c287d60b12452a7f7783f1c826adc",
+      "bytes": 6303
+    },
+    "native-reconciliation-20261101-download-evidence.json": {
+      "sha256": "346d9a07eb75ac9a7f75a3e154201ab036951aa64364019c67535513d234a8dc",
+      "bytes": 2580
+    },
+    "native-reconciliation-20261101-native-driver.py": {
+      "sha256": "6dccf2ecda6976295934a2f1916840012bf75d916ff951c9bb1de2f28f4f6267",
+      "bytes": 5918
+    },
+    "native-reconciliation-20261101-receipt.json": {
+      "sha256": "99eaf3c7edadfd2192a4225e46a81ca429158c962cfe07225e8fa3a4f24e3675",
+      "bytes": 25067
+    },
+    "native-reconciliation-20261101-setup-evidence.json": {
+      "sha256": "1cf654098b6276b594a4d464a9ce2c5998b19c0b197ceb86aea9ed3d34af0eae",
+      "bytes": 1245
+    },
+    "native-reconciliation-20261101-verification-evidence.json": {
+      "sha256": "f739cad2b86f7790d9d4be469426cc2cec7a9a24c80a991ac2acb6d304297060",
+      "bytes": 23777
+    },
+    "original41-pr-collections-20261101.json.gz": {
+      "sha256": "46c5de67bd144e704f50b432338ba46f3befe46e690239995ef21c81fda45cd1",
+      "bytes": 22368
+    },
+    "original41-pr-workflow-jobs-first-pages-20261101.json.gz": {
+      "sha256": "d9bb011641e30832c3cd11a412e8f6f8872fc8614e099e137c478bf04279acad",
+      "bytes": 47108
+    },
+    "reproduce-issue120-20261101.json.gz": {
+      "sha256": "4dddf091d0715b29f438ec44bb465268a58ec941a544f06542ad71ccbe721277",
+      "bytes": 821
+    },
+    "storage-focused-20261101.log.gz": {
+      "sha256": "331cc778cc8efcbc2af58b431b1d4eb3fb687354a6bd66c4de20571d4a257393",
+      "bytes": 62
+    }
+  }
+}

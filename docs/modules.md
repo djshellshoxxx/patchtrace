@@ -6,6 +6,9 @@ Stable IDs are independent of filenames. Public interfaces in SPEC-01 and schema
 |---|---|---|---|---|
 | contracts | models.py | Versioned validated artifact/project/run/function/match/evidence/context/finding/job/export records | pydantic | Pure data; schema and invariant tests |
 | ingestion | ingestion.py | inspect_artifact and immutable copies; PE AMD64 validation | contracts | Disk staging; synthetic PE fixtures |
+| project creation staging | project_creation.py; service.create | Private complete input/snapshot preparation before destination mutation; held-lock publication with bounded identity-owned cleanup, preserving foreign files and persistent lock semantics | ingestion, persistence, models | tests/test_creation_116.py; actual synthetic-PE ingestion and snapshot/publication failure controls |
+| explicit creation retry | project_retry.py; service.retry_create | Read-only bounded validation of exact incomplete-project layout under an existing held lock before database recycling; only staged-input artifact reuse | project creation staging, persistence | tests/test_project_retry.py; byte preservation, lock ownership, cancellation and actual retry |
+| new project dialog | ui_new_project.py; ui.NewProjectDialog re-export | Ordinary empty-root creation and separate explicit occupied-root retry outcome; background job and current-generation adoption | service, Qt | tests/test_ui_project_retry.py; real modal outcomes and queued worker delivery |
 | persistence | persistence.py | create/load/save project, lock, backups, revision history | contracts | SQLite connection confined to its creating thread; temp roots |
 | normalization | normalization.py | normalize_ghidriff, preserve unavailable fields | contracts | Pure conversion; upstream JSON fixtures |
 | alignment | alignment.py | Bounded line alignment and hunks; large-input fallback | contracts | Pure lines; unequal/empty fixtures |
@@ -46,14 +49,20 @@ Stable IDs are independent of filenames. Public interfaces in SPEC-01 and schema
 | artifact bytes | artifact_bytes.py | SPEC-26 shared seam: `VerifiedArtifactReader.open_artifact/open_path`, bounded `read(offset,length,clip)` on a SHA-256-verified handle; change detection; `ArtifactBytesError.code` | ingestion/contracts | Pure IO, no Qt; tmp-file tests |
 | pe overview (alpha) | pe_overview/*.py | SPEC-26 D: bounded stdlib PE header/section/directory/import/export/entropy/overlay/certificate-table parsing, field-level old/new comparison; `inspect(reader) -> PeOverview`; Authenticode trust isolated in Windows-only `authenticode.py` | artifact bytes | Pure; synthetic/hostile PE fixtures; native Windows trust tests skip elsewhere |
 | byte representations (alpha) | representations/*.py | SPEC-26 B: paged Hex/Binary/Base64 rendering of exact verified bytes; whole-file/file-range/function-RVA scopes via injected section map | artifact bytes | Pure; boundary fixtures |
+| raw-offset alignment (RD-F03) | representations/alignment.py | Opt-in bounded exact-byte window anchors, explicit repeated-block/conflicting-shift ambiguity, complete original-byte/file-offset span coverage on limits or cancellation; existing equal-offset mask unchanged; no function equivalence | representations.paging, scope; stdlib only | tests/test_representation_alignment.py |
+| raw alignment view | raw_alignment_view.py | Pure verified physical window capture, aligned Hex/Binary rows and original-window Copy provenance; explicit EOF and unresolved outcomes | artifact_bytes, representations | tests/test_raw_alignment_view.py |
+| raw alignment controls | ui_raw_alignment.py | Opt-in paired offset controls, span navigation and TaskRunner lifecycle/generation rejection; no backend logic | gui.qt.tasks, raw_alignment_view | tests/test_ui_raw_alignment.py |
 | tooltip registry (alpha) | tooltips.py | SPEC-26 A: semantic-ID tooltip registry, safe templates, `apply_tooltips`; New/Open exempt | Qt (apply only) | Registry tests + widget enumeration test |
 | artifact inspection (alpha) | artifact_inspection.py | SPEC-26 D orchestration: `inspect_project_artifacts(project_id, artifacts, root, cancel) -> ProjectInspection` (per-side verified reader + `PeOverview` + `compare_overviews`); per-side failure codes never hide the other side; owner closes readers | artifact bytes/pe overview | Pure; tampered/missing/cancel tests |
 | raw view (alpha) | raw_view.py | SPEC-26 B composition: whole-file and from-function-entry scopes (entry RVA via section map, extent never claimed), `build_side`, `differing_lines` | pe overview/representations | Pure; mapping and diff tests |
 | series UI | ui_series.py | `SeriesWindow` and `SeriesLoadThread`: renders a `SeriesView`, plain-text cells, Open-pair signal; hook in ui.py is one action | Qt, nway.view_model | pytest-qt offscreen, tooltip audit |
 | inspection UI (alpha) | ui_inspection.py | `InspectionThread` independent of analysis jobs; PE comparison table rendering | Qt, artifact inspection | pytest-qt via MainWindow |
+| profile editor navigation | ui_profiles.py; minimal ProfilesPanel wiring in ui.py | Save/Discard/Cancel before leaving unsaved profile edits; save errors preserve the original selection/editor, successful reloads are signal-blocked | Qt, enrichment.profiles, tooltips | tests/test_lifecycle_116.py; actual Qt selection and persistence failures |
 | packaging | tools/build_windows.py; tools/build_linux.py; tools/pyinstaller_hooks/ | Frozen Windows/Linux runtimes, curated Qt desktop plugins, licenses, inventory and checksum | PyInstaller | Windows/Linux Actions and archive inspection |
 
 Every substantial future module must be added here before implementation. UI must not own analysis logic; provider must not own project state.
+
+| Rizin count observation research | tools/research/rzdiff_count_observation.py | Fixed static-query argv and bounded retained-capture decoder; always denies orientation authorization, no execution or policy change | persistence.strict_json, stdlib | tests/test_rzdiff_count_observation.py; synthetic only; docs/research/rzdiff-orientation-witness-20261101.md |
 
 ## Phase C6 evidence panel modules (SPEC-28 evidence panel, owner C6)
 
@@ -328,7 +337,7 @@ K1 notes: plan 10.1 "4 edges, 1 mention-only" = 4 vendor-remediation edges + 1 m
 ### [G1:callgraph-kernel]
 | module | files | purpose | deps | tests |
 |---|---|---|---|---|
-| callgraph kernel | src/patchtrace/callgraph/{limits,text,labels,csr,algo}.py | label parsing, untrusted-text sanitizer, immutable CSR digraph, SCC/reach/ancestors/bidirectional distance/bounded simple paths (stdlib only, no runtime NetworkX) | stdlib | `test_callgraph_labels.py`, `test_callgraph_csr.py`, `test_callgraph_algo.py` |
+| callgraph kernel | src/patchtrace/callgraph/{limits,text,labels,csr,algo}.py | label parsing (terminal ASCII calling-count suffixes; guarded integer-conversion failures remain unresolved without rewriting original labels), untrusted-text sanitizer, immutable CSR digraph with lazy adjacency iterators, SCC/reach/ancestors/bidirectional distance; paths share 200,000 edge examinations across all phases, keep a completed shortest witness on later exhaustion, and filter listed membership in the existing CSR without a remap/cache (stdlib only, no runtime NetworkX) | stdlib | `test_callgraph_labels.py`, `test_callgraph_count_suffix_guard.py`, `test_callgraph_csr.py`, `test_callgraph_algo.py`, `test_callgraph_path_budget.py` |
 ### [G0:fixtures] WB2 call-graph synthetic fixtures (2026-10-14, Haiku 5.5, worktree)
 | module | path | responsibility | depends on | tests |
 |---|---|---|---|---|
@@ -486,6 +495,8 @@ S8 notes: integrator wires `SearchService(extra_specs=lambda req: tool_specs(Too
 | Module | Files | Responsibility | Depends on | Tests |
 |---|---|---|---|---|
 | tier-r evaluator | tools/calibration/tier_r/evaluate.py | per-engine, per-stratum identity and changed-set precision/recall, FP rate, wrong-match list; engine front ends (rz-diff via production registry/scheduler, `.BinDiff` and Ghidriff JSON imports; absent = BLOCKED); deterministic `tier-r-report/1` + Markdown | secondary registry/scheduler/bindiff, normalization, tier_r.contracts | tests/test_tier_r_eval_metrics.py, test_tier_r_eval_engines.py, test_tier_r_eval_report.py |
+| normalized output retention | tools/calibration/tier_r/output_store.py; evaluator/CLI and train reader wiring | Fresh exclusive run directory, strict pre-serialization producer validation, capped canonical bytes and atomic no-overwrite publication. Managed marker plus finalized report/credit manifest bind successful references to exact replay bytes; failed evidence is retained but not adopted. Legacy loose folders remain unverified compatibility; no Tier W transfer or final-look acceptance. | tier_r.report_schemas, calibration.common | tests/test_tier_r_output_persistence.py; tests/test_tier_r_credited_replay.py; constructed outputs/imports and production attention ranking/replay |
+| verified shard training transfer | tools/calibration/tier_r/training_artifacts.py; shard.py | Fixed per-shard bundles; report/case/label/output ownership, exact-byte hashes, no-follow parents/leaves including Windows reparse points, exclusive manifest-last completion; verified merge creates a managed replay run | tier_r.contracts/output_store, calibration.common | tests/test_tier_r_training_artifacts.py; actual shard/evaluate/merge/train reader flow with constructed providers, no native or final-look claim |
 | report schemas | tools/calibration/tier_r/report_schemas.py | `tier-r-engine-output/1` schema, report examples (synthetic) into docs/schemas/corpus/ | tier_r.contracts, evaluate | test_tier_r_eval_report.py |
 | manifest / annotate | tools/calibration/tier_r/{manifest,annotate}.py | `calibration-corpus/1` manifest; labels -> hash-chained annotation log -> `calibration-labels/1` (`synthetic-exact`) | calibration.contracts, label, lineage | tests/test_tier_r_eval_corpus.py |
 | tier-r CLI | tools/calibration/tier_r/{cli,__main__}.py; hook in tools/calibration/corpus.py | `python -m tools.calibration.tier_r <cmd>` (exit 0/1/2/3), `corpus known-answer <cmd>` | factory, fetch, toolchain, evaluate, manifest, annotate | tests/test_tier_r_eval_cli.py |
@@ -843,7 +854,7 @@ S4a notes: spec `docs/specs/unified-engine/07-ui-and-cli.md` s13 lists the devia
 | A/A pairs | tools/unified/corpus/aa.py | SPEC-32 s9 rebuild, link-order and toolchain-noise pairs under the gate's names P0, P1, P2; the P1 variants the builder cannot make are listed in `P1_PENDING` | factory `run_aa`, `run_noise` | tests/test_unified_corpus_manifest.py, test_unified_corpus_cli.py |
 | corpus manifest | tools/unified/corpus/manifest.py | `unified-corpus-manifest/1`: facts only per pair (role, gates, image digests, label digest, counts, mutant class, planted function, accepted verdicts), `ignored` and `pending` listed, deterministic, digest-checked on load | `known-answer-labels/1`, mutation registry | tests/test_unified_corpus_manifest.py |
 | planted mutants | tools/unified/mutations/{classes.py, templates.py, driver.py} | the 12 G-U2 classes (8 base + global-swap R-01, index-swap R-07, branch-swap R-04, buf-resize R-16; `moved-rva-call` and `try-scope` stay PENDING with what each needs), a deterministic freestanding-C generator (`string.Template` slots, so an edit is a slot change), a driver that builds one base image per class plus one image per mutant and labels with the factory's `label_construction`; `callee-swap` and `global-swap` are accepted by a symbol-reference proof because their masked body is equal by design | SPEC-32 factory, `bodyhash.Disassembly` | tests/test_unified_mutations.py (84: registry against the 08 s1 row, generator properties, strict compiles, builds) |
-| G-U5 bench | tools/unified/bench.py | fresh process per measurement with peak RSS; ladder (S2 generator) and ingest (S1 test builder at 3 M instructions) stages; L-35 with 5x slack only at the sizes L-35 defines; exact tick checks; `--live-result` makes informational extract rows from `tools/live_unified_check.py`; facts, read model and `data()` call counts listed as pending; `bench-report/1` with `counts_sha256` | patchtrace.unified.{ladder,ir,limits}, tests/unified_ir_builder.py, tests/unified_extract_builder.py | tests/test_unified_bench.py |
+| G-U5 bench | tools/unified/bench.py, tools/unified/bench_workloads.py | fresh process per measurement with peak RSS; synthetic ladder, ingest, changed-pair facts, persisted read-model and real offscreen Qt table workloads; L-35 with 5x time slack only at defined sizes; exact tick and visible-cell call ceilings; missing stage/size measurements stay pending; `--live-result` adds informational extract rows; `bench-report/1` with count digest | patchtrace.unified.{ladder,ir,facts,read_model,limits}, ui_unified, tests/unified_{ir,extract,facts}_builder.py, tests/unified_read_support.py | tests/test_unified_bench.py, tests/test_unified_bench_stages.py |
 | gate report | tools/unified/gates_u.py | `gate-report/1`: registry of G-U1..G-U8 (question and first slice equal the 08 s1 cells), statuses pass / fail / insufficient-data / pending / blocked, G-U5 from bench reports, G-U8 from a JUnit file (bounded, UTF-8, DTD refused) plus attested CI steps, corpus-readiness facts for the gates that wait for S3, `decision_ready` per U-05, JSON + Markdown, advisory unless `--strict` | bench, corpus.manifest | tests/test_unified_gates.py |
 | workflow | .github/workflows/unified-corpus.yml | dispatch only and advisory: Linux corpus job, Windows bench job (continue-on-error), report job; inputs only through env; artifacts are reports and label documents, never images | the three tools above | tests/test_unified_corpus_workflow.py, tests/test_workflows.py |
 S6a notes (for the integrator, S3 and S6b):
@@ -1060,6 +1071,8 @@ R5 contract notes: no persisted contract changed. Deviations from the card, all 
 ### [LBL-prereg:tools]
 `tools/calibration/prereg.py` recomputes or verifies the C9 preregistration SHA-256 (read-only, never writes the lock). `tools/calibration/vendoring_scan.py` proposes lineage merges from shared masked body hashes (merge-only, hubs excluded, threshold and hub limit required). `tests/test_prereg_constants.py` pins the cv/threshold/gates/ece_null/metrics constants to the preregistration.
 
+`tools/calibration/prereg_gate.py` selects exact LF protocol bytes against one unambiguous `C9-PREREG-v1` QA table row before the training CLI opens corpus inputs. Explicit unlocked rehearsal retains the placeholder report/key; reduced-effort smoke cannot claim a verified protocol. `tests/test_train_prereg_selection.py` checks rejection before input access and real small constructed reports. This is protocol identity validation, not pre-lock approval or final-look acceptance; the single-use final-run CLI wrapper remains separate.
+
 ### [LBL-13:channels]
 `tools/calibration/channels/{strings,capabilities,environment,rules,leadlist}.py` (dev-only): one scorer per channel pack, each returning its own `PackReport` (intervals by lineage bootstrap from `evalcore.boot`, exact counts, gate booleans). Packs are never pooled; `rules` is `blocked` while `yara_x` is missing. `leadlist` evaluates the LBL s7.6 conditions (precision above base rate, A/A false-lead rate <= 0.1 %, hit@10 non-inferiority -0.02, one improved slice); below 30 lineages a condition is undefined, never passed.
 
@@ -1195,6 +1208,49 @@ Calls panel (id graph): `callgraph/panel.py` (PanelSpec), `panel_qt.py` (widgets
 |---|---|---|
 | `kbcorrelation/investigation_qt.py` | Offline KB/CVE investigation controls and controller: advisory import, local search, explicit product scope, verified local pair preview and isolated new-project creation over existing service contracts and TaskRunner. No socket APIs or target execution. | `tests/test_ui_kb_investigation.py` |
 
+### KB current-project capture and frozen journey (2026-11-01)
+
+| Module | Responsibility | Verification |
+|---|---|---|
+| `kbcorrelation/adapters/panel_snapshot.py` | Capture the current project and integrity-checked enrichment rows on their owning GUI thread as immutable strings. Workers rebuild leads from that snapshot and the advisory workspace without reopening the locked project or sharing SQLite objects. | `tests/test_ui_kb_current_project.py` |
+| `gui/qt/kb_selftest.py` | Timer-owned continuations under one top-level application event loop: sample desktop check, synthetic offline investigation, fixture import, actual candidate panel, exports and stale/reopen checks inside packaged `--self-test`; bounded waits/failure cleanup; no test-directory dependency, provider calls or target execution. | `tests/test_ui_kb_frozen_journey.py`; GUI architecture and frozen smoke gates |
+
+
+### Matching/semantic reconciliation (October 31 UTC continuation)
+
+Existing `unified/fusion/arbiter.py`, `unified/sources/ladder.py`, `unified/read_text.py`,
+`unified/ir/cfg.py` and `unified/compute.py` retain R2's complete matching witnesses,
+verified one-sided IR observations, analyst attribution and bounded CFG queries.
+`unified/facts/{pseudo,channels,anchors,verdict}.py` retain typed literal identity
+through rendering and value anchoring and abstain on IR exception/register uncertainty.
+Cache policy includes `matching/2`, `canon/2` and `COS-PSEUDO/1` implementation version 2;
+wire/ProgramIR contracts are unchanged. Regression sources and independent acceptance
+boundaries are recorded in `docs/plans/milestone-ledger-20261030.md`.
+## Windows branding reconciliation (SPEC-52 WIN-1)
+
+| Module | Files | Responsibility | Verification |
+|---|---|---|---|
+| Application mark | `src/patchtrace/app_icon.py`, `resources/patchtrace-mark.svg` | Render the existing owner mark through QtSvg for window and build icons; packaged data hook | Offscreen render and package-data tests |
+| Windows executable identity | `tools/windows_version_info.py`, `windows_icon.py`, `check_windows_exe.py` | Deterministic validated version metadata/ICO generation and bounded read-back gate, no target execution | PyInstaller version serializer round trip and hostile/missing resource tests; real Windows build separately required |
+## Essential workflow safety continuation (2026-10-31)
+
+- `service.ProjectService.export_report` / `reports.export_project(..., project_root=...)`: enforce project-owned report destination boundary before filesystem writes; UI consumes service route. Existing renderer/preview compatibility retained.
+- `kbcorrelation.service.KbService.acquire/import_pair`: bind consented acquisition completion to captured investigation revision and explicit preview scope, using existing workspace lock/history; retain conservative pairing provenance.
+
+- `persistence.ProjectStore.load(*, recover_interrupted=True)`: default startup recovery unchanged; non-mutating committed reads for report generation set False. No schema change.
+
+## Offline KB desktop service seam (2026-10-31 implementation)
+
+| Module | Contract / responsibility | Verification |
+|---|---|---|
+| `kbcorrelation/investigation_service.py` | Frozen `InvestigationRequest` / `InvestigationResult`; `execute_request(request,cancel,service_factory=None)` local-only task-local facade over strict advisory import, search/products and preview-bound local pair creation. No Qt/network calls. | `tests/test_kb_investigation_service.py` |
+| `kbcorrelation/investigation_qt.py` | Parented `InvestigationDialog(parent,workspace=None,tasks=None,on_created=None,current_project=None,execute=execute_request)`: explicit scope/local-pair controls, immutable requests, TaskRunner lifecycle/generation checks; caller adopts new project on GUI thread. Existing index row was ahead of implementation. | `tests/test_ui_kb_investigation.py`; offscreen only, native Windows UI separate |
+
+- `kbcorrelation/wiring.py`: GUI-only create-new project-port factory uses existing ProjectService.create; default CLI/resume factory remains compatible. The investigation service selects the new-only factory per operation.
+
+- `gui/qt/host.py`: `PanelHost.investigation_dialog()` constructs the parented offline dialog and owns retained-path/adoption callbacks; MainWindow delegates without naming/importing a feature package.
+
+- `gui/qt/project_adoption.py`: `adopt_project(window, service)` owns the generic GUI transaction for service/render/preferences adoption and rollback; MainWindow.set_service stays a thin facade. Existing real-service entry regressions cover rollback and lock release.
 
 
 ## Issue #120 evidence identity repair (2026-11-01; independent main port)

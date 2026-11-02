@@ -66,23 +66,35 @@ def dominators(n: int, succ: Sequence[Sequence[int]], entry: int = 0) -> list[in
 
 
 def count_back_edges(n: int, succ: Sequence[Sequence[int]], entry: int = 0) -> int:
-    """Edges (u, v) with v dominating u among the blocks reachable from `entry`; a self loop is a back edge."""
+    """Edges (u, v) with v dominating reachable u; self loops and duplicate edges count.
+
+    DFS intervals of the immediate-dominator tree answer each ancestry query in O(1).
+    The work after `dominators` is O(blocks + edges), including a long acyclic chain.
+    """
     if n == 0:
         return 0
     idom = dominators(n, succ, entry)
+    children: list[list[int]] = [[] for _ in range(n)]
+    for node, parent in enumerate(idom):
+        if parent >= 0 and parent != node:
+            children[parent].append(node)
+    start, end = [-1] * n, [-1] * n
+    stack = [(entry, False)] if 0 <= entry < n else []
+    clock = 0
+    while stack:
+        node, exiting = stack.pop()
+        if exiting:
+            end[node] = clock
+        else:
+            start[node] = clock
+            clock += 1
+            stack.append((node, True))
+            stack.extend((child, False) for child in reversed(children[node]))
     count = 0
     for u in range(n):
-        if idom[u] == -1:
+        if start[u] == -1:
             continue
         for v in succ[u]:
-            if idom[v] == -1:
-                continue
-            node = u
-            while True:  # v dominates u iff v lies on u's dominator chain
-                if node == v:
-                    count += 1
-                    break
-                if idom[node] == node:
-                    break
-                node = idom[node]
+            if 0 <= start[v] <= start[u] < end[v]:
+                count += 1
     return count

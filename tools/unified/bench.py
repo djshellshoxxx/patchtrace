@@ -3,13 +3,14 @@
 Every measurement runs in a FRESH process (`measure` spawns `python -P -m tools.unified.bench --child ...`), so the
 peak RSS it reports belongs to that one workload. The workloads are SYNTHETIC (the generators of
 tests/unified_ir_builder.py for the ladder and tests/unified_extract_builder.py for ingest): they measure the cost of
-the algorithms, not Ghidra or real binaries. The extractor is measured by the live workflow
+the algorithms, not Ghidra or real binaries. Facts use real ingested synthetic instructions; read/UI stages load
+varied persisted result records and use the production read model and Qt table. The extractor is measured by the live workflow
 (`tools/live_unified_check.py`); `--live-result` turns its result file into informational `extract` rows.
 
 Gates are L-35 with 5x wall-clock slack on CI (08 s6) and no slack on memory, applied only at the sizes L-35 defines:
-ladder 10k and 60k, ingest and worker memory at 60k. Other sizes are informational. Exact operation-count checks
-(budget ticks per function, linear growth) hold at every size. What waits for another slice (facts for 5,000 pairs,
-read model, `data()` call counts) is listed as `pending` with its limit, never left out. Windows numbers come from the
+ladder 10k and 60k, ingest and worker memory at 60k, facts at 5k and UI at 100k. Read-model build times and other
+sizes are informational. Exact operation-count checks (budget ticks per function, visible-cell call ceilings)
+hold at every size. Missing required facts/read-model/Qt measurements stay `pending`. Windows numbers come from the
 Windows runner and the frozen EXE; the Windows RSS branch has not been run by the author. The report carries
 `counts_sha256`, a digest of the deterministic counts only, so two runs on equal code can be compared.
 """
@@ -42,17 +43,20 @@ INSNS = 50                      # 60k functions x 50 instructions = the 3 M inst
 TIMEOUT_S = 3600
 HERE = Path(__file__).resolve()
 ROOT = HERE.parents[2]
-STAGES = ('ladder', 'ingest')
-# stage -> (needs, limit name, limit value, what); listed, not measured, until the slice exists
+STAGES = ('ladder', 'ingest', 'facts', 'read_model', 'ui_calls')
+SIZES = {'ladder': (10_000, 60_000), 'ingest': (10_000, 60_000), 'facts': (5_000,),
+         'read_model': (10_000, 100_000), 'ui_calls': (10_000, 100_000)}
 PENDING = (
-    ('facts', 'S3', 'l35_facts_5000_s', DEFAULT_LIMITS.l35_facts_5000_s, 'change facts for 5,000 changed pairs'),
-    ('read_model', 'S4', 'l35_first_paint_ms', DEFAULT_LIMITS.l35_first_paint_ms, 'read-model build at 10k and 100k rows'),
-    ('ui_calls', 'S4', 'l35_first_paint_ms|l35_sort_ms|l35_filter_ms', DEFAULT_LIMITS.l35_first_paint_ms,
-     'exact data() call counts for first paint, sort and filter (C6 method)'))
+    ('facts', 'l35_facts_5000_s', DEFAULT_LIMITS.l35_facts_5000_s, 'change facts for 5,000 changed pairs'),
+    ('read_model', 'informational', 0, 'persisted read-model build at 10k and 100k rows (no L-35 build-time limit)'),
+    ('ui_calls', 'l35_first_paint_ms|l35_sort_ms|l35_filter_ms', DEFAULT_LIMITS.l35_first_paint_ms,
+     'first paint, sort and filter at 10k and 100k rows; C6 data() ceilings and 100k L-35 timings'))
 # (stage, n) -> ((limit name, unit, slack), ...): the sizes L-35 defines
 GATES = {('ladder', 10_000): (('l35_ladder_10k_s', 's'),),
          ('ladder', 60_000): (('l35_ladder_60k_s', 's'), ('l35_worker_rss_bytes', 'bytes')),
-         ('ingest', 60_000): (('l35_ingest_60k_s', 's'), ('l08_ingest_rss_bytes', 'bytes'))}
+         ('ingest', 60_000): (('l35_ingest_60k_s', 's'), ('l08_ingest_rss_bytes', 'bytes')),
+         ('facts', 5_000): (('l35_facts_5000_s', 's'),),
+         ('ui_calls', 100_000): (('l35_first_paint_ms', 'ms'), ('l35_sort_ms', 'ms'), ('l35_filter_ms', 'ms'))}
 
 
 class _Strict(BaseModel):
@@ -61,7 +65,7 @@ class _Strict(BaseModel):
 
 class Gate(_Strict):
     name: str
-    unit: Literal['s', 'bytes']
+    unit: Literal['s', 'ms', 'bytes']
     limit: int
     slack: int
     allowed: float
@@ -76,7 +80,7 @@ class Check(_Strict):
 
 
 class Row(_Strict):
-    stage: Literal['ladder', 'ingest', 'extract']
+    stage: Literal['ladder', 'ingest', 'extract', 'facts', 'read_model', 'ui_calls']
     n: int
     status: Literal['measured', 'failed']
     seconds: dict[str, float]
@@ -137,8 +141,16 @@ def peak_rss_bytes() -> int | None:
 
 
 def environment() -> dict[str, str | int]:
-    return {'platform': platform.platform(), 'python': platform.python_version(), 'machine': platform.machine(),
-            'cpu_count': os.cpu_count() or 0}
+    env = {'platform': platform.platform(), 'python': platform.python_version(), 'machine': platform.machine(),
+           'cpu_count': os.cpu_count() or 0}
+    try:
+        env['source_commit'] = subprocess.check_output(
+            ['git', 'rev-parse', 'HEAD'], cwd=ROOT, text=True, stderr=subprocess.DEVNULL).strip()
+        env['source_tracked_dirty'] = int(bool(subprocess.check_output(
+            ['git', 'status', '--porcelain', '--untracked-files=no'], cwd=ROOT, stderr=subprocess.DEVNULL)))
+    except (OSError, subprocess.CalledProcessError):
+        env['source_commit'] = 'unavailable'
+    return env
 
 
 # ---- workloads (run in the child) ----------------------------------------------------------------------------------------------
@@ -218,7 +230,14 @@ def _ingest(n: int, seed: int, insns: int) -> dict:
 def _child(stage: str, n: int, seed: int, insns: int) -> int:
     if n < 1:
         raise ValueError('n must be positive')
-    work = _ladder(n, seed) if stage == 'ladder' else _ingest(n, seed, insns)
+    if stage == 'ladder':
+        work = _ladder(n, seed)
+    elif stage == 'ingest':
+        work = _ingest(n, seed, insns)
+    else:
+        _need_builders()
+        from tools.unified import bench_workloads
+        work = getattr(bench_workloads, stage)(n, seed, insns)
     print(json.dumps({**work, 'peak_rss_bytes': peak_rss_bytes()}, separators=(',', ':')))
     return 0
 
@@ -234,20 +253,27 @@ def _row(stage: str, n: int, *, status: str = 'measured', work: dict | None = No
 
 def measure(stage: str, n: int, *, seed: int = 1, insns: int = INSNS, timeout: float = TIMEOUT_S) -> dict:
     """One workload in a fresh interpreter. A child that fails or times out is a `failed` row, never an exception."""
+    def recorded_row(**kwargs):
+        row = _row(stage, n, **kwargs)
+        row['counts'].update(seed=seed, requested_insns=insns)
+        return row
+
     argv = [sys.executable, '-P', '-m', 'tools.unified.bench', '--child', stage, str(n), str(seed), str(insns)]
     env = {**os.environ, 'PYTHONPATH': os.pathsep.join(str(p) for p in (ROOT, ROOT / 'src', ROOT / 'tests'))}
+    if stage == 'ui_calls':
+        env['QT_QPA_PLATFORM'] = 'offscreen'
     with tempfile.TemporaryDirectory(prefix='pt-bench-') as private:
         try:
             done = subprocess.run(argv, cwd=private, env=env, capture_output=True, text=True, timeout=timeout,
                                   check=False)
         except subprocess.TimeoutExpired:
-            return _row(stage, n, status='failed', error=f'timeout after {timeout:g} s')
+            return recorded_row(status='failed', error=f'timeout after {timeout:g} s')
     if done.returncode != 0:
-        return _row(stage, n, status='failed', error=(done.stderr.strip() or f'exit {done.returncode}')[-400:])
+        return recorded_row(status='failed', error=(done.stderr.strip() or f'exit {done.returncode}')[-400:])
     try:
-        return _row(stage, n, work=json.loads(done.stdout.strip().splitlines()[-1]))
+        return recorded_row(work=json.loads(done.stdout.strip().splitlines()[-1]))
     except (ValueError, IndexError):
-        return _row(stage, n, status='failed', error='the child printed no result')
+        return recorded_row(status='failed', error='the child printed no result')
 
 
 def extract_rows(live: dict) -> list[dict]:
@@ -274,10 +300,14 @@ def extract_rows(live: dict) -> list[dict]:
 
 def _gate(row: dict, name: str, unit: str) -> dict:
     limit = getattr(DEFAULT_LIMITS, name)
-    slack = SLACK if unit == 's' else 1
+    slack = SLACK if unit in ('s', 'ms') else 1
     if unit == 's':
         seconds = row['seconds']
         observed = seconds.get('total', seconds.get('ingest'))
+    elif unit == 'ms':
+        metric = name.removeprefix('l35_').removesuffix('_ms')
+        value = row['seconds'].get(metric)
+        observed = None if value is None else value * 1000
     else:
         observed = row['peak_rss_bytes']
     allowed = limit * slack
@@ -308,6 +338,29 @@ def _row_checks(row: dict) -> list[dict]:
             and counts.get('instructions') == counts.get('generated_instructions')
         return [_check('ingest-complete', ok, f'{counts.get("functions")} of {counts.get("generated_functions")} '
                        f'functions, {counts.get("instructions")} of {counts.get("generated_instructions")} instructions')]
+    if row['stage'] == 'facts':
+        return [_check('facts-complete', all(counts.get(k) == n for k in (
+            'generated_pairs', 'pairs', 'machine_changed', 'with_deltas', 'nonbenign')) and counts.get('limited') == 0,
+            f'{counts.get("pairs")} pairs, {counts.get("machine_changed")} machine changes, '
+            f'{counts.get("nonbenign")} nonbenign verdicts, {counts.get("limited")} limited')]
+    if row['stage'] in ('read_model', 'ui_calls'):
+        checks = [_check('read-complete', counts.get('state') == 'U3' and all(counts.get(k) == n for k in (
+            'generated_rows', 'rows', 'unique_rows', 'facts_records')) and counts.get('sources') == 3
+            and counts.get('populated_cells') == 3 * n,
+            f'{counts.get("rows")} distinct persisted rows, state {counts.get("state")}, {counts.get("sources")} sources')]
+        if row['stage'] == 'ui_calls':
+            checks.append(_check('ui-operations-correct', counts.get('shown_rows') == n
+                                 and counts.get('sort_correct') == counts.get('filter_correct') == 1
+                                 and counts.get('filtered_rows') == counts.get('expected_filtered'),
+                                 f'{counts.get("shown_rows")} shown; {counts.get("filtered_rows")} filtered'))
+            for operation in ('first_paint', 'sort', 'filter'):
+                cells = counts.get(f'{operation}_visible_cells', 0)
+                calls = counts.get(f'{operation}_data_calls', 0)
+                ceiling = 7 * cells * 6 // 5 + 20
+                checks.append(_check(f'{operation}-calls', cells > 0 and 0 < calls <= ceiling
+                                     and counts.get(f'{operation}_paints', 0) > 0,
+                                     f'{calls} data() calls, {cells} visible cells, ceiling {ceiling}'))
+        return checks
     return []
 
 
@@ -325,6 +378,13 @@ def evaluate(rows: Sequence[dict]) -> list[dict]:
         ratio = large / small if small else float('inf')
         ladder[60_000]['checks'].append(_check('work-linear', ratio < MAX_LINEAR_RATIO,
                                                f'60k costs {ratio:.2f}x the budget ticks of 10k (limit {MAX_LINEAR_RATIO}x)'))
+    ui = {r['n']: r for r in out if r['stage'] == 'ui_calls' and r['status'] == 'measured'}
+    if 10_000 in ui and 100_000 in ui:
+        for operation in ('first_paint', 'sort', 'filter'):
+            small = ui[10_000]['counts'].get(f'{operation}_data_calls', 0)
+            large = ui[100_000]['counts'].get(f'{operation}_data_calls', 0)
+            ui[100_000]['checks'].append(_check(f'{operation}-calls-independent-of-n',
+                small > 0 and large <= small * 6 // 5 + 20, f'10k {small} calls; 100k {large} calls'))
     return out
 
 
@@ -344,8 +404,10 @@ def _verdict(rows: Sequence[dict]) -> str:
 
 
 def report(rows: Sequence[dict], env: dict) -> BenchReport:
-    pending = [{'stage': s, 'needs': needs, 'limit': name, 'limit_value': value, 'what': what}
-               for s, needs, name, value, what in PENDING]
+    measured = {(r['stage'], r['n']) for r in rows if r['status'] == 'measured'}
+    pending = [{'stage': s, 'needs': 'measurement', 'limit': name, 'limit_value': value,
+                'what': f'{what}; missing sizes {", ".join(str(n) for n in SIZES[s] if (s, n) not in measured)}'}
+               for s, name, value, what in PENDING if any((s, n) not in measured for n in SIZES[s])]
     body = {'contract': CONTRACT, 'environment': env, 'slack': SLACK, 'rows': list(rows), 'pending': pending,
             'verdict': _verdict(rows), 'counts_sha256': counts_sha256(rows)}
     return BenchReport.model_validate_json(json.dumps(body))
@@ -383,9 +445,9 @@ def _print(built: BenchReport) -> None:
 
 def main(argv: Sequence[str] | None = None) -> int:
     parser = argparse.ArgumentParser(prog='python -m tools.unified.bench', description=__doc__.split('\n\n')[0])
-    parser.add_argument('--sizes', default='10000,60000', help='comma-separated function counts')
-    parser.add_argument('--stages', default=','.join(STAGES), help='comma-separated: ladder, ingest')
-    parser.add_argument('--insns', type=int, default=INSNS, help='instructions per generated function (ingest)')
+    parser.add_argument('--sizes', help='override stage-specific counts (facts 5000, read/UI 10000,100000)')
+    parser.add_argument('--stages', default='ladder,ingest', help='comma-separated: ' + ', '.join(STAGES))
+    parser.add_argument('--insns', type=int, default=INSNS, help='instruction target per generated function (ingest/facts)')
     parser.add_argument('--seed', type=int, default=1)
     parser.add_argument('--live-result', action='append', default=[], help='live-unified result JSON (extract rows)')
     parser.add_argument('--out', help='write bench-report/1 here')
@@ -397,15 +459,15 @@ def main(argv: Sequence[str] | None = None) -> int:
             parser.error(f'unknown stage {stage}')
         return _child(stage, int(n), int(seed), int(insns))
     try:
-        sizes = [int(s) for s in args.sizes.split(',') if s]
+        sizes = [int(s) for s in args.sizes.split(',') if s] if args.sizes is not None else None
         stages = [s for s in args.stages.split(',') if s]
-        if not sizes or any(s not in STAGES for s in stages) or args.insns < 1:
+        if sizes == [] or (sizes and min(sizes) < 1) or not stages or any(s not in STAGES for s in stages) or args.insns < 1:
             raise ValueError
     except ValueError:
-        print('error: --sizes needs integers, --stages names from ladder,ingest and --insns a positive number',
+        print(f'error: --sizes needs positive integers, --stages names from {",".join(STAGES)} and --insns positive',
               file=sys.stderr)
         return 2
-    rows = [measure(stage, n, seed=args.seed, insns=args.insns) for stage in stages for n in sizes]
+    rows = [measure(stage, n, seed=args.seed, insns=args.insns) for stage in stages for n in (sizes or SIZES[stage])]
     try:
         for path in args.live_result:
             rows += extract_rows(json.loads(Path(path).read_text(encoding='utf-8')))

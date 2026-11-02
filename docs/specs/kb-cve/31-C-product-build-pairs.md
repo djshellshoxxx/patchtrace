@@ -122,3 +122,7 @@ PairResolution contains proposals + rejected proposals + status + ambiguity coun
 - Property-based tests enforce no pairs with cross product or reverse chronology tagged AUTO_VERIFIED.
 
 Release gate: 100% blocking-condition tests; manual user-asserted workflow remains possible, labelled and replayable.
+
+## Manual pair product-architecture contradiction (2026-10-31)
+
+A local/manual pair selected for a current advisory product must be checked against that product's known architecture before preview or attachment mutations. Two AMD64 files cannot be attached to a known ARM64/x86 product merely because the opaque selected scope ID was accepted. Refuse the contradiction with an explicit verification error, preserving investigation history/context and leaving no new project. An unselected manual investigation or unknown product architecture remains conservative under existing manual-pair rules; this check does not establish product/build lineage from PE machine alone. Apply the rule in the service, not only GUI controls.

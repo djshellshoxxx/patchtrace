@@ -1,0 +1,5 @@
+read_model n=10000    measured prepare 1.70s read_model 0.95s | 131 MiB | informational
+read_model n=100000   measured prepare 19.57s read_model 9.33s | 954 MiB | informational
+pending  facts: needs measurement, limit l35_facts_5000_s = 60 (change facts for 5,000 changed pairs; missing sizes 5000)
+pending  ui_calls: needs measurement, limit l35_first_paint_ms|l35_sort_ms|l35_filter_ms = 200 (first paint, sort and filter at 10k and 100k rows; C6 data() ceilings and 100k L-35 timings; missing sizes 10000, 100000)
+verdict insufficient-data, counts_sha256 b1534df1fefd8a67d761c762bf8cdc9a8cebc7d625883540356df1b489ccb9e8

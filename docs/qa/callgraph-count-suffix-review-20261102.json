@@ -1,0 +1,65 @@
+{
+  "reviewer": "review_resume independent helper",
+  "reviewed_head": "424e59dbc800ff7419c2fe47a3eb7f642a5a49b4",
+  "reviewed_tree": "aadafe9d00c9d63fe96ab0c6dda47482073bc437",
+  "base": "ab8476ca5401c0e3f401c59328301192ed57eeb7",
+  "worktree": "/workspace/scratch/142cb233d750/wt-huge-callee",
+  "decision": "No blocking findings within the reviewed bounded slice",
+  "changed_paths": [
+    "docs/modules.md",
+    "docs/qa.md",
+    "docs/specs/program-e/WB2-integration-plan.md",
+    "src/patchtrace/callgraph/labels.py",
+    "src/patchtrace/callgraph/snapshot.py",
+    "tasks/todo.md",
+    "tests/test_callgraph_count_suffix_guard.py"
+  ],
+  "changed_file_sha256": {
+    "docs/modules.md": "12888c28482c520b1935a5ee9026200d8a3422052171b49e9d4d5fdc9374f57d",
+    "docs/qa.md": "2da805387ebc4880d86efbed997e7d27d3b149e996157de942a931b1c6296bf1",
+    "docs/specs/program-e/WB2-integration-plan.md": "18b6f2b896edc2d721a6cf5315c1c67e9f2ed02146af6cc7f92fbe0459a7ace5",
+    "src/patchtrace/callgraph/labels.py": "5b529644dc4f167dfb23386d4fbd4ca2674417f65e6006eb3a92996cf18ad17d",
+    "src/patchtrace/callgraph/snapshot.py": "1457e947e0d0ca19543d7bd09daa268e7296bc61d421a10a87511bfbfa0da668",
+    "tasks/todo.md": "967b549d634402e3b67547e7fa43212323af55eb711be8532baa1ee5eab91433",
+    "tests/test_callgraph_count_suffix_guard.py": "6559077a41a8051c4ea5357e6cf5b0744248cfb86cf07d6429601dff3787a84a"
+  },
+  "environment": {
+    "python": "3.12.14",
+    "platform": "Linux",
+    "Qt": "offscreen"
+  },
+  "independent_control": {
+    "path": "/workspace/scratch/142cb233d750/reviews-resume/new_review_controls.py",
+    "sha256": "8efe1d2c211e75931b656fec36fcf3d3f71166dbe013919242fe1c45b03c4e3c"
+  },
+  "title": "#105 BUG-CG-2 guarded count suffix",
+  "scope_and_reasoning": [
+    "Count suffix recognition now requires a complete ASCII-decimal suffix. Integer-conversion ValueError returns no inferred suffix, preserving the existing unresolved-label path instead of aborting snapshot construction.",
+    "No digit threshold or production interpreter-policy override was introduced. Existing exact-record resolution precedes the suffix rung, so legitimate long numeric-looking function names still resolve exactly.",
+    "Both caller and callee ingestion preserve their original raw strings, distinct node identities, and edge orientation even when display labels truncate to the same text.",
+    "ALGO changes from callgraph/1 to callgraph/2 so cached derived snapshots cannot reuse the previous resolver policy. The integration specification and inventory match this change."
+  ],
+  "validation": [
+    {
+      "command": "QT_QPA_PLATFORM=offscreen PYTHONPATH=.:src:tests /workspace/scratch/142cb233d750/venv/bin/python -m pytest -q --tb=short tests/test_callgraph_count_suffix_guard.py tests/test_callgraph_labels.py tests/test_callgraph_input.py tests/test_callgraph_pairing.py tests/test_callgraph_snapshot.py tests/test_callgraph_delta.py tests/test_callgraph_dot.py tests/test_callgraph_cli.py tests/test_callgraph_schemas.py",
+      "result": "220 passed in 3.85 seconds, including isolated 4,300-digit runtime guard, actual normalized 5,000-digit caller/callee labels, exact-record precedence, and cache invalidation."
+    },
+    {
+      "command": "PYTHONPATH=.:src:tests /workspace/scratch/142cb233d750/venv/bin/python -X int_max_str_digits=640 /workspace/scratch/142cb233d750/reviews-resume/new_review_controls.py suffix",
+      "result": "Independent child control passed: 10, 200, 639, and 640 digit counts accepted; 641 and 5,000 digits return no suffix; process policy remains 640."
+    },
+    {
+      "command": "PYTHONPATH=.:src:tests /workspace/scratch/142cb233d750/venv/bin/python -X int_max_str_digits=0 /workspace/scratch/142cb233d750/reviews-resume/new_review_controls.py suffix",
+      "result": "Independent child control passed: even 5,000 digits are accepted when the caller explicitly disables its own conversion guard; implementation leaves that policy unchanged, proving no arbitrary internal cap."
+    },
+    {
+      "command": "/workspace/scratch/142cb233d750/venv/bin/python -m ruff check src/patchtrace/callgraph/labels.py src/patchtrace/callgraph/snapshot.py tests/test_callgraph_count_suffix_guard.py; git diff --check HEAD^ HEAD",
+      "result": "Changed source/test Ruff and diff checks passed; exactly seven changed files."
+    }
+  ],
+  "limitations": [
+    "The two independent boundary controls explicitly configure isolated reviewer child processes only; no application or test-runner interpreter policy is changed.",
+    "Review is restricted to BUG-CG-2; other callgraph findings such as CG-3 remain separate.",
+    "No full suite, performance run, native disassembler execution, or unrelated #105 closure claim."
+  ]
+}

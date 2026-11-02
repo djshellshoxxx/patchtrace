@@ -383,12 +383,12 @@ def test_train_serve_identity_through_features_artifact_and_runtime_predict():
                              metadata={'length': 40 + 2 * i} if i % 7 else {})
         matches.append(FunctionMatch(id=f'm{i:03d}', run_id='r', category='modified', older=[old], newer=[new],
                                      match_types=['SymbolsHash'] if i % 2 else ['StructuralGraphHash']))
-        rz_rows.append(SecondaryMatch(engine='rz-diff', engine_version='0.9.1', older_address=addr, newer_address=addr,
+        rz_rows.append(SecondaryMatch(engine='rz-diff', engine_version='0.9.0', older_address=addr, newer_address=addr,
                                       older_name=None, newer_name=None,
                                       similarity_milli=int(det_uniform('r', i) * 1000), similarity_text='x',
                                       confidence_milli=None, confidence_text=None, flags=(),
                                       algorithm='levenshtein-bytes'))
-    rset = SecondaryMatchSet(contract='secondary/2', engine='rz-diff', engine_version='0.9.1', older_sha256='a' * 64,
+    rset = SecondaryMatchSet(contract='secondary/2', engine='rz-diff', engine_version='0.9.0', older_sha256='a' * 64,
                              newer_sha256='b' * 64, file_sha256='c' * 64, matches=tuple(rz_rows),
                              image_base_subtracted='no')
     report = reconcile(matches, rset)
@@ -407,9 +407,9 @@ def test_train_serve_identity_through_features_artifact_and_runtime_predict():
     model = FittedModel(1.0, tuple(mu), tuple(sd), tuple(beta), fit_calibrator('platt', rows, scores))
     cont = [n for n, k in zip(names, kinds, strict=True) if k == 'num']
     ood = ood_fit([dict(zip(names, r.x, strict=True)) for r in rows], [1.0] * len(rows), cont,
-                  [dict(f.categories) for f in feats], ['rz-diff 0.9.1'])
+                  [dict(f.categories) for f in feats], ['rz-diff 0.9.0'])
     art_doc = build_artifact(model=model, profile='G+R', names=names, kinds=kinds, med=med, ood=ood, tau=None,
-                             tau_low=None, domain={'engines': {'rz-diff': ['0.9.1']}, 'toolchains': ['clang'],
+                             tau_low=None, domain={'engines': {'rz-diff': ['0.9.0']}, 'toolchains': ['clang'],
                                                    'arch': ['x64'], 'corpus_id': 'synthetic', 'n_pairs': 1,
                                                    'n_lineages': 6, 'prevalence': 0.5, 'known_blind_spots': []},
                              evidence={'preregistration_sha256': None, 'report_sha256': None,
@@ -417,6 +417,21 @@ def test_train_serve_identity_through_features_artifact_and_runtime_predict():
                                        'tool_git': 'test', 'gates': {}},
                              model_id='identity', created=dt.date(2026, 10, 14))
     art = parse_artifact(canonical_json(art_doc), today=dt.date(2026, 10, 14))
+    # Identical synthetic endpoint rows under the quarantined version must remain unscored.
+    quarantined = rset.model_copy(update={
+        'engine_version': '0.9.1',
+        'matches': tuple(row.model_copy(update={'engine_version': '0.9.1'}) for row in rset.matches),
+    })
+    original = quarantined.model_dump_json()
+    refused = reconcile(matches, quarantined)
+    assert all(row.status == 'not-comparable' and not row.secondary for row in refused.rows)
+    for match in matches:
+        feature = extract(match, (refused,), ctx)
+        assert feature.status == 'not-comparable' and feature.profile is None
+        assert predict(feature, art) is None
+    assert quarantined.model_dump_json() == original
+    assert (quarantined.older_sha256, quarantined.newer_sha256, quarantined.file_sha256) == (
+        rset.older_sha256, rset.newer_sha256, rset.file_sha256)
     for f, r in zip(feats, rows, strict=True):
         served = predict(f, art)
         assert served.p == pytest.approx(model.predict(r.x), abs=2e-6)  # 12-digit artifact rounding only

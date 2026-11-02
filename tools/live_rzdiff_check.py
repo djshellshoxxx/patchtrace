@@ -19,6 +19,7 @@ import time
 from pathlib import Path
 
 from patchtrace.jobs import run_process
+from patchtrace.secondary.contracts import RZDIFF_ORIENTATION_LIMITATION, rzdiff_orientation_unverified
 from patchtrace.secondary.engine_env import engine_env
 from patchtrace.secondary.registry import build_registry
 from patchtrace.secondary.scheduler import ProjectRef, run_engines
@@ -66,6 +67,8 @@ def main() -> int:
         capability = registry['rz-diff'].probe(env, threading.Event())
         result['rizin_version'] = capability.version
         if not capability.supported:
+            if capability.version is not None and rzdiff_orientation_unverified(capability.version):
+                result.update(status='blocked', blocked_reason=RZDIFF_ORIENTATION_LIMITATION)
             raise AssertionError(f'probe unsupported: {capability.reason}')
         if capability.version != args.pin:
             raise AssertionError(f'version {capability.version} != pin {args.pin}')

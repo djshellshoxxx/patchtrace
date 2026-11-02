@@ -268,8 +268,9 @@ def test_bindiff_alternatives_become_rank_atoms():
 
 
 def test_rzdiff_shared_newer_endpoint_is_non_exclusive():
-    rows = [rz(0x1000, 0x1080), rz(0x1010, 0x1080), rz(0x1100, 0x1180), rz(0x1200, None), rz(None, 0x1300)]
-    out = run(SecondaryAdapter(), inputs([], secondary=[loaded(rzdiff_set(rows))]))
+    rows = [rz(0x1000, 0x1080, version='0.9.0'), rz(0x1010, 0x1080, version='0.9.0'),
+            rz(0x1100, 0x1180, version='0.9.0'), rz(0x1200, None, version='0.9.0'), rz(None, 0x1300, version='0.9.0')]
+    out = run(SecondaryAdapter(), inputs([], secondary=[loaded(rzdiff_set(rows, version='0.9.0'))]))
     found = pairs(out)
     assert found[(0x1000, 0x1080)].cardinality == found[(0x1010, 0x1080)].cardinality == 'non-exclusive'
     assert found[(0x1100, 0x1180)].cardinality == '1:1'
@@ -279,8 +280,11 @@ def test_rzdiff_shared_newer_endpoint_is_non_exclusive():
 
 
 def test_rzdiff_similarity_text_is_native_only():
-    a = run(SecondaryAdapter(), inputs([], secondary=[loaded(rzdiff_set([rz(0x1000, 0x1080, sim=100)]))]))
-    b = run(SecondaryAdapter(), inputs([], secondary=[loaded(rzdiff_set([rz(0x1000, 0x1080, sim=999)]))]))
+    # Unaffected synthetic version isolates display-only scoring; 0.9.1 is quarantined separately.
+    a = run(SecondaryAdapter(), inputs([], secondary=[loaded(rzdiff_set(
+        [rz(0x1000, 0x1080, sim=100, version='0.9.0')], version='0.9.0'))]))
+    b = run(SecondaryAdapter(), inputs([], secondary=[loaded(rzdiff_set(
+        [rz(0x1000, 0x1080, sim=999, version='0.9.0')], version='0.9.0'))]))
     strip = [[(x.source, x.step, x.tier, x.cls, x.cardinality, x.older_rva, x.newer_rva) for x in o.atoms]
              for o in (a, b)]
     assert strip[0] == strip[1] and a.atoms != b.atoms  # only the display text differs

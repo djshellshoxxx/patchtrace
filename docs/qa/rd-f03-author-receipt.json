@@ -1,0 +1,35 @@
+{
+  "source_base": "f005c6674e0d7e7e151668494bb9c5a299f2635b",
+  "source_commits": [
+    "f085243e6482cd42589d70b1e23f8a94aafae3ce",
+    "78c5266821651635b433138f8bf1165ad1e2af00"
+  ],
+  "source_head": "78c5266821651635b433138f8bf1165ad1e2af00",
+  "dirty_paths": [],
+  "policy": "raw-offset-align/1",
+  "python": "3.12.14",
+  "backend_pin_sha256": "66a7fa1376d76457a7da7bd47c6294278fc1dfd85015ae56d10f18136fcf5871",
+  "runtime_pin_changes": false,
+  "focused_tests": {
+    "command": "python -m pytest -q tests/test_representation_alignment.py tests/test_representations.py",
+    "result": "92 passed in 0.60s",
+    "ruff": "passed on src/patchtrace/representations and tests/test_representation_alignment.py",
+    "diff_check": "passed"
+  },
+  "scope": "Pure stdlib backend only, existing equal-offset mask unchanged. No shared Qt/schema edits, UI adoption, full-suite, benchmark, native or Windows acceptance claim. No target executed.",
+  "review": "PASS on exact source78c5266821651635b433138f8bf1165ad1e2af00; page-offset metadata finding closed.",
+  "author_evidence": {
+    "rd-align-red.log": "a54bb3409d21b767b963fcfc73805598d671127837bd73ee223ed9f01e4e126c",
+    "rd-align-green-final.log": "2177b65cd3f2c8a85df3b029baaf230f653c1f5c523e492192783e8b6bd3fabd",
+    "rd-align-page-review-red.log": "c6e0bbc0f128b98ee25f93a33dd2d92aff377998a7867e5f66a05caf704d420c",
+    "rd-align-page-review-green.log": "4343f2c36ac712e667ca6c36020b60273ca4ada1c30538941caf53d6445dbc5e"
+  },
+  "independent_review": {
+    "file": "/workspace/scratch/142cb233d750/reconciliation/rd-f03-independent-review-20261101.json",
+    "sha256": "091790506b72dd5f10588f03e2ecd773868e86781951737a34014816c1c74afa",
+    "focused_tests": 92,
+    "alignment_calls": 2200,
+    "valid_reader_pages": 392,
+    "rejected_malformed_cases": 2131
+  }
+}

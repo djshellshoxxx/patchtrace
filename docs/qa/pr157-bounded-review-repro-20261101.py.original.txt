@@ -1,0 +1,75 @@
+"""Synthetic bounded review controls for PR157; no native/corpus evidence."""
+import dataclasses
+import json
+import tempfile
+from pathlib import Path
+from unittest.mock import patch
+from test_tier_r_output_persistence import LABELS, provider
+from tools.calibration.tier_r import report_schemas as RS, output_store as OS, evaluate as E
+from tools.calibration import train
+from tools.calibration.evalcore import rank
+from tools.calibration.common import canonical_json
+
+results = {}
+with tempfile.TemporaryDirectory(prefix='pt-review157-') as tmp:
+    root = Path(tmp)
+    doc = RS.example_engine_output()
+    for i, key in enumerate(([1], ['first'])):
+        doc['predictions'][i].update(changed=True, order_key=key)
+    run = root / 'mixed'
+    run.mkdir()
+    (run / 'answer.json').write_bytes(canonical_json(doc))
+    loaded = train.load_outputs(run)
+    out = next(iter(loaded.values()))[0]
+    keys = [p.order_key for p in E.to_engine_pairs(out, 'hidden').pairs if p.flag]
+    try:
+        rank.midranks(keys)
+    except Exception as exc:
+        results['mixed_order_keys'] = {'schema_and_loader_accepted': True, 'keys': keys,
+            'ranking_exception': str(exc), 'exception_type': type(exc).__name__}
+    bad = RS.example_engine_output()
+    bad['predictions'][0]['old_name'] = 'x' * 513
+    encoded = []
+    encoder = OS.json.JSONEncoder.iterencode
+    def traced(self, value, *args, **kwargs):
+        for chunk in encoder(self, value, *args, **kwargs):
+            if 'x' * 513 in chunk:
+                encoded.append(len(chunk.encode()))
+            yield chunk
+    with patch.object(OS.json.JSONEncoder, 'iterencode', traced):
+        try:
+            OS.OutputStore(root / 'bounded').write('bounded', 'rz-diff', bad)
+        except OS.OutputError as exc:
+            results['schema_after_encoding'] = {'invalid_scalar_characters': 513,
+                'encoded_chunks_before_rejection': encoded, 'rejection': str(exc)[:150]}
+    link = OS.os.link
+    def mutate(src, dst, **kwargs):
+        value = link(src, dst, **kwargs)
+        data = json.loads(Path(dst).read_bytes())
+        data['predictions'][0]['old_name'] = 'valid but uncredited mutation'
+        Path(dst).write_bytes(canonical_json(data))
+        return value
+    with patch.object(OS.os, 'link', mutate):
+        report = E.evaluate([LABELS], [provider()], output_dir=root / 'uncredited', b_count=20)
+    loaded = train.load_outputs(root / 'uncredited')
+    results['uncredited_reader'] = {'reported_status': report['pairs'][0]['status'],
+        'reported_digest': report['pairs'][0]['output_sha256'], 'adopted_outputs': len(loaded),
+        'adopted_name': next(iter(loaded.values()))[0].predictions[0].old_name}
+    answer = provider().outputs[LABELS.pair_id]
+    preds = list(answer.predictions)
+    preds[0] = dataclasses.replace(preds[0], old_name='x' * 513)
+    answer = dataclasses.replace(answer, predictions=tuple(preds))
+    owner = E.StaticProvider('rz-diff', {LABELS.pair_id: answer})
+    no_store = E.evaluate([LABELS], [owner], b_count=20)
+    retained = E.evaluate([LABELS], [owner], output_dir=root / 'long-name', b_count=20)
+    results['long_name_retention'] = {'characters': 513,
+        'without_retention': no_store['pairs'][0]['status'],
+        'with_retention': retained['pairs'][0]['status'], 'reason': retained['pairs'][0]['reason']}
+    for name in ('run1', 'run2'):
+        E.evaluate([LABELS], [provider()], output_dir=root / 'outputs' / name, b_count=20)
+    try:
+        train.load_outputs(root / 'outputs')
+    except Exception as exc:
+        results['parent_folder'] = {'exception_type': type(exc).__name__, 'reason': str(exc)}
+print(json.dumps(results, indent=2))
+

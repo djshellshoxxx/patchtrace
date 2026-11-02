@@ -1,0 +1,236 @@
+{
+ "contract": "bench-report/1",
+ "counts_sha256": "479111979302462a3b00311d5a7502e9c0e480a609df6c85ab0dd407d9b350a2",
+ "environment": {
+  "cpu_count": 5,
+  "machine": "x86_64",
+  "platform": "Linux-6.18.57-x86_64-with-glibc2.41",
+  "python": "3.12.14"
+ },
+ "pending": [
+  {
+   "limit": "l35_facts_5000_s",
+   "limit_value": 60,
+   "needs": "S3",
+   "stage": "facts",
+   "what": "change facts for 5,000 changed pairs"
+  },
+  {
+   "limit": "l35_first_paint_ms",
+   "limit_value": 200,
+   "needs": "S4",
+   "stage": "read_model",
+   "what": "read-model build at 10k and 100k rows"
+  },
+  {
+   "limit": "l35_first_paint_ms|l35_sort_ms|l35_filter_ms",
+   "limit_value": 200,
+   "needs": "S4",
+   "stage": "ui_calls",
+   "what": "exact data() call counts for first paint, sort and filter (C6 method)"
+  }
+ ],
+ "rows": [
+  {
+   "checks": [
+    {
+     "detail": "status complete, limits hit neighbour-cap",
+     "name": "complete",
+     "ok": true
+    },
+    {
+     "detail": "right 9888 of 9898, wrong 0, spurious 0 (a property of the generator, not an accuracy claim)",
+     "name": "consistent",
+     "ok": true
+    },
+    {
+     "detail": "61944 ticks for 10000 functions",
+     "name": "ticks-per-function",
+     "ok": true
+    }
+   ],
+   "counts": {
+    "limits_hit": "neighbour-cap",
+    "pairs": 9888,
+    "right": 9888,
+    "spurious": 0,
+    "status": "complete",
+    "ticks": 61944,
+    "truth": 9898,
+    "waves": 7,
+    "wrong": 0
+   },
+   "derived": {},
+   "error": null,
+   "gates": [
+    {
+     "allowed": 75.0,
+     "limit": 15,
+     "name": "l35_ladder_10k_s",
+     "observed": 1.1628430800001297,
+     "slack": 5,
+     "unit": "s",
+     "verdict": "pass"
+    }
+   ],
+   "n": 10000,
+   "peak_rss_bytes": 121110528,
+   "seconds": {
+    "generate": 0.4453759610000816,
+    "ladder": 0.8685102469999038,
+    "sides": 0.29433283300022595,
+    "total": 1.1628430800001297
+   },
+   "stage": "ladder",
+   "status": "measured"
+  },
+  {
+   "checks": [
+    {
+     "detail": "status complete, limits hit neighbour-cap",
+     "name": "complete",
+     "ok": true
+    },
+    {
+     "detail": "right 59382 of 59424, wrong 0, spurious 0 (a property of the generator, not an accuracy claim)",
+     "name": "consistent",
+     "ok": true
+    },
+    {
+     "detail": "374507 ticks for 60000 functions",
+     "name": "ticks-per-function",
+     "ok": true
+    },
+    {
+     "detail": "60k costs 6.05x the budget ticks of 10k (limit 7.0x)",
+     "name": "work-linear",
+     "ok": true
+    }
+   ],
+   "counts": {
+    "limits_hit": "neighbour-cap",
+    "pairs": 59382,
+    "right": 59382,
+    "spurious": 0,
+    "status": "complete",
+    "ticks": 374507,
+    "truth": 59424,
+    "waves": 10,
+    "wrong": 0
+   },
+   "derived": {},
+   "error": null,
+   "gates": [
+    {
+     "allowed": 600.0,
+     "limit": 120,
+     "name": "l35_ladder_60k_s",
+     "observed": 7.4724853529996835,
+     "slack": 5,
+     "unit": "s",
+     "verdict": "pass"
+    },
+    {
+     "allowed": 1610612736.0,
+     "limit": 1610612736,
+     "name": "l35_worker_rss_bytes",
+     "observed": 531615744.0,
+     "slack": 1,
+     "unit": "bytes",
+     "verdict": "pass"
+    }
+   ],
+   "n": 60000,
+   "peak_rss_bytes": 531615744,
+   "seconds": {
+    "generate": 1.8699911040002917,
+    "ladder": 5.537179757999638,
+    "sides": 1.9353055950000453,
+    "total": 7.4724853529996835
+   },
+   "stage": "ladder",
+   "status": "measured"
+  },
+  {
+   "checks": [
+    {
+     "detail": "10000 of 10000 functions, 510000 of 510000 instructions",
+     "name": "ingest-complete",
+     "ok": true
+    }
+   ],
+   "counts": {
+    "blocks": 10000,
+    "content_digest": "b22b5cb0e659a0400fdd6045f83372e846f2b4c374f509f4ebd94688273b347d",
+    "functions": 10000,
+    "generated_functions": 10000,
+    "generated_instructions": 510000,
+    "instructions": 510000,
+    "ir_bytes": 24358912,
+    "jsonl_bytes": 73204931
+   },
+   "derived": {},
+   "error": null,
+   "gates": [],
+   "n": 10000,
+   "peak_rss_bytes": 58753024,
+   "seconds": {
+    "generate": 1.4272336839999298,
+    "ingest": 13.788303391999762
+   },
+   "stage": "ingest",
+   "status": "measured"
+  },
+  {
+   "checks": [
+    {
+     "detail": "60000 of 60000 functions, 3060000 of 3060000 instructions",
+     "name": "ingest-complete",
+     "ok": true
+    }
+   ],
+   "counts": {
+    "blocks": 60000,
+    "content_digest": "900bfba58a0bc951f11800c0419f45671da699f00a29d1e2e9b42504855acaa4",
+    "functions": 60000,
+    "generated_functions": 60000,
+    "generated_instructions": 3060000,
+    "instructions": 3060000,
+    "ir_bytes": 149762048,
+    "jsonl_bytes": 439409923
+   },
+   "derived": {},
+   "error": null,
+   "gates": [
+    {
+     "allowed": 3000.0,
+     "limit": 600,
+     "name": "l35_ingest_60k_s",
+     "observed": 82.55664022400015,
+     "slack": 5,
+     "unit": "s",
+     "verdict": "pass"
+    },
+    {
+     "allowed": 1610612736.0,
+     "limit": 1610612736,
+     "name": "l08_ingest_rss_bytes",
+     "observed": 66383872.0,
+     "slack": 1,
+     "unit": "bytes",
+     "verdict": "pass"
+    }
+   ],
+   "n": 60000,
+   "peak_rss_bytes": 66383872,
+   "seconds": {
+    "generate": 8.668120696999722,
+    "ingest": 82.55664022400015
+   },
+   "stage": "ingest",
+   "status": "measured"
+  }
+ ],
+ "slack": 5,
+ "verdict": "pass"
+}

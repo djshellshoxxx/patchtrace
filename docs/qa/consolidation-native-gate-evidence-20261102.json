@@ -1,0 +1,288 @@
+{
+  "head_159": "56374f867594dd923383c91ea71970cb7d24d173",
+  "head_152": "0130bf81e2fe3154f30af7b68a0e6ab197946040",
+  "candidate": "ca80cc0f310ad1a82174cd17ee1fa8443b016b73",
+  "checks": [
+    {
+      "id": 125567604656,
+      "name": "release",
+      "conclusion": "skipped",
+      "head": "56374f867594dd923383c91ea71970cb7d24d173",
+      "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/41509306110/job/125567604656"
+    },
+    {
+      "id": 125567603755,
+      "name": "linux-smoke",
+      "conclusion": "skipped",
+      "head": "56374f867594dd923383c91ea71970cb7d24d173",
+      "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/41509306110/job/125567603755"
+    },
+    {
+      "id": 125567601841,
+      "name": "linux-package",
+      "conclusion": "skipped",
+      "head": "56374f867594dd923383c91ea71970cb7d24d173",
+      "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/41509306110/job/125567601841"
+    },
+    {
+      "id": 125497569008,
+      "name": "SonarCloud Code Analysis",
+      "conclusion": "success",
+      "head": "56374f867594dd923383c91ea71970cb7d24d173",
+      "url": "https://github.com/djshellshoxxx/patchtrace/runs/125497569008"
+    },
+    {
+      "id": 125496731118,
+      "name": "CodeRabbit",
+      "conclusion": "skipped",
+      "head": "56374f867594dd923383c91ea71970cb7d24d173",
+      "url": "https://github.com/djshellshoxxx/patchtrace/runs/125496731118"
+    },
+    {
+      "id": 125496693248,
+      "name": "native (patchtrace-seeded-store)",
+      "conclusion": "success",
+      "head": "56374f867594dd923383c91ea71970cb7d24d173",
+      "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/41509306365/job/125496693248"
+    },
+    {
+      "id": 125496692691,
+      "name": "release-gate",
+      "conclusion": "skipped",
+      "head": "56374f867594dd923383c91ea71970cb7d24d173",
+      "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/41509306110/job/125496692691"
+    },
+    {
+      "id": 125496691812,
+      "name": "native (patchtrace-clean)",
+      "conclusion": "success",
+      "head": "56374f867594dd923383c91ea71970cb7d24d173",
+      "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/41509306365/job/125496691812"
+    },
+    {
+      "id": 125496691730,
+      "name": "native (raw-cache-hit)",
+      "conclusion": "success",
+      "head": "56374f867594dd923383c91ea71970cb7d24d173",
+      "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/41509306365/job/125496691730"
+    },
+    {
+      "id": 125496691683,
+      "name": "native (patchtrace-seeded-store-no-adjacent-pdb)",
+      "conclusion": "success",
+      "head": "56374f867594dd923383c91ea71970cb7d24d173",
+      "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/41509306365/job/125496691683"
+    },
+    {
+      "id": 125496691263,
+      "name": "native (repro-plain-ghidriff)",
+      "conclusion": "success",
+      "head": "56374f867594dd923383c91ea71970cb7d24d173",
+      "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/41509306365/job/125496691263"
+    },
+    {
+      "id": 125496691011,
+      "name": "qt-gate (ubuntu-latest, 20, 1/4)",
+      "conclusion": "success",
+      "head": "56374f867594dd923383c91ea71970cb7d24d173",
+      "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/41509306110/job/125496691011"
+    },
+    {
+      "id": 125496690977,
+      "name": "qt-gate (ubuntu-latest, 20, 3/4)",
+      "conclusion": "cancelled",
+      "head": "56374f867594dd923383c91ea71970cb7d24d173",
+      "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/41509306110/job/125496690977"
+    },
+    {
+      "id": 125496690918,
+      "name": "qt-gate (ubuntu-latest, 20, 2/4)",
+      "conclusion": "success",
+      "head": "56374f867594dd923383c91ea71970cb7d24d173",
+      "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/41509306110/job/125496690918"
+    },
+    {
+      "id": 125496690894,
+      "name": "qa (ubuntu-latest)",
+      "conclusion": "failure",
+      "head": "56374f867594dd923383c91ea71970cb7d24d173",
+      "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/41509306110/job/125496690894"
+    },
+    {
+      "id": 125496690879,
+      "name": "qt-gate (windows-latest, 5, 1/1)",
+      "conclusion": "failure",
+      "head": "56374f867594dd923383c91ea71970cb7d24d173",
+      "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/41509306110/job/125496690879"
+    },
+    {
+      "id": 125496690816,
+      "name": "qt-gate (ubuntu-latest, 20, 4/4)",
+      "conclusion": "success",
+      "head": "56374f867594dd923383c91ea71970cb7d24d173",
+      "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/41509306110/job/125496690816"
+    },
+    {
+      "id": 125496690575,
+      "name": "qa (windows-latest)",
+      "conclusion": "failure",
+      "head": "56374f867594dd923383c91ea71970cb7d24d173",
+      "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/41509306110/job/125496690575"
+    },
+    {
+      "id": 125496609138,
+      "name": "native (raw-cache-hit)",
+      "conclusion": "success",
+      "head": "56374f867594dd923383c91ea71970cb7d24d173",
+      "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/41509281649/job/125496609138"
+    },
+    {
+      "id": 125496609043,
+      "name": "native (patchtrace-clean)",
+      "conclusion": "success",
+      "head": "56374f867594dd923383c91ea71970cb7d24d173",
+      "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/41509281649/job/125496609043"
+    },
+    {
+      "id": 125496608878,
+      "name": "native (repro-plain-ghidriff)",
+      "conclusion": "success",
+      "head": "56374f867594dd923383c91ea71970cb7d24d173",
+      "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/41509281649/job/125496608878"
+    },
+    {
+      "id": 125496608770,
+      "name": "native (patchtrace-seeded-store-no-adjacent-pdb)",
+      "conclusion": "success",
+      "head": "56374f867594dd923383c91ea71970cb7d24d173",
+      "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/41509281649/job/125496608770"
+    },
+    {
+      "id": 125496608406,
+      "name": "native (patchtrace-seeded-store)",
+      "conclusion": "success",
+      "head": "56374f867594dd923383c91ea71970cb7d24d173",
+      "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/41509281649/job/125496608406"
+    }
+  ],
+  "runs": [
+    {
+      "id": 41509306365,
+      "name": "Native Windows Ghidriff acceptance",
+      "head": "56374f867594dd923383c91ea71970cb7d24d173",
+      "path": ".github/workflows/live-backend.yml",
+      "event": "pull_request",
+      "conclusion": "success",
+      "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/41509306365"
+    },
+    {
+      "id": 41509306110,
+      "name": "QA and Windows standalone",
+      "head": "56374f867594dd923383c91ea71970cb7d24d173",
+      "path": ".github/workflows/qa-windows.yml",
+      "event": "pull_request",
+      "conclusion": "failure",
+      "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/41509306110"
+    },
+    {
+      "id": 41509281649,
+      "name": "Native Windows Ghidriff acceptance",
+      "head": "56374f867594dd923383c91ea71970cb7d24d173",
+      "path": ".github/workflows/live-backend.yml",
+      "event": "push",
+      "conclusion": "success",
+      "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/41509281649"
+    }
+  ],
+  "job_excerpts": [
+    {
+      "job_id": 125478518407,
+      "lines": [
+        {
+          "line": 539,
+          "text": "2026-11-02T18:49:47.2965457Z [BLOCKED] evaluate:rz-diff: exit 3: rz-diff: rz-diff 0.9.1 orientation is unverified: its singleton branch reverses side ownership. Historical raw evidence is retained; matching votes and endpoint links are unavailable without a verified witness. (and 5 more pairs)"
+        },
+        {
+          "line": 540,
+          "text": "2026-11-02T18:49:47.4503219Z {\"blocked\": [\"evaluate:rz-diff\"], \"cases\": 6, \"failed\": [], \"file\": \"shard-0.json\", \"shard\": 0, \"shard_sha256\": \"1db45d0ac3f04873f000f68dd33f2441d16b28f97907656ce609df737ff8b3b8\"}"
+        },
+        {
+          "line": 541,
+          "text": "2026-11-02T18:49:47.4872070Z ##[error]Process completed with exit code 3."
+        }
+      ]
+    },
+    {
+      "job_id": 125478518634,
+      "lines": [
+        {
+          "line": 538,
+          "text": "2026-11-02T18:50:22.1195590Z [BLOCKED] evaluate:rz-diff: exit 3: rz-diff: rz-diff 0.9.1 orientation is unverified: its singleton branch reverses side ownership. Historical raw evidence is retained; matching votes and endpoint links are unavailable without a verified witness. (and 4 more pairs)"
+        },
+        {
+          "line": 539,
+          "text": "2026-11-02T18:50:22.2245005Z {\"blocked\": [\"evaluate:rz-diff\"], \"cases\": 6, \"failed\": [], \"file\": \"shard-1.json\", \"shard\": 1, \"shard_sha256\": \"d71dd617e921d86698d8772c18dc4d025c40f84a57289bc8be89c3739879d89b\"}"
+        },
+        {
+          "line": 540,
+          "text": "2026-11-02T18:50:22.2616759Z ##[error]Process completed with exit code 3."
+        }
+      ]
+    },
+    {
+      "job_id": 125479611289,
+      "lines": [
+        {
+          "line": 386,
+          "text": "2026-11-02T18:51:03.4642408Z {\"failing_cases\": 2, \"merge_sha256\": \"371aaba5520331e8c64a2c7ef3c191a62323c2381325f8b40f0bba6bef94ea79\", \"report_sha256\": \"be865c827f082fb789048ab614815f649d3e6f7ed6e720ec50a85910f92252ae\", \"shards\": 2}"
+        },
+        {
+          "line": 387,
+          "text": "2026-11-02T18:51:03.4993471Z ##[error]Process completed with exit code 1."
+        }
+      ]
+    },
+    {
+      "job_id": 125478008453,
+      "lines": [
+        {
+          "line": 432,
+          "text": "2026-11-02T18:48:54.6461804Z   \"blocked_reason\": \"rz-diff-orientation-unverified\",\r"
+        },
+        {
+          "line": 435,
+          "text": "2026-11-02T18:48:54.6475925Z     \"AssertionError: probe unsupported: rz-diff 0.9.1 orientation is unverified: its singleton branch reverses side ownership. Historical raw evidence is retained; matching votes and endpoint links are unavailable without a verified witness.\"\r"
+        },
+        {
+          "line": 446,
+          "text": "2026-11-02T18:48:54.6481041Z   \"status\": \"blocked\"\r"
+        },
+        {
+          "line": 448,
+          "text": "2026-11-02T18:48:54.6773460Z ##[error]Process completed with exit code 1.\r"
+        }
+      ]
+    },
+    {
+      "job_id": 125478008715,
+      "lines": [
+        {
+          "line": 410,
+          "text": "2026-11-02T18:48:19.0614365Z   \"blocked_reason\": \"rz-diff-orientation-unverified\","
+        },
+        {
+          "line": 413,
+          "text": "2026-11-02T18:48:19.0617670Z     \"AssertionError: probe unsupported: rz-diff 0.9.1 orientation is unverified: its singleton branch reverses side ownership. Historical raw evidence is retained; matching votes and endpoint links are unavailable without a verified witness.\""
+        },
+        {
+          "line": 424,
+          "text": "2026-11-02T18:48:19.0623232Z   \"status\": \"blocked\""
+        },
+        {
+          "line": 426,
+          "text": "2026-11-02T18:48:19.0863363Z ##[error]Process completed with exit code 1."
+        }
+      ]
+    }
+  ]
+}

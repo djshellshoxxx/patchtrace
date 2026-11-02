@@ -148,7 +148,213 @@ functions; cosmetic and `ambiguous` counts reported apart; the wrong-match list 
 counterparts. Output `tier-r-report/1` JSON (deterministic, `report_sha256` over canonical JSON) and Markdown rendered from it.
 Mocked/synthetic engine output in tests is never live evidence (AGENTS.md).
 
+### Normalized output retention (LBL-31, November 1, 2026)
+
+The `evaluate` CLI retains every successful normalized engine response whose
+canonical byte SHA-256 appears in its report. Each evaluation exclusively creates
+a fresh directory under the selected store's `outputs/<run-token>`; `--outputs`
+may select another **nonexisting** directory. Existing directories, including
+empty ones and links/reparse points, are never reused. Filenames bind the validated
+pair id and engine, and JSON binds ordered image hashes, symbol mode and producer
+version. A provider may not return a different engine identity; duplicate provider
+owners are rejected before execution. The report's existing label digests and
+pair/engine keys remain the reference contract, without adding paths or random
+run tokens to its deterministic bytes.
+
+Normalized JSON is strict, canonical and capped at 64 MiB while serializing. A
+staged file is flushed/fsynced, then published with an atomic no-overwrite hard
+link; unsupported filesystems or publication errors fail that pair with no output
+digest, metrics or successful-run credit. No overwrite fallback is permitted.
+Previously completed outputs remain intact. The fresh directory's filesystem
+identity is checked before and after publication; changed ownership is a failure,
+not successful evidence under another run. This does not claim a lock against an
+arbitrary same-user hostile process or full power-loss durability on every OS.
+An integrity failure after publication can leave an uncredited file. Transfer
+consumers must verify successful report references, not adopt directory contents.
+
+Retained-file reads compare descriptor metadata before/after the read and pathname
+metadata before/after the open/read separately, including each API's `ctime`.
+Across descriptor and pathname results, compare identity, size and `mtime`; do
+not assume their `ctime` meanings agree. CPython 3.12 on Windows reports change
+time through `fstat` but creation time through `stat`/`lstat`. A stable difference
+between those API meanings is not a content change. Changed descriptor or
+pathname timestamps, replaced identities, linked/reparse paths, excess bytes and
+digest mismatches still refuse successful credit; the underlying file is retained.
+
+CLI JSON reports and their Markdown companions are also published without
+replacement. Default filenames remain under the selected store's `reports/` and
+include the fresh run token; equal evaluations retain equal report bytes/digests
+but different paths. Explicit `--out` cannot replace an existing JSON/Markdown
+file. A report-write failure preserves already retained engine outputs and earlier
+reports. The CLI summary returns the actual `outputs` path. Library callers opt
+in with `evaluate_full(..., output_dir=...)`; without it they retain the existing
+in-memory evaluator behavior and must not claim file retention.
+
+The existing `tier-r-engine-output/1` kind vocabulary gains `attention`, which
+the evaluator/CLI already support. Its prediction `order_key`, already emitted by
+the producer, is an optional tuple of at most 16 strict integer, finite float or
+string values (at most 4,096 characters per string). Attention's production key is
+one integer rank; the bounds cover that provider without altering its ordering.
+Missing keys stay omitted in producer bytes. Validation is a check on the original
+canonical bytes, never a reserialization of model defaults or coerced values.
+The existing normalized-output reader must preserve the optional key when it
+reconstructs predictions, so replay uses the same ranking. This does not add
+attention to the calibration feature-engine set or change fitting/scoring rules.
+Existing documents retain their bytes and meaning. This is an additive `/1`
+vocabulary/field extension: older strict readers reject the new kind, field, or
+newly admitted long text safely; this is not universal reader compatibility or a numerical-confidence
+claim. No `unified` producer or new engine default is added. This is a selective
+adoption of preserved PR #78 (`2019a37f`, repository MIT license); its older
+duplicate-scoring behavior and replace-after-existence-check writer are not
+imported. Verified shard/merge artifact transfer remains a separate acceptance
+task; none of this authorizes Tier W redistribution or a final evaluation.
+
+#### Credited replay and producer validation (#157, November 1, 2026)
+
+Every successful provider answer, with or without retention, must satisfy the
+existing normalized-output field bounds before scoring. The existing in-memory
+`unified` provider remains supported through a private validation shape using the
+report engine vocabulary; persisted output/credit schemas retain their four
+existing engines, so retained `unified` answers are explicitly refused. Names
+and string ordering keys are capped at 4,096 characters; versions are capped at
+1,024. These bounds retain long upstream symbols and version labels without
+truncating scorer tie-breaks, while remaining bounded under the 64 MiB document
+cap. Longer values fail with no metrics/digest rather than being truncated or
+accepted only by the in-memory path. Validate the Python
+document before JSON serialization, converting only JSON array containers to
+tuples for strict validation. Scalar types, code points, absent defaults and the
+original accepted document are preserved. Retention's incremental 64 MiB
+serialization cap remains. Changed, deduplicated predictions must have mutually comparable
+effective ordering keys under the existing scorer (`order_key` or its unchanged
+similarity/name fallback). Reject incompatible keys, including conflicts with a
+missing-key fallback; do not impose a uniform column type, change ranking/ties,
+or add attention to training's feature engines.
+The same text bounds apply wherever accepted metadata is copied: `tier-r-report/1`
+wrong-match names allow 4,096 characters and `tier-r-feature-rows/1` engine-run
+versions allow 1,024. Evaluation reports and training rows preserve those values
+without truncation.
+
+A fresh `OutputStore` publishes `.tier-r-output-run.json` with contract
+`tier-r-output-run/1` before any output. After evaluation/report assembly,
+`finalize(reports)` publishes `output-credits.json` (`tier-r-output-credits/1`)
+exclusively. It embeds the validated, digest-checked reports and one record for
+each successful pair/engine reference, binding report digest, pair id, engine,
+exact canonical output SHA-256, ordered image hashes, symbol mode and producer
+version. Duplicate/ambiguous references and inconsistent report ownership fail.
+Finalization rechecks run ownership and the referenced bytes; a failure leaves
+the run incomplete and cannot return a successful evaluation report. Failed or
+unreferenced raw artifacts are preserved but never credited.
+
+The aggregate credit manifest has its own explicit 64 MiB byte budget, unchanged
+from the previous effective limit. It is independent of the 64 MiB per-output
+limit; no pair-count estimate substitutes for exact bounded serialization.
+`preflight_credit_manifest(reports, output_records)` checks the complete report
+batch and retained-output metadata without filesystem writes, using the same
+builder and budget as finalization. Transfer writers with a complete batch call
+it before creating their destination. Reports and successful credit wire formats
+are unchanged.
+
+Before publishing credits, finalization exclusively publishes
+`.tier-r-output-incomplete.json` (`tier-r-output-completion/1`, `status: incomplete`).
+The reader refuses any presence of this sentinel, including malformed files or
+broken links. All credit and owner verification finishes while it remains;
+removing the owned sentinel is the final success transition. Removal failure is
+failure, with no subsequent validation after successful removal. A crash before
+credits leaves an incomplete run; a crash after credits but before sentinel
+removal also leaves an incomplete run. Started or completed stores cannot be
+finalized again. Existing successful `MANAGED_FILES` remains the original two
+files. These rules do not add an OS-wide lock or power-loss durability claim.
+
+If credit finalization fails after evaluation has assembled its report, the
+library raises `EvaluationRetentionError`, retaining that complete report and
+the original failure even if diagnostic persistence fails. It attempts exclusive
+publication of `uncredited-report.json` (the unchanged report, bounded at 64 MiB)
+and `evaluation-failure.json` (`tier-r-evaluation-failure/1`, `status: failed`,
+`credited: false`, report filename/digest and bounded error text). These are
+diagnostics outside ordinary report discovery, never training success evidence.
+Either diagnostic filename also blocks managed or legacy credit loading.
+Diagnostic writes cannot overwrite an existing file or mark a prior completed
+run failed. The CLI reports exit 1, `status: failed`, `credited: false`, exact
+attempted and retained diagnostic paths, and each persistence error. If report
+retention fails it includes the assembled report in `report_data`; it never
+publishes that diagnostic through the ordinary success-report path. This is a
+runtime completion failure, distinct from exit-2 usage/contract errors.
+
+The public `write_raw(pair_id, engine, raw)` retains exact validated canonical
+bytes; `finalize(reports)` and `MANAGED_FILES` also support the separately owned
+verified-transfer writer. A transferred run uses the same reader contract, with
+the parent transfer manifest additionally binding the managed metadata files.
+
+`train.load_outputs` recognizes managed markers with no-follow checks (including
+broken links), requires a valid completed credit manifest, and rechecks every
+successful reference's exact bytes and metadata before reconstruction. A missing,
+unreadable, linked, incomplete or inconsistent managed record is an error, never
+a fallback to legacy loading. Selecting a parent containing managed runs is
+ambiguous and refused. Legacy loose output folders remain an explicitly
+**unverified compatibility path** for existing callers: schema validation and
+duplicate-key rejection do not establish report credit, transfer ownership or
+final-evaluation acceptance. This includes output directories created before
+this amendment: their missing markers cannot retroactively prove success.
+`load_outputs(..., allow_legacy=True)` emits `LegacyOutputWarning` whenever it
+uses this path; `allow_legacy=False` refuses it. No existing directory is silently
+stamped as managed or assigned inferred credit.
+Removing all managed metadata by the filesystem
+owner is outside the local integrity/authenticity claim. No signature, hostile
+same-user lock, model change or final-run permission is implied.
+
 ## 11. Lineage, roles and existing tooling
+### Verified shard transfer (November 2, 2026)
+
+`shard run-shard --collect-artifacts` exports a separate completed bundle at
+`<out>/training/shard-<index>/`. `manifest.json` (`tier-r-training/1`) is published
+last and exclusively, after exact source reports, report-referenced labels and
+successful managed outputs have been validated and copied. It binds the plan,
+shard diagnostic digest, planned cases, each label's producing case, semantic
+label/report digests, and SHA-256 of every transferred byte stream, including
+the managed marker and credit manifest. Reports are named by their semantic
+digest; labels and output filenames are derived from validated pair/engine IDs.
+Case ownership comes only from explicit successful builder `written` summaries;
+files found by scanning scratch are never adopted. Repeated pair ownership is
+refused, even if the bytes agree. Only `status=ok` report references earn output
+credit; failed files remain in their original run and are not transferred.
+The diagnostic shard binds `pair_cases` before its own digest is calculated.
+Both shard and merged manifests must exactly match those recorded assignments;
+merged ownership names the source shard and its completed producing case.
+The strict generated `TrainingManifest.json` schema caps a manifest at 10,000
+reports, 200,000 pair assignments and 400,000 fixed file references; its encoded
+bytes are additionally capped at 8 MiB. Existing 64 MiB label/output/managed
+credit limits remain in force, including merged credit manifests. Exceeding a
+limit preserves partial destination evidence without transfer completion.
+For verified transfers, all report and output metadata is already available:
+the writer calls the shared credit-manifest preflight before creating its
+destination. Known aggregate-credit overflow therefore creates no destination;
+later IO/finalization failures still preserve partial uncredited evidence.
+
+`shard merge --artifacts <download-root>/training` requires the fixed
+`shard-<index>` bundle for every diagnostic shard, verifies all ownership and
+exact bytes before writing, and creates `<out>/training/` with exact reports,
+labels, a managed `outputs/` run and its own final manifest. The actual training
+reader can consume `<out>/training/outputs` with `allow_legacy=False`.
+Every source and target parent and leaf is checked without following links,
+including Windows reparse points; changed identities and incomplete bundles
+are refused. Existing destinations are never replaced. Publication failures
+preserve partial files for diagnosis, without a completed transfer manifest.
+Producer containment checks inspect both original lexical paths before resolving
+nonlinked filesystem aliases (including Windows short/long names), then verify
+canonical containment, unchanged leaf identities and unchanged original parents.
+Normalization must never hide a linked component before `..`. Generated training
+schema bytes use UTF-8 with LF line endings on every platform; CLI path strings
+continue to use forward slashes.
+This is bounded local integrity verification, not an authenticity signature or
+a lock against arbitrary same-user concurrent filesystem mutation.
+
+Actions uploads diagnostics unconditionally and a completed training bundle
+only when the producing step emits the fixed boolean `verified_training=true`.
+The payload names fixed visible JSON locations and the exact hidden managed
+marker; it never uploads scratch, images, binaries, Tier W or unknown hidden
+files. Evaluator summaries declaring `failed` remain failed even with exit 1;
+this does not change metric thresholds, completion policy or training gates.
+
 Lineage = project (`L-<project>`; suites `L-ours-<suite>-<project>`); mutants, A/A and noise pairs inherit the lineage of
 their base source so grouped CV (SPEC-28 s4) never splits a function identity across folds; `family` comes from the recipe.
 `tier_r/manifest.py` emits a `calibration-corpus/1` manifest (Tier R binaries with source pins and recipe digests, pairs,
@@ -158,7 +364,8 @@ candidates into the hash-chained annotation log (`label.AnnotationLog`, annotato
 
 ## 12. CLI (`python -m tools.calibration.tier_r <cmd>`)
 `toolchain` (probe, BLOCKED reasons) | `fetch` (network) | `build-suite DIR` | `build-card ID` | `mutate` | `aa` | `noise` |
-`evaluate` | `manifest` | `annotate` | `schemas` | `catalogue-check`. Exit codes: 0 ok, 1 findings/disagreements,
+`evaluate` | `manifest` | `annotate` | `schemas` | `catalogue-check`. Exit codes: 0 ok, 1 findings/disagreements
+or evaluation output completion failure,
 2 usage or contract error, 3 BLOCKED.
 
 ## 13. CI (`.github/workflows/corpus-tier-r.yml`)

@@ -1,0 +1,54 @@
+{
+  "base": "f8b2bbbde0548eda3007a047e07bec92401429eb",
+  "head": "25bfc9626bfa18d0b73d3897f8cfe50949df5733",
+  "commits": [
+    "5db4de95e8419ec93a0794fb33ab7b5a6b0855ae",
+    "25bfc9626bfa18d0b73d3897f8cfe50949df5733"
+  ],
+  "changed_paths": [
+    "docs/specs/multi-engine-orchestration.md",
+    "docs/specs/unified-engine/02-data-model.md",
+    "docs/specs/unified-engine/06-adapters.md",
+    "src/patchtrace/secondary/contracts.py",
+    "src/patchtrace/unified/keys.py",
+    "src/patchtrace/unified/sources/manual.py",
+    "src/patchtrace/unified/sources/secondary.py",
+    "tests/test_secondary_alternative_identity_20261101.py",
+    "tests/test_unified_evidence_identity_20261101.py",
+    "tests/test_unified_sources.py"
+  ],
+  "source_sha256": {
+    "docs/specs/multi-engine-orchestration.md": "0939f5194fa764ad38cf965b0dadb8327f8f3a7c28361d5cedc0915f85137ab4",
+    "docs/specs/unified-engine/02-data-model.md": "dfcd9b7b786cc7b75c68f4b6ae6f55c411198de55fb7726f83869603db283be8",
+    "docs/specs/unified-engine/06-adapters.md": "9f6c4326b0c23b344dc0da56dd2642381c6b9de08f72000539c06b4b3838b914",
+    "src/patchtrace/secondary/contracts.py": "5dd28819c20b9caff74ef145f4fe019a9dddaf90443c0cea157197baba5f83db",
+    "src/patchtrace/unified/keys.py": "61baf5bf6b6385e9efd535958c4fe4201cd2e266e1c87278d3ba39b5a8c7cd14",
+    "src/patchtrace/unified/sources/manual.py": "03d784898b7a620d0292a2fdb3f1e5c369e38d316d7c9b52a4382e044cd0af5b",
+    "src/patchtrace/unified/sources/secondary.py": "75b6acde2f333da7405dcb64db30e45fa653414e4d8b9953c789d6826dd6cba6",
+    "tests/test_secondary_alternative_identity_20261101.py": "fad95469add7f2fc5760042f1dcaa2efe7b6fa8c19fb641b08abc35c810624c3",
+    "tests/test_unified_evidence_identity_20261101.py": "4ddbdaf3c8fe4a6406dc6b9e63a5a6be345963e63bbd6269983095c031dd43cb",
+    "tests/test_unified_sources.py": "2f0b0304da730162773270c4c87d069ca0c30f3d34c5959eab5ae9a2448c6389"
+  },
+  "checks": {
+    "focused_final": "193 passed in2.79s",
+    "in_process_pipeline_compute": "144 passed,26 deselected in3.85s; earlier overlapping subset,not additive",
+    "corrected_original_source_red": "25 failed,3 passed in0.83s; explicit pytest pythonpath override against original integrated source",
+    "ruff": "entire src tests tools passed",
+    "schema_generation": "passed,no generated-file drift",
+    "diff_hygiene": "passed",
+    "checkout_status": "clean"
+  },
+  "limitations": [
+    "Independent review pending; not incorporated in canonical main.",
+    "No current-head Windows/native/frozen/full/performance acceptance claimed.",
+    "Pure synthetic and real local SQLite/cache evidence only; no target binary executed.",
+    "Changing derived source identities invalidates cached secondary/manual results while retaining old manifests/readability.",
+    "Earlier first red run had two missing test-directory setup errors; corrected-original-source red result supersedes only fixture validity,not erased historical output."
+  ],
+  "review_focus": [
+    "Complete normalized content plus original stored entry bound; upstream raw file hash kept separate.",
+    "Derived SourceRef.entry_id is content identity; original stored id remains Atom.ref.",
+    "Canonical secondary row traversal resolves order-dependent name/flag selection.",
+    "Invalid historical alternatives now refused under existing corrupt-input policy."
+  ]
+}

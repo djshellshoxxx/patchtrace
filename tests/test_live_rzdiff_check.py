@@ -21,12 +21,12 @@ sys.path.insert(0, str(ROOT / 'tools'))
 import live_rzdiff_check  # noqa: E402
 
 
-def fake_rz(tmp_path: Path, help_text: str) -> Path:
+def fake_rz(tmp_path: Path, help_text: str, version: str = '0.9.0') -> Path:
     spy = tmp_path / 'spy.json'
     body = f'''import json, os, sys
 args = sys.argv[1:]
 if args == ['-v']:
-    print('rz-diff 0.9.1 @ linux-x86-64'); sys.exit(0)
+    print('rz-diff {version} @ synthetic-test'); sys.exit(0)
 if args == ['-h']:
     print({help_text!r}); sys.exit(0)
 open({str(spy)!r}, 'w').write(json.dumps(dict(os.environ)))
@@ -38,13 +38,13 @@ sys.stdout.write(open({str(FIXTURE)!r}).read())
 HELP = 'Usage: rz-diff [options] <file0> <file1>\n  -C           show calls\n  -j           json\n  -t [type]    type\n'
 
 
-def run_tool(tmp_path: Path, exe: Path) -> tuple[int, dict]:
+def run_tool(tmp_path: Path, exe: Path, version: str = '0.9.0') -> tuple[int, dict]:
     older, newer = tmp_path / 'old.dll', tmp_path / 'new.dll'
     older.write_bytes(b'MZold')
     newer.write_bytes(b'MZnew')
     out = tmp_path / 'live.json'
     env = {**os.environ, 'AWS_SECRET_ACCESS_KEY': 'sentinel', 'PYTHONPATH': str(ROOT / 'src')}
-    proc = subprocess.run([sys.executable, str(TOOL), str(exe), str(older), str(newer), str(out), '--pin', '0.9.1',
+    proc = subprocess.run([sys.executable, str(TOOL), str(exe), str(older), str(newer), str(out), '--pin', version,
                            '--archive-sha256', '0' * 64, '--os', 'test'], env=env, capture_output=True, text=True,
                           timeout=120)
     return proc.returncode, json.loads(out.read_text())
@@ -67,3 +67,11 @@ def test_tool_fails_on_flag_drift(tmp_path):
     code, result = run_tool(tmp_path, fake_rz(tmp_path, 'Usage: rz-diff -C -j -t (all inline)\n  -a  arch\n'))
     assert code == 1 and result['status'] == 'failed'
     assert result['help_flags'] == {'-C': False, '-j': False, '-t': False}
+
+
+def test_known_affected_pin_is_explicitly_blocked_and_remains_a_nonzero_gate(tmp_path):
+    code, result = run_tool(tmp_path, fake_rz(tmp_path, HELP, '0.9.1'), '0.9.1')
+    assert code == 1 and result['status'] == 'blocked'
+    assert result['blocked_reason'] == 'rz-diff-orientation-unverified'
+    assert result['rizin_version'] == result['pin'] == '0.9.1'
+    assert 'orientation' in result['errors'][0].lower()

@@ -62,7 +62,8 @@ class InspectionThread(QThread):
             result = inspect_project_artifacts(self.project_id, self.artifacts, self.root, self.cancel.is_set)
         except Exception as exc:  # noqa: BLE001 - only the class crosses the thread boundary (GUI plan 8.5)
             logging.getLogger(__name__).warning('File inspection failed', exc_info=True)
-            self.inspection_failed.emit(type(exc).__name__, self.key)
+            if not self.cancel.is_set():
+                self.inspection_failed.emit(type(exc).__name__, self.key)
             return
         if self.cancel.is_set():
             result.close()

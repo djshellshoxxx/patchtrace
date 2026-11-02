@@ -49,12 +49,12 @@ RZ_ENTRIES = [(1.0, 'COMPLETE', 0x1000, 0x1000), (0.9, 'PARTIAL', 0x1020, 0x1020
               (0.0, 'UNLIKE', 0x1060, None)]
 
 
-def _fake_rz(tmp_path, entries=RZ_ENTRIES, exit_code=0):
+def _fake_rz(tmp_path, entries=RZ_ENTRIES, exit_code=0, version='0.9.0'):
     doc = [{'similarity': s, 'type': t, 'original': None if o is None else {'addr': BASE + o, 'name': 'f', 'size': 16},
             'modified': None if n is None else {'addr': BASE + n, 'name': 'f', 'size': 16}} for s, t, o, n in entries]
     script = tmp_path / 'rz-diff'
     script.write_text(f'#!{sys.executable}\nimport sys\n'
-                      f'if sys.argv[1:] == ["-v"]:\n    print("rz-diff 0.9.1 (synthetic fake)"); sys.exit(0)\n'
+                      f'if sys.argv[1:] == ["-v"]:\n    print("rz-diff {version} (synthetic fake)"); sys.exit(0)\n'
                       f'print({json.dumps(json.dumps(doc))}); sys.exit({exit_code})\n')
     script.chmod(script.stat().st_mode | stat.S_IXUSR)
     return str(script)
@@ -67,7 +67,7 @@ posix_only = pytest.mark.skipif(os.name == 'nt', reason='fake rz-diff is a sheba
 def test_rzdiff_through_the_production_adapter(tmp_path):
     provider = E.RzDiffProvider(_store(tmp_path), executable=_fake_rz(tmp_path))
     result = provider(LABELS, 'hidden')
-    assert (result.status, result.version) == ('ok', '0.9.1')
+    assert (result.status, result.version) == ('ok', '0.9.0')
     assert sorted((p.old_rva, p.new_rva, p.changed) for p in result.predictions) == [
         (0x1000, 0x1000, False), (0x1010, 0x1010, False), (0x1020, 0x1020, True)]
     assert result.old_only == frozenset({0x1060})
@@ -75,6 +75,16 @@ def test_rzdiff_through_the_production_adapter(tmp_path):
     m = report['strata']['authored']['rz-diff']
     assert (m['identity_tp'], m['identity_fp'], m['changed_tp']) == (3, 0, 1)
     assert report['engines'][0]['status'] == 'ok'
+
+
+@posix_only
+def test_identical_synthetic_output_cannot_bypass_quarantined_version(tmp_path):
+    provider = E.RzDiffProvider(_store(tmp_path), executable=_fake_rz(tmp_path, version='0.9.1'))
+    result = provider(LABELS, 'hidden')
+    assert result.status == 'blocked' and 'orientation' in result.reason.lower()
+    assert not result.predictions
+    report = E.evaluate([LABELS], [provider])
+    assert report['engines'][0]['status'] == 'blocked'
 
 
 @posix_only

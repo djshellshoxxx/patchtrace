@@ -12,6 +12,7 @@ import importlib.util
 import json
 import os
 import sys
+import uuid
 from collections.abc import Sequence
 from pathlib import Path
 
@@ -24,6 +25,7 @@ from . import evaluate as E
 from . import factory as F
 from . import fetch as FE
 from . import manifest as M
+from . import output_store as OS
 from . import report_schemas as RS
 from . import schemas as S
 from .toolchain import PROFILE_TOOLS, Blocked, probe
@@ -217,14 +219,26 @@ def cmd_evaluate(args) -> tuple[int, dict]:
     imports = Path(args.imports) if args.imports else store / 'imports'
     providers = E.default_providers(store, imports, rz_diff=args.rz_diff or os.environ.get('RZ_DIFF') or None,
                                     engines=engines)
-    report = E.evaluate(docs, providers, symbols=args.symbols)
-    out = Path(args.out) if args.out else store / 'reports' / f'tier-r-{args.symbols}-{report["report_sha256"][:12]}.json'
-    out.parent.mkdir(parents=True, exist_ok=True)
-    out.write_bytes(C.dump_json(report))
-    out.with_suffix('.md').write_text(E.render_markdown(report), encoding='utf-8', newline='\n')
+    run_token = uuid.uuid4().hex
+    outputs = Path(args.outputs) if args.outputs else store / 'outputs' / run_token
+    try:
+        report = E.evaluate(docs, providers, symbols=args.symbols, output_dir=outputs)
+    except E.EvaluationRetentionError as exc:
+        return FINDINGS, {'command': 'evaluate', 'status': 'failed', 'credited': False, 'error': str(exc),
+                          'outputs': exc.outputs.as_posix(), 'diagnostics': exc.diagnostics,
+                          **({'report_data': exc.report} if 'report' not in exc.diagnostics else {})}
+    out = Path(args.out) if args.out else store / 'reports' / (
+        f'tier-r-{args.symbols}-{report["report_sha256"][:12]}-{run_token}.json')
+    try:
+        OS.publish_bytes(out, C.dump_json(report))
+        OS.publish_bytes(out.with_suffix('.md'), E.render_markdown(report).encode('utf-8'))
+    except OS.OutputError as exc:
+        return USAGE, {'command': 'evaluate', 'status': 'error', 'error': str(exc),
+                       'outputs': outputs.as_posix(), 'report_path': out.as_posix(), 'report_data': report}
     problems = E.blocked_engines(report)
     states = {e['engine']: e['status'] for e in report['engines']}
-    doc = {'command': 'evaluate', 'report': out.as_posix(), 'report_sha256': report['report_sha256'],
+    doc = {'command': 'evaluate', 'report': out.as_posix(), 'outputs': outputs.as_posix(),
+           'report_sha256': report['report_sha256'],
            'engines': states, 'blocked': {e['engine']: e['reason'] for e in problems if e['status'] == 'blocked'}}
     if all(s == 'blocked' for s in states.values()):
         doc['status'] = 'blocked'
@@ -291,8 +305,11 @@ def cmd_vendoring(args) -> tuple[int, dict]:
 
 
 def cmd_schemas(args) -> tuple[int, dict]:
+    from . import training_artifacts as TA
+
     root = Path(args.out)
     written = [p.as_posix() for p in S.write_all(root)] + [p.as_posix() for p in RS.write_all(root)]
+    written.append(TA.write_schema(root).as_posix())
     return OK, {'command': 'schemas', 'status': 'ok', 'written': sorted(written)}
 
 
@@ -374,6 +391,7 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument('--engines', default=','.join(E.ENGINES))
     p.add_argument('--rz-diff', help='absolute path of rz-diff (default: PATH lookup)')
     p.add_argument('--out', help='report JSON path; a Markdown file is written beside it')
+    p.add_argument('--outputs', help='nonexisting directory for retained normalized outputs (default: fresh store run)')
     p = add('manifest', cmd_manifest, 'emit a calibration-corpus/1 manifest of the label documents')
     p.add_argument('--labels')
     p.add_argument('--out')

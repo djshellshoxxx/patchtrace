@@ -2,9 +2,10 @@
 in, and a `Correspondence` over two real sidecars coming out as the `AdapterOutput` the arbiter takes.
 
 Fusion never sees function ids, only RVAs: the atoms of sources `pt-ladder` and `pt-bytes` (one per pair, with the pass,
-tier and evidence class of the pair) and the display names of the paired functions. What the row model cannot hold yet
-is counted instead of dropped: the N:M groups of the ladder (`duplicate`, `icf`, `inlined-into`, `outlined-from`) and
-the leftovers appear in `limitations`, so a reader sees that the ladder knew more than the rows show.
+tier and evidence class of the pair) and their display names. Unmatched functions become one-sided W/E-UNKNOWN
+observations with their original reason and hints, never added/removed claims or votes against another source's pair.
+The row model cannot yet hold the overlapping N:M groups (`duplicate`, `icf`, `inlined-into`, `outlined-from`);
+their count appears in `limitations`, so a reader sees that the ladder knew more than the rows show.
 """
 from __future__ import annotations
 
@@ -13,8 +14,9 @@ from collections.abc import Iterable
 from ..contracts import Atom
 from ..ir import schema
 from ..ir.reader import IrReader
-from ..ladder.types import Correspondence
-from . import AdapterOutput, Ledger, NodeRecord, clean_name
+from ..ladder.types import LEFTOVER_REASONS, Correspondence
+from ..limits import UnifiedError
+from . import AdapterOutput, Ledger, NodeRecord, atom_order, clean_name, native
 
 _IMPORT = schema.FN_FLAGS['import']
 _KIND = {schema.KIND_CODES['normal']: 'function', schema.KIND_CODES['thunk']: 'thunk',
@@ -54,4 +56,22 @@ def ladder_output(corr: Correspondence, older: IrReader, newer: IrReader, *, anc
     ledger.count('ladder-anchors-outside-ir', anchors_skipped)
     nodes = {(pair.older_fid, pair.newer_fid) for pair in corr.pairs}
     records = [_node('older', older, o) for o, _ in sorted(nodes)] + [_node('newer', newer, n) for _, n in sorted(nodes)]
-    return AdapterOutput(atoms=corr.atoms(), nodes=tuple(records), limitations=ledger.render())
+    atoms = list(corr.atoms())
+    for side, reader, leftovers, rvas in (('older', older, corr.older_only, corr.older_rva),
+                                           ('newer', newer, corr.newer_only, corr.newer_rva)):
+        for item in leftovers:
+            # Resolve through the verified sidecar. In particular, a negative fid must not index the last function,
+            # and a correspondence from another IR must not introduce an unrelated address into this result.
+            fid = item.fid
+            if (type(fid) is not int or not 0 <= fid < reader.functions.n or fid >= len(rvas)
+                    or item.reason not in LEFTOVER_REASONS or rvas[fid] != reader.functions.get('rva', fid)):
+                raise UnifiedError('PT-UNIFIED-INTERNAL', 'A ladder leftover does not belong to its ProgramIR',
+                                   reason='leftover-identity')
+            record = _node(side, reader, fid)
+            records.append(record)
+            atoms.append(Atom(source='pt-ladder', step=f'unmatched-{item.reason}', tier='W', cls='E-UNKNOWN',
+                              cardinality='1:1', older_rva=record.rva if side == 'older' else None,
+                              newer_rva=record.rva if side == 'newer' else None, ref=f'fid:{fid}',
+                              native=native(('reason', item.reason), ('hints', ', '.join(item.hints)))))
+    return AdapterOutput(atoms=tuple(sorted(atoms, key=atom_order)),
+                         nodes=tuple(sorted(records, key=lambda n: (n.side, n.rva))), limitations=ledger.render())

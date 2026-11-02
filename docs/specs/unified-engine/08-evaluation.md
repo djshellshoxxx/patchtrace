@@ -65,6 +65,18 @@ Parametrised ids stay short (a 64 MiB parameter id once stalled the Windows cons
 ## 6. Performance harness (`tools/unified/bench.py` + marked tests)
 Generated IR at 10k / 60k / 250k functions with realistic degree distributions (power-law callers, 1-5 % changed functions, 0.5 % duplicates) measures: ingest time and RSS (fresh process), ladder time per stage, facts time for N changed pairs, read-model build, `data()` call counts for first paint/sort/filter at 10k and 100k rows. Gate: L-35 with 5x wall-clock slack on CI, exact call-count gates (C6 method). Windows numbers come from the Windows CI runner and the frozen EXE; they are recorded, never extrapolated from Linux. Baseline from the review's scratch prototypes [own, Linux, 2.1 GHz vCPU; not CI evidence]: ingest 28.9 s / 304 MiB and ladder core 0.4 s at 60k functions; the extractor's JPype dump (68-70 us per instruction) is the largest cost, so `bench_extract` on the live fixture is part of G-U5.
 
+GT12 harness completion (2026-11-01): `facts` measures context construction plus channel collection and judgement
+for 5,000 distinct changed pairs over real ingested, synthetic x86-64 IR; input generation and ingest are recorded
+separately. `read_model` loads strict persisted rows and facts at 10k/100k, with varied names, changes and source
+cells; build time is informational (L-35 has no separate read-model budget). `ui_calls` loads that same varied model
+before timing the production Qt table's model assignment through actual viewport paint, then sort and selective
+filter through paint. First-paint/sort/filter time gates apply at 100k only, with the existing 5x slack; at 10k and
+100k each operation has the C6 exact ceiling `floor(7 * visible cells * 1.2) + 20` and cross-size call growth is
+checked. Offscreen paints are synthetic Linux/Qt observations, not Windows, display-server latency or scrolling
+acceptance. Missing required stage/size measurements remain explicit in `pending`; implementing a stage does not
+make an unrun measurement pass. Every generated measurement, including a failed child, retains its seed and
+requested instruction count for replay. Small smoke sizes remain informational. No L-35 value changes.
+
 ## 7. CI placement
 
 | Workflow | Runs | Counts as |
@@ -82,7 +94,31 @@ Strict pydantic models, deterministic JSON (sorted keys, LF, no timestamps), nev
 |---|---|---|
 | `unified-corpus-pins/1` | `tools/unified/corpus/pins.json`, `catalogue.py` | per case-card id, the SHA-256 of the old and the new pinned source tree (lines `<file sha256>  <path>` of every regular file, sorted, symlinks never followed, `.git` and the fetch receipt left out); toolchain independent; `fetch` reports `PT-UC-PIN` on a difference. Image hashes are not pinned: they differ per compiler version and live in the reports |
 | `unified-corpus-manifest/1` | `tools/unified/corpus/manifest.py` | facts per label document, no threshold: role (`release`, `cve-fix`, `control`, `P0`, `P1`, `P2`, `mutation`), the gates it feeds, image digests, label digest, function counts, `x_vs_x` (the two images are the same bytes), for a mutant its class, planted function and accepted verdicts; `ignored` (strata that belong to SPEC-32 alone) and `pending` (work that cannot be built yet, with the reason) are listed, never dropped; `manifest_sha256` |
-| `bench-report/1` | `tools/unified/bench.py` | one row per (stage, size): seconds, peak RSS of a fresh process, deterministic counts, gates and checks; gates are L-35 with 5x slack on time and none on memory, only at the sizes L-35 defines (ladder 10k and 60k, ingest and worker memory at 60k); stages that wait for S3 or S4 are listed under `pending` with their limits; `counts_sha256` digests the counts only, so equal code gives an equal digest |
+| `bench-report/1` | `tools/unified/bench.py` | one row per (stage, size): seconds, fresh-process peak RSS, counts, gates and checks; L-35 with 5x time slack and none on memory, only at defined sizes (ladder 10k/60k, ingest and worker memory 60k, facts 5k, UI 100k); `read_model` timings informational; missing required facts/read/UI sizes stay `pending`; gate units `s`, `ms`, `bytes`; environment records source commit and tracked dirtiness; `counts_sha256` excludes timings/RSS and includes fixture digests and observed Qt calls (compare on the same Qt/platform configuration) |
 | `gate-report/1` | `tools/unified/gates_u.py` | one row per gate with a status, reasons, what it needs and observed facts; statuses: `pass` and `fail` are verdicts on data, `insufficient-data` means the data cannot decide, `pending` means a slice that is not built, `blocked` means something outside the code (a pinned BinDiff, a Windows runner); inputs with their SHA-256; `flag.decision_ready` is true only when G-U1..G-U6 pass (U-05); `report_sha256` |
 
 Rules: a gate that cannot run is never `pass`; a skipped required test is `blocked`, not a pass; G-U8 maps each of its checks to named tests (the tool's test keeps the names real); the planted-mutant classes are `tools/unified/mutations/classes.py`, tied to the G-U2 row by a test; the report is advisory (exit 0) unless `--strict`. JSON Schemas for these four contracts are not generated.
+
+
+## GT-01 native A/A gate: opt-in identical-input comparison (2026-10-30)
+
+The normal application preserves its existing identical-hash shortcut and reports
+`identical`, not a completed analysis. The dev-only unified-live-gates harness may
+opt into a **genuine native** Ghidriff comparison when the labelled older/newer
+images have exactly equal SHA-256. In that case it disables cached raw analysis,
+passes the pinned Ghidriff `--force-diff` switch, and gives the copied images
+side-distinct basenames without changing their bytes. Distinct basenames are
+required by the observed Ghidra ProgramDB transaction failure in R1 PR #128
+(`docs/research/ground-truth-corpus/results/native-aa-control.md`).
+
+An A/A result can enter the acceptance denominator only after actual successful
+native exit, raw JSON ownership validation, two valid retained GZF/IR sides,
+ProjectService completed-run persistence, unified result generation, and proper
+orientation checks. A skipped, unsupported, failed or cancelled attempt remains
+explicitly excluded, not a synthetic unchanged proof. Empty `modified` lists
+do not automatically prove unchanged source semantics. Pin and verify Linux and
+Windows runs and G-U1..G-U8 at the exact commit before GT-01 acceptance.
+
+Each pair/orientation owns its extraction staging workspace. An ingest or IR
+placement failure may retain partial staging for diagnosis, but must not make a
+later independent comparison fail because of a leftover staging directory.

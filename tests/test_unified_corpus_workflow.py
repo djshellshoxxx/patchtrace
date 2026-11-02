@@ -6,7 +6,7 @@ from __future__ import annotations
 
 import re
 import sys
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 
 import pytest
 
@@ -86,7 +86,7 @@ def test_the_corpus_store_is_outside_the_work_tree_and_no_image_is_uploaded(doc)
 
 def test_the_mingw_variant_is_pinned_to_the_one_the_evidence_came_from(doc):
     env = doc['jobs']['corpus']['env']
-    assert env['PATCHTRACE_KA_MINGW_GCC'].endswith('x86_64-w64-mingw32-gcc-win32') and Path(env['PATCHTRACE_KA_MINGW_GCC']).is_absolute()
+    assert env['PATCHTRACE_KA_MINGW_GCC'].endswith('x86_64-w64-mingw32-gcc-win32') and PurePosixPath(env['PATCHTRACE_KA_MINGW_GCC']).is_absolute()
     assert 'gcc-mingw-w64-x86-64-win32' in run_text(doc['jobs']['corpus'])
 
 

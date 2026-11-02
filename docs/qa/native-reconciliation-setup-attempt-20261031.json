@@ -1,0 +1,188 @@
+{
+  "source_commit": "59ff5ad1379c0a787d92f62d732686c1dd0e65b4",
+  "dirty_paths": [
+    "docs/qa/completion-inventory-20261031.json"
+  ],
+  "platform": "Linux-6.18.57-x86_64-with-glibc2.41",
+  "versions": {
+    "ghidriff": "1.0.0",
+    "pyghidra": "3.0.2",
+    "JPype1": "1.5.2",
+    "ziglang": "0.17.0"
+  },
+  "ghidriff_revision": "4f5d895fcbb1eacd65efd81145922c15bb7e741d",
+  "ghidra_archive_sha256": "c3b458661d69e26e203d739c0c82d143cc8a4a29d9e571f099c2cf4bda62a120",
+  "source_inputs": {
+    "bounds-old.c": {
+      "sha256": "b0d28c94a901b3b188034ae0112f6dbbba09cfae946d97f115dbdf1165e370e3",
+      "text": "/* Benign static bounds-check regression fixture; never executed by PatchTrace. */\n__declspec(dllexport) int read_item(const int *items, int length, int index) {\n    return items[index];\n}\n"
+    }
+  },
+  "compile_commands": [
+    [
+      "/workspace/work/patchtrace-native-venv/bin/python",
+      "-m",
+      "ziglang",
+      "cc",
+      "-target",
+      "x86_64-windows-gnu",
+      "-shared",
+      "-nostdlib",
+      "-Wl,--no-entry",
+      "-fno-sanitize=all",
+      "-O0",
+      "-o",
+      "/workspace/work/native-smoke/inputs/bounds-old.dll",
+      "/workspace/work/native-smoke/inputs/bounds-old.c"
+    ]
+  ],
+  "cases": [
+    {
+      "name": "bounds",
+      "expected": "changed",
+      "status": "failed",
+      "error": "FileNotFoundError: [Errno 2] No such file or directory: '/workspace/work/native-smoke/inputs/bounds-new.dll'",
+      "elapsed_seconds": 0.0
+    },
+    {
+      "name": "signed-long",
+      "expected": "changed",
+      "status": "failed",
+      "error": "FileNotFoundError: [Errno 2] No such file or directory: '/workspace/work/native-smoke/inputs/long-old.dll'",
+      "elapsed_seconds": 0.0
+    },
+    {
+      "name": "float",
+      "expected": "changed",
+      "status": "failed",
+      "error": "FileNotFoundError: [Errno 2] No such file or directory: '/workspace/work/native-smoke/inputs/float-old.dll'",
+      "elapsed_seconds": 0.0
+    },
+    {
+      "name": "exponent",
+      "expected": "changed",
+      "status": "failed",
+      "error": "FileNotFoundError: [Errno 2] No such file or directory: '/workspace/work/native-smoke/inputs/exponent-old.dll'",
+      "elapsed_seconds": 0.0
+    },
+    {
+      "name": "identical",
+      "expected": "unchanged",
+      "status": "passed",
+      "older_sha256": "8bf0e0bf9246cfe5a113f97cbeee899c9ef739338349ea5fd64894e7fd275618",
+      "newer_sha256": "8bf0e0bf9246cfe5a113f97cbeee899c9ef739338349ea5fd64894e7fd275618",
+      "backend_status": "completed",
+      "run_id": "d183458a-02fd-412f-a900-23511c9ed715",
+      "backend_error": null,
+      "settings": {
+        "timeout_seconds": 300,
+        "allow_symbol_downloads": false,
+        "symbol_policy": "disabled",
+        "ghidra_settings": "isolated-per-run",
+        "older_sha256": "8bf0e0bf9246cfe5a113f97cbeee899c9ef739338349ea5fd64894e7fd275618",
+        "newer_sha256": "8bf0e0bf9246cfe5a113f97cbeee899c9ef739338349ea5fd64894e7fd275618",
+        "force_identical_diff": true,
+        "python_version": "3.12.14",
+        "pyghidra_version": "3.0.2",
+        "ghidra_version": "12.0.4",
+        "java_runtime_version": "unverified",
+        "gzf": {
+          "older": {
+            "name": "older-8bf0e0bf9246cfe5a113f97cbeee899c9ef739338349ea5fd64894e7fd275618.bin-d77d4e.gzf",
+            "sha256": "008d22dd7b07665de16d401a86b39286813449461e9100dfb30917a00cd8887c",
+            "bytes": 25395
+          },
+          "newer": {
+            "name": "newer-8bf0e0bf9246cfe5a113f97cbeee899c9ef739338349ea5fd64894e7fd275618.bin-d77d4e.gzf",
+            "sha256": "4ce7524c03e189987bd4cdf283e071076deaea4250e5df8f6f05f2eb17e057ed",
+            "bytes": 25357
+          }
+        }
+      },
+      "raw_sha256": "738c66d2382bef751593deb5878c157c9f846035f434c37e2afd58818ea2b0a1",
+      "backend_functions": [],
+      "gzf": {
+        "older": {
+          "sha256": "008d22dd7b07665de16d401a86b39286813449461e9100dfb30917a00cd8887c",
+          "bytes": 25395
+        },
+        "newer": {
+          "sha256": "4ce7524c03e189987bd4cdf283e071076deaea4250e5df8f6f05f2eb17e057ed",
+          "bytes": 25357
+        }
+      },
+      "ir": {
+        "older": {
+          "content_digest": "7b43ee117f2676c2eeba697ee223dfea4f9073e3dc420e333af649ddacb4c3fd",
+          "functions": 1
+        },
+        "newer": {
+          "content_digest": "7b43ee117f2676c2eeba697ee223dfea4f9073e3dc420e333af649ddacb4c3fd",
+          "functions": 1
+        }
+      },
+      "result_id": "f56f898a0556b9b738f3dad539477bbc2de0d928b648183c398635bbe5d89465",
+      "manifest_status": "complete",
+      "rows": [
+        {
+          "older": [
+            [
+              "read_item",
+              4096
+            ]
+          ],
+          "newer": [
+            [
+              "read_item",
+              4096
+            ]
+          ],
+          "decision": "matched",
+          "verdict": "unchanged",
+          "proof": "UNCH/1",
+          "classes": [],
+          "channels": {
+            "C0": "equal",
+            "C1": "equal",
+            "C2": "equal",
+            "C3": "equal",
+            "C4": "equal",
+            "C5": "equal",
+            "C6": "unavailable",
+            "C7": "unavailable",
+            "C8": "unavailable"
+          },
+          "eh": "equal"
+        }
+      ],
+      "elapsed_seconds": 26.92
+    }
+  ],
+  "scope": "Authored exported-name-visible one-function Linux native smoke. No target executed; no Tier R, held-out, BinDiff, Windows, air-gap or full G-U acceptance claim.",
+  "policies": {
+    "matching": "matching/2",
+    "channels": {
+      "C0": 1,
+      "C1": 1,
+      "C2": 1,
+      "C3": 1,
+      "C4": 1,
+      "C4n": 1,
+      "C5": 1,
+      "C5t": 1,
+      "C6": 1,
+      "C8": 1,
+      "align": 1,
+      "canon": 2,
+      "datamap": 1,
+      "eh-eq": 1
+    },
+    "proofs": {
+      "COS-ADDR/1": 1,
+      "COS-LAYOUT/1": 1,
+      "COS-PSEUDO/1": 2,
+      "UNCH/1": 1
+    }
+  },
+  "compiler_binary_sha256": "7c61539af19fa4082c94848f1c2b57b89e76dc6cfd5bd4c57764c3caf8f82272"
+}

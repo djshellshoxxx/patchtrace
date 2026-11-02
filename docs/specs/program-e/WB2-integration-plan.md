@@ -77,7 +77,7 @@ A scratch prototype of A1-A3 over the repo's real `normalize_ghidriff` reproduce
 | Partial graph read as complete ("no path") | copy "not found among the N functions with stored call lists"; reached = "at most K calls (observed path)" |
 | Hub expansion (20k callers) | 64 neighbours per node then "+N more"; virtual table; BFS visit budget |
 | Same qualified name, two functions | `ambiguous` node listing candidates, never first-wins, no unqualified fallback (`_related` also accepts `upstream_name`, so it is not reused) |
-| `--use-calling-counts` labels `name-N` | exact lookup first; suffix strip only when the stem resolves uniquely, flagged `inferred-count-suffix` |
+| `--use-calling-counts` labels `name-N` | exact lookup first; suffix strip only when the entire terminal suffix is ASCII decimal and converts under the existing Python integer-conversion guard, and the stem resolves uniquely; flagged `inferred-count-suffix`. Unconvertible suffixes remain original unresolved labels; no source text is truncated or rewritten and no new numeric-count cap is imposed. |
 | Analysis differences (function recovery, inlining, ICF) look like call changes | reuse T-track `function-recovery-shift`; banner "build environment or analysis changed" |
 | `EXTERNAL:` address stored as `'virtual'` | classify in the graph layer from `metadata.external`/prefix; no persisted-contract change |
 | Orientation or side mix-up, wrong-side navigation | node id hashes (sha, side, key); cache key has both shas, run, revision; swap or override invalidates (`test_swap_orientation_invalidates`) |
@@ -123,14 +123,14 @@ A scratch prototype of A1-A3 over the repo's real `normalize_ghidriff` reproduce
 
 **7.5 Errors, limits, cache, versioning**
 - Errors: `PT-GRAPH-INPUT` (unknown function/side/args), `-SOURCE` (raw missing, hash, not strict JSON), `-LIMIT` (caps; result `truncated`), `-STALE`, `-CANCEL`, `-EXPORT`, `-PAIR` (series).
-- Cache and storage: nothing persisted in v1 (derived and recomputable: no new enrichment kind, no sidecar, no `DERIVED_KINDS` change); optional `DerivedCache` stage `callgraph`. Key = `domain_id('callgraph-cache', 1, {project_id, revision, run_id, raw_sha256, older_sha, newer_sha, manual_digest, secondary_set_digest, unified_result_id|None, patch_rules_version+digest, hub_registry_version, algo 'callgraph/1'})`. Bookmarks reuse `AnalystAnnotation(kind='bookmark', target_id=match_id)`.
+- Cache and storage: nothing persisted in v1 (derived and recomputable: no new enrichment kind, no sidecar, no `DERIVED_KINDS` change); optional `DerivedCache` stage `callgraph`. Key = `domain_id('callgraph-cache', 1, {project_id, revision, run_id, raw_sha256, older_sha, newer_sha, manual_digest, secondary_set_digest, unified_result_id|None, patch_rules_version+digest, hub_registry_version, algo 'callgraph/2'})`. Algorithm 2 refuses unconvertible, Unicode-digit or nonterminal calling-count suffix inference; exact emitted labels still take precedence. Bookmarks reuse `AnalystAnnotation(kind='bookmark', target_id=match_id)`.
 - Versioning: additive only (fields and enum values appended; readers show unknown values as "unknown"); resolver or delta rule changes bump `algo` (recompute, never migrate). Schemas: `tools/generate_callgraph_schemas.py` to `docs/schemas/callgraph/` with a regenerate-and-compare test.
 | limit | value |
 |---|---|
 | GL-01 claims per snapshot | 250,000 (IR sources: 150k nodes, 600k edges) |
 | GL-02 label | 512 stored, 120 shown |
 | GL-03 query | depth <= 4; nodes 100 default, 500 max (table 2,000); edges 250 / 2,000; 64 neighbours per node then "+N more" |
-| GL-04 paths | <= 5 paths, length <= 12, visit budget 200,000 |
+| GL-04 paths | <= 5 paths, length <= 12, shared edge-examination budget 200,000 per source/destination query |
 | GL-05 closure | count exact, listed <= 2,000 |
 | GL-06 delta | <= 500 changes per function, 100 shown |
 | GL-07 groups | >= 2 changed pairs, <= 200 groups |
@@ -138,8 +138,33 @@ A scratch prototype of A1-A3 over the repo's real `normalize_ghidriff` reproduce
 | GL-09 evolution | <= 8 builds, 2,000 lineages, 7 read-only pair projects |
 | GL-10 export | <= 2,000 nodes and edges, 2 MiB |
 | GL-11 hub | fan-in >= 64 (unified L-17) or registry |
-| GL-12 cancel | checked every 200 claims / 4,096 queue pops |
+| GL-12 cancel | checked every 200 claims / 4,096 queue pops; paths at start and every 4,096 edge examinations |
 | GL-13 CLI JSON | <= 16 MiB |
+
+GL-04 counts every forward or reverse adjacency item examined across bidirectional reachability,
+reverse distances and path enumeration, including cyclic, dead-end and excluded-node candidates.
+The check occurs before reading each item. The query traverses the existing sorted CSR lazily,
+without copying adjacency rows or rebuilding a complete induced graph. A query-local membership
+filter preserves the listed-function rule (plus the requested endpoints); whole-program sources
+use the same traversal without that filter. No persistent or global derived index is introduced.
+Budget exhaustion retains already found valid paths, sets `truncated`, explains that more paths
+may exist, and maps to CLI exit 3. A completed bidirectional BFS retains its lexicographically first
+shortest path (within the length limit) from query-local parent links. If later preparation exhausts
+the budget before enumeration produces a path, return that witnessed path as partial; an unfinished
+BFS layer does not establish a shortest witness. Cancellation is checked at query start and every 4,096 charged
+edge examinations. Below the budget, shortest-first and ascending-node tie order are unchanged.
+The CLI may resolve an API name to several destination identities; each source/destination query
+has this budget. This is not a single aggregate budget for that multi-target command.
+
+GL-03 applies to unique focus nodes and unique neighbours; duplicate focus IDs and duplicate call claims do
+not consume extra node slots. Reaching the per-node neighbour cap is a truncated/partial query just like reaching
+the node or edge cap. `more` retains one count per expanded origin; overlapping frontiers may refer to the same
+omitted neighbour, so these counts are never summed into a claimed number of missing unique nodes. A cap flag
+describes bounded exploration even when another frontier reaches some omitted neighbours. The visible note is
+"The view is capped; some nodes or edges may be omitted." The note propagates into paired export limitations.
+CLI queries/exports return partial exit 3, and the UI uses this note instead of presenting an apparently complete
+"64 of 64" neighbour total. Query cap state survives an independent Changes-row delivery and clears when the
+current query and Changes list are both uncapped.
 
 **7.6 DOT export** (text only: no Graphviz dependency, no execution)
 1. UTF-8 without BOM, LF, final newline, byte-identical for equal inputs; header is `//` comments built only from validated ids and hex.
@@ -149,6 +174,8 @@ A scratch prototype of A1-A3 over the repo's real `normalize_ghidriff` reproduce
 5. Paired export: `cluster_older`/`cluster_newer` labelled "Older build"/"Newer build" [unverified: cluster semantics from docs host, blocked]; inferred edges dashed, unresolved nodes dashed, correspondence dotted with `constraint=false`.
 6. Write: temp file in the target directory, `os.replace` with retry on `PermissionError`, refuse overwrite without `--overwrite`, default name `callgraph-<sha12>.dot`, never derived from function names; <= GL-10.
 7. Oracle test: a Python port of the four `scan.l` quoted-string rules plus the `labels.c` unescape must round-trip every sanitized label (hypothesis over all Unicode categories); goldens carry `text eol=lf`.
+8. A partial export carries a fixed cap warning in a DOT comment and a graph `label`, so both the standalone text
+   and a later rendering disclose partial coverage. It never invents omitted node/edge counts or executes Graphviz.
 
 ## 8. CLI and GUI
 **8.1 CLI** (`patchtrace graph ...`; dispatcher `callgraph/cli.py`, adapter `cli_commands/graph.py` (<= 25 lines), no `cli.py` hook; envelope `enrichment-cli/1`; no Qt import; basenames only):

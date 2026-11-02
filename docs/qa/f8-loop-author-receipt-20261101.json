@@ -1,0 +1,65 @@
+{
+  "source_commit": "c6981426b29530c92b528431d7bf10aeac0dfda8",
+  "source_tree": "ec1a05a7621db9ceb0ba185e83cc24184ba0063e",
+  "source_clean": true,
+  "scope": "F8 source self-test event-loop architecture repair; Linux Qt offscreen only",
+  "baseline_failure": "unchanged forbidden-API event-pumping guard rejected original seven processEvents calls",
+  "checks": {
+    "guard_journey_current_project_panel": {
+      "passed": 51,
+      "seconds": 16.31
+    },
+    "entry_cancellation_investigation_domain_contracts": {
+      "passed": 149,
+      "seconds": 6.38
+    },
+    "scoped_ruff": "passed",
+    "diff_check": "passed",
+    "source_selftest": {
+      "exit_code": 0,
+      "cwd": "/tmp",
+      "pythonpath": "/workspace/scratch/142cb233d750/wt-f8-loop/src",
+      "marker": "offline-investigation: synthetic F8 journey passed",
+      "optional_deps_missing": [
+        "rapidfuzz",
+        "yara-x",
+        "iced-x86"
+      ]
+    }
+  },
+  "independent_review": {
+    "agent": "ci_review",
+    "commit": "c6981426b29530c92b528431d7bf10aeac0dfda8",
+    "disposition": "PASS",
+    "focused_passed": 16,
+    "source_selftest_exit": 0,
+    "optional_deps_missing": []
+  },
+  "limitations": [
+    "No frozen Windows build/run in this check",
+    "No native-engine or live-provider claim",
+    "Full combined regression reserved to coordinator"
+  ],
+  "evidence": {
+    "f8-loop-guard-red.log": {
+      "path": "/workspace/scratch/142cb233d750/f8-loop-guard-red.log",
+      "sha256": "934ed7a338612c546066c5706cc5459e48d0c79bbe25845388478e918d5bf193"
+    },
+    "f8-loop-focused.log": {
+      "path": "/workspace/scratch/142cb233d750/f8-loop-focused.log",
+      "sha256": "99c878e89a0dd83c9f48ff6a4bd7d4f04cb81eceec98b9e5f12f82a66d10fb84"
+    },
+    "f8-loop-adjacent.log": {
+      "path": "/workspace/scratch/142cb233d750/f8-loop-adjacent.log",
+      "sha256": "6ff76a6c57b81d7292553a9694ad102629008916c6b38fc31369f1375f4b23be"
+    },
+    "f8-loop-source-selftest.log": {
+      "path": "/workspace/scratch/142cb233d750/f8-loop-source-selftest.log",
+      "sha256": "de8348af9c06fda35a285bd1838d3f30f0be94dea5812393df24fa697bd9d1ff"
+    },
+    "f8-loop-lint.log": {
+      "path": "/workspace/scratch/142cb233d750/f8-loop-lint.log",
+      "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+    }
+  }
+}

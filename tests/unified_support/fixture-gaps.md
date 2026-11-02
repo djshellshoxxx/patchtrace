@@ -1,5 +1,41 @@
 # Unified synthetic fixture handoff and remaining gaps
 
+## Consolidation status — 2026-11-02
+
+This reconciliation compares [PR #90](https://github.com/djshellshoxxx/patchtrace/pull/90)
+at `941c617b6854291e2448cad6d7d5710a24a8543d` with landed main
+`ce8c65bf41541cf6adb52289d2a530ce2817a53a` and the immutable consolidation candidate
+`ca80cc0f310ad1a82174cd17ee1fa8443b016b73`. It covers the PR's five changed paths.
+
+The two collection/fixture defects in the original handoff below are no longer
+current blockers in either examined snapshot:
+
+| Historical PR #90 change | Observed in both snapshots |
+|---|---|
+| Remove `test_unified_synthetic_pe-2.py` and `test_unified_fixture_gate_u6-2.py` | Both duplicate paths are absent. |
+| Correct canonical `test_unified_fixture_gate_u6.py` | Byte-identical to PR #90: blob `3ae05b9cc009502453333236dbb371239e59616e`; independent simulated project ids and case metadata are retained. |
+| Add the targeted Hypothesis health-check suppression | Canonical `test_unified_synthetic_pe.py` retains only `HealthCheck.function_scoped_fixture` suppression. Compared with PR #90, it also splits the imports and binds `timestamp`/`padding` by keyword in `@given`. |
+| Preserve the 36-line handoff continuation | Previously absent in both snapshots; restored below from the exact PR #90 head. |
+
+Fresh focused validation on candidate `ca80cc0`: **8 passed in 1.95s** with
+`QT_QPA_PLATFORM=offscreen PYTHONPATH=.:src:tests python3 -m pytest -q
+tests/test_unified_synthetic_pe.py tests/test_unified_fixture_gate_u6.py`.
+Whole-repository `python3 -m ruff check src tests tools` and `git diff --check`
+also passed for this documentation reconciliation. No target image was executed.
+
+The original handoff and the continuation below are **historical records**:
+their `UNVERIFIED`, branch-presence, and pending-validation statements describe
+the October 16 delivery. They do not reverse the current-path observations above.
+The broader “work not reached” inventory has not been recertified by this bounded
+comparison. These fixture results do not establish G-U3 oracle parity, G-U1..G-U8
+live acceptance, complete Linux/Windows equality, performance budgets, or frozen
+Windows acceptance; those remain separate checks under
+[SPEC-31 evaluation](../../docs/specs/unified-engine/08-evaluation.md).
+This note preserves the missing evidence and records the represented functional
+delta; it does not certify full PR #90 absorption, integration acceptance, or closure.
+
+## Original handoff — 2026-10-16
+
 Status: UNVERIFIED. This is a partial Prompt 3 delivery stopped at 25 added files.
 No Python, pytest, Ruff, assembler, decoder, generated target, external engine, benchmark or schema generator
 was executed. Repository reads and writes used GitHub APIs. No test-pass claim is made.
@@ -8,7 +44,7 @@ All changes are new files below tests/. Existing source, tests, tools, workflows
 not edited. Only chatgpt/unified-fixtures-1 was written. The prompt's requested research gap file is placed
 here because the direct-write instruction limits additions to tests/ and tests/fixtures/.
 
-## Blocking integration corrections
+### Blocking integration corrections (historical)
 
 The no-edit restriction also prevented correcting two files after their first commit. Complete replacement
 variants are supplied with the requested -2 suffix:
@@ -22,7 +58,7 @@ Both originals remain in the branch to obey the no-edit/no-delete rule. An ordin
 will still collect those originals. The integrator must replace or exclude them before this draft is ready.
 Do not mistake the corrected variants for evidence that either version has run.
 
-## Delivered behavior and boundaries
+### Delivered behavior and boundaries
 
 assembler.py emits only bounded authored bytes. It supports register/immediate MOV, ADD and CMP,
 near conditional jumps, direct CALL/JMP, RIP-relative LEA, RET, single-byte NOP runs, table-relative
@@ -52,7 +88,7 @@ projection. It is authored by hand, marked UNVERIFIED and never rewritten automa
 The timing helper measures small fixture construction only. It cannot preempt a hung operation;
 a test-runner deadline must enforce the requested 30-second per-file ceiling during validation.
 
-## Work not reached
+### Work not reached
 
 1. A hermetic PE-byte-to-ProgramIR adapter for these generated images. No new product API is assumed.
    Existing seams are VerifiedArtifactReader.open_path, ir.pe_tables.read_pe_tables, the existing
@@ -88,7 +124,7 @@ a test-runner deadline must enforce the requested 30-second per-file ceiling dur
     network-audit, script-AST, old-reader, schema, accessibility and frozen-smoke checks remain required.
     No release flag or gate status was changed.
 
-## Review and validation order
+### Review and validation order
 
 First integrate the two corrected variants and remove/exclude the two known defective originals.
 Then inspect all new files and independently decode the authored instruction encodings without executing
@@ -100,3 +136,43 @@ PDBs, downloaded Winbindex labels or GPL/AGPL implementation code.
 
 Integrator-only request: confirm appropriate LF attributes for these JSON/Markdown/Python fixtures
 without modifying existing repository attributes during this task.
+
+The continuation below is preserved as written in
+[PR #90's handoff](https://github.com/djshellshoxxx/patchtrace/blob/941c617b6854291e2448cad6d7d5710a24a8543d/tests/unified_support/fixture-gaps.md).
+Its branch and verification statements are historical; the November 2 status above applies to the examined snapshots.
+
+## 2026-10-16 continuation: canonical test collection repairs (PR follow-up)
+
+The two **known integration blockers** listed near the top have been addressed on the
+isolated branch `chatgpt/unified-fixture-collection-fix-20261016`, based on PR #71
+head `161a88345efc6484f4d7809fc6963a0193bd0057`.
+The complete corrected `-2` text was copied into its original canonical pytest
+filename, then the ignored `-2` duplicate deleted. Exact replacements:
+
+- `test_unified_synthetic_pe.py` now uses the Hypothesis
+  `HealthCheck.function_scoped_fixture` suppression for its explicitly reused
+  `tmp_path`; other health checks are still enforced.
+- `test_unified_fixture_gate_u6.py` now creates distinct simulated project
+  lineages through `label_doc` and preserves case metadata for each of its
+  scripted examples.
+
+This is a **collection/fixture correctness repair only**; production unified
+engine behavior, gate thresholds, contracts, source code and live acceptance
+are unchanged. The original superseded files no longer exist on this branch.
+They still exist on PR #71 until this fix is merged into that source branch.
+
+Verification remains **PENDING** until focused tests, `ruff`, and current-head
+Linux/Windows CI run. Start with:
+
+```sh
+QT_QPA_PLATFORM=offscreen python -m pytest -q \
+  tests/test_unified_synthetic_pe.py tests/test_unified_fixture_gate_u6.py
+python -m ruff check src tests tools
+```
+
+Then test all unified synthetic fixture files and the repository-wide suite.
+Review expected G-U3 oracle blockage and fixture-only evidence separately.
+Merge the fix branch into PR #71 only after its own current-head checks pass.
+PR #71 remains a draft and must not be merged into the integration branch
+until full checks, synthetic PE/gate parity and related acceptance pass.
+Do not mark G-U1..G-U8 live gate acceptance from scripted fixtures.

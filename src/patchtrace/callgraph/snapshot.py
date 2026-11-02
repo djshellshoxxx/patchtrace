@@ -15,7 +15,7 @@ from .resolver import Resolver
 from .text import sanitize
 
 MAX_CLAIMS = 250_000  # GL-01
-ALGO = 'callgraph/1'
+ALGO = 'callgraph/2'  # strict terminal ASCII count suffixes; guarded conversions remain unresolved
 SIDES: tuple[Side, ...] = ('older', 'newer')
 
 

@@ -1,0 +1,83 @@
+{
+ "contract": "bench-report/1",
+ "counts_sha256": "85d38771ad435c0a52c3cc70a65e081077162960fe322005ae7c53a212c0d694",
+ "environment": {
+  "cpu_count": 9,
+  "machine": "x86_64",
+  "platform": "Linux-6.18.57-x86_64-with-glibc2.39",
+  "python": "3.12.14",
+  "source_commit": "1f5f0b808149a30d222a35937667b36a5407bc0d",
+  "source_tracked_dirty": 0
+ },
+ "pending": [
+  {
+   "limit": "informational",
+   "limit_value": 0,
+   "needs": "measurement",
+   "stage": "read_model",
+   "what": "persisted read-model build at 10k and 100k rows (no L-35 build-time limit); missing sizes 10000, 100000"
+  },
+  {
+   "limit": "l35_first_paint_ms|l35_sort_ms|l35_filter_ms",
+   "limit_value": 200,
+   "needs": "measurement",
+   "stage": "ui_calls",
+   "what": "first paint, sort and filter at 10k and 100k rows; C6 data() ceilings and 100k L-35 timings; missing sizes 10000, 100000"
+  }
+ ],
+ "rows": [
+  {
+   "checks": [
+    {
+     "detail": "5000 pairs, 5000 machine changes, 5000 nonbenign verdicts, 0 limited",
+     "name": "facts-complete",
+     "ok": true
+    }
+   ],
+   "counts": {
+    "generated_pairs": 5000,
+    "limited": 0,
+    "machine_changed": 5000,
+    "mutation_families": 5,
+    "newer_instructions": 237000,
+    "newer_ir_digest": "3b877496009a237cb51f37f4ddf72a2910e4ab5421ac903607e4418d0eedf614",
+    "nonbenign": 5000,
+    "older_instructions": 237000,
+    "older_ir_digest": "14b69c33400c4b126d4786799826ec3125be040a0783cc4dcdbfa4dcc7d9645e",
+    "pairs": 5000,
+    "requested_insns": 50,
+    "seed": 1,
+    "verdict_material": 1000,
+    "verdict_review": 4000,
+    "with_deltas": 5000,
+    "workload": "synthetic-ir-changed-pairs"
+   },
+   "derived": {},
+   "error": null,
+   "gates": [
+    {
+     "allowed": 300.0,
+     "limit": 60,
+     "name": "l35_facts_5000_s",
+     "observed": 3.9954063539989875,
+     "slack": 5,
+     "unit": "s",
+     "verdict": "pass"
+    }
+   ],
+   "n": 5000,
+   "peak_rss_bytes": 530120704,
+   "seconds": {
+    "context": 0.05077957499815966,
+    "facts": 3.944626779000828,
+    "generate": 6.861592007000581,
+    "ingest": 14.389325119002024,
+    "total": 3.9954063539989875
+   },
+   "stage": "facts",
+   "status": "measured"
+  }
+ ],
+ "slack": 5,
+ "verdict": "pass"
+}

@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import math
+import re
 from typing import Annotated, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, model_serializer, model_validator
@@ -20,6 +21,17 @@ ErrorCode = Literal['PT-SECONDARY-INPUT', 'PT-SECONDARY-PAIR', 'PT-SECONDARY-ORI
                     'PT-SECONDARY-CACHE']
 MAX_ALTERNATIVES_PER_ANCHOR = 8
 MAX_ALTERNATIVES = 50_000
+RZDIFF_ORIENTATION_LIMITATION = 'rz-diff-orientation-unverified'
+RZDIFF_ORIENTATION_WARNING = (
+    'rz-diff 0.9.1 orientation is unverified: its singleton branch reverses side ownership. '
+    'Historical raw evidence is retained; matching votes and endpoint links are unavailable without a verified witness.'
+)
+_RZDIFF_ORIENTATION_AFFECTED = re.compile(r'^0{1,9}\.0{0,8}9\.0{0,8}1(?![0-9])')
+
+
+def rzdiff_orientation_unverified(version: str) -> bool:
+    """Pure known-producer policy; a suffix/version string cannot attest a patched executable."""
+    return _RZDIFF_ORIENTATION_AFFECTED.match(version.strip()) is not None
 
 RZDIFF_LIMITATIONS = (
     'rz-diff similarity is raw-byte Levenshtein: not semantic, sensitive to relocations and address shifts.',

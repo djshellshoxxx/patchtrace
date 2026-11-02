@@ -1,0 +1,15 @@
+{
+  "product_head": "64534b1b1e75245c8582380b1f6187c404549d52",
+  "product_tree": "087ea18b96325c90d1fa1a8581c71e1644f8cebd",
+  "main": "6579ed83211b7ff2039e3152728ac1cddc3e93d6",
+  "full_suite_source": "f005c6674e0d7e7e151668494bb9c5a299f2635b",
+  "full_suite_result": {
+    "passed": 18702,
+    "failed": 3,
+    "skipped": 138,
+    "xfailed": 7,
+    "seconds": 1731.42
+  },
+  "archive_sha256": "b21623aece124f0927364749cdf9374973ba9c1eb11ab86be7268bd186266db3",
+  "publication": "API commit metadata differs; PR body records resulting remote commit and exact tree equality."
+}

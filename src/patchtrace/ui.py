@@ -42,6 +42,7 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 
+from . import ui_profiles as profile_ui
 from .acquisition import quarantine, winbindex
 from .acquisition.contracts import AUTHENTICITY_NOTE, AcquisitionError, validate_file_name
 from .acquisition.transport import BLOB_SUFFIX, METADATA_HOST, SYMBOL_HOST, AcquisitionConsent, Transport
@@ -50,6 +51,7 @@ from .backend import BackendConfig, diagnose, parse_env_passthrough, quarantine_
 from .evidence import build_context, resolve_evidence
 from .gui.qt.codediff import clear_selections, compose_selections, row_selection, view_text
 from .gui.qt.host import PanelHost
+from .gui.qt.project_adoption import adopt_project
 from .gui.qt.theme import DARK
 from .interpretation import interpret, system_prompt
 from .offline_bundle import inspect_offline_bundle, install_offline_bundle
@@ -68,8 +70,10 @@ from .service import ProjectService
 from .tooltips import apply_tooltip, apply_tooltips
 from .ui_bundle_setup import BundleSetup
 from .ui_inspection import InspectionThread, side_summary
+from .ui_new_project import NewProjectDialog, start_project_creation
 from .ui_persistence import commit_and_report
 from .ui_profiles import PROFILE_SETTING, profiles_dir, selected_profile
+from .ui_raw_alignment import RawAlignmentController
 from .ui_symbols import SymbolChoice, config_kwargs, configured_symbol_mode, effective_profile_symbol_mode
 
 REVIEWS = ['unreviewed', 'accepted', 'rejected', 'needs-review']
@@ -77,6 +81,7 @@ CATEGORIES = ['modified', 'added', 'removed', 'ambiguous', 'split', 'merged', 'u
 MAX_VIEW_CHARS = 200_000
 ACTION_TIPS = {
     'Download from Microsoft symbol server…': 'action.acquire',
+    'Investigate KB/CVE locally…': 'action.kb_investigation',
     'Sample': 'action.sample',
     'Series window…': 'action.series',
     'Import JSON': 'action.import_json',
@@ -218,81 +223,6 @@ class Worker(QThread):
             self.result_ready.emit(self.task(self.cancel, self.event_ready.emit))
         except Exception as exc:
             self.failed.emit(str(exc) or type(exc).__name__)
-
-
-class NewProjectDialog(QDialog):
-    def __init__(self, parent=None):
-        super().__init__(parent)
-        self.setWindowTitle('New comparison · explicit older / newer')
-        self.resize(680, 300)
-        layout = QVBoxLayout(self)
-        label = PlainLabel('Select the older artifact on the left and the newer artifact on the right.\n'
-                       'Only static analysis is performed. Originals are preserved.')
-        label.setWordWrap(True)
-        layout.addWidget(label)
-        form = QFormLayout()
-        self.name = QLineEdit('Patch comparison')
-        self.older = ArtifactPathEdit()
-        self.newer = ArtifactPathEdit()
-        self.root = QLineEdit()
-        form.addRow('Project name', self.name)
-        for title, edit, directory, browse_tip in [
-                ('Older PE x64', self.older, False, 'new_project.older_browse'),
-                ('Newer PE x64', self.newer, False, 'new_project.newer_browse'),
-                ('New project directory', self.root, True, 'new_project.root_browse')]:
-            row = QWidget()
-            horizontal = QHBoxLayout(row)
-            horizontal.setContentsMargins(0, 0, 0, 0)
-            horizontal.addWidget(edit)
-            choose = QPushButton('Browse…')
-            apply_tooltip(choose, browse_tip)
-            choose.clicked.connect(lambda checked=False, e=edit, d=directory: self.browse(e, d))
-            horizontal.addWidget(choose)
-            form.addRow(title, row)
-        layout.addLayout(form)
-        swap = QPushButton('Swap older and newer')
-        swap.clicked.connect(self.swap)
-        layout.addWidget(swap)
-        self.error = PlainLabel()
-        self.error.setObjectName('warning')
-        self.error.setWordWrap(True)
-        layout.addWidget(self.error)
-        apply_tooltips(self, {'name': 'new_project.name', 'older': 'new_project.older',
-                              'newer': 'new_project.newer', 'root': 'new_project.root'})
-        apply_tooltip(swap, 'new_project.swap')
-        layout.addWidget(dialog_buttons(self, 'Create project', 'new_project'))
-
-    def browse(self, edit, directory):
-        if directory:
-            parent = QFileDialog.getExistingDirectory(self, 'Choose parent directory')
-            if parent:
-                edit.setText(str(Path(parent) / 'patchtrace-project'))
-        else:
-            value, _ = QFileDialog.getOpenFileName(self, 'Select PE AMD64 artifact', '', 'PE files (*.exe *.dll *.sys);;All files (*)')
-            if value:
-                edit.setText(value)
-
-    def swap(self):
-        old = self.older.text()
-        self.older.setText(self.newer.text())
-        self.newer.setText(old)
-
-    def accept(self):
-        if not self.name.text().strip() or not self.root.text().strip():
-            self.error.setText('Enter a project name and a new project directory.')
-            return
-        if not all(Path(edit.text()).is_file() for edit in [self.older, self.newer]):
-            self.error.setText('Choose two existing binary files. PE format and architecture are validated on creation.')
-            return
-        root = Path(self.root.text())
-        try:
-            occupied = root.exists() and (not root.is_dir() or any(root.iterdir()))
-        except OSError:
-            occupied = True
-        if occupied:
-            self.error.setText('The project directory must be absent or empty.')
-            return
-        super().accept()
 
 
 class AcquisitionDialog(QDialog):
@@ -711,7 +641,7 @@ class ProfilesPanel(QWidget):
         self.list = QListWidget()
         self.list.setAccessibleName('Analysis profiles')
         apply_tooltip(self.list, 'profile.list')
-        self.list.currentItemChanged.connect(lambda *_: self._show_current())
+        self.list.currentItemChanged.connect(lambda *_: profile_ui.profile_selection_changed(self))
         left.addWidget(self.list)
         buttons = QHBoxLayout()
         self.new_button = QPushButton('New')
@@ -797,9 +727,9 @@ class ProfilesPanel(QWidget):
             item = QListWidgetItem(profile.name + (' (built-in, read-only)' if profile.is_default else ''))
             item.setData(Qt.ItemDataRole.UserRole, profile.name)
             self.list.addItem(item)
-        self.list.blockSignals(False)
         names = [p.name for p in profiles]
         self.list.setCurrentRow(names.index(select) if select in names else 0)
+        self.list.blockSignals(False)
         self._show_current()
 
     def selected_name(self) -> str:
@@ -873,10 +803,14 @@ class ProfilesPanel(QWidget):
         self.reload(new.name)
 
     def new_profile(self):
+        if not profile_ui.confirm_profile_leave(self):
+            return
         from .enrichment.profiles import DEFAULT_PROFILE
         self._create_from(DEFAULT_PROFILE, 'profile')
 
     def duplicate_profile(self):
+        if not profile_ui.confirm_profile_leave(self):
+            return
         from .enrichment.profiles import ProfileError
         try:
             source = self.store.get(self.selected_name())
@@ -1519,6 +1453,7 @@ class MainWindow(QMainWindow):
     def _build_actions(self):
         self.new_action = self._action('New', self.new_project, 'Ctrl+N')
         self.acquire_action = self._action('Download from Microsoft symbol server…', self.acquire_project)
+        self.kb_investigation_action = self._action('Investigate KB/CVE locally…', self.investigate_kb)
         self.open_action = self._action('Open', self.open_project, 'Ctrl+O')
         self.sample_action = self._action('Sample', self.open_sample)
         self.series_action = self._action('Series window…', self.open_series)
@@ -1544,7 +1479,7 @@ class MainWindow(QMainWindow):
             toolbar.addAction(action)
         file_menu = self.menuBar().addMenu('Project')
         apply_tooltip(file_menu.menuAction(), 'menu.project')
-        for action in [self.new_action, self.acquire_action, self.open_action, self.sample_action, self.save_action,
+        for action in [self.new_action, self.acquire_action, self.kb_investigation_action, self.open_action, self.sample_action, self.save_action,
                        self.import_action, self.overview_action, self.export_action, self.swap_action]:
             file_menu.addAction(action)
         file_menu.addAction(self.backup_action)
@@ -1750,6 +1685,7 @@ class MainWindow(QMainWindow):
         apply_tooltips(self, {'mode': 'viewer.mode', 'sync_scroll': 'viewer.sync_scroll',
                               'previous_diff': 'nav.previous_hunk', 'next_diff': 'nav.next_hunk',
                               'hunk_list': 'nav.hunk_list'})
+        self.raw_alignment = RawAlignmentController(self, pane, layout)
         self.workspace.addWidget(pane)
 
     def _build_findings(self):
@@ -1857,18 +1793,7 @@ class MainWindow(QMainWindow):
         box.exec()
 
     def set_service(self, service):
-        previous = self.service
-        if previous is not service:
-            self._stop_inspection()
-        self.service = service
-        if previous and previous is not service:
-            previous.close()
-        self.refresh()
-        self.settings.setValue('recent/project', str(service.root))
-        recent = self.settings.value('recent/projects', [], type=list)
-        recent = [str(service.root), *[path for path in recent if path != str(service.root)]]
-        self.settings.setValue('recent/projects', recent[:8])
-        self.refresh_recent()
+        adopt_project(self, service)
 
     def refresh_recent(self):
         self.recent_menu.clear()
@@ -1910,23 +1835,7 @@ class MainWindow(QMainWindow):
             self.refresh()
 
     def new_project(self):
-        dialog = NewProjectDialog(self)
-        if dialog.exec() != QDialog.DialogCode.Accepted:
-            return
-        # SQLite connections remain in their owner thread. Creation closes before GUI-thread adoption.
-        args = (Path(dialog.older.text()), Path(dialog.newer.text()), dialog.name.text().strip(), Path(dialog.root.text()))
-        def create(cancel, event):
-            service = ProjectService.create(*args)
-            root = service.root
-            service.close()
-            return root
-        def adopt(root):
-            if self.worker and self.worker.cancel.is_set():
-                self.job_label.setText('Cancelled · created project retained without opening')
-                self.logs.appendPlainText(f'Project creation finished before cancellation. Retained directory: {root}')
-                return
-            self.set_service(ProjectService.open(root))
-        self.start_job('Creating project', create, adopt)
+        start_project_creation(self, NewProjectDialog)
 
     def acquisition_dialog(self):
         return AcquisitionDialog(self)
@@ -1938,6 +1847,14 @@ class MainWindow(QMainWindow):
         dialog.exec()
         if dialog.service is not None:
             self.set_service(dialog.service)
+
+    def investigation_dialog(self):
+        return self.panels.investigation_dialog()
+
+    def investigate_kb(self):
+        if self.worker is not None or self._close_requested:
+            return
+        self.investigation_dialog().exec()
 
     def open_project(self):
         path = QFileDialog.getExistingDirectory(self, 'Open PatchTrace project', self.settings.value('recent/project', ''))
@@ -2044,6 +1961,7 @@ class MainWindow(QMainWindow):
             self.panels.selection_changed(self.current_match())
 
     def render_match(self, *_):
+        self.raw_alignment.sync()
         match = self.current_match()
         self._render_signals(match)
         self._function_offsets = {}
@@ -2183,6 +2101,9 @@ class MainWindow(QMainWindow):
         artifact = next(a for a in self.project.artifacts if a.side == side)
         text = f'PatchTrace project {self.project.id} / revision {self.project.revision}\n'
         if self._raw_mode():
+            if self.raw_alignment.active():
+                self.raw_alignment.copy(side, text, artifact)
+                return
             raw = self._raw_sides.get(side) if self._current_inspection() is not None else None
             if raw is None or raw.rendered is None:
                 self.statusBar().showMessage('No raw bytes are displayed for this side; nothing copied.')
@@ -2580,6 +2501,9 @@ class MainWindow(QMainWindow):
     def _render_raw(self, match, clamped_from: int | None = None):
         self._hunks = []
         self._hunk_index = -1
+        if self.raw_alignment.active():
+            self.raw_alignment.render()
+            return
         inspection = self._current_inspection()
         if inspection is None:
             self._raw_sides = {}  # never let Copy return bytes from a previous orientation
@@ -2663,6 +2587,7 @@ class MainWindow(QMainWindow):
         if not sizes or offset < 0 or offset >= max(sizes):
             self.statusBar().showMessage('Offset is outside the verified artifact bytes.')
             return
+        self.raw_alignment.toggle.setChecked(False)
         self.raw_scope.blockSignals(True)
         self.raw_scope.setCurrentIndex(SCOPES.index('whole'))
         self.raw_scope.blockSignals(False)
@@ -2709,11 +2634,15 @@ class MainWindow(QMainWindow):
             self.render_match()
 
     def _inspection_failed(self, message, key=None):
-        self._inspection_error = (key or self._project_inspection_key(), message)
+        current = self._project_inspection_key()
+        if current is None or key != current:
+            return
+        self._inspection_error = (key, message)
         self.inspection_status.emit('File inspection failed: ' + message)
         self.logs.appendPlainText('File inspection failed: ' + message)
 
     def _clear_inspection(self):
+        self.raw_alignment.invalidate()
         if self._inspection is not None:
             self._inspection.close()
         self._inspection, self._inspection_key, self._raw_sides = None, None, {}
@@ -2725,10 +2654,13 @@ class MainWindow(QMainWindow):
             if thread.isRunning():
                 alive.append(thread)
             else:
+                if self._inspection_thread is thread:
+                    self._inspection_thread = None
                 thread.deleteLater()
         self._inspection_threads = alive
 
     def _stop_inspection(self):
+        self.raw_alignment.invalidate()
         # Every started thread is cancelled and joined: destroying a running QThread aborts the process.
         for thread in self._inspection_threads:
             thread.cancel.set()
@@ -2920,8 +2852,8 @@ class MainWindow(QMainWindow):
         idle = self.worker is None
         project = bool(self.service)
         match = self.current_match()
-        for action in [self.new_action, self.acquire_action, self.open_action, self.sample_action,
-                       self.setup_action]:
+        for action in [self.new_action, self.acquire_action, self.kb_investigation_action,
+                       self.open_action, self.sample_action, self.setup_action]:
             action.setEnabled(idle)
         for action in [self.run_action, self.import_action, self.export_action, self.save_action, self.swap_action,
                        self.backup_action]:
@@ -3045,6 +2977,7 @@ class MainWindow(QMainWindow):
         for name, splitter in [('workspace', self.workspace), ('vertical', self.vertical), ('code', self.code_split)]:
             self.settings.setValue('desktop/' + name, splitter.saveState())
         self.settings.setValue('desktop/sync', self.sync_scroll.isChecked())
+        self.raw_alignment.shutdown()
         self.panels.shutdown()
         self.settings.sync()
         self._stop_inspection()

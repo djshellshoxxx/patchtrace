@@ -1,0 +1,227 @@
+{
+ "contract": "bench-report/1",
+ "counts_sha256": "f36283e3124174a95b96f4829663cf4fa39090da4aa2d1b76387a04ea53edd8a",
+ "environment": {
+  "cpu_count": 9,
+  "machine": "x86_64",
+  "platform": "Linux-6.18.57-x86_64-with-glibc2.39",
+  "python": "3.12.14",
+  "source_commit": "1f5f0b808149a30d222a35937667b36a5407bc0d",
+  "source_tracked_dirty": 0
+ },
+ "pending": [
+  {
+   "limit": "l35_facts_5000_s",
+   "limit_value": 60,
+   "needs": "measurement",
+   "stage": "facts",
+   "what": "change facts for 5,000 changed pairs; missing sizes 5000"
+  },
+  {
+   "limit": "informational",
+   "limit_value": 0,
+   "needs": "measurement",
+   "stage": "read_model",
+   "what": "persisted read-model build at 10k and 100k rows (no L-35 build-time limit); missing sizes 10000, 100000"
+  }
+ ],
+ "rows": [
+  {
+   "checks": [
+    {
+     "detail": "10000 distinct persisted rows, state U3, 3 sources",
+     "name": "read-complete",
+     "ok": true
+    },
+    {
+     "detail": "10000 shown; 1000 filtered",
+     "name": "ui-operations-correct",
+     "ok": true
+    },
+    {
+     "detail": "504 data() calls, 72 visible cells, ceiling 624",
+     "name": "first_paint-calls",
+     "ok": true
+    },
+    {
+     "detail": "504 data() calls, 72 visible cells, ceiling 624",
+     "name": "sort-calls",
+     "ok": true
+    },
+    {
+     "detail": "504 data() calls, 72 visible cells, ceiling 624",
+     "name": "filter-calls",
+     "ok": true
+    }
+   ],
+   "counts": {
+    "expected_filtered": 1000,
+    "facts_records": 10000,
+    "facts_sha256": "803f0f851d00786fbc0ca50ca83d0671ad1e51054a0afdce224f64512070f829",
+    "filter_correct": 1,
+    "filter_data_calls": 504,
+    "filter_paints": 1,
+    "filter_visible_cells": 72,
+    "filtered_rows": 1000,
+    "first_paint_data_calls": 504,
+    "first_paint_paints": 1,
+    "first_paint_visible_cells": 72,
+    "generated_rows": 10000,
+    "materiality_kinds": 5,
+    "populated_cells": 30000,
+    "qt_platform": "offscreen",
+    "qt_style": "fusion",
+    "qt_version": "6.12.0",
+    "requested_insns": 50,
+    "result_id": "40e8ee18f9f8d15eaac2dee5cedd8b8edc5263ab8a9b0c9577c3b0a293df7768",
+    "rows": 10000,
+    "rows_sha256": "7dc002406a9d8f41883dd5ef6c2e9ad4aee995b336a48960b5778de8c7423616",
+    "seed": 1,
+    "shown_rows": 10000,
+    "sort_correct": 1,
+    "sort_data_calls": 504,
+    "sort_paints": 1,
+    "sort_visible_cells": 72,
+    "sources": 3,
+    "state": "U3",
+    "unique_rows": 10000,
+    "workload": "synthetic-persisted-mixed-rows"
+   },
+   "derived": {},
+   "error": null,
+   "gates": [],
+   "n": 10000,
+   "peak_rss_bytes": 189337600,
+   "seconds": {
+    "filter": 0.007292450001841644,
+    "first_paint": 0.011901500998646952,
+    "prepare": 1.4746954920010467,
+    "read_model": 0.8945498540015251,
+    "sort": 0.01980989400180988
+   },
+   "stage": "ui_calls",
+   "status": "measured"
+  },
+  {
+   "checks": [
+    {
+     "detail": "100000 distinct persisted rows, state U3, 3 sources",
+     "name": "read-complete",
+     "ok": true
+    },
+    {
+     "detail": "100000 shown; 10000 filtered",
+     "name": "ui-operations-correct",
+     "ok": true
+    },
+    {
+     "detail": "504 data() calls, 72 visible cells, ceiling 624",
+     "name": "first_paint-calls",
+     "ok": true
+    },
+    {
+     "detail": "504 data() calls, 72 visible cells, ceiling 624",
+     "name": "sort-calls",
+     "ok": true
+    },
+    {
+     "detail": "504 data() calls, 72 visible cells, ceiling 624",
+     "name": "filter-calls",
+     "ok": true
+    },
+    {
+     "detail": "10k 504 calls; 100k 504 calls",
+     "name": "first_paint-calls-independent-of-n",
+     "ok": true
+    },
+    {
+     "detail": "10k 504 calls; 100k 504 calls",
+     "name": "sort-calls-independent-of-n",
+     "ok": true
+    },
+    {
+     "detail": "10k 504 calls; 100k 504 calls",
+     "name": "filter-calls-independent-of-n",
+     "ok": true
+    }
+   ],
+   "counts": {
+    "expected_filtered": 10000,
+    "facts_records": 100000,
+    "facts_sha256": "eeac170973328eace5597e89cfb0d99b7e6f4f2c67c26548e1fe4753c5dd0ce6",
+    "filter_correct": 1,
+    "filter_data_calls": 504,
+    "filter_paints": 1,
+    "filter_visible_cells": 72,
+    "filtered_rows": 10000,
+    "first_paint_data_calls": 504,
+    "first_paint_paints": 1,
+    "first_paint_visible_cells": 72,
+    "generated_rows": 100000,
+    "materiality_kinds": 5,
+    "populated_cells": 300000,
+    "qt_platform": "offscreen",
+    "qt_style": "fusion",
+    "qt_version": "6.12.0",
+    "requested_insns": 50,
+    "result_id": "40e8ee18f9f8d15eaac2dee5cedd8b8edc5263ab8a9b0c9577c3b0a293df7768",
+    "rows": 100000,
+    "rows_sha256": "41821c463635b79a6728a9668239313109c680a9d3df6b7b6150e62ddf48fb0d",
+    "seed": 1,
+    "shown_rows": 100000,
+    "sort_correct": 1,
+    "sort_data_calls": 504,
+    "sort_paints": 1,
+    "sort_visible_cells": 72,
+    "sources": 3,
+    "state": "U3",
+    "unique_rows": 100000,
+    "workload": "synthetic-persisted-mixed-rows"
+   },
+   "derived": {},
+   "error": null,
+   "gates": [
+    {
+     "allowed": 1000.0,
+     "limit": 200,
+     "name": "l35_first_paint_ms",
+     "observed": 14.837448001344455,
+     "slack": 5,
+     "unit": "ms",
+     "verdict": "pass"
+    },
+    {
+     "allowed": 750.0,
+     "limit": 150,
+     "name": "l35_sort_ms",
+     "observed": 299.83873699893593,
+     "slack": 5,
+     "unit": "ms",
+     "verdict": "pass"
+    },
+    {
+     "allowed": 500.0,
+     "limit": 100,
+     "name": "l35_filter_ms",
+     "observed": 45.04030799944303,
+     "slack": 5,
+     "unit": "ms",
+     "verdict": "pass"
+    }
+   ],
+   "n": 100000,
+   "peak_rss_bytes": 1052618752,
+   "seconds": {
+    "filter": 0.04504030799944303,
+    "first_paint": 0.014837448001344455,
+    "prepare": 16.978389108000556,
+    "read_model": 8.576376231001632,
+    "sort": 0.29983873699893593
+   },
+   "stage": "ui_calls",
+   "status": "measured"
+  }
+ ],
+ "slack": 5,
+ "verdict": "pass"
+}

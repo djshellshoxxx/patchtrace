@@ -1,0 +1,193 @@
+{
+  "date_utc": "2026-10-31",
+  "description": "Real pinned native live_pairs.analyse_pair smoke; not corpus gate acceptance",
+  "labels": {
+    "case": {
+      "smoke_only": true
+    },
+    "contract": "known-answer-labels/1",
+    "digest_sha256": "5eb9855107bfbf5ee6ef0550f5f4a6a8c84fa75e2b6126f3e6ef1625db4a13ba",
+    "family": "authored-fixture",
+    "functions": [
+      {
+        "body": "identical",
+        "change_kind": null,
+        "check": "ok",
+        "file": "tests/fixtures/old.c",
+        "identity": "same",
+        "label": "unchanged",
+        "label_source": "same-source",
+        "name": "read_item",
+        "new_rva": 4096,
+        "new_size": 38,
+        "notes": "",
+        "old_rva": 4096,
+        "old_size": 38,
+        "taxonomy": [],
+        "variant": null
+      }
+    ],
+    "label_source": "same-source",
+    "lineage": "authored-bounds-smoke",
+    "method": "aa-rebuild",
+    "newer": {
+      "build": {
+        "compiler": "Zig Clang",
+        "compiler_version": "Zig 0.17.0",
+        "link_order": "sorted",
+        "opt": "O0",
+        "profile": "mingw-clang",
+        "recipe_digest": "08204ccae22e341e7472833a3abf2a2140d89e880541cdac733492f528119a00",
+        "variant": "freestanding-nosanitize"
+      },
+      "debug_sha256": "f76907f0258502fbb737fd925c6558a5aac5ae47689407bb4c28d908d9565348",
+      "file_name": "old.dll",
+      "image_base": 6442450944,
+      "pdb_sha256": null,
+      "sha256": "f76907f0258502fbb737fd925c6558a5aac5ae47689407bb4c28d908d9565348",
+      "size": 3072,
+      "source": {
+        "commit": null,
+        "git": null,
+        "license_spdx": "MIT",
+        "mutation": null,
+        "ref": null,
+        "suite": "fixture/bounds-check",
+        "version": "v1"
+      }
+    },
+    "notes": [
+      "One compiled authored image supplied on both sides, not independent rebuilds or a Tier R corpus. Endpoint from PE export; extent from PE runtime table; no predicted matches used as truth."
+    ],
+    "older": {
+      "build": {
+        "compiler": "Zig Clang",
+        "compiler_version": "Zig 0.17.0",
+        "link_order": "sorted",
+        "opt": "O0",
+        "profile": "mingw-clang",
+        "recipe_digest": "08204ccae22e341e7472833a3abf2a2140d89e880541cdac733492f528119a00",
+        "variant": "freestanding-nosanitize"
+      },
+      "debug_sha256": "f76907f0258502fbb737fd925c6558a5aac5ae47689407bb4c28d908d9565348",
+      "file_name": "old.dll",
+      "image_base": 6442450944,
+      "pdb_sha256": null,
+      "sha256": "f76907f0258502fbb737fd925c6558a5aac5ae47689407bb4c28d908d9565348",
+      "size": 3072,
+      "source": {
+        "commit": null,
+        "git": null,
+        "license_spdx": "MIT",
+        "mutation": null,
+        "ref": null,
+        "suite": "fixture/bounds-check",
+        "version": "v1"
+      }
+    },
+    "pair_id": "smoke-identical-bounds",
+    "project": "authored-bounds-smoke",
+    "reproducibility": null,
+    "stratum": "aa",
+    "summary": {
+      "absent_functions": 0,
+      "by_body": {
+        "identical": 1
+      },
+      "by_identity": {
+        "same": 1
+      },
+      "by_label": {
+        "unchanged": 1
+      },
+      "disagreements": 0,
+      "functions": 1,
+      "runtime_functions": 0
+    }
+  },
+  "labels_file_sha256": "9ecb2d3302d2120c36ee1b31c1f6772a1c0b8a5009d63292ba26996a66f0784b",
+  "limitations": [
+    "Single authored exported function, same compiled DLL supplied twice; not independently rebuilt images.",
+    "Construction identity from identical bytes and the PE export; extent from the PE runtime-function table; no predicted engine matches used as labels.",
+    "Native Ghidriff completed, project imported, both GZFs retained, IR extracted, real unified pipeline and outcome collection completed in each orientation.",
+    "Not a qualifying Tier R run, different-image orientation test, matching-accuracy estimate, Windows forced-A/A acceptance, air-gap proof or G-U1..G-U8 pass."
+  ],
+  "outcomes": [
+    {
+      "labels_sha256": "5eb9855107bfbf5ee6ef0550f5f4a6a8c84fa75e2b6126f3e6ef1625db4a13ba",
+      "legacy_tools": [
+        "ghidriff"
+      ],
+      "orientation": "forward",
+      "pair_id": "smoke-identical-bounds",
+      "planted": null,
+      "rows": [
+        {
+          "basis": [
+            {
+              "cls": "E-NAME",
+              "component": "K1",
+              "source": "ghidriff",
+              "step": "SymbolsHash",
+              "tier": "A"
+            }
+          ],
+          "cheap_semantic": false,
+          "decision": "matched",
+          "edited": "not-edited",
+          "ghidriff_exact": true,
+          "legacy": [],
+          "materiality": "unchanged",
+          "newer": [
+            4096
+          ],
+          "older": [
+            4096
+          ],
+          "proof": "UNCH/1",
+          "truth": "right"
+        }
+      ],
+      "rows_sha256": "df3861a42bccf115510a30574d476716df5fb660eeff7f2e6e6108613f5d06b5"
+    },
+    {
+      "labels_sha256": "5eb9855107bfbf5ee6ef0550f5f4a6a8c84fa75e2b6126f3e6ef1625db4a13ba",
+      "legacy_tools": [
+        "ghidriff"
+      ],
+      "orientation": "swapped",
+      "pair_id": "smoke-identical-bounds",
+      "planted": null,
+      "rows": [
+        {
+          "basis": [
+            {
+              "cls": "E-NAME",
+              "component": "K1",
+              "source": "ghidriff",
+              "step": "SymbolsHash",
+              "tier": "A"
+            }
+          ],
+          "cheap_semantic": false,
+          "decision": "matched",
+          "edited": "not-edited",
+          "ghidriff_exact": true,
+          "legacy": [],
+          "materiality": "unchanged",
+          "newer": [
+            4096
+          ],
+          "older": [
+            4096
+          ],
+          "proof": "UNCH/1",
+          "truth": "right"
+        }
+      ],
+      "rows_sha256": "df3861a42bccf115510a30574d476716df5fb660eeff7f2e6e6108613f5d06b5"
+    }
+  ],
+  "outcomes_file_sha256": "5622290a3c6685d0fbd78975b715e9fd0a56fff033148009771ecda8b172a3a9",
+  "source_commit": "bc1fdf3830562918cd7884a4e4d1991903214062"
+}

@@ -1,0 +1,15 @@
+"""Real-validator regression for ambiguous native MSRC and CSAF root fields."""
+import json
+from pathlib import Path
+from kbc_k1_support import valid_csaf, IntelligenceAdvisoryPort
+from patchtrace.kbcorrelation.sources.importer import import_bytes
+from patchtrace.kbcorrelation.sources.cvrf import SourceError
+value=valid_csaf()
+value.update(json.loads(Path('tests/fixtures/kbcve/msrc/2024-Aug-CVE-2024-38193.facts.json').read_bytes()))
+try:
+    doc=import_bytes(json.dumps(value).encode(), now='2026-11-01T13:00:00Z', advisory=IntelligenceAdvisoryPort())
+except SourceError as error:
+    assert error.code == 'PT-KBC-SOURCE'
+    print('PASS: mixed native/CSAF refused', error.code, error.message)
+else:
+    raise AssertionError(f'mixed native/CSAF accepted: {doc.source.dialect}, counts={doc.counts()}')

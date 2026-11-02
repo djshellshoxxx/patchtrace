@@ -8,7 +8,7 @@ import tempfile
 from dataclasses import dataclass
 from pathlib import Path
 
-from .ingestion import display_text, inspect_artifact, safe_path
+from .ingestion import inspect_artifact, safe_path
 from .models import AnalysisRun, AnalystAnnotation, ComparisonProject, FunctionMatch, InterpretationRun
 from .normalization import normalize_ghidriff, verify_diff_identity
 from .persistence import ProjectStore, strict_json
@@ -34,26 +34,33 @@ class ProjectService:
 
     @classmethod
     def create(cls, older: Path, newer: Path, name: str, root: Path) -> ProjectService:
+        from .project_creation import CreationPublication, staged_project
+
         root = Path(root).resolve()
-        store = ProjectStore(root, create=True)
+        store = publication = None
         try:
-            artifacts = [inspect_artifact(older, 'older', root), inspect_artifact(newer, 'newer', root)]
-            project = ComparisonProject(name=display_text(name.strip()) or 'Untitled comparison',
-                                        artifacts=artifacts)
-            if artifacts[0].sha256 == artifacts[1].sha256:
-                project.runs.append(AnalysisRun(status='identical', backend='none', backend_version='none',
-                                                settings={'reason': 'Input SHA-256 hashes are identical'}))
-            project = store.save(project)
+            with staged_project(older, newer, name, inspector=inspect_artifact) as (staged_root, project):
+                store = ProjectStore(root, create=True)
+                publication = CreationPublication(store)
+                publication.publish(staged_root, project)
+                project = store.save(project)
             return cls(root, project, store)
-        except BaseException:  # Ctrl+C and SystemExit must not leave a snapshot-less database behind either
-            store.close()
-            # No snapshot was committed; permit retry without presenting a corrupt project. A leftover
-            # that cannot be removed now (antivirus hold, kill) is recycled by the next create().
+        except BaseException:
+            # Cleanup must finish before unlocking, and may remove only this
+            # attempt's still-owned unpublished files. The lock file remains.
             try:
-                (root / 'project.sqlite3').unlink(missing_ok=True)
-            except OSError:
-                pass
+                if publication is not None:
+                    publication.discard_if_unpublished()
+            finally:
+                if store is not None:
+                    store.close()
             raise
+
+    @classmethod
+    def retry_create(cls, older: Path, newer: Path, name: str, root: Path, *, cancel=None) -> ProjectService:
+        from .project_retry import retry_project
+
+        return retry_project(cls, older, newer, name, root, cancel=cancel)
 
     @classmethod
     def open(cls, root: Path, *, maintenance: bool = True) -> ProjectService:

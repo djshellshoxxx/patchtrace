@@ -13,6 +13,11 @@ At PR head `0cf22c9520da6d2841d27c0aa8136f36657aecc6`, review found that every s
 Other review controls: missing native fields resolve diagnostics to an existing parent pointer; the offline XML namespace audit now constructs prefix-to-URI pairs; context construction tries a JSON-locatable CSAF card when a preferred CVRF/XML card cannot be bound and explicitly reports when no card can be sourced. Added regressions cover these cases and preserve raw source dependencies.
 
 Validation on the local PR #153 tree: `PYTHONPATH=.:src:tests QT_QPA_PLATFORM=offscreen python -m pytest -q tests/test_kbc_*.py` passed **1,054 tests**; whole-tree Ruff and `git diff --check` passed. The first focused run had transient failures because existing tests still expected disagreeing snapshots to remain current; the updated behavior and regressions pass in the final KB/CVE run. Current-head hosted checks and independent re-review are pending; this does not qualify the PR for merge or release.
+## 2026-11-02 PR #157 long producer metadata
+
+The credited-output contract's 512-character name/order-key cap and 200-character version cap rejected upstream values that the Ghidriff importer otherwise preserves, causing successful answers to lose score and retention credit. The documented `/1` bounds are now 4,096 characters for names and string order keys and 1,024 for producer versions. No truncation changes the sort key. The existing 64 MiB document limit remains the aggregate bound; values beyond the field caps still fail before scoring. Generated output and credit schemas were regenerated.
+
+Validation on the local PR #157 tree after reconciling current main: all Tier R suites **448 passed, 8 skipped**; whole-tree Ruff and `git diff --check` passed. The 7 live compiler/toolchain probes in the suite were explicitly `BLOCKED` because this POSIX host lacks the required Clang/LLVM/MinGW tools; no live score is claimed. Synthetic adapter/retention checks establish contract behavior, not live engine accuracy. Fresh exact-head CI and independent re-review remain pending.
 
 ## Repaired audit defects
 - Ghidra rejected `runs/.quarantine-<uuid>/raw` with `Path element starting with '.' is not permitted`. Active and normalization-failed run directories now use `quarantine-<uuid>`. Preflight validates every resolved output ancestor, with an actionable error for dot-prefixed names and excessively long Windows output paths. The fake backend reproduces this exact rejection; native Ghidriff confirmation on Windows and clean-user reinstall remain release checks.
@@ -411,6 +416,176 @@ Final runtime integration full run at `8bf483c`: **18,265 passed, 135 skipped, 7
 
 Full d34efeb snapshot before final Qodo repairs: **18,304 passed, 128 skipped, 7 xfailed, 1 failed** in 371.25 s. Only failure: executor denies AF_UNIX socket creation. Final substantive Qodo findings are repaired and focused-tested (see 20261030-consolidation-review.md); a new combined full suite and exact-head GitHub gates follow. Schema regeneration completed without schema-file changes.
 
+## 2026-10-30 controlled branch consolidation — integration lane (pre-final gates)
+
+- **Pinned main at coordinator start:** `a04f5a299a8d4afef023261e52e08d14678cf1e7`. Its exact-head QA and Windows standalone push workflow, [run 41060959610](https://github.com/djshellshoxxx/patchtrace/actions/runs/41060959610), completed **success**. This is **main's baseline evidence**, not proof that later integration commits pass.
+- **Dedicated remote branch:** `integration/controlled-consolidation-20261030` created from that commit. Full conservative branch/PR snapshot is in [`docs/branch-pr-inventory-2026-10-30.md`](branch-pr-inventory-2026-10-30.md): 126 branches in API listing including main/new integration, 28 open PRs. Uncommitted/untracked local worker files and worktrees are not observable through GitHub; their status remains **unknown**.
+- **PR #98 selective source preservation:** copied six unique `docs/wiki/*.md` blobs byte-for-byte from `docs/readme-and-wiki@ad8fbe9f2f041653760c02e9d18a91a66dd11c39` into integration commit `e81adbe882ae6eb2c26a5854b24aa6acff2b27a2`. Adapted the wiki-source reference into the **current** README rather than replacing newer main content (`c307aaad162cff1f4464b62469792ead8d877385`). Original PR #98 and source branch retained. The old PR head had successful Linux and Windows QA, but those are **not** evidence for this new integration branch. Its README text must not overwrite modern main.
+- **PR #61 is not merge-ready:** the observed exact-head checks for `4467d1f3c6e113a7da808a67e8dee9d4aa5083d8` include Windows QA **failure**, Linux QA success, and skipped package/release jobs. It also alters `AGENTS.md` and `CLAUDE.md`. No direct/wholesale integration before root-cause repair and current-contract review.
+- **PR #102 is not merge-ready:** its head `9fddf99e2635e28129b2deda0ff155b00d9ba471` is 13 commits ahead / 416 behind pinned main. It changes code, CLI, resources, release workflow, and packaging and overlaps already merged integration repairs. Keep author's branch untouched; port only reviewed unique, compatible fixes with red/green regressions.
+- **PR #126 is active code, not documentation-only:** observed head `8d958f0a1950a29c1d1cef9525a114654f4c9904`, 9 ahead / 0 behind main, modifies callgraph, KB, detection rules and tests despite a docs-style title; reserve worker branch and require its own exact-head acceptance. R1–R8 research PRs received same-day updates and are preserved untouched.
+- **Not run on new integration branch:** local offscreen pytest, Ruff, schema generation, Linux/Windows CI, live native Ghidriff/secondary engines, Windows frozen smoke. This environment has GitHub repository API access but **no local PatchTrace checkout and no network path for Git clone** (`git ls-remote` fails DNS resolution). Do not interpret these as passing. Open an integration PR to trigger GitHub Actions; verify checks on its exact resulting head before marking ready.
+- **Acceptance stop rule:** main remains unchanged, no code changes may be promoted merely because docs-only code is green. PRs are not closed until all unique source content has merged into main and equivalence is established.
+
+
+## GT-01 executable verification continuation (2026-10-30 Pacific)
+
+This entry supersedes the earlier no-checkout limitation for this session only.
+Reviewed source: PR #140 `b87193d1dd30635fce33986f80ceade136507a1a`, stacked on
+#139; neither draft is accepted or merged by this entry.
+
+- Reproduced both invalid A/A regression fixtures (equal hashes incorrectly labelled
+  `release`) and two Ruff findings; corrected the fixture stratum and import/fixture
+  registration annotations without relaxing the label contract.
+- Independent review found failed extraction staging could poison the next pair or
+  orientation. The new regression first failed twice with `FileExistsError`, then
+  passed after comparison-owned extraction staging. The real project store and
+  unified pipeline remain exercised; the external runner is synthetic in this test.
+- Focused GT-01 suites: **30 passed**. `python -m ruff check src tests tools` and
+  `git diff --check`: clean. Independent review approved the recovery repair.
+- Real Linux static smoke: pinned Ghidriff `4f5d895`, PyGhidra 3.0.2, verified
+  Ghidra 12.0.4 archive, OpenJDK 21.0.12.1, authored one-function PE fixtures
+  compiled with Zig 0.17.0. Changed pair: completed/imported, `read_item` modified,
+  unified `material`. Two independent equal-byte controls: completed/imported,
+  two hash-verified retained GZF sides each, extracted IR, current unified result,
+  `read_item` unchanged. Receipt: [gt01-native-smoke-20261030.json](qa/gt01-native-smoke-20261030.json).
+  No target DLL ran. These tiny exported-name-visible fixtures are not a Tier R,
+  G-U1..G-U8, different-image orientation, Windows or general accuracy claim.
+- An initial native launch failed during JDK auto-selection under the read-only
+  host home; successful attempts use the supported explicit JDK/restricted-env
+  configuration. The failed project/log is retained in session scratch.
+- Initial parallel full run: **18,290 passed, 49 failed, 9 errors, 126 skipped,
+  7 xfailed** in 476.79 s. Socket creation was denied by the shell network sandbox;
+  two subprocess cases resolved the symlinked venv interpreter to its unprovisioned
+  base. A copied venv interpreter and explicit shell network capability made
+  **36 environment rechecks pass**. The rule-export check still sees the sandbox's
+  empty read-only `/tmp/.git` marker as a repository; no production protection was
+  weakened to conceal that host artifact. A final complete run is pending.
+- Prior #140 remote QA run [41152314039](https://github.com/djshellshoxxx/patchtrace/actions/runs/41152314039)
+  failed on those two invalid A/A fixtures on both OSes; its Windows repeated-Qt
+  leg also timed out in discovery. The discovery check passes **30 repetitions**
+  locally, but that is not Windows confirmation and the remote gate stays open.
+
+Remaining: final-source full suite, exact-head Linux/Windows QA and repeated Qt,
+real native corpus workflow with evaluated denominators and all required G-U gates,
+then reviewed integration and release acceptance. Advisory-green parents do not
+establish child-job acceptance.
+## GT-01 local repair checkpoint (2026-10-30, Windows)
+
+Base: PR #140 b87193d1dd30635fce33986f80ceade136507a1a; isolated project venv, Python 3.14.5. Original 7-Zip quarantine inspection confirms 105,077,223 bytes of JSON against a 104,857,600-byte ceiling; hashes and limitations are in [the diagnosis](plans/gt01-native-output-diagnosis-20261030.md). Original files were preserved.
+
+- Red reporting regressions: **7 failed, 2 passed in 54.13 s** against unchanged backend messages (both corrected A/A fixture orientations passed).
+- Focused backend/harness selection: **74 passed, 4 skipped in 89.95 s** across test_jobs, test_unified_live_force_identical, test_unified_live_pairs, test_unified_live_pairs_r1, test_unified_live_workflow and test_unified_live_native_failure_details. Fake external processes are not native acceptance.
+- Full repository Ruff and git diff --check passed.
+- Isolated Windows Qt discovery reproduction: **1 passed in 31.34 s**. The earlier repeated-CI timeout remains unresolved; one pass does not establish stability.
+- Full offscreen suite and a local installed-runtime native A/A smoke are running at this checkpoint. No completed full/native result is claimed. The smoke uses synthetic PE bytes and Ghidra 12.1.4/Ghidriff 1.0.0; it is not the pinned cross-platform G-U matrix.
+- Required new-head Linux/Windows CI, repeated Qt, evaluated native G-U1–G-U8 and applicable independent review remain open. Workflow dispatch is blocked: connector has no dispatch operation, CLI has no authenticated session and the available browser is signed out. No merge or GT-01 completion is claimed.
+
+
+### GT-01 concurrent-source reconciliation
+
+The Windows coordinator advanced #140 to `fb91cff6d91c77a2c539c896b670d81180dcc637`
+while the Linux repair was being verified. A guarded ref update did not move
+that branch. Both append-only QA/todo sections and the Windows output-diagnostic
+repair are retained in the local reconciliation. Combined focused backend/harness
+checks: **87 passed, 3 skipped** in 7.34 s; Ruff and patch hygiene clean.
+The complete Linux run started from the earlier `b705659` source snapshot;
+it cannot attest the subsequent concurrent diagnostic changes. New combined-head
+CI remains required. The independent extraction repair is published separately
+so the active coordinator's branch is not overwritten.
+
+
+## Complete combined continuation check (2026-10-30 Pacific)
+
+Combined tested tree `fc27f77c9c822b114d3479bf36efe89aa2b32c17`:
+**18,384 passed, 1 failed, 126 skipped, 7 xfailed** in 389.17 s. The sole
+failure is the rule-export test observing the sandbox's read-only `/tmp/.git`
+marker. Full Ruff and patch hygiene passed; schema regeneration changed no
+schemas. Exact-head PR #141 native Windows Ghidriff run 41166712588 passed
+all five scoped jobs. Actual Linux live-pair harness same-image controls
+completed both orientations with known-endpoint unchanged outcomes. Neither
+result establishes required corpus or full Windows release acceptance.
+See [continuation verification](qa/continuation-verification-20261030.md) for
+source-tree equivalence, native receipts, failed node, draft PRs and open gates.
+
+## Matching/semantic continuation — October 30 Pacific / October 31 UTC
+
+Candidate #144 builds on #143, preserves original #129/#131/#135 refs and combines
+R2 matching/evidence/CFG repairs with R3/R8 semantic corrections. Extra integrated
+regressions cover LLP64 signed-L radix, exponent floats, typed-key fact consumers,
+and rejection of false machine anchors from type-only literal exchanges. Scoped
+independent reviews approved after repairs. Latest combined focused selection:
+136 passed; counts overlap earlier receipts and are not summed. Ruff passed and
+schema regeneration produced no tracked schema changes. Stable-source full pytest
+started at `c592b680eb1013f02c8472e544bbdb417e11fdde`; results pending here.
+Native corpus/Windows package and release acceptance remain open. See the single
+extended coordinator `docs/plans/milestone-ledger-20261030.md` and its linked
+135-branch/100-registry-entry content inventory. No main merge, source deletion,
+confidence promotion or target execution occurred in this continuation.
+
+Final continuation receipt: `docs/qa/completion-verification-20261031.json`.
+Stable #144 product source 59ff5ad: full suite after competing full runs finished
+**18,446 passed / 1 failed / 136 skipped / 7 xfailed**, 334.80 s. Same sole
+rule-export ancestor-Git-marker failure reproduced on main (18,342 passed /
+1 failed in the complete serial baseline) and in isolation; protection retained.
+Earlier concurrent full run's two timing failures are retained in the receipt;
+both rechecks and later full-suite executions pass unchanged. Unified Qt repeat
+5: **285 passed**. Pinned real Linux smoke: bounds material, signed-L/float/exponent
+review, identical UNCH/1; all five persist backend/GZF/IR/unified results and
+original hashes. These authored visible-name cases are not corpus/Windows/full
+G-U/air-gap acceptance. Initial fixture-setup failures are preserved separately.
+#143 exact-head QA/Qt/Windows package/Linux smoke now passes at a7f13e1; it does
+not validate later #144 changes. #144/#145/#146 and canonical main acceptance
+remain open. See the extended single milestone ledger for exact source/PR/gate
+mapping and pending native dispatch authentication.
+## WIN-1 selective reconciliation (2026-10-30 continuation)
+
+Source: `5429e84` + review repair `78ff0c7` on `codex/windows-branding-reconcile-20261030`; ported from PR #102 commit `9121bbc`, preserving its author attribution and current launcher/extractor checks. No workflow policy or schema changes. Independent review reproduced hidden extra version blocks and duplicate identity fields; generated single-block/single-table/unique-key enforcement now refuses these. QtSvg pinned source notices accompany runtime collection.
+
+| Check | Result | Evidence / limitation |
+|---|---|---|
+| Integrated focused packaging / resources / PE / CLI | PASS | 310 passed in 4.16 s; `work/integrated-focused.log` |
+| Independent resource review | PASS | 64 tests passed on worker `676ca38`; headless CLI imports no Qt; no remaining actionable finding within this scope |
+| Ruff / patch hygiene / dependency consistency | PASS | Full `ruff check src tests tools`, `git diff --check`, pip check |
+| Local initial-main baseline | BLOCKED / interrupted | Product source unchanged from `a04f5a2`; local run showed failures/errors and reached 88% before coordinator termination to avoid duplicating the complete remote baseline. Exit143, no final counts; log retained at `work/baseline-pytest.log`. No local full-baseline pass claimed. |
+| Exact-main remote baseline | PASS | See authoritative run/job counts and URLs in the latest `docs/plans/essential-integration-20261029.md` continuation entry; not candidate evidence |
+| Full combined candidate suite | FAIL (one host-specific fixture) | Frozen source local `7fd095f`, published `015f79cc762f0ebff4cbb700480a44a88e014d9f`, exact tree `956487f11e0798909d956ae7f1a91906ed997c2b`: **18,358 passed, 134 skipped, 7 xfailed, 1 failed**, 1043.41 s. Sole failure: `test_rules_actions.py::test_the_preview_is_exactly_the_file_and_never_replaces`; the host mounts an empty read-only `/tmp/.git` above pytest temporary paths, so the unchanged Git-tree export guard correctly refuses. The unchanged test separately passed (1 in 0.68 s) using a disposable non-Git `/dev/shm` basetemp. No guard/test weakened and no full-suite pass claimed. Logs/XML retained in `work/`. |
+| Linux frozen candidate | PASS | Actual PyInstaller build/self-test, complete `tools/frozen_smoke.py`, wheel owner-mark payload and archive SHA-256 verified. 85,610,436-byte archive SHA-256 `086307c0f9ff3f59ce0780636b5006be999562b402dc96ce52efeb5ce3e79bae`; contains mark, replaceable QtSvg library and upstream notices. Built from the tested source above; retained in `dist/`, not published as a release. |
+| Windows resource embedding / portable / installer | BLOCKED pending exact-source Windows CI | Cannot cross-compile or substitute Linux fixtures for Windows acceptance |
+| Overall essential release / G-U1–G-U8 | BLOCKED | Actual main advisory report has zero evaluated native outcomes; active repair stacks retained, no release claim |
+
+Latest candidate verification is reported with the candidate PR and retained command logs. No release or tag published; no cloud resources provisioned. Development venv and worker source are retained until safe integration/handoff.
+
+Final WIN-1 continuation: [draft PR #147](https://github.com/djshellshoxxx/patchtrace/pull/147) preserves the reviewed/tested product source. This documentation checkpoint updates evidence only; `src`, `tests`, `tools` and `pyproject.toml` are unchanged from the tested source. A symlinked local venv initially made test fixtures that call `Path(sys.executable).resolve()` use the base interpreter without dependencies. A copied venv interpreter fixed the isolated protobuf regression without source/assertion changes; the complete results above are from the corrected environment. The prior partial runs were terminated and are not completion evidence. Exact-head Windows/Linux/native QA remains queued; final run URLs/status live on the PR. No merge/tag/release; no extra cloud VMs provisioned. Root retains the current workspace, committed worker checkout, venv and build/test evidence for native follow-up; the disposable shared-memory test directory was already absent at cleanup.
+## Essential project-safety and offline investigation (2026-10-31)
+
+Candidate branch `codex/essential-project-safety-20261031`, product source through `e2727e6` on main `a04f5a2`. This is separate from branding PR147. Prior main full CI is baseline evidence; no newer source is certified by those runs.
+
+Delivered and reproduced before repair: report export replacing the open project database; export using unsaved state and unbounded project scanning; consented acquisition losing explicit product scope/revision; local pair preview accepting a known ARM64/x86 product for AMD64 files; missing offline KB desktop entry; new-project creation adopting a concurrent creator's project; deferred dialog Close after failures; project adoption closing the original before successful rendering. Tests use synthetic data/fake transports where relevant, never target execution or live-provider evidence.
+
+Focused integrated journey/tooltips/export/helper checks: **58 passed** in11.37s. Worker broad KB+new helper/Qt batch: **940 passed** (overlapping counts). Independent review:35 export/storage,39 KB selection/acquire,22 GUI helper/lifecycle and6 MainWindow entry tests passed on their scoped sources. Whole Ruff/diff hygiene and source desktop self-test PASS; self-test now constructs the offline dialog without import/download/creation. No wire schema/model changes; final generated-schema drift remains checked by the full suite.
+
+Full combined suite and actual frozen Linux candidate are pending on the frozen integrated revision. Historical host failures were not suppressed: copied venv interpreter is retained; ordinary temp directories have ancestor Git markers. A permission-scoped non-Git `/dev/shm` test directory was verified with executable fake-script and unchanged rule-export tests; full candidate testing will use that appropriate environment with loopback permission. `/var/tmp` setup failed read-only and its log is retained. No assertions, thresholds or protections weakened.
+
+Windows native/resource/portable/installer and clean interactive acceptance remain external gates. PR147's earlier Windows QA failed only on SVG CRLF, now repaired with LF attributes; atomic output staging repair is published as `8f4c4a2`. New exact-head checks and Sonar disposition remain pending; no suppression or false-positive claim. Follow current candidate PR for complete result/run URLs and final evidence; do not merge or publish unverified source. Root owns current workspace, copied venv, worker checkouts and build/test logs. No additional cloud VM provisioned.
+
+### Essential candidate full-run follow-up and seam repair
+
+Complete first run at `a394782`: **18,335 passed, 134 skipped, 7 xfailed, 14 failed** in1108.15s. Two real architecture failures were UI line budget/feature import violations. The dialog factory/callbacks now belong to PanelHost and generic transactional adoption to indexed `gui/qt/project_adoption.py`; ui.py is3054lines, below unchanged3077ceiling. The complete host-seam +entry/helper/dialog selection passes51tests, Ruff/diffclean. No testbudget/forbidden-rule changes.
+
+Other12failures were caused by placing offline-installer fixtures under `/dev/shm`, which is deliberately refused as an operating-system directory. All12 exact failing installer/Linux/UI nodes passed unchanged using ordinary `/tmp` (1.76s); logs/nodelist/XML retained. A final full run uses ordinary temp storage and reports any ancestor-Git-marker failure separately; no host guard is bypassed. Linux build/selftest atfirstfrozen source passed and initialized the new dialog without network/import/creation; final frozen build/smoke rerun pending.
+
+PR147 exact8f4c4a2 now has successful Windows/Linux QA, repeatedQt, Windows PEresource/build/frozen/portable/installer lifecycle, Linuxpackage/smokes and all5 nativeGhidriff jobs: QA41182077577/native41182077573. Windows artifact13036931502; these published assets do NOT include the separate essential GUI candidate. Sonar Csecurity finding remains unresolved, not suppressed.
+
+New essential source publication was rejected by automatic approval review: it cited insufficient explicit authorization for external destination djshellshoxxx/patchtrace and the14-failure run. No alternative publication route, force-push, merge or suppression was attempted. Source remains committed locally; concrete final candidate/evidence will be prepared before requesting publication approval. Existing public PR147 is retained unchanged.
+
+### Final essential local verification
+
+Frozen tested product source `024a00bda33e92aca8e6cca4d4e95e6f158a9137`, tree `6e7a02f8321e59868f476d3aed797664f9057c7a`: complete ordinary-temp offscreen run **18,348 passed, 134 skipped, 7 xfailed, 1 failed** in1085.81s. Sole failure is the unchanged rule-export Git-tree guard test because this host places an ancestor `.git` marker over ordinary temporary files. The same unchanged test passed on this final source in scoped non-Git storage. This is not a clean full-suite pass; no guard/assertion/threshold was weakened. The two real GUI architecture failures from the previous run are fixed and independent seam/entry checks pass30tests; full final run contains no other failure. All12 earlier installer-location failures now pass in ordinary temp storage.
+
+Actual final Linux PyInstaller build, dialog-initializing self-test, complete frozen smoke, checksum verification, whole Ruff, dependency check and patch hygiene PASS. Archive `dist/PatchTrace-0.1.0-linux-x86_64.tar.gz`:85,569,222bytes, SHA-256 `a01dd3bae3d13f2b65fabea674405a83c787f331f080946132b4cae86090627d`. Artifact and all source/test evidence are retained locally; `work/essential-final-receipt.json` and `work/essential-final.patch` identify the exact candidate. This documentation-only handoff does not alter tested src/tests/tools/pyproject.
+
+New essential candidate has no published commit/PR: automatic approval review rejected external commit publication to `djshellshoxxx/patchtrace`, citing explicit destination authorization and the then-failing14-test run. Local code failures are resolved; explicit publication approval remains requested before any further GitHub write. No alternate route, force-push, merge or suppression was attempted. Existing PR147 remains at8f4c4a2 with verified native Windows packaging/assets, but unresolved Sonar; its assets are a separate source, not this new offline-workflow build. Global G-U1–G-U8, live-provider/secondary evidence and clean interactive Windows acceptance remain separate unclosed gates. Root retains current workspace/copied venv/committed worktrees/logs and this Linux candidate; no additional cloud instance provisioned.
 ## 2026-11-01 independent backup and Diaphora integrity repairs
 
 Base main `a04f5a299a8d4afef023261e52e08d14678cf1e7`. Issue #121 backup metadata-cache failure reproduced in three tests, including real history deletion after a damaged backup was trusted. Fresh bounded byte hashing now binds reuse and publication to the checked copy; unchanged-byte SQLite checks remain cached. Six regressions cover same-size/restored-mtime edits, verification/publication races, unreadability and mutation of already-read bytes. Root independently ran 41 backup/prune/history/storage/sidecar tests; a second reviewer ran 24 retention/integrity tests. No native Windows claim from Linux results; fresh hashing has linear I/O cost.
@@ -425,6 +600,70 @@ Baseline `a04f5a299a8d4afef023261e52e08d14678cf1e7`: the imported 13 destination
 
 Focused validation: `QT_QPA_PLATFORM=offscreen python -m pytest -q tests/test_export_destination_guard.py tests/test_report_export_backup.py tests/test_service_storage_audit.py` passed; whole-tree Ruff passed. An initial command named nonexistent test files and ran no tests; corrected command above is the evidence. Full suite and native CI remain pending until recorded.
 
+### GT12 benchmark stage completion (2026-11-01)
+
+Independent review cleared benchmark source `1f5f0b8` before serial first-attempt Linux synthetic runs. Facts 5k: 3.995 s; persisted read-model 10k/100k: 0.947/9.330 s (informational); Qt 100k paint/sort/filter: 14.84/299.84/45.04 ms. All existing CI allowances and exact C6 call ceilings pass; sort exceeds its raw 150 ms target but stays below the unchanged 750 ms allowance. Every Qt operation used 504 calls at both sizes. Possible brief overlap with a focused test in the Qt run’s final seconds is recorded. No native/Windows/full G-U5/final-integrated-source claim. Original failing fixture smoke and every initial acceptance report are retained. Details, commands and hashes: [GT12 receipt](qa/gt12-benchmark-20261101.md).
+
+### November 1 corpus safeguards and preregistration identity
+
+Selective comparison of preserved #78/#79/#82/#85 against coordinator source `241f445` confirms missing output persistence, two-sided recipe A/A/noise planner cases and final-run CLI guard. The narrow preregistration identity repair rejects unrecorded/mismatched/ambiguous QA rows before corpus reads, and explicitly keeps rehearsal reports unlocked. Initial regression 18 failed/1 passed; repaired bounded integration 255 passed/1 native-tool skip (68.85 s); full Ruff passes. This is not final-evaluation or numeric-confidence acceptance. Independent review and combined cross-OS checks remain pending. Full source/remaining-work map and evidence: [corpus-safeguards-20261101.md](qa/corpus-safeguards-20261101.md).
+
+Preregistration review follow-up: fenced/commented/indented example rows could still be accepted at first review; 8 new failures reproduced. Excluded them without changing real record identity or locked data. Final bounded selection/tools/constants checks: 74 passed (0.88 s), full Ruff passed; independent final review pending. Historical red evidence retained in the linked corpus safeguard record.
+
+Final preregistration format follow-up: independent review found raw HTML and list-nested code contexts could still resemble lock records. The supported format now requires column-zero rows and rejects unsupported raw HTML/multiline code with a controlled error. Existing QA prose compatibility and final selection/tools/constants checks pass: 99 passed (1.02 s), full Ruff clean. Review source/results are retained in the corpus safeguard record; no real final look was consumed.
+
+Independent preregistration identity review complete: `cancel_fix` cleared source `42a3d5dee13ac4ff87436a66f787c6b3b5e093ad` with 102 focused checks passing (1.40 s), original false-lock probes replayed, source hashes verified and unchanged lineage/frozen/final-gate boundaries confirmed. This supersedes pending-review notes above; integration/full/cross-OS and remaining GT-05 acceptance remain separate.
+
+### November 1 reviewed integration checkpoint and full-suite failures
+
+Product source `64534b1b1e75245c8582380b1f6187c404549d52` (tree `087ea18b96325c90d1fa1a8581c71e1644f8cebd`) adds reviewed identity, MSRC, benchmark, preregistration, RZ quarantine and opt-in RD-F03 alignment. Combined bounded checks: 428 passed (13.77 s); RD root review: 92 passed (0.93 s). Source scopes overlap and are not summed. All source/receipt hashes remain in the dated handoff and linked QA records.
+
+Frozen earlier source `f005c66` full suite: **18,702 passed, 3 failed, 138 skipped, 7 xfailed**, 1,731.42 s. Failures are GUI event pumping, host AF_UNIX EPERM and a refused-source identity expectation under contract review. No retry or suppression. Full Ruff, dependency/protobuf checks and both schema checks passed without drift. [Receipt](qa/full-verification-f005c66-20261101.md) and [original evidence](qa/full-verification-f005c66-20261101.tar.gz). This run excludes later RZ/prereg/RD changes. Overall combined acceptance remains open.
+
+### GT05 normalized output persistence (2026-11-01)
+
+Against checkpoint `06b56a6`, actual CLI reports referenced normalized output digests with no retained source document; original regressions failed 3/3. The narrow #78 reconciliation now uses fresh exclusive run directories and atomic no-overwrite publication, and fails a pair without metrics when evidence cannot be retained. Earlier outputs/reports survive later failures. The actual attention provider exposed an already-produced field/schema mismatch; its bounded ranking key and engine kind now validate without changing original output bytes or scoring. Old strict readers reject these additive `/1` fields/kind safely.
+
+Independent review exposed loss of the ranking field in the production output reader; the one-field reconstruction fix and actual-loader regression preserve it. Final focused checks: **164 passed, 2 native-tool skips** in 3.09 s; whole Ruff/diff clean. All inputs are constructed; production attention import/ranking/loader/replay is exercised, but no native accuracy or real corpus/final evaluation is claimed. Final independent review/integration and verified shard-transfer remain pending. Exact source/license adoption, preserved red/green logs, schema limits and remaining requirements: [output retention receipt](qa/corpus-output-persistence-20261101.md).
+
+Independent review now clears source `ad35469860d402c4dfa86f041be3ce6996323465` (tree `bb7bd51dc64b08cc6fd33d8d7c90f4bf72b47841`): 164 independent passes, 2 native-tool BLOCKED skips in 3.30 s, extra production-reader/failure controls and old-byte/decoder differential all pass. The sole reader finding is closed; exact source hashes match. Evidence-only follow-up preserves the original runs and raw logs. Coordinator integration/cross-OS and verified transfer remain open.
+
+PR151 backup publication follow-up: actual fixed-clock/pending-file regressions2failed before repair; reviewed exclusive-stage/non-replacing publication39 tests passed (independent39 plus live-save failure controls). Prior evidence and no-prune-on-failure preserved; exact newhead CI required. See `docs/qa/backup-publication-collision-20261101.md`.
+
+## Rizin original-runtime witness research (2026-11-01)
+
+Fresh bounded controls on the approved original 0.9.1 Linux archive/member reproduced conditional
+orientation, identical output with reversed inputs, zero/absent-function exit0 diagnostics and the
+source-bound selected-function singleton case. Full raw/control/config/digest evidence is in
+`docs/research/rzdiff-witness-native-20261101.json`; this is research, not GT/native compatibility acceptance.
+All 675 runtime files and six input artifacts remained byte-identical. A privately extracted, verified GDB
+observer failed before inferior startup with host `ptrace: Operation not permitted`; no bypass was attempted.
+The all-function same-run witness remains unproven, so production quarantine and the nonzero live gate remain.
+
+External #154 parser follow-up: actual comment-fragment, whole-digest-cell and inline-code/comment boundaries
+reproduced; escaped-pipe false cells and optional trailing delimiter were also verified. Original new regression
+run:21 failed/61 passed; repaired selection/tools/constants:123 passed. Before-input probes used only synthetic
+protocol/QA files and a mocked corpus boundary. No actual corpus, final look, approval authority or frozen
+protocol changed. Preserved closed #155 overlap was inspected; its intended cases are covered while its
+prefix-comment false-lock regression is refused. [Detailed source/disposition/evidence](qa/prereg-markdown-review-20261101.md).
+
+Root review found an additional escaped-opening backtick false lock on5e008a5, so its earlier approval
+is withdrawn pending follow-up. A closed multiline comment reproduced verification and mocked corpus-boundary
+access. Source-backed opening-escape handling now preserves literal backslashes inside established code;
+new red6 failed/91 passed, repaired selection/tools/constants138 passed (all prior123 included), whole Ruff/diff
+clean. No real corpus or final evaluation was read. Independent exact-follow-up review remains required.
+
+Independent main657 port `522fe1b` plus receipt `5a95772` preserves all reviewed source/schema/test hashes and main's original QA/todo prefixes. Scoped checks plus corpus contract/schema drift pass **188 tests, 2 native-tool BLOCKED skips in 3.90 s**, with actual imports resolved to the new worktree, full Ruff and diff hygiene clean. Independent review transfers unchanged after explicit source/owned-diff equivalence checks. No preregistration branch dependency or remote publication is introduced.
+
+### PR #157 credited replay boundary (2026-11-01)
+
+Independent review reproduced incompatible ordering keys reaching a ranking TypeError, and a valid failed-publication artifact being adopted by the actual loader. New managed runs now finalize explicit successful-report credit and the reader rechecks exact bytes/ownership; preserved failed files are uncredited. Producer scalar validation precedes encoding/scoring on both paths, with unchanged strict limits and in-memory unified compatibility. Legacy unmarked folders remain visibly unverified and can be refused; historical success is not inferred. Initial controls: 11 failed/4 passed; final bounded selection: **237 passed, 2 native-tool BLOCKED skips**, 5 expected legacy warnings in 4.70 s; whole Ruff, pip check and diff clean. No actual corpus/final evaluation was consumed. Independent final review, integration, cross-OS and broader acceptance remain open; see [credited replay receipt](qa/output-credited-replay-20261101.md).
+
+Independent credited-replay review approved source `5c26af904a28dd41aaacb3a60f9826037a85980d` / tree `f57a7dd2c210b773956bf218ad088295a03f93ff`: 119 separate passes, 1 native-tool BLOCKED skip, 11 expected legacy diagnostics in 26.55 s, plus direct strict-scalar/post-link valid-JSON controls and schema/lint checks. The selection includes existing bounded synthetic training-pipeline regressions; no actual corpus/final evaluation or native acceptance is claimed. This supersedes pending review only; integration/cross-OS/transfer and broader safeguards remain open.
+
+## Combined source verification — 2026-11-01 14:32 UTC
+
+Source `78722316df82bd606402c9c8af3db87ab11a3e53`: 216 passed, 1 native-tool PATH skip, 14 expected warnings in 27.55 s for credited replay/persistence/synthetic training/preregistration. Whole Ruff/pip/general+corpus schema/KBC checks passed. Earlier full f005c66 failed 3 tests; its two source findings are now reviewed repairs, with no fresh full run claimed. Original failures retained. [Current evidence](qa/integration-checkpoint2-20261101.json); [current status and ownership](handoff/autonomous-continuation-20261101.md).
 PR151 backup publication follow-up: actual fixed-clock/pending-file regressions2failed before repair; reviewed exclusive-stage/non-replacing publication39 tests passed (independent39 plus live-save failure controls). Prior evidence and no-prune-on-failure preserved; exact newhead CI required. See `docs/qa/backup-publication-collision-20261101.md`.
 
 
@@ -444,8 +683,123 @@ Independent main identity repair: original28 failures reproduced on main; final 
 
 PR156 external-review follow-up: active Budget now reaches refacts identity/flag work; Qt captures validated inputs on owner and resolves new identity hashing in task work before exact-key owner DB lookup/publication. Both defects independently reviewed; main-port79 coordinator checks passed. Original red/independent evidence is retained in `docs/qa/identity-followup-20261101.md`. Existing capture I/O remains owner-side; no full responsiveness/performance claim.
 
+## RD-F03 paired raw UI recovery — 2026-11-02
+
+Fresh implementation from `039c696` after the unpublished workspace source was lost; earlier source/test claims
+do not qualify this implementation. Pure `raw_alignment_view.py` and TaskRunner-based `ui_raw_alignment.py`
+provide opt-in Hex/Binary physical windows, original-window Copy, visible unresolved/EOF reasons and bounded
+span navigation. Default fixed-offset and Base64 views remain covered by the existing integration tests.
+
+The stronger immediate-result geometry regression first failed at both starting widths: 1440 allocated 27 px
+for a 28 px status, and 1100 allocated 35 px for 42 px. Existing child/parent layout allocation order was repaired;
+tests inspect immediate delivery and resize to 960 without event pumping or size-policy overrides. Removing
+only the inspection reap fix reproduced a retained deleted `InspectionThread` C++ wrapper (1 failing regression);
+the fix clears the current pointer only when reaping that exact finished thread. An initial exit-time event-filter
+access to a deleted control was also repaired by removing filters during shutdown and refusing closed events.
+
+Focused command (offscreen, `PYTHONPATH=.:src:tests`):
+`python -m pytest -q tests/test_raw_alignment_view.py tests/test_ui_raw_alignment.py tests/test_alpha_integration.py tests/test_tooltips.py tests/test_representation_alignment.py tests/test_gui_tasks.py tests/test_gui_host_seam.py`.
+Final source result: **191 passed**. Whole `python -m ruff check src tests tools` and `git diff --check` pass;
+a fresh pure-view import loads no Qt modules. Tests include actual `QApplication.quit()` in an isolated subprocess,
+real verified-reader reads, exact physical gutters and Copy reconstruction, EOF/tamper/bounds, all context-change
+stale-result paths, worker-thread capture, public fixed-offset navigation, current tooltip provenance, button/
+keyboard/context-menu Copy and span selection preservation on redraw. Independent review and central integration
+remain separate. No target execution, full-suite, native Windows, DPI, performance or human acceptance is claimed.
+
+## November 2 recovery and reviewed integration
+
+Previous scratch-only full2/native work is unavailable; no outcome is inferred. [Dated continuation](handoff/autonomous-continuation-20261102.md), [machine receipt](qa/resume-checkpoint-20261102.json) and [CI archive](qa/ci-resume-evidence-20261102.tar.gz) preserve actual original failures, #156 exact-tree acceptance/package hashes, fresh stat-API repairs, independent RD/transfer reviews and current gate limits. Combined RD/transfer106 passed18.70s; no new combined full/Windows pass is claimed. All broader accepted work remains open as individually recorded.
+
+## Issue #105 BUG-CG-2 — numeric callee suffix recovery (2026-11-02)
+
+Live [BUG-CG-2 report](https://github.com/djshellshoxxx/patchtrace/issues/105#issuecomment-6487334009) read and
+reproduced on `ab8476c`: `normalize_ghidriff` and `read_project_input` preserve `ReadBuffer-` plus 5000 decimal
+digits, then the actual `build_snapshot` raises Python's integer-string conversion `ValueError`. This is fresh
+evidence; the lost unpublished audit is not used to qualify the fix.
+
+`split_count_suffix` now accepts a complete ASCII decimal suffix and treats a refused integer conversion as
+no suffix. Original text, raw snapshot labels and exact-record precedence remain intact; no interpreter policy
+is changed and no arbitrary nine-digit cap is introduced (the applicable contract had none). Unicode decimal
+digits and a trailing newline no longer establish inferred count identity. Existing 10-digit and 200-digit
+accepted counts remain supported. The resolver-policy cache version becomes `callgraph/2` under WB2 section 7.5;
+wire schemas are unchanged.
+
+Fresh red regressions: **5 failed, 10 passed**, covering real 5000-digit ingestion/snapshot, Unicode and newline
+suffix inference and the previous cache-policy key. Final bounded selection: **220 passed in 3.88 s** using
+`PYTHONPATH=.:src:tests QT_QPA_PLATFORM=offscreen python -m pytest -q tests/test_callgraph_count_suffix_guard.py tests/test_callgraph_labels.py tests/test_callgraph_input.py tests/test_callgraph_pairing.py tests/test_callgraph_snapshot.py tests/test_callgraph_delta.py tests/test_callgraph_dot.py tests/test_callgraph_cli.py tests/test_callgraph_schemas.py`.
+The huge-count regression uses an isolated subprocess with `-X int_max_str_digits=4300` and both caller/callee
+directions; it checks original labels, distinct identities despite display truncation, retained edges and exact
+emitted-record precedence. Whole Ruff and diff hygiene pass; schema regeneration comparison passes in the selection.
+
+This slice addresses **BUG-CG-2 only**, not the whole issue. A separate fresh `cycle_hub` probe confirms BUG-CG-3
+still exposes 65 nodes and `+2 more` with `truncated=False` and no cap note. BUG-CG-1 successor-scan accounting
+still appears in source, but its performance repro was not rerun here. Other #105 rules, KEV/acquisition, KBC,
+strings and PE findings need their own disposition; historical issue comments are not fresh closure evidence.
+Independent review/integration and combined/native gates remain separate; no target binary was executed.
+
+## Issue #105 BUG-CG-3 — truthful call-graph caps (2026-11-02)
+
+Separate follow-up from frozen CG-2 candidate `424e59d`. The real `cycle_hub` fixture again produced 65 displayed
+nodes, 64 edges and `+2 more` with `truncated=False`; the CLI reported complete exit 0. New regressions also
+showed that duplicate focus IDs could consume the node budget before deduplication and hide a distinct root.
+Fresh red selection: **6 failed, 1 passed**. The old snapshot test explicitly expected the incorrect false
+truncation value; it now requires the existing GL-03 partial contract and a cap limitation.
+
+The existing 64-neighbour cap now marks the query partial, keeps its per-origin `more` counts and emits the
+conservative visible note "The view is capped; some nodes or edges may be omitted." Shared frontiers can omit
+the same node, so their counts are not presented as a missing unique-node total. Duplicate roots are deduplicated
+before the node budget. Paired JSON exports retain query limitations; standalone DOT includes a fixed warning
+comment and graph label; actual CLI neighbours and exports return partial exit 3. The Calls panel shows the
+cap note instead of "64 of 64 neighbours", preserves it when an independent Changes task finishes, and clears
+the cap state after an uncapped query. Existing caps and stored schemas are unchanged.
+
+Final bounded correctness selection: **185 passed in 10.03 s**, with
+`PYTHONPATH=.:src:tests QT_QPA_PLATFORM=offscreen python -m pytest -q tests/test_callgraph_cap_truth.py tests/test_ui_callgraph_cap_truth.py tests/test_callgraph_snapshot.py tests/test_callgraph_dot.py tests/test_callgraph_cli.py tests/test_callgraph_schemas.py tests/test_callgraph_inspection.py tests/test_ui_graph_panel.py tests/test_ui_graph_inspection.py tests/test_callgraph_view_model.py::test_every_headline_state_has_its_text tests/test_callgraph_view_model.py::test_notes_follow_the_headline_and_headline_precedence tests/test_callgraph_view_model.py::test_footer_and_state_copy_exact`.
+This includes real synthetic project persistence/CLI export, overlapping/duplicate frontiers, schema regeneration
+comparison, existing DOT goldens/escaping and offscreen Qt delivery order. Whole Ruff and diff hygiene pass.
+No graph path/performance job ran alongside the coordinator's combined suite. Independent review and central
+integration remain separate; CG-1 successor-scan complexity and other #105 findings are not closed by this work.
+No target execution, native Windows or human visual acceptance is claimed.
+
+## November 2 second reviewed recovery wave
+
+Reviewed output completion/transfer preflight, MSRC consensus, callgraph suffix/cap truth, profile/stale-inspection lifecycle and refusal-only backup filtering are integrated. Combined selections106 and163 passed at their pinned sources; source-bound independent receipts and [second checkpoint](qa/resume-followup-checkpoint-20261102.json) record the boundaries. The required frozen4a82fd3 full run remains pending at this entry's preparation and cannot qualify later changes. Card-only source/key identity, creation staging, precise diagnostics, CG1 and native/hosted/full/quality/remaining accepted work remain open.
+
+Completed frozen4a82fd3 local full:19,266passed/128skipped/7xfailed/1hostAF_UNIXfailure in1970.47s. Isolated stdlibcontrol reproducesEPERM; testbytesmatchmain25. Hosted Linux job125172582878 atidentical47e5221ftree passed19,314/49skip/7xfail. [Raw complete JUnit and controls](qa/full-recovered-20261102.tar.gz). Neitherqualifieslaterfollowups; no guard/testweakening.
+
+## November 2, 09:45 UTC checkpoint
+
+Creation/held-lock cleanup, card identity and pointers are reviewed/integrated; root113 and87 related checks passed. Dev-only PyYAML enables35 existing checks; all pass with independent configuration review. Old central Windows8 failures and skipped packages are archived. Backup re-adoption, retry lexical-path review finding and native exporter protobuf failure remain open. See current handoff; later assembled source is unqualified.
+### [CG-1:shared-path-budget] 2026-11-02
+
+- Source investigation began at `1367889d549a4db290b669df4ed97ac20b553428`; issue #105 comment 6487333023. Actual normalized graph -> snapshot -> `find_paths`: 816 nodes / 851 edges (`K=6`, 800 dead successors) copied and examined 202,444 DFS adjacency items despite the 200,000 visit budget, returned `truncated=false`, and made no DFS cancellation callback. Subgraph rebuilding separately read 851 edges, bidirectional reachability 8, reverse distances 51. A 416-node / 451-edge control examined 101,644 DFS items. These are operation counts, not throughput evidence.
+- GL-04 now meters every raw adjacency examination before retrieval across all path phases, including cyclic/dead/excluded candidates. Lazy CSR traversal avoids row copies and complete induced-graph rebuilding. Membership uses the existing immutable listed set plus endpoints; whole-program traversal remains unrestricted. No global/persistent index, schema expansion or new numerical limit.
+- First dedicated red run: 9 failures / 2 passes. The shared-budget implementation passed 11 checks, then moderate phase/cancellation/order coverage grew. An authorized serial run of the existing 60k/447k algorithm gate exposed a real regression: shortest reachability established distance 6 in 738 reads, reverse preparation exhausted the remaining 199,262, and an empty partial result failed the unchanged `paths.paths` assertion (1 failed in 2.53 s).
+- The refined bidirectional pass retains its completed lexicographically first shortest witness from query-local parent links, without another edge scan. An incomplete BFS layer establishes no witness. Forward parents follow FIFO prefix order, not a sort of frontier node IDs; reverse ties choose the smallest forward next hop. Exhaustion preserves enumerated paths, or that witness when enumeration has not produced one. Moderate regressions include 80 seven-node graphs at nine budgets against exhaustive shortest/lexicographic path oracles, explicit contrary frontier/suffix order, precise prepass boundaries, real normalization and actual CLI partial exit 3.
+- Final bounded selection: **82 passed, 3 deselected in 3.00 s** (the two large gates and deep-chain test deliberately excluded from this concurrent slice). The existing 60k/447k algorithm gate was then rerun serially after coordination: **1 passed in 2.50 s**, assertion and 20 s objective unchanged; 446,969 actual edges, exactly 200,000 reads, one valid six-hop simple path retained with `truncated=true`. Query elapsed 0.08668 s on that one instrumented run is recorded only as an observation, not a throughput claim. Whole Ruff and whitespace checks passed. Logs, counters and the moderate reproduction are archived in `docs/qa/callgraph-path-budget-20261102.tar.gz`.
+- Independent exact-source review and central/full integration remain pending. The CLI can resolve one API name to multiple destination identities; its total path work remains at most one 200,000-examination budget per source/destination pair, not one shared command budget. Snapshot construction and target-name lookup are outside that query budget. This does not close the broad #105 tracker or claim native Windows/full-suite/performance acceptance.
 PR #151 post-link admission follow-up (2026-11-02): exact `9c468bc` reproduced real later deletion after failed publication, despite valid SQLite/project/snapshot facts. Final regression file gives 7 failures / 1 pass on that baseline; stage-based admission repair gives 60 related passes (5.68 s), with earlier and foreign files preserved and failed bytes retained outside adoptable publication state. Whole Ruff/diff clean; independent review and integration pending. Evidence, limits and initial probe setup error: [backup-publication-admission-20261102.md](qa/backup-publication-admission-20261102.md).
 
 PR #151 admission review follow-up: independent review blocked `536aebc` because `Path.glob` swallowed pending-stage scan errors. Explicit `os.scandir` now propagates opening/iteration/entry failures to refusal; two author red cases plus three independent error cases are retained. Revised related selection: 63 passed (5.57 s), Ruff/diff clean. Rereview remains required; see the admission QA record and scan evidence archive.
 
+## November 2, 10:20 UTC checkpoint
+
+Reviewed retry, backup admission, Windows fixtures/transfer/schema and raw summary sizing are integrated. Root194 related checks passed at10f24df; later layout/transfer retain independent evidence. Prior9c and6f full Windows/Linux/Qt/native/package gates passed and are archived, but new backup completion and advisory attribution findings remain open. Native origin probe awaits frozen review/release. See authoritative current handoff; no later-tree full or release acceptance.
+
+
+## C13 local full-suite follow-up — November 2, 2026
+
+The exact `c13d3257c88140c23fb585a8a59a4dce81e81928` serial Linux-container run completed **19,497 passed, 128 skipped, 7 xfailed, 3 failed** in 2,238.21 s. One failure was the host-denied AF_UNIX test; a second was a nested test import caused by omitting the documented `PYTHONPATH=.:src:tests`; the third was a stale crash-during-create expectation after creation moved to private staging. The import test passed with its required environment, and the creation stress file passed after its expectation was aligned with staging-before-publication. The full run is not a clean pass; no source guard or acceptance threshold was weakened. Focused dispositions and remaining gates are in `docs/qa/c13-local-full-suite-20261102.md`.
 PR #151 cleanup-completion follow-up (2026-11-02): exact `1f284a1` retained all deleted rows in its valid copy but authorized enrichment pruning while that copy remained undiscoverable. Successful backup return now requires owned-stage removal and observed absence; failures keep every live row and preserve final/foreign evidence. Final regressions: 7 failures / 10 passes on baseline; 76 focused passes on `4bfc2c0`, Ruff/diff clean. Independent review pending; no data-loss or native/full claim. See [backup-completion-20261102.md](qa/backup-completion-20261102.md).
+
+## 2026-11-02 combined current-main reconciliation
+
+The local candidate reconciles published #159 tree `816864d631ec19ac8c0e8a273b18fda42ac01599` with current-main tree `0f90e002704d93e8343568acf0bde443dcc4b2eb`, preserving finite saved scope, field provenance, revision applicability, card fallback, and backup completion. Local versus published commit ancestry is mapped explicitly. The corrupted published delivery tracker was recovered where demonstrable and its missing middle restored from intact base history; both appendices are retained. Focused KB/CVE and backup publication checks: **1,131 passed**; Ruff/diff clean. Full immutable integration, hosted and Windows gates remain open. See [combined-consolidation-20261102.md](qa/combined-consolidation-20261102.md).
+
+Combined portability follow-up (2026-11-02): reproduced the child helper import failure, host-dependent interpretation of the Linux compiler path, and CRLF conversion of all three raw-hashed native-harness source files. Explicit test child paths, POSIX target-path checking and three LF attributes repair those conditions with every pin unchanged. Focused checks: **37 passed**; Git core.autocrlf conversion controls and Ruff/diff clean. Native Windows and final combined gates remain open; see [combined-portability-20261102.md](qa/combined-portability-20261102.md).
+
+Full replay/schema integration (2026-11-02): complete #157/#160 source and receipts are reconciled with candidate shard transfer and managed completion. Metadata limits propagate through outputs, reports, credits and feature rows; all corresponding schemas match. Focused selection: 237 passed, 1 unavailable-native-tool skip, 11 compatibility warnings; whole Ruff/diff clean. Repeated tracker corruption recovered with limits; earlier tracker-base wording corrected without changing restored source. See [combined-replay-integration-20261102.md](qa/combined-replay-integration-20261102.md).
+
+Full protocol integration (2026-11-02): entire #154/#161 branch and unique port/cleanup receipts retained alongside current replay/transfer/version bounds. Gate source matches the reviewed prefix-cleanup branch; original complete visible-cell and before-input guards remain. Focused protocol/tools/constants: 138 passed, 3 legacy-output warnings; whole Ruff/diff clean. No owner approval or locked evaluation is inferred. See [combined-protocol-integration-20261102.md](qa/combined-protocol-integration-20261102.md).
+
+Approved backup/UI integration (2026-11-02): coordinator-approved stable byte observations and wrapped-controls allocation applied unchanged after the full replay/protocol merges, followed by the approved PR90 historical handoff reconciliation. Integrated backup/UI selection: 161 passed; whole Ruff/diff and merged corpus/calibration/transfer schema comparisons passed. Previous Windows failures retain their historical outcomes pending fresh native CI. No full-suite result is claimed. See [combined-approved-fixes-20261102.md](qa/combined-approved-fixes-20261102.md).

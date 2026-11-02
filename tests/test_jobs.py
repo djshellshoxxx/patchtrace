@@ -6,6 +6,7 @@ import sys
 import threading
 import time
 from pathlib import Path
+from types import SimpleNamespace
 
 import pytest
 from liveness_support import heartbeat_code, heartbeat_stopped, wait_for
@@ -181,6 +182,7 @@ def test_json_size_limit_and_untrusted_path(fake_runtime, monkeypatch):
     write_backend(package, '(out/"json"/"old-new.ghidriff.json").write_text("x"*100)\n')
     _, run = run_comparison(config, project, root, threading.Event(), lambda _: None)
     assert run.status == 'failed' and 'oversized' in run.error
+    assert '[output-limit]' in run.error
 
 
 def test_log_redacts_credentials():
@@ -661,3 +663,24 @@ def test_nan_timeout_and_non_integer_limits_are_rejected(tmp_path, bound):
     """NaN never compares >= elapsed (no deadline); a float limit kills the reader thread (the pipe stops draining)."""
     with pytest.raises(ValueError, match='PT-BACKEND'):
         execute(tmp_path, 'pass', **bound)
+
+
+@pytest.mark.parametrize('reason', ['output-limit', 'unsafe-output-path', 'output-check-failed'])
+@pytest.mark.parametrize('during_process', [True, False])
+def test_output_rejection_retains_distinct_reason_and_partial_report(fake_runtime, monkeypatch, reason,
+                                                                   during_process):
+    root, _package, project, config = fake_runtime
+
+    def stopped_process(argv, **_kwargs):
+        raw = Path(argv[argv.index('--output-path') + 1])
+        (raw / 'partial.md').write_text('diagnostic only', encoding='utf-8')
+        return SimpleNamespace(returncode=0, reason=reason if during_process else None, log_tail='')
+
+    monkeypatch.setattr(backend, 'run_process', stopped_process)
+    monkeypatch.setattr(backend, '_output_error', lambda _: None if during_process else reason)
+    path, run = run_comparison(config, project, root, threading.Event(), lambda _: None)
+    assert run.status == 'failed' and f'[{reason}]' in run.error
+    assert (path / 'failure.txt').read_text(encoding='utf-8') == run.error
+    assert (path / 'raw' / 'partial.md').read_text(encoding='utf-8') == 'diagnostic only'
+    assert run.raw_path is None and not project.runs
+    assert not (root / 'runs' / run.id).exists()

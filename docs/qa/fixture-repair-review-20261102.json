@@ -1,0 +1,56 @@
+{
+  "reviewer": "review_resume independent helper",
+  "reviewed_head": "2f69f083482a927454a48c31ec19fadad09f2fa4",
+  "reviewed_tree": "d815f91687cedcb62867c18553b31bb3534a91ce",
+  "base": "178fbeabeb535e874b0212a1ba4cec7f851f50e2",
+  "worktree": "/workspace/scratch/142cb233d750/wt-fixture-repair",
+  "decision": "no blocking findings in the six-test-file fixture alignment repair",
+  "changed_paths": [
+    "docs/qa/combined-fixture-repair-20261102.md",
+    "docs/qa/combined-fixture-repair-20261102.tar.gz",
+    "tests/test_audit2_fixes.py",
+    "tests/test_audit_desktop.py",
+    "tests/test_calibration_tools.py",
+    "tests/test_evidence_panel_service.py",
+    "tests/test_evidence_ui.py",
+    "tests/test_tier_r_eval_engines.py"
+  ],
+  "changed_test_sha256": {
+    "tests/test_audit2_fixes.py": "c78a91a432efe876cb7e1eea1c3e2626316252eca4edef43f7c9ee15d2b4b361",
+    "tests/test_audit_desktop.py": "cee1af6c1dfa7625ad192eed4b553cc0af9cbf0f34a90ee0804e641f53d4172d",
+    "tests/test_calibration_tools.py": "71ea2772bc13173512df26b9892b63005fbac0a4dea99da7ea024c4773ffa45f",
+    "tests/test_evidence_panel_service.py": "2d0ee67d2b76ccbea962673878a1fe447f8e447d0c69b3be73d25e2b91125cc3",
+    "tests/test_evidence_ui.py": "bbfb853e6573ea93053ae66e3d6f7e27c3c9a64e9af18592dbd8123782f7404c",
+    "tests/test_tier_r_eval_engines.py": "06e65c0515ec49cea37b909806e6fefd5c86b2d1c213d6d172188779f6d06190"
+  },
+  "scope": [
+    "Positive constructed Rizin fixture version becomes0.9.0 so intended parse/UI/calibration success and failure paths remain exercised",
+    "Same-shape0.9.1 controls separately require production probe blocking, fake-probe parser orientation refusal, calibration not-comparable/abstention",
+    "Negative controls preserve original row/digest/image ownership; production quarantine and version pin untouched",
+    "Desktop failure expectation now matches actual frozen-journey message; project-close assertion retained"
+  ],
+  "validation": [
+    {
+      "command": "QT_QPA_PLATFORM=offscreen PYTHONPATH=.:src:tests /workspace/scratch/142cb233d750/venv/bin/python -m pytest -q --tb=short tests/test_audit2_fixes.py tests/test_audit_desktop.py tests/test_calibration_tools.py tests/test_evidence_panel_service.py tests/test_evidence_ui.py tests/test_tier_r_eval_engines.py",
+      "result": "127 passed in21.90s"
+    },
+    {
+      "command": "QT_QPA_PLATFORM=offscreen PYTHONPATH=.:src:tests /workspace/scratch/142cb233d750/venv/bin/python -m pytest -q --tb=short tests/test_rzdiff_orientation_20261101.py",
+      "result": "36 passed in0.69s; disjoint from127selection"
+    },
+    {
+      "command": "Ruff changed tests; git diff --check base..head; changed-path inventory",
+      "result": "passed; only6testfiles and2QAartifacts changed"
+    }
+  ],
+  "environment": {
+    "python": "3.12.14",
+    "platform": "Linux",
+    "Qt": "offscreen"
+  },
+  "limitations": [
+    "Constructed fake executables/synthetic calibration identity checks only; not native Rizin compatibility or calibrated-model acceptance",
+    "No nativeWindows/combinedfull-suite claim",
+    "No production target executed or remote review submitted"
+  ]
+}

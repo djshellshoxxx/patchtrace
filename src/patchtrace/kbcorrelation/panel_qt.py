@@ -7,6 +7,7 @@ panel reads stored results only: it opens no network connection, runs no tool an
 """
 from __future__ import annotations
 
+import json
 from collections.abc import Callable
 from pathlib import Path
 
@@ -18,6 +19,7 @@ from ..gui.qt.docks import ControllerBase
 from ..gui.qt.labels import PlainLabel, SafeTextView
 from ..gui.qt.state_view import StateView
 from ..gui.qt.table import ROW_ROLE, VirtualTable
+from ..gui.qt.tasks import TaskFailure
 from ..gui.registry import PanelContext
 from ..gui.table_spec import ColumnSpec, PreparedTable, TableSpec, prepare_table
 from ..gui.text import VIEW_LIMIT, sanitize_text
@@ -48,7 +50,7 @@ def load_report(workspace: Path, project_dir: str, token: object) -> LeadsReport
     from .wiring import build_service
     outcome = leads_outcome(build_service(workspace), RealEngine(), project_dir)
     if 'text' in outcome.result:
-        return LeadsReport.model_validate(outcome.result)
+        return LeadsReport.model_validate_json(json.dumps(outcome.result))
     return build_leads(None, None, alignment=default_alignment())  # no advisory and no ranking: nothing to pair
 
 
@@ -193,11 +195,23 @@ class KbController(ControllerBase):
             return
         key, group, loader = self.key, self.group, self.loader
         workspace = self.workspace or _default_workspace()
+        snapshot = None
+        if loader is load_report:
+            from .adapters.panel_snapshot import capture
+            try:
+                snapshot = capture(self.port.service)
+            except Exception as exc:
+                self._failed(TaskFailure(type(exc).__name__))
+                return
         self.loading = True
         self._render({('refreshing' if self.model else 'loading'): {'noun': NOUN}}, self.model is not None)
 
         def work(token, _report):
-            report = loader(workspace, directory, token)
+            if snapshot is not None:
+                from .adapters.panel_snapshot import load_snapshot
+                report = load_snapshot(snapshot, workspace, token)
+            else:
+                report = loader(workspace, directory, token)
             return (key, report, *_prepare(report, group, token))
         self.tasks.submit(CHANNEL, work, self._loaded, self._failed)
 

@@ -1,0 +1,16 @@
+{
+  "artifact_id": 13083992472,
+  "file": "pr149-linux.zip",
+  "outer_sha256": "f962ea08d0d35dd622a1381ecc4e2216c5b87c667542dd4de12433f831485ec8",
+  "members": [
+    "PatchTrace-0.1.0-linux-x86_64.tar.gz",
+    "PatchTrace-0.1.0-linux-x86_64.tar.gz.sha256"
+  ],
+  "inner_packages": [
+    {
+      "path": "PatchTrace-0.1.0-linux-x86_64.tar.gz",
+      "sha256": "dcc9607eddee0e4ab95aef9e61e304294fb9557246b3d631b5809e0c5038e839",
+      "bytes": 94323276
+    }
+  ]
+}

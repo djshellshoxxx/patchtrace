@@ -1,0 +1,23 @@
+{
+  "remote_main": "ce8c65bf41541cf6adb52289d2a530ce2817a53a",
+  "remote_tracker_blob": "72552207db2bc02d111e2766296e7358b1c1cc16",
+  "remote_tracker_sha256": "49012016598c230cf7f762adb9bf6ea61a5f59503b2a15e006b204c93b229e1b",
+  "common_base_commit": "25c9795bd9cd58bfad855f30594ee3a0c7584cec",
+  "base_tracker_blob": "594d096f29adeda5bedfe40c37c5a5c24e451958",
+  "recovery": "Base64 re-encode verified binary blob, remove exact warning-prefix characters, decode payload with padding; restore damaged/truncated span from common-base tracker; retain every valid new insertion; three-way union with intact candidate.",
+  "removed_encoded_wrapper": "Warningtruncatedoutputoriginaltokencount54858Totaloutputlines1",
+  "damage_restored_from_base": [
+    {
+      "baseline_first_line": 251,
+      "baseline_last_line": 593,
+      "recovered_first_line": 257,
+      "recovered_last_line": 257
+    }
+  ],
+  "recovered_insertions": 4,
+  "reconstructed_main_sha256": "bdbd40058249fd857549d12fdc0a8c0e64a3775809fddff2dbb9ffcfca7c0bbb",
+  "merged_tracker_sha256": "f3a13a5f4c15b4d087d1004f42255dea1279c06894a14de660a31ba5812bf15f",
+  "limitation": "The missing middle of the current-main textual payload is recovered from the intact common base. New text that might have been present only inside that truncated span cannot be inferred.",
+  "snapshot_parent_commit": "63d11d316c70e1f1e83baa80acabd3cf3c4c2245",
+  "correction": "The first receipt mislabeled the snapshot parent as the tracker merge base; the restored blob/range and merge output are unchanged."
+}

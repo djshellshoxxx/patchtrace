@@ -75,12 +75,20 @@ Alternative hypotheses include code optimizer churn, debug/symbol changes, unrel
 
 Store output keyed by input tuple (project ID/rev, old/new SHA, run ID, match-override revision, product_scope_id, KB/CVE edge-set digest, advisory SHA, rules SHA, engine/version/settings, source-coverage digest). An advisory or build lineage revision invalidates derived assessments; immutable raw runs and analyst notes persist. Persist transformed reports with source id plus JSON pointer and code location; default reports exclude raw binary, code and local paths. No user source is transmitted to remote AI without existing separate preview/consent and explicit user action. E0 can reuse existing report export extension; E1 may append optional PILOT/1 section, never replacing original Finding.
 
+E0 context construction must use the investigation's saved finite search scope for CVE/card lookups,
+source snapshots, active revision selection and the edge-set digest. A saved cached-corpus search is
+bounded by its recorded document IDs, not by documents imported later. Unselected sources must not
+enter interpretation or change its digest; selected older snapshots remain usable when a newer
+revision was not selected. Preserve the exact saved coverage in the context. Missing or contradictory
+scope requires an explicit repeat search under SPEC-31-F; no inferred whole-corpus fallback is allowed.
+This rule does not redesign card provenance or claim that a documentary association proves a fix.
+
 Documentary context source identity includes every active document contributing to the selected CVEs' card
 consensus, including card-only snapshots and source-kind groups whose conflict warnings are displayed. These
 contributors come from the same bounded lookup as the cards; superseded, out-of-scope, and unrelated-CVE
 documents are excluded. Union their source digests with the selected edge sources and copy every resulting
 raw object into the attached project. The key includes their document IDs, raw SHA-256 values, kinds, and
-release IDs even when the edge-set digest is unchanged. Key-policy version 2 separates these complete identities
+release IDs even when the edge-set digest is unchanged. Key-policy version 3 includes these complete identities and the card-field references below, separating them
 from older keys; this is an internal identity version, not a wire bundle schema change. Existing persisted
 version-1 bundles remain readable and are not rewritten. Raw cards, source-kind separation, revision selection,
 and saved investigation scope remain unchanged.

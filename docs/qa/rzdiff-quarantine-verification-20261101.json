@@ -1,0 +1,106 @@
+{
+  "base": "241f445bf3e2e1bc4083aac47ac074b3fd3b795b",
+  "head": "e8319b9476898935dd2d3a3259e18982644991ed",
+  "changed_paths": [
+    "docs/specs/secondary-engine.md",
+    "docs/specs/unified-engine/06-adapters.md",
+    "src/patchtrace/calibration/features.py",
+    "src/patchtrace/secondary/contracts.py",
+    "src/patchtrace/secondary/evidence.py",
+    "src/patchtrace/secondary/evidence_view.py",
+    "src/patchtrace/secondary/reconcile.py",
+    "src/patchtrace/secondary/rzdiff.py",
+    "src/patchtrace/unified/compute.py",
+    "src/patchtrace/unified/sources/__init__.py",
+    "src/patchtrace/unified/sources/secondary.py",
+    "tests/fixtures/secondary/rzdiff-0.9.1-native-orientation.json",
+    "tests/test_calibration_runtime.py",
+    "tests/test_cli_secondary_run.py",
+    "tests/test_evidence_view.py",
+    "tests/test_live_rzdiff_check.py",
+    "tests/test_rzdiff_cli_env.py",
+    "tests/test_rzdiff_orientation_20261101.py",
+    "tests/test_secondary_reconcile.py",
+    "tests/test_secondary_rzdiff.py",
+    "tests/test_secondary_scheduler.py",
+    "tests/test_unified_sources.py",
+    "tools/live_rzdiff_check.py"
+  ],
+  "source_sha256": {
+    "docs/specs/secondary-engine.md": "b54f5d59c86eaf250c7ef3b740a615038a66f5aa417e4eff63be979449602280",
+    "docs/specs/unified-engine/06-adapters.md": "1003e25489f5c91ed0ec4b0db09c18b29bcef8f2c67f4f1e11754a8a27d5c48b",
+    "src/patchtrace/calibration/features.py": "6c460700cbef3bd9485055e519dcf74acfbb00c376abb2572d77c3523a0a57ad",
+    "src/patchtrace/secondary/contracts.py": "7654e9b69e18bc3e0719ea68b135c32ac50e68a36b2ab3eaf4636e2413b7c1e9",
+    "src/patchtrace/secondary/evidence.py": "065128ecc43d3c1be34579700a3d3597198b3baa1b60bba049361fff5cebfe4d",
+    "src/patchtrace/secondary/evidence_view.py": "973fa1b14a88d07fba9c4d5f46b60cf930d11f811a07a3fb5d748fbf6071e004",
+    "src/patchtrace/secondary/reconcile.py": "d62c101d3c8a7906e64fe42c4e55f93603d5b21d7f716e5acc54601a3cef7a48",
+    "src/patchtrace/secondary/rzdiff.py": "9947b0702ee5ff183dc38061d1e41740339b21e1f7f2d378e8fb5af6eef0a717",
+    "src/patchtrace/unified/compute.py": "52a14435a2fbb60f3e376379fc0473bc8f973d71f9904730868fce29758271f6",
+    "src/patchtrace/unified/sources/__init__.py": "720ab8d333631fed7bc3a1d8cf1a9f5d25d78aae8e48de19993fb3734e812dc0",
+    "src/patchtrace/unified/sources/secondary.py": "25907a1b4eb04d0e57f23bc190663e5c0cf57c8e50c09f273eba81b5f523d314",
+    "tests/fixtures/secondary/rzdiff-0.9.1-native-orientation.json": "24d32622172ba9bf0ad4b36717d01951f0e28cd2db443b306ce31f191749b0ec",
+    "tests/test_calibration_runtime.py": "fdae762a724fe0eef06160262d2a9c473438a427bcf6779c843afa124f4f394f",
+    "tests/test_cli_secondary_run.py": "e7a6af70b56e4769423c731282af8a400cd5dabd67a1e842b534b36fe7556fed",
+    "tests/test_evidence_view.py": "8fbb0e28c79e3a9676d1b03c2805512f8e185275b55cf31edfdad0ba1cd4bbb9",
+    "tests/test_live_rzdiff_check.py": "68b0a2c4512c86afb44b679510d5403533ad2b4fabc204bda251ada54586e9cd",
+    "tests/test_rzdiff_cli_env.py": "e7676a5905452237b1bb3a0d0455530a54e9bb93299aed255c90858e37ec716b",
+    "tests/test_rzdiff_orientation_20261101.py": "0d8791bde5a5e1f297619335607f6562922aee72c186d351fcc833de6cd15371",
+    "tests/test_secondary_reconcile.py": "120672678f84d493c20dad05960195f97486e2f68c5359ef56fbc525244e669f",
+    "tests/test_secondary_rzdiff.py": "119d1c8d9ac30792a1f6cdffa702556a2ed80b3ba21683f898faadb9d878fda6",
+    "tests/test_secondary_scheduler.py": "61587026ebdb0d534a8e3c1e1dc25682a4e62f906f52a8be46de06765b7777a3",
+    "tests/test_unified_sources.py": "7ccf5a35aaa1eb9abc1e38db2652acdf6e655d6d8a67dec173752bab5b7b9820",
+    "tools/live_rzdiff_check.py": "d2332d3303e7b25200b6091b30461645206742286741b7209355fd9ef6fc1f51"
+  },
+  "historical_replay": {
+    "before": {
+      "recordings": 27,
+      "accepted": 7,
+      "rejected": 20
+    },
+    "after": {
+      "recordings": 27,
+      "accepted": 0,
+      "rejected": 27
+    },
+    "after_error_codes": {
+      "PT-SECONDARY-INPUT": 20,
+      "PT-SECONDARY-ORIENTATION": 7
+    },
+    "new_native_invocations": 0,
+    "original_tool_archive_sha256": "9102249a9f0b6319c5334a2e5cf8d9cc3f2035e1d3def027c41f6a90f647e8cf",
+    "original_executable_sha256": "536987d5d0e5d2a35689f653502dc10f8be8751a46ef2ffd888e8d514ed9712e"
+  },
+  "tests": {
+    "new_recorded_policy_baseline": "9 failed,21 passed",
+    "expanded_consumer_baseline": "10 failed,23 passed",
+    "focused_regression": "217 passed in7.14s",
+    "final_policy_tests": "36 passed in0.78s; overlaps previous batch",
+    "ruff": "all src tests tools passed",
+    "schema_generation": "passed,no drift",
+    "diff_hygiene": "passed",
+    "worktree": "clean"
+  },
+  "scope": [
+    "Known0.9.1 probe unsupported before old scheduler cache; nonempty structurally valid output classified ORIENTATION with exact raw stdout digest.",
+    "Historical raw/model data unchanged; active unified/reconciliation/evidence/calibration/view claims quarantined with explicit warning and no false votes/weak contests/actionable engine-only links.",
+    "Common pure version predicate in contracts avoids importing process/Qt modules into source policy.",
+    "matching/3 invalidates prior unified cache policy; source ownership/hash/version metadata preserved.",
+    "Live harness explicitly blocked with nonzero exit; no workflow or native pin changes.",
+    "Synthetic generic test fixtures use unaffected0.9.0 labels solely for schema/lifecycle/math coverage,not native compatibility. Actual recordings stay0.9.1."
+  ],
+  "limitations": [
+    "This is a partial safety repair,not a verified orientation witness or native compatibility completion.",
+    "No fresh native run,Windows compatibility/fullG-U/GT03 acceptance claimed.",
+    "Only PATH and historical recorded locations were checked for installed tools; broader installation state unknown.",
+    "Existing JSON/ProgramIR/Ghidriff/export metadata cannot prove exact recovered input0 cardinality; identical JSON bytes occur under opposite input orientations.",
+    "Native live-rizin acceptance remains honestly nonpassing while the0.9.1 pin lacks a witness."
+  ],
+  "next_ready_task": "Investigate bounded exact same-version recovered-list preflight using approved Rizin tools/primary source; prove count query and analysis settings match rz-diff pre-serialization list,then add provenance-bound witness harness with positive/negative controls. Do not infer count from output rows,aflj,exports or Ghidra without source proof; do not bypass quarantine with version suffixes.",
+  "independent_review": {
+    "approved_head": "e8319b9476898935dd2d3a3259e18982644991ed",
+    "result": "source approved with explicit partial/native acceptance limits",
+    "focused_tests": "179 passed in4.17s; independent overlapping subset,not additive",
+    "note": "rzdiff-quarantine-independent-review-20261101.md",
+    "root_integration": "pending root combined policy/source/CLI validation"
+  }
+}

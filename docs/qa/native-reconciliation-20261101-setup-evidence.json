@@ -1,0 +1,24 @@
+{
+  "versions": {
+    "patchtrace": "0.1.0",
+    "ghidriff": "1.0.0",
+    "pyghidra": "3.0.2",
+    "JPype1": "1.5.2",
+    "packaging": "25.0",
+    "mdutils": "1.6.0",
+    "ziglang": "0.17.0"
+  },
+  "python_executable": "/workspace/scratch/142cb233d750/native-20261101/venv/bin/python",
+  "compiler_sha256": "7c61539af19fa4082c94848f1c2b57b89e76dc6cfd5bd4c57764c3caf8f82272",
+  "compiler_matches_prior_control": true,
+  "java_home": "/workspace/scratch/142cb233d750/native-20261101/runtime/jdk-21.0.12.1+1",
+  "java_version": "openjdk version \"21.0.12.1\" 2026-08-18 LTS\nOpenJDK Runtime Environment Temurin-21.0.12.1+1 (build 21.0.12.1+1-LTS)\nOpenJDK 64-Bit Server VM Temurin-21.0.12.1+1 (build 21.0.12.1+1-LTS, mixed mode, sharing)\n",
+  "source_worktree": "/workspace/scratch/142cb233d750/wt-integrate",
+  "fixture_sources_match_prior_control": true,
+  "analysis_started": false,
+  "python_is_symlink": false,
+  "driver_sha256": "6dccf2ecda6976295934a2f1916840012bf75d916ff951c9bb1de2f28f4f6267",
+  "source_driver_sha256": "058044475742e3217b85e2e7b35d0e0227f9a4b1ff0f41202630438e5b8ffe0c",
+  "driver_change_scope": "workspace paths only; same five source controls and verdict requirements",
+  "pip_check": "No broken requirements found."
+}

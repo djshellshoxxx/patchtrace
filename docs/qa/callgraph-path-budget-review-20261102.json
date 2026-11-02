@@ -1,0 +1,77 @@
+{
+  "reviewer": "review_resume independent helper",
+  "decision": "No blocking findings in the bounded CG-1 shared path-budget repair",
+  "reviewed_head": "0a7e2ad6c1b4409d585179d185a9249a2d5d3784",
+  "reviewed_tree": "7751514e42c147e04e9b5913804fb48de37b18ce",
+  "base": "1367889d549a4db290b669df4ed97ac20b553428",
+  "worktree": "/workspace/scratch/142cb233d750/wt-callgraph-budget-probe",
+  "changed_paths": [
+    "docs/modules.md",
+    "docs/qa.md",
+    "docs/qa/callgraph-path-budget-20261102.tar.gz",
+    "docs/specs/program-e/WB2-integration-plan.md",
+    "src/patchtrace/callgraph/algo.py",
+    "src/patchtrace/callgraph/csr.py",
+    "src/patchtrace/callgraph/limits.py",
+    "src/patchtrace/callgraph/paths.py",
+    "tasks/todo.md",
+    "tests/test_callgraph_path_budget.py"
+  ],
+  "changed_file_sha256": {
+    "docs/modules.md": "544be1b64420dff74c3347f5b93654797321ee48b1b8a81244ff117fff4d792a",
+    "docs/qa.md": "47ec4ca67d9a3ae947791a4ed7ad62255661affb06f42019de2a6b5e9f726f57",
+    "docs/qa/callgraph-path-budget-20261102.tar.gz": "be3d2408af93a959d4dedd9193b076451d09532b4c2162fb9d9fa5b30f2fc6a6",
+    "docs/specs/program-e/WB2-integration-plan.md": "f644a513c01eae7f76e5ec1e9b4fa340afff84aeecbdcfd5a016cd2616733646",
+    "src/patchtrace/callgraph/algo.py": "3e7648701092d0928f80f40809120dd103fc6f5e33bf0426f1918eaae1561ca1",
+    "src/patchtrace/callgraph/csr.py": "9a05030355894a395cee385646b8c544fa515d140e1d0fbdb101869f2e2a99eb",
+    "src/patchtrace/callgraph/limits.py": "4979cd45a1b8ba3edcdd1b23126e4573141da77f0ab423aaf497b8ce58ea7f4e",
+    "src/patchtrace/callgraph/paths.py": "aec69c8a785cdd2c7084f2a529f3d892124161664129b4f19f4f843a8f27fdff",
+    "tasks/todo.md": "54552228d2519d7a69827a6f2ba2bd25d9fae3eec6e0edd419dcf7c013b6eef8",
+    "tests/test_callgraph_path_budget.py": "e7b2deeb816c8fde372272e52d67be83ee9fd4c89bbadb1fb0c3623118c5a563"
+  },
+  "scope_and_reasoning": [
+    "One query-local _PathGraph charges the existing 200,000 budget before fetching each raw forward or reverse adjacency item across bidirectional shortest reachability, reverse-distance preparation and enumeration. Membership-rejected, dead-end and cyclic candidates consume the same budget.",
+    "Lazy CSR iterators read existing ascending arrays without row slicing or rebuilding an induced graph. The existing immutable listed set filters intermediate nodes while explicit endpoints remain eligible; whole-program traversal uses no filter. Original node order preserves the previous monotone-remap tie order.",
+    "Forward parent discovery processes complete FIFO layers and ascending adjacency, preserving lexicographic full prefixes. Reverse equal-distance parent selection chooses the smallest forward next hop, whose shorter suffix was settled in an earlier layer. Completed meeting layers compare full path candidates by length and tuple; incomplete layers publish no witness.",
+    "When later preparation or enumeration exhausts the budget, returned paths remain a prefix of the deterministic shortest-first result; a completed shortest witness is retained only if enumeration has not produced a path. Partial results carry the existing truncated field plus an explicit work-limit note and CLI exit3.",
+    "Cancellation is checked at query start and before each4,096th charged adjacency retrieval, independent of accepted neighbours or queue-pop progress. Existing standalone reach, shortest-distance, SCC and CSR APIs remain compatible; allowed is a new keyword-only internal path filter.",
+    "No numerical limit, graph schema, persistent/global cache or snapshot remapping was added. The public results remain bounded by the existing requested path count and length."
+  ],
+  "validation": [
+    {
+      "command": "QT_QPA_PLATFORM=offscreen PYTHONPATH=.:src:tests /workspace/scratch/142cb233d750/venv/bin/python -m pytest -q --tb=short tests/test_callgraph_path_budget.py tests/test_callgraph_algo.py tests/test_callgraph_csr.py tests/test_callgraph_leads.py tests/test_callgraph_cli.py tests/test_callgraph_schemas.py -k \"not gate_60k and not deep_chain\"",
+      "result": "82 passed,3 deselected in2.66 seconds. Includes actual normalized graph and CLI partial behavior, phase boundaries, deterministic witnesses, existing NetworkX differential checks and schema equality."
+    },
+    {
+      "command": "QT_QPA_PLATFORM=offscreen PYTHONPATH=.:src:tests /workspace/scratch/142cb233d750/venv/bin/python -m pytest -q --tb=short tests/test_callgraph_algo.py::test_gate_60k_447k_algorithms_within_budget",
+      "result": "The one explicitly authorized serial60k/447k algorithm gate passed in2.22 seconds. Its existing nonempty-path assertion and20-second objective were unchanged. Root was notified immediately upon completion; no second large gate was run."
+    },
+    {
+      "command": "PYTHONPATH=.:src:tests /workspace/scratch/142cb233d750/venv/bin/python /workspace/scratch/142cb233d750/reviews-resume/callgraph_path_budget_controls.py",
+      "result": "Independent400 seeded2..8-node graphs at11 budgets, varied maximum lengths and membership filters:4,400 queries matched a separate BFS oracle;1,286 were partial and457 retained a valid oracle prefix. Direct raw CSR-array instrumentation rejected any over-budget retrieval or slice copy; neither occurred."
+    },
+    {
+      "command": "Same independent script:5,001-edge excluded-candidate cancellation boundary",
+      "result": "Cancellation callback raw-read counts were exactly[0,4095]; PT-GRAPH-CANCEL occurred before the4,096th raw read, including excluded membership candidates."
+    },
+    {
+      "command": "Ruff on changed Python files; git diff --check HEAD^ HEAD; clean source inventory",
+      "result": "Passed; ten changed paths and clean frozen worktree."
+    }
+  ],
+  "independent_artifacts": {
+    "/workspace/scratch/142cb233d750/reviews-resume/callgraph_path_budget_controls.py": "e03aa58cc9acf15d12fd7cc3135cc90df5e201552c014a84a0b4183b1bb98ab0",
+    "/workspace/scratch/142cb233d750/reviews-resume/callgraph-path-budget-control-result.json": "9ddf32d7dcf7d74aec1c71e95249d9bea199ca8bcf24dec3faaec2e20d0aee44"
+  },
+  "environment": {
+    "python": "3.12.14",
+    "platform": "Linux",
+    "Qt": "offscreen"
+  },
+  "limitations": [
+    "The edge budget applies per source/destination query. Multiple CLI API-target identities each receive a budget; snapshot construction and target lookup remain outside it.",
+    "The large gate is one local correctness/timing acceptance result, not a general throughput claim. Exact200,000-read instrumentation on that large graph is author evidence; independent raw-read instrumentation here covers the bounded oracle and cancellation controls.",
+    "The other large CSR gate and deep-chain case were not rerun. No full suite, native Windows, native disassembler, or broad#105 closure claim.",
+    "No repository source edits, target execution, remote mutation, or GitHub approval performed."
+  ]
+}
