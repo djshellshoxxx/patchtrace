@@ -199,6 +199,12 @@ def trusted_backup(root: Path, label: str, *, project_id: str | None = None, sna
     cannot authorize irreversible pruning. It does not repeat SQLite queries.
     """
     for candidate in _candidates(Path(root), label):
+        # Refusal needs no byte read. Rehash only verdicts that could authorize deletion;
+        # the preparatory find_verified_backup path can still verify changed candidates.
+        with _LOCK:
+            entry = _VERIFIED.get(str(candidate))
+        if entry is None or not _acceptable(entry[1], project_id, snapshot_sha, require_tables):
+            continue
         known, facts = _cached(candidate)
         if known and _acceptable(facts, project_id, snapshot_sha, require_tables):
             return candidate
