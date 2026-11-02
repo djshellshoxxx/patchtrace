@@ -283,7 +283,7 @@ S2 notes (for S0b, S1, S5 and the integration owner):
 | unified fusion | src/patchtrace/unified/fusion/{components,arbiter}.py | independence components (union-find over D-tags), evidence classes, claims, contests, groups, deterministic row order; no averaging, no numbers | registry, sources | tests/test_unified_fusion.py |
 | unified S0 facts | src/patchtrace/unified/facts/{__init__,pseudo,channels,verdict}.py | canon/1 pseudo-code, channels C4n/C5t/C6/C8, COS-PSEUDO/1 and anchored-second-channel verdicts | fusion, sources | tests/test_unified_facts.py |
 | unified exchange / compute | src/patchtrace/unified/{exchange,compute}.py | worker request/report models and file helpers; `plan_identity` (result id BEFORE the run), `compute_result`, `run_request` (pure, no project DB) | facts, fusion, sources, store | tests/test_unified_worker.py |
-| unified pipeline | src/patchtrace/unified/pipeline.py | owner side: `make_plan`/`prepare`/`cached`/`execute`/`publish`/`run_unified`; worker child through `jobs.run_process` + C3 `worker_argv`/`worker_env`/OOM rule, L-42 cap; `unified-run` rows; read helpers | compute, exchange, store, jobs, secondary.binexport_run | tests/test_unified_pipeline.py |
+| unified pipeline | src/patchtrace/unified/pipeline.py | owner capture (`capture_plan`/`capture_request`), budgeted task identity resolution (`resolve_plan`/`resolve_request`), synchronous `make_plan`/`prepare`, `cached`/`execute`/`publish`/`run_unified`; worker child through `jobs.run_process` + C3 `worker_argv`/`worker_env`/OOM rule, L-42 cap; `unified-run` rows; read helpers | compute, exchange, store, jobs, secondary.binexport_run | tests/test_unified_pipeline.py, tests/test_unified_plan_capture_20261101.py, tests/test_unified_owner_identity_20261101.py |
 | unified worker / CLI | src/patchtrace/unified/{worker,cli}.py | hidden `unified _worker` (exit codes, `--self-check`); `unified run/show/explain/status`, registered by 4 lines in `patchtrace/cli.py` | compute, exchange, pipeline | tests/test_unified_worker.py, tests/test_unified_cli.py, tests/test_unified_import_dag.py |
 ### [S1:extraction-ir] SPEC-31 S1 built (2026-10-14)
 | Module | Files | Responsibility | Depends on | Verification |
@@ -1193,3 +1193,11 @@ Calls panel (id graph): `callgraph/panel.py` (PanelSpec), `panel_qt.py` (widgets
 |---|---|---|
 | `kbcorrelation/investigation_qt.py` | Offline KB/CVE investigation controls and controller: advisory import, local search, explicit product scope, verified local pair preview and isolated new-project creation over existing service contracts and TaskRunner. No socket APIs or target execution. | `tests/test_ui_kb_investigation.py` |
 
+
+
+## Issue #120 evidence identity repair (2026-11-01; independent main port)
+
+- `unified/keys.py`, `unified/sources/{manual,secondary,__init__}.py`: byte-exact complete source identities, ambiguous manual declarations as abstaining groups, immutable per-input identity/order caches and cooperative preparation budgets. Original secondary entry references stay in atoms; raw file hashes stay upstream provenance.
+- `enrichment/storage.py`, `secondary/__init__.py`, `unified/pipeline.py`: retain already verified immutable body JSON/checksum, parse that authority, transport exact bytes and independently validate them in the worker. Added internal `Entry` fields preserve existing constructor/equality and capture compatibility.
+- `secondary/contracts.py`: validate alternative source/candidate/set engine and version, and exact non-null anchor endpoint. No public field/schema additions.
+- Regression files: `tests/test_unified_evidence_identity_20261101.py`, `test_secondary_alternative_identity_20261101.py`, `test_unified_identity_budget_20261101.py`; the last includes a real Python worker plus project-store/cache round-trip on authored data. No native comparator evidence.

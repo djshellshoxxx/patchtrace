@@ -1,0 +1,149 @@
+{
+  "contract": "patchtrace-independent-main-port/1",
+  "date": "2026-11-01",
+  "base": "6579ed83211b7ff2039e3152728ac1cddc3e93d6",
+  "head": "65857d4aad2a67d1d2a8ede3a4856ba0caba4fcd",
+  "tree": "74ae78e2ab33b8b2976dfc37734d8d73c2183a6a",
+  "branch": "codex/identity-main-repair-20261101",
+  "commits": [
+    "65857d4aad2a67d1d2a8ede3a4856ba0caba4fcd fix: bind unified results to complete immutable source evidence",
+    "1c0e8e48925fafaf813b237c3b6c8c0bf3f8d12f fix: reject inconsistent secondary alternative identities"
+  ],
+  "original_reviewed_commits": [
+    "5db4de9",
+    "25bfc96",
+    "59e80be",
+    "4578c90"
+  ],
+  "dependency_assessment": {
+    "requires_pr144": false,
+    "ported_pr144_parent": false,
+    "omitted_parent_delta": "compute.MATCH_POLICY_VERSION matching/2 and its pass-table-digest hook (4 lines); no ladder/facts/pseudocode/typed-literal or KB desktop code imported",
+    "supported_by": "All target source files except the unrelated compute policy hook already match the reviewed commits parent; 28 original behavioral failures reproduced on canonical main and pass after minimal port. Existing main pipeline/wire/contract tests pass."
+  },
+  "checks": {
+    "baseline_original_defects": {
+      "failed": 28,
+      "passed": 3,
+      "runtime_s": 1.18
+    },
+    "identity_focused": {
+      "passed": 126,
+      "runtime_s": 2.49
+    },
+    "related_integration": {
+      "passed": 141,
+      "deselected": 1,
+      "runtime_s": 6.43
+    },
+    "contracts_import_boundary": {
+      "passed": 141,
+      "runtime_s": 4.45
+    },
+    "existing_real_python_worker": {
+      "passed": 1,
+      "runtime_s": 1.33
+    },
+    "budget_with_new_stored_secondary_real_worker": {
+      "passed": 8,
+      "runtime_s": 1.01
+    },
+    "ruff": "full src tests tools passed",
+    "schema": "tools/generate_schemas.py passed; no generated drift",
+    "diff_check": "passed"
+  },
+  "source_blobs": {
+    "src/patchtrace/secondary/contracts.py": "39f68941be4aa1145ddf84f861e6437a50f524c9",
+    "src/patchtrace/unified/keys.py": "9ad83b782a370d806005b644d0b8fb0167380a39",
+    "src/patchtrace/unified/sources/manual.py": "80fb59010bad6e9a80fb25471eecd56b3427b52b",
+    "src/patchtrace/unified/sources/secondary.py": "65f4bbe707752813c2a7d02d415e02c45e168df6",
+    "src/patchtrace/enrichment/storage.py": "419b518a9cc19f112513359bab5c7cb3f8b208d5",
+    "src/patchtrace/secondary/__init__.py": "ecb83e355da15ea55eff18df4eb4acfda7ddf6f4",
+    "src/patchtrace/unified/compute.py": "bc692d7462dc688e0dd037c4c108632333e47a9e",
+    "src/patchtrace/unified/pipeline.py": "3279786298d1f2c7bba3bd7754bd990dc46449af",
+    "src/patchtrace/unified/sources/__init__.py": "5df581f514cc489ba3c5527758380446de6a9593"
+  },
+  "changed_files": [
+    "docs/modules.md",
+    "docs/qa.md",
+    "docs/specs/multi-engine-orchestration.md",
+    "docs/specs/unified-engine/02-data-model.md",
+    "docs/specs/unified-engine/06-adapters.md",
+    "src/patchtrace/enrichment/storage.py",
+    "src/patchtrace/secondary/__init__.py",
+    "src/patchtrace/secondary/contracts.py",
+    "src/patchtrace/unified/compute.py",
+    "src/patchtrace/unified/keys.py",
+    "src/patchtrace/unified/pipeline.py",
+    "src/patchtrace/unified/sources/__init__.py",
+    "src/patchtrace/unified/sources/manual.py",
+    "src/patchtrace/unified/sources/secondary.py",
+    "tasks/todo.md",
+    "tests/test_secondary_alternative_identity_20261101.py",
+    "tests/test_unified_evidence_identity_20261101.py",
+    "tests/test_unified_identity_budget_20261101.py",
+    "tests/test_unified_sources.py"
+  ],
+  "logs": {
+    "identity-main-red-6579ed8-20261101.log": {
+      "path": "/workspace/scratch/142cb233d750/reconciliation/identity-main-red-6579ed8-20261101.log",
+      "sha256": "46df547ee2990b9ed7385b5e514410be383ba87abe6543f9c0579caee003446e"
+    },
+    "identity-main-focused-green-20261101.log": {
+      "path": "/workspace/scratch/142cb233d750/reconciliation/identity-main-focused-green-20261101.log",
+      "sha256": "1e9daff51f76e0ee80223afe6cca871de06434064ef90fa1ea1fd91adfdf2bdc"
+    },
+    "identity-main-integration-green-20261101.log": {
+      "path": "/workspace/scratch/142cb233d750/reconciliation/identity-main-integration-green-20261101.log",
+      "sha256": "944d4ade7cd4ed90bc428f9efc635ee627bf85d6f1a4f3f6bec34b8c7cf5ce69"
+    },
+    "identity-main-contracts-green-20261101.log": {
+      "path": "/workspace/scratch/142cb233d750/reconciliation/identity-main-contracts-green-20261101.log",
+      "sha256": "089e5cf9a16044e69b7de6a61950fdb74eff91e62ea08b9d6b1c2d70dc2bc5c6"
+    },
+    "identity-main-worker-roundtrip-20261101.log": {
+      "path": "/workspace/scratch/142cb233d750/reconciliation/identity-main-worker-roundtrip-20261101.log",
+      "sha256": "261e0cc667ccb4a186594fae47208424262c49dbe966f15f9627419134973a2c"
+    },
+    "identity-main-budget-worker-green-20261101.log": {
+      "path": "/workspace/scratch/142cb233d750/reconciliation/identity-main-budget-worker-green-20261101.log",
+      "sha256": "c6f0424c4efe4e6d800436e859b4e906c56e845586103df9cde97b82f92a0c1a"
+    },
+    "identity-main-schema-generation-20261101.log": {
+      "path": "/workspace/scratch/142cb233d750/reconciliation/identity-main-schema-generation-20261101.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "pending": [
+    "Root independent review",
+    "Exact-head full pytest under reserved slot",
+    "Applicable remote/native acceptance before publication/merge"
+  ],
+  "native_claim": false,
+  "target_execution": false,
+  "full_suite_claim": false,
+  "git_status": "",
+  "test_environment": {
+    "parent_executable": "/workspace/scratch/142cb233d750/venv/bin/python",
+    "parent_compute": "/workspace/scratch/142cb233d750/wt-identity-main/src/patchtrace/unified/compute.py",
+    "parent_pythonpath": "/workspace/scratch/142cb233d750/wt-identity-main/src:/workspace/scratch/142cb233d750/wt-identity-main/tests",
+    "worker_argv": [
+      "/workspace/scratch/142cb233d750/venv/bin/python",
+      "-P",
+      "-m",
+      "patchtrace"
+    ],
+    "worker_pythonpath": "/workspace/scratch/142cb233d750/wt-identity-main/src",
+    "child_observed": {
+      "executable": "/workspace/scratch/142cb233d750/venv/bin/python",
+      "package": "/workspace/scratch/142cb233d750/wt-identity-main/src/patchtrace/__init__.py",
+      "compute": "/workspace/scratch/142cb233d750/wt-identity-main/src/patchtrace/unified/compute.py",
+      "worker_bootstrap": "/workspace/scratch/142cb233d750/wt-identity-main/src/patchtrace/secondary/binexport_run.py"
+    },
+    "source_head": "65857d4aad2a67d1d2a8ede3a4856ba0caba4fcd",
+    "commands": {
+      "existing_real_worker": "timeout 60s env QT_QPA_PLATFORM=offscreen PYTHONPATH=/workspace/scratch/142cb233d750/wt-identity-main/src:/workspace/scratch/142cb233d750/wt-identity-main/tests /workspace/scratch/142cb233d750/venv/bin/python -m pytest -q tests/test_unified_pipeline.py::test_a_real_child_process_produces_the_same_result_as_the_same_code_in_process -p no:cacheprovider",
+      "new_stored_secondary_worker": "timeout 60s env QT_QPA_PLATFORM=offscreen PYTHONPATH=/workspace/scratch/142cb233d750/wt-identity-main/src:/workspace/scratch/142cb233d750/wt-identity-main/tests /workspace/scratch/142cb233d750/venv/bin/python -m pytest -q tests/test_unified_identity_budget_20261101.py -p no:cacheprovider"
+    }
+  }
+}
