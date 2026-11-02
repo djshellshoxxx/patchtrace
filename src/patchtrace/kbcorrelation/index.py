@@ -293,7 +293,7 @@ class ReverseIndex:
         revision_conflicts: list[tuple[str, str, str, str]] = []
         conflict_docs: dict[tuple, list[ImportedDocument]] = {}
         for doc in picked:
-            if doc.doc_id in active and doc.source.dialect == DIALECT_MSRC:
+            if doc.doc_id in active:
                 conflict_docs.setdefault(_group_key(doc), []).append(doc)
         conflicted_keys: set[tuple[str, str, str, str, str]] = set()
         for key, docs in conflict_docs.items():
