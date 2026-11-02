@@ -219,6 +219,9 @@ def _remediation(index: int, value, at: str, allowed: set[str], limits, problems
         problems.append(Problem('TYPE_INVALID', at + '/Type' if 'Type' in value else at,
                                 'remediation type is not an integer' if 'Type' in value else 'missing Type'))
         return None
+    if kind == REMEDIATION_VENDOR_FIX and 'Description' not in value:
+        problems.append(Problem('ROW_SHAPE', at, 'missing Description for vendor-fix remediation'))
+        return None
     desc = _wrapped(value['Description']) if 'Description' in value else ''
     pids = value.get('ProductID', [])
     if desc is None or not _members(pids):

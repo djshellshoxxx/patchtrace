@@ -111,6 +111,7 @@ def build_bundle(*, investigation_id: str, base_revision: int, lead: Lead, cves:
     unknowns: list[str] = ['KEV listing was not loaded, so exploitation status is unknown.']
     for cve in sorted(set(cves)):
         lookup = index.lookup_cve(cve, scope_id=scope_id, now=now)
+        unknowns.extend(w for w in lookup.warnings if w.startswith('CARD_FACT_CONFLICT:'))
         card = next((c for c in lookup.cards if c.source_kind == 'cvrf'), None) or next(iter(lookup.cards), None)
         edge = next(iter(lookup.edges), None)
         if card is None or edge is None:

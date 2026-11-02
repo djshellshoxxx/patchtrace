@@ -93,6 +93,9 @@ an exact KB per line; other types cannot make vendor-remediation edges. `FixedBu
 the vendor's spelled `Supercedence` field are retained conservatively (comma-separated exact KBs,
 not prose extraction). No URL/title/note scan manufactures remediation facts. Invalid or oversized
 fields are diagnosed without truncating a partial KB into a claim.
+If a Type `2` remediation omits `Description`, report `ROW_SHAPE` at the existing remediation
+object, name the missing field, and skip the row. Other remediation kinds may omit this field;
+their existing handling remains unchanged.
 
 Only numeric product status `3` is mapped to `Known Affected`: the paired official JSON/XML
 capture establishes identical CVE/product memberships. Other numeric values, including `4`, are
@@ -109,6 +112,14 @@ without a zone is diagnosed and is **not** coerced to UTC or retrieval time. A s
 containing native snapshots with unknown revision instants, or tied distinct native snapshots,
 keeps all snapshots active with `REVISION_ORDER_UNKNOWN`; no digest tie-break declares one newest.
 Comparable explicit-zone revisions retain normal latest-instant selection and all prior history.
+For each queried CVE and source kind, lookup card metadata uses only facts on which all selected
+active cards agree. A disagreement in title, stated CWE, or severity context (including absent versus
+present) withholds that field and emits a stable `CARD_FACT_CONFLICT` warning naming the fields.
+Keep agreeing fields, all source cards/raw snapshots, and all existing edges; do not select a metadata
+winner by insertion order, digest, or an unverified revision number. CVRF and CSAF cards remain separate.
+KB/CVE searches report the conflict, and derived context records it among its unknowns so a withheld
+CWE cannot silently become a chosen rule hypothesis. This is conservative presentation within the
+existing card shape, not a snapshot-provenance schema expansion or a resolution of all advisory ambiguity.
 This is a bounded adapter acceptance, not full GT06 completion, complete historical MSRC coverage,
 or evidence that a CVE was repaired in any particular function. The existing 32 MiB implementation
 limit remains unchanged; captures exceeding limits fail explicitly.
