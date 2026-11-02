@@ -1,0 +1,151 @@
+{
+  "source": "cb22780bffbabf0e6fddfbc7562fe20ee699e35e",
+  "source_tree": "33943045ab70b81423458eac5de6e14a028016f8",
+  "base": "aff72cddc902f31a2cf44dea9c48797edabc1c30",
+  "recorded_at": "2026-11-02T08:03:13.138352+00:00",
+  "original_windows": {
+    "python": "3.12.10 x64",
+    "workflow": 41316567247,
+    "job": 124877832666,
+    "passed": 18360,
+    "failed": 60,
+    "errors": 27,
+    "skipped": 81,
+    "xfailed": 6,
+    "observed_failure": "read_output_bytes rejects ordinary retained files with output bytes changed while reading or exceed limit",
+    "decoded_log": {
+      "bytes": 440040,
+      "sha256": "ba1af4b2e8a58b2b707e6e57cc8c5deb9863dfa34afadb43bcb3c0261615c5ca"
+    }
+  },
+  "cause_evidence": {
+    "kind": "exact CPython source-backed inference plus portable modeled regression; pending fresh Windows execution",
+    "references": [
+      "https://github.com/python/cpython/blob/v3.12.10/Modules/posixmodule.c#L2139",
+      "https://github.com/python/cpython/blob/v3.12.10/Python/fileutils.c#L1108",
+      "https://github.com/python/cpython/blob/v3.12.10/Python/fileutils.c#L1233",
+      "https://github.com/python/cpython/issues/157671"
+    ]
+  },
+  "checks": {
+    "red": {
+      "failed": 1,
+      "passed": 14,
+      "seconds": 0.69
+    },
+    "focused": {
+      "passed": 100,
+      "warnings": 3,
+      "seconds": 1.54
+    },
+    "existing_synthetic_training": {
+      "passed": 34,
+      "skipped": 1,
+      "warnings": 8,
+      "seconds": 27.49,
+      "skip": "native LLVM tools not installed/on PATH"
+    },
+    "whole_ruff": "passed",
+    "pip_check": "passed",
+    "diff_check": "passed",
+    "initial_combined_attempt": "Tool reported exit0 but original log ended mid-progress without summary or JUnit; unqualified, preserved, not counted"
+  },
+  "commands": [
+    "QT_QPA_PLATFORM=offscreen PYTHONPATH=.:src:tests /workspace/scratch/142cb233d750/venv/bin/python -m pytest -q --tb=short tests/test_tier_r_output_stat_compat.py",
+    "QT_QPA_PLATFORM=offscreen PYTHONPATH=.:src:tests /workspace/scratch/142cb233d750/venv/bin/python -m pytest -q --tb=short tests/test_tier_r_output_stat_compat.py tests/test_tier_r_credited_replay.py tests/test_tier_r_output_persistence.py",
+    "QT_QPA_PLATFORM=offscreen PYTHONPATH=.:src:tests /workspace/scratch/142cb233d750/venv/bin/python -m pytest -q --tb=short tests/test_train_pipeline.py --junitxml=/workspace/scratch/142cb233d750/reconciliation/output-windows-train.xml"
+  ],
+  "artifacts": {
+    "output-windows-stat-red.log": {
+      "bytes": 941,
+      "sha256": "ffab0d4088ce0886f468dbdd0c840b25563678f3dea9058ca511c237e1f4d710"
+    },
+    "output-windows-stat-green.log": {
+      "bytes": 83,
+      "sha256": "295b31f4c3f0c0588829608dc7a769dfcd5360384b55274c9998c371f34a6034"
+    },
+    "output-windows-stat-focused.log": {
+      "bytes": 939,
+      "sha256": "cde182f08adbebf9bfe99ebc2ffe129fbe718f4a83a620889094f20f7995bd3c"
+    },
+    "output-windows-train.log": {
+      "bytes": 1988,
+      "sha256": "e5053758ae5574320b0d4ba844835f2d22a35c4370319eea076729b1a3a548b5"
+    },
+    "output-windows-train.xml": {
+      "bytes": 5184,
+      "sha256": "291ca05508a66e67b0b0471a9944dc0bea6b3be744953c1c8f6e1877dac0d203"
+    },
+    "job-124877832666.log.gz": {
+      "bytes": 50799,
+      "sha256": "b4ecf50ce30ea738601226252b89d98f80ab8b668f0a4efe5128eb31f10701c5"
+    },
+    "output-windows-review-20261102.json": {
+      "bytes": 2141,
+      "sha256": "056fa836edb4c2790e6ce0858ba29c3cfb0f76b4df1f6efc555e48658e2681ba"
+    },
+    "output-windows-review-20261102.md": {
+      "bytes": 901,
+      "sha256": "69435281ad0a421fa44f01b0ca977d97e3cca4a0a5d7ea70e83d9d7bfb89b3d6"
+    },
+    "independent_read_races.py": {
+      "bytes": 3107,
+      "sha256": "762111202334518f5f2f6d716d5b5d43763582eeddb5d1d042001c23a220fb98"
+    },
+    "output-windows-stat-20261102.tar.gz": {
+      "bytes": 56838,
+      "sha256": "c11d909706749bfcbb5c91e29ab0aee7780e919c41a48f8af43f2b106a0c9610"
+    }
+  },
+  "limitations": [
+    "No fresh native Windows result yet",
+    "No full-suite, native corpus, held-out final or performance acceptance",
+    "Separate generic Sonar output-path finding remains unresolved"
+  ],
+  "independent_review": {
+    "disposition": "No blocking finding in source cb22780b; not a formal GitHub approval or native acceptance",
+    "receipt": {
+      "reviewer": "review_resume independent helper",
+      "reviewed_head": "cb22780bffbabf0e6fddfbc7562fe20ee699e35e",
+      "reviewed_tree": "33943045ab70b81423458eac5de6e14a028016f8",
+      "base": "aff72cddc902f31a2cf44dea9c48797edabc1c30",
+      "worktree": "/workspace/scratch/142cb233d750/wt-output-windows",
+      "decision": "no blocking findings in the bounded Windows stat compatibility repair",
+      "source_sha256": "84681fd6a27dcba8caafbc2ffa638b767776a7ff64e937a5b57ecfd3cd2e2c00",
+      "scope": [
+        "read_output_bytes compares full versions within each stat API family",
+        "cross-family comparison retains device/inode/size/mtime and excludes ctime only",
+        "publication, nonreplacement, cleanup ownership, canonical digest and successful-report credit paths unchanged"
+      ],
+      "validation": [
+        {
+          "command": "QT_QPA_PLATFORM=offscreen PYTHONPATH=.:src:tests /workspace/scratch/142cb233d750/venv/bin/python -m pytest -q --tb=short tests/test_tier_r_output_stat_compat.py tests/test_tier_r_output_persistence.py tests/test_tier_r_credited_replay.py",
+          "result": "100 passed, 3 LegacyOutputWarning warnings in 1.75s"
+        },
+        {
+          "command": "PYTHONPATH=.:src:tests /workspace/scratch/142cb233d750/venv/bin/python /workspace/scratch/142cb233d750/reviews-resume/independent_read_races.py output",
+          "result": "same-byte same-size restored-mtime pathname replacement during bounded read refused; original and replacement retained"
+        },
+        {
+          "command": "python -m ruff check tools/calibration/tier_r/output_store.py tests/test_tier_r_output_stat_compat.py",
+          "result": "All checks passed"
+        },
+        {
+          "command": "git diff --check base..head",
+          "result": "passed"
+        }
+      ],
+      "control_script_sha256": "762111202334518f5f2f6d716d5b5d43763582eeddb5d1d042001c23a220fb98",
+      "environment": {
+        "python": "3.12.14",
+        "platform": "Linux"
+      },
+      "limitations": [
+        "Portable API-semantic model and real Linux file controls, not native Windows acceptance",
+        "No remote GitHub review submitted",
+        "No full-suite/performance/native job repeated",
+        "Required exact-head Windows QA still open"
+      ]
+    }
+  }
+}

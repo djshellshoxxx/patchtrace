@@ -869,3 +869,10 @@ Done: dock with state matrix, consent, import, changes, copy, go to CVE. Open: r
 - [x] Preserve old no-key bytes/ranking and private in-memory unified support; keep persisted engine vocabulary unchanged; expose legacy unmarked replay as unverified rather than infer historical credit.
 - [ ] Independent final review, coordinator integration/cross-OS and verified transfer integration remain pending; broader locked training/final-run/promotion safeguards are not completed by this slice. See `docs/qa/output-credited-replay-20261101.md`.
 - [x] Independent credited-replay review approved exact source `5c26af9` with 119 passes/1 native-tool BLOCKED skip and direct scalar/failed-valid-artifact controls; no remaining bounded source blocker. Integration/cross-OS/transfer and broader safeguards above remain open.
+
+
+### Issue #120 independent main repair (2026-11-01)
+
+- [x] Reproduce the original identity/ambiguity/alternative defects on canonical main `6579ed8` (28 failing tests, including service/store/cache paths).
+- [x] Port only reviewed source identity, immutable-body/resource and alternative consistency fixes; preserve main's existing matching-policy/ladder/facts behavior and keep rz-diff quarantine separate. Focused regressions, a real Python worker/cache round-trip, full Ruff and schema regeneration pass.
+- [ ] Root independent review, exact-head full pytest and applicable remote/native acceptance before publication or merge; current synthetic checks do not close broader matching accuracy gates.

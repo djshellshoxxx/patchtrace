@@ -888,11 +888,18 @@ def request_from_service(service: ProjectService, *, extraction_configured: bool
     """OWNER thread only (it reads the project database): the plan, the stored pointer row and what changed since.
     A failure becomes the request's `error` (state U5), never an exception."""
     from . import pipeline
-    project = service.project
     try:
         plan = pipeline.make_plan(service)
     except UnifiedError:
         plan = None  # nothing to compare with: a stored result is then reported as stale
+    return request_from_plan(service, plan, extraction_configured=extraction_configured, attention=attention)
+
+
+def request_from_plan(service: ProjectService, plan, *, extraction_configured: bool = False,
+                      attention: Mapping[str, int] | None = None) -> UnifiedLoadRequest:
+    """Owner-thread exact-key pointer lookup after task work resolves a captured plan."""
+    from . import pipeline
+    project = service.project
     run_id = plan.run_id if plan else None
     try:
         loaded = pipeline.load_current(service, plan)

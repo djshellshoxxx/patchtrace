@@ -172,6 +172,15 @@ arbitrary same-user hostile process or full power-loss durability on every OS.
 An integrity failure after publication can leave an uncredited file. Transfer
 consumers must verify successful report references, not adopt directory contents.
 
+Retained-file reads compare descriptor metadata before/after the read and pathname
+metadata before/after the open/read separately, including each API's `ctime`.
+Across descriptor and pathname results, compare identity, size and `mtime`; do
+not assume their `ctime` meanings agree. CPython 3.12 on Windows reports change
+time through `fstat` but creation time through `stat`/`lstat`. A stable difference
+between those API meanings is not a content change. Changed descriptor or
+pathname timestamps, replaced identities, linked/reparse paths, excess bytes and
+digest mismatches still refuse successful credit; the underlying file is retained.
+
 CLI JSON reports and their Markdown companions are also published without
 replacement. Default filenames remain under the selected store's `reports/` and
 include the fresh run token; equal evaluations retain equal report bytes/digests
