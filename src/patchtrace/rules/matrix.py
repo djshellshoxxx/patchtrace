@@ -63,12 +63,13 @@ def direction_of(version: RuleVersion) -> str:
 
 def _digest(path: Path) -> tuple[str, int]:
     """SHA-256 and size of a regular file. A device, FIFO or socket is refused before it is opened (a FIFO's open
-    blocks, /dev/zero never ends) and again on the open handle, so a swap in between is caught (#105 BUG-RULE-6)."""
+    blocks, /dev/zero never ends) and again on a nonblocking handle (POSIX FIFO replacement cannot stall open)."""
     sha, size = hashlib.sha256(), 0
     try:
         if not stat.S_ISREG(os.stat(path).st_mode):
             raise RuleError('PT-RULE-INPUT', 'A file of the test is not a regular file', reason='not-a-file')
-        with open(path, 'rb') as handle:
+        flags = os.O_RDONLY | getattr(os, 'O_BINARY', 0) | getattr(os, 'O_NONBLOCK', 0)
+        with os.fdopen(os.open(path, flags), 'rb') as handle:
             if not stat.S_ISREG(os.fstat(handle.fileno()).st_mode):
                 raise RuleError('PT-RULE-INPUT', 'A file of the test is not a regular file', reason='not-a-file')
             while chunk := handle.read(READ_CHUNK):
@@ -194,13 +195,29 @@ def rescored(run: MatrixRun, targets: Sequence[TargetRef], versions: Sequence[Ru
     """A stored run with the current expectations (the cache key does not cover them). The key ignores the order of
     files and rules, so each cell is found by the file's and the rule's hash, never by position (#105 BUG-RULE-1)."""
     width = len(run.rules)
-    stored = {(t.sha256, r.rule_sha256): run.cells[i * width + j]
-              for i, t in enumerate(run.targets) for j, r in enumerate(run.rules)}
-    by_rule = {r.rule_sha256: r for r in run.rules}
-    rules = tuple(by_rule[v.rule_sha256] for v in versions)
-    cells = score([stored[(t.sha256, r.rule_sha256)] for t in targets for r in rules], targets,
-                  [direction_of(v) for v in versions])
-    return run.model_copy(update={'targets': tuple(targets), 'rules': rules, 'cells': cells})
+    exact = {}
+    by_content = {}
+    for i, target in enumerate(run.targets):
+        for j, rule in enumerate(run.rules):
+            item = (target.sha256, rule.rule_sha256, run.cells[i * width + j])
+            exact[(target.target_id, rule.version_id)] = item
+            by_content.setdefault(item[:2], []).append(item[2])
+    rules = tuple(RunRule(version_id=v.version_id, rule_sha256=v.rule_sha256) for v in versions)
+    remapped = []
+    for target in targets:
+        for rule in rules:
+            hashes = (target.sha256, rule.rule_sha256)
+            item = exact.get((target.target_id, rule.version_id))
+            if item is not None and item[:2] == hashes:
+                remapped.append(item[2])
+                continue
+            candidates = by_content.get(hashes, ())
+            if len(candidates) != 1:
+                raise RuleError('PT-RULE-INTEGRITY', 'The cached test cells cannot be identified unambiguously; '
+                                'run the test again', reason='cache-identity')
+            remapped.append(candidates[0])
+    cells = score(remapped, targets, [direction_of(v) for v in versions])
+    return MatrixRun.model_validate({**run.model_dump(), 'targets': tuple(targets), 'rules': rules, 'cells': cells})
 
 
 def cache_key(versions: Sequence[RuleVersion], targets: Sequence[TargetRef], engine_version: str, timeout_s: int,
