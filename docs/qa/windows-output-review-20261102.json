@@ -1,0 +1,96 @@
+{
+  "reviewer": "/root/rd_recover",
+  "date": "2026-11-02",
+  "status": "no_blocking_findings",
+  "candidate": "4edf8f4c1f7272d408ffcbbd236b6e32b6fb4cdd",
+  "parent": "eccfb8d587f94e927f857fad248531a002ecc36c",
+  "tree": "02d62801e9c1c3fdde61c71e8b4222fe08d7719a",
+  "worktree": "/workspace/scratch/142cb233d750/wt-windows-output-review",
+  "clean": true,
+  "changed_file_sha256": {
+    "docs/specs/known-answer-corpus.md": "3ae54b57e15bb9e999f11fb2855b58571d02fc4d02ac44264ad4390b05fe5817",
+    "tests/test_tier_r_credit_completion.py": "244366746a5bfe0632521be067de795a7280e266621386909a779783559d9f33",
+    "tests/test_tier_r_output_persistence.py": "b3c3f7324dc82ac7cc5639664fd3c8ae88e1add5b85dbf006f0b3357208eac79",
+    "tests/test_tier_r_training_artifacts.py": "1b07c9a64e078b6e2d14398ca91f91e4ed829f589b8cbbb5128304beea95f722",
+    "tools/calibration/tier_r/training_artifacts.py": "f3196da972380397d16e49110fc929a8ffcd1e2c1d75ac0cbcf51041d133b024"
+  },
+  "environment": {
+    "PYTHONPATH": ".:src:tests",
+    "QT_QPA_PLATFORM": "offscreen",
+    "python": "/workspace/scratch/142cb233d750/venv/bin/python"
+  },
+  "checks": [
+    {
+      "command": "python -m pytest -q tests/test_tier_r_training_artifacts.py tests/test_tier_r_output_persistence.py tests/test_tier_r_shard.py tests/test_tier_r_credited_replay.py tests/test_tier_r_output_stat_compat.py tests/test_workflows.py tests/test_tier_r_credit_completion.py",
+      "result": "275 passed, 3 expected LegacyOutputWarning warnings in 8.20s",
+      "log": "windows-output-review/focused.log"
+    },
+    {
+      "command": "python -m pytest -q tests/test_tier_r_eval_cli.py -k 'not test_mutate_plants_builds_and_labels_a_tiny_suite_pair and not test_real_suite_end_to_end_manifest_and_annotation'",
+      "result": "15 passed, 2 native compiler-backed tests explicitly deselected in 1.37s",
+      "log": "windows-output-review/eval-cli.log"
+    },
+    {
+      "cwd": "/workspace/scratch/142cb233d750/wt-windows-output-baseline-review",
+      "command": "python -m pytest -q /workspace/scratch/142cb233d750/reviews-resume/windows-output-review/test_final_training_artifacts.py -k 'uses_lf_even or accepts_nonlinked or refuses_scratch_link_before_dotdot'",
+      "result": "2 expected failures (LF and alias), 2 link/reparse controls passed, 57 deselected in 1.28s",
+      "log": "windows-output-review/baseline.log"
+    },
+    {
+      "command": "python -m pytest -q /workspace/scratch/142cb233d750/reviews-resume/windows-output-review/test_independent_paths.py",
+      "result": "7 passed in 1.07s",
+      "log": "windows-output-review/independent-final.log"
+    },
+    {
+      "command": "python -m ruff check src tests tools",
+      "result": "All checks passed!"
+    },
+    {
+      "command": "git diff --check eccfb8d587f94e927f857fad248531a002ecc36c 4edf8f4c1f7272d408ffcbbd236b6e32b6fb4cdd",
+      "result": "passed; no output"
+    }
+  ],
+  "independent_controls": [
+    "Actual export -> verify_bundle -> load_outputs with modeled nonlinked aliases on both root and producer paths.",
+    "Ordinary dotdot acceptance; real link and modeled reparse before dotdot in report paths refused before destination creation.",
+    "Real same-inode hard link outside scratch refused, all source bytes preserved.",
+    "Changed original ancestor identity refused despite unchanged leaves.",
+    "Canonical Tier W path cannot be hidden behind safe-looking lexical alias."
+  ],
+  "path_assertion_subset": {
+    "disposition": "approved; assertions match existing production as_posix serialization without relaxing validation/credit gates",
+    "port": "/workspace/scratch/142cb233d750/wt-output-windows-paths",
+    "port_base": "bb98bae",
+    "diff": "exactly two assertion lines, no production changes",
+    "full_files_match_candidate": true,
+    "sha256": {
+      "tests/test_tier_r_credit_completion.py": "244366746a5bfe0632521be067de795a7280e266621386909a779783559d9f33",
+      "tests/test_tier_r_output_persistence.py": "b3c3f7324dc82ac7cc5639664fd3c8ae88e1add5b85dbf006f0b3357208eac79"
+    }
+  },
+  "hosted_evidence": {
+    "source": "51a9b4af",
+    "job": "125172583133",
+    "path": "/workspace/scratch/142cb233d750/reconciliation/ci-monitor-20261102/windows-51a9b4af-failure-tracebacks.txt",
+    "sha256": "78d9bd53adad2ac08024524fe85e57789fcdfe31086f9464c59c5b21aa752f3b"
+  },
+  "limits": [
+    "Host log proves LF mismatch, forward-slash expectation mismatch and outside-scratch refusal; it omits original/canonical spelling pair, so short/long-name root cause remains inferred.",
+    "Portable alias/reparse models are not native Windows acceptance. Two compiler-backed cases were deliberately deselected; no engine, target binary, heavy benchmark or full suite was run.",
+    "No source edits or remote writes. Author untracked QA draft is outside the reviewed commit."
+  ],
+  "artifact_sha256": {
+    "baseline.log": "3a1af2411c47e13adb44e2a8fa6fb580f4219d93ea20c9f7f7abe98495c465a0",
+    "baseline.xml": "8f5c6ade9a2d330788e6171dc8c1e34c0a2585370e04da5a33894b3581d6dc27",
+    "eval-cli.log": "c0e2711d5c5b9078b2133709eac3297bccd8d064f810e4be2ce4a46623bf6df8",
+    "eval-cli.xml": "0ba0b3445e71b6516da52d433400cb74cd275bf8cc159b9f8d8321976581eb23",
+    "focused.log": "fdf424847ae5dfefe9fcec02bd7c420f45aa2ff5668d86c78db0d28960f758e4",
+    "focused.xml": "122da63e3c1f651b9830d030f2d0ccf4ec503f41a7733358d834068bc4978135",
+    "independent-final.log": "d1b6c929f4db5e706a451410fd6ebac7d48650e5d024dab847972b5034d27030",
+    "independent-final.xml": "4719e01ce83a5445223b617efe64cf22a52ed1c9d6fc49a28489b3f8deecd620",
+    "independent.log": "1af906bc260f39dca7f6cc2b4936f13eb7b1a50884af3f8dda29ea81f1c56303",
+    "independent.xml": "fd501bbdb09eaff48bfcc1dc980fa94c70989eaa0056510f177510f2f9fe761b",
+    "test_final_training_artifacts.py": "1b07c9a64e078b6e2d14398ca91f91e4ed829f589b8cbbb5128304beea95f722",
+    "test_independent_paths.py": "62d7afd7015a4d9be296e12046780d0a61b783de01af7111939d2acc4693685d"
+  }
+}
