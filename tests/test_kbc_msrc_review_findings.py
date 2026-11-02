@@ -259,3 +259,19 @@ def test_present_malformed_type2_description_keeps_existing_rejection(descriptio
     assert not [e for e in doc.edges if e.kb == KB]
     assert any(p.code == 'ROW_SHAPE' and p.pointer == '/Vulnerability/0/Remediations/0' + suffix
                for p in doc.problems)
+
+
+def test_mixed_native_and_synthetic_revisions_dispute_withdrawn_remediation():
+    native = _import(_data())
+    synthetic = native.model_copy(update={
+        'source': native.source.model_copy(update={
+            'doc_id': native.doc_id + '-synthetic',
+            'dialect': 'cvrf-json/0',
+        }),
+        'edges': (),
+    })
+    lookup = _index(native, synthetic).lookup_kb(KB, now=NOW)
+    assert not lookup.edges
+    assert {edge.ref.doc_id for edge in lookup.disputed} == {native.doc_id}
+    assert any(w.startswith('REVISION_EDGE_CONFLICT:') and CVE in w and KB in w
+               for w in lookup.warnings)
