@@ -6,6 +6,14 @@ Total output lines: 941
 ## Current evidence
 2026-10-11: source inspection of pinned upstream revisions completed. Linux Qt offscreen desktop self-test starts and displays the synthetic project. Integrated Linux QA: 91 tests passed, 2 Windows-only tests skipped; Ruff and Qt offscreen desktop self-test passed. Domain, transport, worker, schema and UI tests are included. Synthetic fixtures and mocked providers verify wiring and validation, not real matching accuracy or model interpretation correctness.
 
+## 2026-11-02 PR #153 advisory review follow-up
+
+At PR head `0cf22c9520da6d2841d27c0aa8136f36657aecc6`, review found that every single native snapshot without a zoned date was labelled order-ambiguous, and that multiple unorderable snapshots could leave an edge from only one snapshot presented as current. A single snapshot no longer warns. When ambiguous same-month snapshots disagree on KB/CVE/product applicability, discrepant rows are retained as disputed with deterministic conflict IDs and a `REVISION_EDGE_CONFLICT` warning; they are not called current or superseded. The MSRC specification records this limit. No revision sequence is inferred from unverified values.
+
+Other review controls: missing native fields resolve diagnostics to an existing parent pointer; the offline XML namespace audit now constructs prefix-to-URI pairs; context construction tries a JSON-locatable CSAF card when a preferred CVRF/XML card cannot be bound and explicitly reports when no card can be sourced. Added regressions cover these cases and preserve raw source dependencies.
+
+Validation on the local PR #153 tree: `PYTHONPATH=.:src:tests QT_QPA_PLATFORM=offscreen python -m pytest -q tests/test_kbc_*.py` passed **1,054 tests**; whole-tree Ruff and `git diff --check` passed. The first focused run had transient failures because existing tests still expected disagreeing snapshots to remain current; the updated behavior and regressions pass in the final KB/CVE run. Current-head hosted checks and independent re-review are pending; this does not qualify the PR for merge or release.
+
 ## Repaired audit defects
 - Ghidra rejected `runs/.quarantine-<uuid>/raw` with `Path element starting with '.' is not permitted`. Active and normalization-failed run directories now use `quarantine-<uuid>`. Preflight validates every resolved output ancestor, with an actionable error for dot-prefixed names and excessively long Windows output paths. The fake backend reproduces this exact rejection; native Ghidriff confirmation on Windows and clean-user reinstall remain release checks.
 - Artifact storage could escape project roots: pure models and disk paths now reject traversal, absolute/drive paths and symlinks.

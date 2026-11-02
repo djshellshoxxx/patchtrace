@@ -2,10 +2,9 @@
 
 What is parsed, and what is not
 -------------------------------
-Only DIALECTS the parser knows are read: ``cvrf-json/0`` and ``cvrf-xml/0``. Both are SYNTHETIC project placeholders
-whose shape follows RK1 section 3 (``Remediations[Type==2]`` carries the KB, ``Type 5`` is a known issue). The real
-MSRC CVRF JSON shape is unobserved until live probe L1, so a document in any other shape is refused with
-``PT-KBC-SOURCE`` ("dialect unknown"); a parser never guesses, and an unknown dialect is never read as an empty month.
+The synthetic placeholders ``cvrf-json/0`` and ``cvrf-xml/0`` remain supported. Native monthly MSRC
+JSON is dispatched to ``cvrf_msrc`` (``msrc-cvrf-json/1``), with verified semantics and limits documented
+in SPEC-31-B B3.1. Unknown structural dialects fail with ``PT-KBC-SOURCE``; they are never empty months.
 
 Safety: duplicate JSON keys (in XML, a container repeated under one parent), non-finite numbers, byte-order marks and
 invalid UTF-8 are refused; nesting, node and string sizes are bounded (`KbcLimits`); XML containing any markup
@@ -55,7 +54,8 @@ from ..products import clean_text, safe_label, scope_for
 PARSER_VERSION = 1
 DIALECT_JSON = 'cvrf-json/0'
 DIALECT_XML = 'cvrf-xml/0'
-DIALECTS = (DIALECT_JSON, DIALECT_XML)
+DIALECT_MSRC = 'msrc-cvrf-json/1'
+DIALECTS = (DIALECT_JSON, DIALECT_XML, DIALECT_MSRC)
 XML_NS = 'https://example.invalid/synthetic-cvrf/1'  # synthetic placeholder namespace (fixtures, not Microsoft)
 MAX_STRING = 1_048_576
 MAX_STATUS_NAME = 200
@@ -121,12 +121,28 @@ class RawRemediation:
     fixed_build: str | None
     supersedes: tuple[str, ...]
     sub_type: str | None
+    field_pointers: tuple[tuple[str, str], ...] = ()
+    product_pointers: tuple[str, ...] = ()
+
+    def field_pointer(self, field: str) -> str:
+        return dict(self.field_pointers).get(field, self.pointer + '/' + field)
+
+    def product_pointer(self, index: int) -> str:
+        return self.product_pointers[index] if self.product_pointers else f'{self.pointer}/product_ids/{index}'
 
 
 @dataclass(frozen=True)
 class RawStatus:
     value: str
     product_id: str
+    pointer: str
+
+
+@dataclass(frozen=True)
+class RawRevision:
+    """Native vendor revision metadata, retained verbatim without ordering or timezone assumptions."""
+    number: str | None
+    date: str | None
     pointer: str
 
 
@@ -139,6 +155,7 @@ class RawVulnerability:
     cwe: str | None
     remediations: tuple[RawRemediation, ...]
     statuses: tuple[RawStatus, ...]
+    revisions: tuple[RawRevision, ...] = ()
 
 
 @dataclass(frozen=True)
@@ -151,6 +168,7 @@ class CvrfDocument:
     vulnerabilities: tuple[RawVulnerability, ...]
     problems: tuple[Problem, ...]
     ambiguous_cves: frozenset[str] = frozenset()
+    revisions: tuple[RawRevision, ...] = ()
 
 
 @dataclass(frozen=True)
@@ -369,7 +387,7 @@ def parse_cvrf(raw: bytes, limits: KbcLimits = DEFAULT_LIMITS) -> CvrfDocument:
 
 def _unknown_dialect(detail: str = '') -> SourceError:
     return SourceError('PT-KBC-SOURCE', 'CVRF dialect unknown: this parser reads ' + ' and '.join(DIALECTS)
-                       + ' only; the real MSRC shape is unverified until live probe L1' + detail)
+                       + ' only' + detail)
 
 
 def _shape(what: str) -> SourceError:
@@ -378,9 +396,21 @@ def _shape(what: str) -> SourceError:
 
 # ---------------------------------------------------------------------------------------------- JSON dialect
 
+def guard_json_dialect(value) -> None:
+    """Refuse contradictory root families before any parser can treat the other family's fields as extensions."""
+    if isinstance(value, dict) \
+            and any(k in value for k in ('DocumentType', 'DocumentTracking', 'ProductTree', 'Vulnerability')) \
+            and any(k in value for k in ('dialect', 'document', 'product_tree', 'vulnerabilities')):
+        raise _shape('mixed native and synthetic/CSAF document fields')
+
+
 def parse_json_document(value, limits: KbcLimits = DEFAULT_LIMITS) -> CvrfDocument:
     if not isinstance(value, dict):
         raise _unknown_dialect()
+    guard_json_dialect(value)
+    if 'DocumentTracking' in value:
+        from .cvrf_msrc import parse_document
+        return parse_document(value, limits)
     if value.get('dialect') != DIALECT_JSON:
         looks_real = 'Vulnerability' in value or 'ProductTree' in value
         raise _unknown_dialect(' (it looks like an MSRC CVRF document)' if looks_real else '')
@@ -731,7 +761,7 @@ def _edges_for_remediation(document, doc_id, vuln, rem, scope_by_pid, by_pid, ed
             try:
                 kbs.append(normalise_kb_edge(line))
             except KbSyntaxError:
-                problems.append(Problem('KB_UNPARSED', rem.pointer + '/description',
+                problems.append(Problem('KB_UNPARSED', rem.field_pointer('description'),
                                         'a Type 2 line is not a KB id; no remediation edge'))
                 mentions.extend(find_kb_tokens(line))
     else:
@@ -743,22 +773,22 @@ def _edges_for_remediation(document, doc_id, vuln, rem, scope_by_pid, by_pid, ed
         raise SourceError('PT-KBC-LIMIT', f'the document yields more than {limit} edges')
     build = parse_fixed_build(rem.fixed_build)
     if rem.fixed_build is not None and build is None:
-        problems.append(Problem('FIXED_BUILD_UNPARSED', rem.pointer + '/fixed_build', 'not a build number'))
+        problems.append(Problem('FIXED_BUILD_UNPARSED', rem.field_pointer('fixed_build'), 'not a build number'))
     supersedes = []
     for text in rem.supersedes:
         try:
             supersedes.append(normalise_kb_edge(text))
         except KbSyntaxError:
-            problems.append(Problem('SUPERSEDES_UNPARSED', rem.pointer + '/supersedes', 'not a KB id'))
+            problems.append(Problem('SUPERSEDES_UNPARSED', rem.field_pointer('supersedes'), 'not a KB id'))
     for k, pid in enumerate(rem.product_ids):
         scope = scope_by_pid.get(pid)
         if scope is None:
-            problems.append(Problem('UNKNOWN_PRODUCT_ID', f'{rem.pointer}/product_ids/{k}',
+            problems.append(Problem('UNKNOWN_PRODUCT_ID', rem.product_pointer(k),
                                     'product id is not in the product tree; no edge'))
             continue
         statuses = sorted(by_pid.get(pid, ()), key=lambda s: (s.value, s.pointer))
         if vuln.statuses and not statuses:
-            problems.append(Problem('PRODUCT_STATUS_MISSING', f'{rem.pointer}/product_ids/{k}',
+            problems.append(Problem('PRODUCT_STATUS_MISSING', rem.product_pointer(k),
                                     'the vulnerability lists statuses but none for this product', 'info'))
         negative = next((s for s in statuses if status_class(s.value) == 'not_affected'), None)
         shown = negative or (statuses[0] if statuses else None)

@@ -128,10 +128,11 @@ def build_examples() -> dict:
 
 
 def render_contract_schemas() -> dict[str, str]:
-    from patchtrace.kbcorrelation import contracts, errors
+    from patchtrace.kbcorrelation import context, contracts, errors
     out = {}
-    for name in CONTRACTS:
-        model = getattr(errors if name in ERRORS_MODULE else contracts, name)
+    for name in (*CONTRACTS, 'ContextBundle'):
+        module = context if name == 'ContextBundle' else errors if name in ERRORS_MODULE else contracts
+        model = getattr(module, name)
         schema = model.model_json_schema()
         schema['$id'] = f'https://patchtrace.local/schemas/kbcorrelation/1/{name}.json'
         schema['$schema'] = 'https://json-schema.org/draft/2020-12/schema'

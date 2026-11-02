@@ -1,0 +1,60 @@
+{
+  "reviewer": "review_resume independent helper",
+  "reviewed_head": "7533fe07365524526915c53b71b9cf45fc3e1bae",
+  "reviewed_tree": "0203f768f6ab4f5bc0dab9c4ffb055b8fd739266",
+  "base": "3bd48a710dcec1b471944f439a79b0fc8655921d",
+  "worktree": "/workspace/scratch/142cb233d750/wt-msrc-findings",
+  "decision": "No blocking findings within the reviewed bounded slice",
+  "changed_paths": [
+    "docs/qa/msrc-review-findings-20261102.md",
+    "docs/specs/kb-cve/31-B-msrc-reverse-index.md",
+    "src/patchtrace/kbcorrelation/context.py",
+    "src/patchtrace/kbcorrelation/index.py",
+    "src/patchtrace/kbcorrelation/sources/cvrf_msrc.py",
+    "tests/test_kbc_msrc_review_findings.py"
+  ],
+  "changed_file_sha256": {
+    "docs/qa/msrc-review-findings-20261102.md": "9903553fb825bd5396a1a7a9e263a2e48aefdf2d61a6aef1cd4ea49f73dba48b",
+    "docs/specs/kb-cve/31-B-msrc-reverse-index.md": "948b425b42687edce74a9e80f2636f6a57fc5181fbd7b215ba5d45505eb9b95a",
+    "src/patchtrace/kbcorrelation/context.py": "bb075cbad4a79189f27f287935c1aeb405de93171a796058b360c104f45dc707",
+    "src/patchtrace/kbcorrelation/index.py": "a447c1e07c84f452c756d06f3fcd636fbc4efee000451ca3454311377029f32d",
+    "src/patchtrace/kbcorrelation/sources/cvrf_msrc.py": "16988c383a864607b276fffa81203d125eaf52b807b990b63594d9b9aa8bdb67",
+    "tests/test_kbc_msrc_review_findings.py": "7f532e8b59422794e988d3423656e6e9adc17238e0b5a2c65f7731c31015d1fd"
+  },
+  "environment": {
+    "python": "3.12.14",
+    "platform": "Linux",
+    "Qt": "offscreen"
+  },
+  "independent_control": {
+    "path": "/workspace/scratch/142cb233d750/reviews-resume/new_review_controls.py",
+    "sha256": "8efe1d2c211e75931b656fec36fcf3d3f71166dbe013919242fe1c45b03c4e3c"
+  },
+  "title": "#153 card consensus and Type 2 missing Description",
+  "scope_and_reasoning": [
+    "Type 2 vendor-fix rows lacking Description receive a resolvable parent-object ROW_SHAPE diagnostic and are skipped. Existing non-fix omissions and malformed-present behavior remain covered.",
+    "The index groups selected active cards by CVE and source kind. Each of title, stated CWE, and severity context survives only when all candidate values agree, including absence; field and group ordering are deterministic.",
+    "Consensus leaves original imported cards, raw objects, edge sets, revision selection, and separate CVRF/CSAF groups intact. KB searches report the conflict while their cards shape stays unchanged.",
+    "The single context change propagates CARD_FACT_CONFLICT into unknowns; withheld CWE cannot supply a selected CWE hypothesis.",
+    "Current native CVRF, XML CVRF, and CSAF card construction does not load applicability or KEV into source cards. Their existing default values therefore are not lost by reconstruction; derived context computes applicability separately."
+  ],
+  "validation": [
+    {
+      "command": "QT_QPA_PLATFORM=offscreen PYTHONPATH=.:src:tests /workspace/scratch/142cb233d750/venv/bin/python -m pytest -q --tb=short tests/test_kbc_msrc_review_findings.py tests/test_kbc_msrc_provenance.py tests/test_kbc_msrc_cvrf.py tests/test_kbc_index.py tests/test_kbc_context.py tests/test_kbc_service.py",
+      "result": "165 passed in 2.97 seconds."
+    },
+    {
+      "command": "QT_QPA_PLATFORM=offscreen PYTHONPATH=.:src:tests /workspace/scratch/142cb233d750/venv/bin/python /workspace/scratch/142cb233d750/reviews-resume/new_review_controls.py consensus",
+      "result": "Independent constructed-severity control passed: six insertion orders yield identical cards, edges, and warnings; only severity is withheld; an explicit single-file scope retains its fact; original cards and all edges remain unchanged."
+    },
+    {
+      "command": "/workspace/scratch/142cb233d750/venv/bin/python -m ruff check src/patchtrace/kbcorrelation/index.py src/patchtrace/kbcorrelation/context.py src/patchtrace/kbcorrelation/sources/cvrf_msrc.py tests/test_kbc_msrc_review_findings.py; git diff --check HEAD^ HEAD",
+      "result": "Changed source/test Ruff and diff checks passed; exactly six changed files."
+    }
+  ],
+  "limitations": [
+    "The severity control deliberately constructs a supported card value because current importers leave severity unset; it is not a claim that the pinned source fixture contains severity facts.",
+    "This parent does not contain the independently reviewed #118 saved-scope repair. When combining, retain both its bounded index lookup and this conflict-warning propagation line.",
+    "No full suite, native Windows, live vendor fetch, broader advisory-provenance schema, or unrelated #153 acceptance claim."
+  ]
+}

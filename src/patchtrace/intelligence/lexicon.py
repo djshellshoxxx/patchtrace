@@ -20,6 +20,7 @@ import html
 import re
 import unicodedata
 from dataclasses import dataclass
+from typing import Literal
 
 from ..enrichment.identity import domain_id
 from .contracts import CVEFact, CweClassification, CweProfile, TermHit
@@ -341,10 +342,13 @@ def _hit_key(hit: TermHit) -> tuple:
     return (hit.pointer, hit.term_id, hit.phrase, hit.excerpt, hit.negated)
 
 
-def classify(fact: CVEFact) -> CweProfile:
+def classify(fact: CVEFact, *, explicit_basis: Literal['explicit-csaf-cwe', 'explicit-advisory-cwe'] =
+             'explicit-csaf-cwe') -> CweProfile:
     """CWE profile of one vulnerability item. ``fact.cve`` must be set (profiles are per CVE)."""
     if fact.cve is None:
         raise ValueError('classify needs a vulnerability item with a CVE')
+    if explicit_basis not in ('explicit-csaf-cwe', 'explicit-advisory-cwe'):
+        raise ValueError('unsupported explicit advisory basis')
     limitations: list[str] = []
     hits: list[_Hit] = []
     sources = _sources(fact)
@@ -362,7 +366,7 @@ def classify(fact: CVEFact) -> CweProfile:
         return record
 
     if fact.cwe is not None:
-        entry(fact.cwe.id, 'explicit-csaf-cwe', 'explicit', 'advisory-claim', (fact.cwe.pointer,))
+        entry(fact.cwe.id, explicit_basis, 'explicit', 'advisory-claim', (fact.cwe.pointer,))
     live = [h for h in hits if h.negated is None]
     for hit in live:
         if hit.term.term_id == 'cwe-id-in-text':
@@ -385,10 +389,10 @@ def classify(fact: CVEFact) -> CweProfile:
          for cwe_id, r in by_cwe.items()),
         key=lambda c: (('explicit', 'phrase-match', 'weak').index(c.confidence), c.cwe_id)))
     disagreements = []
-    explicit = [c for c in classifications if c.basis == 'explicit-csaf-cwe']
+    explicit = [c for c in classifications if c.basis.startswith('explicit-')]
     for e in explicit:
         for other in classifications:
-            if other.basis != 'explicit-csaf-cwe' and other.confidence != 'weak' and other.family != e.family:
+            if not other.basis.startswith('explicit-') and other.confidence != 'weak' and other.family != e.family:
                 disagreements.append(f'explicit {e.cwe_id} ({e.family}) and {other.basis} {other.cwe_id} '
                                      f'({other.family}) differ; both are kept and neither is resolved')
     if explicit:

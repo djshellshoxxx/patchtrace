@@ -18,6 +18,7 @@ from typing import Annotated, Protocol
 from pydantic import Field, model_validator
 
 from ..intelligence.contracts import CweProfile, HypothesisSet
+from .card_provenance import FIELDS, CardFactRef, bind_consensus, fact_key
 from .contracts import (
     CONTRACT,
     ContextReport,
@@ -35,6 +36,7 @@ from .index import ReverseIndex
 from .products import clean_text
 
 BUNDLE_VERSION = 1
+CONTEXT_KEY_VERSION = 3  # New field attribution; old bundles remain readable as recorded.
 HOOKS = ('kb.meaning.coverage', 'kb.meaning.hypothesis', 'kb.meaning.kev', 'kb.meaning.relation',
          'kb.next.run_comparison')
 LIMITATION = ('The context records what advisory documents state and which checks could not be made; it does not '
@@ -48,7 +50,7 @@ class RulesPort(Protocol):
     rules_digest: str
     lexicon_digest: str
 
-    def interpret(self, card: CveCard, pointer: str, source_sha256: str) -> tuple[CweProfile, HypothesisSet]: ...
+    def interpret(self, card: CveCard, facts: tuple[CardFactRef, ...]) -> tuple[CweProfile, HypothesisSet]: ...
 
 
 class SourceDigest(Record):
@@ -74,22 +76,58 @@ class ContextBundle(Contract):
     context: ContextReport
     cwe_profiles: tuple[CweProfile, ...] = ()
     hypotheses: tuple[HypothesisSet, ...] = ()
+    card_facts: tuple[CardFactRef, ...] = ()  # Absent in legacy bundles; never backfill invented provenance.
 
     @model_validator(mode='after')
     def _same_cves(self):
         cves = [c.cve for c in self.context.cards]
         if [p.cve for p in self.cwe_profiles] != cves or [h.cve for h in self.hypotheses] != cves:
             raise ValueError('profiles and hypotheses must follow the cards, one each')
+        if self.card_facts:
+            sources = {s.doc_id: s for s in self.sources}
+            cards = {c.cve: c for c in self.context.cards}
+            if tuple(sorted(set(self.card_facts), key=fact_key)) != self.card_facts:
+                raise ValueError('card facts must be unique and canonical')
+            for ref in self.card_facts:
+                card, source = cards.get(ref.cve), sources.get(ref.doc_id)
+                if card is None or source is None or card.source_kind != ref.source_kind \
+                        or source.sha256 != ref.source_sha256 or getattr(card, ref.field) != ref.value \
+                        or source.kind != ('cvrf-month' if ref.source_kind == 'cvrf' else 'csaf'):
+                    raise ValueError('card fact must match its displayed value and retained source')
+            for card in cards.values():
+                for field in FIELDS:
+                    if getattr(card, field) is not None and not any(r.cve == card.cve and r.field == field
+                                                                 for r in self.card_facts):
+                        raise ValueError('displayed advisory field has no source reference')
+            for profile, hypotheses in zip(self.cwe_profiles, self.hypotheses, strict=True):
+                refs = [r for r in self.card_facts if r.cve == profile.cve and r.field != 'cve']
+                pointers = {r.pointer for r in refs}
+                used = {p for item in profile.classifications for p in item.pointers}
+                hits = [h for item in profile.classifications for h in item.hits]
+                used.update(h.pointer for h in (*hits, *profile.negated_hits, *profile.effect_hits))
+                if not used <= pointers:
+                    raise ValueError('classification pointer has no card field source')
+                expected = ('explicit-csaf-cwe' if cards[profile.cve].source_kind == 'csaf'
+                            else 'explicit-advisory-cwe')
+                for item in profile.classifications:
+                    if item.basis.startswith('explicit-') and (item.basis != expected or not any(
+                            r.field == 'stated_cwe' and r.value == item.cwe_id and r.pointer in item.pointers
+                            for r in refs)):
+                        raise ValueError('explicit classification lacks its stated CWE source')
+                classified = {(item.cwe_id, item.basis) for item in profile.classifications}
+                if any((item.cwe_id, item.basis) not in classified for item in hypotheses.hypotheses):
+                    raise ValueError('hypothesis lacks its source-bound classification')
         return self
 
 
-def context_key(*, investigation_id: str, base_revision: int, edge_set_digest: str, csaf_shas: Sequence[str],
+def context_key(*, investigation_id: str, base_revision: int, edge_set_digest: str, sources: Sequence[SourceDigest],
                 rules_digest: str, lexicon_digest: str, older_sha: str | None, newer_sha: str | None,
                 scope_id: str | None) -> str:
     """Plan 7.4 context key; ``kev_snapshot_sha`` is None until the KEV adapter (K8) loads a snapshot."""
-    return domain_id('kbc.context', 1, {
+    return domain_id('kbc.context', CONTEXT_KEY_VERSION, {
         'inv': investigation_id, 'revision': base_revision, 'edge_set_digest': edge_set_digest,
-        'csaf_source_shas': sorted(csaf_shas), 'rules_digest': rules_digest, 'lexicon_digest': lexicon_digest,
+        'advisory_sources': [d.model_dump(mode='json') for d in sorted(sources, key=lambda d: d.doc_id)],
+        'rules_digest': rules_digest, 'lexicon_digest': lexicon_digest,
         'kev_snapshot_sha': None, 'older': older_sha, 'newer': newer_sha, 'scope_id': scope_id,
         'versions': {'contract': CONTRACT, 'bundle': BUNDLE_VERSION}})
 
@@ -107,24 +145,46 @@ def build_bundle(*, investigation_id: str, base_revision: int, lead: Lead, cves:
     cards: list[CveCard] = []
     profiles: list[CweProfile] = []
     hypotheses: list[HypothesisSet] = []
+    facts: list[CardFactRef] = []
     docs: dict[str, SourceDigest] = {}
     unknowns: list[str] = ['KEV listing was not loaded, so exploitation status is unknown.']
     for cve in sorted(set(cves)):
         lookup = index.lookup_cve(cve, scope_id=scope_id, now=now)
-        card = next((c for c in lookup.cards if c.source_kind == 'cvrf'), None) or next(iter(lookup.cards), None)
-        edge = next(iter(lookup.edges), None)
-        if card is None or edge is None:
+        unknowns.extend(w for w in lookup.warnings if w.startswith('CARD_FACT_CONFLICT:'))
+        for doc_id in lookup.card_doc_ids:
+            source = index.get(doc_id).source
+            docs[doc_id] = SourceDigest(doc_id=doc_id, sha256=source.sha256, kind=source.kind,
+                                       release_id=source.release_id)
+        if not lookup.edges:
             unknowns.append(f'{cve} has no advisory text in the loaded documents; no interpretation was made.')
             continue
-        source = index.get(edge.ref.doc_id).source
-        docs[source.doc_id] = SourceDigest(doc_id=source.doc_id, sha256=source.sha256, kind=source.kind,
-                                           release_id=source.release_id)
+        # Prefer CVRF, then CSAF, but do not let an unlocatable XML/duplicate-row card hide a bindable card.
+        candidates = sorted(lookup.cards, key=lambda item: (item.source_kind != 'cvrf', item.source_kind))
+        bound = None
+        missing_by_kind = {}
+        for candidate in candidates:
+            candidate_card, refs, missing = bind_consensus(
+                candidate, (index.get(doc_id) for doc_id in lookup.card_doc_ids))
+            if candidate_card is not None:
+                bound = candidate_card, refs, missing
+                break
+            missing_by_kind[candidate.source_kind] = missing
+        if bound is None:
+            details = '; '.join(f'{kind}: {", ".join(fields)}' for kind, fields in sorted(missing_by_kind.items()))
+            unknowns.append(f'CARD_FACT_SOURCE_MISSING: {cve} has no JSON-located advisory card; '
+                            f'the CVE was left out of the context ({details or "no source card"})')
+            continue
+        card, refs, missing = bound
+        if missing:
+            unknowns.append(f'CARD_FACT_SOURCE_MISSING: {cve} {", ".join(missing)} has no complete JSON '
+                            'field provenance; unavailable fields were withheld')
         shown = card.model_copy(update={'title': clean_text(card.title, 1000) if card.title else None,
                                         'applicability': APPLICABILITY})
-        profile, hypothesis = rules.interpret(shown, vulnerability_pointer(edge.ref.pointer), source.sha256)
+        profile, hypothesis = rules.interpret(shown, refs)
         cards.append(shown)
         profiles.append(profile)
         hypotheses.append(hypothesis)
+        facts.extend(refs)
     unknowns += [f'{cve} is mentioned in advisory text only and is left out of the context.'
                  for cve in sorted(set(mention_only))]
     unknowns.append('Applicability of the advisory to these two files is unverified until you confirm the product.'
@@ -134,7 +194,7 @@ def build_bundle(*, investigation_id: str, base_revision: int, lead: Lead, cves:
                            limitations=(LIMITATION,), hooks=HOOKS)
     key = context_key(investigation_id=investigation_id, base_revision=base_revision,
                       edge_set_digest=index.edge_set_digest(),
-                      csaf_shas=[d.sha256 for d in docs.values() if d.kind == 'csaf'],
+                      sources=tuple(docs.values()),
                       rules_digest=rules.rules_digest, lexicon_digest=rules.lexicon_digest, older_sha=older_sha,
                       newer_sha=newer_sha, scope_id=scope_id)
     return ContextBundle(
@@ -142,4 +202,5 @@ def build_bundle(*, investigation_id: str, base_revision: int, lead: Lead, cves:
         scope_id=scope_id, pair_id=pair_id, older_sha=older_sha, newer_sha=newer_sha,
         edge_set_digest=index.edge_set_digest(), rules_digest=rules.rules_digest,
         lexicon_digest=rules.lexicon_digest, sources=tuple(sorted(docs.values(), key=lambda d: d.doc_id)),
-        context=report, cwe_profiles=tuple(profiles), hypotheses=tuple(hypotheses))
+        context=report, cwe_profiles=tuple(profiles), hypotheses=tuple(hypotheses),
+        card_facts=tuple(sorted(facts, key=fact_key)))
