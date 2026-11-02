@@ -16,7 +16,7 @@ import tempfile
 import threading
 import time
 from collections.abc import Iterator
-from contextlib import contextmanager
+from contextlib import contextmanager, suppress
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -45,6 +45,7 @@ class Snapshot:
     tables: dict[str, tuple[str, ...]]
     conn: sqlite3.Connection
     _deadline: list
+    _cancel: threading.Event | None = None
 
     def count(self, table: str) -> int:
         _check(table, SCHEMA[table])
@@ -55,17 +56,42 @@ class Snapshot:
             raise _db(exc) from None
 
     def rows(self, table: str, limit: int) -> Iterator[tuple]:
-        """Fixed-shape rows in rowid order: (rowid, *SCHEMA[table]); at most `limit`."""
+        """Fixed-shape rows in rowid order, with one total deadline for this iterator."""
         _check(table, SCHEMA[table])
         columns = ', '.join(f'"{c}"' for c in SCHEMA[table])
-        self._deadline[0] = time.monotonic() + DEADLINE_SECONDS
+        deadline = time.monotonic() + DEADLINE_SECONDS
+        cursor = None
         try:
+            self._check_rows_budget(deadline)
             cursor = self.conn.execute(f'SELECT rowid, {columns} FROM "{table}" ORDER BY rowid LIMIT ?', (limit,))
-            for row in cursor:
-                self._deadline[0] = time.monotonic() + DEADLINE_SECONDS
+            while True:
+                # Another operation may have used the shared SQLite progress
+                # handler while this iterator was suspended. Restore this query's
+                # original deadline, never a fresh per-row budget.
+                self._check_rows_budget(deadline)
+                row = cursor.fetchone()
+                self._check_rows_budget(deadline)
+                if row is None:
+                    return
                 yield row
         except sqlite3.Error as exc:
+            if self._cancel is not None and self._cancel.is_set():
+                raise DiaphoraError('PT-DIAPHORA-CANCEL', 'import cancelled') from None
             raise _db(exc) from None
+        finally:
+            if cursor is not None:
+                # The snapshot may already have closed its connection before an
+                # abandoned generator is finalized.
+                with suppress(sqlite3.ProgrammingError):
+                    cursor.close()
+
+    def _check_rows_budget(self, deadline: float) -> None:
+        self._deadline[0] = deadline
+        if self._cancel is not None and self._cancel.is_set():
+            raise DiaphoraError('PT-DIAPHORA-CANCEL', 'import cancelled')
+        if time.monotonic() > deadline:
+            raise DiaphoraError('PT-DIAPHORA-LIMIT',
+                                'reading the result database exceeded its time budget or was cancelled')
 
 
 def _check(table: str, columns: tuple[str, ...]) -> None:
@@ -156,7 +182,7 @@ def open_snapshot(path: Path, cancel: threading.Event | None = None) -> Iterator
             missing = [c for c in columns if c not in tables[name]]
             if missing:
                 raise DiaphoraError('PT-DIAPHORA-DB', f'table {name!r} lacks column(s) {", ".join(missing)}')
-        yield Snapshot(digest, size, tables, conn, deadline)
+        yield Snapshot(digest, size, tables, conn, deadline, cancel)
     finally:
         if conn is not None:
             conn.close()
