@@ -881,3 +881,6 @@ Done: dock with state matrix, consent, import, changes, copy, go to CVE. Open: r
 
 - [x] Storage admission review blocker: replace error-suppressing glob discovery with explicit scandir; failed opening/iteration cannot mean no pending stages. Red 2 failed / 1 passed; revised 63 related passes.
 - [ ] Rereview amended storage admission source; `536aebc` alone is not an approved candidate.
+
+- [x] PR #151 cleanup completion: reproduce real caller inconsistency on `1f284a1`; require owned-stage removal before backup success, with first-prune/history/replacement controls (76 focused passes; final baseline 7 red cases). Source `4bfc2c0`; no observed data loss in the original probe.
+- [ ] Independently review and integrate the frozen #151 cleanup-completion follow-up; exact published CI remains separate.

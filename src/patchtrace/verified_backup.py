@@ -4,7 +4,8 @@ Rule: no backup, no deletion. A new backup is written with the SQLite backup API
 an exclusively created `backups/project-pre-<label>-<UTC stamp>-*.sqlite3.part`; the writing connection is closed, the file is
 re-opened read-only and must pass `PRAGMA integrity_check` and answer the caller's identity queries
 (snapshot hash, row counts) exactly like the live database. Only then is it hard-linked to an unused final name,
-and revalidated before its unique staging name is removed. A matching staging name makes the
+and revalidated before its unique staging name is removed. Successful return requires that owned
+name's removal and observed absence. A matching staging name makes the
 final name ineligible for discovery, including after restart; failed publication retains its evidence.
 
 An existing backup is trusted only after the same read-only re-open with `PRAGMA quick_check`, a
@@ -292,7 +293,18 @@ def write_verified_backup(root: Path, connection: sqlite3.Connection, label: str
         retain_stage = True
         if not _remember(target, facts, checked):
             raise BackupError(f'PT-STORAGE: pre-{label} database backup changed during publication')
-        retain_stage = False
+        # Completion authorizes the caller's first prune, so cleanup is not best effort.
+        # Leave the final and any replacement staging inode untouched on failure.
+        info = part.lstat()
+        if (info.st_dev, info.st_ino) != owned:
+            raise BackupError(f'PT-STORAGE: pre-{label} database backup staging ownership changed')
+        part.unlink()
+        try:
+            part.lstat()
+        except FileNotFoundError:
+            pass
+        else:
+            raise BackupError(f'PT-STORAGE: pre-{label} database backup staging name remains')
     except BackupError:
         raise
     except (sqlite3.Error, OSError, ValueError, NotImplementedError) as exc:
@@ -304,8 +316,8 @@ def write_verified_backup(root: Path, connection: sqlite3.Connection, label: str
                 if (info.st_dev, info.st_ino) == owned:
                     part.unlink()
             except OSError:
-                # An untrusted leftover is not a verified backup. Never remove
-                # the published name or a replacement temporary owned elsewhere.
+                # Before publication, retain the original failure even when cleanup
+                # fails. Never remove a replacement temporary owned elsewhere.
                 pass
     return target
 

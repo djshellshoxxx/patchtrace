@@ -161,7 +161,7 @@ def test_foreign_final_and_stage_replacements_are_preserved_and_not_adopted(serv
     assert V.find_verified_backup(service.root, 'history-prune', project_id=service.project.id) is None
 
 
-def test_staging_cleanup_failure_cannot_make_pending_name_eligible(service, monkeypatch):
+def test_staging_cleanup_failure_cannot_return_success_or_make_pending_name_eligible(service, monkeypatch):
     original = Path.unlink
 
     def cannot_remove_stage(path, *args, **kwargs):
@@ -170,10 +170,151 @@ def test_staging_cleanup_failure_cannot_make_pending_name_eligible(service, monk
         return original(path, *args, **kwargs)
 
     monkeypatch.setattr(Path, 'unlink', cannot_remove_stage)
-    final = V.write_verified_backup(service.root, service.store.connection, 'history-prune')
+    with pytest.raises(V.BackupError):
+        V.write_verified_backup(service.root, service.store.connection, 'history-prune')
+    final, = (service.root / 'backups').glob('*.sqlite3')
     assert final.is_file()
     V.forget_all()
     assert V.find_verified_backup(service.root, 'history-prune', project_id=service.project.id) is None
+
+
+def _refuse_stage_cleanup(monkeypatch):
+    original = Path.unlink
+    refused = []
+
+    def cannot_remove_stage(path, *args, **kwargs):
+        if path.name.endswith('.sqlite3.part'):
+            refused.append((path, path.read_bytes()))
+            raise PermissionError('retained staging name')
+        return original(path, *args, **kwargs)
+
+    monkeypatch.setattr(Path, 'unlink', cannot_remove_stage)
+    return refused
+
+
+def test_retention_keeps_every_row_until_new_backup_cleanup_completes(service, monkeypatch):
+    store = EnrichmentStore(service.store)
+    _generations(store, 10)
+    before = _rows(service.store.connection)
+    with monkeypatch.context() as failure:
+        refused = _refuse_stage_cleanup(failure)
+        for _ in range(2):
+            V.forget_all()
+            assert store.apply_retention(CURRENT, started=FUTURE) == 0
+            assert _rows(service.store.connection) == before
+            assert V.find_verified_backup(service.root, 'retention', project_id=service.project.id) is None
+    assert len(refused) == 2
+    for stage, data in refused:
+        assert stage.read_bytes() == data
+    finals = list((service.root / 'backups').glob('project-pre-retention-*.sqlite3'))
+    assert len(finals) == 2
+    for final in finals:
+        with sqlite3.connect(final) as copy:
+            assert copy.execute('PRAGMA integrity_check').fetchall() == [('ok',)]
+            assert _rows(copy) == before
+    assert store.apply_retention(CURRENT, started=FUTURE) == 8
+    accepted = V.find_verified_backup(service.root, 'retention', project_id=service.project.id)
+    assert accepted not in finals
+    assert all(stage.read_bytes() == data for stage, data in refused)
+
+
+def test_history_cleanup_failure_commits_save_keeps_rows_and_blocks_session(service, monkeypatch):
+    monkeypatch.setattr(persistence, 'HISTORY_KEEP', 2)
+    refused = _refuse_stage_cleanup(monkeypatch)
+    before = _rows(service.store.connection, 'history')
+    _save(service, 'cleanup failed')
+    assert before < _rows(service.store.connection, 'history')
+    assert service.store.load().name == 'cleanup failed'
+    assert service.store._prune_blocked
+    _save(service, 'same session skips copy')
+    assert len(refused) == 1
+    root = service.root
+    before = _rows(service.store.connection, 'history')
+    service.close()
+    V.forget_all()
+    with ProjectService.open(root) as reopened:
+        _save(reopened, 'reopened cleanup failed')
+        assert before < _rows(reopened.store.connection, 'history')
+        assert reopened.store.load().name == 'reopened cleanup failed'
+        assert reopened.store._prune_blocked
+    assert len(refused) == 2
+    assert all(stage.read_bytes() == data for stage, data in refused)
+
+
+@pytest.mark.parametrize('replacement_at', ['after_verify', 'after_unlink'])
+def test_foreign_stage_replacement_cannot_complete_or_be_removed(service, monkeypatch, replacement_at):
+    original_remember = V._remember
+    original_unlink = Path.unlink
+    observed = []
+
+    def replace(stage, final):
+        # The published hard link keeps the original inode alive while replacing the stage.
+        original_unlink(stage)
+        stage.write_bytes(b'foreign staging evidence')
+        observed.append((stage, final, final.read_bytes()))
+
+    def remember_then_replace(path, facts, checked):
+        result = original_remember(path, facts, checked)
+        if result and replacement_at == 'after_verify':
+            stage, = path.parent.glob(path.stem + '-*.sqlite3.part')
+            replace(stage, path)
+        return result
+
+    def unlink_then_replace(path, *args, **kwargs):
+        if path.name.endswith('.sqlite3.part') and replacement_at == 'after_unlink':
+            final, = path.parent.glob('*.sqlite3')
+            replace(path, final)
+            return None
+        return original_unlink(path, *args, **kwargs)
+
+    monkeypatch.setattr(V, '_remember', remember_then_replace)
+    monkeypatch.setattr(Path, 'unlink', unlink_then_replace)
+    with pytest.raises(V.BackupError):
+        V.write_verified_backup(service.root, service.store.connection, 'history-prune')
+    stage, final, data = observed[0]
+    assert stage.read_bytes() == b'foreign staging evidence'
+    assert final.read_bytes() == data
+    with sqlite3.connect(final) as db:
+        assert db.execute('PRAGMA integrity_check').fetchall() == [('ok',)]
+        assert _rows(db, 'history') == _rows(service.store.connection, 'history')
+    V.forget_all()
+    assert V.find_verified_backup(service.root, 'history-prune', project_id=service.project.id) is None
+
+
+@pytest.mark.parametrize('after_removal', [False, True])
+def test_unreadable_stage_identity_cannot_return_success(service, monkeypatch, after_removal):
+    original_remember = V._remember
+    original_lstat = Path.lstat
+    published = []
+    stage_reads = 0
+
+    def remember_then_observe(path, facts, checked):
+        result = original_remember(path, facts, checked)
+        if result:
+            stage, = path.parent.glob(path.stem + '-*.sqlite3.part')
+            published.append((stage, path, path.read_bytes()))
+        return result
+
+    def refuse_stage_identity(path, *args, **kwargs):
+        nonlocal stage_reads
+        if published and path == published[0][0]:
+            stage_reads += 1
+            if stage_reads == (2 if after_removal else 1):
+                raise PermissionError('staging identity is unreadable')
+        return original_lstat(path, *args, **kwargs)
+
+    monkeypatch.setattr(V, '_remember', remember_then_observe)
+    monkeypatch.setattr(Path, 'lstat', refuse_stage_identity)
+    with pytest.raises(V.BackupError):
+        V.write_verified_backup(service.root, service.store.connection, 'history-prune')
+    stage, final, data = published[0]
+    assert final.read_bytes() == data
+    if not after_removal:
+        assert stage.read_bytes() == data
+        V.forget_all()
+        assert V.find_verified_backup(service.root, 'history-prune', project_id=service.project.id) is None
+    else:
+        assert not stage.exists()
 
 
 def test_successful_publication_removes_only_its_stage_and_keeps_normal_reuse(service):

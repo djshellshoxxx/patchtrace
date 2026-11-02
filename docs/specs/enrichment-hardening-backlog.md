@@ -155,6 +155,13 @@ this attempt's owned staging name only after final byte revalidation succeeds. I
 validation fails, retain that staging name and diagnostic bytes, leave every final name untouched,
 and raise `BackupError`; later discovery, including after restart, must not adopt that unfinished
 publication. This refusal also applies while publication is in progress or staging cleanup fails.
+Returning a newly written backup requires both final byte revalidation and completion of the
+owned staging-name removal. An ownership mismatch, an unreadable staging identity, or failed
+removal is `BackupError`: preserve the final name and any remaining staging/foreign bytes,
+and authorize no first prune. After removing the owned name, observe its absence; a replacement
+at that name is also failure and is never removed. This does not promise exclusion of arbitrary
+filesystem changes after those observations. A verified SQLite copy may still contain every
+would-be deleted row after cleanup fails, but it is not a completed backup for the caller.
 Failure to open or completely read either directory enumeration refuses every candidate; a
 suppressed scan error must never be interpreted as absence of staging names.
 Other timestamps' completed backups remain eligible. Existing legacy backups with no matching
