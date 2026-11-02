@@ -90,6 +90,18 @@ def test_wrong_match_list_is_sorted_and_bounded():
     assert 'more wrong matches' in E.render_markdown(report)
 
 
+def test_wrong_match_report_preserves_long_unlabelled_provider_names():
+    long_name = 'provider-symbol-' + 'x' * 600
+    labels = make_labels([('expected', 0x1000, 0x1000, 'unchanged')], pair_id='syn-long-name')
+    answer = E.EngineOutput('rz-diff', 'ok', predictions=(
+        E.Prediction(0x1000, 0x1010, True, old_name='expected', new_name=long_name),))
+    report = E.evaluate([labels], [E.StaticProvider('rz-diff', {'syn-long-name': answer})])
+
+    wrong, = report['wrong_matches']
+    assert wrong['new_name'] == long_name
+    assert C.load_report(C.dump_json(report)).wrong_matches[0].new_name == long_name
+
+
 def test_markdown_escapes_hostile_names():
     labels = make_labels([('evil|name`<b>', 0x1000, 0x1000, 'unchanged'), ('x', 0x1010, 0x1010, 'unchanged')],
                          pair_id='syn-evil')
