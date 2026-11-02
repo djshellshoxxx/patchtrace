@@ -1,0 +1,62 @@
+{
+  "observed_utc": "2026-11-02 23:11:28 UTC",
+  "repository": "djshellshoxxx/patchtrace",
+  "pull_request": 163,
+  "head_sha": "6e82fd70f315b99c6798a42c9061a1424a02933e",
+  "check": {
+    "id": 125611462834,
+    "name": "SonarCloud Code Analysis",
+    "status": "completed",
+    "conclusion": "failure",
+    "started_at": "2026-11-02T23:06:37Z",
+    "completed_at": "2026-11-02T23:07:57Z",
+    "html_url": "https://github.com/djshellshoxxx/patchtrace/runs/125611462834",
+    "details_url": "https://sonarcloud.io/dashboard?id=djshellshoxxx_patchtrace&pullRequest=163",
+    "output": {
+      "title": "Quality Gate failed",
+      "summary": "Failed conditions  \n![](https://sonarsource.github.io/sonarcloud-github-static-resources/v2/common/failed.svg '') [C Security Rating on New Code](https://sonarcloud.io/project/issues?id=djshellshoxxx_patchtrace&pullRequest=163&issueStatuses=OPEN,CONFIRMED&sinceLeakPeriod=true) (required ≥ A)  \n  \n[See analysis details on SonarQube Cloud](https://sonarcloud.io/dashboard?id=djshellshoxxx_patchtrace&pullRequest=163)\n\n##   \n![](https://sonarsource.github.io/sonarcloud-github-static-resources/v2/common/light_bulb.svg '') Catch issues before they fail your Quality Gate with our IDE extension ![](https://sonarsource.github.io/sonarcloud-github-static-resources/v2/common/sonarlint.svg '') [SonarQube for IDE](https://www.sonarsource.com/products/sonarlint/features/connected-mode/?referrer=pull-request)\n\n",
+      "text": null,
+      "annotations_count": 10,
+      "annotations_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/check-runs/125611462834/annotations"
+    }
+  },
+  "sonar_comment": {
+    "url": "https://github.com/djshellshoxxx/patchtrace/pull/163#issuecomment-6590787069",
+    "created_at": "2026-11-02T23:07:59Z",
+    "body": "## [![Quality Gate Failed](https://sonarsource.github.io/sonarcloud-github-static-resources/v2/checks/QualityGateBadge/qg-failed-20px.png 'Quality Gate Failed')](https://sonarcloud.io/dashboard?id=djshellshoxxx_patchtrace&pullRequest=163) **Quality Gate failed**  \nFailed conditions  \n![](https://sonarsource.github.io/sonarcloud-github-static-resources/v2/common/failed-16px.png '') [C Security Rating on New Code](https://sonarcloud.io/project/issues?id=djshellshoxxx_patchtrace&pullRequest=163&issueStatuses=OPEN,CONFIRMED&sinceLeakPeriod=true) (required ≥ A)  \n  \n<!-- sqra:qg_revision=7eb82b071ef3a8773d6e68716fa9f6d93758b69c5d8591fbe139714452759096 -->\n<!-- sqra-placement-anchor -->\n[See analysis details on SonarQube Cloud](https://sonarcloud.io/dashboard?id=djshellshoxxx_patchtrace&pullRequest=163)\n\n##   \n![](https://sonarsource.github.io/sonarcloud-github-static-resources/v2/common/light_bulb-16px.png '') Catch issues before they fail your Quality Gate with our IDE extension ![](https://sonarsource.github.io/sonarcloud-github-static-resources/v2/common/sonarlint-16px.png '') [SonarQube for IDE](https://www.sonarsource.com/products/sonarlint/features/connected-mode/?referrer=pull-request)\n\n"
+  },
+  "inline_review_comments_count": 0,
+  "public_lookup_results": [
+    {
+      "resource": "GitHub PR163 checks page",
+      "result": "DisabledError"
+    },
+    {
+      "resource": "GitHub check-run public page",
+      "result": "DisabledError"
+    },
+    {
+      "resource": "https://sonarcloud.io/dashboard?id=djshellshoxxx_patchtrace&pullRequest=163",
+      "result": "not accessible via this tool"
+    },
+    {
+      "resource": "Sonar PR163 issue view linked by check",
+      "result": "not accessible via this tool"
+    },
+    {
+      "resource": "Sonar public api/issues/search for project and pullRequest=163",
+      "result": "not accessible via this tool"
+    },
+    {
+      "resource": "Sonar api/issues/search documentation",
+      "result": "not accessible via this tool"
+    },
+    {
+      "resource": "Public search for exact Sonar project key",
+      "result": "no results"
+    }
+  ],
+  "findings_available": false,
+  "limitation": "No paths, rules, line locations, issue messages or dataflows were returned. Annotation count does not establish the number or type of security issues. Access failures do not establish whether the Sonar project is private.",
+  "actions": "Read-only connectors and public web lookup only. No code edits, remote writes, browser/login, proxy changes, suppression, exploitation or reproduction."
+}

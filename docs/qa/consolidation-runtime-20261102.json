@@ -1,0 +1,13 @@
+{
+  "python": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+  "platform": "Linux-6.18.57-x86_64-with-glibc2.39",
+  "cpu_count": 9,
+  "load_average": [
+    1.22998046875,
+    1.09521484375,
+    0.9423828125
+  ],
+  "cpu.max": "800000 100000",
+  "memory.max": "8589934592",
+  "cpu.stat": "usage_usec 13982734646\nuser_usec 11871479410\nsystem_usec 2111255235\nnice_usec 0\nnr_periods 270691\nnr_throttled 40\nthrottled_usec 1560380\nnr_bursts 0\nburst_usec 0"
+}

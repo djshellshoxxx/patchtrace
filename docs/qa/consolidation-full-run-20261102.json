@@ -1,0 +1,48 @@
+{
+  "tested_local_commit": "f2b7d981008dea25ac09ea82734da64a1dccb96d",
+  "tested_tree": "985078aed0feb4f909690d6082ec4940540cda17",
+  "published_source_commit": "6e82fd70f315b99c6798a42c9061a1424a02933e",
+  "published_tree": "2e7cd8e258821f50d776ca3b3a4caef594e2a417",
+  "publication_difference": "Five additional QA documents; every prior path, mode and blob identical.",
+  "command": "QT_QPA_PLATFORM=offscreen PYTHONPATH=src python3 -m pytest -q --junitxml=/tmp/patchtrace-consolidation-full-20261102.xml",
+  "outcome": "FAILED; do not relabel from later targeted runs",
+  "exit_code": 1,
+  "summary": {
+    "passed": 19154,
+    "failed": 59,
+    "errors": 9,
+    "skipped": 402,
+    "xfailed": 7,
+    "warnings": 18,
+    "seconds": 2101.09
+  },
+  "initial_failure_groups": {
+    "socket_permission_failures": 46,
+    "socket_fixture_errors": 9,
+    "missing_rapidfuzz_imports": 4,
+    "missing_search_suggestion_assertions": 2,
+    "isolated_python_package_imports": 7
+  },
+  "files": [
+    {
+      "name": "patchtrace-consolidation-full-20261102.log",
+      "bytes": 164030,
+      "sha256": "50bbe4e8587d7ea05b5b962382179f613a3442536a09061d1e1738fb35302d74"
+    },
+    {
+      "name": "patchtrace-consolidation-full-20261102.xml",
+      "bytes": 2881926,
+      "sha256": "9d6de2820ebeb610b2bb88a95f9e936855323f738a4f41fe6c51b44cd5e7fa70"
+    },
+    {
+      "name": "patchtrace-consolidation-full-failures-20261102.json",
+      "bytes": 131565,
+      "sha256": "beb467136b9894cc215bc2f527f9af90661e7b193408c524059a76595252f973"
+    },
+    {
+      "name": "patchtrace-consolidation-full-skips-20261102.json",
+      "bytes": 167313,
+      "sha256": "fe48e81981743c32b3db4aee8b023a6157f483c78d3ed65693fc0919e6ac8353"
+    }
+  ]
+}

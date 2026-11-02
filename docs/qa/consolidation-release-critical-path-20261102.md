@@ -1,0 +1,122 @@
+# PatchTrace release critical path — read-only audit, 2026-11-02
+
+## Candidate and scope
+
+Reviewed published PR **#163**, commit **`6e82fd70f315b99c6798a42c9061a1424a02933e`**, tree **`2e7cd8e258821f50d776ca3b3a4caef594e2a417`**. The clean local representation at `/tmp/patchtrace-publish-20261102` is commit `2b6a4965cc4e0e1f3822109d8a13ebf236ff9bb0`; the coordinator independently confirmed every tree entry matches the published commit. Links below are immutable published-source links.
+
+Read `AGENTS.md`, the release/Windows/bundle specifications and actual workflows/build/smoke code. Applied the desktop-relevant parts of the shipping-and-launch skill: fixed candidate identity, critical workflow acceptance, truthful feature availability, release verification and recoverable distribution. Generic web hosting requirements do not apply. No repository edits, tests, native execution, network requests or remote changes were performed. This report does not replace the coordinator's ongoing full serial run or hosted check collection.
+
+**The shortest defensible path is to qualify one integrated candidate, produce its tested Windows ZIP and installer, complete the packaged native workflow, and record the clean Windows acceptance.** Consolidating every historical PR is not a mechanical prerequisite to making another beta. Completing all adopted requirements remains the documented mission; research proposals stay proposals. A final non-prerelease release still needs the owner's explicit final decision after the concrete candidate is reviewable. [Authority][authority] [Current handoff][handoff] [Adopted scope][scope]
+
+## 1. Finite release checklist
+
+| ID | Required next action | Acceptance evidence / disposition |
+|---|---|---|
+| R1 | Freeze the integrated source and close current qualification failures. | Complete the running immutable full suite, collect exact published-head Linux/Windows QA, all Qt legs, package/smoke and applicable review/quality checks. Preserve failures and distinguish the tested source tree from later receipt-only commits. The publication checkpoint says these gates were pending. The coordinator's separately collected PR163 Sonar check reports **C Security Rating on New Code, required A**, with 10 annotations; paths/rules/dataflows remain inaccessible. This is unresolved quality evidence, not ten established vulnerabilities or a false-positive disposition. |
+| R2 | Produce and verify the exact Windows portable and installer artifacts. | Pass every actual package gate in section 2, record SHA-256, source SHA, run URL, version/resource read-back and notices. A Linux source pass cannot qualify a Windows executable. |
+| R3 | Close the core end-to-end workflow on those artifacts. | Use the finite journey in section 3, including real native analysis, export/reopen and cancellation/failure preservation. Synthetic imported results establish wiring only. P0 data loss/security invariant/launch failures and P1 wrong results presented as right block acceptance under E-6. |
+| R4 | Qualify native components for the claims being shipped. | Exact-source Ghidriff matrix for this source-changing candidate, then packaged native GUI evidence. Treat BinExport/BinDiff, Rizin and the full offline bundle according to section 4; their distinct gates cannot be credited from a Ghidriff smoke. |
+| R5 | Reconcile adopted feature correctness and final scope. | Map the remaining accepted ledger rows to actual code and evidence, starting with receipt publication integrity and rule matrix correctness. Close or explicitly retain the rule-proposal wiring gap. The documents do not define a single final-release scope that makes every open PR mandatory; section 5 identifies what is known and what needs an explicit disposition. Do not silently delete accepted v2 obligations. |
+| R6 | Record clean Windows desktop acceptance. | M01–M28 on the exact downloaded package, with Windows build, SHA-256, tester, date and pass/fail/not-run per row; include screen readers, keyboard, high contrast, DPI/mixed monitors and native cancel/reopen. Actual desktop/assistive-technology acceptance remains human work. |
+| R7 | Publish the permitted prerelease and verify the assets fetched back. | Verify the intended commit/tag, prerelease flag, ZIP/Setup/Linux hashes and notes. Notes must identify backend requirements, unsigned status and all open gates. Preserve previous assets; document replacement of app files without overwriting projects. A green build with failed upload is not a published release. |
+| R8 | Make the final-release decision only from the resulting evidence. | Supply the tested package plus this closed/open checklist. No final release, signing claim, air-gap claim, numeric-confidence promotion or global completion claim follows automatically from a beta tag or a green subset. |
+
+R1's current-source qualification requirements are explicit in the [consolidation handoff][consolidation] and [validation checkpoint][validation]. The later Sonar observation is in `/tmp/patchtrace-pr163-sonar-diagnostic-20261102.md` / `.json`, observed 23:11:28 UTC; it is external check evidence, not text present in the candidate. The ordinary workflow does not name Sonar in its `release.needs`; the accepted consolidation checkpoint nevertheless requires applicable hosted quality/review disposition. No branch-protection setting was audited here.
+
+## 2. Exact Windows portable and installer gates
+
+The actual [QA workflow][workflow] is authoritative where older prose differs:
+
+| Stage | Current implemented gate |
+|---|---|
+| Source QA | Python 3.12; binary-wheel-only installation of `.[dev,search,rules]`; `pip check`; pinned protobuf/upb check; full pytest and Ruff on both Ubuntu and Windows. Timeout is currently 120 minutes, superseding the old 60-minute handoff. |
+| Qt stability | Four Ubuntu shards, each repeat 20, and one Windows leg, repeat 5. `linux-package` requires both `qa` and `qt-gate`. |
+| Windows frozen build | Must run on Windows. Builds one-folder PyInstaller app; checks pinned dependency/notices inventory, replaceable Qt distribution, upb extension, byte-identical extractor and Ghidriff launcher data, desktop mark, executable version/icon/source identity; runs frozen self-test and CLI help before archiving. Read-back rejects incomplete/ambiguous resources. |
+| Frozen acceptance | `tools/frozen_smoke.py` tests all registered command help, invalid command/missing project, strict JSON ranking, path variants, imported three-build series, BinExport positive/refusal controls, intelligence/unified checks and self-test. It explicitly requires the constructed offline F8 journey marker and optional dependency availability. |
+| Portable ZIP | `test_windows_portable.ps1` verifies its SHA-256 sidecar, extracts outside checkout to a Unicode/space path, requires EXE, `qwindows.dll`, dependency manifest and notices, clears `PYTHONHOME`/`PYTHONPATH`, then runs frozen self-test and `rank --help`. This proves relocation with the frozen interpreter, not native backend inclusion. |
+| Installer | NSIS **3.13** is checked. The installer is per-user (`RequestExecutionLevel user`), normally under LocalAppData. `test_windows_installer.ps1` installs to a Unicode/space path, verifies EXE, Qt DLL/plugin, NSIS notice, Start Menu and HKCU Apps entry; runs frozen self-test; uninstalls; requires EXE/registration/shortcut removal and preservation of project sentinels both inside and outside the app directory. |
+| Publish dependencies | `release` directly needs `qa`, `qt-gate`, `linux-smoke`, `release-gate`. Both Linux 22.04/24.04 offscreen and Xvfb smoke legs are required through the current graph. The cadence gate's fail-open policy cannot bypass failed QA/Qt/package dependencies. |
+| Release assets | Windows versioned ZIP + sidecar, Setup.exe + sidecar; release job verifies both and creates canonical `PatchTrace-Windows-x64-Portable.zip` + sidecar; Linux tar.gz + sidecar. Downloaded release assets must be verified again against the intended SHA/run. |
+
+Sources: [Windows builder][builder], [frozen smoke][smoke], [portable acceptance][portable], [installer builder][installerbuilder], [installer acceptance][installeraccept], [installer definition][installer], [Windows acceptance spec][windows].
+
+The Windows spec's native A6 three-build comparison is **not** satisfied by synthetic A6s. The old A7–A12 table also needs reconciliation against actual tests and run evidence: existing scheduler/rule/BinExport tests do contain descendant cleanup controls, so the whole group must not be called unimplemented from its 2026-10-14 labels. A7's forced harness-death requirement, native A6, OneDrive scratch behavior and exclusive file-lock preservation each need their own mapped evidence. This audit did not execute or declare them passed.
+
+Automatic `v0.1.0-beta.<run>` publication is an integration build, explicitly not acceptance. The release name remains hard-coded `PatchTrace beta <run>`, so the specified alpha-tag naming change is still needed before advertising a tagged alpha. Signing is not required for the present alpha/beta policy. Old “no installer” prose is explicitly superseded by the NSIS amendment. [Release process][release] [Signing policy][signing]
+
+## 3. Core workflow acceptance: a bounded user journey
+
+1. **Launch and inputs:** start the downloaded portable and installed app on a clean Windows profile; open the synthetic sample; create/open a project from a known old/new PE AMD64 pair; inspect metadata and raw bytes before analysis; reject incompatible/corrupt inputs with an actionable message.
+2. **Native comparison:** configure the approved external runtime, compare the known pair through the frozen GUI, verify older/newer ownership, nonempty expected matches and the expected changed function, then repeat for byte/cache consistency. Include an identical pair and reversed inputs where the accepted native controls specify them. Never execute the compared binaries.
+3. **Investigation and persistence:** navigate paired code/raw views and evidence, record analyst review/notes, export each advertised report format, close/reopen, and verify source/run/artifact identity, retained history and persisted edits. An older supported project must reopen without silent destructive migration.
+4. **Failures:** cancel/close during real analysis, repeat in Unicode/space and OneDrive-backed locations, exercise a locked output and failed export/save, verify child termination and preserved prior committed results/backup evidence. Record the actual response; “did not crash” alone is insufficient.
+5. **Optional features actually advertised:** a provider action needs exact preview/consent/citation evidence; rule authoring needs propose→review→accept→test→export evidence; unavailable secondary engines must show explicit unavailable/blocked states and leave core results intact. These feature paths must be qualified or described as limited, not assumed complete from imports.
+
+The candidate already contains a substantial [constructed F8 journey][journey]: offline advisory import, missing/ambiguous coverage, explicit product scope, hashed local-pair preview, project creation/adoption, imported synthetic analysis, candidate panel, project/context export, Unicode paths, tooltip/accessibility names, source snapshots, close/reopen and stale-after-advisory-replacement behavior. The [frozen smoke][smoke] demands its success marker. This is a useful existing acceptance foundation; it deliberately imports synthetic analysis and cannot stand in for step 2 or human visual/accessibility checks.
+
+[E-6][e6] supplies scenario/bug/performance requirements but contains dated “to build” observations; for example, the current F8 journey postdates it and there is no current `tools/beta/` directory. Use a coverage map to the actual harnesses instead of duplicating all 24 historical scenarios. Retain unresolved budgets and adopted requirements; measure only concrete remaining gaps after the serial full-suite resource gate.
+
+## 4. Native backend inclusion and qualification
+
+| Component | Current inclusion / qualification consequence |
+|---|---|
+| Python + Qt desktop | Bundled in ordinary ZIP/Setup. No separate desktop Python install is needed. This does not bundle the comparison runtime. |
+| Primary Ghidriff/Ghidra/Java | Ordinary assets require external configuration. [Native Windows workflow][native] uses Ghidra 12.0.4, pinned Ghidriff commit `4f5d895...`, Java 25, and five variants: plain-Ghidriff expected-failure reproduction, clean PatchTrace, seeded store, seeded store without adjacent PDB and raw-cache hit. Five modes repeated on push/PR are not ten different acceptance dimensions. The [milestone spec][windows] requires exact-SHA native success when source changes; the release job does not directly depend on this workflow. |
+| Zero-download full bundle | Separate workflow and artifacts; not part of ordinary `qa-windows` package publication. Require exact payload pin/hash/license gate, Windows disconnected/read-only-tree positive-control acceptance, full verification and known-patch self-test, no unexpected connections, cancellation/import recovery, notices/source offers, and asset size below 1.9 GiB. Linux full-bundle acceptance is additionally required if Linux full assets are included. Owner clean disconnected-Windows W1–W9 remains separate. |
+| Bundle approval versus compatibility | Current [backend pin][backendpin] already records owner approval for unmodified out-of-process Ghidriff with corresponding source and the JDK. Do not re-ask based on the old checklist. The bundle pins JDK 21 and a specific Python/JPype/PyGhidra stack, whereas the native smoke uses Java 25 and resolves some Python dependencies differently. A native smoke therefore cannot qualify the full bundle. The actual build/read-only disconnected tests are still necessary. |
+| BinExport / BinDiff | [BinDiff pin][bindiffpin] still says `verified:false`; it requires independent digest/signature verification. The preserved [native attempt][binexportattempt] failed exporter compatibility, accepted zero exports, and never ran BinDiff. Resolve the actual supported host/exporter/protobuf compatibility and then record the full static export→match→persist→GUI chain. This is necessary for those native/oracle claims, not satisfied by synthetic parser fixtures. |
+| Rizin 0.9.1 | Deliberately quarantined. Known affected probes refuse; valid nonempty parser output does not become trusted orientation; associative consumers abstain and cache identity changes prevent reuse of earlier current results. The pinned live check reports `rz-diff-orientation-unverified` and exits nonzero. Corpus defaults using rz-diff consequently remain blocked. |
+
+For the full bundle, publication is only an explicit `publish_prerelease=true` dispatch/call after acceptance; tag pushes build/accept but do not publish. Current documentation still says no official fully validated bundle is available. The owner's recorded no-download-bundle request remains accepted work; it need not block another honestly limited desktop beta, but it cannot be called complete or silently dropped from the full mission. [Offline guide][offline] [Bundle rules][bundle] [Bundle workflow][bundleworkflow]
+
+Rizin quarantine is protective behavior, not completed native acceptance. Retaining it can support an explicitly limited beta with Rizin unavailable; it cannot support a claim that all secondary engines, default corpus evaluation or full adopted matching acceptance are done. The [witness document][rizinwitness] identifies the missing same-run analysis-state/orientation proof and controlled review needed before any lift. The [native triage][nativetriage] preserves failed/blocked runs; absence of a path-filtered run is not success. No pin downgrade, global endpoint swap, or gate suppression is a release shortcut.
+
+## 5. Are #128/#145/#150 and #126/#146 mandatory release dependencies?
+
+| Stack | Documentary determination | Concrete next step |
+|---|---|---|
+| Receipt lineage **#128 → #145 → #150** | **Not a direct Windows package-content dependency.** [Known-answer corpus spec][corpus] explicitly calls these tools dev-only and excluded from the Windows package. Their truth/lineage/receipt safeguards are dependencies of trustworthy native corpus/calibration evaluation and are retained accepted work in the completion ledger. Later ledger entries report 14 native Windows controls but unresolved parent/quality acceptance; child checks do not qualify parents. No current document states “every desktop beta must merge these three PR IDs.” | Reconcile unique production/evidence deltas and each parent before relying on their evaluation output; retain failed evidence and independent review. Decide final release linkage from the actual adopted evaluation/accuracy claims, not PR count. Do not infer calibration readiness or enable numeric confidence from the repaired receipt path. |
+| Rules **#126 → #146** | **A shipped-feature correctness dependency where those defects remain applicable.** #126 is not docs-only: its preserved ledger names callgraph, KB and rules production changes. #146 fixes duplicate-content rule identities/cells and blocking FIFO replacement; these are correctness defects, not optional model research. The beta workflow itself does not name this stack as a dependency. Full absorption into PR163 has not been established by this bounded audit. | Compare the unique fixes against PR163 and integrate still-valid bounded repairs with exact-head Windows evidence. Do not merge broad historical source blindly or mark it absorbed solely from an ancestor test run. |
+| Full rule-authoring workflow | **Concrete current implementation gap.** [Rules CLI][rulescli] initializes `BACKEND: PairBackend | None = None`; read-only search found no production assignment in `src/`. `_propose` explicitly refuses because it cannot read match evidence. The [dock help][ruleshelp] says the dock displays stored results and delegates creation/testing to CLI. Passing grid tests cannot prove end-to-end authoring. | If rule authoring is part of the intended final feature set, finish and independently qualify the bounded evidence-loader integration. Meanwhile reconcile help/availability wording. This is separate from the two #146 matrix repairs. |
+
+**Unknown:** the reviewed documents retain the entire adopted mission but do not supply a final, release-specific feature matrix that assigns every outstanding stack a mandatory/deferrable final-release status. The current inventory is a dated preservation snapshot, not a current semantic absorption certificate. Avoid deciding product scope by declaring either stack universally mandatory or optional. Preserve their accepted correctness obligations and obtain a concrete disposition only after the source reconciliation makes the choice reviewable. [Scope ledger][scope] [Current handoff][handoff] [Preservation inventory][inventory]
+
+## 6. Work outside the immediate package-critical path
+
+- Historical PR closure, branch cleanup and duplicate tracker cleanup are consolidation hygiene after unique content is preserved; they are not proof of release readiness.
+- Optional learned matchers, R7 synthetic slicing and speculative corpus recipes remain research unless adopted. Accepted v2 QB/RD/Diaphora obligations remain in the mission; essential-alpha sequencing never deleted them.
+- Signing provider enrollment, a new signed channel, combined attestation work and Pages deployment do not block the currently specified unsigned beta. Final signing policy remains an owner decision; no unsupported trust claim follows from SHA-256 alone.
+- Broad accuracy, numeric confidence, “all engines validated” and “air-gapped” claims introduce independent evidence prerequisites. Keep current ordinal/unknown/blocked states until their real gates pass.
+
+The useful next work is therefore **one qualified candidate and its complete supported user journey**, plus bounded reconciliation of real correctness gaps. The report does not call the project complete, infer Windows acceptance from Linux, or turn a historical checklist into a new permission barrier.
+
+[authority]: https://github.com/djshellshoxxx/patchtrace/blob/6e82fd70f315b99c6798a42c9061a1424a02933e/AGENTS.md
+[handoff]: https://github.com/djshellshoxxx/patchtrace/blob/6e82fd70f315b99c6798a42c9061a1424a02933e/docs/handoff/autonomous-continuation-20261102.md
+[scope]: https://github.com/djshellshoxxx/patchtrace/blob/6e82fd70f315b99c6798a42c9061a1424a02933e/docs/plans/milestone-ledger-20261030.md
+[consolidation]: https://github.com/djshellshoxxx/patchtrace/blob/6e82fd70f315b99c6798a42c9061a1424a02933e/docs/qa/consolidation-handoff-20261102.md
+[validation]: https://github.com/djshellshoxxx/patchtrace/blob/6e82fd70f315b99c6798a42c9061a1424a02933e/docs/qa/consolidation-final-validation-20261102.md
+[workflow]: https://github.com/djshellshoxxx/patchtrace/blob/6e82fd70f315b99c6798a42c9061a1424a02933e/.github/workflows/qa-windows.yml
+[builder]: https://github.com/djshellshoxxx/patchtrace/blob/6e82fd70f315b99c6798a42c9061a1424a02933e/tools/build_windows.py
+[smoke]: https://github.com/djshellshoxxx/patchtrace/blob/6e82fd70f315b99c6798a42c9061a1424a02933e/tools/frozen_smoke.py
+[portable]: https://github.com/djshellshoxxx/patchtrace/blob/6e82fd70f315b99c6798a42c9061a1424a02933e/tools/test_windows_portable.ps1
+[installerbuilder]: https://github.com/djshellshoxxx/patchtrace/blob/6e82fd70f315b99c6798a42c9061a1424a02933e/tools/package_windows_installer.py
+[installeraccept]: https://github.com/djshellshoxxx/patchtrace/blob/6e82fd70f315b99c6798a42c9061a1424a02933e/tools/test_windows_installer.ps1
+[installer]: https://github.com/djshellshoxxx/patchtrace/blob/6e82fd70f315b99c6798a42c9061a1424a02933e/installer/PatchTrace.nsi
+[windows]: https://github.com/djshellshoxxx/patchtrace/blob/6e82fd70f315b99c6798a42c9061a1424a02933e/docs/specs/windows-acceptance-and-milestone-builds.md
+[release]: https://github.com/djshellshoxxx/patchtrace/blob/6e82fd70f315b99c6798a42c9061a1424a02933e/docs/release-process.md
+[signing]: https://github.com/djshellshoxxx/patchtrace/blob/6e82fd70f315b99c6798a42c9061a1424a02933e/docs/specs/windows-release-signing-policy.md
+[journey]: https://github.com/djshellshoxxx/patchtrace/blob/6e82fd70f315b99c6798a42c9061a1424a02933e/src/patchtrace/gui/qt/kb_selftest.py
+[e6]: https://github.com/djshellshoxxx/patchtrace/blob/6e82fd70f315b99c6798a42c9061a1424a02933e/docs/specs/program-e/E6-test-performance-beta-plan.md
+[native]: https://github.com/djshellshoxxx/patchtrace/blob/6e82fd70f315b99c6798a42c9061a1424a02933e/.github/workflows/live-backend.yml
+[backendpin]: https://github.com/djshellshoxxx/patchtrace/blob/6e82fd70f315b99c6798a42c9061a1424a02933e/tools/backend_pin.json
+[bindiffpin]: https://github.com/djshellshoxxx/patchtrace/blob/6e82fd70f315b99c6798a42c9061a1424a02933e/tools/bindiff_pin.json
+[binexportattempt]: https://github.com/djshellshoxxx/patchtrace/blob/6e82fd70f315b99c6798a42c9061a1424a02933e/docs/qa/native-binexport-bindiff-attempt1-summary-20261102.json
+[offline]: https://github.com/djshellshoxxx/patchtrace/blob/6e82fd70f315b99c6798a42c9061a1424a02933e/docs/offline-backend.md
+[bundle]: https://github.com/djshellshoxxx/patchtrace/blob/6e82fd70f315b99c6798a42c9061a1424a02933e/docs/specs/program-e/BUNDLE-release-checklist.md
+[bundleworkflow]: https://github.com/djshellshoxxx/patchtrace/blob/6e82fd70f315b99c6798a42c9061a1424a02933e/.github/workflows/backend-bundle.yml
+[rizinwitness]: https://github.com/djshellshoxxx/patchtrace/blob/6e82fd70f315b99c6798a42c9061a1424a02933e/docs/research/rzdiff-orientation-witness-20261101.md
+[nativetriage]: https://github.com/djshellshoxxx/patchtrace/blob/6e82fd70f315b99c6798a42c9061a1424a02933e/docs/qa/consolidation-native-gate-triage-20261102.md
+[corpus]: https://github.com/djshellshoxxx/patchtrace/blob/6e82fd70f315b99c6798a42c9061a1424a02933e/docs/specs/known-answer-corpus.md
+[rulescli]: https://github.com/djshellshoxxx/patchtrace/blob/6e82fd70f315b99c6798a42c9061a1424a02933e/src/patchtrace/rules/cli.py
+[ruleshelp]: https://github.com/djshellshoxxx/patchtrace/blob/6e82fd70f315b99c6798a42c9061a1424a02933e/docs/help/28-detection-rules-panel.md
+[inventory]: https://github.com/djshellshoxxx/patchtrace/blob/6e82fd70f315b99c6798a42c9061a1424a02933e/docs/qa/consolidation-inventory-20261102.json
