@@ -66,7 +66,8 @@ def test_historical_trimmed_fixture_and_unverified_suffixes_cannot_attest_orient
     assert hashlib.sha256(raw).hexdigest() in rejected.value.message
 
 
-def test_affected_probe_is_explicit_and_cannot_reuse_old_scheduler_cache(tmp_path, monkeypatch):
+@pytest.mark.parametrize('executable_name', ['rz-diff', 'rz-diff.exe'])
+def test_affected_probe_is_explicit_and_cannot_reuse_old_scheduler_cache(tmp_path, monkeypatch, executable_name):
     old, new = tmp_path / 'old.bin', tmp_path / 'new.bin'
     old.write_bytes(b'older bytes')
     new.write_bytes(b'newer bytes')
@@ -74,6 +75,17 @@ def test_affected_probe_is_explicit_and_cannot_reuse_old_scheduler_cache(tmp_pat
     cached = rzdiff_set([rz(0x1000, 0x1080, version='0.9.1')], version='0.9.1', older=old_sha, newer=new_sha)
     original = cached.model_dump_json()
     calls = []
+    executable = tmp_path / 'synthetic tool path' / executable_name
+    executable.parent.mkdir()
+    executable.write_bytes(b'inert test placeholder: only the injected probe runner may inspect this path')
+    probes = []
+
+    def probe_runner(argv, **kwargs):
+        probes.append(argv)
+        return ProcessResult(0, 'rz-diff 0.9.1 @ synthetic-platform\n', None, '')
+
+    def no_matching(*args, **kwargs):
+        pytest.fail('quarantined producer reached matching execution')
 
     class Cache:
         def find(self, key):
@@ -82,12 +94,13 @@ def test_affected_probe_is_explicit_and_cannot_reuse_old_scheduler_cache(tmp_pat
 
     real_probe = rzdiff.probe
     monkeypatch.setattr(rzdiff, 'probe', lambda path, env, cancel: real_probe(
-        path, env, cancel, runner=lambda *args, **kwargs: ProcessResult(0, 'rz-diff 0.9.1 @ linux-x86-64\n', None, '')))
+        path, env, cancel, runner=probe_runner))
     [outcome] = run_engines(ProjectRef(old, new, old_sha, new_sha), ['rz-diff'], registry={
-        'rz-diff': RzDiffAdapter('/historical/pinned/rz-diff')}, env={}, cancel=threading.Event(), cache=Cache())
+        'rz-diff': RzDiffAdapter(str(executable))}, env={}, cancel=threading.Event(), cache=Cache(), runner=no_matching)
     assert outcome.run.status == 'unsupported' and outcome.match_set is None
     assert outcome.run.engine_version == '0.9.1'
     assert 'orientation' in outcome.error.message.lower()
+    assert probes == [[str(executable), '-v']]
     assert calls == [] and cached.model_dump_json() == original
     assert (outcome.run.older_sha256, outcome.run.newer_sha256) == (old_sha, new_sha)
 

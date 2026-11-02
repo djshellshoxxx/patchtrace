@@ -130,7 +130,7 @@ def test_budget_failure_cli_is_failed_completion_and_exposes_report(tmp_path, mo
     assert result['status'] == 'failed' and result['credited'] is False
     assert result['report_data']['pairs'][0]['metrics'] is not None
     assert not (store / 'reports').exists()
-    assert result['diagnostics']['attempted']['report'] == str(Path(result['outputs']) / OS.UNCREDITED_REPORT)
+    assert result['diagnostics']['attempted']['report'] == (Path(result['outputs']) / OS.UNCREDITED_REPORT).as_posix()
     assert 'report' in result['diagnostics']['errors']
 
 

@@ -104,6 +104,8 @@ Mode, project, orientation, selection, inspection, input and panel visibility ch
 displayed results. Cancellation happens before releasing inspected readers; late results must match the captured
 context and generation. Close and application quit cancel work through the shared TaskRunner. Summary layout is
 allocated by its existing parent layout before result paint, including status/EOF line wrapping at narrow widths.
+Its current wrapped height is a layout minimum even if the splitter does not propagate height-for-width.
+Width/font/style changes recalculate it; shorter status text releases the previous minimum.
 
 
 Hex line: lower-case offset gutter (at least 8 digits, widened consistently when needed), two spaces, byte columns with an extra space after the 8th byte, then `|ascii|` where only 0x20..0x7e are shown and every other byte (nulls, high-bit) is `.`. A partial last line is padded so the ASCII column aligns. Binary line: offset gutter, two spaces, 8-bit groups (`01001101`) separated by a space. Base64: RFC 4648 standard alphabet with padding; wrapping is display only, `base64_exact` is the single-line form and encodes exactly the page bytes in logical order. For non-contiguous pages Hex/Binary emit one segment header line per chunk; Base64 shows no headers inside the encoded text (the caption lists the segments) so the text stays valid Base64.

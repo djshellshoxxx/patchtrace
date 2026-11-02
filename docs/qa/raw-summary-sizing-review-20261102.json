@@ -1,0 +1,69 @@
+{
+  "reviewer": "review_resume independent helper",
+  "decision": "No blocking findings within reviewed summary-allocation scope",
+  "reviewed_head": "b4ed3a221a342ea57e70791d46acdcc7096aacd1",
+  "reviewed_tree": "3ceedaabfdaa4ff44b9d10e20be131d7b696ea3f",
+  "base": "6a37e48880e2c1b6360fc92c4d744492caa37387",
+  "worktree": "/workspace/scratch/142cb233d750/wt-raw-summary",
+  "worktree_status": "",
+  "changed_paths": [
+    "docs/qa/raw-summary-sizing-20261102.md",
+    "docs/qa/raw-summary-sizing-20261102.tar.gz",
+    "docs/specs/byte-representations.md",
+    "src/patchtrace/ui_raw_alignment.py",
+    "tests/test_ui_raw_alignment.py"
+  ],
+  "changed_file_sha256": {
+    "docs/qa/raw-summary-sizing-20261102.md": "cd5b3eb574083b52b743451f69b89b0251678c0b33bc6e25d651fb5172b34870",
+    "docs/qa/raw-summary-sizing-20261102.tar.gz": "021a804538969d5f1fecff78f0a6543fead6dd654782f16dd45df6d9779c9059",
+    "docs/specs/byte-representations.md": "4bd80ab02d28b474f4dc2a5b62f86fdded0768462c7b3c21aed4bce819526d76",
+    "src/patchtrace/ui_raw_alignment.py": "bfad25e8015c61915e4e6ab65f1e9b31e5e0a009da944b5e68c12c6160521374",
+    "tests/test_ui_raw_alignment.py": "46f05e4b4befe9a115d806dbdb286d8be79cf99888f8d2aa3e045d1751dbcf2c"
+  },
+  "environment": {
+    "python": "3.12.14",
+    "platform": "Linux",
+    "Qt": "offscreen"
+  },
+  "scope_and_reasoning": [
+    "Controller status sizing only: update text through unchanged PlainLabel, release old minimum before heightForWidth, then allocate existing layouts using current wrapped height. At most two explicit passes per nonreentrant allocator call account for layout-induced width change.",
+    "The guard refuses synchronous recursive allocation and resets in finally, including an injected measurement exception. Label Resize/FontChange/StyleChange events recompute the requirement; closed controller returns before touching Qt controls.",
+    "Actual Qt controls exercised 12 repeated combinations of 12/24/18/12-pixel QFont changes and 1440/960/1100 widths, followed by an 18-pixel padded/bordered style and 960-pixel window. Every measured summary fits and short text releases the previous height; result/context/generation/original Copy bytes stay unchanged.",
+    "The status remains bounded sanitized plain text with links disabled. Existing Copy, context invalidation, worker delivery and cancellation code is unchanged and covered by the existing focused selection.",
+    "Viewed narrow screenshot confirms the complete EOF summary remains visible inside its parent controls. This is Linux Qt offscreen evidence, not a Windows/DPI acceptance substitute."
+  ],
+  "validation": [
+    {
+      "command": "QT_QPA_PLATFORM=offscreen PYTHONPATH=.:src:tests /workspace/scratch/142cb233d750/venv/bin/python -m pytest -q --tb=short --junitxml=/workspace/scratch/142cb233d750/reviews-resume/raw-summary-existing-20261102.xml tests/test_ui_raw_alignment.py tests/test_raw_alignment_view.py tests/test_tooltips.py tests/test_gui_host_seam.py",
+      "result": "84 passed in 24.55 seconds; unchanged original immediate/narrow allocation assertions included."
+    },
+    {
+      "command": "QT_QPA_PLATFORM=offscreen PYTHONPATH=.:src:tests /workspace/scratch/142cb233d750/venv/bin/python -m pytest -q --tb=short --junitxml=/workspace/scratch/142cb233d750/reviews-resume/raw-summary-independent-20261102.xml /workspace/scratch/142cb233d750/reviews-resume/test_raw_summary_independent.py",
+      "result": "4 independent tests passed in 2.22 seconds; disjoint from existing84."
+    },
+    {
+      "command": "Initial independent script",
+      "result": "1 failed, 3 passed in 2.44 seconds. Reviewer assertion incorrectly treated all Qt height queries during setText as a single allocator call (six queries across width changes). Corrected to assert synchronous reentry during active allocation cannot cause another measurement; retained initial script/log. No production defect inferred from this invalid assertion."
+    },
+    {
+      "command": "Changed-file Ruff; git diff --check; clean frozen head verification; native failure traceback inspection",
+      "result": "Passed. Saved Windows trace confirms 68px actual versus required96/82. No Linux red reproduction claimed."
+    }
+  ],
+  "prior_author_evidence": "Author QA archive preserves Linux baseline5pass, an invalid test filename, first candidate3shrink failures caused by retained minimum, and final corrected84pass. Not counted as independent results.",
+  "independent_artifacts": {
+    "/workspace/scratch/142cb233d750/reviews-resume/test_raw_summary_independent.py": "8da44076331132053edfe9c68308121ed7f50e27f035671e011b0840f920c6b2",
+    "/workspace/scratch/142cb233d750/reviews-resume/test_raw_summary_independent_initial.py": "fbfdc5232b23146404ea886b7e8aee1fe77aa8b4024ec003c566a18738b0dea0",
+    "/workspace/scratch/142cb233d750/reviews-resume/raw-summary-independent-initial-20261102.txt": "278fd2efb665ed20d1118200f21e9e681bf4bd33a9fa91194ccb9108651317db",
+    "/workspace/scratch/142cb233d750/reviews-resume/raw-summary-existing-20261102.txt": "dbe60fe3937aad83b620b356905ce874447ef9a8a5dbd6f170a3cece0681e9c4",
+    "/workspace/scratch/142cb233d750/reviews-resume/raw-summary-existing-20261102.xml": "f9a9bc03cc24ab2b71115ae09f79a433de17a5a26d7c2aedaec11838b06204f2",
+    "/workspace/scratch/142cb233d750/reviews-resume/raw-summary-independent-20261102.txt": "935d4708daaf55b4ee1cbd22fbecfc7dfb8a6e6086561516cc17711e72a524df",
+    "/workspace/scratch/142cb233d750/reviews-resume/raw-summary-independent-20261102.xml": "59c8f94579a020bfc0c7b013e30b703db9ef02b7041c170aff199d51c414aa92",
+    "/workspace/scratch/142cb233d750/reviews-resume/raw-summary-independent-20261102.png": "e8c3d0fa92e10cf0c7e4555984716a623d177ccbfe1f41e42b7a497827da6287",
+    "/workspace/scratch/142cb233d750/reconciliation/ci-monitor-20261102/windows-51a9b4af-failure-tracebacks.txt": "78d9bd53adad2ac08024524fe85e57789fcdfe31086f9464c59c5b21aa752f3b"
+  },
+  "limitations": [
+    "Native Windows CI must confirm the original platform failures are repaired; no native Windows, DPI or screen-reader acceptance claim.",
+    "No full-suite, performance/native job, source edits, remote actions, target execution or GitHub approval."
+  ]
+}

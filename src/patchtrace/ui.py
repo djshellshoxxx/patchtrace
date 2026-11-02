@@ -70,6 +70,7 @@ from .service import ProjectService
 from .tooltips import apply_tooltip, apply_tooltips
 from .ui_bundle_setup import BundleSetup
 from .ui_inspection import InspectionThread, side_summary
+from .ui_new_project import NewProjectDialog, start_project_creation
 from .ui_persistence import commit_and_report
 from .ui_profiles import PROFILE_SETTING, profiles_dir, selected_profile
 from .ui_raw_alignment import RawAlignmentController
@@ -222,81 +223,6 @@ class Worker(QThread):
             self.result_ready.emit(self.task(self.cancel, self.event_ready.emit))
         except Exception as exc:
             self.failed.emit(str(exc) or type(exc).__name__)
-
-
-class NewProjectDialog(QDialog):
-    def __init__(self, parent=None):
-        super().__init__(parent)
-        self.setWindowTitle('New comparison · explicit older / newer')
-        self.resize(680, 300)
-        layout = QVBoxLayout(self)
-        label = PlainLabel('Select the older artifact on the left and the newer artifact on the right.\n'
-                       'Only static analysis is performed. Originals are preserved.')
-        label.setWordWrap(True)
-        layout.addWidget(label)
-        form = QFormLayout()
-        self.name = QLineEdit('Patch comparison')
-        self.older = ArtifactPathEdit()
-        self.newer = ArtifactPathEdit()
-        self.root = QLineEdit()
-        form.addRow('Project name', self.name)
-        for title, edit, directory, browse_tip in [
-                ('Older PE x64', self.older, False, 'new_project.older_browse'),
-                ('Newer PE x64', self.newer, False, 'new_project.newer_browse'),
-                ('New project directory', self.root, True, 'new_project.root_browse')]:
-            row = QWidget()
-            horizontal = QHBoxLayout(row)
-            horizontal.setContentsMargins(0, 0, 0, 0)
-            horizontal.addWidget(edit)
-            choose = QPushButton('Browse…')
-            apply_tooltip(choose, browse_tip)
-            choose.clicked.connect(lambda checked=False, e=edit, d=directory: self.browse(e, d))
-            horizontal.addWidget(choose)
-            form.addRow(title, row)
-        layout.addLayout(form)
-        swap = QPushButton('Swap older and newer')
-        swap.clicked.connect(self.swap)
-        layout.addWidget(swap)
-        self.error = PlainLabel()
-        self.error.setObjectName('warning')
-        self.error.setWordWrap(True)
-        layout.addWidget(self.error)
-        apply_tooltips(self, {'name': 'new_project.name', 'older': 'new_project.older',
-                              'newer': 'new_project.newer', 'root': 'new_project.root'})
-        apply_tooltip(swap, 'new_project.swap')
-        layout.addWidget(dialog_buttons(self, 'Create project', 'new_project'))
-
-    def browse(self, edit, directory):
-        if directory:
-            parent = QFileDialog.getExistingDirectory(self, 'Choose parent directory')
-            if parent:
-                edit.setText(str(Path(parent) / 'patchtrace-project'))
-        else:
-            value, _ = QFileDialog.getOpenFileName(self, 'Select PE AMD64 artifact', '', 'PE files (*.exe *.dll *.sys);;All files (*)')
-            if value:
-                edit.setText(value)
-
-    def swap(self):
-        old = self.older.text()
-        self.older.setText(self.newer.text())
-        self.newer.setText(old)
-
-    def accept(self):
-        if not self.name.text().strip() or not self.root.text().strip():
-            self.error.setText('Enter a project name and a new project directory.')
-            return
-        if not all(Path(edit.text()).is_file() for edit in [self.older, self.newer]):
-            self.error.setText('Choose two existing binary files. PE format and architecture are validated on creation.')
-            return
-        root = Path(self.root.text())
-        try:
-            occupied = root.exists() and (not root.is_dir() or any(root.iterdir()))
-        except OSError:
-            occupied = True
-        if occupied:
-            self.error.setText('The project directory must be absent or empty.')
-            return
-        super().accept()
 
 
 class AcquisitionDialog(QDialog):
@@ -1909,23 +1835,7 @@ class MainWindow(QMainWindow):
             self.refresh()
 
     def new_project(self):
-        dialog = NewProjectDialog(self)
-        if dialog.exec() != QDialog.DialogCode.Accepted:
-            return
-        # SQLite connections remain in their owner thread. Creation closes before GUI-thread adoption.
-        args = (Path(dialog.older.text()), Path(dialog.newer.text()), dialog.name.text().strip(), Path(dialog.root.text()))
-        def create(cancel, event):
-            service = ProjectService.create(*args)
-            root = service.root
-            service.close()
-            return root
-        def adopt(root):
-            if self.worker and self.worker.cancel.is_set():
-                self.job_label.setText('Cancelled · created project retained without opening')
-                self.logs.appendPlainText(f'Project creation finished before cancellation. Retained directory: {root}')
-                return
-            self.set_service(ProjectService.open(root))
-        self.start_job('Creating project', create, adopt)
+        start_project_creation(self, NewProjectDialog)
 
     def acquisition_dialog(self):
         return AcquisitionDialog(self)

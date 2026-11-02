@@ -1,0 +1,26 @@
+{
+  "source_head": "25c4114db1ee518a695372597473163e51eb1861",
+  "production_base": "1367889d549a4db290b669df4ed97ac20b553428",
+  "status": "failed-at-exporter-compatibility",
+  "compiler_exit": 0,
+  "ghidra_import_analysis_exit": 0,
+  "ghidra_export_exit": 1,
+  "accepted_exports": 0,
+  "bindiff_executed": false,
+  "native_negative_controls_executed": false,
+  "target_executed": false,
+  "repair_attempted": false,
+  "error": "java.lang.IllegalAccessError: BinExport$BinExport2 attempted access to com.google.protobuf.LazyStringArrayList.emptyList()",
+  "older_artifact_sha256": "32559bf2fd92ff8223b49cf66b3e044428fac1754f48502f309a32dbaa8afb17",
+  "preserved_partial_bytes": 0,
+  "archive": "native-binexport-bindiff-attempt1-20261102.tar.gz",
+  "archive_bytes": 59670,
+  "archive_sha256": "60980f356e108fe0001388acb86a9faf737f21d161f1560e9fd73041fad9243d",
+  "receipt_sha256": "6ddd9fb56f98086ef3643b64dac57140a84798e02e420c5cc78462759ff60915",
+  "review_receipt_sha256": "2a48a8abaca82fa2e34371cdcd271c606aa83d655a6a0904b26c085468ebe321",
+  "protobuf_runtime_candidates": {
+    "binexport-runtime/ghidra_11.0.3_PUBLIC/Ghidra/Extensions/BinExport/lib/protobuf-java-3.25.1.jar": "48a8e58a1a8f82eff141a7a388d38dfe77d7a48d5e57c9066ee37f19147e20df",
+    "binexport-runtime/ghidra_11.0.3_PUBLIC/Ghidra/Debug/Framework-AsyncComm/lib/protobuf-java-3.21.8.jar": "0b8581ad810d2dfaefd0dcfbf1569b1450448650238d7e2fd6b176c932d08c95"
+  },
+  "diagnosis_status": "Both3.21.8 host and3.25.1 extension JARs present; actual loaded class origin not established. Classpath collision is a hypothesis, not a verified repair."
+}

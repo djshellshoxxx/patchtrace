@@ -36,6 +36,7 @@ class RawAlignmentController(QObject):
         self.result: AlignmentView | None = None
         self.pending = False
         self.closed = False
+        self._allocating_status = False
         self.menus = {}
         self.toggle = QCheckBox('Align paired physical offsets (bounded)')
         apply_tooltip(self.toggle, 'viewer.raw_align')
@@ -87,6 +88,7 @@ class RawAlignmentController(QObject):
         self.status = PlainLabel('Enter independent physical offsets and align the bounded windows.',
                                  wrap=True, multiline=True, limit=2000)
         controls.addWidget(self.status)
+        self.status.installEventFilter(self)
         layout.addWidget(self.controls)
         self.toggle.toggled.connect(self._toggle_changed)
         self.toggle.hide()
@@ -146,13 +148,29 @@ class RawAlignmentController(QObject):
 
     def _status(self, text):
         self.status.setText(text)
-        self.status.updateGeometry()
-        # Reallocate the existing layouts now: a one-line pending label may become several result lines.
-        self.controls.layout().invalidate()
-        self.controls.layout().activate()
-        self.controls.updateGeometry()
-        self.pane.layout().invalidate()
-        self.pane.layout().activate()
+        self._allocate_status()
+
+    def _allocate_status(self):
+        if self._allocating_status:
+            return
+        self._allocating_status = True
+        try:
+            # Splitters need not propagate a nested label's height-for-width.
+            # Use its current wrapped height as a minimum, releasing it for shorter text.
+            for _ in range(2):
+                width = self.status.width()
+                self.status.setMinimumHeight(0)
+                self.status.setMinimumHeight(max(0, self.status.heightForWidth(width)))
+                self.status.updateGeometry()
+                self.controls.layout().invalidate()
+                self.controls.layout().activate()
+                self.controls.updateGeometry()
+                self.pane.layout().invalidate()
+                self.pane.layout().activate()
+                if self.status.width() == width:
+                    break
+        finally:
+            self._allocating_status = False
 
     def _toggle_changed(self):
         self.sync()
@@ -288,6 +306,9 @@ class RawAlignmentController(QObject):
     def eventFilter(self, watched, event):  # noqa: N802
         if self.closed:
             return False
+        if watched is self.status and event.type() in (
+                QEvent.Type.Resize, QEvent.Type.FontChange, QEvent.Type.StyleChange):
+            self._allocate_status()
         if watched is self.pane and event.type() == QEvent.Type.Hide:
             self.invalidate()
         if event.type() == QEvent.Type.KeyPress and self.active() and event.matches(QKeySequence.StandardKey.Copy):

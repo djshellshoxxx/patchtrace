@@ -1,0 +1,69 @@
+{
+  "date_utc": "2026-11-02",
+  "reviewer": "/root/msrc_recover",
+  "author": "/root/output_windows",
+  "base": "1367889d549a4db290b669df4ed97ac20b553428",
+  "head": "25c4114db1ee518a695372597473163e51eb1861",
+  "tree": "4efdf4cca7a429784c6886357c3670139bc0299e",
+  "worktree": "/workspace/scratch/142cb233d750/wt-native-harness-review",
+  "clean": true,
+  "conclusion": "No blocking source-review findings for this bounded authored QA harness. Native execution remains a separate coordinator-controlled step.",
+  "findings": [],
+  "changed_file_sha256": {
+    "docs/qa/ExportBinExport20261102.java": "eb4fe92e27b199ca06b1b1ba05adf3d12fb38193642bfe6127aefc83b6b8d7a7",
+    "docs/qa/native-bindiff-harness-20261102.md": "e5b6af1488760d622ab0e8d5697001478528301e29f46d734d0ba2e682a3224e",
+    "docs/qa/native-bindiff-harness-20261102.py": "7a3872ab22677e7f681863f6c12fabcb4f0fa322b56b81fbb487b887bfafaf91",
+    "docs/qa/native-bindiff-tool-pins-20261102.json": "abcf09da2639f1762d71907d72f43b152c3e2f8852b2fc1934d34383f56c2042",
+    "tests/test_native_bindiff_harness.py": "8dfbbd6d10b4affb4ef460eef2d2a9d790e20731d223feee079cc2a96c38ba65"
+  },
+  "production_interface_sha256": {
+    "src/patchtrace/jobs.py": "fd7cee19cd9b588e80fa709725782042e0397131bf2c23c59ab8301d2a615979",
+    "src/patchtrace/secondary/binexport_run.py": "a1aefb60c32b29fa13bb34e4214493e0712181181fce2a3c95f405ea2ee9fe59",
+    "src/patchtrace/secondary/cli_bindiff.py": "dfdc4bfbef50418a21a2d5fbe4e65d6cc8712d73622e7a6e417fcdfa2dc7c281",
+    "src/patchtrace/secondary/registry.py": "1e56b7ae8b31f94032b6e7c0895d14c04a73c0877d484f03532b613bbceb4a53",
+    "src/patchtrace/secondary/scheduler.py": "0a6a7a49a58361672524a063748d18f22c84ccac2a41fcf5abfdbd94ddf1b7e6",
+    "src/patchtrace/secondary/bindiff_inputs.py": "d2208db32c8cc272e4c85268e1bc8d200350f8c1d71a125a1cfd0283c1b3c2d8",
+    "src/patchtrace/secondary/bindiff_run.py": "c0ba3f08100106e141924b1748f17ccb2e32fd9e668b5e3dffc017ec7f171396",
+    "src/patchtrace/secondary/bindiff_probe.py": "b58d521d7dc8aa1ef9d9beb2600c13d2308c564ec259f56007e8a2d750fbe292",
+    "src/patchtrace/secondary/engine_env.py": "8a5da2466be521771d2239e2b95d967e495088da28359016e1bca8c6dd1b4eb1"
+  },
+  "independent_controls": {
+    "path": "/workspace/scratch/142cb233d750/reviews-msrc/test_native_harness_controls_20261102.py",
+    "sha256": "fb60bdd3ca64612998f6f10134b61ae9656000886afc15fd3ac8e5c24de23c8e",
+    "result": "4 passed in 0.53s"
+  },
+  "author_controls_rerun": {
+    "command": "PYTHONPATH=.:src:tests QT_QPA_PLATFORM=offscreen /workspace/scratch/142cb233d750/native-20261102/venv/bin/python -m pytest -q tests/test_native_bindiff_harness.py",
+    "result": "11 passed in 0.73s"
+  },
+  "preflight": {
+    "path": "/workspace/scratch/142cb233d750/reviews-msrc/native-harness-preflight-20261102.json",
+    "sha256": "28f65463098eb446bdbb84242666a6ca67349f8ca6d8547e4580a6e53f2e164c",
+    "status": "setup-checked",
+    "native_executed": false
+  },
+  "other_checks": [
+    "Changed Python source/test Ruff passed",
+    "Range git diff --check passed",
+    "Production src/tools unchanged from pinned base"
+  ],
+  "reviewed_invariants": [
+    "Fresh private session root; existing file or directory refused",
+    "Java checks imported program SHA-256, uses official packaged exporter defaults, requires nonempty output and success marker",
+    "Exclusive hardlink publication of private stage; partial stage retained on failure",
+    "Explicit pinned Java path, private home/cache/temp, bounded heap/process address space/CPU/timeout/logs; jobs.run_process shell=False and descendant containment",
+    "C3 accept_unbound=False for each exact role/hash; wrapper delegates unchanged arguments and restores runner in finally",
+    "Swapped already-accepted inputs use pure bind_pair before adapter/probe; wrong-hash uses actual C3 in planned native exercise",
+    "Production scheduler/adapter/probe/c3/import path reused; clean-exit raw preserved before import; interrupted partial DB remains rejected by production policy",
+    "Original compiled artifacts rehashed after successful smoke; no argv executes target DLL",
+    "Unsigned BinExport and independently unverified BinDiff trust statuses retained"
+  ],
+  "limitations": [
+    "No compiler, JVM, Ghidra, exporter, BinDiff or target execution in this review",
+    "Java API compatibility and exporter success are source-reviewed only; no Java compilation claim",
+    "Native wrong-hash/swapped controls and actual exporter/BinDiff results await coordinator-approved execution",
+    "No full suite, Windows, Tier R/Tier W, signed oracle, G-U accuracy or release acceptance claim",
+    "Any source rebase or harness edit requires exact re-binding/review before execution; this receipt binds only the frozen range",
+    "Not a GitHub APPROVE event or authorization to run native analysis"
+  ]
+}

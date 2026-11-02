@@ -1,0 +1,13 @@
+# Independent Windows training/output review — 2026-11-02
+
+No blocking finding at `4edf8f4c1f7272d408ffcbbd236b6e32b6fb4cdd`, parent `eccfb8d587f94e927f857fad248531a002ecc36c`, tree `02d62801e9c1c3fdde61c71e8b4222fe08d7719a`. Review used a clean isolated checkout; source was not edited. Changed-file and evidence SHA-256 values are in the JSON sibling.
+
+The implementation checks both original lexical paths before resolving aliases, checks canonical paths for links/reparse points, binds original/canonical leaf identities, rechecks both original parent chains, and then requires canonical containment in a directory scratch root. Ordinary `..` remains valid; linked/reparse components before `..` cannot be hidden by normalization. The schema write explicitly uses LF.
+
+Independent bounded verification: **290 passed** (275 in 8.20 s, 15 in 1.37 s), with three expected legacy-output warnings. Two native compiler-backed cases were explicitly deselected to respect the assigned scope. Whole-repository Ruff and range whitespace checks passed. The byte-identical final training test file on the parent gives the expected **two failures** (modeled Windows text default and nonlinked alias export), while two link/reparse refusal controls still pass.
+
+Seven additional reviewer controls passed in 1.07 s. They exercise actual export → bundle verification → strict training-reader loading with aliases on both root and explicit producer paths; ordinary `..`; original report-path link/reparse components before `..`; a real hard link outside scratch with the same leaf inode; an original ancestor identity change with unchanged leaves; and a safe-looking alias whose canonical location contains forbidden Tier W. Refusal cases preserve source bytes and create no completed destination.
+
+**Path assertion disposition: approved.** The two `as_posix()` expectations match production CLI serialization that already emits forward slashes; they do not weaken validation or credit gates. The narrow port in `wt-output-windows-paths` has exactly those two changed lines against `bb98bae`, no production change, and both complete test files match this reviewed source byte-for-byte. Their hashes are recorded in the JSON receipt.
+
+The hosted `51a9b4af` / job `125172583133` traceback proves LF and separator failures plus an outside-scratch refusal, but does not show both path spellings. Windows short/long-name aliasing therefore remains an inferred explanation. The portable model proves behavior for that case, not native root-cause confirmation or Windows acceptance. No target binaries, native engines, heavy benchmarks, full suite, source edits or remote writes were performed. The author's untracked QA draft is outside this exact-source receipt.

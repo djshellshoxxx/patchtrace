@@ -7,7 +7,6 @@ from __future__ import annotations
 
 import hashlib
 import json
-import os
 import stat
 from collections.abc import Sequence
 from pathlib import Path
@@ -75,7 +74,7 @@ def schema_text() -> str:
 def write_schema(root: Path) -> Path:
     root.mkdir(parents=True, exist_ok=True)
     path = root / 'TrainingManifest.json'
-    path.write_text(schema_text(), encoding='utf-8')
+    path.write_text(schema_text(), encoding='utf-8', newline='\n')
     return path
 
 
@@ -144,15 +143,22 @@ def _fresh(folder: Path) -> None:
 
 
 def inside(scratch: Path, path: str | Path) -> Path:
-    """Constrain explicit producer paths lexically; resolving would hide linked parents."""
-    checked_path(Path(path))
-    path = Path(os.path.abspath(path))
+    """Check lexical ownership before canonicalizing nonlinked filesystem aliases."""
+    scratch, path = Path(scratch), Path(path)
+    original_scratch, original_path = checked_path(scratch), checked_path(path)
+    canonical_scratch, canonical_path = scratch.resolve(strict=True), path.resolve(strict=True)
+    final_scratch, final_path = checked_path(canonical_scratch), checked_path(canonical_path)
+    if (original_scratch[-1][1:] != final_scratch[-1][1:]
+            or original_path[-1][1:] != final_path[-1][1:]
+            or checked_path(scratch) != original_scratch or checked_path(path) != original_path):
+        raise ArtifactError('producer artifact ownership changed during path normalization')
+    if not canonical_scratch.is_dir():
+        raise ArtifactError('shard scratch is not a directory')
     try:
-        path.relative_to(Path(os.path.abspath(scratch)))
+        canonical_path.relative_to(canonical_scratch)
     except ValueError:
         raise ArtifactError('producer artifact is outside its shard scratch') from None
-    checked_path(path)
-    return path
+    return canonical_path
 
 
 def pair_name(pair: str) -> str:

@@ -1,0 +1,85 @@
+{
+  "reviewer": "review_resume independent helper",
+  "decision": "No remaining blocking findings within reviewed scope",
+  "reviewed_head": "3b1b875161ddfc438dbac45327225e7a8161668b",
+  "reviewed_tree": "7f13fb0bacdb1a107323419fdfe7a512dde5ecec",
+  "base": "5b247c061c6faba5df2e42876d811807fae9d75f",
+  "required_source_commits": [
+    "7c20e546ef2b759be963181f21177ec263aa71d6",
+    "3b1b875161ddfc438dbac45327225e7a8161668b"
+  ],
+  "worktree": "/workspace/scratch/142cb233d750/creation-retry-116",
+  "observed_state": "Tracked source equal frozen source; only untracked author QA draft present.",
+  "changed_paths": [
+    "docs/modules.md",
+    "docs/specs/architecture.md",
+    "docs/specs/ui.md",
+    "src/patchtrace/persistence.py",
+    "src/patchtrace/project_retry.py",
+    "src/patchtrace/service.py",
+    "src/patchtrace/tooltips.py",
+    "src/patchtrace/ui.py",
+    "src/patchtrace/ui_new_project.py",
+    "tests/test_project_retry.py",
+    "tests/test_ui_project_retry.py"
+  ],
+  "changed_file_sha256": {
+    "docs/modules.md": "9598bcdfeb1a8853c27fd1595e56fb601fa81ed1405d07113ea1e027c49402e7",
+    "docs/specs/architecture.md": "afaf91233f42f3d323b957d5b0859dbeb35471ffa935821046b417cd4ca5554f",
+    "docs/specs/ui.md": "2fb6a99e70351ea0c1b98c387d5ff28c6497880a1f012d82ff887796347c6e45",
+    "src/patchtrace/persistence.py": "1e1a25dcd74ce6ac580ad7e9548b54aa259e887c7cb27c624a4c1668d6e0bbce",
+    "src/patchtrace/project_retry.py": "afaedf39f4474cf43e2db2e979ca2fee4b42d6e178e0bfa3b2064951e5a63de1",
+    "src/patchtrace/service.py": "7e3c84607ea388fb7152942fb7d9b4ae5186803ef8cab41f2caedeed9d37bf8b",
+    "src/patchtrace/tooltips.py": "8235bfc7202682feda3934ac67282a68a5a79ce108e681da6a5bda85cb83f88a",
+    "src/patchtrace/ui.py": "e228241267d42e7b10e1c34816f52e089f3ffd989f033012d12d0dd260889eaa",
+    "src/patchtrace/ui_new_project.py": "bb6a47f1413e4841edef464729e13c1756f4b9dc19a2afd0c9c3116717b76b2c",
+    "tests/test_project_retry.py": "523febd09388e1e050ff901b61c72fa907eca1d63c038c3f9c7925e6a3e21214",
+    "tests/test_ui_project_retry.py": "2177eb4bb8b7b0d0befe050eec693d921426958f993bd6b7a909585248a14e56"
+  },
+  "environment": {
+    "python": "3.12.14",
+    "platform": "Linux",
+    "Qt": "offscreen"
+  },
+  "resolved_finding": {
+    "initial_source": "7c20e546ef2b759be963181f21177ec263aa71d6",
+    "problem": "os.path.abspath collapsed a symlink component preceding .. before lexical link/reparse checks; actual service retry accepted the incomplete destination.",
+    "reproduction_root": "/workspace/scratch/142cb233d750/reviews-resume/retry-lexical-review-fy5tld97",
+    "resolution": "Cwd join preserves lexical components. Record directory identities before resolve and recheck under held lock and in validator. Actual symlink/.. and modeled reparse/.. now refused without byte changes; ordinary directory/.. succeeds."
+  },
+  "scope_and_reasoning": [
+    "Ordinary Create retains absent/empty guard. Explicit retry has distinct modal result and privately stages both inputs before destination inspection.",
+    "Existing regular 4096-byte single-link lock is acquired without creating or rewriting it. Held-lock validation permits only bounded exact incomplete layout, staged-input artifact bytes/PE validity and optional bounded empty current-schema SQLite opened readonly/immutable.",
+    "Entry sets, lexical identities, fingerprints and held-lock identity are rechecked before recycling. Replacement database/artifacts use exclusive creation; uncertain or committed data is refused. Inherited held-lock ownership cleanup does not recursively clear the user directory.",
+    "Worker closes SQLite service before GUI adoption. Originating cancellation event, service identity and project key bind delivery; actual Qt tests cover responsiveness, validation and postcommit cancellation, replacement service and revised key. Completed projects survive rejected adoption.",
+    "Independent controls: real symlink/.., modeled reparse/.., ordinary .. positive, malformed older/newer inputs, cancellation after validation returns but before pre-recycle recheck. Preservation controls verify all destination bytes and released lock."
+  ],
+  "validation": [
+    {
+      "command": "Initial frozen7c20e546 authored 13-file bounded selection",
+      "result": "236 passed in 40.98 seconds; subsequent real lexical reproduction exposed blocker, so not final acceptance."
+    },
+    {
+      "command": "QT_QPA_PLATFORM=offscreen PYTHONPATH=.:src:tests /workspace/scratch/142cb233d750/venv/bin/python -m pytest -q --tb=short --junitxml=/workspace/scratch/142cb233d750/reviews-resume/retry-final-review-20261102.xml tests/test_project_retry.py tests/test_ui_project_retry.py tests/test_creation_116.py /workspace/scratch/142cb233d750/reviews-resume/test_project_retry_independent.py",
+      "result": "82 passed in 4.80 seconds on final source, including six independent cases. Selections overlap and are not additive."
+    },
+    {
+      "command": "Ruff eight changed Python files; git diff --check 5b247c0 3b1b875; frozen-source equality",
+      "result": "Passed."
+    },
+    {
+      "command": "Earlier final bounded invocation without persistent log/JUnit",
+      "result": "Tool output unavailable across context truncation; not counted. No pytest remained before recorded rerun."
+    }
+  ],
+  "independent_artifacts": {
+    "/workspace/scratch/142cb233d750/reviews-resume/test_project_retry_independent.py": "fa4368f2bca280056846cd611830a8c89b541bf950ca9645399522bbb4344a52",
+    "/workspace/scratch/142cb233d750/reviews-resume/retry-final-review-20261102.txt": "73131290d1b5b1ed42e20b22f9f555502610a77c6788ec3a31d2eb516fc4e1d8",
+    "/workspace/scratch/142cb233d750/reviews-resume/retry-final-review-20261102.xml": "82f06f9e31fb6c1c7a3ca4018d6c76df9f164caa690e3a06a1d637b1b3bc6944"
+  },
+  "limitations": [
+    "Linux/offscreen focused evidence; native Windows filesystem/locking/packaging/GUI gates remain.",
+    "No power-loss durability or immunity to uncooperative concurrent filesystem writer claimed; uncertain layouts intentionally refused.",
+    "Limited explicit retry scope, not all issue116. No full/performance/native job, repository source edit, target execution, remote mutation or GitHub approval."
+  ]
+}

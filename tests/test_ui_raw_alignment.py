@@ -294,3 +294,26 @@ def test_close_cancels_and_keeps_qt_object_ownership(window, qtbot):
     controller._ready(old_result, generation, key)
     assert controller.closed and controller.result is None
     assert isValid(controller)
+
+
+@pytest.mark.parametrize('font_pixels', [12, 14, 18])
+def test_summary_allocates_wrapped_lines_and_releases_short_text(window, qtbot, font_pixels):
+    window.resize(1100, 750)
+    controller = align(window, qtbot)
+    controller.status.setStyleSheet(f'font-size: {font_pixels}px')
+    # Real EOF/unavailable summary, with a platform-independent font-size control.
+    pair = window._current_inspection()
+    from patchtrace.raw_alignment_view import WindowRequest
+    from patchtrace.representations import Representation
+    result = build_alignment_view(WindowRequest(pair.reader('older'), pair.reader('newer'),
+                                                pair.reader('older').size, 0, 4096, Representation.HEX))
+    controller._status(result.summary)
+    assert controller.status.height() >= controller.status.heightForWidth(controller.status.width())
+    tall = controller.status.height()
+    window.resize(960, 740)
+    qtbot.waitUntil(lambda: window.width() == 960)
+    assert controller.status.height() >= controller.status.heightForWidth(controller.status.width())
+    assert controller.controls.rect().contains(controller.status.geometry())
+    controller._status('Reading verified windows…')
+    assert controller.status.height() < tall
+    assert controller.status.height() >= controller.status.heightForWidth(controller.status.width())

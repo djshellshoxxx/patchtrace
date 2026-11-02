@@ -347,7 +347,7 @@ def test_cli_explicit_output_directory_is_fresh_and_cannot_be_reused(tmp_path, m
     args = ['evaluate', '--store', str(store), '--engines', 'rz-diff', '--outputs', str(outputs)]
     assert cli.main(args) == cli.OK
     first = json.loads(capsys.readouterr().out)
-    assert first['outputs'] == str(outputs)
+    assert first['outputs'] == outputs.as_posix()
     evidence = {p.name: p.read_bytes() for p in outputs.iterdir()}
     assert cli.main(args) == cli.USAGE
     second = json.loads(capsys.readouterr().out)

@@ -149,15 +149,18 @@ def test_execute_run_success_and_failure_isolated(tmp_path):
     assert {e.phase for e in events} == {'started', 'finished'}
 
 
-def test_synthetic_good_output_still_refuses_quarantined_version(tmp_path):
+@pytest.mark.parametrize('newline', [b'\n', b'\r\n'], ids=['lf', 'crlf'])
+def test_synthetic_good_output_still_refuses_quarantined_version(tmp_path, newline):
     import hashlib
     import json
 
-    [outcome] = execute_run(run_request(tmp_path), threading.Event(),
-                            registry={'rz-diff': FakeRz(GOOD, version='0.9.1')}, env={})
-    raw = (json.dumps([{'similarity': 0.5, 'type': 'PARTIAL',
+    raw = json.dumps([{'similarity': 0.5, 'type': 'PARTIAL',
                        'original': {'addr': 16, 'name': 'f', 'size': 1},
-                       'modified': {'addr': 32, 'name': 'g', 'size': 1}}]) + '\n').encode()
+                       'modified': {'addr': 32, 'name': 'g', 'size': 1}}]).encode() + newline
+    # Binary stdout makes the expected evidence bytes explicit on every host.
+    code = f'import sys; sys.stdout.buffer.write({raw!r})'
+    [outcome] = execute_run(run_request(tmp_path), threading.Event(),
+                            registry={'rz-diff': FakeRz(code, version='0.9.1')}, env={})
     assert outcome.match_set is None and outcome.run.status == 'failed'
     assert outcome.error.code == 'PT-SECONDARY-ORIENTATION'
     assert hashlib.sha256(raw).hexdigest() in outcome.error.message

@@ -332,6 +332,12 @@ Every source and target parent and leaf is checked without following links,
 including Windows reparse points; changed identities and incomplete bundles
 are refused. Existing destinations are never replaced. Publication failures
 preserve partial files for diagnosis, without a completed transfer manifest.
+Producer containment checks inspect both original lexical paths before resolving
+nonlinked filesystem aliases (including Windows short/long names), then verify
+canonical containment, unchanged leaf identities and unchanged original parents.
+Normalization must never hide a linked component before `..`. Generated training
+schema bytes use UTF-8 with LF line endings on every platform; CLI path strings
+continue to use forward slashes.
 This is bounded local integrity verification, not an authenticity signature or
 a lock against arbitrary same-user concurrent filesystem mutation.
 

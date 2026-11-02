@@ -1051,3 +1051,19 @@ Done: dock with state matrix, consent, import, changes, copy, go to CVE. Open: r
 - [x] Meter all path phases through query-local lazy CSR traversal, including rejected candidates; retain a completed shortest witness on later exhaustion, preserve sorted shortest-first results and existing listed-node scope, and report partial/CLI 3. No remap/global cache/schema addition.
 - [x] Dedicated red/green and 82 bounded focused passes; unchanged 60k/447k algorithm gate passed in a separately coordinated serial run after an observed empty-witness failure was repaired. Whole Ruff/diff clean.
 - [ ] Independent source-bound review and central/full integration; retain CLI multi-target budget multiplier as an explicit remaining scope boundary. Other #105 findings and native acceptance remain separately tracked.
+### [storage:publication-admission] 2026-11-02
+
+- [x] Verify review 5734146359 against exact #151 source `9c468bc` using real valid-but-mutated SQLite and subsequent retention/history deletion; preserve failed and earlier copies as evidence.
+- [x] Clarify staging-name admission before code; retain failed unique stages, exclude matching unfinished final names across restart, and never unlink or rename final/foreign evidence. Final baseline 7 failed / 1 passed; 60 related checks passed; Ruff/diff clean.
+- [ ] Independent frozen-source review and central integration; native Windows/full-suite acceptance remains separate. Existing legacy backups with no matching unique stage retain the previous verification/adoption policy.
+
+- [x] Storage admission review blocker: replace error-suppressing glob discovery with explicit scandir; failed opening/iteration cannot mean no pending stages. Red 2 failed / 1 passed; revised 63 related passes.
+- [ ] Rereview amended storage admission source; `536aebc` alone is not an approved candidate.
+
+### Current November 2, 10:20 UTC disposition
+
+- [x] Integrate reviewed CG1, explicit retry, backup admission, Windows fixture/transfer/schema and summary sizing repairs.
+- [x] Publish storage1f284a1 and output8a18ca8; preserve earlier completed CI/package evidence.
+- [ ] Review backup staging-cleanup completion and advisory per-field attribution; preserve conservative unknowns and legacy reads.
+- [ ] Review/run isolated native class-origin controls, then separately qualify authored native smoke.
+- [ ] Run later assembled immutable full and required hosted/native/Qt/package/quality gates; continue all remaining accepted v2 work.

@@ -57,6 +57,12 @@ class ProjectService:
             raise
 
     @classmethod
+    def retry_create(cls, older: Path, newer: Path, name: str, root: Path, *, cancel=None) -> ProjectService:
+        from .project_retry import retry_project
+
+        return retry_project(cls, older, newer, name, root, cancel=cancel)
+
+    @classmethod
     def open(cls, root: Path, *, maintenance: bool = True) -> ProjectService:
         """`maintenance=False` for read-only readers (series): skips the H8 legacy raw cleanup."""
         store = ProjectStore(root)

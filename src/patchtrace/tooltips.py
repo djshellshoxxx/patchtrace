@@ -450,6 +450,11 @@ REGISTRY: dict[str, TooltipEntry] = {
         'Create the project from the entered files.', 'Finishes setup of a new comparison.',
         'Validates the inputs, copies the files and opens the new project.',
         availability='Needs a name, two existing files and an absent or empty folder.'),
+    'new_project.retry': _e(
+        'Check and retry a previous incomplete project creation.',
+        'Allows matching partial input copies to be reused after a failed creation.',
+        'Validates the directory and selected inputs in the background; unrelated files or completed projects are refused.',
+        availability='Needs the same input files and an existing incomplete project directory.'),
     'new_project.cancel': _e(
         'Close this dialog without creating a project.', 'Backs out safely.', 'Nothing is created.'),
     # ---- Acquisition dialog ----------------------------------------------------------------

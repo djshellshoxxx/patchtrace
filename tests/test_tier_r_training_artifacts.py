@@ -259,6 +259,100 @@ def test_training_schema_is_generated_without_drift(tmp_path):
     assert TA.write_schema(tmp_path).read_bytes() == expected.read_bytes()
 
 
+def test_training_schema_uses_lf_even_with_a_windows_text_default(tmp_path, monkeypatch):
+    original = Path.write_text
+    def windows_text(path, data, *args, **kwargs):
+        if path.name == 'TrainingManifest.json' and kwargs.get('newline') is None:
+            kwargs['newline'] = '\r\n'
+        return original(path, data, *args, **kwargs)
+    monkeypatch.setattr(Path, 'write_text', windows_text)
+    assert TA.write_schema(tmp_path).read_bytes() == TA.schema_text().encode('utf-8')
+
+
+def test_actual_export_accepts_nonlinked_short_long_scratch_aliases(built, tmp_path, monkeypatch):
+    doc, _source, observed = built()
+    scratch, alias = tmp_path / 'scratch', tmp_path / 'SCRATC~1'
+    original_lstat, original_resolve = Path.lstat, Path.resolve
+    def physical(path):
+        return scratch / path.relative_to(alias) if path.is_relative_to(alias) else path
+    def lstat(path, *args, **kwargs):
+        return original_lstat(physical(path), *args, **kwargs)
+    def resolve(path, *args, **kwargs):
+        return original_resolve(physical(path), *args, **kwargs)
+    monkeypatch.setattr(Path, 'lstat', lstat)
+    monkeypatch.setattr(Path, 'resolve', resolve)
+    summary = observed['evaluation']
+    destination = tmp_path / 'alias-export'
+    TA.export_training_artifacts(doc, alias, destination,
+                                 [('rz-diff', summary['report'], summary['outputs'])], doc['pair_cases'])
+    TA.verify_bundle(destination, owner=TA.shard_owner(doc), expected_reports=doc['reports'])
+    outputs = train.load_outputs(destination / 'outputs', allow_legacy=False)
+    assert list(outputs) == [(LABELS.older.sha256, LABELS.newer.sha256, 'rz-diff')]
+
+
+def test_actual_export_still_refuses_a_valid_report_outside_scratch(built, tmp_path):
+    doc, _source, observed = built()
+    summary = observed['evaluation']
+    foreign = tmp_path / 'outside.json'
+    raw = Path(summary['report']).read_bytes()
+    foreign.write_bytes(raw)
+    destination = tmp_path / 'refused-export'
+    with pytest.raises(TA.ArtifactError, match='outside its shard scratch'):
+        TA.export_training_artifacts(doc, tmp_path / 'scratch', destination,
+                                     [('rz-diff', foreign, summary['outputs'])], doc['pair_cases'])
+    assert foreign.read_bytes() == raw and not destination.exists()
+
+
+@pytest.mark.parametrize('kind', ['link', 'reparse'])
+def test_actual_export_refuses_scratch_link_before_dotdot(built, tmp_path, monkeypatch, kind):
+    doc, _source, observed = built()
+    ordinary = tmp_path / 'ordinary'
+    ordinary.mkdir()
+    component = tmp_path / 'linked'
+    if kind == 'link':
+        try:
+            component.symlink_to(ordinary, target_is_directory=True)
+        except OSError:
+            pytest.skip('native symlink creation unavailable; modeled reparse control remains mandatory')
+    else:
+        component.mkdir()
+        original = Path.lstat
+        def reparse(path, *args, **kwargs):
+            info = original(path, *args, **kwargs)
+            if path == component:
+                return SimpleNamespace(st_mode=info.st_mode, st_dev=info.st_dev, st_ino=info.st_ino,
+                                       st_file_attributes=0x400)
+            return info
+        monkeypatch.setattr(Path, 'lstat', reparse)
+    summary, destination = observed['evaluation'], tmp_path / 'refused-export'
+    with pytest.raises(TA.ArtifactError, match='linked/reparse'):
+        TA.export_training_artifacts(doc, component / '..' / 'scratch', destination,
+                                     [('rz-diff', summary['report'], summary['outputs'])], doc['pair_cases'])
+    assert not destination.exists()
+
+
+@pytest.mark.parametrize('changed', ['scratch', 'report'])
+def test_actual_export_refuses_identity_substitution_during_normalization(built, tmp_path, monkeypatch, changed):
+    doc, _source, observed = built()
+    summary = observed['evaluation']
+    scratch, report = tmp_path / 'scratch', Path(summary['report'])
+    foreign = tmp_path / 'other-scratch' if changed == 'scratch' else report.with_name('other-report.json')
+    if changed == 'scratch':
+        foreign.mkdir()
+    else:
+        foreign.write_bytes(report.read_bytes())
+    selected = scratch if changed == 'scratch' else report
+    original = Path.resolve
+    def substituted(path, *args, **kwargs):
+        return original(foreign if path == selected else path, *args, **kwargs)
+    monkeypatch.setattr(Path, 'resolve', substituted)
+    destination = tmp_path / 'refused-export'
+    with pytest.raises(TA.ArtifactError, match='ownership changed'):
+        TA.export_training_artifacts(doc, scratch, destination,
+                                     [('rz-diff', summary['report'], summary['outputs'])], doc['pair_cases'])
+    assert not destination.exists()
+
+
 @pytest.mark.parametrize('damage', ['shard', 'case', 'kind', 'status'])
 def test_merged_manifest_case_ownership_is_bound_to_diagnostics(built, tmp_path, damage):
     doc, source, _ = built()

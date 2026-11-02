@@ -1,0 +1,27 @@
+{
+  "base_source": "1367889d549a4db290b669df4ed97ac20b553428",
+  "tool_files_sha256": {
+    "binexport-runtime/ghidra_11.0.3_PUBLIC/Ghidra/application.properties": "baff45eb6fe09ec6d50d00d5c702d7723157bc55dcc297278373622720a60527",
+    "binexport-runtime/ghidra_11.0.3_PUBLIC/support/analyzeHeadless": "36ac4d2094a0037111875a86452895ec10ed320a0b65ee4264146c46b459e5fe",
+    "binexport-runtime/ghidra_11.0.3_PUBLIC/Ghidra/Extensions/BinExport/extension.properties": "2b4a48c7327833c7e281fb8deb7bb54bea225058d76ecd95a7a8092ebb38d5c7",
+    "binexport-runtime/ghidra_11.0.3_PUBLIC/Ghidra/Extensions/BinExport/lib/BinExport.jar": "0aea870cbfa13930af23bf16158bdde62a7fe08a0642615fd5ded890d8179dbd",
+    "binexport-runtime/ghidra_11.0.3_PUBLIC/Ghidra/Extensions/BinExport/lib/protobuf-java-3.25.1.jar": "48a8e58a1a8f82eff141a7a388d38dfe77d7a48d5e57c9066ee37f19147e20df",
+    "binexport-java/jdk-21.0.12.1+1/bin/java": "2a207f5e7d075afa01d97f8048389a64432a44c4a5af0f5e77d6e286ec5f401d",
+    "downloads/ghidra_11.0.3_PUBLIC_20240410.zip": "2462a2d0ab11e30f9e907cd3b4aa6b48dd2642f325617e3d922c28e752be6761",
+    "downloads/BinExport_Ghidra-Java.zip": "b010285c23f350c4f1ff6a1ebb4d07a9af0e24b75a458ba1eee0d631e0c9327e",
+    "downloads/jdk-linux.tar.gz": "ce79869e1307ed8ee1e2baa86a412b1eb5b75d10a01006d788a6f968bcfaee94",
+    "bindiff-8/opt/bindiff/bin/bindiff": "eb0a88eb6518e000bc3c4eef66c22db7ace197173eb933ea5d1c8ac3f7d8d0fb",
+    "binexport-runtime/ghidra_11.0.3_PUBLIC/Ghidra/Framework/Utility/lib/Utility.jar": "ca4036648fd14ba46044fa60b65c0307e8f23471377014ac9bb444243b8748c8"
+  },
+  "java_relative": "binexport-java/jdk-21.0.12.1+1/bin/java",
+  "ghidra_relative": "binexport-runtime/ghidra_11.0.3_PUBLIC",
+  "bindiff_relative": "bindiff-8/opt/bindiff/bin/bindiff",
+  "compiler_sha256": "7c61539af19fa4082c94848f1c2b57b89e76dc6cfd5bd4c57764c3caf8f82272",
+  "script_sha256": "eb4fe92e27b199ca06b1b1ba05adf3d12fb38193642bfe6127aefc83b6b8d7a7",
+  "source_sha256": {
+    "old.c": "b0d28c94a901b3b188034ae0112f6dbbba09cfae946d97f115dbdf1165e370e3",
+    "new.c": "1b908b80063d6aba5648e75ec3661990699481138966c0876dbd2de3554d5cf8"
+  },
+  "binexport_signed": false,
+  "bindiff_independent_trust_verified": false
+}

@@ -4,6 +4,17 @@ Default dark neutral palette, cyan accent, monospace 11-point code, text labels 
 
 Start controls: New (Ctrl+N) opens explicit older/newer/name/destination wizard; Open (Ctrl+O) validates database; Sample opens synthetic persisted project; Import opens Ghidriff JSON picker for current artifact pair; Setup displays backend configuration. Recent projects retain paths only. Cancel wizard performs no analysis. New validates paths then creates immutable copies; failure leaves no published project. Swap before creation reverses selected inputs; after creation requires service invalidation. Drag/drop files into explicit older/newer controls if supported, never infer chronological order.
 
+The ordinary Create action continues to require an absent or empty destination.
+A separate “Check and retry incomplete creation” action requests an occupied-root
+retry; it never implies the directory is accepted. Private input staging, strict
+read-only validation under the existing project lock and publication run in the
+existing background worker. Unrelated nonempty directories remain refused. The
+worker closes its SQLite service before returning a path for GUI-thread reopening.
+Cancelled results and results whose originating service/project key changed are
+not adopted; any completed directory is retained and identified in the job log.
+The dialog lives outside `ui.py` and remains re-exported for existing callers;
+the `ui.py` ceiling remains 3,077 lines.
+
 Workspace controls: Run requires pair plus valid backend and idle job. Import requires current project and idle job, preserves raw data and normalizes on background worker. Cancel enabled for active job, transitions to cancelling then cancelled. Search filters names/addresses; category filter distinguishes modified/added/removed/ambiguous/split/merged/unmatched. Review filter separate. Selection displays older/newer headers, code, assembly or metadata tabs. Missing code is labeled. Unified diff hunk list gives next/previous controls; paired text alignment inserts explicit gaps. Synchronized scrolling optional. Copy includes artifact/hash/run/function provenance. Correct Match dialog chooses exact existing function records, relationship and required reason; persists provenance and marks findings stale.
 
 Findings panel: structured summaries/support/counterevidence/unknowns/alternatives; evidence IDs are selectable links to correct side and line. Stale evidence displays stale notice and raw immutable context, does not jump into current code. Review status selector and analyst note Save persist separately from model content. Bookmark selected evidence attaches analyst annotation. Findings table allows selection/navigation and inclusion in export. Job pane shows indeterminate progress when backend lacks counts, elapsed time and sanitized log tail. Errors are actionable dialogs plus persistent status; retry starts new run.

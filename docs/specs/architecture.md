@@ -49,6 +49,33 @@ snapshotless state, clean up while locked, then release the lock in all cases.
 The held lock descriptor supplies the lock identity; the named lock path must
 continue to match that descriptor before publication or cleanup.
 
+Explicit incomplete-creation retry is a separate service operation. It stages both
+inputs privately, then acquires the existing regular 4-KiB project lock without
+creating it or rewriting its bytes. Before any database recycling, validation
+under that held lock permits only `.patchtrace.lock`, an optional `project.sqlite3`,
+and an optional `artifacts` directory. All lexical ancestors and entries must be
+ordinary nonlinked/non-reparse paths; regular files must have one hard link.
+Lexical components before `..` remain visible for these checks: normalization is
+allowed only after recording their identities, which are checked again under the
+held lock before the read-only validator runs.
+Artifacts may contain at most the two exact staged-input SHA-256 `.bin` names;
+every existing file must match its staged size/hash and pass complete static PE
+validation. Nothing is adopted by a directory glob or a recovery receipt.
+
+An existing retry database is limited to 1 MiB, opened read-only/immutable, and
+must have version 1, the exact generated empty snapshot/history/SQLite-sequence
+schema, no other schema objects or rows, and a successful bounded integrity check.
+Zero-byte, malformed, committed, foreign-schema and sidecar-bearing databases are
+refused by this explicit route; legacy direct-service abandoned-database behavior
+is unchanged. Entry sets, identities and content versions are rechecked before
+validation returns. Validation failure or cancellation during preparation or validation leaves
+all destination bytes unchanged and releases the lock. Successful validation may
+recycle only that validated snapshotless database and exclusively create missing
+artifacts, reusing complete matching files without overwriting them. The replacement
+database path is also created exclusively; a newly appeared file is never adopted
+or overwritten, and retry never authorizes deleting SQLite sidecars. Cancellation
+after a committed first snapshot retains the project without adopting it.
+
 Domain models are immutable by convention except project aggregate changes in the service. UUID identifiers are assigned by PatchTrace. Every model forbids extra fields. Database loads validate schema versions and relationships before use. Workers return values to UI thread through queued signals; only service transactions change project state. One active job per window, one writer per project through exclusive lock file. No module imports UI except UI. Cancellation is cooperative for providers and process-tree termination for analysis; delivered remote data cannot be recalled. Logs omit credentials and are capped.
 
 Project directory: `project.sqlite3`, `.patchtrace.lock`, `artifacts/{sha256}.bin`, `runs/{run_id}/raw/`, `exports/`. Relative artifact paths cannot escape root. Each DB commit stores current validated aggregate plus history. Backup uses SQLite backup API and copied artifact/run files. Interrupted runs are marked failed on load. Future schema versions fail closed; v1 needs no legacy migration. Migrations require backup and explicit ordered transforms, never reinterpret future data.

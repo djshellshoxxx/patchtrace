@@ -1,0 +1,51 @@
+{
+  "reviewer": "review_resume independent helper",
+  "decision": "No blocking findings within reviewed scope",
+  "reviewed_head": "3731a8cfae1e5bed7f2311400586db831a606395",
+  "reviewed_tree": "2300c46ad0062f397b588ba1b4721826f39d2436",
+  "base": "eccfb8d587f94e927f857fad248531a002ecc36c",
+  "observed_qa_only_head": "f33ab9e7d43b8ae4d4e1609e2f1f2a64961122f7",
+  "worktree": "/workspace/scratch/142cb233d750/wt-windows-secondary-controls",
+  "observed_state": "Clean; QA-only descendant changes only docs/qa/windows-secondary-controls-20261102.md; both tests equal frozen source.",
+  "changed_paths": [
+    "tests/test_evidence_panel_service.py",
+    "tests/test_rzdiff_orientation_20261101.py"
+  ],
+  "changed_file_sha256": {
+    "tests/test_evidence_panel_service.py": "be461cf2454ca2509580005f8b289ef0db4098052389f9c4ee0fad06bcbc9411",
+    "tests/test_rzdiff_orientation_20261101.py": "ad77a62627e8c1e0e38db54868d70aee7e335ff55ffde3f2df09de4ac8a5db41"
+  },
+  "environment": {
+    "python": "3.12.14",
+    "platform": "Linux",
+    "Qt": "offscreen"
+  },
+  "scope_and_reasoning": [
+    "Only two test files change. Explicit binary LF/CRLF output still requires failed status, no MatchSet, PT-SECONDARY-ORIENTATION, exact raw digest and ordered artifact hashes.",
+    "Actual temporary absolute paths containing spaces cover rz-diff and rz-diff.exe; real probe uses injected runner with exact argv asserted. Matching runner fails if called. Version0.9.1 remains unsupported, orientation quarantine explicit, old cache lookup/reuse forbidden.",
+    "Independent PureWindowsPath control confirms original root-relative path stops before probe, but drive-absolute path reaches one real probe then unchanged orientation quarantine. Inert placeholder is never executed.",
+    "Independent recomputed LF39470673eacbf593cfe92bdde85835bb875ec7f5d2df5f7baf9f03f76197185b and CRLF7da3dbdc9e5e8d83f0bcc053c53ed5ac0ab69a62aa8b1372df42598c3c098033 digests match the saved CI traceback."
+  ],
+  "validation": [
+    {
+      "command": "QT_QPA_PLATFORM=offscreen PYTHONPATH=.:src:tests /workspace/scratch/142cb233d750/venv/bin/python -m pytest -q --tb=short tests/test_evidence_panel_service.py tests/test_rzdiff_orientation_20261101.py",
+      "result": "52 passed in 1.19 seconds on source-equal QA descendant."
+    },
+    {
+      "command": "Independent PureWindowsPath registry/probe and LF/CRLF digest reconciliation",
+      "result": "Passed; zero native processes; saved JSON result."
+    },
+    {
+      "command": "Changed-test Ruff; git diff --check; source/QA equality and clean worktree",
+      "result": "Passed."
+    }
+  ],
+  "independent_artifacts": {
+    "/workspace/scratch/142cb233d750/reviews-resume/windows-secondary-control-result.json": "0eb9e9c22378a913b6b239b56d458e4834e8c5e578f90353baa58a8e12b2521b",
+    "/workspace/scratch/142cb233d750/reconciliation/ci-monitor-20261102/windows-51a9b4af-failure-tracebacks.txt": "78d9bd53adad2ac08024524fe85e57789fcdfe31086f9464c59c5b21aa752f3b"
+  },
+  "limitations": [
+    "Linux tests plus Windows-path modeling; actual Windows CI remains required.",
+    "No production code, version pin, quarantine contract or gate changes. No full/native/performance job, repository source edit, target execution, remote mutation or GitHub approval."
+  ]
+}

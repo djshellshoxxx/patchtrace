@@ -33,6 +33,11 @@ HISTORY_KEEP = 100
 HISTORY_MAX_BYTES = 512 * 1024 * 1024
 HISTORY_BACKUP_LABEL = 'history-prune'
 _HISTORY_STATS = 'SELECT COUNT(*), MAX(sequence) FROM history'
+_CURRENT_SNAPSHOT_SQL = ('CREATE TABLE current_snapshot (singleton INTEGER PRIMARY KEY '
+                         'CHECK(singleton=1), payload TEXT NOT NULL, sha256 TEXT NOT NULL)')
+_HISTORY_SQL = ('CREATE TABLE history (sequence INTEGER PRIMARY KEY AUTOINCREMENT, '
+                'revision INTEGER NOT NULL, created TEXT NOT NULL, payload TEXT '
+                'NOT NULL, sha256 TEXT NOT NULL)')
 
 
 # Deepest accepted JSON nesting. Real inputs (Ghidriff results, series, reports) stay far below it; deeper documents
@@ -257,13 +262,20 @@ def _creation_identity(path: Path, *, directory: bool = False) -> tuple[int, int
 
 class ProjectLock:
     """Kernel-owned advisory lock; crashes release it without stealing a live lock file."""
-    def __init__(self, root: Path):
+    def __init__(self, root: Path, *, _preserve_existing: bool = False):
         self.path = safe_path(root, '.patchtrace.lock')
         self.stream = None
         try:
-            flags = os.O_RDWR | os.O_CREAT | getattr(os, 'O_NOFOLLOW', 0)
+            flags = os.O_RDWR | getattr(os, 'O_NOFOLLOW', 0)
+            if not _preserve_existing:
+                flags |= os.O_CREAT
             fd = os.open(self.path, flags, 0o600)
             self.stream = os.fdopen(fd, 'r+b')
+            if _preserve_existing:
+                info = os.fstat(fd)
+                if (_creation_identity(self.path) != (info.st_dev, info.st_ino)
+                        or info.st_size != 4096 or info.st_nlink != 1):
+                    raise OSError('retry requires an existing regular project lock')
             if os.name == 'nt':
                 import msvcrt
                 if os.fstat(fd).st_size == 0:
@@ -274,11 +286,12 @@ class ProjectLock:
             else:
                 import fcntl
                 fcntl.flock(fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
-            payload = json.dumps({'pid': os.getpid(), 'host': socket.gethostname(),
-                                  'token': str(uuid4()), 'opened': now()}).encode()
-            self.stream.seek(0)
-            self.stream.write(payload.ljust(4096, b' '))
-            self.stream.flush()
+            if not _preserve_existing:
+                payload = json.dumps({'pid': os.getpid(), 'host': socket.gethostname(),
+                                      'token': str(uuid4()), 'opened': now()}).encode()
+                self.stream.seek(0)
+                self.stream.write(payload.ljust(4096, b' '))
+                self.stream.flush()
         except OSError as exc:
             if self.stream:
                 self.stream.close()
@@ -299,7 +312,9 @@ class ProjectLock:
 
 
 class ProjectStore:
-    def __init__(self, root: Path, create: bool = False):
+    def __init__(self, root: Path, create: bool = False, *, _creation_validator=None):
+        if _creation_validator is not None and not create:
+            raise ValueError('creation validator requires creation mode')
         self.root = Path(root).resolve()
         self.closed = False
         self.connection = None
@@ -308,7 +323,7 @@ class ProjectStore:
         self.project_id: str | None = None  # known after the first load/save; never changes for a database
         self._prune_deferred = False
         self._prune_blocked = False  # a pre-prune backup failed in this session: keep every row
-        if create:
+        if create and _creation_validator is None:
             try:
                 self.root.mkdir(parents=True, exist_ok=True)
             except OSError as exc:
@@ -316,7 +331,7 @@ class ProjectStore:
         if not self.root.is_dir():
             raise ValueError('PT-STORAGE: project path is not a directory' if self.root.exists()
                              else 'PT-STORAGE: project directory does not exist')
-        self.lock = ProjectLock(self.root)
+        self.lock = ProjectLock(self.root, _preserve_existing=_creation_validator is not None)
         database_owner = None
         try:
             if create:
@@ -326,27 +341,41 @@ class ProjectStore:
                 if _creation_identity(self.lock.path) != lock_identity:
                     raise OSError('creation destination lock identity changed')
             path = safe_path(self.root, 'project.sqlite3')
+            recheck = _creation_validator(self) if _creation_validator is not None else None
             if create and path.exists():
                 if not _abandoned_creation(path):
                     raise ValueError('PT-STORAGE: project database already exists')
-                for suffix in ('', '-journal', '-wal', '-shm'):  # a killed creation left no snapshot to lose
+                if recheck is not None:
+                    recheck()
+                suffixes = ('',) if recheck is not None else ('', '-journal', '-wal', '-shm')
+                for suffix in suffixes:  # Strict retry never authorizes deleting sidecars.
                     Path(f'{path}{suffix}').unlink(missing_ok=True)
+            elif recheck is not None:
+                recheck()
             if not create and not path.is_file():
                 raise ValueError('PT-STORAGE: project database is missing')
+            if recheck is not None:
+                flags = os.O_RDWR | os.O_CREAT | os.O_EXCL | getattr(os, 'O_NOFOLLOW', 0)
+                descriptor = os.open(path, flags, 0o600)
+                try:
+                    created = os.fstat(descriptor)
+                    database_owner = created.st_dev, created.st_ino
+                finally:
+                    os.close(descriptor)
             self.connection = sqlite3.connect(path, timeout=5)
             if create:
-                database_owner = _creation_identity(path)
+                actual_owner = _creation_identity(path)
+                if database_owner is not None and actual_owner != database_owner:
+                    raise OSError('creation database identity changed')
+                database_owner = actual_owner
             self.connection.execute('PRAGMA foreign_keys=ON')
             if create:
                 with self.connection:
                     # Legacy sqlite3 mode does not BEGIN before PRAGMA/DDL; make initialization atomic.
                     self.connection.execute('BEGIN IMMEDIATE')
                     self.connection.execute(f'PRAGMA user_version={SCHEMA_VERSION}')
-                    self.connection.execute('CREATE TABLE current_snapshot (singleton INTEGER PRIMARY KEY '
-                                            'CHECK(singleton=1), payload TEXT NOT NULL, sha256 TEXT NOT NULL)')
-                    self.connection.execute('CREATE TABLE history (sequence INTEGER PRIMARY KEY AUTOINCREMENT, '
-                                            'revision INTEGER NOT NULL, created TEXT NOT NULL, payload TEXT '
-                                            'NOT NULL, sha256 TEXT NOT NULL)')
+                    self.connection.execute(_CURRENT_SNAPSHOT_SQL)
+                    self.connection.execute(_HISTORY_SQL)
             else:
                 version = self.connection.execute('PRAGMA user_version').fetchone()[0]
                 if version != SCHEMA_VERSION:
