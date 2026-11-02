@@ -418,3 +418,20 @@ Baseline `a04f5a299a8d4afef023261e52e08d14678cf1e7`: the imported 13 destination
 Focused validation: `QT_QPA_PLATFORM=offscreen python -m pytest -q tests/test_export_destination_guard.py tests/test_report_export_backup.py tests/test_service_storage_audit.py` passed; whole-tree Ruff passed. An initial command named nonexistent test files and ran no tests; corrected command above is the evidence. Full suite and native CI remain pending until recorded.
 
 PR151 backup publication follow-up: actual fixed-clock/pending-file regressions2failed before repair; reviewed exclusive-stage/non-replacing publication39 tests passed (independent39 plus live-save failure controls). Prior evidence and no-prune-on-failure preserved; exact newhead CI required. See `docs/qa/backup-publication-collision-20261101.md`.
+
+
+## Issue #120 independent main repair (2026-11-01)
+
+Base: canonical `6579ed83211b7ff2039e3152728ac1cddc3e93d6`. Before implementation, the two defect suites produced **28 failed, 3 passed**: manual 1:1 ambiguity became an affirmative pairing; reference/name/code changes reused manual identity; changed normalized secondary content reused result identity; inconsistent alternative engine/version/anchor input was accepted. The failures include real ProjectService correction, persisted secondary republish, cache and refresh scenarios.
+
+Ported only the reviewed issue #120 changes from `5db4de9`, `25bfc96`, `59e80be`, and `4578c90`. Relevant source contracts already exist on main. The PR #144 matching-policy hook, ladder/facts/pseudocode reconciliation and typed-literal changes were not required or imported. No rz-diff quarantine was imported.
+
+Focused checks on the main port: identity/alternative/budget/source/key suites **126 passed**; related storage, secondary, read-model, in-process pipeline and wire-compute suites **141 passed, 1 real-child node deselected**; unified contracts/import-boundary suites **141 passed**. That real-child node was then run separately and **1 passed**. A new stored-secondary identity round-trip also ran a real Python worker and verified its next run was cached; the complete resource suite with that new case **8 passed**. Full `ruff check src tests tools` passed. `tools/generate_schemas.py` regenerated without any schema drift.
+
+The main-only source retains existing matching semantics outside the repaired identity/ambiguity/alternative rules. Valid upstream fields, Atom.ref values and raw hashes are preserved; malformed historical rows follow the existing logged per-row skip policy. Stored-byte and in-memory canonical identity domains may conservatively miss cache across representations; distinct emitted content must not collide.
+
+All fixtures are authored or synthetic; a Python worker round-trip is not a native matching/accuracy gate. Full pytest on the final published head, independent review and remote/native checks remain pending. No main merge or publication is asserted by this record.
+
+Independent main identity repair: original28 failures reproduced on main; final coordinator125 focused/worker/child checks passed. Refused-source assertion now verifies derived identity and original raw provenance; independent fault controls and original failures retained in `docs/qa/identity-main-repair-20261101.md`. Exact published full/native/Qt gates remain required.
+
+PR156 external-review follow-up: active Budget now reaches refacts identity/flag work; Qt captures validated inputs on owner and resolves new identity hashing in task work before exact-key owner DB lookup/publication. Both defects independently reviewed; main-port79 coordinator checks passed. Original red/independent evidence is retained in `docs/qa/identity-followup-20261101.md`. Existing capture I/O remains owner-side; no full responsiveness/performance claim.
