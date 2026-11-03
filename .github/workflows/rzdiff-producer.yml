@@ -4,6 +4,7 @@ on:
     paths:
       - 'tools/rzdiff/**'
       - 'tests/test_rzdiff_producer_patch.py'
+      - 'tests/test_rzdiff_native_evidence.py'
       - '.github/workflows/rzdiff-producer.yml'
 permissions:
   contents: read
@@ -11,11 +12,23 @@ jobs:
   producer:
     runs-on: ubuntu-24.04
     timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        variant: [stock, corrected]
+    env:
+      PATCHTRACE_SOURCE_HEAD: ${{ github.event.pull_request.head.sha }}
+      PRODUCER_VARIANT: ${{ matrix.variant }}
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
       - name: Fetch pinned producer in isolated directory
         run: |
           mkdir -p evidence
+          git rev-parse HEAD > evidence/patchtrace-head.txt
+          test "$(cat evidence/patchtrace-head.txt)" = "$PATCHTRACE_SOURCE_HEAD"
           git init "$RUNNER_TEMP/rizin"
           git -C "$RUNNER_TEMP/rizin" remote add origin https://github.com/rizinorg/rizin.git
           git -C "$RUNNER_TEMP/rizin" fetch --depth=1 origin c3a90e9226d977f58f4e9c75f78fa6b07afe13c7
@@ -23,32 +36,39 @@ jobs:
           git -C "$RUNNER_TEMP/rizin" rev-parse HEAD > evidence/upstream-commit.txt
           cp "$RUNNER_TEMP/rizin/librz/arch/similarity.c" evidence/stock-similarity.c
           sha256sum evidence/stock-similarity.c > evidence/source-hashes.txt
-      - name: Red and green compiled boundary controls
+      - name: Red and green compiled boundary controls and evidence-runner tests
         env:
           PYTHONPATH: .
         run: |
+          set -o pipefail
           python -m pip install pytest meson ninja
-          PATCHTRACE_RIZIN_SIMILARITY="$RUNNER_TEMP/rizin/librz/arch/similarity.c" python -m pytest -c /dev/null --noconftest -q -s tests/test_rzdiff_producer_patch.py --junitxml=evidence/boundary.xml 2>&1 | tee evidence/boundary.log
-      - name: Apply correction and build actual native producer
+          PATCHTRACE_RIZIN_SIMILARITY="$RUNNER_TEMP/rizin/librz/arch/similarity.c" python -m pytest -c /dev/null --noconftest -q -s tests/test_rzdiff_producer_patch.py tests/test_rzdiff_native_evidence.py --junitxml=evidence/boundary.xml 2>&1 | tee evidence/boundary.log
+      - name: Build actual stock or corrected native producer
         run: |
           set -o pipefail
-          python tools/rzdiff/patch_producer.py "$RUNNER_TEMP/rizin"
-          sha256sum "$RUNNER_TEMP/rizin/librz/arch/similarity.c" >> evidence/source-hashes.txt
+          if [ "$PRODUCER_VARIANT" = corrected ]; then
+            python tools/rzdiff/patch_producer.py "$RUNNER_TEMP/rizin"
+          fi
+          cp "$RUNNER_TEMP/rizin/librz/arch/similarity.c" evidence/built-similarity.c
+          sha256sum evidence/built-similarity.c >> evidence/source-hashes.txt
           meson setup "$RUNNER_TEMP/rizin/build" "$RUNNER_TEMP/rizin" --prefix="$RUNNER_TEMP/rizin-install" 2>&1 | tee evidence/setup.log
           meson compile -C "$RUNNER_TEMP/rizin/build" -j 2 2>&1 | tee evidence/build.log
           meson install -C "$RUNNER_TEMP/rizin/build" > evidence/install.log 2>&1
-      - name: Native public API ownership matrix
+      - name: Compile native API oracle and retain binary provenance before execution
         run: |
           set -o pipefail
           export PKG_CONFIG_PATH="$RUNNER_TEMP/rizin-install/lib/x86_64-linux-gnu/pkgconfig:$RUNNER_TEMP/rizin-install/lib/pkgconfig"
+          cc -std=c99 -Wall -Wextra -Werror tools/rzdiff/native_control.c $(pkg-config --cflags --libs rz_core rz_arch rz_io rz_util) -o "$RUNNER_TEMP/native-control" 2>&1 | tee evidence/native-compile.log
+          sha256sum tools/rzdiff/native_control.c "$RUNNER_TEMP/native-control" > evidence/native-hashes.txt
+          find "$RUNNER_TEMP/rizin-install" -type f \( -name 'rz-diff' -o -name '*.so*' \) -exec sha256sum {} + >> evidence/native-hashes.txt
+      - name: Native public API ownership matrix with strict red control
+        run: |
           export LD_LIBRARY_PATH="$RUNNER_TEMP/rizin-install/lib/x86_64-linux-gnu:$RUNNER_TEMP/rizin-install/lib"
-          cc -std=c99 -Wall -Wextra -Werror tools/rzdiff/native_control.c $(pkg-config --cflags --libs rz_core rz_arch rz_io rz_util) -o "$RUNNER_TEMP/native-control"
-          "$RUNNER_TEMP/native-control" 2>&1 | tee evidence/native-matrix.log
-          find "$RUNNER_TEMP/rizin-install" -type f \( -name 'rz-diff' -o -name '*.so*' \) -exec sha256sum {} + > evidence/native-hashes.txt
+          python tools/rzdiff/native_evidence.py --variant "$PRODUCER_VARIANT" --executable "$RUNNER_TEMP/native-control" --output evidence
       - name: Retain first-attempt evidence
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
-          name: rzdiff-producer-ownership
+          name: rzdiff-producer-ownership-${{ matrix.variant }}-${{ github.event.pull_request.head.sha }}-${{ github.run_attempt }}
           path: evidence/
           if-no-files-found: error
