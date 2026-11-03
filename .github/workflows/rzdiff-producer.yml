@@ -28,7 +28,7 @@ jobs:
           PYTHONPATH: .
         run: |
           python -m pip install pytest meson ninja
-          PATCHTRACE_RIZIN_SIMILARITY="$RUNNER_TEMP/rizin/librz/arch/similarity.c" python -m pytest -q -s tests/test_rzdiff_producer_patch.py --junitxml=evidence/boundary.xml 2>&1 | tee evidence/boundary.log
+          PATCHTRACE_RIZIN_SIMILARITY="$RUNNER_TEMP/rizin/librz/arch/similarity.c" python -m pytest -c /dev/null --noconftest -q -s tests/test_rzdiff_producer_patch.py --junitxml=evidence/boundary.xml 2>&1 | tee evidence/boundary.log
       - name: Apply correction and build actual native producer
         run: |
           set -o pipefail
@@ -42,7 +42,7 @@ jobs:
           set -o pipefail
           export PKG_CONFIG_PATH="$RUNNER_TEMP/rizin-install/lib/x86_64-linux-gnu/pkgconfig:$RUNNER_TEMP/rizin-install/lib/pkgconfig"
           export LD_LIBRARY_PATH="$RUNNER_TEMP/rizin-install/lib/x86_64-linux-gnu:$RUNNER_TEMP/rizin-install/lib"
-          cc -std=c99 -Wall -Wextra -Werror tools/rzdiff/native_control.c $(pkg-config --cflags --libs rz_core) -o "$RUNNER_TEMP/native-control"
+          cc -std=c99 -Wall -Wextra -Werror tools/rzdiff/native_control.c $(pkg-config --cflags --libs rz_core rz_arch rz_io rz_util) -o "$RUNNER_TEMP/native-control"
           "$RUNNER_TEMP/native-control" 2>&1 | tee evidence/native-matrix.log
           find "$RUNNER_TEMP/rizin-install" -type f \( -name 'rz-diff' -o -name '*.so*' \) -exec sha256sum {} + > evidence/native-hashes.txt
       - name: Retain first-attempt evidence
