@@ -19,10 +19,10 @@ jobs:
     steps:
       - name: Verify API key secret is available
         env:
-          CODEX_KEY_PRESENT: ${{ secrets.OPENAI_API_KEY != '' }}
+          CODEX_KEY_PRESENT: ${{ secrets.PATCHTRACE_OPENAI_API_KEY != '' }}
         run: |
           if [ "$CODEX_KEY_PRESENT" != 'true' ]; then
-            echo '::error::OPENAI_API_KEY is unavailable or empty. Check the repository Actions secret name and workflow branch.'
+            echo '::error::PATCHTRACE_OPENAI_API_KEY is unavailable or empty. Check the repository Actions secret name and workflow branch.'
             exit 1
           fi
 
@@ -35,7 +35,7 @@ jobs:
         id: codex
         uses: openai/codex-action@v1
         with:
-          openai-api-key: ${{ secrets.OPENAI_API_KEY }}
+          openai-api-key: ${{ secrets.PATCHTRACE_OPENAI_API_KEY }}
           permission-profile: ":workspace"
           output-file: codex-report.txt
           prompt: |
