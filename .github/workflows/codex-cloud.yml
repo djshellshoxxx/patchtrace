@@ -1,0 +1,51 @@
+
+name: PatchTrace Codex Cloud Test
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: patchtrace-codex-test
+  cancel-in-progress: false
+
+jobs:
+  codex-test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Run API-funded Codex
+        id: codex
+        uses: openai/codex-action@v1
+        with:
+          openai-api-key: ${{ secrets.OPENAI_API_KEY }}
+          permission-profile: ":workspace"
+          output-file: codex-report.txt
+          prompt: |
+            You are working on PatchTrace.
+
+            Inspect the repository and identify
+            one small, unfinished task involving
+            CVE correlation, binary comparison,
+            or regression testing.
+
+            Implement one focused improvement.
+
+            Run relevant tests where feasible.
+
+            Do not change unrelated files.
+            Do not create commits or push.
+            Do not install large dependencies.
+
+            Report:
+            - What you changed
+            - Tests executed and results
+            - Remaining issues
