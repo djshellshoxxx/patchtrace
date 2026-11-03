@@ -67,11 +67,19 @@ def _stat_key(info) -> tuple[int, int, int, int, int]:
 
 
 def _fingerprint(path: Path) -> _Version | None:
-    """Fresh bytes, never a metadata-only trust decision; bounded reads of one regular file.
+    """Require matching complete byte observations, not just unchanged timestamps.
 
-    Metadata checks detect observed movement during hashing. The digest detects
-    persistent same-size edits with restored mtime on Windows as well as POSIX.
+    A write behind the first read cursor can leave its digest describing old bytes
+    even when no timestamp advances. Reopen and hash again before accepting that
+    version. Both reads retain their identity and change checks; this is bounded
+    revalidation, not a lock against arbitrary subsequent writers.
     """
+    first = _fingerprint_once(path)
+    return first if first is not None and _fingerprint_once(path) == first else None
+
+
+def _fingerprint_once(path: Path) -> _Version | None:
+    """Hash one regular file in bounded chunks and reject observed changes."""
     try:
         flags = os.O_RDONLY | getattr(os, 'O_BINARY', 0) | getattr(os, 'O_NOFOLLOW', 0)
         fd = os.open(path, flags | getattr(os, 'O_NONBLOCK', 0))
@@ -81,8 +89,8 @@ def _fingerprint(path: Path) -> _Version | None:
                 return None
             # Windows path stat can expose creation time while fstat exposes
             # change time. Compare ctime only within each observation API.
-            # The shared helper also reads FILE_BASIC_INFO.ChangeTime, retaining
-            # detection of restored-mtime edits independently of that mismatch.
+            # The shared helper also observes FILE_BASIC_INFO.ChangeTime as an
+            # independent indication of changes, not proof of unchanged bytes.
             named_before = file_fingerprint(path)
             path_before = path.lstat()
             if (not stat.S_ISREG(path_before.st_mode)

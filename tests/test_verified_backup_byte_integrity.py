@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import os
 from pathlib import Path
+from types import SimpleNamespace
 
 import pytest
 
@@ -132,6 +133,64 @@ def test_edit_to_already_hashed_bytes_with_restored_mtime_is_not_trusted(service
 
     monkeypatch.setattr(verified_backup.hashlib, 'sha256', MutatingHash)
     assert verified_backup.trusted_backup(service.root, 'history-prune') is None
+
+
+def _unchanged_change_times(monkeypatch, path):
+    """Model timestamp observations that cannot distinguish two rapid writes."""
+    identity = path.stat()
+    original_fstat = os.fstat
+    original_lstat = Path.lstat
+    original_fingerprint = verified_backup.file_fingerprint
+
+    def with_change_time(info, value):
+        fields = {name: getattr(info, name) for name in dir(info) if name.startswith('st_')}
+        return SimpleNamespace(**(fields | {'st_ctime_ns': value}))
+
+    def fstat(fd):
+        info = original_fstat(fd)
+        if (info.st_dev, info.st_ino) == (identity.st_dev, identity.st_ino):
+            return with_change_time(info, 1)
+        return info
+
+    def lstat(self):
+        info = original_lstat(self)
+        return with_change_time(info, 2) if self == path else info
+
+    def fingerprint(value):
+        info = original_fingerprint(value)
+        return (*info[:4], 3) if value == path else info
+
+    monkeypatch.setattr(os, 'fstat', fstat)
+    monkeypatch.setattr(Path, 'lstat', lstat)
+    monkeypatch.setattr(verified_backup, 'file_fingerprint', fingerprint)
+
+
+@pytest.mark.parametrize('mutate', [False, True])
+def test_cached_reuse_matches_bytes_when_change_times_do_not_advance(service, monkeypatch, mutate):
+    backup = verified_backup.write_verified_backup(service.root, service.store.connection, 'history-prune')
+    original = backup.read_bytes()
+    _unchanged_change_times(monkeypatch, backup)
+    original_sha256 = verified_backup.hashlib.sha256
+    changed = False
+
+    class MutatingHash:
+        def __init__(self):
+            self.digest = original_sha256()
+
+        def update(self, block):
+            nonlocal changed
+            self.digest.update(block)
+            if mutate and not changed:
+                _change_bytes_preserving_metadata(backup)
+                changed = True
+
+        def hexdigest(self):
+            return self.digest.hexdigest()
+
+    monkeypatch.setattr(verified_backup.hashlib, 'sha256', MutatingHash)
+    assert verified_backup.trusted_backup(service.root, 'history-prune') == (None if mutate else backup)
+    assert backup.exists(), 'refused backup bytes remain available as evidence'
+    assert (backup.read_bytes() != original) == mutate
 
 
 def _fixed_backup_clock(monkeypatch):
