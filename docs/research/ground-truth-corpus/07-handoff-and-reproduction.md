@@ -311,3 +311,14 @@ cleanup comment; the follow-up dispositions are in
 `results/external-review-followup.md`. The PR was marked ready to obtain external
 review, which is not merge approval. Current Linux/Windows/Qt jobs and the final
 published revision's checks must still be inspected on PR #128.
+
+### Receipt publication failure recovery (continuation, October 31 UTC)
+
+After the build matrix finishes, failure to publish the selected receipt path
+still returns exit 2 and never replaces another run's file. The JSON error on
+stdout now includes the complete completed `receipt` object so entry statuses,
+label paths and digests remain recoverable. A pre-build validation failure has
+no receipt and must not invent one. Successful file/stdout output is unchanged.
+This fixes lost matrix evidence, not the separate final-check/parent-replacement
+TOCTOU finding; that finding remains open pending a portable handle-bound writer
+and native platform verification. Do not treat this change as corpus acceptance.
