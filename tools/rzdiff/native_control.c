@@ -12,15 +12,22 @@ static bool owned(RzList *list, const void *ptr) {
     return ptr && rz_list_contains(list, ptr);
 }
 static bool covered(RzList *input, RzList *unmatched, RzList *matches, bool left) {
-    RzListIter *it, *mt;
-    RzAnalysisFunction *f;
+    RzListIter *it, *mt, *ut;
+    RzAnalysisFunction *f, *u;
     RzAnalysisMatchPair *pair;
     rz_list_foreach (input, it, f) {
-        bool found = owned(unmatched, f);
-        rz_list_foreach (matches, mt, pair) {
-            if ((left ? pair->pair_a : pair->pair_b) == f) found = true;
+        unsigned unmatched_count = 0;
+        bool matched = false;
+        rz_list_foreach (unmatched, ut, u) {
+            if (u == f) unmatched_count++;
         }
-        if (!found) return false;
+        rz_list_foreach (matches, mt, pair) {
+            if ((left ? pair->pair_a : pair->pair_b) == f) matched = true;
+        }
+        // Complete coverage is a partition: exactly one unmatched occurrence
+        // OR one/more matches (the singleton intentionally searches all B).
+        if (unmatched_count > 1 || (unmatched_count && matched) ||
+            (!unmatched_count && !matched)) return false;
     }
     return true;
 }
@@ -47,7 +54,14 @@ static int check(unsigned na, unsigned nb, bool overlap) {
     RzAnalysisMatchOpt opt = {0};
     opt.analysis_a = a; opt.analysis_b = b;
     RzAnalysisMatchResult *r = rz_analysis_match_functions(la, lb, &opt);
-    int errors = !r;
+    if (!r) {
+        // A native API failure must not masquerade as stock orientation red.
+        fprintf(stderr, "native API returned NULL for %u:%u overlap=%d\n", na, nb, overlap);
+        rz_list_free(la); rz_list_free(lb);
+        rz_analysis_free(a); rz_analysis_free(b);
+        return 1;
+    }
+    int errors = 0;
     if (r) {
         RzListIter *it; RzAnalysisMatchPair *pair; RzAnalysisFunction *f;
         rz_list_foreach (r->matches, it, pair) {

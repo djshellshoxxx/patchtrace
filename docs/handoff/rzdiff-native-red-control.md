@@ -49,3 +49,25 @@ No parallel persistent workers are exposed.
 5. Consolidation heads: #163 6e82fd70f315b99c6798a42c9061a1424a02933e;
    #164 b58bb53debcb3323e5d8d634e09397cb7e02965f.
    Preserve their unresolved Sonar/native/package/Linux/Windows gate obligations.
+
+## Second implementation checkpoint
+Initial published implementation: 4013cdd5d491b5d662105a24c63761ee7c787480,
+PR #168 stacked on #166.
+
+Found and reproduced an oracle gap: covered() accepted a function simultaneously
+matched and unmatched, and accepted duplicate unmatched pointers. The compiled
+oracle regression failed with two violations against the old check.
+The repaired coverage check requires a partition while retaining legitimate
+singleton all-candidate matches. Pointer-membership checks remain unchanged.
+Matching/serialization/production code is not changed.
+
+Final bounded selection: **27 passed, no skips** (26 evidence/oracle tests plus
+existing source-refusal regression). The oracle C compiled with C99,
+Wall/Wextra/Werror and list doubles. This is NOT native Rizin acceptance.
+Additional signature-only compilation control using the actual #166 callback:
+old int compile exit 1 with incompatible-pointer-types; size_t compile exit 0.
+This confirms the bounded signature correction, not complete API compilation.
+git diff --check passed. Native logs remain inaccessible in this environment.
+
+A NULL native API result now emits diagnostics without a matrix row, ensuring
+strict completeness validation refuses it even in the stock red job.
