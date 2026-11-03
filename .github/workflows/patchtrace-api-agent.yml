@@ -1,0 +1,38 @@
+name: PatchTrace API agent (manual pilot)
+on:
+  workflow_dispatch:
+    inputs:
+      task:
+        description: 'Small, scoped engineering task'
+        required: true
+        default: 'Review rz-diff orientation handoff and identify the next verified implementation step.'
+      model:
+        description: 'Available Responses API model ID'
+        required: true
+        default: 'gpt-5.1'
+permissions:
+  contents: read
+concurrency:
+  group: patchtrace-api-pilot
+  cancel-in-progress: false
+jobs:
+  pilot:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Run bounded read-only API pilot
+        env:
+          OPENAI_API_KEY: ${{ secrets.PATCHTRACE_OPENAI_API_KEY }}
+          OPENAI_MODEL: ${{ inputs.model }}
+          PATCHTRACE_TASK: ${{ inputs.task }}
+        run: python tools/cloud_agent/pilot.py
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: patchtrace-api-pilot
+          path: agent-report.md
+          if-no-files-found: warn
