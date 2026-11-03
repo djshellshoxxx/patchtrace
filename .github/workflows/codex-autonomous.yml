@@ -18,12 +18,13 @@ jobs:
     permissions:
       contents: write
       pull-requests: write
+      actions: write
     if: github.repository == 'djshellshoxxx/patchtrace'
     runs-on: ubuntu-24.04
     timeout-minutes: 60
     steps:
       - name: Checkout latest main
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           ref: main
           persist-credentials: false
@@ -51,7 +52,7 @@ jobs:
 
       - name: Set up Python
         if: steps.preflight.outputs.run_agent == 'true'
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
         with:
           python-version: '3.12'
           cache: pip
@@ -66,7 +67,7 @@ jobs:
       - name: Run API-funded Codex on an unowned task
         if: steps.preflight.outputs.run_agent == 'true'
         id: codex
-        uses: openai/codex-action@v1
+        uses: openai/codex-action@bdf19a4a223ec2549a3e2274a0cf61556bc07675 # v1
         with:
           openai-api-key: ${{ secrets.PATCHTRACE_OPENAI_API_KEY }}
           permission-profile: ":workspace"
@@ -137,7 +138,7 @@ jobs:
 
       - name: Upload Codex run report
         if: always() && steps.preflight.outputs.run_agent == 'true'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: codex-report-${{ github.run_id }}
           path: codex-report.txt
@@ -147,7 +148,7 @@ jobs:
       - name: Create a persistent pull request
         if: steps.preflight.outputs.run_agent == 'true' && steps.scope.outcome == 'success'
         id: publish
-        uses: peter-evans/create-pull-request@v7
+        uses: peter-evans/create-pull-request@22a9089034f40e5a961c8808d113e2c98fb63676 # v7
         with:
           token: ${{ secrets.PATCHTRACE_GITHUB_TOKEN || github.token }}
           branch: codex/cloud-${{ github.run_id }}
@@ -169,6 +170,16 @@ jobs:
             The Codex final report is attached as a run artifact.
           draft: ${{ steps.validation.outcome != 'success' }}
           delete-branch: true
+
+
+      - name: Trigger cross-platform QA for generated PR
+        if: steps.publish.outputs.pull-request-branch != ''
+        env:
+          GH_TOKEN: ${{ secrets.PATCHTRACE_GITHUB_TOKEN || github.token }}
+          PR_BRANCH: ${{ steps.publish.outputs.pull-request-branch }}
+        run: |
+          gh workflow run qa-windows.yml --ref "$PR_BRANCH"
+          echo "Dispatched Linux + Windows QA for $PR_BRANCH" >> "$GITHUB_STEP_SUMMARY"
 
       - name: Publish checkpoint URL
         if: steps.publish.outputs.pull-request-url != ''
