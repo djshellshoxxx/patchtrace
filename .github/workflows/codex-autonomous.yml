@@ -25,6 +25,7 @@ jobs:
       - name: Merge previously validated autonomous PRs when eligible
         env:
           GH_TOKEN: ${{ secrets.PATCHTRACE_GITHUB_TOKEN || github.token }}
+          GH_REPO: ${{ github.repository }}
         shell: bash
         run: |
           set -euo pipefail
