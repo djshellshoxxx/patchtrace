@@ -7,9 +7,7 @@ on:
 
 # GitHub Actions and the OpenAI API are billed separately.
 # This schedule runs a maximum of two attempts per day, with one agent per run.
-permissions:
-  contents: write
-  pull-requests: write
+permissions: {}
 
 concurrency:
   group: patchtrace-api-codex-autonomous
@@ -17,6 +15,9 @@ concurrency:
 
 jobs:
   develop:
+    permissions:
+      contents: write
+      pull-requests: write
     if: github.repository == 'djshellshoxxx/patchtrace'
     runs-on: ubuntu-24.04
     timeout-minutes: 60
