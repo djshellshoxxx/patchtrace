@@ -14,7 +14,42 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  integrate:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      contents: write
+      pull-requests: write
+      checks: read
+    steps:
+      - name: Merge previously validated autonomous PRs when eligible
+        env:
+          GH_TOKEN: ${{ secrets.PATCHTRACE_GITHUB_TOKEN || github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          gh pr list --state open --limit 100 --json number,headRefName,isDraft --jq \
+            '.[] | select(.headRefName | startswith("codex/cloud-")) | select(.isDraft == false) | .number' |
+          while IFS= read -r number; do
+            [ -n "$number" ] || continue
+            sha="$(gh pr view "$number" --json headRefOid --jq '.headRefOid')"
+            checks="$(gh api "repos/$GITHUB_REPOSITORY/commits/$sha/check-runs?per_page=100")"
+            for name in 'qa (ubuntu-latest)' 'qa (windows-latest)' 'SonarCloud Code Analysis' 'CodeRabbit'; do
+              result="$(printf '%s' "$checks" | jq -r --arg name "$name" \
+                '([.check_runs[] | select(.name == $name)] | sort_by(.started_at) | last | .conclusion) // "missing"')"
+              if [ "$result" != "success" ]; then
+                echo "PR #$number not eligible; $name = $result"
+                continue 2
+              fi
+            done
+            echo "PR #$number has Linux, Windows, SonarCloud and CodeRabbit green checks."
+            # GitHub enforces any additional branch protections and required reviews.
+            gh pr merge "$number" --squash --delete-branch ||
+              echo "::warning::PR #$number not yet mergeable under repository policy."
+          done
+
   develop:
+    needs: integrate
     permissions:
       contents: write
       pull-requests: write
