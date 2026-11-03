@@ -1,0 +1,25 @@
+{
+  "base_commit": "b58bb53debcb3323e5d8d634e09397cb7e02965f",
+  "upstream_commit": "c3a90e9226d977f58f4e9c75f78fa6b07afe13c7",
+  "upstream_similarity_blob": "8544259e17a692bcb3c1d8858f104745cd0cba4c",
+  "local_tests": {
+    "passed": 2,
+    "skipped": 0,
+    "seconds": 0.1,
+    "scope": "extracted C public wrapper with helper double; not native acceptance"
+  },
+  "native_acceptance": "not run",
+  "corpus_tier_r": "not run; corrected producer not integrated",
+  "ruff": "blocked: No module named ruff",
+  "quarantine_changed": false,
+  "sha256": {
+    ".github/workflows/rzdiff-producer.yml": "65339e2313aa012d961d5f62d99b10d838369ec4c4b32514ff795680a00b2e5f",
+    "docs/handoff/rzdiff-producer-implementation.md": "ca249da9607e72c052ee3ca5112d0765694ebddc836987284b11d5b38398351c",
+    "docs/qa/rzdiff-producer-boundary.log": "f236f0c04ac3031f56eec33f4e190576464d8314f6e6dfbdce63d065fbb06101",
+    "tests/test_rzdiff_producer_patch.py": "b0c56fa42878976cffbc5816555361f915a75405af836c3ac091d19db6afdadf",
+    "tools/rzdiff/boundary_control.c": "c233a2d9297db30987fd4249e52c1cc100e1dd986332c26960c3e0c0b59cdcb3",
+    "tools/rzdiff/native_control.c": "4f797f22b24f2edf56aeca45006f3756730a43f1572f3d18b1e2de1fa1fa1ef7",
+    "tools/rzdiff/patch_producer.py": "ccaff2a9e7233380b9eec0a767466e688984b4c1e5fcba8d58086c4c772dc0ab",
+    "tools/rzdiff/singleton-ownership.patch": "3af84e7e8f6eeee1dd5525e62403deea3692670999afe1533a2d5b571db94bfc"
+  }
+}
