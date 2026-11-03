@@ -1,0 +1,152 @@
+{
+  "source_commit": "f2b7d981008dea25ac09ea82734da64a1dccb96d",
+  "source_tree": "985078aed0feb4f909690d6082ec4940540cda17",
+  "published_source_commit": "6e82fd70f315b99c6798a42c9061a1424a02933e",
+  "source_changes_for_reruns": false,
+  "runs": [
+    {
+      "name": "editable installation / isolated imports",
+      "passed": 7,
+      "failed": 0,
+      "errors": 0,
+      "seconds": 3.55
+    },
+    {
+      "name": "pinned cached search, YARA-X and iced-x86 extras",
+      "passed": 334,
+      "failed": 1,
+      "skipped": 0,
+      "seconds": 42.58,
+      "failure": "Existing Git ancestor marker correctly blocks rule export from /tmp"
+    },
+    {
+      "name": "original socket-affected nodes / loopback-only namespace",
+      "passed": 55,
+      "failed": 0,
+      "errors": 0,
+      "seconds": 30.1
+    },
+    {
+      "name": "rule export / owned non-Git temporary path",
+      "passed": 1,
+      "failed": 0,
+      "seconds": 1.12
+    }
+  ],
+  "original_nonpassing_outcomes": {
+    "failures": 59,
+    "errors": 9,
+    "later_passed_nodes": 68
+  },
+  "original_full_run_status": "FAILED; later targeted results do not overwrite it",
+  "scope_limitations": [
+    "Targeted followups are separate runs, not a new complete green full-suite run.",
+    "The original 402 skips and 7 expected failures are retained; not all skipped/platform/native cases were rerun.",
+    "Cached wheel hashes and wheel RECORD entries were verified; this does not assert fresh upstream signature verification.",
+    "The isolated import child uses a different base Pydantic environment, recorded in its own receipt.",
+    "No compared target binary was executed; no external network interface existed in the socket rerun namespace.",
+    "Windows package, whole-product quality and full offline bundle acceptance remain independent gates."
+  ],
+  "files": [
+    {
+      "name": "patchtrace-isolated-imports-20261102.json",
+      "bytes": 3340,
+      "sha256": "15a7827f461c821bfb46c502fede1305e548b02a125cc96e95e54e70be45f86d"
+    },
+    {
+      "name": "patchtrace-isolated-imports-20261102.log",
+      "bytes": 98,
+      "sha256": "1139705b40b40556c51cbe36b4d3dea46db5c7e0491fd1f91943dd8d50df99a4"
+    },
+    {
+      "name": "patchtrace-isolated-imports-20261102.xml",
+      "bytes": 989,
+      "sha256": "f3d4ccfc98ddc03b461522c3824012af680af05f543814044d39d058f60b2ace"
+    },
+    {
+      "name": "patchtrace-extra-install-20261102.json",
+      "bytes": 4910,
+      "sha256": "c743db0e89fd7d9e50ddb2bddbe78df7378cfb1530661506dcf60c2d2dde1eb6"
+    },
+    {
+      "name": "patchtrace-extra-affected-20261102.json",
+      "bytes": 29607,
+      "sha256": "e71ba8831df62f46649187b41a55dcc708602a1c164fac30573bce4274ef985c"
+    },
+    {
+      "name": "patchtrace-extra-affected-20261102.log",
+      "bytes": 1493,
+      "sha256": "38e0c7a3af6991f375f685094d0810c18359012720a392a3471935578dae7929"
+    },
+    {
+      "name": "patchtrace-extra-affected-20261102.xml",
+      "bytes": 52208,
+      "sha256": "fbd248d5e008c82668929fa29335d6cc13d3dd3a86fe01123283ff18f6326660"
+    },
+    {
+      "name": "patchtrace-extra-affected-summary-20261102.json",
+      "bytes": 1226,
+      "sha256": "55b17c0095f39a356aa287fab1e1fb07ae69a0717d1d83e43c85ff48d5847cfd"
+    },
+    {
+      "name": "patchtrace-extra-affected-nodes-20261102.json",
+      "bytes": 28727,
+      "sha256": "ea41337f86b40e5eeac297c08aaf6218bb363998889621d28a6f0063c71f8620"
+    },
+    {
+      "name": "patchtrace-extra-affected-nodes-20261102.txt",
+      "bytes": 25319,
+      "sha256": "9882266ea2af1bceb24bca11d3cc9062952c8375c25f060541af3b9a7ed90bc4"
+    },
+    {
+      "name": "patchtrace-extra-export-environment-20261102.json",
+      "bytes": 1073,
+      "sha256": "e8969a5ad023143c765713dda139cac8af844ed2ac3cdb6467678c0f23a74311"
+    },
+    {
+      "name": "patchtrace-loopback-failed-nodes-20261102.txt",
+      "bytes": 4773,
+      "sha256": "fa7c77b516110bd675a7e832cfda60b52c6463fe06380379465a47f69bdbc911"
+    },
+    {
+      "name": "patchtrace-local-reruns-20261102.py",
+      "bytes": 3231,
+      "sha256": "1100d265b3395e3655e1e7e9a00bfe13d1c673ec20b4243f390a264488effcbc"
+    },
+    {
+      "name": "patchtrace-local-rerun-environment-20261102.json",
+      "bytes": 1370,
+      "sha256": "24c329f8746dad5c550237cd6db7deb5aaa8e8e28aaa5f6355929e5aa9141d89"
+    },
+    {
+      "name": "patchtrace-local-rerun-launch-20261102.log",
+      "bytes": 1154,
+      "sha256": "10aea3f9aabda97e316cacd0510c2e4bb15e307aa2dd708c5ab4546f6dd6615c"
+    },
+    {
+      "name": "patchtrace-loopback-rerun-20261102.log",
+      "bytes": 100,
+      "sha256": "8cb37a754948177a10bd7badf0aeae14dc1e59d7d395200dc94090c05df0d6c8"
+    },
+    {
+      "name": "patchtrace-loopback-rerun-20261102.xml",
+      "bytes": 7223,
+      "sha256": "b1ec7ff6e91e197c22a2fb42ac626331517fd3b1ac18ba83f4c98fcad681e536"
+    },
+    {
+      "name": "patchtrace-export-rerun-20261102.log",
+      "bytes": 98,
+      "sha256": "8707f6d4c96754710bf0a62f35c31285b102588e841b88c1f9f5d0aae715dadd"
+    },
+    {
+      "name": "patchtrace-export-rerun-20261102.xml",
+      "bytes": 373,
+      "sha256": "1eb171858a4918e104d7bc450d29a38c9a1eeb6144d87b2bdd73ca23df44f85f"
+    }
+  ],
+  "archive": {
+    "name": "consolidation-targeted-reruns-20261102.tar.gz",
+    "bytes": 26980,
+    "sha256": "2dcb5398b2f79cf83cecfa627cedcf89bd72ff9a1147812c1534a4588de3f790"
+  }
+}

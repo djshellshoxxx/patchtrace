@@ -193,6 +193,30 @@ def test_cached_reuse_matches_bytes_when_change_times_do_not_advance(service, mo
     assert (backup.read_bytes() != original) == mutate
 
 
+def test_failed_second_observation_revokes_cached_backup_until_reverified(service, monkeypatch):
+    backup = verified_backup.write_verified_backup(service.root, service.store.connection, 'history-prune')
+    original_bytes = backup.read_bytes()
+    original_observe = verified_backup._fingerprint_once
+    observations = []
+
+    def fail_second_observation(path):
+        observations.append(path)
+        return None if len(observations) == 2 else original_observe(path)
+
+    monkeypatch.setattr(verified_backup, '_fingerprint_once', fail_second_observation)
+    assert verified_backup.trusted_backup(service.root, 'history-prune',
+                                          project_id=service.project.id, require_tables=('history',)) is None
+    assert observations == [backup, backup]
+    assert backup.read_bytes() == original_bytes, 'a read failure must preserve existing evidence'
+
+    monkeypatch.setattr(verified_backup, '_fingerprint_once', original_observe)
+    assert verified_backup.trusted_backup(service.root, 'history-prune') is None
+    assert verified_backup.find_verified_backup(service.root, 'history-prune',
+                                                project_id=service.project.id,
+                                                require_tables=('history',)) == backup
+    assert verified_backup.trusted_backup(service.root, 'history-prune') == backup
+
+
 def _fixed_backup_clock(monkeypatch):
     from datetime import UTC, datetime
 

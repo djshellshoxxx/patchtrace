@@ -179,7 +179,7 @@ def label_diff(old: SideData, new: SideData, *, label_source: str,
             elif check == 'unchecked':
                 note = (note + '; ' if note else '') + 'card declares a change, evidence is ambiguous: not verified'
         elif name in declared_unchanged:
-            check = 'ok' if label != 'changed' else 'disagree'
+            check = {'unchanged': 'ok', 'cosmetic': 'ok', 'ambiguous': 'unchecked'}.get(label, 'disagree')
             if check == 'disagree':
                 note = (note + '; ' if note else '') + 'card lists it as an unchanged control'
         out.append(_record(j, identity='same', label=label, kind=kind, body=body, source=label_source, check=check,

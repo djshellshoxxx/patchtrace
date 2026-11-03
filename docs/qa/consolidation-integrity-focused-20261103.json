@@ -1,0 +1,65 @@
+{
+  "technical_receipt_date": "2026-11-03 UTC",
+  "client_date": "2026-11-02 America/Vancouver",
+  "tested_source_commit": "a9b9d987a5f57a431a20b1895cb641b9d3f60de6",
+  "tested_source_tree": "d20bede6222093d00d054b528d738468f306f257",
+  "base_published_source": "6e82fd70f315b99c6798a42c9061a1424a02933e",
+  "base_published_evidence": "44c320e37b84a38259f13fa8f0f444b542b96f2c",
+  "focused_result": {
+    "passed": 459,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 0,
+    "seconds": 14.06
+  },
+  "ruff_result": "whole-tree src/tests/tools passed, exit0",
+  "schema_change": false,
+  "limits": [
+    "Focused source validation, not full-suite/Windows package/native acceptance.",
+    "Full resulting-source hosted gates remain required.",
+    "Prior full-suite results remain tied to the earlier6e82 source.",
+    "No compared target, live matching engine, real/locked corpus or calibration approval was consumed."
+  ],
+  "files": [
+    {
+      "name": "patchtrace-backup-followup-20261103.log",
+      "bytes": 99,
+      "sha256": "1f5c3977f01cfb55fffc7c4a85835e25acc01827237a6f6c1f8a3b99f126fe36"
+    },
+    {
+      "name": "patchtrace-backup-followup-20261103.xml",
+      "bytes": 2828,
+      "sha256": "04c6a86f1b4fb1b2fc143b019216993b63a228f687e977b485cf00f04e97b67a"
+    },
+    {
+      "name": "patchtrace-integrity-combined-20261103.log",
+      "bytes": 581,
+      "sha256": "a832305b42551615f6371a130cf29bcb07051f91fbecdd68bba68113469b6f49"
+    },
+    {
+      "name": "patchtrace-integrity-combined-20261103.xml",
+      "bytes": 63287,
+      "sha256": "02b333ab9499ab4ed3a8283a65d8e6bd635ce9a59c0f2eccec259015dc5ea020"
+    },
+    {
+      "name": "patchtrace-rules-integrity-red-20261103.log",
+      "bytes": 7228,
+      "sha256": "75fd43476475e29f07bb70dca380031232f993bd5adbe383f8bc9d4743dd94bf"
+    },
+    {
+      "name": "patchtrace-rules-integrity-green-20261103.log",
+      "bytes": 501,
+      "sha256": "12021a43701332dd7df77f2011e421dfb2b19685cddf5045c095e3cc08b5d832"
+    },
+    {
+      "name": "patchtrace-rules-integrity-ruff-20261103.log",
+      "bytes": 19,
+      "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+    }
+  ],
+  "archive": {
+    "name": "consolidation-integrity-focused-20261103.tar.gz",
+    "bytes": 10229,
+    "sha256": "cba1c7682101356bf4731de118901c431abe8f1e0dcfaf9786f3b7a7fa05af14"
+  }
+}

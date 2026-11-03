@@ -409,3 +409,32 @@ no-recipe; evaluation metrics on hand-computed match sets; report determinism; a
 4. New contract `tier-r-engine-output/1` (`EngineOutputDoc`, in `report_schemas.py`): the normalised per-pair engine answer whose canonical SHA-256 is `output_sha256` of a report pair row. Schema in `docs/schemas/corpus/EngineOutputDoc.json`; examples (including a report produced by the real evaluator from SYNTHETIC output) in `docs/schemas/corpus/report-examples/`. The `tier-r-report/1` model itself stays in `contracts.py` / `schemas.py`.
 5. Manifest: suite sources become `git = "suite:<suite>"` with a derived 40-hex commit; images are recorded by identity only (they live in `<store>/images/`, so `corpus verify` reports them missing until linked into `binaries/<sha>/`). `created` defaults to a fixed placeholder so manifests are reproducible. Annotation: answers are constructed from the truth (`same`, `different`, `no-counterpart`, `indeterminate`); candidates with an unlabelled side are skipped and counted; timestamps are a fixed placeholder; the log is written in bulk in the `label.AnnotationLog` chain format.
 6. `mutate` is a stub: delegates to `tools.calibration.mutations.main(argv)` when importable, otherwise exits 3 (BLOCKED, owned by another worker). No `shard` helper was added (owned by another worker). Not verifiable here: live rz-diff, BinDiff and Ghidriff scoring (no rizin, BinDiff or Ghidra installed; the rz-diff test drives a synthetic fake script through the production adapter).
+
+### [R1-data-integrity] 2026-11-03 bounded provenance and evidence repair
+
+Every newly observed full `tier-r-build/1` record is retained under the debug
+image's `builds/<sha256-of-exact-receipt-bytes>.json`. The complete sorted,
+indented UTF-8 JSON plus LF is staged privately and published atomically without
+replacement using a hard link. An existing receipt must be a regular non-symlink
+file with exactly equal bytes; mismatch or unsupported hard-link publication
+fails before updating `build.json`. That existing filename remains the mutable
+last-observed compatibility view. Equal receipts are reused without rewriting;
+different provenance for equal image bytes remains separately discoverable.
+No receipt is inferred from preexisting `build.json` history. This bounded local
+writer does not claim retained-parent anchoring, hostile concurrent-filesystem
+protection, or power-loss durability; the separate research CLI publisher is not
+installed by this amendment.
+
+Within a factory session, `SideData` reuse requires equal build specification,
+debug-image hash, recipe digest, source digest, and resolved source root. An
+equal debug hash alone cannot substitute another build's provenance or source
+lookup context. This is an in-session cache key, not verification that mutable
+source files still match the build inputs.
+
+For declared unchanged controls in s7, decisive `unchanged` or `cosmetic`
+evidence sets `check=ok`, decisive `changed` evidence sets `check=disagree`, and
+ambiguous source/body evidence remains `check=unchecked`. Existing identity
+ambiguity and missing-counterpart rules remain; no matching or label derivation
+algorithm changes. These changes preserve the existing public wire contracts
+and require no generated schema change. Synthetic record regressions establish
+these invariants, without native-tool, corpus, or evaluation acceptance claims.

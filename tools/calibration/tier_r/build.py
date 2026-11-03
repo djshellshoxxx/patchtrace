@@ -14,7 +14,7 @@ import os
 import re
 import shutil
 import tempfile
-from collections.abc import Sequence
+from collections.abc import Mapping, Sequence
 from dataclasses import dataclass, field
 from pathlib import Path
 
@@ -49,6 +49,35 @@ RUNTIME_MEMBERS = {
 
 class BuildError(RuntimeError):
     pass
+
+
+def persist_build_record(debug_dir: Path, record: Mapping) -> Path:
+    """Retain every observed full receipt; build.json remains the last-build compatibility view.
+
+    Identical artifact bytes can result from different recipes. Publish a complete
+    content-addressed receipt without overwriting an existing one, and refuse a
+    corrupted preexisting receipt before updating the legacy view. No historical
+    receipts are inferred from a preexisting legacy file.
+    """
+    data = json.dumps(dict(record), sort_keys=True, indent=1).encode('utf-8') + b'\n'
+    folder = Path(debug_dir) / 'builds'
+    folder.mkdir(parents=True, exist_ok=True)
+    target = folder / f'{hashlib.sha256(data).hexdigest()}.json'
+    # A hard-link publication is exclusive and atomic: concurrent readers cannot
+    # observe a newly created, partially written receipt.
+    with tempfile.TemporaryDirectory(prefix='.receipt-', dir=folder) as private:
+        staged = Path(private) / 'record.json'
+        staged.write_bytes(data)
+        try:
+            os.link(staged, target)
+        except FileExistsError:
+            if target.is_symlink() or not target.is_file() or target.read_bytes() != data:
+                raise BuildError(f'build receipt integrity mismatch: {target.name}') from None
+        except OSError as exc:
+            raise BuildError('atomic build receipt publication requires a store that permits hard links: '
+                             f'{exc}') from exc
+    (Path(debug_dir) / 'build.json').write_bytes(data)
+    return target
 
 
 NUISANCES = ('icf', 'timestamp', 'guid', 'path')    # P1 of SPEC-31 08 s1 beside link order
@@ -376,7 +405,7 @@ def _build_in(spec: BuildSpec, tools: Toolchain, store: Path, root: Path, scratc
     record = {'contract': 'tier-r-build/1', 'project': spec.project, 'recipe': recipe, 'recipe_digest': recipe_digest,
               'source_digest': source_digest, 'inputs': inputs, 'debug_sha256': debug_sha, 'sha256': engine_sha,
               'pdb_sha256': pdb_sha, 'output': spec.output}
-    (debug_dir / 'build.json').write_bytes(json.dumps(record, sort_keys=True, indent=1).encode('utf-8') + b'\n')
+    persist_build_record(debug_dir, record)
     return BuildResult(spec, recipe_digest, debug_dir / spec.output, engine_dir / spec.output, pdb_target,
                        engine_sha, debug_sha, pdb_sha, len(engine_img.data), engine_img.image_base, compiler,
                        tools.get(compiler).version or 'unknown', source_digest, inputs)

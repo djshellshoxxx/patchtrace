@@ -1,0 +1,198 @@
+{
+  "observed_at": "2026-11-02 23:51:49 UTC",
+  "candidate": {
+    "pr": 163,
+    "head": "6e82fd70f315b99c6798a42c9061a1424a02933e",
+    "tree": "2e7cd8e258821f50d776ca3b3a4caef594e2a417",
+    "draft": true,
+    "state": "open"
+  },
+  "main": "ce8c65bf41541cf6adb52289d2a530ce2817a53a",
+  "merges": [
+    {
+      "pr": 153,
+      "destination": "main",
+      "merge": "ce8c65bf41541cf6adb52289d2a530ce2817a53a",
+      "tree": "0f90e002704d93e8343568acf0bde443dcc4b2eb",
+      "status": "merged after reviewed-head gates passed"
+    },
+    {
+      "pr": 146,
+      "destination": "PR #126 / claude/modest-hamilton-kz2gta",
+      "merge": "280bf05856eb60f4ddb0d58210616f65a3735816",
+      "tree": "e29d83a20e9a6d2d3e1a023f51fb30350d88bc73",
+      "status": "merged into existing draft coordinator; not in main or #163"
+    },
+    {
+      "pr": 160,
+      "destination": "PR #157 / codex/corpus-output-main-20261101",
+      "merge": "874e9a267fdc589a796ce573f2958e1aa84ea0f6",
+      "tree": "0b644486ec1d2b3e94bacc55e85cce7a7c5dd83c",
+      "status": "merged; reviewed source included in #163; later merge alias not its ancestor"
+    },
+    {
+      "pr": 161,
+      "destination": "PR #154 / codex/training-prereg-identity-20261101",
+      "merge": "dfe8f421db390ccd3158393a60205fa5dd25df0b",
+      "tree": "265dfaef41f946daf0397ec4bd30039a36e216ef",
+      "status": "merged; reviewed source included in #163; later merge alias not its ancestor"
+    }
+  ],
+  "backup_pr162": {
+    "head": "f1a55c4cf21ddb0dea243bd417b74f86caaed142",
+    "qa_run": 41540958514,
+    "status": "in_progress"
+  },
+  "protocol_pr161_gates": {
+    "reviewed_head": "9b9452b4677ee3809a6e0f43d49567a8d15602e6",
+    "checks": [
+      {
+        "id": 125629379142,
+        "name": "release",
+        "status": "completed",
+        "conclusion": "skipped"
+      },
+      {
+        "id": 125629113338,
+        "name": "linux-smoke (ubuntu-22.04)",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 125629113267,
+        "name": "linux-smoke (ubuntu-24.04)",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 125628186861,
+        "name": "linux-package",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 125613588857,
+        "name": "merge",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 125602059831,
+        "name": "shard 0 of 2",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 125602059756,
+        "name": "shard 1 of 2",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 125601839442,
+        "name": "SonarCloud Code Analysis",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 125601230746,
+        "name": "CodeRabbit",
+        "status": "completed",
+        "conclusion": "skipped"
+      },
+      {
+        "id": 125601200012,
+        "name": "msvc cl advisory (windows-2022)",
+        "status": "completed",
+        "conclusion": "skipped"
+      },
+      {
+        "id": 125601199340,
+        "name": "release-gate",
+        "status": "completed",
+        "conclusion": "skipped"
+      },
+      {
+        "id": 125601197723,
+        "name": "qt-gate (windows-latest, 5, 1/1)",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 125601197708,
+        "name": "qt-gate (ubuntu-latest, 20, 2/4)",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 125601197626,
+        "name": "qt-gate (ubuntu-latest, 20, 1/4)",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 125601197568,
+        "name": "windows advisory (smoke)",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 125601197550,
+        "name": "qt-gate (ubuntu-latest, 20, 3/4)",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 125601197479,
+        "name": "qa (ubuntu-latest)",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 125601197452,
+        "name": "qt-gate (ubuntu-latest, 20, 4/4)",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 125601197199,
+        "name": "plan",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 125601197055,
+        "name": "qa (windows-latest)",
+        "status": "completed",
+        "conclusion": "success"
+      }
+    ],
+    "workflow_runs": [
+      {
+        "id": 41539933564,
+        "name": "Corpus Tier R (sharded)",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 41539933503,
+        "name": "QA and Windows standalone",
+        "status": "completed",
+        "conclusion": "success"
+      }
+    ],
+    "status_contexts": [
+      {
+        "context": "security/snyk (djshellshoxxx)",
+        "state": "success"
+      }
+    ],
+    "review_threads": [],
+    "review_submissions": []
+  },
+  "notes": [
+    "All original branches were preserved; no protection bypass or force update was used.",
+    "16 predecessor heads were graph-contained at the original inventory snapshot; this is not a claim about later merge aliases.",
+    "The combined candidate remains blocked by independent quality/native gates."
+  ]
+}

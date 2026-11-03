@@ -1,0 +1,606 @@
+{
+  "source_commit": "f2b7d981008dea25ac09ea82734da64a1dccb96d",
+  "source_tree": "985078aed0feb4f909690d6082ec4940540cda17",
+  "runs": {
+    "imports": {
+      "path": "/tmp/patchtrace-isolated-imports-20261102.xml",
+      "sha256": "f3d4ccfc98ddc03b461522c3824012af680af05f543814044d39d058f60b2ace",
+      "counts": {
+        "passed": 7
+      },
+      "duplicate_nodes": {}
+    },
+    "extras": {
+      "path": "/tmp/patchtrace-extra-affected-20261102.xml",
+      "sha256": "fbd248d5e008c82668929fa29335d6cc13d3dd3a86fe01123283ff18f6326660",
+      "counts": {
+        "passed": 334,
+        "failure": 1
+      },
+      "duplicate_nodes": {}
+    },
+    "sockets": {
+      "path": "/tmp/patchtrace-loopback-rerun-20261102.xml",
+      "sha256": "b1ec7ff6e91e197c22a2fb42ac626331517fd3b1ac18ba83f4c98fcad681e536",
+      "counts": {
+        "passed": 55
+      },
+      "duplicate_nodes": {}
+    },
+    "export": {
+      "path": "/tmp/patchtrace-export-rerun-20261102.xml",
+      "sha256": "1eb171858a4918e104d7bc450d29a38c9a1eeb6144d87b2bdd73ca23df44f85f",
+      "counts": {
+        "passed": 1
+      },
+      "duplicate_nodes": {}
+    }
+  },
+  "original_outcomes": {
+    "failure": 59,
+    "error": 9
+  },
+  "original_unique_nodes": 68,
+  "coverage_groups": {
+    "sockets": 55,
+    "imports": 7,
+    "extras": 6
+  },
+  "uncovered_original_nodes": [],
+  "git_blob_files_checked_per_copy": 3413,
+  "git_file_modes": {
+    "100644": 3403,
+    "100755": 10
+  },
+  "git_blob_mismatches": [],
+  "manifest_files_checked": 3413,
+  "manifest_mismatches": [],
+  "export_git_ancestors_now": [],
+  "source_repo_status": "",
+  "reconciliation": [
+    {
+      "node": "tests/test_acquisition_hardening.py::test_cancel_interrupts_slow_response[slow-drip]",
+      "original": "failure",
+      "original_message": "PermissionError: [Errno 1] Operation not permitted",
+      "passed_in": [
+        "sockets"
+      ]
+    },
+    {
+      "node": "tests/test_acquisition_hardening.py::test_cancel_interrupts_slow_response[silent-stall]",
+      "original": "failure",
+      "original_message": "PermissionError: [Errno 1] Operation not permitted",
+      "passed_in": [
+        "sockets"
+      ]
+    },
+    {
+      "node": "tests/test_acquisition_hardening.py::test_total_deadline_interrupts_slow_response[slow-drip]",
+      "original": "failure",
+      "original_message": "PermissionError: [Errno 1] Operation not permitted",
+      "passed_in": [
+        "sockets"
+      ]
+    },
+    {
+      "node": "tests/test_acquisition_hardening.py::test_total_deadline_interrupts_slow_response[silent-stall]",
+      "original": "failure",
+      "original_message": "PermissionError: [Errno 1] Operation not permitted",
+      "passed_in": [
+        "sockets"
+      ]
+    },
+    {
+      "node": "tests/test_acquisition_hardening.py::test_slow_drip_is_read_exactly_across_many_socket_timeout_slices",
+      "original": "failure",
+      "original_message": "PermissionError: [Errno 1] Operation not permitted",
+      "passed_in": [
+        "sockets"
+      ]
+    },
+    {
+      "node": "tests/test_acquisition_hardening.py::test_silent_peer_still_times_out_after_the_idle_budget",
+      "original": "failure",
+      "original_message": "PermissionError: [Errno 1] Operation not permitted",
+      "passed_in": [
+        "sockets"
+      ]
+    },
+    {
+      "node": "tests/test_acquisition_transport.py::test_slow_drip_download_stops_at_the_total_deadline",
+      "original": "failure",
+      "original_message": "PermissionError: [Errno 1] Operation not permitted",
+      "passed_in": [
+        "sockets"
+      ]
+    },
+    {
+      "node": "tests/test_acquisition_transport.py::test_slow_drip_download_observes_cancel",
+      "original": "failure",
+      "original_message": "PermissionError: [Errno 1] Operation not permitted",
+      "passed_in": [
+        "sockets"
+      ]
+    },
+    {
+      "node": "tests/test_bundle_acceptance_unit.py::test_probe_connects_to_loopback_listener_then_reports_blocked",
+      "original": "failure",
+      "original_message": "PermissionError: [Errno 1] Operation not permitted",
+      "passed_in": [
+        "sockets"
+      ]
+    },
+    {
+      "node": "tests/test_enrichment_intelligence.py::test_slow_drip_response_stops_at_the_total_deadline",
+      "original": "failure",
+      "original_message": "PermissionError: [Errno 1] Operation not permitted",
+      "passed_in": [
+        "sockets"
+      ]
+    },
+    {
+      "node": "tests/test_evidence_host.py::test_loading_the_spec_imports_no_qt",
+      "original": "failure",
+      "original_message": "assert 1 == 0\n +  where 1 = CompletedProcess(args=['/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3', '-I', '-c', 'import sys, patchtrace.secondary.evidence_panel; sys.exit(int(\"PySide6\" in sys.modules))'], returncode=1).returncode\n[+2 more lines; full report in element text]",
+      "passed_in": [
+        "imports"
+      ]
+    },
+    {
+      "node": "tests/test_evidence_table.py::test_the_module_imports_no_qt",
+      "original": "failure",
+      "original_message": "assert 1 == 0\n +  where 1 = CompletedProcess(args=['/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3', '-I', '-c', 'import sys, patchtrace.secondary.evidence_table; sys.exit(any(n.startswith(\"PySide6\") for n in sys.modules))'], returncode=1).returncode\n[+2 more lines; full report in element text]",
+      "passed_in": [
+        "imports"
+      ]
+    },
+    {
+      "node": "tests/test_interpretation.py::test_interpret_end_to_end_over_a_loopback_ollama",
+      "original": "failure",
+      "original_message": "PermissionError: [Errno 1] Operation not permitted",
+      "passed_in": [
+        "sockets"
+      ]
+    },
+    {
+      "node": "tests/test_interpretation.py::test_interpret_survives_a_peer_that_does_not_speak_http",
+      "original": "failure",
+      "original_message": "PermissionError: [Errno 1] Operation not permitted",
+      "passed_in": [
+        "sockets"
+      ]
+    },
+    {
+      "node": "tests/test_kev_transport.py::test_a_slow_drip_server_cannot_hold_the_download_past_its_deadline",
+      "original": "failure",
+      "original_message": "PermissionError: [Errno 1] Operation not permitted",
+      "passed_in": [
+        "sockets"
+      ]
+    },
+    {
+      "node": "tests/test_kev_transport.py::test_a_server_that_goes_silent_is_cut_by_the_socket_timeout",
+      "original": "failure",
+      "original_message": "PermissionError: [Errno 1] Operation not permitted",
+      "passed_in": [
+        "sockets"
+      ]
+    },
+    {
+      "node": "tests/test_kev_transport.py::test_a_complete_download_over_a_real_socket",
+      "original": "failure",
+      "original_message": "PermissionError: [Errno 1] Operation not permitted",
+      "passed_in": [
+        "sockets"
+      ]
+    },
+    {
+      "node": "tests/test_kev_transport.py::test_a_chunked_download_over_a_real_socket",
+      "original": "failure",
+      "original_message": "PermissionError: [Errno 1] Operation not permitted",
+      "passed_in": [
+        "sockets"
+      ]
+    },
+    {
+      "node": "tests/test_kev_transport.py::test_a_truncated_body_over_a_real_socket_is_a_network_error[content-length]",
+      "original": "failure",
+      "original_message": "PermissionError: [Errno 1] Operation not permitted",
+      "passed_in": [
+        "sockets"
+      ]
+    },
+    {
+      "node": "tests/test_kev_transport.py::test_a_truncated_body_over_a_real_socket_is_a_network_error[chunked]",
+      "original": "failure",
+      "original_message": "PermissionError: [Errno 1] Operation not permitted",
+      "passed_in": [
+        "sockets"
+      ]
+    },
+    {
+      "node": "tests/test_kev_transport.py::test_the_real_opener_sends_only_the_two_fixed_headers_and_no_redirect_is_followed",
+      "original": "failure",
+      "original_message": "PermissionError: [Errno 1] Operation not permitted",
+      "passed_in": [
+        "sockets"
+      ]
+    },
+    {
+      "node": "tests/test_kev_transport.py::test_the_real_opener_ignores_environment_proxies",
+      "original": "failure",
+      "original_message": "PermissionError: [Errno 1] Operation not permitted",
+      "passed_in": [
+        "sockets"
+      ]
+    },
+    {
+      "node": "tests/test_kev_transport.py::test_the_real_opener_returns_http_errors_as_responses_and_maps_connection_failures",
+      "original": "failure",
+      "original_message": "PermissionError: [Errno 1] Operation not permitted",
+      "passed_in": [
+        "sockets"
+      ]
+    },
+    {
+      "node": "tests/test_network_consent_guard.py::test_every_channel_is_refused_and_recorded_once[tcp-connect]",
+      "original": "failure",
+      "original_message": "PermissionError: [Errno 1] Operation not permitted",
+      "passed_in": [
+        "sockets"
+      ]
+    },
+    {
+      "node": "tests/test_network_consent_guard.py::test_every_channel_is_refused_and_recorded_once[tcp-connect-ex]",
+      "original": "failure",
+      "original_message": "PermissionError: [Errno 1] Operation not permitted",
+      "passed_in": [
+        "sockets"
+      ]
+    },
+    {
+      "node": "tests/test_network_consent_guard.py::test_every_channel_is_refused_and_recorded_once[udp-sendto]",
+      "original": "failure",
+      "original_message": "PermissionError: [Errno 1] Operation not permitted",
+      "passed_in": [
+        "sockets"
+      ]
+    },
+    {
+      "node": "tests/test_network_consent_guard.py::test_every_channel_is_refused_and_recorded_once[tcp-connect-name]",
+      "original": "failure",
+      "original_message": "PermissionError: [Errno 1] Operation not permitted",
+      "passed_in": [
+        "sockets"
+      ]
+    },
+    {
+      "node": "tests/test_network_consent_guard.py::test_every_channel_is_refused_and_recorded_once[udp-sendto-name]",
+      "original": "failure",
+      "original_message": "PermissionError: [Errno 1] Operation not permitted",
+      "passed_in": [
+        "sockets"
+      ]
+    },
+    {
+      "node": "tests/test_network_consent_guard.py::test_every_channel_is_refused_and_recorded_once[raw-socket-module]",
+      "original": "failure",
+      "original_message": "PermissionError: [Errno 1] Operation not permitted",
+      "passed_in": [
+        "sockets"
+      ]
+    },
+    {
+      "node": "tests/test_network_consent_guard.py::test_loopback_is_refused_by_default",
+      "original": "error",
+      "original_message": "failed on setup with \"PermissionError: [Errno 1] Operation not permitted\"",
+      "passed_in": [
+        "sockets"
+      ]
+    },
+    {
+      "node": "tests/test_network_consent_guard.py::test_loopback_is_allowed_on_request_and_nothing_else_is",
+      "original": "error",
+      "original_message": "failed on setup with \"PermissionError: [Errno 1] Operation not permitted\"",
+      "passed_in": [
+        "sockets"
+      ]
+    },
+    {
+      "node": "tests/test_network_consent_guard.py::test_a_local_unix_socket_is_not_network",
+      "original": "failure",
+      "original_message": "PermissionError: [Errno 1] Operation not permitted",
+      "passed_in": [
+        "sockets"
+      ]
+    },
+    {
+      "node": "tests/test_network_consent_guard.py::test_the_guard_restores_everything_on_exit",
+      "original": "error",
+      "original_message": "failed on setup with \"PermissionError: [Errno 1] Operation not permitted\"",
+      "passed_in": [
+        "sockets"
+      ]
+    },
+    {
+      "node": "tests/test_providers_transport.py::test_garbage_status_line_is_classified_not_raised_raw",
+      "original": "failure",
+      "original_message": "PermissionError: [Errno 1] Operation not permitted",
+      "passed_in": [
+        "sockets"
+      ]
+    },
+    {
+      "node": "tests/test_providers_transport.py::test_plain_text_answer_to_a_tls_hello_is_classified_as_tls",
+      "original": "failure",
+      "original_message": "PermissionError: [Errno 1] Operation not permitted",
+      "passed_in": [
+        "sockets"
+      ]
+    },
+    {
+      "node": "tests/test_providers_transport.py::test_chunked_response_is_read_in_full",
+      "original": "failure",
+      "original_message": "PermissionError: [Errno 1] Operation not permitted",
+      "passed_in": [
+        "sockets"
+      ]
+    },
+    {
+      "node": "tests/test_providers_transport.py::test_large_body_is_read_across_many_reads",
+      "original": "failure",
+      "original_message": "PermissionError: [Errno 1] Operation not permitted",
+      "passed_in": [
+        "sockets"
+      ]
+    },
+    {
+      "node": "tests/test_providers_transport.py::test_truncated_chunked_body_is_classified",
+      "original": "failure",
+      "original_message": "PermissionError: [Errno 1] Operation not permitted",
+      "passed_in": [
+        "sockets"
+      ]
+    },
+    {
+      "node": "tests/test_providers_transport.py::test_body_shorter_than_its_content_length_is_not_accepted",
+      "original": "failure",
+      "original_message": "PermissionError: [Errno 1] Operation not permitted",
+      "passed_in": [
+        "sockets"
+      ]
+    },
+    {
+      "node": "tests/test_providers_transport.py::test_connection_closed_without_response_is_classified_and_not_retried",
+      "original": "failure",
+      "original_message": "PermissionError: [Errno 1] Operation not permitted",
+      "passed_in": [
+        "sockets"
+      ]
+    },
+    {
+      "node": "tests/test_providers_transport.py::test_http_error_status_hides_peer_body_and_is_sent_once",
+      "original": "failure",
+      "original_message": "PermissionError: [Errno 1] Operation not permitted",
+      "passed_in": [
+        "sockets"
+      ]
+    },
+    {
+      "node": "tests/test_providers_transport.py::test_ollama_request_and_envelope_shape[bare]",
+      "original": "failure",
+      "original_message": "PermissionError: [Errno 1] Operation not permitted",
+      "passed_in": [
+        "sockets"
+      ]
+    },
+    {
+      "node": "tests/test_providers_transport.py::test_ollama_request_and_envelope_shape[slash]",
+      "original": "failure",
+      "original_message": "PermissionError: [Errno 1] Operation not permitted",
+      "passed_in": [
+        "sockets"
+      ]
+    },
+    {
+      "node": "tests/test_providers_transport.py::test_ollama_request_and_envelope_shape[full]",
+      "original": "failure",
+      "original_message": "PermissionError: [Errno 1] Operation not permitted",
+      "passed_in": [
+        "sockets"
+      ]
+    },
+    {
+      "node": "tests/test_providers_transport.py::test_ollama_request_and_envelope_shape[full-slash]",
+      "original": "failure",
+      "original_message": "PermissionError: [Errno 1] Operation not permitted",
+      "passed_in": [
+        "sockets"
+      ]
+    },
+    {
+      "node": "tests/test_providers_transport.py::test_provider_refuses_redirect[301]",
+      "original": "failure",
+      "original_message": "PermissionError: [Errno 1] Operation not permitted",
+      "passed_in": [
+        "sockets"
+      ]
+    },
+    {
+      "node": "tests/test_providers_transport.py::test_provider_refuses_redirect[302]",
+      "original": "failure",
+      "original_message": "PermissionError: [Errno 1] Operation not permitted",
+      "passed_in": [
+        "sockets"
+      ]
+    },
+    {
+      "node": "tests/test_providers_transport.py::test_provider_refuses_redirect[303]",
+      "original": "failure",
+      "original_message": "PermissionError: [Errno 1] Operation not permitted",
+      "passed_in": [
+        "sockets"
+      ]
+    },
+    {
+      "node": "tests/test_providers_transport.py::test_provider_refuses_redirect[307]",
+      "original": "failure",
+      "original_message": "PermissionError: [Errno 1] Operation not permitted",
+      "passed_in": [
+        "sockets"
+      ]
+    },
+    {
+      "node": "tests/test_providers_transport.py::test_provider_refuses_redirect[308]",
+      "original": "failure",
+      "original_message": "PermissionError: [Errno 1] Operation not permitted",
+      "passed_in": [
+        "sockets"
+      ]
+    },
+    {
+      "node": "tests/test_providers_transport.py::test_real_stalled_body_cancel_returns_promptly",
+      "original": "failure",
+      "original_message": "PermissionError: [Errno 1] Operation not permitted",
+      "passed_in": [
+        "sockets"
+      ]
+    },
+    {
+      "node": "tests/test_search_capability.py::test_rapidfuzz_backend_names[avx2]",
+      "original": "failure",
+      "original_message": "ModuleNotFoundError: No module named 'rapidfuzz'",
+      "passed_in": [
+        "extras"
+      ]
+    },
+    {
+      "node": "tests/test_search_capability.py::test_rapidfuzz_backend_names[cpp]",
+      "original": "failure",
+      "original_message": "ModuleNotFoundError: No module named 'rapidfuzz'",
+      "passed_in": [
+        "extras"
+      ]
+    },
+    {
+      "node": "tests/test_search_capability.py::test_rapidfuzz_backend_names[py]",
+      "original": "failure",
+      "original_message": "ModuleNotFoundError: No module named 'rapidfuzz'",
+      "passed_in": [
+        "extras"
+      ]
+    },
+    {
+      "node": "tests/test_search_capability.py::test_rapidfuzz_backend_names[other]",
+      "original": "failure",
+      "original_message": "ModuleNotFoundError: No module named 'rapidfuzz'",
+      "passed_in": [
+        "extras"
+      ]
+    },
+    {
+      "node": "tests/test_search_synergy.py::test_typo_suggestions_and_rapidfuzz_absence",
+      "original": "failure",
+      "original_message": "AssertionError: assert [] == [('FormatLine', 1)]\n  \n  Right contains one more item: ('FormatLine', 1)\n  Use -v to get more diff",
+      "passed_in": [
+        "extras"
+      ]
+    },
+    {
+      "node": "tests/test_search_synergy.py::test_similar_mode_lists_suggestions_not_hits",
+      "original": "failure",
+      "original_message": "AssertionError: assert (() == ()\n  \n  Use -v to get more diff and [] == ['FormatLine']\n  \n  Right contains one more item: 'FormatLine'\n  Use -v to get more diff)",
+      "passed_in": [
+        "extras"
+      ]
+    },
+    {
+      "node": "tests/test_slow_drip_deadlines.py::test_deadline_bounds_a_slow_drip[csaf]",
+      "original": "error",
+      "original_message": "failed on setup with \"PermissionError: [Errno 1] Operation not permitted\"",
+      "passed_in": [
+        "sockets"
+      ]
+    },
+    {
+      "node": "tests/test_slow_drip_deadlines.py::test_deadline_bounds_a_slow_drip[enrichment]",
+      "original": "error",
+      "original_message": "failed on setup with \"PermissionError: [Errno 1] Operation not permitted\"",
+      "passed_in": [
+        "sockets"
+      ]
+    },
+    {
+      "node": "tests/test_slow_drip_deadlines.py::test_deadline_bounds_a_slow_drip[provider]",
+      "original": "error",
+      "original_message": "failed on setup with \"PermissionError: [Errno 1] Operation not permitted\"",
+      "passed_in": [
+        "sockets"
+      ]
+    },
+    {
+      "node": "tests/test_slow_drip_deadlines.py::test_cancel_interrupts_a_slow_drip[csaf]",
+      "original": "error",
+      "original_message": "failed on setup with \"PermissionError: [Errno 1] Operation not permitted\"",
+      "passed_in": [
+        "sockets"
+      ]
+    },
+    {
+      "node": "tests/test_slow_drip_deadlines.py::test_cancel_interrupts_a_slow_drip[enrichment]",
+      "original": "error",
+      "original_message": "failed on setup with \"PermissionError: [Errno 1] Operation not permitted\"",
+      "passed_in": [
+        "sockets"
+      ]
+    },
+    {
+      "node": "tests/test_slow_drip_deadlines.py::test_cancel_interrupts_a_slow_drip[provider]",
+      "original": "error",
+      "original_message": "failed on setup with \"PermissionError: [Errno 1] Operation not permitted\"",
+      "passed_in": [
+        "sockets"
+      ]
+    },
+    {
+      "node": "tests/test_ui_leads.py::test_loading_the_declaration_imports_no_qt_and_no_feature",
+      "original": "failure",
+      "original_message": "assert 1 == 0\n +  where 1 = CompletedProcess(args=['/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3', '-I', '-c', 'impor...d = [m for m in sys.modules if m.startswith((\"PySide6\", \"patchtrace.ui_\"))]; sys.exit(1 if bad else 0)'], returncode=1).returncode\n[+2 more lines; full report in element text]",
+      "passed_in": [
+        "imports"
+      ]
+    },
+    {
+      "node": "tests/test_ui_m3_docks.py::test_panel_specs_import_no_qt[series]",
+      "original": "failure",
+      "original_message": "assert 1 == 0\n +  where 1 = CompletedProcess(args=['/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3', '-I', '-c', 'import sys, patchtrace.nway.panel; sys.exit(any(name.startswith(\"PySide6\") for name in sys.modules))'], returncode=1).returncode\n[+2 more lines; full report in element text]",
+      "passed_in": [
+        "imports"
+      ]
+    },
+    {
+      "node": "tests/test_ui_m3_docks.py::test_panel_specs_import_no_qt[files]",
+      "original": "failure",
+      "original_message": "assert 1 == 0\n +  where 1 = CompletedProcess(args=['/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3', '-I', '-c', 'import sys, patchtrace.pe_overview.panel; sys.exit(any(name.startswith(\"PySide6\") for name in sys.modules))'], returncode=1).returncode\n[+2 more lines; full report in element text]",
+      "passed_in": [
+        "imports"
+      ]
+    },
+    {
+      "node": "tests/test_unified_pair_text.py::test_the_module_has_no_qt",
+      "original": "failure",
+      "original_message": "assert 1 == 0\n +  where 1 = CompletedProcess(args=['/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3', '-I', '-c', 'import sys, patchtrace.unified.pair_text; sys.exit(any(n.split(\".\")[0] == \"PySide6\" for n in sys.modules))'], returncode=1).returncode\n[+2 more lines; full report in element text]",
+      "passed_in": [
+        "imports"
+      ]
+    },
+    {
+      "node": "tests/test_unified_panel_spec.py::test_panel_module_imports_no_qt",
+      "original": "failure",
+      "original_message": "assert 1 == 0\n +  where 1 = CompletedProcess(args=['/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3', '-I', '-c', 'import sys, patchtrace.unified.panel; sys.exit(any(n.startswith(\"PySide6\") for n in sys.modules))'], returncode=1).returncode\n[+2 more lines; full report in element text]",
+      "passed_in": [
+        "imports"
+      ]
+    }
+  ]
+}

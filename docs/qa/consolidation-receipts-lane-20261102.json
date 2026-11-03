@@ -1,0 +1,2835 @@
+{
+  "repository": "djshellshoxxx/patchtrace",
+  "session_date": "2026-11-02",
+  "scope": "Read-only disposition of receipt lineage #128 -> #145 -> #150",
+  "main": {
+    "commit": "ce8c65bf41541cf6adb52289d2a530ce2817a53a",
+    "tree": "0f90e002704d93e8343568acf0bde443dcc4b2eb"
+  },
+  "published": {
+    "pr": 163,
+    "commit": "6e82fd70f315b99c6798a42c9061a1424a02933e",
+    "tree": "2e7cd8e258821f50d776ca3b3a4caef594e2a417"
+  },
+  "lineage": [
+    {
+      "number": 128,
+      "title": "R1: validate ground truth, run native pilot, and preserve corpus provenance",
+      "state": "open",
+      "head": "04bd023df566f43939296f7df1766e46186e7fff",
+      "base_ref": "main",
+      "base_sha": "a04f5a299a8d4afef023261e52e08d14678cf1e7",
+      "changed_paths": 154,
+      "tree": "21027e900e88c1656adf4790239f55ac44c276a6",
+      "comparison": [
+        {
+          "path": ".github/workflows/unified-live-gates.yml",
+          "head_blob": "81b6bc76d8d0a89bb459edc27d4935bd797f5edf",
+          "status": "modified",
+          "main_blob": "1bcab625b9c1a15e1f0829ac2d47a847caea2e0c",
+          "published_blob": "81b6bc76d8d0a89bb459edc27d4935bd797f5edf",
+          "main": "different",
+          "published": "identical"
+        },
+        {
+          "path": "corpus/ours/r1-pilot/defined/README.md",
+          "head_blob": "4df66dd77bb634a99c3722b1659ec62062257eef",
+          "status": "added",
+          "main_blob": null,
+          "published_blob": null,
+          "main": "missing",
+          "published": "missing"
+        },
+        {
+          "path": "corpus/ours/r1-pilot/defined/suite.json",
+          "head_blob": "ca723ceef4ac1728995889cca30d25c8488d0126",
+          "status": "added",
+          "main_blob": null,
+          "published_blob": null,
+          "main": "missing",
+          "published": "missing"
+        },
+        {
+          "path": "corpus/ours/r1-pilot/defined/v1/r1.c",
+          "head_blob": "ae179c3390f051fbc99ce56efc57cc706e7a823d",
+          "status": "added",
+          "main_blob": null,
+          "published_blob": null,
+          "main": "missing",
+          "published": "missing"
+        },
+        {
+          "path": "corpus/ours/r1-pilot/defined/v2/r1.c",
+          "head_blob": "3ee1a709969541ef2402e331fc901032fe6dd289",
+          "status": "added",
+          "main_blob": null,
+          "published_blob": null,
+          "main": "missing",
+          "published": "missing"
+        },
+        {
+          "path": "docs/modules.md",
+          "head_blob": "8cbf3767b4c014ce590977ecb44cbee052078221",
+          "status": "modified",
+          "main_blob": "5ce28ed8f29ab3bb92f96bc418ef2302542a6d5a",
+          "published_blob": "564d6b6c16304ae9cf1f0a9d47353780caf5d3ff",
+          "main": "different",
+          "published": "different"
+        },
+        {
+          "path": "docs/qa.md",
+          "head_blob": "db9185e1f33504008d2cf94893a862ca657b4d23",
+          "status": "modified",
+          "main_blob": "9360da2c946a05c81c687ce1f23d2122193502e9",
+          "published_blob": "db0156554c992c7f6edb720d5d69774880477ed3",
+          "main": "different",
+          "published": "different"
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/01-literature-and-datasets.md",
+          "head_blob": "8b2a19c22d9ea3f6ea81542b3ae21edc61442c90",
+          "status": "added",
+          "main_blob": null,
+          "published_blob": null,
+          "main": "missing",
+          "published": "missing"
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/02-ground-truth-and-evaluation.md",
+          "head_blob": "9c617f00bab68dba4dce623f29c0597d3d63120a",
+          "status": "added",
+          "main_blob": null,
+          "published_blob": null,
+          "main": "missing",
+          "published": "missing"
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/03-real-world-patch-candidates.md",
+          "head_blob": "7db42974f0ab710734cf879969d4e16432558980",
+          "status": "added",
+          "main_blob": null,
+          "published_blob": null,
+          "main": "missing",
+          "published": "missing"
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/04-pilot-protocol.md",
+          "head_blob": "7ab6b425d50a23b30f896dd7a1ccb3a6573020c2",
+          "status": "added",
+          "main_blob": null,
+          "published_blob": null,
+          "main": "missing",
+          "published": "missing"
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/05-results-and-failure-analysis.md",
+          "head_blob": "820a51e24e42b382253defff9842402c42d15d84",
+          "status": "added",
+          "main_blob": null,
+          "published_blob": null,
+          "main": "missing",
+          "published": "missing"
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/06-limitations-and-open-questions.md",
+          "head_blob": "dc8482db4cb52a903de11f24b3e2d3b19e3351e4",
+          "status": "added",
+          "main_blob": null,
+          "published_blob": null,
+          "main": "missing",
+          "published": "missing"
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/07-handoff-and-reproduction.md",
+          "head_blob": "9c18bb3b9fb726ad8702e8d74168c26c5e94fa86",
+          "status": "added",
+          "main_blob": null,
+          "published_blob": null,
+          "main": "missing",
+          "published": "missing"
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/README.md",
+          "head_blob": "ff3a4209405a4dd5947f70c4d11e57b2d01eca10",
+          "status": "added",
+          "main_blob": null,
+          "published_blob": null,
+          "main": "missing",
+          "published": "missing"
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/acceptance-mingw-gcc-o2.json",
+          "head_blob": "c34914f1b4bf0287715b3157e97007d4abd28900",
+          "status": "added",
+          "main_blob": null,
+          "published_blob": null,
+          "main": "missing",
+          "published": "missing"
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/acceptance.json",
+          "head_blob": "de323f7e24ed581618665905d145fc2d5a3a96b8",
+          "status": "added",
+          "main_blob": null,
+          "published_blob": null,
+          "main": "missing",
+          "published": "missing"
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/build-matrix-clang-retry.json",
+          "head_blob": "4bc89531de565a7104c920314db86bb9ae149ac4",
+          "status": "added",
+          "main_blob": null,
+          "published_blob": null,
+          "main": "missing",
+          "published": "missing"
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/build-matrix-final.json",
+          "head_blob": "fcd543cd1d2bf0253b6c5810ca9c9f1ce0c956e3",
+          "status": "added",
+          "main_blob": null,
+          "published_blob": null,
+          "main": "missing",
+          "published": "missing"
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/build-matrix-provenance-rebuild.json",
+          "head_blob": "717ac371fca29c621521ea246d8866ed31eb0e15",
+          "status": "added",
+          "main_blob": null,
+          "published_blob": null,
+          "main": "missing",
+          "published": "missing"
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/build-matrix.json",
+          "head_blob": "c70902c9c3d014eb9fb9e7077174ffb00d36d7e0",
+          "status": "added",
+          "main_blob": null,
+          "published_blob": null,
+          "main": "missing",
+          "published": "missing"
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/build-receipts/02eff01ce5e5cdd81959c059146e30bc0323e77ba50360973ff9baa030940163.json",
+          "head_blob": "8412691c7061c6ae64c9e8160ed2f306cdb1a019",
+          "status": "added",
+          "main_blob": null,
+          "published_blob": null,
+          "main": "missing",
+          "published": "missing"
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/build-receipts/06ad67324fc1ac2a00abeb450dd77aa0ae0698846874ce37c5faf83ae0675963.json",
+          "head_blob": "9bad91c748742da6b33111e96c30fca2500ff2d7",
+          "status": "added",
+          "main_blob": null,
+          "published_blob": null,
+          "main": "missing",
+          "published": "missing"
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/build-receipts/0734e959d5d692588d9a457fcf317d521cb1fce32755f76320a226f956c41633.json",
+          "head_blob": "d4c16cc468d60ab7862867e15676560e69d3e0db",
+          "status": "added",
+          "main_blob": null,
+          "published_blob": null,
+          "main": "missing",
+          "published": "missing"
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/build-receipts/12a6741d9d066226fd3c183cbb1464fabd32e9d28d472da4b5026c741f37deea.json",
+          "head_blob": "11d17fa093e6a4e16c1bfaa3407cc070f6a555f8",
+          "status": "added",
+          "main_blob": null,
+          "published_blob": null,
+          "main": "missing",
+          "published": "missing"
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/build-receipts/13cdbb54e8a80806a9d6dffc1441f276eac081de526514c994a727e776d57e0c.json",
+          "head_blob": "d950b4f56a29666ccabddb7ea02a523ce0913ae0",
+          "status": "added",
+          "main_blob": null,
+          "published_blob": null,
+          "main": "missing",
+          "published": "missing"
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/build-receipts/15dcb4f875438ef750a9e5444230ade8cb3e3f32773d0fb80ba59304ecbf1a6f.json",
+          "head_blob": "fe7c81c1836912c2f73d39d5215135642a4e5123",
+          "status": "added",
+          "main_blob": null,
+          "published_blob": null,
+          "main": "missing",
+          "published": "missing"
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/build-receipts/3de6b5a3c207445a121e3fe38f634bfedcb7c2807ccabce80d95484a92e38837.json",
+          "head_blob": "5d2fba8bea1a2aa34355db08d34e97b545069dfa",
+          "status": "added",
+          "main_blob": null,
+          "published_blob": null,
+          "main": "missing",
+          "published": "missing"
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/build-receipts/4ba9a6212ac0e12926a531a03b52aac9f6249117572094afbaee7dc24cde10c3.json",
+          "head_blob": "9eb8bdd9a1b5a9eb0ffd67a7c613adb5abe51d86",
+          "status": "added",
+          "main_blob": null,
+          "published_blob": null,
+          "main": "missing",
+          "published": "missing"
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/build-receipts/5c823560e8c6df4df81aa5342236f81ee29308523425215e09894ed0ecb9c972.json",
+          "head_blob": "cb5acf855e3b3b5cf0edcce609baf61f47479a22",
+          "status": "added",
+          "main_blob": null,
+          "published_blob": null,
+          "main": "missing",
+          "published": "missing"
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/build-receipts/69d37677a82072776305e324104b138960eff6dd25133f1cc18a78d98e176ef5.json",
+          "head_blob": "b3b2d2d41c794ffa1af141f189f916ca2fa5813e",
+          "status": "added",
+          "main_blob": null,
+          "published_blob": null,
+          "main": "missing",
+          "published": "missing"
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/build-receipts/6c3fe6a100b42f621bac84abc40cc2e7e193fe00a8b88b2acbc698bd15d64e19.json",
+          "head_blob": "f60d2dc0dcb1bcdce759bf212e61ea4c49985c90",
+          "status": "added",
+          "main_blob": null,
+          "published_blob": null,
+          "main": "missing",
+          "published": "missing"
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/build-receipts/703e7283f1c6e6820066c44db4eb4131d30364d8a2559376fac58e9a1f56717e.json",
+          "head_blob": "7f859d1273529db697291001cb0742a6d4f0d1f2",
+          "status": "added",
+          "main_blob": null,
+          "published_blob": null,
+          "main": "missing",
+          "published": "missing"
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/build-receipts/7abf2e788123fc7e861411b206b029d02cd673c57f4150efd02bb8c29f3b230a.json",
+          "head_blob": "8ca6701602ca2010e57681576de09c8663920878",
+          "status": "added",
+          "main_blob": null,
+          "published_blob": null,
+          "main": "missing",
+          "published": "missing"
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/build-receipts/89dfb0eea80d7ca3f414cf6edea532097beb122872afe036a5a767c94e4dd20b.json",
+          "head_blob": "dfd34ad6307982f9b78a7d6815b476c4d759e123",
+          "status": "added",
+          "main_blob": null,
+          "published_blob": null,
+          "main": "missing",
+          "published": "missing"
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/build-receipts/8b503f77dd9cc006d7daa4b4ff36f8f0ab545b5db2837dd92180ae5b539fd2f0.json",
+          "head_blob": "5f31b46e8857c77c270f1bcb61a710a652888d53",
+          "status": "added",
+          "main_blob": null,
+          "published_blob": null,
+          "main": "missing",
+          "published": "missing"
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/build-receipts/8ded7733a301edef8b203f902e4f82077e3e87fe05d316a02fc0a8505f87f7b5.json",
+          "head_blob": "68135b0c698167ec609535ed4703707e24adeebe",
+          "status": "added",
+          "main_blob": null,
+          "published_blob": null,
+          "main": "missing",
+          "published": "missing"
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/build-receipts/9268a5c7bb65570279bddc216bb3760bdcaf1ee68f7b28c60b246b9e72d3149d.json",
+          "head_blob": "cd4d6fbf7bd17b8731259dad5c628d1b14a22ab0",
+          "status": "added",
+          "main_blob": null,
+          "published_blob": null,
+          "main": "missing",
+          "published": "missing"
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/build-receipts/9729d9eb340988bf3ff203001a561e36325f2525a046af499bed88e24d9333f9.json",
+          "head_blob": "3355ce5d25cb5edf6075b940f7749255a2ea7e96",
+          "status": "added",
+          "main_blob": null,
+          "published_blob": null,
+          "main": "missing",
+          "published": "missing"
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/build-receipts/a30d0f685b2d9f196a04f7e0f6c9ae709c3970d85c7aba5b28e199f2e7c792d3.json",
+          "head_blob": "26f01ba2d2376ba4f3d0912423a548b1d0713dcb",
+          "status": "added",
+          "main_blob": null,
+          "published_blob": null,
+          "main": "missing",
+          "published": "missing"
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/build-receipts/a7a9a274ecd7d0abeef324c5816db02a916eba9103eca8a4ece2786a701342d1.json",
+          "head_blob": "1951f0a9c440e84207fde54347cd36382554b566",
+          "status": "added",
+          "main_blob": null,
+          "published_blob": null,
+          "main": "missing",
+          "published": "missing"
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/build-receipts/b3123d5d7bea3c349c79e14f0d900e7f76d78c787783715ac807c8d35110335d.json",
+          "head_blob": "ad2bfbd85399a3c46167a7ab8352ab4fd8135029",
+          "status": "added",
+          "main_blob": null,
+          "published_blob": null,
+          "main": "missing",
+          "published": "missing"
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/build-receipts/b6d1f9aa9a0ba277a09b5649faad62f66f4d2a53a2fc0fb6ed21dcd05cdf68e8.json",
+          "head_blob": "8c96f13ba03629d9192c4d1f2d0ca405ef0ed57b",
+          "status": "added",
+          "main_blob": null,
+          "published_blob": null,
+          "main": "missing",
+          "published": "missing"
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/build-receipts/ba1261e9552f7544881888577df4f80c19ccf9343d76c555a6e90dadb277566d.json",
+          "head_blob": "c22471013b380abe5449a09d33f726ead9669652",
+          "status": "added",
+          "main_blob": null,
+          "published_blob": null,
+          "main": "missing",
+          "published": "missing"
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/build-receipts/c3d8a1379c3c2e2b72342fa2c730ad8b64e246b0f203fb65250499a8e6ec44d5.json",
+          "head_blob": "c3f7f425b341ed4fc64fbc748b5f5a67143cbb60",
+          "status": "added",
+          "main_blob": null,
+          "published_blob": null,
+          "main": "missing",
+          "published": "missing"
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/build-receipts/c7142e5c918973f18c9f12b0948b2f03e311ae74317d3c10dae086203bd54dab.json",
+          "head_blob": "18bae17211a24a89517f6b9c35258a2d699bdbf1",
+          "status": "added",
+          "main_blob": null,
+          "published_blob": null,
+          "main": "missing",
+          "published": "missing"
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/build-receipts/c9decd8c800fbfe12a4614d95a1385d322a2ef948ce9657cd938ba751d94a25e.json",
+          "head_blob": "3cedaf51351a95aaf710d60d45c17e9875411f76",
+          "status": "added",
+          "main_blob": null,
+          "published_blob": null,
+          "main": "missing",
+          "published": "missing"
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/build-receipts/cb7653eb2522abeba4645d21a96f44c9cbb55c7e8a94376e96dfb89de1ae1e84.json",
+          "head_blob": "5a0d778039946337bbc2786daa2f14dafa770285",
+          "status": "added",
+          "main_blob": null,
+          "published_blob": null,
+          "main": "missing",
+          "published": "missing"
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/build-receipts/d53253c186ba501641809b3c6ecdb7a7b6c46124bcb5ee834b28ff79f33ab4fd.json",
+          "head_blob": "6edf5bf7b04fb40adc8d054acdd462ed1ed4da38",
+          "status": "added",
+          "main_blob": null,
+          "published_blob": null,
+          "main": "missing",
+          "published": "missing"
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/build-receipts/d6568fb47762a1c5994f72262863d7a957c77bde657aad4162ada09a7b76c719.json",
+          "head_blob": "71d791675243262c164c7b72978e832633e370af",
+          "status": "added",
+          "main_blob": null,
+          "published_blob": null,
+          "main": "missing",
+          "published": "missing"
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/build-receipts/ed1030bd40fdcc5896149aa6308ea8c030f690dd756c5b73fc5911c9bf21df32.json",
+          "head_blob": "82a0ac8b2235736af8a063ad9b442d46547778da",
+          "status": "added",
+          "main_blob": null,
+          "published_blob": null,
+          "main": "missing",
+          "published": "missing"
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/build-receipts/ef162c385937b849faa0f4bd7669df663f57d11c8fd068184816d14b524b3f1a.json",
+          "head_blob": "99226a161d2b0ae323df5051d02c5784df105c34",
+          "status": "added",
+          "main_blob": null,
+          "published_blob": null,
+          "main": "missing",
+          "published": "missing"
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/build-receipts/f1622c4c9b3fec287511b110ba78cd70a6cf44692a50fa9a0e1adc7a787e43c8.json",
+          "head_blob": "6ed7a7f54a86d42609a62e054844a4a7702bde69",
+          "status": "added",
+          "main_blob": null,
+          "published_blob": null,
+          "main": "missing",
+          "published": "missing"
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/build-receipts/f24e95f1e4b070060659a02aff595968de0b75e0713c237170cc90044f1fa979.json",
+          "head_blob": "f5c4113178f4ea7f7dff5075eb1c028f92506cd3",
+          "status": "added",
+          "main_blob": null,
+          "published_blob": null,
+          "main": "missing",
+          "published": "missing"
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/build-receipts/f4facea3fd4fa5d08ea9223d917be3cb15e0f311c5afa6a7ab93bfa7dac6250b.json",
+          "head_blob": "a6ffcd0e0e478ad602166c80bbd43c09999144db",
+          "status": "added",
+          "main_blob": null,
+          "published_blob": null,
+          "main": "missing",
+          "published": "missing"
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/cjson-acceptance.json",
+          "head_blob": "de3e6a9301f3483008250d7b5dac579b0dbb951e",
+          "status": "added",
+          "main_blob": null,
+          "published_blob": null,
+          "main": "missing",
+          "published": "missing"
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/cjson-review.md",
+          "head_blob": "abec204b79b0bc0c02b65be538fee8904121ddf0",
+          "status": "added",
+          "main_blob": null,
+          "published_blob": null,
+          "main": "missing",
+          "published": "missing"
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/coderabbit-regressions.log",
+          "head_blob": "b6fa2864b3835c72a33dfdc6be90b7893e98d913",
+          "status": "added",
+          "main_blob": null,
+          "published_blob": null,
+          "main": "missing",
+          "published": "missing"
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/coderabbit-research-build-green.log",
+          "head_blob": "2f719022652506be3493d81c28f9b6deec80aadd",
+          "status": "added",
+          "main_blob": null,
+          "published_blob": null,
+          "main": "missing",
+          "published": "missing"
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/coderabbit-research-build-integration.log",
+          "head_blob": "f9f9dbc9bbd7d606d35b5888b6ea33d311ef37a4",
+          "status": "added",
+          "main_blob": null,
+          "published_blob": null,
+          "main": "missing",
+          "published": "missing"
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/coderabbit-research-build-red.log",
+          "head_blob": "e3a23185b9ed69ab3f2bc4c0326aa40e3a63a5b9",
+          "status": "added",
+          "main_blob": null,
+          "published_blob": null,
+          "main": "missing",
+          "published": "missing"
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/controls-and-structure.json",
+          "head_blob": "4742dda09c17de1702bf91103dfbfa66b8309981",
+          "status": "added",
+          "main_blob": null,
+          "published_blob": null,
+          "main": "missing",
+          "published": "missing"
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/controls-and-structure.md",
+          "head_blob": "da2b6fca4dbe12121795c8e08740ccd52863532f",
+          "status": "added",
+          "main_blob": null,
+          "published_blob": null,
+          "main": "missing",
+          "published": "missing"
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/environment.json",
+          "head_blob": "6436cc08a5c49f3df1064659abe1c5f97e2d06a6",
+          "status": "added",
+          "main_blob": null,
+          "published_blob": null,
+          "main": "missing",
+          "published": "missing"
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/external-review-followup.md",
+          "head_blob": "a58acf26541364a0149cb928d3ce774800858c2c",
+          "status": "added",
+          "main_blob": null,
+          "published_blob": null,
+          "main": "missing",
+          "published": "missing"
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/failure-analysis-addendum.md",
+          "head_blob": "f2b421b1679196346fe57376b4f11ce49ae35a95",
+          "status": "added",
+          "main_blob": null,
+          "published_blob": null,
+          "main": "missing",
+          "published": "missing"
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/final-cli-repeatability.json",
+          "head_blob": "738c1fcdbda663b0ae41784084a44a14da328d6b",
+          "status": "added",
+          "main_blob": null,
+          "published_blob": null,
+          "main": "missing",
+          "published": "missing"
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/final-integration-review.md",
+          "head_blob": "f94e342aa4f809a581357263c994aed4bee0a628",
+          "status": "added",
+          "main_blob": null,
+          "published_blob": null,
+          "main": "missing",
+          "published": "missing"
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/final-label-integrity.json",
+          "head_blob": "a3d49e18f33325db7c3d2ee0935c70424e96bfe1",
+          "status": "added",
+          "main_blob": null,
+          "published_blob": null,
+          "main": "missing",
+          "published": "missing"
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/final-partition-audit.json",
+          "head_blob": "7b817b018dfa65fd5babd211ef780337433a3955",
+          "status": "added",
+          "main_blob": null,
+          "published_blob": null,
+          "main": "missing",
+          "published": "missing"
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/final-validation.json",
+          "head_blob": "0c1021f9514a8028a11b28c95ac4ddb4f1ccd7e8",
+          "status": "added",
+          "main_blob": null,
+          "published_blob": null,
+          "main": "missing",
+          "published": "missing"
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/full-linux-pytest.log",
+          "head_blob": "52f23bebf130eba05a3942e4a2dbff8a94274520",
+          "status": "added",
+          "main_blob": null,
+          "published_blob": null,
+          "main": "missing",
+          "published": "missing"
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/hidden-receipt-reconciliation.json",
+          "head_blob": "b78d18c94ce1cd926e0497b610ce9bc1c6e27d36",
+          "status": "added",
+          "main_blob": null,
+          "published_blob": null,
+          "main": "missing",
+          "published": "missing"
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/hidden-receipt-reconciliation.md",
+          "head_blob": "34055438e6ac447f1f3093cc7b56e1452ff6962f",
+          "status": "added",
+          "main_blob": null,
+          "published_blob": null,
+          "main": "missing",
+          "published": "missing"
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/hidden-review-binding-reconciliation.json",
+          "head_blob": "bcd2a817458fa6f133280d91a0d02b7f5402af92",
+          "status": "added",
+          "main_blob": null,
+          "published_blob": null,
+          "main": "missing",
+          "published": "missing"
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/historical-labels/08939af3c162e5dee94f3abe317aa098f8672b32e601a4f75fddf19a0db82445-noise-defined-v1-msvc-free-O2-msvc-free-Os.json",
+          "head_blob": "59ccc9370e41bb8baf6b9eec046f59cfcc55a0ca",
+          "status": "added",
+          "main_blob": null,
+          "published_blob": null,
+          "main": "missing",
+          "published": "missing"
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/historical-labels/1792c140953da1e24c01e697731f3f9d3e5e0065e8358418d3f1fe1aed19e26f-aa-defined-v1-O2-rebuild.json",
+          "head_blob": "67d4caf41c2e93f4055a6fa912f153f5a615b304",
+          "status": "added",
+          "main_blob": null,
+          "published_blob": null,
+          "main": "missing",
+          "published": "missing"
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/historical-labels/a49fac036302ab463018d22c76aeb0de5bde43adb9db3ed3ac50be4b1dc9f415-noise-defined-v1-msvc-free-O0-msvc-free-O2.json",
+          "head_blob": "3c287ee304defc128e7bc9f376cea9409f357c3f",
+          "status": "added",
+          "main_blob": null,
+          "published_blob": null,
+          "main": "missing",
+          "published": "missing"
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/historical-labels/ab00e8abc4f8f62bd7cd67d4ca1e70266d77f281ce69831b5ac87812541355a9-noise-defined-v1-msvc-free-O2-mingw-gcc-O2.json",
+          "head_blob": "44b1bfac125e04e1ad3879218173da6d32cbc3dc",
+          "status": "added",
+          "main_blob": null,
+          "published_blob": null,
+          "main": "missing",
+          "published": "missing"
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/historical-labels/bce0f84260d125168b2142888547438b810abb4189d8688e1778699995025e92-aa-defined-v1-mingw-gcc-O2-rebuild.json",
+          "head_blob": "83add7c94e04ce6a44cd200a0cfd2c627926ccb9",
+          "status": "added",
+          "main_blob": null,
+          "published_blob": null,
+          "main": "missing",
+          "published": "missing"
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/implementation-review.md",
+          "head_blob": "750c4b7f59bb7ef4272dbb9ad4e9ca6c140913e6",
+          "status": "added",
+          "main_blob": null,
+          "published_blob": null,
+          "main": "missing",
+          "published": "missing"
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/integrity-gates.json",
+          "head_blob": "4fc397c4cb241d3367684cb2213ee6c1b42a363a",
+          "status": "added",
+          "main_blob": null,
+          "published_blob": null,
+          "main": "missing",
+          "published": "missing"
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/label-provenance-corrections.json",
+          "head_blob": "184d787bd58c3af8d77ad02229fa7da6f0d7977f",
+          "status": "added",
+          "main_blob": null,
+          "published_blob": null,
+          "main": "missing",
+          "published": "missing"
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/labels/aa-defined-v1-O2-rebuild.json",
+          "head_blob": "74bdbc99a55c00bcac54619e6fe378495641c6fb",
+          "status": "added",
+          "main_blob": null,
+          "published_blob": null,
+          "main": "missing",
+          "published": "missing"
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/labels/aa-defined-v1-mingw-gcc-O2-rebuild.json",
+          "head_blob": "8ac683e69b813e2d82a7854b63fd88b172aa9e4d",
+          "status": "added",
+          "main_blob": null,
+          "published_blob": null,
+          "main": "missing",
+          "published": "missing"
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/labels/cjson-1.7.16-to-1.7.17-O2.json",
+          "head_blob": "7f32e47ddc2d902096c6e9fcfa8b29d8aad320c5",
+          "status": "added",
+          "main_blob": null,
+          "published_blob": null,
+          "main": "missing",
+          "published": "missing"
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/labels/noise-defined-v1-mingw-gcc-O2-mingw-clang-O2.json",
+          "head_blob": "07775d4bc16ce28aecc0c017e24be2af849187b5",
+          "status": "added",
+          "main_blob": null,
+          "published_blob": null,
+          "main": "missing",
+          "published": "missing"
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/labels/noise-defined-v1-msvc-free-O0-msvc-free-O2.json",
+          "head_blob": "e952e99638257f63095a0b0a6ea619e86a7363a2",
+          "status": "added",
+          "main_blob": null,
+          "published_blob": null,
+          "main": "missing",
+          "published": "missing"
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/labels/noise-defined-v1-msvc-free-O2-mingw-gcc-O2.json",
+          "head_blob": "829e95f8c5d13271a40b6b28a8ddca55b9f31e35",
+          "status": "added",
+          "main_blob": null,
+          "published_blob": null,
+          "main": "missing",
+          "published": "missing"
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/labels/noise-defined-v1-msvc-free-O2-msvc-free-Os.json",
+          "head_blob": "4f3bb174dfa9c2fe607790683a65cc4fbf30e42a",
+          "status": "added",
+          "main_blob": null,
+          "published_blob": null,
+          "main": "missing",
+          "published": "missing"
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/labels/ours-r1-pilot-defined-v1-v2-O2.json",
+          "head_blob": "dfccb0c32fe478d4dff0271405f377dab881103c",
+          "status": "added",
+          "main_blob": null,
+          "published_blob": null,
+          "main": "missing",
+          "published": "missing"
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/labels/research-mingw-clang-O0-r1-pilot-defined-v1-v2.json",
+          "head_blob": "2783d244193cea09182af382ccb6dcbeddb86771",
+          "status": "added",
+          "main_blob": null,
+          "published_blob": null,
+          "main": "missing",
+          "published": "missing"
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/labels/research-mingw-clang-O1-r1-pilot-defined-v1-v2.json",
+          "head_blob": "94f40f8e6f9ad09a9b1fed1dd3490853e97f98ad",
+          "status": "added",
+          "main_blob": null,
+          "published_blob": null,
+          "main": "missing",
+          "published": "missing"
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/labels/research-mingw-clang-O2-r1-pilot-defined-v1-v2.json",
+          "head_blob": "df754baba8c80503f781b4ecfcb1444e73b70d6e",
+          "status": "added",
+          "main_blob": null,
+          "published_blob": null,
+          "main": "missing",
+          "published": "missing"
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/labels/research-mingw-clang-O3-r1-pilot-defined-v1-v2.json",
+          "head_blob": "33b614755378f687e1b86d0172a4008878ab87d5",
+          "status": "added",
+          "main_blob": null,
+          "published_blob": null,
+          "main": "missing",
+          "published": "missing"
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/labels/research-mingw-clang-Os-r1-pilot-defined-v1-v2.json",
+          "head_blob": "4c5c711af985d3eb835866353f7fc87b28044f06",
+          "status": "added",
+          "main_blob": null,
+          "published_blob": null,
+          "main": "missing",
+          "published": "missing"
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/labels/research-mingw-gcc-O0-r1-pilot-defined-v1-v2.json",
+          "head_blob": "641137f6c3c1e951b08759b04a86402f167ae1da",
+          "status": "added",
+          "main_blob": null,
+          "published_blob": null,
+          "main": "missing",
+          "published": "missing"
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/labels/research-mingw-gcc-O1-r1-pilot-defined-v1-v2.json",
+          "head_blob": "140a9a804cb812d264aeb5044295b5062310d36f",
+          "status": "added",
+          "main_blob": null,
+          "published_blob": null,
+          "main": "missing",
+          "published": "missing"
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/labels/research-mingw-gcc-O2-r1-pilot-defined-v1-v2.json",
+          "head_blob": "b8ea0fd5d5db97bf1e66a897d3f5aa9db124b46f",
+          "status": "added",
+          "main_blob": null,
+          "published_blob": null,
+          "main": "missing",
+          "published": "missing"
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/labels/research-mingw-gcc-O3-r1-pilot-defined-v1-v2.json",
+          "head_blob": "a70bbc33f4da1befa9cf8479e05b77a70b90f3ac",
+          "status": "added",
+          "main_blob": null,
+          "published_blob": null,
+          "main": "missing",
+          "published": "missing"
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/labels/research-mingw-gcc-Os-r1-pilot-defined-v1-v2.json",
+          "head_blob": "1f365f00e2ffeb19b8c599adbfeb29e70b9e3d99",
+          "status": "added",
+          "main_blob": null,
+          "published_blob": null,
+          "main": "missing",
+          "published": "missing"
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/labels/research-msvc-free-O0-r1-pilot-defined-v1-v2.json",
+          "head_blob": "da08e176db28793477fd4c54e07a47f451b01676",
+          "status": "added",
+          "main_blob": null,
+          "published_blob": null,
+          "main": "missing",
+          "published": "missing"
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/labels/research-msvc-free-O1-r1-pilot-defined-v1-v2.json",
+          "head_blob": "eb687bd4bb1ea577058dd9bb9647c71965229e07",
+          "status": "added",
+          "main_blob": null,
+          "published_blob": null,
+          "main": "missing",
+          "published": "missing"
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/labels/research-msvc-free-O2-r1-pilot-defined-v1-v2.json",
+          "head_blob": "6c7f57e3968ae3cce6a9ffc8afde978cc42e9792",
+          "status": "added",
+          "main_blob": null,
+          "published_blob": null,
+          "main": "missing",
+          "published": "missing"
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/labels/research-msvc-free-O3-r1-pilot-defined-v1-v2.json",
+          "head_blob": "695f544e4264c8c99f83e7544f5bbed9cb6e33c3",
+          "status": "added",
+          "main_blob": null,
+          "published_blob": null,
+          "main": "missing",
+          "published": "missing"
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/labels/research-msvc-free-Os-r1-pilot-defined-v1-v2.json",
+          "head_blob": "d1e15e71ea375c5145e20a1e99e99c8d89e0df54",
+          "status": "added",
+          "main_blob": null,
+          "published_blob": null,
+          "main": "missing",
+          "published": "missing"
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/matrix-provenance-validation.json",
+          "head_blob": "000d8eeace77bc150012a4a5d50ae63b953b2ee6",
+          "status": "added",
+          "main_blob": null,
+          "published_blob": null,
+          "main": "missing",
+          "published": "missing"
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/native-aa-control.json",
+          "head_blob": "aa0bbf48e6179df6151f4b7260ac413907291a04",
+          "status": "added",
+          "main_blob": null,
+          "published_blob": null,
+          "main": "missing",
+          "published": "missing"
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/native-aa-control.md",
+          "head_blob": "82a1ca148b1f8c74a8141e55ffcaada89900f2dc",
+          "status": "added",
+          "main_blob": null,
+          "published_blob": null,
+          "main": "missing",
+          "published": "missing"
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/native-aa-provenance-correction.json",
+          "head_blob": "c6f9aad7fcc812931f5286b4f561add07f66156b",
+          "status": "added",
+          "main_blob": null,
+          "published_blob": null,
+          "main": "missing",
+          "published": "missing"
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/native-aa-provenance-correction.md",
+          "head_blob": "c70cf6cf604f3b357665cfd38e558511a3f44eff",
+          "status": "added",
+          "main_blob": null,
+          "published_blob": null,
+          "main": "missing",
+          "published": "missing"
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/native-aa-recovered-build-receipts/89dfb0eea80d7ca3f414cf6edea532097beb122872afe036a5a767c94e4dd20b.json",
+          "head_blob": "dfd34ad6307982f9b78a7d6815b476c4d759e123",
+          "status": "added",
+          "main_blob": null,
+          "published_blob": null,
+          "main": "missing",
+          "published": "missing"
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/native-aa-recovered-build-receipts/950a443ec7bba59fdd6098517755b9aaa69a56a584c583cd9609a5943916d095.json",
+          "head_blob": "1d49e6a07bcb63b85f8098a0305c4bd9d3c9bb9b",
+          "status": "added",
+          "main_blob": null,
+          "published_blob": null,
+          "main": "missing",
+          "published": "missing"
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/native-aa-recovered-build-receipts/a30d0f685b2d9f196a04f7e0f6c9ae709c3970d85c7aba5b28e199f2e7c792d3.json",
+          "head_blob": "26f01ba2d2376ba4f3d0912423a548b1d0713dcb",
+          "status": "added",
+          "main_blob": null,
+          "published_blob": null,
+          "main": "missing",
+          "published": "missing"
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/native-aa-recovered-build-receipts/d6568fb47762a1c5994f72262863d7a957c77bde657aad4162ada09a7b76c719.json",
+          "head_blob": "71d791675243262c164c7b72978e832633e370af",
+          "status": "added",
+          "main_blob": null,
+          "published_blob": null,
+          "main": "missing",
+          "published": "missing"
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/native-aa-recovered-build-receipts/d88845cbf96c21820a2f66b76ad5149d921e2a57cf4a976b2f2752338bada060.json",
+          "head_blob": "598c67c55b384a23a16d32338a4ac303798e31cb",
+          "status": "added",
+          "main_blob": null,
+          "published_blob": null,
+          "main": "missing",
+          "published": "missing"
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/output-safety-review.md",
+          "head_blob": "0ebd3fa313a64a5733a6928113d98c69256ea623",
+          "status": "added",
+          "main_blob": null,
+          "published_blob": null,
+          "main": "missing",
+          "published": "missing"
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/partition-audit.json",
+          "head_blob": "c4e127df727baf53e43a2eed12ee52d0cdd8a565",
+          "status": "added",
+          "main_blob": null,
+          "published_blob": null,
+          "main": "missing",
+          "published": "missing"
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/per-function-observations.json",
+          "head_blob": "def39564841e8a87ebc3507dca26f6c1d547ed06",
+          "status": "added",
+          "main_blob": null,
+          "published_blob": null,
+          "main": "missing",
+          "published": "missing"
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/pilot-cjson-o2.json",
+          "head_blob": "86e8a5fa07c25e3c69683792c1088911697eb9a8",
+          "status": "added",
+          "main_blob": null,
+          "published_blob": null,
+          "main": "missing",
+          "published": "missing"
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/pilot-cjson-reviewed.json",
+          "head_blob": "eb633e84c207b6a2ed3a46afb4ef97e19d18abf1",
+          "status": "added",
+          "main_blob": null,
+          "published_blob": null,
+          "main": "missing",
+          "published": "missing"
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/pilot-compiler-noise.json",
+          "head_blob": "f169ad1294e6883e4361e9824dc86ecbee775341",
+          "status": "added",
+          "main_blob": null,
+          "published_blob": null,
+          "main": "missing",
+          "published": "missing"
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/pilot-mingw-gcc-o2-final-cli.json",
+          "head_blob": "91a0a8d94b837f31b8b20aabbc095b114f732663",
+          "status": "added",
+          "main_blob": null,
+          "published_blob": null,
+          "main": "missing",
+          "published": "missing"
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/pilot-mingw-gcc-o2-profiled.json",
+          "head_blob": "14854575bd2a8fe8cb02d83384630ac3a430a8c9",
+          "status": "added",
+          "main_blob": null,
+          "published_blob": null,
+          "main": "missing",
+          "published": "missing"
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/pilot-mingw-gcc-o2-repeat.json",
+          "head_blob": "8bd23c63d46189767a1961fb366d2678186259b7",
+          "status": "added",
+          "main_blob": null,
+          "published_blob": null,
+          "main": "missing",
+          "published": "missing"
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/pilot-mingw-gcc-o2.json",
+          "head_blob": "196509e0c0bb0fedcad8ddbd35956bf9304d1e64",
+          "status": "added",
+          "main_blob": null,
+          "published_blob": null,
+          "main": "missing",
+          "published": "missing"
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/pilot-msvc-free-o2-reviewed-replay.json",
+          "head_blob": "a97709fc8fc9a41520f23b144ba23148ac4bd3e3",
+          "status": "added",
+          "main_blob": null,
+          "published_blob": null,
+          "main": "missing",
+          "published": "missing"
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/pilot-msvc-free-o2.json",
+          "head_blob": "0d487487fa119966e94ee1b9dbeee3ba08b12bff",
+          "status": "added",
+          "main_blob": null,
+          "published_blob": null,
+          "main": "missing",
+          "published": "missing"
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/profiled-resources.json",
+          "head_blob": "8206d8080ffd71f3dbb4581f0834b14859a3e965",
+          "status": "added",
+          "main_blob": null,
+          "published_blob": null,
+          "main": "missing",
+          "published": "missing"
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/repeatability.json",
+          "head_blob": "6ce4e55557b24dfde088ce0c23d74f9ba5a015b2",
+          "status": "added",
+          "main_blob": null,
+          "published_blob": null,
+          "main": "missing",
+          "published": "missing"
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/rzdiff-hidden-diagnostic.json",
+          "head_blob": "530879137ce1c0237f2c5e3d0337ee8f9b721f0d",
+          "status": "added",
+          "main_blob": null,
+          "published_blob": null,
+          "main": "missing",
+          "published": "missing"
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/sonar-checkpoint-0271-annotation.json",
+          "head_blob": "cb07d166431d9c484599cd6e23d4004d9c355f3d",
+          "status": "added",
+          "main_blob": null,
+          "published_blob": null,
+          "main": "missing",
+          "published": "missing"
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/source-and-binary-review.md",
+          "head_blob": "c7c3f455d472f1d0c9d3bbe575cf3310f5168d19",
+          "status": "added",
+          "main_blob": null,
+          "published_blob": null,
+          "main": "missing",
+          "published": "missing"
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/source-fetch-receipts.json",
+          "head_blob": "c430133556363beec22f3391ea30f76689fc11dc",
+          "status": "added",
+          "main_blob": null,
+          "published_blob": null,
+          "main": "missing",
+          "published": "missing"
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/suite-endpoint-red-green.json",
+          "head_blob": "77301b06d88aa9bf4b91dadd07a962db324fa2f1",
+          "status": "added",
+          "main_blob": null,
+          "published_blob": null,
+          "main": "missing",
+          "published": "missing"
+        },
+        {
+          "path": "docs/specs/known-answer-corpus.md",
+          "head_blob": "f1fcff7647a46892aff496c90ccb876db87c7785",
+          "status": "modified",
+          "main_blob": "03a297ce7bb9f59af641f96f471f96c040d40890",
+          "published_blob": "bd247524c0a7a9cca52df926978054e2dd15ba60",
+          "main": "different",
+          "published": "different"
+        },
+        {
+          "path": "tasks/todo.md",
+          "head_blob": "7e0cc4f1cb516a6a4874b4a74591d958cf392036",
+          "status": "modified",
+          "main_blob": "72552207db2bc02d111e2766296e7358b1c1cc16",
+          "published_blob": "fcdc72e5a2a1adf387ece49731df400c9bd1ed76",
+          "main": "different",
+          "published": "different"
+        },
+        {
+          "path": "tests/test_binexport_isolation.py",
+          "head_blob": "f3bfa55904e1fa926d60e2e9afc7b64c1f239380",
+          "status": "modified",
+          "main_blob": "1be37eac00c3f4433fa9ca79119359a3c7dd30a6",
+          "published_blob": "1be37eac00c3f4433fa9ca79119359a3c7dd30a6",
+          "main": "different",
+          "published": "different"
+        },
+        {
+          "path": "tests/test_tier_r_build_receipts_r1.py",
+          "head_blob": "5d88eb4e779a45a563c3a2f8d446adbc74059dd3",
+          "status": "added",
+          "main_blob": null,
+          "published_blob": null,
+          "main": "missing",
+          "published": "missing"
+        },
+        {
+          "path": "tests/test_tier_r_label_promotion_r1.py",
+          "head_blob": "4f12f0685d68112dac5841ac0f1696fe4b522825",
+          "status": "added",
+          "main_blob": null,
+          "published_blob": null,
+          "main": "missing",
+          "published": "missing"
+        },
+        {
+          "path": "tests/test_tier_r_research_audit.py",
+          "head_blob": "7fa15b951b008541dbc0fa18e8b07d2e111ea66d",
+          "status": "added",
+          "main_blob": null,
+          "published_blob": null,
+          "main": "missing",
+          "published": "missing"
+        },
+        {
+          "path": "tests/test_tier_r_research_build.py",
+          "head_blob": "bd716887dd7cb940267ca21d5b817c39b447fe3c",
+          "status": "added",
+          "main_blob": null,
+          "published_blob": null,
+          "main": "missing",
+          "published": "missing"
+        },
+        {
+          "path": "tests/test_tier_r_research_observers.py",
+          "head_blob": "f7c306f2df077f51a6fb023f9e1b3e27a7d50506",
+          "status": "added",
+          "main_blob": null,
+          "published_blob": null,
+          "main": "missing",
+          "published": "missing"
+        },
+        {
+          "path": "tests/test_tier_r_research_pilot.py",
+          "head_blob": "b378e2e1ca8d4bb47c2d5530066aa92198238551",
+          "status": "added",
+          "main_blob": null,
+          "published_blob": null,
+          "main": "missing",
+          "published": "missing"
+        },
+        {
+          "path": "tests/test_tier_r_session_provenance_r1.py",
+          "head_blob": "e626d36832773f3ebac1b6903bfadfbced5744e2",
+          "status": "added",
+          "main_blob": null,
+          "published_blob": null,
+          "main": "missing",
+          "published": "missing"
+        },
+        {
+          "path": "tests/test_unified_live_pairs_r1.py",
+          "head_blob": "30e915793b8ef8d0661792c5cb2896499e9e4c46",
+          "status": "added",
+          "main_blob": null,
+          "published_blob": "e74148116d943756c82a6e08c7071b8b5d57ec72",
+          "main": "missing",
+          "published": "different"
+        },
+        {
+          "path": "tools/calibration/tier_r/build.py",
+          "head_blob": "1fcac0ff2acf713def95c3bba7e9ef4b27f41320",
+          "status": "modified",
+          "main_blob": "50a3ea05257b058c937f3b353faeedc2b9f3a5c3",
+          "published_blob": "50a3ea05257b058c937f3b353faeedc2b9f3a5c3",
+          "main": "different",
+          "published": "different"
+        },
+        {
+          "path": "tools/calibration/tier_r/factory.py",
+          "head_blob": "61e08c41e977314c369c0e5e7077098c7696d417",
+          "status": "modified",
+          "main_blob": "02b06820cd888dc66850f7f1cdc93aace7b7abcc",
+          "published_blob": "02b06820cd888dc66850f7f1cdc93aace7b7abcc",
+          "main": "different",
+          "published": "different"
+        },
+        {
+          "path": "tools/calibration/tier_r/labeler.py",
+          "head_blob": "d6983d035783c5f99aba75783f2964c8c99b2402",
+          "status": "modified",
+          "main_blob": "1bf892957a605186df8f38b56d6fd9387d447f81",
+          "published_blob": "1bf892957a605186df8f38b56d6fd9387d447f81",
+          "main": "different",
+          "published": "different"
+        },
+        {
+          "path": "tools/calibration/tier_r/research_audit.py",
+          "head_blob": "d3557898bea65af152bee3dd7cbe1c74e055f6d4",
+          "status": "added",
+          "main_blob": null,
+          "published_blob": null,
+          "main": "missing",
+          "published": "missing"
+        },
+        {
+          "path": "tools/calibration/tier_r/research_build.py",
+          "head_blob": "c2daf6790c9c2bf94fec6c8191eb1a3f33bb140a",
+          "status": "added",
+          "main_blob": null,
+          "published_blob": null,
+          "main": "missing",
+          "published": "missing"
+        },
+        {
+          "path": "tools/calibration/tier_r/research_observers.py",
+          "head_blob": "2f9ba4cc82f3e3a1783cca23cc9e692d30f30f3b",
+          "status": "added",
+          "main_blob": null,
+          "published_blob": null,
+          "main": "missing",
+          "published": "missing"
+        },
+        {
+          "path": "tools/calibration/tier_r/research_pilot.py",
+          "head_blob": "39c279319557167bf7566752335e0daae3cf30ff",
+          "status": "added",
+          "main_blob": null,
+          "published_blob": null,
+          "main": "missing",
+          "published": "missing"
+        },
+        {
+          "path": "tools/unified/live_pairs.py",
+          "head_blob": "c0c4d1ffa43b16b60ff1375dce30a9f3e478bacd",
+          "status": "modified",
+          "main_blob": "57cd4804998e62cd327e91574cfadc3b3fcb6e00",
+          "published_blob": "5dbb45630c08f9639a27d4f5517570b6af48b070",
+          "main": "different",
+          "published": "different"
+        }
+      ]
+    },
+    {
+      "number": 145,
+      "title": "fix: preserve corpus matrix evidence on receipt publication failure",
+      "state": "open",
+      "head": "8c9eafc79b007a963453d8edf6cb40c804c9bc3d",
+      "base_ref": "codex/r1-ground-truth-research-20261030",
+      "base_sha": "04bd023df566f43939296f7df1766e46186e7fff",
+      "changed_paths": 3,
+      "tree": "d79b1e7df0a52b9b91928d1c1e4a4e6d2da04844",
+      "comparison": [
+        {
+          "path": "docs/research/ground-truth-corpus/07-handoff-and-reproduction.md",
+          "head_blob": "75101ed7e2585d228bbd226c7ac6b1d4e107570d",
+          "status": "modified",
+          "main_blob": null,
+          "published_blob": null,
+          "main": "missing",
+          "published": "missing"
+        },
+        {
+          "path": "tests/test_tier_r_research_build.py",
+          "head_blob": "b7c9b66566fb64e26a602f8a772a3576e3a743c3",
+          "status": "modified",
+          "main_blob": null,
+          "published_blob": null,
+          "main": "missing",
+          "published": "missing"
+        },
+        {
+          "path": "tools/calibration/tier_r/research_build.py",
+          "head_blob": "3d29b6e033243e300650a4d330ac0b0d2dfcc4f7",
+          "status": "modified",
+          "main_blob": null,
+          "published_blob": null,
+          "main": "missing",
+          "published": "missing"
+        }
+      ]
+    },
+    {
+      "number": 150,
+      "title": "Anchor research receipts against parent replacement and preserve completed evidence",
+      "state": "open",
+      "head": "2fdac2ea9042985ac3c98545d38ac3461d00f4cc",
+      "base_ref": "codex/r1-receipt-publication-20261031",
+      "base_sha": "8c9eafc79b007a963453d8edf6cb40c804c9bc3d",
+      "changed_paths": 7,
+      "tree": "501569e0d817d449a84a81eb391ee029e4087e23",
+      "comparison": [
+        {
+          "path": "docs/modules.md",
+          "head_blob": "3417d654215f45d1b698136a5954213601458e55",
+          "status": "modified",
+          "main_blob": "5ce28ed8f29ab3bb92f96bc418ef2302542a6d5a",
+          "published_blob": "564d6b6c16304ae9cf1f0a9d47353780caf5d3ff",
+          "main": "different",
+          "published": "different"
+        },
+        {
+          "path": "docs/specs/known-answer-corpus.md",
+          "head_blob": "ea296860cca1a918f0ce4d83b2bb9859ce6aa6b4",
+          "status": "modified",
+          "main_blob": "03a297ce7bb9f59af641f96f471f96c040d40890",
+          "published_blob": "bd247524c0a7a9cca52df926978054e2dd15ba60",
+          "main": "different",
+          "published": "different"
+        },
+        {
+          "path": "tests/test_tier_r_receipt_parent_race.py",
+          "head_blob": "2709c69391791e62ee3ef339e8f2c6fd2a07a6d1",
+          "status": "added",
+          "main_blob": null,
+          "published_blob": null,
+          "main": "missing",
+          "published": "missing"
+        },
+        {
+          "path": "tests/test_tier_r_research_build.py",
+          "head_blob": "fa0926f4c589ce5c2a626e1cdb2737a142c57ac3",
+          "status": "modified",
+          "main_blob": null,
+          "published_blob": null,
+          "main": "missing",
+          "published": "missing"
+        },
+        {
+          "path": "tools/calibration/tier_r/receipts.py",
+          "head_blob": "be26bfa337b2d3cae3e6f6cd4b8fdbbb2517b54c",
+          "status": "added",
+          "main_blob": null,
+          "published_blob": null,
+          "main": "missing",
+          "published": "missing"
+        },
+        {
+          "path": "tools/calibration/tier_r/research_build.py",
+          "head_blob": "3e378921ecab3ae68ca7a90345ff650d3cf02930",
+          "status": "modified",
+          "main_blob": null,
+          "published_blob": null,
+          "main": "missing",
+          "published": "missing"
+        },
+        {
+          "path": "tools/calibration/tier_r/research_pilot.py",
+          "head_blob": "16026f4e8c1f7540a885b610861c77587edf03fd",
+          "status": "modified",
+          "main_blob": null,
+          "published_blob": null,
+          "main": "missing",
+          "published": "missing"
+        }
+      ]
+    }
+  ],
+  "latest_combined_changed_paths": [
+    {
+      "path": ".github/workflows/unified-live-gates.yml",
+      "head_blob": "81b6bc76d8d0a89bb459edc27d4935bd797f5edf",
+      "main_blob": "1bcab625b9c1a15e1f0829ac2d47a847caea2e0c",
+      "published_blob": "81b6bc76d8d0a89bb459edc27d4935bd797f5edf",
+      "main": "different",
+      "published": "identical"
+    },
+    {
+      "path": "corpus/ours/r1-pilot/defined/README.md",
+      "head_blob": "4df66dd77bb634a99c3722b1659ec62062257eef",
+      "main_blob": null,
+      "published_blob": null,
+      "main": "missing",
+      "published": "missing"
+    },
+    {
+      "path": "corpus/ours/r1-pilot/defined/suite.json",
+      "head_blob": "ca723ceef4ac1728995889cca30d25c8488d0126",
+      "main_blob": null,
+      "published_blob": null,
+      "main": "missing",
+      "published": "missing"
+    },
+    {
+      "path": "corpus/ours/r1-pilot/defined/v1/r1.c",
+      "head_blob": "ae179c3390f051fbc99ce56efc57cc706e7a823d",
+      "main_blob": null,
+      "published_blob": null,
+      "main": "missing",
+      "published": "missing"
+    },
+    {
+      "path": "corpus/ours/r1-pilot/defined/v2/r1.c",
+      "head_blob": "3ee1a709969541ef2402e331fc901032fe6dd289",
+      "main_blob": null,
+      "published_blob": null,
+      "main": "missing",
+      "published": "missing"
+    },
+    {
+      "path": "docs/modules.md",
+      "head_blob": "3417d654215f45d1b698136a5954213601458e55",
+      "main_blob": "5ce28ed8f29ab3bb92f96bc418ef2302542a6d5a",
+      "published_blob": "564d6b6c16304ae9cf1f0a9d47353780caf5d3ff",
+      "main": "different",
+      "published": "different"
+    },
+    {
+      "path": "docs/qa.md",
+      "head_blob": "db9185e1f33504008d2cf94893a862ca657b4d23",
+      "main_blob": "9360da2c946a05c81c687ce1f23d2122193502e9",
+      "published_blob": "db0156554c992c7f6edb720d5d69774880477ed3",
+      "main": "different",
+      "published": "different"
+    },
+    {
+      "path": "docs/research/ground-truth-corpus/01-literature-and-datasets.md",
+      "head_blob": "8b2a19c22d9ea3f6ea81542b3ae21edc61442c90",
+      "main_blob": null,
+      "published_blob": null,
+      "main": "missing",
+      "published": "missing"
+    },
+    {
+      "path": "docs/research/ground-truth-corpus/02-ground-truth-and-evaluation.md",
+      "head_blob": "9c617f00bab68dba4dce623f29c0597d3d63120a",
+      "main_blob": null,
+      "published_blob": null,
+      "main": "missing",
+      "published": "missing"
+    },
+    {
+      "path": "docs/research/ground-truth-corpus/03-real-world-patch-candidates.md",
+      "head_blob": "7db42974f0ab710734cf879969d4e16432558980",
+      "main_blob": null,
+      "published_blob": null,
+      "main": "missing",
+      "published": "missing"
+    },
+    {
+      "path": "docs/research/ground-truth-corpus/04-pilot-protocol.md",
+      "head_blob": "7ab6b425d50a23b30f896dd7a1ccb3a6573020c2",
+      "main_blob": null,
+      "published_blob": null,
+      "main": "missing",
+      "published": "missing"
+    },
+    {
+      "path": "docs/research/ground-truth-corpus/05-results-and-failure-analysis.md",
+      "head_blob": "820a51e24e42b382253defff9842402c42d15d84",
+      "main_blob": null,
+      "published_blob": null,
+      "main": "missing",
+      "published": "missing"
+    },
+    {
+      "path": "docs/research/ground-truth-corpus/06-limitations-and-open-questions.md",
+      "head_blob": "dc8482db4cb52a903de11f24b3e2d3b19e3351e4",
+      "main_blob": null,
+      "published_blob": null,
+      "main": "missing",
+      "published": "missing"
+    },
+    {
+      "path": "docs/research/ground-truth-corpus/07-handoff-and-reproduction.md",
+      "head_blob": "75101ed7e2585d228bbd226c7ac6b1d4e107570d",
+      "main_blob": null,
+      "published_blob": null,
+      "main": "missing",
+      "published": "missing"
+    },
+    {
+      "path": "docs/research/ground-truth-corpus/README.md",
+      "head_blob": "ff3a4209405a4dd5947f70c4d11e57b2d01eca10",
+      "main_blob": null,
+      "published_blob": null,
+      "main": "missing",
+      "published": "missing"
+    },
+    {
+      "path": "docs/research/ground-truth-corpus/results/acceptance-mingw-gcc-o2.json",
+      "head_blob": "c34914f1b4bf0287715b3157e97007d4abd28900",
+      "main_blob": null,
+      "published_blob": null,
+      "main": "missing",
+      "published": "missing"
+    },
+    {
+      "path": "docs/research/ground-truth-corpus/results/acceptance.json",
+      "head_blob": "de323f7e24ed581618665905d145fc2d5a3a96b8",
+      "main_blob": null,
+      "published_blob": null,
+      "main": "missing",
+      "published": "missing"
+    },
+    {
+      "path": "docs/research/ground-truth-corpus/results/build-matrix-clang-retry.json",
+      "head_blob": "4bc89531de565a7104c920314db86bb9ae149ac4",
+      "main_blob": null,
+      "published_blob": null,
+      "main": "missing",
+      "published": "missing"
+    },
+    {
+      "path": "docs/research/ground-truth-corpus/results/build-matrix-final.json",
+      "head_blob": "fcd543cd1d2bf0253b6c5810ca9c9f1ce0c956e3",
+      "main_blob": null,
+      "published_blob": null,
+      "main": "missing",
+      "published": "missing"
+    },
+    {
+      "path": "docs/research/ground-truth-corpus/results/build-matrix-provenance-rebuild.json",
+      "head_blob": "717ac371fca29c621521ea246d8866ed31eb0e15",
+      "main_blob": null,
+      "published_blob": null,
+      "main": "missing",
+      "published": "missing"
+    },
+    {
+      "path": "docs/research/ground-truth-corpus/results/build-matrix.json",
+      "head_blob": "c70902c9c3d014eb9fb9e7077174ffb00d36d7e0",
+      "main_blob": null,
+      "published_blob": null,
+      "main": "missing",
+      "published": "missing"
+    },
+    {
+      "path": "docs/research/ground-truth-corpus/results/build-receipts/02eff01ce5e5cdd81959c059146e30bc0323e77ba50360973ff9baa030940163.json",
+      "head_blob": "8412691c7061c6ae64c9e8160ed2f306cdb1a019",
+      "main_blob": null,
+      "published_blob": null,
+      "main": "missing",
+      "published": "missing"
+    },
+    {
+      "path": "docs/research/ground-truth-corpus/results/build-receipts/06ad67324fc1ac2a00abeb450dd77aa0ae0698846874ce37c5faf83ae0675963.json",
+      "head_blob": "9bad91c748742da6b33111e96c30fca2500ff2d7",
+      "main_blob": null,
+      "published_blob": null,
+      "main": "missing",
+      "published": "missing"
+    },
+    {
+      "path": "docs/research/ground-truth-corpus/results/build-receipts/0734e959d5d692588d9a457fcf317d521cb1fce32755f76320a226f956c41633.json",
+      "head_blob": "d4c16cc468d60ab7862867e15676560e69d3e0db",
+      "main_blob": null,
+      "published_blob": null,
+      "main": "missing",
+      "published": "missing"
+    },
+    {
+      "path": "docs/research/ground-truth-corpus/results/build-receipts/12a6741d9d066226fd3c183cbb1464fabd32e9d28d472da4b5026c741f37deea.json",
+      "head_blob": "11d17fa093e6a4e16c1bfaa3407cc070f6a555f8",
+      "main_blob": null,
+      "published_blob": null,
+      "main": "missing",
+      "published": "missing"
+    },
+    {
+      "path": "docs/research/ground-truth-corpus/results/build-receipts/13cdbb54e8a80806a9d6dffc1441f276eac081de526514c994a727e776d57e0c.json",
+      "head_blob": "d950b4f56a29666ccabddb7ea02a523ce0913ae0",
+      "main_blob": null,
+      "published_blob": null,
+      "main": "missing",
+      "published": "missing"
+    },
+    {
+      "path": "docs/research/ground-truth-corpus/results/build-receipts/15dcb4f875438ef750a9e5444230ade8cb3e3f32773d0fb80ba59304ecbf1a6f.json",
+      "head_blob": "fe7c81c1836912c2f73d39d5215135642a4e5123",
+      "main_blob": null,
+      "published_blob": null,
+      "main": "missing",
+      "published": "missing"
+    },
+    {
+      "path": "docs/research/ground-truth-corpus/results/build-receipts/3de6b5a3c207445a121e3fe38f634bfedcb7c2807ccabce80d95484a92e38837.json",
+      "head_blob": "5d2fba8bea1a2aa34355db08d34e97b545069dfa",
+      "main_blob": null,
+      "published_blob": null,
+      "main": "missing",
+      "published": "missing"
+    },
+    {
+      "path": "docs/research/ground-truth-corpus/results/build-receipts/4ba9a6212ac0e12926a531a03b52aac9f6249117572094afbaee7dc24cde10c3.json",
+      "head_blob": "9eb8bdd9a1b5a9eb0ffd67a7c613adb5abe51d86",
+      "main_blob": null,
+      "published_blob": null,
+      "main": "missing",
+      "published": "missing"
+    },
+    {
+      "path": "docs/research/ground-truth-corpus/results/build-receipts/5c823560e8c6df4df81aa5342236f81ee29308523425215e09894ed0ecb9c972.json",
+      "head_blob": "cb5acf855e3b3b5cf0edcce609baf61f47479a22",
+      "main_blob": null,
+      "published_blob": null,
+      "main": "missing",
+      "published": "missing"
+    },
+    {
+      "path": "docs/research/ground-truth-corpus/results/build-receipts/69d37677a82072776305e324104b138960eff6dd25133f1cc18a78d98e176ef5.json",
+      "head_blob": "b3b2d2d41c794ffa1af141f189f916ca2fa5813e",
+      "main_blob": null,
+      "published_blob": null,
+      "main": "missing",
+      "published": "missing"
+    },
+    {
+      "path": "docs/research/ground-truth-corpus/results/build-receipts/6c3fe6a100b42f621bac84abc40cc2e7e193fe00a8b88b2acbc698bd15d64e19.json",
+      "head_blob": "f60d2dc0dcb1bcdce759bf212e61ea4c49985c90",
+      "main_blob": null,
+      "published_blob": null,
+      "main": "missing",
+      "published": "missing"
+    },
+    {
+      "path": "docs/research/ground-truth-corpus/results/build-receipts/703e7283f1c6e6820066c44db4eb4131d30364d8a2559376fac58e9a1f56717e.json",
+      "head_blob": "7f859d1273529db697291001cb0742a6d4f0d1f2",
+      "main_blob": null,
+      "published_blob": null,
+      "main": "missing",
+      "published": "missing"
+    },
+    {
+      "path": "docs/research/ground-truth-corpus/results/build-receipts/7abf2e788123fc7e861411b206b029d02cd673c57f4150efd02bb8c29f3b230a.json",
+      "head_blob": "8ca6701602ca2010e57681576de09c8663920878",
+      "main_blob": null,
+      "published_blob": null,
+      "main": "missing",
+      "published": "missing"
+    },
+    {
+      "path": "docs/research/ground-truth-corpus/results/build-receipts/89dfb0eea80d7ca3f414cf6edea532097beb122872afe036a5a767c94e4dd20b.json",
+      "head_blob": "dfd34ad6307982f9b78a7d6815b476c4d759e123",
+      "main_blob": null,
+      "published_blob": null,
+      "main": "missing",
+      "published": "missing"
+    },
+    {
+      "path": "docs/research/ground-truth-corpus/results/build-receipts/8b503f77dd9cc006d7daa4b4ff36f8f0ab545b5db2837dd92180ae5b539fd2f0.json",
+      "head_blob": "5f31b46e8857c77c270f1bcb61a710a652888d53",
+      "main_blob": null,
+      "published_blob": null,
+      "main": "missing",
+      "published": "missing"
+    },
+    {
+      "path": "docs/research/ground-truth-corpus/results/build-receipts/8ded7733a301edef8b203f902e4f82077e3e87fe05d316a02fc0a8505f87f7b5.json",
+      "head_blob": "68135b0c698167ec609535ed4703707e24adeebe",
+      "main_blob": null,
+      "published_blob": null,
+      "main": "missing",
+      "published": "missing"
+    },
+    {
+      "path": "docs/research/ground-truth-corpus/results/build-receipts/9268a5c7bb65570279bddc216bb3760bdcaf1ee68f7b28c60b246b9e72d3149d.json",
+      "head_blob": "cd4d6fbf7bd17b8731259dad5c628d1b14a22ab0",
+      "main_blob": null,
+      "published_blob": null,
+      "main": "missing",
+      "published": "missing"
+    },
+    {
+      "path": "docs/research/ground-truth-corpus/results/build-receipts/9729d9eb340988bf3ff203001a561e36325f2525a046af499bed88e24d9333f9.json",
+      "head_blob": "3355ce5d25cb5edf6075b940f7749255a2ea7e96",
+      "main_blob": null,
+      "published_blob": null,
+      "main": "missing",
+      "published": "missing"
+    },
+    {
+      "path": "docs/research/ground-truth-corpus/results/build-receipts/a30d0f685b2d9f196a04f7e0f6c9ae709c3970d85c7aba5b28e199f2e7c792d3.json",
+      "head_blob": "26f01ba2d2376ba4f3d0912423a548b1d0713dcb",
+      "main_blob": null,
+      "published_blob": null,
+      "main": "missing",
+      "published": "missing"
+    },
+    {
+      "path": "docs/research/ground-truth-corpus/results/build-receipts/a7a9a274ecd7d0abeef324c5816db02a916eba9103eca8a4ece2786a701342d1.json",
+      "head_blob": "1951f0a9c440e84207fde54347cd36382554b566",
+      "main_blob": null,
+      "published_blob": null,
+      "main": "missing",
+      "published": "missing"
+    },
+    {
+      "path": "docs/research/ground-truth-corpus/results/build-receipts/b3123d5d7bea3c349c79e14f0d900e7f76d78c787783715ac807c8d35110335d.json",
+      "head_blob": "ad2bfbd85399a3c46167a7ab8352ab4fd8135029",
+      "main_blob": null,
+      "published_blob": null,
+      "main": "missing",
+      "published": "missing"
+    },
+    {
+      "path": "docs/research/ground-truth-corpus/results/build-receipts/b6d1f9aa9a0ba277a09b5649faad62f66f4d2a53a2fc0fb6ed21dcd05cdf68e8.json",
+      "head_blob": "8c96f13ba03629d9192c4d1f2d0ca405ef0ed57b",
+      "main_blob": null,
+      "published_blob": null,
+      "main": "missing",
+      "published": "missing"
+    },
+    {
+      "path": "docs/research/ground-truth-corpus/results/build-receipts/ba1261e9552f7544881888577df4f80c19ccf9343d76c555a6e90dadb277566d.json",
+      "head_blob": "c22471013b380abe5449a09d33f726ead9669652",
+      "main_blob": null,
+      "published_blob": null,
+      "main": "missing",
+      "published": "missing"
+    },
+    {
+      "path": "docs/research/ground-truth-corpus/results/build-receipts/c3d8a1379c3c2e2b72342fa2c730ad8b64e246b0f203fb65250499a8e6ec44d5.json",
+      "head_blob": "c3f7f425b341ed4fc64fbc748b5f5a67143cbb60",
+      "main_blob": null,
+      "published_blob": null,
+      "main": "missing",
+      "published": "missing"
+    },
+    {
+      "path": "docs/research/ground-truth-corpus/results/build-receipts/c7142e5c918973f18c9f12b0948b2f03e311ae74317d3c10dae086203bd54dab.json",
+      "head_blob": "18bae17211a24a89517f6b9c35258a2d699bdbf1",
+      "main_blob": null,
+      "published_blob": null,
+      "main": "missing",
+      "published": "missing"
+    },
+    {
+      "path": "docs/research/ground-truth-corpus/results/build-receipts/c9decd8c800fbfe12a4614d95a1385d322a2ef948ce9657cd938ba751d94a25e.json",
+      "head_blob": "3cedaf51351a95aaf710d60d45c17e9875411f76",
+      "main_blob": null,
+      "published_blob": null,
+      "main": "missing",
+      "published": "missing"
+    },
+    {
+      "path": "docs/research/ground-truth-corpus/results/build-receipts/cb7653eb2522abeba4645d21a96f44c9cbb55c7e8a94376e96dfb89de1ae1e84.json",
+      "head_blob": "5a0d778039946337bbc2786daa2f14dafa770285",
+      "main_blob": null,
+      "published_blob": null,
+      "main": "missing",
+      "published": "missing"
+    },
+    {
+      "path": "docs/research/ground-truth-corpus/results/build-receipts/d53253c186ba501641809b3c6ecdb7a7b6c46124bcb5ee834b28ff79f33ab4fd.json",
+      "head_blob": "6edf5bf7b04fb40adc8d054acdd462ed1ed4da38",
+      "main_blob": null,
+      "published_blob": null,
+      "main": "missing",
+      "published": "missing"
+    },
+    {
+      "path": "docs/research/ground-truth-corpus/results/build-receipts/d6568fb47762a1c5994f72262863d7a957c77bde657aad4162ada09a7b76c719.json",
+      "head_blob": "71d791675243262c164c7b72978e832633e370af",
+      "main_blob": null,
+      "published_blob": null,
+      "main": "missing",
+      "published": "missing"
+    },
+    {
+      "path": "docs/research/ground-truth-corpus/results/build-receipts/ed1030bd40fdcc5896149aa6308ea8c030f690dd756c5b73fc5911c9bf21df32.json",
+      "head_blob": "82a0ac8b2235736af8a063ad9b442d46547778da",
+      "main_blob": null,
+      "published_blob": null,
+      "main": "missing",
+      "published": "missing"
+    },
+    {
+      "path": "docs/research/ground-truth-corpus/results/build-receipts/ef162c385937b849faa0f4bd7669df663f57d11c8fd068184816d14b524b3f1a.json",
+      "head_blob": "99226a161d2b0ae323df5051d02c5784df105c34",
+      "main_blob": null,
+      "published_blob": null,
+      "main": "missing",
+      "published": "missing"
+    },
+    {
+      "path": "docs/research/ground-truth-corpus/results/build-receipts/f1622c4c9b3fec287511b110ba78cd70a6cf44692a50fa9a0e1adc7a787e43c8.json",
+      "head_blob": "6ed7a7f54a86d42609a62e054844a4a7702bde69",
+      "main_blob": null,
+      "published_blob": null,
+      "main": "missing",
+      "published": "missing"
+    },
+    {
+      "path": "docs/research/ground-truth-corpus/results/build-receipts/f24e95f1e4b070060659a02aff595968de0b75e0713c237170cc90044f1fa979.json",
+      "head_blob": "f5c4113178f4ea7f7dff5075eb1c028f92506cd3",
+      "main_blob": null,
+      "published_blob": null,
+      "main": "missing",
+      "published": "missing"
+    },
+    {
+      "path": "docs/research/ground-truth-corpus/results/build-receipts/f4facea3fd4fa5d08ea9223d917be3cb15e0f311c5afa6a7ab93bfa7dac6250b.json",
+      "head_blob": "a6ffcd0e0e478ad602166c80bbd43c09999144db",
+      "main_blob": null,
+      "published_blob": null,
+      "main": "missing",
+      "published": "missing"
+    },
+    {
+      "path": "docs/research/ground-truth-corpus/results/cjson-acceptance.json",
+      "head_blob": "de3e6a9301f3483008250d7b5dac579b0dbb951e",
+      "main_blob": null,
+      "published_blob": null,
+      "main": "missing",
+      "published": "missing"
+    },
+    {
+      "path": "docs/research/ground-truth-corpus/results/cjson-review.md",
+      "head_blob": "abec204b79b0bc0c02b65be538fee8904121ddf0",
+      "main_blob": null,
+      "published_blob": null,
+      "main": "missing",
+      "published": "missing"
+    },
+    {
+      "path": "docs/research/ground-truth-corpus/results/coderabbit-regressions.log",
+      "head_blob": "b6fa2864b3835c72a33dfdc6be90b7893e98d913",
+      "main_blob": null,
+      "published_blob": null,
+      "main": "missing",
+      "published": "missing"
+    },
+    {
+      "path": "docs/research/ground-truth-corpus/results/coderabbit-research-build-green.log",
+      "head_blob": "2f719022652506be3493d81c28f9b6deec80aadd",
+      "main_blob": null,
+      "published_blob": null,
+      "main": "missing",
+      "published": "missing"
+    },
+    {
+      "path": "docs/research/ground-truth-corpus/results/coderabbit-research-build-integration.log",
+      "head_blob": "f9f9dbc9bbd7d606d35b5888b6ea33d311ef37a4",
+      "main_blob": null,
+      "published_blob": null,
+      "main": "missing",
+      "published": "missing"
+    },
+    {
+      "path": "docs/research/ground-truth-corpus/results/coderabbit-research-build-red.log",
+      "head_blob": "e3a23185b9ed69ab3f2bc4c0326aa40e3a63a5b9",
+      "main_blob": null,
+      "published_blob": null,
+      "main": "missing",
+      "published": "missing"
+    },
+    {
+      "path": "docs/research/ground-truth-corpus/results/controls-and-structure.json",
+      "head_blob": "4742dda09c17de1702bf91103dfbfa66b8309981",
+      "main_blob": null,
+      "published_blob": null,
+      "main": "missing",
+      "published": "missing"
+    },
+    {
+      "path": "docs/research/ground-truth-corpus/results/controls-and-structure.md",
+      "head_blob": "da2b6fca4dbe12121795c8e08740ccd52863532f",
+      "main_blob": null,
+      "published_blob": null,
+      "main": "missing",
+      "published": "missing"
+    },
+    {
+      "path": "docs/research/ground-truth-corpus/results/environment.json",
+      "head_blob": "6436cc08a5c49f3df1064659abe1c5f97e2d06a6",
+      "main_blob": null,
+      "published_blob": null,
+      "main": "missing",
+      "published": "missing"
+    },
+    {
+      "path": "docs/research/ground-truth-corpus/results/external-review-followup.md",
+      "head_blob": "a58acf26541364a0149cb928d3ce774800858c2c",
+      "main_blob": null,
+      "published_blob": null,
+      "main": "missing",
+      "published": "missing"
+    },
+    {
+      "path": "docs/research/ground-truth-corpus/results/failure-analysis-addendum.md",
+      "head_blob": "f2b421b1679196346fe57376b4f11ce49ae35a95",
+      "main_blob": null,
+      "published_blob": null,
+      "main": "missing",
+      "published": "missing"
+    },
+    {
+      "path": "docs/research/ground-truth-corpus/results/final-cli-repeatability.json",
+      "head_blob": "738c1fcdbda663b0ae41784084a44a14da328d6b",
+      "main_blob": null,
+      "published_blob": null,
+      "main": "missing",
+      "published": "missing"
+    },
+    {
+      "path": "docs/research/ground-truth-corpus/results/final-integration-review.md",
+      "head_blob": "f94e342aa4f809a581357263c994aed4bee0a628",
+      "main_blob": null,
+      "published_blob": null,
+      "main": "missing",
+      "published": "missing"
+    },
+    {
+      "path": "docs/research/ground-truth-corpus/results/final-label-integrity.json",
+      "head_blob": "a3d49e18f33325db7c3d2ee0935c70424e96bfe1",
+      "main_blob": null,
+      "published_blob": null,
+      "main": "missing",
+      "published": "missing"
+    },
+    {
+      "path": "docs/research/ground-truth-corpus/results/final-partition-audit.json",
+      "head_blob": "7b817b018dfa65fd5babd211ef780337433a3955",
+      "main_blob": null,
+      "published_blob": null,
+      "main": "missing",
+      "published": "missing"
+    },
+    {
+      "path": "docs/research/ground-truth-corpus/results/final-validation.json",
+      "head_blob": "0c1021f9514a8028a11b28c95ac4ddb4f1ccd7e8",
+      "main_blob": null,
+      "published_blob": null,
+      "main": "missing",
+      "published": "missing"
+    },
+    {
+      "path": "docs/research/ground-truth-corpus/results/full-linux-pytest.log",
+      "head_blob": "52f23bebf130eba05a3942e4a2dbff8a94274520",
+      "main_blob": null,
+      "published_blob": null,
+      "main": "missing",
+      "published": "missing"
+    },
+    {
+      "path": "docs/research/ground-truth-corpus/results/hidden-receipt-reconciliation.json",
+      "head_blob": "b78d18c94ce1cd926e0497b610ce9bc1c6e27d36",
+      "main_blob": null,
+      "published_blob": null,
+      "main": "missing",
+      "published": "missing"
+    },
+    {
+      "path": "docs/research/ground-truth-corpus/results/hidden-receipt-reconciliation.md",
+      "head_blob": "34055438e6ac447f1f3093cc7b56e1452ff6962f",
+      "main_blob": null,
+      "published_blob": null,
+      "main": "missing",
+      "published": "missing"
+    },
+    {
+      "path": "docs/research/ground-truth-corpus/results/hidden-review-binding-reconciliation.json",
+      "head_blob": "bcd2a817458fa6f133280d91a0d02b7f5402af92",
+      "main_blob": null,
+      "published_blob": null,
+      "main": "missing",
+      "published": "missing"
+    },
+    {
+      "path": "docs/research/ground-truth-corpus/results/historical-labels/08939af3c162e5dee94f3abe317aa098f8672b32e601a4f75fddf19a0db82445-noise-defined-v1-msvc-free-O2-msvc-free-Os.json",
+      "head_blob": "59ccc9370e41bb8baf6b9eec046f59cfcc55a0ca",
+      "main_blob": null,
+      "published_blob": null,
+      "main": "missing",
+      "published": "missing"
+    },
+    {
+      "path": "docs/research/ground-truth-corpus/results/historical-labels/1792c140953da1e24c01e697731f3f9d3e5e0065e8358418d3f1fe1aed19e26f-aa-defined-v1-O2-rebuild.json",
+      "head_blob": "67d4caf41c2e93f4055a6fa912f153f5a615b304",
+      "main_blob": null,
+      "published_blob": null,
+      "main": "missing",
+      "published": "missing"
+    },
+    {
+      "path": "docs/research/ground-truth-corpus/results/historical-labels/a49fac036302ab463018d22c76aeb0de5bde43adb9db3ed3ac50be4b1dc9f415-noise-defined-v1-msvc-free-O0-msvc-free-O2.json",
+      "head_blob": "3c287ee304defc128e7bc9f376cea9409f357c3f",
+      "main_blob": null,
+      "published_blob": null,
+      "main": "missing",
+      "published": "missing"
+    },
+    {
+      "path": "docs/research/ground-truth-corpus/results/historical-labels/ab00e8abc4f8f62bd7cd67d4ca1e70266d77f281ce69831b5ac87812541355a9-noise-defined-v1-msvc-free-O2-mingw-gcc-O2.json",
+      "head_blob": "44b1bfac125e04e1ad3879218173da6d32cbc3dc",
+      "main_blob": null,
+      "published_blob": null,
+      "main": "missing",
+      "published": "missing"
+    },
+    {
+      "path": "docs/research/ground-truth-corpus/results/historical-labels/bce0f84260d125168b2142888547438b810abb4189d8688e1778699995025e92-aa-defined-v1-mingw-gcc-O2-rebuild.json",
+      "head_blob": "83add7c94e04ce6a44cd200a0cfd2c627926ccb9",
+      "main_blob": null,
+      "published_blob": null,
+      "main": "missing",
+      "published": "missing"
+    },
+    {
+      "path": "docs/research/ground-truth-corpus/results/implementation-review.md",
+      "head_blob": "750c4b7f59bb7ef4272dbb9ad4e9ca6c140913e6",
+      "main_blob": null,
+      "published_blob": null,
+      "main": "missing",
+      "published": "missing"
+    },
+    {
+      "path": "docs/research/ground-truth-corpus/results/integrity-gates.json",
+      "head_blob": "4fc397c4cb241d3367684cb2213ee6c1b42a363a",
+      "main_blob": null,
+      "published_blob": null,
+      "main": "missing",
+      "published": "missing"
+    },
+    {
+      "path": "docs/research/ground-truth-corpus/results/label-provenance-corrections.json",
+      "head_blob": "184d787bd58c3af8d77ad02229fa7da6f0d7977f",
+      "main_blob": null,
+      "published_blob": null,
+      "main": "missing",
+      "published": "missing"
+    },
+    {
+      "path": "docs/research/ground-truth-corpus/results/labels/aa-defined-v1-O2-rebuild.json",
+      "head_blob": "74bdbc99a55c00bcac54619e6fe378495641c6fb",
+      "main_blob": null,
+      "published_blob": null,
+      "main": "missing",
+      "published": "missing"
+    },
+    {
+      "path": "docs/research/ground-truth-corpus/results/labels/aa-defined-v1-mingw-gcc-O2-rebuild.json",
+      "head_blob": "8ac683e69b813e2d82a7854b63fd88b172aa9e4d",
+      "main_blob": null,
+      "published_blob": null,
+      "main": "missing",
+      "published": "missing"
+    },
+    {
+      "path": "docs/research/ground-truth-corpus/results/labels/cjson-1.7.16-to-1.7.17-O2.json",
+      "head_blob": "7f32e47ddc2d902096c6e9fcfa8b29d8aad320c5",
+      "main_blob": null,
+      "published_blob": null,
+      "main": "missing",
+      "published": "missing"
+    },
+    {
+      "path": "docs/research/ground-truth-corpus/results/labels/noise-defined-v1-mingw-gcc-O2-mingw-clang-O2.json",
+      "head_blob": "07775d4bc16ce28aecc0c017e24be2af849187b5",
+      "main_blob": null,
+      "published_blob": null,
+      "main": "missing",
+      "published": "missing"
+    },
+    {
+      "path": "docs/research/ground-truth-corpus/results/labels/noise-defined-v1-msvc-free-O0-msvc-free-O2.json",
+      "head_blob": "e952e99638257f63095a0b0a6ea619e86a7363a2",
+      "main_blob": null,
+      "published_blob": null,
+      "main": "missing",
+      "published": "missing"
+    },
+    {
+      "path": "docs/research/ground-truth-corpus/results/labels/noise-defined-v1-msvc-free-O2-mingw-gcc-O2.json",
+      "head_blob": "829e95f8c5d13271a40b6b28a8ddca55b9f31e35",
+      "main_blob": null,
+      "published_blob": null,
+      "main": "missing",
+      "published": "missing"
+    },
+    {
+      "path": "docs/research/ground-truth-corpus/results/labels/noise-defined-v1-msvc-free-O2-msvc-free-Os.json",
+      "head_blob": "4f3bb174dfa9c2fe607790683a65cc4fbf30e42a",
+      "main_blob": null,
+      "published_blob": null,
+      "main": "missing",
+      "published": "missing"
+    },
+    {
+      "path": "docs/research/ground-truth-corpus/results/labels/ours-r1-pilot-defined-v1-v2-O2.json",
+      "head_blob": "dfccb0c32fe478d4dff0271405f377dab881103c",
+      "main_blob": null,
+      "published_blob": null,
+      "main": "missing",
+      "published": "missing"
+    },
+    {
+      "path": "docs/research/ground-truth-corpus/results/labels/research-mingw-clang-O0-r1-pilot-defined-v1-v2.json",
+      "head_blob": "2783d244193cea09182af382ccb6dcbeddb86771",
+      "main_blob": null,
+      "published_blob": null,
+      "main": "missing",
+      "published": "missing"
+    },
+    {
+      "path": "docs/research/ground-truth-corpus/results/labels/research-mingw-clang-O1-r1-pilot-defined-v1-v2.json",
+      "head_blob": "94f40f8e6f9ad09a9b1fed1dd3490853e97f98ad",
+      "main_blob": null,
+      "published_blob": null,
+      "main": "missing",
+      "published": "missing"
+    },
+    {
+      "path": "docs/research/ground-truth-corpus/results/labels/research-mingw-clang-O2-r1-pilot-defined-v1-v2.json",
+      "head_blob": "df754baba8c80503f781b4ecfcb1444e73b70d6e",
+      "main_blob": null,
+      "published_blob": null,
+      "main": "missing",
+      "published": "missing"
+    },
+    {
+      "path": "docs/research/ground-truth-corpus/results/labels/research-mingw-clang-O3-r1-pilot-defined-v1-v2.json",
+      "head_blob": "33b614755378f687e1b86d0172a4008878ab87d5",
+      "main_blob": null,
+      "published_blob": null,
+      "main": "missing",
+      "published": "missing"
+    },
+    {
+      "path": "docs/research/ground-truth-corpus/results/labels/research-mingw-clang-Os-r1-pilot-defined-v1-v2.json",
+      "head_blob": "4c5c711af985d3eb835866353f7fc87b28044f06",
+      "main_blob": null,
+      "published_blob": null,
+      "main": "missing",
+      "published": "missing"
+    },
+    {
+      "path": "docs/research/ground-truth-corpus/results/labels/research-mingw-gcc-O0-r1-pilot-defined-v1-v2.json",
+      "head_blob": "641137f6c3c1e951b08759b04a86402f167ae1da",
+      "main_blob": null,
+      "published_blob": null,
+      "main": "missing",
+      "published": "missing"
+    },
+    {
+      "path": "docs/research/ground-truth-corpus/results/labels/research-mingw-gcc-O1-r1-pilot-defined-v1-v2.json",
+      "head_blob": "140a9a804cb812d264aeb5044295b5062310d36f",
+      "main_blob": null,
+      "published_blob": null,
+      "main": "missing",
+      "published": "missing"
+    },
+    {
+      "path": "docs/research/ground-truth-corpus/results/labels/research-mingw-gcc-O2-r1-pilot-defined-v1-v2.json",
+      "head_blob": "b8ea0fd5d5db97bf1e66a897d3f5aa9db124b46f",
+      "main_blob": null,
+      "published_blob": null,
+      "main": "missing",
+      "published": "missing"
+    },
+    {
+      "path": "docs/research/ground-truth-corpus/results/labels/research-mingw-gcc-O3-r1-pilot-defined-v1-v2.json",
+      "head_blob": "a70bbc33f4da1befa9cf8479e05b77a70b90f3ac",
+      "main_blob": null,
+      "published_blob": null,
+      "main": "missing",
+      "published": "missing"
+    },
+    {
+      "path": "docs/research/ground-truth-corpus/results/labels/research-mingw-gcc-Os-r1-pilot-defined-v1-v2.json",
+      "head_blob": "1f365f00e2ffeb19b8c599adbfeb29e70b9e3d99",
+      "main_blob": null,
+      "published_blob": null,
+      "main": "missing",
+      "published": "missing"
+    },
+    {
+      "path": "docs/research/ground-truth-corpus/results/labels/research-msvc-free-O0-r1-pilot-defined-v1-v2.json",
+      "head_blob": "da08e176db28793477fd4c54e07a47f451b01676",
+      "main_blob": null,
+      "published_blob": null,
+      "main": "missing",
+      "published": "missing"
+    },
+    {
+      "path": "docs/research/ground-truth-corpus/results/labels/research-msvc-free-O1-r1-pilot-defined-v1-v2.json",
+      "head_blob": "eb687bd4bb1ea577058dd9bb9647c71965229e07",
+      "main_blob": null,
+      "published_blob": null,
+      "main": "missing",
+      "published": "missing"
+    },
+    {
+      "path": "docs/research/ground-truth-corpus/results/labels/research-msvc-free-O2-r1-pilot-defined-v1-v2.json",
+      "head_blob": "6c7f57e3968ae3cce6a9ffc8afde978cc42e9792",
+      "main_blob": null,
+      "published_blob": null,
+      "main": "missing",
+      "published": "missing"
+    },
+    {
+      "path": "docs/research/ground-truth-corpus/results/labels/research-msvc-free-O3-r1-pilot-defined-v1-v2.json",
+      "head_blob": "695f544e4264c8c99f83e7544f5bbed9cb6e33c3",
+      "main_blob": null,
+      "published_blob": null,
+      "main": "missing",
+      "published": "missing"
+    },
+    {
+      "path": "docs/research/ground-truth-corpus/results/labels/research-msvc-free-Os-r1-pilot-defined-v1-v2.json",
+      "head_blob": "d1e15e71ea375c5145e20a1e99e99c8d89e0df54",
+      "main_blob": null,
+      "published_blob": null,
+      "main": "missing",
+      "published": "missing"
+    },
+    {
+      "path": "docs/research/ground-truth-corpus/results/matrix-provenance-validation.json",
+      "head_blob": "000d8eeace77bc150012a4a5d50ae63b953b2ee6",
+      "main_blob": null,
+      "published_blob": null,
+      "main": "missing",
+      "published": "missing"
+    },
+    {
+      "path": "docs/research/ground-truth-corpus/results/native-aa-control.json",
+      "head_blob": "aa0bbf48e6179df6151f4b7260ac413907291a04",
+      "main_blob": null,
+      "published_blob": null,
+      "main": "missing",
+      "published": "missing"
+    },
+    {
+      "path": "docs/research/ground-truth-corpus/results/native-aa-control.md",
+      "head_blob": "82a1ca148b1f8c74a8141e55ffcaada89900f2dc",
+      "main_blob": null,
+      "published_blob": null,
+      "main": "missing",
+      "published": "missing"
+    },
+    {
+      "path": "docs/research/ground-truth-corpus/results/native-aa-provenance-correction.json",
+      "head_blob": "c6f9aad7fcc812931f5286b4f561add07f66156b",
+      "main_blob": null,
+      "published_blob": null,
+      "main": "missing",
+      "published": "missing"
+    },
+    {
+      "path": "docs/research/ground-truth-corpus/results/native-aa-provenance-correction.md",
+      "head_blob": "c70cf6cf604f3b357665cfd38e558511a3f44eff",
+      "main_blob": null,
+      "published_blob": null,
+      "main": "missing",
+      "published": "missing"
+    },
+    {
+      "path": "docs/research/ground-truth-corpus/results/native-aa-recovered-build-receipts/89dfb0eea80d7ca3f414cf6edea532097beb122872afe036a5a767c94e4dd20b.json",
+      "head_blob": "dfd34ad6307982f9b78a7d6815b476c4d759e123",
+      "main_blob": null,
+      "published_blob": null,
+      "main": "missing",
+      "published": "missing"
+    },
+    {
+      "path": "docs/research/ground-truth-corpus/results/native-aa-recovered-build-receipts/950a443ec7bba59fdd6098517755b9aaa69a56a584c583cd9609a5943916d095.json",
+      "head_blob": "1d49e6a07bcb63b85f8098a0305c4bd9d3c9bb9b",
+      "main_blob": null,
+      "published_blob": null,
+      "main": "missing",
+      "published": "missing"
+    },
+    {
+      "path": "docs/research/ground-truth-corpus/results/native-aa-recovered-build-receipts/a30d0f685b2d9f196a04f7e0f6c9ae709c3970d85c7aba5b28e199f2e7c792d3.json",
+      "head_blob": "26f01ba2d2376ba4f3d0912423a548b1d0713dcb",
+      "main_blob": null,
+      "published_blob": null,
+      "main": "missing",
+      "published": "missing"
+    },
+    {
+      "path": "docs/research/ground-truth-corpus/results/native-aa-recovered-build-receipts/d6568fb47762a1c5994f72262863d7a957c77bde657aad4162ada09a7b76c719.json",
+      "head_blob": "71d791675243262c164c7b72978e832633e370af",
+      "main_blob": null,
+      "published_blob": null,
+      "main": "missing",
+      "published": "missing"
+    },
+    {
+      "path": "docs/research/ground-truth-corpus/results/native-aa-recovered-build-receipts/d88845cbf96c21820a2f66b76ad5149d921e2a57cf4a976b2f2752338bada060.json",
+      "head_blob": "598c67c55b384a23a16d32338a4ac303798e31cb",
+      "main_blob": null,
+      "published_blob": null,
+      "main": "missing",
+      "published": "missing"
+    },
+    {
+      "path": "docs/research/ground-truth-corpus/results/output-safety-review.md",
+      "head_blob": "0ebd3fa313a64a5733a6928113d98c69256ea623",
+      "main_blob": null,
+      "published_blob": null,
+      "main": "missing",
+      "published": "missing"
+    },
+    {
+      "path": "docs/research/ground-truth-corpus/results/partition-audit.json",
+      "head_blob": "c4e127df727baf53e43a2eed12ee52d0cdd8a565",
+      "main_blob": null,
+      "published_blob": null,
+      "main": "missing",
+      "published": "missing"
+    },
+    {
+      "path": "docs/research/ground-truth-corpus/results/per-function-observations.json",
+      "head_blob": "def39564841e8a87ebc3507dca26f6c1d547ed06",
+      "main_blob": null,
+      "published_blob": null,
+      "main": "missing",
+      "published": "missing"
+    },
+    {
+      "path": "docs/research/ground-truth-corpus/results/pilot-cjson-o2.json",
+      "head_blob": "86e8a5fa07c25e3c69683792c1088911697eb9a8",
+      "main_blob": null,
+      "published_blob": null,
+      "main": "missing",
+      "published": "missing"
+    },
+    {
+      "path": "docs/research/ground-truth-corpus/results/pilot-cjson-reviewed.json",
+      "head_blob": "eb633e84c207b6a2ed3a46afb4ef97e19d18abf1",
+      "main_blob": null,
+      "published_blob": null,
+      "main": "missing",
+      "published": "missing"
+    },
+    {
+      "path": "docs/research/ground-truth-corpus/results/pilot-compiler-noise.json",
+      "head_blob": "f169ad1294e6883e4361e9824dc86ecbee775341",
+      "main_blob": null,
+      "published_blob": null,
+      "main": "missing",
+      "published": "missing"
+    },
+    {
+      "path": "docs/research/ground-truth-corpus/results/pilot-mingw-gcc-o2-final-cli.json",
+      "head_blob": "91a0a8d94b837f31b8b20aabbc095b114f732663",
+      "main_blob": null,
+      "published_blob": null,
+      "main": "missing",
+      "published": "missing"
+    },
+    {
+      "path": "docs/research/ground-truth-corpus/results/pilot-mingw-gcc-o2-profiled.json",
+      "head_blob": "14854575bd2a8fe8cb02d83384630ac3a430a8c9",
+      "main_blob": null,
+      "published_blob": null,
+      "main": "missing",
+      "published": "missing"
+    },
+    {
+      "path": "docs/research/ground-truth-corpus/results/pilot-mingw-gcc-o2-repeat.json",
+      "head_blob": "8bd23c63d46189767a1961fb366d2678186259b7",
+      "main_blob": null,
+      "published_blob": null,
+      "main": "missing",
+      "published": "missing"
+    },
+    {
+      "path": "docs/research/ground-truth-corpus/results/pilot-mingw-gcc-o2.json",
+      "head_blob": "196509e0c0bb0fedcad8ddbd35956bf9304d1e64",
+      "main_blob": null,
+      "published_blob": null,
+      "main": "missing",
+      "published": "missing"
+    },
+    {
+      "path": "docs/research/ground-truth-corpus/results/pilot-msvc-free-o2-reviewed-replay.json",
+      "head_blob": "a97709fc8fc9a41520f23b144ba23148ac4bd3e3",
+      "main_blob": null,
+      "published_blob": null,
+      "main": "missing",
+      "published": "missing"
+    },
+    {
+      "path": "docs/research/ground-truth-corpus/results/pilot-msvc-free-o2.json",
+      "head_blob": "0d487487fa119966e94ee1b9dbeee3ba08b12bff",
+      "main_blob": null,
+      "published_blob": null,
+      "main": "missing",
+      "published": "missing"
+    },
+    {
+      "path": "docs/research/ground-truth-corpus/results/profiled-resources.json",
+      "head_blob": "8206d8080ffd71f3dbb4581f0834b14859a3e965",
+      "main_blob": null,
+      "published_blob": null,
+      "main": "missing",
+      "published": "missing"
+    },
+    {
+      "path": "docs/research/ground-truth-corpus/results/repeatability.json",
+      "head_blob": "6ce4e55557b24dfde088ce0c23d74f9ba5a015b2",
+      "main_blob": null,
+      "published_blob": null,
+      "main": "missing",
+      "published": "missing"
+    },
+    {
+      "path": "docs/research/ground-truth-corpus/results/rzdiff-hidden-diagnostic.json",
+      "head_blob": "530879137ce1c0237f2c5e3d0337ee8f9b721f0d",
+      "main_blob": null,
+      "published_blob": null,
+      "main": "missing",
+      "published": "missing"
+    },
+    {
+      "path": "docs/research/ground-truth-corpus/results/sonar-checkpoint-0271-annotation.json",
+      "head_blob": "cb07d166431d9c484599cd6e23d4004d9c355f3d",
+      "main_blob": null,
+      "published_blob": null,
+      "main": "missing",
+      "published": "missing"
+    },
+    {
+      "path": "docs/research/ground-truth-corpus/results/source-and-binary-review.md",
+      "head_blob": "c7c3f455d472f1d0c9d3bbe575cf3310f5168d19",
+      "main_blob": null,
+      "published_blob": null,
+      "main": "missing",
+      "published": "missing"
+    },
+    {
+      "path": "docs/research/ground-truth-corpus/results/source-fetch-receipts.json",
+      "head_blob": "c430133556363beec22f3391ea30f76689fc11dc",
+      "main_blob": null,
+      "published_blob": null,
+      "main": "missing",
+      "published": "missing"
+    },
+    {
+      "path": "docs/research/ground-truth-corpus/results/suite-endpoint-red-green.json",
+      "head_blob": "77301b06d88aa9bf4b91dadd07a962db324fa2f1",
+      "main_blob": null,
+      "published_blob": null,
+      "main": "missing",
+      "published": "missing"
+    },
+    {
+      "path": "docs/specs/known-answer-corpus.md",
+      "head_blob": "ea296860cca1a918f0ce4d83b2bb9859ce6aa6b4",
+      "main_blob": "03a297ce7bb9f59af641f96f471f96c040d40890",
+      "published_blob": "bd247524c0a7a9cca52df926978054e2dd15ba60",
+      "main": "different",
+      "published": "different"
+    },
+    {
+      "path": "tasks/todo.md",
+      "head_blob": "7e0cc4f1cb516a6a4874b4a74591d958cf392036",
+      "main_blob": "72552207db2bc02d111e2766296e7358b1c1cc16",
+      "published_blob": "fcdc72e5a2a1adf387ece49731df400c9bd1ed76",
+      "main": "different",
+      "published": "different"
+    },
+    {
+      "path": "tests/test_binexport_isolation.py",
+      "head_blob": "f3bfa55904e1fa926d60e2e9afc7b64c1f239380",
+      "main_blob": "1be37eac00c3f4433fa9ca79119359a3c7dd30a6",
+      "published_blob": "1be37eac00c3f4433fa9ca79119359a3c7dd30a6",
+      "main": "different",
+      "published": "different"
+    },
+    {
+      "path": "tests/test_tier_r_build_receipts_r1.py",
+      "head_blob": "5d88eb4e779a45a563c3a2f8d446adbc74059dd3",
+      "main_blob": null,
+      "published_blob": null,
+      "main": "missing",
+      "published": "missing"
+    },
+    {
+      "path": "tests/test_tier_r_label_promotion_r1.py",
+      "head_blob": "4f12f0685d68112dac5841ac0f1696fe4b522825",
+      "main_blob": null,
+      "published_blob": null,
+      "main": "missing",
+      "published": "missing"
+    },
+    {
+      "path": "tests/test_tier_r_receipt_parent_race.py",
+      "head_blob": "2709c69391791e62ee3ef339e8f2c6fd2a07a6d1",
+      "main_blob": null,
+      "published_blob": null,
+      "main": "missing",
+      "published": "missing"
+    },
+    {
+      "path": "tests/test_tier_r_research_audit.py",
+      "head_blob": "7fa15b951b008541dbc0fa18e8b07d2e111ea66d",
+      "main_blob": null,
+      "published_blob": null,
+      "main": "missing",
+      "published": "missing"
+    },
+    {
+      "path": "tests/test_tier_r_research_build.py",
+      "head_blob": "fa0926f4c589ce5c2a626e1cdb2737a142c57ac3",
+      "main_blob": null,
+      "published_blob": null,
+      "main": "missing",
+      "published": "missing"
+    },
+    {
+      "path": "tests/test_tier_r_research_observers.py",
+      "head_blob": "f7c306f2df077f51a6fb023f9e1b3e27a7d50506",
+      "main_blob": null,
+      "published_blob": null,
+      "main": "missing",
+      "published": "missing"
+    },
+    {
+      "path": "tests/test_tier_r_research_pilot.py",
+      "head_blob": "b378e2e1ca8d4bb47c2d5530066aa92198238551",
+      "main_blob": null,
+      "published_blob": null,
+      "main": "missing",
+      "published": "missing"
+    },
+    {
+      "path": "tests/test_tier_r_session_provenance_r1.py",
+      "head_blob": "e626d36832773f3ebac1b6903bfadfbced5744e2",
+      "main_blob": null,
+      "published_blob": null,
+      "main": "missing",
+      "published": "missing"
+    },
+    {
+      "path": "tests/test_unified_live_pairs_r1.py",
+      "head_blob": "30e915793b8ef8d0661792c5cb2896499e9e4c46",
+      "main_blob": null,
+      "published_blob": "e74148116d943756c82a6e08c7071b8b5d57ec72",
+      "main": "missing",
+      "published": "different"
+    },
+    {
+      "path": "tools/calibration/tier_r/build.py",
+      "head_blob": "1fcac0ff2acf713def95c3bba7e9ef4b27f41320",
+      "main_blob": "50a3ea05257b058c937f3b353faeedc2b9f3a5c3",
+      "published_blob": "50a3ea05257b058c937f3b353faeedc2b9f3a5c3",
+      "main": "different",
+      "published": "different"
+    },
+    {
+      "path": "tools/calibration/tier_r/factory.py",
+      "head_blob": "61e08c41e977314c369c0e5e7077098c7696d417",
+      "main_blob": "02b06820cd888dc66850f7f1cdc93aace7b7abcc",
+      "published_blob": "02b06820cd888dc66850f7f1cdc93aace7b7abcc",
+      "main": "different",
+      "published": "different"
+    },
+    {
+      "path": "tools/calibration/tier_r/labeler.py",
+      "head_blob": "d6983d035783c5f99aba75783f2964c8c99b2402",
+      "main_blob": "1bf892957a605186df8f38b56d6fd9387d447f81",
+      "published_blob": "1bf892957a605186df8f38b56d6fd9387d447f81",
+      "main": "different",
+      "published": "different"
+    },
+    {
+      "path": "tools/calibration/tier_r/receipts.py",
+      "head_blob": "be26bfa337b2d3cae3e6f6cd4b8fdbbb2517b54c",
+      "main_blob": null,
+      "published_blob": null,
+      "main": "missing",
+      "published": "missing"
+    },
+    {
+      "path": "tools/calibration/tier_r/research_audit.py",
+      "head_blob": "d3557898bea65af152bee3dd7cbe1c74e055f6d4",
+      "main_blob": null,
+      "published_blob": null,
+      "main": "missing",
+      "published": "missing"
+    },
+    {
+      "path": "tools/calibration/tier_r/research_build.py",
+      "head_blob": "3e378921ecab3ae68ca7a90345ff650d3cf02930",
+      "main_blob": null,
+      "published_blob": null,
+      "main": "missing",
+      "published": "missing"
+    },
+    {
+      "path": "tools/calibration/tier_r/research_observers.py",
+      "head_blob": "2f9ba4cc82f3e3a1783cca23cc9e692d30f30f3b",
+      "main_blob": null,
+      "published_blob": null,
+      "main": "missing",
+      "published": "missing"
+    },
+    {
+      "path": "tools/calibration/tier_r/research_pilot.py",
+      "head_blob": "16026f4e8c1f7540a885b610861c77587edf03fd",
+      "main_blob": null,
+      "published_blob": null,
+      "main": "missing",
+      "published": "missing"
+    },
+    {
+      "path": "tools/unified/live_pairs.py",
+      "head_blob": "c0c4d1ffa43b16b60ff1375dce30a9f3e478bacd",
+      "main_blob": "57cd4804998e62cd327e91574cfadc3b3fcb6e00",
+      "published_blob": "5dbb45630c08f9639a27d4f5517570b6af48b070",
+      "main": "different",
+      "published": "different"
+    }
+  ],
+  "latest_counts": {
+    "main": {
+      "different": 10,
+      "missing": 146
+    },
+    "published": {
+      "identical": 1,
+      "missing": 145,
+      "different": 10
+    }
+  },
+  "evidence": {
+    "remote_parent_145": [
+      "04bd023df566f43939296f7df1766e46186e7fff"
+    ],
+    "remote_parent_150": [
+      "8c9eafc79b007a963453d8edf6cb40c804c9bc3d"
+    ],
+    "github_tree_results_complete": {
+      "main": true,
+      "published": true
+    },
+    "actual_pr128_files_received": 154,
+    "pr128_source_files_read": [
+      {
+        "path": "tools/calibration/tier_r/build.py",
+        "sha": "1fcac0ff2acf713def95c3bba7e9ef4b27f41320"
+      },
+      {
+        "path": "tools/calibration/tier_r/factory.py",
+        "sha": "61e08c41e977314c369c0e5e7077098c7696d417"
+      },
+      {
+        "path": "tools/calibration/tier_r/labeler.py",
+        "sha": "d6983d035783c5f99aba75783f2964c8c99b2402"
+      },
+      {
+        "path": "tools/unified/live_pairs.py",
+        "sha": "c0c4d1ffa43b16b60ff1375dce30a9f3e478bacd"
+      },
+      {
+        "path": "tests/test_unified_live_pairs_r1.py",
+        "sha": "30e915793b8ef8d0661792c5cb2896499e9e4c46"
+      },
+      {
+        "path": "tests/test_binexport_isolation.py",
+        "sha": "f3bfa55904e1fa926d60e2e9afc7b64c1f239380"
+      }
+    ]
+  },
+  "disposition": "Preserve all three PRs and original refs. No whole-PR retirement is justified by main or #163. The remainder requires dedicated R1 integration; it is not a standalone 3/7-file receipt patch.",
+  "limitations": [
+    "No production/source edits, remote mutation, pytest, native execution, compiler, or analysis-tool execution.",
+    "File absence is exact-path/tree evidence; only the listed overlap hunks and publication deltas received source review.",
+    "Historical PR-body test/CI claims were not independently recertified on the new integration tree.",
+    "No broad R1 research, dataset, native acceptance, or cross-platform publisher correctness review was attempted."
+  ]
+}
