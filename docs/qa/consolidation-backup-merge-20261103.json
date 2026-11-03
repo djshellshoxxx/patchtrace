@@ -1,0 +1,193 @@
+{
+  "observed_at_utc": "2026-11-03 00:36:54 UTC",
+  "reviewed_head": "f1a55c4cf21ddb0dea243bd417b74f86caaed142",
+  "prior_main": "ce8c65bf41541cf6adb52289d2a530ce2817a53a",
+  "merge_commit": "1b81740612e65df55e220ff6e42a4816756ec2ad",
+  "result_tree": "61ddda8e5b94e4eaaeb13e9939625740d1124067",
+  "parents": [
+    "ce8c65bf41541cf6adb52289d2a530ce2817a53a",
+    "f1a55c4cf21ddb0dea243bd417b74f86caaed142"
+  ],
+  "checks": [
+    {
+      "id": 125637257192,
+      "name": "release",
+      "status": "completed",
+      "conclusion": "skipped"
+    },
+    {
+      "id": 125636931867,
+      "name": "linux-smoke (ubuntu-24.04)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 125636931704,
+      "name": "linux-smoke (ubuntu-22.04)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 125636296975,
+      "name": "linux-package",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 125605017025,
+      "name": "SonarCloud Code Analysis",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 125604810719,
+      "name": "CodeRabbit",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 125604668870,
+      "name": "release-gate",
+      "status": "completed",
+      "conclusion": "skipped"
+    },
+    {
+      "id": 125604667815,
+      "name": "native (patchtrace-seeded-store)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 125604667741,
+      "name": "qa (ubuntu-latest)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 125604667649,
+      "name": "qt-gate (ubuntu-latest, 20, 2/4)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 125604667626,
+      "name": "qt-gate (ubuntu-latest, 20, 3/4)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 125604667591,
+      "name": "qt-gate (windows-latest, 5, 1/1)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 125604667490,
+      "name": "native (repro-plain-ghidriff)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 125604667487,
+      "name": "native (patchtrace-seeded-store-no-adjacent-pdb)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 125604667472,
+      "name": "qt-gate (ubuntu-latest, 20, 1/4)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 125604667460,
+      "name": "native (raw-cache-hit)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 125604667447,
+      "name": "qt-gate (ubuntu-latest, 20, 4/4)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 125604667325,
+      "name": "native (patchtrace-clean)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 125604667308,
+      "name": "qa (windows-latest)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 125604593962,
+      "name": "native (raw-cache-hit)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 125604593912,
+      "name": "native (patchtrace-seeded-store-no-adjacent-pdb)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 125604593766,
+      "name": "native (repro-plain-ghidriff)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 125604593737,
+      "name": "native (patchtrace-seeded-store)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 125604593489,
+      "name": "native (patchtrace-clean)",
+      "status": "completed",
+      "conclusion": "success"
+    }
+  ],
+  "workflows": [
+    {
+      "id": 41540958529,
+      "name": "Native Windows Ghidriff acceptance",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 41540958514,
+      "name": "QA and Windows standalone",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 41540935586,
+      "name": "Native Windows Ghidriff acceptance",
+      "status": "completed",
+      "conclusion": "success"
+    }
+  ],
+  "commit_statuses": [
+    {
+      "context": "security/snyk (djshellshoxxx)",
+      "state": "success"
+    }
+  ],
+  "review_threads": [],
+  "review_states": [
+    {
+      "id": "PRR_kwDOVEPRFc8AAAABVmfvUg",
+      "state": "COMMENTED",
+      "author": "coderabbitai"
+    }
+  ],
+  "coverage_followup_local_commit": "c35dceb319e960a462748cbe17b03c05e0766255",
+  "gate_scope": "Reviewed-head gates before normal merge. Not a claim that all main or later combined-candidate acceptance is complete."
+}

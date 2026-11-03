@@ -1107,3 +1107,11 @@ Done: dock with state matrix, consent, import, changes, copy, go to CVE. Open: r
 
 - [x] Apply approved backup/UI fixes unchanged and preserve reviewed PR90 fixture handoff. Integrated backup/UI: 161 passed; final Ruff/diff and schema-render comparisons passed.
 - [ ] Root: independently review the full merges, add final inventory evidence, freeze the resulting commit/tree, run one complete suite, and obtain fresh hosted/Windows/quality/package gates. No full or native acceptance is implied by focused controls.
+
+## Consolidation continuation — 2026-11-03 UTC (November 2 Pacific)
+
+PR #162 merged normally into main at `1b81740612e65df55e220ff6e42a4816756ec2ad` after its 24 checks completed (22 success, two intended skips), full QA/package/Qt/native workflows succeeded, Snyk succeeded, and current head/base/reviews were rechecked. Its resulting tree equals the reviewed source. A separate test-only followup now covers failed second observation, preserved bytes, cache invalidation and re-verification.
+
+The proposed followup to #163 preserves the seven final #146 rules blobs and the three remaining shared #128 data-integrity behaviors, with narrow regressions and specification amendments. Authors and independent reviewers completed their bounded slices. Root combined source `a9b9d987a5f57a431a20b1895cb641b9d3f60de6` / tree `d20bede6222093d00d054b528d738468f306f257` passed **459 focused checks in 14.06s**, whole-tree Ruff and diff checks. Later receipt/tracker additions do not modify tested source. Full resulting-source and hosted gates remain pending; no old passing result is transferred.
+
+See [continuation handoff](../docs/handoff/consolidation-integrity-20261103.md) for exact author/source mapping, independent reviews, raw logs, publication parents, active ownership and open limits. Original refs remain. Sonar detail, Rizin/native qualification, broader receipt research tools, #126 KB diagnostic disposition, unset rule-proposal backend and Windows/human/final-release gates remain explicit. No compared target or live comparison engine was executed; no real/locked corpus, calibration approval or final evaluation was consumed.
