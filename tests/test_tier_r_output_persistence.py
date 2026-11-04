@@ -321,7 +321,8 @@ def test_invalid_or_foreign_document_never_publishes(tmp_path):
     assert {p.name for p in store.folder.iterdir()} == {OS.MANAGED_MARKER}
 
 
-@pytest.mark.parametrize('bad_key', [[True], [None], [[]], [{}], [1] * 17, ['x' * 513],
+@pytest.mark.parametrize('bad_key', [[True], [None], [[]], [{}], [1] * 17,
+                                    ['x' * (RS.MAX_ENGINE_NAME_CHARS + 1)],
                                    [float('nan')], [float('inf')], [float('-inf')]])
 def test_order_keys_reject_non_scalars_nonfinite_and_excessive_values(tmp_path, bad_key):
     document = RS.example_engine_output()

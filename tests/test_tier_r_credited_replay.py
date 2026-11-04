@@ -52,13 +52,13 @@ def test_comparable_prefixes_fallback_and_ties_keep_existing_ranking(keys):
 
 def test_invalid_scalar_is_rejected_before_its_json_encoding(tmp_path, monkeypatch):
     document = RS.example_engine_output()
-    document['predictions'][0]['old_name'] = 'x' * 513
+    document['predictions'][0]['old_name'] = 'x' * (RS.MAX_ENGINE_NAME_CHARS + 1)
     encoded = []
     original = OS.json.JSONEncoder.iterencode
 
     def trace(self, value, *args, **kwargs):
         for chunk in original(self, value, *args, **kwargs):
-            if 'x' * 513 in chunk:
+            if 'x' * (RS.MAX_ENGINE_NAME_CHARS + 1) in chunk:
                 encoded.append(chunk)
             yield chunk
 
@@ -69,7 +69,8 @@ def test_invalid_scalar_is_rejected_before_its_json_encoding(tmp_path, monkeypat
     assert encoded == []
 
 
-@pytest.mark.parametrize('field,value', [('old_name', 'x' * 513), ('version', 'x' * 201)])
+@pytest.mark.parametrize('field,value', [('old_name', 'x' * (RS.MAX_ENGINE_NAME_CHARS + 1)),
+                                         ('version', 'x' * (RS.MAX_ENGINE_VERSION_CHARS + 1))])
 def test_invalid_producer_bounds_fail_consistently_without_or_with_retention(tmp_path, field, value):
     answer = provider().outputs[LABELS.pair_id]
     if field == 'version':
