@@ -1,0 +1,194 @@
+{
+ "kind": "rzdiff-orientation-diagnostics/1",
+ "provenance": {
+  "branch": "codex/r2-unified-matching-research-20261030",
+  "commit": "b3ceb8b30d7a83da5e22c231c3b8c28179246816",
+  "source_file": "docs/research/unified-matching-r2/results/native-rizin.json",
+  "source_sha256": "1e0d4e91b12e39899d21c22af1b231e8b0950757fd075585566e2e9e2bc28c49",
+  "source_key": "orientation_diagnostics",
+  "note": "docs/research/unified-matching-r2/07-native-rizin-findings.md",
+  "tool": "rz-diff 0.9.1 @ linux-x86-64",
+  "tool_archive_sha256": "9102249a9f0b6319c5334a2e5cf8d9cc3f2035e1d3def027c41f6a90f647e8cf",
+  "argv": "-C -j -t functions <input0> <input1>",
+  "image_base": 6442450944,
+  "functions_are": "authored (name, entry RVA) of each input, not the Rizin recovered lists",
+  "scope": "repo-owned synthetic PEs, research data, not live acceptance"
+ },
+ "diagnostics": [
+  {
+   "id": "shift-fwd",
+   "label": "shift-forward",
+   "input0_sha256": "6c8a798f89eea64c94eab84253068ba53e53aeb4bc7c3ec785147e90d3fcae7f",
+   "input1_sha256": "dd9d2a44df52c1852adee1a0157da72aeeecbf885ab8198ea4a06bc065f3bb54",
+   "input0_functions": [
+    [
+     "entry",
+     4096
+    ],
+    [
+     "helper",
+     4112
+    ]
+   ],
+   "input1_functions": [
+    [
+     "entry",
+     4160
+    ],
+    [
+     "helper",
+     4176
+    ]
+   ],
+   "returncode": 0,
+   "stderr": "",
+   "stdout": "[{\"similarity\":1.000000,\"type\":\"COMPLETE\",\"original\":{\"name\":\"sym.synthetic.dll_helper\",\"addr\":6442455120,\"size\":18},\"modified\":{\"name\":\"sym.synthetic.dll_helper\",\"addr\":6442455056,\"size\":18}}]\n"
+  },
+  {
+   "id": "shift-rev",
+   "label": "shift-reverse",
+   "input0_sha256": "dd9d2a44df52c1852adee1a0157da72aeeecbf885ab8198ea4a06bc065f3bb54",
+   "input1_sha256": "6c8a798f89eea64c94eab84253068ba53e53aeb4bc7c3ec785147e90d3fcae7f",
+   "input0_functions": [
+    [
+     "entry",
+     4160
+    ],
+    [
+     "helper",
+     4176
+    ]
+   ],
+   "input1_functions": [
+    [
+     "entry",
+     4096
+    ],
+    [
+     "helper",
+     4112
+    ]
+   ],
+   "returncode": 0,
+   "stderr": "",
+   "stdout": "[{\"similarity\":1.000000,\"type\":\"COMPLETE\",\"original\":{\"name\":\"sym.synthetic.dll_helper\",\"addr\":6442455056,\"size\":18},\"modified\":{\"name\":\"sym.synthetic.dll_helper\",\"addr\":6442455120,\"size\":18}}]\n"
+  },
+  {
+   "id": "one-vs-two",
+   "label": "one-recovered-vs-two",
+   "input0_sha256": "6c8a798f89eea64c94eab84253068ba53e53aeb4bc7c3ec785147e90d3fcae7f",
+   "input1_sha256": "a8d5944d442535f1998183524f0b98058cf0273cef9cd59357779309c9d607ac",
+   "input0_functions": [
+    [
+     "entry",
+     4096
+    ],
+    [
+     "helper",
+     4112
+    ]
+   ],
+   "input1_functions": [
+    [
+     "entry",
+     4096
+    ],
+    [
+     "head",
+     4112
+    ],
+    [
+     "tail",
+     4128
+    ]
+   ],
+   "returncode": 0,
+   "stderr": "",
+   "stdout": "[{\"similarity\":0.611111,\"type\":\"PARTIAL\",\"original\":{\"name\":\"sym.synthetic.dll_head\",\"addr\":6442455056,\"size\":11},\"modified\":{\"name\":\"sym.synthetic.dll_helper\",\"addr\":6442455056,\"size\":18}},{\"similarity\":0.444444,\"type\":\"UNLIKE\",\"original\":{\"name\":\"sym.synthetic.dll_tail\",\"addr\":6442455072,\"size\":8},\"modified\":{\"name\":\"sym.synthetic.dll_helper\",\"addr\":6442455056,\"size\":18}}]\n"
+  },
+  {
+   "id": "two-vs-one",
+   "label": "two-recovered-vs-one",
+   "input0_sha256": "a8d5944d442535f1998183524f0b98058cf0273cef9cd59357779309c9d607ac",
+   "input1_sha256": "6c8a798f89eea64c94eab84253068ba53e53aeb4bc7c3ec785147e90d3fcae7f",
+   "input0_functions": [
+    [
+     "entry",
+     4096
+    ],
+    [
+     "head",
+     4112
+    ],
+    [
+     "tail",
+     4128
+    ]
+   ],
+   "input1_functions": [
+    [
+     "entry",
+     4096
+    ],
+    [
+     "helper",
+     4112
+    ]
+   ],
+   "returncode": 0,
+   "stderr": "",
+   "stdout": "[{\"similarity\":0.611111,\"type\":\"PARTIAL\",\"original\":{\"name\":\"sym.synthetic.dll_head\",\"addr\":6442455056,\"size\":11},\"modified\":{\"name\":\"sym.synthetic.dll_helper\",\"addr\":6442455056,\"size\":18}},{\"similarity\":0.444444,\"type\":\"UNLIKE\",\"original\":{\"name\":\"sym.synthetic.dll_tail\",\"addr\":6442455072,\"size\":8},\"modified\":{\"name\":\"sym.synthetic.dll_helper\",\"addr\":6442455056,\"size\":18}}]\n"
+  },
+  {
+   "id": "two-vs-two",
+   "label": "two-recovered-vs-two",
+   "input0_sha256": "a8d5944d442535f1998183524f0b98058cf0273cef9cd59357779309c9d607ac",
+   "input1_sha256": "a8d5944d442535f1998183524f0b98058cf0273cef9cd59357779309c9d607ac",
+   "input0_functions": [
+    [
+     "entry",
+     4096
+    ],
+    [
+     "head",
+     4112
+    ],
+    [
+     "tail",
+     4128
+    ]
+   ],
+   "input1_functions": [
+    [
+     "entry",
+     4096
+    ],
+    [
+     "head",
+     4112
+    ],
+    [
+     "tail",
+     4128
+    ]
+   ],
+   "returncode": 0,
+   "stderr": "",
+   "stdout": "[{\"similarity\":1.000000,\"type\":\"COMPLETE\",\"original\":{\"name\":\"sym.synthetic.dll_head\",\"addr\":6442455056,\"size\":11},\"modified\":{\"name\":\"sym.synthetic.dll_head\",\"addr\":6442455056,\"size\":11}},{\"similarity\":1.000000,\"type\":\"COMPLETE\",\"original\":{\"name\":\"sym.synthetic.dll_tail\",\"addr\":6442455072,\"size\":8},\"modified\":{\"name\":\"sym.synthetic.dll_tail\",\"addr\":6442455072,\"size\":8}}]\n"
+  }
+ ],
+ "no_functions": [
+  {
+   "returncode": 0,
+   "stdout": "",
+   "stderr": "ERROR: rz-diff: No functions found in file0.\n",
+   "runs": 16
+  },
+  {
+   "returncode": 0,
+   "stdout": "",
+   "stderr": "ERROR: rz-diff: No functions found in file1.\n",
+   "runs": 4
+  }
+ ]
+}

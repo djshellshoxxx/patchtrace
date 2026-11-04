@@ -1,6 +1,6 @@
 # SPEC-11: Secondary engine — Rizin rz-diff (Phase 3d)
 
-Status: developer-ready contract, 2026-10-12. Contract version `secondary-engine/1`. Verified facts: `../research/phase3/rizin.md` (rizin v0.9.1 @ c3a90e9, LGPL-3.0-only; run locally on two afd.sys builds).
+Status: developer-ready contract, 2026-10-12. Contract version `secondary-engine/1`. Verified facts: `../research/phase3/rizin.md` (rizin v0.9.1 @ c3a90e9, LGPL-3.0-only; run locally on two afd.sys builds). §8 orientation guard added 2026-11-04.
 
 ## 1. Outcome and boundaries
 
@@ -42,3 +42,36 @@ Version components use one to nine ASCII decimal digits each. Malformed or overs
 versions make the capability probe unsupported, without integer-conversion errors.
 This bounds parsing only; versions accepted by the existing ≥ 0.9.0 policy keep
 that policy and the unified adapter's untested-version limitation.
+
+## 8. Orientation guard and no-function runs (2026-11-04)
+
+R2 native diagnostics (`tests/fixtures/secondary/rzdiff-0.9.1-orientation-r2.json`, from
+research commit `b3ceb8b`, `docs/research/unified-matching-r2/07-native-rizin-findings.md`)
+showed that rz-diff 0.9.1 reverses JSON `original`/`modified` when input0 has exactly one
+recovered function, and keeps argv order otherwise. The JSON carries no bit that names the
+branch, so PatchTrace never swaps sides; it accepts only output whose shape rules the
+reversed branch out.
+
+- **Rule.** In the reversed branch every non-null `modified` is input0's single function.
+  Let N be the number of distinct non-null `modified.addr` values. When parsing succeeds
+  with at least one row and N <= 1, the run fails with `PT-SECONDARY-ORIENTATION`, kind
+  `rzdiff-orientation-unverified`, and a fixed message with no paths. N >= 2 proves the
+  argv-ordered branch. `[]` stays a clean zero-match result. Retained native data agrees:
+  one-vs-two and two-vs-one give identical address shapes (N = 1), the address-shift pair
+  gives N = 1 in both argv orders, and two-vs-two gives N = 2.
+- **Where.** `rzdiff.interpret` applies the rule, so `run_rzdiff` and
+  `RzDiffAdapter.parse` (the scheduler path) both fail closed. `parse_output` stays a pure
+  parser for tier-R, fuzz and research callers; it never decides orientation.
+- **No functions.** Exit 0 with empty stdout and a stderr line `No functions found in file0`
+  (or `file1`) is `PT-SECONDARY-INPUT`, kind `rzdiff-no-functions-older` (or `-newer`),
+  with fixed text. It is a failure, never a zero-match result (R2: 20 of 22 runs). Empty
+  stdout without that line keeps the generic "produced no output" error.
+- **Provenance.** `RzDiffAdapter` has a stateless `provenance()` hook, so the kind is
+  recorded as `EngineRun.provenance['failure_kind']` (and rz-diff timeout or cancelled rows
+  now carry `timeout`/`cancelled`, as BinDiff rows already do).
+- **Cache.** `RzDiffAdapter.cache_extra` returns `('rzdiff-orientation-guard/1',)`, so sets
+  cached before the guard are never reused. Stored sets are never rewritten and get no
+  read-side flag in this slice.
+- **Limits.** The guard sacrifices genuine one-function newer results and cannot repair the
+  reversed branch; a producer with explicit side semantics (R2 note, safe option 2) is
+  the path to recovering them. The live-rizin fixture must show the guard did not fire.

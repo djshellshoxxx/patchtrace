@@ -4,6 +4,10 @@ stdout (the JSON document) and stderr (diagnostics) are captured independently w
 `run_process(separate_streams=True)`, so diagnostics written on success cannot corrupt the
 document. Stdout that is still not strict JSON is an error rather than salvaged: a
 partially recovered match list would look complete.
+
+`interpret` also fails closed on orientation (SPEC-11 §8): rz-diff 0.9.1 reverses `original`/`modified`
+when input0 has one recovered function, so output whose shape cannot rule that branch out is refused,
+never swapped. `parse_output` stays a pure parser.
 """
 from __future__ import annotations
 
@@ -35,6 +39,11 @@ TYPES = frozenset({'COMPLETE', 'PARTIAL', 'UNLIKE'})
 ENTRY_KEYS = frozenset({'similarity', 'type', 'original', 'modified'})
 SIDE_KEYS = frozenset({'addr', 'name', 'size'})
 _VERSION = re.compile(r'^rz-diff ([0-9]{1,9})\.([0-9]{1,9})\.([0-9]{1,9})\b')
+ORIENTATION_GUARD = 'rzdiff-orientation-guard/1'  # cache identity: sets from before the guard are not reused
+ORIENTATION_MESSAGE = ('rz-diff output names fewer than two distinct newer-side functions, so its older and newer '
+                       'sides cannot be verified (rz-diff 0.9.1 reverses them when the older input has one '
+                       'recovered function); the result was not used.')
+_NO_FUNCTIONS = re.compile(r'No functions found in file([01])\b')
 
 
 def parse_version(text: str) -> tuple[str, tuple[int, int, int]] | None:
@@ -174,4 +183,12 @@ def interpret(returncode: int, output: str, stderr_tail: str, version: str, olde
         raise SecondaryError('PT-SECONDARY-LIMIT', 'rz-diff output exceeds 64 MiB')
     if '\ufffd' in output:
         raise SecondaryError('PT-SECONDARY-INPUT', 'rz-diff output is not valid UTF-8')
-    return parse_output(output, version, older_sha256, newer_sha256)
+    if not output.strip() and (found := _NO_FUNCTIONS.search(stderr_tail or '')):
+        side = ('older', 'newer')[int(found.group(1))]
+        raise SecondaryError('PT-SECONDARY-INPUT', f'rz-diff recovered no functions in the {side} artifact',
+                             kind=f'rzdiff-no-functions-{side}')
+    match_set = parse_output(output, version, older_sha256, newer_sha256)
+    newer = {match.newer_address for match in match_set.matches if match.newer_address is not None}
+    if match_set.matches and len(newer) < 2:  # in the reversed branch every `modified` is input0's one function
+        raise SecondaryError('PT-SECONDARY-ORIENTATION', ORIENTATION_MESSAGE, kind='rzdiff-orientation-unverified')
+    return match_set

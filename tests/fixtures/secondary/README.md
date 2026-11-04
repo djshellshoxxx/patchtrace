@@ -16,3 +16,9 @@ captured 2026-10-14 as uid 65534 with an empty environment; exit code 1, stderr 
 by the REAL BinDiff 8 Linux CLI (2026-10-14, via `tests/test_live_bindiff.py` end-to-end as uid 65534) from the
 SYNTHETIC pair of `tests/bindiff_live_pair.py`; `bindiff-v8-real-on-synthetic.json` holds the provenance (tool and
 package hashes, argv, input hashes). Real tool output on synthetic input: not real-driver evidence.
+`rzdiff-0.9.1-orientation-r2.json` is REAL rz-diff 0.9.1 output on repo-owned SYNTHETIC PEs: the five R2
+orientation diagnostics (id, input SHA-256s, authored function RVAs, verbatim stdout) and the two verbatim
+exit-0 empty-stdout "No functions found in file0/file1" stderr lines (16 and 4 of the 22 R2 runs), extracted
+from `docs/research/unified-matching-r2/results/native-rizin.json` (SHA-256 `1e0d4e91...8c49`, key
+`orientation_diagnostics`) on branch `codex/r2-unified-matching-research-20261030` @ `b3ceb8b`. Research data,
+not live acceptance; it backs the SPEC-11 §8 orientation guard tests (`tests/test_rzdiff_orientation_guard.py`).

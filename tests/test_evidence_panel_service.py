@@ -127,9 +127,12 @@ class FakeRz(RzDiffAdapter):
         return (sys.executable, '-c', self.code)
 
 
+# Two rows with distinct newer addresses: a single-newer shape is refused by the SPEC-11 §8 orientation guard.
 GOOD = ('import json,sys; sys.stderr.write("<b>warn</b>\\n"); print(json.dumps([{"similarity": 0.5, '
         '"type": "PARTIAL", "original": {"addr": 16, "name": "f", "size": 1}, '
-        '"modified": {"addr": 32, "name": "g", "size": 1}}]))')
+        '"modified": {"addr": 32, "name": "g", "size": 1}}, {"similarity": 0.25, '
+        '"type": "UNLIKE", "original": {"addr": 17, "name": "h", "size": 1}, '
+        '"modified": {"addr": 33, "name": "k", "size": 1}}]))')
 
 
 def run_request(tmp_path, engines=('rz-diff',)):

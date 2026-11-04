@@ -23,8 +23,11 @@ from patchtrace.secondary.registry import (
 from patchtrace.secondary.scheduler import ProjectRef, run_engines
 
 OLD_BYTES, NEW_BYTES = b'old-artifact', b'new-artifact'
+# Two rows with distinct newer addresses: a single-newer shape is refused by the SPEC-11 §8 orientation guard.
 GOOD = json.dumps([{'similarity': 0.5, 'type': 'PARTIAL', 'original': {'addr': 1, 'name': 'f', 'size': 1},
-                    'modified': {'addr': 2, 'name': 'g', 'size': 1}}])
+                    'modified': {'addr': 2, 'name': 'g', 'size': 1}},
+                   {'similarity': 0.25, 'type': 'UNLIKE', 'original': {'addr': 3, 'name': 'h', 'size': 1},
+                    'modified': {'addr': 4, 'name': 'k', 'size': 1}}])
 
 
 class PyEngine(RzDiffAdapter):

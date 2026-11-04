@@ -74,6 +74,14 @@ class RzDiffAdapter:
     def argv(self, cap: Capability, job: EngineJob) -> tuple[str, ...]:
         return rzdiff.rzdiff_argv(cap.path, job.older, job.newer)
 
+    def cache_extra(self, cap: Capability, job: EngineJob) -> tuple[str]:
+        """SPEC-11 §8: sets cached before the orientation guard are never reused (and never rewritten)."""
+        return (rzdiff.ORIENTATION_GUARD,)
+
+    def provenance(self) -> dict[str, str]:
+        """Stateless (the registry instance is shared); the scheduler adds `failure_kind` from the error."""
+        return {}
+
     def run(self, cap: Capability, job: EngineJob) -> RawResult:
         result = job.runner(list(self.argv(cap, job)), cwd=job.workdir, env=job.env, cancel=job.cancel,
                             timeout_seconds=job.deadline_seconds, log_limit=job.stdout_limit + 1,
