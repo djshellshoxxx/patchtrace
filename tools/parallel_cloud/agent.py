@@ -3,6 +3,8 @@ import argparse
 import json
 import os
 from pathlib import Path
+import re
+import subprocess
 import sys
 import urllib.request
 
@@ -45,6 +47,37 @@ def scoped_files(prefixes):
     return sorted(p for p in found if p.is_file() and not p.is_symlink() and p.resolve().is_relative_to(ROOT))
 
 
+def select_context(files, root):
+    """Keep both source and test files when their paths sort unevenly."""
+    sources = sorted(p for p in files if p.relative_to(root).parts[0] == "src")
+    tests = sorted(p for p in files if p.relative_to(root).parts[0] == "tests")
+    result = []
+    for path in sources[:4] + tests[:4]:
+        content = path.read_text(encoding="utf-8")
+        if len(content) <= 12000:
+            result.append(f"FILE {path.relative_to(root)}\n{content}")
+    return result
+
+
+def is_valid_red(process):
+    output = process.stdout + process.stderr
+    return (process.returncode == 1 and bool(re.search(r"\b[1-9][0-9]* failed\b", output))
+            and not re.search(r"\b[1-9][0-9]* errors?\b", output))
+
+
+def is_valid_green(process):
+    output = process.stdout + process.stderr
+    return (process.returncode == 0 and bool(re.search(r"\b[1-9][0-9]* passed\b", output))
+            and not re.search(r"\b[1-9][0-9]* (?:skipped|xfailed|errors?|failed)\b", output))
+
+
+def run_focused_tests(paths):
+    return subprocess.run(
+        [sys.executable, "-m", "pytest", "-q", "--disable-warnings", *paths],
+        cwd=ROOT, capture_output=True, text=True, timeout=240, check=False,
+    )
+
+
 def query_api(messages):
     req = urllib.request.Request(
         "https://api.openai.com/v1/responses",
@@ -77,7 +110,12 @@ def parse_edit(message, scope, phase):
             raise ValueError("Test phase must change tests only")
         if phase == "source" and not path.startswith("src/"):
             raise ValueError("Source phase must change source only")
+        if path in result:
+            raise ValueError("Duplicate file edit path")
         dest = ROOT / path
+        if dest.is_file() and dest.read_text(encoding="utf-8") == content:
+            raise ValueError("Unchanged file replacement")
+
         if dest.is_symlink() or not dest.is_file() or not dest.resolve().is_relative_to(ROOT):
             raise ValueError("Invalid or nonexisting file target")
         result[path] = content
@@ -91,20 +129,20 @@ def main():
     receipt = {"task": task, "model": MODEL, "budget_usd": BUDGET,
                "accounting_input_usd_per_m": INPUT_RATE,
                "accounting_output_usd_per_m": OUTPUT_RATE,
-               "accounted_cost_usd": 0.0, "attempts": [], "status": "started"}
+               "accounted_cost_usd": 0.0, "attempts": [], "status": "started",
+               "red_verified": False, "green_verified": False}
     try:
         if not 0 < BUDGET <= 25 or INPUT_RATE <= 0 or OUTPUT_RATE <= 0:
             raise ValueError("Invalid budget or price assumptions")
         scope = TASKS[task]
         files = scoped_files(scope)
-        context = []
-        for path in files[:12]:
-            data = path.read_text(encoding="utf-8")
-            if len(data) <= 16000:
-                context.append(f"FILE {path.relative_to(ROOT)}\n{data}")
-        if not context or not any(x.startswith("FILE tests/") for x in context):
-            receipt["status"] = "no_test_seam"
+        context = select_context(files, ROOT)
+        if not any(x.startswith("FILE tests/") for x in context) or not any(
+            x.startswith("FILE src/") for x in context
+        ):
+            receipt["status"] = "no_source_or_test_seam"
             return 0
+
         instructions = ("PatchTrace task: find one small, reproducible hardening/regression defect in "
                         + task + ". Respect AGENTS.md, no new scope, no network, no target binary execution. "
                         "Respond ONLY as JSON {\"files\":[{\"path\":\"existing/path.py\",\"content\":\"full UTF-8 content\"}]}. "
@@ -129,12 +167,24 @@ def main():
             for name, content in edits.items():
                 (ROOT / name).write_text(content, encoding="utf-8")
             if phase == "test":
+                changed_tests = sorted(edits)
+                red = run_focused_tests(changed_tests)
+                receipt["red_verified"] = is_valid_red(red)
+                receipt["red_exit_code"] = red.returncode
+                if not receipt["red_verified"]:
+                    raise ValueError("New regression tests did not fail as assertion failures")
                 source_context = "\n\n".join(c for c in context if not c.startswith("FILE tests/"))
                 messages = [{"role": "user", "content": (
                     "Implement the smallest source fix for the regression test you just wrote. "
                     "Do not edit tests, do not change unrelated contracts. Reply with complete-file JSON edits.\n"
                     + "\n\n".join(f"FILE {name}\n{data[:14000]}" for name, data in edits.items())
                     + "\nOriginal source:\n" + source_context)}]
+            else:
+                green = run_focused_tests(changed_tests)
+                receipt["green_verified"] = is_valid_green(green)
+                receipt["green_exit_code"] = green.returncode
+                if not receipt["green_verified"]:
+                    raise ValueError("Regression tests did not pass after source fix")
         receipt["status"] = "patch_ready_for_validation"
         return 0
     except Exception as exc:
