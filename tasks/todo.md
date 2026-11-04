@@ -945,3 +945,11 @@ Done: dock with state matrix, consent, import, changes, copy, go to CVE. Open: r
 - [x] report/2 data sources: engine evidence, advisories, build facts and leads read from stored producers (`report2/adapters.py`); unified reference uses the recorded run options; GUI export dialog wired through `ui_export_v2.py` (the `ui.py` seam budget holds); a report read path that wrote enrichment tables into `project.sqlite3` is fixed
 - [ ] report/2 `series` section: no project-scoped series record exists (N-way series live in their own folder); the section stays absent with a reason
 - [ ] Owner decision (A3 of fct): whether canon/2 treats `xRam<hex>` names and in-image address literals as data labels (05 s2.4)
+
+
+### [MC-20261104] Manual correction member completeness
+
+- [x] Reproduce partial-member filtering becoming tier-M claims/complete results; add 15 adversarial regressions and require all named members to resolve (SPEC-31/06), adapter `manual/4`.
+- [x] Focused sources/fusion/identity/wire/pipeline integration: 179 passed; whole Ruff and schema drift clean.
+- [ ] Full offscreen suite, exact-head GitHub CI and independent review; dependency PR #180 remains unmerged.
+- [ ] Native G-U1–G-U8 and Windows release acceptance remain separate; none closed by synthetic tests.
