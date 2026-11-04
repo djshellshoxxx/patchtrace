@@ -102,3 +102,15 @@ def test_input_order_is_invisible_with_groups(raw_atoms, raw_groups, rnd: random
     rnd.shuffle(a2)
     rnd.shuffle(g2)
     assert arbiter.decide(a2, g2) == base
+
+
+def test_atoms_differing_only_in_native_text_have_a_fixed_order():
+    """D-16: `set(atoms)` iteration order must not leak into `Decided.atoms` (ties are broken by `native` too)."""
+    import itertools
+    seen = set()
+    for variant in range(40):
+        atoms = [Atom(source='bindiff', step='hash matching', tier='A', cardinality='1:1', cls='E-BODY',
+                      older_rva=1, newer_rva=2, native=(('similarity', f'0.{i}{variant}'),)) for i in range(4)]
+        results = {arbiter.decide(list(p), [])[0].atoms for p in itertools.islice(itertools.permutations(atoms), 24)}
+        seen.add(len(results))
+    assert seen == {1}
