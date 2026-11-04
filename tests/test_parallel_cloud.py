@@ -21,12 +21,12 @@ def test_eight_unique_isolated_task_names():
 
 def test_scope_rejects_cross_module_changes_and_traversal():
     agent = _agent()
-    scope = agent.TASKS["diagnostics"]
-    assert agent.allowed("src/patchtrace/diagnostics.py", scope)
-    assert agent.allowed("tests/test_diagnostics_case.py", scope)
+    scope = agent.TASKS["tooltips"]
+    assert agent.allowed("src/patchtrace/tooltips.py", scope)
+    assert agent.allowed("tests/test_tooltips_case.py", scope)
     for path in ("src/patchtrace/backend.py", "tests/test_nway.py",
-                 "../tests/test_diagnostics.py", "/tests/test_diagnostics.py",
-                 "tests/../tests/test_diagnostics.py", ".github/workflows/test.yml"):
+                 "../tests/test_tooltips.py", "/tests/test_tooltips.py",
+                 "tests/../tests/test_tooltips.py", ".github/workflows/test.yml"):
         assert not agent.allowed(path, scope)
 
 
@@ -84,7 +84,7 @@ def test_receipt_requires_test_first_evidence(tmp_path, monkeypatch):
     spec.loader.exec_module(guard)
     (tmp_path / "parallel.patch").write_text("example")
     receipt = {
-        "task": "diagnostics", "status": "patch_ready_for_validation",
+        "task": "tooltips", "status": "patch_ready_for_validation",
         "accounted_cost_usd": 0.2, "budget_usd": 25,
         "attempts": [{"phase": "test"}, {"phase": "source"}],
         "red_verified": False, "green_verified": True
@@ -93,7 +93,7 @@ def test_receipt_requires_test_first_evidence(tmp_path, monkeypatch):
     import pytest
 
     with pytest.raises(ValueError, match="red/green"):
-        guard.validate_artifact("diagnostics", tmp_path)
+        guard.validate_artifact("tooltips", tmp_path)
 
 
 def test_duplicate_edit_paths_and_unchanged_files_are_refused(tmp_path, monkeypatch):
@@ -101,19 +101,19 @@ def test_duplicate_edit_paths_and_unchanged_files_are_refused(tmp_path, monkeypa
 
     agent = _agent()
     monkeypatch.setattr(agent, "ROOT", tmp_path)
-    path = tmp_path / "tests" / "test_diagnostics.py"
+    path = tmp_path / "tests" / "test_tooltips.py"
     path.parent.mkdir()
     path.write_text("x = 1\\n")
-    payload = {"files": [{"path": "tests/test_diagnostics.py", "content": "x = 2\\n"},
-                         {"path": "tests/test_diagnostics.py", "content": "x = 3\\n"}]}
+    payload = {"files": [{"path": "tests/test_tooltips.py", "content": "x = 2\\n"},
+                         {"path": "tests/test_tooltips.py", "content": "x = 3\\n"}]}
     import pytest
 
     with pytest.raises(ValueError, match="Duplicate"):
-        agent.parse_edit(json.dumps(payload), agent.TASKS["diagnostics"], "test")
+        agent.parse_edit(json.dumps(payload), agent.TASKS["tooltips"], "test")
     with pytest.raises(ValueError, match="Unchanged"):
-        agent.parse_edit(json.dumps({"files": [{"path": "tests/test_diagnostics.py",
+        agent.parse_edit(json.dumps({"files": [{"path": "tests/test_tooltips.py",
                                                 "content": "x = 1\\n"}]}),
-                         agent.TASKS["diagnostics"], "test")
+                         agent.TASKS["tooltips"], "test")
 
 
 def test_focused_test_runner_isolates_api_credentials(monkeypatch):
@@ -129,7 +129,7 @@ def test_focused_test_runner_isolates_api_credentials(monkeypatch):
         return CompletedProcess(command, 1, "1 failed", "")
 
     monkeypatch.setattr(agent.subprocess, "run", fake_run)
-    agent.run_focused_tests(["tests/test_diagnostics.py"])
+    agent.run_focused_tests(["tests/test_tooltips.py"])
     assert observed["command"][:5] == ["sudo", "-n", "-u", "nobody", "env"]
     assert "PATCHTRACE_OPENAI_API_KEY" not in observed["env"]
     assert "GH_TOKEN" not in observed["env"]
@@ -161,7 +161,7 @@ def test_publisher_rejects_forged_low_cost(tmp_path, monkeypatch):
     guard = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(guard)
     receipt = {
-        "task": "diagnostics", "status": "patch_ready_for_validation",
+        "task": "tooltips", "status": "patch_ready_for_validation",
         "red_verified": True, "green_verified": True,
         "red_exit_code": 1, "green_exit_code": 0,
         "accounted_cost_usd": 0.000001, "budget_usd": 25,
@@ -174,7 +174,7 @@ def test_publisher_rejects_forged_low_cost(tmp_path, monkeypatch):
     (tmp_path / "parallel-agent-receipt.json").write_text(json.dumps(receipt))
     (tmp_path / "parallel.patch").write_text("example")
     with pytest.raises(ValueError, match="reconcile"):
-        guard.validate_artifact("diagnostics", tmp_path)
+        guard.validate_artifact("tooltips", tmp_path)
 
 
 def test_active_pr_file_overlap_blocks_paid_work(monkeypatch):
@@ -190,11 +190,11 @@ def test_active_pr_file_overlap_blocks_paid_work(monkeypatch):
         if "/pulls?state=open" in path:
             return [{"number": 221, "head": {"ref": "other-agent-feature"}}]
         if "/pulls/221/files" in path:
-            return [{"filename": "src/patchtrace/diagnostics.py"}]
+            return [{"filename": "src/patchtrace/tooltips.py"}]
         raise AssertionError(path)
 
     monkeypatch.setattr(guard, "github_api", fake_api)
-    assert guard.check_ownership("diagnostics") is False
+    assert guard.check_ownership("tooltips") is False
     assert guard.check_ownership("runtime") is True
 
 
@@ -211,7 +211,7 @@ def test_sandboxed_test_subprocess_has_no_runner_credential_tokens(monkeypatch):
         return CompletedProcess(command, 0, "1 passed", "")
 
     monkeypatch.setattr(agent.subprocess, "run", fake_run)
-    agent.run_focused_tests(["tests/test_diagnostics.py"])
+    agent.run_focused_tests(["tests/test_tooltips.py"])
     assert set(captured["environment"]) == {"PATH"}
     assert "ACTIONS_RUNTIME_TOKEN" not in str(captured["command"])
     assert "PATCHTRACE_OPENAI_API_KEY" not in str(captured["command"])
