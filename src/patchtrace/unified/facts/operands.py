@@ -99,8 +99,7 @@ def holds_effect(view: FnView, block: int) -> bool:
 
 
 def call_target(view: FnView, index: int) -> CallTarget | None:
-    site = view.insns[index].rva
-    rows = sorted(c for c in view.calls if c.site == site)
+    rows = view.calls_at.get(view.insns[index].rva, ())
     if not rows:
         return None
     first = rows[0]

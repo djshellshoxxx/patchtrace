@@ -103,20 +103,39 @@ def _same_callee(a: CallTarget, b: CallTarget, targets: TargetMap, voter: Voter 
     return targets.import_key('older', a.value) == b.value
 
 
-def callee_leftovers(old: FnView, new: FnView, targets: TargetMap,
-                     voter: Voter | None) -> tuple[list[CallTarget], list[CallTarget]]:
-    """C4: the callees without a counterpart on the other side (empty on both sides = `equal`)."""
-    old_targets, new_targets = _targets_of(old), _targets_of(new)
-    used: set[int] = set()
-    only_old = []
-    for a in old_targets:
-        for k, b in enumerate(new_targets):
-            if k not in used and _same_callee(a, b, targets, voter):
-                used.add(k)
-                break
+def _distinct(targets: list[CallTarget]) -> list[tuple[CallTarget, int]]:
+    """Runs of equal targets of a sorted list as (target, count)."""
+    out: list[tuple[CallTarget, int]] = []
+    for target in targets:
+        if out and out[-1][0] == target:
+            out[-1] = (target, out[-1][1] + 1)
         else:
-            only_old.append(a)
-    return only_old, [b for k, b in enumerate(new_targets) if k not in used]
+            out.append((target, 1))
+    return out
+
+
+def callee_leftovers(old: FnView, new: FnView, targets: TargetMap, voter: Voter | None,
+                     budget: Budget | None = None) -> tuple[list[CallTarget], list[CallTarget]]:
+    """C4: the callees without a counterpart on the other side (empty on both sides = `equal`). Every old call takes
+    the first unused new call (both lists sorted) of a matching callee; equal targets are adjacent, so this runs over
+    the distinct targets with their multiplicities: the work grows with distinct callee pairs, never with calls."""
+    budget = budget or Budget()
+    distinct_new = _distinct(_targets_of(new))
+    remaining = [count for _, count in distinct_new]
+    only_old: list[CallTarget] = []
+    for a, count in _distinct(_targets_of(old)):
+        for k, (b, _total) in enumerate(distinct_new):
+            if not count:
+                break
+            if not remaining[k]:
+                continue
+            budget.tick()
+            if _same_callee(a, b, targets, voter):
+                taken = min(count, remaining[k])
+                remaining[k] -= taken
+                count -= taken
+        only_old.extend([a] * count)
+    return only_old, [b for (b, _total), left in zip(distinct_new, remaining, strict=True) for _ in range(left)]
 
 
 def _text_of(target: CallTarget) -> str:
@@ -274,7 +293,7 @@ class IrFacts:
         cfg = compare_cfg(old, new, alignment, self.targets, voter)
         cons = Consistency(*(a + b for a, b in zip(operands.cons.as_tuple(), cfg.cons.as_tuple(), strict=True)))
         deltas = [*operands.deltas, *cfg.deltas]
-        only_old, only_new = callee_leftovers(old, new, self.targets, voter)
+        only_old, only_new = callee_leftovers(old, new, self.targets, voter, self.budget)
         states['C4'] = 'equal' if not only_old and not only_new else 'differs'
         deltas += _call_deltas(old, new, only_old, only_new, _explained_calls(deltas))
         residue = _constant_residue(old, new, deltas)
