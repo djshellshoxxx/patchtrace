@@ -284,7 +284,7 @@ class IrFacts:
         states['C5'] = _constants_equal(old, new)
         deltas.sort(key=lambda item: severity(item[0]))
         eh = eh_state(old, new, self.targets, voter, unreadable=any(self.unreadable))
-        limits_hit = ('align-cap',) if alignment.capped else ()
+        limits_hit = (*(('align-cap',) if alignment.capped else ()), *sorted(self.targets.limits_hit))
         counts_differ = any(table_old.get(c, fo) != table_new.get(c, fn) for c in ('n_bb', 'n_edge'))
         return IrPair(states, tuple(deltas), cons.as_tuple(), eh, positional_cfg_equal(old, new), cfg.layout_ok,
                       unlocated, (tuple(only_old), tuple(only_new)), limits_hit, flags, counts_differ,

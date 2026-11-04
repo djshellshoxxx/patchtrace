@@ -50,7 +50,9 @@ def string_sha(view: FnView, index: int) -> str | None:
 
 class _Votes:
     """Distinct voters per (old datum, new datum), per class ('data' or 'fn'). Per datum only `kept + 1` voters are
-    remembered (L-40): enough to know whether anybody other than the function under judgment voted for it."""
+    remembered (L-40): enough to know whether anybody other than the function under judgment voted for it. Beyond
+    `cap_pairs` distinct pairs a new pair is dropped and both of its data are `incomplete`: a majority over the votes
+    that were kept could contradict the full one, so an incomplete datum has no consensus and no region shift."""
 
     def __init__(self, cap_pairs: int, kept: int):
         self.cap_pairs, self.remembered = cap_pairs, kept + 1
@@ -59,6 +61,8 @@ class _Votes:
         self.by_new: dict[str, dict[int, dict[int, int]]] = {'data': {}, 'fn': {}}
         self.voters_old: dict[tuple, set[Voter]] = {}
         self.voters_new: dict[tuple, set[Voter]] = {}
+        self.incomplete_old: dict[str, set[int]] = {'data': set(), 'fn': set()}
+        self.incomplete_new: dict[str, set[int]] = {'data': set(), 'fn': set()}
         self.capped = False
 
     def add(self, cls: str, t: int, u: int, voter: Voter) -> None:
@@ -66,6 +70,8 @@ class _Votes:
         if key not in self.count:
             if len(self.count) >= self.cap_pairs:
                 self.capped = True
+                self.incomplete_old[cls].add(t)
+                self.incomplete_new[cls].add(u)
                 return
             self.count[key] = 0
         self.count[key] += 1
@@ -139,13 +145,15 @@ class TargetMap:
     def _consensus_old(self, cls: str, t: int) -> int | None:
         key = ('o', cls, t)
         if key not in self._consensus_cache:
-            self._consensus_cache[key] = _Votes.consensus(self._votes.by_old[cls].get(t))
+            self._consensus_cache[key] = None if t in self._votes.incomplete_old[cls] else \
+                _Votes.consensus(self._votes.by_old[cls].get(t))
         return self._consensus_cache[key]
 
     def _consensus_new(self, cls: str, u: int) -> int | None:
         key = ('n', cls, u)
         if key not in self._consensus_cache:
-            self._consensus_cache[key] = _Votes.consensus(self._votes.by_new[cls].get(u))
+            self._consensus_cache[key] = None if u in self._votes.incomplete_new[cls] else \
+                _Votes.consensus(self._votes.by_new[cls].get(u))
         return self._consensus_cache[key]
 
     def _voted_by_others(self, voters: set[Voter] | None, voter: Voter | None) -> bool:
@@ -243,6 +251,8 @@ class TargetMap:
     def _region_shift(self, t: int, u: int, voter: Voter | None) -> bool:
         """Rule (c): no consensus and no vote from another function, neighbours below and above (in the same section)
         moved by the same displacement and keep their order."""
+        if t in self._votes.incomplete_old['data'] or u in self._votes.incomplete_new['data']:
+            return False                                         # dropped votes: "nobody else voted" is unknown
         for cls_votes, datum in ((self._votes.voters_old, ('data', t)), (self._votes.voters_new, ('data', u))):
             if self._voted_by_others(cls_votes.get(datum), voter):
                 return False
