@@ -114,7 +114,9 @@ def urls(trace):
     return [json.loads(line)['urls'] for line in trace.read_text().splitlines()]
 
 
-def test_local_run_forces_empty_servers_and_records_provenance(env):
+def test_local_run_forces_empty_servers_and_records_provenance(env, tmp_path_factory, monkeypatch):
+    # Private temp root: another worker's run in the shared temp directory would race the scratch check below.
+    monkeypatch.setattr(backend.tempfile, 'tempdir', str(tmp_path_factory.mktemp('tmproot')))
     root, project, pdbs, trace, config = env
     (pdbs / 'mod.pdb').write_bytes(make_pdb(G1, 1))     # matches the older side only (age 1)
     path, run_ = run(config(), project, root)
