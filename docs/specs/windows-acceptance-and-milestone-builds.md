@@ -1,6 +1,6 @@
 # Windows acceptance and milestone builds
 
-Status: draft spec, 2026-10-14. Sections marked **(new)** are not implemented; everything else describes current behaviour, including the release gate paragraph of section 1.1 (slice RG).
+Status: draft spec, 2026-10-14; section 1.1 asset bullet and section 4 template amended 2026-11-04 (slice A-I-1, `tools/milestone_notes.py`). Sections marked **(new)** are not implemented; everything else describes current behaviour, including the release gate paragraph of section 1.1 (slice RG). The journey rows of section 4 render `not run (no summary supplied)` until the release step passes `--journey` (a workflow-only edit that lands alone, see the 403 failure mode in 1.1).
 
 Observed state (read-only GitHub REST, 2026-10-14; re-check before acting): remote `main` = `4985132535` (local HEAD `c0df3ad` adds this file and is unpushed); open PRs = 0; latest prerelease `v0.1.0-beta.131` targets `b7e819a`. The `main` push run 135 at `4985132` **failed in `qa (ubuntu-latest)`** at the `pytest` step, so `release` was skipped and no prerelease exists for that commit. The run log was not retrievable from this session, so the failing test is unknown.
 
@@ -24,7 +24,7 @@ From `.github/workflows/qa-windows.yml`:
 - Each `qa` matrix leg records `job.status` after its final acceptance step (including Windows portable and installer acceptance), immediately before the always-run evidence artifact upload. Release notes read these per-leg results and use the aggregate QA result only when a status file is missing.
 - `run_number` counts every run of the workflow, including PR and failed runs. Observed tags therefore have gaps (beta.118, .120, .127, .129, .131).
 - Release body is hard-coded and says "beta"; `target_commitish` is `github.sha`.
-- Uploaded release assets (`release/*`): `PatchTrace-0.1.0-windows-x64.zip`, `PatchTrace-0.1.0-windows-x64.zip.sha256`, `PatchTrace-0.1.0-linux-x86_64.tar.gz`, `PatchTrace-0.1.0-linux-x86_64.tar.gz.sha256`. The version `0.1.0` is hard-coded in `pyproject.toml`, both build scripts and the workflow, so the tag is not in the filenames.
+- Uploaded release assets (`release/*`), each with a `<name>.sha256` sidecar (`<sha256>  <name>`): `PatchTrace-0.1.0-windows-x64.zip`, `PatchTrace-Windows-x64-Portable.zip` (a byte copy of the ZIP made by the release job, which writes its sidecar), `PatchTrace-Windows-x64-Setup.exe` (per-user NSIS installer) and `PatchTrace-0.1.0-linux-x86_64.tar.gz`. The release notes (section 4) list each with bytes, SHA-256 and the sidecar state, and say whether the Portable ZIP equals the ZIP byte for byte; any other file in `release/` is listed too. The version `0.1.0` is hard-coded in `pyproject.toml`, both build scripts and the workflow, so the tag is not in the filenames.
 - Known failure mode: publishing returns HTTP 403 `Resource not accessible by integration` when the head commit adds or changes `.github/workflows/*` (see `docs/plans/phase-c-multi-engine-plan.md`, handoff B1). The build is green but no release exists. The ZIP and tarball remain as Actions artifacts `PatchTrace-windows-x64` and `PatchTrace-linux-x86_64`. Report such a run as "build green, publish failed", never as a release.
 
 **Release gate (slice RG, `tools/release_gate.py`).** A push-only `release-gate` job decides whether this push publishes: `release` needs it and runs only for a `v*` tag or when the gate prints `publish=true`. The gate counts the first-parent commits on `main` after the commit (`target_commitish`) of the latest published, non-draft prerelease whose tag starts with `v0.1.0-beta.`, the head included, and publishes at the third. It also publishes for a head message containing `[release]`, for a tag, when no such prerelease exists or the latest one is not on the head's first-parent history, and whenever the gate itself fails (fail open: the reason is printed, and the count and the reason go into the release notes). A commit whose whole message, subject and body alike, contains `[skip ci]`, `[ci skip]`, `[no ci]`, `[skip actions]` or `[actions skip]` is not counted, because GitHub runs no workflow for it and no build exists; the head always counts, because this run exists. Consequences: `qa`, the packages and the smoke jobs still run on every push that is not skipped; a squash body that quotes a marker on any line skips the whole push run (PR #48 was skipped that way), so do not write the literal markers in commit messages or PR bodies unless that is the intent, and `[release]` belongs to the owner and instance A; two runs in flight at once both read the release list before either publishes, so an extra prerelease is possible; a `workflow_dispatch` run no longer publishes even from a `v*` tag ref, because the gate job is push-only.
@@ -187,14 +187,24 @@ A `fail` links to an issue and states observed behaviour. A check not performed 
 
 ## 4. Release-notes template (every milestone; never write "production ready")
 
+`tools/milestone_notes.py` renders this text (stdlib only; it runs in the `release` job before upload). Lines in angle brackets are filled from arguments or files; a check with no input renders as not run, never as passed. The generator exits 0 whenever it can render, including for a sidecar mismatch, because a non-zero exit makes the workflow fall back to the static preamble and would hide the mismatch; it exits 2 only for invalid arguments or an unreadable required input.
+
 ```markdown
 ## PatchTrace <TAG> - <one-line purpose>
 
 Commit: <full SHA> (<main | tag>) - Run: <run URL> (run number <n>)
 Assets:
-- PatchTrace-0.1.0-windows-x64.zip - <bytes> bytes - SHA-256 <hex>
-- PatchTrace-0.1.0-linux-x86_64.tar.gz - <bytes> bytes - SHA-256 <hex>
+- PatchTrace-0.1.0-windows-x64.zip - <bytes> bytes - SHA-256 <hex> - <sidecar verified | SIDECAR MISMATCH | no sidecar>
+- PatchTrace-Windows-x64-Portable.zip - <bytes> bytes - SHA-256 <hex> - <sidecar state> - <same bytes as PatchTrace-0.1.0-windows-x64.zip | BYTES DIFFER from PatchTrace-0.1.0-windows-x64.zip | not compared (PatchTrace-0.1.0-windows-x64.zip not present)>
+- PatchTrace-Windows-x64-Setup.exe - <bytes> bytes - SHA-256 <hex> - <sidecar state>
+- PatchTrace-0.1.0-linux-x86_64.tar.gz - <bytes> bytes - SHA-256 <hex> - <sidecar state>
+- <any other file in the asset directory> - <bytes> bytes - SHA-256 <hex> - not a listed package
 Verify: `sha256sum -c <file>.sha256`. Extract the whole ZIP before running PatchTrace.exe.
+SHA-256 shows the download is intact. It does not show who built it.
+Signed: <no (PatchTrace.exe has no Authenticode signature) | certificate table present; signer and trust not evaluated by this generator | not checked (<reason>)>
+SmartScreen: unsigned or low-reputation builds can show "Windows protected your PC". Choose "More info" then "Run anyway" only after checking the SHA-256 above.
+Provenance: <attestation <https URL> | attestation not generated: <reason>>
+Supersedes: <tag | not recorded>
 
 ### What changed
 - #<PR> <title> - <one line>
@@ -204,25 +214,43 @@ Verify: `sha256sum -c <file>.sha256`. Extract the whole ZIP before running Patch
 |---|---|---|
 | Linux pytest | <passed / skipped / failed counts> | <run> |
 | Windows pytest | <counts> | <run> |
-| Ruff | pass / fail | <run> |
+| Ruff | Linux <state>, Windows <state> (a step of each qa job) | <run> |
+| Panel manifest check (G6) | Linux <state>, Windows <state> (a step of each qa job) | <run> |
+| Analyst journey gate (RB-05), Linux leg: automated offscreen, fake backend, not native acceptance | <journey state> | <run> |
+| Analyst journey gate (RB-05), Windows leg: automated offscreen, fake backend, not native acceptance | <journey state> | <run> |
 | Linux package and smoke, 22.04 and 24.04 | pass / fail | <run> |
-| Windows frozen self-test and rank --help | pass / fail | <run> |
-| Section 2 additions A1-A12 | <which ran, which did not exist> | <run> |
+| Windows frozen self-test, help for all commands and CLI contract smoke | pass / fail | <run> |
+| Windows exe identity read-back (version resource and icon; tools/check_windows_exe.py inside tools/build_windows.py) | <state> (step of the Windows qa job) | <run> |
+| Windows portable ZIP extracted and run outside the checkout (tools/test_windows_portable.ps1) | <state> (step of the Windows qa job) | <run> |
+| Windows Setup.exe per-user install, self-test launch and uninstall (tools/test_windows_installer.ps1) | <state> (step of the Windows qa job) | <run> |
+| Section 2 additions | <which ran, which did not exist> | <run> |
 | Native Ghidriff matrix (5 variants) | pass / fail | <run> |
 
 ### Manual evidence
 Clean Windows 11 checklist (section 3): <n> pass, <n> fail, <n> not-run. Record: <link or path in docs/qa.md>. A gate leaves "Open" only with a recorded pass and evidence link.
 
 ### Open gates (not passed in this build)
+- Asset integrity: <name> does not match its .sha256 sidecar (one line per mismatch; absent when none)
+- Asset integrity: PatchTrace-Windows-x64-Portable.zip bytes differ from PatchTrace-0.1.0-windows-x64.zip (absent when equal)
 - Clean Windows GUI acceptance M01-M18 (unless listed as pass above)
 - Live local and remote AI provider acceptance (no credentials supplied)
 - Relocatable offline backend bundle and disconnected Windows acceptance
 - Confirmed Windows OneDrive-backed real Ghidriff analysis
 - rz-diff and BinDiff live runs
+- Code signing and SmartScreen reputation (see the Signed line; this generator never evaluates signer trust)
 - Matching accuracy and performance: unmeasured, no claim made
 
-- Limitations: unsigned beta; Ghidra, Java and Ghidriff external. Release publication: <published | not published (403), Actions artifact only>.
+- Limitations: <unsigned beta | beta with a certificate table this generator did not evaluate | beta, signature not checked>; Ghidra, Java and Ghidriff external. Release publication: <published | not published (403), Actions artifact only>.
 ```
+
+Rules for the generated lines:
+
+- **Sidecar state.** `sidecar verified` only when `<name>.sha256` exists, is at most 4096 bytes, and its first line is 64 hex digits, whitespace, an optional `*` and exactly `<name>`, with the hex equal to the computed SHA-256. A sidecar that exists but fails any of these is `SIDECAR MISMATCH` and adds an Open-gates line. No sidecar file is `no sidecar`. A package that is absent renders `- <name> - not present in this build`. Every other file in the asset directory (including the sidecar of an absent package) is listed after the packages, at most 20 of them, its name limited to 120 characters with the characters below replaced.
+- **Portable equality** compares size and SHA-256 with `PatchTrace-0.1.0-windows-x64.zip`; a difference adds an Open-gates line.
+- **Journey state** (`--journey linux|windows=FILE`, the `tools/journey_gate.py` summary): `<n>/<n> runs passed` when every run passed, `FAIL: <p>/<n> runs passed` otherwise, each followed by `; evidence class: <copied>`; `not run (no summary supplied)` without the argument and `not run (summary file not found)` when the file is absent. A file over 64 KiB, invalid JSON, non-integer or negative counts, `runs` below 1, `passed + failed != runs`, `exit_codes` disagreeing with `passed`, or an `evidence_class` that is not a string starting with `automated-` renders `unreadable summary, counted as not run`. The copied evidence class is limited to 160 printable ASCII characters; `|`, backticks, angle brackets, square brackets, backslashes and non-printable characters become `?`. The row label states the evidence class in fixed words; the journey is never called native acceptance.
+- **Signed** probes member `PatchTrace/PatchTrace.exe` of `PatchTrace-0.1.0-windows-x64.zip`, reading at most 4096 decompressed header bytes: `MZ`, `e_lfanew`, `PE\0\0`, optional-header magic `0x20b` or `0x10b`, at least 5 data directories, then data directory 4 (certificate table). Size 0 renders `no`; any other size renders `certificate table present; signer and trust not evaluated by this generator`; the generator never writes `Signed: yes` (SPEC-52 7.5 reserves that for an inspector that reads the signer). A missing or unreadable ZIP, a missing member or a header that is not a PE image renders `not checked (<reason>)`. The SmartScreen line (SPEC-52 7.5, verbatim) is omitted only when a certificate table is present.
+- **Provenance** is `attestation not generated: no attestation step in this workflow` unless `--attestation-url` passes an `https://` URL of at most 300 characters from a restricted character set. **Supersedes** is `not recorded` unless `--supersedes` passes a tag `v<major>.<minor>.<patch>[-<dot-separated alphanumerics>]` of at most 64 characters; any other value exits 2.
+- **What changed** is not written by the generator; it appears only when the release step enables GitHub's generated notes.
 
 ## WIN-1 reconciliation acceptance (2026-10-30)
 
