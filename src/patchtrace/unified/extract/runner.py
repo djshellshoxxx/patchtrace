@@ -31,7 +31,7 @@ from ... import backend as backend_module
 from ...backend import BackendConfig
 from ...jobs import ProcessResult, run_process
 from .. import keys
-from ..contracts import ExtractRequest, IrKeyInputs
+from ..contracts import ExtractRequest, IrKeyInputs, strip_unsafe
 from ..limits import DEFAULT_LIMITS, Budget, BudgetExhausted, UnifiedError, UnifiedLimits
 from . import PRIVATE_SCRIPT_NAME, SYMBOLS_BY_MODE, analysis_options_digest, script_bytes, script_sha256
 from .decomp import DecompRecord, read_decomp
@@ -44,7 +44,6 @@ REQUEST_LIMIT_KEYS = ('l01_functions_per_side', 'l02_instructions_per_side', 'l0
 DECOMPILE_LIMIT_KEYS = ('l29_pseudo_chars', 'l29_pseudo_lines', 'l41_decompile_fn_s', 'l41_decompile_run_s')
 DECOMPILE_OVERHEAD_S = 120                 # JVM start, GZF import and teardown on top of the L-41 run budget
 _SLUG = re.compile(r'^[a-z0-9-]{1,48}$')
-_STDERR_UNSAFE = re.compile('[\x00-\x08\x0b-\x1f\x7f-\x9f\u2028\u2029\u202a-\u202e\u2066-\u2069]')
 _PROBE_KEYS = frozenset({'ghidra', 'pyghidra', 'java', 'python', 'script_sha256'})
 # Child reason slug -> error code. A slug the table does not know is untrusted text: it becomes EXTRACT/crash.
 _REASONS = {
@@ -184,7 +183,7 @@ def predict_ir_key(job: ExtractJob, *, ghidra_version: str, pyghidra_version: st
 
 
 def sanitize_stderr(text: str, limit: int = DEFAULT_LIMITS.l31_stderr_tail_bytes) -> str:
-    cleaned = _STDERR_UNSAFE.sub('?', text.replace('\r\n', '\n'))
+    cleaned = strip_unsafe(text.replace('\r\n', '\n'), keep_layout=True, replacement='?')   # contracts' ranges, U7-09
     raw = cleaned.encode('utf-8', 'replace')
     return raw[-limit:].decode('utf-8', 'ignore') if len(raw) > limit else cleaned
 
@@ -197,6 +196,7 @@ class OutputGuard:
     about every 50 ms from the supervising thread."""
 
     GZF_NAME = 'program.gzf'
+    PROGRESS_PART = 'progress.json.part'
 
     def __init__(self, directory: Path, emit: Callable[[ExtractProgress], None] | None, cap: int, progress_cap: int,
                  gzf_cap: int = DEFAULT_LIMITS.l36_retained_gzf_bytes) -> None:
@@ -216,8 +216,9 @@ class OutputGuard:
                         return 'output-limit'
                     if entry.name == 'progress.json':
                         self._progress(Path(entry.path))
-                    elif entry.name.endswith('.part'):
-                        continue
+                    elif entry.name == self.PROGRESS_PART:
+                        if entry.stat(follow_symlinks=False).st_size > self.progress_cap:
+                            return 'output-limit'   # the one temp file the script writes; any other `.part` counts
                     elif entry.name == self.GZF_NAME:
                         gzf += entry.stat(follow_symlinks=False).st_size
                     else:
