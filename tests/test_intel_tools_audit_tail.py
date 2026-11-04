@@ -3,6 +3,9 @@
 code. Pure: no tool is executed, no network."""
 from __future__ import annotations
 
+import string
+import time
+
 import pytest
 from pydantic import ValidationError
 
@@ -33,6 +36,64 @@ def test_sanitize_drops_every_directory_component_even_with_spaces(text, expecte
     clean = process.sanitize(text)
     assert 'john' not in clean.lower() and 'smith' not in clean.lower()
     assert clean == expected
+
+
+# Verifier repro on the first C-16 fix: an apostrophe ended a component, and `<`, `{`, `>` (or a letter) before a
+# POSIX path stopped it from being anchored, so the user name leaked.
+QUOTED_LEAKS = {
+    'apos-win': ("error opening C:\\Users\\O'Brien Smith\\AppData\\x.dll", 'error opening x.dll'),
+    'apos-home': ("failed to load /home/o'brien smith/x.so", 'failed to load x.so'),
+    'apos-dir': ("error opening D:\\Work Dir\\John Smith's files\\x.dll", 'error opening x.dll'),
+    'apos-user': ("cannot access C:\\Users\\O'Brien: denied", 'cannot access <path>: denied'),
+    'angle': ('at </home/john smith/x.so>', 'at <x.so>'),
+    'brace': ('{/home/john smith/x.so}', '{x.so}'),
+    'arrow': ('x->/home/john smith/x.so', 'x->x.so'),
+    'paren': ('(/home/john smith/x.so)', '(x.so)'),
+    'flag': ('-I/home/john smith/include', '-Iinclude'),
+    'assign': ('path=/mnt/data/home/john smith/x.so', 'path=x.so'),
+    'no-drive': ('cannot access \\Users\\John Smith\\x.dll', 'cannot access x.dll'),
+    'dquote': ('"C:\\Users\\John Smith\\x.dll" missing', '"x.dll" missing'),
+    'xp': ('error opening C:\\Documents and Settings\\John Smith\\x.dll', 'error opening x.dll'),
+    'lead-comma': ('failed /mnt/a,b/home/john smith/x.so', 'failed x.so'),
+}
+
+
+@pytest.mark.parametrize('text, expected', list(QUOTED_LEAKS.values()), ids=list(QUOTED_LEAKS))
+def test_sanitize_drops_user_names_with_apostrophes_or_after_any_punctuation(text, expected):
+    clean = process.sanitize(text)
+    assert not any(word in clean.lower() for word in ('john', 'smith', 'brien', 'work dir')), clean
+    assert clean == expected
+
+
+@pytest.mark.parametrize('before', [*string.punctuation, ' ', '\t', 'x'], ids=lambda c: f'{ord(c):02x}')
+def test_no_character_before_a_rooted_path_lets_a_user_name_through(before):
+    for path in ('/home/john smith/x.so', '/Users/John Smith/x.dylib', 'C:\\Users\\John Smith\\x.dll',
+                 '\\\\server\\John Smith\\x.dll', "C:\\Users\\Jo'hn Smith\\x.dll"):
+        clean = process.sanitize(f'open {before}{path}{before} end')
+        assert 'john' not in clean.lower() and 'smith' not in clean.lower(), (before, path, clean)
+
+
+# Verifier repro: the first C-16 fix scanned to the end of the line at every `/` after `,`, `=`, `(` or `[`, so one
+# 64 KiB line took about 12 s (runner.py calls `excerpt` on up to 256 KiB of stderr). The bound is about 50 times
+# what a linear scan needs here, and far below what the quadratic scan took.
+HOSTILE_RUNS = [',/a', '=/a', '(/a', '[/a', '{/a', '>/a', '-/a', '//a', '\\\\a', "'/a", ' /home/a', ',/home/a',
+                'C:\\a ', "C:\\a'", '\\Users\\a ']
+
+
+@pytest.mark.parametrize('unit', HOSTILE_RUNS, ids=[f'u{i}' for i in range(len(HOSTILE_RUNS))])
+def test_path_scrubbing_stays_linear_on_hostile_lines(unit):
+    line = (unit * (64 * 1024 // len(unit) + 1))[:64 * 1024]
+    started = time.perf_counter()
+    process.sanitize(line, len(line))
+    process.excerpt(line)
+    assert time.perf_counter() - started <= 1.5
+
+
+def test_error_line_search_over_a_large_stdout_stays_bounded():
+    stdout = '\n'.join([',/a' * 5_000] * 16)  # 240 KB with no error word, so every line is sanitized 3 times
+    started = time.perf_counter()
+    process.first_error_line(stdout)
+    assert time.perf_counter() - started <= 3.0
 
 
 def test_a_directory_with_a_space_never_survives():

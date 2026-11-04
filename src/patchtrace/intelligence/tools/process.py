@@ -36,11 +36,19 @@ COPY_CHUNK = 4 * 1024 * 1024
 EXTRA_ENV = frozenset({'LD_LIBRARY_PATH', 'GHIDRA_INSTALL_DIR', 'JAVA_HOME'})
 _ANSI = re.compile(r'\x1b\[[0-9;?]*[ -/]*[@-~]|\x1b[@-_]')
 _PATHISH = re.compile(r'(?:[A-Za-z]:)?(?:[\\/][^\\/\s\'"<>|]+)+[\\/]?')
-# A component of a rooted path may hold spaces (`C:\Users\John Smith`); only Windows' reserved characters end it.
-_SEGMENT = r'[^\\/\'"<>|:*?\r\n]'
-# Drive (`C:\`), UNC (`\\server`) or a POSIX path through a home folder; then every directory up to the last
-# separator, then the rest up to a reserved character or the next drive (the last component and any message text).
-_ROOTED = re.compile(r'(?:\b[A-Za-z]:(?=[\\/])|\\\\|(?<![^\s\'"(=,:\[])/(?=(?:[^\\/\s\'"<>|:*?]+/)*(?:home|Users)/))'
+# A component of a rooted path may hold spaces and apostrophes (`C:\Users\O'Brien Smith`); only a character Windows
+# reserves in names (`\ / " < > | : * ?`) or a line end ends it.
+_SEGMENT = r'[^\\/"<>|:*?\r\n]'
+# A directory before the home folder of a POSIX path (`/mnt/data` in `/mnt/data/home/...`): no space, quote,
+# reserved character or bracket-like punctuation. Such a path starts only after a character outside this class, and
+# the scan of its leading directories stays inside it, so no character is scanned from more than one start (the
+# first C-16 fix rescanned to the end of the line at every `,/`, `=/`, `(/` and `[/`: quadratic).
+_LEAD = r'[^\s\\/\'"<>|:*?,;=(){}\[\]]'
+_HOME = r'[\\/](?i:home|users|documents and settings)[\\/]'
+# Drive (`C:\`), UNC (`\\server`), a rooted path through a home folder, or a home folder glued to the text before it
+# (`-I/home/...`, `x/home/...`); then every directory up to the last separator, then the rest up to a reserved
+# character or the next drive (the last component and any message text).
+_ROOTED = re.compile(rf'(?:\b[A-Za-z]:(?=[\\/])|\\\\|(?<!{_LEAD})(?:[\\/]{_LEAD}+)*?(?={_HOME})|(?P<glued>)(?={_HOME}))'
                      rf'(?P<dirs>(?:{_SEGMENT}*[\\/])+)(?P<tail>(?:(?![A-Za-z]:[\\/]){_SEGMENT})*)')
 _PROFILE_ROOT = re.compile(r'(?:^|[\\/])(?:users|home|documents and settings)[\\/]+$', re.IGNORECASE)
 
@@ -49,15 +57,26 @@ def _rooted_name(match: re.Match) -> str:
     tail = match.group('tail')
     if _PROFILE_ROOT.search(match.group('dirs')):
         return '<path>'  # the last component is the user name; it may run on with spaces, so drop all of it
-    return tail if tail[:1].strip() else '<path>' + tail
+    name = tail if tail[:1].strip() else '<path>' + tail
+    # A glued match starts at the home folder; keep one separator so `_PATHISH` also drops the directories before it.
+    return match.group('dirs')[0] + name if match.group('glued') is not None else name
 
 
 def sanitize(text: str, limit: int = 200) -> str:
     """One line of tool STDERR/ERROR text that is safe to show: ANSI/control characters removed, paths reduced to
-    their last component (no local paths or user names), whitespace collapsed, length capped. A rooted path may
-    hold spaces, so every directory up to its last separator is dropped (over-scrubbing nearby text is accepted;
-    audit C-16). Not for names the tool reports about the file (use `tool_text`): the path scrubber would mangle
-    `C/C++` or `UPX/LZMA`."""
+    their last component (no local paths or user names), whitespace collapsed, length capped.
+
+    A path rooted at a drive (`C:\\`, not glued to a letter, digit or `_` before it), a UNC share (`\\\\server`) or a home
+    folder (`home`, `Users`, `Documents and Settings`, whatever character comes before it) may hold spaces and
+    apostrophes: every directory from that root to the last separator is dropped, and a path that ends at the
+    profile folder becomes `<path>`. Only a character Windows reserves in names (`\\ / " < > | : * ?`) or a line end
+    ends a component, so message text after such a path is dropped up to the last separator before one (accepted
+    over-scrubbing; audit C-16). Directories before a home folder are dropped when they hold no space, quote or
+    reserved character; a relative path, or a POSIX path outside a home folder, keeps the plain rule (cut at the
+    first space). Linear in the length of the text.
+
+    Not for names the tool reports about the file (use `tool_text`): the path scrubber would mangle `C/C++` or
+    `UPX/LZMA`."""
     text = _ANSI.sub('', text)
     text = ''.join(' ' if is_hostile(c) else c for c in text)
     text = _ROOTED.sub(_rooted_name, text)
