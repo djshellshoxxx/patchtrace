@@ -35,3 +35,8 @@ The opt-in unified view (setting `unified/enabled`, default off) has its own gat
 Specification package: architecture covers executive summary, assumptions, APIs, integration, privacy, persistence, risks and decisions; modules covers catalog; schemas provide executable contracts/examples; UI covers journeys/controls; research covers sources/reuse/licenses; verification covers requirements, quality, benchmark, traceability, milestone and final audit. Glossary: artifact=input binary; run=immutable analysis attempt; evidence=scoped location; hypothesis=model-proposed explanation; finding=reviewable structured record; stale=result superseded by revision; match=correspondence, never security confidence.
 
 Unverified native backend/provider/clean-machine tests are release gates. Do not quietly reduce scope to mark beta complete. Optional Docker, graph visualization, ELF/ARM/Mach-O, automatic patch acquisition, tool execution, detached panes and chat are deferred. Any essential incomplete requirement remains on tasks/todo.md with evidence needed.
+
+
+### Parser test budget measurements (2026-11-04)
+
+Hermetic malformed-input parser work budgets use CPU time, excluding runner descheduling and fixture filesystem wait. Keep the existing work thresholds and structural assertions; a shared CI worker's wall-clock pause does not establish excess parser work. These checks do not establish desktop responsiveness or the separate wall-clock performance targets above. Native process supervision retains real elapsed deadlines.

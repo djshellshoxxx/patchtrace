@@ -921,3 +921,10 @@ Done: dock with state matrix, consent, import, changes, copy, go to CVE. Open: r
 - [x] Preserve old no-key bytes/ranking and private in-memory unified support; keep persisted engine vocabulary unchanged; expose legacy unmarked replay as unverified rather than infer historical credit.
 - [ ] Independent final review, coordinator integration/cross-OS and verified transfer integration remain pending; broader locked training/final-run/promotion safeguards are not completed by this slice. See `docs/qa/output-credited-replay-20261101.md`.
 - [x] Independent credited-replay review approved exact source `5c26af9` with 119 passes/1 native-tool BLOCKED skip and direct scalar/failed-valid-artifact controls; no remaining bounded source blocker. Integration/cross-OS/transfer and broader safeguards above remain open.
+
+
+### [PTB-20261104] Parser work-budget follow-up to #184
+
+- [x] Reproduce Windows timing failure with a controlled scheduling/IO pause; measure CPU work at unchanged thresholds and document test meaning.
+- [x] Parser/resource + all #184 affected test files: 302 passed, 3 skipped; whole Ruff/diff clean.
+- [ ] Exact-head Windows/Linux CI and full-suite qualification; #184 remains a dependency, not merged.
