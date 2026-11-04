@@ -644,13 +644,17 @@ def test_no_network_during_unified_run(project):
     assert hasattr(socket, 'socket')  # the guard above really watched the module the code could have used
 
 
-def test_runs_leave_no_stray_files_behind(project):
-    before = {p.name for p in Path(tempfile.gettempdir()).glob('pt-unified-*')}
+def test_runs_leave_no_stray_files_behind(project, tmp_path, monkeypatch):
+    # A private temp root: the shared system temp directory also holds the private directories of tests that
+    # run in parallel (pytest-xdist), which appear and vanish between two listings of it.
+    private_tmp = tmp_path / 'tmp'
+    private_tmp.mkdir()
+    monkeypatch.setattr(tempfile, 'tempdir', str(private_tmp))
     pipeline.run_unified(project, inproc())
     for behaviour in (answer(ProcessResult(22, '', None, '')), error_document):
         with pytest.raises(UnifiedError):
             pipeline.run_unified(project, isolated(StubRunner(behaviour), refresh=True))
-    assert {p.name for p in Path(tempfile.gettempdir()).glob('pt-unified-*')} == before
+    assert list(private_tmp.glob('pt-unified-*')) == []
     root = results_dir(project)
     assert [p.name for p in root.iterdir()] == [pipeline.make_plan(project).result_id[:16]]
     assert sorted(p.name for p in root.iterdir().__next__().iterdir()) == [
