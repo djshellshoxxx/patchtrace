@@ -17,10 +17,44 @@ LOG_LIMIT = 2 * 1024 * 1024
 _WINDOWS_SPAWN_LOCK = threading.Lock()
 # prlimit()/setrlimit() raise OverflowError (not OSError) beyond the rlim_t range; no real cap is this large.
 MEMORY_LIMIT_CEILING = 1 << 62
+# CreateProcessW runs a .bat/.cmd through cmd.exe, which still parses these after list2cmdline quoting
+# (`%`/`!` expand even inside quotes; CR/LF end the command).
+_BATCH_METACHARACTERS = frozenset('&|<>^%!\r\n')
+_JOB_KILL_ON_JOB_CLOSE, _JOB_DIE_ON_UNHANDLED_EXCEPTION, _JOB_PROCESS_MEMORY = 0x2000, 0x400, 0x100
 
 
 def _positive_int(value: object) -> bool:
     return isinstance(value, int) and not isinstance(value, bool) and value >= 1
+
+
+def _argv_error(argv: Sequence[str], windows: bool) -> str | None:
+    """Return why `argv` must not be launched, or None (architecture.md "Launch argument rules")."""
+    args = [os.fsdecode(arg) for arg in argv]
+    if any('\0' in arg for arg in args):
+        return 'PT-BACKEND: a program argument contains a NUL character'
+    # Windows ignores trailing dots and spaces in a file name, so `x.bat.` is still a batch file.
+    program = args[0].casefold().rstrip('. ') if args else ''
+    if windows and program.endswith(('.bat', '.cmd')) and any(_BATCH_METACHARACTERS.intersection(a) for a in args):
+        return ('PT-BACKEND: a .bat/.cmd launcher cannot be given a path or argument containing '
+                '& | < > ^ % ! or a line break; configure the program .exe')
+    return None
+
+
+def _windows_env_block(env: Mapping[str, str]) -> str:
+    """CREATE_UNICODE_ENVIRONMENT block, sorted case-insensitively as CreateProcessW documents."""
+    for name, value in env.items():
+        # A leading '=' is legal (the per-drive `=C:` entries); a later one would split the name.
+        if not name or '\0' in name or '=' in name[1:] or '\0' in value:
+            raise ValueError('PT-BACKEND: an environment variable name or value is not valid for Windows')
+    entries = sorted(env.items(), key=lambda item: (item[0].upper(), item[0]))
+    return '\0'.join(f'{k}={v}' for k, v in entries) + '\0\0'
+
+
+def _job_limit_flags(memory_limit_bytes: int | None) -> int:
+    # DIE_ON_UNHANDLED_EXCEPTION: a crashed tool exits instead of waiting in an error-report dialog until the
+    # timeout. Breakaway (0x800/0x1000) is never allowed: every descendant stays in the job.
+    flags = _JOB_KILL_ON_JOB_CLOSE | _JOB_DIE_ON_UNHANDLED_EXCEPTION
+    return flags | _JOB_PROCESS_MEMORY if memory_limit_bytes is not None else flags
 
 
 @dataclass(frozen=True)
@@ -107,6 +141,7 @@ def _windows_process(argv: Sequence[str], cwd: Path, env: Mapping[str, str], sep
             raise c.WinError(c.get_last_error())
         return value
 
+    environment = c.create_unicode_buffer(_windows_env_block(env))  # validated before anything is created
     read, write = w.HANDLE(), w.HANDLE()
     err_read, err_write = w.HANDLE(), w.HANDLE()
     security = Security(c.sizeof(Security), None, True)
@@ -128,17 +163,15 @@ def _windows_process(argv: Sequence[str], cwd: Path, env: Mapping[str, str], sep
         startup.stdin, startup.stdout = null, write
         startup.stderr = err_write if separate_streams else write
         command = c.create_unicode_buffer(subprocess.list2cmdline(list(argv)))
-        environment = c.create_unicode_buffer('\0'.join(f'{k}={v}' for k, v in sorted(env.items())) + '\0\0')
         check(kernel.CreateProcessW(str(argv[0]), command, None, None, True,
                                     0x4 | 0x400 | 0x08000000, environment, str(cwd),
                                     c.byref(startup), c.byref(info)))
         job = check(kernel.CreateJobObjectW(None, None))
         limits = ExtendedLimits()
-        limits.basic.flags = 0x2000  # JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE
+        limits.basic.flags = _job_limit_flags(memory_limit_bytes)
         if memory_limit_bytes is not None:
             # JOB_OBJECT_LIMIT_PROCESS_MEMORY: committed-memory cap per process, set before the child resumes.
             # Over-limit behaviour (allocation failure vs termination, exit code) is a measured unknown (U7).
-            limits.basic.flags |= 0x100
             limits.process_memory = memory_limit_bytes
         check(kernel.SetInformationJobObject(job, 9, c.byref(limits), c.sizeof(limits)))
         check(kernel.AssignProcessToJobObject(job, info.process))
@@ -254,6 +287,8 @@ def run_process(argv: Sequence[str], *, cwd: Path, env: Mapping[str, str],
     """
     if not argv or not Path(argv[0]).is_absolute():
         raise ValueError('PT-BACKEND: configure an absolute executable path')
+    if error := _argv_error(argv, os.name == 'nt'):
+        raise ValueError(error)
     # `not x > 0` rejects NaN (which never reaches a deadline); a float limit would kill the reader thread.
     if not timeout_seconds > 0 or not _positive_int(log_limit) or not _positive_int(stderr_limit):
         raise ValueError('PT-BACKEND: timeout and log limit must be positive')
@@ -355,15 +390,17 @@ def run_process(argv: Sequence[str], *, cwd: Path, env: Mapping[str, str],
                 peak = None
         return ProcessResult(returncode, log, reason, err, peak, log_raw, err_raw, out_total, err_total)
     finally:
-        terminate()
-        if os.name != 'nt':
-            try:
-                child.wait(timeout=5)
-            except subprocess.TimeoutExpired:
-                pass  # Already reported above; do not mask the primary error.
-        if os.name == 'nt':
-            child.close()
-        streams = [child.stdout, child.stderr][:len(readers)]
-        for reader, stream in zip(readers, streams, strict=True):
-            if not reader.is_alive():
-                stream.close()
+        try:
+            terminate()
+        finally:  # a failing kill must not leak the Job/process handles or the pipes
+            if os.name != 'nt':
+                try:
+                    child.wait(timeout=5)
+                except subprocess.TimeoutExpired:
+                    pass  # Already reported above; do not mask the primary error.
+            if os.name == 'nt':
+                child.close()
+            streams = [child.stdout, child.stderr][:len(readers)]
+            for reader, stream in zip(readers, streams, strict=True):
+                if not reader.is_alive():
+                    stream.close()
