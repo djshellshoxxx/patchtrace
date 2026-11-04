@@ -828,7 +828,7 @@ class UnifiedController(ControllerBase):
         key = self.port.key()
         configured = self._extraction_configured()
         try:
-            captured = pipeline.capture_plan(service)
+            captured = read_model.capture_candidates(service)
         except UnifiedError:
             captured = None  # retained results remain stale when no current plan can be captured
         except Exception as error:  # noqa: BLE001 - never leave the panel on "Loading" because a capture raised
@@ -841,7 +841,7 @@ class UnifiedController(ControllerBase):
         self.panel.show_text_state('load', read_model.progress_text('loading', 0, None))
         previous = self._resolved_plan
         self.tasks.submit(
-            LOAD_CHANNEL, lambda token, report: None if captured is None else pipeline.resolve_plan(
+            LOAD_CHANNEL, lambda token, report: None if captured is None else read_model.resolve_best(
                 captured, budget=Budget(cancel=token), previous=previous),
             on_result=partial(self._plan_loaded, service, key, generation, configured), on_error=self._load_failed)
 
