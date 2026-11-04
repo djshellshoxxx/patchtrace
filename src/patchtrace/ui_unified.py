@@ -8,6 +8,7 @@ GUI-thread callbacks only. All text a person can read comes from the read model 
 from __future__ import annotations
 
 import shutil
+import weakref
 from collections.abc import Callable, Collection, Mapping, Sequence
 from functools import partial
 
@@ -59,6 +60,20 @@ CODE_IN_MAIN = "This row maps to a Ghidriff match; its code is shown in the main
 CODE_MODES = {DECOMPILED: 'Decompiled C', DISASSEMBLY: 'Disassembly'}
 LOAD_CHANNEL, RUN_CHANNEL, DETAIL_CHANNEL, CODE_CHANNEL = 'unified-load', 'unified-run', 'unified-detail', 'unified-code'
 RowCodeReader = Callable[[UnifiedViewModel, UnifiedRowView], RowCode]
+
+
+class _StagedGuard:
+    """Owns the staged result directory of a finished run until the GUI thread takes it over. The task runner drops the
+    result of a superseded task (cancel, project switch, shutdown) without calling any callback; the finalizer then
+    removes the directory when the dropped payload is freed, so a cancelled run never leaves a staged result behind."""
+    __slots__ = ('finalizer', '__weakref__')
+
+    def __init__(self, staged) -> None:
+        self.finalizer = weakref.finalize(self, shutil.rmtree, staged, True)
+
+    def release(self) -> None:
+        """The result was delivered: publish (or the stale-project path) now owns, and discards, the directory."""
+        self.finalizer.detach()
 
 
 # ---- table ----------------------------------------------------------------------------------------------------
@@ -138,7 +153,10 @@ class UnifiedTableModel(QAbstractTableModel):
     def headerData(self, section, orientation, role=Qt.ItemDataRole.DisplayRole):
         if orientation != Qt.Orientation.Horizontal or self.vm is None:
             return None
-        spec = read_model.columns(self.vm)[section]
+        spec = read_model.columns(self.vm)
+        if not 0 <= section < len(spec):
+            return None
+        spec = spec[section]
         if role == Qt.ItemDataRole.DisplayRole:
             return f'{spec.title}\n{spec.unit}' if spec.unit else spec.title
         if role in (Qt.ItemDataRole.ToolTipRole, Qt.ItemDataRole.AccessibleTextRole):
@@ -152,10 +170,10 @@ class UnifiedTableModel(QAbstractTableModel):
 
     def data(self, index, role=Qt.ItemDataRole.DisplayRole):
         self.data_calls += 1
-        if not index.isValid() or index.row() >= len(self.view):
+        column = index.column()
+        if not index.isValid() or not 0 <= index.row() < len(self.view) or not 0 <= column < self.columnCount():
             return None
         row = self.rows[self.view[index.row()]]
-        column = index.column()
         if role == Qt.ItemDataRole.DisplayRole:
             return read_model.cell_text(row, column)
         if role == ROW_ROLE:
@@ -809,6 +827,12 @@ class UnifiedController(ControllerBase):
             captured = pipeline.capture_plan(service)
         except UnifiedError:
             captured = None  # retained results remain stale when no current plan can be captured
+        except Exception as error:  # noqa: BLE001 - never leave the panel on "Loading" because a capture raised
+            self.dirty = False
+            self.panel.show_text_state('U5', f'The unified result could not be produced: PT-UNIFIED-INTERNAL: '
+                                             f'{type(error).__name__}. Earlier results and the primary Ghidriff '
+                                             'results are unchanged.')
+            return
         self.loaded_key, self.dirty = key, False
         self.panel.show_text_state('load', read_model.progress_text('loading', 0, None))
         previous = self._resolved_plan
@@ -888,17 +912,20 @@ class UnifiedController(ControllerBase):
         except UnifiedError as error:
             self._run_error(read_model.error_text(error))
             return
+        except Exception as error:  # noqa: BLE001 - class name only
+            self._run_error(f'PT-UNIFIED-INTERNAL: {type(error).__name__}')
+            return
         self.panel.show_text_state('U2', read_model.progress_text('prepare', 0, None))
         previous = self._resolved_plan
 
         def work(token, report):
             request = pipeline.resolve_request(captured, cancel=token, previous=previous)
             output = pipeline.execute(request, token, lambda event: report(event.stage, event.done, event.total))
-            return request, output
+            return request, output, None if output.staged is None else _StagedGuard(output.staged)
 
         self.tasks.submit(
             RUN_CHANNEL, work,
-            on_result=lambda completed: self._run_finished(completed[0], service, key, completed[1]),
+            on_result=lambda completed: self._run_delivered(completed, service, key),
             on_error=self._run_error_task,
             on_progress=self._progress)
         self.update_controls()
@@ -911,6 +938,12 @@ class UnifiedController(ControllerBase):
 
     def _progress(self, progress) -> None:
         self.panel.show_text_state('U2', read_model.progress_text(progress.stage, progress.done, progress.total))
+
+    def _run_delivered(self, completed, service, key) -> None:
+        request, output, guard = completed
+        if guard is not None:
+            guard.release()
+        self._run_finished(request, service, key, output)
 
     def _run_finished(self, request, service, key, output) -> None:
         if self.window.service is not service or self.port.key() != key:
@@ -925,6 +958,9 @@ class UnifiedController(ControllerBase):
                 self.reload()
             else:
                 self._run_error(read_model.error_text(error))
+            return
+        except Exception as error:  # noqa: BLE001 - class name only; the panel must leave U2 with a visible failure
+            self._run_error(f'PT-UNIFIED-INTERNAL: {type(error).__name__}')
             return
         self._status(f'Unified analysis finished: {report.status}.')
         self.reload()

@@ -717,7 +717,9 @@ def parse_column_widths(items: Sequence[str]) -> dict[str, int]:
     low, high = COLUMN_WIDTH_RANGE
     for item in items:
         key, _, number = item.rpartition(':')
-        if _COLUMN_KEY.fullmatch(key) and key not in out and number.isdecimal() and low <= int(number) <= high:
+        # ASCII digits and a bounded length: `int()` raises ValueError past 4,300 digits, and the setting is untrusted
+        if (_COLUMN_KEY.fullmatch(key) and key not in out and number.isascii() and number.isdecimal()
+                and len(number) <= len(str(high)) and low <= int(number) <= high):
             out[key] = int(number)
     return out
 
