@@ -954,3 +954,7 @@ Done: dock with state matrix, consent, import, changes, copy, go to CVE. Open: r
 - [x] G-TW-RUN Tier W runner library (LBL-23)
 - [x] A-I-1 release-notes evidence completeness (journey rows, sidecars, Portable); live body pending the next prerelease
 - [x] A-I-3 release docs match the NSIS Setup plus portable ZIP build
+- [x] (AF-0 wave A2 repairs) G-TW-CLI Tier W dev CLI: an unreadable side is unknown, never a negative label; `--ratio-min` outside (0, 1] is an input error; foreign-only matches exit 1 (`tests/test_tier_w_cli.py`, 64 passed)
+- [x] (AF-0 wave A2 repairs) H-A deny-egress harness: the cleanup step records commands, bounded failures and duration (`tests/test_bundle_acceptance_isolation.py`); real Windows runner evidence (G4/G5) stays an open native gate
+- [ ] (H-A) `reuse_run_id` input for `backend-bundle.yml` (spec s4.3, env-only, numeric) and its test
+- [x] (AF-0 wave A2 repairs) A-I-2 offline post-publish release verifier `tools/verify_release.py`: hostile archives and inputs keep exit codes 2/3 (`tests/test_verify_release.py`, 75 passed)
