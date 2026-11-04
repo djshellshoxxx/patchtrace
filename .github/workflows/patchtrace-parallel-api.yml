@@ -1,0 +1,163 @@
+name: PatchTrace Parallel API Development
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '11 1,7,13,19 * * *'
+
+# Separate from the existing autonomous workflow; never merges PRs.
+# 4 batches x 8 agents x $25 target = at most $800/day in conservative API accounting.
+permissions: {}
+concurrency:
+  group: patchtrace-parallel-api
+  cancel-in-progress: false
+
+jobs:
+  develop:
+    if: github.repository == 'djshellshoxxx/patchtrace'
+    strategy:
+      fail-fast: false
+      max-parallel: 8
+      matrix:
+        task: [pe, representations, nway, cache, diagnostics, offline, runtime, artifact]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 40
+    permissions:
+      contents: read
+      pull-requests: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          persist-credentials: false
+      - name: Check active PR ownership before paid work
+        id: guard
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PT_TASK: ${{ matrix.task }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python tools/parallel_cloud/guard.py "$PT_TASK" > guard-output
+          cat guard-output
+          cat guard-output >> "$GITHUB_OUTPUT"
+      - name: Record exact base commit
+        if: steps.guard.outputs.ready == 'true'
+        run: git rev-parse HEAD > base-sha.txt
+      - uses: actions/setup-python@v5
+        if: steps.guard.outputs.ready == 'true'
+        with:
+          python-version: '3.12'
+      - name: Install QA dependencies
+        if: steps.guard.outputs.ready == 'true'
+        run: python -m pip install -e '.[dev]'
+      - name: Two-phase bounded API-funded agent
+        if: steps.guard.outputs.ready == 'true'
+        env:
+          PATCHTRACE_OPENAI_API_KEY: ${{ secrets.PATCHTRACE_OPENAI_API_KEY }}
+          PT_AGENT_MODEL: gpt-5-mini
+          PT_AGENT_BUDGET_USD: '25'
+          PT_INPUT_USD_PER_M: '20'
+          PT_OUTPUT_USD_PER_M: '100'
+          PT_TASK: ${{ matrix.task }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -n "$PATCHTRACE_OPENAI_API_KEY" || { echo '::error::PATCHTRACE_OPENAI_API_KEY missing'; exit 1; }
+          python tools/parallel_cloud/agent.py "$PT_TASK"
+      - name: Verify owned paths, Ruff, pytest, and patch
+        if: steps.guard.outputs.ready == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PT_TASK: ${{ matrix.task }}
+          QT_QPA_PLATFORM: offscreen
+        shell: bash
+        run: |
+          set -euo pipefail
+          python tools/parallel_cloud/guard.py "$PT_TASK" --post
+          python -m ruff check src tests tools
+          timeout 900s python -m pytest -q
+          git diff --check
+          git diff --binary -- src/ tests/ > parallel.patch
+          test -s parallel.patch
+      - name: Archive validated patches and auditable usage
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: parallel-${{ matrix.task }}-${{ github.run_id }}
+          path: |
+            base-sha.txt
+            parallel-agent-receipt.json
+            parallel.patch
+          if-no-files-found: ignore
+          retention-days: 30
+
+  publish:
+    needs: develop
+    if: always() && github.repository == 'djshellshoxxx/patchtrace'
+    strategy:
+      fail-fast: false
+      max-parallel: 1
+      matrix:
+        task: [pe, representations, nway, cache, diagnostics, offline, runtime, artifact]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          persist-credentials: false
+      - name: Download this agent's validated patch
+        id: download
+        continue-on-error: true
+        uses: actions/download-artifact@v4
+        with:
+          name: parallel-${{ matrix.task }}-${{ github.run_id }}
+          path: received
+      - name: Recheck ownership, exact base and cost receipt
+        id: guard
+        if: steps.download.outcome == 'success'
+        env:
+          GH_TOKEN: ${{ secrets.PATCHTRACE_GITHUB_TOKEN || github.token }}
+          PT_TASK: ${{ matrix.task }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ ! -s received/parallel.patch ] || [ ! -s received/base-sha.txt ]; then
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          test "$(git rev-parse HEAD)" = "$(cat received/base-sha.txt)" || {
+            echo '::warning::main changed since tests; refusing stale patch'
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          }
+          python tools/parallel_cloud/guard.py "$PT_TASK" > guard-output
+          cat guard-output >> "$GITHUB_OUTPUT"
+          if [ "$(cat guard-output)" != 'ready=true' ]; then exit 0; fi
+          python tools/parallel_cloud/guard.py "$PT_TASK" --validate-artifact received
+          git apply --check --binary received/parallel.patch
+          git apply --binary received/parallel.patch
+      - name: Open independent draft PR for required cross-platform QA
+        if: steps.guard.outputs.ready == 'true'
+        uses: peter-evans/create-pull-request@v7
+        with:
+          token: ${{ secrets.PATCHTRACE_GITHUB_TOKEN || github.token }}
+          branch: codex/parallel-${{ matrix.task }}-${{ github.run_id }}
+          base: main
+          add-paths: |
+            src
+            tests
+          commit-message: 'test: parallel API agent ${{ matrix.task }} regression'
+          title: 'parallel: ${{ matrix.task }} regression and fix (${{ github.run_id }})'
+          body: |
+            Independent PatchTrace API-funded test-first development task: `${{ matrix.task }}`.
+            Exact-run evidence: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+            Full local Ruff/pytest passed before publication.
+            Cost receipt includes actual token counts and conservatively accounted USD.
+            Draft deliberately requires independent Linux and Windows QA, SonarCloud,
+            CodeRabbit, review and branch protections before any human/guarded integration.
+          draft: true
