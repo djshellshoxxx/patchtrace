@@ -113,6 +113,9 @@ class Layout:
         return self.base / 'runs' / check_corpus_id(corpus_id) / pair_id / {'symbols-hidden': 'h',
                                                                            'symbols-visible': 'v'}[condition]
 
+    def matches(self, corpus_id: str) -> Path:
+        return self.base / 'runs' / check_corpus_id(corpus_id) / 'matches.jsonl'
+
     def report(self, corpus_id: str) -> Path:
         return self.base / 'reports' / f'{check_corpus_id(corpus_id)}.evaluation.json'
 

@@ -127,3 +127,23 @@ def dbi_stream(*, age: int, sym_stream: int, modules: list[tuple[int, int, str]]
 
 def module_stream(records: bytes) -> bytes:
     return struct.pack('<I', 4) + records
+
+
+# ---- CLI chain input (SPEC-33 s11) -------------------------------------------------------------------------------
+
+TINY = ('tiny_v1', 'tiny_v2')
+
+
+def tiny_winbindex_doc(line: str = '11-24H2') -> dict:
+    """A made-up Winbindex record whose two x64 builds ARE the self-made tiny_v1/tiny_v2 PEs (sha256, size and
+    SizeOfImage), released a month apart in one line, so the offline chain can place the real fixture bytes."""
+    doc = {}
+    for i, stem in enumerate(TINY):
+        data = (TIER_W_FIXTURES / f'{stem}.pe').read_bytes()
+        digest, date, release = hashlib.sha256(data).hexdigest(), f'2024-{i + 1:02d}-09', f'26100.{100 + i}'
+        info = {'sha256': digest, 'size': len(data), 'machineType': 34404, 'timestamp': 1000 + i,
+                'virtualSize': 0x6000, 'version': f'10.0.{release} (WinBuild.1)'}
+        update = {'releaseDate': date, 'releaseVersion': release, 'heading': f'{date} KB (OS Build {release})'}
+        doc[digest] = {'fileInfo': info,
+                       'windowsVersions': {line: {f'KB50{i:02d}': {'assemblies': {}, 'updateInfo': update}}}}
+    return dict(sorted(doc.items()))
