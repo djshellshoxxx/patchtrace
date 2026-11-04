@@ -704,6 +704,21 @@ REGISTRY: dict[str, TooltipEntry] = {
         'Read-only preview of the exact report.', 'You review what will be written.',
         'Nothing changes. Absolute source paths are redacted and raw provider responses excluded.',
         'Generated from saved project data.'),
+    'export.contract': _e(
+        'Report contract: Report v1 (current) or Report v2.', 'Report v2 adds engine evidence, build facts, '
+        'advisories, leads and an unknowns list, each with its provenance.',
+        'Changes the preview and the file. Report v1 output is unchanged.',
+        'Report v2 reads stored results of this project; nothing is fetched.'),
+    'export.profile': _e(
+        'Redaction profile: Local analysis or Share with others.', 'Share removes code, notes and file paths and '
+        'writes web addresses as inert text, so the report is safer to pass on.',
+        'Share needs Report v2 and switches to it. It disables the code and notes options.',
+        'Applied when the report is written; the preview shows the result.'),
+    'export.sections': _e(
+        'Optional Report v2 sections, each with the number of stored items.', 'Leave out what the reader does '
+        'not need.', 'Unchecked sections are not written. A section with no stored data is disabled with the reason.',
+        'Counts come from the secondary engines, advisories, pilot leads and PE files stored in this project.',
+        availability='Needs Report v2.'),
     'export.accept': _e(
         'Write the report to the chosen destination.', 'Produces the file you previewed.',
         'Creates or overwrites the destination file.', availability='Needs a destination.'),

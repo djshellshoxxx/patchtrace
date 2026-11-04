@@ -201,9 +201,18 @@ def _lead_record(lead, channels_of: dict[str, str]) -> LeadRecord | None:
                       tuple(sorted(lead.support_ids))[:64])
 
 
+def _has_enrichment(service) -> bool:
+    """The pilot store creates the enrichment tables on first use; an export must not write to the project."""
+    row = service.store.connection.execute(
+        "SELECT 1 FROM sqlite_master WHERE type='table' AND name='enrichment_entries'").fetchone()
+    return row is not None
+
+
 def _leads(service, unknowns: _Unknowns) -> _Rows | None:
     from ..enrichment.storage import EnrichmentStore
     from ..pilot import store
+    if not _has_enrichment(service):
+        return None
     loaded = store.load(EnrichmentStore(service.store), _known(service.project))
     if loaded.state == 'none':
         return None

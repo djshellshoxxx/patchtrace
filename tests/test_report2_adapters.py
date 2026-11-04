@@ -45,6 +45,13 @@ def test_empty_project_has_no_optional_sections(service):
     assert not any('engine_evidence' in u or 'advisories' in u or 'leads' in u for u in sections.unknowns)
 
 
+def test_collecting_never_writes_to_the_project(tmp_path):
+    with ProjectService.sample(tmp_path / 'ro') as opened:
+        before = (opened.root / 'project.sqlite3').read_bytes()
+        collect_from_service(opened)
+        assert (opened.root / 'project.sqlite3').read_bytes() == before
+
+
 def test_series_stays_none_because_no_project_scoped_record_exists(service):
     assert collect_from_service(service).series is None
 
