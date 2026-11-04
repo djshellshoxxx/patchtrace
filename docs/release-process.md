@@ -1,6 +1,6 @@
 # Release process
 
-How a PatchTrace prerelease is produced and published. Sources: `tools/release_gate.py`, `.github/workflows/qa-windows.yml`, `docs/specs/windows-release-signing-policy.md` (SPEC-52). Everything published so far is a prerelease `v0.1.0-beta.N`. See [version-history.md](version-history.md).
+How a PatchTrace prerelease is produced and published. Sources: `tools/release_gate.py`, `tools/verify_release.py`, `.github/workflows/qa-windows.yml`, `docs/specs/windows-release-signing-policy.md` (SPEC-52). Everything published so far is a prerelease `v0.1.0-beta.N`. See [version-history.md](version-history.md).
 
 ## Pipeline
 
@@ -54,11 +54,21 @@ Alpha and beta prereleases stay **unsigned**, and release notes say so, includin
 
 ## Verify assets before announcing
 
-1. Download the Windows ZIP, Windows Setup.exe, Linux tar.gz and each corresponding `.sha256` file from the release page.
-2. `sha256sum -c` (Linux) or `Get-FileHash ... -Algorithm SHA256` (Windows) must equal the sidecar and the hashes in the notes.
-3. Check the release is marked **Pre-release** and its tag commit is the intended `main` commit.
+1. From a clone of the repository, with `TAG` the release tag, `SHA` the intended `main` commit and an empty directory `DIR`, fetch the inputs, then run the offline verifier (`tools/verify_release.py`, stdlib only; it never uses the network, never extracts an archive and never runs a downloaded file):
+
+   ```bash
+   gh release view "$TAG" --json tagName,isPrerelease,isDraft,targetCommitish,assets,body > release.json
+   git ls-remote --tags origin "refs/tags/$TAG" "refs/tags/$TAG^{}" > peeled.txt
+   gh release download "$TAG" --dir "$DIR"
+   python tools/verify_release.py --tag "$TAG" --sha "$SHA" --release-json release.json --peeled peeled.txt \
+     --dir "$DIR" --record record.md
+   ```
+
+   It checks: the tag name; **Pre-release** set and not a draft; `targetCommitish`, the peeled tag (the plain ref of a lightweight tag) and the Windows ZIP's `PatchTrace/dependency-versions.json` `PatchTrace commit` all equal `SHA`, and its `PatchTrace` label is the tag without the leading `v`; the eight assets (Windows ZIP, Portable.zip, Setup.exe, Linux tar.gz and their four `.sha256` sidecars) are listed and downloaded with equal sizes; each sidecar is exactly `<64 lowercase hex>  <name>` and one LF (a CRLF sidecar fails); each file's SHA-256 equals its sidecar, the listed `sha256:` digest and every hash the notes print for that name, and Portable.zip is byte-identical to the Windows ZIP; the ZIP holds `PatchTrace/PatchTrace.exe`, `file-inventory.json` and `dependency-versions.json`, the tar holds `PatchTrace/PatchTrace` with an executable bit, and neither has an absolute, `..`, duplicate or escaping-link member. Failures carry `PT-REL-TAG-MISMATCH`, `PT-REL-NOT-PRERELEASE`, `PT-REL-COMMIT-MISMATCH`, `PT-REL-ASSET-MISSING`, `PT-REL-SIDECAR-FORMAT`, `PT-REL-HASH-MISMATCH` or `PT-REL-ARCHIVE-CONTENT`. The Linux package records no commit yet, so that check reports `not-checked`, which is never a pass. `--json` prints one object with `{id, status, code, detail}` per check; `--notes FILE` replaces the release body as the notes source.
+2. Exit codes: `0` no check failed, `2` usage error or unreadable input (nothing is reported), `3` at least one check failed. Do not announce on `2` or `3`.
+3. Paste `record.md` (tag, peeled SHA, bytes and SHA-256 per asset, failed and not-checked checks) into `docs/qa.md`, and add what the tool cannot see: the run URL and number, and the comparison with the Actions artifact of the same run (windows-acceptance spec section 1.3).
 4. Read the notes: they list job results (`qa-ubuntu`, `qa-windows`, `linux-smoke`), test counts and which acceptance gates are still open. Do not copy a claim that the notes do not make.
-5. Windows desktop acceptance (display scaling, screen readers) is manual and reported separately from automated evidence.
+5. Windows desktop acceptance (display scaling, screen readers) is manual and reported separately from automated evidence. Without the tool, `sha256sum -c` (Linux) or `Get-FileHash ... -Algorithm SHA256` (Windows) against each sidecar and the hashes in the notes is the manual fallback.
 
 ## Rules
 
