@@ -1203,3 +1203,31 @@ Calls panel (id graph): `callgraph/panel.py` (PanelSpec), `panel_qt.py` (widgets
 - `enrichment/storage.py`, `secondary/__init__.py`, `unified/pipeline.py`: retain already verified immutable body JSON/checksum, parse that authority, transport exact bytes and independently validate them in the worker. Added internal `Entry` fields preserve existing constructor/equality and capture compatibility.
 - `secondary/contracts.py`: validate alternative source/candidate/set engine and version, and exact non-null anchor endpoint. No public field/schema additions.
 - Regression files: `tests/test_unified_evidence_identity_20261101.py`, `test_secondary_alternative_identity_20261101.py`, `test_unified_identity_budget_20261101.py`; the last includes a real Python worker plus project-store/cache round-trip on authored data. No native comparator evidence.
+## Essential workflow safety continuation (2026-10-31)
+
+- `service.ProjectService.export_report` / `reports.export_project(..., project_root=...)`: enforce project-owned report destination boundary before filesystem writes; UI consumes service route. Existing renderer/preview compatibility retained.
+- `kbcorrelation.service.KbService.acquire/import_pair`: bind consented acquisition completion to captured investigation revision and explicit preview scope, using existing workspace lock/history; retain conservative pairing provenance.
+
+- `persistence.ProjectStore.load(*, recover_interrupted=True)`: default startup recovery unchanged; non-mutating committed reads for report generation set False. No schema change.
+
+## Offline KB desktop service seam (2026-10-31 implementation)
+
+| Module | Contract / responsibility | Verification |
+|---|---|---|
+| `kbcorrelation/investigation_service.py` | Frozen `InvestigationRequest` / `InvestigationResult`; `execute_request(request,cancel,service_factory=None)` local-only task-local facade over strict advisory import, search/products and preview-bound local pair creation. No Qt/network calls. | `tests/test_kb_investigation_service.py` |
+| `kbcorrelation/investigation_qt.py` | Parented `InvestigationDialog(parent,workspace=None,tasks=None,on_created=None,current_project=None,execute=execute_request)`: explicit scope/local-pair controls, immutable requests, TaskRunner lifecycle/generation checks; caller adopts new project on GUI thread. Existing index row was ahead of implementation. | `tests/test_ui_kb_investigation.py`; offscreen only, native Windows UI separate |
+
+- `kbcorrelation/wiring.py`: GUI-only create-new project-port factory uses existing ProjectService.create; default CLI/resume factory remains compatible. The investigation service selects the new-only factory per operation.
+
+- `gui/qt/host.py`: `PanelHost.investigation_dialog()` constructs the parented offline dialog and owns retained-path/adoption callbacks; MainWindow delegates without naming/importing a feature package.
+
+- `gui/qt/project_adoption.py`: `adopt_project(window, service)` owns the generic GUI transaction for service/render/preferences adoption and rollback; MainWindow.set_service stays a thin facade. Existing real-service entry regressions cover rollback and lock release.
+
+### [AF-0:wave1-ports] Autonomous finish wave 1 ports (2026-11-04)
+
+| Module | Files | Responsibility | Verification |
+|---|---|---|---|
+| Application mark (SPEC-52 WIN-1, from #147) | `src/patchtrace/app_icon.py`, `src/patchtrace/resources/patchtrace-mark.svg` | Owner mark rendered through QtSvg for window and build icons; package data | `tests/test_windows_build_resources.py` |
+| Windows executable identity (from #147) | `tools/windows_version_info.py`, `tools/windows_icon.py`, `tools/check_windows_exe.py` | Validated version fields, deterministic ICO, bounded read-back of the built exe's resources (no execution) | same; native Windows read-back is CI-only |
+| Rz-diff producer ownership research (from #165-#168) | `tools/rzdiff/{patch_producer.py,native_evidence.py,native_control.c,boundary_control.c,singleton-ownership.patch}` | Build-time LGPL patch against a pinned rizin checkout (never shipped), native red/green controls, evidence-log parsing | `tests/test_rzdiff_producer_patch.py`, `tests/test_rzdiff_native_evidence.py`; `rzdiff-producer.yml` (PR-only) |
+| Unified live-gate harness repairs (GT-01, from #138-#141) | `tools/unified/live_pairs.py`, `BackendConfig.force_identical_diff` | Commit completed runs before unified analysis, forced native A/A diff, per-pair failure sidecars | `tests/test_unified_live_*.py`; live result only from `unified-live-gates.yml` |
