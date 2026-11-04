@@ -31,3 +31,4 @@ Newest prerelease: v0.1.0-beta.751 (2026-11-03T19:05Z). Main: `b77d84e`.
 | 2026-11-04T01:28 | collection failed: `ImportError: libEGL.so.1` (pytest-qt import) | env fixed | container lacked libegl1; `apt-get install libegl1`; then 18,738 tests collected in 28.7 s |
 | 2026-11-04T01:30 | 12-hour check-in scheduled task | created | trig_01W9SBayAYTw85JjeGKLiVmB, cron `30 */12 * * *` UTC |
 | 2026-11-04T01:30 | rate limit | allowed | get_session rate_limit_info.status=allowed (seven_day) |
+| 2026-11-04T03:10 | correction: d99cd77 also added 2 tracker lines (PR #153 follow-up) that the d03a7d4 restore dropped | restored in place | found by the independent #173 review; recovered by base64-decoding main's file; tracker test now also rejects a mid-file 'tokens truncated' marker |
