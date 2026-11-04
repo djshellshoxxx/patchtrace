@@ -15,8 +15,8 @@ SAFE = ('material', 'review')
 
 
 def tail_called(items, *, index=1, target='helper', **kwargs):
-    """`image(items)` where instruction `index` of `f` is a conditional jump to `target` that Ghidra records as a call
-    row of kind `jump` (a jump leaving the function, 03 s12.3) and keeps out of the block successors."""
+    """`image(items)` where instruction `index` of `f` is a direct jump to `target` that Ghidra records as a call row of
+    kind `jump` (a jump leaving the function, 03 s12.3) and keeps out of the block successors."""
     fns = image(items, **kwargs)
     for fn in fns:
         if fn['name'] == 'f':
@@ -55,6 +55,19 @@ def test_a_tail_call_that_becomes_conditional_is_never_cosmetic(tmp_path):
     new = [('cmp_ri', 'ECX', 6), ('jcc', 'Z', 'helper'), ('mov_ri', 'EAX', 1), ('ret',)]
     facts = run_facts(tmp_path, image(old), tail_called(new)).facts('f')
     assert facts.verdict in SAFE and facts.proof is None, (facts.verdict, facts.proof)
+
+
+@pytest.mark.parametrize('shape', ['jmp', 'jcc'], ids=['jmp', 'jcc'])
+def test_a_retargeted_tail_jump_is_reported_once_and_anchored_like_a_call(tmp_path, shape):
+    """`jmp helper` -> `jmp other` (a direct jump leaving the function) is the same callee change as `call helper` ->
+    `call other`: one `callee` delta that C4 anchors (05 s2.5 MAT-ANCHOR), not a C2 delta without call identities plus
+    a second C4 delta for the same change."""
+    branch = ('jmp',) if shape == 'jmp' else ('jcc', 'Z')
+    tail = [('cmp_ri', 'ECX', 6), (*branch, 'helper'), ('mov_ri', 'EAX', 1), ('ret',)]
+    retargeted = [('cmp_ri', 'ECX', 6), (*branch, 'other'), ('mov_ri', 'EAX', 1), ('ret',)]
+    facts = run_facts(tmp_path, tail_called(tail), tail_called(retargeted, target='other')).facts('f')
+    assert [(d.cls, d.channel) for d in facts.deltas] == [('callee', 'C2')]
+    assert (facts.verdict, facts.second_channel) == ('material', 'C4')
 
 
 def test_an_unchanged_conditional_tail_call_keeps_its_proofs(tmp_path):

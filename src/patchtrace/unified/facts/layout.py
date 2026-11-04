@@ -17,7 +17,7 @@ from ..ir.features import is_conditional_branch
 from .align import Alignment
 from .datamap import CONFLICT, MAPPED, UNMAPPED, TargetMap, Voter
 from .fnview import FnView, positional_cfg_equal
-from .operands import Consistency, DeltaInfo, holds_effect, short
+from .operands import CallTarget, Consistency, DeltaInfo, holds_effect, short
 
 __all__ = ['CfgResult', 'INVERSE', 'compare_cfg', 'condition_code', 'inverted', 'positional_cfg_equal']
 
@@ -80,13 +80,17 @@ def _target(view: FnView, index: int) -> int | None:
 
 def _check_external(old: FnView, new: FnView, to: int, tn: int, targets: TargetMap, voter: Voter | None,
                     out: CfgResult) -> None:
-    """A direct jump that leaves the function (a tail call) is a function target, not an edge."""
-    state = targets.function_state(_target(old, to), _target(new, tn), voter)
+    """A direct jump that leaves the function (a tail call) is a function target, not an edge. A retargeted one is
+    the same callee change as a retargeted call: it carries both call identities, so C4 anchors it and does not
+    report it a second time (05 s2.5)."""
+    target_old, target_new = _target(old, to), _target(new, tn)
+    state = targets.function_state(target_old, target_new, voter)
     out.cons.add(state)
     if state != MAPPED:
         out.layout_ok = False
     if state == CONFLICT:
-        out.deltas.append(_block_delta('callee', old, new, None, None, to, tn, DeltaInfo()))
+        out.deltas.append(_block_delta('callee', old, new, None, None, to, tn, DeltaInfo(
+            tokens=(CallTarget('fn', target_old), CallTarget('fn', target_new)))))
 
 
 def _fall_through_jump_ok(old: FnView, new: FnView, bo: int, bn: int, to: int | None, tn: int | None,
