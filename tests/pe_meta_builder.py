@@ -255,7 +255,52 @@ def dual_signature():
     return signed_pe(make, algs=('sha1', 'sha256'))
 
 
+def flip(data: bytes, offset: int) -> bytes:
+    out = bytearray(data)
+    out[offset] ^= 0xFF
+    return bytes(out)
+
+
 def set_entry_type(data: bytes, info: dict, cert_type: int) -> bytes:
     out = bytearray(data)
     struct.pack_into('<H', out, info['cert_off'] + 6, cert_type)
     return bytes(out)
+
+
+# --- version + manifest + signature in one image --------------------------------------------------------------
+
+def manifest_xml(level: str = 'asInvoker', *, ui_access: bool = False) -> bytes:
+    return (
+        '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n'
+        '<assembly xmlns="urn:schemas-microsoft-com:asm.v1" manifestVersion="1.0">\n'
+        '  <assemblyIdentity type="win32" name="PT.Test.App" version="1.0.0.0" processorArchitecture="amd64"/>\n'
+        '  <trustInfo xmlns="urn:schemas-microsoft-com:asm.v3"><security><requestedPrivileges>\n'
+        f'    <requestedExecutionLevel level="{level}" uiAccess="{str(ui_access).lower()}"/>\n'
+        '  </requestedPrivileges></security></trustInfo>\n</assembly>\n').encode()
+
+
+def meta_pe(version: str = '1.0.0.0', level: str = 'asInvoker', *, signed: bool = True, sections_extra: bytes = b'',
+            company: str = 'PT Test Corp') -> tuple[bytes, dict]:
+    """The synergy fixture (spec 5): version resource, manifest and, when `signed`, one SHA-256 signature made over
+    the final image. `sections_extra` changes a code byte so two builds differ."""
+    from pe_rsrc_builder import (
+        LANG_EN_US,
+        RT_MANIFEST,
+        RT_VERSION,
+        rsrc_pe,
+        standard_strings,
+        tree,
+        version_blob,
+    )
+    quad = tuple(int(part) for part in version.split('.'))
+    strings = standard_strings(version)
+    strings['040904B0']['CompanyName'] = company
+    root = tree({RT_VERSION: {1: {LANG_EN_US: version_blob(quad, strings=strings)}},
+                 RT_MANIFEST: {1: {LANG_EN_US: manifest_xml(level)}}})
+    spec = base_spec()
+    spec.sections[0] = replace(spec.sections[0], data=spec.sections[0].data + sections_extra)
+    if not signed:
+        return rsrc_pe(root, spec=spec)
+    placeholder, info = rsrc_pe(root, spec=replace(spec, cert_payloads=[b'\0' * 16]))
+    digest = reference_digest(placeholder, info, 'sha256')
+    return rsrc_pe(root, spec=replace(spec, cert_payloads=[authenticode_blob('sha256', digest)]))

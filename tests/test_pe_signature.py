@@ -20,6 +20,7 @@ from pe_meta_builder import (
     certificate,
     counter_signature,
     dual_signature,
+    flip,
     reference_digest,
     set_entry_type,
     signed_pe,
@@ -45,12 +46,6 @@ def opened(tmp_path, data, limits=DEFAULT):
 def verify(tmp_path, data, *, limits=DEFAULT, cancel=None):
     with opened(tmp_path, data, limits) as (reader, overview):
         return verify_embedded(reader, overview, cancel, limits)
-
-
-def flip(data: bytes, offset: int) -> bytes:
-    out = bytearray(data)
-    out[offset] ^= 0xFF
-    return bytes(out)
 
 
 def test_unsigned_pe_has_no_signatures(tmp_path):
