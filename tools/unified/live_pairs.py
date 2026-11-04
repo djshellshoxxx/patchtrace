@@ -143,6 +143,9 @@ def main(argv: Sequence[str] | None = None) -> int:
     args.out.parent.mkdir(parents=True, exist_ok=True)
     args.out.write_bytes(outcomes.dump(outcomes.build(args.run, f'{platform.system()}-{platform.release()}', done)))
     print(f'{len(done)} outcomes written to {args.out}')
+    empty = [f'{o.pair_id} ({o.orientation})' for o in done if not o.rows]
+    if empty:       # an engine that saw no function is a different finding from one that saw no change
+        print(f'warning: {len(empty)} outcomes have no unified row: {", ".join(empty[:10])}', file=sys.stderr)
     if failed:
         print('\n'.join(failed), file=sys.stderr)
     return PAIR_FAILED if failed else OK
