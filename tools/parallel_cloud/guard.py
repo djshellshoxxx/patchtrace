@@ -92,6 +92,7 @@ def main():
     p = argparse.ArgumentParser()
     p.add_argument("task", choices=TASKS)
     p.add_argument("--post", action="store_true")
+    p.add_argument("--no-ownership", action="store_true")
     p.add_argument("--validate-artifact", type=Path)
     args = p.parse_args()
     if args.validate_artifact:
@@ -99,6 +100,10 @@ def main():
     else:
         if args.post:
             post_check(args.task)
+        if args.no_ownership:
+            if not args.post:
+                raise ValueError("--no-ownership is only valid with --post")
+            return
         print("ready=" + str(check_ownership(args.task)).lower())
 
 
