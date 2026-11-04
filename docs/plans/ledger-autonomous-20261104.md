@@ -2,21 +2,24 @@
 
 Branch `claude/autonomous-finish-20261104`. Header table is rewritten at each 12-hour check; the event log below it is append-only (timestamp UTC, item, state, evidence).
 
-## Status (rewritten at each check)
+## Status (rewritten at each check; last 2026-11-04T07:58Z)
 
-| Workstream | Done | In progress | Blocked | PRs |
-|---|---|---|---|---|
-| A Windows alpha / CI | - | bootstrap | - | - |
-| B Unified SPEC-31 | - | - | - | - |
-| C Secondary engines | - | - | - | - |
-| D KB/CVE | - | - | - | - |
-| E Intel tools | - | - | - | - |
-| F GUI | - | - | - | - |
-| G Calibration | - | - | - | - |
-| H Security / audits | - | - | - | - |
-| I Docs / tracker | todo.md restored | - | - | - |
+| Workstream | Done (integration branch unless noted) | In progress | Blocked / owner |
+|---|---|---|---|
+| A Windows alpha / CI | #175 exe identity MERGED; release-notes evidence (A-I-1), post-publish verifier (A-I-2), release docs (A-I-3), Linux build records label+commit; #177 xdist (Windows pytest 44m54s -> 14m38s) | #177 held: pre-existing intermittent hang in tests/test_ui_unified.py exposed by xdist; debug agent | offline payload (HARD), clean-Windows acceptance (owner) |
+| B Unified SPEC-31 | GT-01 harness (#174); A-28 Ghidriff 1:N abstain (#174); G-U5 bench stages; U7 audit lows incl. orientation-free L-39 cut; S0a/S2 close-out | RB-01 full run 41774865819 on #174 (diagnostic 41757798304: 27/30 jobs green, 34 outcomes per OS) | - |
+| C Secondary engines | rz-diff producer controls (#174); orientation guard; BinDiff row caps; native receipts wired (RB-03); rz-diff output flood stop | live-rizin / live-bindiff receipts on next runs | BinDiff licence/pin, BinExport2 goldens (owner) |
+| D KB/CVE | #148 investigation (#176); #118 scoped search (#176); C-03, D-02, report_for, attach --repair, applicability in context, pilot KEV channel, CSAF hardening tail | - | live MSRC/Winbindex (network/owner) |
+| E Intel tools | parser fuzz harness + nightly; pairs --hypothesis; search sources bound (S8b); strings dock FLOSS (S7c) | - | live capa/DiE runs (CI) |
+| F GUI | T4/T5/T16/T17 (#176); #116 P2/P3 fixes (#176/integration); journey gate (RB-05 automated); inspection on TaskRunner; accessibility sweep; Windows runbook | - | manual NVDA/DPI/HC runbook execution (owner) |
+| G Calibration | #154/#157 (#176); L7 deltas; Tier W runner + CLI | - | Tier W data (owner) |
+| H Security / audits | dispositions #105 #116 #118 #120 #121; deny-egress harness; Windows launch hardening; child-launch inventory | - | #121-3 needs native validation; #121-6/-7 owner |
+| I Docs / tracker | todo.md + qa.md restored (#173 MERGED); registry T13; 17 + more stale lines ticked | - | Pages settings (owner) |
 
-Newest prerelease: v0.1.0-beta.751 (2026-11-03T19:05Z). Main: `b77d84e`.
+PRs: #173 MERGED (25b2ac8), #175 MERGED (b0280c8); open #174 (unified/secondary, Sonar owner decision), #176 (product slices, Sonar owner decision), #177 (CI speed, held for the hang fix). Integration branch `claude/autonomous-finish-20261104` holds waves A+B (32 slices) for one follow-up PR after the hang fix and two clean gates.
+Newest prerelease: v0.1.0-beta.751 (b77d84e); release gate publishes on every third counted merge (2 counted since).
+Full suite: main baseline 18,701 passed; integration gate 5 @62a87fa 19,808 passed / 0 failed; gate 6 3 failures (the hang).
+Budget: seven-day status allowed_warning since about 07:55Z: no new Opus workers.
 
 ### Owner decisions needed
 - SonarCloud: Security Rating C/D on #174/#175/#176 traced to the "LLM-supplied CLI arguments" path taint rule on developer/CI tools (`tools/**`), not exploitable; mark Safe or exclude `tools/**` from taint rules (sonarcloud.io is denied by this environment's network policy, so the coordinator cannot do it). RB-08.
