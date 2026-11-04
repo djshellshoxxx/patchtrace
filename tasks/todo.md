@@ -120,7 +120,7 @@
 ### [K:28a-28b] CSAF engine (track K, 2026-10-14)
 - [x] SPEC-28a: contracts + generated schemas/examples, discovery, transport, stdlib validator, normalization, storage (synthetic fixtures; fake opener)
 - [x] SPEC-28b: CWE lexicon (negation/scopes), hypothesis rules, anchors, verified-bytes identity, OLD/NEW applicability with contradictions and explicit unknowns
-- [ ] Deferred: `intelligence/reports.py` (JSON/MD, escaping), `intelligence/cli.py` + `cli.py` hook + `tools/frozen_smoke.py` entry (spec section J)
+- [x] Deferred: `intelligence/reports.py` (JSON/MD, escaping), `intelligence/cli.py` + `cli.py` hook + `tools/frozen_smoke.py` entry (spec section J) (2026-11-04 audit: intelligence/reports.py, cli.py, tools/frozen_smoke.py; tests/test_intel_reports.py, tests/test_intel_cli.py)
 - [ ] Live (BLOCKED here): MSRC provider-metadata location and directory layout, real Microsoft CSAF documents through the validator (policy if they fail mandatory tests), `.sha256` availability, consented fetch on Linux/Windows; re-verify OASIS schema hashes on docs.oasis-open.org and CWE names on cwe.mitre.org
 ### [W:tier-w-w1] Tier W local-only corpus (SPEC-33, 2026-10-14)
 - [x] Spec; layout/contracts; Winbindex catalogue + resolve + pair/manifest builder; stdlib MSF reader; PE tables + masked body hash; repository guard (O1) with self-made PDB allow-list; reproducible self-made fixtures
@@ -129,14 +129,14 @@
 ### [T:core] SPEC-29 tools capa/FLOSS/diec (2026-10-14)
 - [x] Spec T1-T10 (`tool-evidence/1`); pinned capa 9.4.0, FLOSS 3.1.1, diec 3.21 verified from upstream source + real Linux runs
 - [x] Contracts, strict parsers/probes, scratch/env helpers, normalize (RVA, verified offsets, attribution, pairing), delta (newly-introduced vs newly-detectable, unlocalized, flags, value gate unvalidated); real goldens on SYNTHETIC pairs
-- [ ] Runner/scheduler + store (draft exists outside the repo, untested), CLI `intel-tools` + 6-line hook, schema generator + regenerate test
+- [x] Runner/scheduler + store (draft exists outside the repo, untested), CLI `intel-tools` + 6-line hook, schema generator + regenerate test (2026-11-04 audit: intelligence/tools/{runner,store,cli}.py; tools/generate_intel_tools_schemas.py; tests/test_intel_tools_*.py)
 - [ ] Fake-executable tests (missing exe, timeout, cancel, oversize, stderr noise, stale cache, Windows paths, airgap)
 - [ ] Provisioning + `tools/intel_tools_pin.json` (asset SHA-256 measured, see qa.md), live test, `live-intel-tools.yml`; Windows runs; Ghidra-backend fixture; DiE value-gate benchmark
 ### [D:known-answer-factory] SPEC-32 known-answer corpus factory (builder D, 2026-10-14)
 - [x] Spec `docs/specs/known-answer-corpus.md`; label contract + schemas/examples; C locator; reproducible msvc-free/mingw builds; PDB/DWARF inventory; masked hashes; decision-table labeller; authored-suite cross-check (I4); case cards (I2/I3); A/A rebuild + layout and toolchain-noise pairs (M4); pinned fetch; zlib v1.3 -> v1.3.1 card verified by a real build
 - [ ] M1 catalogue to >= 14 projects x 3 consecutive pairs (only zlib, 1 pair, committed); M2 >= 15 CVE cases + >= 3 bounds/constant-only + >= 3 controls (sources: CVE List V5 raw records, oss-fuzz-vulns; NVD/OSV hosts blocked here)
-- [ ] M3 planted mutations (`tools/calibration/mutations/`, 16 operators designed in spec s8; not built)
-- [ ] M5 `tier_r/evaluate.py` (rz-diff via registry/scheduler, BinDiff/Ghidriff import, per-stratum metrics, report) and `annotate.py`/`manifest.py` conversions
+- [x] M3 planted mutations (`tools/calibration/mutations/`, 16 operators designed in spec s8; not built) (2026-11-04 audit: tools/calibration/mutations/registry.py (25 operators); tests/test_mutations_{ops,more,ir,opt,labels}.py)
+- [x] M5 `tier_r/evaluate.py` (rz-diff via registry/scheduler, BinDiff/Ghidriff import, per-stratum metrics, report) and `annotate.py`/`manifest.py` conversions (2026-11-04 audit: tools/calibration/tier_r/evaluate.py, annotate.py, manifest.py exist; tests/test_tier_r_eval_*.py)
 - [ ] CLI (`python -m tools.calibration.tier_r`), `corpus.py known-answer` hook, `.github/workflows/corpus-tier-r.yml` (Linux + advisory Windows); optional manifest-only `public-datasets` importer (DeepHistory pins, oss-fuzz-vulns, CVE List V5)
 ### [B:hardening] Phase D track B (2026-10-14, builder worktree; local Linux evidence, CI pending)
 - [x] H2 pre-prune verified backup: no history prune, retention, `make_room` or engine-run deletion without a re-opened, integrity-checked backup (`verified_backup.py`); failure keeps every row (supersedes the "[ ] H2 pre-prune verified backup" line above)
@@ -200,7 +200,7 @@
 - [ ] Owner: plan s10 amendments still open (this slice edits no spec): 1 SPEC-30 status, `pilot/1`, ledger instead of graph, tiers, CVE gate, 30d gate; 2 CSAF spec; 3 implementation plan; 4 rows for the remaining `pilot/*` and `ui_leads.py`; 5 `phase-d-build-coordination.md` s2 (`patch-intent` is not derived, list `PT-PILOT-*`); 6 public `backup_once`/`delete_own` in `enrichment/storage.py`; 7 `cli.py` EXTENSIONS; 8 `ui.py`/`tooltips.py` seam; 9 LBL consumer note; 10 unified A-22 and KB 31-E
 - [ ] Next slices: PIL-A2/A3 adapters, PIL-B1 rule table, PIL-T oracle (`tests/fixtures/pilot/` is already pinned to LF), then B2, C1, C2, D1; `ports.py` signatures are provisional until A2/A3/B2 land
 - [ ] Windows and Python 3.12 CI for the pilot tests (3.12 verified locally in a venv); frozen smoke import of `patchtrace.pilot` once a consumer exists (nothing imports it yet)
-- [ ] Pre-existing on work/a 8fcdd3d, not PIL: `tests/test_algorithm_digests.py::test_algorithm_digests_are_pinned` fails since `enrichment/cve.py` `CVE_PATTERN` gained `re.ASCII`; re-baseline `tests/fixtures/algorithm_digests.json` and record it in docs/qa.md
+- [x] Pre-existing on work/a 8fcdd3d, not PIL: `tests/test_algorithm_digests.py::test_algorithm_digests_are_pinned` fails since `enrichment/cve.py` `CVE_PATTERN` gained `re.ASCII`; re-baseline `tests/fixtures/algorithm_digests.json` and record it in docs/qa.md (2026-11-04 audit: tests/test_algorithm_digests.py::test_algorithm_digests_are_pinned passes (9 passed); re.ASCII in enrichment/cve.py)
 ### [S0b:unified-s0] SPEC-31 S0b (2026-10-14)
 - [x] sources (Ghidriff + raw `address_matches`, BinDiff, rz-diff, analyst corrections), addressing (C3 `detect_address_basis`), fusion/arbiter with independence components AND evidence classes, S0 facts (canon/1, C4n/C5t/C6/C8) and verdicts, pipeline (prepare/cached/execute/publish), hidden worker (C3 `worker_argv`, L-42 cap, C3 OOM rule), CLI `unified run/show/explain/status`; `registry.py` delivered here (S0a deferred it); spec notes 02 s10, 05 s6, 06 s10, 07 s12
 - [ ] Windows CI: the unified tests on Windows (child spawn through `python -m patchtrace`, Job Object memory cap and OOM classification U7, `os.replace` of staged result directories, CRLF), Python 3.12; frozen `PatchTrace.exe unified --help` and `unified _worker --self-check` (A-20, smoke lines belong to S1)
@@ -226,13 +226,13 @@
 
 ### [WB3-S0:strings-core] WB3-S0 contracts and table
 - [x] `patchtrace.strings` limits, contracts, keys, columnar table; schemas under `docs/schemas/strings/`; gate measured: two 200k-row sides (unique display values) load in about 0.3 s, tracemalloc peak about 52 MiB
-- [ ] Next: S1 sources, S2 regions/cues, S3 scan (need S0 only)
+- [x] Next: S1 sources, S2 regions/cues, S3 scan (need S0 only) (2026-11-04 audit: strings/{sources,regions,cues,scan}.py exist; tests/test_strings_*.py)
 ### [WB3-S1-S3:strings-sources-scan]
 - [x] WB3-S1 sources, WB3-S2 regions/cues/look-alike, WB3-S3 built-in scan (parity with the FLOSS 3.1.1 static goldens, property tests against a whole-buffer regex oracle)
-- [ ] Open: S0 contracts/table (`strings/__init__.py`, limits, columnar table) not on this base; `SourceRow` maps 1:1 onto the planned table columns; advisory-text/advisory-api/lookalike cues are set by the delta layer (S5/S6)
+- [x] Open: S0 contracts/table (`strings/__init__.py`, limits, columnar table) not on this base; `SourceRow` maps 1:1 onto the planned table columns; advisory-text/advisory-api/lookalike cues are set by the delta layer (S5/S6) (2026-11-04 audit: strings/{table,contracts,edits,anchors}.py exist; tests/test_strings_*.py)
 ### [G1:callgraph-kernel]
 - [x] Kernel (limits, text, labels, CSR, algo) with NetworkX 3.7 differential oracle (dev only, skipped when absent) and PYTHONHASHSEED 0/1 determinism test
-- [ ] Next: G2 contracts, input, pairing, resolver, snapshot, query
+- [x] Next: G2 contracts, input, pairing, resolver, snapshot, query (2026-11-04 audit: callgraph/{contracts,project_input,pairing,resolver,snapshot,query}.py exist)
 ### [G0:fixtures] WB2 G0 synthetic call-graph fixtures (2026-10-14, Haiku 5.5, worktree)
 - [x] Red tests first (`tests/test_callgraph_fixtures.py`), then builder `tests/callgraph_fixtures.py` and six committed fixtures in `tests/fixtures/callgraph/`; 24 focused tests pass; ruff clean
 - [ ] Integrator: add `.gitattributes` line `tests/fixtures/callgraph/** text eol=lf`
@@ -316,7 +316,7 @@
 
 ### [G5:view-model]
 - [x] Pure view models and tests (`tests/test_callgraph_view_model.py`).
-- [ ] `ui_calls.py`, `ui_calls_tips.py`, `tests/test_ui_calls.py` after F5.
+- [x] `ui_calls.py`, `ui_calls_tips.py`, `tests/test_ui_calls.py` after F5. (2026-11-04 audit: callgraph/panel.py, panel_qt.py; tests/test_ui_graph_panel.py (built under these names))
 
 ### [WB3-S6:anchors-export-cli]
 - [x] Anchors, search rows, export, CLI dispatcher and tests (synthetic pair, built-in scan). [ ] Integrator: 6-line `cli.py` hook, `frozen_smoke` check of `strings scan --builtin --json` (A8, A13). [ ] Not built: derived-cache storage of tables and deltas (recomputed per call), Ghidriff `strings` input to the CLI (L1 links need it), review-order boost from anchor hits (by design none).
@@ -476,7 +476,7 @@
 - [ ] Not verified: Windows and CI; the full suite (the integrator runs it); the DiE `BuildFactAnchor` (not built).
 ### [GUI-F1:core] GUI framework F1: pure core (2026-10-14)
 - [x] gui text, theme_math, shortcuts, capabilities, state, projection, anchors, ports, registry with lint and loader, cli; panel_manifest with the 14 slots; 13 test files, 507 tests (hypothesis on `sanitize_text`, ids and manifest; no-Qt subprocess; exits 0/2/3/4/5): docs/qa.md [GUI-F1:core]
-- [ ] Integrator: add `cli_commands/panels.py` (about 12 lines, adapter text in the F1 report) once F1b is merged; then `patchtrace panels check` joins the feature-PR gate (it exits 4 until the first panel is built)
+- [x] Integrator: add `cli_commands/panels.py` (about 12 lines, adapter text in the F1 report) once F1b is merged; then `patchtrace panels check` joins the feature-PR gate (it exits 4 until the first panel is built) (2026-11-04 audit: cli_commands/panels.py exists; .github/workflows/qa-windows.yml:37 runs panels check)
 - [ ] Open for the next slices: F8 re-exports `ui_evidence.contrast_ratio` from `gui.theme_math` and moves the `evidence.*` tips into `PANEL.tips`; F4 and F6 give `ColumnSpec`, `TableSpec`, `PreparedTable`, `PairText`, `GraphNodeView`, `GraphEdgeView` pure homes; the panel module paths for the slots the plan does not name may need a one-line manifest edit each
 - [ ] Not verified: Windows CI, the frozen build (PyInstaller sees 14 function-level imports of modules that do not exist yet and will warn "missing module", not fail), the full suite twice
 ### [AI-FIX:ai-provider-fixes] AI provider and interpretation fixes (2026-10-14, Sonnet 5.5, worktree; Linux only)
@@ -500,7 +500,7 @@
 - [ ] Integrator: re-measure the time ceilings on Windows CI; add a panel-level sort command and a status announcement from `counts_changed` and `copied`; chips delegate (F3) reads `CHIP_ROLE`.
 ### [GUI-F3:widgets] GUI framework F3: shared widgets (2026-10-14)
 - [x] labels, state_view (StateView, NoticeStrip), chips, theme (dark tokens, stylesheet equal to DARK_STYLE), gui/tips.py with tests/test_gui_{labels,state_view,chips,theme,tips}.py; qt_gate repeat 10: 1,770 passed.
-- [ ] Integrator (F5): call register_gui_tips() in the host and in the test fixture; wrap the central widget with NoticeStrip; have tooltips.py delegate apply_tooltip(accessible=) to gui.tips.apply_tip or adopt it.
+- [x] Integrator (F5): call register_gui_tips() in the host and in the test fixture; wrap the central widget with NoticeStrip; have tooltips.py delegate apply_tooltip(accessible=) to gui.tips.apply_tip or adopt it. (2026-11-04 audit: gui/qt/host.py:232-234 register_gui_tips, :234 NoticeStrip; tooltips.py:1104-1105 apply_tip; test fixture registers tips)
 - [ ] F7: high-contrast chip drawing, system variant, ThemeTokens from QPalette.
 - [ ] BLOCKED (manual): real Narrator or NVDA output for the status strip and notice strip, Windows rendering of chip shapes at 100-200 percent DPI.
 ### [F6b:graph-canvas]
@@ -522,7 +522,7 @@
 ### [F8:evidence-migration] Evidence and engine setup on the host (2026-10-14)
 - [x] M1 and M2 done; `UI_TRANSITIONAL_CEILING` lowered 25 -> 17 (ui.py 3,159 lines).
 - [ ] Reach the plan's +15 (3,157): two more ui.py lines go with F9 (series and files docks).
-- [ ] Integrator: move the evidence status messages to `StatusAnnouncer` and the load/run/probe threads to `TaskRunner` (needs the C6 thread tests rewritten); M4 stays open.
+- [x] Integrator: move the evidence status messages to `StatusAnnouncer` and the load/run/probe threads to `TaskRunner` (needs the C6 thread tests rewritten); M4 stays open. (2026-11-04 audit: ui_evidence.py:1052,1090 use self.tasks.submit; StatusAnnouncer wired (M4 note kept))
 - [ ] BLOCKED (manual): M19 NVDA walk and M21 keyboard walk of the migrated panel on Windows.
 ### [F7:theme]
 - [x] system variant, automatic high contrast, chip HC drawing, reduced motion (Qt animation effects), View > Theme, hunk tints as ThemeTokens, focused tests.
@@ -615,7 +615,7 @@
 - [x] K2: `kev/{transport,service,cli}.py`, the 17-line adapter `cli_commands/kev.py` and `tests/test_kev_{transport,service,cli}.py` (247 tests): the six gate tests of plan section 9 and the RA-3 real-socket regression (`test_a_slow_drip_server_cannot_hold_the_download_past_its_deadline`: a loopback server sends one byte every 0.5 s, the deadline is 2 s, the fetch returns in 2.0 s; the audit measured 12 s on the CSAF transport); 68 one-line mutations killed
 - [x] Live check from this sandbox (not CI, not Windows): `kev fetch --source cisa-github` installed catalog 2026.10.14 (1,745 entries, 1,787,354 bytes, no unknown fields, no warnings) through the production transport; `--source cisa-site` fails with `PT-KEV-NETWORK` here (the host is blocked), so the canonical URL stays unverified until the K6 workflow runs on GitHub
 - [ ] OPEN for the integrator (shared files): `tools/frozen_smoke.py` smoke steps `kev import`, `kev lookup`, `kev status` on `tests/fixtures/kev/kev-synthetic-2099.json` (A1; the derived `names()` lists need no edit); rows for `www.cisa.gov` and `raw.githubusercontent.com` (both through `kev/transport.py`, consent `--consent-hosts`) in `docs/specs/network-egress-privacy.md` section 1; the subprocess tests of `tests/test_acceptance_smoke.py` import the main checkout's `patchtrace` unless `PYTHONPATH` points at the tree under test
-- [ ] OPEN, not K2: RA-3 (a slow-drip server bypasses the deadline) still stands in `intelligence/csaf/transport.py`, `enrichment/intelligence.py` and `acquisition/transport.py`; one shared bounded-read helper in `netutil` with the loopback test of `tests/test_kev_transport.py` as the model would close all four
+- [x] OPEN, not K2: RA-3 (a slow-drip server bypasses the deadline) still stands in `intelligence/csaf/transport.py`, `enrichment/intelligence.py` and `acquisition/transport.py`; one shared bounded-read helper in `netutil` with the loopback test of `tests/test_kev_transport.py` as the model would close all four (2026-11-04 audit: netutil.read_bounded used by csaf/transport.py:28 and enrichment/intelligence.py:36,409; acquisition deadline reads)
 - [ ] NOT built here: K3 GUI, K4 KB adapter and synergy test, K5 project row and report, K6 live probe (next in this chain), K7
 ### [K6:kev-live-probe] KEV K6 live probe and workflow (2026-10-14, Sonnet 5.5, worktree; Linux only)
 - [x] K6: `tools/live_kev_probe.py`, `.github/workflows/live-kev.yml`, `tests/test_live_kev_probe.py` (63 tests): the gate tests `test_probe_classifies_blocked_vs_failed` (16 cases) and `test_probe_detects_schema_drift` (13 cases), the one-release-one-content rule, the 72 h limit, the mirror-only fallback, the status-file convention, the CLI subprocess and the workflow guards; 37 one-line mutations killed
@@ -725,7 +725,7 @@
 
 ### [UE4:code-panes]
 - [x] Decompiled-C side by side in `CodeDiffView` (stored part, honest unavailable), alignment gaps from the stored IR, hunk navigation, provenance per side, copy with provenance, all states, tooltips, accessible names; 100,000-line cap test
-- [ ] Integrator: write `decomp.jsonl.gz` (parts of the manifest, same line shape as `extract/decomp.py`) when the on-demand decompile ran; until then the C mode reports "not stored"
+- [x] Integrator: write `decomp.jsonl.gz` (parts of the manifest, same line shape as `extract/decomp.py`) when the on-demand decompile ran; until then the C mode reports "not stored" (2026-11-04 audit: unified/pipeline.py:618 _store_decomp, called at :709; tests/test_unified_decomp_part.py (9 tests))
 
 ### [LBL-14:ci-summary]
 - [x] ci_summary.py, nightly smoke+noise on ubuntu-24.04, determinism and status steps in the merge job (hermetic tests only).
@@ -753,8 +753,8 @@
 
 ### [U7:audit]
 - [x] Audit written, 4 Medium fixed with red tests
-- [ ] U7-05 BinDiff stub rows reach tier A alone (additive `SecondaryMatch.basicblocks` or IR-aware demotion before fusion)
-- [ ] U7-06 decide the budget policy for fusion and facts after a ladder deadline (partial result is lost today)
+- [x] U7-05 BinDiff stub rows reach tier A alone (additive `SecondaryMatch.basicblocks` or IR-aware demotion before fusion) (2026-11-04 audit: secondary/contracts.py:66 basicblocks; tests/test_unified_fusion.py:334 test_bindiff_stub_row_alone_is_never_matched)
+- [x] U7-06 decide the budget policy for fusion and facts after a ladder deadline (partial result is lost today) (2026-11-04 audit: docs/audits/20261015-unified-audit.md:129 [U7-06:fixed]; tests/test_unified_wire_compute.py:256)
 - [ ] U7-07 trace-arg mutant class for G-U2
 
 ### [LBL-07:mutations-ir-opt]
@@ -763,7 +763,7 @@
 
 ### [LBL-26:audit]
 - [x] Pre-lock audit docs/audits/20261015-lbl26-pre-lock-audit.md; 2 High and 4 Medium fixed with red tests
-- [ ] LBL-26 for C: wire guards.audit_identity_roles, natural-only rows, indeterminate worst-case bound, nested tau (audit C-1..C-8)
+- [x] LBL-26 for C: wire guards.audit_identity_roles, natural-only rows, indeterminate worst-case bound, nested tau (audit C-1..C-8) (2026-11-04 audit: docs/audits/20261015-lbl26-pre-lock-audit.md:75-82 marks C-1..C-6, C-8 DONE (LBL-30); C-7 in report.py)
 - [ ] LBL-26 deferred D-01..D-12 (audit doc)
 
 ### [WB2-G8:whole-program-sources]
