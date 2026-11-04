@@ -7,8 +7,9 @@ exactly one document. Exit codes: 0 ok; 2 invalid arguments or input; 3 runtime,
 adapter failed); 4 a legitimate no result (no completed run, no stored advisory for a named CVE, no lead, nothing stored);
 5 cancelled. Nothing here sends anything, runs a tool or executes a binary: it reads what the project already holds.
 
-The inputs of a run come from `collect.py`. The parser is built only when the verb is invoked (the registry lists the
-others bare), so this module may import pydantic at the top.
+The inputs of a run come from `collect.py`; `leads` reads the KEV catalog of `patchtrace kev` (`--kev-dir`, read only),
+whose notes are warnings. The parser is built only when the verb is invoked (the registry lists the others bare), so
+this module may import pydantic at the top.
 """
 from __future__ import annotations
 
@@ -91,6 +92,9 @@ def add_parser(sub) -> argparse.ArgumentParser:
     leads.add_argument('--limit', type=_count, default=DEFAULT_SHOWN,
                        help=f'leads shown per list (default {DEFAULT_SHOWN}, 0 = all)')
     leads.add_argument('--no-unified', action='store_true', help='ignore a unified result; pair by Ghidriff and BinDiff')
+    leads.add_argument('--kev-dir', type=Path, metavar='DIR',
+                       help='CISA KEV catalog folder of "patchtrace kev" (read only; default: the folder that command '
+                            'uses). KEV orders CVEs only, never functions')
     leads.add_argument('--show-dismissed', action='store_true', help='also list leads the analyst dismissed')
     leads.add_argument('--dry-run', action='store_true', help='do not store the result in the project')
     leads.add_argument('--export', type=Path, metavar='FILE', help='also write the report; .json or .md (escaped, LF)')
@@ -303,13 +307,14 @@ def _nothing_to_rank(args, command: str, exc: PilotError) -> int:
 
 @_handled('pilot leads')
 def _run_leads(args, cancel: threading.Event) -> int:
+    from ..kev.store import default_kev_dir
     from .service import localize
     command = 'pilot leads'
     target = _export_target(args.export)
     with _project(args.project) as (service, enrichment):
         try:
             collected = collect(service, enrichment, named=args.cve, assume=args.assume_applies,
-                                unified=not args.no_unified, cancel=cancel)
+                                unified=not args.no_unified, kev_dir=args.kev_dir or default_kev_dir(), cancel=cancel)
         except PilotError as exc:
             if exc.code != 'PT-PILOT-NOTFOUND':
                 raise

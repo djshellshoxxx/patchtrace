@@ -3,8 +3,9 @@
 `collect` is the one place that knows where each channel comes from: Ghidriff rows with the PE image layouts, B1 signals
 (the stored default profile when current, else computed in memory), the current unified result (unless switched off) or
 the secondary engines' verdicts for the pairing, call labels with the PE import delta, and the stored CSAF advisories with
-their CVE contexts. A source that is missing becomes a channel that is not run (or failed), never a negative vote.
-Stored capa/FLOSS/DiE results, CISA KEV and the KB window are not read yet: their channels say so, and the CSAF-derived
+their CVE contexts, and the CISA KEV catalog `patchtrace kev` keeps in use when a folder is named (CVE context only: it
+orders CVEs, never functions). A source that is missing becomes a channel that is not run (or failed), never a negative
+vote. Stored capa/FLOSS/DiE results and the KB window are not read yet: their channels say so, and the CSAF-derived
 count feeds the confounded window. Owner thread only (it reads the project database); nothing is run, sent or executed.
 
 `universe` decides which stored CVEs a run computes: `--cve` chooses what is shown and never what is computed, so a result
@@ -16,6 +17,7 @@ import sqlite3
 import threading
 from collections.abc import Iterator, Mapping, Sequence
 from dataclasses import dataclass
+from pathlib import Path
 
 from ..enrichment.contracts import EnrichmentError
 from ..enrichment.storage import EnrichmentStore
@@ -26,6 +28,8 @@ from .limits import DEFAULT_LIMITS, Budget, PilotError
 CONFIG = keys.default_config()
 NO_RUN = 'No comparison result yet. Run the analysis first; leads are computed from stored results only.'
 TOOLS_NOT_READ = 'stored capa, FLOSS and Detect It Easy results are not read by this command yet'
+KEV_UNREADABLE = ('The CISA KEV catalog could not be read, so the KEV state of every CVE is unknown. '
+                  'Run "patchtrace kev status".')
 
 
 class _Down:
@@ -159,9 +163,46 @@ def _unified(service, enrichment: EnrichmentStore, older: str, newer: str, budge
     return UnifiedPairing(view), UnifiedFacts(view), None
 
 
-def _contexts(source, computed: Sequence[str], assume: Sequence[str]):
+def _kev_stored(folder: Path) -> bool:
+    """Whether the KEV store's own files exist, leftover temporaries aside (what tells "unreadable" from "none"). Only
+    the pointer and the two store folders are looked at, never the rest of a folder named by `--kev-dir`."""
+    from ..kev import store as kev_store
+    try:
+        return (folder / kev_store.CURRENT_FILE).is_file() or any(
+            path.is_file() and not path.name.endswith(kev_store.TMP_SUFFIX)
+            for name in (kev_store.META_DIR, kev_store.SNAPSHOT_DIR) if (folder / name).is_dir()
+            for path in (folder / name).iterdir())
+    except OSError:
+        return True
+
+
+def _kev_source(kev_dir: Path | None, cves: Sequence[str]) -> tuple[object, tuple[str, ...]]:
+    """(`KevSource`, notes): the catalog in use under `kev_dir` (`patchtrace kev`'s store) for the CVEs of this run.
+    Read-only and total: no folder named, no folder or no catalog is `_NoCatalog` (unknown, never "not listed"), and a
+    store that cannot be read is `_NoCatalog` with a note, never an error of the run. The extract holds only the run's
+    CVEs, so a catalog id longer than a pilot CVE id never reaches `CatalogKev`."""
+    if kev_dir is None:
+        return _NoCatalog(), ()
+    from ..kev import store as kev_store
+    from ..kev.contracts import KevError
+    from .sources.kev import CatalogKev
+    folder = Path(kev_dir)
+    if not folder.is_dir():
+        return _NoCatalog(), ()
+    try:
+        loaded = kev_store.KevStore(folder).load_current()
+    except (KevError, OSError, ValueError):
+        return _NoCatalog(), (KEV_UNREADABLE,)
+    if loaded is None:
+        return _NoCatalog(), (KEV_UNREADABLE,) if _kev_stored(folder) else ()
+    listed = loaded.catalog.by_cve
+    extract = {cve: listed[cve].date_added for cve in cves if cve in listed}
+    return CatalogKev(loaded.catalog.meta.snapshot_id, extract), tuple(f'CISA KEV: {n}' for n in loaded.notes)
+
+
+def _contexts(source, computed: Sequence[str], assume: Sequence[str], kev):
     from .sources.advisory import context_from_report, cve_context
-    from .sources.kev import NO_CATALOG
+    from .sources.kev import kev_context
     from .sources.window import confounding
     unknown = [cve for cve in assume if cve not in computed]
     if unknown:
@@ -170,15 +211,16 @@ def _contexts(source, computed: Sequence[str], assume: Sequence[str]):
     found = [context_from_report(source.report(cve), assume_applies=cve in assume) for cve in computed]
     window = confounding({c.cve: c.gate for c in found}, min_cves=CONFIG.confounded_min_cves)
     zero = LeadCounts(fit=0, review=0, partial=0, code=0, queue=0)
-    return (tuple(cve_context(c, kev=NO_CATALOG, confounding=window, counts=zero) for c in found),
+    return (tuple(cve_context(c, kev=kev_context(kev, c.cve), confounding=window, counts=zero) for c in found),
             {c.cve: c.observations for c in found})
 
 
 def collect(service, enrichment: EnrichmentStore, *, named: Sequence[str] = (), assume: Sequence[str] = (),
-            unified: bool = True, cancel: threading.Event) -> Collected:
-    """Assemble the inputs of `localize` from the stored data of the project (see the module docstring). Raises
-    `PT-PILOT-NOTFOUND` without a completed run or for a named CVE no stored advisory lists, `PT-PILOT-INPUT` for an
-    assumption about a CVE the run does not hold, and `PT-PILOT-CANCEL`."""
+            unified: bool = True, kev_dir: Path | None = None, cancel: threading.Event) -> Collected:
+    """Assemble the inputs of `localize` from the stored data of the project (see the module docstring); `kev_dir` is
+    the KEV catalog folder (None: KEV is not read and every CVE is `unknown`). Raises `PT-PILOT-NOTFOUND` without a
+    completed run or for a named CVE no stored advisory lists, `PT-PILOT-INPUT` for an assumption about a CVE the run
+    does not hold, and `PT-PILOT-CANCEL`."""
     from ..intelligence.csaf.identity import project_identities
     from ..intelligence.storage import AdvisoryStore
     from .sources import pe
@@ -204,13 +246,14 @@ def collect(service, enrichment: EnrichmentStore, *, named: Sequence[str] = (), 
     older_id, newer_id = project_identities(project.artifacts, service.root, {}, cancel)
     computed, _shown = universe(sorted({cve for a in advisories for cve in a.facts.cves()}), named)
     source = StoredAdvisorySource(advisories, older_id, newer_id, cves=computed, warnings=warnings, cancel=cancel)
-    contexts, entries = _contexts(source, computed, assume)
+    kev, kev_notes = _kev_source(kev_dir, computed)
+    contexts, entries = _contexts(source, computed, assume, kev)
     tools = _Down(*(ChannelStatus(channel=c, state='not-run', reason=TOOLS_NOT_READ)
                     for c in ('strings', 'capa', 'build')))
     return Collected(
         project_id=project.id, revision=project.revision, older_sha256=older_sha, newer_sha256=newer_sha,
         ghidriff_run_id=run.id, raw_sha256=run.raw_sha256, advisory=source, changes=CodeEvidence(lexical, typed),
-        tools=tools, kev=_NoCatalog(),
+        tools=tools, kev=kev,
         calls=GhidriffCalls(rows, pe.import_delta(older, newer) if both else None, budget=budget),
         pairing=pairing or GhidriffPairing(rows, _secondary_sets(enrichment)), contexts=contexts,
-        advisory_observations=entries, notes=(note,) if note else ())
+        advisory_observations=entries, notes=(*((note,) if note else ()), *kev_notes))

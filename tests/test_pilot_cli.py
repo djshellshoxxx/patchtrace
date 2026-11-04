@@ -36,6 +36,15 @@ CVE = 'CVE-2099-30001'
 BANNED_IN_OUTPUT = ('probab', 'likelihood', 'vulnerab', 'confiden', 'percent')
 
 
+@pytest.fixture(autouse=True)
+def _no_installed_kev_catalog(monkeypatch, tmp_path_factory):
+    """`pilot leads` reads the KEV catalog of `patchtrace kev` from the user's data folder by default: point that folder
+    of this process, and of the processes it starts, at an empty one so no catalog installed on the machine takes part."""
+    empty = tmp_path_factory.mktemp('no-kev-data')
+    monkeypatch.setenv('LOCALAPPDATA', str(empty))
+    monkeypatch.setenv('XDG_DATA_HOME', str(empty))
+
+
 @pytest.fixture
 def project(tmp_path):
     with ProjectService.sample(tmp_path / 'case') as service:
