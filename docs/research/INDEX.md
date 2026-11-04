@@ -1,6 +1,14 @@
 # Research index
 
-Listing of every file under `docs/research/`, 2026-10-14. "Specs cited" lists SPEC numbers named in the first lines of the file; the authoritative mapping is `docs/specs/REGISTRY.md`. Research files are evidence, not contracts.
+Research files are evidence, not contracts. The authoritative specification mapping is `docs/specs/REGISTRY.md`.
+
+## Additional research — 2026-11-03 Pacific
+
+Start with [the additional research and Claude handoff](20261103-additional-research/README.md): current implementation/PR reconciliation, engines, advisory provenance, Qt/persistence/Windows release, corpus/calibration, substantive non-GitHub source research, and [15 proposed work packets](20261103-additional-research/06-claude-action-plan-and-reuse-register.md). Source/license pins, access limits and unperformed acceptance are explicit. The [repository snapshot](20261103-additional-research/repository-snapshot.json) records the observed heads without claiming CI or native acceptance.
+
+## Historical listing — 2026-10-14
+
+The following inventory is retained as a historical snapshot, not an exhaustive current listing. "Specs cited" lists SPEC numbers named in the first lines of each file.
 
 | File | Specs cited | Status | Title |
 |---|---|---|---|
