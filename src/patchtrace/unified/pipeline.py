@@ -148,6 +148,7 @@ class Plan:
     ir_note: str | None = None                      # why placed sidecars were not used (a warning of the report)
     residual: bool = True
     raw_verdict: str | None = None                  # the worker's own classification of a raw output that hashed fine
+    use_ir: bool = True                             # what the run asked for; `ir` says what it got (None: S0)
     diaphora: tuple[LoadedDiaphora, ...] = ()       # stored `diaphora-matches` sets (06 s5); () leaves every id unchanged
     _identity_inputs: SourceInputs | None = field(default=None, init=False, compare=False, repr=False)
 
@@ -387,7 +388,7 @@ def capture_plan(service, sources: Iterable[str] = ALL_SOURCES, *, limits: Unifi
                 raw_path=raw_path, raw_status=raw_status, backend_version=str(run.backend_version)[:64],
                 older_sha256=sides['older'], newer_sha256=sides['newer'], older_layout=older, newer_layout=newer,
                 sources=chosen, secondary=secondary, manual=manual, ir=placed, ir_note=note, residual=residual,
-                diaphora=diaphora)
+                diaphora=diaphora, use_ir=use_ir)
 
 
 def resolve_plan(plan: Plan, *, limits: UnifiedLimits = DEFAULT_LIMITS, registry: Registry = REGISTRY,
@@ -773,6 +774,9 @@ def _provenance(request: UnifiedRequest, config_digest: str | None) -> dict[str,
     out = {'mode': request.plan.mode, 'engine_version': keys.ENGINE_VERSION, 'sources': ','.join(request.plan.sources),
            'worker': 'child' if request.isolate else 'in-process',
            'python': '.'.join(str(n) for n in sys.version_info[:3]), 'registry': REGISTRY.digest()[:16]}
+    # the options the result was asked for: the read model judges staleness against the plan of these (GUI-09)
+    out['use_ir'] = 'yes' if request.plan.use_ir else 'no'
+    out['residual'] = 'yes' if request.plan.residual else 'no'
     if config_digest:
         out['config'] = config_digest[:16]
     return out

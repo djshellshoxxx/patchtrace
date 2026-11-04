@@ -907,6 +907,15 @@ def _stored_sources(service, manifest: UnifiedResultManifest, all_sources: Seque
     return None
 
 
+def _stored_flag(service, manifest: UnifiedResultManifest, key: str) -> bool | None:
+    """A yes/no option (`use_ir`, `residual`) the runs of this result recorded, or None when no run recorded it or
+    the runs disagree (rows written before the option was recorded say nothing)."""
+    from . import pipeline
+    seen = {run.provenance.get(key) for run in pipeline.recent_runs(service, 50)
+            if run.result_id == manifest.result_id and run.provenance.get(key) in ('yes', 'no')}
+    return (seen == {'yes'}) if len(seen) == 1 else None
+
+
 def capture_candidates(service: ProjectService) -> PlanCandidates:
     """OWNER thread only: the default plan first, then (only when a result is stored) the variants it may come from."""
     import dataclasses
@@ -922,10 +931,16 @@ def capture_candidates(service: ProjectService) -> PlanCandidates:
         return PlanCandidates((base,))
     sources = _stored_sources(service, manifest, ALL_SOURCES)
     bases = [base] if sources in (None, base.sources) else [base, pipeline.capture_plan(service, sources)]
+    residuals = _stored_flag(service, manifest, 'residual')
+    asked_ir = _stored_flag(service, manifest, 'use_ir')
     plans, seen = [], set()
     for plan in bases:
-        for residual in (plan.residual, not plan.residual):
-            for ir in ((plan.ir, None) if plan.ir is not None and manifest.ir_older is None else (plan.ir,)):
+        for residual in ((plan.residual, not plan.residual) if residuals is None else (residuals,)):
+            # An S0 result whose run asked for ProgramIR was S0 only because none was placed: once one is placed the
+            # IR plan is the comparison (stale, a better result is possible). An explicit `--no-extract` run, or one
+            # that did not record its choice, may also be compared with the S0 variant.
+            s0_variant = plan.ir is not None and manifest.ir_older is None and asked_ir is not True
+            for ir in ((plan.ir, None) if s0_variant else (plan.ir,)):
                 variant = dataclasses.replace(plan, residual=residual, ir=ir, ir_note=plan.ir_note if ir else None)
                 key = (variant.sources, residual, ir is None)
                 if key not in seen:
