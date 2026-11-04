@@ -23,10 +23,10 @@ from . import SEVERITY_ORDER, Evidence
 
 NON_CODE_TYPES = {'address': 'address-only', 'refcount': 'refcount-only', 'size': 'size-only', 'name': 'name-only'}
 ONE_SIDED = ('older-only', 'newer-only', 'ambiguous')
-# Delta classes that no proof may carry: semantic ones, unprovable ones, block changes and the classes that stay
-# `review` by rule (a frame or register change is a real change the decompiler may not show: R-14).
+# Delta classes that no proof may carry, COS-PSEUDO/1 included (05 s2.5, s7): semantic ones, unprovable ones, block
+# changes and the classes that stay `review` by rule (a frame or register change is a real change the decompiler may
+# not show: R-14; it alpha-renames `in_`/`unaff_` registers and drops arguments beyond an inferred prototype, R-04).
 PROOF_BLOCKERS = frozenset({*SEMANTIC_CLASSES, *UNPROVABLE_CLASSES, *BLOCK_CLASSES, 'frame', 'register-only', 'eh'})
-PSEUDO_BLOCKERS = frozenset({*SEMANTIC_CLASSES, *UNPROVABLE_CLASSES, *BLOCK_CLASSES, 'frame', 'eh'})
 
 
 @dataclass(frozen=True)
@@ -89,7 +89,7 @@ def _pseudo_proof(ev: Evidence, states, classes: set[str], semantic: list, targe
     """COS-PSEUDO/1: the canonical pseudo-code is equal, nothing else says otherwise (decompiler-relative, listed)."""
     unmapped = ev.ir.pseudo_unmapped if ev.ir is not None else 0
     return (not semantic and states.get('C4') == states.get('C5') == states.get('C6') == 'equal' and targets_ok
-            and ev.eh != 'differs' and unmapped == 0 and not classes & PSEUDO_BLOCKERS)
+            and ev.eh != 'differs' and unmapped == 0 and not classes & PROOF_BLOCKERS)
 
 
 def _ir_proof(ev: Evidence, states, classes: set[str], semantic: list, targets_ok: bool, omitted: int) -> str | None:
