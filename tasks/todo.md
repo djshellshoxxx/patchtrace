@@ -345,7 +345,7 @@
 - [ ] Tests for the KEV adapter path: `tests/test_kbc_kev_wiring.py` was removed at the owner's request (2026-10-29); re-add coverage when the owner agrees (the removed file is in git at `6331817`).
 - [x] 2026-10-29: `LeadsViewModel.status_lines` (report text, stale reasons, KEV source, banner, notes) and the copy block name the KEV snapshot and stale reasons; `tests/test_kbc_view_model_status.py`.
 - [x] 2026-10-29 KB plan A-13: KEV applied when read in `kb explain` and the Markdown `kb export` (`--kev-dir`); JSON export and stored context unchanged; `kev_snapshot_sha` stays None by decision; `tests/test_kbc_kev_explain_export.py`.
-- [ ] open: KEV on `kb search` edge rows (`service._edge_dict` still `not-loaded`); pilot `collect.py` still passes `NO_CATALOG`; KEV-plan K4 item 9 and the GUI KB dock (K4b) consumer of `kev_source`.
+- [ ] open: KEV on `kb search` edge rows (`service._edge_dict` still `not-loaded`); pilot `collect.py` now reads the installed KEV catalog (D-kb-2, 2026-11-04; `tests/test_pilot_collect_kev.py`); KEV-plan K4 item 9 and the GUI KB dock (K4b) consumer of `kev_source`.
 ### [K5w:pairs-plan-glue]
 - [x] K3/K5 glue: `kb pairs` / `kb plan` over the offline file index; tests `tests/test_kbc_pairs_index.py`.
 - [x] `kb index import` accepting a Winbindex record (2026-11-04: built, `cli_index._import_winbindex`, `tests/test_kbc_index.py`, `tests/test_kbc_e0_e2e.py`)
@@ -958,3 +958,9 @@ Done: dock with state matrix, consent, import, changes, copy, go to CVE. Open: r
 - [x] (AF-0 wave A2 repairs) H-A deny-egress harness: the cleanup step records commands, bounded failures and duration (`tests/test_bundle_acceptance_isolation.py`); real Windows runner evidence (G4/G5) stays an open native gate
 - [ ] (H-A) `reuse_run_id` input for `backend-bundle.yml` (spec s4.3, env-only, numeric) and its test
 - [x] (AF-0 wave A2 repairs) A-I-2 offline post-publish release verifier `tools/verify_release.py`: hostile archives and inputs keep exit codes 2/3 (`tests/test_verify_release.py`, 75 passed)
+
+### [D-kb-3:intel-hardening-tail]
+- [x] (2026-11-04, D-kb-3) KBB-04 C-16, C-19, C-20 closed with red-first tests (`tests/test_intel_tools_audit_tail.py`); audit table `docs/audits/20261015-intelligence-kev-rules-fabric-pilot.md` marks them Fixed.
+- [x] (2026-11-04, D-kb-3) KBB-13 limitation line: explain report and `intelligence import` text name the CSAF tests not run (`tests/test_intel_limitations_list_untested_validation.py`); OSV guard `tests/test_osv_not_wired.py`; real-socket drip test `tests/test_intel_transport_drip.py`.
+- [ ] (KBB-04 follow-up) C-23 and C-24 stay open: they need a normalization-version decision.
+- [ ] (KBB-13 follow-up) live CSAF provider-metadata check (L4, owner/CI); owner decision on implementing 6.1.8-6.1.13 (spec Q2).

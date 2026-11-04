@@ -1286,3 +1286,15 @@ Built in isolated worktrees with red tests first, independently verified (diff r
 | G-TW-RUN Tier W runner library (LBL-23) behind engine Protocols | built | no Microsoft data; the CLI wiring waits for G-TW-CLI. |
 | A-I-1 release-notes evidence completeness | built + wired | the release job passes both journey summaries to `milestone_notes`; live release body unverified until the next prerelease. |
 | A-I-3 release docs accuracy | built | `tests/test_release_docs.py` checks the docs against the workflow assets, the NSIS script and the version resource. |
+
+### [D-kb-3:intel-hardening-tail]
+D-kb-3 (2026-11-04), automated and SYNTHETIC only (no tool executed; no network except a 127.0.0.1 drip socket): audit rows C-16 (`process.sanitize` kept a user name containing a space), C-19 (`rva:0x10\n` accepted as a function id) and C-20 (`delta.compute(None, None, None, None)` AttributeError) fixed red first in `tests/test_intel_tools_audit_tail.py`; the explain report and `intelligence import` text now name the CSAF tests validation did not run (`TESTS_NOT_IMPLEMENTED`), red first in `tests/test_intel_limitations_list_untested_validation.py`; report goldens gained exactly that one limitation line. Guards green on arrival: `tests/test_osv_not_wired.py`, `tests/test_intel_transport_drip.py` (real-socket RA-3 deadline and cancel; fails at 8.0 s with the pre-RA-3 blocking read). Focused run (intel, pilot, kbc report, tool, strings, capa, buildenv, unified and stress suites that import the changed modules): 3486 passed, 2 skipped; ruff clean. Not live evidence. Open: C-23, C-24 (need a normalization-version decision); live CSAF provider check (KBB-13 L4).
+
+## [AF-0:waveA1-repairs] Wave A1 slices confirmed after repair (2026-11-04)
+
+| Slice | Defect found by the independent verifier | Repair | Evidence |
+|---|---|---|---|
+| B2-UE-R7-U7low unified audit U7-07/08/10/15/16 | the arbiter's L-39 cut (64 atoms per row) kept different atoms per orientation; the spec claimed full symmetry | the cut ranks with an orientation-free key and keeps or drops a mirror pair whole; `('arbiter', 2)` changes `config_digest` (engine_version stays `ude/1`); two exceptions documented | `tests/test_unified_fusion_mirror.py` (red then green), 793 unified tests passed |
+| D-kb-1 KB context applicability via `report_for` | a CVE lead without a card failed `kb attach`; the candidate qualifier fell off the Leads chip | non-card CVE leads skip CSAF applicability; qualifier first | `tests/test_kbc_context_applicability.py` 17 passed; KB suites 1,249 passed |
+| D-kb-2 pilot KEV channel | `is_dir()` outside the guarded block let PermissionError escape | `_kev_folder` stats inside the guard: unreadable folder is unknown with one warning, exit code unchanged | `tests/test_pilot_collect_kev.py` 20 passed |
+| D-kb-3 CSAF/intel hardening tail | quadratic path regex; leaks after `'`, `<`, `{`, `>`; then UNC spellings `//server`, `\\?\UNC\`, `file://` | linear scrub, all spellings covered (coordinator follow-up for the UNC forms) | `tests/test_intel_tools_audit_tail.py` 93 passed; 526 intel-tool tests passed |
