@@ -1,5 +1,7 @@
 # PE overview (SPEC-26 requirement D, backend stream)
 
+Status note (SPEC-31 amendment A-09, 2026-11-04): this spec is the home of RD-F02 (PE-aware layout and section/import/export delta) of [SPEC-RD-01](radiff2-inspired-comparison.md) as a SPEC-26 extension, not SPEC-31. The note assigns ownership only and claims no new behaviour: what this spec already defines is unchanged, and nothing these items add beyond it is built.
+
 ## Responsibility
 
 `patchtrace.pe_overview` produces a bounded, read-only, preliminary description of a PE file

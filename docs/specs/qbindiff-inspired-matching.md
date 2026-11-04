@@ -1,5 +1,5 @@
 # SPEC-QB-01: Configurable graph-aware function matching
-Status: proposed; research-backed design, not implemented.
+Status: SUPERSEDED by SPEC-31 ([`unified-engine/00-decisions.md`](unified-engine/00-decisions.md) s3.1; amendment A-10, 2026-11-04): goals incorporated; `matching/*` modules, new `matching_*` tables and the message-passing solver are not built (no such package or table exists under `src/`). Original status: proposed; research-backed design, not implemented.
 Scope: optional additive analysis for PatchTrace's existing Windows x64, Python 3.12 and Ghidriff pipeline.
 
 ## Research and novelty assessment

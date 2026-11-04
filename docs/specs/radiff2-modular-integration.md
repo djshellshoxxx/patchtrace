@@ -1,5 +1,5 @@
 # SPEC-RD-02 — radiff2 build-safe integration, dependency and CI contract
-Status: proposed companion to SPEC-RD-01, 2026-10-14.
+Status: PARTIALLY SUPERSEDED (SPEC-31 amendment A-11, 2026-11-04; [`unified-engine/00-decisions.md`](unified-engine/00-decisions.md) s3.1): function-level opcode/operand deltas are SPEC-31 L2 channels C1/C2 ([`unified-engine/05-fusion-and-noise.md`](unified-engine/05-fusion-and-noise.md) s2); file-level layers RD-F01..F03 move to SPEC-26 ([gui-preflight-inspection.md](gui-preflight-inspection.md) B/D, amendment A-09); no radiff2 adapter or `comparison_*` tables are planned. Original status: proposed companion to SPEC-RD-01, 2026-10-14.
 
 ## Constraints and existing architecture
 PatchTrace targets Python >=3.12, PySide6==6.12.0 and pydantic==2.13.5 with separately configured Ghidriff/Ghidra backend, SQLite projects, supervised cancellable jobs and portable Windows x64 packaging. Do not modify the working Ghidriff native import/normalization path; its results and corrections stay authoritative. The raw binary comparator works without radiff2. Enable optional external radiff2 only in advanced analysis after capability preflight. No system PATH changes, silent downloads, package-manager installs, bundled binary until cross-platform testing and license audit.

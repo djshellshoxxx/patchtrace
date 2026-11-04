@@ -4,6 +4,8 @@ Spec: `../specs/unified-engine/` (start at its README). Base observed: `main` = 
 
 ## 1. Slices (H3 refined: two prerequisites, S0 split)
 
+Status (2026-11-04, UE-R11): this table is the original plan and is not kept current. Built, with code and test evidence per slice, per [the unified-engine handoff](../handoff/unified-engine.md) s2: P1, P2, P2b (`test_nway_external_skips_are_counted`), S0a, S0b, S1, S2, S3, S3b, S4 (S4a read model, S4b panel), S5 and S6a-c; the live, Windows and owner gates stay open. What remains is planned in [13-remaining-work-plan.md](../specs/unified-engine/13-remaining-work-plan.md) (UE-R1..UE-R13).
+
 | Slice | Scope (deliverable) | Depends on | Model tier (CLAUDE.md) | Effort | Token band | Acceptance gate (beyond the full gate) | Fallback if blocked |
 |---|---|---|---|---|---|---|---|
 | P1 | DONE (C3 merge): Windows spawn lock `_WINDOWS_SPAWN_LOCK` (jobs.py:14-17) | - | - | 0 | 0 | `test_concurrent_run_process_calls_do_not_cross_pipes_or_leak_threads` | - |
@@ -29,6 +31,8 @@ critical path: S0a -> S2 -> S3 -> S6 gates   (about 18-28 days; S1 runs beside S
 ```
 
 ## 3. Exclusive file ownership (a file has one owner per wave; shared files list their allowed edit size)
+
+Status (2026-11-04, UE-R11): HISTORICAL. This table records the ownership of the original waves; it does not assign files today. Current slices name their own exclusive files.
 
 | Files | Owner | Notes |
 |---|---|---|

@@ -1,5 +1,5 @@
 # SPEC-QB-02: Build-safe modular integration and release gates
-Status: proposed, companion to SPEC-QB-01.
+Status: SUPERSEDED by SPEC-31 ([`unified-engine/00-decisions.md`](unified-engine/00-decisions.md) s3.1; amendment A-10, 2026-11-04): goals incorporated; `matching/*` modules, new `matching_*` tables and the message-passing solver are not built (no such package or table exists under `src/`). Original status: proposed, companion to SPEC-QB-01.
 
 ## Guiding rules
 Keep existing Ghidriff comparison as the sole default execution path. Do not replace the normalizer, comparison job machinery, project persistence, decompiler/assembly pane implementation or packaging pipeline. No new package is a mandatory runtime dependency until proven on clean Windows. Preserve Python 3.12 compatibility, pinned PySide6/Pydantic versions and offline behavior.

@@ -1,5 +1,7 @@
 # Raw byte representations (SPEC-26 requirement B, Hex / Binary / Base64)
 
+Status note (SPEC-31 amendment A-09, 2026-11-04): this spec is the home of RD-F01 (bounded raw byte-span comparison) and RD-F03 (old/new relative-offset alignment) of [SPEC-RD-01](radiff2-inspired-comparison.md) as SPEC-26 extensions, not SPEC-31. The note assigns ownership only and claims no new behaviour: what this spec already defines is unchanged, and nothing these items add beyond it is built.
+
 ## Responsibility
 
 Package `patchtrace.representations` turns verified, original on-disk bytes of a project-owned artifact into bounded, labelled pages in three views: Hex, Binary and Base64. It is pure Python (stdlib only, no Qt, no execution, no network). It owns scope selection, paging, text formatting, captions, copy text and byte-level comparison. It owns no widgets; a UI layer calls it from a worker thread.
