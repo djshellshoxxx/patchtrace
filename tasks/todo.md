@@ -222,7 +222,7 @@
 - [x] Audit TA-1..TA-12 and TA-16 fixed with red tests first (`tests/test_intel_tools_audit.py`); WB3-S1b FLOSS amendments (consent v2, `-n`/`-L`, memory cap, `PT-TOOL-LIMIT`, per-type quotas, `data_rva`/`site_rva`); TC-R runner + store; TC-C `intel-tools` CLI (5-line `cli.py` hook); TC-P schemas, pin file (all six assets MEASURED, none UNMEASURED), provisioning, advisory `live-intel-tools.yml`
 - [x] Real pinned capa 9.4.0 and FLOSS 3.1.1 (Linux) probed pinned, run through the runner on the SYNTHETIC pairs and equal to the goldens (`tests/test_live_intel_tools.py`)
 - [ ] BLOCKED: diec live leg (no Qt5 Core/Script libs in this container), all Windows legs, first GitHub run of `live-intel-tools.yml`, Ghidra backend, independent re-hash of the pins from a second network path, executable-swap window between re-hash and spawn is narrowed not closed
-- [ ] Not done: `intel-tools pairs` (CAP), capa `memory_limit_bytes` option and `contained-in-function` (CAP-1), DiE vocabulary (DIE D1), `tools/frozen_smoke.py`/`build_windows.py` pin packaging, docs/qa.md rows (integrator)
+- [ ] Not done: DiE vocabulary (DIE D1) [2026-11-04: `intel-tools pairs` (CAP-5, `tests/test_capa_cli.py`), capa `memory_limit_bytes` (`capa.py:74-83`) and `contained-in-function` (reserved for CAP-9, `tests/test_capa_extent.py`) are done], `tools/frozen_smoke.py`/`build_windows.py` pin packaging, docs/qa.md rows (integrator)
 
 ### [WB3-S0:strings-core] WB3-S0 contracts and table
 - [x] `patchtrace.strings` limits, contracts, keys, columnar table; schemas under `docs/schemas/strings/`; gate measured: two 200k-row sides (unique display values) load in about 0.3 s, tracemalloc peak about 52 MiB
@@ -258,7 +258,7 @@
 - [ ] Integrator asks: none from CAP-0; the T13 amendments change no shared file. Shared-file changes listed in CAP section 10 (`tools/frozen_smoke.py`, `tools/build_windows.py`, `pyproject.toml` marker `live_capa`, `.gitattributes` fixtures) belong to the slices that need them.
 ### [CAP-1:capa-parser-v2]
 - [x] Contracts and parser: coverage, features, labels, exit 11/13, Ghidra >= 12.0 probe, memory-cap option, in-memory re-parse (`tests/test_capa_parser_v2.py`)
-- [ ] Integrator: `runner.py` passes `CapaConfig.effective_memory_limit()` for capa (today only FLOSS); `intel-tools probe` rules label and `PT-TOOL-PAIRING` exit mapping (CAP-5)
+- [x] Integrator: `runner.py` passes `CapaConfig.effective_memory_limit()` for capa (runner.py:170-174, every engine; `tests/test_intel_tools_runner.py::test_capa_child_gets_the_memory_cap_from_config_or_request`, 2026-11-04); `intel-tools probe` rules label and `PT-TOOL-PAIRING` exit mapping (`intelligence/tools/cli.py:95,370`; `tests/test_capa_cli.py::test_probe_prints_the_rules_label_and_the_pin_status`) (CAP-5)
 
 ### [CAP-2:capa-pairs]
 - [x] Pair groups, pair delta, synergy golden `tests/fixtures/intel_tools/expected-pairs-capa-api.json`, properties, 20,000-item bound, no-Qt import test
