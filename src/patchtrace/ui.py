@@ -2337,8 +2337,7 @@ class MainWindow(QMainWindow):
         notes = [a for a in self.project.annotations if a.target_id == match.id]
         text = f'Match {match.id}\nCategory: {match.category}\nReview: {match.review}\n'
         if match.reason:  # an import's abstention note (A-28) is not an analyst's correction reason
-            label = 'Analyst correction reason' if match.manual else 'Import note'
-            text += f'\n{label}: {match.reason}\n'
+            text += f"\n{'Analyst correction reason' if match.manual else 'Import note'}: {match.reason}\n"
         text += '\nAnalyst annotations:\n' + ('\n\n'.join(
             f'{a.kind}{" [stale]" if a.stale else ""}: {a.text}' for a in notes) or 'No annotations yet.')
         self.finding_detail.setPlainText(text)
