@@ -73,3 +73,11 @@ def test_g_u4_one_sided_rows_must_trade_places():
     same_side = [R(older=(), newer=(0x5000,), decision='older-only', materiality='not-applicable')]
     assert g4(rows, same_side)[0] == 'fail'
     assert g4(rows, mirror(rows))[2]['mirrored'] == {'rel': 'mirrored'}
+
+
+def test_trace_arg_mutant_class_is_pending_with_its_exact_need_so_g_u2_cannot_pass_silently():
+    from tools.unified.mutations import classes
+    pending = {p.id: p for p in classes.PENDING}
+    assert 'trace-arg' in pending and 'import' in pending['trace-arg'].needs and 'review' in pending['trace-arg'].needs
+    assert pending['trace-arg'].spec_phrase == 'trace-arg' and pending['trace-arg'].review_finding == 'R-29'
+    assert 'trace-arg' not in {c.id for c in classes.CLASSES}          # not claimed as planted while it cannot be
