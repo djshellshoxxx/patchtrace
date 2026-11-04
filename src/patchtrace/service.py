@@ -4,6 +4,7 @@ from __future__ import annotations
 import hashlib
 import json
 import os
+import shutil
 import tempfile
 from dataclasses import dataclass
 from pathlib import Path
@@ -25,6 +26,23 @@ class PreparedImport:
     fingerprint: tuple
 
 
+def _remove_created(root: Path, existed: bool, before: set[str]) -> None:
+    """Best-effort removal of what a failed create() made (lock, artifact copies), never of anything that
+    was in the folder before; the folder itself goes only if create() made it. Audit #116 P2."""
+    try:
+        for entry in list(root.iterdir()):
+            if entry.name in before:
+                continue
+            if entry.is_dir() and not entry.is_symlink():
+                shutil.rmtree(entry, ignore_errors=True)
+            else:
+                entry.unlink(missing_ok=True)
+        if not existed:
+            root.rmdir()
+    except OSError:
+        pass  # an antivirus hold or a concurrent writer: the next create() and the wizard report what is left
+
+
 class ProjectService:
     def __init__(self, root: Path, project: ComparisonProject, store: ProjectStore):
         self.root = Path(root).resolve()
@@ -35,6 +53,8 @@ class ProjectService:
     @classmethod
     def create(cls, older: Path, newer: Path, name: str, root: Path) -> ProjectService:
         root = Path(root).resolve()
+        existed = root.is_dir()
+        before = {entry.name for entry in root.iterdir()} if existed else set()
         store = ProjectStore(root, create=True)
         try:
             artifacts = [inspect_artifact(older, 'older', root), inspect_artifact(newer, 'newer', root)]
@@ -53,6 +73,7 @@ class ProjectService:
                 (root / 'project.sqlite3').unlink(missing_ok=True)
             except OSError:
                 pass
+            _remove_created(root, existed, before)
             raise
 
     @classmethod
