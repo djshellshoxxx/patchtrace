@@ -268,7 +268,8 @@ class Report2(_Model):
 
     @model_validator(mode='after')
     def _sections_present_matches(self):
-        present = sorted(k for k in SECTION_KEYS if getattr(self, k) is not None)
+        present = sorted([k for k in SECTION_KEYS if getattr(self, k) is not None]
+                         + (['change_ranking'] if self.change_ranking is not None else []))
         if sorted(self.sections_present) != present:
             raise ValueError('sections_present must list exactly the sections with data')
         return self

@@ -16,11 +16,12 @@ import unicodedata
 from ..reports import ExportError
 
 CAP_NAME, CAP_EVIDENCE, CAP_ADVISORY, CAP_NOTES = 512, 8192, 4096, 16384
+CAP_CODE = 1 << 20  # not in 7.3: decompiled code and assembly are bounded by the 20 MiB report cap instead
 MAX_MATCHES, MAX_ADVISORIES, MAX_BUILD_FACTS, MAX_EVIDENCE_ROWS = 10000, 1000, 5000, 2000
 URL_MODES = ('text', 'defanged', 'removed')
 
 _SURROGATE = re.compile('[\ud800-\udfff]')
-_BIDI = re.compile('[‎‏‪-‮⁦-⁩؜]')
+_BIDI = re.compile('[\\u200e\\u200f\\u202a-\\u202e\\u2066-\\u2069\\u061c]')
 _UNSAFE = frozenset({'Cc', 'Cf', 'Zl', 'Zp'})
 _ID = re.compile('[a-z0-9-]{1,64}')
 _MD_SPECIAL = re.compile(r'([\\`*_{}\[\]()#+.!|>~:@/=-])')
@@ -32,7 +33,7 @@ def _is_unsafe(char: str, verbatim: bool) -> bool:
 
 def neutralize(value: str, *, verbatim: bool = False) -> str:
     """Steps 1, 3 and 4 of 7.3; idempotent, no length cap."""
-    value = _SURROGATE.sub('�', value)
+    value = _SURROGATE.sub('\ufffd', value)
     if verbatim:
         value = value.replace('\r\n', '\n')
     value = _BIDI.sub(lambda m: f'<U+{ord(m.group()):04X}>', value)

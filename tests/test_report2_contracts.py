@@ -96,7 +96,7 @@ def test_no_probability_or_aggregate_field_exists_on_evidence_models():
 
 def test_unnormalized_text_is_rejected_by_the_contract():
     with pytest.raises(ValidationError, match='normalized'):
-        contracts.Lead(lead_id='l1', kind='k', channels=['a'], statement='x‮y')
+        contracts.Lead(lead_id='l1', kind='k', channels=['a'], statement='x\u202ey')
     with pytest.raises(ValidationError, match='normalized'):
         contracts.Lead(lead_id='l1', kind='k', channels=['a'], statement='x\ud800y')
     assert contracts.Lead(lead_id='l1', kind='k', channels=['a'], statement='<U+202E>').statement == '<U+202E>'
