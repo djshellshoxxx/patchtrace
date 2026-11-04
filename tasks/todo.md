@@ -921,3 +921,18 @@ Done: dock with state matrix, consent, import, changes, copy, go to CVE. Open: r
 - [x] Preserve old no-key bytes/ranking and private in-memory unified support; keep persisted engine vocabulary unchanged; expose legacy unmarked replay as unverified rather than infer historical credit.
 - [ ] Independent final review, coordinator integration/cross-OS and verified transfer integration remain pending; broader locked training/final-run/promotion safeguards are not completed by this slice. See `docs/qa/output-credited-replay-20261101.md`.
 - [x] Independent credited-replay review approved exact source `5c26af9` with 119 passes/1 native-tool BLOCKED skip and direct scalar/failed-valid-artifact controls; no remaining bounded source blocker. Integration/cross-OS/transfer and broader safeguards above remain open.
+
+### [UE-AUD-20261104:engine-hardening] Unified engine audit, Diaphora source, report/2 (2026-11-04, PR #180)
+- [x] Core (cor): COR-01 worker deadline before the parent's kill (U7-06 reachable), COR-02 result stale after every run when the raw output has no `address_matches`, COR-03 timeout-partial results cached forever, COR-04 staging leak on interrupt, COR-05 retention could evict the current result (`docs/audits/20261104-unified-cor.md`)
+- [x] Fusion and sources (fus + coordinator): FUS-01/02/09 manual corrections inverted into one-sided or affirmative tier-M claims, `manual/3`; FUS-03 atom order (D-16); FUS-04 bounded snapshot reads (U7-10); U7-08 arbiter symmetry verified (`docs/audits/20261104-unified-fus.md`)
+- [x] Ladder (lad + w2b): LAD-1 hub twins counted for uniqueness, LAD-2 digest binds pass functions and constants, LAD-6 P03 per-alias index, `ladder/4` (`docs/audits/20261104-unified-lad.md`)
+- [x] IR and extraction (irx): irx-01 quadratic back-edge count, irx-02..14 guards, typed errors, sanitising, U7-09; `INGEST_REVISION=2`, `script_sha256` moves (`docs/audits/20261104-unified-irx.md`)
+- [x] Read model and Qt panel (gui + w2b + coordinator): GUI-01..10 incl. staged-dir leak, off-thread provenance/explain; staleness judged against the recorded run options (`use_ir`, `residual`, `sources`) (`docs/audits/20261104-unified-gui.md`)
+- [x] Gate harness (har): UE-R4 bench stages `facts`, `read_model`, `ui_calls` (`PENDING` empty); U7-07 explicit pending class; U7-08 mirror check over every decision; U7-13 bounded dev-tool child; five High evaluator flaws (`docs/audits/20261104-unified-har.md`)
+- [x] Diaphora as a fusion source (06 s5): `unified/sources/diaphora.py`, `--sources diaphora`, worker request files, content-bound source refs
+- [x] SPEC-50 report/2: RPT2-1..5 and the CLI verb `export`; report v1 output byte-identical to main
+- [x] UE-R11 housekeeping: registry rows aligned, SPEC-31 status amendments A-01..A-14 applied, tracker ticks with evidence
+- [ ] Owner/spec decisions: G-U7 bound with a tier-A rate of 0 (U7-17), whether G-U6 may pass with Ghidriff alone, the attention order in the Unified table (needs a port method in `gui/` or `ui.py`), category-versus-sides validation in `ProjectService.correct_match` (`service.py`)
+- [ ] SonarCloud "Security Rating on New Code: C" on PR #180: the issue list is on sonarcloud.io, unreachable from the agent session; needs the rule and file from the owner
+- [ ] Deferred Low findings listed in each audit record (FUS-07/08/10, GUI-11..13, irx-15..19, LAD-7..9, COR-07)
+- [ ] BLOCKED live: G-U1..G-U8 never ran live (PR #174), BinDiff pin, Windows frozen bench and the largest Tier R pair (G-U5), real Diaphora output for the heuristic-class mapping, Windows screen-reader/DPI passes
