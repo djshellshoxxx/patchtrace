@@ -178,6 +178,7 @@ def _read_bounded(path: Path) -> bytes:
 @_handled('intelligence import', local=True)
 def _run_import(args, cancel) -> int:
     from .csaf.validate import ValidationFailed, load_document
+    from .explain import untested_validation
     from .reports import plain_text
     cli = _cli()
     raw = _read_bounded(args.file)
@@ -192,8 +193,9 @@ def _run_import(args, cancel) -> int:
         stored = store.add(raw, origin='local-import', uri=None, file_name=args.file.name, retrieved_at=_now(),
                            cancel=cancel)
     warnings = [f'{w.test} {w.pointer or "/"}: {w.message}' for w in stored.facts.validation.warnings[:MAX_WARNINGS]]
+    untested = untested_validation([stored.facts.validation])
     _say(args, 'intelligence import', 'complete', {'cve': args.cve, **_stored_row(stored)}, warnings,
-         f'imported {_describe(stored)}')
+         f'imported {_describe(stored)}' + (f'; limitation: {untested}' if untested else ''))
     return cli.OK
 
 

@@ -22,6 +22,7 @@ from .common import (
     Engine,
     EvidenceLink,
     StringEvidence,
+    ToolError,
     ToolEvidenceSet,
     ToolRun,
     _Strict,
@@ -333,6 +334,8 @@ def compute(older_run: ToolRun | None, older: ToolEvidenceSet | None, newer_run:
             newer: ToolEvidenceSet | None, *, pairing: FunctionPairing | None = None,
             flags: Iterable[QualityFlag] = (), show_secrets: bool = False,
             include_unchanged_strings: bool = False) -> ToolDelta:
+    if older_run is None and newer_run is None:
+        raise ToolError('PT-TOOL-INPUT', 'a tool delta needs a stored run for at least one artifact')  # audit C-20
     engine = (older_run or newer_run).engine
     pairing = pairing or FunctionPairing.empty()
     reasons: list[str] = []

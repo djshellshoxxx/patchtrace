@@ -19,7 +19,7 @@ from __future__ import annotations
 
 import re
 import threading
-from collections.abc import Sequence
+from collections.abc import Iterable, Sequence
 from typing import Protocol
 
 from .anchors import anchors_for
@@ -34,6 +34,7 @@ from .contracts import (
     IntelError,
     IntelligenceReport,
     SourceSummary,
+    ValidationReport,
 )
 from .csaf.applicability import resolve, supersession
 from .csaf.validate import parse_date_time
@@ -47,6 +48,7 @@ REPORT_LIMITATIONS = (
     'this CVE is present in, or fixed by, any function or binary.',
 )
 _STATUS_RANK = {'explicit': 0, 'derived': 1, 'weak': 2, 'vague': 3, 'none': 4}
+_TEST_ID = re.compile(r'[0-9]{1,2}(?:\.[0-9]{1,2}){1,3}(?:-[0-9]{1,2}(?:\.[0-9]{1,2}){1,3})?')  # 6.1.8, 6.2.2-6.2.19
 
 
 class AdvisoryLike(Protocol):
@@ -60,6 +62,15 @@ class AdvisoryLike(Protocol):
 
     @property
     def superseded(self) -> bool: ...
+
+
+def untested_validation(validations: Iterable[ValidationReport]) -> str | None:
+    """The limitation naming the CSAF tests that validation did not run on these documents, or None when every
+    test ran (vendor-feeds spec s4). Only well-formed test ids are named: a stored record is data, not trusted."""
+    ids = dict.fromkeys(t for v in validations for t in v.tests_not_implemented if _TEST_ID.fullmatch(t))
+    if not ids:
+        return None
+    return f'CSAF validation did not run tests {", ".join(ids)}; a document that violates one of them was accepted.'
 
 
 def _check(cancel: threading.Event | None) -> None:
@@ -163,6 +174,8 @@ def build_report(cve: str, advisories: Sequence[AdvisoryLike], older: ArtifactId
     limitations = list(REPORT_LIMITATIONS)
     for group in (applicability.limitations, profile.limitations, hypotheses.limitations, anchors.limitations):
         limitations += [item for item in group if item not in limitations]
+    if untested := untested_validation(a.facts.validation for a in relevant):
+        limitations.append(untested)
     return IntelligenceReport(
         cve=cve,
         sources=tuple(SourceSummary(source=a.source, facts_id=a.facts.facts_id, superseded=a.superseded,

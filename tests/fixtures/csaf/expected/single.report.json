@@ -716,7 +716,8 @@
     "Hypotheses describe common fix shapes for a weakness class; they are search guidance only.",
     "Advisory CWE values and vocabulary matches are claims or interpretations, not binary observations.",
     "Anchors are search hints labelled with source and quality; they are never linked to diff results or functions.",
-    "Module and feature names come from advisory text and may describe the product, not this file."
+    "Module and feature names come from advisory text and may describe the product, not this file.",
+    "CSAF validation did not run tests 6.1.8, 6.1.9, 6.1.10, 6.1.11, 6.1.12, 6.1.13, 6.2.2-6.2.19, 6.3; a document that violates one of them was accepted."
   ],
   "sources": [
     {

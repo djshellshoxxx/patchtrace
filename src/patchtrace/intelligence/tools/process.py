@@ -36,14 +36,31 @@ COPY_CHUNK = 4 * 1024 * 1024
 EXTRA_ENV = frozenset({'LD_LIBRARY_PATH', 'GHIDRA_INSTALL_DIR', 'JAVA_HOME'})
 _ANSI = re.compile(r'\x1b\[[0-9;?]*[ -/]*[@-~]|\x1b[@-_]')
 _PATHISH = re.compile(r'(?:[A-Za-z]:)?(?:[\\/][^\\/\s\'"<>|]+)+[\\/]?')
+# A component of a rooted path may hold spaces (`C:\Users\John Smith`); only Windows' reserved characters end it.
+_SEGMENT = r'[^\\/\'"<>|:*?\r\n]'
+# Drive (`C:\`), UNC (`\\server`) or a POSIX path through a home folder; then every directory up to the last
+# separator, then the rest up to a reserved character or the next drive (the last component and any message text).
+_ROOTED = re.compile(r'(?:\b[A-Za-z]:(?=[\\/])|\\\\|(?<![^\s\'"(=,:\[])/(?=(?:[^\\/\s\'"<>|:*?]+/)*(?:home|Users)/))'
+                     rf'(?P<dirs>(?:{_SEGMENT}*[\\/])+)(?P<tail>(?:(?![A-Za-z]:[\\/]){_SEGMENT})*)')
+_PROFILE_ROOT = re.compile(r'(?:^|[\\/])(?:users|home|documents and settings)[\\/]+$', re.IGNORECASE)
+
+
+def _rooted_name(match: re.Match) -> str:
+    tail = match.group('tail')
+    if _PROFILE_ROOT.search(match.group('dirs')):
+        return '<path>'  # the last component is the user name; it may run on with spaces, so drop all of it
+    return tail if tail[:1].strip() else '<path>' + tail
 
 
 def sanitize(text: str, limit: int = 200) -> str:
     """One line of tool STDERR/ERROR text that is safe to show: ANSI/control characters removed, paths reduced to
-    their last component (no local paths or user names), whitespace collapsed, length capped. Not for names the
-    tool reports about the file (use `tool_text`): the path scrubber would mangle `C/C++` or `UPX/LZMA`."""
+    their last component (no local paths or user names), whitespace collapsed, length capped. A rooted path may
+    hold spaces, so every directory up to its last separator is dropped (over-scrubbing nearby text is accepted;
+    audit C-16). Not for names the tool reports about the file (use `tool_text`): the path scrubber would mangle
+    `C/C++` or `UPX/LZMA`."""
     text = _ANSI.sub('', text)
     text = ''.join(' ' if is_hostile(c) else c for c in text)
+    text = _ROOTED.sub(_rooted_name, text)
     text = _PATHISH.sub(lambda m: ntpath.basename(m.group(0).rstrip('\\/')) or '<path>', text)
     return ' '.join(text.split())[:limit]
 

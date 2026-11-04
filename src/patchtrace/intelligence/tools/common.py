@@ -58,7 +58,7 @@ MAX_LABELS = 32
 StringType = Literal['static', 'stack', 'tight', 'decoded', 'language']
 EnvCategory = Literal['compiler', 'linker', 'tool', 'packer', 'protector', 'cryptor', 'installer', 'sfx', 'library',
                       'format', 'overlay', 'other', 'unknown', 'language', 'os', 'archive', 'signtool', 'petool']
-_FUNCTION_ID = re.compile(r'^rva:0x[0-9a-f]{1,16}$')
+_FUNCTION_ID = re.compile(r'rva:0x[0-9a-f]{1,16}')  # always `fullmatch`: `$` also matches before a final newline
 _SHORT = Annotated[str, Field(max_length=256)]
 
 
@@ -195,7 +195,7 @@ class EvidenceLink(_Strict):
 
     @model_validator(mode='after')
     def _consistent(self):
-        if self.function_id is not None and not _FUNCTION_ID.match(self.function_id):
+        if self.function_id is not None and not _FUNCTION_ID.fullmatch(self.function_id):
             raise ValueError('function_id must be rva:0x<hex>')
         if self.attribution != 'none' and (self.function_id is None or self.rva is None):
             raise ValueError('a localized attribution names a function and an RVA')

@@ -96,11 +96,11 @@ means the code was read and no run was done.
 | C-13 | Low | Fixed | Lone surrogate gives `PT-INTEL-FORMAT` (reproduced). |
 | C-14 | Low | Addressed | `tools/delta.py` has a per-link pass (`_unmatched`, TA-2 note). By reading. |
 | C-15 | Low | Fixed | FLOSS records `base-differs` (`tools/floss.py:367-371`). By reading. |
-| C-16 | Low | **Open** | `process.sanitize` keeps the part of a user name after a space: `'error opening John Smithx.dll'` (reproduced). `tool_text` is correct for DiE names. |
+| C-16 | Low | Fixed (D-kb-3) | Was: `process.sanitize` kept the part of a user name after a space (`'error opening John Smithx.dll'`). Drive, UNC and home-rooted paths may now hold spaces; every directory up to the last separator is dropped and a path ending at a profile folder becomes `<path>`. `tool_text` unchanged. Test: `tests/test_intel_tools_audit_tail.py::test_sanitize_drops_every_directory_component_even_with_spaces` (audit string, UNC, `/home/john smith/x.so`). |
 | C-17 | Low | Fixed | DiE labels go through `tool_text`, which escapes bidi and NUL (`tools/diec.py:245`). |
 | C-18 | Low | Fixed | `1e999` gives `PT-TOOL-OUTPUT` (reproduced). |
-| C-19 | Low | Open (by reading) | `_FUNCTION_ID` uses `$` with `.match`; `'rva:0x10\n'` matches (regex verified in Python). `tools/common.py:53`. |
-| C-20 | Low | Open | `delta.compute(None, None, None, None)` raises `AttributeError: 'NoneType' ... 'engine'` (reproduced). |
+| C-19 | Low | Fixed (D-kb-3) | Was: `_FUNCTION_ID` used `$` with `.match`, so `'rva:0x10\n'` matched. Now `fullmatch` (`tools/common.py:61,198`). Test: `tests/test_intel_tools_audit_tail.py::test_function_id_with_trailing_text_is_refused`. |
+| C-20 | Low | Fixed (D-kb-3) | Was: `delta.compute(None, None, None, None)` raised `AttributeError`. Now `ToolError('PT-TOOL-INPUT')`; one missing side is still a not-comparable delta. Tests: `tests/test_intel_tools_audit_tail.py::test_compute_without_any_run_is_a_typed_input_error`, `::test_compute_with_one_run_is_still_not_comparable`. |
 | C-21 | Low | Not re-verified | `storage.py:137-149` (by reading the start of `_facts`). |
 | C-22 | Low | Not re-verified | `csaf/transport.py:215-223` (`put`); reads only. |
 | TA-1 | Medium | Fixed | `ValidationError` is turned into `ToolError` (`tools/capa.py:424,434`). By reading. |
