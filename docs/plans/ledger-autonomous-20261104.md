@@ -29,6 +29,7 @@ Newest prerelease: v0.1.0-beta.751 (2026-11-03T19:05Z). Main: `b77d84e`.
 - Pages: Settings, Pages, Source: GitHub Actions (pages.yml has never succeeded: "Not Found"); logo and `monero_address` for the site.
 - KEV and YARA-X spec status lines say "nothing implemented" while code exists (REGISTRY rows left as draft).
 - Microsoft-data gates stay owner-machine only: Winbindex/msdl, real PE/PDB, Tier W labels.
+- (filled during triage)
 
 ## Event log (append-only)
 
