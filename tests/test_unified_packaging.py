@@ -88,6 +88,31 @@ def test_mdindex_header_carries_the_attribution_and_the_same_commit():
     assert 'aecc14dcc2e0f06a0f8957dc465a9073215b5920' in (BINDIFF / 'PROVENANCE.txt').read_text(encoding='utf-8')
 
 
+DERIVED_HEADER = re.compile(r'Portions derived from google/bindiff v8\b')
+HEADER_YEARS = re.compile(r'Copyright (\d{4}-\d{4}) Google LLC')
+
+
+def _head(path: Path, chars: int = 2048) -> str:
+    with open(path, encoding='utf-8') as handle:
+        return ' '.join(handle.read(chars).split())
+
+
+def test_every_bindiff_derived_header_is_listed_in_the_provenance():
+    """Both directions: every src module whose head claims BinDiff derivation is named by the notice, and every named
+    module exists and carries the header with the provenance record's copyright years (09-licensing s3)."""
+    heads = {path.relative_to(ROOT).as_posix(): _head(path) for path in sorted((ROOT / 'src').rglob('*.py'))}
+    derived = {path: head for path, head in heads.items() if DERIVED_HEADER.search(head)}
+    provenance = (BINDIFF / 'PROVENANCE.txt').read_text(encoding='utf-8')
+    shipped = provenance.split('Derived work shipped in PatchTrace:', 1)[1].split('\n\n', 1)[0]
+    assert set(re.findall(r'src/patchtrace/[\w/]+\.py', shipped)) == set(derived)
+    (years,) = re.findall(r'^Copyright of the originals: Copyright (\d{4}-\d{4}) Google LLC\.$', provenance, re.M)
+    assert years == '2011-2023'
+    assert {path: HEADER_YEARS.findall(head) for path, head in derived.items()} == {path: [years] for path in derived}
+    for document in ('notices.md', 'reuse-matrix.md'):
+        text = (ROOT / 'docs' / document).read_text(encoding='utf-8')
+        assert [path for path in derived if path not in text] == [], document
+
+
 def test_no_gpl_or_third_party_graph_code_is_vendored_under_unified():
     documents_licences = {'registry.py'}  # records the licence of each EXTERNAL engine process (data, never vendored code)
     for path in (ROOT / 'src' / 'patchtrace' / 'unified').rglob('*.py'):

@@ -3,8 +3,9 @@
 Portions derived from google/bindiff v8 (Apache-2.0), Copyright 2011-2023 Google LLC (step order, strongest-first
 uniqueness and drill-down semantics of differ.cc / match/call_graph.cc / bindiff.json, call-graph MD of
 graph_util.h); algorithms re-expressed in Python and modified for PatchTrace (2026-10-14). The Apache-2.0 licence
-text is shipped under third_party/notices/bindiff-v8-*/ (slice S1, 09-licensing s3). Header years are the ones
-research note R02 s12 reports for tag v8 and must be re-checked against the pinned files by the notice owner.
+text is shipped under third_party/notices/bindiff-v8-*/ (slice S1, 09-licensing s3). The header years equal the
+"Copyright of the originals" of the provenance record there; differ.cc, match/call_graph.cc and bindiff.json are not
+hashed in it (fetching them needs network), and a packaging test pins the years and the listed files.
 Ghidra-VT-style ideas (implied matches, reference vectors) are clean-room from the VT help text (09 s2).
 Nothing from Diaphora (AGPL), PatchDiff2, Turbodiff or Ghidriff (GPL) is used.
 

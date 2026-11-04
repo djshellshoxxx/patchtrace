@@ -6,6 +6,8 @@ Tag:      v8 (lightweight tag)
 Commit:   aecc14dcc2e0f06a0f8957dc465a9073215b5920   (git ls-remote refs/tags/v8, 2026-10-14)
 Files:    https://raw.githubusercontent.com/google/bindiff/aecc14dcc2e0f06a0f8957dc465a9073215b5920/LICENSE
           .../graph_util.h   .../flow_graph.cc   .../call_graph.cc   (read, not copied)
+Not hashed: differ.cc, match/call_graph.cc, bindiff.json at the same commit (cited by the ladder modules below; see
+          the note there).
 SHA-256:  LICENSE        cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30 (11358 bytes)
           graph_util.h   03d805fcd980c2cfb228d82ac89ed88359326b2c137295bb3e2420e9a479c7e9
           flow_graph.cc  d096758435fc9f83bfea9ec0f8a1954b5cc05c63f8155e9dbc943f6afbf92ab4
@@ -23,7 +25,17 @@ left-to-right double accumulation, and the documented level-0 quirks. Changes: l
 port was checked bit-for-bit against an independent C++ transcription compiled in a throwaway directory (a 3,000-graph
 random comparison, docs/qa.md; five recorded vectors are pinned in tests/test_unified_ir_graph.py). It was NOT checked
 against the real `bindiff --md_index` output (no pinned BinDiff binary). No GPL or yFiles code is involved; "BinDiff" is
-a trademark of Google LLC and the unified engine never claims to be BinDiff.
+a trademark of Google LLC and the unified engine never claims to be BinDiff. Also derived (SPEC-31 S2; each header
+reads "Portions derived from google/bindiff v8 (Apache-2.0), Copyright 2011-2023 Google LLC"):
+src/patchtrace/unified/ladder/passes.py (step order, strongest-first uniqueness and drill-down semantics of differ.cc,
+match/call_graph.cc and bindiff.json; call-graph MD of graph_util.h), src/patchtrace/unified/ladder/engine.py (the
+drill-down semantics of `Diff`/`find` in differ.cc and match/call_graph.cc) and
+src/patchtrace/unified/ladder/propagate.py (the callees-then-callers cascade around fixed points of
+match/call_graph.cc and `Diff` in differ.cc). These three re-express matching semantics in Python and are modified
+for PatchTrace (own pass table, tiers, gates and deterministic waves); no ladder output is claimed to equal BinDiff's.
+Their copyright years repeat the 2011-2023 recorded above for the originals. differ.cc, match/call_graph.cc and
+bindiff.json were NOT fetched for this record (2026-11-04): fetching them needs network access, so their SHA-256s and
+header years are not recorded here and remain to be added by the notice owner.
 
 Redistribution: both build scripts (tools/build_windows.py, tools/build_linux.py) refuse to publish a distribution
 without LICENSE and this record, and copy them under licenses/upstream/.

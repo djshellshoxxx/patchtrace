@@ -205,6 +205,26 @@ def test_blocks_edges_loops_md_and_the_terminator_free_body_key(tmp_path):
     reader.close()
 
 
+FOUR_BLOCKS = [('cmp', 1), ('jcc', 0x1109), ('mov',), ('jmp', 0x110b), ('mov',), ('ret',)]          # at 0x1100
+FOUR_LAYOUT = [(0, [2, 1], ['cond', 'fall']), (2, [3], ['jump']), (4, [3], ['fall']), (5, [], [])]
+
+
+def test_md_null_below_min_blocks(tmp_path):
+    """The REAL ingest (L-11 = 5 blocks, ir/ingest.py) writes NULL MD keys for a 4-block CFG that has edges and both
+    keys for a 5-block CFG; lowering L-11 to 4 gives the same 4-block CFG keys, so the gate (not the shape) decides.
+    tests/test_unified_ir_builder.py has a test of the same name against the synthetic builder only."""
+    assert DEFAULT_LIMITS.l11_md_min_blocks == 5
+    documents = document_set(function(0x1000, FIVE_BLOCKS, name='five', blocks=FIVE_LAYOUT),
+                             function(0x1100, FOUR_BLOCKS, name='four', blocks=FOUR_LAYOUT))
+    result = run(tmp_path, documents)
+    four, five = fn_row(result, 'four'), fn_row(result, 'five')
+    assert (four['n_bb'], four['n_edge'], five['n_bb']) == (4, 4, 5)
+    assert (four['md_td'], four['md_bu']) == (None, None)
+    assert five['md_td'] is not None and five['md_bu'] is not None
+    lowered = fn_row(run(tmp_path, documents, limits=UnifiedLimits(l11_md_min_blocks=4), name='l11.jsonl'), 'four')
+    assert lowered['md_td'] is not None and lowered['md_bu'] is not None
+
+
 def test_block_body_key_ignores_the_terminating_branch_polarity_and_target(tmp_path):
     a = function(0x1000, FIVE_BLOCKS, name='a', blocks=FIVE_LAYOUT)
     b = function(0x1100, FIVE_BLOCKS, name='b', blocks=FIVE_LAYOUT)
