@@ -7,9 +7,11 @@ from pathlib import Path
 import pytest
 from callgraph_graph_support import snapshot
 
+from patchtrace.callgraph.contracts import MoreMarker
 from patchtrace.callgraph.dot import GRAPH_ID, escape_label, render_dot
 from patchtrace.callgraph.export_json import GraphExport, build_export, default_name, to_json, write_export
 from patchtrace.callgraph.limits import GraphError
+from patchtrace.callgraph.query import find_node, neighbourhood
 from patchtrace.callgraph.text import one_line
 
 GOLDEN = Path(__file__).resolve().parent / 'fixtures' / 'callgraph' / 'golden' / 'svc_p.dot'
@@ -154,6 +156,82 @@ def test_hostile_labels_stay_inside_their_quoted_strings():
 def next_hostile_label() -> str:
     snap = snapshot('hostile_names')
     return next(e.label for e in snap.data.entries if e.side == 'newer')
+
+
+def hub_export() -> tuple[GraphExport, str]:
+    """The newer callers of `TraceMessageHub`: 66 callers, so the 64-neighbour cap leaves `+2 more`."""
+    snap = snapshot('cycle_hub')
+    hub = find_node(snap, 'newer', 'TraceMessageHub')
+    view = neighbourhood(snap, 'newer', [hub.id], direction='in', max_nodes=500, max_edges=500)
+    data = snap.data
+    export = GraphExport(project_id=data.project_id, run_id=data.run_id, match_id='m' * 64,
+                         older_sha256=data.older_sha256, newer_sha256=data.newer_sha256, newer=view,
+                         truncated=view.truncated, limitations=view.limitations)
+    return export, hub.id
+
+
+def node_lines(text: str) -> dict[str, str]:
+    """Positional node id -> decoded label of every node statement."""
+    found = re.findall(r'^\s*(n\d+) \[label="((?:[^"\\]|\\.)*)"', text, re.M)
+    return {key: unescape_label(lex_quoted(body)) for key, body in found}
+
+
+def test_capped_hub_gets_a_plus_n_more_placeholder_like_the_json_export():
+    export, hub_id = hub_export()
+    assert [(m.node, m.count) for m in export.newer.more] == [(hub_id, 2)]
+    text = render_dot(export)
+    nodes = node_lines(text)
+    [hub_key] = [k for k, label in nodes.items() if label == 'TraceMessageHub']
+    [(more_key, more_label)] = [(k, label) for k, label in nodes.items() if 'more' in label]
+    assert more_label == '+2 more\nneighbours not shown'
+    assert more_key == f'n{len(export.newer.nodes) + 1}'  # numbered after every function node
+    assert re.search(rf'^\s*{more_key} \[label="[^\n]*style=dotted', text, re.M)
+    assert re.search(rf'^\s*{hub_key} -> {more_key} \[style=dotted, arrowhead=none\];$', text, re.M)
+    ids = set(re.findall(r'^\s*(n\d+) \[', text, re.M))
+    assert ids == {f'n{k}' for k in range(1, len(ids) + 1)}
+    edges = re.findall(r'^\s*(\S+) -> (\S+?)(?: \[.*)?;$', text, re.M)
+    assert edges and all(a in ids and b in ids for a, b in edges)
+    for name in re.findall(r'([A-Za-z_]+)=', re.sub(r'"(?:[^"\\]|\\.)*"', '""', text)):
+        assert name in ATTRIBUTES, name
+
+
+def test_uncapped_export_has_no_placeholder():
+    export = export_of()
+    assert not any(view.more for view in (export.older, export.newer) if view)
+    assert not any('more' in label for label in node_lines(render_dot(export)).values())
+
+
+def test_more_marker_node_ids_never_reach_the_text():
+    snap = snapshot('hostile_names')
+    focus = find_node(snap, 'newer', 'Dispatch')
+    view = neighbourhood(snap, 'newer', [focus.id], direction='out', max_nodes=50, max_edges=100)
+    hostile = next(n for n in view.nodes if n.label != 'Dispatch')
+    dangling = 'INJECTED"]; x -> n1 [URL="file:///c:/x\\N\n\u202e'
+    markers = (MoreMarker(node=hostile.id, count=3), MoreMarker(node=dangling, count=7))
+    view = view.model_copy(update={'more': markers, 'nodes': (*view.nodes, hostile.model_copy(
+        update={'id': 'IDTEXT"\\'}))})
+    data = snap.data
+    export = GraphExport(project_id=data.project_id, run_id=data.run_id, match_id='m' * 64,
+                         older_sha256=data.older_sha256, newer_sha256=data.newer_sha256, newer=view)
+    text = render_dot(export)
+    assert 'INJECTED' not in text and 'IDTEXT' not in text and 'URL' not in text
+    nodes = node_lines(text)
+    placeholders = sorted(label for label in nodes.values() if label.startswith('+'))
+    assert placeholders == ['+3 more\nneighbours not shown', '+7 more\nneighbours not shown']
+    # the shown hub is joined to its placeholder; the marker of a node not in the view still states the cap alone
+    assert len(re.findall(r' -> n\d+ \[style=dotted, arrowhead=none\];$', text, re.M)) == 1
+    for body in re.findall(r'label="((?:[^"\\]|\\.)*)"', text):
+        unescape_label(lex_quoted(body))  # the oracle asserts no early quote end and no Graphviz escape
+
+
+def test_paired_export_keeps_each_placeholder_in_its_own_cluster():
+    export, hub_id = hub_export()
+    older = export.newer.model_copy(update={'side': 'older', 'more': ()})
+    paired = export.model_copy(update={'older': older.model_copy(update={'nodes': (), 'edges': ()})})
+    text = render_dot(paired)
+    newer_block = text[text.index('subgraph cluster_newer'):]
+    older_block = text[text.index('subgraph cluster_older'):text.index('subgraph cluster_newer')]
+    assert '+2 more' in newer_block and 'more' not in older_block
 
 
 def test_golden_matches_after_masking_the_random_match_id():

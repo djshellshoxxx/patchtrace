@@ -10,8 +10,6 @@ from patchtrace.callgraph.export_json import GraphExport
 from patchtrace.callgraph.query import find_node, neighbourhood
 
 
-@pytest.mark.xfail(strict=True, reason='issue#105 BUG-CG-3: the DOT export drops the +N more markers of a capped '
-                                       'neighbourhood and says nothing about the cap; owner callgraph (WS-H1 triage)')
 def test_a105_cg3_dot_export_states_that_neighbours_were_left_out():
     snap = snapshot('cycle_hub')
     hub = find_node(snap, 'newer', 'TraceMessageHub')

@@ -1,10 +1,11 @@
 """DOT text export (7.6): text only, no Graphviz dependency, no execution. Node ids are `n<k>`, labels are escaped
-so no Graphviz escape (`\\N`, `\\G`, ...) can be formed from text, and the output is byte-stable."""
+so no Graphviz escape (`\\N`, `\\G`, ...) can be formed from text, and the output is byte-stable. A capped hub's
+`+N more` marker (as in the JSON export) becomes a dotted placeholder node, so the cap is never silently dropped."""
 from __future__ import annotations
 
 import re
 
-from .contracts import GraphEdge, GraphNode, GraphView
+from .contracts import GraphEdge, GraphNode, GraphView, MoreMarker
 from .export_json import GraphExport, check_size
 from .text import one_line
 
@@ -18,6 +19,7 @@ _DASHED_KINDS = frozenset({'label-only', 'ambiguous'})
 _KIND_LINE = {'function': None, 'paired-unchanged': 'paired, unchanged', 'external': 'import',
               'label-only': 'unresolved', 'ambiguous': 'ambiguous name'}
 _SIDE_TITLE = {'older': 'Older build', 'newer': 'Newer build'}
+_MORE_COLOUR = '#6e6e6e'  # palette grey: a placeholder, never a function
 
 
 def escape_label(value: object) -> str:
@@ -56,6 +58,22 @@ def _edge_line(ids: dict[str, str], edge: GraphEdge, indent: str) -> str:
     return f'{indent}{ids[edge.src]} -> {ids[edge.dst]}{style};'
 
 
+def _more_lines(view: GraphView, ids: dict[str, str], shown: set[str], first: int, indent: str) -> list[str]:
+    """One placeholder per `+N more` marker, numbered `n<first>...` after every function node, in hub order.
+    Only the count and fixed words reach the label; a marker whose hub is not in this view keeps its node alone."""
+    def position(marker: MoreMarker) -> tuple[int, str, int]:
+        hub = int(ids[marker.node][1:]) if marker.node in shown else first
+        return hub, marker.node, int(marker.count)
+
+    out = []
+    for k, marker in enumerate(sorted(view.more, key=position), first):
+        label = '\\n'.join((escape_label(f'+{int(marker.count)} more'), escape_label('neighbours not shown')))
+        out.append(f'{indent}n{k} [label="{label}", color="{_MORE_COLOUR}", style=dotted];')
+        if marker.node in shown:
+            out.append(f'{indent}{ids[marker.node]} -> n{k} [style=dotted, arrowhead=none];')
+    return out
+
+
 def _sides(export: GraphExport) -> list[tuple[str, GraphView]]:
     return [(side, view) for side in ('older', 'newer') if (view := getattr(export, side)) is not None]
 
@@ -67,6 +85,7 @@ def render_dot(export: GraphExport) -> str:
                      key=lambda item: (item[0] != 'older', item[1].label, item[1].id))
     ids = {node.id: f'n{k}' for k, (_, node) in enumerate(ordered, 1)}
     out = [*_header(export), f'digraph {GRAPH_ID} {{', '  rankdir=LR;', '  node [shape=box, fontname="Helvetica"];']
+    placeholder = len(ordered) + 1  # past the largest function node id
     for side, view in sides:
         indent = '    ' if paired else '  '
         if paired:
@@ -74,6 +93,8 @@ def render_dot(export: GraphExport) -> str:
         shown = {n.id for n in view.nodes}
         out += [_node_line(ids[node.id], node, indent) for _, node in ordered if node.id in shown]
         out += [_edge_line(ids, edge, indent) for edge in view.edges]
+        out += _more_lines(view, ids, shown, placeholder, indent)
+        placeholder += len(view.more)
         if paired:
             out.append('  }')
     order = {key: k for k, key in enumerate(ids.values())}
