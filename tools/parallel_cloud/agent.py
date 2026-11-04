@@ -23,7 +23,7 @@ MODEL = os.getenv("PT_AGENT_MODEL", "gpt-5-mini")
 BUDGET = float(os.getenv("PT_AGENT_BUDGET_USD", "25"))
 INPUT_RATE = float(os.getenv("PT_INPUT_USD_PER_M", "20"))
 OUTPUT_RATE = float(os.getenv("PT_OUTPUT_USD_PER_M", "100"))
-OUTPUT_LIMIT = 4500
+OUTPUT_LIMIT = 9000
 
 
 def allowed(path, prefixes):
@@ -105,8 +105,11 @@ def query_api(messages):
     )
     with urllib.request.urlopen(req, timeout=180) as response:
         payload = json.load(response)
+    if payload.get("status") != "completed":
+        raise RuntimeError("API response incomplete or failed; refusing patch")
     usage = payload.get("usage") or {}
-    if not all(isinstance(usage.get(k), int) for k in ("input_tokens", "output_tokens")):
+    if not all(type(usage.get(k)) is int and usage[k] >= 0
+               for k in ("input_tokens", "output_tokens")):
         raise RuntimeError("API did not return usable token accounting")
     parts = [part["text"] for item in payload.get("output", []) if item.get("type") == "message"
              for part in item.get("content", []) if part.get("type") == "output_text"]
@@ -195,6 +198,7 @@ def main():
                     "Implement the smallest source fix for the regression test you just wrote. "
                     "Do not edit tests, do not change unrelated contracts. Reply with complete-file JSON edits.\n"
                     + "\n\n".join(f"FILE {name}\n{data[:14000]}" for name, data in edits.items())
+                    + "\nObserved failing tests:\n" + (red.stdout + red.stderr)[-3500:]
                     + "\nOriginal source:\n" + source_context)}]
             else:
                 green = run_focused_tests(changed_tests)
