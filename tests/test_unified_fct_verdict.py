@@ -48,3 +48,11 @@ def test_blocking_classes_forbid_the_decompiler_proof_in_both_modes(cls):
                             change_signal=False, diff_types=(), limits_hit=(), ir=ir)
         facts = verdict.judge('a' * 64, 'matched', evidence).facts
         assert (facts.verdict, facts.proof) == ('review', None), (cls, ir)
+
+
+def test_the_rule_versions_changed_by_the_fct_audit_move_the_result_key():
+    """Verdicts computed with the old rules must be recomputed, never served from the cache (02 s5)."""
+    from patchtrace.unified.registry import CHANNEL_VERSIONS, PROOF_VERSIONS
+    channels, proofs = dict(CHANNEL_VERSIONS), dict(PROOF_VERSIONS)
+    assert (channels['C1'], channels['C2'], channels['datamap']) == (2, 2, 2)
+    assert (proofs['COS-LAYOUT/1'], proofs['COS-PSEUDO/1']) == (2, 2)
