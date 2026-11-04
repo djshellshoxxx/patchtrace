@@ -713,7 +713,8 @@ class ProfilesPanel(QWidget):
         self.list = QListWidget()
         self.list.setAccessibleName('Analysis profiles')
         apply_tooltip(self.list, 'profile.list')
-        self.list.currentItemChanged.connect(lambda *_: self._show_current())
+        self._switching = False
+        self.list.currentItemChanged.connect(self._selection_changed)
         left.addWidget(self.list)
         buttons = QHBoxLayout()
         self.new_button = QPushButton('New')
@@ -807,6 +808,25 @@ class ProfilesPanel(QWidget):
     def selected_name(self) -> str:
         item = self.list.currentItem()
         return item.data(Qt.ItemDataRole.UserRole) if item else 'default'
+
+    def _selection_changed(self, current, previous):
+        """Audit #116 P2: leaving a profile with unsaved edits asks first; No (or a failed save) stays put."""
+        if self._switching or previous is None or not self.is_dirty():
+            self._show_current()
+            return
+        target = current.data(Qt.ItemDataRole.UserRole) if current is not None else None
+        self._switching = True  # save_profile() reloads the list, which must not ask again
+        try:
+            self.list.blockSignals(True)
+            self.list.setCurrentItem(previous)  # the editor still holds the unsaved edits
+            self.list.blockSignals(False)
+            if not self.confirm_save(self._editing) or not self.save_profile():
+                return
+            if target is not None:
+                self.reload(target)
+        finally:
+            self.list.blockSignals(False)
+            self._switching = False
 
     def _show_current(self):
         name = self.selected_name()
