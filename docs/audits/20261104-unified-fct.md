@@ -1,0 +1,31 @@
+# Audit 2026-11-04: unified engine L2 change facts and proofs (card fct)
+
+Scope: `src/patchtrace/unified/facts/*.py` on `main` 25b2ac8 (SPEC-31 05 s2-s4, 08 s1, 10, 11). Method: read every
+module and its tests, adversarial instruction pairs through the real ingest (`tests/unified_facts_builder.py`), hypothesis
+properties for the alignment primitives and for the C4 matching rewrite. Every fix has a red regression test first.
+Primary source cited: UNWIND_INFO layout and "handler data is handler-specific",
+https://raw.githubusercontent.com/MicrosoftDocs/cpp-docs/main/docs/build/exception-handling-x64.md (learn.microsoft.com
+itself was refused by the egress proxy, 403).
+
+`ID | severity | file:line (on the fixed branch) | defect | status`
+
+- FCT-01 | High | facts/layout.py:128 (`_check_block`, leaves branch) | a terminating jcc that leaves the function (conditional tail call) was checked only as a function target: JZ->JNZ, JL->JC, JL->JLE or a fall-through into another block gave no delta and `cosmetic` COS-LAYOUT/1 (hidden by default) | fixed: `test_condition_change_of_a_conditional_tail_call_is_never_cosmetic`, `test_fall_through_of_a_conditional_tail_call_into_another_block_is_never_cosmetic` (d23b6c6)
+- FCT-02 | High | facts/datamap.py:186 (`function_state`) | `pair_old.get(None) == None` mapped two unresolved targets (branches outside the image, `['addr', None]`): different targets were a mapped pair, the function `cosmetic` COS-LAYOUT/1 | fixed: `test_an_unresolved_function_target_is_never_mapped`, `test_two_branches_to_different_unresolved_targets_are_never_cosmetic` (0cb5486)
+- FCT-03 | High | facts/verdict.py:29 (`PSEUDO_BLOCKERS`) | `register-only` did not block COS-PSEUDO/1, contrary to 05 s2.5 (stays review) and s7 (pseudo proof forbids the blocking classes): an argument register change the decompiler drops (`mov ecx,eax` -> `mov edx,eax` before a call) was `cosmetic` (listed, not hidden) | fixed: `test_an_argument_register_change_the_decompiler_drops_is_never_cosmetic`, `test_blocking_classes_forbid_the_decompiler_proof_in_both_modes` (6f65361)
+- FCT-04 | Medium | facts/operands.py:254 (replaced loop) | a Jcc inside a block body (CONDITIONAL_CALL_TERMINATOR override, or no block list = one synthesized block keyed None) changed condition with no delta; without a block list the pair was even COS-LAYOUT/1 | fixed: `test_condition_change_of_a_jcc_inside_a_block_body_is_a_condition_delta` (7e4fc78)
+- FCT-05 | Medium | facts/datamap.py:68 (`_Votes.add`) | beyond L-40 dropped vote pairs left a consensus over the kept votes only: the dissenters of a swap became `cosmetic` COS-ADDR/1; `datamap-cap` was recorded on TargetMap and never reached a row | fixed: `test_a_capped_vote_table_never_turns_a_dissenter_into_a_proof` (f19a9ef)
+- FCT-06 | Medium | facts/operands.py:177 (`_compare_operands`) | ins/1 operand facts carry no SIB scale, access size or segment: `*0x4` -> `*0x8` compared equal (no delta, C2 equal) and was COS-PSEUDO/1 with equal decompiler text | fixed: `test_an_index_scale_change_is_a_delta_and_never_a_decompiler_proof` (055ac90); recorded real probe pair unchanged
+- FCT-07 | Medium | facts/layout.py:81 (`_check_external`) | a retargeted tail jump had a callee delta without call identities: reported twice (C2 + C4) and never anchored by C4, unlike the same change as a call (review instead of material) | fixed: `test_a_retargeted_tail_jump_is_reported_once_and_anchored_like_a_call` (30b1f63)
+- FCT-08 | Medium | facts/irchannels.py:117, operands.py:101, trace.py:56, anchors.py:105 | per-pair work quadratic in one function's calls/deltas, no budget tick: 16.5 s for 4,000 retargeted calls per side, cancel/deadline ignored | fixed: `test_c4_work_grows_with_distinct_callees_not_with_calls`, `test_c4_matching_observes_cancel` (27f4d4c; output identical, hypothesis-checked)
+- FCT-09 | Medium | facts/datamap.py:231 (`_string_targets`) | the O(image) string index scan decoded every string-referencing function without ticking the budget | fixed: `test_the_string_index_scan_honours_cancel` (e10577c)
+- FCT-10 | Medium | ir/pe_tables.py:254 (not this card) | a C scope table with more than MAX_SCOPES (64) records, or an implausible one, leaves `scopes`/`hlen` None on both sides, so EH-EQ reads `equal` while scopes may differ (UNCH/1 possible) | ask (A1)
+- FCT-11 | Low | facts/pseudo.py:39 (`_DATA_LABEL`) | Ghidra `<type>Ram<hex>` globals and raw in-image address literals are kept verbatim by canon/1, never counted as unmapped labels (S0 COS-PSEUDO, listed only; IR mode is guarded by DATA-MAP) | deferred: needs a canon/2 spec decision (A3)
+- FCT-12 | Low | facts/operands.py:87 (`is_store`) | an instruction with implicit memory operands (`STOSB.REP`) is no store, so an added memset block has no effect flag and is never anchored (stays review, nothing hidden) | deferred: needs real Ghidra operand data for string instructions
+- FCT-13 | Low | facts/datamap.py:105 (comment) | "a contradictory row never maps anything" while the first row of a contradiction maps; unreachable today (matched rows are 1:1 by construction, fusion/arbiter.py:312) | deferred: no wrong output
+
+Checked, no defect: alignment primitives (`lcs_pairs`, `patience_anchors`, `diff_tokens`: monotone, in bounds, optimal LCS, 3,000 hypothesis cases each); then/else swap, inversion table and polarity of internal edges; UNCH/1 requires C0 equal, targets, EH-EQ, no delta, no cap; COS-ADDR needs h1 equal and positional CFG; MAT-ANCHOR never anchors from the bytes group or an `equal` channel; one-sided rows `not-applicable`; missing channels never prove; determinism (sorted inputs, no set order in output).
+
+## Asks (files outside this card)
+- A1 `src/patchtrace/unified/ir/pe_tables.py:254`: after `if 0 < count <= MAX_SCOPES:` add `elif MAX_SCOPES < count < 0x1000: return EH_UNAVAILABLE` (a FuncInfo RVA is never below the first page; a larger C scope count must not compare `equal` unread).
+- A2 `src/patchtrace/unified/registry.py:146-150` (result key, coordinator rule): `('C2', 2)`, `('datamap', 2)`, `('COS-LAYOUT/1', 2)`, `('COS-PSEUDO/1', 2)`; config_digest changes once, so cached results recompute.
+- A3 spec 05 s2.4: decide whether canon/2 treats `[a-z]{1,4}Ram[0-9a-f]{8,16}` names and in-image address literals as data labels.
