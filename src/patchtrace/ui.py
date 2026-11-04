@@ -42,6 +42,7 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 
+from . import ui_export_v2
 from .acquisition import quarantine, winbindex
 from .acquisition.contracts import AUTHENTICITY_NOTE, AcquisitionError, validate_file_name
 from .acquisition.transport import BLOB_SUFFIX, METADATA_HOST, SYMBOL_HOST, AcquisitionConsent, Transport
@@ -55,7 +56,6 @@ from .interpretation import interpret, system_prompt
 from .offline_bundle import inspect_offline_bundle, install_offline_bundle
 from .providers import ProviderConfig
 from .raw_view import SCOPES, RawSide, build_side, differing_lines
-from .report2 import export_vm
 from .reports import export_project
 from .representations import DEFAULT_PAGE_SIZE, Representation
 from .runtime_discovery import (
@@ -1379,7 +1379,6 @@ class ExportDialog(QDialog):
     def __init__(self, project, root, selected_ids, parent=None, sections=None):
         super().__init__(parent)
         self.project = project
-        self.vm = export_vm.ExportViewModel(project, sections)
         self.root = root
         self.selected_ids = selected_ids
         self.enrichment = None
@@ -1401,20 +1400,7 @@ class ExportDialog(QDialog):
         horizontal.addWidget(browse)
         form.addRow('Format', self.format)
         form.addRow('Destination', row)
-        self.contract, self.profile = QComboBox(), QComboBox()
-        self.contract.addItems(export_vm.CONTRACTS)
-        self.profile.addItems(export_vm.PROFILES)
-        self.sections_list = QListWidget()
-        self.sections_list.setMaximumHeight(150)
-        self.hint = PlainLabel()
-        self.hint.setWordWrap(True)
-        for name, widget in (('contract', self.contract), ('profile', self.profile),
-                             ('sections', self.sections_list)):
-            widget.setAccessibleName(export_vm.ACCESSIBLE_NAMES[name])
-        form.addRow('Contract', self.contract)
-        form.addRow('Profile', self.profile)
-        form.addRow('Sections', self.sections_list)
-        form.addRow(self.hint)
+        ui_export_v2.attach(self, form, project, sections, self.refresh_preview)   # report v2 rows (SPEC-50 s8)
         self.code = QCheckBox('Include function code')
         self.notes = QCheckBox('Include analyst notes')
         self.notes.setChecked(True)
@@ -1438,48 +1424,11 @@ class ExportDialog(QDialog):
         layout.addWidget(self.buttons)
         apply_tooltips(self, {'format': 'export.format', 'destination': 'export.destination',
                               'code': 'export.include_code', 'notes': 'export.include_notes',
-                              'selection': 'export.selected_only', 'preview': 'export.preview',
-                              'contract': 'export.contract', 'profile': 'export.profile',
-                              'sections_list': 'export.sections'})
+                              'selection': 'export.selected_only', 'preview': 'export.preview'})
         for control in [self.code, self.notes, self.selection]:
             control.toggled.connect(self.refresh_preview)
         self.format.currentTextChanged.connect(self.refresh_preview)
-        self.contract.currentIndexChanged.connect(lambda index: self.choose(self.vm.set_contract, index))
-        self.profile.currentIndexChanged.connect(lambda index: self.choose(self.vm.set_profile, index))
-        self.sections_list.itemChanged.connect(self.toggle_section)
-        self.show_choices()
-        self.refresh_preview()
-
-    def choose(self, setter, index):
-        notice = setter(index)
-        self.show_choices(notice)
-        self.refresh_preview()
-
-    def show_choices(self, notice=None):
-        """Bind the widgets to the view-model (the view-model owns every rule; the local warning shows once)."""
-        widgets = (self.contract, self.profile, self.sections_list)
-        for widget in widgets:
-            widget.blockSignals(True)
-        self.contract.setCurrentIndex(self.vm.contract_index)
-        self.profile.setCurrentIndex(self.vm.profile_index)
-        self.sections_list.clear()
-        for row in self.vm.section_rows():
-            item = QListWidgetItem(f'{row.label} ({row.count})' if row.enabled else f'{row.label}: {row.reason}')
-            item.setData(Qt.ItemDataRole.UserRole, row.key)
-            item.setFlags((item.flags() | Qt.ItemFlag.ItemIsUserCheckable) if row.enabled
-                          else item.flags() & ~(Qt.ItemFlag.ItemIsEnabled | Qt.ItemFlag.ItemIsUserCheckable))
-            item.setCheckState(Qt.CheckState.Checked if row.checked else Qt.CheckState.Unchecked)
-            self.sections_list.addItem(item)
-        for widget in widgets:
-            widget.blockSignals(False)
-        sharing = bool(self.vm.profile_index)
-        self.code.setEnabled(not sharing)
-        self.notes.setEnabled(not sharing)
-        warning = self.vm.take_local_warning() if self.vm.report_version == 2 else None
-        self.hint.setText(' '.join(filter(None, (notice, self.vm.profile_hint() or warning))))
-
-    def toggle_section(self, item):
-        self.vm.set_section_checked(item.data(Qt.ItemDataRole.UserRole), item.checkState() == Qt.CheckState.Checked)
+        ui_export_v2.show(self)
         self.refresh_preview()
 
     def change_format(self, value):
@@ -3024,20 +2973,12 @@ class MainWindow(QMainWindow):
         self.sync_scroll.setChecked(dialog.sync.isChecked())
         self.statusBar().showMessage('Setup saved. Run comparison to analyze the selected pair.')
 
-    def _report_sections(self):
-        """Report v2 sections read from the stored producers on this (owner) thread; a failure only leaves v2 bare."""
-        try:
-            from .report2.adapters import collect_from_service
-            return collect_from_service(self.service)
-        except Exception as exc:  # noqa: BLE001 - the dialog still opens and v1 export is unaffected
-            self.logs.appendPlainText(f'Export sections unavailable: {type(exc).__name__}')
-            return None
-
     def export_report(self):
         if not self.project:
             return
         selected = [item.data(Qt.ItemDataRole.UserRole) for item in self.findings_list.selectedItems()]
-        dialog = ExportDialog(self.project, self.service.root, selected, self, self._report_sections())
+        dialog = ExportDialog(self.project, self.service.root, selected, self,
+                              ui_export_v2.report_sections(self.service, self.logs.appendPlainText))
         dialog.enrichment = self._enrichment_export()
         dialog.refresh_preview()
         if dialog.exec() == QDialog.DialogCode.Accepted:
