@@ -26,7 +26,7 @@ MAX_FUNCTIONS_PER_SIDE = 1024
 LINE_MAX_BYTES = 256 * 1024 * 1024
 Category = Literal['modified', 'added', 'removed', 'unmatched', 'ambiguous', 'split', 'merged', 'unchanged']
 Short = Annotated[str, Field(max_length=64)]
-DEGRADING = frozenset({'raw-missing', 'raw-hash-mismatch', 'raw-unparsable', 'ladder-partial'})
+DEGRADING = frozenset({'raw-missing', 'raw-hash-mismatch', 'raw-unparsable', 'ladder-partial', 'manual-unresolved'})
 
 
 class _Strict(BaseModel):
@@ -250,7 +250,7 @@ def read_snapshot(path: Path, *, expected_sha256: str, expected_lines: int,
     digest, out = hashlib.sha256(), []
     try:
         with open(path, 'rb') as handle:
-            for line in handle:
+            while line := handle.readline(LINE_MAX_BYTES + 1):  # bounded read: a hostile line never fills memory
                 if len(line) > LINE_MAX_BYTES or len(out) >= limits.l38_rows_per_result:
                     raise UnifiedError('PT-UNIFIED-LIMIT', 'The match snapshot exceeds its limits', reason='rows-cap')
                 digest.update(line)
