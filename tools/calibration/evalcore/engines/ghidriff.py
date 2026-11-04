@@ -22,9 +22,13 @@ def _ghidra_address(text: object) -> int | None:
 
 
 def normalized(raw: dict, labels: C.KnownAnswerLabels, symbols: str, raw_sha256: str | None = None):
-    """(project, run, matches): the production identity check and normalisation of one raw PDiff JSON."""
+    """(project, run, matches): the production identity check and normalisation of one raw PDiff JSON.
+
+    A one-to-many abstention (A-28) raises ValueError, so both providers report the pair `failed`: from_ghidriff would
+    leave the abstained functions unmentioned and `implicit_unchanged` would credit them as paired-correct and
+    unchanged, and the attention view would read a one-sided row as an `old_only` vote."""
     from patchtrace.models import AnalysisRun, Artifact, ComparisonProject
-    from patchtrace.normalization import normalize_ghidriff, verify_diff_identity
+    from patchtrace.normalization import ONE_TO_MANY, is_abstention, normalize_ghidriff, verify_diff_identity
     older_sha, newer_sha = (s.sha256 if symbols == 'hidden' else s.debug_sha256 for s in (labels.older, labels.newer))
     run = AnalysisRun(status='completed', raw_sha256=raw_sha256)
     project = ComparisonProject(
@@ -34,7 +38,12 @@ def normalized(raw: dict, labels: C.KnownAnswerLabels, symbols: str, raw_sha256:
                    Artifact(side='newer', name=labels.newer.file_name, sha256=newer_sha, size=max(labels.newer.size, 1),
                             relative_path='newer/image')])
     verify_diff_identity(raw, project)
-    return project, run, normalize_ghidriff(raw, project, run.id)
+    matches = normalize_ghidriff(raw, project, run.id)
+    abstained = sum(1 for m in matches if is_abstention(m) and ONE_TO_MANY in (m.older + m.newer)[0].metadata)
+    if abstained:
+        raise ValueError(f'ghidriff one-to-many: {abstained} functions abstained; tier-r-engine-output/1 cannot carry '
+                         'an abstention next to implicit_unchanged, so this pair is not scored')
+    return project, run, matches
 
 
 def from_ghidriff(raw: dict, labels: C.KnownAnswerLabels, symbols: str) -> EngineOutput:

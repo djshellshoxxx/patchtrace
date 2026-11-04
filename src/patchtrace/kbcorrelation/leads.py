@@ -89,7 +89,8 @@ class EngineSignal:
 class EngineRow:
     match_id: str
     name: str
-    change: Literal['modified', 'added', 'removed']
+    # 'modified' for every two-sided row; a one-sided row keeps its FunctionMatch category
+    change: Literal['modified', 'added', 'removed', 'unmatched', 'ambiguous', 'split', 'merged', 'unchanged']
     attention_rank: int | None
     signals: tuple[EngineSignal, ...] = ()
     verdicts: tuple[tuple[str, str], ...] = ()  # (engine, 'changed' | 'unchanged' | 'unknown')
