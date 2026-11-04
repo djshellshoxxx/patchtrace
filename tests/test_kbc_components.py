@@ -42,15 +42,17 @@ def test_title_name_is_tier_d_with_a_pointer_and_never_selects_a_file():
     assert not comp.selectable(hints)
 
 
-def test_same_name_from_title_and_analyst_is_one_hint_at_the_documented_tier():
+def test_same_name_from_title_and_analyst_keeps_explicit_analyst_selection():
     hints, _ = comp.hints_for([card('CVE-2099-20001', 'Flaw in ExampleDrv.sys')], {}, ['exampledrv.sys'], SCOPE)
-    assert len(hints) == 1 and hints[0].tier == 'D' and len(hints[0].reasons) == 2
+    assert len(hints) == 1 and hints[0].tier == 'E' and len(hints[0].reasons) == 2
+    assert comp.selectable(hints)
+    assert hints[0].changed_in_kb == 'unknown'
 
 
-def test_hints_sort_by_tier_then_name_and_the_limit_is_flagged():
+def test_selectable_hints_precede_context_then_sort_by_name_and_flag_the_limit():
     cards = [card('CVE-2099-20001', 'z.dll and a.sys')]
     hints, truncated = comp.hints_for(cards, {}, ['b.sys'], SCOPE, limit=2)
-    assert [h.basename for h in hints] == ['a.sys', 'z.dll'] and truncated
+    assert [h.basename for h in hints] == ['b.sys', 'a.sys'] and truncated
 
 
 def test_hint_ids_are_stable_and_scope_bound():
@@ -58,3 +60,9 @@ def test_hint_ids_are_stable_and_scope_bound():
     again = comp.hints_for([], {}, ['x.sys'], SCOPE)[0][0]
     other = comp.hints_for([], {}, ['x.sys'], 'c' * 64)[0][0]
     assert first.hint_id == again.hint_id != other.hint_id
+
+
+def test_contextual_titles_cannot_crowd_out_an_explicit_filename_at_the_cap():
+    hints, truncated = comp.hints_for([card('CVE-2099-20001', 'a.sys and z.sys')], {}, ['z.sys'], SCOPE, limit=1)
+    assert truncated and [(hint.basename, hint.tier) for hint in hints] == [('z.sys', 'E')]
+    assert comp.selectable(hints)
