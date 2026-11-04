@@ -395,8 +395,21 @@ def ingest(jsonl: Path, expect: ExpectedSide, limits: UnifiedLimits = DEFAULT_LI
             raise fail('no-footer')
         _check_footer(footer, tables)
         return _finish(connection, db_path, header, expect, tables, limits, footer, created_utc)
+    except BaseException:
+        connection.close()
+        _discard(out_dir)   # cancel, timeout, hostile input or a cap: no half-written sidecar stays in the directory
+        raise
     finally:
         connection.close()
+
+
+def _discard(out_dir: Path) -> None:
+    """Remove what `ingest` wrote (the database and the manifest with its temp file); never raises."""
+    for name in (schema.DB_NAME, schema.MANIFEST_NAME, schema.MANIFEST_NAME + '.part'):
+        try:
+            (out_dir / name).unlink(missing_ok=True)
+        except OSError:
+            pass
 
 
 def _check_footer(footer, tables: _Tables) -> None:
