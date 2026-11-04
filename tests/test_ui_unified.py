@@ -53,7 +53,7 @@ def ready(tmp_path, *, status='complete', stale=False, rows=None, **kw):
     return load_unified(request(loaded, extraction_configured=True, **kw))
 
 
-def wait_for(condition, seconds=5.0):
+def wait_for(condition, seconds=30.0):  # a wait, not a budget: with every core busy a 5 s ceiling expired
     deadline = time.monotonic() + seconds
     while not condition() and time.monotonic() < deadline:
         QApplication.processEvents()
