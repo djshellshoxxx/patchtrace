@@ -119,6 +119,7 @@ class EvidenceRow(_Model):
 class EngineEvidence(_Model):
     engines: list[Engine]
     rows: list[EvidenceRow]
+    limitations: list[Text] = []  # shared-origin engines and the ordinal-index caveat, noted once
     stale: bool = False
 
 
@@ -207,6 +208,7 @@ class Advisory(_Model):
     fetched_at: Text = ''
     snapshot_digest: Sha256 | None = None
     claim_level: Literal['vendor-claim'] = 'vendor-claim'
+    kev_listed: bool | None = None  # external context only; None is unknown, never "not exploited"
     text: Text
     truncated: bool = False
 

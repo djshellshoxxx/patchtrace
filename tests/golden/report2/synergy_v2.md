@@ -5,7 +5,7 @@ Synthetic bounds\-check walkthrough
 Report contract report/2; project revision 1.
 
 - Generated: 2026\-10\-14T00\:00\:00\+00\:00
-- Content digest: 4f29db632f8d1057ce817fb0aeedee94c01ebda25af098048eb7d1e026ec16e4
+- Content digest: 71e825d359c67d86f97b5b4c8d0625c0989ec6ce0ef8f36b0d1404193339a023
 
 Scores are ordinal triage indices, not probabilities of a vulnerability.
 
@@ -31,6 +31,7 @@ Scores are ordinal triage indices, not probabilities of a vulnerability.
 ## Not run or unknown
 
 - Series context not included\: this export has no series input\.
+- Unified result reference not included\: no stored unified result\.
 
 ## Artifacts
 
@@ -46,12 +47,16 @@ Engines are listed separately and never merged. A missing engine is unknown, not
 | Engine | Version |
 |---|---|
 | bindiff | 8 |
-| ghidriff | 0\.9 |
+| rz\-diff | 0\.9 |
 
 | Match | Verdict | Tier | Supporting | Contradicting | Unknown (not run or absent) | Channels | Explanation |
 |---|---|---|---|---|---|---|---|
-| 00000000\-0000\-4000\-8000\-000000000002 | corroborated | moderate | ghidriff, bindiff | \- | rz\-diff | ghidriff\: present; bindiff\: present; rz\-diff\: unknown | Ghidriff and BinDiff agree; rz\-diff did not run\. |
-| 00000000\-0000\-4000\-8000\-000000000017 | contested | low | ghidriff | bindiff | rz\-diff | ghidriff\: present; bindiff\: present; rz\-diff\: unknown | BinDiff disagrees with the Ghidriff pairing\. |
+| 00000000\-0000\-4000\-8000\-000000000002 | corroborated | high | bindiff | \- | rz\-diff | ghidriff\: present; bindiff\: present; rz\-diff\: unknown | Match endpoints agree, but engines can share disassembly artifacts and failure modes\. Evidence index is an uncalibrated triage aid\. |
+| 00000000\-0000\-4000\-8000\-000000000017 | contested | low | \- | bindiff | rz\-diff | ghidriff\: present; bindiff\: present; rz\-diff\: unknown | At least one engine proposes conflicting endpoints\. Review identities manually before interpreting a patch\. |
+
+- Scores are ordinal, uncalibrated indices of function MATCH corroboration only; never vulnerability probability, patch validity, exploitability, or independent proof\.
+- Function matching and semantic security findings require separate validation\.
+- Engine agreement may reflect shared disassembly or compiler artifacts; do not average upstream scores\.
 
 ## Matches
 
@@ -121,6 +126,7 @@ Return an error for a null buffer or index outside the supplied length
 - Address (inert text): https\:\/\/evil\.example\/adv\.html
 - Fetched: \-
 - Claim level: vendor\-claim
+- KEV catalog (external context): unknown
 
 ``````
 [click](https://evil.example/x) and https://evil.example/y
@@ -139,13 +145,6 @@ Return an error for a null buffer or index outside the supplied length
 
 Two channels agree\.
 
-## Unified result
-
-- Result id: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
-- Manifest SHA-256: bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
-- Status: complete
-- Engines: ghidriff
-
 ## Appendix: report JSON
 
 ``````
@@ -155,6 +154,7 @@ Two channels agree\.
       "claim_level": "vendor-claim",
       "fetched_at": "",
       "id": "CVE-2024-12345",
+      "kev_listed": null,
       "kind": "cve",
       "snapshot_digest": null,
       "text": "[click](https://evil.example/x) and https://evil.example/y\n```\n# not a heading\n`````\n<img src=x onerror=alert(1)>",
@@ -234,7 +234,7 @@ Two channels agree\.
     "profile": null
   },
   "change_ranking": null,
-  "content_digest": "4f29db632f8d1057ce817fb0aeedee94c01ebda25af098048eb7d1e026ec16e4",
+  "content_digest": "71e825d359c67d86f97b5b4c8d0625c0989ec6ce0ef8f36b0d1404193339a023",
   "created": "2026-10-14T00:00:00+00:00",
   "engine_evidence": {
     "engines": [
@@ -243,9 +243,14 @@ Two channels agree\.
         "version": "8"
       },
       {
-        "name": "ghidriff",
+        "name": "rz-diff",
         "version": "0.9"
       }
+    ],
+    "limitations": [
+      "Scores are ordinal, uncalibrated indices of function MATCH corroboration only; never vulnerability probability, patch validity, exploitability, or independent proof.",
+      "Function matching and semantic security findings require separate validation.",
+      "Engine agreement may reflect shared disassembly or compiler artifacts; do not average upstream scores."
     ],
     "rows": [
       {
@@ -253,33 +258,34 @@ Two channels agree\.
         "channels": [
           {
             "engine": "ghidriff",
-            "note": "",
+            "note": "base pairing",
             "state": "present"
           },
           {
             "engine": "bindiff",
-            "note": "",
+            "note": "agrees with the Ghidriff endpoints",
             "state": "present"
           },
           {
             "engine": "rz-diff",
-            "note": "",
+            "note": "rz-diff: absent",
             "state": "absent"
           }
         ],
         "contradicting_engines": [],
-        "explanation": "Ghidriff and BinDiff agree; rz-diff did not run.",
-        "limitations": [],
+        "explanation": "Match endpoints agree, but engines can share disassembly artifacts and failure modes. Evidence index is an uncalibrated triage aid.",
+        "limitations": [
+          "rz-diff: absent"
+        ],
         "match_id": "00000000-0000-4000-8000-000000000002",
         "missing_engines": [
           "rz-diff"
         ],
         "ordinal_index": null,
         "supporting_engines": [
-          "ghidriff",
           "bindiff"
         ],
-        "tier": "moderate",
+        "tier": "high",
         "verdict": "corroborated"
       },
       {
@@ -287,33 +293,34 @@ Two channels agree\.
         "channels": [
           {
             "engine": "ghidriff",
-            "note": "",
+            "note": "base pairing",
             "state": "present"
           },
           {
             "engine": "bindiff",
-            "note": "",
+            "note": "proposes conflicting endpoints",
             "state": "present"
           },
           {
             "engine": "rz-diff",
-            "note": "",
-            "state": "not_run"
+            "note": "rz-diff: absent",
+            "state": "absent"
           }
         ],
         "contradicting_engines": [
           "bindiff"
         ],
-        "explanation": "BinDiff disagrees with the Ghidriff pairing.",
-        "limitations": [],
+        "explanation": "At least one engine proposes conflicting endpoints. Review identities manually before interpreting a patch.",
+        "limitations": [
+          "bindiff: disagreement",
+          "rz-diff: absent"
+        ],
         "match_id": "00000000-0000-4000-8000-000000000017",
         "missing_engines": [
           "rz-diff"
         ],
         "ordinal_index": null,
-        "supporting_engines": [
-          "ghidriff"
-        ],
+        "supporting_engines": [],
         "tier": "low",
         "verdict": "contested"
       }
@@ -619,8 +626,7 @@ Two channels agree\.
     "build_facts",
     "engine_evidence",
     "leads",
-    "symbols",
-    "unified_result"
+    "symbols"
   ],
   "selection": {
     "finding_ids": [
@@ -644,17 +650,9 @@ Two channels agree\.
     "version": "0.1.0"
   },
   "truncated": [],
-  "unified_result": {
-    "engines": [
-      "ghidriff"
-    ],
-    "manifest_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
-    "result_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-    "stale": false,
-    "status": "complete"
-  },
   "unknowns": [
-    "Series context not included: this export has no series input."
+    "Series context not included: this export has no series input.",
+    "Unified result reference not included: no stored unified result."
   ]
 }
 ``````

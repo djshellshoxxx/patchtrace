@@ -71,9 +71,8 @@ def test_no_aggregate_key_under_engine_evidence(built):
 
 def test_sections_present_lists_exactly_the_sections_with_data(built):
     data, _, _ = built
-    assert data['sections_present'] == ['advisories', 'build_facts', 'engine_evidence', 'leads', 'symbols',
-                                        'unified_result']
-    assert not {'series'} & set(data)
+    assert data['sections_present'] == ['advisories', 'build_facts', 'engine_evidence', 'leads', 'symbols']
+    assert not {'series', 'unified_result'} & set(data)
     assert any('Series context not included' in u for u in data['unknowns'])
 
 

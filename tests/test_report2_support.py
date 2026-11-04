@@ -5,26 +5,19 @@ import os
 from pathlib import Path
 
 from patchtrace.models import ComparisonProject
-from patchtrace.report2 import text
-from patchtrace.report2.contracts import (
-    Advisory,
-    BuildFact,
-    Channel,
-    Engine,
-    EngineEvidence,
-    EvidenceRow,
-    Lead,
-    Symbols,
-    UnifiedResult,
-)
 from patchtrace.report2.inputs import SectionInputs
+from patchtrace.report2.sections import collect
+from patchtrace.report2.sections.advisories import AdvisoryRecord
+from patchtrace.report2.sections.build_facts import FactRecord
+from patchtrace.report2.sections.leads import LeadRecord
+from patchtrace.secondary.evidence import assess_reports
+from patchtrace.secondary.reconcile import Reconciliation, ReconciliationReport
 
 GOLDEN = Path(__file__).parent / 'golden' / 'report2'
 FIXED_TIME = '2026-10-14T00:00:00+00:00'
 HOSTILE_NAME = '\u202egnidnuf<script>alert(1)</script>\n# Injected'
 ADVISORY_TEXT = ('[click](https://evil.example/x) and https://evil.example/y\n```\n# not a heading\n`````\n'
                  '<img src=x onerror=alert(1)>')
-SHA_A, SHA_B = 'a' * 64, 'b' * 64
 
 
 def frozen_project() -> ComparisonProject:
@@ -45,34 +38,50 @@ def hostile_project() -> tuple[ComparisonProject, str, str]:
     return project, ids['a'], ids['b']
 
 
-def _n(value: str, cap: int = 512) -> str:
-    return text.normalize_text(value, max_chars=cap)
+def _report(engine: str, version: str, entries: list[tuple[str, str]]) -> ReconciliationReport:
+    return ReconciliationReport(engine, version, tuple(
+        Reconciliation(key, status, 0x1000, 0x2000, (), status) for key, status in entries), (), ())
+
+
+class FakeEvidence:
+    def __init__(self, assessment, stale=False):
+        self._assessment, self._stale = assessment, stale
+
+    def assessment(self):
+        return self._assessment
+
+    def is_stale(self):
+        return self._stale
+
+
+class FakeFacts:
+    def facts(self):
+        return [FactRecord('older', 'company_name', 'Vendor <b>Corp</b>', 'pe-version'),
+                FactRecord('newer', 'file_version', '10.0.1.2', 'pe-version')]
+
+
+class FakeAdvisories:
+    def advisories(self):
+        return [AdvisoryRecord('cve', 'CVE-2024-12345', ADVISORY_TEXT, vendor='Vendor',
+                               url='https://evil.example/adv.html', kev_listed=None)]
+
+
+class FakeLeads:
+    def leads(self):
+        return [LeadRecord('lead-1', 'cluster', ('ghidriff', 'bindiff'), 'Two channels agree.')]
+
+
+class FakeSettings:
+    def latest_settings(self):
+        return {'symbol_mode': 'off'}
 
 
 def synergy_sections(match_a: str, match_b: str) -> SectionInputs:
-    """Match A: Ghidriff + BinDiff agree, rz-diff absent. Match B: BinDiff disagrees."""
-    rows = [
-        EvidenceRow(match_id=match_a, verdict='corroborated', tier='moderate', ordinal_index=75,
-                    channels=[Channel(engine='ghidriff', state='present'), Channel(engine='bindiff', state='present'),
-                              Channel(engine='rz-diff', state='absent')],
-                    supporting_engines=['ghidriff', 'bindiff'], contradicting_engines=[],
-                    missing_engines=['rz-diff'], explanation='Ghidriff and BinDiff agree; rz-diff did not run.'),
-        EvidenceRow(match_id=match_b, verdict='contested', tier='low',
-                    channels=[Channel(engine='ghidriff', state='present'), Channel(engine='bindiff', state='present'),
-                              Channel(engine='rz-diff', state='not_run')],
-                    supporting_engines=['ghidriff'], contradicting_engines=['bindiff'],
-                    missing_engines=['rz-diff'], explanation='BinDiff disagrees with the Ghidriff pairing.')]
-    return SectionInputs(
-        engine_evidence=EngineEvidence(engines=[Engine(name='bindiff', version='8'), Engine(name='ghidriff', version='0.9')],
-                                       rows=rows),
-        build_facts=(BuildFact(side='older', fact='company_name', value=_n('Vendor <b>Corp</b>'), source='pe-version'),
-                     BuildFact(side='newer', fact='file_version', value='10.0.1.2', source='pe-version')),
-        symbols=Symbols(mode='off'),
-        advisories=(Advisory(kind='cve', id='CVE-2024-12345', vendor=_n('Vendor'), url_text='https://evil.example/adv.html',
-                             text=text.normalize_text(ADVISORY_TEXT, verbatim=True, max_chars=text.CAP_ADVISORY)),),
-        leads=(Lead(lead_id='lead-1', kind='cluster', channels=['ghidriff', 'bindiff'], statement=_n('Two channels agree.', 4096)),),
-        unified_result=UnifiedResult(result_id=SHA_A, manifest_sha256=SHA_B, engines=['ghidriff'], status='complete',
-                                     stale=False))
+    """Match A: Ghidriff + BinDiff agree, rz-diff absent. Match B: BinDiff disagrees (real `assess_reports`)."""
+    assessment = assess_reports((_report('bindiff', '8', [(match_a, 'agreement'), (match_b, 'disagreement')]),
+                                 _report('rz-diff', '0.9', [(match_a, 'absent'), (match_b, 'absent')])))
+    return collect(evidence=FakeEvidence(assessment), run_settings=FakeSettings(), build_facts=FakeFacts(),
+                   advisories=FakeAdvisories(), leads=FakeLeads())
 
 
 def check_or_update(name: str, actual: str) -> None:

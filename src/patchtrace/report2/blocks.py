@@ -11,6 +11,9 @@ from .contracts import ATTENTION_LABEL
 Block = tuple
 
 
+_KEV = {True: 'listed', False: 'not listed in the catalog snapshot', None: 'unknown'}
+
+
 def _unknown(state: str) -> str:
     return 'unknown' if state in ('absent', 'not_run') else state.replace('_', ' ')
 
@@ -72,7 +75,7 @@ def _evidence(d: dict) -> list[Block]:
     return [('h2', 'Engine evidence' + (', STALE' if ev['stale'] else '')),
             ('note', 'Engines are listed separately and never merged. A missing engine is unknown, not a negative vote.'),
             ('table', ['Engine', 'Version'], [[e['name'], e['version']] for e in ev['engines']]),
-            ('table', head, rows)]
+            ('table', head, rows), ('bullets', ev['limitations'])]
 
 
 def _matches(d: dict) -> list[Block]:
@@ -121,7 +124,8 @@ def _context(d: dict) -> list[Block]:
     for a in d.get('advisories') or []:
         blocks += [('h3', f'{a["kind"].upper()} {a["id"]}'), ('facts', [
             ('Vendor', a['vendor'] or '-'), ('Address (inert text)', a['url_text'] or '-'),
-            ('Fetched', a['fetched_at'] or '-'), ('Claim level', a['claim_level'])]), ('code', a['text'])]
+            ('Fetched', a['fetched_at'] or '-'), ('Claim level', a['claim_level']),
+            ('KEV catalog (external context)', _KEV[a['kev_listed']])]), ('code', a['text'])]
     if d.get('advisories') is not None:
         blocks.insert(0, ('h2', 'Advisories'))
     if d.get('leads') is not None:

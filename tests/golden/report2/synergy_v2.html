@@ -9,18 +9,19 @@
 <h1>PatchTrace report</h1>
 <p>Synthetic bounds-check walkthrough</p>
 <p>Report contract report/2; project revision 1.</p>
-<ul><li><strong>Generated</strong>: 2026-10-14T00:00:00+00:00</li><li><strong>Content digest</strong>: 4f29db632f8d1057ce817fb0aeedee94c01ebda25af098048eb7d1e026ec16e4</li></ul>
+<ul><li><strong>Generated</strong>: 2026-10-14T00:00:00+00:00</li><li><strong>Content digest</strong>: 71e825d359c67d86f97b5b4c8d0625c0989ec6ce0ef8f36b0d1404193339a023</li></ul>
 <p>Scores are ordinal triage indices, not probabilities of a vulnerability.</p>
 <h2>Orientation and provenance</h2>
 <table><thead><tr><th>Item</th><th>Value</th></tr></thead><tbody><tr><td>Older SHA-256</td><td>dc71b8420acc68418eaebfb8a4848cd2f63626125868e9977f017010c8d30215</td></tr><tr><td>Newer SHA-256</td><td>4af23bcb773054ad469c57363d50e2b53a6590bfba2286f16a06b4fb1440a168</td></tr><tr><td>Tool</td><td>PatchTrace 0.1.0</td></tr><tr><td>Release tag</td><td>unknown</td></tr><tr><td>Signed build</td><td>unknown</td></tr><tr><td>Derived from</td><td>persisted-project-snapshot</td></tr><tr><td>Network used</td><td>false</td></tr><tr><td>Display level</td><td>ordinal</td></tr><tr><td>Redaction profile</td><td>local</td></tr><tr><td>Code included</td><td>false</td></tr><tr><td>Notes included</td><td>true</td></tr><tr><td>Web addresses</td><td>text</td></tr><tr><td>Redaction markers</td><td>none</td></tr><tr><td>Text handling</td><td>report/2 text normalization applied</td></tr></tbody></table>
 <h2>Not run or unknown</h2>
-<ul><li>Series context not included: this export has no series input.</li></ul>
+<ul><li>Series context not included: this export has no series input.</li><li>Unified result reference not included: no stored unified result.</li></ul>
 <h2>Artifacts</h2>
 <table><thead><tr><th>Side</th><th>Name</th><th>SHA-256</th><th>Size</th></tr></thead><tbody><tr><td>older</td><td>older_sample.dll</td><td>dc71b8420acc68418eaebfb8a4848cd2f63626125868e9977f017010c8d30215</td><td>1024</td></tr><tr><td>newer</td><td>newer_sample.dll</td><td>4af23bcb773054ad469c57363d50e2b53a6590bfba2286f16a06b4fb1440a168</td><td>1024</td></tr></tbody></table>
 <h2>Engine evidence</h2>
 <p>Engines are listed separately and never merged. A missing engine is unknown, not a negative vote.</p>
-<table><thead><tr><th>Engine</th><th>Version</th></tr></thead><tbody><tr><td>bindiff</td><td>8</td></tr><tr><td>ghidriff</td><td>0.9</td></tr></tbody></table>
-<table><thead><tr><th>Match</th><th>Verdict</th><th>Tier</th><th>Supporting</th><th>Contradicting</th><th>Unknown (not run or absent)</th><th>Channels</th><th>Explanation</th></tr></thead><tbody><tr><td>00000000-0000-4000-8000-000000000002</td><td>corroborated</td><td>moderate</td><td>ghidriff, bindiff</td><td>-</td><td>rz-diff</td><td>ghidriff: present; bindiff: present; rz-diff: unknown</td><td>Ghidriff and BinDiff agree; rz-diff did not run.</td></tr><tr><td>00000000-0000-4000-8000-000000000017</td><td>contested</td><td>low</td><td>ghidriff</td><td>bindiff</td><td>rz-diff</td><td>ghidriff: present; bindiff: present; rz-diff: unknown</td><td>BinDiff disagrees with the Ghidriff pairing.</td></tr></tbody></table>
+<table><thead><tr><th>Engine</th><th>Version</th></tr></thead><tbody><tr><td>bindiff</td><td>8</td></tr><tr><td>rz-diff</td><td>0.9</td></tr></tbody></table>
+<table><thead><tr><th>Match</th><th>Verdict</th><th>Tier</th><th>Supporting</th><th>Contradicting</th><th>Unknown (not run or absent)</th><th>Channels</th><th>Explanation</th></tr></thead><tbody><tr><td>00000000-0000-4000-8000-000000000002</td><td>corroborated</td><td>high</td><td>bindiff</td><td>-</td><td>rz-diff</td><td>ghidriff: present; bindiff: present; rz-diff: unknown</td><td>Match endpoints agree, but engines can share disassembly artifacts and failure modes. Evidence index is an uncalibrated triage aid.</td></tr><tr><td>00000000-0000-4000-8000-000000000017</td><td>contested</td><td>low</td><td>-</td><td>bindiff</td><td>rz-diff</td><td>ghidriff: present; bindiff: present; rz-diff: unknown</td><td>At least one engine proposes conflicting endpoints. Review identities manually before interpreting a patch.</td></tr></tbody></table>
+<ul><li>Scores are ordinal, uncalibrated indices of function MATCH corroboration only; never vulnerability probability, patch validity, exploitability, or independent proof.</li><li>Function matching and semantic security findings require separate validation.</li><li>Engine agreement may reflect shared disassembly or compiler artifacts; do not average upstream scores.</li></ul>
 <h2>Matches</h2>
 <h3>&lt;U+202E&gt;gnidnuf&lt;script&gt;alert(1)&lt;/script&gt;?# Injected</h3>
 <ul><li><strong>Match</strong>: 00000000-0000-4000-8000-000000000002</li><li><strong>Category</strong>: modified</li><li><strong>Quality</strong>: upstream similarity 0.58 (uncalibrated)</li><li><strong>Review</strong>: unreviewed</li><li><strong>Match types</strong>: Symbols, StructuralGraph</li><li><strong>Reason</strong>: -</li></ul>
@@ -40,7 +41,7 @@
 <ul><li><strong>Mode</strong>: off</li><li><strong>Servers contacted</strong>: none</li><li><strong>Launcher version</strong>: unknown</li></ul>
 <h2>Advisories</h2>
 <h3>CVE CVE-2024-12345</h3>
-<ul><li><strong>Vendor</strong>: Vendor</li><li><strong>Address (inert text)</strong>: https://evil.example/adv.html</li><li><strong>Fetched</strong>: -</li><li><strong>Claim level</strong>: vendor-claim</li></ul>
+<ul><li><strong>Vendor</strong>: Vendor</li><li><strong>Address (inert text)</strong>: https://evil.example/adv.html</li><li><strong>Fetched</strong>: -</li><li><strong>Claim level</strong>: vendor-claim</li><li><strong>KEV catalog (external context)</strong>: unknown</li></ul>
 <pre>[click](https://evil.example/x) and https://evil.example/y
 ```
 # not a heading
@@ -50,8 +51,6 @@
 <h3>lead-1</h3>
 <ul><li><strong>Kind</strong>: cluster</li><li><strong>Independent channels</strong>: ghidriff, bindiff</li></ul>
 <p>Two channels agree.</p>
-<h2>Unified result</h2>
-<ul><li><strong>Result id</strong>: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</li><li><strong>Manifest SHA-256</strong>: bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb</li><li><strong>Status</strong>: complete</li><li><strong>Engines</strong>: ghidriff</li></ul>
 <h2>Appendix: report JSON</h2>
 <pre>{
   &quot;advisories&quot;: [
@@ -59,6 +58,7 @@
       &quot;claim_level&quot;: &quot;vendor-claim&quot;,
       &quot;fetched_at&quot;: &quot;&quot;,
       &quot;id&quot;: &quot;CVE-2024-12345&quot;,
+      &quot;kev_listed&quot;: null,
       &quot;kind&quot;: &quot;cve&quot;,
       &quot;snapshot_digest&quot;: null,
       &quot;text&quot;: &quot;[click](https://evil.example/x) and https://evil.example/y\n```\n# not a heading\n`````\n&lt;img src=x onerror=alert(1)&gt;&quot;,
@@ -138,7 +138,7 @@
     &quot;profile&quot;: null
   },
   &quot;change_ranking&quot;: null,
-  &quot;content_digest&quot;: &quot;4f29db632f8d1057ce817fb0aeedee94c01ebda25af098048eb7d1e026ec16e4&quot;,
+  &quot;content_digest&quot;: &quot;71e825d359c67d86f97b5b4c8d0625c0989ec6ce0ef8f36b0d1404193339a023&quot;,
   &quot;created&quot;: &quot;2026-10-14T00:00:00+00:00&quot;,
   &quot;engine_evidence&quot;: {
     &quot;engines&quot;: [
@@ -147,9 +147,14 @@
         &quot;version&quot;: &quot;8&quot;
       },
       {
-        &quot;name&quot;: &quot;ghidriff&quot;,
+        &quot;name&quot;: &quot;rz-diff&quot;,
         &quot;version&quot;: &quot;0.9&quot;
       }
+    ],
+    &quot;limitations&quot;: [
+      &quot;Scores are ordinal, uncalibrated indices of function MATCH corroboration only; never vulnerability probability, patch validity, exploitability, or independent proof.&quot;,
+      &quot;Function matching and semantic security findings require separate validation.&quot;,
+      &quot;Engine agreement may reflect shared disassembly or compiler artifacts; do not average upstream scores.&quot;
     ],
     &quot;rows&quot;: [
       {
@@ -157,33 +162,34 @@
         &quot;channels&quot;: [
           {
             &quot;engine&quot;: &quot;ghidriff&quot;,
-            &quot;note&quot;: &quot;&quot;,
+            &quot;note&quot;: &quot;base pairing&quot;,
             &quot;state&quot;: &quot;present&quot;
           },
           {
             &quot;engine&quot;: &quot;bindiff&quot;,
-            &quot;note&quot;: &quot;&quot;,
+            &quot;note&quot;: &quot;agrees with the Ghidriff endpoints&quot;,
             &quot;state&quot;: &quot;present&quot;
           },
           {
             &quot;engine&quot;: &quot;rz-diff&quot;,
-            &quot;note&quot;: &quot;&quot;,
+            &quot;note&quot;: &quot;rz-diff: absent&quot;,
             &quot;state&quot;: &quot;absent&quot;
           }
         ],
         &quot;contradicting_engines&quot;: [],
-        &quot;explanation&quot;: &quot;Ghidriff and BinDiff agree; rz-diff did not run.&quot;,
-        &quot;limitations&quot;: [],
+        &quot;explanation&quot;: &quot;Match endpoints agree, but engines can share disassembly artifacts and failure modes. Evidence index is an uncalibrated triage aid.&quot;,
+        &quot;limitations&quot;: [
+          &quot;rz-diff: absent&quot;
+        ],
         &quot;match_id&quot;: &quot;00000000-0000-4000-8000-000000000002&quot;,
         &quot;missing_engines&quot;: [
           &quot;rz-diff&quot;
         ],
         &quot;ordinal_index&quot;: null,
         &quot;supporting_engines&quot;: [
-          &quot;ghidriff&quot;,
           &quot;bindiff&quot;
         ],
-        &quot;tier&quot;: &quot;moderate&quot;,
+        &quot;tier&quot;: &quot;high&quot;,
         &quot;verdict&quot;: &quot;corroborated&quot;
       },
       {
@@ -191,33 +197,34 @@
         &quot;channels&quot;: [
           {
             &quot;engine&quot;: &quot;ghidriff&quot;,
-            &quot;note&quot;: &quot;&quot;,
+            &quot;note&quot;: &quot;base pairing&quot;,
             &quot;state&quot;: &quot;present&quot;
           },
           {
             &quot;engine&quot;: &quot;bindiff&quot;,
-            &quot;note&quot;: &quot;&quot;,
+            &quot;note&quot;: &quot;proposes conflicting endpoints&quot;,
             &quot;state&quot;: &quot;present&quot;
           },
           {
             &quot;engine&quot;: &quot;rz-diff&quot;,
-            &quot;note&quot;: &quot;&quot;,
-            &quot;state&quot;: &quot;not_run&quot;
+            &quot;note&quot;: &quot;rz-diff: absent&quot;,
+            &quot;state&quot;: &quot;absent&quot;
           }
         ],
         &quot;contradicting_engines&quot;: [
           &quot;bindiff&quot;
         ],
-        &quot;explanation&quot;: &quot;BinDiff disagrees with the Ghidriff pairing.&quot;,
-        &quot;limitations&quot;: [],
+        &quot;explanation&quot;: &quot;At least one engine proposes conflicting endpoints. Review identities manually before interpreting a patch.&quot;,
+        &quot;limitations&quot;: [
+          &quot;bindiff: disagreement&quot;,
+          &quot;rz-diff: absent&quot;
+        ],
         &quot;match_id&quot;: &quot;00000000-0000-4000-8000-000000000017&quot;,
         &quot;missing_engines&quot;: [
           &quot;rz-diff&quot;
         ],
         &quot;ordinal_index&quot;: null,
-        &quot;supporting_engines&quot;: [
-          &quot;ghidriff&quot;
-        ],
+        &quot;supporting_engines&quot;: [],
         &quot;tier&quot;: &quot;low&quot;,
         &quot;verdict&quot;: &quot;contested&quot;
       }
@@ -523,8 +530,7 @@
     &quot;build_facts&quot;,
     &quot;engine_evidence&quot;,
     &quot;leads&quot;,
-    &quot;symbols&quot;,
-    &quot;unified_result&quot;
+    &quot;symbols&quot;
   ],
   &quot;selection&quot;: {
     &quot;finding_ids&quot;: [
@@ -548,17 +554,9 @@
     &quot;version&quot;: &quot;0.1.0&quot;
   },
   &quot;truncated&quot;: [],
-  &quot;unified_result&quot;: {
-    &quot;engines&quot;: [
-      &quot;ghidriff&quot;
-    ],
-    &quot;manifest_sha256&quot;: &quot;bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb&quot;,
-    &quot;result_id&quot;: &quot;aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa&quot;,
-    &quot;stale&quot;: false,
-    &quot;status&quot;: &quot;complete&quot;
-  },
   &quot;unknowns&quot;: [
-    &quot;Series context not included: this export has no series input.&quot;
+    &quot;Series context not included: this export has no series input.&quot;,
+    &quot;Unified result reference not included: no stored unified result.&quot;
   ]
 }</pre>
 </main></body></html>
