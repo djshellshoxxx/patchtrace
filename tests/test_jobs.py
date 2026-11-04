@@ -72,7 +72,11 @@ def test_cancel_and_timeout_terminate_children(tmp_path, cancelled):
             kernel.CloseHandle(handle)
     else:
         state = Path(f'/proc/{pid}/stat')
-        # A terminated orphan may briefly remain a zombie until host init reaps it.
+        # SIGKILL to the group is delivered asynchronously: on a loaded runner the orphan can still be runnable
+        # ('R', on its way out; it runs no more user code) for a moment, then a zombie until init reaps it.
+        deadline, pause = time.monotonic() + 10, threading.Event()  # `event` may already be set (cancel case)
+        while state.exists() and state.read_text().split()[2] != 'Z' and time.monotonic() < deadline:
+            pause.wait(.02)
         if state.exists():
             assert state.read_text().split()[2] == 'Z'
 
