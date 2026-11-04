@@ -724,6 +724,9 @@ def execute(request: UnifiedRequest, cancel: threading.Event | None = None,
         error = fail('PT-UNIFIED-LIMIT', 'worker-oom')
     except Exception as exc:  # noqa: BLE001 - class name only, never the message (01 s6)
         error = fail('PT-UNIFIED-INTERNAL', type(exc).__name__)
+    except BaseException:   # an interrupt or exit: no staging directory may outlive it (the sweep takes a day)
+        _discard(staged)
+        raise
     finally:
         _discard(private)
     if error is not None or report is None:

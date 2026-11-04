@@ -2,6 +2,7 @@
 before the parent kills the process tree. Synthetic project; the child is stood in for by a stub runner."""
 from __future__ import annotations
 
+import tempfile
 from pathlib import Path
 
 import pytest
@@ -39,3 +40,22 @@ def test_the_worker_deadline_comes_before_the_parents_kill_deadline(project):
     # always lose to the parent's kill and the partial result of a spent deadline could never be written
     assert seen['budget'] < seen['kill'] == 120
     assert seen['kill'] - seen['budget'] >= 10
+
+
+def staging(service) -> list[str]:
+    parent = service.root / 'runs' / service.project.runs[-1].id / 'unified' / 'results'
+    return sorted(p.name for p in parent.iterdir()) if parent.is_dir() else []
+
+
+@pytest.mark.parametrize('interrupt', [KeyboardInterrupt, SystemExit])
+def test_an_interrupt_during_execute_leaves_no_staging_or_private_directory(project, monkeypatch, interrupt):
+    before = {p.name for p in Path(tempfile.gettempdir()).glob('pt-unified-*')}
+
+    def boom(*args, **kwargs):
+        raise interrupt()
+    monkeypatch.setattr(pipeline, 'run_request', boom)
+    request = pipeline.prepare(project, UnifiedOptions(isolate=False))
+    with pytest.raises(interrupt):
+        pipeline.execute(request)
+    assert staging(project) == []
+    assert {p.name for p in Path(tempfile.gettempdir()).glob('pt-unified-*')} == before
