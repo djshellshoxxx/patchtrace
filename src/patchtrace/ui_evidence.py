@@ -278,8 +278,9 @@ class EvidencePanel(QWidget):
     probe_requested = Signal()
     status_message = Signal(str)
 
-    def __init__(self, settings=None, parent=None, *, bindiff_setup: bool = True):
+    def __init__(self, settings=None, parent=None, *, bindiff_setup: bool = True, announcer=None):
         super().__init__(parent)
+        self._announcer = announcer
         self.settings = PanelSettings(settings, 'evidence') if isinstance(settings, QSettings) else settings
         # Track G (§16): the BinDiff run setup section; False builds the exact C6 panel (regression baseline).
         self._with_bindiff_setup = bindiff_setup
@@ -393,7 +394,7 @@ class EvidencePanel(QWidget):
         self.loading_bar.setAccessibleName('Loading engine evidence')
         layout.addWidget(self.loading_bar)
         register_gui_tips()  # idempotent; the host has done it already (the StateView buttons use these tips)
-        self.state_view = StateView('evidence.matches', 'Engine evidence matches', parent=page, text_limit=VIEW_LIMIT, multiline=True)
+        self.state_view = StateView('evidence.matches', 'Engine evidence matches', self._announcer, parent=page, text_limit=VIEW_LIMIT, multiline=True)
         self.state_view.retry_requested.connect(self.refresh_requested)
         self.state_view.setup_requested.connect(lambda: self.tabs.setCurrentIndex(1))
         self.state_view.copy_requested.connect(self._copy_text)
@@ -873,7 +874,7 @@ class EvidenceController(ControllerBase):
     def __init__(self, ctx: PanelContext, *, loader: Callable = load_evidence, run_execute: Callable | None = None,
                  run_kw: dict | None = None, probe: Callable | None = None, auto_probe: bool = False,
                  bindiff_kw: dict | None = None):
-        panel = EvidencePanel(ctx.settings)
+        panel = EvidencePanel(ctx.settings, announcer=ctx.shell)
         super().__init__(panel)
         self.panel = panel
         # The concrete port is also the legacy window port: it carries the live service and the window (spec 17).
