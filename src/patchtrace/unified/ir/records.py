@@ -206,7 +206,7 @@ def _parse_ranges(value, size_of_image: int) -> list[tuple[int, int]]:
     return ranges
 
 
-def _parse_objs(value) -> tuple:
+def _parse_objs(value, size_of_image: int) -> tuple:
     out = []
     for item in _list(value, 'objs', MAX_OBJS):
         if type(item) is not list or len(item) != 2:
@@ -219,7 +219,7 @@ def _parse_objs(value) -> tuple:
             _int(payload, 'objs')
         elif kind == 'addr':
             if payload is not None:
-                _int(payload, 'objs', 0, 2 ** 32 - 1)
+                _int(payload, 'objs', 0, size_of_image - 1)   # 03 s12.3: an RVA inside the image, null outside
         else:
             raise bad('objs')
         out.append((kind, payload))
@@ -240,7 +240,7 @@ def _parse_refs(value) -> tuple:
     return tuple(out)
 
 
-def _parse_insn(item, length_cap: int) -> RawInsn:
+def _parse_insn(item, length_cap: int, size_of_image: int) -> RawInsn:
     if type(item) is not list or len(item) != 6:
         raise bad('insns')
     off, length, mnem, imask, ops, flow = item
@@ -254,7 +254,7 @@ def _parse_insn(item, length_cap: int) -> RawInsn:
         if type(op) is not list or len(op) != 4:
             raise bad('ops')
         optype = _int(op[0], 'ops', 0, 2 ** 31 - 1)
-        parsed.append(RawOp(optype, _hex(op[1], 'ops', allow_none=True, exact=length), _parse_objs(op[2]),
+        parsed.append(RawOp(optype, _hex(op[1], 'ops', allow_none=True, exact=length), _parse_objs(op[2], size_of_image),
                             _parse_refs(op[3])))
     return RawInsn(off, length, mnem, imask_bytes, tuple(parsed), flow)
 
@@ -348,7 +348,7 @@ def parse_fn(document: dict, size_of_image: int, limits: UnifiedLimits) -> FnRec
     raw = _hex(document['raw'], 'raw', allow_none=True, limit=limits.l06_fn_raw_bytes)
     if raw is not None and len(raw) != total:
         raise bad('raw')
-    insns = [_parse_insn(item, total) for item in _list(document['insns'], 'insns', limits.l06_fn_instructions)]
+    insns = [_parse_insn(item, total, size_of_image) for item in _list(document['insns'], 'insns', limits.l06_fn_instructions)]
     texts = [_text(item, 'text', MAX_TEXT, counter=counter) for item in _list(document['text'], 'text',
                                                                               limits.l06_fn_instructions)]
     record = FnRec(rva, ranges, name, document['name_src'], sorted(aliases), document['kind'], thunk_target, imported,

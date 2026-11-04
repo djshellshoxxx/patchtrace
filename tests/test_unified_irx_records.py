@@ -166,3 +166,16 @@ def test_truncated_with_raw_bytes_is_rejected():
     with pytest.raises(UnifiedError) as caught:
         parse(document)
     assert caught.value.reason == 'bad-record-truncated'
+
+
+def test_an_addr_object_outside_the_image_is_rejected():
+    document = copy.deepcopy(GOOD)
+    for insn in document['insns']:
+        for op in insn[4]:
+            for obj in op[2]:
+                if obj[0] == 'addr':
+                    obj[1] = SIZE
+                    with pytest.raises(UnifiedError):
+                        parse(document)
+                    return
+    raise AssertionError('the sample holds no addr object')
