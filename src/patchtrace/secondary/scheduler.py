@@ -185,6 +185,10 @@ def run_engines(project: ProjectRef, engines: Sequence[EngineId], *, max_paralle
                     return outcome(eid, 'timeout', started, t0, cap=cap, digest=digest, key=key, raw=raw,
                                    error=SecondaryError('PT-SECONDARY-TIMEOUT',
                                                         f'exceeded the {job.deadline_seconds:g} s deadline'))
+                if raw.reason == 'output-limit':
+                    return outcome(eid, 'failed', started, t0, cap=cap, digest=digest, key=key, raw=raw,
+                                   error=SecondaryError('PT-SECONDARY-LIMIT', f'stdout exceeded the '
+                                                        f'{job.stdout_limit} byte limit', kind='output-limit'))
                 if raw.reason:
                     return outcome(eid, 'failed', started, t0, cap=cap, digest=digest, key=key, raw=raw,
                                    error=SecondaryError('PT-SECONDARY-RUN', f'stopped: {raw.reason}'))

@@ -155,13 +155,17 @@ def run_rzdiff(capability: Capability, older: Path, newer: Path, older_sha256: s
             raise SecondaryError('PT-SECONDARY-INPUT', f'artifact {item.name} is not a readable file')
     argv = list(rzdiff_argv(capability.path, older, newer))
     with tempfile.TemporaryDirectory(prefix='patchtrace-rzdiff-') as cwd:
-        # One byte over the limit lets truncation be detected rather than silently parsed.
+        # One byte over the limit lets truncation be detected rather than silently parsed; max_output_bytes
+        # stops a flood there instead of at the deadline (SPEC-28 §9.3).
         result = runner(argv, cwd=Path(cwd), env=env, cancel=cancel, timeout_seconds=timeout_seconds,
-                        log_limit=STDOUT_LIMIT + 1, separate_streams=True, stderr_limit=STDERR_TAIL)
+                        log_limit=STDOUT_LIMIT + 1, separate_streams=True, stderr_limit=STDERR_TAIL,
+                        max_output_bytes=STDOUT_LIMIT)
     if result.reason == 'cancelled':
         raise SecondaryError('PT-SECONDARY-CANCEL', 'rz-diff was cancelled')
     if result.reason == 'timeout':
         raise SecondaryError('PT-SECONDARY-RUN', f'rz-diff exceeded the {timeout_seconds} s timeout')
+    if result.reason == 'output-limit':
+        raise SecondaryError('PT-SECONDARY-LIMIT', 'rz-diff output exceeds 64 MiB', kind='output-limit')
     if result.reason:
         raise SecondaryError('PT-SECONDARY-RUN', f'rz-diff stopped: {result.reason}')
     return interpret(result.returncode, result.log_tail, result.stderr_tail, capability.version,

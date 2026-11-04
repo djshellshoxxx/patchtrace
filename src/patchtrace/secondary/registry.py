@@ -83,9 +83,11 @@ class RzDiffAdapter:
         return {}
 
     def run(self, cap: Capability, job: EngineJob) -> RawResult:
+        # max_output_bytes stops a flood at the limit; log_limit alone only bounds the kept tail (SPEC-28 §9.3).
         result = job.runner(list(self.argv(cap, job)), cwd=job.workdir, env=job.env, cancel=job.cancel,
                             timeout_seconds=job.deadline_seconds, log_limit=job.stdout_limit + 1,
-                            separate_streams=True, stderr_limit=rzdiff.STDERR_TAIL)
+                            separate_streams=True, stderr_limit=rzdiff.STDERR_TAIL,
+                            max_output_bytes=job.stdout_limit)
         return RawResult(result.returncode, result.log_tail.encode('utf-8'), result.stderr_tail, None,
                          result.reason)
 
