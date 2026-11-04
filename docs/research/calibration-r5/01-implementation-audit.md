@@ -1,6 +1,6 @@
 # R5 / 01 — Implementation inventory, integration map, and evidence gaps
 
-**Reference checkout:** GitHub main a04f5a299a8d4afef023261e52e08d14678cf1e7, 2026-10-30.  
+**Reference checkout:** GitHub main a04f5a299a8d4afef023261e52e08d14678cf1e7, 2026-10-30.
 **Method:** read live modules, tests, checked-in QA, C9/SPEC-27/SPEC-28/SPEC-31 contracts and open PR descriptions. Source inspection establishes that a path exists or that a particular branch of logic is present; it does **not** establish statistically correct behavior on real Windows images.
 
 ## 1. Architecture and scope

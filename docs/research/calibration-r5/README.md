@@ -1,10 +1,10 @@
 # R5 — Statistical calibration, confidence semantics, false-match control
 
-**Status: research and implementation audit; NOT an accepted calibration release.**  
-**Prepared:** 2026-10-30  
-**Repository baseline inspected:** main at a04f5a299a8d4afef023261e52e08d14678cf1e7 (PR #124 merged).  
-**Working branch:** chatgpt/r5-calibration-research-20261030.  
-**Input:** owner's R5 research brief, existing SPEC-27/28, SPEC-31/32, C9 preregistration v1 and calibration code.  
+**Status: research and implementation audit; NOT an accepted calibration release.**
+**Prepared:** 2026-10-30
+**Repository baseline inspected:** main at a04f5a299a8d4afef023261e52e08d14678cf1e7 (PR #124 merged).
+**Working branch:** chatgpt/r5-calibration-research-20261030.
+**Input:** owner's R5 research brief, existing SPEC-27/28, SPEC-31/32, C9 preregistration v1 and calibration code.
 **Mode of evidence:** source/contract review through the connected GitHub repository; literature review and reproducible research protocol. No local PatchTrace checkout or calibration data was available to this session. No new PatchTrace tests, Tier R/Tier W accuracy experiments, or Windows acceptance runs were executed. Historical results quoted here are identified as prior repository records, not this session's test results.
 
 ## Decision in one paragraph

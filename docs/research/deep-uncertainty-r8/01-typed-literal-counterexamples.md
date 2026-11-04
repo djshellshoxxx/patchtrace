@@ -1,8 +1,8 @@
 # R8-LIT-01 — type erasure in canonical pseudo-code
 
-**Finding type:** independently demonstrated source-code normalization defect with statically compiled counterexamples.  
-**Priority:** release-blocking for any claim that an equal pseudo-code canonical form is sufficient to label a function benign.  
-**Baseline:** `main` `a04f5a299a8d4afef023261e52e08d14678cf1e7`; original file `src/patchtrace/unified/facts/pseudo.py`.  
+**Finding type:** independently demonstrated source-code normalization defect with statically compiled counterexamples.
+**Priority:** release-blocking for any claim that an equal pseudo-code canonical form is sufficient to label a function benign.
+**Baseline:** `main` `a04f5a299a8d4afef023261e52e08d14678cf1e7`; original file `src/patchtrace/unified/facts/pseudo.py`.
 **Scope of confirmation:** literal normalizer, compiler-produced object `.text` sections. **Not** native Ghidriff/Windows integration, overall false-negative rate, or CVE root-cause.
 
 ## 1. Assumption and source-code path

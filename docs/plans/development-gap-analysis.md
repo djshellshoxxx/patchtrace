@@ -41,140 +41,140 @@ Mean of 20 equally weighted feature scores: **74.3%** (descriptive **planning pr
 
 - **Implementation inspected / relevant files:** `src/patchtrace/src/patchtrace/ingestion.py`; `src/patchtrace/pe_overview/inspect.py` (repository-relative `tools/` paths remain rooted at repository root). These are code anchors, not an assertion that every function in the package was exhaustively reviewed.
 - **Specific remaining gap:** PE bounds, Authenticode/catalog and malicious/OneDrive cases on clean Windows.
-- **Development ticket / dependency:** GT-09. **Priority P1**, effort **M** (S 1–2d, M 3–5d, L 1–2w, XL 2–4w of one engineer; very uncertain for native licensing/corpus). **Research owner:** R8. Research must be merged only after exact-head QA. 
+- **Development ticket / dependency:** GT-09. **Priority P1**, effort **M** (S 1–2d, M 3–5d, L 1–2w, XL 2–4w of one engineer; very uncertain for native licensing/corpus). **Research owner:** R8. Research must be merged only after exact-head QA.
 - **Required verification:** focused adversarial unit/integration tests, unchanged source/artifact/run identity, relevant Linux/Windows QA and a dated real/native acceptance receipt; record explicit `unknown` and `not observed` states instead of silent success.
 
 ### 2. Ghidriff/Ghidra integration — 86% estimated / 14% remaining
 
 - **Implementation inspected / relevant files:** `src/patchtrace/backend.py`; `src/patchtrace/unified/extract/runner.py`; `src/patchtrace/ghidriff_launch/ptlaunch.py` (paths under `tools/` remain relative to repository root). These are code anchors, not an assertion that every function in the package was exhaustively reviewed.
 - **Specific remaining gap:** Pinned native GZF/decomp end-to-end, user PE and failure preservation.
-- **Development ticket / dependency:** GT-01,GT-09. **Priority P0**, effort **L** (S 1–2d, M 3–5d, L 1–2w, XL 2–4w of one engineer; very uncertain for native licensing/corpus). **Research owner:** R1/R2. Research must be merged only after exact-head QA. 
+- **Development ticket / dependency:** GT-01,GT-09. **Priority P0**, effort **L** (S 1–2d, M 3–5d, L 1–2w, XL 2–4w of one engineer; very uncertain for native licensing/corpus). **Research owner:** R1/R2. Research must be merged only after exact-head QA.
 - **Required verification:** focused adversarial unit/integration tests, unchanged source/artifact/run identity, relevant Linux/Windows QA and a dated real/native acceptance receipt; record explicit `unknown` and `not observed` states instead of silent success.
 
 ### 3. BinExport2 — 66% estimated / 34% remaining
 
 - **Implementation inspected / relevant files:** `src/patchtrace/secondary/binexport_run.py`; `src/patchtrace/binexport_producer.py`; `src/patchtrace/binexport_proto.py` (paths under `tools/` remain relative to repository root). These are code anchors, not an assertion that every function in the package was exhaustively reviewed.
 - **Specific remaining gap:** Real exporter builds + adversarial protobuf + Windows host identity/orientation.
-- **Development ticket / dependency:** GT-03. **Priority P0**, effort **L** (S 1–2d, M 3–5d, L 1–2w, XL 2–4w of one engineer; very uncertain for native licensing/corpus). **Research owner:** R2. Research must be merged only after exact-head QA. 
+- **Development ticket / dependency:** GT-03. **Priority P0**, effort **L** (S 1–2d, M 3–5d, L 1–2w, XL 2–4w of one engineer; very uncertain for native licensing/corpus). **Research owner:** R2. Research must be merged only after exact-head QA.
 - **Required verification:** focused adversarial unit/integration tests, unchanged source/artifact/run identity, relevant Linux/Windows QA and a dated real/native acceptance receipt; record explicit `unknown` and `not observed` states instead of silent success.
 
 ### 4. BinDiff — 66% estimated / 34% remaining
 
 - **Implementation inspected / relevant files:** `src/patchtrace/secondary/bindiff_run.py`; `src/patchtrace/bindiff.py`; `src/patchtrace/bindiff_inputs.py` (paths under `tools/` remain relative to repository root). These are code anchors, not an assertion that every function in the package was exhaustively reviewed.
 - **Specific remaining gap:** Verified licensed binary pin, native oracle and one-comparison persistence.
-- **Development ticket / dependency:** GT-03. **Priority P0**, effort **L** (S 1–2d, M 3–5d, L 1–2w, XL 2–4w of one engineer; very uncertain for native licensing/corpus). **Research owner:** R2. Research must be merged only after exact-head QA. 
+- **Development ticket / dependency:** GT-03. **Priority P0**, effort **L** (S 1–2d, M 3–5d, L 1–2w, XL 2–4w of one engineer; very uncertain for native licensing/corpus). **Research owner:** R2. Research must be merged only after exact-head QA.
 - **Required verification:** focused adversarial unit/integration tests, unchanged source/artifact/run identity, relevant Linux/Windows QA and a dated real/native acceptance receipt; record explicit `unknown` and `not observed` states instead of silent success.
 
 ### 5. rz-diff — 74% estimated / 26% remaining
 
 - **Implementation inspected / relevant files:** `src/patchtrace/secondary/rzdiff.py`; `src/patchtrace/secondary/registry.py`; `src/patchtrace/secondary/cli_run.py` (paths under `tools/` remain relative to repository root). These are code anchors, not an assertion that every function in the package was exhaustively reviewed.
 - **Specific remaining gap:** Strict parser does not accept most R2 native probes; validate side orientation per version.
-- **Development ticket / dependency:** GT-03. **Priority P0**, effort **M** (S 1–2d, M 3–5d, L 1–2w, XL 2–4w of one engineer; very uncertain for native licensing/corpus). **Research owner:** R2. Research must be merged only after exact-head QA. 
+- **Development ticket / dependency:** GT-03. **Priority P0**, effort **M** (S 1–2d, M 3–5d, L 1–2w, XL 2–4w of one engineer; very uncertain for native licensing/corpus). **Research owner:** R2. Research must be merged only after exact-head QA.
 - **Required verification:** focused adversarial unit/integration tests, unchanged source/artifact/run identity, relevant Linux/Windows QA and a dated real/native acceptance receipt; record explicit `unknown` and `not observed` states instead of silent success.
 
 ### 6. Unified function matching — 80% estimated / 20% remaining
 
 - **Implementation inspected / relevant files:** `src/patchtrace/unified/pipeline.py`; `src/patchtrace/unified/ladder/`; `src/patchtrace/unified/facts/` (paths under `tools/` remain relative to repository root). These are code anchors, not an assertion that every function in the package was exhaustively reviewed.
 - **Specific remaining gap:** Merge/test R2 witnesses, unmatched IR-only functions and bounded regression; native held-out accuracy.
-- **Development ticket / dependency:** GT-01,GT-02. **Priority P0**, effort **L** (S 1–2d, M 3–5d, L 1–2w, XL 2–4w of one engineer; very uncertain for native licensing/corpus). **Research owner:** R1/R2. Research must be merged only after exact-head QA. 
+- **Development ticket / dependency:** GT-01,GT-02. **Priority P0**, effort **L** (S 1–2d, M 3–5d, L 1–2w, XL 2–4w of one engineer; very uncertain for native licensing/corpus). **Research owner:** R1/R2. Research must be merged only after exact-head QA.
 - **Required verification:** focused adversarial unit/integration tests, unchanged source/artifact/run identity, relevant Linux/Windows QA and a dated real/native acceptance receipt; record explicit `unknown` and `not observed` states instead of silent success.
 
 ### 7. Multi-engine evidence fusion — 80% estimated / 20% remaining
 
 - **Implementation inspected / relevant files:** `src/patchtrace/unified/compute.py`; `src/patchtrace/unified/exchange.py`; `src/patchtrace/secondary/reconcile.py` (paths under `tools/` remain relative to repository root). These are code anchors, not an assertion that every function in the package was exhaustively reviewed.
 - **Specific remaining gap:** Preserve opposing evidence, missingness, provenance; integrate live secondary into unified run.
-- **Development ticket / dependency:** GT-02,GT-03. **Priority P0**, effort **L** (S 1–2d, M 3–5d, L 1–2w, XL 2–4w of one engineer; very uncertain for native licensing/corpus). **Research owner:** R2. Research must be merged only after exact-head QA. 
+- **Development ticket / dependency:** GT-02,GT-03. **Priority P0**, effort **L** (S 1–2d, M 3–5d, L 1–2w, XL 2–4w of one engineer; very uncertain for native licensing/corpus). **Research owner:** R2. Research must be merged only after exact-head QA.
 - **Required verification:** focused adversarial unit/integration tests, unchanged source/artifact/run identity, relevant Linux/Windows QA and a dated real/native acceptance receipt; record explicit `unknown` and `not observed` states instead of silent success.
 
 ### 8. Semantic-change classification — 64% estimated / 36% remaining
 
 - **Implementation inspected / relevant files:** `src/patchtrace/unified/facts/pseudo.py`; `src/patchtrace/unified/facts/channels.py`; `src/patchtrace/unified/compute.py` (paths under `tools/` remain relative to repository root). These are code anchors, not an assertion that every function in the package was exhaustively reviewed.
 - **Specific remaining gap:** R3/R8 proof counterexamples, typed literals, EH unknown, native false-benign controls.
-- **Development ticket / dependency:** GT-04. **Priority P0**, effort **L** (S 1–2d, M 3–5d, L 1–2w, XL 2–4w of one engineer; very uncertain for native licensing/corpus). **Research owner:** R3/R8. Research must be merged only after exact-head QA. 
+- **Development ticket / dependency:** GT-04. **Priority P0**, effort **L** (S 1–2d, M 3–5d, L 1–2w, XL 2–4w of one engineer; very uncertain for native licensing/corpus). **Research owner:** R3/R8. Research must be merged only after exact-head QA.
 - **Required verification:** focused adversarial unit/integration tests, unchanged source/artifact/run identity, relevant Linux/Windows QA and a dated real/native acceptance receipt; record explicit `unknown` and `not observed` states instead of silent success.
 
 ### 9. Compiler-noise suppression — 64% estimated / 36% remaining
 
 - **Implementation inspected / relevant files:** `src/patchtrace/unified/facts/layout.py`; `src/patchtrace/unified/facts/pseudo.py`; `src/patchtrace/buildenv/noise_map.py` (paths under `tools/` remain relative to repository root). These are code anchors, not an assertion that every function in the package was exhaustively reviewed.
 - **Specific remaining gap:** Locked A/A and cross-toolchain negatives, opt/ICF provenance, non-equivalence safeguards.
-- **Development ticket / dependency:** GT-04,GT-05. **Priority P0**, effort **L** (S 1–2d, M 3–5d, L 1–2w, XL 2–4w of one engineer; very uncertain for native licensing/corpus). **Research owner:** R3/R8. Research must be merged only after exact-head QA. 
+- **Development ticket / dependency:** GT-04,GT-05. **Priority P0**, effort **L** (S 1–2d, M 3–5d, L 1–2w, XL 2–4w of one engineer; very uncertain for native licensing/corpus). **Research owner:** R3/R8. Research must be merged only after exact-head QA.
 - **Required verification:** focused adversarial unit/integration tests, unchanged source/artifact/run identity, relevant Linux/Windows QA and a dated real/native acceptance receipt; record explicit `unknown` and `not observed` states instead of silent success.
 
 ### 10. Confidence calibration — 59% estimated / 41% remaining
 
 - **Implementation inspected / relevant files:** `src/patchtrace/calibration/predict.py`; `src/patchtrace/calibration/ood.py`; `tools/calibration/` (paths under `tools/` remain relative to repository root). These are code anchors, not an assertion that every function in the package was exhaustively reviewed.
 - **Specific remaining gap:** Lineage-held-out Tier W labels, locked preregistration, trustworthy metrics and promotion gate.
-- **Development ticket / dependency:** GT-05. **Priority P1**, effort **XL** (S 1–2d, M 3–5d, L 1–2w, XL 2–4w of one engineer; very uncertain for native licensing/corpus). **Research owner:** R1/R5. Research must be merged only after exact-head QA. 
+- **Development ticket / dependency:** GT-05. **Priority P1**, effort **XL** (S 1–2d, M 3–5d, L 1–2w, XL 2–4w of one engineer; very uncertain for native licensing/corpus). **Research owner:** R1/R5. Research must be merged only after exact-head QA.
 - **Required verification:** focused adversarial unit/integration tests, unchanged source/artifact/run identity, relevant Linux/Windows QA and a dated real/native acceptance receipt; record explicit `unknown` and `not observed` states instead of silent success.
 
 ### 11. CVE/KB/product/build correlation — 77% estimated / 23% remaining
 
 - **Implementation inspected / relevant files:** `src/patchtrace/kbcorrelation/workflow.py`; `src/patchtrace/sources/cvrf.py`; `src/patchtrace/intelligence/csaf/` (paths under `tools/` remain relative to repository root). These are code anchors, not an assertion that every function in the package was exhaustively reviewed.
 - **Specific remaining gap:** Real MSRC dialect/source lineage, product/update scopes and non-causal wording.
-- **Development ticket / dependency:** GT-06. **Priority P0**, effort **XL** (S 1–2d, M 3–5d, L 1–2w, XL 2–4w of one engineer; very uncertain for native licensing/corpus). **Research owner:** R4. Research must be merged only after exact-head QA. 
+- **Development ticket / dependency:** GT-06. **Priority P0**, effort **XL** (S 1–2d, M 3–5d, L 1–2w, XL 2–4w of one engineer; very uncertain for native licensing/corpus). **Research owner:** R4. Research must be merged only after exact-head QA.
 - **Required verification:** focused adversarial unit/integration tests, unchanged source/artifact/run identity, relevant Linux/Windows QA and a dated real/native acceptance receipt; record explicit `unknown` and `not observed` states instead of silent success.
 
 ### 12. Winbindex acquisition and MSDelta — 71% estimated / 29% remaining
 
 - **Implementation inspected / relevant files:** `src/patchtrace/acquisition/winbindex.py`; `src/patchtrace/acquisition/delta.py`; `src/patchtrace/acquisition/workflow.py` (paths under `tools/` remain relative to repository root). These are code anchors, not an assertion that every function in the package was exhaustively reviewed.
 - **Specific remaining gap:** Native MSDelta and verified provenance/Authenticode, corpus/live transport cases.
-- **Development ticket / dependency:** GT-07. **Priority P1**, effort **L** (S 1–2d, M 3–5d, L 1–2w, XL 2–4w of one engineer; very uncertain for native licensing/corpus). **Research owner:** R4. Research must be merged only after exact-head QA. 
+- **Development ticket / dependency:** GT-07. **Priority P1**, effort **L** (S 1–2d, M 3–5d, L 1–2w, XL 2–4w of one engineer; very uncertain for native licensing/corpus). **Research owner:** R4. Research must be merged only after exact-head QA.
 - **Required verification:** focused adversarial unit/integration tests, unchanged source/artifact/run identity, relevant Linux/Windows QA and a dated real/native acceptance receipt; record explicit `unknown` and `not observed` states instead of silent success.
 
 ### 13. Patch search — 71% estimated / 29% remaining
 
 - **Implementation inspected / relevant files:** `src/patchtrace/kbcorrelation/adapters/search.py`; `src/patchtrace/search/service.py`; `src/patchtrace/kbcorrelation/pairs.py` (paths under `tools/` remain relative to repository root). These are code anchors, not an assertion that every function in the package was exhaustively reviewed.
 - **Specific remaining gap:** End-to-end CVE→KB→pair→project and stale/ambiguous/negative lineage controls.
-- **Development ticket / dependency:** GT-06,GT-07. **Priority P0**, effort **L** (S 1–2d, M 3–5d, L 1–2w, XL 2–4w of one engineer; very uncertain for native licensing/corpus). **Research owner:** R4. Research must be merged only after exact-head QA. 
+- **Development ticket / dependency:** GT-06,GT-07. **Priority P0**, effort **L** (S 1–2d, M 3–5d, L 1–2w, XL 2–4w of one engineer; very uncertain for native licensing/corpus). **Research owner:** R4. Research must be merged only after exact-head QA.
 - **Required verification:** focused adversarial unit/integration tests, unchanged source/artifact/run identity, relevant Linux/Windows QA and a dated real/native acceptance receipt; record explicit `unknown` and `not observed` states instead of silent success.
 
 ### 14. Project persistence/history — 92% estimated / 8% remaining
 
 - **Implementation inspected / relevant files:** `src/patchtrace/persistence.py`; `src/patchtrace/verified_backup.py`; `src/patchtrace/unified/store.py` (paths under `tools/` remain relative to repository root). These are code anchors, not an assertion that every function in the package was exhaustively reviewed.
 - **Specific remaining gap:** OneDrive/locks crash recovery, version/migration/old result preservation on real Windows.
-- **Development ticket / dependency:** GT-09. **Priority P1**, effort **M** (S 1–2d, M 3–5d, L 1–2w, XL 2–4w of one engineer; very uncertain for native licensing/corpus). **Research owner:** R6. Research must be merged only after exact-head QA. 
+- **Development ticket / dependency:** GT-09. **Priority P1**, effort **M** (S 1–2d, M 3–5d, L 1–2w, XL 2–4w of one engineer; very uncertain for native licensing/corpus). **Research owner:** R6. Research must be merged only after exact-head QA.
 - **Required verification:** focused adversarial unit/integration tests, unchanged source/artifact/run identity, relevant Linux/Windows QA and a dated real/native acceptance receipt; record explicit `unknown` and `not observed` states instead of silent success.
 
 ### 15. GUI/analyst workflow — 80% estimated / 20% remaining
 
 - **Implementation inspected / relevant files:** `src/patchtrace/ui.py`; `src/patchtrace/ui_unified.py`; `src/patchtrace/kbcorrelation/panel_qt.py`; `src/patchtrace/gui/qt/` (paths under `tools/` remain relative to repository root). These are code anchors, not an assertion that every function in the package was exhaustively reviewed.
 - **Specific remaining gap:** Real end-to-end clicks, secondary and failure states, keyboard/DPI, review navigation.
-- **Development ticket / dependency:** GT-08. **Priority P0**, effort **L** (S 1–2d, M 3–5d, L 1–2w, XL 2–4w of one engineer; very uncertain for native licensing/corpus). **Research owner:** R6/#126. Research must be merged only after exact-head QA. 
+- **Development ticket / dependency:** GT-08. **Priority P0**, effort **L** (S 1–2d, M 3–5d, L 1–2w, XL 2–4w of one engineer; very uncertain for native licensing/corpus). **Research owner:** R6/#126. Research must be merged only after exact-head QA.
 - **Required verification:** focused adversarial unit/integration tests, unchanged source/artifact/run identity, relevant Linux/Windows QA and a dated real/native acceptance receipt; record explicit `unknown` and `not observed` states instead of silent success.
 
 ### 16. AI interpretation — 68% estimated / 32% remaining
 
 - **Implementation inspected / relevant files:** `src/patchtrace/interpretation.py`; `src/patchtrace/providers.py`; `src/patchtrace/evidence.py` (paths under `tools/` remain relative to repository root). These are code anchors, not an assertion that every function in the package was exhaustively reviewed.
 - **Specific remaining gap:** Consent/privacy and live local/remote model acceptance; citations and hallucination QA.
-- **Development ticket / dependency:** GT-11. **Priority P2**, effort **M** (S 1–2d, M 3–5d, L 1–2w, XL 2–4w of one engineer; very uncertain for native licensing/corpus). **Research owner:** R7. Research must be merged only after exact-head QA. 
+- **Development ticket / dependency:** GT-11. **Priority P2**, effort **M** (S 1–2d, M 3–5d, L 1–2w, XL 2–4w of one engineer; very uncertain for native licensing/corpus). **Research owner:** R7. Research must be merged only after exact-head QA.
 - **Required verification:** focused adversarial unit/integration tests, unchanged source/artifact/run identity, relevant Linux/Windows QA and a dated real/native acceptance receipt; record explicit `unknown` and `not observed` states instead of silent success.
 
 ### 17. Reports and exports — 88% estimated / 12% remaining
 
 - **Implementation inspected / relevant files:** `src/patchtrace/reports.py`; `src/patchtrace/intelligence/reports.py`; `src/patchtrace/kbcorrelation/export.py` (paths under `tools/` remain relative to repository root). These are code anchors, not an assertion that every function in the package was exhaustively reviewed.
 - **Specific remaining gap:** Cross-feature provenance manifest, failing/partial/cancelled outputs, published ZIP smoke.
-- **Development ticket / dependency:** GT-08,GT-09. **Priority P1**, effort **M** (S 1–2d, M 3–5d, L 1–2w, XL 2–4w of one engineer; very uncertain for native licensing/corpus). **Research owner:** R6. Research must be merged only after exact-head QA. 
+- **Development ticket / dependency:** GT-08,GT-09. **Priority P1**, effort **M** (S 1–2d, M 3–5d, L 1–2w, XL 2–4w of one engineer; very uncertain for native licensing/corpus). **Research owner:** R6. Research must be merged only after exact-head QA.
 - **Required verification:** focused adversarial unit/integration tests, unchanged source/artifact/run identity, relevant Linux/Windows QA and a dated real/native acceptance receipt; record explicit `unknown` and `not observed` states instead of silent success.
 
 ### 18. Security and process isolation — 80% estimated / 20% remaining
 
 - **Implementation inspected / relevant files:** `src/patchtrace/jobs.py`; `src/patchtrace/backend.py`; `src/patchtrace/acquisition/transport.py`; `src/patchtrace/persistence.py` (paths under `tools/` remain relative to repository root). These are code anchors, not an assertion that every function in the package was exhaustively reviewed.
 - **Specific remaining gap:** OS network isolation cannot be inferred; hostile input, env leakage, descendant and temp cleanup acceptance.
-- **Development ticket / dependency:** GT-10. **Priority P0**, effort **L** (S 1–2d, M 3–5d, L 1–2w, XL 2–4w of one engineer; very uncertain for native licensing/corpus). **Research owner:** R8. Research must be merged only after exact-head QA. 
+- **Development ticket / dependency:** GT-10. **Priority P0**, effort **L** (S 1–2d, M 3–5d, L 1–2w, XL 2–4w of one engineer; very uncertain for native licensing/corpus). **Research owner:** R8. Research must be merged only after exact-head QA.
 - **Required verification:** focused adversarial unit/integration tests, unchanged source/artifact/run identity, relevant Linux/Windows QA and a dated real/native acceptance receipt; record explicit `unknown` and `not observed` states instead of silent success.
 
 ### 19. Performance/scalability — 60% estimated / 40% remaining
 
 - **Implementation inspected / relevant files:** `src/patchtrace/unified/ladder/`; `tools/unified/bench.py`; `tools/bench_enrichment.py` (paths under `tools/` remain relative to repository root). These are code anchors, not an assertion that every function in the package was exhaustively reviewed.
 - **Specific remaining gap:** Native 100k and real large PE, Windows RSS/time and GUI first paint/scroll deadlines.
-- **Development ticket / dependency:** GT-05,GT-12. **Priority P1**, effort **L** (S 1–2d, M 3–5d, L 1–2w, XL 2–4w of one engineer; very uncertain for native licensing/corpus). **Research owner:** R2/R5. Research must be merged only after exact-head QA. 
+- **Development ticket / dependency:** GT-05,GT-12. **Priority P1**, effort **L** (S 1–2d, M 3–5d, L 1–2w, XL 2–4w of one engineer; very uncertain for native licensing/corpus). **Research owner:** R2/R5. Research must be merged only after exact-head QA.
 - **Required verification:** focused adversarial unit/integration tests, unchanged source/artifact/run identity, relevant Linux/Windows QA and a dated real/native acceptance receipt; record explicit `unknown` and `not observed` states instead of silent success.
 
 ### 20. Windows packaging/release — 72% estimated / 28% remaining
 
 - **Implementation inspected / relevant files:** `tools/build_windows.py`; `tools/package_windows_installer.py`; `tools/release_gate.py` (paths under `tools/` remain relative to repository root). These are code anchors, not an assertion that every function in the package was exhaustively reviewed.
 - **Specific remaining gap:** Exact-head verified assets, clean Win11, signed/trusted policy, air-gapped runtime bundle optional.
-- **Development ticket / dependency:** GT-09,GT-13. **Priority P0**, effort **L** (S 1–2d, M 3–5d, L 1–2w, XL 2–4w of one engineer; very uncertain for native licensing/corpus). **Research owner:** R6. Research must be merged only after exact-head QA. 
+- **Development ticket / dependency:** GT-09,GT-13. **Priority P0**, effort **L** (S 1–2d, M 3–5d, L 1–2w, XL 2–4w of one engineer; very uncertain for native licensing/corpus). **Research owner:** R6. Research must be merged only after exact-head QA.
 - **Required verification:** focused adversarial unit/integration tests, unchanged source/artifact/run identity, relevant Linux/Windows QA and a dated real/native acceptance receipt; record explicit `unknown` and `not observed` states instead of silent success.
 
 ## Cross-cutting architectural deficits (highest leverage)
@@ -201,11 +201,10 @@ Mean of 20 equally weighted feature scores: **74.3%** (descriptive **planning pr
 - **R7 #134:** research-only bounded P-code slicing synthetic prototype; no production/CWE claim.
 - **R8 #135:** type-sensitive canonicalization and ICF alias adversarial proof; no merged/native false-benign measurement.
 - **#136/#69:** staged KB fixtures and parser tests, pending current dialect checks and two-platform CI; avoid reintegrating original obsolete parent stack.
-- **#126:** shared milestone ledger and `docs/qa.md`, `tasks/todo.md` review owner. 
+- **#126:** shared milestone ledger and `docs/qa.md`, `tasks/todo.md` review owner.
 
 ## Audit methodology / reproducibility
 
 Read `AGENTS.md`, `CLAUDE.md`, `docs/audits/20261030-consolidation-review.md`, `docs/plans/essential-integration-20261029.md`, source modules above, the live branch/PR collections, and CI jobs at exact SHA. Representative source inspection confirmed pure PE ingestion, verified GZF extraction, immutable unified job model, strict BinExport worker, isolated BinDiff run, strict rz-diff parser, immutable KB reducer, acquisition consent boundary, SQLite history, Qt GUI thread model, optional AI provider strict responses, atomic report export and Windows package builder. Native workflows and research reports are referenced as **existing records**; no local checkout, native executable, or test suite was executed by the author of this document. Unread modules, active branches' uncommitted files, and unpublished test runs must be marked **unknown**.
 
 **Sources:** [main](https://github.com/djshellshoxxx/patchtrace/commit/a04f5a299a8d4afef023261e52e08d14678cf1e7), [consolidation](https://github.com/djshellshoxxx/patchtrace/blob/main/docs/audits/20261030-consolidation-review.md), [R2 #131](https://github.com/djshellshoxxx/patchtrace/pull/131), [R4 #130](https://github.com/djshellshoxxx/patchtrace/pull/130), [R5 #132](https://github.com/djshellshoxxx/patchtrace/pull/132), [R6 #133](https://github.com/djshellshoxxx/patchtrace/pull/133), [R7 #134](https://github.com/djshellshoxxx/patchtrace/pull/134), [R8 #135](https://github.com/djshellshoxxx/patchtrace/pull/135), [unified live gates](https://github.com/djshellshoxxx/patchtrace/actions/runs/41063115449), [beta assets](https://github.com/djshellshoxxx/patchtrace/releases/tag/v0.1.0-beta.543).
-

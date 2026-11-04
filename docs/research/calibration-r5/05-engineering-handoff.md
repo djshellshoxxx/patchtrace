@@ -1,7 +1,7 @@
 # R5 / 05 — Prioritized engineering handoff, blocker register, and R6 integration prerequisites
 
-**Prepared:** 2026-10-30. **Inspected main:** a04f5a299a8d4afef023261e52e08d14678cf1e7.  
-**R5 owner:** proposed calibration research/integrator, docs isolated to this directory.  
+**Prepared:** 2026-10-30. **Inspected main:** a04f5a299a8d4afef023261e52e08d14678cf1e7.
+**R5 owner:** proposed calibration research/integrator, docs isolated to this directory.
 **Truth boundary:** No R5 Tier W labels, frozen-test report, numeric calibration artifact or current-head native-run acceptance was produced in this GitHub-documentation session. The correct product state is ordinal-only.
 
 ## Executive disposition
@@ -28,61 +28,61 @@ Refresh open PRs, heads, repository rules and worker ownership **before** touchi
 
 ### R5-P0-A — Reconcile authoritative truth dataset with R1
 
-**Assigned:** R1 corpus owner + R5 dataset evaluator. **Files:** R1-owned tools/calibration/tier_r, corpus/ours, Tier W data outside tree; R5 only consumes agreed data/metadata.  
-**Input:** exact manifest, labelled source revisions, compiler recipes, engine raw output with version and symbols-hidden flags, lineage/identity graph, natural sampling list.  
-**Tasks:** audit public-source pin/license and reproducible hash; reproduce source-to-binary truth; adjudicate ICF, thunks, inlining and duplicate source symbols; validate natural/adversarial split; link all duplicate/near-duplicate copied code; record independent labels and errors. Repair native R1 "identical" backend result parsing and 0-outcome recording with a red/green test under R1 ownership, rather than masking skipped results.  
-**Tests:** tier_r contracts/factory/labeler/evaluate, lineage/guards leak tests, native Ghidriff and rz-diff on source-built pairs, Windows MSVC/clang where required.  
-**Output:** verified natural candidate rows, label-audit report, exact role-and-manifest digest, engine-output completeness report, case failure witnesses and license matrix.  
+**Assigned:** R1 corpus owner + R5 dataset evaluator. **Files:** R1-owned tools/calibration/tier_r, corpus/ours, Tier W data outside tree; R5 only consumes agreed data/metadata.
+**Input:** exact manifest, labelled source revisions, compiler recipes, engine raw output with version and symbols-hidden flags, lineage/identity graph, natural sampling list.
+**Tasks:** audit public-source pin/license and reproducible hash; reproduce source-to-binary truth; adjudicate ICF, thunks, inlining and duplicate source symbols; validate natural/adversarial split; link all duplicate/near-duplicate copied code; record independent labels and errors. Repair native R1 "identical" backend result parsing and 0-outcome recording with a red/green test under R1 ownership, rather than masking skipped results.
+**Tests:** tier_r contracts/factory/labeler/evaluate, lineage/guards leak tests, native Ghidriff and rz-diff on source-built pairs, Windows MSVC/clang where required.
+**Output:** verified natural candidate rows, label-audit report, exact role-and-manifest digest, engine-output completeness report, case failure witnesses and license matrix.
 **Exit:** R1 verifies real matching-engine results, independently defensible source truths and no split leakage; otherwise R5 data-gate is BLOCKED. No minimum G0 claim from synthetic examples.
 
 ### R5-P0-B — Validate theoretical risk-control assumptions before numeric language
 
-**Assigned:** calibration statistician + integration owner. **Files:** research experiments under tools/calibration/ (only if uncontested), existing cv.py/threshold.py/stats.py/gates.py after spec-first review; new tests owned by this packet.  
-**Input:** exact C9 proposed alpha/delta/tau, lineage distribution, weights, ICC assumptions, current LTT code and dev OOF protocol.  
-**Tasks:** reproduce a cluster/null simulation with known actual risk; compare measured false-certification probability to nominal delta; study dev-selected threshold optimism, effective-n rounding and binomial dependence assumptions; assess independent group-held-out calibration split. If the existing method is unsupported, retain its computation as a heuristic or modify under a **new prereg version** before any final-test look. Do not silently change prereg v1 after lock.  
-**Tests:** deterministic simulation harness with fixed seeds, empirical false-certification CI for null cells, threshold boundary cases, ICC=undefined, extreme unequal clusters and weight ratios, frozen split proof.  
-**Output:** mathematical assumptions note, reproducible simulation configuration/results, risk-control protocol decision, signed-off threshold criterion.  
+**Assigned:** calibration statistician + integration owner. **Files:** research experiments under tools/calibration/ (only if uncontested), existing cv.py/threshold.py/stats.py/gates.py after spec-first review; new tests owned by this packet.
+**Input:** exact C9 proposed alpha/delta/tau, lineage distribution, weights, ICC assumptions, current LTT code and dev OOF protocol.
+**Tasks:** reproduce a cluster/null simulation with known actual risk; compare measured false-certification probability to nominal delta; study dev-selected threshold optimism, effective-n rounding and binomial dependence assumptions; assess independent group-held-out calibration split. If the existing method is unsupported, retain its computation as a heuristic or modify under a **new prereg version** before any final-test look. Do not silently change prereg v1 after lock.
+**Tests:** deterministic simulation harness with fixed seeds, empirical false-certification CI for null cells, threshold boundary cases, ICC=undefined, extreme unequal clusters and weight ratios, frozen split proof.
+**Output:** mathematical assumptions note, reproducible simulation configuration/results, risk-control protocol decision, signed-off threshold criterion.
 **Exit:** a justified conditional statistical guarantee or explicitly limited empirical rule; no unqualified distribution-free guarantee.
 
 ### R5-P0-C — Harden model promotion and engine-domain checks
 
-**Assigned:** calibration runtime integrator; must coordinate specs and release pipeline owners. **Files:** calibration/{policy,ood,artifact,predict}.py, tools/calibration/fit.py, packaging config, schema generator, tests/test_calibration_runtime.py and tools tests.  
-**Input:** agreed current feature schema, Tier W domain, CI conditions and immutable report/prereg/label digests.  
-**Tasks:** red test that forged/missing owner signoff/repro/frozen-EXE evidence cannot promote; replace default assumed-true external conditions in fit._reproduce_gates with trusted attestation verification. Domain-compatibility guard: engine major, BinExport producer, arch/PE class and profile must be explicitly supported before numeric/auto-accept; a soft engine-version flag alone must not justify acceptance. Add last-boundary nonfinite-feature rejection without changing ordinal semantics. Ensure old artifacts/failed imports are safe and schemas are versioned.  
-**Tests:** fake accepted report with missing attestations, wrong exact engine version, unsupported architecture, malformed SHA, duplicate profiles, expired model, developer override, nonfinite feature, missing family, contested, one-sided and N:M.  
-**Output:** reviewed code and spec PR with before/after red/green tests, current-head CI, trusted release-attestation contract, no Windows claim from Tier R.  
+**Assigned:** calibration runtime integrator; must coordinate specs and release pipeline owners. **Files:** calibration/{policy,ood,artifact,predict}.py, tools/calibration/fit.py, packaging config, schema generator, tests/test_calibration_runtime.py and tools tests.
+**Input:** agreed current feature schema, Tier W domain, CI conditions and immutable report/prereg/label digests.
+**Tasks:** red test that forged/missing owner signoff/repro/frozen-EXE evidence cannot promote; replace default assumed-true external conditions in fit._reproduce_gates with trusted attestation verification. Domain-compatibility guard: engine major, BinExport producer, arch/PE class and profile must be explicitly supported before numeric/auto-accept; a soft engine-version flag alone must not justify acceptance. Add last-boundary nonfinite-feature rejection without changing ordinal semantics. Ensure old artifacts/failed imports are safe and schemas are versioned.
+**Tests:** fake accepted report with missing attestations, wrong exact engine version, unsupported architecture, malformed SHA, duplicate profiles, expired model, developer override, nonfinite feature, missing family, contested, one-sided and N:M.
+**Output:** reviewed code and spec PR with before/after red/green tests, current-head CI, trusted release-attestation contract, no Windows claim from Tier R.
 **Exit:** **no path** from an untrusted or wrong-domain artifact to a numeric/auto-accept decision; original results never mutate.
 
 ### R5-P0-D — Lock an admissible protocol and run real native measurements
 
-**Assigned:** product owner, dataset owner, statistical integrator; **requires P0-A/B/C decisions**.  
-**Tasks:** settle C9 O1 Tier W legal/publication, O2 independent second annotator, O3 targets/policy/rounding, O4 Tier W families and Windows-only budget; resolve prereg Q1/Q2 and write precise source list. Freeze C9 file bytes (or a justified v2) and record SHA. Allocate 60/25/15 lineage roles and declared shift lineages, ensure group source separation. Execute pinned native Ghidriff/rz-diff/BinDiff (only where available) on validated data. Evaluate dev models M0/M0b/M1/M2/M3/M4, ablations and OOD. **Only after dev freeze**, execute single locked-test through authorized process; preserve failure and report shift separately.  
-**Output:** locked-test aggregate with exact digests/receipt, per-profile Brier/log loss/ECE/reliability, ROCs/PRCs, precision/coverage/FPR/FNR, lineage-bootstrap intervals, ablation gains, shift and subgroup risk, independent approval ledger.  
+**Assigned:** product owner, dataset owner, statistical integrator; **requires P0-A/B/C decisions**.
+**Tasks:** settle C9 O1 Tier W legal/publication, O2 independent second annotator, O3 targets/policy/rounding, O4 Tier W families and Windows-only budget; resolve prereg Q1/Q2 and write precise source list. Freeze C9 file bytes (or a justified v2) and record SHA. Allocate 60/25/15 lineage roles and declared shift lineages, ensure group source separation. Execute pinned native Ghidriff/rz-diff/BinDiff (only where available) on validated data. Evaluate dev models M0/M0b/M1/M2/M3/M4, ablations and OOD. **Only after dev freeze**, execute single locked-test through authorized process; preserve failure and report shift separately.
+**Output:** locked-test aggregate with exact digests/receipt, per-profile Brier/log loss/ECE/reliability, ROCs/PRCs, precision/coverage/FPR/FNR, lineage-bootstrap intervals, ablation gains, shift and subgroup risk, independent approval ledger.
 **Exit:** reproducible statistical metrics and gates with real Windows samples; if G0/G2/G3 fail or data insufficient, the correct outcome is **ordinal + explicit remaining blockers**.
 
 ### R5-P1-E — Make trained feature profiles representative of production
 
-**Assigned:** evaluation owner + runtime feature engineer. **Files:** calibration/features.py, tools/calibration/train.py and serialization tests, no parallel framework.  
-**Problem:** Tier R current adapter may omit G match types and use synthetic callee counts; full production feature vector differs.  
-**Tasks:** serialize exact feature names, provenance and numeric values for representative native Ghidriff/secondary records from both the training adapter and runtime extractor. Require parity or declare the reduced domain; measure feature missingness and source dependency, use a versioned schema where necessary; evaluate proper G, G+R, G+B, G+B+R profiles separately. Do not label data with an untrusted engine score.  
+**Assigned:** evaluation owner + runtime feature engineer. **Files:** calibration/features.py, tools/calibration/train.py and serialization tests, no parallel framework.
+**Problem:** Tier R current adapter may omit G match types and use synthetic callee counts; full production feature vector differs.
+**Tasks:** serialize exact feature names, provenance and numeric values for representative native Ghidriff/secondary records from both the training adapter and runtime extractor. Require parity or declare the reduced domain; measure feature missingness and source dependency, use a versioned schema where necessary; evaluate proper G, G+R, G+B, G+B+R profiles separately. Do not label data with an untrusted engine score.
 **Exit:** byte-identical or equivalence-justified train/serve vectors for measured input population with per-profile evidence, or explicit narrowed support.
 
 ### R5-P1-F — Failure reduction and OOD under real data
 
-**Assigned:** binary-matching engineer + statistical evaluator + R3 collaborator. **Files:** own targeted fixtures and tested calibration metrics, avoid changing R3 proof files without coordination.  
-**Tasks:** exercise FP-01…FP-12, FN-01…FN-04 and CAL-01…CAL-06 in [04-robustness-policy-and-ui.md](04-robustness-policy-and-ui.md). For every real failure, preserve independent source labels and the exact pair/alternative/atom graph. First fix source-correctness problems in L1/L2, then refit/ablate A model; do not "calibrate away" incorrect matching or hide a semantic materiality defect by lowering confidence. Validate Mahalanobis flag error enrichment, categorical-domain abstention and version drift with group-held-out outcomes.  
+**Assigned:** binary-matching engineer + statistical evaluator + R3 collaborator. **Files:** own targeted fixtures and tested calibration metrics, avoid changing R3 proof files without coordination.
+**Tasks:** exercise FP-01…FP-12, FN-01…FN-04 and CAL-01…CAL-06 in [04-robustness-policy-and-ui.md](04-robustness-policy-and-ui.md). For every real failure, preserve independent source labels and the exact pair/alternative/atom graph. First fix source-correctness problems in L1/L2, then refit/ablate A model; do not "calibrate away" incorrect matching or hide a semantic materiality defect by lowering confidence. Validate Mahalanobis flag error enrichment, categorical-domain abstention and version drift with group-held-out outcomes.
 **Exit:** per-class false-match/error table, before/after group-CI and native non-regression suite; known blind spots and review routing recorded.
 
 ### R5-P1-G — Analyst GUI and reporting contract
 
-**Assigned:** Qt GUI owner + calibration read-model owner, after G2/G3 evidence. **Files:** unified/read_model.py, secondary/evidence_view.py, scope.py, UI/export serializers and tests.  
-**Tasks:** keep raw engine score with source-specific unit, evidence tier and L1/L2 verdict distinct. Display validated band only if G2 and number only if G3 plus valid domain/attestation/expiry; C9 floor-down-to-5% rounding applies **only** to accepted target A. Show contested alternatives, missing input, model profile, engine producer, OOD status, calibration population and provenance. Link analyst edits as independent explicit records, never retroactive training features. GUI absence of a number must not remove evidence-strength semantics.  
+**Assigned:** Qt GUI owner + calibration read-model owner, after G2/G3 evidence. **Files:** unified/read_model.py, secondary/evidence_view.py, scope.py, UI/export serializers and tests.
+**Tasks:** keep raw engine score with source-specific unit, evidence tier and L1/L2 verdict distinct. Display validated band only if G2 and number only if G3 plus valid domain/attestation/expiry; C9 floor-down-to-5% rounding applies **only** to accepted target A. Show contested alternatives, missing input, model profile, engine producer, OOD status, calibration population and provenance. Link analyst edits as independent explicit records, never retroactive training features. GUI absence of a number must not remove evidence-strength semantics.
 **Exit:** fully bounded and accessible views, session/project switch safety, exports preserve original provenance and cannot advertise a raw percentage as probability; Windows screen-reader and frozen smoke evidence.
 
 ### R5-P1-H — Windows packaging, CI, release and rollback
 
-**Assigned:** release integrator.  
-**Tasks:** pin source/engine versions and supported package profile; build Windows on Windows, not Linux cross-compile; verify legal payload license and SHA; run full offscreen Linux pytest+Ruff and Windows pytest, native engine/parity acceptance, package smoke. Confirm any promoted artifact is bundled and loaded from trusted package data only; dev override remains experimental; expired/failed/changed model returns ordinal and does not crash.  
+**Assigned:** release integrator.
+**Tasks:** pin source/engine versions and supported package profile; build Windows on Windows, not Linux cross-compile; verify legal payload license and SHA; run full offscreen Linux pytest+Ruff and Windows pytest, native engine/parity acceptance, package smoke. Confirm any promoted artifact is bundled and loaded from trusted package data only; dev override remains experimental; expired/failed/changed model returns ordinal and does not crash.
 **Exit:** exact commit+CI+package+model SHA evidence and human release decision; do not automatically deploy.
 
 ## 3. Work that must remain explicitly out of scope

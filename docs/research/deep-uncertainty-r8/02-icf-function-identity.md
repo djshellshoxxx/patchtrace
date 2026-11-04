@@ -1,7 +1,7 @@
 # R8-IDENT-02 — source-level identity is not a unique RVA under identical-code folding
 
-**Finding:** confirmed static compiler/linker counterexample.  
-**Scope:** linked Windows x64 PE export records; **not** a measured PatchTrace mis-match.  
+**Finding:** confirmed static compiler/linker counterexample.
+**Scope:** linked Windows x64 PE export records; **not** a measured PatchTrace mis-match.
 **Environment:** Clang 17.0.0 `clang-cl`, LLD 17.0.0 `lld-link`, `llvm-objdump -p`; Linux host producing AMD64 Windows COFF and DLL outputs. No target was executed.
 
 ## Hypothesis
@@ -66,5 +66,5 @@ Existing PatchTrace matching may already preserve groups/ambiguity; this experim
 
 ## Evidence classification
 
-**RESOLVED—VALIDATED, narrow scope:** static PE export aliasing produced by Clang/LLD ICF vs no-ICF, twice with identical SHA outputs.  
+**RESOLVED—VALIDATED, narrow scope:** static PE export aliasing produced by Clang/LLD ICF vs no-ICF, twice with identical SHA outputs.
 **UNRESOLVED—MORE DATA REQUIRED:** PatchTrace's extraction, matching and verdict behavior, and its error rate on actual folded vendor binaries.

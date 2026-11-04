@@ -1,7 +1,7 @@
 # R8 — deep technical uncertainty and adversarial validation
 
-**Research branch:** `research/r8-deep-uncertainty-20261030`  
-**Reconciled baseline:** `main` `a04f5a299a8d4afef023261e52e08d14678cf1e7`, 2026-10-30 UTC.  
+**Research branch:** `research/r8-deep-uncertainty-20261030`
+**Reconciled baseline:** `main` `a04f5a299a8d4afef023261e52e08d14678cf1e7`, 2026-10-30 UTC.
 **Status:** active; provisional research and isolated compiler experiments. **No production acceptance / release claim.**
 
 ## Ownership and boundaries

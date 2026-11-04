@@ -1,7 +1,7 @@
 # R8 → R6 integration handoff and architecture risk decision
 
-**Date:** 2026-10-30. **Base:** `main` `a04f5a299a8d4afef023261e52e08d14678cf1e7`.  
-**Owner artifact:** [draft PR #135](https://github.com/djshellshoxxx/patchtrace/pull/135) on `research/r8-deep-uncertainty-20261030`.  
+**Date:** 2026-10-30. **Base:** `main` `a04f5a299a8d4afef023261e52e08d14678cf1e7`.
+**Owner artifact:** [draft PR #135](https://github.com/djshellshoxxx/patchtrace/pull/135) on `research/r8-deep-uncertainty-20261030`.
 **Overall R8 gate:** **NOT RELEASE READY**. Two narrow compiler/source properties were experimentally established, one small proposed production correction is committed but full application/native tests are pending, and the other A–I uncertainty areas remain open.
 
 ## 1. What changed, and what did not

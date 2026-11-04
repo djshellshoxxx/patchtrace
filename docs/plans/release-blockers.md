@@ -85,4 +85,3 @@ The assessment subsequently fetched raw GitHub Actions logs from [unified gate r
 - **Next red-first action:** separate runner provisioning, identical-input control semantics, underlying native Ghidriff execution/analysis output, and resulting unified no-completed-run precondition into independent repros. Preserve the failed result artifacts; treat no evaluated rows as insufficient data. Only after repairing actual causes should rerun A/A and changed pairs in both orientations and compute real G-U denominators. Do not simply suppress these failures or loosen thresholds.
 
 These log snippets were observed from the named 2026-10-30 run; no fix or new CI run is claimed.
-
