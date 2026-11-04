@@ -159,6 +159,9 @@ def find(st: State, spec: PassSpec, pool_a: Sequence[int], pool_b: Sequence[int]
         older = [x for x in by_a[key] if mate_a[x] < 0]        # a drill-down may have consumed members
         newer = [y for y in by_b[key] if mate_b[y] < 0]
         if len(older) == 1 and len(newer) == 1:
+            if not spec.hubs and (st.a.hub[older[0]] or st.b.hub[newer[0]]):
+                st.bump(f'hub-twin:{spec.id}')          # hubs match by P01-P05 only (04 s5); never paired here
+                continue
             _accept_global(st, spec, older[0], newer[0], key, rnd, cap, chain)
         elif older and newer and keyed_tail:
             find(st, keyed_tail[0], older, newer, keyed_tail[1:], rnd, weaker(cap, spec.tier), (*chain, spec))

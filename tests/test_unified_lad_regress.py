@@ -15,7 +15,7 @@ from patchtrace.unified.ladder.blocking import MinHasher, Signatures  # noqa: E4
 from patchtrace.unified.ladder.engine import run_ladder  # noqa: E402
 from patchtrace.unified.ladder.passes import PASS_TABLE_DIGEST, PASSES, pass_table_digest  # noqa: E402
 from patchtrace.unified.ladder.residual import pass_table, table_digest  # noqa: E402
-from patchtrace.unified.limits import Budget, UnifiedError  # noqa: E402
+from patchtrace.unified.limits import DEFAULT_LIMITS, Budget, UnifiedError  # noqa: E402
 
 # ---- (f) U7-12: an unresolved callee never reaches tier A through P15 ------------------------------------------------------
 
@@ -59,6 +59,34 @@ def test_malformed_anchor_is_an_input_error_not_a_crash(bad):
     assert caught.value.code == 'PT-UNIFIED-INPUT'
 
 
+# ---- I2: an unmatched hub twin still counts when uniqueness is judged --------------------------------------------------------------
+
+WEAK = {'h2': 3, 'h3': 4, 'hm': 5, 'hms': 6, 'md_td': 7, 'md_bu': 8, 'n_bb': 6, 'n_edge': 7}      # shared weak keys
+
+
+def _hub_twin_world(with_twin):
+    limits = dataclasses.replace(DEFAULT_LIMITS, l17_hub_fan_in=3)
+    older, newer = SyntheticIr(), SyntheticIr()
+    older.add('x', seed=1, keys={'h0': 101, 'h1': 102, **WEAK})
+    if with_twin:
+        older.add('xhub', seed=2, keys={'h0': 201, 'h1': 202, **WEAK})
+        for i in range(5):                        # fan-in 5 > 3: xhub is a hub and may match by P01-P05 only
+            older.add(f'c{i}', seed=500 + i, calls=('xhub',))
+    newer.add('y', seed=1, keys={'h0': 301, 'h1': 302, **WEAK})
+    return older, newer, limits
+
+
+def test_a_hub_twin_with_the_same_weak_key_stops_a_pair_from_being_unique():
+    older, newer, limits = _hub_twin_world(with_twin=False)
+    control = run_ladder(older, newer, limits=limits)
+    assert ('x', 'y') in pairs_by_tag(control, older, newer)               # no twin: P06 pairs x with y
+
+    older, newer, limits = _hub_twin_world(with_twin=True)
+    corr = run_ladder(older, newer, limits=limits)
+    assert older.fid('xhub') in corr.older_hubs
+    assert ('x', 'y') not in pairs_by_tag(corr, older, newer)              # xhub is just as good a candidate: abstain
+
+
 # ---- (g) the pass-table digest covers what the rows cannot show ----------------------------------------------------------------
 
 def test_digest_changes_when_a_pass_swaps_its_key_guard_or_run_function():
@@ -81,6 +109,14 @@ def test_digest_changes_with_every_row_field(field, value):
     value = (not current) if isinstance(current, bool) else value
     rows[3] = dataclasses.replace(rows[3], **{field: value})
     assert pass_table_digest(rows) != PASS_TABLE_DIGEST
+
+
+def test_the_hub_twin_rule_moved_the_result_key_inputs(monkeypatch):
+    """Same inputs, different pairs: the ladder version (part of the digest) must have been bumped past ladder/2."""
+    assert passes.LADDER_VERSION != 'ladder/2'
+    current = pass_table_digest()
+    monkeypatch.setattr(passes, 'LADDER_VERSION', 'ladder/2')
+    assert pass_table_digest() != current
 
 
 @pytest.mark.parametrize('module,name,value', [

@@ -28,7 +28,7 @@ from .side import K_EXTERNAL, SideData
 from .state import State
 from .types import FAMILY_BYTES, TIER_RANK
 
-LADDER_VERSION = 'ladder/2'
+LADDER_VERSION = 'ladder/3'
 FAMILY_STRUCT = 'F-PT-STRUCT'
 P15_MAX_WAVES = 8
 MAX_CALL_SITES = 512                 # 04 s5.1: a call-site sequence longer than this casts no implied-match votes
