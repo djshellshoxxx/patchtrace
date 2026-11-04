@@ -25,3 +25,26 @@ def test_stderr_scrub_hides_everything_the_shared_definition_hides():
     cleaned = runner.sanitize_stderr('a' + hostile + 'b\n\tc')
     assert cleaned == 'a' + '?' * len(hostile) + 'b\n\tc'
     assert strip_unsafe(cleaned, keep_layout=True) == cleaned
+
+
+def test_output_written_past_a_cap_by_a_child_that_exits_at_once_is_still_refused(tmp_path):
+    import pytest
+    from test_unified_extract_runner import job_for
+
+    from patchtrace.jobs import ProcessResult
+    from patchtrace.unified.limits import UnifiedError, UnifiedLimits
+
+    def fast_flood(argv, **kwargs):          # writes and exits between two polls of the guard
+        (kwargs['cwd'] / 'out' / 'ir.jsonl').write_bytes(b'x' * 5000)
+        return ProcessResult(0, '', None, '')
+
+    def fast_gzf(argv, **kwargs):
+        (kwargs['cwd'] / 'out' / 'ir.jsonl').write_bytes(b'x')
+        (kwargs['cwd'] / 'out' / 'program.gzf').write_bytes(b'x' * 5000)
+        return ProcessResult(0, '', None, '')
+
+    for spy in (fast_flood, fast_gzf):
+        job = job_for(tmp_path, limits=UnifiedLimits(l05_output_bytes=1000, l36_retained_gzf_bytes=1000))
+        with pytest.raises(UnifiedError) as caught:
+            runner.extract_side(job, runner=spy)
+        assert caught.value.code == 'PT-UNIFIED-LIMIT' and caught.value.reason == 'output-limit'

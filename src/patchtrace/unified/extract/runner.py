@@ -369,6 +369,10 @@ def _spawn(cfg: BackendConfig, work: Path, request: ExtractRequest, limits: Unif
     result = runner(argv, cwd=work, env=env, cancel=budget.cancel or threading.Event(), timeout_seconds=timeout,
                     check_output=guard, log_limit=STDOUT_LIMIT, separate_streams=True, stderr_limit=STDERR_LIMIT)
     failure = classify(result)
+    if failure is None and guard() == 'output-limit':
+        # The guard polls every ~50 ms: a child that wrote past a cap and exited inside one interval was never killed.
+        failure = _error('PT-UNIFIED-LIMIT', 'The extractor output exceeded its size limit (L-05 or L-36)',
+                         'output-limit')
     if failure is not None:
         failure.diagnostics = sanitize_stderr(result.stderr_tail)   # plain text for a log, never in the message
         raise failure
