@@ -13,7 +13,7 @@
   "ruff": "blocked: No module named ruff",
   "quarantine_changed": false,
   "sha256": {
-    ".github/workflows/rzdiff-producer.yml": "65339e2313aa012d961d5f62d99b10d838369ec4c4b32514ff795680a00b2e5f",
+    ".github/workflows/rzdiff-producer.yml": "01d2cbcec10b36b48f5d34f37984c8cec27048f9ef0295df1bf5f7cddb96fc33",
     "docs/handoff/rzdiff-producer-implementation.md": "ca249da9607e72c052ee3ca5112d0765694ebddc836987284b11d5b38398351c",
     "docs/qa/rzdiff-producer-boundary.log": "f236f0c04ac3031f56eec33f4e190576464d8314f6e6dfbdce63d065fbb06101",
     "tests/test_rzdiff_producer_patch.py": "b0c56fa42878976cffbc5816555361f915a75405af836c3ac091d19db6afdadf",
