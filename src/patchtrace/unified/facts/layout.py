@@ -126,8 +126,18 @@ def _check_block(old: FnView, new: FnView, bo: int, bn: int, to: int | None, tn:
             out.cons.add(CONFLICT)
             out.layout_ok = False
             out.deltas.append(mismatch)
-        else:
-            _check_external(old, new, to, tn, targets, voter, out)
+            return
+        _check_external(old, new, to, tn, targets, voter, out)
+        # A conditional tail call keeps its polarity and its fall-through edge: the taken edge leaves the function,
+        # so no successor swap can compensate an inverted condition.
+        if x.mnem != y.mnem:
+            out.layout_ok = False
+            conditional = is_conditional_branch(x.flow) and is_conditional_branch(y.flow)
+            out.deltas.append(_block_delta('condition', old, new, bo, bn, to, tn, DeltaInfo(condition=True))
+                              if conditional else mismatch)
+        elif not same:
+            out.layout_ok = False
+            out.deltas.append(mismatch)
         return
     if x.mnem == y.mnem:
         out.cons.add(MAPPED if same else (UNMAPPED if unpaired else CONFLICT))
