@@ -419,7 +419,8 @@ def _labels(m: UnifiedMatch) -> tuple[str, str, str]:
     label = f'{new} (was {old})' if old and new and old != new else new or old or unnamed
     names = ' '.join(clean(s.name, LABEL_LIMIT) for s in (*m.older, *m.newer) if s.name)
     hexes = ' '.join(f'{s.rva:x}' for s in (*m.older, *m.newer))
-    return label, f'{_side_label(m.older)} > {_side_label(m.newer)}', f'{names} {hexes}'.lower()[:SEARCH_KEY_CAP]
+    # addresses first: the cap must cut long names of a group row, never the addresses a person searches by
+    return label, f'{_side_label(m.older)} > {_side_label(m.newer)}', f'{hexes} {names}'.lower()[:SEARCH_KEY_CAP]
 
 
 class _Builder:

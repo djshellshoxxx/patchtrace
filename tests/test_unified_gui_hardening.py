@@ -128,3 +128,16 @@ def test_a_closed_row_code_source_opens_no_reader_and_says_the_result_is_unavail
         assert code.disassembly.pair is None and code.decompiled.pair is None
     finally:
         service.close()
+
+
+# ---- read_model: the search key keeps addresses when names are long --------------------------------------------------
+
+
+def test_search_by_address_still_finds_a_group_row_with_long_names(tmp_path):
+    long = 'n' * 250
+    older = [(0x1000 + 0x10 * i, f'{long}{i}') for i in range(6)]
+    row = make_row(older, [(0x9000, 'target')], decision='ambiguous', materiality='unknown')
+    vm = load_unified(request(publish(tmp_path / 'r', [row]), extraction_configured=True))
+    assert vm.rows
+    for rva in (0x1050, 0x9000):                                     # the last older address and the newer one
+        assert read_model.filter_rows(vm.rows, search=f'0x{rva:x}', materialities=read_model.MATERIALITIES) == [0]
