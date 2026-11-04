@@ -9,7 +9,8 @@ from .tooltip_entries import TEMPLATES, TIPS
 
 def _factory(ctx: PanelContext) -> PanelController:
     from .qt_panel import SearchController
-    return SearchController(ctx)
+    from .wiring import snapshot_sources  # the stored tool, advisory and CVE groups (S8)
+    return SearchController(ctx, sources=snapshot_sources)
 
 
 PANEL = PanelSpec(

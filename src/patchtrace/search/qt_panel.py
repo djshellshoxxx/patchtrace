@@ -2,8 +2,9 @@
 
 Responsibility: let the analyst query the project's local search index, read why a lead matched and go to the code.
 What is said (state copy, rows, detail, clipboard text) lives in the Qt-free `view_model`; this module moves it to
-widgets. The GUI thread captures an immutable request and the project service; workers only run the injected
-`searcher`, `builder` and `coverage` callables. Every result is checked against the project epoch and the query
+widgets. The GUI thread captures an immutable request and a `BoundService` (the project, its root and the memoized
+`wiring` snapshot of stored tool and advisory rows; never a store); workers only run the injected `searcher`,
+`builder` and `coverage` callables. Every result is checked against the project epoch and the query
 generation before it is published, so a late result of a previous project or query is dropped. The panel opens no
 window of its own and no network connection.
 """
@@ -33,6 +34,7 @@ from .contracts import CoverageEntry, SearchRequest, SearchResult
 from .errors import SearchError
 from .query import parse_query
 from .tooltip_entries import TEMPLATES, TIPS
+from .wiring import BoundService
 
 DEBOUNCE_MS = 250
 PAGE = 200
@@ -68,22 +70,25 @@ def _guarded(call: Callable[[], object]) -> Outcome:
         return Outcome(code=exc.code, message=exc.message)
 
 
-def default_search(service, request: SearchRequest, cancel) -> SearchResult:
+def _search_service(service):
+    """A `SearchService` over a `BoundService`; its source snapshot, when present, adds the tool and advisory groups."""
     from .paths import default_cache_root
     from .service import SearchService
-    return SearchService(service, default_cache_root()).search(request, build=False, cancel=cancel)
+    sources = getattr(service, 'sources', None)
+    ports = {} if sources is None else {'extra_specs': sources.extra_specs, 'comparable': sources.comparable}
+    return SearchService(service, default_cache_root(), **ports)
+
+
+def default_search(service, request: SearchRequest, cancel) -> SearchResult:
+    return _search_service(service).search(request, build=False, cancel=cancel)
 
 
 def default_build(service, cancel, progress) -> None:
-    from .paths import default_cache_root
-    from .service import SearchService
-    SearchService(service, default_cache_root()).build(cancel=cancel, progress=progress)
+    _search_service(service).build(cancel=cancel, progress=progress)
 
 
 def default_coverage(service) -> tuple[CoverageEntry, ...]:
-    from .paths import default_cache_root
-    from .service import SearchService
-    return SearchService(service, default_cache_root()).coverage()
+    return _search_service(service).coverage()
 
 
 class SearchWidgets(QWidget):
@@ -172,13 +177,15 @@ class SearchController(ControllerBase):
     """Owns the query, the rows of the current generation and the requests in flight. Hooks run on the GUI thread."""
 
     def __init__(self, ctx: PanelContext, *, searcher: Callable = default_search, builder: Callable = default_build,
-                 coverage: Callable = default_coverage) -> None:
+                 coverage: Callable = default_coverage, sources: Callable | None = None) -> None:
+        """`sources(service, reuse)` is `wiring.snapshot_sources`: it runs here on the GUI thread, never in a worker."""
         register_gui_tips()  # idempotent: the host has done it, a test or a bare embed has not
         register_tips(TIPS, TEMPLATES)
         panel = SearchWidgets()
         super().__init__(panel)
         self.panel, self.ctx, self.port, self.tasks = panel, ctx, ctx.project, ctx.tasks
         self.searcher, self.builder, self.coverage = searcher, builder, coverage
+        self.sources, self.snapshot = sources, None
         self.key = None
         self.epoch = 0
         self.generation = 0
@@ -229,7 +236,7 @@ class SearchController(ControllerBase):
     def project_changed(self, key) -> None:
         self._cancel_all()
         self.epoch += 1
-        self.key = key
+        self.key, self.snapshot = key, None
         self.indexed, self.fetching, self.cancelled = True, False, False
         self._reset_results()
         if key is not None:
@@ -257,6 +264,15 @@ class SearchController(ControllerBase):
 
     def service(self):
         return getattr(self.port, 'service', None)
+
+    def bound(self) -> BoundService | None:
+        """What a worker gets (GUI thread): the project, its root and the memoized source snapshot, never the store."""
+        service = self.service()
+        if service is None:
+            return None
+        if self.sources is not None:
+            self.snapshot = self.sources(service, self.snapshot)
+        return BoundService(self.port.project(), service.root, self.snapshot)
 
     def _plan(self):
         panel = self.panel
@@ -302,7 +318,7 @@ class SearchController(ControllerBase):
             self.fetch_more()
 
     def _run(self, request: SearchRequest) -> None:
-        service, searcher = self.service(), self.searcher
+        service, searcher = self.bound(), self.searcher
         epoch, generation = self.epoch, request.generation
         self.tasks.submit('search.query', lambda token, _report: _guarded(lambda: searcher(service, request, token)),
                           lambda out: self._arrived(epoch, generation, out), self._failed)
@@ -331,7 +347,7 @@ class SearchController(ControllerBase):
     # ---- index ---------------------------------------------------------------------------------------
 
     def _probe_index(self) -> None:
-        service, coverage, epoch = self.service(), self.coverage, self.epoch
+        service, coverage, epoch = self.bound(), self.coverage, self.epoch
         if service is None:
             return
         self.tasks.submit('search.coverage', lambda _token, _report: coverage(service),
@@ -343,7 +359,7 @@ class SearchController(ControllerBase):
             self._render()
 
     def build(self) -> None:
-        service, builder, epoch = self.service(), self.builder, self.epoch
+        service, builder, epoch = self.bound(), self.builder, self.epoch
         if self.key is None or service is None:
             return
         self.cancelled = False

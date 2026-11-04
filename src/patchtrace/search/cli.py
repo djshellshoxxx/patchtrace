@@ -205,12 +205,21 @@ def _run(args, out, err, opener: Opener, extra_specs, anchors=None) -> int:
     try:
         cache = (paths.validate_cache_root(args.cache_dir.resolve(), Path(handle.root)) if args.cache_dir
                  else paths.default_cache_root())
-        service = SearchService(handle, cache, attention=attention, extra_specs=extra_specs)
+        service = SearchService(handle, cache, attention=attention, **_source_ports(handle, extra_specs))
         return _status(args, out, service) if args.status else _search(args, out, err, service, anchors)
     finally:
         close = getattr(handle, 'close', None)
         if close is not None:
             close()
+
+
+def _source_ports(handle, extra_specs) -> dict:
+    """Injected specs (tests) keep their path; production binds the stored tool, advisory and CVE groups (S8)."""
+    if extra_specs is not None:
+        return {'extra_specs': extra_specs}
+    from patchtrace.search import wiring
+    sources = wiring.snapshot_sources(handle)
+    return {'extra_specs': sources.extra_specs, 'comparable': sources.comparable}
 
 
 def main(argv: list[str] | None = None, *, opener: Opener | None = None, extra_specs=None,
