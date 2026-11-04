@@ -47,7 +47,7 @@ def check_ownership(task):
 def post_check(task):
     changed = set(run("git", "diff", "--name-only", "HEAD").splitlines())
     changed |= set(run("git", "ls-files", "--others", "--exclude-standard").splitlines())
-    changed -= {"parallel-agent-receipt.json", "parallel.patch", "guard-output"}
+    changed -= {"parallel-agent-receipt.json", "parallel.patch", "guard-output", "base-sha.txt"}
     if not changed or not all(allowed(path, TASKS[task]) for path in changed):
         raise ValueError(f"Out-of-scope/empty changes: {sorted(changed)}")
     if not any(p.startswith("tests/") for p in changed) or not any(p.startswith("src/") for p in changed):
