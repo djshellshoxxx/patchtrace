@@ -110,11 +110,13 @@ def test_host_owned_widgets_pass_the_accessibility_audit(qtbot, settings):
 # ---- the real manifest and the legacy evidence dock ---------------------------------------------------------------
 
 
+DEFERRED = {'guide'}   # manifest panels the host does not build yet (the guide stub; 2026-10-15 panel batch)
+
+
 def test_the_shipped_manifest_builds_only_the_migrated_panels_and_has_no_problem(main_window):
     host = main_window.panels
-    # Every manifest panel except the deferred guide stub is built (2026-10-15 panel batch).
-    built = {'evidence', 'series', 'files', 'unified', 'leads', 'search', 'graph', 'strings', 'capabilities', 'build_env',
-             'rules', 'kb', 'kev'}
+    assert DEFERRED <= {entry.id for entry in MANIFEST}
+    built = {entry.id for entry in MANIFEST} - DEFERRED
     assert set(host.panels) == built and host.problems == []
     assert set(host.not_built) == {entry.id for entry in MANIFEST} - built
     assert host.self_check() == [] and set(host.build_all_for_test()) == built

@@ -10,7 +10,11 @@ shutdown until they are migrated.
 Ownership rule (to-do T15): every Qt object is created, used and freed on the GUI thread. Workers hold only pure
 Python objects (the task, a lock, a set); a result or closure that holds a Qt object is released by the GUI thread
 after delivery, never by the worker. A live runner is referenced by a module registry until ``shutdown``, so
-dropping the last user reference (or collecting garbage on a worker thread) cannot free the bridge off-thread."""
+dropping the last user reference (or collecting garbage on a worker thread) cannot free the bridge off-thread.
+
+A result that owns a resource (open file readers) passes ``on_discard``: every result that is not applied (superseded,
+cancelled, parked and replaced, or produced after ``shutdown``) is handed to it on the GUI thread instead of being
+dropped. A result handed to ``on_result`` belongs to that callback, even if it raises."""
 from __future__ import annotations
 
 import collections
@@ -34,8 +38,8 @@ JOIN_SECONDS = 5.0
 CHECKPOINT_WORK = 0.002          # sleep 1 ms after every 2 ms of CPU work (measured repaint p95 20 ms)
 CHECKPOINT_SLEEP = 0.001
 LEGACY_REGISTRIES = (('ui_engine_setup', '_LIVE_THREADS'), ('ui_series', '_LIVE_THREADS'),
-                     ('ui_bundle_setup', '_LIVE_THREADS'), ('ui_inspection', '_LIVE_THREADS'),
-                     ('ui', '_DISCOVERY_THREADS'), ('ui_bundle_setup', '_THREADS'))  # (module, thread-set name)
+                     ('ui_bundle_setup', '_LIVE_THREADS'), ('ui', '_DISCOVERY_THREADS'),
+                     ('ui_bundle_setup', '_THREADS'))  # (module, thread-set name)
 
 _UNSAFE = re.compile('[\x00-\x1f\x7f-\x9f\u2028\u2029\u061c\u200e\u200f\u202a-\u202e\u2066-\u2069]')
 
@@ -106,18 +110,21 @@ class _Task:
     owner: Callable[[], TaskRunner | None] | None = None    # weak: a worker never keeps the runner alive
     pending: tuple | None = None     # latest report() arguments, written by the worker, read by the GUI timer
     sent: tuple | None = None
+    on_discard: Callable[[Any], None] | None = None         # gets a result that is never applied
 
     def report(self, stage: str, done: int = 0, total: int | None = None, message: str = '') -> None:
         self.pending = (stage, done, total, message)
 
-    def release(self) -> None:
+    def release(self, keep_discard: bool = False) -> None:
         """Drop the body and the callbacks. A worker frame (or ``Thread._args``) can outlive the GUI thread's last
         use of the task, and the callbacks capture controllers and models: their last reference must die on the GUI
-        thread, not on whichever thread unwinds last."""
+        thread, not on whichever thread unwinds last. ``keep_discard``: the result is still to come (shutdown)."""
         self.fn = self.on_result = self.on_error = self.on_progress = None
+        if not keep_discard:
+            self.on_discard = None
 
 
-@dataclass(slots=True)
+@dataclass(eq=False, slots=True)   # identity: shutdown removes its own events from the mailbox
 class _Event:
     kind: str                        # result, error or drop
     task: _Task
@@ -147,7 +154,7 @@ class _Hub(QObject):
                 return
             owner = event.task.owner() if event.task.owner else None
             if owner is None:
-                event.release()
+                _discard(event)
             else:
                 owner._deliver(event)
 
@@ -192,6 +199,21 @@ def _post(event: _Event) -> None:
         pass
 
 
+def _discard(event: _Event, status: Callable[[str], None] | None = None) -> None:
+    """GUI thread: hand an unapplied result to its task's ``on_discard`` (an exception becomes a status line), then
+    release the event. Errors and drops carry no result."""
+    callback = event.task.on_discard if event.kind == 'result' else None
+    try:
+        if callback is not None:
+            callback(event.payload)
+    except Exception as exc:  # noqa: BLE001 - a failed close must not stop delivery or shutdown
+        if status:
+            status(f'Background task {_clip(event.task.channel, 40)} could not discard its result '
+                   f'({type(exc).__name__}).')
+    finally:
+        event.release()
+
+
 def _execute(task: _Task, state: Any) -> _Event:
     """Worker side. ``fn`` and its frame die here, but ``task.fn`` keeps the closure alive for the GUI thread."""
     try:
@@ -233,19 +255,26 @@ class TaskRunner:
 
     def submit(self, channel: str, fn: Callable[[CancelToken, Callable], Any],
                on_result: Callable[[Any], None] | None = None, on_error: Callable[[TaskFailure], None] | None = None,
-               on_progress: Callable[[Progress], None] | None = None) -> CancelToken:
-        """Start ``fn(token, report)``; the previous task on ``channel`` is cancelled and its result dropped.
-        ``report(stage, done=0, total=None, message='')`` is cheap and may be called in a tight loop."""
+               on_progress: Callable[[Progress], None] | None = None,
+               on_discard: Callable[[Any], None] | None = None) -> CancelToken:
+        """Start ``fn(token, report)``; the previous task on ``channel`` is cancelled and its result dropped (handed
+        to ``on_discard`` on the GUI thread when given). ``report(stage, done=0, total=None, message='')`` is cheap
+        and may be called in a tight loop."""
         self._require_open()
         token = self._supersede(channel)
         generation = self._generation[channel]
-        task = _Task(channel, generation, token, on_result, on_error, on_progress, fn, False, weakref.ref(self))
+        task = _Task(channel, generation, token, on_result, on_error, on_progress, fn, False, weakref.ref(self),
+                     on_discard=on_discard)
         self._start(task, f'pt-task-{channel}')
         return token
 
     def cancel(self, channel: str) -> None:
         """Cancel the channel's task; its result is dropped even if the worker ignores the token."""
         self._supersede(channel)
+
+    @property
+    def closed(self) -> bool:
+        return self._closed
 
     def busy(self, channel: str | None = None) -> bool:
         return any(channel in (None, task.channel) and not task.token.is_set() for task in self._running)
@@ -296,10 +325,19 @@ class TaskRunner:
     # ---- internals -----------------------------------------------------------------------------
 
     def _release_pending(self) -> None:
+        """Discard every outcome this runner still holds, including results its workers posted during the join. A
+        task still running keeps its ``on_discard`` for the result it may post later (see ``_Hub._drain``)."""
+        for event in [event for event in list(_MAILBOX) if event.task.owner and event.task.owner() is self]:
+            try:
+                _MAILBOX.remove(event)
+            except ValueError:
+                continue
+            self._running.discard(event.task)
+            _discard(event, self._status)
         for task in self._running:
-            task.release()
+            task.release(keep_discard=True)
         for event in self._parked.values():
-            event.release()
+            _discard(event, self._status)
         self._running.clear()
         self._parked.clear()
 
@@ -333,16 +371,19 @@ class TaskRunner:
         task = event.task
         self._running.discard(task)
         if self._closed or event.kind == 'drop' or not self._current(task) or not isValid(self._bridge):
-            event.release()
+            _discard(event, self._status)
             return
         if task.channel in self._held:
             replaced = self._parked.get(task.channel)
             self._parked[task.channel] = event
             if replaced:
-                replaced.release()
+                _discard(replaced, self._status)
             return
         self._flush_progress(task)
         callback = task.on_result if event.kind == 'result' else task.on_error
+        if callback is None:
+            _discard(event, self._status)
+            return
         try:
             self._apply(task.channel, callback, event.payload)
         finally:

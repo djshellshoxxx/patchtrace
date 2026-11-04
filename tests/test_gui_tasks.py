@@ -668,3 +668,120 @@ def test_callback_captures_are_freed_on_the_gui_thread_never_on_a_worker(qtbot, 
         assert local.shutdown(timeout=5) == []
         QApplication.processEvents()
     assert freed and set(freed) == {'MainThread'}
+
+
+# ---- on_discard: a result that is never applied is handed back on the GUI thread (F-gui-3) -------------------
+
+
+class Discards:
+    """Records ``on_discard`` payloads and the thread each call ran on."""
+
+    def __init__(self) -> None:
+        self.payloads, self.threads = [], []
+
+    def __call__(self, payload) -> None:
+        self.payloads.append(payload)
+        self.threads.append(threading.current_thread())
+
+    @property
+    def on_gui_thread(self) -> bool:
+        return bool(self.threads) and set(self.threads) == {threading.main_thread()}
+
+
+def test_on_discard_gets_a_superseded_result_and_never_an_applied_one(runner, qtbot):
+    sink, discards, gate = Sink(), Discards(), threading.Event()
+    runner.submit('c', lambda token, report: gate.wait(5) and 'old', sink.result, sink.error, on_discard=discards)
+    runner.submit('c', lambda token, report: 'new', sink.result, sink.error, on_discard=discards)
+    qtbot.waitUntil(lambda: sink.results == ['new'], timeout=5000)
+    gate.set()
+    qtbot.waitUntil(lambda: discards.payloads == ['old'], timeout=5000)
+    assert discards.on_gui_thread and sink.results == ['new']
+
+
+def test_on_discard_gets_a_cancelled_result_but_not_an_error(runner, qtbot):
+    discards, gate = Discards(), threading.Event()
+    runner.submit('c', lambda token, report: gate.wait(5) and 'late', on_discard=discards)
+    runner.cancel('c')
+
+    def fail(token, report):
+        gate.wait(5)
+        raise ValueError('no payload to hand back')
+    runner.submit('e', fail, on_discard=discards)
+    runner.cancel('e')
+    gate.set()
+    qtbot.waitUntil(lambda: bool(not runner._running), timeout=5000)
+    flush_deferred_deletes()
+    assert discards.payloads == ['late'] and discards.on_gui_thread
+
+
+def test_on_discard_gets_a_result_finished_during_shutdown_before_it_returns(qtbot):
+    local, discards = TaskRunner(reraise=True), Discards()
+    local.submit('c', lambda token, report: token.wait(5) and 'late', lambda value: pytest.fail('applied'),
+                 on_discard=discards)
+    assert local.shutdown(timeout=5) == []
+    assert discards.payloads == ['late'] and discards.on_gui_thread
+
+
+@pytest.mark.parametrize('owner_alive', [True, False], ids=['alive', 'gone'])
+def test_on_discard_gets_a_result_that_arrives_after_shutdown(qtbot, owner_alive):
+    local, discards, release, started = TaskRunner(), Discards(), threading.Event(), threading.Event()
+
+    def hung(token, report):
+        started.set()
+        release.wait(10)   # ignores the token on purpose
+        return 'after'
+    local.submit('c', hung, lambda value: pytest.fail('applied'), on_discard=discards)
+    assert started.wait(5)
+    assert local.shutdown(timeout=0) == ['pt-task-c']
+    if not owner_alive:
+        owner = weakref.ref(local)
+        del local
+        gc.collect()
+        assert owner() is None
+    release.set()
+    qtbot.waitUntil(lambda: discards.payloads == ['after'], timeout=5000)
+    assert discards.on_gui_thread
+
+
+def test_on_discard_gets_a_parked_result_replaced_by_a_newer_one(runner, qtbot):
+    sink, discards = Sink(), Discards()
+    runner.set_applying('c', False)
+    runner.submit('c', lambda token, report: 'first', sink.result, on_discard=discards)
+    qtbot.waitUntil(lambda: bool(not runner._running), timeout=5000)
+    runner.submit('c', lambda token, report: 'second', sink.result, on_discard=discards)
+    qtbot.waitUntil(lambda: discards.payloads == ['first'], timeout=5000)
+    runner.set_applying('c', True)
+    assert sink.results == ['second'] and discards.payloads == ['first'] and discards.on_gui_thread
+
+
+def test_on_discard_gets_a_parked_result_at_shutdown(qtbot):
+    local, discards = TaskRunner(reraise=True), Discards()
+    local.set_applying('c', False)
+    local.submit('c', lambda token, report: 'parked', lambda value: pytest.fail('applied'), on_discard=discards)
+    qtbot.waitUntil(lambda: bool(not local._running), timeout=5000)
+    assert discards.payloads == []
+    assert local.shutdown(timeout=5) == []
+    assert discards.payloads == ['parked'] and discards.on_gui_thread
+
+
+def test_an_on_discard_exception_is_swallowed_and_reported_as_a_status_line(qtbot):
+    lines = []
+    quiet = TaskRunner(status=lines.append)
+    try:
+        def boom(payload):
+            raise KeyError('hostile <b>text</b>')
+        gate = threading.Event()
+        quiet.submit('c', lambda token, report: gate.wait(5) and 1, on_discard=boom)
+        quiet.cancel('c')
+        gate.set()
+        qtbot.waitUntil(lambda: bool(lines), timeout=5000)
+        assert lines == ['Background task c could not discard its result (KeyError).']
+    finally:
+        quiet.shutdown()
+
+
+def test_closed_reports_whether_the_runner_was_shut_down():
+    local = TaskRunner()
+    assert local.closed is False
+    local.shutdown()
+    assert local.closed is True
