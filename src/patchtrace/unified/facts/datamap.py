@@ -174,7 +174,9 @@ class TargetMap:
         fid = self._function(side, rva)
         return None if fid is None else (self.older if side == 'older' else self.newer).functions.get('h0', fid)
 
-    def function_state(self, t: int, u: int, voter: Voter | None = None, _depth: int = 0) -> str:
+    def function_state(self, t: int | None, u: int | None, voter: Voter | None = None, _depth: int = 0) -> str:
+        if t is None or u is None:
+            return UNMAPPED                                      # an unresolved target is no evidence either way
         if self.identical:
             return MAPPED if t == u else CONFLICT
         if self.pair_old.get(t) == u:
