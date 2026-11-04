@@ -1,0 +1,122 @@
+{
+  "old_meta": {
+    "Executable SHA256": "dc71b8420acc68418eaebfb8a4848cd2f63626125868e9977f017010c8d30215",
+    "Synthetic journey fixture": true
+  },
+  "new_meta": {
+    "Executable SHA256": "4af23bcb773054ad469c57363d50e2b53a6590bfba2286f16a06b4fb1440a168",
+    "Synthetic journey fixture": true
+  },
+  "functions": {
+    "added": [
+      {
+        "name": "report_invalid_index",
+        "fullname": "report_invalid_index",
+        "address": "180001200",
+        "code": "int report_invalid_index(size_t index, size_t length) {\n    return -1;\n}",
+        "calling": [
+          "read_item"
+        ],
+        "called": [],
+        "instructions": -17200333,
+        "sig": "int report_invalid_index(...)",
+        "sym_type": "FUNCTION",
+        "external": false
+      }
+    ],
+    "deleted": [
+      {
+        "name": "debug_dump",
+        "fullname": "debug_dump",
+        "address": "180001400",
+        "code": "void debug_dump(const char *text) {\n    puts(text);\n}",
+        "calling": [],
+        "called": [],
+        "instructions": -17200333,
+        "sig": "int debug_dump(...)",
+        "sym_type": "FUNCTION",
+        "external": false
+      }
+    ],
+    "modified": [
+      {
+        "old": {
+          "name": "read_item",
+          "fullname": "read_item",
+          "address": "180001000",
+          "code": "int read_item(const unsigned char *buffer, size_t length, size_t index) {\n    return buffer[index];\n}",
+          "calling": [],
+          "called": [],
+          "instructions": -17200333,
+          "sig": "int read_item(...)",
+          "sym_type": "FUNCTION",
+          "external": false
+        },
+        "new": {
+          "name": "read_item",
+          "fullname": "read_item",
+          "address": "180001080",
+          "code": "int read_item(const unsigned char *buffer, size_t length, size_t index) {\n    if (buffer == NULL || index >= length) {\n        return report_invalid_index(index, length);\n    }\n    return buffer[index];\n}",
+          "calling": [],
+          "called": [
+            "report_invalid_index"
+          ],
+          "instructions": -17200333,
+          "sig": "int read_item(...)",
+          "sym_type": "FUNCTION",
+          "external": false
+        },
+        "diff_type": [
+          "code",
+          "address",
+          "called"
+        ],
+        "ratio": 0.58,
+        "match_types": [
+          "Symbols",
+          "StructuralGraph"
+        ]
+      },
+      {
+        "old": {
+          "name": "get_version",
+          "fullname": "get_version",
+          "address": "180001600",
+          "code": "int get_version(void) {\n    return 1;\n}",
+          "calling": [],
+          "called": [],
+          "instructions": -17200333,
+          "sig": "int get_version(...)",
+          "sym_type": "FUNCTION",
+          "external": false
+        },
+        "new": {
+          "name": "get_version",
+          "fullname": "get_version",
+          "address": "180001700",
+          "code": "int get_version(void) {\n    return 2;\n}",
+          "calling": [],
+          "called": [],
+          "instructions": -17200333,
+          "sig": "int get_version(...)",
+          "sym_type": "FUNCTION",
+          "external": false
+        },
+        "diff_type": [
+          "code",
+          "address"
+        ],
+        "ratio": 0.94,
+        "match_types": [
+          "Symbols"
+        ]
+      }
+    ]
+  },
+  "stats": {
+    "added_funcs_len": 1,
+    "deleted_funcs_len": 1,
+    "modified_funcs_len": 2
+  },
+  "md_credits": "Recorded-shape JOURNEY fixture (synthetic; not output from Ghidriff or a real model)"
+}
