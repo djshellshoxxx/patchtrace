@@ -176,7 +176,7 @@
 ### [K-FIX:audit-C] Audit C of intelligence and CVE enrichment (2026-10-14)
 - [x] Fixed, each with a red test first: C-01, C-02, C-03, C-04, C-05, C-06, C-07, C-08, C-09 (all Medium), C-10, C-12, C-13, C-21, C-22 (cache write failure and per-kind cap); plus crash classes the audit's fuzzer missed (version strings beyond 4300 digits, over-long or unpaired-surrogate property names breaking the `Finding` contract); additive CWE-134 and CWE-193 lexicon terms and rules
 - [ ] Not built, reason recorded: C-14 to C-20 (`intelligence/tools/`, owned by instance B); C-11 and C-24 (dropping or marking an over-bound provider element needs an additive `CveSnapshot` marker field in enrichment/contracts.py; today an over-long element fails the whole provider response closed, and the 64-item truncation cannot affect ranking because references are not used and products only lose matches); C-23 (an NVD superset only blocks the extra CWE through the intersection in `contextual_rank`, by design of SPEC-07 section 8); C-22 URL-map lock (a lost update costs a refetch); C-25 to C-27 (information only: numbering is the registry's job, other builders own the missing modules, Windows unverified)
-- [ ] `intelligence explain` (not built yet) must pass every stored document to `resolve`, or call `AdvisoryStore.applicability(cve, older, newer)`, so a withdrawn CVE is reported; `for_cve` alone cannot show it
+- [x] (2026-11-04: `explain.build_report` passes the stored supersession flags; `tests/test_intel_explain.py::test_withdrawn_cve_is_superseded_in_the_explain_report`) `intelligence explain` (not built yet) must pass every stored document to `resolve`, or call `AdvisoryStore.applicability(cve, older, newer)`, so a withdrawn CVE is reported; `for_cve` alone cannot show it
 ### [S2:ladder] SPEC-31 S2 (2026-10-14, builder worktree)
 - [x] Ladder MVP P00-P15 (uniqueness-gated, BinDiff-style drill-down, tier cap along the chain), propagation to a fixpoint (neighbour cascade, hubs, thunk targets, implied matches with symmetric persistent conflicts), groups (duplicate, ICF, inline/outline), leftover reasons, `partial` on budget exhaustion; `src/patchtrace/unified/ladder/`
 - [x] Parity harness `tools/unified/parity.py` (Ghidriff, BinDiff rows, MD histogram, dev-only `--md_index` argv) and synthetic IR builder `tests/unified_ir_builder.py`
@@ -347,7 +347,8 @@
 - [ ] open: KEV on `kb search` edge rows (`service._edge_dict` still `not-loaded`); pilot `collect.py` still passes `NO_CATALOG`; KEV-plan K4 item 9 and the GUI KB dock (K4b) consumer of `kev_source`.
 ### [K5w:pairs-plan-glue]
 - [x] K3/K5 glue: `kb pairs` / `kb plan` over the offline file index; tests `tests/test_kbc_pairs_index.py`.
-- [ ] `kb index import` accepting a Winbindex record (today the file is placed in `<workspace>/winbindex/` by hand); E1 network `PairPlan`.
+- [x] `kb index import` accepting a Winbindex record (2026-11-04: built, `cli_index._import_winbindex`, `tests/test_kbc_index.py`, `tests/test_kbc_e0_e2e.py`)
+- [ ] E1 network `PairPlan`.
 
 ### [CAP-7:capa-hints]
 - [x] Hint table + `capability_context`; inventory extractor; tests `tests/test_capa_hints.py`.
