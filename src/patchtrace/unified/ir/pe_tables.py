@@ -261,6 +261,10 @@ def _eh_signature(rva_reader: _Rva, primary: Primary) -> str | None:
         count_bytes = rva_reader.read(tail + 4, 4)
         if count_bytes is not None:
             count = struct.unpack('<I', count_bytes)[0]
+            if MAX_SCOPES < count < 0x1000:
+                # a C scope table longer than the cap cannot be compared record by record; handler-only would let two
+                # different tables look EH-equal (FCT-10). Counts >= 0x1000 are not scope counts (C++ FuncInfo RVA).
+                return EH_UNAVAILABLE
             if 0 < count <= MAX_SCOPES:
                 table = rva_reader.read(tail + 8, count * 16)
                 if table is not None and _plausible_scopes(table, count, primary):

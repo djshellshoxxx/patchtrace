@@ -20,7 +20,8 @@ NORM_VERSION = 'norm/1'
 # Bumped whenever ingest turns the SAME extractor output into different IR content (sanitised import names, rejected
 # records); mixed into `ir_key` by `ingest.ingest_identity_digest`. 2 = irx audit 20261104. A test pins it equal to
 # `extract.INGEST_REVISION` (the runner predicts the key without importing `ir`).
-INGEST_REVISION = 2
+# 3 (2026-11-04): a C scope table longer than MAX_SCOPES ingests as EH unavailable, no longer handler-only.
+INGEST_REVISION = 3
 INS_VERSION = 'ins/1'
 DB_NAME = 'ir.sqlite3'
 MANIFEST_NAME = 'manifest.json'
