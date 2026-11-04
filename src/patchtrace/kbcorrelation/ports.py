@@ -12,7 +12,11 @@ from typing import Any, Protocol, runtime_checkable
 
 @runtime_checkable
 class AdvisoryPort(Protocol):
-    """CSAF facts (``intelligence``): validate and normalise exact bytes, return JSON-compatible dicts."""
+    """CSAF facts (``intelligence``): validate and normalise exact bytes, return JSON-compatible dicts.
+
+    ``report_for`` takes EVERY loaded CSAF facts dict and returns a ``kbc-csaf-applicability/1`` object
+    (advisory-revision spec s5.1): unknown stays unknown, superseded and withdrawn entries are labelled, every
+    claim names its source, and nothing ties a function to the CVE."""
 
     def parse_csaf(self, raw: bytes, *, source_sha256: str) -> Mapping[str, Any]: ...
 

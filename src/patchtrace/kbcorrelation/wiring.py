@@ -21,6 +21,7 @@ from typing import Any
 from .card_provenance import FIELDS, CardFactRef
 from .components import normalise_name
 from .contracts import Arch, CveCard
+from .ids import is_cve
 from .lineage import IndexRow, index_rows
 from .pairs import LocalFile
 from .service import Env, KbService
@@ -30,6 +31,16 @@ INDEX_DIR = 'winbindex'
 INDEX_RECORD = re.compile(r'(?P<name>[a-z0-9._-]+)@(?P<date>\d{4}-\d{2}-\d{2})\.json(?P<gz>\.gz)?')
 MACHINES: dict[int, Arch] = {0x8664: 'amd64', 0xAA64: 'arm64', 0x14C: 'x86'}
 HEADER_BYTES = 4096
+REPORT_CONTRACT = 'kbc-csaf-applicability/1'
+MAX_CVE_CHARS = 24  # the intelligence/1 CveId bound
+SHA256 = re.compile(r'[0-9a-f]{64}')
+REPORT_LIMITATIONS = (
+    'Applicability restates what the loaded CSAF documents state about products tied to the two files; it does not '
+    'show that any changed function addresses the CVE.',
+    'The two SHA-256 values are recorded identities: an advisory file-hash match is a candidate mapping, never a '
+    'verified one.',
+    'Only the CSAF documents given were checked; a revision that is not loaded can change this result.',
+)
 
 
 class WorkspaceFileIndex:
@@ -136,7 +147,81 @@ class IntelligenceAdvisory:
         return normalize(document, report, source_sha256).model_dump(mode='json')
 
     def report_for(self, cve, facts, older_sha256, newer_sha256) -> Mapping[str, Any]:
-        raise KbcStoreError('PT-KBC-UNSUPPORTED', 'a CSAF applicability report is not built by this slice')
+        """CSAF applicability of ``cve`` for the two files (KBF-03 s5.1), as plain JSON data.
+
+        ``facts`` must be every loaded CSAF document (``parse_csaf`` output), so a newer revision that dropped the CVE
+        supersedes the older claims. Unknown stays unknown: no listing document or a missing SHA-256 gives no report,
+        and an untied file abstains inside it. Nothing here names a function."""
+        from ..intelligence.contracts import ArtifactIdentity
+        from ..intelligence.csaf.applicability import resolve, supersession
+        if not is_cve(cve) or len(cve) > MAX_CVE_CHARS:
+            raise KbcStoreError('PT-KBC-INPUT', 'the CVE must look like CVE-YYYY-NNNN')
+        shas = {'older': older_sha256, 'newer': newer_sha256}
+        if any(sha is not None and (type(sha) is not str or SHA256.fullmatch(sha) is None) for sha in shas.values()):
+            raise KbcStoreError('PT-KBC-INPUT', 'a file SHA-256 must be 64 lower-case hexadecimal digits')
+        documents = _advisory_facts(facts)
+        state = supersession(documents)
+        listing = [d for d in documents if d.vulnerability(cve) is not None]
+        withdrawn = _withdrawn(cve, documents, listing, state)
+        listed = {d.source_id for d in listing}
+        shown_ids = listed | {s for entry in withdrawn for s in entry['current']}
+        shown = [d for d in documents if d.source_id in shown_ids]
+        unknowns = [] if listing else [f'no loaded CSAF document lists {cve}; applicability to these two files is '
+                                       'unknown']
+        unknowns += [f'the {side} file has no SHA-256; applicability was not resolved'
+                     for side, sha in shas.items() if sha is None]
+        if withdrawn:
+            unknowns.append(f'a current CSAF revision no longer lists {cve}; the earlier statements are superseded '
+                            'and nothing replaces them')
+        report = None
+        if listing and None not in shas.values():
+            report = resolve(cve, documents, *(ArtifactIdentity(side=side, sha256=sha, facts_state='record-only')
+                                               for side, sha in shas.items()))
+            unknowns += [f'{s.side} file: applicability is {s.resolution}' for s in (report.older, report.newer)
+                         if s.resolution in ('unknown', 'ambiguous', 'contradictory')]
+        limitations = list(REPORT_LIMITATIONS)
+        limitations += [t for t in (report.limitations if report else ()) if t not in limitations]
+        claimed = report is not None and 'advisory-claim' in (report.older.assessment, report.newer.assessment)
+        return {'contract': REPORT_CONTRACT, 'cve': cve, 'older_sha256': older_sha256, 'newer_sha256': newer_sha256,
+                'assessment': 'advisory-claim' if claimed else 'unknown',
+                'applicability': report.model_dump(mode='json') if report else None,
+                'sources': [{'source_id': d.source_id, 'facts_id': d.facts_id, 'tracking_id': d.tracking_id,
+                             'revision': d.revision, 'current_release_date': d.current_release_date,
+                             'document_category': d.document_category, 'lists_cve': d.source_id in listed,
+                             'superseded': state[d.facts_id]} for d in shown],
+                'withdrawn': withdrawn, 'unknowns': unknowns, 'limitations': limitations}
+
+
+def _advisory_facts(facts) -> list:
+    """Strict ``AdvisoryFacts`` sorted by source; the same facts given twice count once."""
+    from pydantic import ValidationError
+
+    from ..intelligence.contracts import AdvisoryFacts
+    found: dict[str, Any] = {}
+    for item in facts:
+        try:
+            if not isinstance(item, Mapping):
+                raise TypeError
+            doc = AdvisoryFacts.model_validate_json(json.dumps(dict(item)))
+        except (ValidationError, TypeError, ValueError):
+            raise KbcStoreError('PT-KBC-SOURCE', 'a CSAF facts record is not a valid intelligence/1 AdvisoryFacts'
+                                ) from None
+        if found.setdefault(doc.source_id, doc) != doc:
+            raise KbcStoreError('PT-KBC-SOURCE', 'two different CSAF facts records name one source document')
+    return [found[source_id] for source_id in sorted(found)]
+
+
+def _withdrawn(cve: str, documents, listing, state: Mapping[str, bool]) -> list[dict]:
+    """Tracking ids whose current revisions no longer list ``cve`` (every listing revision is superseded)."""
+    out = []
+    for namespace, tracking_id in sorted({(d.publisher_namespace, d.tracking_id) for d in listing}):
+        members = [d for d in documents if (d.publisher_namespace, d.tracking_id) == (namespace, tracking_id)]
+        listed = [d for d in members if d.vulnerability(cve) is not None]
+        if all(state[d.facts_id] for d in listed):
+            out.append({'publisher_namespace': namespace, 'tracking_id': tracking_id,
+                        'listed_in': sorted(d.source_id for d in listed),
+                        'current': sorted(d.source_id for d in members if not state[d.facts_id])})
+    return out
 
 
 class IntelligenceRules:

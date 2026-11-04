@@ -14,7 +14,7 @@ Base `claude/autonomous-finish-20261104` (cb28e96). Method: every open `- [ ]` l
 | 344 | KEV adapter path tests | EXTERNAL (owner) | `tests/test_kbc_kev_wiring.py` removed at the owner's request 2026-10-29; re-add only when the owner agrees (git `6331817`) |
 | 347 | KEV on `kb search` edge rows (`service._edge_dict`) | UNBLOCKED | needs a KEV-lane design call in `service.py`; not started, larger than a slice |
 | 347, 590 | pilot `collect.py` `NO_CATALOG`; plan item 9 `test_three_lanes_stay_separate_for_cve_2024_38063` | FROZEN-ish | `pilot/**` is another worker's area; the lane test needs the KB view model |
-| 139 / 307 | `IntelligenceAdvisory.report_for` (CSAF applicability in the context) | UNBLOCKED | still raises `PT-KBC-UNSUPPORTED`; `AdvisoryStore.applicability` now gives the pure input |
+| 139 / 307 | `IntelligenceAdvisory.report_for` (CSAF applicability in the context) | DONE (slice kbc-report-for) | `wiring.IntelligenceAdvisory.report_for` returns `kbc-csaf-applicability/1` (advisory-revision spec s5.1); `tests/test_kbc_report_for.py`. Not yet called by `context.build_bundle` (`CveCard.applicability` stays the fixed unknown text) |
 | 220, 253, 307, 326, 341 | `cli.py` `kb` hook, `kb index sync` routing | FROZEN | `src/patchtrace/cli.py` (integrator) |
 | 341, 463 | `.gitattributes` lines for kbcorrelation / kev expected JSON and schemas | FROZEN | `.gitattributes` |
 | 163 | A-12: `tools/frozen_smoke.py` import of `kbcorrelation`, `live_kbc` marker, tooltip roots | FROZEN | `tools/frozen_smoke.py`, `pyproject.toml`, `tooltips.py` |
