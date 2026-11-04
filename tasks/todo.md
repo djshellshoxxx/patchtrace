@@ -106,16 +106,16 @@
 - [x] Independent review of the spec (docs/specs/unified-engine/11-review-log.md): 30 findings fixed in place (R-01..R-32), residual risks and USER decisions U-11/U-12 added
 - [x] P1 Windows spawn lock in `jobs._windows_process` (merged with C3; `test_concurrent_run_process_calls_do_not_cross_pipes_or_leak_threads`)
 - [x] P2 nway raw `address_matches`: skip `EXTERNAL:<hex>` entries instead of `PT-NWAY-PAIR` (ce108cd)
-- [ ] P2b count the skipped `EXTERNAL:` entries in the series limitations; SPEC-09/SPEC-28 status lines (A-05, A-06)
-- [ ] S0a contracts/limits/keys/registry/store + schemas + doc status lines (10-amendments rows marked S0a)
-- [ ] S0b sources, fusion, S0 facts, pipeline, worker, CLI `unified run/show/explain/status --no-extract`
-- [ ] S1 extraction (GZF reuse + analyze fallback), ingest, MD index port with notices, live-unified workflow (Windows + Linux)
-- [ ] S2 ladder MVP + parity harness; S5 residual (blocking, vectors, votes, LAP)
-- [ ] S3 IR change channels, DATA-MAP/1 target consistency, proofs UNCH/COS-ADDR/COS-LAYOUT with EH-EQ, MAT-ANCHOR, S3b on-demand decompile
-- [ ] S4 read model + `ui_unified.py` (single window: view switch + dock tab), tooltips, accessibility
+- [x] P2b count the skipped `EXTERNAL:` entries in the series limitations; SPEC-09/SPEC-28 status lines (A-05, A-06) (UE-R11 2026-11-04: `test_nway_external_skips_are_counted`; both status lines present)
+- [x] S0a contracts/limits/keys/registry/store + schemas + doc status lines (10-amendments rows marked S0a) (UE-R11 2026-11-04: every S0a status line applied, A-14 last)
+- [x] S0b sources, fusion, S0 facts, pipeline, worker, CLI `unified run/show/explain/status --no-extract` (built; hardened 2026-11-04, PR #180)
+- [x] S1 extraction (GZF reuse + analyze fallback), ingest, MD index port with notices, live-unified workflow (Windows + Linux) (built; live: Windows L0-L4 on MSVC DLLs recorded earlier, Linux L6 still unverified)
+- [x] S2 ladder MVP + parity harness; S5 residual (blocking, vectors, votes, LAP) (built; BinDiff parity oracle still blocked on the pin)
+- [x] S3 IR change channels, DATA-MAP/1 target consistency, proofs UNCH/COS-ADDR/COS-LAYOUT with EH-EQ, MAT-ANCHOR, S3b on-demand decompile (built; decomp part persisted per UE-R3)
+- [x] S4 read model + `ui_unified.py` (single window: dock tab per B-10; the MainWindow view switch of 07 s2 stays an owner decision), tooltips, accessibility (manual Windows screen-reader/DPI pass still owner-only)
 - [ ] S6 Tier R / A/A / planted-mutation corpus, gates G-U1..G-U8, flag default decision (USER U-05)
 - [ ] USER decisions U-01..U-12 (defaults in docs/specs/unified-engine/00-decisions.md s4)
-- [ ] USER decisions U-01..U-10 (defaults in docs/specs/unified-engine/00-decisions.md s4)
+- [x] superseded by the U-01..U-12 line above (duplicate removed from the open count, UE-R11 2026-11-04)
 
 ### [K:28a-28b] CSAF engine (track K, 2026-10-14)
 - [x] SPEC-28a: contracts + generated schemas/examples, discovery, transport, stdlib validator, normalization, storage (synthetic fixtures; fake opener)
@@ -752,9 +752,9 @@
 
 ### [U7:audit]
 - [x] Audit written, 4 Medium fixed with red tests
-- [ ] U7-05 BinDiff stub rows reach tier A alone (additive `SecondaryMatch.basicblocks` or IR-aware demotion before fusion)
-- [ ] U7-06 decide the budget policy for fusion and facts after a ladder deadline (partial result is lost today)
-- [ ] U7-07 trace-arg mutant class for G-U2
+- [x] U7-05 BinDiff stub rows reach tier A alone (fixed: additive `SecondaryMatch.basicblocks`, stub rows demoted to tier C; audit record "U7-05 fixed")
+- [x] U7-06 decide the budget policy for fusion and facts after a ladder deadline (fixed: partial kept; and since 2026-11-04 (COR-01) the isolated worker's own deadline precedes the parent's kill, so the path is reachable)
+- [ ] U7-07 trace-arg mutant class for G-U2 (2026-11-04: now an explicit `PendingClass` naming its need, so G-U2 cannot pass silently; building it needs an import library in the msvc-free link, `build.py` owner)
 
 ### [LBL-07:mutations-ir-opt]
 - [x] LBL-07 IR layer + opt layer (`mutations/ir.py`, `mutations/opt_transforms.py`)
