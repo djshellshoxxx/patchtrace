@@ -1,12 +1,12 @@
 # Install
 
-PatchTrace ships as an unsigned portable package. No installer and no elevation are needed. Packages are built for Windows 11 x64 and Linux x86-64.
+PatchTrace ships unsigned, as a per-user Windows Setup, a portable Windows zip and a Linux tar.gz. None of them needs elevation. Packages are built for Windows 11 x64 and Linux x86-64. Alpha and beta prereleases stay unsigned under [SPEC-52](specs/windows-release-signing-policy.md), so Windows SmartScreen and antivirus software may warn.
 
 ## Choose a package
 
 | You want | Package | Status |
 |---|---|---|
-| Browse the sample, import diff files, review, export | Windows zip `PatchTrace-<version>-windows-x64.zip` or Linux `PatchTrace-<version>-linux-x86_64.tar.gz` ("lite") | Published as prereleases on the GitHub Releases page |
+| Browse the sample, import diff files, review, export | Windows Setup `PatchTrace-Windows-x64-Setup.exe`, Windows zip `PatchTrace-<version>-windows-x64.zip` (also attached as `PatchTrace-Windows-x64-Portable.zip`, the same bytes) or Linux `PatchTrace-<version>-linux-x86_64.tar.gz` ("lite") | Published as prereleases on the GitHub Releases page |
 | Run comparisons with nothing else to install | "Full" package `PatchTrace-<version>-windows-x64-full.zip` or `...-linux-x86_64-full.tar.gz` | Builder, workflow and acceptance tooling are merged. **No full package has been published or accepted yet** (see below) |
 | Run comparisons with your own tools | Lite package plus external Ghidra, Java and Ghidriff | Works today |
 
@@ -14,7 +14,17 @@ The lite package includes Python and Qt. It does not include Ghidra, Java, Ghidr
 
 ## Windows
 
-1. Download the zip and its `.sha256` file from the Releases page, then verify it (below).
+Use the newest prerelease on the Releases page; it is listed first. GitHub's "latest release" link skips prereleases, so it does not find PatchTrace builds. Prereleases published before the installer was added carry the zip only. If SmartScreen shows "Windows protected your PC", choose **More info** then **Run anyway** only after checking the SHA-256 (below).
+
+### Setup (per user)
+
+1. Download `PatchTrace-Windows-x64-Setup.exe` and `PatchTrace-Windows-x64-Setup.exe.sha256`, then verify it (below).
+2. Run it. It installs for the current user under `%LOCALAPPDATA%\Programs\PatchTrace` (the folder can be changed), adds a Start Menu shortcut and a Windows Apps entry, and does not ask for administrator rights. SmartScreen may warn because Setup is unsigned.
+3. Start PatchTrace from the Start Menu. Keep your projects outside the install folder.
+
+### Portable zip
+
+1. Download the zip and its `.sha256` file from the Releases page, then verify it (below). `PatchTrace-Windows-x64-Portable.zip` with `PatchTrace-Windows-x64-Portable.zip.sha256` is the same zip under a name without the version.
 2. If Windows marked the zip as downloaded from the internet, right-click it, open Properties and tick **Unblock** before extracting, or run `Unblock-File` on it.
 3. Extract the **whole** zip into a user-writable folder. Keep `PatchTrace.exe` and `_internal` together.
 4. Run `PatchTrace.exe`. SmartScreen may warn because the package is unsigned.
@@ -28,11 +38,13 @@ tar xzf PatchTrace-<version>-linux-x86_64.tar.gz
 QT_QPA_PLATFORM=offscreen ./PatchTrace/PatchTrace --self-test   # headless smoke test
 ```
 
-Qt needs host libraries that are not bundled. On Debian or Ubuntu: `libegl1 libgl1 libfontconfig1 libdbus-1-3 libxkbcommon0 libxkbcommon-x11-0 libxcb-cursor0 libxcb-icccm4 libxcb-image0 libxcb-keysyms1 libxcb-randr0 libxcb-render-util0 libxcb-shape0 libxcb-xinerama0 libxcb-xkb1 libxcb-xfixes0` (or a Wayland session). If startup aborts with `Could not load the Qt platform plugin "xcb"`, run `ldd PatchTrace/_internal/PySide6/Qt/lib/libQt6XcbQpa.so.6 | grep 'not found'`. Live Ghidriff analysis from the frozen Linux build is not yet verified.
+Qt needs host libraries that are not bundled. On Debian or Ubuntu: `libegl1 libopengl0 libgl1 libfontconfig1 libdbus-1-3 libxkbcommon0 libxkbcommon-x11-0 libxcb-cursor0 libxcb-icccm4 libxcb-image0 libxcb-keysyms1 libxcb-randr0 libxcb-render-util0 libxcb-shape0 libxcb-xinerama0 libxcb-xkb1 libxcb-xfixes0` (or a Wayland session). If startup aborts with `Could not load the Qt platform plugin "xcb"`, run `ldd PatchTrace/_internal/PySide6/Qt/lib/libQt6XcbQpa.so.6 | grep 'not found'`. Live Ghidriff analysis from the frozen Linux build is not yet verified.
 
 ## Verify a download
 
 ```powershell
+Get-FileHash .\PatchTrace-Windows-x64-Setup.exe -Algorithm SHA256
+Get-Content .\PatchTrace-Windows-x64-Setup.exe.sha256
 Get-FileHash .\PatchTrace-<version>-windows-x64.zip -Algorithm SHA256
 Get-Content .\PatchTrace-<version>-windows-x64.zip.sha256
 ```
@@ -74,7 +86,7 @@ Unpack a new version into a separate folder. Projects and settings are not overw
 
 ## Uninstall
 
-Delete the extracted folder. Per-user data is separate; delete it only if you want it gone:
+Portable zip: delete the extracted folder. Setup: uninstall from Windows Apps or run `Uninstall.exe` in the install folder. It removes only the files Setup installed (projects you created inside that folder stay), its Start Menu shortcut and the `HKCU\Software\PatchTrace` registry key, so the Settings row below is removed too. Other per-user data is separate; delete it only if you want it gone:
 
 | Item | Windows | Linux |
 |---|---|---|

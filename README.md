@@ -24,21 +24,29 @@ Start with an older and newer version of the same executable, DLL, or driver. Ru
 
 ## Download and first launch
 
-1. Download the Windows x64 ZIP and its `.sha256` file from [Releases](https://github.com/djshellshoxxx/patchtrace/releases). The first published package is [v0.1.0-beta.8](https://github.com/djshellshoxxx/patchtrace/releases/tag/v0.1.0-beta.8).
-2. Extract the **entire ZIP** to a user-writable directory. Keep `PatchTrace.exe`, `_internal`, documentation, and licenses together. Running the executable inside the ZIP or copying only the executable will not work.
-3. Launch `PatchTrace.exe`. The desktop includes Python and Qt, so a separate Python installation is unnecessary for opening projects, exploring the sample, reviewing imported comparisons, or exporting reports.
+1. Open [Releases](https://github.com/djshellshoxxx/patchtrace/releases) and use the newest entry; the newest prerelease is listed first. Every PatchTrace build so far is a prerelease. GitHub's "latest release" link skips prereleases (for this project it returns 404), so it is not used here.
+2. Download one Windows x64 package and its `.sha256` file:
+   - **Setup** `PatchTrace-Windows-x64-Setup.exe` installs for the current user only, under `%LOCALAPPDATA%\Programs\PatchTrace`, adds a Start Menu shortcut and a Windows Apps entry, and does not ask for administrator rights.
+   - **Portable ZIP** `PatchTrace-0.1.0-windows-x64.zip` installs nothing. The release also attaches it as `PatchTrace-Windows-x64-Portable.zip`, the same bytes with its own `.sha256`. Extract the **entire ZIP** to a user-writable directory. Keep `PatchTrace.exe`, `_internal`, documentation, and licenses together. Running the executable inside the ZIP or copying only the executable will not work.
+
+   Prereleases published before the installer was added carry the ZIP only.
+3. Launch `PatchTrace.exe` (after Setup, from the Start Menu). The desktop includes Python and Qt, so a separate Python installation is unnecessary for opening projects, exploring the sample, reviewing imported comparisons, or exporting reports.
 4. Choose **Sample** for a guided first exercise, or **New** to create a comparison project.
 
 The desktop target is Windows 11 x64. The initial input format is PE AMD64, including compatible `.exe`, `.dll`, and `.sys` files. File extensions alone do not determine acceptance: headers and architecture are validated. ARM64, 32-bit x86, ELF, Mach-O, and other formats are outside this beta's supported input contract.
 
-To check the download in PowerShell:
+**The packages are unsigned.** Alpha and beta prereleases carry no code signature and name no publisher, so Windows SmartScreen and antivirus software may warn about Setup or `PatchTrace.exe`. If Windows warns, compare the SHA-256 first. SmartScreen can show "Windows protected your PC" for unsigned or low-reputation builds; choose **More info** then **Run anyway** only after checking the SHA-256. The policy is [SPEC-52](docs/specs/windows-release-signing-policy.md).
+
+To check the download in PowerShell, for the package you downloaded:
 
 ```powershell
+Get-FileHash '.\PatchTrace-Windows-x64-Setup.exe' -Algorithm SHA256
+Get-Content '.\PatchTrace-Windows-x64-Setup.exe.sha256'
 Get-FileHash '.\PatchTrace-0.1.0-windows-x64.zip' -Algorithm SHA256
 Get-Content '.\PatchTrace-0.1.0-windows-x64.zip.sha256'
 ```
 
-Compare the hash values. The package is a portable, unsigned beta; no installer or elevation is required. Keep projects in their own directories rather than inside the application directory, so replacing the application does not replace your work.
+Compare the hash values. SHA-256 shows the download is intact. It does not show who built it. Neither package requires elevation. Keep projects in their own directories rather than inside the application directory, so replacing the application does not replace your work.
 
 ## Try the sample
 
@@ -385,7 +393,7 @@ py -3.12 tools/build_windows.py
 
 The builder creates an onedir executable, collects runtime/help/license files, checks required notices and unwanted optional Qt components, records dependency/file inventories, runs the frozen sample self-test, and creates `dist/PatchTrace-0.1.0-windows-x64.zip` plus its checksum. PyInstaller cannot cross-compile the Windows interpreter from Linux.
 
-The published beta passed 93 Windows tests, 91 Linux tests with two Windows-only skips, Ruff, frozen executable startup, a real native Ghidriff known bounds-check fixture, and ZIP checksum/content inspection. These checks verify implementation paths; the single fixture and synthetic sample do not establish general matching accuracy. Live AI-provider acceptance, hands-on clean Windows GUI testing, held-out matching benchmarks, and resource targets remain open. Call-graph visualization, runtime debugging, automatic reproduction, automatic binary acquisition, extra input formats, and the original Diffalayze batch/trigger features are not implemented in this beta.
+Each release's notes list that build's CI job results, test counts and the acceptance gates still open; [docs/qa.md](docs/qa.md) records the exact checks performed and the unverified gates. These checks verify implementation paths; the single native Ghidriff fixture and the synthetic sample do not establish general matching accuracy. Live AI-provider acceptance, hands-on clean Windows GUI testing, held-out matching benchmarks, and resource targets remain open. Runtime debugging, automatic reproduction, automatic binary acquisition, extra input formats, and the original Diffalayze batch/trigger features are not implemented in this beta.
 
 | Documentation | Purpose |
 |---|---|
