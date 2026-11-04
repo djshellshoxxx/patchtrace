@@ -175,3 +175,43 @@ def test_publisher_rejects_forged_low_cost(tmp_path, monkeypatch):
     (tmp_path / "parallel.patch").write_text("example")
     with pytest.raises(ValueError, match="reconcile"):
         guard.validate_artifact("diagnostics", tmp_path)
+
+
+def test_active_pr_file_overlap_blocks_paid_work(monkeypatch):
+    import importlib.util
+
+    directory = Path(__file__).resolve().parents[1] / "tools" / "parallel_cloud"
+    monkeypatch.syspath_prepend(str(directory))
+    spec = importlib.util.spec_from_file_location("parallel_guard_overlap", directory / "guard.py")
+    guard = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(guard)
+
+    def fake_api(path):
+        if "/pulls?state=open" in path:
+            return [{"number": 221, "head": {"ref": "other-agent-feature"}}]
+        if "/pulls/221/files" in path:
+            return [{"filename": "src/patchtrace/diagnostics.py"}]
+        raise AssertionError(path)
+
+    monkeypatch.setattr(guard, "github_api", fake_api)
+    assert guard.check_ownership("diagnostics") is False
+    assert guard.check_ownership("runtime") is True
+
+
+def test_sandboxed_test_subprocess_has_no_runner_credential_tokens(monkeypatch):
+    agent = _agent()
+    monkeypatch.setenv("ACTIONS_RUNTIME_TOKEN", "runtime-private-token")
+    monkeypatch.setenv("PATCHTRACE_OPENAI_API_KEY", "api-private-token")
+    captured = {}
+
+    def fake_run(command, **kwargs):
+        from subprocess import CompletedProcess
+        captured["environment"] = kwargs["env"]
+        captured["command"] = command
+        return CompletedProcess(command, 0, "1 passed", "")
+
+    monkeypatch.setattr(agent.subprocess, "run", fake_run)
+    agent.run_focused_tests(["tests/test_diagnostics.py"])
+    assert set(captured["environment"]) == {"PATH"}
+    assert "ACTIONS_RUNTIME_TOKEN" not in str(captured["command"])
+    assert "PATCHTRACE_OPENAI_API_KEY" not in str(captured["command"])
