@@ -62,6 +62,7 @@ def test_cap_adds_marker_with_omitted_count():
 
 def test_documented_caps_are_pinned():
     assert (text.CAP_NAME, text.CAP_EVIDENCE, text.CAP_ADVISORY, text.CAP_NOTES) == (512, 8192, 4096, 16384)
+    assert text.CAP_CODE == 1 << 20
     assert (text.MAX_MATCHES, text.MAX_ADVISORIES, text.MAX_BUILD_FACTS, text.MAX_EVIDENCE_ROWS) == (
         10000, 1000, 5000, 2000)
 
