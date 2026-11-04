@@ -114,3 +114,64 @@ def test_duplicate_edit_paths_and_unchanged_files_are_refused(tmp_path, monkeypa
         agent.parse_edit(json.dumps({"files": [{"path": "tests/test_diagnostics.py",
                                                 "content": "x = 1\\n"}]}),
                          agent.TASKS["diagnostics"], "test")
+
+
+def test_focused_test_runner_isolates_api_credentials(monkeypatch):
+    agent = _agent()
+    monkeypatch.setenv("PATCHTRACE_OPENAI_API_KEY", "secret-must-not-reach-child")
+    monkeypatch.setenv("GH_TOKEN", "github-secret")
+    observed = {}
+
+    def fake_run(command, **kwargs):
+        observed["command"] = command
+        observed["env"] = kwargs["env"]
+        from subprocess import CompletedProcess
+        return CompletedProcess(command, 1, "1 failed", "")
+
+    monkeypatch.setattr(agent.subprocess, "run", fake_run)
+    agent.run_focused_tests(["tests/test_diagnostics.py"])
+    assert observed["command"][:5] == ["sudo", "-n", "-u", "nobody", "env"]
+    assert "PATCHTRACE_OPENAI_API_KEY" not in observed["env"]
+    assert "GH_TOKEN" not in observed["env"]
+    assert "secret-must-not-reach-child" not in str(observed["command"])
+
+
+def test_incomplete_api_response_is_rejected(monkeypatch):
+    import io
+
+    agent = _agent()
+    monkeypatch.setenv("PATCHTRACE_OPENAI_API_KEY", "fake-test-only")
+    payload = b'{"status":"incomplete","output":[],"usage":{"input_tokens":1,"output_tokens":1}}'
+    monkeypatch.setattr(agent.urllib.request, "urlopen",
+                        lambda request, timeout: io.BytesIO(payload))
+    import pytest
+
+    with pytest.raises(RuntimeError, match="incomplete"):
+        agent.query_api([{"role": "user", "content": "test"}])
+
+
+def test_publisher_rejects_forged_low_cost(tmp_path, monkeypatch):
+    import importlib.util
+    import json
+    import pytest
+
+    directory = Path(__file__).resolve().parents[1] / "tools" / "parallel_cloud"
+    monkeypatch.syspath_prepend(str(directory))
+    spec = importlib.util.spec_from_file_location("parallel_guard_audit", directory / "guard.py")
+    guard = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(guard)
+    receipt = {
+        "task": "diagnostics", "status": "patch_ready_for_validation",
+        "red_verified": True, "green_verified": True,
+        "red_exit_code": 1, "green_exit_code": 0,
+        "accounted_cost_usd": 0.000001, "budget_usd": 25,
+        "accounting_input_usd_per_m": 20, "accounting_output_usd_per_m": 100,
+        "attempts": [
+            {"phase": "test", "input_tokens": 10000, "output_tokens": 1000},
+            {"phase": "source", "input_tokens": 10000, "output_tokens": 1000},
+        ],
+    }
+    (tmp_path / "parallel-agent-receipt.json").write_text(json.dumps(receipt))
+    (tmp_path / "parallel.patch").write_text("example")
+    with pytest.raises(ValueError, match="reconcile"):
+        guard.validate_artifact("diagnostics", tmp_path)
