@@ -1,11 +1,14 @@
-"""Qt presentation of the Strings dock (WB3 S7b; GUI framework 1.1). Everything that decides what is said lives in the
-Qt-free `view_model` and `copy`; this module moves it to widgets. The GUI thread captures an immutable `Request`
-(paths and hashes, never the live project or a connection); the scan and the filtering run on `TaskRunner`
-channels, and a result is applied only when the project key and the request generation still match. Nothing here
-runs a target, opens the network or opens a window of its own.
+"""Qt presentation of the Strings dock (WB3 S7b, S7c; GUI framework 1.1). Everything that decides what is said lives in
+the Qt-free `view_model`, `copy` and `compose`; this module moves it to widgets. The GUI thread reads the stored FLOSS
+results the Source choice asks for (it owns the project connection) and captures an immutable `Request` (paths,
+hashes and FLOSS sources, never the live project, a store or a connection); the comparison (`compose.compare`, the
+one the CLI uses) and the filtering run on `TaskRunner` channels, and a result is applied only when the project key
+and the request generation still match. Nothing here runs a target or a tool, opens the network or opens a window
+of its own.
 """
 from __future__ import annotations
 
+import sqlite3
 import time
 from collections.abc import Callable
 from dataclasses import dataclass
@@ -34,10 +37,15 @@ from ..gui.state import StateModel, dominant
 from ..gui.table_spec import ColumnSpec, PreparedTable, TableSpec, prepare_table
 from ..gui.text import sanitize_text
 from ..gui.tips import apply_tip, register_gui_tips, register_tips
+from ..intelligence.tools.common import ToolError
+from ..tooltips import TooltipEntry
 from . import copy
+from .compose import missing_floss, stored_sources
 from .contracts import Side, StringChange, StringsDelta, StringsError
 from .panel import TIPS
 from .scan import ScanError
+from .sources import FlossEvidenceSource
+from .tooltip_entries import PANEL_ONLY
 from .view_model import (
     CLIPBOARD_ROWS,
     PAIR_CELL,
@@ -52,6 +60,7 @@ from .view_model import (
 )
 
 DETAIL_LIMIT = 8_192
+SOURCE_TIPS = {tip_id: TooltipEntry(*values) for tip_id, values in PANEL_ONLY.items()}
 CHANNELS = ('strings-scan', 'strings-view')
 CHANGE_FILTERS = (('changed', 'Differences'), ('all', 'All changes'), ('only-newer', 'Only in newer'),
                   ('only-older', 'Only in older'), ('edited', 'Edited'))
@@ -72,6 +81,8 @@ class Request:
     min_length: int = 4
     root: Path | None = None       # the project folder and a read-only snapshot of its matches, for function pairing;
     project: object | None = None  # without them every function is unknown, never guessed
+    older_floss: FlossEvidenceSource | None = None  # stored FLOSS evidence the Source choice took for a side, read
+    newer_floss: FlossEvidenceSource | None = None  # on the GUI thread; None: that side is read with the built-in scan
 
 
 @dataclass(frozen=True, slots=True)
@@ -86,36 +97,35 @@ class Loaded:
 Loader = Callable[[Request, object, Report], Loaded]
 
 
-def scan_builtin(request: Request, token, report: Report) -> Loaded:
-    """Worker: read both files with the built-in scan (data reads only) and compare. Strings are linked to functions only
-    through `pairing.project_links` (evidence tiers L4 and L5 over the project's matches); with no analysis, no snapshot or
-    an unparsable image every function stays unknown."""
-    from .cli import table_from_source
-    from .delta import compute_delta
-    from .pairing import Image, inspect_image, project_links
-    from .scan import DEFAULT_MAX_ROWS, BuiltinScanSource
-    sides = (('older', request.older, request.older_sha256), ('newer', request.newer, request.newer_sha256))
+def load_strings(request: Request, token, report: Report) -> Loaded:
+    """Worker: compare the two builds exactly as `patchtrace strings delta` does (`compose.compare`: import and export
+    cues, section regions; no anchors here). A side with a FLOSS source in the request is read from that stored
+    evidence, the other with the built-in scan (data reads only). Strings are linked to functions only through
+    `pairing.project_links` (evidence tiers L4 and L5 over the project's matches); with no analysis, no snapshot or an
+    unparsable image every function stays unknown."""
+    from .compose import builtin_source, compare
+    from .pairing import Image, inspect_image
+    from .scan import DEFAULT_MAX_ROWS
     images: dict[str, Image] = {}
-    for side, path, sha in sides:
+    sources = {}
+    for side, path, sha, floss in (('older', request.older, request.older_sha256, request.older_floss),
+                                   ('newer', request.newer, request.newer_sha256, request.newer_floss)):
         try:
             images[side] = inspect_image(path, sha)
         except StringsError:
-            images[side] = Image()   # the scan below reports the unreadable file; layout-dependent links are unknown
-    tables, partial = {}, []
-    for n, (side, path, sha) in enumerate(sides, 1):
-        report(side, n, 2)
-        pe = images[side].pe
-        source = BuiltinScanSource(path, artifact_sha256=sha, side=side, min_length=request.min_length,
-                                   offset_to_rva=(lambda off, pe=pe: pe.offset_to_rva(off)[0]) if pe else None,
-                                   cancel=token.is_set)
-        tables[side] = table_from_source(source.load())
-        if any(s.state in ('truncated', 'failed') for s in tables[side].basis.stages.values()):
-            partial.append((side, str(DEFAULT_MAX_ROWS)))
-    found = project_links(request.root, request.project, tables, images, [])
-    delta = compute_delta(tables['older'], tables['newer'], pairing=found.pairing, links=found.linked)
-    sources = {'older': 'built-in scan', 'newer': 'built-in scan'}
-    return Loaded(delta, build_rows(delta, sources, unknown_reason=found.reason), {c.id: c for c in delta.changes},
-                  tuple(partial), found.reason)
+            images[side] = Image()   # the scan reports the unreadable file; layout-dependent links and cues are unknown
+        sources[side] = (floss, 'floss') if floss is not None else (
+            builtin_source(path, sha, side, request.min_length, images[side], token), 'builtin-scan')
+    computed = compare(sources, images, request.root, request.project, None, token, progress=report)
+    partial = tuple((side, str(DEFAULT_MAX_ROWS)) for side, table in computed.tables.items()
+                    if any(s.state in ('truncated', 'failed') for s in table.basis.stages.values()))
+    delta, reason = computed.delta, computed.pairing_reason
+    labels = {side: copy.SOURCE_LABELS[name] for side, name in computed.sources.items()}
+    return Loaded(delta, build_rows(delta, labels, unknown_reason=reason), {c.id: c for c in delta.changes}, partial,
+                  reason)
+
+
+scan_builtin = load_strings  # the S7b name of the loader
 
 
 def _cell(value: str, empty: str) -> str:
@@ -147,8 +157,10 @@ class StringsPanel(QWidget):
         self.setObjectName('strings.panel')
         self.buttons: dict[str, QPushButton] = {}
         top = QHBoxLayout()
-        top.addWidget(self._button('scan', 'Scan both builds', 'Scan both builds with the built-in scan',
-                                   'strings.run.builtin'))
+        self.source = self._combo('strings.source', 'Source', tuple(copy.SOURCE_CHOICES.items()))
+        top.addWidget(self.source)
+        top.addWidget(self._button('scan', 'Scan both builds', 'Read and compare the strings of both builds from the '
+                                   'chosen source', 'strings.run.builtin'))
         top.addWidget(self._button('cancel', 'Cancel', 'Cancel the string scan', 'strings.cancel'))
         self.change = self._combo('strings.filter.change', 'Filter strings by kind of change', CHANGE_FILTERS)
         self.scope = self._combo('strings.filter.scope', 'Choose differences or all strings',
@@ -224,10 +236,11 @@ class StringsPanel(QWidget):
 class StringsController(ControllerBase):
     """Owns the loaded comparison and the requests in flight. Hooks run on the GUI thread."""
 
-    def __init__(self, ctx: PanelContext, *, loader: Loader = scan_builtin,
+    def __init__(self, ctx: PanelContext, *, loader: Loader = load_strings,
                  clock: Callable[[], float] = time.monotonic) -> None:
         register_gui_tips()  # the state buttons use them; the host does this too and it is idempotent
         register_tips(TIPS)
+        register_tips(SOURCE_TIPS)
         self.panel = StringsPanel()
         self.view = StateView('strings', 'Strings', ctx.shell, text_limit=600)
         self.view.set_content(self.panel)
@@ -239,6 +252,7 @@ class StringsController(ControllerBase):
         self.prepared: FilterResult | None = None
         self.by_id: dict[str, StringRowVM] = {}
         self.error: tuple[str, str] | None = None
+        self.notice: str | None = None  # why the last Scan read nothing (the chosen source has no stored results)
         self.progress: tuple[str, int] | None = None
         self.started = 0.0
         self.cancelled = self.stale = self.closed = False
@@ -278,7 +292,7 @@ class StringsController(ControllerBase):
                 and self.loaded is not None)
         self._cancel_all()
         self.key = key
-        self.error, self.progress, self.cancelled = None, None, False
+        self.error, self.notice, self.progress, self.cancelled = None, None, None, False
         if same:
             self.stale = key != self.loaded_key
         else:
@@ -324,11 +338,26 @@ class StringsController(ControllerBase):
         except (OSError, ValueError, LookupError) as exc:
             self.error = ('PT-STR-INPUT', f'the project needs an older and a newer artifact ({type(exc).__name__})')
             return self._render()
+        choice = self.panel.source.currentData()
+        try:
+            floss = self._stored_floss(choice)
+        except (StringsError, ToolError) as exc:
+            self.error, self.notice = (exc.code, exc.message), None
+            return self._render()
+        except (OSError, sqlite3.Error) as exc:
+            self.error = ('PT-STR-SOURCE', f'the stored FLOSS results cannot be read ({type(exc).__name__})')
+            self.notice = None
+            return self._render()
+        missing = missing_floss(choice, floss)
+        if missing is not None:  # nothing is read and earlier results stay as they are
+            self.error, self.cancelled = None, False
+            self.notice = copy.STATES['floss-not-stored'].format(side=missing)
+            return self._render()
         request = Request(key, Path(older), Path(newer), older_sha, newer_sha, root=self._root(),
-                          project=self._snapshot())
+                          project=self._snapshot(), older_floss=floss['older'], newer_floss=floss['newer'])
         self.generation += 1
         generation = self.generation
-        self.error, self.cancelled, self.stale = None, False, False
+        self.error, self.notice, self.cancelled, self.stale = None, None, False, False
         self.progress, self.started = ('older', 1), self.clock()
         self._render()
         loader = self.loader
@@ -342,6 +371,19 @@ class StringsController(ControllerBase):
             'strings-scan', work, lambda result: self._loaded(generation, request, result),
             lambda failure: self._failed(generation, failure),
             lambda progress: self._progressed(generation, progress))
+
+    def _stored_floss(self, choice: str) -> dict[str, FlossEvidenceSource | None]:
+        """GUI thread (it owns the project connection): each side's stored FLOSS source under `choice`, picked by the
+        rule of `strings --source`. A port without a project store has none."""
+        service = getattr(self.port, 'service', None)
+        if getattr(service, 'store', None) is None:
+            return {'older': None, 'newer': None}
+        from ..enrichment.storage import EnrichmentStore
+        from ..intelligence.tools.store import ToolStore
+        from .cli import _artifacts
+        project = service.project
+        store = ToolStore(EnrichmentStore(service.store), service.root, project.id, project.revision)
+        return stored_sources(choice, store, _artifacts(service))
 
     def _snapshot(self):
         """A read-only copy of the project record for the worker (never the service or its connection), or None."""
@@ -495,6 +537,8 @@ class StringsController(ControllerBase):
         if self.error:
             found['error'] = copy.STATES['failed'].format(code=sanitize_text(self.error[0], 40),
                                                           message=sanitize_text(self.error[1], 200))
+        if self.notice:
+            found['error'] = self.notice
         if self.cancelled:
             found['cancelled'] = 'Extraction cancelled. Earlier results are unchanged.'
         if self.stale:

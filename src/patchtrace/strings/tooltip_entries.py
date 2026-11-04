@@ -59,9 +59,10 @@ ENTRIES: dict[str, tuple[str, ...]] = {
     'strings.filter.noise': _t('Hides strings that look like data rather than text.',
                                'Keeps the inventory view readable.',
                                'Only the inventory list changes; the count of hidden rows stays visible.'),
-    'strings.run.builtin': _t('Reads the strings of both builds with the built-in scan.',
-                              'Needs no setup and never runs the files.', 'Stores the result with the project.',
-                              'Built-in scan.', 'Needs an open project.'),
+    'strings.run.builtin': _t('Reads the strings of both builds from the chosen source and compares them.',
+                              'The built-in scan needs no setup and never runs the files; stored FLOSS results are '
+                              'read, not run again.', 'Stores the result with the project.',
+                              'Built-in scan or stored FLOSS results.', 'Needs an open project.'),
     'strings.run.floss': _t('Runs FLOSS on both builds for extra string types.',
                             'Finds stack, tight and decoded strings the plain scan cannot.',
                             'Starts a tool run after your confirmation.', 'FLOSS 3.1.1.',
@@ -97,4 +98,15 @@ ENTRIES: dict[str, tuple[str, ...]] = {
     'strings.export': _t('Writes the listed strings to a file.', 'Lets you share the review list.',
                          'Creates a file you name; secret-like text is hidden unless you ask otherwise.',
                          availability='Needs results.'),
+}
+
+# Controls built after the s8 card list that `ENTRIES` mirrors (`test_strings_copy` pins it); the dock registers
+# these itself until the panel declaration (`panel.BUILT`) and that list name them.
+PANEL_ONLY: dict[str, tuple[str, ...]] = {
+    'strings.source': _t('Chooses where the strings of each build come from.',
+                         'Auto reads the stored FLOSS results of a build when it has some, which add stack, tight '
+                         'and decoded strings, and uses the built-in scan otherwise.',
+                         'Only the next comparison changes; FLOSS is never run from here.',
+                         'Built-in scan, or FLOSS results stored by intel-tools run.',
+                         'Choosing FLOSS results needs a stored FLOSS run for both builds.'),
 }
