@@ -14,6 +14,8 @@ Status: ready to paste into a new Claude Code cloud session on `djshellshoxxx/pa
 
 Facts this prompt relies on were observed on 2026-11-04 (`main` = `b77d84e5decf736b031f0a24094001274de41178`). Re-verify them first; they are a snapshot.
 
+Launched 2026-11-04: the coordinator session is live (ledger `docs/plans/ledger-autonomous-20261104.md`, triage `docs/plans/pr-triage-20261104.md`). PR #173 restored the trackers with a regression test (`tests/test_tracker_text.py`) and PR #175 merged the Windows exe identity work from #147; treat section 2 below as superseded by the ledger.
+
 ---
 
 # PROMPT STARTS HERE

@@ -888,8 +888,36 @@ Done: dock with state matrix, consent, import, changes, copy, go to CVE. Open: r
 - [x] Storage admission review blocker: replace error-suppressing glob discovery with explicit scandir; failed opening/iteration cannot mean no pending stages. Red 2 failed / 1 passed; revised 63 related passes.
 - [ ] Rereview amended storage admission source; `536aebc` alone is not an approved candidate.
 
+- [x] PR #153 mixed-revision follow-up: dispute differing remediation applicability across all active same-month snapshots when an ambiguous group includes native MSRC and synthetic CVRF (1,055 KBC tests pass).
+- [ ] Fresh exact-head CI and independent review of the amended mixed-format conflict rule remain open.
+
 - [x] PR #151 cleanup completion: reproduce real caller inconsistency on `1f284a1`; require owned-stage removal before backup success, with first-prune/history/replacement controls (76 focused passes; final baseline 7 red cases). Source `4bfc2c0`; no observed data loss in the original probe.
 - [ ] Independently review and integrate the frozen #151 cleanup-completion follow-up; exact published CI remains separate.
+### Essential project-safety / offline KB desktop continuation (2026-10-31)
 
-## 2026-11-04 tracker restoration
-- [x] `tasks/todo.md` at `d99cd77` (merged via PR #153 follow-up) was committed as 90,060 bytes of non-text data (entropy 5.6 bits/byte, no known compression). Restored from the last valid revision `d03a7d4`. The tracker delta intended by `d99cd77` is lost; its substance is recorded in `docs/qa/msrc-review-findings-20261102.md` ("Mixed native/synthetic revision follow-up"). Re-add any tracker line for that follow-up by hand.
+- [x] PT-EXPORT-GUARD implementation + independent review: protect DB/evidence before report writes; committed non-mutating export; bounded alias checks.
+- [x] PT-KB-SCOPE implementation + review: exact acquisition scope/revision/hash binding; preview revision CAS; known architecture contradiction refusal; conservative pair provenance.
+- [x] PT-KB-GUI implementation + review: local advisory import/search/explicit product/local pair preview/new-only project creation; safe cancel/partial retention; main-thread adoption with original-project rollback.
+- [ ] PT-SAFETY-INTEGRATE acceptance: final product024a00b fully exercised (18,348 passed, one host Git-marker failure; unchanged isolated rerun passed), Linux build/self-test/frozen smoke/checksum/Ruff PASS. Publication is BLOCKED by automatic approval review pending explicit destination authorization; new Windows/native acceptance cannot start until publication. No global release-ready claim.
+- [ ] PR147 current-head Windows packaging and Sonar disposition after LF/output staging repairs; do not close original PR102 by partial adoption.
+
+### [AF-0:wave1] Autonomous finish wave 1 (2026-11-04, coordinator; ledger `docs/plans/ledger-autonomous-20261104.md`)
+- [x] Tracker repair: `tasks/todo.md` restored from d03a7d4 (d99cd77 wrote a truncated base64 tool dump); 744 lines of `docs/qa.md` lost in 08f6a5f/b8e0a67 spliced back from 04d57c7; regression `tests/test_tracker_text.py`
+- [x] Ported onto current main with authorship kept: #158 test only (fix superseded by d99cd77), #148 investigation workflow (export guard already on main), #147 exe identity, #165/#166/#168 rz-diff producer, #138-#141 GT-01 harness
+- [ ] RB-01: dispatch `unified-live-gates.yml` on the integrated head and record evaluated A/A, release and mutant counts per OS (the exec-bit cause of "permissions or locks" is inferred from code, not yet confirmed live)
+- [ ] RB-07: native Windows read-back of the exe version resource and icon (CI only)
+- [ ] Owner: original PRs #138-#141, #147, #148, #158, #165, #166, #168 can be closed as superseded once the replacement PRs merge (coordinator does not close other authors' PRs)
+
+### [AF-0:ported-154-157] Tracker rows carried from PRs #154 and #157 (2026-11-04)
+
+- [ ] November 1 GT-05: review/integrate the narrow QA-bound preregistration selection repair (18 red → 255 bounded pass/1 missing-native-tools skip). Retain #78 normalized output persistence, #79/#82 both-side recipe controls, #85 final-look CLI integration, fresh pin/license audit and pre-lock/held-out gates as separate READY work; see `docs/qa/corpus-safeguards-20261101.md`. No locked evaluation or probability promotion occurred.
+### GT05 bounded normalized output retention (2026-11-01)
+- [x] Reproduce missing source documents behind actual CLI output digests and selectively reconcile #78 retention against current scoring. Fresh exclusive run directories, exact canonical bytes, atomic no-overwrite publication, truthful failure metrics and attention ranking fields are covered by 164 focused passes (2 native-tool BLOCKED skips). See `docs/qa/corpus-output-persistence-20261101.md`.
+- [x] Independent output-retention review cleared `ad35469`: 164 focused passes/2 native-tool BLOCKED skips, production-loader/two-rank replay and failure/no-key differential controls. Reader metadata-loss finding closed.
+- [ ] Coordinator integration and exact-source cross-OS gates remain pending; library persistence is explicitly opt-in.
+- [ ] #78 verified shard/merge transfer and the remaining GT05 growth/source/pin/license, both-side recipe controls, pre-lock/native lineage/OOD, single-use-final CLI and guarded-promotion acceptance remain open. No real locked evaluation consumed or numeric confidence promoted.
+### PR #157 credited replay follow-up (2026-11-01)
+- [x] Reproduce incompatible ranking keys, encode-before-validation and valid failed-artifact adoption by the actual loader; repair producer validation and new managed-run report-bound replay with meaningful CLI/reader controls (237 passed, 2 native-tool BLOCKED skips).
+- [x] Preserve old no-key bytes/ranking and private in-memory unified support; keep persisted engine vocabulary unchanged; expose legacy unmarked replay as unverified rather than infer historical credit.
+- [ ] Independent final review, coordinator integration/cross-OS and verified transfer integration remain pending; broader locked training/final-run/promotion safeguards are not completed by this slice. See `docs/qa/output-credited-replay-20261101.md`.
+- [x] Independent credited-replay review approved exact source `5c26af9` with 119 passes/1 native-tool BLOCKED skip and direct scalar/failed-valid-artifact controls; no remaining bounded source blocker. Integration/cross-OS/transfer and broader safeguards above remain open.
