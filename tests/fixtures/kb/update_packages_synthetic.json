@@ -1,0 +1,146 @@
+{
+  "contract": "kb-fixture-documents/1",
+  "format": "update-package-listings-metadata-only",
+  "disclaimer": "Every row describes synthetic metadata only. No package payload, manifest bytes, Microsoft binary, or executable is included.",
+  "format_support": "PSFX/MSU/CAB and delta labels are scenario names, not verified format capabilities.",
+  "listings": [
+    {
+      "fixture_id": "SYN-PKG-001",
+      "container": "MSU",
+      "update_id": "SYN-UPDATE-001",
+      "kb": "KB9000001",
+      "products": [
+        "SYN-PROD-01"
+      ],
+      "architecture": "amd64",
+      "payload_kind": "full-file-listing",
+      "files": [
+        {
+          "name": "clfs.sys",
+          "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "version": "10.0.26100.1001"
+        }
+      ]
+    },
+    {
+      "fixture_id": "SYN-PKG-002",
+      "container": "CAB",
+      "update_id": "SYN-UPDATE-002",
+      "kb": "KB9000002",
+      "products": [
+        "SYN-PROD-01"
+      ],
+      "architecture": "amd64",
+      "payload_kind": "forward-delta",
+      "base_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "target_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "files": [
+        {
+          "name": "clfs.sys",
+          "sha256": null,
+          "version": null
+        }
+      ]
+    },
+    {
+      "fixture_id": "SYN-PKG-003",
+      "container": "PSFX",
+      "update_id": "SYN-UPDATE-003",
+      "kb": "KB9000003",
+      "products": [
+        "SYN-PROD-02"
+      ],
+      "architecture": "arm64",
+      "payload_kind": "reverse-delta",
+      "base_sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+      "target_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "files": [
+        {
+          "name": "clfs.sys",
+          "sha256": null,
+          "version": null
+        }
+      ]
+    },
+    {
+      "fixture_id": "SYN-PKG-004",
+      "container": "MSU",
+      "update_id": "SYN-UPDATE-004",
+      "kb": "KB9000004",
+      "products": [
+        "SYN-PROD-01"
+      ],
+      "architecture": "amd64",
+      "payload_kind": "checkpoint",
+      "prerequisites": [
+        "SYN-UPDATE-005"
+      ],
+      "files": []
+    },
+    {
+      "fixture_id": "SYN-PKG-005",
+      "container": "CAB",
+      "update_id": "SYN-UPDATE-005",
+      "kb": "KB9000005",
+      "products": [
+        "SYN-PROD-01"
+      ],
+      "architecture": "amd64",
+      "payload_kind": "reverse-delta",
+      "prerequisites": [
+        "SYN-UPDATE-004"
+      ],
+      "files": []
+    },
+    {
+      "fixture_id": "SYN-PKG-006",
+      "container": "PSFX",
+      "update_id": "SYN-UPDATE-006",
+      "kb": "KB9000006",
+      "products": [
+        "SYN-PROD-01"
+      ],
+      "architecture": "amd64",
+      "payload_kind": "package-only",
+      "files": []
+    },
+    {
+      "fixture_id": "SYN-PKG-007",
+      "container": "MSU",
+      "update_id": "SYN-UPDATE-007",
+      "kb": "KB9000007",
+      "products": [
+        "SYN-PROD-01"
+      ],
+      "architecture": "amd64",
+      "payload_kind": "duplicate-file-claims",
+      "files": [
+        {
+          "name": "clfs.sys",
+          "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        {
+          "name": "clfs.sys",
+          "sha256": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+        }
+      ]
+    },
+    {
+      "fixture_id": "SYN-PKG-008",
+      "container": "CAB",
+      "update_id": "SYN-UPDATE-008",
+      "kb": "KB9000008",
+      "products": [
+        "SYN-PROD-99"
+      ],
+      "architecture": "x86",
+      "payload_kind": "unsupported-product",
+      "files": [
+        {
+          "name": "clfs.sys",
+          "sha256": "9999999999999999999999999999999999999999999999999999999999999999"
+        }
+      ]
+    }
+  ]
+}

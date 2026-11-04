@@ -1,0 +1,60 @@
+{
+  "contract": "kb-crash-fixture-points/1",
+  "status": "Test protocol only. The application companion-store injection seam was not present at the inspected branch path.",
+  "points": [
+    {
+      "id": "CRASH-01",
+      "name": "source_before_commit",
+      "expected": "Restart preserves the core project and yields a machine-readable pending or repairable context result; replay is idempotent.",
+      "verification": "Requires companion store implementation and subprocess integration; UNVERIFIED."
+    },
+    {
+      "id": "CRASH-02",
+      "name": "source_after_commit",
+      "expected": "Restart preserves the core project and yields a machine-readable pending or repairable context result; replay is idempotent.",
+      "verification": "Requires companion store implementation and subprocess integration; UNVERIFIED."
+    },
+    {
+      "id": "CRASH-03",
+      "name": "first_binary_verified",
+      "expected": "Restart preserves the core project and yields a machine-readable pending or repairable context result; replay is idempotent.",
+      "verification": "Requires companion store implementation and subprocess integration; UNVERIFIED."
+    },
+    {
+      "id": "CRASH-04",
+      "name": "both_binaries_verified",
+      "expected": "Restart preserves the core project and yields a machine-readable pending or repairable context result; replay is idempotent.",
+      "verification": "Requires companion store implementation and subprocess integration; UNVERIFIED."
+    },
+    {
+      "id": "CRASH-05",
+      "name": "project_created_before_attach",
+      "expected": "Restart preserves the core project and yields a machine-readable pending or repairable context result; replay is idempotent.",
+      "verification": "Requires companion store implementation and subprocess integration; UNVERIFIED."
+    },
+    {
+      "id": "CRASH-06",
+      "name": "sidecar_before_transaction_commit",
+      "expected": "Restart preserves the core project and yields a machine-readable pending or repairable context result; replay is idempotent.",
+      "verification": "Requires companion store implementation and subprocess integration; UNVERIFIED."
+    },
+    {
+      "id": "CRASH-07",
+      "name": "sidecar_after_commit_before_ack",
+      "expected": "Restart preserves the core project and yields a machine-readable pending or repairable context result; replay is idempotent.",
+      "verification": "Requires companion store implementation and subprocess integration; UNVERIFIED."
+    },
+    {
+      "id": "CRASH-08",
+      "name": "triage_before_store",
+      "expected": "Restart preserves the core project and yields a machine-readable pending or repairable context result; replay is idempotent.",
+      "verification": "Requires companion store implementation and subprocess integration; UNVERIFIED."
+    },
+    {
+      "id": "CRASH-09",
+      "name": "sidecar_migration_midflight",
+      "expected": "Restart preserves the core project and yields a machine-readable pending or repairable context result; replay is idempotent.",
+      "verification": "Requires companion store implementation and subprocess integration; UNVERIFIED."
+    }
+  ]
+}

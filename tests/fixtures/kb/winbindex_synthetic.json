@@ -1,0 +1,125 @@
+{
+  "contract": "kb-fixture-documents/1",
+  "format": "winbindex-style",
+  "schema_status": "UNVERIFIED: exact upstream field dialect not live-verified",
+  "disclaimer": "Synthetic metadata only. Hashes are deterministic-looking placeholders and are not hashes of binaries or real Winbindex entries.",
+  "records": [
+    {
+      "fixture_id": "SYN-WBI-001",
+      "file": "clfs.sys",
+      "fileInfo": {
+        "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "fileVersion": "10.0.26100.1001",
+        "machine": "amd64"
+      },
+      "windowsVersions": {
+        "24H2": {
+          "KB9000001": {
+            "version": "10.0.26100.1001",
+            "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "updateId": "SYN-UPDATE-001"
+          }
+        }
+      },
+      "update_ids": [
+        "SYN-UPDATE-001"
+      ],
+      "signature": null,
+      "expectation": "candidate metadata only"
+    },
+    {
+      "fixture_id": "SYN-WBI-002",
+      "file": "clfs.sys",
+      "fileInfo": {
+        "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "fileVersion": "10.0.26100.1002",
+        "machine": "amd64"
+      },
+      "windowsVersions": {
+        "24H2": {
+          "KB9000002": {
+            "version": "10.0.26100.1002",
+            "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "updateId": "SYN-UPDATE-002"
+          }
+        }
+      },
+      "update_ids": [
+        "SYN-UPDATE-002"
+      ],
+      "signature": "not-present",
+      "expectation": "missing signature stays unknown"
+    },
+    {
+      "fixture_id": "SYN-WBI-003",
+      "file": "clfs.sys",
+      "fileInfo": {
+        "sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "fileVersion": "10.0.26100.1003",
+        "machine": "arm64"
+      },
+      "windowsVersions": {
+        "24H2": {
+          "KB9000003": {
+            "version": "10.0.26100.1003",
+            "sha256": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+            "updateId": "SYN-UPDATE-003"
+          }
+        }
+      },
+      "update_ids": [
+        "SYN-UPDATE-003"
+      ],
+      "signature": null,
+      "expectation": "conflicting row and file hashes remain disputed"
+    },
+    {
+      "fixture_id": "SYN-WBI-004",
+      "file": "clfs.sys",
+      "fileInfo": {
+        "fileVersion": "10.0.26100.1004"
+      },
+      "windowsVersions": {
+        "24H2": {
+          "KB9000004": {
+            "version": "10.0.26100.1004",
+            "md5": "0123456789abcdef0123456789abcdef"
+          }
+        }
+      },
+      "update_ids": [
+        "SYN-UPDATE-004"
+      ],
+      "signature": null,
+      "expectation": "missing SHA-256 remains incomplete"
+    },
+    {
+      "fixture_id": "SYN-WBI-005",
+      "file": "clfs.sys",
+      "fileInfo": {
+        "sha256": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+        "fileVersion": "10.0.26100.1005"
+      },
+      "windowsVersions": {
+        "24H2": {
+          "KB9000005": {
+            "version": "10.0.26100.1005",
+            "sha256": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+            "updateId": "SYN-UPDATE-005"
+          },
+          "KB9000006": {
+            "version": "10.0.26100.1006",
+            "sha256": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+            "updateId": "SYN-UPDATE-006"
+          }
+        }
+      },
+      "update_ids": [
+        "SYN-UPDATE-005",
+        "SYN-UPDATE-006"
+      ],
+      "signature": "UNVERIFIED",
+      "expectation": "one file may have multiple update claims"
+    }
+  ]
+}
