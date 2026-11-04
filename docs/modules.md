@@ -1222,3 +1222,12 @@ Calls panel (id graph): `callgraph/panel.py` (PanelSpec), `panel_qt.py` (widgets
 - `gui/qt/host.py`: `PanelHost.investigation_dialog()` constructs the parented offline dialog and owns retained-path/adoption callbacks; MainWindow delegates without naming/importing a feature package.
 
 - `gui/qt/project_adoption.py`: `adopt_project(window, service)` owns the generic GUI transaction for service/render/preferences adoption and rollback; MainWindow.set_service stays a thin facade. Existing real-service entry regressions cover rollback and lock release.
+
+### [AF-0:wave1-ports] Autonomous finish wave 1 ports (2026-11-04)
+
+| Module | Files | Responsibility | Verification |
+|---|---|---|---|
+| Application mark (SPEC-52 WIN-1, from #147) | `src/patchtrace/app_icon.py`, `src/patchtrace/resources/patchtrace-mark.svg` | Owner mark rendered through QtSvg for window and build icons; package data | `tests/test_windows_build_resources.py` |
+| Windows executable identity (from #147) | `tools/windows_version_info.py`, `tools/windows_icon.py`, `tools/check_windows_exe.py` | Validated version fields, deterministic ICO, bounded read-back of the built exe's resources (no execution) | same; native Windows read-back is CI-only |
+| Rz-diff producer ownership research (from #165-#168) | `tools/rzdiff/{patch_producer.py,native_evidence.py,native_control.c,boundary_control.c,singleton-ownership.patch}` | Build-time LGPL patch against a pinned rizin checkout (never shipped), native red/green controls, evidence-log parsing | `tests/test_rzdiff_producer_patch.py`, `tests/test_rzdiff_native_evidence.py`; `rzdiff-producer.yml` (PR-only) |
+| Unified live-gate harness repairs (GT-01, from #138-#141) | `tools/unified/live_pairs.py`, `BackendConfig.force_identical_diff` | Commit completed runs before unified analysis, forced native A/A diff, per-pair failure sidecars | `tests/test_unified_live_*.py`; live result only from `unified-live-gates.yml` |
