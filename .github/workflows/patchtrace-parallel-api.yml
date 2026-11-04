@@ -48,6 +48,9 @@ jobs:
         if: steps.guard.outputs.ready == 'true'
         with:
           python-version: '3.12'
+      - name: Install Ubuntu Qt runtime dependencies
+        if: steps.guard.outputs.ready == 'true'
+        run: sudo apt-get update && sudo apt-get install -y libegl1 libopengl0 libgl1
       - name: Install QA dependencies
         if: steps.guard.outputs.ready == 'true'
         run: python -m pip install -e '.[dev]'
@@ -68,13 +71,12 @@ jobs:
       - name: Verify owned paths, Ruff, pytest, and patch
         if: steps.guard.outputs.ready == 'true'
         env:
-          GH_TOKEN: ${{ github.token }}
           PT_TASK: ${{ matrix.task }}
           QT_QPA_PLATFORM: offscreen
         shell: bash
         run: |
           set -euo pipefail
-          python tools/parallel_cloud/guard.py "$PT_TASK" --post
+          python tools/parallel_cloud/guard.py "$PT_TASK" --post --no-ownership
           python -m ruff check src tests tools
           timeout 900s python -m pytest -q
           git diff --check
@@ -105,6 +107,7 @@ jobs:
     permissions:
       contents: write
       pull-requests: write
+      actions: write
     steps:
       - uses: actions/checkout@v4
         with:
@@ -143,6 +146,7 @@ jobs:
           git apply --binary received/parallel.patch
       - name: Open independent draft PR for required cross-platform QA
         if: steps.guard.outputs.ready == 'true'
+        id: publish
         uses: peter-evans/create-pull-request@v7
         with:
           token: ${{ secrets.PATCHTRACE_GITHUB_TOKEN || github.token }}
@@ -161,3 +165,13 @@ jobs:
             Draft deliberately requires independent Linux and Windows QA, SonarCloud,
             CodeRabbit, review and branch protections before any human/guarded integration.
           draft: true
+      - name: Dispatch independent Linux and Windows QA
+        if: steps.publish.outputs.pull-request-branch != ''
+        env:
+          GH_TOKEN: ${{ secrets.PATCHTRACE_GITHUB_TOKEN || github.token }}
+          PR_BRANCH: ${{ steps.publish.outputs.pull-request-branch }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          gh workflow run qa-windows.yml --ref "$PR_BRANCH"
+          echo "Dispatched cross-platform QA for $PR_BRANCH" >> "$GITHUB_STEP_SUMMARY"
