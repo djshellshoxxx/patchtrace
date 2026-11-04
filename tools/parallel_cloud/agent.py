@@ -163,6 +163,16 @@ def main():
             receipt["status"] = "no_source_or_test_seam"
             return 0
 
+        baseline_tests = [
+            item.partition("\n")[0][5:]
+            for item in context if item.startswith("FILE tests/")
+        ]
+        baseline = run_focused_tests(baseline_tests)
+        receipt["baseline_exit_code"] = baseline.returncode
+        if baseline.returncode != 0:
+            receipt["status"] = "baseline_tests_not_green"
+            return 0
+
         instructions = ("PatchTrace task: find one small, reproducible hardening/regression defect in "
                         + task + ". Respect AGENTS.md, no new scope, no network, no target binary execution. "
                         "Respond ONLY as JSON {\"files\":[{\"path\":\"existing/path.py\",\"content\":\"full UTF-8 content\"}]}. "
