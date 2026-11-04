@@ -64,6 +64,8 @@ class SourceSpec:                           # registry row (D-08); adding a sour
 
 ## 5. Diaphora (optional, out of process, user-installed; after DA-01 D3)
 
+Status (2026-11-04): built in `src/patchtrace/unified/sources/diaphora.py` and wired end to end (`--sources diaphora`, plan capture through `diaphora.service.stored_sets`, worker request files with SHA-256 and size, one content-bound `SourceRef` per set with version suffix `+ad1`). The heuristic text sets the evidence class E-DECOMP or E-CFG only when it names exactly one kind, else E-UNKNOWN (never corroborates). Limitations: `diaphora-external-ea-skipped:N`, `diaphora-ambiguous-address-skipped:N`, `diaphora-rva-out-of-range:N`, `diaphora-unverified-set`, `diaphora-unverified-rows:N`, `diaphora-pair-mismatch` (degrading), `diaphora-orientation-reversed`. Projects without a Diaphora set keep their result ids. Not validated: the heuristic-text mapping against real Diaphora output (no live Diaphora run).
+
 | Aspect | Specification |
 |---|---|
 | Inputs | DA-01 kinds `diaphora-matches` (`diaphora/1` sets) produced by DA-01's hardened importer; the unified adapter never opens `.diaphora` SQLite itself |
