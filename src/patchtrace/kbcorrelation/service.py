@@ -18,7 +18,7 @@ from dataclasses import asdict, dataclass, field
 from pathlib import Path
 from typing import Any, Protocol
 
-from pydantic import ValidationError
+from pydantic import TypeAdapter, ValidationError
 
 from . import components as comp
 from . import pairs as pr
@@ -32,6 +32,7 @@ from .contracts import (
     AnalystDecision,
     Coverage,
     CveCard,
+    CveId,
     InvestigationRevision,
     Lead,
     SearchScope,
@@ -147,6 +148,16 @@ def _fail(code: str, message: str) -> KbcStoreError:
 
 
 MIN_PAIR_PREFIX = 8
+_CARD_CVE = TypeAdapter(CveId)
+
+
+def _card_cve(cve: str) -> bool:
+    """True when ``cve`` fits the card ``CveId`` (at most 24 characters); ``kb-syntax/1`` accepts longer CVE ids."""
+    try:
+        _CARD_CVE.validate_python(cve)
+    except ValidationError:
+        return False
+    return True
 
 
 def parse_lead(raw: str) -> tuple[str, str]:
@@ -738,12 +749,15 @@ class KbService:
     def _applicability(self, index: ReverseIndex, ws: WorkspaceStore, cves: Iterable[str], older: str | None,
                        newer: str | None) -> dict[str, Mapping[str, Any]]:
         """CSAF applicability per CVE (KBF-03 s5.2) over EVERY loaded CSAF document, each parsed once, so a newer
-        revision that dropped a CVE supersedes the older claims; no CSAF document loaded asks nothing."""
+        revision that dropped a CVE supersedes the older claims; no CSAF document loaded asks nothing. Only a CVE that
+        fits the card ``CveId`` is asked: a longer ``kb-syntax/1`` CVE can have no card, so it keeps the fixed text
+        and the attach does not fail on it."""
+        asked = [cve for cve in sorted(set(cves)) if _card_cve(cve)]
         facts = [self.env.advisory.parse_csaf(ws.read_object(doc.source.sha256), source_sha256=doc.source.sha256)
-                 for doc in index.documents if doc.source.kind == 'csaf']
+                 for doc in index.documents if doc.source.kind == 'csaf'] if asked else []
         if not facts:
             return {}
-        return {cve: self.env.advisory.report_for(cve, facts, older, newer) for cve in sorted(set(cves))}
+        return {cve: self.env.advisory.report_for(cve, facts, older, newer) for cve in asked}
 
     def _attach_outcome(self, outcome, investigation_id: str, pair, plan_sha: str, context_key: str) -> Outcome:
         link = outcome.value

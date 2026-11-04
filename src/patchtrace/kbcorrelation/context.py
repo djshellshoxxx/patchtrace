@@ -44,8 +44,10 @@ HOOKS = ('kb.meaning.coverage', 'kb.meaning.hypothesis', 'kb.meaning.kev', 'kb.m
 LIMITATION = ('The context records what advisory documents state and which checks could not be made; it does not '
               'show that any changed function addresses a vulnerability.')
 APPLICABILITY = 'unknown (no loaded document states applicability to these two files)'
-CSAF_APPLICABILITY = ('{assessment}: older file {older}, newer file {newer}, restated from CSAF {sources}; any '
-                      'file-hash mapping is a candidate, not verified')
+# The fixed qualifier comes before the (long) source list, so any later cut, such as the 500-character Leads
+# applicability chip, keeps it.
+CSAF_APPLICABILITY = ('{assessment}: older file {older}, newer file {newer}; any file-hash mapping is a candidate, '
+                      'not verified; restated from CSAF {sources}')
 _VULN = re.compile(r'^(/vulnerabilities/[0-9]+)')
 
 
@@ -144,7 +146,8 @@ def context_key(*, investigation_id: str, base_revision: int, edge_set_digest: s
 
 def applicability_text(report: Mapping[str, Any]) -> str:
     """The card text of a ``kbc-csaf-applicability/1`` report with an ``applicability`` (KBF-03 s5.2). Each part is
-    bounded on its own so the fixed candidate-mapping clause always survives hostile advisory text."""
+    bounded on its own and the fixed candidate-mapping clause ends within the first 200 characters, so it survives
+    hostile advisory text and any display cut of at least that length (the Leads chip keeps 500)."""
     sides = report['applicability']
     sources = sorted({f'{s["tracking_id"]} revision {s["revision"]}' + (' (superseded)' if s['superseded'] else '')
                       for s in report['sources']})

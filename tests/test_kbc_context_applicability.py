@@ -24,6 +24,7 @@ from patchtrace.kbcorrelation import wiring
 from patchtrace.kbcorrelation.context import APPLICABILITY, build_bundle
 from patchtrace.kbcorrelation.contracts import Lead
 from patchtrace.kbcorrelation.index import ReverseIndex
+from patchtrace.kbcorrelation.leads import _chip
 from patchtrace.kbcorrelation.sources.importer import import_bytes
 from patchtrace.kbcorrelation.store import WorkspaceStore
 from patchtrace.sample import synthetic_pe
@@ -42,8 +43,10 @@ RULES = wiring.IntelligenceRules()
 # The CVRF-only bundle of ``cvrf_only`` as built BEFORE build_bundle read CSAF applicability (base 9451d7e).
 PINNED_KEY = '9df959f74598a6ff4f05df78f587601d3ed293795b9f9076e75ba70335bba183'
 PINNED_DUMP_SHA256 = '5b1f9deeb44c54f727b1b925d0151715a449745828712affcf49554a731896db'
-CLAIM = (f'advisory-claim: older file affected, newer file fixed, restated from CSAF {TRACKING} revision 1; any '
-         'file-hash mapping is a candidate, not verified')
+CLAIM = ('advisory-claim: older file affected, newer file fixed; any file-hash mapping is a candidate, not verified; '
+         f'restated from CSAF {TRACKING} revision 1')
+QUALIFIER = 'any file-hash mapping is a candidate, not verified'
+LONG_CVE = 'CVE-2099-1234567890123456789'  # kb-syntax/1 (4-19 digits) but longer than the 24-character card CveId
 WITHDRAWN = (f'{CVE} (CSAF): a current CSAF revision no longer lists {CVE}; the earlier statements are superseded '
              'and nothing replaces them')
 
@@ -115,8 +118,8 @@ def test_hash_tied_files_restate_the_csaf_claim_as_a_candidate_mapping():
 def test_a_revision_that_drops_the_cve_is_unknown_and_says_so_never_affected():
     claimed = bundle(index_of(REV1), applicability=reports([facts(REV1), facts(GONE)]))
     text = claimed.context.cards[0].applicability
-    assert text == (f'unknown: older file unknown, newer file unknown, restated from CSAF {TRACKING} revision 1 '
-                    f'(superseded), {TRACKING} revision 2; any file-hash mapping is a candidate, not verified')
+    assert text == ('unknown: older file unknown, newer file unknown; any file-hash mapping is a candidate, not '
+                    f'verified; restated from CSAF {TRACKING} revision 1 (superseded), {TRACKING} revision 2')
     assert 'affected' not in text and 'fixed' not in text
     unknowns = claimed.context.unknowns
     assert unknowns.count(WITHDRAWN) == 1
@@ -175,6 +178,23 @@ def test_hostile_report_text_is_cleaned_and_bounded():
     assert built.context.cards[0].applicability.startswith('advisory-claim: older file affected, newer file fixed')
 
 
+@pytest.mark.parametrize('kind', ['many', 'long'], ids=['many', 'long'])
+def test_the_leads_chip_keeps_the_candidate_qualifier_whatever_the_source_list(kind):
+    """The Leads applicability chip cuts the card text to 500 characters; the fixed qualifier must survive it."""
+    sources = ([{'tracking_id': f'VENDOR-SA-2099-00{n:02d}', 'revision': f'1.0.{n}', 'superseded': False}
+                for n in range(16)] if kind == 'many' else
+               [{'tracking_id': 'T' * 1000, 'revision': '1' * 40, 'superseded': True}])
+    hostile = 'x' * (0 if kind == 'many' else 2000)
+    report = {'cve': CVE, 'assessment': 'advisory-claim' + hostile, 'unknowns': [],
+              'applicability': {'older': {'resolution': 'affected' + hostile},
+                                'newer': {'resolution': 'fixed' + hostile}}, 'sources': sources}
+    text = bundle(index_of(REV1), applicability={CVE: report}).context.cards[0].applicability
+    assert len(text) <= 1000 and QUALIFIER in text
+    chip = _chip('applicability', 'unknown', text)
+    assert chip.state == 'unknown' and QUALIFIER in chip.text
+    assert chip.text.startswith('advisory-claim')
+
+
 def _workspace(tmp_path, fault=None):
     """A KB workspace holding the KB variant of rev1 whose file hashes are the two synthetic PE files."""
     shas = tuple(hashlib.sha256(synthetic_pe(variant)).hexdigest() for variant in (0, 1))
@@ -212,3 +232,21 @@ def test_a_repaired_context_carries_the_same_csaf_claim(tmp_path):
     explained = fresh.explain(str(project), CVE)
     assert explained.result['cves'][0]['card']['applicability'] == CLAIM
     assert f'  Applicability: {CLAIM}; ' in explained.text
+
+
+@pytest.mark.parametrize('repair', [False, True], ids=['attach', 'repair'])
+def test_a_cve_lead_longer_than_a_card_cve_still_attaches_with_csaf_loaded(tmp_path, repair):
+    """A kb-syntax/1 CVE that cannot be a card CVE gets no CSAF report: the attach completes as before."""
+    service, _, older, newer = _workspace(tmp_path, fault=_StopBeforeRow() if repair else None)
+    inv = service.search(LONG_CVE).result['investigation_id']
+    project = tmp_path / 'P'
+    attached = service.import_pair(inv, older, newer, str(project))
+    if repair:
+        assert attached.exit == 3
+        service = wiring.build_service(service.root, clock=FixedClock())
+        attached = service.attach(str(project), inv, repair_it=True)
+    assert attached.exit == 0
+    built = service._project_bundles(str(project))[-1]
+    assert built.context.cards == ()
+    assert f'{LONG_CVE} has no advisory text in the loaded documents; no interpretation was made.' \
+        in built.context.unknowns
