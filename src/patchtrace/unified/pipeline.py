@@ -93,6 +93,7 @@ __all__ = ['ALL_SOURCES', 'PlacedIr', 'Plan', 'RunReport', 'StageEvent', 'Unifie
 
 SECONDARY_ENGINES = ('bindiff', 'rz-diff')
 MODE_S0, MODE_IR = 's0', 'ir'
+WORKER_GRACE_S = 30   # the child's own deadline precedes the parent's kill by this much (at most a quarter of the timeout)
 RUN_STATUS = {'PT-UNIFIED-CANCEL': 'cancelled', 'PT-UNIFIED-TIMEOUT': 'timeout', 'PT-UNIFIED-UNSUPPORTED': 'unsupported'}
 IR_ASYMMETRIC = ('The ProgramIR of the two sides was produced differently (producer, mode, options or symbols), so '
                  'the result uses stored engine outputs only.')
@@ -454,6 +455,14 @@ def prepare(service, options: UnifiedOptions | None = None, *, limits: UnifiedLi
 
 # --- execute (no SQLite; any thread) ------------------------------------------------------------------------------
 
+def worker_budget_seconds(timeout_s: int) -> int:
+    """The deadline the child works to. The parent kills the process tree at `timeout_s` after the spawn, but the
+    child's clock starts only after its interpreter booted and its inputs were read, so an equal budget would always
+    lose that race and U7-06's partial result (a spent deadline after the ladder) could never be written; the child
+    therefore stops `WORKER_GRACE_S` earlier (at most a quarter of the timeout)."""
+    return max(1, timeout_s - min(WORKER_GRACE_S, timeout_s // 4))
+
+
 def _write_request(request: UnifiedRequest, private: Path) -> Path:
     plan = request.plan
     snapshot_path = private / 'matches.jsonl'
@@ -475,7 +484,7 @@ def _write_request(request: UnifiedRequest, private: Path) -> Path:
         snapshot=WorkerFile(path=str(snapshot_path), sha256=digest, size=size), snapshot_lines=lines,
         secondary=tuple(files), sources=plan.sources,  # type: ignore[arg-type]
         report_path=str(private / 'report.json'), progress_path=str(private / 'progress.json'),
-        budget_seconds=request.timeout_s, residual=plan.residual, **_ir_fields(request))
+        budget_seconds=worker_budget_seconds(request.timeout_s), residual=plan.residual, **_ir_fields(request))
     request_path = private / 'request.json'
     request_path.write_text(req.model_dump_json(), encoding='utf-8')
     return request_path
