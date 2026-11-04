@@ -6,7 +6,8 @@ usage: bundle_acceptance.py BUNDLE_ROOT --older P --newer P --expect-function NA
 BUNDLE_ROOT is the extracted release artifact (the folder holding the launcher and `backend/`). Steps, in order:
   1 scrub     minimal environment, no java/python on PATH, no JAVA_HOME/GHIDRA_INSTALL_DIR/PYTHON*
   2 digest    SHA-256 tree digest of `backend/` (before)
-  3 readonly  `backend/` made read-only (chmod a-w; icacls deny on Windows)
+  3 readonly  `backend/` made read-only (chmod a-w; icacls deny of write/delete rights on Windows), with the
+              bundle's python started (`-I -c print(1)`) before and after the lock; Windows checks the lock here
   4 control   socket probe with the bundle's own python MUST succeed before the block (positive control)
   5 block     Linux: `unshare --net` (+ setpriv, env -i); Windows: outbound firewall rules per program
   6 control   the same probe MUST now fail, otherwise the denial is not proven and the run fails
@@ -18,6 +19,8 @@ The pure helpers carry the unit tests (tests/test_bundle_acceptance_unit.py). Th
 only in CI (`backend-bundle.yml`, B5b) on a release artifact; locally the `--dry-run` mode and the unit tests use
 a fake bundle and a loopback listener as the control target, which proves the harness logic and the Linux
 namespace denial but nothing about the real Ghidra/JDK payload. Nothing here executes the target binaries.
+The evidence is always complete: a failing step stops the run with cleanup (firewall rules, ACL deny, modes) in
+`finally`, an unexpected exception becomes the step `harness-exception`, and `main` writes `--evidence` in `finally`.
 """
 from __future__ import annotations
 
@@ -31,6 +34,8 @@ import subprocess
 import sys
 import tempfile
 import threading
+import time
+import traceback
 from collections.abc import Callable, Iterable, Sequence
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -42,6 +47,9 @@ FORBIDDEN_ENV = frozenset({'JAVA_HOME', 'JDK_HOME', 'JRE_HOME', 'GHIDRA_INSTALL_
 FORBIDDEN_PREFIXES = ('PYTHON', 'JAVA', 'GHIDRA', 'PIP_')
 FORBIDDEN_TOOLS = ('java', 'javaw', 'python', 'python3', 'pythonw')
 PROBE_TIMEOUT = 5.0
+HOST_TIMEOUT = 120.0
+DETAIL_LIMIT = 400
+EXEC_PROBE = ('-I', '-c', 'print(1)')
 SAMPLE_INTERVAL = 0.5
 UNICODE_DIRNAME = 'Patch Trace \u00e9\u4e2d'
 
@@ -164,8 +172,10 @@ def writable_probe(root: Path) -> bool:
 
 
 def windows_readonly_command(root: str, account: str, deny: bool = True) -> list[str]:
+    """Deny only the write and delete rights. The generic `W` would include SYNCHRONIZE, and a SYNCHRONIZE deny
+    inherited by python.exe makes CreateProcess fail with WinError 5 (run 38676664372)."""
     if deny:
-        return ['icacls', root, '/deny', f'{account}:(OI)(CI)(W,D,DC)']
+        return ['icacls', root, '/deny', f'{account}:(OI)(CI)(WD,AD,WEA,WA,DE,DC)']
     return ['icacls', root, '/remove:d', account, '/T']
 
 
@@ -394,8 +404,73 @@ def _run_monitored(argv: Sequence[str], env: dict[str, str], timeout: float, os_
     return subprocess.CompletedProcess(argv, proc.returncode, stdout, stderr), monitor
 
 
-def _tail(proc: subprocess.CompletedProcess, n: int = 400) -> str:
+def _tail(proc: subprocess.CompletedProcess, n: int = DETAIL_LIMIT) -> str:
     return ((proc.stdout or '') + (proc.stderr or ''))[-n:].strip()
+
+
+def _since(start: float) -> float:
+    return round(time.monotonic() - start, 3)
+
+
+def _exception_tail() -> str:
+    """The end of the current traceback (where it failed), bounded like every other step detail."""
+    return traceback.format_exc()[-DETAIL_LIMIT:].strip()
+
+
+HostRun = Callable[..., subprocess.CompletedProcess]
+
+
+def _host_failure(host_run: HostRun, argv: list[str]) -> str:
+    """'' when an icacls/firewall command exited 0, otherwise a bounded reason (exit code and output, or the
+    exception). The OEM code page of these tools must never turn into a decoding crash."""
+    try:
+        proc = host_run(argv, capture_output=True, text=True, encoding='utf-8', errors='replace',
+                        timeout=HOST_TIMEOUT, check=False)
+    except Exception as exc:  # a missing tool or a timeout is a red step, never a crash
+        return f'{type(exc).__name__}: {exc}'[:DETAIL_LIMIT]
+    return '' if proc.returncode == 0 else f'exit {proc.returncode}: {_tail(proc)}'[:DETAIL_LIMIT]
+
+
+def exec_probe(ev: Evidence, name: str, py: Path, env: dict[str, str]) -> bool:
+    """The bundle's python must start under the scrubbed environment and print 1. A spawn error (the WinError 5 of
+    a deny ACE that blocks process creation) is this step's failure, not a harness crash."""
+    argv = [str(py), *EXEC_PROBE]
+    start = time.monotonic()
+    try:
+        proc = _run(argv, env, 30)
+    except (OSError, subprocess.SubprocessError) as exc:
+        return ev.add(name, False, f'{type(exc).__name__}: {exc}'[:DETAIL_LIMIT], argv=argv, duration_s=_since(start))
+    return ev.add(name, proc.returncode == 0 and (proc.stdout or '').strip() == '1',
+                  f'exit {proc.returncode}: {_tail(proc)}', returncode=proc.returncode, argv=argv,
+                  duration_s=_since(start))
+
+
+def block_windows(ev: Evidence, root: Path, host_run: HostRun, undo: list[list[str]]) -> bool:
+    """One outbound block rule per program. Each removal is registered before its add, so a rule that a failing or
+    timed-out command half-created is removed in `finally` too; a failure is the step `firewall-block`."""
+    programs = windows_programs(root)
+    add, remove = windows_firewall_commands(programs)
+    start = time.monotonic()
+    for done, (cmd, undo_cmd) in enumerate(zip(add, remove, strict=True), 1):
+        undo.append(undo_cmd)
+        failure = _host_failure(host_run, cmd)
+        if failure:
+            return ev.add('firewall-block', False, failure, commands=add[:done], duration_s=_since(start))
+    return ev.add('firewall-block', True, f'{len(add)} outbound block rules', commands=add, programs=programs,
+                  duration_s=_since(start))
+
+
+def _cleanup(ev: Evidence, os_name: str, backend: Path, account: str, locked: bool, undo: list[list[str]],
+             host_run: HostRun) -> None:
+    """Spec s7.4: firewall rules and the ACL deny are removed (and Linux modes restored) whenever they were
+    attempted. Every command runs even if one fails; failures are the step `cleanup`."""
+    failures = [_host_failure(host_run, cmd) for cmd in undo]
+    if locked and os_name == 'windows':
+        failures.append(_host_failure(host_run, windows_readonly_command(str(backend), account, deny=False)))
+    if locked and os_name == 'linux':
+        set_tree_readonly(backend, False)
+    if any(failures):
+        ev.add('cleanup', False, '; '.join(f for f in failures if f)[:DETAIL_LIMIT])
 
 
 def selftest_argv(launcher: Path, older: Path, newer: Path, expect: str) -> list[str]:
@@ -411,15 +486,32 @@ def ghidriff_argv(python: Path, older: Path, newer: Path, out: Path, scratch: Pa
 def run_acceptance(root: Path, older: Path, newer: Path, expect_function: str, *, os_name: str | None = None,
                    launcher: Path | None = None, control: tuple[str, int] = ('1.1.1.1', 443),
                    run_uid: int | None = None, run_gid: int | None = None, dry_run: bool = False,
-                   work: Path | None = None, step_timeout: float = 3600.0) -> Evidence:
+                   work: Path | None = None, step_timeout: float = 3600.0, host_run: HostRun = subprocess.run,
+                   evidence: Evidence | None = None) -> Evidence:
+    """Run the spec s3 steps and always return the evidence: a failing step stops the run, any exception becomes
+    the step `harness-exception`, and cleanup runs in `finally` either way. `host_run` executes the icacls and
+    firewall commands; `evidence` lets the caller keep the partial steps even if a BaseException escapes."""
     os_name = os_name or host_os()
     root = root.resolve()
-    ev = Evidence(os_name, str(root), dry_run=dry_run)
+    ev = evidence if evidence is not None else Evidence(os_name, str(root))
+    ev.os_name, ev.root, ev.dry_run = os_name, str(root), dry_run
+    try:
+        _acceptance_steps(ev, root, older, newer, expect_function, os_name=os_name, launcher=launcher,
+                          control=control, run_uid=run_uid, run_gid=run_gid, dry_run=dry_run, work=work,
+                          step_timeout=step_timeout, host_run=host_run)
+    except Exception:  # the evidence must name the failure, not vanish with a traceback (run 38676664372)
+        ev.add('harness-exception', False, _exception_tail())
+    return ev
+
+
+def _acceptance_steps(ev: Evidence, root: Path, older: Path, newer: Path, expect_function: str, *, os_name: str,
+                      launcher: Path | None, control: tuple[str, int], run_uid: int | None, run_gid: int | None,
+                      dry_run: bool, work: Path | None, step_timeout: float, host_run: HostRun) -> None:
     backend, py = root / 'backend', bundle_python(root, os_name)
     launcher = launcher or default_launcher(root, os_name)
     if not (backend / 'manifest.json').is_file() or not py.is_file() or not launcher.is_file():
         ev.add('layout', False, f'need backend/manifest.json, {py.name} and the launcher under {root}')
-        return ev
+        return
     ev.add('layout', True)
     ev.add('path-shape', dry_run or path_is_hostile(str(root)),
            'extract the artifact to a path with a space and a non-ASCII character')
@@ -444,66 +536,91 @@ def run_acceptance(root: Path, older: Path, newer: Path, expect_function: str, *
     run_env['GHIDRA_INSTALL_DIR'] = str(backend / 'payload' / 'ghidra')
     uid = os.getuid() if run_uid is None and os_name == 'linux' else (run_uid or 0)
     gid = os.getgid() if run_gid is None and os_name == 'linux' else (run_gid or 0)
-    firewall_added: list[list[str]] = []
+    account = os.environ.get('USERNAME', 'Users')
+    locked, undo = False, []
     try:
+        if not exec_probe(ev, 'exec-before-readonly', py, env):
+            return
+        locked, lock_argv, lock_failure = True, [], ''
+        start = time.monotonic()
         if os_name == 'linux':
             set_tree_readonly(backend, True)
         else:
-            subprocess.run(windows_readonly_command(str(backend), os.environ.get('USERNAME', 'Users')), check=False)
+            lock_argv = windows_readonly_command(str(backend), account)
+            lock_failure = _host_failure(host_run, lock_argv)
+        lock_s = _since(start)
+        if not exec_probe(ev, 'exec-after-readonly', py, env):
+            return
+        if os_name == 'windows':
+            writable = writable_probe(backend)
+            ev.add('readonly-effective', not lock_failure and not writable,
+                   lock_failure or ('write probe succeeded: the deny is not effective' if writable
+                                    else 'write probe denied'), argv=lock_argv, duration_s=lock_s)
         probe = [str(py), '-I', '-c', probe_code(*control)]
+        start = time.monotonic()
         base = _run(probe, env, 30)
         before_ok = base.returncode == 0 and 'CONNECTED' in base.stdout
-        ev.add('control-before', before_ok, _tail(base), target=f'{control[0]}:{control[1]}')
+        ev.add('control-before', before_ok, _tail(base), target=f'{control[0]}:{control[1]}', argv=probe,
+               duration_s=_since(start))
 
         wrap: Callable[[Sequence[str], dict[str, str]], list[str]]
         if os_name == 'linux':
             def wrap(argv, e):
                 return linux_denial_argv(argv, e, uid, gid, sudo=os.getuid() != 0 and not dry_run)
         else:
-            add, remove = windows_firewall_commands(windows_programs(root))
-            for cmd in add:
-                subprocess.run(cmd, check=True)
-            firewall_added = remove
+            if not block_windows(ev, root, host_run, undo):
+                return
             wrap = lambda argv, e: list(argv)  # noqa: E731
 
+        start = time.monotonic()
         after = _run(wrap(probe, env), env, 60)
         after_ok = after.returncode == 0 and 'CONNECTED' in after.stdout
         verdict = control_verdict(before_ok, after_ok)
-        ev.add('control-after', verdict == 'proven', _tail(after) or verdict, verdict=verdict)
+        ev.add('control-after', verdict == 'proven', _tail(after) or verdict, verdict=verdict, argv=probe,
+               duration_s=_since(start))
         if verdict != 'proven':
-            return ev
+            return
         if os_name == 'linux':
+            start = time.monotonic()
             ev.add('readonly-effective', dry_run or not writable_probe_as(backend, uid, gid, env, wrap),
-                   'run as a non-owner (--run-uid/--run-gid) so the tree is not writable; advisory in dry run')
+                   'run as a non-owner (--run-uid/--run-gid) so the tree is not writable; advisory in dry run',
+                   argv=[] if dry_run else write_probe_argv(backend), duration_s=_since(start))
 
         steps = [('backend-verify-full', [str(launcher), 'backend', 'verify', '--full', '--json'], run_env),
                  ('backend-selftest', selftest_argv(launcher, older, newer, expect_function), run_env)]
         for name, argv, e in steps:
+            start = time.monotonic()
             proc = _run(wrap(argv, e), e, step_timeout)
-            ev.add(name, proc.returncode == 0, f'exit {proc.returncode}: {_tail(proc)}', returncode=proc.returncode)
+            ev.add(name, proc.returncode == 0, f'exit {proc.returncode}: {_tail(proc)}', returncode=proc.returncode,
+                   argv=argv, duration_s=_since(start))
         gout = work / 'out'
         gcmd = ghidriff_argv(py, older, newer, gout, work / 'ghidriff-scratch')
+        start = time.monotonic()
         gproc, monitor = _run_monitored(wrap(gcmd, run_env), run_env, step_timeout, os_name)
         results = sorted(p.name for p in gout.rglob('*.ghidriff.json'))
         ev.add('ghidriff-compare', gproc.returncode == 0 and bool(results),
-               f'exit {gproc.returncode}; results={results}; {_tail(gproc)}', returncode=gproc.returncode)
+               f'exit {gproc.returncode}; results={results}; {_tail(gproc)}', returncode=gproc.returncode,
+               argv=gcmd, duration_s=_since(start))
         ev.add('no-external-connections', not monitor.seen,
                f'{monitor.polls} polls; seen={sorted(monitor.seen)}', polls=monitor.polls)
     finally:
-        for cmd in firewall_added:
-            subprocess.run(cmd, check=False)
-        if os_name == 'linux':
-            set_tree_readonly(backend, False)
+        _cleanup(ev, os_name, backend, account, locked, undo, host_run)
     after_digest = tree_digest(backend)
     ev.add('digest-after-equal', after_digest == before, after_digest, digest=after_digest)
-    return ev
+
+
+WRITE_PROBE = ('import sys\ntry:\n open(sys.argv[1]+"/.pt-write-probe","wb").close()\n'
+               ' import os;os.unlink(sys.argv[1]+"/.pt-write-probe")\n print("WROTE")\nexcept OSError:\n print("DENIED")\n')
+
+
+def write_probe_argv(backend: Path) -> list[str]:
+    """The argv run as the run identity; recorded unwrapped (the isolation wrapper carries env assignments)."""
+    return [sys.executable, '-I', '-c', WRITE_PROBE, str(backend)]
 
 
 def writable_probe_as(backend: Path, uid: int, gid: int, env: dict[str, str], wrap) -> bool:
     """True when the run identity can write into backend/ (read-only is then only proven by the digest)."""
-    code = ('import sys\ntry:\n open(sys.argv[1]+"/.pt-write-probe","wb").close()\n import os;os.unlink(sys.argv[1]+"/.pt-write-probe")\n'
-            ' print("WROTE")\nexcept OSError:\n print("DENIED")\n')
-    proc = _run(wrap([sys.executable, '-I', '-c', code, str(backend)], env), env, 30)
+    proc = _run(wrap(write_probe_argv(backend), env), env, 30)
     return 'WROTE' in (proc.stdout or '')
 
 
@@ -551,11 +668,19 @@ def main(argv: Sequence[str] | None = None) -> int:
     except ValueError as exc:
         print(exc, file=sys.stderr)
         return 2
-    ev = run_acceptance(args.root, args.older, args.newer, args.expect_function, launcher=args.launcher,
-                        control=target, run_uid=args.run_uid, run_gid=args.run_gid, dry_run=args.dry_run)
-    text = ev.to_json()
-    if args.evidence:
-        args.evidence.write_text(text + '\n', encoding='utf-8')
+    ev = Evidence(host_os(), str(args.root), dry_run=args.dry_run)
+    try:
+        ev = run_acceptance(args.root, args.older, args.newer, args.expect_function, launcher=args.launcher,
+                            control=target, run_uid=args.run_uid, run_gid=args.run_gid, dry_run=args.dry_run,
+                            evidence=ev)
+    except BaseException as exc:  # recorded, so a partial file is never ok; an interrupt still propagates
+        ev.add('harness-exception', False, _exception_tail())
+        if not isinstance(exc, Exception):
+            raise
+    finally:  # even an interrupt leaves the evidence file that the workflow uploads
+        text = ev.to_json()
+        if args.evidence:
+            args.evidence.write_text(text + '\n', encoding='utf-8', newline='\n')
     print(text)
     return 0 if ev.ok else 1
 
