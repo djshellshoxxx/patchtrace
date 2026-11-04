@@ -88,9 +88,9 @@ STATE_TEXT: dict[str, str] = {
 }
 STALE_REASONS: dict[str, str] = {
     'older_sha256': 'the older artifact changed', 'newer_sha256': 'the newer artifact changed',
-    'orientation': 'the comparison direction changed', 'ghidriff_raw_sha256': 'the Ghidriff run changed',
+    'orientation': 'the comparison direction changed', 'ghidriff_raw_sha256': 'the Ghidriff raw output changed',
     'ir_older_digest': 'the older ProgramIR changed', 'ir_newer_digest': 'the newer ProgramIR changed',
-    'sources': 'the stored engine results changed', 'manual_digest': 'a manual correction changed the inputs',
+    'sources': 'a stored engine result was added, removed, updated or its status changed', 'manual_digest': 'a manual correction changed the inputs',
     'config_digest': 'the engine configuration changed'}
 STALE_FALLBACK = 'the project changed after this result was computed'
 

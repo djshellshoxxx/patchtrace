@@ -297,7 +297,7 @@ class UnifiedCodeView(QWidget):
             self.mode.addItem(CODE_MODES[channel], channel)
         self.previous_hunk = _button('Previous change', 'unified.code_prev', 'unified.code_prev')
         self.next_hunk = _button('Next change', 'unified.code_next', 'unified.code_next')
-        self.hunk_label = PlainLabel(limit=120)
+        self.hunk_label = PlainLabel(limit=120, elide=False)   # never cut mid-word: 'No changes' stays readable
         self.hunk_label.setAccessibleName('')       # empty, so a setText announces itself (C6 s1.8)
         self.status = PlainLabel(wrap=True, limit=600)
         self.status.setAccessibleName('')
@@ -502,8 +502,12 @@ class UnifiedPanel(QWidget):
         splitter.addWidget(self.table)
         splitter.addWidget(lower)
         splitter.addWidget(self.code)
-        splitter.setStretchFactor(0, 2)
-        splitter.setStretchFactor(2, 2)
+        self.table.setMinimumHeight(self.table.fontMetrics().height() * 8)     # a table of rows, not a strip
+        lower.setMinimumHeight(self.detail.fontMetrics().height() * 4 + self.copy_button.sizeHint().height())
+        splitter.setChildrenCollapsible(False)
+        splitter.setStretchFactor(0, 4)     # the table takes the space while no row is selected
+        splitter.setStretchFactor(1, 1)
+        splitter.setStretchFactor(2, 3)
         layout = QVBoxLayout(self)
         layout.addWidget(self.header)
         layout.addLayout(top)

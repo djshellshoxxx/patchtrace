@@ -141,3 +141,23 @@ def test_search_by_address_still_finds_a_group_row_with_long_names(tmp_path):
     assert vm.rows
     for rva in (0x1050, 0x9000):                                     # the last older address and the newer one
         assert read_model.filter_rows(vm.rows, search=f'0x{rva:x}', materialities=read_model.MATERIALITIES) == [0]
+
+
+def test_the_stale_reason_names_what_changed_without_a_generic_claim():
+    assert 'status changed' in read_model.stale_reason_text(['sources'])
+    assert read_model.stale_reason_text(['ghidriff_raw_sha256']) == 'the Ghidriff raw output changed'
+
+
+def test_the_table_keeps_room_and_the_hunk_label_is_not_elided(qtbot):
+    from patchtrace.ui_unified import UnifiedPanel
+    panel = UnifiedPanel()
+    qtbot.addWidget(panel)
+    panel.resize(520, 700)
+    panel.show()
+    QApplication.processEvents()
+    assert panel.table.height() >= panel.table.fontMetrics().height() * 8
+    assert panel.table.height() > panel.detail.height()
+    label = panel.code.hunk_label
+    label.setText('No changes')
+    QApplication.processEvents()
+    assert label.width() >= label.fontMetrics().horizontalAdvance('No changes')
