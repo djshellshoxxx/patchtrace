@@ -936,3 +936,12 @@ Done: dock with state matrix, consent, import, changes, copy, go to CVE. Open: r
 - [ ] SonarCloud "Security Rating on New Code: C" on PR #180: the issue list is on sonarcloud.io, unreachable from the agent session; needs the rule and file from the owner
 - [ ] Deferred Low findings listed in each audit record (FUS-07/08/10, GUI-11..13, irx-15..19, LAD-7..9, COR-07)
 - [ ] BLOCKED live: G-U1..G-U8 never ran live (PR #174), BinDiff pin, Windows frozen bench and the largest Tier R pair (G-U5), real Diaphora output for the heuristic-class mapping, Windows screen-reader/DPI passes
+
+### [UE-AUD-20261104:facts-and-integration] Facts audit, SPEC-51, report/2 wiring (2026-11-04, PR #180)
+- [x] Facts and proofs (fct): FCT-01 conditional tail call came out COS-LAYOUT/1, FCT-02 an unresolved target counted as mapped, FCT-03 register-only did not block COS-PSEUDO/1 (three false `cosmetic` verdicts, High); FCT-04..09 Medium; FCT-10 a C scope table over the cap read as handler-only, so EH-EQ let UNCH/1 through (fixed, `INGEST_REVISION=3`); rule versions C1, C2, DATA-MAP, COS-LAYOUT/1, COS-PSEUDO/1 moved to 2 so pre-fix verdicts are recomputed (`docs/audits/20261104-unified-fct.md`)
+- [x] SPEC-51 D2-3 (DER, embedded Authenticode structure and digest), D2-5 (compare rows, `inspect` CLI, Version and signing tab), D2-6 (RSA signature math, chain not evaluated)
+- [ ] SPEC-51 D2-4 Windows catalog and consented revocation: built against fakes only; BLOCKED until a Windows CI run reads a catalog-signed system DLL in place
+- [ ] SPEC-51 7.6 persistence: `pe_overview/cache.py` port exists, but the `pe-metadata` kind, its store adapter and the callers are not wired (needs owner-thread store access around the GUI metadata thread)
+- [x] report/2 data sources: engine evidence, advisories, build facts and leads read from stored producers (`report2/adapters.py`); unified reference uses the recorded run options; GUI export dialog wired through `ui_export_v2.py` (the `ui.py` seam budget holds); a report read path that wrote enrichment tables into `project.sqlite3` is fixed
+- [ ] report/2 `series` section: no project-scoped series record exists (N-way series live in their own folder); the section stays absent with a reason
+- [ ] Owner decision (A3 of fct): whether canon/2 treats `xRam<hex>` names and in-image address literals as data labels (05 s2.4)
