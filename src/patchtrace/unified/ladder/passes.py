@@ -28,9 +28,10 @@ from .side import K_EXTERNAL, SideData
 from .state import State
 from .types import FAMILY_BYTES, TIER_RANK
 
-LADDER_VERSION = 'ladder/2'
+LADDER_VERSION = 'ladder/3'
 FAMILY_STRUCT = 'F-PT-STRUCT'
 P15_MAX_WAVES = 8
+MAX_CALL_SITES = 512                 # 04 s5.1: a call-site sequence longer than this casts no implied-match votes
 _SQ = (math.sqrt(2), math.sqrt(3), math.sqrt(5), math.sqrt(7), math.sqrt(11), math.sqrt(13))
 
 
@@ -327,14 +328,22 @@ NEIGHBOUR_PASSES: tuple[PassSpec, ...] = tuple(p for p in PASSES if p.neighbour)
 assert all(PASS_BY_ID[p.id] is p for p in PASSES)
 
 
+def _ident(function: object) -> str | None:
+    """Stable identity of a key/guard/run function: swapping one for another changes the table, though the row flags
+    (`guard is not None`) would not show it."""
+    return None if function is None else f'{function.__module__}.{function.__qualname__}'  # type: ignore[attr-defined]
+
+
 def pass_table_digest(passes: Sequence[PassSpec] = PASSES) -> str:
-    """Identity of the table for `keys.config_digest(pass_table_digest=...)`: any rule change changes it."""
+    """Identity of the table for `keys.config_digest(pass_table_digest=...)`: any rule change changes it. A rule inside
+    a function body is covered by `LADDER_VERSION` (bump it with the change); the rows, the identity of the functions
+    they use and the engine's tuning constants are covered here."""
     rows = [[p.id, p.name, p.stage, p.tier, p.family, p.cls, p.hubs, p.neighbour, p.bytes_family,
-             p.guard is not None, p.run is not None, p.keys is not None] for p in passes]
-    return domain_id('unified-pass-table', 1, {'version': LADDER_VERSION, 'passes': rows,
-                                               'p15_max_waves': P15_MAX_WAVES})
+             _ident(p.keys), _ident(p.guard), _ident(p.run)] for p in passes]
+    return domain_id('unified-pass-table', 2, {'version': LADDER_VERSION, 'passes': rows,
+                                               'p15_max_waves': P15_MAX_WAVES, 'max_call_sites': MAX_CALL_SITES})
 
 
 PASS_TABLE_DIGEST = pass_table_digest()
-__all__ = ['FAMILY_STRUCT', 'LADDER_VERSION', 'NEIGHBOUR_PASSES', 'P00', 'PASSES', 'PASS_BY_ID', 'PASS_TABLE_DIGEST',
+__all__ = ['FAMILY_STRUCT', 'LADDER_VERSION', 'MAX_CALL_SITES', 'NEIGHBOUR_PASSES', 'P00', 'PASSES', 'PASS_BY_ID', 'PASS_TABLE_DIGEST',
            'PassSpec', 'Verdict', 'classify_pair', 'pass_table_digest', 'ratio_ok', 'rehash_exact']
