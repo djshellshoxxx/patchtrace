@@ -124,17 +124,18 @@ def callee_leftovers(old: FnView, new: FnView, targets: TargetMap, voter: Voter 
     remaining = [count for _, count in distinct_new]
     only_old: list[CallTarget] = []
     for a, count in _distinct(_targets_of(old)):
+        left = count            # occurrences of `a` not yet paired with a newer callee
         for k, (b, _total) in enumerate(distinct_new):
-            if not count:
+            if not left:
                 break
             if not remaining[k]:
                 continue
             budget.tick()
             if _same_callee(a, b, targets, voter):
-                taken = min(count, remaining[k])
+                taken = min(left, remaining[k])
                 remaining[k] -= taken
-                count -= taken
-        only_old.extend([a] * count)
+                left -= taken
+        only_old.extend([a] * left)
     return only_old, [b for (b, _total), left in zip(distinct_new, remaining, strict=True) for _ in range(left)]
 
 

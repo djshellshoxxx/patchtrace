@@ -20,6 +20,7 @@ from __future__ import annotations
 import re
 from collections import Counter
 from collections.abc import Callable, Mapping
+from collections.abc import Set as AbstractSet
 from dataclasses import dataclass
 from functools import cached_property
 
@@ -96,7 +97,7 @@ def _offsets(counter: Counter) -> set[int]:
     return found
 
 
-def _shows(counter: Counter, value: int | None, offsets: set[int] = frozenset()) -> bool:
+def _shows(counter: Counter, value: int | None, offsets: AbstractSet[int] = frozenset()) -> bool:
     if value is None:
         return True
     return bool(_literal_forms(value) & counter.keys()) or value in offsets
@@ -167,6 +168,6 @@ def _string_shown(literals: Counter, prefix: str | None) -> bool:
         return False
     for literal in literals:
         text = literal[1:-1].replace('\\"', '"') if len(literal) >= 2 else literal
-        if text.startswith(prefix) or prefix.startswith(text) and text:
+        if text.startswith(prefix) or (text and prefix.startswith(text)):   # an empty text never matches
             return True
     return False
