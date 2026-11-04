@@ -36,8 +36,10 @@ jobs:
       - name: protobuf equals the pin and runs the upb backend (SPEC-10b)
         run: python tools/check_protobuf_runtime.py
       # One process per runner core; a test file stays on one worker (loadfile) so module fixtures and
-      # file-local Qt state are never shared across processes.
-      - run: python -m pytest -q -n auto --dist loadfile --junitxml=qa-results.xml
+      # file-local Qt state are never shared across processes. A short --basetemp keeps tmp_path well inside the
+      # product's Windows 240-character sidecar budget: the default xdist temp root adds 'pytest-of-<user>\
+      # pytest-N\popen-gwN\' under %TEMP%, which pushed one unified test's project past the limit.
+      - run: python -m pytest -q -n auto --dist loadfile --basetemp "${{ runner.temp }}/pt" --junitxml=qa-results.xml
       - run: python -m ruff check src tests tools
       - name: BinExport worker memory cap measurement (SPEC-10b U7, non-gating)
         if: runner.os == 'Windows'
