@@ -67,6 +67,10 @@ jobs:
           ref: main
           persist-credentials: false
 
+      - name: Record trusted base SHA
+        id: base
+        run: echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+
       - name: Check API secret and open automation PR queue
         id: preflight
         env:
@@ -79,7 +83,8 @@ jobs:
             echo "::error::Missing repository secret PATCHTRACE_OPENAI_API_KEY."
             exit 1
           fi
-          pending="$(gh pr list --state open --limit 100 --json headRefName --jq '[.[] | select(.headRefName | startswith("codex/cloud-"))] | length')"
+          pending="$(gh api "repos/$GITHUB_REPOSITORY/pulls?state=open&per_page=100" --jq \
+            '[.[] | select(.head.ref | startswith("codex/cloud-")) | select(.head.repo.full_name == "djshellshoxxx/patchtrace") | select(.user.login == "github-actions[bot]" or .user.login == "djshellshoxxx")] | length')"
           echo "Open Codex cloud PRs: $pending"
           if [ "$pending" -ge 2 ]; then
             echo "Two autonomous PRs are pending; skip new paid agent work until integrated."
@@ -144,6 +149,8 @@ jobs:
       - name: Prevent unauthorized file publication
         if: steps.preflight.outputs.run_agent == 'true'
         id: scope
+        env:
+          BASE_SHA: ${{ steps.base.outputs.sha }}
         shell: bash
         run: |
           set -euo pipefail
@@ -159,7 +166,7 @@ jobs:
                 bad=1
                 ;;
             esac
-          done < <(git ls-files -m -o --exclude-standard)
+          done < <({ git diff --name-only "$BASE_SHA" --; git ls-files -o --exclude-standard; } | sort -u)
           exit "$bad"
 
       - name: Validate PatchTrace source and tests
@@ -190,6 +197,8 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          # Include authorized changes even if the coding agent made local commits.
+          git reset --soft "${{ steps.base.outputs.sha }}"
           git add -A -- src tests tools docs tasks
           if git diff --cached --quiet; then
             echo "No source changes to publish."
