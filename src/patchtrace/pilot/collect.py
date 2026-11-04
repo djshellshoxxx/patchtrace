@@ -14,6 +14,7 @@ does not depend on the question asked of it.
 from __future__ import annotations
 
 import sqlite3
+import stat
 import threading
 from collections.abc import Iterator, Mapping, Sequence
 from dataclasses import dataclass
@@ -176,6 +177,16 @@ def _kev_stored(folder: Path) -> bool:
         return True
 
 
+def _kev_folder(folder: Path) -> bool:
+    """Whether `folder` is a folder; False only when it (or a parent) does not exist or is not a folder. Any other
+    `OSError` (a locked or ACL-denied folder or parent) is raised, so it is told apart from "no catalog" on every Python
+    (`Path.is_dir()` re-raises EACCES on 3.12/3.13 but returns False on 3.14)."""
+    try:
+        return stat.S_ISDIR(folder.stat().st_mode)
+    except (FileNotFoundError, NotADirectoryError):
+        return False
+
+
 def _kev_source(kev_dir: Path | None, cves: Sequence[str]) -> tuple[object, tuple[str, ...]]:
     """(`KevSource`, notes): the catalog in use under `kev_dir` (`patchtrace kev`'s store) for the CVEs of this run.
     Read-only and total: no folder named, no folder or no catalog is `_NoCatalog` (unknown, never "not listed"), and a
@@ -187,9 +198,9 @@ def _kev_source(kev_dir: Path | None, cves: Sequence[str]) -> tuple[object, tupl
     from ..kev.contracts import KevError
     from .sources.kev import CatalogKev
     folder = Path(kev_dir)
-    if not folder.is_dir():
-        return _NoCatalog(), ()
     try:
+        if not _kev_folder(folder):
+            return _NoCatalog(), ()
         loaded = kev_store.KevStore(folder).load_current()
     except (KevError, OSError, ValueError):
         return _NoCatalog(), (KEV_UNREADABLE,)

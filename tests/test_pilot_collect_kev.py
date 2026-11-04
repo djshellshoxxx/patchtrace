@@ -8,7 +8,9 @@ synthetic pilot fixtures. Nothing here is live evidence.
 """
 from __future__ import annotations
 
+import errno
 import json
+import os
 import threading
 from pathlib import Path
 
@@ -165,6 +167,30 @@ def test_a_failing_read_is_unknown_with_the_note_never_an_error_of_the_run(proje
     assert collected.notes == (collect.KEV_UNREADABLE,)
 
 
+def deny_stat(monkeypatch, folder: Path) -> None:
+    """`os.stat` of `folder` and of anything under it fails with EACCES (a locked or ACL-denied folder); every other
+    path is looked at as usual."""
+    real = os.stat
+
+    def stat(path, *args, **kwargs):
+        if not isinstance(path, int) and (Path(os.fspath(path)) == folder or folder in Path(os.fspath(path)).parents):
+            raise PermissionError(errno.EACCES, 'Permission denied', os.fspath(path))
+        return real(path, *args, **kwargs)
+    monkeypatch.setattr(os, 'stat', stat)
+
+
+@pytest.mark.parametrize('installed', [True, False], ids=['catalog', 'none'])
+def test_a_folder_that_cannot_be_looked_at_is_unknown_with_the_note(project, tmp_path, monkeypatch, installed):
+    """Repair of D-kb-2: `Path.is_dir()` re-raises EACCES on Python 3.12/3.13, so a denied folder failed the run."""
+    if installed:
+        install_catalog(tmp_path / 'kev', tmp_path)
+    unread = assess(project)[1]
+    deny_stat(monkeypatch, tmp_path / 'kev')
+    collected, assessment = assess(project, kev_dir=tmp_path / 'kev')
+    assert set(kev_of(assessment).values()) == {Kev(state='unknown')} and assessment.inputs.kev_snapshot_id is None
+    assert assessment.result_id == unread.result_id and collected.notes == (collect.KEV_UNREADABLE,)
+
+
 def test_a_damaged_pointer_falls_back_to_the_stored_catalog_and_says_so(project, tmp_path):
     snapshot = install_catalog(tmp_path / 'kev', tmp_path)
     (tmp_path / 'kev' / kev_store.CURRENT_FILE).write_bytes(b'damaged')
@@ -230,5 +256,19 @@ def test_pilot_leads_with_an_unreadable_catalog_warns_and_keeps_its_exit_code(pr
     code, document = leads_json(project, capsys, '--kev-dir', tmp_path / 'kev')
     assert code == missing_code == 0 and document['status'] == missing['status']
     assert document['warnings'] == [collect.KEV_UNREADABLE] and missing['warnings'] == []
+    assert document['result']['result_id'] == missing['result']['result_id']
+    assert {c['kev']['state'] for c in document['result']['cves']} == {'unknown'}
+
+
+def test_pilot_leads_with_a_denied_default_folder_warns_and_keeps_its_exit_code(project, tmp_path, capsys,
+                                                                                 monkeypatch):
+    """A plain `pilot leads` (the default folder) on a machine whose KEV folder cannot be looked at is not a failed run."""
+    missing_code, missing = leads_json(project, capsys, '--kev-dir', tmp_path / 'absent')
+    monkeypatch.setenv('LOCALAPPDATA', str(tmp_path / 'local'))
+    install_catalog(kev_store.default_kev_dir(), tmp_path)
+    deny_stat(monkeypatch, tmp_path / 'local')
+    code, document = leads_json(project, capsys)
+    assert code == missing_code == 0 and document['status'] == missing['status']
+    assert document['warnings'] == [collect.KEV_UNREADABLE]
     assert document['result']['result_id'] == missing['result']['result_id']
     assert {c['kev']['state'] for c in document['result']['cves']} == {'unknown'}
