@@ -189,6 +189,15 @@ class TimestampClaim:
 
 
 @dataclass(frozen=True, slots=True)
+class CatalogResult:
+    """Windows catalog signature lookup. `state` is present_trusted_no_revocation_check | present_untrusted | absent |
+    not_checked | unavailable; `catalog_name` is a cleaned basename."""
+    state: str
+    catalog_name: str | None
+    hresult: int | None
+
+
+@dataclass(frozen=True, slots=True)
 class SignatureInfo:
     """One WIN_CERTIFICATE signature; nested signatures follow their parent with `nested_depth` + 1.
 
