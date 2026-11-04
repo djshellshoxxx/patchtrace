@@ -246,11 +246,12 @@ def write_snapshot(path: Path, matches: Iterable[SnapshotMatch]) -> tuple[str, i
 
 def read_snapshot(path: Path, *, expected_sha256: str, expected_lines: int,
                   limits: UnifiedLimits = DEFAULT_LIMITS) -> tuple[SnapshotMatch, ...]:
-    """Re-hash while reading; any mismatch is `PT-UNIFIED-INPUT` (the worker's input is untrusted)."""
+    """Re-hash while reading; any mismatch is `PT-UNIFIED-INPUT` (the worker's input is untrusted). A line is read
+    with a bound of one byte over `LINE_MAX_BYTES`, so an oversize line fails before it is held whole (U7-10)."""
     digest, out = hashlib.sha256(), []
     try:
         with open(path, 'rb') as handle:
-            for line in handle:
+            while line := handle.readline(LINE_MAX_BYTES + 1):
                 if len(line) > LINE_MAX_BYTES or len(out) >= limits.l38_rows_per_result:
                     raise UnifiedError('PT-UNIFIED-LIMIT', 'The match snapshot exceeds its limits', reason='rows-cap')
                 digest.update(line)

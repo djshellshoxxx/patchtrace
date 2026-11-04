@@ -222,6 +222,7 @@ def test_g_u2_every_planted_function_detected_passes_the_data_and_pending_classe
     g2 = gate(gates_u.build_report(inputs(mut_manifest(), mut_run())), 'G-U2')
     assert g2.status == 'pending' and not any('leak' in r for r in g2.reasons)
     assert any('moved-rva-call' in r for r in g2.reasons) and any('try-scope' in r for r in g2.reasons)
+    assert any('trace-arg' in r for r in g2.reasons)
     per = g2.observed['classes']
     assert set(per) == {c.id for c in classes.CLASSES}
     assert all(v['mutants'] == 20 and v['detected'] == 20 and v['leaks'] == 0 for v in per.values())
@@ -348,6 +349,37 @@ def test_g_u4_a_swap_that_is_not_the_mirror_image_fails():
     broken = swapped(det_rows())[1:]
     g = g4(corpus_manifest.build([doc], {}), run('linux', pair(doc, det_rows()), pair(doc, broken, orientation='swapped')))
     assert g.status == 'fail' and any('mirror' in r for r in g.reasons)
+
+
+def every_decision_rows():
+    """One row of each decision the arbiter writes; the group row has two newer endpoints (U7-08)."""
+    return [*det_rows(),
+            R(older=(0x4000,), newer=(0x5000,), decision='tentative', materiality='unknown'),
+            R(older=(0x4010,), newer=(0x5010,), decision='candidate', materiality='unknown'),
+            R(older=(0x4020,), newer=(0x5020,), decision='contested', materiality='unknown'),
+            R(older=(0x4030,), newer=(0x5030, 0x5040), decision='ambiguous', materiality='not-applicable')]
+
+
+def test_g_u4_a_swap_that_changes_a_tentative_row_is_not_mirrored():
+    doc = label_doc('rel', 'release')
+    back = swapped(every_decision_rows())
+    back[-4] = back[-4].model_copy(update={'decision': 'candidate'})          # the tentative row changed on swap
+    g = g4(corpus_manifest.build([doc], {}),
+           run('linux', pair(doc, every_decision_rows()), pair(doc, back, orientation='swapped')))
+    assert g.status == 'fail' and g.observed['mirrored'] == {'rel': 'not-mirrored'}
+    assert any('mirror' in r for r in g.reasons)
+
+
+def test_g_u4_rows_of_every_decision_mirror_and_a_moved_group_endpoint_does_not():
+    doc = label_doc('rel', 'release')
+    m = corpus_manifest.build([doc], {})
+    good = g4(m, run('linux', pair(doc, every_decision_rows()),
+                     pair(doc, swapped(every_decision_rows()), orientation='swapped')))
+    assert good.observed['mirrored'] == {'rel': 'mirrored'} and good.status != 'fail'
+    back = swapped(every_decision_rows())
+    back[-1] = back[-1].model_copy(update={'older': (0x5030,)})                # the group lost an endpoint
+    bad = g4(m, run('linux', pair(doc, every_decision_rows()), pair(doc, back, orientation='swapped')))
+    assert bad.status == 'fail' and bad.observed['mirrored'] == {'rel': 'not-mirrored'}
 
 
 def test_g_u4_one_run_without_a_swap_has_nothing_to_compare():

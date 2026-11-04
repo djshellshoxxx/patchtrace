@@ -19,6 +19,7 @@ def test_g_u2_good_script_detects_all_but_keeps_physical_factory_gaps_pending() 
     status, reasons, observed = evaluators.g_u2(manifest, [run(pair(d, planted_rows(d)) for d in docs)])
     assert status == "pending"
     assert any("moved-rva-call" in reason for reason in reasons)
+    assert any("trace-arg" in reason for reason in reasons)
     assert all(v["mutants"] == 20 and v["recall"] == 1.0 for v in observed["classes"].values())
     ci = paired_recall([1] * 30, [0] * 30)
     assert ci["lo"] == ci["point"] == ci["hi"] == 1.0

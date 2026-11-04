@@ -10,7 +10,9 @@ masked body differs). `symbolic` is for the two classes whose only change is the
 swapped callee or global): their masked body is identical by design, so the proof is that the function's symbol
 references differ.
 
-Two review additions cannot be planted as plain C and stay `PENDING` with the exact thing each needs.
+Two review additions cannot be planted as plain C, and trace-arg mutants (R-29, F17) need a tracing import the
+freestanding profile does not have; the three stay `PENDING` with the exact thing each needs, so G-U2 reports them as
+pending instead of passing without them.
 """
 from __future__ import annotations
 
@@ -71,6 +73,12 @@ PENDING: tuple[PendingClass, ...] = (
         'the MSVC Windows leg (cl or clang-cl with a real C runtime handler)',
         'structured exception handling scope tables live in unwind data; the freestanding clang profile has no C '
         'handler to name, so the scope can only be planted on the MSVC Windows leg'),
+    PendingClass(
+        'trace-arg', 'trace-arg', 'R-29',
+        'an import library for a tracing callee (an EtwWrite or TraceMessage import) in the freestanding profile',
+        'F17 (05 s3) marks a constant only when it feeds an argument of a call to an imported tracing function; the '
+        'freestanding clang profile links with no import library, so a planted constant can only reach a local call, '
+        'which is not a tracing callee. Unit coverage stays in tests/test_unified_gu_mutants.py'),
 )
 
 BY_ID = {c.id: c for c in CLASSES}

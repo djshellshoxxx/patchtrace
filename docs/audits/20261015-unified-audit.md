@@ -133,3 +133,48 @@ with their decision and materiality `unknown` (never negative). The manifest get
 (plus `ladder-partial:deadline` when the ladder itself stopped), so the run ends `partial` (CLI exit 3, envelope status
 partial). A cancel still aborts. Red/green tests with a fake clock in `tests/test_unified_wire_compute.py`. Scope note: a
 deadline that passes before the ladder, or inside fusion of a run without ProgramIR, still ends as `PT-UNIFIED-TIMEOUT`.
+
+### [U7-07:pending-class] trace-arg is a pending G-U2 mutant class (2026-11-04)
+`tools/unified/mutations/classes.py` gains `PendingClass('trace-arg', review_finding='R-29')`: F17 marks a constant only
+when it feeds an argument of a call to an imported tracing function, and the freestanding clang profile links with no
+import library, so the class needs an import library for a tracing callee (an EtwWrite or TraceMessage import) before it
+can be planted. The corpus manifest lists `mutation:trace-arg` as pending, so G-U2 reports `pending` instead of passing
+without F17 mutants; the 08 G-U2 row says so. Unit-level coverage stays in `tests/test_unified_gu_mutants.py`. Red/green:
+`tests/test_unified_mutations.py::test_trace_arg_is_a_pending_g_u2_class`; pins updated in `test_unified_mutations.py`,
+`test_unified_gates.py`, `test_unified_gate_eval.py`, `test_unified_fixture_gate_u2.py`, `unified_support/fixture-gaps.md`.
+
+### [U7-08:fixed] G-U4 mirror check covers every decision; the arbiter is orientation symmetric (2026-11-04)
+(a) New derandomised property `tests/test_unified_fusion_mirror.py::test_swapped_inputs_give_the_mirrored_rows` (300
+examples: atoms of both components and every tier, tier-M pairs and one-sided declarations, one-sided observations, engine
+groups that merge into pools, manual groups; equal RVA numbers on both sides). Deciding the swapped input gives the mirror
+of the forward rows on endpoints, decision (older-only <-> newer-only), pair, `mapped`, hints, atom set, and support and
+contest through the atoms their indices name; an analyst overlap is refused the same way in both orientations. No
+counterexample (also 20,000 random scratch inputs with groups, 0 asymmetric): the `(-older, -newer)` tie-break is a master
+list on both sides, so greedy selection gives the unique stable matching. The property fails on a planted
+orientation-dependent tie-break (`-edge[0], edge[1]`, not committed), so it has power. Arbiter, registry and
+`config_digest` are unchanged; `engine_version` stays `ude/1`. Outside the property: `ghidriff_match_id` of an `ambiguous`
+row of two merged Ghidriff groups is the first match id in atom order (a swapped Ghidriff run has its own ids anyway).
+(b) `tools/unified/evaluators.py::_pairing` compares every row of every decision (tentative, candidate, contested,
+ambiguous); group rows compare their endpoint tuples whole. Red/green:
+`tests/test_unified_gate_eval.py::test_g_u4_a_swap_that_changes_a_tentative_row_is_not_mirrored` and
+`::test_g_u4_rows_of_every_decision_mirror_and_a_moved_group_endpoint_does_not`.
+
+### [U7-10:fixed] The match snapshot is read with a bounded line read (2026-11-04)
+`read_snapshot` reads `readline(LINE_MAX_BYTES + 1)` instead of iterating the file, so an oversize line fails with
+`PT-UNIFIED-LIMIT` (`rows-cap`) before it is held whole; error codes are unchanged. Red/green
+`tests/test_unified_sources.py::test_oversize_snapshot_line_fails_before_it_is_read_whole` (a byte-counting raw reader:
+4,194,689 bytes pulled before, at most the limit plus two buffers after); boundary and no-final-newline cases are pinned
+beside it.
+
+### [U7-15:docs] 08 s1 header states the U-05 rule (2026-11-04)
+The header now says G-U1..G-U6 must pass, a failing G-U8 blocks and G-U7 is advisory, as `gates_u.U05_GATES` and
+`decision_ready` apply it (tested by `test_unified_gates.py::test_the_decision_is_ready_only_when_g_u1_to_g_u6_pass_and_nothing_else_counts`).
+
+### [U7-16:docs] 05 s1.2 BinDiff row follows the code (2026-11-04)
+The C cell lists the C-tier algorithm names of `registry.BINDIFF_STEPS`, unknown names and the `basicblocks = 0` stub
+demotion (U7-05) instead of "every step with confidence <= 0.75"; tiers come from the algorithm name alone
+(`sources/secondary.py`), confidence is never read (R02 s7).
+
+### U7-11 and U7-12 already fixed (checked 2026-11-04)
+`exchange.read_report` calls `strict_json` before `model_validate_json`; P15 abstains on an unresolved callee
+(`tests/test_unified_p15_unresolved.py`, `LADDER_VERSION = 'ladder/2'`).

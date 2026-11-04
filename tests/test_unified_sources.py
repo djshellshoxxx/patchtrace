@@ -1,6 +1,8 @@
 """SPEC-31 S0b sources (06 s9, s10): Ghidriff, BinDiff/rz-diff and manual adapters over loaded, synthetic inputs."""
 from __future__ import annotations
 
+import hashlib
+import io
 import random
 
 import pytest
@@ -23,9 +25,9 @@ from unified_s0_fixtures import (
     va,
 )
 
-from patchtrace.unified import keys
+from patchtrace.unified import keys, sources
 from patchtrace.unified.contracts import SourceRef
-from patchtrace.unified.limits import Budget
+from patchtrace.unified.limits import Budget, UnifiedError
 from patchtrace.unified.sources import RawGhidriff, SourceAdapter
 from patchtrace.unified.sources.ghidriff import GhidriffAdapter
 from patchtrace.unified.sources.manual import ManualAdapter, manual_digest_of
@@ -327,3 +329,83 @@ def test_address_values_in_atoms_are_rvas_not_vas():
     out = run(SecondaryAdapter(), inputs([], secondary=[loaded(bindiff_set([bd(0x1000, 0x1080)]))]))
     [atom] = out.atoms
     assert (atom.older_rva, atom.newer_rva) == (0x1000, 0x1080) and BASE + 0x1000 not in (atom.older_rva,)
+
+
+# --- the match snapshot (`s0-match/1`), U7-10 ---------------------------------------------------------------------
+
+class _CountingRaw(io.RawIOBase):
+    """Counts the bytes read from the file, under the reader's buffer: what the reader has pulled into memory."""
+
+    def __init__(self, raw):
+        super().__init__()
+        self._raw = raw
+        self.pulled = 0
+
+    def readable(self) -> bool:
+        return True
+
+    def readinto(self, buffer) -> int | None:
+        count = self._raw.readinto(buffer)
+        self.pulled += count or 0
+        return count
+
+    def close(self) -> None:
+        self._raw.close()
+        super().close()
+
+
+def _snapshot_items(n: int = 3):
+    return [sources.SnapshotMatch(id=f'm{i}', category='modified', manual=False, match_types=('SymbolsHash',),
+                                  older=(sources.SnapshotFunction(name=f'f{i}', address=f'0x{0x1000 + i:x}'),),
+                                  newer=(sources.SnapshotFunction(name=f'f{i}', address=f'0x{0x2000 + i:x}'),))
+            for i in range(n)]
+
+
+def test_oversize_snapshot_line_fails_before_it_is_read_whole(tmp_path, monkeypatch):
+    path = tmp_path / 'matches.jsonl'
+    sources.write_snapshot(path, _snapshot_items(1))
+    huge = 4 * 1024 * 1024
+    with open(path, 'ab') as handle:
+        handle.write(b'{"id":"' + b'x' * huge + b'"}\n')
+    limit = 4096
+    monkeypatch.setattr(sources, 'LINE_MAX_BYTES', limit)
+    opened: list[_CountingRaw] = []
+
+    def counting_open(file, mode='r', *args, **kwargs):
+        assert mode == 'rb'
+        raw = _CountingRaw(open(file, 'rb', buffering=0))
+        opened.append(raw)
+        return io.BufferedReader(raw, buffer_size=8192)
+    monkeypatch.setattr(sources, 'open', counting_open, raising=False)
+    with pytest.raises(UnifiedError) as info:
+        sources.read_snapshot(path, expected_sha256='0' * 64, expected_lines=2)
+    assert (info.value.code, info.value.reason) == ('PT-UNIFIED-LIMIT', 'rows-cap')
+    [raw] = opened
+    assert raw.pulled <= limit + 1 + 2 * 8192 + 1024, raw.pulled                  # never the 4 MiB line whole
+    assert raw.closed
+
+
+def test_a_snapshot_line_at_the_limit_is_read_and_one_byte_over_is_refused(tmp_path, monkeypatch):
+    path = tmp_path / 'matches.jsonl'
+    items = _snapshot_items()
+    digest, _size, lines = sources.write_snapshot(path, items)
+    longest = max(len(line) for line in path.read_bytes().splitlines(keepends=True))
+    monkeypatch.setattr(sources, 'LINE_MAX_BYTES', longest)
+    assert list(sources.read_snapshot(path, expected_sha256=digest, expected_lines=lines)) == items
+    monkeypatch.setattr(sources, 'LINE_MAX_BYTES', longest - 1)
+    with pytest.raises(UnifiedError) as info:
+        sources.read_snapshot(path, expected_sha256=digest, expected_lines=lines)
+    assert (info.value.code, info.value.reason) == ('PT-UNIFIED-LIMIT', 'rows-cap')
+
+
+def test_a_snapshot_without_a_final_newline_is_hashed_and_parsed_as_written(tmp_path):
+    path = tmp_path / 'matches.jsonl'
+    items = _snapshot_items(2)
+    sources.write_snapshot(path, items)
+    data = path.read_bytes().rstrip(b'\n')
+    path.write_bytes(data)
+    digest = hashlib.sha256(data).hexdigest()
+    assert list(sources.read_snapshot(path, expected_sha256=digest, expected_lines=2)) == items
+    with pytest.raises(UnifiedError) as info:
+        sources.read_snapshot(path, expected_sha256=digest, expected_lines=3)
+    assert (info.value.code, info.value.reason) == ('PT-UNIFIED-INPUT', 'snapshot-hash-mismatch')

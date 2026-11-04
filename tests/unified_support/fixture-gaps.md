@@ -64,6 +64,9 @@ a test-runner deadline must enforce the requested 30-second per-file ceiling dur
    The simpler supplied pair kinds are not substitutes for those class-specific fixtures.
    moved-rva-call and try-scope remain distinct pending physical cases. The generic engine outcome
    scripts do not establish any of these classes on emitted PE bytes.
+   trace-arg (R-29, F17) is a third pending class since 2026-11-04 (audit U7-07): it needs an import
+   library for a tracing callee (an EtwWrite or TraceMessage import) in the freestanding profile, so
+   G-U2 reports it as pending. Its unit-level coverage stays in tests/test_unified_gu_mutants.py.
 3. A real compiler-independent IR fixture path exercising P00-P19, target consistency, EH-EQ and
    MAT-ANCHOR on all generated mutations and nuisance variants, including imperfect/abstaining engines.
 4. Complete manifest-byte golden parity under repetition, input permutation and swapped orientation.

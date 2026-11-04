@@ -158,7 +158,6 @@ def _accepted(manifest: corpus_manifest.CorpusManifest, class_id: str) -> tuple[
 
 
 FLIP = {'older-only': 'newer-only', 'newer-only': 'older-only'}
-PAIRING = ('matched', 'older-only', 'newer-only')
 NON_SEMANTIC = ('unchanged', 'cosmetic')
 CHAIN_WAIT = ('pending: no 3-build chain (A-B, B-C and A-C over three distinct images of one project) is in the corpus '
               'manifest; P1 chains come from `corpus aa`, release chains need a third consecutive version per project '
@@ -166,14 +165,17 @@ CHAIN_WAIT = ('pending: no 3-build chain (A-B, B-C and A-C over three distinct i
 
 
 def _pairing(rows, mirror: bool) -> frozenset:
+    """Every row of every decision (matched, tentative, candidate, contested, ambiguous, one-sided; U7-08) as
+    (older, newer, decision); a group row keeps its endpoint tuples whole, so a moved member is a difference."""
     if mirror:
-        return frozenset((r.newer, r.older, FLIP.get(r.decision, r.decision)) for r in rows if r.decision in PAIRING)
-    return frozenset((r.older, r.newer, r.decision) for r in rows if r.decision in PAIRING)
+        return frozenset((tuple(r.newer), tuple(r.older), FLIP.get(r.decision, r.decision)) for r in rows)
+    return frozenset((tuple(r.older), tuple(r.newer), r.decision) for r in rows)
 
 
 def g_u4(sets: Sequence[OutcomeSet], manifest: corpus_manifest.CorpusManifest | None = None) -> Result:
     """Equal row digests for the same pair across runs (two runs, Linux against Windows, permuted input), and the
-    swapped orientation of a pair mirrors the forward one: the same matched set, older-only and newer-only trade places."""
+    swapped orientation of a pair mirrors the forward one: the same rows of every decision, older-only and newer-only
+    trade places."""
     reasons: list[str] = []
     notes: list[str] = []
     compared: dict[str, str] = {}

@@ -36,7 +36,28 @@ def test_ids_are_unique_c_safe_and_pending_classes_say_what_they_need():
     assert len(ids) == len(set(ids))
     assert all(re.fullmatch(r'[a-z]+(-[a-z]+)*', i) for i in ids)
     assert all(len(p.needs) > 10 and len(p.reason) > 30 for p in classes.PENDING)
-    assert {p.id for p in classes.PENDING} == {'moved-rva-call', 'try-scope'}
+    assert {p.id for p in classes.PENDING} == {'moved-rva-call', 'try-scope', 'trace-arg'}
+
+
+def test_trace_arg_is_a_pending_g_u2_class():
+    """U7-07: G-U2 names trace-arg mutants, so the class is in the registry; it cannot be planted in the freestanding
+    profile (no import of a tracing callee to feed), so it is pending and G-U2 says so instead of passing without it."""
+    from unified_support.gate_inputs import mutants, pair, planted_rows, run
+
+    from tools.unified import evaluators
+    from tools.unified.corpus import manifest as corpus_manifest
+    gate_row = next(line for line in SPEC.splitlines() if line.startswith('| G-U2'))
+    pending = {p.id: p for p in classes.PENDING}
+    assert 'trace-arg' in pending and 'trace-arg' not in classes.BY_ID
+    entry = pending['trace-arg']
+    assert entry.review_finding == 'R-29' and entry.spec_phrase in gate_row
+    assert 'import' in entry.needs and 'tracing' in entry.needs and ':' not in entry.needs
+    docs = mutants()
+    manifest = corpus_manifest.build(docs, {})
+    assert 'mutation:trace-arg' in {p.item for p in manifest.pending}
+    status, reasons, observed = evaluators.g_u2(manifest, [run(pair(d, planted_rows(d)) for d in docs)])
+    assert status == 'pending' and 'trace-arg' not in observed['classes']       # every built class passes its data
+    assert any(r.startswith('pending: class trace-arg (needs an import') for r in reasons), reasons
 
 
 def test_frame_only_must_land_in_review_and_every_other_class_in_material_or_review():
