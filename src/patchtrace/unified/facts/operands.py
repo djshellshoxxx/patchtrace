@@ -229,6 +229,10 @@ def operand_deltas(old: FnView, new: FnView, align: Alignment, targets: TargetMa
         x, y = old.insns[i], new.insns[j]
         if x.mnem != y.mnem and family(x.mnem) in ('SETcc', 'CMOVcc'):
             out.deltas.append(_delta('comparison', old, new, i, j, DeltaInfo(condition=True)))
+        elif x.mnem != y.mnem and family(x.mnem) == 'Jcc':
+            # A Jcc inside a body (a call-terminator override, or no block list) is no layout edge: its targets are
+            # compared as operands, so no successor swap can make a changed condition a layout change.
+            out.deltas.append(_delta('condition', old, new, i, j, DeltaInfo(condition=True)))
         _compare_operands(old, new, i, j, align, targets, voter, out)
     for i in align.old_only:
         target = call_target(old, i) if old.insns[i].flags & F_CALL else None
