@@ -63,6 +63,18 @@ def validate_artifact(task, folder):
         raise ValueError("Missing numeric cost values")
     if amount > budget or budget > 25 or len(receipt.get("attempts", [])) != 2:
         raise ValueError("Unverified budget or test-first attempts")
+    if receipt.get("red_verified") is not True or receipt.get("green_verified") is not True:
+        raise ValueError("Missing verified red/green test evidence")
+    if receipt.get("red_exit_code") != 1 or receipt.get("green_exit_code") != 0:
+        raise ValueError("Invalid red/green test exit codes")
+    attempts = receipt["attempts"]
+    if [item.get("phase") for item in attempts] != ["test", "source"]:
+        raise ValueError("Incorrect phase ordering")
+    if not all(isinstance(item.get("input_tokens"), int) and
+               isinstance(item.get("output_tokens"), int) and
+               item["input_tokens"] >= 0 and item["output_tokens"] >= 0
+               for item in attempts):
+        raise ValueError("Unverifiable API usage")
     changes = run("git", "apply", "--numstat", str(folder / "parallel.patch")).splitlines()
     if not changes:
         raise ValueError("Empty patch")
