@@ -732,7 +732,18 @@ class KbService:
         return build_bundle(investigation_id=rev.investigation_id, base_revision=base, lead=rev.lead, cves=cves,
                             index=index, rules=self.env.rules, now=self._now(), coverage=coverage,
                             scope_id=rev.selected_scope_id, pair_id=pair_id, older_sha=older, newer_sha=newer,
-                            mention_only=mention, scope=self._stored_scope(ws, rev))
+                            mention_only=mention, scope=self._stored_scope(ws, rev),
+                            applicability=self._applicability(index, ws, cves, older, newer))
+
+    def _applicability(self, index: ReverseIndex, ws: WorkspaceStore, cves: Iterable[str], older: str | None,
+                       newer: str | None) -> dict[str, Mapping[str, Any]]:
+        """CSAF applicability per CVE (KBF-03 s5.2) over EVERY loaded CSAF document, each parsed once, so a newer
+        revision that dropped a CVE supersedes the older claims; no CSAF document loaded asks nothing."""
+        facts = [self.env.advisory.parse_csaf(ws.read_object(doc.source.sha256), source_sha256=doc.source.sha256)
+                 for doc in index.documents if doc.source.kind == 'csaf']
+        if not facts:
+            return {}
+        return {cve: self.env.advisory.report_for(cve, facts, older, newer) for cve in sorted(set(cves))}
 
     def _attach_outcome(self, outcome, investigation_id: str, pair, plan_sha: str, context_key: str) -> Outcome:
         link = outcome.value

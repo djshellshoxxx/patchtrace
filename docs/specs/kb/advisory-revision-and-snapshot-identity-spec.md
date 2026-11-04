@@ -1,6 +1,6 @@
 # Advisory revisions, snapshot identity, staleness and cache keys (KBF-03)
 
-Status: draft, developer-ready design. Date: 2026-10-15. Base commit: `54fd085`. Proposed alias: KBF-03. Owner packages: `enrichment/{cve,contracts,storage}.py`, `intelligence/{storage,explain}.py`, `intelligence/csaf/applicability.py`, `kbcorrelation/{index,context,leads}.py`, `kev/store.py`. Reads with KBF-01, KBF-02, SPEC-07 s8, SPEC-35 section I, KB plan s7.4.
+Status: draft, developer-ready design; s5.1 and s5.2 BUILT 2026-11-04. Date: 2026-10-15. Base commit: `54fd085`. Proposed alias: KBF-03. Owner packages: `enrichment/{cve,contracts,storage}.py`, `intelligence/{storage,explain}.py`, `intelligence/csaf/applicability.py`, `kbcorrelation/{index,context,leads}.py`, `kev/store.py`. Reads with KBF-01, KBF-02, SPEC-07 s8, SPEC-35 section I, KB plan s7.4.
 
 ## 1. Purpose and non-goals
 
@@ -18,7 +18,7 @@ Non-goals: changing any persisted field (additive only; no migration); a version
 | CVRF/CSAF/KEV document | `doc_id = domain_id('kbc.source', 1, {kind, sha256 of decompressed bytes})` | URL, retrieval time (a fetched and an imported copy of the same bytes are ONE document) | `kbcorrelation/contracts.py:SourceDoc` |
 | CSAF facts | `facts_id` from source sha + `NORMALIZER_VERSION` | retrieval time | `intelligence/csaf/normalize.py` |
 | CSAF retrieval | `retrieval_id` per acquisition; many per source sha | - | `intelligence/storage.py:add` |
-| KB context row | `context_key = domain_id(..., {inv, base_revision, edge_set_digest, csaf_source_shas, rules_digest, lexicon_digest, kev_snapshot_sha (always None today), older, newer, scope_id})` | KEV: the field exists but is `None` until KBF-06 binds KEV | `kbcorrelation/context.py:86-93` |
+| KB context row | `context_key = domain_id(..., {inv, base_revision, edge_set_digest, csaf_source_shas, rules_digest, lexicon_digest, kev_snapshot_sha (always None today), older, newer, scope_id[, csaf_applicability]})` | KEV: the field exists but is `None` until KBF-06 binds KEV; `csaf_applicability` is present only when a CSAF claim reached a card (s5.2) | `kbcorrelation/context.py:context_key` |
 | Leads result (`pilot`) | `result_id` over every input digest + config + limits + rules + tiers | clock | `pilot/keys.py` |
 | Search index | `index_key = domain_id('search-index', 1, [(group, digest16)...])[:16]` | cache location | `search/build.py:BuildRequest.index_key` |
 
@@ -60,7 +60,7 @@ Red test: two documents with one `tracking_id`; r1 lists the CVE as `known_affec
 
 ### 5.1 `IntelligenceAdvisory.report_for` (KB context adapter; BUILT 2026-11-04, slice kbc-report-for)
 
-`AdvisoryPort.report_for(cve, facts, older_sha256, newer_sha256)` restates CSAF applicability for the two files of a KB context. It is pure over its arguments (no store read, no network) and bound in `kbcorrelation/wiring.py`. Not yet called by `build_bundle`: filling `CveCard.applicability` from it is a later additive change.
+`AdvisoryPort.report_for(cve, facts, older_sha256, newer_sha256)` restates CSAF applicability for the two files of a KB context. It is pure over its arguments (no store read, no network) and bound in `kbcorrelation/wiring.py`. `build_bundle` uses it to fill `CveCard.applicability` (s5.2).
 
 Input: `facts` is EVERY loaded CSAF document as `AdvisoryFacts` JSON (the `parse_csaf` output), not only those that list the CVE, so a newer revision that dropped the CVE supersedes the older claims (section 5). Each mapping is validated strictly (`PT-KBC-SOURCE` when it is not `AdvisoryFacts`); the same facts given twice count once; two different facts for one `source_id` are `PT-KBC-SOURCE`; a malformed CVE id is `PT-KBC-INPUT`. The SHA-256 values are recorded identities (`facts_state = record-only`): an advisory file-hash match is a `candidate` mapping, never `verified`.
 
@@ -76,6 +76,21 @@ Output: a JSON object with `contract = "kbc-csaf-applicability/1"`.
 | `unknowns`, `limitations` | fixed sentences naming at most the CVE id and a side; the `intelligence` limitations follow when `applicability` is present | - |
 
 Rules: R1 unknown stays unknown: no listing document, a missing SHA-256 or an unmapped side is `unknown`, never `not_affected` or `fixed`, and never a negative vote. R2 a superseded revision is listed with `superseded: true` and its statuses are marked superseded; a withdrawn entry appears in `withdrawn` and its side resolves `unknown`, never as still affected. R3 no field names a function, RVA or match; a fixed limitation says applicability does not show that a changed function addresses the CVE. R4 the object depends only on the input set (order and repetition of `facts` do not change it). Tests: `tests/test_kbc_report_for.py`.
+
+### 5.2 Use in `build_bundle` (BUILT 2026-11-04, slice D-kb-1-kbc-applicability)
+
+Caller: `KbService._bundle`, shared by `kb import-pair` (attach) and `kb attach --repair` (`_rebuilt_rows`), so an attach and its repair write the same bytes. It parses every CSAF document of the loaded KB index once (`parse_csaf` over the stored bytes, including superseded revisions and documents of other products) and calls `report_for(cve, facts, older_sha, newer_sha)` for each CVE of the lead; with no CSAF document loaded it calls nothing. `build_bundle` receives the results as a plain `applicability: Mapping[cve, report]` and imports no `intelligence` behaviour.
+
+| report | `CveCard.applicability` | context unknowns |
+|---|---|---|
+| absent, or `applicability` null (no loaded document lists the CVE, a SHA-256 is missing) | `APPLICABILITY`, exactly as before (R1) | unchanged |
+| `applicability` present | `{assessment}: older file {older.resolution}, newer file {newer.resolution}, restated from CSAF {sources}; any file-hash mapping is a candidate, not verified` through `clean_text(..., 1000)`; `{sources}` is the sorted, de-duplicated `{tracking_id} revision {revision}` of the report's `sources`, with ` (superseded)` after a superseded one | each report unknown once, as `{cve} (CSAF): {unknown}` through `clean_text(..., 1000)` |
+
+A withdrawn CVE therefore reads `unknown: older file unknown, newer file unknown, ... revision 1 (superseded), ... revision 2` with the withdrawn sentence among the unknowns, never `affected` (R2). The text names no function, RVA or match (R3); the bundle limitation already says so.
+
+Key rule: `context_key` adds `csaf_applicability = domain_id('kbc.csaf-applicability', 1, {cve: report})` over the reports that reached a card, and only when at least one did. Every bundle without a CSAF claim (CVRF only, no CSAF loaded, an unlisted CVE, a missing SHA-256) keeps its key and its bytes (pinned in the tests). `CONTEXT_KEY_VERSION` stays 3: no existing payload changes, and a payload with the field cannot equal one without it. A report for a CVE that has no card does not change the key (R4 holds for the bundle too).
+
+Not changed: no persisted field (the `CveCard.applicability` field exists; it is not in `card_provenance.FIELDS`, so no field reference is added), no schema, the Leads applicability chip state stays `unknown` (only its text changes), and the CSAF documents used here are not added to `ContextBundle.sources`. Tests: `tests/test_kbc_context_applicability.py`.
 
 ## 6. Staleness for a later-loaded revision (KBB-03 part 2)
 

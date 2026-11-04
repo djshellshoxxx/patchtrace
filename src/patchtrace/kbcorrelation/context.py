@@ -1,8 +1,9 @@
 """Documentary context of an investigation (KB-integration-plan 7.2 `ContextReport`, 7.4 keys; slice K3). Pure.
 
 The context records what advisory documents state about the CVEs of a lead (title, vendor-stated CWE with its source
-kind, the curated hypothesis a stated CWE implies) and what could not be checked (applicability to the two files,
-KEV, product mapping). It never claims that a changed function addresses a vulnerability.
+kind, the curated hypothesis a stated CWE implies) and what could not be checked (KEV, product mapping, and
+applicability to the two files unless a loaded CSAF document restates it, KBF-03 s5.2). It never claims that a changed
+function addresses a vulnerability.
 
 ``ContextBundle`` is the persisted body of a ``kb-context:<context_key>`` row. The CWE profile and hypotheses come
 from the reused ``intelligence`` rules through the :class:`RulesPort` that ``wiring`` binds; a CVRF-only CVE has no
@@ -12,8 +13,8 @@ from the reused ``intelligence`` rules through the :class:`RulesPort` that ``wir
 from __future__ import annotations
 
 import re
-from collections.abc import Iterable, Sequence
-from typing import Annotated, Protocol
+from collections.abc import Iterable, Mapping, Sequence
+from typing import Annotated, Any, Protocol
 
 from pydantic import Field, model_validator
 
@@ -43,6 +44,8 @@ HOOKS = ('kb.meaning.coverage', 'kb.meaning.hypothesis', 'kb.meaning.kev', 'kb.m
 LIMITATION = ('The context records what advisory documents state and which checks could not be made; it does not '
               'show that any changed function addresses a vulnerability.')
 APPLICABILITY = 'unknown (no loaded document states applicability to these two files)'
+CSAF_APPLICABILITY = ('{assessment}: older file {older}, newer file {newer}, restated from CSAF {sources}; any '
+                      'file-hash mapping is a candidate, not verified')
 _VULN = re.compile(r'^(/vulnerabilities/[0-9]+)')
 
 
@@ -123,14 +126,31 @@ class ContextBundle(Contract):
 
 def context_key(*, investigation_id: str, base_revision: int, edge_set_digest: str, sources: Sequence[SourceDigest],
                 rules_digest: str, lexicon_digest: str, older_sha: str | None, newer_sha: str | None,
-                scope_id: str | None) -> str:
-    """Plan 7.4 context key; ``kev_snapshot_sha`` is None until the KEV adapter (K8) loads a snapshot."""
-    return domain_id('kbc.context', CONTEXT_KEY_VERSION, {
+                scope_id: str | None, csaf_applicability: str | None = None) -> str:
+    """Plan 7.4 context key; ``kev_snapshot_sha`` is None until the KEV adapter (K8) loads a snapshot.
+
+    ``csaf_applicability`` (KBF-03 s5.2) enters the payload only when a CSAF claim reached a card, so every key
+    without one stays byte-identical under the same version."""
+    payload = {
         'inv': investigation_id, 'revision': base_revision, 'edge_set_digest': edge_set_digest,
         'advisory_sources': [d.model_dump(mode='json') for d in sorted(sources, key=lambda d: d.doc_id)],
         'rules_digest': rules_digest, 'lexicon_digest': lexicon_digest,
         'kev_snapshot_sha': None, 'older': older_sha, 'newer': newer_sha, 'scope_id': scope_id,
-        'versions': {'contract': CONTRACT, 'bundle': BUNDLE_VERSION}})
+        'versions': {'contract': CONTRACT, 'bundle': BUNDLE_VERSION}}
+    if csaf_applicability is not None:
+        payload['csaf_applicability'] = csaf_applicability
+    return domain_id('kbc.context', CONTEXT_KEY_VERSION, payload)
+
+
+def applicability_text(report: Mapping[str, Any]) -> str:
+    """The card text of a ``kbc-csaf-applicability/1`` report with an ``applicability`` (KBF-03 s5.2). Each part is
+    bounded on its own so the fixed candidate-mapping clause always survives hostile advisory text."""
+    sides = report['applicability']
+    sources = sorted({f'{s["tracking_id"]} revision {s["revision"]}' + (' (superseded)' if s['superseded'] else '')
+                      for s in report['sources']})
+    return clean_text(CSAF_APPLICABILITY.format(
+        assessment=clean_text(report['assessment'], 40), older=clean_text(sides['older']['resolution'], 40),
+        newer=clean_text(sides['newer']['resolution'], 40), sources=clean_text(', '.join(sources), 600)), 1000)
 
 
 def vulnerability_pointer(pointer: str) -> str:
@@ -142,7 +162,12 @@ def vulnerability_pointer(pointer: str) -> str:
 def build_bundle(*, investigation_id: str, base_revision: int, lead: Lead, cves: Iterable[str], index: ReverseIndex,
                  rules: RulesPort, now: str, coverage: Sequence[Coverage], scope_id: str | None,
                  pair_id: str | None, older_sha: str | None, newer_sha: str | None,
-                 mention_only: Iterable[str] = (), scope: SearchScope | None = None) -> ContextBundle:
+                 mention_only: Iterable[str] = (), scope: SearchScope | None = None,
+                 applicability: Mapping[str, Mapping[str, Any]] | None = None) -> ContextBundle:
+    """``applicability`` maps a CVE to its ``kbc-csaf-applicability/1`` report (KBF-03 s5.2); a report without an
+    ``applicability`` leaves the card at ``APPLICABILITY`` and changes neither the bytes nor the key."""
+    claims = {cve: report for cve, report in (applicability or {}).items() if report.get('applicability') is not None}
+    applied: dict[str, Mapping[str, Any]] = {}
     cards: list[CveCard] = []
     profiles: list[CweProfile] = []
     hypotheses: list[HypothesisSet] = []
@@ -179,8 +204,14 @@ def build_bundle(*, investigation_id: str, base_revision: int, lead: Lead, cves:
         if missing:
             unknowns.append(f'CARD_FACT_SOURCE_MISSING: {cve} {", ".join(missing)} has no complete JSON '
                             'field provenance; unavailable fields were withheld')
+        claim = claims.get(cve)
         shown = card.model_copy(update={'title': clean_text(card.title, 1000) if card.title else None,
-                                        'applicability': APPLICABILITY})
+                                        'applicability': applicability_text(claim) if claim else APPLICABILITY})
+        if claim:
+            applied[cve] = claim
+            for line in (clean_text(f'{cve} (CSAF): {u}', 1000) for u in claim['unknowns']):
+                if line not in unknowns:
+                    unknowns.append(line)
         profile, hypothesis = rules.interpret(shown, refs)
         cards.append(shown)
         profiles.append(profile)
@@ -197,7 +228,8 @@ def build_bundle(*, investigation_id: str, base_revision: int, lead: Lead, cves:
                       edge_set_digest=index.edge_set_digest(),
                       sources=tuple(docs.values()),
                       rules_digest=rules.rules_digest, lexicon_digest=rules.lexicon_digest, older_sha=older_sha,
-                      newer_sha=newer_sha, scope_id=scope_id)
+                      newer_sha=newer_sha, scope_id=scope_id,
+                      csaf_applicability=domain_id('kbc.csaf-applicability', 1, applied) if applied else None)
     return ContextBundle(
         context_key=key, investigation_id=investigation_id, base_revision=base_revision, lead=lead,
         scope_id=scope_id, pair_id=pair_id, older_sha=older_sha, newer_sha=newer_sha,
