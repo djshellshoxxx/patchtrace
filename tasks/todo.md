@@ -925,3 +925,8 @@ Done: dock with state matrix, consent, import, changes, copy, go to CVE. Open: r
 - [x] (AF-0, 2026-11-04) `kb attach --repair`: preview by default (no writes), `kb-repair` verified backup before any replaced row, keep-aside, never deletes analyst data (`tests/test_kbc_attach_repair.py`)
 - [x] (AF-0, 2026-11-04) BUG-RULE-2 same-second decisions keep write order; BUG-RULE-7 diff cell bound; BUG-CG-3 DOT export states the neighbour cap (`tests/test_audit105_owner_findings.py`, strict xfails removed)
 - [ ] (AF-0) rules/window.py residual: few keys repeated in a cycle stay inside both bounds and take about 2.5 s; needs a deterministic work budget; `rules/cli.py _history()` lists same-second decisions in id order (display only)
+
+### [ghidriff-1toN:normalizer]
+- [x] (2026-11-04, A-28) Ghidriff one-to-many abstains per conflict group instead of rejecting the whole document; CORE-2 exact-pair rejection kept; PatchTrace-reserved metadata keys planted upstream reject (`tests/test_normalization_one_to_many.py`, `tests/test_unified_ghidriff_one_to_many.py`, `tests/test_evalcore_ghidriff_one_to_many.py`)
+- [ ] (RB-01, external) re-dispatch `unified-live-gates` with per_class=2: `lua-v5.4.6-to-v5.4.7-O2` must write outcomes in both orientations; tier-R/attention still report that pair `failed` (one-to-many) by design
+- [ ] (A-28 follow-ups) per-pairing Prediction scoring (needs additive `abstained_old_rvas`/`abstained_new_rvas` in `tier-r-engine-output/1`); partial 1:N degree check over `address_matches` (moves tier-R baselines; owner decision); `SnapshotMatch.pairs` so the ghidriff-1n group survives raw-missing; group-size cap owner decision (count is visible today)
