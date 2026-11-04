@@ -27,6 +27,7 @@ from .contracts import (
     CveCard,
     Lead,
     Record,
+    SearchScope,
     Sha256,
     Short,
     Uuid,
@@ -141,7 +142,7 @@ def vulnerability_pointer(pointer: str) -> str:
 def build_bundle(*, investigation_id: str, base_revision: int, lead: Lead, cves: Iterable[str], index: ReverseIndex,
                  rules: RulesPort, now: str, coverage: Sequence[Coverage], scope_id: str | None,
                  pair_id: str | None, older_sha: str | None, newer_sha: str | None,
-                 mention_only: Iterable[str] = ()) -> ContextBundle:
+                 mention_only: Iterable[str] = (), scope: SearchScope | None = None) -> ContextBundle:
     cards: list[CveCard] = []
     profiles: list[CweProfile] = []
     hypotheses: list[HypothesisSet] = []
@@ -149,7 +150,7 @@ def build_bundle(*, investigation_id: str, base_revision: int, lead: Lead, cves:
     docs: dict[str, SourceDigest] = {}
     unknowns: list[str] = ['KEV listing was not loaded, so exploitation status is unknown.']
     for cve in sorted(set(cves)):
-        lookup = index.lookup_cve(cve, scope_id=scope_id, now=now)
+        lookup = index.lookup_cve(cve, scope=scope, scope_id=scope_id, now=now)
         unknowns.extend(w for w in lookup.warnings if w.startswith('CARD_FACT_CONFLICT:'))
         for doc_id in lookup.card_doc_ids:
             source = index.get(doc_id).source

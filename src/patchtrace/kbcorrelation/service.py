@@ -362,13 +362,23 @@ class KbService:
         return Outcome(0 if comp.selectable(hints) else 4, 'complete' if comp.selectable(hints) else 'unavailable',
                        result, '\n'.join(lines))
 
+    @staticmethod
+    def _stored_scope(ws: WorkspaceStore, rev: InvestigationRevision) -> SearchScope | None:
+        """The document scope the investigation's recorded search used (issue #118): every later lookup keeps it, so
+        an investigation is never widened without a new recorded search. None means the whole cached corpus."""
+        coverage = ws.get_coverage(rev.coverage_ids[-1]) if rev.coverage_ids else None
+        if coverage is None or coverage.scope.kind == 'cached_corpus':
+            return None
+        return coverage.scope
+
     def _lead_cards(self, index: ReverseIndex, rev: InvestigationRevision,
                     ws: WorkspaceStore) -> tuple[list[CveCard], dict[str, SourceRef]]:
         cves, _, _ = self._lead_cves(index, rev, ws)
+        scope = self._stored_scope(ws, rev)
         cards: list[CveCard] = []
         refs: dict[str, SourceRef] = {}
         for cve in cves:
-            look = index.lookup_cve(cve, scope_id=rev.selected_scope_id, now=self._now())
+            look = index.lookup_cve(cve, scope=scope, scope_id=rev.selected_scope_id, now=self._now())
             cards += look.cards[:1]
             if look.edges:
                 edge = look.edges[0]
@@ -382,22 +392,23 @@ class KbService:
         coverage = tuple(c for c in (ws.get_coverage(i) for i in rev.coverage_ids) if c is not None)
         now, scope_id, lead = self._now(), rev.selected_scope_id, rev.lead
         if lead.kind == 'kb':
-            look = index.lookup_kb(lead.value, scope_id=scope_id, now=now)
+            look = index.lookup_kb(lead.value, scope=self._stored_scope(ws, rev), scope_id=scope_id, now=now)
             return (tuple(sorted({e.cve for e in look.edges})), tuple(sorted({e.cve for e in look.mention_only})),
                     coverage or (look.coverage,))
         if lead.kind == 'cve':
             return (lead.value,), (), coverage
         return (), (), coverage
 
-    def _lead_kbs(self, index: ReverseIndex, rev: InvestigationRevision) -> dict[str, str | None]:
+    def _lead_kbs(self, index: ReverseIndex, rev: InvestigationRevision,
+                  scope: SearchScope | None = None) -> dict[str, str | None]:
         """KB ids the lead leads to under the selected product, each with its one vendor-stated fixed build (or None
         when the documents state none or disagree)."""
         lead, scope_id, now = rev.lead, rev.selected_scope_id, self._now()
         if lead.kind == 'kb':
-            look = index.lookup_kb(lead.value, scope_id=scope_id, now=now)
+            look = index.lookup_kb(lead.value, scope=scope, scope_id=scope_id, now=now)
             kbs = {lead.value}
         elif lead.kind == 'cve':
-            look = index.lookup_cve(lead.value, scope_id=scope_id, now=now)
+            look = index.lookup_cve(lead.value, scope=scope, scope_id=scope_id, now=now)
             kbs = {e.kb for e in look.edges}
         else:
             raise _fail('PT-KBC-INPUT', 'this investigation started from two files and has no KB to look up')
@@ -437,7 +448,7 @@ class KbService:
             cards, refs = self._lead_cards(index, rev, ws)
             hints, _ = comp.hints_for(cards, refs, entered, scope_id)
             chosen = sorted({h.basename for h in hints if h.tier in comp.SELECTING_TIERS})
-            kbs = self._lead_kbs(index, rev)
+            kbs = self._lead_kbs(index, rev, self._stored_scope(ws, rev))
         if not chosen:
             return rev, self._unanswered(rev, 'no file name', TEXT_KB7)
         covered = scope.family != 'windows-server' and scope.winbindex_key is not None
@@ -700,7 +711,7 @@ class KbService:
         return build_bundle(investigation_id=rev.investigation_id, base_revision=base, lead=rev.lead, cves=cves,
                             index=index, rules=self.env.rules, now=self._now(), coverage=coverage,
                             scope_id=rev.selected_scope_id, pair_id=pair_id, older_sha=older, newer_sha=newer,
-                            mention_only=mention)
+                            mention_only=mention, scope=self._stored_scope(ws, rev))
 
     def _attach_outcome(self, outcome, investigation_id: str, pair, plan_sha: str, context_key: str) -> Outcome:
         link = outcome.value
