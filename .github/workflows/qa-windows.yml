@@ -22,16 +22,22 @@ jobs:
       QT_QPA_PLATFORM: offscreen
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+          cache: pip
+          cache-dependency-path: pyproject.toml
       - if: runner.os == 'Linux'
         run: sudo apt-get update && sudo apt-get install -y libegl1 libopengl0 libgl1
       - run: "python -m pip install --only-binary=:all: -e '.[dev,search,rules]'"
       - run: python -m pip check
       - name: protobuf equals the pin and runs the upb backend (SPEC-10b)
         run: python tools/check_protobuf_runtime.py
-      - run: python -m pytest -q --junitxml=qa-results.xml
+      # One process per runner core; a test file stays on one worker (loadfile) so module fixtures and
+      # file-local Qt state are never shared across processes.
+      - run: python -m pytest -q -n auto --dist loadfile --junitxml=qa-results.xml
       - run: python -m ruff check src tests tools
       - name: BinExport worker memory cap measurement (SPEC-10b U7, non-gating)
         if: runner.os == 'Windows'
