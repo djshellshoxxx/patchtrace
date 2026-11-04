@@ -10,7 +10,7 @@
         "new_name": {
           "anyOf": [
             {
-              "maxLength": 512,
+              "maxLength": 4096,
               "type": "string"
             },
             {
@@ -29,7 +29,7 @@
         "old_name": {
           "anyOf": [
             {
-              "maxLength": 512,
+              "maxLength": 4096,
               "type": "string"
             },
             {
@@ -57,7 +57,7 @@
                     "type": "number"
                   },
                   {
-                    "maxLength": 512,
+                    "maxLength": 4096,
                     "type": "string"
                   }
                 ]
@@ -178,7 +178,7 @@
     "version": {
       "anyOf": [
         {
-          "maxLength": 200,
+          "maxLength": 1024,
           "type": "string"
         },
         {
