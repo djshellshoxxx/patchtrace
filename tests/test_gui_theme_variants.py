@@ -1,8 +1,10 @@
 """System theme, automatic high contrast, reduced motion and View > Theme (GUI plan 8.6; slice F7). The platform is a
-simulated provider: no test depends on the OS, on a display, or on real high-contrast settings."""
+simulated provider, except in the G3 pair at the end, which drives the real one through an application palette:
+no test depends on the OS, on a display, or on real high-contrast settings."""
 from __future__ import annotations
 
-from collections.abc import Callable
+from collections.abc import Callable, Iterator
+from contextlib import contextmanager
 
 import pytest
 from host_support import private_tooltip_registry  # noqa: F401
@@ -187,6 +189,40 @@ def test_the_qt_provider_reports_a_quiet_platform(qapp):
     prefs._notify()
     assert hits == [1]
     prefs.deleteLater()
+
+
+# ---- the real provider against a live application palette (G3) --------------------------------------------------
+# Offscreen ignores QStyleHints.setColorScheme (colorScheme stays Unknown and colorSchemeChanged never fires on
+# PySide6 6.12), so the OS light/dark switch is left to manual gate M22.
+
+@contextmanager
+def application_palette(pal: QPalette) -> Iterator[None]:
+    original = QPalette(QApplication.palette())
+    try:
+        QApplication.setPalette(pal)
+        yield
+    finally:
+        QApplication.setPalette(original)
+
+
+def test_the_qt_provider_notifies_when_the_application_palette_changes(window):
+    prefs = QtSystemPrefs(QApplication.instance(), window)
+    seen = []
+    prefs.on_change(lambda: seen.append(prefs.palette().color(QPalette.ColorRole.Window).name()))
+    with application_palette(LIGHT):
+        assert seen and set(seen) == {'#f4f4f4'}  # ApplicationPaletteChange reached the event filter
+
+
+def test_the_system_variant_on_the_real_provider_retokens_from_a_new_application_palette(window, settings):  # noqa: F811
+    theme = ThemeController(window, settings, parent=window)  # no prefs: the real QtSystemPrefs
+    theme.set_variant('system')
+    before = theme.tokens
+    seen = []
+    theme.theme_changed.connect(seen.append)
+    with application_palette(DARKISH):
+        assert theme.tokens == system_tokens(DARKISH) and seen[-1] == theme.tokens
+        assert window.styleSheet() == ''
+    assert theme.tokens == before
 
 
 # ---- View > Theme -----------------------------------------------------------------------------------------------
