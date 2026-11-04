@@ -681,3 +681,50 @@ def test_the_tool_is_offline_stdlib_and_names_no_update_endpoint():
     imports = set(re.findall(r'^(?:from|import) ([\w.]+)', text, re.MULTILINE))
     assert not imports & {'subprocess', 'socket', 'urllib', 'urllib.request', 'http', 'http.client', 'requests'}
     assert 'extractall' not in text and '.extract(' not in text
+
+
+# ---------------------------------------------------------------- re-verification follow-ups (A-I-2)
+
+def lzma_zip_with_corrupt_props() -> bytes:
+    """A Windows ZIP whose dependency-versions.json is LZMA-compressed with its five filter-property bytes
+    overwritten: zipfile raises lzma.LZMAError, which subclasses Exception directly."""
+    buffer = io.BytesIO()
+    with zipfile.ZipFile(buffer, 'w') as archive:
+        for name, data in windows_members().items():
+            method = zipfile.ZIP_LZMA if name.endswith('dependency-versions.json') else zipfile.ZIP_DEFLATED
+            archive.writestr(zipfile.ZipInfo(name), data, compress_type=method)
+    raw = bytearray(buffer.getvalue())
+    name = b'PatchTrace/dependency-versions.json'
+    offset = 0
+    while True:
+        offset = raw.index(b'PK\x03\x04', offset)
+        name_len = int.from_bytes(raw[offset + 26:offset + 28], 'little')
+        extra_len = int.from_bytes(raw[offset + 28:offset + 30], 'little')
+        if bytes(raw[offset + 30:offset + 30 + name_len]) == name:
+            data = offset + 30 + name_len + extra_len
+            raw[data + 4:data + 9] = b'\xff' * 5  # 2-byte version, 2-byte props size, then the 5 props bytes
+            break
+        offset += 4
+    return bytes(raw)
+
+
+def test_a_zip_member_with_corrupt_lzma_properties_fails_the_archive_not_the_tool(release):
+    release.files[WINDOWS_ZIP] = release.files[PORTABLE] = lzma_zip_with_corrupt_props()
+    release.write()
+    code, document, err = run(release)
+    assert 'Traceback' not in err
+    assert code == 3 and failures(document).get('archive:windows-zip') == 'PT-REL-ARCHIVE-CONTENT'
+
+
+def test_an_unsearchable_download_dir_exits_2(release, monkeypatch):
+    release.write()
+    real = Path.is_dir
+
+    def guarded(self: Path, *args: object, **kwargs: object) -> bool:
+        if self == release.dir:
+            raise PermissionError(13, 'Permission denied', str(self))
+        return real(self, *args, **kwargs)
+
+    monkeypatch.setattr(Path, 'is_dir', guarded)
+    code, document, err = run(release)
+    assert code == 2 and document == {} and 'verify_release: error' in err

@@ -32,6 +32,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import lzma
 import posixpath
 import re
 import stat
@@ -83,8 +84,8 @@ NAME_IN_NOTES = {name: re.compile(rf'(?<![\w.-]){re.escape(name)}(?![\w-]|\.[\w-
 
 # ValueError: zipfile raises UnicodeDecodeError for a name flagged UTF-8 (0x800) that is not, and tarfile raises a
 # bare ValueError for a malformed PAX GNU.sparse.map; both are hostile archives, not tool errors.
-ZIP_ERRORS = (zipfile.BadZipFile, zipfile.LargeZipFile, zlib.error, EOFError, NotImplementedError, RuntimeError,
-              OSError, ValueError)
+ZIP_ERRORS = (zipfile.BadZipFile, zipfile.LargeZipFile, zlib.error, lzma.LZMAError, EOFError, NotImplementedError,
+              RuntimeError, OSError, ValueError)  # LZMAError subclasses Exception directly
 TAR_ERRORS = (tarfile.TarError, zlib.error, EOFError, OSError, ValueError)
 
 
@@ -207,7 +208,11 @@ def load_inputs(args: argparse.Namespace) -> Inputs:
         raise InputError(f'--tag must look like v0.1.0-beta.N, got {clean(args.tag, 80)!r}')
     if not SHA.fullmatch(args.sha):
         raise InputError('--sha must be a full 40-character lowercase commit SHA')
-    if not args.dir.is_dir():
+    try:
+        is_dir = args.dir.is_dir()
+    except OSError as exc:  # an unsearchable parent raises PermissionError instead of returning False
+        raise InputError(f'--dir {args.dir} cannot be read: {exc.strerror or exc}') from None
+    if not is_dir:
         raise InputError(f'--dir {args.dir} is not a directory')
     release = load_release(args.release_json)
     refs = load_refs(args.peeled)
