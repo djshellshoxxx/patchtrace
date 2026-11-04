@@ -260,7 +260,11 @@ def test_live_bindiff_status(record_live_status, tmp_path):
     if inputs is None:
         checks['end_to_end'] = _check('blocked', why)
     else:
-        extra = {'input': inputs.label, 'acceptance': inputs.acceptance}
+        # The RB-03 receipt (tools/native_receipt.py) needs both pairs: artifact ids and the .BinExport bytes.
+        extra = {'input': inputs.label, 'acceptance': inputs.acceptance,
+                 'source_pair_sha256': {'older': inputs.older_sha256, 'newer': inputs.newer_sha256},
+                 'input_pair_sha256': {'older': inputs.older.summary.file_sha256,
+                                       'newer': inputs.newer.summary.file_sha256}}
         checks['reversed_refused'] = _reversed_refused(inputs)
         checks['end_to_end'] = _end_to_end(exe, inputs, tmp_path / 'e2e', expected_version)
         pair = bind_pair(inputs.older, inputs.newer, inputs.older_sha256, inputs.newer_sha256)
