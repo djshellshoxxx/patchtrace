@@ -13,6 +13,7 @@ from qt_support import settings, top_level_windows  # noqa: F401  (the fixture i
 from unified_s0_fixtures import make_project
 from unified_wire_support import place_pair
 
+import patchtrace.ui_unified as ui_unified
 from patchtrace.gui.tips import register_tips
 from patchtrace.ui import MainWindow
 from patchtrace.unified import pipeline
@@ -107,8 +108,12 @@ def test_a_second_run_reuses_the_stored_result(real):
     run_to_result(controller)
     first = controller.vm.result_id
     controller.panel.run_button.click()
-    wait_for(lambda: not controller.tasks.busy('unified-run'))
+    # The run's own completion reloads (``_run_finished``); let that land so the reload below is the one observed.
+    wait_for(lambda: not controller.tasks.busy('unified-run') and not controller.tasks.busy(ui_unified.LOAD_CHANNEL))
+    before = controller.vm
     controller.reload()
-    wait_for(lambda: controller.vm is not None and controller.vm.state in ('U3', 'U4'))
+    # Wait for this reload's own view model: the previous one already satisfies any state check.
+    wait_for(lambda: controller.vm is not before and not controller.tasks.busy(ui_unified.LOAD_CHANNEL))
+    assert controller.vm.state in ('U3', 'U4')
     assert controller.vm.result_id == first
     assert pipeline.recent_runs(controller.window.service)
