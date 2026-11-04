@@ -136,6 +136,7 @@ class BuildResult:
     compiler_version: str
     source_digest: str
     input_files: dict[str, str] = field(default_factory=dict)
+    source_dirs: tuple[str, ...] = ()    # the scratch source directory the compiler may have recorded unmapped
 
 
 def _check_rel(rel: str) -> None:
@@ -379,7 +380,7 @@ def _build_in(spec: BuildSpec, tools: Toolchain, store: Path, root: Path, scratc
     (debug_dir / 'build.json').write_bytes(json.dumps(record, sort_keys=True, indent=1).encode('utf-8') + b'\n')
     return BuildResult(spec, recipe_digest, debug_dir / spec.output, engine_dir / spec.output, pdb_target,
                        engine_sha, debug_sha, pdb_sha, len(engine_img.data), engine_img.image_base, compiler,
-                       tools.get(compiler).version or 'unknown', source_digest, inputs)
+                       tools.get(compiler).version or 'unknown', source_digest, inputs, (str(src_dir),))
 
 
 def _runtime_archive(tools: Toolchain, spec: BuildSpec, scratch: Path, env: dict) -> str:

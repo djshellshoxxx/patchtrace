@@ -420,3 +420,12 @@ def test_g_u4_cos_pseudo_beside_a_cheap_tier_semantic_delta_fails():
     assert g4(m, run('a', pair(doc, clean)), run('b', pair(doc, clean))).observed['pseudo_violations'] == 0
     bad = g4(m, run('a', pair(doc, dirty)))
     assert bad.status == 'fail' and any('COS-PSEUDO/1' in r for r in bad.reasons)
+
+
+def test_g_u2_reports_where_the_planted_functions_landed_when_the_engine_saw_no_row():
+    """Synthetic outcomes: every mutant has no row at all (RB-01), which is `unpaired`, neither a hit nor a leak."""
+    ps = [pair(doc, []) for doc in mutants()]
+    g2 = gate(gates_u.build_report(inputs(mut_manifest(), run('linux', *ps))), 'G-U2')
+    assert g2.observed['classes']['constant']['verdicts'] == {'unpaired': 20}
+    assert g2.observed['classes']['constant']['leaks'] == 0 and g2.status == 'fail'
+    assert 'unpaired 20' in gates_u.numbers(g2)

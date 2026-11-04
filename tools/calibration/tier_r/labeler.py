@@ -12,7 +12,7 @@ from pathlib import Path
 
 from .bodyhash import Disassembly, body_fact, disassemble, hash_functions
 from .build import BuildResult
-from .contracts import masked_body_must_match
+from .contracts import ContractError, masked_body_must_match
 from .csrc import FunctionDef, Source, compare_spans
 from .debuginfo import ImageFunction, Inventory, inventory
 from .pe import read_pe
@@ -60,7 +60,7 @@ class SideData:
 
 def analyze(build: BuildResult, tools: Toolchain, source_root: Path) -> SideData:
     image = read_pe(build.debug_image)
-    inv = inventory(image, tools, pdb=build.pdb)
+    inv = inventory(image, tools, pdb=build.pdb, roots=build.source_dirs)
     disasm = disassemble(image, tools)
     spans = [(f.rva, f.size) for f in inv.functions if f.origin == 'project']
     return SideData(build, inv, hash_functions(image, disasm, spans), Path(source_root), disasm)
@@ -195,6 +195,10 @@ def label_construction(old: SideData, new: SideData, *, label_source: str, seman
     masked body changed becomes ambiguous (induced by the target)."""
     declared = dict(declared or {})
     targets = ', '.join(sorted(declared)) or 'none'
+    if label_source == 'same-source' and bool(old.functions) != bool(new.functions):
+        # One side without any project function is an inventory failure, not a truth: labelling every function of
+        # the other side `no-counterpart` would contradict correct pairings.
+        raise ContractError('same-source pair: one image has no project function in its debug info')
     out = []
     for j in join(old.functions, new.functions, renames):
         body = _body(old, new, j)
