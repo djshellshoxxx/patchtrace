@@ -83,7 +83,7 @@ from .sources import (
     snapshot_from_project,
     write_snapshot,
 )
-from .sources.ghidriff import MAX_RAW_BYTES
+from .sources.ghidriff import MAX_RAW_BYTES, load_raw
 from .sources.secondary import write_loaded
 
 __all__ = ['ALL_SOURCES', 'PlacedIr', 'Plan', 'RunReport', 'StageEvent', 'UnifiedOptions', 'UnifiedRequest',
@@ -144,6 +144,7 @@ class Plan:
     ir: tuple[PlacedIr, PlacedIr] | None = None     # older, newer; None = S0 mode
     ir_note: str | None = None                      # why placed sidecars were not used (a warning of the report)
     residual: bool = True
+    raw_verdict: str | None = None                  # the worker's own classification of a raw output that hashed fine
     _identity_inputs: SourceInputs | None = field(default=None, init=False, compare=False, repr=False)
 
     @property
@@ -169,7 +170,7 @@ class Plan:
         return AddressMap(self.older_layout, self.newer_layout)
 
     def inputs(self, matches: Iterable[SnapshotMatch] | None = None, raw_status: str | None = None) -> SourceInputs:
-        raw = RawGhidriff(status=raw_status or self.raw_status, sha256=self.raw_sha256)  # type: ignore[arg-type]
+        raw = RawGhidriff(status=raw_status or self.raw_verdict or self.raw_status, sha256=self.raw_sha256)  # type: ignore[arg-type]
         inputs = SourceInputs(older_sha256=self.older_sha256, newer_sha256=self.newer_sha256,
                               run=GhidriffRun(self.run_id, self.backend_version, raw),
                               matches=self.manual if matches is None else tuple(matches), secondary=self.secondary)
@@ -375,6 +376,11 @@ def resolve_plan(plan: Plan, *, limits: UnifiedLimits = DEFAULT_LIMITS, registry
     """Pure task work over validated captures; never accesses the project or trusts a transported digest."""
     budget = budget or Budget()
     budget.check()
+    if plan.raw_status == 'ok' and plan.raw_verdict is None and plan.raw_path is not None:
+        # The capture only hashed the file; the worker also shape-checks it (`load_raw`: no `address_matches` is
+        # `missing`, a malformed table `unparsable`) and those give other source refs. Predict the id it will publish.
+        plan = dataclasses.replace(plan, raw_verdict=load_raw(plan.raw_path, plan.raw_sha256, limits).status)
+        budget.check()
     inputs = plan.inputs()
     prior = None if previous is None else previous._identity_inputs
     if prior is not None and prior._manual_digest is not None and len(prior.matches) == len(inputs.matches):

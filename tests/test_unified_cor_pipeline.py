@@ -59,3 +59,17 @@ def test_an_interrupt_during_execute_leaves_no_staging_or_private_directory(proj
         pipeline.execute(request)
     assert staging(project) == []
     assert {p.name for p in Path(tempfile.gettempdir()).glob('pt-unified-*')} == before
+
+
+def test_a_raw_output_the_worker_cannot_use_does_not_make_every_result_stale(tmp_path):
+    """The plan classifies the raw output like the worker (`load_raw`), so the id it predicts is the id published."""
+    from patchtrace.sample import create_sample
+    service = create_sample(tmp_path / 'sample')
+    try:
+        first = pipeline.run_unified(service, UnifiedOptions(isolate=False, use_ir=False))
+        loaded = pipeline.load_current(service, pipeline.make_plan(service, use_ir=False))
+        assert loaded.state == 'current' and loaded.manifest.result_id == first.result_id
+        again = pipeline.run_unified(service, UnifiedOptions(isolate=False, use_ir=False))
+        assert again.status == 'cached' and again.result_id == first.result_id
+    finally:
+        service.close()
