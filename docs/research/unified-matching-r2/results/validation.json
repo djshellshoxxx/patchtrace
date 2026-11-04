@@ -1,0 +1,367 @@
+{
+  "acceptance": {
+    "automatic_nm": "incomplete",
+    "current_head_windows_ci": "pending",
+    "merge": "draft_not_merged",
+    "native_bindiff": "not_run",
+    "representative_real_world_accuracy": "open"
+  },
+  "baseline": "a04f5a299a8d4afef023261e52e08d14678cf1e7",
+  "baseline_focused": {
+    "duration_s": 258.99,
+    "passed": 2509,
+    "selection": [
+      "tests/test_unified_*.py",
+      "tests/test_secondary*.py",
+      "tests/test_bindiff_*.py"
+    ],
+    "xfailed": 1
+  },
+  "final_research_provenance_integration": {
+    "duration_s": 6.41,
+    "failed": 0,
+    "overlap_note": "Selections overlap prior runs; counts must not be summed.",
+    "passed": 268,
+    "runtime": "isolated copied validation interpreter with read-only existing dependencies",
+    "selection": [
+      "tests/test_r2_*.py",
+      "tests/test_unified_keys.py",
+      "tests/test_unified_wire_compute.py",
+      "tests/test_unified_fusion.py",
+      "tests/test_unified_ir_graph.py"
+    ],
+    "source_head": "e84f81e9c7eb95527091ec9db5bf99472c516a39"
+  },
+  "full_original_run": {
+    "additional_failure_ids": [],
+    "duration_s": 1754.52,
+    "errors": 9,
+    "exit_code": 1,
+    "failed": 47,
+    "failed_error_cases": [
+      {
+        "node_id": "tests/test_acquisition_hardening.py::test_cancel_interrupts_slow_response[slow-drip]",
+        "status": "FAILED"
+      },
+      {
+        "node_id": "tests/test_acquisition_hardening.py::test_cancel_interrupts_slow_response[silent-stall]",
+        "status": "FAILED"
+      },
+      {
+        "node_id": "tests/test_acquisition_hardening.py::test_total_deadline_interrupts_slow_response[slow-drip]",
+        "status": "FAILED"
+      },
+      {
+        "node_id": "tests/test_acquisition_hardening.py::test_total_deadline_interrupts_slow_response[silent-stall]",
+        "status": "FAILED"
+      },
+      {
+        "node_id": "tests/test_acquisition_hardening.py::test_slow_drip_is_read_exactly_across_many_socket_timeout_slices",
+        "status": "FAILED"
+      },
+      {
+        "node_id": "tests/test_acquisition_hardening.py::test_silent_peer_still_times_out_after_the_idle_budget",
+        "status": "FAILED"
+      },
+      {
+        "node_id": "tests/test_acquisition_transport.py::test_slow_drip_download_stops_at_the_total_deadline",
+        "status": "FAILED"
+      },
+      {
+        "node_id": "tests/test_acquisition_transport.py::test_slow_drip_download_observes_cancel",
+        "status": "FAILED"
+      },
+      {
+        "node_id": "tests/test_binexport_isolation.py::test_pure_python_runtime_is_refused_in_a_fresh_interpreter",
+        "status": "FAILED"
+      },
+      {
+        "node_id": "tests/test_bundle_acceptance_unit.py::test_probe_connects_to_loopback_listener_then_reports_blocked",
+        "status": "FAILED"
+      },
+      {
+        "node_id": "tests/test_enrichment_intelligence.py::test_slow_drip_response_stops_at_the_total_deadline",
+        "status": "FAILED"
+      },
+      {
+        "node_id": "tests/test_interpretation.py::test_interpret_end_to_end_over_a_loopback_ollama",
+        "status": "FAILED"
+      },
+      {
+        "node_id": "tests/test_interpretation.py::test_interpret_survives_a_peer_that_does_not_speak_http",
+        "status": "FAILED"
+      },
+      {
+        "node_id": "tests/test_kev_transport.py::test_a_slow_drip_server_cannot_hold_the_download_past_its_deadline",
+        "status": "FAILED"
+      },
+      {
+        "node_id": "tests/test_kev_transport.py::test_a_server_that_goes_silent_is_cut_by_the_socket_timeout",
+        "status": "FAILED"
+      },
+      {
+        "node_id": "tests/test_kev_transport.py::test_a_complete_download_over_a_real_socket",
+        "status": "FAILED"
+      },
+      {
+        "node_id": "tests/test_kev_transport.py::test_a_chunked_download_over_a_real_socket",
+        "status": "FAILED"
+      },
+      {
+        "node_id": "tests/test_kev_transport.py::test_a_truncated_body_over_a_real_socket_is_a_network_error[content-length]",
+        "status": "FAILED"
+      },
+      {
+        "node_id": "tests/test_kev_transport.py::test_a_truncated_body_over_a_real_socket_is_a_network_error[chunked]",
+        "status": "FAILED"
+      },
+      {
+        "node_id": "tests/test_kev_transport.py::test_the_real_opener_sends_only_the_two_fixed_headers_and_no_redirect_is_followed",
+        "status": "FAILED"
+      },
+      {
+        "node_id": "tests/test_kev_transport.py::test_the_real_opener_ignores_environment_proxies",
+        "status": "FAILED"
+      },
+      {
+        "node_id": "tests/test_kev_transport.py::test_the_real_opener_returns_http_errors_as_responses_and_maps_connection_failures",
+        "status": "FAILED"
+      },
+      {
+        "node_id": "tests/test_network_consent_guard.py::test_every_channel_is_refused_and_recorded_once[tcp-connect]",
+        "status": "FAILED"
+      },
+      {
+        "node_id": "tests/test_network_consent_guard.py::test_every_channel_is_refused_and_recorded_once[tcp-connect-ex]",
+        "status": "FAILED"
+      },
+      {
+        "node_id": "tests/test_network_consent_guard.py::test_every_channel_is_refused_and_recorded_once[udp-sendto]",
+        "status": "FAILED"
+      },
+      {
+        "node_id": "tests/test_network_consent_guard.py::test_every_channel_is_refused_and_recorded_once[tcp-connect-name]",
+        "status": "FAILED"
+      },
+      {
+        "node_id": "tests/test_network_consent_guard.py::test_every_channel_is_refused_and_recorded_once[udp-sendto-name]",
+        "status": "FAILED"
+      },
+      {
+        "node_id": "tests/test_network_consent_guard.py::test_every_channel_is_refused_and_recorded_once[raw-socket-module]",
+        "status": "FAILED"
+      },
+      {
+        "node_id": "tests/test_network_consent_guard.py::test_a_local_unix_socket_is_not_network",
+        "status": "FAILED"
+      },
+      {
+        "node_id": "tests/test_providers_transport.py::test_garbage_status_line_is_classified_not_raised_raw",
+        "status": "FAILED"
+      },
+      {
+        "node_id": "tests/test_providers_transport.py::test_plain_text_answer_to_a_tls_hello_is_classified_as_tls",
+        "status": "FAILED"
+      },
+      {
+        "node_id": "tests/test_providers_transport.py::test_chunked_response_is_read_in_full",
+        "status": "FAILED"
+      },
+      {
+        "node_id": "tests/test_providers_transport.py::test_large_body_is_read_across_many_reads",
+        "status": "FAILED"
+      },
+      {
+        "node_id": "tests/test_providers_transport.py::test_truncated_chunked_body_is_classified",
+        "status": "FAILED"
+      },
+      {
+        "node_id": "tests/test_providers_transport.py::test_body_shorter_than_its_content_length_is_not_accepted",
+        "status": "FAILED"
+      },
+      {
+        "node_id": "tests/test_providers_transport.py::test_connection_closed_without_response_is_classified_and_not_retried",
+        "status": "FAILED"
+      },
+      {
+        "node_id": "tests/test_providers_transport.py::test_http_error_status_hides_peer_body_and_is_sent_once",
+        "status": "FAILED"
+      },
+      {
+        "node_id": "tests/test_providers_transport.py::test_ollama_request_and_envelope_shape[bare]",
+        "status": "FAILED"
+      },
+      {
+        "node_id": "tests/test_providers_transport.py::test_ollama_request_and_envelope_shape[slash]",
+        "status": "FAILED"
+      },
+      {
+        "node_id": "tests/test_providers_transport.py::test_ollama_request_and_envelope_shape[full]",
+        "status": "FAILED"
+      },
+      {
+        "node_id": "tests/test_providers_transport.py::test_ollama_request_and_envelope_shape[full-slash]",
+        "status": "FAILED"
+      },
+      {
+        "node_id": "tests/test_providers_transport.py::test_provider_refuses_redirect[301]",
+        "status": "FAILED"
+      },
+      {
+        "node_id": "tests/test_providers_transport.py::test_provider_refuses_redirect[302]",
+        "status": "FAILED"
+      },
+      {
+        "node_id": "tests/test_providers_transport.py::test_provider_refuses_redirect[303]",
+        "status": "FAILED"
+      },
+      {
+        "node_id": "tests/test_providers_transport.py::test_provider_refuses_redirect[307]",
+        "status": "FAILED"
+      },
+      {
+        "node_id": "tests/test_providers_transport.py::test_provider_refuses_redirect[308]",
+        "status": "FAILED"
+      },
+      {
+        "node_id": "tests/test_providers_transport.py::test_real_stalled_body_cancel_returns_promptly",
+        "status": "FAILED"
+      },
+      {
+        "node_id": "tests/test_network_consent_guard.py::test_loopback_is_refused_by_default",
+        "status": "ERROR"
+      },
+      {
+        "node_id": "tests/test_network_consent_guard.py::test_loopback_is_allowed_on_request_and_nothing_else_is",
+        "status": "ERROR"
+      },
+      {
+        "node_id": "tests/test_network_consent_guard.py::test_the_guard_restores_everything_on_exit",
+        "status": "ERROR"
+      },
+      {
+        "node_id": "tests/test_slow_drip_deadlines.py::test_deadline_bounds_a_slow_drip[csaf]",
+        "status": "ERROR"
+      },
+      {
+        "node_id": "tests/test_slow_drip_deadlines.py::test_deadline_bounds_a_slow_drip[enrichment]",
+        "status": "ERROR"
+      },
+      {
+        "node_id": "tests/test_slow_drip_deadlines.py::test_deadline_bounds_a_slow_drip[provider]",
+        "status": "ERROR"
+      },
+      {
+        "node_id": "tests/test_slow_drip_deadlines.py::test_cancel_interrupts_a_slow_drip[csaf]",
+        "status": "ERROR"
+      },
+      {
+        "node_id": "tests/test_slow_drip_deadlines.py::test_cancel_interrupts_a_slow_drip[enrichment]",
+        "status": "ERROR"
+      },
+      {
+        "node_id": "tests/test_slow_drip_deadlines.py::test_cancel_interrupts_a_slow_drip[provider]",
+        "status": "ERROR"
+      }
+    ],
+    "failed_error_ids_equal_baseline_reproduced_recovery_selection": true,
+    "live_acceptance_blockers": [
+      "BinDiff not configured",
+      "DiE not configured",
+      "capa not configured",
+      "tests/capa_pairs_pe.py move-pair builder absent",
+      "FLOSS not configured",
+      "Tier R MSVC requires Windows"
+    ],
+    "log_path": "/tmp/patchtrace-r2-full-tests.log",
+    "log_sha256": "229479fe80ccb5cd79725caf82eeee8b1c9b5bf0d1eef22930cdc9a3cb28fae0",
+    "passed": 18141,
+    "runtime": "original venv, default socket-restricted execution",
+    "skipped": 303,
+    "source_core": "matching/2; production files unchanged since a248c721d8d9565a5293413b3f2550d734202074",
+    "source_scope": "All five changed production modules unchanged during run; later research-runner safety revisions covered by separate focused selection.",
+    "status": "completed_failed_environment",
+    "warning": "Intentional duplicate-ZIP-entry fixture",
+    "warnings": 1,
+    "xfailed": 6
+  },
+  "independent_review": {
+    "cfg_oracle_comparisons": 2832,
+    "corroboration_predicate_cases": 10000,
+    "duration_s": 3.96,
+    "focused_passed": 19,
+    "production_findings": []
+  },
+  "integrated_core": {
+    "duration_s": 3.99,
+    "passed": 203
+  },
+  "integrated_with_research_safety": {
+    "duration_s": 5.72,
+    "failed": 0,
+    "passed": 248,
+    "selection": [
+      "tests/test_r2_*.py",
+      "tests/test_unified_keys.py",
+      "tests/test_unified_wire_compute.py",
+      "tests/test_unified_fusion.py",
+      "tests/test_unified_ir_graph.py"
+    ],
+    "source_head": "64a3c566f8d86f721d4541eb689ebb57d0391c21"
+  },
+  "native_evidence": [
+    "native-ghidra.json",
+    "native-ghidra-current.json",
+    "native-rizin.json",
+    "native-cjson.json"
+  ],
+  "production_changed_paths_sha256": {
+    "src/patchtrace/unified/compute.py": "eeed739158175d8c7d82dc719000284e6c2d2b8ef0b284331d7a05a675af72a9",
+    "src/patchtrace/unified/fusion/arbiter.py": "236a21365bed25661b134a583135047aa32942c82f14912d52de46036674c03a",
+    "src/patchtrace/unified/ir/cfg.py": "b88f3b696b2a09d079724560735959f1d0ff52225dfeb73d5776b5933cb293c8",
+    "src/patchtrace/unified/read_text.py": "f0c6fcac8cbb30c775e274e4197e0cb7f536af63f87c2f6d830e131674bb989c",
+    "src/patchtrace/unified/sources/ladder.py": "1157e4ad0518ff02a29c3f938a526cc6b3450c99692627104874bf44d97042d9"
+  },
+  "research_input_regressions": {
+    "cjson_red": {
+      "duration_s": 3.02,
+      "failed": 7,
+      "passed": 3
+    },
+    "cjson_targeted_green": {
+      "duration_s": 2.61,
+      "passed": 25
+    },
+    "native_repeated": false,
+    "original_six_case_read_only_provenance": {
+      "boundary": "Stopped at ladder entry; no matching, extraction or native execution repeated",
+      "historical_baseline_report_sha256": "053c8df26283f9842180f14acba64ad8049f028d3a871c71707bbed2e87a9db2",
+      "inputs_unchanged": true,
+      "passed": 6
+    },
+    "replay_identity_mismatches": {
+      "categories": [
+        "case artifact SHA",
+        "baseline artifact SHA",
+        "IR artifact SHA",
+        "IR key",
+        "IR content digest"
+      ],
+      "red": 5,
+      "result": "Each mismatch reached compute before fix; now rejected before matching/compute"
+    },
+    "replay_targeted_green": {
+      "duration_s": 2.18,
+      "passed": 48
+    }
+  },
+  "ruff": "passed",
+  "runtime_failure_recovery": {
+    "details": "test-environment-triage.json",
+    "duration_s": 30.43,
+    "not_a_fresh_green_full_suite": true,
+    "passed": 56,
+    "selected": 56
+  },
+  "whitespace": "passed"
+}

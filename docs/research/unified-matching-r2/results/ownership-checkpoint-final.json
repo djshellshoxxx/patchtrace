@@ -1,0 +1,298 @@
+{
+  "observed_utc": "2026-10-30 23:33:20 UTC",
+  "baseline": "a04f5a299a8d4afef023261e52e08d14678cf1e7",
+  "open_pr_count": 29,
+  "prs": [
+    {
+      "number": 136,
+      "title": "Integration QA candidate: preserve PR #69 synthetic KB fixtures and regressions",
+      "head": "2fcd627e52a6d784d5c2e5b4ea8105e90b8589b3",
+      "base": "f18687fd035b67961c1072af84f8c2b3442979e0",
+      "branch": "integration/kb-fixtures-pr69-20261030",
+      "draft": true,
+      "url": "https://github.com/djshellshoxxx/patchtrace/pull/136"
+    },
+    {
+      "number": 135,
+      "title": "R8 (draft): adversarial proof and literal-type normalization research",
+      "head": "12dd4f2b41b468b0eb566bd502219daa821012df",
+      "base": "a04f5a299a8d4afef023261e52e08d14678cf1e7",
+      "branch": "research/r8-deep-uncertainty-20261030",
+      "draft": true,
+      "url": "https://github.com/djshellshoxxx/patchtrace/pull/135"
+    },
+    {
+      "number": 134,
+      "title": "R7 research: bounded semantic slicing and evidence-grounded security interpretation",
+      "head": "c9d1aab6a78847ce1632fe833d15af2e3b9c6e9b",
+      "base": "a04f5a299a8d4afef023261e52e08d14678cf1e7",
+      "branch": "research/r7-advanced-binary-analysis-20261030",
+      "draft": true,
+      "url": "https://github.com/djshellshoxxx/patchtrace/pull/134"
+    },
+    {
+      "number": 133,
+      "title": "R6: comprehensive engineer-ready final integration and release acceptance notes",
+      "head": "3010f289dbb46a1db62218a35cca03420090e306",
+      "base": "a04f5a299a8d4afef023261e52e08d14678cf1e7",
+      "branch": "research/r6-final-integration-engineering-notes-20261030",
+      "draft": true,
+      "url": "https://github.com/djshellshoxxx/patchtrace/pull/133"
+    },
+    {
+      "number": 132,
+      "title": "R5: calibration research, statistical validation audit and developer handoff",
+      "head": "4d9d9051aea87319847a0b321a14d37b95cb8abd",
+      "base": "a04f5a299a8d4afef023261e52e08d14678cf1e7",
+      "branch": "chatgpt/r5-calibration-research-20261030",
+      "draft": true,
+      "url": "https://github.com/djshellshoxxx/patchtrace/pull/132"
+    },
+    {
+      "number": 131,
+      "title": "R2: unified matching research, evidence preservation and measured scaling fixes",
+      "head": "e09ed227c17fffab551eb36ac23fd7176b4b16d7",
+      "base": "a04f5a299a8d4afef023261e52e08d14678cf1e7",
+      "branch": "codex/r2-unified-matching-research-20261030",
+      "draft": true,
+      "url": "https://github.com/djshellshoxxx/patchtrace/pull/131"
+    },
+    {
+      "number": 130,
+      "title": "R4 research: CVE/KB/product/build/binary provenance and function evidence",
+      "head": "ff570bdd784d02f745e4ad21d8aa7b4f1f776344",
+      "base": "a04f5a299a8d4afef023261e52e08d14678cf1e7",
+      "branch": "research/r4-vulnerability-correlation-20261030",
+      "draft": true,
+      "url": "https://github.com/djshellshoxxx/patchtrace/pull/130"
+    },
+    {
+      "number": 129,
+      "title": "R3 research: semantic-change proofs, compiler noise and guarded PE comparisons",
+      "head": "2698b9a04d33b2d04f49c1ab737636539c6ef6f7",
+      "base": "a04f5a299a8d4afef023261e52e08d14678cf1e7",
+      "branch": "chatgpt/semantic-analysis-r3-20261030",
+      "draft": true,
+      "url": "https://github.com/djshellshoxxx/patchtrace/pull/129"
+    },
+    {
+      "number": 128,
+      "title": "R1: validate ground truth, run native pilot, and preserve corpus provenance",
+      "head": "0271f1869ccba0697c5bf6f797432bb7c6ec54d4",
+      "base": "a04f5a299a8d4afef023261e52e08d14678cf1e7",
+      "branch": "codex/r1-ground-truth-research-20261030",
+      "draft": true,
+      "url": "https://github.com/djshellshoxxx/patchtrace/pull/128"
+    },
+    {
+      "number": 127,
+      "title": "Specify modular dockable workspaces and simpler default layouts",
+      "head": "6a1e3ce348a7e5f67bbabfe388315812cc830b03",
+      "base": "a04f5a299a8d4afef023261e52e08d14678cf1e7",
+      "branch": "docs/dockable-workspace-spec-20261030",
+      "draft": true,
+      "url": "https://github.com/djshellshoxxx/patchtrace/pull/127"
+    },
+    {
+      "number": 126,
+      "title": "docs: integrated essential alpha milestone ledger and handoff",
+      "head": "8d958f0a1950a29c1d1cef9525a114654f4c9904",
+      "base": "a04f5a299a8d4afef023261e52e08d14678cf1e7",
+      "branch": "claude/modest-hamilton-kz2gta",
+      "draft": true,
+      "url": "https://github.com/djshellshoxxx/patchtrace/pull/126"
+    },
+    {
+      "number": 125,
+      "title": "docs: next-milestone dev prompt for integrated essential alpha",
+      "head": "198eb21e8813b28de361422cfe3c002bdb9e3970",
+      "base": "5214720716c7afb7952bacbc9afd4b8255574ae8",
+      "branch": "claude/compassionate-goldberg-5uuqks",
+      "draft": true,
+      "url": "https://github.com/djshellshoxxx/patchtrace/pull/125"
+    },
+    {
+      "number": 102,
+      "title": "Windows alpha: exe version resource and icon, CI split, release integrity and parser hardening, SPEC-26 A tooltips",
+      "head": "9fddf99e2635e28129b2deda0ff155b00d9ba471",
+      "base": "e093ade3e66eebf915d1c93c75cf18c033c2abb5",
+      "branch": "claude/patchtrace-haiku-agent-motpbx",
+      "draft": true,
+      "url": "https://github.com/djshellshoxxx/patchtrace/pull/102"
+    },
+    {
+      "number": 100,
+      "title": "SPEC-53 local symbol mode + launcher; SPEC-DA-01 Diaphora Mode A import",
+      "head": "66e9adc50fb118c04e5e24eacd0c221ca483a130",
+      "base": "e093ade3e66eebf915d1c93c75cf18c033c2abb5",
+      "branch": "claude/patchtrace-features",
+      "draft": true,
+      "url": "https://github.com/djshellshoxxx/patchtrace/pull/100"
+    },
+    {
+      "number": 98,
+      "title": "Add wiki pages and link them from README",
+      "head": "ad8fbe9f2f041653760c02e9d18a91a66dd11c39",
+      "base": "bb84b2606f0674a1db675645f2db98b3a8d3d789",
+      "branch": "docs/readme-and-wiki",
+      "draft": true,
+      "url": "https://github.com/djshellshoxxx/patchtrace/pull/98"
+    },
+    {
+      "number": 94,
+      "title": "QA: make Unified 100k-row sort budget resilient to runner descheduling",
+      "head": "27b0a48bb8007f504b4a127a099136a6ea5c00b7",
+      "base": "3e62feec9da304953305fe595385c20da4b1869e",
+      "branch": "chatgpt/unified-sort-perf-qa-20261016",
+      "draft": false,
+      "url": "https://github.com/djshellshoxxx/patchtrace/pull/94"
+    },
+    {
+      "number": 90,
+      "title": "test: replace two defective unified fixture originals",
+      "head": "941c617b6854291e2448cad6d7d5710a24a8543d",
+      "base": "161a88345efc6484f4d7809fc6963a0193bd0057",
+      "branch": "chatgpt/unified-fixture-collection-fix-20261016",
+      "draft": false,
+      "url": "https://github.com/djshellshoxxx/patchtrace/pull/90"
+    },
+    {
+      "number": 86,
+      "title": "UE-R3: persist bounded on-demand Ghidra C into unified result sidecars",
+      "head": "ebbd621d4f557905892aee5f7cf8cb7b0e2addc2",
+      "base": "53f366e8b50ac60a95bdb3734b815daac82cd63d",
+      "branch": "chatgpt/ue-r3-retain-decompiled-20261016",
+      "draft": true,
+      "url": "https://github.com/djshellshoxxx/patchtrace/pull/86"
+    },
+    {
+      "number": 85,
+      "title": "LBL-30: verify preregistration and enforce single-use final training",
+      "head": "6ae2c079e6cafa2b7bd5396cac443cd34ba7138a",
+      "base": "53f366e8b50ac60a95bdb3734b815daac82cd63d",
+      "branch": "chatgpt/lbl30-prereg-guard-20261016",
+      "draft": true,
+      "url": "https://github.com/djshellshoxxx/patchtrace/pull/85"
+    },
+    {
+      "number": 82,
+      "title": "LBL-32: two-sided recipe A/A and noise cases in Tier R planner",
+      "head": "eaa30013794a9bd0fedc9ec34bbe374d6db0cfc9",
+      "base": "53f366e8b50ac60a95bdb3734b815daac82cd63d",
+      "branch": "chatgpt/lbl32-recipe-aa-noise-20261016",
+      "draft": true,
+      "url": "https://github.com/djshellshoxxx/patchtrace/pull/82"
+    },
+    {
+      "number": 79,
+      "title": "LBL-32: run pinned recipe-card A/A and noise controls on both sides",
+      "head": "9513bc05229dd7a8460fc229d7420154d61498db",
+      "base": "5f30a79119b59e337b11a21d81b5e3b12d2bd92a",
+      "branch": "chatgpt/lbl32-card-controls-20261016",
+      "draft": true,
+      "url": "https://github.com/djshellshoxxx/patchtrace/pull/79"
+    },
+    {
+      "number": 78,
+      "title": "LBL-31: persist Tier R engine outputs and transfer verified training artifacts",
+      "head": "2019a37fa65fc37f4758469143c2daadc07e0098",
+      "base": "53f366e8b50ac60a95bdb3734b815daac82cd63d",
+      "branch": "chatgpt/lbl31-output-persistence-20261015",
+      "draft": true,
+      "url": "https://github.com/djshellshoxxx/patchtrace/pull/78"
+    },
+    {
+      "number": 72,
+      "title": "docs: specify Program E panels and coordinated build plan",
+      "head": "cfd7cfff52f4f9b8b1264e8b7d70ef1bbef2d63f",
+      "base": "2ed83e9c2c9c26a1677586d47989aee89cb8a2a6",
+      "branch": "chatgpt/panels-1",
+      "draft": true,
+      "url": "https://github.com/djshellshoxxx/patchtrace/pull/72"
+    },
+    {
+      "number": 71,
+      "title": "Draft: unified synthetic fixtures and gate evaluator tests (partial, unverified)",
+      "head": "161a88345efc6484f4d7809fc6963a0193bd0057",
+      "base": "2ed83e9c2c9c26a1677586d47989aee89cb8a2a6",
+      "branch": "chatgpt/unified-fixtures-1",
+      "draft": true,
+      "url": "https://github.com/djshellshoxxx/patchtrace/pull/71"
+    },
+    {
+      "number": 70,
+      "title": "docs: add first 25 Prompt 5 help topics",
+      "head": "e5bee6fe157c90a40f2d9f458768e2169ce123e5",
+      "base": "a423d3d580d898e4398990b0790fd41d18dea246",
+      "branch": "chatgpt/help-docs-1",
+      "draft": true,
+      "url": "https://github.com/djshellshoxxx/patchtrace/pull/70"
+    },
+    {
+      "number": 69,
+      "title": "Add synthetic KB patch-search fixtures and QA",
+      "head": "781b36fb60e775ce01bf0c114e6a17b609fdb475",
+      "base": "a423d3d580d898e4398990b0790fd41d18dea246",
+      "branch": "chatgpt/kb-fixtures-1",
+      "draft": true,
+      "url": "https://github.com/djshellshoxxx/patchtrace/pull/69"
+    },
+    {
+      "number": 68,
+      "title": "Corpus batch 1: 24 candidate recipes and continuation plan",
+      "head": "b7a0f0a45d2de1462367d877b7386091b4d275ce",
+      "base": "a423d3d580d898e4398990b0790fd41d18dea246",
+      "branch": "chatgpt/corpus-1",
+      "draft": true,
+      "url": "https://github.com/djshellshoxxx/patchtrace/pull/68"
+    },
+    {
+      "number": 67,
+      "title": "Deferred audit fixes: Ghidriff integrity, isolated launches and consent",
+      "head": "2174837f3172c3ff2a3c676da106f42b55648a70",
+      "base": "8af0e0effa7628f2bdf1ed8afc6d21f30e816924",
+      "branch": "chatgpt/deferred-audit-fixes-1",
+      "draft": true,
+      "url": "https://github.com/djshellshoxxx/patchtrace/pull/67"
+    },
+    {
+      "number": 61,
+      "title": "Add Caveman and PatchTrace agent skills with spec-first workflow (SPEC-56)",
+      "head": "4467d1f3c6e113a7da808a67e8dee9d4aa5083d8",
+      "base": "0fb25d8e2ad52d4bfe079c7d31b706d55569c8af",
+      "branch": "codex/agent-skills-spec56-20261014",
+      "draft": false,
+      "url": "https://github.com/djshellshoxxx/patchtrace/pull/61"
+    }
+  ],
+  "file_review_scope": [
+    128,
+    133,
+    134,
+    135,
+    136
+  ],
+  "production_overlap_with_r2": [],
+  "r2_test_overlap": [],
+  "shared_files": {
+    "128": [
+      "docs/modules.md",
+      "docs/qa.md",
+      "tasks/todo.md"
+    ],
+    "134": [
+      "docs/modules.md",
+      "tasks/todo.md"
+    ],
+    "135": [
+      "docs/specs/unified-engine/05-fusion-and-noise.md"
+    ]
+  },
+  "ownership_notes": [
+    "R1 owns test_binexport_isolation.py resolve-to-absolute interpreter fix, live_pairs.py and workflow repairs; explicit A/A refusal is not independent A/A acceptance.",
+    "R6 remains integration research only; R7 bounded slicing prototypes do not change production.",
+    "R8 changes adjacent L2 facts/pseudo.py and registry.py canon/2; preserve R2 matching/2 and R3 proof changes in future integration.",
+    "Integration QA136 contains synthetic fixtures/protocol tests, not implemented production crash hooks; its base differs from main.",
+    "No other contributor changes adopted, branches modified, PRs closed or merged."
+  ]
+}

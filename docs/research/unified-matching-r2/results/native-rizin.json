@@ -1,0 +1,2305 @@
+{
+  "capability": {
+    "engine": "rz-diff",
+    "path": "/workspace/scratch/a55b59b3e326/research-tools/rizin/bin/rz-diff",
+    "reason": null,
+    "supported": true,
+    "supports_json": true,
+    "version": "0.9.1"
+  },
+  "cases": [
+    {
+      "eligible_truth_pairs": 1,
+      "error": "PT-SECONDARY-INPUT: rz-diff produced no output",
+      "excluded_group_relations": 0,
+      "kind": "unchanged",
+      "native_processes": [
+        {
+          "argv": [
+            "/workspace/scratch/a55b59b3e326/research-tools/rizin/bin/rz-diff",
+            "-C",
+            "-j",
+            "-t",
+            "functions",
+            "/tmp/patchtrace-engine-e1rifybb/older.bin",
+            "/tmp/patchtrace-engine-e1rifybb/newer.bin"
+          ],
+          "reason": null,
+          "returncode": 0,
+          "stderr": "ERROR: rz-diff: No functions found in file0.\n",
+          "stdout": "",
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "wall_s": 0.10386482600006275
+        }
+      ],
+      "newer_functions": [
+        [
+          "entry",
+          4096
+        ]
+      ],
+      "newer_sha256": "6462d1618dcddb702dde929094522539c297fb0a2a17fd6083812df17000e1fd",
+      "older_functions": [
+        [
+          "entry",
+          4096
+        ]
+      ],
+      "older_sha256": "6462d1618dcddb702dde929094522539c297fb0a2a17fd6083812df17000e1fd",
+      "run": {
+        "argv_digest": "b7165fe711c2d7d25febc57cb9af3a1d3a55404045d66a54c7b6ba3b89e9da19",
+        "cache_key": "ebeafde4ed22518ac561859a40acd3b59cb37c95df3bf7b3a87481eaa23f7b4d",
+        "contract": "engine-run/1",
+        "duration_ms": 105,
+        "engine": "rz-diff",
+        "engine_version": "0.9.1",
+        "error_code": "PT-SECONDARY-INPUT",
+        "executable_path_sha256": "96e830e1d234231085286ca9c20ae8a2c89c3f3aeda26cd120f4d085c68f7be2",
+        "match_set_id": null,
+        "newer_sha256": "6462d1618dcddb702dde929094522539c297fb0a2a17fd6083812df17000e1fd",
+        "older_sha256": "6462d1618dcddb702dde929094522539c297fb0a2a17fd6083812df17000e1fd",
+        "orientation": "older->newer",
+        "output_sha256": null,
+        "returncode": 0,
+        "run_id": "c495116d2be072f7ad091463903a0c2be5d5f9ef3ebce8e0349c3255f06979f4",
+        "started_utc": "2026-10-30T22:57:03.544075+00:00",
+        "status": "failed",
+        "stderr_tail": "ERROR: rz-diff: No functions found in file0.\n",
+        "superseded_by": null
+      },
+      "seed": 0,
+      "truth_rva_relations": [
+        [
+          [
+            4096
+          ],
+          [
+            4096
+          ],
+          "unchanged"
+        ]
+      ],
+      "unscored_eligible_truth_pairs": 1
+    },
+    {
+      "eligible_truth_pairs": 1,
+      "error": "PT-SECONDARY-INPUT: rz-diff produced no output",
+      "excluded_group_relations": 0,
+      "kind": "moved",
+      "native_processes": [
+        {
+          "argv": [
+            "/workspace/scratch/a55b59b3e326/research-tools/rizin/bin/rz-diff",
+            "-C",
+            "-j",
+            "-t",
+            "functions",
+            "/tmp/patchtrace-engine-wafyrqw0/older.bin",
+            "/tmp/patchtrace-engine-wafyrqw0/newer.bin"
+          ],
+          "reason": null,
+          "returncode": 0,
+          "stderr": "ERROR: rz-diff: No functions found in file0.\n",
+          "stdout": "",
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "wall_s": 0.05091285899970899
+        }
+      ],
+      "newer_functions": [
+        [
+          "entry",
+          4160
+        ]
+      ],
+      "newer_sha256": "e318c3596f77db11a60c51a7b8463bc7d69386264b97cc331b280ebc37a790f1",
+      "older_functions": [
+        [
+          "entry",
+          4096
+        ]
+      ],
+      "older_sha256": "6462d1618dcddb702dde929094522539c297fb0a2a17fd6083812df17000e1fd",
+      "run": {
+        "argv_digest": "b7165fe711c2d7d25febc57cb9af3a1d3a55404045d66a54c7b6ba3b89e9da19",
+        "cache_key": "f5944314ddf76a358eb10aef7ca799d8751a26ed989a7551bbb1f0b71a684dee",
+        "contract": "engine-run/1",
+        "duration_ms": 102,
+        "engine": "rz-diff",
+        "engine_version": "0.9.1",
+        "error_code": "PT-SECONDARY-INPUT",
+        "executable_path_sha256": "96e830e1d234231085286ca9c20ae8a2c89c3f3aeda26cd120f4d085c68f7be2",
+        "match_set_id": null,
+        "newer_sha256": "e318c3596f77db11a60c51a7b8463bc7d69386264b97cc331b280ebc37a790f1",
+        "older_sha256": "6462d1618dcddb702dde929094522539c297fb0a2a17fd6083812df17000e1fd",
+        "orientation": "older->newer",
+        "output_sha256": null,
+        "returncode": 0,
+        "run_id": "e431bab6f20796641c14007417b2c238f37862b1c27eae7b93ecb5c04fd4542d",
+        "started_utc": "2026-10-30T22:57:03.651300+00:00",
+        "status": "failed",
+        "stderr_tail": "ERROR: rz-diff: No functions found in file0.\n",
+        "superseded_by": null
+      },
+      "seed": 0,
+      "truth_rva_relations": [
+        [
+          [
+            4096
+          ],
+          [
+            4160
+          ],
+          "moved"
+        ]
+      ],
+      "unscored_eligible_truth_pairs": 1
+    },
+    {
+      "eligible_truth_pairs": 1,
+      "error": "PT-SECONDARY-INPUT: rz-diff produced no output",
+      "excluded_group_relations": 0,
+      "kind": "renamed",
+      "native_processes": [
+        {
+          "argv": [
+            "/workspace/scratch/a55b59b3e326/research-tools/rizin/bin/rz-diff",
+            "-C",
+            "-j",
+            "-t",
+            "functions",
+            "/tmp/patchtrace-engine-hsuty745/older.bin",
+            "/tmp/patchtrace-engine-hsuty745/newer.bin"
+          ],
+          "reason": null,
+          "returncode": 0,
+          "stderr": "ERROR: rz-diff: No functions found in file0.\n",
+          "stdout": "",
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "wall_s": 0.10110541499989267
+        }
+      ],
+      "newer_functions": [
+        [
+          "renamed_entry",
+          4096
+        ]
+      ],
+      "newer_sha256": "ab4051f0d3d11c3b75586f6d86c9eada4d3970793c9ceccdf05bef0143c154a2",
+      "older_functions": [
+        [
+          "entry",
+          4096
+        ]
+      ],
+      "older_sha256": "6462d1618dcddb702dde929094522539c297fb0a2a17fd6083812df17000e1fd",
+      "run": {
+        "argv_digest": "b7165fe711c2d7d25febc57cb9af3a1d3a55404045d66a54c7b6ba3b89e9da19",
+        "cache_key": "3071647af4e7de549ed31e869dc974e9ec3fa9273730de83aab4a776d76bf50e",
+        "contract": "engine-run/1",
+        "duration_ms": 152,
+        "engine": "rz-diff",
+        "engine_version": "0.9.1",
+        "error_code": "PT-SECONDARY-INPUT",
+        "executable_path_sha256": "96e830e1d234231085286ca9c20ae8a2c89c3f3aeda26cd120f4d085c68f7be2",
+        "match_set_id": null,
+        "newer_sha256": "ab4051f0d3d11c3b75586f6d86c9eada4d3970793c9ceccdf05bef0143c154a2",
+        "older_sha256": "6462d1618dcddb702dde929094522539c297fb0a2a17fd6083812df17000e1fd",
+        "orientation": "older->newer",
+        "output_sha256": null,
+        "returncode": 0,
+        "run_id": "99e0a5ce1652785ac2ea744f7b333d28c64a755b6fa43023971908ba1630ddf1",
+        "started_utc": "2026-10-30T22:57:03.756097+00:00",
+        "status": "failed",
+        "stderr_tail": "ERROR: rz-diff: No functions found in file0.\n",
+        "superseded_by": null
+      },
+      "seed": 0,
+      "truth_rva_relations": [
+        [
+          [
+            4096
+          ],
+          [
+            4096
+          ],
+          "renamed"
+        ]
+      ],
+      "unscored_eligible_truth_pairs": 1
+    },
+    {
+      "eligible_truth_pairs": 0,
+      "error": "PT-SECONDARY-INPUT: rz-diff produced no output",
+      "excluded_group_relations": 1,
+      "kind": "inlined",
+      "native_processes": [
+        {
+          "argv": [
+            "/workspace/scratch/a55b59b3e326/research-tools/rizin/bin/rz-diff",
+            "-C",
+            "-j",
+            "-t",
+            "functions",
+            "/tmp/patchtrace-engine-ctix7a6c/older.bin",
+            "/tmp/patchtrace-engine-ctix7a6c/newer.bin"
+          ],
+          "reason": null,
+          "returncode": 0,
+          "stderr": "ERROR: rz-diff: No functions found in file1.\n",
+          "stdout": "",
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "wall_s": 0.0508831380002448
+        }
+      ],
+      "newer_functions": [
+        [
+          "entry",
+          4096
+        ]
+      ],
+      "newer_sha256": "6462d1618dcddb702dde929094522539c297fb0a2a17fd6083812df17000e1fd",
+      "older_functions": [
+        [
+          "entry",
+          4096
+        ],
+        [
+          "helper",
+          4112
+        ]
+      ],
+      "older_sha256": "6c8a798f89eea64c94eab84253068ba53e53aeb4bc7c3ec785147e90d3fcae7f",
+      "run": {
+        "argv_digest": "b7165fe711c2d7d25febc57cb9af3a1d3a55404045d66a54c7b6ba3b89e9da19",
+        "cache_key": "21148e38d93ec5c2558eec85e7eba79a7b29072ec4b31f459e1433bd425d9d44",
+        "contract": "engine-run/1",
+        "duration_ms": 102,
+        "engine": "rz-diff",
+        "engine_version": "0.9.1",
+        "error_code": "PT-SECONDARY-INPUT",
+        "executable_path_sha256": "96e830e1d234231085286ca9c20ae8a2c89c3f3aeda26cd120f4d085c68f7be2",
+        "match_set_id": null,
+        "newer_sha256": "6462d1618dcddb702dde929094522539c297fb0a2a17fd6083812df17000e1fd",
+        "older_sha256": "6c8a798f89eea64c94eab84253068ba53e53aeb4bc7c3ec785147e90d3fcae7f",
+        "orientation": "older->newer",
+        "output_sha256": null,
+        "returncode": 0,
+        "run_id": "a60ee9e226751e6dcb133e33c57b4e319ee0ce33c8df929dcb4b7dfd6d6830c0",
+        "started_utc": "2026-10-30T22:57:03.910222+00:00",
+        "status": "failed",
+        "stderr_tail": "ERROR: rz-diff: No functions found in file1.\n",
+        "superseded_by": null
+      },
+      "seed": 0,
+      "truth_rva_relations": [
+        [
+          [
+            4096,
+            4112
+          ],
+          [
+            4096
+          ],
+          "inlined"
+        ]
+      ],
+      "unscored_eligible_truth_pairs": 0
+    },
+    {
+      "eligible_truth_pairs": 0,
+      "error": "PT-SECONDARY-INPUT: rz-diff produced no output",
+      "excluded_group_relations": 1,
+      "kind": "split",
+      "native_processes": [
+        {
+          "argv": [
+            "/workspace/scratch/a55b59b3e326/research-tools/rizin/bin/rz-diff",
+            "-C",
+            "-j",
+            "-t",
+            "functions",
+            "/tmp/patchtrace-engine-l8fpvmp5/older.bin",
+            "/tmp/patchtrace-engine-l8fpvmp5/newer.bin"
+          ],
+          "reason": null,
+          "returncode": 0,
+          "stderr": "ERROR: rz-diff: No functions found in file0.\n",
+          "stdout": "",
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "wall_s": 0.10113795300003403
+        }
+      ],
+      "newer_functions": [
+        [
+          "entry",
+          4096
+        ],
+        [
+          "head",
+          4112
+        ],
+        [
+          "tail",
+          4128
+        ]
+      ],
+      "newer_sha256": "a8d5944d442535f1998183524f0b98058cf0273cef9cd59357779309c9d607ac",
+      "older_functions": [
+        [
+          "entry",
+          4096
+        ]
+      ],
+      "older_sha256": "6462d1618dcddb702dde929094522539c297fb0a2a17fd6083812df17000e1fd",
+      "run": {
+        "argv_digest": "b7165fe711c2d7d25febc57cb9af3a1d3a55404045d66a54c7b6ba3b89e9da19",
+        "cache_key": "458544150a938a5de11cae9ad10dd8fab6ccd6dda07b639a6fc97b58b21f395e",
+        "contract": "engine-run/1",
+        "duration_ms": 153,
+        "engine": "rz-diff",
+        "engine_version": "0.9.1",
+        "error_code": "PT-SECONDARY-INPUT",
+        "executable_path_sha256": "96e830e1d234231085286ca9c20ae8a2c89c3f3aeda26cd120f4d085c68f7be2",
+        "match_set_id": null,
+        "newer_sha256": "a8d5944d442535f1998183524f0b98058cf0273cef9cd59357779309c9d607ac",
+        "older_sha256": "6462d1618dcddb702dde929094522539c297fb0a2a17fd6083812df17000e1fd",
+        "orientation": "older->newer",
+        "output_sha256": null,
+        "returncode": 0,
+        "run_id": "cd37fe9fb3a2bd5a4e7046641a261f9666ddbebd2fbe93d7dd94d296798a48bb",
+        "started_utc": "2026-10-30T22:57:04.019429+00:00",
+        "status": "failed",
+        "stderr_tail": "ERROR: rz-diff: No functions found in file0.\n",
+        "superseded_by": null
+      },
+      "seed": 0,
+      "truth_rva_relations": [
+        [
+          [
+            4096
+          ],
+          [
+            4096,
+            4112,
+            4128
+          ],
+          "split"
+        ]
+      ],
+      "unscored_eligible_truth_pairs": 0
+    },
+    {
+      "eligible_truth_pairs": 0,
+      "error": "PT-SECONDARY-INPUT: rz-diff produced no output",
+      "excluded_group_relations": 1,
+      "kind": "merged",
+      "native_processes": [
+        {
+          "argv": [
+            "/workspace/scratch/a55b59b3e326/research-tools/rizin/bin/rz-diff",
+            "-C",
+            "-j",
+            "-t",
+            "functions",
+            "/tmp/patchtrace-engine-pe7jbg9t/older.bin",
+            "/tmp/patchtrace-engine-pe7jbg9t/newer.bin"
+          ],
+          "reason": null,
+          "returncode": 0,
+          "stderr": "ERROR: rz-diff: No functions found in file1.\n",
+          "stdout": "",
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "wall_s": 0.10104171300008602
+        }
+      ],
+      "newer_functions": [
+        [
+          "entry",
+          4096
+        ]
+      ],
+      "newer_sha256": "6462d1618dcddb702dde929094522539c297fb0a2a17fd6083812df17000e1fd",
+      "older_functions": [
+        [
+          "entry",
+          4096
+        ],
+        [
+          "head",
+          4112
+        ],
+        [
+          "tail",
+          4128
+        ]
+      ],
+      "older_sha256": "a8d5944d442535f1998183524f0b98058cf0273cef9cd59357779309c9d607ac",
+      "run": {
+        "argv_digest": "b7165fe711c2d7d25febc57cb9af3a1d3a55404045d66a54c7b6ba3b89e9da19",
+        "cache_key": "2ab3ff59ee0e39fdce520fcaa3488202a859edbd47dbc02b3026211eefebdbd2",
+        "contract": "engine-run/1",
+        "duration_ms": 102,
+        "engine": "rz-diff",
+        "engine_version": "0.9.1",
+        "error_code": "PT-SECONDARY-INPUT",
+        "executable_path_sha256": "96e830e1d234231085286ca9c20ae8a2c89c3f3aeda26cd120f4d085c68f7be2",
+        "match_set_id": null,
+        "newer_sha256": "6462d1618dcddb702dde929094522539c297fb0a2a17fd6083812df17000e1fd",
+        "older_sha256": "a8d5944d442535f1998183524f0b98058cf0273cef9cd59357779309c9d607ac",
+        "orientation": "older->newer",
+        "output_sha256": null,
+        "returncode": 0,
+        "run_id": "d7b65f7a6f937393141c6512fef8974e5db5c0a21824efc54643c131a5d82107",
+        "started_utc": "2026-10-30T22:57:04.175174+00:00",
+        "status": "failed",
+        "stderr_tail": "ERROR: rz-diff: No functions found in file1.\n",
+        "superseded_by": null
+      },
+      "seed": 0,
+      "truth_rva_relations": [
+        [
+          [
+            4096,
+            4112,
+            4128
+          ],
+          [
+            4096
+          ],
+          "merged"
+        ]
+      ],
+      "unscored_eligible_truth_pairs": 0
+    },
+    {
+      "eligible_truth_pairs": 1,
+      "error": "PT-SECONDARY-INPUT: rz-diff produced no output",
+      "excluded_group_relations": 0,
+      "kind": "constant-changed",
+      "native_processes": [
+        {
+          "argv": [
+            "/workspace/scratch/a55b59b3e326/research-tools/rizin/bin/rz-diff",
+            "-C",
+            "-j",
+            "-t",
+            "functions",
+            "/tmp/patchtrace-engine-g111xy_w/older.bin",
+            "/tmp/patchtrace-engine-g111xy_w/newer.bin"
+          ],
+          "reason": null,
+          "returncode": 0,
+          "stderr": "ERROR: rz-diff: No functions found in file0.\n",
+          "stdout": "",
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "wall_s": 0.10076296900024317
+        }
+      ],
+      "newer_functions": [
+        [
+          "entry",
+          4096
+        ]
+      ],
+      "newer_sha256": "5ce1d80a29811c6383846b564e1b05bff1115c34cfa143c2b792336eecd5dab1",
+      "older_functions": [
+        [
+          "entry",
+          4096
+        ]
+      ],
+      "older_sha256": "6462d1618dcddb702dde929094522539c297fb0a2a17fd6083812df17000e1fd",
+      "run": {
+        "argv_digest": "b7165fe711c2d7d25febc57cb9af3a1d3a55404045d66a54c7b6ba3b89e9da19",
+        "cache_key": "65945109d117afeb15937948792effe3445f8f9d8593bc1f5d361b9c3f2927b9",
+        "contract": "engine-run/1",
+        "duration_ms": 102,
+        "engine": "rz-diff",
+        "engine_version": "0.9.1",
+        "error_code": "PT-SECONDARY-INPUT",
+        "executable_path_sha256": "96e830e1d234231085286ca9c20ae8a2c89c3f3aeda26cd120f4d085c68f7be2",
+        "match_set_id": null,
+        "newer_sha256": "5ce1d80a29811c6383846b564e1b05bff1115c34cfa143c2b792336eecd5dab1",
+        "older_sha256": "6462d1618dcddb702dde929094522539c297fb0a2a17fd6083812df17000e1fd",
+        "orientation": "older->newer",
+        "output_sha256": null,
+        "returncode": 0,
+        "run_id": "4691228c07c69e084984e0db3f7cc8bfbd5796aad439d22ea146a9937be34b77",
+        "started_utc": "2026-10-30T22:57:04.284316+00:00",
+        "status": "failed",
+        "stderr_tail": "ERROR: rz-diff: No functions found in file0.\n",
+        "superseded_by": null
+      },
+      "seed": 0,
+      "truth_rva_relations": [
+        [
+          [
+            4096
+          ],
+          [
+            4096
+          ],
+          "constant-changed"
+        ]
+      ],
+      "unscored_eligible_truth_pairs": 1
+    },
+    {
+      "eligible_truth_pairs": 1,
+      "error": "PT-SECONDARY-INPUT: rz-diff produced no output",
+      "excluded_group_relations": 0,
+      "kind": "condition-changed",
+      "native_processes": [
+        {
+          "argv": [
+            "/workspace/scratch/a55b59b3e326/research-tools/rizin/bin/rz-diff",
+            "-C",
+            "-j",
+            "-t",
+            "functions",
+            "/tmp/patchtrace-engine-a_kvqfcl/older.bin",
+            "/tmp/patchtrace-engine-a_kvqfcl/newer.bin"
+          ],
+          "reason": null,
+          "returncode": 0,
+          "stderr": "ERROR: rz-diff: No functions found in file0.\n",
+          "stdout": "",
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "wall_s": 0.05073408299995208
+        }
+      ],
+      "newer_functions": [
+        [
+          "entry",
+          4096
+        ]
+      ],
+      "newer_sha256": "c0d28324588a888e717b569216d852142a79c9530e395ce8ad4c3fd8e7b44ad6",
+      "older_functions": [
+        [
+          "entry",
+          4096
+        ]
+      ],
+      "older_sha256": "165caa52667f65bedd9de50f2540bc61aa3090d719f87f8279ad38a54ef29ce8",
+      "run": {
+        "argv_digest": "b7165fe711c2d7d25febc57cb9af3a1d3a55404045d66a54c7b6ba3b89e9da19",
+        "cache_key": "1db376049f40217797dc2e8f6586e865257f3a94feceb0af7ecf1c01d920100d",
+        "contract": "engine-run/1",
+        "duration_ms": 51,
+        "engine": "rz-diff",
+        "engine_version": "0.9.1",
+        "error_code": "PT-SECONDARY-INPUT",
+        "executable_path_sha256": "96e830e1d234231085286ca9c20ae8a2c89c3f3aeda26cd120f4d085c68f7be2",
+        "match_set_id": null,
+        "newer_sha256": "c0d28324588a888e717b569216d852142a79c9530e395ce8ad4c3fd8e7b44ad6",
+        "older_sha256": "165caa52667f65bedd9de50f2540bc61aa3090d719f87f8279ad38a54ef29ce8",
+        "orientation": "older->newer",
+        "output_sha256": null,
+        "returncode": 0,
+        "run_id": "cf07c4ac30d3e253894f107b024dbc6fbeb8145e0e176e8201e95accf48f4fcf",
+        "started_utc": "2026-10-30T22:57:04.388485+00:00",
+        "status": "failed",
+        "stderr_tail": "ERROR: rz-diff: No functions found in file0.\n",
+        "superseded_by": null
+      },
+      "seed": 0,
+      "truth_rva_relations": [
+        [
+          [
+            4096
+          ],
+          [
+            4096
+          ],
+          "condition-changed"
+        ]
+      ],
+      "unscored_eligible_truth_pairs": 1
+    },
+    {
+      "eligible_truth_pairs": 1,
+      "error": "PT-SECONDARY-INPUT: rz-diff produced no output",
+      "excluded_group_relations": 0,
+      "kind": "added-check",
+      "native_processes": [
+        {
+          "argv": [
+            "/workspace/scratch/a55b59b3e326/research-tools/rizin/bin/rz-diff",
+            "-C",
+            "-j",
+            "-t",
+            "functions",
+            "/tmp/patchtrace-engine-ow3fvdzl/older.bin",
+            "/tmp/patchtrace-engine-ow3fvdzl/newer.bin"
+          ],
+          "reason": null,
+          "returncode": 0,
+          "stderr": "ERROR: rz-diff: No functions found in file0.\n",
+          "stdout": "",
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "wall_s": 0.0509301349998168
+        }
+      ],
+      "newer_functions": [
+        [
+          "entry",
+          4096
+        ]
+      ],
+      "newer_sha256": "a75d363152dc8b7888634e90530950d1bec3186132797826979c9f9942c3d2df",
+      "older_functions": [
+        [
+          "entry",
+          4096
+        ]
+      ],
+      "older_sha256": "6462d1618dcddb702dde929094522539c297fb0a2a17fd6083812df17000e1fd",
+      "run": {
+        "argv_digest": "b7165fe711c2d7d25febc57cb9af3a1d3a55404045d66a54c7b6ba3b89e9da19",
+        "cache_key": "ec979e5ecd1220fc6f989ef77d1d292438905581035ac32c5988226115fd2554",
+        "contract": "engine-run/1",
+        "duration_ms": 102,
+        "engine": "rz-diff",
+        "engine_version": "0.9.1",
+        "error_code": "PT-SECONDARY-INPUT",
+        "executable_path_sha256": "96e830e1d234231085286ca9c20ae8a2c89c3f3aeda26cd120f4d085c68f7be2",
+        "match_set_id": null,
+        "newer_sha256": "a75d363152dc8b7888634e90530950d1bec3186132797826979c9f9942c3d2df",
+        "older_sha256": "6462d1618dcddb702dde929094522539c297fb0a2a17fd6083812df17000e1fd",
+        "orientation": "older->newer",
+        "output_sha256": null,
+        "returncode": 0,
+        "run_id": "1bf76441df455f2da16d6f7a4dbcbaec6bcc12dd6ec310313aecd45373b8256c",
+        "started_utc": "2026-10-30T22:57:04.443780+00:00",
+        "status": "failed",
+        "stderr_tail": "ERROR: rz-diff: No functions found in file0.\n",
+        "superseded_by": null
+      },
+      "seed": 0,
+      "truth_rva_relations": [
+        [
+          [
+            4096
+          ],
+          [
+            4096
+          ],
+          "added-check"
+        ]
+      ],
+      "unscored_eligible_truth_pairs": 1
+    },
+    {
+      "eligible_truth_pairs": 1,
+      "error": "PT-SECONDARY-INPUT: rz-diff produced no output",
+      "excluded_group_relations": 0,
+      "kind": "removed-code",
+      "native_processes": [
+        {
+          "argv": [
+            "/workspace/scratch/a55b59b3e326/research-tools/rizin/bin/rz-diff",
+            "-C",
+            "-j",
+            "-t",
+            "functions",
+            "/tmp/patchtrace-engine-aszcj4ed/older.bin",
+            "/tmp/patchtrace-engine-aszcj4ed/newer.bin"
+          ],
+          "reason": null,
+          "returncode": 0,
+          "stderr": "ERROR: rz-diff: No functions found in file0.\n",
+          "stdout": "",
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "wall_s": 0.05060729300021194
+        }
+      ],
+      "newer_functions": [
+        [
+          "entry",
+          4096
+        ]
+      ],
+      "newer_sha256": "6efa4626db91a677c8da375b53c5405b2bc5c13616aba506c43b60979d934c6f",
+      "older_functions": [
+        [
+          "entry",
+          4096
+        ]
+      ],
+      "older_sha256": "6462d1618dcddb702dde929094522539c297fb0a2a17fd6083812df17000e1fd",
+      "run": {
+        "argv_digest": "b7165fe711c2d7d25febc57cb9af3a1d3a55404045d66a54c7b6ba3b89e9da19",
+        "cache_key": "482f6afdb87d59144658e79a85e33ceb46fc7805b0649140c9f167753102656d",
+        "contract": "engine-run/1",
+        "duration_ms": 52,
+        "engine": "rz-diff",
+        "engine_version": "0.9.1",
+        "error_code": "PT-SECONDARY-INPUT",
+        "executable_path_sha256": "96e830e1d234231085286ca9c20ae8a2c89c3f3aeda26cd120f4d085c68f7be2",
+        "match_set_id": null,
+        "newer_sha256": "6efa4626db91a677c8da375b53c5405b2bc5c13616aba506c43b60979d934c6f",
+        "older_sha256": "6462d1618dcddb702dde929094522539c297fb0a2a17fd6083812df17000e1fd",
+        "orientation": "older->newer",
+        "output_sha256": null,
+        "returncode": 0,
+        "run_id": "efbdff36776297a99f5e05010aa78b7aef2f35cb7f0d02bc6470eb8ca458884a",
+        "started_utc": "2026-10-30T22:57:04.551304+00:00",
+        "status": "failed",
+        "stderr_tail": "ERROR: rz-diff: No functions found in file0.\n",
+        "superseded_by": null
+      },
+      "seed": 0,
+      "truth_rva_relations": [
+        [
+          [
+            4096
+          ],
+          [
+            4096
+          ],
+          "removed-code"
+        ]
+      ],
+      "unscored_eligible_truth_pairs": 1
+    },
+    {
+      "counts": {
+        "ambiguous_predicted": 0,
+        "false_predicted": 0,
+        "group_relation_unscored": 0,
+        "true_predicted": 0,
+        "unknown_predicted": 1
+      },
+      "duplicate_two_sided_proposals": 0,
+      "eligible_truth_pairs": 2,
+      "excluded_group_relations": 0,
+      "kind": "address-shift",
+      "missed_eligible_truth_pairs": 2,
+      "native_processes": [
+        {
+          "argv": [
+            "/workspace/scratch/a55b59b3e326/research-tools/rizin/bin/rz-diff",
+            "-C",
+            "-j",
+            "-t",
+            "functions",
+            "/tmp/patchtrace-engine-bpesg_xi/older.bin",
+            "/tmp/patchtrace-engine-bpesg_xi/newer.bin"
+          ],
+          "reason": null,
+          "returncode": 0,
+          "stderr": "",
+          "stdout": "[{\"similarity\":1.000000,\"type\":\"COMPLETE\",\"original\":{\"name\":\"sym.synthetic.dll_helper\",\"addr\":6442455120,\"size\":18},\"modified\":{\"name\":\"sym.synthetic.dll_helper\",\"addr\":6442455056,\"size\":18}}]\n",
+          "stdout_sha256": "526fa076ba62ab5770018f706e0b59f47f96be2b222353c45611ba0612037a03",
+          "wall_s": 0.15835385100035637
+        }
+      ],
+      "newer_functions": [
+        [
+          "entry",
+          4160
+        ],
+        [
+          "helper",
+          4176
+        ]
+      ],
+      "newer_sha256": "dd9d2a44df52c1852adee1a0157da72aeeecbf885ab8198ea4a06bc065f3bb54",
+      "observations": [
+        {
+          "algorithm": "levenshtein-bytes",
+          "assessment": "unknown_predicted",
+          "basicblocks": null,
+          "confidence_milli": null,
+          "confidence_text": null,
+          "engine": "rz-diff",
+          "engine_version": "0.9.1",
+          "flags": [],
+          "match_type": "COMPLETE",
+          "newer_address": 6442455056,
+          "newer_name": "sym.synthetic.dll_helper",
+          "newer_rva": 4112,
+          "older_address": 6442455120,
+          "older_name": "sym.synthetic.dll_helper",
+          "older_rva": 4176,
+          "similarity_milli": 1000,
+          "similarity_text": "1.0"
+        }
+      ],
+      "older_functions": [
+        [
+          "entry",
+          4096
+        ],
+        [
+          "helper",
+          4112
+        ]
+      ],
+      "older_sha256": "6c8a798f89eea64c94eab84253068ba53e53aeb4bc7c3ec785147e90d3fcae7f",
+      "one_sided_observations": 0,
+      "parsed_output_sha256": "526fa076ba62ab5770018f706e0b59f47f96be2b222353c45611ba0612037a03",
+      "run": {
+        "argv_digest": "b7165fe711c2d7d25febc57cb9af3a1d3a55404045d66a54c7b6ba3b89e9da19",
+        "cache_key": "791dce5f8dc4edc27fc8c9146b373d23288d39751a9acb9b071b795d98d0a32d",
+        "contract": "engine-run/1",
+        "duration_ms": 210,
+        "engine": "rz-diff",
+        "engine_version": "0.9.1",
+        "error_code": null,
+        "executable_path_sha256": "96e830e1d234231085286ca9c20ae8a2c89c3f3aeda26cd120f4d085c68f7be2",
+        "match_set_id": "31fbcd321117396755d650ede93dc9a1409b63be2d5647781873449bcf19c7ec",
+        "newer_sha256": "dd9d2a44df52c1852adee1a0157da72aeeecbf885ab8198ea4a06bc065f3bb54",
+        "older_sha256": "6c8a798f89eea64c94eab84253068ba53e53aeb4bc7c3ec785147e90d3fcae7f",
+        "orientation": "older->newer",
+        "output_sha256": "526fa076ba62ab5770018f706e0b59f47f96be2b222353c45611ba0612037a03",
+        "returncode": 0,
+        "run_id": "dbd718a8e8402a5f11297a2d196f36c83a5f2c47daec210f2a487655d2da81be",
+        "started_utc": "2026-10-30T22:57:04.605085+00:00",
+        "status": "ok",
+        "stderr_tail": "",
+        "superseded_by": null
+      },
+      "seed": 0,
+      "truth_rva_relations": [
+        [
+          [
+            4096
+          ],
+          [
+            4160
+          ],
+          "nuisance"
+        ],
+        [
+          [
+            4112
+          ],
+          [
+            4176
+          ],
+          "nuisance"
+        ]
+      ],
+      "unique_two_sided_proposals": 1
+    },
+    {
+      "eligible_truth_pairs": 1,
+      "error": "PT-SECONDARY-INPUT: rz-diff produced no output",
+      "excluded_group_relations": 0,
+      "kind": "unchanged",
+      "native_processes": [
+        {
+          "argv": [
+            "/workspace/scratch/a55b59b3e326/research-tools/rizin/bin/rz-diff",
+            "-C",
+            "-j",
+            "-t",
+            "functions",
+            "/tmp/patchtrace-engine-g1pouwk5/older.bin",
+            "/tmp/patchtrace-engine-g1pouwk5/newer.bin"
+          ],
+          "reason": null,
+          "returncode": 0,
+          "stderr": "ERROR: rz-diff: No functions found in file0.\n",
+          "stdout": "",
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "wall_s": 0.10128616300016802
+        }
+      ],
+      "newer_functions": [
+        [
+          "entry",
+          4096
+        ]
+      ],
+      "newer_sha256": "5ce1d80a29811c6383846b564e1b05bff1115c34cfa143c2b792336eecd5dab1",
+      "older_functions": [
+        [
+          "entry",
+          4096
+        ]
+      ],
+      "older_sha256": "5ce1d80a29811c6383846b564e1b05bff1115c34cfa143c2b792336eecd5dab1",
+      "run": {
+        "argv_digest": "b7165fe711c2d7d25febc57cb9af3a1d3a55404045d66a54c7b6ba3b89e9da19",
+        "cache_key": "9c49c6e5a4886abae30368bb04a883fae58b7db29fad4466d0e9391fee34286a",
+        "contract": "engine-run/1",
+        "duration_ms": 108,
+        "engine": "rz-diff",
+        "engine_version": "0.9.1",
+        "error_code": "PT-SECONDARY-INPUT",
+        "executable_path_sha256": "96e830e1d234231085286ca9c20ae8a2c89c3f3aeda26cd120f4d085c68f7be2",
+        "match_set_id": null,
+        "newer_sha256": "5ce1d80a29811c6383846b564e1b05bff1115c34cfa143c2b792336eecd5dab1",
+        "older_sha256": "5ce1d80a29811c6383846b564e1b05bff1115c34cfa143c2b792336eecd5dab1",
+        "orientation": "older->newer",
+        "output_sha256": null,
+        "returncode": 0,
+        "run_id": "17071143aab48975e6639708778cdfce54ac481627e94ed8f8c5feca95b81ed4",
+        "started_utc": "2026-10-30T22:57:04.817697+00:00",
+        "status": "failed",
+        "stderr_tail": "ERROR: rz-diff: No functions found in file0.\n",
+        "superseded_by": null
+      },
+      "seed": 1,
+      "truth_rva_relations": [
+        [
+          [
+            4096
+          ],
+          [
+            4096
+          ],
+          "unchanged"
+        ]
+      ],
+      "unscored_eligible_truth_pairs": 1
+    },
+    {
+      "eligible_truth_pairs": 1,
+      "error": "PT-SECONDARY-INPUT: rz-diff produced no output",
+      "excluded_group_relations": 0,
+      "kind": "moved",
+      "native_processes": [
+        {
+          "argv": [
+            "/workspace/scratch/a55b59b3e326/research-tools/rizin/bin/rz-diff",
+            "-C",
+            "-j",
+            "-t",
+            "functions",
+            "/tmp/patchtrace-engine-tx3ickgr/older.bin",
+            "/tmp/patchtrace-engine-tx3ickgr/newer.bin"
+          ],
+          "reason": null,
+          "returncode": 0,
+          "stderr": "ERROR: rz-diff: No functions found in file0.\n",
+          "stdout": "",
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "wall_s": 0.05069189000005281
+        }
+      ],
+      "newer_functions": [
+        [
+          "entry",
+          4160
+        ]
+      ],
+      "newer_sha256": "60f75d2914c11e3c9dd640dcede780185d9136d97fa63d521d029f36672c27d8",
+      "older_functions": [
+        [
+          "entry",
+          4096
+        ]
+      ],
+      "older_sha256": "5ce1d80a29811c6383846b564e1b05bff1115c34cfa143c2b792336eecd5dab1",
+      "run": {
+        "argv_digest": "b7165fe711c2d7d25febc57cb9af3a1d3a55404045d66a54c7b6ba3b89e9da19",
+        "cache_key": "a4ae1ffa76c3060cdfa96b6f4c9324e475bc0356751086a162cd7f7369b0665e",
+        "contract": "engine-run/1",
+        "duration_ms": 52,
+        "engine": "rz-diff",
+        "engine_version": "0.9.1",
+        "error_code": "PT-SECONDARY-INPUT",
+        "executable_path_sha256": "96e830e1d234231085286ca9c20ae8a2c89c3f3aeda26cd120f4d085c68f7be2",
+        "match_set_id": null,
+        "newer_sha256": "60f75d2914c11e3c9dd640dcede780185d9136d97fa63d521d029f36672c27d8",
+        "older_sha256": "5ce1d80a29811c6383846b564e1b05bff1115c34cfa143c2b792336eecd5dab1",
+        "orientation": "older->newer",
+        "output_sha256": null,
+        "returncode": 0,
+        "run_id": "b5289723db57157d028b79b1e77ee7186b13897d6f31a8566ba0f071f134cfca",
+        "started_utc": "2026-10-30T22:57:04.929544+00:00",
+        "status": "failed",
+        "stderr_tail": "ERROR: rz-diff: No functions found in file0.\n",
+        "superseded_by": null
+      },
+      "seed": 1,
+      "truth_rva_relations": [
+        [
+          [
+            4096
+          ],
+          [
+            4160
+          ],
+          "moved"
+        ]
+      ],
+      "unscored_eligible_truth_pairs": 1
+    },
+    {
+      "eligible_truth_pairs": 1,
+      "error": "PT-SECONDARY-INPUT: rz-diff produced no output",
+      "excluded_group_relations": 0,
+      "kind": "renamed",
+      "native_processes": [
+        {
+          "argv": [
+            "/workspace/scratch/a55b59b3e326/research-tools/rizin/bin/rz-diff",
+            "-C",
+            "-j",
+            "-t",
+            "functions",
+            "/tmp/patchtrace-engine-je08q6c7/older.bin",
+            "/tmp/patchtrace-engine-je08q6c7/newer.bin"
+          ],
+          "reason": null,
+          "returncode": 0,
+          "stderr": "ERROR: rz-diff: No functions found in file0.\n",
+          "stdout": "",
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "wall_s": 0.05071509499975946
+        }
+      ],
+      "newer_functions": [
+        [
+          "renamed_entry",
+          4096
+        ]
+      ],
+      "newer_sha256": "497dbbf64d0084b682e5f3c9f8e38067f0df36cbd2f1dc810ae15da9e19f06b2",
+      "older_functions": [
+        [
+          "entry",
+          4096
+        ]
+      ],
+      "older_sha256": "5ce1d80a29811c6383846b564e1b05bff1115c34cfa143c2b792336eecd5dab1",
+      "run": {
+        "argv_digest": "b7165fe711c2d7d25febc57cb9af3a1d3a55404045d66a54c7b6ba3b89e9da19",
+        "cache_key": "7c95aaec3d40f6be526f353f914d6c8acf80ac782d0807eb115e0054a2c147e5",
+        "contract": "engine-run/1",
+        "duration_ms": 52,
+        "engine": "rz-diff",
+        "engine_version": "0.9.1",
+        "error_code": "PT-SECONDARY-INPUT",
+        "executable_path_sha256": "96e830e1d234231085286ca9c20ae8a2c89c3f3aeda26cd120f4d085c68f7be2",
+        "match_set_id": null,
+        "newer_sha256": "497dbbf64d0084b682e5f3c9f8e38067f0df36cbd2f1dc810ae15da9e19f06b2",
+        "older_sha256": "5ce1d80a29811c6383846b564e1b05bff1115c34cfa143c2b792336eecd5dab1",
+        "orientation": "older->newer",
+        "output_sha256": null,
+        "returncode": 0,
+        "run_id": "9b65d69bca5f64e2e87015081070fb52c8f21939a5746a40048439669b36023a",
+        "started_utc": "2026-10-30T22:57:04.984202+00:00",
+        "status": "failed",
+        "stderr_tail": "ERROR: rz-diff: No functions found in file0.\n",
+        "superseded_by": null
+      },
+      "seed": 1,
+      "truth_rva_relations": [
+        [
+          [
+            4096
+          ],
+          [
+            4096
+          ],
+          "renamed"
+        ]
+      ],
+      "unscored_eligible_truth_pairs": 1
+    },
+    {
+      "eligible_truth_pairs": 0,
+      "error": "PT-SECONDARY-INPUT: rz-diff produced no output",
+      "excluded_group_relations": 1,
+      "kind": "inlined",
+      "native_processes": [
+        {
+          "argv": [
+            "/workspace/scratch/a55b59b3e326/research-tools/rizin/bin/rz-diff",
+            "-C",
+            "-j",
+            "-t",
+            "functions",
+            "/tmp/patchtrace-engine-o1zphtkn/older.bin",
+            "/tmp/patchtrace-engine-o1zphtkn/newer.bin"
+          ],
+          "reason": null,
+          "returncode": 0,
+          "stderr": "ERROR: rz-diff: No functions found in file1.\n",
+          "stdout": "",
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "wall_s": 0.05072988699976122
+        }
+      ],
+      "newer_functions": [
+        [
+          "entry",
+          4096
+        ]
+      ],
+      "newer_sha256": "5ce1d80a29811c6383846b564e1b05bff1115c34cfa143c2b792336eecd5dab1",
+      "older_functions": [
+        [
+          "entry",
+          4096
+        ],
+        [
+          "helper",
+          4112
+        ]
+      ],
+      "older_sha256": "9c4cfce655dc454caa877fa692d7a569d933cdfe16c0ffc6e96d782ca8dc03f3",
+      "run": {
+        "argv_digest": "b7165fe711c2d7d25febc57cb9af3a1d3a55404045d66a54c7b6ba3b89e9da19",
+        "cache_key": "6af41fa46e2b376be6f77f1d943d4c85306bb25921fa5a3cb1454cf90ef7f968",
+        "contract": "engine-run/1",
+        "duration_ms": 52,
+        "engine": "rz-diff",
+        "engine_version": "0.9.1",
+        "error_code": "PT-SECONDARY-INPUT",
+        "executable_path_sha256": "96e830e1d234231085286ca9c20ae8a2c89c3f3aeda26cd120f4d085c68f7be2",
+        "match_set_id": null,
+        "newer_sha256": "5ce1d80a29811c6383846b564e1b05bff1115c34cfa143c2b792336eecd5dab1",
+        "older_sha256": "9c4cfce655dc454caa877fa692d7a569d933cdfe16c0ffc6e96d782ca8dc03f3",
+        "orientation": "older->newer",
+        "output_sha256": null,
+        "returncode": 0,
+        "run_id": "4b6597325c4bad1c14a5b9eaf15defa2e93da315b9bf2a930fcd583782945edc",
+        "started_utc": "2026-10-30T22:57:05.038968+00:00",
+        "status": "failed",
+        "stderr_tail": "ERROR: rz-diff: No functions found in file1.\n",
+        "superseded_by": null
+      },
+      "seed": 1,
+      "truth_rva_relations": [
+        [
+          [
+            4096,
+            4112
+          ],
+          [
+            4096
+          ],
+          "inlined"
+        ]
+      ],
+      "unscored_eligible_truth_pairs": 0
+    },
+    {
+      "eligible_truth_pairs": 0,
+      "error": "PT-SECONDARY-INPUT: rz-diff produced no output",
+      "excluded_group_relations": 1,
+      "kind": "split",
+      "native_processes": [
+        {
+          "argv": [
+            "/workspace/scratch/a55b59b3e326/research-tools/rizin/bin/rz-diff",
+            "-C",
+            "-j",
+            "-t",
+            "functions",
+            "/tmp/patchtrace-engine-echr88zp/older.bin",
+            "/tmp/patchtrace-engine-echr88zp/newer.bin"
+          ],
+          "reason": null,
+          "returncode": 0,
+          "stderr": "ERROR: rz-diff: No functions found in file0.\n",
+          "stdout": "",
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "wall_s": 0.10114857500002472
+        }
+      ],
+      "newer_functions": [
+        [
+          "entry",
+          4096
+        ],
+        [
+          "head",
+          4112
+        ],
+        [
+          "tail",
+          4128
+        ]
+      ],
+      "newer_sha256": "78aa105faa9220cae765028dbdabbf33a75343818e12107588b9951e101f3596",
+      "older_functions": [
+        [
+          "entry",
+          4096
+        ]
+      ],
+      "older_sha256": "5ce1d80a29811c6383846b564e1b05bff1115c34cfa143c2b792336eecd5dab1",
+      "run": {
+        "argv_digest": "b7165fe711c2d7d25febc57cb9af3a1d3a55404045d66a54c7b6ba3b89e9da19",
+        "cache_key": "f1ef66bc9814b53cc5149e6065a3d649cdb2a04f84db1d83ae71145ccb1e9ea4",
+        "contract": "engine-run/1",
+        "duration_ms": 153,
+        "engine": "rz-diff",
+        "engine_version": "0.9.1",
+        "error_code": "PT-SECONDARY-INPUT",
+        "executable_path_sha256": "96e830e1d234231085286ca9c20ae8a2c89c3f3aeda26cd120f4d085c68f7be2",
+        "match_set_id": null,
+        "newer_sha256": "78aa105faa9220cae765028dbdabbf33a75343818e12107588b9951e101f3596",
+        "older_sha256": "5ce1d80a29811c6383846b564e1b05bff1115c34cfa143c2b792336eecd5dab1",
+        "orientation": "older->newer",
+        "output_sha256": null,
+        "returncode": 0,
+        "run_id": "7862a59d7b286a4a1cf173541ed60526eb040585938da88f912f20cb844ce646",
+        "started_utc": "2026-10-30T22:57:05.093944+00:00",
+        "status": "failed",
+        "stderr_tail": "ERROR: rz-diff: No functions found in file0.\n",
+        "superseded_by": null
+      },
+      "seed": 1,
+      "truth_rva_relations": [
+        [
+          [
+            4096
+          ],
+          [
+            4096,
+            4112,
+            4128
+          ],
+          "split"
+        ]
+      ],
+      "unscored_eligible_truth_pairs": 0
+    },
+    {
+      "eligible_truth_pairs": 0,
+      "error": "PT-SECONDARY-INPUT: rz-diff produced no output",
+      "excluded_group_relations": 1,
+      "kind": "merged",
+      "native_processes": [
+        {
+          "argv": [
+            "/workspace/scratch/a55b59b3e326/research-tools/rizin/bin/rz-diff",
+            "-C",
+            "-j",
+            "-t",
+            "functions",
+            "/tmp/patchtrace-engine-r7dbjdw7/older.bin",
+            "/tmp/patchtrace-engine-r7dbjdw7/newer.bin"
+          ],
+          "reason": null,
+          "returncode": 0,
+          "stderr": "ERROR: rz-diff: No functions found in file1.\n",
+          "stdout": "",
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "wall_s": 0.050715280000076746
+        }
+      ],
+      "newer_functions": [
+        [
+          "entry",
+          4096
+        ]
+      ],
+      "newer_sha256": "5ce1d80a29811c6383846b564e1b05bff1115c34cfa143c2b792336eecd5dab1",
+      "older_functions": [
+        [
+          "entry",
+          4096
+        ],
+        [
+          "head",
+          4112
+        ],
+        [
+          "tail",
+          4128
+        ]
+      ],
+      "older_sha256": "78aa105faa9220cae765028dbdabbf33a75343818e12107588b9951e101f3596",
+      "run": {
+        "argv_digest": "b7165fe711c2d7d25febc57cb9af3a1d3a55404045d66a54c7b6ba3b89e9da19",
+        "cache_key": "1c27c42d8405e336acca637614f9a243bdc0c65e044831c50cc8339a81c5e341",
+        "contract": "engine-run/1",
+        "duration_ms": 102,
+        "engine": "rz-diff",
+        "engine_version": "0.9.1",
+        "error_code": "PT-SECONDARY-INPUT",
+        "executable_path_sha256": "96e830e1d234231085286ca9c20ae8a2c89c3f3aeda26cd120f4d085c68f7be2",
+        "match_set_id": null,
+        "newer_sha256": "5ce1d80a29811c6383846b564e1b05bff1115c34cfa143c2b792336eecd5dab1",
+        "older_sha256": "78aa105faa9220cae765028dbdabbf33a75343818e12107588b9951e101f3596",
+        "orientation": "older->newer",
+        "output_sha256": null,
+        "returncode": 0,
+        "run_id": "f6c077afc0e8bdc497a8f534d7b44c40736443f40f5cdc0cd49d3095d8b1b107",
+        "started_utc": "2026-10-30T22:57:05.249963+00:00",
+        "status": "failed",
+        "stderr_tail": "ERROR: rz-diff: No functions found in file1.\n",
+        "superseded_by": null
+      },
+      "seed": 1,
+      "truth_rva_relations": [
+        [
+          [
+            4096,
+            4112,
+            4128
+          ],
+          [
+            4096
+          ],
+          "merged"
+        ]
+      ],
+      "unscored_eligible_truth_pairs": 0
+    },
+    {
+      "eligible_truth_pairs": 1,
+      "error": "PT-SECONDARY-INPUT: rz-diff produced no output",
+      "excluded_group_relations": 0,
+      "kind": "constant-changed",
+      "native_processes": [
+        {
+          "argv": [
+            "/workspace/scratch/a55b59b3e326/research-tools/rizin/bin/rz-diff",
+            "-C",
+            "-j",
+            "-t",
+            "functions",
+            "/tmp/patchtrace-engine-9c72ttgp/older.bin",
+            "/tmp/patchtrace-engine-9c72ttgp/newer.bin"
+          ],
+          "reason": null,
+          "returncode": 0,
+          "stderr": "ERROR: rz-diff: No functions found in file0.\n",
+          "stdout": "",
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "wall_s": 0.10093254000003071
+        }
+      ],
+      "newer_functions": [
+        [
+          "entry",
+          4096
+        ]
+      ],
+      "newer_sha256": "52db322d00763985add6a9f71a70825970c910e9f6668542b872a467c7d297a2",
+      "older_functions": [
+        [
+          "entry",
+          4096
+        ]
+      ],
+      "older_sha256": "5ce1d80a29811c6383846b564e1b05bff1115c34cfa143c2b792336eecd5dab1",
+      "run": {
+        "argv_digest": "b7165fe711c2d7d25febc57cb9af3a1d3a55404045d66a54c7b6ba3b89e9da19",
+        "cache_key": "6a763986718c70df7827c2ca230b8c890b5708c9968d83e3716fb44e00cab798",
+        "contract": "engine-run/1",
+        "duration_ms": 102,
+        "engine": "rz-diff",
+        "engine_version": "0.9.1",
+        "error_code": "PT-SECONDARY-INPUT",
+        "executable_path_sha256": "96e830e1d234231085286ca9c20ae8a2c89c3f3aeda26cd120f4d085c68f7be2",
+        "match_set_id": null,
+        "newer_sha256": "52db322d00763985add6a9f71a70825970c910e9f6668542b872a467c7d297a2",
+        "older_sha256": "5ce1d80a29811c6383846b564e1b05bff1115c34cfa143c2b792336eecd5dab1",
+        "orientation": "older->newer",
+        "output_sha256": null,
+        "returncode": 0,
+        "run_id": "2b93b0d364cb847f84f82b798662ebee35998fd4d7a79825a1d5debf5a9d9a6f",
+        "started_utc": "2026-10-30T22:57:05.355048+00:00",
+        "status": "failed",
+        "stderr_tail": "ERROR: rz-diff: No functions found in file0.\n",
+        "superseded_by": null
+      },
+      "seed": 1,
+      "truth_rva_relations": [
+        [
+          [
+            4096
+          ],
+          [
+            4096
+          ],
+          "constant-changed"
+        ]
+      ],
+      "unscored_eligible_truth_pairs": 1
+    },
+    {
+      "eligible_truth_pairs": 1,
+      "error": "PT-SECONDARY-INPUT: rz-diff produced no output",
+      "excluded_group_relations": 0,
+      "kind": "condition-changed",
+      "native_processes": [
+        {
+          "argv": [
+            "/workspace/scratch/a55b59b3e326/research-tools/rizin/bin/rz-diff",
+            "-C",
+            "-j",
+            "-t",
+            "functions",
+            "/tmp/patchtrace-engine-6owrkbni/older.bin",
+            "/tmp/patchtrace-engine-6owrkbni/newer.bin"
+          ],
+          "reason": null,
+          "returncode": 0,
+          "stderr": "ERROR: rz-diff: No functions found in file0.\n",
+          "stdout": "",
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "wall_s": 0.050749026000175945
+        }
+      ],
+      "newer_functions": [
+        [
+          "entry",
+          4096
+        ]
+      ],
+      "newer_sha256": "c942320b8b0f1f579b6fa6553a870d8a5f6a1579d931f08b807a593d9e74a4a6",
+      "older_functions": [
+        [
+          "entry",
+          4096
+        ]
+      ],
+      "older_sha256": "414514199e1361d7fd90a46d4ac62a756d0dd0de9fd298a4e4ee5f8a446dc220",
+      "run": {
+        "argv_digest": "b7165fe711c2d7d25febc57cb9af3a1d3a55404045d66a54c7b6ba3b89e9da19",
+        "cache_key": "b6b56e0c6727218c98a6cb087f4da5182edaffa44b6eb4bc5db475d5bdc15194",
+        "contract": "engine-run/1",
+        "duration_ms": 102,
+        "engine": "rz-diff",
+        "engine_version": "0.9.1",
+        "error_code": "PT-SECONDARY-INPUT",
+        "executable_path_sha256": "96e830e1d234231085286ca9c20ae8a2c89c3f3aeda26cd120f4d085c68f7be2",
+        "match_set_id": null,
+        "newer_sha256": "c942320b8b0f1f579b6fa6553a870d8a5f6a1579d931f08b807a593d9e74a4a6",
+        "older_sha256": "414514199e1361d7fd90a46d4ac62a756d0dd0de9fd298a4e4ee5f8a446dc220",
+        "orientation": "older->newer",
+        "output_sha256": null,
+        "returncode": 0,
+        "run_id": "589e4fcc291a3bd3aa2e1b72932779128be1d7224ac435c62f2b6fc60eaf1f4c",
+        "started_utc": "2026-10-30T22:57:05.461480+00:00",
+        "status": "failed",
+        "stderr_tail": "ERROR: rz-diff: No functions found in file0.\n",
+        "superseded_by": null
+      },
+      "seed": 1,
+      "truth_rva_relations": [
+        [
+          [
+            4096
+          ],
+          [
+            4096
+          ],
+          "condition-changed"
+        ]
+      ],
+      "unscored_eligible_truth_pairs": 1
+    },
+    {
+      "eligible_truth_pairs": 1,
+      "error": "PT-SECONDARY-INPUT: rz-diff produced no output",
+      "excluded_group_relations": 0,
+      "kind": "added-check",
+      "native_processes": [
+        {
+          "argv": [
+            "/workspace/scratch/a55b59b3e326/research-tools/rizin/bin/rz-diff",
+            "-C",
+            "-j",
+            "-t",
+            "functions",
+            "/tmp/patchtrace-engine-a_a7ww1w/older.bin",
+            "/tmp/patchtrace-engine-a_a7ww1w/newer.bin"
+          ],
+          "reason": null,
+          "returncode": 0,
+          "stderr": "ERROR: rz-diff: No functions found in file0.\n",
+          "stdout": "",
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "wall_s": 0.05244683899991287
+        }
+      ],
+      "newer_functions": [
+        [
+          "entry",
+          4096
+        ]
+      ],
+      "newer_sha256": "e39c89280381236ffbaf1c1b869dc89227d4ee879cdc51e0b28ed10f3ed20704",
+      "older_functions": [
+        [
+          "entry",
+          4096
+        ]
+      ],
+      "older_sha256": "5ce1d80a29811c6383846b564e1b05bff1115c34cfa143c2b792336eecd5dab1",
+      "run": {
+        "argv_digest": "b7165fe711c2d7d25febc57cb9af3a1d3a55404045d66a54c7b6ba3b89e9da19",
+        "cache_key": "3669499bfa9de7772f07fa1758e57561ba43a741170b908aa77d462d6042f917",
+        "contract": "engine-run/1",
+        "duration_ms": 104,
+        "engine": "rz-diff",
+        "engine_version": "0.9.1",
+        "error_code": "PT-SECONDARY-INPUT",
+        "executable_path_sha256": "96e830e1d234231085286ca9c20ae8a2c89c3f3aeda26cd120f4d085c68f7be2",
+        "match_set_id": null,
+        "newer_sha256": "e39c89280381236ffbaf1c1b869dc89227d4ee879cdc51e0b28ed10f3ed20704",
+        "older_sha256": "5ce1d80a29811c6383846b564e1b05bff1115c34cfa143c2b792336eecd5dab1",
+        "orientation": "older->newer",
+        "output_sha256": null,
+        "returncode": 0,
+        "run_id": "5646f48cedacedec1970f158aa0df78c64856d8420e3e6aa5fa072584e080ad6",
+        "started_utc": "2026-10-30T22:57:05.566928+00:00",
+        "status": "failed",
+        "stderr_tail": "ERROR: rz-diff: No functions found in file0.\n",
+        "superseded_by": null
+      },
+      "seed": 1,
+      "truth_rva_relations": [
+        [
+          [
+            4096
+          ],
+          [
+            4096
+          ],
+          "added-check"
+        ]
+      ],
+      "unscored_eligible_truth_pairs": 1
+    },
+    {
+      "eligible_truth_pairs": 1,
+      "error": "PT-SECONDARY-INPUT: rz-diff produced no output",
+      "excluded_group_relations": 0,
+      "kind": "removed-code",
+      "native_processes": [
+        {
+          "argv": [
+            "/workspace/scratch/a55b59b3e326/research-tools/rizin/bin/rz-diff",
+            "-C",
+            "-j",
+            "-t",
+            "functions",
+            "/tmp/patchtrace-engine-cqpscdpz/older.bin",
+            "/tmp/patchtrace-engine-cqpscdpz/newer.bin"
+          ],
+          "reason": null,
+          "returncode": 0,
+          "stderr": "ERROR: rz-diff: No functions found in file0.\n",
+          "stdout": "",
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "wall_s": 0.050726486000257864
+        }
+      ],
+      "newer_functions": [
+        [
+          "entry",
+          4096
+        ]
+      ],
+      "newer_sha256": "e99d643f13eaf66069232ae5c5a913a94f6070454fec0e11896eaf92ab06b934",
+      "older_functions": [
+        [
+          "entry",
+          4096
+        ]
+      ],
+      "older_sha256": "5ce1d80a29811c6383846b564e1b05bff1115c34cfa143c2b792336eecd5dab1",
+      "run": {
+        "argv_digest": "b7165fe711c2d7d25febc57cb9af3a1d3a55404045d66a54c7b6ba3b89e9da19",
+        "cache_key": "2cb72dc340bdd96cc65a2694f3691c06b20d137ee41ef959b86af9e744d5d6df",
+        "contract": "engine-run/1",
+        "duration_ms": 102,
+        "engine": "rz-diff",
+        "engine_version": "0.9.1",
+        "error_code": "PT-SECONDARY-INPUT",
+        "executable_path_sha256": "96e830e1d234231085286ca9c20ae8a2c89c3f3aeda26cd120f4d085c68f7be2",
+        "match_set_id": null,
+        "newer_sha256": "e99d643f13eaf66069232ae5c5a913a94f6070454fec0e11896eaf92ab06b934",
+        "older_sha256": "5ce1d80a29811c6383846b564e1b05bff1115c34cfa143c2b792336eecd5dab1",
+        "orientation": "older->newer",
+        "output_sha256": null,
+        "returncode": 0,
+        "run_id": "e94c5a7d38214594e4acf5d960d354d8ef31846c539694c00aa84250ab9a3d02",
+        "started_utc": "2026-10-30T22:57:05.673943+00:00",
+        "status": "failed",
+        "stderr_tail": "ERROR: rz-diff: No functions found in file0.\n",
+        "superseded_by": null
+      },
+      "seed": 1,
+      "truth_rva_relations": [
+        [
+          [
+            4096
+          ],
+          [
+            4096
+          ],
+          "removed-code"
+        ]
+      ],
+      "unscored_eligible_truth_pairs": 1
+    },
+    {
+      "counts": {
+        "ambiguous_predicted": 0,
+        "false_predicted": 0,
+        "group_relation_unscored": 0,
+        "true_predicted": 0,
+        "unknown_predicted": 1
+      },
+      "duplicate_two_sided_proposals": 0,
+      "eligible_truth_pairs": 2,
+      "excluded_group_relations": 0,
+      "kind": "address-shift",
+      "missed_eligible_truth_pairs": 2,
+      "native_processes": [
+        {
+          "argv": [
+            "/workspace/scratch/a55b59b3e326/research-tools/rizin/bin/rz-diff",
+            "-C",
+            "-j",
+            "-t",
+            "functions",
+            "/tmp/patchtrace-engine-_ca_kd0d/older.bin",
+            "/tmp/patchtrace-engine-_ca_kd0d/newer.bin"
+          ],
+          "reason": null,
+          "returncode": 0,
+          "stderr": "",
+          "stdout": "[{\"similarity\":1.000000,\"type\":\"COMPLETE\",\"original\":{\"name\":\"sym.synthetic.dll_helper\",\"addr\":6442455120,\"size\":18},\"modified\":{\"name\":\"sym.synthetic.dll_helper\",\"addr\":6442455056,\"size\":18}}]\n",
+          "stdout_sha256": "526fa076ba62ab5770018f706e0b59f47f96be2b222353c45611ba0612037a03",
+          "wall_s": 0.15108151100002942
+        }
+      ],
+      "newer_functions": [
+        [
+          "entry",
+          4160
+        ],
+        [
+          "helper",
+          4176
+        ]
+      ],
+      "newer_sha256": "587d5b2c720d9ce3332f378becaa41d407e969fd6a3e66546175b21fd0891d98",
+      "observations": [
+        {
+          "algorithm": "levenshtein-bytes",
+          "assessment": "unknown_predicted",
+          "basicblocks": null,
+          "confidence_milli": null,
+          "confidence_text": null,
+          "engine": "rz-diff",
+          "engine_version": "0.9.1",
+          "flags": [],
+          "match_type": "COMPLETE",
+          "newer_address": 6442455056,
+          "newer_name": "sym.synthetic.dll_helper",
+          "newer_rva": 4112,
+          "older_address": 6442455120,
+          "older_name": "sym.synthetic.dll_helper",
+          "older_rva": 4176,
+          "similarity_milli": 1000,
+          "similarity_text": "1.0"
+        }
+      ],
+      "older_functions": [
+        [
+          "entry",
+          4096
+        ],
+        [
+          "helper",
+          4112
+        ]
+      ],
+      "older_sha256": "9c4cfce655dc454caa877fa692d7a569d933cdfe16c0ffc6e96d782ca8dc03f3",
+      "one_sided_observations": 0,
+      "parsed_output_sha256": "526fa076ba62ab5770018f706e0b59f47f96be2b222353c45611ba0612037a03",
+      "run": {
+        "argv_digest": "b7165fe711c2d7d25febc57cb9af3a1d3a55404045d66a54c7b6ba3b89e9da19",
+        "cache_key": "06428acf7140a3500614beff072be631fe3269f4d54812a6b8fa7cb227c47f3f",
+        "contract": "engine-run/1",
+        "duration_ms": 203,
+        "engine": "rz-diff",
+        "engine_version": "0.9.1",
+        "error_code": null,
+        "executable_path_sha256": "96e830e1d234231085286ca9c20ae8a2c89c3f3aeda26cd120f4d085c68f7be2",
+        "match_set_id": "a8bb3f7de6fc95641c3895bd55951e7cf503b72aaf0424bd080fc4fee2dfe98f",
+        "newer_sha256": "587d5b2c720d9ce3332f378becaa41d407e969fd6a3e66546175b21fd0891d98",
+        "older_sha256": "9c4cfce655dc454caa877fa692d7a569d933cdfe16c0ffc6e96d782ca8dc03f3",
+        "orientation": "older->newer",
+        "output_sha256": "526fa076ba62ab5770018f706e0b59f47f96be2b222353c45611ba0612037a03",
+        "returncode": 0,
+        "run_id": "5ca9a89778abb6b2aefa02bd2aab53a899f87d6b76012d6ab92c67b69df65c8f",
+        "started_utc": "2026-10-30T22:57:05.780320+00:00",
+        "status": "ok",
+        "stderr_tail": "",
+        "superseded_by": null
+      },
+      "seed": 1,
+      "truth_rva_relations": [
+        [
+          [
+            4096
+          ],
+          [
+            4160
+          ],
+          "nuisance"
+        ],
+        [
+          [
+            4112
+          ],
+          [
+            4176
+          ],
+          "nuisance"
+        ]
+      ],
+      "unique_two_sided_proposals": 1
+    }
+  ],
+  "diagnostic_findings": [
+    "All 20 ten-kind runs exited zero with empty stdout and stderr ERROR: rz-diff: No functions found in file0.; production strict parser correctly rejects empty output.",
+    "Both address-shift runs output original.addr=base+0x1050 (new helper) and modified.addr=base+0x1010 (old helper) despite older.bin,newer.bin argv; production parsing retains this apparent reverse orientation. Counted unknown, not repaired silently."
+  ],
+  "interpretation": "Native smoke exposed a conditional upstream orientation bug plus no-function fixture-analysis failures. Overall status failed is preserved; failures are not zero-accuracy successes. No global orientation repair or semantic matching claim is made.",
+  "kind": "r2-native-rizin-existing-fixtures/1",
+  "max_total_seconds": 900,
+  "mocked": false,
+  "notes": [
+    "Only rz-diff is executed; target PE files are never executed or loaded.",
+    "Fixtures are authored tiny PE analogues, not compiler output or an independent corpus.",
+    "All fixture functions are exported; names can reveal identity and inflate native matching yield.",
+    "Exact .pdata extents and tiny bodies do not establish realistic analysis or extent recovery.",
+    "inlined/split/merged relations are excluded from 1:1 truth scoring.",
+    "True/false count unique two-sided proposals with known function-entry RVAs and eligible 1:1 truth.",
+    "Unknown addresses, endpoint ambiguities and N:M relation proposals are counted separately.",
+    "No true-negative count, specificity, semantic-equivalence or final unified acceptance is inferred.",
+    "Archive pin was recorded in repository CI from an official-asset stream; not upstream-published checksum."
+  ],
+  "orientation_diagnostics": [
+    {
+      "input0_functions": [
+        [
+          "entry",
+          4096
+        ],
+        [
+          "helper",
+          4112
+        ]
+      ],
+      "input0_sha256": "6c8a798f89eea64c94eab84253068ba53e53aeb4bc7c3ec785147e90d3fcae7f",
+      "input1_functions": [
+        [
+          "entry",
+          4160
+        ],
+        [
+          "helper",
+          4176
+        ]
+      ],
+      "input1_sha256": "dd9d2a44df52c1852adee1a0157da72aeeecbf885ab8198ea4a06bc065f3bb54",
+      "label": "shift-forward",
+      "native_processes": [
+        {
+          "argv": [
+            "/workspace/scratch/a55b59b3e326/research-tools/rizin/bin/rz-diff",
+            "-C",
+            "-j",
+            "-t",
+            "functions",
+            "/tmp/patchtrace-engine-0q99gdkk/older.bin",
+            "/tmp/patchtrace-engine-0q99gdkk/newer.bin"
+          ],
+          "reason": null,
+          "returncode": 0,
+          "stderr": "",
+          "stdout": "[{\"similarity\":1.000000,\"type\":\"COMPLETE\",\"original\":{\"name\":\"sym.synthetic.dll_helper\",\"addr\":6442455120,\"size\":18},\"modified\":{\"name\":\"sym.synthetic.dll_helper\",\"addr\":6442455056,\"size\":18}}]\n"
+        }
+      ],
+      "observations": [
+        {
+          "algorithm": "levenshtein-bytes",
+          "basicblocks": null,
+          "confidence_milli": null,
+          "confidence_text": null,
+          "engine": "rz-diff",
+          "engine_version": "0.9.1",
+          "flags": [],
+          "match_type": "COMPLETE",
+          "newer_address": 6442455056,
+          "newer_name": "sym.synthetic.dll_helper",
+          "older_address": 6442455120,
+          "older_name": "sym.synthetic.dll_helper",
+          "similarity_milli": 1000,
+          "similarity_text": "1.0"
+        }
+      ],
+      "run": {
+        "argv_digest": "b7165fe711c2d7d25febc57cb9af3a1d3a55404045d66a54c7b6ba3b89e9da19",
+        "cache_key": "791dce5f8dc4edc27fc8c9146b373d23288d39751a9acb9b071b795d98d0a32d",
+        "contract": "engine-run/1",
+        "duration_ms": 154,
+        "engine": "rz-diff",
+        "engine_version": "0.9.1",
+        "error_code": null,
+        "executable_path_sha256": "96e830e1d234231085286ca9c20ae8a2c89c3f3aeda26cd120f4d085c68f7be2",
+        "match_set_id": "31fbcd321117396755d650ede93dc9a1409b63be2d5647781873449bcf19c7ec",
+        "newer_sha256": "dd9d2a44df52c1852adee1a0157da72aeeecbf885ab8198ea4a06bc065f3bb54",
+        "older_sha256": "6c8a798f89eea64c94eab84253068ba53e53aeb4bc7c3ec785147e90d3fcae7f",
+        "orientation": "older->newer",
+        "output_sha256": "526fa076ba62ab5770018f706e0b59f47f96be2b222353c45611ba0612037a03",
+        "returncode": 0,
+        "run_id": "fde79d4a4aca1b5d4481fbf8825f7ad3b7206d95bf4be62069ec19da2a9c4aa7",
+        "started_utc": "2026-10-30T22:59:24.836917+00:00",
+        "status": "ok",
+        "stderr_tail": "",
+        "superseded_by": null
+      }
+    },
+    {
+      "input0_functions": [
+        [
+          "entry",
+          4160
+        ],
+        [
+          "helper",
+          4176
+        ]
+      ],
+      "input0_sha256": "dd9d2a44df52c1852adee1a0157da72aeeecbf885ab8198ea4a06bc065f3bb54",
+      "input1_functions": [
+        [
+          "entry",
+          4096
+        ],
+        [
+          "helper",
+          4112
+        ]
+      ],
+      "input1_sha256": "6c8a798f89eea64c94eab84253068ba53e53aeb4bc7c3ec785147e90d3fcae7f",
+      "label": "shift-reverse",
+      "native_processes": [
+        {
+          "argv": [
+            "/workspace/scratch/a55b59b3e326/research-tools/rizin/bin/rz-diff",
+            "-C",
+            "-j",
+            "-t",
+            "functions",
+            "/tmp/patchtrace-engine-8pti0lpi/older.bin",
+            "/tmp/patchtrace-engine-8pti0lpi/newer.bin"
+          ],
+          "reason": null,
+          "returncode": 0,
+          "stderr": "",
+          "stdout": "[{\"similarity\":1.000000,\"type\":\"COMPLETE\",\"original\":{\"name\":\"sym.synthetic.dll_helper\",\"addr\":6442455056,\"size\":18},\"modified\":{\"name\":\"sym.synthetic.dll_helper\",\"addr\":6442455120,\"size\":18}}]\n"
+        }
+      ],
+      "observations": [
+        {
+          "algorithm": "levenshtein-bytes",
+          "basicblocks": null,
+          "confidence_milli": null,
+          "confidence_text": null,
+          "engine": "rz-diff",
+          "engine_version": "0.9.1",
+          "flags": [],
+          "match_type": "COMPLETE",
+          "newer_address": 6442455120,
+          "newer_name": "sym.synthetic.dll_helper",
+          "older_address": 6442455056,
+          "older_name": "sym.synthetic.dll_helper",
+          "similarity_milli": 1000,
+          "similarity_text": "1.0"
+        }
+      ],
+      "run": {
+        "argv_digest": "b7165fe711c2d7d25febc57cb9af3a1d3a55404045d66a54c7b6ba3b89e9da19",
+        "cache_key": "d2c739268f0809380e0879d2f0ee9541bec134ce96bb66ec1d301c5dcec19a12",
+        "contract": "engine-run/1",
+        "duration_ms": 205,
+        "engine": "rz-diff",
+        "engine_version": "0.9.1",
+        "error_code": null,
+        "executable_path_sha256": "96e830e1d234231085286ca9c20ae8a2c89c3f3aeda26cd120f4d085c68f7be2",
+        "match_set_id": "ab2d47a928e1c2da6bbbd9531b172167ec1d6c810bbe48d821767c7f92881190",
+        "newer_sha256": "6c8a798f89eea64c94eab84253068ba53e53aeb4bc7c3ec785147e90d3fcae7f",
+        "older_sha256": "dd9d2a44df52c1852adee1a0157da72aeeecbf885ab8198ea4a06bc065f3bb54",
+        "orientation": "older->newer",
+        "output_sha256": "6806166438a912a3a9d3b86c35821a98811039359a3d21df4a82dfd906b74062",
+        "returncode": 0,
+        "run_id": "916384aef86ab015c15dd55bd6db6f4aaee43c33a3f60302086aaf65b51294e3",
+        "started_utc": "2026-10-30T22:59:24.992831+00:00",
+        "status": "ok",
+        "stderr_tail": "",
+        "superseded_by": null
+      }
+    },
+    {
+      "input0_functions": [
+        [
+          "entry",
+          4096
+        ],
+        [
+          "helper",
+          4112
+        ]
+      ],
+      "input0_sha256": "6c8a798f89eea64c94eab84253068ba53e53aeb4bc7c3ec785147e90d3fcae7f",
+      "input1_functions": [
+        [
+          "entry",
+          4096
+        ],
+        [
+          "head",
+          4112
+        ],
+        [
+          "tail",
+          4128
+        ]
+      ],
+      "input1_sha256": "a8d5944d442535f1998183524f0b98058cf0273cef9cd59357779309c9d607ac",
+      "label": "one-recovered-vs-two",
+      "native_processes": [
+        {
+          "argv": [
+            "/workspace/scratch/a55b59b3e326/research-tools/rizin/bin/rz-diff",
+            "-C",
+            "-j",
+            "-t",
+            "functions",
+            "/tmp/patchtrace-engine-3rbg292i/older.bin",
+            "/tmp/patchtrace-engine-3rbg292i/newer.bin"
+          ],
+          "reason": null,
+          "returncode": 0,
+          "stderr": "",
+          "stdout": "[{\"similarity\":0.611111,\"type\":\"PARTIAL\",\"original\":{\"name\":\"sym.synthetic.dll_head\",\"addr\":6442455056,\"size\":11},\"modified\":{\"name\":\"sym.synthetic.dll_helper\",\"addr\":6442455056,\"size\":18}},{\"similarity\":0.444444,\"type\":\"UNLIKE\",\"original\":{\"name\":\"sym.synthetic.dll_tail\",\"addr\":6442455072,\"size\":8},\"modified\":{\"name\":\"sym.synthetic.dll_helper\",\"addr\":6442455056,\"size\":18}}]\n"
+        }
+      ],
+      "observations": [
+        {
+          "algorithm": "levenshtein-bytes",
+          "basicblocks": null,
+          "confidence_milli": null,
+          "confidence_text": null,
+          "engine": "rz-diff",
+          "engine_version": "0.9.1",
+          "flags": [],
+          "match_type": "PARTIAL",
+          "newer_address": 6442455056,
+          "newer_name": "sym.synthetic.dll_helper",
+          "older_address": 6442455056,
+          "older_name": "sym.synthetic.dll_head",
+          "similarity_milli": 611,
+          "similarity_text": "0.611111"
+        },
+        {
+          "algorithm": "levenshtein-bytes",
+          "basicblocks": null,
+          "confidence_milli": null,
+          "confidence_text": null,
+          "engine": "rz-diff",
+          "engine_version": "0.9.1",
+          "flags": [],
+          "match_type": "UNLIKE",
+          "newer_address": 6442455056,
+          "newer_name": "sym.synthetic.dll_helper",
+          "older_address": 6442455072,
+          "older_name": "sym.synthetic.dll_tail",
+          "similarity_milli": 444,
+          "similarity_text": "0.444444"
+        }
+      ],
+      "run": {
+        "argv_digest": "b7165fe711c2d7d25febc57cb9af3a1d3a55404045d66a54c7b6ba3b89e9da19",
+        "cache_key": "579ac5798f95454dd18ec047af330bae206b2a00aad765220e4b0006a4a8f004",
+        "contract": "engine-run/1",
+        "duration_ms": 203,
+        "engine": "rz-diff",
+        "engine_version": "0.9.1",
+        "error_code": null,
+        "executable_path_sha256": "96e830e1d234231085286ca9c20ae8a2c89c3f3aeda26cd120f4d085c68f7be2",
+        "match_set_id": "5551b360b03c6e993b8259e3a7838c99a1dd1574de0dbb82844f676e5f372bfa",
+        "newer_sha256": "a8d5944d442535f1998183524f0b98058cf0273cef9cd59357779309c9d607ac",
+        "older_sha256": "6c8a798f89eea64c94eab84253068ba53e53aeb4bc7c3ec785147e90d3fcae7f",
+        "orientation": "older->newer",
+        "output_sha256": "d5e968e689211215043851a3e06ae850a77ccaebfb32f16a7dbfb71ff908d8ab",
+        "returncode": 0,
+        "run_id": "041983b8f3e2eadbbb72202ca55582b1bfe529140c113368ab1622c5acbbe6d0",
+        "started_utc": "2026-10-30T22:59:25.199116+00:00",
+        "status": "ok",
+        "stderr_tail": "",
+        "superseded_by": null
+      }
+    },
+    {
+      "input0_functions": [
+        [
+          "entry",
+          4096
+        ],
+        [
+          "head",
+          4112
+        ],
+        [
+          "tail",
+          4128
+        ]
+      ],
+      "input0_sha256": "a8d5944d442535f1998183524f0b98058cf0273cef9cd59357779309c9d607ac",
+      "input1_functions": [
+        [
+          "entry",
+          4096
+        ],
+        [
+          "helper",
+          4112
+        ]
+      ],
+      "input1_sha256": "6c8a798f89eea64c94eab84253068ba53e53aeb4bc7c3ec785147e90d3fcae7f",
+      "label": "two-recovered-vs-one",
+      "native_processes": [
+        {
+          "argv": [
+            "/workspace/scratch/a55b59b3e326/research-tools/rizin/bin/rz-diff",
+            "-C",
+            "-j",
+            "-t",
+            "functions",
+            "/tmp/patchtrace-engine-lpw02plr/older.bin",
+            "/tmp/patchtrace-engine-lpw02plr/newer.bin"
+          ],
+          "reason": null,
+          "returncode": 0,
+          "stderr": "",
+          "stdout": "[{\"similarity\":0.611111,\"type\":\"PARTIAL\",\"original\":{\"name\":\"sym.synthetic.dll_head\",\"addr\":6442455056,\"size\":11},\"modified\":{\"name\":\"sym.synthetic.dll_helper\",\"addr\":6442455056,\"size\":18}},{\"similarity\":0.444444,\"type\":\"UNLIKE\",\"original\":{\"name\":\"sym.synthetic.dll_tail\",\"addr\":6442455072,\"size\":8},\"modified\":{\"name\":\"sym.synthetic.dll_helper\",\"addr\":6442455056,\"size\":18}}]\n"
+        }
+      ],
+      "observations": [
+        {
+          "algorithm": "levenshtein-bytes",
+          "basicblocks": null,
+          "confidence_milli": null,
+          "confidence_text": null,
+          "engine": "rz-diff",
+          "engine_version": "0.9.1",
+          "flags": [],
+          "match_type": "PARTIAL",
+          "newer_address": 6442455056,
+          "newer_name": "sym.synthetic.dll_helper",
+          "older_address": 6442455056,
+          "older_name": "sym.synthetic.dll_head",
+          "similarity_milli": 611,
+          "similarity_text": "0.611111"
+        },
+        {
+          "algorithm": "levenshtein-bytes",
+          "basicblocks": null,
+          "confidence_milli": null,
+          "confidence_text": null,
+          "engine": "rz-diff",
+          "engine_version": "0.9.1",
+          "flags": [],
+          "match_type": "UNLIKE",
+          "newer_address": 6442455056,
+          "newer_name": "sym.synthetic.dll_helper",
+          "older_address": 6442455072,
+          "older_name": "sym.synthetic.dll_tail",
+          "similarity_milli": 444,
+          "similarity_text": "0.444444"
+        }
+      ],
+      "run": {
+        "argv_digest": "b7165fe711c2d7d25febc57cb9af3a1d3a55404045d66a54c7b6ba3b89e9da19",
+        "cache_key": "01366dc5e89c945cc96b92aea122d41a68ac8deb2f805977412a71914c615890",
+        "contract": "engine-run/1",
+        "duration_ms": 203,
+        "engine": "rz-diff",
+        "engine_version": "0.9.1",
+        "error_code": null,
+        "executable_path_sha256": "96e830e1d234231085286ca9c20ae8a2c89c3f3aeda26cd120f4d085c68f7be2",
+        "match_set_id": "eb6dd0b48b4313f6c26e486ca0a4b10291b1325fe0deb24781f6499af6d5fc43",
+        "newer_sha256": "6c8a798f89eea64c94eab84253068ba53e53aeb4bc7c3ec785147e90d3fcae7f",
+        "older_sha256": "a8d5944d442535f1998183524f0b98058cf0273cef9cd59357779309c9d607ac",
+        "orientation": "older->newer",
+        "output_sha256": "d5e968e689211215043851a3e06ae850a77ccaebfb32f16a7dbfb71ff908d8ab",
+        "returncode": 0,
+        "run_id": "5142170af6934b1e33bf5007b48f82354868b65220364bd1fd4ae00fa5c7ec8f",
+        "started_utc": "2026-10-30T22:59:25.403889+00:00",
+        "status": "ok",
+        "stderr_tail": "",
+        "superseded_by": null
+      }
+    },
+    {
+      "input0_functions": [
+        [
+          "entry",
+          4096
+        ],
+        [
+          "head",
+          4112
+        ],
+        [
+          "tail",
+          4128
+        ]
+      ],
+      "input0_sha256": "a8d5944d442535f1998183524f0b98058cf0273cef9cd59357779309c9d607ac",
+      "input1_functions": [
+        [
+          "entry",
+          4096
+        ],
+        [
+          "head",
+          4112
+        ],
+        [
+          "tail",
+          4128
+        ]
+      ],
+      "input1_sha256": "a8d5944d442535f1998183524f0b98058cf0273cef9cd59357779309c9d607ac",
+      "label": "two-recovered-vs-two",
+      "native_processes": [
+        {
+          "argv": [
+            "/workspace/scratch/a55b59b3e326/research-tools/rizin/bin/rz-diff",
+            "-C",
+            "-j",
+            "-t",
+            "functions",
+            "/tmp/patchtrace-engine-vpqri688/older.bin",
+            "/tmp/patchtrace-engine-vpqri688/newer.bin"
+          ],
+          "reason": null,
+          "returncode": 0,
+          "stderr": "",
+          "stdout": "[{\"similarity\":1.000000,\"type\":\"COMPLETE\",\"original\":{\"name\":\"sym.synthetic.dll_head\",\"addr\":6442455056,\"size\":11},\"modified\":{\"name\":\"sym.synthetic.dll_head\",\"addr\":6442455056,\"size\":11}},{\"similarity\":1.000000,\"type\":\"COMPLETE\",\"original\":{\"name\":\"sym.synthetic.dll_tail\",\"addr\":6442455072,\"size\":8},\"modified\":{\"name\":\"sym.synthetic.dll_tail\",\"addr\":6442455072,\"size\":8}}]\n"
+        }
+      ],
+      "observations": [
+        {
+          "algorithm": "levenshtein-bytes",
+          "basicblocks": null,
+          "confidence_milli": null,
+          "confidence_text": null,
+          "engine": "rz-diff",
+          "engine_version": "0.9.1",
+          "flags": [],
+          "match_type": "COMPLETE",
+          "newer_address": 6442455056,
+          "newer_name": "sym.synthetic.dll_head",
+          "older_address": 6442455056,
+          "older_name": "sym.synthetic.dll_head",
+          "similarity_milli": 1000,
+          "similarity_text": "1.0"
+        },
+        {
+          "algorithm": "levenshtein-bytes",
+          "basicblocks": null,
+          "confidence_milli": null,
+          "confidence_text": null,
+          "engine": "rz-diff",
+          "engine_version": "0.9.1",
+          "flags": [],
+          "match_type": "COMPLETE",
+          "newer_address": 6442455072,
+          "newer_name": "sym.synthetic.dll_tail",
+          "older_address": 6442455072,
+          "older_name": "sym.synthetic.dll_tail",
+          "similarity_milli": 1000,
+          "similarity_text": "1.0"
+        }
+      ],
+      "run": {
+        "argv_digest": "b7165fe711c2d7d25febc57cb9af3a1d3a55404045d66a54c7b6ba3b89e9da19",
+        "cache_key": "1323af43039882e7bfc9130774de936a5f286dded120ae545f45caf925164b7e",
+        "contract": "engine-run/1",
+        "duration_ms": 178,
+        "engine": "rz-diff",
+        "engine_version": "0.9.1",
+        "error_code": null,
+        "executable_path_sha256": "96e830e1d234231085286ca9c20ae8a2c89c3f3aeda26cd120f4d085c68f7be2",
+        "match_set_id": "05e922fc9a17abe18fa7d0d6dff315bcafc5a1010732c5c24516dbc7cc86d386",
+        "newer_sha256": "a8d5944d442535f1998183524f0b98058cf0273cef9cd59357779309c9d607ac",
+        "older_sha256": "a8d5944d442535f1998183524f0b98058cf0273cef9cd59357779309c9d607ac",
+        "orientation": "older->newer",
+        "output_sha256": "44c7836b04b00b0e38eec9599dc4283fed1c9cf8c925fabcdb3d71d4a70f91c7",
+        "returncode": 0,
+        "run_id": "cc3f585d231699c500b6565ae01c789af9f28f77f1168a89200717c0c7de24f9",
+        "started_utc": "2026-10-30T22:59:25.608938+00:00",
+        "status": "ok",
+        "stderr_tail": "",
+        "superseded_by": null
+      }
+    }
+  ],
+  "orientation_diagnostics_wall_s": 0.952664657999776,
+  "per_case_timeout_seconds": 60,
+  "pinned_source_findings": {
+    "analysis": "rz-diff.c2365-2385 always analyzes both files for -t functions; -B is not needed on this path.",
+    "empty_output": "core_diff_show2132-2164 returns void on no file0 functions; graphs_files later marks success, hence exit0 with empty stdout and stderr diagnostic.",
+    "matching_blob_sha": "8544259e17a692bcb3c1d8858f104745cd0cba4c",
+    "matching_source": "https://github.com/rizinorg/rizin/blob/v0.9.1/librz/arch/similarity.c",
+    "orientation": "similarity.c568-574 swaps lists iff list_a has one recovered function; callback525-556 emits pair_a from original list_b and pair_b from original list_a without restoring orientation. Normal callback472-519 preserves order.",
+    "ref": "v0.9.1",
+    "serializer": "rz-diff.c2042-2047/2211-2219 writes pair_a as original, pair_b as modified.",
+    "serializer_blob_sha": "3be455f898e91b906ed2d2307060f41c0833450e",
+    "serializer_source": "https://github.com/rizinorg/rizin/blob/v0.9.1/librz/main/rz-diff.c",
+    "tree_sha": "c3a90e9226d977f58f4e9c75f78fa6b07afe13c7"
+  },
+  "platform": "Linux-6.18.57-x86_64-with-glibc2.39",
+  "production_path": "engine_env + registry.RzDiffAdapter + scheduler.run_engines + rzdiff.interpret/parse_output",
+  "python": "3.12.14",
+  "reproduction_commands": [
+    "/workspace/scratch/a55b59b3e326/patchtrace-venv/bin/python tools/research/r2_rizin_probe.py --rz-diff /workspace/scratch/a55b59b3e326/research-tools/rizin/bin/rz-diff --archive /workspace/scratch/a55b59b3e326/research-tools/rizin.tar.xz --output docs/research/unified-matching-r2/results/native-rizin.json",
+    "/workspace/scratch/a55b59b3e326/patchtrace-venv/bin/python tools/research/r2_rizin_probe.py --rz-diff /workspace/scratch/a55b59b3e326/research-tools/rizin/bin/rz-diff --archive /workspace/scratch/a55b59b3e326/research-tools/rizin.tar.xz --output docs/research/unified-matching-r2/results/native-rizin.json --append-orientation"
+  ],
+  "run_counts": {
+    "failed": 20,
+    "ok": 2
+  },
+  "status": "failed",
+  "tool": {
+    "archive_executable_sha256": "536987d5d0e5d2a35689f653502dc10f8be8751a46ef2ffd888e8d514ed9712e",
+    "archive_member": "bin/rz-diff",
+    "archive_path": "/workspace/scratch/a55b59b3e326/research-tools/rizin.tar.xz",
+    "archive_sha256": "9102249a9f0b6319c5334a2e5cf8d9cc3f2035e1d3def027c41f6a90f647e8cf",
+    "executable_sha256": "536987d5d0e5d2a35689f653502dc10f8be8751a46ef2ffd888e8d514ed9712e",
+    "expected_archive_sha256": "9102249a9f0b6319c5334a2e5cf8d9cc3f2035e1d3def027c41f6a90f647e8cf",
+    "path": "/workspace/scratch/a55b59b3e326/research-tools/rizin/bin/rz-diff",
+    "pin_source": ".github/workflows/live-rizin.yml ubuntu-latest matrix",
+    "release_url": "https://github.com/rizinorg/rizin/releases/download/v0.9.1/rizin-v0.9.1-static-x86_64.tar.xz",
+    "version_stdout": "rz-diff 0.9.1 @ linux-x86-64\n"
+  },
+  "totals": {
+    "ambiguous_predicted": 0,
+    "eligible_truth_pairs": 18,
+    "excluded_group_relations": 6,
+    "false_predicted": 0,
+    "group_relation_unscored": 0,
+    "missed_eligible_truth_pairs": 4,
+    "one_sided_observations": 0,
+    "true_predicted": 0,
+    "unknown_predicted": 2,
+    "unscored_eligible_truth_pairs": 14
+  },
+  "wall_s": 7.623943875999885
+}
