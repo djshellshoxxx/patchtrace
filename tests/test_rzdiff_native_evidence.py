@@ -108,3 +108,68 @@ def test_one_green_duplicate_cannot_hide_in_stock_red_set():
     raw = matrix(True).replace("1:1 overlap=0 errors=1", "1:1 overlap=0 errors=0", 1)
     with pytest.raises(ValueError):
         validate("stock", 1, raw)
+
+
+def test_native_coverage_oracle_rejects_contradictory_unmatched(tmp_path):
+    """Compile the actual oracle with list doubles, not native Rizin evidence."""
+    import shutil
+
+    compiler = shutil.which("cc")
+    if not compiler:
+        pytest.skip("helper-only oracle regression requires a C compiler")
+    source = (ROOT / "tools/rzdiff/native_control.c").read_text()
+    start = source.index("static bool covered(")
+    end = source.index("static int check(", start)
+    oracle = source[start:end]
+    prelude = r"""
+#include <stdbool.h>
+#include <stddef.h>
+#include <stdio.h>
+typedef struct RzListIter { void *val; struct RzListIter *next; } RzListIter;
+typedef struct { RzListIter *head; } RzList;
+typedef struct { int id; } RzAnalysisFunction;
+typedef struct { void *pair_a; void *pair_b; } RzAnalysisMatchPair;
+#define rz_list_foreach(l, it, p) for ((it) = (l)->head; (it) && ((p) = (it)->val, 1); (it) = (it)->next)
+static bool owned(RzList *list, const void *ptr) {
+    for (RzListIter *it = list->head; it; it = it->next) if (it->val == ptr) return true;
+    return false;
+}
+"""
+    # owned() is supplied because the old oracle used it; the corrected oracle
+    # can still use it for membership, without hiding duplicate unmatched rows.
+    harness = r"""
+int main(void) {
+    RzAnalysisFunction a = {1}, b = {2}, c = {3};
+    RzAnalysisMatchPair ab = {&a, &b}, ac = {&a, &c};
+    RzListIter ia = {&a, NULL}, ib = {&b, NULL}, ic = {&c, NULL};
+    RzListIter mab = {&ab, NULL}, mac = {&ac, NULL};
+    RzListIter ua = {&a, NULL}, ua2 = {&a, NULL};
+    RzList input = {&ia}, right = {&ib}, matches = {&mab};
+    RzList unmatched = {&ua}, empty = {NULL};
+    int errors = 0;
+    // A function cannot be both matched and unmatched.
+    if (covered(&input, &unmatched, &matches, true)) errors++;
+    // Duplicate unmatched rows cannot account for one input twice.
+    ua.next = &ua2;
+    if (covered(&input, &unmatched, &empty, true)) errors++;
+    ua.next = NULL;
+    if (!covered(&input, &unmatched, &empty, true)) errors++;
+    if (!covered(&input, &empty, &matches, true)) errors++;
+    if (covered(&input, &empty, &empty, true)) errors++;
+    // Singleton's legitimate all-candidate matches must remain supported.
+    mab.next = &mac; ib.next = &ic;
+    if (!covered(&input, &empty, &matches, true)) errors++;
+    if (!covered(&right, &empty, &matches, false)) errors++;
+    // Retain a simple pointer-membership control too.
+    if (!owned(&input, &a) || owned(&input, &b)) errors++;
+    printf("coverage-oracle failures=%d\n", errors);
+    return errors ? 1 : 0;
+}
+"""
+    cfile = tmp_path / "coverage.c"
+    cfile.write_text(prelude + oracle + harness)
+    executable = tmp_path / "coverage"
+    subprocess.run([compiler, "-std=c99", "-Wall", "-Wextra", "-Werror",
+                    str(cfile), "-o", str(executable)], check=True)
+    result = subprocess.run([str(executable)], capture_output=True, text=True, check=False)
+    assert result.returncode == 0, result.stdout + result.stderr
