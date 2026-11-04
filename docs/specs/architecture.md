@@ -55,10 +55,12 @@ PT-INPUT invalid/unreadable/changed/oversize/incompatible input; PT-SCHEMA unkno
 
 ## Project-owned report destination protection (2026-11-01)
 
-
 Project-backed report writes use `ProjectService.export_report` and pass `project_root` to `reports.export_project`. The optional root argument preserves the standalone renderer API used for previews; it does not infer project ownership. Before creating directories, staging or backups, project-backed export refuses any destination inside the project except its `exports/` subtree, and refuses registered artifact/raw evidence paths even if they occur there. Protect the database, WAL/SHM, lock, run/evidence/backup/sidecar stores through this rule. Resolve parent aliases for ownership checks; reject existing aliases to protected evidence. Preserve the existing final-symlink refusal and previous-report backup semantics. Ordinary external destinations and non-evidence files in `exports/` remain supported. GUI export must use the service-owned route; preview stays a throwaway standalone rendering. Refusal preserves project/evidence bytes, creates no report/backup/staging files, and leaves the project reopenable. This adds no wire-schema change and is not an OS-level filesystem sandbox.
 
 `ProjectService.export_report` renders and checks ownership against a loaded committed snapshot, leaving an unsaved mutable in-memory aggregate untouched. Existing-destination alias checks are bounded to registered artifacts/raw evidence and fixed database/companion/lock paths; never recursively enumerate an entire project on the GUI export path. Namespace checks protect other project-owned internal stores without an unbounded file walk.
 
 Committed report reads are non-mutating: `ProjectStore.load(*, recover_interrupted=True)` retains existing default startup recovery, while service export uses `recover_interrupted=False`. Export must neither mark queued/running records failed nor publish recovery/history changes, including when a destination is refused; normal reopen recovery remains unchanged.
 
+Project adoption in MainWindow retains the original open service until the incoming project renders and recent-project state updates successfully. On failure, restore the original service/preferences/view, close the unsuccessful incoming service, and leave its directory available for retry. A KB creation completion must report retained-path/open failure rather than silently replacing the parent on failed rendering.
+
+The generic adoption implementation is isolated in `gui.qt.project_adoption.adopt_project(window, service)`; MainWindow.set_service delegates without adding feature imports or exceeding its established line budget. The existing rollback/ownership contract remains unchanged.

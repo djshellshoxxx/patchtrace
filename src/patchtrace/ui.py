@@ -50,6 +50,7 @@ from .backend import BackendConfig, diagnose, parse_env_passthrough, quarantine_
 from .evidence import build_context, resolve_evidence
 from .gui.qt.codediff import clear_selections, compose_selections, row_selection, view_text
 from .gui.qt.host import PanelHost
+from .gui.qt.project_adoption import adopt_project
 from .gui.qt.theme import DARK
 from .interpretation import interpret, system_prompt
 from .offline_bundle import inspect_offline_bundle, install_offline_bundle
@@ -77,6 +78,7 @@ CATEGORIES = ['modified', 'added', 'removed', 'ambiguous', 'split', 'merged', 'u
 MAX_VIEW_CHARS = 200_000
 ACTION_TIPS = {
     'Download from Microsoft symbol server…': 'action.acquire',
+    'Investigate KB/CVE locally…': 'action.kb_investigation',
     'Sample': 'action.sample',
     'Series window…': 'action.series',
     'Import JSON': 'action.import_json',
@@ -1519,6 +1521,7 @@ class MainWindow(QMainWindow):
     def _build_actions(self):
         self.new_action = self._action('New', self.new_project, 'Ctrl+N')
         self.acquire_action = self._action('Download from Microsoft symbol server…', self.acquire_project)
+        self.kb_investigation_action = self._action('Investigate KB/CVE locally…', self.investigate_kb)
         self.open_action = self._action('Open', self.open_project, 'Ctrl+O')
         self.sample_action = self._action('Sample', self.open_sample)
         self.series_action = self._action('Series window…', self.open_series)
@@ -1544,7 +1547,7 @@ class MainWindow(QMainWindow):
             toolbar.addAction(action)
         file_menu = self.menuBar().addMenu('Project')
         apply_tooltip(file_menu.menuAction(), 'menu.project')
-        for action in [self.new_action, self.acquire_action, self.open_action, self.sample_action, self.save_action,
+        for action in [self.new_action, self.acquire_action, self.kb_investigation_action, self.open_action, self.sample_action, self.save_action,
                        self.import_action, self.overview_action, self.export_action, self.swap_action]:
             file_menu.addAction(action)
         file_menu.addAction(self.backup_action)
@@ -1857,18 +1860,7 @@ class MainWindow(QMainWindow):
         box.exec()
 
     def set_service(self, service):
-        previous = self.service
-        if previous is not service:
-            self._stop_inspection()
-        self.service = service
-        if previous and previous is not service:
-            previous.close()
-        self.refresh()
-        self.settings.setValue('recent/project', str(service.root))
-        recent = self.settings.value('recent/projects', [], type=list)
-        recent = [str(service.root), *[path for path in recent if path != str(service.root)]]
-        self.settings.setValue('recent/projects', recent[:8])
-        self.refresh_recent()
+        adopt_project(self, service)
 
     def refresh_recent(self):
         self.recent_menu.clear()
@@ -1938,6 +1930,14 @@ class MainWindow(QMainWindow):
         dialog.exec()
         if dialog.service is not None:
             self.set_service(dialog.service)
+
+    def investigation_dialog(self):
+        return self.panels.investigation_dialog()
+
+    def investigate_kb(self):
+        if self.worker is not None or self._close_requested:
+            return
+        self.investigation_dialog().exec()
 
     def open_project(self):
         path = QFileDialog.getExistingDirectory(self, 'Open PatchTrace project', self.settings.value('recent/project', ''))
@@ -2920,8 +2920,8 @@ class MainWindow(QMainWindow):
         idle = self.worker is None
         project = bool(self.service)
         match = self.current_match()
-        for action in [self.new_action, self.acquire_action, self.open_action, self.sample_action,
-                       self.setup_action]:
+        for action in [self.new_action, self.acquire_action, self.kb_investigation_action,
+                       self.open_action, self.sample_action, self.setup_action]:
             action.setEnabled(idle)
         for action in [self.run_action, self.import_action, self.export_action, self.save_action, self.swap_action,
                        self.backup_action]:
