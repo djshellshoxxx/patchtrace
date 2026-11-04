@@ -17,6 +17,10 @@ from ..limits import UnifiedError
 CONTRACT = 'program-ir/1'
 INGEST_VERSION = 'ir-ingest/1'
 NORM_VERSION = 'norm/1'
+# Bumped whenever ingest turns the SAME extractor output into different IR content (sanitised import names, rejected
+# records); mixed into `ir_key` by `ingest.ingest_identity_digest`. 2 = irx audit 20261104. A test pins it equal to
+# `extract.INGEST_REVISION` (the runner predicts the key without importing `ir`).
+INGEST_REVISION = 2
 INS_VERSION = 'ins/1'
 DB_NAME = 'ir.sqlite3'
 MANIFEST_NAME = 'manifest.json'
@@ -137,6 +141,7 @@ def open_readonly(path: Path) -> sqlite3.Connection:
         raise error('The IR database is unreadable', 'ir-unreadable', 'PT-UNIFIED-STORE') from None
     if magic != b'SQLite format 3\x00':
         raise error('The IR file is not a SQLite database', 'ir-not-sqlite', 'PT-UNIFIED-STORE')
+    db = None
     try:
         db = sqlite3.connect(f'{path.resolve().as_uri()}?mode=ro&immutable=1', uri=True)
         db.execute('PRAGMA trusted_schema=OFF')
@@ -152,6 +157,8 @@ def open_readonly(path: Path) -> sqlite3.Connection:
             raise error('The IR database lacks required tables', 'ir-schema', 'PT-UNIFIED-STORE')
         db.set_authorizer(_authorizer)
     except sqlite3.Error:
+        if db is not None:
+            db.close()   # an open handle would keep the file locked on Windows
         raise error('The IR database cannot be opened read-only', 'ir-open', 'PT-UNIFIED-STORE') from None
     return db
 

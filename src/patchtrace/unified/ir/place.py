@@ -49,6 +49,8 @@ def _replace(source: Path, target: Path) -> None:
             if attempt == 4:
                 raise _error('An IR directory could not be moved into place', 'replace-failed') from None
             time.sleep(0.2)
+        except OSError:   # target not empty (a concurrent placement), disk full, ...: typed, never a raw OSError
+            raise _error('An IR directory could not be moved into place', 'replace-failed') from None
 
 
 def _rmtree(path: Path) -> None:
@@ -91,7 +93,17 @@ def place_ir(root: Path, run_id: str, built: Path) -> Path:
         _replace(final, trash)
         _rmtree(trash)
     final.parent.mkdir(parents=True, exist_ok=True)
-    _replace(built, final)
+    try:
+        _replace(built, final)
+    except UnifiedError:
+        # A concurrent worker may have placed the same key between the check above and the rename.
+        try:
+            existing = verify_ir_dir(final, expected_key=manifest.ir_key)
+        except UnifiedError:
+            existing = None
+        if existing is None or existing.content_digest != manifest.content_digest:
+            raise
+        _rmtree(built)
     return final
 
 

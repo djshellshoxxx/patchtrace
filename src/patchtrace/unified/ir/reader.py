@@ -10,8 +10,10 @@ from __future__ import annotations
 
 import hashlib
 import json
+import sqlite3
 from array import array
-from collections.abc import Sequence
+from collections.abc import Iterator, Sequence
+from contextlib import contextmanager
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import NamedTuple
@@ -71,6 +73,16 @@ def _store_error(message: str, reason: str) -> UnifiedError:
     return UnifiedError('PT-UNIFIED-STORE', message, reason=reason)
 
 
+@contextmanager
+def _corruption_is_store() -> Iterator[None]:
+    """A row that SQLite returns but that does not have the shape the writer gave it (the file passed its hash check or
+    verification was skipped) is a corrupt sidecar: `PT-UNIFIED-STORE`, never a raw sqlite3/Index/Type/JSON error."""
+    try:
+        yield
+    except (sqlite3.Error, ValueError, TypeError, IndexError, KeyError, OverflowError):
+        raise _store_error('The IR database holds a malformed row', 'ir-corrupt') from None
+
+
 @dataclass
 class FunctionTable:
     """Columnar function facts, indexed by fid (= rank by rva). NULL numeric cells hold `NULL_KEY`."""
@@ -97,6 +109,8 @@ def _csr(n: int, pairs: Sequence[tuple[int, int]]) -> tuple[array, array]:
     """Sorted unique neighbours per vertex as (indptr, indices)."""
     lists: list[set[int]] = [set() for _ in range(n)]
     for source, target in pairs:
+        if not (0 <= source < n and 0 <= target < n):   # a negative index would silently wrap around
+            raise _store_error('An IR call row names a function that does not exist', 'call-range')
         lists[source].add(target)
     indptr, indices = array('q', [0]), array('q')
     for neighbours in lists:
@@ -130,13 +144,15 @@ class IrReader:
             if meta.get('contract') != schema.CONTRACT or meta.get('ir_key') != manifest.ir_key \
                     or meta.get('content_digest') != manifest.content_digest:
                 raise _store_error('The IR database does not match its manifest', 'ir-meta-mismatch')
-            functions = _load_functions(db)
-            pairs = [(row[0], row[1]) for row in db.execute('SELECT fid, callee FROM call WHERE callee IS NOT NULL')]
-        except Exception:
+            with _corruption_is_store():
+                functions = _load_functions(db)
+                pairs = [(row[0], row[1]) for row in
+                         db.execute('SELECT fid, callee FROM call WHERE callee IS NOT NULL')]
+                call_indptr, call_indices = _csr(functions.n, pairs)
+                caller_indptr, caller_indices = _csr(functions.n, [(callee, fid) for fid, callee in pairs])
+        except BaseException:
             db.close()
             raise
-        call_indptr, call_indices = _csr(functions.n, pairs)
-        caller_indptr, caller_indices = _csr(functions.n, [(callee, fid) for fid, callee in pairs])
         return cls(manifest, functions, call_indptr, call_indices, caller_indptr, caller_indices, directory, db)
 
     @classmethod
@@ -168,8 +184,9 @@ class IrReader:
     def call_edges(self) -> list[tuple[int, int]]:
         """Every resolved call row including duplicates (BinDiff counts multi-edges in its degrees)."""
         self._require_db()
-        return [(a, b) for a, b in self._db.execute(
-            'SELECT fid, callee FROM call WHERE callee IS NOT NULL ORDER BY fid, site, kind, callee')]
+        with _corruption_is_store():
+            return [(a, b) for a, b in self._db.execute(
+                'SELECT fid, callee FROM call WHERE callee IS NOT NULL ORDER BY fid, site, kind, callee')]
 
     # --- on-demand rows ---------------------------------------------------------------------------------------
     def _require_db(self) -> None:
@@ -179,48 +196,58 @@ class IrReader:
     def blocks(self, fid: int) -> list[BlockRow]:
         self._require_db()
         out = []
-        for ord_, rva, size, n_insn, h1, hms, succ in self._db.execute(
-                'SELECT ord, rva, size, n_insn, h1, hms, succ FROM bb WHERE fid=? ORDER BY ord', (fid,)):
-            out.append(BlockRow(ord_, rva, size, n_insn, h1, hms,
-                                tuple((target, EDGE_KIND_NAMES[kind]) for target, kind in json.loads(succ))))
+        with _corruption_is_store():
+            for ord_, rva, size, n_insn, h1, hms, succ in self._db.execute(
+                    'SELECT ord, rva, size, n_insn, h1, hms, succ FROM bb WHERE fid=? ORDER BY ord', (fid,)):
+                if any(not 0 <= kind < len(EDGE_KIND_NAMES) for _target, kind in json.loads(succ)):
+                    raise ValueError('edge kind')
+                out.append(BlockRow(ord_, rva, size, n_insn, h1, hms,
+                                    tuple((target, EDGE_KIND_NAMES[kind]) for target, kind in json.loads(succ))))
         return out
 
     def calls(self, fid: int) -> list[CallRow]:
         self._require_db()
-        return [CallRow(site, callee, key, 'jump' if kind else 'call') for site, callee, key, kind in self._db.execute(
-            'SELECT site, callee, import_key, kind FROM call WHERE fid=? ORDER BY site, kind, callee, import_key',
-            (fid,))]
+        with _corruption_is_store():
+            return [CallRow(site, callee, key, 'jump' if kind else 'call') for site, callee, key, kind in
+                    self._db.execute('SELECT site, callee, import_key, kind FROM call WHERE fid=? '
+                                     'ORDER BY site, kind, callee, import_key', (fid,))]
 
     def strings(self, fid: int) -> list[StringRow]:
         self._require_db()
-        return [StringRow(*row) for row in self._db.execute(
-            'SELECT site, sha, len, prefix FROM str WHERE fid=? ORDER BY site, sha, len, prefix', (fid,))]
+        with _corruption_is_store():
+            return [StringRow(*row) for row in self._db.execute(
+                'SELECT site, sha, len, prefix FROM str WHERE fid=? ORDER BY site, sha, len, prefix', (fid,))]
 
     def constants(self, fid: int) -> list[ConstRow]:
         self._require_db()
-        return [ConstRow(*row) for row in self._db.execute(
-            'SELECT site, value, ctx FROM cst WHERE fid=? ORDER BY site, value, ctx', (fid,))]
+        with _corruption_is_store():
+            return [ConstRow(*row) for row in self._db.execute(
+                'SELECT site, value, ctx FROM cst WHERE fid=? ORDER BY site, value, ctx', (fid,))]
 
     def refs(self, fid: int) -> list[RefRow]:
         self._require_db()
         names = tuple(sorted(schema.REF_KIND_CODES, key=schema.REF_KIND_CODES.get))
-        return [RefRow(ord_, opi, names[kind], target, key) for ord_, opi, kind, target, key in self._db.execute(
-            'SELECT ord, opi, kind, target, import_key FROM ref WHERE fid=? ORDER BY ord, opi, kind, target, '
-            'import_key', (fid,))]
+        with _corruption_is_store():
+            return [RefRow(ord_, opi, names[kind], target, key) for ord_, opi, kind, target, key in self._db.execute(
+                'SELECT ord, opi, kind, target, import_key FROM ref WHERE fid=? ORDER BY ord, opi, kind, target, '
+                'import_key', (fid,))]
 
     def instructions(self, fid: int) -> list[Insn]:
         self._require_db()
-        row = self._db.execute('SELECT blob FROM ins WHERE fid=?', (fid,)).fetchone()
+        with _corruption_is_store():
+            row = self._db.execute('SELECT blob FROM ins WHERE fid=?', (fid,)).fetchone()
         return decode_instructions(row[0]) if row else []
 
     def texts(self, fid: int) -> list[str]:
         self._require_db()
-        row = self._db.execute('SELECT txt FROM ins WHERE fid=?', (fid,)).fetchone()
+        with _corruption_is_store():
+            row = self._db.execute('SELECT txt FROM ins WHERE fid=?', (fid,)).fetchone()
         return decode_text(row[0]) if row and row[0] is not None else []
 
     def mnemonics(self) -> list[str]:
         self._require_db()
-        return [text for (text,) in self._db.execute('SELECT text FROM mnem ORDER BY id')]
+        with _corruption_is_store():
+            return [text for (text,) in self._db.execute('SELECT text FROM mnem ORDER BY id')]
 
     def close(self) -> None:
         if self._db is not None:
@@ -275,7 +302,10 @@ def _load_functions(db) -> FunctionTable:
             arrays[column].append(NULL_KEY if value is None else value)
         name, alias, key, signature = row[1 + len(FN_COLUMNS):]
         names.append(name)
-        aliases.append(tuple(json.loads(alias)) if alias else ())
+        listed = json.loads(alias) if alias else []
+        if not isinstance(listed, list) or not all(isinstance(item, str) for item in listed):
+            raise _store_error('An IR alias list is malformed', 'ir-corrupt')
+        aliases.append(tuple(listed))
         imports.append(key)
         eh.append(signature)
         rva_to_fid[row[1]] = row[0]
