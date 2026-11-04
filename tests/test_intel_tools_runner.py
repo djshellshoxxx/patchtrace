@@ -280,3 +280,20 @@ def test_diec_without_a_database_is_unsupported_not_failed(tmp_path, project):
     results = runner.run_tools(request(project, setup, profile='full', engines=('diec',)), tool_store(project),
                                threading.Event())
     assert {r.run.status for r in results} == {'unsupported'}
+
+
+@pytest.mark.parametrize(('cfg', 'req', 'expected'), [
+    (None, None, 8 * 1024 ** 3), (0, None, None), (1 << 30, None, 1 << 30), (1 << 30, 2 << 30, 2 << 30)],
+    ids=['default', 'off', 'config', 'request'])
+def test_capa_child_gets_the_memory_cap_from_config_or_request(tmp_path, project, cfg, req, expected):
+    setup, _counter = capa_setup(tmp_path, project)
+    config = capa.CapaConfig(setup.capa.executable, accept_untested=True, memory_limit_bytes=cfg)
+    seen = []
+
+    def spy(argv, **kw):
+        seen.append(kw.get('memory_limit_bytes'))
+        return runner.run_process(argv, **kw)
+    runner.run_tools(request(project, runner.Setup(capa=config), memory_limit_bytes=req, engines=('capa',)),
+                     tool_store(project), threading.Event(), runner=spy)
+    # the probe may also use the runner without a cap; every analysis spawn carries the cap
+    assert seen and expected in seen and set(seen) <= {expected, None}
