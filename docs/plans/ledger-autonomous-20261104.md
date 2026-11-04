@@ -19,7 +19,16 @@ Branch `claude/autonomous-finish-20261104`. Header table is rewritten at each 12
 Newest prerelease: v0.1.0-beta.751 (2026-11-03T19:05Z). Main: `b77d84e`.
 
 ### Owner decisions needed
-- (filled during triage)
+- SonarCloud: Security Rating C/D on #174/#175/#176 traced to the "LLM-supplied CLI arguments" path taint rule on developer/CI tools (`tools/**`), not exploitable; mark Safe or exclude `tools/**` from taint rules (sonarcloud.io is denied by this environment's network policy, so the coordinator cannot do it). RB-08.
+- Network: allow `sonarcloud.io` in the cloud environment's Network access settings if the coordinator should read Sonar findings directly.
+- Close as superseded once the replacements merge (coordinator never closes other authors' PRs): #138 #139 #140 #141 (by #174), #165 #166 #168 (by #174), #147 (by #175), #148 #154 #157 #158 (by #176); #172 overlaps #173 (todo.md restore).
+- #167 #170 #171: API-funded agent automation (cost policy, secrets to child processes). Not merged; owner decision.
+- #121-3: default `restrict_env=True` for Ghidra children needs a native Windows allowlist validation run first (H7); approve running it, or keep OFF.
+- #121-6: `live-backend.yml` seeding step masks the Ghidriff exit code; confirm whether the mask is intentional (seed-only) before it is changed.
+- #121-7: pin actions to SHAs / runner images (supply chain); approve the churn.
+- Pages: Settings, Pages, Source: GitHub Actions (pages.yml has never succeeded: "Not Found"); logo and `monero_address` for the site.
+- KEV and YARA-X spec status lines say "nothing implemented" while code exists (REGISTRY rows left as draft).
+- Microsoft-data gates stay owner-machine only: Winbindex/msdl, real PE/PDB, Tier W labels.
 
 ## Event log (append-only)
 
@@ -43,3 +52,6 @@ Newest prerelease: v0.1.0-beta.751 (2026-11-03T19:05Z). Main: `b77d84e`.
 | 2026-11-04T02:20 | wave 3 coordinator fixes: #116 P2 rollback, P2 export copy, P3 stale inspection; xdist temp-dir race in 2 tests | pushed to #176 | xfail(strict) tests flipped to passing; race reproduced 1/3 with -n 3, fixed by private temp root |
 | 2026-11-04T02:20 | #121-3 restrict_env default | BLOCKED | default OFF by design (H7) until native Windows allowlist validation; strict-xfail stays |
 | 2026-11-04T02:20 | #121-6 live-backend seeding exit masked | open | intent of masking unclear (seed-only step); change deferred to avoid blind live-backend breakage |
+| 2026-11-04T02:50 | SonarCloud gate #174 D / #175 C / #176 C | traced, owner decision | workflow wf_7c395273-92e (26 agents): 10 candidates, 0 confirmed; one comment per PR |
+| 2026-11-04T02:50 | #116 P2 profile switch | fixed | tests/test_audit116_profile_switch.py (3 red then green); all #116 defects closed |
+| 2026-11-04T02:50 | fuzz harness (11 parsers) + nightly job; RB-05 journey gate in QA; KB C-03/D-02 | integrated on coordinator branch | 0 fuzz findings in about 15,000 inputs per target; journey 5/5 |
