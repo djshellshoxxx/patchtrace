@@ -6,13 +6,15 @@ through the real ingest; synthetic, never live Ghidra evidence."""
 from __future__ import annotations
 
 import dataclasses
+import hashlib
+import threading
 
 import pytest
 from test_unified_ir_facts import image
 from unified_facts_builder import OPT_ADDR_CODE, build_pair, function, run_facts
 
 from patchtrace.unified.facts.datamap import UNMAPPED, TargetMap
-from patchtrace.unified.limits import DEFAULT_LIMITS
+from patchtrace.unified.limits import DEFAULT_LIMITS, Budget, BudgetExhausted
 
 SAFE = ('material', 'review')
 
@@ -61,6 +63,21 @@ def test_a_capped_vote_table_never_turns_a_dissenter_into_a_proof(tmp_path):
         facts = capped.facts(name)
         assert facts.verdict in SAFE and facts.proof is None, (name, facts.verdict, facts.proof)
         assert 'datamap-cap' in facts.limits_hit
+
+
+def test_the_string_index_scan_honours_cancel(tmp_path):
+    """Rule (a) builds a per-side index of every defined string by decoding the instructions of every function that
+    references one: O(image), so it must tick the run's budget like the vote collection (cooperative cancel, 04 I7)."""
+    lines = [function(0x1400 + 0x40 * k, [('lea_g', 'RCX', 's', 'hello'), ('ret',)], name=f'u{k}', sym={'s': 0x2040})
+             for k in range(3)]
+    older, newer = build_pair(tmp_path, lines, lines)
+    cancel = threading.Event()
+    targets = TargetMap(older, newer, [(0x1400, 0x1400)], budget=Budget(cancel=cancel, check_every=1))
+    cancel.set()
+    sha = hashlib.sha256(b'hello').hexdigest()
+    with pytest.raises(BudgetExhausted) as caught:
+        targets.data_state(0x2040, 0x2040, shas=(sha, sha))
+    assert caught.value.code == 'PT-UNIFIED-CANCEL'
 
 
 def test_two_branches_to_different_unresolved_targets_are_never_cosmetic(tmp_path):

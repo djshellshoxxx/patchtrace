@@ -97,6 +97,7 @@ class TargetMap:
                  older_sections: Sequence[Section] = (), newer_sections: Sequence[Section] = (),
                  identical: bool = False, limits: UnifiedLimits = DEFAULT_LIMITS, budget: Budget | None = None):
         self.older, self.newer, self.identical, self.limits = older, newer, identical, limits
+        self.budget = budget or Budget()
         self.sections = {'older': tuple(sorted(older_sections)), 'newer': tuple(sorted(newer_sections))}
         self.pair_old: dict[int, int] = {}
         self.pair_new: dict[int, int] = {}
@@ -109,7 +110,7 @@ class TargetMap:
         self._confirmed: tuple[list[int], list[int]] | None = None
         self._strings: dict[str, dict[str, set[int]]] | None = None
         if not identical:
-            self._collect_votes(budget or Budget())
+            self._collect_votes(self.budget)
         if self._votes.capped:
             self.limits_hit.add('datamap-cap')
 
@@ -222,17 +223,22 @@ class TargetMap:
     def _string_index(self) -> dict[str, dict[str, set[int]]]:
         """sha -> targets of the defined strings per side (built once; uniqueness is global, not per pair)."""
         if self._strings is None:
-            self._strings = {'older': self._string_targets(self.older), 'newer': self._string_targets(self.newer)}
+            self._strings = {'older': self._string_targets(self.older, self.budget),
+                             'newer': self._string_targets(self.newer, self.budget)}
         return self._strings
 
     @staticmethod
-    def _string_targets(reader: IrReader) -> dict[str, set[int]]:
+    def _string_targets(reader: IrReader, budget: Budget) -> dict[str, set[int]]:
+        """O(image): it decodes every function that references a string, so it ticks the run's budget."""
         out: dict[str, set[int]] = defaultdict(set)
         for fid in range(reader.functions.n):
+            budget.tick()
             rows = reader.strings(fid)
             if not rows:
                 continue
-            by_rva = {insn.rva: insn for insn in reader.instructions(fid)}
+            instructions = reader.instructions(fid)
+            budget.tick(len(instructions))
+            by_rva = {insn.rva: insn for insn in instructions}
             for row in rows:
                 insn = by_rva.get(row.site)
                 target = data_target(insn) if insn is not None else None
