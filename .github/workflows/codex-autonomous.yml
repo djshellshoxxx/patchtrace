@@ -29,8 +29,8 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          gh pr list --state open --limit 100 --json number,headRefName,isDraft --jq \
-            '.[] | select(.headRefName | startswith("codex/cloud-")) | select(.isDraft == false) | .number' |
+          gh api --paginate "repos/$GITHUB_REPOSITORY/pulls?state=open&per_page=100" --jq \
+            '.[] | select(.head.ref | startswith("codex/cloud-")) | select(.head.repo.full_name == "djshellshoxxx/patchtrace") | select(.user.login == "github-actions[bot]" or .user.login == "djshellshoxxx") | select(.draft == false) | .number' |
           while IFS= read -r number; do
             [ -n "$number" ] || continue
             sha="$(gh pr view "$number" --json headRefOid --jq '.headRefOid')"
@@ -43,9 +43,14 @@ jobs:
                 continue 2
               fi
             done
-            echo "PR #$number has Linux, Windows, SonarCloud and CodeRabbit green checks."
-            # GitHub enforces any additional branch protections and required reviews.
-            gh pr merge "$number" --squash --delete-branch ||
+            # Require every additional reported CI/security job to succeed or be explicitly skipped.
+            pending="$(printf '%s' "$checks" | jq '[.check_runs[] | select(.name != "release-gate") | select(.status != "completed" or (.conclusion != "success" and .conclusion != "skipped" and .conclusion != "neutral"))] | length')"
+            if [ "$pending" -ne 0 ]; then
+              echo "PR #$number has incomplete or failed checks; not merging."
+              continue
+            fi
+            # Reject a changed PR head between validation and merge.
+            gh pr merge "$number" --match-head-commit "$sha" --squash --delete-branch ||
               echo "::warning::PR #$number not yet mergeable under repository policy."
           done
 
@@ -54,6 +59,7 @@ jobs:
     outputs:
       has_changes: ${{ steps.package.outputs.has_changes }}
       validation: ${{ steps.validation.outcome }}
+      base_sha: ${{ steps.base.outputs.sha }}
     permissions:
       contents: read
       pull-requests: read
@@ -83,8 +89,8 @@ jobs:
             echo "::error::Missing repository secret PATCHTRACE_OPENAI_API_KEY."
             exit 1
           fi
-          pending="$(gh api "repos/$GITHUB_REPOSITORY/pulls?state=open&per_page=100" --jq \
-            '[.[] | select(.head.ref | startswith("codex/cloud-")) | select(.head.repo.full_name == "djshellshoxxx/patchtrace") | select(.user.login == "github-actions[bot]" or .user.login == "djshellshoxxx")] | length')"
+          pending="$(gh api --paginate "repos/$GITHUB_REPOSITORY/pulls?state=open&per_page=100" --jq \
+            '.[] | select(.head.ref | startswith("codex/cloud-")) | select(.head.repo.full_name == "djshellshoxxx/patchtrace") | select(.user.login == "github-actions[bot]" or .user.login == "djshellshoxxx") | .number' | wc -l)"
           echo "Open Codex cloud PRs: $pending"
           if [ "$pending" -ge 2 ]; then
             echo "Two autonomous PRs are pending; skip new paid agent work until integrated."
@@ -114,6 +120,7 @@ jobs:
         with:
           openai-api-key: ${{ secrets.PATCHTRACE_OPENAI_API_KEY }}
           permission-profile: ":workspace"
+          safety-strategy: drop-sudo
           output-file: codex-report.txt
           prompt: |
             You are the PatchTrace cloud development agent using an API-funded
@@ -232,6 +239,16 @@ jobs:
         with:
           ref: main
           persist-credentials: false
+
+      - name: Require unchanged validated base
+        env:
+          EXPECTED_SHA: ${{ needs.develop.outputs.base_sha }}
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$EXPECTED_SHA" || {
+            echo "::error::Main advanced since development; refusing to publish unvalidated patch."
+            exit 1
+          }
 
       - name: Download source patch from isolated development job
         uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
