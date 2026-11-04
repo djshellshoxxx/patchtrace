@@ -258,3 +258,88 @@ def test_guard_reports_findings(root, capsys, monkeypatch, problems, code):
     monkeypatch.setattr(corpus, 'guard', lambda worktree, manifest=None: problems)
     got, doc = invoke(capsys, root, 'guard', '--corpus-id', CID)
     assert got == code and doc['findings'] == len(problems)
+
+
+# ---- verifier regressions (G-TW-CLI-r) -----------------------------------------------------------------------------
+
+FOREIGN = {'contract': 'tier-w-matches/1', 'tier': 'W', 'pair': 'tw.other.0000000000', 'engine': 'ghidriff',
+           'condition': 'symbols-hidden', 'match_id': 'm0', 'older_rva': 4096, 'newer_rva': 4096}
+
+
+def labelled(tmp_path, capsys, root) -> Layout:
+    prepare(tmp_path, capsys, root)
+    place(root)
+    step(capsys, root, 'symbols')
+    step(capsys, root, 'labels')
+    return Layout(root)
+
+
+def label_files(root) -> dict[str, bytes]:
+    folder = Layout(root).labels_dir(CID)
+    return {p.name: p.read_bytes() for p in sorted(folder.glob('*.jsonl'))} if folder.is_dir() else {}
+
+
+def exported_sides(files: dict[str, bytes]) -> tuple[int, int]:
+    sides = [side for name, data in files.items() if name.endswith('.detail.jsonl')
+             for row in map(json.loads, data.decode('utf-8').splitlines())
+             for side in (row['older'], row['newer']) if side.get('rva') is not None]
+    return sum(s['exported'] for s in sides), sum(not s['exported'] for s in sides)
+
+
+@pytest.mark.parametrize('damage', ['gone', 'corrupt'], ids=['gone', 'corrupt'])
+def test_labels_never_record_unknown_exports_as_not_exported(tmp_path, root, capsys, damage):
+    labelled(tmp_path, capsys, root)
+    before = label_files(root)
+    assert exported_sides(before)[0] > 0
+    if damage == 'gone':
+        shutil.rmtree(root / 'binaries')
+    else:
+        for pe in (root / 'binaries').rglob(NAME):
+            pe.write_bytes(b'MZ' + bytes(64))
+    code, doc = invoke(capsys, root, 'labels', '--corpus-id', CID)
+    assert exported_sides(label_files(root)) == exported_sides(before) and label_files(root) == before
+    assert code == 1 and doc['status'] == 'partial' and doc['exports_unknown'] == 1 and doc['labelled'] == 0
+    shutil.rmtree(Layout(root).labels_dir(CID))
+    code, doc = invoke(capsys, root, 'labels', '--corpus-id', CID)
+    assert code == 1 and doc['exports_unknown'] == 1 and label_files(root) == {}
+
+
+@pytest.mark.parametrize('value', ['0', '2', '-5', 'nan', 'inf', '-inf', 'x'],
+                         ids=['zero', 'two', 'neg', 'nan', 'inf', 'ninf', 'text'])
+def test_labels_ratio_min_out_of_range_is_an_input_error(tmp_path, root, capsys, value):
+    prepare(tmp_path, capsys, root)
+    place(root)
+    step(capsys, root, 'symbols')
+    code, doc = invoke(capsys, root, 'labels', '--corpus-id', CID, f'--ratio-min={value}')
+    assert code == 2 and doc['status'] == 'failed' and doc['code'] == 'PT-TIERW-INPUT' and 'ratio-min' in doc['message']
+    assert label_files(root) == {}
+
+
+@pytest.mark.parametrize('value', ['1', '0.5', '1e-9'], ids=['one', 'half', 'tiny'])
+def test_labels_ratio_min_in_range_is_accepted(tmp_path, root, capsys, value):
+    prepare(tmp_path, capsys, root)
+    place(root)
+    step(capsys, root, 'symbols')
+    step(capsys, root, 'labels', f'--ratio-min={value}')
+
+
+def test_evaluate_with_only_foreign_matches_exits_one_and_keeps_outputs(tmp_path, root, capsys):
+    layout = labelled(tmp_path, capsys, root)
+    write_matches(root)
+    step(capsys, root, 'evaluate')
+    outputs = (layout.report(CID), layout.base / 'export' / 'aggregate.json', layout.base / 'export' / 'aggregate.md')
+    before = [p.read_bytes() for p in outputs]
+    layout.matches(CID).write_text(json.dumps(FOREIGN) + '\n', encoding='utf-8', newline='\n')
+    code, doc = invoke(capsys, root, 'evaluate', '--corpus-id', CID)
+    assert code == 1 and doc['status'] == 'partial' and doc['matches'] == 0 and doc['foreign_matches'] == 1
+    assert 'matches' in doc['reason']
+    assert [p.read_bytes() for p in outputs] == before
+
+
+def test_evaluate_with_only_foreign_matches_writes_nothing(tmp_path, root, capsys):
+    layout = labelled(tmp_path, capsys, root)
+    layout.matches(CID).parent.mkdir(parents=True, exist_ok=True)
+    layout.matches(CID).write_text(json.dumps(FOREIGN) + '\n', encoding='utf-8', newline='\n')
+    code, doc = invoke(capsys, root, 'evaluate', '--corpus-id', CID)
+    assert code == 1 and doc['matches'] == 0 and 'matches' in doc['reason']
+    assert not layout.report(CID).exists() and not (layout.base / 'export').exists()

@@ -4,8 +4,10 @@ Wired offline stages: `catalogue --from-file`, `pairs`, `fetch-plan`, `symbols` 
 `evaluate`, `status` and `guard`. Every other stage exits explicitly, never silently: the network stages (`catalogue`
 without `--from-file`, `resolve`, `fetch`) refuse without consent naming the host they contact (exit 2) and are
 otherwise BLOCKED (exit 3, transport not wired here); `audit`, `review`, `audit-report` and `run` are BLOCKED too.
-Each command prints exactly one strict-JSON summary line on stdout. Everything is read from and written under the
-corpus root (PATCHTRACE_CALIB_ROOT, refused inside the work tree; decision O1). Nothing is uploaded or executed.
+`labels` skips a pair whose export table cannot be read on either side (binary gone or unreadable): the export status
+is unknown, so it is never recorded as `exported: false` (the non-exported headline stratum). Each command prints
+exactly one strict-JSON summary line on stdout. Everything is read from and written under the corpus root
+(PATCHTRACE_CALIB_ROOT, refused inside the work tree; decision O1). Nothing is uploaded or executed.
 Exit codes: 0 ok, 1 partial, 2 configuration/consent/input, 3 BLOCKED, 5 cancelled (the CANCEL file or Ctrl-C).
 """
 from __future__ import annotations
@@ -101,6 +103,16 @@ class _Parser(argparse.ArgumentParser):
 
     def error(self, message: str):
         raise TierWError('PT-TIERW-INPUT', f'{self.prog}: {message}')
+
+
+def _ratio_min(value: str) -> float:
+    try:
+        ratio = float(value)
+    except ValueError:
+        raise argparse.ArgumentTypeError('expected a number in (0, 1]') from None
+    if not 0 < ratio <= 1:  # also refuses nan and inf
+        raise argparse.ArgumentTypeError('expected a number in (0, 1]')
+    return ratio
 
 
 def _date(value: str) -> str:
@@ -292,7 +304,7 @@ def _exports(root: Path, binary: PairBinary) -> frozenset[int] | None:
     try:
         with PeView(pe, expected_sha256=binary.sha256) as view:
             return view.export_rvas()
-    except PeTableError:
+    except (PeTableError, ArtifactBytesError):
         return None
 
 
@@ -313,20 +325,21 @@ def _labels(args, layout: Layout, corpus_id: str) -> tuple[int, dict]:
         if older is None or newer is None:
             counts['missing_maps'] += 1
             continue
-        exports = [_exports(layout.root, b) for b in sides]
-        counts['exports_unknown'] += sum(e is None for e in exports)
+        older_exports, newer_exports = (_exports(layout.root, b) for b in sides)
+        if older_exports is None or newer_exports is None:
+            counts['exports_unknown'] += 1  # unknown is not "not exported": leave the pair unlabelled
+            continue
         truth, exclusions = LB.derive_truth(older, newer, args.ratio_min)
         candidates = LB.label_candidates(truth, by_pair.get(pair.id, ()))
         write_jsonl(folder / f'{pair.id}.truth.jsonl', [r.model_dump() for r in LB.truth_records(pair.id, truth)])
         write_jsonl(folder / f'{pair.id}.candidates.jsonl', LB.candidate_records(pair.id, candidates))
-        details = LB.detail_records(pair.id, truth, exclusions, candidates, older, newer,
-                                    *(e or frozenset() for e in exports))
+        details = LB.detail_records(pair.id, truth, exclusions, candidates, older, newer, older_exports, newer_exports)
         write_jsonl(folder / f'{pair.id}.detail.jsonl', [d.model_dump(mode='json') for d in details])
         counts['labelled'] += 1
         counts['truth'] += len(truth)
         excluded.update(e.reason for e in exclusions)
         answers.update(c.answer or 'unlabelled' for c in candidates)
-    code = OK if counts['labelled'] == len(sidecar.pairs) and not counts['exports_unknown'] else PARTIAL
+    code = OK if counts['labelled'] == len(sidecar.pairs) else PARTIAL
     return code, {'producer': args.producer, 'pairs': len(sidecar.pairs), 'labelled': counts['labelled'],
                   'truth': counts['truth'], 'excluded': {r: excluded[r] for r in LB.EXCLUSIONS},
                   'candidates': {a: answers[a] for a in ('same', 'different', 'unlabelled')},
@@ -372,11 +385,12 @@ def _audit_report(layout: Layout, corpus_id: str) -> AuditReport | None:
 def _evaluate(args, layout: Layout, corpus_id: str) -> tuple[int, dict]:
     sidecar = _sidecar(layout, corpus_id)
     matches = _matches(layout, corpus_id)
-    if not matches:
-        return PARTIAL, {'matches': 0, 'reason': 'no engine matches for this corpus (runs/<corpus>/matches.jsonl); '
-                                                 'run the run stage first'}
     known = {p.id for p in sidecar.pairs}
     scored = [m for m in matches if m.pair in known]
+    if not scored:  # nothing to score: keep any earlier report and the shared aggregate as they are
+        return PARTIAL, {'matches': 0, 'foreign_matches': len(matches),
+                         'reason': 'no engine matches for this corpus\'s pairs (runs/<corpus>/matches.jsonl); '
+                                   'run the run stage first'}
     labels, candidates, unlabelled = _truth_labels(layout, corpus_id, sidecar)
     if not labels:
         return PARTIAL, {'matches': len(scored), 'reason': 'no symbol-derived labels for this corpus; run labels first'}
@@ -453,7 +467,7 @@ def build_parser() -> argparse.ArgumentParser:
     pairs.add_argument('--security-only', action='store_true')
     commands['symbols'].add_argument('--producer', choices=PRODUCERS, default='msf')
     commands['labels'].add_argument('--producer', choices=PRODUCERS, default='msf', help='symbol maps to read')
-    commands['labels'].add_argument('--ratio-min', type=float, default=LB.RATIO_MIN)
+    commands['labels'].add_argument('--ratio-min', type=_ratio_min, default=LB.RATIO_MIN, help='in (0, 1]')
     run = commands['run']
     run.add_argument('--python', default='')
     run.add_argument('--ghidra-dir', default='')
