@@ -107,13 +107,17 @@ def list_regular_files(root: Path) -> list[str]:
 PIN_PATH = Path(__file__).resolve().with_name('backend_pin.json')
 
 
-def _load_checker():
-    """tools/check_backend_pin.py (stdlib only), loaded by path so no sys.path assumptions are needed."""
-    spec = importlib.util.spec_from_file_location('_pt_check_backend_pin',
-                                                  Path(__file__).resolve().with_name('check_backend_pin.py'))
+def _load_tool(name: str):
+    """A stdlib-only sibling tool, loaded by path so no sys.path assumptions are needed."""
+    spec = importlib.util.spec_from_file_location(f'_pt_{name}', Path(__file__).resolve().with_name(f'{name}.py'))
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
     return module
+
+
+def _load_checker():
+    """tools/check_backend_pin.py (stdlib only)."""
+    return _load_tool('check_backend_pin')
 
 
 def _bundle_modules():
@@ -399,6 +403,11 @@ def main(argv: list[str] | None = None) -> None:
         raise SystemExit('Build on Linux x86-64: PyInstaller does not cross-compile.')
     root = Path(__file__).resolve().parents[1]
     require_upb_protobuf()
+    # The label and commit the Windows build records, so tools/verify_release.py can check this package too.
+    try:
+        fields = _load_tool('windows_version_info').fields_for_build(args.version, root=root)
+    except ValueError as exc:
+        raise SystemExit(str(exc)) from exc
     argv = [sys.executable, '-m', 'PyInstaller', '--noconfirm', '--clean', '--onedir', '--name', 'PatchTrace',
             '--additional-hooks-dir', str(root / 'tools' / 'pyinstaller_hooks'), '--paths', str(root / 'src')]
     for module in EXCLUDED:
@@ -414,7 +423,8 @@ def main(argv: list[str] | None = None) -> None:
     if any(not (bundled_notices / item).is_file() for item in REQUIRED_NOTICES):
         raise RuntimeError('Pinned third-party notices are missing; refusing to publish distribution')
     shutil.copytree(bundled_notices, notices / 'upstream', dirs_exist_ok=True)
-    versions = {'Python': sys.version.split()[0], 'platform': 'linux-x86_64'}
+    versions = {'Python': sys.version.split()[0], 'platform': 'linux-x86_64', 'PatchTrace': fields.label,
+                'PatchTrace commit': fields.commit}
     for name in DISTRIBUTIONS + [n for n in OPTIONAL_DISTRIBUTIONS if _installed(n)]:
         dist = importlib.metadata.distribution(name)
         versions[name] = dist.version
