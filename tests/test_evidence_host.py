@@ -93,3 +93,9 @@ def test_a_project_change_does_not_probe_engines_until_asked(main_window, qtbot)
     controller.start_probe()  # the explicit action
     qtbot.waitUntil(lambda: controller.probe_token is None, timeout=5000)
     assert calls == [1]
+
+
+def test_the_evidence_state_view_announces_through_the_host_shell(main_window):
+    # T5/G5: the evidence StateView had no announcer, so state changes never reached a screen reader.
+    controller = main_window.panels.controller('evidence')
+    assert controller.panel.state_view._announcer is not None
