@@ -43,6 +43,7 @@ from . import (
     atom_order,
     clean_name,
     native,
+    read_request_file,
 )
 
 MAX_SET_BYTES = 256 * 1024 * 1024
@@ -96,28 +97,9 @@ def write_loaded(path: Path, loaded: LoadedDiaphora) -> tuple[str, int]:
 def read_loaded(path: Path, *, expected_sha256: str, expected_size: int,
                 budget: Budget | None = None) -> LoadedDiaphora:
     """Bounded, re-hashed, strict-JSON reader of a worker input file (any mismatch is `PT-UNIFIED-INPUT`)."""
-    if budget is not None:
-        budget.check()
     try:
-        size = Path(path).stat().st_size
-        if size > MAX_SET_BYTES or size != expected_size:
-            raise UnifiedError('PT-UNIFIED-INPUT', 'A Diaphora set file does not match its request',
-                               reason='diaphora-size-mismatch')
-        data, digest = bytearray(), hashlib.sha256()
-        with Path(path).open('rb') as stream:
-            while True:
-                if budget is not None:
-                    budget.check()
-                chunk = stream.read(65536)
-                if not chunk:
-                    break
-                data.extend(chunk)
-                digest.update(chunk)
-                if len(data) > MAX_SET_BYTES:
-                    raise ValueError('set grew beyond limit')
-        if len(data) != expected_size or digest.hexdigest() != expected_sha256:
-            raise UnifiedError('PT-UNIFIED-INPUT', 'A Diaphora set file does not match its request',
-                               reason='diaphora-hash-mismatch')
+        data = read_request_file(path, expected_sha256=expected_sha256, expected_size=expected_size,
+                                 max_bytes=MAX_SET_BYTES, label='Diaphora', reason='diaphora', budget=budget)
         text = data.decode('utf-8')
         strict_json(text)
         document = json.loads(text)

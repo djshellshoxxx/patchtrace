@@ -272,3 +272,33 @@ def read_snapshot(path: Path, *, expected_sha256: str, expected_lines: int,
         raise UnifiedError('PT-UNIFIED-INPUT', 'The match snapshot does not match its request',
                            reason='snapshot-hash-mismatch')
     return tuple(out)
+
+
+def read_request_file(path: Path, *, expected_sha256: str, expected_size: int, max_bytes: int, label: str,
+                      reason: str, budget: Budget | None = None) -> bytes:
+    """The bytes of a worker input file that the request names by size and SHA-256, read in bounded chunks with a
+    budget check per chunk (shared by the secondary and Diaphora readers). A size or digest mismatch is
+    `PT-UNIFIED-INPUT` with reason `<reason>-size-mismatch` / `<reason>-hash-mismatch`; `OSError` and the overflow
+    `ValueError` propagate so the caller reports its own typed error."""
+    if budget is not None:
+        budget.check()
+    size = Path(path).stat().st_size
+    if size > max_bytes or size != expected_size:
+        raise UnifiedError('PT-UNIFIED-INPUT', f'A {label} set file does not match its request',
+                           reason=f'{reason}-size-mismatch')
+    data, digest = bytearray(), hashlib.sha256()
+    with Path(path).open('rb') as stream:
+        while True:
+            if budget is not None:
+                budget.check()
+            chunk = stream.read(65536)
+            if not chunk:
+                break
+            data.extend(chunk)
+            digest.update(chunk)
+            if len(data) > max_bytes:
+                raise ValueError('set grew beyond limit')
+    if len(data) != expected_size or digest.hexdigest() != expected_sha256:
+        raise UnifiedError('PT-UNIFIED-INPUT', f'A {label} set file does not match its request',
+                           reason=f'{reason}-hash-mismatch')
+    return bytes(data)
