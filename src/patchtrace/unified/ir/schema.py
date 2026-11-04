@@ -17,6 +17,10 @@ from ..limits import UnifiedError
 CONTRACT = 'program-ir/1'
 INGEST_VERSION = 'ir-ingest/1'
 NORM_VERSION = 'norm/1'
+# Bumped whenever ingest turns the SAME extractor output into different IR content (sanitised import names, rejected
+# records); mixed into `ir_key` by `ingest.ingest_identity_digest`. 2 = irx audit 20261104. A test pins it equal to
+# `extract.INGEST_REVISION` (the runner predicts the key without importing `ir`).
+INGEST_REVISION = 2
 INS_VERSION = 'ins/1'
 DB_NAME = 'ir.sqlite3'
 MANIFEST_NAME = 'manifest.json'

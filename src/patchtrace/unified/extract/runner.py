@@ -11,6 +11,7 @@ child per side with the requested RVAs, its `decomp.jsonl` validated line by lin
 """
 from __future__ import annotations
 
+import hashlib
 import json
 import logging
 import os
@@ -33,7 +34,15 @@ from ...jobs import ProcessResult, run_process
 from .. import keys
 from ..contracts import ExtractRequest, IrKeyInputs, strip_unsafe
 from ..limits import DEFAULT_LIMITS, Budget, BudgetExhausted, UnifiedError, UnifiedLimits
-from . import PRIVATE_SCRIPT_NAME, SYMBOLS_BY_MODE, analysis_options_digest, script_bytes, script_sha256
+from . import (
+    INGEST_REVISION,
+    PRIVATE_SCRIPT_NAME,
+    SYMBOLS_BY_MODE,
+    analysis_options_digest,
+    canonical_json,
+    script_bytes,
+    script_sha256,
+)
 from .decomp import DecompRecord, read_decomp
 
 DEFAULT_HEAP_MB = 4096                     # unknown RAM (the package may not import ctypes, 03 s12.2 item 1)
@@ -170,6 +179,13 @@ def heap_mb(job: ExtractJob | DecompileJob) -> int:
     return DEFAULT_HEAP_MB
 
 
+def ingest_identity_digest(limits: UnifiedLimits) -> str:
+    """Same value as `ir.ingest.ingest_identity_digest` (a test pins both)."""
+    payload = canonical_json({'domain': 'unified-ingest-revision/1', 'limits': keys.ingest_limits_digest(limits),
+                              'revision': INGEST_REVISION})
+    return hashlib.sha256(payload.encode('utf-8')).hexdigest()
+
+
 def predict_ir_key(job: ExtractJob, *, ghidra_version: str, pyghidra_version: str,
                    python_version: str) -> tuple[IrKeyInputs, str]:
     """The `ir_key` an extraction would produce, computable BEFORE running it (02 s5): the versions come from
@@ -178,7 +194,7 @@ def predict_ir_key(job: ExtractJob, *, ghidra_version: str, pyghidra_version: st
         artifact_sha256=job.artifact_sha256, producer_kind='ghidra', mode=job.mode, symbols=SYMBOLS_BY_MODE[job.mode],
         ghidra=ghidra_version, pyghidra=pyghidra_version, python=python_version, script_sha256=script_sha256(),
         analysis_options_digest=analysis_options_digest(job.mode, effective_options(job)),
-        ingest_limits_digest=keys.ingest_limits_digest(job.limits))
+        ingest_limits_digest=ingest_identity_digest(job.limits))
     return inputs, keys.ir_key(inputs)
 
 
