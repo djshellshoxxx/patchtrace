@@ -167,3 +167,13 @@ These files were not on `main` at 1560531. As of 2026-10-14 (branch `work/a`, 43
 | `docs/specs/workbench/02-networkx-callgraph.md` (PR #43) | PT-WB-02 | PT-WB-02 | approved | none (planned) | Not implemented |
 | `docs/specs/workbench/03-floss-strings.md` (PR #43) | PT-WB-03; "SPEC-29" means the three-tool suite | PT-WB-03 | partial | planned intelligence/tools/floss.py (SPEC-36) | Reuses the SPEC-36 FLOSS adapter |
 | `docs/specs/workbench/04-quickwins.md` (PR #43) | PT-WB-QW | PT-WB-04 | draft | none | "Ranked proposals, not implementation" |
+| `docs/specs/DOCKABLE-WORKSPACE-SPEC.md` (PR #127) | none (title: dockable, modular workspace) | DOCK-WS | proposed | none | Specification only; not implemented |
+| `docs/specs/panels/build_env.md` (PR #72) | DIE D5 build environment panel | PANEL-BUILD-ENV | proposed | none | Proposed contract, documentation only; baseline `claude/instance-d-gui` d15e16be |
+| `docs/specs/panels/capabilities.md` (PR #72) | CAP-6a/6b capabilities panel | PANEL-CAPABILITIES | proposed | none | Proposed contract, documentation only; baseline `claude/instance-d-gui` d15e16be |
+| `docs/specs/panels/graph.md` (PR #72) | WB2 G5/G6 calls and graph panel | PANEL-GRAPH | proposed | none | Proposed contract, documentation only; baseline `claude/instance-d-gui` d15e16be |
+| `docs/specs/panels/guide.md` (PR #72) | guide panel (deferred stub) | PANEL-GUIDE | proposed | none | Proposed contract, documentation only; baseline `claude/instance-d-gui` d15e16be |
+| `docs/specs/panels/kb.md` (PR #72) | KB / CVE investigation panel | PANEL-KB | proposed | none | Proposed contract, documentation only; baseline `claude/instance-d-gui` d15e16be |
+| `docs/specs/panels/kev.md` (PR #72) | KEV K3 exploitation context panel | PANEL-KEV | proposed | none | Proposed contract, documentation only; baseline `claude/instance-d-gui` d15e16be |
+| `docs/specs/panels/rules.md` (PR #72) | YARA-X R6b detection rules panel | PANEL-RULES | proposed | none | Proposed contract, documentation only; baseline `claude/instance-d-gui` d15e16be |
+| `docs/specs/panels/search.md` (PR #72) | WB1 S7 search panel | PANEL-SEARCH | proposed | none | Proposed contract, documentation only; baseline `claude/instance-d-gui` d15e16be |
+| `docs/specs/panels/strings.md` (PR #72) | WB3 S7b strings panel | PANEL-STRINGS | proposed | none | Proposed contract, documentation only; baseline `claude/instance-d-gui` d15e16be |
