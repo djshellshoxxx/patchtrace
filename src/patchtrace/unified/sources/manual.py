@@ -25,9 +25,9 @@ from . import (
     function_rva,
 )
 
-# manual/4 (2026-11-04): every named member must resolve; filtering a subset can change an N:M correction
-# into an affirmative 1:1. Re-key results made with the earlier member-filtering semantics (02 s5).
-VERSION = 'manual/4'
+# manual/5 (2026-11-04): every named member must resolve, and added/removed must name only their declared
+# side. Re-key results made with member-filtering or contradictory-category semantics (02 s5).
+VERSION = 'manual/5'
 ONE_SIDED = frozenset({'removed', 'added', 'unmatched'})  # 06 s6: categories that declare no counterpart
 
 
@@ -93,6 +93,11 @@ class ManualAdapter:
             if len(older) != len(match.older) or len(newer) != len(match.newer):
                 # Any unresolved member invalidates this correction as a whole. A subset could change a group
                 # into a 1:1 or a one-sided claim, so keep no atoms or nodes and mark the result partial.
+                ledger.count('manual-unresolved')
+                continue
+            if ((match.category == 'added' and (older or not newer))
+                    or (match.category == 'removed' and (newer or not older))):
+                # These categories explicitly declare absence on the opposite side, never an affirmative pair.
                 ledger.count('manual-unresolved')
                 continue
             if match.category not in ONE_SIDED and not (older and newer):
