@@ -18,6 +18,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 import subprocess
 import sys
 from dataclasses import asdict, dataclass, field
@@ -37,6 +38,8 @@ HUB_PREFIXES = ('.github/workflows/', 'tools/build_')
 # A file touched by at least this many branches says nothing about topic and is treated as a hub too.
 HUB_THRESHOLD = 8
 STALE_DAYS = 14
+REMOTE_NAME = re.compile(r'[A-Za-z0-9][A-Za-z0-9_-]*\Z')
+SHA = re.compile(r'[0-9a-f]{40}([0-9a-f]{24})?\Z')
 
 
 @dataclass
@@ -69,6 +72,21 @@ def git(repo: Path, *args: str, stdin: str | None = None) -> str:
     return result.stdout
 
 
+def check_ref_arg(value: str) -> str:
+    """Reject a caller-supplied ref that git could parse as an option (e.g. ``--output=FILE``) or that is malformed."""
+    if not value or value.startswith('-') or any(c in value for c in '\0\n\r\t '):
+        raise ValueError(f'invalid ref: {value!r}')
+    return value
+
+
+def resolve_commit(repo: Path, ref: str) -> str:
+    """Resolve a caller-supplied ref to a full commit SHA, so later git calls only ever receive a hex id."""
+    sha = git(repo, 'rev-parse', '--verify', '--quiet', '--end-of-options', f'{check_ref_arg(ref)}^{{commit}}').strip()
+    if not SHA.match(sha):
+        raise RuntimeError(f'cannot resolve {ref!r} to a commit')
+    return sha
+
+
 def is_docs_path(path: str) -> bool:
     return path.startswith(DOCS_PREFIXES) or path.endswith('.md')
 
@@ -76,7 +94,13 @@ def is_docs_path(path: str) -> bool:
 def list_remote_branches(repo: Path, remote: str, base: str) -> list[str]:
     out = git(repo, 'for-each-ref', '--format=%(refname:short)', f'refs/remotes/{remote}/')
     skip = {base, f'{remote}/HEAD', remote}
-    return sorted(ref for ref in out.split() if ref not in skip)
+    refs = []
+    for ref in out.splitlines():
+        # Git refuses ref names starting with '-', so listed refs are never option-like; check anyway.
+        if ref in skip or ref.startswith('-'):
+            continue
+        refs.append(ref)
+    return sorted(refs)
 
 
 def parse_cherry(text: str) -> tuple[list[str], list[str]]:
@@ -96,7 +120,7 @@ def patch_ids(repo: Path, shas: list[str]) -> dict[str, str]:
     result: dict[str, str] = {}
     for start in range(0, len(shas), 200):
         chunk = shas[start:start + 200]
-        shown = git(repo, 'show', '--no-color', '--format=commit %H', '-p', *chunk)
+        shown = git(repo, 'show', '--no-color', '--format=commit %H', '-p', '--end-of-options', *chunk)
         for line in git(repo, 'patch-id', '--stable', stdin=shown).splitlines():
             pid, _, sha = line.partition(' ')
             if sha:
@@ -105,20 +129,21 @@ def patch_ids(repo: Path, shas: list[str]) -> dict[str, str]:
 
 
 def commit_files(repo: Path, sha: str) -> list[str]:
-    out = git(repo, 'diff-tree', '--no-commit-id', '--name-only', '-r', '--root', sha)
+    out = git(repo, 'diff-tree', '--no-commit-id', '--name-only', '-r', '--root', '--end-of-options', sha)
     return [line for line in out.splitlines() if line]
 
 
 def inspect_branch(repo: Path, ref: str, base: str, remote: str) -> Branch:
-    behind, ahead = (int(n) for n in git(repo, 'rev-list', '--left-right', '--count', f'{base}...{ref}').split())
-    head = git(repo, 'rev-parse', ref).strip()
-    merge_base = git(repo, 'merge-base', base, ref).strip()
-    date, _, author = git(repo, 'log', '-1', '--format=%cI%x09%an', ref).strip().partition('\t')
-    upstream, unique = parse_cherry(git(repo, 'cherry', base, ref)) if ahead else ([], [])
+    head = resolve_commit(repo, ref)
+    counts = git(repo, 'rev-list', '--left-right', '--count', '--end-of-options', f'{base}...{head}')
+    behind, ahead = (int(n) for n in counts.split())
+    merge_base = git(repo, 'merge-base', '--end-of-options', base, head).strip()
+    date, _, author = git(repo, 'log', '-1', '--format=%cI%x09%an', '--end-of-options', head).strip().partition('\t')
+    upstream, unique = parse_cherry(git(repo, 'cherry', base, head)) if ahead else ([], [])
     files = sorted({path for sha in unique for path in commit_files(repo, sha)})
     rewritten = []
     if files:
-        changed_on_base = set(git(repo, 'diff', '--name-only', merge_base, base).splitlines())
+        changed_on_base = set(git(repo, 'diff', '--name-only', '--end-of-options', merge_base, base).splitlines())
         rewritten = sorted(set(files) & changed_on_base)
     return Branch(name=ref.removeprefix(f'{remote}/'), head=head, ahead=ahead, behind=behind, merge_base=merge_base,
                   last_commit=date, last_author=author, cherry_upstream=len(upstream), cherry_unique=len(unique),
@@ -221,7 +246,9 @@ def cluster_live(branches: list[Branch], threshold: int = HUB_THRESHOLD) -> tupl
 def build_inventory(repo: Path, base: str, remote: str, prs: list[dict], now: datetime,
                     hub_threshold: int = HUB_THRESHOLD) -> dict:
     by_head = {pr['head']: pr for pr in prs}
-    branches = [inspect_branch(repo, ref, base, remote) for ref in list_remote_branches(repo, remote, base)]
+    base_sha = resolve_commit(repo, base)
+    refs = list_remote_branches(repo, remote, base)
+    branches = [inspect_branch(repo, ref, base_sha, remote) for ref in refs]
     for b in branches:
         b.pr = by_head.get(b.name)
     all_unique = sorted({sha for b in branches for sha in b.unique_commits})
@@ -232,7 +259,7 @@ def build_inventory(repo: Path, base: str, remote: str, prs: list[dict], now: da
     counts: dict[str, int] = {}
     for b in branches:
         counts[b.klass] = counts.get(b.klass, 0) + 1
-    return {'base': base, 'base_sha': git(repo, 'rev-parse', base).strip(), 'generated_at': now.isoformat(),
+    return {'base': base, 'base_sha': base_sha, 'generated_at': now.isoformat(),
             'counts': dict(sorted(counts.items())), 'hub_files': hubs, 'clusters': clusters,
             'branches': [asdict(b) for b in branches]}
 
@@ -251,6 +278,12 @@ def main(argv: list[str] | None = None) -> int:
     now = datetime.fromisoformat(args.now) if args.now else datetime.now(UTC)
     if now.tzinfo is None:
         parser.error('--now must include a UTC offset')
+    try:
+        check_ref_arg(args.base)
+    except ValueError as exc:
+        parser.error(str(exc))
+    if not REMOTE_NAME.match(args.remote):
+        parser.error(f'invalid remote name: {args.remote!r}')
     prs = json.loads(args.prs.read_text(encoding='utf-8')) if args.prs else []
     if not isinstance(prs, list) or not all(isinstance(p, dict) and 'number' in p and 'head' in p for p in prs):
         parser.error('--prs must be a JSON list of objects with number and head')

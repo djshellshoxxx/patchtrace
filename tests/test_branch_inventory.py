@@ -159,3 +159,25 @@ def test_git_failure_returns_exit_2(tmp_path, capsys):
     tool = _load()
     assert tool.main(['--repo', str(tmp_path), '--now', NOW.isoformat()]) == 2
     assert 'error:' in capsys.readouterr().err
+
+
+@pytest.mark.parametrize('base', ['--output=pwned.txt', '-p', ''], ids=['opt-output', 'opt-short', 'empty'])
+def test_option_like_base_is_rejected_before_reaching_git(inventory, tmp_path, base):
+    tool = _load()
+    victim = tmp_path / 'pwned.txt'
+    with pytest.raises(SystemExit):
+        tool.main(['--repo', str(tmp_path), f'--base={base}', '--now', NOW.isoformat(),
+                   '--out', str(tmp_path / 'o.json')])
+    assert not victim.exists() and not (Path.cwd() / 'pwned.txt').exists()
+
+
+@pytest.mark.parametrize('remote', ['--all', 'a b', 'x/../y'], ids=['opt', 'space', 'dots'])
+def test_bad_remote_name_is_rejected(tmp_path, remote):
+    tool = _load()
+    with pytest.raises(SystemExit):
+        tool.main(['--repo', str(tmp_path), f'--remote={remote}', '--now', NOW.isoformat()])
+
+
+def test_base_is_resolved_to_a_commit_sha(inventory):
+    data, _ = inventory
+    assert len(data['base_sha']) == 40 and all(c in '0123456789abcdef' for c in data['base_sha'])
