@@ -5,6 +5,7 @@ import hashlib
 import json
 import os
 import shutil
+import stat
 import tempfile
 from dataclasses import dataclass
 from pathlib import Path
@@ -34,13 +35,30 @@ def _remove_created(root: Path, existed: bool, before: set[str]) -> None:
             if entry.name in before:
                 continue
             if entry.is_dir() and not entry.is_symlink():
-                shutil.rmtree(entry, ignore_errors=True)
+                shutil.rmtree(entry, onexc=_retry_writable)
             else:
-                entry.unlink(missing_ok=True)
+                _unlink_writable(entry)
         if not existed:
             root.rmdir()
     except OSError:
         pass  # an antivirus hold or a concurrent writer: the next create() and the wizard report what is left
+
+
+def _unlink_writable(path: Path) -> None:
+    """Windows refuses to delete a read-only file, and immutable artifact copies are made read-only
+    (ingestion.inspect_artifact). Only ever called on entries the failed create() itself made."""
+    try:
+        path.unlink(missing_ok=True)
+    except PermissionError:
+        os.chmod(path, stat.S_IREAD | stat.S_IWRITE)
+        path.unlink(missing_ok=True)
+
+
+def _retry_writable(function, path, error) -> None:
+    if not isinstance(error, PermissionError):
+        raise error
+    os.chmod(path, stat.S_IREAD | stat.S_IWRITE)
+    function(path)
 
 
 class ProjectService:
