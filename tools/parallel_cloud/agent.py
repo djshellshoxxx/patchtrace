@@ -13,7 +13,7 @@ TASKS = {
     "representations": ["src/patchtrace/representations/", "tests/test_representations"],
     "nway": ["src/patchtrace/nway/", "tests/test_nway"],
     "cache": ["src/patchtrace/enrichment/cache.py", "tests/test_enrichment_cache"],
-    "diagnostics": ["src/patchtrace/diagnostics.py", "tests/test_diagnostics"],
+    "tooltips": ["src/patchtrace/tooltips.py", "tests/test_tooltips"],
     "offline": ["src/patchtrace/offline_bundle.py", "tests/test_offline_bundle"],
     "runtime": ["src/patchtrace/runtime_discovery.py", "tests/test_runtime_discovery"],
     "artifact": ["src/patchtrace/artifact_bytes.py", "tests/test_artifact_bytes"],
@@ -57,7 +57,7 @@ def select_context(files, root):
         for path in group:
             content = path.read_text(encoding="utf-8")
             if len(content) > 12000:
-                continue
+                content = content[:12000] + "\n[excerpt truncated; only edit exact quoted spans]"
             result.append(f"FILE {path.relative_to(root)}\n{content}")
             accepted += 1
             if accepted == 4:
@@ -120,12 +120,14 @@ def parse_edit(message, scope, phase):
     data = json.loads(message)
     edits = data.get("files")
     if not isinstance(edits, list) or not 1 <= len(edits) <= 3:
-        raise ValueError("Expected 1-3 complete file replacements")
+        raise ValueError("Expected 1-3 scoped file edits")
     result = {}
     for edit in edits:
-        path, content = edit["path"], edit["content"]
-        if not allowed(path, scope) or not isinstance(content, str) or len(content.encode()) > 65000:
-            raise ValueError("Out-of-scope/oversize edit")
+        if not isinstance(edit, dict):
+            raise ValueError("Invalid edit shape")
+        path = edit.get("path")
+        if not allowed(path, scope):
+            raise ValueError("Out-of-scope file edit")
         if phase == "test" and not path.startswith("tests/"):
             raise ValueError("Test phase must change tests only")
         if phase == "source" and not path.startswith("src/"):
@@ -133,11 +135,31 @@ def parse_edit(message, scope, phase):
         if path in result:
             raise ValueError("Duplicate file edit path")
         dest = ROOT / path
-        if dest.is_file() and dest.read_text(encoding="utf-8") == content:
-            raise ValueError("Unchanged file replacement")
-
         if dest.is_symlink() or not dest.is_file() or not dest.resolve().is_relative_to(ROOT):
             raise ValueError("Invalid or nonexisting file target")
+        original = dest.read_text(encoding="utf-8")
+        if "replacements" in edit:
+            replacements = edit["replacements"]
+            if not isinstance(replacements, list) or not 1 <= len(replacements) <= 4:
+                raise ValueError("Expected 1-4 exact replacements")
+            content = original
+            for item in replacements:
+                if not isinstance(item, dict):
+                    raise ValueError("Invalid replacement shape")
+                before, after = item.get("old"), item.get("new")
+                if (not isinstance(before, str) or not isinstance(after, str)
+                        or not before or before == after
+                        or len(before.encode()) > 16000 or len(after.encode()) > 24000):
+                    raise ValueError("Invalid exact replacement")
+                if content.count(before) != 1:
+                    raise ValueError("Replacement text must occur exactly once")
+                content = content.replace(before, after, 1)
+        else:
+            content = edit.get("content")
+            if not isinstance(content, str) or len(content.encode()) > 65000:
+                raise ValueError("Invalid complete-file replacement")
+        if content == original:
+            raise ValueError("Unchanged file replacement")
         result[path] = content
     return result
 
@@ -175,7 +197,9 @@ def main():
 
         instructions = ("PatchTrace task: find one small, reproducible hardening/regression defect in "
                         + task + ". Respect AGENTS.md, no new scope, no network, no target binary execution. "
-                        "Respond ONLY as JSON {\"files\":[{\"path\":\"existing/path.py\",\"content\":\"full UTF-8 content\"}]}. "
+                        'Respond ONLY JSON: {"files":[{"path":"existing/path.py",'
+                        '"replacements":[{"old":"exact original snippet","new":"exact updated snippet"}]}]}. '
+                        "Every old snippet must appear exactly once; edit only visible spans. "
                         "FIRST supply one failing regression test only, not source changes.\n"
                         + "\n\n".join(context))
         messages = [{"role": "user", "content": instructions}]
@@ -206,7 +230,7 @@ def main():
                 source_context = "\n\n".join(c for c in context if not c.startswith("FILE tests/"))
                 messages = [{"role": "user", "content": (
                     "Implement the smallest source fix for the regression test you just wrote. "
-                    "Do not edit tests, do not change unrelated contracts. Reply with complete-file JSON edits.\n"
+                    "Do not edit tests or unrelated contracts. Use the exact-replacements JSON format.\n"
                     + "\n\n".join(f"FILE {name}\n{data[:14000]}" for name, data in edits.items())
                     + "\nObserved failing tests:\n" + (red.stdout + red.stderr)[-3500:]
                     + "\nOriginal source:\n" + source_context)}]
