@@ -236,3 +236,105 @@ All three add API-funded agents that spend money. `main` already carries `.githu
 | #167 | `patchtrace-api-agent.yml` + `tools/cloud_agent/pilot.py` (OpenAI Responses API pilot) | `workflow_dispatch` only, 20 min timeout | `contents: read` | `PATCHTRACE_OPENAI_API_KEY` | none (first-party only) | lowest risk; qa failed on its head (per other coordinator's triage) | owner: keep as a manual pilot or close |
 | #170 | `codex-autonomous.yml` (305 lines): scheduled Codex agent that opens PRs | cron `17 7,19 * * *` (2 runs/day) | job-level `contents: write`, `pull-requests: write`; top-level `{}` | `PATCHTRACE_OPENAI_API_KEY`, optional `PATCHTRACE_GITHUB_TOKEN` | `openai/codex-action`, `peter-evans/create-pull-request`, both SHA-pinned | scheduled spend; write token; overlaps `codex-cloud.yml` | owner decision; at most one of #170/#171/`codex-cloud.yml` |
 | #171 | `patchtrace-parallel-api.yml` + `tools/parallel_cloud/` + tests: 8 isolated agents, 4 batches/day | cron `11 1,7,13,19 * * *` | job-level `contents: write`, `pull-requests: write`; top-level `{}` | as #170 | `peter-evans/create-pull-request@v7` pinned by tag, not SHA | highest spend (8 agents x 4/day); tag-pinned third-party action is a supply-chain gap | owner decision; if kept, SHA-pin the action first |
+
+## Wave 1 content verification (2026-11-04, workflow wf_90c6593e-26f)
+
+Read-only analysts checked each branch's own commits for behavior present on `main` (`25b2ac80`) or an in-flight head (`claude/autonomous-finish-20261104`, #174, #176, #177). Every SUPERSEDED-VERIFIED or ABANDON-PROPOSED verdict then went to an independent refuter told to find one missing change. 76 branches; 53 agents; full results in the coordinator scratchpad (`wave1.json`).
+
+| Branch | PR | Own commits | Verdict | Refuter | Missing (still applies) | Port risk | Disposition |
+|---|---|---|---|---|---|---|---|
+| `chatgpt/kb-fixtures-1` | #69 | 24 | RESIDUAL |  | 5 | medium | see train plan |
+| `chatgpt/unified-fixtures-1` | #71 | 22 | SUPERSEDED-VERIFIED | upheld | 0 | n/a | owner may delete |
+| `chatgpt/unified-fixture-collection-fix-20261016` | #90 | 5 | SUPERSEDED-VERIFIED | upheld | 0 | n/a | owner may delete |
+| `chatgpt/lbl31-output-persistence-20261015` | #78 | 33 | PARTIAL |  | 6 | medium | see train plan |
+| `chatgpt/lbl32-card-controls-20261016` | #79 | 15 | RESIDUAL |  | 4 | medium | see train plan |
+| `chatgpt/lbl32-recipe-aa-noise-20261016` | #82 | 18 | RESIDUAL |  | 5 | medium | see train plan |
+| `chatgpt/lbl30-prereg-guard-20261016` | #85 | 43 | PARTIAL |  | 5 | high | see train plan |
+| `chatgpt/unified-sort-perf-qa-20261016` | #94 | 1 | RESIDUAL |  | 2 | low | see train plan |
+| `chatgpt/ue-r3-retain-decompiled-20261016` | #86 | 11 | SUPERSEDED-VERIFIED | refuted | 0 | n/a | keep: refuter found e2e test: run_unified(texts=SHOWN) publishes a decomp.jsonl.gz part in the loade; e2e test: single-sided decompile (texts only 'older') retains only the older rec |
+| `chatgpt/deferred-audit-fixes-1` | #67 | 8 | SUPERSEDED-VERIFIED | upheld | 0 | n/a | owner may delete |
+| `chatgpt/corpus-1` | #68 | 25 | RESIDUAL |  | 2 | low | see train plan |
+| `codex/fix-pr110-ci-gates-20261029` |  | 9 | PARTIAL |  | 1 | low | see train plan |
+| `codex/pr110-ci-repairs-20261029` |  | 7 | PARTIAL |  | 1 | low | see train plan |
+| `codex/pr110-persistence-feedback-20261029` |  | 9 | PARTIAL |  | 1 | low | see train plan |
+| `codex/pr110-qa-wbjson-diaphora-help-20261029` |  | 6 | PARTIAL |  | 1 | low | see train plan |
+| `codex/pr110-kb-arch-scope-20261029` |  | 8 | PARTIAL |  | 1 | low | see train plan |
+| `codex/pr111-bounded-nav-into-integration-20261029` | #111 | 8 | PARTIAL |  | 1 | low | see train plan |
+| `claude/modest-hamilton-kz2gta` | #126 | 10 | RESIDUAL |  | 8 | medium | see train plan |
+| `codex/coordinator-rule-repairs-20261031` |  | 10 | RESIDUAL |  | 8 | medium | see train plan |
+| `haiku/cli-help-suppress-20261027` |  | 1 | SUPERSEDED-VERIFIED | upheld | 0 | n/a | owner may delete |
+| `codex/gui-bounded-ambiguous-candidates-20261029` |  | 3 | SUPERSEDED-VERIFIED | upheld | 0 | n/a | owner may delete |
+| `fix/remediation-53088704-982db3` |  | 2 | SUPERSEDED-VERIFIED | upheld | 0 | n/a | owner may delete |
+| `codex/t9-qa-20261020` |  | 4 | SUPERSEDED-VERIFIED | upheld | 0 | n/a | owner may delete |
+| `chatgpt/semantic-analysis-r3-20261030` | #129 | 14 | RESIDUAL |  | 5 | low | see train plan |
+| `codex/r2-unified-matching-research-20261030` | #131 | 4 | RESIDUAL |  | 6 | high | see train plan |
+| `research/r7-advanced-binary-analysis-20261030` | #134 | 29 | RESIDUAL |  | 3 | low | see train plan |
+| `research/r8-deep-uncertainty-20261030` | #135 | 16 | RESIDUAL |  | 6 | medium | see train plan |
+| `claude/awesome-ramanujan-o3pxx3-ci` |  | 1 | PARTIAL |  | 6 | high | see train plan |
+| `claude/awesome-ramanujan-o3pxx3-win1` |  | 1 | SUPERSEDED-VERIFIED | upheld | 0 | n/a | owner may delete |
+| `codex/windows-setup-installer-20261017` |  | 32 | SUPERSEDED-VERIFIED | upheld | 0 | n/a | owner may delete |
+| `claude/instance-b-features` |  | 96 | PARTIAL |  | 3 | medium | see train plan |
+| `claude/instance-c-research` |  | 11 | SUPERSEDED-VERIFIED | upheld | 0 | n/a | owner may delete |
+| `feat/phase3-batch` |  | 31 | SUPERSEDED-VERIFIED | upheld | 0 | n/a | owner may delete |
+| `feat/phase2-finish` |  | 22 | SUPERSEDED-VERIFIED | upheld | 0 | n/a | owner may delete |
+| `feat/enrichment-contracts` |  | 23 | SUPERSEDED-VERIFIED | upheld | 0 | n/a | owner may delete |
+| `feat/verified-offline-runtime-bundle` |  | 29 | SUPERSEDED-VERIFIED | upheld | 0 | n/a | owner may delete |
+| `claude/access-test-1791773355` |  | 28 | SUPERSEDED-VERIFIED | refuted | 0 | n/a | keep: refuter found Packager writes a '<archive>.sha256' checksum sidecar ('<digest>  <name>') and c |
+| `claude/audit-beta` |  | 1 | SUPERSEDED-VERIFIED | upheld | 0 | n/a | owner may delete |
+| `claude/bundle-license-gate` |  | 3 | SUPERSEDED-VERIFIED | upheld | 0 | n/a | owner may delete |
+| `claude/patchtrace-cli-dotpath-spec-er6hha` |  | 3 | RESIDUAL |  | 1 | high | see train plan |
+| `claude/symbol-policy-isolated-settings` |  | 6 | SUPERSEDED-VERIFIED | upheld | 0 | n/a | owner may delete |
+| `codex/audit-2` |  | 3 | SUPERSEDED-VERIFIED | upheld | 0 | n/a | owner may delete |
+| `codex/tier-w-fetch-20261015` |  | 6 | RESIDUAL |  | 4 | high | see train plan |
+| `chatgpt/lbl31-coff-quoted-rip-20261016` |  | 2 | SUPERSEDED-VERIFIED | upheld | 0 | n/a | owner may delete |
+| `chatgpt/lbl31-coff-symbol-mask-20261016` |  | 3 | PARTIAL |  | 1 | low | see train plan |
+| `chatgpt/lbl31-windows-qa-fixes-20261016-a` |  | 5 | PARTIAL |  | 2 | low | see train plan |
+| `chatgpt/ghidriff-sequential-lock-fix-20261017` |  | 5 | SUPERSEDED-VERIFIED | upheld | 0 | n/a | owner may delete |
+| `chatgpt/java-probe-boundaries-20261016` |  | 2 | SUPERSEDED-VERIFIED | upheld | 0 | n/a | owner may delete |
+| `feat/alpha-ui-integration` |  | 2 | SUPERSEDED-VERIFIED | upheld | 0 | n/a | owner may delete |
+| `feat/local-runtime-discovery` |  | 9 | SUPERSEDED-VERIFIED | upheld | 0 | n/a | owner may delete |
+| `feature/alpha-file-overview-20261013` |  | 4 | SUPERSEDED-VERIFIED | upheld | 0 | n/a | owner may delete |
+| `feature/evidence-reconciliation-confidence` |  | 6 | SUPERSEDED-VERIFIED | upheld | 0 | n/a | owner may delete |
+| `feature/gui-inspection-preview` |  | 5 | SUPERSEDED-VERIFIED | upheld | 0 | n/a | owner may delete |
+| `fix/backend-exit-diagnostics` |  | 6 | SUPERSEDED-VERIFIED | upheld | 0 | n/a | owner may delete |
+| `fix/explicit-offline-symbol-policy` |  | 12 | SUPERSEDED-VERIFIED | upheld | 0 | n/a | owner may delete |
+| `fix/ghidra-dot-paths` |  | 6 | SUPERSEDED-VERIFIED | upheld | 0 | n/a | owner may delete |
+| `fix/isolate-ghidra-scratch` |  | 8 | SUPERSEDED-VERIFIED | upheld | 0 | n/a | owner may delete |
+| `fix/pe-inspection-row-tooltips-20261013` |  | 6 | SUPERSEDED-VERIFIED | upheld | 0 | n/a | owner may delete |
+| `security/offline-bundle-no-overwrite-20261013` |  | 2 | SUPERSEDED-VERIFIED | upheld | 0 | n/a | owner may delete |
+| `chatgpt/help-docs-1` | #70 | 25 | RESIDUAL |  | 2 | medium | docs train W2-E |
+| `chatgpt/merge-first-handoff-20261016` |  | 5 | SUPERSEDED-VERIFIED | upheld | 0 | n/a | owner may delete |
+| `chatgpt/panels-1` | #72 | 10 | RESIDUAL |  | 1 | low | docs train W2-E |
+| `chatgpt/r5-calibration-research-20261030` | #132 | 11 | RESIDUAL |  | 1 | low | docs train W2-E |
+| `claude/compassionate-goldberg-5uuqks` | #125 | 1 | UNSURE |  | 0 | low | see train plan |
+| `docs/claude-autonomous-alpha-handoff-20261013` |  | 2 | SUPERSEDED-VERIFIED | upheld | 0 | n/a | owner may delete |
+| `docs/csaf-patch-intelligence-specs` |  | 5 | SUPERSEDED-VERIFIED | upheld | 0 | n/a | owner may delete |
+| `docs/diaphora-optional-engine-20261014` |  | 3 | SUPERSEDED-VERIFIED | upheld | 0 | n/a | owner may delete |
+| `docs/dockable-workspace-spec-20261030` | #127 | 1 | RESIDUAL |  | 1 | medium | docs train W2-E |
+| `docs/post-consolidation-gap-analysis-20261030` | #137 | 20 | RESIDUAL |  | 3 | medium | docs train W2-E |
+| `docs/readme-and-wiki` | #98 | 1 | RESIDUAL |  | 2 | low | docs train W2-E |
+| `docs/spec-31-kb-cve-correlation-20261014` |  | 12 | SUPERSEDED-VERIFIED | upheld | 0 | n/a | owner may delete |
+| `docs/spec-32-kb-patch-search-20261014` |  | 17 | SUPERSEDED-VERIFIED | upheld | 0 | n/a | owner may delete |
+| `docs/workbench-search-graph-floss-20261014` |  | 6 | SUPERSEDED-VERIFIED | upheld | 0 | n/a | owner may delete |
+| `research/additional-reuse-claude-20261103` | #178 | 1 | RESIDUAL |  | 3 | low | docs train W2-E |
+| `research/r4-vulnerability-correlation-20261030` | #130 | 12 | RESIDUAL |  | 1 | low | docs train W2-E |
+| `research/r6-final-integration-engineering-notes-20261030` | #133 | 12 | RESIDUAL |  | 1 | low | docs train W2-E |
+
+Totals: {'see train plan': 26, 'owner may delete': 39, 'keep': 2, 'docs train W2-E': 9}.
+
+Corrections to `docs/plans/pr-triage-20261104.md` on `claude/autonomous-finish-20261104` (sent to its coordinator): #69 is not superseded. Its `tests/fixtures/kb/` corpus, `kb_crash_harness.py` and 9 `test_kb_*` files are on none of the reference heads. #90 is superseded by the unified fixtures on main, not by #136/#142. #86 UE-R3 keeps four end-to-end decompile-retention tests that are absent on main.
+
+### Wave 2 train plan
+
+| Train | Branch | Source | Scope | Excluded (reason) |
+|---|---|---|---|---|
+| W2-A KB fixtures | `consolidate/kb-fixtures-20261104` | `codex/kb-fixture-contract-repairs-20261030` (#142 ⊃ #136 ⊃ #69); 0ce7cb20 surrogate-pair test | tests/fixtures/kb, kb_crash_harness.py, test_kb_* | lone-surrogate strict test (contradicts main design) |
+| W2-B rules/callgraph | `consolidate/rules-callgraph-20261104` | `codex/coordinator-rule-repairs-20261031` (= #126) | RULE-1/3/4/6, CG-1/2, yara-x spec section | 3f0df14d KBC NAMED_SUPERSEDED (owner decision, other coordinator scope) |
+| W2-C R7 research tools | `consolidate/research-r7-20261104` | `research/r7-advanced-binary-analysis-20261030` (#134) | tools/research/r7, 2 tests, docs/research/advanced-analysis-r7 | none |
+| W2-E docs | `consolidate/docs-20261104` | #70 #72 #127 #129 #130 #131 #132 #133 #135 #137 #178 | new docs files only | docs/specs/unified-engine edits; R2 results > 256 KiB |
+
+Deferred until the other coordinator's next PR lands (it owns `unified/**`, `kbcorrelation/**`, `secondary/**`, `intelligence/**`, `tools/calibration/**`, `tools/unified/**`): C3 LBL residuals (#78 #79 #82 #85 #94, lbl31-*), `chatgpt/corpus-1` catalogue candidates, `codex/tier-w-fetch-20261015`, R2/R3/R8 src changes (#131 #129 #135), #86 UE-R3 tests, `claude/instance-b-features` intel runner cache. Owner decisions: `claude/patchtrace-cli-dotpath-spec-er6hha` build provenance/source ZIP (touches build_windows.py and qa-windows.yml), `claude/awesome-ramanujan-o3pxx3-ci` CI changes, `claude/access-test-1791773355` packager sha256 sidecar, `claude/instance-b-features` callgraph layout and saved searches (contract reconciliation needed), pr110 `ui_symbols` refactor (shared ui.py, no behavior change).
+
+| 2026-11-04 06:32 | Other coordinator ack | RECEIVED | session_01KtKj8jsKzTB3u2eRDSCGGQ is not porting my list; its next PR touches unified/kbcorrelation/secondary/intelligence/tools/calibration/tools/unified; keep tracker edits append-only |
+| 2026-11-04 07:00 | Wave 1 verification | DONE | 76 branches, 53 agents, 0 errors; 39 SUPERSEDED-VERIFIED upheld, 2 refuted |
+| 2026-11-04 07:00 | Wave 2 trains | RUNNING | workflow wf_86df9a33-4cd (W2-A, W2-B, W2-C, W2-E) |
