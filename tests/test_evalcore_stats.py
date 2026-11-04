@@ -192,8 +192,11 @@ def test_power_goldens():
 
 
 def test_noninferiority_lineages_and_sd():
-    z1 = 1.6448536269514722 + 0.8416212335729143
-    assert power.noninferiority_lineages(-0.02, 0.0, 0.1) == math.ceil((z1 * 0.1 / 0.02) ** 2)
+    # default one-sided 0.025: the decision reads the lower bound of the two-sided 95% interval (z_0.975, ICH E9 5.5)
+    z1 = 1.959963984540054 + 0.8416212335729143
+    assert power.noninferiority_lineages(-0.02, 0.0, 0.1) == math.ceil((z1 * 0.1 / 0.02) ** 2) == 197
+    z05 = 1.6448536269514722 + 0.8416212335729143  # an explicit one-sided 0.05 keeps the textbook form
+    assert power.noninferiority_lineages(-0.02, 0.0, 0.1, alpha=0.05) == math.ceil((z05 * 0.1 / 0.02) ** 2) == 155
     assert power.lineage_sd([1.0]) is None
     assert power.lineage_sd([0.0, 2.0]) == pytest.approx(math.sqrt(2))
     with pytest.raises(ValueError):

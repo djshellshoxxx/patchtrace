@@ -201,7 +201,8 @@ def evaluate_full(labels_docs: Sequence[C.KnownAnswerLabels], providers: Sequenc
                   shift_lineages: Collection[str] = (), b_count: int = ER.boot.B_COUNT,
                   output_dir: Path | None = None) -> tuple[dict, dict]:
     """(report, paired deltas). The deltas (engine vs engine, per stratum and population, with sd, minimum detectable
-    delta and achieved power) have no field in `tier-r-report/1` yet, so they are returned beside it, not hashed in it.
+    delta and observed power) are also persisted, hashed, in the report's optional `deltas` field when there is at least
+    one comparison; a report without any keeps no `deltas` key, so its bytes and digest are unchanged (G-L7).
     `b_count` is the lineage-bootstrap size (2,000; 500 in smoke). A supplied `output_dir` must not exist; successful
     answers receive metrics only after their exact normalized bytes are retained there. Without it this API is in-memory."""
     if symbols not in ('hidden', 'visible'):
@@ -285,6 +286,8 @@ def evaluate_full(labels_docs: Sequence[C.KnownAnswerLabels], providers: Sequenc
     attempts = [(e, r[1], r[2]) for e, acc in by_engine.items() for r in acc.results]
     fields, deltas = ER.build_blocks(docs, runs, attempts, symbols=symbols, shift_lineages=shift_lineages,
                                      b_count=b_count)
+    if deltas:
+        fields['deltas'] = ER.delta_fields(deltas)
     report = finalize_report({**report, **fields})
     if output_store is not None:
         try:
@@ -303,6 +306,8 @@ def evaluate_full(labels_docs: Sequence[C.KnownAnswerLabels], providers: Sequenc
 
 def finalize_report(report: dict) -> dict:
     doc = C.validate_json(C.TierRReport, report).model_dump(mode='json')
+    if doc.get('deltas') is None:  # additive field: absent, not null, so reports without deltas keep their digest
+        doc.pop('deltas', None)
     doc['report_sha256'] = digest(doc, 'report_sha256')
     C.load_report(C.dump_json(doc))  # the written form must load again
     return doc
@@ -329,8 +334,47 @@ def _iv(iv: Mapping | None) -> str:
     return f'{iv["point"]:.3f}{span}' + (' (anti-conservative)' if iv['anti_conservative'] else '')
 
 
+POWER_NOTE = ('Power is observed power, computed at the observed estimate with this n and sd: descriptive only '
+              '(Hoenig & Heisey 2001), never evidence of no difference.')
+DELTA_LEGEND = ('Delta is the first engine minus the second over pairs both completed; MDD is the minimum detectable '
+                'delta (two-sided alpha 0.05, power 0.8); NI is yes when the lower bound is above '
+                f'{ER.NON_INFERIORITY_MARGIN} and n/a when the interval is anti-conservative.')
+
+
+def _span(iv: Mapping) -> str:
+    if iv['point'] is None:
+        return 'n/a'
+    return f'{iv["point"]:.3f}' + ('' if iv['lo'] is None else f' [{iv["lo"]:.3f}, {iv["hi"]:.3f}]')
+
+
+def _yes(flag) -> str:
+    return 'n/a' if flag is None else 'yes' if flag else 'no'
+
+
+def _delta_lines(deltas: Mapping | None) -> list[str]:
+    """Paired engine-vs-engine deltas, in contract order whatever the key order of the source document."""
+    if not deltas:
+        return []
+    order = {k: i for i, k in enumerate(C.comparison_keys(ENGINE_ORDER))}
+    metrics = typing.get_args(C.DeltaMetric)
+    lines = ['', '## Paired deltas', '', POWER_NOTE, DELTA_LEGEND, '',
+             '| stratum | population | comparison | metric | pairs | lineages | delta [lo, hi] | sd | MDD | '
+             'observed power | NI | anti-conservative |', '|---|---|---|---|---|---|---|---|---|---|---|---|']
+    for stratum in sorted(deltas):
+        for population in sorted(deltas[stratum]):
+            per_key = deltas[stratum][population]
+            for key in sorted(per_key, key=lambda k: order.get(k, len(order))):
+                for metric in sorted(per_key[key], key=lambda m: metrics.index(m) if m in metrics else len(metrics)):
+                    d = per_key[key][metric]
+                    lines.append(f'| {_cell(stratum)} | {_cell(population)} | {_cell(key)} | {_cell(metric)} | '
+                                 f'{d["pairs"]} | {d["lineages"]} | {_span(d["delta"])} | {_fmt(d["sd"])} | '
+                                 f'{_fmt(d["min_detectable"])} | {_fmt(d["power"])} | {_yes(d["non_inferior"])} | '
+                                 f'{_yes(d["delta"]["anti_conservative"])} |')
+    return lines
+
+
 def _block_lines(report: Mapping) -> list[str]:
-    """Coverage, per-label cells and rank blocks: descriptive, one row per engine, never pooled."""
+    """Coverage, per-label cells, rank blocks and paired deltas: descriptive, one row per engine, never pooled."""
     lines = []
     if report.get('coverage'):
         lines += ['', f'## Coverage (lineages: {report.get("lineages")})', '',
@@ -352,7 +396,7 @@ def _block_lines(report: Mapping) -> list[str]:
                   f'{_fmt(b["pool_median"])} | {_iv(b["hit_at"]["1"])} | {_iv(b["hit_at"]["3"])} | '
                   f'{_iv(b["hit_at"]["10"])} | {_iv(b["mrr"])} | {_iv(b["ndcg10"])} |'
                   for e in ENGINE_ORDER if e in per_engine for b in [per_engine[e]]]
-    return lines
+    return lines + _delta_lines(report.get('deltas'))
 
 
 def render_markdown(report: Mapping, max_wrong: int = 50) -> str:

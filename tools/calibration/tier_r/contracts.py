@@ -656,10 +656,41 @@ class CoverageRow(_Strict):
         return self
 
 
+DeltaMetric = Literal['hit@10', 'ndcg']
+
+
+class DeltaCell(_Strict):
+    """Paired difference a - b of one rank metric over the pairs both engines completed (G-L7; dev-only, ordinal).
+    `sd` is over per-lineage mean differences; `min_detectable` is two-sided alpha 0.05, power 0.8 at this n and sd;
+    `power` is observed power at the observed estimate (descriptive only, never evidence of no difference);
+    `non_inferior` is None whenever the interval is anti-conservative or undefined (never a claim from few lineages)."""
+    metric: DeltaMetric
+    pairs: int = Field(ge=0)
+    lineages: int = Field(ge=0)
+    delta: Interval
+    sd: float | None = Field(default=None, ge=0)
+    min_detectable: float | None = Field(default=None, ge=0)
+    power: Unit | None = None
+    non_inferior: bool | None = None
+
+    @model_validator(mode='after')
+    def honest(self):
+        if self.lineages > self.pairs:
+            raise ValueError('more lineages than pairs')
+        if self.non_inferior is not None and (self.delta.anti_conservative or self.delta.lo is None):
+            raise ValueError('non_inferior needs a defined lower bound that is not anti-conservative')
+        return self
+
+
 def _keys_in(value, allowed: tuple[str, ...], what: str):
     bad = sorted(set(value) - set(allowed))
     if bad:
-        raise ValueError(f'unknown {what}: {bad}')
+        raise ValueError(f'unknown {what}: {[b[:80] for b in bad[:10]]}')
+
+
+def comparison_keys(engines: tuple[str, ...]) -> tuple[str, ...]:
+    """Every '<a> vs <b>' key: a != b, a before b in `Engine` order."""
+    return tuple(f'{a} vs {b}' for i, a in enumerate(engines) for b in engines[i + 1:])
 
 
 class InputRef(_Strict):
@@ -686,6 +717,9 @@ class TierRReport(_Strict):
     coverage: tuple[CoverageRow, ...] = ()
     lineages: int | None = Field(default=None, ge=0)
     scope_ids: tuple[Ident, ...] = Field(default=(), max_length=32)
+    # G-L7 optional addition: paired engine-vs-engine deltas, deltas[stratum][population]['<a> vs <b>'][metric].
+    # Absent (not null) when there is nothing to compare, so a report without deltas keeps its bytes and digest.
+    deltas: dict[str, dict[Population, dict[str, dict[str, DeltaCell]]]] | None = None
     report_sha256: Sha256
 
     @model_validator(mode='after')
@@ -700,6 +734,15 @@ class TierRReport(_Strict):
         for stratum, per_engine in (self.rank or {}).items():
             _keys_in([stratum], strata, 'stratum')
             _keys_in(per_engine, engines, 'engine')
+        comparisons = comparison_keys(engines)
+        for stratum, per_population in (self.deltas or {}).items():
+            _keys_in([stratum], strata, 'stratum')
+            for per_comparison in per_population.values():
+                _keys_in(per_comparison, comparisons, "comparison (exactly '<a> vs <b>', a before b in engine order)")
+                for cells in per_comparison.values():
+                    for metric, cell in cells.items():
+                        if metric != cell.metric:
+                            raise ValueError(f'delta metric key {metric[:40]!r} does not match its cell')
         return self
 
 

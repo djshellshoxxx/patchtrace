@@ -140,6 +140,26 @@ def example_report_extended() -> dict:
     return doc
 
 
+def example_report_deltas() -> dict:
+    """`example_report_extended` plus a paired-delta block (G-L7). Example numbers only, not produced by a run."""
+    doc = example_report_extended()
+
+    def cell(metric: str, point: float, lo: float, hi: float, sd: float, mdd: float, observed: float) -> dict:
+        return {'metric': metric, 'pairs': 3, 'lineages': 2, 'delta': _interval(point, lo, hi, anti_conservative=True),
+                'sd': sd, 'min_detectable': mdd, 'power': observed, 'non_inferior': None}
+
+    doc['deltas'] = {'authored': {'planted': {'rz-diff vs ghidriff': {
+        'hit@10': cell('hit@10', 0.0, 0.0, 0.0, 0.0, 0.0, 0.0),
+        'ndcg': cell('ndcg', 0.25, 0.0, 0.5, 0.353553390593, 0.700396304528, 0.170075045753)}}}}
+    doc['report_sha256'] = digest(doc, 'report_sha256')
+    return doc
+
+
+def _rename_comparison(doc: dict, old: str, new: str) -> None:
+    per = doc['deltas']['authored']['planted']
+    per[new] = per.pop(old)
+
+
 def _invalid(base: dict, mutate: Callable[[dict], None], *, redigest: str | None = 'digest_sha256') -> dict:
     doc = copy.deepcopy(base)
     mutate(doc)
@@ -149,7 +169,8 @@ def _invalid(base: dict, mutate: Callable[[dict], None], *, redigest: str | None
 
 
 def examples() -> dict[str, dict | list]:
-    labels, report, extended = example_labels(), example_report(), example_report_extended()
+    labels, report, extended, deltas = example_labels(), example_report(), example_report_extended(), \
+        example_report_deltas()
     mutation_opt = example_mutation_opt()
     return {
         'valid-labels-template.json': labels,
@@ -157,6 +178,7 @@ def examples() -> dict[str, dict | list]:
         'valid-mutation-cmp-flip.json': example_mutation(),
         'valid-report-template.json': report,
         'valid-report-extended.json': extended,
+        'valid-report-deltas.json': deltas,
         'valid-recipes-libs.json': example_recipes_libs(),
         'valid-mutation-opt-mergefunc.json': mutation_opt,
         'invalid-labels-tampered.json': _invalid(labels, lambda d: d['functions'][0].update(notes='edited'),
@@ -185,6 +207,9 @@ def examples() -> dict[str, dict | list]:
         'invalid-report-interval.json': _invalid(extended, lambda d: d['labels']['authored']['rz-diff']['changed'][
             'rate'].update(undefined=True), redigest='report_sha256'),
         'invalid-report-digest.json': _invalid(report, lambda d: d.update(symbols='visible'), redigest=None),
+        'invalid-report-deltas-reversed.json': _invalid(
+            deltas, lambda d: _rename_comparison(d, 'rz-diff vs ghidriff', 'ghidriff vs rz-diff'),
+            redigest='report_sha256'),
     }
 
 

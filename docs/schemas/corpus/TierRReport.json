@@ -146,6 +146,93 @@
       "title": "CurveBlock",
       "type": "object"
     },
+    "DeltaCell": {
+      "additionalProperties": false,
+      "description": "Paired difference a - b of one rank metric over the pairs both engines completed (G-L7; dev-only, ordinal).\n`sd` is over per-lineage mean differences; `min_detectable` is two-sided alpha 0.05, power 0.8 at this n and sd;\n`power` is observed power at the observed estimate (descriptive only, never evidence of no difference);\n`non_inferior` is None whenever the interval is anti-conservative or undefined (never a claim from few lineages).",
+      "properties": {
+        "delta": {
+          "$ref": "#/$defs/Interval"
+        },
+        "lineages": {
+          "minimum": 0,
+          "title": "Lineages",
+          "type": "integer"
+        },
+        "metric": {
+          "enum": [
+            "hit@10",
+            "ndcg"
+          ],
+          "title": "Metric",
+          "type": "string"
+        },
+        "min_detectable": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Min Detectable"
+        },
+        "non_inferior": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Non Inferior"
+        },
+        "pairs": {
+          "minimum": 0,
+          "title": "Pairs",
+          "type": "integer"
+        },
+        "power": {
+          "anyOf": [
+            {
+              "maximum": 1.0,
+              "minimum": 0.0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Power"
+        },
+        "sd": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sd"
+        }
+      },
+      "required": [
+        "metric",
+        "pairs",
+        "lineages",
+        "delta"
+      ],
+      "title": "DeltaCell",
+      "type": "object"
+    },
     "EngineStatus": {
       "additionalProperties": false,
       "properties": {
@@ -936,6 +1023,36 @@
       },
       "title": "Curves",
       "type": "array"
+    },
+    "deltas": {
+      "anyOf": [
+        {
+          "additionalProperties": {
+            "additionalProperties": {
+              "additionalProperties": {
+                "additionalProperties": {
+                  "$ref": "#/$defs/DeltaCell"
+                },
+                "type": "object"
+              },
+              "type": "object"
+            },
+            "propertyNames": {
+              "enum": [
+                "real-fix",
+                "planted"
+              ]
+            },
+            "type": "object"
+          },
+          "type": "object"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Deltas"
     },
     "engines": {
       "items": {

@@ -53,8 +53,14 @@ class DeltaSummary:
     delta: C.Interval
     sd: float | None             # of per-lineage mean differences
     min_detectable: float | None  # two-sided alpha 0.05, power 0.8, at this n and sd
-    power: float | None           # of the observed difference at this n and sd
+    power: float | None           # observed power: at the observed difference, this n and sd; descriptive only and
+                                  # never evidence of no difference (Hoenig & Heisey 2001; `power` module docstring)
     non_inferior: bool | None     # lower bound > NON_INFERIORITY_MARGIN; None when anti-conservative or undefined
+
+    def cell(self) -> C.DeltaCell:
+        """The persisted `tier-r-report/1` form (`deltas[stratum][population]['a vs b'][metric]`)."""
+        return C.DeltaCell(metric=self.metric, pairs=self.pairs, lineages=self.lineages, delta=self.delta, sd=self.sd,
+                           min_detectable=self.min_detectable, power=self.power, non_inferior=self.non_inferior)
 
 
 def to_interval(iv: boot.Interval) -> C.Interval:
@@ -170,6 +176,14 @@ def paired_delta(treatment: Sequence[RankObs], baseline: Sequence[RankObs], metr
         non_inferior=boot.non_inferior(iv, margin))
 
 
+def delta_fields(deltas: Mapping[str, Mapping[str, Mapping[str, Mapping[str, DeltaSummary]]]]) -> dict:
+    """Plain JSON of `build_blocks` deltas for the additive `deltas` report field (key order kept)."""
+    return {stratum: {population: {key: {m: d.cell().model_dump(mode='json') for m, d in cells.items()}
+                                   for key, cells in per_key.items()}
+                      for population, per_key in per_population.items()}
+            for stratum, per_population in deltas.items()}
+
+
 # ---- blocks -----------------------------------------------------------------------------------------------------
 
 def label_cells(runs: Sequence[Run], b_count: int, seed: str) -> dict[str, C.LabelCell]:
@@ -227,7 +241,8 @@ def build_blocks(docs: Sequence[C.KnownAnswerLabels], runs_by_engine: Mapping[st
                  attempts: Iterable[tuple[str, str, str]], *, symbols: str, shift_lineages: Collection[str] = (),
                  b_count: int = boot.B_COUNT) -> tuple[dict, dict]:
     """(report fields, paired deltas). Fields are plain JSON data ready for `TierRReport`; deltas are keyed
-    stratum -> population -> 'a vs b' -> metric (engines in contract order, a before b)."""
+    stratum -> population -> 'a vs b' -> metric (engines in contract order, a before b) and become the report's
+    `deltas` field through `delta_fields` (the evaluator adds them only when there is at least one comparison)."""
     order = {e: i for i, e in enumerate(ENGINES)}
     labels_block: dict = {}
     rank_block_: dict = {}

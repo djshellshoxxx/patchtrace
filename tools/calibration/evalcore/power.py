@@ -14,6 +14,14 @@ Formulas and sources (verified against the textbook derivation, not copied from 
   difference d needs n = ((z_{1-alpha} + z_{1-beta}) * sd / (d - margin))**2. Chow et al. 2008, section 3.2.2
   (non-inferiority, one-sample); Julious, "Sample sizes for clinical trials with normal data", Stat Med 23(12),
   2004. The one-sided test uses alpha, not alpha/2.
+* Decision level of non-inferiority: `boot.non_inferior` reads the lower bound of the TWO-sided 95% interval, which
+  is a one-sided test at 0.025, so `noninferiority_lineages` sizes at `NI_ALPHA = 0.025` by default (ICH E9,
+  "Statistical Principles for Clinical Trials", 1998, section 5.5: one-sided tests at half the two-sided level).
+  Sizing at one-sided 0.05 against that rule undersizes (about 0.70 achieved power for a nominal 0.8).
+* `power_for_delta` evaluated at an OBSERVED estimate (as `evalcore.report.paired_delta` does) is observed power: a
+  one-to-one function of the observed p-value, descriptive only and never evidence of no difference (Hoenig &
+  Heisey, "The abuse of power", The American Statistician 55(1):19-24, 2001). Report it with the sd and the minimum
+  detectable delta, never alone.
 * The normal approximation understates n when sd is estimated from few lineages. `lineages_needed_t` adds the
   Guenther (1981) correction n_t ~= n_z + z_{1-alpha/2}**2 / 2 (one-sided: z_{1-alpha}**2 / 2), Guenther,
   "Sample size formulas for normal theory t tests", The American Statistician 35(4):243-244. Use it for the
@@ -29,6 +37,7 @@ from collections.abc import Sequence
 from ..bootstrap import MIN_GROUPS_HEADLINE
 
 _N = statistics.NormalDist()
+NI_ALPHA = 0.025  # one-sided level of 'two-sided 95% lower bound > margin' (boot.non_inferior; ICH E9 s5.5)
 
 
 def anti_conservative(n_lineages: int) -> bool:
@@ -78,6 +87,8 @@ def lineages_needed_t(delta: float, sd: float, alpha: float = 0.05, power: float
 
 def power_for_delta(delta: float, n_lineages: int, sd: float, alpha: float = 0.05,
                     one_sided: bool = False) -> float:
+    """Power of the z-test against a true difference `delta`. At an observed estimate this is observed power:
+    descriptive only, never evidence of no difference (Hoenig & Heisey 2001)."""
     _check(alpha, None, sd)
     if n_lineages < 1:
         raise ValueError('n_lineages must be >= 1')
@@ -90,10 +101,11 @@ def power_for_delta(delta: float, n_lineages: int, sd: float, alpha: float = 0.0
     return _N.cdf(shift - crit) + _N.cdf(-shift - crit)
 
 
-def noninferiority_lineages(margin: float, true_delta: float, sd: float, alpha: float = 0.05,
+def noninferiority_lineages(margin: float, true_delta: float, sd: float, alpha: float = NI_ALPHA,
                             power: float = 0.8) -> int:
     """Lineages so a true delta clears 'lower bound > margin' (margin < 0) with the given power:
-    n = ((z_alpha + z_power) * sd / (true_delta - margin))**2, one-sided."""
+    n = ((z_{1-alpha} + z_power) * sd / (true_delta - margin))**2, one-sided at `alpha`. The default matches the
+    decision rule (lower bound of the two-sided 95% interval, i.e. one-sided 0.025)."""
     gap = true_delta - margin
     if gap <= 0:
         raise ValueError('true_delta must exceed margin')
