@@ -792,6 +792,8 @@ def cached(service, request: UnifiedRequest, *, enrichment: EnrichmentStore | No
     hit = store.cached_result(enrichment, request.plan.result_id, limits)  # a damaged result is a miss, not an error
     if hit is None or hit.manifest is None or hit.directory is None or (hit.entry is not None and hit.entry.stale):
         return None
+    if store.is_timeout_partial(hit.manifest):
+        return None     # the deadline, not the inputs, cut it short: compute again (publish may replace it)
     t = time.monotonic()
     stages = [StageRecord(stage='prepare', status='ok', duration_ms=request.prepare_ms), _stage('cache', t)]
     warnings = _record(enrichment, service, request, status='cached', result_id=hit.manifest.result_id, error=None,

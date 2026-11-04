@@ -302,6 +302,12 @@ def parse_line(line: bytes, model):
     return record
 
 
+def is_timeout_partial(manifest: UnifiedResultManifest) -> bool:
+    """A result cut short by a spent deadline (U7-06). It depends on the machine's speed, not only on the inputs, so
+    it is never authoritative: a cache lookup misses it and a later run of the same id may replace it."""
+    return manifest.status == 'partial' and any(x.split(':', 1)[0] == 'timeout' for x in manifest.limitations)
+
+
 def _row_id_ok(manifest: UnifiedResultManifest, row: UnifiedMatch) -> bool:
     return row.row_id == keys.row_id(manifest.older_sha256, manifest.newer_sha256, [s.rva for s in row.older],
                                      [s.rva for s in row.newer])
@@ -554,7 +560,8 @@ def publish_result(enrichment: EnrichmentStore, staged: Path, *, guard: Guard, c
             _rmtree(trash)
         elif existing.result_id != manifest.result_id:
             raise _err('Another result already uses this sidecar directory', 'dir-collision')
-        elif existing.model_copy(update={'created_utc': manifest.created_utc}) != manifest and upgrade:
+        elif (existing.model_copy(update={'created_utc': manifest.created_utc}) != manifest
+              and (upgrade or is_timeout_partial(existing))):
             previous = _previous_path(final, existing_sha)
             _check_path_length(root, str(previous.relative_to(root)))
             if previous.exists():

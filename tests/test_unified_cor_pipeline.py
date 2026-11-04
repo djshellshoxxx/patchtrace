@@ -73,3 +73,46 @@ def test_a_raw_output_the_worker_cannot_use_does_not_make_every_result_stale(tmp
         assert again.status == 'cached' and again.result_id == first.result_id
     finally:
         service.close()
+
+
+class _Clock:
+    now = 0.0
+
+    def __call__(self):
+        return self.now
+
+
+def _spent_deadline_after_the_ladder(monkeypatch):
+    """The first run's deadline passes right after the ladder (U7-06): a partial result with a `timeout` note."""
+    from patchtrace.unified import compute
+    from patchtrace.unified.limits import Budget
+    real = compute.compute_stage
+
+    def partial(inputs, addr, **kw):
+        clock = _Clock()
+
+        def emit(event):
+            if event.stage == 'fusion':
+                clock.now = 100.0
+        return real(inputs, addr, **{**kw, 'budget': Budget(deadline=50.0, clock=clock, check_every=1), 'emit': emit})
+    monkeypatch.setattr(compute, 'compute_stage', partial)
+    return lambda: monkeypatch.setattr(compute, 'compute_stage', real)
+
+
+def test_a_timeout_partial_result_is_not_served_from_the_cache_and_a_complete_run_replaces_it(
+        project, tmp_path, monkeypatch):
+    from unified_wire_support import place_pair
+
+    from patchtrace.unified import store
+    place_pair(project, scratch=tmp_path)
+    restore = _spent_deadline_after_the_ladder(monkeypatch)
+    first = pipeline.run_unified(project, UnifiedOptions(isolate=False))
+    assert first.result_status == 'partial' and 'timeout' in first.limitations
+    restore()
+    second = pipeline.run_unified(project, UnifiedOptions(isolate=False))      # no --refresh: the deadline was luck
+    assert second.status != 'cached' and second.result_id == first.result_id
+    assert second.result_status == 'complete' and 'timeout' not in second.limitations
+    loaded = pipeline.load_current(project, pipeline.make_plan(project))
+    assert loaded.state == 'current' and loaded.manifest.status == 'complete'
+    assert store.verify_result_dir(loaded.directory).result_id == first.result_id
+    assert pipeline.run_unified(project, UnifiedOptions(isolate=False)).status == 'cached'
