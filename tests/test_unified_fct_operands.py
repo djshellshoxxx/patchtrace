@@ -50,6 +50,40 @@ def test_condition_change_of_a_jcc_inside_a_block_body_is_a_condition_delta(tmp_
     assert dict(facts.channels)['C2'] == 'differs'
 
 
+def rescaled(fns, index, scale):
+    """`f`'s instruction `index` (a `load_tab`, SIB scale 4) with another SIB scale: the operand facts (address target,
+    base and index registers) stay equal, only the SIB byte, the scale object and the listing text change."""
+    for fn in fns:
+        if fn['name'] == 'f':
+            offset, _length, _mnem, _imask, ops, _flow = fn['insns'][index]
+            raw = bytearray.fromhex(fn['raw'])
+            raw[offset + 2] = (raw[offset + 2] & 0x3F) | {1: 0x00, 2: 0x40, 4: 0x80, 8: 0xC0}[scale]
+            fn['raw'] = raw.hex()
+            ops[1][2] = [obj if obj[0] != 'scalar' else ['scalar', scale] for obj in ops[1][2]]
+            fn['text'][index] = fn['text'][index].replace('*0x4', f'*0x{scale:x}')
+    return fns
+
+
+SAME_TEXT = {'older': {0x1000: 'int FUN_180001000(void)\n{\n  return DAT_180003000;\n}\n'},
+             'newer': {0x1000: 'int FUN_180001000(void)\n{\n  return DAT_180003000;\n}\n'}}
+
+
+def test_an_index_scale_change_is_a_delta_and_never_a_decompiler_proof(tmp_path):
+    """`[RDX + RAX*0x4 + table]` -> `[RDX + RAX*0x8 + table]` reads another element: the operand facts are equal (the
+    scale is no displacement), so only the instruction shape shows it; even with equal decompiler text it is no proof."""
+    body = [('load_tab', 'EAX', 'RDX', 'RAX', 'g_a'), ('ret',)]
+    facts = run_facts(tmp_path, image(body), rescaled(image(body), 0, 8), decompiled=SAME_TEXT).facts('f')
+    assert facts.verdict == 'review' and facts.proof is None, (facts.verdict, facts.proof)
+    assert [d.cls for d in facts.deltas] == ['unknown'] and dict(facts.channels)['C2'] == 'differs'
+
+
+def test_a_moved_operand_keeps_its_shape(tmp_path):
+    """Control: the same table read with a moved table (only the address literal changes) adds no shape delta."""
+    body = [('load_tab', 'EAX', 'RDX', 'RAX', 'g_a'), ('ret',)]
+    facts = run_facts(tmp_path, image(body), image(body, shift=0x40)).facts('f')
+    assert facts.deltas == () and facts.verdict == 'cosmetic'
+
+
 @pytest.mark.parametrize('shape', sorted(CASES), ids=sorted(CASES))
 def test_an_unchanged_jcc_inside_a_block_body_adds_no_delta(tmp_path, shape):
     edit = CASES[shape][1]
