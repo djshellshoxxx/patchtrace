@@ -148,6 +148,7 @@ Acceptance automation added (verified locally on Linux against `python -m patcht
 | Perf, Qt model | `test_large_models_stay_lazy_with_data_call_ceilings` (900x500 panel, offscreen, PySide6 6.12.0) | data() calls = visible cells (16) for first paint and filter, 0 for sort, at both 10k and 100k rows; 10k reset/sort/filter about 28/9/9 ms; 100k about 130/122/20 ms |
 
 Scope: offscreen Linux evidence only. Not covered and still open (C8): Windows runs of these tests, real screen-reader announcements (Qt offscreen reports `QAccessible.isActive()` False), 125/150/200% DPI rendering, glyph fonts on Windows, contrast against the live palette (only palette constants are checked), frozen-EXE dock smoke, and the GUI-thread cost of reading very large stored secondary sets (SQLite is thread-confined, so `load_secondary` stays on the GUI thread).
+C8 manual procedure and blank RB-05 receipt: [Windows acceptance runbook](qa/windows-acceptance-runbook.md). Its results stay not-run until a named tester records a run.
 ## 2026-10-14 C4 BinDiff execution (mocked evidence only)
 - Automated (Linux authoring host, fake `bindiff` over `tests/fake_exe.py`, fake BinExport stand-ins): probe table, every SPEC-29 §6 failure kind reachable, exact argv, allow-listed env (sentinel secrets absent), private workdir removed, raw `.BinDiff` preserved before import, timeout/cancel kill the process tree (heartbeat stops), reversed/unbound inputs refused before spawn, explicit override recorded in provenance, CLI exit codes 0/2/3 and previous set kept on failure. These are not live compatibility evidence.
 - Importer fuzz found a real defect: corrupt text in a `.BinDiff` raised an uncaught `UnicodeDecodeError`; now `PT-SECONDARY-INPUT`.
@@ -1270,3 +1271,18 @@ Each slice was built in its own worktree with red tests first and independently 
 | C-BD-ROWCAP BinDiff importer row caps (S6/D5) | built | per-table caps enforced after schema and column checks. |
 | C-RECEIPT native receipts (RB-03, SPEC-28 s17) | built + wired | `tools/native_receipt.py`; receipt build/upload steps in `live-rizin.yml` and `live-bindiff.yml`, PASS required on the Linux BinDiff leg; BinExport2 receipts stay BLOCKED (no Ghidra/IDA-produced export). |
 | E3-CAP-5b `intel-tools pairs --hypothesis CVE-ID` | built | capability context from stored advisories only (`tests/test_capa_cli_hypothesis.py`, 10 passed). |
+
+## [AF-0:waveA2] Backlog wave A2, confirmed slices (2026-11-04)
+
+Built in isolated worktrees with red tests first, independently verified (diff read, tests rerun, source reverted to confirm the new tests fail, invariants audited). Synthetic or offscreen; none of this is live evidence.
+
+| Slice | Result | Evidence |
+|---|---|---|
+| E1-WB1-S8b search tool, advisory and CVE sources bound to `patchtrace search` and the Search dock | built | `tests/test_search_wiring.py` 9 passed (real stores, fake tool executables). Open risk: the first load of 2 x 200k FLOSS strings took about 10.7 s on the calling thread (the evidence store's own read and validation), a reuse 0.02 ms. |
+| E2-WB3-S7c strings dock reads stored FLOSS results with the CLI's `--source` rule | built | dock/CLI parity on synthetic pairs; CLI output byte-identical on 36 commands over 4 projects. |
+| F-gui-2 C8 Windows acceptance runbook and blank RB-05 receipt | written | `docs/qa/windows-acceptance-runbook.md`, `tests/test_windows_runbook.py`; every manual result stays not-run until a named tester records a run. |
+| F-gui-3 G2 file inspection on the host TaskRunner (`ui_inspection_session.py`) | built | `ui.py` 3,077 to 3,025 lines (seam ceiling tightened to -117); the class-only failure message (no path leak) moved to `tests/test_ui_inspection_session.py::test_a_current_failure_reports_the_class_only`. |
+| G-L7 paired-delta block in `tier-r-report/1` plus `power.py` residual fixes | built | additive report field; numbers stay ordinal-only. |
+| G-TW-RUN Tier W runner library (LBL-23) behind engine Protocols | built | no Microsoft data; the CLI wiring waits for G-TW-CLI. |
+| A-I-1 release-notes evidence completeness | built + wired | the release job passes both journey summaries to `milestone_notes`; live release body unverified until the next prerelease. |
+| A-I-3 release docs accuracy | built | `tests/test_release_docs.py` checks the docs against the workflow assets, the NSIS script and the version resource. |

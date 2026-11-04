@@ -263,6 +263,8 @@ jobs:
           python3 src-tree/tools/milestone_notes.py --tag "$TAG" --sha "$GITHUB_SHA" --ref-kind "$REF_KIND" \
             --run-url "$RUN_URL" --run-number "$GITHUB_RUN_NUMBER" --assets release \
             --junit linux=qa-results/qa-Linux/qa-results.xml --junit windows=qa-results/qa-Windows/qa-results.xml \
+            --journey linux=qa-results/qa-Linux/journey-summary.json \
+            --journey windows=qa-results/qa-Windows/journey-summary.json \
             --result "qa-ubuntu=$QA_LINUX" --result "qa-windows=$QA_WINDOWS" --result "linux-smoke=$SMOKE_RESULT" \
             --preamble "$RUNNER_TEMP/preamble.md" --output "$RUNNER_TEMP/notes.md" \
             || { echo "::warning::milestone_notes failed; using static preamble only"; cp "$RUNNER_TEMP/preamble.md" "$RUNNER_TEMP/notes.md"; }

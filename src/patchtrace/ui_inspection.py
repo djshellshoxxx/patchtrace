@@ -1,22 +1,19 @@
 """Qt presentation for preliminary artifact inspection (SPEC-26 D, alpha; GUI plan M3).
 
-Responsibility: run :func:`inspect_project_artifacts` on a dedicated QThread
-(independent of the analysis job worker) and render its immutable result into
-the Files dock. All domain logic lives in ``artifact_inspection``,
-``pe_overview`` and ``raw_view``; this module only moves results to widgets.
+Responsibility: render the immutable result of :func:`inspect_project_artifacts`
+(run by ``ui_inspection_session`` on the host's task runner) into the Files dock.
+All domain logic lives in ``artifact_inspection``, ``pe_overview`` and
+``raw_view``; this module only moves results to widgets.
 """
 from __future__ import annotations
 
-import logging
-import threading
 from dataclasses import dataclass
-from pathlib import Path
 
-from PySide6.QtCore import QAbstractTableModel, Qt, QThread, Signal
+from PySide6.QtCore import QAbstractTableModel, Qt
 from PySide6.QtGui import QFont
 from PySide6.QtWidgets import QAbstractItemView, QSplitter, QTableView, QVBoxLayout, QWidget
 
-from .artifact_inspection import ProjectInspection, inspect_project_artifacts
+from .artifact_inspection import ProjectInspection
 from .gui.qt.docks import ControllerBase
 from .gui.qt.labels import PlainLabel
 from .gui.registry import PanelContext
@@ -41,33 +38,6 @@ EXPLANATION = (
     'executed. Certificate presence is not signature validity, and COFF timestamps can be forged.')
 IDLE_STATUS = 'File inspection not started.'
 RUNNING_STATUS = 'File inspection running: verifying hashes and parsing PE headers…'
-
-
-class InspectionThread(QThread):
-    """Bounded read-only inspection of both artifacts; never mutates the project."""
-    # Both signals carry the identity key so slots can be plain bound methods (queued onto the GUI thread).
-    inspection_ready = Signal(object, object)
-    inspection_failed = Signal(str, object)
-
-    def __init__(self, project_id: str, artifacts, root: Path, parent=None, key=None):
-        super().__init__(parent)
-        self.key = key
-        self.project_id = project_id
-        self.artifacts = tuple(artifacts)
-        self.root = Path(root)
-        self.cancel = threading.Event()
-
-    def run(self):
-        try:
-            result = inspect_project_artifacts(self.project_id, self.artifacts, self.root, self.cancel.is_set)
-        except Exception as exc:  # noqa: BLE001 - only the class crosses the thread boundary (GUI plan 8.5)
-            logging.getLogger(__name__).warning('File inspection failed', exc_info=True)
-            self.inspection_failed.emit(type(exc).__name__, self.key)
-            return
-        if self.cancel.is_set():
-            result.close()
-            return
-        self.inspection_ready.emit(result, self.key)
 
 
 def side_summary(inspection: ProjectInspection) -> str:

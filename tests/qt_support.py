@@ -33,7 +33,7 @@ HOSTILE = ['<b>pwn</b>', '<img src=x onerror=1>', '&lt;', '{0}', '%s', '\x1b[31m
 HOSTILE_PARAMS = [pytest.param(text, id=f'h{index}') for index, text in enumerate(HOSTILE)]
 
 _LEGACY_REGISTRIES = (('ui_engine_setup', '_LIVE_THREADS'), ('ui_series', '_LIVE_THREADS'),
-                      ('ui_bundle_setup', '_LIVE_THREADS'), ('ui_inspection', '_LIVE_THREADS'),
+                      ('ui_bundle_setup', '_LIVE_THREADS'),
                       ('ui', '_DISCOVERY_THREADS'), ('ui_bundle_setup', '_THREADS'))
 JOIN_MS = 5000
 

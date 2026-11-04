@@ -21,9 +21,10 @@ SRC = Path(__file__).resolve().parents[1] / 'src' / 'patchtrace'
 # ui.py was 3,142 lines when F5 started (3,119 at d972125 plus the zero-download bundle work). F5 alone kept the
 # evidence hooks (+25); F8 removed them (M1, M2). The plan's final seam is +15 over d972125 (3,134 = 3,142 - 8);
 # F9 removed the series and files code (M3: -50 lines net), which closed the gap and went below it; M4 (selection
-# layers through compose_selections) took another 15. The ceiling only goes down from here.
+# layers through compose_selections) took another 15; F-gui-3 (inspection on the host task runner) 52 more. The
+# ceiling only goes down from here.
 UI_LINES_BEFORE_F5 = 3142
-UI_TRANSITIONAL_CEILING = -65
+UI_TRANSITIONAL_CEILING = -117
 
 
 def test_ui_seam_budget():
@@ -33,7 +34,7 @@ def test_ui_seam_budget():
 
 def test_ui_seam_is_a_handful_of_host_calls_and_names_no_feature():
     text = (SRC / 'ui.py').read_text(encoding='utf-8')
-    assert len(re.findall(r'self\.panels\.', text)) <= 8
+    assert len(re.findall(r'self\.panels\.', text)) <= 9  # F-gui-3 added self.panels.tasks for the inspection
     assert text.count('PanelHost') == 2  # the import and the one construction
     packages = {entry.module.split('.')[1] for entry in MANIFEST}
     assert not [name for name in packages if re.search(rf'(?:from|import) \.{name}\b|patchtrace\.{name}\b', text)]
@@ -168,14 +169,3 @@ def test_show_external_pair_sanitises_and_announces_truncation(main_window):
     assert older == 'a' * MAX_VIEW_CHARS + notice
     assert newer == 'xyz'
 
-
-def test_the_inspection_worker_sends_only_the_exception_class(monkeypatch, tmp_path):
-    from patchtrace import ui_inspection
-
-    def boom(*_args):
-        raise ValueError('C:/secret/path')
-    monkeypatch.setattr(ui_inspection, 'inspect_project_artifacts', boom)
-    thread, seen = ui_inspection.InspectionThread('p', [], tmp_path), []
-    thread.inspection_failed.connect(lambda message, key: seen.append(message))
-    thread.run()
-    assert seen == ['ValueError']

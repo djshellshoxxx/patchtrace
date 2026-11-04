@@ -71,6 +71,7 @@
 - [x] C6-4 accessibility names/status rule, contrast test, font-metric row height, 10k/100k data()-call gates, QSettings persistence (local Linux evidence only)
 - [ ] C6 CI evidence on Linux + Windows runners (not run from the builder worktree)
 - [ ] C8 manual gates: NVDA/Narrator announcement of the status label, 125/150/200% DPI and glyph fonts on Windows, live-palette contrast, frozen-EXE dock smoke
+- [ ] C8 and RB-05 manual part: run docs/qa/windows-acceptance-runbook.md on a clean Windows 11 profile and paste its filled receipt into docs/qa.md (runbook and receipt added by F-gui-2; no gate run)
 - [ ] Product decision D5 (evidence status in exported reports) - later slice
 ## C4 BinDiff execution (SPEC-29, 2026-10-14)
 - [x] P1 contracts: `EngineRun.provenance`, `cache_key(extra=)`, `SecondaryError.kind`; schema regenerated
@@ -943,3 +944,13 @@ Done: dock with state matrix, consent, import, changes, copy, go to CVE. Open: r
 - [x] C-BD-ROWCAP BinDiff importer row caps (plan S6/D5)
 - [x] E3-CAP-5b `intel-tools pairs --hypothesis CVE-ID` (context only)
 - [ ] A-01b: Run comparison is not disabled while a unified run is in progress (`MainWindow.update_controls` checks only `self.worker`)
+
+### [AF-0:waveA2] Backlog wave A2 (2026-11-04)
+- [x] E1-WB1-S8b: bind `extra_specs`, `comparable` and the `cve-snapshot` reader (`search/wiring.py`, `tests/test_search_wiring.py`)
+- [ ] WB1: first load of large FLOSS evidence is about 10.7 s on the calling thread (evidence store read/validation); move to a worker or index
+- [x] E2-WB3-S7c strings dock reads stored FLOSS results; next: dock FLOSS run/probe/consent
+- [x] F-gui-3 G2 inspection on the host TaskRunner
+- [x] G-L7 paired deltas in tier-r-report/1; L4 power.py residual fixes
+- [x] G-TW-RUN Tier W runner library (LBL-23)
+- [x] A-I-1 release-notes evidence completeness (journey rows, sidecars, Portable); live body pending the next prerelease
+- [x] A-I-3 release docs match the NSIS Setup plus portable ZIP build

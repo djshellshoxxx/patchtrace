@@ -68,7 +68,7 @@ from .runtime_discovery import (
 from .service import ProjectService
 from .tooltips import apply_tooltip, apply_tooltips
 from .ui_bundle_setup import BundleSetup
-from .ui_inspection import InspectionThread, side_summary
+from .ui_inspection_session import InspectionSession
 from .ui_persistence import commit_and_report
 from .ui_profiles import PROFILE_SETTING, profiles_dir, selected_profile
 from .ui_symbols import SymbolChoice, config_kwargs, configured_symbol_mode, effective_profile_symbol_mode
@@ -1495,12 +1495,6 @@ class MainWindow(QMainWindow):
         self.service = service
         self.worker = None
         self._updating = False
-        # Preliminary inspection (SPEC-26 D) runs on its own thread, independent of analysis jobs.
-        self._inspection = None
-        self._inspection_key = None
-        self._inspection_error = None  # (key, message) of the last failed inspection
-        self._inspection_thread = None
-        self._inspection_threads = []
         self._raw_sides = {}
         # Derived enrichment for the current run, keyed by match ID; never part of the project snapshot.
         self._ranking = {}
@@ -1522,6 +1516,10 @@ class MainWindow(QMainWindow):
         self.setMinimumSize(960, 640)
         self.setStyleSheet(DARK_STYLE)
         self.panels = PanelHost(self)  # dock shells only; panels are built when first shown
+        # Preliminary inspection (SPEC-26 D) runs on the host's task runner, independent of analysis jobs.
+        self._inspection_session = InspectionSession(
+            self.panels.tasks, self._project_inspection_key, on_status=self.inspection_status.emit,
+            on_ready=self._inspection_ready, log=lambda text: self.logs.appendPlainText(text))
         self._build_actions()
         self._build_workspace()
         self.restore_preferences()
@@ -2594,9 +2592,7 @@ class MainWindow(QMainWindow):
         self.render_match()
 
     def _current_inspection(self):
-        if self._inspection is not None and self._inspection_key == self._project_inspection_key():
-            return self._inspection
-        return None
+        return self._inspection_session.current()
 
     def _render_raw(self, match, clamped_from: int | None = None):
         self._hunks = []
@@ -2604,14 +2600,13 @@ class MainWindow(QMainWindow):
         inspection = self._current_inspection()
         if inspection is None:
             self._raw_sides = {}  # never let Copy return bytes from a previous orientation
-            failure = self._inspection_error
-            failed = failure is not None and failure[0] == self._project_inspection_key()
+            failure = self._inspection_session.failure()
             for view in self.views.values():
                 clear_selections(view, 'diff')
-                view.setPlainText(f'[File inspection failed: {failure[1]}]' if failed else
+                view.setPlainText(f'[File inspection failed: {failure}]' if failure else
                                   'Verifying artifact bytes against their recorded SHA-256 and inspecting PE '
                                   'headers. The raw view appears when this read-only check finishes.')
-            if not failed:
+            if not failure:
                 self.start_inspection()
             return
         representation = self.RAW_MODES[self.mode.currentIndex()]
@@ -2701,65 +2696,18 @@ class MainWindow(QMainWindow):
         return (str(self.service.root), self.project.id, sides.get('older'), sides.get('newer'))
 
     def start_inspection(self):
-        """Start the bounded read-only inspection worker unless a current result or run exists."""
-        key = self._project_inspection_key()
-        if key is None or (self._inspection is not None and self._inspection_key == key):
-            return
-        thread = self._inspection_thread
-        if thread is not None and thread.isRunning():
-            if thread.key == key:
-                return
-            thread.cancel.set()
-        thread = InspectionThread(self.project.id, self.project.artifacts, self.service.root, self, key)
-        queued = Qt.ConnectionType.QueuedConnection  # bound-method slots, always delivered on the GUI thread
-        thread.inspection_ready.connect(self._inspection_ready, queued)
-        thread.inspection_failed.connect(self._inspection_failed, queued)
-        thread.finished.connect(self._reap_inspection_threads, queued)
-        self._inspection_threads.append(thread)  # a replaced (cancelled) thread must never be dropped while running
-        self._inspection_thread = thread
-        thread.start()
+        """Start the bounded read-only inspection unless a current result or run exists."""
+        if self.project and self.service:
+            self._inspection_session.start(self.project.id, self.project.artifacts, self.service.root)
 
-    def _inspection_ready(self, result, key):
-        if key != self._project_inspection_key():
-            result.close()
-            return
-        self._clear_inspection()
-        self._inspection, self._inspection_key = result, key
-        self.inspection_status.emit('File inspection complete · ' + side_summary(result))
+    def _inspection_ready(self):
+        self._raw_sides = {}
         if self._raw_mode():
             self.render_match()
 
-    def _inspection_failed(self, message, key=None):
-        if key is not None and key != self._project_inspection_key():
-            return  # a superseded inspection must not overwrite the current project's status (audit #116 P3)
-        self._inspection_error = (key or self._project_inspection_key(), message)
-        self.inspection_status.emit('File inspection failed: ' + message)
-        self.logs.appendPlainText('File inspection failed: ' + message)
-
-    def _clear_inspection(self):
-        if self._inspection is not None:
-            self._inspection.close()
-        self._inspection, self._inspection_key, self._raw_sides = None, None, {}
-        self._inspection_error = None
-
-    def _reap_inspection_threads(self):
-        alive = []
-        for thread in self._inspection_threads:
-            if thread.isRunning():
-                alive.append(thread)
-            else:
-                thread.deleteLater()
-        self._inspection_threads = alive
-
     def _stop_inspection(self):
-        # Every started thread is cancelled and joined: destroying a running QThread aborts the process.
-        for thread in self._inspection_threads:
-            thread.cancel.set()
-        for thread in self._inspection_threads:
-            thread.wait()
-        self._inspection_threads = []
-        self._inspection_thread = None
-        self._clear_inspection()
+        self._inspection_session.stop()
+        self._raw_sides = {}
 
     def show_file_overview(self):
         """Nonmodal read-only preview available without the Ghidra backend."""

@@ -1,13 +1,13 @@
 """Audit #116 P3: a failure from a superseded inspection must not touch the current project's Files status."""
 from types import SimpleNamespace
 
-from patchtrace.ui import MainWindow
+from patchtrace.gui.qt.tasks import TaskFailure
+from patchtrace.ui_inspection_session import InspectionSession
 
 
 def test_stale_failure_is_ignored():
     emitted, logged = [], []
-    stub = SimpleNamespace(_project_inspection_key=lambda: 'new', _inspection_error=None,
-                           inspection_status=SimpleNamespace(emit=emitted.append),
-                           logs=SimpleNamespace(appendPlainText=logged.append))
-    MainWindow._inspection_failed(stub, 'boom', 'old')
-    assert emitted == [] and logged == [] and stub._inspection_error is None
+    session = InspectionSession(SimpleNamespace(), lambda: 'new', on_status=emitted.append, on_ready=lambda: None,
+                                log=logged.append)
+    session._failed('old', TaskFailure('boom'))
+    assert emitted == [] and logged == [] and session.failure() is None
