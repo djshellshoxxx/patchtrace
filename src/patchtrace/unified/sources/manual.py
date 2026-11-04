@@ -2,7 +2,7 @@
 
 An affirmative one-function-per-side relation -> a tier-M edge; an ambiguous relation stays an ambiguous group.
 A function on one side only -> a one-sided declaration (`removed`,
-`unmatched`, `added`); anything larger -> a manual group (`split`/`merged` decide `matched`, `ambiguous` decides
+`unmatched`, `added`; any other category with an empty side is skipped and counted as `manual-unresolved`); anything larger -> a manual group (`split`/`merged` decide `matched`, `ambiguous` decides
 `ambiguous`). The correction itself is never re-validated here: the service already guarantees a function belongs to
 one match. `manual_digest` (02 s5) covers the corrections, so any change of them makes a different `result_key`.
 """
@@ -25,7 +25,10 @@ from . import (
     function_rva,
 )
 
-VERSION = 'manual/2'
+# manual/3 (2026-11-04): unresolvable sides, `unmatched` pairs and pairing categories with an empty side no longer
+# become tier-M claims; the bump re-keys results of projects with corrections (02 s5), so none is served stale.
+VERSION = 'manual/3'
+ONE_SIDED = frozenset({'removed', 'added', 'unmatched'})  # 06 s6: categories that declare no counterpart
 
 
 def _manual(inputs: SourceInputs) -> list[SnapshotMatch]:
@@ -90,6 +93,11 @@ class ManualAdapter:
             if (match.older and not older) or (match.newer and not newer):
                 # a side the analyst named but whose address is unusable: a pairing must never degrade into a
                 # one-sided (removed/added) claim, so the correction is not applied and the result is partial
+                ledger.count('manual-unresolved')
+                continue
+            if match.category not in ONE_SIDED and not (older and newer):
+                # a pairing category (modified, unchanged, split, merged, ambiguous) with one side left empty: a
+                # one-sided claim would state the opposite of the analyst's category, so it is skipped the same way
                 ledger.count('manual-unresolved')
                 continue
             for side, items in (('older', older), ('newer', newer)):
