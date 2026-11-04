@@ -904,3 +904,17 @@ Done: dock with state matrix, consent, import, changes, copy, go to CVE. Open: r
 - [ ] RB-01: dispatch `unified-live-gates.yml` on the integrated head and record evaluated A/A, release and mutant counts per OS (the exec-bit cause of "permissions or locks" is inferred from code, not yet confirmed live)
 - [ ] RB-07: native Windows read-back of the exe version resource and icon (CI only)
 - [ ] Owner: original PRs #138-#141, #147, #148, #158, #165, #166, #168 can be closed as superseded once the replacement PRs merge (coordinator does not close other authors' PRs)
+
+### [AF-0:ported-154-157] Tracker rows carried from PRs #154 and #157 (2026-11-04)
+
+- [ ] November 1 GT-05: review/integrate the narrow QA-bound preregistration selection repair (18 red → 255 bounded pass/1 missing-native-tools skip). Retain #78 normalized output persistence, #79/#82 both-side recipe controls, #85 final-look CLI integration, fresh pin/license audit and pre-lock/held-out gates as separate READY work; see `docs/qa/corpus-safeguards-20261101.md`. No locked evaluation or probability promotion occurred.
+### GT05 bounded normalized output retention (2026-11-01)
+- [x] Reproduce missing source documents behind actual CLI output digests and selectively reconcile #78 retention against current scoring. Fresh exclusive run directories, exact canonical bytes, atomic no-overwrite publication, truthful failure metrics and attention ranking fields are covered by 164 focused passes (2 native-tool BLOCKED skips). See `docs/qa/corpus-output-persistence-20261101.md`.
+- [x] Independent output-retention review cleared `ad35469`: 164 focused passes/2 native-tool BLOCKED skips, production-loader/two-rank replay and failure/no-key differential controls. Reader metadata-loss finding closed.
+- [ ] Coordinator integration and exact-source cross-OS gates remain pending; library persistence is explicitly opt-in.
+- [ ] #78 verified shard/merge transfer and the remaining GT05 growth/source/pin/license, both-side recipe controls, pre-lock/native lineage/OOD, single-use-final CLI and guarded-promotion acceptance remain open. No real locked evaluation consumed or numeric confidence promoted.
+### PR #157 credited replay follow-up (2026-11-01)
+- [x] Reproduce incompatible ranking keys, encode-before-validation and valid failed-artifact adoption by the actual loader; repair producer validation and new managed-run report-bound replay with meaningful CLI/reader controls (237 passed, 2 native-tool BLOCKED skips).
+- [x] Preserve old no-key bytes/ranking and private in-memory unified support; keep persisted engine vocabulary unchanged; expose legacy unmarked replay as unverified rather than infer historical credit.
+- [ ] Independent final review, coordinator integration/cross-OS and verified transfer integration remain pending; broader locked training/final-run/promotion safeguards are not completed by this slice. See `docs/qa/output-credited-replay-20261101.md`.
+- [x] Independent credited-replay review approved exact source `5c26af9` with 119 passes/1 native-tool BLOCKED skip and direct scalar/failed-valid-artifact controls; no remaining bounded source blocker. Integration/cross-OS/transfer and broader safeguards above remain open.
