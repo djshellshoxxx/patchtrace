@@ -3,7 +3,7 @@
 #include <rz_analysis.h>
 #include <stdio.h>
 #include <string.h>
-static bool read_bytes(RzIO *io, ut64 addr, ut8 *buf, int len) {
+static bool read_bytes(RzIO *io, ut64 addr, ut8 *buf, size_t len) {
     (void)io; (void)addr;
     memset(buf, 0x90, len);
     return true;
