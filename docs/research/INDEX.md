@@ -27,3 +27,10 @@ Listing of every file under `docs/research/`, 2026-10-14. "Specs cited" lists SP
 | [unified-engine/04-structural-matching-prior-art.md](unified-engine/04-structural-matching-prior-art.md) | - | - | 04 - Structural matching prior art (classical techniques) for the unified diff engine |
 | [unified-engine/05-fusion-and-noise-reduction.md](unified-engine/05-fusion-and-noise-reduction.md) | SPEC-27, SPEC-28, SPEC-30 | - | 05 - Evidence fusion and noise reduction (unified diff engine research) |
 | [ue-open-questions.md](ue-open-questions.md) | SPEC-31 | - | Unified engine open questions: research, decisions, owner questions |
+| [calibration-r5/README.md](calibration-r5/README.md) | - | research | R5 — Statistical calibration, confidence semantics, false-match control |
+| [semantic-analysis-r3/README.md](semantic-analysis-r3/README.md) | - | research | R3: semantic change detection — research and validation dossier |
+| [20261103-additional-research/README.md](20261103-additional-research/README.md) | - | research | Additional PatchTrace research and Claude handoff |
+| [vulnerability-correlation-r4/README.md](vulnerability-correlation-r4/README.md) | - | research | R4 — Vulnerability, update, product and binary correlation |
+| [final-integration-r6/README.md](final-integration-r6/README.md) | - | research | R6 — Final integration, end-to-end acceptance, patch search and Windows release |
+| [deep-uncertainty-r8/README.md](deep-uncertainty-r8/README.md) | - | research | R8 — deep technical uncertainty and adversarial validation |
+| [unified-matching-r2/README.md](unified-matching-r2/README.md) | - | research | R2 — Unified binary matching research and validation |
