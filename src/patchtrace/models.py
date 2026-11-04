@@ -242,3 +242,7 @@ class ExportManifest(Record):
     include_code: bool
     include_notes: bool
     created: str = Field(default_factory=now)
+    report_version: Literal[1, 2] = 1
+    content_digest: str | None = None
+    sections: list[str] = Field(default_factory=list)
+    redaction_profile: str = 'local'
