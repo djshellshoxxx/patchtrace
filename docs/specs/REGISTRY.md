@@ -51,10 +51,10 @@ Cite a spec as **repository path plus canonical alias**, for example `docs/specs
 | `docs/specs/calibration-corpus-and-model.md` | "SPEC-28 (proposed number)" (title) | SPEC-39 (proposed; collision) | draft | calibration/ (runtime, ships); tools/calibration/ (dev, never ships) | "DRAFT methodology"; C9-0 ratification open |
 | `docs/specs/diaphora-optional-engine.md` | SPEC-DA-01 | SPEC-DA-01 | partial | diaphora/ (contracts, sqlite_guard, result_import, address_map, provenance, bridge, service, cli); cli_commands/diaphora.py | Mode A result import built (synthetic fixtures only); open: export-DB import, signals, context, GUI, Mode B/C |
 | `docs/specs/program-e/GDE-integration-plan.md` | none (plan; spec id unassigned) | GDE (unnumbered) | deferred | none; planned guide/ (contract guide-lesson/1) | Guided RE teacher: authored lessons, closed predicate vocabulary, static hint ladder; no code; deferred until the GUI panel registry and anchor work land; listed as a non-goal for the alpha |
-| `docs/specs/qbindiff-inspired-matching.md` | SPEC-QB-01 | SPEC-QB-01 | draft | none on main; planned matching/ | "Proposed; not implemented" |
-| `docs/specs/qbindiff-modular-integration.md` | SPEC-QB-02 | SPEC-QB-02 | draft | none on main | Proposed companion to SPEC-QB-01 |
-| `docs/specs/radiff2-inspired-comparison.md` | SPEC-RD-01 | SPEC-RD-01 | draft | none on main; planned comparison/ | "Proposed; no feature claimed implemented" |
-| `docs/specs/radiff2-modular-integration.md` | SPEC-RD-02 | SPEC-RD-02 | draft | none on main | Proposed companion to SPEC-RD-01 |
+| `docs/specs/qbindiff-inspired-matching.md` | SPEC-QB-01 | SPEC-QB-01 | superseded by SPEC-31 (A-10) | none on main; planned matching/ | "Proposed; not implemented" |
+| `docs/specs/qbindiff-modular-integration.md` | SPEC-QB-02 | SPEC-QB-02 | superseded by SPEC-31 (A-10) | none on main | Proposed companion to SPEC-QB-01 |
+| `docs/specs/radiff2-inspired-comparison.md` | SPEC-RD-01 | SPEC-RD-01 | partially superseded (A-11) | none on main; planned comparison/ | "Proposed; no feature claimed implemented" |
+| `docs/specs/radiff2-modular-integration.md` | SPEC-RD-02 | SPEC-RD-02 | partially superseded (A-11) | none on main | Proposed companion to SPEC-RD-01 |
 | `docs/specs/windows-acceptance-and-milestone-builds.md` | none (self-described "draft spec") | SPEC-40 (proposed; unnumbered) | draft | packaging: tools/build_windows.py, tools/build_linux.py, tools/frozen_smoke.py | Sections marked (new) not implemented |
 | `docs/specs/completeness-audit.md` | none (cites SPEC-05, SPEC-07) | none (audit; cite by path) | n/a | none | Audit; its per-row statuses are stale (handoff B4) |
 | `docs/specs/kev-exploitation-context.md` | SPEC-46 (title) | SPEC-46 | draft | planned enrichment/kev (KEV-integration-plan) | Draft written 2026-10-14; nothing implemented |

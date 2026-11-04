@@ -106,8 +106,8 @@
 - [x] Independent review of the spec (docs/specs/unified-engine/11-review-log.md): 30 findings fixed in place (R-01..R-32), residual risks and USER decisions U-11/U-12 added
 - [x] P1 Windows spawn lock in `jobs._windows_process` (merged with C3; `test_concurrent_run_process_calls_do_not_cross_pipes_or_leak_threads`)
 - [x] P2 nway raw `address_matches`: skip `EXTERNAL:<hex>` entries instead of `PT-NWAY-PAIR` (ce108cd)
-- [ ] P2b count the skipped `EXTERNAL:` entries in the series limitations; SPEC-09/SPEC-28 status lines (A-05, A-06)
-- [ ] S0a contracts/limits/keys/registry/store + schemas + doc status lines (10-amendments rows marked S0a)
+- [x] P2b count the skipped `EXTERNAL:` entries in the series limitations; SPEC-09/SPEC-28 status lines (A-05, A-06)
+- [x] S0a contracts/limits/keys/registry/store + schemas + doc status lines (10-amendments rows marked S0a)
 - [ ] S0b sources, fusion, S0 facts, pipeline, worker, CLI `unified run/show/explain/status --no-extract`
 - [ ] S1 extraction (GZF reuse + analyze fallback), ingest, MD index port with notices, live-unified workflow (Windows + Linux)
 - [ ] S2 ladder MVP + parity harness; S5 residual (blocking, vectors, votes, LAP)
@@ -181,7 +181,7 @@
 - [x] Ladder MVP P00-P15 (uniqueness-gated, BinDiff-style drill-down, tier cap along the chain), propagation to a fixpoint (neighbour cascade, hubs, thunk targets, implied matches with symmetric persistent conflicts), groups (duplicate, ICF, inline/outline), leftover reasons, `partial` on budget exhaustion; `src/patchtrace/unified/ladder/`
 - [x] Parity harness `tools/unified/parity.py` (Ghidriff, BinDiff rows, MD histogram, dev-only `--md_index` argv) and synthetic IR builder `tests/unified_ir_builder.py`
 - [x] Acceptance: every 04 s9 test of the S2 scope by its name (the S5 residual tests are not in scope; the three MD tests run against the builder's stand-in), the four properties (permutation, side swap, unrelated function, budget prefix), G-U5 at 10k and 60k (`tests/test_unified_ladder_perf.py`), 31 mutants of the ladder killed
-- [ ] S1: adapter `IrReader -> IrSide` (ports.py docstring has the column mapping); `ir/mdindex.py` must ship `test_md_index_diamond_vector`, `test_md_index_plain_loop_not_compensated_sum`, `test_md_null_below_min_blocks` against the real module (S2 has them against the builder's stand-in); the ported modules' header years are R02's `2011-2023` and must be checked against the pinned files when `third_party/notices/bindiff-v8-<sha7>/` lands
+- [x] S1: adapter `IrReader -> IrSide` (ports.py docstring has the column mapping); `ir/mdindex.py` must ship `test_md_index_diamond_vector`, `test_md_index_plain_loop_not_compensated_sum`, `test_md_null_below_min_blocks` against the real module (S2 has them against the builder's stand-in); the ported modules' header years are R02's `2011-2023` and must be checked against the pinned files when `third_party/notices/bindiff-v8-<sha7>/` lands
 - [ ] S0b: registry rows for P01-P15 (family, evidence class) plus a cross-check against `ladder.passes.PASSES` (the table in tests/test_unified_ladder_core.py::SPEC_TABLE is the spec transcription); consume `Correspondence`; `PASS_TABLE_DIGEST` into `config_digest`
 - [ ] Integration owner: spec amendment rows A-15 (bindiff-execution.md wording for the dev-only parity tool) and A-24 (docs/notices.md, docs/reuse-matrix.md rows) and a short "S2 build notes" paragraph in 04 (deviations above); register a `perf` pytest marker if G-U5 tests should be deselectable (pyproject.toml is not S2's); extend `test_ported_modules_carry_attribution_header` to `ir/mdindex.py`
 - [ ] BLOCKED (live): G-U3 parity against a real BinDiff (`--md_index` dump layout unverified; no pin yet), G-U5 on the Windows runner and the frozen EXE, real MSVC-built IR, Ghidriff `address_matches` of a real run through the harness
@@ -930,3 +930,16 @@ Done: dock with state matrix, consent, import, changes, copy, go to CVE. Open: r
 - [x] (2026-11-04, A-28) Ghidriff one-to-many abstains per conflict group instead of rejecting the whole document; CORE-2 exact-pair rejection kept; PatchTrace-reserved metadata keys planted upstream reject (`tests/test_normalization_one_to_many.py`, `tests/test_unified_ghidriff_one_to_many.py`, `tests/test_evalcore_ghidriff_one_to_many.py`)
 - [ ] (RB-01, external) re-dispatch `unified-live-gates` with per_class=2: `lua-v5.4.6-to-v5.4.7-O2` must write outcomes in both orientations; tier-R/attention still report that pair `failed` (one-to-many) by design
 - [ ] (A-28 follow-ups) per-pairing Prediction scoring (needs additive `abstained_old_rvas`/`abstained_new_rvas` in `tier-r-engine-output/1`); partial 1:N degree check over `address_matches` (moves tier-R baselines; owner decision); `SnapshotMatch.pairs` so the ghidriff-1n group survives raw-missing; group-size cap owner decision (count is visible today)
+
+### [C-RECEIPT:native-receipts]
+- [x] (2026-11-04, RB-03) native receipt converter/validator `tools/native_receipt.py` + SPEC-28 §17; live BinDiff status records `source_pair_sha256`/`input_pair_sha256` (`tests/test_native_receipt.py`)
+- [ ] (RB-03, integrator) wire the receipt steps into `live-rizin.yml`/`live-bindiff.yml` and record the first real receipts per OS; binexport2 stays BLOCKED until a Ghidra/IDA-produced .BinExport exists (C3-7)
+- [ ] (RB-03) `tools/live_rzdiff_check.py` hard-codes `mocked: false`; honour `PATCHTRACE_LIVE_MOCKED` so a fake-driven run can never yield a PASS receipt
+
+### [AF-0:waveA1] Backlog wave A1 (2026-11-04)
+- [x] B1-UE-R4a: G-U5 bench measures `facts` and `read_model`; child output bounded (U7-13); `tests/test_unified_bench.py`
+- [ ] UE-R4 remainder: `ui_calls` stage (needs Qt S4b), Windows bench report, Tier R pair
+- [x] C-RZ-ORIENT rz-diff orientation guard (abstains on unexcludable 0.9.1 reversal); live-rizin confirmation pending
+- [x] C-BD-ROWCAP BinDiff importer row caps (plan S6/D5)
+- [x] E3-CAP-5b `intel-tools pairs --hypothesis CVE-ID` (context only)
+- [ ] A-01b: Run comparison is not disabled while a unified run is in progress (`MainWindow.update_controls` checks only `self.worker`)

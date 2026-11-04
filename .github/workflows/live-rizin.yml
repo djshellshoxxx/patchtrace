@@ -98,3 +98,15 @@ jobs:
           name: live-rzdiff-${{ runner.os }}
           path: live-rzdiff-${{ runner.os }}.json
           if-no-files-found: warn
+      - name: RB-03 native receipt (SPEC-28 section 17)
+        if: always()
+        shell: bash
+        env:
+          PATCHTRACE_SOURCE_HEAD: ${{ github.sha }}
+        run: python tools/native_receipt.py build --input "live-rzdiff-${{ runner.os }}.json" --out build/receipts
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: receipts-rzdiff-${{ runner.os }}
+          path: build/receipts/*.json
+          if-no-files-found: error

@@ -1254,3 +1254,19 @@ Independent credited-replay review approved source `5c26af904a28dd41aaacb3a60f98
 
 ### [ghidriff-1toN:normalizer]
 A-28 (2026-11-04), automated and SYNTHETIC only (hand-built Ghidriff JSON from `sample_diff`; no Ghidriff/Ghidra run): 30 of 35 new normalizer/service/consumer tests, 3 of 5 unified-adapter tests and 3 of 3 evalcore tests failed before the change (the passing ones lock existing behaviour: golden D0, contradiction rejections, fuzz, two adapter characterizations); all pass after it, CORE-2 test unchanged. Not verified: the live lua-v5.4.6-to-v5.4.7-O2 pair (unified-live-gates re-dispatch is an external gate).
+
+### [C-RECEIPT:native-receipts]
+RB-03 receipts (2026-11-04), automated and SYNTHETIC only: `tests/test_native_receipt.py` maps hand-built rz-diff/BinDiff status documents with today's producer keys (goldens, zero matches, mocked, head, pin, identity, blocked, malformed, binexport2-absent, byte-identical rebuild, exit codes, forged receipts) and runs the live BinDiff test against the fake BinDiff (declared mocked) to prove the new hash pairs are recorded. No real engine ran; no receipt here is live evidence. Open: workflow wiring and the first real receipts (integrator).
+
+## [AF-0:waveA1] Backlog wave A1, confirmed slices (2026-11-04)
+
+Each slice was built in its own worktree with red tests first and independently verified (diff read, tests rerun, source reverted to confirm the new tests fail, invariants audited). Synthetic and Linux-only unless stated; none of this is live evidence.
+
+| Slice | Result | Evidence |
+|---|---|---|
+| B1-UE-R4a G-U5 bench `facts` and `read_model` stages, bounded child output (U7-13) | built | facts at 5,000 changed pairs 4.9-5.1 s (allowed 300 s), child about 25 s and 514 MiB; read_model 10k filter 1.0 ms, sort 3.7 ms, first paint 4.2 ms; 100k filter 10.2 ms, sort 48.3 ms, first paint 51.7 ms (medians of 5). `ui_calls`, the Windows report and the Tier R pair stay pending, so G-U5 is partial. |
+| B3 S0a/S2 close-out | built | SPEC-31 status lines in sibling specs, BinDiff provenance names `ladder/{passes,engine,propagate}.py`; registry rows QB-01/02 superseded (A-10), RD-01/02 partially superseded (A-11). Gap recorded: Run comparison is not disabled during a unified run (A-01b). |
+| C-RZ-ORIENT rz-diff orientation guard | built | output that cannot exclude the 0.9.1 singleton reversal abstains; the next `live-rizin` run must show whether the guard fired (no local rizin). |
+| C-BD-ROWCAP BinDiff importer row caps (S6/D5) | built | per-table caps enforced after schema and column checks. |
+| C-RECEIPT native receipts (RB-03, SPEC-28 s17) | built + wired | `tools/native_receipt.py`; receipt build/upload steps in `live-rizin.yml` and `live-bindiff.yml`, PASS required on the Linux BinDiff leg; BinExport2 receipts stay BLOCKED (no Ghidra/IDA-produced export). |
+| E3-CAP-5b `intel-tools pairs --hypothesis CVE-ID` | built | capability context from stored advisories only (`tests/test_capa_cli_hypothesis.py`, 10 passed). |

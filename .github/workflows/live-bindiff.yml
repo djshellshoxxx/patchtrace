@@ -75,3 +75,21 @@ jobs:
           name: live-bindiff-${{ matrix.pin_os }}
           path: build/live-status/
           if-no-files-found: warn
+      - name: RB-03 native receipt (SPEC-28 section 17)
+        if: always()
+        shell: bash
+        env:
+          PATCHTRACE_SOURCE_HEAD: ${{ github.sha }}
+        run: python tools/native_receipt.py build --input build/live-status/bindiff.json --out build/receipts
+      - name: RB-03 receipt must PASS (required Linux leg only)
+        if: ${{ always() && !matrix.advisory }}
+        shell: bash
+        env:
+          PATCHTRACE_SOURCE_HEAD: ${{ github.sha }}
+        run: python tools/native_receipt.py check build/receipts/bindiff-*.json --require-pass
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: receipts-bindiff-${{ matrix.pin_os }}
+          path: build/receipts/*.json
+          if-no-files-found: error
