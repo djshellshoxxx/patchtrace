@@ -226,3 +226,13 @@ Safe to delete after review (no content lost): every MERGED and EQUIVALENT branc
 | 2026-11-04 06:05 | CI on main | OBSERVED | `qa-windows.yml` run 790 (`b0280c8`, #175) green; `release` skipped by `release-gate` (every third counted merge), so the newest prerelease is still `v0.1.0-beta.751` (`b77d84e`); run 796 (`25b2ac8`) queued. |
 | 2026-11-04 06:07 | 12-hour check | DONE | scheduled task `trig_01HDoAFQvdDBGvFt1RTDM3s5`, cron `6 */12 * * *` into this session. |
 | 2026-11-04 06:07 | In-flight lineage | OBSERVED | #174, #176, #177 heads updated 05:53Z; `claude/autonomous-finish-20261104` (80 unique, no PR) holds #176's patches (#176 classified SUPERSEDED by it). Not touched. |
+
+## C6 automation decision table (coordinator only; nothing merged)
+
+All three add API-funded agents that spend money. `main` already carries `.github/workflows/codex-cloud.yml` (#169), which covers the same ground. Each needs an explicit owner decision. This session merges none of them.
+
+| PR | What it adds | Trigger | Token permissions | Secrets | Third-party actions | Finding | Recommendation |
+|---|---|---|---|---|---|---|---|
+| #167 | `patchtrace-api-agent.yml` + `tools/cloud_agent/pilot.py` (OpenAI Responses API pilot) | `workflow_dispatch` only, 20 min timeout | `contents: read` | `PATCHTRACE_OPENAI_API_KEY` | none (first-party only) | lowest risk; qa failed on its head (per other coordinator's triage) | owner: keep as a manual pilot or close |
+| #170 | `codex-autonomous.yml` (305 lines): scheduled Codex agent that opens PRs | cron `17 7,19 * * *` (2 runs/day) | job-level `contents: write`, `pull-requests: write`; top-level `{}` | `PATCHTRACE_OPENAI_API_KEY`, optional `PATCHTRACE_GITHUB_TOKEN` | `openai/codex-action`, `peter-evans/create-pull-request`, both SHA-pinned | scheduled spend; write token; overlaps `codex-cloud.yml` | owner decision; at most one of #170/#171/`codex-cloud.yml` |
+| #171 | `patchtrace-parallel-api.yml` + `tools/parallel_cloud/` + tests: 8 isolated agents, 4 batches/day | cron `11 1,7,13,19 * * *` | job-level `contents: write`, `pull-requests: write`; top-level `{}` | as #170 | `peter-evans/create-pull-request@v7` pinned by tag, not SHA | highest spend (8 agents x 4/day); tag-pinned third-party action is a supply-chain gap | owner decision; if kept, SHA-pin the action first |
