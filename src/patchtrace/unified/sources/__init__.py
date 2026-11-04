@@ -231,11 +231,16 @@ def snapshot_from_project(project, run_id: str, limits: UnifiedLimits = DEFAULT_
     analyst's corrections, which is all the result identity needs (a cheap plan for `status`)."""
     if len(project.matches) > limits.l38_rows_per_result:
         raise UnifiedError('PT-UNIFIED-LIMIT', 'The project has more matches than L-38 allows', reason='rows-cap')
+    selected = [m for m in project.matches if m.run_id == run_id and (m.manual or not manual_only)]
+    if any(m.manual and (len(m.older) > MAX_FUNCTIONS_PER_SIDE or len(m.newer) > MAX_FUNCTIONS_PER_SIDE)
+           for m in selected):
+        raise UnifiedError('PT-UNIFIED-LIMIT', 'A manual correction exceeds the 1024 functions per side limit',
+                           reason='manual-members-cap')
     out = [SnapshotMatch(id=m.id, category=m.category, manual=bool(m.manual),
                          match_types=tuple(replace_surrogates(str(t)[:64]) for t in m.match_types[:16]),
                          older=tuple(_function(f, limits) for f in m.older[:MAX_FUNCTIONS_PER_SIDE]),
                          newer=tuple(_function(f, limits) for f in m.newer[:MAX_FUNCTIONS_PER_SIDE]))
-           for m in project.matches if m.run_id == run_id and (m.manual or not manual_only)]
+           for m in selected]
     return tuple(sorted(out, key=lambda s: s.id))
 
 

@@ -25,9 +25,9 @@ from . import (
     function_rva,
 )
 
-# manual/3 (2026-11-04): unresolvable sides, `unmatched` pairs and pairing categories with an empty side no longer
-# become tier-M claims; the bump re-keys results of projects with corrections (02 s5), so none is served stale.
-VERSION = 'manual/3'
+# manual/5 (2026-11-04): every named member must resolve, and added/removed must name only their declared
+# side. Re-key results made with member-filtering or contradictory-category semantics (02 s5).
+VERSION = 'manual/5'
 ONE_SIDED = frozenset({'removed', 'added', 'unmatched'})  # 06 s6: categories that declare no counterpart
 
 
@@ -90,9 +90,14 @@ class ManualAdapter:
             budget.tick()
             older = [(rva, f) for f in match.older if (rva := function_rva(f, 'older', addr, basis, ledger)) is not None]
             newer = [(rva, f) for f in match.newer if (rva := function_rva(f, 'newer', addr, basis, ledger)) is not None]
-            if (match.older and not older) or (match.newer and not newer):
-                # a side the analyst named but whose address is unusable: a pairing must never degrade into a
-                # one-sided (removed/added) claim, so the correction is not applied and the result is partial
+            if len(older) != len(match.older) or len(newer) != len(match.newer):
+                # Any unresolved member invalidates this correction as a whole. A subset could change a group
+                # into a 1:1 or a one-sided claim, so keep no atoms or nodes and mark the result partial.
+                ledger.count('manual-unresolved')
+                continue
+            if ((match.category == 'added' and (older or not newer))
+                    or (match.category == 'removed' and (newer or not older))):
+                # These categories explicitly declare absence on the opposite side, never an affirmative pair.
                 ledger.count('manual-unresolved')
                 continue
             if match.category not in ONE_SIDED and not (older and newer):

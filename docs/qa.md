@@ -1267,3 +1267,30 @@ Environment: Linux container, CPython 3.13.18, PySide6 6.12.0 (offscreen), pytes
 - SPEC-51 (d2): 742 passed, 5 skipped (new and existing `tests/test_pe_*.py`, tooltips, GUI host seam, docks, CLI features). Microsoft hosts were unreachable (403); the Authenticode ranges and OIDs were corroborated against signify 0.7.1 (MIT; no code copied). D2-4 Windows catalog: fakes only, BLOCKED for real acceptance.
 - report/2 wiring (rpt3): report, tooltip and export-destination tests 281 passed; new adapters and dialog tests 28 passed; Qt repeat gate x5 65 passed. `test_ui_seam_budget` failed after that merge (ui.py 3,117 lines over the 3,077 budget) and passes after moving the controls to `ui_export_v2.py`.
 - SonarCloud: the duplication condition (7.4%, then 4.8%) cleared after de-duplicating the set-file reader and storing the HTML goldens as `*.html.golden`; "Security Rating on New Code: C" remains unidentified (sonarcloud.io unreachable from the agent session).
+
+
+## Manual correction member completeness (2026-11-04)
+
+Candidate base: PR #180 at `a7689119fc25be61a4ac1b65619d6968859a136f`. A correction containing both a resolvable and an unresolved member silently lost the latter; a merge/split could become an affirmative tier-M 1:1, and the persisted result could be complete. Reproduction: 14 category/side adapter cases plus one compute/write/read integration case failed before the repair (15 failed, 15 passed; `/tmp/patchtrace-manual-red.log`).
+
+SPEC-31/06 now requires every named member to resolve before any correction atoms, groups or nodes are emitted. The adapter retains independent valid corrections, emits degrading `manual-unresolved:N`, and moves to `manual/4` to invalidate old cached identities. No wire shape changed. Schemas regenerated without drift.
+
+Linux Codespace, Python 3.14.2; pinned project dev/search/rules dependencies installed in `.venv`, missing Qt system libraries installed. `QT_QPA_PLATFORM=offscreen python -m pytest -q tests/test_unified_fus_manual.py tests/test_unified_sources.py tests/test_unified_fusion.py tests/test_unified_evidence_identity_20261101.py tests/test_unified_wire_compute.py tests/test_unified_pipeline.py`: **179 passed in 12.54 s**. Whole `python -m ruff check src tests tools` passed; `git diff --check` passed. Full offscreen suite is running; its result and exact published SHA will be recorded separately. Synthetic inputs only, no live backend/provider or Windows qualification is claimed.
+
+GitHub code-scanning and branch-protection queries returned HTTP 403; Dependabot alerts endpoint reports disabled (403). Those checks are unavailable, not clear. No merge attempted. Current local Codex config does not select a model or expose usage/account quota, and no usage/billing connector is available. Actual account TPM and dollar usage cannot be verified or the requested $25 cap claimed enforced. One primary worker plus one bounded read-only reconciliation/review worker; no extra paid API scripts, provider calls, scheduled workflows or model switches were started. No rate-limit event observed.
+
+
+### Manual snapshot follow-up: category defense and member cap
+
+Worker snapshots could turn contradictory added/removed categories into tier-M pairs or declarations on the opposite side. The project `FunctionMatch` validator already rejects those shapes: this repair is defense at the independently parsed snapshot/adapter boundary, not a claim that normal project creation accepts them. Six category/shape regressions failed before the adapter guard; they now produce degrading `manual-unresolved` and no rows/facts. Adapter `manual/5` invalidates the earlier semantics.
+
+A separate production defect is owner snapshot truncation: valid manual groups over 1,024 members were sliced before `manual_digest`, losing members and hiding changes to omitted functions from cache identity. Four tests with real validated FunctionMatch/FunctionRecord models failed before repair. Selected-run oversized manual groups now fail closed with `PT-UNIFIED-LIMIT/manual-members-cap` before hashing/execution; exact-cap groups and unrelated runs remain usable. Prior committed results are not rewritten.
+
+Category follow-up before the cap repair: `QT_QPA_PLATFORM=offscreen PYTHONPATH=src python -m pytest -q tests/test_unified*.py tests/test_ui_unified.py`: **2,515 passed, 32 skipped, 1 xfailed in 400.16 s**; native MSVC-free checks explicitly BLOCKED for missing lld-link. Final cap/category/sources/identity/pipeline/wire selection: **156 passed in 10.52 s**. Whole Ruff/diff passed, schemas regenerated against this worktree with no drift. The earlier full suite continues separately on frozen `31f51e76`; it has recorded a failure and is not a pass for this follow-up.
+
+Actual Windows native Ghidriff workflow [41934879294](https://github.com/djshellshoxxx/patchtrace/actions/runs/41934879294) completed successfully on exact `31f51e76831ff58ff1ba4982a9c34df1b9b39a01`: patchtrace-clean, seeded-store, seeded-store-no-adjacent-pdb, raw-cache-hit, and repro-plain-ghidriff jobs. This is old-head native CI evidence, not evidence for these subsequent source edits and not G-U1–G-U8 or clean-machine release acceptance.
+
+
+### Reviewed help dependency integrated into the manual-fix candidate
+
+PR #185 is exactly #180 plus help commits `9313d11b`, `4abe7e33`, `81a9fb28`, verified with range-diff and file comparison. Those three documentation commits were merged without rewriting their provenance; #188 is now stacked on #185 so its reviewed diff remains the manual safeguards only. Post-merge help/CLI/unified-CLI/manual/cap selection: **322 passed in 26.15 s**. The two missing help-page coverage cases are covered by this selection. Independent final review of `063e9fe6` found no blockers, confirmed selected-run/exact-cap behavior, and required the project-vs-snapshot distinction now recorded above. No GitHub main merge or owner gate bypass.
