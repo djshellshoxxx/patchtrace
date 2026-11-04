@@ -65,12 +65,12 @@ Cite a spec as **repository path plus canonical alias**, for example `docs/specs
 | `docs/specs/unified-engine/00-decisions.md` | SPEC-31 / 00 | SPEC-31/00 | draft | planned unified/ | Contract-freeze draft; base cb25132 |
 | `docs/specs/unified-engine/01-architecture.md` | SPEC-31 / 01 | SPEC-31/01 | draft | planned unified/ (layers, import DAG) | Nothing implemented |
 | `docs/specs/unified-engine/02-data-model.md` | SPEC-31 / 02 | SPEC-31/02 | draft | planned unified/ (contracts, limits, keys, registry, store) | S0a built (unified/contracts.py, keys.py, limits.py, store.py); registry.py present |
-| `docs/specs/unified-engine/03-extraction.md` | SPEC-31 / 03 | SPEC-31/03 | draft | planned unified/extract/, unified/ir/ | S1 and S3b built (unified/extract/, unified/ir/); remainder planned |
-| `docs/specs/unified-engine/04-matching-pipeline.md` | SPEC-31 / 04 | SPEC-31/04 | draft | planned unified/ladder/ | S2 and S5 built (unified/ladder/ incl. residual.py); remainder planned |
-| `docs/specs/unified-engine/05-fusion-and-noise.md` | SPEC-31 / 05 | SPEC-31/05 | draft | planned unified/fusion/, unified/facts/ | S0b fusion and S3 facts built (unified/fusion/, unified/facts/) |
+| `docs/specs/unified-engine/03-extraction.md` | SPEC-31 / 03 | SPEC-31/03 | partial | planned unified/extract/, unified/ir/ | S1 and S3b built (unified/extract/, unified/ir/); remainder planned |
+| `docs/specs/unified-engine/04-matching-pipeline.md` | SPEC-31 / 04 | SPEC-31/04 | partial | planned unified/ladder/ | S2 and S5 built (unified/ladder/ incl. residual.py); remainder planned |
+| `docs/specs/unified-engine/05-fusion-and-noise.md` | SPEC-31 / 05 | SPEC-31/05 | partial | planned unified/fusion/, unified/facts/ | S0b fusion and S3 facts built (unified/fusion/, unified/facts/) |
 | `docs/specs/unified-engine/06-adapters.md` | SPEC-31 / 06 | SPEC-31/06 | draft | planned unified/sources/ | Sources built (unified/sources/ghidriff.py, manual.py, secondary.py) |
 | `docs/specs/unified-engine/07-ui-and-cli.md` | SPEC-31 / 07 | SPEC-31/07 | draft | planned ui_unified.py, unified/cli.py | unified/cli.py and S4a read model built; ui_unified.py not built |
-| `docs/specs/unified-engine/08-evaluation.md` | SPEC-31 / 08 | SPEC-31/08 | draft | planned tools/unified/ | S6a corpus and gates built (tools/unified/corpus, gates_u.py, bench.py, parity.py, mutations); remainder planned |
+| `docs/specs/unified-engine/08-evaluation.md` | SPEC-31 / 08 | SPEC-31/08 | partial | planned tools/unified/ | S6a corpus and gates built (tools/unified/corpus, gates_u.py, bench.py, parity.py, mutations); remainder planned |
 | `docs/specs/unified-engine/09-licensing.md` | SPEC-31 / 09 | SPEC-31/09 | draft | none (licence notices) | Notices per technique source |
 | `docs/specs/unified-engine/10-amendments.md` | SPEC-31 / 10 | SPEC-31/10 | draft | none (edits to other specs, per slice) | Each amendment applies in its slice's PR |
 | `docs/specs/ai-provider-interpretation.md` | none (SPEC-41 assigned) | SPEC-41 | draft | providers.py, interpretation.py, evidence.py | Documents loopback Ollama and HTTPS OpenAI-compatible transports, validation and AI-text rules; findings: loopback check differs on CPython 3.12 vs 3.13, 'no new claims' is prompt-only, transport errors escape unclassified (Haiku draft, probes run) |
@@ -84,16 +84,16 @@ Cite a spec as **repository path plus canonical alias**, for example `docs/specs
 | `docs/specs/unified-engine/13-remaining-work-plan.md` | SPEC-31 / 13 | SPEC-31/13 | plan | none (plan only) | Slices UE-R1..UE-R13; how-to steps in `docs/handoff/unified-engine.md` |
 | `docs/specs/panels/README.md` | none (index) | SPEC-54 (panels) | n/a | none | Index of per-panel specs, not a spec itself |
 | `docs/specs/panels/related.md` | none (SPEC-54 panel) | SPEC-54 | proposed | fabric/panel.py, fabric/related.py, ui_related.py | FAB-6 `related` panel contract, written from the code |
-| `docs/specs/panels/graph-inspection.md` | none (SPEC-47 panel) | SPEC-47 | proposed | callgraph/minimap.py, callgraph/minimap_qt.py, callgraph panel_data | Calls panel DOT export, call-site reveal, minimap |
-| `docs/specs/kb/adapter-binding-spec.md` | none (KB gameplan) | SPEC-KB | proposed | kbcorrelation/, kb adapters | KB adapters bound to the correlation port; written by the KB gameplan worker, not yet built |
-| `docs/specs/kb/advisory-revision-and-snapshot-identity-spec.md` | none (KB gameplan) | SPEC-KB | proposed | kbcorrelation/, kb adapters | Advisory revision and snapshot identity; written by the KB gameplan worker, not yet built |
-| `docs/specs/kb/beta-budgets-help-and-acceptance-spec.md` | none (KB gameplan) | SPEC-KB | proposed | kbcorrelation/, kb adapters | KB beta budgets, help and acceptance; written by the KB gameplan worker, not yet built |
-| `docs/specs/kb/cve-to-function-matching-spec.md` | none (KB gameplan) | SPEC-KB | proposed | kbcorrelation/, kb adapters | CVE-to-function matching; written by the KB gameplan worker, not yet built |
-| `docs/specs/kb/leads-dock-lifecycle-spec.md` | none (KB gameplan) | SPEC-KB | proposed | kbcorrelation/, kb adapters | Leads dock lifecycle; written by the KB gameplan worker, not yet built |
-| `docs/specs/kb/live-acquisition-spec.md` | none (KB gameplan) | SPEC-KB | proposed | kbcorrelation/, kb adapters | Live KB acquisition; written by the KB gameplan worker, not yet built |
-| `docs/specs/kb/search-anchors-bridge-spec.md` | none (KB gameplan) | SPEC-KB | proposed | kbcorrelation/, kb adapters | Search anchors bridge; written by the KB gameplan worker, not yet built |
-| `docs/specs/kb/store-threading-spec.md` | none (KB gameplan) | SPEC-KB | proposed | kbcorrelation/, kb adapters | KB store threading; written by the KB gameplan worker, not yet built |
-| `docs/specs/kb/vendor-feeds-and-source-matrix-spec.md` | none (KB gameplan) | SPEC-KB | proposed | kbcorrelation/, kb adapters | Vendor feeds and source matrix; written by the KB gameplan worker, not yet built |
+| `docs/specs/panels/graph-inspection.md` | none (SPEC-47 panel) | SPEC-47 | built | callgraph/minimap.py, callgraph/minimap_qt.py, callgraph panel_data | Calls panel DOT export, call-site reveal, minimap |
+| `docs/specs/kb/adapter-binding-spec.md` | none (KB gameplan) | SPEC-KB | draft | kbcorrelation/, kb adapters | KB adapters bound to the correlation port; written by the KB gameplan worker, not yet built |
+| `docs/specs/kb/advisory-revision-and-snapshot-identity-spec.md` | none (KB gameplan) | SPEC-KB | draft | kbcorrelation/, kb adapters | Advisory revision and snapshot identity; written by the KB gameplan worker, not yet built |
+| `docs/specs/kb/beta-budgets-help-and-acceptance-spec.md` | none (KB gameplan) | SPEC-KB | draft | kbcorrelation/, kb adapters | KB beta budgets, help and acceptance; written by the KB gameplan worker, not yet built |
+| `docs/specs/kb/cve-to-function-matching-spec.md` | none (KB gameplan) | SPEC-KB | draft | kbcorrelation/, kb adapters | CVE-to-function matching; written by the KB gameplan worker, not yet built |
+| `docs/specs/kb/leads-dock-lifecycle-spec.md` | none (KB gameplan) | SPEC-KB | draft | kbcorrelation/, kb adapters | Leads dock lifecycle; written by the KB gameplan worker, not yet built |
+| `docs/specs/kb/live-acquisition-spec.md` | none (KB gameplan) | SPEC-KB | draft | kbcorrelation/, kb adapters | Live KB acquisition; written by the KB gameplan worker, not yet built |
+| `docs/specs/kb/search-anchors-bridge-spec.md` | none (KB gameplan) | SPEC-KB | draft | kbcorrelation/, kb adapters | Search anchors bridge; written by the KB gameplan worker, not yet built |
+| `docs/specs/kb/store-threading-spec.md` | none (KB gameplan) | SPEC-KB | draft | kbcorrelation/, kb adapters | KB store threading; written by the KB gameplan worker, not yet built |
+| `docs/specs/kb/vendor-feeds-and-source-matrix-spec.md` | none (KB gameplan) | SPEC-KB | draft | kbcorrelation/, kb adapters | Vendor feeds and source matrix; written by the KB gameplan worker, not yet built |
 | `docs/specs/pe-version-authenticode.md` | none (SPEC-51 assigned); part D2 of SPEC-26 | SPEC-51 | partial | pe_overview/ (resources.py, version_info.py, manifest.py built; authenticode.py Windows-only) | D2-1 and D2-2 built; open: DER and embedded-signature digest, catalog check, compare rows, CLI and GUI tab |
 | `docs/specs/windows-release-signing-policy.md` | none (SPEC-52 assigned) | SPEC-52 | draft | none (policy); tools/build_windows.py, release workflow | Nothing is signed; owner decisions on a signing service are open |
 | `docs/specs/ghidriff-launcher-symbols.md` | none (SPEC-53 assigned) | SPEC-53 | partial | symbols/ (modes, pdbid, staging, project); ghidriff_launch/ (ptlaunch.py data file, validate.py); backend.py; enrichment/cache.py; cli.py `series create` | GHR-1 to GHR-3 and CLI flags built (hermetic fake-ghidriff tests); open: Setup radios, Profiles value, diagnose lines, GHR-5 native air-gap matrix, GHR-6 |
@@ -165,5 +165,5 @@ These files were not on `main` at 1560531. As of 2026-10-14 (branch `work/a`, 43
 | `docs/specs/workbench/README.md` (PR #43) | PT-WB index (cites SPEC-29, SPEC-31) | PT-WB (index) | approved | none | Developer-ready design; no implementation |
 | `docs/specs/workbench/01-search-fts5-rapidfuzz.md` (PR #43) | PT-WB-01 | PT-WB-01 | approved | none (planned search index) | Not implemented |
 | `docs/specs/workbench/02-networkx-callgraph.md` (PR #43) | PT-WB-02 | PT-WB-02 | approved | none (planned) | Not implemented |
-| `docs/specs/workbench/03-floss-strings.md` (PR #43) | PT-WB-03; "SPEC-29" means the three-tool suite | PT-WB-03 | approved | planned intelligence/tools/floss.py (SPEC-36) | Reuses the SPEC-36 FLOSS adapter |
+| `docs/specs/workbench/03-floss-strings.md` (PR #43) | PT-WB-03; "SPEC-29" means the three-tool suite | PT-WB-03 | partial | planned intelligence/tools/floss.py (SPEC-36) | Reuses the SPEC-36 FLOSS adapter |
 | `docs/specs/workbench/04-quickwins.md` (PR #43) | PT-WB-QW | PT-WB-04 | draft | none | "Ranked proposals, not implementation" |
