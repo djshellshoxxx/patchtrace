@@ -371,3 +371,64 @@ def load_jsonl(model: type[BaseModel], data: bytes, what: str, *, max_lines: int
             raise TierWError('PT-TIERW-LIMIT', f'{what} has more than {max_lines} lines')
         out.append(_load(model, line, line_limit, f'{what} line {number}'))
     return out
+
+
+# ---- runner summary (s9) ---------------------------------------------------------------------------------------
+
+SkipReason = Literal['split', 'merged', 'ambiguous', 'added', 'removed', 'not-one-to-one', 'one-sided', 'no-address',
+                     'address-space', 'out-of-image', 'image-base-unknown', 'duplicate']
+Condition = Literal['symbols-hidden', 'symbols-visible', 'n/a']
+
+
+class RunCell(_Strict):
+    """Counts for one (engine, condition), never pooled: attempted = ok + failed, and attempted + blocked +
+    cancelled = the pair count. `matches` are the lines written; `skipped` counts engine rows not written."""
+    engine: str = Field(pattern=r'^[a-z0-9._-]{1,64}$')
+    condition: Condition
+    attempted: int = Field(ge=0)
+    ok: int = Field(ge=0)
+    failed: int = Field(ge=0)
+    blocked: int = Field(ge=0)
+    cancelled: int = Field(ge=0)
+    matches: int = Field(ge=0)
+    skipped: dict[SkipReason, int]
+
+    @field_validator('skipped')
+    @classmethod
+    def _positive(cls, value):
+        if any(count < 1 for count in value.values()):
+            raise ValueError('skip counts must be positive')
+        return value
+
+
+class RunProblem(_Strict):
+    pair: Ident
+    engine: str = Field(pattern=r'^[a-z0-9._-]{1,64}$')
+    condition: Condition
+    outcome: Literal['failed', 'blocked']
+    message: str = Field(min_length=1, max_length=500)
+
+
+class RunRecord(_Strict):
+    contract: Literal['tier-w-run/1']
+    tier: Literal['W', 'test']
+    corpus_id: str = Field(pattern=r'^tier-w-[A-Za-z0-9._-]{1,57}$')
+    status: Literal['ok', 'partial', 'blocked', 'cancelled']
+    pairs: int = Field(ge=0)
+    matches_sha256: Sha256
+    cells: tuple[RunCell, ...] = Field(max_length=64)
+    problems: tuple[RunProblem, ...] = Field(default=(), max_length=100_000)
+
+    @model_validator(mode='after')
+    def _consistent(self):
+        keys = [(c.engine, c.condition) for c in self.cells]
+        if keys != sorted(set(keys)):
+            raise ValueError('cells must be sorted by (engine, condition) and unique')
+        for c in self.cells:
+            if c.attempted != c.ok + c.failed or c.attempted + c.blocked + c.cancelled != self.pairs:
+                raise ValueError(f'{c.engine}/{c.condition} counts do not add up')
+        return self
+
+
+def load_run_record(data: bytes) -> RunRecord:
+    return _load(RunRecord, data, DOC_LIMIT, 'run record')
