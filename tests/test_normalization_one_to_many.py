@@ -404,3 +404,27 @@ def test_features_and_nway_abstain_on_the_rows(pure):
         assert row.status == 'not-comparable' and row.values == ()
         alone = extract(match, [])
         assert alone.status == 'one-sided' and 'added/removed' not in alone.reason and 'ambiguous' in alone.reason
+
+
+# --- address spelling (A-28 review follow-up) ------------------------------------------------------------------------
+
+def test_one_function_under_two_address_spellings_is_rejected_not_matched_twice(pure):
+    """'0x180001000' and '180001000' are one function to every consumer (enrichment.identity.parse_address). Before
+    A-28's follow-up the normalizer accepted both spellings as two active modified rows holding the same function;
+    one document spelling one address two ways is malformed (pinned Ghidriff never does it), so it fails closed."""
+    raw = d1(pure[0])
+    raw['functions']['modified'][2]['old']['address'] = '0x180001000'
+    with pytest.raises(ValueError, match='PT-SCHEMA: upstream function is repeated with conflicting content'):
+        normalize(raw, pure)
+
+
+def test_address_less_records_of_one_name_are_one_identity_whatever_the_empty_spelling(pure):
+    """A null and an empty address are both address-less (address_space 'unknown'); two such records of one name with
+    different bodies are a conflict, not two functions."""
+    raw = d1(pure[0])
+    modified = raw['functions']['modified']
+    modified[0]['old']['address'] = None
+    modified[2]['old']['address'] = ''
+    modified[2]['old']['code'] = modified[2]['old']['code'] + '\n// different body'
+    with pytest.raises(ValueError, match='PT-SCHEMA'):
+        normalize(raw, pure)

@@ -5,6 +5,7 @@ import hashlib
 import json
 import math
 
+from .enrichment.identity import parse_address
 from .models import ComparisonProject, FunctionMatch, FunctionRecord
 
 ROOT_KEYS = {'program_options', 'matches', 'symbols', 'strings', 'functions', 'stats',
@@ -15,7 +16,7 @@ ONE_TO_MANY = 'upstream_one_to_many'
 # Metadata keys PatchTrace derives; an upstream record that already carries one is rejected, never stripped (A-28).
 RESERVED_METADATA = frozenset({'upstream_similarity', 'diff_types', 'upstream_name', 'instructions_hash',
                                'assembly_unavailable', ONE_TO_MANY})
-Identity = tuple[str, str, str | None]
+Identity = tuple[str, str, int | None]  # side, name, parsed address (None: address-less)
 
 
 def _strings(value, label: str) -> list[str]:
@@ -53,7 +54,7 @@ def _canonical(value) -> str:
 
 def _identity_key(identity: Identity) -> tuple:
     side, name, address = identity
-    return side != 'older', name, address is None, address or ''
+    return side != 'older', name, address is None, -1 if address is None else address
 
 
 def normalize_ghidriff(raw: dict, project: ComparisonProject, run_id: str) -> list[FunctionMatch]:
@@ -94,7 +95,9 @@ def normalize_ghidriff(raw: dict, project: ComparisonProject, run_id: str) -> li
             else:
                 raise ValueError('PT-SCHEMA: instructions must be a string list, integer hash or null')
         metadata['upstream_name'] = record['name']
-        identity = (side, record.get('fullname') or record['name'], record.get('address'))
+        # Consumers read addresses through parse_address ('0x180001000' == '180001000'; '' and unparsable text are
+        # address-less), so identity does too: one function never sits in two active matches under two spellings.
+        identity = (side, record.get('fullname') or record['name'], parse_address(record.get('address')))
         if identity in seen:
             earlier, earlier_one_sided = seen[identity]
             if one_sided or earlier_one_sided:  # "no counterpart" and "matched", or a repeated one-sided entry
