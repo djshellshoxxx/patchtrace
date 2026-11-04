@@ -343,7 +343,8 @@ def test_explain_previews_the_bounded_context_and_sends_nothing(unified, monkeyp
                             ui_unified.PlainLabel))))
     row = next(r for r in controller.vm.rows if r.ghidriff_match_id is None)
     controller.explain(row)
-    assert seen and 'Nothing is sent from here' in seen[0]
+    wait_for(lambda: seen)
+    assert 'Nothing is sent from here' in seen[0]
 
 
 def test_explain_of_a_row_with_a_ghidriff_match_feeds_the_existing_context_preview(unified, monkeypatch):
@@ -354,6 +355,7 @@ def test_explain_of_a_row_with_a_ghidriff_match_feeds_the_existing_context_previ
     monkeypatch.setattr(ui_unified.ExplainDialog, 'exec', lambda self: calls.append('own-dialog'))
     row = next(r for r in controller.vm.rows if r.ghidriff_match_id)
     controller.explain(row)
+    wait_for(lambda: calls)
     fragment = read_model.explain_context(controller.vm, row)
     assert calls == [row.ghidriff_match_id, ('preview', [(fragment.title, fragment.text, fragment.omitted)])]
 
@@ -365,6 +367,7 @@ def test_explain_falls_back_to_its_own_preview_when_the_match_is_not_in_the_navi
     monkeypatch.setattr(window, 'preview_interpretation', lambda *a, notes=(): calls.append('preview'))
     monkeypatch.setattr(ui_unified.ExplainDialog, 'exec', lambda self: calls.append('own-dialog'))
     controller.explain(next(r for r in controller.vm.rows if r.ghidriff_match_id))
+    wait_for(lambda: calls)
     assert calls == ['own-dialog']
 
 
@@ -373,7 +376,8 @@ def test_copy_provenance_uses_the_shell_clipboard(unified):
     copied = []
     controller._copy_text = lambda text: copied.append(text) or True
     controller.copy_provenance(controller.vm.rows[:1])
-    assert copied and copied[0].startswith('PatchTrace unified comparison')
+    wait_for(lambda: copied)
+    assert copied[0].startswith('PatchTrace unified comparison')
 
 
 def test_run_is_off_by_default_and_names_the_reason(unified):

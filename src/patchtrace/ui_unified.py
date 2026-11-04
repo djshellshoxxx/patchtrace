@@ -59,6 +59,7 @@ CODE_LOADING = 'Loading code...'
 CODE_IN_MAIN = "This row maps to a Ghidriff match; its code is shown in the main window's code panes."
 CODE_MODES = {DECOMPILED: 'Decompiled C', DISASSEMBLY: 'Disassembly'}
 LOAD_CHANNEL, RUN_CHANNEL, DETAIL_CHANNEL, CODE_CHANNEL = 'unified-load', 'unified-run', 'unified-detail', 'unified-code'
+ACTION_CHANNEL = 'unified-action'   # copy provenance / explain: sidecar reads, newest request wins
 RowCodeReader = Callable[[UnifiedViewModel, UnifiedRowView], RowCode]
 
 
@@ -723,6 +724,7 @@ class UnifiedController(ControllerBase):
         self.last_error = ''
         self.detail_generation = 0
         self.code_generation = 0
+        self.action_generation = 0
         self.code_row_id: str | None = None
         self._restore_filters()
         self._restore_columns()
@@ -773,6 +775,7 @@ class UnifiedController(ControllerBase):
     def project_changed(self, key) -> None:
         self.tasks.cancel(RUN_CHANNEL)
         self.tasks.cancel(DETAIL_CHANNEL)
+        self._drop_action()
         self._reset_code()
         if key is None:
             self.tasks.cancel(LOAD_CHANNEL)
@@ -800,6 +803,7 @@ class UnifiedController(ControllerBase):
     def shutdown(self) -> None:
         self._resolved_plan = None
         self._load_generation += 1
+        self._drop_action()
         for channel in (LOAD_CHANNEL, RUN_CHANNEL, DETAIL_CHANNEL, CODE_CHANNEL):
             self.tasks.cancel(channel)
         if self._code_source is not None:
@@ -1045,14 +1049,44 @@ class UnifiedController(ControllerBase):
             return
         self.window.correct_match()   # the existing dialog, over the match the navigator now holds
 
+    def _drop_action(self) -> None:
+        """A pending copy/explain answer no longer belongs to what is shown; it is dropped, not delivered."""
+        self.action_generation += 1
+        self.tasks.cancel(ACTION_CHANNEL)
+
+    def _submit_action(self, work: Callable, on_result: Callable) -> None:
+        """Sidecar reads run off the GUI thread; only the newest request may touch the clipboard or open a dialog."""
+        self.action_generation += 1
+        generation = self.action_generation
+
+        def deliver(value) -> None:
+            if generation == self.action_generation:
+                on_result(value)
+
+        def failed(failure) -> None:
+            if generation == self.action_generation:
+                self._status(f'Could not read the unified result: {failure.text}')
+
+        self.tasks.submit(ACTION_CHANNEL, lambda token, report: work(), on_result=deliver, on_error=failed)
+
     def copy_provenance(self, rows: Sequence[UnifiedRowView]) -> None:
         if self.vm is None:
             return
-        text = read_model.provenance_block(self.vm, rows)
+        vm, chosen = self.vm, list(rows)
+        self._status('Reading provenance...')
+        self._submit_action(lambda: read_model.provenance_block(vm, chosen), self._provenance_ready)
+
+    def _provenance_ready(self, text: str) -> None:
         self._status('Provenance copied.' if text and self._copy_text(text) else 'Provenance could not be copied.')
 
     def explain(self, row: UnifiedRowView | None) -> None:
-        fragment = read_model.explain_context(self.vm, row) if row is not None and self.vm else None
+        if row is None or self.vm is None:
+            self._status('No context could be built for this row.')
+            return
+        vm = self.vm
+        self._submit_action(lambda: read_model.explain_context(vm, row), partial(self._explain_ready, row))
+
+    def _explain_ready(self, row: UnifiedRowView, fragment) -> None:
         if fragment is None:
             self._status('No context could be built for this row.')
             return

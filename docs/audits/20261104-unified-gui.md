@@ -20,3 +20,4 @@ GUI-14 | Info | read_model.py load | 30k-row load 2.3 s in worker (pydantic); ta
 Checked clean: HTML injection (PlainLabel/SafeTextView/escaped template tooltips), thread lifecycle via TaskRunner (generation drops stale loads; `_row_changed` bumps detail generation), ir_opcodes/_pair property probes (3000 cases each: every line shown once in order, rows outside hunks equal).
 
 ASKS: record `use_ir` and `residual` in run provenance (pipeline._provenance) so the read model need not try both; supply `attention` from the evidence ranking to request_from_plan. Trade-off of GUI-09: an S0 result with a ProgramIR placed afterwards reads current (cannot tell --no-extract from nothing placed).
+GUI-10 | fixed 20261104 (w2b) | copy_provenance/explain read the sidecar on ACTION_CHANNEL (generation-guarded, project change/shutdown drop it) | tests/test_unified_w2b_async_actions.py::test_copy_provenance_returns_at_once_and_the_gui_thread_stays_responsive
