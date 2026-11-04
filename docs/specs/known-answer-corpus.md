@@ -172,6 +172,15 @@ arbitrary same-user hostile process or full power-loss durability on every OS.
 An integrity failure after publication can leave an uncredited file. Transfer
 consumers must verify successful report references, not adopt directory contents.
 
+Retained-file reads compare descriptor metadata before/after the read and pathname
+metadata before/after the open/read separately, including each API's `ctime`.
+Across descriptor and pathname results, compare identity, size and `mtime`; do
+not assume their `ctime` meanings agree. CPython 3.12 on Windows reports change
+time through `fstat` but creation time through `stat`/`lstat`. A stable difference
+between those API meanings is not a content change. Changed descriptor or
+pathname timestamps, replaced identities, linked/reparse paths, excess bytes and
+digest mismatches still refuse successful credit; the underlying file is retained.
+
 CLI JSON reports and their Markdown companions are also published without
 replacement. Default filenames remain under the selected store's `reports/` and
 include the fresh run token; equal evaluations retain equal report bytes/digests
@@ -184,7 +193,7 @@ in-memory evaluator behavior and must not claim file retention.
 The existing `tier-r-engine-output/1` kind vocabulary gains `attention`, which
 the evaluator/CLI already support. Its prediction `order_key`, already emitted by
 the producer, is an optional tuple of at most 16 strict integer, finite float or
-string values (at most 512 characters per string). Attention's production key is
+string values (at most 4,096 characters per string). Attention's production key is
 one integer rank; the bounds cover that provider without altering its ordering.
 Missing keys stay omitted in producer bytes. Validation is a check on the original
 canonical bytes, never a reserialization of model defaults or coerced values.
@@ -192,8 +201,8 @@ The existing normalized-output reader must preserve the optional key when it
 reconstructs predictions, so replay uses the same ranking. This does not add
 attention to the calibration feature-engine set or change fitting/scoring rules.
 Existing documents retain their bytes and meaning. This is an additive `/1`
-vocabulary/field extension: older strict readers reject the new kind or field
-safely; this is not universal reader compatibility or a numerical-confidence
+vocabulary/field extension: older strict readers reject the new kind, field, or
+newly admitted long text safely; this is not universal reader compatibility or a numerical-confidence
 claim. No `unified` producer or new engine default is added. This is a selective
 adoption of preserved PR #78 (`2019a37f`, repository MIT license); its older
 duplicate-scoring behavior and replace-after-existence-check writer are not
@@ -206,9 +215,12 @@ Every successful provider answer, with or without retention, must satisfy the
 existing normalized-output field bounds before scoring. The existing in-memory
 `unified` provider remains supported through a private validation shape using the
 report engine vocabulary; persisted output/credit schemas retain their four
-existing engines, so retained `unified` answers are explicitly refused. Names remain capped at 512
-characters and versions at 200; invalid answers fail with no metrics/digest rather
-than being truncated or accepted only by the in-memory path. Validate the Python
+existing engines, so retained `unified` answers are explicitly refused. Names
+and string ordering keys are capped at 4,096 characters; versions are capped at
+1,024. These bounds retain long upstream symbols and version labels without
+truncating scorer tie-breaks, while remaining bounded under the 64 MiB document
+cap. Longer values fail with no metrics/digest rather than being truncated or
+accepted only by the in-memory path. Validate the Python
 document before JSON serialization, converting only JSON array containers to
 tuples for strict validation. Scalar types, code points, absent defaults and the
 original accepted document are preserved. Retention's incremental 64 MiB
