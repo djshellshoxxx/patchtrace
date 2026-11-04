@@ -286,8 +286,9 @@ class UnifiedCodeView(QWidget):
         apply_tooltip(self.mode, 'unified.code_mode')
         apply_tooltip(self.view.panes['older'], 'unified.code_older')
         apply_tooltip(self.view.panes['newer'], 'unified.code_newer')
-        for button in self.view.findChildren(QPushButton):
-            apply_tooltip(button, 'unified.code_copy', name='unified.code_copy')
+        for button in self.view.findChildren(QPushButton):  # one Copy per side, named codediff.copy_<side>
+            side = button.objectName().rpartition('_')[2]
+            apply_tooltip(button, 'unified.code_copy', name=f'unified.code_copy_{side}')
         controls = QHBoxLayout()
         for widget in (self.mode, self.previous_hunk, self.next_hunk, self.hunk_label):
             controls.addWidget(widget)

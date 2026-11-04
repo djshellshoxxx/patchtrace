@@ -133,7 +133,7 @@ class SearchWidgets(QWidget):
         column = QVBoxLayout(self.content)
         column.setContentsMargins(0, 0, 0, 0)
         column.addWidget(self.body, 1)
-        self.state = StateView('search', 'Search', text_limit=vm.QUERY_ECHO * 8)
+        self.state = StateView('search.body', 'Search', text_limit=vm.QUERY_ECHO * 8)
         self.state.set_content(self.content)
         root = QVBoxLayout(self)
         root.setContentsMargins(4, 4, 4, 4)

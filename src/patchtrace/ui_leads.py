@@ -220,7 +220,7 @@ class LeadsPanel(QWidget):
         chips = QHBoxLayout()
         for spec in channel_chips_placeholder():
             chip = ChipLabel(spec, prefix='Channel')
-            chip.set_tip('leads.chip', state=spec.text)
+            chip.set_tip('leads.chip', name=f'leads.chip.{spec.key}', state=spec.text)
             self.chips[spec.key] = chip
             chips.addWidget(chip)
         chips.addStretch(1)
@@ -322,7 +322,7 @@ class LeadsPanel(QWidget):
         if chips_from is not None:
             for spec in chips_from:
                 self.chips[spec.key].set_spec(spec)
-                self.chips[spec.key].set_tip('leads.chip', state=spec.text)
+                self.chips[spec.key].set_tip('leads.chip', name=f'leads.chip.{spec.key}', state=spec.text)
 
 
 def channel_chips_placeholder():

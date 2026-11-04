@@ -449,6 +449,8 @@ class EvidencePanel(QWidget):
         self.engine_table.setSelectionMode(QAbstractItemView.SelectionMode.SingleSelection)
         self.engine_table.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
         self.engine_table.verticalHeader().setVisible(False)
+        self.engine_table.horizontalHeader().setAccessibleName('Engine run status column headers')
+        self.engine_table.verticalHeader().setAccessibleName('Engine run status row headers')
         self.engine_table.horizontalHeader().setStretchLastSection(True)
         self.engine_table.selectionModel().selectionChanged.connect(lambda *_: self._show_engine_log())
         layout.addWidget(self.engine_table, 1)
@@ -456,7 +458,8 @@ class EvidencePanel(QWidget):
         self.engine_checks: dict[str, QCheckBox] = {}
         for engine in SECONDARY_ENGINES:
             box = QCheckBox(ENGINE_NAMES[engine])
-            apply_tooltip(box, 'evidence.engine_check')
+            box.setObjectName('evidence.engine_check')  # the tip id; the accessible id is per engine
+            apply_tooltip(box, 'evidence.engine_check', name=f'evidence.engine_check.{engine}')
             box.setAccessibleName(f'Include {ENGINE_NAMES[engine]} in the next run')
             box.toggled.connect(lambda _checked: self._update_run_controls())
             self.engine_checks[engine] = box

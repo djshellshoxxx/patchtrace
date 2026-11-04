@@ -1,6 +1,6 @@
 # Accessibility, keyboard, DPI and localization baseline (SPEC-45)
 
-Status: draft, 2026-10-14. Documents only: this file changes no code and no other file. SPEC-45 is a proposed number (`docs/specs/REGISTRY.md` section 1, rule 6); section 11 gives the registry row.
+Status: draft, 2026-10-14. Documents only: this file changes no code and no other file. SPEC-45 is a proposed number (`docs/specs/REGISTRY.md` section 1, rule 6); section 11 gives the registry row. Update 2026-11-04 (slice F-gui-1): R-N1, R-N7 and GUI plan 8.7 R9 hold for the main window with every built panel shown, as automated offscreen gates in `tests/test_gui_a11y_window.py` (the section 2 status note); the dialogs, R-N2 and the AX-M3 check on Windows stay open.
 
 Basis: `main` = `fd6cdba` (GitHub REST, 2026-10-14; the worktree HEAD is the same commit). Open PRs at that time: #40, #41, #43 (docs) and #51 (draft, research). By title, none touches the GUI files named here `[inf]`: the diffs were not read.
 
@@ -48,6 +48,11 @@ Unnamed `ui.py` controls:
 - No label relation (25): `:325`, `:333`, `:368`, `:986`, `:1288`, `:1355`, `:1598`, `:1599`, `:1611`, `:1704`, `:1709`, `:1713`, `:1718`, `:1741`, `:1782`, `:1788`, `:1790`, `:1796`, `:1809`, `:1817`, `:1821`, `:1828`, `:1831`, `:2799`, `:2815`.
 - Nested in a row container whose label is the container's buddy, so the field has no buddy (9): `ArtifactPathEdit` at `:232` and `:233`, and `:234`, `:354`, `:764`, `:1000`, `:1001`, `:1002`, `:1414`.
 - Helper `plain_view()` viewers (10; the helper at `ui.py:159-164` sets no name): `:192`, `:375`, `:1043`, `:1290`, `:1291`, `:1292`, `:1439`, `:1618`, `:1758`, `:1804`.
+
+Status 2026-11-04 (slice F-gui-1, read at `62a87fa`). An offscreen probe of `MainWindow(ProjectService.sample)` with every built panel shown found 32 enabled interactive controls with no name and about 30 accessible identifiers used more than once. Both are now automated gates in `tests/test_gui_a11y_window.py`; `ui.py` was not edited.
+- Names. `gui/access_names.py` maps tip ids to names for the `ui.py` controls that set none (`job.log`, the `findings.*` controls, `viewer.mode`, `viewer.raw_scope`, `viewer.raw_page`, `viewer.raw_goto`). `gui.tips.apply_tip` fills an empty name from that table, never names a label (R-N4), and names a combo box's drop-down list "<name> options" and its editable line edit. The table headers (`ui_evidence.py`, `ui_inspection.py`) are named like `gui/qt/table.py`. The one exemption is Qt's own QLineEdit clear button, which no application code can name.
+- Identifiers. An inner panel StateView takes `<panel>.body` ids, so it no longer repeats the dock's ids. The KEV notice strip uses `kev.notice*`. Each engine check box, call-graph minimap, leads chip and unified Copy button gets its own id. The dock tab bars keep the objectName `panels.dock_tabs` but are numbered: "Panel tabs", "Panel tabs 2", and ids `panels.dock_tabs`, `panels.dock_tabs.2`.
+- Still open: the dialogs, including the eight "Browse…" buttons (R-N2), and the AX-M3 check of the AutomationId mapping on Windows.
 
 Other findings:
 - Eight buttons share the name "Browse…" (`ui.py:244` x3, `:359`, `:1012` x3, `:1420`): one name, eight targets.

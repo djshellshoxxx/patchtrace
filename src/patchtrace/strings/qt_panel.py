@@ -242,7 +242,7 @@ class StringsController(ControllerBase):
         register_tips(TIPS)
         register_tips(SOURCE_TIPS)
         self.panel = StringsPanel()
-        self.view = StateView('strings', 'Strings', ctx.shell, text_limit=600)
+        self.view = StateView('strings.body', 'Strings', ctx.shell, text_limit=600)
         self.view.set_content(self.panel)
         super().__init__(self.view)
         self.ctx, self.port, self.tasks, self.loader, self.clock = ctx, ctx.project, ctx.tasks, loader, clock

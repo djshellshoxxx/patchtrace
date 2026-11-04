@@ -241,9 +241,9 @@ class CallsPanel(QWidget):
         for widget, tip in ((self.tabs, 'graph.tabs'), (self.changes, 'graph.changes_table'),
                             (self.neighbours, 'graph.table'), (self.tree, 'graph.tree'),
                             (self.canvas, 'graph.diagram'), (self.edges, 'graph.edges'),
-                            (self.sites, 'graph.callsites'), (self.minimap_toggle, 'graph.minimap'),
-                            (self.minimap, 'graph.minimap')):
+                            (self.sites, 'graph.callsites'), (self.minimap_toggle, 'graph.minimap')):
             apply_tip(widget, tip)
+        apply_tip(self.minimap, 'graph.minimap', name='graph.minimap_view')  # the toggle holds 'graph.minimap'
         self.detail = SafeTextView(ACCESSIBLE_NAMES['detail'], limit=DETAIL_LIMIT, wrap=True)
         self.detail.setObjectName('graph.detail')
         apply_tip(self.detail, 'graph.detail')
@@ -276,7 +276,7 @@ class CallsPanel(QWidget):
         inner.addWidget(split, 1)
         inner.addLayout(actions)
         inner.addWidget(self.footer)
-        self.state = StateView('graph', 'Calls', announcer, text_limit=1_200)
+        self.state = StateView('graph.body', 'Calls', announcer, text_limit=1_200)
         self.state.set_content(self.content)
         root = QVBoxLayout(self)
         root.setContentsMargins(4, 4, 4, 4)

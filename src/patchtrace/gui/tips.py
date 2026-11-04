@@ -2,14 +2,16 @@
 
 `tooltips.py` stays frozen, so this module adds what panels need on top of it: idempotent registration of a panel's
 `TooltipEntry` dicts (a conflicting re-registration is `PT-GUI-TIPS`), the framework-owned `gui.*` entries, and
-`apply_tip`, which also gives a control the short accessible description (the What line, at most 160 characters)
-and the UIA automation id. `tooltips` is imported inside the functions so a panel spec stays cheap to import.
+`apply_tip`, which also gives a control the short accessible description (the What line, at most 160 characters),
+the UIA automation id and, for a control its builder left unnamed, the name from `access_names.NAMES`. `tooltips`
+is imported inside the functions so a panel spec stays cheap to import.
 """
 from __future__ import annotations
 
 import html
 from collections.abc import Mapping
 
+from .access_names import NAMES, popup_name
 from .registry import DESCRIPTION_LIMIT, TIPS_CODE
 
 GUI_TIP_IDS = ('gui.state_retry', 'gui.state_copy', 'gui.state_setup', 'gui.state_refresh', 'gui.notice',
@@ -165,10 +167,11 @@ def what_line(tip_id: str, **values: object) -> str:
 def apply_tip(target: object, tip_id: str, *, accessible: str = 'what', name: str | None = None,
               **values: object) -> None:
     """Apply a registry entry to a widget or action (`tooltips.apply_tooltip` delegates here): tooltip, what's-this,
-    status tip, accessible description and, only while it is still empty, the object name. With `accessible='what'`
-    the description is the What line (the full text stays in what's-this and the tooltip); `'full'` keeps the old
-    flattened whole text. The UIA automation id is `name` or the tip id (unique per window, which is why a state
-    button passes its per-panel name). Dynamic ids (templates) take their values as keywords."""
+    status tip, accessible description and, only while they are still empty, the object name and the accessible
+    name (see `_name_control`). With `accessible='what'` the description is the What line (the full text stays in
+    what's-this and the tooltip); `'full'` keeps the old flattened whole text. The UIA automation id is `name` or the
+    tip id (unique per window, which is why a state button passes its per-panel name). Dynamic ids (templates) take
+    their values as keywords."""
     from .. import tooltips
     if accessible not in ('what', 'full'):
         raise ValueError(f'accessible must be "what" or "full": {accessible!r:.20}')
@@ -183,10 +186,29 @@ def apply_tip(target: object, tip_id: str, *, accessible: str = 'what', name: st
         target.setStatusTip(flat)
     if hasattr(target, 'setAccessibleDescription'):
         target.setAccessibleDescription(what_line(tip_id, **values) if accessible == 'what' else flat)
+    _name_control(target, tip_id)
     if not target.objectName():
         target.setObjectName(name or tip_id)
     if hasattr(target, 'setAccessibleIdentifier'):
         target.setAccessibleIdentifier(name or tip_id)
+
+
+def _name_control(target: object, tip_id: str) -> None:
+    """Fill an empty accessible name from `NAMES`, then name a combo box's drop-down list and its editable line
+    edit, which Qt leaves unnamed and UI Automation shows as controls of their own. A label is never named: its name
+    stays empty so that a text change announces itself (SPEC-45 R-N4). Duck-typed, so this module stays Qt-free."""
+    if not callable(getattr(target, 'accessibleName', None)) or hasattr(target, 'buddy'):
+        return
+    if not target.accessibleName() and tip_id in NAMES:
+        target.setAccessibleName(NAMES[tip_id])
+    name = target.accessibleName()
+    if not name or not callable(getattr(target, 'view', None)) or not callable(getattr(target, 'lineEdit', None)):
+        return
+    popup, edit = target.view(), target.lineEdit()
+    if popup is not None and not popup.accessibleName():
+        popup.setAccessibleName(popup_name(name))
+    if edit is not None and not edit.accessibleName():
+        edit.setAccessibleName(name)
 
 
 def escaped_tip(text: str) -> str:

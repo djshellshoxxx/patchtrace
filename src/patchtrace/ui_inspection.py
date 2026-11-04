@@ -142,6 +142,8 @@ def rows_view(model: RowsModel, widths_em: tuple[int, ...], tip_id: str, name: s
     view.setSelectionBehavior(QAbstractItemView.SelectionBehavior.SelectRows)
     view.verticalHeader().hide()  # row headers are exposed to UI Automation as accessibles
     view.horizontalHeader().setStretchLastSection(True)
+    view.horizontalHeader().setAccessibleName(f'{name} column headers')
+    view.verticalHeader().setAccessibleName(f'{name} row headers')
     em = view.fontMetrics().horizontalAdvance('M')
     for column, width in enumerate(widths_em):
         view.setColumnWidth(column, width * em)
