@@ -26,7 +26,9 @@ def no_artifact(tmp_path_factory, monkeypatch):
 def test_v1_output_is_byte_identical_to_the_frozen_main_output(tmp_path, fmt):
     out = tmp_path / f'r.{fmt}'
     manifest = export_project(frozen_project(), fmt, out)
-    expected = (GOLDEN / f'v1_expected.{fmt}').read_bytes().replace(b'\r\n', b'\n')
+    # HTML goldens carry a data suffix so code analysers do not treat test output as HTML source
+    name = f'v1_expected.{fmt}' + ('.golden' if fmt == 'html' else '')
+    expected = (GOLDEN / name).read_bytes().replace(b'\r\n', b'\n')
     assert out.read_bytes() == expected
     assert manifest.sha256 == hashlib.sha256(expected).hexdigest()
 

@@ -261,7 +261,7 @@ def test_goldens_for_the_synergy_fixture(built):
     data, _, _ = built
     check_or_update('synergy_v2.json', render_json(data))
     check_or_update('synergy_v2.md', render_md(data))
-    check_or_update('synergy_v2.html', render_html(data))
+    check_or_update('synergy_v2.html.golden', render_html(data))   # data suffix: not analysed as HTML
 
 
 def test_render_json_round_trips_and_digest_matches(built):
