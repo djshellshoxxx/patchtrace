@@ -19,8 +19,9 @@ Checks (a failure names its code):
                       notes print on a line naming it; portable: Portable.zip is the Windows ZIP
                                                                                       PT-REL-HASH-MISMATCH
   archive:*           the ZIP holds PatchTrace/PatchTrace.exe, file-inventory.json and dependency-versions.json;
-                      the tar holds PatchTrace/PatchTrace with an executable bit; no absolute, '..', duplicate
-                      or escaping-link member                                         PT-REL-ARCHIVE-CONTENT
+                      the tar holds PatchTrace/PatchTrace with an executable bit (required members are regular
+                      files, not links); no absolute, '..', duplicate or escaping-link member (tar symlinks and
+                      hard links, ZIP Unix symlink entries)                           PT-REL-ARCHIVE-CONTENT
 The Linux package records no commit yet (tools/build_linux.py), so commit:linux-tar is not-checked until its
 dependency-versions.json carries one; not-checked is never a pass. Notes come from --notes, else the release body.
 
@@ -33,6 +34,7 @@ import hashlib
 import json
 import posixpath
 import re
+import stat
 import sys
 import tarfile
 import zipfile
@@ -57,6 +59,7 @@ MAX_JSON_BYTES = 1 << 20  # one archive member read into memory
 MAX_MEMBERS = 100_000
 MAX_INPUT_BYTES = 8 << 20  # release JSON, notes and ls-remote listing
 MAX_SIDECAR_BYTES = 4096
+MAX_LINK_BYTES = 4096  # a ZIP symlink's target is its data
 DETAIL_LIMIT = 300
 LISTED_PROBLEMS = 3
 
@@ -78,9 +81,11 @@ HEX64 = re.compile(r'(?<![0-9A-Fa-f])[0-9A-Fa-f]{64}(?![0-9A-Fa-f])')
 DRIVE = re.compile(r'[A-Za-z]:')
 NAME_IN_NOTES = {name: re.compile(rf'(?<![\w.-]){re.escape(name)}(?![\w-]|\.[\w-])') for name in ASSETS}
 
+# ValueError: zipfile raises UnicodeDecodeError for a name flagged UTF-8 (0x800) that is not, and tarfile raises a
+# bare ValueError for a malformed PAX GNU.sparse.map; both are hostile archives, not tool errors.
 ZIP_ERRORS = (zipfile.BadZipFile, zipfile.LargeZipFile, zlib.error, EOFError, NotImplementedError, RuntimeError,
-              OSError)
-TAR_ERRORS = (tarfile.TarError, zlib.error, EOFError, OSError)
+              OSError, ValueError)
+TAR_ERRORS = (tarfile.TarError, zlib.error, EOFError, OSError, ValueError)
 
 
 class InputError(Exception):
@@ -150,7 +155,8 @@ def read_bounded(path: Path, limit: int) -> bytes:
 
 
 def strict_json(text: str) -> object:
-    """JSON with duplicate keys and NaN/Infinity refused, so no value can hide behind a later one."""
+    """JSON with duplicate keys and NaN/Infinity refused, so no value can hide behind a later one. Nesting deeper
+    than the parser's recursion limit is a ValueError like any other non-strict JSON."""
     def pairs(items: list[tuple[str, object]]) -> dict[str, object]:
         keys = [key for key, _ in items]
         if len(set(keys)) != len(keys):
@@ -160,7 +166,10 @@ def strict_json(text: str) -> object:
     def constant(name: str) -> NoReturn:
         raise ValueError(f'{name} is not JSON')
 
-    return json.loads(text, object_pairs_hook=pairs, parse_constant=constant)
+    try:
+        return json.loads(text, object_pairs_hook=pairs, parse_constant=constant)
+    except RecursionError as exc:
+        raise ValueError('nested too deeply') from exc
 
 
 def read_input(path: Path, what: str) -> str:
@@ -243,20 +252,32 @@ def listed_assets(release: Mapping[str, object]) -> tuple[dict[str, Mapping[str,
     return {item['name']: item for item in entries}, {name for name, count in counts.items() if count > 1}
 
 
+def unreadable_asset(path: Path, exc: OSError) -> InputError:
+    return InputError(f'downloaded asset {path} is unreadable: {exc}')
+
+
 def downloaded(directory: Path) -> dict[str, Path]:
     found = {}
     for name in ASSETS:
         path = directory / name
-        if path.is_file() and not path.is_symlink():
+        try:
+            regular = path.is_file() and not path.is_symlink()
+        except OSError as exc:
+            raise unreadable_asset(path, exc) from exc
+        if regular:
             found[name] = path
     return found
 
 
 def file_facts(files: Mapping[str, Path]) -> dict[str, tuple[int, str]]:
+    """Bytes and SHA-256 of every downloaded asset; one that cannot be read is unreadable input (exit 2)."""
     facts = {}
     for name, path in files.items():
-        with path.open('rb') as stream:
-            facts[name] = (path.stat().st_size, hashlib.file_digest(stream, 'sha256').hexdigest())
+        try:
+            with path.open('rb') as stream:
+                facts[name] = (path.stat().st_size, hashlib.file_digest(stream, 'sha256').hexdigest())
+        except OSError as exc:
+            raise unreadable_asset(path, exc) from exc
     return facts
 
 
@@ -374,18 +395,40 @@ def member_problems(names: Sequence[str]) -> list[str]:
     return bad
 
 
+def link_escapes(member: str, target: str, *, hard: bool = False) -> bool:
+    """True when a link target is absolute or resolves above the archive root, reading either separator. A symlink
+    resolves from its member's directory, a tar hard link from the archive root."""
+    if target.startswith(('/', '\\')) or DRIVE.match(target):
+        return True
+    base = '' if hard else posixpath.dirname(member.replace('\\', '/'))
+    resolved = posixpath.normpath(posixpath.join(base, target.replace('\\', '/')))
+    return resolved == '..' or resolved.startswith('../')
+
+
 def link_problems(members: Sequence[tarfile.TarInfo]) -> list[str]:
+    return [f'link {shown(member.name)} escapes the archive' for member in members
+            if (member.issym() or member.islnk()) and link_escapes(member.name, member.linkname, hard=member.islnk())]
+
+
+def zip_is_link(info: zipfile.ZipInfo) -> bool:
+    """A Unix symlink entry: S_IFLNK in the high half of external_attr (unzip and 7-Zip honour it)."""
+    return stat.S_ISLNK(info.external_attr >> 16)
+
+
+def zip_is_regular(info: zipfile.ZipInfo) -> bool:
+    return not info.is_dir() and not zip_is_link(info)
+
+
+def zip_link_problems(archive: zipfile.ZipFile, links: Sequence[zipfile.ZipInfo]) -> list[str]:
+    """Each symlink entry's target is its data, read bounded; never followed or extracted."""
     bad = []
-    for member in members:
-        if member.issym():
-            target = posixpath.normpath(posixpath.join(posixpath.dirname(member.name), member.linkname))
-        elif member.islnk():
-            target = posixpath.normpath(member.linkname)
-        else:
-            continue
-        absolute = member.linkname.startswith(('/', '\\')) or DRIVE.match(member.linkname)
-        if absolute or target == '..' or target.startswith('../'):
-            bad.append(f'link {shown(member.name)} escapes the archive')
+    for info in links:
+        with archive.open(info) as stream:
+            target = stream.read(MAX_LINK_BYTES + 1)
+        if len(target) > MAX_LINK_BYTES:
+            bad.append(f'link {shown(info.filename)} has a target longer than {MAX_LINK_BYTES} bytes')
+        elif link_escapes(info.filename, target.decode('utf-8', 'surrogateescape')):
+            bad.append(f'link {shown(info.filename)} escapes the archive')
     return bad
 
 
@@ -414,12 +457,15 @@ def read_zip(path: Path) -> Archive:
                 return Archive([f'more than {MAX_MEMBERS} members'], None, 'not read: member cap')
             names = [info.filename for info in infos]
             problems = member_problems(names)
+            problems += zip_link_problems(archive, [info for info in infos if zip_is_link(info)])
             by_name = {info.filename: info for info in infos}
-            problems += [f'{member} missing' for member in ZIP_REQUIRED
-                         if member not in by_name or by_name[member].is_dir()]
+            problems += [f'{member} missing' if member not in by_name else f'{member} is not a regular file'
+                         for member in ZIP_REQUIRED if member not in by_name or not zip_is_regular(by_name[member])]
             info = by_name.get(VERSIONS_MEMBER)
-            if info is None or info.is_dir():
+            if info is None:
                 return Archive(problems, None, 'is not in the ZIP')
+            if not zip_is_regular(info):
+                return Archive(problems, None, 'is not a regular file in the ZIP')
             if names.count(VERSIONS_MEMBER) > 1:
                 return Archive(problems, None, 'is in the ZIP more than once')
             versions, note = read_versions(info.file_size, lambda: archive.open(info))

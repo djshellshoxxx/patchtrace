@@ -10,6 +10,7 @@ import importlib.util
 import io
 import json
 import re
+import stat
 import sys
 import tarfile
 import zipfile
@@ -446,6 +447,128 @@ def test_an_internal_relative_symlink_is_allowed(release):
     assert code == 0, failures(document)
 
 
+# ---------------------------------------------------------------- hostile archives and inputs never crash the tool
+
+def zip_with_links(links: tuple[tuple[str, str], ...], **changes: bytes | None) -> bytes:
+    """The Windows ZIP plus Unix symlink entries (mode S_IFLNK in external_attr, target stored as the data)."""
+    buffer = io.BytesIO()
+    with zipfile.ZipFile(buffer, 'w', zipfile.ZIP_DEFLATED) as archive:
+        for name, data in windows_members(**changes).items():
+            archive.writestr(name, data)
+        for name, target in links:
+            info = zipfile.ZipInfo(name)
+            info.create_system, info.external_attr = 3, (stat.S_IFLNK | 0o777) << 16
+            archive.writestr(info, target)
+    return buffer.getvalue()
+
+
+def use_windows_zip(release: Release, data: bytes) -> None:
+    release.files[WINDOWS_ZIP] = release.files[PORTABLE] = data
+    release.write()
+
+
+ZIP_LINKS = {
+    'zip-link-up': ((('PatchTrace/lib', '../../../etc'),), {}),
+    'zip-link-abs': ((('PatchTrace/lib', '/etc'),), {}),
+    'zip-link-bslash': ((('PatchTrace/lib', '..\\..\\Windows'),), {}),
+    'zip-link-drive': ((('PatchTrace/lib', 'C:\\Windows'),), {}),
+    'zip-exe-link': ((('PatchTrace/PatchTrace.exe', 'PatchTrace.bin'),), {'PatchTrace/PatchTrace.exe': None}),
+}
+
+
+@pytest.mark.parametrize('case', list(ZIP_LINKS), ids=list(ZIP_LINKS))
+def test_a_zip_symlink_that_escapes_or_stands_in_for_a_required_member_fails(release, case):
+    links, changes = ZIP_LINKS[case]
+    use_windows_zip(release, zip_with_links(links, **changes))
+    code, document, _ = run(release)
+    assert code == 3 and failures(document) == {'archive:windows-zip': 'PT-REL-ARCHIVE-CONTENT'}
+
+
+def test_a_zip_symlink_inside_the_archive_is_allowed(release):
+    use_windows_zip(release, zip_with_links((('PatchTrace/_internal/libz.dll', 'libz1.dll'),)))
+    code, document, _ = run(release)
+    assert code == 0, failures(document)
+
+
+def test_a_symlinked_dependency_versions_member_is_not_read_as_json(release):
+    links = (('PatchTrace/dependency-versions.json', versions().decode()),)
+    use_windows_zip(release, zip_with_links(links, **{'PatchTrace/dependency-versions.json': None}))
+    code, document, _ = run(release)
+    assert code == 3 and failures(document) == {'archive:windows-zip': 'PT-REL-ARCHIVE-CONTENT',
+                                                'commit:windows-zip': 'PT-REL-COMMIT-MISMATCH'}
+
+
+def test_a_zip_name_flagged_utf8_that_is_not_utf8_fails_the_archive_not_the_tool(release):
+    # zipfile writes a non-ASCII name as UTF-8 and sets flag 0x800; replacing those bytes makes ZipFile() raise
+    # UnicodeDecodeError while it reads the central directory.
+    data = zip_bytes(windows_members(**{'PatchTrace/\u00e9.txt': b'x'}))
+    assert data.count('\u00e9'.encode()) == 2
+    use_windows_zip(release, data.replace('\u00e9'.encode(), b'\xff\xfe'))
+    code, document, _ = run(release)
+    assert code == 3 and failures(document) == {'archive:windows-zip': 'PT-REL-ARCHIVE-CONTENT',
+                                                'commit:windows-zip': 'PT-REL-COMMIT-MISMATCH'}
+    assert 'unreadable ZIP' in by_id(document)['archive:windows-zip']['detail']
+
+
+def test_a_tar_with_a_malformed_pax_sparse_map_fails_the_archive_not_the_tool(release):
+    buffer = io.BytesIO()
+    with tarfile.open(fileobj=buffer, mode='w:gz', format=tarfile.PAX_FORMAT) as archive:
+        for name, data, mode in LINUX_MEMBERS:
+            info = tarfile.TarInfo(name)
+            info.size, info.mode = len(data), mode
+            archive.addfile(info, io.BytesIO(data))
+        info = tarfile.TarInfo('PatchTrace/sparse')
+        info.pax_headers = {'GNU.sparse.map': 'a,b'}  # tarfile int()s this map: ValueError
+        archive.addfile(info, io.BytesIO(b''))
+    release.files[LINUX_TAR] = buffer.getvalue()
+    release.write()
+    code, document, _ = run(release)
+    assert code == 3 and failures(document) == {'archive:linux-tar': 'PT-REL-ARCHIVE-CONTENT'}
+    assert 'unreadable tar.gz' in by_id(document)['archive:linux-tar']['detail']
+
+
+DEEP = '[' * 200_000  # far below the 1 MiB member bound, far above any parser nesting limit
+NOT_STRICT = {'shallow': '{"PatchTrace": ', 'deep': DEEP}
+
+
+@pytest.mark.parametrize('kind', list(NOT_STRICT), ids=list(NOT_STRICT))
+def test_deeply_nested_json_in_the_zip_is_not_strict_json(release, kind):
+    windows_zip(**{'PatchTrace/dependency-versions.json': NOT_STRICT[kind].encode()})(release)
+    code, document, _ = run(release)
+    assert code == 3 and failures(document) == {'commit:windows-zip': 'PT-REL-COMMIT-MISMATCH'}
+    assert 'is not strict JSON' in by_id(document)['commit:windows-zip']['detail']
+
+
+@pytest.mark.parametrize('kind', list(NOT_STRICT), ids=list(NOT_STRICT))
+def test_deeply_nested_json_in_the_tar_is_not_strict_json(release, kind):
+    members = [LINUX_MEMBERS[0], ('PatchTrace/dependency-versions.json', NOT_STRICT[kind].encode(), 0o644)]
+    linux_tar(members)(release)
+    code, document, _ = run(release)
+    check = by_id(document)['commit:linux-tar']
+    assert code == 0 and failures(document) == {}
+    assert check['status'] == 'not-checked' and 'is not strict JSON' in check['detail']
+
+
+def deny(monkeypatch: pytest.MonkeyPatch, method: str, name: str) -> None:
+    """Make one Path method raise PermissionError for one downloaded file, as a locked or unreadable file does."""
+    real = getattr(Path, method)
+
+    def guarded(self: Path, *args: object, **kwargs: object) -> object:
+        if self.name == name:
+            raise PermissionError(13, 'Permission denied', str(self))
+        return real(self, *args, **kwargs)
+
+    monkeypatch.setattr(Path, method, guarded)
+
+
+@pytest.mark.parametrize('method', ['open', 'stat', 'is_file'], ids=['open', 'stat', 'is-file'])
+def test_an_unreadable_downloaded_asset_exits_2(release, monkeypatch, method):
+    release.write()
+    deny(monkeypatch, method, SETUP)
+    code, document, err = run(release)
+    assert code == 2 and document == {} and 'verify_release: error' in err and SETUP in err
+
+
 # ---------------------------------------------------------------- hostile text stays bounded and on one line
 
 def test_hostile_release_values_are_bounded_and_escaped(release):
@@ -516,8 +639,12 @@ def dir_missing(release: Release) -> None:
     release.dir.rmdir()
 
 
+def json_deep(release: Release) -> None:
+    release.json_path.write_text('{"assets": ' + DEEP, encoding='utf-8', newline='\n')
+
+
 UNREADABLE = {'bad-json': malformed_json, 'json-list': json_list, 'json-nan': json_nan,
-              'no-json': json_missing, 'peeled-junk': peeled_garbage, 'no-dir': dir_missing}
+              'no-json': json_missing, 'peeled-junk': peeled_garbage, 'no-dir': dir_missing, 'json-deep': json_deep}
 
 
 @pytest.mark.parametrize('case', list(UNREADABLE), ids=list(UNREADABLE))
