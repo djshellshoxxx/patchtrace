@@ -15,6 +15,7 @@ import hashlib
 import os
 import re
 import stat
+from collections.abc import Callable
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Literal, Protocol, runtime_checkable
@@ -142,11 +143,13 @@ def _workdir_error(exc: OSError | None = None) -> SecondaryError:
                           kind='workdir-error')
 
 
-def copy_and_hash(source: Path, destination: Path, *, max_bytes: int = MAX_BINEXPORT_BYTES) -> str:
+def copy_and_hash(source: Path, destination: Path, *, max_bytes: int = MAX_BINEXPORT_BYTES,
+                  check: Callable[[], None] | None = None) -> str:
     """Copy (never link) a regular file to a new destination while hashing it; returns the copy's SHA-256.
 
     The destination must not exist (exclusive create). The caller compares the digest with the
-    validated snapshot hash, which closes the validate -> use window.
+    validated snapshot hash, which closes the validate -> use window. ``check`` (optional) runs before each 1 MiB block
+    and may raise ``SecondaryError`` to stop a cancelled or overdue copy (issue #120).
     """
     try:
         info = os.lstat(source)
@@ -161,6 +164,8 @@ def copy_and_hash(source: Path, destination: Path, *, max_bytes: int = MAX_BINEX
     try:
         with open(source, 'rb') as src, open(destination, 'xb') as dst:
             while chunk := src.read(1 << 20):
+                if check is not None:
+                    check()
                 total += len(chunk)
                 if total > max_bytes:
                     raise SecondaryError('PT-SECONDARY-LIMIT', '.BinExport input exceeds the size limit.',
