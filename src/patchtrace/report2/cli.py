@@ -2,8 +2,8 @@
 
 With ``--json`` stdout carries one document whose ``result`` is the ``ExportManifest``. Exit codes: 0 exported; 2 invalid
 arguments or an unopenable project; 3 export failure; 4 nothing to export (the project has no matches); 5 cancelled.
-No network is used. Only the sections a stored producer can supply headlessly are included: the symbol mode from the
-run settings and the unified result reference; the rest are listed under ``unknowns`` in the report.
+No network is used. The sections are read from the project's stored producers by ``report2.adapters`` (a producer that
+fails is listed under ``unknowns`` in the report and never stops the export).
 """
 from __future__ import annotations
 
@@ -15,22 +15,6 @@ from ..cli_commands import CANCELLED, NO_RESULTS, OK, RUNTIME, CliError, emit
 from . import options as options_module
 
 SUMMARY = 'export a project as a report (json, md, html; report/1 or report/2)'
-
-
-class _UnifiedPort:
-    """Read-only: the verified pointer and manifest of the current unified result, never its rows."""
-
-    def __init__(self, service):
-        self._service = service
-
-    def load(self):
-        from ..unified import pipeline
-        from ..unified.limits import UnifiedError
-        try:
-            plan = pipeline.make_plan(self._service)
-        except UnifiedError:
-            plan = None
-        return pipeline.load_current(self._service, plan)
 
 
 def add_parser(sub) -> argparse.ArgumentParser:
@@ -70,9 +54,8 @@ def run(args, cancel) -> int:
             return CANCELLED
         extra = {}
         if chosen.report_version == 2:
-            from .sections import collect
-            extra = {'report_version': 2, 'redaction': chosen.profile,
-                     'sections': collect(unified=_UnifiedPort(service))}
+            from .adapters import collect_from_service
+            extra = {'report_version': 2, 'redaction': chosen.profile, 'sections': collect_from_service(service)}
         try:
             manifest = service.export_report(args.format, args.out, include_code=chosen.include_code,
                                              include_notes=chosen.include_notes, finding_ids=args.finding, **extra)

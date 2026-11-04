@@ -60,7 +60,8 @@ def test_report_v2_all_formats(project, tmp_path, capsys, fmt):
     manifest = json.loads(stdout)['result']
     assert code == 0 and manifest['report_version'] == 2 and manifest['format'] == fmt
     assert manifest['content_digest'] in out.read_text(encoding='utf-8')
-    assert manifest['sections'] == ['symbols'] or manifest['sections'] == []
+    # the sample's two PE files supply build_facts through report2.adapters; nothing else is stored
+    assert manifest['sections'] == ['build_facts'] or manifest['sections'] == ['build_facts', 'symbols']
 
 
 def test_text_mode_prints_one_summary_line(project, tmp_path, capsys):
@@ -188,3 +189,18 @@ def test_option_defaults():
     share = options.resolve(report_version=2, profile='share', include_ordinal_index=True)
     assert (share.include_notes, share.profile.urls, share.profile.include_ordinal_index) == (False, 'defanged', True)
     assert options.resolve(report_version=2, profile='share', urls='removed').profile.urls == 'removed'
+
+
+def test_report_v2_cli_includes_stored_sections_and_records_unknowns(project, tmp_path, capsys):
+    from test_report2_adapters import publish_engine
+
+    from patchtrace.service import ProjectService
+    with ProjectService.open(project) as service:
+        publish_engine(service, 'rz-diff', '1' * 64)
+    out = tmp_path / 'r.json'
+    code, stdout, _ = run(capsys, project, '--report-version', 2, '--out', out, '--json')
+    data = json.loads(out.read_text(encoding='utf-8'))
+    assert code == 0 and 'engine_evidence' in json.loads(stdout)['result']['sections']
+    assert [e['name'] for e in data['engine_evidence']['engines']] == ['rz-diff']
+    assert any('bindiff has no stored match set' in u for u in data['unknowns'])
+    assert all(f['claim_level'] == 'observed-in-file' for f in data['build_facts'])
