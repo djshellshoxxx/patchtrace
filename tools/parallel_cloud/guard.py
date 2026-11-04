@@ -1,6 +1,7 @@
 """Fail-closed ownership and source-patch receipt validation."""
 import argparse
 import json
+import math
 import os
 from pathlib import Path
 import subprocess
@@ -75,6 +76,20 @@ def validate_artifact(task, folder):
                item["input_tokens"] >= 0 and item["output_tokens"] >= 0
                for item in attempts):
         raise ValueError("Unverifiable API usage")
+    in_rate = receipt.get("accounting_input_usd_per_m")
+    out_rate = receipt.get("accounting_output_usd_per_m")
+    if not all(isinstance(x, (int, float)) and not isinstance(x, bool)
+               and math.isfinite(x) and 0 < x <= 1000
+               for x in (in_rate, out_rate)):
+        raise ValueError("Invalid accounting prices")
+    expected_cost = 0.0
+    for attempt in attempts:
+        expected_cost += (attempt["input_tokens"] * in_rate
+                          + attempt["output_tokens"] * out_rate) / 1_000_000
+    if not math.isfinite(amount) or not math.isfinite(budget) or (
+        abs(amount - round(expected_cost, 6)) > 0.000002
+    ):
+        raise ValueError("Token accounting does not reconcile with receipt")
     changes = run("git", "apply", "--numstat", str(folder / "parallel.patch")).splitlines()
     if not changes:
         raise ValueError("Empty patch")
