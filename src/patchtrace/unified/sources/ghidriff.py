@@ -2,8 +2,8 @@
 
 Edges come from the non-manual `modified` matches and from the preserved raw `matches.address_matches` table; the
 connected components of that relation graph are 1:1 edges (one atom each) or `ghidriff-1n` groups, never
-cross-multiplied. `added`/`deleted` are one-sided tier-W observations. Ratios and diff types are display text and
-hints only; no rule reads them (R03 s2).
+cross-multiplied. `added`/`deleted` are one-sided tier-W observations; the normalizer's one-to-many abstentions (A-28)
+give names only and are counted. Ratios and diff types are display text and hints only; no rule reads them (R03 s2).
 """
 from __future__ import annotations
 
@@ -12,6 +12,7 @@ from collections.abc import Mapping
 from pathlib import Path
 
 from ...enrichment.identity import parse_address
+from ...normalization import is_abstention
 from ...persistence import strict_json
 from ..addressing import AddressMap, is_external_key, parse_va_text
 from ..contracts import Atom, SourceRef
@@ -201,6 +202,14 @@ class GhidriffAdapter:
             one_sided.append(Atom(source='ghidriff', step='added' if side == 'newer' else 'deleted', tier='W',
                                   cardinality='1:1', cls='E-UNKNOWN', older_rva=rva if side == 'older' else None,
                                   newer_rva=rva if side == 'newer' else None, ref=match.id[:128]))
+        elif is_abstention(match):
+            # A-28: the normalizer abstained on a one-to-many group. Not a one-sided vote: the group's edges come from
+            # the raw address_matches table, so only the name is taken here.
+            side, function = ('newer', match.newer[0]) if match.newer else ('older', match.older[0])
+            rva = function_rva(function, side, addr, basis, ledger)
+            if rva is not None:
+                nodes[(side, rva)] = nodes.get((side, rva)) or clean_name(function.name)
+            ledger.count('ghidriff-one-to-many-abstained')
         else:
             ledger.count('ghidriff-shape-skipped')
 

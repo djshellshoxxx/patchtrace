@@ -44,7 +44,9 @@ def default_alignment() -> Alignment:
 
 
 def _change(match) -> str:
-    return 'added' if not match.older else 'removed' if not match.newer else 'modified'
+    """A one-sided row keeps its own category: an abstained (A-28) or correction-remainder row is not an added or
+    removed function."""
+    return 'modified' if match.older and match.newer else match.category
 
 
 class RealEngine:
