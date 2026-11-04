@@ -372,3 +372,11 @@ else:
     result = subprocess.run([sys.executable, '-c', code, str(path)], capture_output=True, text=True, timeout=3,
                             env={**os.environ, 'PYTHONPATH': str(Path(__file__).resolve().parents[1] / 'src')})
     assert result.returncode == 0, result.stderr
+
+
+def test_digest_works_when_o_nonblock_is_absent(tmp_path, monkeypatch):
+    """Windows has no os.O_NONBLOCK; the digest path must not require it."""
+    monkeypatch.delattr(os, 'O_NONBLOCK', raising=False)
+    path = tmp_path / 'build.bin'
+    path.write_bytes(b'abc\n')
+    assert matrix._digest(path) == (hashlib.sha256(b'abc\n').hexdigest(), 4)
