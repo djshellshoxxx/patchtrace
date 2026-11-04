@@ -41,6 +41,9 @@ REPORT_LIMITATIONS = (
     'verified one.',
     'Only the CSAF documents given were checked; a revision that is not loaded can change this result.',
 )
+# Checked on the re-opened backup against the live database, beside the snapshot hash (verified_backup).
+KB_ROWS = ("SELECT id, body_sha256 FROM enrichment_entries WHERE kind IN ('kb-investigation', 'kb-context') "
+           'ORDER BY id')
 
 
 class WorkspaceFileIndex:
@@ -400,6 +403,23 @@ class RealProjectPort:
 
     def get_row(self, project_id: str, kind: str, key: str) -> bytes | None:
         return self.list_rows(project_id, kind).get(key)
+
+    def backup(self, project_id: str, label: str) -> str:
+        """A new verified copy of the project database (``verified_backup``: written aside, re-opened read-only,
+        integrity-checked and compared with the live rows) before a repair replaces a row; never reuses an older
+        copy, which may predate the rows being replaced. Returns its path inside the project."""
+        from ..service import ProjectService
+        from ..verified_backup import BACKUP_DIR, BackupError, write_verified_backup
+        directory = self._directory(project_id)
+        service = ProjectService.open(directory, maintenance=False)
+        try:
+            path = write_verified_backup(directory, service.store.connection, label, compare=(KB_ROWS,))
+        except BackupError as exc:
+            raise KbcStoreError('PT-KBC-STORAGE', 'the verified backup of the project database failed; nothing was '
+                                'repaired or changed', details={'cause': str(exc)[:200]}) from None
+        finally:
+            service.close()
+        return f'{BACKUP_DIR}/{path.name}'
 
 
 def escape_markdown(text: str) -> str:

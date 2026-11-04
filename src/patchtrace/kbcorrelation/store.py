@@ -477,6 +477,22 @@ def _file_sha(path: str) -> str:
     return digest.hexdigest()
 
 
+def _file_action(path: Path, data: bytes, differing: str) -> str:
+    if not path.is_file():
+        return 'add'
+    return 'keep' if path.stat().st_size == len(data) and path.read_bytes() == data else differing
+
+
+def _keep_aside(path: Path) -> None:
+    """Never delete: differing bytes move to a content-addressed name beside the file before it is rewritten."""
+    sha = _file_sha(str(path))
+    aside = path.with_name(f'{path.name}.replaced-{sha[:16]}')
+    if not aside.is_file():
+        os.replace(path, aside)
+    elif _file_sha(str(aside)) != sha:  # an equal name already keeps the same bytes; anything else stops here
+        raise KbcStoreError('PT-KBC-STATE', 'a kept-aside sidecar copy holds different bytes')
+
+
 def _revision_of(body: dict) -> InvestigationRevision:
     return InvestigationRevision.model_validate_json(json.dumps(body['revision']))  # strict models parse JSON
 
@@ -640,13 +656,11 @@ class ProjectAttachment:
             raise KbcStoreError('PT-KBC-STORAGE', 'a project sidecar could not be written',
                                 details={'cause': type(exc).__name__}) from exc
 
-    def _write_sidecars(self, body: dict) -> None:
+    def _source_sidecars(self, body: dict) -> list[tuple[str, Path, bytes]]:
+        """(name inside the project, path, bytes) of each source sidecar; the bytes follow from the verified object."""
         directory = Path(body['directory'])
-        rev = _revision_of(body)
-        budget = self.ws.limits.project_sources_bytes
-        sources = directory / 'kb' / 'sources'
-        used = sum(p.stat().st_size for p in sources.glob('*.json.gz')) if sources.is_dir() else 0
         by_sha = {s.sha256: s for s in self.ws.sources()}
+        files = []
         for sha in body['source_shas']:
             path = self._confined(directory, 'kb', 'sources', f'{sha}.json.gz')
             source = by_sha.get(sha)
@@ -655,17 +669,47 @@ class ProjectAttachment:
             envelope = {'contract': 'kbcorrelation/1', 'source': json.loads(_json(source)), 'encoding': 'base64',
                         'bytes': base64.b64encode(self.ws.read_object(sha)).decode('ascii')}
             data = _gz(json.dumps(envelope, sort_keys=True, separators=(',', ':')).encode())
-            if not path.is_file():
-                if used + len(data) > budget:
-                    raise KbcStoreError('PT-KBC-LIMIT', 'the project source budget is exhausted')
+            files.append((f'kb/sources/{sha}.json.gz', path, data))
+        return files
+
+    def _investigation_sidecar(self, body: dict) -> tuple[str, Path, bytes]:
+        rev = _revision_of(body)
+        name = f'{rev.investigation_id}-{rev.revision}.json'
+        return f'kb/investigations/{name}', self._confined(Path(body['directory']), 'kb', 'investigations', name), \
+            _json(rev).encode()
+
+    def sidecar_plan(self, body: dict, *, investigation: bool = True) -> tuple[tuple[str, str], ...]:
+        """(name inside the project, action) for each sidecar ``resume`` writes: ``add``, ``keep``, ``replace`` (the
+        differing bytes are kept aside first) or ``conflict`` (an investigation sidecar is never replaced). Reads only;
+        ``investigation=False`` leaves out the investigation sidecar of a revision that is not committed yet."""
+        plan = [(name, _file_action(path, data, 'replace')) for name, path, data in self._source_sidecars(body)]
+        if investigation:
+            name, path, data = self._investigation_sidecar(body)
+            plan.append((name, _file_action(path, data, 'conflict')))
+        return tuple(plan)
+
+    def _write_sidecars(self, body: dict) -> None:
+        directory = Path(body['directory'])
+        budget = self.ws.limits.project_sources_bytes
+        sources = directory / 'kb' / 'sources'
+        used = sum(p.stat().st_size for p in sources.glob('*.json.gz')) if sources.is_dir() else 0
+        for _, path, data in self._source_sidecars(body):
+            action = _file_action(path, data, 'replace')
+            if action == 'keep':
+                continue
+            if action == 'replace':
+                _keep_aside(path)
+            elif used + len(data) > budget:
+                raise KbcStoreError('PT-KBC-LIMIT', 'the project source budget is exhausted')
+            else:
                 used += len(data)
             atomic_write(path, data)
-        name = f'{rev.investigation_id}-{rev.revision}.json'
-        path = self._confined(directory, 'kb', 'investigations', name)
-        text = _json(rev).encode()
-        if path.is_file() and path.read_bytes() != text:
+        _, path, text = self._investigation_sidecar(body)
+        action = _file_action(path, text, 'conflict')
+        if action == 'conflict':
             raise KbcStoreError('PT-KBC-STATE', 'an investigation sidecar already holds a different revision')
-        atomic_write(path, text)
+        if action == 'add':
+            atomic_write(path, text)
 
     def _rows(self, body: dict, context: tuple[tuple[str, bytes], ...]) -> None:
         rev = _revision_of(body)

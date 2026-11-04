@@ -14,7 +14,7 @@ import hashlib
 import json
 import uuid
 from collections.abc import Callable, Iterable, Mapping, Sequence
-from dataclasses import dataclass, field
+from dataclasses import asdict, dataclass, field
 from pathlib import Path
 from typing import Any, Protocol
 
@@ -48,7 +48,7 @@ from .pairs import LocalFile
 from .plan import index_plan, local_plan
 from .ports import AdvisoryPort, ClockPort, ProjectPort
 from .products import clean_text
-from .recovery import repair
+from .recovery import ContextFor, PlannedRepair, preview, repair
 from .sources.cvrf import SourceError, load_json
 from .store import AttachRequest, Fault, KbcStoreError, ProjectAttachment, WorkspaceStore, atomic_write
 from .workflow import Event
@@ -75,6 +75,24 @@ TEXT_KB17 = ('This project has no advisory context. Search a KB or CVE to attach
              'files stays unverified until you confirm it.')
 TEXT_PAIRS_E0 = ('Pair candidates need the Windows file index, which is not available offline. Supply two files you '
                  'already have with "kb import-pair".')
+REPAIR_BACKUP_LABEL = 'kb-repair'  # backups/project-pre-kb-repair-<UTC stamp>.sqlite3 (verified_backup)
+
+
+def _plan_text(plan: Sequence[PlannedRepair]) -> str:
+    """The ``kb attach`` preview in words: each change ``--repair`` would make; unchanged items are only counted."""
+    changes = [c for p in plan for c in p.changes]
+    lines = ['Context is not attached yet. "kb attach --repair" would:']
+    lines += [f'  {c.action} {c.target}' + (f' {c.name}' if c.name else '') for c in changes if c.action != 'keep']
+    if not changes:
+        lines.append('  write nothing: no context can be rebuilt for this project yet')
+    if kept := sum(c.action == 'keep' for c in changes):
+        lines.append(f'  leave {kept} item(s) that already match as they are')
+    if any(c.target == 'row' and c.action == 'replace' for c in changes):
+        lines.append('A verified backup of the project database is written before any row is replaced.')
+    if any(c.action == 'conflict' for c in changes):
+        lines.append('A conflict stops the repair at that item; nothing is replaced there.')
+    lines.append('Nothing is deleted: a differing source sidecar is kept aside under a ".replaced-" name.')
+    return '\n'.join(lines)
 
 
 class FileIndex(Protocol):
@@ -95,6 +113,9 @@ class ProjectAccess(ProjectPort, Protocol):
     def open_project(self, directory: str) -> str: ...
 
     def list_rows(self, project_id: str, kind: str) -> Mapping[str, bytes]: ...
+
+    def backup(self, project_id: str, label: str) -> str:
+        """A new verified copy of the project database; its path inside the project. Raises ``KbcStoreError``."""
 
 
 @dataclass(frozen=True)
@@ -731,6 +752,10 @@ class KbService:
     # ------------------------------------------------------------------------------------------ attach
 
     def attach(self, project_dir: str, investigation: str, *, repair_it: bool) -> Outcome:
+        """Without ``repair_it`` a preview: the links and every change ``--repair`` would make; nothing is written.
+        With it, a verified backup of the project database comes first whenever a stored row would be replaced (a
+        failed backup refuses the repair), then ``recovery.repair`` finishes this project's attaches. Nothing is
+        deleted."""
         directory = Path(project_dir).resolve().as_posix()
         with self._open(create=False) as ws:
             self._get(ws, investigation)
@@ -738,27 +763,49 @@ class KbService:
             if not ours:
                 raise _fail('PT-KBC-UNSUPPORTED', 'this workspace did not create that project, and attaching '
                             'context to a foreign project arrives with a later slice')
-            if not repair_it:
-                return self._link_outcome(ours, None, 'Context is not attached yet. Run "kb attach --repair".')
-            index, _ = load_index(ws, self.ports)
             port = self.env.project(ws, 'KB comparison')
-            result = repair(ws, port, context_for=lambda op, body: self._rebuilt_rows(index, ws, body),
-                            only=lambda body: body['directory'] == directory
-                            and body['revision']['investigation_id'] == investigation)
+            context_for = self._rebuilder(ws)
+
+            def only(body: dict) -> bool:
+                return body['directory'] == directory and body['revision']['investigation_id'] == investigation
+
+            plan = preview(ws, port, context_for=context_for, only=only)
+            if not repair_it:
+                return self._link_outcome(ours, None, _plan_text(plan), plan, [])
+            backups = [port.backup(project_id, REPAIR_BACKUP_LABEL)
+                       for project_id in dict.fromkeys(p.project_id for p in plan if p.replaces_rows())]
+            result = repair(ws, port, context_for=context_for, only=only)
             return self._link_outcome(self._ops_for(ws, directory, investigation), result,
-                                      'The context is still pending; see the issues.')
+                                      'The context is still pending; see the issues.', plan, backups)
 
     @staticmethod
-    def _link_outcome(ops: list[tuple[str, str, dict]], result, pending_text: str) -> Outcome:
+    def _link_outcome(ops: list[tuple[str, str, dict]], result, pending_text: str,
+                      plan: Sequence[PlannedRepair], backups: list[str]) -> Outcome:
         links = [{'project_id': body['project_id'], 'project_revision': body['project_revision'],
                   'state': (body['link_state'] or 'context-pending') if state == 'done' else 'intent',
                   'pair_id': body['pair_id']} for _, state, body in ops]
         done = all(link['state'] == 'attached' for link in links)
         payload = {'contract': 'kbcorrelation/1', 'links': links,
-                   'issues': [i.model_dump(mode='json') for i in result.issues] if result else []}
+                   'issues': [i.model_dump(mode='json') for i in result.issues] if result else [],
+                   'repair_plan': [asdict(p) for p in plan], 'backups': backups}
         warnings = list(result.warnings) if result else []
-        return Outcome(0 if done else 3, 'complete' if done else 'partial', payload,
-                       TEXT_KB13 if done else pending_text, warnings)
+        text = (TEXT_KB13 if done else pending_text) + ''.join(
+            f'\nThe project database was backed up first: {b}' for b in backups)
+        return Outcome(0 if done else 3, 'complete' if done else 'partial', payload, text, warnings)
+
+    def _rebuilder(self, ws: WorkspaceStore) -> ContextFor:
+        """``context_for`` of the preview and the repair: the index is read at first need and each operation's context
+        is built once, so the repair writes exactly the bytes its preview compared."""
+        built: dict[str, tuple[tuple[str, bytes], ...]] = {}
+        index: list[ReverseIndex] = []
+
+        def rows(op: str, body: dict) -> tuple[tuple[str, bytes], ...]:
+            if op not in built:
+                if not index:
+                    index.append(load_index(ws, self.ports)[0])
+                built[op] = self._rebuilt_rows(index[0], ws, body)
+            return built[op]
+        return rows
 
     @staticmethod
     def _ops_for(ws: WorkspaceStore, directory: str, investigation: str) -> list[tuple[str, str, dict]]:

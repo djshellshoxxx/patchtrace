@@ -64,10 +64,12 @@ def _register_core(sub) -> None:
     search.add_argument('--offline', action='store_true', help='accepted for clarity; search never fetches')
     search.add_argument('--product', metavar='ID', help='keep one product scope; others are listed as not applicable')
     search.add_argument('--investigation', metavar='ID', help='continue an investigation instead of starting one')
-    attach = add_common(sub.add_parser('attach', help='finish or inspect the context attach of a project'))
+    attach = add_common(sub.add_parser('attach', help='inspect the context attach of a project and preview its repair '
+                                       '(writes nothing without --repair)'))
     attach.add_argument('project', metavar='PROJECT')
     attach.add_argument('--investigation', required=True, metavar='INV')
-    attach.add_argument('--repair', action='store_true', help='finish an interrupted attach (idempotent)')
+    attach.add_argument('--repair', action='store_true', help='finish an interrupted attach as previewed (idempotent; '
+                        'a verified project database backup comes before any replaced row; nothing is deleted)')
     explain = add_common(sub.add_parser('explain', help='show a project\'s advisory context'))
     explain.add_argument('project', metavar='PROJECT')
     explain.add_argument('--cve', metavar='CVE')
