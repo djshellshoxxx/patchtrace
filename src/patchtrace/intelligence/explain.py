@@ -132,7 +132,7 @@ def _unknowns(applicability: ApplicabilityReport, profile: CweProfile, hypothese
     for advisory in relevant:
         if advisory.superseded and not local[advisory.facts.facts_id]:
             found.add(f'{_label(advisory)}: a newer stored revision no longer lists {cve}; this older revision is '
-                      'shown, but its statuses are not marked superseded')
+                      'shown with its statuses marked superseded')
     return tuple(sorted(found))
 
 
@@ -148,7 +148,10 @@ def build_report(cve: str, advisories: Sequence[AdvisoryLike], older: ArtifactId
     if not relevant:
         raise IntelError('PT-INTEL-NOTFOUND', f'no stored advisory lists {cve}')
     _check(cancel)
-    applicability = resolve(cve, [a.facts for a in relevant], older, newer)
+    # The caller may hold only the documents that list the CVE; the stored flag carries the store-wide supersession
+    # (a newer revision that dropped the CVE), so a withdrawn claim is never shown as current (audit C-03).
+    applicability = resolve(cve, [a.facts for a in relevant], older, newer,
+                            superseded={a.facts.facts_id: a.superseded for a in relevant})
     _check(cancel)
     current = [a for a in relevant if not a.superseded] or relevant
     pairs = [(a, a.facts.vulnerability(cve)) for a in current]

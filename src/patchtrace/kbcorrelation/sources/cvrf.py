@@ -226,6 +226,13 @@ def _status_name_fits(name: str, index: int, problems: list[Problem]) -> bool:
     return False
 
 
+def clip_bytes(text: str, limit: int) -> str:
+    """``text`` cut to at most ``limit`` UTF-8 bytes on a character boundary (the limit is bytes, audit D-02)."""
+    if len(text) <= limit // 4:  # at most 4 bytes per character: cannot exceed the limit
+        return text
+    return text.encode('utf-8', 'replace')[:limit].decode('utf-8', 'ignore')
+
+
 def parse_fixed_build(text: object) -> str | None:
     """``build.UBR`` from ``26100.9001`` or from a four-part version ``10.0.26100.9001``; anything else is None."""
     if not isinstance(text, str):
@@ -525,7 +532,7 @@ def _json_remediation(ri: int, at: str, rem, problems: list[Problem], limits: Kb
         problems.append(Problem('SUPERSEDES_UNPARSED', at, 'supersedes is not a list of KB ids'))
         sup = []
     sub = rem.get('sub_type')
-    return RawRemediation(ri, at, kind, desc[:limits.text_field_bytes], tuple(pids), rem.get('fixed_build'),
+    return RawRemediation(ri, at, kind, clip_bytes(desc, limits.text_field_bytes), tuple(pids), rem.get('fixed_build'),
                           tuple(sup), clean_text(sub) or None if isinstance(sub, str) else None)
 
 
@@ -669,7 +676,7 @@ def _xml_vulnerability(index: int, el, problems: list[Problem], limits: KbcLimit
         kind = int(text)
         desc = next((c.text or '' for c in rem if _local(c.tag) == 'Description'), '')
         pids = tuple(c.text or '' for c in rem if _local(c.tag) == 'ProductID')
-        rems.append(RawRemediation(ri, rat, kind, desc[:limits.text_field_bytes], pids, rem.get('FixedBuild'),
+        rems.append(RawRemediation(ri, rat, kind, clip_bytes(desc, limits.text_field_bytes), pids, rem.get('FixedBuild'),
                                    tuple((rem.get('Supersedes') or '').split()),
                                    clean_text(rem.get('SubType')) or None))
     statuses = []

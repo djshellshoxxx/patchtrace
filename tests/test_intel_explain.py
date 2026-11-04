@@ -254,3 +254,20 @@ def test_cancellation_is_cooperative(project):
     with pytest.raises(IntelError) as info:
         build_report(CVE, advisories, *identities(service), cancel=cancel)
     assert info.value.code == 'PT-INTEL-CANCEL'
+
+
+def test_withdrawn_cve_is_superseded_in_the_explain_report(project):
+    # Audit C-03 on the explain path: the CLI passes only the documents that list the CVE; the store-wide
+    # supersession flag must still make the withdrawn claims "unknown", never "still affected".
+    service, store = project
+    add(store, REV1)
+    doc = json.loads(REV2)
+    doc['vulnerabilities'] = [v for v in doc['vulnerabilities'] if v['cve'] != CVE]
+    add(store, json.dumps(doc).encode(), 2)
+    advisories, _ = store.for_cve(CVE)
+    assert [a.facts.revision for a in advisories] == ['1'] and advisories[0].superseded is True
+    older, newer = project_identities(service.project.artifacts, service.root, {'older': ['PT-101-1']})
+    report = build_report(CVE, advisories, older, newer)
+    assert report.applicability.superseded_sources == (advisories[0].source.sha256,)
+    assert report.applicability.older.resolution == 'unknown'
+    assert any('no longer lists' in n for n in (*report.applicability.limitations, *report.applicability.older.why))
