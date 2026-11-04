@@ -8,8 +8,9 @@ the file), and only after BinDiff exited cleanly: a killed run can leave a valid
 file with an empty `function` table (SPEC-29 §4.4). Layers: `trusted_schema=OFF`,
 `query_only`, defensive mode, `cell_size_check=ON`, `max_page_count` capped at the file's
 own page count, a progress-handler deadline (`PT-SECONDARY-LIMIT`), an authorizer that
-allows only SELECT/READ of the fixed tables, and rejection of any trigger, view or virtual
-table in `sqlite_master` (a view named like a required table is never read).
+allows only SELECT/READ of the fixed tables, rejection of any trigger, view or virtual
+table in `sqlite_master` (a view named like a required table is never read), and per-table
+row caps counted before any row is read (bindiff-plan D5).
 """
 from __future__ import annotations
 
@@ -37,6 +38,12 @@ NAME_LIMIT = 64 * 1024  # characters per function name, as on the BinExport side
 MASK = 0xFFFF_FFFF_FFFF_FFFF
 DEFAULT_DEADLINE = 120.0     # seconds of wall clock for the whole import, checked by the progress handler
 PROGRESS_STEPS = 10_000      # SQLite VM instructions between deadline checks
+MAX_FUNCTION_ROWS = 2_000_000  # the SPEC-10b BinExport `vertex` cap: a match needs one vertex per side
+MAX_ALGORITHM_ROWS = 1024      # functionalgorithm and basicblockalgorithm, each
+MAX_DETAIL_ROWS = 20_000_000   # function + basicblock + instruction in total (bindiff-plan D5)
+_ALGORITHM_TABLES = ('functionalgorithm', 'basicblockalgorithm')
+_DETAIL_TABLES = ('function', 'basicblock', 'instruction')
+_COUNTED = _ALGORITHM_TABLES + _DETAIL_TABLES
 REQUIRED = {
     'basicblockalgorithm': {'id', 'name'},
     'functionalgorithm': {'id', 'name'},
@@ -190,6 +197,28 @@ def _check_schema_objects(db: sqlite3.Connection) -> set[str]:
     return tables
 
 
+def _too_many(table: str, cap: int) -> SecondaryError:
+    # `table` is always one of the fixed literals above, never text from the file
+    return SecondaryError('PT-SECONDARY-LIMIT', f'BinDiff table {table} exceeds {cap} rows')
+
+
+def _row_counts(db: sqlite3.Connection) -> dict[str, int]:
+    return {table: db.execute(f'SELECT COUNT(*) FROM "{table}"').fetchone()[0] for table in _COUNTED}
+
+
+def _check_row_caps(db: sqlite3.Connection) -> None:
+    """SPEC-29 §7.2: refuse oversized tables before any row becomes a record (the loops repeat the caps)."""
+    counts = _row_counts(db)
+    for table in _ALGORITHM_TABLES:
+        if counts[table] > MAX_ALGORITHM_ROWS:
+            raise _too_many(table, MAX_ALGORITHM_ROWS)
+    if counts['function'] > MAX_FUNCTION_ROWS:
+        raise _too_many('function', MAX_FUNCTION_ROWS)
+    if sum(counts[table] for table in _DETAIL_TABLES) > MAX_DETAIL_ROWS:
+        raise SecondaryError('PT-SECONDARY-LIMIT', f'BinDiff tables {", ".join(_DETAIL_TABLES)} exceed '
+                             f'{MAX_DETAIL_ROWS} rows in total')
+
+
 def _read(db: sqlite3.Connection, older_sha256: str, newer_sha256: str, file_sha256: str,
           expected_hashes: tuple[str, str] | None = None) -> SecondaryMatchSet:
     tables = _check_schema_objects(db)
@@ -199,6 +228,7 @@ def _read(db: sqlite3.Connection, older_sha256: str, newer_sha256: str, file_sha
         present = {row[1] for row in db.execute(f'PRAGMA table_info("{table}")')}
         if missing := columns - present:
             raise _fail(f'table {table!r} lacks columns {sorted(missing)}')
+    _check_row_caps(db)
     meta = db.execute('SELECT version, file1, file2, similarity, confidence FROM metadata').fetchall()
     if len(meta) != 1:
         raise _fail('metadata must contain exactly one row')
@@ -217,14 +247,19 @@ def _read(db: sqlite3.Connection, older_sha256: str, newer_sha256: str, file_sha
     want_older, want_newer = expected_hashes or (older_sha256, newer_sha256)
     check_pair(files[1], files[2], want_older.strip().lower(), want_newer.strip().lower())
     algorithms = {}
-    for ident, name in db.execute('SELECT id, name FROM functionalgorithm'):
+    # The running counters back up COUNT(*), which a corrupt file's index can make disagree with its rows.
+    for seen, (ident, name) in enumerate(db.execute('SELECT id, name FROM functionalgorithm'), 1):
+        if seen > MAX_ALGORITHM_ROWS:
+            raise _too_many('functionalgorithm', MAX_ALGORITHM_ROWS)
         if not isinstance(name, str) or not name.strip():
             raise _fail('functionalgorithm row without a name')
         algorithms[ident] = name
     engine_version = version[len('BinDiff '):]
     matches = []
-    for row in db.execute('SELECT address1, name1, address2, name2, similarity, confidence, flags, algorithm, basicblocks '
-                          'FROM function ORDER BY address1, address2'):
+    for seen, row in enumerate(db.execute('SELECT address1, name1, address2, name2, similarity, confidence, flags, '
+                                          'algorithm, basicblocks FROM function ORDER BY address1, address2'), 1):
+        if seen > MAX_FUNCTION_ROWS:
+            raise _too_many('function', MAX_FUNCTION_ROWS)
         address1, name1, address2, name2, similarity, confidence, flags, algorithm, basicblocks = row
         if algorithm not in algorithms:
             raise _fail(f'function.algorithm {algorithm!r} has no functionalgorithm row')
