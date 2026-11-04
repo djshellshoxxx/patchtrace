@@ -215,3 +215,34 @@ def test_sandboxed_test_subprocess_has_no_runner_credential_tokens(monkeypatch):
     assert set(captured["environment"]) == {"PATH"}
     assert "ACTIONS_RUNTIME_TOKEN" not in str(captured["command"])
     assert "PATCHTRACE_OPENAI_API_KEY" not in str(captured["command"])
+
+
+def test_exact_replacements_are_supported_on_large_existing_files(tmp_path, monkeypatch):
+    import json
+
+    agent = _agent()
+    monkeypatch.setattr(agent, "ROOT", tmp_path)
+    target = tmp_path / "src" / "patchtrace" / "artifact_bytes.py"
+    target.parent.mkdir(parents=True)
+    target.write_text("header = 1\n" + "filler = 0\n" * 6000 + "result = 2\n")
+    proposal = {"files": [{"path": "src/patchtrace/artifact_bytes.py",
+                            "replacements": [{"old": "result = 2\n", "new": "result = 3\n"}]}]}
+    edits = agent.parse_edit(json.dumps(proposal), agent.TASKS["artifact"], "source")
+    assert edits["src/patchtrace/artifact_bytes.py"].startswith("header = 1\n")
+    assert edits["src/patchtrace/artifact_bytes.py"].endswith("result = 3\n")
+
+
+def test_exact_replacements_refuse_ambiguous_or_missing_snippets(tmp_path, monkeypatch):
+    import json
+    import pytest
+
+    agent = _agent()
+    monkeypatch.setattr(agent, "ROOT", tmp_path)
+    target = tmp_path / "tests" / "test_artifact_bytes.py"
+    target.parent.mkdir()
+    target.write_text("same = 1\nsame = 1\n")
+    for fragment in ("same = 1\n", "missing = 0\n"):
+        proposal = {"files": [{"path": "tests/test_artifact_bytes.py",
+                                "replacements": [{"old": fragment, "new": "new = 2\n"}]}]}
+        with pytest.raises(ValueError, match="exactly once"):
+            agent.parse_edit(json.dumps(proposal), agent.TASKS["artifact"], "test")
