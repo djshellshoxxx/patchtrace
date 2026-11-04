@@ -52,10 +52,16 @@ def select_context(files, root):
     sources = sorted(p for p in files if p.relative_to(root).parts[0] == "src")
     tests = sorted(p for p in files if p.relative_to(root).parts[0] == "tests")
     result = []
-    for path in sources[:4] + tests[:4]:
-        content = path.read_text(encoding="utf-8")
-        if len(content) <= 12000:
+    for group in (sources, tests):
+        accepted = 0
+        for path in group:
+            content = path.read_text(encoding="utf-8")
+            if len(content) > 12000:
+                continue
             result.append(f"FILE {path.relative_to(root)}\n{content}")
+            accepted += 1
+            if accepted == 4:
+                break
     return result
 
 
@@ -72,9 +78,20 @@ def is_valid_green(process):
 
 
 def run_focused_tests(paths):
+    # Run model-edited tests as the unprivileged user. In particular, that user
+    # cannot read the parent runner process' /proc/<pid>/environ credentials.
+    # A sanitized environment alone is insufficient to protect the parent.
+    command = [
+        "sudo", "-n", "-u", "nobody", "env", "-i",
+        f"PATH={os.environ['PATH']}",
+        "HOME=/tmp", "LANG=C.UTF-8", "PYTHONPATH=src",
+        "QT_QPA_PLATFORM=offscreen", "PYTHONDONTWRITEBYTECODE=1",
+        sys.executable, "-m", "pytest", "-q", "-p", "no:cacheprovider",
+        "--disable-warnings", *paths,
+    ]
     return subprocess.run(
-        [sys.executable, "-m", "pytest", "-q", "--disable-warnings", *paths],
-        cwd=ROOT, capture_output=True, text=True, timeout=240, check=False,
+        command, cwd=ROOT, capture_output=True, text=True,
+        timeout=240, check=False, env={"PATH": os.environ["PATH"]},
     )
 
 
