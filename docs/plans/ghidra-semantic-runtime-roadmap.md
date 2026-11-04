@@ -2,6 +2,8 @@
 
 Status: PROPOSED / PLANNING ONLY. Nothing in this document claims a working Ghidra extension, semantic detector, or runtime tracer. Maintainers must reconcile this roadmap with current SPEC-01 through SPEC-11 and active PRs before coding. Last drafted 2026-10-12.
 
+SPEC-31 note (amendment A-14, applied 2026-11-04): the static PE x64 subset of analysis interchange (SPEC-13), CFG correspondence (SPEC-16) and multi-engine arbitration (SPEC-21) is specified and built by SPEC-31 (`docs/specs/unified-engine/`); the numbers SPEC-13, SPEC-16 and SPEC-21 stay reserved for the Ghidra-hosted and runtime track described here.
+
 ## Goal and non-goals
 
 Evolve PatchTrace from a Ghidriff-backed, persistent patch investigation desktop into an optionally Ghidra-hosted platform connecting (1) matched binary functions, (2) cross-version CFG/p-code/data-flow evidence, (3) debugger/instrumentation observations and (4) analyst review. Preserve current standalone desktop, CLI, SQLite projects, offline defaults, explicit older/newer orientation, provenance, no target execution during static comparison, and user control over optional network actions. No automatic vulnerability verdict, exploitability probability, assertion of exhaustive tracing, or assumption that matching engines are independent.
