@@ -55,3 +55,6 @@ Newest prerelease: v0.1.0-beta.751 (2026-11-03T19:05Z). Main: `b77d84e`.
 | 2026-11-04T02:50 | SonarCloud gate #174 D / #175 C / #176 C | traced, owner decision | workflow wf_7c395273-92e (26 agents): 10 candidates, 0 confirmed; one comment per PR |
 | 2026-11-04T02:50 | #116 P2 profile switch | fixed | tests/test_audit116_profile_switch.py (3 red then green); all #116 defects closed |
 | 2026-11-04T02:50 | fuzz harness (11 parsers) + nightly job; RB-05 journey gate in QA; KB C-03/D-02 | integrated on coordinator branch | 0 fuzz findings in about 15,000 inputs per target; journey 5/5 |
+| 2026-11-04T03:00 | #177 Windows QA failure (xdist temp path hit the 240-char unified sidecar guard) | fixed | dc1d78b: short --basetemp; budget 240 -> 177; Windows pytest 44m54s -> 14m38s measured |
+| 2026-11-04T03:05 | wave 6 workflow wf_4b651076-6ac: RULE-2, RULE-7, CG-3, report_for, kb attach --repair | 4/4 CONFIRMED, integrated | independent red-check per slice; wiring.py conflict resolved (both constant blocks kept) |
+| 2026-11-04T03:08 | gate pass 3 @e7d309a | pass | 19,187 passed / 32 skipped / 8 xfailed / 0 failed, 378 s; ruff, diff-check, panels check clean |
