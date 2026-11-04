@@ -360,6 +360,8 @@ def parse_fn(document: dict, size_of_image: int, limits: UnifiedLimits) -> FnRec
         raise bad('text')
     if raw is None and (insns or record.blocks or record.calls or record.strings):
         raise bad('raw')
+    if record.truncated and raw is not None:
+        raise bad('truncated')   # a cut instruction list carries no raw bytes (03 s12.3): keys would hash a partial body
     for insn in insns:
         if insn.off + insn.length > total:
             raise bad('insns')

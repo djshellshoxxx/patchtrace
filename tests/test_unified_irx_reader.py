@@ -92,3 +92,38 @@ def test_a_corrupt_block_row_is_a_typed_store_error(tmp_path, sql):
         assert caught.value.code == 'PT-UNIFIED-STORE'
     finally:
         reader.close()
+
+
+def test_a_concurrent_placement_of_the_same_key_is_idempotent_not_a_raw_oserror(tmp_path, monkeypatch):
+    import shutil
+
+    from patchtrace.unified.ir import place
+    first, second = build(tmp_path, 'one'), build(tmp_path, 'two')
+    root = tmp_path / 'project'
+    final = place.ir_dir(root, 'run-1', first.manifest.ir_key)
+    real = place.os.replace
+    raced = []
+
+    def racing(source, target):
+        if not raced and str(target) == str(final):
+            raced.append(True)                                   # another worker lands the same IR first
+            final.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copytree(second.directory, final)
+        return real(source, target)
+
+    monkeypatch.setattr(place.os, 'replace', racing)
+    assert place.place_ir(root, 'run-1', first.directory) == final
+    assert place.find_ir(root, 'run-1', first.manifest.ir_key) == final and not first.directory.exists()
+
+
+def test_a_failed_move_is_a_store_error(tmp_path, monkeypatch):
+    from patchtrace.unified.ir import place
+    built = build(tmp_path)
+
+    def broken(source, target):
+        raise OSError(28, 'No space left on device')
+
+    monkeypatch.setattr(place.os, 'replace', broken)
+    with pytest.raises(UnifiedError) as caught:
+        place.place_ir(tmp_path / 'project', 'run-1', built.directory)
+    assert caught.value.code == 'PT-UNIFIED-STORE'

@@ -158,3 +158,11 @@ def test_parse_pe_header_does_not_read_the_file_up_to_a_hostile_e_lfanew(tmp_pat
         del script.open
     assert result == {'image_base': 0x140000000, 'size_of_image': 0x9000}
     assert max(reads) < 4096 + 200
+
+
+def test_truncated_with_raw_bytes_is_rejected():
+    document = copy.deepcopy(GOOD)
+    document['truncated'] = True
+    with pytest.raises(UnifiedError) as caught:
+        parse(document)
+    assert caught.value.reason == 'bad-record-truncated'
