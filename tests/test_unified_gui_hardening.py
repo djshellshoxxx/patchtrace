@@ -102,3 +102,29 @@ def test_an_unexpected_capture_failure_shows_a_failure_instead_of_leaving_the_pa
     controller.start_run()
     assert 'PT-UNIFIED-INTERNAL: KeyError' in controller.panel.status.full_text()
     assert controller.panel.retry_button.isVisibleTo(controller.panel)
+
+
+# ---- pair_text: a closed code source never reopens readers ---------------------------------------------------------
+
+
+def test_a_closed_row_code_source_opens_no_reader_and_says_the_result_is_unavailable(tmp_path):
+    from unified_s0_fixtures import make_project
+    from unified_wire_support import place_pair
+
+    from patchtrace.unified import pipeline
+    from patchtrace.unified.pair_text import RowCodeSource
+    from patchtrace.unified.pipeline import UnifiedOptions
+    from patchtrace.unified.read_model import request_from_service
+    service = make_project(tmp_path / 'project')
+    try:
+        place_pair(service, scratch=tmp_path)
+        pipeline.run_unified(service, UnifiedOptions(isolate=False))
+        vm = load_unified(request_from_service(service, extraction_configured=True))
+        source = RowCodeSource()
+        row = next(r for r in vm.rows if 'read_item' in r.function_label)
+        source.close()                           # shutdown ran while this load was still queued
+        code = source(vm, row)
+        assert source._readers == {}             # no file handle is left open by a worker that lost the race
+        assert code.disassembly.pair is None and code.decompiled.pair is None
+    finally:
+        service.close()
