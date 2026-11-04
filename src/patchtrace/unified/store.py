@@ -609,7 +609,8 @@ def publish_result(enrichment: EnrichmentStore, staged: Path, *, guard: Guard, c
             pass  # committed replacement is current; the orphan sweep can remove this later
     deleted = 0
     try:
-        deleted = apply_unified_retention(enrichment, protect=(manifest.result_id,), limits=limits)
+        deleted = apply_unified_retention(enrichment, protect=(manifest.result_id,), limits=limits,
+                                          current=current)
     except (UnifiedError, sqlite3.Error, OSError):
         pass  # best effort: retention never fails a publish
     try:
@@ -854,7 +855,7 @@ def _pair_of(enrichment: EnrichmentStore, pointer: UnifiedResultPointer) -> tupl
 
 
 def apply_unified_retention(enrichment: EnrichmentStore, *, protect: Iterable[str] = (),
-                            limits: UnifiedLimits = DEFAULT_LIMITS) -> int:
+                            limits: UnifiedLimits = DEFAULT_LIMITS, current: Guard | None = None) -> int:
     """Keep the newest L-32 results per (older, newer, config_digest) (plus `protect`) and the newest RUN_KEEP run
     rows per Ghidriff run; delete the rest (rows first, then their directories). Another pair, orientation or run
     never evicts a result. Rows that do not validate are never deleted here."""
@@ -863,6 +864,8 @@ def apply_unified_retention(enrichment: EnrichmentStore, *, protect: Iterable[st
         return 0
     rows, _skipped, _newer = _pointers(enrichment)
     keep = set(protect)
+    if current is not None:   # 02 s4: "plus the current one" - the row the live project is on is never evicted
+        keep.update(entry.id for entry, _pointer in rows if entry.guard == current)
     per_group: dict[tuple, int] = {}
     doomed = []
     for entry, pointer in rows:  # newest first
