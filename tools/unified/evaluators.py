@@ -158,7 +158,6 @@ def _accepted(manifest: corpus_manifest.CorpusManifest, class_id: str) -> tuple[
 
 
 FLIP = {'older-only': 'newer-only', 'newer-only': 'older-only'}
-PAIRING = ('matched', 'older-only', 'newer-only')
 NON_SEMANTIC = ('unchanged', 'cosmetic')
 CHAIN_WAIT = ('pending: no 3-build chain (A-B, B-C and A-C over three distinct images of one project) is in the corpus '
               'manifest; P1 chains come from `corpus aa`, release chains need a third consecutive version per project '
@@ -166,9 +165,12 @@ CHAIN_WAIT = ('pending: no 3-build chain (A-B, B-C and A-C over three distinct i
 
 
 def _pairing(rows, mirror: bool) -> frozenset:
+    """(older, newer, decision) of EVERY row, whatever its decision kind (U7-08: a tentative, candidate, contested, ambiguous
+    or unknown row that changes on swap is as much an asymmetry as a matched one). Mirrored: the sides trade places and
+    older-only becomes newer-only."""
     if mirror:
-        return frozenset((r.newer, r.older, FLIP.get(r.decision, r.decision)) for r in rows if r.decision in PAIRING)
-    return frozenset((r.older, r.newer, r.decision) for r in rows if r.decision in PAIRING)
+        return frozenset((r.newer, r.older, FLIP.get(r.decision, r.decision)) for r in rows)
+    return frozenset((r.older, r.newer, r.decision) for r in rows)
 
 
 def g_u4(sets: Sequence[OutcomeSet], manifest: corpus_manifest.CorpusManifest | None = None) -> Result:
@@ -200,7 +202,7 @@ def g_u4(sets: Sequence[OutcomeSet], manifest: corpus_manifest.CorpusManifest | 
             if ahead is None:
                 continue
             ok = _pairing(ahead.rows, True) == _pairing(back.rows, False)
-            mirrored[pair_id] = 'mirrored' if ok else 'not-mirrored'
+            mirrored[pair_id] = 'not-mirrored' if not ok or mirrored.get(pair_id) == 'not-mirrored' else 'mirrored'
             if not ok:
                 reasons.append(f'{pair_id} run {run}: the swapped orientation is not the mirror image of the forward one')
     chain_reasons, chain_notes, chains = _chains(manifest, sets)
