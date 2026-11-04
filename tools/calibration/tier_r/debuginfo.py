@@ -62,8 +62,23 @@ PDB_SOURCE_ROOT = '/ka-src'          # lld-link /pdbsourcepath: relative CodeVie
 _PDB_ROOTS = ('/ka-src/', 'c:/ka-src/')
 
 
-def _root_prefix(root: str) -> str:
-    return root.replace('\\', '/').rstrip('/').lower() + '/'
+def _fold(path: str) -> str:
+    """Forward slashes, no Win32 verbatim or device prefix: '\\\\?\\C:\\x' -> 'C:/x', '\\\\?\\UNC\\srv\\s' -> '//srv/s'."""
+    text = path.replace('\\', '/')
+    low = text.lower()
+    if low.startswith('//?/unc/'):
+        return '//' + text[8:]
+    if low.startswith(('//?/', '//./')):
+        return text[4:]
+    return text
+
+
+def _root_prefix(root: str) -> str | None:
+    """Comparison prefix of a build root, or None for a root so broad it would claim system files ('/', 'C:/')."""
+    stem = _fold(root).rstrip('/').lower()
+    if not stem.strip('/') or re.fullmatch(r'[a-z]:', stem):
+        return None
+    return stem + '/'
 
 
 def normalize_path(raw: str | None, roots: Sequence[str] = ()) -> str | None:
@@ -72,8 +87,9 @@ def normalize_path(raw: str | None, roots: Sequence[str] = ()) -> str | None:
     scratch source directory in the debug info): a file below one of them is project-relative like any other."""
     if not raw:
         return None
-    text = raw.replace('\\', '/')
-    for root in (*_PDB_ROOTS, *(_root_prefix(r) for r in roots if r)):
+    text = _fold(raw)
+    prefixes = (_root_prefix(r) for r in roots if r)
+    for root in (*_PDB_ROOTS, *(p for p in prefixes if p)):
         if text.lower().startswith(root):
             text = text[len(root):]
             break
