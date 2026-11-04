@@ -1,5 +1,7 @@
 # Immediate next-build GUI and preliminary PE inspection requirements (SPEC-26 proposal)
 
+> **SPEC-31 status amendment (2026-11-04, A-09, documentation only):** the file-level radiff2-inspired items are hosted as SPEC-26 extensions, not SPEC-31: RD-F01 (byte spans), RD-F02 (PE layout delta) and RD-F03 (offset alignment). This file is part of SPEC-26.
+
 Status: IN PROGRESS. Code fix in this PR: cross-function next/previous diff navigation and provenance tooltips for the code panes/hunk controls. Other requirements below are NOT implemented by this PR yet and must not be advertised as shipped. Priority P0 for next release. Coordinate with SPEC-12–25 planning and current Phase 3; do not change analysis results.
 
 ## Acceptance requirement A: universal informative hover tips
