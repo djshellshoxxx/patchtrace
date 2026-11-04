@@ -34,6 +34,15 @@ def _changes(value: str) -> tuple[str, ...]:
     return items
 
 
+def _cve(value: str) -> str:
+    """`--hypothesis`: the `intelligence --cve` rule, checked at parse time so no store is opened for a bad id."""
+    from ..explain import CVE_ID, MAX_CVE_CHARS
+    text = value.strip().upper()
+    if not text.isascii() or len(text) > MAX_CVE_CHARS or CVE_ID.fullmatch(text) is None:
+        raise argparse.ArgumentTypeError('PT-TOOL-INPUT: must look like CVE-YYYY-NNNN')
+    return text
+
+
 def _tool_options(p) -> None:
     p.add_argument('--capa', type=Path, metavar='EXE')
     p.add_argument('--floss', type=Path, metavar='EXE')
@@ -85,6 +94,9 @@ def register(sub, common) -> None:
     pairs.add_argument('--include-noise', action='store_true', help='also list differences in unchanged pairs')
     pairs.add_argument('--include-library', action='store_true', help='also list building-block rules')
     pairs.add_argument('--show-features', action='store_true')
+    pairs.add_argument('--hypothesis', type=_cve, metavar='CVE-ID',
+                       help='add capability context for the patch hypotheses of a stored advisory (context only: '
+                            'rows and exit code are unchanged)')
     pairs.add_argument('--show-secrets', action='store_true')
 
 
@@ -315,8 +327,50 @@ def _pairs_text(result: dict) -> str:
     lines = ['  '.join(f'{name} {counts[name]}' for name in CHANGES if name in counts) or 'no pair rows']
     lines += [f'{row["change"]:<12} {display_text(row["rule_id"], 120)}  [{display_text(row["namespace"] or "-", 80)}]'
               f'  {display_text(row["group_id"], 80)}' for row in result['changes']]
+    hypothesis = result.get('hypothesis')
+    if hypothesis and hypothesis['available']:
+        lines += [f'context: {display_text(c["rule_id"], 40)}  {display_text(c["group_id"], 80)}  '
+                  + display_text('; '.join(f'{o["change"]} {o["rule_id"]}' for o in c['observations']), 200)
+                  for c in hypothesis['contexts']]
+        lines.append(f'hypothesis {hypothesis["cve"]}: {len(hypothesis["contexts"])} capability context(s); '
+                     'context only, a missing capability change says nothing about the hypothesis')
     lines += [f'note: {display_text(note, 200)}' for note in result['notes']]
     return '\n'.join(lines)
+
+
+def _shown(change, args, wanted: set[str]) -> bool:
+    """The printed-row filter; `--hypothesis` joins exactly these rows."""
+    return (change.change in wanted and (args.include_noise or change.noise == 'none')
+            and (args.include_library or change.kind == 'capability')
+            and (change.namespace or '').startswith(args.namespace or ''))
+
+
+def _hypothesis(service, cve: str, rows, cancel: threading.Event) -> tuple[dict, list[str]]:
+    """The `--hypothesis` block and its warnings. Context only: it never changes the rows, their order or the exit
+    code, and no context is not a negative result (CAP plan s6). Cancellation leaves `cancel` set for the caller."""
+    from ...enrichment.storage import EnrichmentStore
+    from ..contracts import IntelError
+    from ..csaf.identity import project_identities
+    from ..explain import build_report
+    from ..storage import AdvisoryStore
+    from . import capa_hints
+    block = {'cve': cve, 'contract': capa_hints.CONTRACT, 'available': False, 'contexts': [],
+             'limitations': list(capa_hints.LIMITATIONS)}
+    project = service.project
+    warnings: list[str] = []
+    try:
+        advisories, warnings = AdvisoryStore(service.root, EnrichmentStore(service.store), project.id,
+                                             project.revision).for_cve(cve)
+        if not advisories:
+            return block, [*warnings, f'no stored advisory lists {cve}: no hypothesis context (run '
+                                      '`intelligence import` or `intelligence fetch` first)']
+        older, newer = project_identities(project.artifacts, service.root, {'older': (), 'newer': ()}, cancel)
+        report = build_report(cve, advisories, older, newer, cancel=cancel)
+    except IntelError as exc:
+        return block, warnings + ([] if exc.code == 'PT-INTEL-CANCEL' else
+                                  [f'no hypothesis context for {cve}: {exc.code}: {exc.message}'])
+    contexts = capa_hints.capability_context(report.hypotheses, rows)
+    return {**block, 'available': True, 'contexts': [c.model_dump(mode='json') for c in contexts]}, warnings
 
 
 def _pairs(args, cancel: threading.Event) -> int:
@@ -326,7 +380,7 @@ def _pairs(args, cancel: threading.Event) -> int:
     from ...enrichment.storage import EnrichmentStore
     from . import capa_pairs
     from . import delta as delta_mod
-    from .common import ToolError
+    from .common import ToolError, display_text
     from .store import ToolStore
     service = _open(args.project)
     try:
@@ -352,25 +406,27 @@ def _pairs(args, cancel: threading.Event) -> int:
                                              flags=flags, include_unchanged='unchanged' in wanted)
         except ToolError as exc:
             raise CliError(_error_exit(exc.code), str(exc)) from None
+        shown = [change for change in delta.changes if _shown(change, args, wanted)]
+        result = delta.model_dump(mode='json', exclude={'changes'})
+        result['changes'] = [_present_row(change.model_dump(mode='json'), features=args.show_features,
+                                          show_secrets=args.show_secrets) for change in shown]
+        warnings: list[str] = []
+        if getattr(args, 'hypothesis', None) and not cancel.is_set():
+            result['hypothesis'], warnings = _hypothesis(service, args.hypothesis, shown, cancel)
+            if not getattr(args, 'json', False):   # a terminal gets bounded warnings; JSON keeps the data
+                warnings = [display_text(warning, 500) for warning in warnings]
         if cancel.is_set():
             return CANCELLED
-        result = delta.model_dump(mode='json')
-        result['changes'] = [
-            _present_row(row, features=args.show_features, show_secrets=args.show_secrets)
-            for row in result['changes']
-            if row['change'] in wanted and (args.include_noise or row['noise'] == 'none')
-            and (args.include_library or row['kind'] == 'capability')
-            and (row['namespace'] or '').startswith(args.namespace or '')]
         if not delta.comparable:
             print('not comparable: ' + '; '.join(delta.reasons), file=sys.stderr)
-            _emit(args, 'intel-tools pairs', 'failed', result, [], _pairs_text(result))
+            _emit(args, 'intel-tools pairs', 'failed', result, warnings, _pairs_text(result))
             return _error_exit('PT-TOOL-MISMATCH')
         if delta.pairing == 'unavailable':
             print('no completed analysis run: function pairs are unavailable', file=sys.stderr)
             result['error_code'] = 'PT-TOOL-PAIRING'
-            _emit(args, 'intel-tools pairs', 'partial', result, [], _pairs_text(result))
+            _emit(args, 'intel-tools pairs', 'partial', result, warnings, _pairs_text(result))
             return _error_exit('PT-TOOL-PAIRING')
-        _emit(args, 'intel-tools pairs', 'complete', result, [], _pairs_text(result))
+        _emit(args, 'intel-tools pairs', 'complete', result, warnings, _pairs_text(result))
         return OK if any(delta.counts.get(name) for name in ('gained', 'lost', 'moved')) else NO_RESULTS
     finally:
         service.close()
