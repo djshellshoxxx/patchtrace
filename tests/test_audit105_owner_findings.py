@@ -25,9 +25,6 @@ def test_a105_cg3_dot_export_states_that_neighbours_were_left_out():
     assert 'more' in text or 'capped' in text or 'truncated' in text
 
 
-@pytest.mark.xfail(strict=True, reason='issue#105 BUG-RULE-2: decisions made in one second are ordered by hash, not by '
-                                       'insertion, so the decision in force can be the earlier one; owner rules '
-                                       '(WS-H1 triage)')
 def test_a105_rule2_same_second_decisions_keep_their_insertion_order(tmp_path):
     import rules_fixtures as rf
     from rules_store_support import candidate_of, rule_store
@@ -48,9 +45,6 @@ def test_a105_rule2_same_second_decisions_keep_their_insertion_order(tmp_path):
         bench.close()
 
 
-@pytest.mark.xfail(strict=True, reason='issue#105 BUG-RULE-7: MAX_DIFF_PAIRS bounds equal-instruction pairs only, so '
-                                       '8000 unique pair-swapped instructions still reach difflib (about 3.5 s, not '
-                                       'cancellable); owner rules/window.py (WS-H1 triage)')
 def test_a105_rule7_a_large_all_unique_middle_is_not_handed_to_difflib(monkeypatch):
     from patchtrace.rules import window
     from patchtrace.rules.masks import MaskedFunction, MaskedInstruction

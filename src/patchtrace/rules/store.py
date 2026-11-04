@@ -49,6 +49,7 @@ GUARD_RUN = 'rules'
 SIDECAR_DIR = 'rules/tests'
 INLINE_LIMIT = 1024 * 1024
 _M = TypeVar('_M', bound=BaseModel)
+_UNKNOWN = 2 ** 63   # above every rowid: a row read without one sorts after those of its second
 
 
 def pair_key(pair: tuple[str, str]) -> str:
@@ -176,6 +177,15 @@ class RuleStore:
     def _entries(self, kind: str):
         return self.enrichment.entries(kind, on_corrupt=lambda row: self.skipped.append(row))
 
+    def _written_order(self, kind: str) -> dict[str, int]:
+        """Row id -> SQLite's rowid for the rows of `kind`: the order they were written in. Nothing new is stored for it.
+        A new row's rowid is above that of every row present, and a rule row is written once and never replaced or
+        deleted, so a later row has a larger rowid; the page-by-page backups keep the rowids. Read on the owning thread,
+        right after the rows themselves."""
+        rows = self.enrichment.store.connection.execute(
+            'SELECT id, rowid FROM enrichment_entries WHERE kind=?', (kind,)).fetchall()
+        return {row_id: int(rowid) for row_id, rowid in rows}
+
     def _read(self, kind: str, model: type[_M], load: Callable[[dict], dict] = lambda body: body) -> list[_M]:
         found = []
         for entry in self._entries(kind):
@@ -194,9 +204,12 @@ class RuleStore:
         return next((c for c in self.candidates() if c.candidate_id == candidate_id), None)
 
     def decisions(self, candidate_id: str | None = None) -> list[RuleDecision]:
-        """Oldest first; the last one of a candidate is the one in force."""
+        """Oldest first; the last one of a candidate is the one in force. Decisions with the same `decided_at` (the clock
+        keeps whole seconds) keep the order they were written in, never the order of their ids."""
         found = [d for d in self._read(DECISION, RuleDecision) if candidate_id in (None, d.candidate_id)]
-        return sorted(found, key=lambda d: (d.decided_at, d.decision_id))
+        written = self._written_order(DECISION) if found else {}
+        return sorted(found, key=lambda d: (d.decided_at, written.get(f'{DECISION}:{d.decision_id}', _UNKNOWN),
+                                            d.decision_id))
 
     def versions(self, lineage_id: str | None = None) -> list[RuleVersion]:
         found = [v for v in self._read(VERSION, RuleVersion) if lineage_id in (None, v.lineage_id)]

@@ -933,6 +933,20 @@ def test_a_middle_over_the_pair_budget_is_one_changed_range(monkeypatch):
     assert window.changed_ranges(wider, older, 'newer') == [(0, 4)]
 
 
+def test_a_middle_over_the_cell_budget_is_one_changed_range(monkeypatch):
+    older, newer = masked_bricks(1, 2, 3), masked_bricks(3, 2, 1)                     # 3 x 3 cells, 3 pairs only
+    compared = [('insert', 0, 0, 0, 2), ('delete', 1, 3, 3, 3)]
+    assert window.diff_opcodes(older, newer) == compared
+    monkeypatch.setattr(window, 'MAX_DIFF_CELLS', 9)
+    assert window.diff_opcodes(older, newer) == compared                            # exactly at the budget: compared
+    monkeypatch.setattr(window, 'MAX_DIFF_CELLS', 8)
+    assert window.diff_opcodes(older, newer) == [('replace', 0, 3, 0, 3)]           # the pairs are well inside theirs
+    assert window.changed_ranges(older, newer, 'older') == [(0, 3)]
+    shifted_old, shifted_new = masked_bricks(0xA, 1, 2, 3, 0xB), masked_bricks(0xA, 3, 2, 1, 0xB)
+    assert window.diff_opcodes(shifted_old, shifted_new) == [('replace', 1, 4, 1, 4)]   # the shared ends are not cells
+    assert window.diff_opcodes(masked_bricks(1, 2), masked_bricks(1, 2, 3, 4, 5)) == [('insert', 2, 2, 2, 5)]  # 0 x 3
+
+
 def test_a_pair_too_costly_to_compare_still_gets_its_windows_from_the_checks(monkeypatch):
     pair = fake_pair(ref(0x1000, 56), ref(0x1000, 56))
     older, newer = body(0x91, 1, 2, 3, 4, 5, 6, 0x92), body(0x93, 1, 2, 3, 4, 5, 6, 0x94)   # both ends changed

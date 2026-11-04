@@ -14,10 +14,15 @@ then before, alternately) until the checks pass or it reaches 128 bytes. A range
 sliding windows of the largest size, best literal count first. At most three windows survive, best literal count first,
 none overlapping another. A body with no window reports the checks that the best attempt failed, never nothing.
 
-The comparison is bounded. What both bodies share at their start and at their end is not compared, and `difflib`'s cost is
-proportional to the pairs of equal instructions in what is left (measured: about 0.2 to 0.6 microseconds a pair; 12,000
-identical instructions take 30 s), so a middle with more than `MAX_DIFF_PAIRS` of them is not compared at all: it is one
-changed range, and `uniq` and `sep` still keep every byte the other build has out of the rule.
+The comparison is bounded. What both bodies share at their start and at their end is not compared, and what is left (the
+middle) is not compared at all when it is too costly: it is one changed range (one `replace`), and `uniq` and `sep` still
+keep every byte the other build has out of the rule. `difflib`'s cost grows with two measures of the middle, so each has a
+bound: the pairs of equal instructions (about 0.2 to 0.6 microseconds a pair; 12,000 identical instructions take 30 s),
+at most `MAX_DIFF_PAIRS`, and the instructions of one side times those of the other, at most `MAX_DIFF_CELLS`, because
+`difflib` scans the older side once for every block it matches: 8,000 distinct instructions with each neighbour pair
+swapped have 8,000 equal pairs only, yet took 3.5 s (issue #105 BUG-RULE-7; 2,000 x 2,000 of that shape take 0.27 s).
+Known gap, open: a middle of a few keys repeated in a cycle whose matches are all short costs pairs times matched blocks,
+which neither bound covers (2,000 x 2,000 of 20 keys with each neighbour pair swapped: 200,000 pairs, 2.8 s).
 
 The hit counts are the plain byte semantics of the pattern (a wildcard matches any byte) over the executable sections, which
 is what the rule's `in (raw_data_offset..)` condition scopes to; the finished rule is still scanned by the engine
@@ -49,7 +54,8 @@ from .masks import WILDCARD, MaskedFunction, call_pins, mask_function
 from .ports import MaskSource
 
 CONTEXT = 1                    # instructions of context kept on each side of a changed range
-MAX_DIFF_PAIRS = 1_000_000     # pairs of equal instructions `difflib` may weigh (about 0.5 s at most; provisional)
+MAX_DIFF_PAIRS = 1_000_000     # pairs of equal instructions `difflib` may weigh (provisional)
+MAX_DIFF_CELLS = 4_000_000     # older x newer instructions of the middle `difflib` may scan (2,000 x 2,000; provisional)
 MAX_EVALUATIONS = 32           # windows whose hits are counted in one call
 CACHE_BYTES = 64 * 1024 ** 2   # executable bytes kept in memory per build for repeated counting
 _OPPOSITE: dict[str, Side] = {'older': 'newer', 'newer': 'older'}
@@ -126,14 +132,18 @@ def _shared_ends(older: list[str], newer: list[str]) -> tuple[int, int]:
 def diff_opcodes(older: MaskedFunction, newer: MaskedFunction) -> list[Opcode]:
     """What differs between two bodies after masking, instruction by instruction: `difflib`'s opcodes without the equal
     ones, as indexes of the bodies. The start and the end the bodies share are not compared, and a middle with more than
-    `MAX_DIFF_PAIRS` pairs of equal instructions (the measure of `difflib`'s cost) is not compared either: it is one
-    `replace`, so the checks on the windows (`uniq`, `sep`) decide instead."""
+    `MAX_DIFF_PAIRS` pairs of equal instructions, or with more than `MAX_DIFF_CELLS` instructions of one side times those
+    of the other (the two measures of `difflib`'s cost), is not compared either: it is one `replace`, so the checks on the
+    windows (`uniq`, `sep`) decide instead."""
     a, b = [i.key for i in older.instructions], [i.key for i in newer.instructions]
     head, tail = _shared_ends(a, b)
     a, b = a[head:len(a) - tail], b[head:len(b) - tail]
+    whole = [('replace', head, head + len(a), head, head + len(b))]
+    if len(a) * len(b) > MAX_DIFF_CELLS:
+        return whole
     in_b = Counter(b)
     if sum(count * in_b[key] for key, count in Counter(a).items()) > MAX_DIFF_PAIRS:
-        return [('replace', head, head + len(a), head, head + len(b))]
+        return whole
     matcher = difflib.SequenceMatcher(None, a, b, autojunk=False)
     return [(tag, head + i1, head + i2, head + j1, head + j2)
             for tag, i1, i2, j1, j2 in matcher.get_opcodes() if tag != 'equal']
