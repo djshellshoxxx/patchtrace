@@ -964,3 +964,11 @@ Done: dock with state matrix, consent, import, changes, copy, go to CVE. Open: r
 - [x] (2026-11-04, D-kb-3) KBB-13 limitation line: explain report and `intelligence import` text name the CSAF tests not run (`tests/test_intel_limitations_list_untested_validation.py`); OSV guard `tests/test_osv_not_wired.py`; real-socket drip test `tests/test_intel_transport_drip.py`.
 - [ ] (KBB-04 follow-up) C-23 and C-24 stay open: they need a normalization-version decision.
 - [ ] (KBB-13 follow-up) live CSAF provider-metadata check (L4, owner/CI); owner decision on implementing 6.1.8-6.1.13 (spec Q2).
+
+### [AF-0:waveB] Backlog wave B (2026-11-04)
+- [x] H-B `jobs.run_process` Windows launch hardening: `.bat`/`.cmd` argument-injection guard, NUL refused on every OS, Windows env block validated and sorted, Job flags, handles closed when a kill fails (`tests/test_jobs_windows_launch.py`; 4 Windows-only cases run only on qa-windows)
+- [ ] PS-6: SIGTERM/SIGHUP should set the shared cancel event (needs `cli.py`/`ui.py`)
+- [x] H-C child-launch inventory guard (timeout/output/memory/env census, CI-checked) and rz-diff stdout flood stop (`tests/test_security_child_launch_inventory.py`, `tests/test_secondary_output_flood.py`); PS-9 pinned
+- [ ] H-C follow-up: reclassify the `backend.run_comparison` inventory row when #121 ask D (memory/output caps) lands
+- [x] F-gui-1 main-window accessibility: every interactive control named, accessible ids unique (SPEC-45 R-N1/R-N7, R9)
+- [ ] AX-M3: check the real UIA AutomationId mapping on Windows (manual)

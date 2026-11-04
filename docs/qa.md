@@ -1298,3 +1298,11 @@ D-kb-3 (2026-11-04), automated and SYNTHETIC only (no tool executed; no network 
 | D-kb-1 KB context applicability via `report_for` | a CVE lead without a card failed `kb attach`; the candidate qualifier fell off the Leads chip | non-card CVE leads skip CSAF applicability; qualifier first | `tests/test_kbc_context_applicability.py` 17 passed; KB suites 1,249 passed |
 | D-kb-2 pilot KEV channel | `is_dir()` outside the guarded block let PermissionError escape | `_kev_folder` stats inside the guard: unreadable folder is unknown with one warning, exit code unchanged | `tests/test_pilot_collect_kev.py` 20 passed |
 | D-kb-3 CSAF/intel hardening tail | quadratic path regex; leaks after `'`, `<`, `{`, `>`; then UNC spellings `//server`, `\\?\UNC\`, `file://` | linear scrub, all spellings covered (coordinator follow-up for the UNC forms) | `tests/test_intel_tools_audit_tail.py` 93 passed; 526 intel-tool tests passed |
+
+## [AF-0:waveB] Backlog wave B, confirmed slices (2026-11-04)
+
+| Slice | Result | Evidence |
+|---|---|---|
+| H-B Windows launch hardening in `jobs.py` | built | 56 new tests (3 Windows-only skipped on Linux); 1,578 passed across 60 files that use `run_process`; WER dialog suppression unverified |
+| H-C child-launch inventory and rz-diff output flood | built | 66 new tests; inventory test fails CI when a child launch loses its timeout, output or memory policy |
+| F-gui-1 main-window accessibility sweep | built | 32 unnamed controls named, about 30 duplicate ids made unique; real Windows UIA mapping (AX-M3) not checked |
