@@ -42,6 +42,7 @@ from pydantic import ValidationError
 
 from ..artifact_bytes import ArtifactBytesError, VerifiedArtifactReader
 from ..backend import BackendConfig
+from ..diaphora.service import stored_sets as stored_diaphora_sets
 from ..enrichment.contracts import EnrichmentError
 from ..enrichment.storage import EnrichmentStore, Guard
 from ..ingestion import safe_path
@@ -76,6 +77,7 @@ from .limits import DEFAULT_LIMITS, ERROR_CODES, Budget, BudgetExhausted, Unifie
 from .registry import REGISTRY, Registry
 from .sources import (
     GhidriffRun,
+    LoadedDiaphora,
     LoadedSecondary,
     RawGhidriff,
     SnapshotMatch,
@@ -83,6 +85,7 @@ from .sources import (
     snapshot_from_project,
     write_snapshot,
 )
+from .sources.diaphora import write_loaded as write_diaphora
 from .sources.ghidriff import MAX_RAW_BYTES, load_raw
 from .sources.secondary import write_loaded
 
@@ -145,6 +148,7 @@ class Plan:
     ir_note: str | None = None                      # why placed sidecars were not used (a warning of the report)
     residual: bool = True
     raw_verdict: str | None = None                  # the worker's own classification of a raw output that hashed fine
+    diaphora: tuple[LoadedDiaphora, ...] = ()       # stored `diaphora-matches` sets (06 s5); () leaves every id unchanged
     _identity_inputs: SourceInputs | None = field(default=None, init=False, compare=False, repr=False)
 
     @property
@@ -173,7 +177,8 @@ class Plan:
         raw = RawGhidriff(status=raw_status or self.raw_verdict or self.raw_status, sha256=self.raw_sha256)  # type: ignore[arg-type]
         inputs = SourceInputs(older_sha256=self.older_sha256, newer_sha256=self.newer_sha256,
                               run=GhidriffRun(self.run_id, self.backend_version, raw),
-                              matches=self.manual if matches is None else tuple(matches), secondary=self.secondary)
+                              matches=self.manual if matches is None else tuple(matches), secondary=self.secondary,
+                              diaphora=self.diaphora)
         if matches is None and self._identity_inputs is not None:
             # This exact immutable plan owns the completed digest; replace() drops its private cache.
             object.__setattr__(inputs, '_manual_digest', self._identity_inputs._manual_digest)
@@ -323,6 +328,18 @@ def _stored_sets(service, sources: tuple[str, ...], pair: tuple[str, str] | None
                  for entry, match_set in rows if match_set.engine in wanted)
 
 
+def _stored_diaphora(service, sources: tuple[str, ...]) -> tuple[LoadedDiaphora, ...]:
+    """Owner thread, read-only: the project's valid `diaphora-matches` sets for the current pair and run. The store
+    rows are re-validated by `diaphora.service.stored_sets`; no `.diaphora` file is ever opened."""
+    if 'diaphora' not in sources:
+        return ()
+    try:
+        rows = stored_diaphora_sets(service)
+    except (EnrichmentError, sqlite3.Error, ValueError):
+        raise fail('PT-UNIFIED-STORE', 'diaphora-unreadable') from None
+    return tuple(sorted((LoadedDiaphora(entry.id, match_set) for entry, match_set in rows), key=lambda s: s.entry_id))
+
+
 def _producer(manifest: ProgramIrManifest) -> tuple:
     """What F1 (05 s3) wants equal on both sides: producer, mode, analysis options and symbol policy."""
     p = manifest.producer
@@ -363,12 +380,14 @@ def capture_plan(service, sources: Iterable[str] = ALL_SOURCES, *, limits: Unifi
     manual = snapshot_from_project(project, run.id, limits, manual_only=True)
     sides = {a.side: a.sha256 for a in project.artifacts}
     secondary = _stored_sets(service, chosen, (sides['older'], sides['newer']) if {'older', 'newer'} <= sides.keys() else None)
+    diaphora = _stored_diaphora(service, chosen)
     placed, note = (_find_ir(service.root, run.id, (sides['older'], older), (sides['newer'], newer)) if use_ir
                     else (None, None))
     return Plan(project_id=project.id, revision=project.revision, run_id=run.id, raw_sha256=run.raw_sha256,
                 raw_path=raw_path, raw_status=raw_status, backend_version=str(run.backend_version)[:64],
                 older_sha256=sides['older'], newer_sha256=sides['newer'], older_layout=older, newer_layout=newer,
-                sources=chosen, secondary=secondary, manual=manual, ir=placed, ir_note=note, residual=residual)
+                sources=chosen, secondary=secondary, manual=manual, ir=placed, ir_note=note, residual=residual,
+                diaphora=diaphora)
 
 
 def resolve_plan(plan: Plan, *, limits: UnifiedLimits = DEFAULT_LIMITS, registry: Registry = REGISTRY,
@@ -478,6 +497,11 @@ def _write_request(request: UnifiedRequest, private: Path) -> Path:
         path = private / f'secondary-{index}.json'
         sha, length = write_loaded(path, loaded)
         files.append(WorkerFile(path=str(path), sha256=sha, size=length))
+    diaphora_files = []
+    for index, loaded in enumerate(sorted(plan.diaphora, key=lambda s: s.entry_id)):
+        path = private / f'diaphora-{index}.json'
+        sha, length = write_diaphora(path, loaded)
+        diaphora_files.append(WorkerFile(path=str(path), sha256=sha, size=length))
     req = WorkerRequest(
         older_sha256=plan.older_sha256, newer_sha256=plan.newer_sha256,
         older_layout=WorkerLayout(image_base=plan.older_layout.image_base,
@@ -488,7 +512,7 @@ def _write_request(request: UnifiedRequest, private: Path) -> Path:
         raw_status=plan.raw_status,  # type: ignore[arg-type]
         raw_path=str(plan.raw_path) if plan.raw_path is not None and plan.raw_status == 'ok' else None,
         snapshot=WorkerFile(path=str(snapshot_path), sha256=digest, size=size), snapshot_lines=lines,
-        secondary=tuple(files), sources=plan.sources,  # type: ignore[arg-type]
+        secondary=tuple(files), diaphora=tuple(diaphora_files), sources=plan.sources,  # type: ignore[arg-type]
         report_path=str(private / 'report.json'), progress_path=str(private / 'progress.json'),
         budget_seconds=worker_budget_seconds(request.timeout_s), residual=plan.residual, **_ir_fields(request))
     request_path = private / 'request.json'
