@@ -890,3 +890,10 @@ Done: dock with state matrix, consent, import, changes, copy, go to CVE. Open: r
 
 - [x] PR #151 cleanup completion: reproduce real caller inconsistency on `1f284a1`; require owned-stage removal before backup success, with first-prune/history/replacement controls (76 focused passes; final baseline 7 red cases). Source `4bfc2c0`; no observed data loss in the original probe.
 - [ ] Independently review and integrate the frozen #151 cleanup-completion follow-up; exact published CI remains separate.
+### Essential project-safety / offline KB desktop continuation (2026-10-31)
+
+- [x] PT-EXPORT-GUARD implementation + independent review: protect DB/evidence before report writes; committed non-mutating export; bounded alias checks.
+- [x] PT-KB-SCOPE implementation + review: exact acquisition scope/revision/hash binding; preview revision CAS; known architecture contradiction refusal; conservative pair provenance.
+- [x] PT-KB-GUI implementation + review: local advisory import/search/explicit product/local pair preview/new-only project creation; safe cancel/partial retention; main-thread adoption with original-project rollback.
+- [ ] PT-SAFETY-INTEGRATE acceptance: final product024a00b fully exercised (18,348 passed, one host Git-marker failure; unchanged isolated rerun passed), Linux build/self-test/frozen smoke/checksum/Ruff PASS. Publication is BLOCKED by automatic approval review pending explicit destination authorization; new Windows/native acceptance cannot start until publication. No global release-ready claim.
+- [ ] PR147 current-head Windows packaging and Sonar disposition after LF/output staging repairs; do not close original PR102 by partial adoption.
