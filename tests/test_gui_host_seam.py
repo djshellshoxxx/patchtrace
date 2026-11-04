@@ -168,4 +168,3 @@ def test_show_external_pair_sanitises_and_announces_truncation(main_window):
     notice = '\n[View truncated at 200,000 characters; provenance copy uses full records.]'
     assert older == 'a' * MAX_VIEW_CHARS + notice
     assert newer == 'xyz'
-
