@@ -38,7 +38,7 @@ Assumption **A-IND-1** (narrowed): an E-BODY atom of K2 (pdata-confirmed extents
 | Source | A | B | C | W |
 |---|---|---|---|---|
 | ghidriff (`match_types`, strongest of the list wins) | SymbolsHash, ExternalsName, ExactBytesFunctionHasher, ExactInstructionsFunctionHasher | ExactMnemonicsFunctionHasher, BSIM, BulkInstructionHash, StringsRefsHasher, StrUniqueFuncRefsHasher, Decomp Match | StructuralGraphExactHash, StructuralGraphHash, BulkBasicBlockMnemonicHash, SigCallingCalledHasher, SwitchSigHasher, Implied Match, unknown names | added/deleted one-sided observations |
-| bindiff (`algorithm`; R02 s14 tiers) | name hash, hash matching, edges flowgraph MD index (rows with `basicblocks = 0` only when both ends are imports) | edges callgraph MD, MD flowgraph top-down/bottom-up, prime signature, MD callgraph top-down/bottom-up | every step with confidence <= 0.75, unknown names | - |
+| bindiff (`algorithm`; R02 s14 tiers) | name hash, hash matching, edges flowgraph MD index (rows with `basicblocks = 0` only when both ends are imports) | edges callgraph MD, MD flowgraph top-down/bottom-up, prime signature, MD callgraph top-down/bottom-up | relaxed MD index, instruction count, address sequence, string references, loop count, call reference, call sequence, unknown step names (the step name alone sets the tier; confidence is never read, R02 s7; U7-16 reconciled 2026-11-04) | - |
 | rz-diff | - | - | - | every row (`non-exclusive` when its newer endpoint is shared) |
 | diaphora (verified sets only, 06 s5) | - | best | partial, unreliable, multimatch (as N:M) | unmatched observations |
 | pt-ladder / pt-bytes | pass tier (04 s4) | | | |
