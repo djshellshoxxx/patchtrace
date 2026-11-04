@@ -1,6 +1,11 @@
 """Contract tests for API-funded parallel task isolation (no API usage)."""
 import importlib.util
+import io
+import json
 from pathlib import Path
+from subprocess import CompletedProcess
+
+import pytest
 
 
 def _agent():
@@ -53,7 +58,6 @@ def test_context_selection_reserves_source_and_test_slots(tmp_path):
 
 
 def test_red_gate_accepts_assertion_failure_but_refuses_collection_errors():
-    from subprocess import CompletedProcess
 
     agent = _agent()
     assertion = CompletedProcess([], 1, "1 failed, 3 passed in 0.20s", "")
@@ -65,7 +69,6 @@ def test_red_gate_accepts_assertion_failure_but_refuses_collection_errors():
 
 
 def test_edited_tests_must_pass_after_source_fix():
-    from subprocess import CompletedProcess
 
     agent = _agent()
     assert agent.is_valid_green(CompletedProcess([], 0, "4 passed", ""))
@@ -74,7 +77,6 @@ def test_edited_tests_must_pass_after_source_fix():
 
 
 def test_receipt_requires_test_first_evidence(tmp_path, monkeypatch):
-    import importlib.util
     import sys
 
     directory = Path(__file__).resolve().parents[1] / "tools" / "parallel_cloud"
@@ -89,15 +91,13 @@ def test_receipt_requires_test_first_evidence(tmp_path, monkeypatch):
         "attempts": [{"phase": "test"}, {"phase": "source"}],
         "red_verified": False, "green_verified": True
     }
-    (tmp_path / "parallel-agent-receipt.json").write_text(__import__("json").dumps(receipt))
-    import pytest
+    (tmp_path / "parallel-agent-receipt.json").write_text(json.dumps(receipt))
 
     with pytest.raises(ValueError, match="red/green"):
         guard.validate_artifact("tooltips", tmp_path)
 
 
 def test_duplicate_edit_paths_and_unchanged_files_are_refused(tmp_path, monkeypatch):
-    import json
 
     agent = _agent()
     monkeypatch.setattr(agent, "ROOT", tmp_path)
@@ -106,7 +106,6 @@ def test_duplicate_edit_paths_and_unchanged_files_are_refused(tmp_path, monkeypa
     path.write_text("x = 1\\n")
     payload = {"files": [{"path": "tests/test_tooltips.py", "content": "x = 2\\n"},
                          {"path": "tests/test_tooltips.py", "content": "x = 3\\n"}]}
-    import pytest
 
     with pytest.raises(ValueError, match="Duplicate"):
         agent.parse_edit(json.dumps(payload), agent.TASKS["tooltips"], "test")
@@ -125,7 +124,6 @@ def test_focused_test_runner_isolates_api_credentials(monkeypatch):
     def fake_run(command, **kwargs):
         observed["command"] = command
         observed["env"] = kwargs["env"]
-        from subprocess import CompletedProcess
         return CompletedProcess(command, 1, "1 failed", "")
 
     monkeypatch.setattr(agent.subprocess, "run", fake_run)
@@ -137,23 +135,19 @@ def test_focused_test_runner_isolates_api_credentials(monkeypatch):
 
 
 def test_incomplete_api_response_is_rejected(monkeypatch):
-    import io
 
     agent = _agent()
     monkeypatch.setenv("PATCHTRACE_OPENAI_API_KEY", "fake-test-only")
     payload = b'{"status":"incomplete","output":[],"usage":{"input_tokens":1,"output_tokens":1}}'
     monkeypatch.setattr(agent.urllib.request, "urlopen",
                         lambda request, timeout: io.BytesIO(payload))
-    import pytest
 
     with pytest.raises(RuntimeError, match="incomplete"):
         agent.query_api([{"role": "user", "content": "test"}])
 
 
 def test_publisher_rejects_forged_low_cost(tmp_path, monkeypatch):
-    import importlib.util
     import json
-    import pytest
 
     directory = Path(__file__).resolve().parents[1] / "tools" / "parallel_cloud"
     monkeypatch.syspath_prepend(str(directory))
@@ -178,7 +172,6 @@ def test_publisher_rejects_forged_low_cost(tmp_path, monkeypatch):
 
 
 def test_active_pr_file_overlap_blocks_paid_work(monkeypatch):
-    import importlib.util
 
     directory = Path(__file__).resolve().parents[1] / "tools" / "parallel_cloud"
     monkeypatch.syspath_prepend(str(directory))
@@ -205,7 +198,6 @@ def test_sandboxed_test_subprocess_has_no_runner_credential_tokens(monkeypatch):
     captured = {}
 
     def fake_run(command, **kwargs):
-        from subprocess import CompletedProcess
         captured["environment"] = kwargs["env"]
         captured["command"] = command
         return CompletedProcess(command, 0, "1 passed", "")
@@ -218,7 +210,6 @@ def test_sandboxed_test_subprocess_has_no_runner_credential_tokens(monkeypatch):
 
 
 def test_exact_replacements_are_supported_on_large_existing_files(tmp_path, monkeypatch):
-    import json
 
     agent = _agent()
     monkeypatch.setattr(agent, "ROOT", tmp_path)
@@ -233,7 +224,6 @@ def test_exact_replacements_are_supported_on_large_existing_files(tmp_path, monk
 
 
 def test_exact_replacements_refuse_ambiguous_or_missing_snippets(tmp_path, monkeypatch):
-    import json
     import pytest
 
     agent = _agent()
