@@ -53,3 +53,4 @@ src/patchtrace/ghidriff_launch/ptlaunch.py text eol=lf
 src/patchtrace/resources/patchtrace-mark.svg text eol=lf
 tools/rzdiff/*.patch -whitespace text eol=lf
 docs/qa/*.log -whitespace
+tests/fixtures/journey/** text eol=lf

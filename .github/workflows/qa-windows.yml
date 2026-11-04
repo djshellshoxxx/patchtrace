@@ -33,6 +33,8 @@ jobs:
         run: python tools/check_protobuf_runtime.py
       - run: python -m pytest -q --junitxml=qa-results.xml
       - run: python -m ruff check src tests tools
+      - name: Analyst journey gate (RB-05 automated part; offscreen, fake backend, not native acceptance)
+        run: python tools/journey_gate.py --repeat 5 --out journey-summary.json
       - name: BinExport worker memory cap measurement (SPEC-10b U7, non-gating)
         if: runner.os == 'Windows'
         continue-on-error: true
@@ -70,6 +72,7 @@ jobs:
           path: |
             qa-results.xml
             qa-leg-result.txt
+            journey-summary.json
       - uses: actions/upload-artifact@v4
         if: runner.os == 'Windows' && success()
         with:
