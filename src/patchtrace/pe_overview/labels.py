@@ -12,8 +12,10 @@ UNREADABLE = 'Signature present, structure unreadable'
 MISMATCH = 'Signature present, digest does NOT match file'
 MATCH = 'Signature present, digest matches file; trust not evaluated on this platform'
 NOT_COMPUTED = 'Signature present, digest not computed'
+MATH_OK = 'Signature present, digest matches file; signature math ok, chain not evaluated'
+MATH_FAILED = 'Signature present, signature math does NOT verify'
 WINDOWS_TRUSTED = 'embedded signature chains to a trusted root (revocation NOT checked)'
-EMBEDDED_LABELS = (NOT_SIGNED, UNREADABLE, MISMATCH, MATCH, NOT_COMPUTED, WINDOWS_TRUSTED)
+EMBEDDED_LABELS = (NOT_SIGNED, UNREADABLE, MISMATCH, MATCH, NOT_COMPUTED, MATH_OK, MATH_FAILED, WINDOWS_TRUSTED)
 
 CATALOG_LABELS_BY_STATE = {
     'present_trusted_no_revocation_check': 'Catalog signature present (no revocation check)',
@@ -26,16 +28,21 @@ CATALOG_LABELS = tuple(dict.fromkeys(CATALOG_LABELS_BY_STATE.values()))
 
 
 def embedded_label(signatures: tuple[SignatureInfo, ...], trust_status: str | None = None) -> str:
-    """Worst case first: a mismatch outranks unreadable structure, which outranks a digest that was not computed."""
+    """Worst case first: a digest mismatch, then unreadable structure, then failed signature math, then a digest that
+    was not computed; only then the match labels."""
     if not signatures:
         return NOT_SIGNED
     if any(s.digest_match is False for s in signatures):
         return MISMATCH
     if any(s.structure != 'ok' for s in signatures):
         return UNREADABLE
+    if any(s.signature_math == 'failed' for s in signatures):
+        return MATH_FAILED
     if any(s.digest_match is None for s in signatures):
         return NOT_COMPUTED
-    return WINDOWS_TRUSTED if trust_status == 'trusted_no_revocation_check' else MATCH
+    if trust_status == 'trusted_no_revocation_check':
+        return WINDOWS_TRUSTED
+    return MATH_OK if all(s.signature_math == 'ok_chain_not_evaluated' for s in signatures) else MATCH
 
 
 def catalog_label(state: str) -> str:

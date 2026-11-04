@@ -22,6 +22,8 @@ ERROR = 'Could not read this section: {code}. Other sections are unaffected.'
 HEADERS = ('Field', 'OLDER', 'NEWER', 'Status', 'Provenance')
 TREE_HEADERS = ('Item', 'Value')
 SIDES = ('older', 'newer')
+_MATH_TEXT = {'ok_chain_not_evaluated': 'signature math ok, chain not evaluated', 'failed': 'signature math does NOT verify',
+              'not_evaluated': 'not evaluated'}
 _MATCH_TEXT = {True: 'matches the file', False: 'does NOT match the file', None: 'not computed'}
 
 
@@ -126,7 +128,7 @@ def _signature_node(sig: SignatureInfo) -> TreeNode:
         TreeNode('Digest claimed by the signature', sig.digest_claimed_hex or '(none)'),
         TreeNode('Digest computed from the file', sig.digest_computed_hex or '(not computed)'),
         TreeNode('Digest vs file', _MATCH_TEXT[sig.digest_match]),
-        TreeNode('Signature math', sig.signature_math.replace('_', ' ')),
+        TreeNode('Signature math', _MATH_TEXT[sig.signature_math]),
         TreeNode('Certificate chain', sig.chain.replace('_', ' ')),
         TreeNode('Revocation', sig.revocation.replace('_', ' ')),
         *(_signer_node(i, s) for i, s in enumerate(sig.signers, 1)),

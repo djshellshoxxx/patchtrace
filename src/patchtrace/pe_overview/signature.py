@@ -43,9 +43,13 @@ from .models import (
     SignerInfo,
     TimestampClaim,
 )
+from .rsa_verify import public_key_from_spki, verify_pkcs1_v15
 
 SIGNED_DATA = '1.2.840.113549.1.7.2'
 SPC_INDIRECT = '1.3.6.1.4.1.311.2.1.4'
+MESSAGE_DIGEST = '1.2.840.113549.1.9.4'
+RSA_SIGNATURES = frozenset({'1.2.840.113549.1.1.1', '1.2.840.113549.1.1.4', '1.2.840.113549.1.1.5',
+                            '1.2.840.113549.1.1.11', '1.2.840.113549.1.1.12', '1.2.840.113549.1.1.13'})
 NESTED_SIGNATURE = '1.3.6.1.4.1.311.2.4.1'
 RFC3161_TIMESTAMP = '1.3.6.1.4.1.311.3.3.1'
 COUNTERSIGNATURE = '1.2.840.113549.1.9.6'
@@ -75,6 +79,8 @@ class _Parsed:
     structure: str = 'ok'
     algorithm: str = 'unknown'
     claimed: str | None = None
+    content: bytes = b''  # SpcIndirectDataContent content octets, hashed by the messageDigest attribute
+    math: list[str] = field(default_factory=list)  # one RSA verdict per signer
     signers: list[SignerInfo] = field(default_factory=list)
     certificates: list[CertificateSummary] = field(default_factory=list)
     timestamps: list[TimestampClaim] = field(default_factory=list)
@@ -139,7 +145,7 @@ def _signature(ctx: Ctx, content_info: Node, sig: _Parsed, out: list[_Parsed]) -
     kids = _signed_data(content_info).children
     if len(kids) < 4 or not kids[2].is_universal(SEQUENCE) or not kids[-1].is_universal(SET):
         raise DerError(INVALID, 'SignedData has an unexpected shape')
-    sig.algorithm, sig.claimed = _indirect_digest(kids[2])
+    sig.algorithm, sig.claimed, sig.content = _indirect_digest(kids[2])
     if sig.algorithm == 'unknown':
         sig.warn('signature_digest_unsupported')
     found: list[_Cert] = []
@@ -153,8 +159,8 @@ def _signature(ctx: Ctx, content_info: Node, sig: _Parsed, out: list[_Parsed]) -
         _signer(ctx, signer, sig, found, out)
 
 
-def _indirect_digest(content: Node) -> tuple[str, str]:
-    """(algorithm name, claimed digest hex) of a SpcIndirectDataContent, or raise."""
+def _indirect_digest(content: Node) -> tuple[str, str, bytes]:
+    """(algorithm name, claimed digest hex, content octets) of a SpcIndirectDataContent, or raise."""
     kids = content.children
     if len(kids) < 2 or decode_oid(kids[0]) != SPC_INDIRECT or not kids[1].is_context(0) or not kids[1].children:
         raise DerError(INVALID, 'content is not SpcIndirectDataContent')
@@ -164,7 +170,7 @@ def _indirect_digest(content: Node) -> tuple[str, str]:
     info = spc.children[1].children
     if len(info) < 2 or not info[0].children or not info[1].is_universal(OCTET_STRING):
         raise DerError(INVALID, 'DigestInfo has an unexpected shape')
-    return ALGORITHMS.get(decode_oid(info[0].children[0]) or '', 'unknown'), info[1].content.hex()
+    return ALGORITHMS.get(decode_oid(info[0].children[0]) or '', 'unknown'), info[1].content.hex(), spc.content
 
 
 @dataclass(frozen=True, slots=True)
@@ -172,6 +178,7 @@ class _Cert:
     summary: CertificateSummary
     issuer: bytes
     serial: int | None
+    key: tuple[int, int] | None
 
 
 def _certificates(ctx: Ctx, node: Node, sig: _Parsed) -> tuple[list[CertificateSummary], list[_Cert]]:
@@ -218,7 +225,7 @@ def _certificate(node: Node) -> _Cert | None:
     summary = CertificateSummary(
         subject_cn, subject_dn, issuer_cn, issuer_dn, _serial_hex(serial_node), decode_time(valid[0]),
         decode_time(valid[1]), _code_signing(items[base + 6:]))
-    return _Cert(summary, items[base + 2].raw, serial)
+    return _Cert(summary, items[base + 2].raw, serial, public_key_from_spki(items[base + 5]))
 
 
 def _serial_hex(node: Node) -> str:
@@ -260,6 +267,7 @@ def _signer(ctx: Ctx, node: Node, sig: _Parsed, certs: list[_Cert], out: list[_P
     digest_alg = ALGORITHMS.get(decode_oid(kids[2].children[0]) or '', 'unknown')
     match = next((c for c in certs if c.issuer == issuer.raw and c.serial == serial), None)
     issuer_dn, issuer_cn = _name(issuer)
+    sig.math.append(_signature_math(kids, position, digest_alg, sig_oid, match, sig.content))
     if match is not None:
         s = match.summary
         sig.signers.append(SignerInfo(s.issuer_cn, s.issuer_dn, s.serial_hex, s.subject_cn, s.subject_dn,
@@ -269,6 +277,33 @@ def _signer(ctx: Ctx, node: Node, sig: _Parsed, certs: list[_Cert], out: list[_P
                                       digest_alg, sig_oid, False))
     if unauth is not None:
         _unauthenticated(ctx, unauth, sig, out)
+
+
+def _signature_math(kids: tuple[Node, ...], position: int, algorithm: str, signature_oid: str | None,
+                    cert: _Cert | None, content: bytes) -> str:
+    """RSA check of one signer against the key in its own certificate: ok_chain_not_evaluated | failed |
+    not_evaluated (no usable key, no authenticated attributes, or not an RSA signature)."""
+    auth = kids[position - 1] if position > 3 else None
+    signature = kids[position + 1] if position + 1 < len(kids) else None
+    if cert is None or cert.key is None or auth is None or algorithm == 'unknown' \
+            or signature_oid not in RSA_SIGNATURES or signature is None or not signature.is_universal(OCTET_STRING):
+        return 'not_evaluated'
+    claimed = next((v.content for a in auth.children if len(a.children) == 2
+                    and decode_oid(a.children[0]) == MESSAGE_DIGEST and a.children[1].children
+                    for v in a.children[1].children[:1] if v.is_universal(OCTET_STRING)), None)
+    if claimed is None or claimed != hashlib.new(algorithm, content).digest():
+        return 'failed'
+    signed = b'\x31' + auth.raw[1:]  # the attributes are signed as a SET, not under their [0] tag
+    modulus, exponent = cert.key
+    return 'ok_chain_not_evaluated' if verify_pkcs1_v15(
+        modulus, exponent, hashlib.new(algorithm, signed).digest(), algorithm, signature.content) else 'failed'
+
+
+def _math_state(states: list[str]) -> str:
+    if 'failed' in states:
+        return 'failed'
+    return 'ok_chain_not_evaluated' if states and all(s == 'ok_chain_not_evaluated' for s in states) \
+        else 'not_evaluated'
 
 
 def _unauthenticated(ctx: Ctx, attrs: Node, sig: _Parsed, out: list[_Parsed]) -> None:
@@ -397,7 +432,7 @@ def _freeze(item: _Parsed, digests: dict[str, str]) -> SignatureInfo:
     return SignatureInfo(
         item.index, item.depth, item.structure, item.algorithm, item.claimed, computed, match,
         item.algorithm in WEAK, tuple(item.signers), tuple(item.certificates), tuple(item.timestamps),
-        warnings=tuple(warnings))
+        signature_math=_math_state(item.math), warnings=tuple(warnings))
 
 
 __all__ = ['verify_embedded']
