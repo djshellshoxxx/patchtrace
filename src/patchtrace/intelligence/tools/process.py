@@ -45,10 +45,11 @@ _SEGMENT = r'[^\\/"<>|:*?\r\n]'
 # first C-16 fix rescanned to the end of the line at every `,/`, `=/`, `(/` and `[/`: quadratic).
 _LEAD = r'[^\s\\/\'"<>|:*?,;=(){}\[\]]'
 _HOME = r'[\\/](?i:home|users|documents and settings)[\\/]'
-# Drive (`C:\`), UNC (`\\server`), a rooted path through a home folder, or a home folder glued to the text before it
+# Drive (`C:\`), UNC in any spelling (`\\server`, `//server`, `\/server`, `\\?\UNC\server`, `file://server`; a URL's
+# `//host/` is scrubbed too, which is acceptable), a rooted path through a home folder, or a home folder glued to the text before it
 # (`-I/home/...`, `x/home/...`); then every directory up to the last separator, then the rest up to a reserved
 # character or the next drive (the last component and any message text).
-_ROOTED = re.compile(rf'(?:\b[A-Za-z]:(?=[\\/])|\\\\|(?<!{_LEAD})(?:[\\/]{_LEAD}+)*?(?={_HOME})|(?P<glued>)(?={_HOME}))'
+_ROOTED = re.compile(rf'(?:\b[A-Za-z]:(?=[\\/])|[\\/]{{2}}(?:[?.][\\/](?:(?i:unc)[\\/])?)?|(?<!{_LEAD})(?:[\\/]{_LEAD}+)*?(?={_HOME})|(?P<glued>)(?={_HOME}))'
                      rf'(?P<dirs>(?:{_SEGMENT}*[\\/])+)(?P<tail>(?:(?![A-Za-z]:[\\/]){_SEGMENT})*)')
 _PROFILE_ROOT = re.compile(r'(?:^|[\\/])(?:users|home|documents and settings)[\\/]+$', re.IGNORECASE)
 
@@ -66,7 +67,8 @@ def sanitize(text: str, limit: int = 200) -> str:
     """One line of tool STDERR/ERROR text that is safe to show: ANSI/control characters removed, paths reduced to
     their last component (no local paths or user names), whitespace collapsed, length capped.
 
-    A path rooted at a drive (`C:\\`, not glued to a letter, digit or `_` before it), a UNC share (`\\\\server`) or a home
+    A path rooted at a drive (`C:\\`, not glued to a letter, digit or `_` before it), a UNC share in any spelling (`\\\\server`, `//server`,
+    `\\\\?\\UNC\\server`, `file://server`; a URL's `//host/` is scrubbed too) or a home
     folder (`home`, `Users`, `Documents and Settings`, whatever character comes before it) may hold spaces and
     apostrophes: every directory from that root to the last separator is dropped, and a path that ends at the
     profile folder becomes `<path>`. Only a character Windows reserves in names (`\\ / " < > | : * ?`) or a line end

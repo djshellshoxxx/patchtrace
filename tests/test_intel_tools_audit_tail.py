@@ -147,3 +147,32 @@ def test_compute_with_one_run_is_still_not_comparable():
     result = delta.compute(None, None, run, None)
     assert not result.comparable and result.engine == 'capa'
     assert result.reasons == ('no stored run for the older artifact',)
+
+
+# ---- C-16 re-verification follow-up: UNC roots spelled with forward slashes, the extended-length prefix or a URL --
+
+UNC_SPELLINGS = {
+    'fwd': 'open //server/share/John Smith/x.so',
+    'ext': 'open \\\\?\\UNC\\server\\John Smith\\x.dll',
+    'dev': 'open \\\\.\\UNC\\server\\John Smith\\x.dll',
+    'url': 'loaded file://server/John Smith/x.dll',
+    'mix': 'open \\/server\\share\\John Smith\\x.dll',
+}
+
+
+@pytest.mark.parametrize('line', list(UNC_SPELLINGS.values()), ids=list(UNC_SPELLINGS))
+def test_every_unc_spelling_drops_the_user_named_directory(line):
+    cleaned = process.sanitize(line)
+    assert 'John' not in cleaned and 'Smith' not in cleaned, cleaned
+
+
+def test_an_extended_length_drive_path_drops_the_profile_name():
+    cleaned = process.sanitize('open \\\\?\\C:\\Users\\John Smith\\x.dll')
+    assert 'John' not in cleaned and 'Smith' not in cleaned, cleaned
+
+
+def test_the_unc_roots_keep_the_scan_linear():
+    hostile = '//' * 50_000 + 'x'
+    started = time.perf_counter()
+    process.sanitize(hostile)
+    assert time.perf_counter() - started < 2.0
