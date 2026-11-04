@@ -322,7 +322,7 @@ def _evaluate(gate: GateSpec, inputs: Inputs, facts: dict[str, dict]) -> GateRow
 
 def decision_ready(rows: Sequence[GateRow]) -> bool:
     """U-05: G-U1..G-U6 pass. G-U8 (integrity: snapshot untouched, no socket, schemas) additionally must not have failed."""
-    return all(r.status == 'pass' for r in rows if r.id in U05_GATES) and not any(
+    return {r.id for r in rows} >= set(U05_GATES) and all(r.status == 'pass' for r in rows if r.id in U05_GATES) and not any(
         r.status == 'fail' for r in rows if r.id == INTEGRITY_GATE)
 
 

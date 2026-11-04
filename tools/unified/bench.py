@@ -571,6 +571,12 @@ def load(data: bytes) -> BenchReport:
         raise ContractError(f'bench report invalid: {exc}') from None
     if counts_sha256([r.model_dump(mode='json') for r in built.rows]) != built.counts_sha256:
         raise ContractError('bench counts digest mismatch (edited after generation)')
+    raw = [r.model_dump(mode='json') for r in built.rows]
+    fresh = evaluate(raw)                   # the digest covers counts only: gates, checks and verdict must still follow
+    if [(r['gates'], r['checks']) for r in fresh] != [(r['gates'], r['checks']) for r in raw] \
+            or _verdict(fresh) != built.verdict or built.slack != SLACK:
+        raise ContractError('bench report gates, checks or verdict no longer follow from its measurements '
+                            '(edited after generation, or L-35 limits changed: run the bench again)')
     return built
 
 
