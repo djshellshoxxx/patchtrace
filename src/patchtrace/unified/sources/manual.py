@@ -95,9 +95,10 @@ class ManualAdapter:
             for side, items in (('older', older), ('newer', newer)):
                 for rva, function in items:
                     nodes[(side, rva)] = nodes.get((side, rva)) or clean_name(function.name)
-            if len(older) == 1 and len(newer) == 1 and match.category != 'ambiguous':
+            pairing = match.category != 'unmatched'  # `unmatched` says there is no counterpart: never an affirmative pairing
+            if len(older) == 1 and len(newer) == 1 and pairing and match.category != 'ambiguous':
                 atoms.append(self._atom(older[0][0], newer[0][0], '1:1', match.id))
-            elif older and newer:
+            elif older and newer and pairing:
                 cards = ('1:1' if len(older) == len(newer) == 1 else
                          '1:N' if len(older) == 1 else 'N:1' if len(newer) == 1 else 'N:M')
                 group_atoms = tuple(sorted((self._atom(o, n, cards, match.id) for o, _ in older for n, _ in newer),

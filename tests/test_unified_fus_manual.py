@@ -21,3 +21,11 @@ def test_resolvable_one_sided_declaration_is_kept():
     out = ManualAdapter().atoms(inputs([manual]), addr_map(), Budget())
     assert [(a.older_rva, a.newer_rva) for a in out.atoms] == [(0x1000, None)]
     assert out.limitations == ()
+
+
+def test_manual_unmatched_with_both_sides_is_never_an_affirmative_pairing():
+    """The analyst's category says the functions have no counterpart: two one-sided claims, never a tier-M pair."""
+    manual = match('mm3', 'unmatched', older=[func('f', 0x1000)], newer=[func('g', 0x1100)], manual=True)
+    out = ManualAdapter().atoms(inputs([manual]), addr_map(), Budget())
+    assert out.groups == ()
+    assert {(a.older_rva, a.newer_rva) for a in out.atoms} == {(None, 0x1100), (0x1000, None)}
