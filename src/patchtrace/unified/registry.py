@@ -142,10 +142,11 @@ PASSES: tuple[PassSpec, ...] = (
 )
 
 # Versions of implemented rules; they change `config_digest` (02 s5). S3 added the IR channels C0-C5, DATA-MAP/1,
-# the alignment, EH-EQ and the structural proofs.
+# the alignment, EH-EQ and the structural proofs. `arbiter` 2: the L-39 cut ranks atoms orientation-free and keeps a
+# mirror twin pair whole (audit U7-08; version 1 was the unlisted S0b cut).
 CHANNEL_VERSIONS: tuple[tuple[str, int], ...] = (
     ('C0', 1), ('C1', 1), ('C2', 1), ('C3', 1), ('C4', 1), ('C4n', 1), ('C5', 1), ('C5t', 1), ('C6', 1), ('C8', 1),
-    ('align', 1), ('canon', 1), ('datamap', 1), ('eh-eq', 1))
+    ('align', 1), ('arbiter', 2), ('canon', 1), ('datamap', 1), ('eh-eq', 1))
 PROOF_VERSIONS: tuple[tuple[str, int], ...] = (
     ('COS-ADDR/1', 1), ('COS-LAYOUT/1', 1), ('COS-PSEUDO/1', 1), ('UNCH/1', 1))
 RZDIFF_META: tuple[str, Tier, EvidenceClass] = ('levenshtein-bytes', 'W', 'E-BODY')

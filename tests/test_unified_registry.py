@@ -162,6 +162,17 @@ def test_versions_feed_config_digest_inputs():
     assert set(dict(REGISTRY.proof_versions)) <= {'UNCH/1', 'COS-ADDR/1', 'COS-LAYOUT/1', 'COS-PSEUDO/1'}
 
 
+def test_the_orientation_free_l39_cut_moves_config_digest():
+    """Audit U7-08: the arbiter's L-39 cut ranks atoms orientation-free since `arbiter` version 2, so results cut
+    by the earlier order get a new config_digest (`engine_version` stays `ude/1`, a persisted literal)."""
+    from patchtrace.unified.compute import compute_config_digest
+    from patchtrace.unified.keys import ENGINE_VERSION
+    assert dict(REGISTRY.channel_versions)['arbiter'] == 2 and ENGINE_VERSION == 'ude/1'
+    before = dataclasses.replace(REGISTRY, channel_versions=tuple(
+        row for row in REGISTRY.channel_versions if row[0] != 'arbiter'))
+    assert compute_config_digest(before) != compute_config_digest(REGISTRY)
+
+
 def test_tier_rank_orders_m_a_b_c_w():
     assert sorted(TIER_RANK, key=TIER_RANK.get, reverse=True) == ['M', 'A', 'B', 'C', 'W']
 

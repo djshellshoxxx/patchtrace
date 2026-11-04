@@ -6,8 +6,16 @@ one-sided observations, engine groups (which merge into pools when they share a 
 sides draw from the same RVA numbers, so equal-strength ties between the two orientations are common. Rows are
 compared as values: endpoints, decision (older-only and newer-only trade places), the pair, `mapped`, hints, the set
 of atoms, and support and contest through the atoms their indices name (an index depends on the row's atom order,
-the atom it names does not). `ghidriff_match_id` is not compared: an ambiguous row of two merged Ghidriff groups
-names the first match id in atom order, and a swapped Ghidriff run has its own match ids anyway.
+the atom it names does not). A support index into a mirror twin pair (an edge (x, x) holding one piece of evidence
+as 1:N and as N:1) names the pair: the swapped input holds the same two atoms, so no rule could name the mirror one
+(`test_support_names_one_of_two_mirror_twins_on_an_edge_x_x`). `ghidriff_match_id` is not compared: an ambiguous
+row of two merged Ghidriff groups names the first match id in atom order, and a swapped Ghidriff run has its own
+match ids anyway.
+
+The L-39 cut (`arbiter._assemble`) is checked separately with dense inputs and small caps, because rows of the default
+generator stay far below 64 atoms. A cap below 8 is not drawn: the cut always keeps the strongest chosen atoms of each
+of the three components (twice with a mirror twin) plus one slot (two with a twin) for the strongest against-atom, so a
+smaller cap is a regime the real cap of 64 can never reach.
 
 A failing property is a defect in src: it is marked strict xfail with a one-line reason, never weakened.
 """
@@ -16,12 +24,12 @@ from __future__ import annotations
 import dataclasses
 from collections.abc import Sequence
 
-from hypothesis import HealthCheck, given, settings
+from hypothesis import HealthCheck, Phase, find, given, settings
 from hypothesis import strategies as st
 
 from patchtrace.unified.contracts import Atom
 from patchtrace.unified.fusion import arbiter
-from patchtrace.unified.limits import UnifiedError
+from patchtrace.unified.limits import DEFAULT_LIMITS, UnifiedError, UnifiedLimits
 from patchtrace.unified.sources import SourceGroup
 
 MIRROR = settings(max_examples=300, deadline=None, derandomize=True, database=None,
@@ -62,11 +70,11 @@ def shape_card(older: Sequence[int], newer: Sequence[int]) -> str:
 
 
 @st.composite
-def inputs(draw) -> tuple[list[Atom], list[SourceGroup]]:
-    rvas = RVAS[:draw(st.integers(min_value=1, max_value=len(RVAS)))]
+def inputs(draw, *, max_atoms: int = 18, max_rvas: int = len(RVAS)) -> tuple[list[Atom], list[SourceGroup]]:
+    rvas = RVAS[:draw(st.integers(min_value=1, max_value=max_rvas))]
     rva = st.sampled_from(rvas)
     atoms: list[Atom] = []
-    for _ in range(draw(st.integers(min_value=0, max_value=18))):
+    for _ in range(draw(st.integers(min_value=0, max_value=max_atoms))):
         kind = draw(st.sampled_from(('edge',) * 6 + ('one-sided', 'one-sided', 'manual')))
         if kind == 'edge':
             spec = draw(st.sampled_from(EDGE))
@@ -98,19 +106,28 @@ def inputs(draw) -> tuple[list[Atom], list[SourceGroup]]:
     return atoms, groups
 
 
+def named(atom: Atom, kept: frozenset[Atom]) -> Atom | frozenset[Atom]:
+    """The atom an index names. When the row also holds the atom's mirror twin (the same evidence on an edge (x, x)
+    once 1:N and once N:1), the swapped input holds the same two atoms, so either twin is the same claim."""
+    twin = mirror_atom(atom)
+    return frozenset((atom, twin)) if twin != atom and twin in kept else atom
+
+
 def view(row: arbiter.Decided, *, mirror: bool) -> tuple:
     atoms = [mirror_atom(a) if mirror else a for a in row.atoms]
+    kept = frozenset(atoms)
     older, newer = (row.newer, row.older) if mirror else (row.older, row.newer)
     pair = row.pair[::-1] if mirror and row.pair is not None else row.pair
-    support = frozenset((s.component, s.tier, atoms[s.atom_index]) for s in row.support)
+    support = frozenset((s.component, s.tier, named(atoms[s.atom_index], kept)) for s in row.support)
     contest = None if row.contest is None else (row.contest.strength, frozenset(atoms[i] for i in row.contest.against))
     decision = FLIP_DECISION.get(row.decision, row.decision) if mirror else row.decision
-    return older, newer, decision, support, contest, pair, row.mapped, row.hints, frozenset(atoms)
+    return older, newer, decision, support, contest, pair, row.mapped, row.hints, kept
 
 
-def outcome(atoms: Sequence[Atom], groups: Sequence[SourceGroup], *, mirror: bool) -> tuple:
+def outcome(atoms: Sequence[Atom], groups: Sequence[SourceGroup], *, mirror: bool,
+            limits: UnifiedLimits = DEFAULT_LIMITS) -> tuple:
     try:
-        rows = arbiter.decide(atoms, groups)
+        rows = arbiter.decide(atoms, groups, limits=limits)
     except UnifiedError as exc:            # two analyst claims on one function: the swap must refuse it the same way
         return 'error', exc.code, exc.reason
     views = [view(r, mirror=mirror) for r in rows]
@@ -126,6 +143,50 @@ def test_swapped_inputs_give_the_mirrored_rows(case: tuple[list[Atom], list[Sour
     assert forward == swapped
 
 
+DENSE = inputs(max_atoms=48, max_rvas=3)    # few functions, many atoms: rows go past a small cap
+CAPS = st.integers(min_value=8, max_value=16)
+
+
+@MIRROR
+@given(DENSE, CAPS)
+def test_swapped_inputs_at_the_l39_cap_give_the_mirrored_rows(case: tuple[list[Atom], list[SourceGroup]],
+                                                              cap: int) -> None:
+    atoms, groups = case
+    limits = UnifiedLimits(l39_atoms_per_row=cap)
+    forward = outcome(atoms, groups, mirror=True, limits=limits)
+    swapped = outcome([mirror_atom(a) for a in atoms], [mirror_group(g) for g in groups], mirror=False,
+                      limits=limits)
+    assert forward == swapped
+
+
+def test_the_dense_generator_reaches_the_l39_cut() -> None:
+    """The cap property is not vacuous: it draws rows that lose atoms to the cut."""
+    def cut(drawn) -> bool:
+        (atoms, groups), cap = drawn
+        try:
+            rows = arbiter.decide(atoms, groups, limits=UnifiedLimits(l39_atoms_per_row=cap))
+        except UnifiedError:
+            return False
+        return any(h.startswith('atoms-omitted:') for r in rows for h in r.hints)
+    find(st.tuples(DENSE, CAPS), cut, settings=settings(MIRROR, phases=(Phase.generate,)))  # no shrinking
+
+
+def test_a_row_at_the_l39_cap_keeps_the_mirrored_atoms() -> None:
+    """Audit U7-08 follow-up: a row past the real cap of 64. The against-atoms (0, k) and (k, 0) are mirror twins of
+    one another; the cut keeps or drops a twin pair whole, so the swapped input keeps the mirror image of the atoms
+    the forward input keeps (an orientation-dependent cut kept (0, 24..40) forward and (24..40, 0) swapped)."""
+    tier_b = EDGE[6]
+    atoms = [make(EDGE[0], 0, 0), *(make(tier_b, 0, k) for k in range(1, 41)), *(make(tier_b, k, 0)
+                                                                                  for k in range(1, 41))]
+    assert outcome(atoms, [], mirror=True) == outcome([mirror_atom(a) for a in atoms], [], mirror=False)
+    row = next(r for r in arbiter.decide(atoms, []) if (r.older, r.newer) == ((0,), (0,)))
+    kept = set(row.atoms)
+    assert len(row.atoms) <= DEFAULT_LIMITS.l39_atoms_per_row and kept == {mirror_atom(a) for a in kept}
+    assert make(EDGE[0], 0, 0) in kept and row.contest is not None and row.contest.strength == 'strong'
+    assert kept - {make(EDGE[0], 0, 0)} == {make(tier_b, *ends) for k in range(1, 32) for ends in ((0, k), (k, 0))}
+    assert 'atoms-omitted:18' in row.hints and len(atoms) - len(row.atoms) == 18
+
+
 def test_an_equal_strength_tie_resolves_to_the_same_pairs_in_both_orientations() -> None:
     """The (-older, -newer) tie-break of `strength` reads the sides in a fixed order, yet both orientations choose
     the same pairs: within one strength level each side ranks the other side by RVA alone (a master list), so the
@@ -138,3 +199,28 @@ def test_an_equal_strength_tie_resolves_to_the_same_pairs_in_both_orientations()
     assert {(r.older, r.newer) for r in forward} == {((0x1000,), (0x1000,)), ((0x1010,), (0x1010,))}
     assert {view(r, mirror=True) for r in forward} == {view(r, mirror=False) for r in swapped}
     assert all(r.decision == 'contested' for r in forward)
+
+
+def test_support_names_one_of_two_mirror_twins_on_an_edge_x_x() -> None:
+    """The one place an index cannot follow the mirror: an edge (x, x) holding the same evidence twice, once 1:N and
+    once N:1 (two engine groups of one step around x, filed onto an analyst pair). The two atoms are each other's
+    mirror image, so the swapped input holds the same two atoms and `Support.atom_index` names the same one; the
+    component and tier of the support, the atom set and everything else mirror (05 s1.3)."""
+    x, y, z = RVAS[:3]
+    spec = EDGE[1]
+    groups = [SourceGroup(kind='ghidriff-1n', source='ghidriff', older=(x,), newer=(x, y), decision='ambiguous',
+                          reason='synthetic', atoms=(make(spec, x, x, '1:N'), make(spec, x, y, '1:N'))),
+              SourceGroup(kind='ghidriff-1n', source='ghidriff', older=(x, z), newer=(x,), decision='ambiguous',
+                          reason='synthetic', atoms=(make(spec, x, x, 'N:1'), make(spec, z, x, 'N:1')))]
+    atoms = [make(MANUAL, x, x, ref='mm')]
+    swapped_atoms, swapped_groups = [mirror_atom(a) for a in atoms], [mirror_group(g) for g in groups]
+    assert outcome(atoms, groups, mirror=True) == outcome(swapped_atoms, swapped_groups, mirror=False)
+
+    def named(rows: list[arbiter.Decided], *, mirror: bool) -> tuple:
+        row = next(r for r in rows if (r.older, r.newer) == ((x,), (x,)))
+        support = next(s for s in row.support if s.component == 'K1')
+        atom = row.atoms[support.atom_index]
+        return support.tier, mirror_atom(atom) if mirror else atom
+    forward = named(arbiter.decide(atoms, groups), mirror=True)
+    swapped = named(arbiter.decide(swapped_atoms, swapped_groups), mirror=False)
+    assert forward[0] == swapped[0] == 'B' and forward[1] == mirror_atom(swapped[1]) != swapped[1]

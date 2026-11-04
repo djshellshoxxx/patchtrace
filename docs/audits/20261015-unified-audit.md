@@ -143,7 +143,7 @@ without F17 mutants; the 08 G-U2 row says so. Unit-level coverage stays in `test
 `tests/test_unified_mutations.py::test_trace_arg_is_a_pending_g_u2_class`; pins updated in `test_unified_mutations.py`,
 `test_unified_gates.py`, `test_unified_gate_eval.py`, `test_unified_fixture_gate_u2.py`, `unified_support/fixture-gaps.md`.
 
-### [U7-08:fixed] G-U4 mirror check covers every decision; the arbiter is orientation symmetric (2026-11-04)
+### [U7-08:fixed] G-U4 mirror check covers every decision; the arbiter is orientation symmetric, its L-39 cut since `arbiter` 2 (2026-11-04)
 (a) New derandomised property `tests/test_unified_fusion_mirror.py::test_swapped_inputs_give_the_mirrored_rows` (300
 examples: atoms of both components and every tier, tier-M pairs and one-sided declarations, one-sided observations, engine
 groups that merge into pools, manual groups; equal RVA numbers on both sides). Deciding the swapped input gives the mirror
@@ -151,9 +151,28 @@ of the forward rows on endpoints, decision (older-only <-> newer-only), pair, `m
 contest through the atoms their indices name; an analyst overlap is refused the same way in both orientations. No
 counterexample (also 20,000 random scratch inputs with groups, 0 asymmetric): the `(-older, -newer)` tie-break is a master
 list on both sides, so greedy selection gives the unique stable matching. The property fails on a planted
-orientation-dependent tie-break (`-edge[0], edge[1]`, not committed), so it has power. Arbiter, registry and
-`config_digest` are unchanged; `engine_version` stays `ude/1`. Outside the property: `ghidriff_match_id` of an `ambiguous`
-row of two merged Ghidriff groups is the first match id in atom order (a swapped Ghidriff run has its own ids anyway).
+orientation-dependent tie-break (`-edge[0], edge[1]`, not committed), so it has power. Outside the property:
+`ghidriff_match_id` of an `ambiguous` row of two merged Ghidriff groups is the first match id in atom order (a swapped
+Ghidriff run has its own ids anyway).
+Correction (2026-11-04, independent verification): the claim above that no counterexample exists held only for rows
+under the L-39 cap, because the generator (at most 18 loose atoms and 3 groups) never reached it. Past 64 atoms
+`_assemble` ranked the cut by the atom sort key, which reads the older RVA first: a tier-A Ghidriff atom on (0, 0) plus
+tier-B BinDiff atoms on (0, k) and (k, 0), k = 1..40, is its own mirror image, yet both orientations kept (0, 1..40)
+and (1..23, 0) with `atoms-omitted:17`, so `contest.against` and the atom set were not mirrored. Fixed: the cut ranks by
+the sort key with the endpoints read as the lower and the higher of the two orientations and keeps or drops a mirror twin
+pair whole (the reserved against-slot holds two atoms for a twin; a cut row may hold one atom fewer than 64; that example
+now keeps (0, k) and (k, 0) for k = 1..31 and writes `atoms-omitted:18`). Rows under the cap keep the same atoms as
+before. Support names the strongest chosen atom in that orientation-free order; this names a different atom than before
+only when two atoms of one step on the chosen edge differ in cardinality (1:N against N:1) or in native text alone. Registry `CHANNEL_VERSIONS` gains `('arbiter', 2)`, which moves
+`config_digest`; `engine_version` stays `ude/1`; schemas unchanged. Red/green:
+`tests/test_unified_fusion_mirror.py::test_a_row_at_the_l39_cap_keeps_the_mirrored_atoms` (the example above),
+`::test_swapped_inputs_at_the_l39_cap_give_the_mirrored_rows` (dense inputs, caps 8 to 16, 300 derandomised examples;
+`::test_the_dense_generator_reaches_the_l39_cut` shows it reaches the cut) and
+`tests/test_unified_registry.py::test_the_orientation_free_l39_cut_moves_config_digest`. One case stays outside the
+mirror, because no rule can mirror it: an edge (x, x) holding one piece of evidence as 1:N and as N:1 (two engine groups
+of one step around x) has two atoms that are each other's mirror image, the swapped input holds the same two, and
+`Support.atom_index` names the same one in both orientations (component and tier mirror). The property names such a
+twin pair as one claim; `::test_support_names_one_of_two_mirror_twins_on_an_edge_x_x` pins the case.
 (b) `tools/unified/evaluators.py::_pairing` compares every row of every decision (tentative, candidate, contested,
 ambiguous); group rows compare their endpoint tuples whole. Red/green:
 `tests/test_unified_gate_eval.py::test_g_u4_a_swap_that_changes_a_tentative_row_is_not_mirrored` and
