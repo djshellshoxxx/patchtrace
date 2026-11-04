@@ -114,3 +114,62 @@ def test_atoms_differing_only_in_native_text_have_a_fixed_order():
         results = {arbiter.decide(list(p), [])[0].atoms for p in itertools.islice(itertools.permutations(atoms), 24)}
         seen.add(len(results))
     assert seen == {1}
+
+
+def _oracle_matched(row_atoms) -> bool:
+    """matched iff a tier-A atom exists, or two usable A/B atoms differ in component AND evidence class."""
+    from patchtrace.unified.fusion.components import components_for
+    from patchtrace.unified.registry import REGISTRY
+    comp = components_for(REGISTRY)
+    if any(a.tier == 'A' for a in row_atoms):
+        return True
+    usable = [a for a in row_atoms if a.tier == 'B' and a.cls != 'E-UNKNOWN']
+    return any(comp.of(REGISTRY, x.source, x.step) != comp.of(REGISTRY, y.source, y.step) and x.cls != y.cls
+               for x in usable for y in usable)
+
+
+@SETTINGS
+@given(atoms_st)
+def test_uncontested_pair_rows_obey_the_corroboration_rule(raw_atoms):
+    atoms = [make(s, o, n) for s, o, n in raw_atoms if s[2] != 'M']
+    if not atoms:
+        return
+    rows = arbiter.decide(atoms, [])
+    for row in rows:
+        if row.pair is None or row.decision == 'contested':
+            continue
+        own = [a for a in atoms if (a.older_rva, a.newer_rva) == row.pair]
+        assert (row.decision == 'matched') == _oracle_matched(own)
+        assert row.decision != 'candidate' or not any(a.tier in ('A', 'B') for a in own if a.cls != 'E-UNKNOWN')
+
+
+@SETTINGS
+@given(atoms_st, groups_st)
+def test_every_decided_row_is_a_valid_persisted_row(raw_atoms, raw_groups):
+    """Valid atoms never make the arbiter emit a row the persisted model rejects (crash on valid input)."""
+    atoms, groups = build(raw_atoms, raw_groups)
+    try:
+        rows = arbiter.decide(atoms, groups)
+    except UnifiedError:
+        return  # two manual claims on one function
+    seen = set()
+    for row in rows:
+        match = arbiter.to_match(row, {}, 'a' * 64, 'b' * 64)
+        assert match.row_id not in seen
+        seen.add(match.row_id)
+        assert arbiter.decided_from_match(match).decision == row.decision
+
+
+@SETTINGS
+@given(atoms_st, groups_st)
+def test_every_function_is_in_exactly_one_row(raw_atoms, raw_groups):
+    atoms, groups = build(raw_atoms, raw_groups)
+    try:
+        rows = arbiter.decide(atoms, groups)
+    except UnifiedError:
+        return
+    olders = [o for r in rows for o in r.older]
+    newers = [n for r in rows for n in r.newer]
+    assert len(olders) == len(set(olders)) and len(newers) == len(set(newers))
+    assert set(olders) >= {a.older_rva for a in atoms if a.older_rva is not None}
+    assert set(newers) >= {a.newer_rva for a in atoms if a.newer_rva is not None}
