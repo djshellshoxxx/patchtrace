@@ -13,7 +13,7 @@ from qt_support import HOSTILE_PARAMS, join_gui_threads, main_window, settings, 
 from patchtrace.gui.capabilities import Availability
 from patchtrace.gui.qt.commands import action_entries
 from patchtrace.gui.qt.palette import RECENT_KEY, PaletteEntry, matches
-from patchtrace.gui.registry import PALETTE_RESULTS, CommandSpec
+from patchtrace.gui.registry import PALETTE_LIST_MAX, PALETTE_RESULTS, CommandSpec
 from patchtrace.tooltips import TooltipEntry
 
 
@@ -52,6 +52,14 @@ def test_recent_commands_come_first_only_for_an_empty_query():
 def test_results_are_capped():
     many = [entry(f'c{n}', f'Command {n}') for n in range(PALETTE_RESULTS + 30)]
     assert len(matches(many, 'command')) == PALETTE_RESULTS
+
+
+def test_the_empty_query_lists_every_command_up_to_a_larger_bound():
+    many = [entry(f'c{n}', f'Command {n}') for n in range(PALETTE_RESULTS + 30)]
+    assert [e.id for e in matches(many, '')] == [e.id for e in many]
+    huge = [entry(f'c{n}', f'Command {n}') for n in range(PALETTE_LIST_MAX + 30)]
+    assert len(matches(huge, '')) == PALETTE_LIST_MAX
+    assert len(matches(huge, 'command')) == PALETTE_RESULTS
 
 
 def test_a_disabled_entry_reads_unavailable_with_its_reason():
