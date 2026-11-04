@@ -83,7 +83,7 @@ from .sources import (
     snapshot_from_project,
     write_snapshot,
 )
-from .sources.ghidriff import MAX_RAW_BYTES
+from .sources.ghidriff import MAX_RAW_BYTES, load_raw
 from .sources.secondary import write_loaded
 
 __all__ = ['ALL_SOURCES', 'PlacedIr', 'Plan', 'RunReport', 'StageEvent', 'UnifiedOptions', 'UnifiedRequest',
@@ -93,6 +93,7 @@ __all__ = ['ALL_SOURCES', 'PlacedIr', 'Plan', 'RunReport', 'StageEvent', 'Unifie
 
 SECONDARY_ENGINES = ('bindiff', 'rz-diff')
 MODE_S0, MODE_IR = 's0', 'ir'
+WORKER_GRACE_S = 30   # the child's own deadline precedes the parent's kill by this much (at most a quarter of the timeout)
 RUN_STATUS = {'PT-UNIFIED-CANCEL': 'cancelled', 'PT-UNIFIED-TIMEOUT': 'timeout', 'PT-UNIFIED-UNSUPPORTED': 'unsupported'}
 IR_ASYMMETRIC = ('The ProgramIR of the two sides was produced differently (producer, mode, options or symbols), so '
                  'the result uses stored engine outputs only.')
@@ -143,6 +144,7 @@ class Plan:
     ir: tuple[PlacedIr, PlacedIr] | None = None     # older, newer; None = S0 mode
     ir_note: str | None = None                      # why placed sidecars were not used (a warning of the report)
     residual: bool = True
+    raw_verdict: str | None = None                  # the worker's own classification of a raw output that hashed fine
     _identity_inputs: SourceInputs | None = field(default=None, init=False, compare=False, repr=False)
 
     @property
@@ -168,7 +170,7 @@ class Plan:
         return AddressMap(self.older_layout, self.newer_layout)
 
     def inputs(self, matches: Iterable[SnapshotMatch] | None = None, raw_status: str | None = None) -> SourceInputs:
-        raw = RawGhidriff(status=raw_status or self.raw_status, sha256=self.raw_sha256)  # type: ignore[arg-type]
+        raw = RawGhidriff(status=raw_status or self.raw_verdict or self.raw_status, sha256=self.raw_sha256)  # type: ignore[arg-type]
         inputs = SourceInputs(older_sha256=self.older_sha256, newer_sha256=self.newer_sha256,
                               run=GhidriffRun(self.run_id, self.backend_version, raw),
                               matches=self.manual if matches is None else tuple(matches), secondary=self.secondary)
@@ -374,6 +376,11 @@ def resolve_plan(plan: Plan, *, limits: UnifiedLimits = DEFAULT_LIMITS, registry
     """Pure task work over validated captures; never accesses the project or trusts a transported digest."""
     budget = budget or Budget()
     budget.check()
+    if plan.raw_status == 'ok' and plan.raw_verdict is None and plan.raw_path is not None:
+        # The capture only hashed the file; the worker also shape-checks it (`load_raw`: no `address_matches` is
+        # `missing`, a malformed table `unparsable`) and those give other source refs. Predict the id it will publish.
+        plan = dataclasses.replace(plan, raw_verdict=load_raw(plan.raw_path, plan.raw_sha256, limits).status)
+        budget.check()
     inputs = plan.inputs()
     prior = None if previous is None else previous._identity_inputs
     if prior is not None and prior._manual_digest is not None and len(prior.matches) == len(inputs.matches):
@@ -454,6 +461,14 @@ def prepare(service, options: UnifiedOptions | None = None, *, limits: UnifiedLi
 
 # --- execute (no SQLite; any thread) ------------------------------------------------------------------------------
 
+def worker_budget_seconds(timeout_s: int) -> int:
+    """The deadline the child works to. The parent kills the process tree at `timeout_s` after the spawn, but the
+    child's clock starts only after its interpreter booted and its inputs were read, so an equal budget would always
+    lose that race and U7-06's partial result (a spent deadline after the ladder) could never be written; the child
+    therefore stops `WORKER_GRACE_S` earlier (at most a quarter of the timeout)."""
+    return max(1, timeout_s - min(WORKER_GRACE_S, timeout_s // 4))
+
+
 def _write_request(request: UnifiedRequest, private: Path) -> Path:
     plan = request.plan
     snapshot_path = private / 'matches.jsonl'
@@ -475,7 +490,7 @@ def _write_request(request: UnifiedRequest, private: Path) -> Path:
         snapshot=WorkerFile(path=str(snapshot_path), sha256=digest, size=size), snapshot_lines=lines,
         secondary=tuple(files), sources=plan.sources,  # type: ignore[arg-type]
         report_path=str(private / 'report.json'), progress_path=str(private / 'progress.json'),
-        budget_seconds=request.timeout_s, residual=plan.residual, **_ir_fields(request))
+        budget_seconds=worker_budget_seconds(request.timeout_s), residual=plan.residual, **_ir_fields(request))
     request_path = private / 'request.json'
     request_path.write_text(req.model_dump_json(), encoding='utf-8')
     return request_path
@@ -715,6 +730,9 @@ def execute(request: UnifiedRequest, cancel: threading.Event | None = None,
         error = fail('PT-UNIFIED-LIMIT', 'worker-oom')
     except Exception as exc:  # noqa: BLE001 - class name only, never the message (01 s6)
         error = fail('PT-UNIFIED-INTERNAL', type(exc).__name__)
+    except BaseException:   # an interrupt or exit: no staging directory may outlive it (the sweep takes a day)
+        _discard(staged)
+        raise
     finally:
         _discard(private)
     if error is not None or report is None:
@@ -774,6 +792,8 @@ def cached(service, request: UnifiedRequest, *, enrichment: EnrichmentStore | No
     hit = store.cached_result(enrichment, request.plan.result_id, limits)  # a damaged result is a miss, not an error
     if hit is None or hit.manifest is None or hit.directory is None or (hit.entry is not None and hit.entry.stale):
         return None
+    if store.is_timeout_partial(hit.manifest):
+        return None     # the deadline, not the inputs, cut it short: compute again (publish may replace it)
     t = time.monotonic()
     stages = [StageRecord(stage='prepare', status='ok', duration_ms=request.prepare_ms), _stage('cache', t)]
     warnings = _record(enrichment, service, request, status='cached', result_id=hit.manifest.result_id, error=None,
