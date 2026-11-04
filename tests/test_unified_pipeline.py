@@ -349,7 +349,7 @@ def test_the_child_inputs_are_private_files_listed_with_their_hashes(project):
     assert request['contract'] == 'unified-worker-request/1' and request['raw_status'] == 'ok'
     assert Path(request['raw_path']).is_relative_to(project.root)  # the one input read in place, re-hashed by the worker
     assert len(request['snapshot']['sha256']) == 64 and request['snapshot_lines'] == len(project.project.matches) == 5
-    assert request['sources'] == ['bindiff', 'ghidriff', 'manual', 'rz-diff']
+    assert request['sources'] == ['bindiff', 'diaphora', 'ghidriff', 'manual', 'rz-diff']
 
 
 def test_progress_comes_from_the_childs_progress_file(project):

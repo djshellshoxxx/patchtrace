@@ -95,12 +95,21 @@ class LoadedSecondary:
 
 
 @dataclass(frozen=True)
+class LoadedDiaphora:
+    """One stored `diaphora-matches` set (06 s5). Its source ref is derived from the validated set, never transported."""
+    entry_id: str
+    match_set: Any  # diaphora.contracts.DiaphoraMatchSet
+    _source_ref: Any = field(default=None, init=False, compare=False, repr=False)
+
+
+@dataclass(frozen=True)
 class SourceInputs:
     older_sha256: str
     newer_sha256: str
     run: GhidriffRun
     matches: tuple[SnapshotMatch, ...]
     secondary: tuple[LoadedSecondary, ...] = ()
+    diaphora: tuple[LoadedDiaphora, ...] = ()
     _manual_digest: str | None = field(default=None, init=False, compare=False, repr=False)
 
 
