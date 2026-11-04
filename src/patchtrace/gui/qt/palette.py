@@ -14,7 +14,7 @@ from dataclasses import dataclass
 from PySide6.QtCore import QEvent, QObject, Qt, QTimer
 from PySide6.QtWidgets import QFrame, QLineEdit, QListWidget, QListWidgetItem, QVBoxLayout, QWidget
 
-from ..registry import PALETTE_RESULTS
+from ..registry import PALETTE_LIST_MAX, PALETTE_RESULTS
 from ..text import LABEL_LIMIT, sanitize_text
 from ..tips import apply_tip
 from .state_view import Announcer
@@ -50,7 +50,7 @@ def matches(entries: Iterable[PaletteEntry], query: str, recent: tuple[str, ...]
     if not words and recent:
         rank = {command_id: index for index, command_id in enumerate(recent)}
         found.sort(key=lambda entry: rank.get(entry.id, len(rank)))  # stable: the rest keep their order
-    return found[:PALETTE_RESULTS]
+    return found[:PALETTE_RESULTS if words else PALETTE_LIST_MAX]
 
 
 class CommandPalette(QFrame):

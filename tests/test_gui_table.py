@@ -415,3 +415,32 @@ def test_column_tooltip_replaces_the_cell_text_tooltip(table):
     model = table.table_model
     assert model.index(0, 0).data(Qt.ItemDataRole.ToolTipRole) == '<p>fn000000!</p>'
     assert model.index(0, 1).data(Qt.ItemDataRole.ToolTipRole) == 'note 0'
+
+
+def test_a_column_tip_id_serves_the_header_tooltip_and_a_missing_id_falls_back(qapp):
+    from patchtrace import tooltips
+    tip = next(iter(tooltips.REGISTRY))
+    columns = (ColumnSpec('a', 'Alpha', lambda r: r[0], tip_id=tip),
+               ColumnSpec('b', 'Beta', lambda r: r[0], unit='ms', tip_id='no.such.tip'),
+               ColumnSpec('c', 'Gamma', lambda r: r[0]))
+    model = VirtualTableModel()
+    model.set_prepared(prepare(3, columns))
+    tooltip = Qt.ItemDataRole.ToolTipRole
+    assert model.headerData(0, Qt.Orientation.Horizontal, tooltip) == tooltips.tooltip(tip)
+    assert model.headerData(1, Qt.Orientation.Horizontal, tooltip) == 'Beta (ms)'
+    assert model.headerData(2, Qt.Orientation.Horizontal, tooltip) == 'Gamma'
+    assert model.headerData(0, Qt.Orientation.Horizontal, Qt.ItemDataRole.AccessibleTextRole) == 'Alpha'
+
+
+def test_the_header_sorts_from_the_keyboard_on_the_current_column(table, prepared_10k, qtbot):
+    table.set_prepared(prepared_10k)
+    header = table.horizontalHeader()
+    table.setCurrentIndex(table.table_model.index(0, 1))
+    table.setFocus()
+    QTest.keyClick(table, Qt.Key.Key_Down, Qt.KeyboardModifier.AltModifier)
+    assert (header.sortIndicatorSection(), header.sortIndicatorOrder()) == (1, Qt.SortOrder.AscendingOrder)
+    QTest.keyClick(table, Qt.Key.Key_Up, Qt.KeyboardModifier.AltModifier)
+    assert header.sortIndicatorOrder() == Qt.SortOrder.DescendingOrder
+    QTest.keyClick(table, Qt.Key.Key_Backspace, Qt.KeyboardModifier.AltModifier)
+    assert header.sortIndicatorSection() == -1
+    assert table.table_model.sort_state[0] == -1

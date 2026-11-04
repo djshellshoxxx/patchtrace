@@ -26,6 +26,7 @@ KEEP_SELECTION_LIMIT = 5_000               # a larger selection is dropped on re
 _DISPLAY = Qt.ItemDataRole.DisplayRole
 _ACCESSIBLE = Qt.ItemDataRole.AccessibleTextRole
 _TOOLTIP = Qt.ItemDataRole.ToolTipRole
+_SORT_KEYS = (Qt.Key.Key_Up, Qt.Key.Key_Down, Qt.Key.Key_Backspace)
 _EMPTY = PreparedTable((), (), (), (), (), (), (), 0)
 
 
@@ -181,6 +182,10 @@ class VirtualTableModel(QAbstractTableModel):
         column = self._p.columns[section]
         if role == _DISPLAY:
             return f'{column.title}\n{column.unit}' if column.unit else column.title
+        if role == _TOOLTIP and column.tip_id:
+            registered = _header_tip(column.tip_id)
+            if registered:
+                return registered
         if role in (_TOOLTIP, _ACCESSIBLE):
             return f'{column.title} ({column.unit})' if column.unit else column.title
         return None
@@ -221,6 +226,15 @@ class VirtualTableModel(QAbstractTableModel):
         if index.isValid() and row < len(self._view) and column < len(self._p.columns):
             return self._p.texts[self._view[row]][column]
         return None
+
+
+def _header_tip(tip_id: str) -> str:
+    """The registered tooltip, or '' when the id is not registered (a column may name a tip before it lands)."""
+    from ... import tooltips
+    try:
+        return tooltips.tooltip(tip_id)
+    except KeyError:
+        return ''
 
 
 class VirtualTable(QTableView):
@@ -359,8 +373,22 @@ class VirtualTable(QTableView):
             key = self.current_key()
             if key is not None:
                 self.detail_requested.emit(key)
+        elif event.modifiers() == Qt.KeyboardModifier.AltModifier and event.key() in _SORT_KEYS:
+            self.sort_current_column(event.key())
         else:
             super().keyPressEvent(event)
+
+    def sort_current_column(self, key: int = Qt.Key.Key_Down) -> None:
+        """Keyboard sort path for the header: Alt+Down ascending, Alt+Up descending, Alt+Backspace default order,
+        applied to the current column (Left and Right move it)."""
+        header = self.horizontalHeader()
+        if key == Qt.Key.Key_Backspace:
+            header.setSortIndicator(-1, Qt.SortOrder.AscendingOrder)
+            return
+        column = self.currentIndex().column()
+        if 0 <= column < self.table_model.columnCount():
+            order = Qt.SortOrder.AscendingOrder if key == Qt.Key.Key_Down else Qt.SortOrder.DescendingOrder
+            header.setSortIndicator(column, order)
 
     def _activate_index(self, index: QModelIndex) -> None:
         key = self.table_model.key_at(index.row()) if index.isValid() else None
