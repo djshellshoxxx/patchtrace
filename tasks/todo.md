@@ -961,3 +961,5 @@ Done: dock with state matrix, consent, import, changes, copy, go to CVE. Open: r
 - [x] Four red cases for valid over-cap manual groups; refuse before snapshot truncation/identity, preserve exact-cap and unrelated runs.
 - [x] Unified + Qt before cap: 2,515 passed / 32 skipped / 1 xfailed; final focused 156 passed, Ruff/schema/diff clean.
 - [ ] Final exact-head CI/full-suite integration; frozen 31f51e76 full run still running with a failure, native CI on that old head succeeded but does not qualify subsequent edits or global gates.
+
+- [x] MC dependency reconciliation: preserve #185's three help commits above #180, with 322 post-merge help/CLI/manual checks passing; #188 now stacks on #185. No merge into main.
