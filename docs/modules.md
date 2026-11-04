@@ -1265,3 +1265,19 @@ Wiring: `exchange.ALL_SOURCES`, `--sources diaphora`, `pipeline.capture_plan` (o
 ### [UE-AUD-20261104:run-options] Run options recorded for staleness (2026-11-04, PR #180)
 
 `pipeline._provenance` records `use_ir` and `residual` (yes/no) next to `sources`; `read_model.capture_candidates` compares a stored result only with the plan of the options its runs recorded (results from older run rows keep the previous both-ways behaviour). A result made with `--no-extract`, `--no-residual` or `--sources` stays current while nothing changed; an S0 result made because no ProgramIR was placed becomes stale once one is placed. Tests: `tests/test_unified_run_options_staleness.py`.
+
+### [SPEC-51:d2] PE version resource, manifest and Authenticode structure (SPEC-26 D2, 2026-11-04, PR #180)
+
+| ID | File | Responsibility and public interface | Dependencies | Ownership / test seam |
+|---|---|---|---|---|
+| der reader | pe_overview/der.py | Bounded DER reader (definite lengths only; depth, node and byte caps of 7.3); typed `signature_der_*` warnings | stdlib | `tests/test_pe_der.py` |
+| embedded signature | pe_overview/signature.py | `verify_embedded(reader, overview, cancel)`: `WIN_CERTIFICATE` entries, PKCS#7 SignedData, SpcIndirectDataContent digest, signer and certificate identity, timestamp claims, nested signatures, the recomputed PE Authenticode digest (1 MiB reads, cancel polling, skipped above 256 MiB) | der | `tests/test_pe_signature.py` (DER-writing builder, tamper and dual-signature fixtures) |
+| labels, compare, cache | pe_overview/labels.py, compare.py, metadata.py, cache.py | closed label set (never "valid", "verified publisher", "safe"); old/new `FieldComparison` rows; cache key `sha256(artifact | OVERVIEW_VERSION | limits | trust mode | trust fingerprint)` behind a `SidecarPort` (store binding not wired yet) | models | `tests/test_pe_meta_compare.py` |
+| inspect CLI | pe_overview/cli.py, cli_commands/inspect.py | `patchtrace inspect <project> --side older|newer|both [--trust offline|cache|online --consent-online] --json`; `--trust online` without consent exits 2 `PT-PE-CONSENT-REQUIRED` | pe_overview | `tests/test_pe_inspect_cli.py` |
+| catalog (Windows) | pe_overview/catalog_win.py | catalog signature and consented revocation modes through the existing WinVerifyTrust probe; fakes only here, real acceptance BLOCKED until Windows CI | ctypes (Windows) | `tests/test_pe_catalog_win.py` |
+| RSA check | pe_overview/rsa_verify.py | RSA PKCS#1 v1.5 signature math with `pow()`; the label stays "signature math ok, chain not evaluated" | stdlib | `tests/test_pe_rsa.py` (known-answer vectors) |
+| signing tab | pe_overview/signing_view.py, ui_inspection.py | "Version and signing" tab of File overview: comparison table, manifest text, signature tree with node tips; plain text everywhere | Qt adapter | `tests/test_ui_inspection_signing.py` |
+
+### [RPT2:export-dialog] Report v2 controls of the Export dialog (2026-11-04, PR #180)
+
+`ui_export_v2.py` builds and binds the Contract, Profile and Sections rows of `ExportDialog` to `report2.export_vm.ExportViewModel` and reads the report sections for `MainWindow.export_report` (`report2.adapters.collect_from_service`). `ui.py` keeps a three-line seam (attach, show, options), within the GUI-framework seam budget. Tests: `tests/test_ui_export_v2.py`.
