@@ -426,6 +426,8 @@ def _host_failure(host_run: HostRun, argv: list[str]) -> str:
     try:
         proc = host_run(argv, capture_output=True, text=True, encoding='utf-8', errors='replace',
                         timeout=HOST_TIMEOUT, check=False)
+    except subprocess.TimeoutExpired as exc:  # its message repeats the whole argv, which is recorded already
+        return f'TimeoutExpired: no exit after {exc.timeout} s'
     except Exception as exc:  # a missing tool or a timeout is a red step, never a crash
         return f'{type(exc).__name__}: {exc}'[:DETAIL_LIMIT]
     return '' if proc.returncode == 0 else f'exit {proc.returncode}: {_tail(proc)}'[:DETAIL_LIMIT]
@@ -445,14 +447,18 @@ def exec_probe(ev: Evidence, name: str, py: Path, env: dict[str, str]) -> bool:
                   duration_s=_since(start))
 
 
-def block_windows(ev: Evidence, root: Path, host_run: HostRun, undo: list[list[str]]) -> bool:
+Removal = tuple[str, list[str]]  # (short label for the cleanup detail, argv)
+ACL_REMOVAL = 'icacls /remove:d'
+
+
+def block_windows(ev: Evidence, root: Path, host_run: HostRun, undo: list[Removal]) -> bool:
     """One outbound block rule per program. Each removal is registered before its add, so a rule that a failing or
     timed-out command half-created is removed in `finally` too; a failure is the step `firewall-block`."""
     programs = windows_programs(root)
     add, remove = windows_firewall_commands(programs)
     start = time.monotonic()
-    for done, (cmd, undo_cmd) in enumerate(zip(add, remove, strict=True), 1):
-        undo.append(undo_cmd)
+    for done, (cmd, undo_cmd, program) in enumerate(zip(add, remove, programs, strict=True), 1):
+        undo.append((f'firewall {Path(program).name}', undo_cmd))
         failure = _host_failure(host_run, cmd)
         if failure:
             return ev.add('firewall-block', False, failure, commands=add[:done], duration_s=_since(start))
@@ -460,17 +466,36 @@ def block_windows(ev: Evidence, root: Path, host_run: HostRun, undo: list[list[s
                   duration_s=_since(start))
 
 
-def _cleanup(ev: Evidence, os_name: str, backend: Path, account: str, locked: bool, undo: list[list[str]],
+def _cleanup_detail(failures: list[dict], total: int) -> str:
+    """The ACL deny removal first, then each other failure, every one cut to its own share of DETAIL_LIMIT, so no
+    verbose error can push another out of the detail (the full reasons are in the step's `failures`)."""
+    head = f'{len(failures)} of {total} removals failed: '
+    ordered = sorted(failures, key=lambda f: f['what'] != ACL_REMOVAL)  # stable: run order otherwise
+    share = (DETAIL_LIMIT - len(head)) // len(ordered) - len('; ')
+    parts = [f"{f['what']}: {f['reason'][:max(0, share - len(f['what']) - 2)]}" for f in ordered]
+    return (head + '; '.join(parts))[:DETAIL_LIMIT]
+
+
+def _cleanup(ev: Evidence, os_name: str, backend: Path, account: str, locked: bool, undo: list[Removal],
              host_run: HostRun) -> None:
     """Spec s7.4: firewall rules and the ACL deny are removed (and Linux modes restored) whenever they were
-    attempted. Every command runs even if one fails; failures are the step `cleanup`."""
-    failures = [_host_failure(host_run, cmd) for cmd in undo]
+    attempted. Every command runs even if one fails; failures are the step `cleanup`, which records every removal
+    argv (`commands`), each failure with its own bounded reason (`failures`) and `duration_s`."""
+    removals = list(undo)
     if locked and os_name == 'windows':
-        failures.append(_host_failure(host_run, windows_readonly_command(str(backend), account, deny=False)))
+        removals.append((ACL_REMOVAL, windows_readonly_command(str(backend), account, deny=False)))
+    start = time.monotonic()
+    failures = []
+    for what, argv in removals:
+        reason = _host_failure(host_run, argv)
+        if reason:
+            failures.append({'what': what, 'argv': argv, 'reason': reason})
+    duration = _since(start)
     if locked and os_name == 'linux':
         set_tree_readonly(backend, False)
-    if any(failures):
-        ev.add('cleanup', False, '; '.join(f for f in failures if f)[:DETAIL_LIMIT])
+    if failures:
+        ev.add('cleanup', False, _cleanup_detail(failures, len(removals)), commands=[argv for _, argv in removals],
+               failures=failures, duration_s=duration)
 
 
 def selftest_argv(launcher: Path, older: Path, newer: Path, expect: str) -> list[str]:

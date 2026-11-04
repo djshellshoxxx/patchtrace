@@ -308,3 +308,49 @@ def test_windows_branch_full_order_and_subprocess_records(tmp_path, monkeypatch)
         assert isinstance(steps[name].data['argv'], list) and steps[name].data['duration_s'] >= 0, name
     assert steps['firewall-block'].data['commands'] == blocked
     assert steps['digest-after-equal'].detail == steps['digest-before'].detail
+
+
+@posix_only
+@pytest.mark.parametrize('mode', ['timeout', 'verbose'], ids=['timeout', 'verbose'])
+def test_cleanup_records_every_failed_removal_with_argv_and_duration(tmp_path, monkeypatch, mode):
+    """Each failed removal keeps its own bounded reason, so verbose firewall errors can never push the ACL deny
+    removal result out of the evidence (spec s3 `cleanup`)."""
+    monkeypatch.setenv('USERNAME', 'bob')
+    events: list = []
+    blocked = []
+    _recording_run(monkeypatch, events, connected=lambda: not blocked)
+
+    def hook(argv):
+        if 'New-NetFirewallRule' in argv[-1]:
+            blocked.append(argv)
+        elif 'Remove-NetFirewallRule' in argv[-1]:
+            if mode == 'timeout':
+                raise subprocess.TimeoutExpired(argv, ba.HOST_TIMEOUT)
+            return subprocess.CompletedProcess(argv, 1, '', 'Remove-NetFirewallRule : ' + 'x' * 900)
+        elif _is_remove_deny(argv):
+            return subprocess.CompletedProcess(argv, 5, '', 'bob: Access is denied.')
+        return None
+    monkeypatch.setattr(ba, 'writable_probe', lambda _root: False)
+    ev = _run_windows(tmp_path, FakeHost(events, hook))
+    steps = {s.name: s for s in ev.steps}
+    assert 'cleanup' in steps and not steps['cleanup'].ok and not ev.ok, _names(ev)
+    cleanup = steps['cleanup']
+    programs = ba.windows_programs((tmp_path / 'rel').resolve())
+    _, removes = ba.windows_firewall_commands(programs)
+    backend = str((tmp_path / 'rel' / 'backend').resolve())
+    acl = ba.windows_readonly_command(backend, 'bob', deny=False)
+    assert len(removes) >= 2
+    assert cleanup.data['commands'] == [*removes, acl]                     # every removal argv that ran
+    assert [f['argv'] for f in cleanup.data['failures']] == [*removes, acl]  # structured, never truncated away
+    assert all(0 < len(f['reason']) <= ba.DETAIL_LIMIT for f in cleanup.data['failures'])
+    assert cleanup.data['failures'][-1]['reason'] == 'exit 5: bob: Access is denied.'
+    if mode == 'timeout':                       # the argv is recorded once, not repeated inside every reason
+        assert cleanup.data['failures'][0]['reason'] == f'TimeoutExpired: no exit after {ba.HOST_TIMEOUT} s'
+    assert cleanup.data['duration_s'] >= 0
+    detail = cleanup.detail
+    assert len(detail) <= ba.DETAIL_LIMIT
+    assert 'icacls /remove:d: exit 5: bob: Access is denied.' in detail, detail  # the ACL result survives
+    for program in programs:                                                # and so does every firewall failure
+        assert f'firewall {Path(program).name}: ' in detail, detail
+    assert detail.startswith(f'{len(removes) + 1} of {len(removes) + 1} removals failed'), detail
+    assert json.loads(ev.to_json())['steps'][-2]['name'] == 'cleanup'
