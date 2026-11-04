@@ -104,7 +104,11 @@ def stage_groups(passes: Sequence[PassSpec]) -> list[tuple[PassSpec, ...]]:
 def _apply_anchors(st: State, anchors: Iterable) -> None:
     given = []
     for p in anchors:
-        x, y = (p.older_fid, p.newer_fid) if hasattr(p, 'older_fid') else p
+        try:
+            x, y = (p.older_fid, p.newer_fid) if hasattr(p, 'older_fid') else p
+        except (TypeError, ValueError):
+            raise UnifiedError('PT-UNIFIED-INPUT', 'manual anchor is not an (older, newer) pair',
+                               reason='anchor-shape') from None
         if type(x) is not int or type(y) is not int or not 0 <= x < st.a.n or not 0 <= y < st.b.n:
             raise UnifiedError('PT-UNIFIED-INPUT', 'manual anchor outside the IR', reason='anchor-range')
         given.append((x, y))
