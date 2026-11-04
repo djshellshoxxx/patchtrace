@@ -26,6 +26,8 @@ from unified_read_support import (
     publish,
     request,
     source_ref,
+    synthetic_rows,
+    synthetic_view,
 )
 from unified_s0_fixtures import make_project
 
@@ -776,31 +778,12 @@ def test_names_written_raw_into_the_sidecar_are_still_plain(tmp_path):
 # --- scale (07 s11, 08: first paint, filter and sort at 100,000 rows) ----------------------------------------------------------------
 
 
-def synthetic_rows(count: int):
-    """`count` immutable row views as a load would build them (shared cells and tuples, per-row labels)."""
-    ghidriff = rm.SourceCell('ghidriff', 'value', 'SymbolsHash', None, 'Ghidriff match type SymbolsHash')
-    bindiff = [rm.SourceCell('bindiff', 'value', f'sim 0.{90 + k}  algo name hash matching', 900 + 10 * k, 'spoken')
-               for k in range(10)]
-    decisions = ['matched'] * 17 + ['contested', 'tentative', 'older-only']
-    changes = ['unknown'] * 14 + ['review'] * 3 + ['unchanged', 'material', 'cosmetic']
-    classes = [(), ('constant',), ('callee',), ('address-only',)]
-    sources = frozenset({'ghidriff', 'bindiff'})
-    rows = []
-    for i in range(count):
-        decision, change = decisions[i % 20], changes[i % 20]
-        chip, word = rm.DECISION_CHIPS[decision], rm.MATERIALITY_CHIPS[change].text
-        rows.append(rm.UnifiedRowView(
-            f'{i:064x}', f'Function_{i}', f'0x{i:X} > 0x{i + 16:X}', decision, chip.text, chip.glyph, change, word,
-            word, classes[i % 4], None, 'A', (), (ghidriff, bindiff[i % 10]), sources, None, 0, change == 'unchanged',
-            (i % 9, 0, 0, i % 18, rm.ATTENTION_NONE, i), f'function_{i} {i:x}'))
-    return tuple(rows)
-
-
 def test_filter_and_sort_budget_at_100000_rows():
-    """L-35: filter <= 100 ms and sort <= 150 ms at 100,000 rows, with the repo's 5x wall-clock slack."""
+    """L-35: filter <= 100 ms and sort <= 150 ms at 100,000 rows, with the repo's 5x wall-clock slack. The rows come
+    from `unified_read_support.synthetic_rows`, the generator the read_model stage of tools/unified/bench.py times."""
     rows = synthetic_rows(rm.DISPLAY_ROW_CAP)
-    infos = (rm.SourceInfo('ghidriff', 'Ghidriff', 'u', 't', '1', True), rm.SourceInfo('bindiff', 'BinDiff', 'u', 't', '1', True))
-    vm = rm.UnifiedViewModel('p', None, 0, 'U3', '', infos, rows, {}, (), None, 'ordinal')
+    vm = synthetic_view(rows)
+    assert len(vm.rows) == len(rows) and len(rm.columns(vm)) == 5
 
     def took(fn):
         start = time.perf_counter()

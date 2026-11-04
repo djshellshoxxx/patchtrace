@@ -6,6 +6,7 @@ from collections.abc import Iterable, Sequence
 from pathlib import Path
 
 from patchtrace.unified import keys, store
+from patchtrace.unified import read_model as rm
 from patchtrace.unified.contracts import (
     Atom,
     ChangeFacts,
@@ -108,3 +109,33 @@ def source_ref(source: str, version: str = '1', entry: str | None = None) -> Sou
 
 def request(loaded: store.LoadedResult | None, **kw) -> UnifiedLoadRequest:
     return UnifiedLoadRequest('project-1', 'run-1', 7, loaded, **kw)
+
+
+# --- scale: in-memory row views (tests/test_unified_read_model.py and the read_model stage of tools/unified/bench.py) ---
+
+
+def synthetic_rows(count: int) -> tuple[rm.UnifiedRowView, ...]:
+    """`count` immutable row views as a load would build them (shared cells and tuples, per-row labels)."""
+    ghidriff = rm.SourceCell('ghidriff', 'value', 'SymbolsHash', None, 'Ghidriff match type SymbolsHash')
+    bindiff = [rm.SourceCell('bindiff', 'value', f'sim 0.{90 + k}  algo name hash matching', 900 + 10 * k, 'spoken')
+               for k in range(10)]
+    decisions = ['matched'] * 17 + ['contested', 'tentative', 'older-only']
+    changes = ['unknown'] * 14 + ['review'] * 3 + ['unchanged', 'material', 'cosmetic']
+    classes = [(), ('constant',), ('callee',), ('address-only',)]
+    sources = frozenset({'ghidriff', 'bindiff'})
+    rows = []
+    for i in range(count):
+        decision, change = decisions[i % 20], changes[i % 20]
+        chip, word = rm.DECISION_CHIPS[decision], rm.MATERIALITY_CHIPS[change].text
+        rows.append(rm.UnifiedRowView(
+            f'{i:064x}', f'Function_{i}', f'0x{i:X} > 0x{i + 16:X}', decision, chip.text, chip.glyph, change, word,
+            word, classes[i % 4], None, 'A', (), (ghidriff, bindiff[i % 10]), sources, None, 0, change == 'unchanged',
+            (i % 9, 0, 0, i % 18, rm.ATTENTION_NONE, i), f'function_{i} {i:x}'))
+    return tuple(rows)
+
+
+def synthetic_view(rows: Sequence[rm.UnifiedRowView]) -> rm.UnifiedViewModel:
+    """A ready view model over `rows` with the two sources their cells name (Function, Decision, Change + 2 columns)."""
+    infos = (rm.SourceInfo('ghidriff', 'Ghidriff', 'u', 't', '1', True),
+             rm.SourceInfo('bindiff', 'BinDiff', 'u', 't', '1', True))
+    return rm.UnifiedViewModel('p', None, 0, 'U3', '', infos, tuple(rows), {}, (), None, 'ordinal')
