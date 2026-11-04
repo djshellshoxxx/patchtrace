@@ -921,3 +921,10 @@ Done: dock with state matrix, consent, import, changes, copy, go to CVE. Open: r
 - [x] Preserve old no-key bytes/ranking and private in-memory unified support; keep persisted engine vocabulary unchanged; expose legacy unmarked replay as unverified rather than infer historical credit.
 - [ ] Independent final review, coordinator integration/cross-OS and verified transfer integration remain pending; broader locked training/final-run/promotion safeguards are not completed by this slice. See `docs/qa/output-credited-replay-20261101.md`.
 - [x] Independent credited-replay review approved exact source `5c26af9` with 119 passes/1 native-tool BLOCKED skip and direct scalar/failed-valid-artifact controls; no remaining bounded source blocker. Integration/cross-OS/transfer and broader safeguards above remain open.
+
+
+### [BR-20261104] Exact branch ledger refresh
+
+- [x] Publish full 183-branch / 67-PR snapshot, patch uniqueness, merge bases and focused range/file comparisons in docs/qa/branch-reconciliation-20261104.md.
+- [x] Trace #187 failures to the existing #186 workflow repair, and #184 failure to parser timing follow-up #189.
+- [ ] Required checks/reviews and semantic integration remain open; no ledger entry is merge approval. Next consolidation: qualify #184/#189, #180/#185/#188, then native #174 without re-importing cumulative #163–#168.
