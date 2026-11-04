@@ -1,5 +1,7 @@
 # PE overview (SPEC-26 requirement D, backend stream)
 
+> **SPEC-31 status amendment (2026-11-04, A-09, documentation only):** the file-level radiff2-inspired items are hosted as SPEC-26 extensions, not SPEC-31: RD-F01 (byte spans), RD-F02 (PE layout delta) and RD-F03 (offset alignment). This file is part of SPEC-26.
+
 ## Responsibility
 
 `patchtrace.pe_overview` produces a bounded, read-only, preliminary description of a PE file
