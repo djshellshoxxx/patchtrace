@@ -1,0 +1,6 @@
+.stock 1 12 boundary scenarios; ownership failures=6 helper failures=0
+ 
+corrected 0 12 boundary scenarios; ownership failures=0 helper failures=0
+ 
+.
+2 passed in 0.10s
