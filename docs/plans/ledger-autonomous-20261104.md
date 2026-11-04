@@ -58,3 +58,4 @@ Newest prerelease: v0.1.0-beta.751 (2026-11-03T19:05Z). Main: `b77d84e`.
 | 2026-11-04T03:00 | #177 Windows QA failure (xdist temp path hit the 240-char unified sidecar guard) | fixed | dc1d78b: short --basetemp; budget 240 -> 177; Windows pytest 44m54s -> 14m38s measured |
 | 2026-11-04T03:05 | wave 6 workflow wf_4b651076-6ac: RULE-2, RULE-7, CG-3, report_for, kb attach --repair | 4/4 CONFIRMED, integrated | independent red-check per slice; wiring.py conflict resolved (both constant blocks kept) |
 | 2026-11-04T03:08 | gate pass 3 @e7d309a | pass | 19,187 passed / 32 skipped / 8 xfailed / 0 failed, 378 s; ruff, diff-check, panels check clean |
+| 2026-11-04T03:10 | correction: d99cd77 also added 2 tracker lines (PR #153 follow-up) that the d03a7d4 restore dropped | restored in place | found by the independent #173 review; recovered by base64-decoding main's file; tracker test now also rejects a mid-file 'tokens truncated' marker |
