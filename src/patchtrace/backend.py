@@ -75,6 +75,8 @@ class BackendConfig:
     # empty server list and PDBs only from the analyst-chosen folders below (identity-gated, copied per run).
     symbol_mode: str = ''
     symbol_pdb_dirs: tuple[str, ...] = ()
+    # Opt-in native A/A gate; normal product comparisons still skip identical bytes.
+    force_identical_diff: bool = False
 
 
 _PASSTHROUGH_NAME = re.compile(r'^[A-Za-z_][A-Za-z0-9_()]*$')
@@ -162,6 +164,8 @@ def _config_errors(config: BackendConfig) -> list[str]:
         errors.append('PT-BACKEND: restrict_env must be a boolean')
     if not isinstance(config.retain_gzf, bool):
         errors.append('PT-BACKEND: retain_gzf must be a boolean')
+    if not isinstance(config.force_identical_diff, bool):
+        errors.append('PT-BACKEND: force_identical_diff must be a boolean')
     if not isinstance(config.env_passthrough, tuple) or any(_passthrough_error(n) for n in config.env_passthrough):
         errors.append('PT-BACKEND: env_passthrough must list plain variable names, excluding PYTHONPATH, '
                       'PYTHONHOME, PYTHON*, LD_*, DYLD_*, BASH_ENV, ENV and *_OPTIONS')
@@ -562,6 +566,8 @@ def _ghidriff_argv(config: BackendConfig, older: Path, newer: Path, raw: Path,
     python = [os.path.abspath(config.python_executable), '-I', '-X', 'utf8']
     args = [str(older), str(newer), '--output-path', str(_validated_ghidra_output_path(raw)),
             '--project-location', str(engine_project), '--gzfs-path', str(engine_gzfs), '--no-threaded']
+    if config.force_identical_diff:
+        args.append('--force-diff')
     if local is not None:
         staged = [x for name in local.staged_names for x in ('--pt-staged', name)]
         return [*python, str(local.launcher), '--pt-mode', 'local', '--pt-report', str(local.report), *staged,
@@ -657,6 +663,8 @@ def run_comparison(config: BackendConfig, project: ComparisonProject, root: Path
                 'ghidra_settings': 'isolated-per-run',
                 'older_sha256': next(a.sha256 for a in project.artifacts if a.side == 'older'),
                 'newer_sha256': next(a.sha256 for a in project.artifacts if a.side == 'newer')}
+    if config.force_identical_diff:
+        settings['force_identical_diff'] = True
     backend_version = 'unknown'
     raw_cache = None
     fingerprint = None
@@ -708,7 +716,7 @@ def run_comparison(config: BackendConfig, project: ComparisonProject, root: Path
         backend_version = str(metadata['ghidriff'])
         settings.update({'python_version': metadata['python'], 'pyghidra_version': metadata['pyghidra']})
         settings.update({'ghidra_version': _ghidra_version(config), 'java_runtime_version': 'unverified'})
-        if settings['older_sha256'] == settings['newer_sha256']:
+        if settings['older_sha256'] == settings['newer_sha256'] and not config.force_identical_diff:
             destination = root / 'runs' / run_id
             quarantine.rename(destination)
             event('identical', 'Copied binaries have identical SHA-256 hashes; analysis skipped')
@@ -769,9 +777,15 @@ def run_comparison(config: BackendConfig, project: ComparisonProject, root: Path
                 (scratch_root / 'symbols').mkdir(exist_ok=True)
                 local = _LocalSymbols(write_private_copy(launcher_dir), scratch_root / 'ptlaunch-report.json',
                                       scratch_root / 'symbols', tuple(s.pdb_name for s in local_result.staged))
-            paths = {side: _snapshot_input(path, scratch_root / 'inputs' / side / path.name,
-                                           settings[f'{side}_sha256'], cancel)
-                     for side, path in paths.items()}
+            # Ghidra requires separate names for two identical ProgramDB inputs.
+            # Only names change: the copies retain the exact image bytes and hashes.
+            forced_aa = (config.force_identical_diff
+                         and settings['older_sha256'] == settings['newer_sha256'])
+            paths = {side: _snapshot_input(
+                path, scratch_root / 'inputs' / side /
+                (f'{side}-{path.name}' if forced_aa else path.name),
+                settings[f'{side}_sha256'], cancel)
+                for side, path in paths.items()}
             argv = _ghidriff_argv(config, paths['older'], paths['newer'], raw, engine_project, engine_gzfs, local)
             environment = _environment(config, ghidra_settings)
             progress = BackendProgress(config.timeout_seconds)
@@ -828,10 +842,17 @@ def run_comparison(config: BackendConfig, project: ComparisonProject, root: Path
             raise RuntimeError('PT-CANCEL: analysis cancelled; partial output retained in quarantine')
         if result.reason == 'timeout':
             raise RuntimeError(progress.timeout_error(run_id))
-        if result.reason == 'output-check-failed' or _output_error(raw) == 'output-check-failed':
-            raise RuntimeError('PT-BACKEND: output directory could not be inspected; partial output quarantined')
-        if result.reason or _output_error(raw):
-            raise RuntimeError('PT-BACKEND: unsafe or oversized JSON output; partial output quarantined')
+        output_reason = result.reason or _output_error(raw)
+        if output_reason:
+            if output_reason == 'output-check-failed':
+                detail = 'output directory could not be inspected [output-check-failed]'
+            elif output_reason == 'output-limit':
+                detail = f'unsafe or oversized JSON output [output-limit]: combined JSON exceeds {JSON_LIMIT} bytes'
+            elif output_reason == 'unsafe-output-path':
+                detail = 'unsafe or oversized JSON output [unsafe-output-path]'
+            else:
+                detail = 'unsafe or oversized JSON output'
+            raise RuntimeError(f'PT-BACKEND: {detail}; partial output quarantined')
         if local is not None:
             from .ghidriff_launch.validate import check_exit, validate_run
             check_exit(result.returncode, sanitized_log)
