@@ -1,6 +1,6 @@
 # R7 QA evidence ledger — advanced binary security research
 
-**Status:** research-only; no native acceptance or security accuracy claim.  
+**Status:** research-only; no native acceptance or security accuracy claim.
 **Date:** 2026-10-30. **Baseline:** main `a04f5a299a8d4afef023261e52e08d14678cf1e7`; owner branch `research/r7-advanced-binary-analysis-20261030`; draft PR https://github.com/djshellshoxxx/patchtrace/pull/134
 
 ## Executed local verification

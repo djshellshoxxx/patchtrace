@@ -1,6 +1,6 @@
 # R7 / 02 — Experiment results, acceptance design, engineering roadmap and unresolved gates
 
-**Checkpoint:** 2026-10-30. **Implementation basis:** `research/r7-advanced-binary-analysis-20261030` from main `a04f5a299a8d4afef023261e52e08d14678cf1e7`. Research only; no product contract or materiality decision was changed.  
+**Checkpoint:** 2026-10-30. **Implementation basis:** `research/r7-advanced-binary-analysis-20261030` from main `a04f5a299a8d4afef023261e52e08d14678cf1e7`. Research only; no product contract or materiality decision was changed.
 **Read with:** [README](README.md), [methods](01-literature-and-methods.md), [synthetic-benchmark.json](synthetic-benchmark.json), `tools/research/r7/slicer.py`, `tools/research/r7/patterns.py`, `tests/test_r7_slicing.py`, `tests/test_r7_patterns.py`.
 
 ## 1. What actually executed — versus what remains a hypothesis

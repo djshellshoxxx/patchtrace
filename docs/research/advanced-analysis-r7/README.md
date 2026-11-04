@@ -1,8 +1,8 @@
 # R7 — advanced binary security analysis (research workspace)
 
-**Research status:** active / experimental; no production feature gate has been opened.  
-**Live baseline:** `main` at `a04f5a299a8d4afef023261e52e08d14678cf1e7` (reconciled 2026-10-30).  
-**Research branch:** `research/r7-advanced-binary-analysis-20261030`.  
+**Research status:** active / experimental; no production feature gate has been opened.
+**Live baseline:** `main` at `a04f5a299a8d4afef023261e52e08d14678cf1e7` (reconciled 2026-10-30).
+**Research branch:** `research/r7-advanced-binary-analysis-20261030`.
 **Concurrent owners:** R1 PR #128, R2 #131, R3 #129, R4 #130, R5 #132, R6 #133. Do not edit their files or treat pending PRs as merged.
 
 ## Scope and evidence vocabulary

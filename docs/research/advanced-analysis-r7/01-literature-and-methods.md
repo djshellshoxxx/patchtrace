@@ -1,6 +1,6 @@
 # R7 / 01 — Advanced binary-analysis literature, concrete methods and feasibility
 
-**Research date:** 2026-10-30. **Repository baseline:** main at a04f5a299a8d4afef023261e52e08d14678cf1e7.  
+**Research date:** 2026-10-30. **Repository baseline:** main at a04f5a299a8d4afef023261e52e08d14678cf1e7.
 **Status:** primary-source methods assessment and synthetic exploration; **not** native Ghidra validation, real-binary security accuracy, or an accepted product architecture. Research-code tests and separate measurements are listed in [02-acceptance-and-roadmap.md](02-acceptance-and-roadmap.md).
 
 ## 1. Evidence discipline and reuse
