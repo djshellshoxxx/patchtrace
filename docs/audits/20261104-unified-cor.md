@@ -1,0 +1,15 @@
+# Unified audit 2026-11-04 - card `cor` (contracts, store, pipeline, compute, worker, exchange, CLI)
+
+Format: ID | severity | file:line | defect | status. No `config_digest`, `script_sha256`, pass-table digest or fixture changed.
+
+COR-01 | High | pipeline.py `_write_request` (budget_seconds) | child Budget started after interpreter boot with budget == parent kill timeout, so the parent always killed first; U7-06 partial result unreachable in isolated mode (default) | fixed: test_unified_cor_pipeline.py::test_the_worker_deadline_comes_before_the_parents_kill_deadline (`worker_budget_seconds`)
+COR-02 | High | pipeline.py `resolve_plan`/`Plan.inputs` | plan classified raw output only by hash; worker shape-checks (`load_raw`); predicted result_id != published id for raw without `address_matches` / malformed table: status always stale, cache never hit (coordinator finding) | fixed: test_unified_cor_pipeline.py::test_a_raw_output_the_worker_cannot_use_does_not_make_every_result_stale (`Plan.raw_verdict`)
+COR-03 | High | pipeline.py `cached`, store.py `publish_result` | timeout-partial result shares result_id with the complete one; served from cache forever and a finishing `--refresh` was refused as `result-drift` (INTERNAL) | fixed: test_unified_cor_pipeline.py::test_a_timeout_partial_result_is_not_served_from_the_cache_and_a_complete_run_replaces_it (`store.is_timeout_partial`)
+COR-04 | Medium | pipeline.py `execute` | KeyboardInterrupt/SystemExit left `tmp-*` staging dir (24 h sweep) | fixed: test_unified_cor_pipeline.py::test_an_interrupt_during_execute_leaves_no_staging_or_private_directory
+COR-05 | Medium | store.py `apply_unified_retention` | spec "plus the current one" not applied; stale-published rows could evict the project's current result | fixed: test_unified_cor_store.py::test_retention_never_evicts_the_result_the_project_is_current_on
+COR-06 | - | keys/compute `plan_identity` | cache-key coverage proof: older/newer sha, raw sha/status, backend version, each secondary set, manual corrections, source selection, IR digests, residual switch, content limits change id; operational limits and input order do not | verified: tests/test_unified_cor_keys.py (no defect)
+COR-07 | Low | pipeline.py `publish` | a refresh whose decompile notes differ from the committed result (e.g. no-backend then no-gzf) raises `result-drift` (INTERNAL, exit 3) though the committed result is fine | deferred: existing tests (test_an_incomplete_decompile_refresh_preserves_the_committed_result) and 02 s4 specify result-drift
+COR-08 | Low | cli.py `_status` / read_model | `status`/`show` plan with default options, so a result made with `--sources`/`--no-extract`/`--no-residual` reads as stale | ask: read_model.request_from_service should plan with the stored result's options
+COR-09 | - | exchange/worker/store readers | 200k-deep nested JSON in request/report/refacts/manifest -> typed error, no RecursionError | verified (no defect)
+
+ASKS: COR-08 (read_model.py, outside card). Spec: 01 s5/07 should say the worker's budget is `timeout - min(30 s, timeout/4)`.
