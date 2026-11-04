@@ -5,13 +5,11 @@ Timings are RECORDED, never asserted against the SPEC-07 objectives (derived-cac
 kept in docs/audits/20261015-qa-cli-persistence.md). Assertions are correctness and bounded-growth checks only."""
 from __future__ import annotations
 
-import gc
 import importlib.util
 import os
 import sys
 import tempfile
 import time
-import tracemalloc
 from pathlib import Path
 from uuid import uuid4
 
@@ -95,22 +93,40 @@ def test_large_project_open_time_is_recorded(tmp_path, request):
     _record(request, 'open_10k_matches_seconds', elapsed)
 
 
+# Measured in a fresh interpreter: tracemalloc counts every allocation in the process, so a thread or a global
+# handler left behind by another test file in the same (xdist) worker inflated this number on some runs only
+# (7.7 MB once on Windows, under 1 MiB on the same commit before). The limit and the cycle count are unchanged.
+_GROWTH_PROBE = r"""
+import gc, json, sys, tracemalloc
+from patchtrace.service import ProjectService
+root, cycles = sys.argv[1], int(sys.argv[2])
+for _ in range(20):  # warm caches (imports, pydantic schemas) before the baseline
+    ProjectService.open(root).close()
+gc.collect()
+tracemalloc.start(8)
+before = tracemalloc.take_snapshot()
+baseline = tracemalloc.get_traced_memory()[0]
+for _ in range(cycles):
+    ProjectService.open(root).close()
+gc.collect()
+growth = tracemalloc.get_traced_memory()[0] - baseline
+top = [str(stat) for stat in tracemalloc.take_snapshot().compare_to(before, 'lineno')[:5]]
+print(json.dumps({'growth': growth, 'top': top}))
+"""
+
+
 def test_repeated_opens_do_not_grow_memory_or_descriptors(tmp_path, request):
+    import json
+    import subprocess
     root = make_sample(tmp_path / 'case')
-    for _ in range(20):  # warm caches (imports, pydantic schemas) before the baseline
-        ProjectService.open(root).close()
-    gc.collect()
-    tracemalloc.start()
-    try:
-        baseline = tracemalloc.get_traced_memory()[0]
-        for _ in range(OPEN_CYCLES):
-            ProjectService.open(root).close()
-        gc.collect()
-        growth = tracemalloc.get_traced_memory()[0] - baseline
-    finally:
-        tracemalloc.stop()
+    probe = subprocess.run([sys.executable, '-c', _GROWTH_PROBE, str(root), str(OPEN_CYCLES)], capture_output=True,
+                           text=True, encoding='utf-8', timeout=300, check=False)
+    assert probe.returncode == 0, probe.stderr[-2000:]
+    result = json.loads(probe.stdout.strip().splitlines()[-1])
+    growth = result['growth']
     request.node.user_properties.append(('traced_growth_bytes', growth))
-    assert growth < MEMORY_GROWTH_LIMIT_BYTES, f'{growth} bytes retained after {OPEN_CYCLES} open/close cycles'
+    assert growth < MEMORY_GROWTH_LIMIT_BYTES, (
+        f'{growth} bytes retained after {OPEN_CYCLES} open/close cycles; top sites: ' + '; '.join(result['top']))
 
 
 @pytest.mark.skipif(not os.path.isdir('/proc/self/fd'), reason='descriptor table is read from /proc (Linux)')
