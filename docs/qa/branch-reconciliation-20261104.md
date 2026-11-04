@@ -1,0 +1,9552 @@
+# PatchTrace branch reconciliation — 2026-11-04
+
+Read-only snapshot. Main `5d504ff5c046bfb758623182b472976003632bba`. Remote refs fetched by coordinator. 183 remote feature branches, 67 open PRs in the read-only GitHub snapshot (all open PRs requested with limit 100). A repeat query during review also returned 67; any earlier 63 count came from a different scope or snapshot and is not used here. No merges, closes, branch edits, full tests or native executions performed by the inventory worker. This ledger inventories ancestry, exact patch equivalence and paths; it does not claim semantic review of all branches. Checks are GitHub snapshot evidence, not new local test results. Branch protection query was inaccessible (403). Existing #187 audit reviewed; current ancestry and patch equivalence below supersede its approximate ahead/behind counts.
+
+## Priority reconciliation findings
+
+- #184 is four test-fix commits relative to main. Its test slice should be considered before broad runtime validation, but a failing check remains.
+- #185 is exactly #180 plus three help documentation commits (`9313d11b`, `4abe7e33`, `81a9fb28`), confirmed by range-diff. Merge/port the engine once; retain documentation provenance.
+- #180 includes report/2 and SPEC-51 work as well as unified engine; its title understates scope. Review by slice, not as an engine-only cumulative branch.
+- #174 contains producer/live-gate work represented in older #163-168 trains; do not merge both trains without semantic comparisons.
+- #181/#182 have passing check snapshots and independently scoped consolidation candidates. Passing CI alone does not establish required approval.
+- Automation branches #167/#170/#171/#186 are not feature dependencies and may start paid work; keep separate.
+
+## Summary
+
+| Branch | Head | Base / merge base | PR | Unique / equivalent patches | Files | CI | Readiness |
+|---|---|---|---|---:|---:|---|---|
+| `access-test-noprefix` | `726a371ab34d` | `origin/main` / `ba10a52bde0c` | none | 28 / 0 | 16 | {} | unqualified: no current CI attached |
+| `audit/ai-reports` | `dd6402b9c00d` | `origin/main` / `320a87700feb` | none | 1 / 0 | 4 | {} | unqualified: no current CI attached |
+| `audit/core` | `fae13b2ed304` | `origin/main` / `320a87700feb` | none | 2 / 0 | 3 | {} | unqualified: no current CI attached |
+| `audit/desktop` | `4d5e48ab7df3` | `origin/main` / `320a87700feb` | none | 1 / 0 | 4 | {} | unqualified: no current CI attached |
+| `audit/enrichment` | `cbc5b079ad2c` | `origin/main` / `320a87700feb` | none | 3 / 0 | 12 | {} | unqualified: no current CI attached |
+| `audit/integration` | `f6505928d826` | `origin/main` / `320a87700feb` | none | 18 / 0 | 57 | {} | unqualified: no current CI attached |
+| `audit/runtime` | `9f32a6ecbd05` | `origin/main` / `320a87700feb` | none | 2 / 0 | 5 | {} | unqualified: no current CI attached |
+| `automation/api-funded-persistent-codex-20261103` | `6fe6c4b1be06` | `origin/main` / `b77d84e5decf` | [#170](https://github.com/djshellshoxxx/patchtrace/pull/170) | 9 / 0 | 1 | {'SUCCESS': 12, 'SKIPPED': 2, 'FAILURE': 1} | blocked: failing checks |
+| `automation/parallel-api-eight-agents-20261103` | `f8050a1fef23` | `origin/main` / `b77d84e5decf` | [#171](https://github.com/djshellshoxxx/patchtrace/pull/171) | 23 / 0 | 4 | {'FAILURE': 3, 'SUCCESS': 6, 'SKIPPED': 5} | blocked: failing checks |
+| `automation/patchtrace-api-agent-pilot-20261103` | `def36c822a80` | `origin/main` / `1b81740612e6` | [#167](https://github.com/djshellshoxxx/patchtrace/pull/167) | 2 / 0 | 2 | {'FAILURE': 2, 'SUCCESS': 7, 'SKIPPED': 5} | blocked: failing checks |
+| `chatgpt/corpus-1` | `b7a0f0a45d2d` | `origin/claude/instance-d-gui` / `8af0e0effa76` | [#68](https://github.com/djshellshoxxx/patchtrace/pull/68) | 25 / 0 | 25 | {'CANCELLED': 2, 'SUCCESS': 6, 'FAILURE': 1, 'SKIPPED': 5} | blocked: failing checks |
+| `chatgpt/deferred-audit-fixes-1` | `2174837f3172` | `origin/claude/instance-d-gui` / `7e2e7aa54abb` | [#67](https://github.com/djshellshoxxx/patchtrace/pull/67) | 8 / 0 | 19 | {} | unqualified: no current CI attached |
+| `chatgpt/ghidriff-sequential-lock-fix-20261017` | `f6b7545bcc7a` | `origin/main` / `70e33fd77570` | none | 5 / 0 | 3 | {} | unqualified: no current CI attached |
+| `chatgpt/help-docs-1` | `e5bee6fe157c` | `origin/claude/instance-d-gui` / `a423d3d580d8` | [#70](https://github.com/djshellshoxxx/patchtrace/pull/70) | 25 / 0 | 25 | {'CANCELLED': 2, 'SUCCESS': 2, 'SKIPPED': 4} | candidate: inspect review/protection and focused tests |
+| `chatgpt/java-probe-boundaries-20261016` | `09bb4519d7d8` | `origin/main` / `8ee61c623fa3` | none | 2 / 0 | 1 | {} | unqualified: no current CI attached |
+| `chatgpt/java-probe-ci-fix-20261016` | `0254841e3e63` | `origin/main` / `8ee61c623fa3` | none | 1 / 0 | 1 | {} | unqualified: no current CI attached |
+| `chatgpt/java-probe-qa-fix-20261016` | `89500e120686` | `origin/main` / `89500e120686` | none | 0 / 0 | 0 | {} | no unique patches relative to base |
+| `chatgpt/kb-fixtures-1` | `781b36fb60e7` | `origin/claude/instance-d-gui` / `a423d3d580d8` | [#69](https://github.com/djshellshoxxx/patchtrace/pull/69) | 24 / 0 | 24 | {'CANCELLED': 2, 'SUCCESS': 7, 'SKIPPED': 4} | candidate: inspect review/protection and focused tests |
+| `chatgpt/lbl30-prereg-guard-20261016` | `6ae2c079e6ca` | `origin/claude/instance-d-gui` / `53f366e8b50a` | [#85](https://github.com/djshellshoxxx/patchtrace/pull/85) | 43 / 0 | 21 | {'SUCCESS': 9, 'FAILURE': 1, 'CANCELLED': 1, 'SKIPPED': 6} | blocked: failing checks |
+| `chatgpt/lbl31-coff-quoted-rip-20261016` | `6e71bfabbf5e` | `origin/main` / `53f366e8b50a` | none | 23 / 0 | 15 | {} | unqualified: no current CI attached |
+| `chatgpt/lbl31-coff-symbol-mask-20261016` | `9622704d5c75` | `origin/main` / `53f366e8b50a` | none | 25 / 0 | 15 | {} | unqualified: no current CI attached |
+| `chatgpt/lbl31-output-persistence-20261015` | `2019a37fa65f` | `origin/claude/instance-d-gui` / `53f366e8b50a` | [#78](https://github.com/djshellshoxxx/patchtrace/pull/78) | 33 / 0 | 18 | {'FAILURE': 3, 'SUCCESS': 11, 'CANCELLED': 1, 'SKIPPED': 6} | blocked: failing checks |
+| `chatgpt/lbl31-windows-qa-fixes-20261016-a` | `ddb2ff077a21` | `origin/main` / `53f366e8b50a` | none | 26 / 0 | 18 | {} | unqualified: no current CI attached |
+| `chatgpt/lbl32-card-controls-20261016` | `9513bc05229d` | `origin/chatgpt/lbl31-output-persistence-20261015` / `5f30a79119b5` | [#79](https://github.com/djshellshoxxx/patchtrace/pull/79) | 15 / 0 | 8 | {'FAILURE': 3, 'SUCCESS': 5, 'CANCELLED': 1, 'SKIPPED': 6} | blocked: failing checks |
+| `chatgpt/lbl32-recipe-aa-noise-20261016` | `eaa30013794a` | `origin/claude/instance-d-gui` / `53f366e8b50a` | [#82](https://github.com/djshellshoxxx/patchtrace/pull/82) | 51 / 0 | 20 | {'FAILURE': 4, 'SUCCESS': 10, 'CANCELLED': 1, 'SKIPPED': 6} | blocked: failing checks |
+| `chatgpt/merge-first-handoff-20261016` | `19153f10780e` | `origin/main` / `70e33fd77570` | none | 5 / 0 | 2 | {} | unqualified: no current CI attached |
+| `chatgpt/nway-external-note-qa-20261016` | `8c7288276d3e` | `origin/main` / `8c7288276d3e` | none | 0 / 0 | 0 | {} | no unique patches relative to base |
+| `chatgpt/panels-1` | `cfd7cfff52f4` | `origin/claude/instance-d-gui` / `d15e16be7f19` | [#72](https://github.com/djshellshoxxx/patchtrace/pull/72) | 10 / 0 | 10 | {'CANCELLED': 2, 'SUCCESS': 2, 'SKIPPED': 4} | candidate: inspect review/protection and focused tests |
+| `chatgpt/patchwatch-reuse-roadmap-20261026` | `4eabf8dff2c4` | `origin/main` / `4eabf8dff2c4` | none | 0 / 0 | 0 | {} | no unique patches relative to base |
+| `chatgpt/r5-calibration-research-20261030` | `4d9d9051aea8` | `origin/main` / `a04f5a299a8d` | [#132](https://github.com/djshellshoxxx/patchtrace/pull/132) | 11 / 0 | 8 | {'SUCCESS': 12, 'SKIPPED': 3} | candidate: inspect review/protection and focused tests |
+| `chatgpt/semantic-analysis-r3-20261030` | `2698b9a04d33` | `origin/main` / `a04f5a299a8d` | [#129](https://github.com/djshellshoxxx/patchtrace/pull/129) | 14 / 0 | 10 | {'SUCCESS': 17, 'SKIPPED': 3} | candidate: inspect review/protection and focused tests |
+| `chatgpt/ue-r3-retain-decompiled-20261016` | `ebbd621d4f55` | `origin/claude/instance-d-gui` / `53f366e8b50a` | [#86](https://github.com/djshellshoxxx/patchtrace/pull/86) | 11 / 0 | 7 | {'FAILURE': 2, 'SUCCESS': 6, 'CANCELLED': 1, 'SKIPPED': 4} | blocked: failing checks |
+| `chatgpt/ue-r7-p15-unresolved-20261016-a` | `292dc3953dd2` | `origin/main` / `292dc3953dd2` | none | 0 / 0 | 0 | {} | no unique patches relative to base |
+| `chatgpt/ue-r7-strict-worker-report-20261016-a` | `9c5f9a42b499` | `origin/main` / `9c5f9a42b499` | none | 0 / 0 | 0 | {} | no unique patches relative to base |
+| `chatgpt/unified-fixture-collection-fix-20261016` | `941c617b6854` | `origin/chatgpt/unified-fixtures-1` / `161a88345efc` | [#90](https://github.com/djshellshoxxx/patchtrace/pull/90) | 5 / 0 | 5 | {'FAILURE': 3, 'CANCELLED': 1, 'SKIPPED': 4} | blocked: failing checks |
+| `chatgpt/unified-fixtures-1` | `161a88345efc` | `origin/claude/instance-d-gui` / `8af0e0effa76` | [#71](https://github.com/djshellshoxxx/patchtrace/pull/71) | 25 / 0 | 25 | {'FAILURE': 1, 'SUCCESS': 9, 'CANCELLED': 1, 'SKIPPED': 4} | blocked: failing checks |
+| `chatgpt/unified-sort-perf-qa-20261016` | `27b0a48bb800` | `origin/chatgpt/lbl31-output-persistence-20261015` / `5f30a79119b5` | [#94](https://github.com/djshellshoxxx/patchtrace/pull/94) | 1 / 0 | 1 | {'FAILURE': 2, 'CANCELLED': 1, 'SUCCESS': 1, 'SKIPPED': 4} | blocked: failing checks |
+| `claude/access-test-1791773355` | `726a371ab34d` | `origin/main` / `ba10a52bde0c` | none | 28 / 0 | 16 | {} | unqualified: no current CI attached |
+| `claude/audit-beta` | `c93ff945b9b5` | `origin/main` / `b7e819a3b4ff` | none | 1 / 0 | 37 | {} | unqualified: no current CI attached |
+| `claude/autonomous-finish-20261104` | `cc2e338ff690` | `origin/main` / `25b2ac8000e4` | none | 127 / 0 | 331 | {} | unqualified: no current CI attached |
+| `claude/awesome-ramanujan-o3pxx3-ci` | `0bf1f8309e84` | `origin/main` / `99f8328ce89d` | none | 1 / 0 | 11 | {} | unqualified: no current CI attached |
+| `claude/awesome-ramanujan-o3pxx3-hostile` | `077b04e681ac` | `origin/main` / `077b04e681ac` | none | 0 / 0 | 0 | {} | no unique patches relative to base |
+| `claude/awesome-ramanujan-o3pxx3-win1` | `7ac57759f3b9` | `origin/main` / `99f8328ce89d` | none | 1 / 0 | 13 | {} | unqualified: no current CI attached |
+| `claude/bugfix-kbc-20261029` | `653f384d1ca6` | `origin/main` / `653f384d1ca6` | none | 0 / 0 | 0 | {} | no unique patches relative to base |
+| `claude/bugfix-kev-acq-20261029` | `fbe58d800da2` | `origin/main` / `fbe58d800da2` | none | 0 / 0 | 0 | {} | no unique patches relative to base |
+| `claude/bugfix-strings-pe-20261029` | `7ae041e79e41` | `origin/main` / `7ae041e79e41` | none | 0 / 0 | 0 | {} | no unique patches relative to base |
+| `claude/bundle-license-gate` | `d3617acf9af7` | `origin/main` / `21a005e24217` | none | 3 / 0 | 11 | {} | unqualified: no current CI attached |
+| `claude/clever-clarke-s4nhi6` | `502402684b0d` | `origin/main` / `9c261b1a9610` | none | 0 / 1 | 1 | {} | no unique patches relative to base |
+| `claude/compassionate-goldberg-5uuqks` | `198eb21e8813` | `origin/main` / `5214720716c7` | [#125](https://github.com/djshellshoxxx/patchtrace/pull/125) | 1 / 0 | 1 | {'SUCCESS': 7, 'SKIPPED': 3} | candidate: inspect review/protection and focused tests |
+| `claude/fix-deadline-test` | `22ff025a7710` | `origin/main` / `bb84b2606f06` | none | 0 / 1 | 1 | {} | no unique patches relative to base |
+| `claude/gallant-knuth-8gxuzd` | `a7689119fc25` | `origin/main` / `25b2ac8000e4` | [#180](https://github.com/djshellshoxxx/patchtrace/pull/180) | 89 / 0 | 188 | {'FAILURE': 3, 'SUCCESS': 13, 'SKIPPED': 5} | blocked: failing checks |
+| `claude/instance-b-features` | `e492092ff360` | `origin/main` / `0c4251dfd9a5` | none | 96 / 0 | 9 | {} | unqualified: no current CI attached |
+| `claude/instance-c-research` | `cebf38a30ce3` | `origin/main` / `4cf78d64dd54` | none | 10 / 1 | 2 | {} | unqualified: no current CI attached |
+| `claude/instance-d-gui` | `2fa113889d1f` | `origin/main` / `2fa113889d1f` | none | 0 / 0 | 0 | {} | no unique patches relative to base |
+| `claude/java-version-retry-integration` | `45fa67ad7e92` | `origin/main` / `45fa67ad7e92` | none | 0 / 0 | 0 | {} | no unique patches relative to base |
+| `claude/jolly-fermi-eghaxy` | `99f8328ce89d` | `origin/main` / `99f8328ce89d` | none | 0 / 0 | 0 | {} | no unique patches relative to base |
+| `claude/modest-hamilton-kz2gta` | `280bf05856eb` | `origin/main` / `a04f5a299a8d` | [#126](https://github.com/djshellshoxxx/patchtrace/pull/126) | 10 / 0 | 16 | {'SKIPPED': 1, 'SUCCESS': 2} | candidate: inspect review/protection and focused tests |
+| `claude/patchtrace-cli-dotpath-spec-er6hha` | `62b9a3de4d10` | `origin/main` / `5667b759f553` | none | 3 / 0 | 20 | {} | unqualified: no current CI attached |
+| `claude/patchtrace-features` | `66e9adc50fb1` | `origin/main` / `e093ade3e66e` | [#100](https://github.com/djshellshoxxx/patchtrace/pull/100) | 8 / 0 | 52 | {'SUCCESS': 12, 'SKIPPED': 2} | candidate: inspect review/protection and focused tests |
+| `claude/patchtrace-haiku-agent-motpbx` | `9fddf99e2635` | `origin/main` / `e093ade3e66e` | [#102](https://github.com/djshellshoxxx/patchtrace/pull/102) | 13 / 0 | 40 | {'SUCCESS': 15, 'SKIPPED': 5, 'FAILURE': 1} | blocked: failing checks |
+| `claude/patchtrace-multi-worker-consolidate-24ct7v` | `0477b7f823c5` | `origin/main` / `25b2ac8000e4` | [#179](https://github.com/djshellshoxxx/patchtrace/pull/179) | 6 / 0 | 6 | {'SUCCESS': 11, 'SKIPPED': 3, 'FAILURE': 1} | blocked: failing checks |
+| `claude/quirky-curie-n5pxf5` | `a5593fa58b2e` | `origin/main` / `a5593fa58b2e` | none | 0 / 0 | 0 | {} | no unique patches relative to base |
+| `claude/serene-heisenberg-2y5kz6` | `317acd6de185` | `origin/main` / `25b2ac8000e4` | [#172](https://github.com/djshellshoxxx/patchtrace/pull/172) | 1 / 0 | 1 | {'SUCCESS': 12, 'SKIPPED': 3} | candidate: inspect review/protection and focused tests |
+| `claude/symbol-policy-isolated-settings` | `5db597257dec` | `origin/main` / `615b9354fe8b` | none | 6 / 0 | 12 | {} | unqualified: no current CI attached |
+| `claude/ws-a-20261104` | `dabba4aea4ba` | `origin/main` / `b77d84e5decf` | none | 8 / 0 | 28 | {} | unqualified: no current CI attached |
+| `claude/ws-a2-ci-speed-20261104` | `bef720fdd50c` | `origin/main` / `b0280c821a5a` | [#177](https://github.com/djshellshoxxx/patchtrace/pull/177) | 6 / 0 | 8 | {'SUCCESS': 14, 'SKIPPED': 3} | candidate: inspect review/protection and focused tests |
+| `claude/ws-bc-20261104` | `e1193c8896e0` | `origin/main` / `25b2ac8000e4` | [#174](https://github.com/djshellshoxxx/patchtrace/pull/174) | 27 / 0 | 57 | {'SUCCESS': 27, 'SKIPPED': 4, 'FAILURE': 1} | blocked: failing checks |
+| `claude/ws-i-20261104` | `b03a77b8a2fe` | `origin/main` / `b0280c821a5a` | none | 7 / 0 | 7 | {} | unqualified: no current CI attached |
+| `claude/ws-p-20261104` | `597a8b106491` | `origin/main` / `25b2ac8000e4` | [#176](https://github.com/djshellshoxxx/patchtrace/pull/176) | 24 / 0 | 98 | {'SUCCESS': 25, 'SKIPPED': 4, 'FAILURE': 1} | blocked: failing checks |
+| `codex/agent-skills-spec56-20261014` | `4467d1f3c6e1` | `origin/main` / `0fb25d8e2ad5` | [#61](https://github.com/djshellshoxxx/patchtrace/pull/61) | 1 / 0 | 22 | {'SUCCESS': 1, 'FAILURE': 1, 'SKIPPED': 4} | blocked: failing checks |
+| `codex/audit-1` | `c2070cf8b4e7` | `origin/main` / `c2070cf8b4e7` | none | 0 / 0 | 0 | {} | no unique patches relative to base |
+| `codex/audit-2` | `08b12f1b279d` | `origin/main` / `c2070cf8b4e7` | none | 3 / 0 | 4 | {} | unqualified: no current CI attached |
+| `codex/autonomous-checkpoint-20261102-0945` | `d038ddea4318` | `origin/main` / `25c9795bd9cd` | none | 33 / 0 | 475 | {} | unqualified: no current CI attached |
+| `codex/autonomous-checkpoint-20261102-1020` | `c13d3257c881` | `origin/main` / `25c9795bd9cd` | none | 34 / 0 | 515 | {} | unqualified: no current CI attached |
+| `codex/autonomous-reconcile-20261101` | `0130bf81e2fe` | `origin/main` / `25c9795bd9cd` | [#152](https://github.com/djshellshoxxx/patchtrace/pull/152) | 36 / 0 | 517 | {'FAILURE': 9, 'SUCCESS': 15, 'CANCELLED': 1, 'SKIPPED': 6} | blocked: failing checks |
+| `codex/consolidate-backup-stability-20261102` | `f1a55c4cf21d` | `origin/main` / `f1a55c4cf21d` | none | 0 / 0 | 0 | {} | no unique patches relative to base |
+| `codex/consolidate-prereg-prefix-20261102` | `9b9452b4677e` | `origin/main` / `6579ed83211b` | none | 3 / 0 | 23 | {} | unqualified: no current CI attached |
+| `codex/consolidate-replay-schema-20261102` | `ca411e77f43a` | `origin/main` / `63d11d316c70` | none | 6 / 0 | 44 | {} | unqualified: no current CI attached |
+| `codex/consolidated-reviewed-20261102` | `6e82fd70f315` | `origin/main` / `f1a55c4cf21d` | [#163](https://github.com/djshellshoxxx/patchtrace/pull/163) | 45 / 0 | 491 | {'FAILURE': 6, 'SUCCESS': 25, 'CANCELLED': 1, 'SKIPPED': 6} | blocked: failing checks |
+| `codex/consolidation-audit-20261104` | `fdd15922cf75` | `origin/main` / `5d504ff5c046` | [#187](https://github.com/djshellshoxxx/patchtrace/pull/187) | 1 / 0 | 1 | {'FAILURE': 2, 'SUCCESS': 7, 'SKIPPED': 5} | blocked: failing checks |
+| `codex/consolidation-evidence-20261102` | `44c320e37b84` | `origin/main` / `f1a55c4cf21d` | none | 46 / 0 | 514 | {} | unqualified: no current CI attached |
+| `codex/consolidation-integrity-20261103` | `b58bb53debcb` | `origin/codex/consolidated-reviewed-20261102` / `6e82fd70f315` | [#164](https://github.com/djshellshoxxx/patchtrace/pull/164) | 1 / 0 | 49 | {'SUCCESS': 22, 'CANCELLED': 1, 'SKIPPED': 6, 'FAILURE': 3} | blocked: failing checks |
+| `codex/coordinator-rule-repairs-20261031` | `798e11ef345e` | `origin/main` / `a04f5a299a8d` | none | 10 / 0 | 16 | {} | unqualified: no current CI attached |
+| `codex/corpus-output-main-20261101` | `874e9a267fdc` | `origin/main` / `63d11d316c70` | [#157](https://github.com/djshellshoxxx/patchtrace/pull/157) | 6 / 0 | 44 | {'FAILURE': 1, 'SKIPPED': 1, 'SUCCESS': 1} | blocked: failing checks |
+| `codex/deep-review-consolidation-20261030` | `95e09548a822` | `origin/main` / `95e09548a822` | none | 0 / 0 | 0 | {} | no unique patches relative to base |
+| `codex/essential-combined-verification-20261030` | `a7f13e13ffb5` | `origin/integration/controlled-consolidation-20261030` / `f18687fd035b` | [#143](https://github.com/djshellshoxxx/patchtrace/pull/143) | 7 / 0 | 44 | {'SUCCESS': 26, 'SKIPPED': 3} | candidate: inspect review/protection and focused tests |
+| `codex/essential-integration-20261029` | `5ed624e91468` | `origin/main` / `5ed624e91468` | none | 0 / 0 | 0 | {} | no unique patches relative to base |
+| `codex/essential-project-safety-20261031` | `c3868d8335a8` | `origin/main` / `a04f5a299a8d` | [#148](https://github.com/djshellshoxxx/patchtrace/pull/148) | 1 / 0 | 28 | {'SUCCESS': 22, 'SKIPPED': 3} | candidate: inspect review/protection and focused tests |
+| `codex/fix-pr110-ci-gates-20261029` | `c0d1c38aee74` | `origin/main` / `5ed624e91468` | none | 9 / 0 | 7 | {} | unqualified: no current CI attached |
+| `codex/gt01-extraction-recovery-20261030` | `d76d23372ace` | `origin/repair/gt01-native-identical-controls-20261030` / `fb91cff6d91c` | [#141](https://github.com/djshellshoxxx/patchtrace/pull/141) | 1 / 0 | 7 | {'SUCCESS': 19, 'SKIPPED': 3} | candidate: inspect review/protection and focused tests |
+| `codex/gui-bounded-ambiguous-candidates-20261029` | `3287cb3d3605` | `origin/main` / `f4063c3cc7e0` | none | 2 / 1 | 2 | {} | unqualified: no current CI attached |
+| `codex/identity-main-repair-20261101` | `4eebea4a5389` | `origin/main` / `4eebea4a5389` | none | 0 / 0 | 0 | {} | no unique patches relative to base |
+| `codex/java-version-retry-20261015` | `8ee61c623fa3` | `origin/main` / `8ee61c623fa3` | none | 0 / 0 | 0 | {} | no unique patches relative to base |
+| `codex/kb-fixture-contract-repairs-20261030` | `a4d1e6a38c34` | `origin/integration/kb-fixtures-pr69-20261030` / `2fcd627e52a6` | [#142](https://github.com/djshellshoxxx/patchtrace/pull/142) | 1 / 0 | 11 | {'SUCCESS': 22, 'SKIPPED': 3} | candidate: inspect review/protection and focused tests |
+| `codex/msrc-mixed-format-revision-20261102` | `e1b79e048d39` | `origin/codex/real-msrc-adapter-20261101` / `d03a7d4897ca` | [#158](https://github.com/djshellshoxxx/patchtrace/pull/158) | 3 / 0 | 2 | {'SUCCESS': 17, 'SKIPPED': 3} | candidate: inspect review/protection and focused tests |
+| `codex/msrc-reconcile-integration-20261102` | `56374f867594` | `origin/codex/autonomous-reconcile-20261101` / `0130bf81e2fe` | [#159](https://github.com/djshellshoxxx/patchtrace/pull/159) | 4 / 0 | 30 | {'FAILURE': 3, 'SUCCESS': 15, 'CANCELLED': 1, 'SKIPPED': 5} | blocked: failing checks |
+| `codex/patchtrace-beta` | `c7937246a5bf` | `origin/main` / `c7937246a5bf` | none | 0 / 0 | 0 | {} | no unique patches relative to base |
+| `codex/pr110-ci-repairs-20261029` | `bb42828d05b7` | `origin/main` / `5ed624e91468` | none | 7 / 0 | 7 | {} | unqualified: no current CI attached |
+| `codex/pr110-kb-arch-scope-20261029` | `40e02daf93c8` | `origin/main` / `5ed624e91468` | none | 6 / 2 | 8 | {} | unqualified: no current CI attached |
+| `codex/pr110-persistence-feedback-20261029` | `3e9cedb012b4` | `origin/main` / `5ed624e91468` | none | 7 / 2 | 8 | {} | unqualified: no current CI attached |
+| `codex/pr110-qa-wbjson-diaphora-help-20261029` | `aba4c2001a6b` | `origin/main` / `5ed624e91468` | none | 6 / 0 | 4 | {} | unqualified: no current CI attached |
+| `codex/pr111-bounded-nav-into-integration-20261029` | `025300f8e169` | `origin/main` / `5ed624e91468` | none | 6 / 2 | 8 | {} | unqualified: no current CI attached |
+| `codex/project-safe-export-20261101` | `e90254424c26` | `origin/main` / `e90254424c26` | none | 0 / 0 | 0 | {} | no unique patches relative to base |
+| `codex/r1-ground-truth-research-20261030` | `10856edf05af` | `origin/main` / `a04f5a299a8d` | [#128](https://github.com/djshellshoxxx/patchtrace/pull/128) | 8 / 0 | 154 | {'SUCCESS': 3} | candidate: inspect review/protection and focused tests |
+| `codex/r1-receipt-publication-20261031` | `8c9eafc79b00` | `origin/main` / `a04f5a299a8d` | none | 8 / 0 | 154 | {} | unqualified: no current CI attached |
+| `codex/r2-unified-matching-research-20261030` | `b3ceb8b30d7a` | `origin/main` / `a04f5a299a8d` | [#131](https://github.com/djshellshoxxx/patchtrace/pull/131) | 4 / 0 | 104 | {'SUCCESS': 15, 'FAILURE': 1, 'SKIPPED': 5} | blocked: failing checks |
+| `codex/real-msrc-adapter-20261101` | `d99cd7712b76` | `origin/main` / `d99cd7712b76` | none | 0 / 0 | 0 | {} | no unique patches relative to base |
+| `codex/receipt-parent-race-20261101` | `2fdac2ea9042` | `origin/codex/r1-receipt-publication-20261031` / `8c9eafc79b00` | [#150](https://github.com/djshellshoxxx/patchtrace/pull/150) | 1 / 0 | 7 | {'SUCCESS': 16, 'SKIPPED': 4, 'FAILURE': 1} | blocked: failing checks |
+| `codex/repair-openai-agent-20261104` | `f019606665a7` | `origin/main` / `5d504ff5c046` | [#186](https://github.com/djshellshoxxx/patchtrace/pull/186) | 2 / 0 | 2 | {'SUCCESS': 11, 'SKIPPED': 3, 'FAILURE': 1} | blocked: failing checks |
+| `codex/rzdiff-164-investigation` | `20ef68eaab59` | `origin/main` / `1b81740612e6` | none | 47 / 0 | 538 | {} | unqualified: no current CI attached |
+| `codex/semantic-proof-reconciliation-20261031` | `745e93426a16` | `origin/codex/essential-combined-verification-20261030` / `a7f13e13ffb5` | [#144](https://github.com/djshellshoxxx/patchtrace/pull/144) | 8 / 0 | 29 | {'SUCCESS': 18, 'SKIPPED': 3, 'FAILURE': 1} | blocked: failing checks |
+| `codex/storage-integrity-20261101` | `9911af4d9130` | `origin/main` / `9911af4d9130` | none | 0 / 0 | 0 | {} | no unique patches relative to base |
+| `codex/t9-qa-20261020` | `ecc4f2054c00` | `origin/main` / `08f6a5ff5bb4` | none | 4 / 0 | 11 | {} | unqualified: no current CI attached |
+| `codex/tier-w-fetch-20261015` | `5b7b2591e616` | `origin/main` / `4cf78d64dd54` | none | 6 / 0 | 5 | {} | unqualified: no current CI attached |
+| `codex/training-prereg-identity-20261101` | `dfe8f421db39` | `origin/main` / `6579ed83211b` | [#154](https://github.com/djshellshoxxx/patchtrace/pull/154) | 3 / 0 | 23 | {'FAILURE': 1, 'SUCCESS': 2} | blocked: failing checks |
+| `codex/windows-branding-reconcile-20261030` | `8f4c4a2e0021` | `origin/main` / `a04f5a299a8d` | [#147](https://github.com/djshellshoxxx/patchtrace/pull/147) | 4 / 0 | 28 | {'SUCCESS': 18, 'SKIPPED': 3, 'FAILURE': 1} | blocked: failing checks |
+| `codex/windows-setup-installer-20261017` | `9c5fe67bd10a` | `origin/main` / `04d57c72eced` | none | 31 / 0 | 13 | {} | unqualified: no current CI attached |
+| `consolidate/docs-20261104` | `ed70e6ddac44` | `origin/main` / `25b2ac8000e4` | [#183](https://github.com/djshellshoxxx/patchtrace/pull/183) | 13 / 0 | 144 | {'SUCCESS': 12, 'SKIPPED': 3} | candidate: inspect review/protection and focused tests |
+| `consolidate/kb-fixtures-20261104` | `820d70744dff` | `origin/main` / `25b2ac8000e4` | [#182](https://github.com/djshellshoxxx/patchtrace/pull/182) | 4 / 0 | 28 | {'SUCCESS': 17, 'SKIPPED': 3} | candidate: inspect review/protection and focused tests |
+| `consolidate/research-r7-20261104` | `abadcb367564` | `origin/main` / `25b2ac8000e4` | none | 2 / 0 | 11 | {} | unqualified: no current CI attached |
+| `consolidate/rules-callgraph-20261104` | `7b3fcbaca882` | `origin/main` / `25b2ac8000e4` | [#181](https://github.com/djshellshoxxx/patchtrace/pull/181) | 9 / 0 | 13 | {'SUCCESS': 17, 'SKIPPED': 3} | candidate: inspect review/protection and focused tests |
+| `consolidate/test-stability-20261104` | `64e8374d5d3a` | `origin/main` / `25b2ac8000e4` | [#184](https://github.com/djshellshoxxx/patchtrace/pull/184) | 4 / 0 | 5 | {'SUCCESS': 8, 'FAILURE': 1, 'SKIPPED': 5} | blocked: failing checks |
+| `docs/claude-autonomous-alpha-handoff-20261013` | `1038d3f13f21` | `origin/main` / `0a4bc09bb0f6` | none | 2 / 0 | 2 | {} | unqualified: no current CI attached |
+| `docs/csaf-patch-intelligence-specs` | `24244831ec44` | `origin/main` / `31bf430c5028` | none | 5 / 0 | 4 | {} | unqualified: no current CI attached |
+| `docs/diaphora-optional-engine-20261014` | `b75ac57d85c7` | `origin/main` / `4fa554a05a50` | none | 3 / 0 | 3 | {} | unqualified: no current CI attached |
+| `docs/dockable-workspace-spec-20261030` | `6a1e3ce348a7` | `origin/main` / `a04f5a299a8d` | [#127](https://github.com/djshellshoxxx/patchtrace/pull/127) | 1 / 0 | 1 | {'FAILURE': 2, 'SUCCESS': 7, 'SKIPPED': 5} | blocked: failing checks |
+| `docs/nway-matches` | `f748cc48ea07` | `origin/main` / `20a843348dc1` | none | 1 / 0 | 1 | {} | unqualified: no current CI attached |
+| `docs/post-consolidation-gap-analysis-20261030` | `61b5c2bade71` | `origin/integration/controlled-consolidation-20261030` / `f18687fd035b` | [#137](https://github.com/djshellshoxxx/patchtrace/pull/137) | 9 / 0 | 6 | {'SUCCESS': 12, 'SKIPPED': 3} | candidate: inspect review/protection and focused tests |
+| `docs/readme-and-wiki` | `ad8fbe9f2f04` | `origin/main` / `bb84b2606f06` | [#98](https://github.com/djshellshoxxx/patchtrace/pull/98) | 1 / 0 | 7 | {'SUCCESS': 5, 'SKIPPED': 2} | candidate: inspect review/protection and focused tests |
+| `docs/semantic-ghidra-roadmap` | `8b9ebc01bb22` | `origin/main` / `31bf430c5028` | none | 0 / 1 | 1 | {} | no unique patches relative to base |
+| `docs/spec-31-kb-cve-correlation-20261014` | `9088bf0e2e45` | `origin/main` / `1560531c7522` | none | 12 / 0 | 10 | {} | unqualified: no current CI attached |
+| `docs/spec-32-kb-patch-search-20261014` | `d0ceb56f30f8` | `origin/main` / `1560531c7522` | none | 17 / 0 | 8 | {} | unqualified: no current CI attached |
+| `docs/specs-plan` | `a5194581396b` | `origin/main` / `320a87700feb` | none | 5 / 0 | 14 | {} | unqualified: no current CI attached |
+| `docs/workbench-search-graph-floss-20261014` | `af15701d13b5` | `origin/main` / `1560531c7522` | none | 6 / 0 | 6 | {} | unqualified: no current CI attached |
+| `feat/acquisition` | `293362a2d8ce` | `origin/main` / `320a87700feb` | none | 11 / 0 | 42 | {} | unqualified: no current CI attached |
+| `feat/acquisition-gui` | `7ae34d8fa26a` | `origin/main` / `20a843348dc1` | none | 1 / 0 | 2 | {} | unqualified: no current CI attached |
+| `feat/alpha-ui-integration` | `c7ed1d90a890` | `origin/main` / `1e6703a81c06` | none | 2 / 0 | 10 | {} | unqualified: no current CI attached |
+| `feat/artifact-bytes-seam` | `91b35d09afd2` | `origin/main` / `f0086f797556` | none | 0 / 1 | 4 | {} | no unique patches relative to base |
+| `feat/byte-representations` | `303bc452d0bb` | `origin/main` / `0ec471016d28` | none | 0 / 1 | 8 | {} | no unique patches relative to base |
+| `feat/enrichment-cache` | `0368fd9b5453` | `origin/main` / `615b9354fe8b` | none | 2 / 0 | 11 | {} | unqualified: no current CI attached |
+| `feat/enrichment-contracts` | `010d809d2581` | `origin/main` / `2d889417ed2e` | none | 23 / 0 | 57 | {} | unqualified: no current CI attached |
+| `feat/enrichment-cve` | `49bf245583d0` | `origin/main` / `615b9354fe8b` | none | 2 / 0 | 16 | {} | unqualified: no current CI attached |
+| `feat/enrichment-signals` | `e96441a1a904` | `origin/main` / `615b9354fe8b` | none | 3 / 0 | 11 | {} | unqualified: no current CI attached |
+| `feat/enrichment-wil` | `9a6999a0e644` | `origin/main` / `615b9354fe8b` | none | 2 / 0 | 11 | {} | unqualified: no current CI attached |
+| `feat/local-runtime-discovery` | `b9198705ab4c` | `origin/main` / `0f1b4ce5a0b5` | none | 9 / 0 | 9 | {} | unqualified: no current CI attached |
+| `feat/nway` | `44d431788bcc` | `origin/main` / `1223cdd5517c` | none | 23 / 0 | 21 | {} | unqualified: no current CI attached |
+| `feat/pe-overview` | `4b78a6d3c001` | `origin/main` / `0ec471016d28` | none | 0 / 1 | 17 | {} | no unique patches relative to base |
+| `feat/phase2-finish` | `86afe3f6563b` | `origin/main` / `1223cdd5517c` | none | 22 / 0 | 16 | {} | unqualified: no current CI attached |
+| `feat/phase3-batch` | `3581b520207b` | `origin/main` / `20a843348dc1` | none | 31 / 0 | 28 | {} | unqualified: no current CI attached |
+| `feat/profiles` | `d21b5917a660` | `origin/main` / `320a87700feb` | none | 19 / 0 | 62 | {} | unqualified: no current CI attached |
+| `feat/raw-cache` | `28bc476713fc` | `origin/main` / `320a87700feb` | none | 19 / 0 | 58 | {} | unqualified: no current CI attached |
+| `feat/secondary` | `b932ae1a1c89` | `origin/main` / `20a843348dc1` | none | 1 / 0 | 13 | {} | unqualified: no current CI attached |
+| `feat/tooltip-registry` | `0a3843ea2abe` | `origin/main` / `0ec471016d28` | none | 0 / 1 | 4 | {} | no unique patches relative to base |
+| `feat/verified-offline-runtime-bundle` | `1724503d01be` | `origin/main` / `2148a3fba9d4` | none | 29 / 0 | 16 | {} | unqualified: no current CI attached |
+| `feature/alpha-file-overview-20261013` | `476016590be5` | `origin/main` / `0a4bc09bb0f6` | none | 4 / 0 | 4 | {} | unqualified: no current CI attached |
+| `feature/evidence-reconciliation-confidence` | `ddda35f40b94` | `origin/main` / `31bf430c5028` | none | 6 / 0 | 4 | {} | unqualified: no current CI attached |
+| `feature/gui-inspection-preview` | `8b94227a81b7` | `origin/main` / `31bf430c5028` | none | 5 / 0 | 3 | {} | unqualified: no current CI attached |
+| `fix/backend-exit-diagnostics` | `bc00a6912dde` | `origin/main` / `736332cf63d3` | none | 6 / 0 | 6 | {} | unqualified: no current CI attached |
+| `fix/codex-cloud-secret-preflight-20261103` | `bd3dbcae9254` | `origin/main` / `bd3dbcae9254` | none | 0 / 0 | 0 | {} | no unique patches relative to base |
+| `fix/explicit-offline-symbol-policy` | `2e6618762ab6` | `origin/main` / `97dda86615fd` | none | 12 / 0 | 10 | {} | unqualified: no current CI attached |
+| `fix/ghidra-dot-paths` | `5c3b1df94c0d` | `origin/main` / `df5fcd3bcee6` | none | 6 / 0 | 6 | {} | unqualified: no current CI attached |
+| `fix/isolate-ghidra-scratch` | `7ea727231127` | `origin/main` / `5667b759f553` | none | 8 / 0 | 7 | {} | unqualified: no current CI attached |
+| `fix/pe-inspection-row-tooltips-20261013` | `0182a8035d64` | `origin/main` / `58578e176ff4` | none | 6 / 0 | 4 | {} | unqualified: no current CI attached |
+| `fix/pr110-ci-regressions-20261029` | `979ddfad860c` | `origin/main` / `979ddfad860c` | none | 0 / 0 | 0 | {} | no unique patches relative to base |
+| `fix/remediation-53088704-982db3` | `15370a0bf690` | `origin/main` / `6579ed83211b` | none | 2 / 0 | 18 | {} | unqualified: no current CI attached |
+| `haiku/cli-help-suppress-20261027` | `37940b706f11` | `origin/main` / `e093ade3e66e` | none | 1 / 0 | 2 | {} | unqualified: no current CI attached |
+| `haiku/phase2-handoff-import-20261027` | `4522030ff3ff` | `origin/main` / `e093ade3e66e` | none | 1 / 0 | 7 | {} | unqualified: no current CI attached |
+| `haiku/skills-manifest-import-20261027` | `039b0ef8a5d0` | `origin/main` / `e093ade3e66e` | none | 1 / 0 | 30 | {} | unqualified: no current CI attached |
+| `integration/controlled-consolidation-20261030` | `f18687fd035b` | `origin/main` / `a04f5a299a8d` | none | 11 / 0 | 16 | {} | unqualified: no current CI attached |
+| `integration/kb-fixtures-pr69-20261030` | `2fcd627e52a6` | `origin/integration/controlled-consolidation-20261030` / `f18687fd035b` | [#136](https://github.com/djshellshoxxx/patchtrace/pull/136) | 1 / 0 | 24 | {'FAILURE': 2, 'SUCCESS': 12, 'SKIPPED': 5} | blocked: failing checks |
+| `repair/gt01-consolidated-native-evidence-20261030` | `c04ad725551f` | `origin/integration/controlled-consolidation-20261030` / `f18687fd035b` | [#139](https://github.com/djshellshoxxx/patchtrace/pull/139) | 1 / 0 | 7 | {'FAILURE': 2, 'SUCCESS': 7, 'SKIPPED': 5} | blocked: failing checks |
+| `repair/gt01-native-identical-controls-20261030` | `fb91cff6d91c` | `origin/repair/gt01-consolidated-native-evidence-20261030` / `c04ad725551f` | [#140](https://github.com/djshellshoxxx/patchtrace/pull/140) | 2 / 0 | 10 | {'SUCCESS': 19, 'SKIPPED': 3} | candidate: inspect review/protection and focused tests |
+| `repair/gt01-unified-live-gates-20261030` | `ca1a36c0caea` | `origin/integration/controlled-consolidation-20261030` / `f18687fd035b` | [#138](https://github.com/djshellshoxxx/patchtrace/pull/138) | 4 / 0 | 4 | {'SUCCESS': 12, 'SKIPPED': 3} | candidate: inspect review/protection and focused tests |
+| `repair/rzdiff-native-callback-size-20261103` | `edab7d916970` | `origin/repair/rzdiff-producer-ownership` / `4d66af5577e6` | [#166](https://github.com/djshellshoxxx/patchtrace/pull/166) | 1 / 0 | 1 | {'SUCCESS': 9, 'CANCELLED': 1, 'SKIPPED': 5} | candidate: inspect review/protection and focused tests |
+| `repair/rzdiff-native-red-control-20261103` | `b304034e3c31` | `origin/repair/rzdiff-native-callback-size-20261103` / `edab7d916970` | [#168](https://github.com/djshellshoxxx/patchtrace/pull/168) | 2 / 0 | 9 | {'SUCCESS': 9, 'CANCELLED': 1, 'SKIPPED': 5, 'FAILURE': 1} | blocked: failing checks |
+| `repair/rzdiff-producer-ownership` | `4d66af5577e6` | `origin/codex/consolidation-integrity-20261103` / `b58bb53debcb` | [#165](https://github.com/djshellshoxxx/patchtrace/pull/165) | 2 / 0 | 9 | {'FAILURE': 2, 'SUCCESS': 7, 'CANCELLED': 1, 'SKIPPED': 5} | blocked: failing checks |
+| `research/additional-reuse-claude-20261103` | `be4a58ff7d8f` | `origin/main` / `b77d84e5decf` | [#178](https://github.com/djshellshoxxx/patchtrace/pull/178) | 1 / 0 | 11 | {'SUCCESS': 13, 'SKIPPED': 2} | candidate: inspect review/protection and focused tests |
+| `research/r4-vulnerability-correlation-20261030` | `ff570bdd784d` | `origin/main` / `a04f5a299a8d` | [#130](https://github.com/djshellshoxxx/patchtrace/pull/130) | 12 / 0 | 9 | {'SUCCESS': 12, 'SKIPPED': 3} | candidate: inspect review/protection and focused tests |
+| `research/r6-final-integration-engineering-notes-20261030` | `3010f289dbb4` | `origin/main` / `a04f5a299a8d` | [#133](https://github.com/djshellshoxxx/patchtrace/pull/133) | 12 / 0 | 9 | {'SUCCESS': 8, 'FAILURE': 1, 'SKIPPED': 5} | blocked: failing checks |
+| `research/r7-advanced-binary-analysis-20261030` | `c9d1aab6a788` | `origin/main` / `a04f5a299a8d` | [#134](https://github.com/djshellshoxxx/patchtrace/pull/134) | 29 / 0 | 12 | {'FAILURE': 2, 'SUCCESS': 7, 'SKIPPED': 5} | blocked: failing checks |
+| `research/r8-deep-uncertainty-20261030` | `12dd4f2b41b4` | `origin/main` / `a04f5a299a8d` | [#135](https://github.com/djshellshoxxx/patchtrace/pull/135) | 16 / 0 | 10 | {'FAILURE': 2, 'SUCCESS': 12, 'SKIPPED': 5} | blocked: failing checks |
+| `security/offline-bundle-no-overwrite-20261013` | `a39cab81de3e` | `origin/main` / `be8577c03440` | none | 2 / 0 | 2 | {} | unqualified: no current CI attached |
+| `worker/patchtrace-cli-help-20261104` | `81a9fb28f306` | `origin/claude/gallant-knuth-8gxuzd` / `a7689119fc25` | [#185](https://github.com/djshellshoxxx/patchtrace/pull/185) | 3 / 0 | 3 | {'FAILURE': 2, 'SUCCESS': 7, 'SKIPPED': 5} | blocked: failing checks |
+
+## Full branch records
+
+Unique commits below are patch-unique against the declared base (`git cherry` +); equivalent hashes are `git cherry` −. This detects exact patch equivalence only: overlapping semantic changes require manual file review. Changed files use the branch merge-base diff, not current-base direct diff. Functional scope is conservatively inferred from paths.
+
+### `access-test-noprefix`
+
+- Head: `726a371ab34d4589b0456d059865ade6b82fac88`
+- Base: `origin/main` at `5d504ff5c046bfb758623182b472976003632bba`
+- Merge base: `ba10a52bde0c3a2892193d8d178e493b59e8daff`
+- Associated PR: none in open PR snapshot
+- Functional scope: {"README.md": 1, "docs": 5, "src/patchtrace/backend.py": 1, "src/patchtrace/offline_bundle.py": 1, "src/patchtrace/runtime_discovery.py": 1, "src/patchtrace/ui.py": 1, "tasks": 1, "tests": 4, "tools": 1}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {}; failures: []; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: unqualified: no current CI attached.
+- Recommended disposition: preserve active branch; port only verified unique patches.
+- Unique commits: `037afbcb43ca69189d5f525f7c7ad1289d518c6d`, `83c1008f4c752d6b01c62cf1ca9a21704911d230`, `013ae86d25afdffc7bc465665d55e60b0da809de`, `ec8bcfc82d19a1da20c7f77699c1ac2f3f60928a`, `fcaba0cc36f5e042291827665f420a46915831c3`, `6cf73c611cb7a07cd21621b8179118fb60bf5b85`, `7b2aec72cf580c2f75a4316782708eb08e18038e`, `9390377173a8b7d30822bd06a4b07dcb64fd9a45`, `247902cb7889d75037d3fff67b29f1a28d7a6fb0`, `24903fadd9b018cbc7abd70a9522253ceca0d46c`, `c16b22e62bee334fa04067a8fb2b7acb8c7362e0`, `c16535d7a307887014793ede5d48b4f748b916dd`, `dd8e98f344eda648a1f73889ef28f9cc59206069`, `e1e184d24d94384d7fc2f2f297a52bc190ba6f61`, `b2604d70d5eea17b9a4cf83198f74cf4fc2bace8`, `6713bbe66eba1ad1809635817b84e9f1b75c42af`, `1de25a86f5d31580e5d86369926deda7125f04aa`, `3507a058cd1522c2e4c5c060f36b33b965ba82ff`, `f2da166306659ccb0bff3f8d5f68ed27700e8cc7`, `00165c787c2039bf473c72327168fe556368fbb6`, `8226cd75774a34a2a8c2a467312fc8751aa878bc`, `34c014583bcb6493325d3ca6f6b9669e7a77c48c`, `e9f0c8dd49c8d330677cace118fa05d833610ca2`, `011ab0d84551921091154a5b5b0abbf1a107df21`, `6ff851d3740bb6e316262cfa507b2b029f0e36c8`, `81007b64dbdd8cba38cf1e250eb10af5bb853761`, `da4ed896f11fd64528e2ab2592e56e2598dce569`, `761d4938f666c043c6617cb7a3daba7360cb85ed`
+- Patch-equivalent commits: none
+- Modified files:
+  - `README.md`
+  - `docs/modules.md`
+  - `docs/offline-backend.md`
+  - `docs/qa.md`
+  - `docs/specs/offline-backend-installer.md`
+  - `docs/windows.md`
+  - `src/patchtrace/backend.py`
+  - `src/patchtrace/offline_bundle.py`
+  - `src/patchtrace/runtime_discovery.py`
+  - `src/patchtrace/ui.py`
+  - `tasks/todo.md`
+  - `tests/test_jobs.py`
+  - `tests/test_offline_bundle.py`
+  - `tests/test_runtime_discovery.py`
+  - `tests/test_ui.py`
+  - `tools/make_offline_bundle.py`
+
+### `audit/ai-reports`
+
+- Head: `dd6402b9c00d5aae79f152f4fe5ce0fa8597dc24`
+- Base: `origin/main` at `5d504ff5c046bfb758623182b472976003632bba`
+- Merge base: `320a87700feb196835b1e45ac90a00bc0963db1d`
+- Associated PR: none in open PR snapshot
+- Functional scope: {"src/patchtrace/providers.py": 1, "src/patchtrace/reports.py": 1, "tests": 2}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {}; failures: []; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: unqualified: no current CI attached.
+- Recommended disposition: preserve active branch; port only verified unique patches.
+- Unique commits: `dd6402b9c00d5aae79f152f4fe5ce0fa8597dc24`
+- Patch-equivalent commits: none
+- Modified files:
+  - `src/patchtrace/providers.py`
+  - `src/patchtrace/reports.py`
+  - `tests/test_audit_ai_reports.py`
+  - `tests/test_interpretation.py`
+
+### `audit/core`
+
+- Head: `fae13b2ed3043ddce00bbf387e386e93e7b3ee06`
+- Base: `origin/main` at `5d504ff5c046bfb758623182b472976003632bba`
+- Merge base: `320a87700feb196835b1e45ac90a00bc0963db1d`
+- Associated PR: none in open PR snapshot
+- Functional scope: {"src/patchtrace/persistence.py": 1, "src/patchtrace/service.py": 1, "tests": 1}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {}; failures: []; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: unqualified: no current CI attached.
+- Recommended disposition: preserve active branch; port only verified unique patches.
+- Unique commits: `1db176a532bcf40d677ea7cc7c11fb037553358a`, `fae13b2ed3043ddce00bbf387e386e93e7b3ee06`
+- Patch-equivalent commits: none
+- Modified files:
+  - `src/patchtrace/persistence.py`
+  - `src/patchtrace/service.py`
+  - `tests/test_audit_core.py`
+
+### `audit/desktop`
+
+- Head: `4d5e48ab7df30f6318a8f3177b37ac98741e2b1f`
+- Base: `origin/main` at `5d504ff5c046bfb758623182b472976003632bba`
+- Merge base: `320a87700feb196835b1e45ac90a00bc0963db1d`
+- Associated PR: none in open PR snapshot
+- Functional scope: {"src/patchtrace/__main__.py": 1, "src/patchtrace/ui.py": 1, "tests": 2}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {}; failures: []; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: unqualified: no current CI attached.
+- Recommended disposition: preserve active branch; port only verified unique patches.
+- Unique commits: `4d5e48ab7df30f6318a8f3177b37ac98741e2b1f`
+- Patch-equivalent commits: none
+- Modified files:
+  - `src/patchtrace/__main__.py`
+  - `src/patchtrace/ui.py`
+  - `tests/test_audit_desktop.py`
+  - `tests/test_ui.py`
+
+### `audit/enrichment`
+
+- Head: `cbc5b079ad2c8cdea4ec161b1afe9ac554b8ed39`
+- Base: `origin/main` at `5d504ff5c046bfb758623182b472976003632bba`
+- Merge base: `320a87700feb196835b1e45ac90a00bc0963db1d`
+- Associated PR: none in open PR snapshot
+- Functional scope: {"src/patchtrace/cli.py": 1, "src/patchtrace/enrichment": 6, "tests": 5}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {}; failures: []; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: unqualified: no current CI attached.
+- Recommended disposition: preserve active branch; port only verified unique patches.
+- Unique commits: `fd9cffa44142e1aa99732a2b46f599225574d5b5`, `4c51e4001b4150f4a8a0825fdcc2a0422981bb3e`, `cbc5b079ad2c8cdea4ec161b1afe9ac554b8ed39`
+- Patch-equivalent commits: none
+- Modified files:
+  - `src/patchtrace/cli.py`
+  - `src/patchtrace/enrichment/cache.py`
+  - `src/patchtrace/enrichment/cve.py`
+  - `src/patchtrace/enrichment/intelligence.py`
+  - `src/patchtrace/enrichment/pipeline.py`
+  - `src/patchtrace/enrichment/signals.py`
+  - `src/patchtrace/enrichment/wil.py`
+  - `tests/test_audit_enrichment.py`
+  - `tests/test_enrichment_cache.py`
+  - `tests/test_enrichment_cve.py`
+  - `tests/test_enrichment_intelligence.py`
+  - `tests/test_enrichment_wil.py`
+
+### `audit/integration`
+
+- Head: `f6505928d8264343caa33f878deb253626752944`
+- Base: `origin/main` at `5d504ff5c046bfb758623182b472976003632bba`
+- Merge base: `320a87700feb196835b1e45ac90a00bc0963db1d`
+- Associated PR: none in open PR snapshot
+- Functional scope: {"README.md": 1, "docs": 13, "src/patchtrace/__main__.py": 1, "src/patchtrace/acquisition": 6, "src/patchtrace/backend.py": 1, "src/patchtrace/cli.py": 1, "src/patchtrace/diagnostics.py": 1, "src/patchtrace/enrichment": 6, "src/patchtrace/jobs.py": 1, "src/patchtrace/persistence.py": 1, "src/patchtrace/providers.py": 1, "src/patchtrace/reports.py": 1, "src/patchtrace/runtime_discovery.py": 1, "src/patchtrace/service.py": 1, "src/patchtrace/ui.py": 1, "tasks": 2, "tests": 18}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {}; failures: []; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: unqualified: no current CI attached.
+- Recommended disposition: preserve active branch; port only verified unique patches.
+- Unique commits: `dd6402b9c00d5aae79f152f4fe5ce0fa8597dc24`, `93264acf9121c2e423bb1a80495f9d2866493f65`, `fd9cffa44142e1aa99732a2b46f599225574d5b5`, `b29267e8f72bfc7578c9e5014fdaeb54180c494d`, `9ea48e456dd793586c467aa4ad7a5dde53b57504`, `1db176a532bcf40d677ea7cc7c11fb037553358a`, `552a0a05b33fdf424eb02273a8454aeabfb1ac35`, `fae13b2ed3043ddce00bbf387e386e93e7b3ee06`, `9f32a6ecbd056249373b82bc1e814bd938da8c70`, `4c51e4001b4150f4a8a0825fdcc2a0422981bb3e`, `4a1db22532b55cf3bd6b18347f053e784a6f8e57`, `cbc5b079ad2c8cdea4ec161b1afe9ac554b8ed39`, `eed862dd0795f844190b17f89b6bfd86128df9d5`, `a5194581396b67395a0ae8453d73eec5ab024e54`, `09a114a63332a12fce8da5bd57d30841d60c934b`, `293362a2d8cee7d5cc373439436945888b3b805a`, `4d5e48ab7df30f6318a8f3177b37ac98741e2b1f`, `f6505928d8264343caa33f878deb253626752944`
+- Patch-equivalent commits: none
+- Modified files:
+  - `README.md`
+  - `docs/modules.md`
+  - `docs/qa.md`
+  - `docs/research/phase3/acquisition.md`
+  - `docs/research/phase3/binexport-bindiff.md`
+  - `docs/research/phase3/nway.md`
+  - `docs/research/phase3/rizin.md`
+  - `docs/specs/acquisition.md`
+  - `docs/specs/architecture.md`
+  - `docs/specs/bindiff-adapter.md`
+  - `docs/specs/completeness-audit.md`
+  - `docs/specs/enrichment.md`
+  - `docs/specs/nway.md`
+  - `docs/specs/secondary-engine.md`
+  - `src/patchtrace/__main__.py`
+  - `src/patchtrace/acquisition/__init__.py`
+  - `src/patchtrace/acquisition/contracts.py`
+  - `src/patchtrace/acquisition/delta.py`
+  - `src/patchtrace/acquisition/quarantine.py`
+  - `src/patchtrace/acquisition/transport.py`
+  - `src/patchtrace/acquisition/winbindex.py`
+  - `src/patchtrace/backend.py`
+  - `src/patchtrace/cli.py`
+  - `src/patchtrace/diagnostics.py`
+  - `src/patchtrace/enrichment/cache.py`
+  - `src/patchtrace/enrichment/cve.py`
+  - `src/patchtrace/enrichment/intelligence.py`
+  - `src/patchtrace/enrichment/pipeline.py`
+  - `src/patchtrace/enrichment/signals.py`
+  - `src/patchtrace/enrichment/wil.py`
+  - `src/patchtrace/jobs.py`
+  - `src/patchtrace/persistence.py`
+  - `src/patchtrace/providers.py`
+  - `src/patchtrace/reports.py`
+  - `src/patchtrace/runtime_discovery.py`
+  - `src/patchtrace/service.py`
+  - `src/patchtrace/ui.py`
+  - `tasks/plan.md`
+  - `tasks/todo.md`
+  - `tests/fixtures/winbindex/README.md`
+  - `tests/fixtures/winbindex/afd.sys.json`
+  - `tests/test_acquisition_cli.py`
+  - `tests/test_acquisition_delta.py`
+  - `tests/test_acquisition_quarantine.py`
+  - `tests/test_acquisition_transport.py`
+  - `tests/test_acquisition_winbindex.py`
+  - `tests/test_audit_ai_reports.py`
+  - `tests/test_audit_core.py`
+  - `tests/test_audit_desktop.py`
+  - `tests/test_audit_enrichment.py`
+  - `tests/test_audit_runtime.py`
+  - `tests/test_enrichment_cache.py`
+  - `tests/test_enrichment_cve.py`
+  - `tests/test_enrichment_intelligence.py`
+  - `tests/test_enrichment_wil.py`
+  - `tests/test_interpretation.py`
+  - `tests/test_ui.py`
+
+### `audit/runtime`
+
+- Head: `9f32a6ecbd056249373b82bc1e814bd938da8c70`
+- Base: `origin/main` at `5d504ff5c046bfb758623182b472976003632bba`
+- Merge base: `320a87700feb196835b1e45ac90a00bc0963db1d`
+- Associated PR: none in open PR snapshot
+- Functional scope: {"src/patchtrace/backend.py": 1, "src/patchtrace/diagnostics.py": 1, "src/patchtrace/jobs.py": 1, "src/patchtrace/runtime_discovery.py": 1, "tests": 1}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {}; failures: []; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: unqualified: no current CI attached.
+- Recommended disposition: preserve active branch; port only verified unique patches.
+- Unique commits: `b29267e8f72bfc7578c9e5014fdaeb54180c494d`, `9f32a6ecbd056249373b82bc1e814bd938da8c70`
+- Patch-equivalent commits: none
+- Modified files:
+  - `src/patchtrace/backend.py`
+  - `src/patchtrace/diagnostics.py`
+  - `src/patchtrace/jobs.py`
+  - `src/patchtrace/runtime_discovery.py`
+  - `tests/test_audit_runtime.py`
+
+### `automation/api-funded-persistent-codex-20261103`
+
+- Head: `6fe6c4b1be060eb6e9d5208a68f0d68e1082b59c`
+- Base: `origin/main` at `5d504ff5c046bfb758623182b472976003632bba`
+- Merge base: `b77d84e5decf736b031f0a24094001274de41178`
+- Associated PR: https://github.com/djshellshoxxx/patchtrace/pull/170
+- Functional scope: {".github": 1}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {'SUCCESS': 12, 'SKIPPED': 2, 'FAILURE': 1}; failures: ['SonarCloud Code Analysis']; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: blocked: failing checks.
+- Recommended disposition: keep automation separate; owner budget/activation review.
+- Unique commits: `5315f542e4dc860a2da55e6d29bf1f06ef5e0722`, `65e974190b2e45188d8d42dafa0217d2e4f6252a`, `a992ddbc3ce513865d746adb593e7d9f18f8a206`, `c8a5c3fc5f3db8c4febde3a2a482fb48b1e5d94a`, `90a3aebc21b27dbfb73dc6fae6c59fc970191fab`, `e47ea3d470058dffe0179135e35f42dd90e2a29e`, `f43e3320a3e8dd318127ae7f33ff8c95d3b7681f`, `3d2424281c65041570717d546fb7d00560ad94f7`, `6fe6c4b1be060eb6e9d5208a68f0d68e1082b59c`
+- Patch-equivalent commits: none
+- Modified files:
+  - `.github/workflows/codex-autonomous.yml`
+
+### `automation/parallel-api-eight-agents-20261103`
+
+- Head: `f8050a1fef23b71fd3a02b216c5035bcac3f4889`
+- Base: `origin/main` at `5d504ff5c046bfb758623182b472976003632bba`
+- Merge base: `b77d84e5decf736b031f0a24094001274de41178`
+- Associated PR: https://github.com/djshellshoxxx/patchtrace/pull/171
+- Functional scope: {".github": 1, "tests": 1, "tools": 2}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {'FAILURE': 3, 'SUCCESS': 6, 'SKIPPED': 5}; failures: ['qa (ubuntu-latest)', 'qa (windows-latest)', 'SonarCloud Code Analysis']; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: blocked: failing checks.
+- Recommended disposition: keep automation separate; owner budget/activation review.
+- Unique commits: `d6285708a18bd3b6168af5c2438c318b1729149b`, `5cf56fb68937a91a7e8cc0c9a5c4b89cbd5dcc1c`, `c88989d2e1007d89ccf591eb8d9bb8559146ea56`, `490e0b9159743a67bd6393233f0b93f7486bf62c`, `c18b37af61ecc91a3c8a9d9ef9c62f1e30de77be`, `0acf97f3a036d44394ce072d941e9f0ceea003b2`, `a8cb44e2d8129bed23c32af8ca412a24fb7cd218`, `9df103c109a4fba3a3ddbc90a14e94aaa38bd173`, `860bf711d330d6c48f9586b7c5b921ffdec86403`, `f610e768e44ae949b31515ee3738b318b3fc55b6`, `4e72ecad5f614545a9da7acde71a135f88b650e9`, `cd70266cfc6f310d988bbf33c7404226d9b8768f`, `260ebccd7cf2d8a6c1a68c56ec7db6e4efec7776`, `147dfa49b24b9141f43483b9e7145250e2f94fdf`, `ce7d8b0207a1c05e576c2a206d636c6d24900c66`, `2490c0edda9d82b6194f792ac36760a5a8d0d4bd`, `cc349cf914131c5089527dd4d87156e39e83787f`, `62a13f8b04c923bd1268a06f2363cd1417d029e7`, `ed5bbdd4927f00566b970b5a687a1dbef5551995`, `e1e622b4345f3bf3e1e5576c8373769f9fa9f8ed`, `2bb507b23d8a2c17df421598d1911368d51c1e70`, `f6fe7604f6150e4fff6af15feaa6a9f76e6afda6`, `f8050a1fef23b71fd3a02b216c5035bcac3f4889`
+- Patch-equivalent commits: none
+- Modified files:
+  - `.github/workflows/patchtrace-parallel-api.yml`
+  - `tests/test_parallel_cloud.py`
+  - `tools/parallel_cloud/agent.py`
+  - `tools/parallel_cloud/guard.py`
+
+### `automation/patchtrace-api-agent-pilot-20261103`
+
+- Head: `def36c822a80c77ae94b8e9a77da6f1ee9de1160`
+- Base: `origin/main` at `5d504ff5c046bfb758623182b472976003632bba`
+- Merge base: `1b81740612e65df55e220ff6e42a4816756ec2ad`
+- Associated PR: https://github.com/djshellshoxxx/patchtrace/pull/167
+- Functional scope: {".github": 1, "tools": 1}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {'FAILURE': 2, 'SUCCESS': 7, 'SKIPPED': 5}; failures: ['qa (ubuntu-latest)', 'qa (windows-latest)']; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: blocked: failing checks.
+- Recommended disposition: keep automation separate; owner budget/activation review.
+- Unique commits: `06d6a137476b4bb52959b8e1f8bae1c140a5af2b`, `def36c822a80c77ae94b8e9a77da6f1ee9de1160`
+- Patch-equivalent commits: none
+- Modified files:
+  - `.github/workflows/patchtrace-api-agent.yml`
+  - `tools/cloud_agent/pilot.py`
+
+### `chatgpt/corpus-1`
+
+- Head: `b7a0f0a45d2de1462367d877b7386091b4d275ce`
+- Base: `origin/claude/instance-d-gui` at `2fa113889d1ffee6b68496993d3b3b6ebb0ba035`
+- Merge base: `8af0e0effa7628f2bdf1ed8afc6d21f30e816924`
+- Associated PR: https://github.com/djshellshoxxx/patchtrace/pull/68
+- Functional scope: {"docs": 1, "tools": 24}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {'CANCELLED': 2, 'SUCCESS': 6, 'FAILURE': 1, 'SKIPPED': 5}; failures: ['qt-gate (windows-latest, 5)']; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: blocked: failing checks.
+- Recommended disposition: preserve active branch; port only verified unique patches.
+- Unique commits: `919b7ebd4a600f94baa9dc194a5d92c37fc1ed55`, `40b599e2aa91c180ebd92a9a27734286a6fc9db1`, `e791de70b9025942025ceaccb8c23e7a01045059`, `a0b8b3511305837b9a42f4d3c842957e54741bc9`, `e84875fb95bf55277f7a29e65a49e8fcf37c8573`, `9d5ecaf78cdafbbd8696e7e7493ad12329b3589a`, `173c9a312754ee9730037d7aff8ae3e7bc8711c7`, `86beb219ef82310cc62f54973d4277c5377a636f`, `9671895e072d72a141210230fffcdfba0c8f3b2c`, `5f7940cfd28b0b024b6abf699001f1580b8e7bfa`, `e4324fe1223913947758f722656c1d3a99b14066`, `c00f6d7a91eb683f1f2ac0ec8ffa2280ac6224ad`, `b261afacd737538d9b45b5c2668b6e86bfa8f6f7`, `f262e35cf0648c77a85bce1493f2d600b2247cc7`, `82cfe858df3a4baddd099a91b047f348f33f87d9`, `5e83511f0ecfe1bfc176cfc13e69d48cb82644b7`, `85522a2d14eea022e010510967bc39c5effb7469`, `7237f60b7cc9d395318949984ec9b4b6513efcc4`, `0569d153ea62603f940692666801aec3ae2a8bd7`, `e159ab138767a8089b0454f6451159854b5c9ce7`, `e8b4007ee12b47d89ae7e1465abe58743a8c3481`, `d52409661b3fb916c9d8b5645ac8086abcbf1d88`, `b80697b13a22c03bdabafd291557f0eea8d75980`, `ca9cc0fead9e5f21dd4c3b57593c6764a6f2778a`, `b7a0f0a45d2de1462367d877b7386091b4d275ce`
+- Patch-equivalent commits: none
+- Modified files:
+  - `docs/plans/chatgpt-corpus-1-continuation.md`
+  - `tools/calibration/catalogue/hiredis-candidate.json`
+  - `tools/calibration/catalogue/http-parser-candidate.json`
+  - `tools/calibration/catalogue/inih-candidate.json`
+  - `tools/calibration/catalogue/jsmn-candidate.json`
+  - `tools/calibration/catalogue/jsoncpp-candidate.json`
+  - `tools/calibration/catalogue/libhydrogen-candidate.json`
+  - `tools/calibration/catalogue/libogg-candidate.json`
+  - `tools/calibration/catalogue/libspng-candidate.json`
+  - `tools/calibration/catalogue/libtomcrypt-candidate.json`
+  - `tools/calibration/catalogue/libtommath-candidate.json`
+  - `tools/calibration/catalogue/libvterm-candidate.json`
+  - `tools/calibration/catalogue/llhttp-candidate.json`
+  - `tools/calibration/catalogue/monocypher-candidate.json`
+  - `tools/calibration/catalogue/nanopb-candidate.json`
+  - `tools/calibration/catalogue/nghttp2-candidate.json`
+  - `tools/calibration/catalogue/parson-candidate.json`
+  - `tools/calibration/catalogue/protobuf-c-candidate.json`
+  - `tools/calibration/catalogue/pugixml-candidate.json`
+  - `tools/calibration/catalogue/qoi-candidate.json`
+  - `tools/calibration/catalogue/snappy-candidate.json`
+  - `tools/calibration/catalogue/speex-candidate.json`
+  - `tools/calibration/catalogue/tinycbor-candidate.json`
+  - `tools/calibration/catalogue/tinyxml2-candidate.json`
+  - `tools/calibration/catalogue/yyjson-candidate.json`
+
+### `chatgpt/deferred-audit-fixes-1`
+
+- Head: `2174837f3172c3ff2a3c676da106f42b55648a70`
+- Base: `origin/claude/instance-d-gui` at `2fa113889d1ffee6b68496993d3b3b6ebb0ba035`
+- Merge base: `7e2e7aa54abb62d43f7e701362b866f9f08109a8`
+- Associated PR: https://github.com/djshellshoxxx/patchtrace/pull/67
+- Functional scope: {"docs": 3, "src/patchtrace/backend.py": 1, "src/patchtrace/cli.py": 1, "src/patchtrace/diagnostics.py": 1, "src/patchtrace/ingestion.py": 1, "src/patchtrace/service.py": 1, "tasks": 1, "tests": 10}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {}; failures: []; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: unqualified: no current CI attached.
+- Recommended disposition: preserve active branch; port only verified unique patches.
+- Unique commits: `114a848b8a893a3fe2d855abd342e2e065f7c432`, `51b9625a20e2112924541b657a6fdbb5eb385dc6`, `04cf5930a3ed2128f5e90840dc7176862d40f37a`, `b00f8777a3befd4154f58b6716f51bbc0e226f2d`, `c8ddaea1cb98f74c6a59a88d08b8b59f768fa641`, `cfb0952be24f5da8cb51f1801f2a17a444f5725d`, `251991ceba8408297f6389ba5f1f537e220d1079`, `2174837f3172c3ff2a3c676da106f42b55648a70`
+- Patch-equivalent commits: none
+- Modified files:
+  - `docs/modules.md`
+  - `docs/qa.md`
+  - `docs/specs/acquisition.md`
+  - `src/patchtrace/backend.py`
+  - `src/patchtrace/cli.py`
+  - `src/patchtrace/diagnostics.py`
+  - `src/patchtrace/ingestion.py`
+  - `src/patchtrace/service.py`
+  - `tasks/todo.md`
+  - `tests/test_acquisition_acq12.py`
+  - `tests/test_backend_bundle_env.py`
+  - `tests/test_backend_sec1.py`
+  - `tests/test_backend_sec3.py`
+  - `tests/test_cli_acq13.py`
+  - `tests/test_core.py`
+  - `tests/test_diagnostics_core8.py`
+  - `tests/test_ingestion_core10.py`
+  - `tests/test_jobs.py`
+  - `tests/test_network_consent_symbols.py`
+
+### `chatgpt/ghidriff-sequential-lock-fix-20261017`
+
+- Head: `f6b7545bcc7a161440ab7119233c204510571370`
+- Base: `origin/main` at `5d504ff5c046bfb758623182b472976003632bba`
+- Merge base: `70e33fd77570329ba23afc58a38616270636d37c`
+- Associated PR: none in open PR snapshot
+- Functional scope: {"docs": 1, "src/patchtrace/backend.py": 1, "tests": 1}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {}; failures: []; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: unqualified: no current CI attached.
+- Recommended disposition: preserve active branch; port only verified unique patches.
+- Unique commits: `ff3afa5a44fcf54a9c6acf3e8bb1d3552f59955e`, `ef9262cb8883e49a5d8af3c776a87524ca9a352f`, `a660dcf515a99adeeef145520e1c37f1d42aef48`, `4156565476b3c2aeea48bc513d9ec40ea0128246`, `f6b7545bcc7a161440ab7119233c204510571370`
+- Patch-equivalent commits: none
+- Modified files:
+  - `docs/qa/ghidriff-windows-lock-20261017.md`
+  - `src/patchtrace/backend.py`
+  - `tests/test_ghidriff_threading.py`
+
+### `chatgpt/help-docs-1`
+
+- Head: `e5bee6fe157c90a40f2d9f458768e2169ce123e5`
+- Base: `origin/claude/instance-d-gui` at `2fa113889d1ffee6b68496993d3b3b6ebb0ba035`
+- Merge base: `a423d3d580d898e4398990b0790fd41d18dea246`
+- Associated PR: https://github.com/djshellshoxxx/patchtrace/pull/70
+- Functional scope: {"docs": 25}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {'CANCELLED': 2, 'SUCCESS': 2, 'SKIPPED': 4}; failures: []; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: candidate: inspect review/protection and focused tests.
+- Recommended disposition: preserve active branch; port only verified unique patches.
+- Unique commits: `b8a1e157bfb61dee3de06678b7171c0ce298b37b`, `03e82b512dcb612313e2530ac6569e26def88e15`, `2d11b91c40af186530c6793331704943dfa88eba`, `0d1272a972bd82a7311dff8c26b165d60cc5eb82`, `553fd3686329fb61d7cf511007adba0909d608ec`, `4ce1bb29edcb0b6824b201971c92e78041af8c0e`, `71f24c124c4d5858e04f84889ed7a5e25eb29852`, `8a8702e1dbd2dc0ae1a6b99818f23d3ed1ea58f7`, `19ffb456fc0e3a154091200a2a3fe6cb6c16377f`, `e5b376937ee35651078581fbf6247121ba19fa83`, `e123ec8e94180a315465ef967b6597bd4dc4468b`, `0e3e47ce65299e0c47dc63a3c045fed4031d67a7`, `218ccdfddda046ae909ba73e26bf078cd06a0bd9`, `de63e15dd0b6589455114915bffd030be0e9a682`, `ce930a1b0d522bcfb54f1ed054752e4d3771a43c`, `a00cebb907265c8f29d4f31fe539729638ababbd`, `1bb616f40260ed120d5fd83231ed2274402fdc39`, `b1ed4ff3cd15cbe852203fb4c3c28001f5dd8a92`, `1d4baf07eca42c50099618faccb3d40f9831b93e`, `d9ac0cccb5b96b920955c248a5d0f587691d0f07`, `e2b51d615016b250cdcf98a546372fe37bef2fda`, `5f0e082b46829fb6c3ed364c28c5c5d8caf2b8a9`, `300fa24cc808db9f55544daaba345622ac7a4d2a`, `744c175e256089334c4f2e6a331023968da19e84`, `e5bee6fe157c90a40f2d9f458768e2169ce123e5`
+- Patch-equivalent commits: none
+- Modified files:
+  - `docs/help/01-start-here.md`
+  - `docs/help/02-projects.md`
+  - `docs/help/03-run-comparison.md`
+  - `docs/help/04-import-comparison.md`
+  - `docs/help/05-code-and-bytes.md`
+  - `docs/help/06-evidence-panel.md`
+  - `docs/help/07-unified-panel.md`
+  - `docs/help/08-search-panel.md`
+  - `docs/help/09-graph-panel.md`
+  - `docs/help/10-strings-panel.md`
+  - `docs/help/11-capabilities-panel.md`
+  - `docs/help/12-build-environment-panel.md`
+  - `docs/help/13-rules-panel.md`
+  - `docs/help/14-kb-panel.md`
+  - `docs/help/15-kev-panel.md`
+  - `docs/help/16-leads-panel.md`
+  - `docs/help/17-series-panel.md`
+  - `docs/help/18-files-panel.md`
+  - `docs/help/19-guide-panel.md`
+  - `docs/help/20-states-and-remedies.md`
+  - `docs/help/21-layout-and-shortcuts.md`
+  - `docs/help/22-privacy-and-consent.md`
+  - `docs/help/23-offline-backend.md`
+  - `docs/help/24-external-tools.md`
+  - `docs/help/25-reading-confidence.md`
+
+### `chatgpt/java-probe-boundaries-20261016`
+
+- Head: `09bb4519d7d8e9ff8f40abcba7e11cb297d8b61e`
+- Base: `origin/main` at `5d504ff5c046bfb758623182b472976003632bba`
+- Merge base: `8ee61c623fa37c5a219f912cf7870bfeddcb1f70`
+- Associated PR: none in open PR snapshot
+- Functional scope: {"tests": 1}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {}; failures: []; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: unqualified: no current CI attached.
+- Recommended disposition: preserve active branch; port only verified unique patches.
+- Unique commits: `0254841e3e635ed717e35abcf83021f001d7df29`, `09bb4519d7d8e9ff8f40abcba7e11cb297d8b61e`
+- Patch-equivalent commits: none
+- Modified files:
+  - `tests/test_backend_java_version.py`
+
+### `chatgpt/java-probe-ci-fix-20261016`
+
+- Head: `0254841e3e635ed717e35abcf83021f001d7df29`
+- Base: `origin/main` at `5d504ff5c046bfb758623182b472976003632bba`
+- Merge base: `8ee61c623fa37c5a219f912cf7870bfeddcb1f70`
+- Associated PR: none in open PR snapshot
+- Functional scope: {"tests": 1}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {}; failures: []; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: unqualified: no current CI attached.
+- Recommended disposition: preserve active branch; port only verified unique patches.
+- Unique commits: `0254841e3e635ed717e35abcf83021f001d7df29`
+- Patch-equivalent commits: none
+- Modified files:
+  - `tests/test_backend_java_version.py`
+
+### `chatgpt/java-probe-qa-fix-20261016`
+
+- Head: `89500e12068656fa1958443ef634064effcbc40b`
+- Base: `origin/main` at `5d504ff5c046bfb758623182b472976003632bba`
+- Merge base: `89500e12068656fa1958443ef634064effcbc40b`
+- Associated PR: none in open PR snapshot
+- Functional scope: {}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {}; failures: []; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: no unique patches relative to base.
+- Recommended disposition: superseded relative to base; verify before closing/deleting.
+- Unique commits: none
+- Patch-equivalent commits: none
+- Modified files:
+
+### `chatgpt/kb-fixtures-1`
+
+- Head: `781b36fb60e775ce01bf0c114e6a17b609fdb475`
+- Base: `origin/claude/instance-d-gui` at `2fa113889d1ffee6b68496993d3b3b6ebb0ba035`
+- Merge base: `a423d3d580d898e4398990b0790fd41d18dea246`
+- Associated PR: https://github.com/djshellshoxxx/patchtrace/pull/69
+- Functional scope: {"tests": 24}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {'CANCELLED': 2, 'SUCCESS': 7, 'SKIPPED': 4}; failures: []; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: candidate: inspect review/protection and focused tests.
+- Recommended disposition: preserve active branch; port only verified unique patches.
+- Unique commits: `e3d567c68159b8196170b92cb5f53d830955d21f`, `c7f56d8f2539dc01bcf18ab923bb0726919d961a`, `cf99cb1370bbb9c95dfdbeec14ff1e9942dbae17`, `93a02b08d747265ba727bc58b15fec82a98bd439`, `ffb19127b6d91804049de1be66f152c63fa60f61`, `115df35486964e9e543155142309e59350cc6890`, `459d78799f75178213052a7f1f2c2f95877139c5`, `5e19ad7c41909a4105e1c00ece64abf4cf9e6984`, `e1e77428e70552433dc98b323216f31d09a83c17`, `5117815a8db01fdd9ee8d35bba35be6db3182efd`, `9366e995791541cfb1a12af3d6222f0c48791e67`, `ad3df7bebb85fef3364246a527a045aab3f97d5c`, `93b847aa496e14d3890dd981e8eb1fa11ecbab94`, `633783cec98e03bc6630162a2f5f87b21acdd3f0`, `ec0c922eee883b1faac739e248a85021a4756da0`, `3160a398ca27f664fd15e4d8be3dcc96c98e4d60`, `a6103f2dd20bce758f8f9fba1bf0feab4b500578`, `5c65f1640f5b88318663231d58e8ac94ec1b13ba`, `42dc8d84da5b9518cc568bb43b32054980b73888`, `db4a8a3ae073e74e385a7f5d5405cef6bd88a2e4`, `f1a4a1e319a49f7d246310cd6fff488906746f9b`, `a38259eec6592262c3f9a0373ea40e2a13575067`, `bc0ad8a149b28350c5fd33d7b2382b9f3deff177`, `781b36fb60e775ce01bf0c114e6a17b609fdb475`
+- Patch-equivalent commits: none
+- Modified files:
+  - `tests/fixtures/kb/CONTRACT_CONFLICTS.md`
+  - `tests/fixtures/kb/MANIFEST.json`
+  - `tests/fixtures/kb/README.md`
+  - `tests/fixtures/kb/crash_points.json`
+  - `tests/fixtures/kb/csaf_synthetic.json`
+  - `tests/fixtures/kb/cvrf_bom.json`
+  - `tests/fixtures/kb/cvrf_crlf.json`
+  - `tests/fixtures/kb/cvrf_v3_synthetic.json`
+  - `tests/fixtures/kb/raw_adversarial_inputs.json`
+  - `tests/fixtures/kb/update_packages_synthetic.json`
+  - `tests/fixtures/kb/update_relationships_synthetic.json`
+  - `tests/fixtures/kb/vex_synthetic.json`
+  - `tests/fixtures/kb/winbindex_synthetic.json`
+  - `tests/kb_crash_harness.py`
+  - `tests/kb_fixture_performance_plan.md`
+  - `tests/test_kb_crash_injection_protocol.py`
+  - `tests/test_kb_cvrf_fixture_import.py`
+  - `tests/test_kb_fixture_encoding.py`
+  - `tests/test_kb_fixture_properties.py`
+  - `tests/test_kb_metadata_fixture_boundaries.py`
+  - `tests/test_kb_offline_fixture_import.py`
+  - `tests/test_kb_raw_adversarial_inputs.py`
+  - `tests/test_kb_synthetic_fixture_corpus.py`
+  - `tests/test_kb_update_relationships.py`
+
+### `chatgpt/lbl30-prereg-guard-20261016`
+
+- Head: `6ae2c079e6cafa2b7bd5396cac443cd34ba7138a`
+- Base: `origin/claude/instance-d-gui` at `2fa113889d1ffee6b68496993d3b3b6ebb0ba035`
+- Merge base: `53f366e8b50ac60a95bdb3734b815daac82cd63d`
+- Associated PR: https://github.com/djshellshoxxx/patchtrace/pull/85
+- Functional scope: {".github": 2, "docs": 5, "tasks": 1, "tests": 5, "tools": 8}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {'SUCCESS': 9, 'FAILURE': 1, 'CANCELLED': 1, 'SKIPPED': 6}; failures: ['qa (windows-latest)']; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: blocked: failing checks.
+- Recommended disposition: preserve active branch; port only verified unique patches.
+- Unique commits: `f16a2237772156364d9fb04c802c140e59fc929d`, `157e208ef26e9b5d8279d9d61f16a39c01fb96aa`, `96dc2ef1a6cdacc5beb3ac212af5fe2c6a32a0a6`, `546379206513bef24f639add85bac950c7df7962`, `a023927ef8d1f5d96060e522179804892e5f1700`, `302a852c5e03abe4ce431e94d6d4c7fd2b8c02f2`, `c958c1b6e073c366da207f8ff1778cd0acee3cd9`, `175766985382bd9e45c3a42e5f67d25cbafad786`, `3c18c9590f60b3ea3db67c01b95dd69352a783f5`, `ea7b848d61b14669a20053316ba85bf552824522`, `482dcb19263c30b7191c936fbece1065a9d0f60c`, `7279fd7a626f2a4630ebd9811a1b85b069e89fd1`, `a215ab16fe45f61b910a0a7f9458911033099ddd`, `f29474ce2f7b991e6d919b0ab8acd48607459231`, `db74fc87a1e956f63285359c27ef626165d88d19`, `b1d5e8a9f2243107d6aadd71bb5ba7b94bad3a90`, `6808f4387cb51bcd08e5b3c8bc63ca4dc26b2fb1`, `f20cc572394a4365b399e3643532f71424ce9f4c`, `0843de5fcde928aa3d457856a3dd2f767ea24ff9`, `76896f0eaed994234d939fe6279a94fd76066698`, `5f30a79119b59e337b11a21d81b5e3b12d2bd92a`, `f7b8e0504ae848d4a027597fa94e3245f3f985b6`, `0761b2ec939316a7bff0fa8947c9ab6f70d40e7f`, `35f1967fd2cee0e47884ac298b58a1cb89d77429`, `8dcaf9366b07c0c66656c061589dd38ecc62416e`, `eccaf545bc62c962c37b92eb83f7193bcfeb8267`, `41b98647232b3220c7812338a528a9749f6610b6`, `8de9dfdbd2094f0c585baaadf9aa932a0f7abf39`, `45fb31ec83006f41c7d32d52cb52d4923d3350a9`, `46ce447a60aeae87334537795665be2152e87750`, `ef274da0b2eb1a4f85f66e66390047bea22bea87`, `984f3b56c266742cdeaa7ba4a4f2c2659fd070d0`, `80ff663e4568596a4f1b53cce09b29efcd9bf6da`, `079e16beea44202d27a5e86ddf82259c40d6f2cb`, `4c1b73d7f22419a63cd4a830928c1d611ddfa074`, `60dadba1de6591c3afccbac755ce39b1ce66dcd5`, `dfc0bca72528127ef228a1b9b3a0883adae2604b`, `d3efc5ffb6d2e0c1607932c03052fb0aeac776c6`, `73c477019d9b867a585c95770c7a1cfa7f8cf4a7`, `01ce4baa51ddb3e40628769d34fa8b665bf96272`, `654987dcd9f1d2b0a429db1ad7d0888990aa07ff`, `21304d14ebf99b7c4faa93c79325bed174885bf0`, `6ae2c079e6cafa2b7bd5396cac443cd34ba7138a`
+- Patch-equivalent commits: none
+- Modified files:
+  - `.github/workflows/corpus-tier-r.yml`
+  - `.github/workflows/lbl30-prereg-gate.yml`
+  - `docs/handoff/lbl30-prereg-guard-chatgpt-20261016.md`
+  - `docs/handoff/lbl31-output-persistence-chatgpt-20261015.md`
+  - `docs/modules.md`
+  - `docs/qa.md`
+  - `docs/specs/program-e/LBL-LOCK-CLI.md`
+  - `tasks/todo.md`
+  - `tests/test_ci_summary.py`
+  - `tests/test_mutations_more.py`
+  - `tests/test_tier_r_output_persistence.py`
+  - `tests/test_tier_r_shard.py`
+  - `tests/test_train_prereg_gate.py`
+  - `tools/calibration/mutations/engine.py`
+  - `tools/calibration/prereg_gate.py`
+  - `tools/calibration/tier_r/cli.py`
+  - `tools/calibration/tier_r/evaluate.py`
+  - `tools/calibration/tier_r/output_store.py`
+  - `tools/calibration/tier_r/shard.py`
+  - `tools/calibration/tier_r/training_artifacts.py`
+  - `tools/calibration/train.py`
+
+### `chatgpt/lbl31-coff-quoted-rip-20261016`
+
+- Head: `6e71bfabbf5ef75449b46981e9e822f7e555a6bf`
+- Base: `origin/main` at `5d504ff5c046bfb758623182b472976003632bba`
+- Merge base: `53f366e8b50ac60a95bdb3734b815daac82cd63d`
+- Associated PR: none in open PR snapshot
+- Functional scope: {".github": 1, "docs": 3, "tasks": 1, "tests": 4, "tools": 6}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {}; failures: []; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: unqualified: no current CI attached.
+- Recommended disposition: preserve active branch; port only verified unique patches.
+- Unique commits: `f16a2237772156364d9fb04c802c140e59fc929d`, `157e208ef26e9b5d8279d9d61f16a39c01fb96aa`, `96dc2ef1a6cdacc5beb3ac212af5fe2c6a32a0a6`, `546379206513bef24f639add85bac950c7df7962`, `a023927ef8d1f5d96060e522179804892e5f1700`, `302a852c5e03abe4ce431e94d6d4c7fd2b8c02f2`, `c958c1b6e073c366da207f8ff1778cd0acee3cd9`, `175766985382bd9e45c3a42e5f67d25cbafad786`, `3c18c9590f60b3ea3db67c01b95dd69352a783f5`, `ea7b848d61b14669a20053316ba85bf552824522`, `482dcb19263c30b7191c936fbece1065a9d0f60c`, `7279fd7a626f2a4630ebd9811a1b85b069e89fd1`, `a215ab16fe45f61b910a0a7f9458911033099ddd`, `f29474ce2f7b991e6d919b0ab8acd48607459231`, `db74fc87a1e956f63285359c27ef626165d88d19`, `b1d5e8a9f2243107d6aadd71bb5ba7b94bad3a90`, `6808f4387cb51bcd08e5b3c8bc63ca4dc26b2fb1`, `f20cc572394a4365b399e3643532f71424ce9f4c`, `0843de5fcde928aa3d457856a3dd2f767ea24ff9`, `76896f0eaed994234d939fe6279a94fd76066698`, `5f30a79119b59e337b11a21d81b5e3b12d2bd92a`, `c72600debeae62445932e894b03726f3baae9539`, `6e71bfabbf5ef75449b46981e9e822f7e555a6bf`
+- Patch-equivalent commits: none
+- Modified files:
+  - `.github/workflows/corpus-tier-r.yml`
+  - `docs/handoff/lbl31-output-persistence-chatgpt-20261015.md`
+  - `docs/modules.md`
+  - `docs/qa.md`
+  - `tasks/todo.md`
+  - `tests/test_ci_summary.py`
+  - `tests/test_mutations_more.py`
+  - `tests/test_tier_r_output_persistence.py`
+  - `tests/test_tier_r_shard.py`
+  - `tools/calibration/mutations/engine.py`
+  - `tools/calibration/tier_r/cli.py`
+  - `tools/calibration/tier_r/evaluate.py`
+  - `tools/calibration/tier_r/output_store.py`
+  - `tools/calibration/tier_r/shard.py`
+  - `tools/calibration/tier_r/training_artifacts.py`
+
+### `chatgpt/lbl31-coff-symbol-mask-20261016`
+
+- Head: `9622704d5c751d55700c4b642111131a7135d139`
+- Base: `origin/main` at `5d504ff5c046bfb758623182b472976003632bba`
+- Merge base: `53f366e8b50ac60a95bdb3734b815daac82cd63d`
+- Associated PR: none in open PR snapshot
+- Functional scope: {".github": 1, "docs": 3, "tasks": 1, "tests": 4, "tools": 6}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {}; failures: []; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: unqualified: no current CI attached.
+- Recommended disposition: preserve active branch; port only verified unique patches.
+- Unique commits: `f16a2237772156364d9fb04c802c140e59fc929d`, `157e208ef26e9b5d8279d9d61f16a39c01fb96aa`, `96dc2ef1a6cdacc5beb3ac212af5fe2c6a32a0a6`, `546379206513bef24f639add85bac950c7df7962`, `a023927ef8d1f5d96060e522179804892e5f1700`, `302a852c5e03abe4ce431e94d6d4c7fd2b8c02f2`, `c958c1b6e073c366da207f8ff1778cd0acee3cd9`, `175766985382bd9e45c3a42e5f67d25cbafad786`, `3c18c9590f60b3ea3db67c01b95dd69352a783f5`, `ea7b848d61b14669a20053316ba85bf552824522`, `482dcb19263c30b7191c936fbece1065a9d0f60c`, `7279fd7a626f2a4630ebd9811a1b85b069e89fd1`, `a215ab16fe45f61b910a0a7f9458911033099ddd`, `f29474ce2f7b991e6d919b0ab8acd48607459231`, `db74fc87a1e956f63285359c27ef626165d88d19`, `b1d5e8a9f2243107d6aadd71bb5ba7b94bad3a90`, `6808f4387cb51bcd08e5b3c8bc63ca4dc26b2fb1`, `f20cc572394a4365b399e3643532f71424ce9f4c`, `0843de5fcde928aa3d457856a3dd2f767ea24ff9`, `76896f0eaed994234d939fe6279a94fd76066698`, `5f30a79119b59e337b11a21d81b5e3b12d2bd92a`, `e93180acccd115718b3824da9be4e0f9257e3779`, `fe0ae91b0c4d248e23e5c8a4f274a51218a86807`, `fe565ea67627314f3d1a26fd0414c843f38297be`, `9622704d5c751d55700c4b642111131a7135d139`
+- Patch-equivalent commits: none
+- Modified files:
+  - `.github/workflows/corpus-tier-r.yml`
+  - `docs/handoff/lbl31-output-persistence-chatgpt-20261015.md`
+  - `docs/modules.md`
+  - `docs/qa.md`
+  - `tasks/todo.md`
+  - `tests/test_ci_summary.py`
+  - `tests/test_mutations_more.py`
+  - `tests/test_tier_r_output_persistence.py`
+  - `tests/test_tier_r_shard.py`
+  - `tools/calibration/mutations/engine.py`
+  - `tools/calibration/tier_r/cli.py`
+  - `tools/calibration/tier_r/evaluate.py`
+  - `tools/calibration/tier_r/output_store.py`
+  - `tools/calibration/tier_r/shard.py`
+  - `tools/calibration/tier_r/training_artifacts.py`
+
+### `chatgpt/lbl31-output-persistence-20261015`
+
+- Head: `2019a37fa65fc37f4758469143c2daadc07e0098`
+- Base: `origin/claude/instance-d-gui` at `2fa113889d1ffee6b68496993d3b3b6ebb0ba035`
+- Merge base: `53f366e8b50ac60a95bdb3734b815daac82cd63d`
+- Associated PR: https://github.com/djshellshoxxx/patchtrace/pull/78
+- Functional scope: {".github": 2, "docs": 3, "src/patchtrace/unified": 1, "tasks": 1, "tests": 5, "tools": 6}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {'FAILURE': 3, 'SUCCESS': 11, 'CANCELLED': 1, 'SKIPPED': 6}; failures: ['qa (ubuntu-latest)', 'windows-focused', 'qa (windows-latest)']; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: blocked: failing checks.
+- Recommended disposition: preserve active branch; port only verified unique patches.
+- Unique commits: `f16a2237772156364d9fb04c802c140e59fc929d`, `157e208ef26e9b5d8279d9d61f16a39c01fb96aa`, `96dc2ef1a6cdacc5beb3ac212af5fe2c6a32a0a6`, `546379206513bef24f639add85bac950c7df7962`, `a023927ef8d1f5d96060e522179804892e5f1700`, `302a852c5e03abe4ce431e94d6d4c7fd2b8c02f2`, `c958c1b6e073c366da207f8ff1778cd0acee3cd9`, `175766985382bd9e45c3a42e5f67d25cbafad786`, `3c18c9590f60b3ea3db67c01b95dd69352a783f5`, `ea7b848d61b14669a20053316ba85bf552824522`, `482dcb19263c30b7191c936fbece1065a9d0f60c`, `7279fd7a626f2a4630ebd9811a1b85b069e89fd1`, `a215ab16fe45f61b910a0a7f9458911033099ddd`, `f29474ce2f7b991e6d919b0ab8acd48607459231`, `db74fc87a1e956f63285359c27ef626165d88d19`, `b1d5e8a9f2243107d6aadd71bb5ba7b94bad3a90`, `6808f4387cb51bcd08e5b3c8bc63ca4dc26b2fb1`, `f20cc572394a4365b399e3643532f71424ce9f4c`, `0843de5fcde928aa3d457856a3dd2f767ea24ff9`, `76896f0eaed994234d939fe6279a94fd76066698`, `5f30a79119b59e337b11a21d81b5e3b12d2bd92a`, `e93180acccd115718b3824da9be4e0f9257e3779`, `678fe464efcde0818050bc2f1a7f97f51ea238d4`, `0fbe5a5a68f9aae7556ce765632ad2452e711f4d`, `e72b9b57e706284b6664f291101e8b3881b92062`, `55a14e2da2770e1e8a7cb8b219f3ca2f5ff70e4e`, `1a9f246b2e8f75986702167e340183154b7aa2f0`, `1e0b2cd225898f966e979048a1108b4f0e2efa31`, `03805023ae7bf66d0e4f445bafc61bd2829bb60c`, `3e62feec9da304953305fe595385c20da4b1869e`, `44f9adbd882a6ed425bfa655cb2f427af893e86d`, `6c8cb748a65860c252b764b2b8a07f186df8010e`, `2019a37fa65fc37f4758469143c2daadc07e0098`
+- Patch-equivalent commits: none
+- Modified files:
+  - `.github/workflows/corpus-tier-r.yml`
+  - `.github/workflows/lbl31-regressions.yml`
+  - `docs/handoff/lbl31-output-persistence-chatgpt-20261015.md`
+  - `docs/modules.md`
+  - `docs/qa.md`
+  - `src/patchtrace/unified/read_model.py`
+  - `tasks/todo.md`
+  - `tests/test_ci_summary.py`
+  - `tests/test_mutations_more.py`
+  - `tests/test_tier_r_output_persistence.py`
+  - `tests/test_tier_r_shard.py`
+  - `tests/test_unified_read_model.py`
+  - `tools/calibration/mutations/engine.py`
+  - `tools/calibration/tier_r/cli.py`
+  - `tools/calibration/tier_r/evaluate.py`
+  - `tools/calibration/tier_r/output_store.py`
+  - `tools/calibration/tier_r/shard.py`
+  - `tools/calibration/tier_r/training_artifacts.py`
+
+### `chatgpt/lbl31-windows-qa-fixes-20261016-a`
+
+- Head: `ddb2ff077a21c1f0053ba8079564f6f86c3e155f`
+- Base: `origin/main` at `5d504ff5c046bfb758623182b472976003632bba`
+- Merge base: `53f366e8b50ac60a95bdb3734b815daac82cd63d`
+- Associated PR: none in open PR snapshot
+- Functional scope: {".github": 1, "docs": 4, "src/patchtrace/unified": 1, "tasks": 1, "tests": 5, "tools": 6}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {}; failures: []; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: unqualified: no current CI attached.
+- Recommended disposition: preserve active branch; port only verified unique patches.
+- Unique commits: `f16a2237772156364d9fb04c802c140e59fc929d`, `157e208ef26e9b5d8279d9d61f16a39c01fb96aa`, `96dc2ef1a6cdacc5beb3ac212af5fe2c6a32a0a6`, `546379206513bef24f639add85bac950c7df7962`, `a023927ef8d1f5d96060e522179804892e5f1700`, `302a852c5e03abe4ce431e94d6d4c7fd2b8c02f2`, `c958c1b6e073c366da207f8ff1778cd0acee3cd9`, `175766985382bd9e45c3a42e5f67d25cbafad786`, `3c18c9590f60b3ea3db67c01b95dd69352a783f5`, `ea7b848d61b14669a20053316ba85bf552824522`, `482dcb19263c30b7191c936fbece1065a9d0f60c`, `7279fd7a626f2a4630ebd9811a1b85b069e89fd1`, `a215ab16fe45f61b910a0a7f9458911033099ddd`, `f29474ce2f7b991e6d919b0ab8acd48607459231`, `db74fc87a1e956f63285359c27ef626165d88d19`, `b1d5e8a9f2243107d6aadd71bb5ba7b94bad3a90`, `6808f4387cb51bcd08e5b3c8bc63ca4dc26b2fb1`, `f20cc572394a4365b399e3643532f71424ce9f4c`, `0843de5fcde928aa3d457856a3dd2f767ea24ff9`, `76896f0eaed994234d939fe6279a94fd76066698`, `5f30a79119b59e337b11a21d81b5e3b12d2bd92a`, `eb5070d1bff1dda82cc53386d39d7a7767772519`, `8764f3a73945a99f0cca94947bf9f71a8f724a59`, `ddd5000047df8faffdbe8fd63b31943f0bef7ce3`, `1108374b653641d3c6b9fa4b7fbd0f9a39cb1c6d`, `ddb2ff077a21c1f0053ba8079564f6f86c3e155f`
+- Patch-equivalent commits: none
+- Modified files:
+  - `.github/workflows/corpus-tier-r.yml`
+  - `docs/handoff/lbl31-output-persistence-chatgpt-20261015.md`
+  - `docs/handoff/lbl31-windows-qa-fixes-20261016.md`
+  - `docs/modules.md`
+  - `docs/qa.md`
+  - `src/patchtrace/unified/read_model.py`
+  - `tasks/todo.md`
+  - `tests/test_ci_summary.py`
+  - `tests/test_mutations_more.py`
+  - `tests/test_tier_r_output_persistence.py`
+  - `tests/test_tier_r_shard.py`
+  - `tests/test_unified_read_model.py`
+  - `tools/calibration/mutations/engine.py`
+  - `tools/calibration/tier_r/cli.py`
+  - `tools/calibration/tier_r/evaluate.py`
+  - `tools/calibration/tier_r/output_store.py`
+  - `tools/calibration/tier_r/shard.py`
+  - `tools/calibration/tier_r/training_artifacts.py`
+
+### `chatgpt/lbl32-card-controls-20261016`
+
+- Head: `9513bc05229dd7a8460fc229d7420154d61498db`
+- Base: `origin/chatgpt/lbl31-output-persistence-20261015` at `2019a37fa65fc37f4758469143c2daadc07e0098`
+- Merge base: `5f30a79119b59e337b11a21d81b5e3b12d2bd92a`
+- Associated PR: https://github.com/djshellshoxxx/patchtrace/pull/79
+- Functional scope: {"docs": 5, "tasks": 1, "tests": 1, "tools": 1}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {'FAILURE': 3, 'SUCCESS': 5, 'CANCELLED': 1, 'SKIPPED': 6}; failures: ['qa (ubuntu-latest)', 'qa (windows-latest)', 'windows advisory (smoke)']; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: blocked: failing checks.
+- Recommended disposition: preserve active branch; port only verified unique patches.
+- Unique commits: `4fc52eb26a2d0e254647e6424083d5d90c15c18f`, `0bb62903042598d32f9c3c731e6bb33dad4d5345`, `0b8e5c2b08f67ccd28d19286b88731f0105c4903`, `df22737d587463e6b25a590fd30d69125a9ed946`, `5caf7d30210bea37487d5ff0d947794991102e8e`, `ca847220d504156dd8b697e7fec85515fd0b3945`, `f0b48634583e0573ff2ad99c9234060d2109c283`, `8c973517652f3d9ca2ed8dd610cc83f99026ec53`, `ab189e4f2b6f4e46c3705483078ae365ea9f22bf`, `335615c35ce2727acbaac0caaffd6564729379b8`, `7e80249692daad4accc27c3b7a9753f47e12e009`, `0946afcc657dfc921a5162222ee481763ba18ace`, `ee3428184267b616a4032e60969df5cd3f60bf57`, `7d4166aa76a124f1167b8f581c1232a1d10a13fa`, `9513bc05229dd7a8460fc229d7420154d61498db`
+- Patch-equivalent commits: none
+- Modified files:
+  - `docs/handoff/README.md`
+  - `docs/handoff/lbl32-card-controls-chatgpt-20261016.md`
+  - `docs/modules.md`
+  - `docs/qa.md`
+  - `docs/specs/program-e/LBL-DATA-integration-plan.md`
+  - `tasks/todo.md`
+  - `tests/test_tier_r_shard.py`
+  - `tools/calibration/tier_r/shard.py`
+
+### `chatgpt/lbl32-recipe-aa-noise-20261016`
+
+- Head: `eaa30013794a9bd0fedc9ec34bbe374d6db0cfc9`
+- Base: `origin/claude/instance-d-gui` at `2fa113889d1ffee6b68496993d3b3b6ebb0ba035`
+- Merge base: `53f366e8b50ac60a95bdb3734b815daac82cd63d`
+- Associated PR: https://github.com/djshellshoxxx/patchtrace/pull/82
+- Functional scope: {".github": 2, "docs": 5, "src/patchtrace/unified": 1, "tasks": 1, "tests": 5, "tools": 6}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {'FAILURE': 4, 'SUCCESS': 10, 'CANCELLED': 1, 'SKIPPED': 6}; failures: ['qa (ubuntu-latest)', 'windows-focused', 'qa (windows-latest)', 'qt-gate (windows-latest, 5)']; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: blocked: failing checks.
+- Recommended disposition: preserve active branch; port only verified unique patches.
+- Unique commits: `f16a2237772156364d9fb04c802c140e59fc929d`, `157e208ef26e9b5d8279d9d61f16a39c01fb96aa`, `96dc2ef1a6cdacc5beb3ac212af5fe2c6a32a0a6`, `546379206513bef24f639add85bac950c7df7962`, `a023927ef8d1f5d96060e522179804892e5f1700`, `302a852c5e03abe4ce431e94d6d4c7fd2b8c02f2`, `c958c1b6e073c366da207f8ff1778cd0acee3cd9`, `175766985382bd9e45c3a42e5f67d25cbafad786`, `3c18c9590f60b3ea3db67c01b95dd69352a783f5`, `ea7b848d61b14669a20053316ba85bf552824522`, `482dcb19263c30b7191c936fbece1065a9d0f60c`, `7279fd7a626f2a4630ebd9811a1b85b069e89fd1`, `a215ab16fe45f61b910a0a7f9458911033099ddd`, `f29474ce2f7b991e6d919b0ab8acd48607459231`, `db74fc87a1e956f63285359c27ef626165d88d19`, `b1d5e8a9f2243107d6aadd71bb5ba7b94bad3a90`, `6808f4387cb51bcd08e5b3c8bc63ca4dc26b2fb1`, `f20cc572394a4365b399e3643532f71424ce9f4c`, `0843de5fcde928aa3d457856a3dd2f767ea24ff9`, `76896f0eaed994234d939fe6279a94fd76066698`, `5f30a79119b59e337b11a21d81b5e3b12d2bd92a`, `f8f865885f57ec24d0e6bc473c00f555f7b9c112`, `c83c92d974c2f7c3c2075e6ea1072483a3878187`, `a8bec1932d84905274e141b508a2a17228721aa0`, `39824115dcdf86c97220ea14701d166a9ee42c47`, `e1589cf9d0e5abc25d806ade80abd821f4254d9f`, `0fb7b4447e88a11045298bc62c4434a6506d308a`, `212952151a10353516b20d4e4659f64df1d9c61f`, `ebc162e5db52b4d00be92638b06b71145692ff13`, `e93180acccd115718b3824da9be4e0f9257e3779`, `678fe464efcde0818050bc2f1a7f97f51ea238d4`, `0fbe5a5a68f9aae7556ce765632ad2452e711f4d`, `e72b9b57e706284b6664f291101e8b3881b92062`, `55a14e2da2770e1e8a7cb8b219f3ca2f5ff70e4e`, `1a9f246b2e8f75986702167e340183154b7aa2f0`, `1e0b2cd225898f966e979048a1108b4f0e2efa31`, `03805023ae7bf66d0e4f445bafc61bd2829bb60c`, `3e62feec9da304953305fe595385c20da4b1869e`, `44f9adbd882a6ed425bfa655cb2f427af893e86d`, `6c8cb748a65860c252b764b2b8a07f186df8010e`, `2019a37fa65fc37f4758469143c2daadc07e0098`, `3bb5590a8b9d32cfcab0bdbf28d9fa93f174b3b9`, `a10f8cb5f947881fd90274ac44ef99e66a427e7b`, `21a884de49522476dfa4365535342e32738c08bc`, `176878f88509fbfd1e2983f1a0c93f738de3de06`, `7d690087c6efe47388a5db173a7eb702b97fa948`, `dc6b52b2b79bad6b158e585bab68e9ba83131bdc`, `ef7ae4283d617a05037a4d97210f0831a1676c41`, `e2cf9ce31cd5b5664d85411e1c9bbf40f2437b52`, `bd5bb9e265ceafaab9e116a16f81446b2cd71a40`, `eaa30013794a9bd0fedc9ec34bbe374d6db0cfc9`
+- Patch-equivalent commits: none
+- Modified files:
+  - `.github/workflows/corpus-tier-r.yml`
+  - `.github/workflows/lbl31-regressions.yml`
+  - `docs/handoff/lbl31-output-persistence-chatgpt-20261015.md`
+  - `docs/handoff/lbl32-recipe-aa-noise-chatgpt-20261016.md`
+  - `docs/modules.md`
+  - `docs/qa.md`
+  - `docs/specs/known-answer-corpus.md`
+  - `src/patchtrace/unified/read_model.py`
+  - `tasks/todo.md`
+  - `tests/test_ci_summary.py`
+  - `tests/test_mutations_more.py`
+  - `tests/test_tier_r_output_persistence.py`
+  - `tests/test_tier_r_shard.py`
+  - `tests/test_unified_read_model.py`
+  - `tools/calibration/mutations/engine.py`
+  - `tools/calibration/tier_r/cli.py`
+  - `tools/calibration/tier_r/evaluate.py`
+  - `tools/calibration/tier_r/output_store.py`
+  - `tools/calibration/tier_r/shard.py`
+  - `tools/calibration/tier_r/training_artifacts.py`
+
+### `chatgpt/merge-first-handoff-20261016`
+
+- Head: `19153f10780e783bc931739dd26db97d8eaf2b92`
+- Base: `origin/main` at `5d504ff5c046bfb758623182b472976003632bba`
+- Merge base: `70e33fd77570329ba23afc58a38616270636d37c`
+- Associated PR: none in open PR snapshot
+- Functional scope: {"docs": 2}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {}; failures: []; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: unqualified: no current CI attached.
+- Recommended disposition: preserve active branch; port only verified unique patches.
+- Unique commits: `40d0f960f5d3b486e6f23617e7bbc1027742cb37`, `6059f17c9ec047fb0b29b98e708376e4767a2fc7`, `7d3b0537563c081c6a7af6c77de9808c57fe280a`, `116a2e257fe7c0a6ef2ca44c92b540878a0256c4`, `19153f10780e783bc931739dd26db97d8eaf2b92`
+- Patch-equivalent commits: none
+- Modified files:
+  - `docs/plans/chatgpt-merge-first-handoff-20261016.md`
+  - `docs/plans/claude-autonomous-alpha-handoff-20261013.md`
+
+### `chatgpt/nway-external-note-qa-20261016`
+
+- Head: `8c7288276d3e49b7794b7fd80db4b02d5891cf00`
+- Base: `origin/main` at `5d504ff5c046bfb758623182b472976003632bba`
+- Merge base: `8c7288276d3e49b7794b7fd80db4b02d5891cf00`
+- Associated PR: none in open PR snapshot
+- Functional scope: {}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {}; failures: []; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: no unique patches relative to base.
+- Recommended disposition: superseded relative to base; verify before closing/deleting.
+- Unique commits: none
+- Patch-equivalent commits: none
+- Modified files:
+
+### `chatgpt/panels-1`
+
+- Head: `cfd7cfff52f4f9b8b1264e8b7d70ef1bbef2d63f`
+- Base: `origin/claude/instance-d-gui` at `2fa113889d1ffee6b68496993d3b3b6ebb0ba035`
+- Merge base: `d15e16be7f19798cd6419c313b16dc54a3467ac4`
+- Associated PR: https://github.com/djshellshoxxx/patchtrace/pull/72
+- Functional scope: {"docs": 10}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {'CANCELLED': 2, 'SUCCESS': 2, 'SKIPPED': 4}; failures: []; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: candidate: inspect review/protection and focused tests.
+- Recommended disposition: preserve active branch; port only verified unique patches.
+- Unique commits: `fdec965d0f666aecdee93b1ab45cf281535d0be8`, `278da61b46690e7c34b676c43cf86d65046ebb89`, `715e89ce4a089c13f5febc844a16089b355f4435`, `71d273a4e4dbc00acf20d0080d230e706c04b4cf`, `8a467d7a562913692d6bbeabcc24d908198fee50`, `f53138f6dfcc303828d017d1d957b38ac47d0ee6`, `5b23fa28a1fc51a763d22d60543db2ae241b619f`, `7f55047df479927a416ad0f2f3b09bd4d8bf4710`, `b8ea59e71dd7488859bbf0f77273e369ad5b26bf`, `cfd7cfff52f4f9b8b1264e8b7d70ef1bbef2d63f`
+- Patch-equivalent commits: none
+- Modified files:
+  - `docs/plans/panels-build-plan.md`
+  - `docs/specs/panels/build_env.md`
+  - `docs/specs/panels/capabilities.md`
+  - `docs/specs/panels/graph.md`
+  - `docs/specs/panels/guide.md`
+  - `docs/specs/panels/kb.md`
+  - `docs/specs/panels/kev.md`
+  - `docs/specs/panels/rules.md`
+  - `docs/specs/panels/search.md`
+  - `docs/specs/panels/strings.md`
+
+### `chatgpt/patchwatch-reuse-roadmap-20261026`
+
+- Head: `4eabf8dff2c4094681da70c7bd85ecd0da5aed9f`
+- Base: `origin/main` at `5d504ff5c046bfb758623182b472976003632bba`
+- Merge base: `4eabf8dff2c4094681da70c7bd85ecd0da5aed9f`
+- Associated PR: none in open PR snapshot
+- Functional scope: {}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {}; failures: []; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: no unique patches relative to base.
+- Recommended disposition: superseded relative to base; verify before closing/deleting.
+- Unique commits: none
+- Patch-equivalent commits: none
+- Modified files:
+
+### `chatgpt/r5-calibration-research-20261030`
+
+- Head: `4d9d9051aea87319847a0b321a14d37b95cb8abd`
+- Base: `origin/main` at `5d504ff5c046bfb758623182b472976003632bba`
+- Merge base: `a04f5a299a8d4afef023261e52e08d14678cf1e7`
+- Associated PR: https://github.com/djshellshoxxx/patchtrace/pull/132
+- Functional scope: {"docs": 8}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {'SUCCESS': 12, 'SKIPPED': 3}; failures: []; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: candidate: inspect review/protection and focused tests.
+- Recommended disposition: preserve active branch; port only verified unique patches.
+- Unique commits: `d39f3419ea281fa69ea9e22f55e165a16ccbdc46`, `0553f2bf1b08932c30afe65c122b49addd206935`, `16861bbcfbdd08de60ae9830ae8d55b0c6bdeb76`, `536d3486b589345c4313190b9d77ebc8cc5de517`, `5dd48450def478b7bc6503d86e74c74101bbd633`, `b689af6e80c4a9c579167545eb05a8c2743d154b`, `26183510d6b461f291831685850b40abe6758f8b`, `c217c88948514d7f5f3b85a335c5814bacee1e36`, `5b18e829ea922e14eac2a8d9a787c33d034b3282`, `bf4a49adc7bddb959517f28feab01bedd792e63d`, `4d9d9051aea87319847a0b321a14d37b95cb8abd`
+- Patch-equivalent commits: none
+- Modified files:
+  - `docs/research/calibration-r5/01-implementation-audit.md`
+  - `docs/research/calibration-r5/02-statistical-methods.md`
+  - `docs/research/calibration-r5/03-data-and-experiment-runbook.md`
+  - `docs/research/calibration-r5/04-robustness-policy-and-ui.md`
+  - `docs/research/calibration-r5/05-engineering-handoff.md`
+  - `docs/research/calibration-r5/06-dependence-toy.md`
+  - `docs/research/calibration-r5/README.md`
+  - `docs/research/calibration-r5/independence_toy.py`
+
+### `chatgpt/semantic-analysis-r3-20261030`
+
+- Head: `2698b9a04d33b2d04f49c1ab737636539c6ef6f7`
+- Base: `origin/main` at `5d504ff5c046bfb758623182b472976003632bba`
+- Merge base: `a04f5a299a8d4afef023261e52e08d14678cf1e7`
+- Associated PR: https://github.com/djshellshoxxx/patchtrace/pull/129
+- Functional scope: {"docs": 6, "src/patchtrace/unified": 2, "tasks": 1, "tests": 1}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {'SUCCESS': 17, 'SKIPPED': 3}; failures: []; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: candidate: inspect review/protection and focused tests.
+- Recommended disposition: preserve active branch; port only verified unique patches.
+- Unique commits: `b9ff87c88ce35cf5bafc350f949014c7eb7ac86a`, `5052daf8d9e5993c0e0fdb0a5fa06cca5fa9faea`, `709972823ab0c2bfcc1ed3073490693ab5c252b5`, `7f7817248730c47ead664fb2f8a2b0c04e5ba92d`, `f31f65d4056e37683eff63cf65ebbd756f3e4163`, `a479044ba79140693bbba6eca66e46119b730427`, `64a027d1e8637cc5dbd73fdda83126cdd60a5d09`, `515bda9ca378c91d443972c7c8321c0f418362e1`, `a994abb291d3513c6c39d49f78a6a586267e8fa6`, `5887870b533c1e79107663fd4ab5fdb796d5f8a3`, `37267935ebc0a884dbc43494667073bfadd75b31`, `c13cdbce08c9150c4bafcd8081f535fa6434e68a`, `513c83f6ea4eb39e6cf6f53fea0872b4cbfa1d91`, `2698b9a04d33b2d04f49c1ab737636539c6ef6f7`
+- Patch-equivalent commits: none
+- Modified files:
+  - `docs/qa.md`
+  - `docs/research/semantic-analysis-r3/README.md`
+  - `docs/research/semantic-analysis-r3/experiment-and-benchmark.md`
+  - `docs/research/semantic-analysis-r3/methods-and-tools.md`
+  - `docs/research/semantic-analysis-r3/r4-handoff.md`
+  - `docs/specs/unified-engine/05-fusion-and-noise.md`
+  - `src/patchtrace/unified/facts/verdict.py`
+  - `src/patchtrace/unified/registry.py`
+  - `tasks/todo.md`
+  - `tests/test_unified_verdict_ir.py`
+
+### `chatgpt/ue-r3-retain-decompiled-20261016`
+
+- Head: `ebbd621d4f557905892aee5f7cf8cb7b0e2addc2`
+- Base: `origin/claude/instance-d-gui` at `2fa113889d1ffee6b68496993d3b3b6ebb0ba035`
+- Merge base: `53f366e8b50ac60a95bdb3734b815daac82cd63d`
+- Associated PR: https://github.com/djshellshoxxx/patchtrace/pull/86
+- Functional scope: {"docs": 1, "src/patchtrace/unified": 3, "tests": 3}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {'FAILURE': 2, 'SUCCESS': 6, 'CANCELLED': 1, 'SKIPPED': 4}; failures: ['qa (ubuntu-latest)', 'qa (windows-latest)']; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: blocked: failing checks.
+- Recommended disposition: preserve active branch; port only verified unique patches.
+- Unique commits: `d8b18bcff22626ecef2dd5cd8c27c7cb04db3259`, `7eee1316e8b4f1cf6955d1b43df91ee3c4f9c25d`, `adce7e97e69efdd12d4f21ae59b76a4dd3e02094`, `2a530253c716367c1496839a8d59d8c4cbc2fe8d`, `58bfa01f7dd82f10859d8c3c56b8007035dcb3f6`, `f0912f10a31eb8c4a31e384b95b254265c4561ea`, `e378654e6c82cbdba78e0b18a15283bcb3fe243c`, `9c5db0efd71f7c291e34c34c345ed2ce2c3a749d`, `9eb3c00a0931ba9f4f05a5e5fcb2089489d0a487`, `4c132d0ba96a49e4e272299bf8f44e40b2f9bfee`, `ebbd621d4f557905892aee5f7cf8cb7b0e2addc2`
+- Patch-equivalent commits: none
+- Modified files:
+  - `docs/handoff/ue-r3-retain-decompiled-20261016.md`
+  - `src/patchtrace/unified/compute.py`
+  - `src/patchtrace/unified/pair_text.py`
+  - `src/patchtrace/unified/store.py`
+  - `tests/test_unified_pair_text.py`
+  - `tests/test_unified_store.py`
+  - `tests/test_unified_wire_refacts.py`
+
+### `chatgpt/ue-r7-p15-unresolved-20261016-a`
+
+- Head: `292dc3953dd2b8f157752d12251aff68b6e5bda5`
+- Base: `origin/main` at `5d504ff5c046bfb758623182b472976003632bba`
+- Merge base: `292dc3953dd2b8f157752d12251aff68b6e5bda5`
+- Associated PR: none in open PR snapshot
+- Functional scope: {}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {}; failures: []; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: no unique patches relative to base.
+- Recommended disposition: superseded relative to base; verify before closing/deleting.
+- Unique commits: none
+- Patch-equivalent commits: none
+- Modified files:
+
+### `chatgpt/ue-r7-strict-worker-report-20261016-a`
+
+- Head: `9c5f9a42b499133b842b14b9619bf8390010e1ff`
+- Base: `origin/main` at `5d504ff5c046bfb758623182b472976003632bba`
+- Merge base: `9c5f9a42b499133b842b14b9619bf8390010e1ff`
+- Associated PR: none in open PR snapshot
+- Functional scope: {}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {}; failures: []; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: no unique patches relative to base.
+- Recommended disposition: superseded relative to base; verify before closing/deleting.
+- Unique commits: none
+- Patch-equivalent commits: none
+- Modified files:
+
+### `chatgpt/unified-fixture-collection-fix-20261016`
+
+- Head: `941c617b6854291e2448cad6d7d5710a24a8543d`
+- Base: `origin/chatgpt/unified-fixtures-1` at `161a88345efc6484f4d7809fc6963a0193bd0057`
+- Merge base: `161a88345efc6484f4d7809fc6963a0193bd0057`
+- Associated PR: https://github.com/djshellshoxxx/patchtrace/pull/90
+- Functional scope: {"tests": 5}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {'FAILURE': 3, 'CANCELLED': 1, 'SKIPPED': 4}; failures: ['qa (ubuntu-latest)', 'qt-gate (ubuntu-latest, 20)', 'qt-gate (windows-latest, 5)']; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: blocked: failing checks.
+- Recommended disposition: preserve active branch; port only verified unique patches.
+- Unique commits: `a2883a5c811afde7985c9c28589f9367ee41e9ec`, `237368ef423b6c16020c0ac053077e1fd878dac0`, `ea8299e82644ce9e49bb371ff0245464ab70fc99`, `4739dfbd669780d6b3b29caaee7872e12daff85d`, `941c617b6854291e2448cad6d7d5710a24a8543d`
+- Patch-equivalent commits: none
+- Modified files:
+  - `tests/test_unified_fixture_gate_u6-2.py`
+  - `tests/test_unified_fixture_gate_u6.py`
+  - `tests/test_unified_synthetic_pe-2.py`
+  - `tests/test_unified_synthetic_pe.py`
+  - `tests/unified_support/fixture-gaps.md`
+
+### `chatgpt/unified-fixtures-1`
+
+- Head: `161a88345efc6484f4d7809fc6963a0193bd0057`
+- Base: `origin/claude/instance-d-gui` at `2fa113889d1ffee6b68496993d3b3b6ebb0ba035`
+- Merge base: `8af0e0effa7628f2bdf1ed8afc6d21f30e816924`
+- Associated PR: https://github.com/djshellshoxxx/patchtrace/pull/71
+- Functional scope: {"tests": 25}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {'FAILURE': 1, 'SUCCESS': 9, 'CANCELLED': 1, 'SKIPPED': 4}; failures: ['qa (ubuntu-latest)']; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: blocked: failing checks.
+- Recommended disposition: preserve active branch; port only verified unique patches.
+- Unique commits: `a5c419a121baffbd3c0da7a7a9648822134d840b`, `357a87485158aa20e2b1f32ce5bc8a1ac564a182`, `30aabd8a77534d809680936d5d8a1f02d52eb4a7`, `0f38d2e06c55ecd7fc322541010d12827de52cf5`, `97ab160adeb5bbf36d6b786289d330a861469b3f`, `b879de2294d3b2eacb2c86a1e1642ad0fc597ea9`, `815160421411328a13a2b321266d8741b2b71b52`, `aebc69f9848b622aefff3d2667e16ef6e56ecc64`, `52487699ee5697a205c92eef03503d585db4adb7`, `19622e8f11cfd516fdff1a5fbc8907ec95d41bd4`, `d6db03e49f754f28f6229bb54c4fb90e467ea140`, `97535b91ac1c3493b45ae268f153d78791438092`, `0aa1aa392727b237ad563f40d4a2f8b9e18abb07`, `621db77a2c94159d97331f4f4f18b172c8fc5682`, `69bbc4bf2dcc58096bad476b365b698f23a59db9`, `d3d2f1ab5b7432ee9d48d2f6a4ecde171feb571d`, `de36230048b83ea5b33ad20accd6468297779c20`, `74df07a7b7645607d51aabd6d1d401e2557ffe01`, `469f261c04acc5810fa5c77c6c81a10155da100c`, `622178d7b07717552e440a4060ff4b5ce730ad90`, `d406cfc76e01cc53a501117e54dd9cc063174d3f`, `3198571749cc90797d3414b544af4c83c0609976`, `32e7836722d341b17e370be1a08bb64d5e659731`, `7422c95df29dae529e27c380265ce8c0fc3f2d06`, `161a88345efc6484f4d7809fc6963a0193bd0057`
+- Patch-equivalent commits: none
+- Modified files:
+  - `tests/fixtures/unified/synthetic_read_model.json`
+  - `tests/test_unified_fixture_fusion_properties.py`
+  - `tests/test_unified_fixture_gate_u1.py`
+  - `tests/test_unified_fixture_gate_u2.py`
+  - `tests/test_unified_fixture_gate_u3.py`
+  - `tests/test_unified_fixture_gate_u4.py`
+  - `tests/test_unified_fixture_gate_u5.py`
+  - `tests/test_unified_fixture_gate_u6-2.py`
+  - `tests/test_unified_fixture_gate_u6.py`
+  - `tests/test_unified_fixture_gate_u7.py`
+  - `tests/test_unified_fixture_read_model_golden.py`
+  - `tests/test_unified_fixture_statistics.py`
+  - `tests/test_unified_fixture_timing.py`
+  - `tests/test_unified_synthetic_pairs.py`
+  - `tests/test_unified_synthetic_pe-2.py`
+  - `tests/test_unified_synthetic_pe.py`
+  - `tests/unified_support/assembler.py`
+  - `tests/unified_support/fixture-gaps.md`
+  - `tests/unified_support/gate_inputs.py`
+  - `tests/unified_support/nuisance.py`
+  - `tests/unified_support/pairs.py`
+  - `tests/unified_support/statistical-plan.md`
+  - `tests/unified_support/statistics.py`
+  - `tests/unified_support/synthetic_pe.py`
+  - `tests/unified_support/timing.py`
+
+### `chatgpt/unified-sort-perf-qa-20261016`
+
+- Head: `27b0a48bb8007f504b4a127a099136a6ea5c00b7`
+- Base: `origin/chatgpt/lbl31-output-persistence-20261015` at `2019a37fa65fc37f4758469143c2daadc07e0098`
+- Merge base: `5f30a79119b59e337b11a21d81b5e3b12d2bd92a`
+- Associated PR: https://github.com/djshellshoxxx/patchtrace/pull/94
+- Functional scope: {"tests": 1}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {'FAILURE': 2, 'CANCELLED': 1, 'SUCCESS': 1, 'SKIPPED': 4}; failures: ['qa (ubuntu-latest)', 'qa (windows-latest)']; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: blocked: failing checks.
+- Recommended disposition: preserve active branch; port only verified unique patches.
+- Unique commits: `27b0a48bb8007f504b4a127a099136a6ea5c00b7`
+- Patch-equivalent commits: none
+- Modified files:
+  - `tests/test_unified_read_model.py`
+
+### `claude/access-test-1791773355`
+
+- Head: `726a371ab34d4589b0456d059865ade6b82fac88`
+- Base: `origin/main` at `5d504ff5c046bfb758623182b472976003632bba`
+- Merge base: `ba10a52bde0c3a2892193d8d178e493b59e8daff`
+- Associated PR: none in open PR snapshot
+- Functional scope: {"README.md": 1, "docs": 5, "src/patchtrace/backend.py": 1, "src/patchtrace/offline_bundle.py": 1, "src/patchtrace/runtime_discovery.py": 1, "src/patchtrace/ui.py": 1, "tasks": 1, "tests": 4, "tools": 1}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {}; failures: []; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: unqualified: no current CI attached.
+- Recommended disposition: preserve active branch; port only verified unique patches.
+- Unique commits: `037afbcb43ca69189d5f525f7c7ad1289d518c6d`, `83c1008f4c752d6b01c62cf1ca9a21704911d230`, `013ae86d25afdffc7bc465665d55e60b0da809de`, `ec8bcfc82d19a1da20c7f77699c1ac2f3f60928a`, `fcaba0cc36f5e042291827665f420a46915831c3`, `6cf73c611cb7a07cd21621b8179118fb60bf5b85`, `7b2aec72cf580c2f75a4316782708eb08e18038e`, `9390377173a8b7d30822bd06a4b07dcb64fd9a45`, `247902cb7889d75037d3fff67b29f1a28d7a6fb0`, `24903fadd9b018cbc7abd70a9522253ceca0d46c`, `c16b22e62bee334fa04067a8fb2b7acb8c7362e0`, `c16535d7a307887014793ede5d48b4f748b916dd`, `dd8e98f344eda648a1f73889ef28f9cc59206069`, `e1e184d24d94384d7fc2f2f297a52bc190ba6f61`, `b2604d70d5eea17b9a4cf83198f74cf4fc2bace8`, `6713bbe66eba1ad1809635817b84e9f1b75c42af`, `1de25a86f5d31580e5d86369926deda7125f04aa`, `3507a058cd1522c2e4c5c060f36b33b965ba82ff`, `f2da166306659ccb0bff3f8d5f68ed27700e8cc7`, `00165c787c2039bf473c72327168fe556368fbb6`, `8226cd75774a34a2a8c2a467312fc8751aa878bc`, `34c014583bcb6493325d3ca6f6b9669e7a77c48c`, `e9f0c8dd49c8d330677cace118fa05d833610ca2`, `011ab0d84551921091154a5b5b0abbf1a107df21`, `6ff851d3740bb6e316262cfa507b2b029f0e36c8`, `81007b64dbdd8cba38cf1e250eb10af5bb853761`, `da4ed896f11fd64528e2ab2592e56e2598dce569`, `761d4938f666c043c6617cb7a3daba7360cb85ed`
+- Patch-equivalent commits: none
+- Modified files:
+  - `README.md`
+  - `docs/modules.md`
+  - `docs/offline-backend.md`
+  - `docs/qa.md`
+  - `docs/specs/offline-backend-installer.md`
+  - `docs/windows.md`
+  - `src/patchtrace/backend.py`
+  - `src/patchtrace/offline_bundle.py`
+  - `src/patchtrace/runtime_discovery.py`
+  - `src/patchtrace/ui.py`
+  - `tasks/todo.md`
+  - `tests/test_jobs.py`
+  - `tests/test_offline_bundle.py`
+  - `tests/test_runtime_discovery.py`
+  - `tests/test_ui.py`
+  - `tools/make_offline_bundle.py`
+
+### `claude/audit-beta`
+
+- Head: `c93ff945b9b523abe0b829247137105788a5ea27`
+- Base: `origin/main` at `5d504ff5c046bfb758623182b472976003632bba`
+- Merge base: `b7e819a3b4ff580654d37a666117f1b3305a051b`
+- Associated PR: none in open PR snapshot
+- Functional scope: {"PatchTrace.spec": 1, "docs": 2, "src/patchtrace/__main__.py": 1, "src/patchtrace/acquisition": 1, "src/patchtrace/artifact_bytes.py": 1, "src/patchtrace/cli.py": 1, "src/patchtrace/diagnostics.py": 1, "src/patchtrace/enrichment": 5, "src/patchtrace/nway": 1, "src/patchtrace/pe_overview": 2, "src/patchtrace/persistence.py": 1, "src/patchtrace/raw_view.py": 1, "src/patchtrace/reports.py": 1, "src/patchtrace/secondary": 2, "src/patchtrace/service.py": 1, "src/patchtrace/ui.py": 1, "tests": 12, "tools": 2}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {}; failures: []; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: unqualified: no current CI attached.
+- Recommended disposition: preserve active branch; port only verified unique patches.
+- Unique commits: `c93ff945b9b523abe0b829247137105788a5ea27`
+- Patch-equivalent commits: none
+- Modified files:
+  - `PatchTrace.spec`
+  - `docs/plans/audit-20261014-and-next-phase.md`
+  - `docs/qa.md`
+  - `src/patchtrace/__main__.py`
+  - `src/patchtrace/acquisition/transport.py`
+  - `src/patchtrace/artifact_bytes.py`
+  - `src/patchtrace/cli.py`
+  - `src/patchtrace/diagnostics.py`
+  - `src/patchtrace/enrichment/cache.py`
+  - `src/patchtrace/enrichment/intelligence.py`
+  - `src/patchtrace/enrichment/pipeline.py`
+  - `src/patchtrace/enrichment/profiles.py`
+  - `src/patchtrace/enrichment/signals.py`
+  - `src/patchtrace/nway/graph.py`
+  - `src/patchtrace/pe_overview/_common.py`
+  - `src/patchtrace/pe_overview/imports_exports.py`
+  - `src/patchtrace/persistence.py`
+  - `src/patchtrace/raw_view.py`
+  - `src/patchtrace/reports.py`
+  - `src/patchtrace/secondary/contracts.py`
+  - `src/patchtrace/secondary/rzdiff.py`
+  - `src/patchtrace/service.py`
+  - `src/patchtrace/ui.py`
+  - `tests/test_acquisition_transport.py`
+  - `tests/test_artifact_bytes.py`
+  - `tests/test_audit_ai_reports.py`
+  - `tests/test_cli.py`
+  - `tests/test_core.py`
+  - `tests/test_enrichment_signals.py`
+  - `tests/test_nway_graph.py`
+  - `tests/test_pe_overview.py`
+  - `tests/test_profiles.py`
+  - `tests/test_representations.py`
+  - `tests/test_secondary_rzdiff.py`
+  - `tests/test_ui.py`
+  - `tools/build_windows.py`
+  - `tools/make_offline_bundle.py`
+
+### `claude/autonomous-finish-20261104`
+
+- Head: `cc2e338ff69036695b5caae9009982251d10796b`
+- Base: `origin/main` at `5d504ff5c046bfb758623182b472976003632bba`
+- Merge base: `25b2ac8000e4bb2b941ce44ccbbb25a7eff5c278`
+- Associated PR: none in open PR snapshot
+- Functional scope: {".gitattributes": 1, ".github": 6, "README.md": 1, "docs": 104, "src/patchtrace/__main__.py": 1, "src/patchtrace/backend.py": 1, "src/patchtrace/buildenv": 1, "src/patchtrace/calibration": 1, "src/patchtrace/callgraph": 2, "src/patchtrace/gui": 12, "src/patchtrace/intelligence": 7, "src/patchtrace/jobs.py": 1, "src/patchtrace/kbcorrelation": 12, "src/patchtrace/normalization.py": 1, "src/patchtrace/pilot": 2, "src/patchtrace/rules": 2, "src/patchtrace/search": 4, "src/patchtrace/secondary": 6, "src/patchtrace/service.py": 1, "src/patchtrace/strings": 5, "src/patchtrace/tooltips.py": 1, "src/patchtrace/ui.py": 1, "src/patchtrace/ui_engine_setup.py": 1, "src/patchtrace/ui_evidence.py": 1, "src/patchtrace/ui_inspection.py": 1, "src/patchtrace/ui_inspection_session.py": 1, "src/patchtrace/ui_kev.py": 1, "src/patchtrace/ui_leads.py": 1, "src/patchtrace/ui_unified.py": 1, "src/patchtrace/unified": 5, "tasks": 1, "tests": 112, "third_party": 1, "tools": 32}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {}; failures: []; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: unqualified: no current CI attached.
+- Recommended disposition: preserve active branch; port only verified unique patches.
+- Unique commits: `13ba34d24448fc2456d11fd235f7508e13bfae29`, `1962cb3850c3f2113b000985d68211d4990dd59d`, `66032351b2dfceabf7b991f0a283298dd43239e7`, `639962f1c0761bf171334eed2a09f3bb0cc08f89`, `3b376aef335f45793993e569a19b577e6281d1ba`, `4fe3118fb5f9916b7398f17d99ce3d3f4eead4a5`, `dcab647a7a31894c982cb3adc50504f94cfa122f`, `f40bbbf47d607f3b4cb54d29d2e5d40cf90f0cf9`, `b6283cbc34dd7870c817557baf206573bdaab7e6`, `83c19fd0edfddbf575ea2d80b01e4e7c76fdf1bc`, `b308adcdeb247118a0bd2273f31a3fab6221eac5`, `af2680dd10d2375b36c61c07a3c0f0601d101a1e`, `41d072e106deb6d1cfcde1b3d7cd7ea926f4b2cf`, `2fc3486cb17d78f79fd8c2dcf97f3612ceb679e3`, `98c163ee24d93886e09118a4e14c8f51d9677e82`, `fd4ec2d7287752f43172642bbe3faa079c338fc0`, `1943018ba843bf0665be0e9fe3d0228f59f37ef8`, `ed48471ebce2fe8f190df9a7166b1ccf7675491a`, `dfde390e5fa47d5c11a6803d2ea3bca0606f75a6`, `edc57a9c30eb26c66cf401bd6cc4288365901760`, `175aef4569846d892384ddd50236d900cac00d77`, `c17d762e51fdf28df4c7f052f76f89473529858a`, `9d256068ba95270a115b541f614ce5e4a7eeb05e`, `a5efbfdf6a24ed6c3149c33b5a0844c9d78e502f`, `45e0a876621b6ef7447b8199305fd5a21d3a996e`, `65a8f7863d202d73ed46e8aeff8384302ea5d0a8`, `23488d6ffac6cc562223b60d3f276b095b57536e`, `9174e0234b8fa9afbd025e4cb897881021267811`, `75648549752abbbf957061cd81e3a1f1e60a2816`, `808e60f472bf3b4b304adeeba14547035cd93117`, `f68e9a6522a7ad85dcff818133411e7ec7624102`, `bb2ccfadfb4988dbcd1ee6111f28d3965c11d671`, `61e71a1ebb657906a895da70c001f7ac23fc23eb`, `8c95cd2af4311da98e889010cb9ede251a168916`, `d51f9a3239ad1a0c24afdfe22c8d07d18b17cfc0`, `455adeb77c9c001587eac69ad42bb0235fcce3de`, `091fbf6f7f8a3f7a682eefce7ecbecf17de782d2`, `d4c452e8ed9b8d24bc3f52e8721e8ba51cbd862d`, `6ace56ad0891af10bbe485184320546294ccd239`, `12bd11093d7b9d4e4d48d45ae1d96744884520c3`, `f66e0c186c38458b0101dc73151b26f72c5145ef`, `14c94b043a465f7c47eb2102a242cd25dd7dbd3c`, `8ee2c40c96cdbd591937b8d8a2b0199afc72978f`, `d54598cd04c8244a8f92baeb4c4758a5a05eca3a`, `1136a19cd32acf85a31487056cb35137eb92ca18`, `325fb9d4d8334c8d6f72e4200efb786bcec362fc`, `e399e5e81e0de0dfcc3214dc8b968288d442e734`, `8c4c726cf2bdc2ae3dd981547b10f46c73276bf0`, `94b42fe05c00b1c52566b82297d4f912d5c86528`, `6bee5fa5c2ce3d1e54464a0035c58053dac6335f`, `9b66f04b0f52f62e7302dbbe1b7d2aec17ac49e9`, `cb28e966a758159e4923f3b5258f3ce4bf9e3b29`, `928feceb17585da154ba9d4972f4f55df7848d7a`, `e9ad3fc8f73fa43283a27072785cab1dd5f87a50`, `1ba189e7585b75946e77f79a8dc37eaad3dc81df`, `45c48e78610cd6bfd7493921e63fdf3b760e9ab0`, `bf08a182e5c8f33d165f5af9b1dbba8513aa5fb6`, `36235980a5bd19b4587a7779fd4f8424c32d930d`, `cf3e3954bcc420962bb39ebdef0e74c20c5b147b`, `7b6ab0c66e4b55f0ee03ded7c7113d6b3ed6c62f`, `1412b81f68186feae97011567ef107a91a741cac`, `0e2f5a34662ac0b137ac343fc3b2fa1934d7a547`, `cda6cb39e611724232aa9b80f6b35f1dec787c12`, `15cff650979c4481ec12c19cb96ee1fa3855b2ce`, `e7d309af01df1cd3be6c4f18637c6d4639f10542`, `2368210cd5cea449a2ae53849f2b2d69afc55210`, `3df721da3766ced21d1b3102c5b39e997eada4c1`, `de0435b7d65f287de8b2ff44fd670304266aa111`, `3acf4da7b36a734dfe6220ba53b8d2e56b2abbee`, `427faec324c92467b92a953c1244928bacaf499e`, `29f5795d0bee991815da9cb30254f067c2080f4f`, `d71fe0ba61c28bbac5d72b9b16c50873386bb944`, `27a791266fcf2f52988d89430835341dc1ffc1d8`, `685ac689ddd6da267a89e525541be67a8e86573d`, `f58f0029c19fc794eccb516fd7c1c374b1bd6851`, `5f2afa7d2673d6049425d7fdb4449914f9b5e9b1`, `9e852a42c6ed26b80e76cf98a365143791f13e75`, `7e7ff9632b6bf50b2f4822a82c6018ce1f2cabb6`, `9451d7e776fc1b0d4848dafc96706d8aa11980d7`, `55da5bd9f3d9e3acbe6b4f35ee515d85812f10ff`, `4aff6fcecbfe671f36dd61189bf7701fab25794e`, `a698daddc3191ee084c24086d43d46c1b4099dfb`, `e15d9ed2af47726650cb2ffed9999d8ee3146573`, `500ceb2e43045484f234bad45fbf35f475e5dd17`, `d9ec26e8f87c36ed3d54334dce522517867a2180`, `8451e93f85bed8cd3f9e08f2d0baf18c9e6ddd20`, `044568947e1458222f16ceab1016920794115df9`, `0b0422d2677f764a4dddc8b03bc5f4b41132aed1`, `fc6438d68e3298f72845b71b774f6726255b27ed`, `33e7e33805e68b03665ab860fc19c83fd11fc5d8`, `150d9b9618b4f621ce31101c64502fb555734d46`, `0c683d5eba0ec519ccebec34af90fc47e708e765`, `04a44d95106e00908f82f6ddcf35fcb22d05b5e1`, `8de8ef896a08e22378da81fd480c7ad1ade4d893`, `c1a46beb46a8cd100c262d9e2143c47c0a892f3b`, `0ae2a792f9766e207ffdd4b604f5bba7bc85050c`, `02a9127612774eb455b374135eb78673b244f456`, `ab46ad91c176f41cecd57d7fffacb598352871e7`, `7e8237164e4ab732911938063a6f936c08f32af0`, `ce02504a266929a2648297a6f4d488523b3c48f1`, `bff635ffab2a5900ac3086bac9bac782cc52bfd2`, `0ad362250f6fb315029c928219cad281519237ff`, `3256c0d72d1db60c1b3e7fdc763b7a02b2ac995b`, `96fca17232272a5c490ab48ba956865e8e3351d9`, `3b501c042263c8de19b5f134340ec927a53b6e95`, `a7bc728a546c37320e940d80f8504eca44811339`, `d0cdc242e05ff46829324b59a27b2a72e3f34a8a`, `565c028541aaab6c8003fa42b24dbec4c6f30e7f`, `c9fabbf3c0d6ce436187b40f6e419db3bbcf2e3d`, `7237c55cba6e134c58df7936f273fd269aa864c5`, `ce573af54507b1314b39c9967bbc4d667d900325`, `2e743eae8ec185057e137467678a10b894548ba4`, `c891ad1d21f91be891b86cd3b17a26c04bdc2f93`, `ce551841c2b3d6cd6beba89771aaae368a76e69c`, `6a47c45d8bea0f0395f56301cabaace83f915875`, `a6b3b31ee20940bedb83338f31045f2dbc170324`, `afb5fb6be349ef481afd49cb95a4bf98894851d5`, `62a87fa2abe71c58055b3da2c380be270f4da4bd`, `a4e50300bde8dcbfe15cd32ac0113ceebee2e546`, `0483db36156d4a44ea81eec019c37994a987b4ca`, `a1a98af4c89ab682af502dfb799ba9fbf4057de5`, `6ad9ba7cbe9f86b2ddda58e1d59c583a21322fe8`, `8624ff734416e243b2d439191e7f9c55d66c36a9`, `1792152f28a5d0a802173e5bf4dbea9f3d6257da`, `eb964d60dba04221740b76e12d18d11328e74699`, `37de7c23339b367806d96bde5a00bf5f9a5f27c8`, `cc2e338ff69036695b5caae9009982251d10796b`
+- Patch-equivalent commits: none
+- Modified files:
+  - `.gitattributes`
+  - `.github/workflows/live-bindiff.yml`
+  - `.github/workflows/live-rizin.yml`
+  - `.github/workflows/nightly-fuzz.yml`
+  - `.github/workflows/qa-windows.yml`
+  - `.github/workflows/rzdiff-producer.yml`
+  - `.github/workflows/unified-live-gates.yml`
+  - `README.md`
+  - `docs/audits/20261015-core-app.md`
+  - `docs/audits/20261015-intelligence-kev-rules-fabric-pilot.md`
+  - `docs/audits/20261015-unified-audit.md`
+  - `docs/audits/20261104-dispositions-118-120-105.md`
+  - `docs/audits/20261104-dispositions-121-116.md`
+  - `docs/audits/20261104-kb-open-items.md`
+  - `docs/audits/process-supervision-20261014.md`
+  - `docs/handoff/rzdiff-native-red-control.md`
+  - `docs/handoff/rzdiff-producer-implementation.md`
+  - `docs/help/02-windows-first-launch.md`
+  - `docs/install.md`
+  - `docs/linux.md`
+  - `docs/modules.md`
+  - `docs/notices.md`
+  - `docs/package-audit.md`
+  - `docs/plans/ghidra-semantic-runtime-roadmap.md`
+  - `docs/plans/hard-problems/bindiff-plan.md`
+  - `docs/plans/ledger-autonomous-20261104.md`
+  - `docs/plans/unified-engine-plan.md`
+  - `docs/qa.md`
+  - `docs/qa/ci-monitor-windows-bb98bae3-20261102.tar.gz`
+  - `docs/qa/corpus-focused-20261101.log.gz`
+  - `docs/qa/corpus-html-green-final-20261101.log.gz`
+  - `docs/qa/corpus-html-red-20261101.log.gz`
+  - `docs/qa/corpus-output-persistence-20261101.json`
+  - `docs/qa/corpus-output-persistence-20261101.md`
+  - `docs/qa/corpus-prereg-green-20261101.log.gz`
+  - `docs/qa/corpus-prereg-red-20261101.log.gz`
+  - `docs/qa/corpus-review-green-final-20261101.log.gz`
+  - `docs/qa/corpus-review-red-20261101.log.gz`
+  - `docs/qa/corpus-safeguards-20261101.json`
+  - `docs/qa/corpus-safeguards-20261101.md`
+  - `docs/qa/output-completion-merged-20261102.log.gz`
+  - `docs/qa/output-credit-completion-20261102.json`
+  - `docs/qa/output-credit-completion-20261102.md`
+  - `docs/qa/output-credit-completion-20261102.tar.gz`
+  - `docs/qa/output-credit-completion-independent-review-20261102.json`
+  - `docs/qa/output-credited-replay-20261101.json`
+  - `docs/qa/output-credited-replay-20261101.md`
+  - `docs/qa/output-metadata-propagation-20261102.md`
+  - `docs/qa/output-path-fixtures-20261102.md`
+  - `docs/qa/output-path-fixtures-20261102.tar.gz`
+  - `docs/qa/pr154-escaped-opening-verification-20261101.json`
+  - `docs/qa/pr154-markdown-verification-20261101.json`
+  - `docs/qa/prereg-fence-prefix-consolidation-20261102.md`
+  - `docs/qa/prereg-main-port-20261101.log.gz`
+  - `docs/qa/prereg-main-port-20261101.md`
+  - `docs/qa/prereg-markdown-review-20261101.md`
+  - `docs/qa/prereg-review-followup-20261101.tar.gz`
+  - `docs/qa/rzdiff-native-evidence-red.log`
+  - `docs/qa/rzdiff-native-evidence-tests.log`
+  - `docs/qa/rzdiff-native-oracle-red.log`
+  - `docs/qa/rzdiff-native-oracle-tests.log`
+  - `docs/qa/rzdiff-producer-boundary.log`
+  - `docs/qa/rzdiff-producer-checkpoint.json`
+  - `docs/qa/windows-acceptance-runbook.md`
+  - `docs/qa/windows-output-review-20261102.json`
+  - `docs/qa/windows-output-review-20261102.md`
+  - `docs/release-process.md`
+  - `docs/reuse-matrix.md`
+  - `docs/schemas/calibration/PairRows.json`
+  - `docs/schemas/corpus/EngineOutputDoc.json`
+  - `docs/schemas/corpus/EvaluationFailure.json`
+  - `docs/schemas/corpus/OutputCompletion.json`
+  - `docs/schemas/corpus/OutputCredits.json`
+  - `docs/schemas/corpus/TierRReport.json`
+  - `docs/schemas/corpus/examples/invalid-report-deltas-reversed.json`
+  - `docs/schemas/corpus/examples/valid-report-deltas.json`
+  - `docs/schemas/corpus/report-examples/valid-engine-output-attention.json`
+  - `docs/specs/REGISTRY.md`
+  - `docs/specs/accessibility-baseline.md`
+  - `docs/specs/architecture.md`
+  - `docs/specs/bindiff-execution.md`
+  - `docs/specs/byte-representations.md`
+  - `docs/specs/calibration-corpus-and-model.md`
+  - `docs/specs/gui-preflight-inspection.md`
+  - `docs/specs/kb-cve/31-C-product-build-pairs.md`
+  - `docs/specs/kb-cve/31-F-workflow-ui-persistence.md`
+  - `docs/specs/kb/adapter-binding-spec.md`
+  - `docs/specs/kb/advisory-revision-and-snapshot-identity-spec.md`
+  - `docs/specs/known-answer-corpus.md`
+  - `docs/specs/multi-engine-orchestration.md`
+  - `docs/specs/pe-overview.md`
+  - `docs/specs/program-e/BUNDLE-acceptance-isolation-spec.md`
+  - `docs/specs/program-e/CAP-integration-plan.md`
+  - `docs/specs/program-e/KB-integration-plan.md`
+  - `docs/specs/program-e/WB1-integration-plan.md`
+  - `docs/specs/program-e/WB2-integration-plan.md`
+  - `docs/specs/program-e/WB3-integration-plan.md`
+  - `docs/specs/qbindiff-inspired-matching.md`
+  - `docs/specs/qbindiff-modular-integration.md`
+  - `docs/specs/radiff2-inspired-comparison.md`
+  - `docs/specs/radiff2-modular-integration.md`
+  - `docs/specs/schemas.md`
+  - `docs/specs/secondary-engine.md`
+  - `docs/specs/tier-w-local-corpus.md`
+  - `docs/specs/unified-engine/02-data-model.md`
+  - `docs/specs/unified-engine/05-fusion-and-noise.md`
+  - `docs/specs/unified-engine/06-adapters.md`
+  - `docs/specs/unified-engine/08-evaluation.md`
+  - `docs/specs/unified-engine/10-amendments.md`
+  - `docs/specs/unified-engine/13-remaining-work-plan.md`
+  - `docs/specs/windows-acceptance-and-milestone-builds.md`
+  - `docs/windows.md`
+  - `src/patchtrace/__main__.py`
+  - `src/patchtrace/backend.py`
+  - `src/patchtrace/buildenv/qt_panel.py`
+  - `src/patchtrace/calibration/features.py`
+  - `src/patchtrace/callgraph/dot.py`
+  - `src/patchtrace/callgraph/panel_qt.py`
+  - `src/patchtrace/gui/access_names.py`
+  - `src/patchtrace/gui/qt/chips.py`
+  - `src/patchtrace/gui/qt/docks.py`
+  - `src/patchtrace/gui/qt/host.py`
+  - `src/patchtrace/gui/qt/palette.py`
+  - `src/patchtrace/gui/qt/project_adoption.py`
+  - `src/patchtrace/gui/qt/state_view.py`
+  - `src/patchtrace/gui/qt/table.py`
+  - `src/patchtrace/gui/qt/tasks.py`
+  - `src/patchtrace/gui/registry.py`
+  - `src/patchtrace/gui/table_spec.py`
+  - `src/patchtrace/gui/tips.py`
+  - `src/patchtrace/intelligence/cli.py`
+  - `src/patchtrace/intelligence/explain.py`
+  - `src/patchtrace/intelligence/tools/capa_qt.py`
+  - `src/patchtrace/intelligence/tools/cli.py`
+  - `src/patchtrace/intelligence/tools/common.py`
+  - `src/patchtrace/intelligence/tools/delta.py`
+  - `src/patchtrace/intelligence/tools/process.py`
+  - `src/patchtrace/jobs.py`
+  - `src/patchtrace/kbcorrelation/cli.py`
+  - `src/patchtrace/kbcorrelation/cli_leads.py`
+  - `src/patchtrace/kbcorrelation/context.py`
+  - `src/patchtrace/kbcorrelation/investigation_qt.py`
+  - `src/patchtrace/kbcorrelation/investigation_service.py`
+  - `src/patchtrace/kbcorrelation/leads.py`
+  - `src/patchtrace/kbcorrelation/ports.py`
+  - `src/patchtrace/kbcorrelation/recovery.py`
+  - `src/patchtrace/kbcorrelation/service.py`
+  - `src/patchtrace/kbcorrelation/sources/cvrf.py`
+  - `src/patchtrace/kbcorrelation/store.py`
+  - `src/patchtrace/kbcorrelation/wiring.py`
+  - `src/patchtrace/normalization.py`
+  - `src/patchtrace/pilot/cli.py`
+  - `src/patchtrace/pilot/collect.py`
+  - `src/patchtrace/rules/store.py`
+  - `src/patchtrace/rules/window.py`
+  - `src/patchtrace/search/cli.py`
+  - `src/patchtrace/search/panel.py`
+  - `src/patchtrace/search/qt_panel.py`
+  - `src/patchtrace/search/wiring.py`
+  - `src/patchtrace/secondary/bindiff.py`
+  - `src/patchtrace/secondary/bindiff_inputs.py`
+  - `src/patchtrace/secondary/reconcile.py`
+  - `src/patchtrace/secondary/registry.py`
+  - `src/patchtrace/secondary/rzdiff.py`
+  - `src/patchtrace/secondary/scheduler.py`
+  - `src/patchtrace/service.py`
+  - `src/patchtrace/strings/cli.py`
+  - `src/patchtrace/strings/compose.py`
+  - `src/patchtrace/strings/copy.py`
+  - `src/patchtrace/strings/qt_panel.py`
+  - `src/patchtrace/strings/tooltip_entries.py`
+  - `src/patchtrace/tooltips.py`
+  - `src/patchtrace/ui.py`
+  - `src/patchtrace/ui_engine_setup.py`
+  - `src/patchtrace/ui_evidence.py`
+  - `src/patchtrace/ui_inspection.py`
+  - `src/patchtrace/ui_inspection_session.py`
+  - `src/patchtrace/ui_kev.py`
+  - `src/patchtrace/ui_leads.py`
+  - `src/patchtrace/ui_unified.py`
+  - `src/patchtrace/unified/fusion/arbiter.py`
+  - `src/patchtrace/unified/ladder/passes.py`
+  - `src/patchtrace/unified/registry.py`
+  - `src/patchtrace/unified/sources/__init__.py`
+  - `src/patchtrace/unified/sources/ghidriff.py`
+  - `tasks/todo.md`
+  - `tests/fixtures/csaf/expected/hostile.report.json`
+  - `tests/fixtures/csaf/expected/hostile.report.md`
+  - `tests/fixtures/csaf/expected/revisions-vex.report.json`
+  - `tests/fixtures/csaf/expected/revisions-vex.report.md`
+  - `tests/fixtures/csaf/expected/single.report.json`
+  - `tests/fixtures/csaf/expected/single.report.md`
+  - `tests/fixtures/journey/ghidriff.recorded.json`
+  - `tests/fixtures/secondary/README.md`
+  - `tests/fixtures/secondary/rzdiff-0.9.1-orientation-r2.json`
+  - `tests/qt_support.py`
+  - `tests/stress/test_cli_stress_perf.py`
+  - `tests/test_audit105_kb_kev_acq.py`
+  - `tests/test_audit105_owner_findings.py`
+  - `tests/test_audit116_create_rollback.py`
+  - `tests/test_audit116_export_copy.py`
+  - `tests/test_audit116_profile_switch.py`
+  - `tests/test_audit116_stale_inspection_failure.py`
+  - `tests/test_audit118_scope_and_provenance.py`
+  - `tests/test_audit120_rzdiff_prep.py`
+  - `tests/test_backend_symbol_local.py`
+  - `tests/test_bindiff_row_caps.py`
+  - `tests/test_bundle_acceptance_isolation.py`
+  - `tests/test_callgraph_dot.py`
+  - `tests/test_capa_cli_hypothesis.py`
+  - `tests/test_cli_secondary_run.py`
+  - `tests/test_evalcore_ghidriff_one_to_many.py`
+  - `tests/test_evalcore_stats.py`
+  - `tests/test_evidence_host.py`
+  - `tests/test_evidence_panel_service.py`
+  - `tests/test_gui_a11y_window.py`
+  - `tests/test_gui_host_palette.py`
+  - `tests/test_gui_host_seam.py`
+  - `tests/test_gui_table.py`
+  - `tests/test_gui_tasks.py`
+  - `tests/test_gui_theme_variants.py`
+  - `tests/test_hostile_fuzz_parsers.py`
+  - `tests/test_intel_explain.py`
+  - `tests/test_intel_limitations_list_untested_validation.py`
+  - `tests/test_intel_tools_audit_tail.py`
+  - `tests/test_intel_tools_runner.py`
+  - `tests/test_intel_transport_drip.py`
+  - `tests/test_jobs.py`
+  - `tests/test_jobs_windows_launch.py`
+  - `tests/test_journey_analyst.py`
+  - `tests/test_journey_gate.py`
+  - `tests/test_kb_investigation_service.py`
+  - `tests/test_kbc_acquire_cli.py`
+  - `tests/test_kbc_attach_repair.py`
+  - `tests/test_kbc_context_applicability.py`
+  - `tests/test_kbc_contracts.py`
+  - `tests/test_kbc_msrc_review_findings.py`
+  - `tests/test_kbc_report_for.py`
+  - `tests/test_kbc_selection_guard.py`
+  - `tests/test_kbc_text_limit_bytes.py`
+  - `tests/test_live_bindiff.py`
+  - `tests/test_milestone_notes.py`
+  - `tests/test_native_receipt.py`
+  - `tests/test_normalization_one_to_many.py`
+  - `tests/test_osv_not_wired.py`
+  - `tests/test_pilot_cli.py`
+  - `tests/test_pilot_collect_kev.py`
+  - `tests/test_release_docs.py`
+  - `tests/test_rules_masks.py`
+  - `tests/test_rzdiff_native_evidence.py`
+  - `tests/test_rzdiff_orientation_guard.py`
+  - `tests/test_rzdiff_producer_patch.py`
+  - `tests/test_search_wiring.py`
+  - `tests/test_secondary_output_flood.py`
+  - `tests/test_secondary_scheduler.py`
+  - `tests/test_security_child_env_default.py`
+  - `tests/test_security_child_launch_inventory.py`
+  - `tests/test_strings_compose.py`
+  - `tests/test_tier_r_credit_completion.py`
+  - `tests/test_tier_r_credited_replay.py`
+  - `tests/test_tier_r_eval_report.py`
+  - `tests/test_tier_r_output_persistence.py`
+  - `tests/test_tier_r_output_stat_compat.py`
+  - `tests/test_tier_r_report_deltas.py`
+  - `tests/test_tier_w_cli.py`
+  - `tests/test_tier_w_runner.py`
+  - `tests/test_tooltips.py`
+  - `tests/test_train_prereg_selection.py`
+  - `tests/test_ui_inspection_session.py`
+  - `tests/test_ui_kb_entry.py`
+  - `tests/test_ui_kb_investigation.py`
+  - `tests/test_ui_related_panel.py`
+  - `tests/test_ui_strings_source.py`
+  - `tests/test_ui_unified.py`
+  - `tests/test_ui_unified_pipeline.py`
+  - `tests/test_unified_bench.py`
+  - `tests/test_unified_fixture_gate_u2.py`
+  - `tests/test_unified_fusion_mirror.py`
+  - `tests/test_unified_gate_eval.py`
+  - `tests/test_unified_gates.py`
+  - `tests/test_unified_ghidriff_one_to_many.py`
+  - `tests/test_unified_ir_ingest.py`
+  - `tests/test_unified_live_force_identical.py`
+  - `tests/test_unified_live_native_failure_details.py`
+  - `tests/test_unified_live_pairs.py`
+  - `tests/test_unified_live_pairs_r1.py`
+  - `tests/test_unified_live_workflow.py`
+  - `tests/test_unified_mutations.py`
+  - `tests/test_unified_packaging.py`
+  - `tests/test_unified_pipeline.py`
+  - `tests/test_unified_read_model.py`
+  - `tests/test_unified_registry.py`
+  - `tests/test_unified_sources.py`
+  - `tests/test_verify_release.py`
+  - `tests/test_windows_runbook.py`
+  - `tests/tier_w_builders.py`
+  - `tests/unified_read_support.py`
+  - `tests/unified_support/fixture-gaps.md`
+  - `third_party/notices/bindiff-v8-aecc14d/PROVENANCE.txt`
+  - `tools/build_linux.py`
+  - `tools/bundle_acceptance.py`
+  - `tools/calibration/evalcore/engines/ghidriff.py`
+  - `tools/calibration/evalcore/power.py`
+  - `tools/calibration/evalcore/report.py`
+  - `tools/calibration/prereg_gate.py`
+  - `tools/calibration/tier_r/cli.py`
+  - `tools/calibration/tier_r/contracts.py`
+  - `tools/calibration/tier_r/evaluate.py`
+  - `tools/calibration/tier_r/output_store.py`
+  - `tools/calibration/tier_r/report_schemas.py`
+  - `tools/calibration/tier_r/schemas.py`
+  - `tools/calibration/tier_w/__main__.py`
+  - `tools/calibration/tier_w/cli.py`
+  - `tools/calibration/tier_w/contracts.py`
+  - `tools/calibration/tier_w/paths.py`
+  - `tools/calibration/tier_w/runner.py`
+  - `tools/calibration/train.py`
+  - `tools/fuzz_parsers.py`
+  - `tools/journey_gate.py`
+  - `tools/milestone_notes.py`
+  - `tools/native_receipt.py`
+  - `tools/rzdiff/boundary_control.c`
+  - `tools/rzdiff/native_control.c`
+  - `tools/rzdiff/native_evidence.py`
+  - `tools/rzdiff/patch_producer.py`
+  - `tools/rzdiff/singleton-ownership.patch`
+  - `tools/unified/bench.py`
+  - `tools/unified/evaluators.py`
+  - `tools/unified/live_pairs.py`
+  - `tools/unified/mutations/classes.py`
+  - `tools/verify_release.py`
+
+### `claude/awesome-ramanujan-o3pxx3-ci`
+
+- Head: `0bf1f8309e8425ba34199657009d3055215336f1`
+- Base: `origin/main` at `5d504ff5c046bfb758623182b472976003632bba`
+- Merge base: `99f8328ce89d02f200cf9fbc5852d9801761af28`
+- Associated PR: none in open PR snapshot
+- Functional scope: {".github": 1, "docs": 3, "pyproject.toml": 1, "tests": 4, "tools": 2}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {}; failures: []; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: unqualified: no current CI attached.
+- Recommended disposition: preserve active branch; port only verified unique patches.
+- Unique commits: `0bf1f8309e8425ba34199657009d3055215336f1`
+- Patch-equivalent commits: none
+- Modified files:
+  - `.github/workflows/qa-windows.yml`
+  - `docs/release-process.md`
+  - `docs/specs/windows-acceptance-and-milestone-builds.md`
+  - `docs/specs/windows-release-signing-policy.md`
+  - `pyproject.toml`
+  - `tests/test_codex_pkg_packaging.py`
+  - `tests/test_milestone_notes.py`
+  - `tests/test_release_gate.py`
+  - `tests/test_windows_installer_manifest.py`
+  - `tools/milestone_notes.py`
+  - `tools/package_windows_installer.py`
+
+### `claude/awesome-ramanujan-o3pxx3-hostile`
+
+- Head: `077b04e681ac74b20c0ff8bf367aa720c277f2d2`
+- Base: `origin/main` at `5d504ff5c046bfb758623182b472976003632bba`
+- Merge base: `077b04e681ac74b20c0ff8bf367aa720c277f2d2`
+- Associated PR: none in open PR snapshot
+- Functional scope: {}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {}; failures: []; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: no unique patches relative to base.
+- Recommended disposition: superseded relative to base; verify before closing/deleting.
+- Unique commits: none
+- Patch-equivalent commits: none
+- Modified files:
+
+### `claude/awesome-ramanujan-o3pxx3-win1`
+
+- Head: `7ac57759f3b9b332eaafb48c82f366566892f1b1`
+- Base: `origin/main` at `5d504ff5c046bfb758623182b472976003632bba`
+- Merge base: `99f8328ce89d02f200cf9fbc5852d9801761af28`
+- Associated PR: none in open PR snapshot
+- Functional scope: {".gitattributes": 1, "docs": 2, "pyproject.toml": 1, "src/patchtrace/__main__.py": 1, "src/patchtrace/app_icon.py": 1, "src/patchtrace/resources": 1, "tests": 1, "tools": 5}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {}; failures: []; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: unqualified: no current CI attached.
+- Recommended disposition: preserve active branch; port only verified unique patches.
+- Unique commits: `7ac57759f3b9b332eaafb48c82f366566892f1b1`
+- Patch-equivalent commits: none
+- Modified files:
+  - `.gitattributes`
+  - `docs/modules.md`
+  - `docs/specs/windows-release-signing-policy.md`
+  - `pyproject.toml`
+  - `src/patchtrace/__main__.py`
+  - `src/patchtrace/app_icon.py`
+  - `src/patchtrace/resources/patchtrace-mark.svg`
+  - `tests/test_windows_build_resources.py`
+  - `tools/build_windows.py`
+  - `tools/check_windows_exe.py`
+  - `tools/pyinstaller_hooks/hook-patchtrace.app_icon.py`
+  - `tools/windows_icon.py`
+  - `tools/windows_version_info.py`
+
+### `claude/bugfix-kbc-20261029`
+
+- Head: `653f384d1ca60b7e943bd658698e0989d826b696`
+- Base: `origin/main` at `5d504ff5c046bfb758623182b472976003632bba`
+- Merge base: `653f384d1ca60b7e943bd658698e0989d826b696`
+- Associated PR: none in open PR snapshot
+- Functional scope: {}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {}; failures: []; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: no unique patches relative to base.
+- Recommended disposition: superseded relative to base; verify before closing/deleting.
+- Unique commits: none
+- Patch-equivalent commits: none
+- Modified files:
+
+### `claude/bugfix-kev-acq-20261029`
+
+- Head: `fbe58d800da27aff2544c6a478f0a591ff7dad3b`
+- Base: `origin/main` at `5d504ff5c046bfb758623182b472976003632bba`
+- Merge base: `fbe58d800da27aff2544c6a478f0a591ff7dad3b`
+- Associated PR: none in open PR snapshot
+- Functional scope: {}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {}; failures: []; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: no unique patches relative to base.
+- Recommended disposition: superseded relative to base; verify before closing/deleting.
+- Unique commits: none
+- Patch-equivalent commits: none
+- Modified files:
+
+### `claude/bugfix-strings-pe-20261029`
+
+- Head: `7ae041e79e419159299c32df98b8e69ab176e859`
+- Base: `origin/main` at `5d504ff5c046bfb758623182b472976003632bba`
+- Merge base: `7ae041e79e419159299c32df98b8e69ab176e859`
+- Associated PR: none in open PR snapshot
+- Functional scope: {}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {}; failures: []; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: no unique patches relative to base.
+- Recommended disposition: superseded relative to base; verify before closing/deleting.
+- Unique commits: none
+- Patch-equivalent commits: none
+- Modified files:
+
+### `claude/bundle-license-gate`
+
+- Head: `d3617acf9af7834582b4962a8c149969a7d55a22`
+- Base: `origin/main` at `5d504ff5c046bfb758623182b472976003632bba`
+- Merge base: `21a005e242177f07a984937a7cd924e826c17b9f`
+- Associated PR: none in open PR snapshot
+- Functional scope: {".github": 1, "docs": 1, "tests": 4, "tools": 5}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {}; failures: []; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: unqualified: no current CI attached.
+- Recommended disposition: preserve active branch; port only verified unique patches.
+- Unique commits: `246eed794dbda3d3ebc6f2a8f29736ec09b94fb6`, `c9a01b6f4e6e51b35b0685dcac96c4cdc1400101`, `d3617acf9af7834582b4962a8c149969a7d55a22`
+- Patch-equivalent commits: none
+- Modified files:
+  - `.github/workflows/backend-bundle.yml`
+  - `docs/notices.md`
+  - `tests/test_backend_pin.py`
+  - `tests/test_build_backend_bundle.py`
+  - `tests/test_build_full_variants.py`
+  - `tests/test_codex_pkg_packaging.py`
+  - `tools/backend_pin.json`
+  - `tools/build_backend_bundle.py`
+  - `tools/build_linux.py`
+  - `tools/build_windows.py`
+  - `tools/check_backend_pin.py`
+
+### `claude/clever-clarke-s4nhi6`
+
+- Head: `502402684b0d0aa35d7719bb5a3467de035982bc`
+- Base: `origin/main` at `5d504ff5c046bfb758623182b472976003632bba`
+- Merge base: `9c261b1a9610183eb2e7be806deee7c468694b99`
+- Associated PR: none in open PR snapshot
+- Functional scope: {".github": 1}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {}; failures: []; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: no unique patches relative to base.
+- Recommended disposition: superseded relative to base; verify before closing/deleting.
+- Unique commits: none
+- Patch-equivalent commits: `502402684b0d0aa35d7719bb5a3467de035982bc`
+- Modified files:
+  - `.github/workflows/qa-windows.yml`
+
+### `claude/compassionate-goldberg-5uuqks`
+
+- Head: `198eb21e8813b28de361422cfe3c002bdb9e3970`
+- Base: `origin/main` at `5d504ff5c046bfb758623182b472976003632bba`
+- Merge base: `5214720716c7afb7952bacbc9afd4b8255574ae8`
+- Associated PR: https://github.com/djshellshoxxx/patchtrace/pull/125
+- Functional scope: {"docs": 1}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {'SUCCESS': 7, 'SKIPPED': 3}; failures: []; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: candidate: inspect review/protection and focused tests.
+- Recommended disposition: preserve active branch; port only verified unique patches.
+- Unique commits: `198eb21e8813b28de361422cfe3c002bdb9e3970`
+- Patch-equivalent commits: none
+- Modified files:
+  - `docs/plans/next-milestone-dev-prompt-20261030.md`
+
+### `claude/fix-deadline-test`
+
+- Head: `22ff025a7710d07d7ad74be2c8f7cc0b4db0daf7`
+- Base: `origin/main` at `5d504ff5c046bfb758623182b472976003632bba`
+- Merge base: `bb84b2606f0674a1db675645f2db98b3a8d3d789`
+- Associated PR: none in open PR snapshot
+- Functional scope: {"tests": 1}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {}; failures: []; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: no unique patches relative to base.
+- Recommended disposition: superseded relative to base; verify before closing/deleting.
+- Unique commits: none
+- Patch-equivalent commits: `22ff025a7710d07d7ad74be2c8f7cc0b4db0daf7`
+- Modified files:
+  - `tests/test_unified_decompile_runner.py`
+
+### `claude/gallant-knuth-8gxuzd`
+
+- Head: `a7689119fc25be61a4ac1b65619d6968859a136f`
+- Base: `origin/main` at `5d504ff5c046bfb758623182b472976003632bba`
+- Merge base: `25b2ac8000e4bb2b941ce44ccbbb25a7eff5c278`
+- Associated PR: https://github.com/djshellshoxxx/patchtrace/pull/180
+- Functional scope: {".gitattributes": 1, "docs": 30, "src/patchtrace/cli_commands": 2, "src/patchtrace/models.py": 1, "src/patchtrace/pe_overview": 11, "src/patchtrace/report2": 23, "src/patchtrace/reports.py": 1, "src/patchtrace/tooltips.py": 1, "src/patchtrace/ui.py": 1, "src/patchtrace/ui_export_v2.py": 1, "src/patchtrace/ui_inspection.py": 1, "src/patchtrace/ui_unified.py": 1, "src/patchtrace/unified": 38, "tasks": 1, "tests": 68, "tools": 7}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {'FAILURE': 3, 'SUCCESS': 13, 'SKIPPED': 5}; failures: ['qa (ubuntu-latest)', 'qa (windows-latest)', 'SonarCloud Code Analysis']; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: blocked: failing checks.
+- Recommended disposition: preserve active branch; port only verified unique patches.
+- Unique commits: `9148f6ef45b6800ffad3436d2070b71a3f4caa6a`, `98c8a18fd437e4884a9ab90c5cbe26bd30e3a71f`, `9a634f7fe8f1458090de7fd2c63773111953a858`, `f854de0a730063ea65028d38830fb55d8b023ab3`, `77cefa0199cdcda7c66b7307f8821efdd4dd3323`, `d83210fe364c93d6595e09496f34552c7823f4ae`, `d9ddd7bdb8740efa70a1c31a9bda3ec360730fd2`, `0a0e556072f566a04b81a4ff7be91f5bf9c6b065`, `a824c6868942d8646009ebba083f532c1adebd73`, `fbab7c096132005d1b03940151d2a40b865e1c81`, `4615a94f50f35a0577ba09af113d6e9ce0450404`, `16b8f39c97cf25c5e27e538234cd8540ce082517`, `08b7a9788e4d2494b905606350804468152c2480`, `9a4f23a51a9b45b116380ce89834f3f70cd1f262`, `7fac15e21f18897b6ef04350272ca64dd6531d9d`, `48d3d3d763054ee7807a66870adf7f9876abe35f`, `4a76d85e61a41860acd29792332ad19bd66381d6`, `d6e5de79fa8dd2f15537b3ab2ebeeb8ae9a7a63a`, `ed640d79e8202740293b1ad65c251d11cc5b5c9d`, `2562771f44c6a8f9447fdc7cbfe6c01ff41a5e78`, `7f8b4576aa702792a623d63e5422f97be8d23862`, `d374df66a68fe0f28984b49358bcb94815d2f043`, `acc488859e8528606ad66d7f402667748f65b57c`, `3c9a7bc8cc9e4679fdaecf211f9c58470cbafaa3`, `3148f5ef1388da9d43c8772ad00cab480b001ab6`, `31ed5ba188976984ae1291afa37dc2bc472d8276`, `9bf42cb20a0b926ca048db9713461d394030e26d`, `b904f0176ace8bf39011ec3c6504531a46c98abc`, `5032624ddff690422edb528d49b33f9fbf60de6b`, `40562b277005099a34949668c9632d8917e20558`, `1048d7bfc74bc2a9f034a6a56c7a6f2677e2d2b4`, `70f99c1c8f053e4e5243ce2fe2f52facf9655c18`, `1837eded8b544816355d6e4c131e312720c4a9fc`, `2b76b533e6d84bf1a07efb6cbe3869eae01a0815`, `bfd13c872bcea1afaa4937bc8cefa896d80d3045`, `723a02a8238fdf60e4cd4b69222db6b02d1038c8`, `33ac36b06336317b82ecb79a3a57ca95963b0a1d`, `f59a61407ca5e8e670ec974b6e7cd0d489a19dc1`, `9ee58f3375e9580b124c7eb4c097263c99bff413`, `543427df64a3f1fb737fc71500215aa4b0b7d4a2`, `662a83bf515bd1240bfed1e0b534e5ce719b086d`, `fcfb264e060142250a3ca31c433e04ee119769ca`, `7b2208692731efb1cccc22ba26228ebf00d7e206`, `c3acbd2c73dc7e75cc9935c72c4f6a4c89ab3c0e`, `ec22cc8a9aaa90d7f1f1c70580de3c96bcab7339`, `edc6b8ea04368db8337d81253a3f5e11f0395530`, `38369eeac3bb51b174ae70d9aa45b52de84023d5`, `8f364e86e287505730d75d7f2e31ed3036d24f09`, `d23b6c642eefe21de464e34e2f5e17eb29b2a84a`, `4608a0112cb47bd3b2c2ae71b60ae3c6a33a54c0`, `e3cff6a3315b04ab28b4e425823e913540cff0b5`, `3465c74dea8633ba71d2afe77abb8bba0a9b034b`, `7e4fc78cbacceed9209f4de09cd8db14da2213e1`, `a1bd1a65189c91af1bc8d407a650b3720668a561`, `0cb54867d27e426f46277b78cec29bf060f05f2b`, `e1622f51df160c5bcf15c638f5785e6f04d0d927`, `ed73eaf218c61aef82054c6eea372a28141bd819`, `da4a9c95add28ac0362b256f04403f092833b31a`, `e2e9af7bd1d5ad48c53453335f31c2de7c004663`, `41adaee3126f7867c123d11dd68dcf848650f72e`, `96ad59a80518efe2a333612a5d31271e5c23836d`, `97f46ca928ae0ce4b470590a50bbd5d4a5fe1dfa`, `f19a9ef5e1f61f05dd4df951989d4d3e2666e784`, `6f6536198a8fe281fd7e08523bbd5321ac7c86ab`, `e81e037a583c44f94163150fb3a2e1ad1a51da20`, `690cacfaa1969c7d962865ea200c4abb7e7ef0ea`, `1c7833985534a5c5ac076a72180baf9d0197f5e5`, `20748de6627a8b040757160c0498acce9974eda7`, `30b1f6319d391faa5817b6f8333c76adfcca82d1`, `6770680a943ba4c323c1038db3fa34021548a831`, `3239e7231ce80c35a0365e902932410a4472ec93`, `6b5553ee052a6d49c7e4bf8fac9d03d903d3e409`, `e10577c20f35e9502d1491b16a7c2549c79e92b1`, `e6e6d4320d16c964e8d2d45d573a0b7f4a330f40`, `9876bda57fda04214a19df520430eb27b5f00f46`, `46ec893d771748adf0ee219e99468261f5843571`, `2d469ba15c7e093d2b3e1e534e76df7ba73ecf93`, `0f6cf5a3a8676d99784a0665c30e17aab6eb7eff`, `2e15caded60983c63066c6a40e77d96c80da92eb`, `055ac90da3c59492b682aee4422e590767705871`, `018d834f832b86f3c31b73447b6fea1b6f2a1131`, `27f4d4c57dae233707175f698c5529bed38ceb4f`, `588ed27bf0ff86bbcae0334d3191a482d1615cb2`, `b00c5556e865b78c51040547c738abddedced710`, `19ddb08a3c8ad18aefc44bccac9ae12ded69a978`, `e9928bc453962d63b29f75c8a13e0c270f54cde6`, `315ab092b72d855bf51a205ccf8391af794438cd`, `7d6587105a722a6d2219903b6d43cfc33c7adea7`, `a7689119fc25be61a4ac1b65619d6968859a136f`
+- Patch-equivalent commits: none
+- Modified files:
+  - `.gitattributes`
+  - `docs/audits/20261104-unified-cor.md`
+  - `docs/audits/20261104-unified-fct.md`
+  - `docs/audits/20261104-unified-fus.md`
+  - `docs/audits/20261104-unified-gui.md`
+  - `docs/audits/20261104-unified-har.md`
+  - `docs/audits/20261104-unified-irx.md`
+  - `docs/audits/20261104-unified-lad.md`
+  - `docs/modules.md`
+  - `docs/plans/ghidra-semantic-runtime-roadmap.md`
+  - `docs/qa.md`
+  - `docs/schemas/ExportManifest.json`
+  - `docs/specs/REGISTRY.md`
+  - `docs/specs/architecture.md`
+  - `docs/specs/byte-representations.md`
+  - `docs/specs/gui-preflight-inspection.md`
+  - `docs/specs/multi-engine-orchestration.md`
+  - `docs/specs/pe-overview.md`
+  - `docs/specs/pe-version-authenticode.md`
+  - `docs/specs/qbindiff-inspired-matching.md`
+  - `docs/specs/qbindiff-modular-integration.md`
+  - `docs/specs/radiff2-inspired-comparison.md`
+  - `docs/specs/radiff2-modular-integration.md`
+  - `docs/specs/report-export-contract-v2.md`
+  - `docs/specs/schemas.md`
+  - `docs/specs/unified-engine/01-architecture.md`
+  - `docs/specs/unified-engine/04-matching-pipeline.md`
+  - `docs/specs/unified-engine/05-fusion-and-noise.md`
+  - `docs/specs/unified-engine/06-adapters.md`
+  - `docs/specs/unified-engine/10-amendments.md`
+  - `docs/specs/unified-engine/README.md`
+  - `src/patchtrace/cli_commands/export.py`
+  - `src/patchtrace/cli_commands/inspect.py`
+  - `src/patchtrace/models.py`
+  - `src/patchtrace/pe_overview/cache.py`
+  - `src/patchtrace/pe_overview/catalog_win.py`
+  - `src/patchtrace/pe_overview/cli.py`
+  - `src/patchtrace/pe_overview/compare.py`
+  - `src/patchtrace/pe_overview/der.py`
+  - `src/patchtrace/pe_overview/labels.py`
+  - `src/patchtrace/pe_overview/metadata.py`
+  - `src/patchtrace/pe_overview/models.py`
+  - `src/patchtrace/pe_overview/rsa_verify.py`
+  - `src/patchtrace/pe_overview/signature.py`
+  - `src/patchtrace/pe_overview/signing_view.py`
+  - `src/patchtrace/report2/__init__.py`
+  - `src/patchtrace/report2/adapters.py`
+  - `src/patchtrace/report2/assemble.py`
+  - `src/patchtrace/report2/blocks.py`
+  - `src/patchtrace/report2/calibration_block.py`
+  - `src/patchtrace/report2/cli.py`
+  - `src/patchtrace/report2/contracts.py`
+  - `src/patchtrace/report2/export.py`
+  - `src/patchtrace/report2/export_vm.py`
+  - `src/patchtrace/report2/inputs.py`
+  - `src/patchtrace/report2/options.py`
+  - `src/patchtrace/report2/render_html.py`
+  - `src/patchtrace/report2/render_json.py`
+  - `src/patchtrace/report2/render_md.py`
+  - `src/patchtrace/report2/sections/__init__.py`
+  - `src/patchtrace/report2/sections/advisories.py`
+  - `src/patchtrace/report2/sections/build_facts.py`
+  - `src/patchtrace/report2/sections/engine_evidence.py`
+  - `src/patchtrace/report2/sections/leads.py`
+  - `src/patchtrace/report2/sections/series.py`
+  - `src/patchtrace/report2/sections/symbols.py`
+  - `src/patchtrace/report2/sections/unified_result.py`
+  - `src/patchtrace/report2/text.py`
+  - `src/patchtrace/reports.py`
+  - `src/patchtrace/tooltips.py`
+  - `src/patchtrace/ui.py`
+  - `src/patchtrace/ui_export_v2.py`
+  - `src/patchtrace/ui_inspection.py`
+  - `src/patchtrace/ui_unified.py`
+  - `src/patchtrace/unified/cli.py`
+  - `src/patchtrace/unified/compute.py`
+  - `src/patchtrace/unified/exchange.py`
+  - `src/patchtrace/unified/extract/__init__.py`
+  - `src/patchtrace/unified/extract/ghidra_script.py`
+  - `src/patchtrace/unified/extract/runner.py`
+  - `src/patchtrace/unified/facts/anchors.py`
+  - `src/patchtrace/unified/facts/datamap.py`
+  - `src/patchtrace/unified/facts/fnview.py`
+  - `src/patchtrace/unified/facts/irchannels.py`
+  - `src/patchtrace/unified/facts/layout.py`
+  - `src/patchtrace/unified/facts/operands.py`
+  - `src/patchtrace/unified/facts/trace.py`
+  - `src/patchtrace/unified/facts/verdict.py`
+  - `src/patchtrace/unified/fusion/arbiter.py`
+  - `src/patchtrace/unified/ir/cfg.py`
+  - `src/patchtrace/unified/ir/ingest.py`
+  - `src/patchtrace/unified/ir/pe_tables.py`
+  - `src/patchtrace/unified/ir/place.py`
+  - `src/patchtrace/unified/ir/reader.py`
+  - `src/patchtrace/unified/ir/records.py`
+  - `src/patchtrace/unified/ir/schema.py`
+  - `src/patchtrace/unified/ladder/blocking.py`
+  - `src/patchtrace/unified/ladder/engine.py`
+  - `src/patchtrace/unified/ladder/passes.py`
+  - `src/patchtrace/unified/ladder/propagate.py`
+  - `src/patchtrace/unified/ladder/residual.py`
+  - `src/patchtrace/unified/ladder/state.py`
+  - `src/patchtrace/unified/pair_text.py`
+  - `src/patchtrace/unified/pipeline.py`
+  - `src/patchtrace/unified/read_model.py`
+  - `src/patchtrace/unified/registry.py`
+  - `src/patchtrace/unified/sources/__init__.py`
+  - `src/patchtrace/unified/sources/diaphora.py`
+  - `src/patchtrace/unified/sources/manual.py`
+  - `src/patchtrace/unified/sources/secondary.py`
+  - `src/patchtrace/unified/store.py`
+  - `src/patchtrace/unified/worker.py`
+  - `tasks/todo.md`
+  - `tests/golden/report2/project_v1_input.json`
+  - `tests/golden/report2/synergy_v2.html.golden`
+  - `tests/golden/report2/synergy_v2.json`
+  - `tests/golden/report2/synergy_v2.md`
+  - `tests/golden/report2/v1_expected.html.golden`
+  - `tests/golden/report2/v1_expected.json`
+  - `tests/golden/report2/v1_expected.md`
+  - `tests/pe_meta_builder.py`
+  - `tests/pe_rsa_builder.py`
+  - `tests/test_pe_catalog_win.py`
+  - `tests/test_pe_der.py`
+  - `tests/test_pe_inspect_cli.py`
+  - `tests/test_pe_meta_compare.py`
+  - `tests/test_pe_rsa.py`
+  - `tests/test_pe_signature.py`
+  - `tests/test_report2_adapters.py`
+  - `tests/test_report2_cli.py`
+  - `tests/test_report2_contracts.py`
+  - `tests/test_report2_export.py`
+  - `tests/test_report2_export_vm.py`
+  - `tests/test_report2_render.py`
+  - `tests/test_report2_sections.py`
+  - `tests/test_report2_support.py`
+  - `tests/test_report2_synergy.py`
+  - `tests/test_report2_text.py`
+  - `tests/test_ui_export_v2.py`
+  - `tests/test_ui_inspection_signing.py`
+  - `tests/test_ui_unified.py`
+  - `tests/test_ui_unified_pipeline.py`
+  - `tests/test_unified_bench.py`
+  - `tests/test_unified_cli.py`
+  - `tests/test_unified_cor_keys.py`
+  - `tests/test_unified_cor_pipeline.py`
+  - `tests/test_unified_cor_store.py`
+  - `tests/test_unified_diaphora_adapter.py`
+  - `tests/test_unified_diaphora_wire.py`
+  - `tests/test_unified_extract_runner.py`
+  - `tests/test_unified_fct_datamap.py`
+  - `tests/test_unified_fct_irchannels.py`
+  - `tests/test_unified_fct_layout.py`
+  - `tests/test_unified_fct_operands.py`
+  - `tests/test_unified_fct_verdict.py`
+  - `tests/test_unified_fus_manual.py`
+  - `tests/test_unified_fus_orientation.py`
+  - `tests/test_unified_fus_snapshot_bounds.py`
+  - `tests/test_unified_gate_eval.py`
+  - `tests/test_unified_gates.py`
+  - `tests/test_unified_gui_hardening.py`
+  - `tests/test_unified_har_bench.py`
+  - `tests/test_unified_har_gates.py`
+  - `tests/test_unified_har_integrity.py`
+  - `tests/test_unified_har_manifest.py`
+  - `tests/test_unified_har_missing.py`
+  - `tests/test_unified_har_parity.py`
+  - `tests/test_unified_ir_pe_tables.py`
+  - `tests/test_unified_irx_cfg.py`
+  - `tests/test_unified_irx_guard.py`
+  - `tests/test_unified_irx_key.py`
+  - `tests/test_unified_irx_pe.py`
+  - `tests/test_unified_irx_reader.py`
+  - `tests/test_unified_irx_records.py`
+  - `tests/test_unified_lad_regress.py`
+  - `tests/test_unified_mutations.py`
+  - `tests/test_unified_pipeline.py`
+  - `tests/test_unified_read_model.py`
+  - `tests/test_unified_run_options_staleness.py`
+  - `tests/test_unified_w2b_async_actions.py`
+  - `tests/test_unified_w2b_name_alias.py`
+  - `tools/unified/bench.py`
+  - `tools/unified/corpus/manifest.py`
+  - `tools/unified/evaluators.py`
+  - `tools/unified/gates_u.py`
+  - `tools/unified/mutations/classes.py`
+  - `tools/unified/parity.py`
+  - `tools/unified/rowgates.py`
+
+### `claude/instance-b-features`
+
+- Head: `e492092ff360ee22d576ce6266a31dfe8d614ab4`
+- Base: `origin/main` at `5d504ff5c046bfb758623182b472976003632bba`
+- Merge base: `0c4251dfd9a5749937a355c2c3bfb38cdb4e0d3a`
+- Associated PR: none in open PR snapshot
+- Functional scope: {"docs": 1, "src/patchtrace/callgraph": 2, "src/patchtrace/intelligence": 2, "src/patchtrace/search": 1, "tests": 3}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {}; failures: []; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: unqualified: no current CI attached.
+- Recommended disposition: preserve active branch; port only verified unique patches.
+- Unique commits: `0d7dfd8392192877a4a75d33de10ae3af81db266`, `cf1862dae48168154ede97083a9bbabd9a7328e2`, `d3c386fbb27448f51e6020fc637565dde4b55961`, `1828b446980262a6cb9baaeaf5df82eaab38eef8`, `07fc9c4387738fa56220ea4c4ad6391de706c137`, `d69f02105105ae6d68529902f9135561ddb2a463`, `f07deebd013e607e56dec2409e1a0c6632fcf076`, `1af97bd1331070867cd6a52e7d890856e3b30c5c`, `991f57915e09f5f4d78882ac31696e79f900f475`, `6e8ed60078012de40b812c8a3006d687aae19a58`, `5e7dbcfa1770770399d3fa5b3be85d7b612bd484`, `ec61e949c54b0666b1e424f32bbec15b193ace76`, `a85e4932e5d16a266721a2bcd02c2e7ac3e326fd`, `77b52753f912ea6eb7d5661980f17dfe7f418f59`, `29c3aa4513b2615ac5b2ea6e4f9b1e10c09cc7de`, `975b80dea917d904c0f94eaa9eb6fcc41a486730`, `756bb89ac55949f6f6aae93ef7e369308c3667e6`, `c897d5fc701dd0285f9ad65090990f8a6bc06914`, `b06260bbe13d14aec9cf54d052d9c703f4f17df8`, `a076fe9aadd3c5d1fc2eecc009ef4b0b39081241`, `249d60f8f1cf547e8ad82835274238ad11ae08b7`, `e20b695f43314f1806c179f392cc5e93cd0b4b59`, `f509d5118cfb67beedf9baa041a82826ae6b412f`, `10a77d5a5b0a715e7246fc926bc730a3cf8b9d5e`, `6da156d2750a740cd98eca8fb158d76f4de89f26`, `ec61cb6279876ebe753fd783cb6fda1532b0ff4d`, `5e556e739b7ebdc352baa1bc95eb7b625e3cb7a9`, `b6951133b8f60b0531fbed4401ec2b735d255534`, `e3e0ba3b7a1c9fa728f9d00ca4c5d97cc72c5266`, `425416d5bccd14579a50f6d5fea577b1ff4c30e4`, `712a5ff396bb79ff26ba01f9f46771d03f68d598`, `89d8f782d55ad211d308c5eb6b9715ff441acf74`, `e429e0a3d35f03227c21d851ec1204c3a88f1310`, `f105656574579e44a5091cafa3f6b230d67c8196`, `5e437e6d6344691cf89172a985c51626abc1839a`, `12742bd83ab21cdd845edb3cc34a61819a49c251`, `a2a90d7e8c46c4f44674e5d5b3d2619f4ca9d3d6`, `324ce83c653dff4dd9c66ca4aad282b575167423`, `2060a93bb1724ec90e537bd9541e58e5593d7fc0`, `5799568e524e8f479ee84da95b3e2c0cf82455dd`, `5e46b1a2260c8e04e5e403080626facf561ebd79`, `9fdc3702934a181b9ef32a57ca6ef04f3aa718a5`, `c91f4825fdabe96f1fbb8a1e6159bb6d9cc0c2d8`, `5ccd8f43036a810dd41abbf3b7c99036b08dc361`, `bd47695c85ce8be71ae218ce8144b4681a1bcff3`, `a9f146dde2894c4dcb98bce15da41e2c136ce3d9`, `2fa13875f129b95432219c832f8c018c187cb0fc`, `56bee0f1680473b3c27ceaa9b3d9a21b74069d3e`, `39723f6e9a9a8965a93adc1dce3f6662fde2762e`, `0c640c20e776f356fa2d6d57250f9cf94103089e`, `81e483b9d921463257460156389bd3161d257330`, `9af84dc107720dd9cd5f5c5929927fbf4ef8505b`, `b1a4e0caf4aeb0fd7c576ea4730b24025544f6e8`, `5bed417ad5f908f4effa13b66a1480fa20f7443d`, `62a77c0e95600527733117be47bf9a5de2c22ffd`, `d147eb3584e3ae809ae75dccd01a0ecec159897e`, `9961d8709358a83081b3963eebe4118a78aaf207`, `d7e6a0ff65d5327593a537aad0846993166c00de`, `f9ce2462975c2a341d895584ec918d0f19da89bb`, `bf211095cccb8be26dce2cb60c2efaf7595bf2a8`, `03358526006fbb76f27d3a5cc9d873a2fe61a780`, `a1800c350a687065547e6e5ca108e2d6602cbedd`, `83eae6835d13e013e3fe4515113a07eaffaca7f8`, `d8dbc8f73cb2b3fbd2f5cc7661a8395d582e8bd8`, `4ec97c10b5b5320b816d5276ea43104582c2be5c`, `97fa9b8b4e6f4a3ea1328e4902a9954e14a3c3ee`, `a8d69db94d4495709a8ede9da7d67295c54c8af8`, `67cb9aecfd548e14c608753492d87882823bf579`, `2f788c63c0153e744c41db29412b759198fc51d0`, `a75361f4d43962a047db6b31d9cd9d17ecfa3bed`, `efe806da093dede3c82b43b8fccecaadc10b5c12`, `ee622ca200bf67689bdf0a1878f52bba464490c4`, `92e20ffec0cdda396312ca8f99be2341780cc59f`, `b68fb110c540696e5b855f8670b2b47f37f322e5`, `7c2e83f8de541ac4dac1cb7b61976fed463df06d`, `a55b54eb894b505cc1af1455e3ec049440ce0ffc`, `e2a51318ca7a53a908bb28e2f5cbe02789505511`, `22dca15ea9e87e85b3adebe159bc71ac280467f9`, `39e86868c56af5ff52d0f6a12aaba61e3d8b0ac2`, `878069db19c9d3dd49a53c3df2e819fceb060b0c`, `e013db2bc9bf34488afebde6c53adefc373b3211`, `fd7898355c29c9938f80d91743f5d5fb0d9bfd19`, `96b6dee05056525d63e5e536230f931b5969ea38`, `cf3e2ad51957ab6ab61d348d93c352074e4d51e6`, `81162ffd2df3318ad1d15f77fa3fe1a79209b6d4`, `c8bdf3203184780a1d88535b629e08a8efbf9f09`, `4cf856b37a98ab4c23230dbf7bcacc20b94e89ab`, `9160c0637fad7a31c212215f1cfe07153f049499`, `5f98f9408d17df0a900a7f987b8876ce845d34a9`, `e3216cb9459cdcd8cf92acf3a2fbd3fbce9baa55`, `bb92305e82af58b39779cb5b0c294c0fc3187e54`, `a51d97fc7d3848c6fec48b4f63b609757b1d32a1`, `5191c3ccf29482dbd3d5799e24bedbd3fc87fdd4`, `06b26d83ba9c7900c974dc4afba4d56f788d092c`, `6e1e153bd90b251b81b9cc919b0cbbb7f1d8d9ac`, `e492092ff360ee22d576ce6266a31dfe8d614ab4`
+- Patch-equivalent commits: none
+- Modified files:
+  - `docs/plans/ledger-B.md`
+  - `src/patchtrace/callgraph/layout.py`
+  - `src/patchtrace/callgraph/limits.py`
+  - `src/patchtrace/intelligence/tools/capa.py`
+  - `src/patchtrace/intelligence/tools/runner.py`
+  - `src/patchtrace/search/saved.py`
+  - `tests/test_callgraph_layout.py`
+  - `tests/test_intel_tools_runner_cache.py`
+  - `tests/test_search_saved.py`
+
+### `claude/instance-c-research`
+
+- Head: `cebf38a30ce3d4967ed00a4773f8f9898a9ea708`
+- Base: `origin/main` at `5d504ff5c046bfb758623182b472976003632bba`
+- Merge base: `4cf78d64dd542b508fdf89b2bac70ca16630fa29`
+- Associated PR: none in open PR snapshot
+- Functional scope: {"docs": 2}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {}; failures: []; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: unqualified: no current CI attached.
+- Recommended disposition: preserve active branch; port only verified unique patches.
+- Unique commits: `246eed794dbda3d3ebc6f2a8f29736ec09b94fb6`, `c9a01b6f4e6e51b35b0685dcac96c4cdc1400101`, `785998a0a9c1c6dda46d81097ce861fb5cd648e4`, `974e2696b692e7d03389f2b9d41f3db008184848`, `f11aecd43a4c2db5d23fd30c5989d5e33ae09733`, `7cd22cabbb785c8a4a729b39b200ef0a324ef721`, `0500a78b0d96e54c083613c50a3bacdb8aeecb1c`, `a75e182dde305c453496d4eaa6c411b1ea5f369d`, `0ca419f1026abfe52cb9a0e4141ea016a4476756`, `5b9cd96119966c421f9a7f140c1dd8b1211bddb9`
+- Patch-equivalent commits: `cebf38a30ce3d4967ed00a4773f8f9898a9ea708`
+- Modified files:
+  - `docs/plans/chatgpt-instance-c-prompt.md`
+  - `docs/plans/instance-c-handoff.md`
+
+### `claude/instance-d-gui`
+
+- Head: `2fa113889d1ffee6b68496993d3b3b6ebb0ba035`
+- Base: `origin/main` at `5d504ff5c046bfb758623182b472976003632bba`
+- Merge base: `2fa113889d1ffee6b68496993d3b3b6ebb0ba035`
+- Associated PR: none in open PR snapshot
+- Functional scope: {}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {}; failures: []; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: no unique patches relative to base.
+- Recommended disposition: superseded relative to base; verify before closing/deleting.
+- Unique commits: none
+- Patch-equivalent commits: none
+- Modified files:
+
+### `claude/java-version-retry-integration`
+
+- Head: `45fa67ad7e924cb4e2df1cd487c04a2c0ddab381`
+- Base: `origin/main` at `5d504ff5c046bfb758623182b472976003632bba`
+- Merge base: `45fa67ad7e924cb4e2df1cd487c04a2c0ddab381`
+- Associated PR: none in open PR snapshot
+- Functional scope: {}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {}; failures: []; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: no unique patches relative to base.
+- Recommended disposition: superseded relative to base; verify before closing/deleting.
+- Unique commits: none
+- Patch-equivalent commits: none
+- Modified files:
+
+### `claude/jolly-fermi-eghaxy`
+
+- Head: `99f8328ce89d02f200cf9fbc5852d9801761af28`
+- Base: `origin/main` at `5d504ff5c046bfb758623182b472976003632bba`
+- Merge base: `99f8328ce89d02f200cf9fbc5852d9801761af28`
+- Associated PR: none in open PR snapshot
+- Functional scope: {}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {}; failures: []; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: no unique patches relative to base.
+- Recommended disposition: superseded relative to base; verify before closing/deleting.
+- Unique commits: none
+- Patch-equivalent commits: none
+- Modified files:
+
+### `claude/modest-hamilton-kz2gta`
+
+- Head: `280bf05856eb60f4ddb0d58210616f65a3735816`
+- Base: `origin/main` at `5d504ff5c046bfb758623182b472976003632bba`
+- Merge base: `a04f5a299a8d4afef023261e52e08d14678cf1e7`
+- Associated PR: https://github.com/djshellshoxxx/patchtrace/pull/126
+- Functional scope: {"docs": 4, "src/patchtrace/callgraph": 2, "src/patchtrace/kbcorrelation": 1, "src/patchtrace/rules": 3, "tests": 6}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {'SKIPPED': 1, 'SUCCESS': 2}; failures: []; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: candidate: inspect review/protection and focused tests.
+- Recommended disposition: preserve active branch; port only verified unique patches.
+- Unique commits: `7bec5742cbe6c515d2543c2c8185225881391b5a`, `d707f54be2cf447c654a3a1d446c80643a0a7576`, `3f0df14d9d68dfd9523afd7f9e97482f9d7907ff`, `492620e4d18a98b8830a8887f768e3d07af3ad97`, `a5557949d0cfa0594209b2060026ed4c58d8c0fb`, `a6a219a69f5ce74c6f7943873612582fb3d6d2ef`, `0ab50c754a5e6238e5d638b13f69a3d51b76e292`, `8d958f0a1950a29c1d1cef9525a114654f4c9904`, `19013569956c3af929e9eccc4f20e5d22a4f8faa`, `798e11ef345ed7a7a65508a466eaf77ee85ef77c`
+- Patch-equivalent commits: none
+- Modified files:
+  - `docs/plans/milestone-ledger-20261030.md`
+  - `docs/specs/kb-patch-search-source-adapters.md`
+  - `docs/specs/program-e/WB2-integration-plan.md`
+  - `docs/specs/yara-x-rule-workflow.md`
+  - `src/patchtrace/callgraph/algo.py`
+  - `src/patchtrace/callgraph/labels.py`
+  - `src/patchtrace/kbcorrelation/index.py`
+  - `src/patchtrace/rules/export.py`
+  - `src/patchtrace/rules/matrix.py`
+  - `src/patchtrace/rules/store.py`
+  - `tests/test_callgraph_algo.py`
+  - `tests/test_callgraph_labels.py`
+  - `tests/test_kbc_bugfixes_20261029.py`
+  - `tests/test_rules_export.py`
+  - `tests/test_rules_matrix.py`
+  - `tests/test_rules_store.py`
+
+### `claude/patchtrace-cli-dotpath-spec-er6hha`
+
+- Head: `62b9a3de4d1036a6e4b9bd2618372f4042b15f7f`
+- Base: `origin/main` at `5d504ff5c046bfb758623182b472976003632bba`
+- Merge base: `5667b759f553e946885d0998953c301666907de6`
+- Associated PR: none in open PR snapshot
+- Functional scope: {".github": 1, "docs": 10, "src/patchtrace/buildinfo.py": 1, "src/patchtrace/config.py": 1, "src/patchtrace/models.py": 1, "tasks": 1, "tests": 2, "tools": 3}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {}; failures: []; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: unqualified: no current CI attached.
+- Recommended disposition: preserve active branch; port only verified unique patches.
+- Unique commits: `4b354ee635bc55690e6e4dd10031e6e12c9aa14d`, `e1354a3fb531b08da0c46d98f33ca637e4b330b0`, `b4b8171140b760aac12193fd7fe795c9676134f1`
+- Patch-equivalent commits: none
+- Modified files:
+  - `.github/workflows/qa-windows.yml`
+  - `docs/modules.md`
+  - `docs/schemas/BackendCapabilities.json`
+  - `docs/schemas/CliRunReport.json`
+  - `docs/schemas/PatchTraceConfig.json`
+  - `docs/schemas/examples.json`
+  - `docs/specs/architecture.md`
+  - `docs/specs/cli.md`
+  - `docs/specs/schemas.md`
+  - `docs/specs/verification.md`
+  - `docs/windows.md`
+  - `src/patchtrace/buildinfo.py`
+  - `src/patchtrace/config.py`
+  - `src/patchtrace/models.py`
+  - `tasks/todo.md`
+  - `tests/test_config.py`
+  - `tests/test_packaging.py`
+  - `tools/build_windows.py`
+  - `tools/generate_examples.py`
+  - `tools/generate_schemas.py`
+
+### `claude/patchtrace-features`
+
+- Head: `66e9adc50fb118c04e5e24eacd0c221ca483a130`
+- Base: `origin/main` at `5d504ff5c046bfb758623182b472976003632bba`
+- Merge base: `e093ade3e66eebf915d1c93c75cf18c033c2abb5`
+- Associated PR: https://github.com/djshellshoxxx/patchtrace/pull/100
+- Functional scope: {".gitattributes": 1, "docs": 11, "src/patchtrace/backend.py": 1, "src/patchtrace/cli.py": 1, "src/patchtrace/cli_commands": 1, "src/patchtrace/diaphora": 9, "src/patchtrace/enrichment": 2, "src/patchtrace/ghidriff_launch": 3, "src/patchtrace/reports.py": 1, "src/patchtrace/symbols": 5, "src/patchtrace/tooltips.py": 1, "src/patchtrace/ui.py": 1, "src/patchtrace/ui_symbols.py": 1, "tasks": 1, "tests": 9, "tools": 4}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {'SUCCESS': 12, 'SKIPPED': 2}; failures: []; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: candidate: inspect review/protection and focused tests.
+- Recommended disposition: preserve active branch; port only verified unique patches.
+- Unique commits: `7e416ed9d3f8a5ccf683a4fc80d46cab34263530`, `1a22e423e1393aa7984f8368b867638f385d8520`, `0ef5a4bccca58f0fa2f663cbae15e1f184321e8e`, `88cee3ae98c8b91c29b58eb033295acd078278c9`, `6b798e0b2069abd66661a8cf1aa72a0ef6cd8546`, `0419328f04c7dd535470ad379197d17935f20af3`, `6ab7de982af95ccad0406cf8ed2e98deff72635c`, `66e9adc50fb118c04e5e24eacd0c221ca483a130`
+- Patch-equivalent commits: none
+- Modified files:
+  - `.gitattributes`
+  - `docs/modules.md`
+  - `docs/qa.md`
+  - `docs/schemas/diaphora/DiaphoraDiffManifest.json`
+  - `docs/schemas/diaphora/DiaphoraMatch.json`
+  - `docs/schemas/diaphora/DiaphoraMatchSet.json`
+  - `docs/schemas/diaphora/DiaphoraUnmatched.json`
+  - `docs/schemas/diaphora/examples.json`
+  - `docs/specs/INDEX.md`
+  - `docs/specs/REGISTRY.md`
+  - `docs/specs/diaphora-optional-engine.md`
+  - `docs/specs/ghidriff-launcher-symbols.md`
+  - `src/patchtrace/backend.py`
+  - `src/patchtrace/cli.py`
+  - `src/patchtrace/cli_commands/diaphora.py`
+  - `src/patchtrace/diaphora/__init__.py`
+  - `src/patchtrace/diaphora/address_map.py`
+  - `src/patchtrace/diaphora/bridge.py`
+  - `src/patchtrace/diaphora/cli.py`
+  - `src/patchtrace/diaphora/contracts.py`
+  - `src/patchtrace/diaphora/provenance.py`
+  - `src/patchtrace/diaphora/result_import.py`
+  - `src/patchtrace/diaphora/service.py`
+  - `src/patchtrace/diaphora/sqlite_guard.py`
+  - `src/patchtrace/enrichment/cache.py`
+  - `src/patchtrace/enrichment/storage.py`
+  - `src/patchtrace/ghidriff_launch/__init__.py`
+  - `src/patchtrace/ghidriff_launch/ptlaunch.py`
+  - `src/patchtrace/ghidriff_launch/validate.py`
+  - `src/patchtrace/reports.py`
+  - `src/patchtrace/symbols/cli_args.py`
+  - `src/patchtrace/symbols/modes.py`
+  - `src/patchtrace/symbols/pdbid.py`
+  - `src/patchtrace/symbols/project.py`
+  - `src/patchtrace/symbols/staging.py`
+  - `src/patchtrace/tooltips.py`
+  - `src/patchtrace/ui.py`
+  - `src/patchtrace/ui_symbols.py`
+  - `tasks/todo.md`
+  - `tests/diaphora_support.py`
+  - `tests/test_backend_symbol_local.py`
+  - `tests/test_diaphora_cli.py`
+  - `tests/test_diaphora_import.py`
+  - `tests/test_diaphora_schemas.py`
+  - `tests/test_nway_series.py`
+  - `tests/test_ptlaunch.py`
+  - `tests/test_symbols_staging.py`
+  - `tests/test_ui_symbol_local.py`
+  - `tools/build_linux.py`
+  - `tools/build_windows.py`
+  - `tools/generate_diaphora_schemas.py`
+  - `tools/pyinstaller_hooks/hook-patchtrace.ghidriff_launch.py`
+
+### `claude/patchtrace-haiku-agent-motpbx`
+
+- Head: `9fddf99e2635e28129b2deda0ff155b00d9ba471`
+- Base: `origin/main` at `5d504ff5c046bfb758623182b472976003632bba`
+- Merge base: `e093ade3e66eebf915d1c93c75cf18c033c2abb5`
+- Associated PR: https://github.com/djshellshoxxx/patchtrace/pull/102
+- Functional scope: {".gitattributes": 1, ".github": 1, "NOTES.md": 1, "SECURITY_REVIEW.md": 1, "SPEC_STATUS.md": 1, "docs": 7, "pyproject.toml": 1, "src/patchtrace/__main__.py": 1, "src/patchtrace/acquisition": 1, "src/patchtrace/app_icon.py": 1, "src/patchtrace/ingestion.py": 1, "src/patchtrace/normalization.py": 1, "src/patchtrace/pe_overview": 1, "src/patchtrace/persistence.py": 1, "src/patchtrace/reports.py": 1, "src/patchtrace/resources": 1, "src/patchtrace/secondary": 2, "src/patchtrace/tooltips.py": 1, "src/patchtrace/ui.py": 1, "tasks": 1, "tests": 7, "tools": 6}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {'SUCCESS': 15, 'SKIPPED': 5, 'FAILURE': 1}; failures: ['SonarCloud Code Analysis']; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: blocked: failing checks.
+- Recommended disposition: preserve active branch; port only verified unique patches.
+- Unique commits: `1ae38be0de865b3c09b7257b4094b1b6de6cd635`, `ff9ae7e7e212537f68be36779646f1175518c6ff`, `430eca0799a12bf8b63f446da17220a00c49b942`, `9121bbc3e307c9641a47df475fbeecec1a7e6f71`, `108911256464137bcc9b0ff8fc6eee6b11fc3f0e`, `ce43458d5c00a27738effd455c32cba702dcb78d`, `62a4bb3c5ef9d152eb9d8bc2ecb414db5ec25b92`, `475bd2d19347f411ed003c6599d21ceccef6a5b3`, `90dfc497d46da8f73467e42175f0b2080456348a`, `47d3a40cc25d785cabb353053db3232b996c5981`, `ebbef02b8cd02b694c2e4a77f70133d6d3d6fadb`, `79e6fea6e3ff0846bd03fe1efdf03bb6b21ac265`, `9fddf99e2635e28129b2deda0ff155b00d9ba471`
+- Patch-equivalent commits: none
+- Modified files:
+  - `.gitattributes`
+  - `.github/workflows/qa-windows.yml`
+  - `NOTES.md`
+  - `SECURITY_REVIEW.md`
+  - `SPEC_STATUS.md`
+  - `docs/modules.md`
+  - `docs/plans/claude-autonomous-alpha-handoff-20261013.md`
+  - `docs/qa.md`
+  - `docs/specs/architecture.md`
+  - `docs/specs/gui-preflight-inspection.md`
+  - `docs/specs/windows-acceptance-and-milestone-builds.md`
+  - `docs/specs/windows-release-signing-policy.md`
+  - `pyproject.toml`
+  - `src/patchtrace/__main__.py`
+  - `src/patchtrace/acquisition/winbindex.py`
+  - `src/patchtrace/app_icon.py`
+  - `src/patchtrace/ingestion.py`
+  - `src/patchtrace/normalization.py`
+  - `src/patchtrace/pe_overview/tables.py`
+  - `src/patchtrace/persistence.py`
+  - `src/patchtrace/reports.py`
+  - `src/patchtrace/resources/patchtrace-mark.svg`
+  - `src/patchtrace/secondary/bindiff_probe.py`
+  - `src/patchtrace/secondary/rzdiff.py`
+  - `src/patchtrace/tooltips.py`
+  - `src/patchtrace/ui.py`
+  - `tasks/todo.md`
+  - `tests/test_codex_pkg_packaging.py`
+  - `tests/test_hostile_input_fuzz_regressions.py`
+  - `tests/test_release_gate.py`
+  - `tests/test_report_export_backup.py`
+  - `tests/test_tooltips.py`
+  - `tests/test_windows_build_resources.py`
+  - `tests/test_windows_installer_manifest.py`
+  - `tools/build_windows.py`
+  - `tools/check_windows_exe.py`
+  - `tools/package_windows_installer.py`
+  - `tools/pyinstaller_hooks/hook-patchtrace.app_icon.py`
+  - `tools/windows_icon.py`
+  - `tools/windows_version_info.py`
+
+### `claude/patchtrace-multi-worker-consolidate-24ct7v`
+
+- Head: `0477b7f823c52e316a472f17c6b81edbbba7aae5`
+- Base: `origin/main` at `5d504ff5c046bfb758623182b472976003632bba`
+- Merge base: `25b2ac8000e4bb2b941ce44ccbbb25a7eff5c278`
+- Associated PR: https://github.com/djshellshoxxx/patchtrace/pull/179
+- Functional scope: {"docs": 3, "tests": 2, "tools": 1}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {'SUCCESS': 11, 'SKIPPED': 3, 'FAILURE': 1}; failures: ['SonarCloud Code Analysis']; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: blocked: failing checks.
+- Recommended disposition: preserve active branch; port only verified unique patches.
+- Unique commits: `baa4023241342c4c126aaa828edd2796b6146349`, `e7a70480d7bddfa762e104d3a1cb0bfec0712b98`, `9efe656a6539a57f3ab0eef58d032a03b396e8a8`, `8357b487e06a5c0fb586d10f2d55adf87f9a064c`, `44f72586a651b05af0c4afa8c7d8ed6b2498285c`, `0477b7f823c52e316a472f17c6b81edbbba7aae5`
+- Patch-equivalent commits: none
+- Modified files:
+  - `docs/modules.md`
+  - `docs/plans/claude-consolidate-and-build-prompt-20261104.md`
+  - `docs/plans/ledger-consolidation-20261104.md`
+  - `tests/test_branch_inventory.py`
+  - `tests/test_ui_unified.py`
+  - `tools/dev/branch_inventory.py`
+
+### `claude/quirky-curie-n5pxf5`
+
+- Head: `a5593fa58b2ead6ecf6adfe045db242232cd52a3`
+- Base: `origin/main` at `5d504ff5c046bfb758623182b472976003632bba`
+- Merge base: `a5593fa58b2ead6ecf6adfe045db242232cd52a3`
+- Associated PR: none in open PR snapshot
+- Functional scope: {}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {}; failures: []; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: no unique patches relative to base.
+- Recommended disposition: superseded relative to base; verify before closing/deleting.
+- Unique commits: none
+- Patch-equivalent commits: none
+- Modified files:
+
+### `claude/serene-heisenberg-2y5kz6`
+
+- Head: `317acd6de1855714ed8fc7524a11a18fca8b24c2`
+- Base: `origin/main` at `5d504ff5c046bfb758623182b472976003632bba`
+- Merge base: `25b2ac8000e4bb2b941ce44ccbbb25a7eff5c278`
+- Associated PR: https://github.com/djshellshoxxx/patchtrace/pull/172
+- Functional scope: {"docs": 1}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {'SUCCESS': 12, 'SKIPPED': 3}; failures: []; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: candidate: inspect review/protection and focused tests.
+- Recommended disposition: preserve active branch; port only verified unique patches.
+- Unique commits: `e949d5a2c11ece2fe8c20d9dc80f8ae68713110c`
+- Patch-equivalent commits: none
+- Modified files:
+  - `docs/plans/claude-autonomous-finish-prompt-20261104.md`
+
+### `claude/symbol-policy-isolated-settings`
+
+- Head: `5db597257decc219db520c0dab8369b4d4e2ea5e`
+- Base: `origin/main` at `5d504ff5c046bfb758623182b472976003632bba`
+- Merge base: `615b9354fe8b5a8954d71f212ecf76f5a8d08c0e`
+- Associated PR: none in open PR snapshot
+- Functional scope: {".github": 2, "docs": 3, "src/patchtrace/backend.py": 1, "src/patchtrace/diagnostics.py": 1, "tasks": 1, "tests": 1, "tools": 3}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {}; failures: []; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: unqualified: no current CI attached.
+- Recommended disposition: preserve active branch; port only verified unique patches.
+- Unique commits: `eff750327b913cb199ab13dee599e795a1ca3c3d`, `8c34f5ad826d6cab5f35b43949407822594460f4`, `75d5526039a0c118282fb1cb21a34ba1770f4e0f`, `a929f44b63ea10a1507659b2c946735df09acbdb`, `aac726dafacb0ee927ec3041da32d7633de1f427`, `5db597257decc219db520c0dab8369b4d4e2ea5e`
+- Patch-equivalent commits: none
+- Modified files:
+  - `.github/workflows/live-backend.yml`
+  - `.github/workflows/qa-windows.yml`
+  - `docs/linux.md`
+  - `docs/modules.md`
+  - `docs/specs/architecture.md`
+  - `src/patchtrace/backend.py`
+  - `src/patchtrace/diagnostics.py`
+  - `tasks/todo.md`
+  - `tests/test_jobs.py`
+  - `tools/build_linux.py`
+  - `tools/pyinstaller_hooks/hook-PySide6.QtGui.py`
+  - `tools/seed_symbol_cache.py`
+
+### `claude/ws-a-20261104`
+
+- Head: `dabba4aea4ba0fa19e71ede05ce4fb8ab6741942`
+- Base: `origin/main` at `5d504ff5c046bfb758623182b472976003632bba`
+- Merge base: `b77d84e5decf736b031f0a24094001274de41178`
+- Associated PR: none in open PR snapshot
+- Functional scope: {".gitattributes": 1, "docs": 6, "pyproject.toml": 1, "src/patchtrace/__main__.py": 1, "src/patchtrace/app_icon.py": 1, "src/patchtrace/resources": 1, "tasks": 1, "tests": 2, "third_party": 8, "tools": 6}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {}; failures: []; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: unqualified: no current CI attached.
+- Recommended disposition: preserve active branch; port only verified unique patches.
+- Unique commits: `fa04b4ea3687fd1a48d89e506592c887290ffac4`, `ae6844a533ad4c43fa8ed03709bfb1c703a1df2e`, `aac68bbf1db4d67d233085404edd3f0b9c441ad1`, `93be2cf60c5224022c03335a3417673fbbc34eac`, `ea3606d20a7c633f580ae5006ae1d4ba631ddd22`, `1dcf4f4f1f5f1f341176c12afddafc9131d5de73`, `bd45edfd1d2e2f8732d1da735f5405c247821f98`, `dabba4aea4ba0fa19e71ede05ce4fb8ab6741942`
+- Patch-equivalent commits: none
+- Modified files:
+  - `.gitattributes`
+  - `docs/notices.md`
+  - `docs/plans/essential-integration-20261029.md`
+  - `docs/qa.md`
+  - `docs/release-process.md`
+  - `docs/specs/windows-acceptance-and-milestone-builds.md`
+  - `docs/specs/windows-release-signing-policy.md`
+  - `pyproject.toml`
+  - `src/patchtrace/__main__.py`
+  - `src/patchtrace/app_icon.py`
+  - `src/patchtrace/resources/patchtrace-mark.svg`
+  - `tasks/todo.md`
+  - `tests/test_tracker_text.py`
+  - `tests/test_windows_build_resources.py`
+  - `third_party/notices/README.md`
+  - `third_party/notices/qtsvg-6.12.0/LICENSES/BSD-3-Clause.txt`
+  - `third_party/notices/qtsvg-6.12.0/LICENSES/GPL-2.0-only.txt`
+  - `third_party/notices/qtsvg-6.12.0/LICENSES/GPL-3.0-only.txt`
+  - `third_party/notices/qtsvg-6.12.0/LICENSES/LGPL-3.0-only.txt`
+  - `third_party/notices/qtsvg-6.12.0/PROVENANCE.txt`
+  - `third_party/notices/qtsvg-6.12.0/REUSE.toml`
+  - `third_party/notices/qtsvg-6.12.0/SOURCE-HEADERS.txt`
+  - `tools/build_linux.py`
+  - `tools/build_windows.py`
+  - `tools/check_windows_exe.py`
+  - `tools/pyinstaller_hooks/hook-patchtrace.app_icon.py`
+  - `tools/windows_icon.py`
+  - `tools/windows_version_info.py`
+
+### `claude/ws-a2-ci-speed-20261104`
+
+- Head: `bef720fdd50c0ab7c93a10955b3e5ec7d2a5f992`
+- Base: `origin/main` at `5d504ff5c046bfb758623182b472976003632bba`
+- Merge base: `b0280c821a5a3a7e7d3e6c4fef03f94903a44ca2`
+- Associated PR: https://github.com/djshellshoxxx/patchtrace/pull/177
+- Functional scope: {".github": 1, "pyproject.toml": 1, "tests": 6}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {'SUCCESS': 14, 'SKIPPED': 3}; failures: []; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: candidate: inspect review/protection and focused tests.
+- Recommended disposition: preserve active branch; port only verified unique patches.
+- Unique commits: `fabc72b7ec0f2c39c243a80f66d7b8b82740e5d8`, `07db4ffe5f321b3522fab7ef721ee4fd00936ea9`, `dc1d78bee99b3f406a026fa1036b7d6924c8b076`, `355e7ad9d9a483e61b4eb66c56f03cb4871bedb8`, `f8153de62e9151a5f838f743fd2d61900201a47f`, `bef720fdd50c0ab7c93a10955b3e5ec7d2a5f992`
+- Patch-equivalent commits: none
+- Modified files:
+  - `.github/workflows/qa-windows.yml`
+  - `pyproject.toml`
+  - `tests/stress/test_cli_stress_perf.py`
+  - `tests/test_backend_symbol_local.py`
+  - `tests/test_jobs.py`
+  - `tests/test_ui_related_panel.py`
+  - `tests/test_ui_unified.py`
+  - `tests/test_unified_pipeline.py`
+
+### `claude/ws-bc-20261104`
+
+- Head: `e1193c8896e009930dae4edec974d9795876f0e0`
+- Base: `origin/main` at `5d504ff5c046bfb758623182b472976003632bba`
+- Merge base: `25b2ac8000e4bb2b941ce44ccbbb25a7eff5c278`
+- Associated PR: https://github.com/djshellshoxxx/patchtrace/pull/174
+- Functional scope: {".gitattributes": 1, ".github": 2, "docs": 16, "src/patchtrace/backend.py": 1, "src/patchtrace/calibration": 1, "src/patchtrace/kbcorrelation": 2, "src/patchtrace/normalization.py": 1, "src/patchtrace/secondary": 1, "src/patchtrace/ui.py": 1, "src/patchtrace/unified": 1, "tasks": 1, "tests": 15, "tools": 14}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {'SUCCESS': 27, 'SKIPPED': 4, 'FAILURE': 1}; failures: ['SonarCloud Code Analysis']; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: blocked: failing checks.
+- Recommended disposition: preserve active branch; port only verified unique patches.
+- Unique commits: `92e7e88917f32fd1860c6a3013f6b254622dc971`, `00d323edddd67c9800ca609546a1ad36d3326303`, `c2107f57e011d8241c76a5d249e95127aab0492e`, `0b5c50873b84d718a147a2ee1978bac49d61cd17`, `5175ccbeb9224b444be620828a2a77f3ecfd6465`, `e8cd27d1654a960e9d3d3d9dbfe319ca92a9f9a4`, `d22853d34c231050f58382eb76f79dddc7c26199`, `671f7ecb788381f58f13f41e73a4f6605f485ae4`, `aff21ed4b082421f8c5fe47a2aab4fc0aff54327`, `3d8354922bcdbee375d84f4de692c444283436f9`, `78733709d943b316ca77040b9d47a51518b26d19`, `33c7ad326718adc45ca592656be8ea1d4e3d69c5`, `4f1639c98a56db2321713801e041b5808155596e`, `8bf6338a6a220776530284c343c211abccdda11c`, `f4c4a6d5d77fa79e5a27b1c723ab83234c50bee3`, `dec89fa69b1ed518dca895109d316d7a0fdf109b`, `01109b6dfd1a21b2983faad77c8cc167ac350bc0`, `b1411fb57774233ef909fabf4afab34ab4b67dff`, `164b3949b5d6dd7e0d813bef80fbe8d3725a57ac`, `9a992d51ff2c9716c980dd59782c8afb9ee59af5`, `a00100d4148b7d03bec40cc7ee04339a244c852b`, `599778a05386ea1e0f382c4d978f0a16e62c7b60`, `b3da70991129fc9d5d414ab5ae9741f15734e5c5`, `4cc03029abd28899ae8a4a6e19e65dd0a8f51920`, `df5f251222d9fa3a78542617363d8a0ef2856983`, `ed7be746cf460db66c7cfed8b887dbe4844137fd`, `e1193c8896e009930dae4edec974d9795876f0e0`
+- Patch-equivalent commits: none
+- Modified files:
+  - `.gitattributes`
+  - `.github/workflows/rzdiff-producer.yml`
+  - `.github/workflows/unified-live-gates.yml`
+  - `docs/audits/20261015-core-app.md`
+  - `docs/handoff/rzdiff-native-red-control.md`
+  - `docs/handoff/rzdiff-producer-implementation.md`
+  - `docs/modules.md`
+  - `docs/plans/ledger-autonomous-20261104.md`
+  - `docs/qa.md`
+  - `docs/qa/rzdiff-native-evidence-red.log`
+  - `docs/qa/rzdiff-native-evidence-tests.log`
+  - `docs/qa/rzdiff-native-oracle-red.log`
+  - `docs/qa/rzdiff-native-oracle-tests.log`
+  - `docs/qa/rzdiff-producer-boundary.log`
+  - `docs/qa/rzdiff-producer-checkpoint.json`
+  - `docs/specs/architecture.md`
+  - `docs/specs/unified-engine/06-adapters.md`
+  - `docs/specs/unified-engine/08-evaluation.md`
+  - `docs/specs/unified-engine/10-amendments.md`
+  - `src/patchtrace/backend.py`
+  - `src/patchtrace/calibration/features.py`
+  - `src/patchtrace/kbcorrelation/cli_leads.py`
+  - `src/patchtrace/kbcorrelation/leads.py`
+  - `src/patchtrace/normalization.py`
+  - `src/patchtrace/secondary/reconcile.py`
+  - `src/patchtrace/ui.py`
+  - `src/patchtrace/unified/sources/ghidriff.py`
+  - `tasks/todo.md`
+  - `tests/test_evalcore_ghidriff_one_to_many.py`
+  - `tests/test_hostile_fuzz_parsers.py`
+  - `tests/test_jobs.py`
+  - `tests/test_normalization_one_to_many.py`
+  - `tests/test_rzdiff_native_evidence.py`
+  - `tests/test_rzdiff_producer_patch.py`
+  - `tests/test_ui_unified.py`
+  - `tests/test_unified_gate_eval.py`
+  - `tests/test_unified_ghidriff_one_to_many.py`
+  - `tests/test_unified_live_force_identical.py`
+  - `tests/test_unified_live_native_failure_details.py`
+  - `tests/test_unified_live_pairs.py`
+  - `tests/test_unified_live_pairs_r1.py`
+  - `tests/test_unified_live_workflow.py`
+  - `tests/test_unified_rb01_harness.py`
+  - `tools/calibration/evalcore/engines/ghidriff.py`
+  - `tools/calibration/tier_r/build.py`
+  - `tools/calibration/tier_r/debuginfo.py`
+  - `tools/calibration/tier_r/labeler.py`
+  - `tools/fuzz_parsers.py`
+  - `tools/rzdiff/boundary_control.c`
+  - `tools/rzdiff/native_control.c`
+  - `tools/rzdiff/native_evidence.py`
+  - `tools/rzdiff/patch_producer.py`
+  - `tools/rzdiff/singleton-ownership.patch`
+  - `tools/unified/evaluators.py`
+  - `tools/unified/gates_u.py`
+  - `tools/unified/live_pairs.py`
+  - `tools/unified/mutations/templates.py`
+
+### `claude/ws-i-20261104`
+
+- Head: `b03a77b8a2fe9e4fa65fbe43889e06f4e68180e9`
+- Base: `origin/main` at `5d504ff5c046bfb758623182b472976003632bba`
+- Merge base: `b0280c821a5a3a7e7d3e6c4fef03f94903a44ca2`
+- Associated PR: none in open PR snapshot
+- Functional scope: {"docs": 5, "tasks": 1, "tests": 1}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {}; failures: []; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: unqualified: no current CI attached.
+- Recommended disposition: preserve active branch; port only verified unique patches.
+- Unique commits: `92e7e88917f32fd1860c6a3013f6b254622dc971`, `def2a99e4f336e0b37b9eb0d9e31e6bc31e4ea74`, `ea04b3b34e4e3f59e512447b547c472acb27c6be`, `607944a9b8295e8b5606877f810566d494dbf9a0`, `a371aef300fd76c8a7ccdfb2f7d963958c283a79`, `93587a0c19c654cd003938ad780520340248a87e`, `25612512b4b89d56420c59ee12a4ffa3fb7611ec`
+- Patch-equivalent commits: none
+- Modified files:
+  - `docs/modules.md`
+  - `docs/plans/ledger-autonomous-20261104.md`
+  - `docs/plans/pr-triage-20261104.md`
+  - `docs/qa.md`
+  - `docs/specs/REGISTRY.md`
+  - `tasks/todo.md`
+  - `tests/test_tracker_text.py`
+
+### `claude/ws-p-20261104`
+
+- Head: `597a8b106491cd587cedf1273ee5ef6d56d71508`
+- Base: `origin/main` at `5d504ff5c046bfb758623182b472976003632bba`
+- Merge base: `25b2ac8000e4bb2b941ce44ccbbb25a7eff5c278`
+- Associated PR: https://github.com/djshellshoxxx/patchtrace/pull/176
+- Functional scope: {"README.md": 1, "docs": 45, "src/patchtrace/__main__.py": 1, "src/patchtrace/gui": 6, "src/patchtrace/kbcorrelation": 5, "src/patchtrace/secondary": 2, "src/patchtrace/service.py": 1, "src/patchtrace/tooltips.py": 1, "src/patchtrace/ui.py": 1, "src/patchtrace/ui_evidence.py": 1, "tests": 27, "tools": 7}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {'SUCCESS': 25, 'SKIPPED': 4, 'FAILURE': 1}; failures: ['SonarCloud Code Analysis']; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: blocked: failing checks.
+- Recommended disposition: preserve active branch; port only verified unique patches.
+- Unique commits: `fa04b4ea3687fd1a48d89e506592c887290ffac4`, `c2d9ddd6388ec56b29b5184b031d1d34c155b361`, `296e29ac80e6971e7ed2cf640895d6547f1a649b`, `37a6fed01e9bcf910f6ae1dd154fd9387f1b6a0d`, `bad8fa4c4b02b2f091970fd91391f2e6c7dfb55d`, `500ab5a9d1818789a79113c166a3a72448d0fe6a`, `d8d8be45abd09854954210f77075f23f056b32e9`, `b9c6b6e0be24a18613ef9bf61af4c810992326d5`, `10f0623c9547c49638ef5a9eb00095420632853c`, `5f54fd990bc7cb21e387030a6181d7f22a344573`, `1e468fe2d3fd3305caf454091dfb4864fc3c17c6`, `d0fa3678118bc369e2a686bf5e3647da07c7b6d5`, `1b24088c658429ccc02fec5557496258b7531f31`, `8d76a72dc285025d4faead3285fbaf6c5d5a7d1b`, `b55aa6984168bf9349d32f924c5fe32918a99dd0`, `5668b15f8b1f388723f5412b4c3183297aa0919c`, `4a9e32bb490e4b3c000808554988103b4e50aa61`, `647502ceff0602d2b03f1864136da431a1436511`, `5984511ca0d00c3d345cf8f21312e3a60535d00c`, `54357119a95b8fda2ce1f8f5463e0d26c815c57a`, `ebc9fb74c8e441ec7b81ffb367cc82bacb3b4776`, `e2bacfcf085e20959a9fbc7a633a3f6b8e21b962`, `db0a0b05d48e4c8fb394ec4e221677b5efb37954`, `8c42d231b23c63c83e10e9bc8ae31d7d7689e6eb`
+- Patch-equivalent commits: none
+- Modified files:
+  - `README.md`
+  - `docs/audits/20261104-dispositions-118-120-105.md`
+  - `docs/audits/20261104-dispositions-121-116.md`
+  - `docs/qa/ci-monitor-windows-bb98bae3-20261102.tar.gz`
+  - `docs/qa/corpus-focused-20261101.log.gz`
+  - `docs/qa/corpus-html-green-final-20261101.log.gz`
+  - `docs/qa/corpus-html-red-20261101.log.gz`
+  - `docs/qa/corpus-output-persistence-20261101.json`
+  - `docs/qa/corpus-output-persistence-20261101.md`
+  - `docs/qa/corpus-prereg-green-20261101.log.gz`
+  - `docs/qa/corpus-prereg-red-20261101.log.gz`
+  - `docs/qa/corpus-review-green-final-20261101.log.gz`
+  - `docs/qa/corpus-review-red-20261101.log.gz`
+  - `docs/qa/corpus-safeguards-20261101.json`
+  - `docs/qa/corpus-safeguards-20261101.md`
+  - `docs/qa/output-completion-merged-20261102.log.gz`
+  - `docs/qa/output-credit-completion-20261102.json`
+  - `docs/qa/output-credit-completion-20261102.md`
+  - `docs/qa/output-credit-completion-20261102.tar.gz`
+  - `docs/qa/output-credit-completion-independent-review-20261102.json`
+  - `docs/qa/output-credited-replay-20261101.json`
+  - `docs/qa/output-credited-replay-20261101.md`
+  - `docs/qa/output-metadata-propagation-20261102.md`
+  - `docs/qa/output-path-fixtures-20261102.md`
+  - `docs/qa/output-path-fixtures-20261102.tar.gz`
+  - `docs/qa/pr154-escaped-opening-verification-20261101.json`
+  - `docs/qa/pr154-markdown-verification-20261101.json`
+  - `docs/qa/prereg-fence-prefix-consolidation-20261102.md`
+  - `docs/qa/prereg-main-port-20261101.log.gz`
+  - `docs/qa/prereg-main-port-20261101.md`
+  - `docs/qa/prereg-markdown-review-20261101.md`
+  - `docs/qa/prereg-review-followup-20261101.tar.gz`
+  - `docs/qa/windows-output-review-20261102.json`
+  - `docs/qa/windows-output-review-20261102.md`
+  - `docs/schemas/calibration/PairRows.json`
+  - `docs/schemas/corpus/EngineOutputDoc.json`
+  - `docs/schemas/corpus/EvaluationFailure.json`
+  - `docs/schemas/corpus/OutputCompletion.json`
+  - `docs/schemas/corpus/OutputCredits.json`
+  - `docs/schemas/corpus/TierRReport.json`
+  - `docs/schemas/corpus/report-examples/valid-engine-output-attention.json`
+  - `docs/specs/architecture.md`
+  - `docs/specs/calibration-corpus-and-model.md`
+  - `docs/specs/kb-cve/31-C-product-build-pairs.md`
+  - `docs/specs/kb-cve/31-F-workflow-ui-persistence.md`
+  - `docs/specs/known-answer-corpus.md`
+  - `src/patchtrace/__main__.py`
+  - `src/patchtrace/gui/qt/host.py`
+  - `src/patchtrace/gui/qt/palette.py`
+  - `src/patchtrace/gui/qt/project_adoption.py`
+  - `src/patchtrace/gui/qt/table.py`
+  - `src/patchtrace/gui/registry.py`
+  - `src/patchtrace/gui/table_spec.py`
+  - `src/patchtrace/kbcorrelation/context.py`
+  - `src/patchtrace/kbcorrelation/investigation_qt.py`
+  - `src/patchtrace/kbcorrelation/investigation_service.py`
+  - `src/patchtrace/kbcorrelation/service.py`
+  - `src/patchtrace/kbcorrelation/wiring.py`
+  - `src/patchtrace/secondary/bindiff_inputs.py`
+  - `src/patchtrace/secondary/scheduler.py`
+  - `src/patchtrace/service.py`
+  - `src/patchtrace/tooltips.py`
+  - `src/patchtrace/ui.py`
+  - `src/patchtrace/ui_evidence.py`
+  - `tests/test_audit105_kb_kev_acq.py`
+  - `tests/test_audit105_owner_findings.py`
+  - `tests/test_audit116_create_rollback.py`
+  - `tests/test_audit116_export_copy.py`
+  - `tests/test_audit116_stale_inspection_failure.py`
+  - `tests/test_audit118_scope_and_provenance.py`
+  - `tests/test_audit120_rzdiff_prep.py`
+  - `tests/test_backend_symbol_local.py`
+  - `tests/test_evidence_host.py`
+  - `tests/test_gui_host_palette.py`
+  - `tests/test_gui_table.py`
+  - `tests/test_kb_investigation_service.py`
+  - `tests/test_kbc_acquire_cli.py`
+  - `tests/test_kbc_contracts.py`
+  - `tests/test_kbc_msrc_review_findings.py`
+  - `tests/test_kbc_selection_guard.py`
+  - `tests/test_security_child_env_default.py`
+  - `tests/test_tier_r_credit_completion.py`
+  - `tests/test_tier_r_credited_replay.py`
+  - `tests/test_tier_r_eval_report.py`
+  - `tests/test_tier_r_output_persistence.py`
+  - `tests/test_tier_r_output_stat_compat.py`
+  - `tests/test_tooltips.py`
+  - `tests/test_train_prereg_selection.py`
+  - `tests/test_ui_kb_entry.py`
+  - `tests/test_ui_kb_investigation.py`
+  - `tests/test_unified_pipeline.py`
+  - `tools/calibration/prereg_gate.py`
+  - `tools/calibration/tier_r/cli.py`
+  - `tools/calibration/tier_r/contracts.py`
+  - `tools/calibration/tier_r/evaluate.py`
+  - `tools/calibration/tier_r/output_store.py`
+  - `tools/calibration/tier_r/report_schemas.py`
+  - `tools/calibration/train.py`
+
+### `codex/agent-skills-spec56-20261014`
+
+- Head: `4467d1f3c6e113a7da808a67e8dee9d4aa5083d8`
+- Base: `origin/main` at `5d504ff5c046bfb758623182b472976003632bba`
+- Merge base: `0fb25d8e2ad52d4bfe079c7d31b706d55569c8af`
+- Associated PR: https://github.com/djshellshoxxx/patchtrace/pull/61
+- Functional scope: {"AGENTS.md": 1, "CLAUDE.md": 1, "docs": 3, "skills": 17}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {'SUCCESS': 1, 'FAILURE': 1, 'SKIPPED': 4}; failures: ['qa (windows-latest)']; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: blocked: failing checks.
+- Recommended disposition: preserve active branch; port only verified unique patches.
+- Unique commits: `4467d1f3c6e113a7da808a67e8dee9d4aa5083d8`
+- Patch-equivalent commits: none
+- Modified files:
+  - `AGENTS.md`
+  - `CLAUDE.md`
+  - `docs/specs/INDEX.md`
+  - `docs/specs/REGISTRY.md`
+  - `docs/specs/agent-skill-workflow.md`
+  - `skills/README.md`
+  - `skills/_third_party_licenses/JuliusBrussee-caveman/LICENSE`
+  - `skills/_third_party_licenses/JuliusBrussee-caveman/LICENSE-MIT`
+  - `skills/_third_party_licenses/JuliusBrussee-caveman/LICENSING.md`
+  - `skills/_third_party_licenses/JuliusBrussee-caveman/NOTICE`
+  - `skills/caveman-commit/SKILL.md`
+  - `skills/caveman/SKILL.md`
+  - `skills/investigate-first/SKILL.md`
+  - `skills/lean-build/SKILL.md`
+  - `skills/patchtrace-evidence-integrity/SKILL.md`
+  - `skills/patchtrace-parallel-handoff/SKILL.md`
+  - `skills/patchtrace-spec-routing/SKILL.md`
+  - `skills/patchtrace-test-and-release/SKILL.md`
+  - `skills/patchtrace-token-efficient-work/SKILL.md`
+  - `skills/safe-refactor/SKILL.md`
+  - `skills/surgical-patch/SKILL.md`
+  - `skills/verify-and-stop/SKILL.md`
+
+### `codex/audit-1`
+
+- Head: `c2070cf8b4e7b0ade76cb000a5805009754eec55`
+- Base: `origin/main` at `5d504ff5c046bfb758623182b472976003632bba`
+- Merge base: `c2070cf8b4e7b0ade76cb000a5805009754eec55`
+- Associated PR: none in open PR snapshot
+- Functional scope: {}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {}; failures: []; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: no unique patches relative to base.
+- Recommended disposition: superseded relative to base; verify before closing/deleting.
+- Unique commits: none
+- Patch-equivalent commits: none
+- Modified files:
+
+### `codex/audit-2`
+
+- Head: `08b12f1b279d917736cfc17d4b8e447c8f552616`
+- Base: `origin/main` at `5d504ff5c046bfb758623182b472976003632bba`
+- Merge base: `c2070cf8b4e7b0ade76cb000a5805009754eec55`
+- Associated PR: none in open PR snapshot
+- Functional scope: {"docs": 2, "tests": 2}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {}; failures: []; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: unqualified: no current CI attached.
+- Recommended disposition: preserve active branch; port only verified unique patches.
+- Unique commits: `ee21cfc86bd44b050c9861fe31b983c853a3ec9b`, `c6479cd5524986e0fb6be591d796407b6cac7986`, `08b12f1b279d917736cfc17d4b8e447c8f552616`
+- Patch-equivalent commits: none
+- Modified files:
+  - `docs/audits/codex-packaging-1.md`
+  - `docs/audits/codex-workflows-1.md`
+  - `tests/test_codex_pkg_packaging.py`
+  - `tests/test_codex_pkg_workflows.py`
+
+### `codex/autonomous-checkpoint-20261102-0945`
+
+- Head: `d038ddea43182b8709afd447140dc74fded487c5`
+- Base: `origin/main` at `5d504ff5c046bfb758623182b472976003632bba`
+- Merge base: `25c9795bd9cd58bfad855f30594ee3a0c7584cec`
+- Associated PR: none in open PR snapshot
+- Functional scope: {".gitattributes": 1, ".github": 2, "README.md": 1, "docs": 280, "pyproject.toml": 1, "src/patchtrace/__main__.py": 1, "src/patchtrace/app_icon.py": 1, "src/patchtrace/backend.py": 1, "src/patchtrace/calibration": 1, "src/patchtrace/callgraph": 11, "src/patchtrace/diaphora": 1, "src/patchtrace/gui": 3, "src/patchtrace/kbcorrelation": 12, "src/patchtrace/persistence.py": 1, "src/patchtrace/project_creation.py": 1, "src/patchtrace/raw_alignment_view.py": 1, "src/patchtrace/representations": 2, "src/patchtrace/resources": 1, "src/patchtrace/secondary": 5, "src/patchtrace/service.py": 1, "src/patchtrace/tooltips.py": 1, "src/patchtrace/ui.py": 1, "src/patchtrace/ui_inspection.py": 1, "src/patchtrace/ui_profiles.py": 1, "src/patchtrace/ui_raw_alignment.py": 1, "src/patchtrace/unified": 12, "src/patchtrace/verified_backup.py": 1, "tasks": 1, "tests": 100, "third_party": 8, "tools": 20}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {}; failures: []; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: unqualified: no current CI attached.
+- Recommended disposition: preserve active branch; port only verified unique patches.
+- Unique commits: `b26ca2c9bf85e9b7bc385b02c7bfdad1d7d724de`, `e81adbe882ae6eb2c26a5854b24aa6acff2b27a2`, `c307aaad162cff1f4464b62469792ead8d877385`, `e9f6be5d8c0cdc36d1a65f81403901648a6fe1fc`, `fffd5badb1ed84c8e930d667eae7d2d1dcf5a64f`, `d21d66758f75c6a3912b76042a792c0b9bb2eea2`, `ecfb60193b806dd984c044ae8f347b063e3d5155`, `aa6d614f0677e908727224aa4e46453108bb1b57`, `f82489bc9ff8ad89987670fde484a5f579aefa6b`, `5736376891d273fb16fa211ed0fa2de5125c1601`, `f18687fd035b67961c1072af84f8c2b3442979e0`, `2fcd627e52a6d784d5c2e5b4ea8105e90b8589b3`, `c04ad725551fe8daa139b37aa2cdf46d6d161b65`, `b87193d1dd30635fce33986f80ceade136507a1a`, `fb91cff6d91c77a2c539c896b670d81180dcc637`, `632079f0251982068d2cac294514b2d32e06a74c`, `a4d1e6a38c34d1952584aa65d7f5f908c45547b3`, `a7f13e13ffb512f8e9621753a0ae162d78942f3b`, `17210eb704802912a2951d8efd9f5e3d27a2193b`, `e2476c19017f82785570497aa2804b4f4f2e374f`, `0ca9ff1c99d2aea5198f9dda1a93c9bde8ca0226`, `7f14f792ed516c494aea17d7ca337bae18a31cf6`, `2c87611ebe65ea227f9f3efdf9c6246ab09b177f`, `c592b680eb1013f02c8472e544bbdb417e11fdde`, `59ff5ad1379c0a787d92f62d732686c1dd0e65b4`, `015f79cc762f0ebff4cbb700480a44a88e014d9f`, `745e93426a16e0a91a961b6e0bbcb71be69f2a7e`, `25125eb8b282322bafe8e682f5c09dfbffb07fbf`, `50ced35a54f18b4de8437b78a42dd2ec689338d9`, `8f4c4a2e0021d424d403317c6780b6db026ad76b`, `c3868d8335a8f32f676905032dc1a6d0e9f22fd6`, `039c696c93a443d152d4ddc1383179408ff86b75`, `d038ddea43182b8709afd447140dc74fded487c5`
+- Patch-equivalent commits: none
+- Modified files:
+  - `.gitattributes`
+  - `.github/workflows/corpus-tier-r.yml`
+  - `.github/workflows/unified-live-gates.yml`
+  - `README.md`
+  - `docs/branch-pr-inventory-2026-10-30.md`
+  - `docs/handoff/autonomous-continuation-20261031.md`
+  - `docs/handoff/autonomous-continuation-20261101.md`
+  - `docs/handoff/autonomous-continuation-20261102.md`
+  - `docs/integration/pr-gates-01.md`
+  - `docs/integration/pr-gates-02.md`
+  - `docs/integration/pr-gates-03.md`
+  - `docs/integration/pr-gates-04.md`
+  - `docs/integration/pr-gates-05.md`
+  - `docs/integration/pr-gates-06.md`
+  - `docs/modules.md`
+  - `docs/notices.md`
+  - `docs/plans/essential-integration-20261029.md`
+  - `docs/plans/gt01-native-output-diagnosis-20261030.md`
+  - `docs/plans/gt01-overlap-disposition-20261030.md`
+  - `docs/plans/milestone-ledger-20261030.md`
+  - `docs/qa.md`
+  - `docs/qa/backup-independent-20261101.log.gz`
+  - `docs/qa/backup-publication-collision-20261101.md`
+  - `docs/qa/backup-publication-green.log.gz`
+  - `docs/qa/backup-publication-independent-review-20261101.json`
+  - `docs/qa/backup-publication-red.log.gz`
+  - `docs/qa/backup-reuse-filter-20261102.md`
+  - `docs/qa/backup-reuse-filter-20261102.tar.gz`
+  - `docs/qa/backup-reuse-filter-independent-20261102.tar.gz`
+  - `docs/qa/backup-stat-api-recovery-20261102.md`
+  - `docs/qa/backup-stat-green.log.gz`
+  - `docs/qa/backup-stat-green.xml.gz`
+  - `docs/qa/backup-stat-red.log.gz`
+  - `docs/qa/backup-windows-review-20261102.json`
+  - `docs/qa/backup-windows-review-20261102.md`
+  - `docs/qa/branch-dispositions-20261101.md`
+  - `docs/qa/callgraph-cap-review-20261102.json`
+  - `docs/qa/callgraph-cap-review-20261102.md`
+  - `docs/qa/callgraph-count-suffix-review-20261102.json`
+  - `docs/qa/callgraph-count-suffix-review-20261102.md`
+  - `docs/qa/callgraph-path-budget-20261102.tar.gz`
+  - `docs/qa/callgraph-path-budget-review-20261102.json`
+  - `docs/qa/callgraph-path-budget-review-20261102.md`
+  - `docs/qa/card-context-sources-20261102.md`
+  - `docs/qa/card-context-sources-review-20261102.json`
+  - `docs/qa/card-context-sources-review-20261102.md`
+  - `docs/qa/checkpoint2-schema.log.gz`
+  - `docs/qa/ci-monitor-checkpoint-0905.tar.gz`
+  - `docs/qa/ci-monitor-checkpoint-0932.tar.gz`
+  - `docs/qa/ci-monitor-delta-hosted-linux-20261102.tar.gz`
+  - `docs/qa/ci-monitor-windows-51a9b4af-20261102.tar.gz`
+  - `docs/qa/ci-resume-evidence-20261102.tar.gz`
+  - `docs/qa/combined-fixture-repair-20261102.md`
+  - `docs/qa/combined-fixture-repair-20261102.tar.gz`
+  - `docs/qa/combined-followups-extra-20261102.tar.gz`
+  - `docs/qa/combined-followups-root-20261102.tar.gz`
+  - `docs/qa/combined-reviewed-20261101.log.gz`
+  - `docs/qa/completion-inventory-20261031.json`
+  - `docs/qa/completion-inventory-20261101.json.gz`
+  - `docs/qa/completion-verification-20261031.json`
+  - `docs/qa/completion-verification-20261101.json`
+  - `docs/qa/continuation-verification-20261030.md`
+  - `docs/qa/corpus-focused-20261101.log.gz`
+  - `docs/qa/corpus-html-green-final-20261101.log.gz`
+  - `docs/qa/corpus-html-red-20261101.log.gz`
+  - `docs/qa/corpus-output-persistence-20261101.json`
+  - `docs/qa/corpus-output-persistence-20261101.md`
+  - `docs/qa/corpus-prereg-green-20261101.log.gz`
+  - `docs/qa/corpus-prereg-red-20261101.log.gz`
+  - `docs/qa/corpus-review-green-final-20261101.log.gz`
+  - `docs/qa/corpus-review-red-20261101.log.gz`
+  - `docs/qa/corpus-safeguards-20261101.json`
+  - `docs/qa/corpus-safeguards-20261101.md`
+  - `docs/qa/corpus-transfer-review-20261102.json`
+  - `docs/qa/corpus-transfer-review-20261102.md`
+  - `docs/qa/corpus-verified-transfer-recovery-20261102.md`
+  - `docs/qa/creation-staging-review-20261102.json`
+  - `docs/qa/creation-staging-review-20261102.md`
+  - `docs/qa/export-base-failures-20261101.log.gz`
+  - `docs/qa/export-copies-candidate-20261101.log.gz`
+  - `docs/qa/export-copies-failures-20261101.log.gz`
+  - `docs/qa/export-full-20261101.log.gz`
+  - `docs/qa/export-full-20261101.xml.gz`
+  - `docs/qa/f8-loop-author-receipt-20261101.json`
+  - `docs/qa/f8-loop-integrated-root.log.gz`
+  - `docs/qa/fixture-repair-review-20261102.json`
+  - `docs/qa/fixture-repair-review-20261102.md`
+  - `docs/qa/full-recovered-20261102.json`
+  - `docs/qa/full-recovered-20261102.tar.gz`
+  - `docs/qa/full-verification-f005c66-20261101.md`
+  - `docs/qa/full-verification-f005c66-20261101.tar.gz`
+  - `docs/qa/gt01-harness-smoke-20261030.json`
+  - `docs/qa/gt01-native-smoke-20261030.json`
+  - `docs/qa/gt12-benchmark-20261101.md`
+  - `docs/qa/gt12-combined-20261101.json`
+  - `docs/qa/gt12-evidence-20261101.json`
+  - `docs/qa/gt12-facts-20261101.invocation.json`
+  - `docs/qa/gt12-facts-20261101.json`
+  - `docs/qa/gt12-facts-20261101.log`
+  - `docs/qa/gt12-independent-controls-20261101.log`
+  - `docs/qa/gt12-independent-controls-20261101.py`
+  - `docs/qa/gt12-independent-controls-20261101.py.original.txt`
+  - `docs/qa/gt12-independent-receipt-check-20261101.log`
+  - `docs/qa/gt12-independent-receipt-check-20261101.py`
+  - `docs/qa/gt12-independent-receipt-check-20261101.py.original.txt`
+  - `docs/qa/gt12-independent-review-20261101.md`
+  - `docs/qa/gt12-independent-tests-20261101.log`
+  - `docs/qa/gt12-read-model-20261101.invocation.json`
+  - `docs/qa/gt12-read-model-20261101.json`
+  - `docs/qa/gt12-read-model-20261101.log`
+  - `docs/qa/gt12-run-stage-20261101.py`
+  - `docs/qa/gt12-smoke-4c8f9a6-20261101.json`
+  - `docs/qa/gt12-smoke-initial-20261101.json`
+  - `docs/qa/gt12-ui-calls-20261101.invocation.json`
+  - `docs/qa/gt12-ui-calls-20261101.json`
+  - `docs/qa/gt12-ui-calls-20261101.log`
+  - `docs/qa/historical-review-scripts-20261101.json`
+  - `docs/qa/identity-followup-20261101.md`
+  - `docs/qa/identity-followup-integrated-original-20261101.tar.gz`
+  - `docs/qa/identity-followup-root-integrated.log.gz`
+  - `docs/qa/identity-independent-review-20261101.md`
+  - `docs/qa/integrated-latest-bounded.log.gz`
+  - `docs/qa/integrated-output-prereg-research.log.gz`
+  - `docs/qa/integrated-rzdiff-identity.log.gz`
+  - `docs/qa/integration-checkpoint-20261101.json`
+  - `docs/qa/integration-checkpoint2-20261101.json`
+  - `docs/qa/integration-focused-20261101.log.gz`
+  - `docs/qa/integration-focused-final-20261101.log.gz`
+  - `docs/qa/integration-identity-msrc-20261101-copied.log.gz`
+  - `docs/qa/integration-identity-msrc-20261101.log.gz`
+  - `docs/qa/issue-dispositions-20261101.md`
+  - `docs/qa/issue120-combined-green-20261101.log.gz`
+  - `docs/qa/issue120-corrected-baseline-red-20261101.log.gz`
+  - `docs/qa/issue120-corrected-original-source-red-20261101.log.gz`
+  - `docs/qa/issue120-final-focused-20261101.log.gz`
+  - `docs/qa/issue120-identity-first-20261101.log.gz`
+  - `docs/qa/issue120-identity-green-20261101.log.gz`
+  - `docs/qa/issue120-identity-integration-20261101.log.gz`
+  - `docs/qa/issue120-implementation-verification-20261101.json`
+  - `docs/qa/issue120-red-20261101.log.gz`
+  - `docs/qa/issue120-resource-verification-20261101.json`
+  - `docs/qa/kb-fixture-reconciliation-20261030.md`
+  - `docs/qa/kb-saved-scope-20261102.md`
+  - `docs/qa/kb-saved-scope-review-20261102.json`
+  - `docs/qa/kb-saved-scope-review-20261102.md`
+  - `docs/qa/lifecycle-116-creation-staging-20261102.md`
+  - `docs/qa/lifecycle-116-independent-20261102.tar.gz`
+  - `docs/qa/lifecycle-116-profile-inspection-20261102.md`
+  - `docs/qa/lifecycle-116-review-20261102.json`
+  - `docs/qa/lifecycle-116-review-20261102.md`
+  - `docs/qa/llvm-native-controls-20261101.tar.gz`
+  - `docs/qa/msrc-20261101-2024-Aug.json.import-result.json`
+  - `docs/qa/msrc-20261101-2026-Oct.json.import-result.json`
+  - `docs/qa/msrc-20261101-independent-mixed-control.py`
+  - `docs/qa/msrc-20261101-independent-mixed-control.py.original.txt`
+  - `docs/qa/msrc-20261101-independent-mixed-red.txt`
+  - `docs/qa/msrc-20261101-independent-order-red.txt`
+  - `docs/qa/msrc-20261101-independent-review-controls-final.txt`
+  - `docs/qa/msrc-20261101-independent-review-controls.py`
+  - `docs/qa/msrc-20261101-independent-review-controls.py.original.txt`
+  - `docs/qa/msrc-20261101-independent-review-controls.py.pre-namespace-discovery.txt`
+  - `docs/qa/msrc-20261101-independent-review.md`
+  - `docs/qa/msrc-after-merge.log.gz`
+  - `docs/qa/msrc-field-diagnostics-20261102.md`
+  - `docs/qa/msrc-field-diagnostics-review-20261102.json`
+  - `docs/qa/msrc-field-diagnostics-review-20261102.md`
+  - `docs/qa/msrc-namespace-independent-review.json`
+  - `docs/qa/msrc-namespace-review-20261101.log.gz`
+  - `docs/qa/msrc-namespace-review-20261101.md`
+  - `docs/qa/msrc-namespace-sonar-20261101.json`
+  - `docs/qa/msrc-provenance-recovery-20261102.md`
+  - `docs/qa/msrc-provenance-review-20261102.json`
+  - `docs/qa/msrc-provenance-review-20261102.md`
+  - `docs/qa/msrc-review-findings-20261102.md`
+  - `docs/qa/msrc-review-findings-review-20261102.json`
+  - `docs/qa/msrc-review-findings-review-20261102.md`
+  - `docs/qa/native-reconciliation-20261101-compile-evidence.json`
+  - `docs/qa/native-reconciliation-20261101-download-evidence.json`
+  - `docs/qa/native-reconciliation-20261101-native-driver.py`
+  - `docs/qa/native-reconciliation-20261101-receipt.json`
+  - `docs/qa/native-reconciliation-20261101-setup-evidence.json`
+  - `docs/qa/native-reconciliation-20261101-verification-evidence.json`
+  - `docs/qa/native-reconciliation-setup-attempt-20261031.json`
+  - `docs/qa/native-reconciliation-smoke-20261031-driver.py`
+  - `docs/qa/native-reconciliation-smoke-20261031.json`
+  - `docs/qa/original41-pr-collections-20261101.json.gz`
+  - `docs/qa/original41-pr-workflow-jobs-first-pages-20261101.json.gz`
+  - `docs/qa/output-credit-completion-20261102.json`
+  - `docs/qa/output-credit-completion-20261102.md`
+  - `docs/qa/output-credit-completion-20261102.tar.gz`
+  - `docs/qa/output-credit-completion-independent-review-20261102.json`
+  - `docs/qa/output-credit-completion-review-20261102.json`
+  - `docs/qa/output-credit-completion-review-20261102.md`
+  - `docs/qa/output-credited-replay-20261101.json`
+  - `docs/qa/output-credited-replay-20261101.md`
+  - `docs/qa/output-prereg-integrated-checkpoint2.log.gz`
+  - `docs/qa/output-windows-independent-review-20261102.json`
+  - `docs/qa/output-windows-stat-20261102.json`
+  - `docs/qa/output-windows-stat-20261102.md`
+  - `docs/qa/output-windows-stat-20261102.tar.gz`
+  - `docs/qa/pr149-linux.verified.json`
+  - `docs/qa/pr149-windows.verified.json`
+  - `docs/qa/pr150-qa-windows.verified.json`
+  - `docs/qa/pr150-sonar-triage-2fdac2e.md`
+  - `docs/qa/pr154-escaped-opening-verification-20261101.json`
+  - `docs/qa/pr154-markdown-independent-review-20261101.json`
+  - `docs/qa/pr154-markdown-verification-20261101.json`
+  - `docs/qa/pr156157-independent-external-review-20261101.md`
+  - `docs/qa/pr157-bounded-review-repro-20261101.json`
+  - `docs/qa/pr157-bounded-review-repro-20261101.py.original.txt`
+  - `docs/qa/pr157-credited-replay-independent-review-20261101.json`
+  - `docs/qa/prereg-fence-audit-20261102.tar.gz`
+  - `docs/qa/prereg-final-root-integrated.log.gz`
+  - `docs/qa/prereg-independent-review-20261101.json`
+  - `docs/qa/prereg-markdown-review-20261101.md`
+  - `docs/qa/prereg-review-followup-20261101.tar.gz`
+  - `docs/qa/pyyaml-dev-independent-review-20261102.json`
+  - `docs/qa/rd-alignment-root.log.gz`
+  - `docs/qa/rd-f03-author-receipt.json`
+  - `docs/qa/rd-f03-independent-review-20261101.json`
+  - `docs/qa/rd-paired-review-20261102.json`
+  - `docs/qa/rd-paired-review-20261102.md`
+  - `docs/qa/reconciliation-bench-20261031.json`
+  - `docs/qa/remote-heads-checkpoint-20261101.json`
+  - `docs/qa/remote-heads-checkpoint2-20261101.json`
+  - `docs/qa/reproduce-issue120-20261101.json.gz`
+  - `docs/qa/resume-checkpoint-20261102.json`
+  - `docs/qa/resume-followup-checkpoint-20261102.json`
+  - `docs/qa/resume-root-checks-20261102.tar.gz`
+  - `docs/qa/rz-fixtures-20261101.md`
+  - `docs/qa/rz-fixtures-20261101.tar.gz`
+  - `docs/qa/rz-scoring-contract-followup.log.gz`
+  - `docs/qa/rz-scoring-contract-green.log.gz`
+  - `docs/qa/rzdiff-native-provenance-20261101.tar.gz`
+  - `docs/qa/rzdiff-native-root-review-20261101.json`
+  - `docs/qa/rzdiff-quarantine-independent-review-20261101.md`
+  - `docs/qa/rzdiff-quarantine-verification-20261101.json`
+  - `docs/qa/rzdiff-replay-final-e8319b9.json`
+  - `docs/qa/rzdiff-scoring-fixture-independent-review-20261101.json`
+  - `docs/qa/rzdiff-shared-fixtures-independent-review-20261101.json`
+  - `docs/qa/sonar-review.md`
+  - `docs/qa/storage-after-merge.log.gz`
+  - `docs/qa/storage-focused-20261101.log.gz`
+  - `docs/qa/storage-reuse-filter-review-20261102.json`
+  - `docs/qa/storage-reuse-filter-review-20261102.md`
+  - `docs/qa/transfer-credit-preflight-20261102.md`
+  - `docs/qa/transfer-preflight-review-20261102.json`
+  - `docs/qa/transfer-preflight-review-20261102.md`
+  - `docs/release-process.md`
+  - `docs/research/deep-uncertainty-r8/01-typed-literal-counterexamples.md`
+  - `docs/research/rzdiff-orientation-witness-20261101.md`
+  - `docs/research/rzdiff-witness-native-20261101.json`
+  - `docs/schemas/corpus/EngineOutputDoc.json`
+  - `docs/schemas/corpus/EvaluationFailure.json`
+  - `docs/schemas/corpus/OutputCompletion.json`
+  - `docs/schemas/corpus/OutputCredits.json`
+  - `docs/schemas/corpus/TrainingManifest.json`
+  - `docs/schemas/corpus/report-examples/valid-engine-output-attention.json`
+  - `docs/specs/architecture.md`
+  - `docs/specs/byte-representations.md`
+  - `docs/specs/calibration-corpus-and-model.md`
+  - `docs/specs/diaphora-optional-engine.md`
+  - `docs/specs/enrichment-hardening-backlog.md`
+  - `docs/specs/gui-preflight-inspection.md`
+  - `docs/specs/kb-cve/31-B-msrc-reverse-index.md`
+  - `docs/specs/kb-cve/31-C-product-build-pairs.md`
+  - `docs/specs/kb-cve/31-E-evidence-intent.md`
+  - `docs/specs/kb-cve/31-F-workflow-ui-persistence.md`
+  - `docs/specs/known-answer-corpus.md`
+  - `docs/specs/panels/graph-inspection.md`
+  - `docs/specs/program-e/WB2-integration-plan.md`
+  - `docs/specs/secondary-engine.md`
+  - `docs/specs/ui.md`
+  - `docs/specs/unified-engine/05-fusion-and-noise.md`
+  - `docs/specs/unified-engine/06-adapters.md`
+  - `docs/specs/unified-engine/08-evaluation.md`
+  - `docs/specs/windows-acceptance-and-milestone-builds.md`
+  - `docs/specs/windows-release-signing-policy.md`
+  - `docs/wiki/Architecture-and-Design-Rationale.md`
+  - `docs/wiki/Codebase-Map.md`
+  - `docs/wiki/Developer-Guide.md`
+  - `docs/wiki/Home.md`
+  - `docs/wiki/User-Guide.md`
+  - `docs/wiki/_Sidebar.md`
+  - `pyproject.toml`
+  - `src/patchtrace/__main__.py`
+  - `src/patchtrace/app_icon.py`
+  - `src/patchtrace/backend.py`
+  - `src/patchtrace/calibration/features.py`
+  - `src/patchtrace/callgraph/algo.py`
+  - `src/patchtrace/callgraph/csr.py`
+  - `src/patchtrace/callgraph/dot.py`
+  - `src/patchtrace/callgraph/export_json.py`
+  - `src/patchtrace/callgraph/labels.py`
+  - `src/patchtrace/callgraph/limits.py`
+  - `src/patchtrace/callgraph/panel_qt.py`
+  - `src/patchtrace/callgraph/paths.py`
+  - `src/patchtrace/callgraph/query.py`
+  - `src/patchtrace/callgraph/snapshot.py`
+  - `src/patchtrace/callgraph/view_model.py`
+  - `src/patchtrace/diaphora/sqlite_guard.py`
+  - `src/patchtrace/gui/qt/host.py`
+  - `src/patchtrace/gui/qt/kb_selftest.py`
+  - `src/patchtrace/gui/qt/project_adoption.py`
+  - `src/patchtrace/kbcorrelation/adapters/panel_snapshot.py`
+  - `src/patchtrace/kbcorrelation/cli_leads.py`
+  - `src/patchtrace/kbcorrelation/context.py`
+  - `src/patchtrace/kbcorrelation/index.py`
+  - `src/patchtrace/kbcorrelation/investigation_qt.py`
+  - `src/patchtrace/kbcorrelation/investigation_service.py`
+  - `src/patchtrace/kbcorrelation/panel_qt.py`
+  - `src/patchtrace/kbcorrelation/service.py`
+  - `src/patchtrace/kbcorrelation/sources/cvrf.py`
+  - `src/patchtrace/kbcorrelation/sources/cvrf_msrc.py`
+  - `src/patchtrace/kbcorrelation/sources/importer.py`
+  - `src/patchtrace/kbcorrelation/wiring.py`
+  - `src/patchtrace/persistence.py`
+  - `src/patchtrace/project_creation.py`
+  - `src/patchtrace/raw_alignment_view.py`
+  - `src/patchtrace/representations/__init__.py`
+  - `src/patchtrace/representations/alignment.py`
+  - `src/patchtrace/resources/patchtrace-mark.svg`
+  - `src/patchtrace/secondary/contracts.py`
+  - `src/patchtrace/secondary/evidence.py`
+  - `src/patchtrace/secondary/evidence_view.py`
+  - `src/patchtrace/secondary/reconcile.py`
+  - `src/patchtrace/secondary/rzdiff.py`
+  - `src/patchtrace/service.py`
+  - `src/patchtrace/tooltips.py`
+  - `src/patchtrace/ui.py`
+  - `src/patchtrace/ui_inspection.py`
+  - `src/patchtrace/ui_profiles.py`
+  - `src/patchtrace/ui_raw_alignment.py`
+  - `src/patchtrace/unified/compute.py`
+  - `src/patchtrace/unified/facts/anchors.py`
+  - `src/patchtrace/unified/facts/channels.py`
+  - `src/patchtrace/unified/facts/pseudo.py`
+  - `src/patchtrace/unified/facts/verdict.py`
+  - `src/patchtrace/unified/fusion/arbiter.py`
+  - `src/patchtrace/unified/ir/cfg.py`
+  - `src/patchtrace/unified/read_text.py`
+  - `src/patchtrace/unified/registry.py`
+  - `src/patchtrace/unified/sources/__init__.py`
+  - `src/patchtrace/unified/sources/ladder.py`
+  - `src/patchtrace/unified/sources/secondary.py`
+  - `src/patchtrace/verified_backup.py`
+  - `tasks/todo.md`
+  - `tests/fixtures/kb/CONTRACT_CONFLICTS.md`
+  - `tests/fixtures/kb/MANIFEST.json`
+  - `tests/fixtures/kb/README.md`
+  - `tests/fixtures/kb/confusable_kb.json`
+  - `tests/fixtures/kb/crash_points.json`
+  - `tests/fixtures/kb/csaf_synthetic.json`
+  - `tests/fixtures/kb/cvrf_bom.json`
+  - `tests/fixtures/kb/cvrf_crlf.json`
+  - `tests/fixtures/kb/cvrf_v3_synthetic.json`
+  - `tests/fixtures/kb/raw_adversarial_inputs.json`
+  - `tests/fixtures/kb/update_packages_synthetic.json`
+  - `tests/fixtures/kb/update_relationships_synthetic.json`
+  - `tests/fixtures/kb/vex_synthetic.json`
+  - `tests/fixtures/kb/winbindex_synthetic.json`
+  - `tests/fixtures/kbcve/msrc/2024-Aug-CVE-2024-38193.facts.json`
+  - `tests/fixtures/kbcve/msrc/2024-Aug-CVE-2024-38193.provenance.json`
+  - `tests/fixtures/secondary/rzdiff-0.9.1-native-orientation.json`
+  - `tests/kb_crash_harness.py`
+  - `tests/kb_fixture_performance_plan.md`
+  - `tests/test_audit2_fixes.py`
+  - `tests/test_audit_desktop.py`
+  - `tests/test_calibration_runtime.py`
+  - `tests/test_calibration_tools.py`
+  - `tests/test_callgraph_cap_truth.py`
+  - `tests/test_callgraph_count_suffix_guard.py`
+  - `tests/test_callgraph_path_budget.py`
+  - `tests/test_callgraph_snapshot.py`
+  - `tests/test_ci_summary.py`
+  - `tests/test_cli_secondary_run.py`
+  - `tests/test_creation_116.py`
+  - `tests/test_diaphora_deadline.py`
+  - `tests/test_evidence_panel_service.py`
+  - `tests/test_evidence_ui.py`
+  - `tests/test_evidence_view.py`
+  - `tests/test_jobs.py`
+  - `tests/test_kb_crash_injection_protocol.py`
+  - `tests/test_kb_cvrf_fixture_import.py`
+  - `tests/test_kb_fixture_encoding.py`
+  - `tests/test_kb_fixture_properties.py`
+  - `tests/test_kb_investigation_service.py`
+  - `tests/test_kb_metadata_fixture_boundaries.py`
+  - `tests/test_kb_offline_fixture_import.py`
+  - `tests/test_kb_raw_adversarial_inputs.py`
+  - `tests/test_kb_synthetic_fixture_corpus.py`
+  - `tests/test_kb_update_relationships.py`
+  - `tests/test_kbc_acquire_cli.py`
+  - `tests/test_kbc_card_context_sources.py`
+  - `tests/test_kbc_contracts.py`
+  - `tests/test_kbc_msrc_cvrf.py`
+  - `tests/test_kbc_msrc_field_diagnostics.py`
+  - `tests/test_kbc_msrc_provenance.py`
+  - `tests/test_kbc_msrc_review_findings.py`
+  - `tests/test_kbc_saved_scope.py`
+  - `tests/test_kbc_selection_guard.py`
+  - `tests/test_lifecycle_116.py`
+  - `tests/test_live_rzdiff_check.py`
+  - `tests/test_r2_cache_version.py`
+  - `tests/test_r2_cfg_performance.py`
+  - `tests/test_r2_fusion_regressions.py`
+  - `tests/test_r8_literal_types.py`
+  - `tests/test_raw_alignment_view.py`
+  - `tests/test_representation_alignment.py`
+  - `tests/test_rzdiff_cli_env.py`
+  - `tests/test_rzdiff_count_observation.py`
+  - `tests/test_rzdiff_orientation_20261101.py`
+  - `tests/test_secondary_reconcile.py`
+  - `tests/test_secondary_rzdiff.py`
+  - `tests/test_secondary_scheduler.py`
+  - `tests/test_tier_r_credit_completion.py`
+  - `tests/test_tier_r_credited_replay.py`
+  - `tests/test_tier_r_eval_engines.py`
+  - `tests/test_tier_r_eval_metrics.py`
+  - `tests/test_tier_r_output_persistence.py`
+  - `tests/test_tier_r_output_stat_compat.py`
+  - `tests/test_tier_r_training_artifacts.py`
+  - `tests/test_tooltips.py`
+  - `tests/test_train_prereg_selection.py`
+  - `tests/test_ui_callgraph_cap_truth.py`
+  - `tests/test_ui_kb_create_cancellation.py`
+  - `tests/test_ui_kb_current_project.py`
+  - `tests/test_ui_kb_entry.py`
+  - `tests/test_ui_kb_frozen_journey.py`
+  - `tests/test_ui_kb_investigation.py`
+  - `tests/test_ui_raw_alignment.py`
+  - `tests/test_unified_bench.py`
+  - `tests/test_unified_bench_stages.py`
+  - `tests/test_unified_cli_show.py`
+  - `tests/test_unified_live_force_identical.py`
+  - `tests/test_unified_live_native_failure_details.py`
+  - `tests/test_unified_live_pairs.py`
+  - `tests/test_unified_live_pairs_r1.py`
+  - `tests/test_unified_live_workflow.py`
+  - `tests/test_unified_sources.py`
+  - `tests/test_unified_verdict_ir.py`
+  - `tests/test_unified_wire_compute.py`
+  - `tests/test_verified_backup_byte_integrity.py`
+  - `tests/test_verified_backup_reuse_filter.py`
+  - `tests/test_verified_backup_stat_api.py`
+  - `tests/test_windows_build_resources.py`
+  - `tests/unified_s0_fixtures.py`
+  - `third_party/notices/README.md`
+  - `third_party/notices/qtsvg-6.12.0/LICENSES/BSD-3-Clause.txt`
+  - `third_party/notices/qtsvg-6.12.0/LICENSES/GPL-2.0-only.txt`
+  - `third_party/notices/qtsvg-6.12.0/LICENSES/GPL-3.0-only.txt`
+  - `third_party/notices/qtsvg-6.12.0/LICENSES/LGPL-3.0-only.txt`
+  - `third_party/notices/qtsvg-6.12.0/PROVENANCE.txt`
+  - `third_party/notices/qtsvg-6.12.0/REUSE.toml`
+  - `third_party/notices/qtsvg-6.12.0/SOURCE-HEADERS.txt`
+  - `tools/build_linux.py`
+  - `tools/build_windows.py`
+  - `tools/calibration/prereg_gate.py`
+  - `tools/calibration/tier_r/cli.py`
+  - `tools/calibration/tier_r/evaluate.py`
+  - `tools/calibration/tier_r/output_store.py`
+  - `tools/calibration/tier_r/report_schemas.py`
+  - `tools/calibration/tier_r/shard.py`
+  - `tools/calibration/tier_r/training_artifacts.py`
+  - `tools/calibration/train.py`
+  - `tools/check_windows_exe.py`
+  - `tools/frozen_smoke.py`
+  - `tools/live_rzdiff_check.py`
+  - `tools/pyinstaller_hooks/hook-patchtrace.app_icon.py`
+  - `tools/research/rzdiff_count_observation.py`
+  - `tools/unified/bench.py`
+  - `tools/unified/bench_workloads.py`
+  - `tools/unified/live_pairs.py`
+  - `tools/windows_icon.py`
+  - `tools/windows_version_info.py`
+
+### `codex/autonomous-checkpoint-20261102-1020`
+
+- Head: `c13d3257c88140c23fb585a8a59a4dce81e81928`
+- Base: `origin/main` at `5d504ff5c046bfb758623182b472976003632bba`
+- Merge base: `25c9795bd9cd58bfad855f30594ee3a0c7584cec`
+- Associated PR: none in open PR snapshot
+- Functional scope: {".gitattributes": 1, ".github": 2, "README.md": 1, "docs": 314, "pyproject.toml": 1, "src/patchtrace/__main__.py": 1, "src/patchtrace/app_icon.py": 1, "src/patchtrace/backend.py": 1, "src/patchtrace/calibration": 1, "src/patchtrace/callgraph": 11, "src/patchtrace/diaphora": 1, "src/patchtrace/gui": 3, "src/patchtrace/kbcorrelation": 12, "src/patchtrace/persistence.py": 1, "src/patchtrace/project_creation.py": 1, "src/patchtrace/project_retry.py": 1, "src/patchtrace/raw_alignment_view.py": 1, "src/patchtrace/representations": 2, "src/patchtrace/resources": 1, "src/patchtrace/secondary": 5, "src/patchtrace/service.py": 1, "src/patchtrace/tooltips.py": 1, "src/patchtrace/ui.py": 1, "src/patchtrace/ui_inspection.py": 1, "src/patchtrace/ui_new_project.py": 1, "src/patchtrace/ui_profiles.py": 1, "src/patchtrace/ui_raw_alignment.py": 1, "src/patchtrace/unified": 12, "src/patchtrace/verified_backup.py": 1, "tasks": 1, "tests": 104, "third_party": 8, "tools": 20}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {}; failures: []; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: unqualified: no current CI attached.
+- Recommended disposition: preserve active branch; port only verified unique patches.
+- Unique commits: `b26ca2c9bf85e9b7bc385b02c7bfdad1d7d724de`, `e81adbe882ae6eb2c26a5854b24aa6acff2b27a2`, `c307aaad162cff1f4464b62469792ead8d877385`, `e9f6be5d8c0cdc36d1a65f81403901648a6fe1fc`, `fffd5badb1ed84c8e930d667eae7d2d1dcf5a64f`, `d21d66758f75c6a3912b76042a792c0b9bb2eea2`, `ecfb60193b806dd984c044ae8f347b063e3d5155`, `aa6d614f0677e908727224aa4e46453108bb1b57`, `f82489bc9ff8ad89987670fde484a5f579aefa6b`, `5736376891d273fb16fa211ed0fa2de5125c1601`, `f18687fd035b67961c1072af84f8c2b3442979e0`, `2fcd627e52a6d784d5c2e5b4ea8105e90b8589b3`, `c04ad725551fe8daa139b37aa2cdf46d6d161b65`, `b87193d1dd30635fce33986f80ceade136507a1a`, `fb91cff6d91c77a2c539c896b670d81180dcc637`, `632079f0251982068d2cac294514b2d32e06a74c`, `a4d1e6a38c34d1952584aa65d7f5f908c45547b3`, `a7f13e13ffb512f8e9621753a0ae162d78942f3b`, `17210eb704802912a2951d8efd9f5e3d27a2193b`, `e2476c19017f82785570497aa2804b4f4f2e374f`, `0ca9ff1c99d2aea5198f9dda1a93c9bde8ca0226`, `7f14f792ed516c494aea17d7ca337bae18a31cf6`, `2c87611ebe65ea227f9f3efdf9c6246ab09b177f`, `c592b680eb1013f02c8472e544bbdb417e11fdde`, `59ff5ad1379c0a787d92f62d732686c1dd0e65b4`, `015f79cc762f0ebff4cbb700480a44a88e014d9f`, `745e93426a16e0a91a961b6e0bbcb71be69f2a7e`, `25125eb8b282322bafe8e682f5c09dfbffb07fbf`, `50ced35a54f18b4de8437b78a42dd2ec689338d9`, `8f4c4a2e0021d424d403317c6780b6db026ad76b`, `c3868d8335a8f32f676905032dc1a6d0e9f22fd6`, `039c696c93a443d152d4ddc1383179408ff86b75`, `d038ddea43182b8709afd447140dc74fded487c5`, `c13d3257c88140c23fb585a8a59a4dce81e81928`
+- Patch-equivalent commits: none
+- Modified files:
+  - `.gitattributes`
+  - `.github/workflows/corpus-tier-r.yml`
+  - `.github/workflows/unified-live-gates.yml`
+  - `README.md`
+  - `docs/branch-pr-inventory-2026-10-30.md`
+  - `docs/handoff/autonomous-continuation-20261031.md`
+  - `docs/handoff/autonomous-continuation-20261101.md`
+  - `docs/handoff/autonomous-continuation-20261102.md`
+  - `docs/integration/pr-gates-01.md`
+  - `docs/integration/pr-gates-02.md`
+  - `docs/integration/pr-gates-03.md`
+  - `docs/integration/pr-gates-04.md`
+  - `docs/integration/pr-gates-05.md`
+  - `docs/integration/pr-gates-06.md`
+  - `docs/modules.md`
+  - `docs/notices.md`
+  - `docs/plans/essential-integration-20261029.md`
+  - `docs/plans/gt01-native-output-diagnosis-20261030.md`
+  - `docs/plans/gt01-overlap-disposition-20261030.md`
+  - `docs/plans/milestone-ledger-20261030.md`
+  - `docs/qa.md`
+  - `docs/qa/ExportBinExport20261102.java`
+  - `docs/qa/backup-independent-20261101.log.gz`
+  - `docs/qa/backup-publication-admission-20261102.md`
+  - `docs/qa/backup-publication-admission-20261102.tar.gz`
+  - `docs/qa/backup-publication-admission-scan-20261102.tar.gz`
+  - `docs/qa/backup-publication-collision-20261101.md`
+  - `docs/qa/backup-publication-green.log.gz`
+  - `docs/qa/backup-publication-independent-review-20261101.json`
+  - `docs/qa/backup-publication-red.log.gz`
+  - `docs/qa/backup-reuse-filter-20261102.md`
+  - `docs/qa/backup-reuse-filter-20261102.tar.gz`
+  - `docs/qa/backup-reuse-filter-independent-20261102.tar.gz`
+  - `docs/qa/backup-stat-api-recovery-20261102.md`
+  - `docs/qa/backup-stat-green.log.gz`
+  - `docs/qa/backup-stat-green.xml.gz`
+  - `docs/qa/backup-stat-red.log.gz`
+  - `docs/qa/backup-windows-review-20261102.json`
+  - `docs/qa/backup-windows-review-20261102.md`
+  - `docs/qa/branch-dispositions-20261101.md`
+  - `docs/qa/callgraph-cap-review-20261102.json`
+  - `docs/qa/callgraph-cap-review-20261102.md`
+  - `docs/qa/callgraph-count-suffix-review-20261102.json`
+  - `docs/qa/callgraph-count-suffix-review-20261102.md`
+  - `docs/qa/callgraph-path-budget-20261102.tar.gz`
+  - `docs/qa/callgraph-path-budget-review-20261102.json`
+  - `docs/qa/callgraph-path-budget-review-20261102.md`
+  - `docs/qa/card-context-sources-20261102.md`
+  - `docs/qa/card-context-sources-review-20261102.json`
+  - `docs/qa/card-context-sources-review-20261102.md`
+  - `docs/qa/checkpoint2-schema.log.gz`
+  - `docs/qa/ci-monitor-checkpoint-0905.tar.gz`
+  - `docs/qa/ci-monitor-checkpoint-0932.tar.gz`
+  - `docs/qa/ci-monitor-delta-hosted-linux-20261102.tar.gz`
+  - `docs/qa/ci-monitor-terminal-6f923758-20261102.tar.gz`
+  - `docs/qa/ci-monitor-terminal-9c468bc7-20261102.tar.gz`
+  - `docs/qa/ci-monitor-windows-51a9b4af-20261102.tar.gz`
+  - `docs/qa/ci-monitor-windows-bb98bae3-20261102.tar.gz`
+  - `docs/qa/ci-resume-evidence-20261102.tar.gz`
+  - `docs/qa/combined-fixture-repair-20261102.md`
+  - `docs/qa/combined-fixture-repair-20261102.tar.gz`
+  - `docs/qa/combined-followups-extra-20261102.tar.gz`
+  - `docs/qa/combined-followups-root-20261102.tar.gz`
+  - `docs/qa/combined-retry-backup-windows-20261102.tar.gz`
+  - `docs/qa/combined-reviewed-20261101.log.gz`
+  - `docs/qa/completion-inventory-20261031.json`
+  - `docs/qa/completion-inventory-20261101.json.gz`
+  - `docs/qa/completion-verification-20261031.json`
+  - `docs/qa/completion-verification-20261101.json`
+  - `docs/qa/continuation-verification-20261030.md`
+  - `docs/qa/corpus-focused-20261101.log.gz`
+  - `docs/qa/corpus-html-green-final-20261101.log.gz`
+  - `docs/qa/corpus-html-red-20261101.log.gz`
+  - `docs/qa/corpus-output-persistence-20261101.json`
+  - `docs/qa/corpus-output-persistence-20261101.md`
+  - `docs/qa/corpus-prereg-green-20261101.log.gz`
+  - `docs/qa/corpus-prereg-red-20261101.log.gz`
+  - `docs/qa/corpus-review-green-final-20261101.log.gz`
+  - `docs/qa/corpus-review-red-20261101.log.gz`
+  - `docs/qa/corpus-safeguards-20261101.json`
+  - `docs/qa/corpus-safeguards-20261101.md`
+  - `docs/qa/corpus-transfer-review-20261102.json`
+  - `docs/qa/corpus-transfer-review-20261102.md`
+  - `docs/qa/corpus-verified-transfer-recovery-20261102.md`
+  - `docs/qa/creation-explicit-retry-review-20261102.json`
+  - `docs/qa/creation-explicit-retry-review-20261102.md`
+  - `docs/qa/creation-staging-review-20261102.json`
+  - `docs/qa/creation-staging-review-20261102.md`
+  - `docs/qa/export-base-failures-20261101.log.gz`
+  - `docs/qa/export-copies-candidate-20261101.log.gz`
+  - `docs/qa/export-copies-failures-20261101.log.gz`
+  - `docs/qa/export-full-20261101.log.gz`
+  - `docs/qa/export-full-20261101.xml.gz`
+  - `docs/qa/f8-loop-author-receipt-20261101.json`
+  - `docs/qa/f8-loop-integrated-root.log.gz`
+  - `docs/qa/fixture-repair-review-20261102.json`
+  - `docs/qa/fixture-repair-review-20261102.md`
+  - `docs/qa/full-recovered-20261102.json`
+  - `docs/qa/full-recovered-20261102.tar.gz`
+  - `docs/qa/full-verification-f005c66-20261101.md`
+  - `docs/qa/full-verification-f005c66-20261101.tar.gz`
+  - `docs/qa/gt01-harness-smoke-20261030.json`
+  - `docs/qa/gt01-native-smoke-20261030.json`
+  - `docs/qa/gt12-benchmark-20261101.md`
+  - `docs/qa/gt12-combined-20261101.json`
+  - `docs/qa/gt12-evidence-20261101.json`
+  - `docs/qa/gt12-facts-20261101.invocation.json`
+  - `docs/qa/gt12-facts-20261101.json`
+  - `docs/qa/gt12-facts-20261101.log`
+  - `docs/qa/gt12-independent-controls-20261101.log`
+  - `docs/qa/gt12-independent-controls-20261101.py`
+  - `docs/qa/gt12-independent-controls-20261101.py.original.txt`
+  - `docs/qa/gt12-independent-receipt-check-20261101.log`
+  - `docs/qa/gt12-independent-receipt-check-20261101.py`
+  - `docs/qa/gt12-independent-receipt-check-20261101.py.original.txt`
+  - `docs/qa/gt12-independent-review-20261101.md`
+  - `docs/qa/gt12-independent-tests-20261101.log`
+  - `docs/qa/gt12-read-model-20261101.invocation.json`
+  - `docs/qa/gt12-read-model-20261101.json`
+  - `docs/qa/gt12-read-model-20261101.log`
+  - `docs/qa/gt12-run-stage-20261101.py`
+  - `docs/qa/gt12-smoke-4c8f9a6-20261101.json`
+  - `docs/qa/gt12-smoke-initial-20261101.json`
+  - `docs/qa/gt12-ui-calls-20261101.invocation.json`
+  - `docs/qa/gt12-ui-calls-20261101.json`
+  - `docs/qa/gt12-ui-calls-20261101.log`
+  - `docs/qa/historical-review-scripts-20261101.json`
+  - `docs/qa/identity-followup-20261101.md`
+  - `docs/qa/identity-followup-integrated-original-20261101.tar.gz`
+  - `docs/qa/identity-followup-root-integrated.log.gz`
+  - `docs/qa/identity-independent-review-20261101.md`
+  - `docs/qa/integrated-latest-bounded.log.gz`
+  - `docs/qa/integrated-output-prereg-research.log.gz`
+  - `docs/qa/integrated-rzdiff-identity.log.gz`
+  - `docs/qa/integration-checkpoint-20261101.json`
+  - `docs/qa/integration-checkpoint2-20261101.json`
+  - `docs/qa/integration-focused-20261101.log.gz`
+  - `docs/qa/integration-focused-final-20261101.log.gz`
+  - `docs/qa/integration-identity-msrc-20261101-copied.log.gz`
+  - `docs/qa/integration-identity-msrc-20261101.log.gz`
+  - `docs/qa/issue-dispositions-20261101.md`
+  - `docs/qa/issue120-combined-green-20261101.log.gz`
+  - `docs/qa/issue120-corrected-baseline-red-20261101.log.gz`
+  - `docs/qa/issue120-corrected-original-source-red-20261101.log.gz`
+  - `docs/qa/issue120-final-focused-20261101.log.gz`
+  - `docs/qa/issue120-identity-first-20261101.log.gz`
+  - `docs/qa/issue120-identity-green-20261101.log.gz`
+  - `docs/qa/issue120-identity-integration-20261101.log.gz`
+  - `docs/qa/issue120-implementation-verification-20261101.json`
+  - `docs/qa/issue120-red-20261101.log.gz`
+  - `docs/qa/issue120-resource-verification-20261101.json`
+  - `docs/qa/kb-fixture-reconciliation-20261030.md`
+  - `docs/qa/kb-saved-scope-20261102.md`
+  - `docs/qa/kb-saved-scope-review-20261102.json`
+  - `docs/qa/kb-saved-scope-review-20261102.md`
+  - `docs/qa/lifecycle-116-creation-staging-20261102.md`
+  - `docs/qa/lifecycle-116-explicit-retry-20261102.md`
+  - `docs/qa/lifecycle-116-independent-20261102.tar.gz`
+  - `docs/qa/lifecycle-116-profile-inspection-20261102.md`
+  - `docs/qa/lifecycle-116-review-20261102.json`
+  - `docs/qa/lifecycle-116-review-20261102.md`
+  - `docs/qa/llvm-native-controls-20261101.tar.gz`
+  - `docs/qa/msrc-20261101-2024-Aug.json.import-result.json`
+  - `docs/qa/msrc-20261101-2026-Oct.json.import-result.json`
+  - `docs/qa/msrc-20261101-independent-mixed-control.py`
+  - `docs/qa/msrc-20261101-independent-mixed-control.py.original.txt`
+  - `docs/qa/msrc-20261101-independent-mixed-red.txt`
+  - `docs/qa/msrc-20261101-independent-order-red.txt`
+  - `docs/qa/msrc-20261101-independent-review-controls-final.txt`
+  - `docs/qa/msrc-20261101-independent-review-controls.py`
+  - `docs/qa/msrc-20261101-independent-review-controls.py.original.txt`
+  - `docs/qa/msrc-20261101-independent-review-controls.py.pre-namespace-discovery.txt`
+  - `docs/qa/msrc-20261101-independent-review.md`
+  - `docs/qa/msrc-after-merge.log.gz`
+  - `docs/qa/msrc-field-diagnostics-20261102.md`
+  - `docs/qa/msrc-field-diagnostics-review-20261102.json`
+  - `docs/qa/msrc-field-diagnostics-review-20261102.md`
+  - `docs/qa/msrc-namespace-independent-review.json`
+  - `docs/qa/msrc-namespace-review-20261101.log.gz`
+  - `docs/qa/msrc-namespace-review-20261101.md`
+  - `docs/qa/msrc-namespace-sonar-20261101.json`
+  - `docs/qa/msrc-provenance-recovery-20261102.md`
+  - `docs/qa/msrc-provenance-review-20261102.json`
+  - `docs/qa/msrc-provenance-review-20261102.md`
+  - `docs/qa/msrc-review-findings-20261102.md`
+  - `docs/qa/msrc-review-findings-review-20261102.json`
+  - `docs/qa/msrc-review-findings-review-20261102.md`
+  - `docs/qa/native-bindiff-harness-20261102.md`
+  - `docs/qa/native-bindiff-harness-20261102.py`
+  - `docs/qa/native-bindiff-independent-review-20261102.json`
+  - `docs/qa/native-bindiff-tool-pins-20261102.json`
+  - `docs/qa/native-binexport-bindiff-attempt1-20261102.json`
+  - `docs/qa/native-binexport-bindiff-attempt1-20261102.tar.gz`
+  - `docs/qa/native-binexport-bindiff-attempt1-summary-20261102.json`
+  - `docs/qa/native-reconciliation-20261101-compile-evidence.json`
+  - `docs/qa/native-reconciliation-20261101-download-evidence.json`
+  - `docs/qa/native-reconciliation-20261101-native-driver.py`
+  - `docs/qa/native-reconciliation-20261101-receipt.json`
+  - `docs/qa/native-reconciliation-20261101-setup-evidence.json`
+  - `docs/qa/native-reconciliation-20261101-verification-evidence.json`
+  - `docs/qa/native-reconciliation-setup-attempt-20261031.json`
+  - `docs/qa/native-reconciliation-smoke-20261031-driver.py`
+  - `docs/qa/native-reconciliation-smoke-20261031.json`
+  - `docs/qa/original41-pr-collections-20261101.json.gz`
+  - `docs/qa/original41-pr-workflow-jobs-first-pages-20261101.json.gz`
+  - `docs/qa/output-credit-completion-20261102.json`
+  - `docs/qa/output-credit-completion-20261102.md`
+  - `docs/qa/output-credit-completion-20261102.tar.gz`
+  - `docs/qa/output-credit-completion-independent-review-20261102.json`
+  - `docs/qa/output-credit-completion-review-20261102.json`
+  - `docs/qa/output-credit-completion-review-20261102.md`
+  - `docs/qa/output-credited-replay-20261101.json`
+  - `docs/qa/output-credited-replay-20261101.md`
+  - `docs/qa/output-path-fixtures-20261102.md`
+  - `docs/qa/output-path-fixtures-20261102.tar.gz`
+  - `docs/qa/output-prereg-integrated-checkpoint2.log.gz`
+  - `docs/qa/output-windows-independent-review-20261102.json`
+  - `docs/qa/output-windows-stat-20261102.json`
+  - `docs/qa/output-windows-stat-20261102.md`
+  - `docs/qa/output-windows-stat-20261102.tar.gz`
+  - `docs/qa/pr149-linux.verified.json`
+  - `docs/qa/pr149-windows.verified.json`
+  - `docs/qa/pr150-qa-windows.verified.json`
+  - `docs/qa/pr150-sonar-triage-2fdac2e.md`
+  - `docs/qa/pr154-escaped-opening-verification-20261101.json`
+  - `docs/qa/pr154-markdown-independent-review-20261101.json`
+  - `docs/qa/pr154-markdown-verification-20261101.json`
+  - `docs/qa/pr156157-independent-external-review-20261101.md`
+  - `docs/qa/pr157-bounded-review-repro-20261101.json`
+  - `docs/qa/pr157-bounded-review-repro-20261101.py.original.txt`
+  - `docs/qa/pr157-credited-replay-independent-review-20261101.json`
+  - `docs/qa/prereg-fence-audit-20261102.tar.gz`
+  - `docs/qa/prereg-final-root-integrated.log.gz`
+  - `docs/qa/prereg-independent-review-20261101.json`
+  - `docs/qa/prereg-markdown-review-20261101.md`
+  - `docs/qa/prereg-review-followup-20261101.tar.gz`
+  - `docs/qa/pyyaml-dev-independent-review-20261102.json`
+  - `docs/qa/raw-summary-independent-20261102.png`
+  - `docs/qa/raw-summary-sizing-20261102.md`
+  - `docs/qa/raw-summary-sizing-20261102.tar.gz`
+  - `docs/qa/raw-summary-sizing-review-20261102.json`
+  - `docs/qa/raw-summary-sizing-review-20261102.md`
+  - `docs/qa/rd-alignment-root.log.gz`
+  - `docs/qa/rd-f03-author-receipt.json`
+  - `docs/qa/rd-f03-independent-review-20261101.json`
+  - `docs/qa/rd-paired-review-20261102.json`
+  - `docs/qa/rd-paired-review-20261102.md`
+  - `docs/qa/reconciliation-bench-20261031.json`
+  - `docs/qa/remote-heads-checkpoint-20261101.json`
+  - `docs/qa/remote-heads-checkpoint2-20261101.json`
+  - `docs/qa/reproduce-issue120-20261101.json.gz`
+  - `docs/qa/resume-checkpoint-20261102.json`
+  - `docs/qa/resume-followup-checkpoint-20261102.json`
+  - `docs/qa/resume-root-checks-20261102.tar.gz`
+  - `docs/qa/rz-fixtures-20261101.md`
+  - `docs/qa/rz-fixtures-20261101.tar.gz`
+  - `docs/qa/rz-scoring-contract-followup.log.gz`
+  - `docs/qa/rz-scoring-contract-green.log.gz`
+  - `docs/qa/rzdiff-native-provenance-20261101.tar.gz`
+  - `docs/qa/rzdiff-native-root-review-20261101.json`
+  - `docs/qa/rzdiff-quarantine-independent-review-20261101.md`
+  - `docs/qa/rzdiff-quarantine-verification-20261101.json`
+  - `docs/qa/rzdiff-replay-final-e8319b9.json`
+  - `docs/qa/rzdiff-scoring-fixture-independent-review-20261101.json`
+  - `docs/qa/rzdiff-shared-fixtures-independent-review-20261101.json`
+  - `docs/qa/sonar-review.md`
+  - `docs/qa/storage-after-merge.log.gz`
+  - `docs/qa/storage-focused-20261101.log.gz`
+  - `docs/qa/storage-publication-independent-20261102.tar.gz`
+  - `docs/qa/storage-publication-review-20261102.json`
+  - `docs/qa/storage-publication-review-20261102.md`
+  - `docs/qa/storage-reuse-filter-review-20261102.json`
+  - `docs/qa/storage-reuse-filter-review-20261102.md`
+  - `docs/qa/transfer-credit-preflight-20261102.md`
+  - `docs/qa/transfer-preflight-review-20261102.json`
+  - `docs/qa/transfer-preflight-review-20261102.md`
+  - `docs/qa/transfer-windows-paths-20261102.md`
+  - `docs/qa/windows-output-review-20261102.json`
+  - `docs/qa/windows-output-review-20261102.md`
+  - `docs/qa/windows-secondary-controls-20261102.md`
+  - `docs/qa/windows-secondary-controls-review-20261102.json`
+  - `docs/qa/windows-secondary-controls-review-20261102.md`
+  - `docs/release-process.md`
+  - `docs/research/deep-uncertainty-r8/01-typed-literal-counterexamples.md`
+  - `docs/research/rzdiff-orientation-witness-20261101.md`
+  - `docs/research/rzdiff-witness-native-20261101.json`
+  - `docs/schemas/corpus/EngineOutputDoc.json`
+  - `docs/schemas/corpus/EvaluationFailure.json`
+  - `docs/schemas/corpus/OutputCompletion.json`
+  - `docs/schemas/corpus/OutputCredits.json`
+  - `docs/schemas/corpus/TrainingManifest.json`
+  - `docs/schemas/corpus/report-examples/valid-engine-output-attention.json`
+  - `docs/specs/architecture.md`
+  - `docs/specs/byte-representations.md`
+  - `docs/specs/calibration-corpus-and-model.md`
+  - `docs/specs/diaphora-optional-engine.md`
+  - `docs/specs/enrichment-hardening-backlog.md`
+  - `docs/specs/gui-preflight-inspection.md`
+  - `docs/specs/kb-cve/31-B-msrc-reverse-index.md`
+  - `docs/specs/kb-cve/31-C-product-build-pairs.md`
+  - `docs/specs/kb-cve/31-E-evidence-intent.md`
+  - `docs/specs/kb-cve/31-F-workflow-ui-persistence.md`
+  - `docs/specs/known-answer-corpus.md`
+  - `docs/specs/panels/graph-inspection.md`
+  - `docs/specs/program-e/WB2-integration-plan.md`
+  - `docs/specs/secondary-engine.md`
+  - `docs/specs/ui.md`
+  - `docs/specs/unified-engine/05-fusion-and-noise.md`
+  - `docs/specs/unified-engine/06-adapters.md`
+  - `docs/specs/unified-engine/08-evaluation.md`
+  - `docs/specs/windows-acceptance-and-milestone-builds.md`
+  - `docs/specs/windows-release-signing-policy.md`
+  - `docs/wiki/Architecture-and-Design-Rationale.md`
+  - `docs/wiki/Codebase-Map.md`
+  - `docs/wiki/Developer-Guide.md`
+  - `docs/wiki/Home.md`
+  - `docs/wiki/User-Guide.md`
+  - `docs/wiki/_Sidebar.md`
+  - `pyproject.toml`
+  - `src/patchtrace/__main__.py`
+  - `src/patchtrace/app_icon.py`
+  - `src/patchtrace/backend.py`
+  - `src/patchtrace/calibration/features.py`
+  - `src/patchtrace/callgraph/algo.py`
+  - `src/patchtrace/callgraph/csr.py`
+  - `src/patchtrace/callgraph/dot.py`
+  - `src/patchtrace/callgraph/export_json.py`
+  - `src/patchtrace/callgraph/labels.py`
+  - `src/patchtrace/callgraph/limits.py`
+  - `src/patchtrace/callgraph/panel_qt.py`
+  - `src/patchtrace/callgraph/paths.py`
+  - `src/patchtrace/callgraph/query.py`
+  - `src/patchtrace/callgraph/snapshot.py`
+  - `src/patchtrace/callgraph/view_model.py`
+  - `src/patchtrace/diaphora/sqlite_guard.py`
+  - `src/patchtrace/gui/qt/host.py`
+  - `src/patchtrace/gui/qt/kb_selftest.py`
+  - `src/patchtrace/gui/qt/project_adoption.py`
+  - `src/patchtrace/kbcorrelation/adapters/panel_snapshot.py`
+  - `src/patchtrace/kbcorrelation/cli_leads.py`
+  - `src/patchtrace/kbcorrelation/context.py`
+  - `src/patchtrace/kbcorrelation/index.py`
+  - `src/patchtrace/kbcorrelation/investigation_qt.py`
+  - `src/patchtrace/kbcorrelation/investigation_service.py`
+  - `src/patchtrace/kbcorrelation/panel_qt.py`
+  - `src/patchtrace/kbcorrelation/service.py`
+  - `src/patchtrace/kbcorrelation/sources/cvrf.py`
+  - `src/patchtrace/kbcorrelation/sources/cvrf_msrc.py`
+  - `src/patchtrace/kbcorrelation/sources/importer.py`
+  - `src/patchtrace/kbcorrelation/wiring.py`
+  - `src/patchtrace/persistence.py`
+  - `src/patchtrace/project_creation.py`
+  - `src/patchtrace/project_retry.py`
+  - `src/patchtrace/raw_alignment_view.py`
+  - `src/patchtrace/representations/__init__.py`
+  - `src/patchtrace/representations/alignment.py`
+  - `src/patchtrace/resources/patchtrace-mark.svg`
+  - `src/patchtrace/secondary/contracts.py`
+  - `src/patchtrace/secondary/evidence.py`
+  - `src/patchtrace/secondary/evidence_view.py`
+  - `src/patchtrace/secondary/reconcile.py`
+  - `src/patchtrace/secondary/rzdiff.py`
+  - `src/patchtrace/service.py`
+  - `src/patchtrace/tooltips.py`
+  - `src/patchtrace/ui.py`
+  - `src/patchtrace/ui_inspection.py`
+  - `src/patchtrace/ui_new_project.py`
+  - `src/patchtrace/ui_profiles.py`
+  - `src/patchtrace/ui_raw_alignment.py`
+  - `src/patchtrace/unified/compute.py`
+  - `src/patchtrace/unified/facts/anchors.py`
+  - `src/patchtrace/unified/facts/channels.py`
+  - `src/patchtrace/unified/facts/pseudo.py`
+  - `src/patchtrace/unified/facts/verdict.py`
+  - `src/patchtrace/unified/fusion/arbiter.py`
+  - `src/patchtrace/unified/ir/cfg.py`
+  - `src/patchtrace/unified/read_text.py`
+  - `src/patchtrace/unified/registry.py`
+  - `src/patchtrace/unified/sources/__init__.py`
+  - `src/patchtrace/unified/sources/ladder.py`
+  - `src/patchtrace/unified/sources/secondary.py`
+  - `src/patchtrace/verified_backup.py`
+  - `tasks/todo.md`
+  - `tests/fixtures/kb/CONTRACT_CONFLICTS.md`
+  - `tests/fixtures/kb/MANIFEST.json`
+  - `tests/fixtures/kb/README.md`
+  - `tests/fixtures/kb/confusable_kb.json`
+  - `tests/fixtures/kb/crash_points.json`
+  - `tests/fixtures/kb/csaf_synthetic.json`
+  - `tests/fixtures/kb/cvrf_bom.json`
+  - `tests/fixtures/kb/cvrf_crlf.json`
+  - `tests/fixtures/kb/cvrf_v3_synthetic.json`
+  - `tests/fixtures/kb/raw_adversarial_inputs.json`
+  - `tests/fixtures/kb/update_packages_synthetic.json`
+  - `tests/fixtures/kb/update_relationships_synthetic.json`
+  - `tests/fixtures/kb/vex_synthetic.json`
+  - `tests/fixtures/kb/winbindex_synthetic.json`
+  - `tests/fixtures/kbcve/msrc/2024-Aug-CVE-2024-38193.facts.json`
+  - `tests/fixtures/kbcve/msrc/2024-Aug-CVE-2024-38193.provenance.json`
+  - `tests/fixtures/secondary/rzdiff-0.9.1-native-orientation.json`
+  - `tests/kb_crash_harness.py`
+  - `tests/kb_fixture_performance_plan.md`
+  - `tests/test_audit2_fixes.py`
+  - `tests/test_audit_desktop.py`
+  - `tests/test_calibration_runtime.py`
+  - `tests/test_calibration_tools.py`
+  - `tests/test_callgraph_cap_truth.py`
+  - `tests/test_callgraph_count_suffix_guard.py`
+  - `tests/test_callgraph_path_budget.py`
+  - `tests/test_callgraph_snapshot.py`
+  - `tests/test_ci_summary.py`
+  - `tests/test_cli_secondary_run.py`
+  - `tests/test_creation_116.py`
+  - `tests/test_diaphora_deadline.py`
+  - `tests/test_evidence_panel_service.py`
+  - `tests/test_evidence_ui.py`
+  - `tests/test_evidence_view.py`
+  - `tests/test_jobs.py`
+  - `tests/test_kb_crash_injection_protocol.py`
+  - `tests/test_kb_cvrf_fixture_import.py`
+  - `tests/test_kb_fixture_encoding.py`
+  - `tests/test_kb_fixture_properties.py`
+  - `tests/test_kb_investigation_service.py`
+  - `tests/test_kb_metadata_fixture_boundaries.py`
+  - `tests/test_kb_offline_fixture_import.py`
+  - `tests/test_kb_raw_adversarial_inputs.py`
+  - `tests/test_kb_synthetic_fixture_corpus.py`
+  - `tests/test_kb_update_relationships.py`
+  - `tests/test_kbc_acquire_cli.py`
+  - `tests/test_kbc_card_context_sources.py`
+  - `tests/test_kbc_contracts.py`
+  - `tests/test_kbc_msrc_cvrf.py`
+  - `tests/test_kbc_msrc_field_diagnostics.py`
+  - `tests/test_kbc_msrc_provenance.py`
+  - `tests/test_kbc_msrc_review_findings.py`
+  - `tests/test_kbc_saved_scope.py`
+  - `tests/test_kbc_selection_guard.py`
+  - `tests/test_lifecycle_116.py`
+  - `tests/test_live_rzdiff_check.py`
+  - `tests/test_native_bindiff_harness.py`
+  - `tests/test_project_retry.py`
+  - `tests/test_r2_cache_version.py`
+  - `tests/test_r2_cfg_performance.py`
+  - `tests/test_r2_fusion_regressions.py`
+  - `tests/test_r8_literal_types.py`
+  - `tests/test_raw_alignment_view.py`
+  - `tests/test_representation_alignment.py`
+  - `tests/test_rzdiff_cli_env.py`
+  - `tests/test_rzdiff_count_observation.py`
+  - `tests/test_rzdiff_orientation_20261101.py`
+  - `tests/test_secondary_reconcile.py`
+  - `tests/test_secondary_rzdiff.py`
+  - `tests/test_secondary_scheduler.py`
+  - `tests/test_tier_r_credit_completion.py`
+  - `tests/test_tier_r_credited_replay.py`
+  - `tests/test_tier_r_eval_engines.py`
+  - `tests/test_tier_r_eval_metrics.py`
+  - `tests/test_tier_r_output_persistence.py`
+  - `tests/test_tier_r_output_stat_compat.py`
+  - `tests/test_tier_r_training_artifacts.py`
+  - `tests/test_tooltips.py`
+  - `tests/test_train_prereg_selection.py`
+  - `tests/test_ui_callgraph_cap_truth.py`
+  - `tests/test_ui_kb_create_cancellation.py`
+  - `tests/test_ui_kb_current_project.py`
+  - `tests/test_ui_kb_entry.py`
+  - `tests/test_ui_kb_frozen_journey.py`
+  - `tests/test_ui_kb_investigation.py`
+  - `tests/test_ui_project_retry.py`
+  - `tests/test_ui_raw_alignment.py`
+  - `tests/test_unified_bench.py`
+  - `tests/test_unified_bench_stages.py`
+  - `tests/test_unified_cli_show.py`
+  - `tests/test_unified_live_force_identical.py`
+  - `tests/test_unified_live_native_failure_details.py`
+  - `tests/test_unified_live_pairs.py`
+  - `tests/test_unified_live_pairs_r1.py`
+  - `tests/test_unified_live_workflow.py`
+  - `tests/test_unified_sources.py`
+  - `tests/test_unified_verdict_ir.py`
+  - `tests/test_unified_wire_compute.py`
+  - `tests/test_verified_backup_byte_integrity.py`
+  - `tests/test_verified_backup_publication_admission.py`
+  - `tests/test_verified_backup_reuse_filter.py`
+  - `tests/test_verified_backup_stat_api.py`
+  - `tests/test_windows_build_resources.py`
+  - `tests/unified_s0_fixtures.py`
+  - `third_party/notices/README.md`
+  - `third_party/notices/qtsvg-6.12.0/LICENSES/BSD-3-Clause.txt`
+  - `third_party/notices/qtsvg-6.12.0/LICENSES/GPL-2.0-only.txt`
+  - `third_party/notices/qtsvg-6.12.0/LICENSES/GPL-3.0-only.txt`
+  - `third_party/notices/qtsvg-6.12.0/LICENSES/LGPL-3.0-only.txt`
+  - `third_party/notices/qtsvg-6.12.0/PROVENANCE.txt`
+  - `third_party/notices/qtsvg-6.12.0/REUSE.toml`
+  - `third_party/notices/qtsvg-6.12.0/SOURCE-HEADERS.txt`
+  - `tools/build_linux.py`
+  - `tools/build_windows.py`
+  - `tools/calibration/prereg_gate.py`
+  - `tools/calibration/tier_r/cli.py`
+  - `tools/calibration/tier_r/evaluate.py`
+  - `tools/calibration/tier_r/output_store.py`
+  - `tools/calibration/tier_r/report_schemas.py`
+  - `tools/calibration/tier_r/shard.py`
+  - `tools/calibration/tier_r/training_artifacts.py`
+  - `tools/calibration/train.py`
+  - `tools/check_windows_exe.py`
+  - `tools/frozen_smoke.py`
+  - `tools/live_rzdiff_check.py`
+  - `tools/pyinstaller_hooks/hook-patchtrace.app_icon.py`
+  - `tools/research/rzdiff_count_observation.py`
+  - `tools/unified/bench.py`
+  - `tools/unified/bench_workloads.py`
+  - `tools/unified/live_pairs.py`
+  - `tools/windows_icon.py`
+  - `tools/windows_version_info.py`
+
+### `codex/autonomous-reconcile-20261101`
+
+- Head: `0130bf81e2fe3154f30af7b68a0e6ab197946040`
+- Base: `origin/main` at `5d504ff5c046bfb758623182b472976003632bba`
+- Merge base: `25c9795bd9cd58bfad855f30594ee3a0c7584cec`
+- Associated PR: https://github.com/djshellshoxxx/patchtrace/pull/152
+- Functional scope: {".gitattributes": 1, ".github": 2, "README.md": 1, "docs": 315, "pyproject.toml": 1, "src/patchtrace/__main__.py": 1, "src/patchtrace/app_icon.py": 1, "src/patchtrace/backend.py": 1, "src/patchtrace/calibration": 1, "src/patchtrace/callgraph": 11, "src/patchtrace/diaphora": 1, "src/patchtrace/gui": 3, "src/patchtrace/kbcorrelation": 12, "src/patchtrace/persistence.py": 1, "src/patchtrace/project_creation.py": 1, "src/patchtrace/project_retry.py": 1, "src/patchtrace/raw_alignment_view.py": 1, "src/patchtrace/representations": 2, "src/patchtrace/resources": 1, "src/patchtrace/secondary": 5, "src/patchtrace/service.py": 1, "src/patchtrace/tooltips.py": 1, "src/patchtrace/ui.py": 1, "src/patchtrace/ui_inspection.py": 1, "src/patchtrace/ui_new_project.py": 1, "src/patchtrace/ui_profiles.py": 1, "src/patchtrace/ui_raw_alignment.py": 1, "src/patchtrace/unified": 12, "src/patchtrace/verified_backup.py": 1, "tasks": 1, "tests": 105, "third_party": 8, "tools": 20}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {'FAILURE': 9, 'SUCCESS': 15, 'CANCELLED': 1, 'SKIPPED': 6}; failures: ['live rz-diff (ubuntu-latest)', 'qa (ubuntu-latest)', 'live rz-diff (windows-latest)', 'qa (windows-latest)', 'qt-gate (windows-latest, 5, 1/1)', 'shard 0 of 2', 'shard 1 of 2', 'merge', 'SonarCloud Code Analysis']; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: blocked: failing checks.
+- Recommended disposition: preserve active branch; port only verified unique patches.
+- Unique commits: `b26ca2c9bf85e9b7bc385b02c7bfdad1d7d724de`, `e81adbe882ae6eb2c26a5854b24aa6acff2b27a2`, `c307aaad162cff1f4464b62469792ead8d877385`, `e9f6be5d8c0cdc36d1a65f81403901648a6fe1fc`, `fffd5badb1ed84c8e930d667eae7d2d1dcf5a64f`, `d21d66758f75c6a3912b76042a792c0b9bb2eea2`, `ecfb60193b806dd984c044ae8f347b063e3d5155`, `aa6d614f0677e908727224aa4e46453108bb1b57`, `f82489bc9ff8ad89987670fde484a5f579aefa6b`, `5736376891d273fb16fa211ed0fa2de5125c1601`, `f18687fd035b67961c1072af84f8c2b3442979e0`, `2fcd627e52a6d784d5c2e5b4ea8105e90b8589b3`, `c04ad725551fe8daa139b37aa2cdf46d6d161b65`, `b87193d1dd30635fce33986f80ceade136507a1a`, `fb91cff6d91c77a2c539c896b670d81180dcc637`, `632079f0251982068d2cac294514b2d32e06a74c`, `a4d1e6a38c34d1952584aa65d7f5f908c45547b3`, `a7f13e13ffb512f8e9621753a0ae162d78942f3b`, `17210eb704802912a2951d8efd9f5e3d27a2193b`, `e2476c19017f82785570497aa2804b4f4f2e374f`, `0ca9ff1c99d2aea5198f9dda1a93c9bde8ca0226`, `7f14f792ed516c494aea17d7ca337bae18a31cf6`, `2c87611ebe65ea227f9f3efdf9c6246ab09b177f`, `c592b680eb1013f02c8472e544bbdb417e11fdde`, `59ff5ad1379c0a787d92f62d732686c1dd0e65b4`, `015f79cc762f0ebff4cbb700480a44a88e014d9f`, `745e93426a16e0a91a961b6e0bbcb71be69f2a7e`, `25125eb8b282322bafe8e682f5c09dfbffb07fbf`, `50ced35a54f18b4de8437b78a42dd2ec689338d9`, `8f4c4a2e0021d424d403317c6780b6db026ad76b`, `c3868d8335a8f32f676905032dc1a6d0e9f22fd6`, `039c696c93a443d152d4ddc1383179408ff86b75`, `d038ddea43182b8709afd447140dc74fded487c5`, `c13d3257c88140c23fb585a8a59a4dce81e81928`, `566e266f53b07696c4289c9b46969d43f27f4de9`, `0130bf81e2fe3154f30af7b68a0e6ab197946040`
+- Patch-equivalent commits: none
+- Modified files:
+  - `.gitattributes`
+  - `.github/workflows/corpus-tier-r.yml`
+  - `.github/workflows/unified-live-gates.yml`
+  - `README.md`
+  - `docs/branch-pr-inventory-2026-10-30.md`
+  - `docs/handoff/autonomous-continuation-20261031.md`
+  - `docs/handoff/autonomous-continuation-20261101.md`
+  - `docs/handoff/autonomous-continuation-20261102.md`
+  - `docs/integration/pr-gates-01.md`
+  - `docs/integration/pr-gates-02.md`
+  - `docs/integration/pr-gates-03.md`
+  - `docs/integration/pr-gates-04.md`
+  - `docs/integration/pr-gates-05.md`
+  - `docs/integration/pr-gates-06.md`
+  - `docs/modules.md`
+  - `docs/notices.md`
+  - `docs/plans/essential-integration-20261029.md`
+  - `docs/plans/gt01-native-output-diagnosis-20261030.md`
+  - `docs/plans/gt01-overlap-disposition-20261030.md`
+  - `docs/plans/milestone-ledger-20261030.md`
+  - `docs/qa.md`
+  - `docs/qa/ExportBinExport20261102.java`
+  - `docs/qa/backup-independent-20261101.log.gz`
+  - `docs/qa/backup-publication-admission-20261102.md`
+  - `docs/qa/backup-publication-admission-20261102.tar.gz`
+  - `docs/qa/backup-publication-admission-scan-20261102.tar.gz`
+  - `docs/qa/backup-publication-collision-20261101.md`
+  - `docs/qa/backup-publication-green.log.gz`
+  - `docs/qa/backup-publication-independent-review-20261101.json`
+  - `docs/qa/backup-publication-red.log.gz`
+  - `docs/qa/backup-reuse-filter-20261102.md`
+  - `docs/qa/backup-reuse-filter-20261102.tar.gz`
+  - `docs/qa/backup-reuse-filter-independent-20261102.tar.gz`
+  - `docs/qa/backup-stat-api-recovery-20261102.md`
+  - `docs/qa/backup-stat-green.log.gz`
+  - `docs/qa/backup-stat-green.xml.gz`
+  - `docs/qa/backup-stat-red.log.gz`
+  - `docs/qa/backup-windows-review-20261102.json`
+  - `docs/qa/backup-windows-review-20261102.md`
+  - `docs/qa/branch-dispositions-20261101.md`
+  - `docs/qa/c13-local-full-suite-20261102.md`
+  - `docs/qa/callgraph-cap-review-20261102.json`
+  - `docs/qa/callgraph-cap-review-20261102.md`
+  - `docs/qa/callgraph-count-suffix-review-20261102.json`
+  - `docs/qa/callgraph-count-suffix-review-20261102.md`
+  - `docs/qa/callgraph-path-budget-20261102.tar.gz`
+  - `docs/qa/callgraph-path-budget-review-20261102.json`
+  - `docs/qa/callgraph-path-budget-review-20261102.md`
+  - `docs/qa/card-context-sources-20261102.md`
+  - `docs/qa/card-context-sources-review-20261102.json`
+  - `docs/qa/card-context-sources-review-20261102.md`
+  - `docs/qa/checkpoint2-schema.log.gz`
+  - `docs/qa/ci-monitor-checkpoint-0905.tar.gz`
+  - `docs/qa/ci-monitor-checkpoint-0932.tar.gz`
+  - `docs/qa/ci-monitor-delta-hosted-linux-20261102.tar.gz`
+  - `docs/qa/ci-monitor-terminal-6f923758-20261102.tar.gz`
+  - `docs/qa/ci-monitor-terminal-9c468bc7-20261102.tar.gz`
+  - `docs/qa/ci-monitor-windows-51a9b4af-20261102.tar.gz`
+  - `docs/qa/ci-monitor-windows-bb98bae3-20261102.tar.gz`
+  - `docs/qa/ci-resume-evidence-20261102.tar.gz`
+  - `docs/qa/combined-fixture-repair-20261102.md`
+  - `docs/qa/combined-fixture-repair-20261102.tar.gz`
+  - `docs/qa/combined-followups-extra-20261102.tar.gz`
+  - `docs/qa/combined-followups-root-20261102.tar.gz`
+  - `docs/qa/combined-retry-backup-windows-20261102.tar.gz`
+  - `docs/qa/combined-reviewed-20261101.log.gz`
+  - `docs/qa/completion-inventory-20261031.json`
+  - `docs/qa/completion-inventory-20261101.json.gz`
+  - `docs/qa/completion-verification-20261031.json`
+  - `docs/qa/completion-verification-20261101.json`
+  - `docs/qa/continuation-verification-20261030.md`
+  - `docs/qa/corpus-focused-20261101.log.gz`
+  - `docs/qa/corpus-html-green-final-20261101.log.gz`
+  - `docs/qa/corpus-html-red-20261101.log.gz`
+  - `docs/qa/corpus-output-persistence-20261101.json`
+  - `docs/qa/corpus-output-persistence-20261101.md`
+  - `docs/qa/corpus-prereg-green-20261101.log.gz`
+  - `docs/qa/corpus-prereg-red-20261101.log.gz`
+  - `docs/qa/corpus-review-green-final-20261101.log.gz`
+  - `docs/qa/corpus-review-red-20261101.log.gz`
+  - `docs/qa/corpus-safeguards-20261101.json`
+  - `docs/qa/corpus-safeguards-20261101.md`
+  - `docs/qa/corpus-transfer-review-20261102.json`
+  - `docs/qa/corpus-transfer-review-20261102.md`
+  - `docs/qa/corpus-verified-transfer-recovery-20261102.md`
+  - `docs/qa/creation-explicit-retry-review-20261102.json`
+  - `docs/qa/creation-explicit-retry-review-20261102.md`
+  - `docs/qa/creation-staging-review-20261102.json`
+  - `docs/qa/creation-staging-review-20261102.md`
+  - `docs/qa/export-base-failures-20261101.log.gz`
+  - `docs/qa/export-copies-candidate-20261101.log.gz`
+  - `docs/qa/export-copies-failures-20261101.log.gz`
+  - `docs/qa/export-full-20261101.log.gz`
+  - `docs/qa/export-full-20261101.xml.gz`
+  - `docs/qa/f8-loop-author-receipt-20261101.json`
+  - `docs/qa/f8-loop-integrated-root.log.gz`
+  - `docs/qa/fixture-repair-review-20261102.json`
+  - `docs/qa/fixture-repair-review-20261102.md`
+  - `docs/qa/full-recovered-20261102.json`
+  - `docs/qa/full-recovered-20261102.tar.gz`
+  - `docs/qa/full-verification-f005c66-20261101.md`
+  - `docs/qa/full-verification-f005c66-20261101.tar.gz`
+  - `docs/qa/gt01-harness-smoke-20261030.json`
+  - `docs/qa/gt01-native-smoke-20261030.json`
+  - `docs/qa/gt12-benchmark-20261101.md`
+  - `docs/qa/gt12-combined-20261101.json`
+  - `docs/qa/gt12-evidence-20261101.json`
+  - `docs/qa/gt12-facts-20261101.invocation.json`
+  - `docs/qa/gt12-facts-20261101.json`
+  - `docs/qa/gt12-facts-20261101.log`
+  - `docs/qa/gt12-independent-controls-20261101.log`
+  - `docs/qa/gt12-independent-controls-20261101.py`
+  - `docs/qa/gt12-independent-controls-20261101.py.original.txt`
+  - `docs/qa/gt12-independent-receipt-check-20261101.log`
+  - `docs/qa/gt12-independent-receipt-check-20261101.py`
+  - `docs/qa/gt12-independent-receipt-check-20261101.py.original.txt`
+  - `docs/qa/gt12-independent-review-20261101.md`
+  - `docs/qa/gt12-independent-tests-20261101.log`
+  - `docs/qa/gt12-read-model-20261101.invocation.json`
+  - `docs/qa/gt12-read-model-20261101.json`
+  - `docs/qa/gt12-read-model-20261101.log`
+  - `docs/qa/gt12-run-stage-20261101.py`
+  - `docs/qa/gt12-smoke-4c8f9a6-20261101.json`
+  - `docs/qa/gt12-smoke-initial-20261101.json`
+  - `docs/qa/gt12-ui-calls-20261101.invocation.json`
+  - `docs/qa/gt12-ui-calls-20261101.json`
+  - `docs/qa/gt12-ui-calls-20261101.log`
+  - `docs/qa/historical-review-scripts-20261101.json`
+  - `docs/qa/identity-followup-20261101.md`
+  - `docs/qa/identity-followup-integrated-original-20261101.tar.gz`
+  - `docs/qa/identity-followup-root-integrated.log.gz`
+  - `docs/qa/identity-independent-review-20261101.md`
+  - `docs/qa/integrated-latest-bounded.log.gz`
+  - `docs/qa/integrated-output-prereg-research.log.gz`
+  - `docs/qa/integrated-rzdiff-identity.log.gz`
+  - `docs/qa/integration-checkpoint-20261101.json`
+  - `docs/qa/integration-checkpoint2-20261101.json`
+  - `docs/qa/integration-focused-20261101.log.gz`
+  - `docs/qa/integration-focused-final-20261101.log.gz`
+  - `docs/qa/integration-identity-msrc-20261101-copied.log.gz`
+  - `docs/qa/integration-identity-msrc-20261101.log.gz`
+  - `docs/qa/issue-dispositions-20261101.md`
+  - `docs/qa/issue120-combined-green-20261101.log.gz`
+  - `docs/qa/issue120-corrected-baseline-red-20261101.log.gz`
+  - `docs/qa/issue120-corrected-original-source-red-20261101.log.gz`
+  - `docs/qa/issue120-final-focused-20261101.log.gz`
+  - `docs/qa/issue120-identity-first-20261101.log.gz`
+  - `docs/qa/issue120-identity-green-20261101.log.gz`
+  - `docs/qa/issue120-identity-integration-20261101.log.gz`
+  - `docs/qa/issue120-implementation-verification-20261101.json`
+  - `docs/qa/issue120-red-20261101.log.gz`
+  - `docs/qa/issue120-resource-verification-20261101.json`
+  - `docs/qa/kb-fixture-reconciliation-20261030.md`
+  - `docs/qa/kb-saved-scope-20261102.md`
+  - `docs/qa/kb-saved-scope-review-20261102.json`
+  - `docs/qa/kb-saved-scope-review-20261102.md`
+  - `docs/qa/lifecycle-116-creation-staging-20261102.md`
+  - `docs/qa/lifecycle-116-explicit-retry-20261102.md`
+  - `docs/qa/lifecycle-116-independent-20261102.tar.gz`
+  - `docs/qa/lifecycle-116-profile-inspection-20261102.md`
+  - `docs/qa/lifecycle-116-review-20261102.json`
+  - `docs/qa/lifecycle-116-review-20261102.md`
+  - `docs/qa/llvm-native-controls-20261101.tar.gz`
+  - `docs/qa/msrc-20261101-2024-Aug.json.import-result.json`
+  - `docs/qa/msrc-20261101-2026-Oct.json.import-result.json`
+  - `docs/qa/msrc-20261101-independent-mixed-control.py`
+  - `docs/qa/msrc-20261101-independent-mixed-control.py.original.txt`
+  - `docs/qa/msrc-20261101-independent-mixed-red.txt`
+  - `docs/qa/msrc-20261101-independent-order-red.txt`
+  - `docs/qa/msrc-20261101-independent-review-controls-final.txt`
+  - `docs/qa/msrc-20261101-independent-review-controls.py`
+  - `docs/qa/msrc-20261101-independent-review-controls.py.original.txt`
+  - `docs/qa/msrc-20261101-independent-review-controls.py.pre-namespace-discovery.txt`
+  - `docs/qa/msrc-20261101-independent-review.md`
+  - `docs/qa/msrc-after-merge.log.gz`
+  - `docs/qa/msrc-field-diagnostics-20261102.md`
+  - `docs/qa/msrc-field-diagnostics-review-20261102.json`
+  - `docs/qa/msrc-field-diagnostics-review-20261102.md`
+  - `docs/qa/msrc-namespace-independent-review.json`
+  - `docs/qa/msrc-namespace-review-20261101.log.gz`
+  - `docs/qa/msrc-namespace-review-20261101.md`
+  - `docs/qa/msrc-namespace-sonar-20261101.json`
+  - `docs/qa/msrc-provenance-recovery-20261102.md`
+  - `docs/qa/msrc-provenance-review-20261102.json`
+  - `docs/qa/msrc-provenance-review-20261102.md`
+  - `docs/qa/msrc-review-findings-20261102.md`
+  - `docs/qa/msrc-review-findings-review-20261102.json`
+  - `docs/qa/msrc-review-findings-review-20261102.md`
+  - `docs/qa/native-bindiff-harness-20261102.md`
+  - `docs/qa/native-bindiff-harness-20261102.py`
+  - `docs/qa/native-bindiff-independent-review-20261102.json`
+  - `docs/qa/native-bindiff-tool-pins-20261102.json`
+  - `docs/qa/native-binexport-bindiff-attempt1-20261102.json`
+  - `docs/qa/native-binexport-bindiff-attempt1-20261102.tar.gz`
+  - `docs/qa/native-binexport-bindiff-attempt1-summary-20261102.json`
+  - `docs/qa/native-reconciliation-20261101-compile-evidence.json`
+  - `docs/qa/native-reconciliation-20261101-download-evidence.json`
+  - `docs/qa/native-reconciliation-20261101-native-driver.py`
+  - `docs/qa/native-reconciliation-20261101-receipt.json`
+  - `docs/qa/native-reconciliation-20261101-setup-evidence.json`
+  - `docs/qa/native-reconciliation-20261101-verification-evidence.json`
+  - `docs/qa/native-reconciliation-setup-attempt-20261031.json`
+  - `docs/qa/native-reconciliation-smoke-20261031-driver.py`
+  - `docs/qa/native-reconciliation-smoke-20261031.json`
+  - `docs/qa/original41-pr-collections-20261101.json.gz`
+  - `docs/qa/original41-pr-workflow-jobs-first-pages-20261101.json.gz`
+  - `docs/qa/output-credit-completion-20261102.json`
+  - `docs/qa/output-credit-completion-20261102.md`
+  - `docs/qa/output-credit-completion-20261102.tar.gz`
+  - `docs/qa/output-credit-completion-independent-review-20261102.json`
+  - `docs/qa/output-credit-completion-review-20261102.json`
+  - `docs/qa/output-credit-completion-review-20261102.md`
+  - `docs/qa/output-credited-replay-20261101.json`
+  - `docs/qa/output-credited-replay-20261101.md`
+  - `docs/qa/output-path-fixtures-20261102.md`
+  - `docs/qa/output-path-fixtures-20261102.tar.gz`
+  - `docs/qa/output-prereg-integrated-checkpoint2.log.gz`
+  - `docs/qa/output-windows-independent-review-20261102.json`
+  - `docs/qa/output-windows-stat-20261102.json`
+  - `docs/qa/output-windows-stat-20261102.md`
+  - `docs/qa/output-windows-stat-20261102.tar.gz`
+  - `docs/qa/pr149-linux.verified.json`
+  - `docs/qa/pr149-windows.verified.json`
+  - `docs/qa/pr150-qa-windows.verified.json`
+  - `docs/qa/pr150-sonar-triage-2fdac2e.md`
+  - `docs/qa/pr154-escaped-opening-verification-20261101.json`
+  - `docs/qa/pr154-markdown-independent-review-20261101.json`
+  - `docs/qa/pr154-markdown-verification-20261101.json`
+  - `docs/qa/pr156157-independent-external-review-20261101.md`
+  - `docs/qa/pr157-bounded-review-repro-20261101.json`
+  - `docs/qa/pr157-bounded-review-repro-20261101.py.original.txt`
+  - `docs/qa/pr157-credited-replay-independent-review-20261101.json`
+  - `docs/qa/prereg-fence-audit-20261102.tar.gz`
+  - `docs/qa/prereg-final-root-integrated.log.gz`
+  - `docs/qa/prereg-independent-review-20261101.json`
+  - `docs/qa/prereg-markdown-review-20261101.md`
+  - `docs/qa/prereg-review-followup-20261101.tar.gz`
+  - `docs/qa/pyyaml-dev-independent-review-20261102.json`
+  - `docs/qa/raw-summary-independent-20261102.png`
+  - `docs/qa/raw-summary-sizing-20261102.md`
+  - `docs/qa/raw-summary-sizing-20261102.tar.gz`
+  - `docs/qa/raw-summary-sizing-review-20261102.json`
+  - `docs/qa/raw-summary-sizing-review-20261102.md`
+  - `docs/qa/rd-alignment-root.log.gz`
+  - `docs/qa/rd-f03-author-receipt.json`
+  - `docs/qa/rd-f03-independent-review-20261101.json`
+  - `docs/qa/rd-paired-review-20261102.json`
+  - `docs/qa/rd-paired-review-20261102.md`
+  - `docs/qa/reconciliation-bench-20261031.json`
+  - `docs/qa/remote-heads-checkpoint-20261101.json`
+  - `docs/qa/remote-heads-checkpoint2-20261101.json`
+  - `docs/qa/reproduce-issue120-20261101.json.gz`
+  - `docs/qa/resume-checkpoint-20261102.json`
+  - `docs/qa/resume-followup-checkpoint-20261102.json`
+  - `docs/qa/resume-root-checks-20261102.tar.gz`
+  - `docs/qa/rz-fixtures-20261101.md`
+  - `docs/qa/rz-fixtures-20261101.tar.gz`
+  - `docs/qa/rz-scoring-contract-followup.log.gz`
+  - `docs/qa/rz-scoring-contract-green.log.gz`
+  - `docs/qa/rzdiff-native-provenance-20261101.tar.gz`
+  - `docs/qa/rzdiff-native-root-review-20261101.json`
+  - `docs/qa/rzdiff-quarantine-independent-review-20261101.md`
+  - `docs/qa/rzdiff-quarantine-verification-20261101.json`
+  - `docs/qa/rzdiff-replay-final-e8319b9.json`
+  - `docs/qa/rzdiff-scoring-fixture-independent-review-20261101.json`
+  - `docs/qa/rzdiff-shared-fixtures-independent-review-20261101.json`
+  - `docs/qa/sonar-review.md`
+  - `docs/qa/storage-after-merge.log.gz`
+  - `docs/qa/storage-focused-20261101.log.gz`
+  - `docs/qa/storage-publication-independent-20261102.tar.gz`
+  - `docs/qa/storage-publication-review-20261102.json`
+  - `docs/qa/storage-publication-review-20261102.md`
+  - `docs/qa/storage-reuse-filter-review-20261102.json`
+  - `docs/qa/storage-reuse-filter-review-20261102.md`
+  - `docs/qa/transfer-credit-preflight-20261102.md`
+  - `docs/qa/transfer-preflight-review-20261102.json`
+  - `docs/qa/transfer-preflight-review-20261102.md`
+  - `docs/qa/transfer-windows-paths-20261102.md`
+  - `docs/qa/windows-output-review-20261102.json`
+  - `docs/qa/windows-output-review-20261102.md`
+  - `docs/qa/windows-secondary-controls-20261102.md`
+  - `docs/qa/windows-secondary-controls-review-20261102.json`
+  - `docs/qa/windows-secondary-controls-review-20261102.md`
+  - `docs/release-process.md`
+  - `docs/research/deep-uncertainty-r8/01-typed-literal-counterexamples.md`
+  - `docs/research/rzdiff-orientation-witness-20261101.md`
+  - `docs/research/rzdiff-witness-native-20261101.json`
+  - `docs/schemas/corpus/EngineOutputDoc.json`
+  - `docs/schemas/corpus/EvaluationFailure.json`
+  - `docs/schemas/corpus/OutputCompletion.json`
+  - `docs/schemas/corpus/OutputCredits.json`
+  - `docs/schemas/corpus/TrainingManifest.json`
+  - `docs/schemas/corpus/report-examples/valid-engine-output-attention.json`
+  - `docs/specs/architecture.md`
+  - `docs/specs/byte-representations.md`
+  - `docs/specs/calibration-corpus-and-model.md`
+  - `docs/specs/diaphora-optional-engine.md`
+  - `docs/specs/enrichment-hardening-backlog.md`
+  - `docs/specs/gui-preflight-inspection.md`
+  - `docs/specs/kb-cve/31-B-msrc-reverse-index.md`
+  - `docs/specs/kb-cve/31-C-product-build-pairs.md`
+  - `docs/specs/kb-cve/31-E-evidence-intent.md`
+  - `docs/specs/kb-cve/31-F-workflow-ui-persistence.md`
+  - `docs/specs/known-answer-corpus.md`
+  - `docs/specs/panels/graph-inspection.md`
+  - `docs/specs/program-e/WB2-integration-plan.md`
+  - `docs/specs/secondary-engine.md`
+  - `docs/specs/ui.md`
+  - `docs/specs/unified-engine/05-fusion-and-noise.md`
+  - `docs/specs/unified-engine/06-adapters.md`
+  - `docs/specs/unified-engine/08-evaluation.md`
+  - `docs/specs/windows-acceptance-and-milestone-builds.md`
+  - `docs/specs/windows-release-signing-policy.md`
+  - `docs/wiki/Architecture-and-Design-Rationale.md`
+  - `docs/wiki/Codebase-Map.md`
+  - `docs/wiki/Developer-Guide.md`
+  - `docs/wiki/Home.md`
+  - `docs/wiki/User-Guide.md`
+  - `docs/wiki/_Sidebar.md`
+  - `pyproject.toml`
+  - `src/patchtrace/__main__.py`
+  - `src/patchtrace/app_icon.py`
+  - `src/patchtrace/backend.py`
+  - `src/patchtrace/calibration/features.py`
+  - `src/patchtrace/callgraph/algo.py`
+  - `src/patchtrace/callgraph/csr.py`
+  - `src/patchtrace/callgraph/dot.py`
+  - `src/patchtrace/callgraph/export_json.py`
+  - `src/patchtrace/callgraph/labels.py`
+  - `src/patchtrace/callgraph/limits.py`
+  - `src/patchtrace/callgraph/panel_qt.py`
+  - `src/patchtrace/callgraph/paths.py`
+  - `src/patchtrace/callgraph/query.py`
+  - `src/patchtrace/callgraph/snapshot.py`
+  - `src/patchtrace/callgraph/view_model.py`
+  - `src/patchtrace/diaphora/sqlite_guard.py`
+  - `src/patchtrace/gui/qt/host.py`
+  - `src/patchtrace/gui/qt/kb_selftest.py`
+  - `src/patchtrace/gui/qt/project_adoption.py`
+  - `src/patchtrace/kbcorrelation/adapters/panel_snapshot.py`
+  - `src/patchtrace/kbcorrelation/cli_leads.py`
+  - `src/patchtrace/kbcorrelation/context.py`
+  - `src/patchtrace/kbcorrelation/index.py`
+  - `src/patchtrace/kbcorrelation/investigation_qt.py`
+  - `src/patchtrace/kbcorrelation/investigation_service.py`
+  - `src/patchtrace/kbcorrelation/panel_qt.py`
+  - `src/patchtrace/kbcorrelation/service.py`
+  - `src/patchtrace/kbcorrelation/sources/cvrf.py`
+  - `src/patchtrace/kbcorrelation/sources/cvrf_msrc.py`
+  - `src/patchtrace/kbcorrelation/sources/importer.py`
+  - `src/patchtrace/kbcorrelation/wiring.py`
+  - `src/patchtrace/persistence.py`
+  - `src/patchtrace/project_creation.py`
+  - `src/patchtrace/project_retry.py`
+  - `src/patchtrace/raw_alignment_view.py`
+  - `src/patchtrace/representations/__init__.py`
+  - `src/patchtrace/representations/alignment.py`
+  - `src/patchtrace/resources/patchtrace-mark.svg`
+  - `src/patchtrace/secondary/contracts.py`
+  - `src/patchtrace/secondary/evidence.py`
+  - `src/patchtrace/secondary/evidence_view.py`
+  - `src/patchtrace/secondary/reconcile.py`
+  - `src/patchtrace/secondary/rzdiff.py`
+  - `src/patchtrace/service.py`
+  - `src/patchtrace/tooltips.py`
+  - `src/patchtrace/ui.py`
+  - `src/patchtrace/ui_inspection.py`
+  - `src/patchtrace/ui_new_project.py`
+  - `src/patchtrace/ui_profiles.py`
+  - `src/patchtrace/ui_raw_alignment.py`
+  - `src/patchtrace/unified/compute.py`
+  - `src/patchtrace/unified/facts/anchors.py`
+  - `src/patchtrace/unified/facts/channels.py`
+  - `src/patchtrace/unified/facts/pseudo.py`
+  - `src/patchtrace/unified/facts/verdict.py`
+  - `src/patchtrace/unified/fusion/arbiter.py`
+  - `src/patchtrace/unified/ir/cfg.py`
+  - `src/patchtrace/unified/read_text.py`
+  - `src/patchtrace/unified/registry.py`
+  - `src/patchtrace/unified/sources/__init__.py`
+  - `src/patchtrace/unified/sources/ladder.py`
+  - `src/patchtrace/unified/sources/secondary.py`
+  - `src/patchtrace/verified_backup.py`
+  - `tasks/todo.md`
+  - `tests/fixtures/kb/CONTRACT_CONFLICTS.md`
+  - `tests/fixtures/kb/MANIFEST.json`
+  - `tests/fixtures/kb/README.md`
+  - `tests/fixtures/kb/confusable_kb.json`
+  - `tests/fixtures/kb/crash_points.json`
+  - `tests/fixtures/kb/csaf_synthetic.json`
+  - `tests/fixtures/kb/cvrf_bom.json`
+  - `tests/fixtures/kb/cvrf_crlf.json`
+  - `tests/fixtures/kb/cvrf_v3_synthetic.json`
+  - `tests/fixtures/kb/raw_adversarial_inputs.json`
+  - `tests/fixtures/kb/update_packages_synthetic.json`
+  - `tests/fixtures/kb/update_relationships_synthetic.json`
+  - `tests/fixtures/kb/vex_synthetic.json`
+  - `tests/fixtures/kb/winbindex_synthetic.json`
+  - `tests/fixtures/kbcve/msrc/2024-Aug-CVE-2024-38193.facts.json`
+  - `tests/fixtures/kbcve/msrc/2024-Aug-CVE-2024-38193.provenance.json`
+  - `tests/fixtures/secondary/rzdiff-0.9.1-native-orientation.json`
+  - `tests/kb_crash_harness.py`
+  - `tests/kb_fixture_performance_plan.md`
+  - `tests/stress/test_cli_stress_recovery.py`
+  - `tests/test_audit2_fixes.py`
+  - `tests/test_audit_desktop.py`
+  - `tests/test_calibration_runtime.py`
+  - `tests/test_calibration_tools.py`
+  - `tests/test_callgraph_cap_truth.py`
+  - `tests/test_callgraph_count_suffix_guard.py`
+  - `tests/test_callgraph_path_budget.py`
+  - `tests/test_callgraph_snapshot.py`
+  - `tests/test_ci_summary.py`
+  - `tests/test_cli_secondary_run.py`
+  - `tests/test_creation_116.py`
+  - `tests/test_diaphora_deadline.py`
+  - `tests/test_evidence_panel_service.py`
+  - `tests/test_evidence_ui.py`
+  - `tests/test_evidence_view.py`
+  - `tests/test_jobs.py`
+  - `tests/test_kb_crash_injection_protocol.py`
+  - `tests/test_kb_cvrf_fixture_import.py`
+  - `tests/test_kb_fixture_encoding.py`
+  - `tests/test_kb_fixture_properties.py`
+  - `tests/test_kb_investigation_service.py`
+  - `tests/test_kb_metadata_fixture_boundaries.py`
+  - `tests/test_kb_offline_fixture_import.py`
+  - `tests/test_kb_raw_adversarial_inputs.py`
+  - `tests/test_kb_synthetic_fixture_corpus.py`
+  - `tests/test_kb_update_relationships.py`
+  - `tests/test_kbc_acquire_cli.py`
+  - `tests/test_kbc_card_context_sources.py`
+  - `tests/test_kbc_contracts.py`
+  - `tests/test_kbc_msrc_cvrf.py`
+  - `tests/test_kbc_msrc_field_diagnostics.py`
+  - `tests/test_kbc_msrc_provenance.py`
+  - `tests/test_kbc_msrc_review_findings.py`
+  - `tests/test_kbc_saved_scope.py`
+  - `tests/test_kbc_selection_guard.py`
+  - `tests/test_lifecycle_116.py`
+  - `tests/test_live_rzdiff_check.py`
+  - `tests/test_native_bindiff_harness.py`
+  - `tests/test_project_retry.py`
+  - `tests/test_r2_cache_version.py`
+  - `tests/test_r2_cfg_performance.py`
+  - `tests/test_r2_fusion_regressions.py`
+  - `tests/test_r8_literal_types.py`
+  - `tests/test_raw_alignment_view.py`
+  - `tests/test_representation_alignment.py`
+  - `tests/test_rzdiff_cli_env.py`
+  - `tests/test_rzdiff_count_observation.py`
+  - `tests/test_rzdiff_orientation_20261101.py`
+  - `tests/test_secondary_reconcile.py`
+  - `tests/test_secondary_rzdiff.py`
+  - `tests/test_secondary_scheduler.py`
+  - `tests/test_tier_r_credit_completion.py`
+  - `tests/test_tier_r_credited_replay.py`
+  - `tests/test_tier_r_eval_engines.py`
+  - `tests/test_tier_r_eval_metrics.py`
+  - `tests/test_tier_r_output_persistence.py`
+  - `tests/test_tier_r_output_stat_compat.py`
+  - `tests/test_tier_r_training_artifacts.py`
+  - `tests/test_tooltips.py`
+  - `tests/test_train_prereg_selection.py`
+  - `tests/test_ui_callgraph_cap_truth.py`
+  - `tests/test_ui_kb_create_cancellation.py`
+  - `tests/test_ui_kb_current_project.py`
+  - `tests/test_ui_kb_entry.py`
+  - `tests/test_ui_kb_frozen_journey.py`
+  - `tests/test_ui_kb_investigation.py`
+  - `tests/test_ui_project_retry.py`
+  - `tests/test_ui_raw_alignment.py`
+  - `tests/test_unified_bench.py`
+  - `tests/test_unified_bench_stages.py`
+  - `tests/test_unified_cli_show.py`
+  - `tests/test_unified_live_force_identical.py`
+  - `tests/test_unified_live_native_failure_details.py`
+  - `tests/test_unified_live_pairs.py`
+  - `tests/test_unified_live_pairs_r1.py`
+  - `tests/test_unified_live_workflow.py`
+  - `tests/test_unified_sources.py`
+  - `tests/test_unified_verdict_ir.py`
+  - `tests/test_unified_wire_compute.py`
+  - `tests/test_verified_backup_byte_integrity.py`
+  - `tests/test_verified_backup_publication_admission.py`
+  - `tests/test_verified_backup_reuse_filter.py`
+  - `tests/test_verified_backup_stat_api.py`
+  - `tests/test_windows_build_resources.py`
+  - `tests/unified_s0_fixtures.py`
+  - `third_party/notices/README.md`
+  - `third_party/notices/qtsvg-6.12.0/LICENSES/BSD-3-Clause.txt`
+  - `third_party/notices/qtsvg-6.12.0/LICENSES/GPL-2.0-only.txt`
+  - `third_party/notices/qtsvg-6.12.0/LICENSES/GPL-3.0-only.txt`
+  - `third_party/notices/qtsvg-6.12.0/LICENSES/LGPL-3.0-only.txt`
+  - `third_party/notices/qtsvg-6.12.0/PROVENANCE.txt`
+  - `third_party/notices/qtsvg-6.12.0/REUSE.toml`
+  - `third_party/notices/qtsvg-6.12.0/SOURCE-HEADERS.txt`
+  - `tools/build_linux.py`
+  - `tools/build_windows.py`
+  - `tools/calibration/prereg_gate.py`
+  - `tools/calibration/tier_r/cli.py`
+  - `tools/calibration/tier_r/evaluate.py`
+  - `tools/calibration/tier_r/output_store.py`
+  - `tools/calibration/tier_r/report_schemas.py`
+  - `tools/calibration/tier_r/shard.py`
+  - `tools/calibration/tier_r/training_artifacts.py`
+  - `tools/calibration/train.py`
+  - `tools/check_windows_exe.py`
+  - `tools/frozen_smoke.py`
+  - `tools/live_rzdiff_check.py`
+  - `tools/pyinstaller_hooks/hook-patchtrace.app_icon.py`
+  - `tools/research/rzdiff_count_observation.py`
+  - `tools/unified/bench.py`
+  - `tools/unified/bench_workloads.py`
+  - `tools/unified/live_pairs.py`
+  - `tools/windows_icon.py`
+  - `tools/windows_version_info.py`
+
+### `codex/consolidate-backup-stability-20261102`
+
+- Head: `f1a55c4cf21ddb0dea243bd417b74f86caaed142`
+- Base: `origin/main` at `5d504ff5c046bfb758623182b472976003632bba`
+- Merge base: `f1a55c4cf21ddb0dea243bd417b74f86caaed142`
+- Associated PR: none in open PR snapshot
+- Functional scope: {}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {}; failures: []; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: no unique patches relative to base.
+- Recommended disposition: superseded relative to base; verify before closing/deleting.
+- Unique commits: none
+- Patch-equivalent commits: none
+- Modified files:
+
+### `codex/consolidate-prereg-prefix-20261102`
+
+- Head: `9b9452b4677ee3809a6e0f43d49567a8d15602e6`
+- Base: `origin/main` at `5d504ff5c046bfb758623182b472976003632bba`
+- Merge base: `6579ed83211b7ff2039e3152728ac1cddc3e93d6`
+- Associated PR: none in open PR snapshot
+- Functional scope: {"docs": 19, "tasks": 1, "tests": 1, "tools": 2}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {}; failures: []; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: unqualified: no current CI attached.
+- Recommended disposition: preserve active branch; port only verified unique patches.
+- Unique commits: `4aa99f7bd989765000c6ebd659c9565030a48849`, `f27d23a80ee49573ccca54cdf036427f57eebb2a`, `9b9452b4677ee3809a6e0f43d49567a8d15602e6`
+- Patch-equivalent commits: none
+- Modified files:
+  - `docs/modules.md`
+  - `docs/qa.md`
+  - `docs/qa/corpus-focused-20261101.log.gz`
+  - `docs/qa/corpus-html-green-final-20261101.log.gz`
+  - `docs/qa/corpus-html-red-20261101.log.gz`
+  - `docs/qa/corpus-prereg-green-20261101.log.gz`
+  - `docs/qa/corpus-prereg-red-20261101.log.gz`
+  - `docs/qa/corpus-review-green-final-20261101.log.gz`
+  - `docs/qa/corpus-review-red-20261101.log.gz`
+  - `docs/qa/corpus-safeguards-20261101.json`
+  - `docs/qa/corpus-safeguards-20261101.md`
+  - `docs/qa/pr154-escaped-opening-verification-20261101.json`
+  - `docs/qa/pr154-markdown-verification-20261101.json`
+  - `docs/qa/prereg-fence-prefix-consolidation-20261102.md`
+  - `docs/qa/prereg-main-port-20261101.log.gz`
+  - `docs/qa/prereg-main-port-20261101.md`
+  - `docs/qa/prereg-markdown-review-20261101.md`
+  - `docs/qa/prereg-review-followup-20261101.tar.gz`
+  - `docs/specs/calibration-corpus-and-model.md`
+  - `tasks/todo.md`
+  - `tests/test_train_prereg_selection.py`
+  - `tools/calibration/prereg_gate.py`
+  - `tools/calibration/train.py`
+
+### `codex/consolidate-replay-schema-20261102`
+
+- Head: `ca411e77f43a9fd95ca5e0bcc7d2b58071ccae37`
+- Base: `origin/main` at `5d504ff5c046bfb758623182b472976003632bba`
+- Merge base: `63d11d316c70e1f1e83baa80acabd3cf3c4c2245`
+- Associated PR: none in open PR snapshot
+- Functional scope: {"docs": 32, "tasks": 1, "tests": 5, "tools": 6}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {}; failures: []; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: unqualified: no current CI attached.
+- Recommended disposition: preserve active branch; port only verified unique patches.
+- Unique commits: `99660cc825b366a28e50b18eacad44dbb069ca69`, `aff72cddc902f31a2cf44dea9c48797edabc1c30`, `bb98bae3cf0a3b6a38a298a14186d7f4e1c9c151`, `8a18ca82032b6f6ed11dde887fd5eddef1a9fe81`, `dac9b89a297f428bdcf364b4be37a448a5b2ce4e`, `ca411e77f43a9fd95ca5e0bcc7d2b58071ccae37`
+- Patch-equivalent commits: none
+- Modified files:
+  - `docs/modules.md`
+  - `docs/qa.md`
+  - `docs/qa/ci-monitor-windows-bb98bae3-20261102.tar.gz`
+  - `docs/qa/corpus-output-persistence-20261101.json`
+  - `docs/qa/corpus-output-persistence-20261101.md`
+  - `docs/qa/output-completion-merged-20261102.log.gz`
+  - `docs/qa/output-credit-completion-20261102.json`
+  - `docs/qa/output-credit-completion-20261102.md`
+  - `docs/qa/output-credit-completion-20261102.tar.gz`
+  - `docs/qa/output-credit-completion-independent-review-20261102.json`
+  - `docs/qa/output-credited-replay-20261101.json`
+  - `docs/qa/output-credited-replay-20261101.md`
+  - `docs/qa/output-metadata-propagation-20261102.md`
+  - `docs/qa/output-path-fixtures-20261102.md`
+  - `docs/qa/output-path-fixtures-20261102.tar.gz`
+  - `docs/qa/output-windows-independent-review-20261102.json`
+  - `docs/qa/output-windows-main-corrected.log.gz`
+  - `docs/qa/output-windows-main.log.gz`
+  - `docs/qa/output-windows-main.xml.gz`
+  - `docs/qa/output-windows-stat-20261102.json`
+  - `docs/qa/output-windows-stat-20261102.md`
+  - `docs/qa/output-windows-stat-20261102.tar.gz`
+  - `docs/qa/windows-output-review-20261102.json`
+  - `docs/qa/windows-output-review-20261102.md`
+  - `docs/schemas/calibration/PairRows.json`
+  - `docs/schemas/corpus/EngineOutputDoc.json`
+  - `docs/schemas/corpus/EvaluationFailure.json`
+  - `docs/schemas/corpus/OutputCompletion.json`
+  - `docs/schemas/corpus/OutputCredits.json`
+  - `docs/schemas/corpus/TierRReport.json`
+  - `docs/schemas/corpus/report-examples/valid-engine-output-attention.json`
+  - `docs/specs/known-answer-corpus.md`
+  - `tasks/todo.md`
+  - `tests/test_tier_r_credit_completion.py`
+  - `tests/test_tier_r_credited_replay.py`
+  - `tests/test_tier_r_eval_report.py`
+  - `tests/test_tier_r_output_persistence.py`
+  - `tests/test_tier_r_output_stat_compat.py`
+  - `tools/calibration/tier_r/cli.py`
+  - `tools/calibration/tier_r/contracts.py`
+  - `tools/calibration/tier_r/evaluate.py`
+  - `tools/calibration/tier_r/output_store.py`
+  - `tools/calibration/tier_r/report_schemas.py`
+  - `tools/calibration/train.py`
+
+### `codex/consolidated-reviewed-20261102`
+
+- Head: `6e82fd70f315b99c6798a42c9061a1424a02933e`
+- Base: `origin/main` at `5d504ff5c046bfb758623182b472976003632bba`
+- Merge base: `f1a55c4cf21ddb0dea243bd417b74f86caaed142`
+- Associated PR: https://github.com/djshellshoxxx/patchtrace/pull/163
+- Functional scope: {".gitattributes": 1, ".github": 2, "README.md": 1, "docs": 300, "pyproject.toml": 1, "src/patchtrace/__main__.py": 1, "src/patchtrace/app_icon.py": 1, "src/patchtrace/backend.py": 1, "src/patchtrace/calibration": 1, "src/patchtrace/callgraph": 11, "src/patchtrace/gui": 3, "src/patchtrace/kbcorrelation": 9, "src/patchtrace/persistence.py": 1, "src/patchtrace/project_creation.py": 1, "src/patchtrace/project_retry.py": 1, "src/patchtrace/raw_alignment_view.py": 1, "src/patchtrace/representations": 2, "src/patchtrace/resources": 1, "src/patchtrace/secondary": 5, "src/patchtrace/service.py": 1, "src/patchtrace/tooltips.py": 1, "src/patchtrace/ui.py": 1, "src/patchtrace/ui_inspection.py": 1, "src/patchtrace/ui_new_project.py": 1, "src/patchtrace/ui_profiles.py": 1, "src/patchtrace/ui_raw_alignment.py": 1, "src/patchtrace/unified": 12, "tasks": 1, "tests": 98, "third_party": 8, "tools": 21}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {'FAILURE': 6, 'SUCCESS': 25, 'CANCELLED': 1, 'SKIPPED': 6}; failures: ['live rz-diff (ubuntu-latest)', 'live rz-diff (windows-latest)', 'shard 0 of 2', 'shard 1 of 2', 'merge', 'SonarCloud Code Analysis']; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: blocked: failing checks.
+- Recommended disposition: preserve active branch; port only verified unique patches.
+- Unique commits: `b26ca2c9bf85e9b7bc385b02c7bfdad1d7d724de`, `e81adbe882ae6eb2c26a5854b24aa6acff2b27a2`, `c307aaad162cff1f4464b62469792ead8d877385`, `e9f6be5d8c0cdc36d1a65f81403901648a6fe1fc`, `fffd5badb1ed84c8e930d667eae7d2d1dcf5a64f`, `d21d66758f75c6a3912b76042a792c0b9bb2eea2`, `ecfb60193b806dd984c044ae8f347b063e3d5155`, `aa6d614f0677e908727224aa4e46453108bb1b57`, `f82489bc9ff8ad89987670fde484a5f579aefa6b`, `5736376891d273fb16fa211ed0fa2de5125c1601`, `f18687fd035b67961c1072af84f8c2b3442979e0`, `2fcd627e52a6d784d5c2e5b4ea8105e90b8589b3`, `c04ad725551fe8daa139b37aa2cdf46d6d161b65`, `b87193d1dd30635fce33986f80ceade136507a1a`, `fb91cff6d91c77a2c539c896b670d81180dcc637`, `632079f0251982068d2cac294514b2d32e06a74c`, `a4d1e6a38c34d1952584aa65d7f5f908c45547b3`, `a7f13e13ffb512f8e9621753a0ae162d78942f3b`, `17210eb704802912a2951d8efd9f5e3d27a2193b`, `e2476c19017f82785570497aa2804b4f4f2e374f`, `0ca9ff1c99d2aea5198f9dda1a93c9bde8ca0226`, `7f14f792ed516c494aea17d7ca337bae18a31cf6`, `2c87611ebe65ea227f9f3efdf9c6246ab09b177f`, `c592b680eb1013f02c8472e544bbdb417e11fdde`, `59ff5ad1379c0a787d92f62d732686c1dd0e65b4`, `015f79cc762f0ebff4cbb700480a44a88e014d9f`, `745e93426a16e0a91a961b6e0bbcb71be69f2a7e`, `25125eb8b282322bafe8e682f5c09dfbffb07fbf`, `50ced35a54f18b4de8437b78a42dd2ec689338d9`, `8f4c4a2e0021d424d403317c6780b6db026ad76b`, `c3868d8335a8f32f676905032dc1a6d0e9f22fd6`, `4aa99f7bd989765000c6ebd659c9565030a48849`, `99660cc825b366a28e50b18eacad44dbb069ca69`, `f27d23a80ee49573ccca54cdf036427f57eebb2a`, `aff72cddc902f31a2cf44dea9c48797edabc1c30`, `039c696c93a443d152d4ddc1383179408ff86b75`, `bb98bae3cf0a3b6a38a298a14186d7f4e1c9c151`, `d038ddea43182b8709afd447140dc74fded487c5`, `8a18ca82032b6f6ed11dde887fd5eddef1a9fe81`, `c13d3257c88140c23fb585a8a59a4dce81e81928`, `566e266f53b07696c4289c9b46969d43f27f4de9`, `0130bf81e2fe3154f30af7b68a0e6ab197946040`, `dac9b89a297f428bdcf364b4be37a448a5b2ce4e`, `ca411e77f43a9fd95ca5e0bcc7d2b58071ccae37`, `9b9452b4677ee3809a6e0f43d49567a8d15602e6`
+- Patch-equivalent commits: none
+- Modified files:
+  - `.gitattributes`
+  - `.github/workflows/corpus-tier-r.yml`
+  - `.github/workflows/unified-live-gates.yml`
+  - `README.md`
+  - `docs/branch-pr-inventory-2026-10-30.md`
+  - `docs/handoff/autonomous-continuation-20261031.md`
+  - `docs/handoff/autonomous-continuation-20261101.md`
+  - `docs/handoff/autonomous-continuation-20261102.md`
+  - `docs/integration/pr-gates-01.md`
+  - `docs/integration/pr-gates-02.md`
+  - `docs/integration/pr-gates-03.md`
+  - `docs/integration/pr-gates-04.md`
+  - `docs/integration/pr-gates-05.md`
+  - `docs/integration/pr-gates-06.md`
+  - `docs/modules.md`
+  - `docs/notices.md`
+  - `docs/plans/essential-integration-20261029.md`
+  - `docs/plans/gt01-native-output-diagnosis-20261030.md`
+  - `docs/plans/gt01-overlap-disposition-20261030.md`
+  - `docs/plans/milestone-ledger-20261030.md`
+  - `docs/qa.md`
+  - `docs/qa/ExportBinExport20261102.java`
+  - `docs/qa/backup-independent-20261101.log.gz`
+  - `docs/qa/branch-dispositions-20261101.md`
+  - `docs/qa/c13-local-full-suite-20261102.md`
+  - `docs/qa/callgraph-cap-review-20261102.json`
+  - `docs/qa/callgraph-cap-review-20261102.md`
+  - `docs/qa/callgraph-count-suffix-review-20261102.json`
+  - `docs/qa/callgraph-count-suffix-review-20261102.md`
+  - `docs/qa/callgraph-path-budget-20261102.tar.gz`
+  - `docs/qa/callgraph-path-budget-review-20261102.json`
+  - `docs/qa/callgraph-path-budget-review-20261102.md`
+  - `docs/qa/checkpoint2-schema.log.gz`
+  - `docs/qa/ci-monitor-checkpoint-0905.tar.gz`
+  - `docs/qa/ci-monitor-checkpoint-0932.tar.gz`
+  - `docs/qa/ci-monitor-delta-hosted-linux-20261102.tar.gz`
+  - `docs/qa/ci-monitor-terminal-6f923758-20261102.tar.gz`
+  - `docs/qa/ci-monitor-terminal-9c468bc7-20261102.tar.gz`
+  - `docs/qa/ci-monitor-windows-51a9b4af-20261102.tar.gz`
+  - `docs/qa/ci-monitor-windows-bb98bae3-20261102.tar.gz`
+  - `docs/qa/ci-resume-evidence-20261102.tar.gz`
+  - `docs/qa/combined-approved-fixes-20261102.md`
+  - `docs/qa/combined-approved-fixes-20261102.tar.gz`
+  - `docs/qa/combined-consolidation-20261102.md`
+  - `docs/qa/combined-consolidation-20261102.tar.gz`
+  - `docs/qa/combined-fixture-repair-20261102.md`
+  - `docs/qa/combined-fixture-repair-20261102.tar.gz`
+  - `docs/qa/combined-followups-extra-20261102.tar.gz`
+  - `docs/qa/combined-followups-root-20261102.tar.gz`
+  - `docs/qa/combined-portability-20261102.md`
+  - `docs/qa/combined-portability-20261102.tar.gz`
+  - `docs/qa/combined-protocol-integration-20261102.md`
+  - `docs/qa/combined-protocol-integration-20261102.tar.gz`
+  - `docs/qa/combined-replay-integration-20261102.md`
+  - `docs/qa/combined-replay-integration-20261102.tar.gz`
+  - `docs/qa/combined-replay-tracker-recovery-20261102.json`
+  - `docs/qa/combined-retry-backup-windows-20261102.tar.gz`
+  - `docs/qa/combined-reviewed-20261101.log.gz`
+  - `docs/qa/combined-tracker-recovery-20261102.json`
+  - `docs/qa/completion-inventory-20261031.json`
+  - `docs/qa/completion-inventory-20261101.json.gz`
+  - `docs/qa/completion-verification-20261031.json`
+  - `docs/qa/completion-verification-20261101.json`
+  - `docs/qa/consolidation-backup-independent-review-20261102.md`
+  - `docs/qa/consolidation-final-validation-20261102.md`
+  - `docs/qa/consolidation-handoff-20261102.md`
+  - `docs/qa/consolidation-inventory-20261102.json`
+  - `docs/qa/consolidation-main-independent-review-20261102.md`
+  - `docs/qa/consolidation-native-gate-evidence-20261102.json`
+  - `docs/qa/consolidation-native-gate-triage-20261102.md`
+  - `docs/qa/consolidation-portability-independent-review-20261102.md`
+  - `docs/qa/consolidation-protocol-independent-review-20261102.md`
+  - `docs/qa/consolidation-replay-independent-review-20261102.md`
+  - `docs/qa/consolidation-ui-independent-review-20261102.md`
+  - `docs/qa/continuation-verification-20261030.md`
+  - `docs/qa/corpus-focused-20261101.log.gz`
+  - `docs/qa/corpus-html-green-final-20261101.log.gz`
+  - `docs/qa/corpus-html-red-20261101.log.gz`
+  - `docs/qa/corpus-output-persistence-20261101.json`
+  - `docs/qa/corpus-output-persistence-20261101.md`
+  - `docs/qa/corpus-prereg-green-20261101.log.gz`
+  - `docs/qa/corpus-prereg-red-20261101.log.gz`
+  - `docs/qa/corpus-review-green-final-20261101.log.gz`
+  - `docs/qa/corpus-review-red-20261101.log.gz`
+  - `docs/qa/corpus-safeguards-20261101.json`
+  - `docs/qa/corpus-safeguards-20261101.md`
+  - `docs/qa/corpus-transfer-review-20261102.json`
+  - `docs/qa/corpus-transfer-review-20261102.md`
+  - `docs/qa/corpus-verified-transfer-recovery-20261102.md`
+  - `docs/qa/creation-explicit-retry-review-20261102.json`
+  - `docs/qa/creation-explicit-retry-review-20261102.md`
+  - `docs/qa/creation-staging-review-20261102.json`
+  - `docs/qa/creation-staging-review-20261102.md`
+  - `docs/qa/export-base-failures-20261101.log.gz`
+  - `docs/qa/export-copies-candidate-20261101.log.gz`
+  - `docs/qa/export-copies-failures-20261101.log.gz`
+  - `docs/qa/export-full-20261101.log.gz`
+  - `docs/qa/export-full-20261101.xml.gz`
+  - `docs/qa/f8-loop-author-receipt-20261101.json`
+  - `docs/qa/f8-loop-integrated-root.log.gz`
+  - `docs/qa/fixture-repair-review-20261102.json`
+  - `docs/qa/fixture-repair-review-20261102.md`
+  - `docs/qa/full-recovered-20261102.json`
+  - `docs/qa/full-recovered-20261102.tar.gz`
+  - `docs/qa/full-verification-f005c66-20261101.md`
+  - `docs/qa/full-verification-f005c66-20261101.tar.gz`
+  - `docs/qa/gt01-harness-smoke-20261030.json`
+  - `docs/qa/gt01-native-smoke-20261030.json`
+  - `docs/qa/gt12-benchmark-20261101.md`
+  - `docs/qa/gt12-combined-20261101.json`
+  - `docs/qa/gt12-evidence-20261101.json`
+  - `docs/qa/gt12-facts-20261101.invocation.json`
+  - `docs/qa/gt12-facts-20261101.json`
+  - `docs/qa/gt12-facts-20261101.log`
+  - `docs/qa/gt12-independent-controls-20261101.log`
+  - `docs/qa/gt12-independent-controls-20261101.py`
+  - `docs/qa/gt12-independent-controls-20261101.py.original.txt`
+  - `docs/qa/gt12-independent-receipt-check-20261101.log`
+  - `docs/qa/gt12-independent-receipt-check-20261101.py`
+  - `docs/qa/gt12-independent-receipt-check-20261101.py.original.txt`
+  - `docs/qa/gt12-independent-review-20261101.md`
+  - `docs/qa/gt12-independent-tests-20261101.log`
+  - `docs/qa/gt12-read-model-20261101.invocation.json`
+  - `docs/qa/gt12-read-model-20261101.json`
+  - `docs/qa/gt12-read-model-20261101.log`
+  - `docs/qa/gt12-run-stage-20261101.py`
+  - `docs/qa/gt12-smoke-4c8f9a6-20261101.json`
+  - `docs/qa/gt12-smoke-initial-20261101.json`
+  - `docs/qa/gt12-ui-calls-20261101.invocation.json`
+  - `docs/qa/gt12-ui-calls-20261101.json`
+  - `docs/qa/gt12-ui-calls-20261101.log`
+  - `docs/qa/historical-review-scripts-20261101.json`
+  - `docs/qa/identity-followup-20261101.md`
+  - `docs/qa/identity-followup-integrated-original-20261101.tar.gz`
+  - `docs/qa/identity-followup-root-integrated.log.gz`
+  - `docs/qa/identity-independent-review-20261101.md`
+  - `docs/qa/integrated-latest-bounded.log.gz`
+  - `docs/qa/integrated-output-prereg-research.log.gz`
+  - `docs/qa/integrated-rzdiff-identity.log.gz`
+  - `docs/qa/integration-checkpoint-20261101.json`
+  - `docs/qa/integration-checkpoint2-20261101.json`
+  - `docs/qa/integration-focused-20261101.log.gz`
+  - `docs/qa/integration-focused-final-20261101.log.gz`
+  - `docs/qa/integration-identity-msrc-20261101-copied.log.gz`
+  - `docs/qa/integration-identity-msrc-20261101.log.gz`
+  - `docs/qa/issue-dispositions-20261101.md`
+  - `docs/qa/issue120-combined-green-20261101.log.gz`
+  - `docs/qa/issue120-corrected-baseline-red-20261101.log.gz`
+  - `docs/qa/issue120-corrected-original-source-red-20261101.log.gz`
+  - `docs/qa/issue120-final-focused-20261101.log.gz`
+  - `docs/qa/issue120-identity-first-20261101.log.gz`
+  - `docs/qa/issue120-identity-green-20261101.log.gz`
+  - `docs/qa/issue120-identity-integration-20261101.log.gz`
+  - `docs/qa/issue120-implementation-verification-20261101.json`
+  - `docs/qa/issue120-red-20261101.log.gz`
+  - `docs/qa/issue120-resource-verification-20261101.json`
+  - `docs/qa/kb-fixture-reconciliation-20261030.md`
+  - `docs/qa/kb-saved-scope-20261102.md`
+  - `docs/qa/kb-saved-scope-review-20261102.json`
+  - `docs/qa/kb-saved-scope-review-20261102.md`
+  - `docs/qa/lifecycle-116-creation-staging-20261102.md`
+  - `docs/qa/lifecycle-116-explicit-retry-20261102.md`
+  - `docs/qa/lifecycle-116-independent-20261102.tar.gz`
+  - `docs/qa/lifecycle-116-profile-inspection-20261102.md`
+  - `docs/qa/lifecycle-116-review-20261102.json`
+  - `docs/qa/lifecycle-116-review-20261102.md`
+  - `docs/qa/llvm-native-controls-20261101.tar.gz`
+  - `docs/qa/msrc-20261101-independent-mixed-control.py.original.txt`
+  - `docs/qa/msrc-20261101-independent-review-controls.py.original.txt`
+  - `docs/qa/msrc-after-merge.log.gz`
+  - `docs/qa/native-bindiff-harness-20261102.md`
+  - `docs/qa/native-bindiff-harness-20261102.py`
+  - `docs/qa/native-bindiff-independent-review-20261102.json`
+  - `docs/qa/native-bindiff-tool-pins-20261102.json`
+  - `docs/qa/native-binexport-bindiff-attempt1-20261102.json`
+  - `docs/qa/native-binexport-bindiff-attempt1-20261102.tar.gz`
+  - `docs/qa/native-binexport-bindiff-attempt1-summary-20261102.json`
+  - `docs/qa/native-reconciliation-20261101-compile-evidence.json`
+  - `docs/qa/native-reconciliation-20261101-download-evidence.json`
+  - `docs/qa/native-reconciliation-20261101-native-driver.py`
+  - `docs/qa/native-reconciliation-20261101-receipt.json`
+  - `docs/qa/native-reconciliation-20261101-setup-evidence.json`
+  - `docs/qa/native-reconciliation-20261101-verification-evidence.json`
+  - `docs/qa/native-reconciliation-setup-attempt-20261031.json`
+  - `docs/qa/native-reconciliation-smoke-20261031-driver.py`
+  - `docs/qa/native-reconciliation-smoke-20261031.json`
+  - `docs/qa/original41-pr-collections-20261101.json.gz`
+  - `docs/qa/original41-pr-workflow-jobs-first-pages-20261101.json.gz`
+  - `docs/qa/output-completion-merged-20261102.log.gz`
+  - `docs/qa/output-credit-completion-20261102.json`
+  - `docs/qa/output-credit-completion-20261102.md`
+  - `docs/qa/output-credit-completion-20261102.tar.gz`
+  - `docs/qa/output-credit-completion-independent-review-20261102.json`
+  - `docs/qa/output-credit-completion-review-20261102.json`
+  - `docs/qa/output-credit-completion-review-20261102.md`
+  - `docs/qa/output-credited-replay-20261101.json`
+  - `docs/qa/output-credited-replay-20261101.md`
+  - `docs/qa/output-metadata-propagation-20261102.md`
+  - `docs/qa/output-path-fixtures-20261102.md`
+  - `docs/qa/output-path-fixtures-20261102.tar.gz`
+  - `docs/qa/output-prereg-integrated-checkpoint2.log.gz`
+  - `docs/qa/output-windows-independent-review-20261102.json`
+  - `docs/qa/output-windows-main-corrected.log.gz`
+  - `docs/qa/output-windows-main.log.gz`
+  - `docs/qa/output-windows-main.xml.gz`
+  - `docs/qa/output-windows-stat-20261102.json`
+  - `docs/qa/output-windows-stat-20261102.md`
+  - `docs/qa/output-windows-stat-20261102.tar.gz`
+  - `docs/qa/pr149-linux.verified.json`
+  - `docs/qa/pr149-windows.verified.json`
+  - `docs/qa/pr150-qa-windows.verified.json`
+  - `docs/qa/pr150-sonar-triage-2fdac2e.md`
+  - `docs/qa/pr154-escaped-opening-verification-20261101.json`
+  - `docs/qa/pr154-markdown-independent-review-20261101.json`
+  - `docs/qa/pr154-markdown-verification-20261101.json`
+  - `docs/qa/pr156157-independent-external-review-20261101.md`
+  - `docs/qa/pr157-bounded-review-repro-20261101.json`
+  - `docs/qa/pr157-bounded-review-repro-20261101.py.original.txt`
+  - `docs/qa/pr157-credited-replay-independent-review-20261101.json`
+  - `docs/qa/prereg-fence-audit-20261102.tar.gz`
+  - `docs/qa/prereg-fence-prefix-consolidation-20261102.md`
+  - `docs/qa/prereg-final-root-integrated.log.gz`
+  - `docs/qa/prereg-independent-review-20261101.json`
+  - `docs/qa/prereg-main-port-20261101.log.gz`
+  - `docs/qa/prereg-main-port-20261101.md`
+  - `docs/qa/prereg-markdown-review-20261101.md`
+  - `docs/qa/prereg-review-followup-20261101.tar.gz`
+  - `docs/qa/pyyaml-dev-independent-review-20261102.json`
+  - `docs/qa/raw-summary-container-consolidation-20261102.md`
+  - `docs/qa/raw-summary-independent-20261102.png`
+  - `docs/qa/raw-summary-sizing-20261102.md`
+  - `docs/qa/raw-summary-sizing-20261102.tar.gz`
+  - `docs/qa/raw-summary-sizing-review-20261102.json`
+  - `docs/qa/raw-summary-sizing-review-20261102.md`
+  - `docs/qa/rd-alignment-root.log.gz`
+  - `docs/qa/rd-f03-author-receipt.json`
+  - `docs/qa/rd-f03-independent-review-20261101.json`
+  - `docs/qa/rd-paired-review-20261102.json`
+  - `docs/qa/rd-paired-review-20261102.md`
+  - `docs/qa/reconciliation-bench-20261031.json`
+  - `docs/qa/remote-heads-checkpoint-20261101.json`
+  - `docs/qa/remote-heads-checkpoint2-20261101.json`
+  - `docs/qa/reproduce-issue120-20261101.json.gz`
+  - `docs/qa/resume-checkpoint-20261102.json`
+  - `docs/qa/resume-followup-checkpoint-20261102.json`
+  - `docs/qa/resume-root-checks-20261102.tar.gz`
+  - `docs/qa/rz-fixtures-20261101.md`
+  - `docs/qa/rz-fixtures-20261101.tar.gz`
+  - `docs/qa/rz-scoring-contract-followup.log.gz`
+  - `docs/qa/rz-scoring-contract-green.log.gz`
+  - `docs/qa/rzdiff-native-provenance-20261101.tar.gz`
+  - `docs/qa/rzdiff-native-root-review-20261101.json`
+  - `docs/qa/rzdiff-quarantine-independent-review-20261101.md`
+  - `docs/qa/rzdiff-quarantine-verification-20261101.json`
+  - `docs/qa/rzdiff-replay-final-e8319b9.json`
+  - `docs/qa/rzdiff-scoring-fixture-independent-review-20261101.json`
+  - `docs/qa/rzdiff-shared-fixtures-independent-review-20261101.json`
+  - `docs/qa/sonar-review.md`
+  - `docs/qa/storage-after-merge.log.gz`
+  - `docs/qa/storage-focused-20261101.log.gz`
+  - `docs/qa/transfer-credit-preflight-20261102.md`
+  - `docs/qa/transfer-preflight-review-20261102.json`
+  - `docs/qa/transfer-preflight-review-20261102.md`
+  - `docs/qa/transfer-windows-paths-20261102.md`
+  - `docs/qa/windows-output-review-20261102.json`
+  - `docs/qa/windows-output-review-20261102.md`
+  - `docs/qa/windows-secondary-controls-20261102.md`
+  - `docs/qa/windows-secondary-controls-review-20261102.json`
+  - `docs/qa/windows-secondary-controls-review-20261102.md`
+  - `docs/release-process.md`
+  - `docs/research/deep-uncertainty-r8/01-typed-literal-counterexamples.md`
+  - `docs/research/rzdiff-orientation-witness-20261101.md`
+  - `docs/research/rzdiff-witness-native-20261101.json`
+  - `docs/schemas/calibration/PairRows.json`
+  - `docs/schemas/corpus/EngineOutputDoc.json`
+  - `docs/schemas/corpus/EvaluationFailure.json`
+  - `docs/schemas/corpus/OutputCompletion.json`
+  - `docs/schemas/corpus/OutputCredits.json`
+  - `docs/schemas/corpus/TierRReport.json`
+  - `docs/schemas/corpus/TrainingManifest.json`
+  - `docs/schemas/corpus/report-examples/valid-engine-output-attention.json`
+  - `docs/specs/architecture.md`
+  - `docs/specs/byte-representations.md`
+  - `docs/specs/calibration-corpus-and-model.md`
+  - `docs/specs/gui-preflight-inspection.md`
+  - `docs/specs/kb-cve/31-C-product-build-pairs.md`
+  - `docs/specs/kb-cve/31-E-evidence-intent.md`
+  - `docs/specs/kb-cve/31-F-workflow-ui-persistence.md`
+  - `docs/specs/known-answer-corpus.md`
+  - `docs/specs/panels/graph-inspection.md`
+  - `docs/specs/program-e/WB2-integration-plan.md`
+  - `docs/specs/secondary-engine.md`
+  - `docs/specs/ui.md`
+  - `docs/specs/unified-engine/05-fusion-and-noise.md`
+  - `docs/specs/unified-engine/06-adapters.md`
+  - `docs/specs/unified-engine/08-evaluation.md`
+  - `docs/specs/windows-acceptance-and-milestone-builds.md`
+  - `docs/specs/windows-release-signing-policy.md`
+  - `docs/wiki/Architecture-and-Design-Rationale.md`
+  - `docs/wiki/Codebase-Map.md`
+  - `docs/wiki/Developer-Guide.md`
+  - `docs/wiki/Home.md`
+  - `docs/wiki/User-Guide.md`
+  - `docs/wiki/_Sidebar.md`
+  - `pyproject.toml`
+  - `src/patchtrace/__main__.py`
+  - `src/patchtrace/app_icon.py`
+  - `src/patchtrace/backend.py`
+  - `src/patchtrace/calibration/features.py`
+  - `src/patchtrace/callgraph/algo.py`
+  - `src/patchtrace/callgraph/csr.py`
+  - `src/patchtrace/callgraph/dot.py`
+  - `src/patchtrace/callgraph/export_json.py`
+  - `src/patchtrace/callgraph/labels.py`
+  - `src/patchtrace/callgraph/limits.py`
+  - `src/patchtrace/callgraph/panel_qt.py`
+  - `src/patchtrace/callgraph/paths.py`
+  - `src/patchtrace/callgraph/query.py`
+  - `src/patchtrace/callgraph/snapshot.py`
+  - `src/patchtrace/callgraph/view_model.py`
+  - `src/patchtrace/gui/qt/host.py`
+  - `src/patchtrace/gui/qt/kb_selftest.py`
+  - `src/patchtrace/gui/qt/project_adoption.py`
+  - `src/patchtrace/kbcorrelation/adapters/panel_snapshot.py`
+  - `src/patchtrace/kbcorrelation/cli_leads.py`
+  - `src/patchtrace/kbcorrelation/context.py`
+  - `src/patchtrace/kbcorrelation/index.py`
+  - `src/patchtrace/kbcorrelation/investigation_qt.py`
+  - `src/patchtrace/kbcorrelation/investigation_service.py`
+  - `src/patchtrace/kbcorrelation/panel_qt.py`
+  - `src/patchtrace/kbcorrelation/service.py`
+  - `src/patchtrace/kbcorrelation/wiring.py`
+  - `src/patchtrace/persistence.py`
+  - `src/patchtrace/project_creation.py`
+  - `src/patchtrace/project_retry.py`
+  - `src/patchtrace/raw_alignment_view.py`
+  - `src/patchtrace/representations/__init__.py`
+  - `src/patchtrace/representations/alignment.py`
+  - `src/patchtrace/resources/patchtrace-mark.svg`
+  - `src/patchtrace/secondary/contracts.py`
+  - `src/patchtrace/secondary/evidence.py`
+  - `src/patchtrace/secondary/evidence_view.py`
+  - `src/patchtrace/secondary/reconcile.py`
+  - `src/patchtrace/secondary/rzdiff.py`
+  - `src/patchtrace/service.py`
+  - `src/patchtrace/tooltips.py`
+  - `src/patchtrace/ui.py`
+  - `src/patchtrace/ui_inspection.py`
+  - `src/patchtrace/ui_new_project.py`
+  - `src/patchtrace/ui_profiles.py`
+  - `src/patchtrace/ui_raw_alignment.py`
+  - `src/patchtrace/unified/compute.py`
+  - `src/patchtrace/unified/facts/anchors.py`
+  - `src/patchtrace/unified/facts/channels.py`
+  - `src/patchtrace/unified/facts/pseudo.py`
+  - `src/patchtrace/unified/facts/verdict.py`
+  - `src/patchtrace/unified/fusion/arbiter.py`
+  - `src/patchtrace/unified/ir/cfg.py`
+  - `src/patchtrace/unified/read_text.py`
+  - `src/patchtrace/unified/registry.py`
+  - `src/patchtrace/unified/sources/__init__.py`
+  - `src/patchtrace/unified/sources/ladder.py`
+  - `src/patchtrace/unified/sources/secondary.py`
+  - `tasks/todo.md`
+  - `tests/fixtures/kb/CONTRACT_CONFLICTS.md`
+  - `tests/fixtures/kb/MANIFEST.json`
+  - `tests/fixtures/kb/README.md`
+  - `tests/fixtures/kb/confusable_kb.json`
+  - `tests/fixtures/kb/crash_points.json`
+  - `tests/fixtures/kb/csaf_synthetic.json`
+  - `tests/fixtures/kb/cvrf_bom.json`
+  - `tests/fixtures/kb/cvrf_crlf.json`
+  - `tests/fixtures/kb/cvrf_v3_synthetic.json`
+  - `tests/fixtures/kb/raw_adversarial_inputs.json`
+  - `tests/fixtures/kb/update_packages_synthetic.json`
+  - `tests/fixtures/kb/update_relationships_synthetic.json`
+  - `tests/fixtures/kb/vex_synthetic.json`
+  - `tests/fixtures/kb/winbindex_synthetic.json`
+  - `tests/fixtures/secondary/rzdiff-0.9.1-native-orientation.json`
+  - `tests/kb_crash_harness.py`
+  - `tests/kb_fixture_performance_plan.md`
+  - `tests/stress/test_cli_stress_recovery.py`
+  - `tests/test_audit2_fixes.py`
+  - `tests/test_audit_desktop.py`
+  - `tests/test_calibration_runtime.py`
+  - `tests/test_calibration_tools.py`
+  - `tests/test_callgraph_cap_truth.py`
+  - `tests/test_callgraph_count_suffix_guard.py`
+  - `tests/test_callgraph_path_budget.py`
+  - `tests/test_callgraph_snapshot.py`
+  - `tests/test_ci_summary.py`
+  - `tests/test_cli_secondary_run.py`
+  - `tests/test_creation_116.py`
+  - `tests/test_evidence_panel_service.py`
+  - `tests/test_evidence_ui.py`
+  - `tests/test_evidence_view.py`
+  - `tests/test_jobs.py`
+  - `tests/test_kb_crash_injection_protocol.py`
+  - `tests/test_kb_cvrf_fixture_import.py`
+  - `tests/test_kb_fixture_encoding.py`
+  - `tests/test_kb_fixture_properties.py`
+  - `tests/test_kb_investigation_service.py`
+  - `tests/test_kb_metadata_fixture_boundaries.py`
+  - `tests/test_kb_offline_fixture_import.py`
+  - `tests/test_kb_raw_adversarial_inputs.py`
+  - `tests/test_kb_synthetic_fixture_corpus.py`
+  - `tests/test_kb_update_relationships.py`
+  - `tests/test_kbc_acquire_cli.py`
+  - `tests/test_kbc_card_context_sources.py`
+  - `tests/test_kbc_contracts.py`
+  - `tests/test_kbc_msrc_review_findings.py`
+  - `tests/test_kbc_saved_scope.py`
+  - `tests/test_kbc_selection_guard.py`
+  - `tests/test_lifecycle_116.py`
+  - `tests/test_live_rzdiff_check.py`
+  - `tests/test_native_bindiff_harness.py`
+  - `tests/test_project_retry.py`
+  - `tests/test_r2_cache_version.py`
+  - `tests/test_r2_cfg_performance.py`
+  - `tests/test_r2_fusion_regressions.py`
+  - `tests/test_r8_literal_types.py`
+  - `tests/test_raw_alignment_view.py`
+  - `tests/test_representation_alignment.py`
+  - `tests/test_rzdiff_cli_env.py`
+  - `tests/test_rzdiff_count_observation.py`
+  - `tests/test_rzdiff_orientation_20261101.py`
+  - `tests/test_secondary_reconcile.py`
+  - `tests/test_secondary_rzdiff.py`
+  - `tests/test_secondary_scheduler.py`
+  - `tests/test_tier_r_credit_completion.py`
+  - `tests/test_tier_r_credited_replay.py`
+  - `tests/test_tier_r_eval_engines.py`
+  - `tests/test_tier_r_eval_metrics.py`
+  - `tests/test_tier_r_eval_report.py`
+  - `tests/test_tier_r_output_persistence.py`
+  - `tests/test_tier_r_output_stat_compat.py`
+  - `tests/test_tier_r_training_artifacts.py`
+  - `tests/test_tooltips.py`
+  - `tests/test_train_prereg_selection.py`
+  - `tests/test_ui_callgraph_cap_truth.py`
+  - `tests/test_ui_kb_create_cancellation.py`
+  - `tests/test_ui_kb_current_project.py`
+  - `tests/test_ui_kb_entry.py`
+  - `tests/test_ui_kb_frozen_journey.py`
+  - `tests/test_ui_kb_investigation.py`
+  - `tests/test_ui_project_retry.py`
+  - `tests/test_ui_raw_alignment.py`
+  - `tests/test_unified_bench.py`
+  - `tests/test_unified_bench_stages.py`
+  - `tests/test_unified_cli_show.py`
+  - `tests/test_unified_corpus_workflow.py`
+  - `tests/test_unified_live_force_identical.py`
+  - `tests/test_unified_live_native_failure_details.py`
+  - `tests/test_unified_live_pairs.py`
+  - `tests/test_unified_live_pairs_r1.py`
+  - `tests/test_unified_live_workflow.py`
+  - `tests/test_unified_sources.py`
+  - `tests/test_unified_verdict_ir.py`
+  - `tests/test_unified_wire_compute.py`
+  - `tests/test_windows_build_resources.py`
+  - `tests/unified_s0_fixtures.py`
+  - `tests/unified_support/fixture-gaps.md`
+  - `third_party/notices/README.md`
+  - `third_party/notices/qtsvg-6.12.0/LICENSES/BSD-3-Clause.txt`
+  - `third_party/notices/qtsvg-6.12.0/LICENSES/GPL-2.0-only.txt`
+  - `third_party/notices/qtsvg-6.12.0/LICENSES/GPL-3.0-only.txt`
+  - `third_party/notices/qtsvg-6.12.0/LICENSES/LGPL-3.0-only.txt`
+  - `third_party/notices/qtsvg-6.12.0/PROVENANCE.txt`
+  - `third_party/notices/qtsvg-6.12.0/REUSE.toml`
+  - `third_party/notices/qtsvg-6.12.0/SOURCE-HEADERS.txt`
+  - `tools/build_linux.py`
+  - `tools/build_windows.py`
+  - `tools/calibration/prereg_gate.py`
+  - `tools/calibration/tier_r/cli.py`
+  - `tools/calibration/tier_r/contracts.py`
+  - `tools/calibration/tier_r/evaluate.py`
+  - `tools/calibration/tier_r/output_store.py`
+  - `tools/calibration/tier_r/report_schemas.py`
+  - `tools/calibration/tier_r/shard.py`
+  - `tools/calibration/tier_r/training_artifacts.py`
+  - `tools/calibration/train.py`
+  - `tools/check_windows_exe.py`
+  - `tools/frozen_smoke.py`
+  - `tools/live_rzdiff_check.py`
+  - `tools/pyinstaller_hooks/hook-patchtrace.app_icon.py`
+  - `tools/research/rzdiff_count_observation.py`
+  - `tools/unified/bench.py`
+  - `tools/unified/bench_workloads.py`
+  - `tools/unified/live_pairs.py`
+  - `tools/windows_icon.py`
+  - `tools/windows_version_info.py`
+
+### `codex/consolidation-audit-20261104`
+
+- Head: `fdd15922cf751c5c8d3cddd418c0a0231d88ff02`
+- Base: `origin/main` at `5d504ff5c046bfb758623182b472976003632bba`
+- Merge base: `5d504ff5c046bfb758623182b472976003632bba`
+- Associated PR: https://github.com/djshellshoxxx/patchtrace/pull/187
+- Functional scope: {"docs": 1}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {'FAILURE': 2, 'SUCCESS': 7, 'SKIPPED': 5}; failures: ['qa (ubuntu-latest)', 'qa (windows-latest)']; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: blocked: failing checks.
+- Recommended disposition: preserve active branch; port only verified unique patches.
+- Unique commits: `fdd15922cf751c5c8d3cddd418c0a0231d88ff02`
+- Patch-equivalent commits: none
+- Modified files:
+  - `docs/plans/patchtrace-consolidation-audit-20261104.md`
+
+### `codex/consolidation-evidence-20261102`
+
+- Head: `44c320e37b84a38259f13fa8f0f444b542b96f2c`
+- Base: `origin/main` at `5d504ff5c046bfb758623182b472976003632bba`
+- Merge base: `f1a55c4cf21ddb0dea243bd417b74f86caaed142`
+- Associated PR: none in open PR snapshot
+- Functional scope: {".gitattributes": 1, ".github": 2, "README.md": 1, "docs": 323, "pyproject.toml": 1, "src/patchtrace/__main__.py": 1, "src/patchtrace/app_icon.py": 1, "src/patchtrace/backend.py": 1, "src/patchtrace/calibration": 1, "src/patchtrace/callgraph": 11, "src/patchtrace/gui": 3, "src/patchtrace/kbcorrelation": 9, "src/patchtrace/persistence.py": 1, "src/patchtrace/project_creation.py": 1, "src/patchtrace/project_retry.py": 1, "src/patchtrace/raw_alignment_view.py": 1, "src/patchtrace/representations": 2, "src/patchtrace/resources": 1, "src/patchtrace/secondary": 5, "src/patchtrace/service.py": 1, "src/patchtrace/tooltips.py": 1, "src/patchtrace/ui.py": 1, "src/patchtrace/ui_inspection.py": 1, "src/patchtrace/ui_new_project.py": 1, "src/patchtrace/ui_profiles.py": 1, "src/patchtrace/ui_raw_alignment.py": 1, "src/patchtrace/unified": 12, "tasks": 1, "tests": 98, "third_party": 8, "tools": 21}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {}; failures: []; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: unqualified: no current CI attached.
+- Recommended disposition: preserve active branch; port only verified unique patches.
+- Unique commits: `b26ca2c9bf85e9b7bc385b02c7bfdad1d7d724de`, `e81adbe882ae6eb2c26a5854b24aa6acff2b27a2`, `c307aaad162cff1f4464b62469792ead8d877385`, `e9f6be5d8c0cdc36d1a65f81403901648a6fe1fc`, `fffd5badb1ed84c8e930d667eae7d2d1dcf5a64f`, `d21d66758f75c6a3912b76042a792c0b9bb2eea2`, `ecfb60193b806dd984c044ae8f347b063e3d5155`, `aa6d614f0677e908727224aa4e46453108bb1b57`, `f82489bc9ff8ad89987670fde484a5f579aefa6b`, `5736376891d273fb16fa211ed0fa2de5125c1601`, `f18687fd035b67961c1072af84f8c2b3442979e0`, `2fcd627e52a6d784d5c2e5b4ea8105e90b8589b3`, `c04ad725551fe8daa139b37aa2cdf46d6d161b65`, `b87193d1dd30635fce33986f80ceade136507a1a`, `fb91cff6d91c77a2c539c896b670d81180dcc637`, `632079f0251982068d2cac294514b2d32e06a74c`, `a4d1e6a38c34d1952584aa65d7f5f908c45547b3`, `a7f13e13ffb512f8e9621753a0ae162d78942f3b`, `17210eb704802912a2951d8efd9f5e3d27a2193b`, `e2476c19017f82785570497aa2804b4f4f2e374f`, `0ca9ff1c99d2aea5198f9dda1a93c9bde8ca0226`, `7f14f792ed516c494aea17d7ca337bae18a31cf6`, `2c87611ebe65ea227f9f3efdf9c6246ab09b177f`, `c592b680eb1013f02c8472e544bbdb417e11fdde`, `59ff5ad1379c0a787d92f62d732686c1dd0e65b4`, `015f79cc762f0ebff4cbb700480a44a88e014d9f`, `745e93426a16e0a91a961b6e0bbcb71be69f2a7e`, `25125eb8b282322bafe8e682f5c09dfbffb07fbf`, `50ced35a54f18b4de8437b78a42dd2ec689338d9`, `8f4c4a2e0021d424d403317c6780b6db026ad76b`, `c3868d8335a8f32f676905032dc1a6d0e9f22fd6`, `4aa99f7bd989765000c6ebd659c9565030a48849`, `99660cc825b366a28e50b18eacad44dbb069ca69`, `f27d23a80ee49573ccca54cdf036427f57eebb2a`, `aff72cddc902f31a2cf44dea9c48797edabc1c30`, `039c696c93a443d152d4ddc1383179408ff86b75`, `bb98bae3cf0a3b6a38a298a14186d7f4e1c9c151`, `d038ddea43182b8709afd447140dc74fded487c5`, `8a18ca82032b6f6ed11dde887fd5eddef1a9fe81`, `c13d3257c88140c23fb585a8a59a4dce81e81928`, `566e266f53b07696c4289c9b46969d43f27f4de9`, `0130bf81e2fe3154f30af7b68a0e6ab197946040`, `dac9b89a297f428bdcf364b4be37a448a5b2ce4e`, `ca411e77f43a9fd95ca5e0bcc7d2b58071ccae37`, `9b9452b4677ee3809a6e0f43d49567a8d15602e6`, `44c320e37b84a38259f13fa8f0f444b542b96f2c`
+- Patch-equivalent commits: none
+- Modified files:
+  - `.gitattributes`
+  - `.github/workflows/corpus-tier-r.yml`
+  - `.github/workflows/unified-live-gates.yml`
+  - `README.md`
+  - `docs/branch-pr-inventory-2026-10-30.md`
+  - `docs/handoff/autonomous-continuation-20261031.md`
+  - `docs/handoff/autonomous-continuation-20261101.md`
+  - `docs/handoff/autonomous-continuation-20261102.md`
+  - `docs/integration/pr-gates-01.md`
+  - `docs/integration/pr-gates-02.md`
+  - `docs/integration/pr-gates-03.md`
+  - `docs/integration/pr-gates-04.md`
+  - `docs/integration/pr-gates-05.md`
+  - `docs/integration/pr-gates-06.md`
+  - `docs/modules.md`
+  - `docs/notices.md`
+  - `docs/plans/essential-integration-20261029.md`
+  - `docs/plans/gt01-native-output-diagnosis-20261030.md`
+  - `docs/plans/gt01-overlap-disposition-20261030.md`
+  - `docs/plans/milestone-ledger-20261030.md`
+  - `docs/qa.md`
+  - `docs/qa/ExportBinExport20261102.java`
+  - `docs/qa/backup-independent-20261101.log.gz`
+  - `docs/qa/branch-dispositions-20261101.md`
+  - `docs/qa/c13-local-full-suite-20261102.md`
+  - `docs/qa/callgraph-cap-review-20261102.json`
+  - `docs/qa/callgraph-cap-review-20261102.md`
+  - `docs/qa/callgraph-count-suffix-review-20261102.json`
+  - `docs/qa/callgraph-count-suffix-review-20261102.md`
+  - `docs/qa/callgraph-path-budget-20261102.tar.gz`
+  - `docs/qa/callgraph-path-budget-review-20261102.json`
+  - `docs/qa/callgraph-path-budget-review-20261102.md`
+  - `docs/qa/checkpoint2-schema.log.gz`
+  - `docs/qa/ci-monitor-checkpoint-0905.tar.gz`
+  - `docs/qa/ci-monitor-checkpoint-0932.tar.gz`
+  - `docs/qa/ci-monitor-delta-hosted-linux-20261102.tar.gz`
+  - `docs/qa/ci-monitor-terminal-6f923758-20261102.tar.gz`
+  - `docs/qa/ci-monitor-terminal-9c468bc7-20261102.tar.gz`
+  - `docs/qa/ci-monitor-windows-51a9b4af-20261102.tar.gz`
+  - `docs/qa/ci-monitor-windows-bb98bae3-20261102.tar.gz`
+  - `docs/qa/ci-resume-evidence-20261102.tar.gz`
+  - `docs/qa/combined-approved-fixes-20261102.md`
+  - `docs/qa/combined-approved-fixes-20261102.tar.gz`
+  - `docs/qa/combined-consolidation-20261102.md`
+  - `docs/qa/combined-consolidation-20261102.tar.gz`
+  - `docs/qa/combined-fixture-repair-20261102.md`
+  - `docs/qa/combined-fixture-repair-20261102.tar.gz`
+  - `docs/qa/combined-followups-extra-20261102.tar.gz`
+  - `docs/qa/combined-followups-root-20261102.tar.gz`
+  - `docs/qa/combined-portability-20261102.md`
+  - `docs/qa/combined-portability-20261102.tar.gz`
+  - `docs/qa/combined-protocol-integration-20261102.md`
+  - `docs/qa/combined-protocol-integration-20261102.tar.gz`
+  - `docs/qa/combined-replay-integration-20261102.md`
+  - `docs/qa/combined-replay-integration-20261102.tar.gz`
+  - `docs/qa/combined-replay-tracker-recovery-20261102.json`
+  - `docs/qa/combined-retry-backup-windows-20261102.tar.gz`
+  - `docs/qa/combined-reviewed-20261101.log.gz`
+  - `docs/qa/combined-tracker-recovery-20261102.json`
+  - `docs/qa/completion-inventory-20261031.json`
+  - `docs/qa/completion-inventory-20261101.json.gz`
+  - `docs/qa/completion-verification-20261031.json`
+  - `docs/qa/completion-verification-20261101.json`
+  - `docs/qa/consolidation-backup-independent-review-20261102.md`
+  - `docs/qa/consolidation-cached-wheel-review-20261102.md`
+  - `docs/qa/consolidation-completed-validation-20261102.md`
+  - `docs/qa/consolidation-completed-validation-reconciliation-20261102.json`
+  - `docs/qa/consolidation-completed-validation-review-20261102.md`
+  - `docs/qa/consolidation-completion-checkpoint-20261102.json`
+  - `docs/qa/consolidation-completion-checkpoint-20261102.md`
+  - `docs/qa/consolidation-final-validation-20261102.md`
+  - `docs/qa/consolidation-full-run-20261102.json`
+  - `docs/qa/consolidation-full-run-20261102.tar.gz`
+  - `docs/qa/consolidation-handoff-20261102.md`
+  - `docs/qa/consolidation-inventory-20261102.json`
+  - `docs/qa/consolidation-isolated-import-review-20261102.md`
+  - `docs/qa/consolidation-main-independent-review-20261102.md`
+  - `docs/qa/consolidation-native-gate-evidence-20261102.json`
+  - `docs/qa/consolidation-native-gate-triage-20261102.md`
+  - `docs/qa/consolidation-portability-independent-review-20261102.md`
+  - `docs/qa/consolidation-pr-disposition-20261102.json`
+  - `docs/qa/consolidation-pr-disposition-20261102.md`
+  - `docs/qa/consolidation-protocol-independent-review-20261102.md`
+  - `docs/qa/consolidation-receipts-lane-20261102.json`
+  - `docs/qa/consolidation-receipts-lane-20261102.md`
+  - `docs/qa/consolidation-release-critical-path-20261102.md`
+  - `docs/qa/consolidation-replay-independent-review-20261102.md`
+  - `docs/qa/consolidation-rules-lane-20261102.md`
+  - `docs/qa/consolidation-rules-merge-20261102.md`
+  - `docs/qa/consolidation-runtime-20261102.json`
+  - `docs/qa/consolidation-search-rules-review-20261102.md`
+  - `docs/qa/consolidation-sonar-diagnostic-20261102.json`
+  - `docs/qa/consolidation-sonar-diagnostic-20261102.md`
+  - `docs/qa/consolidation-targeted-reruns-20261102.json`
+  - `docs/qa/consolidation-targeted-reruns-20261102.tar.gz`
+  - `docs/qa/consolidation-ui-independent-review-20261102.md`
+  - `docs/qa/continuation-verification-20261030.md`
+  - `docs/qa/corpus-focused-20261101.log.gz`
+  - `docs/qa/corpus-html-green-final-20261101.log.gz`
+  - `docs/qa/corpus-html-red-20261101.log.gz`
+  - `docs/qa/corpus-output-persistence-20261101.json`
+  - `docs/qa/corpus-output-persistence-20261101.md`
+  - `docs/qa/corpus-prereg-green-20261101.log.gz`
+  - `docs/qa/corpus-prereg-red-20261101.log.gz`
+  - `docs/qa/corpus-review-green-final-20261101.log.gz`
+  - `docs/qa/corpus-review-red-20261101.log.gz`
+  - `docs/qa/corpus-safeguards-20261101.json`
+  - `docs/qa/corpus-safeguards-20261101.md`
+  - `docs/qa/corpus-transfer-review-20261102.json`
+  - `docs/qa/corpus-transfer-review-20261102.md`
+  - `docs/qa/corpus-verified-transfer-recovery-20261102.md`
+  - `docs/qa/creation-explicit-retry-review-20261102.json`
+  - `docs/qa/creation-explicit-retry-review-20261102.md`
+  - `docs/qa/creation-staging-review-20261102.json`
+  - `docs/qa/creation-staging-review-20261102.md`
+  - `docs/qa/export-base-failures-20261101.log.gz`
+  - `docs/qa/export-copies-candidate-20261101.log.gz`
+  - `docs/qa/export-copies-failures-20261101.log.gz`
+  - `docs/qa/export-full-20261101.log.gz`
+  - `docs/qa/export-full-20261101.xml.gz`
+  - `docs/qa/f8-loop-author-receipt-20261101.json`
+  - `docs/qa/f8-loop-integrated-root.log.gz`
+  - `docs/qa/fixture-repair-review-20261102.json`
+  - `docs/qa/fixture-repair-review-20261102.md`
+  - `docs/qa/full-recovered-20261102.json`
+  - `docs/qa/full-recovered-20261102.tar.gz`
+  - `docs/qa/full-verification-f005c66-20261101.md`
+  - `docs/qa/full-verification-f005c66-20261101.tar.gz`
+  - `docs/qa/gt01-harness-smoke-20261030.json`
+  - `docs/qa/gt01-native-smoke-20261030.json`
+  - `docs/qa/gt12-benchmark-20261101.md`
+  - `docs/qa/gt12-combined-20261101.json`
+  - `docs/qa/gt12-evidence-20261101.json`
+  - `docs/qa/gt12-facts-20261101.invocation.json`
+  - `docs/qa/gt12-facts-20261101.json`
+  - `docs/qa/gt12-facts-20261101.log`
+  - `docs/qa/gt12-independent-controls-20261101.log`
+  - `docs/qa/gt12-independent-controls-20261101.py`
+  - `docs/qa/gt12-independent-controls-20261101.py.original.txt`
+  - `docs/qa/gt12-independent-receipt-check-20261101.log`
+  - `docs/qa/gt12-independent-receipt-check-20261101.py`
+  - `docs/qa/gt12-independent-receipt-check-20261101.py.original.txt`
+  - `docs/qa/gt12-independent-review-20261101.md`
+  - `docs/qa/gt12-independent-tests-20261101.log`
+  - `docs/qa/gt12-read-model-20261101.invocation.json`
+  - `docs/qa/gt12-read-model-20261101.json`
+  - `docs/qa/gt12-read-model-20261101.log`
+  - `docs/qa/gt12-run-stage-20261101.py`
+  - `docs/qa/gt12-smoke-4c8f9a6-20261101.json`
+  - `docs/qa/gt12-smoke-initial-20261101.json`
+  - `docs/qa/gt12-ui-calls-20261101.invocation.json`
+  - `docs/qa/gt12-ui-calls-20261101.json`
+  - `docs/qa/gt12-ui-calls-20261101.log`
+  - `docs/qa/historical-review-scripts-20261101.json`
+  - `docs/qa/identity-followup-20261101.md`
+  - `docs/qa/identity-followup-integrated-original-20261101.tar.gz`
+  - `docs/qa/identity-followup-root-integrated.log.gz`
+  - `docs/qa/identity-independent-review-20261101.md`
+  - `docs/qa/integrated-latest-bounded.log.gz`
+  - `docs/qa/integrated-output-prereg-research.log.gz`
+  - `docs/qa/integrated-rzdiff-identity.log.gz`
+  - `docs/qa/integration-checkpoint-20261101.json`
+  - `docs/qa/integration-checkpoint2-20261101.json`
+  - `docs/qa/integration-focused-20261101.log.gz`
+  - `docs/qa/integration-focused-final-20261101.log.gz`
+  - `docs/qa/integration-identity-msrc-20261101-copied.log.gz`
+  - `docs/qa/integration-identity-msrc-20261101.log.gz`
+  - `docs/qa/issue-dispositions-20261101.md`
+  - `docs/qa/issue120-combined-green-20261101.log.gz`
+  - `docs/qa/issue120-corrected-baseline-red-20261101.log.gz`
+  - `docs/qa/issue120-corrected-original-source-red-20261101.log.gz`
+  - `docs/qa/issue120-final-focused-20261101.log.gz`
+  - `docs/qa/issue120-identity-first-20261101.log.gz`
+  - `docs/qa/issue120-identity-green-20261101.log.gz`
+  - `docs/qa/issue120-identity-integration-20261101.log.gz`
+  - `docs/qa/issue120-implementation-verification-20261101.json`
+  - `docs/qa/issue120-red-20261101.log.gz`
+  - `docs/qa/issue120-resource-verification-20261101.json`
+  - `docs/qa/kb-fixture-reconciliation-20261030.md`
+  - `docs/qa/kb-saved-scope-20261102.md`
+  - `docs/qa/kb-saved-scope-review-20261102.json`
+  - `docs/qa/kb-saved-scope-review-20261102.md`
+  - `docs/qa/lifecycle-116-creation-staging-20261102.md`
+  - `docs/qa/lifecycle-116-explicit-retry-20261102.md`
+  - `docs/qa/lifecycle-116-independent-20261102.tar.gz`
+  - `docs/qa/lifecycle-116-profile-inspection-20261102.md`
+  - `docs/qa/lifecycle-116-review-20261102.json`
+  - `docs/qa/lifecycle-116-review-20261102.md`
+  - `docs/qa/llvm-native-controls-20261101.tar.gz`
+  - `docs/qa/msrc-20261101-independent-mixed-control.py.original.txt`
+  - `docs/qa/msrc-20261101-independent-review-controls.py.original.txt`
+  - `docs/qa/msrc-after-merge.log.gz`
+  - `docs/qa/native-bindiff-harness-20261102.md`
+  - `docs/qa/native-bindiff-harness-20261102.py`
+  - `docs/qa/native-bindiff-independent-review-20261102.json`
+  - `docs/qa/native-bindiff-tool-pins-20261102.json`
+  - `docs/qa/native-binexport-bindiff-attempt1-20261102.json`
+  - `docs/qa/native-binexport-bindiff-attempt1-20261102.tar.gz`
+  - `docs/qa/native-binexport-bindiff-attempt1-summary-20261102.json`
+  - `docs/qa/native-reconciliation-20261101-compile-evidence.json`
+  - `docs/qa/native-reconciliation-20261101-download-evidence.json`
+  - `docs/qa/native-reconciliation-20261101-native-driver.py`
+  - `docs/qa/native-reconciliation-20261101-receipt.json`
+  - `docs/qa/native-reconciliation-20261101-setup-evidence.json`
+  - `docs/qa/native-reconciliation-20261101-verification-evidence.json`
+  - `docs/qa/native-reconciliation-setup-attempt-20261031.json`
+  - `docs/qa/native-reconciliation-smoke-20261031-driver.py`
+  - `docs/qa/native-reconciliation-smoke-20261031.json`
+  - `docs/qa/original41-pr-collections-20261101.json.gz`
+  - `docs/qa/original41-pr-workflow-jobs-first-pages-20261101.json.gz`
+  - `docs/qa/output-completion-merged-20261102.log.gz`
+  - `docs/qa/output-credit-completion-20261102.json`
+  - `docs/qa/output-credit-completion-20261102.md`
+  - `docs/qa/output-credit-completion-20261102.tar.gz`
+  - `docs/qa/output-credit-completion-independent-review-20261102.json`
+  - `docs/qa/output-credit-completion-review-20261102.json`
+  - `docs/qa/output-credit-completion-review-20261102.md`
+  - `docs/qa/output-credited-replay-20261101.json`
+  - `docs/qa/output-credited-replay-20261101.md`
+  - `docs/qa/output-metadata-propagation-20261102.md`
+  - `docs/qa/output-path-fixtures-20261102.md`
+  - `docs/qa/output-path-fixtures-20261102.tar.gz`
+  - `docs/qa/output-prereg-integrated-checkpoint2.log.gz`
+  - `docs/qa/output-windows-independent-review-20261102.json`
+  - `docs/qa/output-windows-main-corrected.log.gz`
+  - `docs/qa/output-windows-main.log.gz`
+  - `docs/qa/output-windows-main.xml.gz`
+  - `docs/qa/output-windows-stat-20261102.json`
+  - `docs/qa/output-windows-stat-20261102.md`
+  - `docs/qa/output-windows-stat-20261102.tar.gz`
+  - `docs/qa/pr149-linux.verified.json`
+  - `docs/qa/pr149-windows.verified.json`
+  - `docs/qa/pr150-qa-windows.verified.json`
+  - `docs/qa/pr150-sonar-triage-2fdac2e.md`
+  - `docs/qa/pr154-escaped-opening-verification-20261101.json`
+  - `docs/qa/pr154-markdown-independent-review-20261101.json`
+  - `docs/qa/pr154-markdown-verification-20261101.json`
+  - `docs/qa/pr156157-independent-external-review-20261101.md`
+  - `docs/qa/pr157-bounded-review-repro-20261101.json`
+  - `docs/qa/pr157-bounded-review-repro-20261101.py.original.txt`
+  - `docs/qa/pr157-credited-replay-independent-review-20261101.json`
+  - `docs/qa/prereg-fence-audit-20261102.tar.gz`
+  - `docs/qa/prereg-fence-prefix-consolidation-20261102.md`
+  - `docs/qa/prereg-final-root-integrated.log.gz`
+  - `docs/qa/prereg-independent-review-20261101.json`
+  - `docs/qa/prereg-main-port-20261101.log.gz`
+  - `docs/qa/prereg-main-port-20261101.md`
+  - `docs/qa/prereg-markdown-review-20261101.md`
+  - `docs/qa/prereg-review-followup-20261101.tar.gz`
+  - `docs/qa/pyyaml-dev-independent-review-20261102.json`
+  - `docs/qa/raw-summary-container-consolidation-20261102.md`
+  - `docs/qa/raw-summary-independent-20261102.png`
+  - `docs/qa/raw-summary-sizing-20261102.md`
+  - `docs/qa/raw-summary-sizing-20261102.tar.gz`
+  - `docs/qa/raw-summary-sizing-review-20261102.json`
+  - `docs/qa/raw-summary-sizing-review-20261102.md`
+  - `docs/qa/rd-alignment-root.log.gz`
+  - `docs/qa/rd-f03-author-receipt.json`
+  - `docs/qa/rd-f03-independent-review-20261101.json`
+  - `docs/qa/rd-paired-review-20261102.json`
+  - `docs/qa/rd-paired-review-20261102.md`
+  - `docs/qa/reconciliation-bench-20261031.json`
+  - `docs/qa/remote-heads-checkpoint-20261101.json`
+  - `docs/qa/remote-heads-checkpoint2-20261101.json`
+  - `docs/qa/reproduce-issue120-20261101.json.gz`
+  - `docs/qa/resume-checkpoint-20261102.json`
+  - `docs/qa/resume-followup-checkpoint-20261102.json`
+  - `docs/qa/resume-root-checks-20261102.tar.gz`
+  - `docs/qa/rz-fixtures-20261101.md`
+  - `docs/qa/rz-fixtures-20261101.tar.gz`
+  - `docs/qa/rz-scoring-contract-followup.log.gz`
+  - `docs/qa/rz-scoring-contract-green.log.gz`
+  - `docs/qa/rzdiff-native-provenance-20261101.tar.gz`
+  - `docs/qa/rzdiff-native-root-review-20261101.json`
+  - `docs/qa/rzdiff-quarantine-independent-review-20261101.md`
+  - `docs/qa/rzdiff-quarantine-verification-20261101.json`
+  - `docs/qa/rzdiff-replay-final-e8319b9.json`
+  - `docs/qa/rzdiff-scoring-fixture-independent-review-20261101.json`
+  - `docs/qa/rzdiff-shared-fixtures-independent-review-20261101.json`
+  - `docs/qa/sonar-review.md`
+  - `docs/qa/storage-after-merge.log.gz`
+  - `docs/qa/storage-focused-20261101.log.gz`
+  - `docs/qa/transfer-credit-preflight-20261102.md`
+  - `docs/qa/transfer-preflight-review-20261102.json`
+  - `docs/qa/transfer-preflight-review-20261102.md`
+  - `docs/qa/transfer-windows-paths-20261102.md`
+  - `docs/qa/windows-output-review-20261102.json`
+  - `docs/qa/windows-output-review-20261102.md`
+  - `docs/qa/windows-secondary-controls-20261102.md`
+  - `docs/qa/windows-secondary-controls-review-20261102.json`
+  - `docs/qa/windows-secondary-controls-review-20261102.md`
+  - `docs/release-process.md`
+  - `docs/research/deep-uncertainty-r8/01-typed-literal-counterexamples.md`
+  - `docs/research/patchtrace-improvement-research-20261102.md`
+  - `docs/research/rzdiff-orientation-witness-20261101.md`
+  - `docs/research/rzdiff-witness-native-20261101.json`
+  - `docs/schemas/calibration/PairRows.json`
+  - `docs/schemas/corpus/EngineOutputDoc.json`
+  - `docs/schemas/corpus/EvaluationFailure.json`
+  - `docs/schemas/corpus/OutputCompletion.json`
+  - `docs/schemas/corpus/OutputCredits.json`
+  - `docs/schemas/corpus/TierRReport.json`
+  - `docs/schemas/corpus/TrainingManifest.json`
+  - `docs/schemas/corpus/report-examples/valid-engine-output-attention.json`
+  - `docs/specs/architecture.md`
+  - `docs/specs/byte-representations.md`
+  - `docs/specs/calibration-corpus-and-model.md`
+  - `docs/specs/gui-preflight-inspection.md`
+  - `docs/specs/kb-cve/31-C-product-build-pairs.md`
+  - `docs/specs/kb-cve/31-E-evidence-intent.md`
+  - `docs/specs/kb-cve/31-F-workflow-ui-persistence.md`
+  - `docs/specs/known-answer-corpus.md`
+  - `docs/specs/panels/graph-inspection.md`
+  - `docs/specs/program-e/WB2-integration-plan.md`
+  - `docs/specs/secondary-engine.md`
+  - `docs/specs/ui.md`
+  - `docs/specs/unified-engine/05-fusion-and-noise.md`
+  - `docs/specs/unified-engine/06-adapters.md`
+  - `docs/specs/unified-engine/08-evaluation.md`
+  - `docs/specs/windows-acceptance-and-milestone-builds.md`
+  - `docs/specs/windows-release-signing-policy.md`
+  - `docs/wiki/Architecture-and-Design-Rationale.md`
+  - `docs/wiki/Codebase-Map.md`
+  - `docs/wiki/Developer-Guide.md`
+  - `docs/wiki/Home.md`
+  - `docs/wiki/User-Guide.md`
+  - `docs/wiki/_Sidebar.md`
+  - `pyproject.toml`
+  - `src/patchtrace/__main__.py`
+  - `src/patchtrace/app_icon.py`
+  - `src/patchtrace/backend.py`
+  - `src/patchtrace/calibration/features.py`
+  - `src/patchtrace/callgraph/algo.py`
+  - `src/patchtrace/callgraph/csr.py`
+  - `src/patchtrace/callgraph/dot.py`
+  - `src/patchtrace/callgraph/export_json.py`
+  - `src/patchtrace/callgraph/labels.py`
+  - `src/patchtrace/callgraph/limits.py`
+  - `src/patchtrace/callgraph/panel_qt.py`
+  - `src/patchtrace/callgraph/paths.py`
+  - `src/patchtrace/callgraph/query.py`
+  - `src/patchtrace/callgraph/snapshot.py`
+  - `src/patchtrace/callgraph/view_model.py`
+  - `src/patchtrace/gui/qt/host.py`
+  - `src/patchtrace/gui/qt/kb_selftest.py`
+  - `src/patchtrace/gui/qt/project_adoption.py`
+  - `src/patchtrace/kbcorrelation/adapters/panel_snapshot.py`
+  - `src/patchtrace/kbcorrelation/cli_leads.py`
+  - `src/patchtrace/kbcorrelation/context.py`
+  - `src/patchtrace/kbcorrelation/index.py`
+  - `src/patchtrace/kbcorrelation/investigation_qt.py`
+  - `src/patchtrace/kbcorrelation/investigation_service.py`
+  - `src/patchtrace/kbcorrelation/panel_qt.py`
+  - `src/patchtrace/kbcorrelation/service.py`
+  - `src/patchtrace/kbcorrelation/wiring.py`
+  - `src/patchtrace/persistence.py`
+  - `src/patchtrace/project_creation.py`
+  - `src/patchtrace/project_retry.py`
+  - `src/patchtrace/raw_alignment_view.py`
+  - `src/patchtrace/representations/__init__.py`
+  - `src/patchtrace/representations/alignment.py`
+  - `src/patchtrace/resources/patchtrace-mark.svg`
+  - `src/patchtrace/secondary/contracts.py`
+  - `src/patchtrace/secondary/evidence.py`
+  - `src/patchtrace/secondary/evidence_view.py`
+  - `src/patchtrace/secondary/reconcile.py`
+  - `src/patchtrace/secondary/rzdiff.py`
+  - `src/patchtrace/service.py`
+  - `src/patchtrace/tooltips.py`
+  - `src/patchtrace/ui.py`
+  - `src/patchtrace/ui_inspection.py`
+  - `src/patchtrace/ui_new_project.py`
+  - `src/patchtrace/ui_profiles.py`
+  - `src/patchtrace/ui_raw_alignment.py`
+  - `src/patchtrace/unified/compute.py`
+  - `src/patchtrace/unified/facts/anchors.py`
+  - `src/patchtrace/unified/facts/channels.py`
+  - `src/patchtrace/unified/facts/pseudo.py`
+  - `src/patchtrace/unified/facts/verdict.py`
+  - `src/patchtrace/unified/fusion/arbiter.py`
+  - `src/patchtrace/unified/ir/cfg.py`
+  - `src/patchtrace/unified/read_text.py`
+  - `src/patchtrace/unified/registry.py`
+  - `src/patchtrace/unified/sources/__init__.py`
+  - `src/patchtrace/unified/sources/ladder.py`
+  - `src/patchtrace/unified/sources/secondary.py`
+  - `tasks/todo.md`
+  - `tests/fixtures/kb/CONTRACT_CONFLICTS.md`
+  - `tests/fixtures/kb/MANIFEST.json`
+  - `tests/fixtures/kb/README.md`
+  - `tests/fixtures/kb/confusable_kb.json`
+  - `tests/fixtures/kb/crash_points.json`
+  - `tests/fixtures/kb/csaf_synthetic.json`
+  - `tests/fixtures/kb/cvrf_bom.json`
+  - `tests/fixtures/kb/cvrf_crlf.json`
+  - `tests/fixtures/kb/cvrf_v3_synthetic.json`
+  - `tests/fixtures/kb/raw_adversarial_inputs.json`
+  - `tests/fixtures/kb/update_packages_synthetic.json`
+  - `tests/fixtures/kb/update_relationships_synthetic.json`
+  - `tests/fixtures/kb/vex_synthetic.json`
+  - `tests/fixtures/kb/winbindex_synthetic.json`
+  - `tests/fixtures/secondary/rzdiff-0.9.1-native-orientation.json`
+  - `tests/kb_crash_harness.py`
+  - `tests/kb_fixture_performance_plan.md`
+  - `tests/stress/test_cli_stress_recovery.py`
+  - `tests/test_audit2_fixes.py`
+  - `tests/test_audit_desktop.py`
+  - `tests/test_calibration_runtime.py`
+  - `tests/test_calibration_tools.py`
+  - `tests/test_callgraph_cap_truth.py`
+  - `tests/test_callgraph_count_suffix_guard.py`
+  - `tests/test_callgraph_path_budget.py`
+  - `tests/test_callgraph_snapshot.py`
+  - `tests/test_ci_summary.py`
+  - `tests/test_cli_secondary_run.py`
+  - `tests/test_creation_116.py`
+  - `tests/test_evidence_panel_service.py`
+  - `tests/test_evidence_ui.py`
+  - `tests/test_evidence_view.py`
+  - `tests/test_jobs.py`
+  - `tests/test_kb_crash_injection_protocol.py`
+  - `tests/test_kb_cvrf_fixture_import.py`
+  - `tests/test_kb_fixture_encoding.py`
+  - `tests/test_kb_fixture_properties.py`
+  - `tests/test_kb_investigation_service.py`
+  - `tests/test_kb_metadata_fixture_boundaries.py`
+  - `tests/test_kb_offline_fixture_import.py`
+  - `tests/test_kb_raw_adversarial_inputs.py`
+  - `tests/test_kb_synthetic_fixture_corpus.py`
+  - `tests/test_kb_update_relationships.py`
+  - `tests/test_kbc_acquire_cli.py`
+  - `tests/test_kbc_card_context_sources.py`
+  - `tests/test_kbc_contracts.py`
+  - `tests/test_kbc_msrc_review_findings.py`
+  - `tests/test_kbc_saved_scope.py`
+  - `tests/test_kbc_selection_guard.py`
+  - `tests/test_lifecycle_116.py`
+  - `tests/test_live_rzdiff_check.py`
+  - `tests/test_native_bindiff_harness.py`
+  - `tests/test_project_retry.py`
+  - `tests/test_r2_cache_version.py`
+  - `tests/test_r2_cfg_performance.py`
+  - `tests/test_r2_fusion_regressions.py`
+  - `tests/test_r8_literal_types.py`
+  - `tests/test_raw_alignment_view.py`
+  - `tests/test_representation_alignment.py`
+  - `tests/test_rzdiff_cli_env.py`
+  - `tests/test_rzdiff_count_observation.py`
+  - `tests/test_rzdiff_orientation_20261101.py`
+  - `tests/test_secondary_reconcile.py`
+  - `tests/test_secondary_rzdiff.py`
+  - `tests/test_secondary_scheduler.py`
+  - `tests/test_tier_r_credit_completion.py`
+  - `tests/test_tier_r_credited_replay.py`
+  - `tests/test_tier_r_eval_engines.py`
+  - `tests/test_tier_r_eval_metrics.py`
+  - `tests/test_tier_r_eval_report.py`
+  - `tests/test_tier_r_output_persistence.py`
+  - `tests/test_tier_r_output_stat_compat.py`
+  - `tests/test_tier_r_training_artifacts.py`
+  - `tests/test_tooltips.py`
+  - `tests/test_train_prereg_selection.py`
+  - `tests/test_ui_callgraph_cap_truth.py`
+  - `tests/test_ui_kb_create_cancellation.py`
+  - `tests/test_ui_kb_current_project.py`
+  - `tests/test_ui_kb_entry.py`
+  - `tests/test_ui_kb_frozen_journey.py`
+  - `tests/test_ui_kb_investigation.py`
+  - `tests/test_ui_project_retry.py`
+  - `tests/test_ui_raw_alignment.py`
+  - `tests/test_unified_bench.py`
+  - `tests/test_unified_bench_stages.py`
+  - `tests/test_unified_cli_show.py`
+  - `tests/test_unified_corpus_workflow.py`
+  - `tests/test_unified_live_force_identical.py`
+  - `tests/test_unified_live_native_failure_details.py`
+  - `tests/test_unified_live_pairs.py`
+  - `tests/test_unified_live_pairs_r1.py`
+  - `tests/test_unified_live_workflow.py`
+  - `tests/test_unified_sources.py`
+  - `tests/test_unified_verdict_ir.py`
+  - `tests/test_unified_wire_compute.py`
+  - `tests/test_windows_build_resources.py`
+  - `tests/unified_s0_fixtures.py`
+  - `tests/unified_support/fixture-gaps.md`
+  - `third_party/notices/README.md`
+  - `third_party/notices/qtsvg-6.12.0/LICENSES/BSD-3-Clause.txt`
+  - `third_party/notices/qtsvg-6.12.0/LICENSES/GPL-2.0-only.txt`
+  - `third_party/notices/qtsvg-6.12.0/LICENSES/GPL-3.0-only.txt`
+  - `third_party/notices/qtsvg-6.12.0/LICENSES/LGPL-3.0-only.txt`
+  - `third_party/notices/qtsvg-6.12.0/PROVENANCE.txt`
+  - `third_party/notices/qtsvg-6.12.0/REUSE.toml`
+  - `third_party/notices/qtsvg-6.12.0/SOURCE-HEADERS.txt`
+  - `tools/build_linux.py`
+  - `tools/build_windows.py`
+  - `tools/calibration/prereg_gate.py`
+  - `tools/calibration/tier_r/cli.py`
+  - `tools/calibration/tier_r/contracts.py`
+  - `tools/calibration/tier_r/evaluate.py`
+  - `tools/calibration/tier_r/output_store.py`
+  - `tools/calibration/tier_r/report_schemas.py`
+  - `tools/calibration/tier_r/shard.py`
+  - `tools/calibration/tier_r/training_artifacts.py`
+  - `tools/calibration/train.py`
+  - `tools/check_windows_exe.py`
+  - `tools/frozen_smoke.py`
+  - `tools/live_rzdiff_check.py`
+  - `tools/pyinstaller_hooks/hook-patchtrace.app_icon.py`
+  - `tools/research/rzdiff_count_observation.py`
+  - `tools/unified/bench.py`
+  - `tools/unified/bench_workloads.py`
+  - `tools/unified/live_pairs.py`
+  - `tools/windows_icon.py`
+  - `tools/windows_version_info.py`
+
+### `codex/consolidation-integrity-20261103`
+
+- Head: `b58bb53debcb3323e5d8d634e09397cb7e02965f`
+- Base: `origin/codex/consolidated-reviewed-20261102` at `6e82fd70f315b99c6798a42c9061a1424a02933e`
+- Merge base: `6e82fd70f315b99c6798a42c9061a1424a02933e`
+- Associated PR: https://github.com/djshellshoxxx/patchtrace/pull/164
+- Functional scope: {"docs": 35, "src/patchtrace/rules": 3, "tasks": 1, "tests": 7, "tools": 3}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {'SUCCESS': 22, 'CANCELLED': 1, 'SKIPPED': 6, 'FAILURE': 3}; failures: ['shard 0 of 2', 'shard 1 of 2', 'merge']; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: blocked: failing checks.
+- Recommended disposition: preserve active branch; port only verified unique patches.
+- Unique commits: `44c320e37b84a38259f13fa8f0f444b542b96f2c`
+- Patch-equivalent commits: none
+- Modified files:
+  - `docs/handoff/consolidation-integrity-20261103.md`
+  - `docs/qa.md`
+  - `docs/qa/consolidation-backup-merge-20261103.json`
+  - `docs/qa/consolidation-cached-wheel-review-20261102.md`
+  - `docs/qa/consolidation-ci-review-20261103.md`
+  - `docs/qa/consolidation-completed-validation-20261102.md`
+  - `docs/qa/consolidation-completed-validation-reconciliation-20261102.json`
+  - `docs/qa/consolidation-completed-validation-review-20261102.md`
+  - `docs/qa/consolidation-completion-checkpoint-20261102.json`
+  - `docs/qa/consolidation-completion-checkpoint-20261102.md`
+  - `docs/qa/consolidation-data-integrity-independent-20261103.md`
+  - `docs/qa/consolidation-full-run-20261102.json`
+  - `docs/qa/consolidation-full-run-20261102.tar.gz`
+  - `docs/qa/consolidation-integrity-focused-20261103.json`
+  - `docs/qa/consolidation-integrity-focused-20261103.tar.gz`
+  - `docs/qa/consolidation-isolated-import-review-20261102.md`
+  - `docs/qa/consolidation-pr-disposition-20261102.json`
+  - `docs/qa/consolidation-pr-disposition-20261102.md`
+  - `docs/qa/consolidation-receipts-lane-20261102.json`
+  - `docs/qa/consolidation-receipts-lane-20261102.md`
+  - `docs/qa/consolidation-release-critical-path-20261102.md`
+  - `docs/qa/consolidation-rules-integrity-independent-20261103.md`
+  - `docs/qa/consolidation-rules-lane-20261102.md`
+  - `docs/qa/consolidation-rules-merge-20261102.md`
+  - `docs/qa/consolidation-runtime-20261102.json`
+  - `docs/qa/consolidation-search-rules-review-20261102.md`
+  - `docs/qa/consolidation-sonar-diagnostic-20261102.json`
+  - `docs/qa/consolidation-sonar-diagnostic-20261102.md`
+  - `docs/qa/consolidation-targeted-reruns-20261102.json`
+  - `docs/qa/consolidation-targeted-reruns-20261102.tar.gz`
+  - `docs/qa/consolidation-tier-r-data-integrity-20261103.md`
+  - `docs/qa/rules-integrity-consolidation-20261103.md`
+  - `docs/research/patchtrace-improvement-research-20261102.md`
+  - `docs/specs/known-answer-corpus.md`
+  - `docs/specs/yara-x-rule-workflow.md`
+  - `src/patchtrace/rules/export.py`
+  - `src/patchtrace/rules/matrix.py`
+  - `src/patchtrace/rules/store.py`
+  - `tasks/todo.md`
+  - `tests/test_rules_export.py`
+  - `tests/test_rules_matrix.py`
+  - `tests/test_rules_store.py`
+  - `tests/test_tier_r_build_receipts_r1.py`
+  - `tests/test_tier_r_label_promotion_r1.py`
+  - `tests/test_tier_r_session_provenance_r1.py`
+  - `tests/test_verified_backup_byte_integrity.py`
+  - `tools/calibration/tier_r/build.py`
+  - `tools/calibration/tier_r/factory.py`
+  - `tools/calibration/tier_r/labeler.py`
+
+### `codex/coordinator-rule-repairs-20261031`
+
+- Head: `798e11ef345ed7a7a65508a466eaf77ee85ef77c`
+- Base: `origin/main` at `5d504ff5c046bfb758623182b472976003632bba`
+- Merge base: `a04f5a299a8d4afef023261e52e08d14678cf1e7`
+- Associated PR: none in open PR snapshot
+- Functional scope: {"docs": 4, "src/patchtrace/callgraph": 2, "src/patchtrace/kbcorrelation": 1, "src/patchtrace/rules": 3, "tests": 6}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {}; failures: []; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: unqualified: no current CI attached.
+- Recommended disposition: preserve active branch; port only verified unique patches.
+- Unique commits: `7bec5742cbe6c515d2543c2c8185225881391b5a`, `d707f54be2cf447c654a3a1d446c80643a0a7576`, `3f0df14d9d68dfd9523afd7f9e97482f9d7907ff`, `492620e4d18a98b8830a8887f768e3d07af3ad97`, `a5557949d0cfa0594209b2060026ed4c58d8c0fb`, `a6a219a69f5ce74c6f7943873612582fb3d6d2ef`, `0ab50c754a5e6238e5d638b13f69a3d51b76e292`, `8d958f0a1950a29c1d1cef9525a114654f4c9904`, `19013569956c3af929e9eccc4f20e5d22a4f8faa`, `798e11ef345ed7a7a65508a466eaf77ee85ef77c`
+- Patch-equivalent commits: none
+- Modified files:
+  - `docs/plans/milestone-ledger-20261030.md`
+  - `docs/specs/kb-patch-search-source-adapters.md`
+  - `docs/specs/program-e/WB2-integration-plan.md`
+  - `docs/specs/yara-x-rule-workflow.md`
+  - `src/patchtrace/callgraph/algo.py`
+  - `src/patchtrace/callgraph/labels.py`
+  - `src/patchtrace/kbcorrelation/index.py`
+  - `src/patchtrace/rules/export.py`
+  - `src/patchtrace/rules/matrix.py`
+  - `src/patchtrace/rules/store.py`
+  - `tests/test_callgraph_algo.py`
+  - `tests/test_callgraph_labels.py`
+  - `tests/test_kbc_bugfixes_20261029.py`
+  - `tests/test_rules_export.py`
+  - `tests/test_rules_matrix.py`
+  - `tests/test_rules_store.py`
+
+### `codex/corpus-output-main-20261101`
+
+- Head: `874e9a267fdc589a796ce573f2958e1aa84ea0f6`
+- Base: `origin/main` at `5d504ff5c046bfb758623182b472976003632bba`
+- Merge base: `63d11d316c70e1f1e83baa80acabd3cf3c4c2245`
+- Associated PR: https://github.com/djshellshoxxx/patchtrace/pull/157
+- Functional scope: {"docs": 32, "tasks": 1, "tests": 5, "tools": 6}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {'FAILURE': 1, 'SKIPPED': 1, 'SUCCESS': 1}; failures: ['SonarCloud Code Analysis']; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: blocked: failing checks.
+- Recommended disposition: preserve active branch; port only verified unique patches.
+- Unique commits: `99660cc825b366a28e50b18eacad44dbb069ca69`, `aff72cddc902f31a2cf44dea9c48797edabc1c30`, `bb98bae3cf0a3b6a38a298a14186d7f4e1c9c151`, `8a18ca82032b6f6ed11dde887fd5eddef1a9fe81`, `dac9b89a297f428bdcf364b4be37a448a5b2ce4e`, `ca411e77f43a9fd95ca5e0bcc7d2b58071ccae37`
+- Patch-equivalent commits: none
+- Modified files:
+  - `docs/modules.md`
+  - `docs/qa.md`
+  - `docs/qa/ci-monitor-windows-bb98bae3-20261102.tar.gz`
+  - `docs/qa/corpus-output-persistence-20261101.json`
+  - `docs/qa/corpus-output-persistence-20261101.md`
+  - `docs/qa/output-completion-merged-20261102.log.gz`
+  - `docs/qa/output-credit-completion-20261102.json`
+  - `docs/qa/output-credit-completion-20261102.md`
+  - `docs/qa/output-credit-completion-20261102.tar.gz`
+  - `docs/qa/output-credit-completion-independent-review-20261102.json`
+  - `docs/qa/output-credited-replay-20261101.json`
+  - `docs/qa/output-credited-replay-20261101.md`
+  - `docs/qa/output-metadata-propagation-20261102.md`
+  - `docs/qa/output-path-fixtures-20261102.md`
+  - `docs/qa/output-path-fixtures-20261102.tar.gz`
+  - `docs/qa/output-windows-independent-review-20261102.json`
+  - `docs/qa/output-windows-main-corrected.log.gz`
+  - `docs/qa/output-windows-main.log.gz`
+  - `docs/qa/output-windows-main.xml.gz`
+  - `docs/qa/output-windows-stat-20261102.json`
+  - `docs/qa/output-windows-stat-20261102.md`
+  - `docs/qa/output-windows-stat-20261102.tar.gz`
+  - `docs/qa/windows-output-review-20261102.json`
+  - `docs/qa/windows-output-review-20261102.md`
+  - `docs/schemas/calibration/PairRows.json`
+  - `docs/schemas/corpus/EngineOutputDoc.json`
+  - `docs/schemas/corpus/EvaluationFailure.json`
+  - `docs/schemas/corpus/OutputCompletion.json`
+  - `docs/schemas/corpus/OutputCredits.json`
+  - `docs/schemas/corpus/TierRReport.json`
+  - `docs/schemas/corpus/report-examples/valid-engine-output-attention.json`
+  - `docs/specs/known-answer-corpus.md`
+  - `tasks/todo.md`
+  - `tests/test_tier_r_credit_completion.py`
+  - `tests/test_tier_r_credited_replay.py`
+  - `tests/test_tier_r_eval_report.py`
+  - `tests/test_tier_r_output_persistence.py`
+  - `tests/test_tier_r_output_stat_compat.py`
+  - `tools/calibration/tier_r/cli.py`
+  - `tools/calibration/tier_r/contracts.py`
+  - `tools/calibration/tier_r/evaluate.py`
+  - `tools/calibration/tier_r/output_store.py`
+  - `tools/calibration/tier_r/report_schemas.py`
+  - `tools/calibration/train.py`
+
+### `codex/deep-review-consolidation-20261030`
+
+- Head: `95e09548a82202ae4cfd9380522f36513da87a66`
+- Base: `origin/main` at `5d504ff5c046bfb758623182b472976003632bba`
+- Merge base: `95e09548a82202ae4cfd9380522f36513da87a66`
+- Associated PR: none in open PR snapshot
+- Functional scope: {}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {}; failures: []; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: no unique patches relative to base.
+- Recommended disposition: superseded relative to base; verify before closing/deleting.
+- Unique commits: none
+- Patch-equivalent commits: none
+- Modified files:
+
+### `codex/essential-combined-verification-20261030`
+
+- Head: `a7f13e13ffb512f8e9621753a0ae162d78942f3b`
+- Base: `origin/integration/controlled-consolidation-20261030` at `f18687fd035b67961c1072af84f8c2b3442979e0`
+- Merge base: `f18687fd035b67961c1072af84f8c2b3442979e0`
+- Associated PR: https://github.com/djshellshoxxx/patchtrace/pull/143
+- Functional scope: {".github": 1, "docs": 9, "src/patchtrace/backend.py": 1, "tasks": 1, "tests": 31, "tools": 1}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {'SUCCESS': 26, 'SKIPPED': 3}; failures: []; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: candidate: inspect review/protection and focused tests.
+- Recommended disposition: preserve active branch; port only verified unique patches.
+- Unique commits: `2fcd627e52a6d784d5c2e5b4ea8105e90b8589b3`, `c04ad725551fe8daa139b37aa2cdf46d6d161b65`, `b87193d1dd30635fce33986f80ceade136507a1a`, `fb91cff6d91c77a2c539c896b670d81180dcc637`, `632079f0251982068d2cac294514b2d32e06a74c`, `a4d1e6a38c34d1952584aa65d7f5f908c45547b3`, `a7f13e13ffb512f8e9621753a0ae162d78942f3b`
+- Patch-equivalent commits: none
+- Modified files:
+  - `.github/workflows/unified-live-gates.yml`
+  - `docs/plans/gt01-native-output-diagnosis-20261030.md`
+  - `docs/plans/gt01-overlap-disposition-20261030.md`
+  - `docs/qa.md`
+  - `docs/qa/continuation-verification-20261030.md`
+  - `docs/qa/gt01-harness-smoke-20261030.json`
+  - `docs/qa/gt01-native-smoke-20261030.json`
+  - `docs/qa/kb-fixture-reconciliation-20261030.md`
+  - `docs/specs/architecture.md`
+  - `docs/specs/unified-engine/08-evaluation.md`
+  - `src/patchtrace/backend.py`
+  - `tasks/todo.md`
+  - `tests/fixtures/kb/CONTRACT_CONFLICTS.md`
+  - `tests/fixtures/kb/MANIFEST.json`
+  - `tests/fixtures/kb/README.md`
+  - `tests/fixtures/kb/confusable_kb.json`
+  - `tests/fixtures/kb/crash_points.json`
+  - `tests/fixtures/kb/csaf_synthetic.json`
+  - `tests/fixtures/kb/cvrf_bom.json`
+  - `tests/fixtures/kb/cvrf_crlf.json`
+  - `tests/fixtures/kb/cvrf_v3_synthetic.json`
+  - `tests/fixtures/kb/raw_adversarial_inputs.json`
+  - `tests/fixtures/kb/update_packages_synthetic.json`
+  - `tests/fixtures/kb/update_relationships_synthetic.json`
+  - `tests/fixtures/kb/vex_synthetic.json`
+  - `tests/fixtures/kb/winbindex_synthetic.json`
+  - `tests/kb_crash_harness.py`
+  - `tests/kb_fixture_performance_plan.md`
+  - `tests/test_jobs.py`
+  - `tests/test_kb_crash_injection_protocol.py`
+  - `tests/test_kb_cvrf_fixture_import.py`
+  - `tests/test_kb_fixture_encoding.py`
+  - `tests/test_kb_fixture_properties.py`
+  - `tests/test_kb_metadata_fixture_boundaries.py`
+  - `tests/test_kb_offline_fixture_import.py`
+  - `tests/test_kb_raw_adversarial_inputs.py`
+  - `tests/test_kb_synthetic_fixture_corpus.py`
+  - `tests/test_kb_update_relationships.py`
+  - `tests/test_unified_live_force_identical.py`
+  - `tests/test_unified_live_native_failure_details.py`
+  - `tests/test_unified_live_pairs.py`
+  - `tests/test_unified_live_pairs_r1.py`
+  - `tests/test_unified_live_workflow.py`
+  - `tools/unified/live_pairs.py`
+
+### `codex/essential-integration-20261029`
+
+- Head: `5ed624e91468c410f2cf738ed4e36c2be3e0201d`
+- Base: `origin/main` at `5d504ff5c046bfb758623182b472976003632bba`
+- Merge base: `5ed624e91468c410f2cf738ed4e36c2be3e0201d`
+- Associated PR: none in open PR snapshot
+- Functional scope: {}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {}; failures: []; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: no unique patches relative to base.
+- Recommended disposition: superseded relative to base; verify before closing/deleting.
+- Unique commits: none
+- Patch-equivalent commits: none
+- Modified files:
+
+### `codex/essential-project-safety-20261031`
+
+- Head: `c3868d8335a8f32f676905032dc1a6d0e9f22fd6`
+- Base: `origin/main` at `5d504ff5c046bfb758623182b472976003632bba`
+- Merge base: `a04f5a299a8d4afef023261e52e08d14678cf1e7`
+- Associated PR: https://github.com/djshellshoxxx/patchtrace/pull/148
+- Functional scope: {"README.md": 1, "docs": 6, "src/patchtrace/__main__.py": 1, "src/patchtrace/gui": 2, "src/patchtrace/kbcorrelation": 4, "src/patchtrace/persistence.py": 1, "src/patchtrace/reports.py": 1, "src/patchtrace/service.py": 1, "src/patchtrace/tooltips.py": 1, "src/patchtrace/ui.py": 1, "tasks": 1, "tests": 8}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {'SUCCESS': 22, 'SKIPPED': 3}; failures: []; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: candidate: inspect review/protection and focused tests.
+- Recommended disposition: preserve active branch; port only verified unique patches.
+- Unique commits: `c3868d8335a8f32f676905032dc1a6d0e9f22fd6`
+- Patch-equivalent commits: none
+- Modified files:
+  - `README.md`
+  - `docs/modules.md`
+  - `docs/plans/essential-integration-20261029.md`
+  - `docs/qa.md`
+  - `docs/specs/architecture.md`
+  - `docs/specs/kb-cve/31-C-product-build-pairs.md`
+  - `docs/specs/kb-cve/31-F-workflow-ui-persistence.md`
+  - `src/patchtrace/__main__.py`
+  - `src/patchtrace/gui/qt/host.py`
+  - `src/patchtrace/gui/qt/project_adoption.py`
+  - `src/patchtrace/kbcorrelation/investigation_qt.py`
+  - `src/patchtrace/kbcorrelation/investigation_service.py`
+  - `src/patchtrace/kbcorrelation/service.py`
+  - `src/patchtrace/kbcorrelation/wiring.py`
+  - `src/patchtrace/persistence.py`
+  - `src/patchtrace/reports.py`
+  - `src/patchtrace/service.py`
+  - `src/patchtrace/tooltips.py`
+  - `src/patchtrace/ui.py`
+  - `tasks/todo.md`
+  - `tests/test_export_destination_guard.py`
+  - `tests/test_kb_investigation_service.py`
+  - `tests/test_kbc_acquire_cli.py`
+  - `tests/test_kbc_contracts.py`
+  - `tests/test_kbc_selection_guard.py`
+  - `tests/test_tooltips.py`
+  - `tests/test_ui_kb_entry.py`
+  - `tests/test_ui_kb_investigation.py`
+
+### `codex/fix-pr110-ci-gates-20261029`
+
+- Head: `c0d1c38aee74461969ff0a8b4d61179c3dbb9b0b`
+- Base: `origin/main` at `5d504ff5c046bfb758623182b472976003632bba`
+- Merge base: `5ed624e91468c410f2cf738ed4e36c2be3e0201d`
+- Associated PR: none in open PR snapshot
+- Functional scope: {"docs": 2, "src/patchtrace/acquisition": 1, "src/patchtrace/ui.py": 1, "src/patchtrace/ui_symbols.py": 1, "tests": 2}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {}; failures: []; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: unqualified: no current CI attached.
+- Recommended disposition: preserve active branch; port only verified unique patches.
+- Unique commits: `ac4081efe17c608c3ce37fc3d5240e7a6fd45470`, `72964c5ffed9589a0a636549a40a08596cdba6a5`, `3cf5be3d3b550344832ea7379201fc9783b681c5`, `ff761cbfa61e0d1878383fbedbca6791dcc6eb46`, `6d6bd78d431354943e8ddb549ff28bf33675b73e`, `1e4b67fd3129ba5cbdf2ca81e0e4521b8c92f298`, `74cf94fde8488562e2b8c0389de52079f596b177`, `26e45cb7cdeacc1253eef33b88ca00e3be65a727`, `c0d1c38aee74461969ff0a8b4d61179c3dbb9b0b`
+- Patch-equivalent commits: none
+- Modified files:
+  - `docs/help/74-cli-diaphora.md`
+  - `docs/help/README.md`
+  - `src/patchtrace/acquisition/winbindex.py`
+  - `src/patchtrace/ui.py`
+  - `src/patchtrace/ui_symbols.py`
+  - `tests/test_acquisition_hostile_20261029.py`
+  - `tests/test_ui_symbol_local.py`
+
+### `codex/gt01-extraction-recovery-20261030`
+
+- Head: `d76d23372acef4049115e9ae176acbeb538a82e5`
+- Base: `origin/repair/gt01-native-identical-controls-20261030` at `fb91cff6d91c77a2c539c896b670d81180dcc637`
+- Merge base: `fb91cff6d91c77a2c539c896b670d81180dcc637`
+- Associated PR: https://github.com/djshellshoxxx/patchtrace/pull/141
+- Functional scope: {"docs": 3, "tasks": 1, "tests": 2, "tools": 1}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {'SUCCESS': 19, 'SKIPPED': 3}; failures: []; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: candidate: inspect review/protection and focused tests.
+- Recommended disposition: preserve active branch; port only verified unique patches.
+- Unique commits: `632079f0251982068d2cac294514b2d32e06a74c`
+- Patch-equivalent commits: none
+- Modified files:
+  - `docs/qa.md`
+  - `docs/qa/gt01-native-smoke-20261030.json`
+  - `docs/specs/unified-engine/08-evaluation.md`
+  - `tasks/todo.md`
+  - `tests/test_unified_live_pairs.py`
+  - `tests/test_unified_live_pairs_r1.py`
+  - `tools/unified/live_pairs.py`
+
+### `codex/gui-bounded-ambiguous-candidates-20261029`
+
+- Head: `3287cb3d36052bd6e44420f631ed033baf939d64`
+- Base: `origin/main` at `5d504ff5c046bfb758623182b472976003632bba`
+- Merge base: `f4063c3cc7e0c9d02d972e798699ad206628a5f1`
+- Associated PR: none in open PR snapshot
+- Functional scope: {"src/patchtrace/gui": 1, "tests": 1}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {}; failures: []; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: unqualified: no current CI attached.
+- Recommended disposition: preserve active branch; port only verified unique patches.
+- Unique commits: `41c8b9dfddee9089bd9ac6da9055d8aa4549e821`, `3287cb3d36052bd6e44420f631ed033baf939d64`
+- Patch-equivalent commits: `f45e04ff9009b17f30057d3b7949856694b6e493`
+- Modified files:
+  - `src/patchtrace/gui/anchors.py`
+  - `tests/test_gui_core_anchors.py`
+
+### `codex/identity-main-repair-20261101`
+
+- Head: `4eebea4a5389af16bffe32a2bf9285c406d95fb1`
+- Base: `origin/main` at `5d504ff5c046bfb758623182b472976003632bba`
+- Merge base: `4eebea4a5389af16bffe32a2bf9285c406d95fb1`
+- Associated PR: none in open PR snapshot
+- Functional scope: {}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {}; failures: []; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: no unique patches relative to base.
+- Recommended disposition: superseded relative to base; verify before closing/deleting.
+- Unique commits: none
+- Patch-equivalent commits: none
+- Modified files:
+
+### `codex/java-version-retry-20261015`
+
+- Head: `8ee61c623fa37c5a219f912cf7870bfeddcb1f70`
+- Base: `origin/main` at `5d504ff5c046bfb758623182b472976003632bba`
+- Merge base: `8ee61c623fa37c5a219f912cf7870bfeddcb1f70`
+- Associated PR: none in open PR snapshot
+- Functional scope: {}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {}; failures: []; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: no unique patches relative to base.
+- Recommended disposition: superseded relative to base; verify before closing/deleting.
+- Unique commits: none
+- Patch-equivalent commits: none
+- Modified files:
+
+### `codex/kb-fixture-contract-repairs-20261030`
+
+- Head: `a4d1e6a38c34d1952584aa65d7f5f908c45547b3`
+- Base: `origin/integration/kb-fixtures-pr69-20261030` at `2fcd627e52a6d784d5c2e5b4ea8105e90b8589b3`
+- Merge base: `2fcd627e52a6d784d5c2e5b4ea8105e90b8589b3`
+- Associated PR: https://github.com/djshellshoxxx/patchtrace/pull/142
+- Functional scope: {"docs": 1, "tests": 10}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {'SUCCESS': 22, 'SKIPPED': 3}; failures: []; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: candidate: inspect review/protection and focused tests.
+- Recommended disposition: preserve active branch; port only verified unique patches.
+- Unique commits: `a4d1e6a38c34d1952584aa65d7f5f908c45547b3`
+- Patch-equivalent commits: none
+- Modified files:
+  - `docs/qa/kb-fixture-reconciliation-20261030.md`
+  - `tests/fixtures/kb/CONTRACT_CONFLICTS.md`
+  - `tests/fixtures/kb/README.md`
+  - `tests/fixtures/kb/confusable_kb.json`
+  - `tests/test_kb_crash_injection_protocol.py`
+  - `tests/test_kb_cvrf_fixture_import.py`
+  - `tests/test_kb_fixture_encoding.py`
+  - `tests/test_kb_fixture_properties.py`
+  - `tests/test_kb_offline_fixture_import.py`
+  - `tests/test_kb_raw_adversarial_inputs.py`
+  - `tests/test_kb_synthetic_fixture_corpus.py`
+
+### `codex/msrc-mixed-format-revision-20261102`
+
+- Head: `e1b79e048d3963d747bc9f07448b039a250180ed`
+- Base: `origin/codex/real-msrc-adapter-20261101` at `d99cd7712b76e9e42661ef0b268417d7ca322d3e`
+- Merge base: `d03a7d4897ca0f09172aeb17f0ee57f8caab13eb`
+- Associated PR: https://github.com/djshellshoxxx/patchtrace/pull/158
+- Functional scope: {"src/patchtrace/kbcorrelation": 1, "tests": 1}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {'SUCCESS': 17, 'SKIPPED': 3}; failures: []; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: candidate: inspect review/protection and focused tests.
+- Recommended disposition: preserve active branch; port only verified unique patches.
+- Unique commits: `9a34244ce5f20a4883ea48eb72476e0306e97f2c`, `771b7e9b812ce8e5e34607235e8b8b116679db67`, `e1b79e048d3963d747bc9f07448b039a250180ed`
+- Patch-equivalent commits: none
+- Modified files:
+  - `src/patchtrace/kbcorrelation/index.py`
+  - `tests/test_kbc_msrc_review_findings.py`
+
+### `codex/msrc-reconcile-integration-20261102`
+
+- Head: `56374f867594dd923383c91ea71970cb7d24d173`
+- Base: `origin/codex/autonomous-reconcile-20261101` at `0130bf81e2fe3154f30af7b68a0e6ab197946040`
+- Merge base: `0130bf81e2fe3154f30af7b68a0e6ab197946040`
+- Associated PR: https://github.com/djshellshoxxx/patchtrace/pull/159
+- Functional scope: {"docs": 17, "src/patchtrace/intelligence": 2, "src/patchtrace/kbcorrelation": 4, "src/patchtrace/pilot": 4, "tests": 2, "tools": 1}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {'FAILURE': 3, 'SUCCESS': 15, 'CANCELLED': 1, 'SKIPPED': 5}; failures: ['qa (ubuntu-latest)', 'qa (windows-latest)', 'qt-gate (windows-latest, 5, 1/1)']; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: blocked: failing checks.
+- Recommended disposition: preserve active branch; port only verified unique patches.
+- Unique commits: `141f8176d4dbcebe23dada481a4fe8660a332dcb`, `9ae5731cadebd691a1aedc5b5727c3af3fcd58a0`, `6f923758efb57e3f19a43b5b1d2c1ba8319e1823`, `0cf22c9520da6d2841d27c0aa8136f36657aecc6`
+- Patch-equivalent commits: none
+- Modified files:
+  - `docs/modules.md`
+  - `docs/qa/card-field-attribution-20261102.json`
+  - `docs/qa/card-field-attribution-20261102.md`
+  - `docs/qa/card-field-attribution-20261102.tar.gz`
+  - `docs/qa/card-field-attribution-review-20261102.json`
+  - `docs/qa/card-field-attribution-review-20261102.md`
+  - `docs/qa/msrc-provenance-recovery-20261102.md`
+  - `docs/qa/msrc-recovered-main.log.gz`
+  - `docs/qa/msrc-recovered-main.xml.gz`
+  - `docs/schemas/intelligence/CweProfile.json`
+  - `docs/schemas/intelligence/HypothesisSet.json`
+  - `docs/schemas/intelligence/IntelligenceReport.json`
+  - `docs/schemas/kbcorrelation/ContextBundle.json`
+  - `docs/schemas/kbcorrelation/ContextReport.json`
+  - `docs/schemas/pilot/Lead.json`
+  - `docs/schemas/pilot/PilotAssessment.json`
+  - `docs/specs/kb-cve/31-E-evidence-intent.md`
+  - `src/patchtrace/intelligence/contracts.py`
+  - `src/patchtrace/intelligence/lexicon.py`
+  - `src/patchtrace/kbcorrelation/card_provenance.py`
+  - `src/patchtrace/kbcorrelation/context.py`
+  - `src/patchtrace/kbcorrelation/sources/importer.py`
+  - `src/patchtrace/kbcorrelation/wiring.py`
+  - `src/patchtrace/pilot/contracts.py`
+  - `src/patchtrace/pilot/ranking.py`
+  - `src/patchtrace/pilot/sources/advisory.py`
+  - `src/patchtrace/pilot/why.py`
+  - `tests/test_kbc_card_field_provenance.py`
+  - `tests/test_kbc_schemas.py`
+  - `tools/generate_kbc_schemas.py`
+
+### `codex/patchtrace-beta`
+
+- Head: `c7937246a5bf3f1a09c7d121c0d438088b02040c`
+- Base: `origin/main` at `5d504ff5c046bfb758623182b472976003632bba`
+- Merge base: `c7937246a5bf3f1a09c7d121c0d438088b02040c`
+- Associated PR: none in open PR snapshot
+- Functional scope: {}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {}; failures: []; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: no unique patches relative to base.
+- Recommended disposition: superseded relative to base; verify before closing/deleting.
+- Unique commits: none
+- Patch-equivalent commits: none
+- Modified files:
+
+### `codex/pr110-ci-repairs-20261029`
+
+- Head: `bb42828d05b775c59b73a7bbd02c0113b9b9bb3b`
+- Base: `origin/main` at `5d504ff5c046bfb758623182b472976003632bba`
+- Merge base: `5ed624e91468c410f2cf738ed4e36c2be3e0201d`
+- Associated PR: none in open PR snapshot
+- Functional scope: {"docs": 2, "src/patchtrace/acquisition": 1, "src/patchtrace/ui.py": 1, "src/patchtrace/ui_symbols.py": 1, "tests": 2}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {}; failures: []; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: unqualified: no current CI attached.
+- Recommended disposition: preserve active branch; port only verified unique patches.
+- Unique commits: `e2e554cb01511ba1aadd3157f3b3d7cf2e3a893a`, `4946b259c9748303902b0e8e48f645d13e0db53c`, `68e3d8e1ac1002601877a773b765a9149c4b7127`, `3d4c4234a680eaa3aa89537c8d6a7d5cb4346d19`, `4a57aed02fcd2834923b40940618de695a9b0c7b`, `c1e21efcee9da2d65787ea75a5fa630c5547f3a4`, `bb42828d05b775c59b73a7bbd02c0113b9b9bb3b`
+- Patch-equivalent commits: none
+- Modified files:
+  - `docs/help/74-cli-diaphora.md`
+  - `docs/help/README.md`
+  - `src/patchtrace/acquisition/winbindex.py`
+  - `src/patchtrace/ui.py`
+  - `src/patchtrace/ui_symbols.py`
+  - `tests/test_acquisition_winbindex.py`
+  - `tests/test_ui_symbol_local.py`
+
+### `codex/pr110-kb-arch-scope-20261029`
+
+- Head: `40e02daf93c8e13a94b74f5b80d86c1680fea7ad`
+- Base: `origin/main` at `5d504ff5c046bfb758623182b472976003632bba`
+- Merge base: `5ed624e91468c410f2cf738ed4e36c2be3e0201d`
+- Associated PR: none in open PR snapshot
+- Functional scope: {"docs": 2, "src/patchtrace/acquisition": 1, "src/patchtrace/kbcorrelation": 1, "src/patchtrace/ui.py": 1, "src/patchtrace/ui_symbols.py": 1, "tests": 2}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {}; failures: []; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: unqualified: no current CI attached.
+- Recommended disposition: preserve active branch; port only verified unique patches.
+- Unique commits: `e2e554cb01511ba1aadd3157f3b3d7cf2e3a893a`, `4946b259c9748303902b0e8e48f645d13e0db53c`, `68e3d8e1ac1002601877a773b765a9149c4b7127`, `3d4c4234a680eaa3aa89537c8d6a7d5cb4346d19`, `4a57aed02fcd2834923b40940618de695a9b0c7b`, `c1e21efcee9da2d65787ea75a5fa630c5547f3a4`
+- Patch-equivalent commits: `400cfe4a258d58d0a98f1afe8a198632b761f456`, `40e02daf93c8e13a94b74f5b80d86c1680fea7ad`
+- Modified files:
+  - `docs/help/74-cli-diaphora.md`
+  - `docs/help/README.md`
+  - `src/patchtrace/acquisition/winbindex.py`
+  - `src/patchtrace/kbcorrelation/resolver.py`
+  - `src/patchtrace/ui.py`
+  - `src/patchtrace/ui_symbols.py`
+  - `tests/test_kbc_resolver.py`
+  - `tests/test_ui_symbol_local.py`
+
+### `codex/pr110-persistence-feedback-20261029`
+
+- Head: `3e9cedb012b4c82da3b0e5f9bc977ecd7313b64c`
+- Base: `origin/main` at `5d504ff5c046bfb758623182b472976003632bba`
+- Merge base: `5ed624e91468c410f2cf738ed4e36c2be3e0201d`
+- Associated PR: none in open PR snapshot
+- Functional scope: {"docs": 2, "src/patchtrace/acquisition": 1, "src/patchtrace/ui.py": 1, "src/patchtrace/ui_persistence.py": 1, "src/patchtrace/ui_symbols.py": 1, "tests": 2}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {}; failures: []; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: unqualified: no current CI attached.
+- Recommended disposition: preserve active branch; port only verified unique patches.
+- Unique commits: `e2e554cb01511ba1aadd3157f3b3d7cf2e3a893a`, `4946b259c9748303902b0e8e48f645d13e0db53c`, `68e3d8e1ac1002601877a773b765a9149c4b7127`, `3d4c4234a680eaa3aa89537c8d6a7d5cb4346d19`, `4a57aed02fcd2834923b40940618de695a9b0c7b`, `c1e21efcee9da2d65787ea75a5fa630c5547f3a4`, `3e9cedb012b4c82da3b0e5f9bc977ecd7313b64c`
+- Patch-equivalent commits: `239ac1ea3e8685bbdf8848cc969ee129d5f3a3ff`, `db427bb227949690cfd65aad1963b6caf9c63df7`
+- Modified files:
+  - `docs/help/74-cli-diaphora.md`
+  - `docs/help/README.md`
+  - `src/patchtrace/acquisition/winbindex.py`
+  - `src/patchtrace/ui.py`
+  - `src/patchtrace/ui_persistence.py`
+  - `src/patchtrace/ui_symbols.py`
+  - `tests/test_ui.py`
+  - `tests/test_ui_symbol_local.py`
+
+### `codex/pr110-qa-wbjson-diaphora-help-20261029`
+
+- Head: `aba4c2001a6b093f7f8cdc8b0ac20ab074ed57b8`
+- Base: `origin/main` at `5d504ff5c046bfb758623182b472976003632bba`
+- Merge base: `5ed624e91468c410f2cf738ed4e36c2be3e0201d`
+- Associated PR: none in open PR snapshot
+- Functional scope: {"docs": 2, "src/patchtrace/acquisition": 1, "tests": 1}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {}; failures: []; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: unqualified: no current CI attached.
+- Recommended disposition: preserve active branch; port only verified unique patches.
+- Unique commits: `d07f7ceb80729547f4d9aceeeaea22c294bd8fa1`, `11781e2de6ffa391e6340d53ae886232c178b837`, `71053462d21cdaccb0d9ca66324ba63ef9d1e0bc`, `0ce7cb20535b7ea368cdfcf06953fd3f4fabc505`, `a6a931235ecebe754beffdaa273829967dc45c66`, `aba4c2001a6b093f7f8cdc8b0ac20ab074ed57b8`
+- Patch-equivalent commits: none
+- Modified files:
+  - `docs/help/74-cli-diaphora.md`
+  - `docs/help/README.md`
+  - `src/patchtrace/acquisition/winbindex.py`
+  - `tests/test_acquisition_hostile_20261029.py`
+
+### `codex/pr111-bounded-nav-into-integration-20261029`
+
+- Head: `025300f8e169556f84b6a8cfed20413e0a26b019`
+- Base: `origin/main` at `5d504ff5c046bfb758623182b472976003632bba`
+- Merge base: `5ed624e91468c410f2cf738ed4e36c2be3e0201d`
+- Associated PR: none in open PR snapshot
+- Functional scope: {"docs": 2, "src/patchtrace/acquisition": 1, "src/patchtrace/gui": 1, "src/patchtrace/ui.py": 1, "src/patchtrace/ui_symbols.py": 1, "tests": 2}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {}; failures: []; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: unqualified: no current CI attached.
+- Recommended disposition: preserve active branch; port only verified unique patches.
+- Unique commits: `e2e554cb01511ba1aadd3157f3b3d7cf2e3a893a`, `4946b259c9748303902b0e8e48f645d13e0db53c`, `68e3d8e1ac1002601877a773b765a9149c4b7127`, `3d4c4234a680eaa3aa89537c8d6a7d5cb4346d19`, `4a57aed02fcd2834923b40940618de695a9b0c7b`, `c1e21efcee9da2d65787ea75a5fa630c5547f3a4`
+- Patch-equivalent commits: `a3c493dae21f49b46565ba3106f32cc8652f1694`, `025300f8e169556f84b6a8cfed20413e0a26b019`
+- Modified files:
+  - `docs/help/74-cli-diaphora.md`
+  - `docs/help/README.md`
+  - `src/patchtrace/acquisition/winbindex.py`
+  - `src/patchtrace/gui/anchors.py`
+  - `src/patchtrace/ui.py`
+  - `src/patchtrace/ui_symbols.py`
+  - `tests/test_gui_core_anchors.py`
+  - `tests/test_ui_symbol_local.py`
+
+### `codex/project-safe-export-20261101`
+
+- Head: `e90254424c26ecd00e4c10c3c638e76d11b35841`
+- Base: `origin/main` at `5d504ff5c046bfb758623182b472976003632bba`
+- Merge base: `e90254424c26ecd00e4c10c3c638e76d11b35841`
+- Associated PR: none in open PR snapshot
+- Functional scope: {}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {}; failures: []; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: no unique patches relative to base.
+- Recommended disposition: superseded relative to base; verify before closing/deleting.
+- Unique commits: none
+- Patch-equivalent commits: none
+- Modified files:
+
+### `codex/r1-ground-truth-research-20261030`
+
+- Head: `10856edf05afae8166291f09fb3ead92f297360d`
+- Base: `origin/main` at `5d504ff5c046bfb758623182b472976003632bba`
+- Merge base: `a04f5a299a8d4afef023261e52e08d14678cf1e7`
+- Associated PR: https://github.com/djshellshoxxx/patchtrace/pull/128
+- Functional scope: {".github": 1, "corpus": 4, "docs": 131, "tasks": 1, "tests": 9, "tools": 8}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {'SUCCESS': 3}; failures: []; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: candidate: inspect review/protection and focused tests.
+- Recommended disposition: preserve active branch; port only verified unique patches.
+- Unique commits: `1256d9ed7fa19b3f74df75f975e6598c9e8315b2`, `a02a1774a1617441072f4a8770348cc22038eeac`, `0271f1869ccba0697c5bf6f797432bb7c6ec54d4`, `de72e150bb9f40a18dffbc0960226677555e4431`, `0d14548eef118ac32789da1e410fc1aa6b9f27f2`, `fc1a9c2dc4cf7f231eab0c37994932357817f7e6`, `04bd023df566f43939296f7df1766e46186e7fff`, `8c9eafc79b007a963453d8edf6cb40c804c9bc3d`
+- Patch-equivalent commits: none
+- Modified files:
+  - `.github/workflows/unified-live-gates.yml`
+  - `corpus/ours/r1-pilot/defined/README.md`
+  - `corpus/ours/r1-pilot/defined/suite.json`
+  - `corpus/ours/r1-pilot/defined/v1/r1.c`
+  - `corpus/ours/r1-pilot/defined/v2/r1.c`
+  - `docs/modules.md`
+  - `docs/qa.md`
+  - `docs/research/ground-truth-corpus/01-literature-and-datasets.md`
+  - `docs/research/ground-truth-corpus/02-ground-truth-and-evaluation.md`
+  - `docs/research/ground-truth-corpus/03-real-world-patch-candidates.md`
+  - `docs/research/ground-truth-corpus/04-pilot-protocol.md`
+  - `docs/research/ground-truth-corpus/05-results-and-failure-analysis.md`
+  - `docs/research/ground-truth-corpus/06-limitations-and-open-questions.md`
+  - `docs/research/ground-truth-corpus/07-handoff-and-reproduction.md`
+  - `docs/research/ground-truth-corpus/README.md`
+  - `docs/research/ground-truth-corpus/results/acceptance-mingw-gcc-o2.json`
+  - `docs/research/ground-truth-corpus/results/acceptance.json`
+  - `docs/research/ground-truth-corpus/results/build-matrix-clang-retry.json`
+  - `docs/research/ground-truth-corpus/results/build-matrix-final.json`
+  - `docs/research/ground-truth-corpus/results/build-matrix-provenance-rebuild.json`
+  - `docs/research/ground-truth-corpus/results/build-matrix.json`
+  - `docs/research/ground-truth-corpus/results/build-receipts/02eff01ce5e5cdd81959c059146e30bc0323e77ba50360973ff9baa030940163.json`
+  - `docs/research/ground-truth-corpus/results/build-receipts/06ad67324fc1ac2a00abeb450dd77aa0ae0698846874ce37c5faf83ae0675963.json`
+  - `docs/research/ground-truth-corpus/results/build-receipts/0734e959d5d692588d9a457fcf317d521cb1fce32755f76320a226f956c41633.json`
+  - `docs/research/ground-truth-corpus/results/build-receipts/12a6741d9d066226fd3c183cbb1464fabd32e9d28d472da4b5026c741f37deea.json`
+  - `docs/research/ground-truth-corpus/results/build-receipts/13cdbb54e8a80806a9d6dffc1441f276eac081de526514c994a727e776d57e0c.json`
+  - `docs/research/ground-truth-corpus/results/build-receipts/15dcb4f875438ef750a9e5444230ade8cb3e3f32773d0fb80ba59304ecbf1a6f.json`
+  - `docs/research/ground-truth-corpus/results/build-receipts/3de6b5a3c207445a121e3fe38f634bfedcb7c2807ccabce80d95484a92e38837.json`
+  - `docs/research/ground-truth-corpus/results/build-receipts/4ba9a6212ac0e12926a531a03b52aac9f6249117572094afbaee7dc24cde10c3.json`
+  - `docs/research/ground-truth-corpus/results/build-receipts/5c823560e8c6df4df81aa5342236f81ee29308523425215e09894ed0ecb9c972.json`
+  - `docs/research/ground-truth-corpus/results/build-receipts/69d37677a82072776305e324104b138960eff6dd25133f1cc18a78d98e176ef5.json`
+  - `docs/research/ground-truth-corpus/results/build-receipts/6c3fe6a100b42f621bac84abc40cc2e7e193fe00a8b88b2acbc698bd15d64e19.json`
+  - `docs/research/ground-truth-corpus/results/build-receipts/703e7283f1c6e6820066c44db4eb4131d30364d8a2559376fac58e9a1f56717e.json`
+  - `docs/research/ground-truth-corpus/results/build-receipts/7abf2e788123fc7e861411b206b029d02cd673c57f4150efd02bb8c29f3b230a.json`
+  - `docs/research/ground-truth-corpus/results/build-receipts/89dfb0eea80d7ca3f414cf6edea532097beb122872afe036a5a767c94e4dd20b.json`
+  - `docs/research/ground-truth-corpus/results/build-receipts/8b503f77dd9cc006d7daa4b4ff36f8f0ab545b5db2837dd92180ae5b539fd2f0.json`
+  - `docs/research/ground-truth-corpus/results/build-receipts/8ded7733a301edef8b203f902e4f82077e3e87fe05d316a02fc0a8505f87f7b5.json`
+  - `docs/research/ground-truth-corpus/results/build-receipts/9268a5c7bb65570279bddc216bb3760bdcaf1ee68f7b28c60b246b9e72d3149d.json`
+  - `docs/research/ground-truth-corpus/results/build-receipts/9729d9eb340988bf3ff203001a561e36325f2525a046af499bed88e24d9333f9.json`
+  - `docs/research/ground-truth-corpus/results/build-receipts/a30d0f685b2d9f196a04f7e0f6c9ae709c3970d85c7aba5b28e199f2e7c792d3.json`
+  - `docs/research/ground-truth-corpus/results/build-receipts/a7a9a274ecd7d0abeef324c5816db02a916eba9103eca8a4ece2786a701342d1.json`
+  - `docs/research/ground-truth-corpus/results/build-receipts/b3123d5d7bea3c349c79e14f0d900e7f76d78c787783715ac807c8d35110335d.json`
+  - `docs/research/ground-truth-corpus/results/build-receipts/b6d1f9aa9a0ba277a09b5649faad62f66f4d2a53a2fc0fb6ed21dcd05cdf68e8.json`
+  - `docs/research/ground-truth-corpus/results/build-receipts/ba1261e9552f7544881888577df4f80c19ccf9343d76c555a6e90dadb277566d.json`
+  - `docs/research/ground-truth-corpus/results/build-receipts/c3d8a1379c3c2e2b72342fa2c730ad8b64e246b0f203fb65250499a8e6ec44d5.json`
+  - `docs/research/ground-truth-corpus/results/build-receipts/c7142e5c918973f18c9f12b0948b2f03e311ae74317d3c10dae086203bd54dab.json`
+  - `docs/research/ground-truth-corpus/results/build-receipts/c9decd8c800fbfe12a4614d95a1385d322a2ef948ce9657cd938ba751d94a25e.json`
+  - `docs/research/ground-truth-corpus/results/build-receipts/cb7653eb2522abeba4645d21a96f44c9cbb55c7e8a94376e96dfb89de1ae1e84.json`
+  - `docs/research/ground-truth-corpus/results/build-receipts/d53253c186ba501641809b3c6ecdb7a7b6c46124bcb5ee834b28ff79f33ab4fd.json`
+  - `docs/research/ground-truth-corpus/results/build-receipts/d6568fb47762a1c5994f72262863d7a957c77bde657aad4162ada09a7b76c719.json`
+  - `docs/research/ground-truth-corpus/results/build-receipts/ed1030bd40fdcc5896149aa6308ea8c030f690dd756c5b73fc5911c9bf21df32.json`
+  - `docs/research/ground-truth-corpus/results/build-receipts/ef162c385937b849faa0f4bd7669df663f57d11c8fd068184816d14b524b3f1a.json`
+  - `docs/research/ground-truth-corpus/results/build-receipts/f1622c4c9b3fec287511b110ba78cd70a6cf44692a50fa9a0e1adc7a787e43c8.json`
+  - `docs/research/ground-truth-corpus/results/build-receipts/f24e95f1e4b070060659a02aff595968de0b75e0713c237170cc90044f1fa979.json`
+  - `docs/research/ground-truth-corpus/results/build-receipts/f4facea3fd4fa5d08ea9223d917be3cb15e0f311c5afa6a7ab93bfa7dac6250b.json`
+  - `docs/research/ground-truth-corpus/results/cjson-acceptance.json`
+  - `docs/research/ground-truth-corpus/results/cjson-review.md`
+  - `docs/research/ground-truth-corpus/results/coderabbit-regressions.log`
+  - `docs/research/ground-truth-corpus/results/coderabbit-research-build-green.log`
+  - `docs/research/ground-truth-corpus/results/coderabbit-research-build-integration.log`
+  - `docs/research/ground-truth-corpus/results/coderabbit-research-build-red.log`
+  - `docs/research/ground-truth-corpus/results/controls-and-structure.json`
+  - `docs/research/ground-truth-corpus/results/controls-and-structure.md`
+  - `docs/research/ground-truth-corpus/results/environment.json`
+  - `docs/research/ground-truth-corpus/results/external-review-followup.md`
+  - `docs/research/ground-truth-corpus/results/failure-analysis-addendum.md`
+  - `docs/research/ground-truth-corpus/results/final-cli-repeatability.json`
+  - `docs/research/ground-truth-corpus/results/final-integration-review.md`
+  - `docs/research/ground-truth-corpus/results/final-label-integrity.json`
+  - `docs/research/ground-truth-corpus/results/final-partition-audit.json`
+  - `docs/research/ground-truth-corpus/results/final-validation.json`
+  - `docs/research/ground-truth-corpus/results/full-linux-pytest.log`
+  - `docs/research/ground-truth-corpus/results/hidden-receipt-reconciliation.json`
+  - `docs/research/ground-truth-corpus/results/hidden-receipt-reconciliation.md`
+  - `docs/research/ground-truth-corpus/results/hidden-review-binding-reconciliation.json`
+  - `docs/research/ground-truth-corpus/results/historical-labels/08939af3c162e5dee94f3abe317aa098f8672b32e601a4f75fddf19a0db82445-noise-defined-v1-msvc-free-O2-msvc-free-Os.json`
+  - `docs/research/ground-truth-corpus/results/historical-labels/1792c140953da1e24c01e697731f3f9d3e5e0065e8358418d3f1fe1aed19e26f-aa-defined-v1-O2-rebuild.json`
+  - `docs/research/ground-truth-corpus/results/historical-labels/a49fac036302ab463018d22c76aeb0de5bde43adb9db3ed3ac50be4b1dc9f415-noise-defined-v1-msvc-free-O0-msvc-free-O2.json`
+  - `docs/research/ground-truth-corpus/results/historical-labels/ab00e8abc4f8f62bd7cd67d4ca1e70266d77f281ce69831b5ac87812541355a9-noise-defined-v1-msvc-free-O2-mingw-gcc-O2.json`
+  - `docs/research/ground-truth-corpus/results/historical-labels/bce0f84260d125168b2142888547438b810abb4189d8688e1778699995025e92-aa-defined-v1-mingw-gcc-O2-rebuild.json`
+  - `docs/research/ground-truth-corpus/results/implementation-review.md`
+  - `docs/research/ground-truth-corpus/results/integrity-gates.json`
+  - `docs/research/ground-truth-corpus/results/label-provenance-corrections.json`
+  - `docs/research/ground-truth-corpus/results/labels/aa-defined-v1-O2-rebuild.json`
+  - `docs/research/ground-truth-corpus/results/labels/aa-defined-v1-mingw-gcc-O2-rebuild.json`
+  - `docs/research/ground-truth-corpus/results/labels/cjson-1.7.16-to-1.7.17-O2.json`
+  - `docs/research/ground-truth-corpus/results/labels/noise-defined-v1-mingw-gcc-O2-mingw-clang-O2.json`
+  - `docs/research/ground-truth-corpus/results/labels/noise-defined-v1-msvc-free-O0-msvc-free-O2.json`
+  - `docs/research/ground-truth-corpus/results/labels/noise-defined-v1-msvc-free-O2-mingw-gcc-O2.json`
+  - `docs/research/ground-truth-corpus/results/labels/noise-defined-v1-msvc-free-O2-msvc-free-Os.json`
+  - `docs/research/ground-truth-corpus/results/labels/ours-r1-pilot-defined-v1-v2-O2.json`
+  - `docs/research/ground-truth-corpus/results/labels/research-mingw-clang-O0-r1-pilot-defined-v1-v2.json`
+  - `docs/research/ground-truth-corpus/results/labels/research-mingw-clang-O1-r1-pilot-defined-v1-v2.json`
+  - `docs/research/ground-truth-corpus/results/labels/research-mingw-clang-O2-r1-pilot-defined-v1-v2.json`
+  - `docs/research/ground-truth-corpus/results/labels/research-mingw-clang-O3-r1-pilot-defined-v1-v2.json`
+  - `docs/research/ground-truth-corpus/results/labels/research-mingw-clang-Os-r1-pilot-defined-v1-v2.json`
+  - `docs/research/ground-truth-corpus/results/labels/research-mingw-gcc-O0-r1-pilot-defined-v1-v2.json`
+  - `docs/research/ground-truth-corpus/results/labels/research-mingw-gcc-O1-r1-pilot-defined-v1-v2.json`
+  - `docs/research/ground-truth-corpus/results/labels/research-mingw-gcc-O2-r1-pilot-defined-v1-v2.json`
+  - `docs/research/ground-truth-corpus/results/labels/research-mingw-gcc-O3-r1-pilot-defined-v1-v2.json`
+  - `docs/research/ground-truth-corpus/results/labels/research-mingw-gcc-Os-r1-pilot-defined-v1-v2.json`
+  - `docs/research/ground-truth-corpus/results/labels/research-msvc-free-O0-r1-pilot-defined-v1-v2.json`
+  - `docs/research/ground-truth-corpus/results/labels/research-msvc-free-O1-r1-pilot-defined-v1-v2.json`
+  - `docs/research/ground-truth-corpus/results/labels/research-msvc-free-O2-r1-pilot-defined-v1-v2.json`
+  - `docs/research/ground-truth-corpus/results/labels/research-msvc-free-O3-r1-pilot-defined-v1-v2.json`
+  - `docs/research/ground-truth-corpus/results/labels/research-msvc-free-Os-r1-pilot-defined-v1-v2.json`
+  - `docs/research/ground-truth-corpus/results/matrix-provenance-validation.json`
+  - `docs/research/ground-truth-corpus/results/native-aa-control.json`
+  - `docs/research/ground-truth-corpus/results/native-aa-control.md`
+  - `docs/research/ground-truth-corpus/results/native-aa-provenance-correction.json`
+  - `docs/research/ground-truth-corpus/results/native-aa-provenance-correction.md`
+  - `docs/research/ground-truth-corpus/results/native-aa-recovered-build-receipts/89dfb0eea80d7ca3f414cf6edea532097beb122872afe036a5a767c94e4dd20b.json`
+  - `docs/research/ground-truth-corpus/results/native-aa-recovered-build-receipts/950a443ec7bba59fdd6098517755b9aaa69a56a584c583cd9609a5943916d095.json`
+  - `docs/research/ground-truth-corpus/results/native-aa-recovered-build-receipts/a30d0f685b2d9f196a04f7e0f6c9ae709c3970d85c7aba5b28e199f2e7c792d3.json`
+  - `docs/research/ground-truth-corpus/results/native-aa-recovered-build-receipts/d6568fb47762a1c5994f72262863d7a957c77bde657aad4162ada09a7b76c719.json`
+  - `docs/research/ground-truth-corpus/results/native-aa-recovered-build-receipts/d88845cbf96c21820a2f66b76ad5149d921e2a57cf4a976b2f2752338bada060.json`
+  - `docs/research/ground-truth-corpus/results/output-safety-review.md`
+  - `docs/research/ground-truth-corpus/results/partition-audit.json`
+  - `docs/research/ground-truth-corpus/results/per-function-observations.json`
+  - `docs/research/ground-truth-corpus/results/pilot-cjson-o2.json`
+  - `docs/research/ground-truth-corpus/results/pilot-cjson-reviewed.json`
+  - `docs/research/ground-truth-corpus/results/pilot-compiler-noise.json`
+  - `docs/research/ground-truth-corpus/results/pilot-mingw-gcc-o2-final-cli.json`
+  - `docs/research/ground-truth-corpus/results/pilot-mingw-gcc-o2-profiled.json`
+  - `docs/research/ground-truth-corpus/results/pilot-mingw-gcc-o2-repeat.json`
+  - `docs/research/ground-truth-corpus/results/pilot-mingw-gcc-o2.json`
+  - `docs/research/ground-truth-corpus/results/pilot-msvc-free-o2-reviewed-replay.json`
+  - `docs/research/ground-truth-corpus/results/pilot-msvc-free-o2.json`
+  - `docs/research/ground-truth-corpus/results/profiled-resources.json`
+  - `docs/research/ground-truth-corpus/results/repeatability.json`
+  - `docs/research/ground-truth-corpus/results/rzdiff-hidden-diagnostic.json`
+  - `docs/research/ground-truth-corpus/results/sonar-checkpoint-0271-annotation.json`
+  - `docs/research/ground-truth-corpus/results/source-and-binary-review.md`
+  - `docs/research/ground-truth-corpus/results/source-fetch-receipts.json`
+  - `docs/research/ground-truth-corpus/results/suite-endpoint-red-green.json`
+  - `docs/specs/known-answer-corpus.md`
+  - `tasks/todo.md`
+  - `tests/test_binexport_isolation.py`
+  - `tests/test_tier_r_build_receipts_r1.py`
+  - `tests/test_tier_r_label_promotion_r1.py`
+  - `tests/test_tier_r_research_audit.py`
+  - `tests/test_tier_r_research_build.py`
+  - `tests/test_tier_r_research_observers.py`
+  - `tests/test_tier_r_research_pilot.py`
+  - `tests/test_tier_r_session_provenance_r1.py`
+  - `tests/test_unified_live_pairs_r1.py`
+  - `tools/calibration/tier_r/build.py`
+  - `tools/calibration/tier_r/factory.py`
+  - `tools/calibration/tier_r/labeler.py`
+  - `tools/calibration/tier_r/research_audit.py`
+  - `tools/calibration/tier_r/research_build.py`
+  - `tools/calibration/tier_r/research_observers.py`
+  - `tools/calibration/tier_r/research_pilot.py`
+  - `tools/unified/live_pairs.py`
+
+### `codex/r1-receipt-publication-20261031`
+
+- Head: `8c9eafc79b007a963453d8edf6cb40c804c9bc3d`
+- Base: `origin/main` at `5d504ff5c046bfb758623182b472976003632bba`
+- Merge base: `a04f5a299a8d4afef023261e52e08d14678cf1e7`
+- Associated PR: none in open PR snapshot
+- Functional scope: {".github": 1, "corpus": 4, "docs": 131, "tasks": 1, "tests": 9, "tools": 8}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {}; failures: []; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: unqualified: no current CI attached.
+- Recommended disposition: preserve active branch; port only verified unique patches.
+- Unique commits: `1256d9ed7fa19b3f74df75f975e6598c9e8315b2`, `a02a1774a1617441072f4a8770348cc22038eeac`, `0271f1869ccba0697c5bf6f797432bb7c6ec54d4`, `de72e150bb9f40a18dffbc0960226677555e4431`, `0d14548eef118ac32789da1e410fc1aa6b9f27f2`, `fc1a9c2dc4cf7f231eab0c37994932357817f7e6`, `04bd023df566f43939296f7df1766e46186e7fff`, `8c9eafc79b007a963453d8edf6cb40c804c9bc3d`
+- Patch-equivalent commits: none
+- Modified files:
+  - `.github/workflows/unified-live-gates.yml`
+  - `corpus/ours/r1-pilot/defined/README.md`
+  - `corpus/ours/r1-pilot/defined/suite.json`
+  - `corpus/ours/r1-pilot/defined/v1/r1.c`
+  - `corpus/ours/r1-pilot/defined/v2/r1.c`
+  - `docs/modules.md`
+  - `docs/qa.md`
+  - `docs/research/ground-truth-corpus/01-literature-and-datasets.md`
+  - `docs/research/ground-truth-corpus/02-ground-truth-and-evaluation.md`
+  - `docs/research/ground-truth-corpus/03-real-world-patch-candidates.md`
+  - `docs/research/ground-truth-corpus/04-pilot-protocol.md`
+  - `docs/research/ground-truth-corpus/05-results-and-failure-analysis.md`
+  - `docs/research/ground-truth-corpus/06-limitations-and-open-questions.md`
+  - `docs/research/ground-truth-corpus/07-handoff-and-reproduction.md`
+  - `docs/research/ground-truth-corpus/README.md`
+  - `docs/research/ground-truth-corpus/results/acceptance-mingw-gcc-o2.json`
+  - `docs/research/ground-truth-corpus/results/acceptance.json`
+  - `docs/research/ground-truth-corpus/results/build-matrix-clang-retry.json`
+  - `docs/research/ground-truth-corpus/results/build-matrix-final.json`
+  - `docs/research/ground-truth-corpus/results/build-matrix-provenance-rebuild.json`
+  - `docs/research/ground-truth-corpus/results/build-matrix.json`
+  - `docs/research/ground-truth-corpus/results/build-receipts/02eff01ce5e5cdd81959c059146e30bc0323e77ba50360973ff9baa030940163.json`
+  - `docs/research/ground-truth-corpus/results/build-receipts/06ad67324fc1ac2a00abeb450dd77aa0ae0698846874ce37c5faf83ae0675963.json`
+  - `docs/research/ground-truth-corpus/results/build-receipts/0734e959d5d692588d9a457fcf317d521cb1fce32755f76320a226f956c41633.json`
+  - `docs/research/ground-truth-corpus/results/build-receipts/12a6741d9d066226fd3c183cbb1464fabd32e9d28d472da4b5026c741f37deea.json`
+  - `docs/research/ground-truth-corpus/results/build-receipts/13cdbb54e8a80806a9d6dffc1441f276eac081de526514c994a727e776d57e0c.json`
+  - `docs/research/ground-truth-corpus/results/build-receipts/15dcb4f875438ef750a9e5444230ade8cb3e3f32773d0fb80ba59304ecbf1a6f.json`
+  - `docs/research/ground-truth-corpus/results/build-receipts/3de6b5a3c207445a121e3fe38f634bfedcb7c2807ccabce80d95484a92e38837.json`
+  - `docs/research/ground-truth-corpus/results/build-receipts/4ba9a6212ac0e12926a531a03b52aac9f6249117572094afbaee7dc24cde10c3.json`
+  - `docs/research/ground-truth-corpus/results/build-receipts/5c823560e8c6df4df81aa5342236f81ee29308523425215e09894ed0ecb9c972.json`
+  - `docs/research/ground-truth-corpus/results/build-receipts/69d37677a82072776305e324104b138960eff6dd25133f1cc18a78d98e176ef5.json`
+  - `docs/research/ground-truth-corpus/results/build-receipts/6c3fe6a100b42f621bac84abc40cc2e7e193fe00a8b88b2acbc698bd15d64e19.json`
+  - `docs/research/ground-truth-corpus/results/build-receipts/703e7283f1c6e6820066c44db4eb4131d30364d8a2559376fac58e9a1f56717e.json`
+  - `docs/research/ground-truth-corpus/results/build-receipts/7abf2e788123fc7e861411b206b029d02cd673c57f4150efd02bb8c29f3b230a.json`
+  - `docs/research/ground-truth-corpus/results/build-receipts/89dfb0eea80d7ca3f414cf6edea532097beb122872afe036a5a767c94e4dd20b.json`
+  - `docs/research/ground-truth-corpus/results/build-receipts/8b503f77dd9cc006d7daa4b4ff36f8f0ab545b5db2837dd92180ae5b539fd2f0.json`
+  - `docs/research/ground-truth-corpus/results/build-receipts/8ded7733a301edef8b203f902e4f82077e3e87fe05d316a02fc0a8505f87f7b5.json`
+  - `docs/research/ground-truth-corpus/results/build-receipts/9268a5c7bb65570279bddc216bb3760bdcaf1ee68f7b28c60b246b9e72d3149d.json`
+  - `docs/research/ground-truth-corpus/results/build-receipts/9729d9eb340988bf3ff203001a561e36325f2525a046af499bed88e24d9333f9.json`
+  - `docs/research/ground-truth-corpus/results/build-receipts/a30d0f685b2d9f196a04f7e0f6c9ae709c3970d85c7aba5b28e199f2e7c792d3.json`
+  - `docs/research/ground-truth-corpus/results/build-receipts/a7a9a274ecd7d0abeef324c5816db02a916eba9103eca8a4ece2786a701342d1.json`
+  - `docs/research/ground-truth-corpus/results/build-receipts/b3123d5d7bea3c349c79e14f0d900e7f76d78c787783715ac807c8d35110335d.json`
+  - `docs/research/ground-truth-corpus/results/build-receipts/b6d1f9aa9a0ba277a09b5649faad62f66f4d2a53a2fc0fb6ed21dcd05cdf68e8.json`
+  - `docs/research/ground-truth-corpus/results/build-receipts/ba1261e9552f7544881888577df4f80c19ccf9343d76c555a6e90dadb277566d.json`
+  - `docs/research/ground-truth-corpus/results/build-receipts/c3d8a1379c3c2e2b72342fa2c730ad8b64e246b0f203fb65250499a8e6ec44d5.json`
+  - `docs/research/ground-truth-corpus/results/build-receipts/c7142e5c918973f18c9f12b0948b2f03e311ae74317d3c10dae086203bd54dab.json`
+  - `docs/research/ground-truth-corpus/results/build-receipts/c9decd8c800fbfe12a4614d95a1385d322a2ef948ce9657cd938ba751d94a25e.json`
+  - `docs/research/ground-truth-corpus/results/build-receipts/cb7653eb2522abeba4645d21a96f44c9cbb55c7e8a94376e96dfb89de1ae1e84.json`
+  - `docs/research/ground-truth-corpus/results/build-receipts/d53253c186ba501641809b3c6ecdb7a7b6c46124bcb5ee834b28ff79f33ab4fd.json`
+  - `docs/research/ground-truth-corpus/results/build-receipts/d6568fb47762a1c5994f72262863d7a957c77bde657aad4162ada09a7b76c719.json`
+  - `docs/research/ground-truth-corpus/results/build-receipts/ed1030bd40fdcc5896149aa6308ea8c030f690dd756c5b73fc5911c9bf21df32.json`
+  - `docs/research/ground-truth-corpus/results/build-receipts/ef162c385937b849faa0f4bd7669df663f57d11c8fd068184816d14b524b3f1a.json`
+  - `docs/research/ground-truth-corpus/results/build-receipts/f1622c4c9b3fec287511b110ba78cd70a6cf44692a50fa9a0e1adc7a787e43c8.json`
+  - `docs/research/ground-truth-corpus/results/build-receipts/f24e95f1e4b070060659a02aff595968de0b75e0713c237170cc90044f1fa979.json`
+  - `docs/research/ground-truth-corpus/results/build-receipts/f4facea3fd4fa5d08ea9223d917be3cb15e0f311c5afa6a7ab93bfa7dac6250b.json`
+  - `docs/research/ground-truth-corpus/results/cjson-acceptance.json`
+  - `docs/research/ground-truth-corpus/results/cjson-review.md`
+  - `docs/research/ground-truth-corpus/results/coderabbit-regressions.log`
+  - `docs/research/ground-truth-corpus/results/coderabbit-research-build-green.log`
+  - `docs/research/ground-truth-corpus/results/coderabbit-research-build-integration.log`
+  - `docs/research/ground-truth-corpus/results/coderabbit-research-build-red.log`
+  - `docs/research/ground-truth-corpus/results/controls-and-structure.json`
+  - `docs/research/ground-truth-corpus/results/controls-and-structure.md`
+  - `docs/research/ground-truth-corpus/results/environment.json`
+  - `docs/research/ground-truth-corpus/results/external-review-followup.md`
+  - `docs/research/ground-truth-corpus/results/failure-analysis-addendum.md`
+  - `docs/research/ground-truth-corpus/results/final-cli-repeatability.json`
+  - `docs/research/ground-truth-corpus/results/final-integration-review.md`
+  - `docs/research/ground-truth-corpus/results/final-label-integrity.json`
+  - `docs/research/ground-truth-corpus/results/final-partition-audit.json`
+  - `docs/research/ground-truth-corpus/results/final-validation.json`
+  - `docs/research/ground-truth-corpus/results/full-linux-pytest.log`
+  - `docs/research/ground-truth-corpus/results/hidden-receipt-reconciliation.json`
+  - `docs/research/ground-truth-corpus/results/hidden-receipt-reconciliation.md`
+  - `docs/research/ground-truth-corpus/results/hidden-review-binding-reconciliation.json`
+  - `docs/research/ground-truth-corpus/results/historical-labels/08939af3c162e5dee94f3abe317aa098f8672b32e601a4f75fddf19a0db82445-noise-defined-v1-msvc-free-O2-msvc-free-Os.json`
+  - `docs/research/ground-truth-corpus/results/historical-labels/1792c140953da1e24c01e697731f3f9d3e5e0065e8358418d3f1fe1aed19e26f-aa-defined-v1-O2-rebuild.json`
+  - `docs/research/ground-truth-corpus/results/historical-labels/a49fac036302ab463018d22c76aeb0de5bde43adb9db3ed3ac50be4b1dc9f415-noise-defined-v1-msvc-free-O0-msvc-free-O2.json`
+  - `docs/research/ground-truth-corpus/results/historical-labels/ab00e8abc4f8f62bd7cd67d4ca1e70266d77f281ce69831b5ac87812541355a9-noise-defined-v1-msvc-free-O2-mingw-gcc-O2.json`
+  - `docs/research/ground-truth-corpus/results/historical-labels/bce0f84260d125168b2142888547438b810abb4189d8688e1778699995025e92-aa-defined-v1-mingw-gcc-O2-rebuild.json`
+  - `docs/research/ground-truth-corpus/results/implementation-review.md`
+  - `docs/research/ground-truth-corpus/results/integrity-gates.json`
+  - `docs/research/ground-truth-corpus/results/label-provenance-corrections.json`
+  - `docs/research/ground-truth-corpus/results/labels/aa-defined-v1-O2-rebuild.json`
+  - `docs/research/ground-truth-corpus/results/labels/aa-defined-v1-mingw-gcc-O2-rebuild.json`
+  - `docs/research/ground-truth-corpus/results/labels/cjson-1.7.16-to-1.7.17-O2.json`
+  - `docs/research/ground-truth-corpus/results/labels/noise-defined-v1-mingw-gcc-O2-mingw-clang-O2.json`
+  - `docs/research/ground-truth-corpus/results/labels/noise-defined-v1-msvc-free-O0-msvc-free-O2.json`
+  - `docs/research/ground-truth-corpus/results/labels/noise-defined-v1-msvc-free-O2-mingw-gcc-O2.json`
+  - `docs/research/ground-truth-corpus/results/labels/noise-defined-v1-msvc-free-O2-msvc-free-Os.json`
+  - `docs/research/ground-truth-corpus/results/labels/ours-r1-pilot-defined-v1-v2-O2.json`
+  - `docs/research/ground-truth-corpus/results/labels/research-mingw-clang-O0-r1-pilot-defined-v1-v2.json`
+  - `docs/research/ground-truth-corpus/results/labels/research-mingw-clang-O1-r1-pilot-defined-v1-v2.json`
+  - `docs/research/ground-truth-corpus/results/labels/research-mingw-clang-O2-r1-pilot-defined-v1-v2.json`
+  - `docs/research/ground-truth-corpus/results/labels/research-mingw-clang-O3-r1-pilot-defined-v1-v2.json`
+  - `docs/research/ground-truth-corpus/results/labels/research-mingw-clang-Os-r1-pilot-defined-v1-v2.json`
+  - `docs/research/ground-truth-corpus/results/labels/research-mingw-gcc-O0-r1-pilot-defined-v1-v2.json`
+  - `docs/research/ground-truth-corpus/results/labels/research-mingw-gcc-O1-r1-pilot-defined-v1-v2.json`
+  - `docs/research/ground-truth-corpus/results/labels/research-mingw-gcc-O2-r1-pilot-defined-v1-v2.json`
+  - `docs/research/ground-truth-corpus/results/labels/research-mingw-gcc-O3-r1-pilot-defined-v1-v2.json`
+  - `docs/research/ground-truth-corpus/results/labels/research-mingw-gcc-Os-r1-pilot-defined-v1-v2.json`
+  - `docs/research/ground-truth-corpus/results/labels/research-msvc-free-O0-r1-pilot-defined-v1-v2.json`
+  - `docs/research/ground-truth-corpus/results/labels/research-msvc-free-O1-r1-pilot-defined-v1-v2.json`
+  - `docs/research/ground-truth-corpus/results/labels/research-msvc-free-O2-r1-pilot-defined-v1-v2.json`
+  - `docs/research/ground-truth-corpus/results/labels/research-msvc-free-O3-r1-pilot-defined-v1-v2.json`
+  - `docs/research/ground-truth-corpus/results/labels/research-msvc-free-Os-r1-pilot-defined-v1-v2.json`
+  - `docs/research/ground-truth-corpus/results/matrix-provenance-validation.json`
+  - `docs/research/ground-truth-corpus/results/native-aa-control.json`
+  - `docs/research/ground-truth-corpus/results/native-aa-control.md`
+  - `docs/research/ground-truth-corpus/results/native-aa-provenance-correction.json`
+  - `docs/research/ground-truth-corpus/results/native-aa-provenance-correction.md`
+  - `docs/research/ground-truth-corpus/results/native-aa-recovered-build-receipts/89dfb0eea80d7ca3f414cf6edea532097beb122872afe036a5a767c94e4dd20b.json`
+  - `docs/research/ground-truth-corpus/results/native-aa-recovered-build-receipts/950a443ec7bba59fdd6098517755b9aaa69a56a584c583cd9609a5943916d095.json`
+  - `docs/research/ground-truth-corpus/results/native-aa-recovered-build-receipts/a30d0f685b2d9f196a04f7e0f6c9ae709c3970d85c7aba5b28e199f2e7c792d3.json`
+  - `docs/research/ground-truth-corpus/results/native-aa-recovered-build-receipts/d6568fb47762a1c5994f72262863d7a957c77bde657aad4162ada09a7b76c719.json`
+  - `docs/research/ground-truth-corpus/results/native-aa-recovered-build-receipts/d88845cbf96c21820a2f66b76ad5149d921e2a57cf4a976b2f2752338bada060.json`
+  - `docs/research/ground-truth-corpus/results/output-safety-review.md`
+  - `docs/research/ground-truth-corpus/results/partition-audit.json`
+  - `docs/research/ground-truth-corpus/results/per-function-observations.json`
+  - `docs/research/ground-truth-corpus/results/pilot-cjson-o2.json`
+  - `docs/research/ground-truth-corpus/results/pilot-cjson-reviewed.json`
+  - `docs/research/ground-truth-corpus/results/pilot-compiler-noise.json`
+  - `docs/research/ground-truth-corpus/results/pilot-mingw-gcc-o2-final-cli.json`
+  - `docs/research/ground-truth-corpus/results/pilot-mingw-gcc-o2-profiled.json`
+  - `docs/research/ground-truth-corpus/results/pilot-mingw-gcc-o2-repeat.json`
+  - `docs/research/ground-truth-corpus/results/pilot-mingw-gcc-o2.json`
+  - `docs/research/ground-truth-corpus/results/pilot-msvc-free-o2-reviewed-replay.json`
+  - `docs/research/ground-truth-corpus/results/pilot-msvc-free-o2.json`
+  - `docs/research/ground-truth-corpus/results/profiled-resources.json`
+  - `docs/research/ground-truth-corpus/results/repeatability.json`
+  - `docs/research/ground-truth-corpus/results/rzdiff-hidden-diagnostic.json`
+  - `docs/research/ground-truth-corpus/results/sonar-checkpoint-0271-annotation.json`
+  - `docs/research/ground-truth-corpus/results/source-and-binary-review.md`
+  - `docs/research/ground-truth-corpus/results/source-fetch-receipts.json`
+  - `docs/research/ground-truth-corpus/results/suite-endpoint-red-green.json`
+  - `docs/specs/known-answer-corpus.md`
+  - `tasks/todo.md`
+  - `tests/test_binexport_isolation.py`
+  - `tests/test_tier_r_build_receipts_r1.py`
+  - `tests/test_tier_r_label_promotion_r1.py`
+  - `tests/test_tier_r_research_audit.py`
+  - `tests/test_tier_r_research_build.py`
+  - `tests/test_tier_r_research_observers.py`
+  - `tests/test_tier_r_research_pilot.py`
+  - `tests/test_tier_r_session_provenance_r1.py`
+  - `tests/test_unified_live_pairs_r1.py`
+  - `tools/calibration/tier_r/build.py`
+  - `tools/calibration/tier_r/factory.py`
+  - `tools/calibration/tier_r/labeler.py`
+  - `tools/calibration/tier_r/research_audit.py`
+  - `tools/calibration/tier_r/research_build.py`
+  - `tools/calibration/tier_r/research_observers.py`
+  - `tools/calibration/tier_r/research_pilot.py`
+  - `tools/unified/live_pairs.py`
+
+### `codex/r2-unified-matching-research-20261030`
+
+- Head: `b3ceb8b30d7a83da5e22c231c3b8c28179246816`
+- Base: `origin/main` at `5d504ff5c046bfb758623182b472976003632bba`
+- Merge base: `a04f5a299a8d4afef023261e52e08d14678cf1e7`
+- Associated PR: https://github.com/djshellshoxxx/patchtrace/pull/131
+- Functional scope: {"docs": 83, "src/patchtrace/unified": 5, "tasks": 1, "tests": 9, "tools": 6}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {'SUCCESS': 15, 'FAILURE': 1, 'SKIPPED': 5}; failures: ['qa (windows-latest)']; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: blocked: failing checks.
+- Recommended disposition: preserve active branch; port only verified unique patches.
+- Unique commits: `b519e6f589156084f90580345cdbd723aa2e31cc`, `c704a39c8ece56c3215c1d765d79e7f4780ddcbd`, `e09ed227c17fffab551eb36ac23fd7176b4b16d7`, `b3ceb8b30d7a83da5e22c231c3b8c28179246816`
+- Patch-equivalent commits: none
+- Modified files:
+  - `docs/modules.md`
+  - `docs/qa.md`
+  - `docs/research/unified-matching-r2/00-reconciliation.md`
+  - `docs/research/unified-matching-r2/01-implementation-inventory.md`
+  - `docs/research/unified-matching-r2/02-algorithms-and-upstream.md`
+  - `docs/research/unified-matching-r2/03-graph-residual-performance.md`
+  - `docs/research/unified-matching-r2/04-fusion-identity-false-matches.md`
+  - `docs/research/unified-matching-r2/05-baseline-and-validation.md`
+  - `docs/research/unified-matching-r2/06-limitations-and-r3-handoff.md`
+  - `docs/research/unified-matching-r2/07-native-rizin-findings.md`
+  - `docs/research/unified-matching-r2/08-native-cjson-development.md`
+  - `docs/research/unified-matching-r2/README.md`
+  - `docs/research/unified-matching-r2/results/graph-ablation-00.json`
+  - `docs/research/unified-matching-r2/results/graph-ablation-01.json`
+  - `docs/research/unified-matching-r2/results/graph-ablation-02.json`
+  - `docs/research/unified-matching-r2/results/graph-ablation-03.json`
+  - `docs/research/unified-matching-r2/results/graph-ablation-04.json`
+  - `docs/research/unified-matching-r2/results/graph-ablation-05.json`
+  - `docs/research/unified-matching-r2/results/graph-ablation-06.json`
+  - `docs/research/unified-matching-r2/results/graph-ablation-07.json`
+  - `docs/research/unified-matching-r2/results/graph-ablation-08.json`
+  - `docs/research/unified-matching-r2/results/graph-ablation-09.json`
+  - `docs/research/unified-matching-r2/results/graph-ablation-10.json`
+  - `docs/research/unified-matching-r2/results/graph-ablation-11.json`
+  - `docs/research/unified-matching-r2/results/graph-ablation-12.json`
+  - `docs/research/unified-matching-r2/results/graph-ablation-13.json`
+  - `docs/research/unified-matching-r2/results/graph-ablation-14.json`
+  - `docs/research/unified-matching-r2/results/graph-ablation-15.json`
+  - `docs/research/unified-matching-r2/results/graph-ablation-16.json`
+  - `docs/research/unified-matching-r2/results/graph-ablation-17.json`
+  - `docs/research/unified-matching-r2/results/graph-ablation-18.json`
+  - `docs/research/unified-matching-r2/results/graph-ablation-19.json`
+  - `docs/research/unified-matching-r2/results/graph-ablation-20.json`
+  - `docs/research/unified-matching-r2/results/graph-ablation-21.json`
+  - `docs/research/unified-matching-r2/results/graph-ablation-22.json`
+  - `docs/research/unified-matching-r2/results/graph-ambiguous-200.json`
+  - `docs/research/unified-matching-r2/results/graph-ambiguous-300.json`
+  - `docs/research/unified-matching-r2/results/graph-assignment-100.json`
+  - `docs/research/unified-matching-r2/results/graph-assignment-20.json`
+  - `docs/research/unified-matching-r2/results/graph-assignment-200.json`
+  - `docs/research/unified-matching-r2/results/graph-assignment-50.json`
+  - `docs/research/unified-matching-r2/results/graph-cfg-1000.json`
+  - `docs/research/unified-matching-r2/results/graph-cfg-10000.json`
+  - `docs/research/unified-matching-r2/results/graph-cfg-2000.json`
+  - `docs/research/unified-matching-r2/results/graph-cfg-5000.json`
+  - `docs/research/unified-matching-r2/results/graph-cfg-optimized-1000.json`
+  - `docs/research/unified-matching-r2/results/graph-cfg-optimized-10000.json`
+  - `docs/research/unified-matching-r2/results/graph-cfg-optimized-100000.json`
+  - `docs/research/unified-matching-r2/results/graph-cfg-optimized-2000.json`
+  - `docs/research/unified-matching-r2/results/graph-cfg-optimized-5000.json`
+  - `docs/research/unified-matching-r2/results/graph-cfg-optimized-50000.json`
+  - `docs/research/unified-matching-r2/results/graph-collision.json`
+  - `docs/research/unified-matching-r2/results/graph-common-1000.json`
+  - `docs/research/unified-matching-r2/results/graph-common-10000.json`
+  - `docs/research/unified-matching-r2/results/graph-common-100000.json`
+  - `docs/research/unified-matching-r2/results/graph-common-50000.json`
+  - `docs/research/unified-matching-r2/results/graph-determinism-generated-1.json`
+  - `docs/research/unified-matching-r2/results/graph-determinism-generated-321.json`
+  - `docs/research/unified-matching-r2/results/graph-determinism-generated-random.json`
+  - `docs/research/unified-matching-r2/results/graph-determinism-residual-1.json`
+  - `docs/research/unified-matching-r2/results/graph-determinism-residual-321.json`
+  - `docs/research/unified-matching-r2/results/graph-determinism-residual-random.json`
+  - `docs/research/unified-matching-r2/results/graph-exact-1000.json`
+  - `docs/research/unified-matching-r2/results/graph-exact-10000.json`
+  - `docs/research/unified-matching-r2/results/graph-exact-100000.json`
+  - `docs/research/unified-matching-r2/results/graph-exact-50000.json`
+  - `docs/research/unified-matching-r2/results/graph-residual-1000.json`
+  - `docs/research/unified-matching-r2/results/graph-residual-10000.json`
+  - `docs/research/unified-matching-r2/results/graph-residual-100000.json`
+  - `docs/research/unified-matching-r2/results/graph-residual-50000.json`
+  - `docs/research/unified-matching-r2/results/integration-checkpoint.json`
+  - `docs/research/unified-matching-r2/results/native-cjson.json`
+  - `docs/research/unified-matching-r2/results/native-ghidra-current.json`
+  - `docs/research/unified-matching-r2/results/native-ghidra.json`
+  - `docs/research/unified-matching-r2/results/native-rizin.json`
+  - `docs/research/unified-matching-r2/results/ownership-checkpoint-final.json`
+  - `docs/research/unified-matching-r2/results/reconciliation.json`
+  - `docs/research/unified-matching-r2/results/security-checkpoint-e09.json`
+  - `docs/research/unified-matching-r2/results/test-environment-triage.json`
+  - `docs/research/unified-matching-r2/results/validation.json`
+  - `docs/specs/unified-engine/02-data-model.md`
+  - `docs/specs/unified-engine/05-fusion-and-noise.md`
+  - `docs/specs/unified-engine/06-adapters.md`
+  - `src/patchtrace/unified/compute.py`
+  - `src/patchtrace/unified/fusion/arbiter.py`
+  - `src/patchtrace/unified/ir/cfg.py`
+  - `src/patchtrace/unified/read_text.py`
+  - `src/patchtrace/unified/sources/ladder.py`
+  - `tasks/todo.md`
+  - `tests/test_r2_cache_version.py`
+  - `tests/test_r2_cfg_performance.py`
+  - `tests/test_r2_cjson_input_safety.py`
+  - `tests/test_r2_cjson_paths.py`
+  - `tests/test_r2_fusion_regressions.py`
+  - `tests/test_r2_replay_provenance.py`
+  - `tests/test_r2_report_paths.py`
+  - `tests/test_r2_research_safety.py`
+  - `tests/test_unified_wire_compute.py`
+  - `tools/research/r2_cjson_probe.py`
+  - `tools/research/r2_ghidra_probe.py`
+  - `tools/research/r2_ghidra_replay.py`
+  - `tools/research/r2_graph_benchmark.py`
+  - `tools/research/r2_paths.py`
+  - `tools/research/r2_rizin_probe.py`
+
+### `codex/real-msrc-adapter-20261101`
+
+- Head: `d99cd7712b76e9e42661ef0b268417d7ca322d3e`
+- Base: `origin/main` at `5d504ff5c046bfb758623182b472976003632bba`
+- Merge base: `d99cd7712b76e9e42661ef0b268417d7ca322d3e`
+- Associated PR: none in open PR snapshot
+- Functional scope: {}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {}; failures: []; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: no unique patches relative to base.
+- Recommended disposition: superseded relative to base; verify before closing/deleting.
+- Unique commits: none
+- Patch-equivalent commits: none
+- Modified files:
+
+### `codex/receipt-parent-race-20261101`
+
+- Head: `2fdac2ea9042985ac3c98545d38ac3461d00f4cc`
+- Base: `origin/codex/r1-receipt-publication-20261031` at `8c9eafc79b007a963453d8edf6cb40c804c9bc3d`
+- Merge base: `8c9eafc79b007a963453d8edf6cb40c804c9bc3d`
+- Associated PR: https://github.com/djshellshoxxx/patchtrace/pull/150
+- Functional scope: {"docs": 2, "tests": 2, "tools": 3}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {'SUCCESS': 16, 'SKIPPED': 4, 'FAILURE': 1}; failures: ['SonarCloud Code Analysis']; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: blocked: failing checks.
+- Recommended disposition: preserve active branch; port only verified unique patches.
+- Unique commits: `2fdac2ea9042985ac3c98545d38ac3461d00f4cc`
+- Patch-equivalent commits: none
+- Modified files:
+  - `docs/modules.md`
+  - `docs/specs/known-answer-corpus.md`
+  - `tests/test_tier_r_receipt_parent_race.py`
+  - `tests/test_tier_r_research_build.py`
+  - `tools/calibration/tier_r/receipts.py`
+  - `tools/calibration/tier_r/research_build.py`
+  - `tools/calibration/tier_r/research_pilot.py`
+
+### `codex/repair-openai-agent-20261104`
+
+- Head: `f019606665a740dc252e745913924debf73adc48`
+- Base: `origin/main` at `5d504ff5c046bfb758623182b472976003632bba`
+- Merge base: `5d504ff5c046bfb758623182b472976003632bba`
+- Associated PR: https://github.com/djshellshoxxx/patchtrace/pull/186
+- Functional scope: {".github": 2}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {'SUCCESS': 11, 'SKIPPED': 3, 'FAILURE': 1}; failures: ['SonarCloud Code Analysis']; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: blocked: failing checks.
+- Recommended disposition: keep automation separate; owner budget/activation review.
+- Unique commits: `a22671fd796e598bdbd1afb3184e8a812f6fb4b1`, `f019606665a740dc252e745913924debf73adc48`
+- Patch-equivalent commits: none
+- Modified files:
+  - `.github/agent-prompts/repository-scope.md`
+  - `.github/workflows/openai-agents.yml`
+
+### `codex/rzdiff-164-investigation`
+
+- Head: `20ef68eaab59a2941bd2fb0db918eee36107c75f`
+- Base: `origin/main` at `5d504ff5c046bfb758623182b472976003632bba`
+- Merge base: `1b81740612e65df55e220ff6e42a4816756ec2ad`
+- Associated PR: none in open PR snapshot
+- Functional scope: {".gitattributes": 1, ".github": 2, "README.md": 1, "docs": 334, "pyproject.toml": 1, "src/patchtrace/__main__.py": 1, "src/patchtrace/app_icon.py": 1, "src/patchtrace/backend.py": 1, "src/patchtrace/calibration": 1, "src/patchtrace/callgraph": 11, "src/patchtrace/gui": 3, "src/patchtrace/kbcorrelation": 9, "src/patchtrace/persistence.py": 1, "src/patchtrace/project_creation.py": 1, "src/patchtrace/project_retry.py": 1, "src/patchtrace/raw_alignment_view.py": 1, "src/patchtrace/representations": 2, "src/patchtrace/resources": 1, "src/patchtrace/rules": 3, "src/patchtrace/secondary": 5, "src/patchtrace/service.py": 1, "src/patchtrace/tooltips.py": 1, "src/patchtrace/ui.py": 1, "src/patchtrace/ui_inspection.py": 1, "src/patchtrace/ui_new_project.py": 1, "src/patchtrace/ui_profiles.py": 1, "src/patchtrace/ui_raw_alignment.py": 1, "src/patchtrace/unified": 12, "tasks": 1, "tests": 105, "third_party": 8, "tools": 24}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {}; failures: []; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: unqualified: no current CI attached.
+- Recommended disposition: preserve active branch; port only verified unique patches.
+- Unique commits: `b26ca2c9bf85e9b7bc385b02c7bfdad1d7d724de`, `e81adbe882ae6eb2c26a5854b24aa6acff2b27a2`, `c307aaad162cff1f4464b62469792ead8d877385`, `e9f6be5d8c0cdc36d1a65f81403901648a6fe1fc`, `fffd5badb1ed84c8e930d667eae7d2d1dcf5a64f`, `d21d66758f75c6a3912b76042a792c0b9bb2eea2`, `ecfb60193b806dd984c044ae8f347b063e3d5155`, `aa6d614f0677e908727224aa4e46453108bb1b57`, `f82489bc9ff8ad89987670fde484a5f579aefa6b`, `5736376891d273fb16fa211ed0fa2de5125c1601`, `f18687fd035b67961c1072af84f8c2b3442979e0`, `2fcd627e52a6d784d5c2e5b4ea8105e90b8589b3`, `c04ad725551fe8daa139b37aa2cdf46d6d161b65`, `b87193d1dd30635fce33986f80ceade136507a1a`, `fb91cff6d91c77a2c539c896b670d81180dcc637`, `632079f0251982068d2cac294514b2d32e06a74c`, `a4d1e6a38c34d1952584aa65d7f5f908c45547b3`, `a7f13e13ffb512f8e9621753a0ae162d78942f3b`, `17210eb704802912a2951d8efd9f5e3d27a2193b`, `e2476c19017f82785570497aa2804b4f4f2e374f`, `0ca9ff1c99d2aea5198f9dda1a93c9bde8ca0226`, `7f14f792ed516c494aea17d7ca337bae18a31cf6`, `2c87611ebe65ea227f9f3efdf9c6246ab09b177f`, `c592b680eb1013f02c8472e544bbdb417e11fdde`, `59ff5ad1379c0a787d92f62d732686c1dd0e65b4`, `015f79cc762f0ebff4cbb700480a44a88e014d9f`, `745e93426a16e0a91a961b6e0bbcb71be69f2a7e`, `25125eb8b282322bafe8e682f5c09dfbffb07fbf`, `50ced35a54f18b4de8437b78a42dd2ec689338d9`, `8f4c4a2e0021d424d403317c6780b6db026ad76b`, `c3868d8335a8f32f676905032dc1a6d0e9f22fd6`, `4aa99f7bd989765000c6ebd659c9565030a48849`, `99660cc825b366a28e50b18eacad44dbb069ca69`, `f27d23a80ee49573ccca54cdf036427f57eebb2a`, `aff72cddc902f31a2cf44dea9c48797edabc1c30`, `039c696c93a443d152d4ddc1383179408ff86b75`, `bb98bae3cf0a3b6a38a298a14186d7f4e1c9c151`, `d038ddea43182b8709afd447140dc74fded487c5`, `8a18ca82032b6f6ed11dde887fd5eddef1a9fe81`, `c13d3257c88140c23fb585a8a59a4dce81e81928`, `566e266f53b07696c4289c9b46969d43f27f4de9`, `0130bf81e2fe3154f30af7b68a0e6ab197946040`, `dac9b89a297f428bdcf364b4be37a448a5b2ce4e`, `ca411e77f43a9fd95ca5e0bcc7d2b58071ccae37`, `9b9452b4677ee3809a6e0f43d49567a8d15602e6`, `44c320e37b84a38259f13fa8f0f444b542b96f2c`, `20ef68eaab59a2941bd2fb0db918eee36107c75f`
+- Patch-equivalent commits: none
+- Modified files:
+  - `.gitattributes`
+  - `.github/workflows/corpus-tier-r.yml`
+  - `.github/workflows/unified-live-gates.yml`
+  - `README.md`
+  - `docs/branch-pr-inventory-2026-10-30.md`
+  - `docs/handoff/autonomous-continuation-20261031.md`
+  - `docs/handoff/autonomous-continuation-20261101.md`
+  - `docs/handoff/autonomous-continuation-20261102.md`
+  - `docs/handoff/consolidation-integrity-20261103.md`
+  - `docs/handoff/rzdiff-164-investigation.md`
+  - `docs/integration/pr-gates-01.md`
+  - `docs/integration/pr-gates-02.md`
+  - `docs/integration/pr-gates-03.md`
+  - `docs/integration/pr-gates-04.md`
+  - `docs/integration/pr-gates-05.md`
+  - `docs/integration/pr-gates-06.md`
+  - `docs/modules.md`
+  - `docs/notices.md`
+  - `docs/plans/essential-integration-20261029.md`
+  - `docs/plans/gt01-native-output-diagnosis-20261030.md`
+  - `docs/plans/gt01-overlap-disposition-20261030.md`
+  - `docs/plans/milestone-ledger-20261030.md`
+  - `docs/qa.md`
+  - `docs/qa/ExportBinExport20261102.java`
+  - `docs/qa/backup-independent-20261101.log.gz`
+  - `docs/qa/branch-dispositions-20261101.md`
+  - `docs/qa/c13-local-full-suite-20261102.md`
+  - `docs/qa/callgraph-cap-review-20261102.json`
+  - `docs/qa/callgraph-cap-review-20261102.md`
+  - `docs/qa/callgraph-count-suffix-review-20261102.json`
+  - `docs/qa/callgraph-count-suffix-review-20261102.md`
+  - `docs/qa/callgraph-path-budget-20261102.tar.gz`
+  - `docs/qa/callgraph-path-budget-review-20261102.json`
+  - `docs/qa/callgraph-path-budget-review-20261102.md`
+  - `docs/qa/checkpoint2-schema.log.gz`
+  - `docs/qa/ci-monitor-checkpoint-0905.tar.gz`
+  - `docs/qa/ci-monitor-checkpoint-0932.tar.gz`
+  - `docs/qa/ci-monitor-delta-hosted-linux-20261102.tar.gz`
+  - `docs/qa/ci-monitor-terminal-6f923758-20261102.tar.gz`
+  - `docs/qa/ci-monitor-terminal-9c468bc7-20261102.tar.gz`
+  - `docs/qa/ci-monitor-windows-51a9b4af-20261102.tar.gz`
+  - `docs/qa/ci-monitor-windows-bb98bae3-20261102.tar.gz`
+  - `docs/qa/ci-resume-evidence-20261102.tar.gz`
+  - `docs/qa/combined-approved-fixes-20261102.md`
+  - `docs/qa/combined-approved-fixes-20261102.tar.gz`
+  - `docs/qa/combined-consolidation-20261102.md`
+  - `docs/qa/combined-consolidation-20261102.tar.gz`
+  - `docs/qa/combined-fixture-repair-20261102.md`
+  - `docs/qa/combined-fixture-repair-20261102.tar.gz`
+  - `docs/qa/combined-followups-extra-20261102.tar.gz`
+  - `docs/qa/combined-followups-root-20261102.tar.gz`
+  - `docs/qa/combined-portability-20261102.md`
+  - `docs/qa/combined-portability-20261102.tar.gz`
+  - `docs/qa/combined-protocol-integration-20261102.md`
+  - `docs/qa/combined-protocol-integration-20261102.tar.gz`
+  - `docs/qa/combined-replay-integration-20261102.md`
+  - `docs/qa/combined-replay-integration-20261102.tar.gz`
+  - `docs/qa/combined-replay-tracker-recovery-20261102.json`
+  - `docs/qa/combined-retry-backup-windows-20261102.tar.gz`
+  - `docs/qa/combined-reviewed-20261101.log.gz`
+  - `docs/qa/combined-tracker-recovery-20261102.json`
+  - `docs/qa/completion-inventory-20261031.json`
+  - `docs/qa/completion-inventory-20261101.json.gz`
+  - `docs/qa/completion-verification-20261031.json`
+  - `docs/qa/completion-verification-20261101.json`
+  - `docs/qa/consolidation-backup-independent-review-20261102.md`
+  - `docs/qa/consolidation-backup-merge-20261103.json`
+  - `docs/qa/consolidation-cached-wheel-review-20261102.md`
+  - `docs/qa/consolidation-ci-review-20261103.md`
+  - `docs/qa/consolidation-completed-validation-20261102.md`
+  - `docs/qa/consolidation-completed-validation-reconciliation-20261102.json`
+  - `docs/qa/consolidation-completed-validation-review-20261102.md`
+  - `docs/qa/consolidation-completion-checkpoint-20261102.json`
+  - `docs/qa/consolidation-completion-checkpoint-20261102.md`
+  - `docs/qa/consolidation-data-integrity-independent-20261103.md`
+  - `docs/qa/consolidation-final-validation-20261102.md`
+  - `docs/qa/consolidation-full-run-20261102.json`
+  - `docs/qa/consolidation-full-run-20261102.tar.gz`
+  - `docs/qa/consolidation-handoff-20261102.md`
+  - `docs/qa/consolidation-integrity-focused-20261103.json`
+  - `docs/qa/consolidation-integrity-focused-20261103.tar.gz`
+  - `docs/qa/consolidation-inventory-20261102.json`
+  - `docs/qa/consolidation-isolated-import-review-20261102.md`
+  - `docs/qa/consolidation-main-independent-review-20261102.md`
+  - `docs/qa/consolidation-native-gate-evidence-20261102.json`
+  - `docs/qa/consolidation-native-gate-triage-20261102.md`
+  - `docs/qa/consolidation-portability-independent-review-20261102.md`
+  - `docs/qa/consolidation-pr-disposition-20261102.json`
+  - `docs/qa/consolidation-pr-disposition-20261102.md`
+  - `docs/qa/consolidation-protocol-independent-review-20261102.md`
+  - `docs/qa/consolidation-receipts-lane-20261102.json`
+  - `docs/qa/consolidation-receipts-lane-20261102.md`
+  - `docs/qa/consolidation-release-critical-path-20261102.md`
+  - `docs/qa/consolidation-replay-independent-review-20261102.md`
+  - `docs/qa/consolidation-rules-integrity-independent-20261103.md`
+  - `docs/qa/consolidation-rules-lane-20261102.md`
+  - `docs/qa/consolidation-rules-merge-20261102.md`
+  - `docs/qa/consolidation-runtime-20261102.json`
+  - `docs/qa/consolidation-search-rules-review-20261102.md`
+  - `docs/qa/consolidation-sonar-diagnostic-20261102.json`
+  - `docs/qa/consolidation-sonar-diagnostic-20261102.md`
+  - `docs/qa/consolidation-targeted-reruns-20261102.json`
+  - `docs/qa/consolidation-targeted-reruns-20261102.tar.gz`
+  - `docs/qa/consolidation-tier-r-data-integrity-20261103.md`
+  - `docs/qa/consolidation-ui-independent-review-20261102.md`
+  - `docs/qa/continuation-verification-20261030.md`
+  - `docs/qa/corpus-focused-20261101.log.gz`
+  - `docs/qa/corpus-html-green-final-20261101.log.gz`
+  - `docs/qa/corpus-html-red-20261101.log.gz`
+  - `docs/qa/corpus-output-persistence-20261101.json`
+  - `docs/qa/corpus-output-persistence-20261101.md`
+  - `docs/qa/corpus-prereg-green-20261101.log.gz`
+  - `docs/qa/corpus-prereg-red-20261101.log.gz`
+  - `docs/qa/corpus-review-green-final-20261101.log.gz`
+  - `docs/qa/corpus-review-red-20261101.log.gz`
+  - `docs/qa/corpus-safeguards-20261101.json`
+  - `docs/qa/corpus-safeguards-20261101.md`
+  - `docs/qa/corpus-transfer-review-20261102.json`
+  - `docs/qa/corpus-transfer-review-20261102.md`
+  - `docs/qa/corpus-verified-transfer-recovery-20261102.md`
+  - `docs/qa/creation-explicit-retry-review-20261102.json`
+  - `docs/qa/creation-explicit-retry-review-20261102.md`
+  - `docs/qa/creation-staging-review-20261102.json`
+  - `docs/qa/creation-staging-review-20261102.md`
+  - `docs/qa/export-base-failures-20261101.log.gz`
+  - `docs/qa/export-copies-candidate-20261101.log.gz`
+  - `docs/qa/export-copies-failures-20261101.log.gz`
+  - `docs/qa/export-full-20261101.log.gz`
+  - `docs/qa/export-full-20261101.xml.gz`
+  - `docs/qa/f8-loop-author-receipt-20261101.json`
+  - `docs/qa/f8-loop-integrated-root.log.gz`
+  - `docs/qa/fixture-repair-review-20261102.json`
+  - `docs/qa/fixture-repair-review-20261102.md`
+  - `docs/qa/full-recovered-20261102.json`
+  - `docs/qa/full-recovered-20261102.tar.gz`
+  - `docs/qa/full-verification-f005c66-20261101.md`
+  - `docs/qa/full-verification-f005c66-20261101.tar.gz`
+  - `docs/qa/gt01-harness-smoke-20261030.json`
+  - `docs/qa/gt01-native-smoke-20261030.json`
+  - `docs/qa/gt12-benchmark-20261101.md`
+  - `docs/qa/gt12-combined-20261101.json`
+  - `docs/qa/gt12-evidence-20261101.json`
+  - `docs/qa/gt12-facts-20261101.invocation.json`
+  - `docs/qa/gt12-facts-20261101.json`
+  - `docs/qa/gt12-facts-20261101.log`
+  - `docs/qa/gt12-independent-controls-20261101.log`
+  - `docs/qa/gt12-independent-controls-20261101.py`
+  - `docs/qa/gt12-independent-controls-20261101.py.original.txt`
+  - `docs/qa/gt12-independent-receipt-check-20261101.log`
+  - `docs/qa/gt12-independent-receipt-check-20261101.py`
+  - `docs/qa/gt12-independent-receipt-check-20261101.py.original.txt`
+  - `docs/qa/gt12-independent-review-20261101.md`
+  - `docs/qa/gt12-independent-tests-20261101.log`
+  - `docs/qa/gt12-read-model-20261101.invocation.json`
+  - `docs/qa/gt12-read-model-20261101.json`
+  - `docs/qa/gt12-read-model-20261101.log`
+  - `docs/qa/gt12-run-stage-20261101.py`
+  - `docs/qa/gt12-smoke-4c8f9a6-20261101.json`
+  - `docs/qa/gt12-smoke-initial-20261101.json`
+  - `docs/qa/gt12-ui-calls-20261101.invocation.json`
+  - `docs/qa/gt12-ui-calls-20261101.json`
+  - `docs/qa/gt12-ui-calls-20261101.log`
+  - `docs/qa/historical-review-scripts-20261101.json`
+  - `docs/qa/identity-followup-20261101.md`
+  - `docs/qa/identity-followup-integrated-original-20261101.tar.gz`
+  - `docs/qa/identity-followup-root-integrated.log.gz`
+  - `docs/qa/identity-independent-review-20261101.md`
+  - `docs/qa/integrated-latest-bounded.log.gz`
+  - `docs/qa/integrated-output-prereg-research.log.gz`
+  - `docs/qa/integrated-rzdiff-identity.log.gz`
+  - `docs/qa/integration-checkpoint-20261101.json`
+  - `docs/qa/integration-checkpoint2-20261101.json`
+  - `docs/qa/integration-focused-20261101.log.gz`
+  - `docs/qa/integration-focused-final-20261101.log.gz`
+  - `docs/qa/integration-identity-msrc-20261101-copied.log.gz`
+  - `docs/qa/integration-identity-msrc-20261101.log.gz`
+  - `docs/qa/issue-dispositions-20261101.md`
+  - `docs/qa/issue120-combined-green-20261101.log.gz`
+  - `docs/qa/issue120-corrected-baseline-red-20261101.log.gz`
+  - `docs/qa/issue120-corrected-original-source-red-20261101.log.gz`
+  - `docs/qa/issue120-final-focused-20261101.log.gz`
+  - `docs/qa/issue120-identity-first-20261101.log.gz`
+  - `docs/qa/issue120-identity-green-20261101.log.gz`
+  - `docs/qa/issue120-identity-integration-20261101.log.gz`
+  - `docs/qa/issue120-implementation-verification-20261101.json`
+  - `docs/qa/issue120-red-20261101.log.gz`
+  - `docs/qa/issue120-resource-verification-20261101.json`
+  - `docs/qa/kb-fixture-reconciliation-20261030.md`
+  - `docs/qa/kb-saved-scope-20261102.md`
+  - `docs/qa/kb-saved-scope-review-20261102.json`
+  - `docs/qa/kb-saved-scope-review-20261102.md`
+  - `docs/qa/lifecycle-116-creation-staging-20261102.md`
+  - `docs/qa/lifecycle-116-explicit-retry-20261102.md`
+  - `docs/qa/lifecycle-116-independent-20261102.tar.gz`
+  - `docs/qa/lifecycle-116-profile-inspection-20261102.md`
+  - `docs/qa/lifecycle-116-review-20261102.json`
+  - `docs/qa/lifecycle-116-review-20261102.md`
+  - `docs/qa/llvm-native-controls-20261101.tar.gz`
+  - `docs/qa/msrc-20261101-independent-mixed-control.py.original.txt`
+  - `docs/qa/msrc-20261101-independent-review-controls.py.original.txt`
+  - `docs/qa/msrc-after-merge.log.gz`
+  - `docs/qa/native-bindiff-harness-20261102.md`
+  - `docs/qa/native-bindiff-harness-20261102.py`
+  - `docs/qa/native-bindiff-independent-review-20261102.json`
+  - `docs/qa/native-bindiff-tool-pins-20261102.json`
+  - `docs/qa/native-binexport-bindiff-attempt1-20261102.json`
+  - `docs/qa/native-binexport-bindiff-attempt1-20261102.tar.gz`
+  - `docs/qa/native-binexport-bindiff-attempt1-summary-20261102.json`
+  - `docs/qa/native-reconciliation-20261101-compile-evidence.json`
+  - `docs/qa/native-reconciliation-20261101-download-evidence.json`
+  - `docs/qa/native-reconciliation-20261101-native-driver.py`
+  - `docs/qa/native-reconciliation-20261101-receipt.json`
+  - `docs/qa/native-reconciliation-20261101-setup-evidence.json`
+  - `docs/qa/native-reconciliation-20261101-verification-evidence.json`
+  - `docs/qa/native-reconciliation-setup-attempt-20261031.json`
+  - `docs/qa/native-reconciliation-smoke-20261031-driver.py`
+  - `docs/qa/native-reconciliation-smoke-20261031.json`
+  - `docs/qa/original41-pr-collections-20261101.json.gz`
+  - `docs/qa/original41-pr-workflow-jobs-first-pages-20261101.json.gz`
+  - `docs/qa/output-completion-merged-20261102.log.gz`
+  - `docs/qa/output-credit-completion-20261102.json`
+  - `docs/qa/output-credit-completion-20261102.md`
+  - `docs/qa/output-credit-completion-20261102.tar.gz`
+  - `docs/qa/output-credit-completion-independent-review-20261102.json`
+  - `docs/qa/output-credit-completion-review-20261102.json`
+  - `docs/qa/output-credit-completion-review-20261102.md`
+  - `docs/qa/output-credited-replay-20261101.json`
+  - `docs/qa/output-credited-replay-20261101.md`
+  - `docs/qa/output-metadata-propagation-20261102.md`
+  - `docs/qa/output-path-fixtures-20261102.md`
+  - `docs/qa/output-path-fixtures-20261102.tar.gz`
+  - `docs/qa/output-prereg-integrated-checkpoint2.log.gz`
+  - `docs/qa/output-windows-independent-review-20261102.json`
+  - `docs/qa/output-windows-main-corrected.log.gz`
+  - `docs/qa/output-windows-main.log.gz`
+  - `docs/qa/output-windows-main.xml.gz`
+  - `docs/qa/output-windows-stat-20261102.json`
+  - `docs/qa/output-windows-stat-20261102.md`
+  - `docs/qa/output-windows-stat-20261102.tar.gz`
+  - `docs/qa/pr149-linux.verified.json`
+  - `docs/qa/pr149-windows.verified.json`
+  - `docs/qa/pr150-qa-windows.verified.json`
+  - `docs/qa/pr150-sonar-triage-2fdac2e.md`
+  - `docs/qa/pr154-escaped-opening-verification-20261101.json`
+  - `docs/qa/pr154-markdown-independent-review-20261101.json`
+  - `docs/qa/pr154-markdown-verification-20261101.json`
+  - `docs/qa/pr156157-independent-external-review-20261101.md`
+  - `docs/qa/pr157-bounded-review-repro-20261101.json`
+  - `docs/qa/pr157-bounded-review-repro-20261101.py.original.txt`
+  - `docs/qa/pr157-credited-replay-independent-review-20261101.json`
+  - `docs/qa/prereg-fence-audit-20261102.tar.gz`
+  - `docs/qa/prereg-fence-prefix-consolidation-20261102.md`
+  - `docs/qa/prereg-final-root-integrated.log.gz`
+  - `docs/qa/prereg-independent-review-20261101.json`
+  - `docs/qa/prereg-main-port-20261101.log.gz`
+  - `docs/qa/prereg-main-port-20261101.md`
+  - `docs/qa/prereg-markdown-review-20261101.md`
+  - `docs/qa/prereg-review-followup-20261101.tar.gz`
+  - `docs/qa/pyyaml-dev-independent-review-20261102.json`
+  - `docs/qa/raw-summary-container-consolidation-20261102.md`
+  - `docs/qa/raw-summary-independent-20261102.png`
+  - `docs/qa/raw-summary-sizing-20261102.md`
+  - `docs/qa/raw-summary-sizing-20261102.tar.gz`
+  - `docs/qa/raw-summary-sizing-review-20261102.json`
+  - `docs/qa/raw-summary-sizing-review-20261102.md`
+  - `docs/qa/rd-alignment-root.log.gz`
+  - `docs/qa/rd-f03-author-receipt.json`
+  - `docs/qa/rd-f03-independent-review-20261101.json`
+  - `docs/qa/rd-paired-review-20261102.json`
+  - `docs/qa/rd-paired-review-20261102.md`
+  - `docs/qa/reconciliation-bench-20261031.json`
+  - `docs/qa/remote-heads-checkpoint-20261101.json`
+  - `docs/qa/remote-heads-checkpoint2-20261101.json`
+  - `docs/qa/reproduce-issue120-20261101.json.gz`
+  - `docs/qa/resume-checkpoint-20261102.json`
+  - `docs/qa/resume-followup-checkpoint-20261102.json`
+  - `docs/qa/resume-root-checks-20261102.tar.gz`
+  - `docs/qa/rules-integrity-consolidation-20261103.md`
+  - `docs/qa/rz-fixtures-20261101.md`
+  - `docs/qa/rz-fixtures-20261101.tar.gz`
+  - `docs/qa/rz-scoring-contract-followup.log.gz`
+  - `docs/qa/rz-scoring-contract-green.log.gz`
+  - `docs/qa/rzdiff-native-provenance-20261101.tar.gz`
+  - `docs/qa/rzdiff-native-root-review-20261101.json`
+  - `docs/qa/rzdiff-quarantine-independent-review-20261101.md`
+  - `docs/qa/rzdiff-quarantine-verification-20261101.json`
+  - `docs/qa/rzdiff-replay-final-e8319b9.json`
+  - `docs/qa/rzdiff-scoring-fixture-independent-review-20261101.json`
+  - `docs/qa/rzdiff-shared-fixtures-independent-review-20261101.json`
+  - `docs/qa/sonar-review.md`
+  - `docs/qa/storage-after-merge.log.gz`
+  - `docs/qa/storage-focused-20261101.log.gz`
+  - `docs/qa/transfer-credit-preflight-20261102.md`
+  - `docs/qa/transfer-preflight-review-20261102.json`
+  - `docs/qa/transfer-preflight-review-20261102.md`
+  - `docs/qa/transfer-windows-paths-20261102.md`
+  - `docs/qa/windows-output-review-20261102.json`
+  - `docs/qa/windows-output-review-20261102.md`
+  - `docs/qa/windows-secondary-controls-20261102.md`
+  - `docs/qa/windows-secondary-controls-review-20261102.json`
+  - `docs/qa/windows-secondary-controls-review-20261102.md`
+  - `docs/release-process.md`
+  - `docs/research/deep-uncertainty-r8/01-typed-literal-counterexamples.md`
+  - `docs/research/patchtrace-improvement-research-20261102.md`
+  - `docs/research/rzdiff-orientation-witness-20261101.md`
+  - `docs/research/rzdiff-witness-native-20261101.json`
+  - `docs/schemas/calibration/PairRows.json`
+  - `docs/schemas/corpus/EngineOutputDoc.json`
+  - `docs/schemas/corpus/EvaluationFailure.json`
+  - `docs/schemas/corpus/OutputCompletion.json`
+  - `docs/schemas/corpus/OutputCredits.json`
+  - `docs/schemas/corpus/TierRReport.json`
+  - `docs/schemas/corpus/TrainingManifest.json`
+  - `docs/schemas/corpus/report-examples/valid-engine-output-attention.json`
+  - `docs/specs/architecture.md`
+  - `docs/specs/byte-representations.md`
+  - `docs/specs/calibration-corpus-and-model.md`
+  - `docs/specs/gui-preflight-inspection.md`
+  - `docs/specs/kb-cve/31-C-product-build-pairs.md`
+  - `docs/specs/kb-cve/31-E-evidence-intent.md`
+  - `docs/specs/kb-cve/31-F-workflow-ui-persistence.md`
+  - `docs/specs/known-answer-corpus.md`
+  - `docs/specs/panels/graph-inspection.md`
+  - `docs/specs/program-e/WB2-integration-plan.md`
+  - `docs/specs/secondary-engine.md`
+  - `docs/specs/ui.md`
+  - `docs/specs/unified-engine/05-fusion-and-noise.md`
+  - `docs/specs/unified-engine/06-adapters.md`
+  - `docs/specs/unified-engine/08-evaluation.md`
+  - `docs/specs/windows-acceptance-and-milestone-builds.md`
+  - `docs/specs/windows-release-signing-policy.md`
+  - `docs/specs/yara-x-rule-workflow.md`
+  - `docs/wiki/Architecture-and-Design-Rationale.md`
+  - `docs/wiki/Codebase-Map.md`
+  - `docs/wiki/Developer-Guide.md`
+  - `docs/wiki/Home.md`
+  - `docs/wiki/User-Guide.md`
+  - `docs/wiki/_Sidebar.md`
+  - `pyproject.toml`
+  - `src/patchtrace/__main__.py`
+  - `src/patchtrace/app_icon.py`
+  - `src/patchtrace/backend.py`
+  - `src/patchtrace/calibration/features.py`
+  - `src/patchtrace/callgraph/algo.py`
+  - `src/patchtrace/callgraph/csr.py`
+  - `src/patchtrace/callgraph/dot.py`
+  - `src/patchtrace/callgraph/export_json.py`
+  - `src/patchtrace/callgraph/labels.py`
+  - `src/patchtrace/callgraph/limits.py`
+  - `src/patchtrace/callgraph/panel_qt.py`
+  - `src/patchtrace/callgraph/paths.py`
+  - `src/patchtrace/callgraph/query.py`
+  - `src/patchtrace/callgraph/snapshot.py`
+  - `src/patchtrace/callgraph/view_model.py`
+  - `src/patchtrace/gui/qt/host.py`
+  - `src/patchtrace/gui/qt/kb_selftest.py`
+  - `src/patchtrace/gui/qt/project_adoption.py`
+  - `src/patchtrace/kbcorrelation/adapters/panel_snapshot.py`
+  - `src/patchtrace/kbcorrelation/cli_leads.py`
+  - `src/patchtrace/kbcorrelation/context.py`
+  - `src/patchtrace/kbcorrelation/index.py`
+  - `src/patchtrace/kbcorrelation/investigation_qt.py`
+  - `src/patchtrace/kbcorrelation/investigation_service.py`
+  - `src/patchtrace/kbcorrelation/panel_qt.py`
+  - `src/patchtrace/kbcorrelation/service.py`
+  - `src/patchtrace/kbcorrelation/wiring.py`
+  - `src/patchtrace/persistence.py`
+  - `src/patchtrace/project_creation.py`
+  - `src/patchtrace/project_retry.py`
+  - `src/patchtrace/raw_alignment_view.py`
+  - `src/patchtrace/representations/__init__.py`
+  - `src/patchtrace/representations/alignment.py`
+  - `src/patchtrace/resources/patchtrace-mark.svg`
+  - `src/patchtrace/rules/export.py`
+  - `src/patchtrace/rules/matrix.py`
+  - `src/patchtrace/rules/store.py`
+  - `src/patchtrace/secondary/contracts.py`
+  - `src/patchtrace/secondary/evidence.py`
+  - `src/patchtrace/secondary/evidence_view.py`
+  - `src/patchtrace/secondary/reconcile.py`
+  - `src/patchtrace/secondary/rzdiff.py`
+  - `src/patchtrace/service.py`
+  - `src/patchtrace/tooltips.py`
+  - `src/patchtrace/ui.py`
+  - `src/patchtrace/ui_inspection.py`
+  - `src/patchtrace/ui_new_project.py`
+  - `src/patchtrace/ui_profiles.py`
+  - `src/patchtrace/ui_raw_alignment.py`
+  - `src/patchtrace/unified/compute.py`
+  - `src/patchtrace/unified/facts/anchors.py`
+  - `src/patchtrace/unified/facts/channels.py`
+  - `src/patchtrace/unified/facts/pseudo.py`
+  - `src/patchtrace/unified/facts/verdict.py`
+  - `src/patchtrace/unified/fusion/arbiter.py`
+  - `src/patchtrace/unified/ir/cfg.py`
+  - `src/patchtrace/unified/read_text.py`
+  - `src/patchtrace/unified/registry.py`
+  - `src/patchtrace/unified/sources/__init__.py`
+  - `src/patchtrace/unified/sources/ladder.py`
+  - `src/patchtrace/unified/sources/secondary.py`
+  - `tasks/todo.md`
+  - `tests/fixtures/kb/CONTRACT_CONFLICTS.md`
+  - `tests/fixtures/kb/MANIFEST.json`
+  - `tests/fixtures/kb/README.md`
+  - `tests/fixtures/kb/confusable_kb.json`
+  - `tests/fixtures/kb/crash_points.json`
+  - `tests/fixtures/kb/csaf_synthetic.json`
+  - `tests/fixtures/kb/cvrf_bom.json`
+  - `tests/fixtures/kb/cvrf_crlf.json`
+  - `tests/fixtures/kb/cvrf_v3_synthetic.json`
+  - `tests/fixtures/kb/raw_adversarial_inputs.json`
+  - `tests/fixtures/kb/update_packages_synthetic.json`
+  - `tests/fixtures/kb/update_relationships_synthetic.json`
+  - `tests/fixtures/kb/vex_synthetic.json`
+  - `tests/fixtures/kb/winbindex_synthetic.json`
+  - `tests/fixtures/secondary/rzdiff-0.9.1-native-orientation.json`
+  - `tests/kb_crash_harness.py`
+  - `tests/kb_fixture_performance_plan.md`
+  - `tests/stress/test_cli_stress_recovery.py`
+  - `tests/test_audit2_fixes.py`
+  - `tests/test_audit_desktop.py`
+  - `tests/test_calibration_runtime.py`
+  - `tests/test_calibration_tools.py`
+  - `tests/test_callgraph_cap_truth.py`
+  - `tests/test_callgraph_count_suffix_guard.py`
+  - `tests/test_callgraph_path_budget.py`
+  - `tests/test_callgraph_snapshot.py`
+  - `tests/test_ci_summary.py`
+  - `tests/test_cli_secondary_run.py`
+  - `tests/test_creation_116.py`
+  - `tests/test_evidence_panel_service.py`
+  - `tests/test_evidence_ui.py`
+  - `tests/test_evidence_view.py`
+  - `tests/test_jobs.py`
+  - `tests/test_kb_crash_injection_protocol.py`
+  - `tests/test_kb_cvrf_fixture_import.py`
+  - `tests/test_kb_fixture_encoding.py`
+  - `tests/test_kb_fixture_properties.py`
+  - `tests/test_kb_investigation_service.py`
+  - `tests/test_kb_metadata_fixture_boundaries.py`
+  - `tests/test_kb_offline_fixture_import.py`
+  - `tests/test_kb_raw_adversarial_inputs.py`
+  - `tests/test_kb_synthetic_fixture_corpus.py`
+  - `tests/test_kb_update_relationships.py`
+  - `tests/test_kbc_acquire_cli.py`
+  - `tests/test_kbc_card_context_sources.py`
+  - `tests/test_kbc_contracts.py`
+  - `tests/test_kbc_msrc_review_findings.py`
+  - `tests/test_kbc_saved_scope.py`
+  - `tests/test_kbc_selection_guard.py`
+  - `tests/test_lifecycle_116.py`
+  - `tests/test_live_rzdiff_check.py`
+  - `tests/test_native_bindiff_harness.py`
+  - `tests/test_project_retry.py`
+  - `tests/test_r2_cache_version.py`
+  - `tests/test_r2_cfg_performance.py`
+  - `tests/test_r2_fusion_regressions.py`
+  - `tests/test_r8_literal_types.py`
+  - `tests/test_raw_alignment_view.py`
+  - `tests/test_representation_alignment.py`
+  - `tests/test_rules_export.py`
+  - `tests/test_rules_matrix.py`
+  - `tests/test_rules_store.py`
+  - `tests/test_rzdiff_cli_env.py`
+  - `tests/test_rzdiff_count_observation.py`
+  - `tests/test_rzdiff_orientation_20261101.py`
+  - `tests/test_secondary_reconcile.py`
+  - `tests/test_secondary_rzdiff.py`
+  - `tests/test_secondary_scheduler.py`
+  - `tests/test_tier_r_build_receipts_r1.py`
+  - `tests/test_tier_r_credit_completion.py`
+  - `tests/test_tier_r_credited_replay.py`
+  - `tests/test_tier_r_eval_engines.py`
+  - `tests/test_tier_r_eval_metrics.py`
+  - `tests/test_tier_r_eval_report.py`
+  - `tests/test_tier_r_label_promotion_r1.py`
+  - `tests/test_tier_r_output_persistence.py`
+  - `tests/test_tier_r_output_stat_compat.py`
+  - `tests/test_tier_r_session_provenance_r1.py`
+  - `tests/test_tier_r_training_artifacts.py`
+  - `tests/test_tooltips.py`
+  - `tests/test_train_prereg_selection.py`
+  - `tests/test_ui_callgraph_cap_truth.py`
+  - `tests/test_ui_kb_create_cancellation.py`
+  - `tests/test_ui_kb_current_project.py`
+  - `tests/test_ui_kb_entry.py`
+  - `tests/test_ui_kb_frozen_journey.py`
+  - `tests/test_ui_kb_investigation.py`
+  - `tests/test_ui_project_retry.py`
+  - `tests/test_ui_raw_alignment.py`
+  - `tests/test_unified_bench.py`
+  - `tests/test_unified_bench_stages.py`
+  - `tests/test_unified_cli_show.py`
+  - `tests/test_unified_corpus_workflow.py`
+  - `tests/test_unified_live_force_identical.py`
+  - `tests/test_unified_live_native_failure_details.py`
+  - `tests/test_unified_live_pairs.py`
+  - `tests/test_unified_live_pairs_r1.py`
+  - `tests/test_unified_live_workflow.py`
+  - `tests/test_unified_sources.py`
+  - `tests/test_unified_verdict_ir.py`
+  - `tests/test_unified_wire_compute.py`
+  - `tests/test_verified_backup_byte_integrity.py`
+  - `tests/test_windows_build_resources.py`
+  - `tests/unified_s0_fixtures.py`
+  - `tests/unified_support/fixture-gaps.md`
+  - `third_party/notices/README.md`
+  - `third_party/notices/qtsvg-6.12.0/LICENSES/BSD-3-Clause.txt`
+  - `third_party/notices/qtsvg-6.12.0/LICENSES/GPL-2.0-only.txt`
+  - `third_party/notices/qtsvg-6.12.0/LICENSES/GPL-3.0-only.txt`
+  - `third_party/notices/qtsvg-6.12.0/LICENSES/LGPL-3.0-only.txt`
+  - `third_party/notices/qtsvg-6.12.0/PROVENANCE.txt`
+  - `third_party/notices/qtsvg-6.12.0/REUSE.toml`
+  - `third_party/notices/qtsvg-6.12.0/SOURCE-HEADERS.txt`
+  - `tools/build_linux.py`
+  - `tools/build_windows.py`
+  - `tools/calibration/prereg_gate.py`
+  - `tools/calibration/tier_r/build.py`
+  - `tools/calibration/tier_r/cli.py`
+  - `tools/calibration/tier_r/contracts.py`
+  - `tools/calibration/tier_r/evaluate.py`
+  - `tools/calibration/tier_r/factory.py`
+  - `tools/calibration/tier_r/labeler.py`
+  - `tools/calibration/tier_r/output_store.py`
+  - `tools/calibration/tier_r/report_schemas.py`
+  - `tools/calibration/tier_r/shard.py`
+  - `tools/calibration/tier_r/training_artifacts.py`
+  - `tools/calibration/train.py`
+  - `tools/check_windows_exe.py`
+  - `tools/frozen_smoke.py`
+  - `tools/live_rzdiff_check.py`
+  - `tools/pyinstaller_hooks/hook-patchtrace.app_icon.py`
+  - `tools/research/rzdiff_count_observation.py`
+  - `tools/unified/bench.py`
+  - `tools/unified/bench_workloads.py`
+  - `tools/unified/live_pairs.py`
+  - `tools/windows_icon.py`
+  - `tools/windows_version_info.py`
+
+### `codex/semantic-proof-reconciliation-20261031`
+
+- Head: `745e93426a16e0a91a961b6e0bbcb71be69f2a7e`
+- Base: `origin/codex/essential-combined-verification-20261030` at `a7f13e13ffb512f8e9621753a0ae162d78942f3b`
+- Merge base: `a7f13e13ffb512f8e9621753a0ae162d78942f3b`
+- Associated PR: https://github.com/djshellshoxxx/patchtrace/pull/144
+- Functional scope: {"docs": 12, "src/patchtrace/unified": 10, "tasks": 1, "tests": 6}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {'SUCCESS': 18, 'SKIPPED': 3, 'FAILURE': 1}; failures: ['SonarCloud Code Analysis']; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: blocked: failing checks.
+- Recommended disposition: preserve active branch; port only verified unique patches.
+- Unique commits: `17210eb704802912a2951d8efd9f5e3d27a2193b`, `e2476c19017f82785570497aa2804b4f4f2e374f`, `0ca9ff1c99d2aea5198f9dda1a93c9bde8ca0226`, `7f14f792ed516c494aea17d7ca337bae18a31cf6`, `2c87611ebe65ea227f9f3efdf9c6246ab09b177f`, `c592b680eb1013f02c8472e544bbdb417e11fdde`, `59ff5ad1379c0a787d92f62d732686c1dd0e65b4`, `745e93426a16e0a91a961b6e0bbcb71be69f2a7e`
+- Patch-equivalent commits: none
+- Modified files:
+  - `docs/handoff/autonomous-continuation-20261031.md`
+  - `docs/modules.md`
+  - `docs/plans/milestone-ledger-20261030.md`
+  - `docs/qa.md`
+  - `docs/qa/completion-inventory-20261031.json`
+  - `docs/qa/completion-verification-20261031.json`
+  - `docs/qa/native-reconciliation-setup-attempt-20261031.json`
+  - `docs/qa/native-reconciliation-smoke-20261031-driver.py`
+  - `docs/qa/native-reconciliation-smoke-20261031.json`
+  - `docs/qa/reconciliation-bench-20261031.json`
+  - `docs/research/deep-uncertainty-r8/01-typed-literal-counterexamples.md`
+  - `docs/specs/unified-engine/05-fusion-and-noise.md`
+  - `src/patchtrace/unified/compute.py`
+  - `src/patchtrace/unified/facts/anchors.py`
+  - `src/patchtrace/unified/facts/channels.py`
+  - `src/patchtrace/unified/facts/pseudo.py`
+  - `src/patchtrace/unified/facts/verdict.py`
+  - `src/patchtrace/unified/fusion/arbiter.py`
+  - `src/patchtrace/unified/ir/cfg.py`
+  - `src/patchtrace/unified/read_text.py`
+  - `src/patchtrace/unified/registry.py`
+  - `src/patchtrace/unified/sources/ladder.py`
+  - `tasks/todo.md`
+  - `tests/test_r2_cache_version.py`
+  - `tests/test_r2_cfg_performance.py`
+  - `tests/test_r2_fusion_regressions.py`
+  - `tests/test_r8_literal_types.py`
+  - `tests/test_unified_verdict_ir.py`
+  - `tests/test_unified_wire_compute.py`
+
+### `codex/storage-integrity-20261101`
+
+- Head: `9911af4d9130b81b1875f82179e03e0a89e89794`
+- Base: `origin/main` at `5d504ff5c046bfb758623182b472976003632bba`
+- Merge base: `9911af4d9130b81b1875f82179e03e0a89e89794`
+- Associated PR: none in open PR snapshot
+- Functional scope: {}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {}; failures: []; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: no unique patches relative to base.
+- Recommended disposition: superseded relative to base; verify before closing/deleting.
+- Unique commits: none
+- Patch-equivalent commits: none
+- Modified files:
+
+### `codex/t9-qa-20261020`
+
+- Head: `ecc4f2054c00dc2b324bb71134595c48dc4b6a18`
+- Base: `origin/main` at `5d504ff5c046bfb758623182b472976003632bba`
+- Merge base: `08f6a5ff5bb4304287aec2ab30546d841c63665a`
+- Associated PR: none in open PR snapshot
+- Functional scope: {"docs": 2, "site": 3, "tasks": 1, "tests": 2, "tools": 3}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {}; failures: []; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: unqualified: no current CI attached.
+- Recommended disposition: preserve active branch; port only verified unique patches.
+- Unique commits: `2999fc99a4ac979b141c5ac93784e8bc56c028e3`, `4a4e56f5e1d0ef060cd99e21c3ed90151170135d`, `9ef16271d59d2c98c238966c6b7cbd4d9d3cab65`, `5aaec20280a6f7eb78fe143b7e482c67bd9f104c`
+- Patch-equivalent commits: none
+- Modified files:
+  - `docs/plans/master-todo-d.md`
+  - `docs/qa.md`
+  - `site/assets/screens/overview.png`
+  - `site/assets/screens/overview.webp`
+  - `site/assets/screens/screens.json`
+  - `tasks/todo.md`
+  - `tests/test_tier_r_csrc.py`
+  - `tests/test_tier_r_eval_cli.py`
+  - `tools/calibration/tier_r/cli.py`
+  - `tools/calibration/tier_r/csrc.py`
+  - `tools/site/render_screenshots.py`
+
+### `codex/tier-w-fetch-20261015`
+
+- Head: `5b7b2591e616e8c28c05c7070661b33e2ca0435c`
+- Base: `origin/main` at `5d504ff5c046bfb758623182b472976003632bba`
+- Merge base: `4cf78d64dd542b508fdf89b2bac70ca16630fa29`
+- Associated PR: none in open PR snapshot
+- Functional scope: {"docs": 2, "tools": 3}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {}; failures: []; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: unqualified: no current CI attached.
+- Recommended disposition: preserve active branch; port only verified unique patches.
+- Unique commits: `204d66fc973713daab40db3fc57e33a0ac708eb3`, `6a32aa216f87aa20f194a7e55434d6fba09a1ce4`, `c0255b786970309d781c7222f2e6868b7406c389`, `f44454ad4f8d1e00d8e0f5aa941b1a6557656ca5`, `68876dea7cc222383125830ae95ef80b71f1e6ea`, `5b7b2591e616e8c28c05c7070661b33e2ca0435c`
+- Patch-equivalent commits: none
+- Modified files:
+  - `docs/modules.md`
+  - `docs/specs/tier-w-local-corpus.md`
+  - `tools/calibration/tier_w/contracts.py`
+  - `tools/calibration/tier_w/fetch.py`
+  - `tools/calibration/tier_w/transport.py`
+
+### `codex/training-prereg-identity-20261101`
+
+- Head: `dfe8f421db390ccd3158393a60205fa5dd25df0b`
+- Base: `origin/main` at `5d504ff5c046bfb758623182b472976003632bba`
+- Merge base: `6579ed83211b7ff2039e3152728ac1cddc3e93d6`
+- Associated PR: https://github.com/djshellshoxxx/patchtrace/pull/154
+- Functional scope: {"docs": 19, "tasks": 1, "tests": 1, "tools": 2}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {'FAILURE': 1, 'SUCCESS': 2}; failures: ['SonarCloud Code Analysis']; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: blocked: failing checks.
+- Recommended disposition: preserve active branch; port only verified unique patches.
+- Unique commits: `4aa99f7bd989765000c6ebd659c9565030a48849`, `f27d23a80ee49573ccca54cdf036427f57eebb2a`, `9b9452b4677ee3809a6e0f43d49567a8d15602e6`
+- Patch-equivalent commits: none
+- Modified files:
+  - `docs/modules.md`
+  - `docs/qa.md`
+  - `docs/qa/corpus-focused-20261101.log.gz`
+  - `docs/qa/corpus-html-green-final-20261101.log.gz`
+  - `docs/qa/corpus-html-red-20261101.log.gz`
+  - `docs/qa/corpus-prereg-green-20261101.log.gz`
+  - `docs/qa/corpus-prereg-red-20261101.log.gz`
+  - `docs/qa/corpus-review-green-final-20261101.log.gz`
+  - `docs/qa/corpus-review-red-20261101.log.gz`
+  - `docs/qa/corpus-safeguards-20261101.json`
+  - `docs/qa/corpus-safeguards-20261101.md`
+  - `docs/qa/pr154-escaped-opening-verification-20261101.json`
+  - `docs/qa/pr154-markdown-verification-20261101.json`
+  - `docs/qa/prereg-fence-prefix-consolidation-20261102.md`
+  - `docs/qa/prereg-main-port-20261101.log.gz`
+  - `docs/qa/prereg-main-port-20261101.md`
+  - `docs/qa/prereg-markdown-review-20261101.md`
+  - `docs/qa/prereg-review-followup-20261101.tar.gz`
+  - `docs/specs/calibration-corpus-and-model.md`
+  - `tasks/todo.md`
+  - `tests/test_train_prereg_selection.py`
+  - `tools/calibration/prereg_gate.py`
+  - `tools/calibration/train.py`
+
+### `codex/windows-branding-reconcile-20261030`
+
+- Head: `8f4c4a2e0021d424d403317c6780b6db026ad76b`
+- Base: `origin/main` at `5d504ff5c046bfb758623182b472976003632bba`
+- Merge base: `a04f5a299a8d4afef023261e52e08d14678cf1e7`
+- Associated PR: https://github.com/djshellshoxxx/patchtrace/pull/147
+- Functional scope: {".gitattributes": 1, "docs": 7, "pyproject.toml": 1, "src/patchtrace/__main__.py": 1, "src/patchtrace/app_icon.py": 1, "src/patchtrace/resources": 1, "tasks": 1, "tests": 1, "third_party": 8, "tools": 6}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {'SUCCESS': 18, 'SKIPPED': 3, 'FAILURE': 1}; failures: ['SonarCloud Code Analysis']; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: blocked: failing checks.
+- Recommended disposition: preserve active branch; port only verified unique patches.
+- Unique commits: `015f79cc762f0ebff4cbb700480a44a88e014d9f`, `25125eb8b282322bafe8e682f5c09dfbffb07fbf`, `50ced35a54f18b4de8437b78a42dd2ec689338d9`, `8f4c4a2e0021d424d403317c6780b6db026ad76b`
+- Patch-equivalent commits: none
+- Modified files:
+  - `.gitattributes`
+  - `docs/modules.md`
+  - `docs/notices.md`
+  - `docs/plans/essential-integration-20261029.md`
+  - `docs/qa.md`
+  - `docs/release-process.md`
+  - `docs/specs/windows-acceptance-and-milestone-builds.md`
+  - `docs/specs/windows-release-signing-policy.md`
+  - `pyproject.toml`
+  - `src/patchtrace/__main__.py`
+  - `src/patchtrace/app_icon.py`
+  - `src/patchtrace/resources/patchtrace-mark.svg`
+  - `tasks/todo.md`
+  - `tests/test_windows_build_resources.py`
+  - `third_party/notices/README.md`
+  - `third_party/notices/qtsvg-6.12.0/LICENSES/BSD-3-Clause.txt`
+  - `third_party/notices/qtsvg-6.12.0/LICENSES/GPL-2.0-only.txt`
+  - `third_party/notices/qtsvg-6.12.0/LICENSES/GPL-3.0-only.txt`
+  - `third_party/notices/qtsvg-6.12.0/LICENSES/LGPL-3.0-only.txt`
+  - `third_party/notices/qtsvg-6.12.0/PROVENANCE.txt`
+  - `third_party/notices/qtsvg-6.12.0/REUSE.toml`
+  - `third_party/notices/qtsvg-6.12.0/SOURCE-HEADERS.txt`
+  - `tools/build_linux.py`
+  - `tools/build_windows.py`
+  - `tools/check_windows_exe.py`
+  - `tools/pyinstaller_hooks/hook-patchtrace.app_icon.py`
+  - `tools/windows_icon.py`
+  - `tools/windows_version_info.py`
+
+### `codex/windows-setup-installer-20261017`
+
+- Head: `9c5fe67bd10a5d1342440bb8ea6a524cca3ce1f2`
+- Base: `origin/main` at `5d504ff5c046bfb758623182b472976003632bba`
+- Merge base: `04d57c72eced716b6c163d29f80b6cd5543c6582`
+- Associated PR: none in open PR snapshot
+- Functional scope: {".github": 1, "docs": 4, "installer": 1, "tasks": 2, "tests": 1, "third_party": 1, "tools": 3}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {}; failures: []; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: unqualified: no current CI attached.
+- Recommended disposition: preserve active branch; port only verified unique patches.
+- Unique commits: `104bbc905776d5c73bb015dabba900b4479768c1`, `56eaea3ee55175b2bab00d729060a8bba42da31c`, `14b4250e805d0957f2d0a16748ff7e75c6c75f43`, `9f4e185ec05a3efad49e6e6388037130b03706bd`, `bf59ac4d008374dd86c2ca535507f24b701e4f07`, `a904dd960b4ee1c0d2c81127192e020b2630020d`, `5c121c85867f9b7c5e372cae2303d05865757487`, `8163be72dacc469b471a28cdc439dc6e9f4fe012`, `70ae6eb8ff8718cc8a149e0efb4cfa084b35f894`, `6fa3f694deb02f64e9fba9cd12fbfdafe3063622`, `185023088cd48df8c528e0dff8c7da1a6f1ad3e8`, `b6689d8b7b64aa8816f1274f67e4c8ec7ed1ce5a`, `b3a425bff8d80d3fb76425cea112f8a46ce31fce`, `1991a72d595fb409fe236ecac8984a83752f113a`, `5e2c806268cdb5e8a444c89fdc46283c08feeba1`, `2af8900c965ea814c4b4df958f09aa49dba1e82a`, `157292221328a242a596eafa24d70df3d1b41e9d`, `f8f648f24b4040116ae5caaa94ca8df889c719ec`, `9e7722885728dd9e3ec33dcc50308840fc8d67f9`, `41383e63868830b196967bb141cc3d69cfd95564`, `5ce8bea744efebc3fec384e416747e055a25ff6e`, `77e797c01015778394eba6e50563314a7d0b44a8`, `1e8b6ee64a75c067e2056fa1aada22d85d3f83ff`, `36f7a8dbe094ea699bfd59e32000a161351bfca2`, `cf2ff26ad3e5a387a7720916e42aa6ec04612b20`, `92f88e8899abb076664e3c7ada9b5082471fcc39`, `28ae017a5754c903e2426c21eaf22ff9257cea52`, `8d03eb78715a65cea710d58975becd2edd930f39`, `fd4da2b14b7c1e740c2239d7870723a29e2fc4be`, `3d7a9ace33976baec185c31582bdbcafafdd6e3d`, `6f42dd1482f4d65b490a739886011dc3b50cf3c6`
+- Patch-equivalent commits: none
+- Modified files:
+  - `.github/workflows/qa-windows.yml`
+  - `docs/package-audit.md`
+  - `docs/qa.md`
+  - `docs/release-process.md`
+  - `docs/windows.md`
+  - `installer/PatchTrace.nsi`
+  - `tasks/claude-progress.md`
+  - `tasks/todo.md`
+  - `tests/test_windows_installer_manifest.py`
+  - `third_party/notices/nsis-3.13/COPYING`
+  - `tools/package_windows_installer.py`
+  - `tools/test_windows_installer.ps1`
+  - `tools/test_windows_portable.ps1`
+
+### `consolidate/docs-20261104`
+
+- Head: `ed70e6ddac449a42f843f1c60aa878416ab31727`
+- Base: `origin/main` at `5d504ff5c046bfb758623182b472976003632bba`
+- Merge base: `25b2ac8000e4bb2b941ce44ccbbb25a7eff5c278`
+- Associated PR: https://github.com/djshellshoxxx/patchtrace/pull/183
+- Functional scope: {"docs": 144}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {'SUCCESS': 12, 'SKIPPED': 3}; failures: []; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: candidate: inspect review/protection and focused tests.
+- Recommended disposition: preserve active branch; port only verified unique patches.
+- Unique commits: `40cbaf66a93fdeab38d2c66cd601c18b3dbb3fb8`, `f1a8ab2bce33835b8a6ae8d7e4d84e5eb949dccc`, `8b183e0ef9b439426f1a4b73f6c83b2dee029a15`, `3f0af144c48ba7f4244552125bd0451fc0b773e8`, `3324163c1a42b15d119e8054dd4f8fc947e8905e`, `5635597166420c3d5826c1442575302e88bb9871`, `fa8f000e0cceb99e8104437ac5b6f45446a1b1fc`, `5338d6adaa6833a6c7109c0c1fb4399574ff549e`, `f8a6aa5a177e6ec3290e79f8245bced4be7373ef`, `aac0a2b2e30fbbb512c32af0ef014a2c5a8a4be1`, `8e10990b4490b8a1addb7b3b2cd05dc4ed735955`, `2ee1d2aaeb1a96e0c08c9597ebf484dc229f6b72`, `ed70e6ddac449a42f843f1c60aa878416ab31727`
+- Patch-equivalent commits: none
+- Modified files:
+  - `docs/plans/development-dependency-map.md`
+  - `docs/plans/development-gap-analysis.md`
+  - `docs/plans/panels-build-plan.md`
+  - `docs/plans/parallel-development-plan.md`
+  - `docs/plans/release-blockers.md`
+  - `docs/research/20261103-additional-research/01-current-state-and-research-gaps.md`
+  - `docs/research/20261103-additional-research/02-engine-runtime-reuse.md`
+  - `docs/research/20261103-additional-research/03-metadata-provenance-reuse.md`
+  - `docs/research/20261103-additional-research/04-desktop-persistence-release-reuse.md`
+  - `docs/research/20261103-additional-research/05-corpus-calibration-reproducibility.md`
+  - `docs/research/20261103-additional-research/06-claude-action-plan-and-reuse-register.md`
+  - `docs/research/20261103-additional-research/README.md`
+  - `docs/research/20261103-additional-research/repository-snapshot.json`
+  - `docs/research/20261103-additional-research/validation.json`
+  - `docs/research/INDEX.md`
+  - `docs/research/calibration-r5/01-implementation-audit.md`
+  - `docs/research/calibration-r5/02-statistical-methods.md`
+  - `docs/research/calibration-r5/03-data-and-experiment-runbook.md`
+  - `docs/research/calibration-r5/04-robustness-policy-and-ui.md`
+  - `docs/research/calibration-r5/05-engineering-handoff.md`
+  - `docs/research/calibration-r5/06-dependence-toy.md`
+  - `docs/research/calibration-r5/README.md`
+  - `docs/research/calibration-r5/independence_toy.py`
+  - `docs/research/deep-uncertainty-r8/01-typed-literal-counterexamples.md`
+  - `docs/research/deep-uncertainty-r8/02-icf-function-identity.md`
+  - `docs/research/deep-uncertainty-r8/03-integration-handoff-and-release-risk.md`
+  - `docs/research/deep-uncertainty-r8/README.md`
+  - `docs/research/deep-uncertainty-r8/uncertainty-register.md`
+  - `docs/research/final-integration-r6/01-repository-reconciliation.md`
+  - `docs/research/final-integration-r6/02-unified-engine-implementation.md`
+  - `docs/research/final-integration-r6/03-secondary-tools-compatibility.md`
+  - `docs/research/final-integration-r6/04-vulnerability-correlation-patch-search.md`
+  - `docs/research/final-integration-r6/05-ground-truth-calibration-performance.md`
+  - `docs/research/final-integration-r6/06-gui-security-release.md`
+  - `docs/research/final-integration-r6/07-acceptance-defects-runbook.md`
+  - `docs/research/final-integration-r6/08-feature-matrix-and-handoff.md`
+  - `docs/research/final-integration-r6/README.md`
+  - `docs/research/semantic-analysis-r3/README.md`
+  - `docs/research/semantic-analysis-r3/experiment-and-benchmark.md`
+  - `docs/research/semantic-analysis-r3/methods-and-tools.md`
+  - `docs/research/semantic-analysis-r3/r4-handoff.md`
+  - `docs/research/unified-matching-r2/00-reconciliation.md`
+  - `docs/research/unified-matching-r2/01-implementation-inventory.md`
+  - `docs/research/unified-matching-r2/02-algorithms-and-upstream.md`
+  - `docs/research/unified-matching-r2/03-graph-residual-performance.md`
+  - `docs/research/unified-matching-r2/04-fusion-identity-false-matches.md`
+  - `docs/research/unified-matching-r2/05-baseline-and-validation.md`
+  - `docs/research/unified-matching-r2/06-limitations-and-r3-handoff.md`
+  - `docs/research/unified-matching-r2/07-native-rizin-findings.md`
+  - `docs/research/unified-matching-r2/08-native-cjson-development.md`
+  - `docs/research/unified-matching-r2/README.md`
+  - `docs/research/unified-matching-r2/results/graph-ablation-00.json`
+  - `docs/research/unified-matching-r2/results/graph-ablation-01.json`
+  - `docs/research/unified-matching-r2/results/graph-ablation-02.json`
+  - `docs/research/unified-matching-r2/results/graph-ablation-03.json`
+  - `docs/research/unified-matching-r2/results/graph-ablation-04.json`
+  - `docs/research/unified-matching-r2/results/graph-ablation-05.json`
+  - `docs/research/unified-matching-r2/results/graph-ablation-06.json`
+  - `docs/research/unified-matching-r2/results/graph-ablation-07.json`
+  - `docs/research/unified-matching-r2/results/graph-ablation-08.json`
+  - `docs/research/unified-matching-r2/results/graph-ablation-09.json`
+  - `docs/research/unified-matching-r2/results/graph-ablation-10.json`
+  - `docs/research/unified-matching-r2/results/graph-ablation-11.json`
+  - `docs/research/unified-matching-r2/results/graph-ablation-12.json`
+  - `docs/research/unified-matching-r2/results/graph-ablation-13.json`
+  - `docs/research/unified-matching-r2/results/graph-ablation-14.json`
+  - `docs/research/unified-matching-r2/results/graph-ablation-15.json`
+  - `docs/research/unified-matching-r2/results/graph-ablation-16.json`
+  - `docs/research/unified-matching-r2/results/graph-ablation-17.json`
+  - `docs/research/unified-matching-r2/results/graph-ablation-18.json`
+  - `docs/research/unified-matching-r2/results/graph-ablation-19.json`
+  - `docs/research/unified-matching-r2/results/graph-ablation-20.json`
+  - `docs/research/unified-matching-r2/results/graph-ablation-21.json`
+  - `docs/research/unified-matching-r2/results/graph-ablation-22.json`
+  - `docs/research/unified-matching-r2/results/graph-ambiguous-200.json`
+  - `docs/research/unified-matching-r2/results/graph-ambiguous-300.json`
+  - `docs/research/unified-matching-r2/results/graph-assignment-100.json`
+  - `docs/research/unified-matching-r2/results/graph-assignment-20.json`
+  - `docs/research/unified-matching-r2/results/graph-assignment-200.json`
+  - `docs/research/unified-matching-r2/results/graph-assignment-50.json`
+  - `docs/research/unified-matching-r2/results/graph-cfg-1000.json`
+  - `docs/research/unified-matching-r2/results/graph-cfg-10000.json`
+  - `docs/research/unified-matching-r2/results/graph-cfg-2000.json`
+  - `docs/research/unified-matching-r2/results/graph-cfg-5000.json`
+  - `docs/research/unified-matching-r2/results/graph-cfg-optimized-1000.json`
+  - `docs/research/unified-matching-r2/results/graph-cfg-optimized-10000.json`
+  - `docs/research/unified-matching-r2/results/graph-cfg-optimized-100000.json`
+  - `docs/research/unified-matching-r2/results/graph-cfg-optimized-2000.json`
+  - `docs/research/unified-matching-r2/results/graph-cfg-optimized-5000.json`
+  - `docs/research/unified-matching-r2/results/graph-cfg-optimized-50000.json`
+  - `docs/research/unified-matching-r2/results/graph-collision.json`
+  - `docs/research/unified-matching-r2/results/graph-common-1000.json`
+  - `docs/research/unified-matching-r2/results/graph-common-10000.json`
+  - `docs/research/unified-matching-r2/results/graph-common-100000.json`
+  - `docs/research/unified-matching-r2/results/graph-common-50000.json`
+  - `docs/research/unified-matching-r2/results/graph-determinism-generated-1.json`
+  - `docs/research/unified-matching-r2/results/graph-determinism-generated-321.json`
+  - `docs/research/unified-matching-r2/results/graph-determinism-generated-random.json`
+  - `docs/research/unified-matching-r2/results/graph-determinism-residual-1.json`
+  - `docs/research/unified-matching-r2/results/graph-determinism-residual-321.json`
+  - `docs/research/unified-matching-r2/results/graph-determinism-residual-random.json`
+  - `docs/research/unified-matching-r2/results/graph-exact-1000.json`
+  - `docs/research/unified-matching-r2/results/graph-exact-10000.json`
+  - `docs/research/unified-matching-r2/results/graph-exact-100000.json`
+  - `docs/research/unified-matching-r2/results/graph-exact-50000.json`
+  - `docs/research/unified-matching-r2/results/graph-residual-1000.json`
+  - `docs/research/unified-matching-r2/results/graph-residual-10000.json`
+  - `docs/research/unified-matching-r2/results/graph-residual-100000.json`
+  - `docs/research/unified-matching-r2/results/graph-residual-50000.json`
+  - `docs/research/unified-matching-r2/results/integration-checkpoint.json`
+  - `docs/research/unified-matching-r2/results/native-ghidra-current.json`
+  - `docs/research/unified-matching-r2/results/native-ghidra.json`
+  - `docs/research/unified-matching-r2/results/native-rizin.json`
+  - `docs/research/unified-matching-r2/results/ownership-checkpoint-final.json`
+  - `docs/research/unified-matching-r2/results/reconciliation.json`
+  - `docs/research/unified-matching-r2/results/security-checkpoint-e09.json`
+  - `docs/research/unified-matching-r2/results/test-environment-triage.json`
+  - `docs/research/unified-matching-r2/results/validation.json`
+  - `docs/research/vulnerability-correlation-r4/01-repository-inventory.md`
+  - `docs/research/vulnerability-correlation-r4/02-source-compatibility.md`
+  - `docs/research/vulnerability-correlation-r4/03-windows-servicing.md`
+  - `docs/research/vulnerability-correlation-r4/04-evidence-graph-and-search.md`
+  - `docs/research/vulnerability-correlation-r4/05-binaries-and-function-evidence.md`
+  - `docs/research/vulnerability-correlation-r4/06-acceptance-experiments.md`
+  - `docs/research/vulnerability-correlation-r4/07-priority-backlog-and-r5.md`
+  - `docs/research/vulnerability-correlation-r4/08-graph-beta-kb-metadata.md`
+  - `docs/research/vulnerability-correlation-r4/README.md`
+  - `docs/specs/DOCKABLE-WORKSPACE-SPEC.md`
+  - `docs/specs/REGISTRY.md`
+  - `docs/specs/panels/build_env.md`
+  - `docs/specs/panels/capabilities.md`
+  - `docs/specs/panels/graph.md`
+  - `docs/specs/panels/guide.md`
+  - `docs/specs/panels/kb.md`
+  - `docs/specs/panels/kev.md`
+  - `docs/specs/panels/rules.md`
+  - `docs/specs/panels/search.md`
+  - `docs/specs/panels/strings.md`
+  - `docs/wiki/Architecture-and-Design-Rationale.md`
+  - `docs/wiki/Codebase-Map.md`
+  - `docs/wiki/Developer-Guide.md`
+  - `docs/wiki/Home.md`
+  - `docs/wiki/User-Guide.md`
+  - `docs/wiki/_Sidebar.md`
+
+### `consolidate/kb-fixtures-20261104`
+
+- Head: `820d70744dff58ef484299791d073b2e712f0524`
+- Base: `origin/main` at `5d504ff5c046bfb758623182b472976003632bba`
+- Merge base: `25b2ac8000e4bb2b941ce44ccbbb25a7eff5c278`
+- Associated PR: https://github.com/djshellshoxxx/patchtrace/pull/182
+- Functional scope: {".gitattributes": 1, "tests": 27}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {'SUCCESS': 17, 'SKIPPED': 3}; failures: []; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: candidate: inspect review/protection and focused tests.
+- Recommended disposition: preserve active branch; port only verified unique patches.
+- Unique commits: `efe94f44f87e81c376dac0d0f285153524e65739`, `154e3a571e0a3d922944353afe16bef3cebec7cd`, `099513aabbc2b6420f6893539fa0543b1d6f1b08`, `820d70744dff58ef484299791d073b2e712f0524`
+- Patch-equivalent commits: none
+- Modified files:
+  - `.gitattributes`
+  - `tests/fixtures/kb/CONTRACT_CONFLICTS.md`
+  - `tests/fixtures/kb/MANIFEST.json`
+  - `tests/fixtures/kb/README.md`
+  - `tests/fixtures/kb/confusable_kb.json`
+  - `tests/fixtures/kb/crash_points.json`
+  - `tests/fixtures/kb/csaf_synthetic.json`
+  - `tests/fixtures/kb/cvrf_bom.json`
+  - `tests/fixtures/kb/cvrf_crlf.json`
+  - `tests/fixtures/kb/cvrf_v3_synthetic.json`
+  - `tests/fixtures/kb/raw_adversarial_inputs.json`
+  - `tests/fixtures/kb/update_packages_synthetic.json`
+  - `tests/fixtures/kb/update_relationships_synthetic.json`
+  - `tests/fixtures/kb/vex_synthetic.json`
+  - `tests/fixtures/kb/winbindex_synthetic.json`
+  - `tests/kb_crash_harness.py`
+  - `tests/kb_fixture_performance_plan.md`
+  - `tests/test_acquisition_hostile_20261029.py`
+  - `tests/test_kb_crash_injection_protocol.py`
+  - `tests/test_kb_cvrf_fixture_import.py`
+  - `tests/test_kb_fixture_encoding.py`
+  - `tests/test_kb_fixture_properties.py`
+  - `tests/test_kb_metadata_fixture_boundaries.py`
+  - `tests/test_kb_offline_fixture_import.py`
+  - `tests/test_kb_raw_adversarial_inputs.py`
+  - `tests/test_kb_synthetic_fixture_corpus.py`
+  - `tests/test_kb_update_relationships.py`
+  - `tests/test_ui_unified.py`
+
+### `consolidate/research-r7-20261104`
+
+- Head: `abadcb367564d69a59e7988da5b2abfeb410cfda`
+- Base: `origin/main` at `5d504ff5c046bfb758623182b472976003632bba`
+- Merge base: `25b2ac8000e4bb2b941ce44ccbbb25a7eff5c278`
+- Associated PR: none in open PR snapshot
+- Functional scope: {"docs": 6, "tests": 2, "tools": 3}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {}; failures: []; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: unqualified: no current CI attached.
+- Recommended disposition: preserve active branch; port only verified unique patches.
+- Unique commits: `1f4a078465c3121b620e4c21e13476ec0a779187`, `abadcb367564d69a59e7988da5b2abfeb410cfda`
+- Patch-equivalent commits: none
+- Modified files:
+  - `docs/research/INDEX.md`
+  - `docs/research/advanced-analysis-r7/01-literature-and-methods.md`
+  - `docs/research/advanced-analysis-r7/02-acceptance-and-roadmap.md`
+  - `docs/research/advanced-analysis-r7/README.md`
+  - `docs/research/advanced-analysis-r7/qa.md`
+  - `docs/research/advanced-analysis-r7/synthetic-benchmark.json`
+  - `tests/test_r7_patterns.py`
+  - `tests/test_r7_slicing.py`
+  - `tools/research/r7/bench.py`
+  - `tools/research/r7/patterns.py`
+  - `tools/research/r7/slicer.py`
+
+### `consolidate/rules-callgraph-20261104`
+
+- Head: `7b3fcbaca88256971eafd55b8fb8fe9f44634a9e`
+- Base: `origin/main` at `5d504ff5c046bfb758623182b472976003632bba`
+- Merge base: `25b2ac8000e4bb2b941ce44ccbbb25a7eff5c278`
+- Associated PR: https://github.com/djshellshoxxx/patchtrace/pull/181
+- Functional scope: {"docs": 2, "src/patchtrace/callgraph": 2, "src/patchtrace/rules": 3, "tests": 6}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {'SUCCESS': 17, 'SKIPPED': 3}; failures: []; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: candidate: inspect review/protection and focused tests.
+- Recommended disposition: preserve active branch; port only verified unique patches.
+- Unique commits: `a1d7c1d450d029dde0a119054292432f4fd70f16`, `f0dd4b0e4a439ce863443438de975e4a42d52627`, `5b8e9b1f306780147583fae8912007bed67c79b0`, `c308e6e69d3bf349f2ad9079052cf866f4962862`, `5767f2206d43db4a1d1538356b57fb82e6d732bc`, `cbfa47d9c75b4181eebad9e5d04ee2c00b46baab`, `e9f3c6cbcca091f1208e29135d7bdcbfe894c2de`, `7f1685dfb9d16fa9baef7ca499de709bcc9ba19d`, `7b3fcbaca88256971eafd55b8fb8fe9f44634a9e`
+- Patch-equivalent commits: none
+- Modified files:
+  - `docs/specs/program-e/WB2-integration-plan.md`
+  - `docs/specs/yara-x-rule-workflow.md`
+  - `src/patchtrace/callgraph/algo.py`
+  - `src/patchtrace/callgraph/labels.py`
+  - `src/patchtrace/rules/export.py`
+  - `src/patchtrace/rules/matrix.py`
+  - `src/patchtrace/rules/store.py`
+  - `tests/test_callgraph_algo.py`
+  - `tests/test_callgraph_labels.py`
+  - `tests/test_rules_export.py`
+  - `tests/test_rules_matrix.py`
+  - `tests/test_rules_store.py`
+  - `tests/test_ui_unified.py`
+
+### `consolidate/test-stability-20261104`
+
+- Head: `64e8374d5d3ae97a719a2bb3ac800497c50892af`
+- Base: `origin/main` at `5d504ff5c046bfb758623182b472976003632bba`
+- Merge base: `25b2ac8000e4bb2b941ce44ccbbb25a7eff5c278`
+- Associated PR: https://github.com/djshellshoxxx/patchtrace/pull/184
+- Functional scope: {"tests": 5}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {'SUCCESS': 8, 'FAILURE': 1, 'SKIPPED': 5}; failures: ['qa (windows-latest)']; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: blocked: failing checks.
+- Recommended disposition: preserve active branch; port only verified unique patches.
+- Unique commits: `96b5329e998e98e141a70eff7cf65f9a38a7949c`, `26a17863490d694b3aa0fe5f4c15d1c4b7536dcb`, `da6b815c2d0e8a432f615edb587f4bae679ba355`, `64e8374d5d3ae97a719a2bb3ac800497c50892af`
+- Patch-equivalent commits: none
+- Modified files:
+  - `tests/test_backend_symbol_local.py`
+  - `tests/test_jobs.py`
+  - `tests/test_ui_related_panel.py`
+  - `tests/test_ui_unified.py`
+  - `tests/test_unified_pipeline.py`
+
+### `docs/claude-autonomous-alpha-handoff-20261013`
+
+- Head: `1038d3f13f214d55c28ceeb51c1c13c9b43b1d3f`
+- Base: `origin/main` at `5d504ff5c046bfb758623182b472976003632bba`
+- Merge base: `0a4bc09bb0f658a8b39a799e489b0239620504f0`
+- Associated PR: none in open PR snapshot
+- Functional scope: {"CLAUDE.md": 1, "docs": 1}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {}; failures: []; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: unqualified: no current CI attached.
+- Recommended disposition: preserve active branch; port only verified unique patches.
+- Unique commits: `dfe0f77dcaf78a11741e221e6dd09aa622eaac1c`, `1038d3f13f214d55c28ceeb51c1c13c9b43b1d3f`
+- Patch-equivalent commits: none
+- Modified files:
+  - `CLAUDE.md`
+  - `docs/plans/claude-autonomous-alpha-handoff-20261013.md`
+
+### `docs/csaf-patch-intelligence-specs`
+
+- Head: `24244831ec443fa19555586835e71da6dd4aac98`
+- Base: `origin/main` at `5d504ff5c046bfb758623182b472976003632bba`
+- Merge base: `31bf430c5028cf7f7f9399f21b3894a043f0bc24`
+- Associated PR: none in open PR snapshot
+- Functional scope: {"docs": 4}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {}; failures: []; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: unqualified: no current CI attached.
+- Recommended disposition: preserve active branch; port only verified unique patches.
+- Unique commits: `e35cd3bcdd0eb324506a968dbb790d593cfd72b1`, `9d1da3096cbe95e9fac80d53e8723f41743a510c`, `c7a790f180090180cf137e0b36a2f4acbf6a0c3e`, `42dcbf937d8aa05f7e01db0a5d8493f02d060b34`, `24244831ec443fa19555586835e71da6dd4aac98`
+- Patch-equivalent commits: none
+- Modified files:
+  - `docs/plans/csaf-patch-intelligence-implementation.md`
+  - `docs/specs/csaf-cve-interpretation-engine.md`
+  - `docs/specs/patch-intent-localization-engine.md`
+  - `docs/specs/three-tool-evidence-adapters.md`
+
+### `docs/diaphora-optional-engine-20261014`
+
+- Head: `b75ac57d85c75e8d61c61af8d104119bb1c65587`
+- Base: `origin/main` at `5d504ff5c046bfb758623182b472976003632bba`
+- Merge base: `4fa554a05a5051f0ae2da749ad12e2ec92e094dd`
+- Associated PR: none in open PR snapshot
+- Functional scope: {"docs": 3}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {}; failures: []; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: unqualified: no current CI attached.
+- Recommended disposition: preserve active branch; port only verified unique patches.
+- Unique commits: `3726dd15f0b0c52ace2dfdeef25c610f11723063`, `3141c4f605dcff095d7a637c19a20536550ab24f`, `b75ac57d85c75e8d61c61af8d104119bb1c65587`
+- Patch-equivalent commits: none
+- Modified files:
+  - `docs/plans/diaphora-integration.md`
+  - `docs/research/diaphora-feature-study-20261014.md`
+  - `docs/specs/diaphora-optional-engine.md`
+
+### `docs/dockable-workspace-spec-20261030`
+
+- Head: `6a1e3ce348a7e5f67bbabfe388315812cc830b03`
+- Base: `origin/main` at `5d504ff5c046bfb758623182b472976003632bba`
+- Merge base: `a04f5a299a8d4afef023261e52e08d14678cf1e7`
+- Associated PR: https://github.com/djshellshoxxx/patchtrace/pull/127
+- Functional scope: {"docs": 1}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {'FAILURE': 2, 'SUCCESS': 7, 'SKIPPED': 5}; failures: ['qa (ubuntu-latest)', 'qa (windows-latest)']; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: blocked: failing checks.
+- Recommended disposition: preserve active branch; port only verified unique patches.
+- Unique commits: `6a1e3ce348a7e5f67bbabfe388315812cc830b03`
+- Patch-equivalent commits: none
+- Modified files:
+  - `docs/specs/DOCKABLE-WORKSPACE-SPEC.md`
+
+### `docs/nway-matches`
+
+- Head: `f748cc48ea07b9af189d967979aa078610550eea`
+- Base: `origin/main` at `5d504ff5c046bfb758623182b472976003632bba`
+- Merge base: `20a843348dc125346af346ec32c815c469c67283`
+- Associated PR: none in open PR snapshot
+- Functional scope: {"docs": 1}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {}; failures: []; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: unqualified: no current CI attached.
+- Recommended disposition: preserve active branch; port only verified unique patches.
+- Unique commits: `f748cc48ea07b9af189d967979aa078610550eea`
+- Patch-equivalent commits: none
+- Modified files:
+  - `docs/specs/nway.md`
+
+### `docs/post-consolidation-gap-analysis-20261030`
+
+- Head: `61b5c2bade71a8cec58ca9e1514141f4508b7c79`
+- Base: `origin/integration/controlled-consolidation-20261030` at `f18687fd035b67961c1072af84f8c2b3442979e0`
+- Merge base: `f18687fd035b67961c1072af84f8c2b3442979e0`
+- Associated PR: https://github.com/djshellshoxxx/patchtrace/pull/137
+- Functional scope: {"docs": 5, "tasks": 1}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {'SUCCESS': 12, 'SKIPPED': 3}; failures: []; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: candidate: inspect review/protection and focused tests.
+- Recommended disposition: preserve active branch; port only verified unique patches.
+- Unique commits: `bea81576f1592e37b704622d41e9163a726460a3`, `e9e90e6c4015ac2d8b1dff3362f941e26bf91747`, `7b07fbc850b17af743062ba3f7c81b5541ea4628`, `f05f4e06109b3633ea72468fbc521486fd49ad8f`, `281185289e69b72dc933fda31cf70148eaee776b`, `13e1c87d1f5453dba05982beb27e2137ef791f7c`, `db0210ce0bc8b7750c5e72d7dfd00d5038ed3130`, `e280f762cd78c3cccdcaea06c0a7572c26fcc4c3`, `61b5c2bade71a8cec58ca9e1514141f4508b7c79`
+- Patch-equivalent commits: none
+- Modified files:
+  - `docs/plans/development-dependency-map.md`
+  - `docs/plans/development-gap-analysis.md`
+  - `docs/plans/parallel-development-plan.md`
+  - `docs/plans/release-blockers.md`
+  - `docs/qa.md`
+  - `tasks/todo.md`
+
+### `docs/readme-and-wiki`
+
+- Head: `ad8fbe9f2f041653760c02e9d18a91a66dd11c39`
+- Base: `origin/main` at `5d504ff5c046bfb758623182b472976003632bba`
+- Merge base: `bb84b2606f0674a1db675645f2db98b3a8d3d789`
+- Associated PR: https://github.com/djshellshoxxx/patchtrace/pull/98
+- Functional scope: {"README.md": 1, "docs": 6}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {'SUCCESS': 5, 'SKIPPED': 2}; failures: []; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: candidate: inspect review/protection and focused tests.
+- Recommended disposition: preserve active branch; port only verified unique patches.
+- Unique commits: `ad8fbe9f2f041653760c02e9d18a91a66dd11c39`
+- Patch-equivalent commits: none
+- Modified files:
+  - `README.md`
+  - `docs/wiki/Architecture-and-Design-Rationale.md`
+  - `docs/wiki/Codebase-Map.md`
+  - `docs/wiki/Developer-Guide.md`
+  - `docs/wiki/Home.md`
+  - `docs/wiki/User-Guide.md`
+  - `docs/wiki/_Sidebar.md`
+
+### `docs/semantic-ghidra-roadmap`
+
+- Head: `8b9ebc01bb221a60ee65838dfdafd59d66e15f5d`
+- Base: `origin/main` at `5d504ff5c046bfb758623182b472976003632bba`
+- Merge base: `31bf430c5028cf7f7f9399f21b3894a043f0bc24`
+- Associated PR: none in open PR snapshot
+- Functional scope: {"docs": 1}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {}; failures: []; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: no unique patches relative to base.
+- Recommended disposition: superseded relative to base; verify before closing/deleting.
+- Unique commits: none
+- Patch-equivalent commits: `8b9ebc01bb221a60ee65838dfdafd59d66e15f5d`
+- Modified files:
+  - `docs/plans/ghidra-semantic-runtime-roadmap.md`
+
+### `docs/spec-31-kb-cve-correlation-20261014`
+
+- Head: `9088bf0e2e452c5d792f2a9e6e879f417e9fc120`
+- Base: `origin/main` at `5d504ff5c046bfb758623182b472976003632bba`
+- Merge base: `1560531c7522b10fa5d18ef744ac5a068936ef31`
+- Associated PR: none in open PR snapshot
+- Functional scope: {"docs": 10}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {}; failures: []; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: unqualified: no current CI attached.
+- Recommended disposition: preserve active branch; port only verified unique patches.
+- Unique commits: `2895b339c057749bfc280fa4ae853a7748ebf245`, `91f2e580c694ca5d9abbe5253b26babe568de8b9`, `c9b1285fb54554331e7c683741e437a917a0e81b`, `378341c5276572304cf1733519ab0996b814dc80`, `39c557f64729d80df164ce01dab16fbc7956bd38`, `2f87363fa2c4fe4ef955a1d69c8b7a6f899dc950`, `4c88530f8422452a1a59fdf3425c3cd57e8c74ac`, `ee814e3e11c7758e7f36db3fe6b24115ad1cb34a`, `08ac8955ee0451e2536602d4f532864b26e7cd72`, `9d6411280cab09d43374e0086589d7350629c930`, `5b1652c3dab74c23dc31dd9260155fee7b13dd6b`, `9088bf0e2e452c5d792f2a9e6e879f417e9fc120`
+- Patch-equivalent commits: none
+- Modified files:
+  - `docs/specs/kb-cve-correlation-and-acquisition.md`
+  - `docs/specs/kb-cve/31-A-contracts-identity.md`
+  - `docs/specs/kb-cve/31-B-msrc-reverse-index.md`
+  - `docs/specs/kb-cve/31-C-product-build-pairs.md`
+  - `docs/specs/kb-cve/31-D-acquisition-packages.md`
+  - `docs/specs/kb-cve/31-E-evidence-intent.md`
+  - `docs/specs/kb-cve/31-F-workflow-ui-persistence.md`
+  - `docs/specs/kb-cve/31-G-components-discovery.md`
+  - `docs/specs/kb-cve/31-H-tests-release.md`
+  - `docs/specs/kb-cve/README.md`
+
+### `docs/spec-32-kb-patch-search-20261014`
+
+- Head: `d0ceb56f30f81f881f1f25fb4d1dba772ff476b9`
+- Base: `origin/main` at `5d504ff5c046bfb758623182b472976003632bba`
+- Merge base: `1560531c7522b10fa5d18ef744ac5a068936ef31`
+- Associated PR: none in open PR snapshot
+- Functional scope: {"docs": 8}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {}; failures: []; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: unqualified: no current CI attached.
+- Recommended disposition: preserve active branch; port only verified unique patches.
+- Unique commits: `c0ff9159f02fec493eebd1914935c54828ebb138`, `4bfa66db6e5d6570516075f11c111fe0f7ddf98d`, `7b506a83f5cc04d146cb6e3bc991718ede856d6a`, `a30f3d1abab9b64df7e04b74bfba997100dc08c5`, `3fdab87ba190d80b38f0d0ba937e8f9aacc0c962`, `2c161846710deb4d0113953951f2bf3d9d576d38`, `6db7be46fb83391687266d971a36253d34c7118d`, `e20b7dfa659a3f9eac40907efe1c70a7334e6a9a`, `09384d32ce1f00fcf4e9e8c1e3a7340ff1af041d`, `07d7d7f77a643c20f5c8b2edfa5bcdc1bcaca594`, `266dc67ccf19f2991ace4ceda1a74e4100ccc80b`, `822b3f9a2d000c4b91d4da331ed3d98a23e532b4`, `d884dee8aedfcd8ad32fdd74475e0c9eb0989699`, `adeda1dc877f1e760f1c9cad44ca3050de8f848b`, `cd4178534de84acf15a5e4aa6f00a2220617208d`, `d3d0e9a48902b471f3bb0531fe840b3c6f5d473f`, `d0ceb56f30f81f881f1f25fb4d1dba772ff476b9`
+- Patch-equivalent commits: none
+- Modified files:
+  - `docs/plans/kb-patch-search-implementation.md`
+  - `docs/plans/kb-patch-search-integration-notes.md`
+  - `docs/specs/kb-patch-search-and-pair-resolution.md`
+  - `docs/specs/kb-patch-search-contract-blueprint.md`
+  - `docs/specs/kb-patch-search-pair-lifecycle.md`
+  - `docs/specs/kb-patch-search-qa-and-fixtures.md`
+  - `docs/specs/kb-patch-search-source-adapters.md`
+  - `docs/specs/kb-patch-search-ui-cli-contract.md`
+
+### `docs/specs-plan`
+
+- Head: `a5194581396b67395a0ae8453d73eec5ab024e54`
+- Base: `origin/main` at `5d504ff5c046bfb758623182b472976003632bba`
+- Merge base: `320a87700feb196835b1e45ac90a00bc0963db1d`
+- Associated PR: none in open PR snapshot
+- Functional scope: {"docs": 12, "tasks": 2}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {}; failures: []; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: unqualified: no current CI attached.
+- Recommended disposition: preserve active branch; port only verified unique patches.
+- Unique commits: `93264acf9121c2e423bb1a80495f9d2866493f65`, `9ea48e456dd793586c467aa4ad7a5dde53b57504`, `552a0a05b33fdf424eb02273a8454aeabfb1ac35`, `4a1db22532b55cf3bd6b18347f053e784a6f8e57`, `a5194581396b67395a0ae8453d73eec5ab024e54`
+- Patch-equivalent commits: none
+- Modified files:
+  - `docs/modules.md`
+  - `docs/research/phase3/acquisition.md`
+  - `docs/research/phase3/binexport-bindiff.md`
+  - `docs/research/phase3/nway.md`
+  - `docs/research/phase3/rizin.md`
+  - `docs/specs/acquisition.md`
+  - `docs/specs/architecture.md`
+  - `docs/specs/bindiff-adapter.md`
+  - `docs/specs/completeness-audit.md`
+  - `docs/specs/enrichment.md`
+  - `docs/specs/nway.md`
+  - `docs/specs/secondary-engine.md`
+  - `tasks/plan.md`
+  - `tasks/todo.md`
+
+### `docs/workbench-search-graph-floss-20261014`
+
+- Head: `af15701d13b516662a36f20a00ece01b8462160f`
+- Base: `origin/main` at `5d504ff5c046bfb758623182b472976003632bba`
+- Merge base: `1560531c7522b10fa5d18ef744ac5a068936ef31`
+- Associated PR: none in open PR snapshot
+- Functional scope: {"docs": 6}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {}; failures: []; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: unqualified: no current CI attached.
+- Recommended disposition: preserve active branch; port only verified unique patches.
+- Unique commits: `f22969ba125ec9729a49ece2846cfd7a796c8799`, `d8c40483ccb896af3c69d93a3a4b5b3026b0b56f`, `84fadc72742ce550a073064ac00969e4a77cf140`, `61169b95ab0cb916dff5d8f809c01d21c8b29945`, `3ea1dd2d8574cb60f28f26f035069c2f0df93d79`, `af15701d13b516662a36f20a00ece01b8462160f`
+- Patch-equivalent commits: none
+- Modified files:
+  - `docs/plans/workbench-search-graph-floss-implementation.md`
+  - `docs/specs/workbench/01-search-fts5-rapidfuzz.md`
+  - `docs/specs/workbench/02-networkx-callgraph.md`
+  - `docs/specs/workbench/03-floss-strings.md`
+  - `docs/specs/workbench/04-quickwins.md`
+  - `docs/specs/workbench/README.md`
+
+### `feat/acquisition`
+
+- Head: `293362a2d8cee7d5cc373439436945888b3b805a`
+- Base: `origin/main` at `5d504ff5c046bfb758623182b472976003632bba`
+- Merge base: `320a87700feb196835b1e45ac90a00bc0963db1d`
+- Associated PR: none in open PR snapshot
+- Functional scope: {"docs": 5, "src/patchtrace/acquisition": 6, "src/patchtrace/backend.py": 1, "src/patchtrace/cli.py": 1, "src/patchtrace/diagnostics.py": 1, "src/patchtrace/enrichment": 6, "src/patchtrace/jobs.py": 1, "src/patchtrace/persistence.py": 1, "src/patchtrace/providers.py": 1, "src/patchtrace/reports.py": 1, "src/patchtrace/runtime_discovery.py": 1, "src/patchtrace/service.py": 1, "tests": 16}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {}; failures: []; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: unqualified: no current CI attached.
+- Recommended disposition: preserve active branch; port only verified unique patches.
+- Unique commits: `dd6402b9c00d5aae79f152f4fe5ce0fa8597dc24`, `fd9cffa44142e1aa99732a2b46f599225574d5b5`, `b29267e8f72bfc7578c9e5014fdaeb54180c494d`, `1db176a532bcf40d677ea7cc7c11fb037553358a`, `fae13b2ed3043ddce00bbf387e386e93e7b3ee06`, `9f32a6ecbd056249373b82bc1e814bd938da8c70`, `4c51e4001b4150f4a8a0825fdcc2a0422981bb3e`, `cbc5b079ad2c8cdea4ec161b1afe9ac554b8ed39`, `eed862dd0795f844190b17f89b6bfd86128df9d5`, `09a114a63332a12fce8da5bd57d30841d60c934b`, `293362a2d8cee7d5cc373439436945888b3b805a`
+- Patch-equivalent commits: none
+- Modified files:
+  - `docs/research/phase3/acquisition.md`
+  - `docs/research/phase3/binexport-bindiff.md`
+  - `docs/research/phase3/nway.md`
+  - `docs/research/phase3/rizin.md`
+  - `docs/specs/acquisition.md`
+  - `src/patchtrace/acquisition/__init__.py`
+  - `src/patchtrace/acquisition/contracts.py`
+  - `src/patchtrace/acquisition/delta.py`
+  - `src/patchtrace/acquisition/quarantine.py`
+  - `src/patchtrace/acquisition/transport.py`
+  - `src/patchtrace/acquisition/winbindex.py`
+  - `src/patchtrace/backend.py`
+  - `src/patchtrace/cli.py`
+  - `src/patchtrace/diagnostics.py`
+  - `src/patchtrace/enrichment/cache.py`
+  - `src/patchtrace/enrichment/cve.py`
+  - `src/patchtrace/enrichment/intelligence.py`
+  - `src/patchtrace/enrichment/pipeline.py`
+  - `src/patchtrace/enrichment/signals.py`
+  - `src/patchtrace/enrichment/wil.py`
+  - `src/patchtrace/jobs.py`
+  - `src/patchtrace/persistence.py`
+  - `src/patchtrace/providers.py`
+  - `src/patchtrace/reports.py`
+  - `src/patchtrace/runtime_discovery.py`
+  - `src/patchtrace/service.py`
+  - `tests/fixtures/winbindex/README.md`
+  - `tests/fixtures/winbindex/afd.sys.json`
+  - `tests/test_acquisition_cli.py`
+  - `tests/test_acquisition_delta.py`
+  - `tests/test_acquisition_quarantine.py`
+  - `tests/test_acquisition_transport.py`
+  - `tests/test_acquisition_winbindex.py`
+  - `tests/test_audit_ai_reports.py`
+  - `tests/test_audit_core.py`
+  - `tests/test_audit_enrichment.py`
+  - `tests/test_audit_runtime.py`
+  - `tests/test_enrichment_cache.py`
+  - `tests/test_enrichment_cve.py`
+  - `tests/test_enrichment_intelligence.py`
+  - `tests/test_enrichment_wil.py`
+  - `tests/test_interpretation.py`
+
+### `feat/acquisition-gui`
+
+- Head: `7ae34d8fa26a6b6c8b7acf40f5c16d99643151ce`
+- Base: `origin/main` at `5d504ff5c046bfb758623182b472976003632bba`
+- Merge base: `20a843348dc125346af346ec32c815c469c67283`
+- Associated PR: none in open PR snapshot
+- Functional scope: {"src/patchtrace/ui.py": 1, "tests": 1}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {}; failures: []; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: unqualified: no current CI attached.
+- Recommended disposition: preserve active branch; port only verified unique patches.
+- Unique commits: `7ae34d8fa26a6b6c8b7acf40f5c16d99643151ce`
+- Patch-equivalent commits: none
+- Modified files:
+  - `src/patchtrace/ui.py`
+  - `tests/test_ui_acquisition.py`
+
+### `feat/alpha-ui-integration`
+
+- Head: `c7ed1d90a890afa9eb67c238f9f52f458db96432`
+- Base: `origin/main` at `5d504ff5c046bfb758623182b472976003632bba`
+- Merge base: `1e6703a81c068201758179f5ac884e4fd5375eb7`
+- Associated PR: none in open PR snapshot
+- Functional scope: {"docs": 3, "src/patchtrace/artifact_inspection.py": 1, "src/patchtrace/raw_view.py": 1, "src/patchtrace/tooltips.py": 1, "src/patchtrace/ui.py": 1, "src/patchtrace/ui_inspection.py": 1, "tasks": 1, "tests": 1}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {}; failures: []; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: unqualified: no current CI attached.
+- Recommended disposition: preserve active branch; port only verified unique patches.
+- Unique commits: `2da0b8cb37acf7499378cbfb17c3f66561869eb7`, `c7ed1d90a890afa9eb67c238f9f52f458db96432`
+- Patch-equivalent commits: none
+- Modified files:
+  - `docs/modules.md`
+  - `docs/qa.md`
+  - `docs/specs/gui-preflight-inspection.md`
+  - `src/patchtrace/artifact_inspection.py`
+  - `src/patchtrace/raw_view.py`
+  - `src/patchtrace/tooltips.py`
+  - `src/patchtrace/ui.py`
+  - `src/patchtrace/ui_inspection.py`
+  - `tasks/todo.md`
+  - `tests/test_alpha_integration.py`
+
+### `feat/artifact-bytes-seam`
+
+- Head: `91b35d09afd29e9c78169a3b095d9ea3be6c31b1`
+- Base: `origin/main` at `5d504ff5c046bfb758623182b472976003632bba`
+- Merge base: `f0086f797556afca5848c2b68a3819be5c0c0064`
+- Associated PR: none in open PR snapshot
+- Functional scope: {"docs": 2, "src/patchtrace/artifact_bytes.py": 1, "tests": 1}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {}; failures: []; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: no unique patches relative to base.
+- Recommended disposition: superseded relative to base; verify before closing/deleting.
+- Unique commits: none
+- Patch-equivalent commits: `91b35d09afd29e9c78169a3b095d9ea3be6c31b1`
+- Modified files:
+  - `docs/modules.md`
+  - `docs/specs/gui-preflight-inspection.md`
+  - `src/patchtrace/artifact_bytes.py`
+  - `tests/test_artifact_bytes.py`
+
+### `feat/byte-representations`
+
+- Head: `303bc452d0bb6cd46ee67f731f64ec951e1ee215`
+- Base: `origin/main` at `5d504ff5c046bfb758623182b472976003632bba`
+- Merge base: `0ec471016d2838a90753e014a0d647dd90168e87`
+- Associated PR: none in open PR snapshot
+- Functional scope: {"docs": 1, "src/patchtrace/representations": 6, "tests": 1}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {}; failures: []; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: no unique patches relative to base.
+- Recommended disposition: superseded relative to base; verify before closing/deleting.
+- Unique commits: none
+- Patch-equivalent commits: `303bc452d0bb6cd46ee67f731f64ec951e1ee215`
+- Modified files:
+  - `docs/specs/byte-representations.md`
+  - `src/patchtrace/representations/__init__.py`
+  - `src/patchtrace/representations/compare.py`
+  - `src/patchtrace/representations/formatters.py`
+  - `src/patchtrace/representations/paging.py`
+  - `src/patchtrace/representations/render.py`
+  - `src/patchtrace/representations/scope.py`
+  - `tests/test_representations.py`
+
+### `feat/enrichment-cache`
+
+- Head: `0368fd9b5453ab50166c08cf8dfc493e57b0ee52`
+- Base: `origin/main` at `5d504ff5c046bfb758623182b472976003632bba`
+- Merge base: `615b9354fe8b5a8954d71f212ecf76f5a8d08c0e`
+- Associated PR: none in open PR snapshot
+- Functional scope: {"docs": 2, "pyproject.toml": 1, "src/patchtrace/enrichment": 6, "tests": 2}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {}; failures: []; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: unqualified: no current CI attached.
+- Recommended disposition: preserve active branch; port only verified unique patches.
+- Unique commits: `bafd62a52c2cc397698fd993ea21cf56c3ef4936`, `0368fd9b5453ab50166c08cf8dfc493e57b0ee52`
+- Patch-equivalent commits: none
+- Modified files:
+  - `docs/modules.md`
+  - `docs/specs/enrichment.md`
+  - `pyproject.toml`
+  - `src/patchtrace/enrichment/__init__.py`
+  - `src/patchtrace/enrichment/cache.py`
+  - `src/patchtrace/enrichment/contracts.py`
+  - `src/patchtrace/enrichment/identity.py`
+  - `src/patchtrace/enrichment/ranking.py`
+  - `src/patchtrace/enrichment/views.py`
+  - `tests/test_enrichment_cache.py`
+  - `tests/test_enrichment_core.py`
+
+### `feat/enrichment-contracts`
+
+- Head: `010d809d2581d3a8ed8208e83325ba29f91b2419`
+- Base: `origin/main` at `5d504ff5c046bfb758623182b472976003632bba`
+- Merge base: `2d889417ed2e43d28485dac267d0da1ce2b29e6c`
+- Associated PR: none in open PR snapshot
+- Functional scope: {"PatchTrace.spec": 1, "README.md": 1, "docs": 20, "pyproject.toml": 1, "src/patchtrace/__main__.py": 1, "src/patchtrace/cli.py": 1, "src/patchtrace/enrichment": 12, "src/patchtrace/reports.py": 1, "src/patchtrace/ui.py": 1, "tasks": 1, "tests": 13, "tools": 4}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {}; failures: []; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: unqualified: no current CI attached.
+- Recommended disposition: preserve active branch; port only verified unique patches.
+- Unique commits: `bafd62a52c2cc397698fd993ea21cf56c3ef4936`, `9a6999a0e644ef03670d10fc0b08524345c6c709`, `0368fd9b5453ab50166c08cf8dfc493e57b0ee52`, `60f6140bec032776e13daf428f5129bfbf29bc17`, `7ae13709a77a376e1886d90615a921fa675c1d13`, `85a78a9892541775f5b3aad3177ad81cbf19a84b`, `49bf245583d040a8b29d80daee8666d8c7f7b8d4`, `e96441a1a90478d5b06e7b0d9b4320695a2018ed`, `1f747fd18fe741fa3ee9b7c89e9b56ec193bb835`, `df0e21b73e8b9d37e19bf326209ec78f4d32de03`, `ebc1224db4b581e8155a3488c961ebb5d2b8aeb3`, `cc0cfaf82c8f80a63bb97cd3110acfaf2fba0cd9`, `1f40497ecf034c84ead3dd89c81d001df3d07af2`, `8c214dd4ffd167d15370c590b18a38e87a9707ca`, `6a8d0215ac3ba2d6b4cc20c9af5553a197c7ef94`, `ed4fb7fa876e99c92ba80ac51f9bcee81259d6ac`, `3e6a86dbc96878aafea8fa098102b81a74e702d4`, `2ca0a6421cf776e63b24e0ec625dab7b4a88a82e`, `f6b975fc9217edab862a584eab4fb4d1156c9a94`, `64e6a0bba7c6465d6ee24cd034e8a468ae16e3fa`, `973a7b906c4376668388b45f1766e8bb597bbbab`, `0d1104a62aaf4d0e357235067cb5929ef0e69cf7`, `010d809d2581d3a8ed8208e83325ba29f91b2419`
+- Patch-equivalent commits: none
+- Modified files:
+  - `PatchTrace.spec`
+  - `README.md`
+  - `docs/modules.md`
+  - `docs/qa.md`
+  - `docs/schemas/enrichment/CacheManifest.json`
+  - `docs/schemas/enrichment/ChangeSignal.json`
+  - `docs/schemas/enrichment/ContextContribution.json`
+  - `docs/schemas/enrichment/ContextualEntry.json`
+  - `docs/schemas/enrichment/ContextualRanking.json`
+  - `docs/schemas/enrichment/CveSnapshot.json`
+  - `docs/schemas/enrichment/DetectorOutcome.json`
+  - `docs/schemas/enrichment/FeatureSite.json`
+  - `docs/schemas/enrichment/FeatureTransition.json`
+  - `docs/schemas/enrichment/GroupSubtotal.json`
+  - `docs/schemas/enrichment/PipelineStatus.json`
+  - `docs/schemas/enrichment/RankingConfig.json`
+  - `docs/schemas/enrichment/RankingEntry.json`
+  - `docs/schemas/enrichment/RankingResult.json`
+  - `docs/schemas/enrichment/SignalSet.json`
+  - `docs/schemas/enrichment/SourceLocation.json`
+  - `docs/schemas/enrichment/StageResult.json`
+  - `docs/specs/enrichment.md`
+  - `pyproject.toml`
+  - `src/patchtrace/__main__.py`
+  - `src/patchtrace/cli.py`
+  - `src/patchtrace/enrichment/__init__.py`
+  - `src/patchtrace/enrichment/cache.py`
+  - `src/patchtrace/enrichment/contracts.py`
+  - `src/patchtrace/enrichment/cve.py`
+  - `src/patchtrace/enrichment/identity.py`
+  - `src/patchtrace/enrichment/intelligence.py`
+  - `src/patchtrace/enrichment/pipeline.py`
+  - `src/patchtrace/enrichment/ranking.py`
+  - `src/patchtrace/enrichment/signals.py`
+  - `src/patchtrace/enrichment/storage.py`
+  - `src/patchtrace/enrichment/views.py`
+  - `src/patchtrace/enrichment/wil.py`
+  - `src/patchtrace/reports.py`
+  - `src/patchtrace/ui.py`
+  - `tasks/todo.md`
+  - `tests/fixtures/cve/README.md`
+  - `tests/fixtures/cve/msrc_CVE-2024-38063.json`
+  - `tests/fixtures/cve/nvd_CVE-2024-38063.json`
+  - `tests/test_cli.py`
+  - `tests/test_enrichment_cache.py`
+  - `tests/test_enrichment_core.py`
+  - `tests/test_enrichment_cve.py`
+  - `tests/test_enrichment_intelligence.py`
+  - `tests/test_enrichment_review_regressions.py`
+  - `tests/test_enrichment_signals.py`
+  - `tests/test_enrichment_storage.py`
+  - `tests/test_enrichment_wil.py`
+  - `tests/test_ui_enrichment.py`
+  - `tools/bench_enrichment.py`
+  - `tools/build_linux.py`
+  - `tools/build_windows.py`
+  - `tools/generate_schemas.py`
+
+### `feat/enrichment-cve`
+
+- Head: `49bf245583d040a8b29d80daee8666d8c7f7b8d4`
+- Base: `origin/main` at `5d504ff5c046bfb758623182b472976003632bba`
+- Merge base: `615b9354fe8b5a8954d71f212ecf76f5a8d08c0e`
+- Associated PR: none in open PR snapshot
+- Functional scope: {"docs": 2, "pyproject.toml": 1, "src/patchtrace/enrichment": 7, "tests": 6}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {}; failures: []; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: unqualified: no current CI attached.
+- Recommended disposition: preserve active branch; port only verified unique patches.
+- Unique commits: `bafd62a52c2cc397698fd993ea21cf56c3ef4936`, `49bf245583d040a8b29d80daee8666d8c7f7b8d4`
+- Patch-equivalent commits: none
+- Modified files:
+  - `docs/modules.md`
+  - `docs/specs/enrichment.md`
+  - `pyproject.toml`
+  - `src/patchtrace/enrichment/__init__.py`
+  - `src/patchtrace/enrichment/contracts.py`
+  - `src/patchtrace/enrichment/cve.py`
+  - `src/patchtrace/enrichment/identity.py`
+  - `src/patchtrace/enrichment/intelligence.py`
+  - `src/patchtrace/enrichment/ranking.py`
+  - `src/patchtrace/enrichment/views.py`
+  - `tests/fixtures/cve/README.md`
+  - `tests/fixtures/cve/msrc_CVE-2024-38063.json`
+  - `tests/fixtures/cve/nvd_CVE-2024-38063.json`
+  - `tests/test_enrichment_core.py`
+  - `tests/test_enrichment_cve.py`
+  - `tests/test_enrichment_intelligence.py`
+
+### `feat/enrichment-signals`
+
+- Head: `e96441a1a90478d5b06e7b0d9b4320695a2018ed`
+- Base: `origin/main` at `5d504ff5c046bfb758623182b472976003632bba`
+- Merge base: `615b9354fe8b5a8954d71f212ecf76f5a8d08c0e`
+- Associated PR: none in open PR snapshot
+- Functional scope: {"docs": 2, "pyproject.toml": 1, "src/patchtrace/enrichment": 6, "tests": 2}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {}; failures: []; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: unqualified: no current CI attached.
+- Recommended disposition: preserve active branch; port only verified unique patches.
+- Unique commits: `bafd62a52c2cc397698fd993ea21cf56c3ef4936`, `7ae13709a77a376e1886d90615a921fa675c1d13`, `e96441a1a90478d5b06e7b0d9b4320695a2018ed`
+- Patch-equivalent commits: none
+- Modified files:
+  - `docs/modules.md`
+  - `docs/specs/enrichment.md`
+  - `pyproject.toml`
+  - `src/patchtrace/enrichment/__init__.py`
+  - `src/patchtrace/enrichment/contracts.py`
+  - `src/patchtrace/enrichment/identity.py`
+  - `src/patchtrace/enrichment/ranking.py`
+  - `src/patchtrace/enrichment/signals.py`
+  - `src/patchtrace/enrichment/views.py`
+  - `tests/test_enrichment_core.py`
+  - `tests/test_enrichment_signals.py`
+
+### `feat/enrichment-wil`
+
+- Head: `9a6999a0e644ef03670d10fc0b08524345c6c709`
+- Base: `origin/main` at `5d504ff5c046bfb758623182b472976003632bba`
+- Merge base: `615b9354fe8b5a8954d71f212ecf76f5a8d08c0e`
+- Associated PR: none in open PR snapshot
+- Functional scope: {"docs": 2, "pyproject.toml": 1, "src/patchtrace/enrichment": 6, "tests": 2}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {}; failures: []; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: unqualified: no current CI attached.
+- Recommended disposition: preserve active branch; port only verified unique patches.
+- Unique commits: `bafd62a52c2cc397698fd993ea21cf56c3ef4936`, `9a6999a0e644ef03670d10fc0b08524345c6c709`
+- Patch-equivalent commits: none
+- Modified files:
+  - `docs/modules.md`
+  - `docs/specs/enrichment.md`
+  - `pyproject.toml`
+  - `src/patchtrace/enrichment/__init__.py`
+  - `src/patchtrace/enrichment/contracts.py`
+  - `src/patchtrace/enrichment/identity.py`
+  - `src/patchtrace/enrichment/ranking.py`
+  - `src/patchtrace/enrichment/views.py`
+  - `src/patchtrace/enrichment/wil.py`
+  - `tests/test_enrichment_core.py`
+  - `tests/test_enrichment_wil.py`
+
+### `feat/local-runtime-discovery`
+
+- Head: `b9198705ab4c144746214c1e42c15b6098063009`
+- Base: `origin/main` at `5d504ff5c046bfb758623182b472976003632bba`
+- Merge base: `0f1b4ce5a0b51526fdceb5533f0553321899fd2a`
+- Associated PR: none in open PR snapshot
+- Functional scope: {"README.md": 1, "docs": 4, "src/patchtrace/runtime_discovery.py": 1, "src/patchtrace/ui.py": 1, "tests": 2}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {}; failures: []; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: unqualified: no current CI attached.
+- Recommended disposition: preserve active branch; port only verified unique patches.
+- Unique commits: `b1d0666eb8db120b298ebcb875a4a24c16592343`, `6297b481f01329d05e2a9e4390f547f003afd01d`, `17506bbe7e0703875ea4ea43fb985fe39932859c`, `f16ae866611f1a2a2c8054fa9b9063cef9ec87f3`, `6b9f4bca5063d18d9edb0610a491c6b3823c0391`, `dd35b18ade7a57dc41862bbe64ecbd5717706898`, `29ac0c9c71971b774b02a09cca1886c73f1ba280`, `2acea044891b5089d3dfd3089d0cb95cdbceede7`, `b9198705ab4c144746214c1e42c15b6098063009`
+- Patch-equivalent commits: none
+- Modified files:
+  - `README.md`
+  - `docs/modules.md`
+  - `docs/qa.md`
+  - `docs/specs/runtime-discovery.md`
+  - `docs/windows.md`
+  - `src/patchtrace/runtime_discovery.py`
+  - `src/patchtrace/ui.py`
+  - `tests/test_runtime_discovery.py`
+  - `tests/test_ui.py`
+
+### `feat/nway`
+
+- Head: `44d431788bcc55429a033049ed997fa33c92289b`
+- Base: `origin/main` at `5d504ff5c046bfb758623182b472976003632bba`
+- Merge base: `1223cdd5517c2d49423210a6c7a35b5946679a07`
+- Associated PR: none in open PR snapshot
+- Functional scope: {"docs": 2, "src/patchtrace/backend.py": 1, "src/patchtrace/cli.py": 1, "src/patchtrace/enrichment": 2, "src/patchtrace/nway": 4, "src/patchtrace/reports.py": 1, "src/patchtrace/ui.py": 1, "tasks": 2, "tests": 6, "tools": 1}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {}; failures: []; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: unqualified: no current CI attached.
+- Recommended disposition: preserve active branch; port only verified unique patches.
+- Unique commits: `dd6402b9c00d5aae79f152f4fe5ce0fa8597dc24`, `93264acf9121c2e423bb1a80495f9d2866493f65`, `fd9cffa44142e1aa99732a2b46f599225574d5b5`, `b29267e8f72bfc7578c9e5014fdaeb54180c494d`, `9ea48e456dd793586c467aa4ad7a5dde53b57504`, `1db176a532bcf40d677ea7cc7c11fb037553358a`, `552a0a05b33fdf424eb02273a8454aeabfb1ac35`, `fae13b2ed3043ddce00bbf387e386e93e7b3ee06`, `9f32a6ecbd056249373b82bc1e814bd938da8c70`, `4c51e4001b4150f4a8a0825fdcc2a0422981bb3e`, `4a1db22532b55cf3bd6b18347f053e784a6f8e57`, `cbc5b079ad2c8cdea4ec161b1afe9ac554b8ed39`, `eed862dd0795f844190b17f89b6bfd86128df9d5`, `a5194581396b67395a0ae8453d73eec5ab024e54`, `09a114a63332a12fce8da5bd57d30841d60c934b`, `293362a2d8cee7d5cc373439436945888b3b805a`, `4d5e48ab7df30f6318a8f3177b37ac98741e2b1f`, `f6505928d8264343caa33f878deb253626752944`, `28bc476713fc9b77b876cfc8f5454760ea23d4e0`, `d21b5917a66041cb1ffa4f46931e551e55f3165a`, `12105c3bf16e0f8159246d63d9a213e99fd99955`, `70bdb28db2d8bf3260f5e510acb5ccc6609b5208`, `44d431788bcc55429a033049ed997fa33c92289b`
+- Patch-equivalent commits: none
+- Modified files:
+  - `docs/schemas/profile/AnalysisProfile.json`
+  - `docs/specs/enrichment.md`
+  - `src/patchtrace/backend.py`
+  - `src/patchtrace/cli.py`
+  - `src/patchtrace/enrichment/pipeline.py`
+  - `src/patchtrace/enrichment/profiles.py`
+  - `src/patchtrace/nway/__init__.py`
+  - `src/patchtrace/nway/contracts.py`
+  - `src/patchtrace/nway/graph.py`
+  - `src/patchtrace/nway/series.py`
+  - `src/patchtrace/reports.py`
+  - `src/patchtrace/ui.py`
+  - `tasks/plan.md`
+  - `tasks/todo.md`
+  - `tests/test_nway_graph.py`
+  - `tests/test_nway_series.py`
+  - `tests/test_nway_support.py`
+  - `tests/test_profiles.py`
+  - `tests/test_raw_cache.py`
+  - `tests/test_ui_profiles.py`
+  - `tools/generate_schemas.py`
+
+### `feat/pe-overview`
+
+- Head: `4b78a6d3c0015a5fd46d557cde6cc8f0a583795b`
+- Base: `origin/main` at `5d504ff5c046bfb758623182b472976003632bba`
+- Merge base: `0ec471016d2838a90753e014a0d647dd90168e87`
+- Associated PR: none in open PR snapshot
+- Functional scope: {"docs": 1, "src/patchtrace/pe_overview": 13, "tests": 3}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {}; failures: []; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: no unique patches relative to base.
+- Recommended disposition: superseded relative to base; verify before closing/deleting.
+- Unique commits: none
+- Patch-equivalent commits: `4b78a6d3c0015a5fd46d557cde6cc8f0a583795b`
+- Modified files:
+  - `docs/specs/pe-overview.md`
+  - `src/patchtrace/pe_overview/__init__.py`
+  - `src/patchtrace/pe_overview/_common.py`
+  - `src/patchtrace/pe_overview/authenticode.py`
+  - `src/patchtrace/pe_overview/certificates.py`
+  - `src/patchtrace/pe_overview/compare.py`
+  - `src/patchtrace/pe_overview/debug_info.py`
+  - `src/patchtrace/pe_overview/directories.py`
+  - `src/patchtrace/pe_overview/entropy.py`
+  - `src/patchtrace/pe_overview/headers.py`
+  - `src/patchtrace/pe_overview/imports_exports.py`
+  - `src/patchtrace/pe_overview/inspect.py`
+  - `src/patchtrace/pe_overview/models.py`
+  - `src/patchtrace/pe_overview/sections.py`
+  - `tests/pe_builder.py`
+  - `tests/test_pe_overview.py`
+  - `tests/test_pe_overview_map_compare.py`
+
+### `feat/phase2-finish`
+
+- Head: `86afe3f6563b71e1fff5ed56a907f29c6703b96e`
+- Base: `origin/main` at `5d504ff5c046bfb758623182b472976003632bba`
+- Merge base: `1223cdd5517c2d49423210a6c7a35b5946679a07`
+- Associated PR: none in open PR snapshot
+- Functional scope: {".github": 1, "docs": 2, "src/patchtrace/backend.py": 1, "src/patchtrace/cli.py": 1, "src/patchtrace/enrichment": 2, "src/patchtrace/reports.py": 1, "src/patchtrace/ui.py": 1, "tasks": 2, "tests": 3, "tools": 2}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {}; failures: []; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: unqualified: no current CI attached.
+- Recommended disposition: preserve active branch; port only verified unique patches.
+- Unique commits: `dd6402b9c00d5aae79f152f4fe5ce0fa8597dc24`, `93264acf9121c2e423bb1a80495f9d2866493f65`, `fd9cffa44142e1aa99732a2b46f599225574d5b5`, `b29267e8f72bfc7578c9e5014fdaeb54180c494d`, `9ea48e456dd793586c467aa4ad7a5dde53b57504`, `1db176a532bcf40d677ea7cc7c11fb037553358a`, `552a0a05b33fdf424eb02273a8454aeabfb1ac35`, `fae13b2ed3043ddce00bbf387e386e93e7b3ee06`, `9f32a6ecbd056249373b82bc1e814bd938da8c70`, `4c51e4001b4150f4a8a0825fdcc2a0422981bb3e`, `4a1db22532b55cf3bd6b18347f053e784a6f8e57`, `cbc5b079ad2c8cdea4ec161b1afe9ac554b8ed39`, `eed862dd0795f844190b17f89b6bfd86128df9d5`, `a5194581396b67395a0ae8453d73eec5ab024e54`, `09a114a63332a12fce8da5bd57d30841d60c934b`, `293362a2d8cee7d5cc373439436945888b3b805a`, `4d5e48ab7df30f6318a8f3177b37ac98741e2b1f`, `f6505928d8264343caa33f878deb253626752944`, `28bc476713fc9b77b876cfc8f5454760ea23d4e0`, `d21b5917a66041cb1ffa4f46931e551e55f3165a`, `12105c3bf16e0f8159246d63d9a213e99fd99955`, `86afe3f6563b71e1fff5ed56a907f29c6703b96e`
+- Patch-equivalent commits: none
+- Modified files:
+  - `.github/workflows/live-backend.yml`
+  - `docs/schemas/profile/AnalysisProfile.json`
+  - `docs/specs/enrichment.md`
+  - `src/patchtrace/backend.py`
+  - `src/patchtrace/cli.py`
+  - `src/patchtrace/enrichment/pipeline.py`
+  - `src/patchtrace/enrichment/profiles.py`
+  - `src/patchtrace/reports.py`
+  - `src/patchtrace/ui.py`
+  - `tasks/plan.md`
+  - `tasks/todo.md`
+  - `tests/test_profiles.py`
+  - `tests/test_raw_cache.py`
+  - `tests/test_ui_profiles.py`
+  - `tools/generate_schemas.py`
+  - `tools/live_cache_check.py`
+
+### `feat/phase3-batch`
+
+- Head: `3581b520207b464b35a7baa39d188fb4f2a08cf1`
+- Base: `origin/main` at `5d504ff5c046bfb758623182b472976003632bba`
+- Merge base: `20a843348dc125346af346ec32c815c469c67283`
+- Associated PR: none in open PR snapshot
+- Functional scope: {".github": 1, "README.md": 1, "docs": 1, "src/patchtrace/cli.py": 1, "src/patchtrace/enrichment": 1, "src/patchtrace/nway": 4, "src/patchtrace/secondary": 6, "src/patchtrace/ui.py": 1, "tasks": 1, "tests": 11}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {}; failures: []; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: unqualified: no current CI attached.
+- Recommended disposition: preserve active branch; port only verified unique patches.
+- Unique commits: `dd6402b9c00d5aae79f152f4fe5ce0fa8597dc24`, `93264acf9121c2e423bb1a80495f9d2866493f65`, `fd9cffa44142e1aa99732a2b46f599225574d5b5`, `b29267e8f72bfc7578c9e5014fdaeb54180c494d`, `9ea48e456dd793586c467aa4ad7a5dde53b57504`, `1db176a532bcf40d677ea7cc7c11fb037553358a`, `552a0a05b33fdf424eb02273a8454aeabfb1ac35`, `fae13b2ed3043ddce00bbf387e386e93e7b3ee06`, `9f32a6ecbd056249373b82bc1e814bd938da8c70`, `4c51e4001b4150f4a8a0825fdcc2a0422981bb3e`, `4a1db22532b55cf3bd6b18347f053e784a6f8e57`, `cbc5b079ad2c8cdea4ec161b1afe9ac554b8ed39`, `eed862dd0795f844190b17f89b6bfd86128df9d5`, `a5194581396b67395a0ae8453d73eec5ab024e54`, `09a114a63332a12fce8da5bd57d30841d60c934b`, `293362a2d8cee7d5cc373439436945888b3b805a`, `4d5e48ab7df30f6318a8f3177b37ac98741e2b1f`, `f6505928d8264343caa33f878deb253626752944`, `28bc476713fc9b77b876cfc8f5454760ea23d4e0`, `d21b5917a66041cb1ffa4f46931e551e55f3165a`, `12105c3bf16e0f8159246d63d9a213e99fd99955`, `70bdb28db2d8bf3260f5e510acb5ccc6609b5208`, `f748cc48ea07b9af189d967979aa078610550eea`, `7ae34d8fa26a6b6c8b7acf40f5c16d99643151ce`, `44d431788bcc55429a033049ed997fa33c92289b`, `b932ae1a1c8916aeac7be2d49ce27c24717f2846`, `462ef7fa098caa0df8608a7ea28c07003904b92d`, `81ac386f465301dff08b41b0d1ecd3e452755b5b`, `709b4d1b5a40ed0235aeb2a858c0759278510383`, `b8d1ad1af87c4672c1e83defb2126a5d9cfa5da4`, `3581b520207b464b35a7baa39d188fb4f2a08cf1`
+- Patch-equivalent commits: none
+- Modified files:
+  - `.github/workflows/qa-windows.yml`
+  - `README.md`
+  - `docs/specs/nway.md`
+  - `src/patchtrace/cli.py`
+  - `src/patchtrace/enrichment/storage.py`
+  - `src/patchtrace/nway/__init__.py`
+  - `src/patchtrace/nway/contracts.py`
+  - `src/patchtrace/nway/graph.py`
+  - `src/patchtrace/nway/series.py`
+  - `src/patchtrace/secondary/__init__.py`
+  - `src/patchtrace/secondary/bindiff.py`
+  - `src/patchtrace/secondary/binexport.py`
+  - `src/patchtrace/secondary/contracts.py`
+  - `src/patchtrace/secondary/reconcile.py`
+  - `src/patchtrace/secondary/rzdiff.py`
+  - `src/patchtrace/ui.py`
+  - `tasks/todo.md`
+  - `tests/fixtures/secondary/README.md`
+  - `tests/fixtures/secondary/rzdiff-functions.json`
+  - `tests/test_cli_secondary.py`
+  - `tests/test_nway_graph.py`
+  - `tests/test_nway_series.py`
+  - `tests/test_nway_support.py`
+  - `tests/test_secondary_bindiff.py`
+  - `tests/test_secondary_binexport.py`
+  - `tests/test_secondary_reconcile.py`
+  - `tests/test_secondary_rzdiff.py`
+  - `tests/test_ui_acquisition.py`
+
+### `feat/profiles`
+
+- Head: `d21b5917a66041cb1ffa4f46931e551e55f3165a`
+- Base: `origin/main` at `5d504ff5c046bfb758623182b472976003632bba`
+- Merge base: `320a87700feb196835b1e45ac90a00bc0963db1d`
+- Associated PR: none in open PR snapshot
+- Functional scope: {"README.md": 1, "docs": 14, "src/patchtrace/__main__.py": 1, "src/patchtrace/acquisition": 6, "src/patchtrace/backend.py": 1, "src/patchtrace/cli.py": 1, "src/patchtrace/diagnostics.py": 1, "src/patchtrace/enrichment": 7, "src/patchtrace/jobs.py": 1, "src/patchtrace/persistence.py": 1, "src/patchtrace/providers.py": 1, "src/patchtrace/reports.py": 1, "src/patchtrace/runtime_discovery.py": 1, "src/patchtrace/service.py": 1, "src/patchtrace/ui.py": 1, "tasks": 2, "tests": 20, "tools": 1}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {}; failures: []; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: unqualified: no current CI attached.
+- Recommended disposition: preserve active branch; port only verified unique patches.
+- Unique commits: `dd6402b9c00d5aae79f152f4fe5ce0fa8597dc24`, `93264acf9121c2e423bb1a80495f9d2866493f65`, `fd9cffa44142e1aa99732a2b46f599225574d5b5`, `b29267e8f72bfc7578c9e5014fdaeb54180c494d`, `9ea48e456dd793586c467aa4ad7a5dde53b57504`, `1db176a532bcf40d677ea7cc7c11fb037553358a`, `552a0a05b33fdf424eb02273a8454aeabfb1ac35`, `fae13b2ed3043ddce00bbf387e386e93e7b3ee06`, `9f32a6ecbd056249373b82bc1e814bd938da8c70`, `4c51e4001b4150f4a8a0825fdcc2a0422981bb3e`, `4a1db22532b55cf3bd6b18347f053e784a6f8e57`, `cbc5b079ad2c8cdea4ec161b1afe9ac554b8ed39`, `eed862dd0795f844190b17f89b6bfd86128df9d5`, `a5194581396b67395a0ae8453d73eec5ab024e54`, `09a114a63332a12fce8da5bd57d30841d60c934b`, `293362a2d8cee7d5cc373439436945888b3b805a`, `4d5e48ab7df30f6318a8f3177b37ac98741e2b1f`, `f6505928d8264343caa33f878deb253626752944`, `d21b5917a66041cb1ffa4f46931e551e55f3165a`
+- Patch-equivalent commits: none
+- Modified files:
+  - `README.md`
+  - `docs/modules.md`
+  - `docs/qa.md`
+  - `docs/research/phase3/acquisition.md`
+  - `docs/research/phase3/binexport-bindiff.md`
+  - `docs/research/phase3/nway.md`
+  - `docs/research/phase3/rizin.md`
+  - `docs/schemas/profile/AnalysisProfile.json`
+  - `docs/specs/acquisition.md`
+  - `docs/specs/architecture.md`
+  - `docs/specs/bindiff-adapter.md`
+  - `docs/specs/completeness-audit.md`
+  - `docs/specs/enrichment.md`
+  - `docs/specs/nway.md`
+  - `docs/specs/secondary-engine.md`
+  - `src/patchtrace/__main__.py`
+  - `src/patchtrace/acquisition/__init__.py`
+  - `src/patchtrace/acquisition/contracts.py`
+  - `src/patchtrace/acquisition/delta.py`
+  - `src/patchtrace/acquisition/quarantine.py`
+  - `src/patchtrace/acquisition/transport.py`
+  - `src/patchtrace/acquisition/winbindex.py`
+  - `src/patchtrace/backend.py`
+  - `src/patchtrace/cli.py`
+  - `src/patchtrace/diagnostics.py`
+  - `src/patchtrace/enrichment/cache.py`
+  - `src/patchtrace/enrichment/cve.py`
+  - `src/patchtrace/enrichment/intelligence.py`
+  - `src/patchtrace/enrichment/pipeline.py`
+  - `src/patchtrace/enrichment/profiles.py`
+  - `src/patchtrace/enrichment/signals.py`
+  - `src/patchtrace/enrichment/wil.py`
+  - `src/patchtrace/jobs.py`
+  - `src/patchtrace/persistence.py`
+  - `src/patchtrace/providers.py`
+  - `src/patchtrace/reports.py`
+  - `src/patchtrace/runtime_discovery.py`
+  - `src/patchtrace/service.py`
+  - `src/patchtrace/ui.py`
+  - `tasks/plan.md`
+  - `tasks/todo.md`
+  - `tests/fixtures/winbindex/README.md`
+  - `tests/fixtures/winbindex/afd.sys.json`
+  - `tests/test_acquisition_cli.py`
+  - `tests/test_acquisition_delta.py`
+  - `tests/test_acquisition_quarantine.py`
+  - `tests/test_acquisition_transport.py`
+  - `tests/test_acquisition_winbindex.py`
+  - `tests/test_audit_ai_reports.py`
+  - `tests/test_audit_core.py`
+  - `tests/test_audit_desktop.py`
+  - `tests/test_audit_enrichment.py`
+  - `tests/test_audit_runtime.py`
+  - `tests/test_enrichment_cache.py`
+  - `tests/test_enrichment_cve.py`
+  - `tests/test_enrichment_intelligence.py`
+  - `tests/test_enrichment_wil.py`
+  - `tests/test_interpretation.py`
+  - `tests/test_profiles.py`
+  - `tests/test_ui.py`
+  - `tests/test_ui_profiles.py`
+  - `tools/generate_schemas.py`
+
+### `feat/raw-cache`
+
+- Head: `28bc476713fc9b77b876cfc8f5454760ea23d4e0`
+- Base: `origin/main` at `5d504ff5c046bfb758623182b472976003632bba`
+- Merge base: `320a87700feb196835b1e45ac90a00bc0963db1d`
+- Associated PR: none in open PR snapshot
+- Functional scope: {"README.md": 1, "docs": 13, "src/patchtrace/__main__.py": 1, "src/patchtrace/acquisition": 6, "src/patchtrace/backend.py": 1, "src/patchtrace/cli.py": 1, "src/patchtrace/diagnostics.py": 1, "src/patchtrace/enrichment": 6, "src/patchtrace/jobs.py": 1, "src/patchtrace/persistence.py": 1, "src/patchtrace/providers.py": 1, "src/patchtrace/reports.py": 1, "src/patchtrace/runtime_discovery.py": 1, "src/patchtrace/service.py": 1, "src/patchtrace/ui.py": 1, "tasks": 2, "tests": 19}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {}; failures: []; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: unqualified: no current CI attached.
+- Recommended disposition: preserve active branch; port only verified unique patches.
+- Unique commits: `dd6402b9c00d5aae79f152f4fe5ce0fa8597dc24`, `93264acf9121c2e423bb1a80495f9d2866493f65`, `fd9cffa44142e1aa99732a2b46f599225574d5b5`, `b29267e8f72bfc7578c9e5014fdaeb54180c494d`, `9ea48e456dd793586c467aa4ad7a5dde53b57504`, `1db176a532bcf40d677ea7cc7c11fb037553358a`, `552a0a05b33fdf424eb02273a8454aeabfb1ac35`, `fae13b2ed3043ddce00bbf387e386e93e7b3ee06`, `9f32a6ecbd056249373b82bc1e814bd938da8c70`, `4c51e4001b4150f4a8a0825fdcc2a0422981bb3e`, `4a1db22532b55cf3bd6b18347f053e784a6f8e57`, `cbc5b079ad2c8cdea4ec161b1afe9ac554b8ed39`, `eed862dd0795f844190b17f89b6bfd86128df9d5`, `a5194581396b67395a0ae8453d73eec5ab024e54`, `09a114a63332a12fce8da5bd57d30841d60c934b`, `293362a2d8cee7d5cc373439436945888b3b805a`, `4d5e48ab7df30f6318a8f3177b37ac98741e2b1f`, `f6505928d8264343caa33f878deb253626752944`, `28bc476713fc9b77b876cfc8f5454760ea23d4e0`
+- Patch-equivalent commits: none
+- Modified files:
+  - `README.md`
+  - `docs/modules.md`
+  - `docs/qa.md`
+  - `docs/research/phase3/acquisition.md`
+  - `docs/research/phase3/binexport-bindiff.md`
+  - `docs/research/phase3/nway.md`
+  - `docs/research/phase3/rizin.md`
+  - `docs/specs/acquisition.md`
+  - `docs/specs/architecture.md`
+  - `docs/specs/bindiff-adapter.md`
+  - `docs/specs/completeness-audit.md`
+  - `docs/specs/enrichment.md`
+  - `docs/specs/nway.md`
+  - `docs/specs/secondary-engine.md`
+  - `src/patchtrace/__main__.py`
+  - `src/patchtrace/acquisition/__init__.py`
+  - `src/patchtrace/acquisition/contracts.py`
+  - `src/patchtrace/acquisition/delta.py`
+  - `src/patchtrace/acquisition/quarantine.py`
+  - `src/patchtrace/acquisition/transport.py`
+  - `src/patchtrace/acquisition/winbindex.py`
+  - `src/patchtrace/backend.py`
+  - `src/patchtrace/cli.py`
+  - `src/patchtrace/diagnostics.py`
+  - `src/patchtrace/enrichment/cache.py`
+  - `src/patchtrace/enrichment/cve.py`
+  - `src/patchtrace/enrichment/intelligence.py`
+  - `src/patchtrace/enrichment/pipeline.py`
+  - `src/patchtrace/enrichment/signals.py`
+  - `src/patchtrace/enrichment/wil.py`
+  - `src/patchtrace/jobs.py`
+  - `src/patchtrace/persistence.py`
+  - `src/patchtrace/providers.py`
+  - `src/patchtrace/reports.py`
+  - `src/patchtrace/runtime_discovery.py`
+  - `src/patchtrace/service.py`
+  - `src/patchtrace/ui.py`
+  - `tasks/plan.md`
+  - `tasks/todo.md`
+  - `tests/fixtures/winbindex/README.md`
+  - `tests/fixtures/winbindex/afd.sys.json`
+  - `tests/test_acquisition_cli.py`
+  - `tests/test_acquisition_delta.py`
+  - `tests/test_acquisition_quarantine.py`
+  - `tests/test_acquisition_transport.py`
+  - `tests/test_acquisition_winbindex.py`
+  - `tests/test_audit_ai_reports.py`
+  - `tests/test_audit_core.py`
+  - `tests/test_audit_desktop.py`
+  - `tests/test_audit_enrichment.py`
+  - `tests/test_audit_runtime.py`
+  - `tests/test_enrichment_cache.py`
+  - `tests/test_enrichment_cve.py`
+  - `tests/test_enrichment_intelligence.py`
+  - `tests/test_enrichment_wil.py`
+  - `tests/test_interpretation.py`
+  - `tests/test_raw_cache.py`
+  - `tests/test_ui.py`
+
+### `feat/secondary`
+
+- Head: `b932ae1a1c8916aeac7be2d49ce27c24717f2846`
+- Base: `origin/main` at `5d504ff5c046bfb758623182b472976003632bba`
+- Merge base: `20a843348dc125346af346ec32c815c469c67283`
+- Associated PR: none in open PR snapshot
+- Functional scope: {"src/patchtrace/enrichment": 1, "src/patchtrace/secondary": 6, "tests": 6}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {}; failures: []; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: unqualified: no current CI attached.
+- Recommended disposition: preserve active branch; port only verified unique patches.
+- Unique commits: `b932ae1a1c8916aeac7be2d49ce27c24717f2846`
+- Patch-equivalent commits: none
+- Modified files:
+  - `src/patchtrace/enrichment/storage.py`
+  - `src/patchtrace/secondary/__init__.py`
+  - `src/patchtrace/secondary/bindiff.py`
+  - `src/patchtrace/secondary/binexport.py`
+  - `src/patchtrace/secondary/contracts.py`
+  - `src/patchtrace/secondary/reconcile.py`
+  - `src/patchtrace/secondary/rzdiff.py`
+  - `tests/fixtures/secondary/README.md`
+  - `tests/fixtures/secondary/rzdiff-functions.json`
+  - `tests/test_secondary_bindiff.py`
+  - `tests/test_secondary_binexport.py`
+  - `tests/test_secondary_reconcile.py`
+  - `tests/test_secondary_rzdiff.py`
+
+### `feat/tooltip-registry`
+
+- Head: `0a3843ea2abe37d42ff0291d621fa9a7c9744bbc`
+- Base: `origin/main` at `5d504ff5c046bfb758623182b472976003632bba`
+- Merge base: `0ec471016d2838a90753e014a0d647dd90168e87`
+- Associated PR: none in open PR snapshot
+- Functional scope: {"docs": 1, "src/patchtrace/tooltips.py": 1, "src/patchtrace/ui.py": 1, "tests": 1}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {}; failures: []; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: no unique patches relative to base.
+- Recommended disposition: superseded relative to base; verify before closing/deleting.
+- Unique commits: none
+- Patch-equivalent commits: `0a3843ea2abe37d42ff0291d621fa9a7c9744bbc`
+- Modified files:
+  - `docs/specs/gui-preflight-inspection.md`
+  - `src/patchtrace/tooltips.py`
+  - `src/patchtrace/ui.py`
+  - `tests/test_tooltips.py`
+
+### `feat/verified-offline-runtime-bundle`
+
+- Head: `1724503d01be7aee13cb43a3a7a28b8a9ff54ece`
+- Base: `origin/main` at `5d504ff5c046bfb758623182b472976003632bba`
+- Merge base: `2148a3fba9d41a11cd0d60215b4c7926196bf4fc`
+- Associated PR: none in open PR snapshot
+- Functional scope: {"README.md": 1, "docs": 5, "src/patchtrace/backend.py": 1, "src/patchtrace/offline_bundle.py": 1, "src/patchtrace/runtime_discovery.py": 1, "src/patchtrace/ui.py": 1, "tasks": 1, "tests": 4, "tools": 1}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {}; failures: []; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: unqualified: no current CI attached.
+- Recommended disposition: preserve active branch; port only verified unique patches.
+- Unique commits: `037afbcb43ca69189d5f525f7c7ad1289d518c6d`, `83c1008f4c752d6b01c62cf1ca9a21704911d230`, `013ae86d25afdffc7bc465665d55e60b0da809de`, `ec8bcfc82d19a1da20c7f77699c1ac2f3f60928a`, `fcaba0cc36f5e042291827665f420a46915831c3`, `6cf73c611cb7a07cd21621b8179118fb60bf5b85`, `7b2aec72cf580c2f75a4316782708eb08e18038e`, `9390377173a8b7d30822bd06a4b07dcb64fd9a45`, `247902cb7889d75037d3fff67b29f1a28d7a6fb0`, `24903fadd9b018cbc7abd70a9522253ceca0d46c`, `c16b22e62bee334fa04067a8fb2b7acb8c7362e0`, `c16535d7a307887014793ede5d48b4f748b916dd`, `dd8e98f344eda648a1f73889ef28f9cc59206069`, `e1e184d24d94384d7fc2f2f297a52bc190ba6f61`, `b2604d70d5eea17b9a4cf83198f74cf4fc2bace8`, `6713bbe66eba1ad1809635817b84e9f1b75c42af`, `1de25a86f5d31580e5d86369926deda7125f04aa`, `3507a058cd1522c2e4c5c060f36b33b965ba82ff`, `f2da166306659ccb0bff3f8d5f68ed27700e8cc7`, `00165c787c2039bf473c72327168fe556368fbb6`, `8226cd75774a34a2a8c2a467312fc8751aa878bc`, `34c014583bcb6493325d3ca6f6b9669e7a77c48c`, `e9f0c8dd49c8d330677cace118fa05d833610ca2`, `011ab0d84551921091154a5b5b0abbf1a107df21`, `6ff851d3740bb6e316262cfa507b2b029f0e36c8`, `81007b64dbdd8cba38cf1e250eb10af5bb853761`, `eff750327b913cb199ab13dee599e795a1ca3c3d`, `8c34f5ad826d6cab5f35b43949407822594460f4`, `d467ca4a3e7684a548512e51b4c837d7a400eb35`
+- Patch-equivalent commits: none
+- Modified files:
+  - `README.md`
+  - `docs/modules.md`
+  - `docs/offline-backend.md`
+  - `docs/qa.md`
+  - `docs/specs/offline-backend-installer.md`
+  - `docs/windows.md`
+  - `src/patchtrace/backend.py`
+  - `src/patchtrace/offline_bundle.py`
+  - `src/patchtrace/runtime_discovery.py`
+  - `src/patchtrace/ui.py`
+  - `tasks/todo.md`
+  - `tests/test_jobs.py`
+  - `tests/test_offline_bundle.py`
+  - `tests/test_runtime_discovery.py`
+  - `tests/test_ui.py`
+  - `tools/make_offline_bundle.py`
+
+### `feature/alpha-file-overview-20261013`
+
+- Head: `476016590be5cd1315613759af18ff61c7c27851`
+- Base: `origin/main` at `5d504ff5c046bfb758623182b472976003632bba`
+- Merge base: `0a4bc09bb0f658a8b39a799e489b0239620504f0`
+- Associated PR: none in open PR snapshot
+- Functional scope: {"docs": 1, "src/patchtrace/preflight.py": 1, "src/patchtrace/ui.py": 1, "tests": 1}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {}; failures: []; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: unqualified: no current CI attached.
+- Recommended disposition: preserve active branch; port only verified unique patches.
+- Unique commits: `21ccb19d2c0151f6a4103be28fcc0a6b2dc810e2`, `12ac2e1256d1791bda7a895fdffda1b3013c8eb0`, `71fc606760eac0977c5b90d4297bd79695bb7739`, `476016590be5cd1315613759af18ff61c7c27851`
+- Patch-equivalent commits: none
+- Modified files:
+  - `docs/specs/gui-preflight-inspection.md`
+  - `src/patchtrace/preflight.py`
+  - `src/patchtrace/ui.py`
+  - `tests/test_preflight_overview.py`
+
+### `feature/evidence-reconciliation-confidence`
+
+- Head: `ddda35f40b94c145b2a9a9b68509b4ddb76a090a`
+- Base: `origin/main` at `5d504ff5c046bfb758623182b472976003632bba`
+- Merge base: `31bf430c5028cf7f7f9399f21b3894a043f0bc24`
+- Associated PR: none in open PR snapshot
+- Functional scope: {"docs": 1, "src/patchtrace/cli.py": 1, "src/patchtrace/secondary": 1, "tests": 1}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {}; failures: []; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: unqualified: no current CI attached.
+- Recommended disposition: preserve active branch; port only verified unique patches.
+- Unique commits: `7b5b3e2cc4577e4997ea817226e1f257c2aaa40c`, `7cadcdf644cac4fef36535d19da36ddba4e4665e`, `6e5c363f264bf594115103654e20a1c3fc5968f5`, `5d0a0b95feaffaab0d23df9f841079089d4f75ed`, `0d33092856a5de6621ed32709138f1857eca8cfa`, `ddda35f40b94c145b2a9a9b68509b4ddb76a090a`
+- Patch-equivalent commits: none
+- Modified files:
+  - `docs/specs/multi-engine-evidence-calibration.md`
+  - `src/patchtrace/cli.py`
+  - `src/patchtrace/secondary/evidence.py`
+  - `tests/test_secondary_evidence.py`
+
+### `feature/gui-inspection-preview`
+
+- Head: `8b94227a81b71841c65783c775f704a538d35710`
+- Base: `origin/main` at `5d504ff5c046bfb758623182b472976003632bba`
+- Merge base: `31bf430c5028cf7f7f9399f21b3894a043f0bc24`
+- Associated PR: none in open PR snapshot
+- Functional scope: {"docs": 1, "src/patchtrace/ui.py": 1, "tests": 1}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {}; failures: []; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: unqualified: no current CI attached.
+- Recommended disposition: preserve active branch; port only verified unique patches.
+- Unique commits: `4603db5202c06b3cf83a4eabef52238aa8555c3c`, `785571b0c3f64264fee8191c35dc6e92237dfc10`, `35b6c6fd65714de0dd32b7d8fc2947da2fcc2927`, `1cd5818062f95a9722f86ac92b0b147490f715e5`, `8b94227a81b71841c65783c775f704a538d35710`
+- Patch-equivalent commits: none
+- Modified files:
+  - `docs/specs/gui-preflight-inspection.md`
+  - `src/patchtrace/ui.py`
+  - `tests/test_diff_navigation_extra.py`
+
+### `fix/backend-exit-diagnostics`
+
+- Head: `bc00a6912dde57482a301bf64ef6fbc3f324cb92`
+- Base: `origin/main` at `5d504ff5c046bfb758623182b472976003632bba`
+- Merge base: `736332cf63d3c7927f5c17f4aea5150f624bf957`
+- Associated PR: none in open PR snapshot
+- Functional scope: {"docs": 3, "src/patchtrace/backend.py": 1, "src/patchtrace/diagnostics.py": 1, "tests": 1}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {}; failures: []; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: unqualified: no current CI attached.
+- Recommended disposition: preserve active branch; port only verified unique patches.
+- Unique commits: `483d9cac572b8803d503fceb87e7b5a706bacd3f`, `f66000f1e18ada9a8d0aab7489c2cbe148d12d5c`, `0321b184c94981235d4944efcc7fb7985dd03147`, `05a508697945c3a00b8b4385fd463394f62a6bc8`, `e593fe9dd3f9b994d8afc53b6588326f58cc4dc5`, `d590d987980980757bb59b7bafe243c927a8acfd`
+- Patch-equivalent commits: none
+- Modified files:
+  - `docs/modules.md`
+  - `docs/qa.md`
+  - `docs/specs/architecture.md`
+  - `src/patchtrace/backend.py`
+  - `src/patchtrace/diagnostics.py`
+  - `tests/test_jobs.py`
+
+### `fix/codex-cloud-secret-preflight-20261103`
+
+- Head: `bd3dbcae9254853f534b735864c0709f6766ced3`
+- Base: `origin/main` at `5d504ff5c046bfb758623182b472976003632bba`
+- Merge base: `bd3dbcae9254853f534b735864c0709f6766ced3`
+- Associated PR: none in open PR snapshot
+- Functional scope: {}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {}; failures: []; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: no unique patches relative to base.
+- Recommended disposition: keep automation separate; owner budget/activation review.
+- Unique commits: none
+- Patch-equivalent commits: none
+- Modified files:
+
+### `fix/explicit-offline-symbol-policy`
+
+- Head: `2e6618762ab6e15e5be0be60aec3fb8f56af44f3`
+- Base: `origin/main` at `5d504ff5c046bfb758623182b472976003632bba`
+- Merge base: `97dda86615fd21a74ad0568301b24368e9efd070`
+- Associated PR: none in open PR snapshot
+- Functional scope: {"README.md": 1, "docs": 3, "src/patchtrace/backend.py": 1, "src/patchtrace/reports.py": 1, "src/patchtrace/ui.py": 1, "tasks": 1, "tests": 2}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {}; failures: []; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: unqualified: no current CI attached.
+- Recommended disposition: preserve active branch; port only verified unique patches.
+- Unique commits: `c66ada1cb4e56600503940bed3fe77c2be177544`, `c4b3cb8caafdaf42cc64a6bf147e640ba3ef1041`, `ab807b5f1b16d5a79fd8bcc38ef5b454a65823a4`, `da924b0a0fd8df1631556df9a52b61280f158c4b`, `d76beb88ca8c584eadf15a7da2c7cc3fd59a5986`, `f3c312d407bd7f87e12f0f37d90a1bd0960185c3`, `bd95a653dcfdff9dccdaec814e9f1f8e965da045`, `8751fd0579509142e5ed30b7d09382093bec658b`, `c44af897a9cbe0a6457b513b586de97ea33c57b9`, `d6be868505d3ab03b13dd58714cd636bdbb82ad0`, `6c0dab8222602e186a9faf0723cd154afb2f2c84`, `2e6618762ab6e15e5be0be60aec3fb8f56af44f3`
+- Patch-equivalent commits: none
+- Modified files:
+  - `README.md`
+  - `docs/qa.md`
+  - `docs/specs/architecture.md`
+  - `docs/windows.md`
+  - `src/patchtrace/backend.py`
+  - `src/patchtrace/reports.py`
+  - `src/patchtrace/ui.py`
+  - `tasks/todo.md`
+  - `tests/test_jobs.py`
+  - `tests/test_ui.py`
+
+### `fix/ghidra-dot-paths`
+
+- Head: `5c3b1df94c0d2a908bb0459caceb336912527555`
+- Base: `origin/main` at `5d504ff5c046bfb758623182b472976003632bba`
+- Merge base: `df5fcd3bcee640351ff0d797123bfadab41be629`
+- Associated PR: none in open PR snapshot
+- Functional scope: {"docs": 2, "src/patchtrace/backend.py": 1, "tasks": 1, "tests": 2}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {}; failures: []; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: unqualified: no current CI attached.
+- Recommended disposition: preserve active branch; port only verified unique patches.
+- Unique commits: `575ca804578ebcadaacb91d07e0b6abbdf864aeb`, `ab14d890df04555899ae6bf2095009c5b6b5aaeb`, `cec2d99b529d8761d6b175c9c0071776360b3e4e`, `0fa9fa41cdd5a14bb7bf4cd5e998f18af97962c3`, `4671cbcecc006814e886cac0e337311b34b9042d`, `5c3b1df94c0d2a908bb0459caceb336912527555`
+- Patch-equivalent commits: none
+- Modified files:
+  - `docs/qa.md`
+  - `docs/specs/architecture.md`
+  - `src/patchtrace/backend.py`
+  - `tasks/todo.md`
+  - `tests/test_jobs.py`
+  - `tests/test_ui.py`
+
+### `fix/isolate-ghidra-scratch`
+
+- Head: `7ea7272311271a540a188e5d0de6d3aaa8864611`
+- Base: `origin/main` at `5d504ff5c046bfb758623182b472976003632bba`
+- Merge base: `5667b759f553e946885d0998953c301666907de6`
+- Associated PR: none in open PR snapshot
+- Functional scope: {".github": 1, "docs": 3, "src/patchtrace/backend.py": 1, "tasks": 1, "tests": 1}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {}; failures: []; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: unqualified: no current CI attached.
+- Recommended disposition: preserve active branch; port only verified unique patches.
+- Unique commits: `6c74096604ef3a68695a8599500a0d7f403065ce`, `118ecea25c17723c83606e2f00289de51a7668e6`, `993916518c2d0abdb9f89a73f29d54ba20c98709`, `55a1e6bd1545a615aed1d90450359abe21827494`, `8988213c7d5c1e90fa032ddcf9f036fc369e5745`, `604e3680e5f29d79bab6bfe2a0a152d08e4f5129`, `53a8562f03e46164b900cb992321fdb172865356`, `7ea7272311271a540a188e5d0de6d3aaa8864611`
+- Patch-equivalent commits: none
+- Modified files:
+  - `.github/workflows/live-backend.yml`
+  - `docs/audits/2026-10-11-runtime-reliability.md`
+  - `docs/qa.md`
+  - `docs/specs/architecture.md`
+  - `src/patchtrace/backend.py`
+  - `tasks/todo.md`
+  - `tests/test_jobs.py`
+
+### `fix/pe-inspection-row-tooltips-20261013`
+
+- Head: `0182a8035d64071fc88b5f299edc3ef3760946b5`
+- Base: `origin/main` at `5d504ff5c046bfb758623182b472976003632bba`
+- Merge base: `58578e176ff420f0e80eb1d41c740d43bd01ea4a`
+- Associated PR: none in open PR snapshot
+- Functional scope: {"docs": 1, "src/patchtrace/tooltips.py": 1, "src/patchtrace/ui_inspection.py": 1, "tests": 1}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {}; failures: []; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: unqualified: no current CI attached.
+- Recommended disposition: preserve active branch; port only verified unique patches.
+- Unique commits: `b213bfe65eb47e2e9fca2d5fd802298a7e0adb15`, `a8c1382f57c91d59b6a8b94d89e7f126dfce442d`, `586d226402d2f7941cdd748d6056ccc3003f490d`, `3af645afffe6f74e2534aac9e0e6bd354a8b47a0`, `1b3f11c9fe56328210fbf54df12612d7ffb1aaa9`, `0182a8035d64071fc88b5f299edc3ef3760946b5`
+- Patch-equivalent commits: none
+- Modified files:
+  - `docs/plans/claude-code-handoff-after-alpha.md`
+  - `src/patchtrace/tooltips.py`
+  - `src/patchtrace/ui_inspection.py`
+  - `tests/test_inspection_row_tooltips.py`
+
+### `fix/pr110-ci-regressions-20261029`
+
+- Head: `979ddfad860c95ceabeb5b670b771900b5617098`
+- Base: `origin/main` at `5d504ff5c046bfb758623182b472976003632bba`
+- Merge base: `979ddfad860c95ceabeb5b670b771900b5617098`
+- Associated PR: none in open PR snapshot
+- Functional scope: {}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {}; failures: []; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: no unique patches relative to base.
+- Recommended disposition: superseded relative to base; verify before closing/deleting.
+- Unique commits: none
+- Patch-equivalent commits: none
+- Modified files:
+
+### `fix/remediation-53088704-982db3`
+
+- Head: `15370a0bf690ea65f49d1f6cc67c40f73fd3d77c`
+- Base: `origin/main` at `5d504ff5c046bfb758623182b472976003632bba`
+- Merge base: `6579ed83211b7ff2039e3152728ac1cddc3e93d6`
+- Associated PR: none in open PR snapshot
+- Functional scope: {"docs": 14, "tasks": 1, "tests": 1, "tools": 2}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {}; failures: []; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: unqualified: no current CI attached.
+- Recommended disposition: preserve active branch; port only verified unique patches.
+- Unique commits: `4aa99f7bd989765000c6ebd659c9565030a48849`, `15370a0bf690ea65f49d1f6cc67c40f73fd3d77c`
+- Patch-equivalent commits: none
+- Modified files:
+  - `docs/modules.md`
+  - `docs/qa.md`
+  - `docs/qa/corpus-focused-20261101.log.gz`
+  - `docs/qa/corpus-html-green-final-20261101.log.gz`
+  - `docs/qa/corpus-html-red-20261101.log.gz`
+  - `docs/qa/corpus-prereg-green-20261101.log.gz`
+  - `docs/qa/corpus-prereg-red-20261101.log.gz`
+  - `docs/qa/corpus-review-green-final-20261101.log.gz`
+  - `docs/qa/corpus-review-red-20261101.log.gz`
+  - `docs/qa/corpus-safeguards-20261101.json`
+  - `docs/qa/corpus-safeguards-20261101.md`
+  - `docs/qa/prereg-main-port-20261101.log.gz`
+  - `docs/qa/prereg-main-port-20261101.md`
+  - `docs/specs/calibration-corpus-and-model.md`
+  - `tasks/todo.md`
+  - `tests/test_train_prereg_selection.py`
+  - `tools/calibration/prereg_gate.py`
+  - `tools/calibration/train.py`
+
+### `haiku/cli-help-suppress-20261027`
+
+- Head: `37940b706f117f9786109433aed7751eca4e52a6`
+- Base: `origin/main` at `5d504ff5c046bfb758623182b472976003632bba`
+- Merge base: `e093ade3e66eebf915d1c93c75cf18c033c2abb5`
+- Associated PR: none in open PR snapshot
+- Functional scope: {"src/patchtrace/secondary": 1, "tests": 1}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {}; failures: []; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: unqualified: no current CI attached.
+- Recommended disposition: preserve active branch; port only verified unique patches.
+- Unique commits: `37940b706f117f9786109433aed7751eca4e52a6`
+- Patch-equivalent commits: none
+- Modified files:
+  - `src/patchtrace/secondary/cli_binexport.py`
+  - `tests/test_secondary_help.py`
+
+### `haiku/phase2-handoff-import-20261027`
+
+- Head: `4522030ff3ff76d720a5efc33953aaa5e5837398`
+- Base: `origin/main` at `5d504ff5c046bfb758623182b472976003632bba`
+- Merge base: `e093ade3e66eebf915d1c93c75cf18c033c2abb5`
+- Associated PR: none in open PR snapshot
+- Functional scope: {".gitattributes": 1, "docs": 4, "pyproject.toml": 1, "tests": 1}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {}; failures: []; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: unqualified: no current CI attached.
+- Recommended disposition: preserve active branch; port only verified unique patches.
+- Unique commits: `4522030ff3ff76d720a5efc33953aaa5e5837398`
+- Patch-equivalent commits: none
+- Modified files:
+  - `.gitattributes`
+  - `docs/schemas/phase2/PatchTrace-Phase2-Contracts-v1.schema.json`
+  - `docs/schemas/phase2/PatchTrace-Phase2-Synthetic-Examples-v1.json`
+  - `docs/specs/phase2/PROVENANCE.md`
+  - `docs/specs/phase2/PatchTrace-Extension-Specification-2026-10-11.md`
+  - `pyproject.toml`
+  - `tests/test_phase2_contract_examples.py`
+
+### `haiku/skills-manifest-import-20261027`
+
+- Head: `039b0ef8a5d0cb5136aca72be5c65d11867c19af`
+- Base: `origin/main` at `5d504ff5c046bfb758623182b472976003632bba`
+- Merge base: `e093ade3e66eebf915d1c93c75cf18c033c2abb5`
+- Associated PR: none in open PR snapshot
+- Functional scope: {"skills": 29, "tests": 1}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {}; failures: []; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: unqualified: no current CI attached.
+- Recommended disposition: preserve active branch; port only verified unique patches.
+- Unique commits: `039b0ef8a5d0cb5136aca72be5c65d11867c19af`
+- Patch-equivalent commits: none
+- Modified files:
+  - `skills/PATCHTRACE-SKILLS-MANIFEST.json`
+  - `skills/binary-analysis-patterns/LICENSE`
+  - `skills/binary-analysis-patterns/SKILL.md`
+  - `skills/binary-analysis-patterns/references/details.md`
+  - `skills/caveman/LICENSE`
+  - `skills/caveman/LICENSE-MIT`
+  - `skills/caveman/LICENSING.md`
+  - `skills/caveman/NOTICE`
+  - `skills/caveman/README.md`
+  - `skills/caveman/SKILL.md`
+  - `skills/github-actions-templates/LICENSE`
+  - `skills/github-actions-templates/SKILL.md`
+  - `skills/python-design-patterns/LICENSE`
+  - `skills/python-design-patterns/SKILL.md`
+  - `skills/python-design-patterns/references/details.md`
+  - `skills/python-error-handling/LICENSE`
+  - `skills/python-error-handling/SKILL.md`
+  - `skills/python-error-handling/references/details.md`
+  - `skills/python-packaging/LICENSE`
+  - `skills/python-packaging/SKILL.md`
+  - `skills/python-packaging/references/advanced-patterns.md`
+  - `skills/python-packaging/references/details.md`
+  - `skills/python-resource-management/LICENSE`
+  - `skills/python-resource-management/SKILL.md`
+  - `skills/python-resource-management/references/details.md`
+  - `skills/python-testing-patterns/LICENSE`
+  - `skills/python-testing-patterns/SKILL.md`
+  - `skills/python-testing-patterns/references/advanced-patterns.md`
+  - `skills/python-testing-patterns/references/details.md`
+  - `tests/test_skills_manifest.py`
+
+### `integration/controlled-consolidation-20261030`
+
+- Head: `f18687fd035b67961c1072af84f8c2b3442979e0`
+- Base: `origin/main` at `5d504ff5c046bfb758623182b472976003632bba`
+- Merge base: `a04f5a299a8d4afef023261e52e08d14678cf1e7`
+- Associated PR: none in open PR snapshot
+- Functional scope: {"README.md": 1, "docs": 14, "tasks": 1}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {}; failures: []; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: unqualified: no current CI attached.
+- Recommended disposition: preserve active branch; port only verified unique patches.
+- Unique commits: `b26ca2c9bf85e9b7bc385b02c7bfdad1d7d724de`, `e81adbe882ae6eb2c26a5854b24aa6acff2b27a2`, `c307aaad162cff1f4464b62469792ead8d877385`, `e9f6be5d8c0cdc36d1a65f81403901648a6fe1fc`, `fffd5badb1ed84c8e930d667eae7d2d1dcf5a64f`, `d21d66758f75c6a3912b76042a792c0b9bb2eea2`, `ecfb60193b806dd984c044ae8f347b063e3d5155`, `aa6d614f0677e908727224aa4e46453108bb1b57`, `f82489bc9ff8ad89987670fde484a5f579aefa6b`, `5736376891d273fb16fa211ed0fa2de5125c1601`, `f18687fd035b67961c1072af84f8c2b3442979e0`
+- Patch-equivalent commits: none
+- Modified files:
+  - `README.md`
+  - `docs/branch-pr-inventory-2026-10-30.md`
+  - `docs/integration/pr-gates-01.md`
+  - `docs/integration/pr-gates-02.md`
+  - `docs/integration/pr-gates-03.md`
+  - `docs/integration/pr-gates-04.md`
+  - `docs/integration/pr-gates-05.md`
+  - `docs/integration/pr-gates-06.md`
+  - `docs/qa.md`
+  - `docs/wiki/Architecture-and-Design-Rationale.md`
+  - `docs/wiki/Codebase-Map.md`
+  - `docs/wiki/Developer-Guide.md`
+  - `docs/wiki/Home.md`
+  - `docs/wiki/User-Guide.md`
+  - `docs/wiki/_Sidebar.md`
+  - `tasks/todo.md`
+
+### `integration/kb-fixtures-pr69-20261030`
+
+- Head: `2fcd627e52a6d784d5c2e5b4ea8105e90b8589b3`
+- Base: `origin/integration/controlled-consolidation-20261030` at `f18687fd035b67961c1072af84f8c2b3442979e0`
+- Merge base: `f18687fd035b67961c1072af84f8c2b3442979e0`
+- Associated PR: https://github.com/djshellshoxxx/patchtrace/pull/136
+- Functional scope: {"tests": 24}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {'FAILURE': 2, 'SUCCESS': 12, 'SKIPPED': 5}; failures: ['qa (ubuntu-latest)', 'qa (windows-latest)']; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: blocked: failing checks.
+- Recommended disposition: preserve active branch; port only verified unique patches.
+- Unique commits: `2fcd627e52a6d784d5c2e5b4ea8105e90b8589b3`
+- Patch-equivalent commits: none
+- Modified files:
+  - `tests/fixtures/kb/CONTRACT_CONFLICTS.md`
+  - `tests/fixtures/kb/MANIFEST.json`
+  - `tests/fixtures/kb/README.md`
+  - `tests/fixtures/kb/crash_points.json`
+  - `tests/fixtures/kb/csaf_synthetic.json`
+  - `tests/fixtures/kb/cvrf_bom.json`
+  - `tests/fixtures/kb/cvrf_crlf.json`
+  - `tests/fixtures/kb/cvrf_v3_synthetic.json`
+  - `tests/fixtures/kb/raw_adversarial_inputs.json`
+  - `tests/fixtures/kb/update_packages_synthetic.json`
+  - `tests/fixtures/kb/update_relationships_synthetic.json`
+  - `tests/fixtures/kb/vex_synthetic.json`
+  - `tests/fixtures/kb/winbindex_synthetic.json`
+  - `tests/kb_crash_harness.py`
+  - `tests/kb_fixture_performance_plan.md`
+  - `tests/test_kb_crash_injection_protocol.py`
+  - `tests/test_kb_cvrf_fixture_import.py`
+  - `tests/test_kb_fixture_encoding.py`
+  - `tests/test_kb_fixture_properties.py`
+  - `tests/test_kb_metadata_fixture_boundaries.py`
+  - `tests/test_kb_offline_fixture_import.py`
+  - `tests/test_kb_raw_adversarial_inputs.py`
+  - `tests/test_kb_synthetic_fixture_corpus.py`
+  - `tests/test_kb_update_relationships.py`
+
+### `repair/gt01-consolidated-native-evidence-20261030`
+
+- Head: `c04ad725551fe8daa139b37aa2cdf46d6d161b65`
+- Base: `origin/integration/controlled-consolidation-20261030` at `f18687fd035b67961c1072af84f8c2b3442979e0`
+- Merge base: `f18687fd035b67961c1072af84f8c2b3442979e0`
+- Associated PR: https://github.com/djshellshoxxx/patchtrace/pull/139
+- Functional scope: {".github": 1, "docs": 1, "tests": 4, "tools": 1}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {'FAILURE': 2, 'SUCCESS': 7, 'SKIPPED': 5}; failures: ['qa (ubuntu-latest)', 'qa (windows-latest)']; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: blocked: failing checks.
+- Recommended disposition: preserve active branch; port only verified unique patches.
+- Unique commits: `c04ad725551fe8daa139b37aa2cdf46d6d161b65`
+- Patch-equivalent commits: none
+- Modified files:
+  - `.github/workflows/unified-live-gates.yml`
+  - `docs/plans/gt01-overlap-disposition-20261030.md`
+  - `tests/test_unified_live_native_failure_details.py`
+  - `tests/test_unified_live_pairs.py`
+  - `tests/test_unified_live_pairs_r1.py`
+  - `tests/test_unified_live_workflow.py`
+  - `tools/unified/live_pairs.py`
+
+### `repair/gt01-native-identical-controls-20261030`
+
+- Head: `fb91cff6d91c77a2c539c896b670d81180dcc637`
+- Base: `origin/repair/gt01-consolidated-native-evidence-20261030` at `c04ad725551fe8daa139b37aa2cdf46d6d161b65`
+- Merge base: `c04ad725551fe8daa139b37aa2cdf46d6d161b65`
+- Associated PR: https://github.com/djshellshoxxx/patchtrace/pull/140
+- Functional scope: {"docs": 4, "src/patchtrace/backend.py": 1, "tasks": 1, "tests": 3, "tools": 1}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {'SUCCESS': 19, 'SKIPPED': 3}; failures: []; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: candidate: inspect review/protection and focused tests.
+- Recommended disposition: preserve active branch; port only verified unique patches.
+- Unique commits: `b87193d1dd30635fce33986f80ceade136507a1a`, `fb91cff6d91c77a2c539c896b670d81180dcc637`
+- Patch-equivalent commits: none
+- Modified files:
+  - `docs/plans/gt01-native-output-diagnosis-20261030.md`
+  - `docs/qa.md`
+  - `docs/specs/architecture.md`
+  - `docs/specs/unified-engine/08-evaluation.md`
+  - `src/patchtrace/backend.py`
+  - `tasks/todo.md`
+  - `tests/test_jobs.py`
+  - `tests/test_unified_live_force_identical.py`
+  - `tests/test_unified_live_native_failure_details.py`
+  - `tools/unified/live_pairs.py`
+
+### `repair/gt01-unified-live-gates-20261030`
+
+- Head: `ca1a36c0caea44a9225e487f3ba7b0828c90a567`
+- Base: `origin/integration/controlled-consolidation-20261030` at `f18687fd035b67961c1072af84f8c2b3442979e0`
+- Merge base: `f18687fd035b67961c1072af84f8c2b3442979e0`
+- Associated PR: https://github.com/djshellshoxxx/patchtrace/pull/138
+- Functional scope: {".github": 1, "tests": 2, "tools": 1}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {'SUCCESS': 12, 'SKIPPED': 3}; failures: []; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: candidate: inspect review/protection and focused tests.
+- Recommended disposition: preserve active branch; port only verified unique patches.
+- Unique commits: `9f5a3491b2fdce5c03477866e389f6b080ef2d5d`, `42e4381d576cae6bcd244fee310c51ed0c2f79a6`, `ff21f69782d5b9609e5034356c9aaf454db6bcb1`, `ca1a36c0caea44a9225e487f3ba7b0828c90a567`
+- Patch-equivalent commits: none
+- Modified files:
+  - `.github/workflows/unified-live-gates.yml`
+  - `tests/test_unified_live_pairs.py`
+  - `tests/test_unified_live_workflow.py`
+  - `tools/unified/live_pairs.py`
+
+### `repair/rzdiff-native-callback-size-20261103`
+
+- Head: `edab7d916970144b33c98384834369773e5b0e62`
+- Base: `origin/repair/rzdiff-producer-ownership` at `4d66af5577e6f6ad8f6e21440f6fe4187e0c8fe5`
+- Merge base: `4d66af5577e6f6ad8f6e21440f6fe4187e0c8fe5`
+- Associated PR: https://github.com/djshellshoxxx/patchtrace/pull/166
+- Functional scope: {"tools": 1}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {'SUCCESS': 9, 'CANCELLED': 1, 'SKIPPED': 5}; failures: []; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: candidate: inspect review/protection and focused tests.
+- Recommended disposition: preserve active branch; port only verified unique patches.
+- Unique commits: `edab7d916970144b33c98384834369773e5b0e62`
+- Patch-equivalent commits: none
+- Modified files:
+  - `tools/rzdiff/native_control.c`
+
+### `repair/rzdiff-native-red-control-20261103`
+
+- Head: `b304034e3c310528f7e0a3206eda48c94e0a6873`
+- Base: `origin/repair/rzdiff-native-callback-size-20261103` at `edab7d916970144b33c98384834369773e5b0e62`
+- Merge base: `edab7d916970144b33c98384834369773e5b0e62`
+- Associated PR: https://github.com/djshellshoxxx/patchtrace/pull/168
+- Functional scope: {".github": 1, "docs": 5, "tests": 1, "tools": 2}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {'SUCCESS': 9, 'CANCELLED': 1, 'SKIPPED': 5, 'FAILURE': 1}; failures: ['SonarCloud Code Analysis']; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: blocked: failing checks.
+- Recommended disposition: preserve active branch; port only verified unique patches.
+- Unique commits: `4013cdd5d491b5d662105a24c63761ee7c787480`, `b304034e3c310528f7e0a3206eda48c94e0a6873`
+- Patch-equivalent commits: none
+- Modified files:
+  - `.github/workflows/rzdiff-producer.yml`
+  - `docs/handoff/rzdiff-native-red-control.md`
+  - `docs/qa/rzdiff-native-evidence-red.log`
+  - `docs/qa/rzdiff-native-evidence-tests.log`
+  - `docs/qa/rzdiff-native-oracle-red.log`
+  - `docs/qa/rzdiff-native-oracle-tests.log`
+  - `tests/test_rzdiff_native_evidence.py`
+  - `tools/rzdiff/native_control.c`
+  - `tools/rzdiff/native_evidence.py`
+
+### `repair/rzdiff-producer-ownership`
+
+- Head: `4d66af5577e6f6ad8f6e21440f6fe4187e0c8fe5`
+- Base: `origin/codex/consolidation-integrity-20261103` at `b58bb53debcb3323e5d8d634e09397cb7e02965f`
+- Merge base: `b58bb53debcb3323e5d8d634e09397cb7e02965f`
+- Associated PR: https://github.com/djshellshoxxx/patchtrace/pull/165
+- Functional scope: {".github": 1, "docs": 3, "tests": 1, "tools": 4}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {'FAILURE': 2, 'SUCCESS': 7, 'CANCELLED': 1, 'SKIPPED': 5}; failures: ['producer', 'SonarCloud Code Analysis']; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: blocked: failing checks.
+- Recommended disposition: preserve active branch; port only verified unique patches.
+- Unique commits: `51e5b4b1cc5bd7aa628fc9ebe72ddd0d19addbdb`, `4d66af5577e6f6ad8f6e21440f6fe4187e0c8fe5`
+- Patch-equivalent commits: none
+- Modified files:
+  - `.github/workflows/rzdiff-producer.yml`
+  - `docs/handoff/rzdiff-producer-implementation.md`
+  - `docs/qa/rzdiff-producer-boundary.log`
+  - `docs/qa/rzdiff-producer-checkpoint.json`
+  - `tests/test_rzdiff_producer_patch.py`
+  - `tools/rzdiff/boundary_control.c`
+  - `tools/rzdiff/native_control.c`
+  - `tools/rzdiff/patch_producer.py`
+  - `tools/rzdiff/singleton-ownership.patch`
+
+### `research/additional-reuse-claude-20261103`
+
+- Head: `be4a58ff7d8facc57e99faac9c743cb8d60b36f4`
+- Base: `origin/main` at `5d504ff5c046bfb758623182b472976003632bba`
+- Merge base: `b77d84e5decf736b031f0a24094001274de41178`
+- Associated PR: https://github.com/djshellshoxxx/patchtrace/pull/178
+- Functional scope: {"CLAUDE.md": 1, "docs": 10}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {'SUCCESS': 13, 'SKIPPED': 2}; failures: []; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: candidate: inspect review/protection and focused tests.
+- Recommended disposition: preserve active branch; port only verified unique patches.
+- Unique commits: `be4a58ff7d8facc57e99faac9c743cb8d60b36f4`
+- Patch-equivalent commits: none
+- Modified files:
+  - `CLAUDE.md`
+  - `docs/research/20261103-additional-research/01-current-state-and-research-gaps.md`
+  - `docs/research/20261103-additional-research/02-engine-runtime-reuse.md`
+  - `docs/research/20261103-additional-research/03-metadata-provenance-reuse.md`
+  - `docs/research/20261103-additional-research/04-desktop-persistence-release-reuse.md`
+  - `docs/research/20261103-additional-research/05-corpus-calibration-reproducibility.md`
+  - `docs/research/20261103-additional-research/06-claude-action-plan-and-reuse-register.md`
+  - `docs/research/20261103-additional-research/README.md`
+  - `docs/research/20261103-additional-research/repository-snapshot.json`
+  - `docs/research/20261103-additional-research/validation.json`
+  - `docs/research/INDEX.md`
+
+### `research/r4-vulnerability-correlation-20261030`
+
+- Head: `ff570bdd784d02f745e4ad21d8aa7b4f1f776344`
+- Base: `origin/main` at `5d504ff5c046bfb758623182b472976003632bba`
+- Merge base: `a04f5a299a8d4afef023261e52e08d14678cf1e7`
+- Associated PR: https://github.com/djshellshoxxx/patchtrace/pull/130
+- Functional scope: {"docs": 9}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {'SUCCESS': 12, 'SKIPPED': 3}; failures: []; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: candidate: inspect review/protection and focused tests.
+- Recommended disposition: preserve active branch; port only verified unique patches.
+- Unique commits: `f42f007f42d09a65af6c6fbf00d4f69ba248f0ab`, `75289b369d940965092cd7357a9e45abad103189`, `d0c230c73a69394b227d3ddc5f1cab07082d77dc`, `35f1eb7b2e9b0794d63d9fffb5bc77c767807f6e`, `cbdfec2adb5f9329eecfaa239e2bca2533fd9a48`, `96751e3da94de94d39005950422fe1b42ed1331f`, `05adfb423e58cd5ce2243802b622e5fa259d4521`, `4ba5c68e6e3fadbcc356ab2be4dea2c57ca516c2`, `125626473f834fec5c622afd9d9cd8a000355955`, `72c8717e7084458744af74ae613e2c1aab40f0d0`, `d915e65d66067c086065d81371d813aad048b758`, `ff570bdd784d02f745e4ad21d8aa7b4f1f776344`
+- Patch-equivalent commits: none
+- Modified files:
+  - `docs/research/vulnerability-correlation-r4/01-repository-inventory.md`
+  - `docs/research/vulnerability-correlation-r4/02-source-compatibility.md`
+  - `docs/research/vulnerability-correlation-r4/03-windows-servicing.md`
+  - `docs/research/vulnerability-correlation-r4/04-evidence-graph-and-search.md`
+  - `docs/research/vulnerability-correlation-r4/05-binaries-and-function-evidence.md`
+  - `docs/research/vulnerability-correlation-r4/06-acceptance-experiments.md`
+  - `docs/research/vulnerability-correlation-r4/07-priority-backlog-and-r5.md`
+  - `docs/research/vulnerability-correlation-r4/08-graph-beta-kb-metadata.md`
+  - `docs/research/vulnerability-correlation-r4/README.md`
+
+### `research/r6-final-integration-engineering-notes-20261030`
+
+- Head: `3010f289dbb46a1db62218a35cca03420090e306`
+- Base: `origin/main` at `5d504ff5c046bfb758623182b472976003632bba`
+- Merge base: `a04f5a299a8d4afef023261e52e08d14678cf1e7`
+- Associated PR: https://github.com/djshellshoxxx/patchtrace/pull/133
+- Functional scope: {"docs": 9}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {'SUCCESS': 8, 'FAILURE': 1, 'SKIPPED': 5}; failures: ['qa (windows-latest)']; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: blocked: failing checks.
+- Recommended disposition: preserve active branch; port only verified unique patches.
+- Unique commits: `2dbd97f5d7ab4003755090c764dff89d840c3b35`, `4cc178e7762cc22f32b4c62f4c4779eb24747aa5`, `4cc96ba086e8a67c58c07ce9e493139dc8cd3bc6`, `0d87352dc95259c817cfa0e859870bc4fae6e832`, `121a8c9f382588ebdcb8803ad2172a0c4829b507`, `cbd7f2e6498978218587f55a5b5a3991db3acf98`, `fcc632f1a2dce715eb02a1375986e664b58f81e2`, `5978f74eecaff2fba89880582e4c03038cee9e63`, `c355e8c12feee82bd85ba84be9735c9719f5f89b`, `6bdd5338e0a7c0975055adab74a1b39b8dbe10a3`, `6502f9acf067c4baeb244ae0fee0a562e73e3411`, `3010f289dbb46a1db62218a35cca03420090e306`
+- Patch-equivalent commits: none
+- Modified files:
+  - `docs/research/final-integration-r6/01-repository-reconciliation.md`
+  - `docs/research/final-integration-r6/02-unified-engine-implementation.md`
+  - `docs/research/final-integration-r6/03-secondary-tools-compatibility.md`
+  - `docs/research/final-integration-r6/04-vulnerability-correlation-patch-search.md`
+  - `docs/research/final-integration-r6/05-ground-truth-calibration-performance.md`
+  - `docs/research/final-integration-r6/06-gui-security-release.md`
+  - `docs/research/final-integration-r6/07-acceptance-defects-runbook.md`
+  - `docs/research/final-integration-r6/08-feature-matrix-and-handoff.md`
+  - `docs/research/final-integration-r6/README.md`
+
+### `research/r7-advanced-binary-analysis-20261030`
+
+- Head: `c9d1aab6a78847ce1632fe833d15af2e3b9c6e9b`
+- Base: `origin/main` at `5d504ff5c046bfb758623182b472976003632bba`
+- Merge base: `a04f5a299a8d4afef023261e52e08d14678cf1e7`
+- Associated PR: https://github.com/djshellshoxxx/patchtrace/pull/134
+- Functional scope: {"docs": 6, "tasks": 1, "tests": 2, "tools": 3}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {'FAILURE': 2, 'SUCCESS': 7, 'SKIPPED': 5}; failures: ['qa (ubuntu-latest)', 'qa (windows-latest)']; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: blocked: failing checks.
+- Recommended disposition: preserve active branch; port only verified unique patches.
+- Unique commits: `d8f54133b498eba5a1d82b89373693ebd8caff1a`, `2bde85bfd337f956a1d04ab53307b214e0ab4415`, `1bb4c282b7f4e11f3975b635477e2385d121960f`, `6e4ac6411dc672f546940fea977f2a026f289f3a`, `6c917e84e2ff8f9750aaedac984e06c8285c8e1c`, `db11222815ad2bfd5ca39391b1f24a7fa461223d`, `6d774d1a51afae628e696d2940ae69942b144783`, `9ee1d2f04014a4c5be704ba06770f5ae1e2a502b`, `c0fd0834b60eb5e9431f84d58b08dae7d54ba1a3`, `8d13ca2dc2ad441eabc11b5569e29ab3ed6f1d61`, `4ae543cd23cfae67874462bd76a27ece7884c80b`, `65b72a618e1b2ad7d43a33f64b31b799dd180a34`, `defc1f832cf7e11428ee9c2bbe7dbb985534822c`, `426fa7a8a75a5ecfb0b1ec31a53f25705caa11d9`, `4793cf2f0afa898a37fc416a7e9fab2fc478e65b`, `4caa98233843eca695ec6dcf3ce1817c9c63c8dd`, `9fabc1ce025797e58b5d60a88daa45d227c343c9`, `8802fc0dc97ec2cde2402db0adfbc704ef90ac37`, `dbff9ccafee51388590d74a3964c476b51f64ae5`, `cf146f70a79fc576f19a1a34a04ab4cc0cd5e454`, `9656eb60ec2be2c0d7def636d880f67d0a5443c4`, `73d13061f63eaf9c35f4045f87bd8f1e3d43390a`, `8f6736ba24dcaff17644e79e4781c658bde29b80`, `85463dc0a70f69b2e1195d49b7a097f4ed89d6cf`, `0e2eb6dc395db7b6cb54cce5f3d2a2897515ccd7`, `fe794822b6cdff928860e3a743a1f8e1d494c967`, `8f157dcae3a40b52a0ce3b1722ac4ebd50c7eb24`, `57f0bbbbdd7cbb15b516b02a3892b8dc97c76065`, `c9d1aab6a78847ce1632fe833d15af2e3b9c6e9b`
+- Patch-equivalent commits: none
+- Modified files:
+  - `docs/modules.md`
+  - `docs/research/advanced-analysis-r7/01-literature-and-methods.md`
+  - `docs/research/advanced-analysis-r7/02-acceptance-and-roadmap.md`
+  - `docs/research/advanced-analysis-r7/README.md`
+  - `docs/research/advanced-analysis-r7/qa.md`
+  - `docs/research/advanced-analysis-r7/synthetic-benchmark.json`
+  - `tasks/todo.md`
+  - `tests/test_r7_patterns.py`
+  - `tests/test_r7_slicing.py`
+  - `tools/research/r7/bench.py`
+  - `tools/research/r7/patterns.py`
+  - `tools/research/r7/slicer.py`
+
+### `research/r8-deep-uncertainty-20261030`
+
+- Head: `12dd4f2b41b468b0eb566bd502219daa821012df`
+- Base: `origin/main` at `5d504ff5c046bfb758623182b472976003632bba`
+- Merge base: `a04f5a299a8d4afef023261e52e08d14678cf1e7`
+- Associated PR: https://github.com/djshellshoxxx/patchtrace/pull/135
+- Functional scope: {"docs": 6, "src/patchtrace/unified": 2, "tests": 1, "tools": 1}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {'FAILURE': 2, 'SUCCESS': 12, 'SKIPPED': 5}; failures: ['qa (ubuntu-latest)', 'qa (windows-latest)']; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: blocked: failing checks.
+- Recommended disposition: preserve active branch; port only verified unique patches.
+- Unique commits: `19b7a5379d465fcf1326704eedeafeac8c2ffaa2`, `fcdf9c4d47c457a5a32d58709cdc05570d475375`, `9217b55b49eff2b6679f028bdfc8d4d2442a1002`, `762f891937ac063b9760e882cee607a9bc709232`, `6d7f28dfa4630cbe245fe0b0da95e01fc6f0b6b0`, `8267b42b32a85f6728b9ca4311915c12d1496c8f`, `5505c76ae3fba5385edc93248d7cea36e1908874`, `c5f08acdc73aa75dc52f51cbb68da52a75406b4b`, `a7be38d2a5b91df33cb75aa2e8ee96b27f3b2e00`, `fe0c2cb06225fa3e240ee690d87b259f388c7d76`, `c57fe1d48bf58042f9ca8e9861a064a2cdd5f091`, `d2866fd5a604e05ab62a9f8d249ab6feda4fd43a`, `a490bc258301f55ef37a1cb93b99b65ff8b7f585`, `c4f183929678b2d2b7e614f2a5570760afacbb0a`, `58c863a8b3256dd32b2e6e32a7565f629c3e7729`, `12dd4f2b41b468b0eb566bd502219daa821012df`
+- Patch-equivalent commits: none
+- Modified files:
+  - `docs/research/deep-uncertainty-r8/01-typed-literal-counterexamples.md`
+  - `docs/research/deep-uncertainty-r8/02-icf-function-identity.md`
+  - `docs/research/deep-uncertainty-r8/03-integration-handoff-and-release-risk.md`
+  - `docs/research/deep-uncertainty-r8/README.md`
+  - `docs/research/deep-uncertainty-r8/uncertainty-register.md`
+  - `docs/specs/unified-engine/05-fusion-and-noise.md`
+  - `src/patchtrace/unified/facts/pseudo.py`
+  - `src/patchtrace/unified/registry.py`
+  - `tests/test_r8_literal_types.py`
+  - `tools/research/r8_icf_probe.py`
+
+### `security/offline-bundle-no-overwrite-20261013`
+
+- Head: `a39cab81de3e0eeadf57e6255d2fe3e131b3294a`
+- Base: `origin/main` at `5d504ff5c046bfb758623182b472976003632bba`
+- Merge base: `be8577c0344023a0c2f7e3a43aeed2daa2c5d950`
+- Associated PR: none in open PR snapshot
+- Functional scope: {"src/patchtrace/offline_bundle.py": 1, "tests": 1}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {}; failures: []; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: unqualified: no current CI attached.
+- Recommended disposition: preserve active branch; port only verified unique patches.
+- Unique commits: `9fcc0d371d7c74b70957bbc2379605eb0d54e61f`, `a39cab81de3e0eeadf57e6255d2fe3e131b3294a`
+- Patch-equivalent commits: none
+- Modified files:
+  - `src/patchtrace/offline_bundle.py`
+  - `tests/test_offline_bundle.py`
+
+### `worker/patchtrace-cli-help-20261104`
+
+- Head: `81a9fb28f30630e2fd168422dc4672af3a34aa52`
+- Base: `origin/claude/gallant-knuth-8gxuzd` at `a7689119fc25be61a4ac1b65619d6968859a136f`
+- Merge base: `a7689119fc25be61a4ac1b65619d6968859a136f`
+- Associated PR: https://github.com/djshellshoxxx/patchtrace/pull/185
+- Functional scope: {"docs": 3}
+- Dependencies: declared base above; additional semantic dependencies not established.
+- Tests: no new tests run by this read-only worker.
+- CI: {'FAILURE': 2, 'SUCCESS': 7, 'SKIPPED': 5}; failures: ['qa (ubuntu-latest)', 'qa (windows-latest)']; pending: [].
+- Security: review changed paths before integration; upstream/native/data validation claims not established by inventory.
+- Integration readiness: blocked: failing checks.
+- Recommended disposition: preserve active branch; port only verified unique patches.
+- Unique commits: `9313d11b506fe1f30ace9d0ffeb712fd9e84660b`, `4abe7e33fd2d976a38e3c07e2211c27dc61b285a`, `81a9fb28f30630e2fd168422dc4672af3a34aa52`
+- Patch-equivalent commits: none
+- Modified files:
+  - `docs/help/75-cli-export.md`
+  - `docs/help/76-cli-inspect.md`
+  - `docs/help/README.md`
+
+## Focused overlap and failure follow-up
+
+- #184 Windows failure is `tests/test_pe_version_info.py::test_hostile_structure_is_reported_and_never_raises[zero-length-child]`: elapsed wall time 0.6499 s exceeds 0.25 s, run 41807460657 job 126497937645. This is separate from the four corrected race families.
+- #177 and #184 have identical `test_backend_symbol_local.py`, `test_jobs.py`, `test_ui_related_panel.py`, `test_unified_pipeline.py`; `test_ui_unified.py` differs only in #184 retaining a 30 s wait versus #177 5 s. Prefer #184 test content and reconcile workflow/xdist changes separately.
+- #173 and #175 are already merged (trackers and Windows branding); #169 already merged (secret preflight). Their remote branches are retained refs, not evidence of outstanding implementation.
+- #174 versus the older rz-diff head #168: producer-specific identical files: `docs/handoff/rzdiff-native-red-control.md`, `docs/handoff/rzdiff-producer-implementation.md`, `docs/qa/rzdiff-native-evidence-red.log`, `docs/qa/rzdiff-native-evidence-tests.log`, `docs/qa/rzdiff-native-oracle-red.log`, `docs/qa/rzdiff-native-oracle-tests.log`, `docs/qa/rzdiff-producer-boundary.log`, `docs/qa/rzdiff-producer-checkpoint.json`, `tests/test_rzdiff_native_evidence.py`, `tests/test_rzdiff_producer_patch.py`, `tools/rzdiff/boundary_control.c`, `tools/rzdiff/native_control.c`, `tools/rzdiff/native_evidence.py`, `tools/rzdiff/patch_producer.py`, `tools/rzdiff/singleton-ownership.patch`.
+- Producer-specific differing paths (inspect semantically; do not declare superseded): `.github/workflows/rzdiff-producer.yml`, `docs/qa/integrated-rzdiff-identity.log.gz`, `docs/qa/rzdiff-native-provenance-20261101.tar.gz`, `docs/qa/rzdiff-native-root-review-20261101.json`, `docs/qa/rzdiff-quarantine-independent-review-20261101.md`, `docs/qa/rzdiff-quarantine-verification-20261101.json`, `docs/qa/rzdiff-replay-final-e8319b9.json`, `docs/qa/rzdiff-scoring-fixture-independent-review-20261101.json`, `docs/qa/rzdiff-shared-fixtures-independent-review-20261101.json`, `docs/research/rzdiff-orientation-witness-20261101.md`, `docs/research/rzdiff-witness-native-20261101.json`, `src/patchtrace/secondary/rzdiff.py`, `tests/fixtures/secondary/rzdiff-0.9.1-native-orientation.json`, `tests/test_live_rzdiff_check.py`, `tests/test_rzdiff_cli_env.py`, `tests/test_rzdiff_count_observation.py`, `tests/test_rzdiff_orientation_20261101.py`, `tests/test_secondary_rzdiff.py`, `tools/live_rzdiff_check.py`, `tools/research/rzdiff_count_observation.py`.
+
+## Security visibility and snapshot limits
+
+- Code-scanning alerts query: HTTP 403, `Resource not accessible by integration`; no assertion that alerts are absent.
+- Dependabot alerts query: HTTP 403, `Dependabot alerts are disabled for this repository`; dependency security remains unqualified.
+- Branch protection query: HTTP 403; required approvals/protection cannot be established from this token.
+- Open PR list snapshot: 67 records, repeated query 67. Historical references to 63 are not treated as current counts.
+- Ref inventory cleanup: excluded the symbolic `origin`/HEAD entry that had appeared as an empty branch; 183 actual remote feature branches remain.
