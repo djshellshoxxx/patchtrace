@@ -1052,3 +1052,8 @@ Full `QT_QPA_PLATFORM=offscreen python -m pytest -q` for this isolated native sl
 - [x] Focused nway tests, whole Ruff and whitespace checks pass. Full-suite and native Windows release acceptance stay coordinator-owned.
 
 - [ ] Follow-up outside this one-defect wave: stream/hash the damaged original during nway recovery; `--replace-corrupt` currently reads it in full even when load rejects the size.
+
+### 2026-11-05 invalid development-agent fragment
+
+- [x] Reproduce three workflow source validation failures; preserve the standalone agent step as a byte-identical example outside executable workflow discovery.49static checks passed/3existingxfails; Ruff passed.
+- [ ] Exact-head integration/full/cross-OS CI. Existing paid automation proposals remain separate and unenabled by this repair.

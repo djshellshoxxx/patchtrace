@@ -1392,3 +1392,7 @@ Independent read-only review of implementation `27c9c948` found no blockers: pre
 - One-defect bounded wave; static inspection of ingestion/persistence did not yield another reproduced finding. Authored PE bytes/local file IO only. No native engine/Windows acceptance evidence; release gates remain independent.
 
 - Coordinator pre-publication review found no blocker for the existing-copy repair. Remaining limitation: `_keep_corrupt_copy` still reads the damaged original via `path.read_bytes()` even when normal load rejects its size; this wave bounds only verification of a preexisting recovery copy, not the whole recovery path.
+
+## CI fragment discovery repair (2026-11-05)
+
+GitHub #191 Ubuntu QA job127522978541 completed with18743passes/47skips/7xfails and3failures, all caused by main's step-only `.github/workflows/openai-agents.yml` (missing workflow name/on/jobs/permissions/timeouts). Local unchanged baseline reproduces3failed/48passed/3existingxfails in workflow source checks. Preserve the fragment byte-for-byte under `.github/workflow-examples/openai-agents-step.yml`, with explanatory README, so only executable workflow definitions are discovered. Final focused source validation:49passed/3existingxfails; whole Ruff/diff hygiene pass; original bytes verified against5d504ff5. No new paid runner/trigger or competitor automation is enabled; #167/#170/#171/#186 remain separate review candidates. Whole/cross-OS acceptance remains pending on the resulting integration head.
