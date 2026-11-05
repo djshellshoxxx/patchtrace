@@ -1,72 +1,53 @@
-# PatchTrace coordinated swarm checkpoint — 2026-11-05
+# PatchTrace coordinated development — latest verified checkpoint
 
-This is the current coordination record. [Wave-one history](archive/20261105-wave1.md) preserves the earlier recovery, published commits, failures and restart notes without presenting historical worker activity as current.
+Date:2026-11-05. Primary review candidate: `integrate/swarm-qualified-20261105`, draft [#205](https://github.com/djshellshoxxx/patchtrace/pull/205). Main remains `5d504ff5`; no main merge or release. Follow-up [#213](https://github.com/djshellshoxxx/patchtrace/pull/213) and current-project [#214](https://github.com/djshellshoxxx/patchtrace/pull/214) were integrated into this candidate; integration-branch ancestry is distinct from main/release acceptance.
 
-## Recovery and dependencies
+[Wave1](archive/20261105-wave1.md) and [wave2](archive/20261105-wave2.md) preserve prior inventories, all source commit receipts and diagnostic history. This document supersedes their current-status sections, not their evidence. All worker code is committed/published; workers are idle. No competing paid automation was enabled.
 
-Main remains `5d504ff5`. Existing worktrees, branches and clean working trees were preserved. PRs #191–#199 remain open; source heads match the prior checkpoint. #199 (`e5f9302e`) is required to repair the reproduced verified-byte integrity failure. Its general/Windows checks are pending, not passing. No merges to main, source-PR closures, production releases or competing automation were performed. Branch-protection inspection returns HTTP403, so review requirements cannot be inferred from its absence.
+## Consolidated source and dependency accounting
 
-## Current ownership
+The candidate includes #191–#199 once, plus #200cache integrity, #201offline investigation, #202verified recovery copies, #203component-support test/spec correction, #204invalid workflow-fragment relocation, #206native input ownership, #207streamed recovery, #208actual unprovisioned-native diagnostics, #209strict release-pin parsing, #210attempt-owned creation rollback, #211linear parity parsing/unchanged-runtime fixture escaping, #212SHA256 source binding/checkout containment, and #214verified current-project inputs. #213 is the collected follow-up integration.
 
-Runtime supports four concurrent agents including coordinator; roles run in waves.
+The cumulative #180→#185→#188→#192 stack entered only through #192. It includes report2 and PE signing beyond matching. Preserve original source PRs until full accounting and normal gates; source #174 GT-01/normalizer/fuzz and #176 calibration/replay still have unintegrated work. Historical research #178/#179/#183/#187 is preserved rather than assumed fully merged.
 
-| Role | Worktree / branch | Exclusive implementation scope | Status |
+| Subsystem | Status | Verified change | Remaining acceptance / next action |
 |---|---|---|---|
-| Coordinator / integration, QA, documentation | `/tmp/pt-swarm2`, `integrate/swarm-qualified-20261105` | Integration conflict resolutions, shared specs/schemas, handoff and acceptance record | INTEGRATING |
-| A4/C3 offline investigation | `/tmp/pt-investigation2`, `integrate/kb-investigation-20261105` | KB service/dialog/wiring, minimal revision guard and real host hook | PUBLISHED #201; expected_revision guard tested and independently reviewed |
-| B5 unified independent verification | `/tmp/pt-unified2`, `integrate/unified-qualified-20261105` | Unified/pilot/report2 focused acceptance; no source edits yet | VERIFIED cumulative stack:978passed/1skip/1oldxfail; #203 corrects that test expectation |
-| E4 random audit / independent review | `/tmp/pt-audit2`, `audit/random-boundaries-20261105` | Seeded offline_bundle/enrichment.cache/pe_overview audit; candidate read-only review | PUBLISHED #200/#202; independent integration/KB reviews complete |
+| KB/CVE→product→binary investigation | PARTIAL | Offline import/search/explicit product/manual pair preview/create/adopt; current-project verified copies; stale and hash guards | Product-only/binary-only desktop starts, online wizard, live-source qualification; original/derived .bin labels explicitly unsupported by current-pair route |
+| Unified matching/evidence/manual corrections | INTEGRATING | Cumulative hardening, option-aware consumers, correction completeness, deterministic support/contradictions | Exact final full/native/Windows gates; G-U1..G-U8 and real precision/calibration gates remain open; opt-in stays off |
+| GUI/workspace | PARTIAL | Transactional adoption, stale inspection guard, real KB/current-project journey, tooltip/import boundaries | Native/frozen/high-DPI/accessibility/clean Windows journeys; lock-only-directory wizard retry remains open |
+| Persistence/input/security | PARTIAL | Block-verified byte reads; strict cache/pin JSON; exclusive input ownership; bounded recovery; attempt-owned rollback | Rollback assumes cooperative writer lock and retains final pathname race; exclusive artifact publication requires hardlink-capable storage |
+| Native adapters/research producer | PARTIAL | Ownership/callback/red controls, preserved evidence, stronger source identity and checkout boundary | Actual pinned-native API/CLI/inventory/IO controls; local headers/libraries/Meson/Ninja unprovisioned, not an unavoidable external blocker; quarantine unchanged |
+| QA/CI | INTEGRATING | Real fragment error fixed; focused negative/lifecycle controls; standalone/isolated Python bound correctly in dedicated venvs | Complete single-head full suite, required current-head Linux/Windows/Qt/native/package checks and authorized scanner dispositions |
+| Documentation/research | READY for review | Current status consolidated, two historical checkpoints archived, CLI help/specs and evidence retained, stale TOFU instruction corrected | Remaining research/spec branches still need selective reconciliation; no speculative implementation claims |
+| Windows/offline release | PARTIAL | Existing beta.751 downloadable; packaging infrastructure retained, strict pin gates improved | Actual relocatable offline payload/disconnected qualification, clean Windows/manual acceptance and release gates; no production release authorized |
 
-## Verified integration work
+## Completed validation (counts overlap)
 
-Candidate combines #194 QA, #199 byte verification, #191 rules/callgraph, #193 KB fixtures/selection, #196 inspection guard, #198 transactional adoption, #197 input preparation, #195 native research controls, and #200 cache fixes. It is a review candidate, not a qualified release. Merge conflicts only involved append-only QA/todo/spec/module records; both sides were retained. UI #196/#198 coexist in distinct methods. Independent source-identity scan confirmed exact source retention for the eight earlier slices. Initial integrated focused selection: **213 passed** in69.76s; whole-tree Ruff passed.
+- Core integrated selection:213passed. Unified/UI/byte/pilot integration:171passed. KB/tooltips/cache:50passed. Recovery/fusion:12passed. CI/tracker:53passed/3existingxfails.
+- Independent cumulative unified review:978passed/1Windows-native skip/1old strictxfail. #203 corrected that test's invalid support-vs-corroboration expectation;153focused tests passed, production matching unchanged.
+- Integrated follow-ups:649passed/1Windows-onlyskip in70.75s. After current-project journey merge:219passed in78.40s. Independent current-project review:20passed/136deselected; earlier workflow review25passed.
+- All source slices passed whole-tree Ruff in their worktrees. Schemas regenerated from candidate source with no drift. Source files/tests/tools/workflows in the final candidate are byte-identical to reviewed/tested follow-up head `c6691ab1` before documentation-only native receipts and checkpoint updates. Do not add overlapping counts as unique coverage.
 
-#200 `802b5b1b`: seeded audit(20261105) selected offline_bundle, enrichment.cache and pe_overview from a recorded17-module pool. Two confirmed cache defects: duplicate manifest keys accepted, and >1MiB manifest admission inconsistent with the reader cap. Three original regressions failed before repairs; **173 selected-module tests passed**, Ruff passed. No defect or security qualification claimed for other inspected modules. Coordinator independently reviewed patch and regression tests with no blocker.
+## Whole-suite status — NOT COMPLETE
 
-## Acceptance and publication
+Frozen baseline `a33a4405`: first attempt422passed/1environment failure because shared editable CLI differed. Candidate-scoped smoke passed. Source-scoped retry interrupted422passed; isolated Python still resolved global editable source. Dedicated `/tmp/pt-swarm-venv` was installed against `/tmp/pt-swarm2`, with ordinary and -I binding verified.
 
-Prior full run stopped on the actual byte-integrity failure:776passed/1skipped/1failed, NOT COMPLETE. #199's580focused passes/1Windows-only skip are not a full-suite result. A fresh combined full suite will run on a frozen integrated candidate after focused dependency checks. Full Windows/native checks remain independent gates. Mocked/compiled-helper controls are not pinned-native acceptance; Rizin quarantine remains.
+Dedicated whole-suite attempt:7351passed/13skipped/4existingxfails/1failure in782.08s. It found the omitted named-Qt-adapter import entry; reviewed repair226ac7e5 added precise allowances and seven negative purity controls (159related/44independent passes), preserving all service/UI database/network restrictions.
 
-#192 is cumulative on #188, with report2 and PE signing beyond unified matching. Never merge #180/#185/#188/#192 as independent implementations. KB #176 remaining investigation is now being isolated; calibration/replay portions remain separate. Original PRs must stay open until full accounting/checks/review.
+Remaining-node diagnosis then2096passed/10skipped/1harness failure: inherited coordinator PYTEST_ADDOPTS fail-fast truncated an intentionally failing child pytest. Outer diagnostic flags moved to arguments; no consent guard or assertion changed. A continuation reached88% progress then exited143/SIGTERM without summary; cause not established and no pass inferred. Final overlapping1600-node tail completed1573passed/27skipped/18117deselected in156.89s. These segments are NOT a fresh unsplit full-suite pass, and apply to older snapshot `a60d1dbc`, not the later production follow-ups/current-project feature.
 
-## Next executable actions
+Retained logs: `/tmp/pt-swarm-full.log`, `pt-swarm-full-source.log`, `pt-swarm-full-venv.log`, `pt-swarm-remaining.log`, `pt-swarm-remaining-network.log`, `pt-swarm-final-tail.log`, `pt-followups-focused.log`, `pt-current-integrated.log`. Last-node debug file: `/tmp/pt-diagnostic-last-node.txt`. No local pytest process intentionally remains running.
 
-1. Finish focused unified and KB GUI/service checks; integrate compatible source once, regenerate schemas if contracts change, and freeze candidate.
-2. Run full offscreen pytest and whole-tree Ruff; diagnose actual failures without reducing assertions.
-3. Publish candidate immediately after meaningful focused milestone, and inspect current-head CI before any main merge.
-4. Continue native GT-01, persistence, offline packaging and remaining calibration work in later waves. Windows builds run only on Windows; actual disconnected bundle and clean Windows GUI acceptance remain open.
+## Scanner and release boundaries
 
-API token/cost/cache-hit telemetry is unavailable; no usage or enforced cap is invented.
+Sonar205 previously failed main-relative security/reliability ratings. #211/#212 address actual parser/source-boundary findings. Independent operator-counterexample, deterministic synthetic-benchmark and explicit exclusive-output triage is in [scanner receipt](../qa/sonar-205-triage-20261105.md). No suppression, issue status or quality gate was bypassed; no Sonar review credential is configured. #213's earlier green scan was relative to its stacked base, not final main-relative qualification.
 
-## Frozen combined qualification candidate
+Native skips are BLOCKED/NOT RUN, never passed native evidence. #208 retains raw failed compile/package probes, and no native executable ran there. Linux cannot build/qualify Windows standalone; official complete offline bundle remains unqualified. API cost/token/cache-hit telemetry is unavailable and none is invented.
 
-Code freeze after `dfdc1018`: #191–#199, #200cache, #201offlineKB desktop, #202verified recovery copies, #203spec/test correction, and CI fragment repair `1229ca3b`. Main unchanged. Original branches preserved. Final integrated checks:213core passes,171unified/UI/byte/pilot passes,50KB/tooltips/cache passes,12fusion/recovery passes,53workflow/tracker passes+3existingxfails. Counts overlap. WholeRuff passed; `PYTHONPATH=src python tools/generate_schemas.py` regenerated from the candidate with no drift.
+## Restart actions
 
-Merged unified fixture conflict keeps shared private_tempdir for both cleanup checks and compares the exact private directory contents, preserving source assertions. Source ledger modifications (including completed implementation rows but open release gates) and all independently appended evidence retained. Independent 124-test candidate review found no blockers before the later independently reviewed slices.
-
-GitHub191UbuntuQA actual result:18743passed/47skipped/7xfails and3failures, all invalid openai-agents workflow fragment. Local red3fail/48pass/3xfail; relocation preserves exact fragment bytes as reference outside executable workflow discovery; final49pass/3xfail. #186 runnable automation proposal remains separate and inactive. No additional paid runner enabled.
-
-Fresh full suite starts on the resulting freeze commit with `QT_QPA_PLATFORM=offscreen python -m pytest -q`, plus `PYTEST_ADDOPTS=--maxfail=1` for immediate diagnosis if any test fails. This selects the entire suite; no skips/assertions are changed. Result pending until logged. Cross-OS/native/package gates remain pending.
-
-Supporting subsequent waves remain isolated from frozen source: nativeinput descriptor race and streamed corruptseries recovery followups. Their focused results cannot qualify this candidate until deliberately integrated and retested.
-
-## Follow-up integration and qualification status
-
-- Base qualification stays pinned to #205 `a33a4405` in `/tmp/pt-swarm2`. First full attempt422passed/1environment failure (shared editable CLI), source-scoped retry interrupted422passed; dedicated `/tmp/pt-swarm-venv` now binds both ordinary and isolated Python to that exact candidate. Full retry log `/tmp/pt-swarm-full-venv.log`, pending; do not claim those earlier runs passed.
-- `/tmp/pt-swarm3`, `integrate/swarm-followups-20261105` integrates reviewed #206 `0526d546`, #207 `20a60f9d`, #209 `c3370578`, #210 `2a3639ad`, #211 `c923039b`, #212 `c3be348b` above205. Its own `/tmp/pt-followups-venv` resolves this tree, avoiding global editable cross-worktree confusion. Broad related focused selection `/tmp/pt-followups-focused.log` pending; whole Ruff/schema regeneration clean.
-- #208 `dc3bf773` records actual unprovisioned native headers/libraries and build tools; no native execution/target execution or quarantine change. Diagnostic source branch stays isolated.
-- #210's cooperative-lock/last-path race/hardlink storage/GUI retry limitations are explicit. Native/platform acceptance remains open. Source PRs stay open; main unchanged.
-- Sonar205 fails; actionable regex/source-boundary findings addressed by211/212. Independent true/false operator, deterministic benchmark and exclusive-output evidence in `docs/qa/sonar-205-triage-20261105.md`. Normal authorized project review is required; no suppression/status/gate changes.
-- Active additional work: bounded current-project-pair investigation journey in `/tmp/pt-kb-current2` (KB worker), shared snapshot interface proposal required first. Other workers have published reviewed slices and are idle. Token/cost/cache telemetry unavailable.
-
-Qualification update: dedicated #205 run stopped at7351passed/13skipped/4xfails/1import-boundary failure in782.08s. Accepted investigation Qt adapter missing its specific import-test entry, already present in source176; root repair has159focused+44independent passes and seven negative purity controls. This is a test-integration omission, not permission for Qt/network/database in domain modules. Whole suite remains NOT COMPLETE. Follow-up integrated selection completed649passed/1Windows-onlyskip in70.75s, Ruff/schema drift clean. Exact native source pin supplied for compiled wrapper controls; those are not actual pinned-native API acceptance.
-
-## Latest published integration receipts
-
-Current code review candidate: `integrate/swarm-followups-20261105` in `/tmp/pt-swarm3`, draft #213. It now also integrates current-project input journey #214 (`ef70e0bd`, code0b3c58fb), reviewed independently;219integrated checks passed with creation/rollback/adoption/tooltips/import contracts. Original .bin or derived hash labels and conflicting labels on identical content have explicit unsupported outcomes. No current-origin linkage/annotations are persisted or CVE proof inferred; existing manual-pair hashes remain authoritative. All workers are at published checkpoints; no worker edit remains pending.
-
-Qualification tree stays `/tmp/pt-swarm2`, branch `integrate/swarm-qualified-20261105`, draft #205, after named-adapter test repair226ac7e5 (mergea60d1dbc). Its application source remains the earlier freeze; do not apply its partial results to the newer follow-up source. Dedicated-env full run:7351passed/13skipped/4xfails then the omitted UI import-test entry; repaired with159related and44independent passes. Subsequent subset diagnosis:2096passed/10skipped then inherited diagnostic fail-fast truncated a child consent test; outer flags corrected without changing guard assertions. Current remaining-node log `/tmp/pt-swarm-remaining-network.log` is diagnostic continuation, NOT a single complete full-suite pass. Full/current-head Windows/native/package gates remain pending; main still5d504ff5.
-
-#213's earlier scanner result passed against its stacked base; #205's main-relative Sonar gate still failed at last check. The independent triage document is evidence, not an authorized dashboard disposition. No suppression or bypass. Newly introduced source should receive a fresh main-relative scan/full qualification before merge. Source PRs remain open unless GitHub automatically accounts ancestry into integration branches; no manual original closure or main merge performed.
-
-Next: finish remaining-node diagnosis, rerun complete exact-head qualification on the chosen final candidate, inspect hosted required reviews/checks and apply normal authorized Sonar triage if still needed. Merge only when those gates actually pass. Preserve all worktrees and log receipts; costs/cache telemetry unavailable.
+1. Refresh exact heads, required checks/reviews and branch ownership; main-protection API returned403, so do not infer requirements absent. Inspect final #205 main-relative scanner/CI; never bypass pending/failed gates.
+2. Run a fresh complete final-candidate suite in a dedicated source-bound environment, with outer fail-fast options as CLI arguments, not inherited PYTEST_ADDOPTS. If local execution ends, preserve logs and report incomplete; use validated CI/sharding without changing assertions or claiming partial segments as full acceptance.
+3. Requalify Windows/native/package and clean-machine/manual gates. Apply normal authorized Sonar project review if remaining false-positive dispositions require it.
+4. Merge main only after exact-head required gates/review pass. Then account/close superseded source PRs with preserved commit references; do not blindly merge cumulative stacks.
+5. Continue remaining GT-01/calibration/replay and unsupported desktop-start/label-preservation/lock-only retry work. Current-project provenance is preview-only; persisted manual pair hashes remain authoritative and never prove CVE repair.
