@@ -6,6 +6,7 @@ from dataclasses import replace
 from functools import partial
 from pathlib import Path
 
+from PySide6.QtCore import Qt
 from PySide6.QtWidgets import (
     QCheckBox,
     QComboBox,
@@ -89,15 +90,17 @@ class InvestigationDialog(QDialog):
         self.manual_pair_start.toggled.connect(self._mode_changed)
         root.addWidget(self.manual_pair_start)
         form = QFormLayout()
+        tab_order = [self.manual_pair_start]
         self.fields = {}
         self.buttons = {}
         values = {'workspace': str(workspace if workspace is not None else default_workspace()),
                   'source': '', 'lead': '', 'older': '', 'newer': '', 'destination': '', 'name': 'KB comparison'}
-        for key, title in (('workspace', 'Advisory workspace'), ('source', 'Advisory file'), ('lead', 'KB/CVE'),
-                           ('older', 'Older local binary'), ('newer', 'Newer local binary'),
-                           ('destination', 'New project directory'), ('name', 'Project name')):
+        for key, title in (('workspace', 'Advisory &workspace'), ('source', '&Advisory file'), ('lead', '&KB/CVE'),
+                           ('older', '&Older local binary'), ('newer', '&Newer local binary'),
+                           ('destination', 'New project &directory'), ('name', 'Project na&me')):
             field = self.fields[key] = QLineEdit(values[key])
             self._tip(field, key)
+            tab_order.append(field)
             row = QWidget()
             layout = QHBoxLayout(row)
             layout.setContentsMargins(0, 0, 0, 0)
@@ -106,6 +109,7 @@ class InvestigationDialog(QDialog):
                 button = self._button('browse_' + key, 'Browse…')
                 button.clicked.connect(lambda _checked=False, k=key: self._browse(k))
                 layout.addWidget(button)
+                tab_order.append(button)
             if key in {'source', 'lead'}:
                 action = 'import' if key == 'source' else 'search'
                 button = self._button(action, 'Import advisory' if action == 'import' else 'Search locally')
@@ -114,23 +118,30 @@ class InvestigationDialog(QDialog):
                 else:
                     button.clicked.connect(lambda: self._submit(self._request('import')))
                 layout.addWidget(button)
-            form.addRow(title, row)
+                tab_order.append(button)
+            label = PlainLabel(title, wrap=True)
+            label.setBuddy(field)
+            form.addRow(label, row)
             field.textChanged.connect(lambda _text, k=key: self._edited(k))
         self.scope = QComboBox()
         self._tip(self.scope, 'scope')
         self.scope.addItem('Choose a product explicitly', None)
         self.scope.currentIndexChanged.connect(self._scope_changed)
-        form.insertRow(3, 'Product / architecture / release', self.scope)
+        form.insertRow(3, '&Product / architecture / release', self.scope)
+        tab_order.insert(tab_order.index(self.fields['older']), self.scope)
         self.same_component = QCheckBox('I confirm that differently named files are the same component')
         self._tip(self.same_component, 'same_component')
         self.same_component.toggled.connect(lambda _: self._invalidate())
         form.addRow(self.same_component)
+        tab_order.append(self.same_component)
         root.addLayout(form)
         actions = QHBoxLayout()
         for key, title in (('use_current', 'Use current project inputs'), ('preview', 'Preview local pair'),
                            ('create', 'Create and open comparison'),
                            ('cancel', 'Cancel operation'), ('close', 'Close')):
-            actions.addWidget(self._button(key, title))
+            button = self._button(key, title)
+            actions.addWidget(button)
+            tab_order.append(button)
         self.buttons['use_current'].clicked.connect(self._use_current)
         self.buttons['preview'].clicked.connect(lambda: self._submit(self._request('preview')))
         self.buttons['create'].clicked.connect(self._create)
@@ -143,6 +154,9 @@ class InvestigationDialog(QDialog):
         self.status = PlainLabel('Local files only. No comparison has been created.', wrap=True)
         self._tip(self.status, 'status')
         root.addWidget(self.status)
+        tab_order.append(self.details)
+        for before, after in zip(tab_order, tab_order[1:], strict=False):
+            QWidget.setTabOrder(before, after)
         self._enable()
 
     @staticmethod
@@ -269,6 +283,7 @@ class InvestigationDialog(QDialog):
             return
         if not self.fields['workspace'].text().strip():
             self.status.setText('Choose an advisory workspace directory before continuing.')
+            self.fields['workspace'].setFocus(Qt.FocusReason.OtherFocusReason)
             return
         if request.current_inputs is not None and not self._is_current():
             self._preview = None
