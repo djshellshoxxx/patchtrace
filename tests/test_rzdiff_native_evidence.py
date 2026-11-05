@@ -197,3 +197,25 @@ def test_failed_attempt_cannot_be_overwritten_by_retry(tmp_path):
     with pytest.raises(FileExistsError):
         run('corrected', tmp_path / 'absent', out)
     assert {p.name: p.read_bytes() for p in out.iterdir()} == prior
+
+
+@pytest.mark.parametrize('name', ['native-result.json', 'native-matrix.log', 'native-stderr.log',
+                                 '.native-evidence-run'])
+def test_output_child_symlink_cannot_overwrite_external_evidence(tmp_path, monkeypatch, name):
+    output = tmp_path / 'explicit-output'
+    output.mkdir()
+    external = tmp_path / 'outside-evidence'
+    external.write_bytes(b'preserved external evidence')
+    try:
+        (output / name).symlink_to(external)
+    except OSError:
+        pytest.skip('symlink creation unavailable')
+
+    def forbidden(*args, **kwargs):
+        pytest.fail('pre-existing evidence symlink must be refused before execution')
+
+    monkeypatch.setattr(subprocess, 'run', forbidden)
+    with pytest.raises(FileExistsError):
+        run('corrected', tmp_path / 'absent', output)
+    assert external.read_bytes() == b'preserved external evidence'
+    assert (output / name).is_symlink()
