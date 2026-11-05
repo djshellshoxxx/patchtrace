@@ -48,3 +48,7 @@ No main merge, source-PR closure, new automation enablement, production release 
 - GUI draft [#196](https://github.com/djshellshoxxx/patchtrace/pull/196), `3fa22c61`: 35 focused passes, Ruff/diff checks passed; independent review incorporated current/unkeyed failure controls and precise path policy.
 - Unified #192 updated to `b5f6e138`: recorded-option pilot resolution repaired after two failing regressions; 28 pilot tests passed, independent review no blocker. This count overlaps prior selections; do not add counts as unique coverage.
 - `/tmp/pt-adoption` / `integrate/project-adoption-20261105`: isolated transactional project-adoption slice from #176 assigned to rules worker. No broader KB integration or main merge implied.
+
+## Full-suite failure / active security repair
+
+Coordinator full offscreen suite interrupted for diagnosis after **776 passed, 1 skipped, 1 failed** in389.28seconds. `test_artifact_bytes.py::test_in_place_edit_with_restored_mtime_is_detected`: content edit escaped metadata fingerprint. Full suite NOT COMPLETE. Isolated `/tmp/pt-bytes` / `repair/verified-bytes-20261105` assigned to unified worker for deterministic collision regression and bounded requested-content verification. No full-suite passing claim. Secondary preparation `/tmp/pt-prep` / `integrate/secondary-prep-20261105` assigned KB worker; project adoption worker remains active.

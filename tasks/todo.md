@@ -933,3 +933,5 @@ Done: dock with state matrix, consent, import, changes, copy, go to CVE. Open: r
 
 - [x] Preserve #184 fixture isolation/own-load waits and #189 parser CPU budgets; 301 focused passes/3 skips plus one repaired environment failure retested passing; Ruff/pip check clean.
 - [ ] Full offscreen suite currently running; exact-head cross-OS CI and review remain required before merge.
+
+- [ ] Full-suite confirmed defect (2026-11-05): verified artifact reader accepted same-size/restored-mtime edit with colliding metadata. Repair requested-chunk integrity with deterministic collision regression; rerun relevant consumers and full QA. Initial full run interrupted: 776 passed/1 skipped/1 failed.
