@@ -926,3 +926,5 @@ Done: dock with state matrix, consent, import, changes, copy, go to CVE. Open: r
 
 - [x] Isolate PR #176 artifact-preparation cancellation, engine budget and ingestion-cap repair; preserve the separate probe budget. Six red regressions repaired; 85 focused tests and global Ruff pass.
 - [ ] Coordinator review/publication and combined full-suite/Windows CI qualification for secondary preparation; no native acceptance claim.
+
+- [ ] Harden `secondary.bindiff_inputs.copy_and_hash` against replacement between `lstat` and `open` (including POSIX FIFO): evaluate nonblocking descriptor open plus regular-file `fstat`, preserve cross-platform behavior, and add deterministic replacement coverage. Cooperative cancellation does not interrupt blocked OS calls.
