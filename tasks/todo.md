@@ -1087,3 +1087,8 @@ Full `QT_QPA_PLATFORM=offscreen python -m pytest -q` for this isolated native sl
 - [x] Escape bidi source characters in the five assigned fixture files; AST and runtime fixture values unchanged.
 - [x] Focused parity/fixture tests, CPU-budget regression, grammar limits and whole Ruff/diff checks pass.
 - [ ] Coordinator reruns actual Sonar/full qualification; this focused slice claims no native parity acceptance.
+
+### 2026-11-05 KB Qt adapter import boundary
+
+- [x] Reconcile accepted named investigation Qt adapter with import-contract scanner; preserve service purity and UI network/database exclusions with seven negative controls.159focused passes;44independent passes; Ruff clean.
+- [ ] Resume combined qualification and require exact-head full/cross-OS checks; no test/gate bypass or broad Qt exemption.
