@@ -28,13 +28,15 @@ from ..tooltips import TooltipEntry
 from .investigation_service import InvestigationRequest, InvestigationResult, execute_request
 from .store import default_workspace
 
-SOURCE = ('Local advisory workspace and inspected local PE files. Optional MSRC advisory downloads require '
+SOURCE = ('Local advisory workspace and inspected local PE files. Optional MSRC advisory and Winbindex metadata downloads require '
           'an exact preview and separate consent; binary inputs remain local.')
 DESCRIPTIONS = {
     'workspace': 'Directory containing the local advisory workspace.',
     'source': 'Local supported advisory document to import.',
     'lead': 'KB or CVE identifier to search in the stored documents.',
     'scope': 'Explicit product, architecture and release used for this comparison.',
+    'plan_metadata': 'Preview the exact third-party Winbindex metadata request for this public filename; no request is sent.',
+    'refresh_metadata': 'Consent once to exactly the displayed index metadata URL, host, caps and digest; no binary download.',
     'component': 'Explicit component basename to inspect in saved Winbindex records; no download is performed.',
     'candidate_pairs': 'Inspect existing saved-index pair candidates for the selected advisory product and filename.',
     'candidates': 'Choose a saved-index pair explicitly; candidates are claims with unverified bytes.',
@@ -64,8 +66,8 @@ DESCRIPTIONS = {
     'browse_destination': 'Choose a parent directory for a new comparison folder.',
 }
 TIPS = {f'kb.investigation.{key}': TooltipEntry(text, 'Keeps the local investigation explicit and inspectable.',
-                                             ('Only the exact consented advisory plan is fetched; targets are not run.'
-                                              if key == 'sync_sources' else
+                                             ('Only the currently displayed and consented metadata plan is fetched; targets are not run.'
+                                              if key in {'sync_sources', 'refresh_metadata'} else
                                               'Local operation only; target binaries are not run.'), SOURCE)
         for key, text in DESCRIPTIONS.items()}
 
@@ -88,13 +90,14 @@ class InvestigationDialog(QDialog):
         self._pending = None
         self._preview = None
         self._online_plan = None
+        self._metadata_plan = None
         self._candidate_result = None
         self._investigation_id = None
         self._cancel_create, self._close_after_create = False, False
         root = QVBoxLayout(self)
         heading = PlainLabel('Search a local KB/CVE advisory and choose a product, or start from local files. '
                              'Preview older/newer files before creating a separate comparison. '
-                             'Optional advisory downloads require a separate preview and consent. '
+                             'Optional advisory and index metadata downloads require a separate preview and consent. '
                              'Binary files remain local and are never executed.',
                              wrap=True)
         root.addWidget(heading)
@@ -160,6 +163,16 @@ class InvestigationDialog(QDialog):
         candidate_actions.addWidget(self._button('candidate_pairs', 'Inspect saved index candidates'))
         tab_order.extend((component, self.buttons['candidate_pairs']))
         root.addLayout(candidate_actions)
+        metadata_actions = QHBoxLayout()
+        metadata_actions.addWidget(PlainLabel('Optional Winbindex metadata', wrap=True))
+        for key, title in (('plan_metadata', 'Preview index metadata request'),
+                           ('refresh_metadata', 'Fetch exactly this index metadata plan')):
+            button = self._button(key, title)
+            metadata_actions.addWidget(button)
+            tab_order.append(button)
+        self.buttons['plan_metadata'].clicked.connect(self._plan_metadata)
+        self.buttons['refresh_metadata'].clicked.connect(self._refresh_metadata)
+        root.addLayout(metadata_actions)
         candidate_selection = QHBoxLayout()
         self.candidates = QComboBox()
         self._tip(self.candidates, 'candidates')
@@ -273,8 +286,11 @@ class InvestigationDialog(QDialog):
     def _invalidate(self):
         self._preview = None
         self._online_plan = None
+        self._metadata_plan = None
         self._clear_candidates()
         if self._pending is not None and self._pending.operation != 'create':
+            if self._pending.operation == 'refresh_metadata':
+                self.status.setText('Inputs changed. Any completed metadata publication is retained.')
             self._generation += 1
             self.tasks.cancel(self._channel)
             self._pending = None
@@ -310,6 +326,7 @@ class InvestigationDialog(QDialog):
 
     def _candidate_changed(self):
         self._preview = None
+        self._online_plan, self._metadata_plan = None, None
         if self._pending is not None and self._pending.operation == 'candidate_preview':
             self._generation += 1
             self.tasks.cancel(self._channel)
@@ -328,6 +345,18 @@ class InvestigationDialog(QDialog):
                              expected_revision=result.data['investigation_revision'],
                              expected_candidates_digest=result.data['candidates_digest']))
 
+    def _plan_metadata(self):
+        self._invalidate()
+        self._submit(self._request('plan_metadata'))
+
+    def _refresh_metadata(self):
+        if self._metadata_plan is None:
+            return
+        request, result = self._metadata_plan
+        self._metadata_plan = None
+        self._submit(replace(request, operation='refresh_metadata', source_plan_json=result.data['plan_json'],
+                             consent_hosts=tuple(result.data['hosts']), consent_plan=result.data['plan_sha']))
+
     def _plan_sources(self):
         self._invalidate()
         self._submit(replace(self._request('plan_sources'), investigation_id=None, scope_id=None))
@@ -337,6 +366,7 @@ class InvestigationDialog(QDialog):
             return
         request, result = self._online_plan
         self._online_plan = None
+        self._metadata_plan = None
         self._submit(replace(request, operation='sync_sources', source_plan_json=result.data['plan_json'],
                              consent_hosts=tuple(result.data['hosts']), consent_plan=result.data['plan_sha']))
 
@@ -372,6 +402,9 @@ class InvestigationDialog(QDialog):
                                                 and bool(self.fields['lead'].text().strip())
                                                 and bool(self.fields['months'].text().strip()))
         self.buttons['sync_sources'].setEnabled(not busy and not manual and self._online_plan is not None)
+        self.buttons['plan_metadata'].setEnabled(not busy and not manual
+                                                and bool(self.fields['component'].text().strip()))
+        self.buttons['refresh_metadata'].setEnabled(not busy and not manual and self._metadata_plan is not None)
         self.buttons['candidate_pairs'].setEnabled(not busy and not manual
                                                   and self._investigation_id is not None
                                                   and self.scope.currentData() is not None
@@ -401,6 +434,7 @@ class InvestigationDialog(QDialog):
             self._enable()
             return
         self._online_plan = None
+        self._metadata_plan = None
         if request.operation != 'candidate_preview':
             self._clear_candidates()
         self._generation += 1
@@ -411,6 +445,8 @@ class InvestigationDialog(QDialog):
                              'current_inputs': 'Verifying current project input copies…',
                              'plan_sources': 'Preparing exact advisory download preview; no request is sent…',
                              'sync_sources': 'Fetching the consented advisory plan…',
+                             'plan_metadata': 'Preparing exact index metadata preview; no request is sent…',
+                             'refresh_metadata': 'Fetching the consented index metadata plan…',
                              'candidate_pairs': 'Inspecting saved index candidates; no request is sent…',
                              'candidate_preview': 'Preparing the selected index-pair claims; no request is sent…',
                              'preview': 'Inspecting local pair…', 'create': 'Creating separate comparison…'}
@@ -433,7 +469,9 @@ class InvestigationDialog(QDialog):
                              text='The current project changed; reopen the investigation.')
         self.status.setText(('' if result.success else f'{result.error_code or "PT-KBC-INPUT"}: ') + result.text)
         text = result.text
-        if result.success and request.operation == 'candidate_pairs':
+        if result.success and request.operation == 'plan_metadata':
+            self._metadata_plan = (request, result)
+        elif result.success and request.operation == 'candidate_pairs':
             self._candidate_result = (request, result)
             self.candidates.blockSignals(True)
             for pair in result.data.get('pairs', ()):
@@ -533,7 +571,9 @@ class InvestigationDialog(QDialog):
         self._submit(request)
 
     def cancel_operation(self):
+        metadata_pending = self._pending is not None and self._pending.operation == 'refresh_metadata'
         self._online_plan = None
+        self._metadata_plan = None
         self._clear_candidates()
         if self._pending is not None and self._pending.operation == 'create':
             self._cancel_create = True
@@ -542,7 +582,8 @@ class InvestigationDialog(QDialog):
         self._generation += 1
         self.tasks.cancel(self._channel)
         self._pending, self._preview = None, None
-        self.status.setText('Cancelled. Previous results remain available.')
+        self.status.setText('Cancelled. Any completed metadata publication is retained.' if metadata_pending else
+                            'Cancelled. Previous results remain available.')
         self._enable()
 
     def _shutdown(self):
