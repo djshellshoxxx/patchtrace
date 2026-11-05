@@ -1,0 +1,7 @@
+Package rz_core was not found in the pkg-config search path.
+Perhaps you should add the directory containing `rz_core.pc'
+to the PKG_CONFIG_PATH environment variable
+Package 'rz_core', required by 'virtual:world', not found
+Package 'rz_arch', required by 'virtual:world', not found
+Package 'rz_io', required by 'virtual:world', not found
+Package 'rz_util', required by 'virtual:world', not found
