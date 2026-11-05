@@ -35,6 +35,10 @@ DESCRIPTIONS = {
     'source': 'Local supported advisory document to import.',
     'lead': 'KB or CVE identifier to search in the stored documents.',
     'scope': 'Explicit product, architecture and release used for this comparison.',
+    'component': 'Explicit component basename to inspect in saved Winbindex records; no download is performed.',
+    'candidate_pairs': 'Inspect existing saved-index pair candidates for the selected advisory product and filename.',
+    'candidates': 'Choose a saved-index pair explicitly; candidates are claims with unverified bytes.',
+    'candidate_preview': 'Preview only the explicitly selected index pair and its source claims; no request is sent.',
     'months': 'Explicit advisory months to preview, separated by commas, such as 2026-09,2026-10.',
     'plan_sources': 'Preview exact monthly MSRC advisory requests without accessing the network.',
     'sync_sources': 'Consent once to fetching exactly the displayed advisory URLs, hosts and plan digest.',
@@ -84,6 +88,7 @@ class InvestigationDialog(QDialog):
         self._pending = None
         self._preview = None
         self._online_plan = None
+        self._candidate_result = None
         self._investigation_id = None
         self._cancel_create, self._close_after_create = False, False
         root = QVBoxLayout(self)
@@ -143,6 +148,31 @@ class InvestigationDialog(QDialog):
         form.addRow(self.same_component)
         tab_order.append(self.same_component)
         root.addLayout(form)
+        candidate_actions = QHBoxLayout()
+        component = self.fields['component'] = QLineEdit()
+        self._tip(component, 'component')
+        component.setPlaceholderText('Component basename, such as clfs.sys')
+        component.textChanged.connect(lambda _: self._invalidate())
+        component_label = PlainLabel('Index &filename', wrap=True)
+        component_label.setBuddy(component)
+        candidate_actions.addWidget(component_label)
+        candidate_actions.addWidget(component, 1)
+        candidate_actions.addWidget(self._button('candidate_pairs', 'Inspect saved index candidates'))
+        tab_order.extend((component, self.buttons['candidate_pairs']))
+        root.addLayout(candidate_actions)
+        candidate_selection = QHBoxLayout()
+        self.candidates = QComboBox()
+        self._tip(self.candidates, 'candidates')
+        self.candidates.addItem('Choose a saved-index pair explicitly', None)
+        self.candidates.setSizeAdjustPolicy(QComboBox.SizeAdjustPolicy.AdjustToMinimumContentsLengthWithIcon)
+        self.candidates.setMinimumContentsLength(24)
+        self.candidates.currentIndexChanged.connect(self._candidate_changed)
+        candidate_selection.addWidget(self.candidates, 1)
+        candidate_selection.addWidget(self._button('candidate_preview', 'Preview selected index pair'))
+        self.buttons['candidate_pairs'].clicked.connect(self._inspect_candidates)
+        self.buttons['candidate_preview'].clicked.connect(self._preview_candidate)
+        tab_order.extend((self.candidates, self.buttons['candidate_preview']))
+        root.addLayout(candidate_selection)
         source_actions = QHBoxLayout()
         months = self.fields['months'] = QLineEdit()
         self._tip(months, 'months')
@@ -221,7 +251,8 @@ class InvestigationDialog(QDialog):
                                     current_project=self._current_project,
                                     confirm_same_component=self.same_component.isChecked(),
                                     current_inputs=self._input_origin if operation in {'preview', 'create'} else None,
-                                    manual_pair_start=manual, source_months=self.fields['months'].text().strip())
+                                    manual_pair_start=manual, source_months=self.fields['months'].text().strip(),
+                                    component_name=self.fields['component'].text().strip())
 
     def _mode_changed(self):
         self._investigation_id = None
@@ -242,6 +273,7 @@ class InvestigationDialog(QDialog):
     def _invalidate(self):
         self._preview = None
         self._online_plan = None
+        self._clear_candidates()
         if self._pending is not None and self._pending.operation != 'create':
             self._generation += 1
             self.tasks.cancel(self._channel)
@@ -268,6 +300,33 @@ class InvestigationDialog(QDialog):
     def _search_new(self):
         self._preview = None
         self._submit(replace(self._request('search'), investigation_id=None, scope_id=None))
+
+    def _clear_candidates(self):
+        self._candidate_result = None
+        self.candidates.blockSignals(True)
+        self.candidates.clear()
+        self.candidates.addItem('Choose a saved-index pair explicitly', None)
+        self.candidates.blockSignals(False)
+
+    def _candidate_changed(self):
+        self._preview = None
+        if self._pending is not None and self._pending.operation == 'candidate_preview':
+            self._generation += 1
+            self.tasks.cancel(self._channel)
+            self._pending = None
+        self._enable()
+
+    def _inspect_candidates(self):
+        self._invalidate()
+        self._submit(self._request('candidate_pairs'))
+
+    def _preview_candidate(self):
+        if self._candidate_result is None or self.candidates.currentData() is None:
+            return
+        request, result = self._candidate_result
+        self._submit(replace(request, operation='candidate_preview', candidate_pair_id=self.candidates.currentData(),
+                             expected_revision=result.data['investigation_revision'],
+                             expected_candidates_digest=result.data['candidates_digest']))
 
     def _plan_sources(self):
         self._invalidate()
@@ -305,7 +364,7 @@ class InvestigationDialog(QDialog):
             button.setEnabled(not busy)
         self.buttons['use_current'].setEnabled(not busy and self._available_current is not None
                                                and self._is_current())
-        for key in ('source', 'lead', 'months'):
+        for key in ('source', 'lead', 'months', 'component'):
             self.fields[key].setEnabled(not busy and not manual)
         for key in ('browse_source', 'import', 'search'):
             self.buttons[key].setEnabled(not busy and not manual)
@@ -313,6 +372,14 @@ class InvestigationDialog(QDialog):
                                                 and bool(self.fields['lead'].text().strip())
                                                 and bool(self.fields['months'].text().strip()))
         self.buttons['sync_sources'].setEnabled(not busy and not manual and self._online_plan is not None)
+        self.buttons['candidate_pairs'].setEnabled(not busy and not manual
+                                                  and self._investigation_id is not None
+                                                  and self.scope.currentData() is not None
+                                                  and bool(self.fields['component'].text().strip()))
+        self.candidates.setEnabled(not busy and not manual and self._candidate_result is not None)
+        self.buttons['candidate_preview'].setEnabled(not busy and not manual
+                                                    and self._candidate_result is not None
+                                                    and self.candidates.currentData() is not None)
         self.buttons['cancel'].setEnabled(busy)
         self.buttons['close'].setEnabled(True)
         pair_ready = manual or (self._investigation_id is not None and self.scope.currentData() is not None)
@@ -334,6 +401,8 @@ class InvestigationDialog(QDialog):
             self._enable()
             return
         self._online_plan = None
+        if request.operation != 'candidate_preview':
+            self._clear_candidates()
         self._generation += 1
         generation = self._generation
         self._pending = request
@@ -342,6 +411,8 @@ class InvestigationDialog(QDialog):
                              'current_inputs': 'Verifying current project input copies…',
                              'plan_sources': 'Preparing exact advisory download preview; no request is sent…',
                              'sync_sources': 'Fetching the consented advisory plan…',
+                             'candidate_pairs': 'Inspecting saved index candidates; no request is sent…',
+                             'candidate_preview': 'Preparing the selected index-pair claims; no request is sent…',
                              'preview': 'Inspecting local pair…', 'create': 'Creating separate comparison…'}
                             [request.operation])
         self._enable()
@@ -362,7 +433,20 @@ class InvestigationDialog(QDialog):
                              text='The current project changed; reopen the investigation.')
         self.status.setText(('' if result.success else f'{result.error_code or "PT-KBC-INPUT"}: ') + result.text)
         text = result.text
-        if result.success and request.operation == 'plan_sources':
+        if result.success and request.operation == 'candidate_pairs':
+            self._candidate_result = (request, result)
+            self.candidates.blockSignals(True)
+            for pair in result.data.get('pairs', ()):
+                label = (f'{pair["file_name"]} · {pair["kb"]} · {pair["grade"]}/{pair["tier"]} · '
+                         f'{pair["older_sha256"][:12]} → {pair["newer_sha256"][:12]} · '
+                         + ', '.join(pair.get('reason_codes', ())))
+                self.candidates.addItem(sanitize_text(label, 500), pair['pair_id'])
+            self.candidates.blockSignals(False)
+        elif request.operation == 'candidate_preview':
+            self._preview = None
+            if not result.success:
+                self._clear_candidates()
+        elif result.success and request.operation == 'plan_sources':
             self._online_plan = (request, result)
         elif result.success and request.operation == 'current_inputs':
             self._preview = None
@@ -430,6 +514,7 @@ class InvestigationDialog(QDialog):
         if self._closed or generation != self._generation:
             return
         self._pending, self._preview = None, None
+        self._clear_candidates()
         self.status.setText(f'{failure.code}: {failure.exception_class} stopped the local operation. Previous results remain.')
         self._enable()
         if self._close_after_create:
@@ -449,6 +534,7 @@ class InvestigationDialog(QDialog):
 
     def cancel_operation(self):
         self._online_plan = None
+        self._clear_candidates()
         if self._pending is not None and self._pending.operation == 'create':
             self._cancel_create = True
             self.status.setText('Finishing local project creation; any completed project will be retained, not opened.')

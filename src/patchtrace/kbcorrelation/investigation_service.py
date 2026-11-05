@@ -5,6 +5,7 @@ the existing service on this worker's thread; no connection is returned to the G
 """
 from __future__ import annotations
 
+import json
 from dataclasses import dataclass, field, replace
 from pathlib import Path
 from typing import Literal
@@ -28,7 +29,8 @@ class CurrentProjectInputs:
 
 @dataclass(frozen=True, slots=True)
 class InvestigationRequest:
-    operation: Literal['import', 'search', 'preview', 'create', 'current_inputs', 'plan_sources', 'sync_sources']
+    operation: Literal['import', 'search', 'preview', 'create', 'current_inputs', 'plan_sources', 'sync_sources',
+                       'candidate_pairs', 'candidate_preview']
     workspace: Path
     source: Path | None = None
     lead: str = ''
@@ -48,6 +50,9 @@ class InvestigationRequest:
     source_plan_json: str | None = None
     consent_hosts: tuple[str, ...] = ()
     consent_plan: str = ''
+    component_name: str = ''
+    candidate_pair_id: str | None = None
+    expected_candidates_digest: str | None = None
 
 
 @dataclass(frozen=True, slots=True)
@@ -204,6 +209,148 @@ def _source_operation(request: InvestigationRequest, cancel, service, source_fet
                                error_code=None if outcome.exit in {0, 3, 4} else 'PT-KBC-INPUT')
 
 
+class _CandidateFileIndex:
+    """One selected-scope operation: keep immutable validated rows for each name the domain resolver reads."""
+
+    def __init__(self, port):
+        self._port = port
+        self._available = port.available()
+        self._captured = {}
+
+    def available(self):
+        return self._available
+
+    def rows(self, file_name, version_key):
+        if file_name not in self._captured:
+            rows, skipped = self._port.rows(file_name, version_key)
+            self._captured[file_name] = (version_key, tuple(rows), skipped)
+        _, rows, skipped = self._captured[file_name]
+        return rows, skipped
+
+    def rows_for(self, file_name, version_key):
+        raise KbcStoreError('PT-KBC-UNSUPPORTED', 'A read-only candidate snapshot cannot acquire binaries.')
+
+    def unchanged(self):
+        try:
+            if self._port.available() != self._available:
+                return False
+            for name, (key, rows, skipped) in self._captured.items():
+                current, current_skipped = self._port.rows(name, key)
+                if tuple(current) != rows or current_skipped != skipped:
+                    return False
+        except (KbcStoreError, OSError, ValueError):
+            return False
+        return True
+
+
+def _candidate_owner(service, investigation):
+    with WorkspaceStore(service.root, create=False, clock=service.env.clock) as store:
+        revision = store.current_revision(investigation)
+        if revision is None:
+            raise KbcStoreError('PT-KBC-INPUT', 'Search an advisory before inspecting index candidates.')
+        return {'revision': revision.revision, 'scope_id': revision.selected_scope_id,
+                'lead': {'kind': revision.lead.kind, 'value': revision.lead.value},
+                'sources': [source.model_dump(mode='json') for source in store.sources()]}
+
+
+def _index_claims(rows, sha, version_keys):
+    matching = [row for row in rows if row.sha256 == sha and row.build.version_key in version_keys]
+    return {'architectures': sorted({row.machine for row in matching}),
+            'sizes': sorted({row.size for row in matching}),
+            'file_versions': sorted({row.file_version for row in matching if row.file_version}),
+            'observed_builds': sorted({row.build.release_version for row in matching if row.build.release_version}),
+            'record_sha256': sorted({row.build.record_sha256 for row in matching}),
+            'version_keys': sorted({row.build.version_key for row in matching})}
+
+
+def _candidate_snapshot(request, cancel, service):
+    from .contracts import domain_id
+    from .service import KbService, parse_lead
+
+    if request.manual_pair_start:
+        raise KbcStoreError('PT-KBC-INPUT', 'Saved-index pairing requires an explicit advisory product.')
+    investigation = _required(request.investigation_id, 'an advisory search result')
+    scope_id = _required(request.scope_id, 'an explicit product')
+    name = normalise_name(_required(request.component_name.strip(), 'a component basename'))
+    owner = _candidate_owner(service, investigation)
+    if parse_lead(request.lead) != (owner['lead']['kind'], owner['lead']['value']):
+        raise KbcStoreError('PT-KBC-STALE', 'The identifier differs from the stored advisory investigation.')
+    products = service.products(investigation).result
+    if products.get('selected_scope_id') != scope_id or owner['scope_id'] != scope_id:
+        raise KbcStoreError('PT-KBC-STALE', 'The selected product changed; search and select it again.')
+    scope = next((item for item in products['products'] if item['scope_id'] == scope_id), None)
+    if scope is None:
+        raise KbcStoreError('PT-KBC-STALE', 'The selected product mapping is unavailable; repeat the search.')
+    _checkpoint(cancel)
+    original_index = service.env.file_index(service.root) if service.env.file_index is not None else None
+    snapshot = _CandidateFileIndex(original_index) if original_index is not None else None
+    resolver_service = (KbService(service.root, replace(service.env, file_index=lambda _: snapshot))
+                        if snapshot is not None else service)
+    outcome = resolver_service.pairs(investigation, product=scope_id, files=(name,))
+    candidates = [dict(pair) for pair in outcome.result.get('pairs', ()) if pair.get('file_name') == name]
+    resolutions = [dict(row) for row in outcome.result.get('resolutions', ()) if row.get('file_name') == name]
+    versions = {row['version_key'] for row in resolutions if row.get('version_key')}
+    rows = ()
+    if candidates and snapshot is not None:
+        rows, _ = snapshot.rows(name, '')
+    for pair in candidates:
+        pair['older_index'] = _index_claims(rows, pair['older_sha256'], versions)
+        pair['newer_index'] = _index_claims(rows, pair['newer_sha256'], versions)
+    _checkpoint(cancel)
+    if snapshot is not None and not snapshot.unchanged():
+        raise KbcStoreError('PT-KBC-STALE', 'The saved index changed during candidate inspection; inspect it again.')
+    if _candidate_owner(service, investigation) != owner:
+        raise KbcStoreError('PT-KBC-STALE', 'The advisory investigation changed during candidate inspection.')
+    data = {**outcome.result, 'pairs': candidates, 'resolutions': resolutions,
+            'scope': scope, 'component_name': name, 'investigation_revision': owner['revision'],
+            'files_without_record': [item for item in outcome.result.get('files_without_record', ()) if item == name],
+            'warnings': list(outcome.warnings), 'source': 'Saved Winbindex index claims; bytes unverified.'}
+    data['candidates_digest'] = domain_id('kbc.desktop-candidates', 1, {'owner': owner, 'result': data})
+    return outcome, data, resolver_service
+
+
+def _candidate_operation(request, cancel, service):
+    outcome, data, resolver_service = _candidate_snapshot(request, cancel, service)
+    if request.operation == 'candidate_pairs':
+        lines = [f'{pair["grade"]}/{pair["tier"]}  {pair["file_name"]}  {pair["kb"]}  '
+                 f'older {pair["older_sha256"][:12]} -> newer {pair["newer_sha256"][:12]}  '
+                 f'[{", ".join(pair["reason_codes"]) or "no flags"}]  {pair["pair_id"][:12]}'
+                 for pair in data['pairs']]
+        lines += [f'{row["file_name"]}  {row["kb"]}: {row["note"]}'
+                  for row in data['resolutions'] if row.get('note')]
+        lines += [f'{name}: no Winbindex record is saved in this workspace.' for name in data['files_without_record']]
+        if not lines:
+            lines.append(outcome.text)
+        text = ('Saved-index claims only; candidate bytes and architecture are unverified until local inspection.\n'
+                'No network request is made. Choose a candidate explicitly; ranking is not proof of a CVE fix.\n'
+                + '\n'.join(lines))
+        if outcome.warnings:
+            text += '\nInvestigation file-index warnings:\n' + '\n'.join(outcome.warnings)
+        return InvestigationResult('candidate_pairs', text, data, success=outcome.exit in {0, 3, 4})
+    if (request.expected_revision != data['investigation_revision'] or
+            request.expected_candidates_digest != data['candidates_digest']):
+        raise KbcStoreError('PT-KBC-STALE', 'The candidate sources changed; inspect and select the pair again.')
+    pair_id = _required(request.candidate_pair_id, 'an explicit index pair')
+    selected = next((pair for pair in data['pairs'] if pair['pair_id'] == pair_id), None)
+    if selected is None:
+        raise KbcStoreError('PT-KBC-STALE', 'The selected full pair id is not in the current candidate list.')
+    preview = resolver_service.plan(request.investigation_id, pair_id=pair_id, product=request.scope_id,
+                           files=(data['component_name'],))
+    _checkpoint(cancel)
+    _, current, _ = _candidate_snapshot(request, cancel, service)
+    if current['candidates_digest'] != data['candidates_digest']:
+        raise KbcStoreError('PT-KBC-STALE', 'The candidate sources changed during preview; inspect them again.')
+    pair = preview.result.get('pair')
+    if pair is None or any(pair.get(key) != selected[key] for key in ('pair_id', 'older_sha256', 'newer_sha256')):
+        raise KbcStoreError('PT-KBC-STALE', 'The selected index pair changed during preview.')
+    text = ('Saved-index claims; candidate bytes and architecture remain unverified.\n'
+            'Metadata-only preview. No download consent is granted and no project can be created from this preview.\n'
+            + preview.text + '\n\nSelected advisory product scope:\n' + json.dumps(data['scope'], indent=2)
+            + '\n\nSelected candidate and source claims:\n' + json.dumps(selected, indent=2))
+    return InvestigationResult('candidate_preview', text, {**data, **preview.result, 'selected_candidate': selected},
+                               success=preview.exit == 0, error_code=None if preview.exit == 0 else 'PT-KBC-INPUT')
+
+
 def _execute(request: InvestigationRequest, cancel, service_factory, source_fetcher) -> InvestigationResult:
     _checkpoint(cancel)
     if request.manual_pair_start and (request.investigation_id is not None or request.scope_id is not None
@@ -228,6 +375,8 @@ def _execute(request: InvestigationRequest, cancel, service_factory, source_fetc
         from .wiring import build_service
         service_factory = build_service
     service = service_factory(Path(request.workspace))
+    if request.operation in {'candidate_pairs', 'candidate_preview'}:
+        return _candidate_operation(request, cancel, service)
     if request.operation in {'plan_sources', 'sync_sources'}:
         return _source_operation(request, cancel, service, source_fetcher)
     if request.operation == 'create':
