@@ -1121,3 +1121,7 @@ Full `QT_QPA_PLATFORM=offscreen python -m pytest -q` for this isolated native sl
 
 - [x] #219 reviewed38be184c integrated: real lock-only retry, non-destructive committed acquisition failures, exact retained path, repaired SIGKILL fixture signature;475 combined tests passed.
 - [ ] Continue product-only desktop start and remaining unique #174 adapter functionality in exclusive worker worktrees.
+
+- [x] Review/integrate #220 reserved derived metadata boundary and #221 explicit binary-only local-pair desktop start;339 combined passes.
+- [ ] Product-only desktop/domain starting path and single-binary patch discovery remain separate accepted work.
+- [ ] Complete remaining #174 one-to-many normalization/GT-01 controls; narrow reserved-key integration alone is not full native acceptance.
