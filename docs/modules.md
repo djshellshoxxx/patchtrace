@@ -60,7 +60,7 @@ Stable IDs are independent of filenames. Public interfaces in SPEC-01 and schema
 | inspection UI (alpha) | ui_inspection.py | `InspectionThread` independent of analysis jobs; PE comparison table rendering | Qt, artifact inspection | pytest-qt via MainWindow |
 | packaging | tools/build_windows.py; tools/build_linux.py; tools/pyinstaller_hooks/ | Frozen Windows/Linux runtimes, curated Qt desktop plugins, licenses, inventory and checksum | PyInstaller | Windows/Linux Actions and archive inspection |
 | Windows archive preflight | tools/check_windows_package.py | Bounded portable ZIP digest/layout/inventory/dependency identity check; JSON receipt without extraction or execution | stdlib, persistence.strict_json | tests/test_windows_package_preflight.py; authored archives only; Windows execution remains separate |
-| Winbindex metadata refresh (planned) | kbcorrelation/sources/winbindex_fetch.py | Exact-plan preview/consent over existing Transport.fetch_metadata and saved index; no target execution | existing transport/parser/publication | test_kb_winbindex_refresh_20261105.py; injected fixtures, no live acceptance |
+| Winbindex metadata refresh | kbcorrelation/sources/winbindex_fetch.py | Exact-plan preview/consent over deadline-bounded Transport.fetch_metadata and atomic saved index publication; no target execution | existing transport/parser/publication | test_kb_winbindex_refresh_20261105.py; injected fixtures, no live acceptance |
 
 Every substantial future module must be added here before implementation. UI must not own analysis logic; provider must not own project state.
 

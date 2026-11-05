@@ -46,6 +46,18 @@ Active next slices: saved-index candidate inspection, explicit consented Winbind
 metadata refresh and cache staging publication hardening; each needs independent
 review and focused integration before its result enters this checkpoint.
 
+Subsequent #237/#238/#239 are reviewed/published/integrated: metadata deadline,
+exclusive cache publication plus review-discovered raw-fd cleanup, and exact-consent
+metadata refresh. Combined checks **283 passed in 3.63 s**,
+`/tmp/pt-independent-integration-index-focused.log`. SHAs/reviews are in the handoff.
+Candidate snapshot and desktop metadata follow-ups remain separate.
+
+Public #235 scanner query: one OPEN `pythonsecurity:S8707` issue
+`AaGuFuc-a2s4H-WIcBuh` on package preflight CLI archive path, new security rating 3.
+Independent triage found no unauthorized traversal in the explicit local CLI
+surface; normal authorized disposition remains needed. Status/rules/gate and
+suppression configuration remain unchanged.
+
 ## Current evidence
 2026-10-11: source inspection of pinned upstream revisions completed. Linux Qt offscreen desktop self-test starts and displays the synthetic project. Integrated Linux QA: 91 tests passed, 2 Windows-only tests skipped; Ruff and Qt offscreen desktop self-test passed. Domain, transport, worker, schema and UI tests are included. Synthetic fixtures and mocked providers verify wiring and validation, not real matching accuracy or model interpretation correctness.
 

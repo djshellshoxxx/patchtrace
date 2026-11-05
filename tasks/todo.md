@@ -8,7 +8,9 @@
 - [x] Integrate reviewed slices once on the separate independent branch; focused combined checks 248 and 122 passed (overlap), whole Ruff/diff and schema regeneration clean.
 - [ ] Finish/review/publish the saved-index candidate inspection/selection follow-up; candidate download/acquisition and product-only starts remain partial.
 - [x] Independently review/publish #236 authored-PE incomplete manifest backing repair; affected PE/package integration 257 passed/one real-launcher deselected.
-- [ ] Complete/review explicit consented Winbindex metadata refresh seam and exclusive owned cache publication repair.
+- [x] Review/publish #237 metadata deadlines, #238 cache publication/raw-fd cleanup and #239 exact-consent refresh; combined283 focused checks passed.
+- [ ] Review/publish candidate immutable-snapshot follow-up and desktop metadata consent wiring; no implicit acquisition.
+- [ ] Resolve #235 scanner path finding through evidence and normal authorized disposition; do not suppress or bypass.
 - [ ] Existing owners complete frozen #205 full-suite and pinned-native qualification; do not start duplicates or modify their source/processes/logs/worktrees.
 - [ ] Qualification owner resolves existing #205 run exit143/no summary at about94%; no full pass is inferred and this session did not stop/restart it.
 - [ ] Qualify exact final Linux/Windows/Qt/native/package/live/manual/offline and main-relative scanner/review gates before any main/release acceptance claim.

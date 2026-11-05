@@ -1,6 +1,6 @@
 # Independent development while qualification continues
 
-Checkpoint: 2026-11-05 23:42 UTC. Independent review branch:
+Checkpoint: 2026-11-05 23:53 UTC. Independent review branch:
 `integrate/independent-wave4-20261105`, code merge
 `ec48810c41530d787cfbd44b38406427062a5442`, based on published
 [#218](https://github.com/djshellshoxxx/patchtrace/pull/218)
@@ -9,6 +9,7 @@ This is a focused-tested candidate, not release acceptance.
 Published integration: [#235](https://github.com/djshellshoxxx/patchtrace/pull/235).
 The subsequent PE backing fix below is also integrated; exact current head is in
 that PR. A planned module index entry does not claim its implementation complete.
+Latest backend source merge: `92f2ab687790909bde87031ef6557b05d9683adb`.
 
 [Previous #218 checkpoint](archive/20261105-pr218-afc8a296.md) preserves all prior
 source accounting, diagnostic history, gates and native ownership. The original
@@ -41,6 +42,9 @@ none was merged to main. Counts overlap and must not be added as unique coverage
 | A3 [#233](https://github.com/djshellshoxxx/patchtrace/pull/233) | `69c705d052e6b6fb3c96ea49062d6a207829c1b8` | 135 author/five coordinator passes. Authored advisories and real-store revision/stale/ambiguity/failure preservation; eight-category acceptance matrix. |
 | A2 [#234](https://github.com/djshellshoxxx/patchtrace/pull/234), stacked on #226 | `bf46954ef2c6c9a278d9b78f5b4274242e617e09` | 255 author/107 independent passes plus three altered-plan refusals. Full 24-month preview, one-operation consent, strict rebuilt-plan checks, existing advisory sync and local-pair create/reopen preserving hashes. |
 | E2 [#236](https://github.com/djshellshoxxx/patchtrace/pull/236) | `8975c517af22aca0c0f90eb931b8a06ab18687b5` | Four baseline failures; 168 author/197 independent passes, one actual launcher excluded. Closed XML prefixes cannot supply facts/hash from incompletely backed PE resources; partial warning preserves original bytes. |
+| A1/B2 [#237](https://github.com/djshellshoxxx/patchtrace/pull/237) | `64eb58ece2f44914e8f94135ab1caefbb5a83f6b` | Seven baseline failures; 94 author/94 independent passes plus two separate loopback controls. Deadline covers requests/headers/retry delays; other defaults remain compatible. |
+| E1/E2 [#238](https://github.com/djshellshoxxx/patchtrace/pull/238) | `2afe874d6be17a4596d3955b71b493d5e0e4ed00` atop `08d9f9ddf191cb7de3f29ba1f039a50da54050e7` | Fixed staging alias/directory writes; review reproduced a raw-fd leak and drove its fix before publication. 95 author/59 independent checks, 30 coordinator store/publication checks. |
+| A1/B2 [#239](https://github.com/djshellshoxxx/patchtrace/pull/239) | `83320a32c7249f92a1d7ba708c8fc8e12e4aa15c` | Exact metadata plan/consent backend reuses transport/parser/publisher; URL/date/raw integrity and cancellation checks. 91 author/188 coordinator checks including boundaries. No live requests. |
 
 ## Integrated checks and current ownership
 
@@ -53,6 +57,8 @@ editable installs and qualification environments are unchanged. Ruff/schema drif
 results are recorded in the integration QA checkpoint.
 After PE repair: **257 passed, one real-launcher node deselected in 6.84 s**,
 `/tmp/pt-independent-integration-pe-focused.log` (affected authored-PE/package tests).
+After metadata dependencies: **283 passed in 3.63 s**,
+`/tmp/pt-independent-integration-index-focused.log`.
 
 Root plus three supported workers execute logical swarms in bounded waves. Each
 has its own `/tmp/pt-independent-*` branch/worktree/logs and explicit acceptance.
@@ -70,6 +76,11 @@ Keep #205 frozen until its owner resolves qualification. Its known stale
 crash-double failure is repaired in #218/#219; no green full result is inferred
 from progress or focused selections. Hosted exact-head checks remain queued or
 pending and #205's known Sonar failure was not bypassed.
+Public #235 Sonar query also reports one OPEN `pythonsecurity:S8707` finding on
+`tools/check_windows_package.py` CLI archive selection (`AaGuFuc-a2s4H-WIcBuh`),
+new security rating 3. Independent triage found no unauthorized traversal in the
+intended explicit local CLI surface; normal authorized disposition remains needed.
+No status/suppression/gate change or disposed finding is claimed.
 
 Online candidate discovery/download/acquisition, product-only starts, full update
 DAG/supersedence and derived `.bin` labels remain partial. A2 adds explicit advisory
