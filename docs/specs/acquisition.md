@@ -40,6 +40,18 @@ Pure modules import no network/Qt. The service creates projects through the exis
 
 Network: HTTPS only; allowlist `winbindex.m417z.com`, `msdl.microsoft.com`, `*.blob.core.windows.net` (redirect target only); environment proxies ignored; no credentials; User-Agent `PatchTrace`; bounded retries (429/5xx, ≤ 3, Retry-After ≤ 60 s); cancellable. Nothing about the user's projects is sent.
 
+Winbindex metadata has one 120-second network-operation budget, including all
+attempts, connection/header waits, retry delays and body reads. Check cancellation
+and this deadline before every request and after response headers. Each connection
+timeout is the smaller of the ordinary 10 seconds and the remaining budget. Never
+sleep for a Retry-After/backoff that would exhaust the remaining budget, retry
+early against that server delay, or open another request after an overshooting
+sleep. Preserve typed network/cancellation outcomes and close returned responses.
+The shared internal retry helper accepts an optional deadline; other acquisition
+operations retain their existing policies when it is absent. A custom opener must
+honor its supplied timeout; this contract adds no arbitrary-call interruption or
+local parsing CPU timeout.
+
 ## 5. Surfaces
 
 - CLI: `PatchTrace acquire search NAME [--json]` (metadata only, needs `--consent-hosts winbindex.m417z.com`), `PatchTrace acquire fetch NAME --older SHA --newer SHA --project DIR --consent-hosts winbindex.m417z.com,msdl.microsoft.com [--json]`. Exit codes per SPEC-07 §11 (0/2/3/4/5; 4 = no downloadable candidates).
