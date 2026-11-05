@@ -13,6 +13,7 @@ from typing import Literal
 
 from ..enrichment.identity import parse_address
 from ..models import FunctionMatch
+from ..normalization import is_abstention
 from .contracts import AlternativeMatch, SecondaryMatch, SecondaryMatchSet
 
 Status = Literal['agreement', 'disagreement', 'absent', 'not-comparable']
@@ -71,6 +72,9 @@ def reconcile(matches: Iterable[FunctionMatch], secondary: SecondaryMatchSet) ->
     used: set[int] = set()
     rows = []
     for match in matches:
+        if is_abstention(match):  # A-28: Ghidriff claimed several counterparts; no endpoint pair to compare
+            rows.append(Reconciliation(match.id, 'not-comparable', None, None, (), 'Ghidriff abstained: one-to-many'))
+            continue
         ends = _endpoints(match)
         if ends is None:
             rows.append(Reconciliation(match.id, 'not-comparable', None, None, (),

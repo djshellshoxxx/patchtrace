@@ -362,6 +362,12 @@ def _interval(ci: dict | None) -> str:
     return f'{ci["point"]:.4f} ({span}, {ci["groups"]} lineages{", anti-conservative" if ci["anti_conservative"] else ""})'
 
 
+def _verdict_note(v: dict) -> str:
+    """Where the planted functions landed when none was detected: a run of `unpaired` says the engine saw no row."""
+    missed = {k: n for k, n in v.get('verdicts', {}).items() if k in ('unpaired', 'mispaired')}
+    return ' [' + ', '.join(f'{k} {n}' for k, n in sorted(missed.items())) + ']' if missed else ''
+
+
 def numbers(g: GateRow) -> str:
     """The measured values of a gate on one line: counts, rates and intervals, never prose."""
     o = g.observed
@@ -370,6 +376,7 @@ def numbers(g: GateRow) -> str:
         return f'{len(o["evaluated"])} A/A pairs: ' + ', '.join(f'{k} {v}' for k, v in sorted(states.items()))
     if g.id == 'G-U2' and 'classes' in o:
         return '; '.join(f'{k} recall {v["recall"]} ({v["detected"]} hits, {v["mutants"]} mutants), leaks {v["leaks"]}'
+                         f'{_verdict_note(v)}'
                          for k, v in o['classes'].items())
     if g.id == 'G-U3' and 'rows' in o:
         return (f'{o["rows"]} matched rows, precision {_interval(o["precision"])}; tier-A contradicted '

@@ -184,7 +184,9 @@ def extract(match: FunctionMatch, reports: Iterable[ReconciliationReport],
     if any(r.status == 'disagreement' for r in rows.values()):
         return abstain('contested', 'an engine pairs an endpoint differently; manual review')
     if not match.older or not match.newer:
-        return abstain('one-sided', 'added/removed function has no counterpart to judge')
+        if match.category in ('added', 'removed'):
+            return abstain('one-sided', 'added/removed function has no counterpart to judge')
+        return abstain('one-sided', f'one-sided {match.category} row: no pairing to judge')
     engines = sorted(e for e, r in rows.items() if r.status == 'agreement' and e in ENGINE_FAMILY)
     profile = '+'.join(['G'] + sorted(ENGINE_FAMILY[e] for e in engines))
     profile = {'G+R+B': 'G+B+R'}.get(profile, profile)

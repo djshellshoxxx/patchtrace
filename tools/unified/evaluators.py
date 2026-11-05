@@ -114,7 +114,7 @@ def g_u2(manifest: corpus_manifest.CorpusManifest, sets: Sequence[OutcomeSet]) -
     failed = short = False
     for cls in classes.CLASSES:
         mutants = [p for p in manifest.pairs if p.mutation and p.mutation.unified_class == cls.id]
-        seen = Counter()
+        seen, verdicts = Counter(), Counter()
         for pair in mutants:
             for run, outcome in forward(sets, pair.pair_id):
                 if outcome.planted is None:
@@ -122,6 +122,7 @@ def g_u2(manifest: corpus_manifest.CorpusManifest, sets: Sequence[OutcomeSet]) -
                     failed = True
                     continue
                 verdict = _verdict(outcome)
+                verdicts[verdict] += 1
                 seen['runs'] += 1
                 if verdict in LEAKS:
                     seen['leaks'] += 1
@@ -135,7 +136,8 @@ def g_u2(manifest: corpus_manifest.CorpusManifest, sets: Sequence[OutcomeSet]) -
         n = seen['runs']
         recall = round(seen['detected'] / n, 4) if n else None
         per_class[cls.id] = {'manifest': len(mutants), 'mutants': seen['mutants'], 'detected': seen['detected'],
-                             'leaks': seen['leaks'], 'mispaired': seen['mispaired'], 'recall': recall}
+                             'leaks': seen['leaks'], 'mispaired': seen['mispaired'], 'recall': recall,
+                             'verdicts': dict(sorted(verdicts.items()))}
         if seen['mutants'] < MIN_MUTANTS_PER_CLASS:
             short = True
             reasons.append(f'{cls.id}: {seen["mutants"]} mutants with an outcome, {MIN_MUTANTS_PER_CLASS} are needed')
