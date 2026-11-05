@@ -1,0 +1,108 @@
+{
+  "format": "patchtrace-historical-research-import/1",
+  "evidence_scope": "byte-preserved historical research; no new acceptance",
+  "files": [
+    {
+      "path": "docs/research/20261103-additional-research/01-current-state-and-research-gaps.md",
+      "source_commit": "be4a58ff7d8facc57e99faac9c743cb8d60b36f4",
+      "sha256": "641ad872794920bb0999feda4274cea90725a0b17a5125c8594baf1dac9b50b1",
+      "bytes": 15089
+    },
+    {
+      "path": "docs/research/20261103-additional-research/02-engine-runtime-reuse.md",
+      "source_commit": "be4a58ff7d8facc57e99faac9c743cb8d60b36f4",
+      "sha256": "378ed3aaeac08688b0281a83d58dc8202f45203ee1d5ef0be3ac496fc44565bb",
+      "bytes": 27869
+    },
+    {
+      "path": "docs/research/20261103-additional-research/03-metadata-provenance-reuse.md",
+      "source_commit": "be4a58ff7d8facc57e99faac9c743cb8d60b36f4",
+      "sha256": "bca299e5dbf793c52cbb0c52466094ff496cc6078a3f9337399d58f4ef2f46af",
+      "bytes": 27219
+    },
+    {
+      "path": "docs/research/20261103-additional-research/04-desktop-persistence-release-reuse.md",
+      "source_commit": "be4a58ff7d8facc57e99faac9c743cb8d60b36f4",
+      "sha256": "911917da2a5e5c631a84c7f534846e5e9584d7dbd5d4c5dba10fc91456eca622",
+      "bytes": 27225
+    },
+    {
+      "path": "docs/research/20261103-additional-research/05-corpus-calibration-reproducibility.md",
+      "source_commit": "be4a58ff7d8facc57e99faac9c743cb8d60b36f4",
+      "sha256": "7950b2a9cbadf9e8f3eb76eef4b0baeaf21a875907e2b973d1341a14ab143689",
+      "bytes": 21568
+    },
+    {
+      "path": "docs/research/20261103-additional-research/06-claude-action-plan-and-reuse-register.md",
+      "source_commit": "be4a58ff7d8facc57e99faac9c743cb8d60b36f4",
+      "sha256": "a823208173149fb1fcd6a3d780e826d712fc748efbd37e9b7ece24a14b78b5b3",
+      "bytes": 21550
+    },
+    {
+      "path": "docs/research/20261103-additional-research/README.md",
+      "source_commit": "be4a58ff7d8facc57e99faac9c743cb8d60b36f4",
+      "sha256": "2498962ba9c5db53b5b31ded0fba1ccba25ca4c414169e5746a5576f7bf26629",
+      "bytes": 10504
+    },
+    {
+      "path": "docs/research/20261103-additional-research/repository-snapshot.json",
+      "source_commit": "be4a58ff7d8facc57e99faac9c743cb8d60b36f4",
+      "sha256": "398b22ce77f5c352a01b3f71551bdd3e8980fe8742d70ba26212ec5e8d04256d",
+      "bytes": 28755
+    },
+    {
+      "path": "docs/research/20261103-additional-research/validation.json",
+      "source_commit": "be4a58ff7d8facc57e99faac9c743cb8d60b36f4",
+      "sha256": "2178042e7de9f314509be3c92576fd5397049f93a54b40c4f5b357261aef6893",
+      "bytes": 3450
+    },
+    {
+      "path": "docs/research/calibration-r5/01-implementation-audit.md",
+      "source_commit": "ed70e6ddac449a42f843f1c60aa878416ab31727",
+      "sha256": "78d80c3ea3bbada30a09475be9321c455049758b3901cddcc0d53dc2330a19d1",
+      "bytes": 20763
+    },
+    {
+      "path": "docs/research/calibration-r5/02-statistical-methods.md",
+      "source_commit": "ed70e6ddac449a42f843f1c60aa878416ab31727",
+      "sha256": "9565279d15f86a9489e9fba1feeaeb486520e8ed1275344dc138487560b71376",
+      "bytes": 17150
+    },
+    {
+      "path": "docs/research/calibration-r5/03-data-and-experiment-runbook.md",
+      "source_commit": "ed70e6ddac449a42f843f1c60aa878416ab31727",
+      "sha256": "0a011c70f4e66b8e6392ee252a6abc9ca2bd458c0cd33062f0412fe895a5d5f2",
+      "bytes": 18164
+    },
+    {
+      "path": "docs/research/calibration-r5/04-robustness-policy-and-ui.md",
+      "source_commit": "ed70e6ddac449a42f843f1c60aa878416ab31727",
+      "sha256": "d2c972f784f02dc67e2fbcffc48f1296fe662e9d98a1cac219108c62fd1ed92d",
+      "bytes": 18939
+    },
+    {
+      "path": "docs/research/calibration-r5/05-engineering-handoff.md",
+      "source_commit": "ed70e6ddac449a42f843f1c60aa878416ab31727",
+      "sha256": "ebbd3f6a1d9e52617d7e41e9d55b1c99f1934315e99954739851bbb74bc0356f",
+      "bytes": 24326
+    },
+    {
+      "path": "docs/research/calibration-r5/06-dependence-toy.md",
+      "source_commit": "ed70e6ddac449a42f843f1c60aa878416ab31727",
+      "sha256": "22d6ba6da709fab23c5910997243de840ffbc317b7de30b6c6f07069e9c20519",
+      "bytes": 4939
+    },
+    {
+      "path": "docs/research/calibration-r5/README.md",
+      "source_commit": "ed70e6ddac449a42f843f1c60aa878416ab31727",
+      "sha256": "f7d2c549eb459434a5b48bbafc2051fa2182c1a9fc492022c426537ddbda6905",
+      "bytes": 8461
+    },
+    {
+      "path": "docs/research/calibration-r5/independence_toy.py",
+      "source_commit": "ed70e6ddac449a42f843f1c60aa878416ab31727",
+      "sha256": "f095e3e6ff0ec734a4310c592968d5e6d797b41d73f9ca3ddf40c9e2e9025d95",
+      "bytes": 2704
+    }
+  ]
+}

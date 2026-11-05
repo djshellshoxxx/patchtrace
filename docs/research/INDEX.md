@@ -1,5 +1,10 @@
 # Research index
 
+2026-11-05 additions: [source-preserving reconciliation](reconciliation-20261105.md),
+[reuse dossier](20261103-additional-research/README.md), and
+[R5 calibration dossier](calibration-r5/README.md). The table below remains the
+historical October 14 index; imported observations retain their original baselines.
+
 Listing of every file under `docs/research/`, 2026-10-14. "Specs cited" lists SPEC numbers named in the first lines of the file; the authoritative mapping is `docs/specs/REGISTRY.md`. Research files are evidence, not contracts.
 
 | File | Specs cited | Status | Title |
