@@ -1,4 +1,4 @@
-"""Offline investigation dialog; worker requests contain no widgets or SQLite objects."""
+"""Investigation dialog; workers own explicit source requests and no widgets or SQLite objects."""
 from __future__ import annotations
 
 import time
@@ -28,12 +28,16 @@ from ..tooltips import TooltipEntry
 from .investigation_service import InvestigationRequest, InvestigationResult, execute_request
 from .store import default_workspace
 
-SOURCE = 'Local advisory workspace and inspected local PE files; no online acquisition is performed.'
+SOURCE = ('Local advisory workspace and inspected local PE files. Optional MSRC advisory downloads require '
+          'an exact preview and separate consent; binary inputs remain local.')
 DESCRIPTIONS = {
     'workspace': 'Directory containing the local advisory workspace.',
     'source': 'Local supported advisory document to import.',
     'lead': 'KB or CVE identifier to search in the stored documents.',
     'scope': 'Explicit product, architecture and release used for this comparison.',
+    'months': 'Explicit advisory months to preview, separated by commas, such as 2026-09,2026-10.',
+    'plan_sources': 'Preview exact monthly MSRC advisory requests without accessing the network.',
+    'sync_sources': 'Consent once to fetching exactly the displayed advisory URLs, hosts and plan digest.',
     'older': 'Older local AMD64 PE binary; its bytes are inspected and never executed.',
     'newer': 'Newer local AMD64 PE binary; its bytes are inspected and never executed.',
     'destination': 'New or empty directory outside the currently open project.',
@@ -56,7 +60,9 @@ DESCRIPTIONS = {
     'browse_destination': 'Choose a parent directory for a new comparison folder.',
 }
 TIPS = {f'kb.investigation.{key}': TooltipEntry(text, 'Keeps the local investigation explicit and inspectable.',
-                                             'Local operation only; target binaries are not run.', SOURCE)
+                                             ('Only the exact consented advisory plan is fetched; targets are not run.'
+                                              if key == 'sync_sources' else
+                                              'Local operation only; target binaries are not run.'), SOURCE)
         for key, text in DESCRIPTIONS.items()}
 
 
@@ -65,7 +71,7 @@ class InvestigationDialog(QDialog):
                  execute=execute_request, notice=None, current_inputs=None, is_current=None):
         super().__init__(parent)
         register_tips(TIPS)
-        self.setWindowTitle('Investigate KB/CVE or local pair · offline')
+        self.setWindowTitle('Investigate KB/CVE or local pair')
         self.resize(920, 760)
         self.tasks = tasks if tasks is not None else TaskRunner(self)
         self._own_tasks = tasks is None
@@ -77,12 +83,14 @@ class InvestigationDialog(QDialog):
         self._generation, self._closed = 0, False
         self._pending = None
         self._preview = None
+        self._online_plan = None
         self._investigation_id = None
         self._cancel_create, self._close_after_create = False, False
         root = QVBoxLayout(self)
         heading = PlainLabel('Search a local KB/CVE advisory and choose a product, or start from local files. '
                              'Preview older/newer files before creating a separate comparison. '
-                             'Nothing is downloaded or executed.',
+                             'Optional advisory downloads require a separate preview and consent. '
+                             'Binary files remain local and are never executed.',
                              wrap=True)
         root.addWidget(heading)
         self.manual_pair_start = QCheckBox('Start from local files without advisory linkage')
@@ -135,6 +143,24 @@ class InvestigationDialog(QDialog):
         form.addRow(self.same_component)
         tab_order.append(self.same_component)
         root.addLayout(form)
+        source_actions = QHBoxLayout()
+        months = self.fields['months'] = QLineEdit()
+        self._tip(months, 'months')
+        months.setPlaceholderText('YYYY-MM,YYYY-MM (up to 24 months)')
+        months.textChanged.connect(lambda _: self._invalidate())
+        months_label = PlainLabel('Advisory mon&ths', wrap=True)
+        months_label.setBuddy(months)
+        source_actions.addWidget(months_label)
+        source_actions.addWidget(months, 1)
+        tab_order.append(months)
+        for key, title in (('plan_sources', 'Preview advisory downloads'),
+                           ('sync_sources', 'Fetch exactly this advisory plan')):
+            button = self._button(key, title)
+            source_actions.addWidget(button)
+            tab_order.append(button)
+        self.buttons['plan_sources'].clicked.connect(self._plan_sources)
+        self.buttons['sync_sources'].clicked.connect(self._sync_sources)
+        root.addLayout(source_actions)
         actions = QHBoxLayout()
         for key, title in (('use_current', 'Use current project inputs'), ('preview', 'Preview local pair'),
                            ('create', 'Create and open comparison'),
@@ -148,7 +174,7 @@ class InvestigationDialog(QDialog):
         self.buttons['cancel'].clicked.connect(self.cancel_operation)
         self.buttons['close'].clicked.connect(self.reject)
         root.addLayout(actions)
-        self.details = SafeTextView('Local investigation details', wrap=True)
+        self.details = SafeTextView('Local investigation details', wrap=True, limit=65536)
         self._tip(self.details, 'details')
         root.addWidget(self.details, 1)
         self.status = PlainLabel('Local files only. No comparison has been created.', wrap=True)
@@ -195,7 +221,7 @@ class InvestigationDialog(QDialog):
                                     current_project=self._current_project,
                                     confirm_same_component=self.same_component.isChecked(),
                                     current_inputs=self._input_origin if operation in {'preview', 'create'} else None,
-                                    manual_pair_start=manual)
+                                    manual_pair_start=manual, source_months=self.fields['months'].text().strip())
 
     def _mode_changed(self):
         self._investigation_id = None
@@ -215,6 +241,7 @@ class InvestigationDialog(QDialog):
 
     def _invalidate(self):
         self._preview = None
+        self._online_plan = None
         if self._pending is not None and self._pending.operation != 'create':
             self._generation += 1
             self.tasks.cancel(self._channel)
@@ -242,6 +269,18 @@ class InvestigationDialog(QDialog):
         self._preview = None
         self._submit(replace(self._request('search'), investigation_id=None, scope_id=None))
 
+    def _plan_sources(self):
+        self._invalidate()
+        self._submit(replace(self._request('plan_sources'), investigation_id=None, scope_id=None))
+
+    def _sync_sources(self):
+        if self._online_plan is None:
+            return
+        request, result = self._online_plan
+        self._online_plan = None
+        self._submit(replace(request, operation='sync_sources', source_plan_json=result.data['plan_json'],
+                             consent_hosts=tuple(result.data['hosts']), consent_plan=result.data['plan_sha']))
+
     def _use_current(self):
         self._invalidate()
         if self._available_current is not None:
@@ -266,10 +305,14 @@ class InvestigationDialog(QDialog):
             button.setEnabled(not busy)
         self.buttons['use_current'].setEnabled(not busy and self._available_current is not None
                                                and self._is_current())
-        for key in ('source', 'lead'):
+        for key in ('source', 'lead', 'months'):
             self.fields[key].setEnabled(not busy and not manual)
         for key in ('browse_source', 'import', 'search'):
             self.buttons[key].setEnabled(not busy and not manual)
+        self.buttons['plan_sources'].setEnabled(not busy and not manual
+                                                and bool(self.fields['lead'].text().strip())
+                                                and bool(self.fields['months'].text().strip()))
+        self.buttons['sync_sources'].setEnabled(not busy and not manual and self._online_plan is not None)
         self.buttons['cancel'].setEnabled(busy)
         self.buttons['close'].setEnabled(True)
         pair_ready = manual or (self._investigation_id is not None and self.scope.currentData() is not None)
@@ -290,12 +333,15 @@ class InvestigationDialog(QDialog):
             self.status.setText('PT-KBC-STALE: The current project changed; reopen the investigation.')
             self._enable()
             return
+        self._online_plan = None
         self._generation += 1
         generation = self._generation
         self._pending = request
         self._cancel_create, self._close_after_create = False, False
         self.status.setText({'import': 'Importing local advisory…', 'search': 'Searching stored documents…',
                              'current_inputs': 'Verifying current project input copies…',
+                             'plan_sources': 'Preparing exact advisory download preview; no request is sent…',
+                             'sync_sources': 'Fetching the consented advisory plan…',
                              'preview': 'Inspecting local pair…', 'create': 'Creating separate comparison…'}
                             [request.operation])
         self._enable()
@@ -316,7 +362,9 @@ class InvestigationDialog(QDialog):
                              text='The current project changed; reopen the investigation.')
         self.status.setText(('' if result.success else f'{result.error_code or "PT-KBC-INPUT"}: ') + result.text)
         text = result.text
-        if result.success and request.operation == 'current_inputs':
+        if result.success and request.operation == 'plan_sources':
+            self._online_plan = (request, result)
+        elif result.success and request.operation == 'current_inputs':
             self._preview = None
             for key in ('older', 'newer'):
                 self.fields[key].blockSignals(True)
@@ -328,7 +376,7 @@ class InvestigationDialog(QDialog):
         elif result.success and request.operation == 'import':
             self._investigation_id, self._preview = None, None
             self._set_scopes([], None)
-        elif result.success and request.operation == 'search':
+        elif result.success and request.operation in {'search', 'sync_sources'}:
             self._preview = None
             self._investigation_id = result.data.get('investigation_id')
             self._set_scopes(result.data.get('scopes', ()), request.scope_id)
@@ -400,6 +448,7 @@ class InvestigationDialog(QDialog):
         self._submit(request)
 
     def cancel_operation(self):
+        self._online_plan = None
         if self._pending is not None and self._pending.operation == 'create':
             self._cancel_create = True
             self.status.setText('Finishing local project creation; any completed project will be retained, not opened.')

@@ -1,4 +1,4 @@
-"""Local-only desktop investigation operations. No Qt, sockets or target execution.
+"""Desktop investigation orchestration. No Qt, direct sockets or target execution.
 
 Each request contains plain values. Workspace/project stores are opened and closed by
 the existing service on this worker's thread; no connection is returned to the GUI.
@@ -28,7 +28,7 @@ class CurrentProjectInputs:
 
 @dataclass(frozen=True, slots=True)
 class InvestigationRequest:
-    operation: Literal['import', 'search', 'preview', 'create', 'current_inputs']
+    operation: Literal['import', 'search', 'preview', 'create', 'current_inputs', 'plan_sources', 'sync_sources']
     workspace: Path
     source: Path | None = None
     lead: str = ''
@@ -44,6 +44,10 @@ class InvestigationRequest:
     confirm_same_component: bool = False
     current_inputs: CurrentProjectInputs | None = None
     manual_pair_start: bool = False
+    source_months: str = ''
+    source_plan_json: str | None = None
+    consent_hosts: tuple[str, ...] = ()
+    consent_plan: str = ''
 
 
 @dataclass(frozen=True, slots=True)
@@ -121,7 +125,86 @@ def _verified_current(snapshot: CurrentProjectInputs, cancel) -> tuple[tuple[Pat
     return paths, origin
 
 
-def _execute(request: InvestigationRequest, cancel, service_factory) -> InvestigationResult:
+def _source_plan(request: InvestigationRequest, service):
+    from .service import parse_lead
+    from .sources.net_plan import build_plan
+
+    if request.manual_pair_start:
+        raise KbcStoreError('PT-KBC-INPUT', 'Advisory sync requires an explicit KB/CVE starting point.')
+    parse_lead(_required(request.lead.strip(), 'a KB or CVE identifier'))
+    raw = request.source_months
+    if not isinstance(raw, str):
+        raise KbcStoreError('PT-KBC-INPUT', 'The advisory month scope must be text.')
+    if len(raw) > 4096:
+        raise KbcStoreError('PT-KBC-LIMIT', 'The advisory month scope exceeds its limit.')
+    _required(raw.strip(), 'advisory months to preview')
+    return build_plan([month.strip() for month in raw.split(',') if month.strip()],
+                      now_release=service.ports.now()[:7])
+
+
+def _source_operation(request: InvestigationRequest, cancel, service, source_fetcher) -> InvestigationResult:
+    from .sources.cvrf_fetch import fetch_months, to_imported
+    from .sources.net_plan import IndexPlan, render_plan, verify_consent
+
+    plan = _source_plan(request, service)
+    if request.operation == 'plan_sources':
+        text = ('Advisory metadata only. No request has been made.\nHeader: User-Agent: PatchTrace\n'
+                + render_plan(plan) + '\n\nExact plan JSON:\n' + plan.model_dump_json(indent=2))
+        return InvestigationResult('plan_sources', text, {'plan_json': plan.model_dump_json(),
+                                    'plan_sha': plan.plan_sha, 'hosts': plan.hosts})
+    raw = _required(request.source_plan_json, 'a current advisory download preview')
+    if not isinstance(raw, str):
+        raise KbcStoreError('PT-KBC-INPUT', 'The captured advisory plan must be JSON text.')
+    if len(raw) > 65536 or len(raw.encode('utf-8')) > 65536:
+        raise KbcStoreError('PT-KBC-LIMIT', 'The captured advisory plan exceeds its limit.')
+    load_json(raw.encode('utf-8'))  # Reject duplicate keys/non-finite constants before Pydantic's JSON decoder.
+    captured = IndexPlan.model_validate_json(raw)
+    if captured != plan:
+        raise KbcStoreError('PT-KBC-STALE', 'The advisory plan changed; preview it again before consent.')
+    verify_consent(plan, consent_hosts=request.consent_hosts, consent_plan=request.consent_plan)
+    fetcher = source_fetcher if source_fetcher is not None else fetch_months
+    rows, cancelled = [], False
+    try:
+        for fetched in fetcher(plan, consent_hosts=request.consent_hosts,
+                               consent_plan=request.consent_plan, cancel=cancel):
+            _checkpoint(cancel)
+            row = {'month': fetched.month, 'state': fetched.state}
+            if fetched.document is None:
+                if fetched.error is not None:
+                    row.update(code=fetched.error.code, message=fetched.error.message)
+                rows.append(row)
+                continue
+            try:
+                doc = to_imported(fetched.document)
+            except SourceError as exc:
+                rows.append({'month': fetched.month, 'state': 'failed', 'code': exc.code, 'message': exc.message})
+                continue
+            _checkpoint(cancel)
+            with WorkspaceStore(service.root, clock=service.env.clock) as store:
+                added = store.add_document(doc, fetched.document.raw)
+            rows.append({'month': fetched.month, 'state': 'added' if added else 'already-present',
+                         'sha256': doc.source.sha256, 'document': doc.summary()})
+    except (SourceError, KbcStoreError) as exc:
+        if exc.code != 'PT-KBC-CANCEL':
+            raise
+        cancelled = True
+    summary = '\n'.join(f'{row["month"]}: {row["state"]}' +
+                        (f' ({row["message"]})' if row.get('message') else '') for row in rows)
+    data = {'source_months': rows, 'plan_sha': plan.plan_sha, 'requested_months': list(plan.months)}
+    if cancelled:
+        return InvestigationResult('sync_sources', summary + '\nCancelled. Completed advisory sources are retained.',
+                                   data, success=False, error_code='PT-KBC-CANCEL')
+    _checkpoint(cancel)
+    outcome = service.search(request.lead.strip())
+    partial = any(row['state'] not in {'added', 'already-present'} for row in rows)
+    text = (summary + ('\nPartial advisory sync; valid stored sources remain available.' if partial else
+                       '\nAdvisory sync completed for the displayed months.') + '\n' + outcome.text)
+    return InvestigationResult('sync_sources', text, {**outcome.result, **data, 'source_partial': partial},
+                               success=outcome.exit in {0, 3, 4},
+                               error_code=None if outcome.exit in {0, 3, 4} else 'PT-KBC-INPUT')
+
+
+def _execute(request: InvestigationRequest, cancel, service_factory, source_fetcher) -> InvestigationResult:
     _checkpoint(cancel)
     if request.manual_pair_start and (request.investigation_id is not None or request.scope_id is not None
                                       or request.expected_revision is not None):
@@ -145,6 +228,8 @@ def _execute(request: InvestigationRequest, cancel, service_factory) -> Investig
         from .wiring import build_service
         service_factory = build_service
     service = service_factory(Path(request.workspace))
+    if request.operation in {'plan_sources', 'sync_sources'}:
+        return _source_operation(request, cancel, service, source_fetcher)
     if request.operation == 'create':
         from .service import KbService
         from .wiring import new_project_factory
@@ -241,10 +326,10 @@ def _execute(request: InvestigationRequest, cancel, service_factory) -> Investig
                                error_code=None if outcome.exit in {0, 3, 4} else 'PT-KBC-INPUT')
 
 
-def execute_request(request: InvestigationRequest, cancel, *, service_factory=None) -> InvestigationResult:
-    """Run one offline operation; domain errors are plain result data for the GUI."""
+def execute_request(request: InvestigationRequest, cancel, *, service_factory=None, source_fetcher=None) -> InvestigationResult:
+    """Run one explicit operation; source transport remains outside the UI and domain errors are plain data."""
     try:
-        return _execute(request, cancel, service_factory)
+        return _execute(request, cancel, service_factory, source_fetcher)
     except (KbcStoreError, SourceError) as exc:
         return InvestigationResult(request.operation, exc.message, success=False, error_code=exc.code)
     except (OSError, ValueError) as exc:
