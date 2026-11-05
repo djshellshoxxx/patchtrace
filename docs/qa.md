@@ -1276,3 +1276,19 @@ Validation on Linux: artifact-byte, representation and all `test_pe_*.py` consum
 ## Rules/callgraph consolidation — 2026-11-05
 
 Isolated port of eight PR #181 commits (excluding unrelated GUI timeout) reviewed against `5d504ff5`. Cache rescoring follows file/rule identity across reorderings; export names validate before writing; saved malformed grids are reported; regular-file hashing and graph successor budgets remain bounded. Review additionally reproduced a hash-valid grid sidecar accepting duplicate JSON keys (1 failed, 5 passed before fix); `RuleStore` now uses the existing strict JSON decoder. Focused pure rules/callgraph suite: **130 passed**; whole-tree Ruff passed. Published draft PR #191, initial source head `df0f1eb8`. New-head full QA/Windows checks remain pending; no live YARA-X compatibility claim. Initial ordinary pytest startup was blocked by absent Codespace Qt libraries; declared dependencies and required system libraries were provisioned separately.
+
+
+## KB explicit filename eligibility (2026-11-04)
+
+Base main `5d504ff5`; also reproduced unchanged in #176 (the components module and existing unit tests are identical). An advisory title naming a file downgraded an explicit analyst selection to contextual tier D, leaving COMPONENTS_READY and persisted pair resolution unreachable. Contextual title suggestions could also crowd explicit names out of a capped list. Before repair, 3 regression cases failed / 35 passed (`/tmp/patchtrace-kb-red.log`), including the real CLI/store/Winbindex-fixture path.
+
+SPEC-31-G and the KB integration plan now specify selectable A/B/C/E priority over contextual D. D+E dedup records tier E (analyst origin) and retains both reasons and source references. Title-only hints remain D and cannot select files. IDs stay basename/scope bound; byte verification remains pending and no file-to-CVE proof is inferred.
+
+Linux Codespace, Python 3.14.2: focused component/pair-index/service/CLI tests **76 passed in 5.91 s**; `QT_QPA_PLATFORM=offscreen python -m pytest -q tests/test_kbc*.py`: **1,057 passed in 43.01 s**, synthetic/offline with sockets denied. Whole Ruff/diff hygiene passed. `PYTHONPATH=src python tools/generate_schemas.py` has no drift; explicit import check resolves this worktree's `components.py`. The first schema command without PYTHONPATH picked up the shared editable checkout; its unrelated generated ExportManifest change was discarded and regeneration repeated against the correct source. An initial test command also named a nonexistent glob and collected nothing; corrected command above is the actual evidence. Independent read-only review found no blockers. Full-suite and exact-head Windows/Linux CI remain pending; no live MSRC/Winbindex/backend claim.
+
+### KB integration checkpoint (2026-11-05)
+
+- Reconciled PR #182's three KB fixture commits and PR #190's explicit-filename correction onto `5d504ff5`; excluded #182's unrelated UI wait port for the QA integration owner. Fixtures remain synthetic; structural and crash-protocol assertions are not native/provider or application-recovery acceptance evidence.
+- Reproduced the old source behavior: an analyst filename also named by a title became tier D and could not select a component. The correction retains tier E, both reasons and source references, including after CLI/store reopening.
+- Broad non-Qt KB validation: 1113 passed, one environment failure because isolated Python could not import a user-site `typing_extensions`. Installed that dependency into the shared interpreter; the affected test and all changed fixture/component/pair tests then passed with normal Qt plugin loading: 96 passed. Global `python -m ruff check src tests tools` and `git diff --check` passed.
+- Initial pytest startup was blocked by missing Qt host libraries; these were provisioned before the 96-test pass. Full-suite and Windows qualification remain coordinator/CI gates. No live compatibility claim is made.

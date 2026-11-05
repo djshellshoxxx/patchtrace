@@ -946,3 +946,16 @@ Done: dock with state matrix, consent, import, changes, copy, go to CVE. Open: r
 
 - [x] Port PR #181 rules/cache/export/callgraph repairs without unrelated GUI wait; reproduce and reject duplicate keys in saved-grid JSON. Focused pure suite: 130 passed; Ruff clean; draft PR #191 published.
 - [ ] Require current-head full/cross-OS checks and review before merge; preserve native acceptance gates independently.
+
+
+### [KBF-20261104] Explicit component filename selection
+
+- [x] Reproduce advisory-title collision and capped-list suppression of explicit filenames; preserve analyst tier E and title provenance, title-only D remains unselectable.
+- [x] Persisted CLI/pair selection regression, 3 red cases; 1,057 KBC tests passed, whole Ruff/diff/schema drift clean; independent review no blockers.
+- [ ] Exact-head CI, full-suite integration and Windows qualification. No live MSRC/Winbindex or vulnerability-attribution gate closed.
+
+### KB consolidation checkpoint (2026-11-05)
+
+- [x] Account for PR #182's KB fixture corpus, Unicode acceptance and byte-preserving line endings; leave its unrelated UI wait port to QA ownership.
+- [x] Account for PR #190's analyst filename selection repair and persisted investigation regression. Focused affected tests: 96 passed; global ruff passed.
+- [ ] Coordinator: publish reviewed KB integration and run combined full-suite/Windows CI gates; retain source PRs until all changes are accounted for. Synthetic fixtures do not satisfy live provider or release acceptance.
