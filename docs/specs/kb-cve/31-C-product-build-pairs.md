@@ -48,6 +48,8 @@ Phase 2 stable preference tuple for compatible candidates:
 
 This ordering must not be exposed as a vulnerability probability. If a newer version is shared across multiple KBs, attribution window is ambiguous even if the pair is otherwise compatible.
 
+The existing index-row proposal seam must enforce the component and orientation checks even when called directly, outside the filename-filtered resolver. Distinct normalized basenames carry the existing NAME_MISMATCH hard block. The timeline's KB identifier, SHA-256 and BASE-row ordering are deterministic display tie-breakers only; they cannot establish temporal order when both rows have equal release date and numeric build/UBR. Such proposals retain their rows with ORDER_UNVERIFIED, incompatible lineage and grade X. This does not change manual pair selection or imply verified product mapping, complete update coverage or a vulnerability probability.
+
 ## C4. Formal interval algorithm
 
 Target update T on the selected product lineage; let valid old/new build observations o,n have o < n. Seek the nearest verified predecessor o to T and earliest verified new build n at/after T with no known intermediate security or preview updates. A cumulative update may include other fixes even at one step: indicate multi-CVE-confounded. If any build branch changes across T, do not treat it as an adjacent pair. Unknown intervening releases result in coverage_unknown=true and do not qualify the label 'isolates target update'.
