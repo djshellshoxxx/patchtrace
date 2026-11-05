@@ -3,7 +3,8 @@
 The same steps as ``AcquisitionDialog`` (plan the requests, resolve candidate URLs, download and verify two files into
 a private staging directory, promote them into a normal project), but as plain functions over an injected
 ``Transport``. Nothing here asks for consent: the caller shows ``plan_requests`` to the analyst and builds the consent
-from what was shown. Nothing is executed. A cancel or any failure leaves no staging directory and no project.
+from what was shown. Nothing is executed. Cancellation/failure discards private staging; a project already committed during promotion
+remains available for inspection when later verification or provenance recording fails.
 """
 from __future__ import annotations
 
@@ -15,6 +16,7 @@ from typing import Any
 
 from pydantic import ValidationError
 
+from ..persistence import creation_directory_available
 from . import quarantine, winbindex
 from .contracts import AcquiredArtifact, AcquisitionError, BuildCandidate, DownloadPlan, KbRef
 from .transport import SYMBOL_HOST, AcquisitionConsent, Transport
@@ -88,7 +90,7 @@ def plan_requests(older: BuildCandidate, newer: BuildCandidate) -> RequestPlan:
 
 def check_project_root(root: Path) -> None:
     root = Path(root)
-    if root.exists() and (not root.is_dir() or any(root.iterdir())):
+    if not creation_directory_available(root):
         raise AcquisitionError('PT-ACQ-INPUT', 'the project directory must be absent or empty')
 
 

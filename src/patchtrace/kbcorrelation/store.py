@@ -29,6 +29,7 @@ from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
+from ..persistence import creation_directory_available
 from .contracts import (
     AnalystDecision,
     Attempt,
@@ -540,7 +541,7 @@ class ProjectAttachment:
             if _file_sha(path) != sha:
                 raise KbcStoreError('PT-KBC-VERIFY', 'an input file does not match its verified SHA-256')
         directory = Path(request.directory)
-        if directory.exists() and (not directory.is_dir() or any(directory.iterdir())):
+        if not creation_directory_available(directory):
             raise KbcStoreError('PT-KBC-STORAGE', 'the project directory exists and is not empty')
         for sha in request.source_shas:
             self.ws.read_object(sha)  # fail before any side effect if a source object is damaged

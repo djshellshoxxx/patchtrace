@@ -400,8 +400,20 @@ def test_domain_modules_import_no_qt_network_or_database(path):
             assert top not in FORBIDDEN - ALLOWED_FORBIDDEN.get(path.name, set()), f'{path.name} imports {module}'
             assert top != 'patchtrace', f'{path.name} must use relative imports'
         elif level == 2:  # `..x` is a sibling package
-            assert top in sibling_ok, f'{path.name} imports sibling {module}'
+            if path.name in {'investigation_service.py', 'store.py'} and module == 'persistence':
+                nodes = [n for n in ast.walk(ast.parse(path.read_text(encoding='utf-8')))
+                         if isinstance(n, ast.ImportFrom) and n.level == 2 and n.module == 'persistence']
+                assert all([(a.name, a.asname) for a in n.names] == [('creation_directory_available', None)]
+                           for n in nodes), f'{path.name} imports sibling persistence forbidden symbols'
+            else:
+                assert top in sibling_ok, f'{path.name} imports sibling {module}'
         # `.x` inside kbcorrelation is fine
+    if path.name == 'investigation_service.py':
+        forbidden = {'ProjectStore', 'ProjectLock', 'sqlite3', 'connect', 'execute', 'executemany',
+                     'executescript', 'cursor', '__globals__'}
+        for node in ast.walk(ast.parse(path.read_text(encoding='utf-8'))):
+            symbol = node.id if isinstance(node, ast.Name) else node.attr if isinstance(node, ast.Attribute) else None
+            assert symbol not in forbidden, f'{path.name} accesses forbidden database/lock symbol {symbol}'
 
 
 def test_init_is_empty_and_ports_and_ids_import_no_sibling():
@@ -439,4 +451,45 @@ def test_current_input_service_sibling_boundary(tmp_path, sibling, allowed):
         test_domain_modules_import_no_qt_network_or_database(path)
     else:
         with pytest.raises(AssertionError, match='imports sibling'):
+            test_domain_modules_import_no_qt_network_or_database(path)
+
+
+@pytest.mark.parametrize('source,allowed', [
+    ('from ..persistence import creation_directory_available', True),
+    ('from ..persistence import ProjectStore', False),
+    ('from ..persistence import ProjectStore as creation_directory_available', False),
+    ('from ..persistence import creation_directory_available as ProjectStore', False),
+    ('from ..persistence import creation_directory_available, ProjectStore', False),
+    ('from .. import persistence as store', False),
+    ('import patchtrace.persistence as store', False),
+    ('import sqlite3', False),
+    ('connection.execute("SELECT 1")', False),
+    ('ProjectLock(root)', False),
+    ('creation_directory_available.__globals__["ProjectStore"]', False),
+], ids=['exact-helper', 'store', 'store-alias', 'helper-alias', 'extra-symbol', 'module-alias',
+        'absolute-module', 'sqlite', 'db-call', 'lock-call', 'helper-introspection'])
+def test_investigation_destination_preflight_has_no_database_escape(tmp_path, source, allowed):
+    path = tmp_path / 'investigation_service.py'
+    path.write_text(source + '\n', encoding='utf-8')
+    if allowed:
+        test_domain_modules_import_no_qt_network_or_database(path)
+    else:
+        with pytest.raises(AssertionError):
+            test_domain_modules_import_no_qt_network_or_database(path)
+
+
+@pytest.mark.parametrize('source,allowed', [
+    ('from ..persistence import creation_directory_available', True),
+    ('from ..persistence import ProjectStore', False),
+    ('from ..persistence import ProjectLock as creation_directory_available', False),
+    ('from ..persistence import creation_directory_available as store', False),
+    ('from .. import persistence as store', False),
+], ids=['helper', 'store', 'lock-alias', 'helper-alias', 'module-alias'])
+def test_workspace_destination_preflight_is_exact_helper_import(tmp_path, source, allowed):
+    path = tmp_path / 'store.py'
+    path.write_text(source + '\n', encoding='utf-8')
+    if allowed:
+        test_domain_modules_import_no_qt_network_or_database(path)
+    else:
+        with pytest.raises(AssertionError):
             test_domain_modules_import_no_qt_network_or_database(path)
