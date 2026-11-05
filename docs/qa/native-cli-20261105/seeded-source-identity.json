@@ -1,0 +1,7 @@
+{
+  "upstream_commit": "c3a90e9226d977f58f4e9c75f78fa6b07afe13c7",
+  "path": "librz/main/rz-diff.c",
+  "baseline_sha256": "d44bfe9d05da81ace0ce46eae8e69555c080719cebac3cb72d6686917ab1ea5b",
+  "experimental_sha256": "144d36904de9e5e892f9fab94d1b94e923c84adb869f16b927b103fa784b942d",
+  "status": "unsupported research producer with extra analysis-seeding patch; not approved pin or patcher output"
+}
