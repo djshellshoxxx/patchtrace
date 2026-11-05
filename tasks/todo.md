@@ -1044,3 +1044,11 @@ Full `QT_QPA_PLATFORM=offscreen python -m pytest -q` for this isolated native sl
 - [x] Port the bounded advisory import → KB/CVE search → explicit product → local pair preview → create/open journey, with create-only factory and existing workspace/project stores.
 - [x] Reproduce absent modules on prerequisite baseline; protect preview revision/hash, selected architecture, retained paths, cancellation and current-project adoption.
 - [ ] Coordinator exact-head full suite/CI and independent review. Product-only/binary-only desktop starts, online acquisition wizard, native Windows/frozen accessibility and live source gates are outside this slice; fixtures do not close them.
+
+## E4-RANDOM2-20261105 — bounded lifecycle audit
+
+- [x] Seeded nway/ingestion/persistence selection recorded; reproduce one recovery preservation defect before fixing.
+- [x] Verify existing recovery bytes before corrupt-series replacement; collision, directory and link failures preserve both original paths; exact-copy reuse tested.
+- [x] Focused nway tests, whole Ruff and whitespace checks pass. Full-suite and native Windows release acceptance stay coordinator-owned.
+
+- [ ] Follow-up outside this one-defect wave: stream/hash the damaged original during nway recovery; `--replace-corrupt` currently reads it in full even when load rejects the size.

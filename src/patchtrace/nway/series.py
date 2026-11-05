@@ -11,6 +11,7 @@ import hashlib
 import json
 import os
 import sqlite3
+import stat
 import tempfile
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -235,7 +236,24 @@ def _keep_corrupt_copy(path: Path) -> None:
     try:
         fd = os.open(copy, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
     except FileExistsError:
-        return  # these exact damaged bytes were already preserved; never overwrite a copy
+        # The short name is only a hint: it may hold unrelated bytes, or a previous
+        # interrupted write. Never replace the damaged original until its copy is verified.
+        try:
+            info = copy.lstat()
+            if not stat.S_ISREG(info.st_mode):
+                raise OSError('recovery path is not a regular file')
+            flags = os.O_RDONLY | getattr(os, 'O_BINARY', 0) | getattr(os, 'O_NONBLOCK', 0)
+            flags |= getattr(os, 'O_NOFOLLOW', 0)
+            with os.fdopen(os.open(copy, flags), 'rb') as stream:
+                opened = os.fstat(stream.fileno())
+                if (not stat.S_ISREG(opened.st_mode) or opened.st_size != len(data)
+                        or (opened.st_dev, opened.st_ino) != (info.st_dev, info.st_ino)
+                        or stream.read(len(data) + 1) != data):
+                    raise OSError('recovery copy differs from damaged series')
+        except OSError:
+            raise NwayError('PT-NWAY-STORAGE', f'{copy.name} is not a verified recovery copy; '
+                            'the damaged series was retained') from None
+        return
     with os.fdopen(fd, 'wb') as stream:
         stream.write(data)
         stream.flush()
