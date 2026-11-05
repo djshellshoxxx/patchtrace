@@ -47,6 +47,30 @@ def verdicts(rows):
 
 # ---- facts -------------------------------------------------------------------------------------------------------------------------
 
+@pytest.mark.parametrize('fail_newer', [False, True])
+def test_facts_readers_close_before_temporary_files_are_removed(monkeypatch, fail_newer):
+    import unified_facts_builder as fb
+
+    opened = []
+    build = fb.build_reader
+
+    def reader(*args, **kwargs):
+        if fail_newer and opened:
+            raise RuntimeError('newer ingest failed')
+        result = build(*args, **kwargs)
+        opened.append(result)
+        return result
+
+    monkeypatch.setattr(fb, 'build_reader', reader)
+    if fail_newer:
+        with pytest.raises(RuntimeError, match='newer ingest failed'):
+            bench._facts(2, 1)
+    else:
+        assert bench._facts(2, 1)['counts']['pairs'] == 2
+    assert len(opened) == (1 if fail_newer else 2)
+    assert all(r._db is None for r in opened)
+
+
 def test_bench_facts_stage_reports_counts_and_gate():
     measured = bench.measure('facts', 40, seed=1)
     assert measured['status'] == 'measured', measured['error']

@@ -29,6 +29,7 @@ import tempfile
 import threading
 import time
 from collections.abc import Sequence
+from contextlib import ExitStack
 from pathlib import Path
 from typing import Literal
 
@@ -256,11 +257,13 @@ def _facts(n: int, seed: int) -> dict:
         return [fb.function(first + i * stride, [('mov_ri', 'EAX', i + 1), ('cmp_ri', 'EAX', constants[i] + shift),
                                                  ('jcc', 'Z', 'out'), ('mov_ri', 'ECX', 7), ('label', 'out'), ('ret',)],
                             name=f'f{i}') for i in range(n)]
-    with tempfile.TemporaryDirectory(prefix='pt-bench-facts-') as private:
+    with tempfile.TemporaryDirectory(prefix='pt-bench-facts-') as private, ExitStack() as readers:
         t0 = time.perf_counter()
         old, new = image(0), image(1)
         older = fb.build_reader(Path(private), 'old', old, sha=fb.OLD_SHA, size=size)
+        readers.callback(older.close)
         newer = fb.build_reader(Path(private), 'new', new, sha=fb.NEW_SHA, size=size)
+        readers.callback(newer.close)
         t1 = time.perf_counter()
         rows = [fb.decided(a['rva'], b['rva']) for a, b in zip(old, new, strict=True)]
         layout = PeLayout(image_base=fb.BASE, size_of_image=size)
