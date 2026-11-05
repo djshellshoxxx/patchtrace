@@ -921,3 +921,9 @@ Done: dock with state matrix, consent, import, changes, copy, go to CVE. Open: r
 - [x] Preserve old no-key bytes/ranking and private in-memory unified support; keep persisted engine vocabulary unchanged; expose legacy unmarked replay as unverified rather than infer historical credit.
 - [ ] Independent final review, coordinator integration/cross-OS and verified transfer integration remain pending; broader locked training/final-run/promotion safeguards are not completed by this slice. See `docs/qa/output-credited-replay-20261101.md`.
 - [x] Independent credited-replay review approved exact source `5c26af9` with 119 passes/1 native-tool BLOCKED skip and direct scalar/failed-valid-artifact controls; no remaining bounded source blocker. Integration/cross-OS/transfer and broader safeguards above remain open.
+
+### Verified bytes after metadata collisions (2026-11-05)
+
+- [x] Reproduce same-size/restored-mtime edits with equal metadata deterministically; prevent changed requested bytes from escaping the verified reader with compact per-block hashes and a post-read metadata check.
+- [x] Preserve range/cancel/size limits; cover scalar I/O bounds, boundaries, short OS reads and read-time mutation. Linux focused consumers: 558 passed/1 Windows-only skip, plus 22 alpha integration passes; whole Ruff passed.
+- [ ] Review and integrate repair; run exact-head full-suite and Windows CI. Do not count the skipped WinVerifyTrust test as native acceptance.
