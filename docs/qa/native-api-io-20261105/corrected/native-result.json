@@ -1,0 +1,14 @@
+{
+  "variant": "corrected",
+  "accepted": true,
+  "scope": "native public API only; not CLI JSON or application acceptance",
+  "source_head": "7b5817f2ff6306ac1d0b24defe2dba7661b94881",
+  "workflow_sha": null,
+  "run_id": null,
+  "run_attempt": null,
+  "executable": "/tmp/pt-rizin-native-control",
+  "returncode": 0,
+  "executable_sha256": "c86f4fefa1b29bf5da9a480c02454b700f666c75d93fa9c25335c92881b6e8e8",
+  "stdout_sha256": "6a8b2683c823f4765805efd168e64a84166c41c283a6a649412139e546a817f8",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}
