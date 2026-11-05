@@ -1,0 +1,4 @@
+distinct-io 1:2 overlap=0 errors=0 reads=3,4
+distinct-io 2:1 overlap=0 errors=0 reads=4,3
+distinct-io 1:2 overlap=1 errors=0 reads=3,4
+distinct-io 2:1 overlap=1 errors=0 reads=4,3

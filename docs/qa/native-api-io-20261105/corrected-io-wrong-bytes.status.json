@@ -1,0 +1,8 @@
+{
+  "returncode": 1,
+  "accepted_as": "intentional-negative-oracle-control",
+  "source_head": "7b5817f2ff6306ac1d0b24defe2dba7661b94881",
+  "control_sha256": "8aa41a9686947030684fc5163184a1f233e1774ca0d72e5d4b628cb25da46ce4",
+  "stdout_sha256": "c61642faf2b5549fd95c24af264da198c5041b0f1ac16493d248558d3044a6cc",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}
