@@ -10,6 +10,7 @@ Published integration: [#235](https://github.com/djshellshoxxx/patchtrace/pull/2
 The subsequent PE backing fix below is also integrated; exact current head is in
 that PR. A planned module index entry does not claim its implementation complete.
 Latest backend source merge: `92f2ab687790909bde87031ef6557b05d9683adb`.
+Candidate/scanner receipt merge: `7545667db3bf881f380ba8bafe1c633c128c7022`.
 
 [Previous #218 checkpoint](archive/20261105-pr218-afc8a296.md) preserves all prior
 source accounting, diagnostic history, gates and native ownership. The original
@@ -45,6 +46,8 @@ none was merged to main. Counts overlap and must not be added as unique coverage
 | A1/B2 [#237](https://github.com/djshellshoxxx/patchtrace/pull/237) | `64eb58ece2f44914e8f94135ab1caefbb5a83f6b` | Seven baseline failures; 94 author/94 independent passes plus two separate loopback controls. Deadline covers requests/headers/retry delays; other defaults remain compatible. |
 | E1/E2 [#238](https://github.com/djshellshoxxx/patchtrace/pull/238) | `2afe874d6be17a4596d3955b71b493d5e0e4ed00` atop `08d9f9ddf191cb7de3f29ba1f039a50da54050e7` | Fixed staging alias/directory writes; review reproduced a raw-fd leak and drove its fix before publication. 95 author/59 independent checks, 30 coordinator store/publication checks. |
 | A1/B2 [#239](https://github.com/djshellshoxxx/patchtrace/pull/239) | `83320a32c7249f92a1d7ba708c8fc8e12e4aa15c` | Exact metadata plan/consent backend reuses transport/parser/publisher; URL/date/raw integrity and cancellation checks. 91 author/188 coordinator checks including boundaries. No live requests. |
+| A2/B2 [#240](https://github.com/djshellshoxxx/patchtrace/pull/240) | `bf3661966785a971f484b6339af81274278d1434` atop `5cdf0e834d2b6699c442f1137eed6399fe1662f3` | Saved-index inspect/select/metadata preview. Review reproduced mixed old-pair/new-record claims; immutable validated snapshots now feed existing resolver/planner. 339 author/106 independent/30 coordinator checks plus cancellation probe; no implicit download or creation. |
+| Security review [#241](https://github.com/djshellshoxxx/patchtrace/pull/241) | `c30f11fb6f94ab3325e3bf6252326004f792294d` | Independent CLI archive-path triage: 60 authored tests plus absolute/parent-relative read-only probes; no unauthorized traversal in intended local surface. Scanner finding remains OPEN; normal authorized disposition required. Initial GitHub create failed transiently, verified absent then retry published this PR. |
 
 ## Integrated checks and current ownership
 
@@ -59,6 +62,9 @@ After PE repair: **257 passed, one real-launcher node deselected in 6.84 s**,
 `/tmp/pt-independent-integration-pe-focused.log` (affected authored-PE/package tests).
 After metadata dependencies: **283 passed in 3.63 s**,
 `/tmp/pt-independent-integration-index-focused.log`.
+After candidate integration: **170 passed in 15.87 s**,
+`/tmp/pt-independent-integration-candidate-focused.log`; source/GUI/metadata/manual
+hash controls overlap earlier selections and do not imply whole-suite acceptance.
 
 Root plus three supported workers execute logical swarms in bounded waves. Each
 has its own `/tmp/pt-independent-*` branch/worktree/logs and explicit acceptance.
@@ -66,9 +72,9 @@ has its own `/tmp/pt-independent-*` branch/worktree/logs and explicit acceptance
 | Owner | Current exclusive work | Budget / acceptance |
 |---|---|---|
 | Coordinator | Own integration, modules/QA/todo/latest handoff, reviewed publication | Focused integration/Ruff/schema checks and exact SHA/PR evidence; never alter qualification/native ownership |
-| online_sources_a1 | New `work/consented-winbindex-refresh-20261105`, `/tmp/pt-independent-winbindex-refresh-20261105`: sources/winbindex_fetch.py, own tests/source spec/QA | 15-minute metadata refresh seam using existing transport/parser/publication; exact consent preview, injected tests, no live calls. Module indexed before code in `58cc60f7`. Also independent review of other workers' changes. |
-| gui_accessibility_c2 | `work/investigation-candidates-20261105`, `/tmp/pt-independent-candidate-wizard-20261105`: investigation service/Qt, new candidate tests, SPEC31-F and dedicated QA | 20-minute milestone: explicit saved-index candidate inspection/selection, revision/digest/provenance checks; no auto-selection or unconsented network; manual hashes authoritative |
-| security_persistence_e1 | New `work/winbindex-publication-20261105`, `/tmp/pt-independent-index-publication-20261105`: wiring.py save_winbindex_record, own tests/SPEC31-D/QA | 15-minute milestone: reproduce fixed staging-path alias write, exclusive owned publication fix, preserve prior/foreign bytes and independent review |
+| online_sources_a1 | Read-only independent desktop metadata/consent review; completed scanner triage #241 | Exact-SHA approval with adversarial probes, no self-review or scanner disposition |
+| gui_accessibility_c2 | `work/desktop-index-refresh-20261105`, `/tmp/pt-independent-metadata-desktop-20261105`: facade/Qt, own tests/SPEC31-F/QA | 15-minute explicit filename→metadata plan→separate one-use consent→saved candidate journey; clear both advisory/metadata grants on edits or preview replacement |
+| security_persistence_e1 | `repair/kb-acquire-lifecycle-20261105`, `/tmp/pt-independent-acquire-lifecycle-20261105`: KbService.acquire in service.py, own tests/SPEC31-D/QA | 15-minute cancel propagation and captured revision/advisory-source validation before staging/import; backwards-compatible keywords, real-store authored controls, independent review |
 
 ## Open boundaries
 

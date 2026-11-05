@@ -6,6 +6,10 @@ consent, and orchestrates existing CVRF transport/per-document WorkspaceStore co
 Qt owns only preview, one-operation consent and lifecycle state. Regression seam:
 `tests/test_kb_online_investigation_20261105.py`; injected sources and real stores,
 no live compatibility evidence. `test_kb_accessibility_20261105.py` covers keyboard access.
+The same facade now exposes explicit saved-index candidate inspection/selection:
+one immutable validated index snapshot feeds the existing resolver and pure planner,
+with provenance/revision/digest checks; metadata-only candidate preview grants no
+download or creation consent. `test_kb_candidate_journey_20261105.py` covers this seam.
 
 Stable IDs are independent of filenames. Public interfaces in SPEC-01 and schemas in SPEC-02 are source of truth. Module implementations remain independently usable without Qt.
 

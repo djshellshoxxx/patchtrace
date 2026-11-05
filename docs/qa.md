@@ -58,6 +58,14 @@ Independent triage found no unauthorized traversal in the explicit local CLI
 surface; normal authorized disposition remains needed. Status/rules/gate and
 suppression configuration remain unchanged.
 
+Reviewed #240 (`bf366196` atop `5cdf0e83`) now supplies coherent saved-index
+inspection/selection: an independently reproduced in-operation record replacement
+cannot mix old pair decisions with new provenance. Author339, independent106 and
+coordinator30 focused checks passed; integration **170 passed in 15.87 s**, log
+`/tmp/pt-independent-integration-candidate-focused.log`. No actual download or
+project creation is enabled by metadata-only candidate preview. #241 retains the
+independent scanner boundary receipt; finding remains OPEN and gate not bypassed.
+
 ## Current evidence
 2026-10-11: source inspection of pinned upstream revisions completed. Linux Qt offscreen desktop self-test starts and displays the synthetic project. Integrated Linux QA: 91 tests passed, 2 Windows-only tests skipped; Ruff and Qt offscreen desktop self-test passed. Domain, transport, worker, schema and UI tests are included. Synthetic fixtures and mocked providers verify wiring and validation, not real matching accuracy or model interpretation correctness.
 
