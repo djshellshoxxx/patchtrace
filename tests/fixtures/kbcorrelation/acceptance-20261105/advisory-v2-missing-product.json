@@ -1,0 +1,21 @@
+{
+  "dialect": "cvrf-json/0",
+  "synthetic": true,
+  "document": {
+    "tracking_id": "PT-ACCEPTANCE-2099-Feb",
+    "title": "PatchTrace authored acceptance fixture, not Microsoft",
+    "release_id": "2099-Feb",
+    "current_release_date": "2099-02-14",
+    "publisher": "PatchTrace synthetic fixture"
+  },
+  "product_tree": [],
+  "vulnerabilities": [
+    {
+      "cve": "CVE-2099-70001",
+      "title": "Authored advisory for a synthetic component",
+      "description": "The revised fixture deliberately omits product evidence.",
+      "remediations": [{"type": 2, "description": "5099551", "product_ids": ["PT-ACCEPTANCE-CLIENT"], "fixed_build": "10.0.26100.9551"}],
+      "product_statuses": {"Fixed": ["PT-ACCEPTANCE-CLIENT"]}
+    }
+  ]
+}
