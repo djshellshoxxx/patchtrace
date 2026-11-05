@@ -50,6 +50,14 @@ def validate(variant: str, returncode: int, stdout: str) -> None:
 
 def run(variant: str, executable: Path, output: Path, timeout: float = 120) -> bool:
     output.mkdir(parents=True, exist_ok=True)
+    # A marker serializes cooperating attempts; legacy receipts without a marker
+    # are refused too. Never let a failed retry replace the first raw evidence.
+    for name in ('native-result.json', 'native-matrix.log', 'native-stderr.log'):
+        path = output / name
+        if path.exists() or path.is_symlink():
+            raise FileExistsError(f'native evidence already exists: {path}')
+    with (output / '.native-evidence-run').open('x', encoding='utf-8') as marker:
+        marker.write('native-api-research/1\n')
     executable = executable.resolve()
     receipt = {
         "variant": variant, "accepted": False,
@@ -78,13 +86,14 @@ def run(variant: str, executable: Path, output: Path, timeout: float = 120) -> b
     finally:
         # Save raw bytes before reporting failure; never discard first-attempt
         # diagnostics or fabricate a successful native receipt after a crash.
-        (output / "native-matrix.log").write_bytes(stdout)
-        (output / "native-stderr.log").write_bytes(stderr)
+        with (output / "native-matrix.log").open('xb') as handle:
+            handle.write(stdout)
+        with (output / "native-stderr.log").open('xb') as handle:
+            handle.write(stderr)
         receipt["stdout_sha256"] = hashlib.sha256(stdout).hexdigest()
         receipt["stderr_sha256"] = hashlib.sha256(stderr).hexdigest()
-        (output / "native-result.json").write_text(
-            json.dumps(receipt, indent=2) + "\n", encoding="utf-8",
-        )
+        with (output / "native-result.json").open('x', encoding='utf-8') as handle:
+            handle.write(json.dumps(receipt, indent=2) + "\n")
     print(json.dumps(receipt))
     return receipt["accepted"]
 

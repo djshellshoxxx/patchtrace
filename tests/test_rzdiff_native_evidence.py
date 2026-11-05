@@ -173,3 +173,27 @@ int main(void) {
                     str(cfile), "-o", str(executable)], check=True)
     result = subprocess.run([str(executable)], capture_output=True, text=True, check=False)
     assert result.returncode == 0, result.stdout + result.stderr
+
+
+@pytest.mark.parametrize('existing', ['native-result.json', 'native-matrix.log', 'native-stderr.log',
+                                     '.native-evidence-run'])
+def test_existing_evidence_is_preserved_before_any_execution(tmp_path, monkeypatch, existing):
+    out = tmp_path / 'evidence'
+    out.mkdir()
+    prior = out / existing
+    prior.write_bytes(b'prior evidence')
+    def forbidden(*args, **kwargs):
+        pytest.fail('a reused evidence directory must be refused before native execution')
+    monkeypatch.setattr(subprocess, 'run', forbidden)
+    with pytest.raises(FileExistsError):
+        run('corrected', tmp_path / 'absent', out)
+    assert prior.read_bytes() == b'prior evidence'
+
+
+def test_failed_attempt_cannot_be_overwritten_by_retry(tmp_path):
+    out = tmp_path / 'evidence'
+    assert not run('corrected', tmp_path / 'absent', out)
+    prior = {p.name: p.read_bytes() for p in out.iterdir()}
+    with pytest.raises(FileExistsError):
+        run('corrected', tmp_path / 'absent', out)
+    assert {p.name: p.read_bytes() for p in out.iterdir()} == prior
