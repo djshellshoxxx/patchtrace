@@ -80,8 +80,8 @@ def _month_of(url: str) -> str:
 def _redirect_target(current: str, location: str | None) -> str:
     if not location:
         raise SourceError('PT-KBC-SOURCE', 'the server redirected without a Location')
-    target = urllib.parse.urljoin(current, location)
     try:
+        target = urllib.parse.urljoin(current, location)
         parts = urllib.parse.urlsplit(target)
         port = parts.port
     except ValueError:
@@ -152,11 +152,23 @@ def _fetch(plan: IndexPlan, cancel, transport: tr.Transport, limits: KbcLimits) 
 def _fetch_one(transport: tr.Transport, url: str, month: str, plan: IndexPlan, deadline: float) -> FetchedDocument:
     cap = plan.caps.max_bytes_per_document
 
+    def wait_with_deadline(seconds: float, cancel: threading.Event | None) -> None:
+        transport._live(deadline)
+        if seconds >= deadline - transport.clock():
+            raise AcquisitionError('PT-ACQ-NETWORK', 'retry wait exceeds the remaining time budget', recoverable=True)
+        transport.sleep(seconds, cancel)
+        transport._live(deadline)
+
     def attempt() -> bytes:
         target, hops = url, 0
         while True:
-            response = transport._open('GET', target, plan.caps.request_timeout_s)
+            transport._live(deadline)
+            remaining = deadline - transport.clock()
+            if remaining <= 0:
+                raise AcquisitionError('PT-ACQ-NETWORK', 'total timeout exceeded', recoverable=True)
+            response = transport._open('GET', target, min(plan.caps.request_timeout_s, remaining))
             try:
+                transport._live(deadline)
                 if response.status in tr.REDIRECT_STATUS:
                     hops += 1
                     if hops > plan.caps.max_redirects:
@@ -176,7 +188,7 @@ def _fetch_one(transport: tr.Transport, url: str, month: str, plan: IndexPlan, d
             finally:
                 response.close()
 
-    raw = transport._with_retries(attempt)
+    raw = dataclasses.replace(transport, sleep=wait_with_deadline)._with_retries(attempt)
     if raw[:2] == b'\x1f\x8b':
         raw = gunzip_bounded(raw, cap)
     return FetchedDocument(month=month, url=url, raw=raw, sha256=hashlib.sha256(raw).hexdigest(),
