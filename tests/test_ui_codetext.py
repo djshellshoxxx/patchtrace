@@ -140,6 +140,27 @@ def test_windowed_highlighter_formats_only_the_window(controller, panes):
     assert far == []
 
 
+def test_bulk_load_skips_span_dispatch_outside_the_window(controller, panes, monkeypatch):
+    controller.configure(True, True)
+    visited = []
+    spans = controller.spans
+
+    def record(side, row, text):
+        visited.append((side, row))
+        return spans(side, row, text)
+
+    monkeypatch.setattr(controller, 'spans', record)
+    text = '\n'.join(body(3000))
+    load(controller, panes, PairText(text, text))
+    assert visited
+    assert all(controller._windows[side][0] <= row <= controller._windows[side][1]
+               for side, row in visited)
+    assert len(visited) < 1000  # two panes, including their first pass and finish
+    for pane in panes:
+        assert {pane.document().findBlockByNumber(row).userState() for row in range(3000)} == {-1}
+        assert formatted(pane, 400, 2999) == []
+
+
 def test_scroll_updates_window_within_budget(controller, panes):
     controller.configure(True, True)
     load(controller, panes, pair_of(body(6500), body(6500, edit_every=40)))
