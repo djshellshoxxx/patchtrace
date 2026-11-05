@@ -13,8 +13,11 @@ that PR. A planned module index entry does not claim its implementation complete
 [Previous #218 checkpoint](archive/20261105-pr218-afc8a296.md) preserves all prior
 source accounting, diagnostic history, gates and native ownership. The original
 root checkout remains clean on frozen PR #205
-`f33e2a0aaa3399644367f2419fee21cfe2e8702b`. Its full-suite PID110463 is still
-running; no exit receipt was observed. Its owners retain their processes,
+`f33e2a0aaa3399644367f2419fee21cfe2e8702b`. At 23:43 UTC its existing exit receipt
+reported **143**, after about 94% progress with no pytest summary. The cause is
+unknown; the run is **NOT COMPLETE**. This session sent no signal or restart.
+Raw `/tmp/pt-205-f33-full.log` and `/tmp/pt-205-f33-full.exit` remain untouched.
+Its owners retain their processes,
 worktrees and logs. No competing full suite, GUI stress or native build was
 started here. Native [#222](https://github.com/djshellshoxxx/patchtrace/pull/222)
 and [#224](https://github.com/djshellshoxxx/patchtrace/pull/224) remain independently
@@ -63,7 +66,7 @@ has its own `/tmp/pt-independent-*` branch/worktree/logs and explicit acceptance
 
 ## Open boundaries
 
-Keep #205 frozen until its owner's exact-head suite completes. Its known stale
+Keep #205 frozen until its owner resolves qualification. Its known stale
 crash-double failure is repaired in #218/#219; no green full result is inferred
 from progress or focused selections. Hosted exact-head checks remain queued or
 pending and #205's known Sonar failure was not bypassed.

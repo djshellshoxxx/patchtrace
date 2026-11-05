@@ -28,8 +28,10 @@ Worker QA receipts preserve exact original failures and limitations.
 NOT RUN here: another `QT_QPA_PLATFORM=offscreen python -m pytest -q` full suite or
 broad GUI stress/native build, because the user's latest instruction reserves
 those processes to the existing qualification owners. Frozen #205 remains clean at
-`f33e2a0a`; PID110463 was still running at the last read-only observation with no
-exit receipt. No result is inferred from progress. Native #222/#224 and their logs/
+`f33e2a0a`. At 23:43 UTC the existing run exit receipt recorded **143** and the log
+ended around 94% without a pytest summary: **NOT COMPLETE**, cause unknown. This
+session sent no signal/restart; raw owner logs/exit receipt remain untouched. No
+result is inferred from progress. Native #222/#224 and their logs/
 worktrees/builds remain reserved and untouched. Hosted required current-head jobs,
 main-relative scanner review, live sources, Windows/native/package/manual and
 disconnected-bundle acceptance remain open. No live provider, target execution,

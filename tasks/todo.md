@@ -10,6 +10,7 @@
 - [x] Independently review/publish #236 authored-PE incomplete manifest backing repair; affected PE/package integration 257 passed/one real-launcher deselected.
 - [ ] Complete/review explicit consented Winbindex metadata refresh seam and exclusive owned cache publication repair.
 - [ ] Existing owners complete frozen #205 full-suite and pinned-native qualification; do not start duplicates or modify their source/processes/logs/worktrees.
+- [ ] Qualification owner resolves existing #205 run exit143/no summary at about94%; no full pass is inferred and this session did not stop/restart it.
 - [ ] Qualify exact final Linux/Windows/Qt/native/package/live/manual/offline and main-relative scanner/review gates before any main/release acceptance claim.
 - [ ] Continue selective #183 R2/R3/R6/R8 reconciliation and remaining source freshness/authenticity, full supersedence/update-DAG and derived-label work. Preserved research is not implementation acceptance.
 
