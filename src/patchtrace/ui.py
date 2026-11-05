@@ -1408,7 +1408,8 @@ class ExportDialog(QDialog):
         form.addRow(self.notes)
         form.addRow(self.selection)
         layout.addLayout(form)
-        policy = PlainLabel('Absolute source paths are redacted. Raw provider responses are excluded.\n'
+        policy = PlainLabel('Absolute source paths are redacted in report text; included code and evidence '
+                            'excerpts may contain original paths. Raw provider responses are excluded.\n'
                         'Review the preview, then write the report to the chosen destination.')
         policy.setWordWrap(True)
         layout.addWidget(policy)
@@ -2709,6 +2710,8 @@ class MainWindow(QMainWindow):
             self.render_match()
 
     def _inspection_failed(self, message, key=None):
+        if key is not None and key != self._project_inspection_key():
+            return  # A superseded inspection must not overwrite the current project's status.
         self._inspection_error = (key or self._project_inspection_key(), message)
         self.inspection_status.emit('File inspection failed: ' + message)
         self.logs.appendPlainText('File inspection failed: ' + message)
