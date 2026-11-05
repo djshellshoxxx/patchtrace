@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import math
 
+from .enrichment.identity import parse_address
 from .models import ComparisonProject, FunctionMatch, FunctionRecord
 
 ROOT_KEYS = {'program_options', 'matches', 'symbols', 'strings', 'functions', 'stats',
@@ -44,7 +45,7 @@ def normalize_ghidriff(raw: dict, project: ComparisonProject, run_id: str) -> li
     if run_id not in {run.id for run in project.runs}:
         raise ValueError('PT-SCHEMA: normalization requires a project-owned analysis run')
     artifacts = {artifact.side: artifact for artifact in project.artifacts}
-    seen: set[tuple[str, str, str | None]] = set()
+    seen: set[tuple[str, str, int | None]] = set()
 
     def function(record, side: str) -> FunctionRecord:
         if not isinstance(record, dict) or not isinstance(record.get('name'), str) or not record['name']:
@@ -68,7 +69,8 @@ def normalize_ghidriff(raw: dict, project: ComparisonProject, run_id: str) -> li
             else:
                 raise ValueError('PT-SCHEMA: instructions must be a string list, integer hash or null')
         metadata['upstream_name'] = record['name']
-        identity = (side, record.get('fullname') or record['name'], record.get('address'))
+        # Use the same address interpretation as consumers while preserving upstream text in the record.
+        identity = (side, record.get('fullname') or record['name'], parse_address(record.get('address')))
         if identity in seen:
             raise ValueError('PT-SCHEMA: upstream function is repeated; shared evidence counts once')
         seen.add(identity)

@@ -76,3 +76,7 @@ Cleanup verifies the recorded file identity, size and modification time and refu
 ### Normalizer derived metadata boundary (2026-11-05)
 
 Enhanced upstream function records may not supply PatchTrace-reserved derived metadata keys `upstream_similarity`, `diff_types`, `upstream_name`, `instructions_hash`, `assembly_unavailable`, or `upstream_one_to_many`. The normalizer rejects their presence with `PT-SCHEMA` instead of accepting forged provenance, even when the supplied value is null. Ordinary upstream metadata remains preserved. Rejected imports preserve raw source bytes and prior committed results. This boundary does not introduce one-to-many normalization or change the stored schema.
+
+### Normalizer canonical address identity (2026-11-05)
+
+The normalizer identifies a function by side, qualified name (`fullname` or fallback `name`), and the address parsed by `enrichment.identity.parse_address`. Equivalent address spellings therefore cannot bypass the existing repeated-function rejection (`PT-SCHEMA`). Empty, unparseable and overflowing addresses occupy one address-less bucket for a given side and qualified name; different qualified names or distinct parsed addresses remain distinct. Stored address text and raw source bytes remain unchanged. The normalizer continues to reject all repeated identities; one-to-many abstention and its coordinated consumer changes remain deferred. No schema change.
