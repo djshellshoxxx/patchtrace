@@ -1071,3 +1071,12 @@ Full `QT_QPA_PLATFORM=offscreen python -m pytest -q` for this isolated native sl
 - [x] Correct runbook TOFU instruction against existing approved digest-source rules; leave actual pins/licence approvals unchanged.
 - [x] Focused 179 passed/1 skipped, whole Ruff/diff checks, and current release-pin checker exit 0.
 - [ ] Clean native Windows offline/full-runtime release acceptance still requires its own downloadable artifact and linked acceptance evidence; this Linux tooling slice supplies none.
+
+### E3-PROJECTCREATE initial creation rollback
+
+- [x] Reproduce source #116 creation/copy residuals; replace broad directory-difference deletion with explicit identity-checked publication ownership, retaining the kernel lock inode and committed first snapshots.
+- [x] Cover retry, preexisting/concurrent foreign files, reused read-only artifacts, readonly deletion rules, failed publication, destination races, substitutions/symlinks, interruptions and unsupported exclusive publication.
+- [ ] Independent review and coordinator integration/full suite; native Windows hardlink/read-only lifecycle and other filesystem compatibility qualification remain open. Hardlink support is required for new artifact publication; no overwrite fallback.
+
+- [ ] Harden the residual exact-path replacement race between the last metadata check and unlink/chmod if support for hostile noncooperating filesystem writers is required; evaluate quarantine/native handles with native Windows tests. This repair guarantees cooperative-lock and identity-checked best-effort cleanup only.
+- [ ] Verify desktop wizard retry after a failed creation: destination validation may reject the intentionally retained lock-only directory. Backend create retry is tested; no end-to-end wizard retry claim.

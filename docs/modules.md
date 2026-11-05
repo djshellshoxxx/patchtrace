@@ -1289,3 +1289,6 @@ Wiring: `exchange.ALL_SOURCES`, `--sources diaphora`, `pipeline.capture_plan` (o
 ### [A4-C3-20261105:offline-investigation]
 
 `kbcorrelation/investigation_service.py` is the Qt-free immutable request/result facade over existing workspace import, search, local preview and create-only project attachment. `kbcorrelation/investigation_qt.py` owns the parented modal controls and TaskRunner generation/lifecycle adapter; `gui/qt/host.py` owns adoption and retained-path notices. `kbcorrelation/wiring.py` adds a create-only factory while preserving CLI resume. Tests: `test_kb_investigation_service.py`, `test_ui_kb_investigation.py`; synthetic/offline only.
+### [E3-PROJECTCREATE:creation-rollback]
+
+`ingestion.inspect_artifact` optionally records only exclusively published files/directories with their filesystem identity in an attempt-local Python ledger. `service.ProjectService.create` uses that ledger and the held project lock for bounded identity-checked rollback before a first snapshot; persistent lock file and foreign/reused files are retained. Tests: `tests/test_audit116_create_rollback.py` plus ingestion/core lifecycle regressions. No new module or database.
