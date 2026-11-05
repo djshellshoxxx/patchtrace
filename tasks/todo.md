@@ -929,3 +929,9 @@ Done: dock with state matrix, consent, import, changes, copy, go to CVE. Open: r
 - [x] Focused nway tests, whole Ruff and whitespace checks pass. Full-suite and native Windows release acceptance stay coordinator-owned.
 
 - [ ] Follow-up outside this one-defect wave: stream/hash the damaged original during nway recovery; `--replace-corrupt` currently reads it in full even when load rejects the size.
+
+## E3-RECOVERY-20261105 — resource-bounded preservation
+
+- [x] Stream/hash the damaged original and compare existing recovery copies in <=1 MiB reads; no new size cap or contract model changes.
+- [x] Same-handle second-pass digest/change detection, preserved prior copies and exclusive partial cleanup verified with guarded streams and authored mutation/read failures.
+- [x] Focused 38-test nway suite and whole Ruff/diff checks pass. Earlier E4-RANDOM2 streaming follow-up is resolved by this slice; full-suite/native release gates remain independent.
