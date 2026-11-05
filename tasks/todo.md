@@ -921,3 +921,8 @@ Done: dock with state matrix, consent, import, changes, copy, go to CVE. Open: r
 - [x] Preserve old no-key bytes/ranking and private in-memory unified support; keep persisted engine vocabulary unchanged; expose legacy unmarked replay as unverified rather than infer historical credit.
 - [ ] Independent final review, coordinator integration/cross-OS and verified transfer integration remain pending; broader locked training/final-run/promotion safeguards are not completed by this slice. See `docs/qa/output-credited-replay-20261101.md`.
 - [x] Independent credited-replay review approved exact source `5c26af9` with 119 passes/1 native-tool BLOCKED skip and direct scalar/failed-valid-artifact controls; no remaining bounded source blocker. Integration/cross-OS/transfer and broader safeguards above remain open.
+
+### 2026-11-05 invalid development-agent fragment
+
+- [x] Reproduce three workflow source validation failures; preserve the standalone agent step as a byte-identical example outside executable workflow discovery.49static checks passed/3existingxfails; Ruff passed.
+- [ ] Exact-head integration/full/cross-OS CI. Existing paid automation proposals remain separate and unenabled by this repair.
