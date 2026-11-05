@@ -935,3 +935,9 @@ Done: dock with state matrix, consent, import, changes, copy, go to CVE. Open: r
 - [ ] Full offscreen suite currently running; exact-head cross-OS CI and review remain required before merge.
 
 - [ ] Full-suite confirmed defect (2026-11-05): verified artifact reader accepted same-size/restored-mtime edit with colliding metadata. Repair requested-chunk integrity with deterministic collision regression; rerun relevant consumers and full QA. Initial full run interrupted: 776 passed/1 skipped/1 failed.
+
+### Verified bytes after metadata collisions (2026-11-05)
+
+- [x] Reproduce same-size/restored-mtime edits with equal metadata deterministically; prevent changed requested bytes from escaping the verified reader with compact per-block hashes and a post-read metadata check.
+- [x] Preserve range/cancel/size limits; cover scalar I/O bounds, boundaries, short OS reads and read-time mutation. Linux focused consumers: 558 passed/1 Windows-only skip, plus 22 alpha integration passes; whole Ruff passed.
+- [ ] Review and integrate repair; run exact-head full-suite and Windows CI. Do not count the skipped WinVerifyTrust test as native acceptance.
