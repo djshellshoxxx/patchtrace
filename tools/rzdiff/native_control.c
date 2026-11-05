@@ -159,6 +159,9 @@ static int check_distinct(unsigned na, unsigned nb, bool overlap, unsigned fault
         double expected = newer ? 0.5 : 0.75;
         if (pair->similarity != expected) errors++;
     }
+    RzAnalysisFunction *unmatched;
+    rz_list_foreach (result->unmatch_a,it,unmatched) { if (!owned(lists[0],unmatched)) errors++; }
+    rz_list_foreach (result->unmatch_b,it,unmatched) { if (!owned(lists[1],unmatched)) errors++; }
     printf("distinct-io %u:%u overlap=%d errors=%d reads=%u,%u\n",na,nb,overlap,errors,
            distinct_reads[0],distinct_reads[1]);
 cleanup:
