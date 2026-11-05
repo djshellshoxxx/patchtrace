@@ -1,0 +1,266 @@
+[
+  {
+    "variant": "stock",
+    "format": "ELF relocatable",
+    "role": "old",
+    "expected_authored_functions": 1,
+    "recovered_functions": 1,
+    "functions": [
+      {
+        "name": "sym.component",
+        "offset": 134217792,
+        "size": 19
+      }
+    ]
+  },
+  {
+    "variant": "stock",
+    "format": "ELF relocatable",
+    "role": "old",
+    "expected_authored_functions": 2,
+    "recovered_functions": 2,
+    "functions": [
+      {
+        "name": "sym.component",
+        "offset": 134217792,
+        "size": 19
+      },
+      {
+        "name": "sym.helper",
+        "offset": 134217811,
+        "size": 18
+      }
+    ]
+  },
+  {
+    "variant": "stock",
+    "format": "ELF relocatable",
+    "role": "new",
+    "expected_authored_functions": 1,
+    "recovered_functions": 1,
+    "functions": [
+      {
+        "name": "sym.component",
+        "offset": 134217792,
+        "size": 19
+      }
+    ]
+  },
+  {
+    "variant": "stock",
+    "format": "ELF relocatable",
+    "role": "new",
+    "expected_authored_functions": 2,
+    "recovered_functions": 2,
+    "functions": [
+      {
+        "name": "sym.component",
+        "offset": 134217792,
+        "size": 19
+      },
+      {
+        "name": "sym.helper",
+        "offset": 134217811,
+        "size": 22
+      }
+    ]
+  },
+  {
+    "variant": "stock",
+    "format": "ELF executable",
+    "role": "old",
+    "expected_authored_functions": 1,
+    "recovered_functions": 1,
+    "functions": [
+      {
+        "name": "entry0",
+        "offset": 4198400,
+        "size": 19
+      }
+    ]
+  },
+  {
+    "variant": "stock",
+    "format": "ELF executable",
+    "role": "old",
+    "expected_authored_functions": 2,
+    "recovered_functions": 2,
+    "functions": [
+      {
+        "name": "entry0",
+        "offset": 4198400,
+        "size": 19
+      },
+      {
+        "name": "sym.helper",
+        "offset": 4198419,
+        "size": 18
+      }
+    ]
+  },
+  {
+    "variant": "stock",
+    "format": "ELF executable",
+    "role": "new",
+    "expected_authored_functions": 1,
+    "recovered_functions": 1,
+    "functions": [
+      {
+        "name": "entry0",
+        "offset": 4198400,
+        "size": 19
+      }
+    ]
+  },
+  {
+    "variant": "stock",
+    "format": "ELF executable",
+    "role": "new",
+    "expected_authored_functions": 2,
+    "recovered_functions": 2,
+    "functions": [
+      {
+        "name": "entry0",
+        "offset": 4198400,
+        "size": 19
+      },
+      {
+        "name": "sym.helper",
+        "offset": 4198419,
+        "size": 22
+      }
+    ]
+  },
+  {
+    "variant": "corrected",
+    "format": "ELF relocatable",
+    "role": "old",
+    "expected_authored_functions": 1,
+    "recovered_functions": 1,
+    "functions": [
+      {
+        "name": "sym.component",
+        "offset": 134217792,
+        "size": 19
+      }
+    ]
+  },
+  {
+    "variant": "corrected",
+    "format": "ELF relocatable",
+    "role": "old",
+    "expected_authored_functions": 2,
+    "recovered_functions": 2,
+    "functions": [
+      {
+        "name": "sym.component",
+        "offset": 134217792,
+        "size": 19
+      },
+      {
+        "name": "sym.helper",
+        "offset": 134217811,
+        "size": 18
+      }
+    ]
+  },
+  {
+    "variant": "corrected",
+    "format": "ELF relocatable",
+    "role": "new",
+    "expected_authored_functions": 1,
+    "recovered_functions": 1,
+    "functions": [
+      {
+        "name": "sym.component",
+        "offset": 134217792,
+        "size": 19
+      }
+    ]
+  },
+  {
+    "variant": "corrected",
+    "format": "ELF relocatable",
+    "role": "new",
+    "expected_authored_functions": 2,
+    "recovered_functions": 2,
+    "functions": [
+      {
+        "name": "sym.component",
+        "offset": 134217792,
+        "size": 19
+      },
+      {
+        "name": "sym.helper",
+        "offset": 134217811,
+        "size": 22
+      }
+    ]
+  },
+  {
+    "variant": "corrected",
+    "format": "ELF executable",
+    "role": "old",
+    "expected_authored_functions": 1,
+    "recovered_functions": 1,
+    "functions": [
+      {
+        "name": "entry0",
+        "offset": 4198400,
+        "size": 19
+      }
+    ]
+  },
+  {
+    "variant": "corrected",
+    "format": "ELF executable",
+    "role": "old",
+    "expected_authored_functions": 2,
+    "recovered_functions": 2,
+    "functions": [
+      {
+        "name": "entry0",
+        "offset": 4198400,
+        "size": 19
+      },
+      {
+        "name": "sym.helper",
+        "offset": 4198419,
+        "size": 18
+      }
+    ]
+  },
+  {
+    "variant": "corrected",
+    "format": "ELF executable",
+    "role": "new",
+    "expected_authored_functions": 1,
+    "recovered_functions": 1,
+    "functions": [
+      {
+        "name": "entry0",
+        "offset": 4198400,
+        "size": 19
+      }
+    ]
+  },
+  {
+    "variant": "corrected",
+    "format": "ELF executable",
+    "role": "new",
+    "expected_authored_functions": 2,
+    "recovered_functions": 2,
+    "functions": [
+      {
+        "name": "entry0",
+        "offset": 4198400,
+        "size": 19
+      },
+      {
+        "name": "sym.helper",
+        "offset": 4198419,
+        "size": 22
+      }
+    ]
+  }
+]

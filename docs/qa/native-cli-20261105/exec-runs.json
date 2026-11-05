@@ -1,0 +1,306 @@
+[
+  {
+    "variant": "stock",
+    "label": "exec-inventory-old1",
+    "argv": [
+      "nice",
+      "-n",
+      "15",
+      "/tmp/pt-rizin-native-source/build/binrz/rizin/rizin",
+      "-N",
+      "-A",
+      "-q",
+      "-c",
+      "aflj",
+      "/tmp/pt-rizin-native-cli-inputs/old1.elf"
+    ],
+    "returncode": 0,
+    "stdout_sha256": "c5cd9f114fbe9161521864503947683e7465643b4aca51cc9ac4bc296b1b8902",
+    "stderr_sha256": "c6cd9d1e7cd275062c1256bfc04b1f191e84b664ce020060600ab32718a48dac"
+  },
+  {
+    "variant": "stock",
+    "label": "exec-inventory-old2",
+    "argv": [
+      "nice",
+      "-n",
+      "15",
+      "/tmp/pt-rizin-native-source/build/binrz/rizin/rizin",
+      "-N",
+      "-A",
+      "-q",
+      "-c",
+      "aflj",
+      "/tmp/pt-rizin-native-cli-inputs/old2.elf"
+    ],
+    "returncode": 0,
+    "stdout_sha256": "9585c5c9d4b3e4f9c32a202b9bb73fed02edfe3f75a1296ecd775f7d4819b821",
+    "stderr_sha256": "c6cd9d1e7cd275062c1256bfc04b1f191e84b664ce020060600ab32718a48dac"
+  },
+  {
+    "variant": "stock",
+    "label": "exec-inventory-new1",
+    "argv": [
+      "nice",
+      "-n",
+      "15",
+      "/tmp/pt-rizin-native-source/build/binrz/rizin/rizin",
+      "-N",
+      "-A",
+      "-q",
+      "-c",
+      "aflj",
+      "/tmp/pt-rizin-native-cli-inputs/new1.elf"
+    ],
+    "returncode": 0,
+    "stdout_sha256": "c5cd9f114fbe9161521864503947683e7465643b4aca51cc9ac4bc296b1b8902",
+    "stderr_sha256": "c6cd9d1e7cd275062c1256bfc04b1f191e84b664ce020060600ab32718a48dac"
+  },
+  {
+    "variant": "stock",
+    "label": "exec-inventory-new2",
+    "argv": [
+      "nice",
+      "-n",
+      "15",
+      "/tmp/pt-rizin-native-source/build/binrz/rizin/rizin",
+      "-N",
+      "-A",
+      "-q",
+      "-c",
+      "aflj",
+      "/tmp/pt-rizin-native-cli-inputs/new2.elf"
+    ],
+    "returncode": 0,
+    "stdout_sha256": "f8ba05c2633e8928de39461f08f9bc79182f97dba99de3271da43e931e082b88",
+    "stderr_sha256": "c6cd9d1e7cd275062c1256bfc04b1f191e84b664ce020060600ab32718a48dac"
+  },
+  {
+    "variant": "stock",
+    "label": "exec-pair-1-1",
+    "argv": [
+      "nice",
+      "-n",
+      "15",
+      "/tmp/pt-rizin-native-source/build/binrz/rz-diff/rz-diff",
+      "-C",
+      "-j",
+      "-t",
+      "functions",
+      "/tmp/pt-rizin-native-cli-inputs/old1.elf",
+      "/tmp/pt-rizin-native-cli-inputs/new1.elf"
+    ],
+    "returncode": 0,
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_sha256": "5be659fc7e3ca797d79359c574f05619e61269dbdef6a779ea384cb6f91f0762"
+  },
+  {
+    "variant": "stock",
+    "label": "exec-pair-1-2",
+    "argv": [
+      "nice",
+      "-n",
+      "15",
+      "/tmp/pt-rizin-native-source/build/binrz/rz-diff/rz-diff",
+      "-C",
+      "-j",
+      "-t",
+      "functions",
+      "/tmp/pt-rizin-native-cli-inputs/old1.elf",
+      "/tmp/pt-rizin-native-cli-inputs/new2.elf"
+    ],
+    "returncode": 0,
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_sha256": "5be659fc7e3ca797d79359c574f05619e61269dbdef6a779ea384cb6f91f0762"
+  },
+  {
+    "variant": "stock",
+    "label": "exec-pair-2-1",
+    "argv": [
+      "nice",
+      "-n",
+      "15",
+      "/tmp/pt-rizin-native-source/build/binrz/rz-diff/rz-diff",
+      "-C",
+      "-j",
+      "-t",
+      "functions",
+      "/tmp/pt-rizin-native-cli-inputs/old2.elf",
+      "/tmp/pt-rizin-native-cli-inputs/new1.elf"
+    ],
+    "returncode": 0,
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_sha256": "5be659fc7e3ca797d79359c574f05619e61269dbdef6a779ea384cb6f91f0762"
+  },
+  {
+    "variant": "stock",
+    "label": "exec-pair-2-2",
+    "argv": [
+      "nice",
+      "-n",
+      "15",
+      "/tmp/pt-rizin-native-source/build/binrz/rz-diff/rz-diff",
+      "-C",
+      "-j",
+      "-t",
+      "functions",
+      "/tmp/pt-rizin-native-cli-inputs/old2.elf",
+      "/tmp/pt-rizin-native-cli-inputs/new2.elf"
+    ],
+    "returncode": 0,
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_sha256": "5be659fc7e3ca797d79359c574f05619e61269dbdef6a779ea384cb6f91f0762"
+  },
+  {
+    "variant": "corrected",
+    "label": "exec-inventory-old1",
+    "argv": [
+      "nice",
+      "-n",
+      "15",
+      "/tmp/pt-rizin-native-source/build/binrz/rizin/rizin",
+      "-N",
+      "-A",
+      "-q",
+      "-c",
+      "aflj",
+      "/tmp/pt-rizin-native-cli-inputs/old1.elf"
+    ],
+    "returncode": 0,
+    "stdout_sha256": "c5cd9f114fbe9161521864503947683e7465643b4aca51cc9ac4bc296b1b8902",
+    "stderr_sha256": "c6cd9d1e7cd275062c1256bfc04b1f191e84b664ce020060600ab32718a48dac"
+  },
+  {
+    "variant": "corrected",
+    "label": "exec-inventory-old2",
+    "argv": [
+      "nice",
+      "-n",
+      "15",
+      "/tmp/pt-rizin-native-source/build/binrz/rizin/rizin",
+      "-N",
+      "-A",
+      "-q",
+      "-c",
+      "aflj",
+      "/tmp/pt-rizin-native-cli-inputs/old2.elf"
+    ],
+    "returncode": 0,
+    "stdout_sha256": "9585c5c9d4b3e4f9c32a202b9bb73fed02edfe3f75a1296ecd775f7d4819b821",
+    "stderr_sha256": "c6cd9d1e7cd275062c1256bfc04b1f191e84b664ce020060600ab32718a48dac"
+  },
+  {
+    "variant": "corrected",
+    "label": "exec-inventory-new1",
+    "argv": [
+      "nice",
+      "-n",
+      "15",
+      "/tmp/pt-rizin-native-source/build/binrz/rizin/rizin",
+      "-N",
+      "-A",
+      "-q",
+      "-c",
+      "aflj",
+      "/tmp/pt-rizin-native-cli-inputs/new1.elf"
+    ],
+    "returncode": 0,
+    "stdout_sha256": "c5cd9f114fbe9161521864503947683e7465643b4aca51cc9ac4bc296b1b8902",
+    "stderr_sha256": "c6cd9d1e7cd275062c1256bfc04b1f191e84b664ce020060600ab32718a48dac"
+  },
+  {
+    "variant": "corrected",
+    "label": "exec-inventory-new2",
+    "argv": [
+      "nice",
+      "-n",
+      "15",
+      "/tmp/pt-rizin-native-source/build/binrz/rizin/rizin",
+      "-N",
+      "-A",
+      "-q",
+      "-c",
+      "aflj",
+      "/tmp/pt-rizin-native-cli-inputs/new2.elf"
+    ],
+    "returncode": 0,
+    "stdout_sha256": "f8ba05c2633e8928de39461f08f9bc79182f97dba99de3271da43e931e082b88",
+    "stderr_sha256": "c6cd9d1e7cd275062c1256bfc04b1f191e84b664ce020060600ab32718a48dac"
+  },
+  {
+    "variant": "corrected",
+    "label": "exec-pair-1-1",
+    "argv": [
+      "nice",
+      "-n",
+      "15",
+      "/tmp/pt-rizin-native-source/build/binrz/rz-diff/rz-diff",
+      "-C",
+      "-j",
+      "-t",
+      "functions",
+      "/tmp/pt-rizin-native-cli-inputs/old1.elf",
+      "/tmp/pt-rizin-native-cli-inputs/new1.elf"
+    ],
+    "returncode": 0,
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_sha256": "5be659fc7e3ca797d79359c574f05619e61269dbdef6a779ea384cb6f91f0762"
+  },
+  {
+    "variant": "corrected",
+    "label": "exec-pair-1-2",
+    "argv": [
+      "nice",
+      "-n",
+      "15",
+      "/tmp/pt-rizin-native-source/build/binrz/rz-diff/rz-diff",
+      "-C",
+      "-j",
+      "-t",
+      "functions",
+      "/tmp/pt-rizin-native-cli-inputs/old1.elf",
+      "/tmp/pt-rizin-native-cli-inputs/new2.elf"
+    ],
+    "returncode": 0,
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_sha256": "5be659fc7e3ca797d79359c574f05619e61269dbdef6a779ea384cb6f91f0762"
+  },
+  {
+    "variant": "corrected",
+    "label": "exec-pair-2-1",
+    "argv": [
+      "nice",
+      "-n",
+      "15",
+      "/tmp/pt-rizin-native-source/build/binrz/rz-diff/rz-diff",
+      "-C",
+      "-j",
+      "-t",
+      "functions",
+      "/tmp/pt-rizin-native-cli-inputs/old2.elf",
+      "/tmp/pt-rizin-native-cli-inputs/new1.elf"
+    ],
+    "returncode": 0,
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_sha256": "5be659fc7e3ca797d79359c574f05619e61269dbdef6a779ea384cb6f91f0762"
+  },
+  {
+    "variant": "corrected",
+    "label": "exec-pair-2-2",
+    "argv": [
+      "nice",
+      "-n",
+      "15",
+      "/tmp/pt-rizin-native-source/build/binrz/rz-diff/rz-diff",
+      "-C",
+      "-j",
+      "-t",
+      "functions",
+      "/tmp/pt-rizin-native-cli-inputs/old2.elf",
+      "/tmp/pt-rizin-native-cli-inputs/new2.elf"
+    ],
+    "returncode": 0,
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_sha256": "5be659fc7e3ca797d79359c574f05619e61269dbdef6a779ea384cb6f91f0762"
+  }
+]

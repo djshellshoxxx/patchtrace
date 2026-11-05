@@ -1,0 +1,192 @@
+[
+  {
+    "variant": "stock",
+    "format": "o",
+    "older_functions": 1,
+    "newer_functions": 1,
+    "rows": 1,
+    "foreign_endpoints": [],
+    "complete_own_inventory_coverage": true,
+    "cross_inventory_compatible_endpoint_occurrences": 2,
+    "note": "Membership alone cannot disambiguate endpoints shared by both inventories; no ownership attestation or cache adoption inferred."
+  },
+  {
+    "variant": "stock",
+    "format": "o",
+    "older_functions": 1,
+    "newer_functions": 2,
+    "rows": 2,
+    "foreign_endpoints": [
+      {
+        "row": 1,
+        "side": "original",
+        "addr": 134217811,
+        "size": 22
+      }
+    ],
+    "complete_own_inventory_coverage": false,
+    "cross_inventory_compatible_endpoint_occurrences": 3,
+    "note": "Membership alone cannot disambiguate endpoints shared by both inventories; no ownership attestation or cache adoption inferred."
+  },
+  {
+    "variant": "stock",
+    "format": "o",
+    "older_functions": 2,
+    "newer_functions": 1,
+    "rows": 2,
+    "foreign_endpoints": [],
+    "complete_own_inventory_coverage": true,
+    "cross_inventory_compatible_endpoint_occurrences": 3,
+    "note": "Membership alone cannot disambiguate endpoints shared by both inventories; no ownership attestation or cache adoption inferred."
+  },
+  {
+    "variant": "stock",
+    "format": "o",
+    "older_functions": 2,
+    "newer_functions": 2,
+    "rows": 2,
+    "foreign_endpoints": [],
+    "complete_own_inventory_coverage": true,
+    "cross_inventory_compatible_endpoint_occurrences": 2,
+    "note": "Membership alone cannot disambiguate endpoints shared by both inventories; no ownership attestation or cache adoption inferred."
+  },
+  {
+    "variant": "stock",
+    "format": "elf",
+    "older_functions": 1,
+    "newer_functions": 1,
+    "rows": 1,
+    "foreign_endpoints": [],
+    "complete_own_inventory_coverage": true,
+    "cross_inventory_compatible_endpoint_occurrences": 2,
+    "note": "Membership alone cannot disambiguate endpoints shared by both inventories; no ownership attestation or cache adoption inferred."
+  },
+  {
+    "variant": "stock",
+    "format": "elf",
+    "older_functions": 1,
+    "newer_functions": 2,
+    "rows": 2,
+    "foreign_endpoints": [
+      {
+        "row": 1,
+        "side": "original",
+        "addr": 4198419,
+        "size": 22
+      }
+    ],
+    "complete_own_inventory_coverage": false,
+    "cross_inventory_compatible_endpoint_occurrences": 3,
+    "note": "Membership alone cannot disambiguate endpoints shared by both inventories; no ownership attestation or cache adoption inferred."
+  },
+  {
+    "variant": "stock",
+    "format": "elf",
+    "older_functions": 2,
+    "newer_functions": 1,
+    "rows": 2,
+    "foreign_endpoints": [],
+    "complete_own_inventory_coverage": true,
+    "cross_inventory_compatible_endpoint_occurrences": 3,
+    "note": "Membership alone cannot disambiguate endpoints shared by both inventories; no ownership attestation or cache adoption inferred."
+  },
+  {
+    "variant": "stock",
+    "format": "elf",
+    "older_functions": 2,
+    "newer_functions": 2,
+    "rows": 2,
+    "foreign_endpoints": [],
+    "complete_own_inventory_coverage": true,
+    "cross_inventory_compatible_endpoint_occurrences": 2,
+    "note": "Membership alone cannot disambiguate endpoints shared by both inventories; no ownership attestation or cache adoption inferred."
+  },
+  {
+    "variant": "corrected",
+    "format": "o",
+    "older_functions": 1,
+    "newer_functions": 1,
+    "rows": 1,
+    "foreign_endpoints": [],
+    "complete_own_inventory_coverage": true,
+    "cross_inventory_compatible_endpoint_occurrences": 2,
+    "note": "Membership alone cannot disambiguate endpoints shared by both inventories; no ownership attestation or cache adoption inferred."
+  },
+  {
+    "variant": "corrected",
+    "format": "o",
+    "older_functions": 1,
+    "newer_functions": 2,
+    "rows": 2,
+    "foreign_endpoints": [],
+    "complete_own_inventory_coverage": true,
+    "cross_inventory_compatible_endpoint_occurrences": 3,
+    "note": "Membership alone cannot disambiguate endpoints shared by both inventories; no ownership attestation or cache adoption inferred."
+  },
+  {
+    "variant": "corrected",
+    "format": "o",
+    "older_functions": 2,
+    "newer_functions": 1,
+    "rows": 2,
+    "foreign_endpoints": [],
+    "complete_own_inventory_coverage": true,
+    "cross_inventory_compatible_endpoint_occurrences": 3,
+    "note": "Membership alone cannot disambiguate endpoints shared by both inventories; no ownership attestation or cache adoption inferred."
+  },
+  {
+    "variant": "corrected",
+    "format": "o",
+    "older_functions": 2,
+    "newer_functions": 2,
+    "rows": 2,
+    "foreign_endpoints": [],
+    "complete_own_inventory_coverage": true,
+    "cross_inventory_compatible_endpoint_occurrences": 2,
+    "note": "Membership alone cannot disambiguate endpoints shared by both inventories; no ownership attestation or cache adoption inferred."
+  },
+  {
+    "variant": "corrected",
+    "format": "elf",
+    "older_functions": 1,
+    "newer_functions": 1,
+    "rows": 1,
+    "foreign_endpoints": [],
+    "complete_own_inventory_coverage": true,
+    "cross_inventory_compatible_endpoint_occurrences": 2,
+    "note": "Membership alone cannot disambiguate endpoints shared by both inventories; no ownership attestation or cache adoption inferred."
+  },
+  {
+    "variant": "corrected",
+    "format": "elf",
+    "older_functions": 1,
+    "newer_functions": 2,
+    "rows": 2,
+    "foreign_endpoints": [],
+    "complete_own_inventory_coverage": true,
+    "cross_inventory_compatible_endpoint_occurrences": 3,
+    "note": "Membership alone cannot disambiguate endpoints shared by both inventories; no ownership attestation or cache adoption inferred."
+  },
+  {
+    "variant": "corrected",
+    "format": "elf",
+    "older_functions": 2,
+    "newer_functions": 1,
+    "rows": 2,
+    "foreign_endpoints": [],
+    "complete_own_inventory_coverage": true,
+    "cross_inventory_compatible_endpoint_occurrences": 3,
+    "note": "Membership alone cannot disambiguate endpoints shared by both inventories; no ownership attestation or cache adoption inferred."
+  },
+  {
+    "variant": "corrected",
+    "format": "elf",
+    "older_functions": 2,
+    "newer_functions": 2,
+    "rows": 2,
+    "foreign_endpoints": [],
+    "complete_own_inventory_coverage": true,
+    "cross_inventory_compatible_endpoint_occurrences": 2,
+    "note": "Membership alone cannot disambiguate endpoints shared by both inventories; no ownership attestation or cache adoption inferred."
+  }
+]

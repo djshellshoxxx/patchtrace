@@ -1,0 +1,6 @@
+{
+  "path": "/tmp/pt-rizin-native-seeded-rz-diff",
+  "sha256": "692e9246848ae382f75dcfa4f9ca29be90d59ca47aaa4ffe76b3066d0da15888",
+  "same_bytes_as_original_cli": true,
+  "explanation": "Analysis entrypoint is in dynamically linked librz_main; the third experimental executable path uses a separately hashed seeded-main library set. No forged version suffix or product identity."
+}

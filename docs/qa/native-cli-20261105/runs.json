@@ -1,0 +1,280 @@
+[
+  {
+    "variant": "stock",
+    "label": "version",
+    "argv": [
+      "/tmp/pt-rizin-native-source/build/binrz/rz-diff/rz-diff",
+      "-v"
+    ],
+    "returncode": 0,
+    "stdout_sha256": "6f89d5529d4466e3c0246ef4c4058991f47d70a4494c2f24744a87e847d02346",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "variant": "stock",
+    "label": "inventory-old1",
+    "argv": [
+      "/tmp/pt-rizin-native-source/build/binrz/rizin/rizin",
+      "-N",
+      "-A",
+      "-q",
+      "-c",
+      "aflj",
+      "/tmp/pt-rizin-native-cli-inputs/old1.o"
+    ],
+    "returncode": 0,
+    "stdout_sha256": "3e20504f775096d7e56a20416c17d5fa0a6452204e329ce8ab2fb3901c7d103f",
+    "stderr_sha256": "c6cd9d1e7cd275062c1256bfc04b1f191e84b664ce020060600ab32718a48dac"
+  },
+  {
+    "variant": "stock",
+    "label": "inventory-old2",
+    "argv": [
+      "/tmp/pt-rizin-native-source/build/binrz/rizin/rizin",
+      "-N",
+      "-A",
+      "-q",
+      "-c",
+      "aflj",
+      "/tmp/pt-rizin-native-cli-inputs/old2.o"
+    ],
+    "returncode": 0,
+    "stdout_sha256": "adff5dafcda756072156d5c35e368e6f466f8954ffb01fbb0e01919267122730",
+    "stderr_sha256": "c6cd9d1e7cd275062c1256bfc04b1f191e84b664ce020060600ab32718a48dac"
+  },
+  {
+    "variant": "stock",
+    "label": "inventory-new1",
+    "argv": [
+      "/tmp/pt-rizin-native-source/build/binrz/rizin/rizin",
+      "-N",
+      "-A",
+      "-q",
+      "-c",
+      "aflj",
+      "/tmp/pt-rizin-native-cli-inputs/new1.o"
+    ],
+    "returncode": 0,
+    "stdout_sha256": "3e20504f775096d7e56a20416c17d5fa0a6452204e329ce8ab2fb3901c7d103f",
+    "stderr_sha256": "c6cd9d1e7cd275062c1256bfc04b1f191e84b664ce020060600ab32718a48dac"
+  },
+  {
+    "variant": "stock",
+    "label": "inventory-new2",
+    "argv": [
+      "/tmp/pt-rizin-native-source/build/binrz/rizin/rizin",
+      "-N",
+      "-A",
+      "-q",
+      "-c",
+      "aflj",
+      "/tmp/pt-rizin-native-cli-inputs/new2.o"
+    ],
+    "returncode": 0,
+    "stdout_sha256": "21e3f9e74d1431907a209dc84db18a30000efd8a44b45c2c0a9c0b90191b97c0",
+    "stderr_sha256": "c6cd9d1e7cd275062c1256bfc04b1f191e84b664ce020060600ab32718a48dac"
+  },
+  {
+    "variant": "stock",
+    "label": "pair-1-1",
+    "argv": [
+      "/tmp/pt-rizin-native-source/build/binrz/rz-diff/rz-diff",
+      "-C",
+      "-j",
+      "-t",
+      "functions",
+      "/tmp/pt-rizin-native-cli-inputs/old1.o",
+      "/tmp/pt-rizin-native-cli-inputs/new1.o"
+    ],
+    "returncode": 0,
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_sha256": "5be659fc7e3ca797d79359c574f05619e61269dbdef6a779ea384cb6f91f0762"
+  },
+  {
+    "variant": "stock",
+    "label": "pair-1-2",
+    "argv": [
+      "/tmp/pt-rizin-native-source/build/binrz/rz-diff/rz-diff",
+      "-C",
+      "-j",
+      "-t",
+      "functions",
+      "/tmp/pt-rizin-native-cli-inputs/old1.o",
+      "/tmp/pt-rizin-native-cli-inputs/new2.o"
+    ],
+    "returncode": 0,
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_sha256": "5be659fc7e3ca797d79359c574f05619e61269dbdef6a779ea384cb6f91f0762"
+  },
+  {
+    "variant": "stock",
+    "label": "pair-2-1",
+    "argv": [
+      "/tmp/pt-rizin-native-source/build/binrz/rz-diff/rz-diff",
+      "-C",
+      "-j",
+      "-t",
+      "functions",
+      "/tmp/pt-rizin-native-cli-inputs/old2.o",
+      "/tmp/pt-rizin-native-cli-inputs/new1.o"
+    ],
+    "returncode": 0,
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_sha256": "5be659fc7e3ca797d79359c574f05619e61269dbdef6a779ea384cb6f91f0762"
+  },
+  {
+    "variant": "stock",
+    "label": "pair-2-2",
+    "argv": [
+      "/tmp/pt-rizin-native-source/build/binrz/rz-diff/rz-diff",
+      "-C",
+      "-j",
+      "-t",
+      "functions",
+      "/tmp/pt-rizin-native-cli-inputs/old2.o",
+      "/tmp/pt-rizin-native-cli-inputs/new2.o"
+    ],
+    "returncode": 0,
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_sha256": "5be659fc7e3ca797d79359c574f05619e61269dbdef6a779ea384cb6f91f0762"
+  },
+  {
+    "variant": "corrected",
+    "label": "version",
+    "argv": [
+      "/tmp/pt-rizin-native-source/build/binrz/rz-diff/rz-diff",
+      "-v"
+    ],
+    "returncode": 0,
+    "stdout_sha256": "6f89d5529d4466e3c0246ef4c4058991f47d70a4494c2f24744a87e847d02346",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "variant": "corrected",
+    "label": "inventory-old1",
+    "argv": [
+      "/tmp/pt-rizin-native-source/build/binrz/rizin/rizin",
+      "-N",
+      "-A",
+      "-q",
+      "-c",
+      "aflj",
+      "/tmp/pt-rizin-native-cli-inputs/old1.o"
+    ],
+    "returncode": 0,
+    "stdout_sha256": "3e20504f775096d7e56a20416c17d5fa0a6452204e329ce8ab2fb3901c7d103f",
+    "stderr_sha256": "c6cd9d1e7cd275062c1256bfc04b1f191e84b664ce020060600ab32718a48dac"
+  },
+  {
+    "variant": "corrected",
+    "label": "inventory-old2",
+    "argv": [
+      "/tmp/pt-rizin-native-source/build/binrz/rizin/rizin",
+      "-N",
+      "-A",
+      "-q",
+      "-c",
+      "aflj",
+      "/tmp/pt-rizin-native-cli-inputs/old2.o"
+    ],
+    "returncode": 0,
+    "stdout_sha256": "adff5dafcda756072156d5c35e368e6f466f8954ffb01fbb0e01919267122730",
+    "stderr_sha256": "c6cd9d1e7cd275062c1256bfc04b1f191e84b664ce020060600ab32718a48dac"
+  },
+  {
+    "variant": "corrected",
+    "label": "inventory-new1",
+    "argv": [
+      "/tmp/pt-rizin-native-source/build/binrz/rizin/rizin",
+      "-N",
+      "-A",
+      "-q",
+      "-c",
+      "aflj",
+      "/tmp/pt-rizin-native-cli-inputs/new1.o"
+    ],
+    "returncode": 0,
+    "stdout_sha256": "3e20504f775096d7e56a20416c17d5fa0a6452204e329ce8ab2fb3901c7d103f",
+    "stderr_sha256": "c6cd9d1e7cd275062c1256bfc04b1f191e84b664ce020060600ab32718a48dac"
+  },
+  {
+    "variant": "corrected",
+    "label": "inventory-new2",
+    "argv": [
+      "/tmp/pt-rizin-native-source/build/binrz/rizin/rizin",
+      "-N",
+      "-A",
+      "-q",
+      "-c",
+      "aflj",
+      "/tmp/pt-rizin-native-cli-inputs/new2.o"
+    ],
+    "returncode": 0,
+    "stdout_sha256": "21e3f9e74d1431907a209dc84db18a30000efd8a44b45c2c0a9c0b90191b97c0",
+    "stderr_sha256": "c6cd9d1e7cd275062c1256bfc04b1f191e84b664ce020060600ab32718a48dac"
+  },
+  {
+    "variant": "corrected",
+    "label": "pair-1-1",
+    "argv": [
+      "/tmp/pt-rizin-native-source/build/binrz/rz-diff/rz-diff",
+      "-C",
+      "-j",
+      "-t",
+      "functions",
+      "/tmp/pt-rizin-native-cli-inputs/old1.o",
+      "/tmp/pt-rizin-native-cli-inputs/new1.o"
+    ],
+    "returncode": 0,
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_sha256": "5be659fc7e3ca797d79359c574f05619e61269dbdef6a779ea384cb6f91f0762"
+  },
+  {
+    "variant": "corrected",
+    "label": "pair-1-2",
+    "argv": [
+      "/tmp/pt-rizin-native-source/build/binrz/rz-diff/rz-diff",
+      "-C",
+      "-j",
+      "-t",
+      "functions",
+      "/tmp/pt-rizin-native-cli-inputs/old1.o",
+      "/tmp/pt-rizin-native-cli-inputs/new2.o"
+    ],
+    "returncode": 0,
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_sha256": "5be659fc7e3ca797d79359c574f05619e61269dbdef6a779ea384cb6f91f0762"
+  },
+  {
+    "variant": "corrected",
+    "label": "pair-2-1",
+    "argv": [
+      "/tmp/pt-rizin-native-source/build/binrz/rz-diff/rz-diff",
+      "-C",
+      "-j",
+      "-t",
+      "functions",
+      "/tmp/pt-rizin-native-cli-inputs/old2.o",
+      "/tmp/pt-rizin-native-cli-inputs/new1.o"
+    ],
+    "returncode": 0,
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_sha256": "5be659fc7e3ca797d79359c574f05619e61269dbdef6a779ea384cb6f91f0762"
+  },
+  {
+    "variant": "corrected",
+    "label": "pair-2-2",
+    "argv": [
+      "/tmp/pt-rizin-native-source/build/binrz/rz-diff/rz-diff",
+      "-C",
+      "-j",
+      "-t",
+      "functions",
+      "/tmp/pt-rizin-native-cli-inputs/old2.o",
+      "/tmp/pt-rizin-native-cli-inputs/new2.o"
+    ],
+    "returncode": 0,
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_sha256": "5be659fc7e3ca797d79359c574f05619e61269dbdef6a779ea384cb6f91f0762"
+  }
+]
