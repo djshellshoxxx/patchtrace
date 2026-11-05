@@ -1,5 +1,7 @@
 # SPEC-28: Multi-engine orchestration (Phase C: C0, C1, C2, C5)
 
+> **SPEC-31 status amendment (2026-11-04, A-06, documentation only; applies to s5 rules and s9):** the Windows spawn serialisation is recorded here. `_WINDOWS_SPAWN_LOCK` in `src/patchtrace/jobs.py` serialises the inheritable-handle window, so `max_parallel = 2` is safe on Windows (C3 merge). Regression test: `tests/test_binexport_isolation.py::test_concurrent_run_process_calls_do_not_cross_pipes_or_leak_threads`.
+
 Status: implemented (P1-P5) with the deviations recorded in section 15; developer-ready draft 2026-10-14. Contract versions `engine-run/1`, `secondary/2` (reads `secondary/1`). Extends SPEC-10 (BinDiff), SPEC-11 (rz-diff), SPEC-27 (calibration). Plan: `../plans/phase-c-multi-engine-plan.md`. Amendment A-06 (Windows spawn lock, unified-engine slice P1) is implemented: `_WINDOWS_SPAWN_LOCK` in `jobs.py`, merged 2026-10-14 (C3, PR #38), so `max_parallel = 2` is safe.
 
 ## 1. Outcome

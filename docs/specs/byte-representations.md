@@ -1,5 +1,7 @@
 # Raw byte representations (SPEC-26 requirement B, Hex / Binary / Base64)
 
+> **SPEC-31 status amendment (2026-11-04, A-09, documentation only):** the file-level radiff2-inspired items are hosted as SPEC-26 extensions, not SPEC-31: RD-F01 (byte spans), RD-F02 (PE layout delta) and RD-F03 (offset alignment). This file is part of SPEC-26.
+
 ## Responsibility
 
 Package `patchtrace.representations` turns verified, original on-disk bytes of a project-owned artifact into bounded, labelled pages in three views: Hex, Binary and Base64. It is pure Python (stdlib only, no Qt, no execution, no network). It owns scope selection, paging, text formatting, captions, copy text and byte-level comparison. It owns no widgets; a UI layer calls it from a worker thread.

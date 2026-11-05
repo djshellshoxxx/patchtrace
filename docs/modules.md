@@ -1241,3 +1241,47 @@ Calls panel (id graph): `callgraph/panel.py` (PanelSpec), `panel_qt.py` (widgets
 | desktop project adoption | gui/qt/project_adoption.py | GUI-thread transaction for MainWindow.set_service: retain the previous service until incoming rendering and recent-project preferences succeed; rollback pointer/preferences and close rejected incoming service on failure. No project/backend logic. | MainWindow view/settings hooks | tests/test_gui_project_adoption.py; real ProjectService ownership and QSettings rollback |
 
 | rz-diff producer research controls | tools/rzdiff/{patch_producer.py,singleton-ownership.patch,boundary_control.c,native_control.c,native_evidence.py} | Exact-blob-only Rizin v0.9.1 ownership correction; compiled wrapper double; pinned-native API oracle and strict red/green matrix evidence runner. Research only, no runtime acceptance or quarantine change. | stdlib; external pinned Rizin for live API checks | tests/test_rzdiff_producer_patch.py; tests/test_rzdiff_native_evidence.py; synthetic/compiled-double evidence separate from native acceptance |
+
+### [UE-AUD-20261104:diaphora-source] Diaphora as a unified fusion source (06 s5, 2026-11-04, PR #180)
+
+| ID | File | Responsibility and public interface | Dependencies | Ownership / test seam |
+|---|---|---|---|---|
+| unified diaphora source | unified/sources/diaphora.py | `DiaphoraAdapter` (`available`, `atoms` -> `AdapterOutput`); `write_loaded`/`read_loaded` (worker request files, SHA-256 and size checked, strict JSON); `source_ref_of` (one content-bound `SourceRef` per stored `diaphora/1` set, version suffix `+ad1`). Only `verified-rva` rows become atoms: `best` B, `partial`/`unreliable` C, `multimatch` ambiguous N:M group, unmatched W one-sided; `user-attested` sets are display-only (never support or contest, R-15); another or reversed pair is refused with a degrading limitation | unified.sources, unified.contracts, diaphora.contracts (read-only) | `tests/test_unified_diaphora_adapter.py`, `tests/test_unified_diaphora_wire.py` |
+
+Wiring: `exchange.ALL_SOURCES`, `--sources diaphora`, `pipeline.capture_plan` (owner thread, `diaphora.service.stored_sets`, never opens `.diaphora` SQLite), `WorkerRequest.diaphora`, `compute_stage`. Projects without a Diaphora set keep their result ids.
+
+### [UE-AUD-20261104:bench-stages] G-U5 bench stages facts, read_model, ui_calls (UE-R4, 2026-11-04, PR #180)
+
+`tools/unified/bench.py` measures `facts` (5,000 changed pairs against `l35_facts_5000_s`), `read_model` (10k and 100k rows: first paint, sort, filter against L-35 UI budgets) and `ui_calls` (exact `data()` call counts for first paint, sort and filter); `PENDING` is empty. The dev-tool child runs through `jobs.run_process` (bounded output, process-tree kill, U7-13). G-U5 still needs a Windows-platform report and the largest Tier R pair (`GATES['G-U5'].waits`). Tests: `tests/test_unified_har_bench.py`, `tests/test_unified_bench.py`.
+
+### [RPT2:report-v2] Report and export contract v2 (SPEC-50, 2026-11-04, PR #180)
+
+| ID | File | Responsibility and public interface | Dependencies | Ownership / test seam |
+|---|---|---|---|---|
+| report2 text | report2/text.py | `normalize_text` (7.3: lone surrogates to U+FFFD, bidi controls to visible `<U+XXXX>`, other controls replaced, caps), the 7.4 escaping matrix (JSON, HTML text, Markdown heading/cell/paragraph, computed code fences, inert URLs) | stdlib | `tests/test_report2_text.py` (hypothesis properties) |
+| report2 contracts | report2/contracts.py, calibration_block.py, options.py | strict frozen section models; the exporter calls `calibration.policy.display_level()` itself (ordinal unless a valid artifact allows more); `resolve` of report version, profile, URL mode and ordinal index | pydantic, calibration | `tests/test_report2_contracts.py` |
+| report2 renderers | report2/assemble.py, blocks.py, render_json.py, render_md.py, render_html.py, export.py | v2 envelope (`report_version`, `content_digest` over canonical JSON without times, `sections_present`, provenance, consent, `unknowns`), JSON/Markdown/HTML with CSP by hash, no data in attributes | report2 text/contracts | goldens `tests/golden/report2/` (LF) |
+| report2 sections | report2/sections/*.py | builders behind ports, each `None` when its producer is absent: engine evidence, series, unified result reference (`{result_id, manifest_sha256, engines, status, stale}`, never the rows), symbols, build facts, advisories, leads | ports only | fake ports; synergy test |
+| report2 CLI and dialog model | report2/cli.py, export_vm.py, cli_commands/export.py | `patchtrace export ... --report-version 1|2 --profile local|share`; Qt-free `ExportViewModel` for the dialog (contract, profile, section rows with counts and reasons) | reports, cli_commands | `tests/test_report2_cli.py`, `tests/test_report2_export_vm.py` |
+
+`reports.export_project` keeps report v1 byte-identical (frozen goldens from main); v2 is opt-in. `ExportManifest` gained additive fields `report_version`, `content_digest`, `sections`, `redaction_profile` (schema regenerated).
+
+### [UE-AUD-20261104:run-options] Run options recorded for staleness (2026-11-04, PR #180)
+
+`pipeline._provenance` records `use_ir` and `residual` (yes/no) next to `sources`; `read_model.capture_candidates` compares a stored result only with the plan of the options its runs recorded (results from older run rows keep the previous both-ways behaviour). A result made with `--no-extract`, `--no-residual` or `--sources` stays current while nothing changed; an S0 result made because no ProgramIR was placed becomes stale once one is placed. Tests: `tests/test_unified_run_options_staleness.py`.
+
+### [SPEC-51:d2] PE version resource, manifest and Authenticode structure (SPEC-26 D2, 2026-11-04, PR #180)
+
+| ID | File | Responsibility and public interface | Dependencies | Ownership / test seam |
+|---|---|---|---|---|
+| der reader | pe_overview/der.py | Bounded DER reader (definite lengths only; depth, node and byte caps of 7.3); typed `signature_der_*` warnings | stdlib | `tests/test_pe_der.py` |
+| embedded signature | pe_overview/signature.py | `verify_embedded(reader, overview, cancel)`: `WIN_CERTIFICATE` entries, PKCS#7 SignedData, SpcIndirectDataContent digest, signer and certificate identity, timestamp claims, nested signatures, the recomputed PE Authenticode digest (1 MiB reads, cancel polling, skipped above 256 MiB) | der | `tests/test_pe_signature.py` (DER-writing builder, tamper and dual-signature fixtures) |
+| labels, compare, cache | pe_overview/labels.py, compare.py, metadata.py, cache.py | closed label set (never "valid", "verified publisher", "safe"); old/new `FieldComparison` rows; cache key `sha256(artifact | OVERVIEW_VERSION | limits | trust mode | trust fingerprint)` behind a `SidecarPort` (store binding not wired yet) | models | `tests/test_pe_meta_compare.py` |
+| inspect CLI | pe_overview/cli.py, cli_commands/inspect.py | `patchtrace inspect <project> --side older|newer|both [--trust offline|cache|online --consent-online] --json`; `--trust online` without consent exits 2 `PT-PE-CONSENT-REQUIRED` | pe_overview | `tests/test_pe_inspect_cli.py` |
+| catalog (Windows) | pe_overview/catalog_win.py | catalog signature and consented revocation modes through the existing WinVerifyTrust probe; fakes only here, real acceptance BLOCKED until Windows CI | ctypes (Windows) | `tests/test_pe_catalog_win.py` |
+| RSA check | pe_overview/rsa_verify.py | RSA PKCS#1 v1.5 signature math with `pow()`; the label stays "signature math ok, chain not evaluated" | stdlib | `tests/test_pe_rsa.py` (known-answer vectors) |
+| signing tab | pe_overview/signing_view.py, ui_inspection.py | "Version and signing" tab of File overview: comparison table, manifest text, signature tree with node tips; plain text everywhere | Qt adapter | `tests/test_ui_inspection_signing.py` |
+
+### [RPT2:export-dialog] Report v2 controls of the Export dialog (2026-11-04, PR #180)
+
+`ui_export_v2.py` builds and binds the Contract, Profile and Sections rows of `ExportDialog` to `report2.export_vm.ExportViewModel` and reads the report sections for `MainWindow.export_report` (`report2.adapters.collect_from_service`). `ui.py` keeps a three-line seam (attach, show, options), within the GUI-framework seam budget. Tests: `tests/test_ui_export_v2.py`.

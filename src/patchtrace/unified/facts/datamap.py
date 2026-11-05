@@ -50,7 +50,9 @@ def string_sha(view: FnView, index: int) -> str | None:
 
 class _Votes:
     """Distinct voters per (old datum, new datum), per class ('data' or 'fn'). Per datum only `kept + 1` voters are
-    remembered (L-40): enough to know whether anybody other than the function under judgment voted for it."""
+    remembered (L-40): enough to know whether anybody other than the function under judgment voted for it. Beyond
+    `cap_pairs` distinct pairs a new pair is dropped and both of its data are `incomplete`: a majority over the votes
+    that were kept could contradict the full one, so an incomplete datum has no consensus and no region shift."""
 
     def __init__(self, cap_pairs: int, kept: int):
         self.cap_pairs, self.remembered = cap_pairs, kept + 1
@@ -59,6 +61,8 @@ class _Votes:
         self.by_new: dict[str, dict[int, dict[int, int]]] = {'data': {}, 'fn': {}}
         self.voters_old: dict[tuple, set[Voter]] = {}
         self.voters_new: dict[tuple, set[Voter]] = {}
+        self.incomplete_old: dict[str, set[int]] = {'data': set(), 'fn': set()}
+        self.incomplete_new: dict[str, set[int]] = {'data': set(), 'fn': set()}
         self.capped = False
 
     def add(self, cls: str, t: int, u: int, voter: Voter) -> None:
@@ -66,6 +70,8 @@ class _Votes:
         if key not in self.count:
             if len(self.count) >= self.cap_pairs:
                 self.capped = True
+                self.incomplete_old[cls].add(t)
+                self.incomplete_new[cls].add(u)
                 return
             self.count[key] = 0
         self.count[key] += 1
@@ -91,6 +97,7 @@ class TargetMap:
                  older_sections: Sequence[Section] = (), newer_sections: Sequence[Section] = (),
                  identical: bool = False, limits: UnifiedLimits = DEFAULT_LIMITS, budget: Budget | None = None):
         self.older, self.newer, self.identical, self.limits = older, newer, identical, limits
+        self.budget = budget or Budget()
         self.sections = {'older': tuple(sorted(older_sections)), 'newer': tuple(sorted(newer_sections))}
         self.pair_old: dict[int, int] = {}
         self.pair_new: dict[int, int] = {}
@@ -103,7 +110,7 @@ class TargetMap:
         self._confirmed: tuple[list[int], list[int]] | None = None
         self._strings: dict[str, dict[str, set[int]]] | None = None
         if not identical:
-            self._collect_votes(budget or Budget())
+            self._collect_votes(self.budget)
         if self._votes.capped:
             self.limits_hit.add('datamap-cap')
 
@@ -139,13 +146,15 @@ class TargetMap:
     def _consensus_old(self, cls: str, t: int) -> int | None:
         key = ('o', cls, t)
         if key not in self._consensus_cache:
-            self._consensus_cache[key] = _Votes.consensus(self._votes.by_old[cls].get(t))
+            self._consensus_cache[key] = None if t in self._votes.incomplete_old[cls] else \
+                _Votes.consensus(self._votes.by_old[cls].get(t))
         return self._consensus_cache[key]
 
     def _consensus_new(self, cls: str, u: int) -> int | None:
         key = ('n', cls, u)
         if key not in self._consensus_cache:
-            self._consensus_cache[key] = _Votes.consensus(self._votes.by_new[cls].get(u))
+            self._consensus_cache[key] = None if u in self._votes.incomplete_new[cls] else \
+                _Votes.consensus(self._votes.by_new[cls].get(u))
         return self._consensus_cache[key]
 
     def _voted_by_others(self, voters: set[Voter] | None, voter: Voter | None) -> bool:
@@ -174,7 +183,9 @@ class TargetMap:
         fid = self._function(side, rva)
         return None if fid is None else (self.older if side == 'older' else self.newer).functions.get('h0', fid)
 
-    def function_state(self, t: int, u: int, voter: Voter | None = None, _depth: int = 0) -> str:
+    def function_state(self, t: int | None, u: int | None, voter: Voter | None = None, _depth: int = 0) -> str:
+        if t is None or u is None:
+            return UNMAPPED                                      # an unresolved target is no evidence either way
         if self.identical:
             return MAPPED if t == u else CONFLICT
         if self.pair_old.get(t) == u:
@@ -212,17 +223,22 @@ class TargetMap:
     def _string_index(self) -> dict[str, dict[str, set[int]]]:
         """sha -> targets of the defined strings per side (built once; uniqueness is global, not per pair)."""
         if self._strings is None:
-            self._strings = {'older': self._string_targets(self.older), 'newer': self._string_targets(self.newer)}
+            self._strings = {'older': self._string_targets(self.older, self.budget),
+                             'newer': self._string_targets(self.newer, self.budget)}
         return self._strings
 
     @staticmethod
-    def _string_targets(reader: IrReader) -> dict[str, set[int]]:
+    def _string_targets(reader: IrReader, budget: Budget) -> dict[str, set[int]]:
+        """O(image): it decodes every function that references a string, so it ticks the run's budget."""
         out: dict[str, set[int]] = defaultdict(set)
         for fid in range(reader.functions.n):
+            budget.tick()
             rows = reader.strings(fid)
             if not rows:
                 continue
-            by_rva = {insn.rva: insn for insn in reader.instructions(fid)}
+            instructions = reader.instructions(fid)
+            budget.tick(len(instructions))
+            by_rva = {insn.rva: insn for insn in instructions}
             for row in rows:
                 insn = by_rva.get(row.site)
                 target = data_target(insn) if insn is not None else None
@@ -241,6 +257,8 @@ class TargetMap:
     def _region_shift(self, t: int, u: int, voter: Voter | None) -> bool:
         """Rule (c): no consensus and no vote from another function, neighbours below and above (in the same section)
         moved by the same displacement and keep their order."""
+        if t in self._votes.incomplete_old['data'] or u in self._votes.incomplete_new['data']:
+            return False                                         # dropped votes: "nobody else voted" is unknown
         for cls_votes, datum in ((self._votes.voters_old, ('data', t)), (self._votes.voters_new, ('data', u))):
             if self._voted_by_others(cls_votes.get(datum), voter):
                 return False

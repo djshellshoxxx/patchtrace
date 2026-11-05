@@ -226,6 +226,17 @@ def _g_u8(inputs: Inputs) -> tuple[Status, list[str], tuple[str, ...], dict]:
 
 # ---- G-U5 --------------------------------------------------------------------------------------------------------------------
 
+def _missing_stages(rows) -> list[tuple[str, str]]:
+    """Stages of `bench.REQUIRED_STAGES` with no measured row at the size(s) L-35 and 08 s6 define. A gated stage needs one
+    row with a gate at one of its sizes; `ui_calls` has no limit but its call counts must hold at every size."""
+    out = []
+    for stage, sizes in bench.REQUIRED_STAGES.items():
+        got = {r.n for r in rows if r.stage == stage and r.status == 'measured' and (r.gates or stage == 'ui_calls')}
+        if (set(sizes) - got) if stage == 'ui_calls' else not (got & set(sizes)):
+            out.append((stage, ' and '.join(str(n) for n in sizes) if stage == 'ui_calls' else ' or '.join(str(n) for n in sizes)))
+    return out
+
+
 def _g_u5(inputs: Inputs) -> tuple[Status, list[str], tuple[str, ...], dict]:
     benches = inputs.benches
     if not benches:
@@ -235,7 +246,8 @@ def _g_u5(inputs: Inputs) -> tuple[Status, list[str], tuple[str, ...], dict]:
     failures += [f'{r.stage} n={r.n}: {g.name} {g.verdict} ({g.observed} against {g.allowed} allowed)'
                  for r in rows for g in r.gates if g.verdict == 'fail']
     failures += [f'{r.stage} n={r.n}: check {c.name} failed ({c.detail})' for r in rows for c in r.checks if not c.ok]
-    windows = any('windows' in str(b.environment.get('platform', '')).lower() for b in benches)
+    windows = any('windows' in str(b.environment.get('platform', '')).lower() and any(r.gates for r in b.rows)
+                  for b in benches)             # a Windows report counts only when it measured a gated size
     observed = {'measured': [b.verdict for b in benches], 'windows_report': windows,
                 'reports': [{'platform': b.environment.get('platform'), 'verdict': b.verdict,
                              'counts_sha256': b.counts_sha256} for b in benches]}
@@ -244,13 +256,17 @@ def _g_u5(inputs: Inputs) -> tuple[Status, list[str], tuple[str, ...], dict]:
     if not any(r.gates for r in rows):
         return 'insufficient-data', ['no row at a gated size was measured (ladder 10k or 60k, ingest 60k: the sizes '
                                      'L-35 defines)'], (), observed
+    missing = _missing_stages(rows)
     reasons = [f'pending: {p.stage} needs {p.needs} ({p.what}; limit {p.limit} = {p.limit_value})'
-               for p in benches[0].pending]
+               for p in sorted({(p.stage, p.needs, p.what, p.limit, p.limit_value): p for b in benches
+                                for p in b.pending}.values(), key=lambda p: p.stage)]
+    reasons += [f'pending: stage {stage} not measured at {sizes} (python -m tools.unified.bench --stages {stage})'
+                for stage, sizes in missing]
     if not windows:
         reasons.append('pending: no bench report from the Windows runner or the frozen EXE (numbers are recorded, '
                        'never extrapolated from Linux)')
     reasons += [f'pending: {w}' for w in BY_ID['G-U5'].waits]
-    needs = tuple(sorted({p.needs for p in benches[0].pending} | {'S3'}))
+    needs = tuple(sorted({p.needs for b in benches for p in b.pending} | {'S3'}))
     return ('pending' if reasons else 'pass'), reasons, needs, observed
 
 
@@ -306,7 +322,7 @@ def _evaluate(gate: GateSpec, inputs: Inputs, facts: dict[str, dict]) -> GateRow
 
 def decision_ready(rows: Sequence[GateRow]) -> bool:
     """U-05: G-U1..G-U6 pass. G-U8 (integrity: snapshot untouched, no socket, schemas) additionally must not have failed."""
-    return all(r.status == 'pass' for r in rows if r.id in U05_GATES) and not any(
+    return {r.id for r in rows} >= set(U05_GATES) and all(r.status == 'pass' for r in rows if r.id in U05_GATES) and not any(
         r.status == 'fail' for r in rows if r.id == INTEGRITY_GATE)
 
 

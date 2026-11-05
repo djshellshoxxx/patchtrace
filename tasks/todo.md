@@ -106,16 +106,16 @@
 - [x] Independent review of the spec (docs/specs/unified-engine/11-review-log.md): 30 findings fixed in place (R-01..R-32), residual risks and USER decisions U-11/U-12 added
 - [x] P1 Windows spawn lock in `jobs._windows_process` (merged with C3; `test_concurrent_run_process_calls_do_not_cross_pipes_or_leak_threads`)
 - [x] P2 nway raw `address_matches`: skip `EXTERNAL:<hex>` entries instead of `PT-NWAY-PAIR` (ce108cd)
-- [ ] P2b count the skipped `EXTERNAL:` entries in the series limitations; SPEC-09/SPEC-28 status lines (A-05, A-06)
-- [ ] S0a contracts/limits/keys/registry/store + schemas + doc status lines (10-amendments rows marked S0a)
-- [ ] S0b sources, fusion, S0 facts, pipeline, worker, CLI `unified run/show/explain/status --no-extract`
-- [ ] S1 extraction (GZF reuse + analyze fallback), ingest, MD index port with notices, live-unified workflow (Windows + Linux)
-- [ ] S2 ladder MVP + parity harness; S5 residual (blocking, vectors, votes, LAP)
-- [ ] S3 IR change channels, DATA-MAP/1 target consistency, proofs UNCH/COS-ADDR/COS-LAYOUT with EH-EQ, MAT-ANCHOR, S3b on-demand decompile
-- [ ] S4 read model + `ui_unified.py` (single window: view switch + dock tab), tooltips, accessibility
+- [x] P2b count the skipped `EXTERNAL:` entries in the series limitations; SPEC-09/SPEC-28 status lines (A-05, A-06) (UE-R11 2026-11-04: `test_nway_external_skips_are_counted`; both status lines present)
+- [x] S0a contracts/limits/keys/registry/store + schemas + doc status lines (10-amendments rows marked S0a) (UE-R11 2026-11-04: every S0a status line applied, A-14 last)
+- [x] S0b sources, fusion, S0 facts, pipeline, worker, CLI `unified run/show/explain/status --no-extract` (built; hardened 2026-11-04, PR #180)
+- [x] S1 extraction (GZF reuse + analyze fallback), ingest, MD index port with notices, live-unified workflow (Windows + Linux) (built; live: Windows L0-L4 on MSVC DLLs recorded earlier, Linux L6 still unverified)
+- [x] S2 ladder MVP + parity harness; S5 residual (blocking, vectors, votes, LAP) (built; BinDiff parity oracle still blocked on the pin)
+- [x] S3 IR change channels, DATA-MAP/1 target consistency, proofs UNCH/COS-ADDR/COS-LAYOUT with EH-EQ, MAT-ANCHOR, S3b on-demand decompile (built; decomp part persisted per UE-R3)
+- [x] S4 read model + `ui_unified.py` (single window: dock tab per B-10; the MainWindow view switch of 07 s2 stays an owner decision), tooltips, accessibility (manual Windows screen-reader/DPI pass still owner-only)
 - [ ] S6 Tier R / A/A / planted-mutation corpus, gates G-U1..G-U8, flag default decision (USER U-05)
 - [ ] USER decisions U-01..U-12 (defaults in docs/specs/unified-engine/00-decisions.md s4)
-- [ ] USER decisions U-01..U-10 (defaults in docs/specs/unified-engine/00-decisions.md s4)
+- [x] superseded by the U-01..U-12 line above (duplicate removed from the open count, UE-R11 2026-11-04)
 
 ### [K:28a-28b] CSAF engine (track K, 2026-10-14)
 - [x] SPEC-28a: contracts + generated schemas/examples, discovery, transport, stdlib validator, normalization, storage (synthetic fixtures; fake opener)
@@ -752,9 +752,9 @@
 
 ### [U7:audit]
 - [x] Audit written, 4 Medium fixed with red tests
-- [ ] U7-05 BinDiff stub rows reach tier A alone (additive `SecondaryMatch.basicblocks` or IR-aware demotion before fusion)
-- [ ] U7-06 decide the budget policy for fusion and facts after a ladder deadline (partial result is lost today)
-- [ ] U7-07 trace-arg mutant class for G-U2
+- [x] U7-05 BinDiff stub rows reach tier A alone (fixed: additive `SecondaryMatch.basicblocks`, stub rows demoted to tier C; audit record "U7-05 fixed")
+- [x] U7-06 decide the budget policy for fusion and facts after a ladder deadline (fixed: partial kept; and since 2026-11-04 (COR-01) the isolated worker's own deadline precedes the parent's kill, so the path is reachable)
+- [ ] U7-07 trace-arg mutant class for G-U2 (2026-11-04: now an explicit `PendingClass` naming its need, so G-U2 cannot pass silently; building it needs an import library in the msvc-free link, `build.py` owner)
 
 ### [LBL-07:mutations-ir-opt]
 - [x] LBL-07 IR layer + opt layer (`mutations/ir.py`, `mutations/opt_transforms.py`)
@@ -921,6 +921,48 @@ Done: dock with state matrix, consent, import, changes, copy, go to CVE. Open: r
 - [x] Preserve old no-key bytes/ranking and private in-memory unified support; keep persisted engine vocabulary unchanged; expose legacy unmarked replay as unverified rather than infer historical credit.
 - [ ] Independent final review, coordinator integration/cross-OS and verified transfer integration remain pending; broader locked training/final-run/promotion safeguards are not completed by this slice. See `docs/qa/output-credited-replay-20261101.md`.
 - [x] Independent credited-replay review approved exact source `5c26af9` with 119 passes/1 native-tool BLOCKED skip and direct scalar/failed-valid-artifact controls; no remaining bounded source blocker. Integration/cross-OS/transfer and broader safeguards above remain open.
+
+### [UE-AUD-20261104:engine-hardening] Unified engine audit, Diaphora source, report/2 (2026-11-04, PR #180)
+- [x] Core (cor): COR-01 worker deadline before the parent's kill (U7-06 reachable), COR-02 result stale after every run when the raw output has no `address_matches`, COR-03 timeout-partial results cached forever, COR-04 staging leak on interrupt, COR-05 retention could evict the current result (`docs/audits/20261104-unified-cor.md`)
+- [x] Fusion and sources (fus + coordinator): FUS-01/02/09 manual corrections inverted into one-sided or affirmative tier-M claims, `manual/3`; FUS-03 atom order (D-16); FUS-04 bounded snapshot reads (U7-10); U7-08 arbiter symmetry verified (`docs/audits/20261104-unified-fus.md`)
+- [x] Ladder (lad + w2b): LAD-1 hub twins counted for uniqueness, LAD-2 digest binds pass functions and constants, LAD-6 P03 per-alias index, `ladder/4` (`docs/audits/20261104-unified-lad.md`)
+- [x] IR and extraction (irx): irx-01 quadratic back-edge count, irx-02..14 guards, typed errors, sanitising, U7-09; `INGEST_REVISION=2`, `script_sha256` moves (`docs/audits/20261104-unified-irx.md`)
+- [x] Read model and Qt panel (gui + w2b + coordinator): GUI-01..10 incl. staged-dir leak, off-thread provenance/explain; staleness judged against the recorded run options (`use_ir`, `residual`, `sources`) (`docs/audits/20261104-unified-gui.md`)
+- [x] Gate harness (har): UE-R4 bench stages `facts`, `read_model`, `ui_calls` (`PENDING` empty); U7-07 explicit pending class; U7-08 mirror check over every decision; U7-13 bounded dev-tool child; five High evaluator flaws (`docs/audits/20261104-unified-har.md`)
+- [x] Diaphora as a fusion source (06 s5): `unified/sources/diaphora.py`, `--sources diaphora`, worker request files, content-bound source refs
+- [x] SPEC-50 report/2: RPT2-1..5 and the CLI verb `export`; report v1 output byte-identical to main
+- [x] UE-R11 housekeeping: registry rows aligned, SPEC-31 status amendments A-01..A-14 applied, tracker ticks with evidence
+- [ ] Owner/spec decisions: G-U7 bound with a tier-A rate of 0 (U7-17), whether G-U6 may pass with Ghidriff alone, the attention order in the Unified table (needs a port method in `gui/` or `ui.py`), category-versus-sides validation in `ProjectService.correct_match` (`service.py`)
+- [ ] SonarCloud "Security Rating on New Code: C" on PR #180: the issue list is on sonarcloud.io, unreachable from the agent session; needs the rule and file from the owner
+- [ ] Deferred Low findings listed in each audit record (FUS-07/08/10, GUI-11..13, irx-15..19, LAD-7..9, COR-07)
+- [ ] BLOCKED live: G-U1..G-U8 never ran live (PR #174), BinDiff pin, Windows frozen bench and the largest Tier R pair (G-U5), real Diaphora output for the heuristic-class mapping, Windows screen-reader/DPI passes
+
+### [UE-AUD-20261104:facts-and-integration] Facts audit, SPEC-51, report/2 wiring (2026-11-04, PR #180)
+- [x] Facts and proofs (fct): FCT-01 conditional tail call came out COS-LAYOUT/1, FCT-02 an unresolved target counted as mapped, FCT-03 register-only did not block COS-PSEUDO/1 (three false `cosmetic` verdicts, High); FCT-04..09 Medium; FCT-10 a C scope table over the cap read as handler-only, so EH-EQ let UNCH/1 through (fixed, `INGEST_REVISION=3`); rule versions C1, C2, DATA-MAP, COS-LAYOUT/1, COS-PSEUDO/1 moved to 2 so pre-fix verdicts are recomputed (`docs/audits/20261104-unified-fct.md`)
+- [x] SPEC-51 D2-3 (DER, embedded Authenticode structure and digest), D2-5 (compare rows, `inspect` CLI, Version and signing tab), D2-6 (RSA signature math, chain not evaluated)
+- [ ] SPEC-51 D2-4 Windows catalog and consented revocation: built against fakes only; BLOCKED until a Windows CI run reads a catalog-signed system DLL in place
+- [ ] SPEC-51 7.6 persistence: `pe_overview/cache.py` port exists, but the `pe-metadata` kind, its store adapter and the callers are not wired (needs owner-thread store access around the GUI metadata thread)
+- [x] report/2 data sources: engine evidence, advisories, build facts and leads read from stored producers (`report2/adapters.py`); unified reference uses the recorded run options; GUI export dialog wired through `ui_export_v2.py` (the `ui.py` seam budget holds); a report read path that wrote enrichment tables into `project.sqlite3` is fixed
+- [ ] report/2 `series` section: no project-scoped series record exists (N-way series live in their own folder); the section stays absent with a reason
+- [ ] Owner decision (A3 of fct): whether canon/2 treats `xRam<hex>` names and in-image address literals as data labels (05 s2.4)
+
+
+### [MC-20261104] Manual correction member completeness
+
+- [x] Reproduce partial-member filtering becoming tier-M claims/complete results; add 15 adversarial regressions and require all named members to resolve (SPEC-31/06), adapter `manual/4`.
+- [x] Focused sources/fusion/identity/wire/pipeline integration: 179 passed; whole Ruff and schema drift clean.
+- [ ] Full offscreen suite, exact-head GitHub CI and independent review; dependency PR #180 remains unmerged.
+- [ ] Native G-U1–G-U8 and Windows release acceptance remain separate; none closed by synthetic tests.
+
+
+### [MC-20261104 follow-up] Manual snapshot boundaries
+
+- [x] Six defensive worker-snapshot category cases, project validation distinction documented; adapter manual/5.
+- [x] Four red cases for valid over-cap manual groups; refuse before snapshot truncation/identity, preserve exact-cap and unrelated runs.
+- [x] Unified + Qt before cap: 2,515 passed / 32 skipped / 1 xfailed; final focused 156 passed, Ruff/schema/diff clean.
+- [ ] Final exact-head CI/full-suite integration; frozen 31f51e76 full run still running with a failure, native CI on that old head succeeded but does not qualify subsequent edits or global gates.
+
+- [x] MC dependency reconciliation: preserve #185's three help commits above #180, with 322 post-merge help/CLI/manual checks passing; #188 now stacks on #185. No merge into main.
 
 
 ### [PTB-20261104] Parser work-budget follow-up to #184

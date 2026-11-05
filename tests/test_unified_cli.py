@@ -147,7 +147,7 @@ def test_cli_unified_run_exit_codes(capsys, root, tmp_path, monkeypatch):
     assert doc['contract'] == 'enrichment-cli/1' and doc['warnings'][0].startswith(NOTE_START)
     result = doc['result']
     assert result['stale'] is False and result['cached'] is False and result['mode'] == 's0'
-    assert result['sources'] == ['ghidriff'] and result['selected_sources'] == ['bindiff', 'ghidriff', 'manual', 'rz-diff']
+    assert result['sources'] == ['ghidriff'] and result['selected_sources'] == ['bindiff', 'diaphora', 'ghidriff', 'manual', 'rz-diff']
     assert result['counts']['decisions']['matched'] == 4 and sum(result['counts']['materiality'].values()) == 6
     assert [s['stage'] for s in result['stages']] == ['prepare', 'compute', 'verify', 'publish']
     assert 'unified: write 3/3' in err  # progress is a diagnostic: stderr only

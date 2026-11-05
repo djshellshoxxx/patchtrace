@@ -9,6 +9,7 @@ from __future__ import annotations
 
 from collections import Counter
 from collections.abc import Sequence
+from fractions import Fraction
 from typing import Any
 
 from tools.unified.corpus import aa
@@ -21,6 +22,13 @@ REVIEW_MAX_FRACTION = 0.001         # P0: `review` <= 0.1 % of rows
 RECALL_MIN = 0.95                   # per class
 MIN_MUTANTS_PER_CLASS = 20
 LEAKS = ('unchanged', 'cosmetic')
+JUDGED = ('matched', 'tentative', 'candidate', 'contested')     # decisions that get change facts (compute_stage)
+
+
+def recall_ok(detected: int, runs: int) -> bool:
+    """detected / runs >= RECALL_MIN with integer arithmetic (a rounded ratio would let 94.996 % pass as 95 %)."""
+    bound = Fraction(RECALL_MIN).limit_denominator(10_000)
+    return runs > 0 and detected * bound.denominator >= bound.numerator * runs
 Result = tuple[str, list[str], dict[str, Any]]
 
 
@@ -43,6 +51,15 @@ def _aa_problems(role: str, outcome: PairOutcome) -> list[str]:
     if role == 'P0' and counts['review'] > REVIEW_MAX_FRACTION * len(outcome.rows):
         out.append(f'{counts["review"]} review rows of {len(outcome.rows)} (limit {REVIEW_MAX_FRACTION:.1%})')
     return out
+
+
+def _blind_problems(outcome: PairOutcome) -> list[str]:
+    """Rows that should carry a verdict but say `unknown` (facts truncated or missing): an A/A null measured on them
+    is no evidence, so the pair is `insufficient-data`, never a pass."""
+    blind = sum(1 for r in outcome.rows if r.decision in JUDGED and r.materiality == 'unknown')
+    if blind > REVIEW_MAX_FRACTION * len(outcome.rows):
+        return [f'{blind} of {len(outcome.rows)} rows have no verdict (materiality unknown), the null cannot be judged']
+    return []
 
 
 def _coverage_problems(pair: corpus_manifest.ManifestPair, outcome: PairOutcome) -> list[str]:
@@ -72,7 +89,7 @@ def g_u1(manifest: corpus_manifest.CorpusManifest, sets: Sequence[OutcomeSet]) -
             continue
         state = 'pass'
         for run, outcome in runs:
-            coverage = _coverage_problems(pair, outcome)
+            coverage = [*_coverage_problems(pair, outcome), *([] if pair.x_vs_x else _blind_problems(outcome))]
             problems = ([f'no rows in the result of run {run}'] if not outcome.rows else
                         _x_vs_x_problems(outcome) if pair.x_vs_x else _aa_problems(pair.role, outcome))
             if outcome.rows and problems:
@@ -116,7 +133,15 @@ def g_u2(manifest: corpus_manifest.CorpusManifest, sets: Sequence[OutcomeSet]) -
         mutants = [p for p in manifest.pairs if p.mutation and p.mutation.unified_class == cls.id]
         seen = Counter()
         for pair in mutants:
+            valid = []
             for run, outcome in forward(sets, pair.pair_id):
+                if outcome.labels_sha256 != pair.labels_sha256:
+                    seen['stale'] += 1
+                    reasons.append(f'{pair.pair_id} run {run}: outcome label digest differs from the corpus manifest, '
+                                   'not evidence')
+                    continue
+                valid.append((run, outcome))
+            for run, outcome in valid:
                 if outcome.planted is None:
                     reasons.append(f'{pair.pair_id}: the outcome carries no planted function')
                     failed = True
@@ -131,15 +156,19 @@ def g_u2(manifest: corpus_manifest.CorpusManifest, sets: Sequence[OutcomeSet]) -
                 if verdict in pair.mutation.verdicts:
                     seen['detected'] += 1
                 seen['mispaired'] += verdict == 'mispaired'
-            seen['mutants'] += bool(forward(sets, pair.pair_id))
+            seen['mutants'] += bool(valid)
         n = seen['runs']
         recall = round(seen['detected'] / n, 4) if n else None
         per_class[cls.id] = {'manifest': len(mutants), 'mutants': seen['mutants'], 'detected': seen['detected'],
                              'leaks': seen['leaks'], 'mispaired': seen['mispaired'], 'recall': recall}
+        if seen['mutants'] < len(mutants):
+            short = True        # a subset of the outcomes could hide the misses: every manifest mutant needs its verdict
+            reasons.append(f'{cls.id}: {len(mutants) - seen["mutants"]} of {len(mutants)} manifest mutants are without an '
+                           'outcome (or with a stale one); the class is judged only on all of them')
         if seen['mutants'] < MIN_MUTANTS_PER_CLASS:
             short = True
             reasons.append(f'{cls.id}: {seen["mutants"]} mutants with an outcome, {MIN_MUTANTS_PER_CLASS} are needed')
-        elif recall is not None and recall < RECALL_MIN:
+        elif n and not recall_ok(seen['detected'], n):
             failed = True
             reasons.append(f'{cls.id}: recall {recall:.1%} is below {RECALL_MIN:.0%} '
                            f'({seen["detected"]} of {n} in {sorted(set(_accepted(manifest, cls.id)))})')
@@ -158,7 +187,6 @@ def _accepted(manifest: corpus_manifest.CorpusManifest, class_id: str) -> tuple[
 
 
 FLIP = {'older-only': 'newer-only', 'newer-only': 'older-only'}
-PAIRING = ('matched', 'older-only', 'newer-only')
 NON_SEMANTIC = ('unchanged', 'cosmetic')
 CHAIN_WAIT = ('pending: no 3-build chain (A-B, B-C and A-C over three distinct images of one project) is in the corpus '
               'manifest; P1 chains come from `corpus aa`, release chains need a third consecutive version per project '
@@ -166,14 +194,24 @@ CHAIN_WAIT = ('pending: no 3-build chain (A-B, B-C and A-C over three distinct i
 
 
 def _pairing(rows, mirror: bool) -> frozenset:
+    """(older, newer, decision) of EVERY row, whatever its decision kind (U7-08: a tentative, candidate, contested, ambiguous
+    or unknown row that changes on swap is as much an asymmetry as a matched one). Mirrored: the sides trade places and
+    older-only becomes newer-only."""
     if mirror:
-        return frozenset((r.newer, r.older, FLIP.get(r.decision, r.decision)) for r in rows if r.decision in PAIRING)
-    return frozenset((r.older, r.newer, r.decision) for r in rows if r.decision in PAIRING)
+        return frozenset((r.newer, r.older, FLIP.get(r.decision, r.decision)) for r in rows)
+    return frozenset((r.older, r.newer, r.decision) for r in rows)
 
 
 def g_u4(sets: Sequence[OutcomeSet], manifest: corpus_manifest.CorpusManifest | None = None) -> Result:
     """Equal row digests for the same pair across runs (two runs, Linux against Windows, permuted input), and the
     swapped orientation of a pair mirrors the forward one: the same matched set, older-only and newer-only trade places."""
+    names = Counter(s.run for s in sets)
+    if any(n > 1 for n in names.values()):                  # one file twice is not a second run
+        dup = sorted(r for r, n in names.items() if n > 1)
+        return 'insufficient-data', [f'run {", ".join(dup)} was supplied more than once under the same run name; two runs '
+                                     'need two distinct names'], {
+            'compared': {}, 'mirrored': {}, 'not_comparable': {}, 'chains': {'found': 0, 'composable': 0, 'evaluated': {}},
+            'pseudo_rows': 0, 'pseudo_violations': 0}
     reasons: list[str] = []
     notes: list[str] = []
     compared: dict[str, str] = {}
@@ -200,7 +238,7 @@ def g_u4(sets: Sequence[OutcomeSet], manifest: corpus_manifest.CorpusManifest | 
             if ahead is None:
                 continue
             ok = _pairing(ahead.rows, True) == _pairing(back.rows, False)
-            mirrored[pair_id] = 'mirrored' if ok else 'not-mirrored'
+            mirrored[pair_id] = 'not-mirrored' if not ok or mirrored.get(pair_id) == 'not-mirrored' else 'mirrored'
             if not ok:
                 reasons.append(f'{pair_id} run {run}: the swapped orientation is not the mirror image of the forward one')
     chain_reasons, chain_notes, chains = _chains(manifest, sets)

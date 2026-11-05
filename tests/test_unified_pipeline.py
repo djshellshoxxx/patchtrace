@@ -358,7 +358,7 @@ def test_the_child_inputs_are_private_files_listed_with_their_hashes(project):
     assert request['contract'] == 'unified-worker-request/1' and request['raw_status'] == 'ok'
     assert Path(request['raw_path']).is_relative_to(project.root)  # the one input read in place, re-hashed by the worker
     assert len(request['snapshot']['sha256']) == 64 and request['snapshot_lines'] == len(project.project.matches) == 5
-    assert request['sources'] == ['bindiff', 'ghidriff', 'manual', 'rz-diff']
+    assert request['sources'] == ['bindiff', 'diaphora', 'ghidriff', 'manual', 'rz-diff']
 
 
 def test_progress_comes_from_the_childs_progress_file(project):
@@ -654,12 +654,12 @@ def test_no_network_during_unified_run(project):
 
 
 def test_runs_leave_no_stray_files_behind(project, private_tempdir):
-    before = {p.name for p in Path(tempfile.gettempdir()).glob('pt-unified-*')}
+    before = {p.name for p in private_tempdir.glob('pt-unified-*')}
     pipeline.run_unified(project, inproc())
     for behaviour in (answer(ProcessResult(22, '', None, '')), error_document):
         with pytest.raises(UnifiedError):
             pipeline.run_unified(project, isolated(StubRunner(behaviour), refresh=True))
-    assert {p.name for p in Path(tempfile.gettempdir()).glob('pt-unified-*')} == before
+    assert {p.name for p in private_tempdir.glob('pt-unified-*')} == before
     root = results_dir(project)
     assert [p.name for p in root.iterdir()] == [pipeline.make_plan(project).result_id[:16]]
     assert sorted(p.name for p in root.iterdir().__next__().iterdir()) == [

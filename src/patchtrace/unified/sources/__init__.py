@@ -26,7 +26,7 @@ MAX_FUNCTIONS_PER_SIDE = 1024
 LINE_MAX_BYTES = 256 * 1024 * 1024
 Category = Literal['modified', 'added', 'removed', 'unmatched', 'ambiguous', 'split', 'merged', 'unchanged']
 Short = Annotated[str, Field(max_length=64)]
-DEGRADING = frozenset({'raw-missing', 'raw-hash-mismatch', 'raw-unparsable', 'ladder-partial'})
+DEGRADING = frozenset({'raw-missing', 'raw-hash-mismatch', 'raw-unparsable', 'ladder-partial', 'manual-unresolved'})
 
 
 class _Strict(BaseModel):
@@ -95,12 +95,21 @@ class LoadedSecondary:
 
 
 @dataclass(frozen=True)
+class LoadedDiaphora:
+    """One stored `diaphora-matches` set (06 s5). Its source ref is derived from the validated set, never transported."""
+    entry_id: str
+    match_set: Any  # diaphora.contracts.DiaphoraMatchSet
+    _source_ref: Any = field(default=None, init=False, compare=False, repr=False)
+
+
+@dataclass(frozen=True)
 class SourceInputs:
     older_sha256: str
     newer_sha256: str
     run: GhidriffRun
     matches: tuple[SnapshotMatch, ...]
     secondary: tuple[LoadedSecondary, ...] = ()
+    diaphora: tuple[LoadedDiaphora, ...] = ()
     _manual_digest: str | None = field(default=None, init=False, compare=False, repr=False)
 
 
@@ -222,11 +231,16 @@ def snapshot_from_project(project, run_id: str, limits: UnifiedLimits = DEFAULT_
     analyst's corrections, which is all the result identity needs (a cheap plan for `status`)."""
     if len(project.matches) > limits.l38_rows_per_result:
         raise UnifiedError('PT-UNIFIED-LIMIT', 'The project has more matches than L-38 allows', reason='rows-cap')
+    selected = [m for m in project.matches if m.run_id == run_id and (m.manual or not manual_only)]
+    if any(m.manual and (len(m.older) > MAX_FUNCTIONS_PER_SIDE or len(m.newer) > MAX_FUNCTIONS_PER_SIDE)
+           for m in selected):
+        raise UnifiedError('PT-UNIFIED-LIMIT', 'A manual correction exceeds the 1024 functions per side limit',
+                           reason='manual-members-cap')
     out = [SnapshotMatch(id=m.id, category=m.category, manual=bool(m.manual),
                          match_types=tuple(replace_surrogates(str(t)[:64]) for t in m.match_types[:16]),
                          older=tuple(_function(f, limits) for f in m.older[:MAX_FUNCTIONS_PER_SIDE]),
                          newer=tuple(_function(f, limits) for f in m.newer[:MAX_FUNCTIONS_PER_SIDE]))
-           for m in project.matches if m.run_id == run_id and (m.manual or not manual_only)]
+           for m in selected]
     return tuple(sorted(out, key=lambda s: s.id))
 
 
@@ -250,7 +264,7 @@ def read_snapshot(path: Path, *, expected_sha256: str, expected_lines: int,
     digest, out = hashlib.sha256(), []
     try:
         with open(path, 'rb') as handle:
-            for line in handle:
+            while line := handle.readline(LINE_MAX_BYTES + 1):  # bounded read: a hostile line never fills memory
                 if len(line) > LINE_MAX_BYTES or len(out) >= limits.l38_rows_per_result:
                     raise UnifiedError('PT-UNIFIED-LIMIT', 'The match snapshot exceeds its limits', reason='rows-cap')
                 digest.update(line)
@@ -263,3 +277,33 @@ def read_snapshot(path: Path, *, expected_sha256: str, expected_lines: int,
         raise UnifiedError('PT-UNIFIED-INPUT', 'The match snapshot does not match its request',
                            reason='snapshot-hash-mismatch')
     return tuple(out)
+
+
+def read_request_file(path: Path, *, expected_sha256: str, expected_size: int, max_bytes: int, label: str,
+                      reason: str, budget: Budget | None = None) -> bytes:
+    """The bytes of a worker input file that the request names by size and SHA-256, read in bounded chunks with a
+    budget check per chunk (shared by the secondary and Diaphora readers). A size or digest mismatch is
+    `PT-UNIFIED-INPUT` with reason `<reason>-size-mismatch` / `<reason>-hash-mismatch`; `OSError` and the overflow
+    `ValueError` propagate so the caller reports its own typed error."""
+    if budget is not None:
+        budget.check()
+    size = Path(path).stat().st_size
+    if size > max_bytes or size != expected_size:
+        raise UnifiedError('PT-UNIFIED-INPUT', f'A {label} set file does not match its request',
+                           reason=f'{reason}-size-mismatch')
+    data, digest = bytearray(), hashlib.sha256()
+    with Path(path).open('rb') as stream:
+        while True:
+            if budget is not None:
+                budget.check()
+            chunk = stream.read(65536)
+            if not chunk:
+                break
+            data.extend(chunk)
+            digest.update(chunk)
+            if len(data) > max_bytes:
+                raise ValueError('set grew beyond limit')
+    if len(data) != expected_size or digest.hexdigest() != expected_sha256:
+        raise UnifiedError('PT-UNIFIED-INPUT', f'A {label} set file does not match its request',
+                           reason=f'{reason}-hash-mismatch')
+    return bytes(data)

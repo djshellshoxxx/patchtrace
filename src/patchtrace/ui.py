@@ -42,6 +42,7 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 
+from . import ui_export_v2
 from .acquisition import quarantine, winbindex
 from .acquisition.contracts import AUTHENTICITY_NOTE, AcquisitionError, validate_file_name
 from .acquisition.transport import BLOB_SUFFIX, METADATA_HOST, SYMBOL_HOST, AcquisitionConsent, Transport
@@ -1376,7 +1377,7 @@ class CorrectMatchDialog(QDialog):
 
 
 class ExportDialog(QDialog):
-    def __init__(self, project, root, selected_ids, parent=None):
+    def __init__(self, project, root, selected_ids, parent=None, sections=None):
         super().__init__(parent)
         self.project = project
         self.root = root
@@ -1400,6 +1401,7 @@ class ExportDialog(QDialog):
         horizontal.addWidget(browse)
         form.addRow('Format', self.format)
         form.addRow('Destination', row)
+        ui_export_v2.attach(self, form, project, sections, self.refresh_preview)   # report v2 rows (SPEC-50 s8)
         self.code = QCheckBox('Include function code')
         self.notes = QCheckBox('Include analyst notes')
         self.notes.setChecked(True)
@@ -1428,6 +1430,7 @@ class ExportDialog(QDialog):
         for control in [self.code, self.notes, self.selection]:
             control.toggled.connect(self.refresh_preview)
         self.format.currentTextChanged.connect(self.refresh_preview)
+        ui_export_v2.show(self)
         self.refresh_preview()
 
     def change_format(self, value):
@@ -1441,8 +1444,8 @@ class ExportDialog(QDialog):
             self.destination.setText(value)
 
     def options(self):
-        return dict(include_code=self.code.isChecked(), include_notes=self.notes.isChecked(),
-                    finding_ids=self.selected_ids if self.selection.isChecked() else None,
+        chosen = self.vm.export_kwargs(include_code=self.code.isChecked(), include_notes=self.notes.isChecked())
+        return dict(**chosen, finding_ids=self.selected_ids if self.selection.isChecked() else None,
                     enrichment=self.enrichment)
 
     def refresh_preview(self, *_):
@@ -2967,7 +2970,8 @@ class MainWindow(QMainWindow):
         if not self.project:
             return
         selected = [item.data(Qt.ItemDataRole.UserRole) for item in self.findings_list.selectedItems()]
-        dialog = ExportDialog(self.project, self.service.root, selected, self)
+        dialog = ExportDialog(self.project, self.service.root, selected, self,
+                              ui_export_v2.report_sections(self.service, self.logs.appendPlainText))
         dialog.enrichment = self._enrichment_export()
         dialog.refresh_preview()
         if dialog.exec() == QDialog.DialogCode.Accepted:

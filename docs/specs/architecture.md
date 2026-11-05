@@ -1,5 +1,9 @@
 # PatchTrace beta architecture (SPEC-01, schema v1)
 
+> **SPEC-31 status amendments (2026-11-04, documentation only; rows A-01 and A-01b of `unified-engine/10-amendments.md`):**
+> - **A-01** (section "Objective and decisions", DEC-02) reads: "Never fork or patch Ghidriff; an in-house DERIVED engine (SPEC-31) may match independently; Ghidriff stays primary and its results are never overwritten." This line is the reworded DEC-02 for SPEC-31.
+> - **A-01b** (section "Interfaces and ownership"): "one active analysis job per window" covers the unified run (extraction and worker); the project directory adds `runs/<run_id>/unified/` (IR, results, transient GZFs).
+
 ## Objective and decisions
 PatchTrace is a local Windows 11 x64 desktop for static PE AMD64 patch comparison, manual review and optional evidence-linked hypotheses. Older/newer is selected explicitly. No target binary is executed. Python 3.12 + PySide6 separates desktop from a pure Python domain layer and Ghidriff CLI process. Ghidra/Java/Ghidriff are external analysis dependencies; the desktop ZIP bundles Python and Qt. AI is optional. SQLite stores validated JSON snapshots and append-only revisions in transactions; immutable copied inputs and raw analysis outputs accompany the database. Qt widgets provide keyboard accessibility and scalable plain-text code views. JSON schemas are generated from strict Pydantic models. Upstream schemas are accepted only through an adapter.
 

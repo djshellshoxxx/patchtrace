@@ -382,15 +382,33 @@ def _check_destination(project: ComparisonProject, destination: Path, root: Path
 
 def export_project(project: ComparisonProject, format: str, destination: Path, include_code: bool = False,
                    include_notes: bool = True, finding_ids: list[str] | None = None,
-                   enrichment: dict | None = None, *, project_root: Path | None = None) -> ExportManifest:
+                   enrichment: dict | None = None, *, project_root: Path | None = None, report_version: int = 1,
+                   sections=None, redaction=None, calibration_profile: str | None = None) -> ExportManifest:
     destination = Path(destination)
     _check_destination(project, destination, project_root)
     if format not in {'json', 'html', 'md'}:
         raise ExportError('PT-EXPORT: supported formats are json, html, and md')
-    data = _snapshot(project, include_code, include_notes, finding_ids, enrichment)
-    content = _render(data, format).encode('utf-8')
+    if report_version not in (1, 2):
+        raise ExportError('PT-EXPORT-CONTRACT: report_version must be 1 or 2')
+    if report_version == 1 and (sections is not None or redaction is not None or calibration_profile is not None):
+        raise ExportError('PT-EXPORT-CONTRACT: sections, redaction and calibration_profile need report_version=2')
+    v2 = None
+    if report_version == 2:
+        from .report2 import text as report2_text
+        from .report2.export import render as render_v2
+        from .report2.inputs import RedactionProfile
+        profile = redaction or RedactionProfile()
+        include_code, include_notes = profile.effective(include_code, include_notes)
+        data = _snapshot(project, include_code, include_notes, finding_ids, enrichment)
+        rendered, v2 = render_v2(project, format, data, include_code=include_code, include_notes=include_notes,
+                                 sections=sections, profile=profile, calibration_profile=calibration_profile)
+        content = report2_text.encode_report(rendered)
+    else:
+        data = _snapshot(project, include_code, include_notes, finding_ids, enrichment)
+        content = _render(data, format).encode('utf-8')
     if len(content) > MAX_REPORT_BYTES:
-        raise ExportError('PT-EXPORT: report exceeds 20 MiB; select fewer findings or exclude code')
+        raise ExportError(('PT-EXPORT-SIZE' if v2 else 'PT-EXPORT')
+                          + ': report exceeds 20 MiB; select fewer findings or exclude code')
     destination = Path(destination)
     staged = None
     try:
@@ -403,11 +421,14 @@ def export_project(project: ComparisonProject, format: str, destination: Path, i
         _keep_previous(destination, content)  # before the replace: a failed backup leaves the old file in place
         os.replace(staged, destination)
     except OSError:
-        raise ExportError('PT-EXPORT: cannot write report; check destination permissions and free space') from None
+        raise ExportError(('PT-EXPORT-IO' if v2 else 'PT-EXPORT')
+                          + ': cannot write report; check destination permissions and free space') from None
     finally:
         if staged is not None:
             staged.unlink(missing_ok=True)
+    v2_fields = {} if v2 is None else {'report_version': 2, 'content_digest': v2['content_digest'],
+                                       'sections': v2['sections_present'], 'redaction_profile': profile.name}
     return ExportManifest(project_id=project.id, revision=project.revision, format=format,
                           sha256=hashlib.sha256(content).hexdigest(),
                           finding_ids=data['selection']['finding_ids'],
-                          include_code=include_code, include_notes=include_notes)
+                          include_code=include_code, include_notes=include_notes, **v2_fields)

@@ -60,11 +60,23 @@ REQUIRED_CLASSES = (
 )
 DECOMPILER_CLASSES = (('ghidra.app.decompiler', 'DecompInterface'),)    # `decompile` mode only (S3b)
 _SOURCE_NAMES = ('DEFAULT', 'ANALYSIS', 'AI', 'IMPORTED', 'USER_DEFINED')
-_HEX = re.compile(r'^[0-9a-f]{64}$')
-_ORDINAL = re.compile(r'^(?:#|Ordinal_)(\d{1,6})$')
-_ORDINAL_LABEL = re.compile(r'^Ordinal_\d{1,6}$')
-_CONTROL = re.compile('[\x00-\x1f\x7f-\x9f\u2028\u2029\u202a-\u202e\u2066-\u2069]')
-_CODE_CONTROL = re.compile('[\x00-\x08\x0b-\x1f\x7f-\x9f\u2028\u2029\u202a-\u202e\u2066-\u2069]')   # TAB and LF stay
+_HEX = re.compile(r'^[0-9a-f]{64}\Z')
+_ORDINAL = re.compile(r'^(?:#|Ordinal_)(\d{1,6})\Z')
+_KEY_DLL_UNSAFE = re.compile('[ !]')
+_ORDINAL_LABEL = re.compile(r'^Ordinal_\d{1,6}\Z')
+# Unsafe text: controls, C1, soft hyphen, bidirectional and invisible characters. A COPY of `patchtrace.unified.contracts`
+# (`_UNSAFE_TEXT`, `_STDERR_UNSAFE`: this file runs in the external Python and cannot import patchtrace); a test parses
+# both and pins them equal (U7-09). Built from code points so that this file holds no invisible character itself.
+_INVISIBLE = ((0x7F, 0x9F), (0xAD, 0xAD), (0x61C, 0x61C), (0x180E, 0x180E), (0x200B, 0x200F), (0x2028, 0x202E),
+              (0x2060, 0x206F), (0xFEFF, 0xFEFF), (0xFFF9, 0xFFFB), (0xE0000, 0xE007F))
+
+
+def _char_class(ranges) -> re.Pattern:
+    return re.compile('[' + ''.join(f'{chr(low)}-{chr(high)}' for low, high in ranges) + ']')
+
+
+_CONTROL = _char_class(((0x00, 0x1F), *_INVISIBLE))
+_CODE_CONTROL = _char_class(((0x00, 0x08), (0x0B, 0x1F), *_INVISIBLE))   # TAB and LF stay
 _REQUEST_KEYS = ('contract', 'side', 'artifact_path', 'artifact_sha256', 'mode', 'gzf_path', 'gzf_sha256', 'out_dir',
                  'work_dir', 'max_heap_mb', 'analysis_options', 'limits', 'decompile_rvas')
 _DEFAULT_LIMITS = {'l01_functions_per_side': 250_000, 'l02_instructions_per_side': 20_000_000,
@@ -110,7 +122,9 @@ def dump_line(record: dict) -> str:
 
 def import_key(library: object, label: object, original: object = None) -> str:
     """`<dll lower case>!<name>` or `<dll lower case>!#<ordinal>` (03 s12.3)."""
-    dll = clean_text(library or 'unknown', 128).lower().strip() or 'unknown'
+    # The ingest key shape (03 s12.3): the DLL part holds no space, control character or '!', at most 128 characters
+    # (lower() can lengthen a string, so it comes before the cut).
+    dll = _KEY_DLL_UNSAFE.sub('?', clean_text(library or 'unknown', 128).strip()).lower()[:128] or 'unknown'
     name = clean_text(original or label or 'unknown', 160).strip() or 'unknown'
     match = _ORDINAL.match(name) or _ORDINAL.match(clean_text(label or '', 40))
     return f'{dll}!#{match.group(1)}' if match else f'{dll}!{name}'
@@ -150,8 +164,8 @@ def parse_pe_header(path: str) -> dict:
                 raise ScriptExit(EXIT_UNSUPPORTED, 'unsupported-format')
             lfanew = struct.unpack_from('<I', head, 0x3C)[0]
             if lfanew + 24 + 112 > len(head):
-                stream.seek(0)
-                head = stream.read(lfanew + 24 + 112 + 16)
+                stream.seek(lfanew)   # a hostile e_lfanew must not make us read the file up to it
+                head, lfanew = stream.read(24 + 112 + 16), 0
             if lfanew + 24 + 60 > len(head) or head[lfanew:lfanew + 4] != b'PE\0\0':
                 raise ScriptExit(EXIT_UNSUPPORTED, 'unsupported-format')
             optional = lfanew + 24
