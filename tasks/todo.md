@@ -1100,3 +1100,9 @@ Full `QT_QPA_PLATFORM=offscreen python -m pytest -q` for this isolated native sl
 - [x] Independent read-only review approved implementation 0b3c58fb; independent focused controls 20 passed, 136 deselected.
 - [ ] Coordinator integration and native Windows/full-suite gates. Product-only/binary-only advisory lookup semantics remain outside this slice.
 - [ ] Separately specify label preservation if current-origin preview must support derived hash.bin-labelled projects or other original labels outside the existing .sys/.dll/.exe BinaryRef contract. Current unsupported cases refuse explicitly.
+
+### LBL-30 consolidation checkpoint — 2026-11-05
+
+- [x] Port exact recorded-protocol selection and conservative visible-row tests from #176, preserving explicit unlocked rehearsal and existing final-run gates (97 acceptance tests passed).
+- [ ] Complete broader training regression and independent review before integrating this slice into #205.
+- [ ] Consolidate the separate credited-output replay/persistence slice from #176; this checkpoint does not implement it.
