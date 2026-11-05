@@ -1,5 +1,7 @@
 # Module index
 
+| Winbindex metadata refresh (planned independent slice) | `kbcorrelation/sources/winbindex_fetch.py` | Explicit exact-plan preview/consent orchestration over existing acquisition.Transport.fetch_metadata and saved workspace index; no target/download execution | existing transport, Winbindex parser, workspace publication seam | new deterministic `test_kb_winbindex_refresh_20261105.py`; no live-source acceptance |
+
 2026-11-05 investigation extension: the existing `kbcorrelation/investigation_service.py`
 facade also builds the existing monthly IndexPlan, strictly checks captured plan and
 consent, and orchestrates existing CVRF transport/per-document WorkspaceStore commits.
