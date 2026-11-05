@@ -8,6 +8,9 @@ from .models import ComparisonProject, FunctionMatch, FunctionRecord
 ROOT_KEYS = {'program_options', 'matches', 'symbols', 'strings', 'functions', 'stats',
              'old_meta', 'new_meta', 'md_credits', 'html_credits', 'old_pe_url', 'new_pe_url'}
 HASH_KEYS = ('Executable SHA256', 'SHA256', 'sha256', 'sha256_hash', 'Executable SHA-256')
+# These claims belong to PatchTrace, never to an imported enhanced function.
+RESERVED_METADATA = frozenset({'upstream_similarity', 'diff_types', 'upstream_name', 'instructions_hash',
+                               'assembly_unavailable', 'upstream_one_to_many'})
 
 
 def _strings(value, label: str) -> list[str]:
@@ -49,6 +52,9 @@ def normalize_ghidriff(raw: dict, project: ComparisonProject, run_id: str) -> li
         for key in ['fullname', 'address', 'code']:
             if record.get(key) is not None and not isinstance(record[key], str):
                 raise ValueError(f'PT-SCHEMA: function {key} must be text or null')
+        planted = sorted(RESERVED_METADATA.intersection(record))
+        if planted:
+            raise ValueError(f'PT-SCHEMA: upstream function carries the PatchTrace-reserved metadata key {planted[0]}')
         instructions = record.get('instructions')
         assembly = None
         metadata = {key: value for key, value in record.items()
