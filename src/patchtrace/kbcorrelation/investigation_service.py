@@ -43,6 +43,7 @@ class InvestigationRequest:
     current_project: Path | None = None
     confirm_same_component: bool = False
     current_inputs: CurrentProjectInputs | None = None
+    manual_pair_start: bool = False
 
 
 @dataclass(frozen=True, slots=True)
@@ -122,12 +123,16 @@ def _verified_current(snapshot: CurrentProjectInputs, cancel) -> tuple[tuple[Pat
 
 def _execute(request: InvestigationRequest, cancel, service_factory) -> InvestigationResult:
     _checkpoint(cancel)
+    if request.manual_pair_start and (request.investigation_id is not None or request.scope_id is not None
+                                      or request.expected_revision is not None):
+        raise KbcStoreError('PT-KBC-INPUT', 'A binary-only start cannot reuse an advisory investigation or product.')
     origin = None
     if request.current_inputs is not None:
         paths, origin = _verified_current(request.current_inputs, cancel)
         if request.operation == 'current_inputs':
-            return InvestigationResult('current_inputs', 'Current project copies verified. '
-                                       'Choose advisory scope and preview the pair before creating a project.',
+            next_step = ('Preview the binary-only pair before creating a project.' if request.manual_pair_start else
+                         'Choose advisory scope and preview the pair before creating a project.')
+            return InvestigationResult('current_inputs', 'Current project copies verified. ' + next_step,
                                        {'older': str(paths[0]), 'newer': str(paths[1]), 'input_origin': origin})
         if request.operation in {'preview', 'create'} and (request.older is None or request.newer is None or
                 (request.older.resolve(), request.newer.resolve()) != paths):
@@ -180,24 +185,28 @@ def _execute(request: InvestigationRequest, cancel, service_factory) -> Investig
         outcome = service.search(_required(request.lead.strip(), 'a KB or CVE identifier'),
                                  product=request.scope_id, investigation=request.investigation_id)
     elif request.operation in {'preview', 'create'}:
-        inv = _required(request.investigation_id, 'a search result')
-        scope = _required(request.scope_id, 'an explicit product')
-        with WorkspaceStore(service.root, create=False, clock=service.env.clock) as store:
-            revision = store.current_revision(inv)
-            if revision is not None and revision.state in {
-                    'PROJECT_CREATED', 'CONTEXT_PENDING', 'CONTEXT_ATTACHED', 'COMPARISON_PENDING',
-                    'ANALYZED', 'CORRELATED', 'CORRELATED_PARTIAL'}:
-                raise KbcStoreError('PT-KBC-STATE', 'This investigation already has a project. '
-                                    'Use Search locally to start a new investigation before choosing another pair.')
-        selected = service.products(inv).result.get('selected_scope_id')
-        if selected != scope:
-            raise KbcStoreError('PT-KBC-STALE', 'The selected product changed; search and select it again.')
+        if request.manual_pair_start:
+            inv = 'new'
+        else:
+            inv = _required(request.investigation_id, 'a search result')
+            scope = _required(request.scope_id, 'an explicit product')
+            with WorkspaceStore(service.root, create=False, clock=service.env.clock) as store:
+                revision = store.current_revision(inv)
+                if revision is not None and revision.state in {
+                        'PROJECT_CREATED', 'CONTEXT_PENDING', 'CONTEXT_ATTACHED', 'COMPARISON_PENDING',
+                        'ANALYZED', 'CORRELATED', 'CORRELATED_PARTIAL'}:
+                    raise KbcStoreError('PT-KBC-STATE', 'This investigation already has a project. '
+                                        'Use Search locally to start a new investigation before choosing another pair.')
+            selected = service.products(inv).result.get('selected_scope_id')
+            if selected != scope:
+                raise KbcStoreError('PT-KBC-STALE', 'The selected product changed; search and select it again.')
         old = str(_required(request.older, 'the older local binary'))
         new = str(_required(request.newer, 'the newer local binary'))
         destination = _new_destination(request) if request.operation == 'create' else request.destination or Path('.')
         if request.operation == 'create':
             _required(request.expected_pair_id, 'a current pair preview')
-            _required(request.expected_revision, 'a current investigation revision')
+            if not request.manual_pair_start:
+                _required(request.expected_revision, 'a current investigation revision')
         _checkpoint(cancel)
         try:
             outcome = service.import_pair(inv, old, new, str(destination), name=request.name or None,

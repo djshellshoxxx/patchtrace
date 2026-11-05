@@ -37,6 +37,7 @@ DESCRIPTIONS = {
     'newer': 'Newer local AMD64 PE binary; its bytes are inspected and never executed.',
     'destination': 'New or empty directory outside the currently open project.',
     'name': 'Name for the new comparison project.',
+    'manual_pair_start': 'Start from two local files with unverified product lineage and no advisory linkage.',
     'same_component': 'Explicitly confirm differently named files represent the same component.',
     'import': 'Import the chosen local advisory into the workspace.',
     'search': 'Search stored advisory documents without accessing the network.',
@@ -63,7 +64,7 @@ class InvestigationDialog(QDialog):
                  execute=execute_request, notice=None, current_inputs=None, is_current=None):
         super().__init__(parent)
         register_tips(TIPS)
-        self.setWindowTitle('Investigate KB/CVE · offline')
+        self.setWindowTitle('Investigate KB/CVE or local pair · offline')
         self.resize(920, 760)
         self.tasks = tasks if tasks is not None else TaskRunner(self)
         self._own_tasks = tasks is None
@@ -78,10 +79,15 @@ class InvestigationDialog(QDialog):
         self._investigation_id = None
         self._cancel_create, self._close_after_create = False, False
         root = QVBoxLayout(self)
-        heading = PlainLabel('Import an advisory, search a KB/CVE and choose a product. Preview local older/newer '
-                             'files before creating a separate comparison. Nothing is downloaded or executed.',
+        heading = PlainLabel('Search a local KB/CVE advisory and choose a product, or start from local files. '
+                             'Preview older/newer files before creating a separate comparison. '
+                             'Nothing is downloaded or executed.',
                              wrap=True)
         root.addWidget(heading)
+        self.manual_pair_start = QCheckBox('Start from local files without advisory linkage')
+        self._tip(self.manual_pair_start, 'manual_pair_start')
+        self.manual_pair_start.toggled.connect(self._mode_changed)
+        root.addWidget(self.manual_pair_start)
         form = QFormLayout()
         self.fields = {}
         self.buttons = {}
@@ -165,13 +171,24 @@ class InvestigationDialog(QDialog):
         def path(key):
             value = self.fields[key].text().strip()
             return Path(value).expanduser() if value else None
+        manual = self.manual_pair_start.isChecked()
         return InvestigationRequest(operation, path('workspace') or default_workspace(), source=path('source'),
-                                    lead=self.fields['lead'].text().strip(), investigation_id=self._investigation_id,
-                                    scope_id=self.scope.currentData(), older=path('older'), newer=path('newer'),
+                                    lead='' if manual else self.fields['lead'].text().strip(),
+                                    investigation_id=None if manual else self._investigation_id,
+                                    scope_id=None if manual else self.scope.currentData(),
+                                    older=path('older'), newer=path('newer'),
                                     destination=path('destination'), name=self.fields['name'].text().strip(),
                                     current_project=self._current_project,
                                     confirm_same_component=self.same_component.isChecked(),
-                                    current_inputs=self._input_origin if operation in {'preview', 'create'} else None)
+                                    current_inputs=self._input_origin if operation in {'preview', 'create'} else None,
+                                    manual_pair_start=manual)
+
+    def _mode_changed(self):
+        self._investigation_id = None
+        self._set_scopes([], None)
+        self._invalidate()
+        self.status.setText('Binary-only: product lineage and fix boundary are unverified; no advisory linkage.'
+                            if self.manual_pair_start.isChecked() else 'Search locally and choose an explicit product.')
 
     def _edited(self, key):
         if key in {'older', 'newer'}:
@@ -225,17 +242,23 @@ class InvestigationDialog(QDialog):
 
     def _enable(self):
         busy = self._pending is not None
+        manual = self.manual_pair_start.isChecked()
+        self.manual_pair_start.setEnabled(not busy)
         for field in self.fields.values():
             field.setEnabled(not busy)
-        self.scope.setEnabled(not busy and self._investigation_id is not None)
+        self.scope.setEnabled(not busy and not manual and self._investigation_id is not None)
         self.same_component.setEnabled(not busy)
         for button in self.buttons.values():
             button.setEnabled(not busy)
         self.buttons['use_current'].setEnabled(not busy and self._available_current is not None
                                                and self._is_current())
+        for key in ('source', 'lead'):
+            self.fields[key].setEnabled(not busy and not manual)
+        for key in ('browse_source', 'import', 'search'):
+            self.buttons[key].setEnabled(not busy and not manual)
         self.buttons['cancel'].setEnabled(busy)
         self.buttons['close'].setEnabled(True)
-        pair_ready = self._investigation_id is not None and self.scope.currentData() is not None
+        pair_ready = manual or (self._investigation_id is not None and self.scope.currentData() is not None)
         self.buttons['preview'].setEnabled(not busy and pair_ready
                                           and bool(self.fields['older'].text() and self.fields['newer'].text()))
         self.buttons['create'].setEnabled(not busy and self._preview is not None
@@ -299,7 +322,8 @@ class InvestigationDialog(QDialog):
         elif result.success and request.operation == 'preview':
             self._preview = (request, result)
             pair = result.data.get('pair', {})
-            text += (f'\nProduct: {self.scope.currentText()}\nOlder SHA-256: {pair.get("older_sha256")}\n'
+            product = 'unselected; no advisory linkage' if request.manual_pair_start else self.scope.currentText()
+            text += (f'\nProduct: {product}\nOlder SHA-256: {pair.get("older_sha256")}\n'
                      f'Newer SHA-256: {pair.get("newer_sha256")}\nLineage: {pair.get("lineage_state")}\n'
                      f'Fix boundary: {pair.get("fix_boundary")}\nLimits: {", ".join(pair.get("reason_codes", ()))}')
             if result.data.get('input_origin'):
