@@ -148,7 +148,8 @@ def _validate_pe_prefix(header: bytes, size: int) -> None:
         raise ValueError('PT-INPUT: PE section table is truncated or empty')
 
 
-def inspect_artifact(path: Path, side: str, root: Path) -> Artifact:
+def inspect_artifact(path: Path, side: str, root: Path, *,
+                     created: list[tuple[Path, os.stat_result]] | None = None) -> Artifact:
     if side not in {'older', 'newer'}:
         raise ValueError('PT-INPUT: explicit older/newer side required')
     source = Path(path)
@@ -162,7 +163,14 @@ def inspect_artifact(path: Path, side: str, root: Path) -> Artifact:
         if not 1 <= before.st_size <= MAX_ARTIFACT_BYTES:
             raise ValueError('PT-INPUT: input exceeds 1 GiB or is empty')
         destdir = safe_path(root, 'artifacts')
-        destdir.mkdir(parents=True, exist_ok=True)
+        destdir.parent.mkdir(parents=True, exist_ok=True)
+        try:
+            destdir.mkdir()
+        except FileExistsError:
+            pass
+        else:
+            if created is not None:
+                created.append((destdir, destdir.stat()))
         fd, temporary = tempfile.mkstemp(prefix='.input-', dir=destdir)
         stage = Path(temporary)
         digest = hashlib.sha256()
@@ -196,12 +204,19 @@ def inspect_artifact(path: Path, side: str, root: Path) -> Artifact:
         sha = digest.hexdigest()
         relative = f'artifacts/{sha}.bin'
         destination = safe_path(root, relative)
-        if destination.exists():
+        published = stage.stat()
+        try:
+            os.link(stage, destination)  # exclusive publication; never replace a concurrent file
+        except FileExistsError:
+            destination = safe_path(root, relative)
             if destination.stat().st_size != copied or sha256_file(destination) != sha:
-                raise ValueError('PT-STORAGE: existing immutable artifact has changed')
+                raise ValueError('PT-STORAGE: existing immutable artifact has changed') from None
             stage.unlink()
         else:
-            os.replace(stage, destination)
+            if created is not None:
+                created.append((destination, published))
+            stage.unlink()
+            stage = None
             destination.chmod(stat.S_IREAD | stat.S_IRGRP | stat.S_IROTH)
         stage = None
         return Artifact(side=side, name=display_text(source.name), sha256=sha, size=copied, relative_path=relative)

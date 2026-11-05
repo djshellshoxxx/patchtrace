@@ -921,3 +921,12 @@ Done: dock with state matrix, consent, import, changes, copy, go to CVE. Open: r
 - [x] Preserve old no-key bytes/ranking and private in-memory unified support; keep persisted engine vocabulary unchanged; expose legacy unmarked replay as unverified rather than infer historical credit.
 - [ ] Independent final review, coordinator integration/cross-OS and verified transfer integration remain pending; broader locked training/final-run/promotion safeguards are not completed by this slice. See `docs/qa/output-credited-replay-20261101.md`.
 - [x] Independent credited-replay review approved exact source `5c26af9` with 119 passes/1 native-tool BLOCKED skip and direct scalar/failed-valid-artifact controls; no remaining bounded source blocker. Integration/cross-OS/transfer and broader safeguards above remain open.
+
+### E3-PROJECTCREATE initial creation rollback
+
+- [x] Reproduce source #116 creation/copy residuals; replace broad directory-difference deletion with explicit identity-checked publication ownership, retaining the kernel lock inode and committed first snapshots.
+- [x] Cover retry, preexisting/concurrent foreign files, reused read-only artifacts, readonly deletion rules, failed publication, destination races, substitutions/symlinks, interruptions and unsupported exclusive publication.
+- [ ] Independent review and coordinator integration/full suite; native Windows hardlink/read-only lifecycle and other filesystem compatibility qualification remain open. Hardlink support is required for new artifact publication; no overwrite fallback.
+
+- [ ] Harden the residual exact-path replacement race between the last metadata check and unlink/chmod if support for hostile noncooperating filesystem writers is required; evaluate quarantine/native handles with native Windows tests. This repair guarantees cooperative-lock and identity-checked best-effort cleanup only.
+- [ ] Verify desktop wizard retry after a failed creation: destination validation may reject the intentionally retained lock-only directory. Backend create retry is tested; no end-to-end wizard retry claim.
