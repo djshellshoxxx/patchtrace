@@ -928,3 +928,8 @@ Done: dock with state matrix, consent, import, changes, copy, go to CVE. Open: r
 - [x] Reproduce Windows timing failure with a controlled scheduling/IO pause; measure CPU work at unchanged thresholds and document test meaning.
 - [x] Parser/resource + all #184 affected test files: 302 passed, 3 skipped; whole Ruff/diff clean.
 - [ ] Exact-head Windows/Linux CI and full-suite qualification; #184 remains a dependency, not merged.
+
+### 2026-11-05 QA consolidation
+
+- [x] Preserve #184 fixture isolation/own-load waits and #189 parser CPU budgets; 301 focused passes/3 skips plus one repaired environment failure retested passing; Ruff/pip check clean.
+- [ ] Full offscreen suite currently running; exact-head cross-OS CI and review remain required before merge.
