@@ -1118,3 +1118,6 @@ Full `QT_QPA_PLATFORM=offscreen python -m pytest -q` for this isolated native sl
 - [ ] Finish/review lock-only retry and retain committed promotion data on annotation failure; fix stale crash-test keyword double.
 - [ ] Collect exact f33 complete-suite receipt, then qualify updated candidate.
 - [ ] Complete provisioned pinned-native controls and required current-head Windows/scanner/release gates.
+
+- [x] #219 reviewed38be184c integrated: real lock-only retry, non-destructive committed acquisition failures, exact retained path, repaired SIGKILL fixture signature;475 combined tests passed.
+- [ ] Continue product-only desktop start and remaining unique #174 adapter functionality in exclusive worker worktrees.

@@ -1488,3 +1488,7 @@ Selectively ported the remaining normalized-output retention, report completion,
 ### Wave-three reviewed integration — 2026-11-05
 
 #215/#216/#217 reviewed source integrated at dfc212e2: combined276 passed; Ruff and all four schema generators passed with no drift. Independent prereg97 and replay44 controls passed. Frozen f33e2a0a complete suite remains running (log /tmp/pt-205-f33-full.log); one stale SIGKILL double failure reproduced, repair pending in lifecycle slice. Current scanner/Windows/native/release gates remain open; no main merge.
+
+### GUI retry / retained committed acquisition — #219 integration
+
+Reviewed38be184c merged at a84bf6d1. Five real preflight paths now permit absent/empty/sole regular non-symlink lock directories while kernel locking and committed-database refusal remain authoritative. Baseline actual retry/stress double2failures and separate contributor-file deletion1failure were reproduced. Promotion retains committed project, prior annotations, foreign files and persistent lock, closes service, reports retained path. Integrated lifecycle/KB/calibration475 passed39.80s; author228 and independent206 selections overlap, plus independent second-annotation/KeyboardInterrupt probes. Ruff clean; no schema/model/error-code changes. Frozen f33 full suite remains running; final updated-head/native/Windows acceptance open.
