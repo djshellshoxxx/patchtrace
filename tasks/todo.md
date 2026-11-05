@@ -929,3 +929,15 @@ Source accounting: isolated the generic `gui/qt/project_adoption.py` helper and 
 Confirmed failure: the previous service closed before incoming rendering/preferences completed. Four new regression cases failed on the original implementation, one passed (20.76s). The isolated helper keeps the previous service open until adoption succeeds, restores the service and both recent-project preferences on failure, closes the rejected candidate and releases its project lock. Same-service re-adoption preserves ownership; failed rollback rendering retains the old service and logs a diagnostic. The coordinator independently reviewed the helper/delegation and found no blocking defect.
 
 PASSED: `QT_QPA_PLATFORM=offscreen python -m pytest -q tests/test_gui_project_adoption.py tests/test_gui_host_seam.py tests/test_ui.py` — 59 passed in126.45s; full-tree `python -m ruff check src tests tools` and diff-check passed. A separate rollback-render failure test passed (1 passed,5 deselected). No second full-suite run was started; final integration QA and Windows lifecycle acceptance remain separate gates.
+
+### [KBF-20261104] Explicit component filename selection
+
+- [x] Reproduce advisory-title collision and capped-list suppression of explicit filenames; preserve analyst tier E and title provenance, title-only D remains unselectable.
+- [x] Persisted CLI/pair selection regression, 3 red cases; 1,057 KBC tests passed, whole Ruff/diff/schema drift clean; independent review no blockers.
+- [ ] Exact-head CI, full-suite integration and Windows qualification. No live MSRC/Winbindex or vulnerability-attribution gate closed.
+
+### KB consolidation checkpoint (2026-11-05)
+
+- [x] Account for PR #182's KB fixture corpus, Unicode acceptance and byte-preserving line endings; leave its unrelated UI wait port to QA ownership.
+- [x] Account for PR #190's analyst filename selection repair and persisted investigation regression. Focused affected tests: 96 passed; global ruff passed.
+- [ ] Coordinator: publish reviewed KB integration and run combined full-suite/Windows CI gates; retain source PRs until all changes are accounted for. Synthetic fixtures do not satisfy live provider or release acceptance.
