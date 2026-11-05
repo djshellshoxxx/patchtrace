@@ -972,3 +972,10 @@ Source accounting: isolated the generic `gui/qt/project_adoption.py` helper and 
 Confirmed failure: the previous service closed before incoming rendering/preferences completed. Four new regression cases failed on the original implementation, one passed (20.76s). The isolated helper keeps the previous service open until adoption succeeds, restores the service and both recent-project preferences on failure, closes the rejected candidate and releases its project lock. Same-service re-adoption preserves ownership; failed rollback rendering retains the old service and logs a diagnostic. The coordinator independently reviewed the helper/delegation and found no blocking defect.
 
 PASSED: `QT_QPA_PLATFORM=offscreen python -m pytest -q tests/test_gui_project_adoption.py tests/test_gui_host_seam.py tests/test_ui.py` — 59 passed in126.45s; full-tree `python -m ruff check src tests tools` and diff-check passed. A separate rollback-render failure test passed (1 passed,5 deselected). No second full-suite run was started; final integration QA and Windows lifecycle acceptance remain separate gates.
+
+### Secondary preparation checkpoint (2026-11-05)
+
+- [x] Isolate PR #176 artifact-preparation cancellation, engine budget and ingestion-cap repair; preserve the separate probe budget. Six red regressions repaired; 85 focused tests and global Ruff pass.
+- [ ] Coordinator review/publication and combined full-suite/Windows CI qualification for secondary preparation; no native acceptance claim.
+
+- [ ] Harden `secondary.bindiff_inputs.copy_and_hash` against replacement between `lstat` and `open` (including POSIX FIFO): evaluate nonblocking descriptor open plus regular-file `fstat`, preserve cross-platform behavior, and add deterministic replacement coverage. Cooperative cancellation does not interrupt blocked OS calls.
