@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import math
 from collections.abc import Sequence
+from itertools import groupby
 
 from .mathcore import fit_platt, logit
 
@@ -46,14 +47,17 @@ def ece(p, y, w, bins: int = ECE_BINS) -> float:
 
 
 def ece_equal_mass(p, y, w, bins: int = 10) -> float:
-    """Secondary: weight-equal adaptive bins over sorted predictions."""
+    """Secondary: adaptive target-mass bins, keeping whole prediction ties together."""
     order = sorted(range(len(p)), key=lambda i: (p[i], i))
     total = math.fsum(w)
     out, cur, cur_w = 0.0, [], 0.0
-    for k, i in enumerate(order):
-        cur.append(i)
-        cur_w += w[i]
-        if cur_w >= total / bins - 1e-12 or k == len(order) - 1:
+    processed = 0
+    for _, block in groupby(order, key=lambda i: p[i]):
+        tied = list(block)
+        cur.extend(tied)
+        cur_w += math.fsum(w[i] for i in tied)
+        processed += len(tied)
+        if cur_w >= total / bins - 1e-12 or processed == len(order):
             conf = math.fsum(w[j] * p[j] for j in cur) / cur_w
             accy = math.fsum(w[j] * y[j] for j in cur) / cur_w
             out += cur_w / total * abs(accy - conf)
@@ -95,7 +99,7 @@ def auc(p, y, w) -> float | None:
         neg_below += tie_neg
         i = j
     pos = math.fsum(w[k] for k in range(len(p)) if y[k])
-    neg = math.fsum(w) - pos
+    neg = math.fsum(w[k] for k in range(len(p)) if not y[k])
     return None if pos == 0 or neg == 0 else total / (pos * neg)
 
 
