@@ -1296,3 +1296,11 @@ Linux Codespace, Python 3.14.2: focused component/pair-index/service/CLI tests *
 ## Superseded GUI inspection failures — 2026-11-05
 
 Isolated audit-116 repairs from PR #176: a failure from an old project inspection no longer overwrites the current Files status/error/log. Export policy now clarifies that included code/evidence may retain original paths. Both original audit regressions failed on `5d504ff5`; added current-key/unkeyed failure controls and existing-current-error preservation. Independent review found no guard defect and prompted these controls and more precise copy. Focused GUI suite: **35 passed** in 60.42 seconds; whole-tree Ruff and diff check passed; full/cross-OS qualification remains pending. No report bytes, native adapters, project ownership, or wire contracts change.
+
+## 2026-11-05 transactional desktop project adoption slice
+
+Source accounting: isolated the generic `gui/qt/project_adoption.py` helper and `MainWindow.set_service` delegation from PR #176 commit37a6fed0 (original offline investigation work from #148). No KB dialog, project factory, acquisition, corpus, workflow, unrelated GUI or audit-disposition changes are included. PR #176 remains only partially accounted for. The module was indexed and UI ownership contract specified before porting. No serialized schema fields changed.
+
+Confirmed failure: the previous service closed before incoming rendering/preferences completed. Four new regression cases failed on the original implementation, one passed (20.76s). The isolated helper keeps the previous service open until adoption succeeds, restores the service and both recent-project preferences on failure, closes the rejected candidate and releases its project lock. Same-service re-adoption preserves ownership; failed rollback rendering retains the old service and logs a diagnostic. The coordinator independently reviewed the helper/delegation and found no blocking defect.
+
+PASSED: `QT_QPA_PLATFORM=offscreen python -m pytest -q tests/test_gui_project_adoption.py tests/test_gui_host_seam.py tests/test_ui.py` — 59 passed in126.45s; full-tree `python -m ruff check src tests tools` and diff-check passed. A separate rollback-render failure test passed (1 passed,5 deselected). No second full-suite run was started; final integration QA and Windows lifecycle acceptance remain separate gates.
