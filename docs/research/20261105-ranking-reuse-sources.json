@@ -1,0 +1,112 @@
+{
+  "kind": "primary-source-research-receipt",
+  "retrieved_at": "2026-11-05T23:31:30+00:00",
+  "note": "Source inspection only; no engine execution, training, dataset or calibration acceptance.",
+  "scikit_learn_tag": {
+    "tag": "1.7.2",
+    "annotated_tag_object": "b8c435b6c580cf10685ff012d3d1e7b786d5f244",
+    "peeled_commit": "25dee604bae18205b01548348388baf7a1cdfe0e"
+  },
+  "sources": [
+    {
+      "repository": "google/bindiff",
+      "revision": "13c437afa0740bd704cf396e3de3eb8d1a471ead",
+      "path": "LICENSE",
+      "url": "https://github.com/google/bindiff/blob/13c437afa0740bd704cf396e3de3eb8d1a471ead/LICENSE",
+      "git_blob_sha": "d645695673349e3947e8e5ae42332d0ac3164cd7",
+      "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+      "bytes": 11358,
+      "repository_license": "Apache-2.0"
+    },
+    {
+      "repository": "google/bindiff",
+      "revision": "13c437afa0740bd704cf396e3de3eb8d1a471ead",
+      "path": "docs/concepts.md",
+      "url": "https://github.com/google/bindiff/blob/13c437afa0740bd704cf396e3de3eb8d1a471ead/docs/concepts.md",
+      "git_blob_sha": "2a41387cc4c95dde8fdabde83f264f9e85b15210",
+      "sha256": "1851115553453a7f3d20125acd58aee0f8e25671952efd659ddc3a3ed537734c",
+      "bytes": 13956,
+      "repository_license": "Apache-2.0"
+    },
+    {
+      "repository": "google/bindiff",
+      "revision": "13c437afa0740bd704cf396e3de3eb8d1a471ead",
+      "path": "differ.cc",
+      "url": "https://github.com/google/bindiff/blob/13c437afa0740bd704cf396e3de3eb8d1a471ead/differ.cc",
+      "git_blob_sha": "9fcabbd495ae981e2b89e722e7530eff8f53316d",
+      "sha256": "ccafd631287bbfd3d3190827d8b19af30f72436a22da6df31475e0d9a9f37213",
+      "bytes": 24292,
+      "repository_license": "Apache-2.0"
+    },
+    {
+      "repository": "quarkslab/qbindiff",
+      "revision": "bdd8dd79e32552af43bcfc441e7be113533ba7ad",
+      "path": "LICENSE",
+      "url": "https://github.com/quarkslab/qbindiff/blob/bdd8dd79e32552af43bcfc441e7be113533ba7ad/LICENSE",
+      "git_blob_sha": "d9a10c0d8e868ebf8da0b3dc95bb0be634c34bfe",
+      "sha256": "a6cba85bc92e0cff7a450b1d873c0eaa2e9fc96bf472df0247a26bec77bf3ff9",
+      "bytes": 10173,
+      "repository_license": "Apache-2.0"
+    },
+    {
+      "repository": "quarkslab/qbindiff",
+      "revision": "bdd8dd79e32552af43bcfc441e7be113533ba7ad",
+      "path": "src/qbindiff/matcher/matcher.py",
+      "url": "https://github.com/quarkslab/qbindiff/blob/bdd8dd79e32552af43bcfc441e7be113533ba7ad/src/qbindiff/matcher/matcher.py",
+      "git_blob_sha": "b6be1546b9c97735bd106b2c322ee60b607e03af",
+      "sha256": "932562fbddae59f981facad47ed4059945d416946625d7f8072f7f289f58e730",
+      "bytes": 10627,
+      "repository_license": "Apache-2.0"
+    },
+    {
+      "repository": "quarkslab/qbindiff",
+      "revision": "bdd8dd79e32552af43bcfc441e7be113533ba7ad",
+      "path": "src/qbindiff/matcher/belief_propagation.py",
+      "url": "https://github.com/quarkslab/qbindiff/blob/bdd8dd79e32552af43bcfc441e7be113533ba7ad/src/qbindiff/matcher/belief_propagation.py",
+      "git_blob_sha": "c7397b55284dc990066fa3a600364f23e16d6eb5",
+      "sha256": "bba0bdf1e5f70f5387083080fc8a5bb8032b90faa94f3f5b9d39ce49982e68bf",
+      "bytes": 14557,
+      "repository_license": "Apache-2.0"
+    },
+    {
+      "repository": "scikit-learn/scikit-learn",
+      "revision": "25dee604bae18205b01548348388baf7a1cdfe0e",
+      "path": "COPYING",
+      "url": "https://github.com/scikit-learn/scikit-learn/blob/25dee604bae18205b01548348388baf7a1cdfe0e/COPYING",
+      "git_blob_sha": "e1cd01d5845788ea1db826d10d37bb24e71d1bbb",
+      "sha256": "75684d16f4662ab842ed5af9482ac01939aee83c8243d89993616d959d3053f8",
+      "bytes": 1532,
+      "repository_license": "BSD-3-Clause"
+    },
+    {
+      "repository": "scikit-learn/scikit-learn",
+      "revision": "25dee604bae18205b01548348388baf7a1cdfe0e",
+      "path": "sklearn/calibration.py",
+      "url": "https://github.com/scikit-learn/scikit-learn/blob/25dee604bae18205b01548348388baf7a1cdfe0e/sklearn/calibration.py",
+      "git_blob_sha": "5b2bca2edfcc01bdec5ad60906061888d4fd7f8d",
+      "sha256": "4e0fa65f478c628c3b962f461811fc5037d8beb9e2b8d31b8a2143f8fe28b6d5",
+      "bytes": 51595,
+      "repository_license": "BSD-3-Clause"
+    },
+    {
+      "repository": "scikit-learn/scikit-learn",
+      "revision": "25dee604bae18205b01548348388baf7a1cdfe0e",
+      "path": "sklearn/isotonic.py",
+      "url": "https://github.com/scikit-learn/scikit-learn/blob/25dee604bae18205b01548348388baf7a1cdfe0e/sklearn/isotonic.py",
+      "git_blob_sha": "2f2c56ae5d13cf51e2c165f4ab433c2abba224b7",
+      "sha256": "7482812cd6f84cd19d4ca4496cfe224743ccfcc7cbcb80659d9e1d178d339002",
+      "bytes": 17371,
+      "repository_license": "BSD-3-Clause"
+    },
+    {
+      "repository": "scikit-learn/scikit-learn",
+      "revision": "25dee604bae18205b01548348388baf7a1cdfe0e",
+      "path": "doc/modules/calibration.rst",
+      "url": "https://github.com/scikit-learn/scikit-learn/blob/25dee604bae18205b01548348388baf7a1cdfe0e/doc/modules/calibration.rst",
+      "git_blob_sha": "e8e6aa8b9953a3c4d4501fe483989ce5015623ae",
+      "sha256": "1b789e03e67b23eeec86c501c4e017dcba04368042892f8bc8cad0e70478185e",
+      "bytes": 16355,
+      "repository_license": "BSD-3-Clause"
+    }
+  ]
+}
