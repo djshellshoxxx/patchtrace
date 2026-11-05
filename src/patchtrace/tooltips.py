@@ -68,6 +68,11 @@ REGISTRY: dict[str, TooltipEntry] = {
                      'Opens the New comparison dialog.'),
     'action.open': _e('Open an existing PatchTrace project folder.',
                       'Resume earlier work.', 'Replaces the project shown in the window.'),
+    'action.kb_investigation': _e(
+        'Investigate a KB or CVE using local advisory documents and local binaries.',
+        'Preview exact files before creating a separate comparison project.',
+        'Local workspace only; target binaries are never executed.',
+        'No online discovery or download is performed.'),
     'action.acquire': _e(
         'Search Winbindex metadata and download exact-hash Microsoft binaries for comparison.',
         'Obtains an older and a newer build of a Windows file without hunting for them by hand.',

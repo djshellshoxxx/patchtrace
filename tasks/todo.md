@@ -1038,3 +1038,9 @@ Full `QT_QPA_PLATFORM=offscreen python -m pytest -q` for this isolated native sl
 - [x] Reject cache manifests larger than reader cap before publication/eviction; preserve prior committed entries.
 - [x] Focused selected-module tests (173 passed) and whole Ruff; full suite delegated to coordinator.
 - [ ] Native Windows release acceptance remains an independent gate; this audit uses only authored bytes and does not supply native evidence.
+
+### A4-C3-20261105 offline desktop investigation
+
+- [x] Port the bounded advisory import → KB/CVE search → explicit product → local pair preview → create/open journey, with create-only factory and existing workspace/project stores.
+- [x] Reproduce absent modules on prerequisite baseline; protect preview revision/hash, selected architecture, retained paths, cancellation and current-project adoption.
+- [ ] Coordinator exact-head full suite/CI and independent review. Product-only/binary-only desktop starts, online acquisition wizard, native Windows/frozen accessibility and live source gates are outside this slice; fixtures do not close them.

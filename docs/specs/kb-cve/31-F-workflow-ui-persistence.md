@@ -97,3 +97,11 @@ Tests: quit while network pending, close dialog and reopen before worker respons
 ## F8. Native frozen build gate
 
 On Windows release ZIP: login-free metadata-only/offline replay, documented consented sources, search with ambiguity and partial data, import known old/new PE, create normal project, load and reopen, compare via configured supported engine or import fixture, show candidate view and export. Smoke includes dependency metadata, tooltip registry coverage, content-addressed snapshot copies, stale-state persistence, DPI and non-ASCII filesystem paths. Separate tests for Windows DLL/signature behavior and PA30 reconstruction; do not label them validated from Linux unit tests alone.
+
+## Offline desktop implementation seam (2026-11-05)
+
+The bounded first desktop journey imports a supported local advisory, searches a stored KB/CVE, requires explicit product selection, previews two analyst-selected AMD64 PE files, then creates and opens a separate project. Product-only and binary-only starts remain CLI routes; online discovery/download remains the existing consented acquisition route. The offline dialog never starts downloads or analysis. Pair previews retain advisory source references, hashes, lineage and attribution limitations.
+
+`investigation_service.execute_request` consumes immutable plain requests on a task-local service and returns plain results; no workspace connection or project service crosses into Qt. Local `import_pair` previews return `investigation_revision`; create passes `expected_revision` and `expected_pair_id`. Under the existing workspace lock, mismatch rejects the commit with PT-KBC-STALE before state changes. Selected product architecture must match inspected files, and missing product mappings require a new selection. No serialized contract/schema additions are required.
+
+A create-only project port prevents resume from adopting a concurrently created project. The dialog invalidates previews on every input edit. Closing/cancelling a creation waits for its completion and reports any retained path without adopting it. Open/adoption failure reports the path and preserves the previous project through the generic adoption transaction. The host checks the current service identity, close state and analysis worker before adoption. Target files are inspected as data only.

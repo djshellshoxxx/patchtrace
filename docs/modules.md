@@ -1285,3 +1285,7 @@ Wiring: `exchange.ALL_SOURCES`, `--sources diaphora`, `pipeline.capture_plan` (o
 ### [RPT2:export-dialog] Report v2 controls of the Export dialog (2026-11-04, PR #180)
 
 `ui_export_v2.py` builds and binds the Contract, Profile and Sections rows of `ExportDialog` to `report2.export_vm.ExportViewModel` and reads the report sections for `MainWindow.export_report` (`report2.adapters.collect_from_service`). `ui.py` keeps a three-line seam (attach, show, options), within the GUI-framework seam budget. Tests: `tests/test_ui_export_v2.py`.
+
+### [A4-C3-20261105:offline-investigation]
+
+`kbcorrelation/investigation_service.py` is the Qt-free immutable request/result facade over existing workspace import, search, local preview and create-only project attachment. `kbcorrelation/investigation_qt.py` owns the parented modal controls and TaskRunner generation/lifecycle adapter; `gui/qt/host.py` owns adoption and retained-path notices. `kbcorrelation/wiring.py` adds a create-only factory while preserving CLI resume. Tests: `test_kb_investigation_service.py`, `test_ui_kb_investigation.py`; synthetic/offline only.
