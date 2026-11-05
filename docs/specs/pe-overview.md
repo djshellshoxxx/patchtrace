@@ -34,6 +34,14 @@ cap exceeded, unreadable table or any other warning except purely informational 
 Only `ArtifactBytesError` from the reader (I/O or identity failures) propagates. An unexpected internal
 exception in a stage is converted to the warning `internal_error_<stage>`.
 
+Manifest resource backing amendment (2026-11-05, SPEC-51 extension): when the
+declared manifest leaf is not fully backed by readable file bytes, the manifest
+reader returns `manifest_xml_invalid`, no digest and no manifest facts, even if
+the available prefix is well-formed XML. It refuses that incomplete leaf before
+XML parsing; the metadata aggregate is `partial`. Fully backed XML and its
+supported trailing NUL padding retain their existing behavior. A syntactically
+closed prefix cannot establish the contents of the unreadable declared tail.
+
 Warning codes: `too_short`, `not_mz`, `lfanew_out_of_range`, `lfanew_over_cap`, `pe_signature_missing`,
 `coff_truncated`, `optional_header_truncated`, `optional_magic_unknown`, `directories_over_cap`,
 `section_count_over_cap`, `section_table_truncated`, `section_unmapped`, `import_rva_out_of_file`,
