@@ -69,13 +69,16 @@ def _builds(row: IndexRow) -> set[str]:
 
 def _reasons(older: IndexRow, newer: IndexRow, intervening: Sequence[IndexRow], skipped_rows: int) -> set[str]:
     reasons: set[str] = set()
+    if older.build.file_name != newer.build.file_name:
+        reasons.add('NAME_MISMATCH')
     if older.sha256 == newer.sha256:
         reasons.add('IDENTICAL_CONTENT')
     if SUPPORTED_ARCH != older.machine or SUPPORTED_ARCH != newer.machine:
         reasons.add('ARCH')
     if older.build.version_key != newer.build.version_key:
         reasons.add('CROSS_PRODUCT')
-    if order_key(older) >= order_key(newer):
+    # KB/SHA/BASE tie-breakers keep display order stable; they are not chronology evidence.
+    if order_key(older)[:2] >= order_key(newer)[:2]:
         reasons.add('ORDER_UNVERIFIED')
     if {older.availability, newer.availability} & {'delta-only', 'unavailable'}:
         reasons.add('DELTA_ONLY')
