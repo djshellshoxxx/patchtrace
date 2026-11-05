@@ -336,3 +336,54 @@ def test_selection_change_discards_late_preview_of_a_different_real_candidate(qt
         gate.set()
         dialog.reject()
         runner.shutdown()
+
+
+@pytest.mark.parametrize('change', ['removed-older', 'metadata-only'])
+def test_atomic_index_replacement_between_pair_resolution_and_claims_is_stale(tmp_path, monkeypatch, change):
+    from patchtrace.kbcorrelation.service import KbService
+    run, selected = seed(tmp_path)
+    original = KbService.pairs
+    replaced = []
+    def pairs_then_publish(service, *args, **kwargs):
+        result = original(service, *args, **kwargs)
+        if not replaced:
+            replacement = record(NAME)
+            if change == 'removed-older':
+                replacement.pop('1' * 64)
+            else:
+                replacement['1' * 64]['fileInfo']['description'] = 'Same binary hashes, new source metadata'
+            source = tmp_path / 'replacement.json'
+            source.write_text(json.dumps(replacement), encoding='utf-8')
+            wiring.save_winbindex_record(selected.workspace, source, NAME, '2099-02-12')
+            replaced.append(True)
+        return result
+    monkeypatch.setattr(KbService, 'pairs', pairs_then_publish)
+    result = run(candidate_request(selected), threading.Event())
+    assert replaced
+    assert not result.success and result.error_code == 'PT-KBC-STALE'
+    assert not result.data.get('pairs')
+
+
+def test_pure_plan_reuses_captured_rows_during_transient_atomic_record_replacement(tmp_path, monkeypatch):
+    from patchtrace.kbcorrelation.service import KbService
+    run, selected = seed(tmp_path)
+    request = candidate_request(selected)
+    listed = run(request, threading.Event())
+    original = KbService.plan
+    source = tmp_path / 'transient.json'
+    def transient_record_during_plan(service, *args, **kwargs):
+        changed = record(NAME)
+        changed.pop('1' * 64)
+        source.write_text(json.dumps(changed), encoding='utf-8')
+        wiring.save_winbindex_record(selected.workspace, source, NAME, '2099-02-12')
+        try:
+            # The existing pure domain planner must see its captured rows, never the transient record.
+            return original(service, *args, **kwargs)
+        finally:
+            source.write_text(json.dumps(record(NAME)), encoding='utf-8')
+            wiring.save_winbindex_record(selected.workspace, source, NAME, '2099-02-12')
+    monkeypatch.setattr(KbService, 'plan', transient_record_during_plan)
+    preview = run(selected_request(request, listed), threading.Event())
+    assert preview.success, preview.text
+    assert preview.data['selected_candidate'] == listed.data['pairs'][0]
+    assert preview.data['plan']['network_requests'] == 0
