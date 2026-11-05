@@ -13,9 +13,9 @@ Runtime supports four concurrent agents including coordinator; roles run in wave
 | Role | Worktree / branch | Exclusive implementation scope | Status |
 |---|---|---|---|
 | Coordinator / integration, QA, documentation | `/tmp/pt-swarm2`, `integrate/swarm-qualified-20261105` | Integration conflict resolutions, shared specs/schemas, handoff and acceptance record | INTEGRATING |
-| A4/C3 offline investigation | `/tmp/pt-investigation2`, `integrate/kb-investigation-20261105` | KB service/dialog/wiring, minimal revision guard and real host hook | IMPLEMENTING; expected_revision interface proposal approved |
-| B5 unified independent verification | `/tmp/pt-unified2`, `integrate/unified-qualified-20261105` | Unified/pilot/report2 focused acceptance; no source edits yet | VERIFYING cumulative #180→#185→#188→#192 |
-| E4 random audit / independent review | `/tmp/pt-audit2`, `audit/random-boundaries-20261105` | Seeded offline_bundle/enrichment.cache/pe_overview audit; candidate read-only review | Published #200; reviewing integration |
+| A4/C3 offline investigation | `/tmp/pt-investigation2`, `integrate/kb-investigation-20261105` | KB service/dialog/wiring, minimal revision guard and real host hook | PUBLISHED #201; expected_revision guard tested and independently reviewed |
+| B5 unified independent verification | `/tmp/pt-unified2`, `integrate/unified-qualified-20261105` | Unified/pilot/report2 focused acceptance; no source edits yet | VERIFIED cumulative stack:978passed/1skip/1oldxfail; #203 corrects that test expectation |
+| E4 random audit / independent review | `/tmp/pt-audit2`, `audit/random-boundaries-20261105` | Seeded offline_bundle/enrichment.cache/pe_overview audit; candidate read-only review | PUBLISHED #200/#202; independent integration/KB reviews complete |
 
 ## Verified integration work
 
@@ -37,3 +37,15 @@ Prior full run stopped on the actual byte-integrity failure:776passed/1skipped/1
 4. Continue native GT-01, persistence, offline packaging and remaining calibration work in later waves. Windows builds run only on Windows; actual disconnected bundle and clean Windows GUI acceptance remain open.
 
 API token/cost/cache-hit telemetry is unavailable; no usage or enforced cap is invented.
+
+## Frozen combined qualification candidate
+
+Code freeze after `dfdc1018`: #191–#199, #200cache, #201offlineKB desktop, #202verified recovery copies, #203spec/test correction, and CI fragment repair `1229ca3b`. Main unchanged. Original branches preserved. Final integrated checks:213core passes,171unified/UI/byte/pilot passes,50KB/tooltips/cache passes,12fusion/recovery passes,53workflow/tracker passes+3existingxfails. Counts overlap. WholeRuff passed; `PYTHONPATH=src python tools/generate_schemas.py` regenerated from the candidate with no drift.
+
+Merged unified fixture conflict keeps shared private_tempdir for both cleanup checks and compares the exact private directory contents, preserving source assertions. Source ledger modifications (including completed implementation rows but open release gates) and all independently appended evidence retained. Independent 124-test candidate review found no blockers before the later independently reviewed slices.
+
+GitHub191UbuntuQA actual result:18743passed/47skipped/7xfails and3failures, all invalid openai-agents workflow fragment. Local red3fail/48pass/3xfail; relocation preserves exact fragment bytes as reference outside executable workflow discovery; final49pass/3xfail. #186 runnable automation proposal remains separate and inactive. No additional paid runner enabled.
+
+Fresh full suite starts on the resulting freeze commit with `QT_QPA_PLATFORM=offscreen python -m pytest -q`, plus `PYTEST_ADDOPTS=--maxfail=1` for immediate diagnosis if any test fails. This selects the entire suite; no skips/assertions are changed. Result pending until logged. Cross-OS/native/package gates remain pending.
+
+Supporting subsequent waves remain isolated from frozen source: nativeinput descriptor race and streamed corruptseries recovery followups. Their focused results cannot qualify this candidate until deliberately integrated and retested.
