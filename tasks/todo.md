@@ -1057,3 +1057,10 @@ Full `QT_QPA_PLATFORM=offscreen python -m pytest -q` for this isolated native sl
 
 - [x] Reproduce three workflow source validation failures; preserve the standalone agent step as a byte-identical example outside executable workflow discovery.49static checks passed/3existingxfails; Ruff passed.
 - [ ] Exact-head integration/full/cross-OS CI. Existing paid automation proposals remain separate and unenabled by this repair.
+
+## E4-B5-SONAR-20261105 — bounded parity text parse
+
+- [x] Reproduce adjacent-whitespace parser timeout in a killed child; replace ambiguous partitions with linear scans preserving grammar.
+- [x] Escape bidi source characters in the five assigned fixture files; AST and runtime fixture values unchanged.
+- [x] Focused parity/fixture tests, CPU-budget regression, grammar limits and whole Ruff/diff checks pass.
+- [ ] Coordinator reruns actual Sonar/full qualification; this focused slice claims no native parity acceptance.
