@@ -6,6 +6,9 @@ so these tests never import the C3 BinExport2 modules.
 from __future__ import annotations
 
 import hashlib
+import os
+import subprocess
+import sys
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -173,3 +176,95 @@ def test_copy_and_hash_rejects_non_regular_sources(tmp_path):
         with pytest.raises(SecondaryError) as info:
             copy_and_hash(source, tmp_path / f'out{index}.BinExport')
         assert kinds(info) == ('PT-SECONDARY-RUN', 'workdir-error')
+
+
+@pytest.mark.parametrize('replacement', ['regular', 'directory', 'symlink'])
+@pytest.mark.parametrize('no_follow', [True, False], ids=['native-flags', 'without-nofollow'])
+def test_copy_rejects_source_replacement_between_lstat_and_open(tmp_path, monkeypatch, replacement, no_follow):
+    from patchtrace.secondary import bindiff_inputs
+    source, target, destination = (tmp_path / name for name in ('source', 'target', 'destination'))
+    source.write_bytes(b'accepted bytes')
+    target.write_bytes(b'accepted bytes')
+    if replacement == 'symlink':
+        probe = tmp_path / 'probe'
+        try:
+            probe.symlink_to(target)
+        except (OSError, NotImplementedError):
+            pytest.skip('symlink creation unavailable')
+        probe.unlink()
+    if not no_follow:
+        monkeypatch.delattr(bindiff_inputs.os, 'O_NOFOLLOW', raising=False)
+    original = os.lstat
+    original_open = os.open
+    descriptors = []
+    replaced = False
+
+    def capture_open(*args, **kwargs):
+        descriptor = original_open(*args, **kwargs)
+        descriptors.append(descriptor)
+        return descriptor
+
+    def replace_after_stat(path, *args, **kwargs):
+        nonlocal replaced
+        info = original(path, *args, **kwargs)
+        if Path(path) == source and not replaced:
+            replaced = True
+            source.rename(tmp_path / 'retained-original')
+            if replacement == 'directory':
+                source.mkdir()
+            elif replacement == 'symlink':
+                source.symlink_to(tmp_path / 'retained-original')
+            else:
+                source.write_bytes(b'accepted bytes')
+        return info
+
+    monkeypatch.setattr(bindiff_inputs.os, 'lstat', replace_after_stat)
+    monkeypatch.setattr(bindiff_inputs.os, 'open', capture_open)
+    with pytest.raises(SecondaryError) as info:
+        copy_and_hash(source, destination)
+    assert kinds(info) == ('PT-SECONDARY-RUN', 'workdir-error')
+    assert not destination.exists()
+    assert (tmp_path / 'retained-original').read_bytes() == b'accepted bytes'
+    for descriptor in descriptors:
+        with pytest.raises(OSError):
+            os.fstat(descriptor)
+
+
+@pytest.mark.skipif(not hasattr(os, 'mkfifo'), reason='POSIX FIFO required')
+def test_copy_rejects_fifo_replacement_without_blocking(tmp_path):
+    from patchtrace.secondary import bindiff_inputs
+    # The child is Python test code, never a target binary. A regression is killed by the timeout.
+    script = """
+import os
+from pathlib import Path
+from unittest.mock import patch
+from patchtrace.secondary.bindiff_inputs import copy_and_hash
+from patchtrace.secondary.contracts import SecondaryError
+source, destination = Path('source'), Path('destination')
+source.write_bytes(b'accepted')
+original = os.lstat
+replaced = False
+def replace(path, *args, **kwargs):
+    global replaced
+    info = original(path, *args, **kwargs)
+    if Path(path) == source and not replaced:
+        replaced = True
+        source.unlink()
+        os.mkfifo(source)
+    return info
+with patch('patchtrace.secondary.bindiff_inputs.os.lstat', replace):
+    try:
+        copy_and_hash(source, destination)
+    except SecondaryError as exc:
+        assert exc.kind == 'workdir-error'
+    else:
+        raise AssertionError('FIFO accepted')
+assert not destination.exists()
+"""
+    try:
+        result = subprocess.run([sys.executable, '-c', script], cwd=tmp_path, capture_output=True,
+                                text=True, timeout=5,
+                                env={**os.environ, 'PYTHONPATH': str(Path(bindiff_inputs.__file__).parents[2])})
+    except subprocess.TimeoutExpired:
+        pytest.fail('copy_and_hash blocked opening a replacement FIFO')
+    assert result.returncode == 0, result.stderr

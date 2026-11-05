@@ -1260,3 +1260,12 @@ Independent credited-replay review approved source `5c26af904a28dd41aaacb3a60f98
 - These tests use injected clocks/copies and portable fake engines; they provide no live rz-diff/BinDiff compatibility evidence. Native producer quarantine and release gates remain unchanged. Full-suite/Windows CI gates remain pending for the integration.
 
 Review limitation: copy checks are cooperative between reads, not OS-call interruption. The pre-existing `lstat` followed by `open` input-replacement surface remains a follow-up: evaluate nonblocking open plus handle `fstat` validation and a deterministic regular-file-to-FIFO replacement test. This slice does not claim to close that surface.
+
+
+### Secondary input replacement follow-up (2026-11-05)
+
+Coordinator reviewed source `8244ec7e`: read-only descriptor opening uses nonblocking/no-follow flags where available, then validates handle and fresh path regularity plus admitted device/inode identity before creating a destination. Every opened descriptor closes on refusal or completion. Existing cancellation callback, exclusive destination, bounds and caller hash comparison remain intact; this is not arbitrary filesystem-call interruption.
+
+Deterministic baseline: **3 failed, 1 passed** (another regular file and a symlink to the retained original were accepted; a regular-to-FIFO swap blocked a Python test child until its five-second timeout killed it; directory replacement was already refused). Final implementation: **92 passed** across input/run/preparation/scheduler/C3 integration tests. Expanded input-only controls, including operation without `O_NOFOLLOW` and descriptor closure: **26 passed**. These selections overlap and are not an aggregate count. Whole-repository Ruff and diff checks passed. The receipt commit changes documentation only after the reviewed implementation.
+
+Tests use synthetic files and Python/fake-engine fixtures; no target binary was executed and no native engine compatibility is claimed. FIFO coverage is POSIX-only; symlink cases may skip where creation is unavailable. Native Windows and combined integration/full-suite qualification remain pending. Earlier committed evidence and the coordinator's frozen candidate are unchanged.
