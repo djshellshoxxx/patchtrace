@@ -52,3 +52,31 @@ No main merge, source-PR closure, new automation enablement, production release 
 ## Full-suite failure / active security repair
 
 Coordinator full offscreen suite interrupted for diagnosis after **776 passed, 1 skipped, 1 failed** in389.28seconds. `test_artifact_bytes.py::test_in_place_edit_with_restored_mtime_is_detected`: content edit escaped metadata fingerprint. Full suite NOT COMPLETE. Isolated `/tmp/pt-bytes` / `repair/verified-bytes-20261105` assigned to unified worker for deterministic collision regression and bounded requested-content verification. No full-suite passing claim. Secondary preparation `/tmp/pt-prep` / `integrate/secondary-prep-20261105` assigned KB worker; project adoption worker remains active.
+
+## Final published checkpoint and restart actions
+
+Nine draft PRs published; main remains `5d504ff5`, no merges or releases. All assigned worker slices are committed and published. Coordinator branch `integrate/autonomous-20261105`, previous published checkpoint `aca2d5ce`; this handoff update follows it in its own pushed commit.
+
+| Draft | Published head | Scope | Focused validation |
+|---|---|---|---|
+| [191](https://github.com/djshellshoxxx/patchtrace/pull/191) | `c849d008` | Rules/cache/strict sidecars and callgraph | 130 passed |
+| [192](https://github.com/djshellshoxxx/patchtrace/pull/192) | `b5f6e138` | Stacked on #188: SQLite/QA and option-aware pilot | 57 QA/benchmark; 28 pilot passed (overlap) |
+| [193](https://github.com/djshellshoxxx/patchtrace/pull/193) | `75c01a29` | KB fixtures and explicit filename selection | 96 passed; broad 1113 passes with environment failure repaired/retested |
+| [194](https://github.com/djshellshoxxx/patchtrace/pull/194) | `aca2d5ce` before this commit | QA isolation and parser budgets | 301 passes/3 skips; dependency failure repaired/retested; final jobs 51 passes/3 skips |
+| [195](https://github.com/djshellshoxxx/patchtrace/pull/195) | `a0f41746` | Research producer controls and retry evidence | 33 passed; synthetic compiled boundary evidence only |
+| [196](https://github.com/djshellshoxxx/patchtrace/pull/196) | `3fa22c61` | Superseded inspection failures/export path copy | 35 passed |
+| [197](https://github.com/djshellshoxxx/patchtrace/pull/197) | `b6b5bf6c` | Secondary input cancellation/deadline/cap | 85 passed; blocking OS-call/descriptor followup explicit |
+| [198](https://github.com/djshellshoxxx/patchtrace/pull/198) | `1c97defa` | Transactional project adoption | 59 passed plus separate rollback-render control |
+| [199](https://github.com/djshellshoxxx/patchtrace/pull/199) | `e5f9302e` | Verified bytes despite timestamp collisions | 580 passed, 1 Windows-only skip; independent review no blocker |
+
+All slices passed whole-tree Ruff in their isolated worktrees. Counts overlap; do not sum as unique coverage. Coordinator final Ruff, pip check and diff hygiene passed. No wire-schema fields changed in these slices. The integrity failure has a focused-tested repair in #199; full/exact-head Windows acceptance remains pending. The interrupted full run (776 passed/1 skipped/1 failed) remains NOT COMPLETE.
+
+Next executable actions:
+
+1. Refresh PR heads and checks. Prioritize #199, bring its repair into the QA candidate and rerun full offscreen pytest; focused passes do not establish full acceptance.
+2. Merge independent slices only after required full/cross-OS checks and review pass. No bypass/self-approval. Original source PRs remain open for accounting. #192 stays stacked on #188; #180/#185/#188 are cumulative and also include report2/PE signing.
+3. Reconcile GUI #196/#198 changes semantically (different MainWindow methods); preserve all QA/todo evidence when resolving shared-document appends.
+4. Continue remaining #174 GT-01/normalization/fuzz and #176 offline investigation/calibration work. Partial ports do not account for entire source PRs; do not close them.
+5. Retain native Rizin quarantine and actual offline bundle/disconnected, native, clean Windows GUI and release gates. No official production release authorized.
+
+All agent assignments ended at published checkpoints; no local test process is intentionally left running. One worker encountered an API TPM interruption during PR creation; coordinator recovered its pushed commit and created #198, losing no work. Usage/cost/cache telemetry unavailable. Worktrees retained for review/restart.
