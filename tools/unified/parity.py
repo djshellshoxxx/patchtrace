@@ -45,7 +45,8 @@ MAX_LISTED = 200                       # disagreements / misses listed per group
 MAX_DUMP_BYTES = 64 * 1024 * 1024
 MAX_JSON_BYTES = 512 * 1024 * 1024
 MD_MIN_BLOCKS = 5                      # R02 s14 G1 / 08 s1 G-U3: the MD index is compared on functions with n_bb >= 5
-_MD_LINE = re.compile(r'^\s*(?:0x)?([0-9A-Fa-f]{1,16})\s*[:,=\s]\s*(-?\d{1,30}\.\d{1,30})\s*$')   # bounded: Decimal() of a 64 MiB line would stall
+_MD_ADDRESS = re.compile(r'(?:0x)?([0-9A-Fa-f]{1,16})')
+_MD_VALUE = re.compile(r'-?\d{1,30}\.\d{1,30}')
 _LADDER_SOURCES = ('pt-ladder', 'pt-bytes')
 _RVA_MAX = 2**32 - 1
 
@@ -204,6 +205,26 @@ def bindiff_rows_from_file(path: Path, older_sha256: str, newer_sha256: str) -> 
 
 # ---- MD index ------------------------------------------------------------------------------------------------------------------
 
+def _parse_md_line(line: str) -> tuple[int, str] | None:
+    # Scan whitespace once per boundary; adjacent regex quantifiers would explore
+    # every partition of a hostile whitespace run before rejecting its final token.
+    stripped = line.strip()
+    address = _MD_ADDRESS.match(stripped)
+    if address is None:
+        return None
+    tail = stripped[address.end():]
+    value = tail.lstrip()
+    separated = len(value) < len(tail)
+    if value and value[0] in ':,=':
+        value = value[1:].lstrip()
+    elif not separated:
+        return None
+    # A bounded token check also protects subsequent Decimal arithmetic.
+    if len(value) > 62 or _MD_VALUE.fullmatch(value) is None:
+        return None
+    return int(address.group(1), 16), value
+
+
 def parse_md_dump(text: str) -> tuple[dict[int, str], int]:
     """(address -> decimal text, number of lines that could not be parsed). Later lines win for a repeated address."""
     values: dict[int, str] = {}
@@ -211,11 +232,12 @@ def parse_md_dump(text: str) -> tuple[dict[int, str], int]:
     for line in text.splitlines():
         if not line.strip():
             continue
-        match = _MD_LINE.match(line)
-        if match is None:
+        parsed = _parse_md_line(line)
+        if parsed is None:
             unparsed += 1
             continue
-        values[int(match.group(1), 16)] = match.group(2)
+        address, value = parsed
+        values[address] = value
     return values, unparsed
 
 

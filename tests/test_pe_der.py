@@ -60,7 +60,7 @@ def test_time_refuses_non_times(encoded):
 
 
 def test_text_is_cleaned_of_hostile_characters():
-    node = parse(utf8('Acme‮ evil\x00\x07'))
+    node = parse(utf8('Acme\u202e evil\x00\x07'))
     assert decode_text(node) == 'Acme? evil??'
 
 
