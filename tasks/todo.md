@@ -1064,3 +1064,10 @@ Full `QT_QPA_PLATFORM=offscreen python -m pytest -q` for this isolated native sl
 - [x] Stream/hash the damaged original and compare existing recovery copies in <=1 MiB reads; no new size cap or contract model changes.
 - [x] Same-handle second-pass digest/change detection, preserved prior copies and exclusive partial cleanup verified with guarded streams and authored mutation/read failures.
 - [x] Focused 38-test nway suite and whole Ruff/diff checks pass. Earlier E4-RANDOM2 streaming follow-up is resolved by this slice; full-suite/native release gates remain independent.
+
+## D2-E6-OFFLINE-20261105 — strict producer pin gate
+
+- [x] Reproduce duplicate-field acceptance in checker and producer; enforce one shared strict JSON parse before download/build work.
+- [x] Correct runbook TOFU instruction against existing approved digest-source rules; leave actual pins/licence approvals unchanged.
+- [x] Focused 179 passed/1 skipped, whole Ruff/diff checks, and current release-pin checker exit 0.
+- [ ] Clean native Windows offline/full-runtime release acceptance still requires its own downloadable artifact and linked acceptance evidence; this Linux tooling slice supplies none.
