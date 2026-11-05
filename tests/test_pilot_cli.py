@@ -295,6 +295,28 @@ def test_a_current_unified_result_is_the_pairing_unless_it_is_switched_off(tmp_p
     assert 'cf:call-added' in kinds  # read_item gained a call: a typed observation, not a guard
 
 
+@pytest.mark.parametrize('options', [
+    UnifiedOptions(isolate=False, residual=False),
+    UnifiedOptions(isolate=False, sources=('ghidriff',)),
+], ids=['no-residual', 'ghidriff-only'])
+def test_current_unified_results_keep_their_requested_options_in_pilot(tmp_path, capsys, options):
+    from test_report2_adapters import publish_engine
+
+    from patchtrace.unified.pipeline import load_current, make_plan
+
+    with make_s0_project(tmp_path / 'unified-options') as service:
+        # A stored secondary source makes the selected subset observably different from the default plan.
+        publish_engine(service, 'rz-diff', '1' * 64)
+        run_unified(service, options)
+        expected = EnrichmentStore(service.store).entries('unified-result')[0].body['result_id']
+        assert load_current(service, make_plan(service)).state == 'stale'  # default options are different
+        root = service.root
+    import_advisory(root)
+    document = leads_json(root, capsys)
+    assert stored(root).assessment.inputs.unified_result_id == expected
+    assert not any('unified result could not be used' in warning for warning in document['warnings'])
+
+
 def test_a_stale_unified_result_is_named_and_never_mixed_with_the_ghidriff_pairing(advised, capsys):
     with ProjectService.open(advised) as service:
         run_unified(service, UnifiedOptions(isolate=False))
