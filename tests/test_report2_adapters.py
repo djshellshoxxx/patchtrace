@@ -81,7 +81,7 @@ def test_advisories_are_vendor_claims_with_inert_text(service):
     assert advisories and {a.kind for a in advisories} >= {'cve'}
     assert all(a.claim_level == 'vendor-claim' and a.snapshot_digest and a.fetched_at for a in advisories)
     assert all(a.id.startswith(('CVE-', 'CWE-')) for a in advisories)
-    assert all('‮' not in a.text for a in advisories)
+    assert all('\u202e' not in a.text for a in advisories)
 
 
 def test_failing_producer_gives_none_and_a_recorded_unknown(service, monkeypatch):

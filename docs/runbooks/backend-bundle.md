@@ -38,7 +38,7 @@ PYTHONPATH=src python tools/build_backend_bundle.py build --platform linux --out
 
 The builder writes the payload under `backend/payload/{python,ghidra,jdk,LICENSES,SOURCES}`, the importer ZIP, the ghidriff source tarball, notices and `THIRD-PARTY.json`. The exact output file list beyond the names in section 1 is **UNVERIFIED**.
 
-Before a release build, resolve all placeholders in `tools/backend_pin.json`. Per the pin file, a placeholder is resolved only from a networked run, and it is marked `digest_source: tofu` when the vendor publishes no digest. Do not use `tofu` where a `vendor-file`, `vendor-listing`, `pypi-json` or `sigstore-verified` source exists.
+Before a release build, resolve any placeholders in `tools/backend_pin.json` using the approved digest-source procedure in `BUNDLE-pin-digest-and-upgrade-spec.md`. `tofu` is forbidden everywhere by `check_backend_pin.py`; absence of a vendor digest does not authorize it. Windows Python requires signature verification and the Ghidriff source tarball requires a reproducible rebuild. The local pin checker passing proves only pin consistency and policy, not Windows runtime compatibility or offline release acceptance.
 
 ## 3. Verify in CI (`backend-bundle.yml`)
 

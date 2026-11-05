@@ -230,34 +230,107 @@ def dumps(series: Series) -> str:
                       ensure_ascii=False, allow_nan=False) + '\n'
 
 
-def _keep_corrupt_copy(path: Path) -> None:
-    data = path.read_bytes()
-    copy = path.with_name(f'{path.name}.corrupt-{hashlib.sha256(data).hexdigest()[:8]}')
+_RECOVERY_CHUNK = 1024 * 1024
+
+
+def _recovery_state(info) -> tuple:
+    return info.st_dev, info.st_ino, info.st_size, info.st_mtime_ns, info.st_ctime_ns
+
+
+def _open_recovery_file(path: Path):
+    info = path.lstat()
+    if not stat.S_ISREG(info.st_mode):
+        raise OSError('recovery input is not a regular file')
+    flags = os.O_RDONLY | getattr(os, 'O_BINARY', 0) | getattr(os, 'O_NONBLOCK', 0)
+    flags |= getattr(os, 'O_NOFOLLOW', 0)
+    fd = os.open(path, flags)
     try:
-        fd = os.open(copy, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
-    except FileExistsError:
-        # The short name is only a hint: it may hold unrelated bytes, or a previous
-        # interrupted write. Never replace the damaged original until its copy is verified.
-        try:
-            info = copy.lstat()
-            if not stat.S_ISREG(info.st_mode):
-                raise OSError('recovery path is not a regular file')
-            flags = os.O_RDONLY | getattr(os, 'O_BINARY', 0) | getattr(os, 'O_NONBLOCK', 0)
-            flags |= getattr(os, 'O_NOFOLLOW', 0)
-            with os.fdopen(os.open(copy, flags), 'rb') as stream:
-                opened = os.fstat(stream.fileno())
-                if (not stat.S_ISREG(opened.st_mode) or opened.st_size != len(data)
-                        or (opened.st_dev, opened.st_ino) != (info.st_dev, info.st_ino)
-                        or stream.read(len(data) + 1) != data):
-                    raise OSError('recovery copy differs from damaged series')
-        except OSError:
-            raise NwayError('PT-NWAY-STORAGE', f'{copy.name} is not a verified recovery copy; '
-                            'the damaged series was retained') from None
-        return
-    with os.fdopen(fd, 'wb') as stream:
-        stream.write(data)
-        stream.flush()
-        os.fsync(stream.fileno())
+        opened = os.fstat(fd)
+        if not stat.S_ISREG(opened.st_mode) or _recovery_state(opened) != _recovery_state(info):
+            raise OSError('recovery input changed while opening')
+        return os.fdopen(fd, 'rb')
+    except BaseException:
+        os.close(fd)
+        raise
+
+
+def _unchanged_recovery_file(path: Path, stream, baseline: tuple) -> None:
+    if (_recovery_state(os.fstat(stream.fileno())) != baseline
+            or not stat.S_ISREG(path.lstat().st_mode)
+            or _recovery_state(path.lstat()) != baseline):
+        raise OSError('recovery input changed')
+
+
+def _recovery_chunks(stream, size: int):
+    remaining = size
+    while remaining:
+        chunk = stream.read(min(_RECOVERY_CHUNK, remaining))
+        if not chunk:
+            raise OSError('short recovery read')
+        remaining -= len(chunk)
+        yield chunk
+    if stream.read(1):
+        raise OSError('recovery input grew')
+
+
+def _keep_corrupt_copy(path: Path) -> None:
+    copy, created_identity = None, None
+    complete = False
+    try:
+        with _open_recovery_file(path) as source:
+            baseline = _recovery_state(os.fstat(source.fileno()))
+            digest = hashlib.sha256()
+            for chunk in _recovery_chunks(source, baseline[2]):
+                digest.update(chunk)
+            expected = digest.digest()
+            _unchanged_recovery_file(path, source, baseline)
+            copy = path.with_name(f'{path.name}.corrupt-{digest.hexdigest()[:8]}')
+            source.seek(0)
+            try:
+                fd = os.open(copy, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
+            except FileExistsError:
+                # A short hash suffix is only a hint; compare exact bytes before reuse.
+                with _open_recovery_file(copy) as previous:
+                    previous_state = _recovery_state(os.fstat(previous.fileno()))
+                    second = hashlib.sha256()
+                    for chunk in _recovery_chunks(source, baseline[2]):
+                        second.update(chunk)
+                        if previous.read(len(chunk)) != chunk:
+                            raise OSError('recovery copy differs from damaged series') from None
+                    if previous.read(1) or second.digest() != expected:
+                        raise OSError('recovery copy differs from damaged series') from None
+                    _unchanged_recovery_file(copy, previous, previous_state)
+            else:
+                try:
+                    target_stream = os.fdopen(fd, 'wb')
+                except BaseException:
+                    os.close(fd)
+                    raise
+                with target_stream as target:
+                    info = os.fstat(target.fileno())
+                    created_identity = info.st_dev, info.st_ino
+                    second = hashlib.sha256()
+                    for chunk in _recovery_chunks(source, baseline[2]):
+                        second.update(chunk)
+                        target.write(chunk)
+                    if second.digest() != expected:
+                        raise OSError('damaged series changed while copying')
+                    target.flush()
+                    os.fsync(target.fileno())
+                    _unchanged_recovery_file(copy, target, _recovery_state(os.fstat(target.fileno())))
+            _unchanged_recovery_file(path, source, baseline)
+            complete = True
+    except OSError:
+        raise NwayError('PT-NWAY-STORAGE', f'{path.name} could not be preserved in a verified recovery copy; '
+                        'the damaged series was retained') from None
+    finally:
+        if not complete and created_identity is not None:
+            try:
+                info = copy.lstat()
+                if (info.st_dev, info.st_ino) == created_identity and stat.S_ISREG(info.st_mode):
+                    copy.unlink()
+            except OSError:
+                pass  # Never remove a pre-existing or replaced recovery path.
 
 
 def save(series: Series, path: Path, *, replace_corrupt: bool = False) -> None:

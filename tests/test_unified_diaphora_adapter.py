@@ -139,9 +139,9 @@ def test_evidence_class_comes_from_unambiguous_heuristic_text_only(text, cls):
 
 
 def test_heuristic_step_is_sanitized_and_bounded():
-    out = run(dl(dset([dm(0, 0x1000, 0x1080, heuristic='Same\x00 ‮name ' + 'x' * 200)])))
+    out = run(dl(dset([dm(0, 0x1000, 0x1080, heuristic='Same\x00 \u202ename ' + 'x' * 200)])))
     [atom] = out.atoms
-    assert len(atom.step) <= 64 and '\x00' not in atom.step and '‮' not in atom.step
+    assert len(atom.step) <= 64 and '\x00' not in atom.step and '\u202e' not in atom.step
 
 
 def test_user_attested_set_is_display_only_one_sided_and_flagged():

@@ -4,6 +4,7 @@ from __future__ import annotations
 import hashlib
 import json
 import os
+import stat
 import tempfile
 from dataclasses import dataclass
 from pathlib import Path
@@ -25,6 +26,50 @@ class PreparedImport:
     fingerprint: tuple
 
 
+def _remove_owned(path: Path, recorded: os.stat_result, *, database: bool = False) -> None:
+    """Best effort, bounded cleanup of one positively recorded publication; never recurse."""
+    try:
+        current = path.lstat()
+        if (stat.S_ISLNK(current.st_mode) or (current.st_dev, current.st_ino) !=
+                (recorded.st_dev, recorded.st_ino)):
+            return
+        if stat.S_ISDIR(recorded.st_mode):
+            path.rmdir()  # foreign contents make this fail safely
+        elif stat.S_ISREG(current.st_mode) and (database or
+                (current.st_size, current.st_mtime_ns) == (recorded.st_size, recorded.st_mtime_ns)):
+            try:
+                path.unlink()
+            except PermissionError:
+                if path.lstat() != current:
+                    return
+                options = {'follow_symlinks': False} if os.chmod in os.supports_follow_symlinks else {}
+                path.chmod(current.st_mode | stat.S_IWRITE, **options)
+                path.unlink()
+    except OSError:
+        pass  # retain uncertain/held files; do not replace the creation failure
+
+
+def _rollback_creation(store: ProjectStore, database: os.stat_result | None,
+                       created: list[tuple[Path, os.stat_result]]) -> None:
+    try:
+        # save() can raise after its transaction committed. Preserve a usable first snapshot.
+        if store.connection.execute('SELECT COUNT(*) FROM current_snapshot').fetchone()[0]:
+            return
+        store.connection.close()
+        store.connection = None
+        for path, recorded in reversed(created):
+            _remove_owned(path, recorded)
+        if database is not None:
+            _remove_owned(store.root / 'project.sqlite3', database, database=True)
+    except Exception:
+        pass  # unprovable database state is retained, not guessed to be an abandoned create
+    finally:
+        try:
+            store.close()
+        except Exception:
+            pass
+
+
 class ProjectService:
     def __init__(self, root: Path, project: ComparisonProject, store: ProjectStore):
         self.root = Path(root).resolve()
@@ -36,8 +81,12 @@ class ProjectService:
     def create(cls, older: Path, newer: Path, name: str, root: Path) -> ProjectService:
         root = Path(root).resolve()
         store = ProjectStore(root, create=True)
+        database = None
+        created: list[tuple[Path, os.stat_result]] = []
         try:
-            artifacts = [inspect_artifact(older, 'older', root), inspect_artifact(newer, 'newer', root)]
+            database = (root / 'project.sqlite3').stat()
+            artifacts = [inspect_artifact(older, 'older', root, created=created),
+                         inspect_artifact(newer, 'newer', root, created=created)]
             project = ComparisonProject(name=display_text(name.strip()) or 'Untitled comparison',
                                         artifacts=artifacts)
             if artifacts[0].sha256 == artifacts[1].sha256:
@@ -46,13 +95,7 @@ class ProjectService:
             project = store.save(project)
             return cls(root, project, store)
         except BaseException:  # Ctrl+C and SystemExit must not leave a snapshot-less database behind either
-            store.close()
-            # No snapshot was committed; permit retry without presenting a corrupt project. A leftover
-            # that cannot be removed now (antivirus hold, kill) is recycled by the next create().
-            try:
-                (root / 'project.sqlite3').unlink(missing_ok=True)
-            except OSError:
-                pass
+            _rollback_creation(store, database, created)
             raise
 
     @classmethod

@@ -209,11 +209,11 @@ def test_signer_without_certificate(tmp_path):
 
 
 def test_hostile_names_are_cleaned(tmp_path):
-    evil = 'Evil‮ Corp\x1b[31m'
+    evil = 'Evil\u202e Corp\x1b[31m'
     data, _info = single_signature('sha256', subject=evil)
     (sig,) = verify(tmp_path, data)
     cn = sig.signers[0].subject_cn
-    assert '‮' not in cn and '\x1b' not in cn and cn.startswith('Evil? Corp')
+    assert '\u202e' not in cn and '\x1b' not in cn and cn.startswith('Evil? Corp')
 
 
 def test_unknown_digest_algorithm(tmp_path):

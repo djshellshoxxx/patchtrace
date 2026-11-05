@@ -1020,7 +1020,8 @@ PASSED: `QT_QPA_PLATFORM=offscreen python -m pytest -q tests/test_gui_project_ad
 - [x] Isolate PR #176 artifact-preparation cancellation, engine budget and ingestion-cap repair; preserve the separate probe budget. Six red regressions repaired; 85 focused tests and global Ruff pass.
 - [ ] Coordinator review/publication and combined full-suite/Windows CI qualification for secondary preparation; no native acceptance claim.
 
-- [ ] Harden `secondary.bindiff_inputs.copy_and_hash` against replacement between `lstat` and `open` (including POSIX FIFO): evaluate nonblocking descriptor open plus regular-file `fstat`, preserve cross-platform behavior, and add deterministic replacement coverage. Cooperative cancellation does not interrupt blocked OS calls.
+- [x] Implement and coordinator-review input replacement hardening in `secondary.bindiff_inputs.copy_and_hash` (`8244ec7e`): nonblocking/no-follow flags where available, handle/path regularity and identity checks before destination creation, unconditional descriptor closure. Baseline 3 failed/1 passed; final focused 92 passed and overlapping expanded input selection 26 passed; Ruff/diff clean.
+- [ ] Qualify this input-opening follow-up on native Windows and the combined integration/full suite. POSIX FIFO and synthetic controls do not establish native engine compatibility or arbitrary filesystem-call interruption.
 
 ## 2026-11-05 isolated rz-diff research-controls consolidation
 
@@ -1058,7 +1059,44 @@ Full `QT_QPA_PLATFORM=offscreen python -m pytest -q` for this isolated native sl
 - [x] Reproduce three workflow source validation failures; preserve the standalone agent step as a byte-identical example outside executable workflow discovery.49static checks passed/3existingxfails; Ruff passed.
 - [ ] Exact-head integration/full/cross-OS CI. Existing paid automation proposals remain separate and unenabled by this repair.
 
+## E3-RECOVERY-20261105 — resource-bounded preservation
+
+- [x] Stream/hash the damaged original and compare existing recovery copies in <=1 MiB reads; no new size cap or contract model changes.
+- [x] Same-handle second-pass digest/change detection, preserved prior copies and exclusive partial cleanup verified with guarded streams and authored mutation/read failures.
+- [x] Focused 38-test nway suite and whole Ruff/diff checks pass. Earlier E4-RANDOM2 streaming follow-up is resolved by this slice; full-suite/native release gates remain independent.
+
+## D2-E6-OFFLINE-20261105 — strict producer pin gate
+
+- [x] Reproduce duplicate-field acceptance in checker and producer; enforce one shared strict JSON parse before download/build work.
+- [x] Correct runbook TOFU instruction against existing approved digest-source rules; leave actual pins/licence approvals unchanged.
+- [x] Focused 179 passed/1 skipped, whole Ruff/diff checks, and current release-pin checker exit 0.
+- [ ] Clean native Windows offline/full-runtime release acceptance still requires its own downloadable artifact and linked acceptance evidence; this Linux tooling slice supplies none.
+
+### E3-PROJECTCREATE initial creation rollback
+
+- [x] Reproduce source #116 creation/copy residuals; replace broad directory-difference deletion with explicit identity-checked publication ownership, retaining the kernel lock inode and committed first snapshots.
+- [x] Cover retry, preexisting/concurrent foreign files, reused read-only artifacts, readonly deletion rules, failed publication, destination races, substitutions/symlinks, interruptions and unsupported exclusive publication.
+- [ ] Independent review and coordinator integration/full suite; native Windows hardlink/read-only lifecycle and other filesystem compatibility qualification remain open. Hardlink support is required for new artifact publication; no overwrite fallback.
+
+- [ ] Harden the residual exact-path replacement race between the last metadata check and unlink/chmod if support for hostile noncooperating filesystem writers is required; evaluate quarantine/native handles with native Windows tests. This repair guarantees cooperative-lock and identity-checked best-effort cleanup only.
+- [ ] Verify desktop wizard retry after a failed creation: destination validation may reject the intentionally retained lock-only directory. Backend create retry is tested; no end-to-end wizard retry claim.
+
+## E4-B5-SONAR-20261105 — bounded parity text parse
+
+- [x] Reproduce adjacent-whitespace parser timeout in a killed child; replace ambiguous partitions with linear scans preserving grammar.
+- [x] Escape bidi source characters in the five assigned fixture files; AST and runtime fixture values unchanged.
+- [x] Focused parity/fixture tests, CPU-budget regression, grammar limits and whole Ruff/diff checks pass.
+- [ ] Coordinator reruns actual Sonar/full qualification; this focused slice claims no native parity acceptance.
+
 ### 2026-11-05 KB Qt adapter import boundary
 
 - [x] Reconcile accepted named investigation Qt adapter with import-contract scanner; preserve service purity and UI network/database exclusions with seven negative controls.159focused passes;44independent passes; Ruff clean.
 - [ ] Resume combined qualification and require exact-head full/cross-OS checks; no test/gate bypass or broad Qt exemption.
+
+### A4/C3 current project inputs
+
+- [x] Add explicit worker-verified current project input action and a real advisory/scope/confirmation/preview/create/open journey without reopening the source project store or changing it before adoption.
+- [x] Cover strict snapshot JSON/caps, missing/tampered copies, verification-to-inspection hash changes, stale service/revision/artifact callbacks, late retained creation, field-edit origin clearing, ordinary basename defaults and same-path identical/conflicting labels.
+- [x] Independent read-only review approved implementation 0b3c58fb; independent focused controls 20 passed, 136 deselected.
+- [ ] Coordinator integration and native Windows/full-suite gates. Product-only/binary-only advisory lookup semantics remain outside this slice.
+- [ ] Separately specify label preservation if current-origin preview must support derived hash.bin-labelled projects or other original labels outside the existing .sys/.dll/.exe BinaryRef contract. Current unsupported cases refuse explicitly.

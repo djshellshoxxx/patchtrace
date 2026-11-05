@@ -69,7 +69,7 @@ def test_reference_text_with_a_trailing_newline_is_rejected():
 
 
 def test_import_keys_with_bidi_or_invisible_characters_are_rejected():
-    for bad in ('k.dll!f‮', 'k​.dll!f', 'k.dll!­f'):
+    for bad in ('k.dll!f\u202e', 'k​.dll!f', 'k.dll!­f'):
         document = copy.deepcopy(GOOD)
         document['calls'] = [[0x1007, None, bad, 'call']]
         with pytest.raises(UnifiedError):
@@ -78,7 +78,7 @@ def test_import_keys_with_bidi_or_invisible_characters_are_rejected():
 
 def test_import_stub_dll_and_name_are_sanitised_like_every_other_text():
     document = copy.deepcopy(GOOD)
-    document['import'] = {'dll': 'K‮X.dll', 'name': 'f​n', 'ordinal': None}
+    document['import'] = {'dll': 'K\u202eX.dll', 'name': 'f​n', 'ordinal': None}
     record = parse(document)
     assert record.imp == {'dll': 'K?X.dll', 'name': 'f?n', 'ordinal': None} and record.sanitized == 2
 
@@ -101,11 +101,11 @@ def test_records_sanitiser_equals_contracts():
     sample = ''.join(c for c in ALL if records.strip_unsafe(c, replacement='?') != c)
     assert sample == matched(_UNSAFE_TEXT)
     counter = [0]
-    assert records._text('a­b‮c', 'name', 16, counter=counter) == 'a?b?c' and counter == [1]
+    assert records._text('a­b\u202ec', 'name', 16, counter=counter) == 'a?b?c' and counter == [1]
 
 
 def test_script_clean_text_scrubs_what_contracts_scrubs():
-    assert script.clean_text('x­​‮﻿y', 64) == 'x????y'
+    assert script.clean_text('x­​\u202e﻿y', 64) == 'x????y'
     assert script.clean_code('a\tb\nc​d') == 'a\tb\nc?d'
 
 
