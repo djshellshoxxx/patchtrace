@@ -107,7 +107,9 @@ def test_build_facts_are_observed_in_file_and_timestamps_are_claims(service):
 
 def test_unreadable_artifact_is_unknown_not_fatal(service):
     for artifact in service.project.artifacts:
-        (service.root / artifact.relative_path).write_bytes(b'tampered')
+        path = service.root / artifact.relative_path
+        path.chmod(0o600)  # ingested artifacts are deliberately read-only on both supported platforms
+        path.write_bytes(b'tampered')
     sections = collect_from_service(service)
     assert sections.build_facts is None
     assert sum('could not be read' in u for u in sections.unknowns) == 2

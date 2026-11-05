@@ -13,6 +13,7 @@ import os
 import subprocess
 import sys
 import unicodedata
+from dataclasses import replace
 from pathlib import Path
 
 import pytest
@@ -296,7 +297,13 @@ def test_a_current_unified_result_is_the_pairing_unless_it_is_switched_off(tmp_p
 
 def test_a_stale_unified_result_is_named_and_never_mixed_with_the_ghidriff_pairing(advised, capsys):
     with ProjectService.open(advised) as service:
-        run_unified(service, UnifiedOptions(isolate=False))  # the sample's own result is stored as out of date
+        run_unified(service, UnifiedOptions(isolate=False))
+        # Model a result published after its inputs moved; raw-verdict prediction now makes a normal sample run current.
+        enrichment = EnrichmentStore(service.store)
+        entry = enrichment.entries('unified-result')[0]
+        enrichment.publish(entry.kind, entry.guard, replace(entry.guard, input_digest='0' * 64),
+                           entry.project_revision, entry.status, entry.body, entry.id)
+        assert enrichment.entries('unified-result')[0].stale
     code, out, err = call(['pilot', 'leads', advised, '--json', '--dry-run'], capsys)
     document = doc(out)
     assert code == 0 and any('unified result could not be used' in w for w in document['warnings'])
