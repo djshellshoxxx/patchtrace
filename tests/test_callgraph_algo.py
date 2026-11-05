@@ -91,6 +91,21 @@ def test_simple_paths_visit_budget_truncates():
     assert result.truncated
 
 
+def test_simple_paths_budget_counts_successor_scans_of_a_hub():
+    """#105 BUG-CG-1: a hub with many dead successors, reached through K*K prefixes, must use up the visit budget."""
+    k, dead = 40, 4000
+    a, b = range(1, k + 1), range(k + 1, 2 * k + 1)
+    hub, z = 2 * k + 1, 2 * k + 2
+    dst, first_dead = 2 * k + 3, 2 * k + 4
+    edges = [(0, i) for i in a] + [(i, j) for i in a for j in b] + [(j, hub) for j in b]
+    edges += [(hub, first_dead + d) for d in range(dead)] + [(hub, 0), (0, z), (z, dst)]
+    g = build_csr(first_dead + dead, edges)
+    started = time.monotonic()
+    result = algo.simple_paths(g, 0, dst, max_paths=10_000)
+    assert result.truncated and result.paths[0] == (0, z, dst)
+    assert time.monotonic() - started < 3.0
+
+
 def test_cancel_is_checked_and_raises():
     g = build_csr(20_000, [(i, i + 1) for i in range(19_999)])
     with pytest.raises(GraphError) as exc:

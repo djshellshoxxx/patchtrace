@@ -941,3 +941,8 @@ Done: dock with state matrix, consent, import, changes, copy, go to CVE. Open: r
 - [x] Reproduce same-size/restored-mtime edits with equal metadata deterministically; prevent changed requested bytes from escaping the verified reader with compact per-block hashes and a post-read metadata check.
 - [x] Preserve range/cancel/size limits; cover scalar I/O bounds, boundaries, short OS reads and read-time mutation. Linux focused consumers: 558 passed/1 Windows-only skip, plus 22 alpha integration passes; whole Ruff passed.
 - [ ] Review and integrate repair; run exact-head full-suite and Windows CI. Do not count the skipped WinVerifyTrust test as native acceptance.
+
+### 2026-11-05 rules/callgraph integration
+
+- [x] Port PR #181 rules/cache/export/callgraph repairs without unrelated GUI wait; reproduce and reject duplicate keys in saved-grid JSON. Focused pure suite: 130 passed; Ruff clean; draft PR #191 published.
+- [ ] Require current-head full/cross-OS checks and review before merge; preserve native acceptance gates independently.
