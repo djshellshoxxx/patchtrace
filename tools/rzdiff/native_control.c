@@ -81,7 +81,114 @@ static int check(unsigned na, unsigned nb, bool overlap) {
     rz_analysis_free(a); rz_analysis_free(b);
     return errors;
 }
-int main(void) {
+// Constructed input bytes; the matcher and public API objects are actual pinned Rizin.
+static RzIO *distinct_io[2];
+static RzThreadLock *distinct_read_lock;
+static ut64 distinct_base[2];
+static unsigned distinct_count[2], distinct_reads[2], distinct_fault;
+static const ut8 distinct_data[2][2][4] = {
+    {{0x10,0x20,0x30,0x40}, {0x10,0x20,0x30,0x41}},
+    {{0x10,0x20,0x30,0x42}, {0x10,0x20,0x43,0x44}}
+};
+static bool read_distinct(RzIO *io, ut64 addr, ut8 *buf, size_t len) {
+    for (unsigned side=0; side<2; side++) {
+        if (io != distinct_io[side] || addr < distinct_base[side]) continue;
+        ut64 offset = addr - distinct_base[side];
+        if (len != 4 || offset % 0x100 || offset / 0x100 >= distinct_count[side]) return false;
+        rz_th_lock_enter(distinct_read_lock);
+        distinct_reads[side]++;
+        rz_th_lock_leave(distinct_read_lock);
+        if (distinct_fault == 1) memset(buf, 0x90, len);
+        else memcpy(buf, distinct_data[side][offset / 0x100], len);
+        return true;
+    }
+    return false;
+}
+static int check_distinct(unsigned na, unsigned nb, bool overlap, unsigned fault) {
+    RzAnalysis *analysis[2] = {rz_analysis_new(NULL), rz_analysis_new(NULL)};
+    RzList *lists[2] = {rz_list_new(), rz_list_new()};
+    RzAnalysisFunction *functions[2][2] = {{NULL,NULL},{NULL,NULL}};
+    RzAnalysisMatchResult *result = NULL;
+    int errors = 1;
+    distinct_fault = fault;
+    distinct_read_lock = rz_th_lock_new(false);
+    if (!distinct_read_lock) goto cleanup;
+    for (unsigned side=0; side<2; side++) {
+        distinct_io[side] = rz_io_new();
+        distinct_count[side] = side ? nb : na;
+        distinct_base[side] = 0x1000 + (overlap ? 0 : side * 0x10000);
+        distinct_reads[side] = 0;
+        if (!analysis[side] || !lists[side] || !distinct_io[side]) goto cleanup;
+        RzIOBind *binding = rz_analysis_get_io_bind(analysis[side]);
+        binding->io = distinct_io[side];
+        binding->read_at = read_distinct;
+        for (unsigned i=0; i<distinct_count[side]; i++) {
+            ut64 addr = distinct_base[side] + i * 0x100;
+            char name[32];
+            snprintf(name,sizeof(name),"io.%u.%u",side,i);
+            RzAnalysisFunction *function = rz_analysis_create_function(analysis[side],name,addr,RZ_ANALYSIS_FCN_TYPE_FCN);
+            RzAnalysisBlock *block = rz_analysis_create_block(analysis[side],addr,4);
+            if (!function || !block) {
+                if (block) rz_analysis_block_unref(block);
+                goto cleanup;
+            }
+            rz_analysis_function_add_block(function,block);
+            rz_analysis_block_unref(block);
+            functions[side][i] = function;
+            if (!rz_list_append(lists[side],function)) goto cleanup;
+        }
+    }
+    if (fault == 2) rz_analysis_get_io_bind(analysis[1])->io = distinct_io[0];
+    RzAnalysisMatchOpt opt = {0};
+    opt.analysis_a = analysis[0]; opt.analysis_b = analysis[1];
+    result = rz_analysis_match_functions(lists[0],lists[1],&opt);
+    if (!result) goto cleanup;
+    errors = 0;
+    if (!distinct_reads[0] || !distinct_reads[1]) errors++;
+    if (!covered(lists[0],result->unmatch_a,result->matches,true) ||
+        !covered(lists[1],result->unmatch_b,result->matches,false)) errors++;
+    if (rz_list_length(result->matches) != 2) errors++;
+    RzListIter *it;
+    RzAnalysisMatchPair *pair;
+    rz_list_foreach (result->matches,it,pair) {
+        unsigned old=0, newer=0;
+        while (old<na && functions[0][old] != pair->pair_a) old++;
+        while (newer<nb && functions[1][newer] != pair->pair_b) newer++;
+        if (old==na || newer==nb) { errors++; continue; }
+        // Both older rows differ at one byte from newer[0], and two from newer[1].
+        double expected = newer ? 0.5 : 0.75;
+        if (pair->similarity != expected) errors++;
+    }
+    printf("distinct-io %u:%u overlap=%d errors=%d reads=%u,%u\n",na,nb,overlap,errors,
+           distinct_reads[0],distinct_reads[1]);
+cleanup:
+    if (result) rz_analysis_match_result_free(result);
+    for (unsigned side=0; side<2; side++) {
+        if (lists[side]) rz_list_free(lists[side]);
+        if (analysis[side]) rz_analysis_free(analysis[side]);
+        if (distinct_io[side]) rz_io_free(distinct_io[side]);
+        distinct_io[side] = NULL;
+    }
+    if (distinct_read_lock) rz_th_lock_free(distinct_read_lock);
+    distinct_read_lock = NULL;
+    return errors;
+}
+int main(int argc, char **argv) {
+    if (argc > 1) {
+        if (strcmp(argv[1],"--io-context") || argc > 3) return 2;
+        unsigned fault = 0;
+        if (argc == 3) {
+            if (!strcmp(argv[2],"--wrong-bytes")) fault = 1;
+            else if (!strcmp(argv[2],"--wrong-io")) fault = 2;
+            else return 2;
+        }
+        int errors = 0;
+        for (unsigned overlap=(fault==2); overlap<2; overlap++) {
+            errors += check_distinct(1,2,overlap,fault);
+            errors += check_distinct(2,1,overlap,fault);
+        }
+        return errors ? 1 : 0;
+    }
     int errors = 0;
     const unsigned counts[][2] = {{1,1},{1,2},{2,1},{2,2},{1,0},{0,1},{2,0},{0,2}};
     for (unsigned i=0; i<8; i++) for (unsigned overlap=0; overlap<2; overlap++) {
