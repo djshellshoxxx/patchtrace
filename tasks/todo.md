@@ -941,3 +941,9 @@ PASSED: `QT_QPA_PLATFORM=offscreen python -m pytest -q tests/test_gui_project_ad
 - [x] Account for PR #182's KB fixture corpus, Unicode acceptance and byte-preserving line endings; leave its unrelated UI wait port to QA ownership.
 - [x] Account for PR #190's analyst filename selection repair and persisted investigation regression. Focused affected tests: 96 passed; global ruff passed.
 - [ ] Coordinator: publish reviewed KB integration and run combined full-suite/Windows CI gates; retain source PRs until all changes are accounted for. Synthetic fixtures do not satisfy live provider or release acceptance.
+
+### A4-C3-20261105 offline desktop investigation
+
+- [x] Port the bounded advisory import → KB/CVE search → explicit product → local pair preview → create/open journey, with create-only factory and existing workspace/project stores.
+- [x] Reproduce absent modules on prerequisite baseline; protect preview revision/hash, selected architecture, retained paths, cancellation and current-project adoption.
+- [ ] Coordinator exact-head full suite/CI and independent review. Product-only/binary-only desktop starts, online acquisition wizard, native Windows/frozen accessibility and live source gates are outside this slice; fixtures do not close them.

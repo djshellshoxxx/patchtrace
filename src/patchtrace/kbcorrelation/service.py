@@ -578,11 +578,22 @@ class KbService:
 
     def import_pair(self, investigation: str, older: str, newer: str, directory: str, *, name: str | None = None,
                     confirm_same_component: bool = False, dry_run: bool = False,
-                    expected_pair_id: str | None = None) -> Outcome:
+                    expected_pair_id: str | None = None, expected_revision: int | None = None) -> Outcome:
         older_f, newer_f = self.env.inspect(older), self.env.inspect(newer)
         with self._open() as ws:
             rev = None if investigation == 'new' else self._get(ws, investigation)
+            if expected_revision is not None and (rev is None or rev.revision != expected_revision):
+                raise _fail('PT-KBC-STALE', 'the investigation changed after preview; review the pair again')
             scope_id = rev.selected_scope_id if rev and rev.selected_scope_id else UNSELECTED_SCOPE
+            if scope_id != UNSELECTED_SCOPE:
+                index, _ = load_index(ws, self.ports)
+                selected = next((s for s in index.scopes() if s.scope_id == scope_id), None)
+                if selected is None:
+                    raise _fail('PT-KBC-STALE', 'the selected product mapping changed; select the product again')
+                if selected.architecture != 'unknown' and any(
+                        file.machine != selected.architecture for file in (older_f, newer_f)):
+                    raise _fail('PT-KBC-VERIFY', 'the selected product architecture contradicts these files; '
+                                'choose a matching product')
             pair = pr.propose_manual(older_f, newer_f, scope_id=scope_id,
                                      confirm_same_component=confirm_same_component)
             if expected_pair_id is not None and pair.pair_id != expected_pair_id:
@@ -592,6 +603,7 @@ class KbService:
                 return self._blocked(pair)
             if dry_run:
                 return Outcome(0, 'complete', {'contract': 'kbcorrelation/1', 'plan': plan.as_dict(),
+                                               'investigation_revision': rev.revision if rev is not None else None,
                                                'pair': self._pair_dict(pair)}, plan.text)
             rev = self._approve_pair(ws, rev, pair, older_f, newer_f, confirm_same_component)
             index, _ = load_index(ws, self.ports)
