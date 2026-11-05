@@ -31,6 +31,8 @@ Components alone over-count: Ghidriff's ExactMnemonics and `pt-bytes` P08 are th
 | E-DATA | P12, P14; Ghidriff StringsRefsHasher, StrUniqueFuncRefsHasher; BinDiff string references |
 | E-DECOMP | Ghidriff BSIM, Decomp Match; Diaphora pseudo-code rules (registry maps DA-01 descriptions) |
 | E-LAYOUT / E-RESID / E-MANUAL | P18, BinDiff address sequence / P16, P17, P19 / P00 |
+`support` is the per-component max-pool inventory defined in 02 s4, not a list of mutually corroborating classes. Two same-class atoms in different components retain one support entry per component and both atoms; their decision remains `tentative` unless another rule establishes a match. Class independence is checked by `base_decision` and is explained separately from support by component (07 s11). Native confidence text never changes that inventory or decision.
+
 Assumption **A-IND-1** (narrowed): an E-BODY atom of K2 (pdata-confirmed extents) and a non-E-BODY atom of K1 err independently enough to corroborate; G-U7 (08) measures it per class pair and can join classes by configuration.
 
 ### 1.2 Source atoms -> tiers (adapters, 06)
