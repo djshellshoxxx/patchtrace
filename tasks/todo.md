@@ -1,4 +1,17 @@
 # PatchTrace delivery tracker
+
+## Independent parallel wave — 2026-11-05
+
+- [x] Recover ownership without changing frozen #205 or native workers; use root plus three supported workers in isolated, exclusively assigned worktrees.
+- [x] Reproduce, repair, independently review and publish #225 source deadlines, #226 keyboard access, #227 lock identity, #229 candidate chronology and #230 metric invariants.
+- [x] Publish #228 Windows archive preflight/checklist, #231 source-preserved research, #232 primary-source fixture packets, #233 real-store acceptance fixtures and #234 explicit-consent desktop advisory sync.
+- [x] Integrate reviewed slices once on the separate independent branch; focused combined checks 248 and 122 passed (overlap), whole Ruff/diff and schema regeneration clean.
+- [ ] Finish/review/publish the saved-index candidate inspection/selection follow-up; candidate download/acquisition and product-only starts remain partial.
+- [ ] Independently review/publish authored-PE incomplete manifest backing repair and run affected integration checks.
+- [ ] Existing owners complete frozen #205 full-suite and pinned-native qualification; do not start duplicates or modify their source/processes/logs/worktrees.
+- [ ] Qualify exact final Linux/Windows/Qt/native/package/live/manual/offline and main-relative scanner/review gates before any main/release acceptance claim.
+- [ ] Continue selective #183 R2/R3/R6/R8 reconciliation and remaining source freshness/authenticity, full supersedence/update-DAG and derived-label work. Preserved research is not implementation acceptance.
+
 - [x] Fixed the two locally reproducible full-suite issues recorded in `docs/qa.md`: site screenshot renderer follows the Files panel; Tier R rejects an unknown mutation operator before toolchain probing. Focused rerun: 27 passed, 2 skipped.
 - [x] Linux-container-only full-suite failures documented in `docs/qa.md` are environment limitations (`python -I` excludes the editable install; AF_UNIX sockets are denied; timing budgets are load-sensitive); full pytest and Ruff passed on Windows and Ubuntu CI (run 39456546905).
 

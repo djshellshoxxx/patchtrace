@@ -1,5 +1,44 @@
 # QA and audit record
 
+## Independent parallel development checkpoint — 2026-11-05
+
+Own integration branch `integrate/independent-wave4-20261105`, source merge
+`ec48810c41530d787cfbd44b38406427062a5442`, based on published #218
+`afc8a296`. Source slices #225–#234 were independently reviewed, focused-tested,
+committed/pushed as separate draft PRs and integrated once here. Exact source SHAs,
+reviewers, overlapping counts and remaining boundaries are in the
+[current handoff](handoff/AUTONOMOUS-DEVELOPMENT-LATEST.md); historical #218 evidence
+was preserved before replacing this branch's handoff.
+
+Completed integrated focused checks: **248 passed in 26.99 s** across source/GUI/
+lock/correlation/metrics/package; after advisory-sync/acceptance merge, **122 passed
+in 25.17 s** across online/offline/current-input/binary-only/lock paths. Raw logs:
+`/tmp/pt-independent-integration-first-focused.log` and
+`/tmp/pt-independent-integration-online-focused.log`. These explicit selections
+overlap worker/independent review counts; none is a full-suite result.
+
+Whole `python -m ruff check src tests tools` and `git diff --check` passed. General,
+KB, calibration, Tier R corpus and report schemas regenerated without drift.
+Deterministic tests reproduced source deadline/redirect, keyboard/focus, lock alias,
+candidate chronology and metric arithmetic defects before fixes. Package security
+review also reproduced a ZIP64 directory-bound bypass and malformed DEFLATE failure
+mapping before repair; all seven concrete review findings now have regressions.
+Worker QA receipts preserve exact original failures and limitations.
+
+NOT RUN here: another `QT_QPA_PLATFORM=offscreen python -m pytest -q` full suite or
+broad GUI stress/native build, because the user's latest instruction reserves
+those processes to the existing qualification owners. Frozen #205 remains clean at
+`f33e2a0a`; PID110463 was still running at the last read-only observation with no
+exit receipt. No result is inferred from progress. Native #222/#224 and their logs/
+worktrees/builds remain reserved and untouched. Hosted required current-head jobs,
+main-relative scanner review, live sources, Windows/native/package/manual and
+disconnected-bundle acceptance remain open. No live provider, target execution,
+actual corpus/model fit, cost or prompt-cache evidence is invented.
+
+Active next slices are explicit saved-index candidate inspection and an authored-PE
+incomplete manifest backing repair; each requires independent review, focused
+integration and publication before its result enters this checkpoint.
+
 ## Current evidence
 2026-10-11: source inspection of pinned upstream revisions completed. Linux Qt offscreen desktop self-test starts and displays the synthetic project. Integrated Linux QA: 91 tests passed, 2 Windows-only tests skipped; Ruff and Qt offscreen desktop self-test passed. Domain, transport, worker, schema and UI tests are included. Synthetic fixtures and mocked providers verify wiring and validation, not real matching accuracy or model interpretation correctness.
 

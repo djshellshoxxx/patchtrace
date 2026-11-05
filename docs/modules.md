@@ -1,5 +1,12 @@
 # Module index
 
+2026-11-05 investigation extension: the existing `kbcorrelation/investigation_service.py`
+facade also builds the existing monthly IndexPlan, strictly checks captured plan and
+consent, and orchestrates existing CVRF transport/per-document WorkspaceStore commits.
+Qt owns only preview, one-operation consent and lifecycle state. Regression seam:
+`tests/test_kb_online_investigation_20261105.py`; injected sources and real stores,
+no live compatibility evidence. `test_kb_accessibility_20261105.py` covers keyboard access.
+
 Stable IDs are independent of filenames. Public interfaces in SPEC-01 and schemas in SPEC-02 are source of truth. Module implementations remain independently usable without Qt.
 
 | ID | File | Responsibility and public interface | Dependencies | Ownership / test seam |
