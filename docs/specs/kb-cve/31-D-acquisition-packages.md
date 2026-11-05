@@ -21,6 +21,9 @@ then atomically replace the explicit same-name/date record. Existing fixed
 `<record>.tmp` entries are foreign to this attempt and must not be opened,
 modified, published or removed. A pre-publication write/flush/replace failure
 preserves the prior committed record and cleans only the attempt's stage.
+If buffering the newly created stage fails, close the still-owned raw
+descriptor as well as cleaning the stage; once buffering succeeds, the stream
+owns that descriptor and closes it exactly once.
 Plain/gzip same-name/date replacement remains explicit and compatible. This
 publication refuses an observed symlink or Windows junction at the workspace's
 `winbindex` child before staging, preserving any aliased foreign directory.

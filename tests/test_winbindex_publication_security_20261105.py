@@ -135,3 +135,62 @@ def test_preexisting_index_directory_symlink_does_not_publish_into_foreign_direc
     assert caught.value.code == 'PT-KBC-STORAGE'
     assert {path.name: path.read_bytes() for path in foreign.iterdir()} == before
     assert source.read_bytes() == raw and target.parent.is_symlink()
+
+
+def test_fdopen_failure_closes_raw_stage_descriptor_and_preserves_existing_bytes(tmp_path, monkeypatch):
+    source, original, root, target = fixture(tmp_path)
+    wiring.save_winbindex_record(root, source, NAME, DATE)
+    source.write_bytes(original + b'\n')
+    before = set(target.parent.iterdir())
+    descriptors = []
+    real_mkstemp = store.tempfile.mkstemp
+
+    def record_stage(*args, **kwargs):
+        descriptor, stage = real_mkstemp(*args, **kwargs)
+        descriptors.append(descriptor)
+        return descriptor, stage
+
+    def refuse_buffering(*args, **kwargs):
+        raise OSError('authored fdopen failure before ownership transfer')
+
+    monkeypatch.setattr(store.tempfile, 'mkstemp', record_stage)
+    monkeypatch.setattr(store.os, 'fdopen', refuse_buffering)
+    try:
+        with pytest.raises(KbcStoreError) as caught:
+            wiring.save_winbindex_record(root, source, NAME, DATE)
+        assert caught.value.code == 'PT-KBC-STORAGE'
+        assert len(descriptors) == 1
+        with pytest.raises(OSError):
+            os.fstat(descriptors[0])
+        assert target.read_bytes() == original
+        assert set(target.parent.iterdir()) == before
+    finally:
+        # The baseline leaked this test's own descriptor; never leave a failed probe open.
+        for descriptor in descriptors:
+            try:
+                os.close(descriptor)
+            except OSError:
+                pass
+
+
+def test_successful_buffering_transfers_descriptor_ownership_without_double_close(tmp_path, monkeypatch):
+    source, raw, root, target = fixture(tmp_path)
+    real_fdopen, real_close = store.os.fdopen, store.os.close
+    transferred, raw_closes = [], []
+
+    def record_transfer(descriptor, *args, **kwargs):
+        handle = real_fdopen(descriptor, *args, **kwargs)
+        transferred.append(descriptor)
+        return handle
+
+    def record_close(descriptor):
+        raw_closes.append(descriptor)
+        return real_close(descriptor)
+
+    monkeypatch.setattr(store.os, 'fdopen', record_transfer)
+    monkeypatch.setattr(store.os, 'close', record_close)
+    wiring.save_winbindex_record(root, source, NAME, DATE)
+    assert len(transferred) == 1 and not set(transferred).intersection(raw_closes)
+    with pytest.raises(OSError):
+        os.fstat(transferred[0])
+    assert target.read_bytes() == raw
