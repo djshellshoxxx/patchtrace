@@ -47,6 +47,7 @@ from ..evalcore.engines.common import (  # noqa: F401 - re-exported: the evaluat
 from ..evalcore.engines.ghidriff import GhidriffImportProvider, from_ghidriff  # noqa: F401
 from ..evalcore.engines.rzdiff import RzDiffProvider, image_path  # noqa: F401
 from . import contracts as C
+from . import output_store as OS
 from . import report_schemas as RS
 
 ENGINES = ('rz-diff', 'bindiff', 'ghidriff', 'attention')   # the engines this module can drive or import
@@ -57,6 +58,17 @@ COUNT_KEYS = ('pairs', 'truth_same', 'identity_tp', 'identity_fp', 'identity_fn'
 MAX_WRONG = 1000
 IMPLICIT_NOTE = ('ghidriff lists only added/deleted/modified functions: truth pairs it does not mention are counted as '
                  'matched and unchanged, so its identity numbers are an upper bound')
+
+
+class EvaluationRetentionError(OS.OutputError):
+    """Evaluation assembled a report, but retained output completion failed."""
+
+    def __init__(self, report: dict, outputs: Path, cause: Exception, diagnostics: dict):
+        super().__init__(f'evaluation output completion failed: {cause}')
+        self.report = report
+        self.outputs = outputs
+        self.cause = cause
+        self.diagnostics = diagnostics
 
 
 def duplicate_note(engine: str, count: int) -> str:
@@ -186,15 +198,20 @@ def evaluate(labels_docs: Sequence[C.KnownAnswerLabels], providers: Sequence[Pro
 
 def evaluate_full(labels_docs: Sequence[C.KnownAnswerLabels], providers: Sequence[Provider], *,
                   symbols: str = 'hidden', notes: Sequence[str] = (), max_wrong: int = MAX_WRONG,
-                  shift_lineages: Collection[str] = (), b_count: int = ER.boot.B_COUNT) -> tuple[dict, dict]:
+                  shift_lineages: Collection[str] = (), b_count: int = ER.boot.B_COUNT,
+                  output_dir: Path | None = None) -> tuple[dict, dict]:
     """(report, paired deltas). The deltas (engine vs engine, per stratum and population, with sd, minimum detectable
     delta and achieved power) have no field in `tier-r-report/1` yet, so they are returned beside it, not hashed in it.
-    `b_count` is the lineage-bootstrap size (2,000; 500 in smoke)."""
+    `b_count` is the lineage-bootstrap size (2,000; 500 in smoke). A supplied `output_dir` must not exist; successful
+    answers receive metrics only after their exact normalized bytes are retained there. Without it this API is in-memory."""
     if symbols not in ('hidden', 'visible'):
         raise C.ContractError('symbols must be hidden or visible')
     docs = sorted(labels_docs, key=lambda d: d.pair_id)
     if len({d.pair_id for d in docs}) != len(docs):
         raise C.ContractError('duplicate pair_id in the evaluation set')
+    if len({p.engine for p in providers}) != len(providers):
+        raise C.ContractError('duplicate engine provider ownership')
+    output_store = OS.OutputStore(output_dir) if output_dir is not None else None
     by_engine = {p.engine: _EngineAcc() for p in providers}
     wrong_all: list[dict] = []
     all_notes = list(notes)
@@ -210,6 +227,18 @@ def evaluate_full(labels_docs: Sequence[C.KnownAnswerLabels], providers: Sequenc
             except Exception as exc:  # noqa: BLE001 - isolation: one pair must not end the run; only the class is kept
                 out = failed(provider.engine, f'provider raised {type(exc).__name__}')
             counts = sha = None
+            if out.engine != provider.engine:
+                out = failed(provider.engine, 'engine response does not match its provider owner')
+            if out.status == 'ok':
+                try:
+                    document = engine_output_doc(out, labels, symbols)
+                    if output_store is not None:
+                        sha = output_store.write(labels.pair_id, provider.engine, document)
+                    else:
+                        RS.validate_provider_output_document(document)
+                        sha = RS.output_sha256(document)
+                except (C.ContractError, OS.OutputError, TypeError, ValueError) as exc:
+                    out = failed(provider.engine, f'normalized output rejected: {str(exc)[:250]}')
             if out.status == 'ok':
                 counts, wrong = score_pair(labels, out)
                 runs[provider.engine].append(ER.Run(labels, to_engine_pairs(out, symbols)))
@@ -217,7 +246,6 @@ def evaluate_full(labels_docs: Sequence[C.KnownAnswerLabels], providers: Sequenc
                 dropped = dedupe_predictions(out.predictions)[1]
                 if dropped:
                     duplicates[provider.engine] += dropped
-                sha = RS.output_sha256(engine_output_doc(out, labels, symbols))
                 if out.implicit_unchanged and IMPLICIT_NOTE not in all_notes:
                     all_notes.append(IMPLICIT_NOTE)
             acc.results.append((labels.pair_id, labels.stratum, out.status, out.reason, counts, sha, out.version))
@@ -257,7 +285,20 @@ def evaluate_full(labels_docs: Sequence[C.KnownAnswerLabels], providers: Sequenc
     attempts = [(e, r[1], r[2]) for e, acc in by_engine.items() for r in acc.results]
     fields, deltas = ER.build_blocks(docs, runs, attempts, symbols=symbols, shift_lineages=shift_lineages,
                                      b_count=b_count)
-    return finalize_report({**report, **fields}), deltas
+    report = finalize_report({**report, **fields})
+    if output_store is not None:
+        try:
+            output_store.finalize([report])
+        except (OS.OutputError, OSError) as exc:
+            try:
+                diagnostics = output_store.retain_failure(report, exc)
+            except Exception as diagnostic_exc:  # noqa: BLE001 - diagnostic failure must not lose the assembled report
+                diagnostics = {'attempted': {'marker': (output_store.folder / OS.FAILURE_FILE).as_posix(),
+                                             'report': (output_store.folder / OS.UNCREDITED_REPORT).as_posix()},
+                               'errors': {'marker': str(diagnostic_exc)[:1000],
+                                          'report': str(diagnostic_exc)[:1000]}}
+            raise EvaluationRetentionError(report, output_store.folder, exc, diagnostics) from exc
+    return report, deltas
 
 
 def finalize_report(report: dict) -> dict:

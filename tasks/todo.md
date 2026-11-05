@@ -1106,3 +1106,8 @@ Full `QT_QPA_PLATFORM=offscreen python -m pytest -q` for this isolated native sl
 - [x] Port exact recorded-protocol selection and conservative visible-row tests from #176, preserving explicit unlocked rehearsal and existing final-run gates (97 acceptance tests passed).
 - [ ] Complete broader training regression and independent review before integrating this slice into #205.
 - [ ] Consolidate the separate credited-output replay/persistence slice from #176; this checkpoint does not implement it.
+
+### LBL-31 replay integration — 2026-11-05
+
+- [x] Retain bounded strict normalized output before scoring, verify report-bound completion and exact-byte replay, reject provider-owner conflicts, and preserve diagnostics on completion failure (source #176).
+- [ ] Independent security review and integration of this stacked replay slice; exact-head full suite/native/Windows gates remain open.

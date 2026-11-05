@@ -23,6 +23,9 @@ from pydantic import (
 
 from ..common import canonical_json, digest, strict_json
 
+MAX_ENGINE_NAME_CHARS = 4096
+MAX_ENGINE_VERSION_CHARS = 1024
+
 
 def _relative(value: str) -> str:
     """Repository/source-relative POSIX path: no absolute path, drive, backslash or `..` component."""
@@ -542,8 +545,8 @@ class WrongMatch(_Strict):
     kind: Literal['wrong-counterpart', 'paired-no-counterpart', 'paired-unlabelled']
     old_rva: Rva | None
     new_rva: Rva | None
-    old_name: str | None = Field(default=None, max_length=512)
-    new_name: str | None = Field(default=None, max_length=512)
+    old_name: str | None = Field(default=None, max_length=MAX_ENGINE_NAME_CHARS)
+    new_name: str | None = Field(default=None, max_length=MAX_ENGINE_NAME_CHARS)
     expected_new_rva: Rva | None = None
     expected_old_rva: Rva | None = None
     similarity_milli: int | None = Field(default=None, ge=0, le=1000)
