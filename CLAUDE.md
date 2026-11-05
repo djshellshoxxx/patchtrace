@@ -9,3 +9,7 @@ Work spec-first when changing interfaces, use red/green regression tests for beh
 Cost discipline: use the lowest-cost model that can do each task reliably, and only delegate bounded independent work. For narrow searches, docs, test fixtures and straightforward lint, use a low-cost model. For integration, architecture and nontrivial implementation, use a capable mid-tier model. Escalate to highest-tier reasoning only for a demonstrated hard blocker, nuanced security invariant, or failed lower-cost approach. Do not pay for repeated retries with an underpowered model. Avoid agents for single-file edits.
 
 Do not automatically ship a final release, silently bypass a failing test, or falsely claim a successful GitHub Release when the token is missing permission. Leave a verifiable handoff, PR links, exact test results and open gates.
+
+## Specification-first skills (SPEC-56)
+
+Use `docs/specs/INDEX.md`, `docs/specs/REGISTRY.md` and `docs/modules.md` to find current owning contracts, then read the relevant spec sections before modifying code. Discover local skills at `skills/README.md`; load only those whose triggers apply, especially `skills/patchtrace-spec-routing/SKILL.md` for implementation. Follow `docs/specs/agent-skill-workflow.md` (SPEC-56). General Superpowers and Caveman workflow skills cannot weaken PatchTrace product constraints. Keep token savings to selective context, narrow delegation and concise chatter; never cut tests, evidence, specs or QA records. Do not implicitly install upstream CLIs, proxies, scripts, hooks, telemetry or cloud tooling.
