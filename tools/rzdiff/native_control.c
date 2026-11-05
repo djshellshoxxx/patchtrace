@@ -86,6 +86,7 @@ static RzIO *distinct_io[2];
 static RzThreadLock *distinct_read_lock;
 static ut64 distinct_base[2];
 static unsigned distinct_count[2], distinct_reads[2], distinct_fault;
+// IO contains two readable slots even when only one is a declared function.
 static const ut8 distinct_data[2][2][4] = {
     {{0x10,0x20,0x30,0x40}, {0x10,0x20,0x30,0x41}},
     {{0x10,0x20,0x30,0x42}, {0x10,0x20,0x43,0x44}}
@@ -94,7 +95,7 @@ static bool read_distinct(RzIO *io, ut64 addr, ut8 *buf, size_t len) {
     for (unsigned side=0; side<2; side++) {
         if (io != distinct_io[side] || addr < distinct_base[side]) continue;
         ut64 offset = addr - distinct_base[side];
-        if (len != 4 || offset % 0x100 || offset / 0x100 >= distinct_count[side]) return false;
+        if (len != 4 || offset % 0x100 || offset / 0x100 >= 2) return false;
         rz_th_lock_enter(distinct_read_lock);
         distinct_reads[side]++;
         rz_th_lock_leave(distinct_read_lock);
@@ -139,6 +140,8 @@ static int check_distinct(unsigned na, unsigned nb, bool overlap, unsigned fault
         }
     }
     if (fault == 2) rz_analysis_get_io_bind(analysis[1])->io = distinct_io[0];
+    // Constructors may read IO too: measure only reads performed by the matcher.
+    distinct_reads[0] = distinct_reads[1] = 0;
     RzAnalysisMatchOpt opt = {0};
     opt.analysis_a = analysis[0]; opt.analysis_b = analysis[1];
     result = rz_analysis_match_functions(lists[0],lists[1],&opt);
