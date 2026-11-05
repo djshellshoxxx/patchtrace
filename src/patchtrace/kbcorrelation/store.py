@@ -109,13 +109,19 @@ def atomic_write(path: Path, data: bytes) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     fd, tmp = tempfile.mkstemp(prefix='.kbc-', suffix='.tmp', dir=path.parent)
     try:
-        with os.fdopen(fd, 'wb') as handle:
+        handle = os.fdopen(fd, 'wb')
+        fd = None  # ownership transferred only after buffering succeeds
+        with handle:
             handle.write(data)
             handle.flush()
             os.fsync(handle.fileno())
         os.replace(tmp, path)
     except BaseException:
-        Path(tmp).unlink(missing_ok=True)
+        try:
+            if fd is not None:
+                os.close(fd)
+        finally:
+            Path(tmp).unlink(missing_ok=True)
         raise
 
 

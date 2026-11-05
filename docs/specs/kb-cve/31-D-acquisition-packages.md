@@ -14,6 +14,22 @@ SPEC-08 constraints remain authoritative for symbol-server use: Winbindex metada
 
 Metadata fetch + binary fetch are two separate grants. An acquired sample's SHA matching Winbindex proves index consistency, not Microsoft vendor signature. Preserve source entry hash, expected vs observed bytes/hash, original and final response host, source record time and parser version.
 
+Workspace metadata publication amendment (2026-11-05): after validating exact
+Winbindex record bytes, `save_winbindex_record` uses the existing shared atomic
+writer: create an exclusive, unique same-directory stage, write/flush/fsync,
+then atomically replace the explicit same-name/date record. Existing fixed
+`<record>.tmp` entries are foreign to this attempt and must not be opened,
+modified, published or removed. A pre-publication write/flush/replace failure
+preserves the prior committed record and cleans only the attempt's stage.
+If buffering the newly created stage fails, close the still-owned raw
+descriptor as well as cleaning the stage; once buffering succeeds, the stream
+owns that descriptor and closes it exactly once.
+Plain/gzip same-name/date replacement remains explicit and compatible. This
+publication refuses an observed symlink or Windows junction at the workspace's
+`winbindex` child before staging, preserving any aliased foreign directory.
+It does not promise a sandbox against a noncooperating writer replacing parent
+directories or stage/final pathnames after ownership checks.
+
 ## D3. Verification precedence and authenticity states
 
 Mandatory: stream to private non-executable staging, bounded size, SHA-256, final PE parse, supported architecture, filename identity, selected product/build association, chronology check, stable final bytes (no TOCTOU between verification and project copy). Promote only after re-opening/hash verification via existing ingestion path. Use private scratch names chosen by program; reject symlink traversal and path escape.
