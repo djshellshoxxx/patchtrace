@@ -42,3 +42,9 @@ Version components use one to nine ASCII decimal digits each. Malformed or overs
 versions make the capability probe unsupported, without integer-conversion errors.
 This bounds parsing only; versions accepted by the existing ≥ 0.9.0 policy keep
 that policy and the unified adapter's untested-version limitation.
+
+## 8. Isolated producer research controls (2026-11-05)
+
+`tools/rzdiff` may apply the bounded singleton ownership correction only to the exact pinned v0.9.1 source blob. Compiled wrapper doubles and native public API oracle output are separate evidence categories; neither alone permits CLI JSON acceptance or removal of producer quarantine. Native stock-red qualification requires the complete 32-row ownership matrix with expected singleton-only failures, and corrected qualification requires the same matrix with no failures. Missing rows, NULL results, malformed output, crashes, and wrong process exit fail qualification.
+
+The native evidence runner reserves an exclusive marker in its output directory before reading or executing the oracle. It refuses pre-existing native receipt/log files and any reused run directory, preserving all earlier raw evidence on retries and failures. Other build diagnostics may already occupy the directory. The marker remains after failure; use a fresh output directory for each attempt. No automation is enabled by this research-tool integration.
