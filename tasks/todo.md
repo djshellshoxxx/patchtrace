@@ -921,3 +921,11 @@ Done: dock with state matrix, consent, import, changes, copy, go to CVE. Open: r
 - [x] Preserve old no-key bytes/ranking and private in-memory unified support; keep persisted engine vocabulary unchanged; expose legacy unmarked replay as unverified rather than infer historical credit.
 - [ ] Independent final review, coordinator integration/cross-OS and verified transfer integration remain pending; broader locked training/final-run/promotion safeguards are not completed by this slice. See `docs/qa/output-credited-replay-20261101.md`.
 - [x] Independent credited-replay review approved exact source `5c26af9` with 119 passes/1 native-tool BLOCKED skip and direct scalar/failed-valid-artifact controls; no remaining bounded source blocker. Integration/cross-OS/transfer and broader safeguards above remain open.
+
+## E4-RANDOM2-20261105 — bounded lifecycle audit
+
+- [x] Seeded nway/ingestion/persistence selection recorded; reproduce one recovery preservation defect before fixing.
+- [x] Verify existing recovery bytes before corrupt-series replacement; collision, directory and link failures preserve both original paths; exact-copy reuse tested.
+- [x] Focused nway tests, whole Ruff and whitespace checks pass. Full-suite and native Windows release acceptance stay coordinator-owned.
+
+- [ ] Follow-up outside this one-defect wave: stream/hash the damaged original during nway recovery; `--replace-corrupt` currently reads it in full even when load rejects the size.
