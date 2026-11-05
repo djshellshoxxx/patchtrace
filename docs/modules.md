@@ -52,6 +52,7 @@ Stable IDs are independent of filenames. Public interfaces in SPEC-01 and schema
 | series UI | ui_series.py | `SeriesWindow` and `SeriesLoadThread`: renders a `SeriesView`, plain-text cells, Open-pair signal; hook in ui.py is one action | Qt, nway.view_model | pytest-qt offscreen, tooltip audit |
 | inspection UI (alpha) | ui_inspection.py | `InspectionThread` independent of analysis jobs; PE comparison table rendering | Qt, artifact inspection | pytest-qt via MainWindow |
 | packaging | tools/build_windows.py; tools/build_linux.py; tools/pyinstaller_hooks/ | Frozen Windows/Linux runtimes, curated Qt desktop plugins, licenses, inventory and checksum | PyInstaller | Windows/Linux Actions and archive inspection |
+| Windows archive preflight | tools/check_windows_package.py | Bounded portable ZIP digest/layout/inventory/dependency identity check; JSON receipt without extraction or execution | stdlib, persistence.strict_json | tests/test_windows_package_preflight.py; authored archives only; Windows execution remains separate |
 
 Every substantial future module must be added here before implementation. UI must not own analysis logic; provider must not own project state.
 
