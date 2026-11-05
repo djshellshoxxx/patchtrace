@@ -1289,3 +1289,7 @@ Wiring: `exchange.ALL_SOURCES`, `--sources diaphora`, `pipeline.capture_plan` (o
 ### [A4-C3-20261105:offline-investigation]
 
 `kbcorrelation/investigation_service.py` is the Qt-free immutable request/result facade over existing workspace import, search, local preview and create-only project attachment. `kbcorrelation/investigation_qt.py` owns the parented modal controls and TaskRunner generation/lifecycle adapter; `gui/qt/host.py` owns adoption and retained-path notices. `kbcorrelation/wiring.py` adds a create-only factory while preserving CLI resume. Tests: `test_kb_investigation_service.py`, `test_ui_kb_investigation.py`; synthetic/offline only.
+
+### [A4-C3:current-project-inputs]
+
+`kbcorrelation/investigation_service.py` owns the immutable current-input snapshot, strict Artifact decoding and shared verified-reader checks; `investigation_qt.py` adds an explicit worker-backed action, preview-only provenance and stale-result guards. `gui/qt/host.py` captures existing model values and checks current ownership on the GUI thread without opening another project store. Tests: `tests/test_kb_current_project.py` and existing service/dialog journeys. No new modules or persisted contracts.

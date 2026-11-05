@@ -368,7 +368,8 @@ def test_ports_are_protocols_without_default_behaviour():
 FORBIDDEN = {'PySide6', 'PyQt5', 'PyQt6', 'urllib', 'http', 'socket', 'sqlite3', 'requests', 'ssl'}
 SIBLINGS = {'acquisition', 'enrichment', 'intelligence', 'unified', 'secondary', 'ui', 'backend', 'cli', 'jobs'}
 ALLOWED_FORBIDDEN = {'store.py': {'sqlite3'}, 'recovery.py': {'sqlite3'},
-                     'panel_qt.py': {'PySide6'}}  # K2 owns the workspace database; panel_qt.py is the Qt view of the Leads dock
+                     'panel_qt.py': {'PySide6'},
+                     'investigation_qt.py': {'PySide6'}}  # Explicit UI adapters; all domain modules stay Qt-free.
 # context.py reads the reused intelligence contract types (CweProfile, HypothesisSet); wiring.py is the composition root
 # and the only module that binds sibling behaviour (plan section 9).
 ALLOWED_SIBLINGS = {'contracts.py': {'acquisition', 'enrichment', 'intelligence'}, 'context.py': {'intelligence'},
@@ -376,7 +377,8 @@ ALLOWED_SIBLINGS = {'contracts.py': {'acquisition', 'enrichment', 'intelligence'
                     'cli_leads.py': {'enrichment', 'service'},  # RealEngine moves to adapters/engine.py in K8
                     # the Leads dock: PanelSpec, state notices, tooltip entries and the Qt view use the GUI framework
                     'panel.py': {'gui'}, 'panel_state.py': {'gui'}, 'tooltip_entries.py': {'tooltips'},
-                    'panel_qt.py': {'gui'}}
+                    'panel_qt.py': {'gui'}, 'investigation_qt.py': {'gui', 'tooltips'},
+                    'investigation_service.py': {'models', 'artifact_bytes'}}
 
 
 def _imports(path):
@@ -406,3 +408,35 @@ def test_init_is_empty_and_ports_and_ids_import_no_sibling():
     assert (PKG / '__init__.py').read_text(encoding='utf-8') == ''
     for name in ('ports.py', 'ids.py', 'limits.py', 'errors.py'):
         assert not [m for lvl, m in _imports(PKG / name) if lvl == 2], name
+
+
+@pytest.mark.parametrize('name,module,allowed', [
+    ('investigation_qt.py', 'PySide6.QtWidgets', True),
+    ('investigation_qt.py', 'sqlite3', False),
+    ('investigation_qt.py', 'urllib.request', False),
+    ('investigation_qt.py', 'socket', False),
+    ('investigation_service.py', 'PySide6.QtWidgets', False),
+    ('investigation_service.py', 'sqlite3', False),
+    ('investigation_service.py', 'urllib.request', False),
+], ids=['ui-qt', 'ui-db-denied', 'ui-network-denied', 'ui-socket-denied',
+        'service-qt-denied', 'service-db-denied', 'service-network-denied'])
+def test_named_investigation_adapter_keeps_import_boundaries(tmp_path, name, module, allowed):
+    path = tmp_path / name
+    path.write_text(f'import {module}\n', encoding='utf-8')
+    if allowed:
+        test_domain_modules_import_no_qt_network_or_database(path)
+    else:
+        with pytest.raises(AssertionError, match='imports'):
+            test_domain_modules_import_no_qt_network_or_database(path)
+
+
+@pytest.mark.parametrize('sibling,allowed', [('models', True), ('artifact_bytes', True),
+                                           ('backend', False), ('service', False), ('persistence', False)])
+def test_current_input_service_sibling_boundary(tmp_path, sibling, allowed):
+    path = tmp_path / 'investigation_service.py'
+    path.write_text(f'from ..{sibling} import sentinel\n', encoding='utf-8')
+    if allowed:
+        test_domain_modules_import_no_qt_network_or_database(path)
+    else:
+        with pytest.raises(AssertionError, match='imports sibling'):
+            test_domain_modules_import_no_qt_network_or_database(path)

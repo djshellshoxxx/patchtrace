@@ -207,8 +207,11 @@ def _merge_profiles(profiles):
         'limitations': tuple(sorted({d for p in profiles for d in p.limitations}))})
 
 
-def inspect_local_file(path: str) -> LocalFile:
-    """Hash a file and read its PE machine from the header bytes; the file is never executed or loaded."""
+def inspect_local_file(path: str, *, basename: str | None = None) -> LocalFile:
+    """Inspect bytes, using an explicit captured Artifact name only as a manual basename hint.
+
+    The optional name is not PE OriginalFilename authority; ordinary local/CLI callers use the path name.
+    """
     target = Path(path)
     digest = hashlib.sha256()
     head = b''
@@ -222,7 +225,7 @@ def inspect_local_file(path: str) -> LocalFile:
                 size += len(block)
     except OSError:
         raise KbcStoreError('PT-KBC-INPUT', 'an input file cannot be read') from None
-    return LocalFile(sha256=digest.hexdigest(), size=size, basename=normalise_file(target.name),
+    return LocalFile(sha256=digest.hexdigest(), size=size, basename=normalise_file(target.name if basename is None else basename),
                      machine=_machine(head))
 
 

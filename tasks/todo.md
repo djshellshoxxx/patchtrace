@@ -1057,3 +1057,10 @@ Full `QT_QPA_PLATFORM=offscreen python -m pytest -q` for this isolated native sl
 
 - [x] Reproduce three workflow source validation failures; preserve the standalone agent step as a byte-identical example outside executable workflow discovery.49static checks passed/3existingxfails; Ruff passed.
 - [ ] Exact-head integration/full/cross-OS CI. Existing paid automation proposals remain separate and unenabled by this repair.
+
+### A4/C3 current project inputs
+
+- [x] Add explicit worker-verified current project input action and a real advisory/scope/confirmation/preview/create/open journey without reopening the source project store or changing it before adoption.
+- [x] Cover strict snapshot JSON/caps, missing/tampered copies, verification-to-inspection hash changes, stale service/revision/artifact callbacks, late retained creation, field-edit origin clearing, ordinary basename defaults and same-path identical/conflicting labels.
+- [ ] Independent review/coordinator integration and native Windows/full-suite gates. Product-only/binary-only advisory lookup semantics remain outside this slice.
+- [ ] Separately specify label preservation if current-origin preview must support derived hash.bin-labelled projects or other original labels outside the existing .sys/.dll/.exe BinaryRef contract. Current unsupported cases refuse explicitly.

@@ -9,13 +9,25 @@ from dataclasses import dataclass, field, replace
 from pathlib import Path
 from typing import Literal
 
-from .sources.cvrf import SourceError
+from ..artifact_bytes import ArtifactBytesError, VerifiedArtifactReader
+from ..models import Artifact
+from .components import normalise_name
+from .sources.cvrf import SourceError, load_json
 from .store import KbcStoreError, WorkspaceStore
 
 
 @dataclass(frozen=True, slots=True)
+class CurrentProjectInputs:
+    project_id: str
+    revision: int
+    root: Path
+    older_json: str
+    newer_json: str
+
+
+@dataclass(frozen=True, slots=True)
 class InvestigationRequest:
-    operation: Literal['import', 'search', 'preview', 'create']
+    operation: Literal['import', 'search', 'preview', 'create', 'current_inputs']
     workspace: Path
     source: Path | None = None
     lead: str = ''
@@ -29,6 +41,7 @@ class InvestigationRequest:
     expected_revision: int | None = None
     current_project: Path | None = None
     confirm_same_component: bool = False
+    current_inputs: CurrentProjectInputs | None = None
 
 
 @dataclass(frozen=True, slots=True)
@@ -64,8 +77,64 @@ def _new_destination(request: InvestigationRequest) -> Path:
     return resolved
 
 
+def _verified_current(snapshot: CurrentProjectInputs, cancel) -> tuple[tuple[Path, Path], dict]:
+    artifacts, hints = [], []
+    root = snapshot.root.resolve()
+    for side, raw in (('older', snapshot.older_json), ('newer', snapshot.newer_json)):
+        _checkpoint(cancel)
+        if len(raw) > 16384:
+            raise KbcStoreError('PT-KBC-INPUT', 'The captured artifact record exceeds the local input limit.')
+        encoded = raw.encode('utf-8')
+        if len(encoded) > 16384:
+            raise KbcStoreError('PT-KBC-INPUT', 'The captured artifact record exceeds the local input limit.')
+        artifact = Artifact.model_validate(load_json(encoded))
+        if artifact.side != side or artifact.relative_path != f'artifacts/{artifact.sha256}.bin':
+            raise KbcStoreError('PT-KBC-INPUT', 'The captured artifact does not match its project input side/path.')
+        try:
+            with VerifiedArtifactReader.open_artifact(artifact, root, cancel=cancel.is_set):
+                pass
+        except ArtifactBytesError as exc:
+            raise KbcStoreError('PT-KBC-VERIFY',
+                                f'The current project {side} input could not be verified ({exc.code}).') from None
+        try:
+            hints.append(normalise_name(artifact.name))
+        except ValueError:
+            raise KbcStoreError('PT-KBC-UNSUPPORTED', 'The current project has unsupported original input names. '
+                                'This route requires original .sys, .dll or .exe basenames.') from None
+        artifacts.append(artifact)
+    older, newer = artifacts
+    if older.id == newer.id:
+        raise KbcStoreError('PT-KBC-INPUT', 'The captured project inputs must have distinct artifact records.')
+    paths = (root / older.relative_path, root / newer.relative_path)
+    if paths[0] == paths[1] and hints[0] != hints[1]:
+        raise KbcStoreError('PT-KBC-UNSUPPORTED', 'The same stored input has conflicting original component names. '
+                            'This route cannot choose one role label implicitly.')
+    origin = {'project_id': snapshot.project_id, 'revision': snapshot.revision,
+              'older_artifact_id': older.id, 'newer_artifact_id': newer.id,
+              'older_name': older.name, 'newer_name': newer.name,
+              'older_sha256': older.sha256, 'newer_sha256': newer.sha256,
+              'older_size': older.size, 'newer_size': newer.size,
+              'status': 'Preview-only input origin; original names are manual hints, not PE OriginalFilename authority. '
+                        'Source annotations and CVE linkage are not carried over.'}
+    return paths, origin
+
+
 def _execute(request: InvestigationRequest, cancel, service_factory) -> InvestigationResult:
     _checkpoint(cancel)
+    origin = None
+    if request.current_inputs is not None:
+        paths, origin = _verified_current(request.current_inputs, cancel)
+        if request.operation == 'current_inputs':
+            return InvestigationResult('current_inputs', 'Current project copies verified. '
+                                       'Choose advisory scope and preview the pair before creating a project.',
+                                       {'older': str(paths[0]), 'newer': str(paths[1]), 'input_origin': origin})
+        if request.operation in {'preview', 'create'} and (request.older is None or request.newer is None or
+                (request.older.resolve(), request.newer.resolve()) != paths):
+            raise KbcStoreError('PT-KBC-STALE', 'The selected inputs differ from the captured current project.')
+    elif request.operation == 'current_inputs':
+        raise KbcStoreError('PT-KBC-INPUT', 'Open a project before using its input copies.')
+    if origin is not None and request.operation in {'preview', 'create'} and not request.confirm_same_component:
+        raise KbcStoreError('PT-KBC-INPUT', 'Explicitly confirm the current inputs are the same component before preview.')
     if service_factory is None:
         from .wiring import build_service
         service_factory = build_service
@@ -75,6 +144,25 @@ def _execute(request: InvestigationRequest, cancel, service_factory) -> Investig
         from .wiring import new_project_factory
 
         service = KbService(service.root, replace(service.env, project=new_project_factory))
+    if origin is not None:
+        from .service import KbService
+        from .wiring import inspect_local_file
+
+        expected = {path: (origin[f'{side}_sha256'], origin[f'{side}_size'], normalise_name(origin[f'{side}_name']))
+                    for side, path in zip(('older', 'newer'), paths, strict=True)}
+        # Re-read the exact bound paths. Do not let verification/inspection changes become a new pair.
+        def inspect_current(path):
+            _checkpoint(cancel)
+            resolved = Path(path).resolve()
+            if resolved not in expected:
+                raise KbcStoreError('PT-KBC-STALE', 'The inspected path is outside the captured current pair.')
+            expected_sha, expected_size, name = expected[resolved]
+            observed = inspect_local_file(path, basename=name)
+            if (observed.sha256, observed.size) != (expected_sha, expected_size):
+                raise KbcStoreError('PT-KBC-STALE', 'The current input changed before pair inspection.')
+            return observed
+
+        service = KbService(service.root, replace(service.env, inspect=inspect_current))
     if request.operation == 'import':
         from .cli_index import plain_bytes, read_input_file
         from .sources.importer import import_bytes
@@ -117,6 +205,12 @@ def _execute(request: InvestigationRequest, cancel, service_factory) -> Investig
                                           expected_pair_id=request.expected_pair_id,
                                           **({'expected_revision': request.expected_revision}
                                              if request.operation == 'create' else {}))
+            if origin is not None:
+                pair = outcome.result.get('pair', {})
+                if (pair.get('older_sha256'), pair.get('newer_sha256')) != (
+                        origin['older_sha256'], origin['newer_sha256']):
+                    raise KbcStoreError('PT-KBC-STALE', 'The inspected pair differs from the current project snapshot.')
+                outcome.result['input_origin'] = origin
         except Exception as exc:
             if request.operation == 'create' and (destination / 'project.sqlite3').is_file():
                 return InvestigationResult('create', 'Local creation stopped after project files were written. '

@@ -40,6 +40,7 @@ DESCRIPTIONS = {
     'same_component': 'Explicitly confirm differently named files represent the same component.',
     'import': 'Import the chosen local advisory into the workspace.',
     'search': 'Search stored advisory documents without accessing the network.',
+    'use_current': 'Verify and use the currently open project input copies; origin is preview-only.',
     'preview': 'Inspect the chosen local pair and display its hashes and limitations.',
     'create': 'Create a separate project using exactly the current pair preview.',
     'cancel': 'Cancel pending work, or retain a project whose commit already started.',
@@ -59,7 +60,7 @@ TIPS = {f'kb.investigation.{key}': TooltipEntry(text, 'Keeps the local investiga
 
 class InvestigationDialog(QDialog):
     def __init__(self, parent=None, *, workspace=None, tasks=None, on_created=None, current_project=None,
-                 execute=execute_request, notice=None):
+                 execute=execute_request, notice=None, current_inputs=None, is_current=None):
         super().__init__(parent)
         register_tips(TIPS)
         self.setWindowTitle('Investigate KB/CVE · offline')
@@ -67,6 +68,8 @@ class InvestigationDialog(QDialog):
         self.tasks = tasks if tasks is not None else TaskRunner(self)
         self._own_tasks = tasks is None
         self._execute, self._on_created, self._notice = execute, on_created, notice
+        self._available_current, self._input_origin = current_inputs, None
+        self._is_current = is_current if is_current is not None else lambda: True
         self._current_project = Path(current_project) if current_project is not None else None
         self._channel = f'kb.investigation.{id(self)}'
         self._generation, self._closed = 0, False
@@ -118,9 +121,11 @@ class InvestigationDialog(QDialog):
         form.addRow(self.same_component)
         root.addLayout(form)
         actions = QHBoxLayout()
-        for key, title in (('preview', 'Preview local pair'), ('create', 'Create and open comparison'),
+        for key, title in (('use_current', 'Use current project inputs'), ('preview', 'Preview local pair'),
+                           ('create', 'Create and open comparison'),
                            ('cancel', 'Cancel operation'), ('close', 'Close')):
             actions.addWidget(self._button(key, title))
+        self.buttons['use_current'].clicked.connect(self._use_current)
         self.buttons['preview'].clicked.connect(lambda: self._submit(self._request('preview')))
         self.buttons['create'].clicked.connect(self._create)
         self.buttons['cancel'].clicked.connect(self.cancel_operation)
@@ -165,9 +170,12 @@ class InvestigationDialog(QDialog):
                                     scope_id=self.scope.currentData(), older=path('older'), newer=path('newer'),
                                     destination=path('destination'), name=self.fields['name'].text().strip(),
                                     current_project=self._current_project,
-                                    confirm_same_component=self.same_component.isChecked())
+                                    confirm_same_component=self.same_component.isChecked(),
+                                    current_inputs=self._input_origin if operation in {'preview', 'create'} else None)
 
     def _edited(self, key):
+        if key in {'older', 'newer'}:
+            self._input_origin = None
         self._invalidate()
         if key in {'workspace', 'lead'}:
             self._investigation_id = None
@@ -203,6 +211,18 @@ class InvestigationDialog(QDialog):
         self._preview = None
         self._submit(replace(self._request('search'), investigation_id=None, scope_id=None))
 
+    def _use_current(self):
+        self._invalidate()
+        if self._available_current is not None:
+            self._submit(replace(self._request('current_inputs'), current_inputs=self._available_current))
+
+    @staticmethod
+    def _origin_text(origin):
+        return (f'\nInput origin (preview only): project {origin["project_id"]}, revision {origin["revision"]}'
+                f'\nOlder artifact: {origin["older_artifact_id"]} · {origin["older_name"]}'
+                f'\nNewer artifact: {origin["newer_artifact_id"]} · {origin["newer_name"]}'
+                f'\n{origin["status"]}')
+
     def _enable(self):
         busy = self._pending is not None
         for field in self.fields.values():
@@ -211,6 +231,8 @@ class InvestigationDialog(QDialog):
         self.same_component.setEnabled(not busy)
         for button in self.buttons.values():
             button.setEnabled(not busy)
+        self.buttons['use_current'].setEnabled(not busy and self._available_current is not None
+                                               and self._is_current())
         self.buttons['cancel'].setEnabled(busy)
         self.buttons['close'].setEnabled(True)
         pair_ready = self._investigation_id is not None and self.scope.currentData() is not None
@@ -225,11 +247,17 @@ class InvestigationDialog(QDialog):
         if not self.fields['workspace'].text().strip():
             self.status.setText('Choose an advisory workspace directory before continuing.')
             return
+        if request.current_inputs is not None and not self._is_current():
+            self._preview = None
+            self.status.setText('PT-KBC-STALE: The current project changed; reopen the investigation.')
+            self._enable()
+            return
         self._generation += 1
         generation = self._generation
         self._pending = request
         self._cancel_create, self._close_after_create = False, False
         self.status.setText({'import': 'Importing local advisory…', 'search': 'Searching stored documents…',
+                             'current_inputs': 'Verifying current project input copies…',
                              'preview': 'Inspecting local pair…', 'create': 'Creating separate comparison…'}
                             [request.operation])
         self._enable()
@@ -244,9 +272,22 @@ class InvestigationDialog(QDialog):
         if self._closed or generation != self._generation:
             return
         self._pending = None
+        if request.current_inputs is not None and not self._is_current():
+            self._input_origin = request.current_inputs
+            result = replace(result, success=False, error_code='PT-KBC-STALE',
+                             text='The current project changed; reopen the investigation.')
         self.status.setText(('' if result.success else f'{result.error_code or "PT-KBC-INPUT"}: ') + result.text)
         text = result.text
-        if result.success and request.operation == 'import':
+        if result.success and request.operation == 'current_inputs':
+            self._preview = None
+            for key in ('older', 'newer'):
+                self.fields[key].blockSignals(True)
+                self.fields[key].setText(result.data[key])
+                self.fields[key].blockSignals(False)
+            self._input_origin = request.current_inputs
+            text += self._origin_text(result.data['input_origin'])
+            text += '\nExplicit same-component confirmation and exact pair preview remain required.'
+        elif result.success and request.operation == 'import':
             self._investigation_id, self._preview = None, None
             self._set_scopes([], None)
         elif result.success and request.operation == 'search':
@@ -261,6 +302,8 @@ class InvestigationDialog(QDialog):
             text += (f'\nProduct: {self.scope.currentText()}\nOlder SHA-256: {pair.get("older_sha256")}\n'
                      f'Newer SHA-256: {pair.get("newer_sha256")}\nLineage: {pair.get("lineage_state")}\n'
                      f'Fix boundary: {pair.get("fix_boundary")}\nLimits: {", ".join(pair.get("reason_codes", ()))}')
+            if result.data.get('input_origin'):
+                text += self._origin_text(result.data['input_origin'])
         elif request.operation == 'create' and result.project_path is not None:
             self._preview = None
             if not result.success or self._cancel_create or self._close_after_create or self._on_created is None:
