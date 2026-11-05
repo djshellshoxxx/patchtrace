@@ -1111,3 +1111,10 @@ Full `QT_QPA_PLATFORM=offscreen python -m pytest -q` for this isolated native sl
 
 - [x] Retain bounded strict normalized output before scoring, verify report-bound completion and exact-byte replay, reject provider-owner conflicts, and preserve diagnostics on completion failure (source #176).
 - [ ] Independent security review and integration of this stacked replay slice; exact-head full suite/native/Windows gates remain open.
+
+### Wave-three acceptance — 2026-11-05
+
+- [x] Independently review and integrate #215 recorded identity, #216 acquisition display safety and #217 credited replay; combined276 passed.
+- [ ] Finish/review lock-only retry and retain committed promotion data on annotation failure; fix stale crash-test keyword double.
+- [ ] Collect exact f33 complete-suite receipt, then qualify updated candidate.
+- [ ] Complete provisioned pinned-native controls and required current-head Windows/scanner/release gates.

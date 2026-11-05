@@ -1484,3 +1484,7 @@ Ported the isolated preregistration selection slice from PR #176 (bad8fa4c, 500a
 ### LBL-31 credited-output replay consolidation — 2026-11-05
 
 Selectively ported the remaining normalized-output retention, report completion, replay and bounded metadata slice from PR #176 onto LBL-30. Baseline f33e2a0a independently reproduced a foreign `ghidriff` response scored/credited under its `rz-diff` provider owner; the same constructed control is refused after repair. New feature acceptance initially could not collect because retention modules were absent. After porting and generating all corpus/calibration schemas: 239 focused tests passed; a broader contracts/calibration/unified-harness selection passed 234 tests (overlapping selections), with expected explicit warnings for unverified legacy output compatibility. Whole-tree Ruff passed. Independent security review pending. No actual corpus fit, labels, native compatibility or calibration promotion is claimed; atomic publication requires hardlink-capable storage.
+
+### Wave-three reviewed integration — 2026-11-05
+
+#215/#216/#217 reviewed source integrated at dfc212e2: combined276 passed; Ruff and all four schema generators passed with no drift. Independent prereg97 and replay44 controls passed. Frozen f33e2a0a complete suite remains running (log /tmp/pt-205-f33-full.log); one stale SIGKILL double failure reproduced, repair pending in lifecycle slice. Current scanner/Windows/native/release gates remain open; no main merge.
