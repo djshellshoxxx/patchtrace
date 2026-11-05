@@ -240,6 +240,8 @@ Never say "no CVEs associated with KB" without the scoped qualifier.
 
 Verified origins are provider-specific. Do not use a global regex like *.microsoft.com. If a request redirects outside its approved providers, require an explicit supported redirect policy, never trust an arbitrary 302. Record immutable final nonsecret source URI, not transient auth/SAS query strings. Retry bounds independent of huge scope.
 
+Monthly CVRF fetches use one monotonic document deadline, bounded by the plan deadline, across connection attempts, redirects, body reads and retry waits. Check cancellation and the deadline before every initial, redirect or retry request and after response headers arrive; cap each connection timeout by the remaining document budget. If a server's Retry-After or the fallback backoff would consume the remaining budget, fail that month without sleeping or issuing an early retry. Cancellation during a redirect or wait stops the operation with PT-KBC-CANCEL. Malformed redirect references, including URL-join parsing failures, produce a typed PT-KBC-SOURCE month failure, close the response and allow later planned months to continue. The limits bound the adapter's own scheduling; an injected opener must honor its timeout for connection-level interruption.
+
 ### 5.2 Source blob handling
 
 - Capture bytes (bounded) -> SHA256 -> strict duplicate-key rejecting JSON -> schema/dialect validation -> normalized snapshot.
