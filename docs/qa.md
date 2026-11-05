@@ -1496,3 +1496,7 @@ Reviewed38be184c merged at a84bf6d1. Five real preflight paths now permit absent
 ### Reviewed normalizer and binary-only desktop — #220/#221
 
 #220 cf9cefff reserved metadata guard:24 baseline red/1pass, independent77pass; rejects forged derived claims while preserving raw inputs/prior committed evidence. Integrated normalizer/unified-source106pass. #2217e7a52eb real binary-only local-pair preview/create/reopen/export: independent207pass and no-preview-write/reversed-orientation probes; product lineage/advisory linkage remain explicitly unverified. Integrated both with prior lifecycle:339pass23.77s. Counts overlap. Worker full-suite collection was stopped/no tests run; root f33 suite is the sole complete-run attempt still active. Updated-head full/Windows/native acceptance remains open.
+
+### Native provisioning / canonical normalizer identity — #222/#223
+
+Verified all14 complete compressed/raw log receipts and exact unfinished status for #222 dbebfee8; actual pinned headers compile, native oracle/link/CLI not yet executed. Source/dependencies/build cache provisioned with supported PCRE2 retry; quarantine unchanged. #223631b5e91 closes equivalent address spelling duplicate bypass with existing parse_address while preserving raw spelling and repeated-function refusal:14 baseline red/1pass, independent95pass. Latest integrated normalizer/binary/KB/lifecycle357passed33.26s; Ruff clean. Complete f33 suite still active; no exact updated-head full pass claimed.
