@@ -377,7 +377,8 @@ ALLOWED_SIBLINGS = {'contracts.py': {'acquisition', 'enrichment', 'intelligence'
                     'cli_leads.py': {'enrichment', 'service'},  # RealEngine moves to adapters/engine.py in K8
                     # the Leads dock: PanelSpec, state notices, tooltip entries and the Qt view use the GUI framework
                     'panel.py': {'gui'}, 'panel_state.py': {'gui'}, 'tooltip_entries.py': {'tooltips'},
-                    'panel_qt.py': {'gui'}, 'investigation_qt.py': {'gui', 'tooltips'}}
+                    'panel_qt.py': {'gui'}, 'investigation_qt.py': {'gui', 'tooltips'},
+                    'investigation_service.py': {'models', 'artifact_bytes'}}
 
 
 def _imports(path):
@@ -426,4 +427,16 @@ def test_named_investigation_adapter_keeps_import_boundaries(tmp_path, name, mod
         test_domain_modules_import_no_qt_network_or_database(path)
     else:
         with pytest.raises(AssertionError, match='imports'):
+            test_domain_modules_import_no_qt_network_or_database(path)
+
+
+@pytest.mark.parametrize('sibling,allowed', [('models', True), ('artifact_bytes', True),
+                                           ('backend', False), ('service', False), ('persistence', False)])
+def test_current_input_service_sibling_boundary(tmp_path, sibling, allowed):
+    path = tmp_path / 'investigation_service.py'
+    path.write_text(f'from ..{sibling} import sentinel\n', encoding='utf-8')
+    if allowed:
+        test_domain_modules_import_no_qt_network_or_database(path)
+    else:
+        with pytest.raises(AssertionError, match='imports sibling'):
             test_domain_modules_import_no_qt_network_or_database(path)

@@ -1292,3 +1292,7 @@ Wiring: `exchange.ALL_SOURCES`, `--sources diaphora`, `pipeline.capture_plan` (o
 ### [E3-PROJECTCREATE:creation-rollback]
 
 `ingestion.inspect_artifact` optionally records only exclusively published files/directories with their filesystem identity in an attempt-local Python ledger. `service.ProjectService.create` uses that ledger and the held project lock for bounded identity-checked rollback before a first snapshot; persistent lock file and foreign/reused files are retained. Tests: `tests/test_audit116_create_rollback.py` plus ingestion/core lifecycle regressions. No new module or database.
+
+### [A4-C3:current-project-inputs]
+
+`kbcorrelation/investigation_service.py` owns the immutable current-input snapshot, strict Artifact decoding and shared verified-reader checks; `investigation_qt.py` adds an explicit worker-backed action, preview-only provenance and stale-result guards. `gui/qt/host.py` captures existing model values and checks current ownership on the GUI thread without opening another project store. Tests: `tests/test_kb_current_project.py` and existing service/dialog journeys. No new modules or persisted contracts.

@@ -256,10 +256,27 @@ class PanelHost(QObject):
 
     def investigation_dialog(self):
         from ...kbcorrelation.investigation_qt import InvestigationDialog
+        from ...kbcorrelation.investigation_service import CurrentProjectInputs
         from ...service import ProjectService
 
         window, original = self.window, self.window.service
         current_root = original.root if original else None
+        snapshot = None
+        if original is not None:
+            artifacts = original.project.artifacts
+            older = [a for a in artifacts if a.side == 'older']
+            newer = [a for a in artifacts if a.side == 'newer']
+            if len(older) == len(newer) == 1:
+                snapshot = CurrentProjectInputs(original.project.id, original.project.revision, original.root,
+                                                older[0].model_dump_json(), newer[0].model_dump_json())
+
+        def is_current():
+            return bool(snapshot is not None and window.service is original and not window._close_requested
+                        and original.project.id == snapshot.project_id
+                        and original.project.revision == snapshot.revision
+                        and tuple(a.model_dump_json() for side in ('older', 'newer')
+                                  for a in original.project.artifacts if a.side == side)
+                        == (snapshot.older_json, snapshot.newer_json))
 
         def notice(message):
             self.port.status(message)
@@ -272,7 +289,7 @@ class PanelHost(QObject):
             window.set_service(ProjectService.open(Path(path)))
 
         return InvestigationDialog(window, tasks=self.tasks, current_project=current_root,
-                                   on_created=adopt, notice=notice)
+                                   on_created=adopt, notice=notice, current_inputs=snapshot, is_current=is_current)
 
     # ---- specs and shells -------------------------------------------------------------------------
 

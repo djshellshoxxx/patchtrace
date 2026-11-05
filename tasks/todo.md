@@ -1092,3 +1092,11 @@ Full `QT_QPA_PLATFORM=offscreen python -m pytest -q` for this isolated native sl
 
 - [x] Reconcile accepted named investigation Qt adapter with import-contract scanner; preserve service purity and UI network/database exclusions with seven negative controls.159focused passes;44independent passes; Ruff clean.
 - [ ] Resume combined qualification and require exact-head full/cross-OS checks; no test/gate bypass or broad Qt exemption.
+
+### A4/C3 current project inputs
+
+- [x] Add explicit worker-verified current project input action and a real advisory/scope/confirmation/preview/create/open journey without reopening the source project store or changing it before adoption.
+- [x] Cover strict snapshot JSON/caps, missing/tampered copies, verification-to-inspection hash changes, stale service/revision/artifact callbacks, late retained creation, field-edit origin clearing, ordinary basename defaults and same-path identical/conflicting labels.
+- [x] Independent read-only review approved implementation 0b3c58fb; independent focused controls 20 passed, 136 deselected.
+- [ ] Coordinator integration and native Windows/full-suite gates. Product-only/binary-only advisory lookup semantics remain outside this slice.
+- [ ] Separately specify label preservation if current-origin preview must support derived hash.bin-labelled projects or other original labels outside the existing .sys/.dll/.exe BinaryRef contract. Current unsupported cases refuse explicitly.
