@@ -1396,3 +1396,12 @@ Independent read-only review of implementation `27c9c948` found no blockers: pre
 ## CI fragment discovery repair (2026-11-05)
 
 GitHub #191 Ubuntu QA job127522978541 completed with18743passes/47skips/7xfails and3failures, all caused by main's step-only `.github/workflows/openai-agents.yml` (missing workflow name/on/jobs/permissions/timeouts). Local unchanged baseline reproduces3failed/48passed/3existingxfails in workflow source checks. Preserve the fragment byte-for-byte under `.github/workflow-examples/openai-agents-step.yml`, with explanatory README, so only executable workflow definitions are discovered. Final focused source validation:49passed/3existingxfails; whole Ruff/diff hygiene pass; original bytes verified against5d504ff5. No new paid runner/trigger or competitor automation is enabled; #167/#170/#171/#186 remain separate review candidates. Whole/cross-OS acceptance remains pending on the resulting integration head.
+
+
+### Secondary input replacement follow-up (2026-11-05)
+
+Coordinator reviewed source `8244ec7e`: read-only descriptor opening uses nonblocking/no-follow flags where available, then validates handle and fresh path regularity plus admitted device/inode identity before creating a destination. Every opened descriptor closes on refusal or completion. Existing cancellation callback, exclusive destination, bounds and caller hash comparison remain intact; this is not arbitrary filesystem-call interruption.
+
+Deterministic baseline: **3 failed, 1 passed** (another regular file and a symlink to the retained original were accepted; a regular-to-FIFO swap blocked a Python test child until its five-second timeout killed it; directory replacement was already refused). Final implementation: **92 passed** across input/run/preparation/scheduler/C3 integration tests. Expanded input-only controls, including operation without `O_NOFOLLOW` and descriptor closure: **26 passed**. These selections overlap and are not an aggregate count. Whole-repository Ruff and diff checks passed. The receipt commit changes documentation only after the reviewed implementation.
+
+Tests use synthetic files and Python/fake-engine fixtures; no target binary was executed and no native engine compatibility is claimed. FIFO coverage is POSIX-only; symlink cases may skip where creation is unavailable. Native Windows and combined integration/full-suite qualification remain pending. Earlier committed evidence and the coordinator's frozen candidate are unchanged.

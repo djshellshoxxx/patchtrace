@@ -1020,7 +1020,8 @@ PASSED: `QT_QPA_PLATFORM=offscreen python -m pytest -q tests/test_gui_project_ad
 - [x] Isolate PR #176 artifact-preparation cancellation, engine budget and ingestion-cap repair; preserve the separate probe budget. Six red regressions repaired; 85 focused tests and global Ruff pass.
 - [ ] Coordinator review/publication and combined full-suite/Windows CI qualification for secondary preparation; no native acceptance claim.
 
-- [ ] Harden `secondary.bindiff_inputs.copy_and_hash` against replacement between `lstat` and `open` (including POSIX FIFO): evaluate nonblocking descriptor open plus regular-file `fstat`, preserve cross-platform behavior, and add deterministic replacement coverage. Cooperative cancellation does not interrupt blocked OS calls.
+- [x] Implement and coordinator-review input replacement hardening in `secondary.bindiff_inputs.copy_and_hash` (`8244ec7e`): nonblocking/no-follow flags where available, handle/path regularity and identity checks before destination creation, unconditional descriptor closure. Baseline 3 failed/1 passed; final focused 92 passed and overlapping expanded input selection 26 passed; Ruff/diff clean.
+- [ ] Qualify this input-opening follow-up on native Windows and the combined integration/full suite. POSIX FIFO and synthetic controls do not establish native engine compatibility or arbitrary filesystem-call interruption.
 
 ## 2026-11-05 isolated rz-diff research-controls consolidation
 
