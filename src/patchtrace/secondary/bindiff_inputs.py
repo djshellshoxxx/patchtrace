@@ -162,19 +162,28 @@ def copy_and_hash(source: Path, destination: Path, *, max_bytes: int = MAX_BINEX
                              kind='binexport-too-large')
     digest, total = hashlib.sha256(), 0
     try:
-        with open(source, 'rb') as src, open(destination, 'xb') as dst:
-            while True:
-                if check is not None:
-                    check()
-                chunk = src.read(1 << 20)
-                if not chunk:
-                    break
-                total += len(chunk)
-                if total > max_bytes:
-                    raise SecondaryError('PT-SECONDARY-LIMIT', '.BinExport input exceeds the size limit.',
-                                         kind='binexport-too-large')
-                digest.update(chunk)
-                dst.write(chunk)
+        flags = os.O_RDONLY | getattr(os, 'O_NONBLOCK', 0) | getattr(os, 'O_NOFOLLOW', 0) | getattr(os, 'O_BINARY', 0)
+        descriptor = os.open(source, flags)
+        try:
+            opened, current = os.fstat(descriptor), os.lstat(source)
+            if any(not stat.S_ISREG(item.st_mode) or (item.st_dev, item.st_ino) != (info.st_dev, info.st_ino)
+                   for item in (opened, current)):
+                raise _workdir_error()
+            with os.fdopen(descriptor, 'rb', closefd=False) as src, open(destination, 'xb') as dst:
+                while True:
+                    if check is not None:
+                        check()
+                    chunk = src.read(1 << 20)
+                    if not chunk:
+                        break
+                    total += len(chunk)
+                    if total > max_bytes:
+                        raise SecondaryError('PT-SECONDARY-LIMIT', '.BinExport input exceeds the size limit.',
+                                             kind='binexport-too-large')
+                    digest.update(chunk)
+                    dst.write(chunk)
+        finally:
+            os.close(descriptor)
     except OSError as exc:
         raise _workdir_error(exc) from None
     return digest.hexdigest()
