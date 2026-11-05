@@ -86,7 +86,7 @@ Full `QT_QPA_PLATFORM=offscreen python -m pytest -q` for this isolated native sl
 ## 2026-11-05 local native-control feasibility (bounded follow-up)
 
 Source `a0f41746`; raw diagnostics and a checksum-bound receipt are retained in
-`docs/qa/rzdiff-native-local-feasibility-20261105/`. Native execution is **blocked**, not failed ownership evidence:
+`docs/qa/rzdiff-native-local-feasibility-20261105/`. Native execution is **locally unprovisioned**, not failed ownership evidence or an unavoidable external blocker. Development dependency installation is authorized; it was not attempted in this bounded feasibility wave:
 
 - `pkg-config --modversion rz_core rz_arch rz_io rz_util` exited 1: none of the required native packages is available.
 - Compiling the existing authored oracle with the available C compiler exited 1 at `rz_analysis.h: No such file or directory`; no oracle executable was produced or run.

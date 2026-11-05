@@ -4,7 +4,7 @@
   "upstream_commit": "c3a90e9226d977f58f4e9c75f78fa6b07afe13c7",
   "native_executed": false,
   "status": "blocked",
-  "reason": "Required native headers/libraries and source-build tools unavailable; no new dependencies authorized",
+  "reason": "Native prerequisites unprovisioned; installation not attempted in bounded feasibility wave",
   "tools": {
     "cc": "/usr/bin/cc",
     "pkg-config": "/usr/bin/pkg-config",
