@@ -921,3 +921,10 @@ Done: dock with state matrix, consent, import, changes, copy, go to CVE. Open: r
 - [x] Preserve old no-key bytes/ranking and private in-memory unified support; keep persisted engine vocabulary unchanged; expose legacy unmarked replay as unverified rather than infer historical credit.
 - [ ] Independent final review, coordinator integration/cross-OS and verified transfer integration remain pending; broader locked training/final-run/promotion safeguards are not completed by this slice. See `docs/qa/output-credited-replay-20261101.md`.
 - [x] Independent credited-replay review approved exact source `5c26af9` with 119 passes/1 native-tool BLOCKED skip and direct scalar/failed-valid-artifact controls; no remaining bounded source blocker. Integration/cross-OS/transfer and broader safeguards above remain open.
+
+## D2-E6-OFFLINE-20261105 — strict producer pin gate
+
+- [x] Reproduce duplicate-field acceptance in checker and producer; enforce one shared strict JSON parse before download/build work.
+- [x] Correct runbook TOFU instruction against existing approved digest-source rules; leave actual pins/licence approvals unchanged.
+- [x] Focused 179 passed/1 skipped, whole Ruff/diff checks, and current release-pin checker exit 0.
+- [ ] Clean native Windows offline/full-runtime release acceptance still requires its own downloadable artifact and linked acceptance evidence; this Linux tooling slice supplies none.
