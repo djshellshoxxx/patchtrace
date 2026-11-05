@@ -81,3 +81,18 @@ strict completeness validation refuses it even in the stock red job.
 - BLOCKED/NOT RUN: complete pinned-native API/CLI JSON acceptance, independent recovered inventories, distinct-byte/IO-context controls, Windows acceptance and downstream Tier R requalification. No target binaries executed; no quarantine, runtime parser, approved pin, cache acceptance, or automation changes. This is a research-tool checkpoint, not a qualified producer.
 
 Full `QT_QPA_PLATFORM=offscreen python -m pytest -q` for this isolated native slice was NOT COMPLETED: stopped with SIGINT during collection after 87.42s (no tests ran, exit130) at the coordinator's request to avoid contention with the mandated integration suite. No test failure was observed or discarded; the local interruption log is `/tmp/pt-native-full-qa.log`. The 33 focused passing tests remain the completed local check. Hosted PR #195 CI is pending and does not yet qualify the producer.
+
+
+## 2026-11-05 local native-control feasibility (bounded follow-up)
+
+Source `a0f41746`; raw diagnostics and a checksum-bound receipt are retained in
+`docs/qa/rzdiff-native-local-feasibility-20261105/`. Native execution is **blocked**, not failed ownership evidence:
+
+- `pkg-config --modversion rz_core rz_arch rz_io rz_util` exited 1: none of the required native packages is available.
+- Compiling the existing authored oracle with the available C compiler exited 1 at `rz_analysis.h: No such file or directory`; no oracle executable was produced or run.
+- `meson`, `ninja` and `rz-diff` are absent from PATH; `python -m pip show meson ninja` exited 1 with both packages missing. The bounded local cache/header/library search found no installed Rizin development tree.
+- The cached single `similarity.c` has the exact approved blob `8544259e17a692bcb3c1d8858f104745cd0cba4c` and SHA-256 `a0b196dbc39e4fb3df4f850e156482ba9668838ccf5bb99a25563fd7a8c7ee5a`. It supplies neither the missing public headers/libraries nor the build tools.
+
+No download, dependency installation, native target execution, workflow activation or quarantine/runtime-parser change occurred. Existing approved static release provisioning cannot replace the public-API header/library prerequisites. No helper-double test was counted as native evidence.
+
+Actionable next step: on a runner already provisioned with Meson/Ninja and the pinned source build's development dependencies, use the existing stock/corrected source-build and `native_evidence.py` sequence in `origin/repair/rzdiff-native-red-control-20261103:.github/workflows/rzdiff-producer.yml` at upstream commit `c3a90e9226d977f58f4e9c75f78fa6b07afe13c7`. Retain compilation/library/executable hashes and both raw 32-row matrices in fresh directories. Running that existing job requires separate coordinator scheduling; this receipt does not activate it or qualify CLI JSON, distinct-byte/IO controls, recovered inventories, Windows or Tier R gates.
