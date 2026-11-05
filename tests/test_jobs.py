@@ -71,13 +71,18 @@ def test_cancel_and_timeout_terminate_children(tmp_path, cancelled):
             kernel.CloseHandle(handle)
     else:
         state = Path(f'/proc/{pid}/stat')
-        # SIGKILL to the group is delivered asynchronously: on a loaded runner the orphan can still be runnable
-        # ('R', on its way out; it runs no more user code) for a moment, then a zombie until init reaps it.
+        # SIGKILL delivery and host reaping are asynchronous. Observe one state per iteration so successful
+        # reaping between an existence check and a read cannot turn cleanup into a FileNotFoundError.
         deadline, pause = time.monotonic() + 10, threading.Event()  # `event` may already be set (cancel case)
-        while state.exists() and state.read_text().split()[2] != 'Z' and time.monotonic() < deadline:
+        while True:
+            try:
+                process_state = state.read_text().split()[2]
+            except FileNotFoundError:
+                break
+            if process_state == 'Z':
+                break
+            assert time.monotonic() < deadline, f'child {pid} remains in state {process_state}'
             pause.wait(.02)
-        if state.exists():
-            assert state.read_text().split()[2] == 'Z'
 
 
 def test_precancel_does_not_start(tmp_path):

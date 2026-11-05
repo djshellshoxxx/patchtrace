@@ -40,3 +40,11 @@ Finish focused validation, review and publish independent draft PRs, run full of
 - Further isolated work: `/tmp/pt-native` native producer controls (quarantine unchanged); `/tmp/pt-gui` superseded inspection/error-copy fixes ported from #176 with two failing regressions reproduced before fixes. These are not yet qualified/published.
 
 No main merge, source-PR closure, new automation enablement, production release or Windows/offline qualification has occurred. Full suite and CI remain release/integration gates. Token/cost/cache usage unavailable.
+
+## Additional published slices
+
+- QA draft [#194](https://github.com/djshellshoxxx/patchtrace/pull/194), initial published `0fdae562`; independent review then found/fixed a `/proc` test reaping race (51 passed/3 skipped). Full suite began on the initial head; final-head CI remains required.
+- Native controls draft [#195](https://github.com/djshellshoxxx/patchtrace/pull/195), `a0f41746`: 33 focused passes with exact pinned source and synthetic compiled helper controls only; evidence retry overwrite repaired. Quarantine unchanged. Redundant worker full suite interrupted during collection, NOT COMPLETED, while coordinator suite continues.
+- GUI draft [#196](https://github.com/djshellshoxxx/patchtrace/pull/196), `3fa22c61`: 35 focused passes, Ruff/diff checks passed; independent review incorporated current/unkeyed failure controls and precise path policy.
+- Unified #192 updated to `b5f6e138`: recorded-option pilot resolution repaired after two failing regressions; 28 pilot tests passed, independent review no blocker. This count overlaps prior selections; do not add counts as unique coverage.
+- `/tmp/pt-adoption` / `integrate/project-adoption-20261105`: isolated transactional project-adoption slice from #176 assigned to rules worker. No broader KB integration or main merge implied.
