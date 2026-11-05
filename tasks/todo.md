@@ -989,3 +989,10 @@ PASSED: `QT_QPA_PLATFORM=offscreen python -m pytest -q tests/test_gui_project_ad
 - BLOCKED/NOT RUN: complete pinned-native API/CLI JSON acceptance, independent recovered inventories, distinct-byte/IO-context controls, Windows acceptance and downstream Tier R requalification. No target binaries executed; no quarantine, runtime parser, approved pin, cache acceptance, or automation changes. This is a research-tool checkpoint, not a qualified producer.
 
 Full `QT_QPA_PLATFORM=offscreen python -m pytest -q` for this isolated native slice was NOT COMPLETED: stopped with SIGINT during collection after 87.42s (no tests ran, exit130) at the coordinator's request to avoid contention with the mandated integration suite. No test failure was observed or discarded; the local interruption log is `/tmp/pt-native-full-qa.log`. The 33 focused passing tests remain the completed local check. Hosted PR #195 CI is pending and does not yet qualify the producer.
+
+## E4-RANDOM-20261105 — bounded seeded audit
+
+- [x] Reproduce and repair ambiguous cache JSON manifests; preserve quarantine evidence and verify replacement lifecycle.
+- [x] Reject cache manifests larger than reader cap before publication/eviction; preserve prior committed entries.
+- [x] Focused selected-module tests (173 passed) and whole Ruff; full suite delegated to coordinator.
+- [ ] Native Windows release acceptance remains an independent gate; this audit uses only authored bytes and does not supply native evidence.
