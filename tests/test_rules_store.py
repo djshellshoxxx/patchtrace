@@ -173,7 +173,9 @@ def test_a_large_grid_goes_to_a_hash_verified_sidecar(tmp_path, candidate, monke
     assert rules.tests() == [] and rules.skipped == [f'rule-test:{run.run_id}']
 
 
-@pytest.mark.parametrize('bad', [b'{"not json', b'\xff\xfe', b'[' * 100_000], ids=['json', 'utf8', 'deep'])
+@pytest.mark.parametrize('bad', [b'{"not json', b'\xff\xfe', b'[' * 100_000,
+                                  b'duplicate',
+                                  b'{"value":NaN}'], ids=['json', 'utf8', 'deep', 'duplicate', 'nonfinite'])
 def test_a_sidecar_that_passes_its_hash_but_is_not_json_is_skipped(tmp_path, candidate, monkeypatch, bad):
     """#105 BUG-RULE-4: a tampered sidecar with a matching hash must be skipped and listed, never raise."""
     rules = rule_store(tmp_path)
@@ -182,6 +184,9 @@ def test_a_sidecar_that_passes_its_hash_but_is_not_json_is_skipped(tmp_path, can
     monkeypatch.setattr(store, 'INLINE_LIMIT', 10)
     rules.add_test(run, candidate.source)
     (sidecar,) = (tmp_path / 'project' / 'rules' / 'tests').glob('*.json')
+    if bad == b'duplicate':
+        original = sidecar.read_bytes()
+        bad = b'{"status":"complete",' + original[1:]
     sidecar.write_bytes(bad)
     row = rows(rules, store.TEST)[0]['id']
     body = rules.enrichment.entries(store.TEST)[0].body

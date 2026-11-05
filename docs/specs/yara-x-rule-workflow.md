@@ -303,3 +303,5 @@ Extra-build hashing checks regular-file status both before open and on the open
 handle. On POSIX, acquire the handle nonblocking so a regular file replaced by a
 FIFO cannot stall before the second check. This does not claim Windows named-pipe
 or device race acceptance without native verification.
+
+Saved grid sidecars must use the strict JSON decoder: duplicate object keys, non-finite constants, invalid UTF-8, and excessively nested documents are integrity failures even when the recorded byte hash matches. Such rows are skipped and listed; existing evidence is retained.
