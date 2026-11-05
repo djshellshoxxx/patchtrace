@@ -1,11 +1,14 @@
 # Independent development while qualification continues
 
-Checkpoint: 2026-11-05 23:38 UTC. Independent review branch:
+Checkpoint: 2026-11-05 23:42 UTC. Independent review branch:
 `integrate/independent-wave4-20261105`, code merge
 `ec48810c41530d787cfbd44b38406427062a5442`, based on published
 [#218](https://github.com/djshellshoxxx/patchtrace/pull/218)
 `afc8a2967ba3dec6b1ac3351d20dd08c193ba9bc`. Main and PR #205 are unchanged.
 This is a focused-tested candidate, not release acceptance.
+Published integration: [#235](https://github.com/djshellshoxxx/patchtrace/pull/235).
+The subsequent PE backing fix below is also integrated; exact current head is in
+that PR. A planned module index entry does not claim its implementation complete.
 
 [Previous #218 checkpoint](archive/20261105-pr218-afc8a296.md) preserves all prior
 source accounting, diagnostic history, gates and native ownership. The original
@@ -34,6 +37,7 @@ none was merged to main. Counts overlap and must not be added as unique coverage
 | D1/F2 [#232](https://github.com/djshellshoxxx/patchtrace/pull/232) | `bc52940fb32d5b5f6d1a58a860062ec60d423d1e` | Three bounded fixture packets; ten primary source/license blobs independently hash-verified. #176 seams compared, not ported twice. |
 | A3 [#233](https://github.com/djshellshoxxx/patchtrace/pull/233) | `69c705d052e6b6fb3c96ea49062d6a207829c1b8` | 135 author/five coordinator passes. Authored advisories and real-store revision/stale/ambiguity/failure preservation; eight-category acceptance matrix. |
 | A2 [#234](https://github.com/djshellshoxxx/patchtrace/pull/234), stacked on #226 | `bf46954ef2c6c9a278d9b78f5b4274242e617e09` | 255 author/107 independent passes plus three altered-plan refusals. Full 24-month preview, one-operation consent, strict rebuilt-plan checks, existing advisory sync and local-pair create/reopen preserving hashes. |
+| E2 [#236](https://github.com/djshellshoxxx/patchtrace/pull/236) | `8975c517af22aca0c0f90eb931b8a06ab18687b5` | Four baseline failures; 168 author/197 independent passes, one actual launcher excluded. Closed XML prefixes cannot supply facts/hash from incompletely backed PE resources; partial warning preserves original bytes. |
 
 ## Integrated checks and current ownership
 
@@ -44,6 +48,8 @@ related online/offline/current-input/binary-only/lock checks: **122 passed in
 selections, not full-suite acceptance. Worktree-scoped PYTHONPATH is used; shared
 editable installs and qualification environments are unchanged. Ruff/schema drift
 results are recorded in the integration QA checkpoint.
+After PE repair: **257 passed, one real-launcher node deselected in 6.84 s**,
+`/tmp/pt-independent-integration-pe-focused.log` (affected authored-PE/package tests).
 
 Root plus three supported workers execute logical swarms in bounded waves. Each
 has its own `/tmp/pt-independent-*` branch/worktree/logs and explicit acceptance.
@@ -51,9 +57,9 @@ has its own `/tmp/pt-independent-*` branch/worktree/logs and explicit acceptance
 | Owner | Current exclusive work | Budget / acceptance |
 |---|---|---|
 | Coordinator | Own integration, modules/QA/todo/latest handoff, reviewed publication | Focused integration/Ruff/schema checks and exact SHA/PR evidence; never alter qualification/native ownership |
-| online_sources_a1 | Independent read-only security/consent/candidate review | Exact-SHA approval and adversarial focused probes; no authored-file self-review |
+| online_sources_a1 | New `work/consented-winbindex-refresh-20261105`, `/tmp/pt-independent-winbindex-refresh-20261105`: sources/winbindex_fetch.py, own tests/source spec/QA | 15-minute metadata refresh seam using existing transport/parser/publication; exact consent preview, injected tests, no live calls. Module indexed before code in `58cc60f7`. Also independent review of other workers' changes. |
 | gui_accessibility_c2 | `work/investigation-candidates-20261105`, `/tmp/pt-independent-candidate-wizard-20261105`: investigation service/Qt, new candidate tests, SPEC31-F and dedicated QA | 20-minute milestone: explicit saved-index candidate inspection/selection, revision/digest/provenance checks; no auto-selection or unconsented network; manual hashes authoritative |
-| security_persistence_e1 | `work/pe-parser-security-20261105`, `/tmp/pt-independent-pe-security-20261105`: pe_overview/manifest.py, authored tests, narrow PE spec and QA | 15-minute milestone: reproduced incomplete-resource fact promotion, focused refusal, independent review before publication; parse authored bytes only |
+| security_persistence_e1 | New `work/winbindex-publication-20261105`, `/tmp/pt-independent-index-publication-20261105`: wiring.py save_winbindex_record, own tests/SPEC31-D/QA | 15-minute milestone: reproduce fixed staging-path alias write, exclusive owned publication fix, preserve prior/foreign bytes and independent review |
 
 ## Open boundaries
 

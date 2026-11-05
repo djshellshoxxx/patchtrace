@@ -7,7 +7,8 @@
 - [x] Publish #228 Windows archive preflight/checklist, #231 source-preserved research, #232 primary-source fixture packets, #233 real-store acceptance fixtures and #234 explicit-consent desktop advisory sync.
 - [x] Integrate reviewed slices once on the separate independent branch; focused combined checks 248 and 122 passed (overlap), whole Ruff/diff and schema regeneration clean.
 - [ ] Finish/review/publish the saved-index candidate inspection/selection follow-up; candidate download/acquisition and product-only starts remain partial.
-- [ ] Independently review/publish authored-PE incomplete manifest backing repair and run affected integration checks.
+- [x] Independently review/publish #236 authored-PE incomplete manifest backing repair; affected PE/package integration 257 passed/one real-launcher deselected.
+- [ ] Complete/review explicit consented Winbindex metadata refresh seam and exclusive owned cache publication repair.
 - [ ] Existing owners complete frozen #205 full-suite and pinned-native qualification; do not start duplicates or modify their source/processes/logs/worktrees.
 - [ ] Qualify exact final Linux/Windows/Qt/native/package/live/manual/offline and main-relative scanner/review gates before any main/release acceptance claim.
 - [ ] Continue selective #183 R2/R3/R6/R8 reconciliation and remaining source freshness/authenticity, full supersedence/update-DAG and derived-label work. Preserved research is not implementation acceptance.

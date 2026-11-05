@@ -35,9 +35,14 @@ main-relative scanner review, live sources, Windows/native/package/manual and
 disconnected-bundle acceptance remain open. No live provider, target execution,
 actual corpus/model fit, cost or prompt-cache evidence is invented.
 
-Active next slices are explicit saved-index candidate inspection and an authored-PE
-incomplete manifest backing repair; each requires independent review, focused
-integration and publication before its result enters this checkpoint.
+Subsequent reviewed #236 (`8975c517`) refuses incomplete PE manifest leaves before
+parsing closed XML prefixes: four baseline failures, 168 author and 197 independent
+authored-byte passes (one actual launcher excluded). Combined affected PE/package
+checks **257 passed, one deselected in 6.84 s**, log
+`/tmp/pt-independent-integration-pe-focused.log`. No launcher or target executed.
+Active next slices: saved-index candidate inspection, explicit consented Winbindex
+metadata refresh and cache staging publication hardening; each needs independent
+review and focused integration before its result enters this checkpoint.
 
 ## Current evidence
 2026-10-11: source inspection of pinned upstream revisions completed. Linux Qt offscreen desktop self-test starts and displays the synthetic project. Integrated Linux QA: 91 tests passed, 2 Windows-only tests skipped; Ruff and Qt offscreen desktop self-test passed. Domain, transport, worker, schema and UI tests are included. Synthetic fixtures and mocked providers verify wiring and validation, not real matching accuracy or model interpretation correctness.
