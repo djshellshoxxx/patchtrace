@@ -11,6 +11,7 @@ from typing import Literal
 
 from ..artifact_bytes import ArtifactBytesError, VerifiedArtifactReader
 from ..models import Artifact
+from ..persistence import creation_directory_available
 from .components import normalise_name
 from .sources.cvrf import SourceError, load_json
 from .store import KbcStoreError, WorkspaceStore
@@ -72,7 +73,7 @@ def _new_destination(request: InvestigationRequest) -> Path:
     resolved = path.resolve()
     if request.current_project is not None and resolved.is_relative_to(request.current_project.resolve()):
         raise KbcStoreError('PT-KBC-INPUT', 'Choose a new directory outside the currently open project.')
-    if path.exists() and (not path.is_dir() or any(path.iterdir())):
+    if not creation_directory_available(path):
         raise KbcStoreError('PT-KBC-INPUT', 'The project destination must be new or empty; existing data is retained.')
     return resolved
 
