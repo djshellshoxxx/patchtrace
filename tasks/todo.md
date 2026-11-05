@@ -1128,3 +1128,6 @@ Full `QT_QPA_PLATFORM=offscreen python -m pytest -q` for this isolated native sl
 
 - [x] Account #222 finite pinned-native provisioning evidence and #223 canonical function identity; verify14 complete raw-log receipts and357 combined focused passes.
 - [ ] Finish actual native API linkage/stock-red-corrected-green and distinct-byte/IO controls; optional control tooling remains separate pending verified source.
+
+- [x] Actual pinned Linux API default32 stock-red/corrected-green plus distinct-byte/IO positives and sensitive negatives; final #222 evidence independently reviewed/verified.
+- [ ] Diagnose actual native CLI empty-output/no-functions failure, preserve raw inventories/exit0/stderr; do not weaken parser or quarantine.
