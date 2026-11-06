@@ -1,0 +1,74 @@
+{
+  "reviewer": "review_resume independent helper",
+  "decision": "No blocking findings within the aggregate credit and output-completion slice",
+  "reviewed_head": "a14255715b051b0e5500786049669f77789943d9",
+  "reviewed_tree": "9fa4779bf8031878ded162ebc64328db01ab3a1d",
+  "base": "692e9b009c9f4bba5edceb2a97c207713152d4cb",
+  "observed_qa_only_head": "e6e6aa5b8ea52d256fd3ddc70cbc9e5bed01aac9",
+  "worktree": "/workspace/scratch/142cb233d750/wt-output-credit-budget",
+  "changed_paths": [
+    "docs/schemas/corpus/EvaluationFailure.json",
+    "docs/schemas/corpus/OutputCompletion.json",
+    "docs/specs/known-answer-corpus.md",
+    "tests/test_tier_r_credit_completion.py",
+    "tests/test_tier_r_credited_replay.py",
+    "tests/test_tier_r_output_persistence.py",
+    "tools/calibration/tier_r/cli.py",
+    "tools/calibration/tier_r/evaluate.py",
+    "tools/calibration/tier_r/output_store.py",
+    "tools/calibration/tier_r/report_schemas.py"
+  ],
+  "changed_file_sha256": {
+    "docs/schemas/corpus/EvaluationFailure.json": "835af1509ea3a589b66c51873be23b642e8a9ae6da3309215e08d426a990c90e",
+    "docs/schemas/corpus/OutputCompletion.json": "9d12335bbcdb477066f140f5ea2ca3dc9f318dbf28ebd7d6f76c72caa68930a7",
+    "docs/specs/known-answer-corpus.md": "838095e187be66c495c17b15f6ce3529976bf7abc3de328126680301881ad16d",
+    "tests/test_tier_r_credit_completion.py": "568928d67d42051268f734c3424c88d28088e759c19b6813c2a8b8af80891b8f",
+    "tests/test_tier_r_credited_replay.py": "1edf175d374add82001e7d5c1906a309d5e6601f0f5cb2d0deba4a7a21b45dfe",
+    "tests/test_tier_r_output_persistence.py": "3fd5c06e27447bcb0c076eb8b49ad9af33365116b16877fdb6b97a72ac29f986",
+    "tools/calibration/tier_r/cli.py": "a3283ba98bbb57908f00d2720d4e5842ad90204a29744f3f199276c191474c24",
+    "tools/calibration/tier_r/evaluate.py": "ad4fc881e4fd0b807a9c93f4a7ec4fb936346c846b4b84d2b3b0611cdae44617",
+    "tools/calibration/tier_r/output_store.py": "35a4514336acbbc65f3b509028cd17bb46842b94d82a1b93402e922e2eb6f6ee",
+    "tools/calibration/tier_r/report_schemas.py": "517b03898df9966f32e0b8fe93756896cb0c9e0939c372e36a91a3cfb91dd19d"
+  },
+  "scope_and_reasoning": [
+    "Dedicated aggregate credit budget remains 64 MiB. Pure preflight and finalization share the exact bounded manifest builder; successful wire shapes and MANAGED_FILES remain unchanged.",
+    "An exclusively published sentinel blocks readers before credits appear. All byte, ownership, diagnostic-presence and sentinel checks occur before owned removal; no fallible validation follows the success transition.",
+    "Any completion or failure diagnostic filename blocks managed and legacy loading, including malformed content and broken links. Parent collections remain refused.",
+    "Started stores cannot retry or append; completed stores refuse later failure retention without modifying prior output. Diagnostics publish without overwrite and remain outside ordinary report discovery.",
+    "EvaluationRetentionError preserves the full assembled report and original completion error even when bounded diagnostic writes fail. CLI returns FINDINGS 1 with failed/uncredited status and in-memory report when retention fails."
+  ],
+  "validation": [
+    {
+      "command": "QT_QPA_PLATFORM=offscreen PYTHONPATH=.:src:tests /workspace/scratch/142cb233d750/venv/bin/python -m pytest -q --tb=short tests/test_tier_r_credit_completion.py tests/test_tier_r_output_persistence.py tests/test_tier_r_credited_replay.py tests/test_tier_r_output_stat_compat.py tests/test_tier_r_eval_report.py",
+      "result": "140 passed, 3 expected LegacyOutputWarning warnings in 2.60 seconds"
+    },
+    {
+      "command": "QT_QPA_PLATFORM=offscreen PYTHONPATH=.:src:tests /workspace/scratch/142cb233d750/venv/bin/python /workspace/scratch/142cb233d750/reviews-resume/output_completion_controls.py",
+      "result": "Independent child processes terminated after sentinel publication and after credit publication remain refused by both output and training readers, with no diagnostic exception handler running. Termination after successful completion remains readable."
+    },
+    {
+      "command": "Same independent control script; exact two-report manifest boundary",
+      "result": "7,882-byte aggregate accepted at its exact bound; 7,881-byte cap refused by preflight and finalization; preflight created no files; attempted-store retry refused. Two independent engine reports retain two outputs."
+    },
+    {
+      "command": "RS.render comparison; changed Python-file Ruff; git diff --check base..source",
+      "result": "All generated report schemas exactly match checked-in bytes. Changed-file Ruff and diff checks passed."
+    }
+  ],
+  "independent_artifacts": {
+    "/workspace/scratch/142cb233d750/reviews-resume/output_completion_controls.py": "1ab1a0642b6228e12d76ac92d56c7c92bc667b2a3ebb1a195796d111151036fe",
+    "/workspace/scratch/142cb233d750/reviews-resume/completion-controls-9qzi1uhi/result.json": "5cfdf61c63574df2eb267d8efa8cb2672f8268f5b92522d9aabafa75db462fbc"
+  },
+  "environment": {
+    "python": "3.12.14",
+    "platform": "Linux",
+    "Qt": "offscreen"
+  },
+  "limitations": [
+    "Constructed providers and injected filesystem failures only; no native engine, real corpus acceptance, full suite, performance, or native Windows claim.",
+    "Abrupt process-exit controls do not establish power-loss durability. The contract explicitly excludes an OS-wide or hostile same-user lock; identity checks detect observed replacement, not all possible concurrent filesystem mutation.",
+    "Corpus transfer adoption of the pure preflight remains a separate reviewed integration.",
+    "Only author QA artifacts changed from a142557 to observed e6e6aa5; source and test bytes were independently checked equal.",
+    "No repository source edits, remote mutations, or GitHub approval were performed."
+  ]
+}

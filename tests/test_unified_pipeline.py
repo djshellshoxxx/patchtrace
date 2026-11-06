@@ -319,7 +319,16 @@ def test_the_worker_memory_cap_is_half_the_ram_up_to_four_gib(project, ram, cap)
     assert runner.calls[0]['memory_limit_bytes'] == cap and runner.calls[0]['timeout_seconds'] == 120
 
 
-def test_children_get_absolute_argv_and_a_private_cwd(project):
+@pytest.fixture
+def private_tempdir(tmp_path_factory, monkeypatch):
+    # Parallel test workers create and remove their own pt-unified-* folders in the shared system temp directory,
+    # so a before/after listing of it races; a private temp root keeps those comparisons exact.
+    root = tmp_path_factory.mktemp('tmproot')
+    monkeypatch.setattr(tempfile, 'tempdir', str(root))
+    return root
+
+
+def test_children_get_absolute_argv_and_a_private_cwd(project, private_tempdir):
     runner = StubRunner()
     before = {p.name for p in Path(tempfile.gettempdir()).glob('pt-unified-*')}
     pipeline.run_unified(project, isolated(runner))
@@ -644,7 +653,7 @@ def test_no_network_during_unified_run(project):
     assert hasattr(socket, 'socket')  # the guard above really watched the module the code could have used
 
 
-def test_runs_leave_no_stray_files_behind(project):
+def test_runs_leave_no_stray_files_behind(project, private_tempdir):
     before = {p.name for p in Path(tempfile.gettempdir()).glob('pt-unified-*')}
     pipeline.run_unified(project, inproc())
     for behaviour in (answer(ProcessResult(22, '', None, '')), error_document):

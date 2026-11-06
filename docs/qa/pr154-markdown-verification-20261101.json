@@ -1,0 +1,88 @@
+{
+  "branch": "codex/prereg-markdown-boundary-20261101",
+  "commit": "5e008a5e0590a2b7ce325e1e1abdc422e798999b",
+  "base": "918653cf76abf7b986442048356627666ef4a987",
+  "published_pr154_head": "4aa99f7bd989765000c6ebd659c9565030a48849",
+  "base_tree_matches_published": true,
+  "remote_writes": false,
+  "changed_files": [
+    "docs/qa.md",
+    "docs/qa/prereg-markdown-review-20261101.md",
+    "docs/specs/calibration-corpus-and-model.md",
+    "tests/test_train_prereg_selection.py",
+    "tools/calibration/prereg_gate.py"
+  ],
+  "protected_files_unchanged": [
+    "tools/calibration/train.py",
+    "docs/plans/c9-preregistration-v1.md",
+    "tools/calibration/run_locked_test.py"
+  ],
+  "tests": {
+    "preexisting_baseline": {
+      "passed": 99,
+      "seconds": 1.43
+    },
+    "new_red": {
+      "failed": 21,
+      "passed": 61,
+      "seconds": 1.15
+    },
+    "final": {
+      "passed": 123,
+      "seconds": 1.19,
+      "command": "venv/bin/python -m pytest -q tests/test_train_prereg_selection.py tests/test_prereg_tools.py tests/test_prereg_constants.py"
+    }
+  },
+  "whole_ruff": "passed src tests tools",
+  "diff_check": "passed",
+  "real_corpus_used": false,
+  "locked_evaluation_consumed": false,
+  "independent_review": {
+    "status": "withdrawn/qualified after root found escaped-opening false lock",
+    "replacement_candidate": "b6b5495c98b2e102141184d30600892d87c2784c",
+    "case": "closed multiline HTML comment behind escaped opening backticks",
+    "evidence": "pr154-escaped-opening-baseline-20261101.json"
+  },
+  "production_sha256": {
+    "tools/calibration/prereg_gate.py": "4bbd241a401804b6d91c02b84582b2e29faa14d975bb3722a3bd664b3db63ebf",
+    "tools/calibration/train.py": "b2017475ccb96310f2dc1b568f2196e07583ac7bc08560fb83829b8d85ed2f20"
+  },
+  "logs": {
+    "pr154-markdown-final-20261101.log": {
+      "sha256": "b1139398003041431add0a4fc8e078dea79f72b64cc03b32be7a3c0a2315adc9",
+      "bytes": 180
+    },
+    "pr154-markdown-red-20261101.log": {
+      "sha256": "40e8042b797b179150888c08101866c64214a4409f28d25f622134b4cd7d379d",
+      "bytes": 43464
+    },
+    "pr154-markdown-green-20261101.log": {
+      "sha256": "45faddaab039cc8eef6467a27ed94abe1ed16e4e4367fca8aefb83ae417fe0dd",
+      "bytes": 180
+    }
+  },
+  "preserved_pr155": {
+    "commit": "15370a0bf690ea65f49d1f6cc67c40f73fd3d77c",
+    "origin_branch": "fix/remediation-53088704-982db3",
+    "disposition": "intended comment/code behavior incorporated via independent stronger regression fix; patch not cherry-picked due prefix-comment provenance regression and remaining digest-suffix acceptance",
+    "probe": "pr155-bounded-overlap-review-20261101.json"
+  },
+  "initial_independent_approval_history": {
+    "reviewer": "/root/ci_review",
+    "commit": "5e008a5e0590a2b7ce325e1e1abdc422e798999b",
+    "disposition": "approved no blocking finding",
+    "tests_passed": 123,
+    "seconds": 1.03,
+    "scoped_ruff": "passed",
+    "diff_check": "passed",
+    "additional_probes": [
+      "inherited-comment firstpipe rejection",
+      "backtick literal comment leaves later record visible",
+      "draft/formatted SHA rejection",
+      "odd/even backslash parity",
+      "optional trailing delimiter"
+    ],
+    "actual_corpus_used": false,
+    "approval_or_final_look_authority_added": false
+  }
+}

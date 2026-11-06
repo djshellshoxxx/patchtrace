@@ -49,6 +49,13 @@ def main() -> int:
                 app.processEvents()
                 if not window.navigator.count() or 'SYNTHETIC SAMPLE' not in window.project_label.text():
                     raise RuntimeError('Desktop self-test did not display sample matches')
+                investigation = window.investigation_dialog()
+                try:
+                    if investigation.buttons['create'].isEnabled():
+                        raise RuntimeError('Offline investigation accepted an unpreviewed comparison')
+                finally:
+                    investigation.reject()
+                print('offline-investigation: initialized without import, download or project creation')
                 problems = window.panels.self_check()  # every manifest module imported, every panel built once
                 if problems:
                     raise RuntimeError('Panel self-check failed: ' + '; '.join(problems))
