@@ -1,0 +1,15 @@
+{
+  "before": "3824c330e341cd7245a47e7e81f31650d9a72536",
+  "before_tree": "b59a105796e4c5cc8665cf157d5fbbae0c2ed9fd",
+  "accepted_parent": "6095f702400e7fe19c2f462ae79f6ab650c5db58",
+  "accepted_parent_parents": [
+    "f33e2a0aaa3399644367f2419fee21cfe2e8702b",
+    "4465a0492367d08f324e80b290a594791921691c"
+  ],
+  "accepted_parent_tree": "6db3490e96da2a8f0a200d834f8816bc41421f57",
+  "source_245": "4465a0492367d08f324e80b290a594791921691c",
+  "fetched_owner_ref": "origin/integrate/swarm-qualified-20261105",
+  "published_equivalent_before_reported_by_root": "0498291bc9f674d9f3f060116393f56374e4f509",
+  "expected_tree_change": false,
+  "new_tests_expected": false
+}

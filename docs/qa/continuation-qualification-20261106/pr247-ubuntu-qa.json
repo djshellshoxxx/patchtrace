@@ -1,0 +1,477 @@
+{
+  "schema": "patchtrace.hosted-qa-evidence.v1",
+  "observation": {
+    "receipt_written_at_utc": "2026-11-06T09:02:09.380751+00:00",
+    "api_snapshot_note": "Jobs/artifacts were retrieved once for the completed Linux result; QA run metadata was subsequently read once. These are bounded observations, not continuous monitoring."
+  },
+  "repository": "djshellshoxxx/patchtrace",
+  "pr": 247,
+  "requested_head": "37b771300053e8872febead1fc384fea9126ae90",
+  "job": {
+    "id": 127790743638,
+    "name": "qa (ubuntu-latest)",
+    "status": "completed",
+    "conclusion": "success",
+    "run_id": 42187353481,
+    "run_attempt": 1,
+    "event": "pull_request",
+    "head_sha": "37b771300053e8872febead1fc384fea9126ae90",
+    "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/42187353481/job/127790743638",
+    "run_started_at": "2026-11-06T08:23:40Z",
+    "log_first_timestamp": "2026-11-06T08:25:20.4797019Z",
+    "log_last_timestamp": "2026-11-06T08:57:07.3812092Z",
+    "completed_at": null,
+    "completed_at_note": "Normalized jobs API does not return completion time. Last timestamp is the completed job log's final warning, not an inferred completion timestamp."
+  },
+  "environment": {
+    "os": "Ubuntu 26.04.1 LTS",
+    "image": "ubuntu-26.04",
+    "image_version": "20261101.186.1",
+    "python_implementation": "CPython",
+    "python_version": "3.12.16",
+    "python_location": "/opt/hostedtoolcache/Python/3.12.16/x64",
+    "qt_qpa_platform": "offscreen",
+    "protobuf_pin": "7.36.2",
+    "protobuf_installed": "7.36.2",
+    "protobuf_backend": "upb"
+  },
+  "full_suite": {
+    "command": "python -m pytest -q --junitxml=qa-results.xml",
+    "passed": 20372,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 52,
+    "xfailed": 6,
+    "warnings": 19,
+    "pytest_seconds": 1856.06,
+    "summary": "20372 passed, 52 skipped, 6 xfailed, 19 warnings in 1856.06s (0:30:56)",
+    "warning_categories": [
+      {
+        "category": "UserWarning",
+        "count": 1,
+        "message": "Duplicate name: 'payload/python/python.exe'",
+        "node": "tests/test_offline_bundle.py::test_rejects_duplicate_zip_entries"
+      },
+      {
+        "category": "LegacyOutputWarning",
+        "count": 18,
+        "message": "Legacy output directory is unverified: no successful report credit or transfer ownership",
+        "breakdown": [
+          {
+            "count": 3,
+            "source": "tests/test_tier_r_credited_replay.py:40",
+            "nodes": "test_incomparable_effective_keys_rejected_by_actual_reader_before_ranking[keys0], [keys1], [keys2]"
+          },
+          {
+            "count": 13,
+            "source": "tools/calibration/train.py:374",
+            "per_file": {
+              "tests/test_train_lbl26.py": 2,
+              "tests/test_train_pipeline.py": 7,
+              "tests/test_train_prereg_selection.py": 3,
+              "tests/test_train_report.py": 1
+            }
+          },
+          {
+            "count": 2,
+            "source": "tests/test_train_pipeline.py:245 and :249",
+            "node": "test_visible_symbol_outputs_and_duplicates_are_refused"
+          }
+        ]
+      }
+    ],
+    "warning_log_excerpt": [
+      "2026-11-06T08:57:01.5320612Z =============================== warnings summary ===============================",
+      "2026-11-06T08:57:01.5321233Z tests/test_offline_bundle.py::test_rejects_duplicate_zip_entries",
+      "2026-11-06T08:57:01.5321776Z   /opt/hostedtoolcache/Python/3.12.16/x64/lib/python3.12/zipfile/__init__.py:1650: UserWarning: Duplicate name: 'payload/python/python.exe'",
+      "2026-11-06T08:57:01.5322282Z     return self._open_to_write(zinfo, force_zip64=force_zip64)",
+      "2026-11-06T08:57:01.5322612Z ",
+      "2026-11-06T08:57:01.5323053Z tests/test_tier_r_credited_replay.py::test_incomparable_effective_keys_rejected_by_actual_reader_before_ranking[keys0]",
+      "2026-11-06T08:57:01.5323904Z tests/test_tier_r_credited_replay.py::test_incomparable_effective_keys_rejected_by_actual_reader_before_ranking[keys1]",
+      "2026-11-06T08:57:01.5325056Z tests/test_tier_r_credited_replay.py::test_incomparable_effective_keys_rejected_by_actual_reader_before_ranking[keys2]",
+      "2026-11-06T08:57:01.5326053Z   /home/runner/work/patchtrace/patchtrace/tests/test_tier_r_credited_replay.py:40: LegacyOutputWarning: Legacy output directory is unverified: no successful report credit or transfer ownership",
+      "2026-11-06T08:57:01.5326750Z     train.load_outputs(tmp_path)",
+      "2026-11-06T08:57:01.5326897Z ",
+      "2026-11-06T08:57:01.5326983Z tests/test_train_lbl26.py: 2 warnings",
+      "2026-11-06T08:57:01.5327260Z tests/test_train_pipeline.py: 7 warnings",
+      "2026-11-06T08:57:01.5327624Z tests/test_train_prereg_selection.py: 3 warnings",
+      "2026-11-06T08:57:01.5327924Z tests/test_train_report.py: 1 warning",
+      "2026-11-06T08:57:01.5328516Z   /home/runner/work/patchtrace/patchtrace/tools/calibration/train.py:374: LegacyOutputWarning: Legacy output directory is unverified: no successful report credit or transfer ownership",
+      "2026-11-06T08:57:01.5329350Z     found = load_outputs(outputs_dir)",
+      "2026-11-06T08:57:01.5329489Z ",
+      "2026-11-06T08:57:01.5329686Z tests/test_train_pipeline.py::test_visible_symbol_outputs_and_duplicates_are_refused",
+      "2026-11-06T08:57:01.5330403Z   /home/runner/work/patchtrace/patchtrace/tests/test_train_pipeline.py:245: LegacyOutputWarning: Legacy output directory is unverified: no successful report credit or transfer ownership",
+      "2026-11-06T08:57:01.5331166Z     T.load_outputs(out)",
+      "2026-11-06T08:57:01.5331284Z ",
+      "2026-11-06T08:57:01.5331460Z tests/test_train_pipeline.py::test_visible_symbol_outputs_and_duplicates_are_refused",
+      "2026-11-06T08:57:01.5332363Z   /home/runner/work/patchtrace/patchtrace/tests/test_train_pipeline.py:249: LegacyOutputWarning: Legacy output directory is unverified: no successful report credit or transfer ownership",
+      "2026-11-06T08:57:01.5332938Z     T.load_outputs(out)",
+      "2026-11-06T08:57:01.5333048Z ",
+      "2026-11-06T08:57:01.5333416Z -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html"
+    ]
+  },
+  "source_identity": {
+    "base_sha": "f393bb68ddc11eabb95a6598aa6f86650bd9aa37",
+    "head_sha": "37b771300053e8872febead1fc384fea9126ae90",
+    "head_tree": "cdbab24d14295b4450cd0d3c744d76734c98a561",
+    "tested_ref": "refs/remotes/pull/247/merge",
+    "tested_merge_sha": "bfecc248af653d8c93d7bf3bf46a2121122c6d23",
+    "tested_merge_tree": "cdbab24d14295b4450cd0d3c744d76734c98a561",
+    "tested_merge_parents": [
+      "f393bb68ddc11eabb95a6598aa6f86650bd9aa37",
+      "37b771300053e8872febead1fc384fea9126ae90"
+    ],
+    "test_merge_tree_equals_head_tree": true,
+    "expected_integrated_tree": "cdbab24d14295b4450cd0d3c744d76734c98a561",
+    "test_merge_tree_equals_expected_integrated_tree": true,
+    "head_commit_url": "https://github.com/djshellshoxxx/patchtrace/commit/37b771300053e8872febead1fc384fea9126ae90",
+    "tested_merge_commit_url": "https://github.com/djshellshoxxx/patchtrace/commit/bfecc248af653d8c93d7bf3bf46a2121122c6d23",
+    "proof": "Checkout fetch and git log identify the merge commit; immutable Git commit objects independently give identical head and merge tree IDs. The merge parents are the requested base then requested head."
+  },
+  "validation_steps": [
+    {
+      "name": "Set up job",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 1
+    },
+    {
+      "name": "Run actions/checkout@v4",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 2
+    },
+    {
+      "name": "Run actions/setup-python@v5",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 3
+    },
+    {
+      "name": "Run sudo apt-get update && sudo apt-get install -y libegl1 libopengl0 libgl1",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 4
+    },
+    {
+      "name": "Run python -m pip install --only-binary=:all: -e '.[dev,search,rules]'",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 5
+    },
+    {
+      "name": "Run python -m pip check",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 6
+    },
+    {
+      "name": "protobuf equals the pin and runs the upb backend (SPEC-10b)",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 7
+    },
+    {
+      "name": "Run python -m pytest -q --junitxml=qa-results.xml",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 8
+    },
+    {
+      "name": "Run python -m ruff check src tests tools",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 9
+    },
+    {
+      "name": "BinExport worker memory cap measurement (SPEC-10b U7, non-gating)",
+      "status": "completed",
+      "conclusion": "skipped",
+      "number": 10
+    },
+    {
+      "name": "Run python tools/build_windows.py",
+      "status": "completed",
+      "conclusion": "skipped",
+      "number": 11
+    },
+    {
+      "name": "Frozen EXE headless smoke (A1-A4) and self-test",
+      "status": "completed",
+      "conclusion": "skipped",
+      "number": 12
+    },
+    {
+      "name": "Extract and run portable Windows ZIP outside checkout",
+      "status": "completed",
+      "conclusion": "skipped",
+      "number": 13
+    },
+    {
+      "name": "Install pinned NSIS compiler",
+      "status": "completed",
+      "conclusion": "skipped",
+      "number": 14
+    },
+    {
+      "name": "Build per-user Windows installer",
+      "status": "completed",
+      "conclusion": "skipped",
+      "number": 15
+    },
+    {
+      "name": "Install, launch, and uninstall the setup package",
+      "status": "completed",
+      "conclusion": "skipped",
+      "number": 16
+    },
+    {
+      "name": "Record this matrix leg's own result for the release notes",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 17
+    },
+    {
+      "name": "Run actions/upload-artifact@v4",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 18
+    },
+    {
+      "name": "Run actions/upload-artifact@v4",
+      "status": "completed",
+      "conclusion": "skipped",
+      "number": 19
+    },
+    {
+      "name": "Post Run actions/setup-python@v5",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 37
+    },
+    {
+      "name": "Post Run actions/checkout@v4",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 38
+    },
+    {
+      "name": "Complete job",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 39
+    }
+  ],
+  "qa_artifact": {
+    "id": 13489838041,
+    "name": "qa-Linux",
+    "size_in_bytes": 353375,
+    "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/artifacts/13489838041",
+    "archive_download_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/artifacts/13489838041/zip",
+    "expired": false,
+    "created_at": "2026-11-06T08:57:06Z",
+    "expires_at": "2027-02-04T08:23:41Z",
+    "updated_at": "2026-11-06T08:57:06Z",
+    "digest": "sha256:363ab1476615b42c9c952369ae0ccfd5e3dc4878897b9dd6a424faf1050a76b0",
+    "workflow_run": {
+      "id": 42187353481,
+      "repository_id": 1413730581,
+      "head_repository_id": 1413730581,
+      "head_branch": "integrate/continuation-20261106",
+      "head_sha": "37b771300053e8872febead1fc384fea9126ae90"
+    },
+    "browser_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/42187353481/artifacts/13489838041",
+    "contents_declared_by_upload_step": [
+      "qa-results.xml",
+      "qa-leg-result.txt"
+    ],
+    "downloaded": false,
+    "digest_confirmed_in_upload_log": true
+  },
+  "native_acceptance": {
+    "run_id": 42187353463,
+    "run_attempt": 1,
+    "event": "pull_request",
+    "head_sha": "37b771300053e8872febead1fc384fea9126ae90",
+    "status": "completed",
+    "conclusion": "success",
+    "updated_at": "2026-11-06T08:39:21Z",
+    "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/42187353463",
+    "completed_success_count": 5,
+    "total_jobs": 5,
+    "jobs": [
+      {
+        "id": 127790743477,
+        "name": "native (repro-plain-ghidriff)",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/42187353463/job/127790743477"
+      },
+      {
+        "id": 127790743685,
+        "name": "native (raw-cache-hit)",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/42187353463/job/127790743685"
+      },
+      {
+        "id": 127790743733,
+        "name": "native (patchtrace-clean)",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/42187353463/job/127790743733"
+      },
+      {
+        "id": 127790743860,
+        "name": "native (patchtrace-seeded-store-no-adjacent-pdb)",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/42187353463/job/127790743860"
+      },
+      {
+        "id": 127790743992,
+        "name": "native (patchtrace-seeded-store)",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/42187353463/job/127790743992"
+      }
+    ]
+  },
+  "other_qa_jobs_snapshot": [
+    {
+      "id": 127790743999,
+      "name": "qa (windows-latest)",
+      "status": "in_progress",
+      "conclusion": null,
+      "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/42187353481/job/127790743999"
+    },
+    {
+      "id": 127790744030,
+      "name": "qt-gate (ubuntu-latest, 20, 2/4)",
+      "status": "in_progress",
+      "conclusion": null,
+      "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/42187353481/job/127790744030"
+    },
+    {
+      "id": 127790744050,
+      "name": "qt-gate (ubuntu-latest, 20, 1/4)",
+      "status": "in_progress",
+      "conclusion": null,
+      "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/42187353481/job/127790744050"
+    },
+    {
+      "id": 127790744103,
+      "name": "qt-gate (windows-latest, 5, 1/1)",
+      "status": "in_progress",
+      "conclusion": null,
+      "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/42187353481/job/127790744103"
+    },
+    {
+      "id": 127790744150,
+      "name": "qt-gate (ubuntu-latest, 20, 4/4)",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/42187353481/job/127790744150"
+    },
+    {
+      "id": 127790744218,
+      "name": "qt-gate (ubuntu-latest, 20, 3/4)",
+      "status": "in_progress",
+      "conclusion": null,
+      "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/42187353481/job/127790744218"
+    },
+    {
+      "id": 127790745565,
+      "name": "release-gate",
+      "status": "completed",
+      "conclusion": "skipped",
+      "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/42187353481/job/127790745565"
+    }
+  ],
+  "qa_run_snapshot": {
+    "id": 42187353481,
+    "status": "in_progress",
+    "conclusion": null,
+    "head_sha": "37b771300053e8872febead1fc384fea9126ae90",
+    "updated_at": "2026-11-06T08:54:27Z",
+    "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/42187353481"
+  },
+  "live_acceptance_blocked": {
+    "line_count": 13,
+    "unique_line_count": 11,
+    "raw_log_lines": [
+      "2026-11-06T08:57:01.5334541Z LIVE ACCEPTANCE BLOCKED: bindiff (PATCHTRACE_BINDIFF is not set: no BinDiff installed or provisioned on this machine)",
+      "2026-11-06T08:57:01.5335364Z LIVE ACCEPTANCE BLOCKED: buildenv-diec (PATCHTRACE_DIEC is not set to an existing file (run tools/provision_intel_tools.py))",
+      "2026-11-06T08:57:01.5335968Z LIVE ACCEPTANCE BLOCKED: buildenv-diec (PATCHTRACE_DIEC is not set to an existing file (run tools/provision_intel_tools.py))",
+      "2026-11-06T08:57:01.5336765Z LIVE ACCEPTANCE BLOCKED: capa-pairs-api (PATCHTRACE_CAPA is not set to an existing file (run tools/provision_intel_tools.py))",
+      "2026-11-06T08:57:01.5337446Z LIVE ACCEPTANCE BLOCKED: capa-pairs-move (tests/capa_pairs_pe.py (capa-move pair builder) is absent, so the live move leg cannot run)",
+      "2026-11-06T08:57:01.5338384Z LIVE ACCEPTANCE BLOCKED: intel-tools-capa (PATCHTRACE_CAPA is not set to an existing file (run tools/provision_intel_tools.py))",
+      "2026-11-06T08:57:01.5339256Z LIVE ACCEPTANCE BLOCKED: intel-tools-floss (PATCHTRACE_FLOSS is not set to an existing file (run tools/provision_intel_tools.py))",
+      "2026-11-06T08:57:01.5340088Z LIVE ACCEPTANCE BLOCKED: intel-tools-diec (PATCHTRACE_DIEC is not set to an existing file (run tools/provision_intel_tools.py))",
+      "2026-11-06T08:57:01.5340896Z LIVE ACCEPTANCE BLOCKED: intel-tools-floss (PATCHTRACE_FLOSS is not set to an existing file (run tools/provision_intel_tools.py))",
+      "2026-11-06T08:57:01.5341727Z LIVE ACCEPTANCE BLOCKED: strings-floss-static (PATCHTRACE_FLOSS is not set to an existing file (run tools/provision_intel_tools.py))",
+      "2026-11-06T08:57:01.5342554Z LIVE ACCEPTANCE BLOCKED: strings-floss-decode (PATCHTRACE_FLOSS is not set to an existing file (run tools/provision_intel_tools.py))",
+      "2026-11-06T08:57:01.5343534Z LIVE ACCEPTANCE BLOCKED: tier-r-mingw-gcc (mingw-gcc: missing mingw-gcc (not installed (not on PATH)))",
+      "2026-11-06T08:57:01.5344267Z LIVE ACCEPTANCE BLOCKED: tier-r-msvc (profile msvc builds only on a Windows host (this host is posix))"
+    ],
+    "meaning": "These live acceptance checks are explicitly blocked by unavailable tools, an absent pair builder, or host requirements. A successful QA job does not establish these live acceptance paths passed."
+  },
+  "runner_action_warnings": [
+    {
+      "message": "(node:2183) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.",
+      "occurrences": 1
+    },
+    {
+      "message": "(node:13991) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.",
+      "occurrences": 1
+    },
+    {
+      "message": "(node:13991) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.",
+      "occurrences": 1
+    },
+    {
+      "message": "(node:14003) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.",
+      "occurrences": 1
+    },
+    {
+      "message": "##[warning]Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/setup-python@v5, actions/upload-artifact@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/",
+      "occurrences": 1
+    }
+  ],
+  "raw_log_excerpts": [
+    "2026-11-06T08:25:22.8295002Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +bfecc248af653d8c93d7bf3bf46a2121122c6d23:refs/remotes/pull/247/merge",
+    "2026-11-06T08:25:24.2044070Z [command]/usr/bin/git checkout --progress --force refs/remotes/pull/247/merge",
+    "2026-11-06T08:25:24.4220265Z Note: switching to 'refs/remotes/pull/247/merge'.",
+    "2026-11-06T08:25:24.4224383Z HEAD is now at bfecc24 Merge 37b771300053e8872febead1fc384fea9126ae90 into f393bb68ddc11eabb95a6598aa6f86650bd9aa37",
+    "2026-11-06T08:25:24.4299632Z bfecc248af653d8c93d7bf3bf46a2121122c6d23",
+    "2026-11-06T08:25:24.5751265Z Successfully set up CPython (3.12.16)",
+    "2026-11-06T08:26:02.8035053Z No broken requirements found.",
+    "2026-11-06T08:26:02.8954308Z protobuf pin=7.36.2 installed=7.36.2 backend=upb",
+    "2026-11-06T08:26:02.9064638Z ##[group]Run python -m pytest -q --junitxml=qa-results.xml",
+    "2026-11-06T08:57:01.5344879Z 20372 passed, 52 skipped, 6 xfailed, 19 warnings in 1856.06s (0:30:56)",
+    "2026-11-06T08:57:05.3173891Z All checks passed!",
+    "2026-11-06T08:57:06.5831471Z SHA256 digest of uploaded artifact zip is 363ab1476615b42c9c952369ae0ccfd5e3dc4878897b9dd6a424faf1050a76b0",
+    "2026-11-06T08:57:07.0229642Z Artifact qa-Linux.zip successfully finalized. Artifact ID 13489838041"
+  ],
+  "raw_log": {
+    "encoding": "UTF-8",
+    "length_characters": 78033,
+    "byte_length": 79155,
+    "sha256": "54d6bb40310e801d831147fde6e48cdf6dbe76afc13410693444f40bcd47da8d",
+    "retention": "Full raw log was read through GitHub connector; only compact excerpts and the decoded-content digest are retained here."
+  },
+  "scope": {
+    "conclusion": "Hosted Linux full suite and Ruff passed on the exact integrated source tree; native acceptance workflow is also successful at the same head.",
+    "remaining_observed_gates": "Windows full QA and Windows Qt plus Ubuntu Qt shards 1/4, 2/4 and 3/4 were still in progress in the jobs snapshot; Ubuntu Qt shard 4/4 passed. Release-gate was skipped.",
+    "windows_packaging": "Windows standalone build/smoke/portable ZIP/installer steps were skipped in this Linux job, not passed by it.",
+    "local_runs": "This is independent hosted evidence. The concurrently running local #247 full suite remains a separate record; parent reported it at about 83% with one failure marker when assigning this task. No final local conclusion was inferred. The completed local #246 full suite remains non-green and is preserved in its separate receipt.",
+    "no_merge_eligibility_claim": "This receipt alone does not establish all PR gates or live external-tool acceptance are complete."
+  },
+  "mutations": {
+    "repository_files": false,
+    "git_refs": false,
+    "pr_metadata": false,
+    "test_replays": false,
+    "evidence_receipt_only": true
+  }
+}

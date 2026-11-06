@@ -1630,3 +1630,15 @@ diff cases taking 42.6% of that failed run; no normal-path speedup is claimed.
 The continuation includes actual #246 ancestry and preserves all source refs.
 Whole Ruff/schema/diff checks pass. Combined current-source full and hosted
 qualification remain separate. [Evidence and limits](qa/continuation-20261106.md).
+
+
+## [CONTINUATION-QUALIFICATION-20261106:completed-local-results]
+
+Frozen #247 local full result: **1 failed, 20,284 passed, 139 skipped, 6 xfailed, 18 warnings in 3356.58s**. Only AF_UNIX construction was denied; timing/GUI controls passed. Hosted Ubuntu separately passed **20,372 tests**. The original #246 five-failure run remains preserved; one unchanged three-control timing follow-up passed without establishing cause. Both #244/#246 hosted full suites passed.
+
+Fully qualified #245 merged normally into #205 as `6095f702`; #205 is ready. Forward #248 retains the accepted parent, exact reviewed tree and 54-pass evidence. Source branches remain intact. At the 09:20 UTC checkpoint, current-head hosted gates and parent Sonar dispositions remain open; main is `d02b94bc`. Exact raw evidence and five reconciled R8 documents are retained. [Completed qualification and limits](qa/continuation-qualification-20261106.md).
+
+
+## [SUBPROCESS-ACCEPTED-20261106]
+
+At 09:29:12 UTC, #246 merged normally into main as `dc53b529560453e84cf45e356a40432ff3fc6725`, after all applicable source checks including both Linux smoke legs passed. The merge tree equals the qualified source; its branch remains at `c804e4d9`. Earlier local failures remain in the evidence. Parent application promotion must recheck its merge tree against this new main. [Acceptance and preserved results](qa/continuation-qualification-20261106.md).

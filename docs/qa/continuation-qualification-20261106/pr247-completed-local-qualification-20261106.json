@@ -1,0 +1,265 @@
+{
+  "format": "patchtrace-completed-local-qualification-review/1",
+  "reviewed_at_utc": "2026-11-06T09:22:38.498014+00:00",
+  "pr": 247,
+  "status": "completed non-green; original full-run result retained",
+  "source": {
+    "local_head": "75903db30b8f66e6426d3f5674b1d84fe2b190c3",
+    "published_equivalent": "37b771300053e8872febead1fc384fea9126ae90",
+    "tree": "cdbab24d14295b4450cd0d3c744d76734c98a561",
+    "worktree": "/workspace/scratch/c4fbe5e6f72c/pt-continuation",
+    "before_head": "75903db30b8f66e6426d3f5674b1d84fe2b190c3",
+    "before_tree": "cdbab24d14295b4450cd0d3c744d76734c98a561",
+    "before_status": "",
+    "after_head": "75903db30b8f66e6426d3f5674b1d84fe2b190c3",
+    "after_tree": "cdbab24d14295b4450cd0d3c744d76734c98a561",
+    "after_status": "",
+    "current_head_verified": "75903db30b8f66e6426d3f5674b1d84fe2b190c3",
+    "current_tree_verified": "cdbab24d14295b4450cd0d3c744d76734c98a561",
+    "current_status": "",
+    "observation_scope": "Start and end receipts plus independent current Git inspection agree; no source changes made by this review.",
+    "selected_test_blobs": {
+      "tests/test_network_consent_guard.py": "e83b23ae12bc53bc24acac8441e0dc3482a29996",
+      "tests/network_guard.py": "f686e57af5a6f431f81ab7ecceab1e846cb6e4fd",
+      "tests/test_codetext_tokens.py": "5180a37a39914e2ffc8891a6db2edf937059380f",
+      "tests/test_pilot_properties.py": "d9df1b5243c563b64694050c0140e1dbd69d7c23",
+      "tests/test_ui_related_panel.py": "e31f5c3d65c77fbbf263af9f4de8cb3ec28d53ab"
+    }
+  },
+  "run": {
+    "command": [
+      "/workspace/scratch/e6b4398e92df/pt-venv/bin/python",
+      "-m",
+      "pytest",
+      "-q",
+      "--junitxml=/workspace/scratch/c4fbe5e6f72c/continuation-full/pytest.xml"
+    ],
+    "environment": {
+      "PYTEST_ADDOPTS": "unset",
+      "PYTHONPATH": "src",
+      "QT_QPA_PLATFORM": "offscreen",
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "start_utc": "2026-11-06T08:22:54.199479+00:00",
+    "end_utc": "2026-11-06T09:19:00.614932+00:00",
+    "returncode": 1,
+    "wrapper_seconds": 3366.415,
+    "pytest_summary_seconds": 3356.58,
+    "junit_suite_seconds": 3355.624
+  },
+  "counts": {
+    "failed": 1,
+    "passed": 20284,
+    "skipped": 139,
+    "xfailed": 6,
+    "errors": 0,
+    "warnings": 18,
+    "junit_cases": 20430,
+    "junit_skipped": 145,
+    "collection_skip_records": 3,
+    "non_collection_testcase_records": 20427,
+    "reconciliation": "145 JUnit skipped records = 139 pytest skips (including three collection skips) + six expected failures."
+  },
+  "summary": "1 failed, 20284 passed, 139 skipped, 6 xfailed, 18 warnings in 3356.58s (0:55:56)",
+  "failure": {
+    "classname": "tests.test_network_consent_guard",
+    "name": "test_a_local_unix_socket_is_not_network",
+    "nodeid": "tests/test_network_consent_guard.py::test_a_local_unix_socket_is_not_network",
+    "junit_whole_test_seconds": 0.002,
+    "kind": "failed",
+    "message": "PermissionError: [Errno 1] Operation not permitted",
+    "trace": "tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-45/test_a_local_unix_socket_is_no0')\n\n    @pytest.mark.skipif(not hasattr(socket, 'AF_UNIX'), reason='this platform has no AF_UNIX sockets')\n    def test_a_local_unix_socket_is_not_network(tmp_path):\n        path = str(tmp_path / 's')\n>       with socket.socket(socket.AF_UNIX) as server, socket.socket(socket.AF_UNIX) as client:\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n\ntests/test_network_consent_guard.py:147: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nself = <socket.socket fd=-1, family=0, type=0, proto=0>\nfamily = <AddressFamily.AF_UNIX: 1>, type = <SocketKind.SOCK_STREAM: 1>\nproto = 0, fileno = None\n\n    def __init__(self, family=-1, type=-1, proto=-1, fileno=None):\n        # For user code address family and type values are IntEnum members, but\n        # for the underlying _socket.socket they're just integers. The\n        # constructor of _socket.socket converts the given argument to an\n        # integer automatically.\n        if fileno is None:\n            if family == -1:\n                family = AF_INET\n            if type == -1:\n                type = SOCK_STREAM\n            if proto == -1:\n                proto = 0\n>       _socket.socket.__init__(self, family, type, proto, fileno)\nE       PermissionError: [Errno 1] Operation not permitted\n\n/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/socket.py:233: PermissionError",
+    "phase": "First AF_UNIX socket construction, before bind/listen and before this test enters NetworkGuard.",
+    "source_lines": {
+      "socket_construction": 147,
+      "bind": 148,
+      "listen": 149,
+      "NetworkGuard_entry": 150
+    },
+    "disposition": "The runner returned EPERM from the socket constructor. The guarded connection assertions were not reached. Preserve the failed result; no permission override, skip, or product-defect inference is made."
+  },
+  "requested_controls": [
+    {
+      "label": "Tokenizer char flood",
+      "nodeid": "tests/test_codetext_tokens.py::test_hostile_text_is_covered_within_a_loose_time_bound[char-flood-c]",
+      "status": "passed",
+      "junit_whole_test_seconds": 0.072,
+      "assertion_scope": "time.perf_counter interval < 3.0 seconds, plus exact coverage assertion",
+      "internal_measured_interval_reported": false
+    },
+    {
+      "label": "Tokenizer comment openers",
+      "nodeid": "tests/test_codetext_tokens.py::test_hostile_text_is_covered_within_a_loose_time_bound[comment-openers-asm]",
+      "status": "passed",
+      "junit_whole_test_seconds": 0.941,
+      "assertion_scope": "time.perf_counter interval < 3.0 seconds, plus exact coverage assertion",
+      "internal_measured_interval_reported": false
+    },
+    {
+      "label": "Pilot 5000 pairs by 8 CVEs",
+      "nodeid": "tests/test_pilot_properties.py::test_5000_pairs_by_8_cves_localize_within_the_5_second_target",
+      "status": "passed",
+      "junit_whole_test_seconds": 10.114,
+      "assertion_scope": "time.process_time interval <= 5.0 seconds; CVE count/status/limits and serialization assertions also complete",
+      "internal_measured_interval_reported": false
+    },
+    {
+      "label": "GUI 100000 rows",
+      "nodeid": "tests/test_ui_related_panel.py::test_one_hundred_thousand_rows_are_read_in_pages_and_cost_what_they_show",
+      "status": "passed",
+      "junit_whole_test_seconds": 6.562,
+      "assertion_scope": "Existing 30000 ms synchronization wait; 100000 rows, 200 queries of 500 rows, correct subject and ready state asserted",
+      "internal_measured_interval_reported": false
+    }
+  ],
+  "independent_control_review": "A second read-only reviewer confirmed all four passing nodes/durations and the constructor-before-guard failure order. The guard patches connect/send and lookup activity, not socket construction.",
+  "timing_interpretation": "JUnit times cover whole tests and are not the internal tokenizer wall-clock or pilot CPU-time intervals. The pilot passed its <=5.0 CPU assertion despite a 10.114-second whole-test duration. No cause is inferred for timing differences from earlier runs.",
+  "warning_summary": {
+    "duplicate_zip_entry_warning": 1,
+    "legacy_unverified_output_warnings": 17,
+    "qualification": "Legacy output warnings explicitly do not confer successful report credit or transfer ownership."
+  },
+  "optional_live": {
+    "acceptance": "Explicitly blocked live checks remain unqualified; this local full run is not native or release acceptance.",
+    "reported_blockers": [
+      {
+        "id": "bindiff",
+        "reason": "PATCHTRACE_BINDIFF is not set: no BinDiff installed or provisioned on this machine",
+        "reported_occurrences": 1
+      },
+      {
+        "id": "buildenv-diec",
+        "reason": "PATCHTRACE_DIEC is not set to an existing file (run tools/provision_intel_tools.py)",
+        "reported_occurrences": 2
+      },
+      {
+        "id": "capa-pairs-api",
+        "reason": "PATCHTRACE_CAPA is not set to an existing file (run tools/provision_intel_tools.py)",
+        "reported_occurrences": 1
+      },
+      {
+        "id": "capa-pairs-move",
+        "reason": "tests/capa_pairs_pe.py (capa-move pair builder) is absent, so the live move leg cannot run",
+        "reported_occurrences": 1
+      },
+      {
+        "id": "intel-tools-capa",
+        "reason": "PATCHTRACE_CAPA is not set to an existing file (run tools/provision_intel_tools.py)",
+        "reported_occurrences": 1
+      },
+      {
+        "id": "intel-tools-diec",
+        "reason": "PATCHTRACE_DIEC is not set to an existing file (run tools/provision_intel_tools.py)",
+        "reported_occurrences": 1
+      },
+      {
+        "id": "intel-tools-floss",
+        "reason": "PATCHTRACE_FLOSS is not set to an existing file (run tools/provision_intel_tools.py)",
+        "reported_occurrences": 2
+      },
+      {
+        "id": "mutations-clang",
+        "reason": "not installed (not on PATH)",
+        "reported_occurrences": 46
+      },
+      {
+        "id": "strings-floss-decode",
+        "reason": "PATCHTRACE_FLOSS is not set to an existing file (run tools/provision_intel_tools.py)",
+        "reported_occurrences": 1
+      },
+      {
+        "id": "strings-floss-static",
+        "reason": "PATCHTRACE_FLOSS is not set to an existing file (run tools/provision_intel_tools.py)",
+        "reported_occurrences": 1
+      },
+      {
+        "id": "tier-r-mingw-gcc",
+        "reason": "mingw-gcc: missing mingw-gcc (not installed (not on PATH)), llvm-dwarfdump (not installed (not on PATH)), llvm-objdump (not installed (not on PATH)), llvm-nm (not installed (not on PATH)), llvm-strip (not installed (not on PATH))",
+        "reported_occurrences": 1
+      },
+      {
+        "id": "tier-r-msvc",
+        "reason": "profile msvc builds only on a Windows host (this host is posix)",
+        "reported_occurrences": 1
+      },
+      {
+        "id": "tier-r-msvc-free",
+        "reason": "msvc-free: missing clang (not installed (not on PATH)), lld-link (not installed (not on PATH)), llvm-pdbutil (not installed (not on PATH)), llvm-objdump (not installed (not on PATH)), llvm-nm (not installed (not on PATH)), llvm-strip (not installed (not on PATH))",
+        "reported_occurrences": 37
+      }
+    ],
+    "additional_skip_limits": [
+      "Three workflow modules were collection-skipped because yaml is absent.",
+      "Other skips include unavailable optional Python validation/site dependencies, exact producer source, platform-only controls, Linux unshare --net, and opt-in checks."
+    ],
+    "collection_skips": [
+      {
+        "name": "tests.test_backend_bundle_workflow",
+        "detail": "('/workspace/scratch/c4fbe5e6f72c/pt-continuation/tests/test_backend_bundle_workflow.py', 11, \"Skipped: could not import 'yaml': No module named 'yaml'\")"
+      },
+      {
+        "name": "tests.test_unified_corpus_workflow",
+        "detail": "('/workspace/scratch/c4fbe5e6f72c/pt-continuation/tests/test_unified_corpus_workflow.py', 13, \"Skipped: could not import 'yaml': No module named 'yaml'\")"
+      },
+      {
+        "name": "tests.test_unified_live_workflow",
+        "detail": "('/workspace/scratch/c4fbe5e6f72c/pt-continuation/tests/test_unified_live_workflow.py', 12, \"Skipped: could not import 'yaml': No module named 'yaml'\")"
+      }
+    ],
+    "expected_failures": [
+      {
+        "reason": "CODEX-14",
+        "count": 1
+      },
+      {
+        "reason": "CODEX-1",
+        "count": 1
+      },
+      {
+        "reason": "CODEX-5",
+        "count": 1
+      },
+      {
+        "reason": "CODEX-6",
+        "count": 1
+      },
+      {
+        "reason": "BLOCKED: llvm-pdbutil is not installed on this runner",
+        "count": 1
+      },
+      {
+        "reason": "BLOCKED: no --ghidra-dir given",
+        "count": 1
+      }
+    ]
+  },
+  "artifacts": {
+    "started.json": {
+      "path": "/workspace/scratch/c4fbe5e6f72c/continuation-full/started.json",
+      "bytes": 592,
+      "sha256": "a94ba59ff8aa12e354200e1fbf46b6ef999b7daeab2b8c296953914c04e85837"
+    },
+    "result.json": {
+      "path": "/workspace/scratch/c4fbe5e6f72c/continuation-full/result.json",
+      "bytes": 1500,
+      "sha256": "c548970d3bccea6637fb297c3f676faaee44b62e0dbd9e329cb468ae756cd578"
+    },
+    "pytest.log": {
+      "path": "/workspace/scratch/c4fbe5e6f72c/continuation-full/pytest.log",
+      "bytes": 43168,
+      "sha256": "ce41380945b1cff7ceed9b4e45276c3a92c99d7893e4b03a7bed3d84ee97f290"
+    },
+    "pytest.xml": {
+      "path": "/workspace/scratch/c4fbe5e6f72c/continuation-full/pytest.xml",
+      "bytes": 2833117,
+      "sha256": "17b1ca01e4e734b273e0244101f7922e6d148201a6e8daaba3ceaf702400cbd0"
+    }
+  },
+  "actions": {
+    "tests_run_by_review": 0,
+    "source_edits": 0,
+    "remote_actions": 0,
+    "new_whole_suites": 0,
+    "root_timing_replay": "Separately owned by root on unchanged #246; not included or duplicated here."
+  }
+}

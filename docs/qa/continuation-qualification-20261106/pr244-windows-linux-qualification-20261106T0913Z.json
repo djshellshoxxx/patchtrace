@@ -1,0 +1,246 @@
+{
+  "repository": "djshellshoxxx/patchtrace",
+  "pr": 244,
+  "source": {
+    "sha": "f393bb68ddc11eabb95a6598aa6f86650bd9aa37",
+    "tree": "0539676fcb23b6225ffc395b645bf561f0ea1491"
+  },
+  "written_at_utc": "2026-11-06 09:22:40 UTC",
+  "observation_window_utc": {
+    "start_utc": "2026-11-06T09:13:47Z",
+    "end_utc": "2026-11-06T09:17:21Z"
+  },
+  "qa_run_id": 42175119317,
+  "qa_run_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/42175119317",
+  "tested_merge": {
+    "windows": {
+      "sha": "206cf394e06be37517112e9b76754260611813cd",
+      "tree": "0539676fcb23b6225ffc395b645bf561f0ea1491",
+      "parents": [
+        "ccfe175d44a70947203c75bbd033a9a9e2633f0f",
+        "f393bb68ddc11eabb95a6598aa6f86650bd9aa37"
+      ],
+      "source_tree_equal": true,
+      "checkout_log_line": "2026-11-06T08:14:23.3948219Z 206cf394e06be37517112e9b76754260611813cd",
+      "api_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/git/commits/206cf394e06be37517112e9b76754260611813cd"
+    },
+    "linux": {
+      "sha": "206cf394e06be37517112e9b76754260611813cd",
+      "tree": "0539676fcb23b6225ffc395b645bf561f0ea1491",
+      "parents": [
+        "ccfe175d44a70947203c75bbd033a9a9e2633f0f",
+        "f393bb68ddc11eabb95a6598aa6f86650bd9aa37"
+      ],
+      "source_tree_equal": true,
+      "checkout_log_line": "2026-11-06T08:34:27.8855821Z 206cf394e06be37517112e9b76754260611813cd",
+      "api_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/git/commits/206cf394e06be37517112e9b76754260611813cd"
+    }
+  },
+  "complete_suites": {
+    "windows": {
+      "job_id": 127751698572,
+      "completed_log_utc": "2026-11-06T09:06:47.6710718Z",
+      "passed": 20264,
+      "skipped": 94,
+      "xfailed": 5,
+      "warnings": 19,
+      "duration_seconds": 3092.3,
+      "raw_summary_line": "2026-11-06T09:06:47.6710718Z 20264 passed, 94 skipped, 5 xfailed, 19 warnings in 3092.30s (0:51:32)"
+    },
+    "linux": {
+      "job_id": 127751698540,
+      "completed_log_utc": "2026-11-06T09:06:04.5306529Z",
+      "passed": 20305,
+      "skipped": 52,
+      "xfailed": 6,
+      "warnings": 19,
+      "duration_seconds": 1870.22,
+      "raw_summary_line": "2026-11-06T09:06:04.5306529Z 20305 passed, 52 skipped, 6 xfailed, 19 warnings in 1870.22s (0:31:10)"
+    }
+  },
+  "windows_qualification_steps": [
+    {
+      "number": 6,
+      "name": "Run python -m pip check",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "number": 7,
+      "name": "protobuf equals the pin and runs the upb backend (SPEC-10b)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "number": 8,
+      "name": "Run python -m pytest -q --junitxml=qa-results.xml",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "number": 9,
+      "name": "Run python -m ruff check src tests tools",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "number": 10,
+      "name": "BinExport worker memory cap measurement (SPEC-10b U7, non-gating)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "number": 11,
+      "name": "Run python tools/build_windows.py",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "number": 12,
+      "name": "Frozen EXE headless smoke (A1-A4) and self-test",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "number": 13,
+      "name": "Extract and run portable Windows ZIP outside checkout",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "number": 14,
+      "name": "Install pinned NSIS compiler",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "number": 15,
+      "name": "Build per-user Windows installer",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "number": 16,
+      "name": "Install, launch, and uninstall the setup package",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "number": 17,
+      "name": "Record this matrix leg's own result for the release notes",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "number": 18,
+      "name": "Run actions/upload-artifact@v4",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "number": 19,
+      "name": "Run actions/upload-artifact@v4",
+      "status": "completed",
+      "conclusion": "success"
+    }
+  ],
+  "installer_log_line": "2026-11-06T09:10:01.2601047Z Installer registration, Qt/runtime checks, frozen self-test, non-destructive uninstall passed.",
+  "candidate_artifact": {
+    "id": 13491065612,
+    "name": "PatchTrace-windows-x64",
+    "size_in_bytes": 131687358,
+    "digest": "sha256:3c117e5702bf072cf37d6c36d5c3204850d19e6fb85bf7ddca0fa1d02c981da7",
+    "expired": false,
+    "created_at": "2026-11-06T09:10:07Z",
+    "expires_at": "2027-02-04T06:32:51Z",
+    "source_head": "f393bb68ddc11eabb95a6598aa6f86650bd9aa37",
+    "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/42175119317/artifacts/13491065612"
+  },
+  "artifact_upload_digest_log_line": "2026-11-06T09:10:07.8127299Z SHA256 digest of uploaded artifact zip is 3c117e5702bf072cf37d6c36d5c3204850d19e6fb85bf7ddca0fa1d02c981da7",
+  "artifact_integrity_scope": "Artifact API metadata and job-upload SHA256 agree; artifact archive was not downloaded or independently rehashed in this review.",
+  "qa_jobs_at_initial_snapshot": [
+    {
+      "id": 127751698300,
+      "name": "qt-gate (ubuntu-latest, 20, 3/4)",
+      "status": "completed",
+      "conclusion": "success",
+      "active_steps": []
+    },
+    {
+      "id": 127751698434,
+      "name": "qt-gate (ubuntu-latest, 20, 2/4)",
+      "status": "completed",
+      "conclusion": "success",
+      "active_steps": []
+    },
+    {
+      "id": 127751698514,
+      "name": "qt-gate (ubuntu-latest, 20, 4/4)",
+      "status": "completed",
+      "conclusion": "success",
+      "active_steps": []
+    },
+    {
+      "id": 127751698540,
+      "name": "qa (ubuntu-latest)",
+      "status": "completed",
+      "conclusion": "success",
+      "active_steps": []
+    },
+    {
+      "id": 127751698572,
+      "name": "qa (windows-latest)",
+      "status": "completed",
+      "conclusion": "success",
+      "active_steps": []
+    },
+    {
+      "id": 127751698587,
+      "name": "qt-gate (windows-latest, 5, 1/1)",
+      "status": "completed",
+      "conclusion": "success",
+      "active_steps": []
+    },
+    {
+      "id": 127751698696,
+      "name": "qt-gate (ubuntu-latest, 20, 1/4)",
+      "status": "in_progress",
+      "conclusion": null,
+      "active_steps": [
+        {
+          "number": 6,
+          "name": "Run python tools/qt_gate.py --repeat 20 --shard 1/4"
+        }
+      ]
+    },
+    {
+      "id": 127751699444,
+      "name": "release-gate",
+      "status": "completed",
+      "conclusion": "skipped",
+      "active_steps": []
+    }
+  ],
+  "workflow_runs_at_initial_snapshot": [
+    {
+      "id": 42175119351,
+      "name": "Native Windows Ghidriff acceptance",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 42175119317,
+      "name": "QA and Windows standalone",
+      "status": "in_progress",
+      "conclusion": null
+    }
+  ],
+  "actions": "Read-only API, raw hosted log and Git-object inspection. No tests, reruns, PR changes, branch changes, or artifact execution.",
+  "remaining_at_snapshot": [
+    "Qt Ubuntu 1/4 job 127751698696 in progress.",
+    "Downstream Linux package and Ubuntu 22.04/24.04 smoke stages were not yet materialized in the jobs snapshot.",
+    "This is a verified Windows candidate, not an all-gates or main-merge qualification."
+  ],
+  "feature_scope": "Contains #244 consolidated features; does not contain #247 product-only starting route.",
+  "supersedes_pending_receipt": "pr244-windows-pending-0901Z.json (retained as historical snapshot)"
+}
