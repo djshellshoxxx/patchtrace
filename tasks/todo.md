@@ -1158,3 +1158,9 @@ Full `QT_QPA_PLATFORM=offscreen python -m pytest -q` for this isolated native sl
 - [ ] Selectively reconcile remaining #183 docs and older unique work after source/behavior review; keep paid automation separate.
 
 [Exact source and execution plan](../docs/plans/branch-merge-plan-20261106.md).
+
+### 2026-11-06 N-way Windows recovery prerequisite
+
+- [x] Reproduce the CPython 3.12 pathname/descriptor change-time mismatch with real-file fault injection; retain pinned official source/blob evidence.
+- [x] Keep independent full metadata baselines and cross-view identity/size/mtime validation; six new controls preserve metadata-only refusal and prior evidence. Affected series tests: 47 passed; whole Ruff/diff clean.
+- [ ] Independent review, coordinator integration and native Windows QA of the resulting commit. Linux fault injection does not qualify Windows packaging or release acceptance.

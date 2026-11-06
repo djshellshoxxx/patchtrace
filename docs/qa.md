@@ -1570,3 +1570,15 @@ Verified all14 complete compressed/raw log receipts and exact unfinished status 
 ### [MERGE-20261106:branch-consolidation-readiness]
 
 Audited 242 remote branches and 112 open PRs against pinned main/#205/#218/#235. Isolated #235+#242+#243 source tree `ea48a7e087590fccffadb54e4414bd000f16838b` preserves the nine leaf-owned files and all other integration content. Root affected checks: 424 passed; independent overlapping controls: 42 passed; whole Ruff, diff hygiene and KBC schema drift checks pass. #204 was moved to ready-for-review at its unchanged head after fresh baseline/fix validation. Hosted smoke/review and integration Windows/scanner gates remain open. [Plan](plans/branch-merge-plan-20261106.md); [receipt](qa/branch-merge-readiness-20261106.md). No main merge or release acceptance is claimed.
+
+## N-way Windows recovery compatibility (2026-11-06)
+
+On frozen #205, hosted Windows CPython 3.12.10 reported five recovery failures.
+Pinned CPython source and a real-file fault probe identify incompatible pathname
+versus descriptor `st_ctime` meanings. Recovery now retains independent complete
+timestamp baselines while preserving cross-view device/inode/size/mtime checks,
+streamed exact bytes and owned-copy cleanup. New controls first produced two
+failures/four passes; corrected recovery/tolerance/series selection: **47 passed
+in 3.37 s**, whole Ruff/diff clean. Native Windows and exact integration gates
+remain pending. Source blobs, invariants and limits are recorded in
+`docs/qa/nway-windows-recovery-20261106.md`.
