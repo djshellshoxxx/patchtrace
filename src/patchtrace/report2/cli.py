@@ -52,11 +52,11 @@ def run(args, cancel) -> int:
         if cancel.is_set():
             emit(args, 'export', 'cancelled', None, [], '')
             return CANCELLED
-        extra = {}
-        if chosen.report_version == 2:
-            from .adapters import collect_from_service
-            extra = {'report_version': 2, 'redaction': chosen.profile, 'sections': collect_from_service(service)}
         try:
+            extra = {}
+            if chosen.report_version == 2:
+                from .adapters import collect_from_service
+                extra = {'report_version': 2, 'redaction': chosen.profile, 'sections': collect_from_service(service)}
             manifest = service.export_report(args.format, args.out, include_code=chosen.include_code,
                                              include_notes=chosen.include_notes, finding_ids=args.finding, **extra)
         except ExportError as exc:
