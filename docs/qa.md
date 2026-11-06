@@ -1500,3 +1500,15 @@ Reviewed38be184c merged at a84bf6d1. Five real preflight paths now permit absent
 ### Native provisioning / canonical normalizer identity — #222/#223
 
 Verified all14 complete compressed/raw log receipts and exact unfinished status for #222 dbebfee8; actual pinned headers compile, native oracle/link/CLI not yet executed. Source/dependencies/build cache provisioned with supported PCRE2 retry; quarantine unchanged. #223631b5e91 closes equivalent address spelling duplicate bypass with existing parse_address while preserving raw spelling and repeated-function refusal:14 baseline red/1pass, independent95pass. Latest integrated normalizer/binary/KB/lifecycle357passed33.26s; Ruff clean. Complete f33 suite still active; no exact updated-head full pass claimed.
+
+## N-way Windows recovery compatibility (2026-11-06)
+
+On frozen #205, hosted Windows CPython 3.12.10 reported five recovery failures.
+Pinned CPython source and a real-file fault probe identify incompatible pathname
+versus descriptor `st_ctime` meanings. Recovery now retains independent complete
+timestamp baselines while preserving cross-view device/inode/size/mtime checks,
+streamed exact bytes and owned-copy cleanup. New controls first produced two
+failures/four passes; corrected recovery/tolerance/series selection: **47 passed
+in 3.37 s**, whole Ruff/diff clean. Native Windows and exact integration gates
+remain pending. Source blobs, invariants and limits are recorded in
+`docs/qa/nway-windows-recovery-20261106.md`.
