@@ -21,6 +21,7 @@ TAIL_LIMIT = 16 * 1024
 RECEIPT_LIMIT = 8192
 RECEIPT_NAME = 'backend-execution.json'
 RECEIPT_WARNING = 'Backend execution receipt could not be saved; analysis status is unchanged.'
+UNOBSERVED = 'stage not yet observed'
 STARTING = 'starting Ghidra'
 _MARKERS = (
     ('starting ghidra', STARTING),
@@ -38,15 +39,15 @@ _MARKERS = (
     ('sorting functions', 'checking candidate function pairs'),
     ('starting esym lookups', 'enhancing function/symbol details'),
 )
-_STAGES = frozenset(stage for _, stage in _MARKERS)
+_STAGES = frozenset(stage for _, stage in _MARKERS) | {UNOBSERVED}
 _VERSION = re.compile(r'(?:[vV]?[0-9][A-Za-z0-9_.+-]*|[A-Fa-f0-9]{7,64})')
 _RUNTIMES = ('patchtrace', 'ghidriff', 'python', 'pyghidra', 'ghidra', 'jvm')
-_STOP_REASONS = frozenset({'cancelled', 'timeout', 'output-limit', 'output-check-failed'})
+_STOP_REASONS = frozenset({'cancelled', 'timeout', 'output-limit', 'output-check-failed', 'unsafe-output-path'})
 
 
-def stage_from_tail(text: str, previous: str = STARTING) -> str:
+def stage_from_tail(text: str, previous: str = UNOBSERVED) -> str:
     """Pick the latest recognized marker in a bounded snapshot, preserving a known stage otherwise."""
-    stage = previous if previous in _STAGES else STARTING
+    stage = previous if previous in _STAGES else UNOBSERVED
     tail = text[-TAIL_LIMIT:].lower()
     latest = (-1, 0)
     for marker, name in _MARKERS:
@@ -77,7 +78,7 @@ def _seconds(value: object) -> float:
 class BackendProgress:
     """Small per-process state, updated on the supervisor thread, containing no retained raw text."""
     timeout_seconds: int
-    stage: str = field(default=STARTING, init=False)
+    stage: str = field(default=UNOBSERVED, init=False)
     elapsed_seconds: float = field(default=0.0, init=False)
     last_output_elapsed_seconds: float | None = field(default=None, init=False)
     observed: bool = field(default=False, init=False)

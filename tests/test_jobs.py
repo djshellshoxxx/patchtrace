@@ -139,7 +139,8 @@ def test_completed_raw_is_unique_and_project_unchanged(fake_runtime):
     assert run.raw_path == path.relative_to(root).as_posix()
     assert run.raw_sha256 == hashlib.sha256(path.read_bytes()).hexdigest()
     assert project.model_dump_json() == original
-    assert [event.stage for event in events if event.stage not in {'analysis-progress', 'analysis-stage'}] == [
+    assert [event.stage for event in events
+            if event.stage not in {'analysis-progress', 'analysis-stage', 'analysis-stopped'}] == [
         'preflight', 'analysis', 'completed']
     path2, run2 = run_comparison(config, project, root, threading.Event(), events.append)
     assert path != path2 and run.id != run2.id

@@ -14,6 +14,8 @@ The supervisor thread delivers snapshots at most once per second during executio
 
 ## Backend observer and failure diagnostics
 
+Until a recognizable marker is observed, the stage is explicitly `stage not yet observed`; do not infer Ghidra startup from launch alone. Preserve the known `unsafe-output-path` stop reason in execution receipts rather than replacing it with a generic stop.
+
 A pure `backend_progress.py` module classifies a bounded log snapshot into a small fixed vocabulary: starting Ghidra, importing binaries, analyzing binaries, matching functions, preparing match data, checking candidate function pairs (the upstream message says "Sorting functions"), and enhancing function/symbol details. Unknown output preserves the last observed stage. Select the latest recognized marker in the snapshot. Never emit arbitrary source lines, function names, paths, credentials or percentages through the progress channel. An observed marker is informational and cannot mark a comparison complete.
 
 `backend.run_comparison` emits `JobEvent(stage='analysis-progress', message=...)` with a fixed-text summary of last observed stage, elapsed subprocess seconds, configured total limit and time since last output (or "no output yet"). Numeric progress stays null. Stage transitions may also emit a bounded fixed-text `analysis-stage` event for the log. The observer cannot fail the run or defeat cancellation. Existing bounded, fully redacted terminal log capture remains authoritative; there is no live forwarding of arbitrary child text.
@@ -25,6 +27,8 @@ Before an actual Ghidriff launch, write a best-effort bounded `backend-execution
 UTC receipt timestamps bracket the launch attempt and supervisor return, including cleanup; the monotonic execution duration excludes cleanup. A supervisor exception without a returned result leaves process outcome/duration unverified.
 
 ## Desktop
+
+Emit `analysis-stopped` immediately when subprocess supervision returns or raises, before subsequent receipt persistence, scratch cleanup or result validation. This is an observational lifecycle event, not successful comparison completion. It clears the stored subprocess summary so the ordinary job elapsed timer remains live during cleanup. Command-line listeners omit `analysis-progress` heartbeats while retaining stage changes, warnings and terminal events; a long run must not print a status line every second.
 
 Keep the worker-specific Qt relay in `ui_job_events.py`, preserving the existing `ui.py` seam-size ceiling. The relay owns no backend logic and forwards only events from the exact active worker on the GUI thread.
 

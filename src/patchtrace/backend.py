@@ -799,9 +799,11 @@ def run_comparison(config: BackendConfig, project: ComparisonProject, root: Path
                                      timeout_seconds=config.timeout_seconds,
                                      check_output=lambda: _output_error(raw), on_progress=observe)
             except BaseException:
+                event('analysis-stopped', 'Ghidriff process supervision ended.')
                 # A failed supervisor/spawn must not be presented as an observed process exit.
                 record_execution(supervision_error=True)
                 raise
+            event('analysis-stopped', 'Ghidriff process supervision ended.')
             progress.finish(result)
             record_execution(result)
             if config.retain_gzf and result.returncode == 0 and not result.reason and not cancel.is_set():

@@ -44,7 +44,7 @@ def test_real_ghidra_analysis_sequence_does_not_revert_to_startup():
 def test_stage_observer_handles_split_output_quiet_periods_and_unknown_lines():
     state = backend_progress.BackendProgress(7200)
     state.observe(snapshot('INFO Sorting funct', elapsed=2, last_output=2))
-    assert state.stage == 'starting Ghidra'
+    assert state.stage == 'stage not yet observed'
     state.observe(snapshot('INFO Sorting functions...', elapsed=3, last_output=3))
     assert state.stage == 'checking candidate function pairs'
     state.observe(snapshot('unrecognized secret ' * 2000, elapsed=1800, last_output=3))
@@ -58,10 +58,10 @@ def test_stage_observer_handles_split_output_quiet_periods_and_unknown_lines():
 def test_unknown_or_untrusted_output_cannot_supply_a_stage_or_success():
     state = backend_progress.BackendProgress(14400)
     state.observe(snapshot('token=private-token\nCompleted 72 at 100%\nSUCCESS: run complete', elapsed=4))
-    assert state.stage == 'starting Ghidra'
+    assert state.stage == 'stage not yet observed'
     assert 'no output yet' in state.summary()
     assert all(value not in state.summary() for value in ('private-token', '100%', 'SUCCESS', 'complete'))
-    assert backend_progress.stage_from_tail('x' * 20000, previous='private-stage') == 'starting Ghidra'
+    assert backend_progress.stage_from_tail('x' * 20000, previous='private-stage') == 'stage not yet observed'
 
 
 def test_old_markers_beyond_the_bounded_tail_do_not_replace_last_stage():
@@ -81,6 +81,89 @@ def write_result(argv, *, valid=True):
     (directory / 'result.ghidriff.json').write_text(
         json.dumps({'functions': {'added': [], 'deleted': [], 'modified': []}}) if valid else '{}',
         encoding='utf-8')
+
+
+@pytest.mark.parametrize('text', ['', 'Runtime wrapper output with no recognized marker'],
+                         ids=['silent', 'unrecognized-output'])
+def test_unobserved_stage_is_explicit_in_summary_timeout_and_receipt(fake_runtime, monkeypatch, text):  # noqa: F811
+    root, _package, project, config = fake_runtime
+    events = []
+
+    def runner(argv, **kwargs):
+        quarantine = Path(argv[argv.index('--output-path') + 1]).parent
+        assert read_receipt(quarantine)['last_observed_stage'] == 'stage not yet observed'
+        kwargs['on_progress'](snapshot(text, elapsed=5, last_output=1 if text else None))
+        return ProcessResult(-9, text, 'timeout', elapsed_seconds=3600,
+                             last_output_elapsed_seconds=1 if text else None)
+
+    monkeypatch.setattr(backend, 'run_process', runner)
+    path, run = backend.run_comparison(config, project, root, threading.Event(), events.append)
+    assert run.status == 'failed' and 'last observed stage: stage not yet observed' in run.error
+    assert read_receipt(path)['last_observed_stage'] == 'stage not yet observed'
+    live = [event for event in events if event.stage == 'analysis-progress']
+    assert live and all('stage not yet observed' in event.message for event in live)
+    assert all('starting Ghidra' not in event.message for event in live)
+    assert not any(event.stage == 'analysis-stage' for event in events)
+
+
+def test_unsafe_output_stop_reason_survives_real_supervision(fake_runtime, monkeypatch):  # noqa: F811
+    root, package, project, config = fake_runtime
+    config = replace(config, timeout_seconds=3)
+    (package / '__main__.py').write_text('import time\ntime.sleep(30)\n', encoding='utf-8')
+    monkeypatch.setattr(backend, '_output_error', lambda _raw: 'unsafe-output-path')
+    path, run = backend.run_comparison(config, project, root, threading.Event(), lambda _event: None)
+    assert run.status == 'failed' and 'unsafe or oversized JSON' in run.error
+    receipt = read_receipt(path)
+    assert receipt['process_state'] == 'stopped' and receipt['stop_reason'] == 'unsafe-output-path'
+
+
+@pytest.mark.parametrize('outcome', ['valid', 'invalid', 'timeout', 'exception'])
+def test_stopped_event_precedes_receipt_cleanup_and_output_validation(fake_runtime, monkeypatch, outcome):  # noqa: F811
+    root, _package, project, config = fake_runtime
+    order, events = [], []
+    write_receipt, remove_scratch, check_output = (backend._write_execution_receipt, backend._remove_scratch,
+                                                  backend._output_error)
+
+    def record(directory, document):
+        order.append('receipt:' + document['process_state'])
+        write_receipt(directory, document)
+
+    def cleanup(path):
+        order.append('cleanup')
+        return remove_scratch(path)
+
+    def validate(path):
+        order.append('validation')
+        return check_output(path)
+
+    def runner(argv, **kwargs):
+        kwargs['on_progress'](snapshot('Sorting functions...', elapsed=1, last_output=1))
+        order.append('supervision-ended')
+        if outcome == 'exception':
+            raise OSError('supervisor failed')
+        if outcome == 'timeout':
+            return ProcessResult(-9, '', 'timeout', elapsed_seconds=config.timeout_seconds)
+        write_result(argv, valid=outcome == 'valid')
+        return ProcessResult(0, '', elapsed_seconds=2, last_output_elapsed_seconds=1)
+
+    def observe(event):
+        events.append(event)
+        if event.stage == 'analysis-stopped':
+            order.append('analysis-stopped')
+
+    monkeypatch.setattr(backend, '_write_execution_receipt', record)
+    monkeypatch.setattr(backend, '_remove_scratch', cleanup)
+    monkeypatch.setattr(backend, '_output_error', validate)
+    monkeypatch.setattr(backend, 'run_process', runner)
+    _, run = backend.run_comparison(config, project, root, threading.Event(), observe)
+    assert run.status == ('completed' if outcome == 'valid' else 'failed')
+    last_state = 'unverified' if outcome == 'exception' else 'stopped'
+    assert order[:4] == ['receipt:launch-pending', 'supervision-ended', 'analysis-stopped',
+                         'receipt:' + last_state]
+    assert order.count('analysis-stopped') == 1 and order.index('analysis-stopped') < order.index('cleanup')
+    assert all(index > order.index('analysis-stopped') for index, item in enumerate(order) if item == 'validation')
+    stopped = next(event for event in events if event.stage == 'analysis-stopped')
+    assert stopped.message == 'Ghidriff process supervision ended.' and stopped.progress is None
 
 
 def test_timeout_reports_effective_budget_stage_and_retains_process_receipt(fake_runtime, monkeypatch):  # noqa: F811

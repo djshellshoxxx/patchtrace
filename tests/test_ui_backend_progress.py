@@ -93,12 +93,16 @@ def test_old_worker_cannot_update_replacement_job(view, qtbot, monkeypatch):
     assert view.logs.toPlainText() == before
 
 
-@pytest.mark.parametrize('stage', ['completed', 'failed', 'cancelled', 'identical', 'cache'])
+@pytest.mark.parametrize('stage', ['analysis-stopped', 'completed', 'failed', 'cancelled', 'identical', 'cache'])
 def test_budget_clears_before_normalization_or_other_work(view, qtbot, stage):
     hold_job(view, qtbot, progress(), JobEvent(run_id='test-run', stage=stage, message='Subprocess ended'))
     qtbot.waitUntil(lambda: 'Subprocess ended' in view.logs.toPlainText())
     view._elapsed()
     assert '7200' not in view.job_label.text()
+    before = view.job_label.text()
+    view._job_started -= 10
+    view._elapsed()
+    assert view.job_label.text() != before  # The ordinary job clock keeps moving during cleanup/normalization.
 
 
 def test_cancel_takes_precedence_over_progress(view, qtbot):

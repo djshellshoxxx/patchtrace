@@ -234,7 +234,8 @@ def test_retain_gzf_off_is_byte_identical_to_today(fake_runtime):  # noqa: F811
     assert set(run.settings) == {'timeout_seconds', 'allow_symbol_downloads', 'symbol_policy', 'ghidra_settings',
                                  'older_sha256', 'newer_sha256', 'python_version', 'pyghidra_version',
                                  'ghidra_version', 'java_runtime_version'}
-    assert [e.stage for e in events if e.stage not in {'analysis-progress', 'analysis-stage'}] == [
+    assert [e.stage for e in events
+            if e.stage not in {'analysis-progress', 'analysis-stage', 'analysis-stopped'}] == [
         'preflight', 'analysis', 'completed']
 
 

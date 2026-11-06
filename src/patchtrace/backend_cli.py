@@ -188,7 +188,8 @@ def _diagnose(args, cancel) -> int:
 
 
 def _event_printer(event) -> None:
-    print(f'selftest: {event.stage}: {event.message}', file=sys.stderr)
+    if event.stage != 'analysis-progress':
+        print(f'selftest: {event.stage}: {event.message}', file=sys.stderr)
 
 
 def _selftest(args, cancel) -> int:

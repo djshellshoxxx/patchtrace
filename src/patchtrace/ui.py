@@ -2895,7 +2895,7 @@ class MainWindow(QMainWindow):
             self.progress.setRange(0, 0)
             self._elapsed()
             return  # Heartbeats update status; they must not crowd out retained log messages.
-        if stage in {'completed', 'failed', 'cancelled', 'identical', 'cache'}:
+        if stage in {'analysis-stopped', 'completed', 'failed', 'cancelled', 'identical', 'cache'}:
             # Subsequent normalization/commit is outside the subprocess deadline.
             self._job_backend_status = None
             self._elapsed()
