@@ -1146,3 +1146,15 @@ Full `QT_QPA_PLATFORM=offscreen python -m pytest -q` for this isolated native sl
 
 - [x] Account #222 finite pinned-native provisioning evidence and #223 canonical function identity; verify14 complete raw-log receipts and357 combined focused passes.
 - [ ] Finish actual native API linkage/stock-red-corrected-green and distinct-byte/IO controls; optional control tooling remains separate pending verified source.
+
+### [MERGE-20261106:branch-consolidation-readiness]
+
+- [x] Inventory all 242 remote branches/112 open PRs; distinguish ancestry, patch equivalence and unresolved historical work.
+- [x] Stage and independently review #242/#243 onto #235 with exact blob preservation; 424 root/42 overlapping independent tests pass.
+- [x] Make #204 ready at unchanged `1229ca3b` and record hosted/local evidence.
+- [ ] Finish #204 Linux smoke and normal review; merge only through normal expected-head GitHub gates.
+- [ ] Qualify/publish the isolated current integration candidate; preserve #205/native ownership and original source PRs.
+- [ ] Repair and qualify the #205→#218→updated #235 promotion stages; keep Windows recovery and scanner findings explicit.
+- [ ] Selectively reconcile remaining #183 docs and older unique work after source/behavior review; keep paid automation separate.
+
+[Exact source and execution plan](../docs/plans/branch-merge-plan-20261106.md).

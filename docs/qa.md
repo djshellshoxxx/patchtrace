@@ -1566,3 +1566,7 @@ Reviewed38be184c merged at a84bf6d1. Five real preflight paths now permit absent
 ### Native provisioning / canonical normalizer identity — #222/#223
 
 Verified all14 complete compressed/raw log receipts and exact unfinished status for #222 dbebfee8; actual pinned headers compile, native oracle/link/CLI not yet executed. Source/dependencies/build cache provisioned with supported PCRE2 retry; quarantine unchanged. #223631b5e91 closes equivalent address spelling duplicate bypass with existing parse_address while preserving raw spelling and repeated-function refusal:14 baseline red/1pass, independent95pass. Latest integrated normalizer/binary/KB/lifecycle357passed33.26s; Ruff clean. Complete f33 suite still active; no exact updated-head full pass claimed.
+
+### [MERGE-20261106:branch-consolidation-readiness]
+
+Audited 242 remote branches and 112 open PRs against pinned main/#205/#218/#235. Isolated #235+#242+#243 source tree `ea48a7e087590fccffadb54e4414bd000f16838b` preserves the nine leaf-owned files and all other integration content. Root affected checks: 424 passed; independent overlapping controls: 42 passed; whole Ruff, diff hygiene and KBC schema drift checks pass. #204 was moved to ready-for-review at its unchanged head after fresh baseline/fix validation. Hosted smoke/review and integration Windows/scanner gates remain open. [Plan](plans/branch-merge-plan-20261106.md); [receipt](qa/branch-merge-readiness-20261106.md). No main merge or release acceptance is claimed.
