@@ -926,3 +926,9 @@ Done: dock with state matrix, consent, import, changes, copy, go to CVE. Open: r
 
 - [x] Reproduce three workflow source validation failures; preserve the standalone agent step as a byte-identical example outside executable workflow discovery.49static checks passed/3existingxfails; Ruff passed.
 - [ ] Exact-head integration/full/cross-OS CI. Existing paid automation proposals remain separate and unenabled by this repair.
+
+
+### Subprocess virtual-environment preservation (2026-11-06 UTC)
+
+- [x] Reproduce the protobuf/YARA-X isolation false failures and preserve the active interpreter entry point without changing any test assertion. Both complete affected files pass: 116 tests; independent review and Ruff pass.
+- [ ] Complete current-head hosted qualification and normal merge review. Preserve the separate AF_UNIX runner restriction and native/release gates. See `docs/qa/subprocess-venv-20261106.md`.

@@ -1255,3 +1255,15 @@ Independent credited-replay review approved source `5c26af904a28dd41aaacb3a60f98
 ## CI fragment discovery repair (2026-11-05)
 
 GitHub #191 Ubuntu QA job127522978541 completed with18743passes/47skips/7xfails and3failures, all caused by main's step-only `.github/workflows/openai-agents.yml` (missing workflow name/on/jobs/permissions/timeouts). Local unchanged baseline reproduces3failed/48passed/3existingxfails in workflow source checks. Preserve the fragment byte-for-byte under `.github/workflow-examples/openai-agents-step.yml`, with explanatory README, so only executable workflow definitions are discovered. Final focused source validation:49passed/3existingxfails; whole Ruff/diff hygiene pass; original bytes verified against5d504ff5. No new paid runner/trigger or competitor automation is enabled; #167/#170/#171/#186 remain separate review candidates. Whole/cross-OS acceptance remains pending on the resulting integration head.
+
+
+## Subprocess virtual-environment preservation (2026-11-06 UTC)
+
+On main `d02b94bc`, two subprocess isolation tests resolved the active interpreter
+symlink to a base Python without the installed protobuf/YARA-X dependencies.
+Both failures reproduced. Retaining `sys.executable`, as the production workers
+already do, passed both complete test files: **116 passed in 42.16 seconds**.
+No assertion, limit, environment filter or production code changed. Independent
+review, whole-tree Ruff, dependency consistency and diff hygiene passed. Full
+and hosted cross-platform qualification remain separate; the local AF_UNIX
+restriction is unchanged. [Detailed receipt](qa/subprocess-venv-20261106.md).
