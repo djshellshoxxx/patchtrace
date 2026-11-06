@@ -22,6 +22,7 @@ Listing of every file under `docs/specs/`, 2026-10-14. SPEC number and status co
 | [enrichment-hardening-backlog.md](enrichment-hardening-backlog.md) | SPEC-07h | partial | SPEC-07h: Enrichment hardening backlog (P1 items of the 2026-10-14 audit) |
 | [enrichment.md](enrichment.md) | SPEC-07 | partial | SPEC-07: Phase 2 enrichment — change signals, ranking, WIL, CVE context, cache |
 | [ghidriff-launcher-symbols.md](ghidriff-launcher-symbols.md) | SPEC-53 | draft | PatchTrace-owned Ghidriff launcher and symbol policy (SPEC-53) |
+| [ghidriff-timeout-progress.md](ghidriff-timeout-progress.md) | SPEC-01a | partial | Ghidriff timeout and progress diagnostics (SPEC-01a) |
 | [gui-framework.md](gui-framework.md) | SPEC-54 | partial | GUI framework: panel registry, projection, anchors, theme, tooltips and CLI extensions (SPEC-54) |
 | [gui-preflight-inspection.md](gui-preflight-inspection.md) | SPEC-26 (parent; parts A, C, E) | partial | Immediate next-build GUI and preliminary PE inspection requirements (SPEC-26 proposal) |
 | [kb-cve/31-A-contracts-identity.md](kb-cve/31-A-contracts-identity.md) | KBC-A (SPEC-34) | approved | SPEC-31-A: Canonical Contracts, Identity, Provenance and Compatibility |

@@ -13,11 +13,14 @@ Stable IDs are independent of filenames. Public interfaces in SPEC-01 and schema
 | runtime discovery | runtime_discovery.py | Bounded read-only local Python/Ghidra path candidate discovery (no execution or network) | stdlib | Injected filesystem/env and Qt setup prefill tests |
 | backend | backend.py | Discover configured dependencies; construct verified argv | contracts | External runtime config; fake executable |
 | jobs | jobs.py | Child lifecycle, log bounds, timeout/cancellation | backend | Job Object/process group; fake children |
+| backend progress | backend_progress.py | Fixed-vocabulary Ghidriff stage observation, bounded runtime diagnostics and timeout recovery text; no raw live-log forwarding | jobs progress snapshots, diagnostics, stdlib | Real-child timing controls plus pure hostile-log and backend receipt tests; see specs/ghidriff-timeout-progress.md |
+| CLI backend progress | cli_backend_progress.py | Per-comparison bounded stage deferral; no stderr writes from supervised observation callbacks; flush stages after process stop | contracts, stdlib | Blocked-writer supervision, bounded stage backlog, event order and existing CLI result/exit contracts |
 | evidence | evidence.py | Context selection, digest, evidence resolution | contracts | Pure exact references; forged IDs |
 | interpretation | interpretation.py | Prompt, strict responses, citation validation | evidence/providers | Result only, no project writes; fake responses |
 | providers | providers.py | Loopback Ollama and HTTPS OpenAI-compatible transports | stdlib | Session-only credentials; HTTP fixtures |
 | findings | service.py | Reviews, manual matches, notes, stale invalidation | contracts/persistence | Service owns project aggregate; transaction tests |
 | desktop | ui.py | Wizard/workspace/settings/context preview/evidence navigation | service/jobs | Main thread Qt; pytest-qt |
+| desktop job events | ui_job_events.py | Main-thread event relay bound to the exact active worker; reject stale queued events | PySide6.QtCore | Offscreen Qt progress/lifecycle tests; keep the existing ui.py seam limit |
 | reports | reports.py | JSON/Markdown/self-contained HTML and manifests | contracts | Atomic exports; injection fixtures |
 | diagnostics | diagnostics.py | Dependency status, bounded redacted logs and pure fixed-text Ghidriff exit classification | stdlib | No credentials; redaction tests |
 | samples | sample.py | Representative synthetic ordinary fix with explicit sample identity | contracts | Never masquerades as real analysis |

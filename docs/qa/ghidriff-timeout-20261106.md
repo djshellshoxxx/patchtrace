@@ -4,7 +4,7 @@ Reported: 2026-11-06. Status: **OPEN — user-reported failure; investigation an
 
 The owner's usual two-file comparison ended with `PT-BACKEND: analysis timed out; increase the configured timeout and retry`. Both initial binary analyses completed. The strongest performance lead is a structural correlator producing **2,161,955 entries**, followed by prolonged result processing. Extending the outer deadline is an available interim retry option; it does not establish that the underlying performance issue or incomplete decompilation is fixed.
 
-This record is based on the supplied `failure.txt`, `analysis.log`, and `ghidriff.log`, and source inspection of PatchTrace `main` at `dc53b529560453e84cf45e356a40432ff3fc6725`. The owner's installed PatchTrace build and effective timeout were not supplied. No native reproduction or runtime repair is claimed by this documentation change. Keep this item visible near the top of [the delivery tracker](../../tasks/todo.md).
+The original incident review is based on the supplied `failure.txt`, `analysis.log`, and `ghidriff.log`, and source inspection of PatchTrace `main` at `dc53b529560453e84cf45e356a40432ff3fc6725`. The owner's installed PatchTrace build and effective timeout were not supplied. The subsequent diagnostics implementation is recorded below and in [QA](../qa.md); no native reproduction or matching-performance repair is claimed. Keep this item visible near the top of [the delivery tracker](../../tasks/todo.md).
 
 ## Evidence and limits
 
@@ -67,13 +67,18 @@ These are temporary diagnostic options. An extension may allow completion, but t
 
 ### PT-TIMEOUT-1 — Actionable deadline diagnostics and retry controls
 
-- [ ] Include the effective budget, elapsed duration, timeout layer, last known stage, and retained-log location in timeout diagnostics. Persist run-start metadata and the probed PatchTrace/Ghidriff/Python/Ghidra/JVM versions before launch, then record stop time, elapsed duration and termination reason when the run ends.
-- [ ] Make the active budget visible during a run and provide a clear route from the failure dialog to Setup. Consider 1/2/4-hour presets and an explicit per-run override while retaining a finite limit and working Cancel.
-- [ ] Document or harmonize validation across entry points: desktop/selftest permit 10–86,400 seconds, while the API/series route accepts any positive integer. Surface invalid saved desktop values instead of silently falling back to 3,600 seconds. Do not recommend manual registry edits as a way around the supported control.
-- [ ] Stream bounded, redacted stage messages and distinguish a quiet-but-running stage from a proven hang. Do not reset the total deadline on every log line, or introduce a short stdout-idle timeout that would terminate the observed 28-minute quiet interval.
-- [ ] Label upstream percentages as substage progress. `Completed 72 at 100%` must not be presented as a completed comparison.
+The [SPEC-01a implementation](../specs/ghidriff-timeout-progress.md) adds bounded progress observations, safe stage names and an active subprocess budget without changing the configured deadline or matching behavior. `backend-execution.json` is written before launch and atomically updated after the supervisor returns. It records process evidence, not normalized comparison success. Known runtime versions are included; missing/unprobed versions, including the JVM on the usual uncached path, stay explicitly unverified. UTC timestamps bracket the launch attempt/supervisor return; monotonic elapsed time excludes cleanup. A failed run keeps its receipt in `runs/quarantine-<run-id>/`; a published raw run carries it into `runs/<run-id>/`. Cache hits and identical inputs do not create a pretend execution record. Receipt-write failure cannot change analysis status.
 
-Current source already passes the configured deadline to the subprocess; no dropped-setting bug has been established. The desktop already shows elapsed seconds and indeterminate progress. The missing information is the effective deadline and live backend stage/activity: the existing failure text is too generic to explain this incident, and `backend.run_comparison` emits its collected log tail after `run_process` returns. Extend these diagnostics without changing success/publication semantics.
+The UI keeps progress indeterminate and updates status without adding a log line every second. It rejects stale worker events and preserves terminal/cancel messages against the elapsed timer. Synthetic process and offscreen Qt tests cover this behavior; the original Windows comparison remains unverified.
+
+- [x] Include the effective budget, elapsed duration, subprocess timeout layer, last observed stage and project-relative diagnostics location. Persist launch/stop metadata and available bounded runtime identifiers, keeping missing/unprobed versions explicitly unverified.
+- [x] Show the active budget and include the exact route to Setup in timeout errors while retaining a finite limit and working Cancel.
+- [ ] Evaluate optional 1/2/4-hour presets and an explicit per-run override.
+- [ ] Document or harmonize validation across entry points: desktop/selftest permit 10–86,400 seconds, while the API/series route accepts any positive integer. Surface invalid saved desktop values instead of silently falling back to 3,600 seconds. Do not recommend manual registry edits as a way around the supported control.
+- [x] Emit bounded fixed-vocabulary stage messages and show output age during quiet intervals. Do not infer a hang, renew the total deadline on output, or impose an stdout-idle deadline.
+- [x] Keep upstream percentages out of overall progress. `Completed 72 at 100%` does not mark a comparison complete.
+
+The reviewed `dc53b529` baseline already passed the configured deadline to the subprocess; no dropped-setting bug was established. Its desktop showed elapsed seconds and indeterminate progress, but omitted the effective deadline and live backend stage/activity. Its generic timeout text and terminal-only log delivery could not explain this incident. SPEC-01a adds the missing diagnostics while retaining the bounded sanitized terminal log and existing success/publication semantics.
 
 ### PT-TIMEOUT-2 — Profile and repair candidate expansion / result processing
 
