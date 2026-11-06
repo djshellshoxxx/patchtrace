@@ -22,7 +22,9 @@ from patchtrace.secondary import binexport_run as run
 from patchtrace.secondary.binexport_limits import MIB, BinExportLimits
 from patchtrace.secondary.contracts import SecondaryError
 
-PY = str(Path(sys.executable).resolve())
+# Keep the interpreter entry point: resolving a venv symlink selects its base Python
+# and can drop the dependencies that these subprocess controls are meant to exercise.
+PY = sys.executable
 
 
 def accept(path, private, *, cancel=None, **kw):
