@@ -178,7 +178,7 @@ def test_function_table_array_columns_are_int64():
 def test_deeply_nested_successors_raise_typed_store_error(tmp_path):
     result = build(tmp_path)
     with sqlite3.connect(result.directory / schema.DB_NAME) as db:
-        db.execute('UPDATE bb SET succ=? WHERE fid=0', ('[' * 1400 + '0' + ']' * 1400,))
+        db.execute('UPDATE bb SET succ=? WHERE fid=0', ('[' * 15000 + '0' + ']' * 15000,))
     reader = IrReader.open(result.directory, verify=False)
     try:
         with pytest.raises(UnifiedError) as caught:
