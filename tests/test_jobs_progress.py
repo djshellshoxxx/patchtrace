@@ -49,8 +49,11 @@ def test_live_progress_is_supervisor_owned_throttled_immutable_and_final(tmp_pat
     assert any('ready' in item.log_tail and 'finished' not in item.log_tail for item in snapshots[:-1])
     assert all(b.elapsed_seconds - a.elapsed_seconds >= 1
                for a, b in zip(snapshots[:-2], snapshots[1:-1], strict=True))
-    assert snapshots[-1].log_tail == result.log_tail == 'ready\nfinished\n'
-    assert snapshots[-1].stdout_total == result.stdout_total == len(result.log_bytes)
+    expected = f'ready{os.linesep}finished{os.linesep}'
+    expected_bytes = expected.encode()
+    assert snapshots[-1].log_tail == result.log_tail == expected
+    assert result.log_bytes == expected_bytes
+    assert snapshots[-1].stdout_total == result.stdout_total == len(expected_bytes)
     assert snapshots[-1].elapsed_seconds == result.elapsed_seconds
     assert snapshots[-1].last_output_elapsed_seconds == result.last_output_elapsed_seconds
     assert all(item.last_output_elapsed_seconds is None or item.last_output_elapsed_seconds >= 0
@@ -139,7 +142,11 @@ def test_final_observer_error_preserves_child_exit_code(tmp_path):
     result = execute(tmp_path, 'import sys;print("exit evidence", flush=True);sys.exit(7)',
                      on_progress=observe)
     assert result.returncode == 7 and result.reason is None
-    assert result.log_tail == 'exit evidence\n'
+    expected = f'exit evidence{os.linesep}'
+    expected_bytes = expected.encode()
+    assert result.log_tail == expected
+    assert result.log_bytes == expected_bytes
+    assert calls[-1].stdout_total == result.stdout_total == len(expected_bytes)
     assert calls[-1].log_tail == result.log_tail
 
 
@@ -197,7 +204,10 @@ def test_existing_positional_result_and_no_observer_remain_compatible(tmp_path):
     assert old.elapsed_seconds == 0 and old.last_output_elapsed_seconds is None
     result = execute(tmp_path, 'import time;print("evidence",flush=True);time.sleep(.08)')
     assert result.returncode == 0 and result.reason is None
-    assert result.log_bytes == b'evidence\n' and result.stdout_total == 9
+    expected = f'evidence{os.linesep}'
+    expected_bytes = expected.encode()
+    assert result.log_tail == expected
+    assert result.log_bytes == expected_bytes and result.stdout_total == len(expected_bytes)
     assert result.stderr_tail == '' and result.stderr_total == 0
     # The child may finish before reader startup returns; only timing order is contractual.
     assert 0 <= result.last_output_elapsed_seconds <= result.elapsed_seconds
@@ -205,18 +215,24 @@ def test_existing_positional_result_and_no_observer_remain_compatible(tmp_path):
 
 def test_execution_duration_excludes_cleanup_waits(tmp_path, monkeypatch):
     original_join = threading.Thread.join
+    cleanup_intervals = []
 
     def slow_join(thread, *args, **kwargs):
         if thread.name == 'patchtrace-log':
+            started = time.monotonic()
             time.sleep(.4)
+            cleanup_intervals.append(time.monotonic() - started)
         return original_join(thread, *args, **kwargs)
 
     monkeypatch.setattr(threading.Thread, 'join', slow_join)
     snapshots = []
     before = time.monotonic()
     result = execute(tmp_path, 'print("finished",flush=True)', on_progress=snapshots.append)
+    wall_elapsed = time.monotonic() - before
+    measured_cleanup = sum(cleanup_intervals)
     assert result.returncode == 0
-    assert time.monotonic() - before - result.elapsed_seconds >= .4
+    assert measured_cleanup >= .3, 'the cleanup delay was not exercised'
+    assert wall_elapsed - result.elapsed_seconds >= measured_cleanup - 1e-6
     assert snapshots[-1].elapsed_seconds == result.elapsed_seconds
 
 
