@@ -1,0 +1,192 @@
+{
+  "schema": "patchtrace-windows-addendum-review/1",
+  "status": "passed_no_findings",
+  "reviewer": "/root/recovery_review",
+  "completed_at_utc": "2026-11-06T09:53:37.355524+00:00",
+  "worktree": "/workspace/scratch/c4fbe5e6f72c/pt-r8-docs",
+  "base_head": "70aab2e536d9f9c472610a074f602217126eb4e5",
+  "base_tree": "a139e8f022d943a16daa40fd9b6ab4fdc88067bc",
+  "reviewed_staged_tree": "bfcd33cb7a0f69e8a7b1a56008709fe586e4066c",
+  "stage_stable_during_review": true,
+  "tree_hash_computed_in_memory_and_control_verified": true,
+  "changed_paths": [
+    "docs/qa.md",
+    "docs/qa/continuation-qualification-20261106/pr247-windows-product-start-qualification-20261106T0943Z.json",
+    "docs/qa/continuation-windows-20261106.md",
+    "tasks/todo.md"
+  ],
+  "exactly_four_documentary_paths": true,
+  "frozen_source": {
+    "head": "37b771300053e8872febead1fc384fea9126ae90",
+    "tree": "cdbab24d14295b4450cd0d3c744d76734c98a561",
+    "protected_subtrees": [
+      {
+        "path": "src",
+        "tree": "a8c91bf0ab9b1661605d794078970cde046b16a9",
+        "equals_frozen_247": true
+      },
+      {
+        "path": "tests",
+        "tree": "bb5ff04448fcb1ffc1ce472f46d3ddbc84ba0476",
+        "equals_frozen_247": true
+      },
+      {
+        "path": "tools",
+        "tree": "aa26d80fea5be1b0fd8c39597e05f1055dcef546",
+        "equals_frozen_247": true
+      },
+      {
+        "path": ".github",
+        "tree": "0f6d29ee0d0ae5bc8a8acb202c30bd74479956bc",
+        "equals_frozen_247": true
+      },
+      {
+        "path": "docs/specs",
+        "tree": "14e802b357c6081490cdd10fafb17f8575cdec30",
+        "equals_frozen_247": true
+      }
+    ]
+  },
+  "copied_receipt": {
+    "path": "docs/qa/continuation-qualification-20261106/pr247-windows-product-start-qualification-20261106T0943Z.json",
+    "original_path": "/workspace/scratch/c4fbe5e6f72c/recovery-review/pr247-windows-product-start-qualification-20261106T0943Z.json",
+    "bytes": 8521,
+    "sha256": "ae49041b0dc099a521477c4be92c4dfac56860deae718c02e2c229f85efe5fa8",
+    "matches_requested_digest": true,
+    "exact_bytes_match_original": true,
+    "strict_json_passed": true
+  },
+  "claims_verified": {
+    "windows_job": {
+      "id": 127790743999,
+      "name": "qa (windows-latest)",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/42187353481/job/127790743999"
+    },
+    "suite": {
+      "passed": 20331,
+      "skipped": 94,
+      "xfailed": 5,
+      "warnings": 19,
+      "duration_seconds": 2675.35,
+      "completed_log_utc": "2026-11-06T09:38:39.6549859Z",
+      "raw_summary_line": "2026-11-06T09:38:39.6549859Z 20331 passed, 94 skipped, 5 xfailed, 19 warnings in 2675.35s (0:44:35)"
+    },
+    "tested_merge": {
+      "sha": "bfecc248af653d8c93d7bf3bf46a2121122c6d23",
+      "tree": "cdbab24d14295b4450cd0d3c744d76734c98a561",
+      "parents": [
+        "f393bb68ddc11eabb95a6598aa6f86650bd9aa37",
+        "37b771300053e8872febead1fc384fea9126ae90"
+      ],
+      "equals_source_tree": true
+    },
+    "successful_qualification_steps": 14,
+    "artifact": {
+      "id": 13492805458,
+      "name": "PatchTrace-windows-x64",
+      "size_in_bytes": 131735616,
+      "digest": "sha256:020d6be11fbc4dd6bd3d3b6f88e66d822263e5d2e3855fea77393b8ad27b8d2a",
+      "created_at": "2026-11-06T09:41:46Z",
+      "expires_at": "2027-02-04T08:23:41Z",
+      "expired": false,
+      "source_head": "37b771300053e8872febead1fc384fea9126ae90",
+      "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/42187353481/artifacts/13492805458"
+    },
+    "api_upload_log_identity_size_digest_agree": true,
+    "snapshot": {
+      "observed_window_utc": {
+        "start": "2026-11-06T09:43:51Z",
+        "end": "2026-11-06T09:44:39Z"
+      },
+      "successful_full_qa_jobs": 2,
+      "successful_qt_jobs": 5,
+      "linux_package": {
+        "id": 127822504185,
+        "name": "linux-package",
+        "status": "queued",
+        "conclusion": null
+      },
+      "linux_smoke_jobs_present": false
+    },
+    "download_or_independent_archive_rehash_claimed": false
+  },
+  "ledger_checks": [
+    {
+      "path": "docs/qa.md",
+      "base_blob": "3e1e6b66dc56db21668ca1952be372ecbbf13a22",
+      "staged_blob": "e20601326a475b4bea4625ad75d865801f1de495",
+      "prefix_preserved": true,
+      "appended_bytes": 564,
+      "marker_occurrences": 1,
+      "suffix_sha256": "4397bfc4ddc16fdb27d93920c0e8a110949bb8c80d65a4c0d660ff140ce0a07d"
+    },
+    {
+      "path": "tasks/todo.md",
+      "base_blob": "62e774113a6de463778f784716e8b3084d217ddb",
+      "staged_blob": "d4573cc7afe87b432c56a9f3c8b731c135a4ea44",
+      "prefix_preserved": true,
+      "appended_bytes": 388,
+      "marker_occurrences": 1,
+      "suffix_sha256": "62af0ddf4ef5fcf7591c2b7a482e9cfe5db778b8e1ab4001730f9507036c5956"
+    }
+  ],
+  "relative_links": {
+    "count": 4,
+    "all_resolve_in_staged_tree": true,
+    "checks": [
+      {
+        "source": "docs/qa/continuation-windows-20261106.md",
+        "target": "continuation-qualification-20261106.md",
+        "resolved": true
+      },
+      {
+        "source": "docs/qa/continuation-windows-20261106.md",
+        "target": "continuation-qualification-20261106/pr247-windows-product-start-qualification-20261106T0943Z.json",
+        "resolved": true
+      },
+      {
+        "source": "docs/qa.md",
+        "target": "qa/continuation-windows-20261106.md",
+        "resolved": true
+      },
+      {
+        "source": "tasks/todo.md",
+        "target": "../docs/qa/continuation-windows-20261106.md",
+        "resolved": true
+      }
+    ]
+  },
+  "key_blobs": {
+    "docs/qa.md": "e20601326a475b4bea4625ad75d865801f1de495",
+    "docs/qa/continuation-qualification-20261106/pr247-windows-product-start-qualification-20261106T0943Z.json": "3026d292eb51eb1abbfbb47efce18bfff64f9125",
+    "docs/qa/continuation-windows-20261106.md": "892ff08c766ee3fd2da146d9e14d40ec7e707273",
+    "tasks/todo.md": "d4573cc7afe87b432c56a9f3c8b731c135a4ea44"
+  },
+  "staged_diff_hygiene": "passed",
+  "findings": [],
+  "independent_content_subreview": {
+    "reviewer": "/root/recovery_review/final_claims_review",
+    "wrapper_blob": "892ff08c766ee3fd2da146d9e14d40ec7e707273",
+    "result": "passed_no_findings",
+    "checks": [
+      "Windows totals, summary time, merge/source tree and packaging steps agree with the receipt.",
+      "Artifact identity, ownership, size, creation time and digest agree; verification is limited to metadata/upload-log evidence.",
+      "Remaining Linux packaging/smoke gates match the 09:43:51\u201309:44:39 snapshot.",
+      "Product-start scope and older-reader journal caveat match retained source review.",
+      "Original local failure and parent promotion/scanner/live/manual requirements remain explicit."
+    ]
+  },
+  "scope": {
+    "prior_archives_rereviewed": false,
+    "application_tests_run": 0,
+    "artifact_downloads": 0,
+    "hosted_status_polling": false,
+    "source_edits": false,
+    "root_owned_edits": false,
+    "git_ref_mutations": false
+  },
+  "receipt_self_exclusion": "Reviewed tree precedes any later copy of this independent review receipt into the documentation bundle.",
+  "conclusion": "No evidence, identity, preservation, link, or scope defect found. This four-file documentary addendum is suitable for publication."
+}

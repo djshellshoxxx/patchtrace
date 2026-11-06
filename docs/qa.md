@@ -1642,3 +1642,8 @@ Fully qualified #245 merged normally into #205 as `6095f702`; #205 is ready. For
 ## [SUBPROCESS-ACCEPTED-20261106]
 
 At 09:29:12 UTC, #246 merged normally into main as `dc53b529560453e84cf45e356a40432ff3fc6725`, after all applicable source checks including both Linux smoke legs passed. The merge tree equals the qualified source; its branch remains at `c804e4d9`. Earlier local failures remain in the evidence. Parent application promotion must recheck its merge tree against this new main. [Acceptance and preserved results](qa/continuation-qualification-20261106.md).
+
+
+## [CONTINUATION-WINDOWS-20261106:product-start-build]
+
+Frozen #247 Windows QA passed **20,331 tests, 94 skipped, 5 xfailed, 19 warnings in 2675.35s**, plus standalone/frozen/portable/installer checks. Artifact `13492805458`, source `37b77130`, contains the stored-product starting route. API/upload digest and tested/source tree identity agree. The 09:43–09:44 snapshot still has Linux packaging/smokes outstanding; original local failures and release/live/manual gates remain preserved. [Windows candidate and evidence](qa/continuation-windows-20261106.md).

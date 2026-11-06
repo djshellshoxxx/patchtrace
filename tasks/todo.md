@@ -1212,3 +1212,9 @@ Full `QT_QPA_PLATFORM=offscreen python -m pytest -q` for this isolated native sl
 
 - [x] Merge #246 after full hosted QA, Qt, packaging, both Linux smoke jobs and review/scanner gates pass; verify exact merged tree and retained source. Main: `dc53b529` at 09:29:12 UTC.
 - [ ] Recheck parent application merge trees and gates against the advanced main before promotion.
+
+
+### [CONTINUATION-WINDOWS-20261106:product-start-build]
+
+- [x] Complete #247 Windows QA/packaging and publish the source-pinned downloadable product-start candidate; retain the exact receipt and artifact identity.
+- [ ] Finish Linux packaging/smokes, normal parent promotion and remaining release/live/manual acceptance. [Windows evidence](../docs/qa/continuation-windows-20261106.md).
