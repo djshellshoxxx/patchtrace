@@ -166,3 +166,25 @@ def test_end_to_end_through_the_real_entry_point(pair, capsys):
     code = main_cli.main(['inspect', str(pair), '--json'])
     out = capsys.readouterr().out
     assert code == 0 and json.loads(out)['command'] == 'inspect'
+
+def test_signature_stage_failure_is_partial_and_preserves_available_facts(pair, capsys, monkeypatch):
+    from patchtrace.pe_overview import metadata as metadata_module
+
+    original = metadata_module.verify_embedded
+    calls = []
+
+    def signature_with_failure(*args, **kwargs):
+        calls.append(1)
+        if len(calls) == 2:
+            raise RuntimeError('injected malformed signature')
+        return original(*args, **kwargs)
+
+    monkeypatch.setattr(metadata_module, 'verify_embedded', signature_with_failure)
+    code, stdout, _stderr, _message = invoke(capsys, str(pair), '--json')
+    document = json.loads(stdout)
+    assert code == 3 and document['status'] == 'partial'
+    older, newer = document['result']['sides']
+    assert older['status'] == 'read' and newer['status'] == 'partial'
+    assert 'internal_error_signature' in newer['warnings']
+    assert newer['facts']  # Earlier successful metadata stages remain useful.
+    assert document['result']['comparison'] == []  # Incomplete data cannot assert a full delta.
