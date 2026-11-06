@@ -1591,3 +1591,42 @@ Reproduced #244 review comment 4489325824 against exact `5347ccfd`: source impor
 ## Branch consolidation execution and full-run limits (2026-11-06)
 
 Combined #244 source tree `3e5276d6643d784e459264d6cb213082b812c8d4`: 774 focused tests passed, whole-tree Ruff passed, schemas unchanged. Separate exact #245 full Linux run: **3 failed, 19618 passed, 139 skipped, 6 xfailed, 1 warning in 2537.16s (0:42:17)**. All three failures reproduced on frozen #205; two launcher controls pass in the corrected environment, while local AF_UNIX construction remains unavailable. The original full run remains non-green. See [complete result and controls](qa/pr245-linux-qualification-20261106.md) and [merge plan](plans/branch-merge-plan-20261106.md). Native Windows, current-head hosted checks and parent scanner dispositions remain open for the application candidates. #204's two smoke jobs subsequently passed and the exact reviewed head merged into main at `d02b94bcedb29dae201941f01f2c94d42ebbb297` on 2026-11-06 at 06:27:13 UTC; the source branch was retained.
+
+
+## Subprocess virtual-environment preservation (2026-11-06 UTC)
+
+On main `d02b94bc`, two subprocess isolation tests resolved the active interpreter
+symlink to a base Python without the installed protobuf/YARA-X dependencies.
+Both failures reproduced. Retaining `sys.executable`, as the production workers
+already do, passed both complete test files: **116 passed in 42.16 seconds**.
+No assertion, limit, environment filter or production code changed. Independent
+review, whole-tree Ruff, dependency consistency and diff hygiene passed. Full
+and hosted cross-platform qualification remain separate; the local AF_UNIX
+restriction is unchanged. [Detailed receipt](qa/subprocess-venv-20261106.md).
+
+## [CONTINUATION-20261106:local-product-start-and-qualification]
+
+Unchanged #245 passed Windows QA: **19,671 passed, 90 skipped, 5 xfailed**,
+plus standalone, frozen EXE, portable ZIP and installer gates. The downloadable
+candidate belongs to #245, not the later product implementation. Linux full QA
+and the native Windows Ghidriff workflow subsequently passed; Ubuntu Qt is
+still outstanding at the 08:18 UTC checkpoint.
+
+Reviewed product source `570f86b8` (published equivalent `0b7d8581`, identical
+tree) adds the stored-product catalogue, explicit selection, source-bound local
+pair preview/create, and original-source pending repair. Final affected
+selection: **139 passed** including 59 product cases; independent acceptance:
+**16 passed**, no findings. Six distinct independent cases are retained in
+`test_kb_product_acceptance_20261106.py`; those plus authored cases: **65 passed**.
+Earlier 391-test evidence predates the final repair; counts overlap. New pending
+product attachments require the new journal reader: legacy repair ignores
+`selected_product` and was observed to lose source digests. Public schemas/SQL
+version/CLI grammar are unchanged, but internal journal format is extended.
+
+Test-only exact-byte diagnostics preserve full equality while bounding failure
+rendering; affected selection **49 passed**, separate real child-pytest controls
+passed. The previously failing #235 Windows report identifies two large byte
+diff cases taking 42.6% of that failed run; no normal-path speedup is claimed.
+The continuation includes actual #246 ancestry and preserves all source refs.
+Whole Ruff/schema/diff checks pass. Combined current-source full and hosted
+qualification remain separate. [Evidence and limits](qa/continuation-20261106.md).

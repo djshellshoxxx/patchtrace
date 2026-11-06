@@ -4,6 +4,7 @@ from pathlib import Path
 from types import SimpleNamespace
 
 import pytest
+from byte_assertions import assert_bytes_equal
 from test_nway_series import builds, create  # noqa: F401
 
 from patchtrace.nway import series as store
@@ -154,7 +155,7 @@ def test_oversized_recovery_never_uses_read_bytes(builds, tmp_path, capsys, monk
     monkeypatch.setattr(Path, 'read_bytes', bounded_only)
     store.save(series, path, replace_corrupt=True)
     backup = path.with_name(path.name + '.corrupt-' + hashlib.sha256(damaged).hexdigest()[:8])
-    assert backup.read_bytes() == damaged
+    assert_bytes_equal(backup.read_bytes(), damaged)
     assert original_read(path) == good
 
 
@@ -202,9 +203,9 @@ def test_stream_failure_preserves_original_and_prior_copy(tmp_path, monkeypatch,
     monkeypatch.setattr(store, '_open_recovery_file', guarded_open)
     with pytest.raises(store.NwayError, match='PT-NWAY-STORAGE'):
         store._keep_corrupt_copy(path)
-    assert path.read_bytes() == (damaged if failure == 'read' else b'y' * len(damaged))
+    assert_bytes_equal(path.read_bytes(), damaged if failure == 'read' else b'y' * len(damaged))
     if prior_copy:
-        assert backup.read_bytes() == damaged
+        assert_bytes_equal(backup.read_bytes(), damaged)
     else:
         assert not backup.exists()
     assert calls and max(calls) <= 1024 * 1024

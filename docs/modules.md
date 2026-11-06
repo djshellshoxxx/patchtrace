@@ -1317,3 +1317,16 @@ Wiring: `exchange.ALL_SOURCES`, `--sources diaphora`, `pipeline.capture_plan` (o
 ### [LBL-30:credited-output-replay]
 
 `tools/calibration/tier_r/output_store.py` owns exclusive normalized output retention, report-bound completion/credit receipts, bounded strict replay and explicit legacy compatibility. `evaluate.py` credits a successful answer only after normalization/retention; training verifies managed report credits before accepting replay. Tests: `tests/test_tier_r_{output_persistence,credited_replay,credit_completion,output_stat_compat}.py`. Native adapter compatibility and real calibration remain separate gates.
+
+### [KB-PRODUCT-START-20261106:local-product-catalogue]
+
+`kbcorrelation/index.py` exposes the active local product catalogue. The existing
+`investigation_service.py` / `investigation_qt.py` facade and dialog capture an
+explicit ProductScope plus source snapshot for local pair preview/create.
+`service.py` admits one index for validation/context; `context.py` retains the
+chosen product's source digests without inferring advisory attribution.
+`store.py` adds the optional persisted attach-journal `selected_product` and
+binds pending repair to its exact original scope/source subset. New-reader
+repair is required for those journals; public schemas and SQL version stay
+unchanged. Tests: `test_kb_product_start_20261106.py`,
+`test_kb_product_acceptance_20261106.py`, plus existing service/recovery journeys.

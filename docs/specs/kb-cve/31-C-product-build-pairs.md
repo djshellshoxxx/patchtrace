@@ -14,6 +14,23 @@ Compatibility: immutable stored contexts, pair records, decisions and investigat
 
 Product listing must also refuse a stale investigation with that refresh instruction when any stored scope no longer exists in the rebuilt index, including a mixed list with surviving server scopes. It must not claim that a legacy mapping loss means the lead has no products or that a partial surviving list is complete.
 
+Local product-start amendment (2026-11-06): a product catalogue may be built
+without a KB/CVE lead from the active documents of a captured local reverse
+index. Merge their source product references with the existing scope rules;
+retain tied/ambiguous active revisions and their mapping states. A superseded
+document alone must not keep a removed product selectable. Selection records
+the complete ProductScope and its source identities, and a new local pair is
+bound to that scope only after source-snapshot admission and full scope equality
+are checked. This establishes an analyst-selected scope, not binary product
+membership, affectedness or a fix attribution. Source digests/raw sidecars may
+support that selection without adding any CVE cards to its saved context.
+
+Unreadable stored documents make current product activity uncertain, including
+same-month tied native revisions and CSAF groups whose tracking identity cannot
+be recovered. Product-only listing/admission therefore refuses conservatively
+when any source cannot be read or parsed; it must not revive an older definition
+from the remaining documents. Existing partial KB/CVE lookup behavior is unchanged.
+
 ## C2. Partial-order update graph
 
 Represent product-specific release instances, not global KB nodes:

@@ -1182,3 +1182,18 @@ Full `QT_QPA_PLATFORM=offscreen python -m pytest -q` for this isolated native sl
 - [x] Merge #204 after both smoke jobs and all applicable checks pass: main commit `d02b94bcedb29dae201941f01f2c94d42ebbb297`, 2026-11-06 06:27:13 UTC; source branch retained.
 - [ ] Obtain suitable-runner full Linux/native Windows/current-head qualification and normal parent scanner/review dispositions for #245 and the application integration train.
 - [ ] Recheck accepted ancestry after main promotion before any source-PR disposition; retain native and automation ownership. See [QA evidence](../docs/qa/pr245-linux-qualification-20261106.md).
+
+
+### Subprocess virtual-environment preservation (2026-11-06 UTC)
+
+- [x] Reproduce the protobuf/YARA-X isolation false failures and preserve the active interpreter entry point without changing any test assertion. Both complete affected files pass: 116 tests; independent review and Ruff pass.
+- [ ] Complete current-head hosted qualification and normal merge review. Preserve the separate AF_UNIX runner restriction and native/release gates. See `docs/qa/subprocess-venv-20261106.md`.
+
+### [CONTINUATION-20261106:local-product-start-and-qualification]
+
+- [x] Verify #245 Windows QA, standalone/frozen/portable/installer evidence and expose its downloadable candidate; retain source-head attribution.
+- [x] Implement and independently review stored-product catalogue, explicit selection and source-bound local pair creation without KB/CVE attribution; retain six independent acceptance cases.
+- [x] Bind product-start pending repair to the original source subset and complete scope; document the new-reader requirement for the additive internal journal field.
+- [x] Integrate exact-byte diagnostic bounds and the actual #246 interpreter-fix ancestry; preserve all source branches and prior QA/task entries.
+- [ ] Complete combined current-source full tests, hosted/native qualification, normal review and outstanding parent scanner dispositions before promotion.
+- [ ] Product-only CLI/online acquisition and single-binary discovery remain separate accepted work. [Continuation receipt](../docs/qa/continuation-20261106.md).

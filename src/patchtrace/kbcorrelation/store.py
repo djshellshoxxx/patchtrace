@@ -36,6 +36,7 @@ from .contracts import (
     Contract,
     Coverage,
     InvestigationRevision,
+    ProductScope,
     ProjectLink,
     SourceDoc,
     domain_id,
@@ -471,6 +472,7 @@ class AttachRequest:
     directory: str
     source_shas: tuple[str, ...] = ()
     plan_sha: str | None = None
+    selected_product: ProductScope | None = None
 
 
 def _file_sha(path: str) -> str:
@@ -541,6 +543,10 @@ class ProjectAttachment:
         current = self.ws.current_revision(request.revision.investigation_id)
         if current is None or current.revision != request.revision.revision or current.state != 'BYTES_VERIFIED':
             raise KbcStoreError('PT-KBC-STALE', 'attach needs the current BYTES_VERIFIED revision')
+        if request.selected_product is not None and (
+                request.revision.lead.kind not in {'pair', 'file'} or
+                request.selected_product.scope_id != request.revision.selected_scope_id):
+            raise KbcStoreError('PT-KBC-INPUT', 'the captured product must match the product-only investigation')
         if request.older_sha == request.newer_sha:
             raise KbcStoreError('PT-KBC-VERIFY', 'the two sides are the same bytes')
         for path, sha in ((request.older_path, request.older_sha), (request.newer_path, request.newer_sha)):
@@ -555,6 +561,8 @@ class ProjectAttachment:
             'state': 'intent', 'directory': directory.resolve().as_posix(), 'older_path': request.older_path,
             'newer_path': request.newer_path, 'older_sha': request.older_sha, 'newer_sha': request.newer_sha,
             'pair_id': request.pair_id, 'plan_sha': request.plan_sha, 'source_shas': list(request.source_shas),
+            **({'selected_product': request.selected_product.model_dump(mode='json')}
+               if request.selected_product is not None else {}),
             'revision': request.revision.model_dump(mode='json'), 'base': request.revision.revision,
             'cas_created': False, 'cas_final': False, 'project_id': None, 'project_revision': None,
             'link_state': None, 'interrupted': False})
