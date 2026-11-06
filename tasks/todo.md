@@ -1179,5 +1179,6 @@ Full `QT_QPA_PLATFORM=offscreen python -m pytest -q` for this isolated native sl
 - [x] Publish isolated #244 for current leaves and #245 for frozen-owner recovery repairs; preserve source refs.
 - [x] Stage #245 forward once with verified append-only ledger resolution; repair and independently review the confirmed KB source-provenance race; pass 774 combined focused tests.
 - [x] Complete and preserve the actual #245 Linux run: **3 failed, 19618 passed, 139 skipped, 6 xfailed, 1 warning in 2537.16s (0:42:17)**; investigate all three failures against frozen #205 without weakening assertions or permissions.
-- [ ] Obtain suitable-runner full Linux/native Windows/current-head qualification and normal parent scanner/review dispositions; finish #204's two smoke jobs before planned main promotion.
+- [x] Merge #204 after both smoke jobs and all applicable checks pass: main commit `d02b94bcedb29dae201941f01f2c94d42ebbb297`, 2026-11-06 06:27:13 UTC; source branch retained.
+- [ ] Obtain suitable-runner full Linux/native Windows/current-head qualification and normal parent scanner/review dispositions for #245 and the application integration train.
 - [ ] Recheck accepted ancestry after main promotion before any source-PR disposition; retain native and automation ownership. See [QA evidence](../docs/qa/pr245-linux-qualification-20261106.md).

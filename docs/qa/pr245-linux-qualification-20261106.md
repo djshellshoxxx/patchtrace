@@ -67,5 +67,7 @@ The recovery fixes and KB provenance repair have reviewed, passing focused
 evidence. Full Linux qualification on a suitable runner, native Windows
 qualification, applicable current-head hosted checks, parent Sonar dispositions
 and normal review requirements remain distinct gates. No failing status is
-waived by this diagnosis. The separate #204 main merge still awaits its two
-Linux smoke jobs. No main or frozen owner branch was moved by this task.
+waived by this diagnosis. The separate #204 workflow repair has since passed
+both Linux smoke jobs and merged into main at
+`d02b94bcedb29dae201941f01f2c94d42ebbb297` (2026-11-06 06:27:13 UTC).
+The frozen application/native owner branches remain unchanged.

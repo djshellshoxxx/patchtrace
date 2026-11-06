@@ -16,7 +16,7 @@ The audit inventory below remains frozen. Two new task-owned branches and PRs we
 
 | Planned work | Work completed | Remaining boundary |
 |---|---|---|
-| Independent workflow repair #204 | Ready for review at unchanged `1229ca3bba6bc099d040c279ed9ebc8b91ae913e`; existing Linux, Windows, Qt, packaging and scanner successes preserved | Both Linux smoke jobs still require successful results before the planned main merge |
+| Independent workflow repair #204 | **Merged into main** at `d02b94bcedb29dae201941f01f2c94d42ebbb297`, 2026-11-06 06:27:13 UTC, after both smoke jobs and every applicable check passed; source `1229ca3bba6bc099d040c279ed9ebc8b91ae913e` retained | Complete |
 | Current application leaves #242/#243 | History-preserving consolidation in [#244](https://github.com/djshellshoxxx/patchtrace/pull/244), targeting #235 | Current-head hosted checks and applicable review remain required |
 | Frozen #205 qualification repairs | Published [#245](https://github.com/djshellshoxxx/patchtrace/pull/245) at `4465a0492367d08f324e80b290a594791921691c`, targeting the unchanged #205 owner branch | Native Windows and applicable full-suite/scanner requirements remain open; the original #205 ref is untouched |
 | Downstream recovery propagation | Staged #245 once in the isolated #244 candidate; exact resolved tree `9bebb7cc0fed5d8326f9c9d25781d3576298133f` | This preparation does not advance frozen #205, #218, #235 or main |
@@ -74,7 +74,7 @@ Complete records:
 
 ## Concrete execution order
 
-### 1. Finish the independent CI repair, #204
+### 1. Completed: independent CI repair, #204
 
 [PR #204](https://github.com/djshellshoxxx/patchtrace/pull/204), head `1229ca3bba6bc099d040c279ed9ebc8b91ae913e`, moves the invalid standalone agent step out of `.github/workflows/` and retains its bytes under `.github/workflow-examples/`. It adds no runnable agent or schedule.
 
@@ -87,14 +87,14 @@ This task independently reproduced **3 failures, 48 passes, and 3 existing expec
 | Five Qt gates | All successful |
 | Linux package | Successful |
 | SonarCloud and Snyk | Successful |
-| Linux smoke on 22.04 and 24.04 | Queued at audit |
+| Linux smoke on 22.04 and 24.04 | Both successful before the main merge |
 | CodeRabbit | Previously skipped because draft; now successful after readiness transition; no unresolved inline threads observed |
 
 [Hosted QA run](https://github.com/djshellshoxxx/patchtrace/actions/runs/42112574660).
 
-**Action already taken:** marked #204 ready for review, preserved its head, and appended the fresh evidence to its PR description. This retains the already successful expensive checks. Do not rebase, repush, or rerun those passing jobs without a concrete new reason.
+**Completed:** marked #204 ready without changing its head, preserved the expensive successful checks, and waited for both smoke jobs. The original QA run then completed successfully; CodeRabbit, SonarCloud and Snyk were successful and no unresolved review threads were present. GitHub merged the exact expected head with a normal merge commit at `d02b94bcedb29dae201941f01f2c94d42ebbb297`. Both parents are retained (`5d504ff5c046bfb758623182b472976003632bba`, `1229ca3bba6bc099d040c279ed9ebc8b91ae913e`), and the source branch still exists at its original head.
 
-**Next:** inspect both smoke results and the normal review outcome. Merge through GitHub with the expected head SHA only when applicable requirements pass. #204 is already in #235 ancestry, so no additional merge of it into that integration branch is necessary. Refresh all bases after its main merge.
+**Next:** continue the #205 qualification prerequisite and refresh later main comparisons against the accepted main head. #204 is already in #235 ancestry, so no additional merge of it into that integration branch is necessary. The frozen inventory below still describes the pre-execution snapshot.
 
 ### 2. Complete the current two-slice integration candidate
 
