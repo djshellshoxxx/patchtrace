@@ -100,7 +100,7 @@ On Windows release ZIP: login-free metadata-only/offline replay, documented cons
 
 ## Offline desktop implementation seam (2026-11-05)
 
-The bounded first desktop journey imports a supported local advisory, searches a stored KB/CVE, requires explicit product selection, previews two analyst-selected AMD64 PE files, then creates and opens a separate project. Product-only starts are not implemented in the current domain/CLI contract; binary-only manual pair starts also have the explicit desktop route below; online discovery/download remains the existing consented acquisition route. The offline dialog never starts downloads or analysis. Pair previews retain advisory source references, hashes, lineage and attribution limitations.
+The bounded first desktop journey imports a supported local advisory, searches a stored KB/CVE, requires explicit product selection, previews two analyst-selected AMD64 PE files, then creates and opens a separate project. Product-only starts use the separate local catalogue route below; binary-only manual pair starts also have the explicit desktop route below; online discovery/download remains the existing consented acquisition route. The offline dialog never starts downloads or analysis. Pair previews retain advisory source references, hashes, lineage and attribution limitations.
 
 `investigation_service.execute_request` consumes immutable plain requests on a task-local service and returns plain results; no workspace connection or project service crosses into Qt. Local `import_pair` previews return `investigation_revision`; create passes `expected_revision` and `expected_pair_id`. Under the existing workspace lock, mismatch rejects the commit with PT-KBC-STALE before state changes. Selected product architecture must match inspected files, and missing product mappings require a new selection. No serialized contract/schema additions are required.
 
@@ -120,7 +120,7 @@ The existing BinaryRef filename contract remains unchanged: captured original la
 
 The offline dialog offers an explicit **Start from local files without advisory linkage** checkbox. The frozen Python request adds `manual_pair_start: bool = False`; this is an internal task value, not a serialized model/schema change. This mode rejects any investigation id, product scope id or expected investigation revision. It delegates preview and create to the existing `KbService.import_pair('new', ...)` route, whose manual pair rules and append-only analyst orientation/pair decisions remain authoritative. No advisory search, product selection or imported document is required. Product/build lineage and fix boundary remain unverified; no KB/CVE linkage is inferred.
 
-Preview does not create an investigation and returns a null investigation revision. Create requires the exact preview pair id and re-inspects bytes; an investigation is created only during the existing commit. New/empty destination and create-only project port checks still apply. Any input or mode edit invalidates the preview; mode changes cancel pending preview work and discard late results. Advisory controls are disabled in manual mode and request construction omits their previous values. Switching back requires an explicit fresh advisory search. Cancellation/close during commit retains a completed project without adoption. Current-project input provenance remains preview-only and requires the existing explicit same-component confirmation. Product-only desktop starts remain unimplemented and require a separate domain contract.
+Preview does not create an investigation and returns a null investigation revision. Create requires the exact preview pair id and re-inspects bytes; an investigation is created only during the existing commit. New/empty destination and create-only project port checks still apply. Any input or mode edit invalidates the preview; mode changes cancel pending preview work and discard late results. Advisory controls are disabled in manual mode and request construction omits their previous values. Switching back requires an explicit fresh advisory search. Cancellation/close during commit retains a completed project without adoption. Current-project input provenance remains preview-only and requires the existing explicit same-component confirmation. Product-only desktop starts use the separate local catalogue contract below.
 
 ## Offline investigation keyboard access (2026-11-05)
 
@@ -132,7 +132,7 @@ The investigation dialog retains local-only search/import and binary-only pairin
 
 Internal frozen task requests add `source_months`, `source_plan_json`, `consent_hosts` and `consent_plan`, plus `plan_sources` and `sync_sources` operations. This is an internal Python seam, not a serialized contract/model addition. The backend strictly decodes the size-capped IndexPlan JSON, rebuilds the current plan from the captured month scope, checks equality and verifies exact consent before calling the existing hardened CVRF transport. Cancellation reaches that transport; each successfully parsed document is checkpointed through the existing WorkspaceStore, retaining official-host TLS provenance without upgrading a local import's authenticity. Partial/cancelled work preserves already committed sources and reports requested month outcomes. No KB, CVE, local path, file hash or project content is sent in these month-only URLs.
 
-After a completed sync the backend searches the local index through the existing KbService and the dialog resumes explicit product selection and the existing local-file preview/create/adopt route. No binary is fetched by this action. Any edited field, mode change, cancel, other operation or closed dialog invalidates the displayed plan; old-generation callbacks cannot restore it. A failed or partial provider response is shown with retained source/search evidence, never as a complete live-source qualification. Live endpoint compatibility remains unverified until its separate evidence gate. Online candidate discovery/download, product-only start and the full online acquisition journey remain partial and require later independent work.
+After a completed sync the backend searches the local index through the existing KbService and the dialog resumes explicit product selection and the existing local-file preview/create/adopt route. No binary is fetched by this action. Any edited field, mode change, cancel, other operation or closed dialog invalidates the displayed plan; old-generation callbacks cannot restore it. A failed or partial provider response is shown with retained source/search evidence, never as a complete live-source qualification. Live endpoint compatibility remains unverified until its separate evidence gate. Online candidate discovery/download and the full online acquisition journey remain partial and require later independent work; local product-only starting is specified separately below.
 
 ## Saved-index candidate inspection and explicit selection (2026-11-05)
 
@@ -151,3 +151,71 @@ The component filename has an optional metadata-request preview and a separate *
 The details view displays the exact metadata URL, headers, host, every cap and digest before separate consent. Monthly advisory and Winbindex metadata previews are distinct and mutually exclusive: every edit, mode/candidate change, cancellation, close or other operation clears both grants; only the currently displayed preview can enable its corresponding fetch action. Consent is consumed by that one operation and never persisted. Cancellation reaches the existing refresher; a late completed cache publication is retained but stale/closed callbacks cannot populate the current dialog or adopt a project.
 
 A successful refresh shows the backend's raw-byte SHA-256/size, source URL, retrieval/source dates and date basis, saved path, parser counts/warnings and third-party/TLS authenticity limits. The analyst then explicitly inspects saved-index candidates through the existing action after selecting the advisory product. Neither refresh nor candidate inspection downloads a binary or enables project creation. Original local/manual previews and their measured hashes remain authoritative; full candidate binary acquisition and native/live qualification remain later gates.
+
+## Local product starting point (2026-11-06)
+
+The desktop offers a separate **Start from a stored product without a KB/CVE**
+mode. It lists products from active, successfully parsed local source snapshots
+through the existing product alias/identity rules; it does not search a KB/CVE,
+fetch metadata, infer component names or construct download candidates. A filter
+uses the existing product lookup semantics (display text, source product ID or
+scope-ID prefix). At most 200 matching rows are displayed, with the total and an
+explicit instruction to refine a truncated list. No product is selected
+automatically, even when only one row is available. Unknown/candidate/conflicted
+mapping and architecture values retain their existing meanings.
+
+If any stored document is unreadable, withhold the product catalogue and refuse
+product-only pair admission until the source is repaired. Otherwise dropping an
+unreadable newer or tied revision could make an older product definition appear
+active again. This conservative product-start rule does not change the existing
+KB/CVE search behavior for partially readable workspaces.
+
+Browsing and local pair preview create no investigation. The internal frozen
+task request adds `product_start`, `product_query`, `product_scope_json` and
+`product_source_snapshot`, and a `browse_products` operation. The selected
+ProductScope JSON and ordered SourceDoc JSON strings are captured from that
+listing; they are internal task values, not new serialized contract fields.
+The snapshot retains full source identities and product IDs. A changed source
+set, missing selected source bytes, or changed full product scope requires a
+new listing and explicit selection. The UI clears the listing after workspace,
+filter or mode changes and local source imports; other input changes clear the
+pair preview. Late/cancelled callbacks cannot restore a discarded listing or
+selection. Mode changes revoke all advisory and metadata network grants.
+
+After choosing a product, the analyst supplies two local files (or uses verified
+current-project copies), previews them, and explicitly creates a separate
+comparison. The existing `KbService.import_pair('new', ...)` route gains an
+optional `selected_product: ProductScope` argument, valid only with an expected
+source snapshot and no existing investigation/revision. One admitted index
+validates that snapshot and the entire selected active ProductScope, enforces
+its architecture against both inspected files, and supplies saved provenance.
+The index is never reloaded after admission. Create still requires the exact
+preview pair ID, inspected hashes, same-component rules, new/empty destination,
+and the create-only project port. Cancellation cannot undo a started commit;
+the existing controller retains/reports any completed project without adoption.
+
+The saved investigation keeps the existing actual `Lead(kind='pair')`, selected
+scope ID, source coverage and append-only analyst product-selection decision.
+Existing ContextBundle source-digest fields and raw source sidecars retain the
+documents that define the chosen active product. No KB/CVE, card, CWE profile or
+hypothesis is inferred from the product choice. Product membership of either
+binary, orientation and fix boundary remain unverified; selecting a scope is an
+analyst decision. No lead enum, SQL/storage version, schema or CLI grammar is
+changed. KB/CVE-driven candidate/download workflows, native Windows UI and
+release qualification remain separate work.
+
+Product-only attach requests also retain the exact selected ProductScope in
+an optional `selected_product` member of the persisted internal attach journal.
+This is an additive journal-format change emitted only for product-start
+attachments; public contract schemas and SQL versions remain unchanged. If that attach needs repair, rebuild its
+context from exactly the source hashes already recorded in the journal, using
+the parsed documents from the current read only as a source of those historical
+records. New workspace revisions cannot substitute their product provenance.
+Require full equality with the journaled ProductScope, including source product
+IDs and alias version; refuse before writing context rows if the original
+snapshot or any journaled document is missing, or if the product interpretation
+or its exact source set differs. Keep the existing project and pending attach
+intact. Legacy journals remain readable and generic KB/CVE repair behavior is
+unchanged. Older readers ignore unknown journal members and do not enforce this
+new product-snapshot binding; repair of product-start attachments requires a
+build implementing these journal semantics.
