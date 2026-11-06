@@ -14,6 +14,7 @@ from ..artifact_bytes import ArtifactBytesError, VerifiedArtifactReader
 from ..models import Artifact
 from ..persistence import creation_directory_available
 from .components import normalise_name
+from .contracts import ProductScope
 from .sources.cvrf import SourceError, load_json
 from .store import KbcStoreError, WorkspaceStore
 
@@ -30,7 +31,7 @@ class CurrentProjectInputs:
 @dataclass(frozen=True, slots=True)
 class InvestigationRequest:
     operation: Literal['import', 'search', 'preview', 'create', 'current_inputs', 'plan_sources', 'sync_sources',
-                       'candidate_pairs', 'candidate_preview', 'plan_metadata', 'refresh_metadata']
+                       'candidate_pairs', 'candidate_preview', 'plan_metadata', 'refresh_metadata', 'browse_products']
     workspace: Path
     source: Path | None = None
     lead: str = ''
@@ -53,6 +54,10 @@ class InvestigationRequest:
     component_name: str = ''
     candidate_pair_id: str | None = None
     expected_candidates_digest: str | None = None
+    product_start: bool = False
+    product_query: str = ''
+    product_scope_json: str | None = None
+    product_source_snapshot: tuple[str, ...] | None = None
 
 
 @dataclass(frozen=True, slots=True)
@@ -375,8 +380,33 @@ def _metadata_operation(request, cancel, metadata_refresher):
     return InvestigationResult('refresh_metadata', text, {'metadata': receipt, 'file_name': name})
 
 
+def _product_selection(request: InvestigationRequest) -> ProductScope:
+    raw = _required(request.product_scope_json, 'a product from the current local listing')
+    if not isinstance(raw, str) or len(raw) > 65536 or len(raw.encode('utf-8')) > 65536:
+        raise KbcStoreError('PT-KBC-INPUT', 'The captured product record exceeds its input limit.')
+    load_json(raw.encode('utf-8'))
+    product = ProductScope.model_validate_json(raw)
+    if product.scope_id != _required(request.scope_id, 'an explicit product'):
+        raise KbcStoreError('PT-KBC-STALE', 'The chosen product differs from the captured product record.')
+    snapshot = request.product_source_snapshot
+    if type(snapshot) is not tuple or not snapshot or not all(isinstance(source, str) for source in snapshot):
+        raise KbcStoreError('PT-KBC-INPUT', 'List local products again to capture their source records.')
+    return product
+
+
+def _check_start_mode(request: InvestigationRequest) -> None:
+    if request.product_start:
+        if (request.manual_pair_start or request.investigation_id is not None or request.expected_revision is not None
+                or request.operation not in {'import', 'browse_products', 'preview', 'create', 'current_inputs'}):
+            raise KbcStoreError('PT-KBC-INPUT', 'Product-only mode uses a fresh local pair without KB/CVE or download requests.')
+    elif (request.operation == 'browse_products' or request.product_scope_json is not None
+          or request.product_source_snapshot is not None):
+        raise KbcStoreError('PT-KBC-INPUT', 'A captured product listing belongs only to an explicit product start.')
+
+
 def _execute(request: InvestigationRequest, cancel, service_factory, source_fetcher, metadata_refresher) -> InvestigationResult:
     _checkpoint(cancel)
+    _check_start_mode(request)
     if request.operation in {'plan_metadata', 'refresh_metadata'}:
         return _metadata_operation(request, cancel, metadata_refresher)
     if request.manual_pair_start and (request.investigation_id is not None or request.scope_id is not None
@@ -387,6 +417,7 @@ def _execute(request: InvestigationRequest, cancel, service_factory, source_fetc
         paths, origin = _verified_current(request.current_inputs, cancel)
         if request.operation == 'current_inputs':
             next_step = ('Preview the binary-only pair before creating a project.' if request.manual_pair_start else
+                         'Choose a stored product and preview the pair before creating a project.' if request.product_start else
                          'Choose advisory scope and preview the pair before creating a project.')
             return InvestigationResult('current_inputs', 'Current project copies verified. ' + next_step,
                                        {'older': str(paths[0]), 'newer': str(paths[1]), 'input_origin': origin})
@@ -401,6 +432,10 @@ def _execute(request: InvestigationRequest, cancel, service_factory, source_fetc
         from .wiring import build_service
         service_factory = build_service
     service = service_factory(Path(request.workspace))
+    if request.operation == 'browse_products':
+        outcome = service.product_catalogue(request.product_query, cancel=cancel)
+        _checkpoint(cancel)
+        return InvestigationResult('browse_products', outcome.text, outcome.result)
     if request.operation in {'candidate_pairs', 'candidate_preview'}:
         return _candidate_operation(request, cancel, service)
     if request.operation in {'plan_sources', 'sync_sources'}:
@@ -445,7 +480,8 @@ def _execute(request: InvestigationRequest, cancel, service_factory, source_fetc
         outcome = service.search(_required(request.lead.strip(), 'a KB or CVE identifier'),
                                  product=request.scope_id, investigation=request.investigation_id)
     elif request.operation in {'preview', 'create'}:
-        if request.manual_pair_start:
+        selected_product = _product_selection(request) if request.product_start else None
+        if request.manual_pair_start or request.product_start:
             inv = 'new'
         else:
             inv = _required(request.investigation_id, 'a search result')
@@ -465,7 +501,7 @@ def _execute(request: InvestigationRequest, cancel, service_factory, source_fetc
         destination = _new_destination(request) if request.operation == 'create' else request.destination or Path('.')
         if request.operation == 'create':
             _required(request.expected_pair_id, 'a current pair preview')
-            if not request.manual_pair_start:
+            if not request.manual_pair_start and not request.product_start:
                 _required(request.expected_revision, 'a current investigation revision')
         _checkpoint(cancel)
         try:
@@ -473,8 +509,16 @@ def _execute(request: InvestigationRequest, cancel, service_factory, source_fetc
                                           confirm_same_component=request.confirm_same_component,
                                           dry_run=request.operation == 'preview',
                                           expected_pair_id=request.expected_pair_id,
+                                          **({'selected_product': selected_product,
+                                              'expected_source_snapshot': request.product_source_snapshot}
+                                             if selected_product is not None else {}),
                                           **({'expected_revision': request.expected_revision}
                                              if request.operation == 'create' else {}))
+            if selected_product is not None:
+                outcome.text = ('Analyst-selected product scope; binary membership remains unverified and '
+                                'no KB/CVE attribution is inferred.\n' + outcome.text)
+                if request.operation == 'preview':
+                    outcome.text += '\n\nSelected product and source identities:\n' + selected_product.model_dump_json(indent=2)
             if origin is not None:
                 pair = outcome.result.get('pair', {})
                 if (pair.get('older_sha256'), pair.get('newer_sha256')) != (

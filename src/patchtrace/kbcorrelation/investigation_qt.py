@@ -1,6 +1,7 @@
 """Investigation dialog; workers own explicit source requests and no widgets or SQLite objects."""
 from __future__ import annotations
 
+import json
 import time
 from dataclasses import replace
 from functools import partial
@@ -35,6 +36,9 @@ DESCRIPTIONS = {
     'source': 'Local supported advisory document to import.',
     'lead': 'KB or CVE identifier to search in the stored documents.',
     'scope': 'Explicit product, architecture and release used for this comparison.',
+    'product_start': 'Choose a stored product before supplying local files; no KB/CVE attribution is inferred.',
+    'product_query': 'Filter active stored products by display text, source product ID or scope ID prefix.',
+    'browse_products': 'List source-backed products in the local workspace without creating an investigation.',
     'plan_metadata': 'Preview the exact third-party Winbindex metadata request for this public filename; no request is sent.',
     'refresh_metadata': 'Consent once to exactly the displayed index metadata URL, host, caps and digest; no binary download.',
     'component': 'Explicit component basename to inspect in saved Winbindex records; no download is performed.',
@@ -77,7 +81,7 @@ class InvestigationDialog(QDialog):
                  execute=execute_request, notice=None, current_inputs=None, is_current=None):
         super().__init__(parent)
         register_tips(TIPS)
-        self.setWindowTitle('Investigate KB/CVE or local pair')
+        self.setWindowTitle('Investigate KB/CVE, product or local pair')
         self.resize(920, 760)
         self.tasks = tasks if tasks is not None else TaskRunner(self)
         self._own_tasks = tasks is None
@@ -92,10 +96,11 @@ class InvestigationDialog(QDialog):
         self._online_plan = None
         self._metadata_plan = None
         self._candidate_result = None
+        self._product_result = None
         self._investigation_id = None
         self._cancel_create, self._close_after_create = False, False
         root = QVBoxLayout(self)
-        heading = PlainLabel('Search a local KB/CVE advisory and choose a product, or start from local files. '
+        heading = PlainLabel('Search a local KB/CVE advisory, choose a stored product, or start from local files. '
                              'Preview older/newer files before creating a separate comparison. '
                              'Optional advisory and index metadata downloads require a separate preview and consent. '
                              'Binary files remain local and are never executed.',
@@ -105,8 +110,12 @@ class InvestigationDialog(QDialog):
         self._tip(self.manual_pair_start, 'manual_pair_start')
         self.manual_pair_start.toggled.connect(self._mode_changed)
         root.addWidget(self.manual_pair_start)
+        self.product_start = QCheckBox('Start from a stored product without a KB/CVE')
+        self._tip(self.product_start, 'product_start')
+        self.product_start.toggled.connect(self._product_mode_changed)
+        root.addWidget(self.product_start)
         form = QFormLayout()
-        tab_order = [self.manual_pair_start]
+        tab_order = [self.manual_pair_start, self.product_start]
         self.fields = {}
         self.buttons = {}
         values = {'workspace': str(workspace if workspace is not None else default_workspace()),
@@ -139,12 +148,27 @@ class InvestigationDialog(QDialog):
             label.setBuddy(field)
             form.addRow(label, row)
             field.textChanged.connect(lambda _text, k=key: self._edited(k))
+        product_filter = self.fields['product_query'] = QLineEdit()
+        self._tip(product_filter, 'product_query')
+        product_filter.setPlaceholderText('Optional product name, source product ID or scope ID')
+        product_filter.textChanged.connect(lambda _: self._edited('product_query'))
+        product_row = QWidget()
+        product_layout = QHBoxLayout(product_row)
+        product_layout.setContentsMargins(0, 0, 0, 0)
+        product_layout.addWidget(product_filter, 1)
+        browse_products = self._button('browse_products', 'List stored products')
+        browse_products.clicked.connect(self._browse_products)
+        product_layout.addWidget(browse_products)
+        product_label = PlainLabel('Stored product &query', wrap=True)
+        product_label.setBuddy(product_filter)
+        form.insertRow(3, product_label, product_row)
         self.scope = QComboBox()
         self._tip(self.scope, 'scope')
         self.scope.addItem('Choose a product explicitly', None)
         self.scope.currentIndexChanged.connect(self._scope_changed)
-        form.insertRow(3, '&Product / architecture / release', self.scope)
-        tab_order.insert(tab_order.index(self.fields['older']), self.scope)
+        form.insertRow(4, '&Product / architecture / release', self.scope)
+        position = tab_order.index(self.fields['older'])
+        tab_order[position:position] = [product_filter, browse_products, self.scope]
         self.same_component = QCheckBox('I confirm that differently named files are the same component')
         self._tip(self.same_component, 'same_component')
         self.same_component.toggled.connect(lambda _: self._invalidate())
@@ -254,10 +278,15 @@ class InvestigationDialog(QDialog):
         def path(key):
             value = self.fields[key].text().strip()
             return Path(value).expanduser() if value else None
-        manual = self.manual_pair_start.isChecked()
+        manual, product = self.manual_pair_start.isChecked(), self.product_start.isChecked()
+        selected, sources = None, None
+        if product and self._product_result is not None:
+            data = self._product_result[1].data
+            selected = next((row for row in data['products'] if row['scope_id'] == self.scope.currentData()), None)
+            sources = tuple(data['source_snapshot'])
         return InvestigationRequest(operation, path('workspace') or default_workspace(), source=path('source'),
-                                    lead='' if manual else self.fields['lead'].text().strip(),
-                                    investigation_id=None if manual else self._investigation_id,
+                                    lead='' if manual or product else self.fields['lead'].text().strip(),
+                                    investigation_id=None if manual or product else self._investigation_id,
                                     scope_id=None if manual else self.scope.currentData(),
                                     older=path('older'), newer=path('newer'),
                                     destination=path('destination'), name=self.fields['name'].text().strip(),
@@ -265,18 +294,47 @@ class InvestigationDialog(QDialog):
                                     confirm_same_component=self.same_component.isChecked(),
                                     current_inputs=self._input_origin if operation in {'preview', 'create'} else None,
                                     manual_pair_start=manual, source_months=self.fields['months'].text().strip(),
-                                    component_name=self.fields['component'].text().strip())
+                                    component_name=self.fields['component'].text().strip(),
+                                    product_start=product, product_query=self.fields['product_query'].text(),
+                                    product_scope_json=json.dumps(selected) if selected is not None else None,
+                                    product_source_snapshot=sources)
 
     def _mode_changed(self):
+        if self.manual_pair_start.isChecked() and self.product_start.isChecked():
+            self.product_start.blockSignals(True)
+            self.product_start.setChecked(False)
+            self.product_start.blockSignals(False)
         self._investigation_id = None
+        self._product_result = None
         self._set_scopes([], None)
         self._invalidate()
         self.status.setText('Binary-only: product lineage and fix boundary are unverified; no advisory linkage.'
-                            if self.manual_pair_start.isChecked() else 'Search locally and choose an explicit product.')
+                            if self.manual_pair_start.isChecked() else
+                            'List stored products, choose one explicitly, then preview two local files. No KB/CVE is inferred.'
+                            if self.product_start.isChecked() else 'Search locally and choose an explicit product.')
+
+    def _product_mode_changed(self):
+        if self.product_start.isChecked():
+            self.manual_pair_start.blockSignals(True)
+            self.manual_pair_start.setChecked(False)
+            self.manual_pair_start.blockSignals(False)
+        self._mode_changed()
+
+    def _clear_product_listing(self):
+        self._product_result = None
+        if self.product_start.isChecked():
+            self._set_scopes([], None)
+
+    def _browse_products(self):
+        self._clear_product_listing()
+        self._invalidate()
+        self._submit(self._request('browse_products'))
 
     def _edited(self, key):
         if key in {'older', 'newer'}:
             self._input_origin = None
+        if key in {'workspace', 'product_query', 'source'}:
+            self._clear_product_listing()
         self._invalidate()
         if key in {'workspace', 'lead'}:
             self._investigation_id = None
@@ -310,7 +368,7 @@ class InvestigationDialog(QDialog):
 
     def _scope_changed(self):
         self._invalidate()
-        if self._investigation_id and self.scope.currentData():
+        if not self.product_start.isChecked() and self._investigation_id and self.scope.currentData():
             self._submit(self._request('search'))
 
     def _search_new(self):
@@ -384,38 +442,45 @@ class InvestigationDialog(QDialog):
 
     def _enable(self):
         busy = self._pending is not None
-        manual = self.manual_pair_start.isChecked()
+        manual, product = self.manual_pair_start.isChecked(), self.product_start.isChecked()
         self.manual_pair_start.setEnabled(not busy)
+        self.product_start.setEnabled(not busy)
         for field in self.fields.values():
             field.setEnabled(not busy)
-        self.scope.setEnabled(not busy and not manual and self._investigation_id is not None)
+        self.scope.setEnabled(not busy and not manual and
+                              (self._product_result is not None if product else self._investigation_id is not None))
         self.same_component.setEnabled(not busy)
         for button in self.buttons.values():
             button.setEnabled(not busy)
         self.buttons['use_current'].setEnabled(not busy and self._available_current is not None
                                                and self._is_current())
-        for key in ('source', 'lead', 'months', 'component'):
-            self.fields[key].setEnabled(not busy and not manual)
-        for key in ('browse_source', 'import', 'search'):
+        self.fields['source'].setEnabled(not busy and not manual)
+        for key in ('lead', 'months', 'component'):
+            self.fields[key].setEnabled(not busy and not manual and not product)
+        self.fields['product_query'].setEnabled(not busy and product)
+        self.buttons['browse_products'].setEnabled(not busy and product)
+        for key in ('browse_source', 'import'):
             self.buttons[key].setEnabled(not busy and not manual)
-        self.buttons['plan_sources'].setEnabled(not busy and not manual
+        self.buttons['search'].setEnabled(not busy and not manual and not product)
+        self.buttons['plan_sources'].setEnabled(not busy and not manual and not product
                                                 and bool(self.fields['lead'].text().strip())
                                                 and bool(self.fields['months'].text().strip()))
-        self.buttons['sync_sources'].setEnabled(not busy and not manual and self._online_plan is not None)
-        self.buttons['plan_metadata'].setEnabled(not busy and not manual
+        self.buttons['sync_sources'].setEnabled(not busy and not manual and not product and self._online_plan is not None)
+        self.buttons['plan_metadata'].setEnabled(not busy and not manual and not product
                                                 and bool(self.fields['component'].text().strip()))
-        self.buttons['refresh_metadata'].setEnabled(not busy and not manual and self._metadata_plan is not None)
-        self.buttons['candidate_pairs'].setEnabled(not busy and not manual
+        self.buttons['refresh_metadata'].setEnabled(not busy and not manual and not product and self._metadata_plan is not None)
+        self.buttons['candidate_pairs'].setEnabled(not busy and not manual and not product
                                                   and self._investigation_id is not None
                                                   and self.scope.currentData() is not None
                                                   and bool(self.fields['component'].text().strip()))
-        self.candidates.setEnabled(not busy and not manual and self._candidate_result is not None)
-        self.buttons['candidate_preview'].setEnabled(not busy and not manual
+        self.candidates.setEnabled(not busy and not manual and not product and self._candidate_result is not None)
+        self.buttons['candidate_preview'].setEnabled(not busy and not manual and not product
                                                     and self._candidate_result is not None
                                                     and self.candidates.currentData() is not None)
         self.buttons['cancel'].setEnabled(busy)
         self.buttons['close'].setEnabled(True)
-        pair_ready = manual or (self._investigation_id is not None and self.scope.currentData() is not None)
+        pair_ready = manual or (self.scope.currentData() is not None and
+                                (self._product_result is not None if product else self._investigation_id is not None))
         self.buttons['preview'].setEnabled(not busy and pair_ready
                                           and bool(self.fields['older'].text() and self.fields['newer'].text()))
         self.buttons['create'].setEnabled(not busy and self._preview is not None
@@ -442,6 +507,7 @@ class InvestigationDialog(QDialog):
         self._pending = request
         self._cancel_create, self._close_after_create = False, False
         self.status.setText({'import': 'Importing local advisory…', 'search': 'Searching stored documents…',
+                             'browse_products': 'Listing active products from stored documents…',
                              'current_inputs': 'Verifying current project input copies…',
                              'plan_sources': 'Preparing exact advisory download preview; no request is sent…',
                              'sync_sources': 'Fetching the consented advisory plan…',
@@ -469,7 +535,11 @@ class InvestigationDialog(QDialog):
                              text='The current project changed; reopen the investigation.')
         self.status.setText(('' if result.success else f'{result.error_code or "PT-KBC-INPUT"}: ') + result.text)
         text = result.text
-        if result.success and request.operation == 'plan_metadata':
+        if result.success and request.operation == 'browse_products':
+            self._product_result = (request, result)
+            self._investigation_id, self._preview = None, None
+            self._set_scopes(result.data['products'], None)
+        elif result.success and request.operation == 'plan_metadata':
             self._metadata_plan = (request, result)
         elif result.success and request.operation == 'candidate_pairs':
             self._candidate_result = (request, result)
@@ -497,6 +567,7 @@ class InvestigationDialog(QDialog):
             text += '\nExplicit same-component confirmation and exact pair preview remain required.'
         elif result.success and request.operation == 'import':
             self._investigation_id, self._preview = None, None
+            self._clear_product_listing()
             self._set_scopes([], None)
         elif result.success and request.operation in {'search', 'sync_sources'}:
             self._preview = None
@@ -539,6 +610,8 @@ class InvestigationDialog(QDialog):
                 super().reject()
         elif not result.success:
             self._preview = None
+            if request.product_start and result.error_code == 'PT-KBC-STALE':
+                self._clear_product_listing()
         self.details.setPlainText(text)
         self._enable()
         if request.operation == 'create' and self._close_after_create and not self._closed:
@@ -574,6 +647,7 @@ class InvestigationDialog(QDialog):
         metadata_pending = self._pending is not None and self._pending.operation == 'refresh_metadata'
         self._online_plan = None
         self._metadata_plan = None
+        self._clear_product_listing()
         self._clear_candidates()
         if self._pending is not None and self._pending.operation == 'create':
             self._cancel_create = True

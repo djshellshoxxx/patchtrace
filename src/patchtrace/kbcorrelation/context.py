@@ -148,6 +148,14 @@ def build_bundle(*, investigation_id: str, base_revision: int, lead: Lead, cves:
     facts: list[CardFactRef] = []
     docs: dict[str, SourceDigest] = {}
     unknowns: list[str] = ['KEV listing was not loaded, so exploitation status is unknown.']
+    if lead.kind in {'pair', 'file'} and scope_id is not None:
+        selected = next((scope for scope in index.active_scopes() if scope.scope_id == scope_id), None)
+        if selected is not None:
+            for ref in selected.source_product_ids:
+                source = index.get(ref.doc_id).source
+                docs[source.doc_id] = SourceDigest(doc_id=source.doc_id, sha256=source.sha256, kind=source.kind,
+                                                   release_id=source.release_id)
+        unknowns.append('No KB/CVE was selected; product choice alone does not establish vulnerability attribution.')
     for cve in sorted(set(cves)):
         lookup = index.lookup_cve(cve, scope_id=scope_id, now=now)
         unknowns.extend(w for w in lookup.warnings if w.startswith('CARD_FACT_CONFLICT:'))
