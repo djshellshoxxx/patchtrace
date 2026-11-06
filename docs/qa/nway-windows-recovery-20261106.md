@@ -87,4 +87,37 @@ The coordinator independently reviewed the 26-line production delta, retrieved t
 
 Combined repair at local source commit `640cf36784698c02b1e1579b5a9a38795a4b0b15` / tree `a913fbadcf48e701116213c322d1dd6df0fac19e`: **54 passed in 4.51 s**, whole-tree Ruff and diff hygiene passed. Counts overlap the separate runs. The only production change is the recovery timestamp comparison; no later feature wave is back-merged into frozen #205.
 
-Full Linux qualification will run on the published repair candidate. Its final outcome belongs in the PR description with the exact head and raw-log digest, so evidence updates need not restart the hosted candidate checks. Native Windows qualification and the original Sonar dispositions remain open. The original frozen #205 source ref is unchanged.
+The published repair candidate's full Linux attempt and separate environment controls are preserved in the [exact-head qualification receipt](pr245-linux-qualification-20261106.md) and PR description, including the actual non-green outcome and raw-log digest. Updating this evidence does not restart #245's hosted checks. Native Windows qualification and the original Sonar dispositions remain open. The original frozen #205 source ref is unchanged.
+
+## Completed #218 Windows result
+
+The descendant [#218 Windows job](https://github.com/djshellshoxxx/patchtrace/actions/runs/42127592775/job/127595647308)
+completed with failure on exact `afc8a2967ba3dec6b1ac3351d20dd08c193ba9bc`,
+using CPython 3.12.10, from 04:44:26 to 05:58:57 UTC on 2026-11-06.
+The coordinator independently retrieved the log. Its actual pytest summary was:
+
+```text
+6 failed, 19980 passed, 89 skipped, 5 xfailed, 19 warnings in 4403.56s (1:13:23)
+```
+
+All five original #205 N-way failures recur. The additional observed case is
+`test_stream_failure_preserves_original_and_prior_copy[changed-True]`: the
+expected NwayError occurs before the test's second-pass mutation, leaving the
+original `x` bytes instead of the expected mutated `y` bytes. This is consistent
+with premature path/descriptor timestamp refusal, but the wrapped error does
+not expose the metadata values and does not by itself prove which comparison
+failed. No distinct new defect is established. This case is included in the
+repaired 47-test Linux selection. The old crash-double failure is absent.
+
+The production `series.py` and both relevant test files are byte-identical
+between old #205 and #218: blobs `c2275541b1a3111cc8db016bfca9867ee3e8a5c3`,
+`6d03bcb7b3c004853ebcfe3ba9b483be12f80568` and
+`87210b61ec55b6db7677bea23c524a6ee7a92ac7`, respectively. The result supports
+carrying the existing narrow repair forward, not a claim that Windows has run
+that repair successfully.
+
+Windows Ruff, application build, frozen EXE smoke, portable ZIP checks and
+NSIS/install-launch-uninstall checks were skipped after pytest failed. The
+release gate is skipped. A successful Windows Qt gate and Ubuntu QA do not
+replace those checks. Require Windows QA and the dependent packaging checks
+on the repaired source before promotion.

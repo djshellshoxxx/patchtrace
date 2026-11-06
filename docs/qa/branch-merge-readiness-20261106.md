@@ -47,10 +47,26 @@ Independent review selected the two new regression files and confirmed the inten
 
 #204 was independently checked in a separate worktree: main baseline **3 failed / 48 passed / 3 xfailed**; unchanged #204 head **49 passed / 3 xfailed**. Whole-tree Ruff passed. Original workflow fragment bytes are unchanged by the move. The PR was marked ready without a new source commit.
 
-## Remaining gates
+## Remaining gates at initial staging
 
 This is an integration candidate, not mainline or release qualification. No new complete 20,000-test suite is claimed from this task; existing hosted results and their current head identities are recorded in the plan. Current-head hosted Linux/Windows/Qt/package evidence, scanner disposition, and applicable normal review requirements remain gates before promotion.
 
 #205 has real Linux/Windows failures. #218 Linux has a successful complete run, while its Windows result was still in progress. #235 has queued work and an open scanner finding. Neither skipped nor queued work is treated as successful.
 
 The source/revision guard is an admission check within an open workspace connection, not a write lock or atomic transaction spanning acquisition. Existing native ownership, quarantine, and evidence are unchanged. No paid API workflow is enabled.
+
+## Reviewed continuation — 2026-11-06 UTC
+
+The useful workspace proposal from #183 was added with six documentation-only file changes. Seven original Git blobs/SHA-256 receipts and six reference-only wiki dispositions are preserved in the [workspace reconciliation](../research/workspace-docs-reconciliation-20261106.md). Independent review passed, and the combined candidate's documentation selection passed 294 tests in 2.24 s before later source repairs.
+
+The narrow frozen-#205 prerequisite is published as [#245](https://github.com/djshellshoxxx/patchtrace/pull/245), head `4465a0492367d08f324e80b290a594791921691c`, tree `6db3490e96da2a8f0a200d834f8816bc41421f57`. It corrects the cross-API Windows recovery timestamp comparison and the stale crash-test double. The combined affected selection passed 54 tests. This branch was merged once into the isolated #244 candidate. The production/specification/test blobs match #245 exactly; the crash double was already identical in the descendant. Both append-only ledgers retained their complete destination bytes plus each incoming receipt once. The resulting tree `9bebb7cc0fed5d8326f9c9d25781d3576298133f` matches the independent propagation simulation.
+
+The [Qodo source-provenance finding](https://github.com/djshellshoxxx/patchtrace/pull/244#discussion_r4489325824) was reproduced and repaired; the earlier admission disclaimer was not treated as a disposition. [The detailed repair receipt](kb-source-admission-20261106.md) records two real-store tests failing before the correction, two passing afterward and 75 affected checks passing. Independent review of local commit `c93bbe1d85e9069b7443a594a298bcf70dba7da6` found no blocking or nonblocking findings and independently passed both new controls in 1.28 s. The coordinator reviewed the code and preserved the exact five non-ledger blobs during integration; only append-only ledger concatenation was needed.
+
+Combined local source commit `5c46e85c89af60c598dc01bc221892b08375bc82` has tree `3e5276d6643d784e459264d6cb213082b812c8d4`. Git-data publication preserves this exact tree as `a502c9c241d855dba530160e19215d802ebaf90f`, following recovery merge `376d726d3c771d33491f878f001ab6529c58a878`. The coordinator reran the original 14-file selection plus N-way recovery-copy, series-tolerance, series, subprocess crash recovery, spec registry and help-doc tests: **774 passed in 37.31 s, no skips or expected failures**. Whole-tree Ruff and diff hygiene passed; schema generation again produced no drift. Counts overlap all earlier focused runs.
+
+The combined tests used the separately provisioned copied-executable environment with the same pinned dependency files, `PYTHONPATH=src`, `QT_QPA_PLATFORM=offscreen` and `PYTHONDONTWRITEBYTECODE=1`. Ruff used the original provisioned environment, which contains its console binary. The exact source remained clean throughout verification. Documentation/evidence-only updates follow this tested source commit.
+
+The separate complete Linux run is on #245's exact head, not this combined source. Preserve its actual non-green result and source-pinned environment diagnoses: resolved virtual-environment launchers can escape to a base interpreter lacking protobuf/YARA-X, and this runner denies local AF_UNIX socket construction. The corresponding tests also fail on frozen #205. Copied-interpreter controls preserve the original assertions; they do not relabel the original full run as passing.
+
+No main or frozen owner ref was moved by this continuation. #204's two smoke jobs, current-head hosted checks, Windows qualification, parent scanner dispositions and normal review requirements remain gates. CodeRabbit reports review disabled for the integration base branches; its skipped checks are not successful reviews. The confirmed provenance repair is documented separately from the unresolved/updated review-thread state on GitHub.

@@ -1586,3 +1586,8 @@ remain pending. Source blobs, invariants and limits are recorded in
 ### [KB-ADMISSION-20261106:captured-source-context]
 
 Reproduced #244 review comment 4489325824 against exact `5347ccfd`: source imports after the old snapshot check could enter a saved ContextBundle. Both real-store timing controls failed before repair. SPEC-31-D now specifies admission after one index read and reuse of that index for scope/context; pre-admission drift is stale, and later imports remain available outside the captured context. After repair, both controls pass and the overlapping lifecycle/acquire/service/crash-recovery selection passes **75 tests in 10.56 s**; whole Ruff passes. Prior project bytes, legitimate source imports, verified artifact hashes and owned staging cleanup are checked. [Detailed receipt](qa/kb-source-admission-20261106.md). Independent integration review and existing hosted/native/Windows/full-suite/scanner gates remain open.
+
+
+## Branch consolidation execution and full-run limits (2026-11-06)
+
+Combined #244 source tree `3e5276d6643d784e459264d6cb213082b812c8d4`: 774 focused tests passed, whole-tree Ruff passed, schemas unchanged. Separate exact #245 full Linux run: **3 failed, 19618 passed, 139 skipped, 6 xfailed, 1 warning in 2537.16s (0:42:17)**. All three failures reproduced on frozen #205; two launcher controls pass in the corrected environment, while local AF_UNIX construction remains unavailable. The original full run remains non-green. See [complete result and controls](qa/pr245-linux-qualification-20261106.md) and [merge plan](plans/branch-merge-plan-20261106.md). Native Windows, current-head hosted checks, parent scanner dispositions and #204's queued smoke jobs remain open.

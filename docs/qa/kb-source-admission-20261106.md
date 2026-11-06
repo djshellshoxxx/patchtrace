@@ -100,3 +100,15 @@ compatibility, native Windows acceptance or a complete exact-head suite pass.
 The repair is pending independent integration review. Existing hosted,
 scanner, Windows and release gates remain open; this receipt does not qualify
 the broader branch for main or release.
+
+## Independent integration review
+
+Independent review of local commit `c93bbe1d85e9069b7443a594a298bcf70dba7da6`
+found no blocking or nonblocking findings and independently ran the two new
+regressions: **2 passed in 1.28 s**. The coordinator reviewed the same production
+delta and integrated its exact non-ledger blobs with the recovery prerequisite.
+The combined source tree is `3e5276d6643d784e459264d6cb213082b812c8d4`, published
+as `a502c9c241d855dba530160e19215d802ebaf90f`. Its broader affected selection
+passed **774 tests in 37.31 s**; whole-tree Ruff and schema drift checks passed.
+These results overlap the author checks. Hosted, Windows and main/release
+acceptance remain separate gates.
