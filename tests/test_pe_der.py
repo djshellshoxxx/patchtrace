@@ -155,3 +155,9 @@ def test_mutated_input_only_raises_der_error():
         except DerError:
             continue
         assert node.end <= len(data)
+
+def test_oversized_oid_arc_is_rejected_before_decimal_conversion():
+    # About 5,270 decimal digits: Python's int-to-decimal guard must not escape parsing.
+    huge_arc = b'\x81' * 2500 + b'\x00'
+    assert decode_oid(parse(tlv(0x06, huge_arc))) is None
+    assert decode_oid(parse(oid('2.999.3'))) == '2.999.3'
