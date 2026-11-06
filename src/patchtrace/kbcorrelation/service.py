@@ -12,6 +12,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import threading
 import uuid
 from collections.abc import Callable, Iterable, Mapping, Sequence
 from dataclasses import dataclass, field
@@ -531,19 +532,31 @@ class KbService:
 
     # ------------------------------------------------------------------------------------------ acquire
 
+    def _acquire_owner(self, investigation: str) -> tuple[int, str, tuple[str, ...]]:
+        with self._open(create=False) as ws:
+            revision = self._get(ws, investigation)
+            return (revision.revision, revision.model_dump_json(),
+                    tuple(source.model_dump_json() for source in ws.sources()))
+
     def acquire(self, investigation: str, directory: str, *, pair_id: str | None = None, product: str | None = None,
                 files: Iterable[str] = (), name: str | None = None, consent_hosts: Sequence[str] = (),
-                consent_plan: str = '', offline: bool = False) -> Outcome:
+                consent_plan: str = '', offline: bool = False, cancel: threading.Event | None = None,
+                expected_revision: int | None = None) -> Outcome:
         """Plan the file-index pair, and fetch it only for consent naming exactly the planned hosts and ``plan_sha``.
         Without matching consent the exact plan is returned with exit 2 and nothing is requested."""
         if self.env.acquirer is None or self.env.file_index is None:
             raise _fail('PT-KBC-UNSUPPORTED', 'downloading is not available in this build')
+        result = {'contract': 'kbcorrelation/1', 'investigation_id': investigation, 'plan': None, 'pair': None}
+        if cancel is not None and cancel.is_set():
+            return Outcome(5, 'cancelled', result, 'Acquisition cancelled; nothing was imported.')
+        owner = self._acquire_owner(investigation)
+        if expected_revision is not None and owner[0] != expected_revision:
+            raise _fail('PT-KBC-STALE', 'the investigation changed after preview; review the acquisition again')
         got = self._resolve_pairs(investigation, product, files)
         if isinstance(got[1], Outcome):
             return got[1]
         rev, found, _, _ = got
         pair = self._pick_pair(found, pair_id)
-        result = {'contract': 'kbcorrelation/1', 'investigation_id': rev.investigation_id, 'plan': None, 'pair': None}
         if pair is None:
             return Outcome(4, 'unavailable', result, 'There is no pair candidate to acquire; see "kb pairs".')
         result['pair'] = self._pair_dict(pair)
@@ -561,10 +574,22 @@ class KbService:
             text = plan.text if result['plan'] else exc.message
             return Outcome(2, 'failed', result, text, error=f'{exc.code}: {exc.message}')
         try:
+            def check_current():
+                if cancel is not None and cancel.is_set():
+                    raise _fail('PT-KBC-CANCEL', 'Acquisition cancelled; nothing was imported.')
+                if self._acquire_owner(investigation) != owner:
+                    raise _fail('PT-KBC-STALE', 'the investigation or advisory sources changed during acquisition; '
+                                'review the acquisition again')
+
+            def import_current(older, newer, destination):
+                check_current()
+                return self.import_pair(rev.investigation_id, older, newer, destination, name=name,
+                                        expected_revision=owner[0], expected_source_snapshot=owner[2])
+
+            check_current()
             done = run_acquire(
                 plan, older_row, newer_row, port=self.env.acquirer, directory=directory, consent_hosts=consent_hosts,
-                consent_plan=consent_plan, offline=offline,
-                import_pair=lambda o, n, d: self.import_pair(rev.investigation_id, o, n, d, name=name))
+                consent_plan=consent_plan, offline=offline, cancel=cancel, import_pair=import_current)
         except KbcStoreError as exc:
             if exc.code != 'PT-KBC-CANCEL':
                 raise
@@ -578,12 +603,16 @@ class KbService:
 
     def import_pair(self, investigation: str, older: str, newer: str, directory: str, *, name: str | None = None,
                     confirm_same_component: bool = False, dry_run: bool = False,
-                    expected_pair_id: str | None = None, expected_revision: int | None = None) -> Outcome:
+                    expected_pair_id: str | None = None, expected_revision: int | None = None,
+                    expected_source_snapshot: tuple[str, ...] | None = None) -> Outcome:
         older_f, newer_f = self.env.inspect(older), self.env.inspect(newer)
         with self._open() as ws:
             rev = None if investigation == 'new' else self._get(ws, investigation)
             if expected_revision is not None and (rev is None or rev.revision != expected_revision):
                 raise _fail('PT-KBC-STALE', 'the investigation changed after preview; review the pair again')
+            if (expected_source_snapshot is not None and
+                    tuple(source.model_dump_json() for source in ws.sources()) != expected_source_snapshot):
+                raise _fail('PT-KBC-STALE', 'the advisory sources changed after preview; review the pair again')
             scope_id = rev.selected_scope_id if rev and rev.selected_scope_id else UNSELECTED_SCOPE
             if scope_id != UNSELECTED_SCOPE:
                 index, _ = load_index(ws, self.ports)

@@ -72,6 +72,27 @@ Default optional package limits (tune with real fixtures): input ≤4 GiB, total
 
 A plan can be retried only when same plan_sha and expected bytes; staging artifact SHA must be verified again after restart. Partial files carry separate .partial marker and cannot be selected by pair resolver. Cancellation closes handles, terminates controlled jobs, retains completed verified source caches but never updates active project on incomplete state. Interrupted attempt journal records plan_id, side, last completed stage, file/hash, failure reason and cleanup outcome; stale workdirs are removed only if owned by the job and no live lock. No implicit resume that accesses network.
 
+Service lifecycle amendment (2026-11-05): `KbService.acquire` accepts optional
+`cancel` and `expected_revision` keyword arguments with backwards-compatible
+defaults. A supplied stale revision is refused before staging/networking; an
+already-set cancellation token returns cancelled without staging. Forward the
+same token into the existing acquisition bridge and check it again at the
+final import boundary. Capture the exact committed investigation revision and
+ordered source records before resolution, and compare that snapshot before
+staging and immediately before importing verified bytes. Source additions or
+revision/lead/scope changes invalidate the in-flight operation even when the
+binary request plan itself is unchanged. Always pass the captured revision to
+`import_pair`, whose in-store guard refuses a later revision change. The
+acquisition callback also passes optional `expected_source_snapshot` (the exact
+ordered SourceDoc JSON strings, default `None` for existing manual callers).
+Compare it inside the same held WorkspaceStore before approval/project writes,
+so a cooperative source import between the outer check and in-store admission
+also returns stale without consuming that newer source or creating a project.
+Refusals discard owned staging and preserve prior completed projects; ordinary
+CLI product/file selection and exact request-plan consent remain unchanged.
+Snapshot comparison is an admission check, not one atomic transaction spanning
+download and import; cancellation does not undo an already committed project.
+
 ## D8. Fault injection and acceptance
 
 Acceptance matrix:
