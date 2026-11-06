@@ -657,12 +657,9 @@ def _run_pair(config, path: Path, cancel) -> str | None:
         if any(run.status in {'completed', 'identical'} for run in service.project.runs):
             return None  # reuse the existing directional result
         snapshot = service.project.model_copy(deep=True)
-
-        def print_event(event):
-            if event.stage != 'analysis-progress':
-                print(f'{path.name}: {event.stage}: {event.message}', file=sys.stderr)
-
-        raw_path, run = run_comparison(config, snapshot, service.root, cancel, CliBackendProgress(print_event))
+        listener = CliBackendProgress(lambda event: print(f'{path.name}: {event.stage}: {event.message}',
+                                                         file=sys.stderr))
+        raw_path, run = run_comparison(config, snapshot, service.root, cancel, listener)
         if run.status == 'completed':
             try:
                 if cancel.is_set():
