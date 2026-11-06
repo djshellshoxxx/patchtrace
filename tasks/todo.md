@@ -1164,3 +1164,11 @@ Full `QT_QPA_PLATFORM=offscreen python -m pytest -q` for this isolated native sl
 - [x] Reproduce the CPython 3.12 pathname/descriptor change-time mismatch with real-file fault injection; retain pinned official source/blob evidence.
 - [x] Keep independent full metadata baselines and cross-view identity/size/mtime validation; six new controls preserve metadata-only refusal and prior evidence. Affected series tests: 47 passed; whole Ruff/diff clean.
 - [ ] Independent review, coordinator integration and native Windows QA of the resulting commit. Linux fault injection does not qualify Windows packaging or release acceptance.
+
+### [KB-ADMISSION-20261106:captured-source-context]
+
+- [x] Reproduce #244 comment 4489325824 with two real-store source-insertion schedules on exact `5347ccfd` (both fail before correction).
+- [x] Amend SPEC-31-D and reuse one admitted source index; retain revision CAS, attachment journal, default manual behavior and legitimate later source imports. Two new controls and the overlapping 75-test affected selection pass; whole Ruff passes.
+- [ ] Independently review and integrate this isolated repair before resolving the review finding or promoting #244; retain all existing hosted/native/Windows/full-suite/scanner gates.
+
+[Source-admission repair receipt](../docs/qa/kb-source-admission-20261106.md).

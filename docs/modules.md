@@ -1219,7 +1219,7 @@ Calls panel (id graph): `callgraph/panel.py` (PanelSpec), `panel_qt.py` (widgets
 ## Essential workflow safety continuation (2026-10-31)
 
 - `service.ProjectService.export_report` / `reports.export_project(..., project_root=...)`: enforce project-owned report destination boundary before filesystem writes; UI consumes service route. Existing renderer/preview compatibility retained.
-- `kbcorrelation.service.KbService.acquire/import_pair`: bind consented acquisition completion to captured investigation revision and explicit preview scope, using existing workspace lock/history; retain conservative pairing provenance.
+- `kbcorrelation.service.KbService.acquire/import_pair`: bind consented acquisition completion to captured investigation revision and explicit preview scope, using existing revision compare-and-swap/history. Admit one advisory index after checking the captured source records, then reuse it for scope validation and context; later source additions remain outside that operation. Retain conservative pairing provenance.
 
 - `persistence.ProjectStore.load(*, recover_interrupted=True)`: default startup recovery unchanged; non-mutating committed reads for report generation set False. No schema change.
 

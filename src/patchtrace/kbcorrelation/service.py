@@ -610,12 +610,17 @@ class KbService:
             rev = None if investigation == 'new' else self._get(ws, investigation)
             if expected_revision is not None and (rev is None or rev.revision != expected_revision):
                 raise _fail('PT-KBC-STALE', 'the investigation changed after preview; review the pair again')
-            if (expected_source_snapshot is not None and
-                    tuple(source.model_dump_json() for source in ws.sources()) != expected_source_snapshot):
-                raise _fail('PT-KBC-STALE', 'the advisory sources changed after preview; review the pair again')
+            admitted_index = None
+            if expected_source_snapshot is not None:
+                admitted_index, _ = load_index(ws, self.ports)
+                # Sources are append-only: check after the read, then retain this index for the whole import.
+                if tuple(source.model_dump_json() for source in ws.sources()) != expected_source_snapshot:
+                    raise _fail('PT-KBC-STALE', 'the advisory sources changed after preview; review the pair again')
             scope_id = rev.selected_scope_id if rev and rev.selected_scope_id else UNSELECTED_SCOPE
             if scope_id != UNSELECTED_SCOPE:
-                index, _ = load_index(ws, self.ports)
+                index = admitted_index
+                if index is None:
+                    index, _ = load_index(ws, self.ports)
                 selected = next((s for s in index.scopes() if s.scope_id == scope_id), None)
                 if selected is None:
                     raise _fail('PT-KBC-STALE', 'the selected product mapping changed; select the product again')
@@ -635,7 +640,9 @@ class KbService:
                                                'investigation_revision': rev.revision if rev is not None else None,
                                                'pair': self._pair_dict(pair)}, plan.text)
             rev = self._approve_pair(ws, rev, pair, older_f, newer_f, confirm_same_component)
-            index, _ = load_index(ws, self.ports)
+            index = admitted_index
+            if index is None:
+                index, _ = load_index(ws, self.ports)
             bundle = self._bundle(index, ws, rev, base=rev.revision, pair_id=pair.pair_id, older=pair.older.sha256,
                                   newer=pair.newer.sha256)
             request = AttachRequest(revision=rev, pair_id=pair.pair_id, older_path=older, newer_path=newer,

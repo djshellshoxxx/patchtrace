@@ -1582,3 +1582,7 @@ failures/four passes; corrected recovery/tolerance/series selection: **47 passed
 in 3.37 s**, whole Ruff/diff clean. Native Windows and exact integration gates
 remain pending. Source blobs, invariants and limits are recorded in
 `docs/qa/nway-windows-recovery-20261106.md`.
+
+### [KB-ADMISSION-20261106:captured-source-context]
+
+Reproduced #244 review comment 4489325824 against exact `5347ccfd`: source imports after the old snapshot check could enter a saved ContextBundle. Both real-store timing controls failed before repair. SPEC-31-D now specifies admission after one index read and reuse of that index for scope/context; pre-admission drift is stale, and later imports remain available outside the captured context. After repair, both controls pass and the overlapping lifecycle/acquire/service/crash-recovery selection passes **75 tests in 10.56 s**; whole Ruff passes. Prior project bytes, legitimate source imports, verified artifact hashes and owned staging cleanup are checked. [Detailed receipt](qa/kb-source-admission-20261106.md). Independent integration review and existing hosted/native/Windows/full-suite/scanner gates remain open.
