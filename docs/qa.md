@@ -1,5 +1,11 @@
 # QA and audit record
 
+## 2026-11-06 P1: owner-reported Windows Ghidriff timeout — OPEN
+
+Reviewed the supplied `failure.txt`, `analysis.log`, and `ghidriff.log` against main `dc53b529560453e84cf45e356a40432ff3fc6725`. Both initial analyses completed; a structural correlator reported 2,161,955 entries and later result processing contained a 28m 41.755s quiet interval. Final observed progress was an enhanced-symbol (`esym`) substage at roughly 54 minutes, not overall success. Effective timeout, termination time and the exact installed application/backend versions remain unverified.
+
+The [incident record](qa/ghidriff-timeout-20261106.md) documents the existing 7,200/14,400-second desktop retry options, separate per-function timeout, missing symbols, nonfatal parser warnings, performance investigation and Windows acceptance checklist. The item is prioritized at the top of `tasks/todo.md`. This is evidence review and documentation only; the binary pair was not supplied or rerun and no runtime repair is claimed.
+
 ## Current evidence
 2026-10-11: source inspection of pinned upstream revisions completed. Linux Qt offscreen desktop self-test starts and displays the synthetic project. Integrated Linux QA: 91 tests passed, 2 Windows-only tests skipped; Ruff and Qt offscreen desktop self-test passed. Domain, transport, worker, schema and UI tests are included. Synthetic fixtures and mocked providers verify wiring and validation, not real matching accuracy or model interpretation correctness.
 
