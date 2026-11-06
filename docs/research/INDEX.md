@@ -9,6 +9,10 @@ historical October 14 index; imported observations retain their original baselin
 adapts one proposed UI layout specification and records reference-only dispositions
 for six historical wiki pages, with original-byte receipts for all seven sources.
 
+2026-11-06 addition: [R8 research reconciliation](r8-reconciliation-20261106.md)
+preserves five historical documents with source hashes, current dispositions and
+pinned references for omitted probe/test evidence; it adds no current requirements.
+
 Listing of every file under `docs/research/`, 2026-10-14. "Specs cited" lists SPEC numbers named in the first lines of the file; the authoritative mapping is `docs/specs/REGISTRY.md`. Research files are evidence, not contracts.
 
 | File | Specs cited | Status | Title |
