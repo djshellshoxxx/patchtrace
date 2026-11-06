@@ -246,7 +246,12 @@ def _open_recovery_file(path: Path):
     fd = os.open(path, flags)
     try:
         opened = os.fstat(fd)
-        if not stat.S_ISREG(opened.st_mode) or _recovery_state(opened) != _recovery_state(info):
+        current = path.lstat()
+        # Windows Python 3.12 path stat and fstat expose different ctime meanings.
+        # Match identity/size/mtime across APIs; check ctime within each view only.
+        if (not stat.S_ISREG(opened.st_mode) or not stat.S_ISREG(current.st_mode)
+                or _recovery_state(opened)[:4] != _recovery_state(info)[:4]
+                or _recovery_state(current) != _recovery_state(info)):
             raise OSError('recovery input changed while opening')
         return os.fdopen(fd, 'rb')
     except BaseException:
@@ -254,10 +259,12 @@ def _open_recovery_file(path: Path):
         raise
 
 
-def _unchanged_recovery_file(path: Path, stream, baseline: tuple) -> None:
+def _unchanged_recovery_file(path: Path, stream, baseline: tuple, path_baseline: tuple) -> None:
+    current = path.lstat()
     if (_recovery_state(os.fstat(stream.fileno())) != baseline
-            or not stat.S_ISREG(path.lstat().st_mode)
-            or _recovery_state(path.lstat()) != baseline):
+            or not stat.S_ISREG(current.st_mode)
+            or _recovery_state(current) != path_baseline
+            or path_baseline[:4] != baseline[:4]):
         raise OSError('recovery input changed')
 
 
@@ -279,11 +286,12 @@ def _keep_corrupt_copy(path: Path) -> None:
     try:
         with _open_recovery_file(path) as source:
             baseline = _recovery_state(os.fstat(source.fileno()))
+            path_baseline = _recovery_state(path.lstat())
             digest = hashlib.sha256()
             for chunk in _recovery_chunks(source, baseline[2]):
                 digest.update(chunk)
             expected = digest.digest()
-            _unchanged_recovery_file(path, source, baseline)
+            _unchanged_recovery_file(path, source, baseline, path_baseline)
             copy = path.with_name(f'{path.name}.corrupt-{digest.hexdigest()[:8]}')
             source.seek(0)
             try:
@@ -292,6 +300,7 @@ def _keep_corrupt_copy(path: Path) -> None:
                 # A short hash suffix is only a hint; compare exact bytes before reuse.
                 with _open_recovery_file(copy) as previous:
                     previous_state = _recovery_state(os.fstat(previous.fileno()))
+                    previous_path_state = _recovery_state(copy.lstat())
                     second = hashlib.sha256()
                     for chunk in _recovery_chunks(source, baseline[2]):
                         second.update(chunk)
@@ -299,7 +308,7 @@ def _keep_corrupt_copy(path: Path) -> None:
                             raise OSError('recovery copy differs from damaged series') from None
                     if previous.read(1) or second.digest() != expected:
                         raise OSError('recovery copy differs from damaged series') from None
-                    _unchanged_recovery_file(copy, previous, previous_state)
+                    _unchanged_recovery_file(copy, previous, previous_state, previous_path_state)
             else:
                 try:
                     target_stream = os.fdopen(fd, 'wb')
@@ -317,8 +326,9 @@ def _keep_corrupt_copy(path: Path) -> None:
                         raise OSError('damaged series changed while copying')
                     target.flush()
                     os.fsync(target.fileno())
-                    _unchanged_recovery_file(copy, target, _recovery_state(os.fstat(target.fileno())))
-            _unchanged_recovery_file(path, source, baseline)
+                    _unchanged_recovery_file(copy, target, _recovery_state(os.fstat(target.fileno())),
+                                             _recovery_state(copy.lstat()))
+            _unchanged_recovery_file(path, source, baseline, path_baseline)
             complete = True
     except OSError:
         raise NwayError('PT-NWAY-STORAGE', f'{path.name} could not be preserved in a verified recovery copy; '

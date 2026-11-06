@@ -1476,3 +1476,15 @@ Further whole-suite diagnosis after the import-boundary fix reached2096additiona
 Reviewed follow-up #213 (including #214) and actual local native-prerequisite receipt #208 integrated into primary review candidate #205. No main merge/release. Runtime source, tests, tools and workflow trees match reviewed/tested follow-up c6691ab1 before documentation-only additions. Whole Ruff/schema no drift; final tracker/import checks recorded in the checkpoint receipt.
 
 Older a60d1dbc remaining-node diagnosis ended143/SIGTERM after88% progress, no pytest summary and cause not established; NOT COMPLETE, no pass inferred from progress. Final overlapping1600-node tail completed1573passed/27skipped/18117deselected in156.89s. Earlier7351pass whole attempt stopped on omitted named-adapter test metadata, fixed with precise negative purity controls; later2096pass segment stopped because inherited diagnostic fail-fast truncated its controlled child pytest, corrected by outer-only arguments. These are diagnostic segments, not a fresh unsplit full exact-head pass and not qualification of newer follow-up production changes. Full final-head/native/Windows/package/scanner gates remain open. All worker edits are committed/published and raw local logs retained.
+
+## N-way Windows recovery compatibility (2026-11-06)
+
+On frozen #205, hosted Windows CPython 3.12.10 reported five recovery failures.
+Pinned CPython source and a real-file fault probe identify incompatible pathname
+versus descriptor `st_ctime` meanings. Recovery now retains independent complete
+timestamp baselines while preserving cross-view device/inode/size/mtime checks,
+streamed exact bytes and owned-copy cleanup. New controls first produced two
+failures/four passes; corrected recovery/tolerance/series selection: **47 passed
+in 3.37 s**, whole Ruff/diff clean. Native Windows and exact integration gates
+remain pending. Source blobs, invariants and limits are recorded in
+`docs/qa/nway-windows-recovery-20261106.md`.

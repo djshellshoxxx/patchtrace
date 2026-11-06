@@ -1,10 +1,87 @@
 """Recovery must retain exact damaged evidence before replacing series.json."""
 import hashlib
+from pathlib import Path
+from types import SimpleNamespace
 
 import pytest
 from test_nway_series import builds, create  # noqa: F401
 
 from patchtrace.nway import series as store
+
+
+def stat_with_ctime(info, ctime_ns):
+    fields = {key: getattr(info, key) for key in dir(info) if key.startswith('st_')}
+    return SimpleNamespace(**{**fields, 'st_ctime_ns': ctime_ns})
+
+
+@pytest.mark.parametrize('prior_copy', [False, True])
+def test_distinct_path_and_handle_ctime_domains_allow_exact_recovery(
+        builds, tmp_path, capsys, monkeypatch, prior_copy):  # noqa: F811
+    root = tmp_path / 'series'
+    assert create(capsys, builds[:3], root)[0] == 0
+    path = root / 'series.json'
+    series, good = store.load(path), path.read_bytes()
+    damaged = b'{ damaged evidence\r\n\x1a\x00'
+    path.write_bytes(damaged)
+    backup = path.with_name(path.name + '.corrupt-' + hashlib.sha256(damaged).hexdigest()[:8])
+    if prior_copy:
+        backup.write_bytes(damaged)
+    original_fstat = store.os.fstat
+
+    def changed_time_domain(fd):
+        info = original_fstat(fd)
+        # CPython 3.12 Windows path stat uses birth time; fstat uses change time.
+        return stat_with_ctime(info, info.st_ctime_ns + 1_000_000_000)
+
+    monkeypatch.setattr(store.os, 'fstat', changed_time_domain)
+    store.save(series, path, replace_corrupt=True)
+    assert path.read_bytes() == good
+    assert backup.read_bytes() == damaged
+    assert store.load(path) == series
+
+
+@pytest.mark.parametrize('prior_copy', [False, True])
+@pytest.mark.parametrize('changed_view', ['path', 'handle'])
+def test_change_time_drift_in_either_view_preserves_damaged_series(
+        tmp_path, monkeypatch, prior_copy, changed_view):
+    path = tmp_path / 'series.json'
+    damaged = b'{ damaged evidence'
+    path.write_bytes(damaged)
+    backup = path.with_name(path.name + '.corrupt-' + hashlib.sha256(damaged).hexdigest()[:8])
+    if prior_copy:
+        backup.write_bytes(damaged)
+    identity = path.stat().st_dev, path.stat().st_ino
+    original_fstat, original_lstat = store.os.fstat, Path.lstat
+    original_chunks = store._recovery_chunks
+    passes = 0
+
+    def observed(info, view):
+        if passes == 2 and view == changed_view and (info.st_dev, info.st_ino) == identity:
+            return stat_with_ctime(info, info.st_ctime_ns + 1_000_000_000)
+        return info
+
+    def fstat(fd):
+        return observed(original_fstat(fd), 'handle')
+
+    def lstat(candidate, *args, **kwargs):
+        return observed(original_lstat(candidate, *args, **kwargs), 'path')
+
+    def complete_pass(stream, size):
+        nonlocal passes
+        yield from original_chunks(stream, size)
+        passes += 1
+
+    monkeypatch.setattr(store.os, 'fstat', fstat)
+    monkeypatch.setattr(Path, 'lstat', lstat)
+    monkeypatch.setattr(store, '_recovery_chunks', complete_pass)
+    with pytest.raises(store.NwayError, match='PT-NWAY-STORAGE'):
+        store._keep_corrupt_copy(path)
+    assert passes == 2  # only change metadata after both complete, byte-identical reads
+    assert path.read_bytes() == damaged
+    if prior_copy:
+        assert backup.read_bytes() == damaged
+    else:
+        assert not backup.exists()
 
 
 @pytest.mark.parametrize('existing', ['different', 'directory', 'symlink'])
