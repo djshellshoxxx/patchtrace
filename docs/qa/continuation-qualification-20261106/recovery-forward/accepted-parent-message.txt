@@ -1,0 +1,11 @@
+Merge accepted #205 parent into recovery propagation
+
+Retain actual accepted parent 6095f702400e7fe19c2f462ae79f6ab650c5db58
+as a merge parent after the reviewed #245 source was propagated locally.
+The accepted parent preserves f33e2a0a and 4465a049 and has the same tree
+as the qualified #245 source.
+
+The recovery-forward tree remains exactly
+b59a105796e4c5cc8665cf157d5fbbae0c2ed9fd, identical to local 3824c330.
+No files changed. Existing 54-pass focused and Ruff evidence applies to
+that identical tree; no tests were rerun for this ancestry change.

@@ -1,0 +1,28 @@
+{
+  "argv": [
+    "/workspace/scratch/e6b4398e92df/pt-binexport-copied-launcher/bin/python",
+    "-m",
+    "pytest",
+    "-q",
+    "-p",
+    "no:cacheprovider",
+    "tests/test_nway_recovery_copy_20261105.py",
+    "tests/test_nway_series_tolerance.py",
+    "tests/test_nway_series.py",
+    "tests/stress/test_cli_stress_recovery.py",
+    "--junitxml=/workspace/scratch/c4fbe5e6f72c/recovery-forward-review/pytest.xml"
+  ],
+  "working_directory": "/workspace/scratch/c4fbe5e6f72c/pt-recovery-forward",
+  "resolved_tree": "b59a105796e4c5cc8665cf157d5fbbae0c2ed9fd",
+  "started_at": "2026-11-06T08:52:18.311628+00:00",
+  "finished_at": "2026-11-06T08:52:35.422639+00:00",
+  "wall_seconds": 17.110081102999175,
+  "exit_code": 0,
+  "source_binding": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]\n/workspace/scratch/c4fbe5e6f72c/pt-recovery-forward/src/patchtrace/nway/series.py",
+  "environment": {
+    "QT_QPA_PLATFORM": "offscreen",
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "PYTHONPATH": "src",
+    "PYTEST_ADDOPTS": "unset"
+  }
+}

@@ -1197,3 +1197,24 @@ Full `QT_QPA_PLATFORM=offscreen python -m pytest -q` for this isolated native sl
 - [x] Integrate exact-byte diagnostic bounds and the actual #246 interpreter-fix ancestry; preserve all source branches and prior QA/task entries.
 - [ ] Complete combined current-source full tests, hosted/native qualification, normal review and outstanding parent scanner dispositions before promotion.
 - [ ] Product-only CLI/online acquisition and single-binary discovery remain separate accepted work. [Continuation receipt](../docs/qa/continuation-20261106.md).
+
+
+### [CONTINUATION-QUALIFICATION-20261106:completed-local-results]
+
+- [x] Preserve both completed local full runs, failed outcomes, raw logs/JUnit, hashes and identities.
+- [x] Verify #247 timing/GUI controls, hosted Ubuntu pass and one unchanged #246 timing follow-up.
+- [x] Accept fully qualified #245 and publish actual-parent forward #248; retain sources and 54-pass evidence.
+- [x] Preserve five R8 documents with provenance and explicit unported status.
+- [ ] Finish current-head hosted gates, normal review, parent propagation and Sonar disposition; retain separate release/live/manual requirements. [Evidence](../docs/qa/continuation-qualification-20261106.md).
+
+
+### [SUBPROCESS-ACCEPTED-20261106]
+
+- [x] Merge #246 after full hosted QA, Qt, packaging, both Linux smoke jobs and review/scanner gates pass; verify exact merged tree and retained source. Main: `dc53b529` at 09:29:12 UTC.
+- [ ] Recheck parent application merge trees and gates against the advanced main before promotion.
+
+
+### [CONTINUATION-WINDOWS-20261106:product-start-build]
+
+- [x] Complete #247 Windows QA/packaging and publish the source-pinned downloadable product-start candidate; retain the exact receipt and artifact identity.
+- [ ] Finish Linux packaging/smokes, normal parent promotion and remaining release/live/manual acceptance. [Windows evidence](../docs/qa/continuation-windows-20261106.md).

@@ -1,0 +1,200 @@
+{
+  "schema": "patchtrace-hosted-qa-evidence/1",
+  "observed_at_utc": "2026-11-06 08:24:41 UTC",
+  "repository": "djshellshoxxx/patchtrace",
+  "pr": 245,
+  "requested_head": "4465a0492367d08f324e80b290a594791921691c",
+  "job": {
+    "id": 127733918805,
+    "name": "qa (ubuntu-latest)",
+    "conclusion": "success",
+    "run_id": 42169559762,
+    "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/42169559762/job/127733918805"
+  },
+  "environment": {
+    "implementation": "CPython",
+    "python_version": "3.12.16",
+    "python_root": "/opt/hostedtoolcache/Python/3.12.16/x64",
+    "os": "Ubuntu",
+    "os_release": "26.04.1 LTS",
+    "runner_image": "ubuntu-26.04",
+    "runner_image_version": "20261101.186.1",
+    "qt_platform": "offscreen"
+  },
+  "full_suite": {
+    "command": "python -m pytest -q --junitxml=qa-results.xml",
+    "passed": 19708,
+    "failed": 0,
+    "skipped": 52,
+    "xfailed": 6,
+    "warnings": 1,
+    "seconds": 1697.35,
+    "result_line": "2026-11-06T08:10:12.7476884Z 19708 passed, 52 skipped, 6 xfailed, 1 warning in 1697.35s (0:28:17)",
+    "warning": "Intentional duplicate-ZIP fixture warning: Duplicate name: 'payload/python/python.exe'"
+  },
+  "source_identity": {
+    "checked_out_ref": "refs/remotes/pull/245/merge",
+    "checked_out_sha": "9e0bfefa3d036d080efef30f62ead1a5578ed6f5",
+    "merge_tree": "6db3490e96da2a8f0a200d834f8816bc41421f57",
+    "merge_parents": [
+      "f33e2a0aaa3399644367f2419fee21cfe2e8702b",
+      "4465a0492367d08f324e80b290a594791921691c"
+    ],
+    "head_sha": "4465a0492367d08f324e80b290a594791921691c",
+    "head_tree": "6db3490e96da2a8f0a200d834f8816bc41421f57",
+    "head_parents": [
+      "f33e2a0aaa3399644367f2419fee21cfe2e8702b"
+    ],
+    "base_sha": "f33e2a0aaa3399644367f2419fee21cfe2e8702b",
+    "base_tree": "5f9da49f3e06878805d5efbeedfc6aa9422946b9",
+    "merge_tree_equals_head_tree": true,
+    "source_urls": [
+      "https://api.github.com/repos/djshellshoxxx/patchtrace/git/commits/9e0bfefa3d036d080efef30f62ead1a5578ed6f5",
+      "https://api.github.com/repos/djshellshoxxx/patchtrace/git/commits/4465a0492367d08f324e80b290a594791921691c",
+      "https://api.github.com/repos/djshellshoxxx/patchtrace/git/commits/f33e2a0aaa3399644367f2419fee21cfe2e8702b"
+    ]
+  },
+  "validation_steps": [
+    {
+      "name": "Run sudo apt-get update && sudo apt-get install -y libegl1 libopengl0 libgl1",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "Run python -m pip install --only-binary=:all: -e '.[dev,search,rules]'",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "Run python -m pip check",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "protobuf equals the pin and runs the upb backend (SPEC-10b)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "Run python -m pytest -q --junitxml=qa-results.xml",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "Run python -m ruff check src tests tools",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "BinExport worker memory cap measurement (SPEC-10b U7, non-gating)",
+      "status": "completed",
+      "conclusion": "skipped"
+    },
+    {
+      "name": "Run python tools/build_windows.py",
+      "status": "completed",
+      "conclusion": "skipped"
+    },
+    {
+      "name": "Frozen EXE headless smoke (A1-A4) and self-test",
+      "status": "completed",
+      "conclusion": "skipped"
+    },
+    {
+      "name": "Extract and run portable Windows ZIP outside checkout",
+      "status": "completed",
+      "conclusion": "skipped"
+    },
+    {
+      "name": "Install pinned NSIS compiler",
+      "status": "completed",
+      "conclusion": "skipped"
+    },
+    {
+      "name": "Build per-user Windows installer",
+      "status": "completed",
+      "conclusion": "skipped"
+    },
+    {
+      "name": "Install, launch, and uninstall the setup package",
+      "status": "completed",
+      "conclusion": "skipped"
+    },
+    {
+      "name": "Record this matrix leg's own result for the release notes",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "Run actions/upload-artifact@v4",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "Run actions/upload-artifact@v4",
+      "status": "completed",
+      "conclusion": "skipped"
+    }
+  ],
+  "qa_artifact": {
+    "id": 13486794403,
+    "name": "qa-Linux",
+    "size_in_bytes": 341155,
+    "digest": "sha256:879522c8ac7d3434b1b8522419016e972bae8b241b735392bfeb4afa21440689",
+    "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/42169559762/artifacts/13486794403",
+    "head_sha": "4465a0492367d08f324e80b290a594791921691c"
+  },
+  "raw_log_excerpts": [
+    "2026-11-06T07:41:29.9408207Z HEAD is now at 9e0bfef Merge 4465a0492367d08f324e80b290a594791921691c into f33e2a0aaa3399644367f2419fee21cfe2e8702b",
+    "2026-11-06T07:41:30.0916332Z Successfully set up CPython (3.12.16)",
+    "2026-11-06T07:41:53.3731522Z No broken requirements found.",
+    "2026-11-06T07:41:53.4666697Z protobuf pin=7.36.2 installed=7.36.2 backend=upb",
+    "2026-11-06T08:10:12.7476884Z 19708 passed, 52 skipped, 6 xfailed, 1 warning in 1697.35s (0:28:17)",
+    "2026-11-06T08:10:16.1590685Z All checks passed!",
+    "2026-11-06T08:10:17.0317468Z SHA256 digest of uploaded artifact zip is 879522c8ac7d3434b1b8522419016e972bae8b241b735392bfeb4afa21440689",
+    "2026-11-06T08:10:17.4802752Z Artifact download URL: https://github.com/djshellshoxxx/patchtrace/actions/runs/42169559762/artifacts/13486794403"
+  ],
+  "ubuntu_qt_latest": [
+    {
+      "id": 127733918786,
+      "name": "qt-gate (ubuntu-latest, 20, 2/4)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 127733918945,
+      "name": "qt-gate (ubuntu-latest, 20, 4/4)",
+      "status": "in_progress",
+      "conclusion": null
+    },
+    {
+      "id": 127733918952,
+      "name": "qt-gate (ubuntu-latest, 20, 1/4)",
+      "status": "in_progress",
+      "conclusion": null
+    },
+    {
+      "id": 127733918953,
+      "name": "qt-gate (ubuntu-latest, 20, 3/4)",
+      "status": "in_progress",
+      "conclusion": null
+    }
+  ],
+  "live_acceptance_blocked": [
+    "LIVE ACCEPTANCE BLOCKED: bindiff (PATCHTRACE_BINDIFF is not set: no BinDiff installed or provisioned on this machine)",
+    "LIVE ACCEPTANCE BLOCKED: buildenv-diec (PATCHTRACE_DIEC is not set to an existing file (run tools/provision_intel_tools.py))",
+    "LIVE ACCEPTANCE BLOCKED: buildenv-diec (PATCHTRACE_DIEC is not set to an existing file (run tools/provision_intel_tools.py))",
+    "LIVE ACCEPTANCE BLOCKED: capa-pairs-api (PATCHTRACE_CAPA is not set to an existing file (run tools/provision_intel_tools.py))",
+    "LIVE ACCEPTANCE BLOCKED: capa-pairs-move (tests/capa_pairs_pe.py (capa-move pair builder) is absent, so the live move leg cannot run)",
+    "LIVE ACCEPTANCE BLOCKED: intel-tools-capa (PATCHTRACE_CAPA is not set to an existing file (run tools/provision_intel_tools.py))",
+    "LIVE ACCEPTANCE BLOCKED: intel-tools-floss (PATCHTRACE_FLOSS is not set to an existing file (run tools/provision_intel_tools.py))",
+    "LIVE ACCEPTANCE BLOCKED: intel-tools-diec (PATCHTRACE_DIEC is not set to an existing file (run tools/provision_intel_tools.py))",
+    "LIVE ACCEPTANCE BLOCKED: intel-tools-floss (PATCHTRACE_FLOSS is not set to an existing file (run tools/provision_intel_tools.py))",
+    "LIVE ACCEPTANCE BLOCKED: strings-floss-static (PATCHTRACE_FLOSS is not set to an existing file (run tools/provision_intel_tools.py))",
+    "LIVE ACCEPTANCE BLOCKED: strings-floss-decode (PATCHTRACE_FLOSS is not set to an existing file (run tools/provision_intel_tools.py))",
+    "LIVE ACCEPTANCE BLOCKED: tier-r-mingw-gcc (mingw-gcc: missing mingw-gcc (not installed (not on PATH)))",
+    "LIVE ACCEPTANCE BLOCKED: tier-r-msvc (profile msvc builds only on a Windows host (this host is posix))"
+  ],
+  "scope": "Full Ubuntu QA on the exact repair tree passed. The log also explicitly records unavailable optional live acceptance checks, preserved above. Windows packaging steps were skipped on this Linux matrix leg. Three Ubuntu Qt shards remain running; no final integration or release acceptance is claimed.",
+  "mutations": "None to repository refs, tracked source, PR metadata, or workflow execution; this file is a read-only evidence receipt."
+}
