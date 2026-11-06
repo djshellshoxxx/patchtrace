@@ -169,3 +169,11 @@ These files were not on `main` at 1560531. As of 2026-10-14 (branch `work/a`, 43
 | `docs/specs/workbench/02-networkx-callgraph.md` (PR #43) | PT-WB-02 | PT-WB-02 | approved | none (planned) | Not implemented |
 | `docs/specs/workbench/03-floss-strings.md` (PR #43) | PT-WB-03; "SPEC-29" means the three-tool suite | PT-WB-03 | partial | planned intelligence/tools/floss.py (SPEC-36) | Reuses the SPEC-36 FLOSS adapter |
 | `docs/specs/workbench/04-quickwins.md` (PR #43) | PT-WB-QW | PT-WB-04 | draft | none | "Ranked proposals, not implementation" |
+
+## 6. Workspace documentation reconciliation, 2026-11-06
+
+This later draft registration does not refresh the historical tables or approve an implementation. The nonnumeric alias is proposed; cite the path until confirmed. SPEC-56 is not allocated here because the historical owner-action record already assigns it to PR #61.
+
+| File | Proposed canonical alias | Status | Basis |
+|---|---|---|---|
+| `docs/specs/DOCKABLE-WORKSPACE-SPEC.md` | SPEC-DW-01 (proposed; cite by path) | draft | Compact adaptation of #183 at `ed70e6ddac449a42f843f1c60aa878416ab31727`; source baseline rechecked at candidate #235 `ccfe175d44a70947203c75bbd033a9a9e2633f0f`. Existing feature docks are present; independently dockable core sections, presets and durable workspace migration remain proposed. No runtime or release acceptance. |

@@ -6,7 +6,7 @@ the existing service on this worker's thread; no connection is returned to the G
 from __future__ import annotations
 
 import json
-from dataclasses import dataclass, field, replace
+from dataclasses import asdict, dataclass, field, replace
 from pathlib import Path
 from typing import Literal
 
@@ -30,7 +30,7 @@ class CurrentProjectInputs:
 @dataclass(frozen=True, slots=True)
 class InvestigationRequest:
     operation: Literal['import', 'search', 'preview', 'create', 'current_inputs', 'plan_sources', 'sync_sources',
-                       'candidate_pairs', 'candidate_preview']
+                       'candidate_pairs', 'candidate_preview', 'plan_metadata', 'refresh_metadata']
     workspace: Path
     source: Path | None = None
     lead: str = ''
@@ -351,8 +351,34 @@ def _candidate_operation(request, cancel, service):
                                success=preview.exit == 0, error_code=None if preview.exit == 0 else 'PT-KBC-INPUT')
 
 
-def _execute(request: InvestigationRequest, cancel, service_factory, source_fetcher) -> InvestigationResult:
+def _metadata_operation(request, cancel, metadata_refresher):
+    from .sources.winbindex_fetch import RefreshRequest, build_plan, refresh, render_plan
+
+    if request.manual_pair_start:
+        raise KbcStoreError('PT-KBC-INPUT', 'Switch from binary-only mode before requesting index metadata.')
+    name = normalise_name(_required(request.component_name, 'a public component basename'))
+    if request.operation == 'plan_metadata':
+        plan = build_plan(name)
+        return InvestigationResult('plan_metadata', render_plan(plan),
+                                   {'plan_json': plan.to_json(), 'plan_sha': plan.plan_sha,
+                                    'hosts': plan.hosts, 'file_name': plan.file_name})
+    asked = RefreshRequest(Path(request.workspace), name,
+                           _required(request.source_plan_json, 'a current metadata request preview'),
+                           request.consent_hosts, request.consent_plan)
+    refresher = metadata_refresher if metadata_refresher is not None else refresh
+    receipt = asdict(refresher(asked, cancel))
+    text = ('Saved third-party Winbindex metadata. No binary was downloaded or executed.\n'
+            'TLS origin and raw SHA-256 do not establish Microsoft authorship or a CVE fix.\n'
+            + json.dumps(receipt, indent=2) +
+            '\nSelect the advisory product, then inspect saved index candidates explicitly.')
+    # The refresher retains a completed publication even if cancellation arrives after its commit.
+    return InvestigationResult('refresh_metadata', text, {'metadata': receipt, 'file_name': name})
+
+
+def _execute(request: InvestigationRequest, cancel, service_factory, source_fetcher, metadata_refresher) -> InvestigationResult:
     _checkpoint(cancel)
+    if request.operation in {'plan_metadata', 'refresh_metadata'}:
+        return _metadata_operation(request, cancel, metadata_refresher)
     if request.manual_pair_start and (request.investigation_id is not None or request.scope_id is not None
                                       or request.expected_revision is not None):
         raise KbcStoreError('PT-KBC-INPUT', 'A binary-only start cannot reuse an advisory investigation or product.')
@@ -475,10 +501,11 @@ def _execute(request: InvestigationRequest, cancel, service_factory, source_fetc
                                error_code=None if outcome.exit in {0, 3, 4} else 'PT-KBC-INPUT')
 
 
-def execute_request(request: InvestigationRequest, cancel, *, service_factory=None, source_fetcher=None) -> InvestigationResult:
+def execute_request(request: InvestigationRequest, cancel, *, service_factory=None, source_fetcher=None,
+                    metadata_refresher=None) -> InvestigationResult:
     """Run one explicit operation; source transport remains outside the UI and domain errors are plain data."""
     try:
-        return _execute(request, cancel, service_factory, source_fetcher)
+        return _execute(request, cancel, service_factory, source_fetcher, metadata_refresher)
     except (KbcStoreError, SourceError) as exc:
         return InvestigationResult(request.operation, exc.message, success=False, error_code=exc.code)
     except (OSError, ValueError) as exc:

@@ -1,0 +1,256 @@
+{
+  "protobuf_launcher": {
+    "classification": "baseline test-launcher assumption exposed by symlink-based virtual environment; not a #245 runtime regression",
+    "repair_commit": "4465a0492367d08f324e80b290a594791921691c",
+    "baseline_commit": "f33e2a0aaa3399644367f2419fee21cfe2e8702b",
+    "unchanged_probe": "tests/test_binexport_isolation.py::test_pure_python_runtime_is_refused_in_a_fresh_interpreter",
+    "original_venv_launcher": "/workspace/scratch/e6b4398e92df/pt-venv/bin/python",
+    "original_resolved_launcher": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+    "original_repair_test": {
+      "result": "failed",
+      "seconds": 1.47,
+      "actual": "protobuf_missing",
+      "expected": "protobuf_not_upb"
+    },
+    "original_baseline_test": {
+      "result": "failed",
+      "seconds": 2.77,
+      "actual": "protobuf_missing",
+      "expected": "protobuf_not_upb"
+    },
+    "copied_launcher": "/workspace/scratch/e6b4398e92df/pt-binexport-copied-launcher/bin/python",
+    "copied_resolved_launcher": "/workspace/scratch/e6b4398e92df/pt-binexport-copied-launcher/bin/python",
+    "copied_prefix": "/workspace/scratch/e6b4398e92df/pt-binexport-copied-launcher",
+    "copied_base_prefix": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python",
+    "source_module": "/workspace/scratch/e6b4398e92df/pt-pr245-binexport-diagnosis/src/patchtrace/secondary/binexport_proto.py",
+    "protobuf_version": "7.36.2",
+    "protobuf_module": "/workspace/scratch/e6b4398e92df/pt-binexport-copied-launcher/lib/python3.12/site-packages/google/protobuf/__init__.py",
+    "default_protobuf_implementation": "upb",
+    "dependency_reuse": "Fresh venv built with symlinks=False, with its otherwise empty site-packages path linked to existing pt-venv dependency files; no installation or shared environment change. PYTHONDONTWRITEBYTECODE=1 during corrected probe.",
+    "bounds": "No runtime/test source changes. No full-suite result is replaced or reclassified by this diagnostic.",
+    "resolved_diagnostic_child": {
+      "executable": "/workspace/scratch/e6b4398e92df/pt-binexport-copied-launcher/bin/python",
+      "prefix": "/workspace/scratch/e6b4398e92df/pt-binexport-copied-launcher",
+      "base_prefix": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python"
+    },
+    "corrected_isolation_file": {
+      "command": "QT_QPA_PLATFORM=offscreen PYTHONPATH=src PYTHONDONTWRITEBYTECODE=1 /workspace/scratch/e6b4398e92df/pt-binexport-copied-launcher/bin/python -m pytest -q -vv tests/test_binexport_isolation.py",
+      "result": "28 passed",
+      "seconds": 30.07,
+      "exit_code": 0,
+      "log": "/workspace/scratch/e6b4398e92df/pr245-qualification/binexport-copied-launcher.log",
+      "log_sha256": "7339dc12e83ae77cd186a6349698991dfab63a68c83a82a6da72a6b84526e617"
+    },
+    "unchanged_source_files": {
+      "tests/test_binexport_isolation.py": {
+        "f33e2a0aaa3399644367f2419fee21cfe2e8702b": "1be37eac00c3f4433fa9ca79119359a3c7dd30a6",
+        "4465a0492367d08f324e80b290a594791921691c": "1be37eac00c3f4433fa9ca79119359a3c7dd30a6"
+      },
+      "src/patchtrace/secondary/binexport_proto.py": {
+        "f33e2a0aaa3399644367f2419fee21cfe2e8702b": "7fc1204d1b0db63f5eb318691aff7fe2089f528b",
+        "4465a0492367d08f324e80b290a594791921691c": "7fc1204d1b0db63f5eb318691aff7fe2089f528b"
+      },
+      "src/patchtrace/secondary/binexport_run.py": {
+        "f33e2a0aaa3399644367f2419fee21cfe2e8702b": "427551a635bbaab921200b9a3f5d2f35e2d8a096",
+        "4465a0492367d08f324e80b290a594791921691c": "427551a635bbaab921200b9a3f5d2f35e2d8a096"
+      }
+    },
+    "diagnostic_worktree_status": {
+      "pt-pr245-binexport-diagnosis": "",
+      "pt-pr205-binexport-baseline": ""
+    }
+  },
+  "local_unix_socket": {
+    "classification": "AF_UNIX socket creation is denied by the execution environment before bind/listen or NetworkGuard entry; reproduced on frozen #205 and #245",
+    "repair_commit": "4465a0492367d08f324e80b290a594791921691c",
+    "baseline_commit": "f33e2a0aaa3399644367f2419fee21cfe2e8702b",
+    "test": "tests/test_network_consent_guard.py::test_a_local_unix_socket_is_not_network",
+    "trace": {
+      "test_line": 147,
+      "statement": "with socket.socket(socket.AF_UNIX) as server, socket.socket(socket.AF_UNIX) as client:",
+      "stdlib_frame": "socket.py:233, _socket.socket.__init__",
+      "exception": "PermissionError",
+      "errno": 1,
+      "message": "Operation not permitted"
+    },
+    "logs": {
+      "unix-socket-original-env.log": {
+        "path": "/workspace/scratch/e6b4398e92df/pr245-qualification/unix-socket-original-env.log",
+        "summary": "============================== 1 failed in 0.83s ===============================",
+        "sha256": "c6723bb87fd2e61bef50c427e008a1702f3ab142b9d77301aae57d28d674d08b"
+      },
+      "unix-socket-baseline.log": {
+        "path": "/workspace/scratch/e6b4398e92df/pr245-qualification/unix-socket-baseline.log",
+        "summary": "============================== 1 failed in 0.87s ===============================",
+        "sha256": "f2b793d5749026543b3bfff96def7fd07096242e77a5563681b3c3443629fa9b"
+      }
+    },
+    "source_blobs": {
+      "tests/test_network_consent_guard.py": {
+        "f33e2a0aaa3399644367f2419fee21cfe2e8702b": "e83b23ae12bc53bc24acac8441e0dc3482a29996",
+        "4465a0492367d08f324e80b290a594791921691c": "e83b23ae12bc53bc24acac8441e0dc3482a29996"
+      },
+      "tests/network_guard.py": {
+        "f33e2a0aaa3399644367f2419fee21cfe2e8702b": "f686e57af5a6f431f81ab7ecceab1e846cb6e4fd",
+        "4465a0492367d08f324e80b290a594791921691c": "f686e57af5a6f431f81ab7ecceab1e846cb6e4fd"
+      },
+      "tests/conftest.py": {
+        "f33e2a0aaa3399644367f2419fee21cfe2e8702b": "d56bf1740bd3c023c904cabbb0ae723a6d3e2907",
+        "4465a0492367d08f324e80b290a594791921691c": "d56bf1740bd3c023c904cabbb0ae723a6d3e2907"
+      }
+    },
+    "source_blobs_equal": true,
+    "stdlib_only_controls": [
+      {
+        "interpreter": "/workspace/scratch/e6b4398e92df/pt-venv/bin/python",
+        "returncode": 0,
+        "data": {
+          "executable": "/workspace/scratch/e6b4398e92df/pt-venv/bin/python",
+          "prefix": "/workspace/scratch/e6b4398e92df/pt-venv",
+          "af_unix_defined": true,
+          "operations": [
+            {
+              "family": "AF_UNIX",
+              "operation": "construct only",
+              "result": "error",
+              "exception": "PermissionError",
+              "errno": 1,
+              "message": "[Errno 1] Operation not permitted"
+            },
+            {
+              "family": "AF_INET",
+              "operation": "construct and close only",
+              "result": "created"
+            }
+          ]
+        },
+        "stderr": ""
+      },
+      {
+        "interpreter": "/workspace/scratch/e6b4398e92df/pt-binexport-copied-launcher/bin/python",
+        "returncode": 0,
+        "data": {
+          "executable": "/workspace/scratch/e6b4398e92df/pt-binexport-copied-launcher/bin/python",
+          "prefix": "/workspace/scratch/e6b4398e92df/pt-binexport-copied-launcher",
+          "af_unix_defined": true,
+          "operations": [
+            {
+              "family": "AF_UNIX",
+              "operation": "construct only",
+              "result": "error",
+              "exception": "PermissionError",
+              "errno": 1,
+              "message": "[Errno 1] Operation not permitted"
+            },
+            {
+              "family": "AF_INET",
+              "operation": "construct and close only",
+              "result": "created"
+            }
+          ]
+        },
+        "stderr": ""
+      }
+    ],
+    "interpretation": "AF_UNIX is defined in both Python environments but construction is refused; AF_INET construction and immediate close succeeds. No exact enforcement mechanism is inferred.",
+    "next_step": "Retain the original full-suite result and obtain this unchanged test and required qualification on a runner that permits local AF_UNIX sockets. No guard relaxation, skip injection, permission override or shared runtime mutation is justified.",
+    "bounds": "Probe performs socket construction/close only, with no bind/listen/connect/DNS or PatchTrace imports. No source changes. Original full-suite process/log remains untouched."
+  },
+  "rules_worker_launcher": {
+    "classification": "Baseline test launcher resolves out of virtual environment, so the positive-control child cannot import installed YARA-X; not a #245 isolation regression.",
+    "repair_commit": "4465a0492367d08f324e80b290a594791921691c",
+    "baseline_commit": "f33e2a0aaa3399644367f2419fee21cfe2e8702b",
+    "test": "tests/test_rules_worker.py::test_parent_never_imports_yara_x",
+    "trace": {
+      "test_line": 527,
+      "assertion": "control.returncode == 0 or not runner.engine_installed()",
+      "observed": "control.returncode=1 while parent runner.engine_installed()=True",
+      "control_exception": "ModuleNotFoundError: No module named 'yara_x'",
+      "control_source_frame": "src/patchtrace/rules/engine.py:24, import yara_x"
+    },
+    "test_launcher_expression": "PY = str(Path(sys.executable).resolve())",
+    "original_resolved_child": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+    "original_parent_launcher": "/workspace/scratch/e6b4398e92df/pt-venv/bin/python",
+    "corrected_launcher": "/workspace/scratch/e6b4398e92df/pt-binexport-copied-launcher/bin/python",
+    "import_discovery": [
+      {
+        "name": "original venv",
+        "returncode": 0,
+        "data": {
+          "executable": "/workspace/scratch/e6b4398e92df/pt-venv/bin/python",
+          "prefix": "/workspace/scratch/e6b4398e92df/pt-venv",
+          "yara_x_available": true,
+          "yara_x_origin": "/workspace/scratch/e6b4398e92df/pt-venv/lib/python3.12/site-packages/yara_x/__init__.py",
+          "yara_x_version": "1.21.0",
+          "imported_yara_x": false
+        },
+        "stderr": ""
+      },
+      {
+        "name": "resolved base",
+        "returncode": 0,
+        "data": {
+          "executable": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+          "prefix": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python",
+          "yara_x_available": false,
+          "yara_x_origin": null,
+          "yara_x_version": null,
+          "imported_yara_x": false
+        },
+        "stderr": ""
+      },
+      {
+        "name": "copied launcher",
+        "returncode": 0,
+        "data": {
+          "executable": "/workspace/scratch/e6b4398e92df/pt-binexport-copied-launcher/bin/python",
+          "prefix": "/workspace/scratch/e6b4398e92df/pt-binexport-copied-launcher",
+          "yara_x_available": true,
+          "yara_x_origin": "/workspace/scratch/e6b4398e92df/pt-binexport-copied-launcher/lib/python3.12/site-packages/yara_x/__init__.py",
+          "yara_x_version": "1.21.0",
+          "imported_yara_x": false
+        },
+        "stderr": ""
+      }
+    ],
+    "logs": {
+      "rules-worker-original-env.log": {
+        "path": "/workspace/scratch/e6b4398e92df/pr245-qualification/rules-worker-original-env.log",
+        "summary": "============================== 1 failed in 1.36s ===============================",
+        "sha256": "798e60b37650c970787710716946ff0c34ef1701cfb652b6f6f6cc73cd326388"
+      },
+      "rules-worker-baseline.log": {
+        "path": "/workspace/scratch/e6b4398e92df/pr245-qualification/rules-worker-baseline.log",
+        "summary": "============================== 1 failed in 1.38s ===============================",
+        "sha256": "155764c04bbab0e1ba027bdf3c9d58eaec541dba3254adedc274e9136726f92a"
+      },
+      "rules-worker-copied-launcher.log": {
+        "path": "/workspace/scratch/e6b4398e92df/pr245-qualification/rules-worker-copied-launcher.log",
+        "summary": "============================== 1 passed in 1.89s ===============================",
+        "sha256": "0980704984afeae11486fe62795866e3c628aa59b19d115f36923caf3ec17210"
+      }
+    },
+    "source_blobs": {
+      "tests/test_rules_worker.py": {
+        "f33e2a0aaa3399644367f2419fee21cfe2e8702b": "68c5ceda57b4065397687a69085fb45aa58fb5a8",
+        "4465a0492367d08f324e80b290a594791921691c": "68c5ceda57b4065397687a69085fb45aa58fb5a8"
+      },
+      "src/patchtrace/rules": {
+        "f33e2a0aaa3399644367f2419fee21cfe2e8702b": "a2eec26b7a797b415bd74327b5bfb777651a384e",
+        "4465a0492367d08f324e80b290a594791921691c": "a2eec26b7a797b415bd74327b5bfb777651a384e"
+      },
+      "src/patchtrace/jobs.py": {
+        "f33e2a0aaa3399644367f2419fee21cfe2e8702b": "e2b3e3a2c51f7aaf4d109a873afe57e9da62c61e",
+        "4465a0492367d08f324e80b290a594791921691c": "e2b3e3a2c51f7aaf4d109a873afe57e9da62c61e"
+      },
+      "tests/conftest.py": {
+        "f33e2a0aaa3399644367f2419fee21cfe2e8702b": "d56bf1740bd3c023c904cabbb0ae723a6d3e2907",
+        "4465a0492367d08f324e80b290a594791921691c": "d56bf1740bd3c023c904cabbb0ae723a6d3e2907"
+      }
+    },
+    "unchanged_rules_test_and_package": true,
+    "interpretation": "The original negative-isolation subprocess exits successfully without a real worker probe because its engine is absent. The positive control correctly exposes that mismatch. The copied-launcher environment retains YARA-X 1.21.0 and the unchanged target test passes.",
+    "next_step": "Retain source/test assertions and use the already recorded copied-executable environment for subsequent applicable qualification; preserve the original complete-run failure separately.",
+    "scope": "Only this single test ran at each requested source/environment. No broad suite, production/test edits, dependency installs or shared environment changes. Parent full run untouched."
+  }
+}

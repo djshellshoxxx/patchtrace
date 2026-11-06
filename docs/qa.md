@@ -1566,3 +1566,28 @@ Reviewed38be184c merged at a84bf6d1. Five real preflight paths now permit absent
 ### Native provisioning / canonical normalizer identity — #222/#223
 
 Verified all14 complete compressed/raw log receipts and exact unfinished status for #222 dbebfee8; actual pinned headers compile, native oracle/link/CLI not yet executed. Source/dependencies/build cache provisioned with supported PCRE2 retry; quarantine unchanged. #223631b5e91 closes equivalent address spelling duplicate bypass with existing parse_address while preserving raw spelling and repeated-function refusal:14 baseline red/1pass, independent95pass. Latest integrated normalizer/binary/KB/lifecycle357passed33.26s; Ruff clean. Complete f33 suite still active; no exact updated-head full pass claimed.
+
+### [MERGE-20261106:branch-consolidation-readiness]
+
+Audited 242 remote branches and 112 open PRs against pinned main/#205/#218/#235. Isolated #235+#242+#243 source tree `ea48a7e087590fccffadb54e4414bd000f16838b` preserves the nine leaf-owned files and all other integration content. Root affected checks: 424 passed; independent overlapping controls: 42 passed; whole Ruff, diff hygiene and KBC schema drift checks pass. #204 was moved to ready-for-review at its unchanged head after fresh baseline/fix validation. Hosted smoke/review and integration Windows/scanner gates remain open. [Plan](plans/branch-merge-plan-20261106.md); [receipt](qa/branch-merge-readiness-20261106.md). No main merge or release acceptance is claimed.
+
+## N-way Windows recovery compatibility (2026-11-06)
+
+On frozen #205, hosted Windows CPython 3.12.10 reported five recovery failures.
+Pinned CPython source and a real-file fault probe identify incompatible pathname
+versus descriptor `st_ctime` meanings. Recovery now retains independent complete
+timestamp baselines while preserving cross-view device/inode/size/mtime checks,
+streamed exact bytes and owned-copy cleanup. New controls first produced two
+failures/four passes; corrected recovery/tolerance/series selection: **47 passed
+in 3.37 s**, whole Ruff/diff clean. Native Windows and exact integration gates
+remain pending. Source blobs, invariants and limits are recorded in
+`docs/qa/nway-windows-recovery-20261106.md`.
+
+### [KB-ADMISSION-20261106:captured-source-context]
+
+Reproduced #244 review comment 4489325824 against exact `5347ccfd`: source imports after the old snapshot check could enter a saved ContextBundle. Both real-store timing controls failed before repair. SPEC-31-D now specifies admission after one index read and reuse of that index for scope/context; pre-admission drift is stale, and later imports remain available outside the captured context. After repair, both controls pass and the overlapping lifecycle/acquire/service/crash-recovery selection passes **75 tests in 10.56 s**; whole Ruff passes. Prior project bytes, legitimate source imports, verified artifact hashes and owned staging cleanup are checked. [Detailed receipt](qa/kb-source-admission-20261106.md). Independent integration review and existing hosted/native/Windows/full-suite/scanner gates remain open.
+
+
+## Branch consolidation execution and full-run limits (2026-11-06)
+
+Combined #244 source tree `3e5276d6643d784e459264d6cb213082b812c8d4`: 774 focused tests passed, whole-tree Ruff passed, schemas unchanged. Separate exact #245 full Linux run: **3 failed, 19618 passed, 139 skipped, 6 xfailed, 1 warning in 2537.16s (0:42:17)**. All three failures reproduced on frozen #205; two launcher controls pass in the corrected environment, while local AF_UNIX construction remains unavailable. The original full run remains non-green. See [complete result and controls](qa/pr245-linux-qualification-20261106.md) and [merge plan](plans/branch-merge-plan-20261106.md). Native Windows, current-head hosted checks and parent scanner dispositions remain open for the application candidates. #204's two smoke jobs subsequently passed and the exact reviewed head merged into main at `d02b94bcedb29dae201941f01f2c94d42ebbb297` on 2026-11-06 at 06:27:13 UTC; the source branch was retained.

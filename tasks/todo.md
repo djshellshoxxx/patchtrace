@@ -1146,3 +1146,39 @@ Full `QT_QPA_PLATFORM=offscreen python -m pytest -q` for this isolated native sl
 
 - [x] Account #222 finite pinned-native provisioning evidence and #223 canonical function identity; verify14 complete raw-log receipts and357 combined focused passes.
 - [ ] Finish actual native API linkage/stock-red-corrected-green and distinct-byte/IO controls; optional control tooling remains separate pending verified source.
+
+### [MERGE-20261106:branch-consolidation-readiness]
+
+- [x] Inventory all 242 remote branches/112 open PRs; distinguish ancestry, patch equivalence and unresolved historical work.
+- [x] Stage and independently review #242/#243 onto #235 with exact blob preservation; 424 root/42 overlapping independent tests pass.
+- [x] Make #204 ready at unchanged `1229ca3b` and record hosted/local evidence.
+- [ ] Finish #204 Linux smoke and normal review; merge only through normal expected-head GitHub gates.
+- [ ] Qualify/publish the isolated current integration candidate; preserve #205/native ownership and original source PRs.
+- [ ] Repair and qualify the #205→#218→updated #235 promotion stages; keep Windows recovery and scanner findings explicit.
+- [ ] Selectively reconcile remaining #183 docs and older unique work after source/behavior review; keep paid automation separate.
+
+[Exact source and execution plan](../docs/plans/branch-merge-plan-20261106.md).
+
+### 2026-11-06 N-way Windows recovery prerequisite
+
+- [x] Reproduce the CPython 3.12 pathname/descriptor change-time mismatch with real-file fault injection; retain pinned official source/blob evidence.
+- [x] Keep independent full metadata baselines and cross-view identity/size/mtime validation; six new controls preserve metadata-only refusal and prior evidence. Affected series tests: 47 passed; whole Ruff/diff clean.
+- [ ] Independent review, coordinator integration and native Windows QA of the resulting commit. Linux fault injection does not qualify Windows packaging or release acceptance.
+
+### [KB-ADMISSION-20261106:captured-source-context]
+
+- [x] Reproduce #244 comment 4489325824 with two real-store source-insertion schedules on exact `5347ccfd` (both fail before correction).
+- [x] Amend SPEC-31-D and reuse one admitted source index; retain revision CAS, attachment journal, default manual behavior and legitimate later source imports. Two new controls and the overlapping 75-test affected selection pass; whole Ruff passes.
+- [ ] Independently review and integrate this isolated repair before resolving the review finding or promoting #244; retain all existing hosted/native/Windows/full-suite/scanner gates.
+
+[Source-admission repair receipt](../docs/qa/kb-source-admission-20261106.md).
+
+
+### 2026-11-06 Branch consolidation continuation
+
+- [x] Publish isolated #244 for current leaves and #245 for frozen-owner recovery repairs; preserve source refs.
+- [x] Stage #245 forward once with verified append-only ledger resolution; repair and independently review the confirmed KB source-provenance race; pass 774 combined focused tests.
+- [x] Complete and preserve the actual #245 Linux run: **3 failed, 19618 passed, 139 skipped, 6 xfailed, 1 warning in 2537.16s (0:42:17)**; investigate all three failures against frozen #205 without weakening assertions or permissions.
+- [x] Merge #204 after both smoke jobs and all applicable checks pass: main commit `d02b94bcedb29dae201941f01f2c94d42ebbb297`, 2026-11-06 06:27:13 UTC; source branch retained.
+- [ ] Obtain suitable-runner full Linux/native Windows/current-head qualification and normal parent scanner/review dispositions for #245 and the application integration train.
+- [ ] Recheck accepted ancestry after main promotion before any source-PR disposition; retain native and automation ownership. See [QA evidence](../docs/qa/pr245-linux-qualification-20261106.md).

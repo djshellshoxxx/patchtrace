@@ -5,6 +5,10 @@
 [R5 calibration dossier](calibration-r5/README.md). The table below remains the
 historical October 14 index; imported observations retain their original baselines.
 
+2026-11-06 addition: [workspace documentation reconciliation](workspace-docs-reconciliation-20261106.md)
+adapts one proposed UI layout specification and records reference-only dispositions
+for six historical wiki pages, with original-byte receipts for all seven sources.
+
 Listing of every file under `docs/research/`, 2026-10-14. "Specs cited" lists SPEC numbers named in the first lines of the file; the authoritative mapping is `docs/specs/REGISTRY.md`. Research files are evidence, not contracts.
 
 | File | Specs cited | Status | Title |
