@@ -613,7 +613,7 @@ def _read_raw_cache(cache, fingerprint, settings: dict) -> tuple[bytes, dict] | 
 
 
 def _write_execution_receipt(directory: Path, document: dict) -> None:
-    """Bounded atomic replacement; a failed final write leaves the initial receipt intact.
+    """Sync a bounded temporary file before replacement; failures preserve the earlier receipt.
 
     The caller owns the new run directory and isolates every ordinary diagnostic error from
     analysis status. Never follow a destination symlink or overwrite a partial file in place.
@@ -627,6 +627,8 @@ def _write_execution_receipt(directory: Path, document: dict) -> None:
                                          delete=False) as stream:
             temporary = Path(stream.name)
             stream.write(payload)
+            stream.flush()
+            os.fsync(stream.fileno())
         os.replace(temporary, directory / RECEIPT_NAME)
     finally:
         if temporary is not None:

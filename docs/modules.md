@@ -14,6 +14,7 @@ Stable IDs are independent of filenames. Public interfaces in SPEC-01 and schema
 | backend | backend.py | Discover configured dependencies; construct verified argv | contracts | External runtime config; fake executable |
 | jobs | jobs.py | Child lifecycle, log bounds, timeout/cancellation | backend | Job Object/process group; fake children |
 | backend progress | backend_progress.py | Fixed-vocabulary Ghidriff stage observation, bounded runtime diagnostics and timeout recovery text; no raw live-log forwarding | jobs progress snapshots, diagnostics, stdlib | Real-child timing controls plus pure hostile-log and backend receipt tests; see specs/ghidriff-timeout-progress.md |
+| CLI backend progress | cli_backend_progress.py | Per-comparison bounded stage deferral; no stderr writes from supervised observation callbacks; flush stages after process stop | contracts, stdlib | Blocked-writer supervision, bounded stage backlog, event order and existing CLI result/exit contracts |
 | evidence | evidence.py | Context selection, digest, evidence resolution | contracts | Pure exact references; forged IDs |
 | interpretation | interpretation.py | Prompt, strict responses, citation validation | evidence/providers | Result only, no project writes; fake responses |
 | providers | providers.py | Loopback Ollama and HTTPS OpenAI-compatible transports | stdlib | Session-only credentials; HTTP fixtures |

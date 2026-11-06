@@ -3,8 +3,10 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
 import sys
 import threading
+import weakref
 from pathlib import Path
 from types import SimpleNamespace
 
@@ -12,6 +14,7 @@ import pytest
 
 from patchtrace import backend, backend_cli, cli
 from patchtrace.backend import BackendConfig
+from patchtrace.jobs import run_process
 from patchtrace.models import AnalysisRun, JobEvent, uid
 from patchtrace.sample import synthetic_pe
 from patchtrace.service import ProjectService
@@ -152,3 +155,155 @@ def test_selftest_callback_bounds_long_run_output_and_keeps_exit_contract(
         assert document['result']['expected_functions'] == {'patched_fn': True}
     else:
         assert document['result']['error'] == f'Fixture comparison {status}'
+
+
+def invoke_surface(surface, pair, root, config, cancel):
+    if surface == 'series':
+        ProjectService.create(*pair, 'CLI observation fixture', root).close()
+        return cli._run_pair(config, root, cancel)
+    args = SimpleNamespace(action='selftest', json=True, older=pair[0], newer=pair[1],
+                           expect_function=['patched_fn'])
+    return backend_cli._run_selftest(args, cancel, config, SimpleNamespace(runtime_id='test-runtime'), root)
+
+
+@pytest.mark.parametrize('surface', ['series', 'selftest'])
+@pytest.mark.parametrize('stop', ['timeout', 'cancelled'])
+def test_supervised_observations_never_touch_blocked_stderr(
+        tmp_path, pair, monkeypatch, capsys, surface, stop):
+    class BlockedWriter:
+        def __init__(self):
+            self.release = threading.Event()
+            self.writes = []
+
+        def write(self, text):
+            self.writes.append(text)
+            # A bounded fallback keeps the failing baseline from hanging the test runner.
+            self.release.wait(.25)
+            return len(text)
+
+        def flush(self):
+            pass
+
+    config = BackendConfig(str(Path(sys.executable).resolve()), str(tmp_path / 'unused-ghidra'))
+    writer = BlockedWriter()
+    seen = {}
+
+    def engine(_config, _project, root, cancel, on_event):
+        run_id = uid()
+        stage_sent = False
+
+        def observe(snapshot):
+            nonlocal stage_sent
+            if snapshot.stdout_total and not stage_sent:
+                stage_sent = True
+                if stop == 'cancelled':
+                    cancel.set()  # The cancellation is pending before the stage callback runs.
+                on_event(JobEvent(run_id=run_id, stage='analysis-stage',
+                                  message='Ghidriff stage: analyzing binaries'))
+            on_event(JobEvent(run_id=run_id, stage='analysis-progress', message='HEARTBEAT'))
+
+        try:
+            with monkeypatch.context() as patch:
+                patch.setattr(sys, 'stderr', writer)
+                result = run_process(
+                    [config.python_executable, '-c', 'import time;print("child-ready",flush=True);time.sleep(5)'],
+                    cwd=root, env=os.environ.copy(), cancel=cancel,
+                    timeout_seconds=5 if stop == 'cancelled' else 1.2, on_progress=observe)
+            assert stage_sent and 'child-ready' in result.log_tail, 'the authored child never ran'
+            assert result.reason == stop
+            assert not writer.release.is_set(), 'the writer must remain unavailable during supervision'
+            assert writer.writes == [], 'an observation wrote stderr while the child was supervised'
+            seen['reason'] = result.reason
+        finally:
+            writer.release.set()
+        # A real backend sends this only after supervision returns, with child cleanup complete.
+        on_event(JobEvent(run_id=run_id, stage='analysis-stopped', message='Supervision ended'))
+        status = 'cancelled' if stop == 'cancelled' else 'failed'
+        on_event(JobEvent(run_id=run_id, stage=status, message=f'Comparison {status}'))
+        quarantine = root / 'runs' / f'quarantine-{run_id}'
+        quarantine.mkdir(parents=True)
+        return quarantine, AnalysisRun(id=run_id, status=status, error=f'Fixture {stop}')
+
+    monkeypatch.setattr(backend, 'run_comparison', engine)
+    result = invoke_surface(surface, pair, tmp_path / 'comparison', config, threading.Event())
+    captured = capsys.readouterr()
+    assert seen['reason'] == stop
+    assert result == (f'Fixture {stop}' if surface == 'series' else (5 if stop == 'cancelled' else 3))
+    prefix = 'comparison' if surface == 'series' else 'selftest'
+    assert captured.err.splitlines() == [
+        f'{prefix}: analysis-stage: Ghidriff stage: analyzing binaries',
+        f'{prefix}: analysis-stopped: Supervision ended',
+        f'{prefix}: {"cancelled" if stop == "cancelled" else "failed"}: '
+        f'Comparison {"cancelled" if stop == "cancelled" else "failed"}',
+    ]
+
+
+def test_stage_backlog_keeps_latest_64_with_bounded_omission_notice_and_order():
+    from patchtrace.cli_backend_progress import CliBackendProgress
+
+    written = []
+    listener = CliBackendProgress(written.append)
+    references = []
+    names = ('starting Ghidra', 'importing binaries', 'analyzing binaries', 'matching functions')
+    count = 1003
+    for index in range(count):
+        event = JobEvent(run_id='same-run', stage='analysis-stage', message=f'Ghidriff stage: {names[index % 4]}')
+        references.append(weakref.ref(event))
+        listener(event)
+        listener(JobEvent(run_id='same-run', stage='analysis-progress', message='HEARTBEAT'))
+    assert written == []
+    assert sum(reference() is not None for reference in references) <= 64, 'stage event retention is unbounded'
+
+    stopped = JobEvent(run_id='same-run', stage='analysis-stopped', message='Supervision ended')
+    listener(stopped)
+    assert len(written) == 66
+    assert written[0].stage == 'analysis-stage'
+    assert written[0].message == f'Omitted {count - 64} earlier analysis-stage observations.'
+    assert len(written[0].message) < 100
+    assert [event.message for event in written[1:-1]] == [
+        f'Ghidriff stage: {names[index % 4]}' for index in range(count - 64, count)]
+    assert written[-1] is stopped
+    warning = JobEvent(run_id='same-run', stage='warning', message='Retained warning')
+    listener(warning)
+    assert written[-1] is warning and len(written) == 67, 'the drained backlog was emitted again'
+
+
+@pytest.mark.parametrize('stage', ['warning', 'failed', 'cancelled', 'log', 'analysis-progress-detail'])
+def test_next_non_observation_event_flushes_stages_before_it(stage):
+    from patchtrace.cli_backend_progress import CliBackendProgress
+
+    written = []
+    listener = CliBackendProgress(written.append)
+    observed = JobEvent(run_id='same-run', stage='analysis-stage', message='Ghidriff stage: matching functions')
+    terminal = JobEvent(run_id='same-run', stage=stage, message='Retained event')
+    listener(observed)
+    assert written == []
+    listener(terminal)
+    assert written == [observed, terminal]
+
+
+@pytest.mark.parametrize('surface', ['series', 'selftest'])
+def test_each_real_comparison_callback_has_its_own_stage_backlog(tmp_path, pair, monkeypatch, capsys, surface):
+    callbacks = []
+
+    def engine(_config, _project, root, _cancel, on_event):
+        run_id = uid()
+        callbacks.append(on_event)
+        if len(callbacks) == 1:
+            # An injected older runner omits its stop/terminal event; its backlog must not leak to another run.
+            on_event(JobEvent(run_id=run_id, stage='analysis-stage', message='Ghidriff stage: analyzing binaries'))
+        else:
+            on_event(JobEvent(run_id=run_id, stage='warning', message='Second comparison only'))
+        quarantine = root / 'runs' / f'quarantine-{run_id}'
+        quarantine.mkdir(parents=True)
+        return quarantine, AnalysisRun(id=run_id, status='failed', error='Fixture failure')
+
+    monkeypatch.setattr(backend, 'run_comparison', engine)
+    config = BackendConfig(str(Path(sys.executable).resolve()), str(tmp_path / 'unused-ghidra'))
+    invoke_surface(surface, pair, tmp_path / 'first', config, threading.Event())
+    assert capsys.readouterr().err == ''
+    invoke_surface(surface, pair, tmp_path / 'second', config, threading.Event())
+    captured = capsys.readouterr()
+    prefix = 'second' if surface == 'series' else 'selftest'
+    assert captured.err == f'{prefix}: warning: Second comparison only\n'
+    assert callbacks[0] is not callbacks[1]

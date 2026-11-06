@@ -277,22 +277,25 @@ def test_cancellation_at_launch_does_not_invent_a_child_exit(fake_runtime, monke
 
 
 @pytest.mark.parametrize('failed_writes', [{1}, {2}, {1, 2}], ids=['start', 'stop', 'both'])
+@pytest.mark.parametrize('failure_point', ['replace', 'fsync'])
 def test_receipt_failure_preserves_existing_record_and_analysis_status(fake_runtime, monkeypatch,  # noqa: F811
-                                                                      failed_writes):
+                                                                      failed_writes, failure_point):
     root, _package, project, config = fake_runtime
-    real_replace, calls = backend.os.replace, []
+    real_write, calls = getattr(backend.os, failure_point), []
 
-    def fail_write(source, destination):
-        calls.append(destination)
+    def fail_write(*args):
+        if failure_point == 'fsync':
+            assert backend.os.fstat(args[0]).st_size > 0, 'receipt must leave Python buffers before syncing'
+        calls.append(args)
         if len(calls) in failed_writes:
             raise OSError('Authorization: Bearer private-receipt-error')
-        return real_replace(source, destination)
+        return real_write(*args)
 
     def runner(argv, **kwargs):
         write_result(argv)
         return ProcessResult(0, '', elapsed_seconds=1)
 
-    monkeypatch.setattr(backend.os, 'replace', fail_write)
+    monkeypatch.setattr(backend.os, failure_point, fail_write)
     monkeypatch.setattr(backend, 'run_process', runner)
     events = []
     _, run = backend.run_comparison(config, project, root, threading.Event(), events.append)

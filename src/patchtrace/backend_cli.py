@@ -230,6 +230,7 @@ def _project_root(args, work: Path) -> Path:
 def _run_selftest(args, cancel, config, ref, root: Path) -> int:
     from . import backend
     from .cli import CliError
+    from .cli_backend_progress import CliBackendProgress
     from .service import ProjectService
     try:
         service = ProjectService.create(args.older, args.newer, 'bundle selftest', root)
@@ -239,7 +240,8 @@ def _run_selftest(args, cancel, config, ref, root: Path) -> int:
         if any(run.status == 'identical' for run in service.project.runs):
             raise CliError(USAGE, 'the older and newer artifacts are identical; use two different builds')
         snapshot = service.project.model_copy(deep=True)
-        raw_path, run = backend.run_comparison(config, snapshot, service.root, cancel, _event_printer)
+        raw_path, run = backend.run_comparison(config, snapshot, service.root, cancel,
+                                               CliBackendProgress(_event_printer))
         error = None
         if run.status == 'completed':
             try:
