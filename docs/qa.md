@@ -1603,3 +1603,30 @@ No assertion, limit, environment filter or production code changed. Independent
 review, whole-tree Ruff, dependency consistency and diff hygiene passed. Full
 and hosted cross-platform qualification remain separate; the local AF_UNIX
 restriction is unchanged. [Detailed receipt](qa/subprocess-venv-20261106.md).
+
+## [CONTINUATION-20261106:local-product-start-and-qualification]
+
+Unchanged #245 passed Windows QA: **19,671 passed, 90 skipped, 5 xfailed**,
+plus standalone, frozen EXE, portable ZIP and installer gates. The downloadable
+candidate belongs to #245, not the later product implementation. Linux full QA
+and the native Windows Ghidriff workflow subsequently passed; Ubuntu Qt is
+still outstanding at the 08:18 UTC checkpoint.
+
+Reviewed product source `570f86b8` (published equivalent `0b7d8581`, identical
+tree) adds the stored-product catalogue, explicit selection, source-bound local
+pair preview/create, and original-source pending repair. Final affected
+selection: **139 passed** including 59 product cases; independent acceptance:
+**16 passed**, no findings. Six distinct independent cases are retained in
+`test_kb_product_acceptance_20261106.py`; those plus authored cases: **65 passed**.
+Earlier 391-test evidence predates the final repair; counts overlap. New pending
+product attachments require the new journal reader: legacy repair ignores
+`selected_product` and was observed to lose source digests. Public schemas/SQL
+version/CLI grammar are unchanged, but internal journal format is extended.
+
+Test-only exact-byte diagnostics preserve full equality while bounding failure
+rendering; affected selection **49 passed**, separate real child-pytest controls
+passed. The previously failing #235 Windows report identifies two large byte
+diff cases taking 42.6% of that failed run; no normal-path speedup is claimed.
+The continuation includes actual #246 ancestry and preserves all source refs.
+Whole Ruff/schema/diff checks pass. Combined current-source full and hosted
+qualification remain separate. [Evidence and limits](qa/continuation-20261106.md).
