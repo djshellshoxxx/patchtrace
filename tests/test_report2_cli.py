@@ -204,3 +204,17 @@ def test_report_v2_cli_includes_stored_sections_and_records_unknowns(project, tm
     assert [e['name'] for e in data['engine_evidence']['engines']] == ['rz-diff']
     assert any('bindiff has no stored match set' in u for u in data['unknowns'])
     assert all(f['claim_level'] == 'observed-in-file' for f in data['build_facts'])
+
+def test_report_v2_collection_refusal_uses_export_error_envelope(project, tmp_path, capsys, monkeypatch):
+    from patchtrace.report2 import adapters
+    from patchtrace.reports import ExportError
+
+    def reject(_service):
+        raise ExportError('invalid stored section')
+
+    monkeypatch.setattr(adapters, 'collect_from_service', reject)
+    out = tmp_path / 'failed-report.json'
+    code, stdout, stderr = run(capsys, project, '--report-version', 2, '--out', out, '--json')
+    assert code == 3 and json.loads(stdout)['status'] == 'failed'
+    assert 'Export failed' in stderr and 'previous file' in stderr
+    assert not out.exists()
