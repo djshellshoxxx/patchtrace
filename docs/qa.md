@@ -1488,3 +1488,15 @@ failures/four passes; corrected recovery/tolerance/series selection: **47 passed
 in 3.37 s**, whole Ruff/diff clean. Native Windows and exact integration gates
 remain pending. Source blobs, invariants and limits are recorded in
 `docs/qa/nway-windows-recovery-20261106.md`.
+
+
+## Subprocess virtual-environment preservation (2026-11-06 UTC)
+
+On main `d02b94bc`, two subprocess isolation tests resolved the active interpreter
+symlink to a base Python without the installed protobuf/YARA-X dependencies.
+Both failures reproduced. Retaining `sys.executable`, as the production workers
+already do, passed both complete test files: **116 passed in 42.16 seconds**.
+No assertion, limit, environment filter or production code changed. Independent
+review, whole-tree Ruff, dependency consistency and diff hygiene passed. Full
+and hosted cross-platform qualification remain separate; the local AF_UNIX
+restriction is unchanged. [Detailed receipt](qa/subprocess-venv-20261106.md).
