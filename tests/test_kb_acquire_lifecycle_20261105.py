@@ -171,3 +171,20 @@ def test_revision_is_rechecked_inside_import_after_acquire_guard(ready, monkeypa
         ready.run()
     assert caught.value.code == 'PT-KBC-STALE'
     assert_refused_without_project(ready)
+
+
+def test_source_snapshot_is_rechecked_inside_import_after_acquire_guard(ready, monkeypatch):
+    original = KbService.import_pair
+
+    def change_sources_then_import(service, *args, **kwargs):
+        add_source_without_changing_revision(ready)
+        return original(service, *args, **kwargs)
+
+    monkeypatch.setattr(KbService, 'import_pair', change_sources_then_import)
+    with pytest.raises(KbcStoreError) as caught:
+        ready.run()
+    assert caught.value.code == 'PT-KBC-STALE'
+    with WorkspaceStore(ready.root) as store:
+        assert store.current_revision(ready.investigation).revision == ready.revision
+        assert len(store.sources()) == 2  # the legitimate concurrent import remains intact
+    assert_refused_without_project(ready)

@@ -584,7 +584,7 @@ class KbService:
             def import_current(older, newer, destination):
                 check_current()
                 return self.import_pair(rev.investigation_id, older, newer, destination, name=name,
-                                        expected_revision=owner[0])
+                                        expected_revision=owner[0], expected_source_snapshot=owner[2])
 
             check_current()
             done = run_acquire(
@@ -603,12 +603,16 @@ class KbService:
 
     def import_pair(self, investigation: str, older: str, newer: str, directory: str, *, name: str | None = None,
                     confirm_same_component: bool = False, dry_run: bool = False,
-                    expected_pair_id: str | None = None, expected_revision: int | None = None) -> Outcome:
+                    expected_pair_id: str | None = None, expected_revision: int | None = None,
+                    expected_source_snapshot: tuple[str, ...] | None = None) -> Outcome:
         older_f, newer_f = self.env.inspect(older), self.env.inspect(newer)
         with self._open() as ws:
             rev = None if investigation == 'new' else self._get(ws, investigation)
             if expected_revision is not None and (rev is None or rev.revision != expected_revision):
                 raise _fail('PT-KBC-STALE', 'the investigation changed after preview; review the pair again')
+            if (expected_source_snapshot is not None and
+                    tuple(source.model_dump_json() for source in ws.sources()) != expected_source_snapshot):
+                raise _fail('PT-KBC-STALE', 'the advisory sources changed after preview; review the pair again')
             scope_id = rev.selected_scope_id if rev and rev.selected_scope_id else UNSELECTED_SCOPE
             if scope_id != UNSELECTED_SCOPE:
                 index, _ = load_index(ws, self.ports)

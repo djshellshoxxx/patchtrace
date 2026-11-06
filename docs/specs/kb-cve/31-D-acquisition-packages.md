@@ -82,7 +82,12 @@ ordered source records before resolution, and compare that snapshot before
 staging and immediately before importing verified bytes. Source additions or
 revision/lead/scope changes invalidate the in-flight operation even when the
 binary request plan itself is unchanged. Always pass the captured revision to
-`import_pair`, whose existing in-store guard refuses a later revision change.
+`import_pair`, whose in-store guard refuses a later revision change. The
+acquisition callback also passes optional `expected_source_snapshot` (the exact
+ordered SourceDoc JSON strings, default `None` for existing manual callers).
+Compare it inside the same held WorkspaceStore before approval/project writes,
+so a cooperative source import between the outer check and in-store admission
+also returns stale without consuming that newer source or creating a project.
 Refusals discard owned staging and preserve prior completed projects; ordinary
 CLI product/file selection and exact request-plan consent remain unchanged.
 Snapshot comparison is an admission check, not one atomic transaction spanning

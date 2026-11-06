@@ -3,7 +3,8 @@
 Isolated branch `repair/kb-acquire-lifecycle-20261105`, worktree
 `/tmp/pt-independent-acquire-lifecycle-20261105`, base integration
 `7545667db3bf881f380ba8bafe1c633c128c7022`. Scope: `KbService.acquire`, one
-private committed-ownership snapshot helper, eight new authored lifecycle
+private committed-ownership snapshot helper, the final `import_pair` admission
+guard authorized during review, and authored lifecycle
 controls and the narrow SPEC-31-D amendment. Coordinator approved the optional
 keywords and exact source-record snapshot guard before implementation.
 
@@ -55,12 +56,38 @@ Whole-tree `python -m ruff check src tests tools` and `git diff --check` passed.
 `PYTHONPATH="$PWD/src" python tools/generate_kbc_schemas.py` completed without
 schema drift.
 
+## Independent final-boundary follow-up (2026-11-06)
+
+Root review of initial commit `7713b1dd` identified an ordinary-writer gap:
+adding an advisory source without changing revision after the outer callback
+check still reached `import_pair`, because only the revision was passed into
+that held-store admission. The analogous revision race was already covered,
+but the source-only variant reproduced **1 failed in 1.04 s** and confirmed
+that the initial commit was not ready for publication.
+
+The coordinator approved the narrow optional `expected_source_snapshot`
+keyword on `import_pair`, defaulting to `None` for existing manual/CLI callers.
+Acquisition passes the captured ordered SourceDoc JSON tuple. The importer
+compares it alongside the expected revision inside its existing held
+WorkspaceStore before any approval or project writes. A cooperative source
+import between the outer check and that admission now refuses stale ownership,
+retains the newer legitimate source and unchanged investigation revision, and
+cleans the staged bytes without creating a project.
+
+`env -u PYTEST_ADDOPTS PYTHONPATH="$PWD/src" QT_QPA_PLATFORM=offscreen python -m pytest -q tests/test_kb_acquire_lifecycle_20261105.py tests/test_kbc_acquire_cli.py tests/test_kbc_service.py tests/test_kbc_recovery.py`
+
+Final follow-up: **73 passed in 8.64 s**, no skips; whole-tree Ruff/diff checks
+passed and KBC schemas regenerated without drift. Counts overlap the earlier
+55 and are not cumulative unique coverage. There are now nine new lifecycle
+controls. The initial commit remains unapproved until independent re-review
+of this follow-up.
+
 ## Remaining gates and limits
 
 Independent security/lifecycle review and publication remain coordinator-owned.
 Snapshot admission is not an atomic transaction spanning download and import;
-source-record comparison occurs immediately before import and the existing
-in-store revision check remains authoritative. A cancellation after a project
+both source-record and revision admission checks now run within the existing
+held import store. A cancellation after a project
 commits does not undo it. This repair does not add candidate GUI acquisition,
 re-rank Winbindex observations after download, or establish live transport,
 binary matching accuracy, Windows/native or release acceptance. Existing
