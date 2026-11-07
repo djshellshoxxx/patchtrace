@@ -69,8 +69,8 @@ from .runtime_discovery import (
 from .service import ProjectService
 from .tooltips import apply_tooltip, apply_tooltips
 from .ui_bundle_setup import BundleSetup
-from .ui_inspection import InspectionThread, side_summary
 from .ui_help import WORKFLOW_HELP_TEXT
+from .ui_inspection import InspectionThread, side_summary
 from .ui_persistence import commit_and_report
 from .ui_profiles import PROFILE_SETTING, profiles_dir, selected_profile
 from .ui_symbols import SymbolChoice, config_kwargs, configured_symbol_mode, effective_profile_symbol_mode
