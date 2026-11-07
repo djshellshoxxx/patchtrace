@@ -93,3 +93,34 @@ def test_manifest_file_and_directory_path_conflict_is_rejected_at_inspection(tmp
     archive = make_bundle(tmp_path, files)
     with pytest.raises(OfflineBundleError):
         inspect_offline_bundle(archive)
+
+
+# TB-06 the launcher report was parsed with plain json.loads: deep nesting escaped as RecursionError and a duplicate
+# key or a boolean `setup_calls` was accepted as a valid handshake
+def _report(**changes):
+    import json
+    base = {'contract': 'ptlaunch/1', 'mode': 'local', 'setup_calls': 1, 'server_urls_forced_empty': True,
+            'pdbs_staged': []}
+    return json.dumps(base | changes)
+
+
+@pytest.mark.parametrize('text', [
+    '[' * 20000 + ']' * 20000,
+    _report().replace('"mode": "local"', '"mode": "off", "mode": "local"'),
+    _report(setup_calls=True),
+    _report(setup_calls=float('nan')),
+], ids=['deep-nesting', 'duplicate-key', 'bool-as-count', 'nan'])
+def test_launcher_report_is_strict_json(tmp_path, text):
+    from patchtrace.ghidriff_launch.validate import validate_run
+    from patchtrace.symbols.modes import SymbolError
+    path = tmp_path / 'report.json'
+    path.write_text(text, encoding='utf-8')
+    with pytest.raises(SymbolError):
+        validate_run('local', path, '', ())
+
+
+def test_launcher_report_valid_example_still_accepted(tmp_path):
+    from patchtrace.ghidriff_launch.validate import validate_run
+    path = tmp_path / 'report.json'
+    path.write_text(_report(), encoding='utf-8')
+    assert validate_run('local', path, '', ())['mode'] == 'local'
