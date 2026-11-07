@@ -124,3 +124,22 @@ def test_launcher_report_valid_example_still_accepted(tmp_path):
     path = tmp_path / 'report.json'
     path.write_text(_report(), encoding='utf-8')
     assert validate_run('local', path, '', ())['mode'] == 'local'
+
+
+# TB-07 a project database whose current_snapshot is a view over a runaway recursive query opened normally and hung load()
+def test_project_database_with_view_or_trigger_is_refused(tmp_path):
+    import sqlite3
+
+    from patchtrace.persistence import ProjectStore
+    database = tmp_path / 'project.sqlite3'
+    connection = sqlite3.connect(database)
+    connection.execute('PRAGMA user_version=1')
+    connection.execute('CREATE TABLE history (sequence INTEGER PRIMARY KEY AUTOINCREMENT, revision INTEGER NOT NULL, '
+                       'created TEXT NOT NULL, payload TEXT NOT NULL, sha256 TEXT NOT NULL)')
+    connection.execute('CREATE VIEW current_snapshot AS WITH RECURSIVE r(x) AS (SELECT 1 UNION ALL SELECT x+1 FROM r '
+                       "WHERE x<2000000000) SELECT 1 AS singleton, 'p' AS payload, 'h' AS sha256 FROM r "
+                       'WHERE x=2000000000')
+    connection.commit()
+    connection.close()
+    with pytest.raises(ValueError, match='PT-STORAGE'):
+        ProjectStore(tmp_path)

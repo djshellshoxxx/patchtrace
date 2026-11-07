@@ -358,6 +358,10 @@ class ProjectStore:
                 version = self.connection.execute('PRAGMA user_version').fetchone()[0]
                 if version != SCHEMA_VERSION:
                     raise ValueError(f'PT-SCHEMA: unsupported database version {version}')
+                # PatchTrace writes two plain tables. A view or trigger can only come from someone else's file, and a
+                # view named current_snapshot could run an unbounded query inside load().
+                if self.connection.execute("SELECT 1 FROM sqlite_master WHERE type IN ('view','trigger') LIMIT 1").fetchone():
+                    raise ValueError('PT-STORAGE: project database contains views or triggers; refusing to open')
                 if self.connection.execute('PRAGMA quick_check').fetchone()[0] != 'ok':
                     raise ValueError('PT-STORAGE: database integrity check failed')
         except Exception as exc:
