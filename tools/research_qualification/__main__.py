@@ -22,6 +22,7 @@ import sys
 from pathlib import Path
 
 from . import call_model as CM
+from . import cases as CS
 from . import fixture_pairs as FP
 from . import perf_harness as P
 from . import receipt as R
@@ -172,6 +173,19 @@ def cmd_fixtures(a: argparse.Namespace) -> int:
     return _STATUS_EXIT[status]
 
 
+def cmd_cases(a: argparse.Namespace) -> int:
+    try:
+        m = json.loads(Path(a.manifest).read_text(encoding="utf-8"))
+        info = CS.validate_manifest(m)
+        if a.frozen_sha:
+            CS.check_frozen(m, a.frozen_sha)
+    except (OSError, ValueError) as e:
+        print(f"error: {e}", file=sys.stderr)
+        return 1 if "frozen" in str(e) else 2
+    _print(info)
+    return 0
+
+
 def build_parser() -> argparse.ArgumentParser:
     ap = argparse.ArgumentParser(prog="python -m tools.research_qualification", description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -206,6 +220,9 @@ def build_parser() -> argparse.ArgumentParser:
     f.add_argument("--out", default="build/research-fixtures")
     f.add_argument("--truth")
     f.add_argument("--matches")
+    c = sub.add_parser("cases", help="validate an accuracy case manifest and optionally check its freeze hash")
+    c.add_argument("manifest")
+    c.add_argument("--frozen-sha")
     r = sub.add_parser("receipt", help="validate or compare receipts")
     r.add_argument("action", choices=["validate", "compare"])
     r.add_argument("files", nargs="+")
@@ -225,6 +242,8 @@ def main(argv: list[str] | None = None) -> int:
         return cmd_samplesize(a)
     if a.cmd == "callmodel":
         return cmd_callmodel(a)
+    if a.cmd == "cases":
+        return cmd_cases(a)
     if a.cmd == "fixtures":
         return cmd_fixtures(a)
     return cmd_receipt(a)

@@ -44,7 +44,7 @@ Cases from one project or release are not independent; count distinct projects. 
 | ID | Item | Status |
 |---|---|---|
 | AV-0 | Plan, sample-size tool, fixtures S0 | done (this branch) |
-| AV-1 | Case manifest schema + validator (`cases.py`), frozen-before-run check | in progress |
+| AV-1 | Case manifest schema + validator (`cases.py`), frozen-before-run check | done (tested) |
 | AV-2 | Candidate list: projects, CVE ids, fix commits, release pairs (all `unverified` first) | next |
 | AV-3 | Actions workflow: fetch/build pairs on Windows runner, hash, emit receipts | after AV-2 |
 | AV-4 | Scorer wiring: engine output -> `score_matches`-style top-k rank scoring | after AV-3 |
