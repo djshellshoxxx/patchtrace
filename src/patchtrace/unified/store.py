@@ -176,7 +176,9 @@ def write_result(directory: Path, *, older_sha256: str, newer_sha256: str, ghidr
                              ghidriff_raw_sha256=ghidriff_raw_sha256,
                              ir_older_digest=ir_older.content_digest if ir_older else None,
                              ir_newer_digest=ir_newer.content_digest if ir_newer else None, sources=sources,
-                             manual_digest=manual_digest, config_digest=config_digest)
+                             manual_digest=manual_digest, config_digest=config_digest,
+                             ir_older_key=ir_older.ir_key if ir_older else None,
+                             ir_newer_key=ir_newer.ir_key if ir_newer else None)
     by_id: dict[str, UnifiedMatch] = {}
     for row in rows:
         expected = keys.row_id(older_sha256, newer_sha256, [s.rva for s in row.older], [s.rva for s in row.newer])
