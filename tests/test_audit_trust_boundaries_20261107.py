@@ -9,12 +9,14 @@ import struct
 import time
 
 import pytest
+from test_offline_bundle import FILES, make_bundle
 
 from patchtrace import artifact_inspection
 from patchtrace.acquisition import quarantine
 from patchtrace.acquisition import transport as tr
 from patchtrace.hostile_text import is_hostile
 from patchtrace.ingestion import display_text, inspect_artifact
+from patchtrace.offline_bundle import OfflineBundleError, inspect_offline_bundle
 
 
 # TB-01 sweep_staging followed a symlink named like a staging directory and chmod-ed its target
@@ -83,3 +85,11 @@ def test_inspection_closes_readers_when_comparison_raises(tmp_path, monkeypatch)
     with pytest.raises(RuntimeError):
         artifact_inspection.inspect_project_artifacts('p', artifacts, root, verify_trust=lambda _p: None)
     assert len(closed) == 2
+
+
+# TB-05 a manifest listing both a file and a path beneath it passed inspection and only failed during install
+def test_manifest_file_and_directory_path_conflict_is_rejected_at_inspection(tmp_path):
+    files = dict(FILES) | {'python/python.exe/child.txt': b'x'}
+    archive = make_bundle(tmp_path, files)
+    with pytest.raises(OfflineBundleError):
+        inspect_offline_bundle(archive)

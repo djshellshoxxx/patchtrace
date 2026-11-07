@@ -209,6 +209,11 @@ def validate_manifest(data: object, *, platforms: tuple[str, ...] = DEFAULT_PLAT
         if total > MAX_TOTAL:
             _fail('uncompressed bundle exceeds 8 GiB')
         files.append(BundleFile(name, size, digest))
+    # A path that is also the directory of another path can never be extracted; refuse it at inspection, not mid-install.
+    for canonical in names:
+        parts = canonical.split('/')
+        if any('/'.join(parts[:depth]) in names for depth in range(1, len(parts))):
+            _fail('file inventory uses one path as both a file and a directory')
     # Windows is case-insensitive; Linux is not, so Linux markers must match exactly.
     present = names if platform == 'windows' else {item.path for item in files}
     if any((required.casefold() if platform == 'windows' else required) not in present
