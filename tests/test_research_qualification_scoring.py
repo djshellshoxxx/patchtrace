@@ -27,6 +27,13 @@ def test_ranks_hits_misses_and_blocked():
     assert SC.score_run(M, {"b": ["1", "2", "3", "4", "5", "f"]}, k=6)["hits"] == 1
 
 
+def test_accepted_alternative_name_counts_as_hit():
+    alt = {"cases": [c("r", function="FindObject", accept=["FindStreamObject"])], "schema": "x"}
+    r = SC.score_run(alt, {"r": ["g", "FindStreamObject"]})
+    assert r["hits"] == 1 and r["rows"][0]["rank"] == 2
+    assert SC.score_run(alt, {"r": ["FindObject", "FindStreamObject"]})["rows"][0]["rank"] == 1
+
+
 def test_false_positive_and_unrun_never_counts_as_hit():
     r = SC.score_run(M, {"n": ["g"]})
     assert r["false_positives"] == 1 and r["hits"] == 0 and r["blocked"] == 3

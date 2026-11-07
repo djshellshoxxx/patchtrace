@@ -23,7 +23,9 @@ def score_case(case: dict[str, Any], candidates: list[str] | None, k: int = 5) -
     if exp.get('no_change') is True:
         return {'id': case['id'], 'outcome': 'HIT' if not candidates else 'FALSE_POSITIVE', 'rank': None,
                 'reported': len(candidates)}
-    rank = candidates.index(exp['function']) + 1 if exp['function'] in candidates else None
+    names = [exp['function'], *exp.get('accept', [])]
+    found = [candidates.index(n) + 1 for n in names if n in candidates]
+    rank = min(found) if found else None
     return {'id': case['id'], 'outcome': 'HIT' if rank is not None and rank <= k else 'MISS', 'rank': rank}
 
 

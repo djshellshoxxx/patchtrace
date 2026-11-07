@@ -58,13 +58,17 @@ def validate_case(c: Any) -> None:
     _side(c['older'], f'{c["id"]}.older', c['facts'])
     _side(c['newer'], f'{c["id"]}.newer', c['facts'])
     e = c['expected']
-    if not isinstance(e, dict) or set(e) - {'function', 'cve', 'no_change'}:
+    if not isinstance(e, dict) or set(e) - {'function', 'cve', 'no_change', 'accept'}:
         raise ValueError(f'case {c["id"]}: expected has unknown keys')
     if e.get('no_change') is True:
-        if e.get('function'):
+        if e.get('function') or e.get('accept'):
             raise ValueError(f'case {c["id"]}: a no_change case cannot name a function')
     else:
         _text(e.get('function'), f'{c["id"]}.expected.function', 200)
+        accept = e.get('accept', [])
+        if not isinstance(accept, list) or not all(isinstance(a, str) and a.strip() for a in accept) \
+                or len(accept) > 8 or any(len(a) > 200 for a in accept):
+            raise ValueError(f'case {c["id"]}: expected.accept must be a list of up to 8 function names')
 
 
 def canonical_hash(manifest: dict[str, Any]) -> str:

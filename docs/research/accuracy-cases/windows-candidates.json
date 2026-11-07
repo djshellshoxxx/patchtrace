@@ -247,6 +247,7 @@
       },
       "expected": {
         "function": "FSRendezvousServer::FindObject",
+        "accept": ["FSRendezvousServer::FindStreamObject"],
         "cve": "CVE-2023-36802"
       },
       "facts": "unverified",
