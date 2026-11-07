@@ -36,3 +36,15 @@ def test_projects_without_corrections_keep_their_result_ids(project):
     from patchtrace.unified import keys
     plan = pipeline.make_plan(project, sources=('ghidriff',))
     assert plan.identity.manual_digest == keys.manual_digest([])
+
+
+@pytest.mark.parametrize('limitation', ['timeout', 'ladder-limit-assign-time-cap:1'])
+def test_a_partial_result_cut_by_a_wall_clock_cap_is_never_authoritative(project, limitation):
+    """The P19 assignment stops at a wall-clock cap (L-24) like a run deadline: what it produced depends on the
+    machine's speed, so the cache must not serve it and a complete run of the same id may replace it (p20)."""
+    from patchtrace.unified import store
+    pipeline.run_unified(project, UnifiedOptions(isolate=False))
+    manifest = pipeline.load_current(project, pipeline.make_plan(project)).manifest
+    cut = manifest.model_copy(update={'status': 'partial', 'limitations': (*manifest.limitations, limitation)})
+    assert store.is_timeout_partial(cut)
+    assert not store.is_timeout_partial(manifest)

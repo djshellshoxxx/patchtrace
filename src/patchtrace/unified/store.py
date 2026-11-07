@@ -302,10 +302,16 @@ def parse_line(line: bytes, model):
     return record
 
 
+# Limitations of a run cut by wall-clock time: the run deadline (U7-06) and the P19 assignment cap (L-24).
+SPEED_DEPENDENT_LIMITATIONS = frozenset({'timeout', 'ladder-limit-assign-time-cap'})
+
+
 def is_timeout_partial(manifest: UnifiedResultManifest) -> bool:
-    """A result cut short by a spent deadline (U7-06). It depends on the machine's speed, not only on the inputs, so
-    it is never authoritative: a cache lookup misses it and a later run of the same id may replace it."""
-    return manifest.status == 'partial' and any(x.split(':', 1)[0] == 'timeout' for x in manifest.limitations)
+    """A result cut short by wall-clock time (a spent deadline, U7-06, or the P19 assignment cap, L-24). It depends on
+    the machine's speed, not only on the inputs, so it is never authoritative: a cache lookup misses it and a later
+    run of the same id may replace it."""
+    return manifest.status == 'partial' and any(x.split(':', 1)[0] in SPEED_DEPENDENT_LIMITATIONS
+                                                for x in manifest.limitations)
 
 
 def _row_id_ok(manifest: UnifiedResultManifest, row: UnifiedMatch) -> bool:
