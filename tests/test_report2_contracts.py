@@ -161,3 +161,8 @@ def test_absent_sections_are_omitted_but_v1_nulls_stay():
     assert 'engine_evidence' not in data and 'leads' not in data
     assert data['change_ranking'] is None and data['report_version'] == 2 and data['schema_version'] == 1
     assert data['normalization'] == 'report/2 text normalization applied'
+
+def test_cwe_ids_allow_the_six_digits_supported_by_intelligence():
+    assert contracts.Advisory(kind='cwe', id='CWE-100000', text='t').id == 'CWE-100000'
+    with pytest.raises(ValidationError):
+        contracts.Advisory(kind='cwe', id='CWE-1000000', text='t')

@@ -79,7 +79,7 @@ def _corruption_is_store() -> Iterator[None]:
     verification was skipped) is a corrupt sidecar: `PT-UNIFIED-STORE`, never a raw sqlite3/Index/Type/JSON error."""
     try:
         yield
-    except (sqlite3.Error, ValueError, TypeError, IndexError, KeyError, OverflowError):
+    except (sqlite3.Error, ValueError, TypeError, IndexError, KeyError, OverflowError, RecursionError):
         raise _store_error('The IR database holds a malformed row', 'ir-corrupt') from None
 
 
