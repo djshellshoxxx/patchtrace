@@ -69,6 +69,7 @@ from .runtime_discovery import (
 from .service import ProjectService
 from .tooltips import apply_tooltip, apply_tooltips
 from .ui_bundle_setup import BundleSetup
+from .ui_help import WORKFLOW_HELP_TEXT
 from .ui_inspection import InspectionThread, side_summary
 from .ui_persistence import commit_and_report
 from .ui_profiles import PROFILE_SETTING, profiles_dir, selected_profile
@@ -2993,23 +2994,7 @@ class MainWindow(QMainWindow):
                 self.logs.appendPlainText(f'Export: {output}')
 
     def show_help(self):
-        text_dialog(self, 'PatchTrace workflow and dependency setup',
-                    '1. Create a project with explicit older and newer PE AMD64 artifacts, or open the synthetic sample.\n'
-                    '2. Import a Ghidriff JSON, or configure external dependencies and run comparison.\n'
-                    '3. Search and filter function matches. Inspect decompiled code, assembly and metadata.\n'
-                    '4. Review matches, correct relationships, and save analyst notes.\n'
-                    '5. Optionally select matches and Interpret. Review exact context before Send.\n'
-                    '6. Follow evidence, assess alternatives and unknowns, save an independent analyst conclusion.\n'
-                    '7. Export a report after reviewing its exact preview. Code is excluded by default.\n\n'
-                    'Dependency setup\n'
-                    'Use an external Python environment with the supported Ghidriff version installed. Select its\n'
-                    'python executable and the unpacked Ghidra installation in Setup. Ghidra requires a compatible\n'
-                    'Java installation. Diagnose reports dependency failures without running either target artifact.\n'
-                    'Ghidriff and Ghidra are not bundled and no dependency is downloaded automatically.\n\n'
-                    'Interpretation is optional. Ollama must use a loopback endpoint; OpenAI-compatible providers\n'
-                    'require HTTPS. API keys remain in memory for the current request and are never saved.\n'
-                    'Model assessments, match quality and review status do not establish vulnerability validity.\n'
-                    'Stale findings retain their original context and cannot navigate into a different analysis run.')
+        text_dialog(self, 'PatchTrace workflow and dependency setup', WORKFLOW_HELP_TEXT)
 
     def apply_font(self, size):
         font = QFont('Consolas', size)
