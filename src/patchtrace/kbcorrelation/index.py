@@ -17,6 +17,7 @@ Honest answers:
 """
 from __future__ import annotations
 
+import re
 from collections.abc import Iterable
 from dataclasses import dataclass
 from datetime import UTC, datetime, timedelta
@@ -106,7 +107,9 @@ def _label(doc: ImportedDocument) -> str:
 
 def _group_key(doc: ImportedDocument) -> tuple:
     s = doc.source
-    return ('cvrf-month', s.release_id) if s.kind == 'cvrf-month' else (s.kind, doc.tracking_id or s.doc_id)
+    if s.kind == 'cvrf-month':
+        return ('cvrf-month', s.release_id)
+    return (s.kind, doc.publisher, doc.tracking_id) if doc.tracking_id else (s.kind, None, s.doc_id)
 
 
 def _instant(value: str | None) -> datetime:
@@ -117,10 +120,24 @@ def _instant(value: str | None) -> datetime:
         return datetime.min.replace(tzinfo=UTC)
 
 
+_VERSION_TEXT = re.compile(r'([0-9]+)(?:\.([0-9]+)\.([0-9]+))?(-[0-9A-Za-z.-]+)?(?:\+[0-9A-Za-z.-]+)?')
+
+
+def _revision_order(text: str | None) -> tuple[int, ...]:
+    """CSAF ``version`` precedence (an integer, or SemVer where a pre-release sorts before its release); text that is
+    neither orders before everything."""
+    match = _VERSION_TEXT.fullmatch(text) if text else None
+    if match is None:
+        return ()
+    major, minor, patch, pre = match.groups()
+    return int(major), int(minor or 0), int(patch or 0), 0 if pre else 1
+
+
 def _revision_key(doc: ImportedDocument) -> tuple:
-    """Newer release instant wins, ties by document id. Instants, not strings: '...00.5Z' sorted before '...00Z'
-    and '10:00+05:00' after '08:00Z' as text (issue #105 BUG-KBC-6)."""
-    return (_instant(doc.source.current_release_date), doc.source.doc_id)
+    """Newer release instant wins, then the higher document revision, ties by document id. Instants, not strings:
+    '...00.5Z' sorted before '...00Z' and '10:00+05:00' after '08:00Z' as text (issue #105 BUG-KBC-6). Two revisions
+    may share a release instant, and the document id then picked the older one (audit KBA-03)."""
+    return (_instant(doc.source.current_release_date), _revision_order(doc.revision), doc.source.doc_id)
 
 
 def _native_revision_ambiguous(docs: list[ImportedDocument]) -> bool:

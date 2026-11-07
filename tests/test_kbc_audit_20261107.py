@@ -8,6 +8,7 @@ from __future__ import annotations
 import copy
 import json
 
+import pytest
 from kbc_k1_support import IntelligenceAdvisoryPort, valid_csaf
 from kbc_k5_support import record, rows_of
 
@@ -80,3 +81,22 @@ def test_kba02_coverage_watermark_is_the_newest_instant():
     assert index.coverage(now=NOW).watermark_current_release_date == '2099-02-13T08:00:00Z'
 
 
+# --- KBA-03/04: CSAF revision selection ------------------------------------------------------------------------
+
+@pytest.mark.parametrize('order', [('1', '2'), ('2', '1')])
+def test_kba03_higher_csaf_revision_is_active_when_release_dates_tie(order):
+    index, docs = ReverseIndex(), {}
+    for revision in order:
+        docs[revision] = csaf(revision=revision)
+        index.add(docs[revision])
+    assert docs['1'].tracking_id == docs['2'].tracking_id
+    assert index.active_ids() == frozenset({docs['2'].doc_id})
+
+
+def test_kba04_same_tracking_id_from_two_publishers_are_not_revisions_of_each_other():
+    index = ReverseIndex()
+    first = csaf(revision='1', namespace='https://vendor-a.example', released='2099-02-10T00:00:00Z')
+    second = csaf(revision='1', namespace='https://vendor-b.example', released='2099-02-13T00:00:00Z')
+    index.add(first)
+    index.add(second)
+    assert index.active_ids() == frozenset({first.doc_id, second.doc_id})

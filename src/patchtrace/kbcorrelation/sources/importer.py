@@ -54,6 +54,8 @@ class ImportedDocument:
     vulnerabilities: int
     tracking_id: str | None = None
     card_facts: tuple[CardFactRef, ...] = ()
+    revision: str | None = None      # CSAF ``version`` text; orders revisions that share a release instant
+    publisher: str | None = None     # CSAF publisher namespace; a tracking id is only unique inside it
 
     @property
     def doc_id(self) -> str:
@@ -165,10 +167,13 @@ def _from_csaf(raw: bytes, now: str, advisory: AdvisoryPort | None) -> ImportedD
     meta = facts_meta(facts)
     source = _source_doc('csaf', raw, now=now, release_id=None, current=meta['current_release_date'],
                          dialect=CSAF_DIALECT, parser_version=BRIDGE_VERSION)
-    return _assemble(source, bridge_facts(facts, source.doc_id), meta['tracking_id'])
+    namespace = facts.get('publisher_namespace')
+    return _assemble(source, bridge_facts(facts, source.doc_id), meta['tracking_id'], revision=meta['revision'],
+                     publisher=namespace if isinstance(namespace, str) else None)
 
 
-def _assemble(source: SourceDoc, built: DocumentEdges, tracking_id: str | None) -> ImportedDocument:
+def _assemble(source: SourceDoc, built: DocumentEdges, tracking_id: str | None, *, revision: str | None = None,
+              publisher: str | None = None) -> ImportedDocument:
     return ImportedDocument(source=source, scopes=built.scopes, edges=built.edges, cards=built.cards,
                             statuses=built.statuses, problems=built.problems, vulnerabilities=built.vulnerabilities,
-                            tracking_id=tracking_id)
+                            tracking_id=tracking_id, revision=revision, publisher=publisher)
