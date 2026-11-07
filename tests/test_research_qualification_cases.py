@@ -83,3 +83,13 @@ def test_cli(tmp_path, capsys):
     f.write_text("{}")
     assert main(["cases", str(f)]) == 2
     assert main(["cases", str(tmp_path / "none.json")]) == 2
+
+
+def test_expected_accept_validation():
+    ok = case(expected={"function": "f", "accept": ["g"]})
+    CS.validate_case(ok)
+    for bad in ({"function": "f", "accept": "g"}, {"function": "f", "accept": [""]},
+                {"function": "f", "accept": [str(i) for i in range(9)]},
+                {"no_change": True, "accept": ["g"]}):
+        with pytest.raises(ValueError):
+            CS.validate_case(case(expected=bad))

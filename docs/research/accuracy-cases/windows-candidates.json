@@ -16,7 +16,10 @@
       },
       "expected": {
         "function": "Ipv6pReassembleDatagram",
-        "cve": "CVE-2022-34718"
+        "cve": "CVE-2022-34718",
+        "accept": [
+          "IppReceiveEsp"
+        ]
       },
       "facts": "unverified",
       "holdout": false,
@@ -37,7 +40,13 @@
       },
       "expected": {
         "function": "UlFastSendHttpResponse",
-        "cve": "CVE-2022-21907"
+        "cve": "CVE-2022-21907",
+        "accept": [
+          "UlpAllocateFastTracker",
+          "UlpFastSendCompleteWorker",
+          "UlpFreeFastTracker",
+          "UlAllocateFastTrackerToLookaside"
+        ]
       },
       "facts": "unverified",
       "holdout": false,
@@ -104,7 +113,7 @@
       },
       "facts": "unverified",
       "holdout": false,
-      "notes": "Aggregator page (authorship unclear, timestamps suggest generated content) lists GetControlRecord (added range checks on iExtendBlock/iFlushBlock) and CClfsBaseFilePersisted::WriteMetadataBlock (checks ClfsEncodeBlock return) among 13 patched functions, plus hardening elsewhere. KB5025239 given for Windows 11 22H2. Not independently corroborated by a human-authored page that I read; many functions changed."
+      "notes": "Aggregator page (authorship unclear, timestamps suggest generated content) lists GetControlRecord (added range checks on iExtendBlock/iFlushBlock) and CClfsBaseFilePersisted::WriteMetadataBlock (checks ClfsEncodeBlock return) among 13 patched functions, plus hardening elsewhere. KB5025239 given for Windows 11 22H2. Not independently corroborated by a human-authored page that I read; many functions changed. LOW-TRUST SOURCE: single aggregator page of unknown authorship; the expected label is unconfirmed until the binary pair is diffed."
     },
     {
       "id": "win-cve-2022-24521-clfs",
@@ -170,27 +179,6 @@
       "notes": "Rapid7 page: added missing null check before reading a PDEVICE_OBJECT; page says Microsoft fixed it silently in April 2022 alongside CVE-2022-24500 and the CVE came later. File name srv2.sys is not given by the page, only the srv2 component. KB not stated."
     },
     {
-      "id": "win-cve-2020-0796-srv2",
-      "layer": "L3",
-      "stratum": "smb-integer-overflow",
-      "project": "windows-smb-server",
-      "source_url": "https://trustwave.com/en-us/resources/blogs/spiderlabs-blog/windows-debugging-and-exploiting-part-5-smbghost-cve-2020-0796-technical-review",
-      "licence": "reference-only",
-      "older": {
-        "ref": "srv2.sys, 2020-Feb (pre-patch)"
-      },
-      "newer": {
-        "ref": "srv2.sys, 2020-Mar out-of-band"
-      },
-      "expected": {
-        "function": "Srv2DecompressData",
-        "cve": "CVE-2020-0796"
-      },
-      "facts": "unverified",
-      "holdout": true,
-      "notes": "Page names srv2.sys and Srv2DecompressData as the vulnerable function (unchecked add on attacker-controlled values) and gives March 2020 (disclosed 13 Mar). It does not describe the patch itself or the KB, so that the function is the changed one is the page's framing, not a shown diff. The fix was out of band rather than a normal Patch Tuesday."
-    },
-    {
       "id": "win-cve-2025-47987-tspkg",
       "layer": "L3",
       "stratum": "rdp-integer-overflow",
@@ -208,7 +196,7 @@
         "cve": "CVE-2025-47987"
       },
       "facts": "unverified",
-      "holdout": false,
+      "holdout": true,
       "notes": "Page: patched version uses RtlULongAdd for header length plus certificate length and checks the status before allocation (integer overflow). KB not stated. 0patch page on the same CVE agrees on fix type (safe addition replacing unchecked add, July 2025) but names no binary or function."
     },
     {
@@ -230,7 +218,7 @@
       },
       "facts": "unverified",
       "holdout": false,
-      "notes": "Aggregator page: copy now uses the same rounded size as the allocation, plus size validation returning invalid-argument for zero or oversized values. Page says its patch details are its own reconstruction from diffing. Single source, authorship unclear."
+      "notes": "Aggregator page: copy now uses the same rounded size as the allocation, plus size validation returning invalid-argument for zero or oversized values. Page says its patch details are its own reconstruction from diffing. Single source, authorship unclear. LOW-TRUST SOURCE: single aggregator page of unknown authorship; the expected label is unconfirmed until the binary pair is diffed."
     },
     {
       "id": "win-cve-2023-36802-mskssrv",
@@ -247,11 +235,15 @@
       },
       "expected": {
         "function": "FSRendezvousServer::FindObject",
-        "cve": "CVE-2023-36802"
+        "cve": "CVE-2023-36802",
+        "accept": [
+          "FSRendezvousServer::FindStreamObject",
+          "FSRendezvousServer::Close"
+        ]
       },
       "facts": "unverified",
-      "holdout": true,
-      "notes": "Aggregator page: FindObject renamed FindStreamObject and returns true only when object type field equals 2; FSRendezvousServer::Close changed to do the context search inline. September 2023 is inferred by the page from a filename, not stated. Because of the rename, scoring should accept FindStreamObject."
+      "holdout": false,
+      "notes": "Aggregator page: FindObject renamed FindStreamObject and returns true only when object type field equals 2; FSRendezvousServer::Close changed to do the context search inline. September 2023 is inferred by the page from a filename, not stated. Because of the rename, scoring should accept FindStreamObject. LOW-TRUST SOURCE: single aggregator page of unknown authorship; the expected label is unconfirmed until the binary pair is diffed."
     },
     {
       "id": "win-cve-2023-28244-kdcsvc",
@@ -271,7 +263,7 @@
         "cve": "CVE-2023-28244"
       },
       "facts": "unverified",
-      "holdout": false,
+      "holdout": true,
       "notes": "0patch says Microsoft's fix targeted the same function as its own micropatch and removes validation for RC4-MD4 and RC4_HMAC_OLD, returning 0 when these are passed. Vendor-authored (0patch). Month and KB not stated; file name kdcsvc.dll comes from the page."
     },
     {
@@ -313,7 +305,7 @@
         "cve": "CVE-2024-30088"
       },
       "facts": "unverified",
-      "holdout": true,
+      "holdout": false,
       "notes": "KernelSight page: lock acquisition added around check-and-copy; names KB5039212 and build 10.0.22621.3733 but no month. gengstah page names the same function and June 2024 but says it does not state which function Microsoft changed and gives no fix type. So changed-function evidence rests on one page that looks tool-generated."
     }
   ]

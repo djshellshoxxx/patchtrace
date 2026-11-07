@@ -1,6 +1,6 @@
 # Windows fixed-function candidates (L3)
 
-Research date 2026-11-06. Companion manifest: `windows-candidates.json` (schema `rq-case-manifest/1`). All cases are `facts: unverified` because binaries are not hash-checked yet. Function names below are as stated by the cited page; each page was read in full by the research pass. No write-up text is copied. Marked holdout: every third case by order.
+Research date 2026-11-06. Companion manifest: `windows-candidates.json` (schema `rq-case-manifest/1`). All cases are `facts: unverified` because binaries are not hash-checked yet. Function names below are as stated by the cited page; each page was read in full by the research pass. No write-up text is copied. Marked holdout: every third case by order of the manifest (re-derived after removing CVE-2020-0796; the Holdout column of the table is superseded by the JSON). Cases whose fix touched several functions, or renamed one, list the extra names in `expected.accept`; the scorer counts the best-ranked listed name. Cases from the unknown-author aggregator carry a LOW-TRUST note in the JSON.
 
 | # | CVE | Binary | Month | Fixed function (per source) | Source | Fix type | Confidence | Holdout |
 |---|---|---|---|---|---|---|---|---|
@@ -12,7 +12,6 @@ Research date 2026-11-06. Companion manifest: `windows-candidates.json` (schema 
 | 6 | CVE-2022-24521 | clfs.sys | 2022-Apr | `LoadContainerQ` | [link](https://googleprojectzero.github.io/0days-in-the-wild/0day-RCAs/2022/CVE-2022-24521.html) | offset validation | high | yes |
 | 7 | CVE-2020-17096 | ntfs.sys | 2020-Dec | `NtfsOffloadRead` | [link](https://www.jamf.com/blog/ntfs-remote-code-execution-cve-2020-17096-analysis/) | IrpContext argument fix | high | no |
 | 8 | CVE-2022-32230 | srv2.sys | 2022-Apr (silent) | `Smb2ValidateVolumeObjectsMatch` | [link](https://www.rapid7.com/blog/post/2022/06/14/cve-2022-32230-windows-smb-denial-of-service-vulnerability-fixed/) | null check | medium | no |
-| 9 | CVE-2020-0796 | srv2.sys | 2020-Mar (OOB) | `Srv2DecompressData` | [link](https://trustwave.com/en-us/resources/blogs/spiderlabs-blog/windows-debugging-and-exploiting-part-5-smbghost-cve-2020-0796-technical-review) | integer overflow (fix not described by page) | medium-low | yes |
 | 10 | CVE-2025-47987 | tspkg.dll | 2025-Jul | `TSCreateKerbCertLogonBuffer` | [link](https://kryptoenix.github.io/blog/demystifying-CVE-2025-47987) | checked integer add | high | no |
 | 11 | CVE-2024-30051 | dwmcore.dll | 2024-May | `CCommandBuffer::Initialize` | [link](https://onlyfm252.starlabs.sg/data/patch_diffs/rca-cve-2024-30051.md) | size consistency + validation | medium-low | no |
 | 12 | CVE-2023-36802 | mskssrv.sys | 2023-Sep (inferred) | `FSRendezvousServer::FindObject` | [link](https://onlyfm252.starlabs.sg/data/patch_diffs/mskssrv_sys-kb5030219.md) | object type check | medium-low | yes |
@@ -38,7 +37,7 @@ Confidence reflects how directly the page shows a before/after change in that fu
 - CVE-2023-21768: build numbers differ between sources (IBM and starlabs: 22621.608 vs 22621.1105; clearbluejar: 22621.1028 vs 22621.1415). Starlabs diff also shows inconsistent file version metadata.
 - CVE-2024-38193 (KernelSight): two KBs for one build.
 - CVE-2020-17096 (Jamf): the stated day looks inconsistent with Patch Tuesday; month Dec 2020 taken as is.
-- CVE-2020-0796: srv2.sys function is the vulnerable one; the page shows no diff.
+- CVE-2020-0796: srv2.sys `Srv2DecompressData` is named as the vulnerable function but the page shows no diff, so it was removed from the manifest (no ground truth for a changed function).
 
 ## Could not read
 

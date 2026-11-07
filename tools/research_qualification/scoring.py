@@ -23,7 +23,10 @@ def score_case(case: dict[str, Any], candidates: list[str] | None, k: int = 5) -
     if exp.get('no_change') is True:
         return {'id': case['id'], 'outcome': 'HIT' if not candidates else 'FALSE_POSITIVE', 'rank': None,
                 'reported': len(candidates)}
-    rank = candidates.index(exp['function']) + 1 if exp['function'] in candidates else None
+    # `accept` lists other functions the same fix changed (or a post-patch rename); the best-ranked listed name counts.
+    names = [exp['function'], *exp.get('accept', [])]
+    ranks = [candidates.index(n) + 1 for n in names if n in candidates]
+    rank = min(ranks) if ranks else None
     return {'id': case['id'], 'outcome': 'HIT' if rank is not None and rank <= k else 'MISS', 'rank': rank}
 
 
