@@ -17,9 +17,13 @@ def lower_bound(correct: int, n: int, alpha: float = 0.05) -> float:
     return 1.0 - clopper_pearson_upper(n - correct, n, alpha)
 
 
+def _is_fraction(x: float) -> bool:
+    return 0.0 < x < 1.0
+
+
 def min_cases(target: float, max_errors: int = 0, alpha: float = 0.05, limit: int = 10_000) -> int:
     """Smallest n whose lower bound reaches `target` when at most `max_errors` cases are wrong."""
-    if target <= 0 or target >= 1 or max_errors < 0:
+    if not _is_fraction(target) or max_errors < 0:
         raise ValueError('target must be in (0, 1) and max_errors >= 0')
     n = max_errors + 1
     while n <= limit:

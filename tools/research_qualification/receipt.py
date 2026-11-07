@@ -17,6 +17,8 @@ from datetime import UTC, datetime
 from pathlib import Path, PurePosixPath
 from typing import Any
 
+from .pathguard import confine
+
 SCHEMA_VERSION = 1
 STATUSES = ("PASS", "FAIL", "BLOCKED", "CANCELLED")
 
@@ -341,7 +343,7 @@ def write_receipt(r: dict[str, Any], out_dir: str | os.PathLike[str]) -> Path:
     problems = validate_receipt(r)
     if problems:
         raise ReceiptError("invalid receipt: " + "; ".join(problems))
-    out = Path(out_dir)
+    out = confine(out_dir, "receipt directory")
     out.mkdir(parents=True, exist_ok=True)
     target = out / receipt_filename(r)
     if target.exists():
