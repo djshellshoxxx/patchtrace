@@ -15,7 +15,7 @@ from importlib import resources
 SCRIPT_NAME = 'ghidra_script.py'
 PRIVATE_SCRIPT_NAME = 'pt_ir_extract.py'
 SYMBOLS_BY_MODE = {'gzf': 'primary', 'analyze': 'none'}
-INGEST_REVISION = 3     # copy of `ir.schema.INGEST_REVISION` (the DAG keeps extract away from ir); a test pins both
+INGEST_REVISION = 4     # copy of `ir.schema.INGEST_REVISION` (the DAG keeps extract away from ir); a test pins both
 
 
 def script_bytes() -> bytes:

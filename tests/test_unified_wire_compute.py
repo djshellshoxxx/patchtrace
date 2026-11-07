@@ -87,13 +87,16 @@ def test_the_result_id_is_planned_before_the_run_and_covers_the_ir_digests(tmp_p
     inputs, addr, ir = probe(tmp_path)
     manifest, _ = run(tmp_path, inputs, addr, ir=ir)
     older, newer = ir.digests()
-    planned = plan_identity(inputs, addr, ALL_SOURCES, ir=(older, newer))
+    planned = plan_identity(inputs, addr, ALL_SOURCES, ir=(older, newer), ir_keys=ir.keys())
     assert planned.result_id == manifest.result_id
     assert (planned.key_inputs.ir_older_digest, planned.key_inputs.ir_newer_digest) == (older, newer)
     assert manifest.ir_older.content_digest == older and manifest.ir_newer.content_digest == newer
     assert plan_identity(inputs, addr, ALL_SOURCES).result_id != planned.result_id           # S0 mode is another result
-    assert plan_identity(inputs, addr, ALL_SOURCES, ir=(newer, older)).result_id != planned.result_id
-    assert plan_identity(inputs, addr, ALL_SOURCES, ir=(older, newer), residual=False).result_id != planned.result_id
+    assert plan_identity(inputs, addr, ALL_SOURCES, ir=(newer, older), ir_keys=ir.keys()).result_id != planned.result_id
+    assert plan_identity(inputs, addr, ALL_SOURCES, ir=(older, newer), ir_keys=ir.keys(),
+                         residual=False).result_id != planned.result_id
+    # the sidecar identity is an input too (p8): the same content from another extraction is another result
+    assert plan_identity(inputs, addr, ALL_SOURCES, ir=(older, newer)).result_id != planned.result_id
     assert keys.result_key(keys.result_key_inputs(manifest)) == manifest.result_id
 
 
