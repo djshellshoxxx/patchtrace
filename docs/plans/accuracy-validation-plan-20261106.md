@@ -2,7 +2,8 @@
 
 Purpose: decide, with stated confidence bounds, how accurate PatchTrace's KB/CVE correlation and pair diffing are,
 using the cheapest ground truth first and a small set of real Windows patches last. Nothing here is a result.
-No live MSRC, Winbindex, Ghidra, BinDiff or Rizin run has happened yet; every number below is a target.
+One live MSRC/Winbindex smoke probe has passed (one month, one CVE; docs/qa/kbc-live-probe-20261107.md). No join-accuracy,
+Ghidra, BinDiff or Rizin run has happened yet; every accuracy number below is a target.
 
 ## Claims, one per layer (never one blended percentage)
 
@@ -48,7 +49,7 @@ Cases from one project or release are not independent; count distinct projects. 
 | AV-2 | Candidate list: projects, CVE ids, fix commits, release pairs (all `unverified` first) | next |
 | AV-3 | Actions workflow: fetch/build pairs on Windows runner, hash, emit receipts | after AV-2 |
 | AV-4 | Top-k rank scorer (`scoring.py`, `score` command) | done (tested; engine output adapter still to write) |
-| AV-5 | L1 automated join run over MSRC months (needs live probe L1 to pass first) | blocked on live probe |
+| AV-5 | L1 automated join evaluation over several MSRC months with an independent oracle | prerequisite smoke probe passed (one month, one CVE); the join evaluation itself has not started, so the L1 claim is unchanged |
 | AV-6 | S3/S4 Windows pairs, 15 then 29 | after AV-5 |
 | AV-7 | Report: per-layer bound table with counts, stratified, unverified list | last |
 
