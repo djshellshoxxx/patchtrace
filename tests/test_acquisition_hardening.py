@@ -258,7 +258,7 @@ def test_promote_refuses_a_tampered_staged_file_and_creates_nothing(tmp_path):
     assert not root.exists()
 
 
-def test_promote_failure_after_create_removes_the_project(tmp_path, monkeypatch):
+def test_promote_failure_after_create_retains_the_committed_project(tmp_path, monkeypatch):
     older, newer = _acquired(tmp_path)
     older = older.model_copy(update={'sha256': '1' * 64})  # the project copy will not match this record
     monkeypatch.setattr(q, '_staged_matches', lambda item: True)
@@ -266,7 +266,10 @@ def test_promote_failure_after_create_removes_the_project(tmp_path, monkeypatch)
     with pytest.raises(AcquisitionError) as err:
         q.promote(older, newer, 'demo', root)
     assert err.value.code == 'PT-ACQ-VERIFY'
-    assert not root.exists()
+    assert str(root.resolve()) in str(err.value)
+    from patchtrace.service import ProjectService
+    with ProjectService.open(root) as retained:
+        assert len(retained.project.artifacts) == 2
 
 
 def test_delta_input_cap_is_enforced_before_loading_msdelta(monkeypatch):

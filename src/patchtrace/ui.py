@@ -55,6 +55,7 @@ from .gui.qt.project_adoption import adopt_project
 from .gui.qt.theme import DARK
 from .interpretation import interpret, system_prompt
 from .offline_bundle import inspect_offline_bundle, install_offline_bundle
+from .persistence import creation_directory_available
 from .providers import ProviderConfig
 from .raw_view import SCOPES, RawSide, build_side, differing_lines
 from .reports import export_project
@@ -289,11 +290,7 @@ class NewProjectDialog(QDialog):
             self.error.setText('Choose two existing binary files. PE format and architecture are validated on creation.')
             return
         root = Path(self.root.text())
-        try:
-            occupied = root.exists() and (not root.is_dir() or any(root.iterdir()))
-        except OSError:
-            occupied = True
-        if occupied:
+        if not creation_directory_available(root):
             self.error.setText('The project directory must be absent or empty.')
             return
         super().accept()
@@ -619,7 +616,7 @@ class AcquisitionDialog(QDialog):
             self.status.setText('Enter a project name and a new project directory.')
             return
         root = Path(self.root.text().strip())
-        if root.exists() and (not root.is_dir() or any(root.iterdir())):
+        if not creation_directory_available(root):
             self.status.setText('The project directory must be absent or empty.')
             return
         try:

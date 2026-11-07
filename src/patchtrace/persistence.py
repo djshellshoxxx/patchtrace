@@ -247,6 +247,28 @@ def _abandoned_creation(path: Path) -> bool:
         return False
 
 
+def creation_directory_available(root: Path) -> bool:
+    """Read-only preflight; actual create still owns kernel locking and database refusal.
+
+    Failed creation intentionally leaves the persistent lock inode. Only that one
+    regular entry is allowed alongside otherwise unused destination space.
+    """
+    root = Path(root)
+    try:
+        try:
+            metadata = root.lstat()
+        except FileNotFoundError:
+            return True
+        if not stat.S_ISDIR(metadata.st_mode):
+            return False
+        with os.scandir(root) as entries:
+            first = next(entries, None)
+            return first is None or (first.name == '.patchtrace.lock'
+                                     and first.is_file(follow_symlinks=False) and next(entries, None) is None)
+    except (OSError, ValueError):
+        return False
+
+
 class ProjectLock:
     """Kernel-owned advisory lock; crashes release it without stealing a live lock file."""
     def __init__(self, root: Path):
