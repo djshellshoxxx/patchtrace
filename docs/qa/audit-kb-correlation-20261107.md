@@ -1,0 +1,42 @@
+# KB/CVE correlation bug audit, 2026-11-07
+
+AI-assisted review (Claude), not an independent audit. It is not complete: it covers the code paths and failure classes
+listed below and nothing else. Base: `origin/main` at 652677b0. Tests: `tests/test_kbc_audit_20261107.py`.
+
+No security-class finding. KBA-05 is a crash on hostile persisted data (denial of the advisory listing), fixed.
+
+## Findings
+
+| id | severity | location | evidence (test) | status | suggested fix |
+|---|---|---|---|---|---|
+| KBA-01 | High | `kbcorrelation/products.py:128-135` (key), `resolver.py` `resolve` | `test_kba01_windows_10_product_resolves_against_real_winbindex_version_keys` | fixed | Scope identity writes Windows 10 as `10-22H2`; real Winbindex keys Windows 10 as `22H2` and only Windows 11 as `11-22H2` (`docs/research/kbcve/winbindex-servicing-catalog.md`, live; `tests/fixtures/winbindex/afd.sys.json` has `1507`, `11-26H1`). Every Windows 10 product answered "Not in the file index". Resolver now tries both spellings. Scope ids and persisted `winbindex_key` unchanged. Synthetic fixtures use `10-22H2`, which is why tests never saw it. `docs/specs/kb-cve/31-C-product-build-pairs.md` still describes `10-22H2` as a "version key"; it is only the scope-identity key. |
+| KBA-02 | Low | `kbcorrelation/index.py` `timeline`, `_coverage` | `test_kba02_timeline_is_oldest_first_by_instant`, `test_kba02_coverage_watermark_is_the_newest_instant` | fixed | Timestamps compared as text (BUG-KBC-6 fixed only the active-revision key). `10:00+05:00` (05:00Z) sorted after `08:00Z`: timeline listed newest first and the watermark named the older revision. Now ordered by UTC instant. |
+| KBA-03 | Medium | `kbcorrelation/index.py` `_revision_key` | `test_kba03_higher_csaf_revision_is_active_when_release_dates_tie` (both insertion orders) | fixed | Two CSAF revisions with the same `current_release_date` were separated by document id (a hash), so revision 1 could stay active and revision 2 be reported as superseded. Ties now break on revision precedence (integer or SemVer) before document id. |
+| KBA-04 | Medium | `kbcorrelation/index.py` `_group_key` | `test_kba04_same_tracking_id_from_two_publishers_are_not_revisions_of_each_other` | fixed | CSAF documents were grouped by tracking id alone; a second publisher reusing an id (`2024-001`) marked the other vendor's document superseded and removed its edges from lookups. Group key now includes the publisher namespace (`intelligence` already keys supersession this way). `ImportedDocument` gains in-memory `revision` and `publisher`; no persisted contract changes. |
+| KBA-05 | Low | `intelligence/csaf/applicability.py` `supersession` | `test_kba05_supersession_survives_a_facts_date_that_is_only_shaped_like_a_timestamp` | fixed | `Timestamp` is a pattern, so `2099-13-45T00:00:00Z` is a valid `AdvisoryFacts`; `parse_date_time` returns None and `max()` raised TypeError out of `AdvisoryStore.advisories()` and `explain`. Reachable by a hand-edited stored facts file. Unreadable date now orders first. |
+| KBA-06 | Low | `kbcorrelation/lineage.py:188-206` `predecessor` | `test_kba06_...` (strict xfail) | open | Timeline A, B(preview), A with `same_class_only`: the preview row is skipped and the older A row (target's own bytes) is returned, giving a byte-identical grade X pair instead of "no earlier build". Not fixed because "the build before the bytes first appeared" is ambiguous when bytes revert; needs a decision (skip identical SHA, or walk to before the earliest identical row). |
+| KBA-07 | Low (latent) | `report2/contracts.py:199` | `test_kba07_...` (strict xfail) | open | `Advisory(kind='kb')` accepts `KB\d{6,8}`; kbcorrelation canonical ids are 4-10 digits. A canonical id outside 6-8 digits would make `PT-EXPORT-SECTION` refuse the whole export. Not reachable today: `report2/adapters.py` emits only `cve` and `cwe` records. Widening the regex changes an exported contract, so the spec must be updated first. |
+| KBA-08 | Medium (coverage) | `kbcorrelation/alias_catalog.py` `RELEASE_PATTERNS` | `test_kba08_...` (strict xfail) | open | MSRC names Windows 10 RTM "Windows 10 for x64-based Systems" (no version token), so it gets no `winbindex_key` and resolves to `NO_KEY`; Winbindex key `1507` is unreachable. Fix needs an alias-catalog change (bump `ALIAS_CATALOG_VERSION`, new scope ids for these products), so left for a decision. |
+
+## Areas reviewed with no findings
+
+- `kev/parse.py`, `kev/contracts.py` (strict JSON, required fields, null and wrong types, duplicate CVE, count check, release timestamp), `kev/join.py` (freshness by UTC day, future catalog, 5,000 cap), `kev/store.py` (atomic install, shrink guard, future-dated catalogs, prune grace), `kev/service.py`, `kev/view_model.py`, `kev/kb_adapter.py`, `kev/project_context.py`, `kev/report.py`.
+- `kbcorrelation/ids.py` (KB and CVE normalisation, sort keys), `sources/cvrf.py`, `sources/cvrf_msrc.py` (Type 2 only, Type 3 status gate, remediation line splitting, disputed edges), `sources/csaf_bridge.py`, `sources/scope.py`, `sources/net_plan.py`, `sources/cvrf_fetch.py` (plan check order, redirect rules), `products.py`, `leads.py` (group sort, KEV never counted as evidence), `view_model.py`, `context.py`, `export.py`, `plan.py`, `acquire.py`, `lineage.py` (ordering, change detection), `resolver.py` (rest of it), `store.py` (add_document, CAS, load_index).
+- `acquisition/winbindex.py` (`parse`, `parse_rows`, candidate sizes).
+- `intelligence/csaf/applicability.py`, `intelligence/explain.py`, `intelligence/storage.py` (supersession and contradiction logic).
+- `report2/sections/advisories.py`.
+- Property and fuzz checks, seeded: 1,500 mutations each of the real-shaped KEV fixture, three CVRF/CSAF fixtures and the Winbindex fixture (only the typed error escaped); 3,000 random index timelines (`predecessor` ordering, `index_rows` permutation stability); 300 random document sets (index lookups identical under every insertion order). These are not committed.
+- Corpus: product names from the L1 candidate list (`research/l1-join-corpus-20261107`) were run through `derive()`; families, releases, architectures and keys were as expected apart from KBA-01 and KBA-08. No MSRC data was copied into tests.
+
+## Not reviewed, or not reached
+
+- `kev/transport.py`, `kev/cli.py`, `kbcorrelation/cli*.py`, `investigation_service.py`, `investigation_qt.py`, `panel_qt.py`, `wiring.py` (only skimmed), `recovery.py`, `workflow.py`, `card_provenance.py`, `components.py`.
+- `intelligence/csaf/validate.py` (1,000 lines; only the date and revision helpers), `normalize.py`, `discovery.py`, `transport.py`, `lexicon.py`, `hypotheses.py` rules content, `anchors.py`, `intelligence/tools/`.
+- Live behaviour: no network access to MSRC, NVD, CISA or Winbindex was used. The real MSRC CVRF month shape was tested only through the committed single-CVE fixture.
+- PR #235 (`integrate/swarm-wave3-20261105`): `git diff origin/main origin/integrate/swarm-wave3-20261105` is empty for every path in scope, so nothing in scope exists only there.
+- Out of scope by assignment: `ingestion.py`, `offline_bundle.py`, `artifact_bytes.py`, `hostile_text.py`, `persistence.py`, `netutil.py`, `ghidriff_launch/`.
+- Judgement calls not raised as findings: stale-cache detection uses the newest `retrieved_at` of the inspected documents, so one fresh import hides an old one; `index_rows` keeps the last of two conflicting duplicate `(version key, KB, SHA)` mappings (inputs from `parse_rows` are unique); `normalise_kb_edge` rejects a trailing newline or non-breaking space.
+
+## Test results
+
+See the PR description for the focused and full-suite runs.

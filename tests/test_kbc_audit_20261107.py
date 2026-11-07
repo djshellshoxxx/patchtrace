@@ -124,3 +124,40 @@ def test_kba05_supersession_survives_a_facts_date_that_is_only_shaped_like_a_tim
         {**first.model_dump(mode='json'), 'current_release_date': '2099-13-45T00:00:00Z'}))
     state = ap.supersession([broken, second])
     assert state == {broken.facts_id: True, second.facts_id: False}   # an unreadable date is the oldest
+
+
+# --- reported, not fixed (strict xfail: an unexpected pass means the finding was fixed and the marker must go) ---
+
+@pytest.mark.xfail(strict=True, reason='KBA-06 open: predecessor() can return a row with the target\'s own bytes')
+def test_kba06_predecessor_never_returns_a_row_with_the_targets_own_sha():
+    """A, B(preview), A: with ``same_class_only`` the preview row is skipped as a confounder and the older A row is
+    returned, so the pair is byte-identical (grade X, IDENTICAL_CONTENT) instead of 'no earlier build'."""
+    from patchtrace.kbcorrelation.lineage import index_rows, predecessor, timeline
+
+    def row(kb, sha, day, ubr, heading_class):
+        return {'sha256': sha * 64, 'kb': kb, 'version_key': '11-24H2', 'release_date': f'2099-01-{day:02d}',
+                'release_version': f'26100.{ubr}', 'machine_type': 0x8664, 'size': 100, 'heading_class': heading_class,
+                'variant': 'full', 'download': None, 'record_sha256': 'e' * 64}
+
+    rows, _ = index_rows([row('KB5000001', 'a', 1, 100, 'standard'), row('KB5000002', 'b', 2, 200, 'preview'),
+                          row('KB5000003', 'a', 3, 300, 'standard')], file_name='x.sys')
+    line = timeline(rows, '11-24H2')
+    target = next(r for r in line if r.kb == 'KB5000003')
+    older, _ = predecessor(line, target)
+    assert older is None or older.sha256 != target.sha256
+
+
+@pytest.mark.xfail(strict=True, reason='KBA-07 open: report2 KB ids are 6-8 digits, kbcorrelation canonical ids 4-10')
+def test_kba07_report2_advisory_accepts_every_canonical_kb_id():
+    from patchtrace.kbcorrelation.ids import canonical_kb
+    from patchtrace.report2.contracts import Advisory
+
+    for kb in ('KB12345', 'KB1234567890'):
+        canonical_kb(kb)
+        Advisory(kind='kb', id=kb, text='vendor text')
+
+
+@pytest.mark.xfail(strict=True, reason='KBA-08 open: MSRC names Windows 10 RTM (1507) without a version token')
+def test_kba08_windows_10_rtm_product_name_gets_a_file_index_key():
+    scope = scope_for('d' * 64, 'P1', 'Windows 10 for x64-based Systems')
+    assert scope.family == 'windows-client' and scope.winbindex_key is not None
