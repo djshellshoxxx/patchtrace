@@ -5,14 +5,16 @@ from __future__ import annotations
 
 import os
 import stat
+import struct
 import time
 
 import pytest
 
+from patchtrace import artifact_inspection
 from patchtrace.acquisition import quarantine
 from patchtrace.acquisition import transport as tr
 from patchtrace.hostile_text import is_hostile
-from patchtrace.ingestion import display_text
+from patchtrace.ingestion import display_text, inspect_artifact
 
 
 # TB-01 sweep_staging followed a symlink named like a staging directory and chmod-ed its target
@@ -47,3 +49,37 @@ def test_last_modified_out_of_range_is_ignored_not_raised(value):
 def test_line_and_paragraph_separators_are_hostile(char):
     assert is_hostile(char)
     assert display_text(f'good{char}FAKE') == 'good?FAKE'
+
+
+# TB-04 compare_overviews failure leaked the open readers of both sides
+def _pe(size: int = 0x400) -> bytes:
+    raw = bytearray(size)
+    raw[0:2] = b'MZ'
+    struct.pack_into('<I', raw, 0x3C, 0x80)
+    raw[0x80:0x84] = b'PE\0\0'
+    struct.pack_into('<HH', raw, 0x84, 0x8664, 1)
+    struct.pack_into('<H', raw, 0x80 + 20, 240)
+    struct.pack_into('<H', raw, 0x80 + 24, 0x20B)
+    struct.pack_into('<I', raw, 0x80 + 24 + 108, 16)
+    return bytes(raw)
+
+
+def test_inspection_closes_readers_when_comparison_raises(tmp_path, monkeypatch):
+    older, newer = tmp_path / 'a.bin', tmp_path / 'b.bin'
+    older.write_bytes(_pe())
+    newer.write_bytes(_pe() + b'\0' * 16)
+    root = tmp_path / 'case'
+    artifacts = [inspect_artifact(older, 'older', root), inspect_artifact(newer, 'newer', root)]
+    closed = []
+    original = artifact_inspection.VerifiedArtifactReader.close
+
+    def counting_close(self):
+        closed.append(self.label)
+        original(self)
+
+    monkeypatch.setattr(artifact_inspection.VerifiedArtifactReader, 'close', counting_close)
+    monkeypatch.setattr(artifact_inspection, 'compare_overviews',
+                        lambda *_: (_ for _ in ()).throw(RuntimeError('synthetic comparison defect')))
+    with pytest.raises(RuntimeError):
+        artifact_inspection.inspect_project_artifacts('p', artifacts, root, verify_trust=lambda _p: None)
+    assert len(closed) == 2
