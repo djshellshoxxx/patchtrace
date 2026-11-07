@@ -1,0 +1,116 @@
+{
+  "schema": "rq-case-manifest/1",
+  "cases": [
+    {
+      "id": "win-cve-2019-1184-coreshellextframework",
+      "layer": "L3",
+      "stratum": "com-permission-check",
+      "project": "windows-coreshellextframework",
+      "source_url": "https://www.zerodayinitiative.com/blog/2019/12/19/privilege-escalation-via-the-core-shell-com-registrar-object",
+      "licence": "reference-only",
+      "older": {
+        "ref": "CoreShellExtFramework.dll, 2019-Jul"
+      },
+      "newer": {
+        "ref": "CoreShellExtFramework.dll, 2019-Aug Patch Tuesday"
+      },
+      "expected": {
+        "function": "CoreShellExtFramework!CoreShellComServerRegistrarFactory::HasRequiredPermissions",
+        "cve": "CVE-2019-1184"
+      },
+      "facts": "unverified",
+      "holdout": false,
+      "notes": "ZDI page names HasRequiredPermissions as changed by the August 2019 patch (manual capability check added; LaunchPermission descriptor loosened). Page says Microsoft reverted the August changes to this DLL in October 2019 and set the Low label to Medium, with no function names, so pair July to August, not August to October. KB and file versions not stated. Prefix spelling on the page is CoreShellExtFramework!, the class name is as printed there."
+    },
+    {
+      "id": "win-cve-2020-0729-structuredquery",
+      "layer": "L3",
+      "stratum": "shell-uninit-memory",
+      "project": "windows-structuredquery",
+      "source_url": "https://www.zerodayinitiative.com/blog/2020/3/25/cve-2020-0729-remote-code-execution-through-lnk-files",
+      "licence": "reference-only",
+      "older": {
+        "ref": "StructuredQuery.dll, 2020-Jan"
+      },
+      "newer": {
+        "ref": "StructuredQuery.dll, 2020-Feb Patch Tuesday"
+      },
+      "expected": {
+        "function": "StructuredQuery1::ReadPROPVARIANT",
+        "cve": "CVE-2020-0729"
+      },
+      "facts": "unverified",
+      "holdout": false,
+      "notes": "ZDI page says BinDiff of the February 2020 patch showed exactly one changed function in StructuredQuery.dll, StructuredQuery1::ReadPROPVARIANT (~81% similar); fix zero-fills the VT_VARIANT buffer. The page names the same function as vulnerable. KB not stated. Single-changed-function case, good for a precision check."
+    },
+    {
+      "id": "win-cve-2020-0792-win32kfull",
+      "layer": "L3",
+      "stratum": "win32k-validation-bypass",
+      "project": "windows-win32kfull",
+      "source_url": "https://www.zerodayinitiative.com/blog/2020/5/7/how-a-deceptive-assert-caused-a-critical-windows-kernel-vulnerability",
+      "licence": "reference-only",
+      "older": {
+        "ref": "win32kfull.sys, 2020-Jan"
+      },
+      "newer": {
+        "ref": "win32kfull.sys, 2020-Feb Patch Tuesday"
+      },
+      "expected": {
+        "function": "NtUserResolveDesktopForWOW",
+        "cve": "CVE-2020-0792"
+      },
+      "facts": "unverified",
+      "holdout": false,
+      "notes": "ZDI page names NtUserResolveDesktopForWOW as the function with the flawed validation and describes the fix as code in that path (after MicrosoftTelemetryAssertTriggeredNoArgsKM it now raises an exception via MmUserProbeAddress). It does not say in so many words that this exact function was the one diffed, so confidence is medium. xxxResolveDesktopForWOW is mentioned but not stated as changed, deliberately not accepted. Flawed change shipped Nov 2019. KB not stated."
+    },
+    {
+      "id": "win-cve-2021-27077-win32kbase",
+      "layer": "L3",
+      "stratum": "win32k-new-guard",
+      "project": "windows-win32kbase",
+      "source_url": "https://www.zerodayinitiative.com/blog/2021/7/26/cve-2021-27077-selecting-bitmaps-into-mismatched-device-contexts",
+      "licence": "reference-only",
+      "older": {
+        "ref": "win32kbase.sys, 2021-Feb"
+      },
+      "newer": {
+        "ref": "win32kbase.sys, 2021-Mar Patch Tuesday"
+      },
+      "expected": {
+        "function": "bIsSurfaceAllowedInDC",
+        "cve": "CVE-2021-27077",
+        "accept": [
+          "UMPDAllowPrinterSurfaceInDisplayDC"
+        ]
+      },
+      "facts": "unverified",
+      "holdout": false,
+      "notes": "ZDI page names two functions added by the March 2021 patch in win32kbase.sys: bIsSurfaceAllowedInDC (makes SelectObject fail for printer-compatible bitmaps with non-NULL dhpdev) and UMPDAllowPrinterSurfaceInDisplayDC (init, reads an optional registry key). Both are NEW functions, the existing caller that gained the call is not named, so the engine must report added functions to pass. Page states the patch was not a validation fix in win32kfull!MulTextOut. Low confidence on whether an added-function counts as a changed function. KB not stated."
+    },
+    {
+      "id": "win-cve-2019-9512-http",
+      "layer": "L3",
+      "stratum": "http2-rate-limit",
+      "project": "windows-http",
+      "source_url": "https://www.zerodayinitiative.com/blog/2019/12/4/cve-2019-9512-a-microsoft-windows-http2-ping-flood-denial-of-service",
+      "licence": "reference-only",
+      "older": {
+        "ref": "http.sys, 2019-Jul"
+      },
+      "newer": {
+        "ref": "http.sys, 2019-Aug Patch Tuesday"
+      },
+      "expected": {
+        "function": "UxDuoParsePing",
+        "cve": "CVE-2019-9512",
+        "accept": [
+          "UxDuoApplyPingFrameDosPrevention"
+        ]
+      },
+      "facts": "unverified",
+      "holdout": false,
+      "notes": "ZDI page says the August patch adds HTTP!UxDuoApplyPingFrameDosPrevention (per-client ping limit via HTTP2MaxPingsPerMinute registry value) and that HTTP!UxDuoParsePing now calls it. So UxDuoParsePing is the modified function, the other is new. Page says only \"August\"; year inferred from CVE and post date (Dec 2019). Analysed code was 10.0.14393.2828, not stated to be the patched build. KB not stated. Second http.sys case after win-cve-2022-21907-http in the other manifest."
+    }
+  ]
+}
