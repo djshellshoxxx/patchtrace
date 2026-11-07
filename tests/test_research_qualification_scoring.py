@@ -58,3 +58,10 @@ def test_cli(tmp_path):
     assert main(["score", str(m), str(r)]) == 1
     r.write_text("[]")
     assert main(["score", str(m), str(r)]) == 2
+
+
+def test_accept_list_counts_alternate_function_and_renames():
+    case = {'id': 'c', 'expected': {'function': 'FindObject', 'accept': ['FindStreamObject']}}
+    assert SC.score_case(case, ['Other', 'FindStreamObject'])['rank'] == 2
+    assert SC.score_case(case, ['FindStreamObject', 'FindObject'])['rank'] == 1
+    assert SC.score_case(case, ['Other'])['outcome'] == 'MISS'
