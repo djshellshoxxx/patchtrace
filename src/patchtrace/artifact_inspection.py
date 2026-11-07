@@ -68,6 +68,15 @@ def inspect_project_artifacts(project_id: str, artifacts: Iterable[Artifact], ro
         raise ValueError(f'project is missing oriented artifact(s): {", ".join(missing)}')
     sides: dict[str, SideInspection] = {}
     readers: dict[str, VerifiedArtifactReader] = {}
+    try:
+        return _inspect_sides(project_id, by_side, root, cancel, verify_trust, sides, readers)
+    except BaseException:
+        for reader in readers.values():
+            reader.close()  # the caller never receives them, so nothing else can
+        raise
+
+
+def _inspect_sides(project_id, by_side, root, cancel, verify_trust, sides, readers) -> ProjectInspection:
     cancelled = False
     for side in SIDES:
         artifact = by_side[side]
