@@ -6,6 +6,10 @@
     python -m tools.research_qualification stages LOGFILE
     python -m tools.research_qualification receipt validate FILE...
     python -m tools.research_qualification receipt compare A B
+    python -m tools.research_qualification samplesize [--target 0.9 --max-errors 1]
+    python -m tools.research_qualification callmodel --pairs 2161955 --old 20000 --new 20000 [--us-per-call X]
+    python -m tools.research_qualification fixtures build --out DIR
+    python -m tools.research_qualification fixtures score --truth FILE --matches FILE
 
 Exit codes: 0 ok, 1 failed/invalid/differs, 2 blocked or usage error. Nothing here executes target binaries
 unless the operator passes the command after `--`.
@@ -17,8 +21,11 @@ import json
 import sys
 from pathlib import Path
 
+from . import call_model as CM
+from . import fixture_pairs as FP
 from . import perf_harness as P
 from . import receipt as R
+from . import sample_size as SS
 from .stage_parser import parse_log_text
 
 _STATUS_EXIT = {"PASS": 0, "FAIL": 1, "CANCELLED": 1, "BLOCKED": 2}
@@ -96,6 +103,75 @@ def cmd_receipt(a: argparse.Namespace) -> int:
     return 1 if diffs else 0
 
 
+def cmd_samplesize(a: argparse.Namespace) -> int:
+    try:
+        if a.target is None:
+            _print(SS.table())
+        else:
+            _print({'target': a.target, 'max_errors': a.max_errors,
+                    'min_independent_cases': SS.min_cases(a.target, a.max_errors)})
+    except ValueError as e:
+        print(f"error: {e}", file=sys.stderr)
+        return 2
+    return 0
+
+
+def cmd_callmodel(a: argparse.Namespace) -> int:
+    try:
+        p = CM.Params(a.pairs, a.old, a.new, a.traversals)
+        out = CM.analytic(p, a.us_per_call)
+        out['sensitivity'] = CM.sensitivity(p)
+        if a.simulate:
+            out['simulation'] = CM.simulate(CM.Params(min(a.pairs, 4000), min(a.old, 200), min(a.new, 200), a.traversals))
+    except ValueError as e:
+        print(f"error: {e}", file=sys.stderr)
+        return 2
+    _print(out)
+    return 0 if not a.simulate or out['simulation']['decisions_identical'] else 1
+
+
+def cmd_fixtures(a: argparse.Namespace) -> int:
+    if a.action == "score":
+        try:
+            truth = json.loads(Path(a.truth).read_text(encoding="utf-8"))
+            matches = json.loads(Path(a.matches).read_text(encoding="utf-8"))
+            res = FP.score_matches(truth, matches)
+        except (OSError, ValueError, KeyError) as e:
+            print(f"error: {e}", file=sys.stderr)
+            return 2
+        _print(res)
+        return 0 if res["passed"] else 1
+    out = Path(a.out)
+    started = R.utc_now()
+    summary, problems, hashes = {}, [], {}
+    try:
+        for case in FP.CASES:
+            truth = FP.build_case(case, out)
+            problems += [f"{case}: {m}" for m in FP.verify_truth(case, truth, out)]
+            if not FP.check_reproducible(case, out, truth):
+                problems.append(f"{case}: rebuild gave different bytes")
+            manifest = out / f"{case}.truth.json"
+            manifest.write_text(json.dumps(truth, indent=2, sort_keys=True) + "\n", encoding="utf-8", newline="\n")
+            hashes[case] = R.sha256_file(manifest)
+            summary[case] = {"old": truth["older"]["sha256"][:12], "new": truth["newer"]["sha256"][:12]}
+    except FP.FixtureError as e:
+        problems.append(str(e))
+    status = "PASS" if not problems else ("BLOCKED" if any("not found on PATH" in m for m in problems) else "FAIL")
+    rec = R.build_receipt(
+        experiment_id="rq03-fixtures", scenario_id="self-compiled", tool_name="fixture_pairs", status=status,
+        exit_code=0 if status == "PASS" else None, stop_reason="; ".join(problems)[:200] or "all cases verified",
+        patchtrace_sha=R.git_head(Path(__file__).resolve().parents[2]),
+        validations_run=["reproducible_build", "truth_checked_against_bytes"] if status == "PASS" else [],
+        unverified=["tool.executable_sha256", "pe_pairs_need_windows_toolchain", "inlining_noise_not_modeled"],
+        blocked_reasons=problems if status == "BLOCKED" else [], result_hashes=hashes if status == "PASS" else {},
+        counters={"cases": len(FP.CASES)},
+        observed={"started_utc": started, "ended_utc": R.utc_now(), "duration_s": 0.0},
+    )
+    path = R.write_receipt(rec, out)
+    _print({"status": status, "problems": problems, "cases": summary, "receipt": path.name})
+    return _STATUS_EXIT[status]
+
+
 def build_parser() -> argparse.ArgumentParser:
     ap = argparse.ArgumentParser(prog="python -m tools.research_qualification", description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -115,6 +191,21 @@ def build_parser() -> argparse.ArgumentParser:
     g = sub.add_parser("stages", help="extract stage times and quiet intervals from a log file")
     g.add_argument("log")
     g.add_argument("--top", type=int, default=5)
+    z = sub.add_parser("samplesize", help="how many independent cases an accuracy claim needs")
+    z.add_argument("--target", type=float)
+    z.add_argument("--max-errors", type=int, default=0)
+    m = sub.add_parser("callmodel", help="call-count model of the suspected Ghidriff slow path (a model, not a measurement)")
+    m.add_argument("--pairs", type=int, required=True)
+    m.add_argument("--old", type=int, required=True)
+    m.add_argument("--new", type=int, required=True)
+    m.add_argument("--traversals", type=int, default=2)
+    m.add_argument("--us-per-call", type=float)
+    m.add_argument("--simulate", action="store_true")
+    f = sub.add_parser("fixtures", help="build self-compiled old/new pairs with ground truth, or score matches")
+    f.add_argument("action", choices=["build", "score"])
+    f.add_argument("--out", default="build/research-fixtures")
+    f.add_argument("--truth")
+    f.add_argument("--matches")
     r = sub.add_parser("receipt", help="validate or compare receipts")
     r.add_argument("action", choices=["validate", "compare"])
     r.add_argument("files", nargs="+")
@@ -130,6 +221,12 @@ def main(argv: list[str] | None = None) -> int:
         return cmd_perf(a, cmd)
     if a.cmd == "stages":
         return cmd_stages(a)
+    if a.cmd == "samplesize":
+        return cmd_samplesize(a)
+    if a.cmd == "callmodel":
+        return cmd_callmodel(a)
+    if a.cmd == "fixtures":
+        return cmd_fixtures(a)
     return cmd_receipt(a)
 
 
