@@ -41,8 +41,8 @@ def _parse_json(text: str) -> list[str]:
         diff_type = entry.get('diff_type', [])
         if not isinstance(diff_type, list):
             raise ValueError(f'functions.modified[{i}].diff_type must be a list')
-        if 'code' not in diff_type:
-            continue  # name/address/call-graph-only change: not a code change (ratio is decompiler text, may drift)
+        if 'code' not in diff_type and ratio >= 1.0:
+            continue  # name/address/call-graph-only change: not a code change
         old = entry['old']
         name = normalise_name(old.get('fullname') or old.get('name'))
         if name is None:
