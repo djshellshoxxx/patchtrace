@@ -161,3 +161,9 @@ def test_oversized_oid_arc_is_rejected_before_decimal_conversion():
     huge_arc = b'\x81' * 2500 + b'\x00'
     assert decode_oid(parse(tlv(0x06, huge_arc))) is None
     assert decode_oid(parse(oid('2.999.3'))) == '2.999.3'
+
+def test_uuid_derived_oid_accepts_the_full_128_bit_arc():
+    # ISO/ITU OID 2.25 accepts unsigned UUID-derived 128-bit decimal arcs.
+    largest_uuid_arc = str((1 << 128) - 1)
+    dotted = f'2.25.{largest_uuid_arc}'
+    assert decode_oid(parse(oid(dotted))) == dotted
