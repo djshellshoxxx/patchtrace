@@ -133,7 +133,10 @@ def plan_identity(inputs: SourceInputs, addr: AddressMap, sources: Iterable[str]
     refs.extend(diaphora_ref(s, budget) for s in inputs.diaphora if 'diaphora' in selected)
     manual_refs = ManualAdapter().source_refs(inputs, addr, budget) if 'manual' in selected else ()
     refs.extend(manual_refs)
-    manual = manual_digest_of(inputs, addr, budget) if manual_refs else keys.manual_digest([])
+    # The corrections are bound even when the manual source is not selected: correct_match also reshapes the
+    # non-manual matches every adapter and the facts read (names, ids, modified edges), so a result made before a
+    # correction must not keep its id. Without corrections this is keys.manual_digest([]) as before.
+    manual = manual_digest_of(inputs, addr, budget)
     config = compute_config_digest(registry, limits, residual=residual)
     raw_sha = inputs.run.raw.sha256
     if raw_sha is None:
