@@ -16,6 +16,9 @@ The owner granted broad permission to get the project done and accepts credit sp
 "Ultracode": I cannot verify what this setting is, so nothing here depends on it. If it is an extended-effort or
 longer-thinking mode, do not enable it for the swarm. At most enable it for one orchestrator planning pass per lane.
 
+Prerequisite: each VM must be a Claude Code session with `djshellshoxxx/patchtrace` attached WITH PUSH ACCESS (a plain chat
+session cannot push and will stall; run `git push --dry-run` first and stop if it is refused). Run all three at once.
+
 Three VMs, one per lane, each a separate session on its own branches. Expect roughly 3 orchestrators plus up to 5
 concurrent workers per VM (more parallel workers on one repo means more merge conflicts, not more speed).
 Start all three together. Lane 1 is the owner's top priority.
@@ -33,6 +36,10 @@ Never trade correctness, security or user data for speed. Report blocked externa
 - Repo: Python >= 3.12, PySide6, pydantic, protobuf. Tools in `tools/` (no `__init__.py`; `tools/calibration` and
   `tools/research_qualification` are packages), tests in `tests/`.
 - Test: `QT_QPA_PLATFORM=offscreen python -m pytest -q <focused tests>`. Lint: `python -m ruff check src tests tools` (line length 110).
+- Some files exist only on branches, not on main. Run `git fetch origin research/qualification-tools-rq00-rq01-20261106
+  research/kbc-live-probe-20261106` and read from there: `docs/plans/accuracy-validation-plan-20261106.md`,
+  `tools/research_qualification/` (rq branch, draft PR #256); `tools/live_kbc_probe.py`, `.github/workflows/live-kbc.yml`
+  (kbc branch, draft PR #257). Branch from the branch you need, never overwrite it.
 - Read first: `CLAUDE.md`, `AGENTS.md`, `docs/modules.md`, `tasks/todo.md`, the relevant `docs/specs`, `docs/plans/accuracy-validation-plan-20261106.md`.
 - Active parallel contributors exist. Before starting, read the default-branch SHA, all open PRs and their checks. Never overwrite another worker's branch.
 - GitHub access from the sandbox: repo-scoped REST only (`gh api repos/djshellshoxxx/patchtrace/...`). GraphQL is blocked,
@@ -43,13 +50,16 @@ Never trade correctness, security or user data for speed. Report blocked externa
   `git ls-remote origin <branch>` against `git rev-parse HEAD`; if equal, nothing is unpushed.
 - Receipts convention: one immutable atomic JSON per attempt, statuses PASS/FAIL/BLOCKED/CANCELLED. BLOCKED never counts as success.
   Live-status JSON: `engine`, `status` in passed|failed|blocked, `reason`; blocked exits 0 loudly, failed exits 1.
-- Already built on branch `research/qualification-tools-rq00-rq01-20261106` (131d47e): receipts, perf harness, stage parser,
+- Already built on branch `research/qualification-tools-rq00-rq01-20261106` (71a0e95, draft PR #256): receipts, perf harness, stage parser,
   sample-size table, Ghidriff call-count model (a MODEL; per-call counts unverified), self-compiled fixture pairs + scorer,
-  case manifest validator with freeze hash, top-k scorer. Probe branch `research/kbc-live-probe-20261106` (b74f95d3): live MSRC/Winbindex
-  probe + manual workflow, never run live. No PR is open for either branch.
+  case manifest validator with freeze hash, top-k scorer. Probe branch `research/kbc-live-probe-20261106` (3839f3b, draft PR #257): live MSRC/Winbindex
+  probe + manual workflow, never run live. #257 had a Sonar gate failure: S8707 (path traversal on `--out`) is fixed in 3839f3b;
+  S8544 (unpinned `pip install -e .` in `live-kbc.yml`, same pattern as `live-kev.yml` on main) is an owner decision: do not
+  mark it accepted yourself.
 - PR state at last check: #205 (base main, head 4e9f1d5d) all required checks green except two Windows jobs still running;
   #250 resolves a ledger conflict into the #205 branch (mergeability unknown); #218 (draft) must be retargeted to main after #205 lands;
   #235 (draft) has conflicts and Sonar failures; about 67 old PRs (#61-#190), mostly drafts, many contained in #235.
+- PR #251 (Ghidriff timeout progress and diagnostics) already merged to main on 2026-11-06. L3-B and L2-F start from it; do not redo it.
 - Ghidriff timeout hypothesis (PT-TIMEOUT-2) is unverified against upstream source; keep it labeled unverified until a measurement exists.
 
 ## 3. Rules (hard)
@@ -91,6 +101,9 @@ BLOCKERS | precise blocker and the smallest action to unblock
 ```
 Workers report in this format, short. Orchestrators integrate and verify the combined result with the full relevant test set before reporting.
 
+Cross-lane sync: when Lane 1 merges something, Lanes 2 and 3 `git fetch origin` and merge main into their own branches (merge, never
+rebase or force-push) before opening or updating PRs. Check the status files of the other lanes on origin at each checkpoint.
+
 ## 6. Lane 1 (VM 1): KB/CVE correlation and the PR stack  [highest priority]
 
 Orchestrator: Opus 5.5 high.
@@ -126,7 +139,8 @@ Workers:
 - L2-E harness hardening (Sonnet medium): Windows Actions job exercising the perf harness kill path (`taskkill /T`), currently untested.
 - L2-F measurement (after L2-D/E): run the harness on the self-compiled fixtures and one real pair in Actions; record per-stage timings
   and calls/second to turn the call-count model into a time estimate. Do not claim a Ghidriff fix from the model alone.
-- L2-G L1 join evaluation (Sonnet medium): after the live probe passes, run the automated advisory-join evaluation over several MSRC months
+- L2-G L1 join evaluation (Sonnet medium): there is no cross-VM signal, so check `docs/qa/` on origin/main (and on the #257 branch) once
+  for a recorded live-probe result; if absent, record BLOCKED and move on. Do not wait. When the live probe has passed, run the automated advisory-join evaluation over several MSRC months
   and report the one-sided lower bound with n and errors.
 Done when: manifests frozen (hash recorded), workflows dispatchable, adapters tested, and a stratified report skeleton filled with whatever real
 numbers exist. Do not publish an accuracy percentage without its n, errors, and stratum.
