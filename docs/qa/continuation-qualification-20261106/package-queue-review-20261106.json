@@ -1,0 +1,209 @@
+{
+  "format": "patchtrace-package-queue-review/1",
+  "snapshot_utc": "2026-11-06T09:50:24Z",
+  "completed_at_utc": "2026-11-06T09:52:28.576595+00:00",
+  "conclusion": "Both package jobs are queued with no runner assigned. All declared prerequisites succeeded. No concrete workflow dependency, runner-label or deployment-environment defect is identified.",
+  "targets": [
+    {
+      "pr": 244,
+      "run_id": 42175119317,
+      "run_head": "f393bb68ddc11eabb95a6598aa6f86650bd9aa37",
+      "job": {
+        "id": 127817970146,
+        "run_id": 42175119317,
+        "head_sha": "f393bb68ddc11eabb95a6598aa6f86650bd9aa37",
+        "name": "linux-package",
+        "status": "queued",
+        "conclusion": null,
+        "created_at": "2026-11-06T09:30:44Z",
+        "started_at": "2026-11-06T09:30:44Z",
+        "completed_at": null,
+        "labels": [
+          "ubuntu-22.04"
+        ],
+        "runner_id": 0,
+        "runner_name": "",
+        "runner_group_id": 0,
+        "runner_group_name": "",
+        "step_count": 0,
+        "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/42175119317/job/127817970146"
+      },
+      "last_prerequisite": {
+        "id": 127751698696,
+        "name": "qt-gate (ubuntu-latest, 20, 1/4)",
+        "completed_at": "2026-11-06T09:30:44Z"
+      },
+      "qa_and_qt_successful_legs": 7,
+      "seconds_since_package_creation_at_snapshot": 1180,
+      "supported_state": "Queued, no runner assignment recorded, no steps executed; prerequisites succeeded."
+    },
+    {
+      "pr": 247,
+      "run_id": 42187353481,
+      "run_head": "37b771300053e8872febead1fc384fea9126ae90",
+      "job": {
+        "id": 127822504185,
+        "run_id": 42187353481,
+        "head_sha": "37b771300053e8872febead1fc384fea9126ae90",
+        "name": "linux-package",
+        "status": "queued",
+        "conclusion": null,
+        "created_at": "2026-11-06T09:41:50Z",
+        "started_at": "2026-11-06T09:41:50Z",
+        "completed_at": null,
+        "labels": [
+          "ubuntu-22.04"
+        ],
+        "runner_id": 0,
+        "runner_name": "",
+        "runner_group_id": 0,
+        "runner_group_name": "",
+        "step_count": 0,
+        "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/42187353481/job/127822504185"
+      },
+      "last_prerequisite": {
+        "id": 127790743999,
+        "name": "qa (windows-latest)",
+        "completed_at": "2026-11-06T09:41:50Z"
+      },
+      "qa_and_qt_successful_legs": 7,
+      "seconds_since_package_creation_at_snapshot": 514,
+      "supported_state": "Queued, no runner assignment recorded, no steps executed; prerequisites succeeded."
+    }
+  ],
+  "workflow": {
+    "path": ".github/workflows/qa-windows.yml",
+    "identical_pins": {
+      "244": {
+        "commit": "f393bb68ddc11eabb95a6598aa6f86650bd9aa37",
+        "path": ".github/workflows/qa-windows.yml",
+        "blob": "c129248df40b42ad7cc758c4b82cb86d554f64a1",
+        "sha256": "b0bf43ade48affb8d36b3ef45acc5c42f103bb584ec955f29039f6bcae660c1e",
+        "bytes": 12278
+      },
+      "247": {
+        "commit": "37b771300053e8872febead1fc384fea9126ae90",
+        "path": ".github/workflows/qa-windows.yml",
+        "blob": "c129248df40b42ad7cc758c4b82cb86d554f64a1",
+        "sha256": "b0bf43ade48affb8d36b3ef45acc5c42f103bb584ec955f29039f6bcae660c1e",
+        "bytes": 12278
+      },
+      "246": {
+        "commit": "c804e4d94430368c0eafe1da899493a8cf6520aa",
+        "path": ".github/workflows/qa-windows.yml",
+        "blob": "c129248df40b42ad7cc758c4b82cb86d554f64a1",
+        "sha256": "b0bf43ade48affb8d36b3ef45acc5c42f103bb584ec955f29039f6bcae660c1e",
+        "bytes": 12278
+      }
+    },
+    "package_needs": [
+      "qa",
+      "qt-gate"
+    ],
+    "package_runs_on": "ubuntu-22.04",
+    "package_timeout_minutes": 30,
+    "package_job_if": null,
+    "package_deployment_environment": null,
+    "package_job_concurrency": null,
+    "workflow_concurrency": {
+      "group": "${{ github.workflow }}-${{ github.event_name }}-${{ github.ref }}",
+      "cancel_in_progress": true
+    },
+    "smoke_needs": "linux-package",
+    "smoke_matrix": [
+      "ubuntu-22.04",
+      "ubuntu-24.04"
+    ],
+    "release_gate_is_package_prerequisite": false
+  },
+  "successful_comparator": {
+    "pr": 246,
+    "head": "c804e4d94430368c0eafe1da899493a8cf6520aa",
+    "run_id": 42183372079,
+    "jobs": [
+      {
+        "id": 127812233908,
+        "run_id": 42183372079,
+        "head_sha": "c804e4d94430368c0eafe1da899493a8cf6520aa",
+        "name": "linux-package",
+        "status": "completed",
+        "conclusion": "success",
+        "created_at": "2026-11-06T09:17:16Z",
+        "started_at": "2026-11-06T09:22:12Z",
+        "completed_at": "2026-11-06T09:24:22Z",
+        "labels": [
+          "ubuntu-22.04"
+        ],
+        "runner_id": 1000038059,
+        "runner_name": "GitHub Actions 1000038059",
+        "runner_group_id": 0,
+        "runner_group_name": "GitHub Actions",
+        "step_count": 11,
+        "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/42183372079/job/127812233908"
+      },
+      {
+        "id": 127815240219,
+        "run_id": 42183372079,
+        "head_sha": "c804e4d94430368c0eafe1da899493a8cf6520aa",
+        "name": "linux-smoke (ubuntu-24.04)",
+        "status": "completed",
+        "conclusion": "success",
+        "created_at": "2026-11-06T09:24:22Z",
+        "started_at": "2026-11-06T09:24:25Z",
+        "completed_at": "2026-11-06T09:25:26Z",
+        "labels": [
+          "ubuntu-24.04"
+        ],
+        "runner_id": 1000038061,
+        "runner_name": "GitHub Actions 1000038061",
+        "runner_group_id": 0,
+        "runner_group_name": "GitHub Actions",
+        "step_count": 9,
+        "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/42183372079/job/127815240219"
+      },
+      {
+        "id": 127815240251,
+        "run_id": 42183372079,
+        "head_sha": "c804e4d94430368c0eafe1da899493a8cf6520aa",
+        "name": "linux-smoke (ubuntu-22.04)",
+        "status": "completed",
+        "conclusion": "success",
+        "created_at": "2026-11-06T09:24:22Z",
+        "started_at": "2026-11-06T09:24:25Z",
+        "completed_at": "2026-11-06T09:25:17Z",
+        "labels": [
+          "ubuntu-22.04"
+        ],
+        "runner_id": 1000038060,
+        "runner_name": "GitHub Actions 1000038060",
+        "runner_group_id": 0,
+        "runner_group_name": "GitHub Actions",
+        "step_count": 9,
+        "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/42183372079/job/127815240251"
+      }
+    ],
+    "scope": "Identical workflow and same package label demonstrably executed successfully earlier; this does not identify why later jobs await assignment."
+  },
+  "interpretation": [
+    "The target job creation times exactly match the last required QA/Qt completion. No failed or still-running declared prerequisite remains in this snapshot.",
+    "The API populates started_at equal to created_at for the queued jobs. Status queued, runner_id 0, empty assignment names and zero steps are retained explicitly; started_at alone is not treated as evidence of execution.",
+    "No job-level if, deployment environment, additional runner label/group, or concurrency is declared on linux-package. A step env variable is not a deployment approval gate.",
+    "The repository workflow concurrency key includes workflow, event and ref; no package-specific shared concurrency key is declared.",
+    "The metadata provides no queue-reason, runner availability, account concurrency/quota, billing or service-health diagnosis. Capacity, quota or another scheduler cause remains unknown.",
+    "No source change, rerun or cancellation is justified by this evidence. Awaiting package assignment and subsequent smoke results remains the observable gate."
+  ],
+  "metadata_receipt": {
+    "path": "/workspace/scratch/c4fbe5e6f72c/recovery-review/package-queue-metadata-20261106.json",
+    "sha256": "7561a277b61dd74d77ff7cc8002baabe63be2086e2c5a35eafff520a08e3deb0",
+    "bytes": 24968
+  },
+  "actions": {
+    "bounded_snapshot_only": true,
+    "poll_loops": 0,
+    "tests": 0,
+    "edits_to_repository": 0,
+    "reruns": 0,
+    "cancellations": 0,
+    "remote_mutations": 0
+  }
+}

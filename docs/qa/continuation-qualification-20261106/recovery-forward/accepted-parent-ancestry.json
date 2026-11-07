@@ -1,0 +1,61 @@
+{
+  "format": "patchtrace-recovery-accepted-parent-ancestry/1",
+  "local_head": "a2dacfd178ab48ad42097a6930af7567b6a9309e",
+  "local_parents": [
+    "3824c330e341cd7245a47e7e81f31650d9a72536",
+    "6095f702400e7fe19c2f462ae79f6ab650c5db58"
+  ],
+  "before_local_head": "3824c330e341cd7245a47e7e81f31650d9a72536",
+  "before_tree": "b59a105796e4c5cc8665cf157d5fbbae0c2ed9fd",
+  "after_tree": "b59a105796e4c5cc8665cf157d5fbbae0c2ed9fd",
+  "tree_identical": true,
+  "content_diff_paths": [],
+  "worktree_clean": true,
+  "accepted_parent": "6095f702400e7fe19c2f462ae79f6ab650c5db58",
+  "accepted_parent_parents": [
+    "f33e2a0aaa3399644367f2419fee21cfe2e8702b",
+    "4465a0492367d08f324e80b290a594791921691c"
+  ],
+  "accepted_parent_tree": "6db3490e96da2a8f0a200d834f8816bc41421f57",
+  "fetched_ref": "origin/integrate/swarm-qualified-20261105",
+  "source_245_ancestry_preserved": true,
+  "prior_local_merge_ancestry_preserved": true,
+  "branch": "integrate/recovery-forward-wave3-20261106",
+  "worktree": "/workspace/scratch/c4fbe5e6f72c/pt-recovery-forward",
+  "new_tests_run": 0,
+  "reason_no_retest": "Exact tree is unchanged from the independently reviewed 54-pass/Ruff candidate.",
+  "prior_evidence": {
+    "tests": "54 passed in 14.72s",
+    "ruff": "passed",
+    "tree": "b59a105796e4c5cc8665cf157d5fbbae0c2ed9fd"
+  },
+  "published_equivalent_before_reported_by_root": "0498291bc9f674d9f3f060116393f56374e4f509",
+  "expected_published_parents_for_root_mapping": [
+    "0498291bc9f674d9f3f060116393f56374e4f509",
+    "6095f702400e7fe19c2f462ae79f6ab650c5db58"
+  ],
+  "remote_updates": false,
+  "note": "Only the owned local branch was advanced; fetching updated the local remote-tracking owner ref. Root owns publication of the mapped merge.",
+  "receipts": {
+    "merge-receipt.json": {
+      "path": "/workspace/scratch/c4fbe5e6f72c/recovery-forward-review/merge-receipt.json",
+      "sha256": "f83820e139fcaddf4e92944d948b4bd47f17c49b08579681bcdb555a515647d6",
+      "bytes": 8041
+    },
+    "validation.json": {
+      "path": "/workspace/scratch/c4fbe5e6f72c/recovery-forward-review/validation.json",
+      "sha256": "8d9250d016c3b9c9a25953afafd8347cc87d684d891ce65246c9892ca9f8a283",
+      "bytes": 2295
+    },
+    "accepted-parent-before.json": {
+      "path": "/workspace/scratch/c4fbe5e6f72c/recovery-forward-review/accepted-parent-before.json",
+      "sha256": "5e4800de6c796fd4ccf1eab9489c438c2566f00e0276fe72d420dcfff9e8b913",
+      "bytes": 672
+    },
+    "accepted-parent-message.txt": {
+      "path": "/workspace/scratch/c4fbe5e6f72c/recovery-forward-review/accepted-parent-message.txt",
+      "sha256": "4dbbaf9761565ac5837f0dc936d9caab6ffc9da40eda8e93744f2a2732869d0c",
+      "bytes": 555
+    }
+  }
+}

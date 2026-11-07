@@ -24,7 +24,7 @@ from .contracts import Arch, CveCard
 from .lineage import IndexRow, index_rows
 from .pairs import LocalFile
 from .service import Env, KbService
-from .store import Fault, KbcStoreError, SystemClock, WorkspaceStore
+from .store import Fault, KbcStoreError, SystemClock, WorkspaceStore, atomic_write
 
 INDEX_DIR = 'winbindex'
 INDEX_RECORD = re.compile(r'(?P<name>[a-z0-9._-]+)@(?P<date>\d{4}-\d{2}-\d{2})\.json(?P<gz>\.gz)?')
@@ -114,10 +114,10 @@ def save_winbindex_record(root: Path, source: Path, file_name: str, data_date: s
     other = target.with_name(target.name[:-3] if gz else target.name + '.gz')
     try:
         target.parent.mkdir(parents=True, exist_ok=True)
+        if target.parent.is_symlink() or target.parent.is_junction():
+            raise KbcStoreError('PT-KBC-STORAGE', 'the workspace index directory cannot be a link or junction')
         replaced = target.is_file() or other.is_file()
-        staging = target.with_name(target.name + '.tmp')
-        staging.write_bytes(raw)
-        staging.replace(target)
+        atomic_write(target, raw)
         other.unlink(missing_ok=True)  # one record per name and date, in either form
     except OSError:
         raise KbcStoreError('PT-KBC-STORAGE', 'the workspace cannot be written') from None

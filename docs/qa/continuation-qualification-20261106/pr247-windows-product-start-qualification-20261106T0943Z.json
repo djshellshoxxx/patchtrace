@@ -1,0 +1,229 @@
+{
+  "repository": "djshellshoxxx/patchtrace",
+  "pr": 247,
+  "observed_window_utc": {
+    "start": "2026-11-06T09:43:51Z",
+    "end": "2026-11-06T09:44:39Z"
+  },
+  "source": {
+    "head": "37b771300053e8872febead1fc384fea9126ae90",
+    "tree": "cdbab24d14295b4450cd0d3c744d76734c98a561",
+    "url": "https://github.com/djshellshoxxx/patchtrace/commit/37b771300053e8872febead1fc384fea9126ae90",
+    "local_git_object": "37b771300053e8872febead1fc384fea9126ae90 cdbab24d14295b4450cd0d3c744d76734c98a561 81825ee9638454737d3fb7efa3e6c73b8f3eb105"
+  },
+  "qa_run": {
+    "id": 42187353481,
+    "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/42187353481"
+  },
+  "windows_job": {
+    "id": 127790743999,
+    "name": "qa (windows-latest)",
+    "status": "completed",
+    "conclusion": "success",
+    "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/42187353481/job/127790743999"
+  },
+  "complete_suite": {
+    "passed": 20331,
+    "skipped": 94,
+    "xfailed": 5,
+    "warnings": 19,
+    "duration_seconds": 2675.35,
+    "completed_log_utc": "2026-11-06T09:38:39.6549859Z",
+    "raw_summary_line": "2026-11-06T09:38:39.6549859Z 20331 passed, 94 skipped, 5 xfailed, 19 warnings in 2675.35s (0:44:35)"
+  },
+  "tested_merge": {
+    "sha": "bfecc248af653d8c93d7bf3bf46a2121122c6d23",
+    "tree": "cdbab24d14295b4450cd0d3c744d76734c98a561",
+    "parents": [
+      "f393bb68ddc11eabb95a6598aa6f86650bd9aa37",
+      "37b771300053e8872febead1fc384fea9126ae90"
+    ],
+    "source_tree_equal": true,
+    "checkout_log_line": "2026-11-06T08:53:14.6248271Z bfecc248af653d8c93d7bf3bf46a2121122c6d23",
+    "identity_source": "https://github.com/djshellshoxxx/patchtrace/commit/bfecc248af653d8c93d7bf3bf46a2121122c6d23"
+  },
+  "windows_qualification_steps": [
+    {
+      "number": 6,
+      "name": "Run python -m pip check",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "number": 7,
+      "name": "protobuf equals the pin and runs the upb backend (SPEC-10b)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "number": 8,
+      "name": "Run python -m pytest -q --junitxml=qa-results.xml",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "number": 9,
+      "name": "Run python -m ruff check src tests tools",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "number": 10,
+      "name": "BinExport worker memory cap measurement (SPEC-10b U7, non-gating)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "number": 11,
+      "name": "Run python tools/build_windows.py",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "number": 12,
+      "name": "Frozen EXE headless smoke (A1-A4) and self-test",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "number": 13,
+      "name": "Extract and run portable Windows ZIP outside checkout",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "number": 14,
+      "name": "Install pinned NSIS compiler",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "number": 15,
+      "name": "Build per-user Windows installer",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "number": 16,
+      "name": "Install, launch, and uninstall the setup package",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "number": 17,
+      "name": "Record this matrix leg's own result for the release notes",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "number": 18,
+      "name": "Run actions/upload-artifact@v4",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "number": 19,
+      "name": "Run actions/upload-artifact@v4",
+      "status": "completed",
+      "conclusion": "success"
+    }
+  ],
+  "smoke_log_excerpts": [
+    "2026-11-06T09:40:50.2873909Z PASS A2 unknown command exits 2, no traceback",
+    "2026-11-06T09:40:50.2874542Z PASS A3 missing project exits 2 with message, no traceback",
+    "2026-11-06T09:40:50.2875190Z PASS A4 --self-test exits 0",
+    "2026-11-06T09:40:50.2875737Z PASS A4 self-test reports every optional dependency present",
+    "2026-11-06T09:40:50.2876361Z PASS A4 self-test temp directory removed",
+    "2026-11-06T09:40:59.0187084Z Portable checksum, clean extraction, Qt plugin, dependencies, and frozen executable smoke passed.",
+    "2026-11-06T09:41:40.0607890Z Installer registration, Qt/runtime checks, frozen self-test, non-destructive uninstall passed."
+  ],
+  "candidate_artifact": {
+    "id": 13492805458,
+    "name": "PatchTrace-windows-x64",
+    "size_in_bytes": 131735616,
+    "digest": "sha256:020d6be11fbc4dd6bd3d3b6f88e66d822263e5d2e3855fea77393b8ad27b8d2a",
+    "created_at": "2026-11-06T09:41:46Z",
+    "expires_at": "2027-02-04T08:23:41Z",
+    "expired": false,
+    "source_head": "37b771300053e8872febead1fc384fea9126ae90",
+    "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/42187353481/artifacts/13492805458"
+  },
+  "artifact_upload_log": {
+    "digest_line": "2026-11-06T09:41:46.3620445Z SHA256 digest of uploaded artifact zip is 020d6be11fbc4dd6bd3d3b6f88e66d822263e5d2e3855fea77393b8ad27b8d2a",
+    "upload_line": "2026-11-06T09:41:46.7846749Z Artifact PatchTrace-windows-x64 has been successfully uploaded! Final size is 131735616 bytes. Artifact ID is 13492805458",
+    "download_line": "2026-11-06T09:41:46.7859107Z Artifact download URL: https://github.com/djshellshoxxx/patchtrace/actions/runs/42187353481/artifacts/13492805458"
+  },
+  "digest_verification_scope": "Artifact API metadata agrees with the hosted upload log. The archive was not downloaded or independently rehashed, and no downloaded executable was run during this review.",
+  "qa_jobs_at_snapshot": [
+    {
+      "id": 127790743638,
+      "name": "qa (ubuntu-latest)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 127790743999,
+      "name": "qa (windows-latest)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 127790744030,
+      "name": "qt-gate (ubuntu-latest, 20, 2/4)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 127790744050,
+      "name": "qt-gate (ubuntu-latest, 20, 1/4)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 127790744103,
+      "name": "qt-gate (windows-latest, 5, 1/1)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 127790744150,
+      "name": "qt-gate (ubuntu-latest, 20, 4/4)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 127790744218,
+      "name": "qt-gate (ubuntu-latest, 20, 3/4)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 127790745565,
+      "name": "release-gate",
+      "status": "completed",
+      "conclusion": "skipped"
+    },
+    {
+      "id": 127822504185,
+      "name": "linux-package",
+      "status": "queued",
+      "conclusion": null
+    }
+  ],
+  "linux_complete_suite_reference": {
+    "job_id": 127790743638,
+    "passed": 20372,
+    "skipped": 52,
+    "xfailed": 6,
+    "warnings": 19,
+    "duration_seconds": 1856.06,
+    "completed_log_utc": "2026-11-06T08:57:01.5344879Z",
+    "prior_receipt": "pr247-hosted-qa-snapshot-20261106T0913Z.json",
+    "scope": "Previously extracted completed Linux log on the same tested merge/source tree; current jobs snapshot still reports success."
+  },
+  "feature_scope": "Includes #247's reviewed local-index product starting route and its retained acceptance controls. This supersedes #244 as the newest verified Windows product-start candidate observed in this task.",
+  "qualification_limit": "Both full QA jobs and all five Qt jobs passed. Linux package job 127822504185 is queued; downstream Linux smoke jobs are not yet present. Windows candidate qualification does not establish all-gates completion or main/release readiness.",
+  "supersedes_windows_pending_statement": "pr247-hosted-qa-snapshot-20261106T0913Z.json (retained as historical evidence).",
+  "actions": "One bounded read of completed job evidence, artifacts and job steps plus immutable Git-object verification. No CI reruns or polling loop, tests, downloads, executable execution, branch/PR mutations or merges.",
+  "url_policy": "Canonical GitHub repository/run/job/artifact URLs only; opaque service URL queries are omitted."
+}

@@ -1,0 +1,85 @@
+{
+  "fixtures": [
+    {
+      "authorship": "PatchTrace authored acceptance fixture",
+      "bytes": 884,
+      "created": "2026-11-05T23:35:20.682690Z",
+      "dialect": "cvrf-json/0",
+      "expected": {
+        "problems": [
+          "KB_UNPARSED"
+        ],
+        "remediation_edges": 0,
+        "vulnerabilities": 1
+      },
+      "file": "advisory-ambiguous-kb.json",
+      "fixture_id": "advisory-ambiguous-kb",
+      "kind": "synthetic",
+      "license": "MIT (repository LICENSE)",
+      "reason": "A multi-KB sentence remains mention-only after persistence and search.",
+      "retrieved_at": null,
+      "schema_revision": 1,
+      "sha256": "f7e6ea4cc54ca3a5e8e0a65077f7794dd7f0ce1b33fca731b9c2a02448780935",
+      "source_origin": "authored-local",
+      "source_uri": null,
+      "upstream_revision": "not-applicable: authored synthetic fixture",
+      "used_by": [
+        "tests/test_investigation_acceptance_matrix_20261105.py"
+      ]
+    },
+    {
+      "authorship": "PatchTrace authored acceptance fixture",
+      "bytes": 871,
+      "created": "2026-11-05T23:35:20.682708Z",
+      "dialect": "cvrf-json/0",
+      "expected": {
+        "problems": [],
+        "remediation_edges": 1,
+        "vulnerabilities": 1
+      },
+      "file": "advisory-v1.json",
+      "fixture_id": "advisory-v1",
+      "kind": "synthetic",
+      "license": "MIT (repository LICENSE)",
+      "reason": "Known-good prior source for revision, stale coverage and failed-refresh preservation.",
+      "retrieved_at": null,
+      "schema_revision": 1,
+      "sha256": "25c32a2a59e5dd14695f2efdc5b7fb65eb6797e5d19ae033c9df911d147a71bc",
+      "source_origin": "authored-local",
+      "source_uri": null,
+      "upstream_revision": "not-applicable: authored synthetic fixture",
+      "used_by": [
+        "tests/test_investigation_acceptance_matrix_20261105.py"
+      ]
+    },
+    {
+      "authorship": "PatchTrace authored acceptance fixture",
+      "bytes": 744,
+      "created": "2026-11-05T23:35:20.682714Z",
+      "dialect": "cvrf-json/0",
+      "expected": {
+        "problems": [
+          "UNKNOWN_PRODUCT_ID"
+        ],
+        "remediation_edges": 0,
+        "vulnerabilities": 1
+      },
+      "file": "advisory-v2-missing-product.json",
+      "fixture_id": "advisory-v2-missing-product",
+      "kind": "synthetic",
+      "license": "MIT (repository LICENSE)",
+      "reason": "A superseding revision cannot borrow the old product evidence to retain remediation edges.",
+      "retrieved_at": null,
+      "schema_revision": 1,
+      "sha256": "0c0c53a3b71c9aa53f20a4ed6db3b1f3f55bb653b00dd731cd3aa31e9715e068",
+      "source_origin": "authored-local",
+      "source_uri": null,
+      "upstream_revision": "not-applicable: authored synthetic fixture",
+      "used_by": [
+        "tests/test_investigation_acceptance_matrix_20261105.py"
+      ]
+    }
+  ],
+  "format": "patchtrace-authored-acceptance-fixtures/1",
+  "synthetic": true
+}

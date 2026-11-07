@@ -231,6 +231,17 @@ def coverage_precision_curve(p, y, w, flags_abstain):               # selective-
     return out
 ```
 Coverage is relative to ALL comparable natural candidates (abstentions from OOD/contested/missing count against coverage).
+
+Metric invariant clarification (2026-11-05, deterministic tooling only): secondary
+equal-mass ECE closes an adaptive bin only after a whole equal-prediction tie
+block. Bin boundaries depend on predictions and weights, never the row order or
+labels; a tie may therefore exceed the target bin mass or reduce the bin count.
+Integer weight replication preserves that metric. Weighted AUC sums positive
+and negative class masses independently so subtractive cancellation cannot
+erase a small class or inflate the result beyond its pairwise-ordering value.
+These arithmetic repairs change no primary fixed-width ECE bins, frozen
+preregistration bytes, model, selection threshold or claim gate.
+
 9.2 Cluster (group) bootstrap [S11]: resample LINEAGES with replacement (B=2000, `det_uniform`-seeded), recompute every metric on the resample WITHOUT refitting the model (OOF/locked predictions are fixed); percentile intervals; requires >= 30 lineages for the headline intervals (otherwise the report states the intervals are anti-conservative and criteria G3 cannot pass). Additionally report the leave-one-lineage-out jackknife: worst-lineage precision and maximum influence of any lineage on the precision lower bound.
 ```python
 def cluster_bootstrap(rows, preds, stat_fn, B, seed, alpha=0.05):

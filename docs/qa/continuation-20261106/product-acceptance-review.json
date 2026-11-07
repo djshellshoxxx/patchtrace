@@ -1,0 +1,35 @@
+{
+  "commit": "59c4f637e9afceccd1f591d86b21de158517dbef",
+  "base": "90fb90bed5a4da21f7aee1daf8de7ab9bcae9968",
+  "branch": "test/product-acceptance-20261106",
+  "worktree": "/workspace/scratch/c4fbe5e6f72c/pt-product-acceptance",
+  "changed_files": [
+    "tests/test_kb_product_acceptance_20261106.py"
+  ],
+  "production_changes": false,
+  "ledger_changes": false,
+  "tests": {
+    "files": [
+      "tests/test_kb_product_acceptance_20261106.py",
+      "tests/test_kb_product_start_20261106.py"
+    ],
+    "new_cases": 6,
+    "total_cases": 65,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "result": "65 passed in 3.55s",
+    "junit": "/workspace/scratch/c4fbe5e6f72c/product-review/product-acceptance-regressions.xml",
+    "junit_sha256": "4073e2f10fce3d77c84dfe588386d2e17917ee803d90a8d025b9fe816c31aef2"
+  },
+  "ruff_src_tests_tools": "passed",
+  "git_diff_cached_check": "passed",
+  "working_tree_clean": true,
+  "coverage": [
+    "Real product_selected revision CAS conflict preserves competing write and avoids project creation.",
+    "Saved product context export and project reopen survive loss of workspace source bytes.",
+    "Single filtered product and relisting retain explicit-selection requirement.",
+    "Cancel after real product creation retains project without adoption.",
+    "Pending repair retains original source provenance after newer advisory, including product removal."
+  ]
+}

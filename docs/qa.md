@@ -48,6 +48,72 @@ Reviewed the supplied `failure.txt`, `analysis.log`, and `ghidriff.log` against 
 
 The [incident record](qa/ghidriff-timeout-20261106.md) documents the existing 7,200/14,400-second desktop retry options, separate per-function timeout, missing symbols, nonfatal parser warnings, performance investigation and Windows acceptance checklist. The item is prioritized at the top of `tasks/todo.md`. This initial incident review was documentation only; the diagnostic implementation follow-up is recorded above. The binary pair was not supplied or rerun and no matching-performance repair is claimed.
 
+## Independent parallel development checkpoint — 2026-11-05
+
+Own integration branch `integrate/independent-wave4-20261105`, source merge
+`ec48810c41530d787cfbd44b38406427062a5442`, based on published #218
+`afc8a296`. Source slices #225–#234 were independently reviewed, focused-tested,
+committed/pushed as separate draft PRs and integrated once here. Exact source SHAs,
+reviewers, overlapping counts and remaining boundaries are in the
+[current handoff](handoff/AUTONOMOUS-DEVELOPMENT-LATEST.md); historical #218 evidence
+was preserved before replacing this branch's handoff.
+
+Completed integrated focused checks: **248 passed in 26.99 s** across source/GUI/
+lock/correlation/metrics/package; after advisory-sync/acceptance merge, **122 passed
+in 25.17 s** across online/offline/current-input/binary-only/lock paths. Raw logs:
+`/tmp/pt-independent-integration-first-focused.log` and
+`/tmp/pt-independent-integration-online-focused.log`. These explicit selections
+overlap worker/independent review counts; none is a full-suite result.
+
+Whole `python -m ruff check src tests tools` and `git diff --check` passed. General,
+KB, calibration, Tier R corpus and report schemas regenerated without drift.
+Deterministic tests reproduced source deadline/redirect, keyboard/focus, lock alias,
+candidate chronology and metric arithmetic defects before fixes. Package security
+review also reproduced a ZIP64 directory-bound bypass and malformed DEFLATE failure
+mapping before repair; all seven concrete review findings now have regressions.
+Worker QA receipts preserve exact original failures and limitations.
+
+NOT RUN here: another `QT_QPA_PLATFORM=offscreen python -m pytest -q` full suite or
+broad GUI stress/native build, because the user's latest instruction reserves
+those processes to the existing qualification owners. Frozen #205 remains clean at
+`f33e2a0a`. At 23:43 UTC the existing run exit receipt recorded **143** and the log
+ended around 94% without a pytest summary: **NOT COMPLETE**, cause unknown. This
+session sent no signal/restart; raw owner logs/exit receipt remain untouched. No
+result is inferred from progress. Native #222/#224 and their logs/
+worktrees/builds remain reserved and untouched. Hosted required current-head jobs,
+main-relative scanner review, live sources, Windows/native/package/manual and
+disconnected-bundle acceptance remain open. No live provider, target execution,
+actual corpus/model fit, cost or prompt-cache evidence is invented.
+
+Subsequent reviewed #236 (`8975c517`) refuses incomplete PE manifest leaves before
+parsing closed XML prefixes: four baseline failures, 168 author and 197 independent
+authored-byte passes (one actual launcher excluded). Combined affected PE/package
+checks **257 passed, one deselected in 6.84 s**, log
+`/tmp/pt-independent-integration-pe-focused.log`. No launcher or target executed.
+Active next slices: saved-index candidate inspection, explicit consented Winbindex
+metadata refresh and cache staging publication hardening; each needs independent
+review and focused integration before its result enters this checkpoint.
+
+Subsequent #237/#238/#239 are reviewed/published/integrated: metadata deadline,
+exclusive cache publication plus review-discovered raw-fd cleanup, and exact-consent
+metadata refresh. Combined checks **283 passed in 3.63 s**,
+`/tmp/pt-independent-integration-index-focused.log`. SHAs/reviews are in the handoff.
+Candidate snapshot and desktop metadata follow-ups remain separate.
+
+Public #235 scanner query: one OPEN `pythonsecurity:S8707` issue
+`AaGuFuc-a2s4H-WIcBuh` on package preflight CLI archive path, new security rating 3.
+Independent triage found no unauthorized traversal in the explicit local CLI
+surface; normal authorized disposition remains needed. Status/rules/gate and
+suppression configuration remain unchanged.
+
+Reviewed #240 (`bf366196` atop `5cdf0e83`) now supplies coherent saved-index
+inspection/selection: an independently reproduced in-operation record replacement
+cannot mix old pair decisions with new provenance. Author339, independent106 and
+coordinator30 focused checks passed; integration **170 passed in 15.87 s**, log
+`/tmp/pt-independent-integration-candidate-focused.log`. No actual download or
+project creation is enabled by metadata-only candidate preview. #241 retains the
+independent scanner boundary receipt; finding remains OPEN and gate not bypassed.
+
 ## Current evidence
 2026-10-11: source inspection of pinned upstream revisions completed. Linux Qt offscreen desktop self-test starts and displays the synthetic project. Integrated Linux QA: 91 tests passed, 2 Windows-only tests skipped; Ruff and Qt offscreen desktop self-test passed. Domain, transport, worker, schema and UI tests are included. Synthetic fixtures and mocked providers verify wiring and validation, not real matching accuracy or model interpretation correctness.
 
@@ -1549,6 +1615,10 @@ Reviewed38be184c merged at a84bf6d1. Five real preflight paths now permit absent
 
 Verified all14 complete compressed/raw log receipts and exact unfinished status for #222 dbebfee8; actual pinned headers compile, native oracle/link/CLI not yet executed. Source/dependencies/build cache provisioned with supported PCRE2 retry; quarantine unchanged. #223631b5e91 closes equivalent address spelling duplicate bypass with existing parse_address while preserving raw spelling and repeated-function refusal:14 baseline red/1pass, independent95pass. Latest integrated normalizer/binary/KB/lifecycle357passed33.26s; Ruff clean. Complete f33 suite still active; no exact updated-head full pass claimed.
 
+### [MERGE-20261106:branch-consolidation-readiness]
+
+Audited 242 remote branches and 112 open PRs against pinned main/#205/#218/#235. Isolated #235+#242+#243 source tree `ea48a7e087590fccffadb54e4414bd000f16838b` preserves the nine leaf-owned files and all other integration content. Root affected checks: 424 passed; independent overlapping controls: 42 passed; whole Ruff, diff hygiene and KBC schema drift checks pass. #204 was moved to ready-for-review at its unchanged head after fresh baseline/fix validation. Hosted smoke/review and integration Windows/scanner gates remain open. [Plan](plans/branch-merge-plan-20261106.md); [receipt](qa/branch-merge-readiness-20261106.md). No main merge or release acceptance is claimed.
+
 ## N-way Windows recovery compatibility (2026-11-06)
 
 On frozen #205, hosted Windows CPython 3.12.10 reported five recovery failures.
@@ -1561,6 +1631,15 @@ in 3.37 s**, whole Ruff/diff clean. Native Windows and exact integration gates
 remain pending. Source blobs, invariants and limits are recorded in
 `docs/qa/nway-windows-recovery-20261106.md`.
 
+### [KB-ADMISSION-20261106:captured-source-context]
+
+Reproduced #244 review comment 4489325824 against exact `5347ccfd`: source imports after the old snapshot check could enter a saved ContextBundle. Both real-store timing controls failed before repair. SPEC-31-D now specifies admission after one index read and reuse of that index for scope/context; pre-admission drift is stale, and later imports remain available outside the captured context. After repair, both controls pass and the overlapping lifecycle/acquire/service/crash-recovery selection passes **75 tests in 10.56 s**; whole Ruff passes. Prior project bytes, legitimate source imports, verified artifact hashes and owned staging cleanup are checked. [Detailed receipt](qa/kb-source-admission-20261106.md). Independent integration review and existing hosted/native/Windows/full-suite/scanner gates remain open.
+
+
+## Branch consolidation execution and full-run limits (2026-11-06)
+
+Combined #244 source tree `3e5276d6643d784e459264d6cb213082b812c8d4`: 774 focused tests passed, whole-tree Ruff passed, schemas unchanged. Separate exact #245 full Linux run: **3 failed, 19618 passed, 139 skipped, 6 xfailed, 1 warning in 2537.16s (0:42:17)**. All three failures reproduced on frozen #205; two launcher controls pass in the corrected environment, while local AF_UNIX construction remains unavailable. The original full run remains non-green. See [complete result and controls](qa/pr245-linux-qualification-20261106.md) and [merge plan](plans/branch-merge-plan-20261106.md). Native Windows, current-head hosted checks and parent scanner dispositions remain open for the application candidates. #204's two smoke jobs subsequently passed and the exact reviewed head merged into main at `d02b94bcedb29dae201941f01f2c94d42ebbb297` on 2026-11-06 at 06:27:13 UTC; the source branch was retained.
+
 
 ## Subprocess virtual-environment preservation (2026-11-06 UTC)
 
@@ -1572,3 +1651,47 @@ No assertion, limit, environment filter or production code changed. Independent
 review, whole-tree Ruff, dependency consistency and diff hygiene passed. Full
 and hosted cross-platform qualification remain separate; the local AF_UNIX
 restriction is unchanged. [Detailed receipt](qa/subprocess-venv-20261106.md).
+
+## [CONTINUATION-20261106:local-product-start-and-qualification]
+
+Unchanged #245 passed Windows QA: **19,671 passed, 90 skipped, 5 xfailed**,
+plus standalone, frozen EXE, portable ZIP and installer gates. The downloadable
+candidate belongs to #245, not the later product implementation. Linux full QA
+and the native Windows Ghidriff workflow subsequently passed; Ubuntu Qt is
+still outstanding at the 08:18 UTC checkpoint.
+
+Reviewed product source `570f86b8` (published equivalent `0b7d8581`, identical
+tree) adds the stored-product catalogue, explicit selection, source-bound local
+pair preview/create, and original-source pending repair. Final affected
+selection: **139 passed** including 59 product cases; independent acceptance:
+**16 passed**, no findings. Six distinct independent cases are retained in
+`test_kb_product_acceptance_20261106.py`; those plus authored cases: **65 passed**.
+Earlier 391-test evidence predates the final repair; counts overlap. New pending
+product attachments require the new journal reader: legacy repair ignores
+`selected_product` and was observed to lose source digests. Public schemas/SQL
+version/CLI grammar are unchanged, but internal journal format is extended.
+
+Test-only exact-byte diagnostics preserve full equality while bounding failure
+rendering; affected selection **49 passed**, separate real child-pytest controls
+passed. The previously failing #235 Windows report identifies two large byte
+diff cases taking 42.6% of that failed run; no normal-path speedup is claimed.
+The continuation includes actual #246 ancestry and preserves all source refs.
+Whole Ruff/schema/diff checks pass. Combined current-source full and hosted
+qualification remain separate. [Evidence and limits](qa/continuation-20261106.md).
+
+
+## [CONTINUATION-QUALIFICATION-20261106:completed-local-results]
+
+Frozen #247 local full result: **1 failed, 20,284 passed, 139 skipped, 6 xfailed, 18 warnings in 3356.58s**. Only AF_UNIX construction was denied; timing/GUI controls passed. Hosted Ubuntu separately passed **20,372 tests**. The original #246 five-failure run remains preserved; one unchanged three-control timing follow-up passed without establishing cause. Both #244/#246 hosted full suites passed.
+
+Fully qualified #245 merged normally into #205 as `6095f702`; #205 is ready. Forward #248 retains the accepted parent, exact reviewed tree and 54-pass evidence. Source branches remain intact. At the 09:20 UTC checkpoint, current-head hosted gates and parent Sonar dispositions remain open; main is `d02b94bc`. Exact raw evidence and five reconciled R8 documents are retained. [Completed qualification and limits](qa/continuation-qualification-20261106.md).
+
+
+## [SUBPROCESS-ACCEPTED-20261106]
+
+At 09:29:12 UTC, #246 merged normally into main as `dc53b529560453e84cf45e356a40432ff3fc6725`, after all applicable source checks including both Linux smoke legs passed. The merge tree equals the qualified source; its branch remains at `c804e4d9`. Earlier local failures remain in the evidence. Parent application promotion must recheck its merge tree against this new main. [Acceptance and preserved results](qa/continuation-qualification-20261106.md).
+
+
+## [CONTINUATION-WINDOWS-20261106:product-start-build]
+
+Frozen #247 Windows QA passed **20,331 tests, 94 skipped, 5 xfailed, 19 warnings in 2675.35s**, plus standalone/frozen/portable/installer checks. Artifact `13492805458`, source `37b77130`, contains the stored-product starting route. API/upload digest and tested/source tree identity agree. The 09:43–09:44 snapshot still has Linux packaging/smokes outstanding; original local failures and release/live/manual gates remain preserved. [Windows candidate and evidence](qa/continuation-windows-20261106.md).

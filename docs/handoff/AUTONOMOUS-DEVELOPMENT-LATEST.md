@@ -1,62 +1,104 @@
-# PatchTrace coordinated development — wave three
+# Independent development while qualification continues
 
-Date: 2026-11-05. Main remains `5d504ff5`; no main merge or production release. Primary candidate is draft [#205](https://github.com/djshellshoxxx/patchtrace/pull/205), unchanged at `f33e2a0a` while its complete suite runs. Follow-up integration branch: `integrate/swarm-wave3-20261105`, code merge `d68b595f`, draft [#218](https://github.com/djshellshoxxx/patchtrace/pull/218). This follow-up is for review, not release qualification.
+Checkpoint: 2026-11-05 23:53 UTC. Independent review branch:
+`integrate/independent-wave4-20261105`, code merge
+`ec48810c41530d787cfbd44b38406427062a5442`, based on published
+[#218](https://github.com/djshellshoxxx/patchtrace/pull/218)
+`afc8a2967ba3dec6b1ac3351d20dd08c193ba9bc`. Main and PR #205 are unchanged.
+This is a focused-tested candidate, not release acceptance.
+Published integration: [#235](https://github.com/djshellshoxxx/patchtrace/pull/235).
+The subsequent PE backing fix below is also integrated; exact current head is in
+that PR. A planned module index entry does not claim its implementation complete.
+Latest backend source merge: `92f2ab687790909bde87031ef6557b05d9683adb`.
+Candidate/scanner receipt merge: `7545667db3bf881f380ba8bafe1c633c128c7022`.
 
-Previous accounting and full-suite diagnostic history are preserved in [primary checkpoint](archive/20261105-primary-f33e2a0a.md), [wave one](archive/20261105-wave1.md), and [wave two](archive/20261105-wave2.md). PR #205 contains #191–#214 as accounted there; original contributor branches/worktrees remain preserved.
+[Previous #218 checkpoint](archive/20261105-pr218-afc8a296.md) preserves all prior
+source accounting, diagnostic history, gates and native ownership. The original
+root checkout remains clean on frozen PR #205
+`f33e2a0aaa3399644367f2419fee21cfe2e8702b`. At 23:43 UTC its existing exit receipt
+reported **143**, after about 94% progress with no pytest summary. The cause is
+unknown; the run is **NOT COMPLETE**. This session sent no signal or restart.
+Raw `/tmp/pt-205-f33-full.log` and `/tmp/pt-205-f33-full.exit` remain untouched.
+Its owners retain their processes,
+worktrees and logs. No competing full suite, GUI stress or native build was
+started here. Native [#222](https://github.com/djshellshoxxx/patchtrace/pull/222)
+and [#224](https://github.com/djshellshoxxx/patchtrace/pull/224) remain independently
+owned; their worktrees/libraries/inputs/evidence are untouched.
 
-## Published and reviewed changes
+## Reviewed source, published separately and integrated once
 
-- [#215](https://github.com/djshellshoxxx/patchtrace/pull/215), `57f95e09`: isolated #176 preregistration CLI selection. Exact LF protocol identity must match one visible complete QA digest row before corpus access; explicit rehearsal retains unlocked report/key. Original 96 failures/1 pass become 97 passes. Broader training selection:259 passed/1 blocked native-tool skip (overlap); independent review:97 passed. No owner approval/final-evaluation authority is fabricated.
-- [#216](https://github.com/djshellshoxxx/patchtrace/pull/216), `7716e2b0`: seeded audit20261107 found raw Windows-version display labels in acquisition metadata. Cleaning/collision warning preserves per-candidate raw hashes and all KB references. Coordinator independently reviewed and ran37 focused tests.
-- [#217](https://github.com/djshellshoxxx/patchtrace/pull/217), `f8ed2356`, stacked on #215: remaining #176 report-bound retention/replay and bounded metadata. Foreign-engine output was independently reproduced receiving another provider's score/credit on baseline; repaired path refuses it.239 focused and234 related tests passed (overlap). Independent completion/stat-clock review:44 passed. No actual corpus fit, real labels or production calibration promotion.
+Every row is included in this branch. Separate draft PRs retain review boundaries;
+none was merged to main. Counts overlap and must not be added as unique coverage.
 
-- [#220](https://github.com/djshellshoxxx/patchtrace/pull/220), `cf9cefff`: narrow #174 A-28 reserved-derived-metadata guard.24 baseline failures/1 pass; author77 and independent77 focused passes. Rejected imports preserve source bytes, committed run raw evidence and snapshot/history. Rest of one-to-many normalization remains separate. Integrated normalizer/unified-source selection106 passed.
-- [#221](https://github.com/djshellshoxxx/patchtrace/pull/221), `7e7a52eb`: explicit binary-only local-pair desktop start through existing domain service; preview/create/reopen/export retains manual/unselected product provenance and no inferred CVE linkage. Hash/orientation/name/current-input/cancel guards tested. Independent207 passes plus real preview-no-write/reversed-pair rejection probes. Product-only start remains unimplemented; the stale specification claim was corrected.
-
-- [#222](https://github.com/djshellshoxxx/patchtrace/pull/222), `dbebfee8`: finite actual pinned-native provisioning checkpoint. Coordinator verified all14 losslessly compressed raw logs against raw+compressed hashes/lengths. Approved source/deps/license/header compile recorded; default PCRE2 link failure and supported system-PCRE2 retry preserved. Build deliberately interrupted at checkpoint130, no native execution claimed; incremental cache retained and low-priority continuation active.
-- [#223](https://github.com/djshellshoxxx/patchtrace/pull/223), `631b5e91`: narrow #174 canonical parsed-address identity, preserving original address text/repeat rejection.14 red/1 pass before repair; author95 and independent95 focused passes. Different parsed addresses/qualified names stay distinct. Broader A-28 consumer/abstention work remains separate.
-
-All three slices plus reviewed lifecycle [#219](https://github.com/djshellshoxxx/patchtrace/pull/219), `38be184c`, plus #220–#223 are merged into the follow-up code above. #219 permits lock-only retries through all five real entry checks and preserves committed projects/foreign bytes/persistent locks if acquisition provenance recording fails. It repairs only the crash double signature while retaining actual SIGKILL/recovery assertions. Initial combined acceptance:276 passed in31.34s; expanded lifecycle/KB/calibration integration:475 passed in39.80s (overlap). #219 had228 author-focused and206 independent-focused passes plus second-annotation/interruption preservation probes. Whole-tree Ruff passed. General, calibration, Tier R and report schemas regenerated with no uncommitted drift. Hardlink-capable storage remains necessary for exclusive publication. Managed output cannot receive successful report credit until completion verifies exact bytes; legacy replay remains explicitly warned compatibility.
-
-## Active ownership and dependencies
-
-Runtime supports root plus three concurrent workers, so requested logical swarms execute in waves. Latest integrated normalizer/binary/lifecycle selection after #223:357 passed in33.26s; prior339 passed in23.77s; earlier475 and276 selections overlap. #221 worker accidentally started a competing full-suite collection, stopped its own PID138984 on request, exit2/no tests run; log /tmp/pt-product-start-pytest.log is incomplete and never acceptance evidence.
-
-| Owner / subsystem | Status | Current action / dependency |
+| Streams / draft | Exact source SHA | Evidence and result |
 |---|---|---|
-| Coordinator / exact-head QA and integration | INTEGRATING | Frozen f33e2a0a complete suite; source-bound dedicated venv; publish reviewed follow-ups |
-| kb_workflow_wave2 / GUI, persistence and acquisition lifecycle | COMPLETE for #219 | Exact38be184c reviewed, published and integrated; real retry and retained-data failure paths validated |
-| lifecycle_review_wave3 / independent lifecycle review | COMPLETE for #219 | Exact38be184c approved; independent206 tests plus two preservation probes passed (earlier213 selection overlaps) |
-| kb_product_start_wave3 / KB local pair journey | COMPLETE for #221 | Binary-only pair route published/reviewed/integrated; product-only needs domain model/state work |
-| native_gt_wave3 / normalizer boundary | COMPLETE for #220/#223 | Reserved metadata and canonical address guards published/reviewed/integrated; broader one-to-many consumer work deferred |
-| unified_gate_wave2 / pinned native provisioning | INTEGRATING | Exact approved Rizin source fetched/hash checked; isolated Meson/Ninja; actual generated-header oracle compiles; API-only native build underway at nice15/-j1, finite #222 receipt published; optional distinct-byte/IO control tooling in progress |
-| random_audit_wave2 / seeded audit and prereg review | COMPLETE for published slice | #216 published and reviewed; #215 reviewed; subsequent turn hit transient API TPM limit, no cost/cache totals inferred |
+| A1/A3 [#225](https://github.com/djshellshoxxx/patchtrace/pull/225) | `e14b4445fd0705e2ecffa1bc4842ab73bce373e9` | Seven baseline failures; 144 author/74 coordinator passes. Typed malformed redirects and deadline/cancellation-bounded CVRF requests/retries. |
+| C1/C2 [#226](https://github.com/djshellshoxxx/patchtrace/pull/226) | `b5d4bceabdc34f520120d9dc336d975768e20483` | 13 baseline failures; 54 author/27 coordinator passes. Real label buddies/mnemonics, tab order and validation focus. |
+| E1/E2 [#227](https://github.com/djshellshoxxx/patchtrace/pull/227) | `1a1e1951c55cdef46ff248145031639674ce1c63` | Three baseline failures; 83 author/46 independent passes plus two adversarial probes. Refuse aliased/nonregular/replaced project locks before writes. Final pathname race remains disclosed. |
+| G [#228](https://github.com/djshellshoxxx/patchtrace/pull/228) | `93b4b9a80d31c97659269429e0b680c9218fdf70` | 60 author/60 independent authored-ZIP passes. Bounded read-only archive preflight, security bypass regressions and clean Windows evidence runbook. No Windows execution. |
+| B1/B2 [#229](https://github.com/djshellshoxxx/patchtrace/pull/229) | `fee7c3664a2050aed30a3c3d43ea28c0c3621ee3` | Five baseline failures; 92 author/92 independent passes plus seven coordinator controls. Component mismatch blocks; display ties cannot establish chronology. |
+| D2 [#230](https://github.com/djshellshoxxx/patchtrace/pull/230) | `a6948be8049591247f0bc19a601645b85bc03eb7` | Seven baseline failures; 71 author/31 coordinator passes. Tie-preserving adaptive ECE and independent AUC class sums with exact/permutation oracles. No model promotion. |
+| F1 [#231](https://github.com/djshellshoxxx/patchtrace/pull/231) | `febc9de57e61162da12fb1cc9280aef9b3ec2a99` | 17 byte-preserved #178/#183 historical research files, independent blob/hash/JSON/AST/link review. #179/#187 pinned references; remaining #183 material explicitly partial. |
+| D1/F2 [#232](https://github.com/djshellshoxxx/patchtrace/pull/232) | `bc52940fb32d5b5f6d1a58a860062ec60d423d1e` | Three bounded fixture packets; ten primary source/license blobs independently hash-verified. #176 seams compared, not ported twice. |
+| A3 [#233](https://github.com/djshellshoxxx/patchtrace/pull/233) | `69c705d052e6b6fb3c96ea49062d6a207829c1b8` | 135 author/five coordinator passes. Authored advisories and real-store revision/stale/ambiguity/failure preservation; eight-category acceptance matrix. |
+| A2 [#234](https://github.com/djshellshoxxx/patchtrace/pull/234), stacked on #226 | `bf46954ef2c6c9a278d9b78f5b4274242e617e09` | 255 author/107 independent passes plus three altered-plan refusals. Full 24-month preview, one-operation consent, strict rebuilt-plan checks, existing advisory sync and local-pair create/reopen preserving hashes. |
+| E2 [#236](https://github.com/djshellshoxxx/patchtrace/pull/236) | `8975c517af22aca0c0f90eb931b8a06ab18687b5` | Four baseline failures; 168 author/197 independent passes, one actual launcher excluded. Closed XML prefixes cannot supply facts/hash from incompletely backed PE resources; partial warning preserves original bytes. |
+| A1/B2 [#237](https://github.com/djshellshoxxx/patchtrace/pull/237) | `64eb58ece2f44914e8f94135ab1caefbb5a83f6b` | Seven baseline failures; 94 author/94 independent passes plus two separate loopback controls. Deadline covers requests/headers/retry delays; other defaults remain compatible. |
+| E1/E2 [#238](https://github.com/djshellshoxxx/patchtrace/pull/238) | `2afe874d6be17a4596d3955b71b493d5e0e4ed00` atop `08d9f9ddf191cb7de3f29ba1f039a50da54050e7` | Fixed staging alias/directory writes; review reproduced a raw-fd leak and drove its fix before publication. 95 author/59 independent checks, 30 coordinator store/publication checks. |
+| A1/B2 [#239](https://github.com/djshellshoxxx/patchtrace/pull/239) | `83320a32c7249f92a1d7ba708c8fc8e12e4aa15c` | Exact metadata plan/consent backend reuses transport/parser/publisher; URL/date/raw integrity and cancellation checks. 91 author/188 coordinator checks including boundaries. No live requests. |
+| A2/B2 [#240](https://github.com/djshellshoxxx/patchtrace/pull/240) | `bf3661966785a971f484b6339af81274278d1434` atop `5cdf0e834d2b6699c442f1137eed6399fe1662f3` | Saved-index inspect/select/metadata preview. Review reproduced mixed old-pair/new-record claims; immutable validated snapshots now feed existing resolver/planner. 339 author/106 independent/30 coordinator checks plus cancellation probe; no implicit download or creation. |
+| Security review [#241](https://github.com/djshellshoxxx/patchtrace/pull/241) | `c30f11fb6f94ab3325e3bf6252326004f792294d` | Independent CLI archive-path triage: 60 authored tests plus absolute/parent-relative read-only probes; no unauthorized traversal in intended local surface. Scanner finding remains OPEN; normal authorized disposition required. Initial GitHub create failed transiently, verified absent then retry published this PR. |
 
-Native worker independently reviewed #217 while compilation ran. No target binary has been executed, no quarantine removed, no production binary dependency introduced, and no competing API automation enabled.
+## Integrated checks and current ownership
 
-## Exact-head complete-suite gate — running, not passed
+First combined source/GUI/lock/correlation/metric/package selection: **248 passed
+in 26.99 s**, `/tmp/pt-independent-integration-first-focused.log`. After A2/A3,
+related online/offline/current-input/binary-only/lock checks: **122 passed in
+25.17 s**, `/tmp/pt-independent-integration-online-focused.log`. These are focused
+selections, not full-suite acceptance. Worktree-scoped PYTHONPATH is used; shared
+editable installs and qualification environments are unchanged. Ruff/schema drift
+results are recorded in the integration QA checkpoint.
+After PE repair: **257 passed, one real-launcher node deselected in 6.84 s**,
+`/tmp/pt-independent-integration-pe-focused.log` (affected authored-PE/package tests).
+After metadata dependencies: **283 passed in 3.63 s**,
+`/tmp/pt-independent-integration-index-focused.log`.
+After candidate integration: **170 passed in 15.87 s**,
+`/tmp/pt-independent-integration-candidate-focused.log`; source/GUI/metadata/manual
+hash controls overlap earlier selections and do not imply whole-suite acceptance.
 
-Fresh unsplit command against f33e2a0a:
+Root plus three supported workers execute logical swarms in bounded waves. Each
+has its own `/tmp/pt-independent-*` branch/worktree/logs and explicit acceptance.
 
-`env -u PYTEST_ADDOPTS QT_QPA_PLATFORM=offscreen PATCHTRACE_RIZIN_SIMILARITY=/tmp/pt-rizin-similarity.c /tmp/pt-qualified-final-venv/bin/python -m pytest -q`
+| Owner | Current exclusive work | Budget / acceptance |
+|---|---|---|
+| Coordinator | Own integration, modules/QA/todo/latest handoff, reviewed publication | Focused integration/Ruff/schema checks and exact SHA/PR evidence; never alter qualification/native ownership |
+| online_sources_a1 | Read-only independent desktop metadata/consent review; completed scanner triage #241 | Exact-SHA approval with adversarial probes, no self-review or scanner disposition |
+| gui_accessibility_c2 | `work/desktop-index-refresh-20261105`, `/tmp/pt-independent-metadata-desktop-20261105`: facade/Qt, own tests/SPEC31-F/QA | 15-minute explicit filename→metadata plan→separate one-use consent→saved candidate journey; clear both advisory/metadata grants on edits or preview replacement |
+| security_persistence_e1 | `repair/kb-acquire-lifecycle-20261105`, `/tmp/pt-independent-acquire-lifecycle-20261105`: KbService.acquire in service.py, own tests/SPEC31-D/QA | 15-minute cancel propagation and captured revision/advisory-source validation before staging/import; backwards-compatible keywords, real-store authored controls, independent review |
 
-Ordinary editable install and isolated `python -I` both resolve `/workspaces/patchtrace/src/patchtrace`. Root working tree stays unchanged during this run. Collected19791 nodes. Log `/tmp/pt-205-f33-full.log`; eventual exit receipt `/tmp/pt-205-f33-full.exit`; tool session56905. No final result exists at this checkpoint. One early failure reproduced independently: crash-test double `park(*args)` rejects new `created=` ownership keyword before its intended SIGKILL checkpoint. #219 repairs only the signature, preserving actual kill/recovery assertions; its focused integrated recovery checks pass. Frozen f33 still contains the old double, so its eventual result cannot be green for this known reason. Do not add prior partial/overlapping counts as full qualification.
+## Open boundaries
 
-## Gates and remaining accepted work
+Keep #205 frozen until its owner resolves qualification. Its known stale
+crash-double failure is repaired in #218/#219; no green full result is inferred
+from progress or focused selections. Hosted exact-head checks remain queued or
+pending and #205's known Sonar failure was not bypassed.
+Public #235 Sonar query also reports one OPEN `pythonsecurity:S8707` finding on
+`tools/check_windows_package.py` CLI archive selection (`AaGuFuc-a2s4H-WIcBuh`),
+new security rating 3. Independent triage found no unauthorized traversal in the
+intended explicit local CLI surface; normal authorized disposition remains needed.
+No status/suppression/gate change or disposed finding is claimed.
 
-- Sonar fresh #205 scan retains three independently reviewed findings (operator condition, deterministic synthetic PRNG, explicit native evidence CLI output path). Prior parser/source-identity findings are absent. Normal authorized project disposition remains required; no scanner bypass or review credential is available.
-- Current-head Linux/Windows/Qt/native/package CI remains queued/pending. Branch-protection API returns403, so requirements are not assumed absent. Older #198 Windows QA completed18701 passes/81 skips/6 xfails and only three invalid-workflow-fragment failures already repaired by #204; this is historical evidence, not current-head Windows qualification.
-- Unified remains opt-in disabled pending G-U1..G-U8, real precision/native/Windows acceptance. KB online/product-only desktop paths, single-binary candidate discovery and original/derived .bin label preservation remain PARTIAL. Binary-only local-pair preview/create is now implemented via #221 without advisory claims.
-- Native API header compilation is actual pinned-header evidence, not a linked/live producer pass. Full pinned API/CLI/inventory/IO controls and unchanged quarantine remain open.
-- Release/offline payload, clean disconnected Windows, frozen application, high-DPI/accessibility and required scanner/review gates remain open. Linux cannot qualify Windows packaging.
-- Persistence still assumes cooperative locks; final pathname races are not claimed solved. Current GUI work must never unlink the persistent lock or recursively discard committed project data.
-- Historical GT-01/normalizer/fuzz and research/spec branches require selective reconciliation. #176 prereg/replay slices are now accounted separately from prior KB/artifact/GUI integrations.
+Online candidate discovery/download/acquisition, product-only starts, full update
+DAG/supersedence and derived `.bin` labels remain partial. A2 adds explicit advisory
+networking, not a completed online acquisition journey. Live source compatibility,
+source freshness/authenticity extensions, real matching/calibration accuracy,
+native Rizin CLI/inventory, current-head Windows/Qt/package/manual/disconnected
+bundle and main-relative scanner/review gates remain separately unverified here.
 
-## Next executable actions
-
-1. Collect complete f33 result and preserve full log/exit; diagnose any further failures without weakening assertions. Requalify the resulting updated candidate, rather than calling baseline evidence final-head acceptance.
-2. #219 is now reviewed/published/integrated with475 combined passes. Continue bounded product-only and unique native slices with exclusive ownership and independent review.
-3. Complete feasible actual pinned-native controls and retain exact versions/build identity/raw logs; record unavailable gates as BLOCKED, never passed.
-4. Publish follow-up integration checkpoints promptly and update #205 after safe source/test reconciliation. Main merge requires exact-head checks, scanner disposition and normal reviews; no release authorized.
-
-API usage/cost/cache telemetry is unavailable. All stated test counts overlap where noted and are never summed into unique coverage.
+Retain source PRs and historical raw results. Merge passing reviewed slices into
+this independent branch promptly; main needs exact required gates/review. New code
+requires appropriate new focused checks. No target execution, driver installation,
+real advisory requests, source/model-suggested commands or actual model training
+occurred. Credentials are not persisted. API costs/token/cache totals are unavailable
+and not invented. Verified milestones are pushed immediately; recheck publication
+at least every 20 minutes during active work.

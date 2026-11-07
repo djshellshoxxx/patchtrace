@@ -1,0 +1,177 @@
+{
+  "format": "patchtrace-final-source-gates/1",
+  "observed_at_utc": "2026-11-06T09:30:27.698Z",
+  "source": "4465a0492367d08f324e80b290a594791921691c",
+  "accepted_merge": "6095f702400e7fe19c2f462ae79f6ab650c5db58",
+  "merged_at_utc": "2026-11-06T09:05:35Z",
+  "snapshot_retrieved_after_merge": true,
+  "all_completion_times_precede_merge": true,
+  "total_checks": 19,
+  "checks": [
+    {
+      "id": 127805289662,
+      "name": "release",
+      "status": "completed",
+      "conclusion": "skipped",
+      "completed_at": "2026-11-06T09:00:37Z",
+      "url": "https://github.com/djshellshoxxx/patchtrace/runs/127805289662"
+    },
+    {
+      "id": 127805074699,
+      "name": "linux-smoke (ubuntu-22.04)",
+      "status": "completed",
+      "conclusion": "success",
+      "completed_at": "2026-11-06T09:00:37Z",
+      "url": "https://github.com/djshellshoxxx/patchtrace/runs/127805074699"
+    },
+    {
+      "id": 127805074599,
+      "name": "linux-smoke (ubuntu-24.04)",
+      "status": "completed",
+      "conclusion": "success",
+      "completed_at": "2026-11-06T09:00:33Z",
+      "url": "https://github.com/djshellshoxxx/patchtrace/runs/127805074599"
+    },
+    {
+      "id": 127804288711,
+      "name": "linux-package",
+      "status": "completed",
+      "conclusion": "success",
+      "completed_at": "2026-11-06T09:00:07Z",
+      "url": "https://github.com/djshellshoxxx/patchtrace/runs/127804288711"
+    },
+    {
+      "id": 127734185989,
+      "name": "SonarCloud Code Analysis",
+      "status": "completed",
+      "conclusion": "success",
+      "completed_at": "2026-11-06T05:38:45Z",
+      "url": "https://github.com/djshellshoxxx/patchtrace/runs/127734185989"
+    },
+    {
+      "id": 127733935889,
+      "name": "CodeRabbit",
+      "status": "completed",
+      "conclusion": "skipped",
+      "completed_at": "2026-11-06T05:37:57Z",
+      "url": "https://github.com/djshellshoxxx/patchtrace/runs/127733935889"
+    },
+    {
+      "id": 127733920049,
+      "name": "release-gate",
+      "status": "completed",
+      "conclusion": "skipped",
+      "completed_at": "2026-11-06T05:37:54Z",
+      "url": "https://github.com/djshellshoxxx/patchtrace/runs/127733920049"
+    },
+    {
+      "id": 127733919723,
+      "name": "native (repro-plain-ghidriff)",
+      "status": "completed",
+      "conclusion": "success",
+      "completed_at": "2026-11-06T08:12:35Z",
+      "url": "https://github.com/djshellshoxxx/patchtrace/runs/127733919723"
+    },
+    {
+      "id": 127733919693,
+      "name": "native (raw-cache-hit)",
+      "status": "completed",
+      "conclusion": "success",
+      "completed_at": "2026-11-06T08:10:54Z",
+      "url": "https://github.com/djshellshoxxx/patchtrace/runs/127733919693"
+    },
+    {
+      "id": 127733919641,
+      "name": "native (patchtrace-seeded-store)",
+      "status": "completed",
+      "conclusion": "success",
+      "completed_at": "2026-11-06T08:05:31Z",
+      "url": "https://github.com/djshellshoxxx/patchtrace/runs/127733919641"
+    },
+    {
+      "id": 127733919585,
+      "name": "native (patchtrace-seeded-store-no-adjacent-pdb)",
+      "status": "completed",
+      "conclusion": "success",
+      "completed_at": "2026-11-06T08:02:49Z",
+      "url": "https://github.com/djshellshoxxx/patchtrace/runs/127733919585"
+    },
+    {
+      "id": 127733919429,
+      "name": "native (patchtrace-clean)",
+      "status": "completed",
+      "conclusion": "success",
+      "completed_at": "2026-11-06T07:58:09Z",
+      "url": "https://github.com/djshellshoxxx/patchtrace/runs/127733919429"
+    },
+    {
+      "id": 127733918953,
+      "name": "qt-gate (ubuntu-latest, 20, 3/4)",
+      "status": "completed",
+      "conclusion": "success",
+      "completed_at": "2026-11-06T08:45:41Z",
+      "url": "https://github.com/djshellshoxxx/patchtrace/runs/127733918953"
+    },
+    {
+      "id": 127733918952,
+      "name": "qt-gate (ubuntu-latest, 20, 1/4)",
+      "status": "completed",
+      "conclusion": "success",
+      "completed_at": "2026-11-06T08:58:06Z",
+      "url": "https://github.com/djshellshoxxx/patchtrace/runs/127733918952"
+    },
+    {
+      "id": 127733918945,
+      "name": "qt-gate (ubuntu-latest, 20, 4/4)",
+      "status": "completed",
+      "conclusion": "success",
+      "completed_at": "2026-11-06T08:55:35Z",
+      "url": "https://github.com/djshellshoxxx/patchtrace/runs/127733918945"
+    },
+    {
+      "id": 127733918858,
+      "name": "qt-gate (windows-latest, 5, 1/1)",
+      "status": "completed",
+      "conclusion": "success",
+      "completed_at": "2026-11-06T07:55:57Z",
+      "url": "https://github.com/djshellshoxxx/patchtrace/runs/127733918858"
+    },
+    {
+      "id": 127733918805,
+      "name": "qa (ubuntu-latest)",
+      "status": "completed",
+      "conclusion": "success",
+      "completed_at": "2026-11-06T08:10:19Z",
+      "url": "https://github.com/djshellshoxxx/patchtrace/runs/127733918805"
+    },
+    {
+      "id": 127733918786,
+      "name": "qt-gate (ubuntu-latest, 20, 2/4)",
+      "status": "completed",
+      "conclusion": "success",
+      "completed_at": "2026-11-06T08:21:04Z",
+      "url": "https://github.com/djshellshoxxx/patchtrace/runs/127733918786"
+    },
+    {
+      "id": 127733918608,
+      "name": "qa (windows-latest)",
+      "status": "completed",
+      "conclusion": "success",
+      "completed_at": "2026-11-06T07:23:00Z",
+      "url": "https://github.com/djshellshoxxx/patchtrace/runs/127733918608"
+    }
+  ],
+  "commit_statuses": [
+    {
+      "context": "security/snyk (djshellshoxxx)",
+      "state": "success",
+      "created_at": "2026-11-06T05:37:59Z"
+    }
+  ],
+  "skip_meanings": {
+    "CodeRabbit": "Automatic review skipped for integration target; not a completed review.",
+    "release-gate": "Expected pull-request skip.",
+    "release": "Expected pull-request skip."
+  },
+  "acceptance": "16 successful checks plus 3 explicit expected/policy skips; separate Snyk status successful. Normal expected-head merge, reviewed source retained."
+}
