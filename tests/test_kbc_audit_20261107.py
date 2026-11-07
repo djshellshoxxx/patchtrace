@@ -100,3 +100,27 @@ def test_kba04_same_tracking_id_from_two_publishers_are_not_revisions_of_each_ot
     index.add(first)
     index.add(second)
     assert index.active_ids() == frozenset({first.doc_id, second.doc_id})
+
+
+# --- KBA-05: an impossible release date in stored advisory facts crashed supersession --------------------------
+
+def test_kba05_supersession_survives_a_facts_date_that_is_only_shaped_like_a_timestamp():
+    """``Timestamp`` is a pattern, so '2099-13-45T00:00:00Z' is a valid ``AdvisoryFacts`` field; ``parse_date_time``
+    returns None for it and ``max()`` then compared a datetime with None (TypeError out of ``advisories()``)."""
+    import hashlib
+    from pathlib import Path
+
+    from patchtrace.intelligence.contracts import AdvisoryFacts
+    from patchtrace.intelligence.csaf import applicability as ap
+    from patchtrace.intelligence.csaf import normalize, validate
+
+    def facts(name):
+        raw = (Path(__file__).parent / 'fixtures' / 'csaf' / name).read_bytes()
+        parsed, report = validate.load_document(raw)
+        return normalize.normalize(parsed, report, hashlib.sha256(raw).hexdigest())
+
+    first, second = facts('synthetic-advisory-rev1.json'), facts('synthetic-advisory-rev2.json')
+    broken = AdvisoryFacts.model_validate_json(json.dumps(
+        {**first.model_dump(mode='json'), 'current_release_date': '2099-13-45T00:00:00Z'}))
+    state = ap.supersession([broken, second])
+    assert state == {broken.facts_id: True, second.facts_id: False}   # an unreadable date is the oldest
