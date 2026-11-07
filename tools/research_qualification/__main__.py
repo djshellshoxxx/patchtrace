@@ -6,6 +6,7 @@
     python -m tools.research_qualification stages LOGFILE
     python -m tools.research_qualification receipt validate FILE...
     python -m tools.research_qualification receipt compare A B
+    python -m tools.research_qualification parity MANIFEST RESULTS_A RESULTS_B [--k 5]
     python -m tools.research_qualification samplesize [--target 0.9 --max-errors 1]
     python -m tools.research_qualification callmodel --pairs 2161955 --old 20000 --new 20000 [--us-per-call X]
     python -m tools.research_qualification fixtures build --out DIR
@@ -25,6 +26,7 @@ from pathlib import Path
 from . import call_model as CM
 from . import cases as CS
 from . import fixture_pairs as FP
+from . import parity as PY
 from . import pathguard as PG
 from . import perf_harness as P
 from . import receipt as R
@@ -217,6 +219,27 @@ def cmd_score(a: argparse.Namespace) -> int:
     return 0 if res["scored"] and not res["misses"] and not res["false_positives"] else 1
 
 
+def _load_run(path: str, what: str) -> dict:
+    data = json.loads(PG.confine(path, what).read_text(encoding="utf-8"))
+    if not isinstance(data, dict):
+        raise ValueError(f"{what} must be a JSON object")
+    return data
+
+
+def cmd_parity(a: argparse.Namespace) -> int:
+    try:
+        m = json.loads(PG.confine(a.manifest, "manifest").read_text(encoding="utf-8"))
+        CS.validate_manifest(m)
+        res = PY.compare_runs(m, _load_run(a.results_a, "results_a"), _load_run(a.results_b, "results_b"), a.k)
+    except (OSError, ValueError, AttributeError, TypeError) as e:
+        print(f"error: {e}", file=sys.stderr)
+        return 2
+    _print(res)
+    if res["compared"] == 0:
+        return 2
+    return 1 if res["disagreements"] else 0
+
+
 def build_parser() -> argparse.ArgumentParser:
     ap = argparse.ArgumentParser(prog="python -m tools.research_qualification", description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -262,6 +285,11 @@ def build_parser() -> argparse.ArgumentParser:
     sc.add_argument("manifest")
     sc.add_argument("results")
     sc.add_argument("--k", type=int, default=5)
+    pt = sub.add_parser("parity", help="compare two engines' ranked candidate lists over one manifest")
+    pt.add_argument("manifest")
+    pt.add_argument("results_a")
+    pt.add_argument("results_b")
+    pt.add_argument("--k", type=int, default=5)
     r = sub.add_parser("receipt", help="validate or compare receipts")
     r.add_argument("action", choices=["validate", "compare"])
     r.add_argument("files", nargs="+")
@@ -293,6 +321,8 @@ def _dispatch(a: argparse.Namespace, cmd: list[str]) -> int:
         return cmd_score(a)
     if a.cmd == "cases":
         return cmd_cases(a)
+    if a.cmd == "parity":
+        return cmd_parity(a)
     if a.cmd == "fixtures":
         return cmd_fixtures(a)
     if a.cmd == "adapters":
