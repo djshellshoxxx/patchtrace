@@ -10,6 +10,7 @@ import time
 import pytest
 
 from patchtrace.acquisition import quarantine
+from patchtrace.acquisition import transport as tr
 
 
 # TB-01 sweep_staging followed a symlink named like a staging directory and chmod-ed its target
@@ -31,3 +32,9 @@ def test_sweep_staging_ignores_symlinked_staging_names(tmp_path):
     quarantine.sweep_staging(parent)
     assert stat.S_IMODE(victim.stat().st_mode) == 0o755
     assert stat.S_IMODE(keepsake.stat().st_mode) == 0o444
+
+
+# TB-02 a Last-Modified header at the edge of the date range raised OverflowError out of fetch_metadata
+@pytest.mark.parametrize('value', ['Fri, 31 Dec 9999 23:59:59 -0100', 'Fri, 31 Dec 9999 23:59:59 -2359'])
+def test_last_modified_out_of_range_is_ignored_not_raised(value):
+    assert tr._date(value) is None

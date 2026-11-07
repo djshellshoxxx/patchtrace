@@ -185,7 +185,10 @@ def _retry_after(value: str | None, now: datetime) -> float | None:
         return None
     if when.tzinfo is None:
         return None
-    return float(max(0, int((when - now).total_seconds()) + 1))
+    try:
+        return float(max(0, int((when - now).total_seconds()) + 1))
+    except OverflowError:
+        return None
 
 
 def _stamp(now: datetime) -> str:
@@ -434,7 +437,12 @@ def _date(value: str | None) -> str | None:
         when = email.utils.parsedate_to_datetime(value)
     except (TypeError, ValueError):
         return None
-    return when.astimezone(UTC).date().isoformat() if when.tzinfo else None
+    if not when.tzinfo:
+        return None
+    try:
+        return when.astimezone(UTC).date().isoformat()
+    except OverflowError:  # 9999-12-31 with a negative offset leaves the year range; the header is just ignored
+        return None
 
 
 @dataclass(frozen=True)
