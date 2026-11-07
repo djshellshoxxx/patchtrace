@@ -63,7 +63,10 @@ def sweep_staging(parent: Path | None = None) -> None:
     root = Path(parent) if parent is not None else Path(tempfile.gettempdir())
     cutoff = time.time() - STALE_STAGING_SECONDS
     try:
-        stale = [p for p in root.glob(STAGING_PREFIX + '*') if p.is_dir() and p.stat().st_mtime < cutoff]
+        # lstat, never stat: a symlink named like a staging directory (the shared temp directory is writable by every
+        # local user) must not make the sweep chmod or delete whatever it points at.
+        stale = [p for p in root.glob(STAGING_PREFIX + '*')
+                 if not p.is_symlink() and p.is_dir() and p.lstat().st_mtime < cutoff]
     except OSError:
         return
     for path in stale:
@@ -74,6 +77,8 @@ def remove_staging(staging: Path, attempts: int = 4, delay: float = 0.25) -> boo
     """Best-effort removal; never raises. Antivirus or an indexer can hold a freshly written file on
     Windows, so a locked entry is retried and then left behind. Returns whether the directory is gone."""
     def writable(func, path, _exc):
+        if os.path.islink(path):
+            return  # chmod would follow the link to a file outside the staging tree
         for attempt in range(attempts):
             try:
                 # a directory also needs the search bit, or its children become unreachable for a non-root user
@@ -85,6 +90,8 @@ def remove_staging(staging: Path, attempts: int = 4, delay: float = 0.25) -> boo
                     time.sleep(delay)
 
     try:
+        if Path(staging).is_symlink():
+            return False  # only ever a directory this module created; a link here is never ours to follow
         if Path(staging).exists():
             shutil.rmtree(staging, onexc=writable)
         return not Path(staging).exists()
