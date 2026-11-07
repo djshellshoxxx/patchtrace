@@ -27,6 +27,7 @@ Cite a spec as **repository path plus canonical alias**, for example `docs/specs
 | `docs/specs/REGISTRY.md` | none (this index) | REGISTRY | n/a | none | Index of this table |
 | `docs/specs/INDEX.md` | none (listing) | INDEX | n/a | none | Generated file listing with SPEC and status; this registry wins on conflict |
 | `docs/specs/architecture.md` | SPEC-01 (title) | SPEC-01 | built | ingestion.py, backend.py, jobs.py, persistence.py, service.py, models.py | Core pipeline is on main |
+| `docs/specs/ghidriff-timeout-progress.md` | SPEC-01a (title) | SPEC-01a | partial | jobs.py, backend_progress.py, backend.py, ui.py, ui_job_events.py | PT-TIMEOUT-1: bounded progress, active deadline, actionable timeout and process receipt; open: timeout-entry validation/presets and native Windows input-pair acceptance |
 | `docs/specs/schemas.md` | SPEC-02 (title) | SPEC-02 | built | models.py; generated schemas (tools/generate_schemas.py) | Contracts and schema generation on main |
 | `docs/specs/verification.md` | SPEC-03 (title) | SPEC-03 | built | tests/ and docs/qa.md (process) | Requirements and audit record; full code audit done 2026-10-12 |
 | `docs/specs/ui.md` | SPEC-04 (title) | SPEC-04 | built | ui.py | Clean Windows GUI acceptance still open (external) |

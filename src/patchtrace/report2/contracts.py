@@ -197,7 +197,7 @@ class Symbols(_Model):
 
 
 _ADVISORY_ID = {'cve': re.compile(r'CVE-\d{4}-\d{4,19}', re.ASCII), 'kb': re.compile(r'KB\d{6,8}', re.ASCII),
-                'cwe': re.compile(r'CWE-\d{1,5}', re.ASCII)}
+                'cwe': re.compile(r'CWE-\d{1,6}', re.ASCII)}
 
 
 class Advisory(_Model):

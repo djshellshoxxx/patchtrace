@@ -70,7 +70,9 @@ from .runtime_discovery import (
 from .service import ProjectService
 from .tooltips import apply_tooltip, apply_tooltips
 from .ui_bundle_setup import BundleSetup
+from .ui_help import WORKFLOW_HELP_TEXT
 from .ui_inspection import InspectionThread, side_summary
+from .ui_job_events import JobEventRelay
 from .ui_persistence import commit_and_report
 from .ui_profiles import PROFILE_SETTING, profiles_dir, selected_profile
 from .ui_symbols import SymbolChoice, config_kwargs, configured_symbol_mode, effective_profile_symbol_mode
@@ -1491,6 +1493,7 @@ class MainWindow(QMainWindow):
         self._syncing = False
         self._close_requested = False
         self._job_started = 0.0
+        self._job_backend_status = None
         self._hunks = []
         self._hunk_index = -1
         self._function_offsets = {}
@@ -2869,13 +2872,15 @@ class MainWindow(QMainWindow):
             return
         self._job_title = title
         self._job_started = time.monotonic()
+        self._job_backend_status = None
         self.job_label.setText(title + '…')
         self.logs.appendPlainText(title)
         self.progress.setVisible(True)
         self.progress.setRange(0, 0)
         worker = Worker(task, self)
         self.worker = worker
-        worker.event_ready.connect(self.job_event)
+        worker._event_relay = JobEventRelay(self, worker)
+        worker.event_ready.connect(worker._event_relay.forward)
         worker.result_ready.connect(lambda result: self._guard(lambda: complete(result)))
         worker.failed.connect(self.show_error)
         worker.finished.connect(self.job_finished)
@@ -2886,6 +2891,18 @@ class MainWindow(QMainWindow):
     def job_event(self, event):
         message = getattr(event, 'message', str(event))
         stage = getattr(event, 'stage', '')
+        if stage == 'analysis-progress':
+            if (self.worker is None or self.worker.cancel.is_set()
+                    or self.job_label.text().startswith(('Error', 'Cancelled', 'Interpretation cancelled', 'Note'))):
+                return
+            self._job_backend_status = message
+            self.progress.setRange(0, 0)
+            self._elapsed()
+            return  # Heartbeats update status; they must not crowd out retained log messages.
+        if stage in {'analysis-stopped', 'completed', 'failed', 'cancelled', 'identical', 'cache'}:
+            # Subsequent normalization/commit is outside the subprocess deadline.
+            self._job_backend_status = None
+            self._elapsed()
         self.logs.appendPlainText((stage + ' · ' if stage else '') + message)
         value = getattr(event, 'progress', None)
         if value is not None:
@@ -2894,6 +2911,11 @@ class MainWindow(QMainWindow):
 
     def _elapsed(self):
         if self.worker:
+            if self.job_label.text().startswith(('Error', 'Cancelled', 'Interpretation cancelled', 'Note')):
+                return
+            if not self.worker.cancel.is_set() and self._job_backend_status is not None:
+                self.job_label.setText(self._job_backend_status)
+                return
             state = 'Cancelling' if self.worker.cancel.is_set() else self._job_title
             self.job_label.setText(f'{state} · {int(time.monotonic() - self._job_started)} seconds')
 
@@ -2906,6 +2928,7 @@ class MainWindow(QMainWindow):
     def job_finished(self):
         worker = self.worker
         self.worker = None
+        self._job_backend_status = None
         self.timer.stop()
         self.progress.setVisible(False)
         if not self.job_label.text().startswith(('Error', 'Cancelled', 'Interpretation cancelled', 'Note')):
@@ -2990,23 +3013,7 @@ class MainWindow(QMainWindow):
                 self.logs.appendPlainText(f'Export: {output}')
 
     def show_help(self):
-        text_dialog(self, 'PatchTrace workflow and dependency setup',
-                    '1. Create a project with explicit older and newer PE AMD64 artifacts, or open the synthetic sample.\n'
-                    '2. Import a Ghidriff JSON, or configure external dependencies and run comparison.\n'
-                    '3. Search and filter function matches. Inspect decompiled code, assembly and metadata.\n'
-                    '4. Review matches, correct relationships, and save analyst notes.\n'
-                    '5. Optionally select matches and Interpret. Review exact context before Send.\n'
-                    '6. Follow evidence, assess alternatives and unknowns, save an independent analyst conclusion.\n'
-                    '7. Export a report after reviewing its exact preview. Code is excluded by default.\n\n'
-                    'Dependency setup\n'
-                    'Use an external Python environment with the supported Ghidriff version installed. Select its\n'
-                    'python executable and the unpacked Ghidra installation in Setup. Ghidra requires a compatible\n'
-                    'Java installation. Diagnose reports dependency failures without running either target artifact.\n'
-                    'Ghidriff and Ghidra are not bundled and no dependency is downloaded automatically.\n\n'
-                    'Interpretation is optional. Ollama must use a loopback endpoint; OpenAI-compatible providers\n'
-                    'require HTTPS. API keys remain in memory for the current request and are never saved.\n'
-                    'Model assessments, match quality and review status do not establish vulnerability validity.\n'
-                    'Stale findings retain their original context and cannot navigate into a different analysis run.')
+        text_dialog(self, 'PatchTrace workflow and dependency setup', WORKFLOW_HELP_TEXT)
 
     def apply_font(self, size):
         font = QFont('Consolas', size)

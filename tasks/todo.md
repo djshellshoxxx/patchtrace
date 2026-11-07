@@ -1,5 +1,18 @@
 # PatchTrace delivery tracker
 
+## P1 — Recurring Windows comparison timeout (reported 2026-11-06)
+
+**OPEN / high priority.** The owner's usual two-file test failed with `PT-BACKEND: analysis timed out`. Both Ghidra analyses completed; `StructuralGraphHash` then reported **2,161,955 entries**, followed by a **28m 41.755s** quiet interval after "Sorting functions". Later `72/72` progress was only an enhanced-symbol (`esym`) substage. The configured timeout and actual termination time are absent from the supplied logs; the source default of 3,600 seconds is not proof of the value used in this run.
+
+Incident evidence, source references, attachment hashes, implementation options and closure criteria: **[P1 timeout investigation](../docs/qa/ghidriff-timeout-20261106.md)**. Preserve the original tracker history below.
+
+- [ ] **PT-TIMEOUT-1 — partially implemented:** Live elapsed/budget status, last observed stage/output age, actionable timeout text and bounded `backend-execution.json` receipts are implemented in [SPEC-01a](../docs/specs/ghidriff-timeout-progress.md). The elapsed timer and late worker events also preserve terminal/cancel messages. Timeout-entry validation/presets and original-pair Windows acceptance remain open. Existing interim option: **Setup → Backend and desktop → Comparison timeout (seconds) → 7200 (2h) or 14400 (4h) → Save setup**, then start a new run. The current GUI range is 10–86,400 seconds. A longer budget is not a verified performance fix.
+- [ ] **PT-TIMEOUT-2:** Profile the structural-candidate expansion and downstream conversion/filtering/deduplication/JSON work; implement a measured, semantics-preserving repair through the supported external-engine boundary. Preserve ambiguity and disclose any incomplete result caused by resource limits.
+- [ ] **PT-TIMEOUT-3:** Diagnose the separate `FUN_100ca86c` decompiler timeout, missing PDB metadata and nonfatal resource-parser warnings. An outer timeout extension does not automatically fix the per-function timeout. Capture actual runtime versions; this log uses Ghidra 12.1.4.
+- [ ] **PT-TIMEOUT-4:** Verify successful-cache reuse and evaluate separately specified failed-run checkpoints. Keep `--no-threaded`, workspace isolation, failure logs and prior results; do not remove the Windows lock safeguard as an untested speed fix.
+- [ ] **Acceptance:** rerun the recorded pair on Windows with effective timeout and version provenance, phase/runtime/memory evidence, output validation and cancellation checks. Do not mark fixed from documentation, mock tests, or a substage's 100%.
+
+
 ## Independent parallel wave — 2026-11-05
 
 - [x] Recover ownership without changing frozen #205 or native workers; use root plus three supported workers in isolated, exclusively assigned worktrees.
@@ -16,6 +29,8 @@
 - [ ] Qualification owner resolves existing #205 run exit143/no summary at about94%; no full pass is inferred and this session did not stop/restart it.
 - [ ] Qualify exact final Linux/Windows/Qt/native/package/live/manual/offline and main-relative scanner/review gates before any main/release acceptance claim.
 - [ ] Continue selective #183 R2/R3/R6/R8 reconciliation and remaining source freshness/authenticity, full supersedence/update-DAG and derived-label work. Preserved research is not implementation acceptance.
+
+## Earlier delivery history
 
 - [x] Fixed the two locally reproducible full-suite issues recorded in `docs/qa.md`: site screenshot renderer follows the Files panel; Tier R rejects an unknown mutation operator before toolchain probing. Focused rerun: 27 passed, 2 skipped.
 - [x] Linux-container-only full-suite failures documented in `docs/qa.md` are environment limitations (`python -I` excludes the editable install; AF_UNIX sockets are denied; timing budgets are load-sensitive); full pytest and Ruff passed on Windows and Ubuntu CI (run 39456546905).
@@ -1218,3 +1233,6 @@ Full `QT_QPA_PLATFORM=offscreen python -m pytest -q` for this isolated native sl
 
 - [x] Complete #247 Windows QA/packaging and publish the source-pinned downloadable product-start candidate; retain the exact receipt and artifact identity.
 - [ ] Finish Linux packaging/smokes, normal parent promotion and remaining release/live/manual acceptance. [Windows evidence](../docs/qa/continuation-windows-20261106.md).
+
+## Accuracy validation (opened 2026-11-06)
+- [ ] Follow [accuracy validation plan](../docs/plans/accuracy-validation-plan-20261106.md): per-layer claims (L1 advisory join, L2 open-source pair diff, L3 real Windows pairs), manifests frozen before engine runs. AV-0 and AV-1 done, AV-2 next; no accuracy result exists yet.
