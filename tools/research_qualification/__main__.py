@@ -10,6 +10,7 @@
     python -m tools.research_qualification callmodel --pairs 2161955 --old 20000 --new 20000 [--us-per-call X]
     python -m tools.research_qualification fixtures build --out DIR
     python -m tools.research_qualification fixtures score --truth FILE --matches FILE
+    python -m tools.research_qualification adapters {ghidriff,bindiff,rizin} FILE [--case ID]
 
 Exit codes: 0 ok, 1 failed/invalid/differs, 2 blocked or usage error. Nothing here executes target binaries
 unless the operator passes the command after `--`.
@@ -135,6 +136,20 @@ def cmd_callmodel(a: argparse.Namespace) -> int:
     return 0 if not a.simulate or out['simulation']['decisions_identical'] else 1
 
 
+def cmd_adapters(a: argparse.Namespace) -> int:
+    """Convert one engine output to ranked candidates; with --case wrap as scoring input {case: [...]}."""
+    from .adapters import PARSERS
+    try:
+        names = PARSERS[a.engine](Path(PG.confine(a.file, "FILE")))
+    except ValueError as e:
+        if isinstance(e, PG.PathGuardError):
+            raise
+        print(f"error: {e}", file=sys.stderr)
+        return 2
+    _print({a.case: names} if a.case else names)
+    return 0
+
+
 def cmd_fixtures(a: argparse.Namespace) -> int:
     if a.action == "score":
         try:
@@ -236,6 +251,10 @@ def build_parser() -> argparse.ArgumentParser:
     f.add_argument("--out", default="build/research-fixtures")
     f.add_argument("--truth")
     f.add_argument("--matches")
+    ad = sub.add_parser("adapters", help="convert Ghidriff/BinDiff/radiff2 output to ranked changed functions")
+    ad.add_argument("engine", choices=["ghidriff", "bindiff", "rizin"])
+    ad.add_argument("file")
+    ad.add_argument("--case")
     c = sub.add_parser("cases", help="validate an accuracy case manifest and optionally check its freeze hash")
     c.add_argument("manifest")
     c.add_argument("--frozen-sha")
@@ -276,6 +295,8 @@ def _dispatch(a: argparse.Namespace, cmd: list[str]) -> int:
         return cmd_cases(a)
     if a.cmd == "fixtures":
         return cmd_fixtures(a)
+    if a.cmd == "adapters":
+        return cmd_adapters(a)
     return cmd_receipt(a)
 
 
