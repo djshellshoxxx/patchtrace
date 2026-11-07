@@ -48,7 +48,7 @@ Cases from one project or release are not independent; count distinct projects. 
 | AV-2 | Candidate list: projects, CVE ids, fix commits, release pairs (all `unverified` first) | next |
 | AV-3 | Actions workflow: fetch/build pairs on Windows runner, hash, emit receipts | after AV-2 |
 | AV-4 | Top-k rank scorer (`scoring.py`, `score` command) | done (tested; engine output adapter still to write) |
-| AV-5 | L1 automated join run over MSRC months (needs live probe L1 to pass first) | blocked on live probe |
+| AV-5 | L1 automated join run over MSRC months | unblocked: live probe passed once (docs/qa/kbc-live-probe-20261107.md); one month, one CVE only |
 | AV-6 | S3/S4 Windows pairs, 15 then 29 | after AV-5 |
 | AV-7 | Report: per-layer bound table with counts, stratified, unverified list | last |
 
