@@ -157,7 +157,6 @@ def promote(older: AcquiredArtifact, newer: AcquiredArtifact, name: str, root: P
     if not all(_staged_matches(item) for item in (older, newer)):
         raise AcquisitionError('PT-ACQ-VERIFY', 'a staged file changed after it was verified')
     root = Path(root)
-    existed = root.exists()
     service = ProjectService.create(Path(older.path), Path(newer.path), name, root)
     try:
         by_side = {a.side: a for a in service.project.artifacts}
@@ -168,10 +167,16 @@ def promote(older: AcquiredArtifact, newer: AcquiredArtifact, name: str, root: P
             # AnalystAnnotation kinds are fixed in models.py, so provenance is a prefixed 'note'.
             record = item.model_dump(mode='json', exclude={'path'})
             service.annotate(artifact.id, ANNOTATION_PREFIX + json.dumps(record, sort_keys=True))
-    except BaseException:
+    except BaseException as exc:
+        # The initial project snapshot is already committed. Never roll it back by
+        # deleting its directory, persistent lock or files a contributor added.
         service.close()
-        _discard_project(root, existed)
-        raise
+        if not isinstance(exc, Exception):
+            raise
+        code = exc.code if isinstance(exc, AcquisitionError) else 'PT-ACQ-VERIFY'
+        raise AcquisitionError(code, f'Project retained at {service.root}; acquisition provenance or final copy '
+                               'verification did not finish. Reopen and inspect it before retrying.',
+                               recoverable=True) from exc
     return service
 
 
@@ -184,12 +189,3 @@ def _staged_matches(item: AcquiredArtifact) -> bool:
     except OSError:
         return False
     return digest.hexdigest() == item.sha256
-
-
-def _discard_project(root: Path, existed: bool) -> None:
-    # `create` accepts only an absent or empty directory, so everything inside is ours.
-    if not existed:
-        remove_staging(root)
-        return
-    for child in root.iterdir():
-        remove_staging(child) if child.is_dir() else child.unlink(missing_ok=True)

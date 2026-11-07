@@ -1299,3 +1299,11 @@ Wiring: `exchange.ALL_SOURCES`, `--sources diaphora`, `pipeline.capture_plan` (o
 ### [A4-C3:current-project-inputs]
 
 `kbcorrelation/investigation_service.py` owns the immutable current-input snapshot, strict Artifact decoding and shared verified-reader checks; `investigation_qt.py` adds an explicit worker-backed action, preview-only provenance and stale-result guards. `gui/qt/host.py` captures existing model values and checks current ownership on the GUI thread without opening another project store. Tests: `tests/test_kb_current_project.py` and existing service/dialog journeys. No new modules or persisted contracts.
+
+### [LBL-30:recorded-protocol-selection]
+
+`tools/calibration/prereg_gate.py` validates exact LF protocol identity against one visible complete QA table row before the training CLI opens corpus input. Explicit rehearsal retains the unlocked report/key; this does not grant owner approval or consume the final evaluation. Tests: `tests/test_train_prereg_selection.py`.
+
+### [LBL-30:credited-output-replay]
+
+`tools/calibration/tier_r/output_store.py` owns exclusive normalized output retention, report-bound completion/credit receipts, bounded strict replay and explicit legacy compatibility. `evaluate.py` credits a successful answer only after normalization/retention; training verifies managed report credits before accepting replay. Tests: `tests/test_tier_r_{output_persistence,credited_replay,credit_completion,output_stat_compat}.py`. Native adapter compatibility and real calibration remain separate gates.

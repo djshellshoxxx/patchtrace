@@ -1116,6 +1116,34 @@ Full `QT_QPA_PLATFORM=offscreen python -m pytest -q` for this isolated native sl
 - [ ] Coordinator integration and native Windows/full-suite gates. Product-only/binary-only advisory lookup semantics remain outside this slice.
 - [ ] Separately specify label preservation if current-origin preview must support derived hash.bin-labelled projects or other original labels outside the existing .sys/.dll/.exe BinaryRef contract. Current unsupported cases refuse explicitly.
 
+### LBL-30 consolidation checkpoint — 2026-11-05
+
+- [x] Port exact recorded-protocol selection and conservative visible-row tests from #176, preserving explicit unlocked rehearsal and existing final-run gates (97 acceptance tests passed).
+- [ ] Complete broader training regression and independent review before integrating this slice into #205.
+- [ ] Consolidate the separate credited-output replay/persistence slice from #176; this checkpoint does not implement it.
+
+### LBL-31 replay integration — 2026-11-05
+
+- [x] Retain bounded strict normalized output before scoring, verify report-bound completion and exact-byte replay, reject provider-owner conflicts, and preserve diagnostics on completion failure (source #176).
+- [ ] Independent security review and integration of this stacked replay slice; exact-head full suite/native/Windows gates remain open.
+
+### Wave-three acceptance — 2026-11-05
+
+- [x] Independently review and integrate #215 recorded identity, #216 acquisition display safety and #217 credited replay; combined276 passed.
+- [ ] Finish/review lock-only retry and retain committed promotion data on annotation failure; fix stale crash-test keyword double.
+- [ ] Collect exact f33 complete-suite receipt, then qualify updated candidate.
+- [ ] Complete provisioned pinned-native controls and required current-head Windows/scanner/release gates.
+
+- [x] #219 reviewed38be184c integrated: real lock-only retry, non-destructive committed acquisition failures, exact retained path, repaired SIGKILL fixture signature;475 combined tests passed.
+- [ ] Continue product-only desktop start and remaining unique #174 adapter functionality in exclusive worker worktrees.
+
+- [x] Review/integrate #220 reserved derived metadata boundary and #221 explicit binary-only local-pair desktop start;339 combined passes.
+- [ ] Product-only desktop/domain starting path and single-binary patch discovery remain separate accepted work.
+- [ ] Complete remaining #174 one-to-many normalization/GT-01 controls; narrow reserved-key integration alone is not full native acceptance.
+
+- [x] Account #222 finite pinned-native provisioning evidence and #223 canonical function identity; verify14 complete raw-log receipts and357 combined focused passes.
+- [ ] Finish actual native API linkage/stock-red-corrected-green and distinct-byte/IO controls; optional control tooling remains separate pending verified source.
+
 ### 2026-11-06 N-way Windows recovery prerequisite
 
 - [x] Reproduce the CPython 3.12 pathname/descriptor change-time mismatch with real-file fault injection; retain pinned official source/blob evidence.

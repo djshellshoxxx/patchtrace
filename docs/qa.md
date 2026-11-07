@@ -1525,6 +1525,30 @@ Reviewed follow-up #213 (including #214) and actual local native-prerequisite re
 
 Older a60d1dbc remaining-node diagnosis ended143/SIGTERM after88% progress, no pytest summary and cause not established; NOT COMPLETE, no pass inferred from progress. Final overlapping1600-node tail completed1573passed/27skipped/18117deselected in156.89s. Earlier7351pass whole attempt stopped on omitted named-adapter test metadata, fixed with precise negative purity controls; later2096pass segment stopped because inherited diagnostic fail-fast truncated its controlled child pytest, corrected by outer-only arguments. These are diagnostic segments, not a fresh unsplit full exact-head pass and not qualification of newer follow-up production changes. Full final-head/native/Windows/package/scanner gates remain open. All worker edits are committed/published and raw local logs retained.
 
+### LBL-30 recorded-protocol CLI integration — 2026-11-05
+
+Ported the isolated preregistration selection slice from PR #176 (bad8fa4c, 500ab5a9, d8d8be45) onto f33e2a0a; replay/output persistence remains separate. Before repair the acceptance file produced 96 failures/1 pass; after repair 97 passed. Whole-tree Ruff passed; source-bound schema generation produced no drift. Broader training regression and independent review remain pending at this checkpoint. No real locked evaluation, corpus label, numerical threshold or runtime calibration promotion changed.
+
+### LBL-31 credited-output replay consolidation — 2026-11-05
+
+Selectively ported the remaining normalized-output retention, report completion, replay and bounded metadata slice from PR #176 onto LBL-30. Baseline f33e2a0a independently reproduced a foreign `ghidriff` response scored/credited under its `rz-diff` provider owner; the same constructed control is refused after repair. New feature acceptance initially could not collect because retention modules were absent. After porting and generating all corpus/calibration schemas: 239 focused tests passed; a broader contracts/calibration/unified-harness selection passed 234 tests (overlapping selections), with expected explicit warnings for unverified legacy output compatibility. Whole-tree Ruff passed. Independent security review pending. No actual corpus fit, labels, native compatibility or calibration promotion is claimed; atomic publication requires hardlink-capable storage.
+
+### Wave-three reviewed integration — 2026-11-05
+
+#215/#216/#217 reviewed source integrated at dfc212e2: combined276 passed; Ruff and all four schema generators passed with no drift. Independent prereg97 and replay44 controls passed. Frozen f33e2a0a complete suite remains running (log /tmp/pt-205-f33-full.log); one stale SIGKILL double failure reproduced, repair pending in lifecycle slice. Current scanner/Windows/native/release gates remain open; no main merge.
+
+### GUI retry / retained committed acquisition — #219 integration
+
+Reviewed38be184c merged at a84bf6d1. Five real preflight paths now permit absent/empty/sole regular non-symlink lock directories while kernel locking and committed-database refusal remain authoritative. Baseline actual retry/stress double2failures and separate contributor-file deletion1failure were reproduced. Promotion retains committed project, prior annotations, foreign files and persistent lock, closes service, reports retained path. Integrated lifecycle/KB/calibration475 passed39.80s; author228 and independent206 selections overlap, plus independent second-annotation/KeyboardInterrupt probes. Ruff clean; no schema/model/error-code changes. Frozen f33 full suite remains running; final updated-head/native/Windows acceptance open.
+
+### Reviewed normalizer and binary-only desktop — #220/#221
+
+#220 cf9cefff reserved metadata guard:24 baseline red/1pass, independent77pass; rejects forged derived claims while preserving raw inputs/prior committed evidence. Integrated normalizer/unified-source106pass. #2217e7a52eb real binary-only local-pair preview/create/reopen/export: independent207pass and no-preview-write/reversed-orientation probes; product lineage/advisory linkage remain explicitly unverified. Integrated both with prior lifecycle:339pass23.77s. Counts overlap. Worker full-suite collection was stopped/no tests run; root f33 suite is the sole complete-run attempt still active. Updated-head full/Windows/native acceptance remains open.
+
+### Native provisioning / canonical normalizer identity — #222/#223
+
+Verified all14 complete compressed/raw log receipts and exact unfinished status for #222 dbebfee8; actual pinned headers compile, native oracle/link/CLI not yet executed. Source/dependencies/build cache provisioned with supported PCRE2 retry; quarantine unchanged. #223631b5e91 closes equivalent address spelling duplicate bypass with existing parse_address while preserving raw spelling and repeated-function refusal:14 baseline red/1pass, independent95pass. Latest integrated normalizer/binary/KB/lifecycle357passed33.26s; Ruff clean. Complete f33 suite still active; no exact updated-head full pass claimed.
+
 ## N-way Windows recovery compatibility (2026-11-06)
 
 On frozen #205, hosted Windows CPython 3.12.10 reported five recovery failures.
