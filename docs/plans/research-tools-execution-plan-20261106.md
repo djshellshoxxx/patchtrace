@@ -1,5 +1,7 @@
 # PatchTrace external-tool build, verification, execution and integration plan
 
+Note: Some previously completed research dossiers and the branch-merge plan are not on main; source references below use immutable commit f22a02dc2325eb0dfa14abc2ea0ee1bae62effc9 from the independent integration candidate. Historical source status must be refreshed before execution.
+
 Status: PROPOSED / DOCS ONLY. Prepared 2026-11-06 America/Vancouver (2026-11-07 UTC). Plan authored against main 365bf1f20f481d7c49c4d15bd90a3bde4b697038. This document does not provision Codespaces, install software, execute a native benchmark, trigger cloud jobs, enable schedules, change production code, or attest to completed research. Every execution begins by refreshing exact upstream and PatchTrace commit identities.
 
 ## 1. Goals, constraints and owner boundaries
@@ -8,7 +10,7 @@ Goal: systematically qualify existing open-source profiling, binary comparison, 
 
 Preserve existing tools, fixtures, evidence and responsibilities:
 - Existing production and acceptance code: tools/calibration/tier_r/, tools/live_rzdiff_check.py, tools/provision_bindiff.py, tools/bindiff_pin.json, tools/provision_intel_tools.py, tools/qa_binexport_memcap.py, tools/build_windows.py, .github/workflows/{corpus-tier-r,live-bindiff,live-rizin,live-unified,qa-windows}.yml, and src/patchtrace/{backend,jobs,unified,secondary,kbcorrelation,persistence,ui}. Existing suite remains authoritative.
-- Existing research: docs/research/20261103-additional-research/06-claude-action-plan-and-reuse-register.md (P01-P15), calibration-r5/, deep-uncertainty-r8/, R1-R4 PRs. Reconcile current source before treating a historical note as an open defect.
+- Existing research: https://github.com/djshellshoxxx/patchtrace/blob/f22a02dc2325eb0dfa14abc2ea0ee1bae62effc9/https://github.com/djshellshoxxx/patchtrace/tree/f22a02dc2325eb0dfa14abc2ea0ee1bae62effc9/docs/research/20261103-additional-research/06-claude-action-plan-and-reuse-register.md (P01-P15), calibration-r5/, deep-uncertainty-r8/, R1-R4 PRs. Reconcile current source before treating a historical note as an open defect.
 - Live product consolidation: #205 owner integrate/swarm-qualified-20261105; #218 binary investigation; #235 independent investigation; #252 data-validation repair; #254 GUI seam. Do not modify their heads or overwrite docs/qa.md, tasks/todo.md, or AUTONOMOUS-DEVELOPMENT-LATEST.md during this program. No new paid autonomous schedule.
 - Public repo, but vendor PEs/PDBs, licensed fixture binaries, tokens, private paths, commercial tool payloads and large dataset archives must not be committed or uploaded as unrestricted Actions artifacts. Publish only permitted manifests, metadata, hashes and controlled synthetic results.
 - Nothing advances from candidate to production solely because a third-party tool produces a number. Keep raw evidence, original pair orientation, independent provenance, unknown/abstention, and immutable prior results.
@@ -142,7 +144,7 @@ As independent lanes demonstrate actual findings, open separate targeted product
 - CSAF oracle: https://github.com/secvisogram/csaf-validator-lib (Node >=22, CSAF 2.0); optional service https://github.com/secvisogram/csaf-validator-service may be deployed only in isolated dev environment.
 - GitHub Codespaces Linux devcontainer: https://docs.github.com/en/codespaces/setting-up-your-project-for-codespaces/adding-a-dev-container-configuration/introduction-to-dev-containers.
 - GitHub Actions billing: https://docs.github.com/en/billing/concepts/product-billing/github-actions. Standard hosted public-repo runner usage and larger runner billing differ.
-- Internal prerequisites: docs/qa/ghidriff-timeout-20261106.md, docs/plans/branch-merge-plan-20261106.md, docs/research/20261103-additional-research/, docs/research/calibration-r5/, docs/research/deep-uncertainty-r8/, .github/workflows/corpus-tier-r.yml.
+- Internal prerequisites: docs/qa/ghidriff-timeout-20261106.md, https://github.com/djshellshoxxx/patchtrace/blob/f22a02dc2325eb0dfa14abc2ea0ee1bae62effc9/docs/plans/branch-merge-plan-20261106.md, https://github.com/djshellshoxxx/patchtrace/tree/f22a02dc2325eb0dfa14abc2ea0ee1bae62effc9/docs/research/20261103-additional-research/, https://github.com/djshellshoxxx/patchtrace/tree/f22a02dc2325eb0dfa14abc2ea0ee1bae62effc9/docs/research/calibration-r5/, https://github.com/djshellshoxxx/patchtrace/tree/f22a02dc2325eb0dfa14abc2ea0ee1bae62effc9/docs/research/deep-uncertainty-r8/, .github/workflows/corpus-tier-r.yml.
 
 ## 10. Definition of program success
 
