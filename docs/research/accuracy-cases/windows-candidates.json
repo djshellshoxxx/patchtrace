@@ -18,13 +18,12 @@
         "function": "Ipv6pReassembleDatagram",
         "cve": "CVE-2022-34718",
         "accept": [
-          "IppReceiveEsp",
-          "Ipv6ReassembleDatagram"
+          "IppReceiveEsp"
         ]
       },
       "facts": "unverified",
       "holdout": false,
-      "notes": "IBM X-Force page names two patched functions: Ipv6pReassembleDatagram (new bounds check on nextheader_offset vs header buffer length) and IppReceiveEsp (new check on ESP next-header value). Month Sep 2022 per page; KB not stated. Page also spells the first as Ipv6ReassembleDatagram."
+      "notes": "IBM X-Force page names two patched functions: Ipv6pReassembleDatagram (new bounds check on nextheader_offset vs header buffer length) and IppReceiveEsp (new check on ESP next-header value). Month Sep 2022 per page; KB not stated. Page also spells the first as Ipv6ReassembleDatagram. Spelling decision: the IBM page spells the first function Ipv6ReassembleDatagram, most likely a typo; it is deliberately NOT accepted (a wrong accepted name would inflate the score). Re-check against the real symbol when the binary pair is diffed."
     },
     {
       "id": "win-cve-2022-21907-http",
