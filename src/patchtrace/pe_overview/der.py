@@ -162,7 +162,7 @@ def decode_oid(node: Node) -> str | None:
         value = (value << 7) | (byte & 0x7F)
         # Malformed source OIDs can have a huge base-128 arc: refuse before
         # int-to-decimal conversion or unbounded integer accumulation.
-        if value.bit_length() > 127:
+        if value.bit_length() > 128:
             return None
         if not byte & 0x80:
             arcs.append(value)
