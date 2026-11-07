@@ -177,3 +177,12 @@ def test_the_inspection_worker_sends_only_the_exception_class(monkeypatch, tmp_p
     thread.inspection_failed.connect(lambda message, key: seen.append(message))
     thread.run()
     assert seen == ['ValueError']
+
+def test_workflow_help_copy_is_preserved_outside_the_window_host():
+    from patchtrace.ui_help import WORKFLOW_HELP_TEXT
+
+    assert WORKFLOW_HELP_TEXT.startswith('1. Create a project with explicit older and newer PE AMD64 artifacts')
+    assert 'Ghidriff and Ghidra are not bundled and no dependency is downloaded automatically.' in WORKFLOW_HELP_TEXT
+    assert 'API keys remain in memory for the current request and are never saved.' in WORKFLOW_HELP_TEXT
+    assert WORKFLOW_HELP_TEXT.endswith(
+        'Stale findings retain their original context and cannot navigate into a different analysis run.')
