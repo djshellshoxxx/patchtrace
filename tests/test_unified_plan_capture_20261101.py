@@ -67,9 +67,13 @@ def test_changed_manual_content_never_reuses_previous_digest(project, monkeypatc
 def test_prior_selection_without_manual_cannot_seed_empty_digest_for_manual_evidence(project, monkeypatch):
     calls = watch_hash(monkeypatch)
     previous = pipeline.make_plan(project, sources=('ghidriff',))
-    assert previous._identity_inputs._manual_digest is None and calls == []
+    # The corrections are a key input whatever the sources (follow-up p9: correct_match reshapes the non-manual
+    # matches too), so even a plan without the manual source holds the real digest, computed once; it can never seed
+    # an empty one.
+    digest = previous._identity_inputs._manual_digest
+    assert digest not in (None, keys.manual_digest([])) and len(calls) == 1
     resolved = pipeline.resolve_plan(pipeline.capture_plan(project), previous=previous)
-    assert len(calls) == 1 and resolved.identity.manual_digest != keys.manual_digest([])
+    assert len(calls) == 1 and resolved.identity.manual_digest == digest
     assert any(ref.source == 'manual' for ref in resolved.identity.source_refs)
 
 
