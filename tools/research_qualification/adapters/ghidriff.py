@@ -3,7 +3,7 @@
 JSON layout (read from ghidriff 1.0.0 source, ghidra_diff_engine.py): `functions.modified[]` entries carry
 `old`/`new` (each with `name`, `fullname`), `diff_type` and similarity ratios (`ratio` code, `b_ratio` blocks,
 `m_ratio` mnemonics, 1.0 = identical); `functions.added[]` / `functions.deleted[]` entries carry `fullname`.
-Changed = a modified entry whose `diff_type` has `code` or whose `ratio` is below 1; magnitude = 1 - ratio, ties
+Changed = a modified entry whose `diff_type` has `code`; magnitude = 1 - ratio, ties
 by the block then mnemonic ratio. Name = the old side's `fullname` (what the markdown report headings use).
 Markdown: `# Modified` / `# Deleted` / `# Added` sections with one `##` heading per function; magnitude = number of
 `+`/`-` lines in that function's `### <name> Diff` block. `# Modified (No Code Changes)` is treated as unchanged.
@@ -41,8 +41,8 @@ def _parse_json(text: str) -> list[str]:
         diff_type = entry.get('diff_type', [])
         if not isinstance(diff_type, list):
             raise ValueError(f'functions.modified[{i}].diff_type must be a list')
-        if 'code' not in diff_type and ratio >= 1.0:
-            continue  # name/address/call-graph-only change: not a code change
+        if 'code' not in diff_type:
+            continue  # name/address/call-graph-only change: not a code change (ratio is decompiler text, may drift)
         old = entry['old']
         name = normalise_name(old.get('fullname') or old.get('name'))
         if name is None:

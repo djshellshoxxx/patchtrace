@@ -70,5 +70,5 @@ def _read(path: Path) -> list[str]:
         if similarity >= 1.0:
             continue
         confidence = unit_float(conf if conf is not None else 1.0, f'confidence for {name!r}')
-        changed.append((name, (1.0 - similarity) + 1e-6 * (1.0 - confidence)))
+        changed.append((name, round(1.0 - similarity, 6) + 1e-9 * (1.0 - confidence)))
     return rank(changed)

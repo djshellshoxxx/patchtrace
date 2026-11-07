@@ -101,7 +101,10 @@ def rank(changed: Iterable[tuple[str, float]], one_sided: Iterable[str] = ()) ->
 def unit_float(value: object, what: str) -> float:
     if isinstance(value, bool) or not isinstance(value, int | float):
         raise ValueError(f'{what} must be a number')
-    f = float(value)
+    try:
+        f = float(value)
+    except OverflowError as exc:
+        raise ValueError(f'{what} is out of range') from exc
     if f != f or f < 0.0 or f > 1.0:
         raise ValueError(f'{what} must be within 0..1, got {value!r}')
     return f

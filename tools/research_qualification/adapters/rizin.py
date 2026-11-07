@@ -63,9 +63,21 @@ def _parse_json(text: str) -> list[str]:
     for i, row in enumerate(doc):
         if not isinstance(row, dict):
             raise ValueError(f'radiff2 JSON row {i} is not an object')
-        name = normalise_name(row.get('name') or row.get('name2'))
-        if name is None:
-            continue
+        orig, mod = row.get('original'), row.get('modified')
+        if isinstance(orig, dict) or isinstance(mod, dict) or 'original' in row or 'modified' in row:
+            # rizin `rz-diff -j` layout: names nested under original/modified, a null side = unmatched
+            left = normalise_name(orig.get('name')) if isinstance(orig, dict) else None
+            right = normalise_name(mod.get('name')) if isinstance(mod, dict) else None
+            name = left or right
+            if name is None:
+                continue
+            if left is None or right is None:
+                one_sided.append(name)
+                continue
+        else:
+            name = normalise_name(row.get('name') or row.get('name2'))
+            if name is None:
+                continue
         kind = str(row.get('type', row.get('match', ''))).lower()
         sim = row.get('similarity', row.get('dist'))
         if kind == 'new' or sim is None:

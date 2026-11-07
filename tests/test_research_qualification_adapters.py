@@ -237,3 +237,33 @@ def test_cli_adapters_bad_input_exit_2(capsys, tmp_path):
     bad.write_text('nope', encoding='utf-8')
     assert main(['adapters', 'ghidriff', str(bad)]) == 2
     assert 'error' in capsys.readouterr().err
+
+
+def test_rizin_recorded_nested_layout_and_null_sides():
+    import json as _json
+    from pathlib import Path as _P
+
+    from tools.research_qualification.adapters import rizin as _rz
+    text = _P('tests/fixtures/secondary/rzdiff-functions.json').read_text()
+    _json.loads(text)
+    out = _rz.parse(text)
+    assert out[0] == 'fcn.140001008'          # the only changed pair ranks first
+    assert set(out[1:]) == {'fcn.140002000', 'fcn.140003000'}  # unmatched sides are one-sided, after edits
+
+
+def test_ghidriff_non_code_diff_type_not_a_change():
+    import json as _json
+
+    from tools.research_qualification.adapters import ghidriff as _g
+    doc = {'functions': {'added': [], 'deleted': [], 'modified': [
+        {'old': {'fullname': 'a'}, 'diff_type': ['name'], 'ratio': 0.5},
+        {'old': {'fullname': 'b'}, 'diff_type': ['code'], 'ratio': 0.9}]}}
+    assert _g.parse(_json.dumps(doc)) == ['b']
+
+
+def test_huge_json_integer_is_a_clean_error():
+    import pytest
+
+    from tools.research_qualification.adapters._common import unit_float
+    with pytest.raises(ValueError):
+        unit_float(10 ** 400, 'x')
