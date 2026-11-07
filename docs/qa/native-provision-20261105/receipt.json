@@ -1,0 +1,129 @@
+{
+  "contract": "native-provision-checkpoint/1",
+  "patchtrace_head": "f33e2a0aaa3399644367f2419fee21cfe2e8702b",
+  "upstream_commit": "c3a90e9226d977f58f4e9c75f78fa6b07afe13c7",
+  "similarity_sha256": "a0b196dbc39e4fb3df4f850e156482ba9668838ccf5bb99a25563fd7a8c7ee5a",
+  "upstream_source_diff": "",
+  "status": "build-incomplete-at-bounded-checkpoint",
+  "native_executed": false,
+  "oracle_object_compile_exit": 0,
+  "oracle_object_sha256": "c6941a7a0e9cdef2be3feaf2f517326c3f65b568c48553c0cc17c6bb66ba674e",
+  "control_source_sha256": "c702a332f89db52a29cf0cdb9dfdd09bc2b6d4c3af02f420e761cf9ad3647c28",
+  "last_build_exit": 130,
+  "last_build_exit_reason": "intentional SIGINT at bounded checkpoint; preserve root full-suite priority and incremental cache",
+  "initial_actual_failure": "default use_sys_pcre2=disabled left PCRE2 symbols absent from util linker command; exit 1",
+  "supported_configuration_retry": "use_sys_pcre2=enabled, system PCRE2 10.42; util link subsequently passed",
+  "config": [
+    "buildtype=plain",
+    "enable_tests=false",
+    "enable_rz_test=false",
+    "regenerate_cmds=disabled",
+    "use_sys_pcre2=enabled"
+  ],
+  "scheduling": "final build nice +15, -j1; earlier -j1/-j2 attempts preserved separately",
+  "remaining_api_last_line": "[525/525] Linking target librz/arch/librz_arch.so.0.9.1",
+  "build_tools": [
+    "meson==1.12.1",
+    "ninja==1.13.2"
+  ],
+  "compiler": "cc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+  "host": "Linux-6.8.0-1064-azure-x86_64-with-glibc2.39",
+  "source_project_license": "LGPL-3.0-only (meson.build); default use_gpl=true includes GPL components; no binaries redistributed",
+  "subproject_git_heads": {
+    "blake2": "ed1974ea83433eba7b2d95c5dcd9ac33cb847913",
+    "blake3": "2de3cb1a21d09cdee4c8b6b14513063198cf1b82",
+    "capstone-next": "3df6ff015fb6afd81307e325fdd9c82dbf184b28",
+    "libdemangle": "e633061e901208a20ed90f8aaf0b64f25caf73eb",
+    "libmspack": "305907723a4e7ab2018e58040059ffb5e77db837",
+    "rizin-grammar-c": "6a9d542145c2c783230ee4f9006bb81e3fbea635",
+    "softfloat": "537d18e71a51aea70f6b54334854f7014c6458c7"
+  },
+  "logs": [
+    {
+      "file": "build-deps.log.gz",
+      "raw_bytes": 731,
+      "raw_sha256": "5bcec08093a91e82c57249c0122d14102b900326856071c6d972b626f6b2b446",
+      "gzip_sha256": "8d002d8d379de9b39dd02fa40778030708de0a67761331626d648c4ff29a41a4"
+    },
+    {
+      "file": "fetch.log.gz",
+      "raw_bytes": 115,
+      "raw_sha256": "ef1c1d06e7be182ccb915fd2a00b2af5912c8407c1b6d08f2a91bd83c6db5d6d",
+      "gzip_sha256": "b821e6503e2b0c964d925ec24ebde63ff4d0e22561429a932047f6334f42e667"
+    },
+    {
+      "file": "setup.log.gz",
+      "raw_bytes": 38691,
+      "raw_sha256": "60095677bdffd90fd6c29bf0ef7848725eda1c7f13cd40ca67cab906265851d9",
+      "gzip_sha256": "5378c4f8ea9bacd276d5b9708ff31beecc3cb41073f9a9433f9bdc117b536ce6"
+    },
+    {
+      "file": "native-api-object-compile.log.gz",
+      "raw_bytes": 0,
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "gzip_sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64"
+    },
+    {
+      "file": "build-stock.log.gz",
+      "raw_bytes": 56985,
+      "raw_sha256": "2b4f886a5e0e98ff53081bb471dd431c4bca347d5e68f7808ac1f89f009db4f0",
+      "gzip_sha256": "7d2887a1d17c44e5dec9c9f39ca3b5322a94df116babf1bb312344b11998e69b"
+    },
+    {
+      "file": "reconfigure-pcre2.log.gz",
+      "raw_bytes": 0,
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "gzip_sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64"
+    },
+    {
+      "file": "build-stock-system-pcre2.log.gz",
+      "raw_bytes": 66046,
+      "raw_sha256": "e1a2d79461cda32acbf7bb5943f3d35eddff59a116f27f42280f8fba5f71dc92",
+      "gzip_sha256": "c7b446d129af4ecf11acabfd9df8f69ba8947c3a0d47949cede79c3fd5c8e4d0"
+    },
+    {
+      "file": "build-stock-j2.log.gz",
+      "raw_bytes": 9028,
+      "raw_sha256": "3f260182e58e2db8f4d5f4cbd1db328d61a3c1fbf3da0fe34c2bfe99cb4d2e05",
+      "gzip_sha256": "d289766ff9eebcffd09ea919bab462cf62d8481cfbfdf88876ba5ecb3fe06e2a"
+    },
+    {
+      "file": "reconfigure-plain.log.gz",
+      "raw_bytes": 0,
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "gzip_sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64"
+    },
+    {
+      "file": "build-stock-plain.log.gz",
+      "raw_bytes": 91573,
+      "raw_sha256": "db5a9e25063d1d737b28279c4937881b2736b3f9b09fea9848af8aa460366fc7",
+      "gzip_sha256": "2a2b2e8a081aafc862417f75061b2b2733c6691de3fa540342336a8edf0a86d0"
+    },
+    {
+      "file": "build-stock-nice15.log.gz",
+      "raw_bytes": 21873,
+      "raw_sha256": "07d7842356fff213bab39ac644546eb7e2e9e299e208d993963f5947ba96c5dc",
+      "gzip_sha256": "fed9a48bde2c51f22d3d4d1a4ed733683214573bb678e77a95aee38bee919508"
+    },
+    {
+      "file": "target-dryrun.log.gz",
+      "raw_bytes": 87994,
+      "raw_sha256": "c936158bee0ad1bbc2907eb6f8c739eba2462333be8fbed65e979edb769f3869",
+      "gzip_sha256": "9dcaa79b3397c7054a611c6ac412e98131374794b38ea0cca71767cb717548be"
+    },
+    {
+      "file": "api-target-dryrun.log.gz",
+      "raw_bytes": 70145,
+      "raw_sha256": "b9de53a80a1241fbedde9c6ed6d6c3fffd7daca5404f01117b68dffd732be34d",
+      "gzip_sha256": "41e8b96d04645a56ad4156f35b28909c82c5480d16c8c7b87f67824ad322a8a2"
+    },
+    {
+      "file": "build-api-only.log.gz",
+      "raw_bytes": 21991,
+      "raw_sha256": "922bfabc1b94fdcd6d1f1bdc415dabaf3ca86e0adfd785d41a1a24e166f7590a",
+      "gzip_sha256": "d48f9dd4140ee44cce000b0d7cc8b84fd5d85861615352b99a6828fae30c7119"
+    }
+  ],
+  "cache_root": "/tmp/pt-rizin-native-source",
+  "venv": "/tmp/pt-rizin-buildenv"
+}

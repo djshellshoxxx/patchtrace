@@ -1,0 +1,74 @@
+[
+  {
+    "file": "librz_arch.so.0.9.1",
+    "sha256": "89eab2ebca46ada7ea31e98e88907e97d8791dd184aaafc2ec99209401b2f158"
+  },
+  {
+    "file": "librz_bin.so.0.9.1",
+    "sha256": "8db5bc7bfcd1adb29654a1208ae6dec1e89f02f58e2f5f54360e29736a0848b5"
+  },
+  {
+    "file": "librz_config.so.0.9.1",
+    "sha256": "a8bfe2fd3d2276381446a0a3c2e63cd20cb3dcdccabb2b4e87d537366b1cd3de"
+  },
+  {
+    "file": "librz_cons.so.0.9.1",
+    "sha256": "d1e7e24a366a6057b88712e9ec3727189f9ae9a8e396fa8f1e9724dd25bba9b7"
+  },
+  {
+    "file": "librz_crypto.so.0.9.1",
+    "sha256": "065b03c1ddb06707641c450940d46b063f43b5dba1d4462a3cc696d94181147f"
+  },
+  {
+    "file": "librz_demangler.so.0.9.1",
+    "sha256": "0d041491e87df84f2bb2e47f3af7f03a78a8fcd8b0c42ef9d23566de949f79ad"
+  },
+  {
+    "file": "librz_diff.so.0.9.1",
+    "sha256": "4cb78cb46b0d91d3d2ea40f92aa5109c4be9d3c7c0fef8843ea206f5168ed71d"
+  },
+  {
+    "file": "librz_flag.so.0.9.1",
+    "sha256": "23bd1a46310928932c09f3e10322c5e123f3d55660806eccb40bcd1a4d2639b0"
+  },
+  {
+    "file": "librz_hash.so.0.9.1",
+    "sha256": "0615f78b28c0d308ba6966bc9ff412ea9f368a1c1e0ab41d367135090b86cf26"
+  },
+  {
+    "file": "librz_il.so.0.9.1",
+    "sha256": "18df7f0fd632fe25b4141bfdfc595162085d5028f3dc3ebfb199d2586a389bf5"
+  },
+  {
+    "file": "librz_io.so.0.9.1",
+    "sha256": "3c752137eb164d6f6841a7e06360fe41bdce08b00c1d044cd1f0d9b662b53665"
+  },
+  {
+    "file": "librz_magic.so.0.9.1",
+    "sha256": "96ad6f87dfb7fdc4a96d2981dd0fe791e617c2be4f7f23d1c158dff03eb0bbf1"
+  },
+  {
+    "file": "librz_reg.so.0.9.1",
+    "sha256": "c5aa6e77b2b7ec043092525a814918d6aeea9768e73c65b52b6a4985d1b485ab"
+  },
+  {
+    "file": "librz_search.so.0.9.1",
+    "sha256": "a966f308a92fe8aaee1e004be6bac7fe72cccad05d7e585c33d24a4bac9f2e4b"
+  },
+  {
+    "file": "librz_socket.so.0.9.1",
+    "sha256": "f05028e10363807f4806261cb6a2a51094f242f3845bdfaf5177519150e1e5cc"
+  },
+  {
+    "file": "librz_syscall.so.0.9.1",
+    "sha256": "7e350be1f8c7d3a46dbeaf7b7cd9c4a3f1a5d3da4d1f11cc83c8ef29263d61f4"
+  },
+  {
+    "file": "librz_type.so.0.9.1",
+    "sha256": "8e08b801187dc0d959c2c3b0335783244ce2e11bf76c42b43242916626fa8010"
+  },
+  {
+    "file": "librz_util.so.0.9.1",
+    "sha256": "5f9c754870221e004a40b7ecb609dbdc10fc870ee3f84a671c8a60157f25651d"
+  }
+]
