@@ -145,7 +145,7 @@ PASSES: tuple[PassSpec, ...] = (
 # the alignment, EH-EQ and the structural proofs.
 CHANNEL_VERSIONS: tuple[tuple[str, int], ...] = (
     ('C0', 1), ('C1', 1), ('C2', 1), ('C3', 1), ('C4', 1), ('C4n', 1), ('C5', 1), ('C5t', 1), ('C6', 1), ('C8', 1),
-    ('align', 1), ('canon', 1), ('datamap', 1), ('eh-eq', 1))
+    ('align', 1), ('canon', 2), ('datamap', 1), ('eh-eq', 1))
 PROOF_VERSIONS: tuple[tuple[str, int], ...] = (
     ('COS-ADDR/1', 1), ('COS-LAYOUT/1', 1), ('COS-PSEUDO/1', 1), ('UNCH/1', 1))
 RZDIFF_META: tuple[str, Tier, EvidenceClass] = ('levenshtein-bytes', 'W', 'E-BODY')
