@@ -1,0 +1,320 @@
+{
+  "schema": "rq-case-manifest/1",
+  "cases": [
+    {
+      "id": "win-cve-2022-34718-tcpip",
+      "layer": "L3",
+      "stratum": "tcpip-bounds-check",
+      "project": "windows-tcpip",
+      "source_url": "https://www.ibm.com/think/x-force/dissecting-exploiting-tcp-ip-rce-vulnerability-evilesp",
+      "licence": "reference-only",
+      "older": {
+        "ref": "tcpip.sys, 2022-Aug (pre-patch)"
+      },
+      "newer": {
+        "ref": "tcpip.sys, 2022-Sep Patch Tuesday"
+      },
+      "expected": {
+        "function": "Ipv6pReassembleDatagram",
+        "cve": "CVE-2022-34718"
+      },
+      "facts": "unverified",
+      "holdout": false,
+      "notes": "IBM X-Force page names two patched functions: Ipv6pReassembleDatagram (new bounds check on nextheader_offset vs header buffer length) and IppReceiveEsp (new check on ESP next-header value). Month Sep 2022 per page; KB not stated. Page also spells the first as Ipv6ReassembleDatagram."
+    },
+    {
+      "id": "win-cve-2022-21907-http",
+      "layer": "L3",
+      "stratum": "http-state-fix",
+      "project": "windows-http",
+      "source_url": "https://piffd0s.medium.com/patch-diffing-cve-2022-21907-b739f4108eee",
+      "licence": "reference-only",
+      "older": {
+        "ref": "http.sys, 2021-Dec"
+      },
+      "newer": {
+        "ref": "http.sys, 2022-Jan Patch Tuesday"
+      },
+      "expected": {
+        "function": "UlFastSendHttpResponse",
+        "cve": "CVE-2022-21907"
+      },
+      "facts": "unverified",
+      "holdout": false,
+      "notes": "Author lists changed functions from the diff: UlFastSendHttpResponse (~10% changed), UlpAllocateFastTracker, UlpFastSendCompleteWorker, UlpFreeFastTracker, UlAllocateFastTrackerToLookaside. Author says fix type is a theory (memset zeroing in UlpAllocateFastTracker, clear in UlpFreeFastTracker) and may be wrong. Exact build and KB not stated. Several functions changed, so scoring should accept any listed."
+    },
+    {
+      "id": "win-cve-2023-21768-afd",
+      "layer": "L3",
+      "stratum": "afd-missing-probe",
+      "project": "windows-afd",
+      "source_url": "https://www.ibm.com/think/x-force/patch-tuesday-exploit-wednesday-pwning-windows-ancillary-function-driver-winsock",
+      "licence": "reference-only",
+      "older": {
+        "ref": "afd.sys 10.0.22621.608, 2022-Dec"
+      },
+      "newer": {
+        "ref": "afd.sys 10.0.22621.1105, 2023-Jan Patch Tuesday"
+      },
+      "expected": {
+        "function": "AfdNotifyRemoveIoCompletion",
+        "cve": "CVE-2023-21768"
+      },
+      "facts": "unverified",
+      "holdout": true,
+      "notes": "IBM page: the only function that changed; adds PreviousMode check and ProbeForWrite on user pointer. Corroborated by clearbluejar ghidriff guide (names the same function, compares 22621.1028 vs 22621.1415, so build numbers differ between sources) and the starlabs aggregator diff (adds ProbeForWrite; its metadata has inconsistent build labels). KB not stated by any."
+    },
+    {
+      "id": "win-cve-2025-60719-afd",
+      "layer": "L3",
+      "stratum": "afd-race-uaf",
+      "project": "windows-afd",
+      "source_url": "https://www.akamai.com/blog/security-research/2025/dec/inside-fix-ai-root-cause-analysis-cve-2025-60719",
+      "licence": "reference-only",
+      "older": {
+        "ref": "afd.sys 10.0.26100.6899, KB5066835"
+      },
+      "newer": {
+        "ref": "afd.sys 10.0.26100.7171, KB5068861"
+      },
+      "expected": {
+        "function": "AfdGetInformation",
+        "cve": "CVE-2025-60719"
+      },
+      "facts": "unverified",
+      "holdout": false,
+      "notes": "Akamai page: five functions modified, names four (AfdSocketTransfer, AfdGetInformation, AfdBind, AfdConnect); AfdGetInformation is the main one analysed. Fix adds AfdPreventUnbind/AfdReallowUnbind synchronisation. Page dated Dec 2025 and calls it a Patch Tuesday flaw but states no month. Second afd.sys case; keep both only if binary cap is acceptable."
+    },
+    {
+      "id": "win-cve-2023-28252-clfs",
+      "layer": "L3",
+      "stratum": "clfs-bounds-check",
+      "project": "windows-clfs",
+      "source_url": "https://onlyfm252.starlabs.sg/data/patch_diffs/rca-cve-2023-28252.md",
+      "licence": "reference-only",
+      "older": {
+        "ref": "clfs.sys, 2023-Mar (pre-patch)"
+      },
+      "newer": {
+        "ref": "clfs.sys, 2023-Apr Patch Tuesday KB5025239"
+      },
+      "expected": {
+        "function": "CClfsBaseFile::GetControlRecord",
+        "cve": "CVE-2023-28252"
+      },
+      "facts": "unverified",
+      "holdout": false,
+      "notes": "Aggregator page (authorship unclear, timestamps suggest generated content) lists GetControlRecord (added range checks on iExtendBlock/iFlushBlock) and CClfsBaseFilePersisted::WriteMetadataBlock (checks ClfsEncodeBlock return) among 13 patched functions, plus hardening elsewhere. KB5025239 given for Windows 11 22H2. Not independently corroborated by a human-authored page that I read; many functions changed."
+    },
+    {
+      "id": "win-cve-2022-24521-clfs",
+      "layer": "L3",
+      "stratum": "clfs-validation",
+      "project": "windows-clfs",
+      "source_url": "https://googleprojectzero.github.io/0days-in-the-wild/0day-RCAs/2022/CVE-2022-24521.html",
+      "licence": "reference-only",
+      "older": {
+        "ref": "clfs.sys, 2022-Mar (pre-patch)"
+      },
+      "newer": {
+        "ref": "clfs.sys, 2022-Apr Patch Tuesday"
+      },
+      "expected": {
+        "function": "LoadContainerQ",
+        "cve": "CVE-2022-24521"
+      },
+      "facts": "unverified",
+      "holdout": true,
+      "notes": "Page says a new logical block was added in LoadContainerQ calling new CClfsBaseFile::ValidateRgOffsets, feature-flag gated. Page names one more changed function type only as 'two new functions' and does not list others. Month April 2022 per page; KB and builds not stated."
+    },
+    {
+      "id": "win-cve-2020-17096-ntfs",
+      "layer": "L3",
+      "stratum": "ntfs-irpcontext",
+      "project": "windows-ntfs",
+      "source_url": "https://www.jamf.com/blog/ntfs-remote-code-execution-cve-2020-17096-analysis/",
+      "licence": "reference-only",
+      "older": {
+        "ref": "ntfs.sys, 2020-Nov (pre-patch)"
+      },
+      "newer": {
+        "ref": "ntfs.sys, 2020-Dec Patch Tuesday"
+      },
+      "expected": {
+        "function": "NtfsOffloadRead",
+        "cve": "CVE-2020-17096"
+      },
+      "facts": "unverified",
+      "holdout": false,
+      "notes": "Jamf page: change found by diffing in NtfsOffloadRead: NtfsExtendedCompleteRequestInternal now receives IrpContext instead of NULL, and an IrpContext field-clearing if-block removed. Page gives the date as 12 Dec 2020 although Patch Tuesday that month falls earlier in the week, so the day looks off; month is unaffected. KB not stated."
+    },
+    {
+      "id": "win-cve-2022-32230-srv2",
+      "layer": "L3",
+      "stratum": "smb-null-check",
+      "project": "windows-smb-server",
+      "source_url": "https://www.rapid7.com/blog/post/2022/06/14/cve-2022-32230-windows-smb-denial-of-service-vulnerability-fixed/",
+      "licence": "reference-only",
+      "older": {
+        "ref": "srv2.sys, 2022-Mar (pre-patch)"
+      },
+      "newer": {
+        "ref": "srv2.sys, 2022-Apr (silent fix)"
+      },
+      "expected": {
+        "function": "Smb2ValidateVolumeObjectsMatch",
+        "cve": "CVE-2022-32230"
+      },
+      "facts": "unverified",
+      "holdout": false,
+      "notes": "Rapid7 page: added missing null check before reading a PDEVICE_OBJECT; page says Microsoft fixed it silently in April 2022 alongside CVE-2022-24500 and the CVE came later. File name srv2.sys is not given by the page, only the srv2 component. KB not stated."
+    },
+    {
+      "id": "win-cve-2020-0796-srv2",
+      "layer": "L3",
+      "stratum": "smb-integer-overflow",
+      "project": "windows-smb-server",
+      "source_url": "https://trustwave.com/en-us/resources/blogs/spiderlabs-blog/windows-debugging-and-exploiting-part-5-smbghost-cve-2020-0796-technical-review",
+      "licence": "reference-only",
+      "older": {
+        "ref": "srv2.sys, 2020-Feb (pre-patch)"
+      },
+      "newer": {
+        "ref": "srv2.sys, 2020-Mar out-of-band"
+      },
+      "expected": {
+        "function": "Srv2DecompressData",
+        "cve": "CVE-2020-0796"
+      },
+      "facts": "unverified",
+      "holdout": true,
+      "notes": "Page names srv2.sys and Srv2DecompressData as the vulnerable function (unchecked add on attacker-controlled values) and gives March 2020 (disclosed 13 Mar). It does not describe the patch itself or the KB, so that the function is the changed one is the page's framing, not a shown diff. The fix was out of band rather than a normal Patch Tuesday."
+    },
+    {
+      "id": "win-cve-2025-47987-tspkg",
+      "layer": "L3",
+      "stratum": "rdp-integer-overflow",
+      "project": "windows-credssp-tspkg",
+      "source_url": "https://kryptoenix.github.io/blog/demystifying-CVE-2025-47987",
+      "licence": "reference-only",
+      "older": {
+        "ref": "tspkg.dll, 2025-Jun (pre-patch)"
+      },
+      "newer": {
+        "ref": "tspkg.dll, 2025-Jul Patch Tuesday"
+      },
+      "expected": {
+        "function": "TSCreateKerbCertLogonBuffer",
+        "cve": "CVE-2025-47987"
+      },
+      "facts": "unverified",
+      "holdout": false,
+      "notes": "Page: patched version uses RtlULongAdd for header length plus certificate length and checks the status before allocation (integer overflow). KB not stated. 0patch page on the same CVE agrees on fix type (safe addition replacing unchecked add, July 2025) but names no binary or function."
+    },
+    {
+      "id": "win-cve-2024-30051-dwmcore",
+      "layer": "L3",
+      "stratum": "dwm-size-mismatch",
+      "project": "windows-dwmcore",
+      "source_url": "https://onlyfm252.starlabs.sg/data/patch_diffs/rca-cve-2024-30051.md",
+      "licence": "reference-only",
+      "older": {
+        "ref": "dwmcore.dll, 2024-Apr (pre-patch)"
+      },
+      "newer": {
+        "ref": "dwmcore.dll 10.0.22621.3593, 2024-May KB5037771"
+      },
+      "expected": {
+        "function": "CCommandBuffer::Initialize",
+        "cve": "CVE-2024-30051"
+      },
+      "facts": "unverified",
+      "holdout": false,
+      "notes": "Aggregator page: copy now uses the same rounded size as the allocation, plus size validation returning invalid-argument for zero or oversized values. Page says its patch details are its own reconstruction from diffing. Single source, authorship unclear."
+    },
+    {
+      "id": "win-cve-2023-36802-mskssrv",
+      "layer": "L3",
+      "stratum": "mskssrv-type-confusion",
+      "project": "windows-mskssrv",
+      "source_url": "https://onlyfm252.starlabs.sg/data/patch_diffs/mskssrv_sys-kb5030219.md",
+      "licence": "reference-only",
+      "older": {
+        "ref": "mskssrv.sys, 2023-Aug (pre-patch)"
+      },
+      "newer": {
+        "ref": "mskssrv.sys, 2023-Sep KB5030219"
+      },
+      "expected": {
+        "function": "FSRendezvousServer::FindObject",
+        "cve": "CVE-2023-36802"
+      },
+      "facts": "unverified",
+      "holdout": true,
+      "notes": "Aggregator page: FindObject renamed FindStreamObject and returns true only when object type field equals 2; FSRendezvousServer::Close changed to do the context search inline. September 2023 is inferred by the page from a filename, not stated. Because of the rename, scoring should accept FindStreamObject."
+    },
+    {
+      "id": "win-cve-2023-28244-kdcsvc",
+      "layer": "L3",
+      "stratum": "kerberos-algorithm-check",
+      "project": "windows-kerberos-kdc",
+      "source_url": "https://0patch.com/blog/we-patched-cve-2023-28244-before-anyone",
+      "licence": "reference-only",
+      "older": {
+        "ref": "kdcsvc.dll, pre-patch"
+      },
+      "newer": {
+        "ref": "kdcsvc.dll, Microsoft fix (month not stated)"
+      },
+      "expected": {
+        "function": "KerbGetEncTypeBitmask",
+        "cve": "CVE-2023-28244"
+      },
+      "facts": "unverified",
+      "holdout": false,
+      "notes": "0patch says Microsoft's fix targeted the same function as its own micropatch and removes validation for RC4-MD4 and RC4_HMAC_OLD, returning 0 when these are passed. Vendor-authored (0patch). Month and KB not stated; file name kdcsvc.dll comes from the page."
+    },
+    {
+      "id": "win-cve-2019-1436-win32kfull",
+      "layer": "L3",
+      "stratum": "win32k-info-leak",
+      "project": "windows-win32k",
+      "source_url": "https://versprite.com/vs-labs/silently-patched-information-leak/",
+      "licence": "reference-only",
+      "older": {
+        "ref": "win32kfull.sys 10.0.18362.449"
+      },
+      "newer": {
+        "ref": "win32kfull.sys 10.0.18362.476, 2019-Nov"
+      },
+      "expected": {
+        "function": "NtGdiEnsureDpiDepDefaultGuiFontForPlateau",
+        "cve": "CVE-2019-1436"
+      },
+      "facts": "unverified",
+      "holdout": false,
+      "notes": "VerSprite page: changed so it always returns 0x0, stopping a kernel pointer leak. Builds 18362.449 to 18362.476, month Nov 2019; no KB. Behavioural fix, not a bounds check."
+    },
+    {
+      "id": "win-cve-2024-30088-ntoskrnl",
+      "layer": "L3",
+      "stratum": "ntoskrnl-toctou-lock",
+      "project": "windows-ntoskrnl",
+      "source_url": "https://splintersfury.github.io/KernelSight/case-studies/CVE-2024-30088",
+      "licence": "reference-only",
+      "older": {
+        "ref": "ntoskrnl.exe, 2024-May (pre-patch)"
+      },
+      "newer": {
+        "ref": "ntoskrnl.exe 10.0.22621.3733 KB5039212, 2024-Jun"
+      },
+      "expected": {
+        "function": "AuthzBasepCopyoutInternalSecurityAttributes",
+        "cve": "CVE-2024-30088"
+      },
+      "facts": "unverified",
+      "holdout": true,
+      "notes": "KernelSight page: lock acquisition added around check-and-copy; names KB5039212 and build 10.0.22621.3733 but no month. gengstah page names the same function and June 2024 but says it does not state which function Microsoft changed and gives no fix type. So changed-function evidence rests on one page that looks tool-generated."
+    }
+  ]
+}
