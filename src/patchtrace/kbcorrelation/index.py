@@ -261,10 +261,11 @@ class ReverseIndex:
         sources = {d.source.kind for d in in_scope}
         kind = 'csaf' if sources == {'csaf'} else 'cvrf-month'
         marks = [d.source.current_release_date for d in in_scope if d.source.current_release_date]
+        newest = max(marks, key=_instant, default=None)          # instants, not text (audit KBA-02)
         stamps = [d.source.retrieved_at for d in in_scope]
         stale = corpus and (scope.corpus_digest != self.corpus_digest() or _older_than(max(stamps, default=None), now))
         coverage = build_coverage(source_kind=kind, scope=scope, requested=requested, inspected=inspected,
-                                  watermark=max(marks, default=None), retrieved_at=max(stamps, default=now),
+                                  watermark=newest, retrieved_at=max(stamps, default=now),
                                   stale=bool(stale and requested and requested == inspected))
         return coverage, picked
 
@@ -405,7 +406,7 @@ class ReverseIndex:
                 kbs=tuple(sorted({e.kb for e in edges}, key=kb_sort_key)),
                 relations=tuple(sorted({e.relation for e in edges})),
                 status_values=tuple(sorted({s.value for s in statuses}))))
-        return tuple(sorted(out, key=lambda t: (t.current_release_date or '', t.release_id or '', t.doc_id)))
+        return tuple(sorted(out, key=lambda t: (_instant(t.current_release_date), t.release_id or '', t.doc_id)))
 
     def status_rows(self, cve: str) -> tuple[StatusRow, ...]:
         active = self.active_ids()

@@ -12,6 +12,7 @@ from kbc_k1_support import IntelligenceAdvisoryPort, valid_csaf
 from kbc_k5_support import record, rows_of
 
 from patchtrace.kbcorrelation import resolver as rs
+from patchtrace.kbcorrelation.index import ReverseIndex
 from patchtrace.kbcorrelation.products import scope_for
 from patchtrace.kbcorrelation.sources.importer import import_bytes
 
@@ -57,5 +58,25 @@ def test_kba01_windows_10_product_resolves_against_real_winbindex_version_keys()
     res = rs.resolve(rows, kb='KB5099002', scope=scope, file_name='exampledrv.sys')
     assert res.note != 'Not in the file index (Windows 10/11 client x64 only).'
     assert res.blockers != ('NO_NEWER',)
+
+
+# --- KBA-02: timestamps ordered as text ------------------------------------------------------------------------
+
+def test_kba02_timeline_is_oldest_first_by_instant():
+    index = ReverseIndex()
+    older = import_bytes(cvrf('2099-02-13T10:00:00+05:00', 'KB1111'), now=NOW)     # 05:00Z
+    newer = import_bytes(cvrf('2099-02-13T08:00:00Z', 'KB2222'), now=NOW)          # 08:00Z
+    index.add(older)
+    index.add(newer)
+    scope_id = index.scopes()[0].scope_id
+    kbs = [entry.kbs for entry in index.timeline('CVE-2099-0001', scope_id)]
+    assert kbs == [('KB1111',), ('KB2222',)]
+
+
+def test_kba02_coverage_watermark_is_the_newest_instant():
+    index = ReverseIndex()
+    index.add(import_bytes(cvrf('2099-02-13T10:00:00+05:00', 'KB1111'), now=NOW))
+    index.add(import_bytes(cvrf('2099-02-13T08:00:00Z', 'KB2222'), now=NOW))
+    assert index.coverage(now=NOW).watermark_current_release_date == '2099-02-13T08:00:00Z'
 
 
