@@ -23,6 +23,16 @@ _CHANGED_ORDER = {'yes': 0, 'unknown': 1, 'no': 2}
 _AVAILABILITY_ORDER = {'local': 0, 'direct': 1, 'candidates': 2, 'delta-only': 3, 'unavailable': 4}
 NOT_IN_INDEX = 'Not in the file index (Windows 10/11 client x64 only).'
 NO_KEY = 'No file-index key is known for this product.'
+_CLIENT_10_PREFIX = '10-'
+
+
+def index_keys(winbindex_key: str) -> tuple[str, ...]:
+    """The version keys a scope's ``winbindex_key`` may carry in a Winbindex record. Scope identity writes Windows 10
+    as ``10-22H2`` to keep it apart from ``11-22H2``, but Winbindex itself keys Windows 10 as ``22H2`` (``1507`` to
+    ``22H2``) and only Windows 11 with the ``11-`` prefix, so both spellings are tried (audit KBA-01)."""
+    if winbindex_key.startswith(_CLIENT_10_PREFIX):
+        return winbindex_key, winbindex_key[len(_CLIENT_10_PREFIX):]
+    return (winbindex_key,)
 
 
 @dataclass(frozen=True)
@@ -132,7 +142,8 @@ def resolve(rows: Sequence[IndexRow], *, kb: str, scope: ProductScope, file_name
                       skipped_rows)
     if scope.winbindex_key is None:
         return _empty(kb, file_name, scope, None, ('NO_NEWER',), NO_KEY, skipped_rows)
-    line = timeline((r for r in rows if r.build.file_name == file_name), scope.winbindex_key)
+    named = [r for r in rows if r.build.file_name == file_name]
+    line = tuple(sorted((r for key in index_keys(scope.winbindex_key) for r in timeline(named, key)), key=order_key))
     change: ChangeInfo = change_in_kb(line, kb)
     if not change.target_rows:
         return _empty(kb, file_name, scope, scope.winbindex_key, ('NO_NEWER',), NOT_IN_INDEX, skipped_rows)
