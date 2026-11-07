@@ -47,7 +47,7 @@ Cases from one project or release are not independent; count distinct projects. 
 | AV-1 | Case manifest schema + validator (`cases.py`), frozen-before-run check | done (tested) |
 | AV-2 | Candidate list: projects, CVE ids, fix commits, release pairs (all `unverified` first) | next |
 | AV-3 | Actions workflow: fetch/build pairs on Windows runner, hash, emit receipts | after AV-2 |
-| AV-4 | Scorer wiring: engine output -> `score_matches`-style top-k rank scoring | after AV-3 |
+| AV-4 | Top-k rank scorer (`scoring.py`, `score` command) | done (tested; engine output adapter still to write) |
 | AV-5 | L1 automated join run over MSRC months (needs live probe L1 to pass first) | blocked on live probe |
 | AV-6 | S3/S4 Windows pairs, 15 then 29 | after AV-5 |
 | AV-7 | Report: per-layer bound table with counts, stratified, unverified list | last |

@@ -27,6 +27,7 @@ from . import fixture_pairs as FP
 from . import perf_harness as P
 from . import receipt as R
 from . import sample_size as SS
+from . import scoring as SC
 from .stage_parser import parse_log_text
 
 _STATUS_EXIT = {"PASS": 0, "FAIL": 1, "CANCELLED": 1, "BLOCKED": 2}
@@ -186,6 +187,18 @@ def cmd_cases(a: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_score(a: argparse.Namespace) -> int:
+    try:
+        m = json.loads(Path(a.manifest).read_text(encoding="utf-8"))
+        CS.validate_manifest(m)
+        res = SC.score_run(m, json.loads(Path(a.results).read_text(encoding="utf-8")), a.k)
+    except (OSError, ValueError, AttributeError, TypeError) as e:
+        print(f"error: {e}", file=sys.stderr)
+        return 2
+    _print(res)
+    return 0 if res["scored"] and not res["misses"] and not res["false_positives"] else 1
+
+
 def build_parser() -> argparse.ArgumentParser:
     ap = argparse.ArgumentParser(prog="python -m tools.research_qualification", description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -223,6 +236,10 @@ def build_parser() -> argparse.ArgumentParser:
     c = sub.add_parser("cases", help="validate an accuracy case manifest and optionally check its freeze hash")
     c.add_argument("manifest")
     c.add_argument("--frozen-sha")
+    sc = sub.add_parser("score", help="rank-score engine candidates ({case_id: [function,...]|null}) against a manifest")
+    sc.add_argument("manifest")
+    sc.add_argument("results")
+    sc.add_argument("--k", type=int, default=5)
     r = sub.add_parser("receipt", help="validate or compare receipts")
     r.add_argument("action", choices=["validate", "compare"])
     r.add_argument("files", nargs="+")
@@ -242,6 +259,8 @@ def main(argv: list[str] | None = None) -> int:
         return cmd_samplesize(a)
     if a.cmd == "callmodel":
         return cmd_callmodel(a)
+    if a.cmd == "score":
+        return cmd_score(a)
     if a.cmd == "cases":
         return cmd_cases(a)
     if a.cmd == "fixtures":
