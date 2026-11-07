@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import posixpath
 import re
+from collections.abc import Sequence
 from dataclasses import dataclass, field
 from pathlib import Path
 
@@ -61,13 +62,34 @@ PDB_SOURCE_ROOT = '/ka-src'          # lld-link /pdbsourcepath: relative CodeVie
 _PDB_ROOTS = ('/ka-src/', 'c:/ka-src/')
 
 
-def normalize_path(raw: str | None) -> str | None:
+def _fold(path: str) -> str:
+    """Forward slashes, no Win32 verbatim or device prefix: '\\\\?\\C:\\x' -> 'C:/x', '\\\\?\\UNC\\srv\\s' -> '//srv/s'."""
+    text = path.replace('\\', '/')
+    low = text.lower()
+    if low.startswith('//?/unc/'):
+        return '//' + text[8:]
+    if low.startswith(('//?/', '//./')):
+        return text[4:]
+    return text
+
+
+def _root_prefix(root: str) -> str | None:
+    """Comparison prefix of a build root, or None for a root so broad it would claim system files ('/', 'C:/')."""
+    stem = _fold(root).rstrip('/').lower()
+    if not stem.strip('/') or re.fullmatch(r'[a-z]:', stem):
+        return None
+    return stem + '/'
+
+
+def normalize_path(raw: str | None, roots: Sequence[str] = ()) -> str | None:
     """'./a/b.c' -> 'a/b.c'; '/ka-src/a/b.c' -> 'a/b.c'; other absolute, drive-qualified or escaping paths -> None
-    (runtime/system)."""
+    (runtime/system). `roots` are build directories the compiler recorded unmapped (the `path` nuisance keeps the
+    scratch source directory in the debug info): a file below one of them is project-relative like any other."""
     if not raw:
         return None
-    text = raw.replace('\\', '/')
-    for root in _PDB_ROOTS:
+    text = _fold(raw)
+    prefixes = (_root_prefix(r) for r in roots if r)
+    for root in (*_PDB_ROOTS, *(p for p in prefixes if p)):
         if text.lower().startswith(root):
             text = text[len(root):]
             break
@@ -88,7 +110,7 @@ def _unquote(value: str) -> str:
     return value
 
 
-def parse_dwarf(text: str, image_base: int) -> Inventory:
+def parse_dwarf(text: str, image_base: int, roots: Sequence[str] = ()) -> Inventory:
     dies: dict[int, dict] = {}
     order: list[dict] = []
     current: dict | None = None
@@ -161,8 +183,8 @@ def parse_dwarf(text: str, image_base: int) -> Inventory:
                 inv.skipped += 1
                 continue
             ranges = [(lo, hi)] if hi > lo else []
-        file_rel = normalize_path(raw_file)
-        unit = normalize_path(_unquote(die['cu']['attrs'].get('DW_AT_name', ''))) if die['cu'] else None
+        file_rel = normalize_path(raw_file, roots)
+        unit = normalize_path(_unquote(die['cu']['attrs'].get('DW_AT_name', '')), roots) if die['cu'] else None
         if not ranges:
             if 'DW_AT_declaration' not in a and file_rel:
                 inv.inline_only.add((file_rel, name))
@@ -182,7 +204,7 @@ def parse_dwarf(text: str, image_base: int) -> Inventory:
     return inv
 
 
-def parse_pdb(symbols_text: str, lines_text: str, image: PEImage) -> Inventory:
+def parse_pdb(symbols_text: str, lines_text: str, image: PEImage, roots: Sequence[str] = ()) -> Inventory:
     inv = Inventory(source='pdb')
     files: dict[tuple[int, int], tuple[str, int | None]] = {}   # (seg, off) of a line block -> (file, first line)
     current_file: str | None = None
@@ -225,7 +247,7 @@ def parse_pdb(symbols_text: str, lines_text: str, image: PEImage) -> Inventory:
                 continue
             rva = image.sections[seg - 1].virtual_address + off
             raw_file, line_no = files.get((seg, off), (None, None))
-            file_rel = normalize_path(raw_file)
+            file_rel = normalize_path(raw_file, roots)
             unit = normalize_path(Path(module).name if module else None)
             inv.functions.append(ImageFunction(
                 name=name, file=file_rel, raw_file=raw_file, line=line_no, rva=rva, size=size, variant=None,
@@ -259,18 +281,20 @@ def apply_clone_names(inv: Inventory, names: dict[int, list[str]]) -> Inventory:
     return inv
 
 
-def inventory(image: PEImage, tools: Toolchain, *, pdb: Path | None = None, timeout: float = 600) -> Inventory:
-    """Function inventory of a debug image: PDB when given, else DWARF; COFF names refine variants."""
+def inventory(image: PEImage, tools: Toolchain, *, pdb: Path | None = None, timeout: float = 600,
+              roots: Sequence[str] = ()) -> Inventory:
+    """Function inventory of a debug image: PDB when given, else DWARF; COFF names refine variants. `roots`: build
+    source directories to strip from recorded paths (see `normalize_path`)."""
     if pdb is not None:
         exe = tools.path('llvm-pdbutil')
         syms = run_tool([exe, 'dump', '--symbols', str(pdb)], timeout=timeout, check=True).log_tail
         lines = run_tool([exe, 'dump', '-l', str(pdb)], timeout=timeout, check=True).log_tail
-        inv = parse_pdb(syms, lines, image)
+        inv = parse_pdb(syms, lines, image, roots)
     else:
         exe = tools.path('llvm-dwarfdump')
         text = run_tool([exe, '--debug-info', '--recurse-depth=1', str(image.path)], timeout=timeout,
                         check=True).log_tail
-        inv = parse_dwarf(text, image.image_base)
+        inv = parse_dwarf(text, image.image_base, roots)
     if tools.get('llvm-nm').ok:
         nm = run_tool([tools.path('llvm-nm'), '--numeric-sort', '--defined-only', str(image.path)], timeout=timeout)
         if nm.returncode == 0:
