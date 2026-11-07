@@ -11,6 +11,8 @@ import pytest
 
 from patchtrace.acquisition import quarantine
 from patchtrace.acquisition import transport as tr
+from patchtrace.hostile_text import is_hostile
+from patchtrace.ingestion import display_text
 
 
 # TB-01 sweep_staging followed a symlink named like a staging directory and chmod-ed its target
@@ -38,3 +40,10 @@ def test_sweep_staging_ignores_symlinked_staging_names(tmp_path):
 @pytest.mark.parametrize('value', ['Fri, 31 Dec 9999 23:59:59 -0100', 'Fri, 31 Dec 9999 23:59:59 -2359'])
 def test_last_modified_out_of_range_is_ignored_not_raised(value):
     assert tr._date(value) is None
+
+
+# TB-03 U+2028 / U+2029 split a one-line GUI label into two lines but were not treated as hostile
+@pytest.mark.parametrize('char', ['\u2028', '\u2029'])
+def test_line_and_paragraph_separators_are_hostile(char):
+    assert is_hostile(char)
+    assert display_text(f'good{char}FAKE') == 'good?FAKE'
