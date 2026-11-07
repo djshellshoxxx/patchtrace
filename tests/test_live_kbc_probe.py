@@ -127,3 +127,9 @@ def test_real_cli_plan_preview_is_usable_and_makes_no_request(tmp_path):
     run_ = P.run_cli(['kb', 'index', 'plan', '--months', '2024-Aug', '--workspace', str(tmp_path), '--json'], 120)
     verdict, sha = P.check_plan(run_)
     assert verdict['result'] == 'passed' and sha and len(sha) == 64
+
+
+def test_out_and_work_are_confined(tmp_path):
+    assert P.main(['--out', '/etc/kbc-probe.json']) == 2
+    assert P.main(['--out', str(tmp_path / 'o.json'), '--work', '/root/elsewhere']) == 2
+    assert P.main(['--out', '/tmp/../etc/x.json']) == 2

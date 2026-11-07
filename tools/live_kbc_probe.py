@@ -198,6 +198,16 @@ def probe(month: str, cve: str, work: Path, timeout: float, *, skip_winbindex: b
             'checks': parts}
 
 
+def _confined(path: Path, what: str) -> Path:
+    """Resolve `path` and require it to sit under the repo's build/ directory or the system temp directory,
+    so a bad --out or --work cannot write elsewhere."""
+    resolved = path.expanduser().resolve()
+    for base in ((ROOT / 'build').resolve(), Path(tempfile.gettempdir()).resolve()):
+        if resolved.is_relative_to(base):
+            return resolved
+    raise ValueError(f'{what} must be under build/ or the system temp directory: {path}')
+
+
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument('--month', default='2024-Aug', help='release month to sync, like 2024-Aug')
@@ -208,13 +218,15 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument('--skip-winbindex', action='store_true')
     a = ap.parse_args(argv)
     try:
+        out = _confined(a.out, '--out')
+        work = _confined(a.work, '--work') if a.work else None
         with tempfile.TemporaryDirectory(prefix='kbc-live-') as tmp:
-            result = probe(a.month, a.cve, a.work or Path(tmp), a.timeout, skip_winbindex=a.skip_winbindex)
+            result = probe(a.month, a.cve, work or Path(tmp), a.timeout, skip_winbindex=a.skip_winbindex)
     except ValueError as exc:
         print(f'error: {exc}', file=sys.stderr)
         return 2
-    a.out.parent.mkdir(parents=True, exist_ok=True)
-    a.out.write_text(json.dumps(result, indent=2, sort_keys=True) + '\n', encoding='utf-8')
+    out.parent.mkdir(parents=True, exist_ok=True)
+    out.write_text(json.dumps(result, indent=2, sort_keys=True) + '\n', encoding='utf-8')
     print(f"{result['status'].upper()}: {result['reason']}")
     if result['status'] == 'blocked':
         print('LIVE ACCEPTANCE BLOCKED (external condition, not a pass)')
