@@ -161,7 +161,7 @@ def cmd_fixtures(a: argparse.Namespace) -> int:
             summary[case] = {"old": truth["older"]["sha256"][:12], "new": truth["newer"]["sha256"][:12]}
     except FP.FixtureError as e:
         problems.append(str(e))
-    status = "PASS" if not problems else ("BLOCKED" if any("not found on PATH" in m for m in problems) else "FAIL")
+    status = "PASS" if not problems else ("BLOCKED" if any(("not found on PATH" in m or "not an ELF target" in m) for m in problems) else "FAIL")
     rec = R.build_receipt(
         experiment_id="rq03-fixtures", scenario_id="self-compiled", tool_name="fixture_pairs", status=status,
         exit_code=0 if status == "PASS" else None, stop_reason="; ".join(problems)[:200] or "all cases verified",

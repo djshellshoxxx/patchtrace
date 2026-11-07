@@ -62,6 +62,23 @@ def _tool(name: str) -> str:
     return exe
 
 
+def require_elf_toolchain(cc: str = 'gcc') -> None:
+    """These fixtures are ELF shared objects. A compiler that targets another format (for example MinGW on
+    Windows builds PE) cannot produce them, so the run is BLOCKED rather than failing or passing."""
+    p = subprocess.run([_tool(cc), '-dumpmachine'], capture_output=True, text=True, timeout=30, check=False)
+    target = p.stdout.strip()
+    if 'linux' not in target:
+        raise FixtureError(f'not an ELF target: {cc} targets {target or "unknown"}; ELF fixtures need a Linux-targeting compiler')
+
+
+def elf_toolchain_available(cc: str = 'gcc') -> bool:
+    try:
+        require_elf_toolchain(cc)
+        return bool(shutil.which('nm'))
+    except (FixtureError, OSError, subprocess.SubprocessError):
+        return False
+
+
 def compiler_identity(cc: str = 'gcc') -> dict[str, str | None]:
     exe = _tool(cc)
     first = subprocess.run([exe, '--version'], capture_output=True, text=True, timeout=30, check=False
@@ -112,6 +129,7 @@ def function_bytes(binary: Path, row: dict[str, Any]) -> bytes:
 
 
 def build_case(case_id: str, outdir: Path, cc: str = 'gcc') -> dict[str, Any]:
+    require_elf_toolchain(cc)
     (old_opt, old_fixed), (new_opt, new_fixed) = BUILD[case_id]
     old = compile_variant(outdir / case_id / 'old', old_opt, old_fixed, 'old', cc)
     new = compile_variant(outdir / case_id / 'new', new_opt, new_fixed, 'new', cc)

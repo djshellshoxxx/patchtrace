@@ -2,7 +2,6 @@
 from __future__ import annotations
 
 import json
-import shutil
 import sys
 from pathlib import Path
 
@@ -16,7 +15,7 @@ from tools.research_qualification import fixture_pairs as FP  # noqa: E402
 from tools.research_qualification import sample_size as SS  # noqa: E402
 from tools.research_qualification.__main__ import main  # noqa: E402
 
-needs_toolchain = pytest.mark.skipif(not (shutil.which("gcc") and shutil.which("nm")), reason="gcc/nm missing")
+needs_toolchain = pytest.mark.skipif(not FP.elf_toolchain_available(), reason="needs a Linux-targeting gcc and nm (ELF fixtures)")
 
 
 def test_sample_size_golden():
@@ -167,3 +166,14 @@ def test_cli_samplesize_and_callmodel_and_score(tmp_path, capsys):
 def test_cli_fixtures_build(tmp_path, capsys):
     assert main(["fixtures", "build", "--out", str(tmp_path)]) == 0
     assert json.loads(capsys.readouterr().out)["status"] == "PASS"
+
+
+def test_non_elf_toolchain_is_blocked_not_failed(monkeypatch, tmp_path):
+    class R:
+        stdout = "x86_64-w64-mingw32\n"
+    monkeypatch.setattr(FP.subprocess, "run", lambda *a, **k: R())
+    monkeypatch.setattr(FP, "_tool", lambda name: name)
+    with pytest.raises(FP.FixtureError, match="not an ELF target"):
+        FP.build_case("identical", tmp_path)
+    assert FP.elf_toolchain_available() is False
+    assert main(["fixtures", "build", "--out", str(tmp_path / "b")]) == 2
