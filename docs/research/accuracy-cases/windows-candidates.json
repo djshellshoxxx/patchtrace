@@ -18,7 +18,8 @@
         "function": "Ipv6pReassembleDatagram",
         "cve": "CVE-2022-34718",
         "accept": [
-          "IppReceiveEsp"
+          "IppReceiveEsp",
+          "Ipv6ReassembleDatagram"
         ]
       },
       "facts": "unverified",
