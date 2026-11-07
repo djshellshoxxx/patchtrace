@@ -220,3 +220,17 @@ def test_a_c_scope_table_longer_than_the_cap_is_unavailable_never_handler_only(t
     a = _many_scopes(tmp_path, count, 0, 'a.dll')
     b = _many_scopes(tmp_path, count, 1, 'b.dll')         # one scope ends a byte later
     assert a == pt.EH_UNAVAILABLE and b == pt.EH_UNAVAILABLE
+
+
+def test_gs_handler_data_is_not_read_as_an_over_cap_scope_count(tmp_path):
+    """__GSHandlerCheck carries a GS cookie offset, not a C scope count. An offset of 65..4095 is common in MSVC
+    /GS code; it must stay opaque handler data (handler-only signature) unless real scope records follow it, or
+    every such function loses its structural proofs (regression of FCT-10)."""
+    cookie_offset = 0x48                                      # 72: above MAX_SCOPES, below 0x1000
+    data = struct.pack('<I', cookie_offset) + bytes(cookie_offset * 16)   # zeros: no plausible scope record
+    xdata = unwind(flags=1, handler=TEXT + 0x7f0, data=data)
+    with image(tmp_path, xdata=xdata, functions=[(TEXT, TEXT + 0x200, XDATA)]) as reader:
+        eh = pt.read_pe_tables(reader).eh_for(TEXT)
+    assert eh != pt.EH_UNAVAILABLE
+    document = json.loads(eh)
+    assert document['scopes'] is None and document['hlen'] is None and document['handler'] == TEXT + 0x7f0
