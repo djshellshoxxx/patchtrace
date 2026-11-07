@@ -68,7 +68,7 @@ def _read_side(artifact, root: Path, cancel: threading.Event) -> tuple[dict[str,
     if meta.status == 'cancelled' or cancel.is_set():
         record['status'] = 'cancelled'
         return record, None
-    record['status'] = 'read'
+    record['status'] = 'partial' if meta.status == 'partial' else 'read'
     return record, meta
 
 
@@ -87,10 +87,11 @@ def _text(rows: list[dict[str, Any]], comparison) -> str:
     lines = []
     for row in rows:
         head = f'{row["side"].upper()} {row["name"]} sha256 {row["sha256"][:16]}'
-        if row['status'] != 'read':
+        if row['status'] not in ('read', 'partial'):
             lines.append(f'{head}: {row["status"]}' + (f' ({row["error"]})' if row['error'] else ''))
             continue
-        lines.append(f'{head}: {row["labels"]["embedded"]}; catalog: {row["labels"]["catalog"]}')
+        suffix = ' (partial; see warnings)' if row['status'] == 'partial' else ''
+        lines.append(f'{head}: {row["labels"]["embedded"]}; catalog: {row["labels"]["catalog"]}{suffix}')
         lines += [f'  {f["field"]}: {f["value"]}' for f in row['facts']]
     changed = [r for r in comparison if r.status == 'changed']
     if changed:
@@ -123,7 +124,7 @@ def dispatch(args: Namespace, cancel: threading.Event) -> int:
         return CANCELLED
     metas = {record['side']: meta for record, meta in read}
     comparison = compare_metadata(metas['older'], metas['newer']) if len(read) == 2 and all(
-        m is not None for m in metas.values()) else ()
+        record['status'] == 'read' for record, _meta in read) else ()
     rows = [_side_json(record, meta) for record, meta in read]
     result = {'contract': CONTRACT, 'sides': rows,
               'trust': {'mode': args.trust, 'consent_online': bool(args.consent_online), 'network_used': False},
