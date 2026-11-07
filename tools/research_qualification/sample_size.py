@@ -19,7 +19,7 @@ def lower_bound(correct: int, n: int, alpha: float = 0.05) -> float:
 
 def min_cases(target: float, max_errors: int = 0, alpha: float = 0.05, limit: int = 10_000) -> int:
     """Smallest n whose lower bound reaches `target` when at most `max_errors` cases are wrong."""
-    if not 0 < target < 1 or max_errors < 0:
+    if target <= 0 or target >= 1 or max_errors < 0:
         raise ValueError('target must be in (0, 1) and max_errors >= 0')
     n = max_errors + 1
     while n <= limit:

@@ -24,6 +24,7 @@ from pathlib import Path
 from . import call_model as CM
 from . import cases as CS
 from . import fixture_pairs as FP
+from . import pathguard as PG
 from . import perf_harness as P
 from . import receipt as R
 from . import sample_size as SS
@@ -47,7 +48,7 @@ def _print(obj: object) -> None:
 def cmd_selftest(a: argparse.Namespace) -> int:
     """Synthetic end-to-end smoke: harness -> receipt -> validate -> reload -> rerun comparison."""
     code = "print('selftest'); print('Sorting functions')"
-    out = Path(a.out)
+    out = PG.confine(a.out, "--out")
     recs = []
     for n in (1, 2):
         rec, path = P.run([sys.executable, "-c", code], experiment_id="rq-selftest", scenario_id="smoke",
@@ -65,11 +66,12 @@ def cmd_selftest(a: argparse.Namespace) -> int:
 
 def cmd_perf(a: argparse.Namespace, cmd: list[str]) -> int:
     allow = tuple(P.DEFAULT_ENV_ALLOWLIST) + tuple(a.env or ())
+    out_dir = str(PG.confine(a.out, "--out"))
     try:
         if a.action == "plan":
-            _print(P.plan(cmd, timeout_s=a.timeout, out_dir=a.out, env_allowlist=allow))
+            _print(P.plan(cmd, timeout_s=a.timeout, out_dir=out_dir, env_allowlist=allow))
             return 0
-        rec, path = P.run(cmd, experiment_id=a.experiment, scenario_id=a.scenario, out_dir=a.out,
+        rec, path = P.run(cmd, experiment_id=a.experiment, scenario_id=a.scenario, out_dir=out_dir,
                           timeout_s=a.timeout, cwd=a.cwd, env_allowlist=allow,
                           older_sha256=a.older_sha256, newer_sha256=a.newer_sha256)
     except (P.HarnessError, R.ReceiptError) as e:
@@ -81,7 +83,7 @@ def cmd_perf(a: argparse.Namespace, cmd: list[str]) -> int:
 
 
 def cmd_stages(a: argparse.Namespace) -> int:
-    text = Path(a.log).read_text(encoding="utf-8", errors="replace")
+    text = PG.confine(a.log, "--log").read_text(encoding="utf-8", errors="replace")
     _print(parse_log_text(text, top_gaps=a.top))
     return 0
 
@@ -91,7 +93,7 @@ def cmd_receipt(a: argparse.Namespace) -> int:
         bad = 0
         for f in a.files:
             try:
-                R.load_receipt(f)
+                R.load_receipt(PG.confine(f, "receipt"))
                 print(f"ok   {f}")
             except (R.ReceiptError, OSError, json.JSONDecodeError) as e:
                 bad += 1
@@ -100,7 +102,8 @@ def cmd_receipt(a: argparse.Namespace) -> int:
     if len(a.files) != 2:
         print("error: compare needs exactly two receipts", file=sys.stderr)
         return 2
-    diffs = R.compare_receipts(R.load_receipt(a.files[0]), R.load_receipt(a.files[1]))
+    diffs = R.compare_receipts(R.load_receipt(PG.confine(a.files[0], "receipt")),
+                                R.load_receipt(PG.confine(a.files[1], "receipt")))
     _print({"deterministic_differences": diffs})
     return 1 if diffs else 0
 
@@ -135,15 +138,15 @@ def cmd_callmodel(a: argparse.Namespace) -> int:
 def cmd_fixtures(a: argparse.Namespace) -> int:
     if a.action == "score":
         try:
-            truth = json.loads(Path(a.truth).read_text(encoding="utf-8"))
-            matches = json.loads(Path(a.matches).read_text(encoding="utf-8"))
+            truth = json.loads(PG.confine(a.truth, "--truth").read_text(encoding="utf-8"))
+            matches = json.loads(PG.confine(a.matches, "--matches").read_text(encoding="utf-8"))
             res = FP.score_matches(truth, matches)
         except (OSError, ValueError, KeyError) as e:
             print(f"error: {e}", file=sys.stderr)
             return 2
         _print(res)
         return 0 if res["passed"] else 1
-    out = Path(a.out)
+    out = PG.confine(a.out, "--out")
     started = R.utc_now()
     summary, problems, hashes = {}, [], {}
     try:
@@ -176,7 +179,7 @@ def cmd_fixtures(a: argparse.Namespace) -> int:
 
 def cmd_cases(a: argparse.Namespace) -> int:
     try:
-        m = json.loads(Path(a.manifest).read_text(encoding="utf-8"))
+        m = json.loads(PG.confine(a.manifest, "manifest").read_text(encoding="utf-8"))
         info = CS.validate_manifest(m)
         if a.frozen_sha:
             CS.check_frozen(m, a.frozen_sha)
@@ -189,9 +192,9 @@ def cmd_cases(a: argparse.Namespace) -> int:
 
 def cmd_score(a: argparse.Namespace) -> int:
     try:
-        m = json.loads(Path(a.manifest).read_text(encoding="utf-8"))
+        m = json.loads(PG.confine(a.manifest, "manifest").read_text(encoding="utf-8"))
         CS.validate_manifest(m)
-        res = SC.score_run(m, json.loads(Path(a.results).read_text(encoding="utf-8")), a.k)
+        res = SC.score_run(m, json.loads(PG.confine(a.results, "results").read_text(encoding="utf-8")), a.k)
     except (OSError, ValueError, AttributeError, TypeError) as e:
         print(f"error: {e}", file=sys.stderr)
         return 2
@@ -249,6 +252,14 @@ def build_parser() -> argparse.ArgumentParser:
 def main(argv: list[str] | None = None) -> int:
     head, cmd = _split_cmd(list(sys.argv[1:] if argv is None else argv))
     a = build_parser().parse_args(head)
+    try:
+        return _dispatch(a, cmd)
+    except PG.PathGuardError as e:
+        print(f"error: {e}", file=sys.stderr)
+        return 2
+
+
+def _dispatch(a: argparse.Namespace, cmd: list[str]) -> int:
     if a.cmd == "selftest":
         return cmd_selftest(a)
     if a.cmd == "perf":

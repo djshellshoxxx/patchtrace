@@ -6,6 +6,8 @@ import subprocess
 import sys
 from pathlib import Path
 
+import pytest
+
 ROOT = Path(__file__).resolve().parents[1]
 PY = sys.executable
 
@@ -52,3 +54,22 @@ def test_stages_reads_a_log_and_validate_flags_garbage(tmp_path):
     bad = tmp_path / "bad.json"
     bad.write_text("{}")
     assert cli("receipt", "validate", str(bad)).returncode == 1
+
+
+def test_paths_outside_allowed_roots_are_refused(tmp_path, monkeypatch):
+    from tools.research_qualification import pathguard as PG
+    from tools.research_qualification.__main__ import main
+    monkeypatch.delenv("RQ_ALLOWED_DIRS", raising=False)
+    assert main(["cases", "/etc/passwd"]) == 2
+    assert main(["stages", "/etc/passwd"]) == 2
+    assert main(["score", "/etc/passwd", "/etc/hostname"]) == 2
+    assert main(["fixtures", "build", "--out", "/etc/rq"]) == 2
+    f = tmp_path / "ok.json"
+    f.write_text("{}")
+    assert PG.confine(f) == f.resolve()
+    with pytest.raises(PG.PathGuardError):
+        PG.confine(tmp_path / ".." / ".." / ".." / ".." / "etc" / "passwd")
+    with pytest.raises(PG.PathGuardError):
+        PG.confine("")
+    monkeypatch.setenv("RQ_ALLOWED_DIRS", "/etc")
+    assert PG.confine("/etc/hostname")

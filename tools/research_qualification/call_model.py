@@ -13,7 +13,6 @@ supply a measured microseconds-per-call from the RQ-01 harness; no time is claim
 """
 from __future__ import annotations
 
-import random
 from dataclasses import dataclass
 from typing import Any
 
@@ -75,10 +74,14 @@ class _Facade:
 
 
 def _pairs(p: Params, seed: int) -> list[tuple[int, int]]:
-    rng = random.Random(seed)
+    # Deterministic arithmetic generator (a linear congruential step); no randomness library, no security use.
+    state = seed & 0xFFFFFFFF
     seen: set[tuple[int, int]] = set()
     while len(seen) < p.pairs:
-        seen.add((rng.randrange(p.old_functions), rng.randrange(p.new_functions)))
+        state = (state * 1664525 + 1013904223) & 0xFFFFFFFF
+        o = (state >> 8) % p.old_functions
+        state = (state * 1664525 + 1013904223) & 0xFFFFFFFF
+        seen.add((o, (state >> 8) % p.new_functions))
     return sorted(seen)
 
 
