@@ -1,0 +1,111 @@
+name: Winbindex binary pairs (manual)
+# Fetches before/after Windows binaries for PatchTrace accuracy cases: Winbindex metadata, then the Microsoft public
+# symbol server (tools/research_qualification/winpairs.py). Manual only: no push, pull_request or schedule trigger.
+# Binaries are uploaded as a short-lived workflow artifact and are never committed. Inputs reach the script through
+# the environment, never by interpolation into shell text. Check the symbol-server terms before use (docs/research/winpairs.md).
+on:
+  workflow_dispatch:
+    inputs:
+      manifest:
+        description: 'Case manifest (rq-case-manifest/1), relative to the repo root'
+        required: false
+        default: 'docs/research/accuracy-cases/windows-candidates.json'
+      cases:
+        description: 'Comma-separated case ids (empty = all cases in the manifest)'
+        required: false
+        default: ''
+      run_ghidriff:
+        description: 'Also run ghidriff on each found pair when it installs with pip and Ghidra is present'
+        required: false
+        default: false
+        type: boolean
+permissions:
+  contents: read
+concurrency:
+  group: winbindex-pairs
+  cancel-in-progress: false
+jobs:
+  fetch-pairs:
+    name: fetch pairs (ubuntu-latest)
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Fetch and verify pairs
+        id: fetch
+        shell: bash
+        env:
+          PAIR_MANIFEST_IN: ${{ inputs.manifest }}
+          PAIR_CASES: ${{ inputs.cases }}
+        run: |
+          set +e
+          mkdir -p build/winpairs/binaries build/winpairs/manifest
+          args=(--manifest "${PAIR_MANIFEST_IN:-docs/research/accuracy-cases/windows-candidates.json}"
+                --out-dir build/winpairs/binaries --pair-manifest build/winpairs/manifest/pair-manifest.json)
+          if [ -n "${PAIR_CASES:-}" ]; then args+=(--case "$PAIR_CASES"); fi
+          python -m tools.research_qualification.winpairs "${args[@]}"
+          rc=$?
+          echo "rc=$rc" >> "$GITHUB_OUTPUT"
+          {
+            echo '### Winbindex pairs'
+            echo "helper exit code: $rc (0 ok, 1 every requested case missing, 2 blocked or usage)"
+            if [ -f build/winpairs/manifest/pair-manifest.json ]; then
+              python - <<'PY'
+          import json
+          d = json.load(open('build/winpairs/manifest/pair-manifest.json'))
+          for c in d['cases']:
+              print(f"- {c['id']}: {c['status']}")
+          PY
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"
+      - name: Optional ghidriff
+        if: ${{ inputs.run_ghidriff }}
+        shell: bash
+        run: |
+          if ! python -m pip install --only-binary=:all: ghidriff; then
+            echo 'ghidriff did not install with pip on this runner: skipped' | tee -a "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          if [ -z "${GHIDRA_INSTALL_DIR:-}" ] || [ ! -d "${GHIDRA_INSTALL_DIR:-/nonexistent}" ]; then
+            echo 'ghidriff installed but no Ghidra (GHIDRA_INSTALL_DIR) on this runner: skipped' | tee -a "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          python - <<'PY'
+          import json, subprocess
+          d = json.load(open('build/winpairs/manifest/pair-manifest.json'))
+          for c in d['cases']:
+              if c['status'] != 'found':
+                  continue
+              old, new = (f"build/winpairs/binaries/{c['older']['path']}", f"build/winpairs/binaries/{c['newer']['path']}")
+              subprocess.run(['ghidriff', old, new, '--output-path', f"build/winpairs/ghidriff/{c['id']}"], check=False)
+          PY
+      - name: Upload pair manifest
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: winpairs-manifest
+          path: build/winpairs/manifest
+          retention-days: 7
+          if-no-files-found: ignore
+      - name: Upload fetched binaries (not committed)
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: winpairs-binaries
+          path: |
+            build/winpairs/binaries
+            build/winpairs/ghidriff
+          retention-days: 7
+          if-no-files-found: ignore
+      - name: Fail when the helper failed
+        if: ${{ steps.fetch.outputs.rc != '0' }}
+        shell: bash
+        env:
+          RC: ${{ steps.fetch.outputs.rc }}
+        run: exit "${RC:-2}"
