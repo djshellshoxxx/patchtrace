@@ -2,6 +2,10 @@
 
 State as of 2026-11-07 ~07:10 UTC. Re-check GitHub before acting: default-branch SHA, open PRs, check runs. Anything below marked "open PR" may have merged since.
 
+## Quick start for a new tool
+1. Run `tools/handoff_status.sh` (read-only; needs `gh` and `jq`) for live PR and CI state.
+2. A ready-to-paste prompt for ChatGPT or Codex is in `docs/plans/chatgpt-continue-prompt.md`.
+
 ## Goal
 Owner priority: the KB/CVE correlation feature, then a defensible accuracy claim for it. Claims are made per layer and never blended:
 - L1: advisory join (CVE to KB to product and file), oracle = MSRC data cross-checked with Winbindex and KB articles.
