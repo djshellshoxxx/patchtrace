@@ -42,6 +42,7 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 
+from . import ui_export_v2
 from .acquisition import quarantine, winbindex
 from .acquisition.contracts import AUTHENTICITY_NOTE, AcquisitionError, validate_file_name
 from .acquisition.transport import BLOB_SUFFIX, METADATA_HOST, SYMBOL_HOST, AcquisitionConsent, Transport
@@ -50,6 +51,7 @@ from .backend import BackendConfig, diagnose, parse_env_passthrough, quarantine_
 from .evidence import build_context, resolve_evidence
 from .gui.qt.codediff import clear_selections, compose_selections, row_selection, view_text
 from .gui.qt.host import PanelHost
+from .gui.qt.project_adoption import adopt_project
 from .gui.qt.theme import DARK
 from .interpretation import interpret, system_prompt
 from .offline_bundle import inspect_offline_bundle, install_offline_bundle
@@ -67,6 +69,7 @@ from .runtime_discovery import (
 from .service import ProjectService
 from .tooltips import apply_tooltip, apply_tooltips
 from .ui_bundle_setup import BundleSetup
+from .ui_help import WORKFLOW_HELP_TEXT
 from .ui_inspection import InspectionThread, side_summary
 from .ui_job_events import JobEventRelay
 from .ui_persistence import commit_and_report
@@ -78,6 +81,7 @@ CATEGORIES = ['modified', 'added', 'removed', 'ambiguous', 'split', 'merged', 'u
 MAX_VIEW_CHARS = 200_000
 ACTION_TIPS = {
     'Download from Microsoft symbol server…': 'action.acquire',
+    'Investigate KB/CVE locally…': 'action.kb_investigation',
     'Sample': 'action.sample',
     'Series window…': 'action.series',
     'Import JSON': 'action.import_json',
@@ -1376,7 +1380,7 @@ class CorrectMatchDialog(QDialog):
 
 
 class ExportDialog(QDialog):
-    def __init__(self, project, root, selected_ids, parent=None):
+    def __init__(self, project, root, selected_ids, parent=None, sections=None):
         super().__init__(parent)
         self.project = project
         self.root = root
@@ -1400,6 +1404,7 @@ class ExportDialog(QDialog):
         horizontal.addWidget(browse)
         form.addRow('Format', self.format)
         form.addRow('Destination', row)
+        ui_export_v2.attach(self, form, project, sections, self.refresh_preview)   # report v2 rows (SPEC-50 s8)
         self.code = QCheckBox('Include function code')
         self.notes = QCheckBox('Include analyst notes')
         self.notes.setChecked(True)
@@ -1409,7 +1414,8 @@ class ExportDialog(QDialog):
         form.addRow(self.notes)
         form.addRow(self.selection)
         layout.addLayout(form)
-        policy = PlainLabel('Absolute source paths are redacted. Raw provider responses are excluded.\n'
+        policy = PlainLabel('Absolute source paths are redacted in report text; included code and evidence '
+                            'excerpts may contain original paths. Raw provider responses are excluded.\n'
                         'Review the preview, then write the report to the chosen destination.')
         policy.setWordWrap(True)
         layout.addWidget(policy)
@@ -1427,6 +1433,7 @@ class ExportDialog(QDialog):
         for control in [self.code, self.notes, self.selection]:
             control.toggled.connect(self.refresh_preview)
         self.format.currentTextChanged.connect(self.refresh_preview)
+        ui_export_v2.show(self)
         self.refresh_preview()
 
     def change_format(self, value):
@@ -1440,8 +1447,8 @@ class ExportDialog(QDialog):
             self.destination.setText(value)
 
     def options(self):
-        return dict(include_code=self.code.isChecked(), include_notes=self.notes.isChecked(),
-                    finding_ids=self.selected_ids if self.selection.isChecked() else None,
+        chosen = self.vm.export_kwargs(include_code=self.code.isChecked(), include_notes=self.notes.isChecked())
+        return dict(**chosen, finding_ids=self.selected_ids if self.selection.isChecked() else None,
                     enrichment=self.enrichment)
 
     def refresh_preview(self, *_):
@@ -1521,6 +1528,7 @@ class MainWindow(QMainWindow):
     def _build_actions(self):
         self.new_action = self._action('New', self.new_project, 'Ctrl+N')
         self.acquire_action = self._action('Download from Microsoft symbol server…', self.acquire_project)
+        self.kb_investigation_action = self._action('Investigate KB/CVE locally…', self.investigate_kb)
         self.open_action = self._action('Open', self.open_project, 'Ctrl+O')
         self.sample_action = self._action('Sample', self.open_sample)
         self.series_action = self._action('Series window…', self.open_series)
@@ -1546,7 +1554,7 @@ class MainWindow(QMainWindow):
             toolbar.addAction(action)
         file_menu = self.menuBar().addMenu('Project')
         apply_tooltip(file_menu.menuAction(), 'menu.project')
-        for action in [self.new_action, self.acquire_action, self.open_action, self.sample_action, self.save_action,
+        for action in [self.new_action, self.acquire_action, self.kb_investigation_action, self.open_action, self.sample_action, self.save_action,
                        self.import_action, self.overview_action, self.export_action, self.swap_action]:
             file_menu.addAction(action)
         file_menu.addAction(self.backup_action)
@@ -1859,18 +1867,7 @@ class MainWindow(QMainWindow):
         box.exec()
 
     def set_service(self, service):
-        previous = self.service
-        if previous is not service:
-            self._stop_inspection()
-        self.service = service
-        if previous and previous is not service:
-            previous.close()
-        self.refresh()
-        self.settings.setValue('recent/project', str(service.root))
-        recent = self.settings.value('recent/projects', [], type=list)
-        recent = [str(service.root), *[path for path in recent if path != str(service.root)]]
-        self.settings.setValue('recent/projects', recent[:8])
-        self.refresh_recent()
+        adopt_project(self, service)
 
     def refresh_recent(self):
         self.recent_menu.clear()
@@ -1940,6 +1937,14 @@ class MainWindow(QMainWindow):
         dialog.exec()
         if dialog.service is not None:
             self.set_service(dialog.service)
+
+    def investigation_dialog(self):
+        return self.panels.investigation_dialog()
+
+    def investigate_kb(self):
+        if self.worker is not None or self._close_requested:
+            return
+        self.investigation_dialog().exec()
 
     def open_project(self):
         path = QFileDialog.getExistingDirectory(self, 'Open PatchTrace project', self.settings.value('recent/project', ''))
@@ -2711,6 +2716,8 @@ class MainWindow(QMainWindow):
             self.render_match()
 
     def _inspection_failed(self, message, key=None):
+        if key is not None and key != self._project_inspection_key():
+            return  # A superseded inspection must not overwrite the current project's status.
         self._inspection_error = (key or self._project_inspection_key(), message)
         self.inspection_status.emit('File inspection failed: ' + message)
         self.logs.appendPlainText('File inspection failed: ' + message)
@@ -2942,7 +2949,7 @@ class MainWindow(QMainWindow):
         idle = self.worker is None
         project = bool(self.service)
         match = self.current_match()
-        for action in [self.new_action, self.acquire_action, self.open_action, self.sample_action,
+        for action in [self.new_action, self.acquire_action, self.kb_investigation_action, self.open_action, self.sample_action,
                        self.setup_action]:
             action.setEnabled(idle)
         for action in [self.run_action, self.import_action, self.export_action, self.save_action, self.swap_action,
@@ -2996,7 +3003,8 @@ class MainWindow(QMainWindow):
         if not self.project:
             return
         selected = [item.data(Qt.ItemDataRole.UserRole) for item in self.findings_list.selectedItems()]
-        dialog = ExportDialog(self.project, self.service.root, selected, self)
+        dialog = ExportDialog(self.project, self.service.root, selected, self,
+                              ui_export_v2.report_sections(self.service, self.logs.appendPlainText))
         dialog.enrichment = self._enrichment_export()
         dialog.refresh_preview()
         if dialog.exec() == QDialog.DialogCode.Accepted:
@@ -3008,23 +3016,7 @@ class MainWindow(QMainWindow):
                 self.logs.appendPlainText(f'Export: {output}')
 
     def show_help(self):
-        text_dialog(self, 'PatchTrace workflow and dependency setup',
-                    '1. Create a project with explicit older and newer PE AMD64 artifacts, or open the synthetic sample.\n'
-                    '2. Import a Ghidriff JSON, or configure external dependencies and run comparison.\n'
-                    '3. Search and filter function matches. Inspect decompiled code, assembly and metadata.\n'
-                    '4. Review matches, correct relationships, and save analyst notes.\n'
-                    '5. Optionally select matches and Interpret. Review exact context before Send.\n'
-                    '6. Follow evidence, assess alternatives and unknowns, save an independent analyst conclusion.\n'
-                    '7. Export a report after reviewing its exact preview. Code is excluded by default.\n\n'
-                    'Dependency setup\n'
-                    'Use an external Python environment with the supported Ghidriff version installed. Select its\n'
-                    'python executable and the unpacked Ghidra installation in Setup. Ghidra requires a compatible\n'
-                    'Java installation. Diagnose reports dependency failures without running either target artifact.\n'
-                    'Ghidriff and Ghidra are not bundled and no dependency is downloaded automatically.\n\n'
-                    'Interpretation is optional. Ollama must use a loopback endpoint; OpenAI-compatible providers\n'
-                    'require HTTPS. API keys remain in memory for the current request and are never saved.\n'
-                    'Model assessments, match quality and review status do not establish vulnerability validity.\n'
-                    'Stale findings retain their original context and cannot navigate into a different analysis run.')
+        text_dialog(self, 'PatchTrace workflow and dependency setup', WORKFLOW_HELP_TEXT)
 
     def apply_font(self, size):
         font = QFont('Consolas', size)

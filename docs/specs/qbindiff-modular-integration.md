@@ -1,4 +1,7 @@
 # SPEC-QB-02: Build-safe modular integration and release gates
+
+Status (SPEC-31 amendment A-10, 2026-11-04): Superseded by SPEC-31 (`unified-engine/00-decisions.md` s3.1): goals incorporated; `matching/*` modules, new `matching_*` tables and the message-passing solver are not built.
+
 Status: proposed, companion to SPEC-QB-01.
 
 ## Guiding rules

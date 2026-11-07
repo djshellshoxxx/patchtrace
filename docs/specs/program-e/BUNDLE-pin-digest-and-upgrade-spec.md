@@ -57,6 +57,8 @@ Cache keys never trust a file name; the hash is recomputed on every use.
 
 ### 4.2 Pin gate (`gate_pin` / `check_backend_pin.py --release`)
 
+Both pin entry points (`check_backend_pin.py` and producer `gate_pin`) first use the checker's shared stdlib `parse_pin(bytes)` to require UTF-8 JSON with unique object keys at every level, finite numbers and encodable Unicode strings. Duplicate escaped keys count as duplicates. Invalid text or parser recursion exhaustion is a malformed pin (checker exit 1; producer `PT-BUNDLE-PIN`) before output/cache creation, download or subprocess work. This parsing gate does not change pin bytes, versions or digest/approval policy.
+
 `validate_pin(data)` -> problems; `release_problems(data)` -> placeholders; `unapproved_licenses(data)` -> shipped copyleft entries with `owner_approved != true`. Exit codes: 0 ok; 1 malformed; 3 `--release` and a placeholder; 4 `--release` and unapproved licences (downgraded to a warning by `--allow-unapproved-licenses`, which only non-publishing runs may use: the workflow passes it unless `publish` is true). The builder refuses a pin that fails either check (`PT-BUNDLE-PIN`).
 
 ### 4.3 Verification-only pins (`tools/verify_backend_pins.py verify`)

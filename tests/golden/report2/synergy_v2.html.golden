@@ -1,0 +1,562 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="referrer" content="no-referrer">
+<meta http-equiv="Content-Security-Policy" content="default-src &#x27;none&#x27;; style-src &#x27;sha256-4xN/TgscEvVws+5LqkTf6LcaIhFUz/e+6IO2fM0izNY=&#x27;; base-uri &#x27;none&#x27;; form-action &#x27;none&#x27;">
+<title>PatchTrace report: Synthetic bounds-check walkthrough</title>
+<style>body{max-width:1000px;margin:2rem auto;padding:0 1rem;font:16px sans-serif}table{border-collapse:collapse}th,td{border:1px solid #888;padding:.2rem .5rem;text-align:left;vertical-align:top;overflow-wrap:anywhere}pre{white-space:pre-wrap;overflow-wrap:anywhere;border:1px solid #888;padding:.5rem}</style></head>
+<body><main>
+<h1>PatchTrace report</h1>
+<p>Synthetic bounds-check walkthrough</p>
+<p>Report contract report/2; project revision 1.</p>
+<ul><li><strong>Generated</strong>: 2026-10-14T00:00:00+00:00</li><li><strong>Content digest</strong>: 71e825d359c67d86f97b5b4c8d0625c0989ec6ce0ef8f36b0d1404193339a023</li></ul>
+<p>Scores are ordinal triage indices, not probabilities of a vulnerability.</p>
+<h2>Orientation and provenance</h2>
+<table><thead><tr><th>Item</th><th>Value</th></tr></thead><tbody><tr><td>Older SHA-256</td><td>dc71b8420acc68418eaebfb8a4848cd2f63626125868e9977f017010c8d30215</td></tr><tr><td>Newer SHA-256</td><td>4af23bcb773054ad469c57363d50e2b53a6590bfba2286f16a06b4fb1440a168</td></tr><tr><td>Tool</td><td>PatchTrace 0.1.0</td></tr><tr><td>Release tag</td><td>unknown</td></tr><tr><td>Signed build</td><td>unknown</td></tr><tr><td>Derived from</td><td>persisted-project-snapshot</td></tr><tr><td>Network used</td><td>false</td></tr><tr><td>Display level</td><td>ordinal</td></tr><tr><td>Redaction profile</td><td>local</td></tr><tr><td>Code included</td><td>false</td></tr><tr><td>Notes included</td><td>true</td></tr><tr><td>Web addresses</td><td>text</td></tr><tr><td>Redaction markers</td><td>none</td></tr><tr><td>Text handling</td><td>report/2 text normalization applied</td></tr></tbody></table>
+<h2>Not run or unknown</h2>
+<ul><li>Series context not included: this export has no series input.</li><li>Unified result reference not included: no stored unified result.</li></ul>
+<h2>Artifacts</h2>
+<table><thead><tr><th>Side</th><th>Name</th><th>SHA-256</th><th>Size</th></tr></thead><tbody><tr><td>older</td><td>older_sample.dll</td><td>dc71b8420acc68418eaebfb8a4848cd2f63626125868e9977f017010c8d30215</td><td>1024</td></tr><tr><td>newer</td><td>newer_sample.dll</td><td>4af23bcb773054ad469c57363d50e2b53a6590bfba2286f16a06b4fb1440a168</td><td>1024</td></tr></tbody></table>
+<h2>Engine evidence</h2>
+<p>Engines are listed separately and never merged. A missing engine is unknown, not a negative vote.</p>
+<table><thead><tr><th>Engine</th><th>Version</th></tr></thead><tbody><tr><td>bindiff</td><td>8</td></tr><tr><td>rz-diff</td><td>0.9</td></tr></tbody></table>
+<table><thead><tr><th>Match</th><th>Verdict</th><th>Tier</th><th>Supporting</th><th>Contradicting</th><th>Unknown (not run or absent)</th><th>Channels</th><th>Explanation</th></tr></thead><tbody><tr><td>00000000-0000-4000-8000-000000000002</td><td>corroborated</td><td>high</td><td>bindiff</td><td>-</td><td>rz-diff</td><td>ghidriff: present; bindiff: present; rz-diff: unknown</td><td>Match endpoints agree, but engines can share disassembly artifacts and failure modes. Evidence index is an uncalibrated triage aid.</td></tr><tr><td>00000000-0000-4000-8000-000000000017</td><td>contested</td><td>low</td><td>-</td><td>bindiff</td><td>rz-diff</td><td>ghidriff: present; bindiff: present; rz-diff: unknown</td><td>At least one engine proposes conflicting endpoints. Review identities manually before interpreting a patch.</td></tr></tbody></table>
+<ul><li>Scores are ordinal, uncalibrated indices of function MATCH corroboration only; never vulnerability probability, patch validity, exploitability, or independent proof.</li><li>Function matching and semantic security findings require separate validation.</li><li>Engine agreement may reflect shared disassembly or compiler artifacts; do not average upstream scores.</li></ul>
+<h2>Matches</h2>
+<h3>&lt;U+202E&gt;gnidnuf&lt;script&gt;alert(1)&lt;/script&gt;?# Injected</h3>
+<ul><li><strong>Match</strong>: 00000000-0000-4000-8000-000000000002</li><li><strong>Category</strong>: modified</li><li><strong>Quality</strong>: upstream similarity 0.58 (uncalibrated)</li><li><strong>Review</strong>: unreviewed</li><li><strong>Match types</strong>: Symbols, StructuralGraph</li><li><strong>Reason</strong>: -</li></ul>
+<h3>report_invalid_index</h3>
+<ul><li><strong>Match</strong>: 00000000-0000-4000-8000-000000000014</li><li><strong>Category</strong>: added</li><li><strong>Quality</strong>: unknown</li><li><strong>Review</strong>: unreviewed</li><li><strong>Match types</strong>: -</li><li><strong>Reason</strong>: -</li></ul>
+<h3>debug_dump</h3>
+<ul><li><strong>Match</strong>: 00000000-0000-4000-8000-000000000015</li><li><strong>Category</strong>: removed</li><li><strong>Quality</strong>: unknown</li><li><strong>Review</strong>: unreviewed</li><li><strong>Match types</strong>: -</li><li><strong>Reason</strong>: -</li></ul>
+<h3>get_version</h3>
+<ul><li><strong>Match</strong>: 00000000-0000-4000-8000-000000000017</li><li><strong>Category</strong>: modified</li><li><strong>Quality</strong>: upstream similarity 0.94 (uncalibrated)</li><li><strong>Review</strong>: unreviewed</li><li><strong>Match types</strong>: Symbols</li><li><strong>Reason</strong>: -</li></ul>
+<h2>Findings</h2>
+<h3>Synthetic example: guard added before indexed buffer access</h3>
+<p>Return an error for a null buffer or index outside the supplied length</p>
+<ul><li><strong>Review</strong>: unreviewed</li><li><strong>Stale</strong>: false</li></ul>
+<h2>Build facts</h2>
+<table><thead><tr><th>Side</th><th>Fact</th><th>Value</th><th>Source</th><th>Claim level</th></tr></thead><tbody><tr><td>older</td><td>company_name</td><td>Vendor &lt;b&gt;Corp&lt;/b&gt;</td><td>pe-version</td><td>observed-in-file</td></tr><tr><td>newer</td><td>file_version</td><td>10.0.1.2</td><td>pe-version</td><td>observed-in-file</td></tr></tbody></table>
+<h2>Symbols</h2>
+<ul><li><strong>Mode</strong>: off</li><li><strong>Servers contacted</strong>: none</li><li><strong>Launcher version</strong>: unknown</li></ul>
+<h2>Advisories</h2>
+<h3>CVE CVE-2024-12345</h3>
+<ul><li><strong>Vendor</strong>: Vendor</li><li><strong>Address (inert text)</strong>: https://evil.example/adv.html</li><li><strong>Fetched</strong>: -</li><li><strong>Claim level</strong>: vendor-claim</li><li><strong>KEV catalog (external context)</strong>: unknown</li></ul>
+<pre>[click](https://evil.example/x) and https://evil.example/y
+```
+# not a heading
+`````
+&lt;img src=x onerror=alert(1)&gt;</pre>
+<h2>Leads</h2>
+<h3>lead-1</h3>
+<ul><li><strong>Kind</strong>: cluster</li><li><strong>Independent channels</strong>: ghidriff, bindiff</li></ul>
+<p>Two channels agree.</p>
+<h2>Appendix: report JSON</h2>
+<pre>{
+  &quot;advisories&quot;: [
+    {
+      &quot;claim_level&quot;: &quot;vendor-claim&quot;,
+      &quot;fetched_at&quot;: &quot;&quot;,
+      &quot;id&quot;: &quot;CVE-2024-12345&quot;,
+      &quot;kev_listed&quot;: null,
+      &quot;kind&quot;: &quot;cve&quot;,
+      &quot;snapshot_digest&quot;: null,
+      &quot;text&quot;: &quot;[click](https://evil.example/x) and https://evil.example/y\n```\n# not a heading\n`````\n&lt;img src=x onerror=alert(1)&gt;&quot;,
+      &quot;truncated&quot;: false,
+      &quot;url_text&quot;: &quot;https://evil.example/adv.html&quot;,
+      &quot;vendor&quot;: &quot;Vendor&quot;
+    }
+  ],
+  &quot;analysis_runs&quot;: [
+    {
+      &quot;backend&quot;: &quot;synthetic-sample&quot;,
+      &quot;backend_version&quot;: &quot;1&quot;,
+      &quot;created&quot;: &quot;2026-10-14T00:00:00+00:00&quot;,
+      &quot;error&quot;: null,
+      &quot;id&quot;: &quot;00000000-0000-4000-8000-000000000007&quot;,
+      &quot;raw_sha256&quot;: &quot;25483166fb8d80011d03ffc8fcce7bf82de77fe3f7e0dd9c158c8dce43d1f3de&quot;,
+      &quot;schema_version&quot;: 1,
+      &quot;settings&quot;: {},
+      &quot;status&quot;: &quot;completed&quot;
+    }
+  ],
+  &quot;annotations&quot;: [
+    {
+      &quot;created&quot;: &quot;2026-10-14T00:00:00+00:00&quot;,
+      &quot;id&quot;: &quot;00000000-0000-4000-8000-000000000001&quot;,
+      &quot;kind&quot;: &quot;note&quot;,
+      &quot;schema_version&quot;: 1,
+      &quot;stale&quot;: false,
+      &quot;target_id&quot;: &quot;00000000-0000-4000-8000-000000000002&quot;,
+      &quot;text&quot;: &quot;Synthetic sample only. PE fixtures, decompilation and finding are authored examples; no backend or model was run, and no vulnerability is established.&quot;
+    }
+  ],
+  &quot;artifacts&quot;: [
+    {
+      &quot;architecture&quot;: &quot;x86-64&quot;,
+      &quot;format&quot;: &quot;PE&quot;,
+      &quot;id&quot;: &quot;00000000-0000-4000-8000-000000000003&quot;,
+      &quot;name&quot;: &quot;older_sample.dll&quot;,
+      &quot;sha256&quot;: &quot;dc71b8420acc68418eaebfb8a4848cd2f63626125868e9977f017010c8d30215&quot;,
+      &quot;side&quot;: &quot;older&quot;,
+      &quot;size&quot;: 1024
+    },
+    {
+      &quot;architecture&quot;: &quot;x86-64&quot;,
+      &quot;format&quot;: &quot;PE&quot;,
+      &quot;id&quot;: &quot;00000000-0000-4000-8000-000000000004&quot;,
+      &quot;name&quot;: &quot;newer_sample.dll&quot;,
+      &quot;sha256&quot;: &quot;4af23bcb773054ad469c57363d50e2b53a6590bfba2286f16a06b4fb1440a168&quot;,
+      &quot;side&quot;: &quot;newer&quot;,
+      &quot;size&quot;: 1024
+    }
+  ],
+  &quot;build_facts&quot;: [
+    {
+      &quot;claim_level&quot;: &quot;observed-in-file&quot;,
+      &quot;fact&quot;: &quot;company_name&quot;,
+      &quot;side&quot;: &quot;older&quot;,
+      &quot;source&quot;: &quot;pe-version&quot;,
+      &quot;truncated&quot;: false,
+      &quot;value&quot;: &quot;Vendor &lt;b&gt;Corp&lt;/b&gt;&quot;
+    },
+    {
+      &quot;claim_level&quot;: &quot;observed-in-file&quot;,
+      &quot;fact&quot;: &quot;file_version&quot;,
+      &quot;side&quot;: &quot;newer&quot;,
+      &quot;source&quot;: &quot;pe-version&quot;,
+      &quot;truncated&quot;: false,
+      &quot;value&quot;: &quot;10.0.1.2&quot;
+    }
+  ],
+  &quot;calibration&quot;: {
+    &quot;artifact_digest&quot;: null,
+    &quot;display_level&quot;: &quot;ordinal&quot;,
+    &quot;gates&quot;: null,
+    &quot;model_id&quot;: null,
+    &quot;note&quot;: &quot;Scores are ordinal triage indices, not probabilities of a vulnerability.&quot;,
+    &quot;profile&quot;: null
+  },
+  &quot;change_ranking&quot;: null,
+  &quot;content_digest&quot;: &quot;71e825d359c67d86f97b5b4c8d0625c0989ec6ce0ef8f36b0d1404193339a023&quot;,
+  &quot;created&quot;: &quot;2026-10-14T00:00:00+00:00&quot;,
+  &quot;engine_evidence&quot;: {
+    &quot;engines&quot;: [
+      {
+        &quot;name&quot;: &quot;bindiff&quot;,
+        &quot;version&quot;: &quot;8&quot;
+      },
+      {
+        &quot;name&quot;: &quot;rz-diff&quot;,
+        &quot;version&quot;: &quot;0.9&quot;
+      }
+    ],
+    &quot;limitations&quot;: [
+      &quot;Scores are ordinal, uncalibrated indices of function MATCH corroboration only; never vulnerability probability, patch validity, exploitability, or independent proof.&quot;,
+      &quot;Function matching and semantic security findings require separate validation.&quot;,
+      &quot;Engine agreement may reflect shared disassembly or compiler artifacts; do not average upstream scores.&quot;
+    ],
+    &quot;rows&quot;: [
+      {
+        &quot;alternative_ranks&quot;: [],
+        &quot;channels&quot;: [
+          {
+            &quot;engine&quot;: &quot;ghidriff&quot;,
+            &quot;note&quot;: &quot;base pairing&quot;,
+            &quot;state&quot;: &quot;present&quot;
+          },
+          {
+            &quot;engine&quot;: &quot;bindiff&quot;,
+            &quot;note&quot;: &quot;agrees with the Ghidriff endpoints&quot;,
+            &quot;state&quot;: &quot;present&quot;
+          },
+          {
+            &quot;engine&quot;: &quot;rz-diff&quot;,
+            &quot;note&quot;: &quot;rz-diff: absent&quot;,
+            &quot;state&quot;: &quot;absent&quot;
+          }
+        ],
+        &quot;contradicting_engines&quot;: [],
+        &quot;explanation&quot;: &quot;Match endpoints agree, but engines can share disassembly artifacts and failure modes. Evidence index is an uncalibrated triage aid.&quot;,
+        &quot;limitations&quot;: [
+          &quot;rz-diff: absent&quot;
+        ],
+        &quot;match_id&quot;: &quot;00000000-0000-4000-8000-000000000002&quot;,
+        &quot;missing_engines&quot;: [
+          &quot;rz-diff&quot;
+        ],
+        &quot;ordinal_index&quot;: null,
+        &quot;supporting_engines&quot;: [
+          &quot;bindiff&quot;
+        ],
+        &quot;tier&quot;: &quot;high&quot;,
+        &quot;verdict&quot;: &quot;corroborated&quot;
+      },
+      {
+        &quot;alternative_ranks&quot;: [],
+        &quot;channels&quot;: [
+          {
+            &quot;engine&quot;: &quot;ghidriff&quot;,
+            &quot;note&quot;: &quot;base pairing&quot;,
+            &quot;state&quot;: &quot;present&quot;
+          },
+          {
+            &quot;engine&quot;: &quot;bindiff&quot;,
+            &quot;note&quot;: &quot;proposes conflicting endpoints&quot;,
+            &quot;state&quot;: &quot;present&quot;
+          },
+          {
+            &quot;engine&quot;: &quot;rz-diff&quot;,
+            &quot;note&quot;: &quot;rz-diff: absent&quot;,
+            &quot;state&quot;: &quot;absent&quot;
+          }
+        ],
+        &quot;contradicting_engines&quot;: [
+          &quot;bindiff&quot;
+        ],
+        &quot;explanation&quot;: &quot;At least one engine proposes conflicting endpoints. Review identities manually before interpreting a patch.&quot;,
+        &quot;limitations&quot;: [
+          &quot;bindiff: disagreement&quot;,
+          &quot;rz-diff: absent&quot;
+        ],
+        &quot;match_id&quot;: &quot;00000000-0000-4000-8000-000000000017&quot;,
+        &quot;missing_engines&quot;: [
+          &quot;rz-diff&quot;
+        ],
+        &quot;ordinal_index&quot;: null,
+        &quot;supporting_engines&quot;: [],
+        &quot;tier&quot;: &quot;low&quot;,
+        &quot;verdict&quot;: &quot;contested&quot;
+      }
+    ],
+    &quot;stale&quot;: false
+  },
+  &quot;generated_at&quot;: &quot;2026-10-14T00:00:00+00:00&quot;,
+  &quot;interpretations&quot;: [
+    {
+      &quot;context&quot;: {
+        &quot;digest&quot;: &quot;4c8bf36c37e79bc5edadfe222e7a71b25ad495efdc0a19753812e4ada99b9317&quot;,
+        &quot;evidence&quot;: [
+          {
+            &quot;artifact_id&quot;: &quot;00000000-0000-4000-8000-000000000004&quot;,
+            &quot;end_line&quot;: 3,
+            &quot;function_id&quot;: &quot;00000000-0000-4000-8000-000000000009&quot;,
+            &quot;id&quot;: &quot;ev-6e416eb90b1b0be50ef1ef4c2d298497fd7ba022e7db265fc1d4b2f3744bdd07&quot;,
+            &quot;run_id&quot;: &quot;00000000-0000-4000-8000-000000000007&quot;,
+            &quot;schema_version&quot;: 1,
+            &quot;side&quot;: &quot;newer&quot;,
+            &quot;start_line&quot;: 1
+          },
+          {
+            &quot;artifact_id&quot;: &quot;00000000-0000-4000-8000-000000000004&quot;,
+            &quot;end_line&quot;: 6,
+            &quot;function_id&quot;: &quot;00000000-0000-4000-8000-000000000006&quot;,
+            &quot;id&quot;: &quot;ev-9590ec745b0b894dd2e10e35159bf287543da7d787ea6580f1a4f5317f874507&quot;,
+            &quot;run_id&quot;: &quot;00000000-0000-4000-8000-000000000007&quot;,
+            &quot;schema_version&quot;: 1,
+            &quot;side&quot;: &quot;newer&quot;,
+            &quot;start_line&quot;: 1
+          },
+          {
+            &quot;artifact_id&quot;: &quot;00000000-0000-4000-8000-000000000003&quot;,
+            &quot;end_line&quot;: 3,
+            &quot;function_id&quot;: &quot;00000000-0000-4000-8000-000000000008&quot;,
+            &quot;id&quot;: &quot;ev-e10b28b84d92f4e58523b9a19f50b2b95dd842080c946ba32da9fc098d4cf63a&quot;,
+            &quot;run_id&quot;: &quot;00000000-0000-4000-8000-000000000007&quot;,
+            &quot;schema_version&quot;: 1,
+            &quot;side&quot;: &quot;older&quot;,
+            &quot;start_line&quot;: 1
+          }
+        ],
+        &quot;id&quot;: &quot;ctx-4c8bf36c37e79bc5edadfe222e7a71b25ad495efdc0a19753812e4ada99b9317&quot;,
+        &quot;match_ids&quot;: [
+          &quot;00000000-0000-4000-8000-000000000002&quot;
+        ],
+        &quot;omitted&quot;: [
+          &quot;3 omitted or unavailable context entries&quot;
+        ],
+        &quot;project_id&quot;: &quot;00000000-0000-4000-8000-000000000005&quot;,
+        &quot;revision&quot;: 1,
+        &quot;schema_version&quot;: 1,
+        &quot;stale&quot;: false,
+        &quot;token_estimate&quot;: 778
+      },
+      &quot;created&quot;: &quot;2026-10-14T00:00:00+00:00&quot;,
+      &quot;duration_seconds&quot;: 0.0,
+      &quot;endpoint&quot;: null,
+      &quot;error&quot;: null,
+      &quot;findings&quot;: [
+        {
+          &quot;alternatives&quot;: [
+            {
+              &quot;confidence&quot;: &quot;unknown&quot;,
+              &quot;contradicting&quot;: [
+                &quot;ev-e10b28b84d92f4e58523b9a19f50b2b95dd842080c946ba32da9fc098d4cf63a&quot;
+              ],
+              &quot;explanation&quot;: &quot;Caller validation may already have prevented invalid access.&quot;,
+              &quot;id&quot;: &quot;00000000-0000-4000-8000-000000000010&quot;,
+              &quot;preconditions&quot;: [],
+              &quot;schema_version&quot;: 1,
+              &quot;supporting&quot;: [],
+              &quot;unknowns&quot;: [
+                &quot;No caller implementation was provided.&quot;
+              ],
+              &quot;verification&quot;: []
+            }
+          ],
+          &quot;analyst_conclusion&quot;: &quot;&quot;,
+          &quot;category&quot;: &quot;ordinary-bug&quot;,
+          &quot;context_id&quot;: &quot;ctx-4c8bf36c37e79bc5edadfe222e7a71b25ad495efdc0a19753812e4ada99b9317&quot;,
+          &quot;cwe&quot;: null,
+          &quot;cwe_rationale&quot;: null,
+          &quot;fix_purpose&quot;: &quot;Return an error for a null buffer or index outside the supplied length&quot;,
+          &quot;hypothesis&quot;: {
+            &quot;confidence&quot;: &quot;medium&quot;,
+            &quot;contradicting&quot;: [],
+            &quot;explanation&quot;: &quot;The sample now checks the pointer and index before dereferencing the buffer.&quot;,
+            &quot;id&quot;: &quot;00000000-0000-4000-8000-000000000011&quot;,
+            &quot;preconditions&quot;: [
+              &quot;The supplied length accurately describes the readable buffer.&quot;
+            ],
+            &quot;schema_version&quot;: 1,
+            &quot;supporting&quot;: [
+              &quot;ev-e10b28b84d92f4e58523b9a19f50b2b95dd842080c946ba32da9fc098d4cf63a&quot;,
+              &quot;ev-9590ec745b0b894dd2e10e35159bf287543da7d787ea6580f1a4f5317f874507&quot;
+            ],
+            &quot;unknowns&quot;: [
+              &quot;Caller validation and actual shipped machine code are outside this synthetic example.&quot;
+            ],
+            &quot;verification&quot;: [
+              &quot;Review callers and test null, empty, boundary and out-of-range inputs.&quot;
+            ]
+          },
+          &quot;id&quot;: &quot;00000000-0000-4000-8000-000000000012&quot;,
+          &quot;match_ids&quot;: [
+            &quot;00000000-0000-4000-8000-000000000002&quot;
+          ],
+          &quot;review&quot;: &quot;unreviewed&quot;,
+          &quot;schema_version&quot;: 1,
+          &quot;stale&quot;: false,
+          &quot;summary&quot;: &quot;Synthetic example: guard added before indexed buffer access&quot;
+        }
+      ],
+      &quot;id&quot;: &quot;00000000-0000-4000-8000-000000000013&quot;,
+      &quot;model&quot;: &quot;no model invoked&quot;,
+      &quot;prompt_version&quot;: &quot;patchtrace-1&quot;,
+      &quot;provider&quot;: &quot;curated synthetic sample&quot;,
+      &quot;schema_version&quot;: 1,
+      &quot;status&quot;: &quot;completed&quot;
+    }
+  ],
+  &quot;leads&quot;: [
+    {
+      &quot;channels&quot;: [
+        &quot;ghidriff&quot;,
+        &quot;bindiff&quot;
+      ],
+      &quot;evidence_ids&quot;: [],
+      &quot;kind&quot;: &quot;cluster&quot;,
+      &quot;lead_id&quot;: &quot;lead-1&quot;,
+      &quot;statement&quot;: &quot;Two channels agree.&quot;
+    }
+  ],
+  &quot;limitations&quot;: [
+    &quot;Static evidence and hypotheses require analyst verification.&quot;,
+    &quot;Qualitative confidence is not a vulnerability probability.&quot;,
+    &quot;Unavailable context and stale findings remain explicitly identified.&quot;,
+    &quot;Raw provider responses and original source paths are excluded.&quot;
+  ],
+  &quot;matches&quot;: [
+    {
+      &quot;category&quot;: &quot;modified&quot;,
+      &quot;id&quot;: &quot;00000000-0000-4000-8000-000000000002&quot;,
+      &quot;manual&quot;: false,
+      &quot;match_types&quot;: [
+        &quot;Symbols&quot;,
+        &quot;StructuralGraph&quot;
+      ],
+      &quot;newer&quot;: [
+        {
+          &quot;address&quot;: &quot;180001080&quot;,
+          &quot;address_space&quot;: &quot;virtual&quot;,
+          &quot;artifact_id&quot;: &quot;00000000-0000-4000-8000-000000000004&quot;,
+          &quot;callees&quot;: [
+            &quot;report_invalid_index&quot;
+          ],
+          &quot;callers&quot;: [],
+          &quot;id&quot;: &quot;00000000-0000-4000-8000-000000000006&quot;,
+          &quot;name&quot;: &quot;&lt;U+202E&gt;gnidnuf&lt;script&gt;alert(1)&lt;/script&gt;?# Injected&quot;,
+          &quot;run_id&quot;: &quot;00000000-0000-4000-8000-000000000007&quot;,
+          &quot;schema_version&quot;: 1
+        }
+      ],
+      &quot;older&quot;: [
+        {
+          &quot;address&quot;: &quot;180001000&quot;,
+          &quot;address_space&quot;: &quot;virtual&quot;,
+          &quot;artifact_id&quot;: &quot;00000000-0000-4000-8000-000000000003&quot;,
+          &quot;callees&quot;: [],
+          &quot;callers&quot;: [],
+          &quot;id&quot;: &quot;00000000-0000-4000-8000-000000000008&quot;,
+          &quot;name&quot;: &quot;&lt;U+202E&gt;gnidnuf&lt;script&gt;alert(1)&lt;/script&gt;?# Injected&quot;,
+          &quot;run_id&quot;: &quot;00000000-0000-4000-8000-000000000007&quot;,
+          &quot;schema_version&quot;: 1
+        }
+      ],
+      &quot;quality&quot;: &quot;upstream similarity 0.58 (uncalibrated)&quot;,
+      &quot;reason&quot;: &quot;&quot;,
+      &quot;review&quot;: &quot;unreviewed&quot;,
+      &quot;run_id&quot;: &quot;00000000-0000-4000-8000-000000000007&quot;,
+      &quot;schema_version&quot;: 1
+    },
+    {
+      &quot;category&quot;: &quot;added&quot;,
+      &quot;id&quot;: &quot;00000000-0000-4000-8000-000000000014&quot;,
+      &quot;manual&quot;: false,
+      &quot;match_types&quot;: [],
+      &quot;newer&quot;: [
+        {
+          &quot;address&quot;: &quot;180001200&quot;,
+          &quot;address_space&quot;: &quot;virtual&quot;,
+          &quot;artifact_id&quot;: &quot;00000000-0000-4000-8000-000000000004&quot;,
+          &quot;callees&quot;: [],
+          &quot;callers&quot;: [
+            &quot;read_item&quot;
+          ],
+          &quot;id&quot;: &quot;00000000-0000-4000-8000-000000000009&quot;,
+          &quot;name&quot;: &quot;report_invalid_index&quot;,
+          &quot;run_id&quot;: &quot;00000000-0000-4000-8000-000000000007&quot;,
+          &quot;schema_version&quot;: 1
+        }
+      ],
+      &quot;older&quot;: [],
+      &quot;quality&quot;: &quot;unknown&quot;,
+      &quot;reason&quot;: &quot;&quot;,
+      &quot;review&quot;: &quot;unreviewed&quot;,
+      &quot;run_id&quot;: &quot;00000000-0000-4000-8000-000000000007&quot;,
+      &quot;schema_version&quot;: 1
+    },
+    {
+      &quot;category&quot;: &quot;removed&quot;,
+      &quot;id&quot;: &quot;00000000-0000-4000-8000-000000000015&quot;,
+      &quot;manual&quot;: false,
+      &quot;match_types&quot;: [],
+      &quot;newer&quot;: [],
+      &quot;older&quot;: [
+        {
+          &quot;address&quot;: &quot;180001400&quot;,
+          &quot;address_space&quot;: &quot;virtual&quot;,
+          &quot;artifact_id&quot;: &quot;00000000-0000-4000-8000-000000000003&quot;,
+          &quot;callees&quot;: [],
+          &quot;callers&quot;: [],
+          &quot;id&quot;: &quot;00000000-0000-4000-8000-000000000016&quot;,
+          &quot;name&quot;: &quot;debug_dump&quot;,
+          &quot;run_id&quot;: &quot;00000000-0000-4000-8000-000000000007&quot;,
+          &quot;schema_version&quot;: 1
+        }
+      ],
+      &quot;quality&quot;: &quot;unknown&quot;,
+      &quot;reason&quot;: &quot;&quot;,
+      &quot;review&quot;: &quot;unreviewed&quot;,
+      &quot;run_id&quot;: &quot;00000000-0000-4000-8000-000000000007&quot;,
+      &quot;schema_version&quot;: 1
+    },
+    {
+      &quot;category&quot;: &quot;modified&quot;,
+      &quot;id&quot;: &quot;00000000-0000-4000-8000-000000000017&quot;,
+      &quot;manual&quot;: false,
+      &quot;match_types&quot;: [
+        &quot;Symbols&quot;
+      ],
+      &quot;newer&quot;: [
+        {
+          &quot;address&quot;: &quot;180001700&quot;,
+          &quot;address_space&quot;: &quot;virtual&quot;,
+          &quot;artifact_id&quot;: &quot;00000000-0000-4000-8000-000000000004&quot;,
+          &quot;callees&quot;: [],
+          &quot;callers&quot;: [],
+          &quot;id&quot;: &quot;00000000-0000-4000-8000-000000000018&quot;,
+          &quot;name&quot;: &quot;get_version&quot;,
+          &quot;run_id&quot;: &quot;00000000-0000-4000-8000-000000000007&quot;,
+          &quot;schema_version&quot;: 1
+        }
+      ],
+      &quot;older&quot;: [
+        {
+          &quot;address&quot;: &quot;180001600&quot;,
+          &quot;address_space&quot;: &quot;virtual&quot;,
+          &quot;artifact_id&quot;: &quot;00000000-0000-4000-8000-000000000003&quot;,
+          &quot;callees&quot;: [],
+          &quot;callers&quot;: [],
+          &quot;id&quot;: &quot;00000000-0000-4000-8000-000000000019&quot;,
+          &quot;name&quot;: &quot;get_version&quot;,
+          &quot;run_id&quot;: &quot;00000000-0000-4000-8000-000000000007&quot;,
+          &quot;schema_version&quot;: 1
+        }
+      ],
+      &quot;quality&quot;: &quot;upstream similarity 0.94 (uncalibrated)&quot;,
+      &quot;reason&quot;: &quot;&quot;,
+      &quot;review&quot;: &quot;unreviewed&quot;,
+      &quot;run_id&quot;: &quot;00000000-0000-4000-8000-000000000007&quot;,
+      &quot;schema_version&quot;: 1
+    }
+  ],
+  &quot;name&quot;: &quot;Synthetic bounds-check walkthrough&quot;,
+  &quot;normalization&quot;: &quot;report/2 text normalization applied&quot;,
+  &quot;orientation&quot;: {
+    &quot;newer_sha256&quot;: &quot;4af23bcb773054ad469c57363d50e2b53a6590bfba2286f16a06b4fb1440a168&quot;,
+    &quot;older_sha256&quot;: &quot;dc71b8420acc68418eaebfb8a4848cd2f63626125868e9977f017010c8d30215&quot;
+  },
+  &quot;project_id&quot;: &quot;00000000-0000-4000-8000-000000000005&quot;,
+  &quot;provenance&quot;: {
+    &quot;derived_from&quot;: &quot;persisted-project-snapshot&quot;,
+    &quot;network_used&quot;: false,
+    &quot;revision&quot;: 1
+  },
+  &quot;redaction&quot;: {
+    &quot;code&quot;: false,
+    &quot;notes&quot;: true,
+    &quot;paths&quot;: true,
+    &quot;profile&quot;: &quot;local&quot;,
+    &quot;rules_applied&quot;: {},
+    &quot;urls&quot;: &quot;text&quot;
+  },
+  &quot;report_version&quot;: 2,
+  &quot;revision&quot;: 1,
+  &quot;sample&quot;: true,
+  &quot;schema_version&quot;: 1,
+  &quot;sections_present&quot;: [
+    &quot;advisories&quot;,
+    &quot;build_facts&quot;,
+    &quot;engine_evidence&quot;,
+    &quot;leads&quot;,
+    &quot;symbols&quot;
+  ],
+  &quot;selection&quot;: {
+    &quot;finding_ids&quot;: [
+      &quot;00000000-0000-4000-8000-000000000012&quot;
+    ],
+    &quot;include_code&quot;: false,
+    &quot;include_notes&quot;: true
+  },
+  &quot;stale_sections&quot;: [],
+  &quot;symbols&quot;: {
+    &quot;consent&quot;: null,
+    &quot;launcher_version&quot;: null,
+    &quot;mode&quot;: &quot;off&quot;,
+    &quot;servers&quot;: [],
+    &quot;staged&quot;: []
+  },
+  &quot;tool&quot;: {
+    &quot;name&quot;: &quot;PatchTrace&quot;,
+    &quot;release_tag&quot;: null,
+    &quot;signed&quot;: &quot;unknown&quot;,
+    &quot;version&quot;: &quot;0.1.0&quot;
+  },
+  &quot;truncated&quot;: [],
+  &quot;unknowns&quot;: [
+    &quot;Series context not included: this export has no series input.&quot;,
+    &quot;Unified result reference not included: no stored unified result.&quot;
+  ]
+}</pre>
+</main></body></html>

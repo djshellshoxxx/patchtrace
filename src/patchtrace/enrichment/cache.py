@@ -31,8 +31,6 @@ from dataclasses import dataclass, field, fields
 from datetime import UTC, datetime
 from pathlib import Path
 
-from pydantic import ValidationError
-
 from .contracts import CacheManifest, EnrichmentError
 from .identity import domain_id
 
@@ -328,8 +326,10 @@ class DerivedCache:
         if len(raw) > _MANIFEST_MAX:
             raise _Corrupt('manifest too large')
         try:
+            json.loads(raw.decode('utf-8'), object_pairs_hook=_unique_pairs,
+                       parse_constant=_reject_constant)
             manifest = CacheManifest.model_validate_json(raw)
-        except ValidationError:
+        except (ValueError, RecursionError):
             raise _Corrupt('invalid manifest') from None
         if manifest.key != key or manifest.stage != stage:
             raise _Corrupt('manifest names another entry')
@@ -408,6 +408,8 @@ class DerivedCache:
         manifest = CacheManifest(key=key, stage=stage, size=len(payload), sha256=digest,
                                  inputs=dict(inputs), created=datetime.now(UTC).isoformat())
         manifest_bytes = manifest.model_dump_json().encode()
+        if len(manifest_bytes) > _MANIFEST_MAX:
+            return False
         need = len(payload) + len(manifest_bytes)
         if need > self.config.budget_bytes:
             return False
@@ -684,6 +686,19 @@ class DerivedCache:
         except (OSError, _Unsafe) as exc:
             result['error'] = type(exc).__name__
         return result
+
+
+def _unique_pairs(pairs: list[tuple[str, object]]) -> dict:
+    result = {}
+    for key, value in pairs:
+        if key in result:
+            raise ValueError('duplicate manifest field')
+        result[key] = value
+    return result
+
+
+def _reject_constant(value: str) -> None:
+    raise ValueError('nonfinite manifest number')
 
 
 class _Corrupt(Exception):

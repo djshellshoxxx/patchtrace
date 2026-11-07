@@ -1,0 +1,1 @@
+{"dialect":"cvrf-json/0","document":{"release_id":"2099-Jan"},"product_tree":[{"product_id":"SYN-PROD-01","name":"Example"}],"vulnerabilities":[{"cve":"CVE-2099-20001","remediations":[{"type":2,"description":"KB90000\u0417","product_ids":["SYN-PROD-01"]}]}]}

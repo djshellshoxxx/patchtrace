@@ -40,6 +40,7 @@ from .contracts import (
     RuleCandidate,
     RuleDecision,
     RuleVersion,
+    strict_json,
 )
 from .errors import RuleError
 from .limits import DEFAULT_LIMITS
@@ -236,7 +237,10 @@ class RuleStore:
         data = path.read_bytes()
         if hashlib.sha256(data).hexdigest() != body.get('sidecar_sha256'):
             raise RuleError('PT-RULE-INTEGRITY', 'A stored test grid failed its hash check', reason='sidecar-hash')
-        return json.loads(data)
+        try:
+            return strict_json(data.decode('utf-8'))
+        except (ValueError, RecursionError):     # matching hash, tampered text: skip and list it (#105 BUG-RULE-4)
+            raise RuleError('PT-RULE-INTEGRITY', 'A stored test grid is not readable JSON', reason='sidecar-json') from None
 
 
 def _pair(source: PairSource) -> tuple[str, str]:

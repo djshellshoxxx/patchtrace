@@ -941,7 +941,7 @@ def gate_pin(pin_bytes: bytes) -> dict:
     """Parse and validate the pin with check_backend_pin semantics; refuse any remaining placeholder."""
     checker = _load_sibling('check_backend_pin')
     try:
-        data = json.loads(pin_bytes.decode('utf-8'))
+        data = checker.parse_pin(pin_bytes)
     except (UnicodeError, ValueError) as error:
         raise BundleBuildError('PT-BUNDLE-PIN', f'pin is not JSON: {error}') from None
     problems = checker.validate_pin(data) or checker.release_problems(data)

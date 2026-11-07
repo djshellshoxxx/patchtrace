@@ -52,6 +52,39 @@
     "created": {
       "title": "Created",
       "type": "string"
+    },
+    "report_version": {
+      "default": 1,
+      "enum": [
+        1,
+        2
+      ],
+      "title": "Report Version",
+      "type": "integer"
+    },
+    "content_digest": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Content Digest"
+    },
+    "sections": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Sections",
+      "type": "array"
+    },
+    "redaction_profile": {
+      "default": "local",
+      "title": "Redaction Profile",
+      "type": "string"
     }
   },
   "required": [

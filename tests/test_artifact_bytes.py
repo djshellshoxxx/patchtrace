@@ -86,6 +86,7 @@ def test_closed_reader(tmp_path):
     write(tmp_path / 'a.bin', b'abc')
     reader = VerifiedArtifactReader.open_path(tmp_path / 'a.bin')
     reader.close()
+    assert reader._block_digests == b''
     with pytest.raises(ArtifactBytesError) as exc:
         reader.read(0, 1)
     assert exc.value.code == 'closed'
@@ -113,27 +114,21 @@ def test_open_project_artifact_and_reject_traversal(tmp_path):
     assert exc.value.code == 'unreadable'
 
 
-def test_in_place_edit_with_restored_mtime_is_detected(tmp_path):
-    import hashlib
-    import os
-    import sys
+def test_in_place_edit_with_restored_mtime_is_detected(tmp_path, monkeypatch):
+    from patchtrace import artifact_bytes
 
-    import pytest
-
-    from patchtrace.artifact_bytes import ArtifactBytesError, VerifiedArtifactReader
-    if sys.platform == 'win32':
-        pytest.skip('Windows st_ctime is creation time; documented residual risk')
     path = tmp_path / 'a.bin'
     path.write_bytes(b'AAAA')
     stamp = path.stat().st_mtime_ns
-    reader = VerifiedArtifactReader.open_path(path, hashlib.sha256(b'AAAA').hexdigest())
-    with path.open('r+b') as handle:
-        handle.write(b'BBBB')
-    os.utime(path, ns=(stamp, stamp))
-    with pytest.raises(ArtifactBytesError) as info:
-        reader.read(0, 4)
-    assert info.value.code == 'artifact_changed'
-    reader.close()
+    with VerifiedArtifactReader.open_path(path, hashlib.sha256(b'AAAA').hexdigest()) as reader:
+        # Creation time on Windows, or coarse filesystem change-time resolution, can leave all metadata equal.
+        monkeypatch.setattr(artifact_bytes, '_stat_key', lambda _stream: reader._stat)
+        with path.open('r+b') as handle:
+            handle.write(b'BBBB')
+        os.utime(path, ns=(stamp, stamp))
+        with pytest.raises(ArtifactBytesError) as info:
+            reader.read(0, 4)
+        assert info.value.code == 'artifact_changed'
 
 
 def test_change_between_hash_chunks_is_detected(tmp_path):
@@ -152,3 +147,93 @@ def test_change_between_hash_chunks_is_detected(tmp_path):
     with pytest.raises(ArtifactBytesError) as exc:
         VerifiedArtifactReader.open_path(path, cancel=cancel)
     assert exc.value.code == 'artifact_changed'
+
+
+class ObservedStream:
+    """Observe actual verification IO while preserving the real handle and filesystem behavior."""
+    def __init__(self, stream, after_read=None, max_bytes=None):
+        self.stream = stream
+        self.requests = []
+        self.after_read = after_read
+        self.max_bytes = max_bytes
+
+    def __getattr__(self, name):
+        return getattr(self.stream, name)
+
+    def read(self, size):
+        self.requests.append(size)
+        data = self.stream.read(size if self.max_bytes is None else min(size, self.max_bytes))
+        if self.after_read is not None:
+            self.after_read()
+        return data
+
+
+@pytest.mark.parametrize('offset,length', [(4093, 8), (0, 0), (8191, 7), (4096, 4096)])
+def test_verified_ranges_cross_blocks_and_clip_exactly(tmp_path, offset, length):
+    data = bytes(range(256)) * 33
+    path = tmp_path / 'blocks.bin'
+    write(path, data)
+    with VerifiedArtifactReader.open_path(path) as reader:
+        assert reader.read(offset, length) == data[offset:offset + length]
+
+
+def test_scalar_reads_verify_only_touched_blocks(tmp_path):
+    from patchtrace.artifact_bytes import VERIFY_BLOCK_BYTES
+
+    path = tmp_path / 'blocks.bin'
+    write(path, b'A' * (3 * VERIFY_BLOCK_BYTES + 17))
+    with VerifiedArtifactReader.open_path(path) as reader:
+        observed = ObservedStream(reader._stream)
+        reader._stream = observed
+        assert reader.read(VERIFY_BLOCK_BYTES + 11, 1) == b'A'
+        assert observed.requests == [VERIFY_BLOCK_BYTES]
+        assert len(reader._block_digests) == 4 * hashlib.sha256().digest_size
+        observed.requests.clear()
+        assert reader.read(reader.size, 0) == b''
+        assert observed.requests == []
+
+
+def test_boundary_read_rejects_changed_second_block_with_equal_metadata(tmp_path, monkeypatch):
+    from patchtrace import artifact_bytes
+
+    block = artifact_bytes.VERIFY_BLOCK_BYTES
+    path = tmp_path / 'blocks.bin'
+    write(path, b'A' * block + b'B' * block)
+    with VerifiedArtifactReader.open_path(path) as reader:
+        monkeypatch.setattr(artifact_bytes, '_stat_key', lambda _stream: reader._stat)
+        with path.open('r+b') as stream:
+            stream.seek(block)
+            stream.write(b'C')
+        # The unchanged requested block remains usable; the changed block never returns guessed bytes.
+        assert reader.read(0, 1) == b'A'
+        with pytest.raises(ArtifactBytesError) as exc:
+            reader.read(block - 1, 2)
+        assert exc.value.code == 'artifact_changed'
+
+
+def test_change_during_read_is_checked_after_reading(tmp_path):
+    path = tmp_path / 'blocks.bin'
+    write(path, b'A' * 32)
+    with VerifiedArtifactReader.open_path(path) as reader:
+        def mutate():
+            with path.open('ab') as stream:
+                stream.write(b'tail')
+        reader._stream = ObservedStream(reader._stream, after_read=mutate)
+        with pytest.raises(ArtifactBytesError) as exc:
+            reader.read(0, 1)
+        assert exc.value.code == 'artifact_changed'
+
+
+def test_short_os_reads_preserve_block_alignment_and_exact_ranges(tmp_path, monkeypatch):
+    from patchtrace import artifact_bytes
+
+    path = tmp_path / 'short.bin'
+    data = bytes(range(256)) * (artifact_bytes.HASH_CHUNK // 256 + 17)
+    digest = write(path, data)
+    fdopen = artifact_bytes.os.fdopen
+    monkeypatch.setattr(artifact_bytes.os, 'fdopen',
+                        lambda *args, **kwargs: ObservedStream(fdopen(*args, **kwargs), max_bytes=333))
+    with VerifiedArtifactReader.open_path(path, digest) as reader:
+        assert reader.read(4093, 13) == data[4093:4106]
+        assert reader.read(artifact_bytes.HASH_CHUNK - 2, 17) == data[
+            artifact_bytes.HASH_CHUNK - 2:artifact_bytes.HASH_CHUNK + 15]

@@ -44,6 +44,8 @@ Function identity truth per `calibration-corpus-and-model.md` s5 (symbols-hidden
 ## 4. Parity harness (`tools/unified/parity.py`, dev only)
 Inputs: one project with a unified result, optional `.BinDiff` + `bindiff --md_index` dumps (produced only by this dev tool with its own argv; product argv keeps `--md_index` forbidden, C-21), Ghidriff raw JSON. Output `parity-report.json` (deterministic): per pass: pairs, agreement with each oracle, disagreements listed by RVA pair with both provenances; MD index comparison histogram (exact / differs at 1e-12 / missing); Ghidriff pairs not reproduced, grouped by `match_types`; BinDiff pairs not reproduced, grouped by algorithm. Use: G-U3, and diagnosing parity drift (troubleshooting T-14). Ghidra-parity bonus: the extractor's optional Ghidra hasher values (03 s4) must induce the same equivalence classes as `h0` (ExactBytes) and `h3` (ExactInstructions) on every function (`test_live_h3_matches_ghidra_exact_instructions`, live only).
 
+MD dump lines are parsed in linear time in line length, including failed lines with long whitespace runs. Accepted syntax stays: optional whitespace, optional lowercase `0x`, 1–16 ASCII hexadecimal address digits, then either at least one whitespace character or one `:`, `,` or `=` separator surrounded by optional whitespace, then an optional minus and a decimal with 1–30 digits on each side of the dot, then optional whitespace. Blank lines are ignored, other rejected lines counted, and later duplicate addresses win. No native dump-format compatibility is inferred from these authored-text tests.
+
 ## 5. Red/green test list per module (unit tests are pure and fast; live tests are separate workflows)
 
 | Module | Tests (red first, then green) |

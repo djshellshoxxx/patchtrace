@@ -42,7 +42,7 @@ import sys, threading
 from pathlib import Path
 from patchtrace import service as service_module
 
-def park(*args):
+def park(*args, **kwargs):
     # The database and its tables are committed; no snapshot exists yet.
     sys.stdout.write("PARKED\n")
     sys.stdout.flush()

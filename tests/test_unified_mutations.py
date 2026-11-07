@@ -36,7 +36,7 @@ def test_ids_are_unique_c_safe_and_pending_classes_say_what_they_need():
     assert len(ids) == len(set(ids))
     assert all(re.fullmatch(r'[a-z]+(-[a-z]+)*', i) for i in ids)
     assert all(len(p.needs) > 10 and len(p.reason) > 30 for p in classes.PENDING)
-    assert {p.id for p in classes.PENDING} == {'moved-rva-call', 'try-scope'}
+    assert {p.id for p in classes.PENDING} == {'moved-rva-call', 'try-scope', 'trace-arg'}
 
 
 def test_frame_only_must_land_in_review_and_every_other_class_in_material_or_review():

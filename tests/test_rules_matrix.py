@@ -144,8 +144,10 @@ def test_an_expectations_file_turns_a_series_build_into_a_scored_row(world, olde
 
 
 @pytest.mark.parametrize('text', ['[]', '{"a": "maybe"}', '{"a": 1}', 'not json', '{"x.exe": "hit", "x.exe": "hit"}',
-                                  '{"x.exe": "hit", "x.exe": "unknown"}', '{"x.exe": "hit"}' + ' ' * (1 << 20)],
-                         ids=['list', 'word', 'number', 'text', 'dup-same-value', 'dup-other-value', 'too-large'])
+                                  '{"x.exe": "hit", "x.exe": "unknown"}', '{"x.exe": "hit"}' + ' ' * (1 << 20),
+                                  '[' * 100_000],
+                         ids=['list', 'word', 'number', 'text', 'dup-same-value', 'dup-other-value', 'too-large',
+                              'deep-105-rule5'])
 def test_a_bad_expectations_file_is_refused(tmp_path, text):
     path = tmp_path / 'expect.json'
     path.write_text(text, encoding='utf-8')
@@ -236,6 +238,23 @@ def test_a_stored_run_is_scored_again_with_new_expectations_and_the_key_ignores_
     assert grid.cache_key == matrix.cache_key([older_rule], changed, grid.engine.version, 30)
 
 
+def test_a_stored_run_reused_in_another_order_keeps_each_result_on_its_own_file_and_rule(world, older_rule, newer_rule):
+    """#105 BUG-RULE-1: the key ignores order, so a reused run must remap cells by hash, not by position."""
+    entries, _ = world.entries(series=world.series)
+    grid = run(entries, [older_rule, newer_rule])
+    targets, versions = [e.target for e in reversed(entries)], [newer_rule, older_rule]
+    assert grid.cache_key == matrix.cache_key(versions, targets, grid.engine.version, 30)
+    again = matrix.rescored(grid, targets, versions)
+    assert [t.target_id for t in again.targets] == [t.target_id for t in targets]
+    assert [r.rule_sha256 for r in again.rules] == [v.rule_sha256 for v in versions]
+    was = {(t.label, r.rule_sha256): grid.cells[i * 2 + j].state
+           for i, t in enumerate(grid.targets) for j, r in enumerate(grid.rules)}
+    now = {(t.label, r.rule_sha256): again.cells[i * 2 + j].state
+           for i, t in enumerate(again.targets) for j, r in enumerate(again.rules)}
+    assert now == was
+    assert (by_label(again, 1)['0-V1.dll'].verdict, by_label(again, 0)['3-V2.dll'].verdict) == ('as-expected',) * 2
+
+
 def test_no_path_reaches_the_record(world, older_rule):
     entries, _ = world.entries(series=world.series, clean_dir=world.clean)
     text = run(entries, [older_rule]).model_dump_json()
@@ -279,8 +298,85 @@ def test_the_caps_of_a_run_are_enforced_before_anything_is_scanned(world):
     assert (caught.value.code, caught.value.reason) == ('PT-RULE-LIMIT', 'series')
 
 
+@pytest.mark.skipif(not Path('/dev/zero').exists(), reason='needs a character device such as /dev/zero')
+def test_a_device_as_an_extra_build_is_refused_without_reading_it(world):
+    """#105 BUG-RULE-6: `--extra /dev/zero` (or a FIFO) was hashed with no regular-file check and never returned."""
+    outcome = []
+
+    def gather():
+        try:
+            world.entries(extra=[Path('/dev/zero')])
+        except RuleError as exc:
+            outcome.append((exc.code, exc.reason))
+
+    worker = threading.Thread(target=gather, daemon=True)
+    worker.start()
+    worker.join(timeout=10)
+    assert not worker.is_alive() and outcome == [('PT-RULE-INPUT', 'not-a-file')]
+
+
 def test_a_file_or_folder_that_cannot_be_read_is_a_bad_selection(world, tmp_path):
     for kw in ({'extra': [tmp_path / 'missing.dll']}, {'series': tmp_path / 'missing-folder'}):
         with pytest.raises(RuleError) as caught:
             world.entries(**kw)
         assert caught.value.code == 'PT-RULE-INPUT'
+
+
+def test_rescore_keeps_distinct_versions_with_identical_rule_content(world, older_rule):
+    other = older_rule.__class__.model_validate({**older_rule.model_dump(), 'version_id': 'f' * 64})
+    entries, _ = world.entries(series=world.series)
+    grid = run(entries, [older_rule, other])
+    from patchtrace.rules.contracts import MatrixRun
+    cells = (CellResult(state='timeout'), CellResult(state='no-hit', hits=0), *grid.cells[2:])
+    grid = MatrixRun.model_validate({**grid.model_dump(), 'cells': cells})
+    again = matrix.rescored(grid, grid.targets, [other, older_rule])
+    assert [r.version_id for r in again.rules] == [other.version_id, older_rule.version_id]
+    assert [c.state for c in again.cells[:2]] == ['no-hit', 'timeout']
+    assert MatrixRun.model_validate(again.model_dump()) == again
+    renamed = other.__class__.model_validate({**other.model_dump(), 'version_id': 'e' * 64})
+    with pytest.raises(RuleError) as caught:
+        matrix.rescored(grid, grid.targets, [renamed, older_rule])
+    assert caught.value.reason == 'cache-identity'
+
+
+@pytest.mark.skipif(not hasattr(os, 'mkfifo'), reason='POSIX FIFO replacement regression')
+def test_regular_file_replaced_by_fifo_before_open_does_not_block(tmp_path):
+    import subprocess
+    import sys
+
+    path = tmp_path / 'input.bin'
+    path.write_bytes(b'regular input')
+    code = '''
+import os, pathlib, sys
+from patchtrace.rules import matrix
+from patchtrace.rules.errors import RuleError
+path = pathlib.Path(sys.argv[1])
+real_stat = os.stat
+swapped = False
+def stat_then_swap(p, *args, **kwargs):
+    global swapped
+    info = real_stat(p, *args, **kwargs)
+    if pathlib.Path(p) == path and not swapped:
+        swapped = True
+        path.unlink()
+        os.mkfifo(path)
+    return info
+matrix.os.stat = stat_then_swap
+try:
+    matrix._digest(path)
+except RuleError as exc:
+    assert exc.reason == 'not-a-file'
+else:
+    raise AssertionError('FIFO accepted')
+'''
+    result = subprocess.run([sys.executable, '-c', code, str(path)], capture_output=True, text=True, timeout=3,
+                            env={**os.environ, 'PYTHONPATH': str(Path(__file__).resolve().parents[1] / 'src')})
+    assert result.returncode == 0, result.stderr
+
+
+def test_digest_works_when_o_nonblock_is_absent(tmp_path, monkeypatch):
+    """Windows has no os.O_NONBLOCK; the digest path must not require it."""
+    monkeypatch.delattr(os, 'O_NONBLOCK', raising=False)
+    path = tmp_path / 'build.bin'
+    path.write_bytes(b'abc\n')
+    assert matrix._digest(path) == (hashlib.sha256(b'abc\n').hexdigest(), 4)
