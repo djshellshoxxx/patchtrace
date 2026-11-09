@@ -118,6 +118,24 @@ A built panel that emits an anchor kind no built panel handles is a warning, not
 
 Windows-only and owner-only gates (screen-reader pass with NVDA and Narrator, high-contrast and DPI checks, clean-machine launch) are listed in `docs/specs/accessibility-baseline.md` and never count as done here.
 
+### Files status and focus implementation (2026-11-09)
+
+The Files controller uses the existing shell announcement port for inspection and
+Version and signing load, completion and failure transitions. Repeated states
+within the same project/artifact identity are silent; progress is not announced. Failure messages
+are assertive, with fixed spoken copy and persistent plain-text details in the
+panel. Completion means the read ended, not that a signature or input is trusted.
+Superseded metadata results remain ignored under the existing inspection-identity
+guard. No new worker or cancellation lifecycle is introduced.
+
+A project update retains a failure for the current artifact key unless a retry
+for that key is already running; the explicit
+**File overview** action retries inspection. The error names **Logs** and that
+retry action. Asynchronous updates keep keyboard focus where it is; focusing the
+Files panel targets the table in its currently selected tab. Automated regression
+coverage is `tests/test_files_announcements.py`; native assistive-technology
+acceptance remains open.
+
 ## 10. Open questions (recommended defaults)
 
 1. Should `ui.py` host panels through a thin `gui/qt/` layer or stay as is while panels land one by one? Default `[proposal]`: add `gui/qt/` as the plan says; `ui.py` gains only a host call, never panel code.

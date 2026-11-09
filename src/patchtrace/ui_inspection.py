@@ -452,6 +452,9 @@ class FilesController(ControllerBase):
         root = QWidget()
         super().__init__(root)
         self.port = ctx.project
+        self._announce = getattr(ctx, 'announce', None)
+        self._announced: dict[str, tuple[str, bool]] = {}
+        self._announcement_project: object = None
         self.window = self.port.window
         self.recorded, self.pe = RowsModel(RECORDED_HEADERS), RowsModel(PE_HEADERS)
         self.recorded_view = rows_view(self.recorded, (18, 24), 'overview.table', 'Recorded artifact fields')
@@ -480,14 +483,18 @@ class FilesController(ControllerBase):
         self.window.inspection_status.connect(self._inspection_status)
 
     def focus_target(self) -> QWidget:
-        return self.pe_view
+        return self.signing.table if self.tabs.currentWidget() is self.signing else self.pe_view
 
     def project_changed(self, key: object) -> None:
-        self.refresh()
+        self.refresh(retry=False)
 
-    def refresh(self) -> None:
-        """Show the recorded fields now; use the current inspection, or start one."""
+    def refresh(self, *, retry: bool = True) -> None:
+        """Show recorded fields and the current inspection. Only an explicit refresh retries a recorded failure."""
         project = self.port.project()
+        inspection_key = getattr(self.window, '_project_inspection_key', lambda: project.id if project else None)()
+        if inspection_key != self._announcement_project:
+            self._announced.clear()
+            self._announcement_project = inspection_key
         self.recorded.set_rows(recorded_rows(project) if project else ())
         inspection = self.window._current_inspection() if project else None
         self.pe.set_rows(())
@@ -496,13 +503,34 @@ class FilesController(ControllerBase):
         if inspection is not None:
             self._inspection_status('File inspection complete · ' + side_summary(inspection))
         elif project:
-            self.status.setText(RUNNING_STATUS)
-            self.window.start_inspection()
+            failure = getattr(self.window, '_inspection_error', None)
+            thread = getattr(self.window, '_inspection_thread', None)
+            running = (thread is not None and isValid(thread) and thread.isRunning()
+                       and thread.key == inspection_key)
+            if not retry and not running and failure is not None and failure[0] == inspection_key:
+                self._inspection_status('File inspection failed: ' + failure[1])
+            else:
+                self.status.setText(RUNNING_STATUS)
+                self._announce_state('inspection', RUNNING_STATUS)
+                self.window.start_inspection()
         else:
             self.status.setText(IDLE_STATUS)
 
+    def _announce_state(self, section: str, text: str, *, assertive: bool = False) -> None:
+        state = (text, assertive)
+        if self._announced.get(section) != state:
+            self._announced[section] = state
+            if self._announce is not None:
+                self._announce(text, assertive=assertive)
+
     def _inspection_status(self, text: str) -> None:
-        self.status.setText(text)
+        failed = text.startswith('File inspection failed:')
+        remedy = 'Review Logs, then choose File overview to retry.'
+        self.status.setText(f'{text}. {remedy}' if failed else text)
+        if failed:
+            self._announce_state('inspection', f'File inspection failed. {remedy}', assertive=True)
+        elif text.startswith('File inspection complete'):
+            self._announce_state('inspection', 'File inspection complete. Review Files for per-file status and warnings.')
         inspection = self.window._current_inspection()
         if inspection is not None:
             self.pe.set_rows(pe_rows(inspection))
@@ -514,6 +542,7 @@ class FilesController(ControllerBase):
         self._stop_signing()
         self._signing_for = inspection
         self.signing.set_loading()
+        self._announce_state('signing', sv.LOADING)
         thread = MetadataThread(inspection, inspection)
         thread.metadata_ready.connect(self._signing_ready)
         thread.metadata_failed.connect(self._signing_failed)
@@ -531,10 +560,14 @@ class FilesController(ControllerBase):
         if key is self._signing_for:
             trust = {side: (info.trust.status if info.trust else None) for side, info in key.sides.items()}
             self.signing.set_result(metas, trust)
+            self._announce_state('signing', 'Version and signing read complete. Review the section for results and limits.')
 
     def _signing_failed(self, code: str, key) -> None:
         if key is self._signing_for:
             self.signing.set_error(code)
+            self._announce_state(
+                'signing', 'Version and signing read failed. Review the section status; other file sections are unaffected.',
+                assertive=True)
 
     def shutdown(self) -> None:
         self._stop_signing(wait=True)
