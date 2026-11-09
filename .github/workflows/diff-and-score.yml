@@ -1,0 +1,253 @@
+name: Diff and score (L3, manual)
+# Takes the pair artifacts of a winbindex-pairs run, diffs each found pair with ghidriff (one matrix job per pair),
+# converts the reports with the adapters and scores them against a case manifest
+# (tools/research_qualification/scorerun.py). Manual only: no push, pull_request or schedule trigger.
+# ghidriff runs can take HOURS per pair; a timeout or tool failure makes that case BLOCKED (never a miss).
+# This is an L3 (real Windows binaries, function level) claim only. See docs/research/diff-and-score.md.
+# Inputs reach scripts through the environment, never by interpolation into shell text.
+on:
+  workflow_dispatch:
+    inputs:
+      pair_run_id:
+        description: 'Run id of a "Winbindex binary pairs (manual)" run whose artifacts to use'
+        required: true
+      manifest_artifact:
+        description: 'Name of the pair-manifest artifact in that run'
+        required: false
+        default: 'winpairs-manifest'
+      binaries_artifact:
+        description: 'Name of the pair-binaries artifact in that run'
+        required: false
+        default: 'winpairs-binaries'
+      case_manifest:
+        description: 'Case manifest (rq-case-manifest/1), relative to the repo root'
+        required: false
+        default: 'docs/research/accuracy-cases/windows-candidates.json'
+      k:
+        description: 'Top-k rank a case must reach to PASS'
+        required: false
+        default: '5'
+      engine:
+        description: 'Diff engine (only ghidriff has a runner here)'
+        required: false
+        default: 'ghidriff'
+        type: choice
+        options:
+          - ghidriff
+      ghidriff_version:
+        description: 'ghidriff version for pip (1.0.0 exists on PyPI, checked 2026-11-06)'
+        required: false
+        default: '1.0.0'
+      ghidra_url:
+        description: 'Ghidra release zip, https://github.com/NationalSecurityAgency/ghidra/releases/download/... (empty = every pair BLOCKED)'
+        required: false
+        default: ''
+      ghidra_sha256:
+        description: 'sha256 of that zip, from the official release page (empty = every pair BLOCKED)'
+        required: false
+        default: ''
+      java_version:
+        description: 'JDK major version for actions/setup-java (21 is the assumed Ghidra 12 requirement, unverified)'
+        required: false
+        default: '21'
+      pair_timeout_minutes:
+        description: 'Per-pair ghidriff time limit in minutes (job limit is 360)'
+        required: false
+        default: '330'
+permissions:
+  contents: read
+  actions: read  # needed only to download artifacts from another run
+concurrency:
+  group: diff-and-score
+  cancel-in-progress: false
+jobs:
+  plan:
+    name: plan matrix
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    outputs:
+      matrix: ${{ steps.plan.outputs.matrix }}
+      count: ${{ steps.plan.outputs.count }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Download pair manifest
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ inputs.manifest_artifact }}
+          run-id: ${{ inputs.pair_run_id }}
+          github-token: ${{ github.token }}
+          path: build/in/manifest
+      - name: Emit matrix of found pairs
+        id: plan
+        shell: bash
+        env:
+          CASE_MANIFEST: ${{ inputs.case_manifest }}
+        run: |
+          python -m tools.research_qualification.scorerun plan \
+            --pair-manifest build/in/manifest/pair-manifest.json --cases "$CASE_MANIFEST" --out build/matrix.json
+          echo "matrix=$(python -c "import json;print(json.dumps(json.load(open('build/matrix.json'))))")" >> "$GITHUB_OUTPUT"
+          echo "count=$(python -c "import json;print(json.load(open('build/matrix.json'))['count'])")" >> "$GITHUB_OUTPUT"
+          echo "pairs to diff: $(python -c "import json;print(json.load(open('build/matrix.json'))['count'])")" >> "$GITHUB_STEP_SUMMARY"
+  diff:
+    name: diff ${{ matrix.id }}
+    needs: plan
+    if: ${{ needs.plan.outputs.count != '0' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    strategy:
+      fail-fast: false
+      max-parallel: 3
+      matrix: ${{ fromJSON(needs.plan.outputs.matrix) }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: ${{ inputs.java_version }}
+      - name: Download pair binaries
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ inputs.binaries_artifact }}
+          run-id: ${{ inputs.pair_run_id }}
+          github-token: ${{ github.token }}
+          path: build/in/binaries
+      - name: Install ghidriff
+        shell: bash
+        env:
+          GHIDRIFF_VERSION: ${{ inputs.ghidriff_version }}
+        run: python -m pip install "ghidriff==${GHIDRIFF_VERSION}"
+      - name: Install Ghidra (pinned url and sha256)
+        id: ghidra
+        shell: bash
+        env:
+          GHIDRA_URL: ${{ inputs.ghidra_url }}
+          GHIDRA_SHA256: ${{ inputs.ghidra_sha256 }}
+          CASE_ID: ${{ matrix.id }}
+        run: |
+          set +e
+          mkdir -p "build/diff/$CASE_ID" build/ghidra
+          blocked() {
+            echo "Ghidra not available: $1" | tee -a "$GITHUB_STEP_SUMMARY"
+            printf '{"rc": 127, "timed_out": false}\n' > "build/diff/$CASE_ID/pt-run-status.json"
+            echo "ok=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          }
+          case "$GHIDRA_URL" in
+            https://github.com/NationalSecurityAgency/ghidra/releases/download/*.zip) ;;
+            *) blocked "ghidra_url empty or not an official NSA release zip URL" ;;
+          esac
+          printf '%s' "$GHIDRA_SHA256" | grep -Eq '^[0-9a-f]{64}$' || blocked "ghidra_sha256 must be 64 lowercase hex"
+          curl -fsSL --proto '=https' --max-time 1800 -o build/ghidra.zip "$GHIDRA_URL" || blocked "download failed"
+          echo "$GHIDRA_SHA256  build/ghidra.zip" | sha256sum -c - || blocked "sha256 mismatch"
+          unzip -q build/ghidra.zip -d build/ghidra || blocked "unzip failed"
+          dir=$(find build/ghidra -maxdepth 1 -mindepth 1 -type d | head -n 1)
+          [ -n "$dir" ] && [ -x "$dir/ghidraRun" ] || blocked "no ghidraRun in the archive"
+          echo "GHIDRA_INSTALL_DIR=$PWD/$dir" >> "$GITHUB_ENV"
+          echo "ok=true" >> "$GITHUB_OUTPUT"
+      - name: Run ghidriff
+        if: ${{ steps.ghidra.outputs.ok == 'true' }}
+        shell: bash
+        env:
+          CASE_ID: ${{ matrix.id }}
+          OLD_REL: ${{ matrix.older }}
+          NEW_REL: ${{ matrix.newer }}
+          TIMEOUT_MIN: ${{ inputs.pair_timeout_minutes }}
+        run: |
+          set +e
+          out="build/diff/$CASE_ID"
+          mkdir -p "$out" build/work
+          old="build/in/binaries/$OLD_REL"
+          new="build/in/binaries/$NEW_REL"
+          if [ ! -f "$old" ] || [ ! -f "$new" ]; then
+            echo "pair files missing for $CASE_ID" | tee -a "$GITHUB_STEP_SUMMARY"
+            printf '{"rc": 126, "timed_out": false}\n' > "$out/pt-run-status.json"
+            exit 0
+          fi
+          timeout --signal=TERM --kill-after=120s "${TIMEOUT_MIN:-330}m" \
+            ghidriff "$old" "$new" -o "$out" -p build/work/projects -n "$CASE_ID" \
+              -s build/work/symbols -g build/work/gzfs --log-path "$out/ghidriff.log"
+          rc=$?
+          timed=false
+          if [ "$rc" -eq 124 ] || [ "$rc" -eq 137 ]; then timed=true; fi
+          printf '{"rc": %s, "timed_out": %s}\n' "$rc" "$timed" > "$out/pt-run-status.json"
+          echo "ghidriff $CASE_ID rc=$rc timed_out=$timed" | tee -a "$GITHUB_STEP_SUMMARY"
+          exit 0
+      - name: Upload report
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: ghidriff-report-${{ matrix.id }}
+          path: build/diff
+          retention-days: 14
+          if-no-files-found: ignore
+  score:
+    name: score and receipts
+    needs: [plan, diff]
+    if: ${{ always() && needs.plan.result == 'success' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Download pair manifest
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ inputs.manifest_artifact }}
+          run-id: ${{ inputs.pair_run_id }}
+          github-token: ${{ github.token }}
+          path: build/in/manifest
+      - name: Download reports
+        continue-on-error: true
+        uses: actions/download-artifact@v4
+        with:
+          pattern: ghidriff-report-*
+          merge-multiple: true
+          path: build/reports
+      - name: Score
+        id: score
+        shell: bash
+        env:
+          CASE_MANIFEST: ${{ inputs.case_manifest }}
+          K: ${{ inputs.k }}
+          ENGINE: ${{ inputs.engine }}
+        run: |
+          set +e
+          mkdir -p build/reports
+          python -m tools.research_qualification.scorerun score \
+            --pair-manifest build/in/manifest/pair-manifest.json --cases "$CASE_MANIFEST" \
+            --reports build/reports --out build/receipts --k "$K" --engine "$ENGINE" \
+            --summary "$GITHUB_STEP_SUMMARY"
+          rc=$?
+          echo "rc=$rc" >> "$GITHUB_OUTPUT"
+          echo "scorerun exit code: $rc (0 scored, no FAIL; 1 a FAIL; 2 nothing scored or blocked)" >> "$GITHUB_STEP_SUMMARY"
+      - name: Upload receipts
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: diffscore-receipts
+          path: build/receipts
+          retention-days: 90
+          if-no-files-found: ignore
+      - name: Fail when scoring failed or was blocked
+        if: ${{ steps.score.outputs.rc != '0' }}
+        shell: bash
+        env:
+          RC: ${{ steps.score.outputs.rc }}
+        run: exit "${RC:-2}"
