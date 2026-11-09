@@ -25,6 +25,9 @@ _REC = 'struct ka_rec {\n' + ''.join(f'    u32 {f};\n' for f in FIELDS) + '};\n'
 _BUF_USE = ('__attribute__((noinline)) int ka_buf_use(u8 *p, int n)\n'
             '{\n    p[0] = (u8)n;\n    ka_sink = p[0];\n    return p[0] + n;\n}\n')
 _DELTAS = (1, 2, 3, 16, 256)
+# The image has no entry point, exports or unwind table, so a disassembler finds no function in it unless each planted
+# candidate is exported; an image without a function seed would make every verdict `unpaired`, not `unchanged`.
+EXPORT = '__attribute__((dllexport)) '
 
 
 @dataclass(frozen=True)
@@ -47,7 +50,7 @@ class Module:
 
     def function_source(self, index: int, attempt: int | None = None) -> str:
         template = self.templates[index]
-        return template.render(None if attempt is None else template.edits[attempt])
+        return EXPORT + template.render(None if attempt is None else template.edits[attempt])
 
     def attempts(self, index: int) -> int:
         return len(self.templates[index].edits)
