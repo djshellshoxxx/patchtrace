@@ -16,7 +16,7 @@ fi
 if ! sudo apt-get update; then
   echo "apt-get update reported an error; attempting to install PatchTrace prerequisites from available package indexes." >&2
 fi
-sudo apt-get install -y jq libegl1 libopengl0 libgl1 libxkbcommon0
+sudo apt-get install -y jq libegl1 libopengl0 libgl1 libxkbcommon0 libdbus-1-3
 
 python3 - <<'PY'
 import sys
