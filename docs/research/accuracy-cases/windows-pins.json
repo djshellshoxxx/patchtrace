@@ -1,0 +1,1340 @@
+{
+  "schema": "rq-win-pins/1",
+  "generated": "2026-11-07",
+  "entries": [
+    {
+      "case_id": "win-cve-2022-34718-tcpip",
+      "file": "tcpip.sys",
+      "status": "pinned",
+      "reason": "Winbindex Windows version 11-21H2, x64: 10.0.22000.918 -> 10.0.22000.978 (KB5017328, 2022-09-13); after = Winbindex row on the Patch Tuesday of the month named by the case; single x64 sha256 per side; file version differs; also resolvable on Winbindex versions: 20H2, 1809, 1607, 1507",
+      "before": {
+        "version": "10.0.22000.918",
+        "kb": "KB5016691",
+        "sha256": "0f94dfd6496dbbd2a9712a68a8a7c67153cc90a588a80b5978b3bf1fb973da49",
+        "timestamp": 1069405395,
+        "virtual_size": 3235840,
+        "release_date": "2022-08-25",
+        "windows_version": "11-21H2",
+        "arch": "amd64"
+      },
+      "after": {
+        "version": "10.0.22000.978",
+        "kb": "KB5017328",
+        "sha256": "0bf237f4f99142cb3e794ce9620fde75f0f333a6cedb4e2c7369b6044168208c",
+        "timestamp": 1094283973,
+        "virtual_size": 3235840,
+        "release_date": "2022-09-13",
+        "windows_version": "11-21H2",
+        "arch": "amd64"
+      },
+      "caveats": [
+        "before release KB5016691 (2022-08-25) is not a Patch Tuesday release; this sha256 is not listed under any earlier Patch Tuesday update"
+      ],
+      "fetch_check": {
+        "checked": "2026-11-07",
+        "via": "msdl.microsoft.com symbol key (PE timestamp + SizeOfImage), downloaded and hashed outside the repo, not committed",
+        "before": {
+          "http": 200,
+          "sha256": "0f94dfd6496dbbd2a9712a68a8a7c67153cc90a588a80b5978b3bf1fb973da49",
+          "sha256_matches": true,
+          "pe_file_version": "10.0.22000.918"
+        },
+        "after": {
+          "http": 200,
+          "sha256": "0bf237f4f99142cb3e794ce9620fde75f0f333a6cedb4e2c7369b6044168208c",
+          "sha256_matches": true,
+          "pe_file_version": "10.0.22000.978"
+        }
+      },
+      "source": {
+        "url": "https://winbindex.m417z.com/data/by_filename_compressed/tcpip.sys.json.gz",
+        "fetched": "2026-11-07"
+      }
+    },
+    {
+      "case_id": "win-cve-2022-21907-http",
+      "file": "http.sys",
+      "status": "pinned",
+      "reason": "Winbindex Windows version 11-21H2, x64: 10.0.22000.348 -> 10.0.22000.434 (KB5009566, 2022-01-11); after = Winbindex row on the Patch Tuesday of the month named by the case; single x64 sha256 per side; file version differs; also resolvable on Winbindex versions: 1809, 20H2",
+      "before": {
+        "version": "10.0.22000.348",
+        "kb": "KB5008215",
+        "sha256": "82a903c9431156153adedbf0efa66351d99861de025ce923ca6811878ce52fd5",
+        "timestamp": 1221578258,
+        "virtual_size": 1695744,
+        "release_date": "2021-12-14",
+        "windows_version": "11-21H2",
+        "arch": "amd64"
+      },
+      "after": {
+        "version": "10.0.22000.434",
+        "kb": "KB5009566",
+        "sha256": "a2113d526a6bbb2f6b3360254087699bc809518e60cdc99daa1885ba0a27ed3a",
+        "timestamp": 2212275324,
+        "virtual_size": 1695744,
+        "release_date": "2022-01-11",
+        "windows_version": "11-21H2",
+        "arch": "amd64"
+      },
+      "caveats": [
+        "before: msdl symbol-key download returns a different binary (sha256 5051af31034f115d..., PE file version 10.0.22000.376) from the pinned Winbindex sha256 although PE timestamp and SizeOfImage match; winpairs will mark this side missing (sha256 mismatch)"
+      ],
+      "fetch_check": {
+        "checked": "2026-11-07",
+        "via": "msdl.microsoft.com symbol key (PE timestamp + SizeOfImage), downloaded and hashed outside the repo, not committed",
+        "before": {
+          "http": 200,
+          "sha256": "5051af31034f115d881279d0c02b30879241b911f770f411570b263940fc28eb",
+          "sha256_matches": false,
+          "pe_file_version": "10.0.22000.376"
+        },
+        "after": {
+          "http": 200,
+          "sha256": "a2113d526a6bbb2f6b3360254087699bc809518e60cdc99daa1885ba0a27ed3a",
+          "sha256_matches": true,
+          "pe_file_version": "10.0.22000.434"
+        }
+      },
+      "source": {
+        "url": "https://winbindex.m417z.com/data/by_filename_compressed/http.sys.json.gz",
+        "fetched": "2026-11-07"
+      }
+    },
+    {
+      "case_id": "win-cve-2023-21768-afd",
+      "file": "afd.sys",
+      "status": "pinned",
+      "reason": "Winbindex Windows version 11-22H2, x64: 10.0.22621.608 -> 10.0.22621.1105 (KB5022303, 2023-01-10); after build/KB taken from the case ref and confirmed in Winbindex; single x64 sha256 per side; file version differs",
+      "before": {
+        "version": "10.0.22621.608",
+        "kb": "KB5021255",
+        "sha256": "95fd266cc454177901cb58f4d30417c4a7caf29be62bb8649e5b8fca58823600",
+        "timestamp": 207382932,
+        "virtual_size": 688128,
+        "release_date": "2022-12-13",
+        "windows_version": "11-22H2",
+        "arch": "amd64"
+      },
+      "after": {
+        "version": "10.0.22621.1105",
+        "kb": "KB5022303",
+        "sha256": "ebf6be42d39fd5d9361afa43479f883ff8eba97d72f313ece289f78cb51c22f2",
+        "timestamp": 3730061545,
+        "virtual_size": 688128,
+        "release_date": "2023-01-10",
+        "windows_version": "11-22H2",
+        "arch": "amd64"
+      },
+      "caveats": [
+        "before: msdl symbol-key download returns a different binary (sha256 c57893dd8621eb79..., PE file version 10.0.22621.1028) from the pinned Winbindex sha256 although PE timestamp and SizeOfImage match; winpairs will mark this side missing (sha256 mismatch)",
+        "after: msdl symbol-key download returns a different binary (sha256 0cf15707afbc74e2..., PE file version 10.0.23414.1000) from the pinned Winbindex sha256 although PE timestamp and SizeOfImage match; winpairs will mark this side missing (sha256 mismatch)"
+      ],
+      "fetch_check": {
+        "checked": "2026-11-07",
+        "via": "msdl.microsoft.com symbol key (PE timestamp + SizeOfImage), downloaded and hashed outside the repo, not committed",
+        "before": {
+          "http": 200,
+          "sha256": "c57893dd8621eb79db5c6ff6ef7f5796919041e4c3a7bbafcb05560a29385fb8",
+          "sha256_matches": false,
+          "pe_file_version": "10.0.22621.1028"
+        },
+        "after": {
+          "http": 200,
+          "sha256": "0cf15707afbc74e2dbc0c507941f33b64a4cc0f6c3a631889a2d8d5bdbe27bf0",
+          "sha256_matches": false,
+          "pe_file_version": "10.0.23414.1000"
+        }
+      },
+      "source": {
+        "url": "https://winbindex.m417z.com/data/by_filename_compressed/afd.sys.json.gz",
+        "fetched": "2026-11-07"
+      }
+    },
+    {
+      "case_id": "win-cve-2025-60719-afd",
+      "file": "afd.sys",
+      "status": "pinned",
+      "reason": "Winbindex Windows version 11-24H2, x64: 10.0.26100.6899 -> 10.0.26100.7171 (KB5068861, 2025-11-11); after build/KB taken from the case ref and confirmed in Winbindex; single x64 sha256 per side; file version differs",
+      "before": {
+        "version": "10.0.26100.6899",
+        "kb": "KB5066835",
+        "sha256": "257875908b050c444d487c753809ef70ecb98a6aedf9481db96fefa8e500cc66",
+        "timestamp": 1004121129,
+        "virtual_size": 737280,
+        "release_date": "2025-10-14",
+        "windows_version": "11-24H2",
+        "arch": "amd64"
+      },
+      "after": {
+        "version": "10.0.26100.7171",
+        "kb": "KB5068861",
+        "sha256": "d56da3f7de716a1587927ec294f8ee91e889a982c9b9e7f5b27a9dac31fbe9a8",
+        "timestamp": 2982501340,
+        "virtual_size": 737280,
+        "release_date": "2025-11-11",
+        "windows_version": "11-24H2",
+        "arch": "amd64"
+      },
+      "caveats": [
+        "case-named before build is not the immediate predecessor: immediate predecessor in this Windows version is 10.0.26100.7019 (KB5067036, 2025-10-28); intermediate builds sit between before and after (that predecessor is a non-Patch-Tuesday release)"
+      ],
+      "fetch_check": {
+        "checked": "2026-11-07",
+        "via": "msdl.microsoft.com symbol key (PE timestamp + SizeOfImage), downloaded and hashed outside the repo, not committed",
+        "before": {
+          "http": 200,
+          "sha256": "257875908b050c444d487c753809ef70ecb98a6aedf9481db96fefa8e500cc66",
+          "sha256_matches": true,
+          "pe_file_version": "10.0.26100.6899"
+        },
+        "after": {
+          "http": 200,
+          "sha256": "d56da3f7de716a1587927ec294f8ee91e889a982c9b9e7f5b27a9dac31fbe9a8",
+          "sha256_matches": true,
+          "pe_file_version": "10.0.26100.7171"
+        }
+      },
+      "source": {
+        "url": "https://winbindex.m417z.com/data/by_filename_compressed/afd.sys.json.gz",
+        "fetched": "2026-11-07"
+      }
+    },
+    {
+      "case_id": "win-cve-2023-28252-clfs",
+      "file": "clfs.sys",
+      "status": "pinned",
+      "reason": "Winbindex Windows version 11-22H2, x64: 10.0.22621.1265 -> 10.0.22621.1555 (KB5025239, 2023-04-11); after build/KB taken from the case ref and confirmed in Winbindex; single x64 sha256 per side; file version differs",
+      "before": {
+        "version": "10.0.22621.1265",
+        "kb": "KB5023706",
+        "sha256": "825d52fc2a09eca754ae20949cf9bca96a68d034219a8fdc2814c117cb17ca55",
+        "timestamp": 1817738562,
+        "virtual_size": 450560,
+        "release_date": "2023-03-14",
+        "windows_version": "11-22H2",
+        "arch": "amd64"
+      },
+      "after": {
+        "version": "10.0.22621.1555",
+        "kb": "KB5025239",
+        "sha256": "17212f6c01ee639d1f457cc1f522c5f51ac7c38cee37d39c396c533eaab6ab3b",
+        "timestamp": 1013705292,
+        "virtual_size": 454656,
+        "release_date": "2023-04-11",
+        "windows_version": "11-22H2",
+        "arch": "amd64"
+      },
+      "caveats": [
+        "before: msdl symbol-key download returns a different binary (sha256 cf0ea0bb9ad857f4..., PE file version 10.0.23435.1000) from the pinned Winbindex sha256 although PE timestamp and SizeOfImage match; winpairs will mark this side missing (sha256 mismatch)",
+        "after: msdl symbol-key download returns a different binary (sha256 af24c99230f47946..., PE file version 10.0.23451.1000) from the pinned Winbindex sha256 although PE timestamp and SizeOfImage match; winpairs will mark this side missing (sha256 mismatch)"
+      ],
+      "fetch_check": {
+        "checked": "2026-11-07",
+        "via": "msdl.microsoft.com symbol key (PE timestamp + SizeOfImage), downloaded and hashed outside the repo, not committed",
+        "before": {
+          "http": 200,
+          "sha256": "cf0ea0bb9ad857f41e2715df822f189bef955804c0bb5bfe3829f90789ede1b3",
+          "sha256_matches": false,
+          "pe_file_version": "10.0.23435.1000"
+        },
+        "after": {
+          "http": 200,
+          "sha256": "af24c99230f479469b4c9c3cab68e3260860bee0e4ea048f95a2b17a18298e95",
+          "sha256_matches": false,
+          "pe_file_version": "10.0.23451.1000"
+        }
+      },
+      "source": {
+        "url": "https://winbindex.m417z.com/data/by_filename_compressed/clfs.sys.json.gz",
+        "fetched": "2026-11-07"
+      }
+    },
+    {
+      "case_id": "win-cve-2022-24521-clfs",
+      "file": "clfs.sys",
+      "status": "pinned",
+      "reason": "Winbindex Windows version 1607, x64: 10.0.14393.5006 -> 10.0.14393.5066 (KB5012596, 2022-04-12); after = Winbindex row on the Patch Tuesday of the month named by the case; single x64 sha256 per side; file version differs; also resolvable on Winbindex versions: 11-21H2, 20H2, 1909, 1809, 1507",
+      "before": {
+        "version": "10.0.14393.5006",
+        "kb": "KB5011495",
+        "sha256": "50ddc964cf535224d751faebdf7352ed559bdf407ca1c82a7887bc618fa375ba",
+        "timestamp": 1646195215,
+        "virtual_size": 409600,
+        "release_date": "2022-03-08",
+        "windows_version": "1607",
+        "arch": "amd64"
+      },
+      "after": {
+        "version": "10.0.14393.5066",
+        "kb": "KB5012596",
+        "sha256": "e170c2735c8ac139460c93e13a35660f900c27e81f7ebadfaf6c8bdef9568d15",
+        "timestamp": 1648871982,
+        "virtual_size": 413696,
+        "release_date": "2022-04-12",
+        "windows_version": "1607",
+        "arch": "amd64"
+      },
+      "caveats": [],
+      "fetch_check": {
+        "checked": "2026-11-07",
+        "via": "msdl.microsoft.com symbol key (PE timestamp + SizeOfImage), downloaded and hashed outside the repo, not committed",
+        "before": {
+          "http": 200,
+          "sha256": "50ddc964cf535224d751faebdf7352ed559bdf407ca1c82a7887bc618fa375ba",
+          "sha256_matches": true,
+          "pe_file_version": "10.0.14393.5006"
+        },
+        "after": {
+          "http": 200,
+          "sha256": "e170c2735c8ac139460c93e13a35660f900c27e81f7ebadfaf6c8bdef9568d15",
+          "sha256_matches": true,
+          "pe_file_version": "10.0.14393.5066"
+        }
+      },
+      "source": {
+        "url": "https://winbindex.m417z.com/data/by_filename_compressed/clfs.sys.json.gz",
+        "fetched": "2026-11-07"
+      }
+    },
+    {
+      "case_id": "win-cve-2020-17096-ntfs",
+      "file": "ntfs.sys",
+      "status": "pinned",
+      "reason": "Winbindex Windows version 1903, x64: 10.0.18362.1171 -> 10.0.18362.1256 (KB4592449, 2020-12-08); after = Winbindex row on the Patch Tuesday of the month named by the case; single x64 sha256 per side; file version differs; also resolvable on Winbindex versions: 1809, 1803, 1703, 1607, 1507, 2004",
+      "before": {
+        "version": "10.0.18362.1171",
+        "kb": "KB4586786",
+        "sha256": "2ea75e18a0c5263fec128c50fbd5ca638d4c05c7fe3330085d7c14b1599e3aa3",
+        "timestamp": 1118690751,
+        "virtual_size": 2740224,
+        "release_date": "2020-11-10",
+        "windows_version": "1903",
+        "arch": "amd64"
+      },
+      "after": {
+        "version": "10.0.18362.1256",
+        "kb": "KB4592449",
+        "sha256": "20900d437d076b4e225174235e0bd460a35df6fd5aa6f07d9f59f2c64e563bcd",
+        "timestamp": 3989310650,
+        "virtual_size": 2740224,
+        "release_date": "2020-12-08",
+        "windows_version": "1903",
+        "arch": "amd64"
+      },
+      "caveats": [],
+      "fetch_check": {
+        "checked": "2026-11-07",
+        "via": "msdl.microsoft.com symbol key (PE timestamp + SizeOfImage), downloaded and hashed outside the repo, not committed",
+        "before": {
+          "http": 200,
+          "sha256": "2ea75e18a0c5263fec128c50fbd5ca638d4c05c7fe3330085d7c14b1599e3aa3",
+          "sha256_matches": true,
+          "pe_file_version": "10.0.18362.1171"
+        },
+        "after": {
+          "http": 200,
+          "sha256": "20900d437d076b4e225174235e0bd460a35df6fd5aa6f07d9f59f2c64e563bcd",
+          "sha256_matches": true,
+          "pe_file_version": "10.0.18362.1256"
+        }
+      },
+      "source": {
+        "url": "https://winbindex.m417z.com/data/by_filename_compressed/ntfs.sys.json.gz",
+        "fetched": "2026-11-07"
+      }
+    },
+    {
+      "case_id": "win-cve-2022-32230-srv2",
+      "file": "srv2.sys",
+      "status": "unpinned",
+      "reason": "Winbindex lists the identical srv2.sys (same sha256 and file version) in the March 2022 and April 2022 updates on every Windows version that has rows, so the case's April 2022 silent fix is not observable as a file change; the actual fixing build is not identified from this data",
+      "before": null,
+      "after": null,
+      "caveats": [],
+      "source": {
+        "url": "https://winbindex.m417z.com/data/by_filename_compressed/srv2.sys.json.gz",
+        "fetched": "2026-11-07"
+      }
+    },
+    {
+      "case_id": "win-cve-2025-47987-tspkg",
+      "file": "tspkg.dll",
+      "status": "pinned",
+      "reason": "Winbindex Windows version 11-24H2, x64: 10.0.26100.3624 -> 10.0.26100.4652 (KB5062553, 2025-07-08); after = Winbindex row on the Patch Tuesday of the month named by the case; single x64 sha256 per side; file version differs; also resolvable on Winbindex versions: 11-22H2, 21H2, 1809, 1607, 1507",
+      "before": {
+        "version": "10.0.26100.3624",
+        "kb": "KB5060842",
+        "sha256": "e3a03fdc4dca6403ba6445ea59fef82d6a628c6201665213544da1d82cc6e04a",
+        "timestamp": 3719319118,
+        "virtual_size": 180224,
+        "release_date": "2025-06-10",
+        "windows_version": "11-24H2",
+        "arch": "amd64"
+      },
+      "after": {
+        "version": "10.0.26100.4652",
+        "kb": "KB5062553",
+        "sha256": "4ced3cdcc9383f87b92000f8600e7aa4f236f7c05311a4b54d53ace6dd35361c",
+        "timestamp": 3834296613,
+        "virtual_size": 188416,
+        "release_date": "2025-07-08",
+        "windows_version": "11-24H2",
+        "arch": "amd64"
+      },
+      "caveats": [],
+      "fetch_check": {
+        "checked": "2026-11-07",
+        "via": "msdl.microsoft.com symbol key (PE timestamp + SizeOfImage), downloaded and hashed outside the repo, not committed",
+        "before": {
+          "http": 200,
+          "sha256": "e3a03fdc4dca6403ba6445ea59fef82d6a628c6201665213544da1d82cc6e04a",
+          "sha256_matches": true,
+          "pe_file_version": "10.0.26100.3624"
+        },
+        "after": {
+          "http": 200,
+          "sha256": "4ced3cdcc9383f87b92000f8600e7aa4f236f7c05311a4b54d53ace6dd35361c",
+          "sha256_matches": true,
+          "pe_file_version": "10.0.26100.4652"
+        }
+      },
+      "source": {
+        "url": "https://winbindex.m417z.com/data/by_filename_compressed/tspkg.dll.json.gz",
+        "fetched": "2026-11-07"
+      }
+    },
+    {
+      "case_id": "win-cve-2024-30051-dwmcore",
+      "file": "dwmcore.dll",
+      "status": "pinned",
+      "reason": "Winbindex Windows version 11-22H2, x64: 10.0.22621.3527 -> 10.0.22621.3593 (KB5037771, 2024-05-14); after build/KB taken from the case ref and confirmed in Winbindex; single x64 sha256 per side; file version differs",
+      "before": {
+        "version": "10.0.22621.3527",
+        "kb": "KB5036980",
+        "sha256": "185c580813d23513858530d79a1e88435b882e8db0daae77518910a8c6f05d7a",
+        "timestamp": 2977101757,
+        "virtual_size": 4259840,
+        "release_date": "2024-04-23",
+        "windows_version": "11-22H2",
+        "arch": "amd64"
+      },
+      "after": {
+        "version": "10.0.22621.3593",
+        "kb": "KB5037771",
+        "sha256": "e4f3333a592560b0b1131e25c7505eb8bd7bb6a7012ce698d901056bb389574d",
+        "timestamp": 3958026812,
+        "virtual_size": 4280320,
+        "release_date": "2024-05-14",
+        "windows_version": "11-22H2",
+        "arch": "amd64"
+      },
+      "caveats": [
+        "before release KB5036980 (2024-04-23) is not a Patch Tuesday release; this sha256 is not listed under any earlier Patch Tuesday update"
+      ],
+      "fetch_check": {
+        "checked": "2026-11-07",
+        "via": "msdl.microsoft.com symbol key (PE timestamp + SizeOfImage), downloaded and hashed outside the repo, not committed",
+        "before": {
+          "http": 200,
+          "sha256": "185c580813d23513858530d79a1e88435b882e8db0daae77518910a8c6f05d7a",
+          "sha256_matches": true,
+          "pe_file_version": "10.0.22621.3527"
+        },
+        "after": {
+          "http": 200,
+          "sha256": "e4f3333a592560b0b1131e25c7505eb8bd7bb6a7012ce698d901056bb389574d",
+          "sha256_matches": true,
+          "pe_file_version": "10.0.22621.3593"
+        }
+      },
+      "source": {
+        "url": "https://winbindex.m417z.com/data/by_filename_compressed/dwmcore.dll.json.gz",
+        "fetched": "2026-11-07"
+      }
+    },
+    {
+      "case_id": "win-cve-2023-36802-mskssrv",
+      "file": "mskssrv.sys",
+      "status": "pinned",
+      "reason": "Winbindex Windows version 11-22H2, x64: 10.0.22621.1848 -> 10.0.22621.2283 (KB5030219, 2023-09-12); after build/KB taken from the case ref and confirmed in Winbindex; single x64 sha256 per side; file version differs",
+      "before": {
+        "version": "10.0.22621.1848",
+        "kb": "KB5029263",
+        "sha256": "2c5a39b54c16d1ff52b728a77d9dbe9f3c126e854b3299d2b106f0b2fffddfac",
+        "timestamp": 4260590545,
+        "virtual_size": 73728,
+        "release_date": "2023-08-08",
+        "windows_version": "11-22H2",
+        "arch": "amd64"
+      },
+      "after": {
+        "version": "10.0.22621.2283",
+        "kb": "KB5030219",
+        "sha256": "7fb900b0ce4c326cf4c8fad4b08b0b2a7cc309509db435b9a70ad3827f4313cf",
+        "timestamp": 2814383374,
+        "virtual_size": 73728,
+        "release_date": "2023-09-12",
+        "windows_version": "11-22H2",
+        "arch": "amd64"
+      },
+      "caveats": [
+        "before: msdl symbol-key download returns a different binary (sha256 d95c3452af624ab2..., PE file version 10.0.22621.2050) from the pinned Winbindex sha256 although PE timestamp and SizeOfImage match; winpairs will mark this side missing (sha256 mismatch)",
+        "after: msdl symbol-key download returns a different binary (sha256 f9f905ada8ecac11..., PE file version 10.0.22621.1244) from the pinned Winbindex sha256 although PE timestamp and SizeOfImage match; winpairs will mark this side missing (sha256 mismatch)",
+        "PE file versions read from the msdl downloads (10.0.22621.1774/2050 style) differ from the Winbindex fileInfo.version strings used here; the case notes quote the PE values, which explains their apparent contradiction"
+      ],
+      "fetch_check": {
+        "checked": "2026-11-07",
+        "via": "msdl.microsoft.com symbol key (PE timestamp + SizeOfImage), downloaded and hashed outside the repo, not committed",
+        "before": {
+          "http": 200,
+          "sha256": "d95c3452af624ab2b5462092629fb98a2f531853ba600e2dc707fb780b22b7d8",
+          "sha256_matches": false,
+          "pe_file_version": "10.0.22621.2050"
+        },
+        "after": {
+          "http": 200,
+          "sha256": "f9f905ada8ecac1136ed6a5fcc0f33788bd6f13808dacc42788cdc3ee5f8f756",
+          "sha256_matches": false,
+          "pe_file_version": "10.0.22621.1244"
+        }
+      },
+      "source": {
+        "url": "https://winbindex.m417z.com/data/by_filename_compressed/mskssrv.sys.json.gz",
+        "fetched": "2026-11-07"
+      }
+    },
+    {
+      "case_id": "win-cve-2023-28244-kdcsvc",
+      "file": "kdcsvc.dll",
+      "status": "unpinned",
+      "reason": "case gives no fix month, KB or build ('pre-patch' / 'month not stated'); not inferred. Pin once the case names the Patch Tuesday or KB",
+      "before": null,
+      "after": null,
+      "caveats": [],
+      "source": {
+        "url": "https://winbindex.m417z.com/data/by_filename_compressed/kdcsvc.dll.json.gz",
+        "fetched": "2026-11-07"
+      }
+    },
+    {
+      "case_id": "win-cve-2019-1436-win32kfull",
+      "file": "win32kfull.sys",
+      "status": "pinned",
+      "reason": "Winbindex Windows version 1903, x64: 10.0.18362.449 -> 10.0.18362.476 (KB4524570, 2019-11-12); after build/KB taken from the case ref and confirmed in Winbindex; single x64 sha256 per side; file version differs",
+      "before": {
+        "version": "10.0.18362.449",
+        "kb": "KB4522355",
+        "sha256": "4af562df708889c961d55d70994768157fa843350802a25d1bdc9210c0af992d",
+        "timestamp": 1028240918,
+        "virtual_size": 3805184,
+        "release_date": "2019-10-24",
+        "windows_version": "1903",
+        "arch": "amd64"
+      },
+      "after": {
+        "version": "10.0.18362.476",
+        "kb": "KB4524570",
+        "sha256": "15c64411d506707d749aa870a8b845d9f833c5331dfad304da8828a827152a92",
+        "timestamp": 2657212204,
+        "virtual_size": 3805184,
+        "release_date": "2019-11-12",
+        "windows_version": "1903",
+        "arch": "amd64"
+      },
+      "caveats": [
+        "before release KB4522355 (2019-10-24) is not a Patch Tuesday release; this sha256 is not listed under any earlier Patch Tuesday update"
+      ],
+      "fetch_check": {
+        "checked": "2026-11-07",
+        "via": "msdl.microsoft.com symbol key (PE timestamp + SizeOfImage), downloaded and hashed outside the repo, not committed",
+        "before": {
+          "http": 200,
+          "sha256": "4af562df708889c961d55d70994768157fa843350802a25d1bdc9210c0af992d",
+          "sha256_matches": true,
+          "pe_file_version": "10.0.18362.449"
+        },
+        "after": {
+          "http": 200,
+          "sha256": "15c64411d506707d749aa870a8b845d9f833c5331dfad304da8828a827152a92",
+          "sha256_matches": true,
+          "pe_file_version": "10.0.18362.476"
+        }
+      },
+      "source": {
+        "url": "https://winbindex.m417z.com/data/by_filename_compressed/win32kfull.sys.json.gz",
+        "fetched": "2026-11-07"
+      }
+    },
+    {
+      "case_id": "win-cve-2024-30088-ntoskrnl",
+      "file": "ntoskrnl.exe",
+      "status": "pinned",
+      "reason": "Winbindex Windows version 11-22H2, x64: 10.0.22621.3672 -> 10.0.22621.3733 (KB5039212, 2024-06-11); after build/KB taken from the case ref and confirmed in Winbindex; single x64 sha256 per side; file version differs",
+      "before": {
+        "version": "10.0.22621.3672",
+        "kb": "KB5037853",
+        "sha256": "abf6854325023ec00811fb44f6abc7a00d2af5e17171ad9a7339ca3e8d75f81d",
+        "timestamp": 3463142098,
+        "virtual_size": 17068032,
+        "release_date": "2024-05-29",
+        "windows_version": "11-22H2",
+        "arch": "amd64"
+      },
+      "after": {
+        "version": "10.0.22621.3733",
+        "kb": "KB5039212",
+        "sha256": "d2c63f71382ab464c9b243e4f19f123fb4b44917468ddb6928a57f90fe94664a",
+        "timestamp": 1059458674,
+        "virtual_size": 17068032,
+        "release_date": "2024-06-11",
+        "windows_version": "11-22H2",
+        "arch": "amd64"
+      },
+      "caveats": [
+        "before release KB5037853 (2024-05-29) is not a Patch Tuesday release; this sha256 is not listed under any earlier Patch Tuesday update"
+      ],
+      "fetch_check": {
+        "checked": "2026-11-07",
+        "via": "msdl.microsoft.com symbol key (PE timestamp + SizeOfImage), downloaded and hashed outside the repo, not committed",
+        "before": {
+          "http": 200,
+          "sha256": "abf6854325023ec00811fb44f6abc7a00d2af5e17171ad9a7339ca3e8d75f81d",
+          "sha256_matches": true,
+          "pe_file_version": "10.0.22621.3672"
+        },
+        "after": {
+          "http": 200,
+          "sha256": "d2c63f71382ab464c9b243e4f19f123fb4b44917468ddb6928a57f90fe94664a",
+          "sha256_matches": true,
+          "pe_file_version": "10.0.22621.3733"
+        }
+      },
+      "source": {
+        "url": "https://winbindex.m417z.com/data/by_filename_compressed/ntoskrnl.exe.json.gz",
+        "fetched": "2026-11-07"
+      }
+    },
+    {
+      "case_id": "win-cve-2019-1184-coreshellextframework",
+      "file": "CoreShellExtFramework.dll",
+      "status": "pinned",
+      "reason": "Winbindex Windows version 1903, x64: 10.0.18362.1 -> 10.0.18362.295 (KB4512508, 2019-08-13); after = Winbindex row on the Patch Tuesday of the month named by the case; single x64 sha256 per side; file version differs; also resolvable on Winbindex versions: 1809, 1803",
+      "before": {
+        "version": "10.0.18362.1",
+        "kb": null,
+        "sha256": "34e000cac2b5d89ed287535757042ce48963cd8b6553684a7d31803723d52710",
+        "timestamp": 2538859026,
+        "virtual_size": 126976,
+        "release_date": null,
+        "windows_version": "1903",
+        "arch": "amd64"
+      },
+      "after": {
+        "version": "10.0.18362.295",
+        "kb": "KB4512508",
+        "sha256": "717dc92835335316ec28ce0be8d08c5ed381691429ae5b3122eb055716776df0",
+        "timestamp": 619235975,
+        "virtual_size": 135168,
+        "release_date": "2019-08-13",
+        "windows_version": "1903",
+        "arch": "amd64"
+      },
+      "caveats": [
+        "before = RTM install-media build (Winbindex BASE); no earlier update lists this file for this Windows version, so it is inferred unchanged since RTM",
+        "before: msdl symbol-key download returned HTTP 404; binary not retrievable this way",
+        "after: msdl symbol-key download returned HTTP 404; binary not retrievable this way"
+      ],
+      "fetch_check": {
+        "checked": "2026-11-07",
+        "via": "msdl.microsoft.com symbol key (PE timestamp + SizeOfImage), downloaded and hashed outside the repo, not committed",
+        "before": {
+          "http": 404,
+          "sha256": null,
+          "sha256_matches": false,
+          "pe_file_version": null
+        },
+        "after": {
+          "http": 404,
+          "sha256": null,
+          "sha256_matches": false,
+          "pe_file_version": null
+        }
+      },
+      "source": {
+        "url": "https://winbindex.m417z.com/data/by_filename_compressed/coreshellextframework.dll.json.gz",
+        "fetched": "2026-11-07"
+      }
+    },
+    {
+      "case_id": "win-cve-2020-0729-structuredquery",
+      "file": "StructuredQuery.dll",
+      "status": "pinned",
+      "reason": "Winbindex Windows version 1803, x64: 7.0.17134.1246 -> 7.0.17134.1304 (KB4537762, 2020-02-11); after = Winbindex row on the Patch Tuesday of the month named by the case; single x64 sha256 per side; file version differs; also resolvable on Winbindex versions: 1903, 1809, 1703, 1607, 1507, 1709",
+      "before": {
+        "version": "7.0.17134.1246",
+        "kb": "KB4534293",
+        "sha256": "d04eb7a451592a92eade86130d489a0de68ab19a5ab3c3326abc39bba12b2860",
+        "timestamp": 2872298013,
+        "virtual_size": 700416,
+        "release_date": "2020-01-14",
+        "windows_version": "1803",
+        "arch": "amd64"
+      },
+      "after": {
+        "version": "7.0.17134.1304",
+        "kb": "KB4537762",
+        "sha256": "dc522fbdf4d7039469f6ca5ecbc1e4bc4d5a6db1868a41bcb856a620d99c3827",
+        "timestamp": 1812455915,
+        "virtual_size": 700416,
+        "release_date": "2020-02-11",
+        "windows_version": "1803",
+        "arch": "amd64"
+      },
+      "caveats": [],
+      "fetch_check": {
+        "checked": "2026-11-07",
+        "via": "msdl.microsoft.com symbol key (PE timestamp + SizeOfImage), downloaded and hashed outside the repo, not committed",
+        "before": {
+          "http": 200,
+          "sha256": "d04eb7a451592a92eade86130d489a0de68ab19a5ab3c3326abc39bba12b2860",
+          "sha256_matches": true,
+          "pe_file_version": "7.0.17134.1246"
+        },
+        "after": {
+          "http": 200,
+          "sha256": "dc522fbdf4d7039469f6ca5ecbc1e4bc4d5a6db1868a41bcb856a620d99c3827",
+          "sha256_matches": true,
+          "pe_file_version": "7.0.17134.1304"
+        }
+      },
+      "source": {
+        "url": "https://winbindex.m417z.com/data/by_filename_compressed/structuredquery.dll.json.gz",
+        "fetched": "2026-11-07"
+      }
+    },
+    {
+      "case_id": "win-cve-2020-0792-win32kfull",
+      "file": "win32kfull.sys",
+      "status": "pinned",
+      "reason": "Winbindex Windows version 1903, x64: 10.0.18362.628 -> 10.0.18362.657 (KB4532693, 2020-02-11); after = Winbindex row on the Patch Tuesday of the month named by the case; single x64 sha256 per side; file version differs; also resolvable on Winbindex versions: 1803, 1703, 1607, 1507, 1809, 1709",
+      "before": {
+        "version": "10.0.18362.628",
+        "kb": "KB4532695",
+        "sha256": "a8164bdec6fd9e08351479316483c4b9f56340e0ef01edca1842ce21083d5083",
+        "timestamp": 2487308435,
+        "virtual_size": 3809280,
+        "release_date": "2020-01-28",
+        "windows_version": "1903",
+        "arch": "amd64"
+      },
+      "after": {
+        "version": "10.0.18362.657",
+        "kb": "KB4532693",
+        "sha256": "545464918bd5510caa89c7865d5e4094d90831b785e04664935c1109338cb091",
+        "timestamp": 3582840694,
+        "virtual_size": 3809280,
+        "release_date": "2020-02-11",
+        "windows_version": "1903",
+        "arch": "amd64"
+      },
+      "caveats": [
+        "before release KB4532695 (2020-01-28) is not a Patch Tuesday release; this sha256 is not listed under any earlier Patch Tuesday update"
+      ],
+      "fetch_check": {
+        "checked": "2026-11-07",
+        "via": "msdl.microsoft.com symbol key (PE timestamp + SizeOfImage), downloaded and hashed outside the repo, not committed",
+        "before": {
+          "http": 200,
+          "sha256": "a8164bdec6fd9e08351479316483c4b9f56340e0ef01edca1842ce21083d5083",
+          "sha256_matches": true,
+          "pe_file_version": "10.0.18362.628"
+        },
+        "after": {
+          "http": 200,
+          "sha256": "545464918bd5510caa89c7865d5e4094d90831b785e04664935c1109338cb091",
+          "sha256_matches": true,
+          "pe_file_version": "10.0.18362.657"
+        }
+      },
+      "source": {
+        "url": "https://winbindex.m417z.com/data/by_filename_compressed/win32kfull.sys.json.gz",
+        "fetched": "2026-11-07"
+      }
+    },
+    {
+      "case_id": "win-cve-2021-27077-win32kbase",
+      "file": "win32kbase.sys",
+      "status": "pinned",
+      "reason": "Winbindex Windows version 1909, x64: 10.0.18362.1411 -> 10.0.18362.1440 (KB5000808, 2021-03-09); after = Winbindex row on the Patch Tuesday of the month named by the case; single x64 sha256 per side; file version differs; also resolvable on Winbindex versions: 1809, 1803, 1703, 1607, 2004",
+      "before": {
+        "version": "10.0.18362.1411",
+        "kb": "KB4601380",
+        "sha256": "d45199cd9f576b4c36fb4a8cf7b81b84540d28e706b7bc6d7c78737e6a6fe9a0",
+        "timestamp": 2242559766,
+        "virtual_size": 2764800,
+        "release_date": "2021-02-16",
+        "windows_version": "1909",
+        "arch": "amd64"
+      },
+      "after": {
+        "version": "10.0.18362.1440",
+        "kb": "KB5000808",
+        "sha256": "4c207df9c595acb28a63fd251e1c987b7966b7df8a45dc16ab3a25a479807381",
+        "timestamp": 3375716090,
+        "virtual_size": 2764800,
+        "release_date": "2021-03-09",
+        "windows_version": "1909",
+        "arch": "amd64"
+      },
+      "caveats": [
+        "before release KB4601380 (2021-02-16) is not a Patch Tuesday release; this sha256 is not listed under any earlier Patch Tuesday update"
+      ],
+      "fetch_check": {
+        "checked": "2026-11-07",
+        "via": "msdl.microsoft.com symbol key (PE timestamp + SizeOfImage), downloaded and hashed outside the repo, not committed",
+        "before": {
+          "http": 200,
+          "sha256": "d45199cd9f576b4c36fb4a8cf7b81b84540d28e706b7bc6d7c78737e6a6fe9a0",
+          "sha256_matches": true,
+          "pe_file_version": "10.0.18362.1411"
+        },
+        "after": {
+          "http": 200,
+          "sha256": "4c207df9c595acb28a63fd251e1c987b7966b7df8a45dc16ab3a25a479807381",
+          "sha256_matches": true,
+          "pe_file_version": "10.0.18362.1440"
+        }
+      },
+      "source": {
+        "url": "https://winbindex.m417z.com/data/by_filename_compressed/win32kbase.sys.json.gz",
+        "fetched": "2026-11-07"
+      }
+    },
+    {
+      "case_id": "win-cve-2019-9512-http",
+      "file": "http.sys",
+      "status": "pinned",
+      "reason": "Winbindex Windows version 1809, x64: 10.0.17763.404 -> 10.0.17763.678 (KB4511553, 2019-08-13); after = Winbindex row on the Patch Tuesday of the month named by the case; single x64 sha256 per side; file version differs; also resolvable on Winbindex versions: 1803, 1709, 1703, 1607, 1507, 1903",
+      "before": {
+        "version": "10.0.17763.404",
+        "kb": "KB4507469",
+        "sha256": "78621a9c7a0574b42a24719fa2b82b772d4b098ba2d69af78c4c2ef385e68f04",
+        "timestamp": 2953203917,
+        "virtual_size": 1282048,
+        "release_date": "2019-07-09",
+        "windows_version": "1809",
+        "arch": "amd64"
+      },
+      "after": {
+        "version": "10.0.17763.678",
+        "kb": "KB4511553",
+        "sha256": "4a519b442b96dc978b2bf72b39219ede0bc9e0354ab1b5037b8a17a7465ae589",
+        "timestamp": 4132001030,
+        "virtual_size": 1286144,
+        "release_date": "2019-08-13",
+        "windows_version": "1809",
+        "arch": "amd64"
+      },
+      "caveats": [],
+      "fetch_check": {
+        "checked": "2026-11-07",
+        "via": "msdl.microsoft.com symbol key (PE timestamp + SizeOfImage), downloaded and hashed outside the repo, not committed",
+        "before": {
+          "http": 200,
+          "sha256": "78621a9c7a0574b42a24719fa2b82b772d4b098ba2d69af78c4c2ef385e68f04",
+          "sha256_matches": true,
+          "pe_file_version": "10.0.17763.404"
+        },
+        "after": {
+          "http": 200,
+          "sha256": "4a519b442b96dc978b2bf72b39219ede0bc9e0354ab1b5037b8a17a7465ae589",
+          "sha256_matches": true,
+          "pe_file_version": "10.0.17763.678"
+        }
+      },
+      "source": {
+        "url": "https://winbindex.m417z.com/data/by_filename_compressed/http.sys.json.gz",
+        "fetched": "2026-11-07"
+      }
+    },
+    {
+      "case_id": "win-cve-2024-38063-tcpip",
+      "file": "tcpip.sys",
+      "status": "pinned",
+      "reason": "Winbindex Windows version 11-24H2, x64: 10.0.26100.1301 -> 10.0.26100.1455 (KB5041571, 2024-08-13); after = Winbindex row on the Patch Tuesday of the month named by the case; single x64 sha256 per side; file version differs; also resolvable on Winbindex versions: 21H2, 11-21H2, 1809, 1607, 1507, 11-22H2",
+      "before": {
+        "version": "10.0.26100.1301",
+        "kb": "KB5040529",
+        "sha256": "5e2c482a8b47cbb2a60b89493c10f5ccd162186c36dedae1aee0beab628305fc",
+        "timestamp": 836098833,
+        "virtual_size": 3481600,
+        "release_date": "2024-07-30",
+        "windows_version": "11-24H2",
+        "arch": "amd64"
+      },
+      "after": {
+        "version": "10.0.26100.1455",
+        "kb": "KB5041571",
+        "sha256": "0f55334bd00d355b5bdc984fce7daa66e6d3aecd1249af7f3ffab6fe223b1e4b",
+        "timestamp": 398206843,
+        "virtual_size": 3481600,
+        "release_date": "2024-08-13",
+        "windows_version": "11-24H2",
+        "arch": "amd64"
+      },
+      "caveats": [
+        "before release KB5040529 (2024-07-30) is not a Patch Tuesday release; this sha256 is not listed under any earlier Patch Tuesday update"
+      ],
+      "fetch_check": {
+        "checked": "2026-11-07",
+        "via": "msdl.microsoft.com symbol key (PE timestamp + SizeOfImage), downloaded and hashed outside the repo, not committed",
+        "before": {
+          "http": 200,
+          "sha256": "5e2c482a8b47cbb2a60b89493c10f5ccd162186c36dedae1aee0beab628305fc",
+          "sha256_matches": true,
+          "pe_file_version": "10.0.26100.1301"
+        },
+        "after": {
+          "http": 200,
+          "sha256": "0f55334bd00d355b5bdc984fce7daa66e6d3aecd1249af7f3ffab6fe223b1e4b",
+          "sha256_matches": true,
+          "pe_file_version": "10.0.26100.1455"
+        }
+      },
+      "source": {
+        "url": "https://winbindex.m417z.com/data/by_filename_compressed/tcpip.sys.json.gz",
+        "fetched": "2026-11-07"
+      }
+    },
+    {
+      "case_id": "win-cve-2019-0708-termdd",
+      "file": "termdd.sys",
+      "status": "unpinned",
+      "reason": "termdd.sys is absent from Winbindex (HTTP 404 for by_filename_compressed/termdd.sys.json.gz at fetch time); the case's May 2019 pair targets Windows 7 / Server 2008 R2 era builds that Winbindex does not index",
+      "before": null,
+      "after": null,
+      "caveats": [],
+      "source": {
+        "url": "https://winbindex.m417z.com/data/by_filename_compressed/termdd.sys.json.gz",
+        "fetched": "2026-11-07"
+      }
+    },
+    {
+      "case_id": "win-cve-2019-1181-rdpbase",
+      "file": "rdpbase.dll",
+      "status": "pinned",
+      "reason": "Winbindex Windows version 1903, x64: 10.0.18362.1 -> 10.0.18362.295 (KB4512508, 2019-08-13); after build/KB taken from the case ref and confirmed in Winbindex; single x64 sha256 per side; file version differs",
+      "before": {
+        "version": "10.0.18362.1",
+        "kb": null,
+        "sha256": "7d1a9db602ccbae058d1a5bb69d23a9a83eddac58ab5d23def8f86ba19084970",
+        "timestamp": 105823255,
+        "virtual_size": 1540096,
+        "release_date": null,
+        "windows_version": "1903",
+        "arch": "amd64"
+      },
+      "after": {
+        "version": "10.0.18362.295",
+        "kb": "KB4512508",
+        "sha256": "44cadfffed2b260a059786acbea0414f98f215271d4842c73adc0287c3437674",
+        "timestamp": 759338087,
+        "virtual_size": 1540096,
+        "release_date": "2019-08-13",
+        "windows_version": "1903",
+        "arch": "amd64"
+      },
+      "caveats": [
+        "case-named before build is not the immediate predecessor: immediate predecessor in this Windows version is 10.0.18362.53 (KB4497935, 2019-05-29); intermediate builds sit between before and after (that predecessor is a non-Patch-Tuesday release)",
+        "before: msdl symbol-key download returns a different binary (sha256 fbb43bf5b7339dd7..., PE file version 10.0.18362.1016) from the pinned Winbindex sha256 although PE timestamp and SizeOfImage match; winpairs will mark this side missing (sha256 mismatch)"
+      ],
+      "fetch_check": {
+        "checked": "2026-11-07",
+        "via": "msdl.microsoft.com symbol key (PE timestamp + SizeOfImage), downloaded and hashed outside the repo, not committed",
+        "before": {
+          "http": 200,
+          "sha256": "fbb43bf5b7339dd731a3c2e167648552a3df836bdaf7eb0bb231f947846798ef",
+          "sha256_matches": false,
+          "pe_file_version": "10.0.18362.1016"
+        },
+        "after": {
+          "http": 200,
+          "sha256": "44cadfffed2b260a059786acbea0414f98f215271d4842c73adc0287c3437674",
+          "sha256_matches": true,
+          "pe_file_version": "10.0.18362.295"
+        }
+      },
+      "source": {
+        "url": "https://winbindex.m417z.com/data/by_filename_compressed/rdpbase.dll.json.gz",
+        "fetched": "2026-11-07"
+      }
+    },
+    {
+      "case_id": "win-cve-2020-1350-dns",
+      "file": "dns.exe",
+      "status": "pinned",
+      "reason": "Winbindex Windows version 1809, x64: 10.0.17763.1075 -> 10.0.17763.1339 (KB4558998, 2020-07-14); after = Winbindex row on the Patch Tuesday of the month named by the case; single x64 sha256 per side; file version differs; also resolvable on Winbindex versions: 1709, 1607",
+      "before": {
+        "version": "10.0.17763.1075",
+        "kb": "KB4561608",
+        "sha256": "ad1f8b93cfa2eacf8455202a743c5181174769927f7c7bf136b537179a46affc",
+        "timestamp": 1955404037,
+        "virtual_size": 2367488,
+        "release_date": "2020-06-09",
+        "windows_version": "1809",
+        "arch": "amd64"
+      },
+      "after": {
+        "version": "10.0.17763.1339",
+        "kb": "KB4558998",
+        "sha256": "2e80d7839970cf9d09b37ca444939049c5bebdcaa084f4be15dc4ff55f2057f6",
+        "timestamp": 2509554646,
+        "virtual_size": 2367488,
+        "release_date": "2020-07-14",
+        "windows_version": "1809",
+        "arch": "amd64"
+      },
+      "caveats": [
+        "case ref names dns.exe 6.3.9600.16384 -> 6.3.9600.19759 (Windows Server 2012 R2); Winbindex does not index 6.3.9600 builds of dns.exe, so the pair is pinned on a different Windows version. Function and CVE are OS-independent, but the build numbers differ from the case ref and the function name has not been confirmed in this build pair"
+      ],
+      "fetch_check": {
+        "checked": "2026-11-07",
+        "via": "msdl.microsoft.com symbol key (PE timestamp + SizeOfImage), downloaded and hashed outside the repo, not committed",
+        "before": {
+          "http": 200,
+          "sha256": "ad1f8b93cfa2eacf8455202a743c5181174769927f7c7bf136b537179a46affc",
+          "sha256_matches": true,
+          "pe_file_version": "10.0.17763.1075"
+        },
+        "after": {
+          "http": 200,
+          "sha256": "2e80d7839970cf9d09b37ca444939049c5bebdcaa084f4be15dc4ff55f2057f6",
+          "sha256_matches": true,
+          "pe_file_version": "10.0.17763.1339"
+        }
+      },
+      "source": {
+        "url": "https://winbindex.m417z.com/data/by_filename_compressed/dns.exe.json.gz",
+        "fetched": "2026-11-07"
+      }
+    },
+    {
+      "case_id": "win-cve-2020-1472-netlogon",
+      "file": "netlogon.dll",
+      "status": "pinned",
+      "reason": "Winbindex Windows version 1903, x64: 10.0.18362.752 -> 10.0.18362.1016 (KB4565351, 2020-08-11); after = Winbindex row on the Patch Tuesday of the month named by the case; single x64 sha256 per side; file version differs; also resolvable on Winbindex versions: 1809, 1607, 2004",
+      "before": {
+        "version": "10.0.18362.752",
+        "kb": "KB4565483",
+        "sha256": "55546b4f44b30860cf56061fe5bd5cc86552d8455b1ad90a7afb8655ab9542bc",
+        "timestamp": 1208593132,
+        "virtual_size": 888832,
+        "release_date": "2020-07-14",
+        "windows_version": "1903",
+        "arch": "amd64"
+      },
+      "after": {
+        "version": "10.0.18362.1016",
+        "kb": "KB4565351",
+        "sha256": "49c49590a12b0bf37d87873036596774d0864177735a0ffa02665627afe672a7",
+        "timestamp": 2702129254,
+        "virtual_size": 892928,
+        "release_date": "2020-08-11",
+        "windows_version": "1903",
+        "arch": "amd64"
+      },
+      "caveats": [
+        "case ref says Server 2012; Winbindex has no Server 2012 build of netlogon.dll, so the pair is pinned on a different Windows version. Function and CVE are OS-independent, but the build numbers differ from the case ref and the function name has not been confirmed in this build pair"
+      ],
+      "fetch_check": {
+        "checked": "2026-11-07",
+        "via": "msdl.microsoft.com symbol key (PE timestamp + SizeOfImage), downloaded and hashed outside the repo, not committed",
+        "before": {
+          "http": 200,
+          "sha256": "55546b4f44b30860cf56061fe5bd5cc86552d8455b1ad90a7afb8655ab9542bc",
+          "sha256_matches": true,
+          "pe_file_version": "10.0.18362.752"
+        },
+        "after": {
+          "http": 200,
+          "sha256": "49c49590a12b0bf37d87873036596774d0864177735a0ffa02665627afe672a7",
+          "sha256_matches": true,
+          "pe_file_version": "10.0.18362.1016"
+        }
+      },
+      "source": {
+        "url": "https://winbindex.m417z.com/data/by_filename_compressed/netlogon.dll.json.gz",
+        "fetched": "2026-11-07"
+      }
+    },
+    {
+      "case_id": "win-cve-2025-33073-mrxsmb",
+      "file": "mrxsmb.sys",
+      "status": "unpinned",
+      "reason": "case gives no fix month, KB or build ('month not stated'); not inferred. Pin once the case names the Patch Tuesday or KB",
+      "before": null,
+      "after": null,
+      "caveats": [],
+      "source": {
+        "url": "https://winbindex.m417z.com/data/by_filename_compressed/mrxsmb.sys.json.gz",
+        "fetched": "2026-11-07"
+      }
+    },
+    {
+      "case_id": "win-cve-2023-29360-mskssrv",
+      "file": "mskssrv.sys",
+      "status": "pinned",
+      "reason": "Winbindex Windows version 11-22H2, x64: 10.0.22621.1 -> 10.0.22621.1848 (KB5027231, 2023-06-13); after build/KB taken from the case ref and confirmed in Winbindex; single x64 sha256 per side; file version differs",
+      "before": {
+        "version": "10.0.22621.1",
+        "kb": null,
+        "sha256": "6b712addf7c6b583f23f518bf35f7ecbbfa632f14e29ebe2a8e38043b1269e74",
+        "timestamp": 1928148281,
+        "virtual_size": 73728,
+        "release_date": null,
+        "windows_version": "11-22H2",
+        "arch": "amd64"
+      },
+      "after": {
+        "version": "10.0.22621.1848",
+        "kb": "KB5027231",
+        "sha256": "2c5a39b54c16d1ff52b728a77d9dbe9f3c126e854b3299d2b106f0b2fffddfac",
+        "timestamp": 4260590545,
+        "virtual_size": 73728,
+        "release_date": "2023-06-13",
+        "windows_version": "11-22H2",
+        "arch": "amd64"
+      },
+      "caveats": [
+        "before: msdl symbol-key download returns a different binary (sha256 9c5c792c0d303736..., PE file version 10.0.22621.1774) from the pinned Winbindex sha256 although PE timestamp and SizeOfImage match; winpairs will mark this side missing (sha256 mismatch)",
+        "after: msdl symbol-key download returns a different binary (sha256 d95c3452af624ab2..., PE file version 10.0.22621.2050) from the pinned Winbindex sha256 although PE timestamp and SizeOfImage match; winpairs will mark this side missing (sha256 mismatch)",
+        "PE file versions read from the msdl downloads (10.0.22621.1774/2050 style) differ from the Winbindex fileInfo.version strings used here; the case notes quote the PE values, which explains their apparent contradiction"
+      ],
+      "fetch_check": {
+        "checked": "2026-11-07",
+        "via": "msdl.microsoft.com symbol key (PE timestamp + SizeOfImage), downloaded and hashed outside the repo, not committed",
+        "before": {
+          "http": 200,
+          "sha256": "9c5c792c0d3037360d77316add16d6ebcb321aa579a6a935e63678d7683982a0",
+          "sha256_matches": false,
+          "pe_file_version": "10.0.22621.1774"
+        },
+        "after": {
+          "http": 200,
+          "sha256": "d95c3452af624ab2b5462092629fb98a2f531853ba600e2dc707fb780b22b7d8",
+          "sha256_matches": false,
+          "pe_file_version": "10.0.22621.2050"
+        }
+      },
+      "source": {
+        "url": "https://winbindex.m417z.com/data/by_filename_compressed/mskssrv.sys.json.gz",
+        "fetched": "2026-11-07"
+      }
+    },
+    {
+      "case_id": "win-cve-2024-30085-cldflt",
+      "file": "cldflt.sys",
+      "status": "pinned",
+      "reason": "Winbindex Windows version 21H2, x64: 10.0.19041.4412 -> 10.0.19041.4522 (KB5039211, 2024-06-11); after build/KB taken from the case ref and confirmed in Winbindex; single x64 sha256 per side; file version differs",
+      "before": {
+        "version": "10.0.19041.4412",
+        "kb": "KB5037768",
+        "sha256": "e51c3643f3b70444dd78f68b066b881d40b0b67df637c6f064989fafba40461d",
+        "timestamp": 3124037638,
+        "virtual_size": 532480,
+        "release_date": "2024-05-14",
+        "windows_version": "21H2",
+        "arch": "amd64"
+      },
+      "after": {
+        "version": "10.0.19041.4522",
+        "kb": "KB5039211",
+        "sha256": "1b69dcbe3667732dfb03a498adf7a7fc9a826ce3765dee1d43c1c9577626c44c",
+        "timestamp": 159098299,
+        "virtual_size": 532480,
+        "release_date": "2024-06-11",
+        "windows_version": "21H2",
+        "arch": "amd64"
+      },
+      "caveats": [
+        "before: msdl symbol-key download returns a different binary (sha256 9ccaf4b1db394ceb..., PE file version 10.0.19041.4474) from the pinned Winbindex sha256 although PE timestamp and SizeOfImage match; winpairs will mark this side missing (sha256 mismatch)"
+      ],
+      "fetch_check": {
+        "checked": "2026-11-07",
+        "via": "msdl.microsoft.com symbol key (PE timestamp + SizeOfImage), downloaded and hashed outside the repo, not committed",
+        "before": {
+          "http": 200,
+          "sha256": "9ccaf4b1db394ceb7ed77d100cb9451e442ada0edd239de7c5c2cdc424f3be86",
+          "sha256_matches": false,
+          "pe_file_version": "10.0.19041.4474"
+        },
+        "after": {
+          "http": 200,
+          "sha256": "1b69dcbe3667732dfb03a498adf7a7fc9a826ce3765dee1d43c1c9577626c44c",
+          "sha256_matches": true,
+          "pe_file_version": "10.0.19041.4522"
+        }
+      },
+      "source": {
+        "url": "https://winbindex.m417z.com/data/by_filename_compressed/cldflt.sys.json.gz",
+        "fetched": "2026-11-07"
+      }
+    },
+    {
+      "case_id": "win-cve-2025-55680-cldflt",
+      "file": "cldflt.sys",
+      "status": "pinned",
+      "reason": "Winbindex Windows version 11-24H2, x64: 10.0.26100.6725 -> 10.0.26100.6899 (KB5066835, 2025-10-14); after build/KB taken from the case ref and confirmed in Winbindex; single x64 sha256 per side; file version differs",
+      "before": {
+        "version": "10.0.26100.6725",
+        "kb": "KB5065789",
+        "sha256": "69f30945f73c8a873a4cb9d589e1e2da7af5b524ddf8e4c1d533169979db4e33",
+        "timestamp": 1688491787,
+        "virtual_size": 593920,
+        "release_date": "2025-09-29",
+        "windows_version": "11-24H2",
+        "arch": "amd64"
+      },
+      "after": {
+        "version": "10.0.26100.6899",
+        "kb": "KB5066835",
+        "sha256": "46bc6268458bfa35ea83c61f233bf1226e017e54245c75e352676cb1d7b2c266",
+        "timestamp": 1009922807,
+        "virtual_size": 593920,
+        "release_date": "2025-10-14",
+        "windows_version": "11-24H2",
+        "arch": "amd64"
+      },
+      "caveats": [
+        "before release KB5065789 (2025-09-29) is not a Patch Tuesday release; this sha256 is not listed under any earlier Patch Tuesday update"
+      ],
+      "fetch_check": {
+        "checked": "2026-11-07",
+        "via": "msdl.microsoft.com symbol key (PE timestamp + SizeOfImage), downloaded and hashed outside the repo, not committed",
+        "before": {
+          "http": 200,
+          "sha256": "69f30945f73c8a873a4cb9d589e1e2da7af5b524ddf8e4c1d533169979db4e33",
+          "sha256_matches": true,
+          "pe_file_version": "10.0.26100.6725"
+        },
+        "after": {
+          "http": 200,
+          "sha256": "46bc6268458bfa35ea83c61f233bf1226e017e54245c75e352676cb1d7b2c266",
+          "sha256_matches": true,
+          "pe_file_version": "10.0.26100.6899"
+        }
+      },
+      "source": {
+        "url": "https://winbindex.m417z.com/data/by_filename_compressed/cldflt.sys.json.gz",
+        "fetched": "2026-11-07"
+      }
+    },
+    {
+      "case_id": "win-cve-2024-38106-ntoskrnl",
+      "file": "ntoskrnl.exe",
+      "status": "unpinned",
+      "reason": "case names the September 2024 update (KB5043076, 10.0.22621.4169) as the fixed build, but CVE-2024-38106 is listed in the August 2024 Patch Tuesday (per web search results from StarLabs / Ivanti / Tenable pages, not an MSRC page read). A KB5043076 pair would start after the fix, so it is not pinned. Candidate to confirm against MSRC: Windows 11 22H2 x64 10.0.22621.3958 (KB5040527) -> 10.0.22621.4036 (KB5041585, 2024-08-13); not recorded as a pin",
+      "before": null,
+      "after": null,
+      "caveats": [],
+      "source": {
+        "url": "https://winbindex.m417z.com/data/by_filename_compressed/ntoskrnl.exe.json.gz",
+        "fetched": "2026-11-07"
+      }
+    },
+    {
+      "case_id": "win-cve-2022-21882-win32kfull",
+      "file": "win32kfull.sys",
+      "status": "pinned",
+      "reason": "Winbindex Windows version 1507, x64: 10.0.10240.19119 -> 10.0.10240.19177 (KB5009585, 2022-01-11); after = Winbindex row on the Patch Tuesday of the month named by the case; single x64 sha256 per side; file version differs; also resolvable on Winbindex versions: 11-21H2, 1909, 1809, 20H2",
+      "before": {
+        "version": "10.0.10240.19119",
+        "kb": "KB5008230",
+        "sha256": "74c6eb416f4b9b0392d6791ddf9c2d02903471c5a4a902f7f06a619ea423e72a",
+        "timestamp": 1635826050,
+        "virtual_size": 3665920,
+        "release_date": "2021-12-14",
+        "windows_version": "1507",
+        "arch": "amd64"
+      },
+      "after": {
+        "version": "10.0.10240.19177",
+        "kb": "KB5009585",
+        "sha256": "ab4763d18de883d77d4a3dab174538c03b791eaf9ccf955f755c3627ff0df41b",
+        "timestamp": 1641361036,
+        "virtual_size": 3665920,
+        "release_date": "2022-01-11",
+        "windows_version": "1507",
+        "arch": "amd64"
+      },
+      "caveats": [],
+      "fetch_check": {
+        "checked": "2026-11-07",
+        "via": "msdl.microsoft.com symbol key (PE timestamp + SizeOfImage), downloaded and hashed outside the repo, not committed",
+        "before": {
+          "http": 200,
+          "sha256": "74c6eb416f4b9b0392d6791ddf9c2d02903471c5a4a902f7f06a619ea423e72a",
+          "sha256_matches": true,
+          "pe_file_version": "10.0.10240.19119"
+        },
+        "after": {
+          "http": 200,
+          "sha256": "ab4763d18de883d77d4a3dab174538c03b791eaf9ccf955f755c3627ff0df41b",
+          "sha256_matches": true,
+          "pe_file_version": "10.0.10240.19177"
+        }
+      },
+      "source": {
+        "url": "https://winbindex.m417z.com/data/by_filename_compressed/win32kfull.sys.json.gz",
+        "fetched": "2026-11-07"
+      }
+    },
+    {
+      "case_id": "win-cve-2025-60705-csc",
+      "file": "csc.sys",
+      "status": "pinned",
+      "reason": "Winbindex Windows version 11-24H2, x64: 10.0.26100.5074 -> 10.0.26100.7171 (KB5068861, 2025-11-11); after build/KB taken from the case ref and confirmed in Winbindex; single x64 sha256 per side; file version differs",
+      "before": {
+        "version": "10.0.26100.5074",
+        "kb": "KB5066835",
+        "sha256": "b80320fb15aa881239b04d030d069c2671b960b579817fc7e3314a1c2015ac88",
+        "timestamp": 3685411409,
+        "virtual_size": 626688,
+        "release_date": "2025-10-14",
+        "windows_version": "11-24H2",
+        "arch": "amd64"
+      },
+      "after": {
+        "version": "10.0.26100.7171",
+        "kb": "KB5068861",
+        "sha256": "4bf3f8ed10649d98f7f8d945bfae8c88988811353c41f4b806e2fa047a16226c",
+        "timestamp": 772551029,
+        "virtual_size": 626688,
+        "release_date": "2025-11-11",
+        "windows_version": "11-24H2",
+        "arch": "amd64"
+      },
+      "caveats": [],
+      "fetch_check": {
+        "checked": "2026-11-07",
+        "via": "msdl.microsoft.com symbol key (PE timestamp + SizeOfImage), downloaded and hashed outside the repo, not committed",
+        "before": {
+          "http": 200,
+          "sha256": "b80320fb15aa881239b04d030d069c2671b960b579817fc7e3314a1c2015ac88",
+          "sha256_matches": true,
+          "pe_file_version": "10.0.26100.5074"
+        },
+        "after": {
+          "http": 200,
+          "sha256": "4bf3f8ed10649d98f7f8d945bfae8c88988811353c41f4b806e2fa047a16226c",
+          "sha256_matches": true,
+          "pe_file_version": "10.0.26100.7171"
+        }
+      },
+      "source": {
+        "url": "https://winbindex.m417z.com/data/by_filename_compressed/csc.sys.json.gz",
+        "fetched": "2026-11-07"
+      }
+    }
+  ]
+}
