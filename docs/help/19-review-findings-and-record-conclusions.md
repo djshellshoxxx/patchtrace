@@ -13,13 +13,15 @@ To record your review:
 1. Select the finding.
 2. Inspect its evidence and unknowns.
 3. Choose the finding review status.
-4. Enter an independent Analyst conclusion.
-5. Select Save finding review.
+4. Enter an independent **Analyst conclusion**.
+5. Select **Save finding review**.
 
-For a separate annotation, choose `Note on selected match` or `Note on selected finding, enter the text, then select Save note. A match review and a finding review are separate decisions.
+For a separate annotation, choose **Note on selected match** or **Note on selected finding**, enter the text, then select **Save note**. Select the intended match or finding first. A match review and a finding review are separate decisions.
+
+You can review matches and save notes without requesting an interpretation. Tool output describes retained observations; an optional AI interpretation proposes an explanation; your review status and conclusion record your judgment. None alone proves a vulnerability. [Follow the cited evidence](20-follow-evidence-and-check-provenance.md) before accepting an explanation.
 
 Use `Inspect interpretation responses…` to inspect retained response text and attempt information when output is malformed, rejected, or otherwise unclear. Raw response text is displayed as text.
 
 A new comparison, import, match correction, correction undo, or orientation swap can make a finding stale. Retain its historical meaning and generate a new interpretation when you need a hypothesis tied to the current comparison.
 
-Sources: README.md, “Findings and analyst review”; docs/specs/ui.md.
+Sources: `src/patchtrace/ui.py` (finding review, notes and retained response controls); `docs/specs/ui.md`.

@@ -23,8 +23,8 @@ Use these documented core shortcuts:
 
 Controls may be disabled until a project, selection, or idle worker is available. Check the active job and selection before changing configuration.
 
-Planned: the GUI integration plan specifies a common dock host, command palette, layout reset, and keyboard commands for moving panels. Some framework components have implementation records, but complete migration and packaged availability are UNVERIFIED in the reviewed sources.
+The current source also includes a dock host. Open built panels from **View**, or open **View → Command palette** (`Ctrl+Shift+P`) and search by panel or action name. The palette includes commands to show, focus, float/dock, and move available panels. Use `F6` and `Shift+F6` to move between workspace regions, or **View → Reset panel layout** to restore their placement. See [keyboard navigation](49-keyboard-and-command-navigation.md) and [layout recovery](50-panel-layout-and-recovery.md).
 
-**Do not assume a missing dock command has the same availability as an established core action.**
+These instructions describe the current source. A reserved shortcut or a historical implementation record does not establish that a panel exists in an older downloaded package; use that package's **View** menu to check availability.
 
-Sources: `README.md,` “Workspace and GUI controls”; `docs/specs/ui.md;` `docs/specs/program-e/GUI-integration-plan.md,` sections 8.4–8.9; `docs/modules.md.`
+Sources: `src/patchtrace/ui.py`; `src/patchtrace/gui/qt/{host,commands,palette}.py`.
