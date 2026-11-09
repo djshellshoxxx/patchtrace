@@ -7,6 +7,8 @@ This checkpoint supersedes the November 7 open-PR queue and next-task list below
 - Default branch at checkpoint: `77055d4f0f435a457ae6d7d9e9a1d78f4ef8601b`.
 - Merged with expected-head guards: #270 (this handoff), #260, #262, #266, #269, #271, #277, #273, #274, #275, #276, #265, #272, #235, and #264. #272 brought the parity comparator from #263 into main; #263 is now merged/closed. #235's contained PRs #225–#234 and #236/#240 were closed after integration; #237–#239 were already merged. Branches were retained.
 - PR CI was green on the reviewed heads for the merges above. The new push run for #264's merge is `42584567397`; it was queued when checked, so this checkpoint does not claim exact-main CI is complete.
+- On this `main` SHA, #259's branch is 5 commits ahead / 131 behind and #268's is 2 ahead / 120 behind. Both diverged from `652677b0`; forward-port onto current `main` and rerun before relying on either branch's CI or merging. Preserve their original branches.
+- Main run `42584567397` (`QA and Windows standalone`, SHA above) was still in progress when checked: Linux/Windows QA and Qt gates running; no failure reported yet.
 - #205 remains frozen under its owner's existing qualification; no #205 processes, worktrees, logs or inputs were changed.
 
 ### Remaining active work
