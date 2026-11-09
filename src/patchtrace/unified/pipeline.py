@@ -171,6 +171,9 @@ class Plan:
     def ir_digests(self) -> tuple[str, str] | None:
         return None if self.ir is None else (self.ir[0].content_digest, self.ir[1].content_digest)
 
+    def ir_keys(self) -> tuple[str, str] | None:
+        return None if self.ir is None else (self.ir[0].ir_key, self.ir[1].ir_key)
+
     def addr(self) -> AddressMap:
         return AddressMap(self.older_layout, self.newer_layout)
 
@@ -412,7 +415,7 @@ def resolve_plan(plan: Plan, *, limits: UnifiedLimits = DEFAULT_LIMITS, registry
             budget.check()
             object.__setattr__(inputs, '_manual_digest', prior._manual_digest)
     identity = plan_identity(inputs, plan.addr(), plan.sources, registry, limits, ir=plan.ir_digests(),
-                             residual=plan.residual, budget=budget)
+                             ir_keys=plan.ir_keys(), residual=plan.residual, budget=budget)
     budget.check()
     resolved = dataclasses.replace(plan, identity=identity)
     object.__setattr__(resolved, '_identity_inputs', inputs)
@@ -845,7 +848,8 @@ def publish(service, request: UnifiedRequest, output: WorkerOutput, *, enrichmen
                                   duration_ms=output.compute_ms))
         stages.extend(output.stages)
         expected = plan_identity(plan.inputs(raw_status=report.raw_status or plan.raw_status), plan.addr(),
-                                 plan.sources, REGISTRY, limits, ir=plan.ir_digests(), residual=plan.residual)
+                                 plan.sources, REGISTRY, limits, ir=plan.ir_digests(), ir_keys=plan.ir_keys(),
+                                 residual=plan.residual)
         if report.result_id != expected.result_id:
             raise fail('PT-UNIFIED-STORE', 'result-id-mismatch')
         t = time.monotonic()

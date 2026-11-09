@@ -176,7 +176,9 @@ def write_result(directory: Path, *, older_sha256: str, newer_sha256: str, ghidr
                              ghidriff_raw_sha256=ghidriff_raw_sha256,
                              ir_older_digest=ir_older.content_digest if ir_older else None,
                              ir_newer_digest=ir_newer.content_digest if ir_newer else None, sources=sources,
-                             manual_digest=manual_digest, config_digest=config_digest)
+                             manual_digest=manual_digest, config_digest=config_digest,
+                             ir_older_key=ir_older.ir_key if ir_older else None,
+                             ir_newer_key=ir_newer.ir_key if ir_newer else None)
     by_id: dict[str, UnifiedMatch] = {}
     for row in rows:
         expected = keys.row_id(older_sha256, newer_sha256, [s.rva for s in row.older], [s.rva for s in row.newer])
@@ -302,10 +304,16 @@ def parse_line(line: bytes, model):
     return record
 
 
+# Limitations of a run cut by wall-clock time: the run deadline (U7-06) and the P19 assignment cap (L-24).
+SPEED_DEPENDENT_LIMITATIONS = frozenset({'timeout', 'ladder-limit-assign-time-cap'})
+
+
 def is_timeout_partial(manifest: UnifiedResultManifest) -> bool:
-    """A result cut short by a spent deadline (U7-06). It depends on the machine's speed, not only on the inputs, so
-    it is never authoritative: a cache lookup misses it and a later run of the same id may replace it."""
-    return manifest.status == 'partial' and any(x.split(':', 1)[0] == 'timeout' for x in manifest.limitations)
+    """A result cut short by wall-clock time (a spent deadline, U7-06, or the P19 assignment cap, L-24). It depends on
+    the machine's speed, not only on the inputs, so it is never authoritative: a cache lookup misses it and a later
+    run of the same id may replace it."""
+    return manifest.status == 'partial' and any(x.split(':', 1)[0] in SPEED_DEPENDENT_LIMITATIONS
+                                                for x in manifest.limitations)
 
 
 def _row_id_ok(manifest: UnifiedResultManifest, row: UnifiedMatch) -> bool:
