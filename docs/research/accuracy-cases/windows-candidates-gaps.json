@@ -1,0 +1,319 @@
+{
+  "schema": "rq-case-manifest/1",
+  "cases": [
+    {
+      "id": "win-cve-2014-6321-schannel",
+      "layer": "L3",
+      "stratum": "schannel-sigdecode-overflow",
+      "project": "windows-schannel",
+      "source_url": "https://beyondtrust.com/blog/entry/triggering-ms14-066",
+      "licence": "reference-only",
+      "older": {
+        "ref": "schannel.dll before MS14-066 (versions need pinning)"
+      },
+      "newer": {
+        "ref": "schannel.dll after MS14-066: 6.0.6002.19193 (2008 x64), 6.2.9200.17124 (2012 x64), 6.3.9600.17385 (2012 R2 x64); KB2992611 (2014-Nov)"
+      },
+      "expected": {
+        "function": "DecodeSigAndReverse",
+        "cve": "CVE-2014-6321",
+        "accept": [
+          "iCM_DecodeSigAndReverse"
+        ]
+      },
+      "facts": "unverified",
+      "holdout": false,
+      "notes": "BeyondTrust bindiff: 'the one everyone is worried about seems to be in schannel!DecodeSigAndReverse'; new logic added in the middle of the function guarding two memcpy calls; other changed functions in DTLSCookieManager set aside by the author. Unit 42 (unit42.paloaltonetworks.com/code-trigger-ms14-066-ecdsa-server-bof-vulnerability/) names iCM_DecodeSigAndReverse for the vulnerable path but no patched function: naming contradiction, both accepted. Patched versions and KB from the cnblogs.com/LittleHann/p/4092058.html analysis (Chinese; summariser view). Old (2014) but fills the schannel gap."
+    },
+    {
+      "id": "win-cve-2020-0796-srv2",
+      "layer": "L3",
+      "stratum": "smb-compression-size-overflow",
+      "project": "windows-srv2",
+      "source_url": "https://labs.k7computing.com/?p=20243",
+      "licence": "reference-only",
+      "older": {
+        "ref": "srv2.sys, Windows 10/Server 1903 and 1909 before the March 2020 fix (build needs pinning)"
+      },
+      "newer": {
+        "ref": "srv2.sys, Windows 10/Server 1903 and 1909 with the CVE-2020-0796 fix (2020-Mar; KB needs pinning)"
+      },
+      "expected": {
+        "function": "Srv2DecompressData",
+        "cve": "CVE-2020-0796",
+        "accept": [
+          "Srv2CompressionDecompress"
+        ]
+      },
+      "facts": "unverified",
+      "holdout": false,
+      "notes": "K7: 'The vulnerable function Srv2DecompressData() has been patched in the srv2.sys driver' and shows RtlULongAdd in the patched code, but one figure caption says Srv2CompressionDecompress (internal inconsistency). Trellix/McAfee (trellix.com/en-us/about/newsroom/stories/threat-labs/smbghost-analysis-of-cve-2020-0796.html) names Srv2DecompressData as vulnerable and describes RtlULongAdd/RtlULongSub in the fixed code but does not name a patched function. K7 links KB4541338; I could not confirm that is the security fix KB, so KB is deliberately not recorded. The earlier pass removed this CVE from windows-candidates.json for lack of a diff statement; K7 supplies one. srvnet.sys not named by either page."
+    },
+    {
+      "id": "win-cve-2020-1048-localspl",
+      "layer": "L3",
+      "stratum": "spooler-port-validation",
+      "project": "windows-localspl",
+      "source_url": "https://cve-north-stars.github.io/docs/Patch-Diffing-Applied",
+      "licence": "reference-only",
+      "older": {
+        "ref": "localspl.dll 6.1.7601.24383 (Win7, per source)"
+      },
+      "newer": {
+        "ref": "localspl.dll 6.1.7601.24554 (Win7, per source; May 2020 patch)"
+      },
+      "expected": {
+        "function": "LcmCreatePortEntry",
+        "cve": "CVE-2020-1048",
+        "accept": [
+          "LcmXcvDataPort"
+        ]
+      },
+      "facts": "unverified",
+      "holdout": false,
+      "notes": "Patch-Diffing-Applied table lists LcmCreatePortEntry as the changed function (new helpers IsValidNamedPipeOrCustomPort and IsPortNamedPipe). The same page quotes a public report saying the PortIsValid check was moved inside LcmXcvDataPort: contradiction, so both accepted. 0patch (0patch.com/blog/micropatching-printdemon-vulnerability) says Microsoft 'added a couple of checks in the code for creating a printer port', consistent with LcmCreatePortEntry; it names no function. May 2020 and KB4556799 (Win10 1909) from the cve-north-stars CVE page. Non-ZDI source."
+    },
+    {
+      "id": "win-cve-2020-17001-localspl",
+      "layer": "L3",
+      "stratum": "spooler-port-validation-followup",
+      "project": "windows-localspl",
+      "source_url": "https://cve-north-stars.github.io/docs/Patch-Diffing-Applied",
+      "licence": "reference-only",
+      "older": {
+        "ref": "localspl.dll 6.1.7601.24559 (Win7, per source)"
+      },
+      "newer": {
+        "ref": "localspl.dll 6.1.7601.24562 (Win7, per source)"
+      },
+      "expected": {
+        "function": "LcmCreatePortEntry",
+        "cve": "CVE-2020-17001",
+        "accept": [
+          "SplSetPrinterDataEx",
+          "PortIsValid",
+          "LcmStartDocPort",
+          "DoAddPort"
+        ]
+      },
+      "facts": "unverified",
+      "holdout": true,
+      "notes": "Patch-Diffing-Applied lists five changed functions for this build pair (LcmCreatePortEntry, SplSetPrinterDataEx, PortIsValid, LcmStartDocPort, DoAddPort) plus new helpers IsMissingUNCPortsServicingEnabled, IsSpoolerImpersonating, IsValidSpoolDirectory. The page does not say which one is the security fix, so ground truth is a set, not a function: weak discriminating power, low confidence. Single source. Month not stated. Drop if a strict one-function case is required."
+    },
+    {
+      "id": "win-cve-2020-17087-cng",
+      "layer": "L3",
+      "stratum": "cng-ioctl-size-truncation",
+      "project": "windows-cng",
+      "source_url": "https://googleprojectzero.blogspot.com/p/rca-cve-2020-17087.html",
+      "licence": "reference-only",
+      "older": {
+        "ref": "cng.sys, Windows 10 2004 at KB4579311 or earlier (2020-Oct, needs pinning)"
+      },
+      "newer": {
+        "ref": "cng.sys, Windows 10 2004 at KB4586781 (2020-Nov Patch Tuesday, per Project Zero)"
+      },
+      "expected": {
+        "function": "CfgAdtpFormatPropertyBlock",
+        "cve": "CVE-2020-17087"
+      },
+      "facts": "unverified",
+      "holdout": false,
+      "notes": "Project Zero RCA: 'The bug is in the function cng!CfgAdtpFormatPropertyBlock' (size*6 stored in a 16-bit value). P0 gives no patched-function statement and lists Patch CL as N/A. Versprite (versprite.com/vs-labs/windows-kernel-vulnerability-research-cve-2020-17087) names the same function and says the patched code calls cng!RtlUShortMult on the incoming size, which is the only statement tying the fix to this function. No cng.sys file versions on either page. Pages were summarised by WebFetch; function name agreed across both."
+    },
+    {
+      "id": "win-cve-2021-26897-dns",
+      "layer": "L3",
+      "stratum": "dns-sig-file-write-underflow",
+      "project": "windows-dns-server",
+      "source_url": "https://www.coresecurity.com/core-labs/articles/analysis-cve-2021-26897-dns-server-rce",
+      "licence": "reference-only",
+      "older": {
+        "ref": "dns.exe, 2021-Jun (build needs pinning)"
+      },
+      "newer": {
+        "ref": "dns.exe, 2021-Jul Patch Tuesday (month from Qualys ThreatProtect URL date; build/KB needs pinning)"
+      },
+      "expected": {
+        "function": "SigFileWrite",
+        "cve": "CVE-2021-26897"
+      },
+      "facts": "unverified",
+      "holdout": false,
+      "notes": "Core Security: 'There are some unsafe subtractions in the SigFileWrite function'; the patch 'replaced by safe subtractions and some other filters were added', placed before the call to Dns_SecurityKeyToBase64String. The article never names dns.exe (summariser view; binary inferred from DNS Server product). Single source for the function. Second dns.exe case after SIGRed."
+    },
+    {
+      "id": "win-cve-2021-28476-vmswitch",
+      "layer": "L3",
+      "stratum": "vmswitch-oid-validation",
+      "project": "windows-vmswitch",
+      "source_url": "https://github.com/0vercl0k/CVE-2021-28476",
+      "licence": "reference-only",
+      "older": {
+        "ref": "vmswitch.sys, 2021-Apr (build needs pinning; Akamai says bug emerged in an Aug 2019 build)"
+      },
+      "newer": {
+        "ref": "vmswitch.sys, 2021-May Patch Tuesday (build/KB needs pinning)"
+      },
+      "expected": {
+        "function": "VmsIfrInfoParams_OID_SWITCH_NIC_REQUEST",
+        "cve": "CVE-2021-28476",
+        "accept": [
+          "VmsIfrInfoParamsNdisOidRequestBuffer"
+        ]
+      },
+      "facts": "unverified",
+      "holdout": false,
+      "notes": "0vercl0k: 'The bug itself happens in VmsIfrInfoParams_OID_SWITCH_NIC_REQUEST'. Akamai (akamai.com/blog/security/critical-vulnerability-in-hyper-v-allowed-attackers-to-exploit-azure) lists the call chain RndisDevHostControlMessageWorkerRoutine, RndisDevHostHandleSetMessage, VmsIfrInfoParamsNdisOidRequestBuffer, VmsIfrInfoParams_OID_SWITCH_NIC_REQUEST and says vmswitch never validates OidRequest. Neither page says which function Microsoft changed, so this is the vulnerable function, not a confirmed diff result. Patch month May 2021 from both."
+    },
+    {
+      "id": "win-cve-2021-31956-ntfs",
+      "layer": "L3",
+      "stratum": "ntfs-ea-query-underflow",
+      "project": "windows-ntfs",
+      "source_url": "https://y3a.github.io/2022/09/03/cve-2021-31956",
+      "licence": "reference-only",
+      "older": {
+        "ref": "ntfs.sys, Windows 10 20H2 before 2021-Jun (build needs pinning)"
+      },
+      "newer": {
+        "ref": "ntfs.sys, 2021-Jun Patch Tuesday (build/KB needs pinning)"
+      },
+      "expected": {
+        "function": "NtfsQueryEaUserEaList",
+        "cve": "CVE-2021-31956",
+        "accept": [
+          "NtfsCommonQueryEa"
+        ]
+      },
+      "facts": "unverified",
+      "holdout": true,
+      "notes": "y3a says the vulnerable function is NtfsQueryEaUserEaList (no integer-underflow check), reached via NtfsCommonQueryEa. NCC Group (nccgroup.com/research/cve-2021-31956-exploiting-the-windows-kernel-ntfs-with-wnf-part-1/) names the same function and says patched in June 2021 Patch Tuesday. Neither page describes the code change or gives a KB/build. NtfsCommonQueryEa is the caller and is accepted only as a fallback."
+    },
+    {
+      "id": "win-cve-2022-33647-kdcsvc",
+      "layer": "L3",
+      "stratum": "kerberos-weak-enctype-removal",
+      "project": "windows-kdcsvc",
+      "source_url": "https://0patch.com/blog/we-patched-cve-2023-28244-before-anyone",
+      "licence": "reference-only",
+      "older": {
+        "ref": "kdcsvc.dll, 2022-Aug (build needs pinning)"
+      },
+      "newer": {
+        "ref": "kdcsvc.dll, 2022-Sep Patch Tuesday (build/KB needs pinning)"
+      },
+      "expected": {
+        "function": "KerbInitPreferredCryptList",
+        "cve": "CVE-2022-33647",
+        "accept": [
+          "KerbGetEncTypeBitmask"
+        ]
+      },
+      "facts": "unverified",
+      "holdout": false,
+      "notes": "0patch (summariser view): for CVE-2022-33647 Microsoft's original patch was in KerbInitPreferredCryptList (runs at KDC start); 0patch placed its own patch in KerbGetEncTypeBitmask. The 0patch micropatch post for 33647/33679 (0patch.com/blog/micropatches-for-kerberos-elevation-of) confirms kdcsvc.dll and Sept 2022 but names no function. So the function name is single-source. 6.1.7601.24499 on that page is the micropatch target, not a Microsoft pair. Companion CVE-2022-33679 not added (same fix, would double-count)."
+    },
+    {
+      "id": "win-cve-2024-38256-win32k",
+      "layer": "L3",
+      "stratum": "win32k-glyph-outline-uninit",
+      "project": "windows-win32k",
+      "source_url": "https://splintersfury.github.io/KernelSight/case-studies/CVE-2024-38256",
+      "licence": "reference-only",
+      "older": {
+        "ref": "win32k.sys 10.0.22621.3958 (KB5040527, per source)"
+      },
+      "newer": {
+        "ref": "win32k.sys 10.0.22621.4169 (KB5043076, per source)"
+      },
+      "expected": {
+        "function": "GreGetGlyphOutlineInternal",
+        "cve": "CVE-2024-38256",
+        "accept": [
+          "NtGdiGetGlyphOutline"
+        ]
+      },
+      "facts": "unverified",
+      "holdout": false,
+      "notes": "LOW TRUST. KernelSight (aggregator with auto-generated analysis, cites only the MSRC advisory) says 'the fix in KB5043076 adds explicit initialization of stack variables and heap buffers in GreGetGlyphOutlineInternal'. No independent source found. Binary label win32k.sys is as the source gives it; on Windows 11 the code may live in win32kfull.sys, so re-check which file actually changes before diffing. Month not stated. The only modern win32k case found with a named function that does not push win32kfull.sys past its cap."
+    },
+    {
+      "id": "win-cve-2026-41089-netlogon",
+      "layer": "L3",
+      "stratum": "netlogon-dc-ping-string-write",
+      "project": "windows-netlogon",
+      "source_url": "https://adscanpro.com/blog/patch-diffing-cve-2026-41089-netlogon",
+      "licence": "reference-only",
+      "older": {
+        "ref": "netlogon.dll, below the first patched build per SKU (pre-patch build needs pinning)"
+      },
+      "newer": {
+        "ref": "netlogon.dll 10.0.17763.8755 (Server 2019, KB5087538 per adscanpro), 2026-May"
+      },
+      "expected": {
+        "function": "NetpLogonPutUnicodeString",
+        "cve": "CVE-2026-41089",
+        "accept": [
+          "NetpLogonPutBytes",
+          "NlGetLocalPingResponse",
+          "BuildSamLogonResponse",
+          "NetpDcBuildPing",
+          "PrimaryQueryHandler"
+        ]
+      },
+      "facts": "unverified",
+      "holdout": false,
+      "notes": "adscanpro ghidriff diff: 20 modified, 5 added; 'the two helper functions are where the bug lives' (NetpLogonPutBytes, NetpLogonPutUnicodeString), bounded path with RtlStringCbCopyExW added. SecPod (secpod.com/learn/security-research/cve-2026-41089-windows-netlogon-patch-io-cs-detection-and-mitigation-guide) independently names NetpLogonPutUnicodeString and the same per-SKU builds. KB contradiction: SecPod lists KB5089549 for 2016-2025 rows; adscanpro lists different per-SKU KBs (KB5082126, KB5082198, KB5087538) and uses KB5089549 only for the Win11 24H2 post-patch DLL (26100.8457). Patched builds known per SKU; vulnerable build not stated. Function name agrees across two sources but build pair is incomplete, so stays unverified. Second netlogon.dll case after Zerologon."
+    },
+    {
+      "id": "win-cve-2026-41096-dnsclient",
+      "layer": "L3",
+      "stratum": "dns-client-appcategory-strlen",
+      "project": "windows-dns-client",
+      "source_url": "https://www.originhq.com/research/patch-diffing-pipeline",
+      "licence": "reference-only",
+      "older": {
+        "ref": "ws2_32.dll 10.0.26100.8328 and webio.dll (pre-patch, per source; sha256 on page)"
+      },
+      "newer": {
+        "ref": "ws2_32.dll 10.0.28000.1896 (test VM, per source), KB5089548, 2026-May"
+      },
+      "expected": {
+        "function": "WSCGetApplicationCategoryEx",
+        "cve": "CVE-2026-41096",
+        "accept": [
+          "InitAppCategoryInfo",
+          "HkAddPairToTable"
+        ]
+      },
+      "facts": "unverified",
+      "holdout": true,
+      "notes": "LOW CONFIDENCE. Origin HQ pipeline write-up (LLM-assisted) lists patched ws2_32.dll!WSCGetApplicationCategoryEx and InitAppCategoryInfo (new StringLengthWorkerW) and webio.dll!HkAddPairToTable (overflow checks), and itself says the repro reached only a local OOB read, not the network primitive. Contradictions: Xcitium (threatlabsnews.xcitium.com/?p=64621) says the bug is in dnsapi.dll; the pre/post builds (26100.8328 vs 28000.1896) are different servicing branches, not a pair; KB5089548 is per the same page. Needs a proper same-branch pair before use."
+    },
+    {
+      "id": "win-cve-2026-58594-mstscax",
+      "layer": "L3",
+      "stratum": "rdp-client-surface-size-overflow",
+      "project": "windows-rdp-client",
+      "source_url": "https://onlyfm252.starlabs.sg/data/patch_diffs/rca-cve-2026-58594.md",
+      "licence": "reference-only",
+      "older": {
+        "ref": "mstscax.dll 10.0.26100.8737 (Win11 24H2 x64, per source)"
+      },
+      "newer": {
+        "ref": "mstscax.dll 10.0.26100.8875 (KB5101650, 2026-Jul, per source)"
+      },
+      "expected": {
+        "function": "CacNx::SurfaceDecoderCpu::Init",
+        "cve": "CVE-2026-58594",
+        "accept": [
+          "CaCpuDecompressor"
+        ]
+      },
+      "facts": "unverified",
+      "holdout": false,
+      "notes": "Single source, aggregator of unknown authorship (same site as other cases flagged by the earlier pass); summariser view. Page: 32-bit 4*width*height wraps in SurfaceDecoderCpu::Init, fix widens to 64-bit and rejects zero/overflowed sizes, gated by Feature_2141685050, with a companion guard in CaCpuDecompressor (accepted as lower-ranked; the page does not give the exact symbol form). The page contradicts itself on the flag name (cites Feature_2208793915 from another write-up). RDP client, not rdpbase.dll."
+    }
+  ]
+}
