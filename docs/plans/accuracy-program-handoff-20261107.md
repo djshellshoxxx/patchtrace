@@ -1,5 +1,28 @@
 # Accuracy program handoff (tool-neutral)
 
+## Current checkpoint (2026-11-09 08:16 UTC)
+
+This checkpoint supersedes the November 7 open-PR queue and next-task list below. Re-check current refs and runs before acting.
+
+- Default branch at checkpoint: `77055d4f0f435a457ae6d7d9e9a1d78f4ef8601b`.
+- Merged with expected-head guards: #270 (this handoff), #260, #262, #266, #269, #271, #277, #273, #274, #275, #276, #265, #272, #235, and #264. #272 brought the parity comparator from #263 into main; #263 is now merged/closed. #235's contained PRs #225–#234 and #236/#240 were closed after integration; #237–#239 were already merged. Branches were retained.
+- PR CI was green on the reviewed heads for the merges above. The new push run for #264's merge is `42584567397`; it was queued when checked, so this checkpoint does not claim exact-main CI is complete.
+- #205 remains frozen under its owner's existing qualification; no #205 processes, worktrees, logs or inputs were changed.
+
+### Remaining active work
+
+- **#259, draft unified-engine follow-up:** CI on head `f249edc8` was green, but the PR body still lists four confirmed defects: swap-orientation reads raw Ghidriff edges in the wrong direction; IR-only runs drop one-sided added/deleted functions; DATA-MAP majority voting can accept coordinated retargeting; and DATA-MAP function voting/alignment tie-breaking are asymmetric when the pair is reversed. Keep draft and resolve each with focused regressions before promotion.
+- **#268, draft unified live-gate harness fix:** do not merge based on its current result. The failed mutant/orientation jobs report no completed Ghidriff runs after the backend exits with filesystem-permission/lock errors; its bench job also reports missing `libEGL.so.1`. Separate harness defects from runner provisioning and preserve the failed receipts.
+- **#264's former hold is resolved:** its own sources log says the single 359 KB phreedom.org PDF fetch was completed and yielded no useful patch-diff case. The PR is merged as research notes only; its five L3 facts remain unverified and cannot be scored.
+
+### Next steps
+
+1. Check run `42584567397` and all newer main-head workflows; record pass/fail/blocked by exact SHA.
+2. Continue #259 from an isolated branch, preserving the original Claude branch. Fix the four defects one at a time, add regression coverage and run the focused plus full required checks before making it ready.
+3. Diagnose #268's runner setup and measurement semantics from its job logs. Keep any case whose Ghidra analysis did not complete as BLOCKED, never as a miss.
+4. After #259/#268 correctness and main CI are clear, run the manual pair-fetch/diff workflow only with verified tool pins. The default Ghidra URL/hash are intentionally unset; without them cases remain BLOCKED. Obtain real BinDiff and Rizin exports before claiming adapter compatibility.
+5. Keep all L1/L2/L3 accuracy claims separate. No scored accuracy result or release acceptance is established by the merges above. Native Windows, full-suite exact-head, downloadable package, clean-machine and manual release gates remain open.
+
 State as of 2026-11-07 ~07:10 UTC. Re-check GitHub before acting: default-branch SHA, open PRs, check runs. Anything below marked "open PR" may have merged since.
 
 ## Quick start for a new tool
