@@ -2,10 +2,10 @@
 from __future__ import annotations
 
 import hashlib
-import json
 from importlib import resources
 from pathlib import Path
 
+from ..persistence import strict_json
 from ..symbols.modes import LAUNCHER_CONTRACT, SymbolError
 
 SCRIPT_NAME = 'ptlaunch.py'
@@ -49,7 +49,9 @@ def validate_run(mode: str, report_path: Path, log: str, expected_staged: tuple[
     try:
         if report_path.is_symlink() or not report_path.is_file() or report_path.stat().st_size > REPORT_LIMIT:
             raise _mismatch('launcher report is missing or oversized')
-        report = json.loads(report_path.read_text(encoding='utf-8'))
+        # strict_json: the report comes from a process that also parsed hostile binaries, so no duplicate keys,
+        # NaN or unbounded nesting (RecursionError is not a ValueError).
+        report = strict_json(report_path.read_text(encoding='utf-8'))
     except (OSError, ValueError):
         raise _mismatch('launcher report is missing or unreadable') from None
     if not isinstance(report, dict) or report.get('contract') != LAUNCHER_CONTRACT:
@@ -58,7 +60,7 @@ def validate_run(mode: str, report_path: Path, log: str, expected_staged: tuple[
         raise _mismatch('launcher ran in another symbol mode than requested')
     calls = report.get('setup_calls')
     if mode == 'local':
-        if report.get('server_urls_forced_empty') is not True or not isinstance(calls, int) or calls < 1:
+        if report.get('server_urls_forced_empty') is not True or type(calls) is not int or calls < 1:
             raise _mismatch('local mode never forced the symbol server list to empty')
     elif report.get('server_urls_forced_empty') is not False:
         raise _mismatch('launcher patched the symbol hook outside local mode')

@@ -65,7 +65,8 @@ made in at most 1 MiB pieces. `cancel()` is polled between stages and between ch
   DWORD zeroed, folded, plus file length). Match is informational; most user-mode binaries store 0.
 - Sections: names decoded latin-1, NULs stripped, hostile characters replaced by `?`: the control characters
   (C0, DEL and C1, U+0080 to U+009F) and the format characters (categories `Cc` and `Cf`, in Latin-1 only the
-  soft hyphen U+00AD), as judged by `patchtrace.hostile_text.is_hostile`, the one rule that
+  soft hyphen U+00AD), the surrogates, and the line and paragraph separators U+2028 and U+2029 (categories `Zl` and
+  `Zp`, added 2026-11-07 because Qt breaks a one-line label at them), as judged by `patchtrace.hostile_text.is_hostile`, the one rule that
   `intelligence.tools.process.sanitize` shares. Entropy is Shannon entropy of raw bytes (bits/byte, four
   decimals; constant data is `0.0`, never `-0.0`).
 - Overlay: bytes after the last section raw end, excluding the certificate table (which is a file-offset
