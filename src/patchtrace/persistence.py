@@ -271,13 +271,26 @@ def creation_directory_available(root: Path) -> bool:
 
 class ProjectLock:
     """Kernel-owned advisory lock; crashes release it without stealing a live lock file."""
+    def _check_identity(self, descriptor: int) -> None:
+        opened = os.fstat(descriptor)
+        current = self.path.lstat()
+        if (not stat.S_ISREG(opened.st_mode) or not stat.S_ISREG(current.st_mode)
+                or opened.st_nlink != 1 or current.st_nlink != 1
+                or not os.path.samestat(opened, current)):
+            raise OSError('Project lock is not one unchanged regular file')
+
     def __init__(self, root: Path):
         self.path = safe_path(root, '.patchtrace.lock')
         self.stream = None
+        descriptor = None
         try:
-            flags = os.O_RDWR | os.O_CREAT | getattr(os, 'O_NOFOLLOW', 0)
-            fd = os.open(self.path, flags, 0o600)
-            self.stream = os.fdopen(fd, 'r+b')
+            flags = (os.O_RDWR | os.O_CREAT | getattr(os, 'O_NOFOLLOW', 0)
+                     | getattr(os, 'O_NONBLOCK', 0))
+            descriptor = os.open(self.path, flags, 0o600)
+            self._check_identity(descriptor)
+            self.stream = os.fdopen(descriptor, 'r+b')
+            descriptor = None  # the buffered stream now owns this handle
+            fd = self.stream.fileno()
             if os.name == 'nt':
                 import msvcrt
                 if os.fstat(fd).st_size == 0:
@@ -288,12 +301,15 @@ class ProjectLock:
             else:
                 import fcntl
                 fcntl.flock(fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
+            self._check_identity(fd)
             payload = json.dumps({'pid': os.getpid(), 'host': socket.gethostname(),
                                   'token': str(uuid4()), 'opened': now()}).encode()
             self.stream.seek(0)
             self.stream.write(payload.ljust(4096, b' '))
             self.stream.flush()
         except OSError as exc:
+            if descriptor is not None:
+                os.close(descriptor)
             if self.stream:
                 self.stream.close()
                 self.stream = None

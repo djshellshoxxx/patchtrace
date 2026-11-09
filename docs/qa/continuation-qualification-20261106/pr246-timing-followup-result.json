@@ -1,0 +1,44 @@
+{
+  "head": "e52047ae1b1bbb19a42680b8d9881338f2595f93",
+  "tree": "cf59135e03b1c4a84ff628b29b4abb9d308a2b7d",
+  "initial_status": "",
+  "worktree": "/workspace/scratch/c4fbe5e6f72c/pt-subprocess-venv",
+  "command": [
+    "/workspace/scratch/e6b4398e92df/pt-venv/bin/python",
+    "-m",
+    "pytest",
+    "-q",
+    "tests/test_codetext_tokens.py::test_hostile_text_is_covered_within_a_loose_time_bound[char-flood-c]",
+    "tests/test_codetext_tokens.py::test_hostile_text_is_covered_within_a_loose_time_bound[comment-openers-asm]",
+    "tests/test_pilot_properties.py::test_5000_pairs_by_8_cves_localize_within_the_5_second_target",
+    "--junitxml=/workspace/scratch/c4fbe5e6f72c/venv-timing-followup/pytest.xml"
+  ],
+  "environment": {
+    "PYTEST_ADDOPTS": "unset",
+    "PYTHONPATH": "src",
+    "QT_QPA_PLATFORM": "offscreen",
+    "PYTHONDONTWRITEBYTECODE": "1"
+  },
+  "start_utc": "2026-11-06T09:19:27.655809+00:00",
+  "returncode": 0,
+  "duration_seconds": 13.825,
+  "end_utc": "2026-11-06T09:19:41.490047+00:00",
+  "final_head": "e52047ae1b1bbb19a42680b8d9881338f2595f93",
+  "final_tree": "cf59135e03b1c4a84ff628b29b4abb9d308a2b7d",
+  "final_status": "",
+  "log_sha256": "8e76c78a8e5cea9348de9a0a175aa683d6bea509a50a6d4b1807708d19af0add",
+  "junit_sha256": "e17196abbe35bb5fad4c63e57a9f2b2f3231ff3f11539ebb162c83e27d424db6",
+  "suites": [
+    {
+      "name": "pytest",
+      "errors": "0",
+      "failures": "0",
+      "skipped": "0",
+      "tests": "3",
+      "time": "12.305",
+      "timestamp": "2026-11-06T01:19:28.836847-08:00",
+      "hostname": "abfc2396d032"
+    }
+  ],
+  "failures": []
+}

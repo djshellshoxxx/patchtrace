@@ -1,0 +1,50 @@
+{
+  "head": "75903db30b8f66e6426d3f5674b1d84fe2b190c3",
+  "tree": "cdbab24d14295b4450cd0d3c744d76734c98a561",
+  "initial_status": "",
+  "worktree": "/workspace/scratch/c4fbe5e6f72c/pt-continuation",
+  "command": [
+    "/workspace/scratch/e6b4398e92df/pt-venv/bin/python",
+    "-m",
+    "pytest",
+    "-q",
+    "tests/test_kb_product_start_20261106.py",
+    "tests/test_kb_product_acceptance_20261106.py",
+    "tests/test_kb_investigation_service.py",
+    "tests/test_ui_kb_investigation.py",
+    "tests/test_kbc_recovery.py",
+    "tests/test_byte_assertions.py",
+    "tests/test_nway_recovery_copy_20261105.py",
+    "tests/test_binexport_isolation.py",
+    "tests/test_rules_worker.py",
+    "--junitxml=/workspace/scratch/c4fbe5e6f72c/continuation-focused/pytest.xml"
+  ],
+  "environment": {
+    "PYTEST_ADDOPTS": "unset",
+    "PYTHONPATH": "src",
+    "QT_QPA_PLATFORM": "offscreen",
+    "PYTHONDONTWRITEBYTECODE": "1"
+  },
+  "start_utc": "2026-11-06T08:21:28.955555+00:00",
+  "returncode": 0,
+  "duration_seconds": 75.038,
+  "end_utc": "2026-11-06T08:22:43.994227+00:00",
+  "final_head": "75903db30b8f66e6426d3f5674b1d84fe2b190c3",
+  "final_tree": "cdbab24d14295b4450cd0d3c744d76734c98a561",
+  "final_status": "",
+  "log_sha256": "703a8d0acd0f57989c344cc59794b07166e607334bc0f5534608c9ee06b97cae",
+  "junit_sha256": "45127c01143deb5ba791f136599cdbd2ebccf1d396e0ab007e44b3b7a15c3598",
+  "suites": [
+    {
+      "name": "pytest",
+      "errors": "0",
+      "failures": "0",
+      "skipped": "0",
+      "tests": "243",
+      "time": "72.139",
+      "timestamp": "2026-11-06T00:21:31.151288-08:00",
+      "hostname": "abfc2396d032"
+    }
+  ],
+  "failures": []
+}

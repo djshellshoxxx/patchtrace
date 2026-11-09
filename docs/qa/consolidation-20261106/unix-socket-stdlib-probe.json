@@ -1,0 +1,52 @@
+[
+  {
+    "interpreter": "/workspace/scratch/e6b4398e92df/pt-venv/bin/python",
+    "returncode": 0,
+    "data": {
+      "executable": "/workspace/scratch/e6b4398e92df/pt-venv/bin/python",
+      "prefix": "/workspace/scratch/e6b4398e92df/pt-venv",
+      "af_unix_defined": true,
+      "operations": [
+        {
+          "family": "AF_UNIX",
+          "operation": "construct only",
+          "result": "error",
+          "exception": "PermissionError",
+          "errno": 1,
+          "message": "[Errno 1] Operation not permitted"
+        },
+        {
+          "family": "AF_INET",
+          "operation": "construct and close only",
+          "result": "created"
+        }
+      ]
+    },
+    "stderr": ""
+  },
+  {
+    "interpreter": "/workspace/scratch/e6b4398e92df/pt-binexport-copied-launcher/bin/python",
+    "returncode": 0,
+    "data": {
+      "executable": "/workspace/scratch/e6b4398e92df/pt-binexport-copied-launcher/bin/python",
+      "prefix": "/workspace/scratch/e6b4398e92df/pt-binexport-copied-launcher",
+      "af_unix_defined": true,
+      "operations": [
+        {
+          "family": "AF_UNIX",
+          "operation": "construct only",
+          "result": "error",
+          "exception": "PermissionError",
+          "errno": 1,
+          "message": "[Errno 1] Operation not permitted"
+        },
+        {
+          "family": "AF_INET",
+          "operation": "construct and close only",
+          "result": "created"
+        }
+      ]
+    },
+    "stderr": ""
+  }
+]

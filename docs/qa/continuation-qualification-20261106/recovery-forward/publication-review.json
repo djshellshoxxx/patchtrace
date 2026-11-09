@@ -1,0 +1,79 @@
+{
+  "format": "patchtrace-recovery-publication-review/1",
+  "observed_at_utc": "2026-11-06T09:15:49.838793+00:00",
+  "result": "passed; no identity or ancestry findings",
+  "published_head": "a1ed8c9167529fbf855d7dc088132379ee385cf4",
+  "local_equivalent": "a2dacfd178ab48ad42097a6930af7567b6a9309e",
+  "tree": "b59a105796e4c5cc8665cf157d5fbbae0c2ed9fd",
+  "published_parents": [
+    "0498291bc9f674d9f3f060116393f56374e4f509",
+    "6095f702400e7fe19c2f462ae79f6ab650c5db58"
+  ],
+  "local_parents": [
+    "3824c330e341cd7245a47e7e81f31650d9a72536",
+    "6095f702400e7fe19c2f462ae79f6ab650c5db58"
+  ],
+  "published_prior": "0498291bc9f674d9f3f060116393f56374e4f509",
+  "published_prior_parents": [
+    "afc8a2967ba3dec6b1ac3351d20dd08c193ba9bc",
+    "4465a0492367d08f324e80b290a594791921691c"
+  ],
+  "pr248": {
+    "url": "https://github.com/djshellshoxxx/patchtrace/pull/248",
+    "state": "open",
+    "draft": false,
+    "merged": false,
+    "head": "integrate/recovery-forward-wave3-20261106",
+    "head_sha": "a1ed8c9167529fbf855d7dc088132379ee385cf4",
+    "base": "integrate/swarm-wave3-20261105",
+    "base_sha": "afc8a2967ba3dec6b1ac3351d20dd08c193ba9bc",
+    "created_at": "2026-11-06T09:13:50Z",
+    "changed_files": 6
+  },
+  "accepted_pr245": {
+    "url": "https://github.com/djshellshoxxx/patchtrace/pull/245",
+    "merged_at": "2026-11-06T09:05:35Z",
+    "merge_commit": "6095f702400e7fe19c2f462ae79f6ab650c5db58",
+    "parents": [
+      "f33e2a0aaa3399644367f2419fee21cfe2e8702b",
+      "4465a0492367d08f324e80b290a594791921691c"
+    ],
+    "tree": "6db3490e96da2a8f0a200d834f8816bc41421f57",
+    "retained_source_branch": "repair/pr205-qualification-20261106",
+    "retained_source_head": "4465a0492367d08f324e80b290a594791921691c"
+  },
+  "owner_pr205_head": "6095f702400e7fe19c2f462ae79f6ab650c5db58",
+  "remote_refs": {
+    "refs/heads/integrate/recovery-forward-wave3-20261106": "a1ed8c9167529fbf855d7dc088132379ee385cf4",
+    "refs/heads/integrate/swarm-qualified-20261105": "6095f702400e7fe19c2f462ae79f6ab650c5db58",
+    "refs/heads/integrate/swarm-wave3-20261105": "afc8a2967ba3dec6b1ac3351d20dd08c193ba9bc",
+    "refs/heads/repair/pr205-qualification-20261106": "4465a0492367d08f324e80b290a594791921691c"
+  },
+  "checks": {
+    "published_and_local_trees_identical": true,
+    "published_final_parent_merge_changes_no_files": true,
+    "accepted_205_tree_identical_to_245_source": true,
+    "source_245_and_accepted_205_ancestry_present": true,
+    "destination_218_ancestry_present": true,
+    "all_six_changed_paths_and_seven_preservation_checks_match_reviewed_candidate": true,
+    "local_head_unchanged_and_clean": true
+  },
+  "changed_paths_from_pr_base": [
+    "docs/qa.md",
+    "docs/qa/nway-windows-recovery-20261106.md",
+    "docs/specs/series-window.md",
+    "src/patchtrace/nway/series.py",
+    "tasks/todo.md",
+    "tests/test_nway_recovery_copy_20261105.py"
+  ],
+  "scope": "Read-only remote identity, source retention, PR publication metadata and fetched Git-object ancestry; hosted checks/review qualification are separately owned and not assessed here.",
+  "tests_run": 0,
+  "remote_mutations": false,
+  "root_docs_worktree_touched": false,
+  "evidence_files": [
+    "publication-pr-metadata.json",
+    "publication-remote-refs.txt",
+    "accepted-parent-ancestry.json",
+    "resolved-tree.json"
+  ]
+}

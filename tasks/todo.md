@@ -12,6 +12,24 @@ Incident evidence, source references, attachment hashes, implementation options 
 - [ ] **PT-TIMEOUT-4:** Verify successful-cache reuse and evaluate separately specified failed-run checkpoints. Keep `--no-threaded`, workspace isolation, failure logs and prior results; do not remove the Windows lock safeguard as an untested speed fix.
 - [ ] **Acceptance:** rerun the recorded pair on Windows with effective timeout and version provenance, phase/runtime/memory evidence, output validation and cancellation checks. Do not mark fixed from documentation, mock tests, or a substage's 100%.
 
+
+## Independent parallel wave — 2026-11-05
+
+- [x] Recover ownership without changing frozen #205 or native workers; use root plus three supported workers in isolated, exclusively assigned worktrees.
+- [x] Reproduce, repair, independently review and publish #225 source deadlines, #226 keyboard access, #227 lock identity, #229 candidate chronology and #230 metric invariants.
+- [x] Publish #228 Windows archive preflight/checklist, #231 source-preserved research, #232 primary-source fixture packets, #233 real-store acceptance fixtures and #234 explicit-consent desktop advisory sync.
+- [x] Integrate reviewed slices once on the separate independent branch; focused combined checks 248 and 122 passed (overlap), whole Ruff/diff and schema regeneration clean.
+- [ ] Finish/review/publish the saved-index candidate inspection/selection follow-up; candidate download/acquisition and product-only starts remain partial.
+- [x] Independently review/publish #236 authored-PE incomplete manifest backing repair; affected PE/package integration 257 passed/one real-launcher deselected.
+- [x] Review/publish #237 metadata deadlines, #238 cache publication/raw-fd cleanup and #239 exact-consent refresh; combined283 focused checks passed.
+- [x] Review/publish #240 candidate immutable-snapshot inspection/selection and #241 scanner evidence;170 affected integrated checks passed.
+- [ ] Finish/review desktop metadata consent wiring and domain acquisition cancellation/captured-source guards; no implicit acquisition.
+- [ ] Resolve #235 scanner path finding through evidence and normal authorized disposition; do not suppress or bypass.
+- [ ] Existing owners complete frozen #205 full-suite and pinned-native qualification; do not start duplicates or modify their source/processes/logs/worktrees.
+- [ ] Qualification owner resolves existing #205 run exit143/no summary at about94%; no full pass is inferred and this session did not stop/restart it.
+- [ ] Qualify exact final Linux/Windows/Qt/native/package/live/manual/offline and main-relative scanner/review gates before any main/release acceptance claim.
+- [ ] Continue selective #183 R2/R3/R6/R8 reconciliation and remaining source freshness/authenticity, full supersedence/update-DAG and derived-label work. Preserved research is not implementation acceptance.
+
 ## Earlier delivery history
 
 - [x] Fixed the two locally reproducible full-suite issues recorded in `docs/qa.md`: site screenshot renderer follows the Files panel; Tier R rejects an unknown mutation operator before toolchain probing. Focused rerun: 27 passed, 2 skipped.
@@ -1144,17 +1162,77 @@ Full `QT_QPA_PLATFORM=offscreen python -m pytest -q` for this isolated native sl
 - [x] Account #222 finite pinned-native provisioning evidence and #223 canonical function identity; verify14 complete raw-log receipts and357 combined focused passes.
 - [ ] Finish actual native API linkage/stock-red-corrected-green and distinct-byte/IO controls; optional control tooling remains separate pending verified source.
 
+### [MERGE-20261106:branch-consolidation-readiness]
+
+- [x] Inventory all 242 remote branches/112 open PRs; distinguish ancestry, patch equivalence and unresolved historical work.
+- [x] Stage and independently review #242/#243 onto #235 with exact blob preservation; 424 root/42 overlapping independent tests pass.
+- [x] Make #204 ready at unchanged `1229ca3b` and record hosted/local evidence.
+- [ ] Finish #204 Linux smoke and normal review; merge only through normal expected-head GitHub gates.
+- [ ] Qualify/publish the isolated current integration candidate; preserve #205/native ownership and original source PRs.
+- [ ] Repair and qualify the #205→#218→updated #235 promotion stages; keep Windows recovery and scanner findings explicit.
+- [ ] Selectively reconcile remaining #183 docs and older unique work after source/behavior review; keep paid automation separate.
+
+[Exact source and execution plan](../docs/plans/branch-merge-plan-20261106.md).
+
 ### 2026-11-06 N-way Windows recovery prerequisite
 
 - [x] Reproduce the CPython 3.12 pathname/descriptor change-time mismatch with real-file fault injection; retain pinned official source/blob evidence.
 - [x] Keep independent full metadata baselines and cross-view identity/size/mtime validation; six new controls preserve metadata-only refusal and prior evidence. Affected series tests: 47 passed; whole Ruff/diff clean.
 - [ ] Independent review, coordinator integration and native Windows QA of the resulting commit. Linux fault injection does not qualify Windows packaging or release acceptance.
 
+### [KB-ADMISSION-20261106:captured-source-context]
+
+- [x] Reproduce #244 comment 4489325824 with two real-store source-insertion schedules on exact `5347ccfd` (both fail before correction).
+- [x] Amend SPEC-31-D and reuse one admitted source index; retain revision CAS, attachment journal, default manual behavior and legitimate later source imports. Two new controls and the overlapping 75-test affected selection pass; whole Ruff passes.
+- [ ] Independently review and integrate this isolated repair before resolving the review finding or promoting #244; retain all existing hosted/native/Windows/full-suite/scanner gates.
+
+[Source-admission repair receipt](../docs/qa/kb-source-admission-20261106.md).
+
+
+### 2026-11-06 Branch consolidation continuation
+
+- [x] Publish isolated #244 for current leaves and #245 for frozen-owner recovery repairs; preserve source refs.
+- [x] Stage #245 forward once with verified append-only ledger resolution; repair and independently review the confirmed KB source-provenance race; pass 774 combined focused tests.
+- [x] Complete and preserve the actual #245 Linux run: **3 failed, 19618 passed, 139 skipped, 6 xfailed, 1 warning in 2537.16s (0:42:17)**; investigate all three failures against frozen #205 without weakening assertions or permissions.
+- [x] Merge #204 after both smoke jobs and all applicable checks pass: main commit `d02b94bcedb29dae201941f01f2c94d42ebbb297`, 2026-11-06 06:27:13 UTC; source branch retained.
+- [ ] Obtain suitable-runner full Linux/native Windows/current-head qualification and normal parent scanner/review dispositions for #245 and the application integration train.
+- [ ] Recheck accepted ancestry after main promotion before any source-PR disposition; retain native and automation ownership. See [QA evidence](../docs/qa/pr245-linux-qualification-20261106.md).
+
 
 ### Subprocess virtual-environment preservation (2026-11-06 UTC)
 
 - [x] Reproduce the protobuf/YARA-X isolation false failures and preserve the active interpreter entry point without changing any test assertion. Both complete affected files pass: 116 tests; independent review and Ruff pass.
 - [ ] Complete current-head hosted qualification and normal merge review. Preserve the separate AF_UNIX runner restriction and native/release gates. See `docs/qa/subprocess-venv-20261106.md`.
+
+### [CONTINUATION-20261106:local-product-start-and-qualification]
+
+- [x] Verify #245 Windows QA, standalone/frozen/portable/installer evidence and expose its downloadable candidate; retain source-head attribution.
+- [x] Implement and independently review stored-product catalogue, explicit selection and source-bound local pair creation without KB/CVE attribution; retain six independent acceptance cases.
+- [x] Bind product-start pending repair to the original source subset and complete scope; document the new-reader requirement for the additive internal journal field.
+- [x] Integrate exact-byte diagnostic bounds and the actual #246 interpreter-fix ancestry; preserve all source branches and prior QA/task entries.
+- [ ] Complete combined current-source full tests, hosted/native qualification, normal review and outstanding parent scanner dispositions before promotion.
+- [ ] Product-only CLI/online acquisition and single-binary discovery remain separate accepted work. [Continuation receipt](../docs/qa/continuation-20261106.md).
+
+
+### [CONTINUATION-QUALIFICATION-20261106:completed-local-results]
+
+- [x] Preserve both completed local full runs, failed outcomes, raw logs/JUnit, hashes and identities.
+- [x] Verify #247 timing/GUI controls, hosted Ubuntu pass and one unchanged #246 timing follow-up.
+- [x] Accept fully qualified #245 and publish actual-parent forward #248; retain sources and 54-pass evidence.
+- [x] Preserve five R8 documents with provenance and explicit unported status.
+- [ ] Finish current-head hosted gates, normal review, parent propagation and Sonar disposition; retain separate release/live/manual requirements. [Evidence](../docs/qa/continuation-qualification-20261106.md).
+
+
+### [SUBPROCESS-ACCEPTED-20261106]
+
+- [x] Merge #246 after full hosted QA, Qt, packaging, both Linux smoke jobs and review/scanner gates pass; verify exact merged tree and retained source. Main: `dc53b529` at 09:29:12 UTC.
+- [ ] Recheck parent application merge trees and gates against the advanced main before promotion.
+
+
+### [CONTINUATION-WINDOWS-20261106:product-start-build]
+
+- [x] Complete #247 Windows QA/packaging and publish the source-pinned downloadable product-start candidate; retain the exact receipt and artifact identity.
+- [ ] Finish Linux packaging/smokes, normal parent promotion and remaining release/live/manual acceptance. [Windows evidence](../docs/qa/continuation-windows-20261106.md).
 
 ## Accuracy validation (opened 2026-11-06)
 - [ ] Follow [accuracy validation plan](../docs/plans/accuracy-validation-plan-20261106.md): per-layer claims (L1 advisory join, L2 open-source pair diff, L3 real Windows pairs), manifests frozen before engine runs. AV-0 and AV-1 done, AV-2 next; no accuracy result exists yet.

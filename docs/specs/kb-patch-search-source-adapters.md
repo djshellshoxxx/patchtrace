@@ -240,6 +240,8 @@ Never say "no CVEs associated with KB" without the scoped qualifier.
 
 Verified origins are provider-specific. Do not use a global regex like *.microsoft.com. If a request redirects outside its approved providers, require an explicit supported redirect policy, never trust an arbitrary 302. Record immutable final nonsecret source URI, not transient auth/SAS query strings. Retry bounds independent of huge scope.
 
+Monthly CVRF fetches use one monotonic document deadline, bounded by the plan deadline, across connection attempts, redirects, body reads and retry waits. Check cancellation and the deadline before every initial, redirect or retry request and after response headers arrive; cap each connection timeout by the remaining document budget. If a server's Retry-After or the fallback backoff would consume the remaining budget, fail that month without sleeping or issuing an early retry. Cancellation during a redirect or wait stops the operation with PT-KBC-CANCEL. Malformed redirect references, including URL-join parsing failures, produce a typed PT-KBC-SOURCE month failure, close the response and allow later planned months to continue. The limits bound the adapter's own scheduling; an injected opener must honor its timeout for connection-level interruption.
+
 ### 5.2 Source blob handling
 
 - Capture bytes (bounded) -> SHA256 -> strict duplicate-key rejecting JSON -> schema/dialect validation -> normalized snapshot.
@@ -284,3 +286,13 @@ Pin and preserve:
 - Provider response headers/rate limitations, documented retry rules, redirects and max sizes.
 - Live URL behavior must be measured before claiming production adapter support.
 - Test fixture documents must be scrubbed of transient tokens and carry SHA256+retrieval UTC.
+
+## 8. Explicit single-file Winbindex metadata refresh (2026-11-05)
+
+The indexed `kbcorrelation.sources.winbindex_fetch` seam builds a pure frozen internal MetadataPlan from the existing acquisition metadata URL and transport constants. Its readable preview and JSON show the exact GET URL, host set, application request headers, compressed/decompressed byte caps, per-connection timeout, total network budget, retry count/wait cap, redirect refusal and digest. It sends only the chosen normalized public basename. The plan states that Winbindex is a third-party index: HTTPS origin and the stored raw digest do not establish Microsoft authorship or vulnerability attribution.
+
+RefreshRequest carries workspace, basename, captured plan JSON, exact consent hosts/digest and an explicit offline refusal flag. Before network or workspace writes, refresh rejects oversized/non-strict JSON, rebuilds the current plan, compares exact canonical typed JSON (including missing/extra fields and bool/int distinctions), verifies consent and checks cancellation. One invocation consumes this consent; callers must obtain separate approval for each invocation and must not persist or silently replay it. No credential field exists. These are internal Python records, not new serialized application models or schema contracts.
+
+Refresh reuses acquisition.Transport.fetch_metadata, acquisition.winbindex.parse_rows and the existing save_winbindex_record publication seam. The actual response URL must match the plan. Raw bytes are bounded and parsed before publication; an empty/unusable record is refused. Retrieval timestamps and optional Last-Modified dates require real calendar validation; a future Last-Modified is refused rather than becoming the preferred newest index record. Without a usable HTTP date the retrieval date is explicitly identified as the fallback, never silently described as the source publication date. The result preserves source URL, retrieval time, date basis, third-party/TLS provenance, exact raw hash/length, stored relative path and parser counts/warnings. It does not strengthen per-binary authenticity.
+
+Only an operation-private temporary source is passed to the existing publisher. Cancellation is checked before publication. Invalid metadata, observed prepublication failure or cancellation preserves previous saved records. Publication is a commit boundary: no rollback after successful publication is promised, and a late cancellation cannot remove committed metadata. The module does not implement a second publisher, fetch binaries or execute targets. Its total-network-budget claim depends on the separately reviewed shared metadata-transport deadline repair; injected tests are not live Winbindex or Windows qualification.

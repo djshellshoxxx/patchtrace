@@ -1,5 +1,16 @@
 # Module index
 
+2026-11-05 investigation extension: the existing `kbcorrelation/investigation_service.py`
+facade also builds the existing monthly IndexPlan, strictly checks captured plan and
+consent, and orchestrates existing CVRF transport/per-document WorkspaceStore commits.
+Qt owns only preview, one-operation consent and lifecycle state. Regression seam:
+`tests/test_kb_online_investigation_20261105.py`; injected sources and real stores,
+no live compatibility evidence. `test_kb_accessibility_20261105.py` covers keyboard access.
+The same facade now exposes explicit saved-index candidate inspection/selection:
+one immutable validated index snapshot feeds the existing resolver and pure planner,
+with provenance/revision/digest checks; metadata-only candidate preview grants no
+download or creation consent. `test_kb_candidate_journey_20261105.py` covers this seam.
+
 Stable IDs are independent of filenames. Public interfaces in SPEC-01 and schemas in SPEC-02 are source of truth. Module implementations remain independently usable without Qt.
 
 | ID | File | Responsibility and public interface | Dependencies | Ownership / test seam |
@@ -55,6 +66,8 @@ Stable IDs are independent of filenames. Public interfaces in SPEC-01 and schema
 | series UI | ui_series.py | `SeriesWindow` and `SeriesLoadThread`: renders a `SeriesView`, plain-text cells, Open-pair signal; hook in ui.py is one action | Qt, nway.view_model | pytest-qt offscreen, tooltip audit |
 | inspection UI (alpha) | ui_inspection.py | `InspectionThread` independent of analysis jobs; PE comparison table rendering | Qt, artifact inspection | pytest-qt via MainWindow |
 | packaging | tools/build_windows.py; tools/build_linux.py; tools/pyinstaller_hooks/ | Frozen Windows/Linux runtimes, curated Qt desktop plugins, licenses, inventory and checksum | PyInstaller | Windows/Linux Actions and archive inspection |
+| Windows archive preflight | tools/check_windows_package.py | Bounded portable ZIP digest/layout/inventory/dependency identity check; JSON receipt without extraction or execution | stdlib, persistence.strict_json | tests/test_windows_package_preflight.py; authored archives only; Windows execution remains separate |
+| Winbindex metadata refresh | kbcorrelation/sources/winbindex_fetch.py | Exact-plan preview/consent over deadline-bounded Transport.fetch_metadata and atomic saved index publication; no target execution | existing transport/parser/publication | test_kb_winbindex_refresh_20261105.py; injected fixtures, no live acceptance |
 
 Every substantial future module must be added here before implementation. UI must not own analysis logic; provider must not own project state.
 
@@ -1209,7 +1222,7 @@ Calls panel (id graph): `callgraph/panel.py` (PanelSpec), `panel_qt.py` (widgets
 ## Essential workflow safety continuation (2026-10-31)
 
 - `service.ProjectService.export_report` / `reports.export_project(..., project_root=...)`: enforce project-owned report destination boundary before filesystem writes; UI consumes service route. Existing renderer/preview compatibility retained.
-- `kbcorrelation.service.KbService.acquire/import_pair`: bind consented acquisition completion to captured investigation revision and explicit preview scope, using existing workspace lock/history; retain conservative pairing provenance.
+- `kbcorrelation.service.KbService.acquire/import_pair`: bind consented acquisition completion to captured investigation revision and explicit preview scope, using existing revision compare-and-swap/history. Admit one advisory index after checking the captured source records, then reuse it for scope validation and context; later source additions remain outside that operation. Retain conservative pairing provenance.
 
 - `persistence.ProjectStore.load(*, recover_interrupted=True)`: default startup recovery unchanged; non-mutating committed reads for report generation set False. No schema change.
 
@@ -1307,3 +1320,16 @@ Wiring: `exchange.ALL_SOURCES`, `--sources diaphora`, `pipeline.capture_plan` (o
 ### [LBL-30:credited-output-replay]
 
 `tools/calibration/tier_r/output_store.py` owns exclusive normalized output retention, report-bound completion/credit receipts, bounded strict replay and explicit legacy compatibility. `evaluate.py` credits a successful answer only after normalization/retention; training verifies managed report credits before accepting replay. Tests: `tests/test_tier_r_{output_persistence,credited_replay,credit_completion,output_stat_compat}.py`. Native adapter compatibility and real calibration remain separate gates.
+
+### [KB-PRODUCT-START-20261106:local-product-catalogue]
+
+`kbcorrelation/index.py` exposes the active local product catalogue. The existing
+`investigation_service.py` / `investigation_qt.py` facade and dialog capture an
+explicit ProductScope plus source snapshot for local pair preview/create.
+`service.py` admits one index for validation/context; `context.py` retains the
+chosen product's source digests without inferring advisory attribution.
+`store.py` adds the optional persisted attach-journal `selected_product` and
+binds pending repair to its exact original scope/source subset. New-reader
+repair is required for those journals; public schemas and SQL version stay
+unchanged. Tests: `test_kb_product_start_20261106.py`,
+`test_kb_product_acceptance_20261106.py`, plus existing service/recovery journeys.

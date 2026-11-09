@@ -1,0 +1,45 @@
+{
+  "schema": "patchtrace-independent-review/1",
+  "observed_at_utc": "2026-11-06 07:44:06 UTC",
+  "repository": "djshellshoxxx/patchtrace",
+  "branch": "repair/subprocess-venv-20261106",
+  "base": "d02b94bcedb29dae201941f01f2c94d42ebbb297",
+  "reviewed_uncommitted_paths": [
+    "tests/test_binexport_isolation.py",
+    "tests/test_rules_worker.py"
+  ],
+  "delta": "Both PY assignments change from str(Path(sys.executable).resolve()) to sys.executable, with comments explaining symlinked virtual environments. No other test logic changes.",
+  "finding_count": 0,
+  "assertions_unchanged": true,
+  "subprocess_limits_and_environment_controls_unchanged": true,
+  "production_alignment": [
+    "src/patchtrace/secondary/binexport_run.py:worker_argv",
+    "src/patchtrace/rules/runner.py:worker_argv"
+  ],
+  "production_behavior": "Both production worker launchers already retain sys.executable without resolving it.",
+  "observed_interpreter": {
+    "executable": "/workspace/scratch/e6b4398e92df/pt-venv/bin/python",
+    "resolved": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+    "prefix": "/workspace/scratch/e6b4398e92df/pt-venv",
+    "base_prefix": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python"
+  },
+  "baseline_log": "/workspace/scratch/c4fbe5e6f72c/subprocess-venv-before.log",
+  "baseline_failures": [
+    "test_pure_python_runtime_is_refused_in_a_fresh_interpreter: protobuf_missing instead of protobuf_not_upb",
+    "test_parent_never_imports_yara_x: spawned base Python lacked installed yara_x"
+  ],
+  "coordinator_postchange_log": "/workspace/scratch/c4fbe5e6f72c/subprocess-venv-after.log",
+  "coordinator_postchange_result": "116 passed in 42.16s",
+  "independent_postchange_result": {
+    "tests": [
+      "tests/test_binexport_isolation.py::test_pure_python_runtime_is_refused_in_a_fresh_interpreter",
+      "tests/test_rules_worker.py::test_parent_never_imports_yara_x"
+    ],
+    "passed": 2,
+    "seconds": 2.7,
+    "interpreter": "original symlinked pt-venv/bin/python",
+    "diff_check": "passed"
+  },
+  "portability_assessment": "Preserving sys.executable retains the launched interpreter entry point and therefore its virtual-environment identity. It matches production launch behavior and retains direct argv execution. No assertion, timeout, import-isolation control, or cwd policy is weakened. This independent execution evidence is Linux only; hosted checks remain applicable.",
+  "mutations": "Review only; no tracked files, refs, or PR metadata changed by reviewer."
+}

@@ -1,0 +1,143 @@
+{
+  "format": "patchtrace-accepted-main-source/1",
+  "observed_at_utc": "2026-11-06T09:30:27.699Z",
+  "pr": 246,
+  "source": "c804e4d94430368c0eafe1da899493a8cf6520aa",
+  "source_branch": "repair/subprocess-venv-20261106",
+  "source_retained": true,
+  "merge": "dc53b529560453e84cf45e356a40432ff3fc6725",
+  "merged_at_utc": "2026-11-06T09:29:12Z",
+  "merge_parents": [
+    "d02b94bcedb29dae201941f01f2c94d42ebbb297",
+    "c804e4d94430368c0eafe1da899493a8cf6520aa"
+  ],
+  "tree": "cf59135e03b1c4a84ff628b29b4abb9d308a2b7d",
+  "main_ref": "dc53b529560453e84cf45e356a40432ff3fc6725",
+  "expected_head_guard": "c804e4d94430368c0eafe1da899493a8cf6520aa",
+  "merge_method": "merge",
+  "checks": [
+    {
+      "id": 127815703673,
+      "name": "release",
+      "status": "completed",
+      "conclusion": "skipped",
+      "completed_at": "2026-11-06T09:25:27Z",
+      "url": "https://github.com/djshellshoxxx/patchtrace/runs/127815703673"
+    },
+    {
+      "id": 127815240251,
+      "name": "linux-smoke (ubuntu-22.04)",
+      "status": "completed",
+      "conclusion": "success",
+      "completed_at": "2026-11-06T09:25:17Z",
+      "url": "https://github.com/djshellshoxxx/patchtrace/runs/127815240251"
+    },
+    {
+      "id": 127815240219,
+      "name": "linux-smoke (ubuntu-24.04)",
+      "status": "completed",
+      "conclusion": "success",
+      "completed_at": "2026-11-06T09:25:26Z",
+      "url": "https://github.com/djshellshoxxx/patchtrace/runs/127815240219"
+    },
+    {
+      "id": 127812233908,
+      "name": "linux-package",
+      "status": "completed",
+      "conclusion": "success",
+      "completed_at": "2026-11-06T09:24:22Z",
+      "url": "https://github.com/djshellshoxxx/patchtrace/runs/127812233908"
+    },
+    {
+      "id": 127778117482,
+      "name": "SonarCloud Code Analysis",
+      "status": "completed",
+      "conclusion": "success",
+      "completed_at": "2026-11-06T07:49:49Z",
+      "url": "https://github.com/djshellshoxxx/patchtrace/runs/127778117482"
+    },
+    {
+      "id": 127777959380,
+      "name": "CodeRabbit",
+      "status": "completed",
+      "conclusion": "success",
+      "completed_at": "2026-11-06T07:52:16Z",
+      "url": "https://github.com/djshellshoxxx/patchtrace/runs/127777959380"
+    },
+    {
+      "id": 127777889121,
+      "name": "release-gate",
+      "status": "completed",
+      "conclusion": "skipped",
+      "completed_at": "2026-11-06T07:49:10Z",
+      "url": "https://github.com/djshellshoxxx/patchtrace/runs/127777889121"
+    },
+    {
+      "id": 127777888271,
+      "name": "qt-gate (ubuntu-latest, 20, 2/4)",
+      "status": "completed",
+      "conclusion": "success",
+      "completed_at": "2026-11-06T09:17:16Z",
+      "url": "https://github.com/djshellshoxxx/patchtrace/runs/127777888271"
+    },
+    {
+      "id": 127777888049,
+      "name": "qt-gate (ubuntu-latest, 20, 3/4)",
+      "status": "completed",
+      "conclusion": "success",
+      "completed_at": "2026-11-06T09:16:27Z",
+      "url": "https://github.com/djshellshoxxx/patchtrace/runs/127777888049"
+    },
+    {
+      "id": 127777888003,
+      "name": "qt-gate (ubuntu-latest, 20, 1/4)",
+      "status": "completed",
+      "conclusion": "success",
+      "completed_at": "2026-11-06T09:16:21Z",
+      "url": "https://github.com/djshellshoxxx/patchtrace/runs/127777888003"
+    },
+    {
+      "id": 127777888000,
+      "name": "qa (ubuntu-latest)",
+      "status": "completed",
+      "conclusion": "success",
+      "completed_at": "2026-11-06T09:06:43Z",
+      "url": "https://github.com/djshellshoxxx/patchtrace/runs/127777888000"
+    },
+    {
+      "id": 127777887971,
+      "name": "qt-gate (ubuntu-latest, 20, 4/4)",
+      "status": "completed",
+      "conclusion": "success",
+      "completed_at": "2026-11-06T08:52:35Z",
+      "url": "https://github.com/djshellshoxxx/patchtrace/runs/127777887971"
+    },
+    {
+      "id": 127777887964,
+      "name": "qt-gate (windows-latest, 5, 1/1)",
+      "status": "completed",
+      "conclusion": "success",
+      "completed_at": "2026-11-06T08:54:25Z",
+      "url": "https://github.com/djshellshoxxx/patchtrace/runs/127777887964"
+    },
+    {
+      "id": 127777887809,
+      "name": "qa (windows-latest)",
+      "status": "completed",
+      "conclusion": "success",
+      "completed_at": "2026-11-06T09:05:54Z",
+      "url": "https://github.com/djshellshoxxx/patchtrace/runs/127777887809"
+    }
+  ],
+  "commit_statuses": [
+    {
+      "context": "security/snyk (djshellshoxxx)",
+      "state": "success",
+      "created_at": "2026-11-06T07:49:16Z"
+    }
+  ],
+  "formal_reviews": 0,
+  "inline_threads": 0,
+  "review_detail": "pr246-qualification-eligibility-20261106T0920Z.json",
+  "qualification": "All applicable source checks completed before merge; expected PR release skips preserved. Original failed local full run and separate unchanged 3-pass timing follow-up retained."
+}

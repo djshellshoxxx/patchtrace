@@ -245,6 +245,11 @@ class ReverseIndex:
     def scopes(self) -> tuple[ProductScope, ...]:
         return merge_scopes(s for d in self.documents for s in d.scopes)
 
+    def active_scopes(self) -> tuple[ProductScope, ...]:
+        """Products present in the active source snapshots, with their exact source product identities."""
+        active = self.active_ids()
+        return merge_scopes(s for d in self.documents if d.doc_id in active for s in d.scopes)
+
     # ------------------------------------------------------------------------------------------ coverage
 
     def _select(self, scope: SearchScope) -> tuple[set[str], set[str], list[ImportedDocument], bool]:

@@ -1,0 +1,4 @@
+a1ed8c9167529fbf855d7dc088132379ee385cf4	refs/heads/integrate/recovery-forward-wave3-20261106
+6095f702400e7fe19c2f462ae79f6ab650c5db58	refs/heads/integrate/swarm-qualified-20261105
+afc8a2967ba3dec6b1ac3351d20dd08c193ba9bc	refs/heads/integrate/swarm-wave3-20261105
+4465a0492367d08f324e80b290a594791921691c	refs/heads/repair/pr205-qualification-20261106

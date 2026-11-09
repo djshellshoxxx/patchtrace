@@ -1,0 +1,101 @@
+{
+  "format": "patchtrace-research-documentation-validation/1",
+  "checked_at_utc": "2026-11-04T02:33:42.441333+00:00",
+  "inspected_main": "b77d84e5decf736b031f0a24094001274de41178",
+  "scope": "Documentation integrity only; source research is not runtime, native, statistical or release acceptance.",
+  "markdown_research_files": 7,
+  "research_word_count_whitespace": 16595,
+  "action_packets": 15,
+  "numbered_source_references": 96,
+  "unique_external_reference_urls_including_blocked_leads": 110,
+  "external_source_hosts": [
+    "api.kde.org",
+    "api.msrc.microsoft.com",
+    "arxiv.org",
+    "csrc.nist.gov",
+    "diffoscope.org",
+    "doc.qt.io",
+    "docs.oasis-open.org",
+    "github.com",
+    "heptapod.host",
+    "hypothesis.readthedocs.io",
+    "in-toto.io",
+    "invent.kde.org",
+    "jpype.readthedocs.io",
+    "learn.microsoft.com",
+    "lief.re",
+    "llvm.org",
+    "manpages.debian.org",
+    "metacpan.org",
+    "nsis.sourceforge.io",
+    "ossf.github.io",
+    "pyinstaller.org",
+    "reproducible-builds.org",
+    "salsa.debian.org",
+    "scikit-learn.org",
+    "sources.debian.org",
+    "sourceware.org",
+    "sqlite.org",
+    "theupdateframework.github.io",
+    "theupdateframework.readthedocs.io",
+    "www.csaf.io",
+    "www.microsoft.com",
+    "www.sourceware.org",
+    "www.sqlite.org"
+  ],
+  "local_paths_and_heading_links_checked": 118,
+  "pinned_repository_paths_checked": 13,
+  "snapshot_prs": 59,
+  "issues": [],
+  "files": [
+    {
+      "path": "CLAUDE.md",
+      "sha256": "18dc16f104f9bd41f9b0fb6d15073b84bf5778cc7fc636cbef8165d507c750df"
+    },
+    {
+      "path": "docs/research/20261103-additional-research/01-current-state-and-research-gaps.md",
+      "sha256": "641ad872794920bb0999feda4274cea90725a0b17a5125c8594baf1dac9b50b1"
+    },
+    {
+      "path": "docs/research/20261103-additional-research/02-engine-runtime-reuse.md",
+      "sha256": "378ed3aaeac08688b0281a83d58dc8202f45203ee1d5ef0be3ac496fc44565bb"
+    },
+    {
+      "path": "docs/research/20261103-additional-research/03-metadata-provenance-reuse.md",
+      "sha256": "bca299e5dbf793c52cbb0c52466094ff496cc6078a3f9337399d58f4ef2f46af"
+    },
+    {
+      "path": "docs/research/20261103-additional-research/04-desktop-persistence-release-reuse.md",
+      "sha256": "911917da2a5e5c631a84c7f534846e5e9584d7dbd5d4c5dba10fc91456eca622"
+    },
+    {
+      "path": "docs/research/20261103-additional-research/05-corpus-calibration-reproducibility.md",
+      "sha256": "7950b2a9cbadf9e8f3eb76eef4b0baeaf21a875907e2b973d1341a14ab143689"
+    },
+    {
+      "path": "docs/research/20261103-additional-research/06-claude-action-plan-and-reuse-register.md",
+      "sha256": "a823208173149fb1fcd6a3d780e826d712fc748efbd37e9b7ece24a14b78b5b3"
+    },
+    {
+      "path": "docs/research/20261103-additional-research/README.md",
+      "sha256": "2498962ba9c5db53b5b31ded0fba1ccba25ca4c414169e5746a5576f7bf26629"
+    },
+    {
+      "path": "docs/research/20261103-additional-research/repository-snapshot.json",
+      "sha256": "398b22ce77f5c352a01b3f71551bdd3e8980fe8742d70ba26212ec5e8d04256d"
+    },
+    {
+      "path": "docs/research/INDEX.md",
+      "sha256": "5d05907efd5b3cb4154716acdf0b76afb67d846edf2959360c69bc29a6741cf9"
+    }
+  ],
+  "not_run": [
+    "application test suite",
+    "native analysis engines",
+    "target binaries",
+    "Windows builds/installers",
+    "live advisory import",
+    "calibration experiments",
+    "paid API workflows"
+  ]
+}
