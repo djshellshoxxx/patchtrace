@@ -1,0 +1,1 @@
+optional-deps: present=rapidfuzz=3.14.6,yara-x=1.21.0,iced-x86=1.21.0 missing=none

@@ -1,0 +1,22 @@
+{
+  "desktop-self-test.log": {
+    "bytes": 83,
+    "sha256": "5408f8fde87893a19927c0e8df22c3379ebbd230c5fcd0ca5ac10b3b55dbadd9"
+  },
+  "full-parallel-incomplete.log": {
+    "bytes": 5602,
+    "sha256": "c537a771b91b117188f31a48aa5fc49d89566e6838e6c0e8daa85bfd8a8929e1"
+  },
+  "full-serial-timeout.log": {
+    "bytes": 8188,
+    "sha256": "596d8661fb72c1c89ffb169ed54492b8ea6aa80e4daf354e86dafe358aebb462"
+  },
+  "gui.log": {
+    "bytes": 2583,
+    "sha256": "7939ea6185b8452878cb8f7403dd2a2d802c695d58a99aeff238fc0552a88565"
+  },
+  "help-spec.log": {
+    "bytes": 420,
+    "sha256": "04f8b35bbdeb95f781f72b87fcaff653155099d22329f195f143c28170d6829d"
+  }
+}

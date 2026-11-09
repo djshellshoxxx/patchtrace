@@ -1695,3 +1695,17 @@ At 09:29:12 UTC, #246 merged normally into main as `dc53b529560453e84cf45e356a40
 ## [CONTINUATION-WINDOWS-20261106:product-start-build]
 
 Frozen #247 Windows QA passed **20,331 tests, 94 skipped, 5 xfailed, 19 warnings in 2675.35s**, plus standalone/frozen/portable/installer checks. Artifact `13492805458`, source `37b77130`, contains the stored-product starting route. API/upload digest and tested/source tree identity agree. The 09:43–09:44 snapshot still has Linux packaging/smokes outstanding; original local failures and release/live/manual gates remain preserved. [Windows candidate and evidence](qa/continuation-windows-20261106.md).
+
+
+## UX-20261109 — isolated analyst accessibility
+
+Implementation `2129879202a95ee3bdecfcebee7d2847956cf4cd`: Export keyboard focus,
+Files state announcements and current first-run help, independently reviewed.
+Integrated Linux/Python 3.12.14/PySide6 6.12 offscreen selection: **1,589 passed,
+2 test-only deprecation warnings**; whole Ruff, panel check and desktop smoke pass.
+Full validation is **INCOMPLETE**: four unexplained parallel worker exits (local
+attempt interrupted), then a serial attempt timed out after 600 s at 35% without
+a final pytest summary. Do not infer a baseline cause or full pass. Windows
+assistive technology/DPI/high-contrast acceptance remains open. No accuracy/native
+lane changes. Exact commands, source identity, scope and raw logs:
+[verification receipt](plans/analyst-accessibility-20261109.md#verification-receipt).

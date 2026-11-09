@@ -1237,3 +1237,17 @@ Full `QT_QPA_PLATFORM=offscreen python -m pytest -q` for this isolated native sl
 ## Accuracy validation (opened 2026-11-06)
 - [ ] Follow [accuracy validation plan](../docs/plans/accuracy-validation-plan-20261106.md): per-layer claims (L1 advisory join, L2 open-source pair diff, L3 real Windows pairs), manifests frozen before engine runs. AV-0 and AV-1 done, AV-2 next; no accuracy result exists yet.
 - [ ] 2026-11-07 status and findings: see [accuracy program findings](../docs/qa/accuracy-program-findings-20261107.md) (PR triage, CI observations, Windows candidate research, open gates).
+
+
+## UX-20261109 — analyst accessibility follow-up
+
+- [x] Implement and independently review Export keyboard activation/tab order,
+  Files deduplicated announcements/visible-tab focus and current first-run help;
+  integrated focused GUI/help selection: 1,589 passed (2 test-only warnings).
+- [ ] Obtain complete full-suite/CI qualification; parallel workers exited
+  unexpectedly without a cause, serial attempt hit 600 s at 35%. Preserve
+  [receipt and raw logs](../docs/plans/analyst-accessibility-20261109.md#verification-receipt).
+- [ ] Native Windows NVDA/Narrator, focus, DPI and high-contrast acceptance.
+- [ ] Shared VirtualTable keyboard sorting and Evidence announcements remain
+  owned by open #176; they were not duplicated here. Accuracy/runner lanes
+  #279/#259/#268 remain untouched.
