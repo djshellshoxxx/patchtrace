@@ -9,8 +9,14 @@ if ! command -v sudo >/dev/null 2>&1; then
   exit 2
 fi
 
-sudo apt-get update
-sudo apt-get install -y jq libegl1 libopengl0 libgl1
+# Some Codespaces images include a stale third-party Yarn apt source. An update
+# can report that source's signature error even when the Debian indexes needed
+# for PatchTrace are available. Keep package installation authenticated: if the
+# required packages cannot be installed from the configured indexes, this fails.
+if ! sudo apt-get update; then
+  echo "apt-get update reported an error; attempting to install PatchTrace prerequisites from available package indexes." >&2
+fi
+sudo apt-get install -y jq libegl1 libopengl0 libgl1 libxkbcommon0
 
 python3 - <<'PY'
 import sys
