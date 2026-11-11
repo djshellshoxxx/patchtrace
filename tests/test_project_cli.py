@@ -217,6 +217,84 @@ def test_identical_inputs_are_recorded_not_refused(inputs, tmp_path, capsys):
     assert doc['result']['latest_completed'] is None
 
 
+def _missing(tmp_path: Path) -> Path:
+    return tmp_path / 'absent.dll'
+
+
+def _a_directory(tmp_path: Path) -> Path:
+    return tmp_path / 'in'  # holds the inputs; a directory is not an input file
+
+
+BAD_FIRST_INPUTS = {
+    'missing-file': (_missing, 'PT-INPUT: cannot read or preserve input'),
+    'not-a-pe': (_text_file, 'PT-INPUT: missing DOS MZ header'),
+    'a-directory': (_a_directory, 'PT-INPUT: input must be a regular file'),
+}
+
+
+@pytest.mark.parametrize('case', list(BAD_FIRST_INPUTS), ids=list(BAD_FIRST_INPUTS))
+def test_a_refused_first_input_exits_2_and_leaves_no_partial_project(case, inputs, tmp_path, capsys):
+    make, message = BAD_FIRST_INPUTS[case]
+    root = tmp_path / 'proj'
+    code, doc, err = jrun(['project', 'create', '--older', make(tmp_path), '--newer', inputs[1], '--project', root],
+                          capsys)
+    assert code == 2 and doc['command'] == 'project create' and doc['status'] == 'failed'
+    assert doc['error'].startswith(message) and 'Traceback' not in err
+    assert not root.exists() or [p.name for p in root.rglob('*')] == [LOCK]
+    code, doc, _ = jrun(['project', 'create', '--older', inputs[0], '--newer', inputs[1], '--project', root], capsys)
+    assert code == 0, doc  # the same directory can be used again
+
+
+def test_an_unreadable_input_exits_2_and_names_the_input(inputs, tmp_path, capsys, monkeypatch):
+    """A permission failure on an input is the analyst's to correct: exit 2, never a traceback. The fault is injected
+    where the input is first read (`file_fingerprint`) because root reads any file whatever its mode bits."""
+    from patchtrace import ingestion
+    real = ingestion.file_fingerprint
+
+    def denied(path):
+        if Path(path) == inputs[0]:
+            raise PermissionError(13, 'Permission denied')
+        return real(path)
+    monkeypatch.setattr(ingestion, 'file_fingerprint', denied)
+    root = tmp_path / 'proj'
+    code, doc, err = jrun(['project', 'create', '--older', inputs[0], '--newer', inputs[1], '--project', root], capsys)
+    assert code == 2 and doc['error'] == 'PT-INPUT: cannot read or preserve input: Permission denied'
+    assert 'Traceback' not in err
+    assert not root.exists() or [p.name for p in root.rglob('*')] == [LOCK]
+
+
+@pytest.mark.skipif(sys.platform == 'win32' or getattr(os, 'geteuid', lambda: 0)() == 0,
+                    reason='needs an unprivileged POSIX user: chmod cannot deny reads or writes to root')
+def test_chmod_denied_input_and_parent_exit_2_on_an_unprivileged_user(inputs, tmp_path, capsys):
+    parent = tmp_path / 'locked'
+    parent.mkdir()
+    inputs[0].chmod(0)
+    parent.chmod(0o500)
+    try:
+        code, doc, err = jrun(['project', 'create', '--older', inputs[0], '--newer', inputs[1], '--project',
+                               parent / 'proj'], capsys)
+        assert code == 2 and doc['error'].startswith('PT-INPUT: cannot read or preserve input')
+        assert 'Traceback' not in err and [p.name for p in parent.iterdir()] == []
+        inputs[0].chmod(0o644)
+        code, doc, _ = jrun(['project', 'create', '--older', inputs[0], '--newer', inputs[1], '--project',
+                             parent / 'proj'], capsys)
+        assert code == 2 and doc['error'].startswith('PT-STORAGE: project directory cannot be created')
+    finally:
+        parent.chmod(0o755)
+        inputs[0].chmod(0o644)
+
+
+def test_a_project_directory_that_is_a_regular_file_is_refused_and_untouched(inputs, tmp_path, capsys):
+    target = tmp_path / 'notes.txt'
+    target.write_text('mine', encoding='utf-8')
+    for project in (target, target / 'child'):  # the path itself, and a path below it
+        code, doc, err = jrun(['project', 'create', '--older', inputs[0], '--newer', inputs[1], '--project', project],
+                              capsys)
+        assert code == 2 and doc['error'] == 'the project directory must be absent or empty'
+        assert 'Traceback' not in err
+    assert target.read_text(encoding='utf-8') == 'mine'
+
+
 # --- sample -------------------------------------------------------------------------------------------------
 
 def test_sample_creates_the_synthetic_project(tmp_path, capsys):
@@ -559,6 +637,16 @@ def test_a_path_that_is_not_a_project_exits_2(leaf, result_file, tmp_path, capsy
         code, doc, err = jrun(_leaves(root, tmp_path, result_file)[leaf], capsys)
         assert code == 2 and doc['error'] == message and 'Traceback' not in err
     assert not (tmp_path / 'never-written').exists()
+
+
+@pytest.mark.parametrize('leaf', LEAVES, ids=list(LEAVES))
+def test_a_project_path_that_is_a_file_exits_2_and_is_left_alone(leaf, result_file, tmp_path, capsys):
+    target = tmp_path / 'notes.txt'
+    target.write_text('mine', encoding='utf-8')
+    code, doc, err = jrun(_leaves(target, tmp_path, result_file)[leaf], capsys)
+    assert code == 2 and doc['command'] == f'project {leaf}' and doc['status'] == 'failed'
+    assert doc['error'] == 'PT-STORAGE: project path is not a directory' and 'Traceback' not in err
+    assert target.read_text(encoding='utf-8') == 'mine' and not (tmp_path / 'never-written').exists()
 
 
 # --- import cleanliness and the installed entry point -------------------------------------------------------
