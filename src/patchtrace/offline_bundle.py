@@ -11,6 +11,7 @@ import os
 import re
 import shutil
 import stat
+import struct
 import tempfile
 import threading
 import unicodedata
@@ -32,6 +33,11 @@ VERSION = re.compile(r'^[a-zA-Z0-9][a-zA-Z0-9._+\-]{0,95}$')
 WINDOWS_RESERVED = {'CON', 'PRN', 'AUX', 'NUL'} | {
     f'{kind}{index}' for kind in ('COM', 'LPT') for index in (*range(1, 10), '¹', '²', '³')
 } | {'CONIN$', 'CONOUT$'}
+# End-of-central-directory layouts (APPNOTE 4.3.14-4.3.16); the fixed record may be followed by a comment.
+_EOCD = struct.Struct('<4s4H2LH')
+_EOCD64_LOCATOR = struct.Struct('<4sLQL')
+_EOCD64 = struct.Struct('<4sQ2H2L4Q')
+_MAX_ZIP_COMMENT = 0xFFFF
 # Errors raised by zipfile/zlib for corrupt or unsupported members.
 _READ_ERRORS = (OSError, EOFError, zipfile.BadZipFile, zipfile.LargeZipFile, RuntimeError,
                 zlib.error, NotImplementedError, UnicodeError)
@@ -233,6 +239,42 @@ def validate_manifest(data: object, *, platforms: tuple[str, ...] = DEFAULT_PLAT
 _validated_manifest = validate_manifest  # historical private name
 
 
+def _declared_zip_entries(archive: Path) -> int | None:
+    """The total entry count the end-of-central-directory record declares, or None when no record is readable.
+
+    TB-10: read with struct from the tail of the file, so an archive that declares more entries than the cap is
+    refused before zipfile builds one object per directory entry. The record is located the way zipfile locates
+    it (last record that fits, ZIP64 record at the locator's offset or directly before the locator). None means
+    "zipfile reports it": this reader never turns its own doubt into a refusal.
+    """
+    try:
+        with archive.open('rb') as stream:
+            size = stream.seek(0, os.SEEK_END)
+            start = max(0, size - _EOCD.size - _MAX_ZIP_COMMENT - _EOCD64_LOCATOR.size)
+            stream.seek(start)
+            tail = stream.read(size - start)
+            at = len(tail) - _EOCD.size
+            if at < 0:
+                return None
+            if not (tail.startswith(b'PK\x05\x06', at) and tail.endswith(b'\x00\x00')):
+                at = tail.rfind(b'PK\x05\x06', max(0, at - _MAX_ZIP_COMMENT))
+                if at < 0 or at + _EOCD.size > len(tail):
+                    return None
+            locator_at = at - _EOCD64_LOCATOR.size
+            if locator_at < 0 or not tail.startswith(b'PK\x06\x07', locator_at):
+                return _EOCD.unpack_from(tail, at)[4]
+            declared_offset = _EOCD64_LOCATOR.unpack_from(tail, locator_at)[2]
+            for offset in (declared_offset, start + locator_at - _EOCD64.size):
+                if 0 <= offset <= size - _EOCD64.size:
+                    stream.seek(offset)
+                    record = stream.read(_EOCD64.size)
+                    if len(record) == _EOCD64.size and record.startswith(b'PK\x06\x06'):
+                        return _EOCD64.unpack(record)[7]
+    except OSError:
+        return None
+    return None
+
+
 def _zip_entries(archive: zipfile.ZipFile, files: tuple[BundleFile, ...]) -> None:
     entries = archive.infolist()
     if len(entries) > MAX_MEMBERS + 1:
@@ -299,6 +341,9 @@ def inspect_offline_bundle(archive: Path, *, expected_sha256: str | None = None,
         archive_hash = _sha256_file(archive, cancel)
         if expected_sha256 is not None and archive_hash != expected_sha256:
             _fail('archive SHA-256 differs from the trusted expected SHA-256')
+        declared = _declared_zip_entries(archive)
+        if declared is not None and declared > MAX_MEMBERS + 1:
+            _fail('ZIP contains too many entries')
         with zipfile.ZipFile(archive, 'r') as zf:
             entries = zf.infolist()
             manifests = [info for info in entries if info.filename == 'manifest.json']
