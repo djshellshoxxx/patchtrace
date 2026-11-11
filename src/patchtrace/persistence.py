@@ -247,15 +247,50 @@ def _abandoned_creation(path: Path) -> bool:
         return False
 
 
+def creation_directory_available(root: Path) -> bool:
+    """Read-only preflight; actual create still owns kernel locking and database refusal.
+
+    Failed creation intentionally leaves the persistent lock inode. Only that one
+    regular entry is allowed alongside otherwise unused destination space.
+    """
+    root = Path(root)
+    try:
+        try:
+            metadata = root.lstat()
+        except FileNotFoundError:
+            return True
+        if not stat.S_ISDIR(metadata.st_mode):
+            return False
+        with os.scandir(root) as entries:
+            first = next(entries, None)
+            return first is None or (first.name == '.patchtrace.lock'
+                                     and first.is_file(follow_symlinks=False) and next(entries, None) is None)
+    except (OSError, ValueError):
+        return False
+
+
 class ProjectLock:
     """Kernel-owned advisory lock; crashes release it without stealing a live lock file."""
+    def _check_identity(self, descriptor: int) -> None:
+        opened = os.fstat(descriptor)
+        current = self.path.lstat()
+        if (not stat.S_ISREG(opened.st_mode) or not stat.S_ISREG(current.st_mode)
+                or opened.st_nlink != 1 or current.st_nlink != 1
+                or not os.path.samestat(opened, current)):
+            raise OSError('Project lock is not one unchanged regular file')
+
     def __init__(self, root: Path):
         self.path = safe_path(root, '.patchtrace.lock')
         self.stream = None
+        descriptor = None
         try:
-            flags = os.O_RDWR | os.O_CREAT | getattr(os, 'O_NOFOLLOW', 0)
-            fd = os.open(self.path, flags, 0o600)
-            self.stream = os.fdopen(fd, 'r+b')
+            flags = (os.O_RDWR | os.O_CREAT | getattr(os, 'O_NOFOLLOW', 0)
+                     | getattr(os, 'O_NONBLOCK', 0))
+            descriptor = os.open(self.path, flags, 0o600)
+            self._check_identity(descriptor)
+            self.stream = os.fdopen(descriptor, 'r+b')
+            descriptor = None  # the buffered stream now owns this handle
+            fd = self.stream.fileno()
             if os.name == 'nt':
                 import msvcrt
                 if os.fstat(fd).st_size == 0:
@@ -266,12 +301,15 @@ class ProjectLock:
             else:
                 import fcntl
                 fcntl.flock(fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
+            self._check_identity(fd)
             payload = json.dumps({'pid': os.getpid(), 'host': socket.gethostname(),
                                   'token': str(uuid4()), 'opened': now()}).encode()
             self.stream.seek(0)
             self.stream.write(payload.ljust(4096, b' '))
             self.stream.flush()
         except OSError as exc:
+            if descriptor is not None:
+                os.close(descriptor)
             if self.stream:
                 self.stream.close()
                 self.stream = None
@@ -336,6 +374,10 @@ class ProjectStore:
                 version = self.connection.execute('PRAGMA user_version').fetchone()[0]
                 if version != SCHEMA_VERSION:
                     raise ValueError(f'PT-SCHEMA: unsupported database version {version}')
+                # PatchTrace writes two plain tables. A view or trigger can only come from someone else's file, and a
+                # view named current_snapshot could run an unbounded query inside load().
+                if self.connection.execute("SELECT 1 FROM sqlite_master WHERE type IN ('view','trigger') LIMIT 1").fetchone():
+                    raise ValueError('PT-STORAGE: project database contains views or triggers; refusing to open')
                 if self.connection.execute('PRAGMA quick_check').fetchone()[0] != 'ok':
                     raise ValueError('PT-STORAGE: database integrity check failed')
         except Exception as exc:

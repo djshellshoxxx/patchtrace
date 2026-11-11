@@ -651,14 +651,15 @@ def _nway_error(exc) -> CliError:
 def _run_pair(config, path: Path, cancel) -> str | None:
     """Run one pair through the same backend/apply path the desktop uses; return an error or None."""
     from .backend import quarantine_failed_run, run_comparison
+    from .cli_backend_progress import CliBackendProgress
     service = _open(path)
     try:
         if any(run.status in {'completed', 'identical'} for run in service.project.runs):
             return None  # reuse the existing directional result
         snapshot = service.project.model_copy(deep=True)
-        raw_path, run = run_comparison(config, snapshot, service.root, cancel,
-                                       lambda event: print(f'{path.name}: {event.stage}: {event.message}',
-                                                           file=sys.stderr))
+        listener = CliBackendProgress(lambda event: print(f'{path.name}: {event.stage}: {event.message}',
+                                                         file=sys.stderr))
+        raw_path, run = run_comparison(config, snapshot, service.root, cancel, listener)
         if run.status == 'completed':
             try:
                 if cancel.is_set():

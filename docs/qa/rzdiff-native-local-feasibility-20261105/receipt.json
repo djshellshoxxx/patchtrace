@@ -1,0 +1,64 @@
+{
+  "kind": "rzdiff-native-local-feasibility/1",
+  "source_head": "a0f417466da80ddc18ee05cc31b8d3492e7cb98b",
+  "upstream_commit": "c3a90e9226d977f58f4e9c75f78fa6b07afe13c7",
+  "native_executed": false,
+  "status": "blocked",
+  "reason": "Native prerequisites unprovisioned; installation not attempted in bounded feasibility wave",
+  "tools": {
+    "cc": "/usr/bin/cc",
+    "pkg-config": "/usr/bin/pkg-config",
+    "rz-diff": null,
+    "meson": null,
+    "ninja": null
+  },
+  "commands": [
+    {
+      "argv": [
+        "pkg-config",
+        "--modversion",
+        "rz_core",
+        "rz_arch",
+        "rz_io",
+        "rz_util"
+      ],
+      "returncode": 1,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "ec9e2b25a8f06650e19ad6ac1f9f98074037269f32e8f9e8d14fc25379401845"
+    },
+    {
+      "argv": [
+        "cc",
+        "-std=c99",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-c",
+        "tools/rzdiff/native_control.c",
+        "-o",
+        "/tmp/pt-native-controls2-oracle.o"
+      ],
+      "returncode": 1,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "93cbb92f869167bba17c21b99523a69cb50eff0a95e3ac8a1c6ee5b6649dddc0"
+    },
+    {
+      "argv": [
+        "python",
+        "-m",
+        "pip",
+        "show",
+        "meson",
+        "ninja"
+      ],
+      "returncode": 1,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "0f5351262f32877db559665e7d39b98a5ad925080b7d7ce3bd0146d16faea2d6"
+    }
+  ],
+  "cached_similarity_source": {
+    "sha256": "a0b196dbc39e4fb3df4f850e156482ba9668838ccf5bb99a25563fd7a8c7ee5a",
+    "git_blob": "8544259e17a692bcb3c1d8858f104745cd0cba4c",
+    "scope": "single C source only, not native headers or libraries"
+  }
+}

@@ -186,8 +186,8 @@ def test_read_model_states_and_precedence(tmp_path):
         'Partial unified result: raw-missing. Missing evidence is unknown, not disagreement.')
     vm = load(stale, extraction_configured=True, changed_inputs=('manual_digest', 'sources'))
     assert vm.state == 'U6' and vm.stale_reason.startswith('a manual correction')
-    assert vm.state_text == ('The unified result is stale: a manual correction changed the inputs; the stored engine '
-                             'results changed. It is shown for reference only.')
+    assert vm.state_text == ('The unified result is stale: a manual correction changed the inputs; a stored engine '
+                             'result was added, removed, updated or its status changed. It is shown for reference only.')
     both = load(stale_partial, extraction_configured=True)           # U6 outranks U4, which stays visible beneath it
     assert both.state == 'U6' and [b.split(':')[0] for b in both.banners] == ['The unified result is stale',
                                                                              'Partial unified result']

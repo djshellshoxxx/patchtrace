@@ -84,7 +84,7 @@
         "version": {
           "anyOf": [
             {
-              "maxLength": 200,
+              "maxLength": 1024,
               "type": "string"
             },
             {

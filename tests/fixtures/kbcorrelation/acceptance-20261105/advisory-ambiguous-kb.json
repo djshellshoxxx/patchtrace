@@ -1,0 +1,23 @@
+{
+  "dialect": "cvrf-json/0",
+  "synthetic": true,
+  "document": {
+    "tracking_id": "PT-ACCEPTANCE-2099-Feb-AMBIGUOUS",
+    "title": "PatchTrace authored ambiguous KB fixture, not Microsoft",
+    "release_id": "2099-Feb",
+    "current_release_date": "2099-02-13",
+    "publisher": "PatchTrace synthetic fixture"
+  },
+  "product_tree": [
+    {"product_id": "PT-ACCEPTANCE-CLIENT", "name": "Example OS 24H2 x64", "family": "windows-client", "architecture": "amd64"}
+  ],
+  "vulnerabilities": [
+    {
+      "cve": "CVE-2099-70002",
+      "title": "Authored ambiguous remediation description",
+      "description": "Two identifiers in a sentence do not select a vendor fix.",
+      "remediations": [{"type": 2, "description": "KB5099551 or KB5099552; choose manually", "product_ids": ["PT-ACCEPTANCE-CLIENT"]}],
+      "product_statuses": {"Fixed": ["PT-ACCEPTANCE-CLIENT"]}
+    }
+  ]
+}

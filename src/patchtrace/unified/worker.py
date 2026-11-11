@@ -30,7 +30,7 @@ MODULES = (
     'ir.records', 'ir.schema', 'keys', 'ladder', 'ladder.assign', 'ladder.blocking', 'ladder.engine',
     'ladder.groups', 'ladder.passes', 'ladder.passspec', 'ladder.ports', 'ladder.propagate', 'ladder.residual',
     'ladder.side', 'ladder.state', 'ladder.types', 'limits', 'pair_text', 'panel', 'pipeline', 'read_model', 'read_text', 'registry',
-    'sources', 'sources.ghidriff', 'sources.ladder', 'sources.manual', 'sources.secondary', 'store', 'worker')
+    'sources', 'sources.diaphora', 'sources.ghidriff', 'sources.ladder', 'sources.manual', 'sources.secondary', 'store', 'worker')
 USAGE = 'usage: unified _worker --request FILE --result-dir DIR | --self-check'
 
 

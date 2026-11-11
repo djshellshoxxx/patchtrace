@@ -1,0 +1,64 @@
+{
+  "destination_parent": "afc8a2967ba3dec6b1ac3351d20dd08c193ba9bc",
+  "source_parent": "4465a0492367d08f324e80b290a594791921691c",
+  "resolved_tree": "b59a105796e4c5cc8665cf157d5fbbae0c2ed9fd",
+  "conflicts": [
+    "docs/qa.md",
+    "tasks/todo.md"
+  ],
+  "changed_paths": [
+    "docs/qa.md",
+    "docs/qa/nway-windows-recovery-20261106.md",
+    "docs/specs/series-window.md",
+    "src/patchtrace/nway/series.py",
+    "tasks/todo.md",
+    "tests/test_nway_recovery_copy_20261105.py"
+  ],
+  "path_checks": [
+    {
+      "path": "docs/qa.md",
+      "staged_blob": "9fed1bc2011506a21fd16445683ce2e75b2a78d1",
+      "staged_sha256": "41e57f594278b8bf9fe6704b1615aec6f19b6361486cac58b2aa7e99b2a8e6fe",
+      "disposition": "Complete destination bytes preserved; source suffix appended exactly once."
+    },
+    {
+      "path": "docs/qa/nway-windows-recovery-20261106.md",
+      "staged_blob": "6ba850cfea074b294865099c6983f58fd11604b8",
+      "staged_sha256": "d125df85d2983c3b43ecb39b6355195f4c0b68dbf7900e68650d2197d726acf8",
+      "disposition": "Exact source blob imported."
+    },
+    {
+      "path": "docs/specs/series-window.md",
+      "staged_blob": "04b70504e793d364badf2af1574c84d0f7858059",
+      "staged_sha256": "a706199b6a5c28b3623181dc175fc3c305784262175decf95442bee870328ec5",
+      "disposition": "Exact source blob imported."
+    },
+    {
+      "path": "src/patchtrace/nway/series.py",
+      "staged_blob": "99953cee69be48e529d486be307b9909ed1caebf",
+      "staged_sha256": "0146a7164e2947ea17a11e2d0392ae751e48f964865db4e639263938e0cf3939",
+      "disposition": "Exact source blob imported."
+    },
+    {
+      "path": "tasks/todo.md",
+      "staged_blob": "5f6123bd779f49ff0c22c125507ed8ecee45fd0f",
+      "staged_sha256": "297767c5dda478afefed914c61c7596b435a5b97a3acfabe8c02aa7312b9f4c9",
+      "disposition": "Complete destination bytes preserved; source suffix appended exactly once."
+    },
+    {
+      "path": "tests/stress/test_cli_stress_recovery.py",
+      "staged_blob": "bf1ef0c5c0d1b3148b727068cafdc1241a57a25f",
+      "staged_sha256": "a9f7442be8874bb6b9d259dbe663d1ba2af2952aa7ee3f8c17ab047af8a1bfc0",
+      "disposition": "Exact source blob; already present at destination."
+    },
+    {
+      "path": "tests/test_nway_recovery_copy_20261105.py",
+      "staged_blob": "436b2066fc86939949b3bcb3bc1881fd4064b1ad",
+      "staged_sha256": "0d099a0ffaa52b493277e5f0cbcf3535752adbf9829c7e7524c86c7997058ec8",
+      "disposition": "Exact source blob imported."
+    }
+  ],
+  "all_other_destination_paths_unchanged": true,
+  "unstaged_changes": false,
+  "diff_hygiene": "passed"
+}

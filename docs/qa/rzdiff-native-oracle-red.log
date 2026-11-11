@@ -1,0 +1,14 @@
+        result = subprocess.run([str(executable)], capture_output=True, text=True, check=False)
+>       assert result.returncode == 0, result.stdout + result.stderr
+E       AssertionError: coverage-oracle failures=2
+E         
+E       assert 1 == 0
+E        +  where 1 = CompletedProcess(args=['/tmp/pytest-of-root/pytest-2/test_native_coverage_oracle_re0/coverage'], returncode=1, stdout='coverage-oracle failures=2\n', stderr='').returncode
+
+tests/test_rzdiff_native_evidence.py:175: AssertionError
+=========================== short test summary info ============================
+FAILED ../../../dev::test_native_coverage_oracle_rejects_contradictory_unmatched - AssertionError: coverage-oracle failures=2
+  
+assert 1 == 0
+ +  where 1 = CompletedProcess(args=['/tmp/pytest-of-root/pytest-2/test_native_coverage_oracle_re0/coverage'], returncode=1, stdout='coverage-oracle failures=2\n', stderr='').returncode
+1 failed in 0.11s

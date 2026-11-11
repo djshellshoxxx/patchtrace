@@ -46,6 +46,9 @@ from .ladder.residual import pass_table, table_digest
 from .limits import DEFAULT_LIMITS, Budget, BudgetExhausted, UnifiedError, UnifiedLimits
 from .registry import REGISTRY, Registry
 from .sources import DEGRADING, AdapterOutput, GhidriffRun, RawGhidriff, SourceInputs, read_snapshot
+from .sources.diaphora import DiaphoraAdapter
+from .sources.diaphora import read_loaded as read_diaphora
+from .sources.diaphora import source_ref_of as diaphora_ref
 from .sources.ghidriff import GhidriffAdapter, load_raw
 from .sources.ladder import anchor_pairs, ladder_output
 from .sources.manual import ManualAdapter, manual_digest_of
@@ -127,6 +130,7 @@ def plan_identity(inputs: SourceInputs, addr: AddressMap, sources: Iterable[str]
     # Every stored set of a selected engine is an input, one for another pair included: it is refused with a
     # degrading limitation, which changes the result, so it must change the id (same id, same content).
     refs.extend(source_ref_of(s, budget) for s in inputs.secondary if s.match_set.engine in selected)
+    refs.extend(diaphora_ref(s, budget) for s in inputs.diaphora if 'diaphora' in selected)
     manual_refs = ManualAdapter().source_refs(inputs, addr, budget) if 'manual' in selected else ()
     refs.extend(manual_refs)
     manual = manual_digest_of(inputs, addr, budget) if manual_refs else keys.manual_digest([])
@@ -178,12 +182,15 @@ def compute_stage(inputs: SourceInputs, addr: AddressMap, *, result_dir: Path, s
     ident = plan_identity(inputs, addr, selected, registry, limits, residual=residual, budget=budget)
     say('sources')
     scoped = dataclasses.replace(inputs, secondary=tuple(s for s in inputs.secondary
-                                                          if s.match_set.engine in selected))
+                                                          if s.match_set.engine in selected),
+                                 diaphora=inputs.diaphora if 'diaphora' in selected else ())
     outputs = []
     if 'ghidriff' in selected:
         outputs.append(GhidriffAdapter(registry).atoms(inputs, addr, budget))
     if scoped.secondary:
         outputs.append(SecondaryAdapter(registry).atoms(scoped, addr, budget))
+    if scoped.diaphora:
+        outputs.append(DiaphoraAdapter().atoms(scoped, addr, budget))
     manual = ManualAdapter().atoms(inputs, addr, budget) if 'manual' in selected else AdapterOutput()
     if 'manual' in selected:
         outputs.append(manual)
@@ -370,13 +377,16 @@ def run_request(request_path: Path, result_dir: Path, *, cancel: threading.Event
     secondary = tuple(read_loaded(inside(f.path, private), expected_sha256=f.sha256, expected_size=f.size,
                                   budget=load_budget)
                       for f in req.secondary)
+    diaphora = tuple(read_diaphora(inside(f.path, private), expected_sha256=f.sha256, expected_size=f.size,
+                                   budget=load_budget)
+                     for f in req.diaphora)
     if req.raw_status == 'ok':
         raw = load_raw(Path(req.raw_path) if req.raw_path else None, req.raw_sha256, limits)
     else:
         raw = RawGhidriff(status=req.raw_status, sha256=req.raw_sha256)
     inputs = SourceInputs(older_sha256=req.older_sha256, newer_sha256=req.newer_sha256,
                           run=GhidriffRun(run_id=req.run_id, backend_version=req.backend_version, raw=raw),
-                          matches=snapshot, secondary=secondary)
+                          matches=snapshot, secondary=secondary, diaphora=diaphora)
     addr = AddressMap(PeLayout(**req.older_layout.model_dump()), PeLayout(**req.newer_layout.model_dump()))
     marks: dict[str, int] = {}
 

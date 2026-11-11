@@ -1,0 +1,13 @@
+============================= test session starts ==============================
+platform linux -- Python 3.12.14, pytest-9.2.0, pluggy-1.7.0 -- /workspace/scratch/e6b4398e92df/pt-binexport-copied-launcher/bin/python
+cachedir: .pytest_cache
+hypothesis profile 'default'
+PySide6 6.12.0 -- Qt runtime 6.12.0 -- Qt compiled 6.12.0
+rootdir: /workspace/scratch/e6b4398e92df/pt-pr245-binexport-diagnosis
+configfile: pyproject.toml
+plugins: hypothesis-6.170.14, qt-4.5.0
+collecting ... collected 1 item
+
+tests/test_rules_worker.py::test_parent_never_imports_yara_x PASSED      [100%]
+
+============================== 1 passed in 1.89s ===============================

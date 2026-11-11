@@ -1,0 +1,23 @@
+{
+  "_note": "Hand-written from the ghidriff 1.0.0 source layout (ghidra_diff_engine.py); not output of a real run.",
+  "functions": {
+    "modified": [
+      {"old": {"name": "parse_header", "fullname": "Parser::parse_header", "parent": "Parser"},
+       "new": {"name": "parse_header", "fullname": "Parser::parse_header", "parent": "Parser"},
+       "diff": "", "diff_type": ["code", "called"], "ratio": 0.62, "i_ratio": 0.7, "m_ratio": 0.8, "b_ratio": 0.5,
+       "match_types": ["SymbolsHash"]},
+      {"old": {"name": "_checksum@8", "fullname": "_checksum@8"}, "new": {"name": "_checksum@8", "fullname": "_checksum@8"},
+       "diff": "", "diff_type": ["code"], "ratio": 0.95, "i_ratio": 0.9, "m_ratio": 0.9, "b_ratio": 1.0,
+       "match_types": ["ExactBytes"]},
+      {"old": {"name": "alpha", "fullname": "alpha"}, "new": {"name": "alpha", "fullname": "alpha"},
+       "diff": "", "diff_type": ["code"], "ratio": 0.95, "i_ratio": 0.9, "m_ratio": 0.9, "b_ratio": 1.0,
+       "match_types": ["ExactBytes"]},
+      {"old": {"name": "renamed_only", "fullname": "renamed_only"}, "new": {"name": "renamed_new", "fullname": "renamed_new"},
+       "diff": "", "diff_type": ["name", "address"], "ratio": 1.0, "i_ratio": 1.0, "m_ratio": 1.0, "b_ratio": 1.0,
+       "match_types": ["Name"]}
+    ],
+    "added": [{"name": "new_helper", "fullname": "new_helper", "length": 40}],
+    "deleted": [{"name": "old_helper", "fullname": "Util::old_helper", "length": 12}]
+  },
+  "stats": {"added_funcs_len": 1, "deleted_funcs_len": 1, "modified_funcs_len": 4}
+}

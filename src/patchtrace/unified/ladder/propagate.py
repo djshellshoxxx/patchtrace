@@ -26,10 +26,9 @@ from bisect import bisect_left
 from dataclasses import dataclass, field
 
 from ..limits import BudgetExhausted
-from .passes import FAMILY_STRUCT
+from .passes import FAMILY_STRUCT, MAX_CALL_SITES
 from .state import SoftCand, State
 
-MAX_CALL_SITES = 512
 _RANK = {'A': 3, 'B': 2, 'C': 1}
 
 

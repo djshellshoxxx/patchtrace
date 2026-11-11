@@ -162,10 +162,7 @@ class State:
 
     def _static_keys(self, spec: PassSpec, side: SideData, icf_fids: list[int]) -> list:
         keys = list(spec.keys(side, self.limits))
-        if not spec.hubs:
-            for f in side.cached('hub_fids', lambda: [g for g in range(side.n) if side.hub[g]]):
-                keys[f] = None
-        for f in icf_fids:
+        for f in icf_fids:      # hubs keep their key: they count for uniqueness, `engine.find` forbids pairing them
             keys[f] = None
         return keys
 

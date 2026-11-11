@@ -1,4 +1,7 @@
 # SPEC-RD-01 — radiff2-inspired multi-layer binary comparison
+
+Status (SPEC-31 amendment A-11, 2026-11-04): Partially superseded: function-level opcode/operand deltas are SPEC-31 L2 C1/C2; file-level layers move to SPEC-26; no radiff2 adapter or `comparison_*` tables are planned.
+
 Status: Proposed, research and implementation contract (2026-10-14). No feature is claimed implemented.
 
 ## Research provenance and version caveats

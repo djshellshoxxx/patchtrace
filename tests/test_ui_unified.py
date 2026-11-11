@@ -205,11 +205,34 @@ def unified(main_window, tmp_path):  # noqa: F811
     return main_window, controller
 
 
+def reloaded(controller):
+    """Reload and wait for this load, not an earlier one. Showing the panel already started the host's first load
+    (``project_changed``); when that one lands first (a busy CPU), its view model satisfies any state check while
+    this reload is still in flight, and this reload's ``set_view_model`` later empties the row and code views."""
+    before = controller.vm
+    controller.reload()
+    wait_for(lambda: controller.vm is not before and not controller.tasks.busy(ui_unified.LOAD_CHANNEL))
+    return controller
+
+
 def loaded_controller(unified):
     window, controller = unified
-    controller.reload()
-    wait_for(lambda: controller.vm is not None and controller.vm.state == 'U3')
+    reloaded(controller)
+    assert controller.vm.state == 'U3'
     return window, controller
+
+
+def host_load_landed(unified):
+    """Let the load that showing the panel started land before the test reloads: the order a busy CPU produced in
+    the gate passes and in CI, made deterministic."""
+    _, controller = unified
+    wait_for(lambda: controller.vm is not None and not controller.tasks.busy(ui_unified.LOAD_CHANNEL))
+    return unified
+
+
+def test_loaded_controller_waits_for_its_own_reload_not_the_hosts_first_load(unified):
+    _, controller = loaded_controller(host_load_landed(unified))
+    assert not controller.tasks.busy(ui_unified.LOAD_CHANNEL)
 
 
 def test_panel_is_a_tab_of_the_evidence_dock_in_the_one_window(unified):
@@ -257,6 +280,18 @@ def test_goto_reads_the_code_off_the_gui_thread_and_shows_it_in_the_panel(unifie
     assert controller.panel.code.status.full_text() == ui_unified.CODE_LOADING
     wait_for(lambda: controller.panel.code.shown_mode() == DECOMPILED and controller.panel.code.view.hunks)
     assert threads == [False] and 'return 2;' in controller.panel.code.view.panes['newer'].toPlainText()
+
+
+def test_a_code_load_is_shown_when_the_hosts_first_load_landed_before_the_reload(unified):
+    _, controller = host_load_landed(unified)
+    landed = threading.Event()
+    show = controller._show
+    controller._show = lambda vm: (show(vm), landed.set())
+    _, controller = loaded_controller(unified)
+    controller.nav = SimpleNamespace(select_match=lambda *a, **k: True)
+    controller.row_code = lambda vm, row: landed.wait(5) and code_for()   # answers once the reload has been shown
+    controller.show_row(unmatched(controller))
+    wait_for(lambda: controller.panel.code.view.hunks)
 
 
 def test_a_slow_code_load_for_an_earlier_row_is_dropped(unified):
@@ -343,7 +378,8 @@ def test_explain_previews_the_bounded_context_and_sends_nothing(unified, monkeyp
                             ui_unified.PlainLabel))))
     row = next(r for r in controller.vm.rows if r.ghidriff_match_id is None)
     controller.explain(row)
-    assert seen and 'Nothing is sent from here' in seen[0]
+    wait_for(lambda: seen)
+    assert 'Nothing is sent from here' in seen[0]
 
 
 def test_explain_of_a_row_with_a_ghidriff_match_feeds_the_existing_context_preview(unified, monkeypatch):
@@ -354,6 +390,7 @@ def test_explain_of_a_row_with_a_ghidriff_match_feeds_the_existing_context_previ
     monkeypatch.setattr(ui_unified.ExplainDialog, 'exec', lambda self: calls.append('own-dialog'))
     row = next(r for r in controller.vm.rows if r.ghidriff_match_id)
     controller.explain(row)
+    wait_for(lambda: calls)
     fragment = read_model.explain_context(controller.vm, row)
     assert calls == [row.ghidriff_match_id, ('preview', [(fragment.title, fragment.text, fragment.omitted)])]
 
@@ -365,6 +402,7 @@ def test_explain_falls_back_to_its_own_preview_when_the_match_is_not_in_the_navi
     monkeypatch.setattr(window, 'preview_interpretation', lambda *a, notes=(): calls.append('preview'))
     monkeypatch.setattr(ui_unified.ExplainDialog, 'exec', lambda self: calls.append('own-dialog'))
     controller.explain(next(r for r in controller.vm.rows if r.ghidriff_match_id))
+    wait_for(lambda: calls)
     assert calls == ['own-dialog']
 
 
@@ -373,7 +411,8 @@ def test_copy_provenance_uses_the_shell_clipboard(unified):
     copied = []
     controller._copy_text = lambda text: copied.append(text) or True
     controller.copy_provenance(controller.vm.rows[:1])
-    assert copied and copied[0].startswith('PatchTrace unified comparison')
+    wait_for(lambda: copied)
+    assert copied[0].startswith('PatchTrace unified comparison')
 
 
 def test_run_is_off_by_default_and_names_the_reason(unified):
@@ -504,8 +543,8 @@ def test_row_detail_loads_off_thread(unified):
     window, controller = unified
     row, _ = material({'older': [(0x1000, 'f')], 'newer': [(0x1080, 'f')]})
     controller.loader = lambda req, token=None: load_unified(request(publish(window.service.root / 'ur', [row])))
-    controller.reload()
-    wait_for(lambda: controller.vm is not None and controller.vm.rows)
+    reloaded(controller)
+    assert controller.vm.rows
     controller.panel.table.setCurrentIndex(controller.panel.model.index(0, 0))
     wait_for(lambda: controller.panel.detail.toPlainText() not in ('', ui_unified.LOADING_DETAIL))
     assert 'Decision' in controller.panel.detail.toPlainText()

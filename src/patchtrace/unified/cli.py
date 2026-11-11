@@ -24,7 +24,7 @@ LABEL = 'experimental, derived, ordinal'
 NOTE = 'Unified results are experimental, derived and ordinal; the Ghidriff result stays the primary record.'
 NO_EXTRACT = ('extraction is not available in this build; the result uses stored engine outputs only '
               '(no instruction-level facts)')    # said when no ProgramIR is placed for the project (S0 mode)
-SOURCES = ('ghidriff', 'bindiff', 'rz-diff', 'manual')
+SOURCES = ('ghidriff', 'bindiff', 'rz-diff', 'diaphora', 'manual')
 DECISIONS = ('matched', 'tentative', 'candidate', 'contested', 'ambiguous', 'older-only', 'newer-only', 'unknown')
 MATERIALITIES = ('unchanged', 'cosmetic', 'material', 'review', 'unknown', 'not-applicable')
 CLASSES = ('constant', 'comparison', 'condition', 'callee', 'call-added', 'call-removed', 'data-ref', 'struct-offset',

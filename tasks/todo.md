@@ -1,4 +1,37 @@
 # PatchTrace delivery tracker
+
+## P1 — Recurring Windows comparison timeout (reported 2026-11-06)
+
+**OPEN / high priority.** The owner's usual two-file test failed with `PT-BACKEND: analysis timed out`. Both Ghidra analyses completed; `StructuralGraphHash` then reported **2,161,955 entries**, followed by a **28m 41.755s** quiet interval after "Sorting functions". Later `72/72` progress was only an enhanced-symbol (`esym`) substage. The configured timeout and actual termination time are absent from the supplied logs; the source default of 3,600 seconds is not proof of the value used in this run.
+
+Incident evidence, source references, attachment hashes, implementation options and closure criteria: **[P1 timeout investigation](../docs/qa/ghidriff-timeout-20261106.md)**. Preserve the original tracker history below.
+
+- [ ] **PT-TIMEOUT-1 — partially implemented:** Live elapsed/budget status, last observed stage/output age, actionable timeout text and bounded `backend-execution.json` receipts are implemented in [SPEC-01a](../docs/specs/ghidriff-timeout-progress.md). The elapsed timer and late worker events also preserve terminal/cancel messages. Timeout-entry validation/presets and original-pair Windows acceptance remain open. Existing interim option: **Setup → Backend and desktop → Comparison timeout (seconds) → 7200 (2h) or 14400 (4h) → Save setup**, then start a new run. The current GUI range is 10–86,400 seconds. A longer budget is not a verified performance fix.
+- [ ] **PT-TIMEOUT-2:** Profile the structural-candidate expansion and downstream conversion/filtering/deduplication/JSON work; implement a measured, semantics-preserving repair through the supported external-engine boundary. Preserve ambiguity and disclose any incomplete result caused by resource limits.
+- [ ] **PT-TIMEOUT-3:** Diagnose the separate `FUN_100ca86c` decompiler timeout, missing PDB metadata and nonfatal resource-parser warnings. An outer timeout extension does not automatically fix the per-function timeout. Capture actual runtime versions; this log uses Ghidra 12.1.4.
+- [ ] **PT-TIMEOUT-4:** Verify successful-cache reuse and evaluate separately specified failed-run checkpoints. Keep `--no-threaded`, workspace isolation, failure logs and prior results; do not remove the Windows lock safeguard as an untested speed fix.
+- [ ] **Acceptance:** rerun the recorded pair on Windows with effective timeout and version provenance, phase/runtime/memory evidence, output validation and cancellation checks. Do not mark fixed from documentation, mock tests, or a substage's 100%.
+
+
+## Independent parallel wave — 2026-11-05
+
+- [x] Recover ownership without changing frozen #205 or native workers; use root plus three supported workers in isolated, exclusively assigned worktrees.
+- [x] Reproduce, repair, independently review and publish #225 source deadlines, #226 keyboard access, #227 lock identity, #229 candidate chronology and #230 metric invariants.
+- [x] Publish #228 Windows archive preflight/checklist, #231 source-preserved research, #232 primary-source fixture packets, #233 real-store acceptance fixtures and #234 explicit-consent desktop advisory sync.
+- [x] Integrate reviewed slices once on the separate independent branch; focused combined checks 248 and 122 passed (overlap), whole Ruff/diff and schema regeneration clean.
+- [ ] Finish/review/publish the saved-index candidate inspection/selection follow-up; candidate download/acquisition and product-only starts remain partial.
+- [x] Independently review/publish #236 authored-PE incomplete manifest backing repair; affected PE/package integration 257 passed/one real-launcher deselected.
+- [x] Review/publish #237 metadata deadlines, #238 cache publication/raw-fd cleanup and #239 exact-consent refresh; combined283 focused checks passed.
+- [x] Review/publish #240 candidate immutable-snapshot inspection/selection and #241 scanner evidence;170 affected integrated checks passed.
+- [ ] Finish/review desktop metadata consent wiring and domain acquisition cancellation/captured-source guards; no implicit acquisition.
+- [ ] Resolve #235 scanner path finding through evidence and normal authorized disposition; do not suppress or bypass.
+- [ ] Existing owners complete frozen #205 full-suite and pinned-native qualification; do not start duplicates or modify their source/processes/logs/worktrees.
+- [ ] Qualification owner resolves existing #205 run exit143/no summary at about94%; no full pass is inferred and this session did not stop/restart it.
+- [ ] Qualify exact final Linux/Windows/Qt/native/package/live/manual/offline and main-relative scanner/review gates before any main/release acceptance claim.
+- [ ] Continue selective #183 R2/R3/R6/R8 reconciliation and remaining source freshness/authenticity, full supersedence/update-DAG and derived-label work. Preserved research is not implementation acceptance.
+
+## Earlier delivery history
+
 - [x] Fixed the two locally reproducible full-suite issues recorded in `docs/qa.md`: site screenshot renderer follows the Files panel; Tier R rejects an unknown mutation operator before toolchain probing. Focused rerun: 27 passed, 2 skipped.
 - [x] Linux-container-only full-suite failures documented in `docs/qa.md` are environment limitations (`python -I` excludes the editable install; AF_UNIX sockets are denied; timing budgets are load-sensitive); full pytest and Ruff passed on Windows and Ubuntu CI (run 39456546905).
 
@@ -106,16 +139,16 @@
 - [x] Independent review of the spec (docs/specs/unified-engine/11-review-log.md): 30 findings fixed in place (R-01..R-32), residual risks and USER decisions U-11/U-12 added
 - [x] P1 Windows spawn lock in `jobs._windows_process` (merged with C3; `test_concurrent_run_process_calls_do_not_cross_pipes_or_leak_threads`)
 - [x] P2 nway raw `address_matches`: skip `EXTERNAL:<hex>` entries instead of `PT-NWAY-PAIR` (ce108cd)
-- [ ] P2b count the skipped `EXTERNAL:` entries in the series limitations; SPEC-09/SPEC-28 status lines (A-05, A-06)
-- [ ] S0a contracts/limits/keys/registry/store + schemas + doc status lines (10-amendments rows marked S0a)
-- [ ] S0b sources, fusion, S0 facts, pipeline, worker, CLI `unified run/show/explain/status --no-extract`
-- [ ] S1 extraction (GZF reuse + analyze fallback), ingest, MD index port with notices, live-unified workflow (Windows + Linux)
-- [ ] S2 ladder MVP + parity harness; S5 residual (blocking, vectors, votes, LAP)
-- [ ] S3 IR change channels, DATA-MAP/1 target consistency, proofs UNCH/COS-ADDR/COS-LAYOUT with EH-EQ, MAT-ANCHOR, S3b on-demand decompile
-- [ ] S4 read model + `ui_unified.py` (single window: view switch + dock tab), tooltips, accessibility
+- [x] P2b count the skipped `EXTERNAL:` entries in the series limitations; SPEC-09/SPEC-28 status lines (A-05, A-06) (UE-R11 2026-11-04: `test_nway_external_skips_are_counted`; both status lines present)
+- [x] S0a contracts/limits/keys/registry/store + schemas + doc status lines (10-amendments rows marked S0a) (UE-R11 2026-11-04: every S0a status line applied, A-14 last)
+- [x] S0b sources, fusion, S0 facts, pipeline, worker, CLI `unified run/show/explain/status --no-extract` (built; hardened 2026-11-04, PR #180)
+- [x] S1 extraction (GZF reuse + analyze fallback), ingest, MD index port with notices, live-unified workflow (Windows + Linux) (built; live: Windows L0-L4 on MSVC DLLs recorded earlier, Linux L6 still unverified)
+- [x] S2 ladder MVP + parity harness; S5 residual (blocking, vectors, votes, LAP) (built; BinDiff parity oracle still blocked on the pin)
+- [x] S3 IR change channels, DATA-MAP/1 target consistency, proofs UNCH/COS-ADDR/COS-LAYOUT with EH-EQ, MAT-ANCHOR, S3b on-demand decompile (built; decomp part persisted per UE-R3)
+- [x] S4 read model + `ui_unified.py` (single window: dock tab per B-10; the MainWindow view switch of 07 s2 stays an owner decision), tooltips, accessibility (manual Windows screen-reader/DPI pass still owner-only)
 - [ ] S6 Tier R / A/A / planted-mutation corpus, gates G-U1..G-U8, flag default decision (USER U-05)
 - [ ] USER decisions U-01..U-12 (defaults in docs/specs/unified-engine/00-decisions.md s4)
-- [ ] USER decisions U-01..U-10 (defaults in docs/specs/unified-engine/00-decisions.md s4)
+- [x] superseded by the U-01..U-12 line above (duplicate removed from the open count, UE-R11 2026-11-04)
 
 ### [K:28a-28b] CSAF engine (track K, 2026-10-14)
 - [x] SPEC-28a: contracts + generated schemas/examples, discovery, transport, stdlib validator, normalization, storage (synthetic fixtures; fake opener)
@@ -752,9 +785,9 @@
 
 ### [U7:audit]
 - [x] Audit written, 4 Medium fixed with red tests
-- [ ] U7-05 BinDiff stub rows reach tier A alone (additive `SecondaryMatch.basicblocks` or IR-aware demotion before fusion)
-- [ ] U7-06 decide the budget policy for fusion and facts after a ladder deadline (partial result is lost today)
-- [ ] U7-07 trace-arg mutant class for G-U2
+- [x] U7-05 BinDiff stub rows reach tier A alone (fixed: additive `SecondaryMatch.basicblocks`, stub rows demoted to tier C; audit record "U7-05 fixed")
+- [x] U7-06 decide the budget policy for fusion and facts after a ladder deadline (fixed: partial kept; and since 2026-11-04 (COR-01) the isolated worker's own deadline precedes the parent's kill, so the path is reachable)
+- [ ] U7-07 trace-arg mutant class for G-U2 (2026-11-04: now an explicit `PendingClass` naming its need, so G-U2 cannot pass silently; building it needs an import library in the msvc-free link, `build.py` owner)
 
 ### [LBL-07:mutations-ir-opt]
 - [x] LBL-07 IR layer + opt layer (`mutations/ir.py`, `mutations/opt_transforms.py`)
@@ -921,3 +954,286 @@ Done: dock with state matrix, consent, import, changes, copy, go to CVE. Open: r
 - [x] Preserve old no-key bytes/ranking and private in-memory unified support; keep persisted engine vocabulary unchanged; expose legacy unmarked replay as unverified rather than infer historical credit.
 - [ ] Independent final review, coordinator integration/cross-OS and verified transfer integration remain pending; broader locked training/final-run/promotion safeguards are not completed by this slice. See `docs/qa/output-credited-replay-20261101.md`.
 - [x] Independent credited-replay review approved exact source `5c26af9` with 119 passes/1 native-tool BLOCKED skip and direct scalar/failed-valid-artifact controls; no remaining bounded source blocker. Integration/cross-OS/transfer and broader safeguards above remain open.
+
+### [UE-AUD-20261104:engine-hardening] Unified engine audit, Diaphora source, report/2 (2026-11-04, PR #180)
+- [x] Core (cor): COR-01 worker deadline before the parent's kill (U7-06 reachable), COR-02 result stale after every run when the raw output has no `address_matches`, COR-03 timeout-partial results cached forever, COR-04 staging leak on interrupt, COR-05 retention could evict the current result (`docs/audits/20261104-unified-cor.md`)
+- [x] Fusion and sources (fus + coordinator): FUS-01/02/09 manual corrections inverted into one-sided or affirmative tier-M claims, `manual/3`; FUS-03 atom order (D-16); FUS-04 bounded snapshot reads (U7-10); U7-08 arbiter symmetry verified (`docs/audits/20261104-unified-fus.md`)
+- [x] Ladder (lad + w2b): LAD-1 hub twins counted for uniqueness, LAD-2 digest binds pass functions and constants, LAD-6 P03 per-alias index, `ladder/4` (`docs/audits/20261104-unified-lad.md`)
+- [x] IR and extraction (irx): irx-01 quadratic back-edge count, irx-02..14 guards, typed errors, sanitising, U7-09; `INGEST_REVISION=2`, `script_sha256` moves (`docs/audits/20261104-unified-irx.md`)
+- [x] Read model and Qt panel (gui + w2b + coordinator): GUI-01..10 incl. staged-dir leak, off-thread provenance/explain; staleness judged against the recorded run options (`use_ir`, `residual`, `sources`) (`docs/audits/20261104-unified-gui.md`)
+- [x] Gate harness (har): UE-R4 bench stages `facts`, `read_model`, `ui_calls` (`PENDING` empty); U7-07 explicit pending class; U7-08 mirror check over every decision; U7-13 bounded dev-tool child; five High evaluator flaws (`docs/audits/20261104-unified-har.md`)
+- [x] Diaphora as a fusion source (06 s5): `unified/sources/diaphora.py`, `--sources diaphora`, worker request files, content-bound source refs
+- [x] SPEC-50 report/2: RPT2-1..5 and the CLI verb `export`; report v1 output byte-identical to main
+- [x] UE-R11 housekeeping: registry rows aligned, SPEC-31 status amendments A-01..A-14 applied, tracker ticks with evidence
+- [ ] Owner/spec decisions: G-U7 bound with a tier-A rate of 0 (U7-17), whether G-U6 may pass with Ghidriff alone, the attention order in the Unified table (needs a port method in `gui/` or `ui.py`), category-versus-sides validation in `ProjectService.correct_match` (`service.py`)
+- [ ] SonarCloud "Security Rating on New Code: C" on PR #180: the issue list is on sonarcloud.io, unreachable from the agent session; needs the rule and file from the owner
+- [ ] Deferred Low findings listed in each audit record (FUS-07/08/10, GUI-11..13, irx-15..19, LAD-7..9, COR-07)
+- [ ] BLOCKED live: G-U1..G-U8 never ran live (PR #174), BinDiff pin, Windows frozen bench and the largest Tier R pair (G-U5), real Diaphora output for the heuristic-class mapping, Windows screen-reader/DPI passes
+
+### [UE-AUD-20261104:facts-and-integration] Facts audit, SPEC-51, report/2 wiring (2026-11-04, PR #180)
+- [x] Facts and proofs (fct): FCT-01 conditional tail call came out COS-LAYOUT/1, FCT-02 an unresolved target counted as mapped, FCT-03 register-only did not block COS-PSEUDO/1 (three false `cosmetic` verdicts, High); FCT-04..09 Medium; FCT-10 a C scope table over the cap read as handler-only, so EH-EQ let UNCH/1 through (fixed, `INGEST_REVISION=3`); rule versions C1, C2, DATA-MAP, COS-LAYOUT/1, COS-PSEUDO/1 moved to 2 so pre-fix verdicts are recomputed (`docs/audits/20261104-unified-fct.md`)
+- [x] SPEC-51 D2-3 (DER, embedded Authenticode structure and digest), D2-5 (compare rows, `inspect` CLI, Version and signing tab), D2-6 (RSA signature math, chain not evaluated)
+- [ ] SPEC-51 D2-4 Windows catalog and consented revocation: built against fakes only; BLOCKED until a Windows CI run reads a catalog-signed system DLL in place
+- [ ] SPEC-51 7.6 persistence: `pe_overview/cache.py` port exists, but the `pe-metadata` kind, its store adapter and the callers are not wired (needs owner-thread store access around the GUI metadata thread)
+- [x] report/2 data sources: engine evidence, advisories, build facts and leads read from stored producers (`report2/adapters.py`); unified reference uses the recorded run options; GUI export dialog wired through `ui_export_v2.py` (the `ui.py` seam budget holds); a report read path that wrote enrichment tables into `project.sqlite3` is fixed
+- [ ] report/2 `series` section: no project-scoped series record exists (N-way series live in their own folder); the section stays absent with a reason
+- [ ] Owner decision (A3 of fct): whether canon/2 treats `xRam<hex>` names and in-image address literals as data labels (05 s2.4)
+
+
+### [MC-20261104] Manual correction member completeness
+
+- [x] Reproduce partial-member filtering becoming tier-M claims/complete results; add 15 adversarial regressions and require all named members to resolve (SPEC-31/06), adapter `manual/4`.
+- [x] Focused sources/fusion/identity/wire/pipeline integration: 179 passed; whole Ruff and schema drift clean.
+- [ ] Full offscreen suite, exact-head GitHub CI and independent review; dependency PR #180 remains unmerged.
+- [ ] Native G-U1–G-U8 and Windows release acceptance remain separate; none closed by synthetic tests.
+
+
+### [MC-20261104 follow-up] Manual snapshot boundaries
+
+- [x] Six defensive worker-snapshot category cases, project validation distinction documented; adapter manual/5.
+- [x] Four red cases for valid over-cap manual groups; refuse before snapshot truncation/identity, preserve exact-cap and unrelated runs.
+- [x] Unified + Qt before cap: 2,515 passed / 32 skipped / 1 xfailed; final focused 156 passed, Ruff/schema/diff clean.
+- [ ] Final exact-head CI/full-suite integration; frozen 31f51e76 full run still running with a failure, native CI on that old head succeeded but does not qualify subsequent edits or global gates.
+
+- [x] MC dependency reconciliation: preserve #185's three help commits above #180, with 322 post-merge help/CLI/manual checks passing; #188 now stacks on #185. No merge into main.
+
+
+### [PTB-20261104] Parser work-budget follow-up to #184
+
+- [x] Reproduce Windows timing failure with a controlled scheduling/IO pause; measure CPU work at unchanged thresholds and document test meaning.
+- [x] Parser/resource + all #184 affected test files: 302 passed, 3 skipped; whole Ruff/diff clean.
+- [ ] Exact-head Windows/Linux CI and full-suite qualification; #184 remains a dependency, not merged.
+
+### 2026-11-05 QA consolidation
+
+- [x] Preserve #184 fixture isolation/own-load waits and #189 parser CPU budgets; 301 focused passes/3 skips plus one repaired environment failure retested passing; Ruff/pip check clean.
+- [ ] Full offscreen suite currently running; exact-head cross-OS CI and review remain required before merge.
+
+- [ ] Full-suite confirmed defect (2026-11-05): verified artifact reader accepted same-size/restored-mtime edit with colliding metadata. Repair requested-chunk integrity with deterministic collision regression; rerun relevant consumers and full QA. Initial full run interrupted: 776 passed/1 skipped/1 failed.
+
+### Verified bytes after metadata collisions (2026-11-05)
+
+- [x] Reproduce same-size/restored-mtime edits with equal metadata deterministically; prevent changed requested bytes from escaping the verified reader with compact per-block hashes and a post-read metadata check.
+- [x] Preserve range/cancel/size limits; cover scalar I/O bounds, boundaries, short OS reads and read-time mutation. Linux focused consumers: 558 passed/1 Windows-only skip, plus 22 alpha integration passes; whole Ruff passed.
+- [ ] Review and integrate repair; run exact-head full-suite and Windows CI. Do not count the skipped WinVerifyTrust test as native acceptance.
+
+### 2026-11-05 rules/callgraph integration
+
+- [x] Port PR #181 rules/cache/export/callgraph repairs without unrelated GUI wait; reproduce and reject duplicate keys in saved-grid JSON. Focused pure suite: 130 passed; Ruff clean; draft PR #191 published.
+- [ ] Require current-head full/cross-OS checks and review before merge; preserve native acceptance gates independently.
+
+
+### [KBF-20261104] Explicit component filename selection
+
+- [x] Reproduce advisory-title collision and capped-list suppression of explicit filenames; preserve analyst tier E and title provenance, title-only D remains unselectable.
+- [x] Persisted CLI/pair selection regression, 3 red cases; 1,057 KBC tests passed, whole Ruff/diff/schema drift clean; independent review no blockers.
+- [ ] Exact-head CI, full-suite integration and Windows qualification. No live MSRC/Winbindex or vulnerability-attribution gate closed.
+
+### KB consolidation checkpoint (2026-11-05)
+
+- [x] Account for PR #182's KB fixture corpus, Unicode acceptance and byte-preserving line endings; leave its unrelated UI wait port to QA ownership.
+- [x] Account for PR #190's analyst filename selection repair and persisted investigation regression. Focused affected tests: 96 passed; global ruff passed.
+- [ ] Coordinator: publish reviewed KB integration and run combined full-suite/Windows CI gates; retain source PRs until all changes are accounted for. Synthetic fixtures do not satisfy live provider or release acceptance.
+
+### 2026-11-05 GUI inspection slice from #176
+
+- [x] Reproduce stale inspection failure overwriting current project status and qualify export path policy; preserve current/unkeyed failure reporting with explicit controls.
+- [ ] Verify exact-head Windows/full QA before merge; broader #176 project adoption/investigation/calibration work remains unintegrated.
+
+## 2026-11-05 transactional desktop project adoption slice
+
+Source accounting: isolated the generic `gui/qt/project_adoption.py` helper and `MainWindow.set_service` delegation from PR #176 commit37a6fed0 (original offline investigation work from #148). No KB dialog, project factory, acquisition, corpus, workflow, unrelated GUI or audit-disposition changes are included. PR #176 remains only partially accounted for. The module was indexed and UI ownership contract specified before porting. No serialized schema fields changed.
+
+Confirmed failure: the previous service closed before incoming rendering/preferences completed. Four new regression cases failed on the original implementation, one passed (20.76s). The isolated helper keeps the previous service open until adoption succeeds, restores the service and both recent-project preferences on failure, closes the rejected candidate and releases its project lock. Same-service re-adoption preserves ownership; failed rollback rendering retains the old service and logs a diagnostic. The coordinator independently reviewed the helper/delegation and found no blocking defect.
+
+PASSED: `QT_QPA_PLATFORM=offscreen python -m pytest -q tests/test_gui_project_adoption.py tests/test_gui_host_seam.py tests/test_ui.py` — 59 passed in126.45s; full-tree `python -m ruff check src tests tools` and diff-check passed. A separate rollback-render failure test passed (1 passed,5 deselected). No second full-suite run was started; final integration QA and Windows lifecycle acceptance remain separate gates.
+
+### Secondary preparation checkpoint (2026-11-05)
+
+- [x] Isolate PR #176 artifact-preparation cancellation, engine budget and ingestion-cap repair; preserve the separate probe budget. Six red regressions repaired; 85 focused tests and global Ruff pass.
+- [ ] Coordinator review/publication and combined full-suite/Windows CI qualification for secondary preparation; no native acceptance claim.
+
+- [x] Implement and coordinator-review input replacement hardening in `secondary.bindiff_inputs.copy_and_hash` (`8244ec7e`): nonblocking/no-follow flags where available, handle/path regularity and identity checks before destination creation, unconditional descriptor closure. Baseline 3 failed/1 passed; final focused 92 passed and overlapping expanded input selection 26 passed; Ruff/diff clean.
+- [ ] Qualify this input-opening follow-up on native Windows and the combined integration/full suite. POSIX FIFO and synthetic controls do not establish native engine compatibility or arbitrary filesystem-call interruption.
+
+## 2026-11-05 isolated rz-diff research-controls consolidation
+
+- Integrated only PR #174 producer-control commits c2107f57, 0b5c5087, 5175ccbe, e8cd27d1, d22853d3: original #165 source patch/boundary control (51e5b4b1, 4d66af55), #166 callback size_t repair (edab7d91), #168 red-matrix and partition-oracle repairs (4013cdd5, b304034e). No #163/#164 application, GT-01, normalizer, workflow or tracker-restoration changes are included. Existing historical evidence files retain their original scope/date.
+- Confirmed an additional evidence-loss defect: rerunning the native evidence runner in an existing output directory overwrote receipts/logs even when the executable was absent. Five regression cases failed before the correction. Exclusive run reservation and exclusive evidence-file creation now refuse reuse and preserve prior output; other build diagnostic files are allowed.
+- PASSED: 33 focused tests, no skips, with PATCHTRACE_RIZIN_SIMILARITY pointing to the exact pinned source downloaded from raw.githubusercontent.com/rizinorg/rizin/c3a90e9226d977f58f4e9c75f78fa6b07afe13c7/librz/arch/similarity.c. Test verifies Git blob8544259e17a692bcb3c1d8858f104745cd0cba4c and byte-identical patch/application. Compiled wrapper-double stock-red/corrected-green checks and compiled partition oracle are synthetic boundary evidence only.
+- PASSED: python -m ruff check src tests tools. No schemas changed.
+- BLOCKED/NOT RUN: complete pinned-native API/CLI JSON acceptance, independent recovered inventories, distinct-byte/IO-context controls, Windows acceptance and downstream Tier R requalification. No target binaries executed; no quarantine, runtime parser, approved pin, cache acceptance, or automation changes. This is a research-tool checkpoint, not a qualified producer.
+
+Full `QT_QPA_PLATFORM=offscreen python -m pytest -q` for this isolated native slice was NOT COMPLETED: stopped with SIGINT during collection after 87.42s (no tests ran, exit130) at the coordinator's request to avoid contention with the mandated integration suite. No test failure was observed or discarded; the local interruption log is `/tmp/pt-native-full-qa.log`. The 33 focused passing tests remain the completed local check. Hosted PR #195 CI is pending and does not yet qualify the producer.
+
+## E4-RANDOM-20261105 — bounded seeded audit
+
+- [x] Reproduce and repair ambiguous cache JSON manifests; preserve quarantine evidence and verify replacement lifecycle.
+- [x] Reject cache manifests larger than reader cap before publication/eviction; preserve prior committed entries.
+- [x] Focused selected-module tests (173 passed) and whole Ruff; full suite delegated to coordinator.
+- [ ] Native Windows release acceptance remains an independent gate; this audit uses only authored bytes and does not supply native evidence.
+
+### A4-C3-20261105 offline desktop investigation
+
+- [x] Port the bounded advisory import → KB/CVE search → explicit product → local pair preview → create/open journey, with create-only factory and existing workspace/project stores.
+- [x] Reproduce absent modules on prerequisite baseline; protect preview revision/hash, selected architecture, retained paths, cancellation and current-project adoption.
+- [ ] Coordinator exact-head full suite/CI and independent review. Product-only/binary-only desktop starts, online acquisition wizard, native Windows/frozen accessibility and live source gates are outside this slice; fixtures do not close them.
+
+## E4-RANDOM2-20261105 — bounded lifecycle audit
+
+- [x] Seeded nway/ingestion/persistence selection recorded; reproduce one recovery preservation defect before fixing.
+- [x] Verify existing recovery bytes before corrupt-series replacement; collision, directory and link failures preserve both original paths; exact-copy reuse tested.
+- [x] Focused nway tests, whole Ruff and whitespace checks pass. Full-suite and native Windows release acceptance stay coordinator-owned.
+
+- [ ] Follow-up outside this one-defect wave: stream/hash the damaged original during nway recovery; `--replace-corrupt` currently reads it in full even when load rejects the size.
+
+### 2026-11-05 invalid development-agent fragment
+
+- [x] Reproduce three workflow source validation failures; preserve the standalone agent step as a byte-identical example outside executable workflow discovery.49static checks passed/3existingxfails; Ruff passed.
+- [ ] Exact-head integration/full/cross-OS CI. Existing paid automation proposals remain separate and unenabled by this repair.
+
+## E3-RECOVERY-20261105 — resource-bounded preservation
+
+- [x] Stream/hash the damaged original and compare existing recovery copies in <=1 MiB reads; no new size cap or contract model changes.
+- [x] Same-handle second-pass digest/change detection, preserved prior copies and exclusive partial cleanup verified with guarded streams and authored mutation/read failures.
+- [x] Focused 38-test nway suite and whole Ruff/diff checks pass. Earlier E4-RANDOM2 streaming follow-up is resolved by this slice; full-suite/native release gates remain independent.
+
+## D2-E6-OFFLINE-20261105 — strict producer pin gate
+
+- [x] Reproduce duplicate-field acceptance in checker and producer; enforce one shared strict JSON parse before download/build work.
+- [x] Correct runbook TOFU instruction against existing approved digest-source rules; leave actual pins/licence approvals unchanged.
+- [x] Focused 179 passed/1 skipped, whole Ruff/diff checks, and current release-pin checker exit 0.
+- [ ] Clean native Windows offline/full-runtime release acceptance still requires its own downloadable artifact and linked acceptance evidence; this Linux tooling slice supplies none.
+
+### E3-PROJECTCREATE initial creation rollback
+
+- [x] Reproduce source #116 creation/copy residuals; replace broad directory-difference deletion with explicit identity-checked publication ownership, retaining the kernel lock inode and committed first snapshots.
+- [x] Cover retry, preexisting/concurrent foreign files, reused read-only artifacts, readonly deletion rules, failed publication, destination races, substitutions/symlinks, interruptions and unsupported exclusive publication.
+- [ ] Independent review and coordinator integration/full suite; native Windows hardlink/read-only lifecycle and other filesystem compatibility qualification remain open. Hardlink support is required for new artifact publication; no overwrite fallback.
+
+- [ ] Harden the residual exact-path replacement race between the last metadata check and unlink/chmod if support for hostile noncooperating filesystem writers is required; evaluate quarantine/native handles with native Windows tests. This repair guarantees cooperative-lock and identity-checked best-effort cleanup only.
+- [ ] Verify desktop wizard retry after a failed creation: destination validation may reject the intentionally retained lock-only directory. Backend create retry is tested; no end-to-end wizard retry claim.
+
+## E4-B5-SONAR-20261105 — bounded parity text parse
+
+- [x] Reproduce adjacent-whitespace parser timeout in a killed child; replace ambiguous partitions with linear scans preserving grammar.
+- [x] Escape bidi source characters in the five assigned fixture files; AST and runtime fixture values unchanged.
+- [x] Focused parity/fixture tests, CPU-budget regression, grammar limits and whole Ruff/diff checks pass.
+- [ ] Coordinator reruns actual Sonar/full qualification; this focused slice claims no native parity acceptance.
+
+### 2026-11-05 KB Qt adapter import boundary
+
+- [x] Reconcile accepted named investigation Qt adapter with import-contract scanner; preserve service purity and UI network/database exclusions with seven negative controls.159focused passes;44independent passes; Ruff clean.
+- [ ] Resume combined qualification and require exact-head full/cross-OS checks; no test/gate bypass or broad Qt exemption.
+
+### A4/C3 current project inputs
+
+- [x] Add explicit worker-verified current project input action and a real advisory/scope/confirmation/preview/create/open journey without reopening the source project store or changing it before adoption.
+- [x] Cover strict snapshot JSON/caps, missing/tampered copies, verification-to-inspection hash changes, stale service/revision/artifact callbacks, late retained creation, field-edit origin clearing, ordinary basename defaults and same-path identical/conflicting labels.
+- [x] Independent read-only review approved implementation 0b3c58fb; independent focused controls 20 passed, 136 deselected.
+- [ ] Coordinator integration and native Windows/full-suite gates. Product-only/binary-only advisory lookup semantics remain outside this slice.
+- [ ] Separately specify label preservation if current-origin preview must support derived hash.bin-labelled projects or other original labels outside the existing .sys/.dll/.exe BinaryRef contract. Current unsupported cases refuse explicitly.
+
+### LBL-30 consolidation checkpoint — 2026-11-05
+
+- [x] Port exact recorded-protocol selection and conservative visible-row tests from #176, preserving explicit unlocked rehearsal and existing final-run gates (97 acceptance tests passed).
+- [ ] Complete broader training regression and independent review before integrating this slice into #205.
+- [ ] Consolidate the separate credited-output replay/persistence slice from #176; this checkpoint does not implement it.
+
+### LBL-31 replay integration — 2026-11-05
+
+- [x] Retain bounded strict normalized output before scoring, verify report-bound completion and exact-byte replay, reject provider-owner conflicts, and preserve diagnostics on completion failure (source #176).
+- [ ] Independent security review and integration of this stacked replay slice; exact-head full suite/native/Windows gates remain open.
+
+### Wave-three acceptance — 2026-11-05
+
+- [x] Independently review and integrate #215 recorded identity, #216 acquisition display safety and #217 credited replay; combined276 passed.
+- [ ] Finish/review lock-only retry and retain committed promotion data on annotation failure; fix stale crash-test keyword double.
+- [ ] Collect exact f33 complete-suite receipt, then qualify updated candidate.
+- [ ] Complete provisioned pinned-native controls and required current-head Windows/scanner/release gates.
+
+- [x] #219 reviewed38be184c integrated: real lock-only retry, non-destructive committed acquisition failures, exact retained path, repaired SIGKILL fixture signature;475 combined tests passed.
+- [ ] Continue product-only desktop start and remaining unique #174 adapter functionality in exclusive worker worktrees.
+
+- [x] Review/integrate #220 reserved derived metadata boundary and #221 explicit binary-only local-pair desktop start;339 combined passes.
+- [ ] Product-only desktop/domain starting path and single-binary patch discovery remain separate accepted work.
+- [ ] Complete remaining #174 one-to-many normalization/GT-01 controls; narrow reserved-key integration alone is not full native acceptance.
+
+- [x] Account #222 finite pinned-native provisioning evidence and #223 canonical function identity; verify14 complete raw-log receipts and357 combined focused passes.
+- [ ] Finish actual native API linkage/stock-red-corrected-green and distinct-byte/IO controls; optional control tooling remains separate pending verified source.
+
+### [MERGE-20261106:branch-consolidation-readiness]
+
+- [x] Inventory all 242 remote branches/112 open PRs; distinguish ancestry, patch equivalence and unresolved historical work.
+- [x] Stage and independently review #242/#243 onto #235 with exact blob preservation; 424 root/42 overlapping independent tests pass.
+- [x] Make #204 ready at unchanged `1229ca3b` and record hosted/local evidence.
+- [ ] Finish #204 Linux smoke and normal review; merge only through normal expected-head GitHub gates.
+- [ ] Qualify/publish the isolated current integration candidate; preserve #205/native ownership and original source PRs.
+- [ ] Repair and qualify the #205→#218→updated #235 promotion stages; keep Windows recovery and scanner findings explicit.
+- [ ] Selectively reconcile remaining #183 docs and older unique work after source/behavior review; keep paid automation separate.
+
+[Exact source and execution plan](../docs/plans/branch-merge-plan-20261106.md).
+
+### 2026-11-06 N-way Windows recovery prerequisite
+
+- [x] Reproduce the CPython 3.12 pathname/descriptor change-time mismatch with real-file fault injection; retain pinned official source/blob evidence.
+- [x] Keep independent full metadata baselines and cross-view identity/size/mtime validation; six new controls preserve metadata-only refusal and prior evidence. Affected series tests: 47 passed; whole Ruff/diff clean.
+- [ ] Independent review, coordinator integration and native Windows QA of the resulting commit. Linux fault injection does not qualify Windows packaging or release acceptance.
+
+### [KB-ADMISSION-20261106:captured-source-context]
+
+- [x] Reproduce #244 comment 4489325824 with two real-store source-insertion schedules on exact `5347ccfd` (both fail before correction).
+- [x] Amend SPEC-31-D and reuse one admitted source index; retain revision CAS, attachment journal, default manual behavior and legitimate later source imports. Two new controls and the overlapping 75-test affected selection pass; whole Ruff passes.
+- [ ] Independently review and integrate this isolated repair before resolving the review finding or promoting #244; retain all existing hosted/native/Windows/full-suite/scanner gates.
+
+[Source-admission repair receipt](../docs/qa/kb-source-admission-20261106.md).
+
+
+### 2026-11-06 Branch consolidation continuation
+
+- [x] Publish isolated #244 for current leaves and #245 for frozen-owner recovery repairs; preserve source refs.
+- [x] Stage #245 forward once with verified append-only ledger resolution; repair and independently review the confirmed KB source-provenance race; pass 774 combined focused tests.
+- [x] Complete and preserve the actual #245 Linux run: **3 failed, 19618 passed, 139 skipped, 6 xfailed, 1 warning in 2537.16s (0:42:17)**; investigate all three failures against frozen #205 without weakening assertions or permissions.
+- [x] Merge #204 after both smoke jobs and all applicable checks pass: main commit `d02b94bcedb29dae201941f01f2c94d42ebbb297`, 2026-11-06 06:27:13 UTC; source branch retained.
+- [ ] Obtain suitable-runner full Linux/native Windows/current-head qualification and normal parent scanner/review dispositions for #245 and the application integration train.
+- [ ] Recheck accepted ancestry after main promotion before any source-PR disposition; retain native and automation ownership. See [QA evidence](../docs/qa/pr245-linux-qualification-20261106.md).
+
+
+### Subprocess virtual-environment preservation (2026-11-06 UTC)
+
+- [x] Reproduce the protobuf/YARA-X isolation false failures and preserve the active interpreter entry point without changing any test assertion. Both complete affected files pass: 116 tests; independent review and Ruff pass.
+- [ ] Complete current-head hosted qualification and normal merge review. Preserve the separate AF_UNIX runner restriction and native/release gates. See `docs/qa/subprocess-venv-20261106.md`.
+
+### [CONTINUATION-20261106:local-product-start-and-qualification]
+
+- [x] Verify #245 Windows QA, standalone/frozen/portable/installer evidence and expose its downloadable candidate; retain source-head attribution.
+- [x] Implement and independently review stored-product catalogue, explicit selection and source-bound local pair creation without KB/CVE attribution; retain six independent acceptance cases.
+- [x] Bind product-start pending repair to the original source subset and complete scope; document the new-reader requirement for the additive internal journal field.
+- [x] Integrate exact-byte diagnostic bounds and the actual #246 interpreter-fix ancestry; preserve all source branches and prior QA/task entries.
+- [ ] Complete combined current-source full tests, hosted/native qualification, normal review and outstanding parent scanner dispositions before promotion.
+- [ ] Product-only CLI/online acquisition and single-binary discovery remain separate accepted work. [Continuation receipt](../docs/qa/continuation-20261106.md).
+
+
+### [CONTINUATION-QUALIFICATION-20261106:completed-local-results]
+
+- [x] Preserve both completed local full runs, failed outcomes, raw logs/JUnit, hashes and identities.
+- [x] Verify #247 timing/GUI controls, hosted Ubuntu pass and one unchanged #246 timing follow-up.
+- [x] Accept fully qualified #245 and publish actual-parent forward #248; retain sources and 54-pass evidence.
+- [x] Preserve five R8 documents with provenance and explicit unported status.
+- [ ] Finish current-head hosted gates, normal review, parent propagation and Sonar disposition; retain separate release/live/manual requirements. [Evidence](../docs/qa/continuation-qualification-20261106.md).
+
+
+### [SUBPROCESS-ACCEPTED-20261106]
+
+- [x] Merge #246 after full hosted QA, Qt, packaging, both Linux smoke jobs and review/scanner gates pass; verify exact merged tree and retained source. Main: `dc53b529` at 09:29:12 UTC.
+- [ ] Recheck parent application merge trees and gates against the advanced main before promotion.
+
+
+### [CONTINUATION-WINDOWS-20261106:product-start-build]
+
+- [x] Complete #247 Windows QA/packaging and publish the source-pinned downloadable product-start candidate; retain the exact receipt and artifact identity.
+- [ ] Finish Linux packaging/smokes, normal parent promotion and remaining release/live/manual acceptance. [Windows evidence](../docs/qa/continuation-windows-20261106.md).
+
+## Accuracy validation (opened 2026-11-06)
+- [ ] Follow [accuracy validation plan](../docs/plans/accuracy-validation-plan-20261106.md): per-layer claims (L1 advisory join, L2 open-source pair diff, L3 real Windows pairs), manifests frozen before engine runs. AV-0 and AV-1 done, AV-2 next; no accuracy result exists yet.
+- [ ] 2026-11-07 status and findings: see [accuracy program findings](../docs/qa/accuracy-program-findings-20261107.md) (PR triage, CI observations, Windows candidate research, open gates).

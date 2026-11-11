@@ -92,8 +92,16 @@ def role_of(doc: C.KnownAnswerLabels) -> tuple[str | None, str]:
     if doc.stratum in STRATUM_ROLE:
         return STRATUM_ROLE[doc.stratum], ''
     if doc.stratum == 'mutation':
-        known = doc.case.get('unified_class') in classes.BY_ID
-        return ('mutation' if known else None), 'the case has no known unified_class'
+        case = doc.case
+        if case.get('unified_class') not in classes.BY_ID:
+            return None, 'the case has no known unified_class'
+        if not isinstance(case.get('target'), str) or not isinstance(case.get('verdicts'), list):
+            return None, 'the case has no target or no verdicts'
+        if tuple(case['verdicts']) != classes.BY_ID[case['unified_class']].verdicts:
+            # the accepted verdicts belong to the class registry; a document that widens them (a leak verdict, `unknown`)
+            # would turn a normaliser bug into a detected mutant
+            return None, f'the case verdicts differ from the {case["unified_class"]} class registry'
+        return 'mutation', ''
     return None, f'stratum {doc.stratum} belongs to the SPEC-32 evaluation'
 
 
@@ -102,7 +110,7 @@ def _pair(doc: C.KnownAnswerLabels, role: str) -> ManifestPair:
         return Image(sha256=side.sha256, size=side.size, file_name=side.file_name)
     case = doc.case
     mutation = MutationFacts(unified_class=case['unified_class'], target=case['target'],
-                             verdicts=tuple(case['verdicts'])) if role == 'mutation' else None
+                             verdicts=classes.BY_ID[case['unified_class']].verdicts) if role == 'mutation' else None
     return ManifestPair(
         pair_id=doc.pair_id, role=role, gates=GATES[role], gated=role not in NOT_GATED, project=doc.project,
         lineage=doc.lineage, x_vs_x=doc.older.sha256 == doc.newer.sha256, older=image(doc.older),

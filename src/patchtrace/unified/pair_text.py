@@ -184,29 +184,45 @@ class RowCodeSource:
 
     def __init__(self) -> None:
         self._lock = threading.RLock()
+        self._closed = False
         self._readers: dict[Path, IrReader] = {}
         self._decomp: dict[Path, tuple[tuple[str, int, int] | None,
                                        dict[tuple[str, int], tuple[str, str | None]] | None]] = {}
 
     def close(self) -> None:
+        """Final: a load that starts (or is still running) after this call opens no reader that outlives it."""
+        self._closed = True
         with self._lock:
-            for reader in self._readers.values():
-                reader.close()
-            self._readers.clear()
-            self._decomp.clear()
+            self._release()
+
+    def _release(self) -> None:
+        for reader in self._readers.values():
+            reader.close()
+        self._readers.clear()
+        self._decomp.clear()
 
     def __call__(self, vm: UnifiedViewModel, row: UnifiedRowView) -> RowCode:
         with self._lock:
             try:
-                record = records_for(vm, [row]).get(row.row_id)
-            except UnifiedError:
-                record = None
-            if vm.manifest is None or vm.result_dir is None or record is None:
-                return RowCode(_unavailable(DECOMPILED, 'Decompiled code', NO_RESULT),
-                               _unavailable(DISASSEMBLY, 'Disassembly', NO_RESULT))
-            producer = self._producer(vm)
-            return RowCode(self._decompiled(vm, record.match.older, record.match.newer, producer),
-                           self._disassembly(vm, record.match.older, record.match.newer, producer))
+                if self._closed:
+                    return RowCode(_unavailable(DECOMPILED, 'Decompiled code', NO_RESULT),
+                                   _unavailable(DISASSEMBLY, 'Disassembly', NO_RESULT))
+                return self._code(vm, row)
+            finally:
+                if self._closed:
+                    self._release()
+
+    def _code(self, vm: UnifiedViewModel, row: UnifiedRowView) -> RowCode:
+        try:
+            record = records_for(vm, [row]).get(row.row_id)
+        except UnifiedError:
+            record = None
+        if vm.manifest is None or vm.result_dir is None or record is None:
+            return RowCode(_unavailable(DECOMPILED, 'Decompiled code', NO_RESULT),
+                           _unavailable(DISASSEMBLY, 'Disassembly', NO_RESULT))
+        producer = self._producer(vm)
+        return RowCode(self._decompiled(vm, record.match.older, record.match.newer, producer),
+                       self._disassembly(vm, record.match.older, record.match.newer, producer))
 
     # -- shared --
     def _reader(self, root: Path, run_id: str, ref: IrRef) -> IrReader:

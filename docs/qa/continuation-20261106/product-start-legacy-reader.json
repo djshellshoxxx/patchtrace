@@ -1,0 +1,9 @@
+{
+  "legacy_commit": "f393bb68ddc11eabb95a6598aa6f86650bd9aa37",
+  "synthetic_root": "/workspace/scratch/c4fbe5e6f72c/pt-product-legacy-cwfvpxxt",
+  "read_status": "partial",
+  "repair_exit": 0,
+  "sources": 0,
+  "extra_member_retained": true,
+  "limitation": "Legacy readers retain but ignore the new product snapshot; product-start repair requires the new build."
+}

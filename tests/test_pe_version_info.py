@@ -41,7 +41,8 @@ from patchtrace.pe_overview.version_info import (
 )
 
 FAST = settings(deadline=None, suppress_health_check=[HealthCheck.too_slow], max_examples=150)
-BUDGET_S = 0.25
+# Bound parser work; a loaded runner or fixture IO can pause this process without consuming CPU.
+CPU_BUDGET_S = 0.25
 
 
 def read(tmp_path, root, limits=DEFAULT_RESOURCE_LIMITS):
@@ -242,9 +243,9 @@ HOSTILE = {
 @pytest.mark.parametrize('name', list(HOSTILE))
 def test_hostile_structure_is_reported_and_never_raises(tmp_path, name):
     blob, status, code = HOSTILE[name]
-    began = time.perf_counter()
+    began = time.process_time()
     block, codes = one(tmp_path, blob)
-    assert time.perf_counter() - began <= BUDGET_S
+    assert time.process_time() - began <= CPU_BUDGET_S
     assert block.status == status and code in block.warnings and code in codes
     if status == 'malformed':
         assert block.fixed is None and block.strings == ()
@@ -397,9 +398,9 @@ def test_mutated_version_blobs_never_raise_and_stay_bounded(tmp_path):
     blob = version_blob((10, 0, 19041, 1), strings=standard_strings())
     for seed in range(120):
         mutated = mutate(blob, seed, flips=1 + seed % 10)
-        began = time.perf_counter()
+        began = time.process_time()
         block, _codes = one(tmp_path, mutated)
-        assert time.perf_counter() - began <= BUDGET_S * 4
+        assert time.process_time() - began <= CPU_BUDGET_S * 4
         assert block.status in ('ok', 'partial', 'malformed')
         json.dumps(asdict(block))
 

@@ -7,7 +7,8 @@ A KB number never yields files, so a hint is only ever one of:
 
 Tier A needs a structured official field (absent from the data we hold), B needs package inventory and C an index row
 for a name already given (later slices). ``changed_in_kb`` stays ``unknown`` until the file index can say. A name in
-both lists is one hint at the lower (more documented) tier with both reasons.
+both lists is one tier-E hint with both reasons: its selection origin is the analyst, while the title remains
+context only. Selectable tiers precede contextual D hints when applying the cap.
 """
 from __future__ import annotations
 
@@ -21,6 +22,10 @@ from .limits import DEFAULT_LIMITS
 _MODULE = re.compile(r'(?<![A-Za-z0-9_.-])([A-Za-z0-9_][A-Za-z0-9_.-]{0,59}\.(?:sys|dll|exe|ocx|cpl|drv))(?![A-Za-z0-9_-])',
                      re.IGNORECASE)
 SELECTING_TIERS = ('A', 'B', 'C', 'E')  # tier D never selects a file
+
+
+def _tier_priority(tier: str) -> tuple[bool, str]:
+    return tier not in SELECTING_TIERS, tier
 
 
 def normalise_name(raw: str) -> str:
@@ -60,7 +65,7 @@ def hints_for(cards: Iterable[CveCard], refs_by_cve: dict[str, SourceRef], names
         have[1].append(reason)
         if ref is not None:
             have[2].append(ref)
-        if tier < have[0]:
+        if _tier_priority(tier) < _tier_priority(have[0]):
             found[name] = (tier, have[1], have[2])
 
     for card in cards:
@@ -68,7 +73,7 @@ def hints_for(cards: Iterable[CveCard], refs_by_cve: dict[str, SourceRef], names
             add(name, 'D', f'module name in the advisory title of {card.cve}', refs_by_cve.get(card.cve))
     for raw in names:
         add(normalise_name(raw), 'E', 'entered by the analyst', None)
-    ordered = sorted(found.items(), key=lambda item: (item[1][0], item[0]))
+    ordered = sorted(found.items(), key=lambda item: (_tier_priority(item[1][0]), item[0]))
     hints = tuple(_hint(name, scope_id, tier, reasons, refs) for name, (tier, reasons, refs) in ordered[:limit])
     return hints, len(ordered) > limit
 

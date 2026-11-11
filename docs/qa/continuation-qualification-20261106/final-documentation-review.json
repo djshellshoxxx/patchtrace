@@ -1,0 +1,695 @@
+{
+  "schema": "patchtrace-staged-documentation-review/1",
+  "status": "passed_no_remaining_findings",
+  "reviewer": "/root/recovery_review",
+  "started_at_utc": "2026-11-06T09:33:40.496062+00:00",
+  "structural_finished_at_utc": "2026-11-06T09:33:41.167612+00:00",
+  "worktree": "/workspace/scratch/c4fbe5e6f72c/pt-r8-docs",
+  "frozen_source": {
+    "head": "37b771300053e8872febead1fc384fea9126ae90",
+    "tree": "cdbab24d14295b4450cd0d3c744d76734c98a561"
+  },
+  "reviewed_stage": {
+    "base_head": "3dc4b15f751d56e9980bcc5c39741b6328273021",
+    "base_tree": "7faa6f1b10162d30d81bda9acd6d69b40a4b55af",
+    "tree": "cf4cbf3d2f71e4e6e4d3df3d43210565be7a1e67",
+    "end_tree": "cf4cbf3d2f71e4e6e4d3df3d43210565be7a1e67",
+    "stable": true,
+    "tree_computed_in_memory": true,
+    "tree_hash_controls_match_git": true,
+    "diff_against_head": [
+      "docs/qa.md",
+      "docs/qa/continuation-qualification-20261106.md",
+      "docs/qa/continuation-qualification-20261106/archive-hashes.json",
+      "docs/qa/continuation-qualification-20261106/combined-focused-pytest.log.gz",
+      "docs/qa/continuation-qualification-20261106/combined-focused-pytest.xml.gz",
+      "docs/qa/continuation-qualification-20261106/combined-focused.json",
+      "docs/qa/continuation-qualification-20261106/pr205-exact-head-status-20261106T0913Z.json",
+      "docs/qa/continuation-qualification-20261106/pr244-windows-linux-qualification-20261106T0913Z.json",
+      "docs/qa/continuation-qualification-20261106/pr245-final-source-gates.json",
+      "docs/qa/continuation-qualification-20261106/pr245-ubuntu-qa.json",
+      "docs/qa/continuation-qualification-20261106/pr246-accepted-main.json",
+      "docs/qa/continuation-qualification-20261106/pr246-completed-review.json",
+      "docs/qa/continuation-qualification-20261106/pr246-full-result.json",
+      "docs/qa/continuation-qualification-20261106/pr246-pytest.log.gz",
+      "docs/qa/continuation-qualification-20261106/pr246-pytest.xml.gz",
+      "docs/qa/continuation-qualification-20261106/pr246-qualification-eligibility-20261106T0920Z.json",
+      "docs/qa/continuation-qualification-20261106/pr246-timing-followup-pytest.log.gz",
+      "docs/qa/continuation-qualification-20261106/pr246-timing-followup-pytest.xml.gz",
+      "docs/qa/continuation-qualification-20261106/pr246-timing-followup-result.json",
+      "docs/qa/continuation-qualification-20261106/pr247-completed-local-qualification-20261106.json",
+      "docs/qa/continuation-qualification-20261106/pr247-hosted-qa-snapshot-20261106T0913Z.json",
+      "docs/qa/continuation-qualification-20261106/pr247-pytest.log.gz",
+      "docs/qa/continuation-qualification-20261106/pr247-pytest.xml.gz",
+      "docs/qa/continuation-qualification-20261106/pr247-result.json",
+      "docs/qa/continuation-qualification-20261106/pr247-ubuntu-qa.json",
+      "docs/qa/continuation-qualification-20261106/recovery-forward/accepted-parent-ancestry.json",
+      "docs/qa/continuation-qualification-20261106/recovery-forward/accepted-parent-before.json",
+      "docs/qa/continuation-qualification-20261106/recovery-forward/accepted-parent-message.txt",
+      "docs/qa/continuation-qualification-20261106/recovery-forward/independent-review.json",
+      "docs/qa/continuation-qualification-20261106/recovery-forward/merge-receipt.json",
+      "docs/qa/continuation-qualification-20261106/recovery-forward/premerge.json",
+      "docs/qa/continuation-qualification-20261106/recovery-forward/publication-pr-metadata.json",
+      "docs/qa/continuation-qualification-20261106/recovery-forward/publication-remote-refs.txt",
+      "docs/qa/continuation-qualification-20261106/recovery-forward/publication-review.json",
+      "docs/qa/continuation-qualification-20261106/recovery-forward/pytest-run.json",
+      "docs/qa/continuation-qualification-20261106/recovery-forward/pytest.log",
+      "docs/qa/continuation-qualification-20261106/recovery-forward/pytest.xml",
+      "docs/qa/continuation-qualification-20261106/recovery-forward/resolved-tree.json",
+      "docs/qa/continuation-qualification-20261106/recovery-forward/ruff-copied-launcher-run.json",
+      "docs/qa/continuation-qualification-20261106/recovery-forward/ruff-copied-launcher.log.gz",
+      "docs/qa/continuation-qualification-20261106/recovery-forward/ruff-run.json",
+      "docs/qa/continuation-qualification-20261106/recovery-forward/ruff.log",
+      "docs/qa/continuation-qualification-20261106/recovery-forward/validation.json",
+      "docs/qa/continuation-qualification-20261106/source-integration-audit.json",
+      "tasks/todo.md"
+    ],
+    "diff_against_frozen": [
+      "docs/qa.md",
+      "docs/qa/continuation-qualification-20261106.md",
+      "docs/qa/continuation-qualification-20261106/archive-hashes.json",
+      "docs/qa/continuation-qualification-20261106/combined-focused-pytest.log.gz",
+      "docs/qa/continuation-qualification-20261106/combined-focused-pytest.xml.gz",
+      "docs/qa/continuation-qualification-20261106/combined-focused.json",
+      "docs/qa/continuation-qualification-20261106/pr205-exact-head-status-20261106T0913Z.json",
+      "docs/qa/continuation-qualification-20261106/pr244-windows-linux-qualification-20261106T0913Z.json",
+      "docs/qa/continuation-qualification-20261106/pr245-final-source-gates.json",
+      "docs/qa/continuation-qualification-20261106/pr245-ubuntu-qa.json",
+      "docs/qa/continuation-qualification-20261106/pr246-accepted-main.json",
+      "docs/qa/continuation-qualification-20261106/pr246-completed-review.json",
+      "docs/qa/continuation-qualification-20261106/pr246-full-result.json",
+      "docs/qa/continuation-qualification-20261106/pr246-pytest.log.gz",
+      "docs/qa/continuation-qualification-20261106/pr246-pytest.xml.gz",
+      "docs/qa/continuation-qualification-20261106/pr246-qualification-eligibility-20261106T0920Z.json",
+      "docs/qa/continuation-qualification-20261106/pr246-timing-followup-pytest.log.gz",
+      "docs/qa/continuation-qualification-20261106/pr246-timing-followup-pytest.xml.gz",
+      "docs/qa/continuation-qualification-20261106/pr246-timing-followup-result.json",
+      "docs/qa/continuation-qualification-20261106/pr247-completed-local-qualification-20261106.json",
+      "docs/qa/continuation-qualification-20261106/pr247-hosted-qa-snapshot-20261106T0913Z.json",
+      "docs/qa/continuation-qualification-20261106/pr247-pytest.log.gz",
+      "docs/qa/continuation-qualification-20261106/pr247-pytest.xml.gz",
+      "docs/qa/continuation-qualification-20261106/pr247-result.json",
+      "docs/qa/continuation-qualification-20261106/pr247-ubuntu-qa.json",
+      "docs/qa/continuation-qualification-20261106/recovery-forward/accepted-parent-ancestry.json",
+      "docs/qa/continuation-qualification-20261106/recovery-forward/accepted-parent-before.json",
+      "docs/qa/continuation-qualification-20261106/recovery-forward/accepted-parent-message.txt",
+      "docs/qa/continuation-qualification-20261106/recovery-forward/independent-review.json",
+      "docs/qa/continuation-qualification-20261106/recovery-forward/merge-receipt.json",
+      "docs/qa/continuation-qualification-20261106/recovery-forward/premerge.json",
+      "docs/qa/continuation-qualification-20261106/recovery-forward/publication-pr-metadata.json",
+      "docs/qa/continuation-qualification-20261106/recovery-forward/publication-remote-refs.txt",
+      "docs/qa/continuation-qualification-20261106/recovery-forward/publication-review.json",
+      "docs/qa/continuation-qualification-20261106/recovery-forward/pytest-run.json",
+      "docs/qa/continuation-qualification-20261106/recovery-forward/pytest.log",
+      "docs/qa/continuation-qualification-20261106/recovery-forward/pytest.xml",
+      "docs/qa/continuation-qualification-20261106/recovery-forward/resolved-tree.json",
+      "docs/qa/continuation-qualification-20261106/recovery-forward/ruff-copied-launcher-run.json",
+      "docs/qa/continuation-qualification-20261106/recovery-forward/ruff-copied-launcher.log.gz",
+      "docs/qa/continuation-qualification-20261106/recovery-forward/ruff-run.json",
+      "docs/qa/continuation-qualification-20261106/recovery-forward/ruff.log",
+      "docs/qa/continuation-qualification-20261106/recovery-forward/validation.json",
+      "docs/qa/continuation-qualification-20261106/source-integration-audit.json",
+      "docs/research/INDEX.md",
+      "docs/research/deep-uncertainty-r8/01-typed-literal-counterexamples.md",
+      "docs/research/deep-uncertainty-r8/02-icf-function-identity.md",
+      "docs/research/deep-uncertainty-r8/03-integration-handoff-and-release-risk.md",
+      "docs/research/deep-uncertainty-r8/README.md",
+      "docs/research/deep-uncertainty-r8/uncertainty-register.md",
+      "docs/research/r8-reconciliation-20261106-sources.json",
+      "docs/research/r8-reconciliation-20261106.md",
+      "tasks/todo.md"
+    ],
+    "changed_against_head_count": 45,
+    "changed_against_frozen_count": 53,
+    "unstaged_paths": [],
+    "unmerged_paths": [],
+    "final_verified_tree": "cf4cbf3d2f71e4e6e4d3df3d43210565be7a1e67",
+    "stable_through_final_review": true,
+    "receipt_self_exclusion": "This tree covers the complete staged documentation/evidence before this independent review receipt is copied into the bundle."
+  },
+  "scope_boundary": {
+    "unexpected_paths": [],
+    "all_changes_documentary": true,
+    "protected_subtrees": [
+      {
+        "path": "src",
+        "frozen_tree": "a8c91bf0ab9b1661605d794078970cde046b16a9",
+        "staged_tree": "a8c91bf0ab9b1661605d794078970cde046b16a9",
+        "equal": true
+      },
+      {
+        "path": "tests",
+        "frozen_tree": "bb5ff04448fcb1ffc1ce472f46d3ddbc84ba0476",
+        "staged_tree": "bb5ff04448fcb1ffc1ce472f46d3ddbc84ba0476",
+        "equal": true
+      },
+      {
+        "path": "tools",
+        "frozen_tree": "aa26d80fea5be1b0fd8c39597e05f1055dcef546",
+        "staged_tree": "aa26d80fea5be1b0fd8c39597e05f1055dcef546",
+        "equal": true
+      },
+      {
+        "path": ".github",
+        "frozen_tree": "0f6d29ee0d0ae5bc8a8acb202c30bd74479956bc",
+        "staged_tree": "0f6d29ee0d0ae5bc8a8acb202c30bd74479956bc",
+        "equal": true
+      },
+      {
+        "path": "docs/specs",
+        "frozen_tree": "14e802b357c6081490cdd10fafb17f8575cdec30",
+        "staged_tree": "14e802b357c6081490cdd10fafb17f8575cdec30",
+        "equal": true
+      }
+    ]
+  },
+  "strict_json": {
+    "count": 28,
+    "duplicate_keys_and_nonfinite_numbers_rejected": true,
+    "errors": []
+  },
+  "archives": {
+    "count": 9,
+    "all_gzip_files_covered": true,
+    "checks": [
+      {
+        "path": "pr246-pytest.log.gz",
+        "original_path": null,
+        "manifest_matches": true,
+        "decoded_bytes": 45255,
+        "decoded_sha256": "da5dda8a4512bf5143e656a42aa9f76d81e1ffeaaaed0e04c309ab9b791a50c9",
+        "deterministic_header": true
+      },
+      {
+        "path": "pr246-pytest.xml.gz",
+        "original_path": null,
+        "manifest_matches": true,
+        "decoded_bytes": 2593037,
+        "decoded_sha256": "d77fb606aced4b1711eb9a4ae72a826c9bf0eb460fa9c20779a6f406f201b97c",
+        "deterministic_header": true
+      },
+      {
+        "path": "combined-focused-pytest.log.gz",
+        "original_path": null,
+        "manifest_matches": true,
+        "decoded_bytes": 351,
+        "decoded_sha256": "703a8d0acd0f57989c344cc59794b07166e607334bc0f5534608c9ee06b97cae",
+        "deterministic_header": true
+      },
+      {
+        "path": "combined-focused-pytest.xml.gz",
+        "original_path": null,
+        "manifest_matches": true,
+        "decoded_bytes": 34954,
+        "decoded_sha256": "45127c01143deb5ba791f136599cdbd2ebccf1d396e0ab007e44b3b7a15c3598",
+        "deterministic_header": true
+      },
+      {
+        "path": "pr247-pytest.log.gz",
+        "original_path": null,
+        "manifest_matches": true,
+        "decoded_bytes": 43168,
+        "decoded_sha256": "ce41380945b1cff7ceed9b4e45276c3a92c99d7893e4b03a7bed3d84ee97f290",
+        "deterministic_header": true
+      },
+      {
+        "path": "pr247-pytest.xml.gz",
+        "original_path": null,
+        "manifest_matches": true,
+        "decoded_bytes": 2833117,
+        "decoded_sha256": "17b1ca01e4e734b273e0244101f7922e6d148201a6e8daaba3ceaf702400cbd0",
+        "deterministic_header": true
+      },
+      {
+        "path": "pr246-timing-followup-pytest.log.gz",
+        "original_path": null,
+        "manifest_matches": true,
+        "decoded_bytes": 99,
+        "decoded_sha256": "8e76c78a8e5cea9348de9a0a175aa683d6bea509a50a6d4b1807708d19af0add",
+        "deterministic_header": true
+      },
+      {
+        "path": "pr246-timing-followup-pytest.xml.gz",
+        "original_path": null,
+        "manifest_matches": true,
+        "decoded_bytes": 670,
+        "decoded_sha256": "e17196abbe35bb5fad4c63e57a9f2b2f3231ff3f11539ebb162c83e27d424db6",
+        "deterministic_header": true
+      },
+      {
+        "path": "recovery-forward/ruff-copied-launcher.log.gz",
+        "original_path": "recovery-forward/ruff-copied-launcher.log",
+        "manifest_matches": true,
+        "decoded_bytes": 1003,
+        "decoded_sha256": "c5cd1b543637c4bbf9944ed348069872ae065008ff24e5cfaf246b82ab4e5d63",
+        "deterministic_header": true
+      }
+    ],
+    "original_byte_comparisons": [
+      {
+        "archive": "pr246-pytest.log.gz",
+        "original_path": "/workspace/scratch/c4fbe5e6f72c/venv-qualification/pytest.log",
+        "exact_bytes_equal": true,
+        "bytes": 45255
+      },
+      {
+        "archive": "pr246-pytest.xml.gz",
+        "original_path": "/workspace/scratch/c4fbe5e6f72c/venv-qualification/pytest.xml",
+        "exact_bytes_equal": true,
+        "bytes": 2593037
+      },
+      {
+        "archive": "pr247-pytest.log.gz",
+        "original_path": "/workspace/scratch/c4fbe5e6f72c/continuation-full/pytest.log",
+        "exact_bytes_equal": true,
+        "bytes": 43168
+      },
+      {
+        "archive": "pr247-pytest.xml.gz",
+        "original_path": "/workspace/scratch/c4fbe5e6f72c/continuation-full/pytest.xml",
+        "exact_bytes_equal": true,
+        "bytes": 2833117
+      },
+      {
+        "archive": "combined-focused-pytest.log.gz",
+        "original_path": "/workspace/scratch/c4fbe5e6f72c/continuation-focused/pytest.log",
+        "exact_bytes_equal": true,
+        "bytes": 351
+      },
+      {
+        "archive": "combined-focused-pytest.xml.gz",
+        "original_path": "/workspace/scratch/c4fbe5e6f72c/continuation-focused/pytest.xml",
+        "exact_bytes_equal": true,
+        "bytes": 34954
+      },
+      {
+        "archive": "pr246-timing-followup-pytest.log.gz",
+        "original_path": "/workspace/scratch/c4fbe5e6f72c/venv-timing-followup/pytest.log",
+        "exact_bytes_equal": true,
+        "bytes": 99
+      },
+      {
+        "archive": "pr246-timing-followup-pytest.xml.gz",
+        "original_path": "/workspace/scratch/c4fbe5e6f72c/venv-timing-followup/pytest.xml",
+        "exact_bytes_equal": true,
+        "bytes": 670
+      },
+      {
+        "archive": "recovery-forward/ruff-copied-launcher.log.gz",
+        "original_path": "/workspace/scratch/c4fbe5e6f72c/recovery-forward-review/ruff-copied-launcher.log",
+        "exact_bytes_equal": true,
+        "bytes": 1003
+      }
+    ]
+  },
+  "run_evidence": {
+    "pr246": {
+      "summary": "5 failed, 18637 passed, 134 skipped, 7 xfailed, 1 warning in 3101.65s (0:51:41)",
+      "junit_counts": {
+        "passed": 18637,
+        "failed": 5,
+        "errors": 0,
+        "skipped": 134,
+        "xfailed": 7
+      },
+      "junit_total": 18783,
+      "collection_skips": [
+        {
+          "name": "tests.test_backend_bundle_workflow",
+          "message": "collection skipped"
+        },
+        {
+          "name": "tests.test_unified_corpus_workflow",
+          "message": "collection skipped"
+        },
+        {
+          "name": "tests.test_unified_live_workflow",
+          "message": "collection skipped"
+        }
+      ],
+      "failures": [
+        {
+          "classname": "tests.test_codetext_tokens",
+          "name": "test_hostile_text_is_covered_within_a_loose_time_bound[char-flood-c]",
+          "message": "assert 9.31498351099981 < 3.0"
+        },
+        {
+          "classname": "tests.test_codetext_tokens",
+          "name": "test_hostile_text_is_covered_within_a_loose_time_bound[comment-openers-asm]",
+          "message": "assert 3.0742130130001897 < 3.0"
+        },
+        {
+          "classname": "tests.test_network_consent_guard",
+          "name": "test_a_local_unix_socket_is_not_network",
+          "message": "PermissionError: [Errno 1] Operation not permitted"
+        },
+        {
+          "classname": "tests.test_pilot_properties",
+          "name": "test_5000_pairs_by_8_cves_localize_within_the_5_second_target",
+          "message": "AssertionError: 5.31 s of CPU\nassert 5.312991951999948 <= 5.0"
+        },
+        {
+          "classname": "tests.test_ui_related_panel",
+          "name": "test_one_hundred_thousand_rows_are_read_in_pages_and_cost_what_they_show",
+          "message": "pytestqt.exceptions.TimeoutError: waitUntil timed out in 5000 milliseconds"
+        }
+      ],
+      "checks": {
+        "summary_counts": true,
+        "summary_duration": true,
+        "junit_counts": true,
+        "junit_total": true,
+        "returncode": true,
+        "initial_head": true,
+        "initial_tree": true,
+        "final_head": true,
+        "final_tree_if_recorded": true,
+        "clean_final_status": true,
+        "clean_initial_status_if_recorded": true,
+        "log_digest": true,
+        "junit_digest_if_recorded": true
+      }
+    },
+    "pr247": {
+      "summary": "1 failed, 20284 passed, 139 skipped, 6 xfailed, 18 warnings in 3356.58s (0:55:56)",
+      "junit_counts": {
+        "passed": 20284,
+        "failed": 1,
+        "errors": 0,
+        "skipped": 139,
+        "xfailed": 6
+      },
+      "junit_total": 20430,
+      "collection_skips": [
+        {
+          "name": "tests.test_backend_bundle_workflow",
+          "message": "collection skipped"
+        },
+        {
+          "name": "tests.test_unified_corpus_workflow",
+          "message": "collection skipped"
+        },
+        {
+          "name": "tests.test_unified_live_workflow",
+          "message": "collection skipped"
+        }
+      ],
+      "failures": [
+        {
+          "classname": "tests.test_network_consent_guard",
+          "name": "test_a_local_unix_socket_is_not_network",
+          "message": "PermissionError: [Errno 1] Operation not permitted"
+        }
+      ],
+      "checks": {
+        "summary_counts": true,
+        "summary_duration": true,
+        "junit_counts": true,
+        "junit_total": true,
+        "returncode": true,
+        "initial_head": true,
+        "initial_tree": true,
+        "final_head": true,
+        "final_tree_if_recorded": true,
+        "clean_final_status": true,
+        "clean_initial_status_if_recorded": true,
+        "log_digest": true,
+        "junit_digest_if_recorded": true
+      }
+    },
+    "combined_focused": {
+      "summary": "243 passed in 72.29s (0:01:12)",
+      "junit_counts": {
+        "passed": 243,
+        "failed": 0,
+        "errors": 0,
+        "skipped": 0,
+        "xfailed": 0
+      },
+      "junit_total": 243,
+      "collection_skips": [],
+      "failures": [],
+      "checks": {
+        "summary_counts": true,
+        "summary_duration": true,
+        "junit_counts": true,
+        "junit_total": true,
+        "returncode": true,
+        "initial_head": true,
+        "initial_tree": true,
+        "final_head": true,
+        "final_tree_if_recorded": true,
+        "clean_final_status": true,
+        "clean_initial_status_if_recorded": true,
+        "log_digest": true,
+        "junit_digest_if_recorded": true
+      }
+    },
+    "pr246_timing_followup": {
+      "summary": "3 passed in 12.31s",
+      "junit_counts": {
+        "passed": 3,
+        "failed": 0,
+        "errors": 0,
+        "skipped": 0,
+        "xfailed": 0
+      },
+      "junit_total": 3,
+      "collection_skips": [],
+      "failures": [],
+      "checks": {
+        "summary_counts": true,
+        "summary_duration": true,
+        "junit_counts": true,
+        "junit_total": true,
+        "returncode": true,
+        "initial_head": true,
+        "initial_tree": true,
+        "final_head": true,
+        "final_tree_if_recorded": true,
+        "clean_final_status": true,
+        "clean_initial_status_if_recorded": true,
+        "log_digest": true,
+        "junit_digest_if_recorded": true
+      }
+    }
+  },
+  "pr247_passing_controls": [
+    {
+      "classname": "tests.test_codetext_tokens",
+      "name": "test_hostile_text_is_covered_within_a_loose_time_bound[char-flood-c]",
+      "passed": true,
+      "junit_whole_test_seconds": "0.072"
+    },
+    {
+      "classname": "tests.test_codetext_tokens",
+      "name": "test_hostile_text_is_covered_within_a_loose_time_bound[comment-openers-asm]",
+      "passed": true,
+      "junit_whole_test_seconds": "0.941"
+    },
+    {
+      "classname": "tests.test_pilot_properties",
+      "name": "test_5000_pairs_by_8_cves_localize_within_the_5_second_target",
+      "passed": true,
+      "junit_whole_test_seconds": "10.114"
+    },
+    {
+      "classname": "tests.test_ui_related_panel",
+      "name": "test_one_hundred_thousand_rows_are_read_in_pages_and_cost_what_they_show",
+      "passed": true,
+      "junit_whole_test_seconds": "6.562"
+    }
+  ],
+  "followup": {
+    "exact_three_original_timing_controls": true,
+    "began_after_combined_full_finished": true,
+    "combined_end_utc": "2026-11-06T09:19:00.614932+00:00",
+    "followup_start_utc": "2026-11-06T09:19:27.655809+00:00"
+  },
+  "ledgers": [
+    {
+      "path": "docs/qa.md",
+      "frozen_blob": "25a5fe3e23d83af7c0a90c7470d9e99e37043ab1",
+      "staged_blob": "3e1e6b66dc56db21668ca1952be372ecbbf13a22",
+      "prefix_preserved": true,
+      "appended_bytes": 1418,
+      "marker_before": 0,
+      "marker_after": 1,
+      "suffix_sha256": "23da20daf1645974d2325ee9528fc5a746cdcd499709b1075e4dc552c8675dd1"
+    },
+    {
+      "path": "tasks/todo.md",
+      "frozen_blob": "e30347d9ab749b927a4fc9e81e9f0b390122ada1",
+      "staged_blob": "62e774113a6de463778f784716e8b3084d217ddb",
+      "prefix_preserved": true,
+      "appended_bytes": 995,
+      "marker_before": 0,
+      "marker_after": 1,
+      "suffix_sha256": "22d8690bd777a68c767558ccaec0ef607ca0eab21419739e9a76137203cc43c6"
+    }
+  ],
+  "relative_links": {
+    "scope": "Qualification wrapper and new QA/task appendices",
+    "count": 33,
+    "unresolved": []
+  },
+  "remaining_final_markers": [],
+  "canonical_contributions": {
+    "count": 16,
+    "mismatches": [],
+    "source_audit_blob": "fb663d3f4ecded97247a0e83d5dc4f72283b8f25"
+  },
+  "forward_artifact_validation": {
+    "count": 10,
+    "gzip_original_path_mapping": {
+      "docs/qa/continuation-qualification-20261106/recovery-forward/ruff-copied-launcher.log": "recovery-forward/ruff-copied-launcher.log.gz"
+    },
+    "all_manifest_and_supporting_receipt_hashes_match": true
+  },
+  "publication_redaction": {
+    "original_path": "/workspace/scratch/c4fbe5e6f72c/recovery-review/pr246-qualification-eligibility-20261106T0920Z.json",
+    "original_sha256": "f76b4cef90d9a20db728fab7e86474ae8c2cc77babea8ab8f3dc646c5df0585b",
+    "published_blob": "11060c73333fe90a2b9e7e0f380c7bcf5c88ca82",
+    "published_sha256": "cb9dc900be9c898ac835761f44e198b5634fdec07cad0b5e3c391017cc951a6e",
+    "changed_json_paths": [
+      "$.eligibility_snapshot.checks[2].url",
+      "$.publication_redactions"
+    ],
+    "only_documented_url_redaction_and_annotation": true,
+    "check_identifiers_statuses_source_counts_unchanged": true,
+    "raw_logs_and_xml_unchanged": true,
+    "url_validation": {
+      "same_scheme_host_path_fragment": true,
+      "original_query_keys": [
+        "scope"
+      ],
+      "published_query_keys": [],
+      "only_scope_removed": true
+    }
+  },
+  "staged_diff_hygiene": {
+    "returncode": 0,
+    "output": ""
+  },
+  "key_reviewed_blobs": {
+    "docs/qa/continuation-qualification-20261106.md": {
+      "blob": "68102b5e8d3f6dd9801a3b8bafb4c2436165400c",
+      "sha256": "1a05ce61a358e60385b2633ba1fa391cd06b10d1c276056ffd4f63fe0a6c7f85"
+    },
+    "docs/qa/continuation-qualification-20261106/archive-hashes.json": {
+      "blob": "349c806d26f494f928b294b7e5aa51fae2f9cca0",
+      "sha256": "55ac2d70b235f0ec612cf5b746aef3ddc9e32c659560de1a71d8743fabd091d9"
+    },
+    "docs/qa/continuation-qualification-20261106/pr246-qualification-eligibility-20261106T0920Z.json": {
+      "blob": "11060c73333fe90a2b9e7e0f380c7bcf5c88ca82",
+      "sha256": "cb9dc900be9c898ac835761f44e198b5634fdec07cad0b5e3c391017cc951a6e"
+    }
+  },
+  "findings": [],
+  "application_tests_run": 0,
+  "git_refs_mutated": false,
+  "root_files_edited": false,
+  "review_artifact_written_outside_root_worktree": true,
+  "historical_r8_preservation": {
+    "prior_review_retained": true,
+    "research_paths_changed_by_current_stage": [],
+    "basis": "No research path appears in the staged diff against source-only R8 HEAD; all eight earlier R8 documentary changes remain unchanged."
+  },
+  "final_source_acceptance_receipts": [
+    {
+      "receipt": "pr245-final-source-gates.json",
+      "source": "4465a0492367d08f324e80b290a594791921691c",
+      "source_matches_expected": true,
+      "check_count": 19,
+      "conclusions": {
+        "skipped": 3,
+        "success": 16
+      },
+      "all_completed": true,
+      "all_checks_completed_before_merge": true,
+      "latest_check_completion": "2026-11-06T09:00:37Z",
+      "merged_at_utc": "2026-11-06T09:05:35Z",
+      "skip_names": [
+        "CodeRabbit",
+        "release",
+        "release-gate"
+      ],
+      "snyk_success": true,
+      "check_ids_unique": true
+    },
+    {
+      "receipt": "pr246-accepted-main.json",
+      "source": "c804e4d94430368c0eafe1da899493a8cf6520aa",
+      "source_matches_expected": true,
+      "check_count": 14,
+      "conclusions": {
+        "skipped": 2,
+        "success": 12
+      },
+      "all_completed": true,
+      "all_checks_completed_before_merge": true,
+      "latest_check_completion": "2026-11-06T09:25:27Z",
+      "merged_at_utc": "2026-11-06T09:29:12Z",
+      "skip_names": [
+        "release",
+        "release-gate"
+      ],
+      "snyk_success": true,
+      "check_ids_unique": true
+    }
+  ],
+  "completed_at_utc": "2026-11-06T09:37:04.029229+00:00",
+  "published_pr246_merge_independently_verified": {
+    "sha": "dc53b529560453e84cf45e356a40432ff3fc6725",
+    "tree": "cf59135e03b1c4a84ff628b29b4abb9d308a2b7d",
+    "parents": [
+      "d02b94bcedb29dae201941f01f2c94d42ebbb297",
+      "c804e4d94430368c0eafe1da899493a8cf6520aa"
+    ],
+    "url": "https://github.com/djshellshoxxx/patchtrace/commit/dc53b529560453e84cf45e356a40432ff3fc6725"
+  },
+  "content_review": {
+    "reviewer": "/root/recovery_review/final_claims_review",
+    "reviewed_wrapper_blob": "68102b5e8d3f6dd9801a3b8bafb4c2436165400c",
+    "result": "passed_no_remaining_findings",
+    "checks": [
+      "Hosted suite counts, tested merge trees and artifact ownership agree with their staged receipts.",
+      "Pending-job statements preserve the 09:13\u201309:20 observation window.",
+      "Final #245 source checkpoint records 16 successful checks and three explicit skips; all completions precede acceptance.",
+      "#246 accepted-main record has 12 successful checks and two explicit release skips; all completions precede acceptance.",
+      "The later #246 main advancement is distinct from historical d02b94bc snapshots and the old #205 prospective merge.",
+      "Parent merge identities and gates require reevaluation against advanced main; parent Sonar and release/live/manual gates remain open.",
+      "Both failed local full runs remain failed; the single timing replay does not establish causation or replace either result."
+    ],
+    "application_tests_run": 0,
+    "edits": false,
+    "hosted_status_polling": false
+  },
+  "resolved_review_points": [
+    {
+      "point": "Focused raw log/XML retention",
+      "resolution": "Both deterministic gzip files are retained; manifest and direct original-byte comparisons pass."
+    },
+    {
+      "point": "Combined schema/diff validation attribution",
+      "resolution": "Wrapper identifies these as earlier reviewed validation and says this bundle adds no separate command receipt."
+    },
+    {
+      "point": "Final #245 source gate snapshot",
+      "resolution": "pr245-final-source-gates.json now preserves all 19 check conclusions and timestamps plus Snyk, with explicit skip meanings."
+    },
+    {
+      "point": "Hosted snapshot timing precision",
+      "resolution": "Wrapper states the 09:13\u201309:20 observation window and uses in-those-snapshots wording."
+    },
+    {
+      "point": "Opaque CodeRabbit service query value",
+      "resolution": "Only the scope query parameter was removed and documented; all check identifiers, statuses, source identities and counts are unchanged."
+    },
+    {
+      "point": "Historical failed Ruff log EOF whitespace",
+      "resolution": "Original 1003 bytes retained as deterministic gzip with explicit original_path mapping, preserving historical digest c5cd1b543637c4bbf9944ed348069872ae065008ff24e5cfaf246b82ab4e5d63."
+    }
+  ],
+  "conclusion": "The staged documentation and evidence are internally consistent and suitable for publication within the documented scope. No application, release, or parent merge gate is silently closed by this review."
+}

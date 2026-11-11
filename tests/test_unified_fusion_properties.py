@@ -1,14 +1,12 @@
 """Hypothesis properties of the fusion arbiter (SPEC-31 05 s1): determinism, input-order invariance, unknown is no
-negative vote, shared-origin and same-class evidence count once. SYNTHETIC atoms only; derandomised (docs/qa.md T-29).
-
-A failing property is a defect in src: it is marked strict xfail with a one-line reason, never weakened.
+negative vote, component max-pooling and independent-class corroboration. SYNTHETIC atoms only; derandomised
+(docs/qa.md T-29). Support inventories components; it does not itself assert independent-class corroboration.
 """
 from __future__ import annotations
 
 import random
 from collections.abc import Sequence
 
-import pytest
 from hypothesis import HealthCheck, given, settings
 from hypothesis import strategies as st
 
@@ -79,11 +77,31 @@ def test_same_class_sources_never_make_a_match(offset: int, copies: int) -> None
     assert row.decision != 'matched'
 
 
-@pytest.mark.xfail(strict=True, reason='support lists both same-class E-BODY atoms (K1, K2); spec 05 s1.1 says they do not corroborate')
-def test_same_class_support_lists_one_atom() -> None:
+def test_same_class_support_retains_both_components_without_corroboration() -> None:
     old, new = 0x1000, 0x2000
-    [row] = arbiter.decide([atom(BODY_A, old, new), atom(BODY_B, old, new)], [])
-    assert len(row.support) == 1
+    evidence = [atom(BODY_A, old, new), atom(BODY_B, old, new)]
+    [row] = arbiter.decide(evidence, [])
+    assert row.decision == 'tentative'
+    assert row.atoms == tuple(evidence)
+    assert [(s.component, s.tier, row.atoms[s.atom_index]) for s in row.support] == [
+        ('K1', 'B', evidence[0]), ('K2', 'B', evidence[1])]
+
+
+@FAST
+@given(st.permutations((0, 1, 2)), st.sampled_from(('0', '0.5', '1', 'nan')))
+def test_same_class_support_keeps_contradictions_and_ignores_native_confidence(order, confidence) -> None:
+    old, new = 0x1000, 0x2000
+    evidence = [atom(BODY_A, old, new), atom(BODY_B, old, new), atom(STRONG, old, new + 8)]
+    baseline = arbiter.decide(evidence, [])
+    changed = [evidence[i].model_copy(update={'native': (('confidence', confidence),)}) for i in order]
+    rows = arbiter.decide(changed, [])
+    assert shape(rows) == shape(baseline)
+    assert all(r.decision != 'matched' for r in rows)
+    [paired] = [r for r in rows if r.pair is not None]
+    assert paired.decision == 'contested'
+    assert paired.contest is not None and paired.contest.strength == 'strong'
+    assert {a.model_copy(update={'native': ()}) for a in paired.atoms} == set(evidence)
+    assert all(paired.atoms[i].newer_rva == new for i in paired.contest.against)
 
 
 @FAST

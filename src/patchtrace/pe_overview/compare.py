@@ -4,6 +4,8 @@ from __future__ import annotations
 from collections.abc import Callable
 from typing import Any
 
+from .labels import embedded_label
+from .metadata import PeMetadata
 from .models import FieldComparison, PeOverview
 
 IDENTITY = 'recorded file identity'
@@ -116,3 +118,164 @@ def compare_overviews(older: PeOverview, newer: PeOverview) -> tuple[FieldCompar
             reason = _import_reason(older, newer) if name == 'Imported DLLs' else 'values differ'
             out.append(FieldComparison(name, sa, sb, 'changed', reason, provenance))
     return tuple(out)
+
+
+# --- version, manifest and signature (SPEC-51 D2-5) --------------------------------------------------------------
+
+VERSION_SRC = 'RT_VERSION resource (VS_VERSIONINFO), verified bytes'
+MANIFEST_SRC = 'RT_MANIFEST resource, verified bytes, parsed without DTDs or entities'
+SIGNATURE_SRC = 'WIN_CERTIFICATE PKCS#7 container: structure and digest only, chain not evaluated'
+NONE = '(none)'
+NOT_APPLICABLE = 'not applicable'
+LEAD_FIELD = 'Combined lead (not a verdict)'
+LEAD_TEXT = 'newer build requests administrator rights and is not signed (a lead, not a verdict)'
+_STRENGTH = {'md5': 0, 'sha1': 1, 'sha256': 2, 'sha384': 3, 'sha512': 4}
+Getter = Callable[[PeMetadata, 'str | None'], str]
+
+
+def _primary_block(meta: PeMetadata):
+    if meta.version is None or meta.version.primary_index is None:
+        return None
+    return meta.version.blocks[meta.version.primary_index]
+
+
+def _quad(attr: str) -> Getter:
+    def get(meta: PeMetadata, _trust: str | None) -> str:
+        block = _primary_block(meta)
+        if block is None or block.fixed is None:
+            return NONE
+        return '.'.join(str(part) for part in getattr(block.fixed, attr))
+    return get
+
+
+def _string(key: str) -> Getter:
+    def get(meta: PeMetadata, _trust: str | None) -> str:
+        block = _primary_block(meta)
+        return next((s.value for s in block.strings if s.key == key), NONE) if block else NONE
+    return get
+
+
+def _manifest_value(read: Callable[[Any], Any]) -> Getter:
+    def get(meta: PeMetadata, _trust: str | None) -> str:
+        value = read(meta.manifests[0]) if meta.manifests else None
+        if value is None or value == ():
+            return NONE
+        if isinstance(value, bool):
+            return 'yes' if value else 'no'
+        return ', '.join(value) if isinstance(value, tuple) else str(value)
+    return get
+
+
+def _dependencies(found) -> tuple[str, ...]:
+    return tuple(f'{d.name} {d.version}'.strip() for d in found.dependencies if d.name or d.version)
+
+
+def _signers(attr: str, fallback: str) -> Getter:
+    def get(meta: PeMetadata, _trust: str | None) -> str:
+        if not meta.signatures:
+            return '(not signed)'
+        names = [getattr(s, attr) or getattr(s, fallback) or '(unnamed)' for sig in meta.signatures
+                 for s in sig.signers]
+        return '; '.join(dict.fromkeys(names)) or '(no signer)'
+    return get
+
+
+def _digest_algorithms(meta: PeMetadata, _trust: str | None) -> str:
+    return '; '.join(dict.fromkeys(s.digest_algorithm for s in meta.signatures)) or '(not signed)'
+
+
+def _digest_state(meta: PeMetadata, _trust: str | None) -> str:
+    if not meta.signatures:
+        return NOT_APPLICABLE
+    states = {s.digest_match for s in meta.signatures}
+    if False in states:
+        return 'does NOT match'
+    return 'matches' if states == {True} else 'not computed'
+
+
+def _claims(meta: PeMetadata, _trust: str | None) -> str:
+    claims = [f'{t.kind} {t.claimed_time_utc}' for s in meta.signatures for t in s.timestamps if t.claimed_time_utc]
+    return '; '.join(dict.fromkeys(claims)) or NONE
+
+
+def _embedded(meta: PeMetadata, trust: str | None) -> str:
+    return embedded_label(meta.signatures, trust)
+
+
+_METADATA_ROWS: tuple[tuple[str, str, Getter], ...] = (
+    ('File version (fixed)', VERSION_SRC, _quad('file_version')),
+    ('Product version (fixed)', VERSION_SRC, _quad('product_version')),
+    ('FileVersion string', VERSION_SRC, _string('FileVersion')),
+    ('ProductVersion string', VERSION_SRC, _string('ProductVersion')),
+    ('OriginalFilename', VERSION_SRC, _string('OriginalFilename')),
+    ('InternalName', VERSION_SRC, _string('InternalName')),
+    ('CompanyName', VERSION_SRC, _string('CompanyName')),
+    ('FileDescription', VERSION_SRC, _string('FileDescription')),
+    ('ProductName', VERSION_SRC, _string('ProductName')),
+    ('Requested execution level', MANIFEST_SRC, _manifest_value(lambda o: o.execution_level)),
+    ('UI access', MANIFEST_SRC, _manifest_value(lambda o: o.ui_access)),
+    ('Supported OS', MANIFEST_SRC, _manifest_value(lambda o: o.supported_os)),
+    ('Dependent assemblies', MANIFEST_SRC, _manifest_value(_dependencies)),
+    ('Long path aware', MANIFEST_SRC, _manifest_value(lambda o: o.long_path_aware)),
+    ('DPI awareness', MANIFEST_SRC, _manifest_value(lambda o: o.dpi_awareness)),
+    ('Signature (embedded)', SIGNATURE_SRC, _embedded),
+    ('Signer subject', SIGNATURE_SRC, _signers('subject_cn', 'subject_dn')),
+    ('Signer issuer', SIGNATURE_SRC, _signers('issuer_cn', 'issuer_dn')),
+    ('Signature digest algorithm', SIGNATURE_SRC, _digest_algorithms),
+    ('Signature digest vs file', SIGNATURE_SRC, _digest_state),
+    ('Claimed signing time (not verified)', SIGNATURE_SRC, _claims),
+)
+
+
+def describe_metadata(meta: PeMetadata, trust: str | None = None) -> tuple[tuple[str, str, str], ...]:
+    """(field, value, provenance) of one side with the same wording as the comparison rows."""
+    return tuple((name, get(meta, trust), provenance) for name, provenance, get in _METADATA_ROWS)
+
+
+def _weakest(meta: PeMetadata) -> int:
+    return min((_STRENGTH.get(s.digest_algorithm, -1) for s in meta.signatures), default=-1)
+
+
+def _metadata_reason(name: str, older: PeMetadata, newer: PeMetadata) -> str:
+    if name == 'Requested execution level':
+        return 'privilege request changed'
+    if name == 'Signature (embedded)' and bool(older.signatures) != bool(newer.signatures):
+        return 'signature removed' if older.signatures else 'signature added'
+    if name in ('Signer subject', 'Signer issuer'):
+        return 'signer changed'
+    if name == 'Signature digest algorithm' and _weakest(newer) < _weakest(older):
+        return 'digest algorithm weaker'
+    return 'values differ'
+
+
+def compare_metadata(older: PeMetadata | None, newer: PeMetadata | None, *,
+                     trust: tuple[str | None, str | None] = (None, None)) -> tuple[FieldComparison, ...]:
+    """Old/new rows for version, manifest and signature facts, changed rows first, order otherwise stable.
+
+    `trust` carries the Windows `TrustResult.status` of each side when the platform probe ran.
+    """
+    if older is None or newer is None:
+        missing = ' and '.join(side for side, meta in (('older', older), ('newer', newer)) if meta is None)
+        return (FieldComparison('Version and signing', '', '', 'unavailable',
+                                f'not available in {missing} file', VERSION_SRC),)
+    out = []
+    for name, provenance, get in _METADATA_ROWS:
+        a, b = get(older, trust[0]), get(newer, trust[1])
+        if a == b:
+            out.append(FieldComparison(name, a, b, 'unchanged', 'identical values', provenance))
+        else:
+            out.append(FieldComparison(name, a, b, 'changed', _metadata_reason(name, older, newer), provenance))
+    lead = _lead(older, newer)
+    if lead is not None:
+        out.append(lead)
+    return tuple(sorted(out, key=lambda r: r.status != 'changed'))
+
+
+def _lead(older: PeMetadata, newer: PeMetadata) -> FieldComparison | None:
+    """Both deltas together: a neutral field diff each, a triage lead jointly (never a verdict)."""
+    level = _manifest_value(lambda o: o.execution_level)
+    old_level, new_level = level(older, None), level(newer, None)
+    if new_level != 'requireAdministrator' or old_level == new_level or newer.signatures or not older.signatures:
+        return None
+    return FieldComparison(LEAD_FIELD, f'{old_level}; signature present', f'{new_level}; not signed', 'changed',
+                           LEAD_TEXT, f'{MANIFEST_SRC}; {SIGNATURE_SRC}')
