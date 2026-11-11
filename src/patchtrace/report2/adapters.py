@@ -7,6 +7,10 @@ refusal by a section builder (`PT-EXPORT-SECTION`) is not a producer failure and
 
 Sections without a stored producer stay `None`: `series` (an `nway/1` series lives in a series folder with its own
 `series.json`, not in a project, so no project-scoped record exists to read).
+
+`advisories` has two producers, each behind its own guard: the project's CSAF store and the KB context a project made
+by `kb import-pair` or `kb attach` carries (amendment A-2, `kb_context`). The KB records follow the CSAF records; a
+project without a KB context exports what it did before.
 """
 from __future__ import annotations
 
@@ -29,11 +33,11 @@ FACTS_NOT_PARSED = ('build_facts: signer_subject, manifest_exec_level, original_
 
 
 class _Unknowns(list):
-    def attempt(self, section: str, producer: Callable[[], T]) -> T | None:
+    def attempt(self, section: str, producer: Callable[[], T], omitted: str = 'section omitted') -> T | None:
         try:
             return producer()
         except Exception as exc:  # noqa: BLE001 - a failing producer degrades its section only
-            self.append(f'{section}: producer failed ({type(exc).__name__}); section omitted')
+            self.append(f'{section}: producer failed ({type(exc).__name__}); {omitted}')
             return None
 
 
@@ -140,6 +144,33 @@ def _advisories(service, unknowns: _Unknowns) -> _Rows | None:
     return _Rows(tuple(records)) if records else None
 
 
+def _kb_context(service, unknowns: _Unknowns) -> tuple[AdvisoryRecord, ...]:
+    """The `kb` and `cve` records of the KB context the project carries (A-2). Read-only: `entries` creates no
+    table, and the guard keeps that true if the store ever changes. A context prepared for another file pair says
+    nothing about these two files, so it is named in `unknowns` and left out."""
+    import json
+
+    from ..enrichment.storage import EnrichmentStore
+    from . import kb_context
+    if not _has_enrichment(service):
+        return ()
+    bundle = kb_context.latest(json.dumps(e.body) for e in EnrichmentStore(service.store).entries('kb-context'))
+    if bundle is None:
+        return ()
+    if (bundle.older_sha, bundle.newer_sha) != _pair(service.project):
+        unknowns.append(kb_context.NOTE_OTHER_PAIR)
+        return ()
+    records, notes = kb_context.records(bundle)
+    unknowns.extend(notes)
+    return records
+
+
+def _with_kb_context(advisories: _Rows | None, kb_rows: tuple[AdvisoryRecord, ...] | None) -> _Rows | None:
+    if not kb_rows:
+        return advisories
+    return _Rows((*(advisories.rows if advisories else ()), *kb_rows))
+
+
 def _pe_facts(artifact, root, unknowns: _Unknowns) -> list[FactRecord]:
     from ..artifact_bytes import ArtifactBytesError, VerifiedArtifactReader
     from ..intelligence.csaf.identity import read_version_info
@@ -231,6 +262,8 @@ def collect_from_service(service) -> SectionInputs:
     unknowns = _Unknowns()
     evidence = unknowns.attempt('engine_evidence', lambda: _evidence(service, unknowns))
     advisories = unknowns.attempt('advisories', lambda: _advisories(service, unknowns))
+    advisories = _with_kb_context(advisories, unknowns.attempt(
+        'advisories (KB context)', lambda: _kb_context(service, unknowns), 'its kb and cve records are omitted'))
     facts = unknowns.attempt('build_facts', lambda: _build_facts(service, unknowns))
     leads = unknowns.attempt('leads', lambda: _leads(service, unknowns))
     unified = unknowns.attempt('unified_result', UnifiedReferencePort(service).load)
