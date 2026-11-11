@@ -48,9 +48,13 @@ def _reject_constant(name):
 
 
 def strict_json(data: bytes | str):
-    """UTF-8 JSON with duplicate keys and NaN/Infinity rejected (same discipline as acquisition.winbindex)."""
+    """UTF-8 JSON; duplicate keys, NaN/Infinity and nesting beyond the parser limit raise ValueError (same
+    discipline as acquisition.winbindex)."""
     text = data.decode('utf-8') if isinstance(data, bytes) else data
-    return json.loads(text, object_pairs_hook=_no_duplicates, parse_constant=_reject_constant)
+    try:
+        return json.loads(text, object_pairs_hook=_no_duplicates, parse_constant=_reject_constant)
+    except RecursionError:  # a RuntimeError: without this it passes every caller's `except ValueError`
+        raise ValueError('JSON nesting limit exceeded') from None
 
 
 def canonical_json(value) -> bytes:
@@ -237,9 +241,11 @@ def parse_artifact(data: bytes, *, today: dt.date | None = None) -> CalibrationA
         raise ArtifactError('artifact exceeds 512 KiB')
     try:
         document = strict_json(data)
+        # The C parser accepts far deeper documents than the recursive `_finite` walk can follow.
+        finite = isinstance(document, dict) and _finite(document)
     except (UnicodeDecodeError, ValueError, RecursionError) as exc:
         raise ArtifactError(f'not strict JSON: {exc}') from None
-    if not isinstance(document, dict) or not _finite(document):
+    if not finite:
         raise ArtifactError('artifact must be a JSON object of finite numbers')
     try:
         artifact = CalibrationArtifact.model_validate_json(data)

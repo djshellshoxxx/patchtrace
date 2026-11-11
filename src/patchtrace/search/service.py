@@ -511,7 +511,7 @@ class SearchService:
             body = json.loads(base64.urlsafe_b64decode(request.cursor + '=' * (-len(request.cursor) % 4)))
             offset = int(body['o'])
             same = (body['k'], body['q'], body['s']) == (plan_request.index_key, request.plan.digest(), request.sort)
-        except (ValueError, KeyError, TypeError):
+        except (ValueError, KeyError, TypeError, RecursionError):
             raise SearchError('PT-SEARCH-INPUT', 'the page cursor is not valid') from None
         if not same or offset < 0:
             raise SearchError('PT-SEARCH-STALE', 'the index or the query changed since this page; search again',
