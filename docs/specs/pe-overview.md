@@ -62,6 +62,14 @@ not at all (`entropy` None, `entropy_bytes` 0, `sampled=True`), and the file get
 `entropy_budget_exhausted` (status `partial`); checksum skipped with a warning above 256 MiB. Reads are
 made in at most 1 MiB pieces. `cancel()` is polled between stages and between chunks.
 
+Import cap boundary amendment (2026-11-11, audit 20261015 PE-6): the three import caps count entries, and a
+table that ends exactly at a cap is complete. `import_dlls_over_cap`, `import_functions_over_cap` and
+`import_names_over_cap` are raised (and the table or DLL marked truncated) only when a further non-terminator
+entry was read past the cap; that entry is not listed. The reader therefore reads the entry after the cap: a
+zero terminator there ends the table with no warning, and one that is not backed by file data gives
+`import_rva_out_of_file` as anywhere else in the table. The caps, the amount listed and the cancellation
+polls are unchanged.
+
 ## Semantics
 
 - Kind: `DLL` if IMAGE_FILE_DLL; else `SYS` if subsystem is NATIVE; else `EXE` if IMAGE_FILE_EXECUTABLE_IMAGE;
