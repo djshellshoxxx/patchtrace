@@ -86,3 +86,10 @@ def test_cli_reports_failure(tmp_path, capsys):
     p.write_text(json.dumps(manifest(case(), case())), encoding="utf-8")
     assert L1.main([str(p)]) == 1
     assert "duplicate" in capsys.readouterr().err
+
+
+def test_cli_refuses_a_path_outside_the_allowed_roots(monkeypatch, capsys):
+    # Every file argument goes through pathguard.confine: /etc/passwd is refused before it is opened.
+    monkeypatch.delenv("RQ_ALLOWED_DIRS", raising=False)
+    assert L1.main(["/etc/passwd"]) == 2
+    assert "outside the working directory" in capsys.readouterr().err

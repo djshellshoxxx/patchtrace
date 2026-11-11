@@ -102,3 +102,77 @@ the predicted `(product, file set)` equals the expected one:
   the expected files. `unverified` cases never enter a headline accuracy claim.
 - Report per stratum and overall as "at least X% (95% one-sided), n cases, k errors" per the AV plan. Cases that share
   a CVE or a (KB, file) are not independent; count independent units, not rows.
+
+## Running the corpus: `l1-run` (added 2026-11-11)
+
+Status: the runner exists and its mechanics are tested on a synthetic manifest and the synthetic CVRF month of
+`tests/fixtures/kbcorrelation/`. It has not been run on a real MSRC month (none can be fetched in the build
+sandbox), the manifest above is still not frozen, and **no L1 accuracy figure exists**.
+
+Files: `tools/research_qualification/l1_run.py` (runner, receipt contract `rq-l1-run/1`),
+`tests/test_research_qualification_l1_run.py`.
+
+### How to run
+
+1. Freeze the manifest before any scored run: `python -m tools.research_qualification.l1_check` prints
+   `manifest_sha256`. Record that value where the run is reviewed (this file or the pull request). Editing a case
+   afterwards changes the hash, and the runner then refuses the manifest.
+2. Save the CVRF month documents the cases name into one directory, one file per month (`.json` or `.xml`,
+   optionally `.gz`; any file name). The runner reads the month from each document, not from its name.
+3. Optional file leg: save the Winbindex record of each expected file as `<file>.json` or `<file>.json.gz` in one
+   directory and note the date the records were downloaded.
+4. Preview, then run from the repository root. `PYTHONPATH=src` makes the run score this checkout; the runner
+   refuses a `patchtrace` package imported from anywhere else:
+
+```
+PYTHONPATH=src python -m tools.research_qualification l1-run docs/research/accuracy-cases/l1-join-candidates.json --dry-run
+PYTHONPATH=src python -m tools.research_qualification l1-run docs/research/accuracy-cases/l1-join-candidates.json \
+    --months DIR --out build/research-receipts/l1-run.json --frozen-sha <manifest_sha256> \
+    --evidence-class live [--winbindex DIR --winbindex-date YYYY-MM-DD]
+```
+
+Paths must be inside the working directory, the temp directory or a root named in `RQ_ALLOWED_DIRS`. Exit codes:
+0 every asked case passed, 1 at least one case failed, 2 blocked or usage error (unfrozen manifest, missing flag,
+path outside the allowed roots, existing receipt, or any case left BLOCKED). `--evidence-class` is required and is
+never guessed: `synthetic` for fixtures, `live` for real vendor documents. `--dry-run` asks nothing, writes
+nothing and works on an unfrozen manifest.
+
+### What is asked
+
+The runner imports each month through `kb index import` into a throw-away workspace and then, for every
+`facts: verified` case, calls the product's own `kb search <CVE> --months <month>` and, for the file leg,
+`kb pairs`. It does not re-implement the join, fetches nothing and executes nothing.
+
+| leg | question | pass when |
+| --- | --- | --- |
+| edge | does the month list the CVE to KB edge | `kb search` lists an edge with the case's `kb`. For stratum `no-kb`: it lists no KB edge for the CVE |
+| scope | does that edge carry the expected product | an edge for that KB shows the case's `product` string, or (when several advisory names share one product scope) the scope the product's own catalogue derives from that string; the receipt says which (`scope_match`) |
+| file | only with `--winbindex`: does each expected file resolve | `kb pairs` returns at least one pair candidate that is not hard-blocked (grade X) for that KB, file and product, and the file index does not say the file was unchanged in that KB |
+
+Case outcome: `PASS` when every asked leg passed; `FAIL` when a leg failed; `BLOCKED` when the case could not be
+answered (its month is not in `--months`, no record for an expected file is in `--winbindex`, or the join raised).
+A BLOCKED case is not a miss and is in no pass/fail count. `facts: unverified` cases are listed under `excluded`,
+are never asked and are in no count.
+
+### Differences from the proposed scoring rule above (amendment, 2026-11-11)
+
+- File set equality is **not** evaluated. MSRC names no files, so the join takes the file name as input and cannot
+  predict a set; the file leg only says whether the expected name resolves.
+- `non-windows-kb`: only the edge and scope legs are asked. "Returns no Windows pair" is not evaluated.
+- `rollup-vs-security-only`: each of the two cases is asked on its own KB; both passing is "both KBs returned".
+- The bound is the one-sided exact lower bound of `sample_size.lower_bound` over **independent products**: a
+  product counts as correct only when every scored case of it passed. It is printed for `--evidence-class live`
+  only; a synthetic receipt carries `bound: null`.
+- Expected from the product's stated file-index coverage, not yet measured: with `--winbindex` the four verified
+  cases whose `product` is a Windows Server name and the one case with a `.tsp` file will fail the file leg (the
+  file index covers Windows 10/11 client x64 and refuses that extension).
+
+### Receipt (`rq-l1-run/1`)
+
+One JSON file, created exclusively (an existing receipt is never overwritten) and byte-identical for the same
+inputs: no timestamps, no local paths. Fields: `status` (`PASS`/`FAIL`/`BLOCKED`), `stop_reason`, `layer` (`L1`),
+`evidence_class`, `limits` (the honesty limits, repeated in every receipt), `file_rule`, `manifest` (hash and the
+frozen hash), `inputs` (each month file with its SHA-256, release month and load status; the Winbindex records
+and their data date), `counts` (cases, excluded, asked, PASS/FAIL/BLOCKED, per-leg and per-stratum counts),
+`bound`, `cases` (per case: outcome, reason, the three legs, per-file detail, what the join returned) and
+`excluded`.
