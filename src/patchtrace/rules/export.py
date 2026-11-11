@@ -29,6 +29,7 @@ from .contracts import (
     RuleCandidate,
     RuleDecision,
     RuleVersion,
+    plain_line,
 )
 from .errors import RuleError
 from .matrix import totals
@@ -147,11 +148,27 @@ def _in_git_tree(folder: Path) -> bool:
     return any((parent / '.git').exists() for parent in (folder, *folder.parents))
 
 
+MAX_BASENAME = 128
+
+
+def _valid_basename(name: str) -> bool:
+    """What ``ExportRecord.basename`` accepts: 1..128 characters of single-line plain text."""
+    try:
+        plain_line(name)
+    except (ValueError, UnicodeError):
+        return False
+    return 0 < len(name) <= MAX_BASENAME
+
+
 def write(plan: ExportPlan, version: RuleVersion, out: Path, *, allow_git_tree: bool = False,
           now: datetime | None = None) -> ExportRecord:
     """Creates `out` (never replaces a file), LF line ends, and returns the record to store: the basename and the hash."""
     if out.suffix != '.yar':
         raise RuleError('PT-RULE-EXPORT', 'The file name must end in .yar', reason='suffix')
+    if not _valid_basename(out.name):
+        # The record allows 128 printable characters: refuse before the file exists (issue #105 BUG-RULE-3).
+        raise RuleError('PT-RULE-EXPORT', f'The file name must be at most {MAX_BASENAME} printable characters',
+                        reason='name')
     folder = out.resolve().parent
     if not folder.is_dir():
         raise RuleError('PT-RULE-EXPORT', 'The folder of the file does not exist', reason='no-folder')

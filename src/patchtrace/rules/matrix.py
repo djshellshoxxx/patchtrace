@@ -14,7 +14,9 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
 import re
+import stat
 import threading
 from collections import Counter
 from collections.abc import Callable, Iterable, Mapping, Sequence
@@ -59,11 +61,21 @@ def direction_of(version: RuleVersion) -> str:
 
 # --- the builds ------------------------------------------------------------------------------------------------------
 
-def _digest(path: Path) -> tuple[str, int]:
+def _digest(path: Path, max_bytes: int = DEFAULT_LIMITS.file_bytes) -> tuple[str, int]:
+    """SHA-256 and size of a regular file of at most `max_bytes`. A device, FIFO or folder is refused before it is
+    opened (opening a FIFO blocks; /dev/zero never ends; issue #105 BUG-RULE-6), as the scan worker refuses them."""
     sha, size = hashlib.sha256(), 0
     try:
+        if not stat.S_ISREG(os.stat(path).st_mode):
+            raise RuleError('PT-RULE-INPUT', 'A file of the test is not a regular file', reason='not-a-file')
         with open(path, 'rb') as handle:
+            info = os.fstat(handle.fileno())
+            if not stat.S_ISREG(info.st_mode) or info.st_size > max_bytes:
+                raise RuleError('PT-RULE-INPUT', 'A file of the test is not a regular file or is too large',
+                                reason='bad-input-file')
             while chunk := handle.read(READ_CHUNK):
+                if size + len(chunk) > max_bytes:
+                    raise RuleError('PT-RULE-INPUT', 'A file of the test is too large', reason='bad-input-file')
                 sha.update(chunk)
                 size += len(chunk)
     except OSError:
@@ -140,7 +152,7 @@ def read_expectations(path: Path) -> dict[str, str]:
     """`{"<sha256 or file name>": "hit" | "no-hit" | "unknown"}` from a small JSON file."""
     try:
         data = json.loads(path.read_text(encoding='utf-8'))
-    except (OSError, ValueError):
+    except (OSError, ValueError, RecursionError):             # deep nesting too (issue #105 BUG-RULE-5)
         raise RuleError('PT-RULE-INPUT', 'The expectations file could not be read as JSON', reason='expect-file') from None
     if not isinstance(data, dict) or not all(isinstance(k, str) and v in ('hit', 'no-hit', 'unknown')
                                              for k, v in data.items()):
@@ -176,9 +188,20 @@ def score(cells: Sequence[CellResult], targets: Sequence[TargetRef], directions:
 
 
 def rescored(run: MatrixRun, targets: Sequence[TargetRef], versions: Sequence[RuleVersion]) -> MatrixRun:
-    """A stored run with the current expectations (the cache key does not cover them)."""
-    cells = score(run.cells, targets, [direction_of(v) for v in versions])
-    return run.model_copy(update={'targets': tuple(targets), 'cells': cells})
+    """A stored run with the current expectations (the cache key does not cover them).
+
+    The cache key sorts targets and rules, so a hit may list them in another order than the stored grid: each stored
+    cell is moved to the row of its target's SHA-256 and the column of its rule's SHA-256 before scoring. Pairing
+    cells and files by position gave one file's verdict to another (issue #105 BUG-RULE-1)."""
+    width = len(run.rules)
+    row_of = {target.sha256: index for index, target in enumerate(run.targets)}
+    column_of = {rule.rule_sha256: index for index, rule in enumerate(run.rules)}
+    columns = [column_of[v.rule_sha256] for v in versions]
+    rules = tuple(run.rules[column] for column in columns)
+    cells = (tuple(run.cells[row_of[t.sha256] * width + column] for t in targets for column in columns)
+             if run.cells else ())
+    cells = score(cells, targets, [direction_of(v) for v in versions])
+    return run.model_copy(update={'targets': tuple(targets), 'rules': rules, 'cells': cells})
 
 
 def cache_key(versions: Sequence[RuleVersion], targets: Sequence[TargetRef], engine_version: str, timeout_s: int,

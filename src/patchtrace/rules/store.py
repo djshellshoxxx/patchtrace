@@ -23,6 +23,7 @@ import json
 import os
 import tempfile
 from collections.abc import Callable
+from datetime import datetime, timedelta
 from pathlib import Path
 from typing import TypeVar
 
@@ -56,14 +57,29 @@ def pair_key(pair: tuple[str, str]) -> str:
     return hashlib.sha256(f'{pair[0]}:{pair[1]}'.encode('ascii')).hexdigest()
 
 
+def _instant(stamp: str) -> datetime:
+    return datetime.fromisoformat(stamp.replace('Z', '+00:00'))
+
+
+def _decision_id(candidate_id: str, action: str, label: str | None, note: str, decided_at: str, advisories: dict) -> str:
+    identity = {'candidate_id': candidate_id, 'action': action, 'label': label, 'note': note,
+                'decided_at': decided_at, **advisories}
+    return domain_id(DECISION, 1, identity)
+
+
+def _restamped(decision: RuleDecision, decided_at: str) -> RuleDecision:
+    advisories = {'cve': list(decision.cve), 'kb': list(decision.kb), 'cwe': list(decision.cwe)}
+    return decision.model_copy(update={'decided_at': decided_at, 'decision_id': _decision_id(
+        decision.candidate_id, decision.action, decision.analyst_label, decision.note, decided_at, advisories)})
+
+
 def decision_for(candidate: RuleCandidate, action: str, decided_at: str, *, label: str | None = None, note: str = '',
                  cve=(), kb=(), cwe=()) -> RuleDecision:
     """The analyst's decision on a candidate. The id covers what was decided and when, so a changed mind is a new row."""
     advisories = {name: sorted(set(values)) for name, values in (('cve', cve), ('kb', kb), ('cwe', cwe))}
-    identity = {'candidate_id': candidate.candidate_id, 'action': action, 'label': label, 'note': note,
-                'decided_at': decided_at, **advisories}
     try:
-        return RuleDecision(decision_id=domain_id(DECISION, 1, identity), candidate_id=candidate.candidate_id,
+        return RuleDecision(decision_id=_decision_id(candidate.candidate_id, action, label, note, decided_at, advisories),
+                            candidate_id=candidate.candidate_id,
                             action=action, analyst_label=label, note=note, decided_at=decided_at,
                             **{name: tuple(values) for name, values in advisories.items()})
     except ValidationError:
@@ -144,6 +160,16 @@ class RuleStore:
         return self._append(CANDIDATE, _pair(candidate.source), candidate.candidate_id, _body(candidate))
 
     def add_decision(self, decision: RuleDecision, source: PairSource) -> bool:
+        """Stores a decision. Decisions are history ordered by `decided_at`, so a backdated one sorts where it belongs;
+        but one stamped in the same second as the candidate's latest decision, and not after it, is stamped a
+        microsecond after it, so of two decisions made in one second the one made last is in force (issue #105
+        BUG-RULE-2; before this the hash of the decision broke the tie)."""
+        earlier = self.decisions(decision.candidate_id)
+        if earlier and decision.decision_id not in {d.decision_id for d in earlier}:
+            latest, stamp = _instant(earlier[-1].decided_at), _instant(decision.decided_at)
+            if latest.replace(microsecond=0) <= stamp <= latest:
+                later = (latest + timedelta(microseconds=1)).isoformat(timespec='microseconds')
+                decision = _restamped(decision, later)
         return self._append(DECISION, _pair(source), decision.decision_id, _body(decision))
 
     def add_version(self, version: RuleVersion) -> bool:
@@ -196,7 +222,7 @@ class RuleStore:
     def decisions(self, candidate_id: str | None = None) -> list[RuleDecision]:
         """Oldest first; the last one of a candidate is the one in force."""
         found = [d for d in self._read(DECISION, RuleDecision) if candidate_id in (None, d.candidate_id)]
-        return sorted(found, key=lambda d: (d.decided_at, d.decision_id))
+        return sorted(found, key=lambda d: (_instant(d.decided_at), d.decision_id))
 
     def versions(self, lineage_id: str | None = None) -> list[RuleVersion]:
         found = [v for v in self._read(VERSION, RuleVersion) if lineage_id in (None, v.lineage_id)]
@@ -236,7 +262,10 @@ class RuleStore:
         data = path.read_bytes()
         if hashlib.sha256(data).hexdigest() != body.get('sidecar_sha256'):
             raise RuleError('PT-RULE-INTEGRITY', 'A stored test grid failed its hash check', reason='sidecar-hash')
-        return json.loads(data)
+        try:
+            return json.loads(data)
+        except (ValueError, RecursionError):     # hash-consistent but not JSON: skipped, never a crash (#105 RULE-4)
+            raise RuleError('PT-RULE-INTEGRITY', 'A stored test grid is not readable', reason='sidecar-json') from None
 
 
 def _pair(source: PairSource) -> tuple[str, str]:

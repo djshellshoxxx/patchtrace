@@ -197,6 +197,9 @@ def simple_paths(
             _tick(visits, cancel)
             depth = len(path)  # edges used if the next node is appended
             for w in iters[-1]:
+                visits += 1                         # every successor examined counts (issue #105 BUG-CG-1)
+                if visits > budget:
+                    return PathsResult(tuple(found), True)
                 if w in on_path:
                     continue
                 if w == dst:
