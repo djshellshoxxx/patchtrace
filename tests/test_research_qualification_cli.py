@@ -4,6 +4,7 @@ from __future__ import annotations
 import json
 import subprocess
 import sys
+import tempfile
 from pathlib import Path
 
 import pytest
@@ -67,8 +68,12 @@ def test_paths_outside_allowed_roots_are_refused(tmp_path, monkeypatch):
     f = tmp_path / "ok.json"
     f.write_text("{}")
     assert PG.confine(f) == f.resolve()
+    # Climb to the filesystem root whatever the depth of tmp_path: under pytest-xdist it sits one directory
+    # deeper (popen-gwN), so a fixed number of ".." stopped inside the allowed temp directory.
+    escape = tmp_path.joinpath(*[".."] * len(tmp_path.resolve().parts), "etc", "passwd")
+    assert not escape.resolve().is_relative_to(Path(tempfile.gettempdir()).resolve())
     with pytest.raises(PG.PathGuardError):
-        PG.confine(tmp_path / ".." / ".." / ".." / ".." / "etc" / "passwd")
+        PG.confine(escape)
     with pytest.raises(PG.PathGuardError):
         PG.confine("")
     monkeypatch.setenv("RQ_ALLOWED_DIRS", "/etc")
