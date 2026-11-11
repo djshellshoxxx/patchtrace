@@ -88,3 +88,20 @@ Budget: seven-day status allowed_warning since about 07:55Z: no new Opus workers
 | 2026-11-11T00:40 | #268 exact-head live gates run 42349827643 (b29351d4) | FAIL, not this PR's | required CI all green on b29351d4 (qa x2, qt-gate 4+1, linux-package, linux-smoke x2, Tier R shards); live jobs fail before scoring: Ubuntu bench `ImportError: libEGL.so.1`; Linux pairs/mutants `[no-completed-run]` (zipfile drops Ghidra exec bits); Windows identical A/A `RuntimeError: Ghidriff run identical: None` (main has no force_identical_diff); Windows other pairs `[no-completed-run]` (cause hidden: main's live_pairs drops failure text); one comment on #268 |
 | 2026-11-11T00:55 | port #174 live-harness infra onto main | built + CONFIRMED (workflow wf_a10f1417-1d1) | branch claude/live-harness-infra-20261111 head c59ccada: 3d835492, 78733709, 33c7ad32, 8bf6338a, f4c4a6d5 cherry-picked -x onto 882d1ca0; backend.py keeps main's #251 timeout/progress and adds #174 cause tags + opt-in force_identical_diff; 321 focused + 3,521 broad passed; verifier 359 passed, 1 low (671f7ecb test superseded by r1 test) |
 | 2026-11-11T01:00 | live proof branch claude/live-proof-20261111 (infra + #268) | live gates dispatched | head 18efb7ef; one-hunk live_pairs.py conflict between the two PRs resolved (zero-row warning, then sidecar); 76 focused passed |
+
+## Handoff (paused 2026-11-11T01:20Z on the owner's relayed stop order)
+
+Patchtrace work in this session is paused. No merges to main were made by this session after #173/#175; nothing was force-pushed.
+
+| Branch | Head | PR | State |
+|---|---|---|---|
+| `claude/affectionate-galileo-bqd3tw` | `b29351d4` | #268 (draft) | RB-01 G-U2/G-U3 harness fix on main 652677b0 (merges cleanly with 882d1ca0). Required CI green. Advisory live-gates run 42349827643 RED: not this PR's (main lacks #174 live-harness infra; commented once on #268). |
+| `claude/live-harness-infra-20261111` | `c59ccada` | #286 (draft) | #174 live-harness infra (Ghidra exec bits, EGL, opt-in force_identical_diff, native failure text) on main 882d1ca0; independent review CONFIRMED; full suite x2 locally 20,840 passed, 1 known main failure. CI on this head not yet read. |
+| `claude/live-proof-20261111` | `18efb7ef` | none (CI-only: #286 + #268) | unified-live-gates run 42933287696 dispatched; result UNREAD. |
+| `claude/autonomous-finish-20261104` | this commit | draft PR opened for the handoff | integration branch: waves A+B; 129 commits not on main, 8 patch-equivalent; NOT mergeable as-is, needs per-slice reconciliation against main/#205/#218/#235. |
+| `claude/ws-bc-20261104` | `e1193c8` | #174 (draft) | source of #268/#286; RB-01 live proof run 41800958832 green 30/30 (G-U2 recall 1.0 x12, G-U3 contradicted 0). |
+| `claude/ws-p-20261104` | unchanged | #176 (draft) | partly landed as #215/#217. |
+
+Remaining work: read run 42933287696 and record it on #268/#286; whichever of #268/#286 merges second has a one-hunk `tools/unified/live_pairs.py` conflict (keep both: zero-row warning, then sidecar); G-U1 (X-vs-X 4-5 candidate rows, 6-9 missing RVAs per variant) uninvestigated; reconcile the integration branch.
+Known red / failures (pre-existing on main, not caused here): `tests/test_research_qualification_cli.py::test_paths_outside_allowed_roots_are_refused` (xdist-only); `tests/test_kb_winbindex_refresh_20261105.py:105` `gzip.compress(b'{}')` without `mtime=0` breaks xdist collection; SonarCloud D on #174 (owner decision).
+Owner questions open: SonarCloud disposition (mark Safe or exclude `tools/**`); network allowlist for sonarcloud.io and the Actions artifact host; closing superseded PRs; whether this session's 12-hour check-in `trig_01W9SBayAYTw85JjeGKLiVmB` should be paused.
