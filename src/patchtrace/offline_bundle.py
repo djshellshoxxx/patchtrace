@@ -139,6 +139,15 @@ def _json_no_duplicates(raw: bytes) -> dict:
     return data
 
 
+def windows_unsafe_component(part: str) -> bool:
+    """True when Windows would not store this path component under the name given.
+
+    A trailing dot or space is stripped by Win32, and a reserved device name (with or without an extension)
+    opens the device. A rule on the string, not the running OS: the one copy shared with `ingestion.safe_path`.
+    """
+    return part.endswith((' ', '.')) or part.split('.')[0].rstrip(' ').upper() in WINDOWS_RESERVED
+
+
 def _safe_relative(name: str) -> str:
     """Validate literal portable POSIX paths, including Windows filesystem rules."""
     if not isinstance(name, str) or not name or len(name) > 512 or name.startswith('/'):
@@ -146,9 +155,8 @@ def _safe_relative(name: str) -> str:
     if '\\' in name or '//' in name or any(ord(c) < 32 or ord(c) == 127 for c in name):
         _fail('unsafe archive path')
     parts = name.split('/')
-    if any(part in ('', '.', '..') or part.endswith((' ', '.')) or ':' in part
-           or any(char in part for char in '<>"|?*')
-           or part.split('.')[0].rstrip(' ').upper() in WINDOWS_RESERVED for part in parts):
+    if any(part in ('', '.', '..') or ':' in part or any(char in part for char in '<>"|?*')
+           or windows_unsafe_component(part) for part in parts):
         _fail('unsafe archive path')
     return name
 
