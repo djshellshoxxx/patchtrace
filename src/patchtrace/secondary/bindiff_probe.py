@@ -18,6 +18,7 @@ from collections.abc import Callable, Mapping
 from dataclasses import dataclass
 from pathlib import Path
 
+from ..hostile_text import replace_hostile
 from ..jobs import run_process
 from .contracts import Capability
 from .engine_env import engine_env
@@ -51,9 +52,10 @@ class ProbeReport:
 
 
 def sanitize(text: str, limit: int = 200) -> str:
-    """Strip ANSI/control characters, collapse paths to basenames, cap length (no env values, no paths)."""
-    text = _ANSI.sub('', text)
-    text = ''.join(c if c in '\t' or (ord(c) >= 32 and ord(c) != 127) else ' ' for c in text)
+    """Strip ANSI sequences, turn every hostile character (`hostile_text`: C0, DEL and C1 controls, bidirectional and
+    other format characters, surrogates, U+2028 and U+2029) except a tab into a space, collapse paths to basenames,
+    cap length (no env values, no paths)."""
+    text = replace_hostile(_ANSI.sub('', text), ' ', keep='\t')
     text = _PATHISH.sub(lambda m: ntpath.basename(m.group(0).rstrip('\\/')) or '<path>', text)
     return text.strip()[:limit]
 

@@ -17,15 +17,17 @@ from __future__ import annotations
 import hashlib
 import json
 import re
-import unicodedata
 from collections.abc import Iterable
 from dataclasses import dataclass
 
+from ..hostile_text import replace_hostile
 from . import alias_catalog as catalog
 from .contracts import ProductRef, ProductScope, domain_id
 
 _BIDI = dict.fromkeys(map(ord, '‎‏؜‪‫‬‭‮⁦⁧⁨⁩'))
 _SPACE = re.compile(r'\s+')
+_BREAKS_AND_SURROGATES = {**dict.fromkeys(map(ord, '\n\r\t\u2028\u2029'), ' '),
+                          **dict.fromkeys(range(0xd800, 0xe000), '\ufffd')}
 
 _FAMILY = [(f, re.compile(p)) for f, p in catalog.FAMILY_PATTERNS]
 _CLIENT_VERSION = re.compile(catalog.CLIENT_VERSION_PATTERN)
@@ -38,23 +40,18 @@ _KEYABLE = re.compile(r'^(?:[0-9]{2}H[12]|[0-9]{4})$')
 
 
 def clean_text(value: object, limit: int = 1000) -> str:
-    """Untrusted advisory text as plain text: C0/C1 controls (newline and tab become a space) and bidirectional
-    formatting and other invisible format characters (zero-width, BOM, soft hyphen, tag) are removed, surrogates are replaced, the result is cut to ``limit`` characters. Markup is
-    kept verbatim (it is data; renderers must treat it as plain text)."""
+    """Untrusted advisory text as plain text under the one rule of `patchtrace.hostile_text`: a line break (newline,
+    carriage return, tab, line separator U+2028, paragraph separator U+2029) becomes a space, a surrogate becomes
+    U+FFFD, every other hostile character (C0, DEL and C1 controls, bidirectional, zero-width and other format
+    characters such as the BOM, the soft hyphen and tags) is removed, and the result is cut to ``limit`` characters.
+    Markup is kept verbatim (it is data; renderers must treat it as plain text).
+
+    This runs every time a stored document is parsed again, so it must never move an identity: U+2028 and U+2029 are
+    whitespace to `normal_name` and to the status classifier, which already read them as a space, and one character
+    still becomes one character, so scope, edge and document ids and row counts are what they were."""
     if not isinstance(value, str):
         return ''
-    out = []
-    for ch in value.translate(_BIDI):
-        code = ord(ch)
-        if ch in '\n\r\t':
-            out.append(' ')
-        elif code < 0x20 or 0x7f <= code < 0xa0 or unicodedata.category(ch) == 'Cf':
-            continue
-        elif 0xd800 <= code <= 0xdfff:
-            out.append('�')
-        else:
-            out.append(ch)
-    return ''.join(out)[:limit]
+    return replace_hostile(value.translate(_BREAKS_AND_SURROGATES))[:limit]
 
 
 def safe_label(value: object, limit: int = 60) -> str:
