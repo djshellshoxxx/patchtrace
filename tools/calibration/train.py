@@ -6,7 +6,10 @@ of the engine outputs in `features/1` column order, and the engine-run digests. 
 (`--rows`), or taken from the `features` list of a `shard.py merge` provenance file (`--merge`, optionally checked
 against its `--aggregate` report). Nothing but aggregate-safe tables travels between CI shards and this run.
 
-Order of work, each step failing closed: split audit (`guards.audit_manifest` must have no violation, else `PT-KA-LEAK`,
+The CLI validates recorded preregistration identity before opening corpus inputs; an explicit rehearsal retains the
+unlocked report/key. The library `run_training` accepts an already caller-validated protocol SHA.
+Order of work after input loading, each step failing closed: split audit (`guards.audit_manifest` must have no violation,
+else `PT-KA-LEAK`,
 exit 1) -> controls (A/A, noise, mutation pairs) are excluded from evidence and counted -> rows (indeterminate and
 ambiguous candidates excluded and counted; groups from `lineage.identity_groups(hub_max_lineages=3)`) -> minimum-sample
 guards (below them: a report with every gate `insufficient-data`, no fit) -> `fit.run_pipeline` (grouped nested CV,
@@ -51,6 +54,7 @@ import hashlib
 import json
 import math
 import sys
+import warnings
 from collections import Counter
 from collections.abc import Mapping, Sequence
 from dataclasses import asdict, dataclass, field
@@ -65,6 +69,8 @@ from patchtrace.calibration.artifact import parse_artifact
 from patchtrace.calibration.features import FEATURE_SCHEMA, SPEC_BY_NAME, feature_names
 from patchtrace.calibration.scope import SCOPE_TEXT
 
+from . import prereg as P
+from . import prereg_gate as PG
 from . import shift as SH
 from .bootstrap import MAX_UNDEFINED_SHARE
 from .common import Row, canonical_json, digest, strict_json
@@ -166,7 +172,7 @@ class _Strict(BaseModel):
 
 class EngineRun(_Strict):
     engine: Literal['rz-diff', 'ghidriff']
-    version: str | None = Field(default=None, max_length=200)
+    version: str | None = Field(default=None, max_length=C.MAX_ENGINE_VERSION_CHARS)
     output_sha256: C.Sha256
 
 
@@ -235,35 +241,49 @@ def toolchain_of(side: C.ImageSide) -> str:
 
 
 def _output_from_doc(doc: RS.EngineOutputDoc) -> E.EngineOutput:
-    preds = tuple(E.Prediction(p.old_rva, p.new_rva, p.changed, p.similarity_milli, p.old_name, p.new_name)
-                  for p in doc.predictions)
-    return E.EngineOutput(doc.engine, 'ok', version=doc.version, predictions=preds,
-                          old_only=frozenset(doc.old_only_rvas), new_only=frozenset(doc.new_only_rvas),
-                          implicit_unchanged=doc.implicit_unchanged, ignored_unaddressed=doc.ignored_unaddressed)
+    return RS.engine_output_from_doc(doc)
 
 
-def load_outputs(folder: Path) -> dict[tuple[str, str, str], tuple[E.EngineOutput, str]]:
-    """`tier-r-engine-output/1` files keyed by (older image sha, newer image sha, engine) with the SHA-256 of the
-    canonical document (the engine-run digest). Symbols must be hidden; a duplicate key is an error."""
+class LegacyOutputWarning(UserWarning):
+    """Unmarked output loading validates data but cannot prove successful report credit or transfer ownership."""
+
+
+def load_outputs(folder: Path, *, allow_legacy: bool = True) -> dict[tuple[str, str, str], tuple[E.EngineOutput, str]]:
+    """Load report-bound managed output bytes, or explicitly warn for unverified legacy compatibility.
+
+    Keys are ordered image hashes/engine. Hidden symbols and unique keys are required for both paths;
+    pre-marker directories cannot acquire retrospective credit. Set allow_legacy=False to refuse them.
+    """
+    from .tier_r import output_store as OS
+
     found: dict[tuple[str, str, str], tuple[E.EngineOutput, str]] = {}
-    for path in sorted(Path(folder).rglob('*.json')):
-        raw = path.read_bytes()
-        try:
-            head = strict_json(raw)
-        except ValueError:
-            continue
-        if not isinstance(head, dict) or head.get('contract') != RS.OUTPUT_CONTRACT:
-            continue
-        try:
-            doc = RS.load_engine_output(raw)
-        except (C.ContractError, ValueError) as exc:
-            raise TrainError('PT-KA-EVAL', f'{path.name}: {str(exc)[:300]}') from None
+    try:
+        records = OS.read_credited_outputs(Path(folder))
+        if records is None:
+            if not allow_legacy:
+                raise OS.OutputError('legacy output directory has no verified managed credit')
+            warnings.warn('Legacy output directory is unverified: no successful report credit or transfer ownership',
+                          LegacyOutputWarning, stacklevel=2)
+            records = []
+            for path in OS.legacy_output_paths(Path(folder)):
+                raw = OS.read_output_bytes(path)
+                try:
+                    head = strict_json(raw)
+                except ValueError:
+                    continue
+                if not isinstance(head, dict) or head.get('contract') != RS.OUTPUT_CONTRACT:
+                    continue
+                doc = RS.load_engine_output(raw)
+                records.append((path, raw, doc, hashlib.sha256(canonical_json(head)).hexdigest()))
+    except (C.ContractError, OS.OutputError, ValueError) as exc:
+        raise TrainError('PT-KA-EVAL', str(exc)[:300]) from None
+    for path, _raw, doc, output_sha in records:
         if doc.symbols != 'hidden':
             raise TrainError('PT-KA-EVAL', f'{path.name}: engine output with visible symbols cannot feed training')
         key = (doc.older_sha256, doc.newer_sha256, doc.engine)
         if key in found:
             raise TrainError('PT-KA-EVAL', f'{path.name}: second engine output for the same pair and engine')
-        found[key] = (_output_from_doc(doc), hashlib.sha256(canonical_json(head)).hexdigest())
+        found[key] = (_output_from_doc(doc), output_sha)
     return found
 
 
@@ -628,6 +648,7 @@ class TrainResult:
 def run_training(docs: Sequence[PairRows], cfg: TrainConfig | None = None, *, prereg_sha: str | None = None,
                  tool_git: str = 'unknown', origin: str = 'rows', extra: Mapping | None = None,
                  locked_requested: bool = False) -> TrainResult:
+    """Run the pure pipeline; any protocol SHA must already have been validated by the caller."""
     cfg = cfg or TrainConfig()
     bundle = assemble(docs, tool_git)
     manifest_sha = canonical_manifest_sha256(bundle.manifest)
@@ -738,11 +759,12 @@ def _fit(rows, names, kinds, profile, cfg, key, versions, toolchains, lineages, 
 # ---- CLI --------------------------------------------------------------------------------------------------------------
 
 def _prereg_sha(path: str | None) -> str | None:
+    """Read exact LF protocol bytes; the CLI additionally validates its QA record."""
     if not path:
         return None
     try:
-        return hashlib.sha256(Path(path).read_bytes()).hexdigest()
-    except OSError as exc:
+        return P.prereg_sha256(Path(path))
+    except (P.PreregError, OSError) as exc:
         raise TrainError('PT-KA-EVAL', f'preregistration unreadable: {exc}') from None
 
 
@@ -766,13 +788,25 @@ def _write(path: Path, data: bytes) -> None:
 
 
 def _run(args, only_shift: bool = False) -> tuple[int, dict]:
+    try:
+        selection = PG.select(Path(args.prereg) if args.prereg else None, Path(args.qa),
+                              allow_unlocked=args.unlocked_prereg)
+    except PG.PreregGateError as exc:
+        raise TrainError('PT-KA-PREREG', str(exc)) from None
+    if selection.sha and args.smoke:
+        raise TrainError('PT-KA-PREREG', '--smoke uses reduced configuration; select --unlocked-prereg for rehearsal')
     docs, origin, extra = _inputs(args)
     cfg = TrainConfig.smoke_config() if args.smoke else TrainConfig()
-    result = run_training(docs, cfg, prereg_sha=_prereg_sha(args.prereg), tool_git=args.tool_git, origin=origin,
+    result = run_training(docs, cfg, prereg_sha=selection.sha, tool_git=args.tool_git, origin=origin,
                           extra=extra, locked_requested=bool(args.locked_form))
     out = Path(args.out)
     summary = {'train_key': result.train_key, 'report_sha256': result.report['report_sha256'],
                'gates': {g: v['status'] for g, v in sorted(result.report['gates'].items())}}
+    if selection.rehearsal_sha:
+        summary['unlocked_rehearsal'] = {
+            'source_sha256': selection.rehearsal_sha,
+            'note': 'Protocol inspected for rehearsal; the report and train key retain the unlocked placeholder.',
+        }
     code = FINDINGS if result.halt else OK                    # LBL-26 C-1/C-6: halted runs still write their report
     if result.halt:
         summary.update(halt=list(result.halt))
@@ -824,7 +858,11 @@ def build_parser() -> argparse.ArgumentParser:
         p.add_argument('--rows', help='folder of tier-r-feature-rows/1 documents')
         p.add_argument('--merge', help='tier-r-merge/1 provenance file written by shard.py merge')
         p.add_argument('--aggregate', help='merged tier-r-report/1 aggregate to cross-check with --merge')
-        p.add_argument('--prereg', help='locked preregistration file; its SHA-256 enters the train key')
+        p.add_argument('--prereg', help='LF protocol file; must match one C9-PREREG-v1 QA digest row')
+        p.add_argument('--qa', default=str(Path(__file__).resolve().parents[2] / 'docs' / 'qa.md'),
+                       help='QA file containing the recorded protocol digest (default: docs/qa.md)')
+        p.add_argument('--unlocked-prereg', action='store_true',
+                       help='inspect a protocol for rehearsal; the report and train key remain unlocked')
         p.add_argument('--out', required=True, help='output folder')
         p.add_argument('--locked-form', action='store_true',
                        help='a locked-test look is requested: halt (exit 1) with fewer than 12 locked-role lineages')

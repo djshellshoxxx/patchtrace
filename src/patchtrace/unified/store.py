@@ -302,6 +302,12 @@ def parse_line(line: bytes, model):
     return record
 
 
+def is_timeout_partial(manifest: UnifiedResultManifest) -> bool:
+    """A result cut short by a spent deadline (U7-06). It depends on the machine's speed, not only on the inputs, so
+    it is never authoritative: a cache lookup misses it and a later run of the same id may replace it."""
+    return manifest.status == 'partial' and any(x.split(':', 1)[0] == 'timeout' for x in manifest.limitations)
+
+
 def _row_id_ok(manifest: UnifiedResultManifest, row: UnifiedMatch) -> bool:
     return row.row_id == keys.row_id(manifest.older_sha256, manifest.newer_sha256, [s.rva for s in row.older],
                                      [s.rva for s in row.newer])
@@ -554,7 +560,8 @@ def publish_result(enrichment: EnrichmentStore, staged: Path, *, guard: Guard, c
             _rmtree(trash)
         elif existing.result_id != manifest.result_id:
             raise _err('Another result already uses this sidecar directory', 'dir-collision')
-        elif existing.model_copy(update={'created_utc': manifest.created_utc}) != manifest and upgrade:
+        elif (existing.model_copy(update={'created_utc': manifest.created_utc}) != manifest
+              and (upgrade or is_timeout_partial(existing))):
             previous = _previous_path(final, existing_sha)
             _check_path_length(root, str(previous.relative_to(root)))
             if previous.exists():
@@ -602,7 +609,8 @@ def publish_result(enrichment: EnrichmentStore, staged: Path, *, guard: Guard, c
             pass  # committed replacement is current; the orphan sweep can remove this later
     deleted = 0
     try:
-        deleted = apply_unified_retention(enrichment, protect=(manifest.result_id,), limits=limits)
+        deleted = apply_unified_retention(enrichment, protect=(manifest.result_id,), limits=limits,
+                                          current=current)
     except (UnifiedError, sqlite3.Error, OSError):
         pass  # best effort: retention never fails a publish
     try:
@@ -847,7 +855,7 @@ def _pair_of(enrichment: EnrichmentStore, pointer: UnifiedResultPointer) -> tupl
 
 
 def apply_unified_retention(enrichment: EnrichmentStore, *, protect: Iterable[str] = (),
-                            limits: UnifiedLimits = DEFAULT_LIMITS) -> int:
+                            limits: UnifiedLimits = DEFAULT_LIMITS, current: Guard | None = None) -> int:
     """Keep the newest L-32 results per (older, newer, config_digest) (plus `protect`) and the newest RUN_KEEP run
     rows per Ghidriff run; delete the rest (rows first, then their directories). Another pair, orientation or run
     never evicts a result. Rows that do not validate are never deleted here."""
@@ -856,6 +864,8 @@ def apply_unified_retention(enrichment: EnrichmentStore, *, protect: Iterable[st
         return 0
     rows, _skipped, _newer = _pointers(enrichment)
     keep = set(protect)
+    if current is not None:   # 02 s4: "plus the current one" - the row the live project is on is never evicted
+        keep.update(entry.id for entry, _pointer in rows if entry.guard == current)
     per_group: dict[tuple, int] = {}
     doomed = []
     for entry, pointer in rows:  # newest first

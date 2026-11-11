@@ -12,6 +12,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import math
 import re
 import sys
 from pathlib import Path
@@ -36,6 +37,34 @@ _COPYLEFT = re.compile(r'(?<![A-Za-z])(?:A|L)?GPL(?![A-Za-z])', re.IGNORECASE)
 LICENSE_CODE = 'PT-BUNDLE-LICENSE'
 POLICY_FIELDS = ('spdx', 'role', 'owner_approved', 'rationale', 'shipped', 'match')
 APPROVAL_FIELDS = ('approved_on', 'approved_via')  # optional audit trail for an approval
+
+
+def parse_pin(raw: bytes) -> object:
+    """One strict interpretation shared by the checker and producer; no network or execution."""
+    def pairs(items):
+        result = {}
+        for key, value in items:
+            if key in result:
+                raise ValueError('duplicate pin JSON key')
+            result[key] = value
+        return result
+
+    def constant(_value):
+        raise ValueError('nonfinite pin JSON number')
+
+    def finite_float(value):
+        parsed = float(value)
+        if not math.isfinite(parsed):
+            raise ValueError('nonfinite pin JSON number')
+        return parsed
+
+    try:
+        data = json.loads(raw.decode('utf-8'), object_pairs_hook=pairs, parse_constant=constant,
+                          parse_float=finite_float)
+        json.dumps(data, ensure_ascii=False).encode('utf-8')  # reject unpaired surrogate escapes
+        return data
+    except RecursionError:
+        raise ValueError('pin JSON nesting exceeds parser limit') from None
 
 
 def _is_int(value: object) -> bool:
@@ -342,7 +371,7 @@ def main(argv: list[str] | None = None) -> int:
                         help='non-publishing acceptance builds only: warn loudly instead of exit 4')
     args = parser.parse_args(argv)
     try:
-        data = json.loads(args.pin.read_text(encoding='utf-8'))
+        data = parse_pin(args.pin.read_bytes())
     except (OSError, ValueError) as error:
         print(f'FAIL: cannot read pin: {error}', file=sys.stderr)
         return 1

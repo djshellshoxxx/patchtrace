@@ -2,7 +2,7 @@
 
 An affirmative one-function-per-side relation -> a tier-M edge; an ambiguous relation stays an ambiguous group.
 A function on one side only -> a one-sided declaration (`removed`,
-`unmatched`, `added`); anything larger -> a manual group (`split`/`merged` decide `matched`, `ambiguous` decides
+`unmatched`, `added`; any other category with an empty side is skipped and counted as `manual-unresolved`); anything larger -> a manual group (`split`/`merged` decide `matched`, `ambiguous` decides
 `ambiguous`). The correction itself is never re-validated here: the service already guarantees a function belongs to
 one match. `manual_digest` (02 s5) covers the corrections, so any change of them makes a different `result_key`.
 """
@@ -25,7 +25,10 @@ from . import (
     function_rva,
 )
 
-VERSION = 'manual/2'
+# manual/5 (2026-11-04): every named member must resolve, and added/removed must name only their declared
+# side. Re-key results made with member-filtering or contradictory-category semantics (02 s5).
+VERSION = 'manual/5'
+ONE_SIDED = frozenset({'removed', 'added', 'unmatched'})  # 06 s6: categories that declare no counterpart
 
 
 def _manual(inputs: SourceInputs) -> list[SnapshotMatch]:
@@ -87,12 +90,28 @@ class ManualAdapter:
             budget.tick()
             older = [(rva, f) for f in match.older if (rva := function_rva(f, 'older', addr, basis, ledger)) is not None]
             newer = [(rva, f) for f in match.newer if (rva := function_rva(f, 'newer', addr, basis, ledger)) is not None]
+            if len(older) != len(match.older) or len(newer) != len(match.newer):
+                # Any unresolved member invalidates this correction as a whole. A subset could change a group
+                # into a 1:1 or a one-sided claim, so keep no atoms or nodes and mark the result partial.
+                ledger.count('manual-unresolved')
+                continue
+            if ((match.category == 'added' and (older or not newer))
+                    or (match.category == 'removed' and (newer or not older))):
+                # These categories explicitly declare absence on the opposite side, never an affirmative pair.
+                ledger.count('manual-unresolved')
+                continue
+            if match.category not in ONE_SIDED and not (older and newer):
+                # a pairing category (modified, unchanged, split, merged, ambiguous) with one side left empty: a
+                # one-sided claim would state the opposite of the analyst's category, so it is skipped the same way
+                ledger.count('manual-unresolved')
+                continue
             for side, items in (('older', older), ('newer', newer)):
                 for rva, function in items:
                     nodes[(side, rva)] = nodes.get((side, rva)) or clean_name(function.name)
-            if len(older) == 1 and len(newer) == 1 and match.category != 'ambiguous':
+            pairing = match.category != 'unmatched'  # `unmatched` says there is no counterpart: never an affirmative pairing
+            if len(older) == 1 and len(newer) == 1 and pairing and match.category != 'ambiguous':
                 atoms.append(self._atom(older[0][0], newer[0][0], '1:1', match.id))
-            elif older and newer:
+            elif older and newer and pairing:
                 cards = ('1:1' if len(older) == len(newer) == 1 else
                          '1:N' if len(older) == 1 else 'N:1' if len(newer) == 1 else 'N:M')
                 group_atoms = tuple(sorted((self._atom(o, n, cards, match.id) for o, _ in older for n, _ in newer),

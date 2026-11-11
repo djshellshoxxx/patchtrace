@@ -30,7 +30,7 @@ Pure modules import no network/Qt. The service creates projects through the exis
 
 ## 4. Behavior
 
-1. Metadata fetch: `https://winbindex.m417z.com/data/by_filename_compressed/<name>.json.gz` (lowercase, case-sensitive URL). Requires explicit consent naming the host and exact URL. Cap 64 MiB compressed / 256 MiB decompressed; strict JSON syntax, duplicate-key and non-finite-number validation at document scope; unpaired Unicode surrogates are rejected and counted at individual-entry scope so unrelated valid entries remain usable; required per-entry fields `fileInfo.sha256`, `size`, `machineType`, `timestamp` — entries missing any are skipped with a counted warning. All other fields optional.
+1. Metadata fetch: `https://winbindex.m417z.com/data/by_filename_compressed/<name>.json.gz` (lowercase, case-sensitive URL). Requires explicit consent naming the host and exact URL. Cap 64 MiB compressed / 256 MiB decompressed; strict JSON syntax, duplicate-key and non-finite-number validation at document scope; unpaired Unicode surrogates are rejected and counted at individual-entry scope so unrelated valid entries remain usable; required per-entry fields `fileInfo.sha256`, `size`, `machineType`, `timestamp` — entries missing any are skipped with a counted warning. All other fields optional. Windows-version keys retained in `BuildCandidate.windows_versions` are display labels only: replace control/format and Unicode line/paragraph separator characters with spaces and bound each label to 64 characters, then sort/deduplicate. If distinct source keys collide after cleaning, include the counted collision warning in `ParseResult`; retain every source mapping's KB refs and keep each binary candidate separate. Never use these cleaned labels as product or binary identity. The preserved upstream source bytes and canonical raw-entry `record_sha256` remain unchanged.
 2. Download classification: `direct` when `timestamp` and `virtualSize` exist; `candidates` when `timestamp`, `size` and both `lastSection*` exist; otherwise `unavailable` ("update-package only").
 3. Candidate resolution (`candidates`): HEAD each SizeOfImage from `round_up(lastSectionVirtualAddress + (size − lastSectionPointerToRawData), 0x1000)` down to `lastSectionVirtualAddress + 0x1000` in 0x1000 steps; 302 = valid, 404 = invalid, anything else = error; accept only if exactly one is valid. At most 4 concurrent HEADs, 10 s each, overall cap 256 probes.
 4. Download: GET, follow exactly one redirect, only to `*.blob.core.windows.net` over HTTPS; never cache the signed blob URL. 404 = "not on symbol server" (a normal outcome, not an error). Cap 512 MiB. Stream to private staging; compute SHA-256 while streaming; reject size or hash mismatch against the plan.
@@ -40,6 +40,18 @@ Pure modules import no network/Qt. The service creates projects through the exis
 
 Network: HTTPS only; allowlist `winbindex.m417z.com`, `msdl.microsoft.com`, `*.blob.core.windows.net` (redirect target only); environment proxies ignored; no credentials; User-Agent `PatchTrace`; bounded retries (429/5xx, ≤ 3, Retry-After ≤ 60 s); cancellable. Nothing about the user's projects is sent.
 
+Winbindex metadata has one 120-second network-operation budget, including all
+attempts, connection/header waits, retry delays and body reads. Check cancellation
+and this deadline before every request and after response headers. Each connection
+timeout is the smaller of the ordinary 10 seconds and the remaining budget. Never
+sleep for a Retry-After/backoff that would exhaust the remaining budget, retry
+early against that server delay, or open another request after an overshooting
+sleep. Preserve typed network/cancellation outcomes and close returned responses.
+The shared internal retry helper accepts an optional deadline; other acquisition
+operations retain their existing policies when it is absent. A custom opener must
+honor its supplied timeout; this contract adds no arbitrary-call interruption or
+local parsing CPU timeout.
+
 ## 5. Surfaces
 
 - CLI: `PatchTrace acquire search NAME [--json]` (metadata only, needs `--consent-hosts winbindex.m417z.com`), `PatchTrace acquire fetch NAME --older SHA --newer SHA --project DIR --consent-hosts winbindex.m417z.com,msdl.microsoft.com [--json]`. Exit codes per SPEC-07 §11 (0/2/3/4/5; 4 = no downloadable candidates).
@@ -48,3 +60,9 @@ Network: HTTPS only; allowlist `winbindex.m417z.com`, `msdl.microsoft.com`, `*.b
 ## 6. Acceptance
 
 Pure: Winbindex fixture parsing (trimmed real afd.sys record + synthetic variants: missing virtualSize, missing required fields, non-x64), URL formatting `%08X%x`, candidate enumeration arithmetic, CRC/PA30 identification, wrong-hash rejection. Transport with fake opener: allowlist, single redirect to blob host only, 404 semantics, caps, cancellation, proxy ignored. Live probe (recorded separately, not CI-gating): one direct download of a small x64 system file with hash match. Windows-only CI: `msdelta.dll` presence and ApplyDeltaB on a synthetic delta created with `CreateDeltaB` in the test itself (no Microsoft payload committed).
+
+### Promotion failure after initial snapshot (2026-11-05)
+
+After `ProjectService.create` commits a normal project, a failure while checking copied identities or recording acquisition annotations must retain that committed project, its persistent lock inode and any contributor files. Close the service to release ownership; never recursively delete the project as rollback. Ordinary failures surface as the existing typed `AcquisitionError` (preserve an existing acquisition code, otherwise PT-ACQ-VERIFY), with the exact retained project path and a clear statement that acquisition provenance/final copy verification did not finish. Reopening permits analyst inspection, and an immediate new create at the same destination remains refused because a committed database exists. Interruptions are reraised after releasing the service, retaining files. This changes no wire/schema fields or error-code vocabulary. Failures before the first snapshot stay the existing ProjectService creation rollback path; acquisition staging cleanup still affects only the operation's private staging directory.
+
+Destination preflight in acquisition/workflow.check_project_root uses the same read-only creation_directory_available storage helper as the dialogs and KB attachment intent: absent/empty/sole regular persistent lock is allowed, other entries and symlinks are refused. Actual project creation still acquires the kernel lock and refuses existing committed databases. No metadata/PID content is treated as lock availability.

@@ -1,0 +1,6 @@
+# UNVERIFIED: hand-written from the documented radiff2 -C row layout; not output of a real run.
+   sym.parse_header   120 0x00001000 |  UNMATCH  (0.412000) | 0x00001000  140 sym.parse_header
+       sym.checksum    48 0x00002000 |    MATCH  (0.930000) | 0x00002008   48 sym.checksum
+          sym.alpha    16 0x00003000 |    MATCH  (0.930000) | 0x00003000   16 sym.alpha
+          sym.same     10 0x00004000 |    MATCH  (1.000000) | 0x00004000   10 sym.same
+       sym.new_func    64 0x00005000 |      NEW  (0.000000) | 0x00005000   64 sym.new_func

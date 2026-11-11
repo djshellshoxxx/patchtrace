@@ -98,6 +98,7 @@ def test_explain_on_a_matched_row_opens_the_context_preview_with_the_real_fragme
     row = next(r for r in controller.vm.rows if r.ghidriff_match_id)
     controller.nav = SimpleNamespace(select_match=lambda match_id, clear_filters=False: True)
     controller.explain(row)
+    wait_for(lambda: seen)
     (title, text, omitted), = seen[0]
     assert title.startswith('Unified row') and text and isinstance(omitted, tuple)
 

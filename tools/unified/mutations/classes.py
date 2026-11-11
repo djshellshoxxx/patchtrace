@@ -10,7 +10,8 @@ masked body differs). `symbolic` is for the two classes whose only change is the
 swapped callee or global): their masked body is identical by design, so the proof is that the function's symbol
 references differ.
 
-Two review additions cannot be planted as plain C and stay `PENDING` with the exact thing each needs.
+Three additions cannot be planted as plain C and stay `PENDING` with the exact thing each needs (G-U2 never passes while
+one is listed).
 """
 from __future__ import annotations
 
@@ -71,6 +72,14 @@ PENDING: tuple[PendingClass, ...] = (
         'the MSVC Windows leg (cl or clang-cl with a real C runtime handler)',
         'structured exception handling scope tables live in unwind data; the freestanding clang profile has no C '
         'handler to name, so the scope can only be planted on the MSVC Windows leg'),
+    PendingClass(
+        'trace-arg', 'trace-arg', 'R-29',
+        'an import library for the freestanding msvc-free link (llvm-lib /def: of a DLL that exports EtwWrite, passed to lld-link '
+        'as an extra input; the factory ignores BuildSpec.libs for this profile, tier_r/build.py link_lib_args) and an '
+        'acceptance rule that the changed constant feeds the tracing call; the planted function must land in `review`',
+        'F17 only treats a call to a tracing IMPORT (or a thunk to one) as a trace argument; the freestanding profile links '
+        'with /noimplib /nodefaultlib and has no import table, so a plain C mutant can neither call EtwWrite nor prove that '
+        'its changed constant is a trace argument (08 s1 requires trace-arg mutants to land in review, never cosmetic)'),
 )
 
 BY_ID = {c.id: c for c in CLASSES}

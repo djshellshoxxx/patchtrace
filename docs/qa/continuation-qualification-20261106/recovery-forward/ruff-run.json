@@ -1,0 +1,17 @@
+{
+  "argv": [
+    "/workspace/scratch/e6b4398e92df/pt-venv/bin/python",
+    "-m",
+    "ruff",
+    "check",
+    "--no-cache",
+    "src",
+    "tests",
+    "tools"
+  ],
+  "working_directory": "/workspace/scratch/c4fbe5e6f72c/pt-recovery-forward",
+  "resolved_tree": "b59a105796e4c5cc8665cf157d5fbbae0c2ed9fd",
+  "exit_code": 0,
+  "wall_seconds": 0.7894854320002196,
+  "prior_attempt": "The copied Python launcher has the Ruff module but no Ruff executable. Original failure is preserved in ruff-copied-launcher.log and ruff-copied-launcher-run.json; the provisioned development interpreter supplies its executable."
+}

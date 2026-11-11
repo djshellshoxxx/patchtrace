@@ -446,7 +446,7 @@ def test_output_guard_kills_on_size_cap_and_symlink(out_dir):
     guard = runner.OutputGuard(out_dir, None, 100, 4096, 50)
     assert guard() is None
     (out_dir / 'ir.jsonl').write_bytes(b'x' * 100)
-    (out_dir / 'ir.jsonl.part').write_bytes(b'x' * 10_000)          # temp files are not counted
+    (out_dir / 'progress.json.part').write_bytes(b'x' * 10)          # the progress temp file is not counted
     assert guard() is None
     (out_dir / 'ir.jsonl').write_bytes(b'x' * 101)
     assert guard() == 'output-limit'

@@ -13,6 +13,7 @@ from __future__ import annotations
 import re
 from collections import defaultdict
 from collections.abc import Iterable, Mapping, Sequence
+from datetime import UTC, datetime
 
 from ..contracts import (
     STATUS_CLASS,
@@ -34,6 +35,7 @@ LIMITATIONS = (
     'CSAF document signatures are not checked; fetched documents are tied to an allowlisted HTTPS host only.',
 )
 _TIER = {'verified': 0, 'candidate': 1}
+_UNREADABLE = datetime.min.replace(tzinfo=UTC)
 _BASIS_ORDER = ('advisory-file-hash', 'relationship-from-verified-component', 'asserted-product-id',
                 'file-version-equals-product-version', 'same-product-name')
 
@@ -56,7 +58,9 @@ def supersession(documents: Sequence[AdvisoryFacts]) -> dict[str, bool]:
         groups[(doc.publisher_namespace, doc.tracking_id)].append(doc)
 
     def key(doc: AdvisoryFacts) -> tuple:
-        return (parse_date_time(doc.current_release_date), revision_precedence(doc.revision) or ())
+        # ``Timestamp`` only checks the shape, so a stored date can be unreadable: it orders before every real one
+        # instead of failing the comparison (audit KBA-05).
+        return (parse_date_time(doc.current_release_date) or _UNREADABLE, revision_precedence(doc.revision) or ())
 
     out = {}
     for docs in groups.values():

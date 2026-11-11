@@ -14,3 +14,7 @@ live-project/
 ghidra-runtime/
 ghidra.zip
 qa-results.xml
+
+# Codespaces working data (never commit binaries)
+/data/
+/.cache/

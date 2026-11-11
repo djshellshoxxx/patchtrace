@@ -189,6 +189,8 @@ Identity map:
 | unified contested, ambiguous; secondary contested | contested |
 Never both sources at once (shared origin).
 
+Current unified results are checked against their recorded source, residual-pass and IR options through the shared unified read-model plan resolver. A non-default option alone does not make a result stale. Changed evidence, orientation and persisted stale guards still reject the result; rejected unified facts are never mixed with fallback Ghidriff pairing.
+
 Rule data: Python literals validated at import (no files, no eval), keyed by K rule id and revision. Expected changes `{id, required, any_of: leaves, teach_id}` plus counter leaves from a closed vocabulary: `b1:<DETECTOR>@<min>`, `cf:<ChangeClass>`, `call:added|removed@api_hints`, `capa:ns=<prefix>`, `str:*`, `cf:cosmetic|unchanged` (conflict). First draft authored in B1, each line with a positive and a negative fixture:
 | K rules | Expected changes (required first) | Machine evidence today |
 |---|---|---|

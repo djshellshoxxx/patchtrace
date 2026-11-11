@@ -71,9 +71,18 @@ def test_cancel_and_timeout_terminate_children(tmp_path, cancelled):
             kernel.CloseHandle(handle)
     else:
         state = Path(f'/proc/{pid}/stat')
-        # A terminated orphan may briefly remain a zombie until host init reaps it.
-        if state.exists():
-            assert state.read_text().split()[2] == 'Z'
+        # SIGKILL delivery and host reaping are asynchronous. Observe one state per iteration so successful
+        # reaping between an existence check and a read cannot turn cleanup into a FileNotFoundError.
+        deadline, pause = time.monotonic() + 10, threading.Event()  # `event` may already be set (cancel case)
+        while True:
+            try:
+                process_state = state.read_text().split()[2]
+            except FileNotFoundError:
+                break
+            if process_state == 'Z':
+                break
+            assert time.monotonic() < deadline, f'child {pid} remains in state {process_state}'
+            pause.wait(.02)
 
 
 def test_precancel_does_not_start(tmp_path):
@@ -139,7 +148,9 @@ def test_completed_raw_is_unique_and_project_unchanged(fake_runtime):
     assert run.raw_path == path.relative_to(root).as_posix()
     assert run.raw_sha256 == hashlib.sha256(path.read_bytes()).hexdigest()
     assert project.model_dump_json() == original
-    assert [event.stage for event in events] == ['preflight', 'analysis', 'completed']
+    assert [event.stage for event in events
+            if event.stage not in {'analysis-progress', 'analysis-stage', 'analysis-stopped'}] == [
+        'preflight', 'analysis', 'completed']
     path2, run2 = run_comparison(config, project, root, threading.Event(), events.append)
     assert path != path2 and run.id != run2.id
 

@@ -112,7 +112,8 @@ def start(qtbot, reader, *, subject=SUBJECT, open=True, select=True):  # noqa: A
 
 
 def settle(qtbot, controller) -> None:
-    qtbot.waitUntil(lambda: not controller.tasks.busy() and not controller.loading, timeout=5000)
+    # A wait, not a budget: the 100,000-row read takes about 2 s unloaded and over 5 s with every core busy.
+    qtbot.waitUntil(lambda: not controller.tasks.busy() and not controller.loading, timeout=30000)
     QApplication.processEvents()
 
 

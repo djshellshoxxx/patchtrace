@@ -1,0 +1,247 @@
+{
+  "schema": "patchtrace-source-integration-audit/1",
+  "observed_at_utc": "2026-11-06T08:27:10.199094+00:00",
+  "reviewer": "/root/candidate_review",
+  "base": "f393bb68ddc11eabb95a6598aa6f86650bd9aa37",
+  "head": "37b771300053e8872febead1fc384fea9126ae90",
+  "tree": "cdbab24d14295b4450cd0d3c744d76734c98a561",
+  "local_continuation": "75903db30b8f66e6426d3f5674b1d84fe2b190c3",
+  "source_parts": {
+    "diagnostics": {
+      "commit": "064f1c0075a4cfe5ec1eba2f9a04d3f1058ecf0c",
+      "original_review_commit": "37efbb7d32ea01c2efafca3c6117a679e9057ac0",
+      "tree": "c5293654b8b79b43886c7253579fc0e4cc017365",
+      "original_review_tree": "c5293654b8b79b43886c7253579fc0e4cc017365",
+      "original_review_tree_equal": true,
+      "ancestor_of_head": true,
+      "blob_checks": [
+        {
+          "path": "tests/byte_assertions.py",
+          "reviewed_blob": "828ecb7eb046ea77e26492bd75b1e9a0f2c3bc2d",
+          "published_blob": "828ecb7eb046ea77e26492bd75b1e9a0f2c3bc2d",
+          "equal": true
+        },
+        {
+          "path": "tests/test_byte_assertions.py",
+          "reviewed_blob": "956628f91b35c0a590974835d582fdb41e9ea4a0",
+          "published_blob": "956628f91b35c0a590974835d582fdb41e9ea4a0",
+          "equal": true
+        },
+        {
+          "path": "tests/test_nway_recovery_copy_20261105.py",
+          "reviewed_blob": "bf3f7c12abec55ead67c785173df1d826b18e203",
+          "published_blob": "bf3f7c12abec55ead67c785173df1d826b18e203",
+          "equal": true
+        }
+      ]
+    },
+    "product": {
+      "commit": "0b7d858149db0c88ffcf8f3e6ba474d99f39afeb",
+      "original_review_commit": "570f86b8be7038c0841e318693ed5ee0f414b8c2",
+      "tree": "8aa7d16fd78136780f58e281240c02b6f8fd520d",
+      "original_review_tree": "8aa7d16fd78136780f58e281240c02b6f8fd520d",
+      "original_review_tree_equal": true,
+      "ancestor_of_head": true,
+      "blob_checks": [
+        {
+          "path": "docs/specs/kb-cve/31-C-product-build-pairs.md",
+          "reviewed_blob": "b69767b325a1e31b20a4e861dd8f080c7dd79ef3",
+          "published_blob": "b69767b325a1e31b20a4e861dd8f080c7dd79ef3",
+          "equal": true
+        },
+        {
+          "path": "docs/specs/kb-cve/31-F-workflow-ui-persistence.md",
+          "reviewed_blob": "86b72dcc8d5cf52ea66d386bd0a75543ccd84167",
+          "published_blob": "86b72dcc8d5cf52ea66d386bd0a75543ccd84167",
+          "equal": true
+        },
+        {
+          "path": "src/patchtrace/kbcorrelation/context.py",
+          "reviewed_blob": "4ad318aca517a09928c9f76c369e97b71229424e",
+          "published_blob": "4ad318aca517a09928c9f76c369e97b71229424e",
+          "equal": true
+        },
+        {
+          "path": "src/patchtrace/kbcorrelation/index.py",
+          "reviewed_blob": "61901993733aa2f0637edd02c004613855d654eb",
+          "published_blob": "61901993733aa2f0637edd02c004613855d654eb",
+          "equal": true
+        },
+        {
+          "path": "src/patchtrace/kbcorrelation/investigation_qt.py",
+          "reviewed_blob": "4f0bfeae3599cd2e23962462d69777d5e7e08ed6",
+          "published_blob": "4f0bfeae3599cd2e23962462d69777d5e7e08ed6",
+          "equal": true
+        },
+        {
+          "path": "src/patchtrace/kbcorrelation/investigation_service.py",
+          "reviewed_blob": "8148846429fe63ee7b4e4759fe9b0ae5a5000ec3",
+          "published_blob": "8148846429fe63ee7b4e4759fe9b0ae5a5000ec3",
+          "equal": true
+        },
+        {
+          "path": "src/patchtrace/kbcorrelation/service.py",
+          "reviewed_blob": "3fe6625e32b507fc84428ff1d1bcf508c2d7a1da",
+          "published_blob": "3fe6625e32b507fc84428ff1d1bcf508c2d7a1da",
+          "equal": true
+        },
+        {
+          "path": "src/patchtrace/kbcorrelation/store.py",
+          "reviewed_blob": "b5c27a2aee319269be746804025b055b0bc680f2",
+          "published_blob": "b5c27a2aee319269be746804025b055b0bc680f2",
+          "equal": true
+        },
+        {
+          "path": "tests/test_kb_product_start_20261106.py",
+          "reviewed_blob": "4e1e326a469e4ef7747ad157c608bef8a7d1f6f1",
+          "published_blob": "4e1e326a469e4ef7747ad157c608bef8a7d1f6f1",
+          "equal": true
+        }
+      ]
+    },
+    "subprocess_246": {
+      "commit": "c804e4d94430368c0eafe1da899493a8cf6520aa",
+      "original_review_commit": "e52047ae1b1bbb19a42680b8d9881338f2595f93",
+      "tree": "cf59135e03b1c4a84ff628b29b4abb9d308a2b7d",
+      "original_review_tree": "cf59135e03b1c4a84ff628b29b4abb9d308a2b7d",
+      "original_review_tree_equal": true,
+      "ancestor_of_head": true,
+      "blob_checks": [
+        {
+          "path": "docs/qa/subprocess-venv-20261106.md",
+          "reviewed_blob": "ccf0d2e34e9e5c34a08d8ae136fd47889f6dea63",
+          "published_blob": "ccf0d2e34e9e5c34a08d8ae136fd47889f6dea63",
+          "equal": true
+        },
+        {
+          "path": "tests/test_binexport_isolation.py",
+          "reviewed_blob": "60116edd65c0d0e5df0fd84b6eac3195cf982a31",
+          "published_blob": "60116edd65c0d0e5df0fd84b6eac3195cf982a31",
+          "equal": true
+        },
+        {
+          "path": "tests/test_rules_worker.py",
+          "reviewed_blob": "227ed0e9759d4d14a68b8a5100788f3dc9e5ff2d",
+          "published_blob": "227ed0e9759d4d14a68b8a5100788f3dc9e5ff2d",
+          "equal": true
+        }
+      ]
+    },
+    "retained_tests": {
+      "commit": "81825ee9638454737d3fb7efa3e6c73b8f3eb105",
+      "original_review_commit": "59c4f637e9afceccd1f591d86b21de158517dbef",
+      "tree": "303e08dca4de9aea307e26ae18972fb9be22b793",
+      "original_review_tree": "303e08dca4de9aea307e26ae18972fb9be22b793",
+      "original_review_tree_equal": true,
+      "ancestor_of_head": true,
+      "blob_checks": [
+        {
+          "path": "tests/test_kb_product_acceptance_20261106.py",
+          "reviewed_blob": "ba523c2c4bf6cdbf584a9107424ca58503e8df07",
+          "published_blob": "ba523c2c4bf6cdbf584a9107424ca58503e8df07",
+          "equal": true
+        }
+      ]
+    }
+  },
+  "merge_parents": [
+    {
+      "commit": "fb3abfcf8699391b41362a75bb6ea17862dbd932",
+      "parents": [
+        "f393bb68ddc11eabb95a6598aa6f86650bd9aa37",
+        "064f1c0075a4cfe5ec1eba2f9a04d3f1058ecf0c"
+      ]
+    },
+    {
+      "commit": "74684fc033fb384583de408ee0e6673c3b14bcb3",
+      "parents": [
+        "fb3abfcf8699391b41362a75bb6ea17862dbd932",
+        "c804e4d94430368c0eafe1da899493a8cf6520aa"
+      ]
+    },
+    {
+      "commit": "96f5f16023d17d9c96b6718685371a846ac5fe9d",
+      "parents": [
+        "74684fc033fb384583de408ee0e6673c3b14bcb3",
+        "0b7d858149db0c88ffcf8f3e6ba474d99f39afeb"
+      ]
+    }
+  ],
+  "ledger_checks": [
+    {
+      "path": "docs/qa.md",
+      "base_blob": "5ec088a58515d5a51d83c497c32c7e64079bbebe",
+      "head_blob": "25a5fe3e23d83af7c0a90c7470d9e99e37043ab1",
+      "base_prefix_preserved": true,
+      "appended_bytes": 2453,
+      "source_246_append_only": true,
+      "source_246_tail_sha256": "8f1907b5c86213f94c3510133e72542c12b5145a729160faa7a460d84617e04e",
+      "source_246_tail_occurrences": 1
+    },
+    {
+      "path": "tasks/todo.md",
+      "base_blob": "68762cc0648a60bf7b73bffc9712ccb11821498c",
+      "head_blob": "e30347d9ab749b927a4fc9e81e9f0b390122ada1",
+      "base_prefix_preserved": true,
+      "appended_bytes": 1525,
+      "source_246_append_only": true,
+      "source_246_tail_sha256": "1fb703b1c05fafa5a43911d7893ee1940cac10eaea224350e67e6f756c3a975a",
+      "source_246_tail_occurrences": 1
+    }
+  ],
+  "changed_paths": [
+    "docs/modules.md",
+    "docs/qa.md",
+    "docs/qa/continuation-20261106.md",
+    "docs/qa/continuation-20261106/pr235-windows-failure-summary.json",
+    "docs/qa/continuation-20261106/pr244-pr245-hosted-status-0818Z.json",
+    "docs/qa/continuation-20261106/pr245-windows-review.json",
+    "docs/qa/continuation-20261106/product-acceptance-review.json",
+    "docs/qa/continuation-20261106/product-start-legacy-reader.json",
+    "docs/qa/continuation-20261106/product-start-review.json",
+    "docs/qa/continuation-20261106/subprocess-venv-review.json",
+    "docs/qa/subprocess-venv-20261106.md",
+    "docs/specs/kb-cve/31-C-product-build-pairs.md",
+    "docs/specs/kb-cve/31-F-workflow-ui-persistence.md",
+    "src/patchtrace/kbcorrelation/context.py",
+    "src/patchtrace/kbcorrelation/index.py",
+    "src/patchtrace/kbcorrelation/investigation_qt.py",
+    "src/patchtrace/kbcorrelation/investigation_service.py",
+    "src/patchtrace/kbcorrelation/service.py",
+    "src/patchtrace/kbcorrelation/store.py",
+    "tasks/todo.md",
+    "tests/byte_assertions.py",
+    "tests/test_binexport_isolation.py",
+    "tests/test_byte_assertions.py",
+    "tests/test_kb_product_acceptance_20261106.py",
+    "tests/test_kb_product_start_20261106.py",
+    "tests/test_nway_recovery_copy_20261105.py",
+    "tests/test_rules_worker.py"
+  ],
+  "source_test_path_count": 13,
+  "checks": {
+    "base_is_ancestor": true,
+    "published_ref_matches": true,
+    "published_local_tree_equal": true,
+    "all_source_blobs_match": true,
+    "all_reviewed_trees_match_published_equivalents": true,
+    "all_source_commits_are_ancestors": true,
+    "ledgers_preserved_append_only": true,
+    "all_code_changes_covered": true,
+    "no_workflow_changes": true,
+    "production_changes_only_reviewed_kb_files": true,
+    "no_schema_or_dependency_changes": true
+  },
+  "findings": [],
+  "documentation_review": {
+    "paths": [
+      "docs/modules.md",
+      "docs/qa.md",
+      "docs/qa/continuation-20261106.md",
+      "docs/qa/subprocess-venv-20261106.md"
+    ],
+    "material_contradictions": [],
+    "assessment": "Source pins, overlapping focused counts, journal downgrade limit, and historical hosted checkpoint agree with embedded receipts. No claim that prerequisite Windows artifacts or focused tests qualify the continuation."
+  },
+  "scope_limits": "Read-only source/documentation audit using fetched git objects; no tests, tracked edits, ref changes, remote mutation, or fresh hosted status verification. Full frozen suite is separately owned by coordinator."
+}

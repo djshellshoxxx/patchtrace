@@ -1,5 +1,119 @@
 # QA and audit record
 
+## 2026-11-06 PT-TIMEOUT-1: live progress and execution diagnostics
+
+Implemented [SPEC-01a](specs/ghidriff-timeout-progress.md) on `fix/ghidriff-timeout-progress-20261106`, based on `d8cfd7b1d8bffa90af1c7af94dda012b89886b76`. Process observations are bounded to 16 KiB per captured stream, delivered on the supervisor thread outside the reader lock at most once per second plus a final snapshot. The UI shows the effective subprocess budget, elapsed time, last observed stage and output age with indeterminate progress. Heartbeats do not fill the log; cancellation, terminal text and exact-worker identity take precedence. Timeout errors include the Setup route and project-relative diagnostics directory. Atomic best-effort `backend-execution.json` receipts record process outcome and available safe runtime identifiers without claiming normalized comparison success or inventing unprobed versions. No matching, argv, timeout-default, cache-key or threading changes.
+
+Regression evidence: the existing UI elapsed timer overwrote terminal messages while the worker was still active. Independent review also reproduced misclassification of the supplied `Starting Ghidra analysis of ...` sequence and acceptance of credential-shaped single-token version metadata. Those cases now have passing regression coverage. Review corrected two timing-test assumptions by synchronizing the child's quiet interval with the observer and avoiding an invalid child-sleep lower bound on the narrower supervisor clock.
+
+Focused verification: **13 supervisor tests passed**, including real authored children, quiet heartbeats, fixed deadlines despite output, callback failures, bounded separate streams, cancellation/descendant cleanup, output flooding and cleanup-excluded duration. **41 backend diagnostics tests passed**, including a real authored child that cannot finish until progress is observed, receipt-write failures, version redaction, cache/identical skips and prior-result preservation. **11 offscreen Qt tests passed** for live main-thread delivery, no heartbeat log growth, indeterminate percentages, stale-event rejection, normalization/reset and terminal/cancel priority. An earlier combined integration run passed **255 tests with 3 skips** before the two pure-parser review fixes. These are synthetic process/UI controls, not live Ghidriff compatibility or performance evidence.
+
+Full local integration run: **18,705 passed, 3 failed, 134 skipped, 7 xfailed, 1 warning and 3 teardown errors in 2,333.40 seconds**. Before this completed run, the editable install was rebound to this checkout and verified with an isolated `python -I` import; earlier stopped attempts are not counted. The failures identified the existing `ui.py` size ceiling, a GZF regression assertion that did not allow the new observational events, and the environment's `AF_UNIX` restriction. The `ui.py` relay was extracted into `ui_job_events.py`, retaining the existing 3,077-line ceiling (current file: 3,076); the GZF test now preserves its original core lifecycle/settings assertions while allowing progress/stage observations. The affected host-seam/GZF suites pass **49 tests**.
+
+The three new Qt fixture teardown errors were reproduced independently and traced to pytest-qt scheduling the window for deletion before yield-fixture finalizers. Instrumentation confirmed the worker stopped, then the window was destroyed before its queued `job_finished` callback could clear the Python worker reference. Cleanup now uses the supported `before_close_func` hook, joins the actual worker within the unchanged 5,000 ms bound, dispatches completion while the window is still valid, and asserts the normal callback cleared `window.worker`; it never clears that state manually. All test bodies remain unchanged. Three repeated collections in one process passed **33 tests in 31.47 seconds**.
+
+The Unix-socket failure is independently reproduced by isolated stdlib `socket.socket(socket.AF_UNIX)` with **no PatchTrace module imported**, raising the same `PermissionError: [Errno 1] Operation not permitted` before the network guard runs. The test is retained without changing environment access controls. The only warning is the intentional duplicate-ZIP-entry test; native-tool/platform acceptance remains separately blocked or skipped as reported by the suite. This local full run is not green and is not claimed as final-head hosted acceptance.
+
+Initial corrected-tree combined regression run: **315 passed, 3 skipped in 69.69 seconds**, covering supervisor/progress, backend diagnostics, existing jobs/UI/bundle setup, host-seam rules, GZF retention, spec registry and tracker integrity. Whole-tree Ruff and `git diff --check` pass. Schema regeneration produced no changes to the existing public schemas. Independent re-review approved the production changes, event assertions and fixture lifecycle repair.
+
+PR #251 automated-review follow-up: use explicit `stage not yet observed` until a marker is recognized; preserve the known `unsafe-output-path` receipt reason; emit `analysis-stopped` immediately after supervision returns/raises and before diagnostics/cleanup/validation, letting the ordinary desktop job clock continue; omit only `analysis-progress` heartbeats from both CLI listeners. Seven backend regression cases and seven CLI cases first failed before repair. The backend suite then passed **48 tests**, the CLI/series group passed **61**, and the updated UI/host-seam group passed **36**. CLI cases simulate 7,200 heartbeats per scenario while checking exact retained events, real normalization/persistence and JSON exit envelopes without sleeping or running an external engine.
+
+Combined regression run after the four review follow-ups at `a908f90`: **362 passed, 3 skipped in 71.78 seconds**. Whole-tree Ruff and whitespace checks pass, and independent review found no remaining blocker in those four fixes. The existing core lifecycle assertions still reject unexpected events while allowing the explicitly specified observational events.
+
+A further review identified that infrequent CLI stage messages still wrote to stderr synchronously during process supervision. Four production-wiring regressions reproduced attempted stderr writes during real-child timeout/cancellation in both series and selftest. A per-comparison adapter now suppresses heartbeats and retains at most the latest 64 stage observations without I/O; it flushes them in order, with an explicit omission count after overflow, when supervision ends. Desktop signals remain live. This preserves process deadline/cancellation checks even when the CLI writer is blocked; it does not promise non-blocking terminal output after process stop.
+
+Receipt persistence now flushes and syncs the temporary file before atomic replacement. Three injected sync-failure cases failed before repair; afterward, **51 backend diagnostics tests passed in 2.55 seconds**, including unchanged analysis outcome, preservation of an earlier receipt on final-write failure, temporary-file removal and fixed warning text. This file-only sync is best effort, without a full filesystem/power-loss guarantee. Independent review found no blocker in the receipt follow-up.
+
+Final combined regression run including the CLI stage-deferral and receipt-sync follow-up: **377 passed, 3 skipped in 176.28 seconds**. This includes four real-child blocked-writer cases, bounded backlog/omission ordering and fresh-adapter isolation, along with the earlier backend/UI/CLI and integration checks. Cancellation cases allow five seconds for slower Windows startup; timeout cases retain their shorter fixed budget. Whole-tree Ruff and whitespace checks pass. Independent final review found no blocker in the adapter, both production call sites, tests or amended contract.
+
+Hosted full-suite follow-up at `d4255840c56eebfb168d9506ff49e9d181dc8a9f`: [Linux QA](https://github.com/djshellshoxxx/patchtrace/actions/runs/42232172111/job/127941286463) completed with **18,824 passed, 1 failed, 47 skipped, 7 xfailed and 1 warning in 1,629.36 seconds**. The sole failure was `test_cli_registry.py::test_cli_seam_budget`: the cumulative CLI callback changes grew `cli.py` by nine lines against the unchanged six-line allowance. The earlier focused group did not include this separate CLI registry gate. No runtime test failed in this hosted Linux run; its lint/package steps did not execute after pytest failed.
+
+The CLI seam repair replaces the nested stderr callback and its redundant heartbeat filter with a two-line fresh `CliBackendProgress` listener assignment. The adapter already owns heartbeat filtering and stage deferral; formatting, event ordering, normalization, persistence and exit behavior remain unchanged. This naturally reduces file growth from nine to six lines, meeting the existing gate without changing its cap. A focused rerun including CLI progress, registry, backend CLI, series and headless-entry tests passed **129 tests with 1 skip in 15.87 seconds**. Whole-tree Ruff and whitespace checks pass, and independent review approved the repair and unchanged gate. Hosted acceptance is still required on the resulting repair head.
+
+Hosted acceptance at `3b488913b177dd63a6a42c8eef51a03fe2526824` confirmed the CLI gate repair: [full Linux QA](https://github.com/djshellshoxxx/patchtrace/actions/runs/42237741377/job/127960075756) passed **18,825 tests, with 47 skips, 7 xfails and 1 warning**, followed by clean Ruff. All GUI repeat gates passed: **37,740 test executions across four Linux shards with 20 repetitions**, and **9,435 executions with five Windows repetitions**. [Native Windows Ghidriff acceptance](https://github.com/djshellshoxxx/patchtrace/actions/runs/42237741478) and [unified extraction on both platforms](https://github.com/djshellshoxxx/patchtrace/actions/runs/42237741832) also passed for this head.
+
+[Full Windows QA](https://github.com/djshellshoxxx/patchtrace/actions/runs/42237741377/job/127960076037) at `3b488913` reported **18,788 passed, 4 failed, 81 skipped, 6 xfailed and 1 warning in 2,816.50 seconds**. All four failures were new `test_jobs_progress.py` assertions: three expected LF-only print output and a hard-coded byte count although Windows preserved CRLF; the cleanup-duration test compared its requested 0.4-second sleep against separately sampled clock intervals, which produced a 0.391-second gap. The preceding process/observer/exit assertions passed. The trace does not establish a production timing defect. Windows lint, build and package smoke steps were skipped after pytest failed, so this run did not produce an accepted Windows distributable.
+
+The Windows portability repair changes only those regression assertions: derive native print output from `os.linesep`, compare exact text and raw bytes without normalization, and derive byte totals from the expected bytes. The raw-stream UTF-8 boundary fixture remains unchanged. The cleanup test measures the injected interval on the same monotonic clock, retains a 0.3-second minimum induced delay, and allows only `1e-6` for subtraction precision when comparing wall-minus-execution time with that measured interval. Final snapshot/result equality is retained. The affected jobs-progress, jobs, CLI-progress and backend-progress group passed **134 tests with 3 existing skips in 23.19 seconds** locally; whole-tree Ruff and whitespace checks pass. Independent review approved the test-only correction. No production code or skips changed; fresh Windows and package acceptance remains required.
+
+Initial PR head `9e554dba2bcdfa7b9e080c3521cdf6b647eff2f3` passed all five [native Windows Ghidriff fixture jobs](https://github.com/djshellshoxxx/patchtrace/actions/runs/42226182868) and [unified extraction on Windows and Linux](https://github.com/djshellshoxxx/patchtrace/actions/runs/42226182885). These are fixture results for that specific head; the review follow-up requires fresh hosted checks before merge.
+
+Intermediate head `a908f90c3066999db8bb9b7e03de192307acb1ec` also passed all five [native Windows jobs](https://github.com/djshellshoxxx/patchtrace/actions/runs/42228604908) and [unified extraction on Windows and Linux](https://github.com/djshellshoxxx/patchtrace/actions/runs/42228604838). These results precede the CLI stage-deferral/receipt-sync follow-up and cannot qualify its final head.
+
+Replaying the supplied log through the fixed-stage observer identifies candidate processing at line 419 and enhanced-symbol processing at line 420, without promoting the final percentage to comparison completion; no owner binary was rerun. Hosted full-suite, Windows/package and native-backend gates on the corrected PR head remain required. The high-priority timeout incident and exact owner input-pair rerun remain **OPEN**; a longer budget or these diagnostics do not demonstrate repair of the structural-candidate slow path.
+
+## 2026-11-06 P1: owner-reported Windows Ghidriff timeout — OPEN
+
+Reviewed the supplied `failure.txt`, `analysis.log`, and `ghidriff.log` against main `dc53b529560453e84cf45e356a40432ff3fc6725`. Both initial analyses completed; a structural correlator reported 2,161,955 entries and later result processing contained a 28m 41.755s quiet interval. Final observed progress was an enhanced-symbol (`esym`) substage at roughly 54 minutes, not overall success. Effective timeout, termination time and the exact installed application/backend versions remain unverified.
+
+The [incident record](qa/ghidriff-timeout-20261106.md) documents the existing 7,200/14,400-second desktop retry options, separate per-function timeout, missing symbols, nonfatal parser warnings, performance investigation and Windows acceptance checklist. The item is prioritized at the top of `tasks/todo.md`. This initial incident review was documentation only; the diagnostic implementation follow-up is recorded above. The binary pair was not supplied or rerun and no matching-performance repair is claimed.
+
+## Independent parallel development checkpoint — 2026-11-05
+
+Own integration branch `integrate/independent-wave4-20261105`, source merge
+`ec48810c41530d787cfbd44b38406427062a5442`, based on published #218
+`afc8a296`. Source slices #225–#234 were independently reviewed, focused-tested,
+committed/pushed as separate draft PRs and integrated once here. Exact source SHAs,
+reviewers, overlapping counts and remaining boundaries are in the
+[current handoff](handoff/AUTONOMOUS-DEVELOPMENT-LATEST.md); historical #218 evidence
+was preserved before replacing this branch's handoff.
+
+Completed integrated focused checks: **248 passed in 26.99 s** across source/GUI/
+lock/correlation/metrics/package; after advisory-sync/acceptance merge, **122 passed
+in 25.17 s** across online/offline/current-input/binary-only/lock paths. Raw logs:
+`/tmp/pt-independent-integration-first-focused.log` and
+`/tmp/pt-independent-integration-online-focused.log`. These explicit selections
+overlap worker/independent review counts; none is a full-suite result.
+
+Whole `python -m ruff check src tests tools` and `git diff --check` passed. General,
+KB, calibration, Tier R corpus and report schemas regenerated without drift.
+Deterministic tests reproduced source deadline/redirect, keyboard/focus, lock alias,
+candidate chronology and metric arithmetic defects before fixes. Package security
+review also reproduced a ZIP64 directory-bound bypass and malformed DEFLATE failure
+mapping before repair; all seven concrete review findings now have regressions.
+Worker QA receipts preserve exact original failures and limitations.
+
+NOT RUN here: another `QT_QPA_PLATFORM=offscreen python -m pytest -q` full suite or
+broad GUI stress/native build, because the user's latest instruction reserves
+those processes to the existing qualification owners. Frozen #205 remains clean at
+`f33e2a0a`. At 23:43 UTC the existing run exit receipt recorded **143** and the log
+ended around 94% without a pytest summary: **NOT COMPLETE**, cause unknown. This
+session sent no signal/restart; raw owner logs/exit receipt remain untouched. No
+result is inferred from progress. Native #222/#224 and their logs/
+worktrees/builds remain reserved and untouched. Hosted required current-head jobs,
+main-relative scanner review, live sources, Windows/native/package/manual and
+disconnected-bundle acceptance remain open. No live provider, target execution,
+actual corpus/model fit, cost or prompt-cache evidence is invented.
+
+Subsequent reviewed #236 (`8975c517`) refuses incomplete PE manifest leaves before
+parsing closed XML prefixes: four baseline failures, 168 author and 197 independent
+authored-byte passes (one actual launcher excluded). Combined affected PE/package
+checks **257 passed, one deselected in 6.84 s**, log
+`/tmp/pt-independent-integration-pe-focused.log`. No launcher or target executed.
+Active next slices: saved-index candidate inspection, explicit consented Winbindex
+metadata refresh and cache staging publication hardening; each needs independent
+review and focused integration before its result enters this checkpoint.
+
+Subsequent #237/#238/#239 are reviewed/published/integrated: metadata deadline,
+exclusive cache publication plus review-discovered raw-fd cleanup, and exact-consent
+metadata refresh. Combined checks **283 passed in 3.63 s**,
+`/tmp/pt-independent-integration-index-focused.log`. SHAs/reviews are in the handoff.
+Candidate snapshot and desktop metadata follow-ups remain separate.
+
+Public #235 scanner query: one OPEN `pythonsecurity:S8707` issue
+`AaGuFuc-a2s4H-WIcBuh` on package preflight CLI archive path, new security rating 3.
+Independent triage found no unauthorized traversal in the explicit local CLI
+surface; normal authorized disposition remains needed. Status/rules/gate and
+suppression configuration remain unchanged.
+
+Reviewed #240 (`bf366196` atop `5cdf0e83`) now supplies coherent saved-index
+inspection/selection: an independently reproduced in-operation record replacement
+cannot mix old pair decisions with new provenance. Author339, independent106 and
+coordinator30 focused checks passed; integration **170 passed in 15.87 s**, log
+`/tmp/pt-independent-integration-candidate-focused.log`. No actual download or
+project creation is enabled by metadata-only candidate preview. #241 retains the
+independent scanner boundary receipt; finding remains OPEN and gate not bypassed.
+
 ## Current evidence
 2026-10-11: source inspection of pinned upstream revisions completed. Linux Qt offscreen desktop self-test starts and displays the synthetic project. Integrated Linux QA: 91 tests passed, 2 Windows-only tests skipped; Ruff and Qt offscreen desktop self-test passed. Domain, transport, worker, schema and UI tests are included. Synthetic fixtures and mocked providers verify wiring and validation, not real matching accuracy or model interpretation correctness.
 
@@ -1251,3 +1365,333 @@ Independent main657 port `522fe1b` plus receipt `5a95772` preserves all reviewed
 ### PR #157 credited replay boundary (2026-11-01)
 Independent review reproduced incompatible ordering keys reaching a ranking TypeError, and a valid failed-publication artifact being adopted by the actual loader. New managed runs now finalize explicit successful-report credit and the reader rechecks exact bytes/ownership; preserved failed files are uncredited. Producer scalar validation precedes encoding/scoring on both paths, with unchanged strict limits and in-memory unified compatibility. Legacy unmarked folders remain visibly unverified and can be refused; historical success is not inferred. Initial controls: 11 failed/4 passed; final bounded selection: **237 passed, 2 native-tool BLOCKED skips**, 5 expected legacy warnings in 4.70 s; whole Ruff, pip check and diff clean. No actual corpus/final evaluation was consumed. Independent final review, integration, cross-OS and broader acceptance remain open; see [credited replay receipt](qa/output-credited-replay-20261101.md).
 Independent credited-replay review approved source `5c26af904a28dd41aaacb3a60f9826037a85980d` / tree `f57a7dd2c210b773956bf218ad088295a03f93ff`: 119 separate passes, 1 native-tool BLOCKED skip, 11 expected legacy diagnostics in 26.55 s, plus direct strict-scalar/post-link valid-JSON controls and schema/lint checks. The selection includes existing bounded synthetic training-pipeline regressions; no actual corpus/final evaluation or native acceptance is claimed. This supersedes pending review only; integration/cross-OS/transfer and broader safeguards remain open.
+
+
+## Parser CPU work budgets — #184 follow-up (2026-11-04)
+
+Base #184 `64e8374d`. Its Windows QA failure is `tests/test_pe_version_info.py::test_hostile_structure_is_reported_and_never_raises[zero-length-child]`: 0.6499 s wall clock exceeds 0.25 s, run 41807460657/job 126497937645. A controlled 300 ms pause before processing the unchanged hostile bytes reproduces the failure (1 failed, `/tmp/patchtrace-parser-budget-red.log`); with CPU-time measurement it passes (1 passed, `/tmp/patchtrace-parser-budget-green.log`). This is a synthetic scheduling/fixture-IO control, not live Windows evidence. The unchanged work thresholds (0.25 s per hostile case, 1 s per mutation), parser result assertions, and process termination deadlines remain enforced. The SPEC-03 test-measurement amendment distinguishes work budgets from desktop latency targets.
+
+Linux Codespace, Python 3.14.2, `QT_QPA_PLATFORM=offscreen python -m pytest -q tests/test_pe_version_info.py tests/test_pe_resources.py tests/test_jobs.py tests/test_ui_related_panel.py tests/test_ui_unified.py tests/test_unified_pipeline.py tests/test_backend_symbol_local.py`: **302 passed, 3 skipped in 69.09 s**. Whole Ruff and diff hygiene passed. No product/schema changes. Full suite and Windows exact-head CI remain unverified on this follow-up. #184 must satisfy its checks/review before integration; this follow-up does not authorize a merge.
+
+## QA isolation consolidation — 2026-11-05
+
+Ported PR #184's four test-isolation/load-completion commits and PR #189's CPU-work budget amendment onto `5d504ff5`, preserving assertions and process wall deadlines. Initial focused run: **301 passed, 3 skipped, 1 failed** because an isolated Python child could not import user-site-only `typing_extensions`; provisioning it in the interpreter site repaired the environment, and the exact failed test then **passed**. Whole-tree Ruff and `pip check` passed. Full `QT_QPA_PLATFORM=offscreen python -m pytest -q` started; its result remains pending. Missing Qt GL/xkb libraries were also provisioned before successful collection. Native/Windows release gates are not established by this Linux run; draft integration requires exact-head CI and review.
+
+Independent QA review found a remaining `/proc` reaping race in the imported #184 child-cleanup poll: `exists()` followed by `read_text()` could fail after successful reaping. The poll now reads one observed state per iteration, treats disappearance as success and still fails a non-zombie process at the unchanged deadline. Related jobs suite: **51 passed, 3 skipped**. Ruff/diff checks passed. The full-suite run began at `0fdae562` before this test-only correction; its eventual result does not establish the final test helper head by itself. Exact-head CI remains required.
+
+Full QA interrupted after first observed failure to diagnose: **776 passed, 1 skipped, 1 failed** in 389.28 seconds; interrupted, NOT COMPLETE. Failure: `tests/test_artifact_bytes.py::test_in_place_edit_with_restored_mtime_is_detected` did not raise `ArtifactBytesError`. Same-size restored-mtime content edit escaped the reader's metadata fingerprint on this Codespace filesystem. This is a confirmed integrity defect; deterministic metadata-collision regression and bounded read-content verification assigned to isolated `repair/verified-bytes-20261105`. No full-suite success or merge readiness claimed.
+
+### Verified byte metadata-collision repair (2026-11-05)
+
+The Codespaces full-suite run exposed `test_in_place_edit_with_restored_mtime_is_detected` returning changed bytes without `artifact_changed`. The old reader relied on size/mtime/ctime; a deterministic equal-metadata reproduction failed against the original implementation. The Windows-only skip is removed: content integrity now uses compact 4 KiB SHA-256 block digests collected during the original full-file verification, rechecks touched blocks from the exact buffers returned, and checks metadata after reading. Untouched blocks are checked when requested; empty reads verify metadata only. Each scalar read touches at most one 4 KiB block, and the index costs 8 MiB/GiB. Short OS reads are reassembled without shifting digest boundaries; a short-read control first failed and now passes.
+
+Validation on Linux: artifact-byte, representation and all `test_pe_*.py` consumers: **558 passed, 1 skipped** (Windows-only WinVerifyTrust); `test_alpha_integration.py`: **22 passed**. After documenting peak buffers and releasing the digest index on close, the combined exact-source selection passed **580 tests, 1 skipped** in 16.82 s. Whole `python -m ruff check src tests tools` and diff checks passed. Fixtures exercise metadata collisions, read-time mutation, scalar I/O bounds, cross-block/tail ranges and short reads; no target binary is executed. Exact-head full-suite and Windows CI remain unverified; these portable tests are not native compatibility or release acceptance evidence.
+
+## Rules/callgraph consolidation — 2026-11-05
+
+Isolated port of eight PR #181 commits (excluding unrelated GUI timeout) reviewed against `5d504ff5`. Cache rescoring follows file/rule identity across reorderings; export names validate before writing; saved malformed grids are reported; regular-file hashing and graph successor budgets remain bounded. Review additionally reproduced a hash-valid grid sidecar accepting duplicate JSON keys (1 failed, 5 passed before fix); `RuleStore` now uses the existing strict JSON decoder. Focused pure rules/callgraph suite: **130 passed**; whole-tree Ruff passed. Published draft PR #191, initial source head `df0f1eb8`. New-head full QA/Windows checks remain pending; no live YARA-X compatibility claim. Initial ordinary pytest startup was blocked by absent Codespace Qt libraries; declared dependencies and required system libraries were provisioned separately.
+
+
+## KB explicit filename eligibility (2026-11-04)
+
+Base main `5d504ff5`; also reproduced unchanged in #176 (the components module and existing unit tests are identical). An advisory title naming a file downgraded an explicit analyst selection to contextual tier D, leaving COMPONENTS_READY and persisted pair resolution unreachable. Contextual title suggestions could also crowd explicit names out of a capped list. Before repair, 3 regression cases failed / 35 passed (`/tmp/patchtrace-kb-red.log`), including the real CLI/store/Winbindex-fixture path.
+
+SPEC-31-G and the KB integration plan now specify selectable A/B/C/E priority over contextual D. D+E dedup records tier E (analyst origin) and retains both reasons and source references. Title-only hints remain D and cannot select files. IDs stay basename/scope bound; byte verification remains pending and no file-to-CVE proof is inferred.
+
+Linux Codespace, Python 3.14.2: focused component/pair-index/service/CLI tests **76 passed in 5.91 s**; `QT_QPA_PLATFORM=offscreen python -m pytest -q tests/test_kbc*.py`: **1,057 passed in 43.01 s**, synthetic/offline with sockets denied. Whole Ruff/diff hygiene passed. `PYTHONPATH=src python tools/generate_schemas.py` has no drift; explicit import check resolves this worktree's `components.py`. The first schema command without PYTHONPATH picked up the shared editable checkout; its unrelated generated ExportManifest change was discarded and regeneration repeated against the correct source. An initial test command also named a nonexistent glob and collected nothing; corrected command above is the actual evidence. Independent read-only review found no blockers. Full-suite and exact-head Windows/Linux CI remain pending; no live MSRC/Winbindex/backend claim.
+
+### KB integration checkpoint (2026-11-05)
+
+- Reconciled PR #182's three KB fixture commits and PR #190's explicit-filename correction onto `5d504ff5`; excluded #182's unrelated UI wait port for the QA integration owner. Fixtures remain synthetic; structural and crash-protocol assertions are not native/provider or application-recovery acceptance evidence.
+- Reproduced the old source behavior: an analyst filename also named by a title became tier D and could not select a component. The correction retains tier E, both reasons and source references, including after CLI/store reopening.
+- Broad non-Qt KB validation: 1113 passed, one environment failure because isolated Python could not import a user-site `typing_extensions`. Installed that dependency into the shared interpreter; the affected test and all changed fixture/component/pair tests then passed with normal Qt plugin loading: 96 passed. Global `python -m ruff check src tests tools` and `git diff --check` passed.
+- Initial pytest startup was blocked by missing Qt host libraries; these were provisioned before the 96-test pass. Full-suite and Windows qualification remain coordinator/CI gates. No live compatibility claim is made.
+
+## Superseded GUI inspection failures — 2026-11-05
+
+Isolated audit-116 repairs from PR #176: a failure from an old project inspection no longer overwrites the current Files status/error/log. Export policy now clarifies that included code/evidence may retain original paths. Both original audit regressions failed on `5d504ff5`; added current-key/unkeyed failure controls and existing-current-error preservation. Independent review found no guard defect and prompted these controls and more precise copy. Focused GUI suite: **35 passed** in 60.42 seconds; whole-tree Ruff and diff check passed; full/cross-OS qualification remains pending. No report bytes, native adapters, project ownership, or wire contracts change.
+
+## 2026-11-05 transactional desktop project adoption slice
+
+Source accounting: isolated the generic `gui/qt/project_adoption.py` helper and `MainWindow.set_service` delegation from PR #176 commit37a6fed0 (original offline investigation work from #148). No KB dialog, project factory, acquisition, corpus, workflow, unrelated GUI or audit-disposition changes are included. PR #176 remains only partially accounted for. The module was indexed and UI ownership contract specified before porting. No serialized schema fields changed.
+
+Confirmed failure: the previous service closed before incoming rendering/preferences completed. Four new regression cases failed on the original implementation, one passed (20.76s). The isolated helper keeps the previous service open until adoption succeeds, restores the service and both recent-project preferences on failure, closes the rejected candidate and releases its project lock. Same-service re-adoption preserves ownership; failed rollback rendering retains the old service and logs a diagnostic. The coordinator independently reviewed the helper/delegation and found no blocking defect.
+
+PASSED: `QT_QPA_PLATFORM=offscreen python -m pytest -q tests/test_gui_project_adoption.py tests/test_gui_host_seam.py tests/test_ui.py` — 59 passed in126.45s; full-tree `python -m ruff check src tests tools` and diff-check passed. A separate rollback-render failure test passed (1 passed,5 deselected). No second full-suite run was started; final integration QA and Windows lifecycle acceptance remain separate gates.
+
+### Secondary artifact preparation controls (2026-11-05)
+
+- Isolated the artifact-preparation repair from PR #176. Six deterministic regression cases failed on main: missing cancellation/deadline enforcement during copies, excessive copy cap, absent remaining-budget accounting, and missing optional copy callback.
+- Scheduler preparation now checks cancellation/deadlines between bounded reads, uses the 1 GiB ingestion cap, and passes the remaining engine budget. Probe time stays outside that budget, correcting the source PR's worker-start anchor to match SPEC-28. Sources are unchanged; partial private copies remain owned by their temporary working directory.
+- `QT_QPA_PLATFORM=offscreen python -m pytest -q tests/test_audit120_rzdiff_prep.py tests/test_secondary_scheduler.py tests/test_bindiff_inputs.py tests/test_bindiff_run.py`: **85 passed**. `python -m ruff check src tests tools` and `git diff --check` passed. No persisted models changed, so no schema regeneration was needed.
+- These tests use injected clocks/copies and portable fake engines; they provide no live rz-diff/BinDiff compatibility evidence. Native producer quarantine and release gates remain unchanged. Full-suite/Windows CI gates remain pending for the integration.
+
+Review limitation: copy checks are cooperative between reads, not OS-call interruption. The pre-existing `lstat` followed by `open` input-replacement surface remains a follow-up: evaluate nonblocking open plus handle `fstat` validation and a deterministic regular-file-to-FIFO replacement test. This slice does not claim to close that surface.
+
+## 2026-11-05 isolated rz-diff research-controls consolidation
+
+- Integrated only PR #174 producer-control commits c2107f57, 0b5c5087, 5175ccbe, e8cd27d1, d22853d3: original #165 source patch/boundary control (51e5b4b1, 4d66af55), #166 callback size_t repair (edab7d91), #168 red-matrix and partition-oracle repairs (4013cdd5, b304034e). No #163/#164 application, GT-01, normalizer, workflow or tracker-restoration changes are included. Existing historical evidence files retain their original scope/date.
+- Confirmed an additional evidence-loss defect: rerunning the native evidence runner in an existing output directory overwrote receipts/logs even when the executable was absent. Five regression cases failed before the correction. Exclusive run reservation and exclusive evidence-file creation now refuse reuse and preserve prior output; other build diagnostic files are allowed.
+- PASSED: 33 focused tests, no skips, with PATCHTRACE_RIZIN_SIMILARITY pointing to the exact pinned source downloaded from raw.githubusercontent.com/rizinorg/rizin/c3a90e9226d977f58f4e9c75f78fa6b07afe13c7/librz/arch/similarity.c. Test verifies Git blob8544259e17a692bcb3c1d8858f104745cd0cba4c and byte-identical patch/application. Compiled wrapper-double stock-red/corrected-green checks and compiled partition oracle are synthetic boundary evidence only.
+- PASSED: python -m ruff check src tests tools. No schemas changed.
+- BLOCKED/NOT RUN: complete pinned-native API/CLI JSON acceptance, independent recovered inventories, distinct-byte/IO-context controls, Windows acceptance and downstream Tier R requalification. No target binaries executed; no quarantine, runtime parser, approved pin, cache acceptance, or automation changes. This is a research-tool checkpoint, not a qualified producer.
+
+Full `QT_QPA_PLATFORM=offscreen python -m pytest -q` for this isolated native slice was NOT COMPLETED: stopped with SIGINT during collection after 87.42s (no tests ran, exit130) at the coordinator's request to avoid contention with the mandated integration suite. No test failure was observed or discarded; the local interruption log is `/tmp/pt-native-full-qa.log`. The 33 focused passing tests remain the completed local check. Hosted PR #195 CI is pending and does not yet qualify the producer.
+
+## E4-RANDOM-20261105 — seeded cache-boundary audit
+
+- Seed `20261105`, Python `random.Random(seed).sample(pool, 3)` over ordered pool: ingestion, persistence, normalization, alignment, offline_bundle, runtime_discovery, evidence, interpretation, providers, reports, diagnostics, nway, representations, pe_overview, acquisition, diaphora, enrichment.cache. Selected offline_bundle, enrichment.cache, pe_overview. Open PRs #191–#199 do not change these implementations.
+- Baseline `5d504ff5`: three deterministic failures: duplicate size/input manifest fields returned a hit; a >1 MiB manifest returned successful admission. Fixed strict duplicate/nonfinite UTF-8 preflight while preserving Pydantic JSON validation, plus matching admission cap before filesystem mutation. No public interface or schema changes. Quarantine retains original manifest/payload; failed oversized admission preserves prior committed entry.
+- Validation: `QT_QPA_PLATFORM=offscreen python -m pytest -q tests/test_cache_manifest_boundaries_20261105.py tests/test_enrichment_cache.py tests/test_raw_cache.py tests/test_offline_bundle.py tests/test_pe_overview.py`: 173 passed (expected duplicate-ZIP fixture warning). `python -m ruff check src tests tools`: passed. Full suite is coordinator-owned.
+- Bounded static inspection of offline installer and PE export/orchestration found no additional reproduced defect in this wave. Authored bytes and local IO only; no target execution, network data transmission or native compatibility acceptance. Windows release gates remain separate and unverified by this wave.
+
+### [UE-AUD-20261104] Unified engine audit and hardening, SPEC-50 report/2, Diaphora source (2026-11-04, PR #180)
+Environment: Linux container, CPython 3.13.18, PySide6 6.12.0 (offscreen), pytest 9.2 with pytest-xdist (local only), ruff 0.17.3. Base `main` `25b2ac8`. Every result below is synthetic or recorded data; none is live gate evidence (G-U1..G-U8 never ran live; the unified live gates depend on PR #174).
+- Baseline before any change: all unified and unified-UI tests, 2,319 passed, 1 xfailed.
+- Slice audits, each with red/green regression tests and an audit record `docs/audits/20261104-unified-<card>.md`: cor (store, pipeline, compute, CLI), fus (fusion, sources, keys), lad (ladder), irx (IR, extraction), gui (read model, Qt panel), har (gate harness and bench), plus the follow-ups w2b (GUI-10, LAD-6) and the coordinator's fixes (FUS-09, run options, xdist-safe stray-files test).
+- Reproduced before its fix through the real CLI and an offscreen MainWindow screenshot: a unified result reported stale right after every run on the sample project (COR-02); `unified status` now says `current` after a run.
+- Merged branch, all unified, unified-UI, tooltip, Diaphora and KB/pilot unified tests: 2,612 passed, 1 xfailed (before the report/2 and w2b merges). IR, extract, ladder, keys and wire suites after the IR merge: 1,012 passed. Harness suites after the har merge: 368 passed. Report, export, CLI registry, packaging and schema tests after the report/2 merge: 567 passed, 21 skipped. Pipeline, read model, CLI, panel, store, contracts, Diaphora and report2 suites after the run-options change: 822 passed.
+- `python -m ruff check src tests tools`: clean. `python tools/generate_schemas.py`: no drift apart from the additive `ExportManifest` fields of report/2 (regenerated in that slice).
+- Deliberate result re-keying (cached results are recomputed once): `manual/3`, `ladder/4` and the new pass-table digest domain, `INGEST_REVISION=2` with the changed `ghidra_script.py` (`script_sha256` moves). Projects without Diaphora sets keep their result ids (tested).
+- Not verified here: Windows (CI pending at the time of writing), real Ghidra/BinDiff/Diaphora output, the BinDiff pin, the Windows frozen bench and the largest Tier R pair (G-U5), screen readers and DPI. SonarCloud reported "Security Rating on New Code: C" for head `88d48fc`; the issue list is on sonarcloud.io, which this session cannot reach, so the finding is not identified yet (owner action).
+
+### [UE-AUD-20261104:facts-and-integration] Facts audit and integration merges (2026-11-04, PR #180)
+- Facts audit (fct, Opus): 563 focused tests over 28 files before merge. After merging it and applying FCT-10 and the rule-version bumps: IR, extract, wire and EH suites 653 passed; all unified and unified-UI tests 2,590 passed, 1 xfailed; ruff clean; no schema drift.
+- SPEC-51 (d2): 742 passed, 5 skipped (new and existing `tests/test_pe_*.py`, tooltips, GUI host seam, docks, CLI features). Microsoft hosts were unreachable (403); the Authenticode ranges and OIDs were corroborated against signify 0.7.1 (MIT; no code copied). D2-4 Windows catalog: fakes only, BLOCKED for real acceptance.
+- report/2 wiring (rpt3): report, tooltip and export-destination tests 281 passed; new adapters and dialog tests 28 passed; Qt repeat gate x5 65 passed. `test_ui_seam_budget` failed after that merge (ui.py 3,117 lines over the 3,077 budget) and passes after moving the controls to `ui_export_v2.py`.
+- SonarCloud: the duplication condition (7.4%, then 4.8%) cleared after de-duplicating the set-file reader and storing the HTML goldens as `*.html.golden`; "Security Rating on New Code: C" remains unidentified (sonarcloud.io unreachable from the agent session).
+
+
+## Manual correction member completeness (2026-11-04)
+
+Candidate base: PR #180 at `a7689119fc25be61a4ac1b65619d6968859a136f`. A correction containing both a resolvable and an unresolved member silently lost the latter; a merge/split could become an affirmative tier-M 1:1, and the persisted result could be complete. Reproduction: 14 category/side adapter cases plus one compute/write/read integration case failed before the repair (15 failed, 15 passed; `/tmp/patchtrace-manual-red.log`).
+
+SPEC-31/06 now requires every named member to resolve before any correction atoms, groups or nodes are emitted. The adapter retains independent valid corrections, emits degrading `manual-unresolved:N`, and moves to `manual/4` to invalidate old cached identities. No wire shape changed. Schemas regenerated without drift.
+
+Linux Codespace, Python 3.14.2; pinned project dev/search/rules dependencies installed in `.venv`, missing Qt system libraries installed. `QT_QPA_PLATFORM=offscreen python -m pytest -q tests/test_unified_fus_manual.py tests/test_unified_sources.py tests/test_unified_fusion.py tests/test_unified_evidence_identity_20261101.py tests/test_unified_wire_compute.py tests/test_unified_pipeline.py`: **179 passed in 12.54 s**. Whole `python -m ruff check src tests tools` passed; `git diff --check` passed. Full offscreen suite is running; its result and exact published SHA will be recorded separately. Synthetic inputs only, no live backend/provider or Windows qualification is claimed.
+
+GitHub code-scanning and branch-protection queries returned HTTP 403; Dependabot alerts endpoint reports disabled (403). Those checks are unavailable, not clear. No merge attempted. Current local Codex config does not select a model or expose usage/account quota, and no usage/billing connector is available. Actual account TPM and dollar usage cannot be verified or the requested $25 cap claimed enforced. One primary worker plus one bounded read-only reconciliation/review worker; no extra paid API scripts, provider calls, scheduled workflows or model switches were started. No rate-limit event observed.
+
+
+### Manual snapshot follow-up: category defense and member cap
+
+Worker snapshots could turn contradictory added/removed categories into tier-M pairs or declarations on the opposite side. The project `FunctionMatch` validator already rejects those shapes: this repair is defense at the independently parsed snapshot/adapter boundary, not a claim that normal project creation accepts them. Six category/shape regressions failed before the adapter guard; they now produce degrading `manual-unresolved` and no rows/facts. Adapter `manual/5` invalidates the earlier semantics.
+
+A separate production defect is owner snapshot truncation: valid manual groups over 1,024 members were sliced before `manual_digest`, losing members and hiding changes to omitted functions from cache identity. Four tests with real validated FunctionMatch/FunctionRecord models failed before repair. Selected-run oversized manual groups now fail closed with `PT-UNIFIED-LIMIT/manual-members-cap` before hashing/execution; exact-cap groups and unrelated runs remain usable. Prior committed results are not rewritten.
+
+Category follow-up before the cap repair: `QT_QPA_PLATFORM=offscreen PYTHONPATH=src python -m pytest -q tests/test_unified*.py tests/test_ui_unified.py`: **2,515 passed, 32 skipped, 1 xfailed in 400.16 s**; native MSVC-free checks explicitly BLOCKED for missing lld-link. Final cap/category/sources/identity/pipeline/wire selection: **156 passed in 10.52 s**. Whole Ruff/diff passed, schemas regenerated against this worktree with no drift. The earlier full suite continues separately on frozen `31f51e76`; it has recorded a failure and is not a pass for this follow-up.
+
+Actual Windows native Ghidriff workflow [41934879294](https://github.com/djshellshoxxx/patchtrace/actions/runs/41934879294) completed successfully on exact `31f51e76831ff58ff1ba4982a9c34df1b9b39a01`: patchtrace-clean, seeded-store, seeded-store-no-adjacent-pdb, raw-cache-hit, and repro-plain-ghidriff jobs. This is old-head native CI evidence, not evidence for these subsequent source edits and not G-U1–G-U8 or clean-machine release acceptance.
+
+
+### Reviewed help dependency integrated into the manual-fix candidate
+
+PR #185 is exactly #180 plus help commits `9313d11b`, `4abe7e33`, `81a9fb28`, verified with range-diff and file comparison. Those three documentation commits were merged without rewriting their provenance; #188 is now stacked on #185 so its reviewed diff remains the manual safeguards only. Post-merge help/CLI/unified-CLI/manual/cap selection: **322 passed in 26.15 s**. The two missing help-page coverage cases are covered by this selection. Independent final review of `063e9fe6` found no blockers, confirmed selected-run/exact-cap behavior, and required the project-vs-snapshot distinction now recorded above. No GitHub main merge or owner gate bypass.
+
+### A4-C3-20261105 offline investigation desktop slice
+
+Source accounting: isolated PR #176 (`597a8b106491cd587cedf1273ee5ef6d56d71508`) offline investigation service/dialog, create-only project factory, host adoption callback, menu and tooltip hooks. Includes only the local `import_pair` preview revision, locked stale-revision check and product-architecture guard from that source; remote acquisition and document-scoping changes, calibration/replay/persistence/security work and unrelated palette changes remain excluded. Prerequisites are the reviewed KB fixture/filename and transactional project-adoption branches; both tracker sections were preserved during the local prerequisite merge.
+
+Baseline acceptance: the source's two workflow regression modules fail collection with two missing-module errors on main plus prerequisites (`/tmp/pt-investigation-red.log`). Initial implementation passed all 21 service/Qt cases. Added a KB-start real offline journey and actual MainWindow host regressions for failed rendering/adoption and a changed current project. Tests cover strict import retention, source references, explicit product selection, inspected hashes, stale preview/byte rejection, architecture mismatch, create race, retained partial project, cancellation and late completion. Synthetic fixtures/fake transports are offline evidence only. Product-only and binary-only desktop starts, online wizard acquisition, native Windows accessibility/DPI/frozen delivery and live provider compatibility remain open; existing CLI routes are unchanged.
+
+Integration failure found and corrected: the global tooltip reachability audit did not construct the newly registered dialog; it failed with the dialog control IDs missing. The audit now builds the real parented dialog and enumerates its controls (no exemption added). Subsequent tooltip file: **18 passed in 27.03 s**. Separate host seam: **24 passed in 26.47 s**. Existing acquisition/service regression selection: **47 passed in 14.45 s**, using offline/fake transports. Real host successful-adoption case: **1 passed in 6.94 s**. Whole-tree Ruff and diff checks pass; schema generation against this worktree (`PYTHONPATH=src`) has no drift. Full suite is reserved for coordinator integration.
+Final bounded service/dialog selection, including CVE and KB real offline journeys and real host success/failure/changed-selection adoption: **25 passed in 5.88 s**. Together with the separate host seam, tooltip and acquisition/service selections above, 114 distinct tests pass. These are constructed/offline tests; native source and Windows qualification remain unverified.
+Independent read-only review of implementation `27c9c948` found no blockers: preview invalidation/generation, locked revision/pair guard, explicit scope/architecture, create-only port, retained late/partial creation, host current-service checks and adoption rollback reviewed. Reviewer independently reran the service/dialog selection: **25 passed in 5.50 s**. Code is ready for coordinator integration; release/live gates above remain open.
+
+## E4-RANDOM2-20261105 — recovery copy preservation
+
+- Reproducible selection: `random.Random(20261106).sample(pool, 3)` over ordered pool ingestion, persistence, normalization, alignment, runtime_discovery, evidence, interpretation, providers, reports, diagnostics, nway, representations, acquisition, diaphora selected nway, ingestion, persistence. Previous selected modules and current source owners excluded.
+- Baseline `5d504ff5`: all three negative recovery cases failed deterministically. `nway.series._keep_corrupt_copy` treated an existing hash-prefix backup name as proof of preserved bytes; unrelated content, a directory or a symlink allowed `--replace-corrupt` to discard the only damaged original. Repair verifies a regular non-link recovery file and exact bytes on a bounded handle before reuse; failures retain both paths. Exact-copy reuse leaves its inode/mtime unchanged. No interfaces or schemas changed.
+- Validation: 32 tests passed across the new initial three regressions, `test_nway_series_tolerance.py` and `test_nway_series.py`; final new regression file (four cases, including exact-copy reuse) also passes. Whole `python -m ruff check src tests tools` and `git diff --check` passed. No full suite (coordinator-owned).
+- One-defect bounded wave; static inspection of ingestion/persistence did not yield another reproduced finding. Authored PE bytes/local file IO only. No native engine/Windows acceptance evidence; release gates remain independent.
+
+- Coordinator pre-publication review found no blocker for the existing-copy repair. Remaining limitation: `_keep_corrupt_copy` still reads the damaged original via `path.read_bytes()` even when normal load rejects its size; this wave bounds only verification of a preexisting recovery copy, not the whole recovery path.
+
+## CI fragment discovery repair (2026-11-05)
+
+GitHub #191 Ubuntu QA job127522978541 completed with18743passes/47skips/7xfails and3failures, all caused by main's step-only `.github/workflows/openai-agents.yml` (missing workflow name/on/jobs/permissions/timeouts). Local unchanged baseline reproduces3failed/48passed/3existingxfails in workflow source checks. Preserve the fragment byte-for-byte under `.github/workflow-examples/openai-agents-step.yml`, with explanatory README, so only executable workflow definitions are discovered. Final focused source validation:49passed/3existingxfails; whole Ruff/diff hygiene pass; original bytes verified against5d504ff5. No new paid runner/trigger or competitor automation is enabled; #167/#170/#171/#186 remain separate review candidates. Whole/cross-OS acceptance remains pending on the resulting integration head.
+
+
+### Secondary input replacement follow-up (2026-11-05)
+
+Coordinator reviewed source `8244ec7e`: read-only descriptor opening uses nonblocking/no-follow flags where available, then validates handle and fresh path regularity plus admitted device/inode identity before creating a destination. Every opened descriptor closes on refusal or completion. Existing cancellation callback, exclusive destination, bounds and caller hash comparison remain intact; this is not arbitrary filesystem-call interruption.
+
+Deterministic baseline: **3 failed, 1 passed** (another regular file and a symlink to the retained original were accepted; a regular-to-FIFO swap blocked a Python test child until its five-second timeout killed it; directory replacement was already refused). Final implementation: **92 passed** across input/run/preparation/scheduler/C3 integration tests. Expanded input-only controls, including operation without `O_NOFOLLOW` and descriptor closure: **26 passed**. These selections overlap and are not an aggregate count. Whole-repository Ruff and diff checks passed. The receipt commit changes documentation only after the reviewed implementation.
+
+Tests use synthetic files and Python/fake-engine fixtures; no target binary was executed and no native engine compatibility is claimed. FIFO coverage is POSIX-only; symlink cases may skip where creation is unavailable. Native Windows and combined integration/full-suite qualification remain pending. Earlier committed evidence and the coordinator's frozen candidate are unchanged.
+
+## E3-RECOVERY-20261105 — streamed corrupt-series preservation
+
+- Follow-up to E4-RANDOM2 (base `f2b7d178`): reproduced oversized recovery's unbounded `Path.read_bytes()` with a guarded original that rejects that API. The regression failed before implementation.
+- Recovery now hashes and copies/compares through one regular non-link source handle using reads <=1 MiB, bounded to its captured length plus an EOF probe. Rewinding does not reopen the source. Full first/second digest agreement plus handle/path identity, size, mtime and ctime checks reject changes; existing copies receive the same chunked regular-file/change checks. No new evidence-size cap; default normal-load cap unchanged. Failure removes only this attempt's incomplete exclusive copy when its identity still matches.
+- Validation: `QT_QPA_PLATFORM=offscreen python -m pytest -q tests/test_nway_recovery_copy_20261105.py tests/test_nway_series_tolerance.py tests/test_nway_series.py`: 38 passed in 9.86s. Includes oversized save success, guarded second-pass read failure and same-size mutation for both new/existing copies, collision refusal and exact-copy reuse. Whole Ruff and diff whitespace checks passed. Full suite stays coordinator-owned.
+- This closes the full-original-read limitation recorded by E4-RANDOM2. Cooperative change checks are not a filesystem sandbox against arbitrary concurrent writers after the final check. Authored bytes/local IO only; no native Windows or engine acceptance claim.
+
+- Coordinator review requested new-copy receipt and descriptor-failure coverage. Added flush/fsync-time target path/handle verification: an injected replacement of the newly created copy refuses series replacement and retains the foreign path. Injected target `fstat` and `fdopen` setup failures confirm descriptor closure. Final focused result: 41 passed in 7.68s; whole Ruff/diff checks pass. An identity-setup failure can leave an empty exclusive copy when its ownership cannot be re-verified safely; recovery never deletes an unverified path.
+
+## D2-E6-OFFLINE-20261105 — unambiguous producer pin qualification
+
+- Local source review: `tools/check_backend_pin.py` CLI and producer `gate_pin` each used permissive `json.loads`; six deterministic regressions on `5d504ff5` accepted duplicate schema, Ghidra digest and licence-owner-approval fields (each final value valid). This is a qualification ambiguity defect, independent of native runtime compatibility.
+- Shared stdlib checker parser now rejects duplicate keys at every level, nonfinite constants/exponent overflow, invalid UTF-8 and lone surrogate text before normal policy validation. Producer uses the same parser; a real build-entry regression verifies refusal before output/cache creation, injected download or runner. Committed pin values, versions, licences and exact input bytes remain unchanged. Runbook's forbidden `tofu` advice corrected against existing approved pin-source contract, without changing the policy.
+- Validation: focused `test_backend_pin_strict_20261105.py`, `test_backend_pin.py`, `test_build_backend_bundle.py`: 179 passed, 1 skipped in 14.01s. Whole Ruff and diff whitespace checks passed. `python tools/check_backend_pin.py --release`: exit 0 (`backend pin ok`), proving local pin consistency/policy only. No large payloads downloaded, workflow activation or external provisioning performed.
+- Native clean Windows offline acceptance and downloadable full-runtime release qualification remain unverified by this Linux tooling repair; existing release acceptance gates remain open. No Windows compatibility, live engine or full-runtime artifact claim. Full suite remains coordinator-owned.
+
+## E3-PROJECTCREATE failed initial creation rollback (2026-11-05)
+
+Source accounting: PR #176 audit #116 creation rollback intent and four source regressions, isolated onto main `5d504ff5`. The source's recursive cleanup of every newly named directory entry was deliberately replaced: concurrent analyst files are not owned by a creation attempt. No export, UI, KB, model/schema or unrelated source changes are included.
+
+Baseline source regression run: **4 failed in 1.38 s**; invalid second input left an immutable copy and artifact directory. The source tests also demanded deletion of `.patchtrace.lock`, but that persistent kernel-lock inode is intentionally retained to avoid split writer ownership. Acceptance now verifies actual retry, copied-input cleanup and preservation of foreign/prior files and permissions instead of an entirely empty directory.
+
+The optional Python-only ingestion publication ledger records new files/directories and the staged inode before read-only chmod. Exclusive same-directory `os.link` publication refuses overwriting a concurrent destination; an existing destination is verified before reuse and never claimed. Rollback keeps the project lock, closes SQLite, removes only matching recorded files and empty owned directories, and preserves already committed first snapshots. Foreign concurrent paths, replacements/symlinks, reused read-only copies, interruptions and post-publication failures have focused regressions. New artifact publication requires a hardlink-capable project filesystem; unsupported filesystems fail closed before publication. Native Windows/NTFS qualification remains pending; Linux emulated read-only deletion is not native Windows acceptance.
+
+Validation: `QT_QPA_PLATFORM=offscreen PYTHONPATH=src python -m pytest -q tests/test_audit116_create_rollback.py tests/test_service_storage_audit.py tests/test_ingestion_core10.py tests/test_core.py tests/test_audit_core.py tests/test_core_review_regressions_20261029.py` — **76 passed in 6.02 s**. Whole-tree `python -m ruff check src tests tools` and `git diff --check` passed. No full suite was run by this slice; coordinator owns combined QA.
+
+Independent read-only review reproduced a residual lstat→unlink race by injecting an exact owned-basename replacement inside `Path.unlink`: the foreign replacement could be deleted after the final ownership check. The coordinator explicitly scoped this repair to the existing cooperative project-lock model and identity-checked best-effort cleanup; an uncoordinated process racing the final unlink/chmod is not covered, and no atomic conditional deletion or OS-sandbox claim is made. The architecture contract states that limit. Ordinary foreign-path, preexisting/reused/read-only, replaced-before-check, committed-snapshot and held-lock tests remain intact. Quarantine/native-handle hardening and native acceptance remain open follow-ups.
+Coordinator final read-only review approved the bounded implementation for draft publication: committed snapshot retention, database/artifact cleanup under the lock, read-only owned cleanup and foreign-before-check preservation. Retry evidence here is backend `ProjectService.create` only. A desktop destination picker may reject the intentionally retained lock-only directory as nonempty; end-to-end wizard retry is unverified and remains an integration follow-up.
+
+## E4-B5-SONAR-20261105 — parity parser CPU and fixture source safety
+
+- Frozen base `a33a4405`: authored MD dump line (`401000` + 100,000 spaces + `X`) deterministically exceeded a 3-second child timeout. Adjacent whitespace quantifiers in `_MD_LINE` explored ambiguous partitions despite the decimal digit cap. The child is killed by `subprocess.run` on timeout; no native tool or target executes.
+- Replace the whole-line regex with explicit boundary whitespace scans plus bounded address/value checks. Preserve optional lowercase 0x, 1–16 ASCII hex digits, whitespace or colon/comma/equals separators, signed decimal with 1–30 digits per side, duplicate-last-wins and rejected-line counts. A bounded child asserts rejection CPU <1 second; grammar cases include Unicode whitespace/digits, decimal/address limits and malformed separators.
+- Escape literal bidi U+202E in only `test_pe_der.py`, `test_pe_signature.py`, `test_report2_adapters.py`, `test_unified_diaphora_adapter.py`, `test_unified_irx_records.py`. Independent AST comparisons against the base were identical for all five files, preserving every runtime fixture value/assertion; no gate exemption added.
+- Validation: selected parity/fixture suite 168 passed in 8.99s; final parser budget/grammar file two tests also passes (169 unique focused cases covered). Whole Ruff and diff whitespace checks passed. Full suite/Sonar rerun remain coordinator-owned. Authored-text timing is not native BinDiff dump-format compatibility evidence.
+
+## Combined swarm qualification and supporting repairs (2026-11-05)
+
+Frozen candidate #205 `a33a4405` integrates prior #191–#199 and new #200–#204 once. First combined full attempt:422passed/1failed after232.80s; source-CLI smoke subprocess imported the shared editable checkout's old CLI lacking export/inspect. Exact smoke passed after candidate source scoping. A source-scoped retry was interrupted at422passed after172.73s because isolated Python still resolved the shared editable checkout. Neither attempt qualifies the candidate. A dedicated system-site test venv installs candidate editable without changing global installation; both ordinary and `-I` module paths resolve `/tmp/pt-swarm2/src`. Fresh whole-suite run is pending there with fail-fast diagnosis and all tests selected.
+
+Follow-up candidate includes reviewed #206 descriptor input ownership, #207 bounded recovery streaming, #209 strict release-pin parsing, #210 ownership-aware creation rollback, #211 linear parity parser/AST-identical hostile fixtures, #212 approved source SHA256/checkout containment. Their isolated focused results and limitations are in source receipts. #208 retains actual missing-header/library diagnostics; no native executable ran and prerequisites were not provisioned in that bounded wave. Local dependency installation is authorized generally; this is not an unavoidable external blocker.
+
+#210 rollback is identity-checked best effort under the cooperative kernel writer lock. Persistent lock retained; previous snapshots and known foreign/reused files preserved in tests. Uncoordinated final-path replacement between last check and unlink/chmod remains a disclosed residual, not an atomic compare/unlink claim. Exclusive artifact publication requires hardlink-capable storage; unsupported filesystems fail closed. Backend retry is covered; lock-only destination GUI retry remains open.
+
+Sonar205 currently fails. Actual parity slowdown and checkout source escape have fixes; independent remaining operator/benchmark/explicit-output review is in `docs/qa/sonar-205-triage-20261105.md`. No quality gate or issue status was bypassed; authorized project review access and fresh exact-head scans remain required.
+
+## Offline investigation import-boundary integration (2026-11-05)
+
+Dedicated candidate #205 full run at a33a4405 stopped1failed/7351passed/13skipped/4existingxfails in782.08s. Failure: the root KB import scan denied PySide6 in new `investigation_qt.py`. Accepted module index/spec identify it as a named Qt adapter alongside panel_qt; PR176 already carries the missing exact-basename whitelist. Port only PySide6 and gui/tooltips allowances for that adapter. The service remains Qt-free and UI/database/network exclusions remain enforced. Seven guard regressions prove UI Qt accepted while service Qt/network/database and UI network/database stay denied. Related checks159passed; independent import/guard selection44passed/90deselected, Ruff/diff clean. No production behavior or wire/schema fields changed; full/exact-head CI still required.
+
+## A4/C3 current project input journey (2026-11-05)
+
+Frozen #205 base `a33a4405`: an actual MainWindow with an open sample project exposed no current-input action; the new baseline journey failed with `KeyError: use_current` (1 failed in 2.95 s). A subsequent real journey exposed the existing rejection of stored hash.bin names. The bounded repair adds an explicit action and frozen, strict-JSON-decoded existing Artifact snapshots, verifies copies off the GUI thread through the shared reader, then uses captured original names solely as manual component/display hints in the existing local inspector. Each live inspection checks SHA/size before pair resolution, and returned pair hashes must still match. Exact advisory scope, same-component confirmation and current preview remain required. No source project connection/second writer lock, database/model/schema additions or remote traffic.
+
+Origin project id/revision, artifact ids/names and hashes are preview-only convenience provenance. Source annotations and CVE linkage are not carried over; stored context remains the existing manually selected hashes/decision. Host snapshots and callbacks check service identity, revision and ordered artifact records; stale work cannot replace the current service, and late created paths remain reported/reopenable. Original-name labels outside the existing .sys/.dll/.exe contract (including derived projects already labelled hash.bin) return PT-KBC-UNSUPPORTED. Distinct artifact ids sharing a stored hash/path support the existing identical outcome when hints canonically agree, and explicitly refuse conflicting hints. Broader filename/derived-label preservation remains an open contract, not a fabricated alias.
+
+Validation uses the worktree PYTHONPATH with `/tmp/pt-followups-venv/bin/python`; explicit import resolves `/tmp/pt-kb-current2/src/patchtrace/kbcorrelation/investigation_service.py`, and no global editable install was changed. Before final identical-label controls, service/dialog/current journey, host seam, tooltip and KB boundary integration: **217 passed in 82.75 s**. Expanded current-journey file: **15 passed in 83.13 s** (shared load); final size-cap and identical controls after the fast pre-encoding character cap: **5 passed, 12 deselected in 7.90 s**. Whole-tree Ruff and diff hygiene pass. The scoped boundary file preserves boundary repair `226ac7e5`'s seven negative controls and adds only investigation_service models/artifact_bytes siblings with five allowed/denied checks. Fixtures are synthetic/offline; native Windows/live/full-suite integration remain coordinator gates.
+Independent read-only review approved exact implementation `0b3c58fb` against `a33a4405`, with no blockers: strict snapshots/off-GUI verified I/O, no second source-project lock, limited manual hint authority, explicit confirmation, per-inspection hash/size before pair commit, stale-owner retained creation and exact sibling boundaries reviewed. Independent focused controls: **20 passed, 136 deselected in 15.91 s**, scoped Ruff/diff clean. Native/live/full-suite and unsupported-label gates above remain open.
+
+## Current-project journey in the follow-up candidate (2026-11-05)
+
+Reviewed #214 source0b3c58fb (final receipt head ef70e0bd) merged into follow-up candidate after #206/#207/#209/#210/#211/#212. Integrated current-input/service/dialog/contract/tooltip/adoption/rollback selection:219passed in78.40s; whole Ruff/schema regeneration/diff clean. Worker evidence217earlier integration passes plus17current controls across overlapping selections; independent review20passed/136deselected. These counts overlap and are not added as unique coverage. Snapshot decode strict and bounded, input hashing/IO off GUI, no second project store/lock, observed SHA+size checked before pair commit, manual component confirmation and stale-owner/retained-path behavior preserved. Original .bin/derived-label and conflicting shared-path labels return explicit unsupported status, not fabricated metadata.
+
+Further whole-suite diagnosis after the import-boundary fix reached2096additional passes/10skips before a network-guard harness assertion. Cause was the coordinator's PYTEST_ADDOPTS fail-fast setting propagating to its intentionally failing child pytest; guard itself correctly rejected/recorded network attempts. The outer diagnostic runner now passes fail-fast as arguments with no inherited setting. Remaining-node diagnosis continues from that node; it is a subset continuation, not a fresh complete exact-head full-suite pass. Initial temporary diagnostic runner collection also lacked cwd on sys.path; corrected to match python -m semantics before running tests. No application assertion/gate/consent guard changed.
+
+## Final coordinated checkpoint (2026-11-05)
+
+Reviewed follow-up #213 (including #214) and actual local native-prerequisite receipt #208 integrated into primary review candidate #205. No main merge/release. Runtime source, tests, tools and workflow trees match reviewed/tested follow-up c6691ab1 before documentation-only additions. Whole Ruff/schema no drift; final tracker/import checks recorded in the checkpoint receipt.
+
+Older a60d1dbc remaining-node diagnosis ended143/SIGTERM after88% progress, no pytest summary and cause not established; NOT COMPLETE, no pass inferred from progress. Final overlapping1600-node tail completed1573passed/27skipped/18117deselected in156.89s. Earlier7351pass whole attempt stopped on omitted named-adapter test metadata, fixed with precise negative purity controls; later2096pass segment stopped because inherited diagnostic fail-fast truncated its controlled child pytest, corrected by outer-only arguments. These are diagnostic segments, not a fresh unsplit full exact-head pass and not qualification of newer follow-up production changes. Full final-head/native/Windows/package/scanner gates remain open. All worker edits are committed/published and raw local logs retained.
+
+### LBL-30 recorded-protocol CLI integration — 2026-11-05
+
+Ported the isolated preregistration selection slice from PR #176 (bad8fa4c, 500ab5a9, d8d8be45) onto f33e2a0a; replay/output persistence remains separate. Before repair the acceptance file produced 96 failures/1 pass; after repair 97 passed. Whole-tree Ruff passed; source-bound schema generation produced no drift. Broader training regression and independent review remain pending at this checkpoint. No real locked evaluation, corpus label, numerical threshold or runtime calibration promotion changed.
+
+### LBL-31 credited-output replay consolidation — 2026-11-05
+
+Selectively ported the remaining normalized-output retention, report completion, replay and bounded metadata slice from PR #176 onto LBL-30. Baseline f33e2a0a independently reproduced a foreign `ghidriff` response scored/credited under its `rz-diff` provider owner; the same constructed control is refused after repair. New feature acceptance initially could not collect because retention modules were absent. After porting and generating all corpus/calibration schemas: 239 focused tests passed; a broader contracts/calibration/unified-harness selection passed 234 tests (overlapping selections), with expected explicit warnings for unverified legacy output compatibility. Whole-tree Ruff passed. Independent security review pending. No actual corpus fit, labels, native compatibility or calibration promotion is claimed; atomic publication requires hardlink-capable storage.
+
+### Wave-three reviewed integration — 2026-11-05
+
+#215/#216/#217 reviewed source integrated at dfc212e2: combined276 passed; Ruff and all four schema generators passed with no drift. Independent prereg97 and replay44 controls passed. Frozen f33e2a0a complete suite remains running (log /tmp/pt-205-f33-full.log); one stale SIGKILL double failure reproduced, repair pending in lifecycle slice. Current scanner/Windows/native/release gates remain open; no main merge.
+
+### GUI retry / retained committed acquisition — #219 integration
+
+Reviewed38be184c merged at a84bf6d1. Five real preflight paths now permit absent/empty/sole regular non-symlink lock directories while kernel locking and committed-database refusal remain authoritative. Baseline actual retry/stress double2failures and separate contributor-file deletion1failure were reproduced. Promotion retains committed project, prior annotations, foreign files and persistent lock, closes service, reports retained path. Integrated lifecycle/KB/calibration475 passed39.80s; author228 and independent206 selections overlap, plus independent second-annotation/KeyboardInterrupt probes. Ruff clean; no schema/model/error-code changes. Frozen f33 full suite remains running; final updated-head/native/Windows acceptance open.
+
+### Reviewed normalizer and binary-only desktop — #220/#221
+
+#220 cf9cefff reserved metadata guard:24 baseline red/1pass, independent77pass; rejects forged derived claims while preserving raw inputs/prior committed evidence. Integrated normalizer/unified-source106pass. #2217e7a52eb real binary-only local-pair preview/create/reopen/export: independent207pass and no-preview-write/reversed-orientation probes; product lineage/advisory linkage remain explicitly unverified. Integrated both with prior lifecycle:339pass23.77s. Counts overlap. Worker full-suite collection was stopped/no tests run; root f33 suite is the sole complete-run attempt still active. Updated-head full/Windows/native acceptance remains open.
+
+### Native provisioning / canonical normalizer identity — #222/#223
+
+Verified all14 complete compressed/raw log receipts and exact unfinished status for #222 dbebfee8; actual pinned headers compile, native oracle/link/CLI not yet executed. Source/dependencies/build cache provisioned with supported PCRE2 retry; quarantine unchanged. #223631b5e91 closes equivalent address spelling duplicate bypass with existing parse_address while preserving raw spelling and repeated-function refusal:14 baseline red/1pass, independent95pass. Latest integrated normalizer/binary/KB/lifecycle357passed33.26s; Ruff clean. Complete f33 suite still active; no exact updated-head full pass claimed.
+
+### [MERGE-20261106:branch-consolidation-readiness]
+
+Audited 242 remote branches and 112 open PRs against pinned main/#205/#218/#235. Isolated #235+#242+#243 source tree `ea48a7e087590fccffadb54e4414bd000f16838b` preserves the nine leaf-owned files and all other integration content. Root affected checks: 424 passed; independent overlapping controls: 42 passed; whole Ruff, diff hygiene and KBC schema drift checks pass. #204 was moved to ready-for-review at its unchanged head after fresh baseline/fix validation. Hosted smoke/review and integration Windows/scanner gates remain open. [Plan](plans/branch-merge-plan-20261106.md); [receipt](qa/branch-merge-readiness-20261106.md). No main merge or release acceptance is claimed.
+
+## N-way Windows recovery compatibility (2026-11-06)
+
+On frozen #205, hosted Windows CPython 3.12.10 reported five recovery failures.
+Pinned CPython source and a real-file fault probe identify incompatible pathname
+versus descriptor `st_ctime` meanings. Recovery now retains independent complete
+timestamp baselines while preserving cross-view device/inode/size/mtime checks,
+streamed exact bytes and owned-copy cleanup. New controls first produced two
+failures/four passes; corrected recovery/tolerance/series selection: **47 passed
+in 3.37 s**, whole Ruff/diff clean. Native Windows and exact integration gates
+remain pending. Source blobs, invariants and limits are recorded in
+`docs/qa/nway-windows-recovery-20261106.md`.
+
+### [KB-ADMISSION-20261106:captured-source-context]
+
+Reproduced #244 review comment 4489325824 against exact `5347ccfd`: source imports after the old snapshot check could enter a saved ContextBundle. Both real-store timing controls failed before repair. SPEC-31-D now specifies admission after one index read and reuse of that index for scope/context; pre-admission drift is stale, and later imports remain available outside the captured context. After repair, both controls pass and the overlapping lifecycle/acquire/service/crash-recovery selection passes **75 tests in 10.56 s**; whole Ruff passes. Prior project bytes, legitimate source imports, verified artifact hashes and owned staging cleanup are checked. [Detailed receipt](qa/kb-source-admission-20261106.md). Independent integration review and existing hosted/native/Windows/full-suite/scanner gates remain open.
+
+
+## Branch consolidation execution and full-run limits (2026-11-06)
+
+Combined #244 source tree `3e5276d6643d784e459264d6cb213082b812c8d4`: 774 focused tests passed, whole-tree Ruff passed, schemas unchanged. Separate exact #245 full Linux run: **3 failed, 19618 passed, 139 skipped, 6 xfailed, 1 warning in 2537.16s (0:42:17)**. All three failures reproduced on frozen #205; two launcher controls pass in the corrected environment, while local AF_UNIX construction remains unavailable. The original full run remains non-green. See [complete result and controls](qa/pr245-linux-qualification-20261106.md) and [merge plan](plans/branch-merge-plan-20261106.md). Native Windows, current-head hosted checks and parent scanner dispositions remain open for the application candidates. #204's two smoke jobs subsequently passed and the exact reviewed head merged into main at `d02b94bcedb29dae201941f01f2c94d42ebbb297` on 2026-11-06 at 06:27:13 UTC; the source branch was retained.
+
+
+## Subprocess virtual-environment preservation (2026-11-06 UTC)
+
+On main `d02b94bc`, two subprocess isolation tests resolved the active interpreter
+symlink to a base Python without the installed protobuf/YARA-X dependencies.
+Both failures reproduced. Retaining `sys.executable`, as the production workers
+already do, passed both complete test files: **116 passed in 42.16 seconds**.
+No assertion, limit, environment filter or production code changed. Independent
+review, whole-tree Ruff, dependency consistency and diff hygiene passed. Full
+and hosted cross-platform qualification remain separate; the local AF_UNIX
+restriction is unchanged. [Detailed receipt](qa/subprocess-venv-20261106.md).
+
+## [CONTINUATION-20261106:local-product-start-and-qualification]
+
+Unchanged #245 passed Windows QA: **19,671 passed, 90 skipped, 5 xfailed**,
+plus standalone, frozen EXE, portable ZIP and installer gates. The downloadable
+candidate belongs to #245, not the later product implementation. Linux full QA
+and the native Windows Ghidriff workflow subsequently passed; Ubuntu Qt is
+still outstanding at the 08:18 UTC checkpoint.
+
+Reviewed product source `570f86b8` (published equivalent `0b7d8581`, identical
+tree) adds the stored-product catalogue, explicit selection, source-bound local
+pair preview/create, and original-source pending repair. Final affected
+selection: **139 passed** including 59 product cases; independent acceptance:
+**16 passed**, no findings. Six distinct independent cases are retained in
+`test_kb_product_acceptance_20261106.py`; those plus authored cases: **65 passed**.
+Earlier 391-test evidence predates the final repair; counts overlap. New pending
+product attachments require the new journal reader: legacy repair ignores
+`selected_product` and was observed to lose source digests. Public schemas/SQL
+version/CLI grammar are unchanged, but internal journal format is extended.
+
+Test-only exact-byte diagnostics preserve full equality while bounding failure
+rendering; affected selection **49 passed**, separate real child-pytest controls
+passed. The previously failing #235 Windows report identifies two large byte
+diff cases taking 42.6% of that failed run; no normal-path speedup is claimed.
+The continuation includes actual #246 ancestry and preserves all source refs.
+Whole Ruff/schema/diff checks pass. Combined current-source full and hosted
+qualification remain separate. [Evidence and limits](qa/continuation-20261106.md).
+
+
+## [CONTINUATION-QUALIFICATION-20261106:completed-local-results]
+
+Frozen #247 local full result: **1 failed, 20,284 passed, 139 skipped, 6 xfailed, 18 warnings in 3356.58s**. Only AF_UNIX construction was denied; timing/GUI controls passed. Hosted Ubuntu separately passed **20,372 tests**. The original #246 five-failure run remains preserved; one unchanged three-control timing follow-up passed without establishing cause. Both #244/#246 hosted full suites passed.
+
+Fully qualified #245 merged normally into #205 as `6095f702`; #205 is ready. Forward #248 retains the accepted parent, exact reviewed tree and 54-pass evidence. Source branches remain intact. At the 09:20 UTC checkpoint, current-head hosted gates and parent Sonar dispositions remain open; main is `d02b94bc`. Exact raw evidence and five reconciled R8 documents are retained. [Completed qualification and limits](qa/continuation-qualification-20261106.md).
+
+
+## [SUBPROCESS-ACCEPTED-20261106]
+
+At 09:29:12 UTC, #246 merged normally into main as `dc53b529560453e84cf45e356a40432ff3fc6725`, after all applicable source checks including both Linux smoke legs passed. The merge tree equals the qualified source; its branch remains at `c804e4d9`. Earlier local failures remain in the evidence. Parent application promotion must recheck its merge tree against this new main. [Acceptance and preserved results](qa/continuation-qualification-20261106.md).
+
+
+## [CONTINUATION-WINDOWS-20261106:product-start-build]
+
+Frozen #247 Windows QA passed **20,331 tests, 94 skipped, 5 xfailed, 19 warnings in 2675.35s**, plus standalone/frozen/portable/installer checks. Artifact `13492805458`, source `37b77130`, contains the stored-product starting route. API/upload digest and tested/source tree identity agree. The 09:43–09:44 snapshot still has Linux packaging/smokes outstanding; original local failures and release/live/manual gates remain preserved. [Windows candidate and evidence](qa/continuation-windows-20261106.md).

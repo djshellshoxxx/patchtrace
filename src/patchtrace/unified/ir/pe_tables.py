@@ -163,8 +163,17 @@ def _parse_sections(overview) -> tuple[Section, ...]:
     return tuple(sorted(out, key=lambda section: section.start))
 
 
-def _in_section(sections: Sequence[Section], rva: int) -> bool:
-    return any(section.start <= rva < section.end for section in sections)
+class _Covered:
+    """Union of the sections as sorted disjoint intervals: `rva in covered` is a bisect, not a scan of every section
+    (a hostile table of 1M entries against 96 sections cost ~10 s with the linear scan)."""
+
+    def __init__(self, sections: Sequence[Section]) -> None:
+        self._spans = _coalesce([(section.start, section.end) for section in sections])
+        self._starts = [start for start, _ in self._spans]
+
+    def __contains__(self, rva: int) -> bool:
+        index = bisect_right(self._starts, rva) - 1
+        return index >= 0 and rva < self._spans[index][1]
 
 
 def _read_runtime_functions(rva_reader: _Rva, directory, sections, tables: PeTables) -> list[tuple[int, int, int]] | None:
@@ -183,9 +192,10 @@ def _read_runtime_functions(rva_reader: _Rva, directory, sections, tables: PeTab
             return None
         entries.extend(struct.iter_unpack('<III', data))
     previous_end = 0
+    covered = _Covered(sections)
     for begin, end, unwind in entries:
-        if (remainder or begin >= end or begin < previous_end or not _in_section(sections, begin)
-                or not _in_section(sections, end - 1) or unwind == 0):
+        if (remainder or begin >= end or begin < previous_end or begin not in covered
+                or (end - 1) not in covered or unwind == 0):
             tables.warnings.append('pdata-unreadable')   # unsorted, overlapping, out-of-section or truncated table
             return None
         previous_end = end
@@ -251,6 +261,10 @@ def _eh_signature(rva_reader: _Rva, primary: Primary) -> str | None:
         count_bytes = rva_reader.read(tail + 4, 4)
         if count_bytes is not None:
             count = struct.unpack('<I', count_bytes)[0]
+            if MAX_SCOPES < count < 0x1000:
+                # a C scope table longer than the cap cannot be compared record by record; handler-only would let two
+                # different tables look EH-equal (FCT-10). Counts >= 0x1000 are not scope counts (C++ FuncInfo RVA).
+                return EH_UNAVAILABLE
             if 0 < count <= MAX_SCOPES:
                 table = rva_reader.read(tail + 8, count * 16)
                 if table is not None and _plausible_scopes(table, count, primary):

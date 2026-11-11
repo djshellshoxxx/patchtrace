@@ -93,12 +93,13 @@ def test_the_ingest_row_must_have_read_back_every_generated_function_and_instruc
     assert checks(short, 'ingest-complete') == {('ingest', 500): False}
 
 
-def test_stages_that_wait_for_s3_and_s4_are_listed_with_their_limits_and_never_silently_absent():
+def test_a_stage_that_waits_is_listed_with_its_limit_and_never_silently_absent(monkeypatch):
+    # UE-R4: facts, read_model and ui_calls left PENDING (tests/test_unified_har_bench.py); the mechanism stays for any stage that waits
+    assert bench.report([], bench.environment()).pending == ()
+    monkeypatch.setattr(bench, 'PENDING', (('x', 'S9', 'l35_facts_5000_s', DEFAULT_LIMITS.l35_facts_5000_s, 'later'),))
     built = bench.report([], bench.environment())
     pending = {p.stage: p for p in built.pending}
-    assert set(pending) == {'facts', 'read_model', 'ui_calls'}
-    assert pending['facts'].needs == 'S3' and pending['facts'].limit_value == DEFAULT_LIMITS.l35_facts_5000_s
-    assert pending['ui_calls'].needs == 'S4' and 'first_paint' in pending['ui_calls'].limit
+    assert set(pending) == {'x'} and pending['x'].needs == 'S9' and pending['x'].limit_value == DEFAULT_LIMITS.l35_facts_5000_s
     assert built.verdict == 'insufficient-data'                                      # nothing was measured
 
 
@@ -178,5 +179,5 @@ def test_the_command_line_writes_a_report_and_exits_by_the_verdict(tmp_path, cap
     built = bench.load(out.read_bytes())
     assert {(r.stage, r.n) for r in built.rows} == {('ladder', 150), ('ingest', 150)}
     assert code == 0 and built.verdict == 'insufficient-data'                         # 150 is not an L-35 size
-    assert 'pending' in capsys.readouterr().out
+    assert 'verdict insufficient-data' in capsys.readouterr().out
     assert bench.main(['--sizes', 'abc']) == 2 and bench.main(['--stages', 'nope', '--sizes', '10']) == 2

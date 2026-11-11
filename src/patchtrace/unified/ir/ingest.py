@@ -92,6 +92,14 @@ class IrBuildResult:
     manifest: ProgramIrManifest
 
 
+def ingest_identity_digest(limits: UnifiedLimits = DEFAULT_LIMITS) -> str:
+    """`ingest_limits_digest` input of `ir_key`: the content-changing limits plus `schema.INGEST_REVISION`, so a change
+    that turns the SAME extractor output into different IR content moves the key (cached sidecars then miss)."""
+    payload = schema.canonical_json({'domain': 'unified-ingest-revision/1', 'limits': keys.ingest_limits_digest(limits),
+                                     'revision': schema.INGEST_REVISION})
+    return hashlib.sha256(payload.encode('utf-8')).hexdigest()
+
+
 def ir_key_inputs(header, limits: UnifiedLimits = DEFAULT_LIMITS) -> IrKeyInputs:
     """02 s5 payload of `ir_key`, from the validated header (the probed versions are authoritative)."""
     producer = header.producer
@@ -99,7 +107,7 @@ def ir_key_inputs(header, limits: UnifiedLimits = DEFAULT_LIMITS) -> IrKeyInputs
                        symbols=producer.symbols, ghidra=producer.ghidra, pyghidra=producer.pyghidra,
                        python=producer.python, script_sha256=producer.script_sha256,
                        analysis_options_digest=producer.analysis_options_digest,
-                       ingest_limits_digest=keys.ingest_limits_digest(limits))
+                       ingest_limits_digest=ingest_identity_digest(limits))
 
 
 def _lines(path: Path, limits: UnifiedLimits) -> Iterator[bytes]:
@@ -395,8 +403,21 @@ def ingest(jsonl: Path, expect: ExpectedSide, limits: UnifiedLimits = DEFAULT_LI
             raise fail('no-footer')
         _check_footer(footer, tables)
         return _finish(connection, db_path, header, expect, tables, limits, footer, created_utc)
+    except BaseException:
+        connection.close()
+        _discard(out_dir)   # cancel, timeout, hostile input or a cap: no half-written sidecar stays in the directory
+        raise
     finally:
         connection.close()
+
+
+def _discard(out_dir: Path) -> None:
+    """Remove what `ingest` wrote (the database and the manifest with its temp file); never raises."""
+    for name in (schema.DB_NAME, schema.MANIFEST_NAME, schema.MANIFEST_NAME + '.part'):
+        try:
+            (out_dir / name).unlink(missing_ok=True)
+        except OSError:
+            pass
 
 
 def _check_footer(footer, tables: _Tables) -> None:

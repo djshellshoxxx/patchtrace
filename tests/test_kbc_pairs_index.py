@@ -276,3 +276,29 @@ def test_a_damaged_record_is_a_typed_error(tmp_path, body, code):
 
 def test_an_empty_workspace_has_no_index(tmp_path):
     assert not wiring.WorkspaceFileIndex(tmp_path).available()
+
+
+def test_explicit_title_filename_survives_component_selection_and_reopening(kb):
+    doc = json.loads(cvrf())
+    doc['vulnerabilities'][0]['title'] = 'Synthetic flaw in ExampleDrv.sys'
+    raw = json.dumps(doc).encode('utf-8')
+    with WorkspaceStore(kb.workspace) as ws:
+        ws.add_document(import_bytes(raw, now=NOW), raw)
+    inv, scopes = investigation(kb)
+    save_record(kb)
+    code, title_only, _ = kb('components', inv, '--product', scopes['client'])
+    assert code == 4 and title_only['result']['state'] == 'NEEDS_FILENAME'
+    assert title_only['result']['hints'][0]['tier'] == 'D'
+    assert kb('pairs', inv)[1]['result']['reason'] == 'no file name'
+    code, selected, _ = kb('components', inv, '--file', 'ExampleDrv.SYS')
+    assert code == 0 and selected['result']['state'] == 'COMPONENTS_READY'
+    hint, = selected['result']['hints']
+    assert hint['tier'] == 'E' and len(hint['reasons']) == 2 and hint['claim_refs']
+    assert hint['changed_in_kb'] == 'unknown'
+    # Each CLI call constructs a new service/store. Product and explicit filename come from persisted decisions.
+    code, pairs, _ = kb('pairs', inv)
+    assert code == 3  # the synthetic index reports skipped rows
+    pair, = pairs['result']['pairs']
+    assert pair['file_name'] == DRV
+    assert pair['older_sha256'] == 'c' * 64 and pair['newer_sha256'] == 'd' * 64
+    assert pair['bytes_state'] == 'pending'
