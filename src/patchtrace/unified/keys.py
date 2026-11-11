@@ -17,7 +17,7 @@ from .limits import DEFAULT_LIMITS, Budget, UnifiedLimits
 
 DOMAINS = ('unified-ir', 'unified-result', 'unified-config', 'unified-manual', 'unified-row', 'unified-run',
            'unified-limits', 'unified-ingest-limits', 'unified-sources', 'unified-source-content')
-ENGINE_VERSION = 'ude/2'  # A-28: the raw Ghidriff table is read in the project's current orientation
+ENGINE_VERSION = 'ude/2'  # A-28: raw Ghidriff table read in the current orientation; A-29: one-sided-by hints on every row
 _RVA_MAX = 2**32 - 1
 _SHA256 = re.compile(r'[0-9a-f]{64}')
 _HEX_ADDRESS = re.compile(r'0x[0-9a-f]{1,16}')

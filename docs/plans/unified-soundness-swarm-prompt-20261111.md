@@ -244,7 +244,11 @@ sufficient to recompute them)? Report CONFIRMED/PLAUSIBLE findings with a reprod
   revised twice on 2026-11-11 after worker C showed that a literal 2-voter floor after removal makes every two-referrer
   global unprovable, and that without the explained-dissenter exclusion a lone dissenter ties two innocent referrers). Rationale: by votes alone, "several functions retargeted to a global that other functions still reference" is
   indistinguishable from "that global moved and the others were retargeted"; a proof must abstain. The remaining majority
-  decision (a lone dissenter against a consensus) is the typical patched function and stays as before. Known cost: two
+  decision (a lone dissenter against a consensus) is the typical patched function and stays as before. Review findings
+  2026-11-11 added: a stationary claim (the existing global kept its address) blocks with one voter; an explanation is void
+  when the judged datum itself votes for the explaining partner (swapped globals); rule 4(b) keeps a floor of two voters in
+  all. Residual: >= 3 retargeters to a MOVED existing global with exactly one referrer still map (indistinguishable by votes
+  from a single retarget of that referrer). Known cost: two
   functions retargeted together to a brand-new global abstain for everyone who references the old datum (`review`, never a
   wrong `cosmetic`). `datamap` version 3.
 - **A-31 (05 s2.3 and s7 alignment; p17).** Tie-breaks in block pairing (`pair_blocks` order), patience anchors and the LCS fill
