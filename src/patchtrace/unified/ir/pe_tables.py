@@ -262,10 +262,14 @@ def _eh_signature(rva_reader: _Rva, primary: Primary) -> str | None:
         if count_bytes is not None:
             count = struct.unpack('<I', count_bytes)[0]
             if MAX_SCOPES < count < 0x1000:
-                # a C scope table longer than the cap cannot be compared record by record; handler-only would let two
-                # different tables look EH-equal (FCT-10). Counts >= 0x1000 are not scope counts (C++ FuncInfo RVA).
-                return EH_UNAVAILABLE
-            if 0 < count <= MAX_SCOPES:
+                # A C scope table longer than the cap cannot be compared record by record, and handler-only would let
+                # two different tables look EH-equal (FCT-10). The same dword is a GS cookie offset for
+                # __GSHandlerCheck, so only records that really look like scopes make the signature unavailable;
+                # anything else stays opaque handler data. Counts >= 0x1000 are not scope counts (a FuncInfo RVA).
+                table = rva_reader.read(tail + 8, count * 16)
+                if table is not None and _plausible_scopes(table, count, primary):
+                    return EH_UNAVAILABLE
+            elif 0 < count <= MAX_SCOPES:
                 table = rva_reader.read(tail + 8, count * 16)
                 if table is not None and _plausible_scopes(table, count, primary):
                     document['hlen'] = 4 + 16 * count

@@ -21,7 +21,8 @@ NORM_VERSION = 'norm/1'
 # records); mixed into `ir_key` by `ingest.ingest_identity_digest`. 2 = irx audit 20261104. A test pins it equal to
 # `extract.INGEST_REVISION` (the runner predicts the key without importing `ir`).
 # 3 (2026-11-04): a C scope table longer than MAX_SCOPES ingests as EH unavailable, no longer handler-only.
-INGEST_REVISION = 3
+# 4 (2026-11-07): ... but only when plausible scope records follow; a GS cookie offset stays handler-only.
+INGEST_REVISION = 4
 INS_VERSION = 'ins/1'
 DB_NAME = 'ir.sqlite3'
 MANIFEST_NAME = 'manifest.json'
