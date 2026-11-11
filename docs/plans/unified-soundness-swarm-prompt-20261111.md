@@ -239,9 +239,10 @@ sufficient to recompute them)? Report CONFIRMED/PLAUSIBLE findings with a reprod
   claim*: for `consensus(t) = u`, a vote (t', u) with t' != t blocks when t' has >= 2 voters for u and t' has no raw consensus
   of its own elsewhere (raw = plain strict majority) or is incomplete; a single dissenting vote never blocks; symmetric for
   `consensus(u) = t`. Rule 4(b): leave-one-out: the bidirectional consensus for row r is a strict majority among the voters OTHER than r,
-  with at least one of them (r's vote never tips its own majority; two agreeing functions with no competing claim map, as
-  before; revised 2026-11-11 after worker C showed a literal 2-voter floor after removal makes every two-referrer global
-  unprovable). Rationale: by votes alone, "several functions retargeted to a global that other functions still reference" is
+  with at least one of them, where an explained dissenting vote (its other endpoint has a full-table consensus elsewhere)
+  is not counted (r's vote never tips its own majority; two agreeing functions with no competing claim map, as before;
+  revised twice on 2026-11-11 after worker C showed that a literal 2-voter floor after removal makes every two-referrer
+  global unprovable, and that without the explained-dissenter exclusion a lone dissenter ties two innocent referrers). Rationale: by votes alone, "several functions retargeted to a global that other functions still reference" is
   indistinguishable from "that global moved and the others were retargeted"; a proof must abstain. The remaining majority
   decision (a lone dissenter against a consensus) is the typical patched function and stays as before. Known cost: two
   functions retargeted together to a brand-new global abstain for everyone who references the old datum (`review`, never a
