@@ -8,12 +8,14 @@ from __future__ import annotations
 import hashlib
 import json
 import os
+import struct
 import threading
 import zipfile
 from pathlib import Path
 
 import pytest
 
+from patchtrace import offline_bundle
 from patchtrace.offline_bundle import (
     OfflineBundleError,
     inspect_offline_bundle,
@@ -396,3 +398,160 @@ def test_producer_does_not_overwrite_archive_created_during_publish(tmp_path, mo
         offline_bundle.build_offline_bundle(source, RUNTIME_ID, versions, destination)
     assert destination.read_bytes() == b'other publisher'
     assert not list(tmp_path.glob('.offline-pack-*'))
+
+
+# ---- TB-10: the entry count is read from the end-of-central-directory record before zipfile opens the archive ----
+
+EOCD = struct.Struct('<4s4H2LH')
+EOCD_SIGNATURE = b'PK\x05\x06'
+
+
+def _split_at_eocd(archive):
+    data = archive.read_bytes()
+    at = data.rfind(EOCD_SIGNATURE)
+    return data[:at], list(EOCD.unpack_from(data, at))
+
+
+def _declare(archive, total, comment=b''):
+    """Rewrite the end record so that it declares `total` entries (and carries `comment`)."""
+    head, fields = _split_at_eocd(archive)
+    fields[3] = fields[4] = total
+    fields[7] = len(comment)
+    archive.write_bytes(head + EOCD.pack(*fields) + comment)
+    return archive
+
+
+def _as_zip64(archive, total, *, prefix=b'', extensible=b''):
+    """Rewrite the end of a small archive the way zipfile writes a ZIP64 one, declaring `total` entries.
+
+    `prefix` is data prepended to the whole file (the locator offset is then short by its length) and
+    `extensible` is a ZIP64 extensible data sector, which separates the record from its locator.
+    """
+    head, fields = _split_at_eocd(archive)
+    directory_size, directory_offset = fields[5], fields[6]
+    record = struct.pack('<4sQ2H2L4Q', b'PK\x06\x06', 44 + len(extensible), 45, 45, 0, 0, total, total,
+                         directory_size, directory_offset)
+    locator = struct.pack('<4sLQL', b'PK\x06\x07', 0, len(head), 1)
+    end = EOCD.pack(EOCD_SIGNATURE, 0, 0, 0xFFFF, 0xFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0)
+    archive.write_bytes(prefix + head + record + extensible + locator + end)
+    return archive
+
+
+def _forbid_zipfile(monkeypatch):
+    def constructed(*args, **kwargs):
+        raise AssertionError('zipfile.ZipFile was constructed before the member cap was enforced')
+    monkeypatch.setattr(offline_bundle.zipfile, 'ZipFile', constructed)
+
+
+OVER_CAP = offline_bundle.MAX_MEMBERS + 2
+DECLARED_OVER_CAP = {
+    'plain': lambda archive: _declare(archive, OVER_CAP),
+    'comment': lambda archive: _declare(archive, OVER_CAP, b'release note'),
+    'longest-comment': lambda archive: _declare(archive, OVER_CAP, b'c' * 0xFFFF),
+    'zip64': lambda archive: _as_zip64(archive, OVER_CAP),
+    'zip64-huge': lambda archive: _as_zip64(archive, 2**40),
+    'zip64-prefixed': lambda archive: _as_zip64(archive, OVER_CAP, prefix=b'stub' * 64),
+    'zip64-extensible-data': lambda archive: _as_zip64(archive, OVER_CAP, extensible=b'e' * 32),
+    'saturated-without-zip64': lambda archive: _declare(archive, 0xFFFF),
+}
+
+
+@pytest.mark.parametrize('rewrite', list(DECLARED_OVER_CAP.values()), ids=list(DECLARED_OVER_CAP))
+def test_declared_entry_count_over_the_cap_is_refused_before_zipfile_opens(tmp_path, monkeypatch, rewrite):
+    archive = rewrite(make_bundle(tmp_path))
+    _forbid_zipfile(monkeypatch)
+    with pytest.raises(OfflineBundleError, match='PT-OFFLINE: ZIP contains too many entries'):
+        inspect_offline_bundle(archive)
+
+
+def test_archive_with_more_real_entries_than_the_cap_is_refused_before_zipfile_opens(tmp_path, monkeypatch):
+    archive = make_bundle(tmp_path, extra_members=[(f'payload/extra/{index}', b'x') for index in range(8)])
+    monkeypatch.setattr(offline_bundle, 'MAX_MEMBERS', 8)  # 13 real entries against a cap of 8 + manifest
+    _forbid_zipfile(monkeypatch)
+    with pytest.raises(OfflineBundleError, match='PT-OFFLINE: ZIP contains too many entries'):
+        inspect_offline_bundle(archive)
+
+
+def test_zip64_archive_written_by_zipfile_is_refused_before_zipfile_opens(tmp_path, monkeypatch):
+    # 65,537 members force zipfile itself to write the ZIP64 record and locator (synthetic empty members).
+    archive = tmp_path / 'many.zip'
+    with zipfile.ZipFile(archive, 'w', compression=zipfile.ZIP_STORED) as out:
+        for index in range(0x10001):
+            out.writestr(f'payload/{index:05d}', b'')
+    assert EOCD.unpack(archive.read_bytes()[-EOCD.size:])[4] == 0xFFFF  # the 16-bit field is saturated
+    assert offline_bundle._declared_zip_entries(archive) == 0x10001
+    _forbid_zipfile(monkeypatch)
+    with pytest.raises(OfflineBundleError, match='PT-OFFLINE: ZIP contains too many entries'):
+        inspect_offline_bundle(archive)
+
+
+@pytest.mark.parametrize('zip64', [False, True], ids=['plain', 'zip64'])
+def test_under_declared_entry_count_still_meets_the_check_after_open(tmp_path, monkeypatch, zip64):
+    # zipfile ignores the declared count and reads the whole directory, so the post-open check must stay.
+    archive = make_bundle(tmp_path, extra_members=[(f'payload/extra/{index}', b'x') for index in range(8)])
+    archive = _as_zip64(archive, 1) if zip64 else _declare(archive, 1)
+    monkeypatch.setattr(offline_bundle, 'MAX_MEMBERS', 8)
+    assert offline_bundle._declared_zip_entries(archive) == 1
+    with pytest.raises(OfflineBundleError, match='PT-OFFLINE: ZIP contains too many entries'):
+        inspect_offline_bundle(archive)
+
+
+HONEST = {
+    'plain': lambda archive: archive,
+    'comment': lambda archive: _declare(archive, 5, b'release note'),
+    'longest-comment': lambda archive: _declare(archive, 5, b'c' * 0xFFFF),
+    'comment-ends-in-nul': lambda archive: _declare(archive, 5, b'note\x00\x00'),
+    'zip64': lambda archive: _as_zip64(archive, 5),
+    'zip64-prefixed': lambda archive: _as_zip64(archive, 5, prefix=b'stub' * 64),
+}
+
+
+@pytest.mark.parametrize('rewrite', list(HONEST.values()), ids=list(HONEST))
+def test_honest_bundle_is_never_refused_by_the_entry_count_precheck(tmp_path, monkeypatch, rewrite):
+    archive = rewrite(make_bundle(tmp_path))
+    monkeypatch.setattr(offline_bundle, 'MAX_MEMBERS', 4)  # four payload files + manifest is exactly the cap
+    with zipfile.ZipFile(archive) as reference:
+        assert offline_bundle._declared_zip_entries(archive) == len(reference.infolist()) == 5
+    plan = inspect_offline_bundle(archive)
+    assert plan.file_count == 4 and plan.runtime_id == RUNTIME_ID
+
+
+UNREADABLE_END = {
+    'empty': b'',
+    'shorter-than-a-record': b'PK\x05\x06',
+    'no-signature': b'not a zip archive ' * 8192,
+    'record-cut-short': b'x' * 64 + b'PK\x05\x06' + b'\x00' * 10 + b'tail',
+}
+
+
+@pytest.mark.parametrize('content', list(UNREADABLE_END.values()), ids=list(UNREADABLE_END))
+def test_unreadable_end_record_is_left_to_zipfile(tmp_path, content):
+    # The pre-check never invents a refusal: what it cannot parse keeps the existing zipfile error.
+    archive = tmp_path / 'broken.zip'
+    archive.write_bytes(content)
+    assert offline_bundle._declared_zip_entries(archive) is None
+    with pytest.raises(OfflineBundleError, match=r'PT-OFFLINE: cannot read or verify offline ZIP \(BadZipFile\)'):
+        inspect_offline_bundle(archive)
+
+
+_SATURATED_END = EOCD.pack(EOCD_SIGNATURE, 0, 0, 0xFFFF, 0xFFFF, 0, 0, 0)
+ZIP64_WITHOUT_RECORD = {
+    'locator-past-the-end': struct.pack('<4sLQL', b'PK\x06\x07', 0, 2**40, 1) + _SATURATED_END,
+    'locator-without-record': b'y' * 56 + struct.pack('<4sLQL', b'PK\x06\x07', 0, 0, 1) + _SATURATED_END,
+}
+
+
+@pytest.mark.parametrize('content', list(ZIP64_WITHOUT_RECORD.values()), ids=list(ZIP64_WITHOUT_RECORD))
+def test_zip64_locator_without_a_record_is_left_to_zipfile(tmp_path, content):
+    # A locator promises a ZIP64 record, so the saturated 16-bit count is not a count. How zipfile words its own
+    # refusal of such a file differs between CPython patch levels; only "not the member-count refusal" is stable.
+    archive = tmp_path / 'broken.zip'
+    archive.write_bytes(content)
+    assert offline_bundle._declared_zip_entries(archive) is None
+    with pytest.raises(OfflineBundleError, match='PT-OFFLINE: ') as refused:
+        inspect_offline_bundle(archive)
+    assert 'too many entries' not in str(refused.value)
+
+
+def test_missing_archive_has_no_declared_entry_count(tmp_path):
+    assert offline_bundle._declared_zip_entries(tmp_path / 'absent.zip') is None
