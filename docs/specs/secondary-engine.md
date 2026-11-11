@@ -12,7 +12,7 @@ Optionally run rz-diff on the project's artifact pair to obtain a second, indepe
 
 ## 3. Invocation and parsing
 
-`rz-diff -C -j -t functions <older> <newer>` with argv list (no shell), cwd = private temp, stdout bounded at 64 MiB, stderr tail 2 MiB, wall-clock timeout default 1,800 s (configurable 60–86,400), process-tree kill on cancel/timeout (existing `jobs.run_process`). Exit 0 = ran; non-zero = error with stderr tail. Stdout must parse as a strict JSON array of objects `{similarity: number 0..1, type: 'COMPLETE'|'PARTIAL'|'UNLIKE', original: {addr:int, name:str, size:int}|null, modified: {…}|null}`; empty/invalid output is an error even with exit 0. Addresses are unsigned VAs.
+`rz-diff -C -j -t functions <older> <newer>` with argv list (no shell), cwd = private temp, stdout bounded at 64 MiB, stderr tail 2 MiB, wall-clock timeout default 1,800 s (configurable 60–86,400), process-tree kill on cancel/timeout (existing `jobs.run_process`). Exit 0 = ran; non-zero = error with stderr tail. Stdout must parse as a strict JSON array of objects `{similarity: number 0..1, type: 'COMPLETE'|'PARTIAL'|'UNLIKE', original: {addr:int, name:str, size:int}|null, modified: {…}|null}`; empty/invalid output is an error even with exit 0. A run stopped by timeout, cancel or the output limit is an error whatever its exit code, and its stdout is never parsed or committed (verified: the adapter's parse refuses a stopped run; the scheduler records timeout and cancelled as their own statuses). Addresses are unsigned VAs.
 
 ## 4. Records
 
