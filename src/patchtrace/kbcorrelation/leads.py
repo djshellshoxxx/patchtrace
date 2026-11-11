@@ -16,7 +16,8 @@ Rules that keep the claim small:
 * stale means the project's ordered SHA-256 pair differs from the pair the context was prepared for, or an advisory
   document the context was prepared from has been replaced by a newer imported revision; navigation is off and
   ``stale_reasons`` says which. A ranking from an earlier analysis run is never read (``load_default`` guards it), and the
-  engine's reason is shown instead of "not ranked yet".
+  engine's reason is shown: after "not ranked yet" when nothing is stored, after "does not match" when a stored
+  ranking is not served.
 """
 from __future__ import annotations
 
@@ -58,6 +59,11 @@ TEXT_STALE_ADVISORY = 'A newer revision of an advisory document this context was
 TEXT_STALE_TAIL = 'It is shown for reference; navigation is off.'
 TEXT_NO_CURRENT_RANKING = ('The stored ranking does not match the current analysis, so only the advisory context is '
                            'shown. {note}')
+# ``enrichment.pipeline.load_default`` starts every reason about a ranking that is stored but not served (project
+# changed, older algorithm, incomplete rows) with these words. Its other reason is that no analysis run completed:
+# nothing is stored then, so nothing can mismatch.
+STORED_RANKING_REASON = 'Stored ranking'
+TEXT_NO_CONTEXT_CHIP = 'no advisory context is attached, so no CVE is compared with this change'
 TEXT_READY = ('Leads pair the advisory context with the comparison. The order inside a group is the engine\'s own '
               'attention order; it does not show that any changed function addresses a vulnerability.')
 TEXT_GUARD = 'absence of a signal is not a negative finding'
@@ -288,9 +294,11 @@ def _kev_chip(kev: KevFact) -> Chip:
 
 
 def _loose_chips(row: EngineRow, elsewhere: Sequence[NotApplicable], alignment: Alignment,
-                 pair_stale: bool) -> tuple[Chip, ...]:
+                 pair_stale: bool, attached: bool) -> tuple[Chip, ...]:
     other = next((n for n in elsewhere if alignment.hits(n.stated_cwe, row)), None)
-    if other is not None:
+    if not attached:
+        text = TEXT_NO_CONTEXT_CHIP
+    elif other is not None:
         where = ', '.join(other.products) or 'other products'
         text = f'no applicable CVE: its aligned {other.stated_cwe} {other.cve} lists {where} only'
     else:
@@ -389,8 +397,8 @@ def build_leads(bundle: ContextBundle | None, view: EngineView | None, *, alignm
                                                                         pair_stale), len(rows), view, key, stale,
                                            hooks))
         if not member:
-            loose.append(_lead(row, UNATTRIBUTED, _loose_chips(row, elsewhere, alignment, pair_stale), len(rows),
-                               view, key, stale, ('kb.next.review_lead',)))
+            chips = _loose_chips(row, elsewhere, alignment, pair_stale, attached=bundle is not None)
+            loose.append(_lead(row, UNATTRIBUTED, chips, len(rows), view, key, stale, ('kb.next.review_lead',)))
     groups = [_group(card, rule_ids, grouped[card.cve], facts[card.cve]) for card, rule_ids in zip(cards, rules,
                                                                                                     strict=True)]
     groups.sort(key=lambda g: (g.kev != 'listed', -len(_supporting(g.leads)), g.group))
@@ -418,7 +426,9 @@ def _state_text(state: LeadsState, reasons: Sequence[StaleReason], engine_note: 
         parts = {'file-pair': TEXT_STALE_PAIR, 'advisory-revision': TEXT_STALE_ADVISORY}
         return ' '.join([*(parts[r] for r in reasons), TEXT_STALE_TAIL])
     if state == 'no-comparison' and engine_note:
-        return plain_text(TEXT_NO_CURRENT_RANKING.format(note=engine_note), 1000)
+        stored = engine_note.startswith(STORED_RANKING_REASON)
+        text = TEXT_NO_CURRENT_RANKING.format(note=engine_note) if stored else f'{TEXT_NO_COMPARISON} {engine_note}'
+        return plain_text(text, 1000)
     return {'ready': TEXT_READY, 'no-comparison': TEXT_NO_COMPARISON, 'no-advisory': TEXT_NO_ADVISORY}[state]
 
 
