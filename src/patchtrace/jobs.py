@@ -24,6 +24,15 @@ def _positive_int(value: object) -> bool:
     return isinstance(value, int) and not isinstance(value, bool) and value >= 1
 
 
+def _valid_environment(env: Mapping[str, str]) -> bool:
+    """TB-15: names and values that mean the same in a POSIX `environ` and in a NUL-separated Windows block.
+
+    A NUL would end an entry early and start another variable; `=` in a name moves the name/value boundary.
+    """
+    return all(isinstance(name, str) and isinstance(value, str) and name and '=' not in name
+               and '\0' not in name and '\0' not in value for name, value in env.items())
+
+
 @dataclass(frozen=True)
 class ProcessProgress:
     """Bounded, unredacted child output for trusted internal observers only."""
@@ -283,6 +292,9 @@ def run_process(argv: Sequence[str], *, cwd: Path, env: Mapping[str, str],
     if memory_limit_bytes is not None and not (_positive_int(memory_limit_bytes)
                                                and memory_limit_bytes < MEMORY_LIMIT_CEILING):
         raise ValueError('PT-BACKEND: memory limit must be a positive integer')
+    if not _valid_environment(env):
+        # The name and the value stay out of the message: either may be a credential or hostile text.
+        raise ValueError('PT-BACKEND: child environment has an invalid variable name or value')
     if cancel.is_set():
         return ProcessResult(-1, '', 'cancelled')
     if os.name == 'nt':
