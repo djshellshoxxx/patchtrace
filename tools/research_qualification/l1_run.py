@@ -108,6 +108,7 @@ class ProductJoin:
         self._env = build_env(clock=_FixedClock())
         self._root = root
         self._home: dict[str, Path] = {}
+        self._unusable: set[str] = set()  # months whose import raised: no question is answered from them
         self._records: dict[tuple[Path, str], str] = {}
 
     def _kb(self, argv: list[str]) -> tuple[int, dict]:
@@ -134,22 +135,30 @@ class ProductJoin:
         except OSError:
             return {'file': path.name, 'sha256': None, 'status': 'rejected', 'reason': 'the file cannot be read'}
         probe = self._root / f'doc{index:04d}'
-        code, doc = self._kb(['index', 'import', '--json', '--workspace', str(probe), str(path)])
-        documents = (doc.get('result') or {}).get('documents') or []
-        if code != 0 or len(documents) != 1:
-            return {**entry, 'status': 'rejected', 'reason': self._failure(doc)}
-        info = documents[0]
-        release = info.get('release_id')
-        if release:
-            home = self._home.setdefault(release, probe)
-            if home != probe:  # another revision of the same month: both go to one workspace, the product picks
-                self._kb(['index', 'import', '--json', '--workspace', str(home), str(path)])
+        release = None
+        try:
+            code, doc = self._kb(['index', 'import', '--json', '--workspace', str(probe), str(path)])
+            documents = (doc.get('result') or {}).get('documents') or []
+            if code != 0 or len(documents) != 1:
+                return {**entry, 'status': 'rejected', 'reason': self._failure(doc)}
+            info = documents[0]
+            release = info.get('release_id')
+            if release:
+                home = self._home.setdefault(release, probe)
+                if home != probe:  # another revision of the same month: both go to one workspace, the product picks
+                    self._kb(['index', 'import', '--json', '--workspace', str(home), str(path)])
+        except Exception as exc:  # a join that raises: the month is not answered, its cases are BLOCKED, not a traceback
+            if release:
+                self._unusable.add(release)  # a half-loaded month must not answer any question
+            return {**entry, 'status': 'rejected', 'reason': self.describe(exc)}
         return {**entry, 'status': 'loaded', 'release_id': release, 'kind': info.get('kind'),
                 'doc_id': info.get('doc_id'), 'edges': info.get('edges'), 'problems': info.get('problems')}
 
     def search(self, cve: str, month: str) -> dict | None:
         """`kb search CVE --months MONTH`; None when no loaded document belongs to that month."""
         home = self._home.get(month)
+        if month in self._unusable:
+            return None
         return None if home is None else self._service(home, self._env).search(cve, months=month).result
 
     def scope_id(self, product: str) -> str:
@@ -392,6 +401,13 @@ def _status(counts: dict[str, Any]) -> tuple[str, str]:
     return 'PASS', f'all {counts["scored"]} asked cases passed'
 
 
+def _answer(case: dict, join: ProductJoin, records: dict[str, Path] | None, data_date: str) -> dict:
+    try:
+        return run_case(case, join, records, data_date)
+    except Exception as exc:  # any join failure leaves this case unanswered: BLOCKED, never a miss or a traceback
+        return _row(case, 'BLOCKED', join.describe(exc))
+
+
 def run(manifest: dict[str, Any], frozen_sha: str, evidence_class: str, months: Path, winbindex: Path | None,
         data_date: str) -> dict[str, Any]:
     """Ask the join for every verified case and return the rq-l1-run/1 receipt document."""
@@ -401,7 +417,7 @@ def run(manifest: dict[str, Any], frozen_sha: str, evidence_class: str, months: 
     with tempfile.TemporaryDirectory(prefix='rq-l1-', ignore_cleanup_errors=True) as scratch:
         join = ProductJoin(Path(scratch))
         loaded = [join.import_month(i, path) for i, path in enumerate(month_files)]
-        rows = [run_case(case, join, records, data_date) for case in asked]
+        rows = [_answer(case, join, records, data_date) for case in asked]
     counts = _counts(len(manifest['cases']), rows, excluded)
     status, stop_reason = _status(counts)
     index = None if records is None else {

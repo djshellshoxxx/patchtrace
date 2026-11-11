@@ -327,3 +327,36 @@ def test_a_patchtrace_from_another_checkout_is_not_scored(tmp_path, months, monk
     monkeypatch.setattr(L1R, "REPO", other)
     code, rec = run(tmp_path, months, [case(PASS_ID)])
     assert code == 2 and rec is None and "PYTHONPATH" in capsys.readouterr().err
+
+
+def test_a_join_that_raises_while_importing_a_month_blocks_its_cases_and_writes_the_receipt(tmp_path, months, monkeypatch):
+    # An exception from the join is an unanswered question: the receipt is still written, the month is recorded as
+    # rejected and its cases are BLOCKED. It must not escape main() as a traceback (which exits 1, the "differs" code).
+    from tools.research_qualification import l1_run as L1R
+    real_kb = L1R.ProductJoin._kb
+
+    def boom(self, argv):
+        if argv[:2] == ["index", "import"]:
+            raise RuntimeError("synthetic crash with /home/someone/private in its text")
+        return real_kb(self, argv)
+
+    monkeypatch.setattr(L1R.ProductJoin, "_kb", boom)
+    code, rec = run(tmp_path, months, [case(PASS_ID)])
+    assert code == 2 and rec is not None and rec["status"] == "BLOCKED"
+    assert rows_of(rec)[PASS_ID]["outcome"] == "BLOCKED" and "month 2099-Feb is not present" in rows_of(rec)[PASS_ID]["reason"]
+    assert [m["status"] for m in rec["inputs"]["months"]] == ["rejected"]
+    assert "RuntimeError" in rec["inputs"]["months"][0]["reason"] and "someone" not in json.dumps(rec)
+
+
+def test_a_join_that_raises_outside_the_search_blocks_only_that_case(tmp_path, months, monkeypatch):
+    from tools.research_qualification import l1_run as L1R
+
+    def boom(self, product):
+        raise RuntimeError("synthetic scope crash")
+
+    monkeypatch.setattr(L1R.ProductJoin, "scope_id", boom)
+    code, rec = run(tmp_path, months, [case("l1-a-scope", kb="KB5099002")])
+    assert code == 2 and rec is not None
+    row = rows_of(rec)["l1-a-scope"]
+    assert row["outcome"] == "BLOCKED" and "RuntimeError" in row["reason"]
+    assert rec["counts"]["FAIL"] == 0 and rec["counts"]["scored"] == 0
