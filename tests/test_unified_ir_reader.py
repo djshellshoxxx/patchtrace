@@ -174,3 +174,16 @@ def test_place_ir_refuses_unverified_directories_and_bad_identities(tmp_path):
 def test_function_table_array_columns_are_int64():
     reader = IrReader.from_columns({'rva': [1, 2]})
     assert isinstance(reader.functions.rva, array) and reader.functions.rva.typecode == 'q'
+
+def test_deeply_nested_successors_raise_typed_store_error(tmp_path):
+    result = build(tmp_path)
+    with sqlite3.connect(result.directory / schema.DB_NAME) as db:
+        db.execute('UPDATE bb SET succ=? WHERE fid=0', ('[' * 15000 + '0' + ']' * 15000,))
+    reader = IrReader.open(result.directory, verify=False)
+    try:
+        with pytest.raises(UnifiedError) as caught:
+            reader.blocks(0)
+        assert caught.value.code == 'PT-UNIFIED-STORE'
+        assert caught.value.reason == 'ir-corrupt'
+    finally:
+        reader.close()

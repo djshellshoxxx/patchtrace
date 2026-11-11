@@ -1,5 +1,39 @@
 # Windows acceptance and milestone builds
 
+## Desktop archive preflight amendment (2026-11-05)
+
+`tools/check_windows_package.py ARCHIVE --sha256 DIGEST --commit SHA --label LABEL`
+checks a Windows **desktop** portable ZIP against an independently obtained expected
+SHA-256 and source identity. It never extracts or executes archive contents, downloads
+dependencies, or marks Windows acceptance passed. Its JSON receipt records archive
+size/digest, manifest identity and file count; Windows smoke, native and manual gates
+remain `not-run`. A matching digest establishes equality to the supplied digest, not
+publisher authenticity.
+
+Before opening ZIP members, bound archive size to 2 GiB, central directory to 16 MiB
+and entries to 50,000; refuse ZIP64 and split archives explicitly. Accept only stored
+and DEFLATE compression, as emitted by the current builder. Bound total declared
+expanded bytes to 4 GiB and each metadata JSON to 4 MiB. Reject encrypted members,
+non-file/non-directory Unix types, duplicate/casefold/NFC-colliding names, unsafe
+Windows path components (255 UTF-16 code units maximum), NUL-truncated ZIP names,
+and file/directory-prefix conflicts. Require the single
+`PatchTrace/` root, a nonempty `PatchTrace.exe`, replaceable Qt6Core DLL and Windows
+platform plugin, a Python DLL, Python and Qt LGPL notices, `dependency-versions.json`
+and `file-inventory.json`. Runtime files must occupy the current PyInstaller layout:
+`_internal/python3*.dll`, `_internal/PySide6/Qt6Core.dll` and
+`_internal/PySide6/plugins/platforms/qwindows.dll`. Parse JSON strictly. The dependency manifest must identify
+the exact expected PatchTrace label and 40-character lowercase source commit, plus
+nonempty Python/PySide6 versions. Inventory must equal the archive's files except
+the inventory itself (the current builder emits its inventory before writing it).
+Archive contents and inventory names use identical path validation. Check the opened
+archive's metadata for mutation after hashing and metadata inspection. Do not claim
+protection against a hostile writer that can alter and restore all observed metadata.
+
+This is a structural preflight: executable resource identity remains
+`check_windows_exe.py`, decompression/CRC of every payload and frozen execution remain
+the clean Windows extraction/smoke. The full offline bundle uses its existing backend
+manifest validator and disconnected qualification; this preflight does not qualify it.
+
 Status: draft spec, 2026-10-14. Sections marked **(new)** are not implemented; everything else describes current behaviour, including the release gate paragraph of section 1.1 (slice RG).
 
 Observed state (read-only GitHub REST, 2026-10-14; re-check before acting): remote `main` = `4985132535` (local HEAD `c0df3ad` adds this file and is unpushed); open PRs = 0; latest prerelease `v0.1.0-beta.131` targets `b7e819a`. The `main` push run 135 at `4985132` **failed in `qa (ubuntu-latest)`** at the `pytest` step, so `release` was skipped and no prerelease exists for that commit. The run log was not retrievable from this session, so the failing test is unknown.

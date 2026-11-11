@@ -1,0 +1,139 @@
+{
+  "reviewer": "/root/train_review",
+  "decision": "accept_for_integration_no_blocking_findings",
+  "source": {
+    "commit": "570f86b8be7038c0841e318693ed5ee0f414b8c2",
+    "tree": "8aa7d16fd78136780f58e281240c02b6f8fd520d",
+    "base": "f393bb68ddc11eabb95a6598aa6f86650bd9aa37",
+    "author_worktree": "/workspace/scratch/c4fbe5e6f72c/pt-product-start",
+    "review_worktree": "/workspace/scratch/c4fbe5e6f72c/product-review/checkout",
+    "review_worktree_clean": true
+  },
+  "scope": "Read-only independent source/spec review and external synthetic offline acceptance probes; no author-tree edits, remote actions, full-suite duplication or live/native qualification.",
+  "source_review": {
+    "files_changed": 9,
+    "production_files_reviewed": [
+      "src/patchtrace/kbcorrelation/context.py",
+      "src/patchtrace/kbcorrelation/index.py",
+      "src/patchtrace/kbcorrelation/investigation_qt.py",
+      "src/patchtrace/kbcorrelation/investigation_service.py",
+      "src/patchtrace/kbcorrelation/service.py",
+      "src/patchtrace/kbcorrelation/store.py"
+    ],
+    "specifications": [
+      "docs/specs/kb-cve/31-C-product-build-pairs.md",
+      "docs/specs/kb-cve/31-F-workflow-ui-persistence.md"
+    ],
+    "blocking_findings": [],
+    "reviewed_contracts": [
+      "Active source catalogue; unreadable sources refuse without reviving superseded products.",
+      "Full ProductScope identity and complete SourceDoc snapshot admission; one admitted index for validation and provenance.",
+      "Actual pair Lead, selected scope, stored coverage and append-only analyst decision; no CVE/card/CWE/hypothesis inference.",
+      "Existing pair hash, component, architecture, destination and revision CAS checks retained.",
+      "Product-specific repair uses exact journaled source set and complete selected_product equality before attach writes.",
+      "UI explicit selection, generation invalidation, mode separation, network-grant revocation and cancellation retention."
+    ]
+  },
+  "independent_tests": {
+    "test_file": "/workspace/scratch/c4fbe5e6f72c/product-review/test_independent_product_start.py",
+    "junit": "/workspace/scratch/c4fbe5e6f72c/product-review/independent-570f86b8-final.xml",
+    "cases": 16,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "pytest_console_seconds": 2.37,
+    "reported_result": "16 passed",
+    "runner": "/workspace/scratch/e6b4398e92df/pt-venv/bin/python",
+    "environment": {
+      "QT_QPA_PLATFORM": "offscreen",
+      "PYTHONDONTWRITEBYTECODE": "1",
+      "PYTEST_ADDOPTS": "unset"
+    },
+    "checks": [
+      "test_missing_newest_raw_bytes_cannot_revive_removed_product",
+      "test_same_scope_id_cannot_substitute_another_workspaces_source_identity",
+      "test_saved_product_context_exports_after_workspace_source_loss",
+      "test_pending_product_repair_retains_original_source_after_newer_import[False]",
+      "test_pending_product_repair_retains_original_source_after_newer_import[True]",
+      "test_pending_product_repair_cannot_substitute_new_source_for_missing_original",
+      "test_pending_product_repair_refuses_changed_alias_version_with_same_scope_id",
+      "test_pending_product_repair_refuses_missing_or_corrupt_product_snapshot[missing]",
+      "test_pending_product_repair_refuses_missing_or_corrupt_product_snapshot[null]",
+      "test_pending_product_repair_refuses_missing_or_corrupt_product_snapshot[changed_display]",
+      "test_pending_product_repair_refuses_missing_or_corrupt_product_snapshot[invalid_field]",
+      "test_competing_product_revision_is_not_overwritten_or_attached",
+      "test_roundtrip_product_mode_does_not_restore_prior_network_grants[metadata]",
+      "test_roundtrip_product_mode_does_not_restore_prior_network_grants[advisory]",
+      "test_single_filtered_product_still_requires_an_explicit_selection",
+      "test_cancelled_product_create_retains_completed_project_without_adoption"
+    ],
+    "initial_run": {
+      "junit": "/workspace/scratch/c4fbe5e6f72c/product-review/independent-570f86b8.xml",
+      "result": "15 passed, 1 probe-expectation failure",
+      "resolution": "Unreadable catalogue returns PT-KBC-VERIFY; PT-KBC-STALE is the admission error. The external probe was corrected to expect VERIFY. Production code was unchanged."
+    }
+  },
+  "static_checks": {
+    "ruff_changed_sources_and_external_tests": "passed",
+    "git_diff_check": "passed",
+    "schema_drift": "No public model/schema or SQL version files changed; author separately reports schema generation has no drift."
+  },
+  "author_reported_validation": {
+    "exact_final_commit_focused": {
+      "passed": 139,
+      "seconds": 14.38,
+      "new_product_cases": 59
+    },
+    "broader_affected_before_repair_addition": {
+      "passed": 391,
+      "seconds": 96.6
+    },
+    "attribution": "Reported by candidate_review; independent result above is separate."
+  },
+  "legacy_reader_boundary": {
+    "legacy_commit": "f393bb68ddc11eabb95a6598aa6f86650bd9aa37",
+    "persisted_change": "Optional selected_product member in internal attach-journal JSON. This is a persisted journal-format addition despite unchanged public schemas and SQL version.",
+    "static_verified": "Legacy journal_get/journal_ops use json.loads; legacy resume ignores extra keys; legacy _rebuilt_rows ignores selected_product and pair context construction gathers source digests only via CVEs.",
+    "author_measured_receipt": "/workspace/scratch/c4fbe5e6f72c/product-start-legacy-reader.json",
+    "author_measured_result": {
+      "repair_exit": 0,
+      "sources": 0,
+      "extra_member_retained": true
+    },
+    "required_limit": "Do not repair a new product-start pending attachment with an older reader. It can report completion while losing product-source context. Use a build implementing the new journal semantics.",
+    "documentation": "SPEC-31-F Local product starting point explicitly records this limitation."
+  },
+  "recommended_repository_regressions": [
+    {
+      "external_test": "test_competing_product_revision_is_not_overwritten_or_attached",
+      "distinct_risk": "Actual second WorkspaceStore writer wins product_selected CAS; differs from source-import races in authored cases."
+    },
+    {
+      "external_test": "test_saved_product_context_exports_after_workspace_source_loss",
+      "distinct_risk": "Export and reopen must remain self-contained after original workspace source object disappears, not just immediately after creation."
+    },
+    {
+      "external_test": "test_single_filtered_product_still_requires_an_explicit_selection",
+      "distinct_risk": "One-row filter and relisting must never auto-select or restore a prior selection; author journey uses multiple products."
+    },
+    {
+      "external_test": "test_cancelled_product_create_retains_completed_project_without_adoption",
+      "distinct_risk": "Product-mode cancel after real creation completes must report retained project and clear selection without adoption; author late-result controls cover listing only."
+    }
+  ],
+  "optional_small_extension": "Parameterize the existing newer-source repair control with a newer advisory that removes the product entirely; the external probe also passes this case.",
+  "remaining_coordinator_gates": [
+    "Combined full suite on integrated head",
+    "Existing CI/review/scanner requirements",
+    "Separate native Windows/UI/release acceptance"
+  ],
+  "preserved_exclusions": [
+    "Native prerequisite branches #222/#224",
+    "Paid automation",
+    "Binary download and engine execution"
+  ],
+  "evidence_sha256": {
+    "independent-570f86b8-final.xml": "6233aa3b9fa176d88aa2917f515cc097e8108e56827e986c8ec7555a0302a8c8",
+    "test_independent_product_start.py": "9639aea43f68325db07884baf323a94e216159ae584758250e197c43a31d7461"
+  }
+}

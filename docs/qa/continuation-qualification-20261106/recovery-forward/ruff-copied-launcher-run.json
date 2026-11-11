@@ -1,0 +1,16 @@
+{
+  "argv": [
+    "/workspace/scratch/e6b4398e92df/pt-binexport-copied-launcher/bin/python",
+    "-m",
+    "ruff",
+    "check",
+    "--no-cache",
+    "src",
+    "tests",
+    "tools"
+  ],
+  "working_directory": "/workspace/scratch/c4fbe5e6f72c/pt-recovery-forward",
+  "resolved_tree": "b59a105796e4c5cc8665cf157d5fbbae0c2ed9fd",
+  "exit_code": 1,
+  "wall_seconds": 0.1873373119997268
+}

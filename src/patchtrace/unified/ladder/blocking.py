@@ -17,7 +17,7 @@ from __future__ import annotations
 
 import heapq
 from collections import Counter
-from collections.abc import Iterable
+from collections.abc import Callable, Iterable
 from dataclasses import dataclass
 from hashlib import blake2b
 from itertools import chain, islice
@@ -35,7 +35,8 @@ PADDING = frozenset({'nop', 'int3'})          # alignment padding is not part of
 MNEMONIC_CHARS = 32                           # mnemonic text is untrusted: only a bounded prefix is hashed
 _PRIME = (1 << 61) - 1
 MAX_CACHED_SHINGLES = 100_000                 # ~700 bytes each: bounds the cache whatever the (untrusted) IR holds
-MIN_SHARED = 2                                # non-size tokens that make a candidate without a shared band
+TICK_INSTRUCTIONS = 64                        # instructions read per budget unit (hashing a shingle costs about 64 dict steps)
+MIN_SHARED = 2                             # non-size tokens that make a candidate without a shared band
 
 
 class MnemonicSource(Protocol):
@@ -91,15 +92,20 @@ class MinHasher:
 class Signatures:
     """The MinHash band tokens of the functions of one side, read through a `MnemonicSource` once per function."""
 
-    def __init__(self, source: MnemonicSource, hasher: MinHasher, limit: int):
-        self._source, self._hasher, self._limit = source, hasher, limit
+    def __init__(self, source: MnemonicSource, hasher: MinHasher, limit: int,
+                 tick: Callable[[int], None] | None = None):
+        self._source, self._hasher, self._limit, self._tick = source, hasher, limit, tick
         self._cache: dict[int, tuple[tuple, ...]] = {}
 
     def bands(self, fid: int) -> tuple[tuple, ...]:
-        """`('m', band, (row values...))` per band; empty when the function has no signature."""
+        """`('m', band, (row values...))` per band; empty when the function has no signature. `tick` meters the
+        instructions read (one unit per TICK_INSTRUCTIONS) so a cancel is not postponed by a run of huge functions."""
         cached = self._cache.get(fid)
         if cached is None:
-            signature = self._hasher.signature(self._source.mnemonics(fid), self._limit)
+            mnemonics = list(islice(self._source.mnemonics(fid), self._limit))
+            if self._tick is not None:
+                self._tick(len(mnemonics) // TICK_INSTRUCTIONS)
+            signature = self._hasher.signature(mnemonics, self._limit)
             cached = () if signature is None else tuple(
                 ('m', band, signature[band * ROWS:(band + 1) * ROWS]) for band in range(BANDS))
             self._cache[fid] = cached

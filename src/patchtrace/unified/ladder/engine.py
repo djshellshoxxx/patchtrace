@@ -22,7 +22,7 @@ from collections.abc import Iterable, Mapping, Sequence
 
 from ..limits import DEFAULT_LIMITS, Budget, BudgetExhausted, UnifiedError, UnifiedLimits
 from .groups import build_groups
-from .passes import FAMILY_STRUCT, P00, PASSES, PassSpec, classify_pair
+from .passes import FAMILY_STRUCT, P00, PASSES, PassSpec, accept_global
 from .ports import IrSide
 from .propagate import propagate_to_fixpoint
 from .side import SideData
@@ -104,7 +104,11 @@ def stage_groups(passes: Sequence[PassSpec]) -> list[tuple[PassSpec, ...]]:
 def _apply_anchors(st: State, anchors: Iterable) -> None:
     given = []
     for p in anchors:
-        x, y = (p.older_fid, p.newer_fid) if hasattr(p, 'older_fid') else p
+        try:
+            x, y = (p.older_fid, p.newer_fid) if hasattr(p, 'older_fid') else p
+        except (TypeError, ValueError):
+            raise UnifiedError('PT-UNIFIED-INPUT', 'manual anchor is not an (older, newer) pair',
+                               reason='anchor-shape') from None
         if type(x) is not int or type(y) is not int or not 0 <= x < st.a.n or not 0 <= y < st.b.n:
             raise UnifiedError('PT-UNIFIED-INPUT', 'manual anchor outside the IR', reason='anchor-range')
         given.append((x, y))
@@ -155,30 +159,14 @@ def find(st: State, spec: PassSpec, pool_a: Sequence[int], pool_b: Sequence[int]
         older = [x for x in by_a[key] if mate_a[x] < 0]        # a drill-down may have consumed members
         newer = [y for y in by_b[key] if mate_b[y] < 0]
         if len(older) == 1 and len(newer) == 1:
-            _accept_global(st, spec, older[0], newer[0], key, rnd, cap, chain)
+            if not spec.hubs and (st.a.hub[older[0]] or st.b.hub[newer[0]]):
+                st.bump(f'hub-twin:{spec.id}')          # hubs match by P01-P05 only (04 s5); never paired here
+                continue
+            accept_global(st, spec, older[0], newer[0], key, rnd, cap, chain)
         elif older and newer and keyed_tail:
             find(st, keyed_tail[0], older, newer, keyed_tail[1:], rnd, weaker(cap, spec.tier), (*chain, spec))
         elif older and newer:
             st.bump(f'ambiguous:{spec.id}')
-
-
-def _accept_global(st: State, spec: PassSpec, x: int, y: int, key: object, rnd: int, cap: str,
-                   chain: tuple[PassSpec, ...]) -> None:
-    tier = weaker(cap, spec.tier)
-    hints: tuple[str, ...] = ()
-    if spec.guard is not None:
-        verdict = spec.guard(st, x, y, key)
-        if verdict is None:
-            st.bump(f'guard-rejected:{spec.id}')
-            return
-        tier, hints = weaker(tier, verdict.tier), verdict.hints
-    family, cls = classify_pair(spec, chain, bool(st.a.pdata[x] and st.b.pdata[y]))
-    chain_ids = tuple(c.id for c in chain)
-    if tier == 'C':
-        st.add_soft(SoftCand(x, y, spec.id, spec.step, family, cls, rnd, chain_ids, (), hints))
-        return
-    st.accept(x, y, pass_id=spec.id, step=spec.step, tier=tier, family=family, cls=cls, rnd=rnd, chain=chain_ids,
-              hints=hints)
 
 
 # ---- soft candidates -------------------------------------------------------------------------------------------------------------

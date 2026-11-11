@@ -63,7 +63,10 @@ def sweep_staging(parent: Path | None = None) -> None:
     root = Path(parent) if parent is not None else Path(tempfile.gettempdir())
     cutoff = time.time() - STALE_STAGING_SECONDS
     try:
-        stale = [p for p in root.glob(STAGING_PREFIX + '*') if p.is_dir() and p.stat().st_mtime < cutoff]
+        # lstat, never stat: a symlink named like a staging directory (the shared temp directory is writable by every
+        # local user) must not make the sweep chmod or delete whatever it points at.
+        stale = [p for p in root.glob(STAGING_PREFIX + '*')
+                 if not p.is_symlink() and p.is_dir() and p.lstat().st_mtime < cutoff]
     except OSError:
         return
     for path in stale:
@@ -74,6 +77,8 @@ def remove_staging(staging: Path, attempts: int = 4, delay: float = 0.25) -> boo
     """Best-effort removal; never raises. Antivirus or an indexer can hold a freshly written file on
     Windows, so a locked entry is retried and then left behind. Returns whether the directory is gone."""
     def writable(func, path, _exc):
+        if os.path.islink(path):
+            return  # chmod would follow the link to a file outside the staging tree
         for attempt in range(attempts):
             try:
                 # a directory also needs the search bit, or its children become unreachable for a non-root user
@@ -85,6 +90,8 @@ def remove_staging(staging: Path, attempts: int = 4, delay: float = 0.25) -> boo
                     time.sleep(delay)
 
     try:
+        if Path(staging).is_symlink():
+            return False  # only ever a directory this module created; a link here is never ours to follow
         if Path(staging).exists():
             shutil.rmtree(staging, onexc=writable)
         return not Path(staging).exists()
@@ -157,7 +164,6 @@ def promote(older: AcquiredArtifact, newer: AcquiredArtifact, name: str, root: P
     if not all(_staged_matches(item) for item in (older, newer)):
         raise AcquisitionError('PT-ACQ-VERIFY', 'a staged file changed after it was verified')
     root = Path(root)
-    existed = root.exists()
     service = ProjectService.create(Path(older.path), Path(newer.path), name, root)
     try:
         by_side = {a.side: a for a in service.project.artifacts}
@@ -168,10 +174,16 @@ def promote(older: AcquiredArtifact, newer: AcquiredArtifact, name: str, root: P
             # AnalystAnnotation kinds are fixed in models.py, so provenance is a prefixed 'note'.
             record = item.model_dump(mode='json', exclude={'path'})
             service.annotate(artifact.id, ANNOTATION_PREFIX + json.dumps(record, sort_keys=True))
-    except BaseException:
+    except BaseException as exc:
+        # The initial project snapshot is already committed. Never roll it back by
+        # deleting its directory, persistent lock or files a contributor added.
         service.close()
-        _discard_project(root, existed)
-        raise
+        if not isinstance(exc, Exception):
+            raise
+        code = exc.code if isinstance(exc, AcquisitionError) else 'PT-ACQ-VERIFY'
+        raise AcquisitionError(code, f'Project retained at {service.root}; acquisition provenance or final copy '
+                               'verification did not finish. Reopen and inspect it before retrying.',
+                               recoverable=True) from exc
     return service
 
 
@@ -184,12 +196,3 @@ def _staged_matches(item: AcquiredArtifact) -> bool:
     except OSError:
         return False
     return digest.hexdigest() == item.sha256
-
-
-def _discard_project(root: Path, existed: bool) -> None:
-    # `create` accepts only an absent or empty directory, so everything inside is ours.
-    if not existed:
-        remove_staging(root)
-        return
-    for child in root.iterdir():
-        remove_staging(child) if child.is_dir() else child.unlink(missing_ok=True)

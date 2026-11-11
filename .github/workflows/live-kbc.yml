@@ -1,0 +1,60 @@
+name: Live KB/CVE correlator probe (advisory)
+# Real network, not mocked (KB plan, probe L1; tools/live_kbc_probe.py). Manual only: no push, pull_request or schedule
+# trigger, never a required check. It syncs ONE Microsoft CVRF month through the shipped CLI with exact consent
+# flags, re-verifies the stored document, resolves a known CVE to its KB, and asks Winbindex for afd.sys. BLOCKED
+# (host unreachable, HTTP 403/429, time-out) exits 0 and is shown in the summary; FAILED (drift) exits 1. Inputs are
+# passed through the environment, never interpolated into the script.
+on:
+  workflow_dispatch:
+    inputs:
+      month:
+        description: 'CVRF release month to sync, like 2024-Aug'
+        required: false
+        default: '2024-Aug'
+      cve:
+        description: 'A CVE published in that month'
+        required: false
+        default: 'CVE-2024-38063'
+      skip_winbindex:
+        description: 'Skip the Winbindex check'
+        required: false
+        default: false
+        type: boolean
+permissions:
+  contents: read
+concurrency:
+  group: live-kbc
+  cancel-in-progress: false
+jobs:
+  live-kbc:
+    name: live KB/CVE probe (ubuntu-latest)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: "python -m pip install --only-binary=:all: -e ."
+      - name: Probe the sources through the CLI
+        shell: bash
+        env:
+          PROBE_MONTH: ${{ inputs.month }}
+          PROBE_CVE: ${{ inputs.cve }}
+          PROBE_SKIP_WINBINDEX: ${{ inputs.skip_winbindex }}
+        run: |
+          set -euo pipefail
+          args=(--month "${PROBE_MONTH:-2024-Aug}" --cve "${PROBE_CVE:-CVE-2024-38063}" --out build/live-status/kbc-live.json)
+          if [ "${PROBE_SKIP_WINBINDEX:-false}" = 'true' ]; then args+=(--skip-winbindex); fi
+          python tools/live_kbc_probe.py "${args[@]}"
+      - name: Step summary
+        if: always()
+        run: python tools/check_live_status.py --dir build/live-status --summary "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: live-kbc
+          path: build/live-status/kbc-live.json
+          if-no-files-found: warn

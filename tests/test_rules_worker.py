@@ -28,7 +28,9 @@ from patchtrace.rules import runner, worker
 from patchtrace.rules.errors import RuleError
 from patchtrace.rules.limits import DEFAULT_LIMITS, MIB, RuleLimits
 
-PY = str(Path(sys.executable).resolve())
+# Keep the interpreter entry point: resolving a venv symlink selects its base Python
+# and can drop the dependencies that these subprocess controls are meant to exercise.
+PY = sys.executable
 SRC = str(Path(rules_package.__file__).resolve().parents[2])
 ROOT = Path(__file__).resolve().parents[1]
 RULE = c.WorkerRule(name='r1', text='import "pe"\nrule PT_0123456789ab_older: patchtrace {\n  condition:\n    true\n}\n')

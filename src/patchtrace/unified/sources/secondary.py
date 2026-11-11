@@ -12,6 +12,7 @@ from pathlib import Path
 from pydantic import ValidationError
 
 from ...enrichment.identity import domain_id
+from ...persistence import strict_json
 from ...secondary.contracts import AlternativeMatch, SecondaryMatch, SecondaryMatchSet
 from .. import keys
 from ..addressing import AddressMap
@@ -28,6 +29,7 @@ from . import (
     atom_order,
     clean_name,
     native,
+    read_request_file,
 )
 
 MAX_SET_BYTES = 256 * 1024 * 1024
@@ -85,30 +87,12 @@ def write_loaded(path: Path, loaded: LoadedSecondary) -> tuple[str, int]:
 
 def read_loaded(path: Path, *, expected_sha256: str, expected_size: int,
                 budget: Budget | None = None) -> LoadedSecondary:
-    import hashlib
-    if budget is not None:
-        budget.check()
     try:
-        info = Path(path).stat()
-        if info.st_size > MAX_SET_BYTES or info.st_size != expected_size:
-            raise UnifiedError('PT-UNIFIED-INPUT', 'A secondary set file does not match its request',
-                               reason='secondary-size-mismatch')
-        data, digest = bytearray(), hashlib.sha256()
-        with Path(path).open('rb') as stream:
-            while True:
-                if budget is not None:
-                    budget.check()
-                chunk = stream.read(65536)
-                if not chunk:
-                    break
-                data.extend(chunk)
-                digest.update(chunk)
-                if len(data) > MAX_SET_BYTES:
-                    raise ValueError('set grew beyond limit')
-        if len(data) != expected_size or digest.hexdigest() != expected_sha256:
-            raise UnifiedError('PT-UNIFIED-INPUT', 'A secondary set file does not match its request',
-                               reason='secondary-hash-mismatch')
-        document = json.loads(data.decode('utf-8'))
+        data = read_request_file(path, expected_sha256=expected_sha256, expected_size=expected_size,
+                                 max_bytes=MAX_SET_BYTES, label='secondary', reason='secondary', budget=budget)
+        text = data.decode('utf-8')
+        strict_json(text)   # a duplicate key is a damaged file, never "last one wins"
+        document = json.loads(text)
         entry_id = document['entry_id']
         if not isinstance(entry_id, str) or not entry_id:
             raise ValueError('entry id')

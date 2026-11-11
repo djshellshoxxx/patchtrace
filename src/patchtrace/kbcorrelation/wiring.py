@@ -24,7 +24,7 @@ from .contracts import Arch, CveCard
 from .lineage import IndexRow, index_rows
 from .pairs import LocalFile
 from .service import Env, KbService
-from .store import Fault, KbcStoreError, SystemClock, WorkspaceStore
+from .store import Fault, KbcStoreError, SystemClock, WorkspaceStore, atomic_write
 
 INDEX_DIR = 'winbindex'
 INDEX_RECORD = re.compile(r'(?P<name>[a-z0-9._-]+)@(?P<date>\d{4}-\d{2}-\d{2})\.json(?P<gz>\.gz)?')
@@ -114,10 +114,10 @@ def save_winbindex_record(root: Path, source: Path, file_name: str, data_date: s
     other = target.with_name(target.name[:-3] if gz else target.name + '.gz')
     try:
         target.parent.mkdir(parents=True, exist_ok=True)
+        if target.parent.is_symlink() or target.parent.is_junction():
+            raise KbcStoreError('PT-KBC-STORAGE', 'the workspace index directory cannot be a link or junction')
         replaced = target.is_file() or other.is_file()
-        staging = target.with_name(target.name + '.tmp')
-        staging.write_bytes(raw)
-        staging.replace(target)
+        atomic_write(target, raw)
         other.unlink(missing_ok=True)  # one record per name and date, in either form
     except OSError:
         raise KbcStoreError('PT-KBC-STORAGE', 'the workspace cannot be written') from None
@@ -207,8 +207,11 @@ def _merge_profiles(profiles):
         'limitations': tuple(sorted({d for p in profiles for d in p.limitations}))})
 
 
-def inspect_local_file(path: str) -> LocalFile:
-    """Hash a file and read its PE machine from the header bytes; the file is never executed or loaded."""
+def inspect_local_file(path: str, *, basename: str | None = None) -> LocalFile:
+    """Inspect bytes, using an explicit captured Artifact name only as a manual basename hint.
+
+    The optional name is not PE OriginalFilename authority; ordinary local/CLI callers use the path name.
+    """
     target = Path(path)
     digest = hashlib.sha256()
     head = b''
@@ -222,7 +225,7 @@ def inspect_local_file(path: str) -> LocalFile:
                 size += len(block)
     except OSError:
         raise KbcStoreError('PT-KBC-INPUT', 'an input file cannot be read') from None
-    return LocalFile(sha256=digest.hexdigest(), size=size, basename=normalise_file(target.name),
+    return LocalFile(sha256=digest.hexdigest(), size=size, basename=normalise_file(target.name if basename is None else basename),
                      machine=_machine(head))
 
 
@@ -246,8 +249,10 @@ class RealProjectPort:
     """``ProjectPort`` over ``ProjectService`` and ``EnrichmentStore`` (the project store stays single-owner: every
     call opens, uses and closes it)."""
 
-    def __init__(self, workspace: WorkspaceStore | None = None, name: str = 'KB comparison'):
+    def __init__(self, workspace: WorkspaceStore | None = None, name: str = 'KB comparison', *,
+                 reuse_existing: bool = True):
         self.name = name
+        self.reuse_existing = reuse_existing
         self._dirs: dict[str, Path] = {}
         self._workspace = workspace
 
@@ -263,7 +268,7 @@ class RealProjectPort:
     def create_project(self, older_path: str, newer_path: str, *, directory: str) -> Mapping[str, Any]:
         from ..service import ProjectService
         root = Path(directory)
-        if (root / 'project.sqlite3').is_file():
+        if self.reuse_existing and (root / 'project.sqlite3').is_file():
             service = ProjectService.open(root, maintenance=False)
         else:
             service = ProjectService.create(Path(older_path), Path(newer_path), self.name, root)
@@ -322,6 +327,14 @@ def escape_markdown(text: str) -> str:
 
 def _project_factory(workspace: WorkspaceStore | None, name: str) -> RealProjectPort:
     return RealProjectPort(workspace, name)
+
+
+def new_project_factory(workspace: WorkspaceStore | None, name: str) -> RealProjectPort:
+    """Desktop create-only route; ProjectService.create refuses a concurrently existing database.
+
+    The normal CLI factory retains its journal-resume behavior.
+    """
+    return RealProjectPort(workspace, name, reuse_existing=False)
 
 
 def build_env(*, clock=None, fault: Fault | None = None, advisory=None, acquirer=None) -> Env:

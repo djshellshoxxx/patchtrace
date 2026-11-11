@@ -13,7 +13,7 @@ from bisect import bisect_right
 from dataclasses import dataclass
 from typing import NamedTuple
 
-from ..contracts import IrExtractFooter, IrExtractHeader
+from ..contracts import IrExtractFooter, IrExtractHeader, strip_unsafe
 from ..limits import UnifiedError, UnifiedLimits
 
 NAME_SOURCES = ('DEFAULT', 'ANALYSIS', 'IMPORTED', 'USER_DEFINED', 'AI')
@@ -22,16 +22,15 @@ MAX_RANGES, MAX_ALIASES, MAX_NAME, MAX_TEXT, MAX_PREFIX, MAX_OPS, MAX_OBJS, MAX_
 INT64_MIN, INT64_MAX = -(2 ** 63), 2 ** 63 - 1
 _FN_KEYS = frozenset({'type', 'rva', 'ranges', 'name', 'name_src', 'aliases', 'kind', 'thunk_target', 'import', 'lib',
                       'raw', 'truncated', 'blocks', 'insns', 'calls', 'strings', 'text'})
-_HEX = re.compile(r'^(?:[0-9a-f]{2})*$')
-_SHA = re.compile(r'^[0-9a-f]{64}$')
-_MNEMONIC = re.compile(r'^[A-Za-z0-9_.]{1,32}$')
-_FLOW = re.compile(r'^[A-Z_]{3,48}$')
-_REFTYPE = re.compile(r'^[A-Z_]{1,40}$')
-_REGISTER = re.compile(r'^[A-Za-z0-9_.]{1,16}$')
-_IMPORT_KEY = re.compile(r'^[^\x00-\x20!]{1,128}![^\x00-\x1f\x7f]{1,256}$')
-_RVA_REF = re.compile(r'^rva:(0|[1-9][0-9]{0,9})$')
-_STACK_REF = re.compile(r'^stack:(0|-?[1-9][0-9]{0,9})$')
-_CONTROL = re.compile('[\x00-\x1f\x7f-\x9f\u2028\u2029\u202a-\u202e\u2066-\u2069]')
+_HEX = re.compile(r'^(?:[0-9a-f]{2})*\Z')
+_SHA = re.compile(r'^[0-9a-f]{64}\Z')
+_MNEMONIC = re.compile(r'^[A-Za-z0-9_.]{1,32}\Z')
+_FLOW = re.compile(r'^[A-Z_]{3,48}\Z')
+_REFTYPE = re.compile(r'^[A-Z_]{1,40}\Z')
+_REGISTER = re.compile(r'^[A-Za-z0-9_.]{1,16}\Z')
+_IMPORT_KEY = re.compile(r'^[^\x00-\x20!]{1,128}![^\x00-\x1f\x7f]{1,256}\Z')
+_RVA_REF = re.compile(r'^rva:(0|[1-9][0-9]{0,9})\Z')
+_STACK_REF = re.compile(r'^stack:(0|-?[1-9][0-9]{0,9})\Z')
 
 
 class Block(NamedTuple):
@@ -135,10 +134,18 @@ def _text(value, field, limit, *, counter: list[int] | None = None) -> str:
         value.encode('utf-8')
     except UnicodeEncodeError:
         raise bad(field) from None
-    if counter is not None and _CONTROL.search(value):
-        counter[0] += 1
-        return _CONTROL.sub('?', value)
+    if counter is not None:
+        cleaned = strip_unsafe(value, replacement='?')   # the one definition of unsafe text (contracts), U7-09
+        if cleaned != value:
+            counter[0] += 1
+            return cleaned
     return value
+
+
+def _import_key_ok(value: object) -> bool:
+    """An import key: the shape of 03 s12.3 and no control, bidirectional or invisible character (rejected, never
+    repaired: a key is an identity, so it cannot be rewritten)."""
+    return type(value) is str and bool(_IMPORT_KEY.match(value)) and strip_unsafe(value) == value
 
 
 def _hex(value, field, *, allow_none=False, limit=None, exact=None) -> bytes | None:
@@ -199,7 +206,7 @@ def _parse_ranges(value, size_of_image: int) -> list[tuple[int, int]]:
     return ranges
 
 
-def _parse_objs(value) -> tuple:
+def _parse_objs(value, size_of_image: int) -> tuple:
     out = []
     for item in _list(value, 'objs', MAX_OBJS):
         if type(item) is not list or len(item) != 2:
@@ -212,7 +219,7 @@ def _parse_objs(value) -> tuple:
             _int(payload, 'objs')
         elif kind == 'addr':
             if payload is not None:
-                _int(payload, 'objs', 0, 2 ** 32 - 1)
+                _int(payload, 'objs', 0, size_of_image - 1)   # 03 s12.3: an RVA inside the image, null outside
         else:
             raise bad('objs')
         out.append((kind, payload))
@@ -227,13 +234,13 @@ def _parse_refs(value) -> tuple:
             raise bad('refs')
         text = item[1]
         if not (_RVA_REF.match(text) or _STACK_REF.match(text)
-                or (text.startswith('ext:') and _IMPORT_KEY.match(text[4:]))):
+                or (text.startswith('ext:') and _import_key_ok(text[4:]))):
             raise bad('refs')
         out.append((item[0], text))
     return tuple(out)
 
 
-def _parse_insn(item, length_cap: int) -> RawInsn:
+def _parse_insn(item, length_cap: int, size_of_image: int) -> RawInsn:
     if type(item) is not list or len(item) != 6:
         raise bad('insns')
     off, length, mnem, imask, ops, flow = item
@@ -247,7 +254,7 @@ def _parse_insn(item, length_cap: int) -> RawInsn:
         if type(op) is not list or len(op) != 4:
             raise bad('ops')
         optype = _int(op[0], 'ops', 0, 2 ** 31 - 1)
-        parsed.append(RawOp(optype, _hex(op[1], 'ops', allow_none=True, exact=length), _parse_objs(op[2]),
+        parsed.append(RawOp(optype, _hex(op[1], 'ops', allow_none=True, exact=length), _parse_objs(op[2], size_of_image),
                             _parse_refs(op[3])))
     return RawInsn(off, length, mnem, imask_bytes, tuple(parsed), flow)
 
@@ -258,6 +265,8 @@ def _parse_blocks(value, size_of_image: int) -> list[Block]:
         if type(item) is not list or len(item) != 5:
             raise bad('blocks')
         start, length = _rva(item[0], 'blocks', size_of_image), _int(item[1], 'blocks', 1, size_of_image)
+        if start + length > size_of_image:
+            raise bad('blocks')
         n_insn = _int(item[2], 'blocks', 0, 2 ** 31)
         succ, kinds = item[3], item[4]
         if type(succ) is not list or type(kinds) is not list or len(succ) != len(kinds):
@@ -283,7 +292,7 @@ def _parse_calls(value, size_of_image: int) -> list[tuple]:
         site = _rva(item[0], 'calls', size_of_image)
         target = None if item[1] is None else _rva(item[1], 'calls', size_of_image)
         key = item[2]
-        if key is not None and (type(key) is not str or not _IMPORT_KEY.match(key)):
+        if key is not None and not _import_key_ok(key):
             raise bad('calls')
         if target is not None and key is not None:
             raise bad('calls')
@@ -325,20 +334,21 @@ def parse_fn(document: dict, size_of_image: int, limits: UnifiedLimits) -> FnRec
     if imported is not None:
         if type(imported) is not dict or set(imported) != {'dll', 'name', 'ordinal'}:
             raise bad('import')
-        _text(imported['dll'], 'import', 128)
-        if imported['name'] is not None:
-            _text(imported['name'], 'import', 256)
-        if imported['ordinal'] is not None:
-            _int(imported['ordinal'], 'import', 0, 65535)
-        if not imported['dll'] or (imported['name'] is None) == (imported['ordinal'] is None):
+        dll = _text(imported['dll'], 'import', 128, counter=counter)
+        name_text = None if imported['name'] is None else _text(imported['name'], 'import', 256, counter=counter)
+        ordinal = imported['ordinal']
+        if ordinal is not None:
+            _int(ordinal, 'import', 0, 65535)
+        if not dll or (name_text is None) == (ordinal is None):
             raise bad('import')
+        imported = {'dll': dll, 'name': name_text, 'ordinal': ordinal}
     if type(document['lib']) is not bool or type(document['truncated']) is not bool:
         raise bad('flags')
     total = sum(length for _, length in ranges)
     raw = _hex(document['raw'], 'raw', allow_none=True, limit=limits.l06_fn_raw_bytes)
     if raw is not None and len(raw) != total:
         raise bad('raw')
-    insns = [_parse_insn(item, total) for item in _list(document['insns'], 'insns', limits.l06_fn_instructions)]
+    insns = [_parse_insn(item, total, size_of_image) for item in _list(document['insns'], 'insns', limits.l06_fn_instructions)]
     texts = [_text(item, 'text', MAX_TEXT, counter=counter) for item in _list(document['text'], 'text',
                                                                               limits.l06_fn_instructions)]
     record = FnRec(rva, ranges, name, document['name_src'], sorted(aliases), document['kind'], thunk_target, imported,
@@ -350,6 +360,8 @@ def parse_fn(document: dict, size_of_image: int, limits: UnifiedLimits) -> FnRec
         raise bad('text')
     if raw is None and (insns or record.blocks or record.calls or record.strings):
         raise bad('raw')
+    if record.truncated and raw is not None:
+        raise bad('truncated')   # a cut instruction list carries no raw bytes (03 s12.3): keys would hash a partial body
     for insn in insns:
         if insn.off + insn.length > total:
             raise bad('insns')

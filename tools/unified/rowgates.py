@@ -47,15 +47,34 @@ def _known(row: OutcomeRow) -> bool:
     return row.decision == 'matched' and row.truth in ('right', 'wrong')
 
 
-def _outcomes(pairs: Sequence, sets: Sequence[OutcomeSet]) -> tuple[list[tuple[Any, PairOutcome]], list[str]]:
-    have, missing = [], []
+def _outcomes(pairs: Sequence, sets: Sequence[OutcomeSet]) -> tuple[list[tuple[Any, PairOutcome]], list[str], list[str]]:
+    """(pairs with a usable outcome, ids without one, one reason per id). An outcome built from other label bytes than the
+    manifest's (a stale or foreign run) is no outcome: it would score functions the manifest does not describe."""
+    have, missing, why = [], [], []
     for pair in pairs:
         got = first_run(sets, pair.pair_id)
         if got is None:
             missing.append(pair.pair_id)
+            why.append(f'{pair.pair_id}: no outcome supplied for this pair')
+        elif got.labels_sha256 != pair.labels_sha256:
+            missing.append(pair.pair_id)
+            why.append(f'{pair.pair_id}: the outcome label digest differs from the corpus manifest, not evidence')
         else:
             have.append((pair, got))
-    return have, missing
+    return have, missing, why
+
+
+def precision_ok(right: int, total: int) -> bool:
+    """right / total >= PRECISION_MIN, exactly (a rounded ratio would let 0.9949999 pass as 0.995)."""
+    bound = Fraction(PRECISION_MIN).limit_denominator(10_000)
+    return total > 0 and right * bound.denominator >= bound.numerator * total
+
+
+def error_ratio_exceeded(wrong_b: int, rows_b: int, wrong_a: int, rows_a: int) -> bool:
+    """The B+B error rate is more than ERROR_RATIO_MAX times the tier-A rate, exactly (integer cross-multiplication;
+    a tier-A rate of 0 makes any B+B error exceed it, see docs/audits/20261104-unified-har.md U7-17)."""
+    ratio = Fraction(ERROR_RATIO_MAX).limit_denominator(1000)
+    return rows_b > 0 and rows_a > 0 and wrong_b * rows_a * ratio.denominator > ratio.numerator * wrong_a * rows_b
 
 
 def _rate_stat(sums: tuple[float, ...]) -> float | None:
@@ -91,13 +110,14 @@ def _g3_aa(have: list[tuple[Any, PairOutcome]]) -> dict[str, Any]:
 def g_u3(manifest: corpus_manifest.CorpusManifest, sets: Sequence[OutcomeSet]) -> Result:
     release = [p for p in manifest.pairs if 'G-U3' in p.gates and p.gated]
     aa = [p for p in manifest.pairs if p.role in ('P0', 'P1') and p.gated]
-    have, missing = _outcomes(release, sets)
-    aa_have, aa_missing = _outcomes(aa, sets)
-    reasons = [f'{pid}: no outcome supplied for this pair' for pid in (*missing, *aa_missing)]
+    have, missing, why = _outcomes(release, sets)
+    aa_have, aa_missing, aa_why = _outcomes(aa, sets)
+    reasons = [*why, *aa_why]
     if not release:
         reasons.append('the corpus manifest has no pair that feeds G-U3')
     overall, per_pass = _g3_precision(have)
     total = int(sum(v[1] for v in overall.values()))
+    right = int(sum(v[0] for v in overall.values()))
     interval = cluster.ci(overall, _rate_stat, seed='G-U3') if total else None
     table = {}
     for key in sorted(per_pass):
@@ -112,7 +132,7 @@ def g_u3(manifest: corpus_manifest.CorpusManifest, sets: Sequence[OutcomeSet]) -
                                                     'demote_below': PASS_DEMOTE_BELOW}}
     failed = False
     if interval and interval['point'] is not None:
-        if interval['point'] < PRECISION_MIN:
+        if not precision_ok(right, total):
             failed = True
             reasons.append(f'matched-pair precision {interval["point"]:.4f} is below {PRECISION_MIN} ({total} rows)')
         if interval['lo'] is not None and interval['lo'] < PRECISION_CI_LOW_MIN:
@@ -166,8 +186,7 @@ def _reduction(sums: tuple[float, ...]) -> float | None:
 
 def g_u6(manifest: corpus_manifest.CorpusManifest, sets: Sequence[OutcomeSet]) -> Result:
     pairs = [p for p in manifest.pairs if p.role in G6_ROLES and p.gated]
-    have, missing = _outcomes(pairs, sets)
-    reasons = [f'{pid}: no outcome supplied for this pair' for pid in missing]
+    have, missing, reasons = _outcomes(pairs, sets)
     tools = sorted({t for _, o in have for t in o.legacy_tools})
     per_tool: dict[str, Any] = {}
     failed = undecided = False
@@ -220,8 +239,7 @@ def class_key(row: OutcomeRow) -> str | None:
 
 def g_u7(manifest: corpus_manifest.CorpusManifest, sets: Sequence[OutcomeSet]) -> Result:
     pairs = [p for p in manifest.pairs if 'G-U7' in p.gates and p.gated]
-    have, missing = _outcomes(pairs, sets)
-    reasons = [f'{pid}: no outcome supplied for this pair' for pid in missing]
+    have, missing, reasons = _outcomes(pairs, sets)
     classes: dict[str, dict[str, list[float]]] = defaultdict(lambda: defaultdict(lambda: [0.0, 0.0]))
     tier_a: dict[str, list[float]] = defaultdict(lambda: [0.0, 0.0])
     for pair, outcome in have:
@@ -233,7 +251,8 @@ def g_u7(manifest: corpus_manifest.CorpusManifest, sets: Sequence[OutcomeSet]) -
                 cell[0] += wrong
                 cell[1] += 1
     a_rows = int(sum(v[1] for v in tier_a.values()))
-    a_rate = sum(v[0] for v in tier_a.values()) / a_rows if a_rows else None
+    a_wrong = int(sum(v[0] for v in tier_a.values()))
+    a_rate = a_wrong / a_rows if a_rows else None
     table: dict[str, Any] = {}
     failed = short = False
     for key in sorted(classes):
@@ -245,7 +264,7 @@ def g_u7(manifest: corpus_manifest.CorpusManifest, sets: Sequence[OutcomeSet]) -
             continue
         ci = cluster.ci(classes[key], _rate_stat, seed=f'G-U7:{key}')
         bound = None if a_rate is None else ERROR_RATIO_MAX * a_rate
-        bad = bound is not None and ci['point'] > bound
+        bad = a_rate is not None and error_ratio_exceeded(int(sum(v[0] for v in classes[key].values())), n, a_wrong, a_rows)
         failed |= bad
         thin = not bad and ci['anti_conservative']
         short |= thin

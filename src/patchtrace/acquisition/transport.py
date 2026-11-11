@@ -185,7 +185,10 @@ def _retry_after(value: str | None, now: datetime) -> float | None:
         return None
     if when.tzinfo is None:
         return None
-    return float(max(0, int((when - now).total_seconds()) + 1))
+    try:
+        return float(max(0, int((when - now).total_seconds()) + 1))
+    except OverflowError:
+        return None
 
 
 def _stamp(now: datetime) -> str:
@@ -200,9 +203,9 @@ class Transport:
     clock: Callable[[], float] = time.monotonic
     now: Callable[[], datetime] = lambda: datetime.now(UTC)
 
-    def _with_retries(self, action: Callable[[], object]):
+    def _with_retries(self, action: Callable[[], object], *, deadline: float | None = None):
         for attempt in range(1, MAX_ATTEMPTS + 1):
-            _cancelled(self.cancel)
+            self._live(deadline)
             try:
                 return action()
             except _Retry as retry:
@@ -213,7 +216,14 @@ class Transport:
                 if wait > MAX_RETRY_AFTER:
                     raise AcquisitionError('PT-ACQ-NETWORK', 'server asked to retry later than 60 s',
                                            recoverable=True) from None
+                if deadline is not None:
+                    self._live(deadline)
+                    if wait >= deadline - self.clock():
+                        raise AcquisitionError('PT-ACQ-NETWORK', 'retry wait exceeds the remaining time budget',
+                                               recoverable=True) from None
                 self.sleep(wait, self.cancel)
+                if deadline is not None:
+                    self._live(deadline)
         raise AssertionError('unreachable')
 
     def _open(self, method: str, url: str, timeout: float = TIMEOUT):
@@ -273,8 +283,13 @@ class Transport:
         deadline = self.clock() + METADATA_DEADLINE
 
         def attempt():
-            response = self._open('GET', url)
+            self._live(deadline)
+            remaining = deadline - self.clock()
+            if remaining <= 0:
+                raise AcquisitionError('PT-ACQ-NETWORK', 'total timeout exceeded', recoverable=True)
+            response = self._open('GET', url, min(TIMEOUT, remaining))
             try:
+                self._live(deadline)
                 if response.status == 404:
                     raise AcquisitionError('PT-ACQ-NOTFOUND', f'Winbindex has no record for {file_name}')
                 if response.status in REDIRECT_STATUS:
@@ -289,7 +304,7 @@ class Transport:
                                         _date(response.headers.get('Last-Modified')))
             finally:
                 response.close()
-        return self._with_retries(attempt)
+        return self._with_retries(attempt, deadline=deadline)
 
     # -- candidate resolution -----------------------------------------------------------
     def probe(self, url: str, consent: AcquisitionConsent) -> bool:
@@ -434,7 +449,12 @@ def _date(value: str | None) -> str | None:
         when = email.utils.parsedate_to_datetime(value)
     except (TypeError, ValueError):
         return None
-    return when.astimezone(UTC).date().isoformat() if when.tzinfo else None
+    if not when.tzinfo:
+        return None
+    try:
+        return when.astimezone(UTC).date().isoformat()
+    except OverflowError:  # 9999-12-31 with a negative offset leaves the year range; the header is just ignored
+        return None
 
 
 @dataclass(frozen=True)

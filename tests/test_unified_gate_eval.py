@@ -221,7 +221,7 @@ def mut_run(per_class=20, verdict=accepted, skip=()):
 def test_g_u2_every_planted_function_detected_passes_the_data_and_pending_classes_keep_it_pending():
     g2 = gate(gates_u.build_report(inputs(mut_manifest(), mut_run())), 'G-U2')
     assert g2.status == 'pending' and not any('leak' in r for r in g2.reasons)
-    assert any('moved-rva-call' in r for r in g2.reasons) and any('try-scope' in r for r in g2.reasons)
+    assert all(any(c in r for r in g2.reasons) for c in ('moved-rva-call', 'try-scope', 'trace-arg'))
     per = g2.observed['classes']
     assert set(per) == {c.id for c in classes.CLASSES}
     assert all(v['mutants'] == 20 and v['detected'] == 20 and v['leaks'] == 0 for v in per.values())

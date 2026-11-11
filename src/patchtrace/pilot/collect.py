@@ -143,11 +143,13 @@ def _unified(service, enrichment: EnrichmentStore, older: str, newer: str, budge
     saying why when there is one that cannot be used (a stale result is never combined with the Ghidriff pairing)."""
     from ..unified import pipeline as unified
     from ..unified.limits import UnifiedError
+    from ..unified.read_model import capture_candidates, resolve_best
     from .sources.unified import UnifiedFacts, UnifiedPairing, UnifiedView
     try:
         if not enrichment.entries('unified-result', on_corrupt=lambda _id: None):
             return None, None, None  # none was ever computed: the plan (a PE read of both builds) is not needed
-        loaded = unified.load_current(service, unified.make_plan(service))
+        plan = resolve_best(capture_candidates(service), budget=budget)
+        loaded = unified.load_current(service, plan)
         if loaded.state == 'none':
             return None, None, None
         view = UnifiedView.read(loaded, older_sha256=older, newer_sha256=newer, budget=budget)

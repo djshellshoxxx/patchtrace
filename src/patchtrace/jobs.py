@@ -11,6 +11,7 @@ from dataclasses import dataclass
 from pathlib import Path
 
 LOG_LIMIT = 2 * 1024 * 1024
+_PROGRESS_TAIL_LIMIT = 16 * 1024
 # Windows: inheritable pipe/NUL handles exist from CreatePipe until the parent closes the child ends after
 # CreateProcessW(bInheritHandles=True). Serialising that window stops a concurrent run_process child from
 # inheriting another run's pipe write end (which would keep that reader from ever seeing EOF).
@@ -21,6 +22,18 @@ MEMORY_LIMIT_CEILING = 1 << 62
 
 def _positive_int(value: object) -> bool:
     return isinstance(value, int) and not isinstance(value, bool) and value >= 1
+
+
+@dataclass(frozen=True)
+class ProcessProgress:
+    """Bounded, unredacted child output for trusted internal observers only."""
+
+    elapsed_seconds: float
+    log_tail: str
+    stderr_tail: str
+    stdout_total: int
+    stderr_total: int
+    last_output_elapsed_seconds: float | None
 
 
 @dataclass(frozen=True)
@@ -39,6 +52,9 @@ class ProcessResult:
     stderr_bytes: bytes | None = None
     stdout_total: int = 0
     stderr_total: int = 0
+    # Supervisor-clock duration, excluding cleanup waits. Preserve all prior positional fields.
+    elapsed_seconds: float = 0.0
+    last_output_elapsed_seconds: float | None = None
 
 
 def _windows_process(argv: Sequence[str], cwd: Path, env: Mapping[str, str], separate_streams: bool = False,
@@ -235,7 +251,8 @@ def run_process(argv: Sequence[str], *, cwd: Path, env: Mapping[str, str],
                 check_output: Callable[[], str | None] | None = None,
                 log_limit: int = LOG_LIMIT, separate_streams: bool = False,
                 stderr_limit: int = LOG_LIMIT, memory_limit_bytes: int | None = None,
-                max_output_bytes: int | None = None) -> ProcessResult:
+                max_output_bytes: int | None = None,
+                on_progress: Callable[[ProcessProgress], None] | None = None) -> ProcessResult:
     """Run an argv with a bounded log and terminate descendants on every exit.
 
     By default stdout and stderr are merged into `log_tail`. With `separate_streams`,
@@ -251,6 +268,10 @@ def run_process(argv: Sequence[str], *, cwd: Path, env: Mapping[str, str],
     `max_output_bytes` (default None = unlimited) stops the child as soon as its stdout has delivered more than
     that many bytes in total (`reason='output-limit'`): `log_limit` only bounds the memory of the kept tail, so a
     child that prints without end would otherwise run to the full timeout.
+
+    `on_progress` receives at most one bounded snapshot per second and a final snapshot after pipe drain.
+    It runs on this supervisor thread without the reader lock and must return promptly. Ordinary observer
+    errors are ignored; interrupts still trigger cleanup. Output activity never changes the fixed deadline.
     """
     if not argv or not Path(argv[0]).is_absolute():
         raise ValueError('PT-BACKEND: configure an absolute executable path')
@@ -278,13 +299,16 @@ def run_process(argv: Sequence[str], *, cwd: Path, env: Mapping[str, str],
                                  preexec_fn=_posix_preexec(memory_limit_bytes))
     tail, err_tail = bytearray(), bytearray()
     totals = {'out': 0, 'err': 0}
+    last_output_at: float | None = None
     lock = threading.Lock()
 
     def collect(stream, buffer: bytearray, limit: int, name: str):
+        nonlocal last_output_at
         try:
             while chunk := stream.read(8192):
                 with lock:
                     totals[name] += len(chunk)
+                    last_output_at = time.monotonic()
                     buffer.extend(chunk)
                     if len(buffer) > limit:
                         del buffer[:-limit]
@@ -305,6 +329,23 @@ def run_process(argv: Sequence[str], *, cwd: Path, env: Mapping[str, str],
             except ProcessLookupError:
                 pass
 
+    def activity_elapsed(elapsed: float, output_at: float | None) -> float | None:
+        # Readers may start before the deadline clock and finish draining after the observed stop.
+        # Keep their activity on the execution interval so reported idle time cannot be negative.
+        return None if output_at is None else min(elapsed, max(0.0, output_at - started))
+
+    def notify_progress(elapsed: float, out: bytes, err: bytes,
+                        out_total: int, err_total: int, output_at: float | None) -> None:
+        if on_progress is None:
+            return
+        snapshot = ProcessProgress(elapsed, out[-_PROGRESS_TAIL_LIMIT:].decode('utf-8', errors='replace'),
+                                   err[-_PROGRESS_TAIL_LIMIT:].decode('utf-8', errors='replace'),
+                                   out_total, err_total, activity_elapsed(elapsed, output_at))
+        try:
+            on_progress(snapshot)
+        except Exception:
+            pass  # Observation cannot change child supervision, exit status, or failure evidence.
+
     try:
         # Everything after the spawn is covered by the `finally`: a failed memory cap, a reader thread that
         # cannot start (thread exhaustion) or an interrupt must not leave the child tree running or its pipes open.
@@ -313,6 +354,8 @@ def run_process(argv: Sequence[str], *, cwd: Path, env: Mapping[str, str],
         for reader in readers:
             reader.start()
         started, reason = time.monotonic(), None
+        next_progress = started
+        stopped: float | None = None
         while child.poll() is None:
             if cancel.is_set():
                 reason = 'cancelled'
@@ -323,9 +366,21 @@ def run_process(argv: Sequence[str], *, cwd: Path, env: Mapping[str, str],
             elif check_output:
                 reason = check_output()
             if reason:
+                stopped = time.monotonic()
                 terminate()
                 break
+            now = time.monotonic()
+            if on_progress is not None and now >= next_progress:
+                with lock:
+                    progress_out = bytes(tail[-_PROGRESS_TAIL_LIMIT:])
+                    progress_err = bytes(err_tail[-_PROGRESS_TAIL_LIMIT:])
+                    progress_out_total, progress_err_total = totals['out'], totals['err']
+                    progress_output_at = last_output_at
+                notify_progress(now - started, progress_out, progress_err,
+                                progress_out_total, progress_err_total, progress_output_at)
+                next_progress = time.monotonic() + 1.0
             cancel.wait(0.05)
+        elapsed_seconds = (time.monotonic() if stopped is None else stopped) - started
         # A successful parent may leave a descendant holding the output pipe.
         terminate()
         if os.name != 'nt':
@@ -345,6 +400,7 @@ def run_process(argv: Sequence[str], *, cwd: Path, env: Mapping[str, str],
         with lock:
             log_raw, err_raw = bytes(tail), bytes(err_tail)
             out_total, err_total = totals['out'], totals['err']
+            output_at = last_output_at
         log = log_raw.decode('utf-8', errors='replace')
         err = err_raw.decode('utf-8', errors='replace')
         peak = None
@@ -353,7 +409,9 @@ def run_process(argv: Sequence[str], *, cwd: Path, env: Mapping[str, str],
                 peak = child.peak_memory()
             except OSError:
                 peak = None
-        return ProcessResult(returncode, log, reason, err, peak, log_raw, err_raw, out_total, err_total)
+        notify_progress(elapsed_seconds, log_raw, err_raw, out_total, err_total, output_at)
+        return ProcessResult(returncode, log, reason, err, peak, log_raw, err_raw, out_total, err_total,
+                             elapsed_seconds, activity_elapsed(elapsed_seconds, output_at))
     finally:
         terminate()
         if os.name != 'nt':

@@ -1,10 +1,12 @@
 # Raw byte representations (SPEC-26 requirement B, Hex / Binary / Base64)
 
+> **SPEC-31 status amendment (2026-11-04, A-09, documentation only):** the file-level radiff2-inspired items are hosted as SPEC-26 extensions, not SPEC-31: RD-F01 (byte spans), RD-F02 (PE layout delta) and RD-F03 (offset alignment). This file is part of SPEC-26.
+
 ## Responsibility
 
 Package `patchtrace.representations` turns verified, original on-disk bytes of a project-owned artifact into bounded, labelled pages in three views: Hex, Binary and Base64. It is pure Python (stdlib only, no Qt, no execution, no network). It owns scope selection, paging, text formatting, captions, copy text and byte-level comparison. It owns no widgets; a UI layer calls it from a worker thread.
 
-The only source of bytes is `patchtrace.artifact_bytes.VerifiedArtifactReader`. Metadata, decompiled text and assembly are never encoded as bytes by this package, and no API here accepts text for encoding. Decompiled output is Ghidra C-like text, not original bytes; presenting it as Hex/Binary/Base64 would mislabel it, so it is out of scope by construction.
+The only source of bytes is `patchtrace.artifact_bytes.VerifiedArtifactReader`. Its initial full-file SHA-256 verification also records compact SHA-256 digests of 4 KiB blocks from the same bytes. Every nonempty read re-reads and checks each touched block and returns slices of those exact checked bytes; it checks file metadata before and after the read. Restoring size and timestamps cannot make changed requested bytes pass verification. Untouched blocks are checked when requested; an empty read performs metadata checks only. No verified block cache substitutes for current input bytes. Metadata, decompiled text and assembly are never encoded as bytes by this package, and no API here accepts text for encoding. Decompiled output is Ghidra C-like text, not original bytes; presenting it as Hex/Binary/Base64 would mislabel it, so it is out of scope by construction.
 
 Code-line evidence navigation (next/previous hunk, evidence jump, line anchors) does not apply to raw views. Raw alignment is byte/range alignment only (`byte_diff_mask`), never text `SequenceMatcher` hunks. The UI must disable code-line evidence navigation while a raw representation is shown.
 
@@ -38,7 +40,7 @@ Reads use `clip=False`, so a file that changed, shrank or was swapped surfaces `
 
 * One page is at most 65536 input bytes (`MAX_PAGE_SIZE`); `render_page` rejects larger pages.
 * Memory per page: input <= 64 KiB; rendered text roughly Hex 4.9x, Base64 1.4x, Binary 10x (under 700 KB), plus a copy-text duplicate. CPU is linear in page bytes.
-* A single read is bounded by the page size (reader cap is 16 MiB); seeking directly to the page means the last page of a multi-GiB file reads only that page.
+* Returned bytes are bounded by the page size (reader cap is 16 MiB). Verification reads only the touched 4 KiB blocks, adding less than 8 KiB of I/O to a nonempty contiguous request; it never rehashes the full file per page. The digest index uses 32 bytes per block (8 MiB per GiB of input), plus bounded working buffers. Construction briefly holds both mutable and immutable digest indexes (up to twice that index memory); reads briefly hold an output buffer and its immutable return copy (up to twice the requested bytes), plus block buffers. Closing the reader releases its digest index.
 * `byte_diff_mask` accepts inputs up to 65536 bytes each (`ValueError` otherwise).
 * Function scopes are capped at 1 MiB by default (`max_length`).
 

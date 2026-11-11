@@ -1,0 +1,54 @@
+{
+  "merge_base": "f33e2a0aaa3399644367f2419fee21cfe2e8702b",
+  "source": "4465a0492367d08f324e80b290a594791921691c",
+  "destination": "afc8a2967ba3dec6b1ac3351d20dd08c193ba9bc",
+  "source_changed_paths": [
+    "docs/qa.md",
+    "docs/qa/nway-windows-recovery-20261106.md",
+    "docs/specs/series-window.md",
+    "src/patchtrace/nway/series.py",
+    "tasks/todo.md",
+    "tests/stress/test_cli_stress_recovery.py",
+    "tests/test_nway_recovery_copy_20261105.py"
+  ],
+  "ledger_resolution": "Every destination byte plus the exact source-minus-merge-base suffix once.",
+  "ledgers": [
+    {
+      "path": "docs/qa.md",
+      "merge_base_bytes": 324941,
+      "merge_base_sha256": "b576bf11491a2ab82e20e28a6d9c053f0932b0a70c53e0b3d91c1a1f13de0511",
+      "source_bytes": 325668,
+      "source_sha256": "eb84a24857b615af81b4ffee6e1b3a0cf845e0920ff168ed44a48f2ffe127ff9",
+      "destination_bytes": 329134,
+      "destination_sha256": "7fadfbd9e6ddc78f988b84a51441babe4c1c2980e8da9dda2647fe5fed9555fb",
+      "suffix_bytes": 727,
+      "suffix_sha256": "3c16bff5cf6782079b9477ee916783d1752b4e29d0f620c1c01c6932b05f52a5",
+      "expected_bytes": 329861,
+      "expected_sha256": "41e57f594278b8bf9fe6704b1615aec6f19b6361486cac58b2aa7e99b2a8e6fe",
+      "destination_suffix_occurrences_before": 0,
+      "expected_suffix_occurrences_after": 1
+    },
+    {
+      "path": "tasks/todo.md",
+      "merge_base_bytes": 191210,
+      "merge_base_sha256": "2d5490374abbadae3bd34dbff5efa5a1e1967f442658e44d38aa9869f985cea4",
+      "source_bytes": 191810,
+      "source_sha256": "0d3df2bcc48f96a9ca427634f81a2e894f8ec3790d5af061c79d65305df4436c",
+      "destination_bytes": 193620,
+      "destination_sha256": "3060951995d881b5634cfac68c11d63400dea4671587b1dfed6f165fa120aeef",
+      "suffix_bytes": 600,
+      "suffix_sha256": "bc12e2490d75bc3cc4109f18c84ef74bd0e1f07d9bf46336f948755f32df3beb",
+      "expected_bytes": 194220,
+      "expected_sha256": "297767c5dda478afefed914c61c7596b435a5b97a3acfabe8c02aa7312b9f4c9",
+      "destination_suffix_occurrences_before": 0,
+      "expected_suffix_occurrences_after": 1
+    }
+  ],
+  "crash_fixture": {
+    "path": "tests/stress/test_cli_stress_recovery.py",
+    "destination_blob": "bf1ef0c5c0d1b3148b727068cafdc1241a57a25f",
+    "source_blob": "bf1ef0c5c0d1b3148b727068cafdc1241a57a25f",
+    "already_identical": true
+  },
+  "qualification_scope": "Preparation only. Parent reports #245 reviewed with Linux/Windows QA and native pass; two Ubuntu Qt shards are still running. Current PR qualification was not independently queried for this local merge."
+}

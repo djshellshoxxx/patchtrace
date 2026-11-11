@@ -28,8 +28,9 @@ def test_thunk_target(label, expected):
 
 @pytest.mark.parametrize(
     ('label', 'expected'),
-    [('Foo-3', ('Foo', 3)), ('a-b-12', ('a-b', 12)), ('Foo', None), ('Foo-x', None), ('-3', None)],
-    ids=['simple', 'dashed-stem', 'none', 'nonnumeric', 'no-stem'],
+    [('Foo-3', ('Foo', 3)), ('a-b-12', ('a-b', 12)), ('Foo', None), ('Foo-x', None), ('-3', None),
+     ('x-' + '9' * 5000, None), ('Foo-\u0663', None)],
+    ids=['simple', 'dashed-stem', 'none', 'nonnumeric', 'no-stem', 'huge-suffix-105-cg2', 'non-ascii-digit'],
 )
 def test_split_count_suffix(label, expected):
     assert labels.split_count_suffix(label) == expected

@@ -231,6 +231,17 @@ def coverage_precision_curve(p, y, w, flags_abstain):               # selective-
     return out
 ```
 Coverage is relative to ALL comparable natural candidates (abstentions from OOD/contested/missing count against coverage).
+
+Metric invariant clarification (2026-11-05, deterministic tooling only): secondary
+equal-mass ECE closes an adaptive bin only after a whole equal-prediction tie
+block. Bin boundaries depend on predictions and weights, never the row order or
+labels; a tie may therefore exceed the target bin mass or reduce the bin count.
+Integer weight replication preserves that metric. Weighted AUC sums positive
+and negative class masses independently so subtractive cancellation cannot
+erase a small class or inflate the result beyond its pairwise-ordering value.
+These arithmetic repairs change no primary fixed-width ECE bins, frozen
+preregistration bytes, model, selection threshold or claim gate.
+
 9.2 Cluster (group) bootstrap [S11]: resample LINEAGES with replacement (B=2000, `det_uniform`-seeded), recompute every metric on the resample WITHOUT refitting the model (OOF/locked predictions are fixed); percentile intervals; requires >= 30 lineages for the headline intervals (otherwise the report states the intervals are anti-conservative and criteria G3 cannot pass). Additionally report the leave-one-lineage-out jackknife: worst-lineage precision and maximum influence of any lineage on the precision lower bound.
 ```python
 def cluster_bootstrap(rows, preds, stat_fn, B, seed, alpha=0.05):
@@ -443,3 +454,57 @@ Inputs: this spec, `docs/plans/spec-decisions-20261014.md` (O1-O6), the phase-C 
 ### Natural grouping boundary clarification (LBL-26 C-1 / C-3)
 
 The candidates admitted as natural evidence alone determine their CV identity groups, hub threshold counts and grouping diagnostics. Excluded adversarial candidates may be counted in their stress table, but cannot add identity edges, rename natural groups or turn a natural cross-role identity into a hub. Audit natural identity roles using the natural grouping's hub set before fitting. Retain the broader evidence-candidate identity-role audit independently with its own hub set; findings from either audit block fitting. This preserves split-leak checks while preventing excluded stress rows from changing natural folds or headline metrics. Preregistration bytes and frozen analysis parameters are unchanged.
+
+### Training CLI preregistration selection (LBL-30, November 1, 2026)
+
+Before either `train run` or `train shift` opens corpus inputs, `--prereg FILE`
+must match one unambiguous `C9-PREREG-v1` Markdown table row in `--qa FILE`
+(default `docs/qa.md`). Record rows must start at column zero; indented/nested
+list contents cannot become records. The exact identifier must be a complete cell and the
+row must contain exactly one lowercase SHA-256 value. Missing, duplicated,
+malformed or mismatched rows fail with `PT-KA-PREREG`; prose examples and
+identifier substrings are not lock records. Exclude fenced and indented code
+examples and HTML comments; a literal comment opener inside a fenced example
+does not hide a later visible record. This is a deliberately bounded record
+format, not a general Markdown renderer: raw HTML outside recognized code or
+comments, and multiline/unclosed inline-code spans, cause a controlled
+`PT-KA-PREREG` error for the QA input. Same-line code spans may contain literal
+HTML/path placeholders. A later valid-looking row does not override an
+unsupported-format error. Hash exact LF protocol bytes using
+the existing preregistration reader; reject CR bytes rather than normalizing them.
+
+`--unlocked-prereg` explicitly selects a rehearsal and requires `--prereg`.
+It still checks protocol readability and LF bytes, but the report and train key
+receive no preregistration SHA: `preregistered` remains false and the normal
+`unlocked-placeholder` is retained. The command summary may record the inspected
+draft SHA separately. A verified preregistration cannot be combined with
+`--smoke`; use the explicit rehearsal mode for reduced-effort configuration.
+With no protocol option, the existing unlocked behavior remains unchanged.
+
+This selection proves only the recorded protocol identity. It does not complete
+the pre-lock audit, assert owner sign-off, consume a final evaluation, or replace
+the section 2.1 single-use final-run gate. The declared-final CLI integration from
+preserved PR #85 remains separate acceptance work. The low-level `run_training`
+library accepts a caller-validated SHA; CLI validation must not be bypassed by
+production command paths. No frozen preregistration bytes or numeric thresholds
+change in this repair.
+
+November 1 parser-boundary amendment: a record's first pipe must be the original,
+visible column-zero character, outside any comment already open at the start of
+that physical line. Removing a comment cannot manufacture that provenance.
+Recognize closed same-line code spans before comment delimiters so literal
+`<!--`/`-->` examples cannot alter comment state. The SHA must occupy a complete
+plain cell as exactly 64 lowercase hexadecimal characters; a substring with a
+prefix, suffix or formatting is not a digest value. Pipe-delimited record rows
+may omit the trailing pipe. Backslash-escaped pipes remain cell text rather than
+creating identifier/digest cells. These rules concern recorded identity only;
+they confer no owner approval, lock authority or final-evaluation permission.
+
+Escaped-opening follow-up: outside a code span, backslash escapes apply to an
+opening backtick (odd/even preceding-backslash parity). An escaped first tick
+cannot protect a real HTML comment from scanning. Inside an established code
+span, backslashes are literal: they do not escape an otherwise matching closing
+backtick run. See CommonMark 0.31.2 [backslash escapes](https://spec.commonmark.org/0.31.2/#backslash-escapes),
+[code spans](https://spec.commonmark.org/0.31.2/#code-spans) and
+[raw HTML](https://spec.commonmark.org/0.31.2/#raw-html). Unsupported multiline
+code still fails conservatively; comment-hidden rows cannot record an identity.

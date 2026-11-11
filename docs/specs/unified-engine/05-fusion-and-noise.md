@@ -31,6 +31,9 @@ Components alone over-count: Ghidriff's ExactMnemonics and `pt-bytes` P08 are th
 | E-DATA | P12, P14; Ghidriff StringsRefsHasher, StrUniqueFuncRefsHasher; BinDiff string references |
 | E-DECOMP | Ghidriff BSIM, Decomp Match; Diaphora pseudo-code rules (registry maps DA-01 descriptions) |
 | E-LAYOUT / E-RESID / E-MANUAL | P18, BinDiff address sequence / P16, P17, P19 / P00 |
+
+`support` is the per-component max-pool inventory defined in 02 s4, not a list of mutually corroborating classes. Two same-class atoms in different components retain one support entry per component and both atoms; their decision remains `tentative` unless another rule establishes a match. Class independence is checked by `base_decision` and is explained separately from support by component (07 s11). Native confidence text never changes that inventory or decision.
+
 Assumption **A-IND-1** (narrowed): an E-BODY atom of K2 (pdata-confirmed extents) and a non-E-BODY atom of K1 err independently enough to corroborate; G-U7 (08) measures it per class pair and can join classes by configuration.
 
 ### 1.2 Source atoms -> tiers (adapters, 06)
@@ -38,7 +41,7 @@ Assumption **A-IND-1** (narrowed): an E-BODY atom of K2 (pdata-confirmed extents
 | Source | A | B | C | W |
 |---|---|---|---|---|
 | ghidriff (`match_types`, strongest of the list wins) | SymbolsHash, ExternalsName, ExactBytesFunctionHasher, ExactInstructionsFunctionHasher | ExactMnemonicsFunctionHasher, BSIM, BulkInstructionHash, StringsRefsHasher, StrUniqueFuncRefsHasher, Decomp Match | StructuralGraphExactHash, StructuralGraphHash, BulkBasicBlockMnemonicHash, SigCallingCalledHasher, SwitchSigHasher, Implied Match, unknown names | added/deleted one-sided observations |
-| bindiff (`algorithm`; R02 s14 tiers) | name hash, hash matching, edges flowgraph MD index (rows with `basicblocks = 0` only when both ends are imports) | edges callgraph MD, MD flowgraph top-down/bottom-up, prime signature, MD callgraph top-down/bottom-up | every step with confidence <= 0.75, unknown names | - |
+| bindiff (`algorithm`; R02 s14 tiers) | name hash, hash matching, edges flowgraph MD index (rows with `basicblocks = 0` only when both ends are imports) | edges callgraph MD, MD flowgraph top-down/bottom-up, prime signature, MD callgraph top-down/bottom-up | relaxed MD index, instruction count, address sequence, string references, loop count, call reference, call sequence, unknown step names (the step name alone sets the tier; confidence is never read, R02 s7; U7-16 reconciled 2026-11-04) | - |
 | rz-diff | - | - | - | every row (`non-exclusive` when its newer endpoint is shared) |
 | diaphora (verified sets only, 06 s5) | - | best | partial, unreliable, multimatch (as N:M) | unmatched observations |
 | pt-ladder / pt-bytes | pass tier (04 s4) | | | |

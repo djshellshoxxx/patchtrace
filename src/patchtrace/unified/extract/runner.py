@@ -11,6 +11,7 @@ child per side with the requested RVAs, its `decomp.jsonl` validated line by lin
 """
 from __future__ import annotations
 
+import hashlib
 import json
 import logging
 import os
@@ -31,9 +32,17 @@ from ... import backend as backend_module
 from ...backend import BackendConfig
 from ...jobs import ProcessResult, run_process
 from .. import keys
-from ..contracts import ExtractRequest, IrKeyInputs
+from ..contracts import ExtractRequest, IrKeyInputs, strip_unsafe
 from ..limits import DEFAULT_LIMITS, Budget, BudgetExhausted, UnifiedError, UnifiedLimits
-from . import PRIVATE_SCRIPT_NAME, SYMBOLS_BY_MODE, analysis_options_digest, script_bytes, script_sha256
+from . import (
+    INGEST_REVISION,
+    PRIVATE_SCRIPT_NAME,
+    SYMBOLS_BY_MODE,
+    analysis_options_digest,
+    canonical_json,
+    script_bytes,
+    script_sha256,
+)
 from .decomp import DecompRecord, read_decomp
 
 DEFAULT_HEAP_MB = 4096                     # unknown RAM (the package may not import ctypes, 03 s12.2 item 1)
@@ -44,7 +53,6 @@ REQUEST_LIMIT_KEYS = ('l01_functions_per_side', 'l02_instructions_per_side', 'l0
 DECOMPILE_LIMIT_KEYS = ('l29_pseudo_chars', 'l29_pseudo_lines', 'l41_decompile_fn_s', 'l41_decompile_run_s')
 DECOMPILE_OVERHEAD_S = 120                 # JVM start, GZF import and teardown on top of the L-41 run budget
 _SLUG = re.compile(r'^[a-z0-9-]{1,48}$')
-_STDERR_UNSAFE = re.compile('[\x00-\x08\x0b-\x1f\x7f-\x9f\u2028\u2029\u202a-\u202e\u2066-\u2069]')
 _PROBE_KEYS = frozenset({'ghidra', 'pyghidra', 'java', 'python', 'script_sha256'})
 # Child reason slug -> error code. A slug the table does not know is untrusted text: it becomes EXTRACT/crash.
 _REASONS = {
@@ -171,6 +179,13 @@ def heap_mb(job: ExtractJob | DecompileJob) -> int:
     return DEFAULT_HEAP_MB
 
 
+def ingest_identity_digest(limits: UnifiedLimits) -> str:
+    """Same value as `ir.ingest.ingest_identity_digest` (a test pins both)."""
+    payload = canonical_json({'domain': 'unified-ingest-revision/1', 'limits': keys.ingest_limits_digest(limits),
+                              'revision': INGEST_REVISION})
+    return hashlib.sha256(payload.encode('utf-8')).hexdigest()
+
+
 def predict_ir_key(job: ExtractJob, *, ghidra_version: str, pyghidra_version: str,
                    python_version: str) -> tuple[IrKeyInputs, str]:
     """The `ir_key` an extraction would produce, computable BEFORE running it (02 s5): the versions come from
@@ -179,12 +194,12 @@ def predict_ir_key(job: ExtractJob, *, ghidra_version: str, pyghidra_version: st
         artifact_sha256=job.artifact_sha256, producer_kind='ghidra', mode=job.mode, symbols=SYMBOLS_BY_MODE[job.mode],
         ghidra=ghidra_version, pyghidra=pyghidra_version, python=python_version, script_sha256=script_sha256(),
         analysis_options_digest=analysis_options_digest(job.mode, effective_options(job)),
-        ingest_limits_digest=keys.ingest_limits_digest(job.limits))
+        ingest_limits_digest=ingest_identity_digest(job.limits))
     return inputs, keys.ir_key(inputs)
 
 
 def sanitize_stderr(text: str, limit: int = DEFAULT_LIMITS.l31_stderr_tail_bytes) -> str:
-    cleaned = _STDERR_UNSAFE.sub('?', text.replace('\r\n', '\n'))
+    cleaned = strip_unsafe(text.replace('\r\n', '\n'), keep_layout=True, replacement='?')   # contracts' ranges, U7-09
     raw = cleaned.encode('utf-8', 'replace')
     return raw[-limit:].decode('utf-8', 'ignore') if len(raw) > limit else cleaned
 
@@ -197,6 +212,7 @@ class OutputGuard:
     about every 50 ms from the supervising thread."""
 
     GZF_NAME = 'program.gzf'
+    PROGRESS_PART = 'progress.json.part'
 
     def __init__(self, directory: Path, emit: Callable[[ExtractProgress], None] | None, cap: int, progress_cap: int,
                  gzf_cap: int = DEFAULT_LIMITS.l36_retained_gzf_bytes) -> None:
@@ -216,8 +232,9 @@ class OutputGuard:
                         return 'output-limit'
                     if entry.name == 'progress.json':
                         self._progress(Path(entry.path))
-                    elif entry.name.endswith('.part'):
-                        continue
+                    elif entry.name == self.PROGRESS_PART:
+                        if entry.stat(follow_symlinks=False).st_size > self.progress_cap:
+                            return 'output-limit'   # the one temp file the script writes; any other `.part` counts
                     elif entry.name == self.GZF_NAME:
                         gzf += entry.stat(follow_symlinks=False).st_size
                     else:
@@ -368,6 +385,10 @@ def _spawn(cfg: BackendConfig, work: Path, request: ExtractRequest, limits: Unif
     result = runner(argv, cwd=work, env=env, cancel=budget.cancel or threading.Event(), timeout_seconds=timeout,
                     check_output=guard, log_limit=STDOUT_LIMIT, separate_streams=True, stderr_limit=STDERR_LIMIT)
     failure = classify(result)
+    if failure is None and guard() == 'output-limit':
+        # The guard polls every ~50 ms: a child that wrote past a cap and exited inside one interval was never killed.
+        failure = _error('PT-UNIFIED-LIMIT', 'The extractor output exceeded its size limit (L-05 or L-36)',
+                         'output-limit')
     if failure is not None:
         failure.diagnostics = sanitize_stderr(result.stderr_tail)   # plain text for a log, never in the message
         raise failure

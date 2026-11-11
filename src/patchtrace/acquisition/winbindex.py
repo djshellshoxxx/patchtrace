@@ -126,13 +126,16 @@ def _canonical(value) -> bytes:
     return json.dumps(value, sort_keys=True, separators=(',', ':'), ensure_ascii=False).encode('utf-8')
 
 
-def _kbs(windows: dict) -> tuple[tuple[str, ...], tuple[KbRef, ...]]:
+def _kbs(windows: dict) -> tuple[tuple[str, ...], tuple[KbRef, ...], int]:
     versions: set[str] = set()
+    collisions = 0
     kbs: dict[tuple, KbRef] = {}
     for version, updates in windows.items():
         if not isinstance(updates, dict):
             continue
-        versions.add(version)
+        label = _clean(version, 64)
+        collisions += label in versions
+        versions.add(label)
         for kb, body in updates.items():
             info = body.get('updateInfo') if isinstance(body, dict) else None
             info = info if isinstance(info, dict) else {}
@@ -144,7 +147,7 @@ def _kbs(windows: dict) -> tuple[tuple[str, ...], tuple[KbRef, ...]]:
                         release_date=date if isinstance(date, str) and _DATE.fullmatch(date) else None,
                         release_version=_clean(release, 64) if isinstance(release, str) else None)
             kbs[(ref.kb, ref.release_date or '', ref.release_version or '')] = ref
-    return tuple(sorted(versions)), tuple(kbs[k] for k in sorted(kbs))
+    return tuple(sorted(versions)), tuple(kbs[k] for k in sorted(kbs)), collisions
 
 
 def parse(data: bytes, file_name: str, data_date: str, *, compressed: bool = True) -> ParseResult:
@@ -157,6 +160,7 @@ def parse(data: bytes, file_name: str, data_date: str, *, compressed: bool = Tru
         raise AcquisitionError('PT-ACQ-PROVIDER', 'Winbindex record must be a JSON object')
     candidates = []
     skipped = 0
+    label_collisions = 0
     for key, entry in document.items():
         info = entry.get('fileInfo') if isinstance(entry, dict) else None
         if (not isinstance(info, dict) or any(f not in info for f in REQUIRED)
@@ -180,7 +184,8 @@ def parse(data: bytes, file_name: str, data_date: str, *, compressed: bool = Tru
             skipped += 1
             continue
         windows = entry.get('windowsVersions')
-        versions, kbs = _kbs(windows) if isinstance(windows, dict) else ((), ())
+        versions, kbs, collisions = _kbs(windows) if isinstance(windows, dict) else ((), (), 0)
+        label_collisions += collisions
         version = info.get('version')
         candidates.append(BuildCandidate(
             file_name=file_name, sha256=key, size=info['size'], machine_type=info['machineType'],
@@ -192,6 +197,9 @@ def parse(data: bytes, file_name: str, data_date: str, *, compressed: bool = Tru
     candidates.sort(key=lambda c: (min((k.release_date for k in c.kbs if k.release_date), default=''),
                                    c.sha256))
     warnings = (f'{skipped} Winbindex entries skipped: missing or invalid required fields',) if skipped else ()
+    if label_collisions:
+        warnings += (f'{label_collisions} Windows version display label collisions; '
+                     'consult the preserved raw record for original labels',)
     return ParseResult(tuple(candidates), skipped, warnings)
 
 

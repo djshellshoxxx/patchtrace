@@ -76,8 +76,8 @@ def test_ctrl_c_during_creation_removes_the_half_initialised_database(tmp_path, 
     root = tmp_path / 'case'
     real = service_module.inspect_artifact
 
-    def interrupted(path, side, project_root):
-        artifact = real(path, side, project_root)
+    def interrupted(path, side, project_root, **kwargs):
+        artifact = real(path, side, project_root, **kwargs)
         if side == 'newer':
             raise KeyboardInterrupt
         return artifact

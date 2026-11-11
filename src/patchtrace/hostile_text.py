@@ -1,11 +1,12 @@
 """The one rule for characters that untrusted text may not carry into a stored or displayed field: control (C0, DEL and
-C1), format (bidirectional, zero-width, byte order mark, soft hyphen, tag) and surrogate code points. Each sink picks
+C1), format (bidirectional, zero-width, byte order mark, soft hyphen, tag), surrogate and line or paragraph separator
+(U+2028, U+2029: Qt breaks a one-line label at them) code points. Each sink picks
 its own replacement: `pe_overview` a `?`, `intelligence.tools.process.sanitize` a space."""
 from __future__ import annotations
 
 import unicodedata
 
-_HOSTILE = frozenset({'Cc', 'Cf', 'Cs'})
+_HOSTILE = frozenset({'Cc', 'Cf', 'Cs', 'Zl', 'Zp'})
 
 
 def is_hostile(char: str) -> bool:

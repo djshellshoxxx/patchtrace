@@ -1,5 +1,7 @@
 # Normalized schemas (SPEC-02)
 
+> **SPEC-31 status amendment (2026-11-04, A-03, documentation only):** `docs/schemas/unified/` entities are added for the unified engine: UnifiedMatch, ChangeFacts, UnifiedResultManifest, UnifiedRun, ProgramIrManifest, ExtractRequest and the ir-extract header and footer (IrExtractHeader.json, IrExtractFooter.json). The directory also holds UnifiedResultPointer.json and UnifiedResultPointerV2.json.
+
 The 15 JSON Schema draft 2020-12 files under ../schemas/ are normative field/type/required/enum/default contracts, generated from `models.py` by `PYTHONPATH=src python tools/generate_schemas.py`. Their IDs are `https://patchtrace.local/schemas/v1/{Entity}.json`; this is an identity namespace and need not be fetched. Unknown extra fields fail. JSON UTF-8 only; no unsafe object deserialization. All records carry stable project-owned string identity and schema_version exactly 1. UUID defaults do not permit deriving correspondence from addresses. Timestamps are UTC ISO 8601.
 
 | Entity | Lifecycle / relationships / null semantics |

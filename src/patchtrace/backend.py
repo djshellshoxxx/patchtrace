@@ -17,10 +17,11 @@ from dataclasses import dataclass
 from pathlib import Path
 from uuid import UUID
 
+from .backend_progress import RECEIPT_LIMIT, RECEIPT_NAME, RECEIPT_WARNING, BackendProgress
 from .diagnostics import describe_backend_exit, redact_log
 from .ingestion import MAX_ARTIFACT_BYTES, safe_path
 from .jobs import run_process
-from .models import AnalysisRun, ComparisonProject, JobEvent, uid
+from .models import AnalysisRun, ComparisonProject, JobEvent, now, uid
 
 JSON_LIMIT = 100 * 1024 * 1024
 
@@ -611,6 +612,29 @@ def _read_raw_cache(cache, fingerprint, settings: dict) -> tuple[bytes, dict] | 
         return None
 
 
+def _write_execution_receipt(directory: Path, document: dict) -> None:
+    """Sync a bounded temporary file before replacement; failures preserve the earlier receipt.
+
+    The caller owns the new run directory and isolates every ordinary diagnostic error from
+    analysis status. Never follow a destination symlink or overwrite a partial file in place.
+    """
+    payload = (json.dumps(document, ensure_ascii=True, allow_nan=False, indent=2, sort_keys=True) + '\n').encode()
+    if len(payload) > RECEIPT_LIMIT or directory.is_symlink():
+        raise ValueError('invalid execution receipt')
+    temporary = None
+    try:
+        with tempfile.NamedTemporaryFile(dir=directory, prefix='backend-execution-', suffix='.tmp',
+                                         delete=False) as stream:
+            temporary = Path(stream.name)
+            stream.write(payload)
+            stream.flush()
+            os.fsync(stream.fileno())
+        os.replace(temporary, directory / RECEIPT_NAME)
+    finally:
+        if temporary is not None:
+            temporary.unlink(missing_ok=True)
+
+
 def run_comparison(config: BackendConfig, project: ComparisonProject, root: Path,
                    cancel: threading.Event, on_event: Callable[[JobEvent], None]) -> tuple[Path, AnalysisRun]:
     """Return completed raw JSON and a new run, or a quarantined directory on failure.
@@ -749,10 +773,41 @@ def run_comparison(config: BackendConfig, project: ComparisonProject, root: Path
                                            settings[f'{side}_sha256'], cancel)
                      for side, path in paths.items()}
             argv = _ghidriff_argv(config, paths['older'], paths['newer'], raw, engine_project, engine_gzfs, local)
-            result = run_process(argv, cwd=scratch_root, env=_environment(config, ghidra_settings),
-                                 cancel=cancel,
-                                 timeout_seconds=config.timeout_seconds,
-                                 check_output=lambda: _output_error(raw))
+            environment = _environment(config, ghidra_settings)
+            progress = BackendProgress(config.timeout_seconds)
+            from . import __version__ as patchtrace_version
+            versions = {'patchtrace': patchtrace_version, 'ghidriff': backend_version,
+                        'python': settings.get('python_version'), 'pyghidra': settings.get('pyghidra_version'),
+                        'ghidra': settings.get('ghidra_version'), 'jvm': settings.get('java_runtime_version')}
+            started_at = now()
+
+            def record_execution(result=None, *, supervision_error=False):
+                try:
+                    document = progress.receipt(run_id, started_at, versions, result=result,
+                                                stopped_at=now() if result is not None else None,
+                                                supervision_error=supervision_error)
+                    _write_execution_receipt(quarantine, document)
+                except Exception:  # noqa: BLE001 - diagnostic persistence cannot change a process outcome
+                    event('warning', RECEIPT_WARNING)
+
+            def observe(snapshot):
+                if progress.observe(snapshot):
+                    event('analysis-stage', f'Ghidriff stage: {progress.stage}')
+                event('analysis-progress', progress.summary())
+
+            record_execution()
+            try:
+                result = run_process(argv, cwd=scratch_root, env=environment, cancel=cancel,
+                                     timeout_seconds=config.timeout_seconds,
+                                     check_output=lambda: _output_error(raw), on_progress=observe)
+            except BaseException:
+                event('analysis-stopped', 'Ghidriff process supervision ended.')
+                # A failed supervisor/spawn must not be presented as an observed process exit.
+                record_execution(supervision_error=True)
+                raise
+            event('analysis-stopped', 'Ghidriff process supervision ended.')
+            progress.finish(result)
+            record_execution(result)
             if config.retain_gzf and result.returncode == 0 and not result.reason and not cancel.is_set():
                 from .unified.extract.retain import retain_run_gzfs  # lazy: the unified engine stays optional
                 retain_run_gzfs(engine_gzfs, quarantine, paths, settings, event)
@@ -772,7 +827,7 @@ def run_comparison(config: BackendConfig, project: ComparisonProject, root: Path
         if result.reason == 'cancelled' or cancel.is_set():
             raise RuntimeError('PT-CANCEL: analysis cancelled; partial output retained in quarantine')
         if result.reason == 'timeout':
-            raise RuntimeError('PT-BACKEND: analysis timed out; increase the configured timeout and retry')
+            raise RuntimeError(progress.timeout_error(run_id))
         if result.reason == 'output-check-failed' or _output_error(raw) == 'output-check-failed':
             raise RuntimeError('PT-BACKEND: output directory could not be inspected; partial output quarantined')
         if result.reason or _output_error(raw):

@@ -1,0 +1,266 @@
+{
+  "schema": "patchtrace-hosted-status/1",
+  "observed_at_utc": "2026-11-06 08:18:54 UTC",
+  "repository": "djshellshoxxx/patchtrace",
+  "pull_requests": [
+    {
+      "pr": 244,
+      "head_sha": "f393bb68ddc11eabb95a6598aa6f86650bd9aa37",
+      "qa": {
+        "run_id": 42175119317,
+        "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/42175119317",
+        "jobs": [
+          {
+            "id": 127751698300,
+            "name": "qt-gate (ubuntu-latest, 20, 3/4)",
+            "status": "queued",
+            "conclusion": null,
+            "active_step": null,
+            "failed_steps": []
+          },
+          {
+            "id": 127751698434,
+            "name": "qt-gate (ubuntu-latest, 20, 2/4)",
+            "status": "in_progress",
+            "conclusion": null,
+            "active_step": "Run python tools/qt_gate.py --repeat 20 --shard 2/4",
+            "failed_steps": []
+          },
+          {
+            "id": 127751698514,
+            "name": "qt-gate (ubuntu-latest, 20, 4/4)",
+            "status": "queued",
+            "conclusion": null,
+            "active_step": null,
+            "failed_steps": []
+          },
+          {
+            "id": 127751698540,
+            "name": "qa (ubuntu-latest)",
+            "status": "queued",
+            "conclusion": null,
+            "active_step": null,
+            "failed_steps": []
+          },
+          {
+            "id": 127751698572,
+            "name": "qa (windows-latest)",
+            "status": "in_progress",
+            "conclusion": null,
+            "active_step": "Run python -m pytest -q --junitxml=qa-results.xml",
+            "failed_steps": []
+          },
+          {
+            "id": 127751698587,
+            "name": "qt-gate (windows-latest, 5, 1/1)",
+            "status": "completed",
+            "conclusion": "success",
+            "active_step": null,
+            "failed_steps": []
+          },
+          {
+            "id": 127751698696,
+            "name": "qt-gate (ubuntu-latest, 20, 1/4)",
+            "status": "queued",
+            "conclusion": null,
+            "active_step": null,
+            "failed_steps": []
+          },
+          {
+            "id": 127751699444,
+            "name": "release-gate",
+            "status": "completed",
+            "conclusion": "skipped",
+            "active_step": null,
+            "failed_steps": []
+          }
+        ]
+      },
+      "native": {
+        "run_id": 42175119351,
+        "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/42175119351",
+        "jobs": [
+          {
+            "id": 127751696363,
+            "name": "native (patchtrace-seeded-store-no-adjacent-pdb)",
+            "status": "completed",
+            "conclusion": "success",
+            "active_step": null,
+            "failed_steps": []
+          },
+          {
+            "id": 127751696433,
+            "name": "native (patchtrace-seeded-store)",
+            "status": "completed",
+            "conclusion": "success",
+            "active_step": null,
+            "failed_steps": []
+          },
+          {
+            "id": 127751696451,
+            "name": "native (patchtrace-clean)",
+            "status": "completed",
+            "conclusion": "success",
+            "active_step": null,
+            "failed_steps": []
+          },
+          {
+            "id": 127751696745,
+            "name": "native (raw-cache-hit)",
+            "status": "completed",
+            "conclusion": "success",
+            "active_step": null,
+            "failed_steps": []
+          },
+          {
+            "id": 127751696799,
+            "name": "native (repro-plain-ghidriff)",
+            "status": "completed",
+            "conclusion": "success",
+            "active_step": null,
+            "failed_steps": []
+          }
+        ]
+      },
+      "counts": {
+        "jobs": 13,
+        "success": 6,
+        "failure": 0,
+        "skipped": 1,
+        "in_progress": 2,
+        "queued": 4
+      }
+    },
+    {
+      "pr": 245,
+      "head_sha": "4465a0492367d08f324e80b290a594791921691c",
+      "qa": {
+        "run_id": 42169559762,
+        "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/42169559762",
+        "jobs": [
+          {
+            "id": 127733918608,
+            "name": "qa (windows-latest)",
+            "status": "completed",
+            "conclusion": "success",
+            "active_step": null,
+            "failed_steps": []
+          },
+          {
+            "id": 127733918786,
+            "name": "qt-gate (ubuntu-latest, 20, 2/4)",
+            "status": "in_progress",
+            "conclusion": null,
+            "active_step": "Run python tools/qt_gate.py --repeat 20 --shard 2/4",
+            "failed_steps": []
+          },
+          {
+            "id": 127733918805,
+            "name": "qa (ubuntu-latest)",
+            "status": "completed",
+            "conclusion": "success",
+            "active_step": null,
+            "failed_steps": []
+          },
+          {
+            "id": 127733918858,
+            "name": "qt-gate (windows-latest, 5, 1/1)",
+            "status": "completed",
+            "conclusion": "success",
+            "active_step": null,
+            "failed_steps": []
+          },
+          {
+            "id": 127733918945,
+            "name": "qt-gate (ubuntu-latest, 20, 4/4)",
+            "status": "queued",
+            "conclusion": null,
+            "active_step": null,
+            "failed_steps": []
+          },
+          {
+            "id": 127733918952,
+            "name": "qt-gate (ubuntu-latest, 20, 1/4)",
+            "status": "queued",
+            "conclusion": null,
+            "active_step": null,
+            "failed_steps": []
+          },
+          {
+            "id": 127733918953,
+            "name": "qt-gate (ubuntu-latest, 20, 3/4)",
+            "status": "queued",
+            "conclusion": null,
+            "active_step": null,
+            "failed_steps": []
+          },
+          {
+            "id": 127733920049,
+            "name": "release-gate",
+            "status": "completed",
+            "conclusion": "skipped",
+            "active_step": null,
+            "failed_steps": []
+          }
+        ]
+      },
+      "native": {
+        "run_id": 42169559870,
+        "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/42169559870",
+        "jobs": [
+          {
+            "id": 127733919429,
+            "name": "native (patchtrace-clean)",
+            "status": "completed",
+            "conclusion": "success",
+            "active_step": null,
+            "failed_steps": []
+          },
+          {
+            "id": 127733919585,
+            "name": "native (patchtrace-seeded-store-no-adjacent-pdb)",
+            "status": "completed",
+            "conclusion": "success",
+            "active_step": null,
+            "failed_steps": []
+          },
+          {
+            "id": 127733919641,
+            "name": "native (patchtrace-seeded-store)",
+            "status": "completed",
+            "conclusion": "success",
+            "active_step": null,
+            "failed_steps": []
+          },
+          {
+            "id": 127733919693,
+            "name": "native (raw-cache-hit)",
+            "status": "completed",
+            "conclusion": "success",
+            "active_step": null,
+            "failed_steps": []
+          },
+          {
+            "id": 127733919723,
+            "name": "native (repro-plain-ghidriff)",
+            "status": "completed",
+            "conclusion": "success",
+            "active_step": null,
+            "failed_steps": []
+          }
+        ]
+      },
+      "counts": {
+        "jobs": 13,
+        "success": 8,
+        "failure": 0,
+        "skipped": 1,
+        "in_progress": 1,
+        "queued": 3
+      }
+    }
+  ],
+  "findings": "No failed jobs or failed steps observed. Both native Windows Ghidriff workflows completed successfully with five successful jobs each. #245 Linux QA newly passed. Remaining work is pending QA/Qt execution.",
+  "logs_fetched": false,
+  "github_mutations": false
+}

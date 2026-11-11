@@ -1,0 +1,150 @@
+{
+  "repository": "djshellshoxxx/patchtrace",
+  "pr": 247,
+  "source": {
+    "sha": "37b771300053e8872febead1fc384fea9126ae90",
+    "tree": "cdbab24d14295b4450cd0d3c744d76734c98a561"
+  },
+  "written_at_utc": "2026-11-06 09:22:40 UTC",
+  "observation_window_utc": {
+    "start_utc": "2026-11-06T09:13:47Z",
+    "end_utc": "2026-11-06T09:17:21Z"
+  },
+  "qa_run_id": 42187353481,
+  "qa_run_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/42187353481",
+  "linux_complete_suite": {
+    "job_id": 127790743638,
+    "completed_log_utc": "2026-11-06T08:57:01.5344879Z",
+    "passed": 20372,
+    "skipped": 52,
+    "xfailed": 6,
+    "warnings": 19,
+    "duration_seconds": 1856.06,
+    "raw_summary_line": "2026-11-06T08:57:01.5344879Z 20372 passed, 52 skipped, 6 xfailed, 19 warnings in 1856.06s (0:30:56)"
+  },
+  "linux_tested_merge": {
+    "sha": "bfecc248af653d8c93d7bf3bf46a2121122c6d23",
+    "tree": "cdbab24d14295b4450cd0d3c744d76734c98a561",
+    "parents": [
+      "f393bb68ddc11eabb95a6598aa6f86650bd9aa37",
+      "37b771300053e8872febead1fc384fea9126ae90"
+    ],
+    "source_tree_equal": true,
+    "checkout_log_line": "2026-11-06T08:25:24.4299632Z bfecc248af653d8c93d7bf3bf46a2121122c6d23",
+    "api_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/git/commits/bfecc248af653d8c93d7bf3bf46a2121122c6d23"
+  },
+  "qa_jobs": [
+    {
+      "id": 127790743638,
+      "name": "qa (ubuntu-latest)",
+      "status": "completed",
+      "conclusion": "success",
+      "active_steps": []
+    },
+    {
+      "id": 127790743999,
+      "name": "qa (windows-latest)",
+      "status": "in_progress",
+      "conclusion": null,
+      "active_steps": [
+        {
+          "number": 8,
+          "name": "Run python -m pytest -q --junitxml=qa-results.xml"
+        }
+      ]
+    },
+    {
+      "id": 127790744030,
+      "name": "qt-gate (ubuntu-latest, 20, 2/4)",
+      "status": "in_progress",
+      "conclusion": null,
+      "active_steps": [
+        {
+          "number": 6,
+          "name": "Run python tools/qt_gate.py --repeat 20 --shard 2/4"
+        }
+      ]
+    },
+    {
+      "id": 127790744050,
+      "name": "qt-gate (ubuntu-latest, 20, 1/4)",
+      "status": "in_progress",
+      "conclusion": null,
+      "active_steps": [
+        {
+          "number": 6,
+          "name": "Run python tools/qt_gate.py --repeat 20 --shard 1/4"
+        }
+      ]
+    },
+    {
+      "id": 127790744103,
+      "name": "qt-gate (windows-latest, 5, 1/1)",
+      "status": "in_progress",
+      "conclusion": null,
+      "active_steps": [
+        {
+          "number": 6,
+          "name": "Run python tools/qt_gate.py --repeat 5 --shard 1/1"
+        }
+      ]
+    },
+    {
+      "id": 127790744150,
+      "name": "qt-gate (ubuntu-latest, 20, 4/4)",
+      "status": "completed",
+      "conclusion": "success",
+      "active_steps": []
+    },
+    {
+      "id": 127790744218,
+      "name": "qt-gate (ubuntu-latest, 20, 3/4)",
+      "status": "in_progress",
+      "conclusion": null,
+      "active_steps": [
+        {
+          "number": 6,
+          "name": "Run python tools/qt_gate.py --repeat 20 --shard 3/4"
+        }
+      ]
+    },
+    {
+      "id": 127790745565,
+      "name": "release-gate",
+      "status": "completed",
+      "conclusion": "skipped",
+      "active_steps": []
+    }
+  ],
+  "workflow_runs": [
+    {
+      "id": 42187353463,
+      "name": "Native Windows Ghidriff acceptance",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 42187353481,
+      "name": "QA and Windows standalone",
+      "status": "in_progress",
+      "conclusion": null
+    }
+  ],
+  "artifacts": [
+    {
+      "id": 13489838041,
+      "name": "qa-Linux",
+      "size_in_bytes": 353375,
+      "digest": "sha256:363ab1476615b42c9c952369ae0ccfd5e3dc4878897b9dd6a424faf1050a76b0",
+      "expired": false,
+      "created_at": "2026-11-06T08:57:06Z",
+      "expires_at": "2027-02-04T08:23:41Z",
+      "source_head": "37b771300053e8872febead1fc384fea9126ae90",
+      "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/42187353481/artifacts/13489838041"
+    }
+  ],
+  "windows_candidate_available_at_snapshot": false,
+  "remaining": "Windows job 127790743999 was still in full pytest; Ubuntu Qt 1/4, 2/4, 3/4 and Windows Qt remained active. No Windows product-start candidate artifact had been uploaded. Downstream Linux packaging/smoke were not yet qualified.",
+  "actions": "Read-only metadata and completed Linux log/Git-object inspection. No polls, reruns, tests or mutations.",
+  "caveat": "This is a timestamped snapshot, not a statement that those jobs remain in progress after the observation window."
+}

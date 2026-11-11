@@ -200,6 +200,14 @@ def test_the_path_policy(rule, tmp_path, name, reason):
     assert (caught.value.code, caught.value.reason) == ('PT-RULE-EXPORT', reason)
 
 
+def test_a_name_the_record_cannot_hold_is_refused_before_any_file_is_made(rule, tmp_path):
+    """#105 BUG-RULE-3: a basename over 128 characters wrote the file, then failed validation and stranded it."""
+    out = tmp_path / ('n' * 150 + '.yar')
+    with pytest.raises(RuleError) as caught:
+        export.write(rule.build(), rule.version, out, allow_git_tree=True)
+    assert (caught.value.code, caught.value.reason) == ('PT-RULE-EXPORT', 'name') and not out.exists()
+
+
 def test_a_git_working_tree_needs_the_explicit_word(rule, tmp_path):
     repo = tmp_path / 'repo'
     (repo / '.git').mkdir(parents=True)

@@ -17,6 +17,7 @@ Honest answers:
 """
 from __future__ import annotations
 
+import re
 from collections.abc import Iterable
 from dataclasses import dataclass
 from datetime import UTC, datetime, timedelta
@@ -106,7 +107,9 @@ def _label(doc: ImportedDocument) -> str:
 
 def _group_key(doc: ImportedDocument) -> tuple:
     s = doc.source
-    return ('cvrf-month', s.release_id) if s.kind == 'cvrf-month' else (s.kind, doc.tracking_id or s.doc_id)
+    if s.kind == 'cvrf-month':
+        return ('cvrf-month', s.release_id)
+    return (s.kind, doc.publisher, doc.tracking_id) if doc.tracking_id else (s.kind, None, s.doc_id)
 
 
 def _instant(value: str | None) -> datetime:
@@ -117,10 +120,24 @@ def _instant(value: str | None) -> datetime:
         return datetime.min.replace(tzinfo=UTC)
 
 
+_VERSION_TEXT = re.compile(r'([0-9]+)(?:\.([0-9]+)\.([0-9]+))?(-[0-9A-Za-z.-]+)?(?:\+[0-9A-Za-z.-]+)?')
+
+
+def _revision_order(text: str | None) -> tuple[int, ...]:
+    """CSAF ``version`` precedence (an integer, or SemVer where a pre-release sorts before its release); text that is
+    neither orders before everything."""
+    match = _VERSION_TEXT.fullmatch(text) if text else None
+    if match is None:
+        return ()
+    major, minor, patch, pre = match.groups()
+    return int(major), int(minor or 0), int(patch or 0), 0 if pre else 1
+
+
 def _revision_key(doc: ImportedDocument) -> tuple:
-    """Newer release instant wins, ties by document id. Instants, not strings: '...00.5Z' sorted before '...00Z'
-    and '10:00+05:00' after '08:00Z' as text (issue #105 BUG-KBC-6)."""
-    return (_instant(doc.source.current_release_date), doc.source.doc_id)
+    """Newer release instant wins, then the higher document revision, ties by document id. Instants, not strings:
+    '...00.5Z' sorted before '...00Z' and '10:00+05:00' after '08:00Z' as text (issue #105 BUG-KBC-6). Two revisions
+    may share a release instant, and the document id then picked the older one (audit KBA-03)."""
+    return (_instant(doc.source.current_release_date), _revision_order(doc.revision), doc.source.doc_id)
 
 
 def _native_revision_ambiguous(docs: list[ImportedDocument]) -> bool:
@@ -228,6 +245,11 @@ class ReverseIndex:
     def scopes(self) -> tuple[ProductScope, ...]:
         return merge_scopes(s for d in self.documents for s in d.scopes)
 
+    def active_scopes(self) -> tuple[ProductScope, ...]:
+        """Products present in the active source snapshots, with their exact source product identities."""
+        active = self.active_ids()
+        return merge_scopes(s for d in self.documents if d.doc_id in active for s in d.scopes)
+
     # ------------------------------------------------------------------------------------------ coverage
 
     def _select(self, scope: SearchScope) -> tuple[set[str], set[str], list[ImportedDocument], bool]:
@@ -261,10 +283,11 @@ class ReverseIndex:
         sources = {d.source.kind for d in in_scope}
         kind = 'csaf' if sources == {'csaf'} else 'cvrf-month'
         marks = [d.source.current_release_date for d in in_scope if d.source.current_release_date]
+        newest = max(marks, key=_instant, default=None)          # instants, not text (audit KBA-02)
         stamps = [d.source.retrieved_at for d in in_scope]
         stale = corpus and (scope.corpus_digest != self.corpus_digest() or _older_than(max(stamps, default=None), now))
         coverage = build_coverage(source_kind=kind, scope=scope, requested=requested, inspected=inspected,
-                                  watermark=max(marks, default=None), retrieved_at=max(stamps, default=now),
+                                  watermark=newest, retrieved_at=max(stamps, default=now),
                                   stale=bool(stale and requested and requested == inspected))
         return coverage, picked
 
@@ -405,7 +428,7 @@ class ReverseIndex:
                 kbs=tuple(sorted({e.kb for e in edges}, key=kb_sort_key)),
                 relations=tuple(sorted({e.relation for e in edges})),
                 status_values=tuple(sorted({s.value for s in statuses}))))
-        return tuple(sorted(out, key=lambda t: (t.current_release_date or '', t.release_id or '', t.doc_id)))
+        return tuple(sorted(out, key=lambda t: (_instant(t.current_release_date), t.release_id or '', t.doc_id)))
 
     def status_rows(self, cve: str) -> tuple[StatusRow, ...]:
         active = self.active_ids()
