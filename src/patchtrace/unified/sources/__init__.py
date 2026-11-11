@@ -26,7 +26,8 @@ MAX_FUNCTIONS_PER_SIDE = 1024
 LINE_MAX_BYTES = 256 * 1024 * 1024
 Category = Literal['modified', 'added', 'removed', 'unmatched', 'ambiguous', 'split', 'merged', 'unchanged']
 Short = Annotated[str, Field(max_length=64)]
-DEGRADING = frozenset({'raw-missing', 'raw-hash-mismatch', 'raw-unparsable', 'ladder-partial', 'manual-unresolved'})
+DEGRADING = frozenset({'raw-missing', 'raw-hash-mismatch', 'raw-unparsable', 'raw-identity-mismatch', 'ladder-partial',
+                       'manual-unresolved'})
 
 
 class _Strict(BaseModel):
@@ -59,9 +60,12 @@ class SnapshotMatch(_Strict):
 @dataclass(frozen=True)
 class RawGhidriff:
     """The preserved raw PDiff `matches.address_matches` table, or why it is not usable."""
-    status: Literal['ok', 'missing', 'hash-mismatch', 'unparsable']
+    status: Literal['ok', 'missing', 'hash-mismatch', 'unparsable', 'identity-mismatch']
     address_matches: Mapping[str, Any] | None = None
     sha256: str | None = None
+    # The document's own sides (`old_meta`/`new_meta` input SHA-256, lower-case; A-28). None = not recorded.
+    older_sha256: str | None = None
+    newer_sha256: str | None = None
 
 
 @dataclass(frozen=True)

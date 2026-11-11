@@ -17,7 +17,7 @@ from .limits import DEFAULT_LIMITS, Budget, UnifiedLimits
 
 DOMAINS = ('unified-ir', 'unified-result', 'unified-config', 'unified-manual', 'unified-row', 'unified-run',
            'unified-limits', 'unified-ingest-limits', 'unified-sources', 'unified-source-content')
-ENGINE_VERSION = 'ude/1'
+ENGINE_VERSION = 'ude/2'  # A-28: raw Ghidriff table read in the current orientation; A-29: one-sided-by hints on every row
 _RVA_MAX = 2**32 - 1
 _SHA256 = re.compile(r'[0-9a-f]{64}')
 _HEX_ADDRESS = re.compile(r'0x[0-9a-f]{1,16}')
@@ -99,6 +99,9 @@ def source_content_digest(source: str, snapshot: object, *, budget: Budget | Non
 def result_key(inputs: ResultKeyInputs) -> str:
     payload = inputs.model_dump(mode='json')
     payload['sources'] = _source_rows(inputs.sources)  # order-independent
+    for name in ('ir_older_key', 'ir_newer_key'):   # S0 mode: absent, so S0 ids are the same as before these inputs
+        if payload[name] is None:
+            del payload[name]
     return domain_id('unified-result', 1, payload)
 
 
@@ -109,7 +112,9 @@ def result_key_inputs(manifest: UnifiedResultManifest) -> ResultKeyInputs:
         ghidriff_raw_sha256=manifest.ghidriff_raw_sha256,
         ir_older_digest=manifest.ir_older.content_digest if manifest.ir_older else None,
         ir_newer_digest=manifest.ir_newer.content_digest if manifest.ir_newer else None,
-        sources=manifest.sources, manual_digest=manifest.manual_digest, config_digest=manifest.config_digest)
+        sources=manifest.sources, manual_digest=manifest.manual_digest, config_digest=manifest.config_digest,
+        ir_older_key=manifest.ir_older.ir_key if manifest.ir_older else None,
+        ir_newer_key=manifest.ir_newer.ir_key if manifest.ir_newer else None)
 
 
 def changed_inputs(stored: ResultKeyInputs, current: ResultKeyInputs) -> tuple[str, ...]:

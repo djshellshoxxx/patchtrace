@@ -13,6 +13,23 @@ Incident evidence, source references, attachment hashes, implementation options 
 - [ ] **Acceptance:** rerun the recorded pair on Windows with effective timeout and version provenance, phase/runtime/memory evidence, output validation and cancellation checks. Do not mark fixed from documentation, mock tests, or a substage's 100%.
 
 
+## SPEC-31 unified-engine soundness follow-up — 2026-11-11 (PR #259 open defects)
+
+Plan and worker briefs: [unified-soundness-swarm-prompt-20261111](../docs/plans/unified-soundness-swarm-prompt-20261111.md). Branch `claude/funny-feynman-d2m0b5` = `main` `882d1ca0` + #259's five fixed commits (clean merge) + the four fixes below. Spec first: amendments A-28..A-31 in `docs/specs/unified-engine/10-amendments.md`. Synthetic evidence only; no live, Windows or real-pair claim.
+
+- [x] Forward-port #259 (`claude/gallant-knuth-8gxuzd`, 5 ahead / 134 behind) onto current `main` by merge; original branch untouched.
+- [x] p1 swap orientation (A-28): `load_raw` records the document's `old_meta`/`new_meta` identity; the raw `address_matches` table is read in the project's current orientation, flipped when crosswise; new raw failure kind `identity-mismatch`; `ENGINE_VERSION` ude/2. `tests/test_unified_followup_orientation.py`.
+- [x] p7 IR-only leftovers (A-29): ladder leftovers of kind function/thunk become one-sided `pt-ladder` tier-W atoms and `older-only`/`newer-only` rows; imports/externals counted; `LADDER_VERSION` ladder/5. `tests/test_unified_followup_ironly.py`.
+- [x] p15 DATA-MAP soundness and p11 symmetry (A-30): consensus blocked by a competing claim of >= 2 unexplained voters; leave-one-out majority among the other voters with explained dissents ignored; symmetric call-operand votes and region shift; `datamap` 3. `tests/test_unified_followup_datamap.py` (300-example mirror property).
+- [x] p17 alignment symmetry (A-31): symmetric block-pairing seed, canonical-orientation LCS/patience ties, symmetric layout edge check; `align` 2. `tests/test_unified_followup_align.py` (300-example mirror property, 60-example end-to-end verdict mirror).
+- [x] Whole unified set plus pilot/report2/UI neighbours green on Linux (counts in `docs/qa.md`); Ruff clean; no schema drift.
+- [x] Independent adversarial review of the combined diff: 4 CONFIRMED findings fixed in `a81bc814` with red tests (details in `docs/qa.md`); residuals documented in `facts/datamap.py`.
+- [ ] **PAUSED by the owner (2026-11-11 01:06 UTC: stop all workers except ghostpay/p2p offramp).** Everything is committed and pushed at `a81bc814`; PR #287 is a draft with CI running on that head and not yet recorded; no local work is in flight. Resume by checking PR #287 CI, then the items below.
+- [x] Draft PR to `main`: [#287](https://github.com/djshellshoxxx/patchtrace/pull/287) (head `b2651bcf` at creation).
+- [ ] Linux and Windows CI (`qa-windows.yml`) green on the exact PR head; then promote and merge; close #259 as superseded (keep its branch).
+- [ ] Known cost to watch on real pairs: two functions retargeted together to a brand-new global make every referrer of the old datum `review` (never a wrong `cosmetic`). Measure on the next live unified gate run (G-U1/G-U3) before any threshold is touched.
+- [ ] Not addressed here (owner-side or runner-side): PT-TIMEOUT-2..4, #268 live-gate runner provisioning, L3 real-pair scoring.
+
 ## Independent parallel wave — 2026-11-05
 
 - [x] Recover ownership without changing frozen #205 or native workers; use root plus three supported workers in isolated, exclusively assigned worktrees.

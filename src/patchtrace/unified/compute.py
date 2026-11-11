@@ -84,6 +84,9 @@ class IrInputs:
     def digests(self) -> tuple[str, str]:
         return self.older.manifest.content_digest, self.newer.manifest.content_digest
 
+    def keys(self) -> tuple[str, str]:
+        return self.older.manifest.ir_key, self.newer.manifest.ir_key
+
     def refs(self) -> tuple[IrRef, IrRef]:
         def ref(reader: IrReader) -> IrRef:
             manifest = reader.manifest
@@ -117,7 +120,8 @@ def compute_config_digest(registry: Registry = REGISTRY, limits: UnifiedLimits =
 
 def plan_identity(inputs: SourceInputs, addr: AddressMap, sources: Iterable[str], registry: Registry = REGISTRY,
                   limits: UnifiedLimits = DEFAULT_LIMITS, *, ir: tuple[str, str] | None = None,
-                  residual: bool = True, budget: Budget | None = None) -> Identity:
+                  ir_keys: tuple[str, str] | None = None, residual: bool = True,
+                  budget: Budget | None = None) -> Identity:
     """The inputs that make a result (02 s5) without computing it: the owner calls this before the run (cache
     lookup) and again with the worker's observed raw status to check the answer. `ir` = the content digests of the
     two ProgramIR sidecars the run will use, or None for S0 mode."""
@@ -133,7 +137,10 @@ def plan_identity(inputs: SourceInputs, addr: AddressMap, sources: Iterable[str]
     refs.extend(diaphora_ref(s, budget) for s in inputs.diaphora if 'diaphora' in selected)
     manual_refs = ManualAdapter().source_refs(inputs, addr, budget) if 'manual' in selected else ()
     refs.extend(manual_refs)
-    manual = manual_digest_of(inputs, addr, budget) if manual_refs else keys.manual_digest([])
+    # The corrections are bound even when the manual source is not selected: correct_match also reshapes the
+    # non-manual matches every adapter and the facts read (names, ids, modified edges), so a result made before a
+    # correction must not keep its id. Without corrections this is keys.manual_digest([]) as before.
+    manual = manual_digest_of(inputs, addr, budget)
     config = compute_config_digest(registry, limits, residual=residual)
     raw_sha = inputs.run.raw.sha256
     if raw_sha is None:
@@ -142,7 +149,9 @@ def plan_identity(inputs: SourceInputs, addr: AddressMap, sources: Iterable[str]
     key_inputs = ResultKeyInputs(older_sha256=inputs.older_sha256, newer_sha256=inputs.newer_sha256,
                                  ghidriff_raw_sha256=raw_sha, ir_older_digest=None if ir is None else ir[0],
                                  ir_newer_digest=None if ir is None else ir[1], sources=ordered,
-                                 manual_digest=manual, config_digest=config)
+                                 manual_digest=manual, config_digest=config,
+                                 ir_older_key=None if ir_keys is None else ir_keys[0],
+                                 ir_newer_key=None if ir_keys is None else ir_keys[1])
     return Identity(ordered, manual, config, keys.result_key(key_inputs), key_inputs)
 
 
@@ -159,7 +168,7 @@ def _ladder(ir: IrInputs, manual: AdapterOutput, limits: UnifiedLimits, budget: 
     passes = pass_table(residual=residual, older=ReaderMnemonics(ir.older), newer=ReaderMnemonics(ir.newer))
     correspondence = run_ladder(ReaderSide(ir.older, limits), ReaderSide(ir.newer, limits), anchors=anchors,
                                 limits=limits, budget=budget, passes=passes)
-    return ladder_output(correspondence, ir.older, ir.newer, anchors_skipped=outside)
+    return ladder_output(correspondence, ir.older, ir.newer, anchors_skipped=outside, budget=budget)
 
 
 def _announce(emit: Callable[[StageEvent], None] | None, ir: bool) -> Callable[[str], None]:
@@ -278,7 +287,7 @@ def refacts_stage(inputs: SourceInputs, addr: AddressMap, *, result_dir: Path, i
     manifest, _sha = store.read_manifest(result_dir)
     selected = frozenset(sources)
     if manifest.result_id != plan_identity(inputs, addr, selected, registry, limits, ir=ir.digests(),
-                                           residual=residual, budget=budget).result_id:
+                                           ir_keys=ir.keys(), residual=residual, budget=budget).result_id:
         raise UnifiedError('PT-UNIFIED-STORE', 'The staged result is not the one this request describes',
                            reason='staged-mismatch')
     texts = {side: refacts.texts(side) for side in ('older', 'newer')}
@@ -381,7 +390,8 @@ def run_request(request_path: Path, result_dir: Path, *, cancel: threading.Event
                                    budget=load_budget)
                      for f in req.diaphora)
     if req.raw_status == 'ok':
-        raw = load_raw(Path(req.raw_path) if req.raw_path else None, req.raw_sha256, limits)
+        raw = load_raw(Path(req.raw_path) if req.raw_path else None, req.raw_sha256, limits,
+                       (req.older_sha256, req.newer_sha256))
     else:
         raw = RawGhidriff(status=req.raw_status, sha256=req.raw_sha256)
     inputs = SourceInputs(older_sha256=req.older_sha256, newer_sha256=req.newer_sha256,

@@ -90,8 +90,25 @@ def _trim(a: Sequence, b: Sequence) -> tuple[int, int]:
     return prefix, suffix
 
 
+def _flipped(a: Sequence, b: Sequence) -> bool:
+    """True when `b` is the canonical first side of the pair: the shorter sequence, else the one whose items sort
+    first. Both depend on the CONTENT only, so the answer for (b, a) is the opposite of the answer for (a, b) and a
+    tie-break made in the canonical orientation is orientation-symmetric (A-31). Equal sequences never tie-break."""
+    if len(a) != len(b):
+        return len(a) > len(b)
+    return [repr(item) for item in a] > [repr(item) for item in b]
+
+
+def _swap(pairs: list[tuple[int, int]]) -> list[tuple[int, int]]:
+    return sorted((j, i) for i, j in pairs)
+
+
 def patience_anchors(a: Sequence, b: Sequence) -> list[tuple[int, int]]:
-    """Longest chain of items that occur exactly once on each side, increasing on both (patience sorting)."""
+    """Longest chain of items that occur exactly once on each side, increasing on both (patience sorting). Several
+    longest chains are broken in the canonical orientation (`_flipped`), so `patience_anchors(b, a)` is the mirror
+    of `patience_anchors(a, b)`."""
+    if _flipped(a, b):
+        return _swap(patience_anchors(b, a))
     def unique(items: Sequence) -> dict:
         seen: dict = {}
         dupes: set = set()
@@ -132,6 +149,11 @@ def lcs_pairs(a: Sequence, b: Sequence, cap: int = DP_CELL_CAP) -> list[tuple[in
     n, m = len(mid_a), len(mid_b)
     if n * m > cap:
         return None
+    if _flipped(mid_a, mid_b):         # ties of the fill and of the backtrack are decided in the canonical orientation
+        inner = _swap([(i, j) for i, j in lcs_pairs(mid_b, mid_a, cap) or []])
+        out.extend((prefix + i, prefix + j) for i, j in inner)
+        out.extend((len(a) - suffix + k, len(b) - suffix + k) for k in range(suffix))
+        return out
     rows = [[0] * (m + 1) for _ in range(n + 1)]
     for i in range(n - 1, -1, -1):
         row, below = rows[i], rows[i + 1]
@@ -188,7 +210,7 @@ def pair_blocks(old: FnView, new: FnView) -> tuple[dict[int, int], bool]:
     for block in new.blocks:
         keys_new[block.h1].append(block.ord)
     pairs: dict[int, int] = {}
-    for key in sorted(keys_old.keys() & keys_new.keys(), key=lambda k: (k is not None, k or 0)):
+    for key in sorted(keys_old.keys() & keys_new.keys(), key=lambda k: (k is not None, k or b'')):
         if len(keys_old[key]) == 1 and len(keys_new[key]) == 1:
             pairs[keys_old[key][0]] = keys_new[key][0]
     by_key = len(pairs) == len(old.blocks) == len(new.blocks)
@@ -197,9 +219,15 @@ def pair_blocks(old: FnView, new: FnView) -> tuple[dict[int, int], bool]:
     if entry_old not in pairs and entry_new not in taken:
         pairs[entry_old] = entry_new
         taken.add(entry_new)
-    queue = sorted(pairs.items())
-    while queue:
-        block_old, block_new = queue.pop(0)
+    # Symmetric seed order (A-31): the pairs of the two entry blocks first, then the rest by their shared body key (equal
+    # on both sides by construction, None first); the BFS discovery order after that is a function of mirrored state.
+    queue = sorted(pairs.items(), key=lambda pair: (pair[0] != entry_old and pair[1] != entry_new,
+                                                     old.blocks[pair[0]].h1 is not None,
+                                                     old.blocks[pair[0]].h1 or b''))
+    head = 0
+    while head < len(queue):
+        block_old, block_new = queue[head]
+        head += 1
         for kind in EDGE_ORDER:
             # the successors of this kind that no other evidence paired yet; exactly one on each side is a pair
             rest_old = [t for t, k in old.blocks[block_old].succ if k == kind and t not in pairs]

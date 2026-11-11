@@ -153,7 +153,7 @@ GOLDEN = {
     'manual_digest_empty': 'a9adbdc4d34f2c90e9f3672b7e6bff65fe419699a061e2bb54c61b9bc41a7505',
     'ingest_limits_digest': '8ac9c2226c9b026ff33c24a5adf48a8ccd8ee48d4645c9e94ef793cfb7090fc4',
     'ir_key': '514c93bf4415f590bd9a613501e4eb8f721f49f5326cf4e6bcf1fea6f905830b',
-    'config_digest': '71eb316ed629a03f815e4d500488c485257b60952176bf683f626853a0219e99',
+    'config_digest': '9330054e98499f8930143c71974e60b5a8d543cb5be880824e93b5cfb8840cb0',  # ude/2 (A-28)
     'unified_run_id': '806b53dbeeff3089f2b37994aed0c092116b1b4d95d0500ba644690398f0c089',
 }
 

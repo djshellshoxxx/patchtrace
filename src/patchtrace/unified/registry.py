@@ -148,9 +148,16 @@ PASSES: tuple[PassSpec, ...] = (
 # maps an unresolved target (FCT-02, FCT-05); COS-LAYOUT/1 checks the condition and fall-through of a conditional tail
 # call and anchors a retargeted tail jump (FCT-01, FCT-07); COS-PSEUDO/1 is blocked by a register-only delta (FCT-03).
 # The bumps move `config_digest`, so results stored with the old rules are recomputed instead of served from the cache.
+# align 2 (2026-11-11, A-31, p17): block pairing, patience anchors and the LCS fill break ties deterministically AND
+# orientation-symmetrically, so align(newer, older) mirrors align(older, newer); COS-LAYOUT/1 counts an unpaired
+# new-side successor the same way as an old-side one.
+# datamap 3 (2026-11-11, A-30, p15/p11): a consensus is blocked by a competing claim of >= 2 unexplained voters, by a
+# stationary claim (the global kept its address) and by a swap explanation, so a coordinated retarget to an existing global
+# abstains unless that global moved and kept exactly one referrer against three or more retargeters; leave-one-out is a majority among the OTHER voters with
+# explained dissents ignored; call-operand votes and the region shift are orientation-symmetric.
 CHANNEL_VERSIONS: tuple[tuple[str, int], ...] = (
     ('C0', 1), ('C1', 2), ('C2', 2), ('C3', 1), ('C4', 1), ('C4n', 1), ('C5', 1), ('C5t', 1), ('C6', 1), ('C8', 1),
-    ('align', 1), ('canon', 1), ('datamap', 2), ('eh-eq', 1))
+    ('align', 2), ('canon', 1), ('datamap', 3), ('eh-eq', 1))
 PROOF_VERSIONS: tuple[tuple[str, int], ...] = (
     ('COS-ADDR/1', 1), ('COS-LAYOUT/1', 2), ('COS-PSEUDO/1', 2), ('UNCH/1', 1))
 RZDIFF_META: tuple[str, Tier, EvidenceClass] = ('levenshtein-bytes', 'W', 'E-BODY')

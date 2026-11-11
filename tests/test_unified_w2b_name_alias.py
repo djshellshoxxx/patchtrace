@@ -100,7 +100,7 @@ def test_result_is_independent_of_function_order_and_side():
 
 
 def test_the_name_pass_digest_moved_with_the_alias_index(monkeypatch):
-    assert passes.LADDER_VERSION == 'ladder/4'
+    assert passes.LADDER_VERSION == 'ladder/5'
     current = pass_table_digest()
     assert current == PASS_TABLE_DIGEST
     monkeypatch.setattr(passes, 'LADDER_VERSION', 'ladder/3')

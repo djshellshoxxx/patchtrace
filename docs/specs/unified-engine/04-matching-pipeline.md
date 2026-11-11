@@ -154,7 +154,7 @@ Within one blocked bucket (<= L-24 functions per side): in-house similarity `s(a
 - `test_propagation_hub_excluded`; `test_neighbour_truncation_is_deterministic_and_recorded`; `test_implied_two_votes_zero_conflicts_tier_b`; `test_implied_conflict_produces_no_pair`; `test_implied_conflict_on_newer_endpoint_blocks_pair`; `test_implied_decision_independent_of_anchor_order` (shuffle the wave); `test_drill_down_tier_never_exceeds_chain`.
 - `test_rehash_exact_matches_function_with_moved_callee`.
 - `test_refvector_mutual_best_with_margin`; `test_lap_reject_cost_leaves_function_unmatched`; `test_blocking_never_builds_full_matrix` (counter on pair evaluations <= K x n).
-- Properties (hypothesis): permutation of input order -> identical correspondence; swapping sides -> mirrored correspondence; adding an unrelated function never changes existing tier-A pairs; budget expiry yields a prefix of the full run's accepted pairs.
+- Properties (hypothesis): permutation of input order -> identical correspondence; swapping sides -> mirrored correspondence; adding an unrelated function never changes existing tier-A pairs; budget expiry yields a prefix of the full run's accepted pairs. The same mirror property holds downstream for the alignment (05 s2.3, A-31) and DATA-MAP (05 s2.7, A-30); the ladder's leftovers reach fusion as one-sided `pt-ladder` atoms (05 s1.3, A-29).
 - Perf (marked, 5x slack): `test_ladder_10k_under_budget`, `test_ladder_60k_synthetic_under_budget` (L-35).
 - Parity: `tools/unified/parity.py` compares pairs with Ghidriff `address_matches`/`modified` and, when available, BinDiff `.BinDiff` rows and `--md_index` dumps (08 s4).
 
