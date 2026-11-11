@@ -1,0 +1,1498 @@
+{
+ "workstream": "D",
+ "title": "Patch correlation and recommendations (vulnerability-to-patch workflow)",
+ "baseline": "main@882d1ca0",
+ "features": [
+  {
+   "id": "D-F01",
+   "name": "Hop 1 Binary: intake, hashing, PE check, identity facts",
+   "spec": [
+    "docs/specs/kb-cve/31-A-contracts-identity.md",
+    "docs/specs/kb-patch-search-pair-lifecycle.md"
+   ],
+   "code": [
+    "src/patchtrace/kbcorrelation/wiring.py (inspect_local_file, _machine)",
+    "src/patchtrace/kbcorrelation/pairs.py (LocalFile, propose_manual)",
+    "src/patchtrace/intelligence/csaf/identity.py",
+    "src/patchtrace/cli_commands/inspect.py"
+   ],
+   "status": "implemented",
+   "implementation_pct": 90,
+   "validation_pct": 33,
+   "verified_by": [
+    "tests/test_kbc_pairs.py (synthetic)",
+    "tests/test_kbc_service.py (synthetic)",
+    "tests/test_kb_binary_only_start.py (synthetic)"
+   ],
+   "evidence_class": "synthetic",
+   "remaining": [
+    "Authenticode / catalog signature state is never established (authenticity stays unverified-local-file or signature-unknown; BinaryRef literals hash-matched-to-index and embedded-signature-valid have no producer).",
+    "Only AMD64 PE is accepted (ARM64 and x86 are hard blocks by design)."
+   ],
+   "defects": [],
+   "blockers": [
+    {
+     "type": "windows-only",
+     "detail": "Native Windows / frozen ZIP acceptance (31-H gates F and I, H6) cannot run on Linux."
+    }
+   ],
+   "effort_hours": 6,
+   "confidence": "high",
+   "acceptance_tests": [
+    "kb import-pair --dry-run on two synthetic PE files exits 0 with grade B, tier E (run here)."
+   ],
+   "active_lane_overlap": "none"
+  },
+  {
+   "id": "D-F02",
+   "name": "Hop 2 Product identification: alias catalog, product scopes, analyst selection",
+   "spec": [
+    "docs/specs/kb-cve/31-C-product-build-pairs.md",
+    "docs/specs/kb-cve/31-A-contracts-identity.md"
+   ],
+   "code": [
+    "src/patchtrace/kbcorrelation/products.py",
+    "src/patchtrace/kbcorrelation/alias_catalog.py",
+    "src/patchtrace/kbcorrelation/service.py (product_catalogue, products)",
+    "src/patchtrace/kbcorrelation/investigation_service.py (browse_products)"
+   ],
+   "status": "partial",
+   "implementation_pct": 60,
+   "validation_pct": 33,
+   "verified_by": [
+    "tests/test_kbc_products.py (synthetic)",
+    "tests/test_kb_product_start_20261106.py (synthetic)",
+    "tests/test_kb_product_acceptance_20261106.py (synthetic)"
+   ],
+   "evidence_class": "synthetic",
+   "remaining": [
+    "No binary-first identification: nothing maps a local file (SHA-256, version resource) to a product, build or KB; the product is always chosen by the analyst and every context says applicability is unknown (D-T11).",
+    "KBA-08 and two sibling names derive no file-index key (D-T03).",
+    "A scope is never \"verified\": the analyst decision that would set mapping=verified is not built.",
+    "CLI has no verb for the stored-product catalogue or the product-only start (GUI only; D-T14).",
+    "Windows Server and ARM64 products resolve to stated gaps (SERVER_NOT_COVERED, ARCH) by design."
+   ],
+   "defects": [
+    {
+     "id": "KBA-08",
+     "severity": "medium",
+     "summary": "Windows 10 RTM product names (\"Windows 10 for x64-based Systems\") derive no release and no file-index key, so every KB of that product resolves to \"No file-index key is known\"; the Winbindex key 1507 is unreachable.",
+     "evidence": "src/patchtrace/kbcorrelation/alias_catalog.py:27-30 (RELEASE_PATTERNS need a version token); src/patchtrace/kbcorrelation/products.py:108-130; strict xfail tests/test_kbc_audit_20261107.py:160-163",
+     "failure_scenario": "Checked with products.derive(): \"Windows 10 for x64-based Systems\" -> release None, winbindex_key None. The same holds for \"Windows 10 Version 2004 for x64-based Systems\" (pattern `version (1[5-9][0-9]{2})` cannot match 2004) and \"Windows 11 for x64-based Systems\" (the pre-rename 21H2 name; real-data occurrence of these two names is UNVERIFIED in the repo, the derivation result is verified). `kb pairs` then prints NO_KEY for a product Winbindex does cover.",
+     "proposed_fix": "Spec first (31-C: scope identity vs. Winbindex key; record the implied releases). alias_catalog: bump ALIAS_CATALOG_VERSION to 2; widen the numeric token to `\\bversion (1[5-9][0-9]{2}|2004)\\b`; add data IMPLIED_CLIENT_RELEASE = ((\"10\", \"1507\"), (\"11\", \"21H2\")) and IMPLIED_NAME_PATTERN = r\"^windows (10|11) for (?:x64-based|32-bit|arm64-based) systems$\" (exact RTM form only, so LTSC/IoT/other names stay unkeyed). products.derive: when family is windows-client, no release token matched and the whole normalised name matches IMPLIED_NAME_PATTERN, set release from the table; the key follows as 10-1507 / 11-21H2 (resolver.index_keys already tries 1507). Scope ids of only these names change (v1 name-keyed -> v2 keyed); stored investigations on them hit the existing \"mapping is no longer current; repeat the search\" path.",
+     "regression_test": "Remove the xfail of test_kba08_windows_10_rtm_product_name_gets_a_file_index_key; add to tests/test_kbc_products.py: RTM x64 -> key \"10-1507\", \"Version 2004\" -> \"10-2004\", Windows 11 RTM -> \"11-21H2\", \"Windows 10 Version 1607\" scope id unchanged, an LTSC name still unkeyed, ALIAS_CATALOG_VERSION == 2; one resolver test that a \"1507\" record row resolves for the RTM scope."
+    }
+   ],
+   "blockers": [
+    {
+     "type": "owner-decision",
+     "detail": "KBA-08 was left for a decision because it bumps ALIAS_CATALOG_VERSION and changes scope ids."
+    }
+   ],
+   "effort_hours": 14,
+   "confidence": "high",
+   "acceptance_tests": [
+    "test_kba08 passes without xfail",
+    "kb identify FILE answers version key, KB and build from a saved record (new)"
+   ],
+   "active_lane_overlap": "none"
+  },
+  {
+   "id": "D-F03",
+   "name": "Hop 3 Version: Winbindex file index, build lineage, change-in-KB",
+   "spec": [
+    "docs/specs/kb-cve/31-C-product-build-pairs.md",
+    "docs/specs/kb/live-acquisition-spec.md"
+   ],
+   "code": [
+    "src/patchtrace/kbcorrelation/lineage.py",
+    "src/patchtrace/kbcorrelation/wiring.py (WorkspaceFileIndex, save_winbindex_record)",
+    "src/patchtrace/kbcorrelation/sources/winbindex_fetch.py",
+    "src/patchtrace/acquisition/winbindex.py"
+   ],
+   "status": "partial",
+   "implementation_pct": 75,
+   "validation_pct": 33,
+   "verified_by": [
+    "tests/test_kbc_lineage.py (synthetic)",
+    "tests/test_kbc_pairs_index.py (synthetic)",
+    "tests/test_kb_winbindex_refresh_20261105.py (mocked transport)",
+    "tests/test_kbc_audit_20261107.py::test_kba01 (synthetic, real key spelling)"
+   ],
+   "evidence_class": "synthetic",
+   "remaining": [
+    "KBA-06 (D-T02).",
+    "Consented Winbindex metadata refresh exists only behind the GUI dialog (plan_metadata / refresh_metadata); no CLI verb fetches a record (kb index import --winbindex needs a file saved by hand).",
+    "Heading classes and otherWindowsVersions were never checked on a fresh live record (tasks/todo.md:368).",
+    "Stale-record detection: the newest record of a name wins; no age warning on pair answers (UNVERIFIED whether the GUI shows one)."
+   ],
+   "defects": [
+    {
+     "id": "KBA-06",
+     "severity": "medium",
+     "summary": "lineage.predecessor() can return a row carrying the target's own bytes when the build reverted across a different-class row, so the resolver proposes a byte-identical grade X pair and hides the usable earlier build.",
+     "evidence": "src/patchtrace/kbcorrelation/lineage.py:186-207 (the backward loop never compares row.sha256 with target.sha256); strict xfail tests/test_kbc_audit_20261107.py:131-148",
+     "failure_scenario": "Timeline Z(std), A(std), B(preview), A(std, target KB): on main predecessor returns the first A row; resolve() answers changed_in_kb=\"yes\" together with one pair graded X / IDENTICAL_CONTENT (\"this file did not change between them\") and never offers Z -> A. Simulated in memory here: main gives older=KB5000001 (same SHA); the fix gives older=KB5000000 with window (KB5000001, KB5000002), grade A + WINDOW_CONFOUNDED.",
+     "proposed_fix": "Decision: skip identical bytes (audit option 1). In the loop add `if row.sha256 == target.sha256: continue` before the same-class test; the skipped rows stay in the returned window so the pair is named WINDOW_CONFOUNDED. With no other row the answer is (None, ()) -> NO_OLDER. Option 2 (walk to before the earliest identical row) is wrong for Z, A, Y(std), B(preview), A: it would skip the nearest distinct standard build Y. Update the docstring and docs/specs/kb-cve/31-C-product-build-pairs.md (rule \"the older side never has the target SHA\"); optionally say in the NO_OLDER note when only a different-class build precedes.",
+     "regression_test": "Remove the xfail marker of test_kba06_predecessor_never_returns_a_row_with_the_targets_own_sha (it passes with the one-line fix; verified by in-memory simulation); add tests/test_kbc_lineage.py cases Z,A,B(preview),A -> Z and Z,A,Y,B(preview),A -> Y, and a resolver test that no returned pair carries IDENTICAL_CONTENT."
+    }
+   ],
+   "blockers": [
+    {
+     "type": "live-network",
+     "detail": "MSRC, Winbindex, msdl and CISA hosts are unreachable in this sandbox; no live response has ever been recorded for the KB chain (docs/qa/audit-kb-correlation-20261107.md \"Not reviewed\")."
+    }
+   ],
+   "effort_hours": 10,
+   "confidence": "high",
+   "acceptance_tests": [
+    "test_kba06 passes without xfail",
+    "kb pairs on a saved record lists grade A/C pairs (run here: exit 3 because the synthetic record has 2 skipped entries)"
+   ],
+   "active_lane_overlap": "none"
+  },
+  {
+   "id": "D-F04",
+   "name": "Hop 4 CVE: advisory sources and reverse index (CVRF, CSAF, coverage, revisions)",
+   "spec": [
+    "docs/specs/kb-cve/31-B-msrc-reverse-index.md",
+    "docs/specs/kb-patch-search-source-adapters.md",
+    "docs/specs/kb/advisory-revision-and-snapshot-identity-spec.md",
+    "docs/specs/kb/vendor-feeds-and-source-matrix-spec.md"
+   ],
+   "code": [
+    "src/patchtrace/kbcorrelation/sources/cvrf.py",
+    "src/patchtrace/kbcorrelation/sources/cvrf_msrc.py",
+    "src/patchtrace/kbcorrelation/sources/csaf_bridge.py",
+    "src/patchtrace/kbcorrelation/sources/importer.py",
+    "src/patchtrace/kbcorrelation/sources/scope.py",
+    "src/patchtrace/kbcorrelation/index.py",
+    "src/patchtrace/kbcorrelation/store.py",
+    "src/patchtrace/kbcorrelation/cli_index.py",
+    "src/patchtrace/kbcorrelation/sources/cvrf_fetch.py",
+    "src/patchtrace/kbcorrelation/sources/net_plan.py",
+    "src/patchtrace/kbcorrelation/cli_online.py"
+   ],
+   "status": "implemented",
+   "implementation_pct": 85,
+   "validation_pct": 45,
+   "verified_by": [
+    "tests/test_kbc_cvrf.py (synthetic)",
+    "tests/test_kbc_msrc_cvrf.py (fixture: one real-shaped MSRC CVE, tests/fixtures/kbcve/msrc/2024-Aug-CVE-2024-38193.facts.json)",
+    "tests/test_kbc_index.py (synthetic)",
+    "tests/test_kbc_cvrf_fetch.py (mocked transport)",
+    "tests/test_kbc_audit_20261107.py (synthetic)",
+    "tests/test_investigation_acceptance_matrix_20261105.py (synthetic)"
+   ],
+   "evidence_class": "fixture",
+   "remaining": [
+    "Live MSRC CVRF URL shape, document size and rate limits are unverified (probe L1 never run).",
+    "A full real CVRF month has never been parsed; only a single-CVE excerpt is committed.",
+    "Stale-cache detection uses the newest retrieved_at of the inspected documents (audit judgement call).",
+    "kb index sync is undiscoverable from --help (D-T07)."
+   ],
+   "defects": [
+    {
+     "id": "D-DEF-03",
+     "severity": "low",
+     "summary": "`patchtrace kb index sync --help` fails with \"invalid choice: sync\" and `kb index --help` does not list sync, the only consented CVRF fetch verb.",
+     "evidence": "src/patchtrace/kbcorrelation/cli.py:125-131 (help is excluded from the sync route), src/patchtrace/kbcorrelation/cli_index.py:85-94 (subparsers: import, status, verify, plan)",
+     "failure_scenario": "Reproduced: `python -m patchtrace kb index sync --help` -> \"error: patchtrace kb index: argument action: invalid choice: 'sync'\". An analyst cannot discover the flags (--months, --consent-hosts, --consent-plan) from the CLI.",
+     "proposed_fix": "Route `index sync` with -h/--help to cli_online.main too, and name sync in the `kb index` description/epilog (help text only, cli_index stays offline).",
+     "regression_test": "tests/test_kbc_cli.py::test_index_sync_help_is_reachable_and_listed (exit 0, usage names --consent-plan; `kb index --help` mentions sync)."
+    }
+   ],
+   "blockers": [
+    {
+     "type": "live-network",
+     "detail": "MSRC, Winbindex, msdl and CISA hosts are unreachable in this sandbox; no live response has ever been recorded for the KB chain (docs/qa/audit-kb-correlation-20261107.md \"Not reviewed\")."
+    }
+   ],
+   "effort_hours": 12,
+   "confidence": "high",
+   "acceptance_tests": [
+    "kb index import + status + search on the synthetic month (run here, exit 0)",
+    "tools/live_kbc_probe.py against the real host (owner machine)"
+   ],
+   "active_lane_overlap": "none"
+  },
+  {
+   "id": "D-F05",
+   "name": "Hop 5-6 Security update and KB: search, investigations, components",
+   "spec": [
+    "docs/specs/kb-cve-correlation-and-acquisition.md",
+    "docs/specs/kb-patch-search-and-pair-resolution.md",
+    "docs/specs/kb-patch-search-ui-cli-contract.md",
+    "docs/specs/kb-cve/31-G-components-discovery.md"
+   ],
+   "code": [
+    "src/patchtrace/kbcorrelation/service.py (search, products, components)",
+    "src/patchtrace/kbcorrelation/workflow.py",
+    "src/patchtrace/kbcorrelation/components.py",
+    "src/patchtrace/kbcorrelation/cli.py",
+    "src/patchtrace/kbcorrelation/cli_pairs.py",
+    "src/patchtrace/kbcorrelation/ids.py"
+   ],
+   "status": "implemented",
+   "implementation_pct": 85,
+   "validation_pct": 33,
+   "verified_by": [
+    "tests/test_kbc_service.py (synthetic)",
+    "tests/test_kbc_cli.py (synthetic)",
+    "tests/test_kbc_e0_e2e.py (synthetic, sockets denied)",
+    "tests/test_kbc_components.py (synthetic)",
+    "tests/test_kbc_workflow.py (synthetic)"
+   ],
+   "evidence_class": "synthetic",
+   "remaining": [
+    "Component tiers A (official field), B (package inventory) and C (index row) are not built: a KB never yields file names; the analyst must type one (tier E) or it is a title suggestion (tier D).",
+    "KEV state on `kb search` edge rows is hard-coded \"not-loaded\" (service.py:150; D-T09).",
+    "No analyst-asserted KB<->CVE edge can be recorded (relation literal exists, no producer).",
+    "Supersedence between KBs (rollup vs security-only) is not modelled beyond document revisions (UNVERIFIED against tests/test_kb_update_relationships.py scope)."
+   ],
+   "defects": [],
+   "blockers": [
+    {
+     "type": "none",
+     "detail": ""
+    }
+   ],
+   "effort_hours": 16,
+   "confidence": "medium",
+   "acceptance_tests": [
+    "kb search KB5099001 -> METADATA_READY with 2 product scopes and next=kb.next.choose_product (run here)"
+   ],
+   "active_lane_overlap": "none"
+  },
+  {
+   "id": "D-F06",
+   "name": "Hop 7 Patched binary: pair resolution and grading (kb pairs, kb plan)",
+   "spec": [
+    "docs/specs/kb-cve/31-C-product-build-pairs.md",
+    "docs/specs/kb-patch-search-pair-lifecycle.md"
+   ],
+   "code": [
+    "src/patchtrace/kbcorrelation/resolver.py",
+    "src/patchtrace/kbcorrelation/lineage.py",
+    "src/patchtrace/kbcorrelation/pairs.py",
+    "src/patchtrace/kbcorrelation/plan.py",
+    "src/patchtrace/kbcorrelation/service.py (_resolve_pairs, pairs, plan, _pick_pair)"
+   ],
+   "status": "implemented",
+   "implementation_pct": 85,
+   "validation_pct": 33,
+   "verified_by": [
+    "tests/test_kbc_resolver.py (synthetic)",
+    "tests/test_kbc_pairs_index.py (synthetic)",
+    "tests/test_kbc_selection_guard.py (synthetic)",
+    "tests/test_kb_candidate_journey_20261105.py (synthetic)"
+   ],
+   "evidence_class": "synthetic",
+   "remaining": [
+    "KBA-06 produces a blocked identical pair instead of the usable earlier build (D-T02).",
+    "Grade B for index pairs (verified bytes of an index pair) is never produced: after download the pair is re-proposed as manual (see D-DEF-02).",
+    "window_complete is always None (completeness of the intervening-update list is never established).",
+    "The checked-in synthetic CVRF month cannot drive `kb pairs` as committed: its product names carry no Windows 10/11 token, so tests rewrite the name in memory (observed: \"No file-index key is known\")."
+   ],
+   "defects": [],
+   "blockers": [
+    {
+     "type": "none",
+     "detail": ""
+    }
+   ],
+   "effort_hours": 8,
+   "confidence": "high",
+   "acceptance_tests": [
+    "kb pairs/plan on a keyed scope: \"A/C exampledrv.sys KB5099001 older ccc -> newer ddd [INDEX_GAP]\" (run here on a scratch copy of the fixture)"
+   ],
+   "active_lane_overlap": "none"
+  },
+  {
+   "id": "D-F07",
+   "name": "Hop 7b Update artifacts: consented acquisition, packages",
+   "spec": [
+    "docs/specs/kb-cve/31-D-acquisition-packages.md",
+    "docs/specs/kb/live-acquisition-spec.md"
+   ],
+   "code": [
+    "src/patchtrace/kbcorrelation/acquire.py",
+    "src/patchtrace/kbcorrelation/cli_acquire.py",
+    "src/patchtrace/kbcorrelation/service.py (acquire)",
+    "src/patchtrace/acquisition/workflow.py"
+   ],
+   "status": "partial",
+   "implementation_pct": 55,
+   "validation_pct": 20,
+   "verified_by": [
+    "tests/test_kbc_acquire_cli.py (mocked transport)",
+    "tests/test_kb_acquire_lifecycle_20261105.py (mocked)"
+   ],
+   "evidence_class": "mocked",
+   "remaining": [
+    "No live download has ever been verified (symbol-server URL derivation from Winbindex rows on real data).",
+    "Acquisition provenance and index lineage are not persisted (D-DEF-02, D-T05).",
+    "The GUI investigation dialog cannot acquire: candidate snapshots refuse rows_for (investigation_service.py:236); acquisition is CLI only.",
+    "31-D package support (MSU/CAB inventory, PA30/PA31 delta reconstruction, checkpoint chains) is not built; delta-only rows are a hard block (DELTA_ONLY).",
+    "Catalog browser-only fallback and signing-catalog checks are not built."
+   ],
+   "defects": [
+    {
+     "id": "D-DEF-02",
+     "severity": "medium",
+     "summary": "A pair downloaded with `kb acquire` is stored as a manual pair: its index lineage (target KB, window, grade A, fix boundary, Winbindex record hash) and the download provenance (URL, retrieval time) are not persisted anywhere, and the stored analyst decision says the analyst chose the order.",
+     "evidence": "src/patchtrace/kbcorrelation/acquire.py:8-10 (\"it is not written into the project\"), src/patchtrace/kbcorrelation/service.py:623-626 (acquire -> import_pair), src/patchtrace/kbcorrelation/service.py:678 (propose_manual), src/patchtrace/kbcorrelation/service.py:754-756 (decision text), src/patchtrace/kbcorrelation/service.py:636-638 (provenance only in the returned Outcome); no append_attempt call exists for acquire (grep: only recovery.py:37 and store.py:621)",
+     "failure_scenario": "Analyst acquires the grade A index-adjacent pair for KB5099001; the project context and workspace record tier E, grade B, lineage user-asserted, ORDER_UNVERIFIED and \"Older and newer were chosen by the analyst; the release order was not established\". `kb explain` / `kb export` a week later cannot show which KB the pair brackets, that other updates ship in the window, or where the bytes came from; that evidence existed only in one stdout document.",
+     "proposed_fix": "Keep the project untouched (revision rule) and persist in the workspace: pass the resolved index PairProposal and the download records into import_pair (new keyword `origin`), append an AnalystDecision op=\"pair-origin\" whose reason names the index pair id, target KB, window KBs, reason codes and record SHA-256, word the orientation decision from the index when the pair came from it, and append Attempt(op=\"acquire\", plan_sha, stage=\"imported\"). Carry the index pair summary in the kb sidecar / ContextBundle only after a spec amendment (31-D, 31-F).",
+     "regression_test": "tests/test_kbc_acquire_cli.py::test_acquired_pair_keeps_its_index_lineage_and_download_provenance (fake transport): after a consented acquire, ws.decisions() holds the pair-origin record and ws.attempts() the acquire attempt; red on main."
+    }
+   ],
+   "blockers": [
+    {
+     "type": "live-network",
+     "detail": "MSRC, Winbindex, msdl and CISA hosts are unreachable in this sandbox; no live response has ever been recorded for the KB chain (docs/qa/audit-kb-correlation-20261107.md \"Not reviewed\")."
+    },
+    {
+     "type": "windows-only",
+     "detail": "Native Windows / frozen ZIP acceptance (31-H gates F and I, H6) cannot run on Linux."
+    },
+    {
+     "type": "owner-decision",
+     "detail": "31-H gate H: packages are optional and independently gated."
+    }
+   ],
+   "effort_hours": 40,
+   "confidence": "medium",
+   "acceptance_tests": [
+    "kb acquire --offline prints the exact plan and exits 2 with PT-KBC-CONSENT (run here)",
+    "one consented real pair on the owner machine (31-H H6 a)"
+   ],
+   "active_lane_overlap": "none"
+  },
+  {
+   "id": "D-F08",
+   "name": "Project creation and context attach (import-pair, attach, repair, recovery)",
+   "spec": [
+    "docs/specs/kb-cve/31-F-workflow-ui-persistence.md",
+    "docs/specs/kb/store-threading-spec.md"
+   ],
+   "code": [
+    "src/patchtrace/kbcorrelation/service.py (import_pair, attach)",
+    "src/patchtrace/kbcorrelation/store.py (ProjectAttachment)",
+    "src/patchtrace/kbcorrelation/recovery.py",
+    "src/patchtrace/kbcorrelation/wiring.py (RealProjectPort)"
+   ],
+   "status": "partial",
+   "implementation_pct": 80,
+   "validation_pct": 33,
+   "verified_by": [
+    "tests/test_kbc_store.py (synthetic)",
+    "tests/test_kbc_recovery.py (synthetic)",
+    "tests/test_kb_crash_injection_protocol.py (synthetic, real child process kill)",
+    "tests/test_kbc_e0_e2e.py (synthetic)"
+   ],
+   "evidence_class": "synthetic",
+   "remaining": [
+    "`kb attach` refuses any project the workspace did not create (service.py:796-798): an already analysed project can never receive KB context, so kb leads on existing work is impossible (D-T06).",
+    "Workspace object eviction and backup/restore of KB history with the project (31-H gate E second half) are UNVERIFIED.",
+    "The CSAF applicability report is not built into the context (wiring.py:138-139 raises PT-KBC-UNSUPPORTED)."
+   ],
+   "defects": [],
+   "blockers": [
+    {
+     "type": "none",
+     "detail": ""
+    }
+   ],
+   "effort_hours": 20,
+   "confidence": "high",
+   "acceptance_tests": [
+    "kb import-pair creates the project and attaches the context, exit 0 (run here)",
+    "kb attach PROJECT --investigation INV on a sample project attaches a context (new)"
+   ],
+   "active_lane_overlap": "none"
+  },
+  {
+   "id": "D-F09",
+   "name": "Hop 8 Binary comparison hand-off",
+   "spec": [
+    "docs/specs/kb-cve-correlation-and-acquisition.md"
+   ],
+   "code": [
+    "src/patchtrace/cli.py (_run_pair, cmd_series)",
+    "src/patchtrace/backend.py",
+    "src/patchtrace/ui_evidence.py"
+   ],
+   "status": "blocked-external",
+   "implementation_pct": 60,
+   "validation_pct": 20,
+   "verified_by": [
+    "tests/test_nway_series.py (mocked/fake Ghidriff)",
+    "tests/test_kbc_synergy.py (synthetic analysed sample)"
+   ],
+   "evidence_class": "mocked",
+   "remaining": [
+    "No CLI verb runs the comparison of one two-file project: only `series create --run` (3-8 builds) or the desktop start a Ghidriff run, so the CLI chain stops after `kb import-pair` / `kb acquire` (D-T10).",
+    "A real KB pair has never been compared end to end in this repository's evidence (31-H H6)."
+   ],
+   "defects": [],
+   "blockers": [
+    {
+     "type": "external-tool",
+     "detail": "Ghidra/Ghidriff are not installed here; a real comparison of a KB pair cannot be produced."
+    },
+    {
+     "type": "other-lane",
+     "detail": "backend.py belongs to L2/L5; a compare verb must only call the existing run_comparison entry."
+    }
+   ],
+   "effort_hours": 10,
+   "confidence": "high",
+   "acceptance_tests": [
+    "patchtrace compare PROJECT --python P --ghidra-dir G with the hermetic fake Ghidriff completes a run (new)"
+   ],
+   "active_lane_overlap": "L2"
+  },
+  {
+   "id": "D-F10",
+   "name": "Hop 9 Evidence: documentary context, explain, export",
+   "spec": [
+    "docs/specs/kb-cve/31-E-evidence-intent.md",
+    "docs/specs/kb/cve-to-function-matching-spec.md"
+   ],
+   "code": [
+    "src/patchtrace/kbcorrelation/context.py",
+    "src/patchtrace/kbcorrelation/card_provenance.py",
+    "src/patchtrace/kbcorrelation/export.py",
+    "src/patchtrace/kbcorrelation/service.py (explain, export)"
+   ],
+   "status": "implemented",
+   "implementation_pct": 85,
+   "validation_pct": 33,
+   "verified_by": [
+    "tests/test_kbc_context.py (synthetic)",
+    "tests/test_kbc_card_field_provenance.py (synthetic)",
+    "tests/test_kbc_card_context_sources.py (synthetic)",
+    "tests/test_kbc_kev_explain_export.py (synthetic)"
+   ],
+   "evidence_class": "synthetic",
+   "remaining": [
+    "Applicability is always \"unknown (no loaded document states applicability to these two files)\" (context.py:44): no check ties the two binaries to the product or the fixed build.",
+    "context_key records kev_snapshot_sha None (context.py:131); KEV is applied at read time only.",
+    "The pair grade, reason codes and analyst decisions are not part of the exported context (only pair_id and the two SHA-256)."
+   ],
+   "defects": [],
+   "blockers": [
+    {
+     "type": "none",
+     "detail": ""
+    }
+   ],
+   "effort_hours": 12,
+   "confidence": "high",
+   "acceptance_tests": [
+    "kb explain / kb export .md / .json on the attached project (run here, exit 0; 2,080 and 7,700 bytes)"
+   ],
+   "active_lane_overlap": "none"
+  },
+  {
+   "id": "D-F11",
+   "name": "KB leads: CVE-grouped changed functions (kb leads)",
+   "spec": [
+    "docs/specs/kb/cve-to-function-matching-spec.md",
+    "docs/specs/kb/adapter-binding-spec.md"
+   ],
+   "code": [
+    "src/patchtrace/kbcorrelation/leads.py",
+    "src/patchtrace/kbcorrelation/cli_leads.py",
+    "src/patchtrace/kbcorrelation/view_model.py",
+    "src/patchtrace/kbcorrelation/adapters/kev.py",
+    "src/patchtrace/kbcorrelation/adapters/engine.py",
+    "src/patchtrace/kbcorrelation/adapters/search.py",
+    "src/patchtrace/kbcorrelation/adapters/anchors.py"
+   ],
+   "status": "partial",
+   "implementation_pct": 70,
+   "validation_pct": 30,
+   "verified_by": [
+    "tests/test_kbc_leads.py (synthetic)",
+    "tests/test_kbc_synergy.py (synthetic golden)",
+    "tests/test_kb_adapters_k8.py (synthetic)",
+    "tests/test_kbc_view_model.py (synthetic)"
+   ],
+   "evidence_class": "synthetic",
+   "remaining": [
+    "K8 adapters engine, search and anchors have no production importer (grep: only adapters/kev is bound); the anchor chip is always \"not-run\" and unified results never feed kb leads.",
+    "adapters/kev.load_exploitation over a real KevStore has no test (tests/test_kbc_kev_wiring.py was removed 2026-10-29 at the owner's request; tasks/todo.md:377).",
+    "cli_leads._elsewhere replaced-revision detection has no regression test (tests/test_kbc_leads_freshness.py removed; tasks/todo.md:373).",
+    "Misleading state and chip wording (D-DEF-04, D-T08).",
+    "The documentary chip hard-codes \"unverified local file; 1 source family\" (leads.py:249) for every pair."
+   ],
+   "defects": [
+    {
+     "id": "D-DEF-04",
+     "severity": "low",
+     "summary": "`kb leads` states \"The stored ranking does not match the current analysis\" when no analysis was ever run, and labels unattributed rows \"no applicable CVE in the context aligns\" when no context is attached.",
+     "evidence": "src/patchtrace/kbcorrelation/leads.py:59-60, 416-422 (_state_text uses TEXT_NO_CURRENT_RANKING for any engine note), src/patchtrace/kbcorrelation/leads.py:290-297; note source src/patchtrace/enrichment/pipeline.py:434",
+     "failure_scenario": "Observed here: a project fresh from `kb import-pair` prints \"The stored ranking does not match the current analysis ... Ranking unavailable: no completed analysis run.\" (nothing is stored, nothing mismatches); the sample project without a context prints \"no applicable CVE in the context aligns with this change\" on every row.",
+     "proposed_fix": "Use TEXT_NO_COMPARISON plus the engine note when the note reports no completed run or no ranking, keep TEXT_NO_CURRENT_RANKING for the stale/older-algorithm notes; in _loose_chips say \"no advisory context is attached\" when bundle is None.",
+     "regression_test": "tests/test_kbc_leads.py: two cases pinning the state text for the no-run note and the chip text of the no-advisory state."
+    }
+   ],
+   "blockers": [
+    {
+     "type": "owner-decision",
+     "detail": "Re-adding the two removed test files needs the owner's agreement."
+    }
+   ],
+   "effort_hours": 14,
+   "confidence": "high",
+   "acceptance_tests": [
+    "kb leads on the sample project lists 4 rows with labelled attention order (run here, exit 0)"
+   ],
+   "active_lane_overlap": "none"
+  },
+  {
+   "id": "D-F12",
+   "name": "GUI entry: KB and CVE dock",
+   "spec": [
+    "docs/specs/kb/leads-dock-lifecycle-spec.md",
+    "docs/specs/kb/store-threading-spec.md"
+   ],
+   "code": [
+    "src/patchtrace/kbcorrelation/panel.py",
+    "src/patchtrace/kbcorrelation/panel_qt.py",
+    "src/patchtrace/kbcorrelation/panel_state.py",
+    "src/patchtrace/kbcorrelation/tooltip_entries.py",
+    "src/patchtrace/panel_manifest.py:100"
+   ],
+   "status": "partial",
+   "implementation_pct": 60,
+   "validation_pct": 15,
+   "verified_by": [
+    "tests/test_ui_kb_panel.py (mocked loader, offscreen Qt)",
+    "tests/test_kb_accessibility_20261105.py (offscreen)"
+   ],
+   "evidence_class": "mocked",
+   "remaining": [
+    "Production loader cannot read the open project (D-DEF-01, D-T01).",
+    "The dock is leads-only: no search, product, pair or acquire pages (those live in the separate investigation dialog); the larger dock of the gameplan (KBB-19) is not on main.",
+    "No native Windows keyboard / screen-reader pass (31-H gate F)."
+   ],
+   "defects": [
+    {
+     "id": "D-DEF-01",
+     "severity": "high",
+     "summary": "The KB and CVE dock opens the already-open project a second time from a worker thread, so its production loader fails for every project the desktop holds (KBB-01, still open on main).",
+     "evidence": "src/patchtrace/kbcorrelation/panel_qt.py:45-52 (load_report -> leads_outcome(build_service(ws), RealEngine(), project_dir)); src/patchtrace/kbcorrelation/cli_leads.py:62-65 (ProjectService.open inside RealEngine.read); src/patchtrace/kbcorrelation/wiring.py:284-295 (open_project); spec of the fix: docs/specs/kb/store-threading-spec.md s3-s4",
+     "failure_scenario": "Reproduced here (synthetic sample project): hold ProjectService.open(case) as the desktop window does, call panel_qt.load_report(workspace, case, token) from a second thread -> \"KbcStoreError: the project cannot be opened\". In the desktop the dock (Ctrl+Shift+K) therefore shows a failure state instead of the CVE-grouped leads; tests/test_ui_kb_panel.py never sees it because every test injects loader=.",
+     "proposed_fix": "Implement the owner-thread snapshot of store-threading-spec s4: on the GUI thread read the kb-context rows and the default ranking through the host service (ctx.project.service: EnrichmentStore(service.store).entries(\"kb-context\"), enrichment.pipeline.load_default, build_views) into a frozen KbSnapshot; the worker only runs build_leads on the snapshot. Give RealEngine a read_service(service) and RealProjectPort a rows-from-open-service path so CLI and dock share one reader.",
+     "regression_test": "tests/test_ui_kb_panel.py::test_production_loader_reads_a_project_the_host_holds_open (ProjectService.sample held open, default loader, asserts a ready/no-advisory state and no failure condition); red on main."
+    }
+   ],
+   "blockers": [
+    {
+     "type": "windows-only",
+     "detail": "Native Windows / frozen ZIP acceptance (31-H gates F and I, H6) cannot run on Linux."
+    }
+   ],
+   "effort_hours": 12,
+   "confidence": "high",
+   "acceptance_tests": [
+    "dock shows leads for a project the host holds open (new test, red on main)"
+   ],
+   "active_lane_overlap": "none"
+  },
+  {
+   "id": "D-F13",
+   "name": "GUI entry: KB investigation dialog",
+   "spec": [
+    "docs/specs/kb-cve/31-F-workflow-ui-persistence.md",
+    "docs/specs/kb/beta-budgets-help-and-acceptance-spec.md"
+   ],
+   "code": [
+    "src/patchtrace/kbcorrelation/investigation_qt.py",
+    "src/patchtrace/kbcorrelation/investigation_service.py",
+    "src/patchtrace/gui/qt/host.py:257-292"
+   ],
+   "status": "partial",
+   "implementation_pct": 75,
+   "validation_pct": 25,
+   "verified_by": [
+    "tests/test_ui_kb_investigation.py (offscreen Qt, synthetic)",
+    "tests/test_kb_investigation_service.py (synthetic)",
+    "tests/test_kb_online_investigation_20261105.py (mocked transport)",
+    "tests/test_kb_desktop_index_refresh_20261105.py (mocked)"
+   ],
+   "evidence_class": "synthetic",
+   "remaining": [
+    "No binary acquisition from the dialog (CLI only); candidate preview is read-only.",
+    "No in-dialog explain/export of the attached context.",
+    "Windows frozen-build pass of the 6-step flow (gate F) not run."
+   ],
+   "defects": [],
+   "blockers": [
+    {
+     "type": "windows-only",
+     "detail": "Native Windows / frozen ZIP acceptance (31-H gates F and I, H6) cannot run on Linux."
+    }
+   ],
+   "effort_hours": 16,
+   "confidence": "medium",
+   "acceptance_tests": [
+    "offscreen dialog tests green (existing)",
+    "manual Windows pass (owner)"
+   ],
+   "active_lane_overlap": "none"
+  },
+  {
+   "id": "D-F14",
+   "name": "Patch-intent localization engine (pilot/1: fusion, tiers, ranking, rules, why)",
+   "spec": [
+    "docs/specs/patch-intent-localization-engine.md"
+   ],
+   "code": [
+    "src/patchtrace/pilot/contracts.py",
+    "src/patchtrace/pilot/fusion.py",
+    "src/patchtrace/pilot/tiers.py",
+    "src/patchtrace/pilot/ranking.py",
+    "src/patchtrace/pilot/quality.py",
+    "src/patchtrace/pilot/why.py",
+    "src/patchtrace/pilot/service.py",
+    "src/patchtrace/pilot/rules/data.py",
+    "src/patchtrace/pilot/rules/evaluate.py",
+    "src/patchtrace/pilot/keys.py",
+    "src/patchtrace/pilot/limits.py"
+   ],
+   "status": "implemented",
+   "implementation_pct": 85,
+   "validation_pct": 30,
+   "verified_by": [
+    "tests/test_pilot_fusion.py (synthetic)",
+    "tests/test_pilot_ranking.py (synthetic)",
+    "tests/test_pilot_rules.py (synthetic)",
+    "tests/test_pilot_sample_e2e.py (synthetic sample PE pair)",
+    "tests/test_pilot_properties.py (synthetic)",
+    "tests/test_pilot_synergy.py (synthetic)"
+   ],
+   "evidence_class": "synthetic",
+   "remaining": [
+    "The SPEC-30 adoption gate (>= 20 % fewer false leads at non-decreasing recall on a held-out corpus) has never been evaluated; no labelled corpus run exists (tasks/todo.md:711).",
+    "Mechanism \"strong\" is unreachable by design until typed data-flow evidence exists.",
+    "B1 detector confidence is not carried on observations (tasks/todo.md:586), so some rule leaves are met only through other channels.",
+    "Spec status text still says \"deferred\" and names intelligence/* modules that were replaced (doc drift)."
+   ],
+   "defects": [],
+   "blockers": [
+    {
+     "type": "external-tool",
+     "detail": "A labelled real-binary corpus and Ghidra runs are needed for the calibration gate."
+    }
+   ],
+   "effort_hours": 30,
+   "confidence": "medium",
+   "acceptance_tests": [
+    "pilot leads on the sample + CWE-125 advisory: read_item FITS ADVISORY rank 1, three NOT ASSESSED ties (run here)"
+   ],
+   "active_lane_overlap": "none"
+  },
+  {
+   "id": "D-F15",
+   "name": "Pilot evidence collection (advisory gate, code, calls, pairing, tools, KEV, KB window)",
+   "spec": [
+    "docs/specs/patch-intent-localization-engine.md"
+   ],
+   "code": [
+    "src/patchtrace/pilot/collect.py",
+    "src/patchtrace/pilot/sources/advisory.py",
+    "src/patchtrace/pilot/sources/code.py",
+    "src/patchtrace/pilot/sources/calls.py",
+    "src/patchtrace/pilot/sources/unified.py",
+    "src/patchtrace/pilot/sources/tools.py",
+    "src/patchtrace/pilot/sources/kev.py",
+    "src/patchtrace/pilot/sources/window.py",
+    "src/patchtrace/pilot/sources/pe.py",
+    "src/patchtrace/pilot/sources/snapshot.py"
+   ],
+   "status": "partial",
+   "implementation_pct": 60,
+   "validation_pct": 30,
+   "verified_by": [
+    "tests/test_pilot_sources_advisory.py (synthetic)",
+    "tests/test_pilot_sources_code.py (synthetic)",
+    "tests/test_pilot_cli.py (synthetic; pins that tool channels say \"not run\")"
+   ],
+   "evidence_class": "synthetic",
+   "remaining": [
+    "Stored capa / FLOSS / Detect It Easy results are not read: strings, capa and build channels are always \"not-run\" (collect.py:28, 208-209) although sources/tools.py ToolDeltas exists.",
+    "KEV is always unknown: collect passes _NoCatalog / NO_CATALOG (collect.py:53-60, 166, 175, 215) although sources/kev.py CatalogKev and the kev store exist (D-T09).",
+    "The KB context is not an input: a project created by kb import-pair from a CVRF month shows no CVE context in pilot leads until a CSAF file is also imported with `intelligence import` (two disjoint advisory planes).",
+    "Applicability gate matches file versions to CSAF product_version names by exact equality only; ranges are not evaluated (stated in the report limitations)."
+   ],
+   "defects": [],
+   "blockers": [
+    {
+     "type": "none",
+     "detail": ""
+    }
+   ],
+   "effort_hours": 28,
+   "confidence": "high",
+   "acceptance_tests": [
+    "pilot leads shows \"CISA KEV: listed <date>\" for a CVE in a loaded catalog (new)",
+    "strings/capa/build channels available when stored tool results exist (new)"
+   ],
+   "active_lane_overlap": "none"
+  },
+  {
+   "id": "D-F16",
+   "name": "Pilot store, review events, report and CLI (pilot leads | why | review)",
+   "spec": [
+    "docs/specs/patch-intent-localization-engine.md"
+   ],
+   "code": [
+    "src/patchtrace/pilot/store.py",
+    "src/patchtrace/pilot/review.py",
+    "src/patchtrace/pilot/report.py",
+    "src/patchtrace/pilot/cli.py",
+    "src/patchtrace/pilot/read_model.py",
+    "src/patchtrace/cli_commands/pilot.py"
+   ],
+   "status": "implemented",
+   "implementation_pct": 90,
+   "validation_pct": 33,
+   "verified_by": [
+    "tests/test_pilot_store.py (synthetic)",
+    "tests/test_pilot_store_durability.py (synthetic)",
+    "tests/test_pilot_report.py (synthetic)",
+    "tests/test_pilot_cli.py (synthetic)",
+    "tests/test_pilot_read_model.py (synthetic)"
+   ],
+   "evidence_class": "synthetic",
+   "remaining": [
+    "The channel note lists partial channels under \"Some evidence was not available\" while the result status reads \"complete\" (report.py:162-166): wording only.",
+    "result_id cannot tell two CVE selections or B1 versions apart (tasks/todo.md:697).",
+    "Windows CI of sidecar locking and CRLF goldens not verified here."
+   ],
+   "defects": [],
+   "blockers": [
+    {
+     "type": "windows-only",
+     "detail": "Native Windows / frozen ZIP acceptance (31-H gates F and I, H6) cannot run on Linux."
+    }
+   ],
+   "effort_hours": 6,
+   "confidence": "high",
+   "acceptance_tests": [
+    "pilot why and pilot review --action note on the sample project (run here, exit 0)"
+   ],
+   "active_lane_overlap": "none"
+  },
+  {
+   "id": "D-F17",
+   "name": "GUI entry: Leads dock (ui_leads.py)",
+   "spec": [
+    "docs/specs/kb/leads-dock-lifecycle-spec.md",
+    "docs/specs/gui-framework.md"
+   ],
+   "code": [
+    "src/patchtrace/ui_leads.py",
+    "src/patchtrace/pilot/panel.py",
+    "src/patchtrace/pilot/read_model.py"
+   ],
+   "status": "partial",
+   "implementation_pct": 75,
+   "validation_pct": 25,
+   "verified_by": [
+    "tests/test_ui_leads.py (offscreen Qt, synthetic)"
+   ],
+   "evidence_class": "synthetic",
+   "remaining": [
+    "Evidence collection runs on the GUI thread (ui_leads.py:624-642); Cancel cannot interrupt it and a large project freezes the window (KBB-02 open).",
+    "Advisory or KEV changes do not mark stored leads stale (KBB-18).",
+    "No native Windows accessibility pass."
+   ],
+   "defects": [],
+   "blockers": [
+    {
+     "type": "windows-only",
+     "detail": "Native Windows / frozen ZIP acceptance (31-H gates F and I, H6) cannot run on Linux."
+    }
+   ],
+   "effort_hours": 14,
+   "confidence": "medium",
+   "acceptance_tests": [
+    "Prepare leads stays responsive and cancellable on a 250,000-candidate fixture (new)"
+   ],
+   "active_lane_overlap": "none"
+  },
+  {
+   "id": "D-F18",
+   "name": "KEV exploitation context in the chain (ui_kev.py entry, kb/pilot adapters)",
+   "spec": [
+    "docs/specs/kev-exploitation-context.md"
+   ],
+   "code": [
+    "src/patchtrace/ui_kev.py",
+    "src/patchtrace/kbcorrelation/adapters/kev.py",
+    "src/patchtrace/kev/kb_adapter.py",
+    "src/patchtrace/pilot/sources/kev.py"
+   ],
+   "status": "partial",
+   "implementation_pct": 70,
+   "validation_pct": 30,
+   "verified_by": [
+    "tests/test_ui_kev_panel.py (offscreen)",
+    "tests/test_kev_kb_integration.py (synthetic)",
+    "tests/test_kbc_kev_explain_export.py (synthetic)"
+   ],
+   "evidence_class": "synthetic",
+   "remaining": [
+    "KEV reaches kb leads, kb explain and kb export .md, but not kb search edges and not pilot leads.",
+    "The canonical www.cisa.gov feed URL is unverified (tasks/todo.md:497).",
+    "Three-lane test for CVE-2024-38063 (KEV plan item 9) is still open (tasks/todo.md:403, 623)."
+   ],
+   "defects": [],
+   "blockers": [
+    {
+     "type": "live-network",
+     "detail": "MSRC, Winbindex, msdl and CISA hosts are unreachable in this sandbox; no live response has ever been recorded for the KB chain (docs/qa/audit-kb-correlation-20261107.md \"Not reviewed\")."
+    }
+   ],
+   "effort_hours": 8,
+   "confidence": "medium",
+   "acceptance_tests": [
+    "kb search --json edges carry kev listed/not-in-snapshot from a loaded catalog (new)"
+   ],
+   "active_lane_overlap": "none"
+  },
+  {
+   "id": "D-F19",
+   "name": "Hop 10 Recommendation output",
+   "spec": [
+    "docs/specs/patch-intent-localization-engine.md",
+    "docs/specs/kb-patch-search-ui-cli-contract.md"
+   ],
+   "code": [
+    "src/patchtrace/pilot/why.py (NEXT_STEPS, next_step)",
+    "src/patchtrace/pilot/report.py",
+    "src/patchtrace/kbcorrelation/contracts.py:70-78 (kb.next.* hooks)",
+    "src/patchtrace/kbcorrelation/view_model.py"
+   ],
+   "status": "partial",
+   "implementation_pct": 35,
+   "validation_pct": 20,
+   "verified_by": [
+    "tests/test_pilot_report.py (synthetic)",
+    "tests/test_pilot_read_model.py (synthetic)"
+   ],
+   "evidence_class": "synthetic",
+   "remaining": [
+    "There is no output named or shaped as a recommendation. The closest are (a) the pilot lead class (FITS ADVISORY / NEEDS REVIEW / PARTIAL FIT / CODE CHANGE / NOT ASSESSED) with \"Next step:\" sentences in `pilot why` and the Markdown report, and (b) kb.next.* hook ids, which the CLI prints only as ids in JSON.",
+    "No investigation-level summary ties product, KB, pair grade, coverage, the top leads and the open unknowns into one analyst-readable page with a stated next action.",
+    "By policy nothing may claim a fix; a recommendation must stay \"where to look and what is unverified\"."
+   ],
+   "defects": [],
+   "blockers": [
+    {
+     "type": "owner-decision",
+     "detail": "Wording and scope of an investigation summary need a spec (no spec section defines a recommendation record)."
+    }
+   ],
+   "effort_hours": 20,
+   "confidence": "medium",
+   "acceptance_tests": [
+    "kb summary PROJECT (or a report/2 section) renders product, KB, pair grade, coverage, top leads, unknowns and next steps from stored data only (new, spec first)"
+   ],
+   "active_lane_overlap": "none"
+  },
+  {
+   "id": "D-F20",
+   "name": "Structured export of the investigation (kb export, pilot --export, report/2)",
+   "spec": [
+    "docs/specs/report-export-contract-v2.md",
+    "docs/specs/kb-patch-search-ui-cli-contract.md"
+   ],
+   "code": [
+    "src/patchtrace/kbcorrelation/export.py",
+    "src/patchtrace/pilot/report.py",
+    "src/patchtrace/report2/adapters.py",
+    "src/patchtrace/report2/sections/advisories.py",
+    "src/patchtrace/report2/contracts.py"
+   ],
+   "status": "partial",
+   "implementation_pct": 65,
+   "validation_pct": 30,
+   "verified_by": [
+    "tests/test_report2_adapters.py (synthetic)",
+    "tests/test_report2_sections.py (synthetic)",
+    "tests/test_kbc_kev_explain_export.py (synthetic)",
+    "tests/test_pilot_report.py (synthetic)"
+   ],
+   "evidence_class": "synthetic",
+   "remaining": [
+    "report/2 advisories come only from the project CSAF store (report2/adapters.py:120-138: cve and cwe records); the KB context (CVRF cards, KB ids, product scope, pair grade) is never exported there (D-T12).",
+    "KBA-07 id grammar mismatch (D-T04).",
+    "Three separate exports (kb export, pilot leads --export, export --report-version 2); none references the others' digests.",
+    "report/2 series section stays absent (tasks/todo.md:979)."
+   ],
+   "defects": [
+    {
+     "id": "KBA-07",
+     "severity": "low",
+     "summary": "report/2 Advisory(kind=\"kb\") accepts KB + 6-8 digits while kbcorrelation canonical ids are KB + 4-10 digits; one canonical id outside 6-8 digits would make PT-EXPORT-SECTION refuse the whole export (latent: no adapter emits kind kb yet).",
+     "evidence": "src/patchtrace/report2/contracts.py:199; src/patchtrace/kbcorrelation/ids.py:13-16; strict xfail tests/test_kbc_audit_20261107.py:150-157",
+     "failure_scenario": "As soon as the KB context is exported into report/2 (D-T12), a context naming KB12345 or a 9-10 digit id stops `patchtrace export --report-version 2` for the whole project.",
+     "proposed_fix": "Spec first: docs/specs/report-export-contract-v2.md section 6 (advisories) states the id grammar `KB[0-9]{4,10}` (kb-syntax/1). Then change the pattern to r\"KB\\d{4,10}\" with re.ASCII; no JSON-schema file carries the pattern (it is a model validator), so no schema regeneration is expected (confirm with the schema drift test).",
+     "regression_test": "Remove the xfail of test_kba07_report2_advisory_accepts_every_canonical_kb_id; add negatives to tests/test_report2_contracts.py (KB123, KB12345678901, kb1234567, fullwidth digits all rejected)."
+    }
+   ],
+   "blockers": [
+    {
+     "type": "none",
+     "detail": ""
+    }
+   ],
+   "effort_hours": 14,
+   "confidence": "high",
+   "acceptance_tests": [
+    "test_kba07 passes without xfail",
+    "export --report-version 2 of a kb-created project lists kind=kb and kind=cve advisories with snapshot digests (new)"
+   ],
+   "active_lane_overlap": "none"
+  },
+  {
+   "id": "D-F21",
+   "name": "N-way series (nway/1: series, chains, graph) and series CLI",
+   "spec": [
+    "docs/specs/nway.md"
+   ],
+   "code": [
+    "src/patchtrace/nway/contracts.py",
+    "src/patchtrace/nway/series.py",
+    "src/patchtrace/nway/graph.py",
+    "src/patchtrace/cli.py (series create | chains)"
+   ],
+   "status": "implemented",
+   "implementation_pct": 90,
+   "validation_pct": 30,
+   "verified_by": [
+    "tests/test_nway_series.py (synthetic, fake Ghidriff)",
+    "tests/test_nway_graph.py (synthetic)",
+    "tests/test_nway_series_tolerance.py (synthetic)",
+    "tests/test_nway_recovery_copy_20261105.py (synthetic)"
+   ],
+   "evidence_class": "synthetic",
+   "remaining": [
+    "Native three-build CI run is acceptance-only and has never been executed (tasks/todo.md:76).",
+    "--replace-corrupt reads the damaged original in full (tasks/todo.md:1088).",
+    "A KB investigation cannot create a series from an index timeline (no bridge from kb pairs to series create)."
+   ],
+   "defects": [],
+   "blockers": [
+    {
+     "type": "external-tool",
+     "detail": "Ghidra/Ghidriff are not installed here; a real comparison of a KB pair cannot be produced."
+    },
+    {
+     "type": "windows-only",
+     "detail": "Native Windows / frozen ZIP acceptance (31-H gates F and I, H6) cannot run on Linux."
+    }
+   ],
+   "effort_hours": 10,
+   "confidence": "medium",
+   "acceptance_tests": [
+    "series create --run on three real builds (owner machine)"
+   ],
+   "active_lane_overlap": "none"
+  },
+  {
+   "id": "D-F22",
+   "name": "Series window (SPEC-09b)",
+   "spec": [
+    "docs/specs/series-window.md"
+   ],
+   "code": [
+    "src/patchtrace/nway/view_model.py",
+    "src/patchtrace/nway/pair_access.py",
+    "src/patchtrace/nway/panel.py",
+    "src/patchtrace/ui_series.py"
+   ],
+   "status": "partial",
+   "implementation_pct": 80,
+   "validation_pct": 25,
+   "verified_by": [
+    "tests/test_ui_series.py (offscreen Qt)",
+    "tests/test_nway_view_model.py (synthetic)"
+   ],
+   "evidence_class": "synthetic",
+   "remaining": [
+    "Open-pair on a live (locked) pair project is still open (docs/specs/REGISTRY.md row SPEC-09b; tasks/todo.md:76).",
+    "Frozen-EXE smoke and manual DPI pass of the window not done."
+   ],
+   "defects": [],
+   "blockers": [
+    {
+     "type": "windows-only",
+     "detail": "Native Windows / frozen ZIP acceptance (31-H gates F and I, H6) cannot run on Linux."
+    }
+   ],
+   "effort_hours": 8,
+   "confidence": "medium",
+   "acceptance_tests": [
+    "open pair at this function while the pair project is open in the main window (new)"
+   ],
+   "active_lane_overlap": "none"
+  },
+  {
+   "id": "D-F23",
+   "name": "L1 KB/CVE join accuracy corpus and runner",
+   "spec": [
+    "docs/research/accuracy-cases/l1-join-candidates.md",
+    "docs/plans/accuracy-program-handoff-20261107.md"
+   ],
+   "code": [
+    "tools/research_qualification/l1_check.py",
+    "docs/research/accuracy-cases/l1-join-candidates.json"
+   ],
+   "status": "partial",
+   "implementation_pct": 30,
+   "validation_pct": 0,
+   "verified_by": [
+    "tests/test_research_qualification_l1.py (structural validation only)"
+   ],
+   "evidence_class": "none",
+   "remaining": [
+    "87 candidate cases (79 verified, 8 unverified per the handoff) exist; nothing has been run through the join and no L1 recall figure exists.",
+    "No runner maps a case (CVE, KB, product, expected files) to kb search / kb pairs output and scores it (D-T13).",
+    "The manifest is not frozen (manifest_sha256 not recorded).",
+    "l1_check accepts KB ids of 6-8 digits only (same grammar gap as KBA-07; harmless for current data)."
+   ],
+   "defects": [],
+   "blockers": [
+    {
+     "type": "live-network",
+     "detail": "MSRC, Winbindex, msdl and CISA hosts are unreachable in this sandbox; no live response has ever been recorded for the KB chain (docs/qa/audit-kb-correlation-20261107.md \"Not reviewed\")."
+    }
+   ],
+   "effort_hours": 16,
+   "confidence": "medium",
+   "acceptance_tests": [
+    "l1 runner over a synthetic manifest + synthetic month reports found/missing per case (new)",
+    "frozen manifest scored against real CVRF months (owner machine)"
+   ],
+   "active_lane_overlap": "none"
+  },
+  {
+   "id": "D-F24",
+   "name": "SPEC-37 patch-search/1 contract and registry state",
+   "spec": [
+    "docs/specs/kb-patch-search-and-pair-resolution.md",
+    "docs/specs/kb-patch-search-contract-blueprint.md",
+    "docs/specs/kb-patch-search-qa-and-fixtures.md",
+    "docs/specs/REGISTRY.md"
+   ],
+   "code": [
+    "src/patchtrace/kbcorrelation/service.py"
+   ],
+   "status": "deferred-by-design",
+   "implementation_pct": 0,
+   "validation_pct": 0,
+   "verified_by": [],
+   "evidence_class": "none",
+   "remaining": [
+    "No patch_search package exists; the capability was delivered under kbcorrelation/1. REGISTRY.md rows 149-164 still say \"planned\" / \"Implementation not started\" for SPEC-34 slices that are on main, and SPEC-37 has no superseded-by note.",
+    "docs/specs/kb-cve/31-C still calls 10-22H2 a \"version key\" (audit KBA-01 note)."
+   ],
+   "defects": [],
+   "blockers": [
+    {
+     "type": "other-lane",
+     "detail": "Registry and ledger refresh overlaps L3 (consolidation ledger); docs only."
+    }
+   ],
+   "effort_hours": 4,
+   "confidence": "medium",
+   "acceptance_tests": [
+    "REGISTRY rows for SPEC-34/37 match the code on main"
+   ],
+   "active_lane_overlap": "L3"
+  },
+  {
+   "id": "D-F25",
+   "name": "Live, Windows and field acceptance of the chain (31-H gates F, I, H6)",
+   "spec": [
+    "docs/specs/kb-cve/31-H-tests-release.md",
+    "docs/specs/kb-cve-correlation-and-acquisition.md:725"
+   ],
+   "code": [
+    "tools/live_kbc_probe.py",
+    "tests/test_live_kbc_probe.py"
+   ],
+   "status": "blocked-external",
+   "implementation_pct": 10,
+   "validation_pct": 0,
+   "verified_by": [
+    "tests/test_live_kbc_probe.py (mocked hosts; not live evidence)"
+   ],
+   "evidence_class": "none",
+   "remaining": [
+    "Two real-world field cases (official KB with a valid old/new Microsoft PE pair; KB with no downloadable predecessor), one non-adjacent pair showing the confounder banner, and three native Windows error cases.",
+    "Frozen Windows ZIP reopen/export of the same investigation (the spec's definition of \"implemented\").",
+    "Live probe L1 (MSRC CVRF shape), L4 (CSAF KB location), Winbindex heading classes."
+   ],
+   "defects": [],
+   "blockers": [
+    {
+     "type": "live-network",
+     "detail": "MSRC, Winbindex, msdl and CISA hosts are unreachable in this sandbox; no live response has ever been recorded for the KB chain (docs/qa/audit-kb-correlation-20261107.md \"Not reviewed\")."
+    },
+    {
+     "type": "windows-only",
+     "detail": "Native Windows / frozen ZIP acceptance (31-H gates F and I, H6) cannot run on Linux."
+    },
+    {
+     "type": "external-tool",
+     "detail": "Ghidra/Ghidriff are not installed here; a real comparison of a KB pair cannot be produced."
+    }
+   ],
+   "effort_hours": 40,
+   "confidence": "high",
+   "acceptance_tests": [
+    "31-H H6 record with URLs, retrieval times, SHA-256, engine versions and what stays unverified"
+   ],
+   "active_lane_overlap": "none"
+  }
+ ],
+ "actionable_now": [
+  {
+   "id": "D-T01",
+   "title": "KB dock: read the open project through an owner-thread snapshot (KBB-01)",
+   "why": "D-DEF-01: the dock's production loader fails with \"the project cannot be opened\" for every project the desktop holds; reproduced on main with the sample project.",
+   "files": [
+    "src/patchtrace/kbcorrelation/panel_qt.py",
+    "src/patchtrace/kbcorrelation/cli_leads.py",
+    "src/patchtrace/kbcorrelation/wiring.py",
+    "tests/test_ui_kb_panel.py"
+   ],
+   "tests": [
+    "tests/test_ui_kb_panel.py",
+    "tests/test_kbc_synergy.py",
+    "tests/test_kbc_leads.py"
+   ],
+   "size": "M",
+   "priority": 1,
+   "risk": "Project store is owner-thread only (store-threading-spec R1): every read must stay on the GUI thread; keep the CLI path (RealEngine.read by directory) unchanged.",
+   "depends_on": [],
+   "lane_conflict": "none",
+   "acceptance": "New test holds ProjectService.sample open and drives KbController with the default loader: state is ready or no-advisory, never failed; no second ProjectService.open happens (assert by monkeypatch)."
+  },
+  {
+   "id": "D-T02",
+   "title": "KBA-06: predecessor() never returns the target's own bytes",
+   "why": "A reverted build yields a byte-identical grade X pair and hides the usable earlier build; strict xfail exists.",
+   "files": [
+    "src/patchtrace/kbcorrelation/lineage.py",
+    "tests/test_kbc_audit_20261107.py",
+    "tests/test_kbc_lineage.py",
+    "docs/specs/kb-cve/31-C-product-build-pairs.md",
+    "docs/qa/audit-kb-correlation-20261107.md"
+   ],
+   "tests": [
+    "tests/test_kbc_audit_20261107.py",
+    "tests/test_kbc_lineage.py",
+    "tests/test_kbc_resolver.py",
+    "tests/test_kbc_pairs_index.py"
+   ],
+   "size": "S",
+   "priority": 2,
+   "risk": "Changes which older build is proposed for reverted timelines only; pair ids of other timelines are unchanged. Spec sentence first (AGENTS.md).",
+   "depends_on": [],
+   "lane_conflict": "none",
+   "acceptance": "xfail marker removed and the test passes; Z,A,B(preview),A -> Z with window (A,B); Z,A,Y,B(preview),A -> Y; no resolver pair carries IDENTICAL_CONTENT."
+  },
+  {
+   "id": "D-T03",
+   "title": "KBA-08: file-index keys for Windows 10 RTM, Version 2004 and Windows 11 RTM names (alias catalog v2)",
+   "why": "Products Winbindex covers resolve to \"No file-index key is known\"; strict xfail exists.",
+   "files": [
+    "src/patchtrace/kbcorrelation/alias_catalog.py",
+    "src/patchtrace/kbcorrelation/products.py",
+    "tests/test_kbc_audit_20261107.py",
+    "tests/test_kbc_products.py",
+    "docs/specs/kb-cve/31-C-product-build-pairs.md",
+    "docs/qa/audit-kb-correlation-20261107.md"
+   ],
+   "tests": [
+    "tests/test_kbc_audit_20261107.py",
+    "tests/test_kbc_products.py",
+    "tests/test_kbc_resolver.py",
+    "tests/test_kb_product_start_20261106.py",
+    "tests/test_kbc_fixtures.py"
+   ],
+   "size": "S",
+   "priority": 3,
+   "risk": "Bumps ALIAS_CATALOG_VERSION (parse key) and changes scope ids of exactly these names; stored investigations on them must repeat the search (existing guarded path). Real MSRC use of the 2004 and Windows 11 RTM names is UNVERIFIED offline.",
+   "depends_on": [],
+   "lane_conflict": "none",
+   "acceptance": "xfail marker removed; derive() gives 10-1507, 10-2004, 11-21H2; ids of already keyed names are byte-identical to main; an LTSC name stays unkeyed."
+  },
+  {
+   "id": "D-T04",
+   "title": "KBA-07: report/2 accepts every canonical KB id (KB + 4-10 digits)",
+   "why": "Latent export refusal once KB advisories are exported; strict xfail exists; prerequisite of D-T12.",
+   "files": [
+    "src/patchtrace/report2/contracts.py",
+    "docs/specs/report-export-contract-v2.md",
+    "tests/test_kbc_audit_20261107.py",
+    "tests/test_report2_contracts.py"
+   ],
+   "tests": [
+    "tests/test_kbc_audit_20261107.py",
+    "tests/test_report2_contracts.py",
+    "tests/test_report2_sections.py"
+   ],
+   "size": "S",
+   "priority": 4,
+   "risk": "Widens an exported contract: the spec must change first; check the schema drift test.",
+   "depends_on": [],
+   "lane_conflict": "none",
+   "acceptance": "xfail marker removed; KB1234 and KB1234567890 accepted; KB123, 11 digits, lower case and non-ASCII digits rejected."
+  },
+  {
+   "id": "D-T05",
+   "title": "Persist index lineage and download provenance of an acquired pair",
+   "why": "D-DEF-02: after kb acquire the stored record says the analyst chose the order and keeps no KB, window, record hash, URL or retrieval time.",
+   "files": [
+    "src/patchtrace/kbcorrelation/service.py",
+    "src/patchtrace/kbcorrelation/acquire.py",
+    "tests/test_kbc_acquire_cli.py",
+    "docs/specs/kb-cve/31-D-acquisition-packages.md"
+   ],
+   "tests": [
+    "tests/test_kbc_acquire_cli.py",
+    "tests/test_kb_acquire_lifecycle_20261105.py",
+    "tests/test_kbc_service.py"
+   ],
+   "size": "M",
+   "priority": 5,
+   "risk": "Must not advance the project revision (attach link records it): write to the workspace decisions/attempts only; AnalystDecision.reason is capped at 500 characters.",
+   "depends_on": [],
+   "lane_conflict": "none",
+   "acceptance": "After a consented fake-transport acquire, ws.decisions() has a pair-origin record naming the index pair id, target KB, window and record SHA-256, and ws.attempts() an acquire attempt with the plan_sha; the manual import path is unchanged."
+  },
+  {
+   "id": "D-T06",
+   "title": "kb attach: attach an investigation context to an existing analysed project",
+   "why": "Today only projects created by kb import-pair/acquire can hold KB context (PT-KBC-UNSUPPORTED), so the chain cannot be applied to work an analyst already has, and kb leads needs a re-created, re-analysed project.",
+   "files": [
+    "src/patchtrace/kbcorrelation/service.py",
+    "src/patchtrace/kbcorrelation/store.py",
+    "src/patchtrace/kbcorrelation/wiring.py",
+    "src/patchtrace/kbcorrelation/cli.py",
+    "docs/specs/kb-cve/31-F-workflow-ui-persistence.md",
+    "tests/test_kbc_attach_existing.py"
+   ],
+   "tests": [
+    "tests/test_kbc_attach_existing.py",
+    "tests/test_kbc_service.py",
+    "tests/test_kbc_recovery.py",
+    "tests/test_kbc_synergy.py"
+   ],
+   "size": "L",
+   "priority": 6,
+   "risk": "Cross-project linkage must be refused when the project bytes differ from the pair (31-H \"cross-project file link refusal\"); writes one enrichment row, so the project store lock and revision rules apply.",
+   "depends_on": [],
+   "lane_conflict": "none",
+   "acceptance": "kb attach SAMPLE --investigation INV builds the pair from the project's stored artifacts, records the decisions, writes kb-context and returns attached; a second run is idempotent; kb leads then groups read_item under the CVE; a project whose SHA-256 pair differs is refused."
+  },
+  {
+   "id": "D-T07",
+   "title": "kb index sync: reachable --help and listed in kb index --help",
+   "why": "D-DEF-03: the only consented CVRF fetch verb is undiscoverable and its --help errors.",
+   "files": [
+    "src/patchtrace/kbcorrelation/cli.py",
+    "src/patchtrace/kbcorrelation/cli_index.py",
+    "tests/test_kbc_cli.py"
+   ],
+   "tests": [
+    "tests/test_kbc_cli.py",
+    "tests/test_kbc_cvrf_fetch.py"
+   ],
+   "size": "S",
+   "priority": 7,
+   "risk": "Help only; cli_index must stay import-clean of network modules.",
+   "depends_on": [],
+   "lane_conflict": "none",
+   "acceptance": "kb index sync --help exits 0 and names --consent-hosts/--consent-plan; kb index --help mentions sync."
+  },
+  {
+   "id": "D-T08",
+   "title": "kb leads: correct state text without a run and chip text without a context",
+   "why": "D-DEF-04: output claims a ranking mismatch when nothing was ranked, and refers to a context that is not attached.",
+   "files": [
+    "src/patchtrace/kbcorrelation/leads.py",
+    "tests/test_kbc_leads.py"
+   ],
+   "tests": [
+    "tests/test_kbc_leads.py",
+    "tests/test_kbc_synergy.py",
+    "tests/test_kbc_view_model_status.py"
+   ],
+   "size": "S",
+   "priority": 8,
+   "risk": "The synergy golden pins lead shape; update it only if the changed strings are part of the golden.",
+   "depends_on": [],
+   "lane_conflict": "none",
+   "acceptance": "No-run note renders the no-comparison sentence plus the note; no-advisory rows say no advisory context is attached; banned-word sweep stays clean."
+  },
+  {
+   "id": "D-T09",
+   "title": "KEV into pilot leads and kb search edges",
+   "why": "pilot leads always prints \"CISA KEV: unknown\" and kb search edges always \"not-loaded\" although the catalog store, CatalogKev and the kb KEV adapter exist.",
+   "files": [
+    "src/patchtrace/pilot/collect.py",
+    "src/patchtrace/pilot/cli.py",
+    "src/patchtrace/kbcorrelation/service.py",
+    "src/patchtrace/kbcorrelation/cli.py",
+    "tests/test_pilot_cli.py",
+    "tests/test_kbc_cli.py"
+   ],
+   "tests": [
+    "tests/test_pilot_cli.py",
+    "tests/test_pilot_store.py",
+    "tests/test_kbc_cli.py",
+    "tests/test_kbc_service.py",
+    "tests/test_kev_kb_integration.py"
+   ],
+   "size": "M",
+   "priority": 9,
+   "risk": "kev_snapshot_id is part of the pilot result_id: stored results become stale when a catalog is loaded (intended, must be stated). tests/conftest.py already redirects the default KEV folder; keep KEV a CVE-level fact that never orders functions.",
+   "depends_on": [],
+   "lane_conflict": "none",
+   "acceptance": "With a synthetic catalog (tests/fixtures/kbcorrelation/kev-synthetic.json imported into a temp KEV dir) pilot leads shows listed + date for the listed CVE and \"not in snapshot\" otherwise; kb search --json edges carry the same states; without a catalog both stay unknown / not-loaded."
+  },
+  {
+   "id": "D-T10",
+   "title": "CLI verb to run the comparison of one two-file project",
+   "why": "The CLI chain stops after kb import-pair: only series create --run (3-8 builds) or the desktop start Ghidriff.",
+   "files": [
+    "src/patchtrace/cli.py",
+    "tests/test_cli_compare.py",
+    "docs/specs/kb-patch-search-ui-cli-contract.md"
+   ],
+   "tests": [
+    "tests/test_cli_compare.py",
+    "tests/test_nway_series.py"
+   ],
+   "size": "M",
+   "priority": 10,
+   "risk": "cli.py is a shared integrator file and backend.py belongs to L2/L5: reuse the existing _run_pair / run_comparison call unchanged and add no backend code. Verifiable here only with the hermetic fake Ghidriff used by the series tests; live behaviour stays unverified.",
+   "depends_on": [],
+   "lane_conflict": "none",
+   "acceptance": "patchtrace compare PROJECT --python P --ghidra-dir G (fake backend) records a completed run, is a no-op on a project that already has one, exits 5 on cancel, and rank + kb leads then work on the same project."
+  },
+  {
+   "id": "D-T11",
+   "title": "kb identify: binary-first lookup of a local file in saved Winbindex records",
+   "why": "Hops 2-4 start from the binary in the target chain, but nothing maps a file to its build, KB and product; the analyst must already know the KB.",
+   "files": [
+    "src/patchtrace/kbcorrelation/identify.py",
+    "src/patchtrace/kbcorrelation/cli_pairs.py",
+    "src/patchtrace/kbcorrelation/service.py",
+    "docs/specs/kb-cve/31-C-product-build-pairs.md",
+    "tests/test_kbc_identify.py"
+   ],
+   "tests": [
+    "tests/test_kbc_identify.py",
+    "tests/test_kbc_pairs_index.py"
+   ],
+   "size": "M",
+   "priority": 11,
+   "risk": "Index rows are claims: the answer must be labelled index claim, list every version key the SHA appears under, and say \"not in the saved record\" instead of guessing from the version resource. New contract surface: spec first.",
+   "depends_on": [],
+   "lane_conflict": "none",
+   "acceptance": "For a record whose row SHA equals the synthetic PE, kb identify FILE prints version key, KB (or BASE), UBR, heading class, the next and previous distinct builds and the CVEs the index lists for that KB; an unknown SHA exits 4 with the stated gap."
+  },
+  {
+   "id": "D-T12",
+   "title": "report/2: export the KB context as kind=kb and kind=cve advisories",
+   "why": "The consolidated report omits the KB chain; kb export is a separate file.",
+   "files": [
+    "src/patchtrace/report2/adapters.py",
+    "tests/test_report2_adapters.py",
+    "docs/specs/report-export-contract-v2.md"
+   ],
+   "tests": [
+    "tests/test_report2_adapters.py",
+    "tests/test_report2_sections.py",
+    "tests/test_report2_synergy.py"
+   ],
+   "size": "M",
+   "priority": 12,
+   "risk": "Export must not write to the project (adapters.py guards this for pilot); advisory text is untrusted and goes through the existing inert-text path.",
+   "depends_on": [
+    "D-T04"
+   ],
+   "lane_conflict": "none",
+   "acceptance": "A kb-created project exports one kb record per KB of the lead and one cve record per card with the source snapshot digest; a project without a context is unchanged byte for byte."
+  },
+  {
+   "id": "D-T13",
+   "title": "L1 join runner over the candidate manifest (offline, synthetic test)",
+   "why": "The 87-case L1 corpus has never been run through the join; no runner exists.",
+   "files": [
+    "tools/research_qualification/l1_run.py",
+    "tests/test_research_qualification_l1_run.py",
+    "docs/research/accuracy-cases/l1-join-candidates.md"
+   ],
+   "tests": [
+    "tests/test_research_qualification_l1_run.py",
+    "tests/test_research_qualification_l1.py"
+   ],
+   "size": "M",
+   "priority": 13,
+   "risk": "Never score a case marked facts: unverified (AGENTS.md); the runner must report per-layer L1 only and refuse an unfrozen manifest for a scored run. Real months are unavailable here, so only the mechanics are verified.",
+   "depends_on": [],
+   "lane_conflict": "none",
+   "acceptance": "Against a synthetic manifest and the synthetic month the runner reports per case: KB edge found, product scope found, expected file resolvable, with counts; unverified cases are listed and excluded."
+  },
+  {
+   "id": "D-T14",
+   "title": "kb products --all / --query: stored-product catalogue from the CLI",
+   "why": "GUI-only capability (browse_products and the product-only start); KbService.product_catalogue is already built.",
+   "files": [
+    "src/patchtrace/kbcorrelation/cli_pairs.py",
+    "src/patchtrace/kbcorrelation/cli.py",
+    "tests/test_kbc_cli.py"
+   ],
+   "tests": [
+    "tests/test_kbc_cli.py",
+    "tests/test_kb_product_start_20261106.py"
+   ],
+   "size": "S",
+   "priority": 14,
+   "risk": "Argument shape of an existing verb changes (INV becomes optional with --all): keep the old form working.",
+   "depends_on": [],
+   "lane_conflict": "none",
+   "acceptance": "kb products --all --query 24H2 lists the stored scopes with exit 0 and exit 4 when none match; no investigation is created."
+  }
+ ],
+ "notes": "TARGET CHAIN (module | CLI | GUI | evidence | gap). 1 Binary: wiring.inspect_local_file, intelligence/csaf/identity | inspect, kb import-pair --dry-run | investigation dialog \"Preview local pair\" | synthetic | no signature state. 2 Product: products.derive/scope_for, alias_catalog | kb search --product, kb products | \"List stored products\" | synthetic | analyst-chosen only, KBA-08. 3 Version: lineage.index_rows/timeline, wiring.WorkspaceFileIndex | kb index import --winbindex | \"Refresh metadata\" | synthetic + mocked | no binary-first lookup, KBA-06. 4 CVE: sources/cvrf*, csaf_bridge, index.ReverseIndex | kb index import/status/verify/plan/sync, kb search | \"Import advisory\", \"Search locally\" | synthetic + one real-shaped fixture | live shape unverified. 5-6 Security update / KB: KbService.search, _lead_kbs, components | kb search, kb components | dialog | synthetic | KB never yields file names. 7 Patched binary: resolver.resolve, acquire.acquire_pair | kb pairs, kb plan, kb acquire | \"Inspect saved index candidates\" (no acquire) | synthetic + mocked | provenance not persisted, packages missing. 8 Comparison: backend.run_comparison via cli._run_pair | series create --run only | desktop Evidence panel | mocked | no single-pair verb, Ghidra absent here. 9 Evidence: context.build_bundle, leads.build_leads, pilot.service.localize | kb explain, kb leads, rank, pilot leads/why | KB dock (broken loader), Leads dock | synthetic | two disjoint advisory planes. 10 Recommendation: pilot/why.NEXT_STEPS, kb.next.* hooks | pilot why, pilot leads --export | Leads dock detail | synthetic | no recommendation record. FIXED-CLAIM CHECK: no code path states a vulnerability is fixed because two binaries differ. A byte-identical pair says \"this file did not change between them\"; every context, lead, report and export carries the limitation that it does not show a function contains or fixes a CVE; the pilot gate \"applies\" comes from CSAF product status, and the mechanism tier \"strong\" is unreachable. OFFLINE CLI WALK DONE HERE (synthetic fixtures, writes only under tmp-D): kb index import (exit 0) -> kb search KB5099001 (0, 2 scopes) -> kb index import --winbindex (0) -> kb products (0) -> kb components (0) -> kb pairs (3, one A/C pair; needed a scratch copy of the month with a Windows 11 product name, the committed month has no file-index key) -> kb plan (0) -> kb acquire --offline (2, exact plan, PT-KBC-CONSENT) -> kb import-pair --dry-run (0) -> kb import-pair (0, project + context) -> kb explain (0) -> kb export .md/.json (0) -> kb leads (4, no comparison). Comparison cannot run here (no Ghidra, no single-pair CLI verb). On the sample project built through the Python API (ProjectService.sample; no CLI verb creates it): intelligence import --cve (0) -> rank (0) -> pilot leads --export (0: read_item FITS ADVISORY) -> pilot why (0) -> pilot review (0) -> kb leads (0, unattributed only) -> kb attach (2, PT-KBC-UNSUPPORTED foreign project). COMPLETION BASIS: 15 required capabilities scored implemented=1 / partial=0.5 / missing=0: implemented 5 (locate updates, changed functions, confidence indicators, missing/contradictory handling, persistence), partial 10 -> 10/15 = 67 %. Validation weights live-native=1, real-data fixture=0.67, synthetic or mocked=0.33: 0 live-native, 1 real-data fixture (locate updates), 14 synthetic/mocked -> 5.3/15 = 35 %. 31-H gates: A, B, C, D, G met at their synthetic level; E partial; F, I and H6 unmet; H not applicable (packages not built). TRACKER DRIFT: docs/specs/REGISTRY.md rows 149-164 call built slices \"planned\"; tasks/todo.md lines 340, 359, 368, 374, 383, 391 list work that is on main (kb hook, index sync route, IndexPort wiring, kb acquire, --winbindex import). Per-feature percentages are estimates from the listed remaining items, not measured.",
+ "completion": {
+  "implementation_pct": 67,
+  "validation_pct": 35,
+  "basis": "15 required capabilities scored implemented=1 / partial=0.5 / missing=0: 5 implemented (locate updates, relevant changed functions, confidence indicators, missing/contradictory handling, persistence), 10 partial, 0 missing -> 10/15 = 67%. Validation weights live-native=1, real-data fixture=0.67, synthetic or mocked=0.33: 0 live-native, 1 real-data fixture (CVE-to-KB lookup, single real-shaped MSRC CVE), 14 synthetic/mocked -> 5.3/15 = 35%. 31-H gates: A, B, C, D, G met at their synthetic level; E partial; F, I and H6 unmet; H not applicable. Per-feature percentages in the file are estimates from listed remaining items, not measured."
+ },
+ "external_blockers": [
+  "Live network: MSRC CVRF, Winbindex, msdl symbol server and CISA are unreachable; no live response has ever been recorded for the KB chain (CVRF URL shape, real month parse, real download all unverified)",
+  "External tool: Ghidra/Ghidriff not installed, so a real KB pair cannot be compared; single-pair comparison also has no CLI verb",
+  "Windows only: 31-H gates F and I and the H6 field cases (frozen ZIP, keyboard/screen-reader pass, three native error cases) cannot run here",
+  "Owner decision: KBA-08 bumps ALIAS_CATALOG_VERSION and changes scope ids; KBA-06 needs the skip-identical-SHA rule accepted in 31-C",
+  "Owner decision: re-adding the removed tests test_kbc_kev_wiring.py and test_kbc_leads_freshness.py (removed 2026-10-29 at the owner's request)",
+  "Owner decision: no spec defines a recommendation / investigation-summary record",
+  "Other lane: backend.py (L2/L5) underlies the comparison hop; registry refresh for SPEC-34/37 overlaps L3",
+  "Labelled real-binary corpus needed for the SPEC-30 calibration gate and for scoring the 87-case L1 join corpus (never run)"
+ ],
+ "summary": "Offline, an analyst can run the KB chain by CLI from advisory import to an attached, exportable context; I ran it on synthetic fixtures. It stops at comparison: no Ghidra here, and no single-pair CLI verb. `pilot leads/why/review` and `kb leads` work on the sample project. Nothing claims a fix because binaries differ. No recommendation record exists, only lead classes and next-step sentences. One high defect: the KB dock cannot load the open project (reproduced). Medium: KBA-06, KBA-08 (plus two sibling names), acquired-pair provenance not persisted. KBA-06..08 have fix designs; the KBA-06 fix was simulated and flips its xfail. Evidence is synthetic or mocked throughout; none is live."
+}

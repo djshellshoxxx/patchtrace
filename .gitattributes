@@ -55,3 +55,4 @@ tests/fixtures/kb/** text eol=lf
 tests/fixtures/kb/cvrf_crlf.json -text -whitespace
 tests/fixtures/kb/cvrf_bom.json -text
 tests/golden/report2/** text eol=lf
+docs/status/** text eol=lf

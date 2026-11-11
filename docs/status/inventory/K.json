@@ -1,0 +1,2195 @@
+{
+ "workstream": "K",
+ "title": "Testing and continuous integration",
+ "baseline": "main@882d1ca0",
+ "completion": {
+  "implementation_pct": 74,
+  "validation_pct": 44,
+  "basis": "172.5 of 232 counted acceptance items implemented, 101 validated. Implemented/validated/total per feature: K-F01 main QA workflow 7/7/14; K-F02 fleet hygiene 104/42/126 (21 workflows x 6 owner rules; validated = rule checks enforced by a test); K-F03 run evidence 21/13/21 (latest run on main green for 13 of 21 workflows); K-F04 skip/xfail discipline 4/4/10; K-F05 coverage map 11.5/11/13; K-F06 parallel-safety 5/5/10; K-F07 test tooling 8/7/13; K-F08 packaging smoke 6/6/11; K-F09 release gate (L4) 5/5/10; K-F10 docs currency 1/1/4."
+ },
+ "features": [
+  {
+   "id": "K-F01",
+   "name": "Main QA workflow: qa, qt-gate, linux-package, linux-smoke jobs of qa-windows.yml (release job excluded, see K-F09)",
+   "spec": [
+    "docs/release-process.md",
+    "docs/handoff/qa-and-release.md",
+    "docs/specs/windows-acceptance-and-milestone-builds.md"
+   ],
+   "code": [
+    ".github/workflows/qa-windows.yml",
+    "tools/qt_gate.py",
+    "tools/check_protobuf_runtime.py"
+   ],
+   "status": "partial",
+   "implementation_pct": 50,
+   "validation_pct": 50,
+   "verified_by": [
+    "GitHub Actions run 42605088788 (2026-11-09, push on main@882d1ca0, conclusion success): 20812 passed, 53 skipped, 9 xfailed in 1899.60 s on ubuntu-latest (live CI log); Windows counts UNVERIFIED",
+    "tests/test_workflows.py (static text checks of the workflow)",
+    "tests/test_codex_pkg_workflows.py (static: timeouts, permissions)"
+   ],
+   "evidence_class": "live-native",
+   "remaining": [
+    "No docs-only filter: the workflow has neither paths nor paths-ignore, so the docs-only merge #278 (882d1ca0) ran all 12 jobs: about 161 Linux and 81 Windows job-minutes, 49 min wall (computed from job timestamps of run 42605088788).",
+    "pytest runs serially (qa-windows.yml:34): 31 min 46 s on Linux, 42 min 42 s on Windows; the Windows qa leg (46.3 min) is the critical path because linux-package needs [qa, qt-gate]. Branch origin/claude/ws-a2-ci-speed-20261104 (unmerged: 7 commits not on main, 398 behind) holds the xdist + pip-cache change; it needs pytest-xdist in the dev extra and K-T01 first.",
+    "qt-gate Linux shards are unbalanced: 45.0 / 25.5 / 19.8 / 35.1 min for shards 1/4..4/4 (round-robin by file name, tools/qt_gate.py:35).",
+    "No pip cache (setup-python without cache: pip) in any of the 7 installing jobs; each reinstalls .[dev,search,rules] (12-46 s per job).",
+    "persist-credentials: false missing on the qa and linux-package checkouts (2 of 5 checkouts) although both run pull-request code.",
+    "All actions are referenced by mutable tag (CODEX-1, strict xfail tests/test_codex_pkg_workflows.py:78).",
+    "Linux package gets only --self-test, not tools/frozen_smoke.py (CODEX-14, strict xfail tests/test_codex_pkg_packaging.py:93).",
+    "linux-smoke ldd check can never fail (OPS-8): it only emits ::warning::.",
+    "Runner warning on every job: actions/checkout@v4, setup-python@v5, upload-artifact@v4 target Node.js 20 and are forced onto Node.js 24 (log of job 129118903307). Newer majors UNVERIFIED (no network)."
+   ],
+   "defects": [
+    {
+     "id": "K-D10",
+     "severity": "medium",
+     "summary": "The main QA workflow runs its full matrix for documentation-only changes and runs pytest on one process.",
+     "evidence": ".github/workflows/qa-windows.yml:2-7 (no paths filter), :34 (python -m pytest -q --junitxml=qa-results.xml)",
+     "failure_scenario": "A PR that edits only docs/*.md queues 2 qa legs and 5 qt-gate legs (about 242 job-minutes, Windows minutes billed at a higher rate) and delays the merge by about 49 minutes.",
+     "proposed_fix": "After L4 lands: add a docs-only short-circuit (a tiny `changes` job or paths-ignore plus a no-op job with the same required check names), run pytest with -n auto --dist loadfile once K-T01/K-T06 are in, add cache: pip.",
+     "regression_test": "tests/test_workflows.py: new static assertions (docs-only filter present; qa step contains -n)."
+    },
+    {
+     "id": "K-D12",
+     "severity": "low",
+     "summary": "The bundled-Qt shared-library check in linux-smoke is vacuous (audit OPS-8, still open).",
+     "evidence": ".github/workflows/qa-windows.yml:159-164",
+     "failure_scenario": "A PyInstaller change drops libQt6XcbQpa.so.6; the glob matches nothing or ldd prints \"not found\"; the step still exits 0 with at most a warning annotation.",
+     "proposed_fix": "Fail when no plugin matched or any dependency is \"not found\" (allow-list the host libraries documented in docs/linux.md).",
+     "regression_test": "tests/test_workflows.py: assert the step contains `exit 1` on missing matches."
+    }
+   ],
+   "blockers": [
+    {
+     "type": "other-lane",
+     "detail": "L4 owns the release job in the same file and tests/test_release_gate.py; every edit of qa-windows.yml must be sequenced after or with L4."
+    },
+    {
+     "type": "windows-only",
+     "detail": "The Windows legs (build, frozen smoke, NSIS install) can only be verified on GitHub windows-latest."
+    }
+   ],
+   "effort_hours": 10,
+   "confidence": "high",
+   "acceptance_tests": [
+    "A docs-only PR finishes its required checks in under 5 minutes without running pytest.",
+    "qa pytest step wall time under 15 min on both OS with the same pass/skip/xfail counts as the serial run.",
+    "tests/test_codex_pkg_packaging.py::test_linux_package_runs_full_cli_smoke passes with its xfail removed."
+   ],
+   "active_lane_overlap": "L4"
+  },
+  {
+   "id": "K-F02",
+   "name": "Workflow fleet hygiene versus owner rules (21 workflow files)",
+   "spec": [
+    "docs/audits/20261015-tools-workflows.md",
+    "docs/audits/codex-workflows-1.md"
+   ],
+   "code": [
+    ".github/workflows/*.yml"
+   ],
+   "status": "partial",
+   "implementation_pct": 83,
+   "validation_pct": 33,
+   "verified_by": [
+    "tests/test_codex_pkg_workflows.py::test_every_job_has_timeout, ::test_workflows_declare_permissions (static)",
+    "tests/test_workflows.py (YAML scalar and top-level key checks, static)",
+    "this inventory: PyYAML parse of all 21 files (see workflow_table)"
+   ],
+   "evidence_class": "fixture",
+   "remaining": [
+    "persist-credentials: false is set on every checkout in only 7 of 21 workflows (audit OPS-20 still open). Missing in corpus-tier-r (5 checkouts), live-backend, live-bindiff, live-capa, live-intel-tools (2), live-rizin, live-unified (2), nightly-fuzz, optional-deps, pages, pilot-eval, qa-windows (2 of 5), unified-corpus (3), unified-live-gates (5, lane L2).",
+    "Third-party actions by mutable tag: ilammy/msvc-dev-cmd@v1 in backend-bundle.yml, live-backend.yml, live-rizin.yml, live-unified.yml (corpus-tier-r.yml already pins the same action to SHA 0b201ec74fa43914dc39ae48a89fd1d8cb592756); openai/codex-action@v1 in codex-cloud.yml (receives secrets.PATCHTRACE_OPENAI_API_KEY); softprops/action-gh-release@v2 in the qa-windows release job (L4). Owner rule \"first-party actions only\" is violated by these three actions.",
+    "No first-party action is pinned by SHA anywhere (CODEX-1). Besides checkout/cache/upload-artifact/download-artifact the fleet uses actions/setup-python@v5, setup-java@v4, configure-pages@v5, upload-pages-artifact@v3, deploy-pages@v4.",
+    "qa-windows.yml is the only push/PR workflow without a docs-only filter; no workflow uses paths-ignore (the others use positive paths filters).",
+    "qa-windows.yml sets cancel-in-progress: true at workflow level although it contains the publishing release job (owner rule: never on release/publish workflows). backend-bundle.yml and pages.yml correctly use false.",
+    "No concurrency block in live-capa, nightly-fuzz, pilot-eval, unified-corpus, unified-live-gates (dispatch/schedule only, so the push/PR rule does not apply; duplicate dispatches can overlap).",
+    "retention-days set only in backend-bundle, diff-and-score, unified-live-gates, winbindex-pairs (audit OPS-19 open for the other upload-artifact users).",
+    "pages.yml workflow_dispatch has no main-only guard (audit OPS-3 open); live-rizin/corpus-tier-r RZ_DIFF has no existence check on Linux (OPS-13 open); live-unified.yml:88 unquoted glob into GITHUB_ENV (OPS-14 open); corpus-tier-r shard default 4 (dispatch) versus 2 (push/PR fallback, :39) (OPS-15 open). OPS-12, OPS-16, OPS-18 UNVERIFIED on this snapshot.",
+    "pip installs without --only-binary and without hashes in 14 run lines (CODEX-5 strict xfail)."
+   ],
+   "defects": [
+    {
+     "id": "K-D13",
+     "severity": "medium",
+     "summary": "pages.yml can be dispatched from any branch and would build and deploy that branch (audit OPS-3, still open).",
+     "evidence": ".github/workflows/pages.yml:9 (workflow_dispatch), :16-48 (no ref guard on build or deploy)",
+     "failure_scenario": "A contributor with write access dispatches pages.yml on a feature branch; once Pages is enabled the branch content is published to the public site without review (the github-pages environment branch policy is not in the repo and is UNVERIFIED).",
+     "proposed_fix": "Add `if: github.ref == 'refs/heads/main'` to both jobs.",
+     "regression_test": "tests/test_site_workflow.py: assert both jobs carry the main-only condition."
+    },
+    {
+     "id": "K-D14",
+     "severity": "low",
+     "summary": "Workflows that run pull-request code keep the GITHUB_TOKEN in .git/config (persist-credentials default).",
+     "evidence": ".github/workflows/corpus-tier-r.yml (5 checkouts), live-backend.yml:25, live-rizin.yml, live-unified.yml, optional-deps.yml, nightly-fuzz.yml:18, pilot-eval.yml, unified-corpus.yml, live-bindiff.yml:44, live-capa.yml, live-intel-tools.yml",
+     "failure_scenario": "A test or build script executed from a pull request reads the persisted token from .git/config; with contents: read the blast radius is read access only, so severity stays low.",
+     "proposed_fix": "Set persist-credentials: false on every checkout that does not push.",
+     "regression_test": "New tests/test_workflow_owner_rules.py::test_every_checkout_drops_credentials (see K-T11)."
+    }
+   ],
+   "blockers": [
+    {
+     "type": "other-lane",
+     "detail": "unified-live-gates.yml belongs to L2 and the qa-windows release job to L4."
+    },
+    {
+     "type": "live-network",
+     "detail": "Pinning actions by SHA needs the upstream commit ids; no network here (only the ilammy SHA already present in corpus-tier-r.yml can be reused)."
+    },
+    {
+     "type": "other",
+     "detail": "Workflow-file hazard (docs/release-process.md): a head commit that changes .github/workflows cannot publish a prerelease with GITHUB_TOKEN; batch workflow edits into one merge."
+    }
+   ],
+   "effort_hours": 8,
+   "confidence": "high",
+   "acceptance_tests": [
+    "tests/test_workflow_owner_rules.py passes with an empty exception ledger for non-lane workflows.",
+    "tests/test_codex_pkg_workflows.py::test_remote_actions_are_immutable passes with the CODEX-1 xfail removed."
+   ],
+   "active_lane_overlap": "L2"
+  },
+  {
+   "id": "K-F03",
+   "name": "Workflow run evidence on main (latest conclusion per workflow)",
+   "spec": [
+    "docs/qa.md",
+    "docs/handoff/qa-and-release.md"
+   ],
+   "code": [
+    ".github/workflows/*.yml",
+    "tools/check_live_status.py"
+   ],
+   "status": "partial",
+   "implementation_pct": 100,
+   "validation_pct": 62,
+   "verified_by": [
+    "GitHub Actions API list_workflow_runs per file with branch=main, read 2026-11-11 (see workflow_table.latest_on_main)"
+   ],
+   "evidence_class": "live-native",
+   "remaining": [
+    "Never run on any branch: diff-and-score.yml, live-capa.yml, pilot-eval.yml, unified-corpus.yml, winbindex-pairs.yml. optional-deps.yml has never run on main (PR/dispatch only; latest PR run success).",
+    "Failing on main: backend-bundle.yml (last two dispatches on 2026-10-15 failed in job pin-verify-signatures-and-rebuild; cause UNVERIFIED) and pages.yml (configure-pages 404: Pages not enabled; failing since 2026-10-15).",
+    "A green advisory run is not acceptance: Windows legs of live-bindiff/live-capa/live-intel-tools use continue-on-error, and check_live_status.py is called without --fail-on-failed and exits 0 with zero status files. The content of the uploaded status JSON for the 13 green workflows was not read (UNVERIFIED).",
+    "unified-live-gates.yml has one run on main (2026-10-30, a04f5a29), 12 days and many merges old (lane L2)."
+   ],
+   "defects": [],
+   "blockers": [
+    {
+     "type": "owner-decision",
+     "detail": "Pages must be enabled in repository settings before pages.yml can pass."
+    },
+    {
+     "type": "owner-decision",
+     "detail": "Dispatch-only workflows (diff-and-score, live-capa, pilot-eval, unified-corpus, winbindex-pairs) need an owner or lane dispatch; Winbindex and Microsoft binaries are involved in two of them."
+    },
+    {
+     "type": "external-tool",
+     "detail": "Ghidra, Rizin, BinDiff, capa, FLOSS, DIE are not installed in the sandbox; live evidence can only come from GitHub runners."
+    }
+   ],
+   "effort_hours": 4,
+   "confidence": "high",
+   "acceptance_tests": [
+    "Every workflow file has a completed run on a main SHA no older than the last change of its own paths, or is listed as an open gate in docs/qa.md."
+   ],
+   "active_lane_overlap": "L2"
+  },
+  {
+   "id": "K-F04",
+   "name": "Skip / xfail / blocked discipline (tests must not pass silently without essential dependencies)",
+   "spec": [
+    "docs/specs/bindiff-execution.md (SPEC-29 section 9.4)",
+    "docs/audits/20261015-test-suite-hygiene.md",
+    "docs/audits/20261015-fixes-test-hygiene.md"
+   ],
+   "code": [
+    "tests/conftest.py",
+    "tests/live_status.py",
+    "tools/check_live_status.py",
+    "pyproject.toml",
+    "tests/tier_r_helpers.py"
+   ],
+   "status": "partial",
+   "implementation_pct": 40,
+   "validation_pct": 40,
+   "verified_by": [
+    "GitHub Actions run 42605088788 (2026-11-09, push on main@882d1ca0, conclusion success): 53 skipped, 9 xfailed, 10 \"LIVE ACCEPTANCE BLOCKED\" lines (live CI log)",
+    "local run with the project venv: tests/test_unified_live_workflow.py, test_backend_bundle_workflow.py, test_unified_corpus_workflow.py skipped at import, 4 tests of test_ci_summary.py skipped (\"could not import yaml\")",
+    "local run with a PyYAML shim on PYTHONPATH: the same files plus tests/test_tier_r_shard.py give 96 passed (so the skipped tests are healthy, only unexecuted)",
+    "tests/test_live_harness.py (mocked harness)"
+   ],
+   "evidence_class": "fixture",
+   "remaining": [
+    "Grep count asked by the brief: 145 lines in tests/**/*.py (146 with one compiled-cache line). Classified: platform 83, missing native tool 28 (+2 written as pytest.xfail), missing Python dependency 8, open defect (strict xfail marks) 7, other 7, comment/docstring mentions 10. Another 48 pytest.importorskip lines are not matched by that grep (yara_x 13, pefile 7, yaml 5, PIL 4, PyInstaller 3, sklearn 3, patchtrace.* 3, networkx 2, iced_x86 2, PySide6 2, colorspacious 1, pygments 1, pydemumble 1, segno 1).",
+    "PyYAML is not a declared dependency, so 39 workflow-contract tests never run in CI (K-D01).",
+    "Never installed by any workflow: pydemumble (tests/test_symbols_decoration.py:112), colorspacious (tests/test_codetext_palette.py:390), scikit-learn (tests/test_calibration_math.py:187,200,211; extra calibration-dev exists but no job installs it), psutil (tests/test_research_qualification_perf_harness.py:92).",
+    "Opt-in tests whose stated runner does not exist: PATCHTRACE_TOY_FREEZE (\"opt-in nightly check\", tests/test_cli_registry.py:514), PATCHTRACE_RIZIN_SIMILARITY (\"CI fetches exact upstream commit\", tests/test_rzdiff_producer_patch.py:27,90,111,130), PATCHTRACE_GHIDRA_DIR (tests/test_tier_w_symbols.py:382), tests/test_live_strings.py (no workflow invokes it), PATCHTRACE_REQUIRE_TIER_R (tests/tier_r_helpers.py:25 says \"as in corpus-tier-r CI\"; no workflow sets it).",
+    "Blocked is reported as xfailed in tests/test_tier_w_symbols.py:240 and :385 (2 of the 9 CI xfails are missing tools, not expected failures).",
+    "The junit file and the release notes cannot tell skipped-by-platform from blocked-by-missing-tool from missing-dependency; only the terminal section \"LIVE ACCEPTANCE BLOCKED\" does, for tests that call record_live_status.",
+    "7 strict xfail marks have no raises= although docs/audits/20261015-fixes-test-hygiene.md records TST-7 as fixed (K-D08).",
+    "unshare-based no-network tests (tests/test_bundle_acceptance_unit.py:281,300,316; tests/test_live_intel_tools.py:136,144) skip when user namespaces are refused; whether GitHub ubuntu-latest permits them is UNVERIFIED (junit not read).",
+    "Windows-leg skip and xfail counts UNVERIFIED (log tail did not reach the pytest summary)."
+   ],
+   "defects": [
+    {
+     "id": "K-D01",
+     "severity": "high",
+     "summary": "39 workflow-contract tests are skipped on every CI run because PyYAML is not installed by the QA install line and the tests use pytest.importorskip.",
+     "evidence": "tests/test_backend_bundle_workflow.py:11 (13 tests), tests/test_unified_live_workflow.py:12 (10), tests/test_unified_corpus_workflow.py:13 (11), tests/test_ci_summary.py:147 (4), tests/test_tier_r_shard.py:437 (1); pyproject.toml:11 (dev extra has no pyyaml); .github/workflows/qa-windows.yml:30 installs only '.[dev,search,rules]'",
+     "failure_scenario": "A change widens permissions or adds an unlisted action in backend-bundle.yml (the workflow that can publish release assets) or removes a never-silent step in corpus-tier-r.yml; the tests that pin those invariants report \"skipped\" and both QA legs stay green.",
+     "proposed_fix": "Add \"pyyaml>=6,<7\" to the dev extra and add a CI guard in the style of tests/test_rules_worker.py:503-508 that fails when CI is set and a declared test dependency cannot be imported.",
+     "regression_test": "tests/test_ci_environment.py::test_declared_test_dependencies_import_in_ci (new): red with CI=1 and no yaml, green after the extra is installed."
+    },
+    {
+     "id": "K-D07",
+     "severity": "medium",
+     "summary": "Tests announce runners that do not exist, so their checks run nowhere; two blocked live checks are reported as xfailed.",
+     "evidence": "tests/test_cli_registry.py:514-515; tests/test_rzdiff_producer_patch.py:27,90,111,130; tests/test_tier_w_symbols.py:240,385; tests/tier_r_helpers.py:25; no match for PATCHTRACE_TOY_FREEZE, PATCHTRACE_RIZIN_SIMILARITY, PATCHTRACE_GHIDRA_DIR, PATCHTRACE_REQUIRE_TIER_R or test_live_strings in .github/workflows",
+     "failure_scenario": "The toy-freeze check of the CLI registry collect hook regresses; no job sets PATCHTRACE_TOY_FREEZE, the test skips with the reason \"opt-in nightly check\" and the regression reaches a release build.",
+     "proposed_fix": "Record these as blocked through record_live_status and pytest.skip(\"BLOCKED ...\") instead of pytest.xfail; correct the reasons to say no workflow runs them; wiring into a scheduled job is a follow-up outside lane files.",
+     "regression_test": "tests/test_tier_w_symbols.py: assert the missing-tool path writes a blocked status entry; tests/test_skip_ledger.py classifies the reasons as blocked."
+    },
+    {
+     "id": "K-D05",
+     "severity": "medium",
+     "summary": "check_live_status.py prints every row under the heading \"Live acceptance (not mocked)\" and ignores the mocked field that conftest writes.",
+     "evidence": "tools/check_live_status.py:45 (fixed heading), :23-36 (mocked never read); tests/conftest.py:78-80 (mocked recorded)",
+     "failure_scenario": "A status directory produced by the fake-executable harness (PATCHTRACE_LIVE_MOCKED=1) is summarised as \"not mocked ... passed\" and copied into docs/qa.md as live evidence.",
+     "proposed_fix": "Add a mocked column, split or relabel the heading, treat a missing mocked field as unknown, add --require ENGINE to fail on absent or blocked engines.",
+     "regression_test": "tests/test_live_harness.py: a mocked status file must render with mocked=yes and never under a \"not mocked\" heading."
+    },
+    {
+     "id": "K-D08",
+     "severity": "low",
+     "summary": "Seven strict xfail marks accept any exception type; the audit follow-up says this was fixed.",
+     "evidence": "tests/test_codex_pkg_workflows.py:78,112,121; tests/test_codex_pkg_packaging.py:93; tests/test_kbc_audit_20261107.py:131,150,160; docs/audits/20261015-fixes-test-hygiene.md:13",
+     "failure_scenario": "An import error or typo inside one of these tests is counted as the expected failure, so the open finding looks tracked while the test no longer checks it.",
+     "proposed_fix": "Add raises=AssertionError (or the specific expected error) to each mark.",
+     "regression_test": "Run the three files: still 7 xfailed; inject a NameError into one test and see it fail."
+    }
+   ],
+   "blockers": [
+    {
+     "type": "other-lane",
+     "detail": "CI wiring of a skip ledger step belongs in qa-windows.yml (same file as L4)."
+    }
+   ],
+   "effort_hours": 10,
+   "confidence": "high",
+   "acceptance_tests": [
+    "CI qa log shows 0 skips with reason \"could not import\" for any module declared in pyproject.toml.",
+    "A skip ledger generated from qa-results.xml lists every non-pass as exactly one of platform, blocked, missing-dependency, open-defect, and fails on an unknown reason.",
+    "No pytest.xfail call carries a BLOCKED reason."
+   ],
+   "active_lane_overlap": "none"
+  },
+  {
+   "id": "K-F05",
+   "name": "Test-type coverage map versus the directive list (13 categories)",
+   "spec": [
+    "docs/specs/program-e/E6-test-performance-beta-plan.md",
+    "docs/qa.md"
+   ],
+   "code": [
+    "tests/ (769 test_*.py files: 742 top level, 27 in tests/stress)",
+    "tools/frozen_smoke.py",
+    "tools/test_windows_installer.ps1",
+    "tools/test_windows_portable.ps1"
+   ],
+   "status": "partial",
+   "implementation_pct": 88,
+   "validation_pct": 85,
+   "verified_by": [
+    "GitHub Actions run 42605088788 (2026-11-09, push on main@882d1ca0, conclusion success) (unit, integration, CLI, GUI, database, security, end-to-end synthetic, packaging, installation, Linux+Windows)",
+    "live-backend 42584073996, live-rizin 42346042490, live-bindiff 42620821985, live-unified 42346042468, live-intel-tools 42819978053 (native adapters, GitHub runners)"
+   ],
+   "evidence_class": "synthetic",
+   "remaining": [
+    "Migration: no dedicated suite. Only schema-version rejection and first-open checks were found (tests/test_models.py:19, tests/test_kbc_store.py:48, tests/test_ui_symbol_local.py:62); no old-format fixture is opened and upgraded. Whether the product supports migrations at all is UNVERIFIED (owned by the persistence workstream).",
+    "Benchmark: no benchmark harness in the default suite; there are in-test wall-clock budgets (39 assertions found) and dispatch-only bench jobs (unified-corpus.yml bench-windows, never run). No trend is recorded.",
+    "Native adapter: the default suite uses fake executables (tests/fake_exe.py, fake_bindiff.py); real tools run only in the live workflows, on synthetic pairs.",
+    "Installation: Windows NSIS install/uninstall and portable ZIP are exercised in CI; Linux is tar extraction plus --self-test; no wheel/sdist build-and-install test exists.",
+    "Cross-platform: ubuntu-latest and windows-latest (plus ubuntu-22.04/24.04 smoke); no macOS leg (not a stated target).",
+    "Counts in the brief differ from the tree: 21 workflow files (not 25) and 769 test files (not 797); CI collected 20874 tests on Linux."
+   ],
+   "defects": [],
+   "blockers": [
+    {
+     "type": "windows-only",
+     "detail": "Windows-only acceptance items A6-A12 (docs/handoff/qa-and-release.md item 8) need windows-latest."
+    },
+    {
+     "type": "external-tool",
+     "detail": "Native adapter live evidence needs Ghidra/Rizin/BinDiff on runners."
+    }
+   ],
+   "effort_hours": 16,
+   "confidence": "medium",
+   "acceptance_tests": [
+    "A migration test opens a committed project fixture of the previous schema version and verifies upgrade or an explicit refusal.",
+    "A benchmark job records timings for a fixed synthetic corpus on a main SHA."
+   ],
+   "active_lane_overlap": "none"
+  },
+  {
+   "id": "K-F06",
+   "name": "Parallel-safety and flake resistance of the suite",
+   "spec": [
+    "docs/audits/20261015-test-suite-hygiene.md (TST-3, TST-4, TST-5, TST-11)"
+   ],
+   "code": [
+    "tests/test_research_qualification_cli.py",
+    "tools/research_qualification/pathguard.py",
+    "tests/test_unified_cor_pipeline.py",
+    "tests/conftest.py",
+    "pyproject.toml"
+   ],
+   "status": "partial",
+   "implementation_pct": 50,
+   "validation_pct": 50,
+   "verified_by": [
+    "reproduced here: `pytest -n 1` on test_paths_outside_allowed_roots_are_refused fails with \"DID NOT RAISE PathGuardError\" at tests/test_research_qualification_cli.py:70; the same selection passes without -n (2 passed in 0.53 s)",
+    "GitHub Actions run 42605088788 (2026-11-09, push on main@882d1ca0, conclusion success) (serial suite and qt-gate 20x/5x green)",
+    "static scan: 0 raw os.chdir, 0 fixed ports (all binds use port 0), 90 time.sleep lines"
+   ],
+   "evidence_class": "fixture",
+   "remaining": [
+    "Root cause of the known xdist failure (K-D02): the test climbs exactly four \"..\" from tmp_path. Serial: /tmp/pytest-of-U/pytest-N/test_x0 -> four levels up is \"/\" -> /etc/passwd is outside the allowed roots -> PathGuardError. Under xdist the base temp gains one level (/tmp/pytest-of-U/pytest-N/popen-gwK/test_x0) -> four levels up is /tmp -> /tmp/etc/passwd is inside tempfile.gettempdir(), an allowed root (tools/research_qualification/pathguard.py:15) -> no error. No shared state, cwd or environment variable is involved; it fails with a single worker too.",
+    "Second fragility in the same test: line 69 needs tmp_path to be under the system temp directory or the cwd; with --basetemp outside both (the unmerged CI-speed branch uses --basetemp \"${{ runner.temp }}/pt\") PG.confine(f) raises (derived from pathguard.py:14-28, not run).",
+    "tests/test_unified_cor_pipeline.py:52,61 compares listings of the shared system temp directory before and after; another worker creating pt-unified-* there breaks it (tests/test_unified_pipeline.py:322-328 already uses a private temp root for the same reason).",
+    "14 @given tests in 8 files run with Hypothesis defaults (200 ms deadline, random seed): tests/test_evalcore_stats.py (5), test_enrichment_wil.py (2), test_enrichment_core.py (2), test_unified_irx_cfg.py, test_unified_pair_text.py, test_unified_irx_pe.py, test_evalcore_scoring.py, test_enrichment_hardening.py. No shared profile exists.",
+    "Tight wall-clock budgets that parallel load can break: tests/test_cli_registry.py:271 (<= 0.125 s), tests/test_gui_host_seam.py:128 (< 0.5 s), tests/test_kev_parse.py:487 (< 1.0 s), tests/test_slow_drip_deadlines.py:118,125, tests/test_pe_api_delta.py:245 (< 2 s).",
+    "No per-test timeout and no faulthandler_timeout; a hung test consumes the 120-minute job limit (tests/conftest.py:25-26 documents one two-hour hang). The modal-dialog watchdog covers only QMessageBox.exec.",
+    "No --strict-markers and no xfail_strict in pyproject.toml (only one custom marker is registered and used, so adoption is safe).",
+    "Import-time process state: 114 sys.path.insert calls and 16 sys.modules assignments in tests (TST-11 open); order-dependence from these was not observed.",
+    "Latent only: tests/test_research_qualification_adapters.py:210 sets TMPDIR; if that were the first tempfile.gettempdir() call in a process the cached value would outlive the test. Not reproduced (the cache was already filled in the xdist worker)."
+   ],
+   "defects": [
+    {
+     "id": "K-D02",
+     "severity": "medium",
+     "summary": "test_paths_outside_allowed_roots_are_refused hard-codes the depth of tmp_path and assumes tmp_path lies under the system temp directory.",
+     "evidence": "tests/test_research_qualification_cli.py:69-71; tools/research_qualification/pathguard.py:14-18 (allowed roots: cwd, tempfile.gettempdir(), RQ_ALLOWED_DIRS)",
+     "failure_scenario": "Any pytest-xdist run (even -n 1), or a deeper TMPDIR/--basetemp: tmp_path/../../../../etc/passwd resolves to /tmp/etc/passwd, inside the temp root, so confine() returns and pytest.raises fails.",
+     "proposed_fix": "Build the traversal from the real depth (tmp_path.joinpath(*['..'] * len(tmp_path.parts), 'etc', 'passwd')) and make the positive case independent of the temp root (monkeypatch.chdir(tmp_path) or RQ_ALLOWED_DIRS=tmp_path); assert the escape target is outside every allowed root before calling confine.",
+     "regression_test": "Run the test serially, with -n 2, and with --basetemp under a directory that is neither cwd nor the system temp; all three must pass."
+    },
+    {
+     "id": "K-D03",
+     "severity": "medium",
+     "summary": "A unified pipeline test asserts that the shared system temp directory listing is unchanged across the test.",
+     "evidence": "tests/test_unified_cor_pipeline.py:52,61",
+     "failure_scenario": "Under xdist a second worker runs any test that creates a pt-unified-* scratch directory between the two listings; the set comparison fails although the code under test cleaned up correctly.",
+     "proposed_fix": "Give the test a private temp root (monkeypatch.setattr(tempfile, 'tempdir', str(tmp_path_factory.mktemp('tmproot')))), as tests/test_unified_pipeline.py:322-328 does.",
+     "regression_test": "Run tests/test_unified_cor_pipeline.py together with tests/test_unified_pipeline.py under -n 4 --dist load repeatedly; no failure."
+    },
+    {
+     "id": "K-D04",
+     "severity": "medium",
+     "summary": "Fourteen property tests rely on the default Hypothesis deadline and a random seed.",
+     "evidence": "tests/test_evalcore_stats.py, tests/test_enrichment_wil.py, tests/test_enrichment_core.py, tests/test_unified_irx_cfg.py, tests/test_unified_pair_text.py, tests/test_unified_irx_pe.py, tests/test_evalcore_scoring.py, tests/test_enrichment_hardening.py (no settings/deadline in any of them); tests/conftest.py (no profile)",
+     "failure_scenario": "On a loaded runner one example takes longer than 200 ms; Hypothesis raises DeadlineExceeded or Flaky and the QA leg fails without a code change.",
+     "proposed_fix": "Register and load one profile in tests/conftest.py (deadline=None; print_blob=True; derandomize when CI is set) so tests without explicit settings inherit it.",
+     "regression_test": "tests/test_hypothesis_profile.py: assert hypothesis.settings.default.deadline is None after conftest import."
+    },
+    {
+     "id": "K-D15",
+     "severity": "low",
+     "summary": "Sub-second wall-clock assertions remain in tests that run in the shared suite.",
+     "evidence": "tests/test_cli_registry.py:271; tests/test_gui_host_seam.py:128; tests/test_kev_parse.py:487; tests/test_slow_drip_deadlines.py:118,125",
+     "failure_scenario": "With all cores busy (xdist on a 2- or 4-core runner) names() takes more than 125 ms once and the leg fails.",
+     "proposed_fix": "Use best-of-N timing or CPU time (time.process_time) for pure-CPU budgets, as tests/test_codetext_tokens.py does.",
+     "regression_test": "Run each file 20 times under `stress`-like load (-n 4 with the full GUI shard) and see no failure."
+    }
+   ],
+   "blockers": [
+    {
+     "type": "none",
+     "detail": ""
+    }
+   ],
+   "effort_hours": 8,
+   "confidence": "high",
+   "acceptance_tests": [
+    "The full suite gives the same passed/skipped/xfailed counts with -n 4 --dist load, -n 4 --dist loadfile and serial, three times each.",
+    "pytest --collect-only succeeds with --strict-markers."
+   ],
+   "active_lane_overlap": "none"
+  },
+  {
+   "id": "K-F07",
+   "name": "Developer and CI test tooling: run_test_suite.py, qt_gate.py, check_live_status.py",
+   "spec": [
+    "docs/specs/bindiff-execution.md (SPEC-29 section 9.4)",
+    "docs/qa.md"
+   ],
+   "code": [
+    "tools/run_test_suite.py",
+    "tools/qt_gate.py",
+    "tools/check_live_status.py"
+   ],
+   "status": "partial",
+   "implementation_pct": 62,
+   "validation_pct": 54,
+   "verified_by": [
+    "tests/test_dev_test_tools.py (synthetic log text)",
+    "tests/test_gui_tasks.py:486-516 (qt_gate command, shards, environment)",
+    "tests/test_live_harness.py:65-75 (check_live_status render and exit codes)",
+    "local call of run_test_suite.failing_ids on a log line with a parametrized id containing spaces"
+   ],
+   "evidence_class": "synthetic",
+   "remaining": [
+    "run_test_suite.py: failing ids are cut at the first space (K-D06); the summary does not separate skipped, blocked and xfailed.",
+    "qt_gate.py: the default patterns miss 29 of 81 Qt-using test files (K-D09); shards are dealt by name, not by duration; the ABORT branch (exit status >= 128) has no test.",
+    "check_live_status.py: no mocked column (K-D05); exits 0 with zero rows and with blocked rows; no workflow passes --fail-on-failed."
+   ],
+   "defects": [
+    {
+     "id": "K-D06",
+     "severity": "low",
+     "summary": "run_test_suite.py truncates node ids that contain spaces, which breaks the base-ref triage.",
+     "evidence": "tools/run_test_suite.py:28 (FAILED regex with \\S+), :48-55 (failing_ids), :76-90 (triage)",
+     "failure_scenario": "tests/test_intel_lexicon.py::test_negated_weakness_phrases_never_classify[The update does not allow a heap overflow.] fails; the tool reports \"...classify[The\", passes that non-existent id to pytest on the base worktree, pytest runs nothing and every failure is labelled [new].",
+     "proposed_fix": "Parse the id up to the \" - \" separator (or read the junit XML) and pass ids unchanged.",
+     "regression_test": "tests/test_dev_test_tools.py: a FAILED line with a bracketed id containing spaces round-trips intact."
+    },
+    {
+     "id": "K-D09",
+     "severity": "medium",
+     "summary": "The Qt repeat gate does not cover 29 test files that create Qt objects, including tests/test_ui.py and all nine tests/stress/test_gui_stress_*.py.",
+     "evidence": "tools/qt_gate.py:19 (DEFAULT_PATTERNS = 'test_gui_*.py', 'test_ui_*.py', 'test_evidence_ui.py', 'test_tooltips.py'; non-recursive glob at :23)",
+     "failure_scenario": "A worker thread leak in tests/test_alpha_integration.py or tests/test_unified_gui_hardening.py aborts the interpreter only on repeated runs; the gate never repeats those files, so the abort first appears as an intermittent qa failure.",
+     "proposed_fix": "Discover gate files by content (uses qtbot/QApplication/MainWindow) or extend the patterns, including tests/stress; keep the list deterministic.",
+     "regression_test": "tests/test_gui_tasks.py: every test file that requests qtbot is in qt_gate.default_files()."
+    }
+   ],
+   "blockers": [
+    {
+     "type": "other-lane",
+     "detail": "More gate files need more shards in the qt-gate matrix of qa-windows.yml (same file as L4)."
+    }
+   ],
+   "effort_hours": 6,
+   "confidence": "high",
+   "acceptance_tests": [
+    "tests/test_dev_test_tools.py and tests/test_live_harness.py cover ids with spaces and mocked rows.",
+    "qt_gate.default_files() is a superset of every test file that requests qtbot."
+   ],
+   "active_lane_overlap": "none"
+  },
+  {
+   "id": "K-F08",
+   "name": "Packaging and installation smoke (build_windows.py, build_linux.py, frozen_smoke.py, installer scripts)",
+   "spec": [
+    "docs/specs/windows-acceptance-and-milestone-builds.md",
+    "docs/release-process.md",
+    "docs/audits/codex-packaging-1.md"
+   ],
+   "code": [
+    "tools/build_windows.py",
+    "tools/build_linux.py",
+    "tools/frozen_smoke.py",
+    "tools/package_windows_installer.py",
+    "tools/test_windows_installer.ps1",
+    "tools/test_windows_portable.ps1"
+   ],
+   "status": "partial",
+   "implementation_pct": 55,
+   "validation_pct": 55,
+   "verified_by": [
+    "GitHub Actions run 42605088788 (2026-11-09, push on main@882d1ca0, conclusion success): build_windows, frozen EXE smoke, portable ZIP, NSIS build, install/launch/uninstall, build_linux, sha256 check, offscreen and xcb self-test on 22.04 and 24.04 all success",
+    "tests/test_acceptance_smoke.py (frozen_smoke logic against python -m patchtrace, not the frozen package)",
+    "tests/test_codex_pkg_packaging.py (static)"
+   ],
+   "evidence_class": "live-native",
+   "remaining": [
+    "Linux package is not run through tools/frozen_smoke.py (CODEX-14 strict xfail, tests/test_codex_pkg_packaging.py:93); tools/build_linux.py:454-455 runs only --self-test and `rank --help`.",
+    "Bundled-library check cannot fail (OPS-8, see K-D12).",
+    "Version 0.1.0 is hard-coded 10 times in qa-windows.yml and in tools/build_linux.py:25 (OPS-9 open).",
+    "Both build scripts copy the whole docs/ tree, including docs/audits and docs/plans, into the end-user package (tools/build_linux.py:410, tools/build_windows.py:91; OPS-10 open).",
+    "No wheel or sdist build-and-install test.",
+    "Each OS package is built once and reused by smoke and release (owner rule met)."
+   ],
+   "defects": [],
+   "blockers": [
+    {
+     "type": "windows-only",
+     "detail": "Windows packaging must run on Windows (AGENTS.md)."
+    },
+    {
+     "type": "other",
+     "detail": "A local PyInstaller build of the Linux package is CPU-heavy; verifying a frozen_smoke hook in build_linux.py here would compete with the shared 4 cores."
+    }
+   ],
+   "effort_hours": 8,
+   "confidence": "medium",
+   "acceptance_tests": [
+    "linux-package or linux-smoke runs tools/frozen_smoke.py against PatchTrace/PatchTrace and the CODEX-14 xfail is removed.",
+    "The packaged docs folder contains only the curated user documents."
+   ],
+   "active_lane_overlap": "L4"
+  },
+  {
+   "id": "K-F09",
+   "name": "Release gate and publish job (inventory only; owned by L4)",
+   "spec": [
+    "docs/release-process.md",
+    "docs/specs/windows-release-signing-policy.md"
+   ],
+   "code": [
+    "tools/release_gate.py",
+    "tools/milestone_notes.py",
+    ".github/workflows/qa-windows.yml (release-gate, release)",
+    "tests/test_release_gate.py"
+   ],
+   "status": "partial",
+   "implementation_pct": 50,
+   "validation_pct": 50,
+   "verified_by": [
+    "tests/test_release_gate.py, tests/test_codex_pkg_workflows.py (synthetic)",
+    "GitHub Actions run 42605088788 (2026-11-09, push on main@882d1ca0, conclusion success): release-gate success, release skipped by the gate; last publication UNVERIFIED"
+   ],
+   "evidence_class": "synthetic",
+   "remaining": [
+    "A v* tag is still published as prerelease \"PatchTrace beta <run>\" (OPS-5 open: qa-windows.yml release step prerelease: true, fixed name).",
+    "release has no always() with explicit result checks (OPS-6 open).",
+    "Workflow-level cancel-in-progress: true also covers the release job (K-D11).",
+    "softprops/action-gh-release@v2 is third-party and tag-pinned.",
+    "Version single-sourcing (OPS-9)."
+   ],
+   "defects": [
+    {
+     "id": "K-D11",
+     "severity": "medium",
+     "summary": "A second push to main can cancel a run while its release job is uploading assets.",
+     "evidence": ".github/workflows/qa-windows.yml:10-12 (concurrency group per workflow+event+ref, cancel-in-progress: true) and the release job in the same workflow",
+     "failure_scenario": "Merge A reaches the release job (about 1 minute, softprops upload); merge B lands; the group cancels run A mid-upload and leaves a prerelease with a partial asset set and no checksum for some files.",
+     "proposed_fix": "L4: give release (and release-gate) a job-level concurrency group with cancel-in-progress: false, or exclude tag and publishing runs from cancellation.",
+     "regression_test": "tests/test_workflows.py: assert the release job is not cancellable."
+    }
+   ],
+   "blockers": [
+    {
+     "type": "other-lane",
+     "detail": "L4 release-job naming/pinning owns these files."
+    }
+   ],
+   "effort_hours": 4,
+   "confidence": "medium",
+   "acceptance_tests": [
+    "Owned by L4."
+   ],
+   "active_lane_overlap": "L4"
+  },
+  {
+   "id": "K-F10",
+   "name": "QA and release documentation currency",
+   "spec": [
+    "docs/release-process.md",
+    "docs/handoff/qa-and-release.md",
+    "docs/audits/20261015-test-suite-hygiene.md",
+    "docs/audits/20261015-fixes-test-hygiene.md",
+    "docs/audits/20261015-tools-workflows.md"
+   ],
+   "code": [],
+   "status": "partial",
+   "implementation_pct": 25,
+   "validation_pct": 25,
+   "verified_by": [
+    "read against the workflow files at main@882d1ca0"
+   ],
+   "evidence_class": "none",
+   "remaining": [
+    "docs/handoff/qa-and-release.md is dated 2026-10-15: it describes PR #64/#66 as pending, a 60-minute qa timeout (now 120) and suite counts of about 13.2k tests (now 20.9k).",
+    "docs/release-process.md says release waits for qa, linux-smoke and release-gate; the workflow also needs qt-gate.",
+    "docs/audits/20261015-fixes-test-hygiene.md records TST-7 as fixed (commit ce6da5f); main has no raises= on those marks.",
+    "No status file tracks OPS-3..OPS-20 of 20261015-tools-workflows.md (fixes-gui-ops covers OPS-1 and OPS-2 only). Verified still open here: OPS-3, 5, 6, 8, 9, 10, 13, 14, 15, 19, 20.",
+    "tools/run_test_suite.py docstring says xdist \"is a local convenience, not a repository dependency\"; keep in step with any decision to add pytest-xdist to the dev extra."
+   ],
+   "defects": [],
+   "blockers": [
+    {
+     "type": "none",
+     "detail": ""
+    }
+   ],
+   "effort_hours": 3,
+   "confidence": "high",
+   "acceptance_tests": [
+    "Each OPS and TST finding has one status line with a commit or \"open\" that matches main."
+   ],
+   "active_lane_overlap": "none"
+  }
+ ],
+ "actionable_now": [
+  {
+   "id": "K-T01",
+   "title": "Make the path-guard CLI test independent of tmp_path depth and temp root",
+   "why": "Only known xdist-only failure (K-D02); reproduced with -n 1. It blocks parallel baselines for every lane and the CI speed-up.",
+   "files": [
+    "tests/test_research_qualification_cli.py"
+   ],
+   "tests": [
+    "tests/test_research_qualification_cli.py::test_paths_outside_allowed_roots_are_refused (serial, -n 2, and --basetemp outside cwd and temp)"
+   ],
+   "size": "S",
+   "priority": 1,
+   "risk": "Test-only change; keep the four CLI refusals and the RQ_ALLOWED_DIRS positive case.",
+   "depends_on": [],
+   "lane_conflict": "none",
+   "acceptance": "Red today with `-n 1`; green serial, with -n 2 and with a custom --basetemp."
+  },
+  {
+   "id": "K-T02",
+   "title": "Declare PyYAML for tests and fail CI when a declared test dependency is missing",
+   "why": "39 workflow-contract tests are skipped on every CI run (K-D01); they pass when PyYAML is present (96 passed with a shim).",
+   "files": [
+    "pyproject.toml",
+    "tests/test_ci_environment.py (new)"
+   ],
+   "tests": [
+    "tests/test_ci_environment.py",
+    "tests/test_backend_bundle_workflow.py",
+    "tests/test_unified_corpus_workflow.py",
+    "tests/test_ci_summary.py",
+    "tests/test_codex_pkg_packaging.py"
+   ],
+   "size": "S",
+   "priority": 2,
+   "risk": "New dev dependency must keep an upper bound (tests/test_codex_pkg_packaging.py::test_all_declared_dependencies_have_pin_or_upper_bound) and must not enter the frozen package. Do not edit tests/test_unified_live_workflow.py (it tests the L2 workflow).",
+   "depends_on": [],
+   "lane_conflict": "none",
+   "acceptance": "With CI=1 and no yaml the guard test fails; after installing the dev extra the five yaml-gated files run with 0 skips."
+  },
+  {
+   "id": "K-T03",
+   "title": "Skip ledger: classify every non-pass in a junit file as platform, blocked, missing-dependency, open-defect or other",
+   "why": "Owner directive: distinguish skipped, blocked, failed and passed. Today junit and the release notes show one \"skipped\" number (53 on Linux).",
+   "files": [
+    "tools/skip_ledger.py (new)",
+    "tests/test_skip_ledger.py (new)"
+   ],
+   "tests": [
+    "tests/test_skip_ledger.py (synthetic junit documents: importorskip reason, BLOCKED reason, platform reason, strict xfail, unknown reason)"
+   ],
+   "size": "M",
+   "priority": 3,
+   "risk": "Reason-pattern rules can drift; unknown reasons must fail in --strict mode rather than fall into a default bucket. CI wiring is a later one-line step in qa-windows.yml.",
+   "depends_on": [],
+   "lane_conflict": "none",
+   "acceptance": "Exit 1 on a \"could not import\" skip of a declared dependency or an unclassified reason; Markdown table with five counts; pure stdlib."
+  },
+  {
+   "id": "K-T04",
+   "title": "check_live_status.py: show the mocked flag, stop labelling every row \"not mocked\", add --require ENGINE",
+   "why": "Evidence classes must stay separate (K-D05).",
+   "files": [
+    "tools/check_live_status.py",
+    "tests/test_live_harness.py"
+   ],
+   "tests": [
+    "tests/test_live_harness.py::test_check_live_status_renders_and_flags_bad_files plus new cases for mocked rows and --require"
+   ],
+   "size": "S",
+   "priority": 4,
+   "risk": "The table text is copied into docs/qa.md by integrators; keep existing columns and add one.",
+   "depends_on": [],
+   "lane_conflict": "none",
+   "acceptance": "A status file with mocked=true renders mocked=yes and no \"not mocked\" heading covers it; --require bindiff exits 1 when the file is absent or blocked."
+  },
+  {
+   "id": "K-T05",
+   "title": "Shared Hypothesis profile in tests/conftest.py",
+   "why": "14 property tests use the 200 ms default deadline and random seeds (K-D04).",
+   "files": [
+    "tests/conftest.py",
+    "tests/test_hypothesis_profile.py (new)"
+   ],
+   "tests": [
+    "tests/test_hypothesis_profile.py",
+    "tests/test_evalcore_stats.py",
+    "tests/test_enrichment_core.py"
+   ],
+   "size": "S",
+   "priority": 5,
+   "risk": "Explicit @settings on other tests keep precedence; do not set max_examples globally.",
+   "depends_on": [],
+   "lane_conflict": "none",
+   "acceptance": "hypothesis.settings.default.deadline is None in the suite; the 8 files pass unchanged."
+  },
+  {
+   "id": "K-T06",
+   "title": "Private temp root for the shared-temp listing test",
+   "why": "Race under parallel workers (K-D03).",
+   "files": [
+    "tests/test_unified_cor_pipeline.py"
+   ],
+   "tests": [
+    "tests/test_unified_cor_pipeline.py (with tests/test_unified_pipeline.py under -n 4 --dist load)"
+   ],
+   "size": "S",
+   "priority": 6,
+   "risk": "File tests the unified pipeline but is not in the L1 file list; change the fixture only.",
+   "depends_on": [],
+   "lane_conflict": "none",
+   "acceptance": "Both parametrized cases pass 20 times under -n 4 with the unified files running beside them."
+  },
+  {
+   "id": "K-T07",
+   "title": "Report blocked live checks as blocked, not xfailed, and correct reasons that name runners that do not exist",
+   "why": "K-D07: 2 of 9 CI xfails are missing tools; three opt-in groups claim a nightly or CI runner that no workflow provides.",
+   "files": [
+    "tests/test_tier_w_symbols.py",
+    "tests/test_cli_registry.py",
+    "tests/test_rzdiff_producer_patch.py"
+   ],
+   "tests": [
+    "tests/test_tier_w_symbols.py",
+    "tests/test_cli_registry.py",
+    "tests/test_rzdiff_producer_patch.py"
+   ],
+   "size": "S",
+   "priority": 7,
+   "risk": "llvm-pdbutil is installed in this sandbox, so the blocked branch must be tested by hiding it (monkeypatch shutil.which).",
+   "depends_on": [
+    "K-T03"
+   ],
+   "lane_conflict": "none",
+   "acceptance": "No pytest.xfail call with a BLOCKED reason remains; the missing-tool path writes a blocked status entry; skip reasons say that no workflow sets the variable."
+  },
+  {
+   "id": "K-T08",
+   "title": "Add raises= to the seven strict xfail marks",
+   "why": "K-D08; the audit follow-up already claims this.",
+   "files": [
+    "tests/test_codex_pkg_workflows.py",
+    "tests/test_codex_pkg_packaging.py",
+    "tests/test_kbc_audit_20261107.py"
+   ],
+   "tests": [
+    "the same three files: 7 xfailed before and after"
+   ],
+   "size": "S",
+   "priority": 8,
+   "risk": "Confirm the actual exception type of each KBA test before choosing raises=.",
+   "depends_on": [],
+   "lane_conflict": "none",
+   "acceptance": "Each mark names its expected exception; a deliberately injected NameError fails the test."
+  },
+  {
+   "id": "K-T09",
+   "title": "run_test_suite.py: keep node ids with spaces intact and print skipped/xfailed counts",
+   "why": "K-D06: base-ref triage mislabels every failure as new when one id contains a space (20 such ids in three sampled files).",
+   "files": [
+    "tools/run_test_suite.py",
+    "tests/test_dev_test_tools.py"
+   ],
+   "tests": [
+    "tests/test_dev_test_tools.py::test_run_test_suite_reads_failures_and_the_summary_line (extended)"
+   ],
+   "size": "S",
+   "priority": 9,
+   "risk": "Ids can contain \" - \" as well; prefer the longest prefix that is followed by \" - \" and exists in the collected ids, or read junit.",
+   "depends_on": [],
+   "lane_conflict": "none",
+   "acceptance": "A FAILED line for test_x[two words] yields the full id and triage passes it unchanged after `--`."
+  },
+  {
+   "id": "K-T10",
+   "title": "Qt repeat gate covers every Qt-using test file",
+   "why": "K-D09: 29 of 81 Qt-using files are never repeated.",
+   "files": [
+    "tools/qt_gate.py",
+    "tests/test_gui_tasks.py"
+   ],
+   "tests": [
+    "tests/test_gui_tasks.py::test_qt_gate_default_files_cover_the_gui_tests_and_this_file (extended to every file that requests qtbot)"
+   ],
+   "size": "M",
+   "priority": 10,
+   "risk": "More files lengthen the Linux shards (slowest is 45 min of a 120 min limit); adding shards means editing the qt-gate matrix in qa-windows.yml, which must wait for L4.",
+   "depends_on": [],
+   "lane_conflict": "none",
+   "acceptance": "default_files() is a superset of all test files that request qtbot, including tests/stress; shard slices still cover each file exactly once."
+  },
+  {
+   "id": "K-T11",
+   "title": "Static owner-rule test for workflows and fixes in non-lane workflow files",
+   "why": "Only timeouts and permissions are enforced by tests; concurrency policy, credential persistence, third-party allow-list and docs-only filters are not (K-F02: 104 of 126 rule checks pass).",
+   "files": [
+    "tests/test_workflow_owner_rules.py (new)",
+    ".github/workflows/corpus-tier-r.yml",
+    ".github/workflows/live-backend.yml",
+    ".github/workflows/live-bindiff.yml",
+    ".github/workflows/live-capa.yml",
+    ".github/workflows/live-intel-tools.yml",
+    ".github/workflows/live-rizin.yml",
+    ".github/workflows/live-unified.yml",
+    ".github/workflows/nightly-fuzz.yml",
+    ".github/workflows/optional-deps.yml",
+    ".github/workflows/pilot-eval.yml",
+    ".github/workflows/unified-corpus.yml",
+    ".github/workflows/backend-bundle.yml",
+    "tests/test_backend_bundle_workflow.py"
+   ],
+   "tests": [
+    "tests/test_workflow_owner_rules.py",
+    "tests/test_workflows.py",
+    "tests/test_codex_pkg_workflows.py",
+    "tests/test_backend_bundle_workflow.py"
+   ],
+   "size": "M",
+   "priority": 11,
+   "risk": "Workflow edits cannot be executed here, only statically checked; a head commit touching .github/workflows cannot publish a prerelease, so land them in one merge. Exceptions for qa-windows.yml (L4) and unified-live-gates.yml (L2) go into a ledger that may only shrink. Reuse the ilammy SHA already in corpus-tier-r.yml; other SHAs need network.",
+   "depends_on": [
+    "K-T02"
+   ],
+   "lane_conflict": "none",
+   "acceptance": "The new test passes; persist-credentials: false on every non-pushing checkout of the listed files; ilammy/msvc-dev-cmd pinned by SHA in the four files that use the tag."
+  },
+  {
+   "id": "K-T12",
+   "title": "pages.yml: main-only guard for build and deploy",
+   "why": "K-D13 (audit OPS-3).",
+   "files": [
+    ".github/workflows/pages.yml",
+    "tests/test_site_workflow.py"
+   ],
+   "tests": [
+    "tests/test_site_workflow.py",
+    "tests/test_codex_pkg_workflows.py::test_pages_build_has_read_only_permissions"
+   ],
+   "size": "S",
+   "priority": 12,
+   "risk": "Static verification only; Pages is not enabled, so no live run is possible.",
+   "depends_on": [],
+   "lane_conflict": "none",
+   "acceptance": "Both jobs carry `if: github.ref == 'refs/heads/main'` and a test asserts it."
+  },
+  {
+   "id": "K-T13",
+   "title": "pytest configuration hardening in pyproject.toml",
+   "why": "A hung test burns the 120-minute job limit with no stack; a typo in a marker name is silently accepted.",
+   "files": [
+    "pyproject.toml",
+    "tests/test_pytest_config.py (new)"
+   ],
+   "tests": [
+    "tests/test_pytest_config.py (reads pyproject.toml)",
+    "pytest --collect-only -q --strict-markers"
+   ],
+   "size": "S",
+   "priority": 13,
+   "risk": "faulthandler_timeout dumps stacks but does not stop the test; choose a value above the slowest legitimate test (UNVERIFIED which one). xfail_strict changes nothing today (all marks are already strict).",
+   "depends_on": [],
+   "lane_conflict": "none",
+   "acceptance": "addopts contains --strict-markers; xfail_strict = true; faulthandler_timeout set; collection of the whole suite succeeds."
+  }
+ ],
+ "workflow_table": [
+  {
+   "file": "backend-bundle.yml",
+   "name": "Backend bundle (zero-download full build)",
+   "triggers": [
+    "workflow_dispatch",
+    "workflow_call",
+    "push tags=v*"
+   ],
+   "jobs": [
+    "pin",
+    "vrfy",
+    "bld-win",
+    "acc-win",
+    "bld-lin",
+    "acc-lin",
+    "pub"
+   ],
+   "job_count": 7,
+   "timeout_minutes": {
+    "all_jobs_have_timeout": true,
+    "min": 15,
+    "max": 60
+   },
+   "concurrency": {
+    "present": true,
+    "group": "backend-bundle-${{ github.ref }}",
+    "cancel_in_progress": false,
+    "meets_owner_rule": true
+   },
+   "permissions": {
+    "top_level": {
+     "contents": "read"
+    },
+    "job_level_overrides": {
+     "pub": {
+      "contents": "write"
+     }
+    },
+    "minimal": true
+   },
+   "paths_ignore_present": false,
+   "docs_only_filter": "yes (positive paths filter or tag-only push)",
+   "checkouts": 6,
+   "checkouts_with_persist_credentials_false": 6,
+   "third_party_actions": [
+    {
+     "uses": "ilammy/msvc-dev-cmd@v1",
+     "pinned_by_sha": false
+    }
+   ],
+   "first_party_actions": [
+    "actions/cache@v4",
+    "actions/checkout@v4",
+    "actions/download-artifact@v4",
+    "actions/setup-python@v5",
+    "actions/upload-artifact@v4"
+   ],
+   "first_party_pinned_by_sha": false,
+   "latest_on_main": {
+    "conclusion": "failure",
+    "run_id": "38660893572",
+    "date": "2026-10-15",
+    "note": "workflow_dispatch; failed job pin-verify-signatures-and-rebuild (cause UNVERIFIED, log tail shows only artifact upload); previous run 38660818187 also failure; 5 runs on main"
+   }
+  },
+  {
+   "file": "codex-cloud.yml",
+   "name": "PatchTrace Codex Cloud Test",
+   "triggers": [
+    "workflow_dispatch"
+   ],
+   "jobs": [
+    "codex-test"
+   ],
+   "job_count": 1,
+   "timeout_minutes": {
+    "all_jobs_have_timeout": true,
+    "min": 30,
+    "max": 30
+   },
+   "concurrency": {
+    "present": true,
+    "group": "patchtrace-codex-test",
+    "cancel_in_progress": false,
+    "meets_owner_rule": true
+   },
+   "permissions": {
+    "top_level": {
+     "contents": "read"
+    },
+    "job_level_overrides": {},
+    "minimal": true
+   },
+   "paths_ignore_present": false,
+   "docs_only_filter": "n/a (no push/pull_request trigger)",
+   "checkouts": 1,
+   "checkouts_with_persist_credentials_false": 1,
+   "third_party_actions": [
+    {
+     "uses": "openai/codex-action@v1",
+     "pinned_by_sha": false
+    }
+   ],
+   "first_party_actions": [
+    "actions/checkout@v4"
+   ],
+   "first_party_pinned_by_sha": false,
+   "latest_on_main": {
+    "conclusion": "success",
+    "run_id": "41691829253",
+    "date": "2026-11-03",
+    "note": "workflow_dispatch; previous run 41688332437 failure"
+   }
+  },
+  {
+   "file": "corpus-tier-r.yml",
+   "name": "Corpus Tier R (sharded)",
+   "triggers": [
+    "workflow_dispatch",
+    "schedule 17 3 * * *; 47 3 * * *",
+    "push branches=main (paths filter)",
+    "pull_request (paths filter)"
+   ],
+   "jobs": [
+    "plan",
+    "shard",
+    "merge",
+    "windows-advisory",
+    "msvc-advisory"
+   ],
+   "job_count": 5,
+   "timeout_minutes": {
+    "all_jobs_have_timeout": true,
+    "min": 10,
+    "max": 120
+   },
+   "concurrency": {
+    "present": true,
+    "group": "${{ github.workflow }}-${{ github.event_name }}-${{ github.ref }}",
+    "cancel_in_progress": true,
+    "meets_owner_rule": true
+   },
+   "permissions": {
+    "top_level": {
+     "contents": "read"
+    },
+    "job_level_overrides": {},
+    "minimal": true
+   },
+   "paths_ignore_present": false,
+   "docs_only_filter": "yes (positive paths filter or tag-only push)",
+   "checkouts": 5,
+   "checkouts_with_persist_credentials_false": 0,
+   "third_party_actions": [
+    {
+     "uses": "ilammy/msvc-dev-cmd@0b201ec74fa43914dc39ae48a89fd1d8cb592756",
+     "pinned_by_sha": true
+    }
+   ],
+   "first_party_actions": [
+    "actions/cache@v4",
+    "actions/checkout@v4",
+    "actions/download-artifact@v4",
+    "actions/setup-java@v4",
+    "actions/setup-python@v5",
+    "actions/upload-artifact@v4"
+   ],
+   "first_party_pinned_by_sha": false,
+   "latest_on_main": {
+    "conclusion": "success",
+    "run_id": "42810633773",
+    "date": "2026-11-10",
+    "note": "schedule on 882d1ca0; previous 42804968963 success"
+   }
+  },
+  {
+   "file": "diff-and-score.yml",
+   "name": "Diff and score (L3, manual)",
+   "triggers": [
+    "workflow_dispatch"
+   ],
+   "jobs": [
+    "plan",
+    "diff",
+    "score"
+   ],
+   "job_count": 3,
+   "timeout_minutes": {
+    "all_jobs_have_timeout": true,
+    "min": 15,
+    "max": 360
+   },
+   "concurrency": {
+    "present": true,
+    "group": "diff-and-score",
+    "cancel_in_progress": false,
+    "meets_owner_rule": true
+   },
+   "permissions": {
+    "top_level": {
+     "contents": "read",
+     "actions": "read"
+    },
+    "job_level_overrides": {},
+    "minimal": true
+   },
+   "paths_ignore_present": false,
+   "docs_only_filter": "n/a (no push/pull_request trigger)",
+   "checkouts": 3,
+   "checkouts_with_persist_credentials_false": 3,
+   "third_party_actions": [],
+   "first_party_actions": [
+    "actions/checkout@v4",
+    "actions/download-artifact@v4",
+    "actions/setup-java@v4",
+    "actions/setup-python@v5",
+    "actions/upload-artifact@v4"
+   ],
+   "first_party_pinned_by_sha": false,
+   "latest_on_main": {
+    "conclusion": "never run",
+    "run_id": "",
+    "date": "",
+    "note": "0 runs on any branch"
+   }
+  },
+  {
+   "file": "live-backend.yml",
+   "name": "Native Windows Ghidriff acceptance",
+   "triggers": [
+    "workflow_dispatch",
+    "push branches=main,codex/** (paths filter)",
+    "pull_request (paths filter)"
+   ],
+   "jobs": [
+    "native"
+   ],
+   "job_count": 1,
+   "timeout_minutes": {
+    "all_jobs_have_timeout": true,
+    "min": 25,
+    "max": 25
+   },
+   "concurrency": {
+    "present": true,
+    "group": "${{ github.workflow }}-${{ github.event_name }}-${{ github.ref }}",
+    "cancel_in_progress": true,
+    "meets_owner_rule": true
+   },
+   "permissions": {
+    "top_level": {
+     "contents": "read"
+    },
+    "job_level_overrides": {},
+    "minimal": true
+   },
+   "paths_ignore_present": false,
+   "docs_only_filter": "yes (positive paths filter or tag-only push)",
+   "checkouts": 1,
+   "checkouts_with_persist_credentials_false": 0,
+   "third_party_actions": [
+    {
+     "uses": "ilammy/msvc-dev-cmd@v1",
+     "pinned_by_sha": false
+    }
+   ],
+   "first_party_actions": [
+    "actions/checkout@v4",
+    "actions/setup-java@v4",
+    "actions/setup-python@v5",
+    "actions/upload-artifact@v4"
+   ],
+   "first_party_pinned_by_sha": false,
+   "latest_on_main": {
+    "conclusion": "success",
+    "run_id": "42584073996",
+    "date": "2026-11-09",
+    "note": "push on 252030f6 (not head: later merges were docs-only and filtered by paths); previous 42583886407 cancelled by concurrency"
+   }
+  },
+  {
+   "file": "live-bindiff.yml",
+   "name": "Live BinDiff acceptance",
+   "triggers": [
+    "workflow_dispatch",
+    "schedule 17 4 * * 1",
+    "pull_request (paths filter)"
+   ],
+   "jobs": [
+    "live-bindiff"
+   ],
+   "job_count": 1,
+   "timeout_minutes": {
+    "all_jobs_have_timeout": true,
+    "min": 45,
+    "max": 45
+   },
+   "concurrency": {
+    "present": true,
+    "group": "${{ github.workflow }}-${{ github.event_name }}-${{ github.ref }}",
+    "cancel_in_progress": true,
+    "meets_owner_rule": true
+   },
+   "permissions": {
+    "top_level": {
+     "contents": "read"
+    },
+    "job_level_overrides": {},
+    "minimal": true
+   },
+   "paths_ignore_present": false,
+   "docs_only_filter": "yes (positive paths filter or tag-only push)",
+   "checkouts": 1,
+   "checkouts_with_persist_credentials_false": 0,
+   "third_party_actions": [],
+   "first_party_actions": [
+    "actions/cache@v4",
+    "actions/checkout@v4",
+    "actions/setup-python@v5",
+    "actions/upload-artifact@v4"
+   ],
+   "first_party_pinned_by_sha": false,
+   "latest_on_main": {
+    "conclusion": "success",
+    "run_id": "42620821985",
+    "date": "2026-11-09",
+    "note": "schedule on 882d1ca0; previous 41444737130 success"
+   }
+  },
+  {
+   "file": "live-capa.yml",
+   "name": "Live capa pairs acceptance",
+   "triggers": [
+    "workflow_dispatch"
+   ],
+   "jobs": [
+    "live-capa"
+   ],
+   "job_count": 1,
+   "timeout_minutes": {
+    "all_jobs_have_timeout": true,
+    "min": 60,
+    "max": 60
+   },
+   "concurrency": {
+    "present": false,
+    "group": null,
+    "cancel_in_progress": null,
+    "meets_owner_rule": true
+   },
+   "permissions": {
+    "top_level": {
+     "contents": "read"
+    },
+    "job_level_overrides": {},
+    "minimal": true
+   },
+   "paths_ignore_present": false,
+   "docs_only_filter": "n/a (no push/pull_request trigger)",
+   "checkouts": 1,
+   "checkouts_with_persist_credentials_false": 0,
+   "third_party_actions": [],
+   "first_party_actions": [
+    "actions/cache@v4",
+    "actions/checkout@v4",
+    "actions/setup-python@v5",
+    "actions/upload-artifact@v4"
+   ],
+   "first_party_pinned_by_sha": false,
+   "latest_on_main": {
+    "conclusion": "never run",
+    "run_id": "",
+    "date": "",
+    "note": "0 runs on any branch"
+   }
+  },
+  {
+   "file": "live-intel-tools.yml",
+   "name": "Live intel tools acceptance",
+   "triggers": [
+    "workflow_dispatch",
+    "schedule 41 4 * * 2",
+    "pull_request (paths filter)"
+   ],
+   "jobs": [
+    "live-intel-tools",
+    "live-buildenv"
+   ],
+   "job_count": 2,
+   "timeout_minutes": {
+    "all_jobs_have_timeout": true,
+    "min": 30,
+    "max": 60
+   },
+   "concurrency": {
+    "present": true,
+    "group": "${{ github.workflow }}-${{ github.event_name }}-${{ github.ref }}",
+    "cancel_in_progress": true,
+    "meets_owner_rule": true
+   },
+   "permissions": {
+    "top_level": {
+     "contents": "read"
+    },
+    "job_level_overrides": {},
+    "minimal": true
+   },
+   "paths_ignore_present": false,
+   "docs_only_filter": "yes (positive paths filter or tag-only push)",
+   "checkouts": 2,
+   "checkouts_with_persist_credentials_false": 0,
+   "third_party_actions": [],
+   "first_party_actions": [
+    "actions/cache@v4",
+    "actions/checkout@v4",
+    "actions/setup-python@v5",
+    "actions/upload-artifact@v4"
+   ],
+   "first_party_pinned_by_sha": false,
+   "latest_on_main": {
+    "conclusion": "success",
+    "run_id": "42819978053",
+    "date": "2026-11-10",
+    "note": "schedule on 882d1ca0; previous 41634514664 success"
+   }
+  },
+  {
+   "file": "live-kbc.yml",
+   "name": "Live KB/CVE correlator probe (advisory)",
+   "triggers": [
+    "workflow_dispatch"
+   ],
+   "jobs": [
+    "live-kbc"
+   ],
+   "job_count": 1,
+   "timeout_minutes": {
+    "all_jobs_have_timeout": true,
+    "min": 20,
+    "max": 20
+   },
+   "concurrency": {
+    "present": true,
+    "group": "live-kbc",
+    "cancel_in_progress": false,
+    "meets_owner_rule": true
+   },
+   "permissions": {
+    "top_level": {
+     "contents": "read"
+    },
+    "job_level_overrides": {},
+    "minimal": true
+   },
+   "paths_ignore_present": false,
+   "docs_only_filter": "n/a (no push/pull_request trigger)",
+   "checkouts": 1,
+   "checkouts_with_persist_credentials_false": 1,
+   "third_party_actions": [],
+   "first_party_actions": [
+    "actions/checkout@v4",
+    "actions/setup-python@v5",
+    "actions/upload-artifact@v4"
+   ],
+   "first_party_pinned_by_sha": false,
+   "latest_on_main": {
+    "conclusion": "success",
+    "run_id": "42346127399",
+    "date": "2026-11-07",
+    "note": "workflow_dispatch; the only run"
+   }
+  },
+  {
+   "file": "live-kev.yml",
+   "name": "Live KEV catalog probe (advisory)",
+   "triggers": [
+    "workflow_dispatch",
+    "schedule 23 6 * * 3"
+   ],
+   "jobs": [
+    "live-kev"
+   ],
+   "job_count": 1,
+   "timeout_minutes": {
+    "all_jobs_have_timeout": true,
+    "min": 15,
+    "max": 15
+   },
+   "concurrency": {
+    "present": true,
+    "group": "live-kev",
+    "cancel_in_progress": false,
+    "meets_owner_rule": true
+   },
+   "permissions": {
+    "top_level": {
+     "contents": "read"
+    },
+    "job_level_overrides": {},
+    "minimal": true
+   },
+   "paths_ignore_present": false,
+   "docs_only_filter": "n/a (no push/pull_request trigger)",
+   "checkouts": 1,
+   "checkouts_with_persist_credentials_false": 1,
+   "third_party_actions": [],
+   "first_party_actions": [
+    "actions/checkout@v4",
+    "actions/setup-python@v5",
+    "actions/upload-artifact@v4"
+   ],
+   "first_party_pinned_by_sha": false,
+   "latest_on_main": {
+    "conclusion": "success",
+    "run_id": "41850105271",
+    "date": "2026-11-04",
+    "note": "schedule; previous 40694148430 success"
+   }
+  },
+  {
+   "file": "live-nvd.yml",
+   "name": "Live NVD/MSRC probe (advisory)",
+   "triggers": [
+    "workflow_dispatch",
+    "schedule 37 5 * * 1"
+   ],
+   "jobs": [
+    "live-nvd"
+   ],
+   "job_count": 1,
+   "timeout_minutes": {
+    "all_jobs_have_timeout": true,
+    "min": 20,
+    "max": 20
+   },
+   "concurrency": {
+    "present": true,
+    "group": "live-nvd",
+    "cancel_in_progress": false,
+    "meets_owner_rule": true
+   },
+   "permissions": {
+    "top_level": {
+     "contents": "read"
+    },
+    "job_level_overrides": {},
+    "minimal": true
+   },
+   "paths_ignore_present": false,
+   "docs_only_filter": "n/a (no push/pull_request trigger)",
+   "checkouts": 1,
+   "checkouts_with_persist_credentials_false": 1,
+   "third_party_actions": [],
+   "first_party_actions": [
+    "actions/checkout@v4",
+    "actions/setup-python@v5",
+    "actions/upload-artifact@v4"
+   ],
+   "first_party_pinned_by_sha": false,
+   "latest_on_main": {
+    "conclusion": "success",
+    "run_id": "42632853488",
+    "date": "2026-11-09",
+    "note": "schedule on 882d1ca0; previous 41456018069 success"
+   }
+  },
+  {
+   "file": "live-rizin.yml",
+   "name": "Live rizin rz-diff acceptance",
+   "triggers": [
+    "workflow_dispatch",
+    "push branches=main (paths filter)",
+    "pull_request (paths filter)"
+   ],
+   "jobs": [
+    "live-rizin"
+   ],
+   "job_count": 1,
+   "timeout_minutes": {
+    "all_jobs_have_timeout": true,
+    "min": 20,
+    "max": 20
+   },
+   "concurrency": {
+    "present": true,
+    "group": "${{ github.workflow }}-${{ github.event_name }}-${{ github.ref }}",
+    "cancel_in_progress": true,
+    "meets_owner_rule": true
+   },
+   "permissions": {
+    "top_level": {
+     "contents": "read"
+    },
+    "job_level_overrides": {},
+    "minimal": true
+   },
+   "paths_ignore_present": false,
+   "docs_only_filter": "yes (positive paths filter or tag-only push)",
+   "checkouts": 1,
+   "checkouts_with_persist_credentials_false": 0,
+   "third_party_actions": [
+    {
+     "uses": "ilammy/msvc-dev-cmd@v1",
+     "pinned_by_sha": false
+    }
+   ],
+   "first_party_actions": [
+    "actions/checkout@v4",
+    "actions/setup-python@v5",
+    "actions/upload-artifact@v4"
+   ],
+   "first_party_pinned_by_sha": false,
+   "latest_on_main": {
+    "conclusion": "success",
+    "run_id": "42346042490",
+    "date": "2026-11-07",
+    "note": "push on 7ac01478; previous 41409950627 success"
+   }
+  },
+  {
+   "file": "live-unified.yml",
+   "name": "Live unified extraction (SPEC-31 S1)",
+   "triggers": [
+    "workflow_dispatch",
+    "push branches=main,codex/** (paths filter)",
+    "pull_request (paths filter)"
+   ],
+   "jobs": [
+    "windows",
+    "linux"
+   ],
+   "job_count": 2,
+   "timeout_minutes": {
+    "all_jobs_have_timeout": true,
+    "min": 60,
+    "max": 60
+   },
+   "concurrency": {
+    "present": true,
+    "group": "${{ github.workflow }}-${{ github.ref }}",
+    "cancel_in_progress": true,
+    "meets_owner_rule": true
+   },
+   "permissions": {
+    "top_level": {
+     "contents": "read"
+    },
+    "job_level_overrides": {},
+    "minimal": true
+   },
+   "paths_ignore_present": false,
+   "docs_only_filter": "yes (positive paths filter or tag-only push)",
+   "checkouts": 2,
+   "checkouts_with_persist_credentials_false": 0,
+   "third_party_actions": [
+    {
+     "uses": "ilammy/msvc-dev-cmd@v1",
+     "pinned_by_sha": false
+    }
+   ],
+   "first_party_actions": [
+    "actions/checkout@v4",
+    "actions/download-artifact@v4",
+    "actions/setup-java@v4",
+    "actions/setup-python@v5",
+    "actions/upload-artifact@v4"
+   ],
+   "first_party_pinned_by_sha": false,
+   "latest_on_main": {
+    "conclusion": "success",
+    "run_id": "42346042468",
+    "date": "2026-11-07",
+    "note": "push on 7ac01478; previous 42255231243 success"
+   }
+  },
+  {
+   "file": "nightly-fuzz.yml",
+   "name": "Nightly BinExport2 fuzz (non-gating)",
+   "triggers": [
+    "schedule 17 3 * * *",
+    "workflow_dispatch"
+   ],
+   "jobs": [
+    "fuzz"
+   ],
+   "job_count": 1,
+   "timeout_minutes": {
+    "all_jobs_have_timeout": true,
+    "min": 45,
+    "max": 45
+   },
+   "concurrency": {
+    "present": false,
+    "group": null,
+    "cancel_in_progress": null,
+    "meets_owner_rule": true
+   },
+   "permissions": {
+    "top_level": {
+     "contents": "read"
+    },
+    "job_level_overrides": {},
+    "minimal": true
+   },
+   "paths_ignore_present": false,
+   "docs_only_filter": "n/a (no push/pull_request trigger)",
+   "checkouts": 1,
+   "checkouts_with_persist_credentials_false": 0,
+   "third_party_actions": [],
+   "first_party_actions": [
+    "actions/checkout@v4",
+    "actions/setup-python@v5",
+    "actions/upload-artifact@v4"
+   ],
+   "first_party_pinned_by_sha": false,
+   "latest_on_main": {
+    "conclusion": "success",
+    "run_id": "42805760188",
+    "date": "2026-11-10",
+    "note": "schedule on 882d1ca0; previous 42610019857 success"
+   }
+  },
+  {
+   "file": "optional-deps.yml",
+   "name": "Optional dependency wheels probe",
+   "triggers": [
+    "pull_request (paths filter)",
+    "workflow_dispatch"
+   ],
+   "jobs": [
+    "probe"
+   ],
+   "job_count": 1,
+   "timeout_minutes": {
+    "all_jobs_have_timeout": true,
+    "min": 15,
+    "max": 15
+   },
+   "concurrency": {
+    "present": true,
+    "group": "${{ github.workflow }}-${{ github.event_name }}-${{ github.ref }}",
+    "cancel_in_progress": true,
+    "meets_owner_rule": true
+   },
+   "permissions": {
+    "top_level": {
+     "contents": "read"
+    },
+    "job_level_overrides": {},
+    "minimal": true
+   },
+   "paths_ignore_present": false,
+   "docs_only_filter": "yes (positive paths filter or tag-only push)",
+   "checkouts": 1,
+   "checkouts_with_persist_credentials_false": 0,
+   "third_party_actions": [],
+   "first_party_actions": [
+    "actions/checkout@v4",
+    "actions/setup-python@v5"
+   ],
+   "first_party_pinned_by_sha": false,
+   "latest_on_main": {
+    "conclusion": "never run on main",
+    "run_id": "",
+    "date": "",
+    "note": "pull_request/dispatch only; 76 PR runs, latest 41796989955 (2026-11-04, branch claude/ws-a2-ci-speed-20261104) success"
+   }
+  },
+  {
+   "file": "pages.yml",
+   "name": "GitHub Pages",
+   "triggers": [
+    "push branches=main (paths filter)",
+    "workflow_dispatch"
+   ],
+   "jobs": [
+    "build",
+    "deploy"
+   ],
+   "job_count": 2,
+   "timeout_minutes": {
+    "all_jobs_have_timeout": true,
+    "min": 10,
+    "max": 15
+   },
+   "concurrency": {
+    "present": true,
+    "group": "pages",
+    "cancel_in_progress": false,
+    "meets_owner_rule": true
+   },
+   "permissions": {
+    "top_level": {
+     "contents": "read"
+    },
+    "job_level_overrides": {
+     "build": {
+      "contents": "read"
+     },
+     "deploy": {
+      "pages": "write",
+      "id-token": "write"
+     }
+    },
+    "minimal": true
+   },
+   "paths_ignore_present": false,
+   "docs_only_filter": "yes (positive paths filter or tag-only push)",
+   "checkouts": 1,
+   "checkouts_with_persist_credentials_false": 0,
+   "third_party_actions": [],
+   "first_party_actions": [
+    "actions/checkout@v4",
+    "actions/configure-pages@v5",
+    "actions/deploy-pages@v4",
+    "actions/setup-python@v5",
+    "actions/upload-pages-artifact@v3"
+   ],
+   "first_party_pinned_by_sha": false,
+   "latest_on_main": {
+    "conclusion": "failure",
+    "run_id": "39594045154",
+    "date": "2026-10-21",
+    "note": "push; actions/configure-pages failed: \"Get Pages site failed ... Not Found\" (Pages is not enabled in repository settings); site tests and build steps passed; previous 38740604755 failure"
+   }
+  },
+  {
+   "file": "pilot-eval.yml",
+   "name": "Pilot evaluation (advisory)",
+   "triggers": [
+    "workflow_dispatch"
+   ],
+   "jobs": [
+    "evaluate"
+   ],
+   "job_count": 1,
+   "timeout_minutes": {
+    "all_jobs_have_timeout": true,
+    "min": 30,
+    "max": 30
+   },
+   "concurrency": {
+    "present": false,
+    "group": null,
+    "cancel_in_progress": null,
+    "meets_owner_rule": true
+   },
+   "permissions": {
+    "top_level": {
+     "contents": "read"
+    },
+    "job_level_overrides": {},
+    "minimal": true
+   },
+   "paths_ignore_present": false,
+   "docs_only_filter": "n/a (no push/pull_request trigger)",
+   "checkouts": 1,
+   "checkouts_with_persist_credentials_false": 0,
+   "third_party_actions": [],
+   "first_party_actions": [
+    "actions/checkout@v4",
+    "actions/setup-python@v5",
+    "actions/upload-artifact@v4"
+   ],
+   "first_party_pinned_by_sha": false,
+   "latest_on_main": {
+    "conclusion": "never run",
+    "run_id": "",
+    "date": "",
+    "note": "0 runs on any branch"
+   }
+  },
+  {
+   "file": "qa-windows.yml",
+   "name": "QA and Windows standalone",
+   "triggers": [
+    "push branches=main tags=v*",
+    "pull_request (all paths)",
+    "workflow_dispatch"
+   ],
+   "jobs": [
+    "qa",
+    "qt-gate",
+    "linux-package",
+    "linux-smoke",
+    "release-gate",
+    "release"
+   ],
+   "job_count": 6,
+   "timeout_minutes": {
+    "all_jobs_have_timeout": true,
+    "min": 10,
+    "max": 120
+   },
+   "concurrency": {
+    "present": true,
+    "group": "${{ github.workflow }}-${{ github.event_name }}-${{ github.ref }}",
+    "cancel_in_progress": true,
+    "meets_owner_rule": false
+   },
+   "permissions": {
+    "top_level": {
+     "contents": "read"
+    },
+    "job_level_overrides": {
+     "release-gate": {
+      "contents": "read"
+     },
+     "release": {
+      "contents": "write"
+     }
+    },
+    "minimal": true
+   },
+   "paths_ignore_present": false,
+   "docs_only_filter": "NO: runs on every push/PR including docs-only",
+   "checkouts": 5,
+   "checkouts_with_persist_credentials_false": 3,
+   "third_party_actions": [
+    {
+     "uses": "softprops/action-gh-release@v2",
+     "pinned_by_sha": false
+    }
+   ],
+   "first_party_actions": [
+    "actions/checkout@v4",
+    "actions/download-artifact@v4",
+    "actions/setup-python@v5",
+    "actions/upload-artifact@v4"
+   ],
+   "first_party_pinned_by_sha": false,
+   "latest_on_main": {
+    "conclusion": "success",
+    "run_id": "42605088788",
+    "date": "2026-11-09",
+    "note": "push on 882d1ca0 (head); 12 jobs, release skipped by the gate; previous 42584567397 success"
+   }
+  },
+  {
+   "file": "unified-corpus.yml",
+   "name": "Unified corpus gates (SPEC-31 S6, advisory)",
+   "triggers": [
+    "workflow_dispatch"
+   ],
+   "jobs": [
+    "corpus",
+    "bench-windows",
+    "report"
+   ],
+   "job_count": 3,
+   "timeout_minutes": {
+    "all_jobs_have_timeout": true,
+    "min": 30,
+    "max": 180
+   },
+   "concurrency": {
+    "present": false,
+    "group": null,
+    "cancel_in_progress": null,
+    "meets_owner_rule": true
+   },
+   "permissions": {
+    "top_level": {
+     "contents": "read"
+    },
+    "job_level_overrides": {},
+    "minimal": true
+   },
+   "paths_ignore_present": false,
+   "docs_only_filter": "n/a (no push/pull_request trigger)",
+   "checkouts": 3,
+   "checkouts_with_persist_credentials_false": 0,
+   "third_party_actions": [],
+   "first_party_actions": [
+    "actions/checkout@v4",
+    "actions/download-artifact@v4",
+    "actions/setup-python@v5",
+    "actions/upload-artifact@v4"
+   ],
+   "first_party_pinned_by_sha": false,
+   "latest_on_main": {
+    "conclusion": "never run",
+    "run_id": "",
+    "date": "",
+    "note": "0 runs on any branch"
+   }
+  },
+  {
+   "file": "unified-live-gates.yml",
+   "name": "Unified live gates (SPEC-31 S6b, advisory)",
+   "triggers": [
+    "workflow_dispatch"
+   ],
+   "jobs": [
+    "build",
+    "pairs",
+    "mutants",
+    "integrity",
+    "report"
+   ],
+   "job_count": 5,
+   "timeout_minutes": {
+    "all_jobs_have_timeout": true,
+    "min": 30,
+    "max": 240
+   },
+   "concurrency": {
+    "present": false,
+    "group": null,
+    "cancel_in_progress": null,
+    "meets_owner_rule": true
+   },
+   "permissions": {
+    "top_level": {
+     "contents": "read"
+    },
+    "job_level_overrides": {},
+    "minimal": true
+   },
+   "paths_ignore_present": false,
+   "docs_only_filter": "n/a (no push/pull_request trigger)",
+   "checkouts": 5,
+   "checkouts_with_persist_credentials_false": 0,
+   "third_party_actions": [],
+   "first_party_actions": [
+    "actions/checkout@v4",
+    "actions/download-artifact@v4",
+    "actions/setup-java@v4",
+    "actions/setup-python@v5",
+    "actions/upload-artifact@v4"
+   ],
+   "first_party_pinned_by_sha": false,
+   "latest_on_main": {
+    "conclusion": "success",
+    "run_id": "41063115449",
+    "date": "2026-10-30",
+    "note": "workflow_dispatch on a04f5a29; the only run on main (lane L2)"
+   }
+  },
+  {
+   "file": "winbindex-pairs.yml",
+   "name": "Winbindex binary pairs (manual)",
+   "triggers": [
+    "workflow_dispatch"
+   ],
+   "jobs": [
+    "fetch-pairs"
+   ],
+   "job_count": 1,
+   "timeout_minutes": {
+    "all_jobs_have_timeout": true,
+    "min": 30,
+    "max": 30
+   },
+   "concurrency": {
+    "present": true,
+    "group": "winbindex-pairs",
+    "cancel_in_progress": false,
+    "meets_owner_rule": true
+   },
+   "permissions": {
+    "top_level": {
+     "contents": "read"
+    },
+    "job_level_overrides": {},
+    "minimal": true
+   },
+   "paths_ignore_present": false,
+   "docs_only_filter": "n/a (no push/pull_request trigger)",
+   "checkouts": 1,
+   "checkouts_with_persist_credentials_false": 1,
+   "third_party_actions": [],
+   "first_party_actions": [
+    "actions/checkout@v4",
+    "actions/setup-python@v5",
+    "actions/upload-artifact@v4"
+   ],
+   "first_party_pinned_by_sha": false,
+   "latest_on_main": {
+    "conclusion": "never run",
+    "run_id": "",
+    "date": "",
+    "note": "0 runs on any branch"
+   }
+  }
+ ],
+ "workflow_rule_tally_of_21": {
+  "timeouts": 21,
+  "permissions": 21,
+  "concurrency_policy": 20,
+  "persist_credentials": 7,
+  "third_party_pinned_or_none": 15,
+  "docs_only_filter": 20
+ },
+ "skip_inventory": {
+  "grep_command": "grep -rn 'xfail\\|pytest.mark.skip\\|skipif\\|pytest.skip(' tests --include='*.py' | wc -l",
+  "grep_count": 145,
+  "grep_count_including_one_pyc_match": 146,
+  "classification_of_145": {
+   "platform": 83,
+   "missing_native_tool": 28,
+   "missing_native_tool_written_as_xfail": 2,
+   "missing_python_dependency": 8,
+   "open_defect_strict_xfail": 7,
+   "other": 7,
+   "comment_or_docstring_mention": 10
+  },
+  "importorskip_lines_not_matched_by_the_grep": 48,
+  "importorskip_modules": {
+   "yara_x": 13,
+   "pefile": 7,
+   "yaml": 5,
+   "PIL": 4,
+   "PyInstaller": 3,
+   "sklearn": 3,
+   "patchtrace.rules.engine": 3,
+   "networkx": 2,
+   "iced_x86": 2,
+   "PySide6": 2,
+   "colorspacious": 1,
+   "pygments": 1,
+   "pydemumble": 1,
+   "segno": 1
+  },
+  "strict_xfails_open": [
+   "KBA-06 tests/test_kbc_audit_20261107.py:131",
+   "KBA-07 :150",
+   "KBA-08 :160",
+   "CODEX-1 tests/test_codex_pkg_workflows.py:78",
+   "CODEX-5 :112",
+   "CODEX-6 :121",
+   "CODEX-14 tests/test_codex_pkg_packaging.py:93"
+  ],
+  "ci_linux_counts_run_42605088788": {
+   "passed": 20812,
+   "skipped": 53,
+   "xfailed": 9,
+   "warnings": 19,
+   "seconds": 1899.6
+  },
+  "ci_windows_counts": "UNVERIFIED",
+  "silent_pass_risks": [
+   "yaml: 39 tests always skipped in CI (K-D01).",
+   "pydemumble, colorspacious, scikit-learn, psutil: never installed by any workflow; 6 tests always skipped.",
+   "PATCHTRACE_TOY_FREEZE, PATCHTRACE_RIZIN_SIMILARITY, PATCHTRACE_GHIDRA_DIR, tests/test_live_strings.py: no workflow provides them (K-D07).",
+   "tests/test_tier_w_symbols.py:240,385: blocked reported as xfailed.",
+   "unshare-dependent no-network tests: skip when user namespaces are refused (CI status UNVERIFIED).",
+   "tests/test_live_capa_pairs.py:95-101: capa-move leg is a placeholder that always records blocked and skips.",
+   "Guards that already work and should be the model: tests/test_rules_worker.py:503-508 and tests/test_rules_masks.py:344-356 fail when CI is set and yara-x / iced-x86 are missing."
+  ]
+ },
+ "coverage_map": [
+  {
+   "category": "unit",
+   "exists": true,
+   "evidence": "majority of 769 files; 20812 passed on Linux CI",
+   "gap": ""
+  },
+  {
+   "category": "integration",
+   "exists": true,
+   "evidence": "tests/test_alpha_integration.py, *_synergy.py, tests/test_acceptance_smoke.py",
+   "gap": ""
+  },
+  {
+   "category": "native adapter",
+   "exists": "partial",
+   "evidence": "fake executables in the suite (mocked); real tools in live-backend, live-rizin, live-bindiff, live-unified, live-intel-tools on GitHub runners with synthetic pairs",
+   "gap": "live-capa never run; live strings never run; no real-binary evidence in this workstream"
+  },
+  {
+   "category": "CLI",
+   "exists": true,
+   "evidence": "42 test_*cli* files, tests/stress/test_cli_stress_*.py, frozen_smoke A1-A5/A10 on Windows CI",
+   "gap": "frozen CLI smoke missing on Linux (CODEX-14)"
+  },
+  {
+   "category": "GUI",
+   "exists": true,
+   "evidence": "81 Qt-using files (pytest-qt, offscreen); qt-gate 20x Linux / 5x Windows",
+   "gap": "29 Qt files outside the repeat gate; real-display and accessibility checks are manual"
+  },
+  {
+   "category": "database",
+   "exists": true,
+   "evidence": "78 test files use sqlite3 (stores, persistence, enrichment cache)",
+   "gap": ""
+  },
+  {
+   "category": "migration",
+   "exists": false,
+   "evidence": "schema-version rejection only (tests/test_models.py:19, tests/test_kbc_store.py:48)",
+   "gap": "no old-version fixture upgrade suite"
+  },
+  {
+   "category": "security regression",
+   "exists": true,
+   "evidence": "32 files (test_*security*, *hostile*, test_audit_*, test_network_consent_*)",
+   "gap": ""
+  },
+  {
+   "category": "benchmark",
+   "exists": "partial",
+   "evidence": "39 in-test wall-clock budgets; unified-corpus bench job (dispatch, never run)",
+   "gap": "no recorded benchmark trend"
+  },
+  {
+   "category": "end-to-end workflow",
+   "exists": true,
+   "evidence": "tests/test_pilot_sample_e2e.py, tests/test_acceptance_smoke.py, frozen_smoke A6s/C1-C4 (synthetic)",
+   "gap": "native 3-build series with real Ghidra not done (frozen_smoke docstring)"
+  },
+  {
+   "category": "packaging",
+   "exists": true,
+   "evidence": "Windows and Linux builds on every push/PR; tests/test_codex_pkg_packaging.py",
+   "gap": "see K-F08"
+  },
+  {
+   "category": "installation",
+   "exists": "partial",
+   "evidence": "NSIS install/launch/uninstall and portable ZIP on Windows CI; tar extraction + self-test on Ubuntu 22.04/24.04",
+   "gap": "no wheel/sdist install test"
+  },
+  {
+   "category": "cross-platform",
+   "exists": true,
+   "evidence": "ubuntu-latest + windows-latest matrix for qa and qt-gate",
+   "gap": "no macOS (not a stated target)"
+  }
+ ],
+ "flake_analysis": {
+  "known_flake": {
+   "test": "tests/test_research_qualification_cli.py::test_paths_outside_allowed_roots_are_refused",
+   "reproduced": "yes: `-n 1` fails, serial passes (selection of 2 tests)",
+   "failing_line": "tests/test_research_qualification_cli.py:70-71 (pytest.raises(PathGuardError) did not raise)",
+   "root_cause": "Hard-coded four \"..\" segments from tmp_path. xdist nests the base temp one level deeper (popen-gwN), so the path resolves to <system temp>/etc/passwd, which is inside an allowed root (pathguard.py:15), instead of /etc/passwd. Not shared state, cwd or an environment variable.",
+   "fix": "Derive the number of \"..\" from len(tmp_path.parts) and make the positive case use RQ_ALLOWED_DIRS or chdir (K-T01)."
+  },
+  "other_candidates": [
+   "tests/test_unified_cor_pipeline.py:52,61 shared temp listing (K-D03)",
+   "14 property tests on Hypothesis defaults (K-D04)",
+   "sub-second wall-clock budgets (K-D15)",
+   "import-time sys.path / sys.modules mutation (114 / 16 sites, not observed failing)"
+  ],
+  "checked_and_clean": [
+   "raw os.chdir: 0 (15 monkeypatch.chdir)",
+   "fixed ports: 0 (all binds use port 0)",
+   "fixed temp file names: only an intentionally absent path (tests/test_rules_worker.py:37)",
+   "tempfile.tempdir overrides: 10, all through monkeypatch.setattr"
+  ]
+ },
+ "ci_speed_findings": [
+  {
+   "rule": "concurrency cancel-in-progress on push/PR, never on publish",
+   "status": "20 of 21 meet it",
+   "finding": "qa-windows.yml cancels at workflow level while holding the release job (K-D11, L4)."
+  },
+  {
+   "rule": "paths-ignore for docs-only changes",
+   "status": "20 of 21 (positive paths filters); qa-windows.yml has none",
+   "finding": "docs-only merge 882d1ca0 cost about 242 job-minutes (K-D10)."
+  },
+  {
+   "rule": "build each artifact once and reuse",
+   "status": "met",
+   "finding": "Windows package built in the qa Windows leg, Linux package in linux-package; smoke and release download them. Dependencies are reinstalled in each of 7 jobs without a pip cache."
+  },
+  {
+   "rule": "explicit parallelism",
+   "status": "partial",
+   "finding": "qt-gate has 4 Linux shards (45.0/25.5/19.8/35.1 min, unbalanced); qa pytest is serial (31.8 min Linux, 42.7 min Windows)."
+  },
+  {
+   "rule": "fetch-depth 1",
+   "status": "met",
+   "finding": "default depth 1 everywhere; release-gate uses fetch-depth 0 by design (first-parent merge count)."
+  },
+  {
+   "rule": "least-privilege permissions",
+   "status": "met for token scopes",
+   "finding": "all 21 files set contents: read at top level; write scopes only on backend-bundle pub, pages deploy and the release job. persist-credentials: false missing in 14 files."
+  },
+  {
+   "rule": "first-party actions only",
+   "status": "not met",
+   "finding": "ilammy/msvc-dev-cmd (5 files, SHA-pinned in 1), openai/codex-action@v1 (1), softprops/action-gh-release@v2 (1, L4). No first-party action is SHA-pinned."
+  }
+ ],
+ "notes": "Scope facts differ from the brief: 21 workflow files exist (not 25) and 769 test_*.py files (not 797). GitHub data was read on 2026-11-11 through the Actions API (list_workflow_runs with branch=main, perPage 2) plus job lists and log tails for runs 42605088788, 38660893572 and 39594045154. Local runs were limited to selections of a few tests with -p no:cacheprovider and PYTHONDONTWRITEBYTECODE=1; nothing was written inside the checkout. Edits to .github/workflows/qa-windows.yml (docs-only filter, xdist, pip cache, extra qt-gate shards, skip-ledger step, ldd check, Linux frozen smoke) are listed under feature remaining items and are deliberately absent from actionable_now because L4 owns the release job in that file; unified-live-gates.yml is L2. pytest-xdist is installed in the local venv but is not a declared dependency. Evidence classes: CI run results are live runner evidence for the suite and packaging; native-tool workflows run real tools on synthetic pairs and say nothing about real-binary accuracy; everything verified here locally is fixture or synthetic. UNVERIFIED: Windows-leg skip counts, contents of live status artifacts, cause of the backend-bundle failures, github-pages environment policy, newer action major versions.",
+ "external_blockers": [
+  "GitHub Pages is not enabled in repository settings: pages.yml has failed at configure-pages since 2026-10-15 (owner setting)",
+  "L4 owns the release job in qa-windows.yml: docs-only filter, xdist, pip cache, extra qt-gate shards and a skip-ledger step in that file must be sequenced with L4",
+  "L2 owns unified-live-gates.yml (5 checkouts without persist-credentials: false, no concurrency block)",
+  "Ghidra, Rizin, BinDiff, capa, FLOSS and DIE are absent from the sandbox: native evidence only from GitHub runners",
+  "Windows legs (build, frozen smoke, NSIS install, Windows skip counts) can only be verified on windows-latest",
+  "No network: SHA-pinning of actions and newer Node 24 action majors cannot be looked up (only the ilammy SHA already in corpus-tier-r.yml is reusable)",
+  "Five dispatch-only workflows have never run and need an owner or lane dispatch: diff-and-score, live-capa, pilot-eval, unified-corpus, winbindex-pairs",
+  "backend-bundle.yml last two runs on main failed (2026-10-15, job pin-verify-signatures-and-rebuild); cause UNVERIFIED"
+ ],
+ "summary": "Main QA is green on head (run 42605088788: 20812 passed, 53 skipped, 9 xfailed on Linux), but 39 workflow-contract tests never run in CI because PyYAML is undeclared. The xdist-only failure is reproduced and explained: the test climbs four hard-coded \"..\" from tmp_path; xdist adds one directory level, so the path lands inside the allowed temp root. Fleet hygiene: 104 of 126 owner-rule checks pass across 21 workflows (not 25); 13 have a green latest run on main, 2 fail, 6 never ran there. qa-windows.yml has no docs-only filter and serial pytest (about 242 job-minutes for a docs merge). 13 sandbox-verifiable tasks listed; qa-windows.yml edits deferred to L4."
+}

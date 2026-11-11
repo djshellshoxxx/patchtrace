@@ -1,0 +1,684 @@
+{
+ "schema": "patchtrace-status/1",
+ "baseline_commit": "882d1ca0b4190bccddb6ce1f66b46c4db856703b",
+ "baseline_date": "2026-11-09",
+ "as_of": "2026-11-11",
+ "session": "sleepy-fermi",
+ "workstreams": {
+  "B": {
+   "title": "Native binary analysis adapters (Ghidriff/Ghidra, Rizin rz-diff, BinDiff, BinExport2, Diaphora, capa/FLOSS/DiE)",
+   "features": 13,
+   "features_by_status": {
+    "implemented": 4,
+    "partial": 6,
+    "missing": 1,
+    "blocked-external": 2,
+    "deferred-by-design": 0
+   },
+   "completion": {
+    "implementation_pct": 82,
+    "validation_pct": 19,
+    "basis": "6 adapters x 14 checks = 84 cells (Ghidriff, rz-diff, BinDiff, BinExport2, Diaphora, capa/FLOSS/DiE). Implementation score 69.0/84 (yes=1, partial=0.5, no=0). Validation counts only cells with live-native evidence: 16/84 (Ghidriff 4 on Windows, rz-diff 4 on Linux+Windows, BinDiff 4 on Linux, intel tools 4 on Linux, BinExport2 0, Diaphora 0). Separately 69/84 cells have an automated test of any class (mocked/synthetic/fixture), which is not compatibility evidence. Non-adapter features (timeout program, SPEC-53 launcher, bundle, rz-diff producer research, orchestration, BinExport producer, docs) carry their own counted bases in the file and are not blended into these two numbers."
+   },
+   "effort_hours_not_implemented": 176,
+   "effort_basis": "analyst estimate, hours",
+   "effort_features": 9,
+   "features_by_evidence_class": {
+    "mocked": 2,
+    "synthetic": 5,
+    "fixture": 0,
+    "live-native": 4,
+    "none": 2
+   },
+   "defects_by_severity": {
+    "critical": 0,
+    "high": 2,
+    "medium": 3,
+    "low": 5
+   },
+   "blockers_by_type": {
+    "external-tool": 8,
+    "windows-only": 6,
+    "live-network": 3,
+    "owner-decision": 5,
+    "other-lane": 5
+   },
+   "actionable_now": 9,
+   "external_blockers": [
+    "No Ghidra, Rizin, BinDiff, capa/FLOSS/diec, IDA or Diaphora in the sandbox: no native run possible here",
+    "Windows runner needed: capa/FLOSS probe failure (run 42819978053), BinDiff Windows leg reports blocked/advisory (run 42620821985), PT-TIMEOUT acceptance on the owner's recorded pair, OneDrive/long-path checks",
+    "rz-diff producer qualification needs a pinned Rizin v0.9.1 source build (Meson/Ninja + dev headers); native API evidence (#222) and failed CLI baseline (#224) exist only on open draft PR branches 195 commits behind main; #165 and #168 are also open drafts",
+    "Owner decision: rz-diff policy for stock 0.9.1 (conditional refusal vs version-wide quarantine) and whether a patched Rizin may be required",
+    "No real-producer .BinExport pair exists (only synthetic); BinExport producer ADR SPEC-49 is a draft (owner decision)",
+    "Diaphora: any real .diaphora result needs licensed IDA/Hex-Rays + Diaphora (AGPL review); Modes B/C not built",
+    "backend-bundle.yml: latest two runs on main failed (38660893572, 38660818187, 2026-10-15); real relocatable payload never validated on a disconnected Windows 11",
+    "live-capa.yml has never run (0 runs); live-buildenv job is dispatch-only and was skipped",
+    "Pins for BinDiff and intel tools are trust-on-first-use (verified: false); independent re-hash needs upstream network access",
+    "backend.py is owned by lanes L2/L5, unified/sources by L1, docs/help by L6, PR consolidation by L3: no tasks proposed there"
+   ],
+   "summary": "Six native adapters inventoried against 14 checks each: implementation 82%, live-native validation 19% (mocked/synthetic tests are not counted). Live evidence on main: Ghidriff on Windows (run 42584073996), rz-diff on Linux and Windows (42346042490), BinDiff on Linux only (42620821985), capa/FLOSS/diec on Linux only (42819978053). BinExport2 and Diaphora have none. Main stores rz-diff results with no guard against the known Rizin singleton side swap; the quarantine and native evidence sit on open draft PRs. capa and FLOSS fail their probe on Windows. Nine offline tasks are listed, none in an active lane; the first three fix reproduced defects. Audit items TA-1..12 and most SEC items are fixed."
+  },
+  "C": {
+   "title": "CVE and vulnerability intelligence",
+   "features": 22,
+   "features_by_status": {
+    "implemented": 5,
+    "partial": 15,
+    "missing": 0,
+    "blocked-external": 1,
+    "deferred-by-design": 1
+   },
+   "completion": {
+    "implementation_pct": 65.5,
+    "validation_pct": 58.5,
+    "basis": "93 of 142 counted acceptance items built and 83 of 142 validated across 22 features (per-feature item lists are in each feature's pct_basis in the OUTFILE). Validated means evidence of the class the item needs was seen: automated tests for logic items (mostly synthetic or mocked, never counted as live evidence) and a live run whose step summary I read for live items. Windows-only and live-only items count as built but not validated. Of 1,943 tests collected in the 58 scoped test files I ran three files (131 passed); the rest rests on the baseline suite."
+   },
+   "effort_hours_not_implemented": 163,
+   "effort_basis": "analyst estimate, hours",
+   "effort_features": 17,
+   "features_by_evidence_class": {
+    "mocked": 2,
+    "synthetic": 14,
+    "fixture": 2,
+    "live-native": 4,
+    "none": 0
+   },
+   "defects_by_severity": {
+    "critical": 0,
+    "high": 0,
+    "medium": 3,
+    "low": 9
+   },
+   "blockers_by_type": {
+    "external-tool": 1,
+    "windows-only": 4,
+    "live-network": 5,
+    "owner-decision": 8,
+    "other-lane": 0
+   },
+   "actionable_now": 12,
+   "external_blockers": [
+    "MSRC CSAF (msrc.microsoft.com): provider-metadata URL, directory layout and real documents never verified live; no live probe exists for it",
+    "Windows-only: msdelta PA30/PA31 apply, real symbol-server pair download, KEV store replace-retry and TLS roots, byte-identical report goldens",
+    "Owner decision: flip the KEV dock default to cisa-site (the live-kev gate passed on 2026-11-04)",
+    "Owner decision: persist NVD/MSRC CVE snapshots and raw provider bodies in the project (kind cve-snapshot is reserved but has no writer)",
+    "Owner decision: C-23 NVD Primary/Secondary CWE semantics (todo.md says by design, vendor-feeds spec says open)",
+    "Owner decision: authenticity label for an offline CSAF cache replay; OSV and second CSAF vendor scope; SPEC-42 offline switch (draft proposal)",
+    "cwe.mitre.org unreachable: lexicon CWE names unverified",
+    "AI provider live acceptance needs a model and credentials",
+    "AV-5 independent oracle for the CVE-to-KB join (workstream D)"
+   ],
+   "summary": "Inventory written: 22 features, 12 defects, 12 actionable tasks. No high or critical defect found; four are medium, and nine of the twelve were reproduced offline. The main one: `intelligence explain` shows a vendor-withdrawn CVE claim as the current affected/fixed resolution (explain.py:151), the only path found that overstates evidence. Others: KEV provenance overwritten on re-import, untyped overflow errors aborting `correlate`, raw ValueError in the CSAF transport. KEV project row and report block are built but have no caller. Live gates: live-nvd (2026-11-09) and live-kev (2026-11-04) passed on main but trackers still say no run exists; live-kbc has one run (passed). MSRC CSAF remains unverified live."
+  },
+  "D": {
+   "title": "Patch correlation and recommendations (vulnerability-to-patch workflow)",
+   "features": 25,
+   "features_by_status": {
+    "implemented": 8,
+    "partial": 14,
+    "missing": 0,
+    "blocked-external": 2,
+    "deferred-by-design": 1
+   },
+   "completion": {
+    "implementation_pct": 67,
+    "validation_pct": 35,
+    "basis": "15 required capabilities scored implemented=1 / partial=0.5 / missing=0: 5 implemented (locate updates, relevant changed functions, confidence indicators, missing/contradictory handling, persistence), 10 partial, 0 missing -> 10/15 = 67%. Validation weights live-native=1, real-data fixture=0.67, synthetic or mocked=0.33: 0 live-native, 1 real-data fixture (CVE-to-KB lookup, single real-shaped MSRC CVE), 14 synthetic/mocked -> 5.3/15 = 35%. 31-H gates: A, B, C, D, G met at their synthetic level; E partial; F, I and H6 unmet; H not applicable. Per-feature percentages in the file are estimates from listed remaining items, not measured."
+   },
+   "effort_hours_not_implemented": 288,
+   "effort_basis": "analyst estimate, hours",
+   "effort_features": 17,
+   "features_by_evidence_class": {
+    "mocked": 3,
+    "synthetic": 18,
+    "fixture": 1,
+    "live-native": 0,
+    "none": 3
+   },
+   "defects_by_severity": {
+    "critical": 0,
+    "high": 1,
+    "medium": 3,
+    "low": 3
+   },
+   "blockers_by_type": {
+    "external-tool": 4,
+    "windows-only": 9,
+    "live-network": 6,
+    "owner-decision": 4,
+    "other-lane": 2
+   },
+   "actionable_now": 14,
+   "external_blockers": [
+    "Live network: MSRC CVRF, Winbindex, msdl symbol server and CISA are unreachable; no live response has ever been recorded for the KB chain (CVRF URL shape, real month parse, real download all unverified)",
+    "External tool: Ghidra/Ghidriff not installed, so a real KB pair cannot be compared; single-pair comparison also has no CLI verb",
+    "Windows only: 31-H gates F and I and the H6 field cases (frozen ZIP, keyboard/screen-reader pass, three native error cases) cannot run here",
+    "Owner decision: KBA-08 bumps ALIAS_CATALOG_VERSION and changes scope ids; KBA-06 needs the skip-identical-SHA rule accepted in 31-C",
+    "Owner decision: re-adding the removed tests test_kbc_kev_wiring.py and test_kbc_leads_freshness.py (removed 2026-10-29 at the owner's request)",
+    "Owner decision: no spec defines a recommendation / investigation-summary record",
+    "Other lane: backend.py (L2/L5) underlies the comparison hop; registry refresh for SPEC-34/37 overlaps L3",
+    "Labelled real-binary corpus needed for the SPEC-30 calibration gate and for scoring the 87-case L1 join corpus (never run)"
+   ],
+   "summary": "Offline, an analyst can run the KB chain by CLI from advisory import to an attached, exportable context; I ran it on synthetic fixtures. It stops at comparison: no Ghidra here, and no single-pair CLI verb. `pilot leads/why/review` and `kb leads` work on the sample project. Nothing claims a fix because binaries differ. No recommendation record exists, only lead classes and next-step sentences. One high defect: the KB dock cannot load the open project (reproduced). Medium: KBA-06, KBA-08 (plus two sibling names), acquired-pair provenance not persisted. KBA-06..08 have fix designs; the KBA-06 fix was simulated and flips its xfail. Evidence is synthetic or mocked throughout; none is live."
+  },
+  "E": {
+   "title": "GUI and analyst experience",
+   "features": 26,
+   "features_by_status": {
+    "implemented": 3,
+    "partial": 22,
+    "missing": 0,
+    "blocked-external": 0,
+    "deferred-by-design": 1
+   },
+   "completion": {
+    "implementation_pct": 73,
+    "validation_pct": 59,
+    "implemented_items": 136,
+    "implementation_items": 187,
+    "validated_items": 116,
+    "validation_items": 196,
+    "basis": "136 of 187 counted implementation items and 116 of 196 counted validation items across 25 features (E-F24 dockable workspace is a draft spec, 0 of 13 sections, excluded). An item counts as validated when an automated offscreen test file covering it was located by name; I did not re-run those tests. All such evidence is mocked, synthetic or fixture: none is live-native, and the Windows manual gates M19-M23 are not-run."
+   },
+   "effort_hours_not_implemented": 219,
+   "effort_basis": "analyst estimate, hours",
+   "effort_features": 23,
+   "features_by_evidence_class": {
+    "mocked": 3,
+    "synthetic": 10,
+    "fixture": 11,
+    "live-native": 0,
+    "none": 2
+   },
+   "defects_by_severity": {
+    "critical": 0,
+    "high": 1,
+    "medium": 6,
+    "low": 7
+   },
+   "blockers_by_type": {
+    "external-tool": 2,
+    "windows-only": 10,
+    "live-network": 2,
+    "owner-decision": 5,
+    "other-lane": 7
+   },
+   "actionable_now": 12,
+   "external_blockers": [
+    "Windows-only manual gates M19-M23 (NVDA, Narrator, keyboard walk, high contrast, DPI 125/150/200 %) and clean Windows GUI acceptance are not-run",
+    "Ghidra, BinDiff and Rizin are not installed: no live-native comparison or engine run through the GUI (lane L2)",
+    "NVD, MSRC, CISA and Winbindex are unreachable: KB/KEV/acquisition GUI paths have fixture or mocked evidence only",
+    "Owner decisions: default_visible / first-run panel policy (G6), Guide panel (deferred), run-history view has no spec, meaning of 'patch recommendations', SPEC-DW-01 dockable workspace is still a draft",
+    "Lane L6 owns ui_export_v2.py, ui_inspection.py and docs/help (export accessibility, inspection thread move G2, in-app help content)",
+    "ui.py has only 12 lines of seam budget left (3065 of 3077), so E-T01, E-T02 and E-T09 need one owner in sequence",
+    "Windows qt-gate 5x and Linux 20x CI results were not read (UNVERIFIED)"
+   ],
+   "summary": "GUI inventory written: 26 features, 14 defects (1 high), 12 actionable tasks, plus T1-T19/G1-G8/Q1-Q4 verified with file:line. 13 of 14 manifest panels are built; only guide is stubbed. Open on main: T4, T5, T13, T16, T17, G2, G6, G8, Q1, Q3, Q4; T15 is done. Measured offscreen: 44 of 560 controls unnamed, palette shows 50 of 106 commands, changed-row contrast 1.77:1 in System theme, 1.3 s GUI-thread deep copy at 30k synthetic matches. From PR #176, cherry-pick 647502ce as is and 4a9e32bb with a new sort chord (Alt+Up/Down belong to window actions); do not merge the branch."
+  },
+  "F": {
+   "title": "CLI, automation and the GUI/CLI parity matrix",
+   "features": 23,
+   "features_by_status": {
+    "implemented": 8,
+    "partial": 13,
+    "missing": 1,
+    "blocked-external": 0,
+    "deferred-by-design": 1
+   },
+   "completion": {
+    "implementation_pct": 63,
+    "validation_pct": 61,
+    "basis": "Directive's 19 required CLI items: 6 full (adapter selection, CVE lookup, patch correlation, patch recommendations, result export, unattended execution), 12 partial, 1 missing (manual correction import/export). Implementation = (6 + 12 x 0.5) / 19 = 63 %. Validation = 11.5 / 19 = 61 %: 6 full items and the built half of 10 partial items have offline automated tests (6 + 5), exit codes and docs count 0.25 each (no cross-verb contract test, no doc drift test). All evidence is mocked, synthetic or fixture; live-native CLI evidence is 0 of 19. Cross-check from the parity matrix: 43 applicable GUI capabilities = 23 full, 8 partial, 12 GUI-only -> (23 + 4) / 43 = 63 %. Only tests/test_cli_registry.py and tests/test_help_docs.py were run here (249 passed, 1 skipped)."
+   },
+   "effort_hours_not_implemented": 100,
+   "effort_basis": "analyst estimate, hours",
+   "effort_features": 15,
+   "features_by_evidence_class": {
+    "mocked": 6,
+    "synthetic": 11,
+    "fixture": 4,
+    "live-native": 0,
+    "none": 2
+   },
+   "defects_by_severity": {
+    "critical": 0,
+    "high": 2,
+    "medium": 3,
+    "low": 2
+   },
+   "blockers_by_type": {
+    "external-tool": 4,
+    "windows-only": 1,
+    "live-network": 4,
+    "owner-decision": 10,
+    "other-lane": 10
+   },
+   "actionable_now": 15,
+   "external_blockers": [
+    "Ghidra/Ghidriff not installed: any CLI comparison evidence is mocked",
+    "BinDiff 8 and rizin not installed (BinDiff has no licensed install)",
+    "capa, FLOSS, Detect It Easy not installed",
+    "NVD, MSRC, Winbindex, CISA unreachable: live fetch paths unverified",
+    "Windows-only: frozen-bundle selftest and Windows console/CRLF behaviour unverified",
+    "Owner decision: SPEC-44 s8 exit-code rules (partial 0 vs 3, no-bundle 4 vs 2, backend 5, status vocabulary)",
+    "Owner decision: SPEC-44 s7 still marks project/import/doctor/config/interpret as not in the alpha",
+    "Lane L6 owns docs/help/**: every new verb needs a help page and index line there",
+    "Lanes L2/L5 own backend.py and the backend diagnose path",
+    "Lane L1 swap-orientation work precedes a corrections import contract"
+   ],
+   "summary": "The real CLI has 24 verbs and 87 leaves; all have text and JSON, none prompts, and 109 probes produced no traceback. Two high-severity gaps: two local binaries cannot be imported and compared without the GUI, and `rules propose` can never succeed from the CLI. Manual correction import/export is entirely missing; profiles, runtime discovery, offline ZIP install, backup and swap are GUI-only. Three medium defects are wrong exit codes or a false \"never fetches\" help claim. `docs/cli-reference.md` lacks 37 of 87 leaves, and the guide lists six built verbs as not built. Deliverables: F.json, parity-matrix.md, cli-help.txt in the inventory folder. New verbs need a docs/help page (lane L6)."
+  },
+  "I1": {
+   "title": "Security and reliability backlog verification against main",
+   "features": 13,
+   "features_by_status": {
+    "implemented": 3,
+    "partial": 8,
+    "missing": 0,
+    "blocked-external": 2,
+    "deferred-by-design": 0
+   },
+   "completion": {
+    "implementation_pct": 59,
+    "validation_pct": 48,
+    "basis": "136 counted findings across 13 families (TB 16 incl. new TB-16, KBA 8, SEC 13, ACQ 13, PE 13, CORE 12, RA 10, TA 18, Sonar 6, WP 10, runtime-reliability 8, 2026-11-05 slices 4, SECURITY.md gaps 5). 75 closed (fixed or not-applicable) + 11 partial at 0.5 = 80.5/136 = 59% implementation. 65/136 closed with a named regression test present on main = 48% validation. Tests were checked for presence only, not re-run; all evidence is mocked/synthetic/fixture, none live-native or live-network."
+   },
+   "effort_hours_not_implemented": 65,
+   "effort_basis": "analyst estimate, hours",
+   "effort_features": 10,
+   "features_by_evidence_class": {
+    "mocked": 2,
+    "synthetic": 8,
+    "fixture": 1,
+    "live-native": 0,
+    "none": 2
+   },
+   "defects_by_severity": {
+    "critical": 0,
+    "high": 0,
+    "medium": 6,
+    "low": 18
+   },
+   "blockers_by_type": {
+    "external-tool": 2,
+    "windows-only": 6,
+    "live-network": 3,
+    "owner-decision": 5,
+    "other-lane": 4
+   },
+   "actionable_now": 15,
+   "external_blockers": [
+    "owner-decision: KBA-06 predecessor semantics, KBA-07 exported KB-id contract, KBA-08 alias catalogue version bump",
+    "owner-decision: CORE-3 (second import drops earlier matches), SEC-8 pinned U+FFFD contract, SEC-5 per-project BinExport byte cap",
+    "other-lane L2/L5: SEC-10 restrict_env default, backend.py:675 plain json.loads, java probe cwd, runtime-reliability rows (all in backend.py)",
+    "other-lane L1: plain json.loads in unified/sources/secondary.py:95 and diaphora.py:105; Sonar S2583 on unified/facts/anchors.py",
+    "windows-only: TB-11 Authenticode path-vs-handle, TB-13 in-process msdelta, TA-15 tool encoding/onefile cleanup, native lock/junction acceptance, SEC-10 variable list",
+    "live-network: TB-08 blob host pinning needs observed Microsoft redirect hosts; SonarCloud gate state unverifiable offline",
+    "external-tool: capa/FLOSS/DiE, Ghidra/Ghidriff, BinDiff, rizin not installed (TA-13 memory, runtime-reliability P1/P2)",
+    "owner: authorised Sonar reviewer for 4 false-positive dispositions; GitHub private vulnerability reporting; backend pin placeholder; release signing certificate"
+   ],
+   "summary": "No High or Critical finding is still open on main@882d1ca0; the worst open items are Medium. None of this has live-native evidence, and I checked regression tests for presence only (no pytest run).\n\nFixed, but trackers still list them open: SEC-3, the Ghidriff half of SEC-1, ACQ-12/13, TA-1..12 and all of RA-1..10.\n\nStill open:\n- **TB:** TB-08..13 and TB-15.\n- **KBA:** KBA-06..08 (owner decisions).\n- **SEC:** SEC-8 and SEC-10; SEC-5 and SEC-9 are partial.\n- **PE:** PE-4..12, plus PE-2/3 in the tier_w and unified copies.\n- **CORE/WP:** CORE-3 and WP-03/04/05/07/10.\n\nNew finding TB-16 (confirmed by run): deeply nested JSON raises RecursionError past `except ValueError` at about nine sites.\n\nThe file lists 15 offline-fixable tasks; none touches another lane's files."
+  },
+  "K": {
+   "title": "Testing and continuous integration",
+   "features": 10,
+   "features_by_status": {
+    "implemented": 0,
+    "partial": 10,
+    "missing": 0,
+    "blocked-external": 0,
+    "deferred-by-design": 0
+   },
+   "completion": {
+    "implementation_pct": 74,
+    "validation_pct": 44,
+    "basis": "172.5 of 232 counted acceptance items implemented, 101 validated. Implemented/validated/total per feature: K-F01 main QA workflow 7/7/14; K-F02 fleet hygiene 104/42/126 (21 workflows x 6 owner rules; validated = rule checks enforced by a test); K-F03 run evidence 21/13/21 (latest run on main green for 13 of 21 workflows); K-F04 skip/xfail discipline 4/4/10; K-F05 coverage map 11.5/11/13; K-F06 parallel-safety 5/5/10; K-F07 test tooling 8/7/13; K-F08 packaging smoke 6/6/11; K-F09 release gate (L4) 5/5/10; K-F10 docs currency 1/1/4."
+   },
+   "effort_hours_not_implemented": 77,
+   "effort_basis": "analyst estimate, hours",
+   "effort_features": 10,
+   "features_by_evidence_class": {
+    "mocked": 0,
+    "synthetic": 3,
+    "fixture": 3,
+    "live-native": 3,
+    "none": 1
+   },
+   "defects_by_severity": {
+    "critical": 0,
+    "high": 1,
+    "medium": 9,
+    "low": 5
+   },
+   "blockers_by_type": {
+    "external-tool": 2,
+    "windows-only": 3,
+    "live-network": 1,
+    "owner-decision": 2,
+    "other-lane": 5,
+    "other": 2
+   },
+   "actionable_now": 13,
+   "external_blockers": [
+    "GitHub Pages is not enabled in repository settings: pages.yml has failed at configure-pages since 2026-10-15 (owner setting)",
+    "L4 owns the release job in qa-windows.yml: docs-only filter, xdist, pip cache, extra qt-gate shards and a skip-ledger step in that file must be sequenced with L4",
+    "L2 owns unified-live-gates.yml (5 checkouts without persist-credentials: false, no concurrency block)",
+    "Ghidra, Rizin, BinDiff, capa, FLOSS and DIE are absent from the sandbox: native evidence only from GitHub runners",
+    "Windows legs (build, frozen smoke, NSIS install, Windows skip counts) can only be verified on windows-latest",
+    "No network: SHA-pinning of actions and newer Node 24 action majors cannot be looked up (only the ilammy SHA already in corpus-tier-r.yml is reusable)",
+    "Five dispatch-only workflows have never run and need an owner or lane dispatch: diff-and-score, live-capa, pilot-eval, unified-corpus, winbindex-pairs",
+    "backend-bundle.yml last two runs on main failed (2026-10-15, job pin-verify-signatures-and-rebuild); cause UNVERIFIED"
+   ],
+   "summary": "Main QA is green on head (run 42605088788: 20812 passed, 53 skipped, 9 xfailed on Linux), but 39 workflow-contract tests never run in CI because PyYAML is undeclared. The xdist-only failure is reproduced and explained: the test climbs four hard-coded \"..\" from tmp_path; xdist adds one directory level, so the path lands inside the allowed temp root. Fleet hygiene: 104 of 126 owner-rule checks pass across 21 workflows (not 25); 13 have a green latest run on main, 2 fail, 6 never ran there. qa-windows.yml has no docs-only filter and serial pytest (about 242 job-minutes for a docs merge). 13 sandbox-verifiable tasks listed; qa-windows.yml edits deferred to L4."
+  },
+  "T1": {
+   "title": "Tracker reconciliation, part 1 (tasks/todo.md lines 1-620)",
+   "features": 0,
+   "features_by_status": {
+    "implemented": 0,
+    "partial": 0,
+    "missing": 0,
+    "blocked-external": 0,
+    "deferred-by-design": 0
+   },
+   "completion": {
+    "implementation_pct": 52.8,
+    "validation_pct": 29.3,
+    "basis": "Unit = one tracker line containing a checkbox in tasks/todo.md lines 1-620: 460 lines. implementation_pct = (184 fully checked + 59 open-marked lines verified done on main) / 460 = 52.8% (5 obsolete duplicates and 49 unknown lines are NOT counted as done). validation_pct = (243 closed - 108 still-pending lines that wait on Windows / native-tool / live-network / CI evidence) / 460 = 29.3%. This is a tracker-derived proxy, not live-native proof: most [x] lines cite mocked, synthetic or fixture evidence. Of the 276 lines with an open box: 163 open, 59 done-on-main, 49 unknown, 5 obsolete; 41 are sandbox-actionable."
+   },
+   "effort_hours_not_implemented": 0,
+   "effort_basis": "analyst estimate, hours",
+   "effort_features": 0,
+   "features_by_evidence_class": {
+    "mocked": 0,
+    "synthetic": 0,
+    "fixture": 0,
+    "live-native": 0,
+    "none": 0
+   },
+   "defects_by_severity": {
+    "critical": 0,
+    "high": 1,
+    "medium": 2,
+    "low": 3
+   },
+   "blockers_by_type": {
+    "external-tool": 0,
+    "windows-only": 0,
+    "live-network": 0,
+    "owner-decision": 0,
+    "other-lane": 0
+   },
+   "actionable_now": 15,
+   "external_blockers": [
+    "windows-only: 31 pending lines (clean-Windows GUI acceptance, manual NVDA/Narrator/DPI/high-contrast gates M19-M28, OneDrive and frozen-EXE checks, P1 pair rerun)",
+    "native-tool: 27 pending lines (Ghidra/Ghidriff, BinDiff 8, rizin, capa/FLOSS/diec not installed; live gates on real label forms, real MSVC IR, Tier R)",
+    "ci-run: 36 pending lines (first green runs of live-bindiff, live-rizin, live-nvd, live-intel-tools, pages, unified-corpus; about 20 'Windows CI for the new tests' lines closable by citing one green qa-windows run, not read in this brief)",
+    "live-network: 14 pending lines (MSRC, NVD, CISA, Winbindex, OASIS/MITRE; capa-rules 9.4.0 pack for the derived-unverified inventory)",
+    "owner-decision: 27 pending lines (U-01..U-12, C9 ratification and labelling decisions O1/O2/O4, D5, restrict_env default, removed KB/KEV tests at todo.md:373/377, plan wording)",
+    "other-lane: 15 pending lines inside L1/L2/L4/L5 files (unified ladder/facts/spec notes, tools/unified, tier_r, backend.py, release gate)"
+   ],
+   "summary": "All 276 lines with an open box in tasks/todo.md 1-620 are classified in OUTFILE (items, counts, 15 actionable_now, 6 defects). The tracker is stale: 59 open-marked lines are done on main, 5 are duplicates, 49 are unknown (mostly hosted-CI results not read). Of 212 pending lines, 108 wait on Windows, native tools, live network or CI runs; 27 on the owner; 15 sit in active lanes. 41 are sandbox-actionable. The one high defect is the tracker-recorded P1 Windows timeout, not reproduced. Medium findings confirmed by code reading: `intelligence explain` keeps a withdrawn CVE current; the BinDiff importer loads unbounded rows. Two low bugs were reproduced. Nothing is live-native evidence."
+  },
+  "T2": {
+   "title": "Tracker reconciliation, part 2 (tasks/todo.md lines 621-1239)",
+   "features": 0,
+   "features_by_status": {
+    "implemented": 0,
+    "partial": 0,
+    "missing": 0,
+    "blocked-external": 0,
+    "deferred-by-design": 0
+   },
+   "completion": null,
+   "effort_hours_not_implemented": 0,
+   "effort_basis": "analyst estimate, hours",
+   "effort_features": 0,
+   "features_by_evidence_class": {
+    "mocked": 0,
+    "synthetic": 0,
+    "fixture": 0,
+    "live-native": 0,
+    "none": 0
+   },
+   "defects_by_severity": {
+    "critical": 0,
+    "high": 0,
+    "medium": 0,
+    "low": 0
+   },
+   "blockers_by_type": {
+    "external-tool": 0,
+    "windows-only": 0,
+    "live-network": 0,
+    "owner-decision": 0,
+    "other-lane": 0
+   },
+   "actionable_now": 15
+  }
+ },
+ "not_inventoried": [
+  "A",
+  "G",
+  "H",
+  "I2",
+  "I3",
+  "J",
+  "L",
+  "R"
+ ],
+ "tracker": {
+  "T1": {
+   "total_open_listed": 276,
+   "by_state": {
+    "done-on-main": 59,
+    "obsolete": 5,
+    "open": 163,
+    "unknown": 49
+   },
+   "by_blocked_by": {
+    "ci-run": 37,
+    "live-network": 14,
+    "native-tool": 29,
+    "none": 120,
+    "other-lane": 18,
+    "owner-decision": 27,
+    "windows-only": 31
+   },
+   "by_area": {
+    "accuracy-calibration": 11,
+    "bundle": 2,
+    "ci-testing": 28,
+    "cli": 8,
+    "docs": 12,
+    "gui": 43,
+    "intelligence": 40,
+    "kb-cve": 24,
+    "native-adapters": 19,
+    "other": 24,
+    "performance": 5,
+    "persistence": 6,
+    "release-packaging": 10,
+    "security": 11,
+    "unified": 33
+   },
+   "by_kind": {
+    "audit": 2,
+    "bug": 8,
+    "build": 145,
+    "external": 2,
+    "owner": 18,
+    "qa": 97,
+    "spec": 4
+   },
+   "actionable_in_sandbox": 41,
+   "checkbox_lines_in_range": 460,
+   "fully_checked_lines": 184,
+   "lines_with_open_box": 276,
+   "mixed_lines_x_and_open": 33,
+   "pending_open_or_unknown": 212,
+   "pending_blocked_by_validation_evidence": 108,
+   "pending_by_blocked_by": {
+    "ci-run": 36,
+    "live-network": 14,
+    "native-tool": 27,
+    "none": 62,
+    "other-lane": 15,
+    "owner-decision": 27,
+    "windows-only": 31
+   },
+   "closed_checked_or_done_on_main": 243
+  },
+  "T2": {
+   "total_open_listed": 175,
+   "by_state": {
+    "open": 81,
+    "done-on-main": 23,
+    "unknown": 30,
+    "obsolete": 41
+   },
+   "by_blocked_by": {
+    "none": 104,
+    "windows-only": 23,
+    "owner-decision": 11,
+    "live-network": 2,
+    "other-lane": 13,
+    "native-tool": 16,
+    "ci-run": 6
+   },
+   "by_area": {
+    "kb-cve": 11,
+    "other": 7,
+    "persistence": 20,
+    "ci-testing": 38,
+    "performance": 1,
+    "security": 6,
+    "cli": 4,
+    "intelligence": 8,
+    "native-adapters": 10,
+    "gui": 26,
+    "accuracy-calibration": 26,
+    "unified": 8,
+    "release-packaging": 8,
+    "docs": 2
+   },
+   "by_kind": {
+    "qa": 82,
+    "build": 55,
+    "spec": 6,
+    "owner": 16,
+    "bug": 4,
+    "external": 4,
+    "audit": 7,
+    "docs": 1
+   },
+   "actionable_in_sandbox": 15
+  }
+ },
+ "totals": {
+  "features": 132,
+  "actionable_now": 120,
+  "features_by_status": {
+   "implemented": 31,
+   "partial": 88,
+   "missing": 2,
+   "blocked-external": 7,
+   "deferred-by-design": 4
+  },
+  "defects_by_severity": {
+   "critical": 0,
+   "high": 8,
+   "medium": 35,
+   "low": 52
+  },
+  "blockers_by_type": {
+   "external-tool": 23,
+   "windows-only": 39,
+   "live-network": 24,
+   "owner-decision": 39,
+   "other-lane": 33,
+   "other": 2
+  },
+  "features_by_evidence_class": {
+   "mocked": 18,
+   "synthetic": 69,
+   "fixture": 22,
+   "live-native": 11,
+   "none": 12
+  },
+  "effort_hours_not_implemented": 1088,
+  "effort_basis": "analyst estimate, hours"
+ },
+ "completion_measures": [
+  {
+   "measure": "workstream-features",
+   "workstream": "B",
+   "title": "Native binary analysis adapters (Ghidriff/Ghidra, Rizin rz-diff, BinDiff, BinExport2, Diaphora, capa/FLOSS/DiE)",
+   "implementation_pct": 82,
+   "validation_pct": 19,
+   "basis": "6 adapters x 14 checks = 84 cells (Ghidriff, rz-diff, BinDiff, BinExport2, Diaphora, capa/FLOSS/DiE). Implementation score 69.0/84 (yes=1, partial=0.5, no=0). Validation counts only cells with live-native evidence: 16/84 (Ghidriff 4 on Windows, rz-diff 4 on Linux+Windows, BinDiff 4 on Linux, intel tools 4 on Linux, BinExport2 0, Diaphora 0). Separately 69/84 cells have an automated test of any class (mocked/synthetic/fixture), which is not compatibility evidence. Non-adapter features (timeout program, SPEC-53 launcher, bundle, rz-diff producer research, orchestration, BinExport producer, docs) carry their own counted bases in the file and are not blended into these two numbers."
+  },
+  {
+   "measure": "workstream-features",
+   "workstream": "C",
+   "title": "CVE and vulnerability intelligence",
+   "implementation_pct": 65.5,
+   "validation_pct": 58.5,
+   "basis": "93 of 142 counted acceptance items built and 83 of 142 validated across 22 features (per-feature item lists are in each feature's pct_basis in the OUTFILE). Validated means evidence of the class the item needs was seen: automated tests for logic items (mostly synthetic or mocked, never counted as live evidence) and a live run whose step summary I read for live items. Windows-only and live-only items count as built but not validated. Of 1,943 tests collected in the 58 scoped test files I ran three files (131 passed); the rest rests on the baseline suite."
+  },
+  {
+   "measure": "workstream-features",
+   "workstream": "D",
+   "title": "Patch correlation and recommendations (vulnerability-to-patch workflow)",
+   "implementation_pct": 67,
+   "validation_pct": 35,
+   "basis": "15 required capabilities scored implemented=1 / partial=0.5 / missing=0: 5 implemented (locate updates, relevant changed functions, confidence indicators, missing/contradictory handling, persistence), 10 partial, 0 missing -> 10/15 = 67%. Validation weights live-native=1, real-data fixture=0.67, synthetic or mocked=0.33: 0 live-native, 1 real-data fixture (CVE-to-KB lookup, single real-shaped MSRC CVE), 14 synthetic/mocked -> 5.3/15 = 35%. 31-H gates: A, B, C, D, G met at their synthetic level; E partial; F, I and H6 unmet; H not applicable. Per-feature percentages in the file are estimates from listed remaining items, not measured."
+  },
+  {
+   "measure": "workstream-features",
+   "workstream": "E",
+   "title": "GUI and analyst experience",
+   "implementation_pct": 73,
+   "validation_pct": 59,
+   "basis": "136 of 187 counted implementation items and 116 of 196 counted validation items across 25 features (E-F24 dockable workspace is a draft spec, 0 of 13 sections, excluded). An item counts as validated when an automated offscreen test file covering it was located by name; I did not re-run those tests. All such evidence is mocked, synthetic or fixture: none is live-native, and the Windows manual gates M19-M23 are not-run."
+  },
+  {
+   "measure": "gui-cli-parity",
+   "workstream": "F",
+   "title": "CLI, automation and the GUI/CLI parity matrix",
+   "implementation_pct": 63,
+   "validation_pct": 61,
+   "basis": "Directive's 19 required CLI items: 6 full (adapter selection, CVE lookup, patch correlation, patch recommendations, result export, unattended execution), 12 partial, 1 missing (manual correction import/export). Implementation = (6 + 12 x 0.5) / 19 = 63 %. Validation = 11.5 / 19 = 61 %: 6 full items and the built half of 10 partial items have offline automated tests (6 + 5), exit codes and docs count 0.25 each (no cross-verb contract test, no doc drift test). All evidence is mocked, synthetic or fixture; live-native CLI evidence is 0 of 19. Cross-check from the parity matrix: 43 applicable GUI capabilities = 23 full, 8 partial, 12 GUI-only -> (23 + 4) / 43 = 63 %. Only tests/test_cli_registry.py and tests/test_help_docs.py were run here (249 passed, 1 skipped)."
+  },
+  {
+   "measure": "security-backlog",
+   "workstream": "I1",
+   "title": "Security and reliability backlog verification against main",
+   "implementation_pct": 59,
+   "validation_pct": 48,
+   "basis": "136 counted findings across 13 families (TB 16 incl. new TB-16, KBA 8, SEC 13, ACQ 13, PE 13, CORE 12, RA 10, TA 18, Sonar 6, WP 10, runtime-reliability 8, 2026-11-05 slices 4, SECURITY.md gaps 5). 75 closed (fixed or not-applicable) + 11 partial at 0.5 = 80.5/136 = 59% implementation. 65/136 closed with a named regression test present on main = 48% validation. Tests were checked for presence only, not re-run; all evidence is mocked/synthetic/fixture, none live-native or live-network."
+  },
+  {
+   "measure": "workstream-features",
+   "workstream": "K",
+   "title": "Testing and continuous integration",
+   "implementation_pct": 74,
+   "validation_pct": 44,
+   "basis": "172.5 of 232 counted acceptance items implemented, 101 validated. Implemented/validated/total per feature: K-F01 main QA workflow 7/7/14; K-F02 fleet hygiene 104/42/126 (21 workflows x 6 owner rules; validated = rule checks enforced by a test); K-F03 run evidence 21/13/21 (latest run on main green for 13 of 21 workflows); K-F04 skip/xfail discipline 4/4/10; K-F05 coverage map 11.5/11/13; K-F06 parallel-safety 5/5/10; K-F07 test tooling 8/7/13; K-F08 packaging smoke 6/6/11; K-F09 release gate (L4) 5/5/10; K-F10 docs currency 1/1/4."
+  },
+  {
+   "measure": "tracker-lines",
+   "workstream": "T1",
+   "title": "Tracker reconciliation, part 1 (tasks/todo.md lines 1-620)",
+   "implementation_pct": 52.8,
+   "validation_pct": 29.3,
+   "basis": "Unit = one tracker line containing a checkbox in tasks/todo.md lines 1-620: 460 lines. implementation_pct = (184 fully checked + 59 open-marked lines verified done on main) / 460 = 52.8% (5 obsolete duplicates and 49 unknown lines are NOT counted as done). validation_pct = (243 closed - 108 still-pending lines that wait on Windows / native-tool / live-network / CI evidence) / 460 = 29.3%. This is a tracker-derived proxy, not live-native proof: most [x] lines cite mocked, synthetic or fixture evidence. Of the 276 lines with an open box: 163 open, 59 done-on-main, 49 unknown, 5 obsolete; 41 are sandbox-actionable."
+  }
+ ],
+ "nonconforming": {
+  "K": [
+   "K-F02: blocker type 'other' is not one of external-tool, windows-only, live-network, owner-decision, other-lane, none",
+   "K-F08: blocker type 'other' is not one of external-tool, windows-only, live-network, owner-decision, other-lane, none"
+  ]
+ }
+}
