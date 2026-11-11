@@ -11,6 +11,7 @@ from __future__ import annotations
 import hashlib
 import os
 import re
+import tempfile
 from collections.abc import Iterable, Mapping
 from dataclasses import dataclass
 from pathlib import Path
@@ -198,9 +199,18 @@ def read_report(path: Path) -> WorkerReport | None:
 
 
 def write_atomic(path: Path, data: bytes) -> None:
-    part = Path(f'{path}.part')
-    part.write_bytes(data)
-    os.replace(part, path)
+    """Write a unique temporary beside the target, fsync, then replace. A fixed `<target>.part` name would write
+    through a symlink planted there, and a failed replace would leave the partial file behind."""
+    fd, temporary = tempfile.mkstemp(prefix=f'.{path.name}.', suffix='.part', dir=path.parent)
+    try:
+        with os.fdopen(fd, 'wb') as stream:
+            stream.write(data)
+            stream.flush()
+            os.fsync(stream.fileno())
+        os.replace(temporary, path)
+    except BaseException:
+        Path(temporary).unlink(missing_ok=True)
+        raise
 
 
 def inside(path: str, directory: Path) -> Path:

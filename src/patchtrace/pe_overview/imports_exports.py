@@ -55,10 +55,6 @@ def parse_imports(ctx: Ctx, smap: SectionMap, rva: int, plus: bool) -> ImportsIn
     index = 0
     while True:
         ctx.check()
-        if index >= lim.max_import_dlls:
-            ctx.warn('import_dlls_over_cap', f'more than {lim.max_import_dlls} import descriptors; stopped')
-            truncated = True
-            break
         raw = _read_span(ctx, smap, rva + index * 20, 20)
         if len(raw) < 20:
             ctx.warn('import_rva_out_of_file', 'import descriptor table is not (fully) backed by file data')
@@ -68,6 +64,11 @@ def parse_imports(ctx: Ctx, smap: SectionMap, rva: int, plus: bool) -> ImportsIn
             break
         oft, _ts, _fwd, name_rva, ft = struct.unpack('<IIIII', raw)
         if raw == b'\0' * 20:
+            break
+        # The caps apply to an entry that exists: a table whose terminator sits exactly at a cap is complete (PE-6).
+        if index >= lim.max_import_dlls:
+            ctx.warn('import_dlls_over_cap', f'more than {lim.max_import_dlls} import descriptors; stopped')
+            truncated = True
             break
         key = (oft, name_rva, ft)
         if key in seen_desc:
@@ -90,14 +91,6 @@ def parse_imports(ctx: Ctx, smap: SectionMap, rva: int, plus: bool) -> ImportsIn
         seen_names: set[int] = set()
         while thunk_rva:
             ctx.check()
-            if count >= lim.max_functions_per_dll:
-                ctx.warn('import_functions_over_cap', f'more than {lim.max_functions_per_dll} imports from one DLL')
-                dll_trunc = True
-                break
-            if total_funcs >= lim.max_total_names:
-                ctx.warn('import_names_over_cap', f'more than {lim.max_total_names} imported names in total')
-                dll_trunc = truncated = True
-                break
             traw = _read_span(ctx, smap, thunk_rva + count * entry, entry)
             if len(traw) < entry:
                 ctx.warn('import_rva_out_of_file', 'an import thunk table is not backed by file data')
@@ -105,6 +98,14 @@ def parse_imports(ctx: Ctx, smap: SectionMap, rva: int, plus: bool) -> ImportsIn
                 break
             value = struct.unpack('<Q' if plus else '<I', traw)[0]
             if value == 0:
+                break
+            if count >= lim.max_functions_per_dll:
+                ctx.warn('import_functions_over_cap', f'more than {lim.max_functions_per_dll} imports from one DLL')
+                dll_trunc = True
+                break
+            if total_funcs >= lim.max_total_names:
+                ctx.warn('import_names_over_cap', f'more than {lim.max_total_names} imported names in total')
+                dll_trunc = truncated = True
                 break
             if value & ordinal_flag:
                 funcs.append(f'#{value & 0xFFFF}')

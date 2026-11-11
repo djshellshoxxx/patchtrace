@@ -201,7 +201,7 @@ Cache key (SPEC-28 §5.1) = `sha256(["bindiff", cap.version, argv_digest, older_
 | `output-pair-mismatch` | PAIR/ORIENTATION | `file.hash` ≠ project hashes | importer messages (already specified) |
 | `store-failed` | RUN | `EnrichmentError` on publish | "The result was valid but could not be stored: {code}. The raw `.BinDiff` was kept." |
 
-Rules: stderr text is shown only after `sanitize()` (strip control chars/ANSI, collapse paths to basenames, cap 200 chars, never echo environment values); full tail only in memory for `--verbose`. A failure never deletes or modifies previously stored sets or runs; a failed run still writes an `EngineRun`.
+Rules: stderr text is shown only after `sanitize()` (strip control chars/ANSI, collapse paths to basenames, cap 200 chars, never echo environment values; amended 2026-11-11, SEC-B: after the ANSI sequences are removed, every character `patchtrace.hostile_text.is_hostile` rejects except a tab becomes a space, so C1 controls such as CSI U+009B, bidirectional overrides and other format characters, surrogates and U+2028/U+2029 no longer pass); full tail only in memory for `--verbose`. A failure never deletes or modifies previously stored sets or runs; a failed run still writes an `EngineRun`.
 
 ## 7. Security invariants
 

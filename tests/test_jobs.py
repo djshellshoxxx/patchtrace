@@ -10,7 +10,7 @@ from pathlib import Path
 import pytest
 from liveness_support import heartbeat_code, heartbeat_stopped, wait_for
 
-from patchtrace import backend
+from patchtrace import backend, jobs
 from patchtrace.backend import BackendConfig, quarantine_failed_run, run_comparison
 from patchtrace.diagnostics import redact_log
 from patchtrace.jobs import run_process
@@ -672,3 +672,43 @@ def test_nan_timeout_and_non_integer_limits_are_rejected(tmp_path, bound):
     """NaN never compares >= elapsed (no deadline); a float limit kills the reader thread (the pipe stops draining)."""
     with pytest.raises(ValueError, match='PT-BACKEND'):
         execute(tmp_path, 'pass', **bound)
+
+
+# ---- TB-15: the child environment is validated before any spawn, on every platform ----
+
+INVALID_ENVIRONMENTS = {
+    'empty-name': {'': 'secret'},
+    'equals-in-name': {'A=B': 'secret'},
+    'leading-equals-name': {'=A': 'secret'},
+    'nul-in-name': {'A\0B': 'secret'},
+    'nul-in-value': {'A': 'secret\0B=y'},
+    'bytes-name': {b'A': 'secret'},
+    'int-name': {1: 'secret'},
+    'bytes-value': {'A': b'secret'},
+    'none-value': {'A': None},
+    'int-value': {'A': 1},
+}
+
+
+@pytest.mark.parametrize('extra', list(INVALID_ENVIRONMENTS.values()), ids=list(INVALID_ENVIRONMENTS))
+def test_invalid_child_environment_is_refused_before_any_spawn(tmp_path, monkeypatch, extra):
+    """The Windows environment block is NUL-separated: an unchecked NUL would add a variable nobody named."""
+    def spawned(*args, **kwargs):
+        raise AssertionError('a process was spawned for a refused environment')
+
+    monkeypatch.setattr(jobs.subprocess, 'Popen', spawned)
+    monkeypatch.setattr(jobs, '_windows_process', spawned)
+    with pytest.raises(ValueError) as refused:
+        run_process([str(Path(sys.executable).resolve()), '-c', 'pass'], cwd=tmp_path,
+                    env={**os.environ, **extra}, cancel=threading.Event(), timeout_seconds=5)
+    assert str(refused.value) == 'PT-BACKEND: child environment has an invalid variable name or value'
+
+
+def test_valid_child_environment_reaches_the_child_unchanged(tmp_path):
+    values = {'PT_TB15_EQUALS': 'k=v=w', 'PT_TB15_EMPTY': '', 'PT_TB15_TEXT': 'caf\u00e9 \u2713'}
+    code = ('import json,os,sys;'
+            'sys.stdout.write(json.dumps({k: os.environ.get(k) for k in sorted(os.environ) if k.startswith("PT_TB15_")}))')
+    result = run_process([str(Path(sys.executable).resolve()), '-X', 'utf8', '-c', code], cwd=tmp_path,
+                         env={**os.environ, **values}, cancel=threading.Event(), timeout_seconds=30)
+    assert result.returncode == 0
+    assert json.loads(result.log_tail) == values

@@ -21,7 +21,7 @@ def load_manifest(path: Path) -> DiaphoraDiffManifest:
         if path.is_symlink() or not path.is_file() or path.stat().st_size > MANIFEST_LIMIT:
             raise DiaphoraError('PT-DIAPHORA-PROVENANCE', 'the manifest must be a regular file under 64 KiB')
         return DiaphoraDiffManifest.model_validate(json.loads(path.read_text(encoding='utf-8')))
-    except (OSError, ValueError, ValidationError):
+    except (OSError, ValueError, ValidationError, RecursionError):
         raise DiaphoraError('PT-DIAPHORA-PROVENANCE', 'the manifest is unreadable or not diaphora-diff/1') from None
 
 
