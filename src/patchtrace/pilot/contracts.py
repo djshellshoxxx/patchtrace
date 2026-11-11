@@ -13,7 +13,7 @@ vocabulary but unreachable until a typed dominance or dataflow channel exists (`
 from __future__ import annotations
 
 import re
-from datetime import date
+from datetime import date, datetime
 from types import MappingProxyType
 from typing import Annotated, Literal, get_args
 
@@ -131,6 +131,16 @@ def _line(max_length: int, min_length: int = 0):
     return Annotated[str, AfterValidator(plain_line), Field(min_length=min_length, max_length=max_length)]
 
 
+def _real_utc(value: str) -> str:
+    """A UTC stamp that is a real instant: the pattern alone accepts month 13, and one such stored row used to abort
+    `pilot leads`, `why` and `review` instead of being skipped (issue #105 P1)."""
+    try:
+        datetime.fromisoformat(value.replace('Z', '+00:00'))
+    except ValueError:
+        raise ValueError('time must be a real UTC instant') from None
+    return value
+
+
 def _real_date(value: str) -> str:
     try:
         date.fromisoformat(value)
@@ -153,7 +163,8 @@ Slug = Annotated[str, Field(pattern=r'^[a-z0-9-]{1,48}$')]
 CveId = Annotated[str, Field(max_length=24, pattern=r'^CVE-[0-9]{4}-[0-9]{4,19}$')]
 CweId = Annotated[str, Field(pattern=r'^CWE-[1-9][0-9]{0,5}$')]
 Pointer = Annotated[str, Field(max_length=4096, pattern=r'^(/([^/~]|~[01])*)*$')]
-Utc = Annotated[str, Field(pattern=r'^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\.[0-9]{1,6})?(\+00:00|Z)$')]
+Utc = Annotated[str, Field(pattern=r'^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\.[0-9]{1,6})?(\+00:00|Z)$'),
+              AfterValidator(_real_utc)]
 IsoDate = Annotated[str, Field(pattern=r'^[0-9]{4}-[0-9]{2}-[0-9]{2}$'), AfterValidator(_real_date)]
 OriginTag = Annotated[str, Field(pattern=r'^D_[a-z0-9_]{1,32}$')]
 ObsKind = Annotated[str, Field(pattern=r'^[a-z][a-z0-9]{0,11}:[A-Za-z0-9][A-Za-z0-9_.-]{0,63}$')]

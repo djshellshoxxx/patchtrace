@@ -52,6 +52,7 @@ NAME_KINDS = ('function', 'import', 'export')
 MAX_EVIDENCE = 6
 SNIPPET_CHARS = 300
 BROAD_PAGE = 200
+SQLITE_INT_LIMIT = 1 << 63      # one past the largest SQLite INTEGER
 BROAD_WARNING = 'Too many documents match; showing the first {n} in index order, unranked. Narrow the query.'
 DOC_COLUMNS = 'd.id, d.kind, d.side, d.subject, d.display, d.extra, d.ref, d.rva, d.flags, d.value_sha'
 SCHEME = {'function': 'function', 'code': 'function', 'asm': 'function', 'string': 'string', 'import': 'import',
@@ -175,12 +176,18 @@ class _Reader:
             self._keep(self._candidate(row[:11], table, tier, reason, field_, snippet=row[11]))
 
     def _signatures(self) -> None:
-        needles = [t.fold for t in self.plan.terms]
+        # Words and phrases must all occur and no excluded word may: a phrase-only plan has no words, and `all([])`
+        # used to match every signature (issue #105 S6).
+        needles = [t.fold for t in self.plan.terms] + [fold(p) for p in self.plan.phrases]
+        excluded = [fold(e) for e in self.plan.excludes]
+        if not needles:
+            return
         rows = self.segment.conn.execute(
             f"SELECT {DOC_COLUMNS}, 0.0 FROM doc d WHERE d.kind = 'function' AND d.extra != ''{self.filters} "
             'ORDER BY d.id LIMIT ?', (*self.params, self.limits.scan_rows_max))
         for row in rows:
-            if all(n in fold(row[5]) for n in needles):
+            signature = fold(row[5])
+            if all(n in signature for n in needles) and not any(e in signature for e in excluded):
                 self._keep(self._candidate(row, 'doc', 3, 'text-words', 'signature'))
 
     def _browse(self) -> None:
@@ -199,9 +206,10 @@ class _Reader:
             if term.kind in ('sha256', 'address'):
                 self._lookup(term)
             else:
-                needle = fold(term.value)
+                # A whole id, not a prefix of a longer one: CVE-2099-10001 is not in CVE-2099-100011 (#105 S7).
+                whole = re.compile(rf'(?<![0-9a-z]){re.escape(fold(term.value))}(?![0-9a-z])')
                 for key, candidate in list(self.found.items()):
-                    if needle in fold(f'{candidate.display} {candidate.extra} {candidate.subject}'):
+                    if whole.search(fold(f'{candidate.display} {candidate.extra} {candidate.subject}')):
                         self.found[key] = replace(candidate, tier=0, reason='exact-id', field=term.kind)
 
     def _lookup(self, term) -> None:
@@ -211,7 +219,13 @@ class _Reader:
             value = int(term.value, 16)
             subjects = self.index.at_address(value)
             marks = ','.join('?' * len(subjects))
-            where, params, label = f'(d.rva = ?{f" OR d.subject IN ({marks})" if subjects else ""})', [value, *subjects], 'address'
+            # SQLite integers are signed 64-bit: no stored rva is 2**63 or more, and binding one overflows (#105 S4).
+            by_rva = ['d.rva = ?'] if value < SQLITE_INT_LIMIT else []
+            by_subject = [f'd.subject IN ({marks})'] if subjects else []
+            if not (by_rva or by_subject):
+                return
+            where = f'({" OR ".join(by_rva + by_subject)})'
+            params, label = [value] * len(by_rva) + list(subjects), 'address'
         rows = self.segment.conn.execute(f'SELECT {DOC_COLUMNS}, 0.0 FROM doc d WHERE {where}{self.filters} '
                                          'ORDER BY d.id LIMIT ?', (*params, *self.params, self.limits.candidate_cap))
         for row in rows:
@@ -511,7 +525,7 @@ class SearchService:
             body = json.loads(base64.urlsafe_b64decode(request.cursor + '=' * (-len(request.cursor) % 4)))
             offset = int(body['o'])
             same = (body['k'], body['q'], body['s']) == (plan_request.index_key, request.plan.digest(), request.sort)
-        except (ValueError, KeyError, TypeError):
+        except (ValueError, KeyError, TypeError, OverflowError):   # {"o": 1e999} is not an offset (#105 S5)
             raise SearchError('PT-SEARCH-INPUT', 'the page cursor is not valid') from None
         if not same or offset < 0:
             raise SearchError('PT-SEARCH-STALE', 'the index or the query changed since this page; search again',
