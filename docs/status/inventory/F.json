@@ -1,0 +1,1486 @@
+{
+ "workstream": "F",
+ "title": "CLI, automation and the GUI/CLI parity matrix",
+ "baseline": "main@882d1ca0",
+ "features": [
+  {
+   "id": "F-F01",
+   "name": "CLI framework: Qt-free dispatch, enrichment-cli/1 envelope, cli_commands registry",
+   "spec": [
+    "docs/specs/cli-umbrella.md",
+    "docs/specs/enrichment.md",
+    "docs/specs/program-e/GUI-integration-plan.md"
+   ],
+   "code": [
+    "src/patchtrace/__main__.py",
+    "src/patchtrace/cli.py",
+    "src/patchtrace/cli_commands/__init__.py",
+    "src/patchtrace/cli_commands/_support.py"
+   ],
+   "status": "partial",
+   "implementation_pct": 78,
+   "validation_pct": 78,
+   "verified_by": [
+    "tests/test_cli.py (synthetic)",
+    "tests/test_cli_registry.py (synthetic; 249 passed with tests/test_help_docs.py in 2.1 s on 2026-11-11)",
+    "tests/stress/test_cli_stress_verbs.py (synthetic)",
+    "109 scratch probes on a synthetic sample project, stdin closed: no traceback, one JSON document per --json call (synthetic)"
+   ],
+   "evidence_class": "synthetic",
+   "remaining": [
+    "Failure-envelope `command` label is inconsistent (F-D04).",
+    "Status vocabulary has undocumented values `ok`, `too-broad` (F-D06); owner decision.",
+    "Usage errors print one line without the usage block (audit CLI-15, still open).",
+    "`correlate --save-snapshot` uses Path.write_text: CRLF on Windows and not atomic (src/patchtrace/cli.py:490; audit CLI-13, still open; Windows behaviour UNVERIFIED).",
+    "`patchtrace kb` with no action prints help and exits 0 (src/patchtrace/cli_commands/kb.py:16) while every other verb group exits 2.",
+    "No `--version` (`patchtrace --version` exits 2: 'the following arguments are required: command')."
+   ],
+   "defects": [
+    {
+     "id": "F-D04",
+     "severity": "low",
+     "summary": "The `command` field of a failure envelope differs from the success envelope for registry verbs and for parse failures.",
+     "evidence": "src/patchtrace/cli.py:873-882; src/patchtrace/cli_commands/__init__.py:83",
+     "failure_scenario": "`patchtrace build-env show MISSING --json` prints command 'build-env' (success prints 'build-env show'); `patchtrace pilot why P --candidate x --json` prints command 'patchtrace'; `patchtrace secondary binexport-check F --artifact-sha256 00 --role older --json` prints 'secondary'. A consumer that routes on `command` cannot match a failure to the call it made. SPEC-44 s2 says command is the verb plus the action.",
+     "proposed_fix": "In `_json_envelope` accept any verb in the parser choices (cli_commands.names()) and append argv[1] when it is an action; in `_command_name` append `args.action` when a registry verb has one and no explicit nested label. cli.py is exactly at its seam budget (920 lines = CLI_BASELINE_LINES 914 + 6), so the edit must be line-neutral or bump the baseline with a bug-fix note as was done before.",
+     "regression_test": "tests/test_cli_registry.py::test_failure_envelope_names_verb_and_action (new; parametrized over build-env show, graph leads, strings list, diaphora show, pilot why bad --candidate, secondary binexport-check bad sha)"
+    },
+    {
+     "id": "F-D06",
+     "severity": "low",
+     "summary": "Envelope `status` values outside the vocabulary SPEC-44 s4 allows: `ok` (panels, search) and `too-broad` (search).",
+     "evidence": "src/patchtrace/gui/cli.py:55; src/patchtrace/search/cli.py:122,130,154; docs/specs/cli-umbrella.md:25,40",
+     "failure_scenario": "A consumer that treats any status other than complete/partial/failed/cancelled/unavailable/stale/no-results as an error rejects every successful `patchtrace search ... --json` and `patchtrace panels list --json` (both observed with status 'ok', exit 0).",
+     "proposed_fix": "Owner decision: either list `ok` and `too-broad` in SPEC-44 s4 as observed v1 values (additive note) or map them to `complete`/`partial` in enrichment-cli/2. Until then document them; do not change shipped values silently.",
+     "regression_test": "tests/test_cli_contract_matrix.py::test_status_values_are_in_the_documented_vocabulary (new)"
+    }
+   ],
+   "blockers": [
+    {
+     "type": "owner-decision",
+     "detail": "Status vocabulary and the additive rule of SPEC-44 s2 (change shipped status strings or document them)."
+    }
+   ],
+   "effort_hours": 6,
+   "confidence": "high",
+   "acceptance_tests": [
+    "Basis: 9 acceptance items; 7 met (Qt-free dispatch; one JSON document on success; envelope on parse failure; cancelled status on exit 5; redacted errors; terminal-escaped text; registry isolates a broken verb), 2 not met (consistent command label; closed status vocabulary).",
+    "tests/test_cli_registry.py::test_failure_envelope_names_verb_and_action (new)",
+    "tests/test_cli_contract_matrix.py::test_status_values_are_in_the_documented_vocabulary (new)"
+   ],
+   "active_lane_overlap": "none"
+  },
+  {
+   "id": "F-F02",
+   "name": "Exit-code contract 0/2/3/4/5 and error messages across all verbs",
+   "spec": [
+    "docs/specs/cli-umbrella.md"
+   ],
+   "code": [
+    "src/patchtrace/cli.py",
+    "src/patchtrace/backend_cli.py",
+    "src/patchtrace/kbcorrelation/cli_index.py",
+    "src/patchtrace/intelligence/tools/cli.py",
+    "src/patchtrace/secondary/cli_run.py"
+   ],
+   "status": "partial",
+   "implementation_pct": 75,
+   "validation_pct": 46,
+   "verified_by": [
+    "per-verb CLI test files, 24 of 24 verbs (synthetic/mocked)",
+    "scratch probes: every observed exit code of a visible verb was 0, 2, 3 or 4 (synthetic)"
+   ],
+   "evidence_class": "synthetic",
+   "remaining": [
+    "Owner decisions still open (SPEC-44 s8 items 1-6; master-todo S7): partial exits 0 for rank and correlate, 3 elsewhere; no-bundle exits 4 (status, verify) or 2 (selftest, diagnose); backend uses 5 for a failed verification; intel-tools probe and delta exit 2 with status complete.",
+    "`kb explain|leads|export` exit 3 for a missing project where every other verb exits 2 (F-D05).",
+    "`secondary import-bindiff` exits 3 with a misleading message for a missing input file (F-D03, listed under F-F08).",
+    "SPEC-44 s4 has per-verb exit rows for 11 of 24 verbs; none for the 13 registry verbs or `intel-tools pairs`.",
+    "Only 3 of 106 help pages state exit codes (unified, unified run, unified show).",
+    "No cross-verb contract test (SPEC-44 s11 proposal was never built).",
+    "`export --out <path inside the project>` exits 3 (PT-EXPORT) although it is an invalid argument; `strings explain --id <unknown>` exits 2 with status failed and no error text on stderr or in the envelope (src/patchtrace/strings/cli.py:289-291)."
+   ],
+   "defects": [
+    {
+     "id": "F-D05",
+     "severity": "medium",
+     "summary": "`kb explain`, `kb leads` and `kb export` exit 3 (runtime failure) for a project directory that does not exist; the rest of the CLI exits 2 (PT-STORAGE).",
+     "evidence": "src/patchtrace/kbcorrelation/wiring.py:284-289; src/patchtrace/kbcorrelation/cli_leads.py:61-64; src/patchtrace/kbcorrelation/cli_index.py:40,159",
+     "failure_scenario": "A script that retries on exit 3 (transient runtime failure) and aborts on exit 2 (bad input) loops forever on `patchtrace kb leads /typo/path --json` (observed: exit 3, error 'PT-KBC-STORAGE: the project cannot be opened'); `patchtrace rank /typo/path --json` exits 2.",
+     "proposed_fix": "Catch the 'directory does not exist / is not a project' case separately and raise PT-KBC-INPUT (already in ARGUMENT_CODES -> exit 2); keep PT-KBC-STORAGE (3) for a damaged or locked store.",
+     "regression_test": "tests/test_kbc_cli.py::test_missing_project_directory_is_exit_2 (new; explain, leads, export)"
+    }
+   ],
+   "blockers": [
+    {
+     "type": "owner-decision",
+     "detail": "SPEC-44 s8 items 1-6 and s10 item 4 (partial exit code, no-bundle code, backend 5, status/exit pairing)."
+    },
+    {
+     "type": "other-lane",
+     "detail": "backend exit codes: L5 owns the backend diagnose path and tests/test_backend_cli.py."
+    }
+   ],
+   "effort_hours": 10,
+   "confidence": "high",
+   "acceptance_tests": [
+    "Basis: implementation = 18 of 24 verbs have no known deviation from the 0/2/3/4/5 contract (deviating: rank, correlate, backend, intel-tools, kb, secondary); validation = 11 of 24 verbs have a documented per-verb exit table (SPEC-44 s4) that tests can be read against.",
+    "tests/test_cli_contract_matrix.py (new): for every visible leaf, a nonexistent project with --json yields one envelope, status failed, exit 2.",
+    "tests/test_kbc_cli.py::test_missing_project_directory_is_exit_2 (new)"
+   ],
+   "active_lane_overlap": "L5"
+  },
+  {
+   "id": "F-F03",
+   "name": "Headless binary import / project creation",
+   "spec": [
+    "docs/specs/cli-umbrella.md",
+    "docs/specs/architecture.md",
+    "docs/specs/kb-cve-correlation-and-acquisition.md",
+    "docs/specs/acquisition.md"
+   ],
+   "code": [
+    "src/patchtrace/service.py",
+    "src/patchtrace/kbcorrelation/cli_pairs.py",
+    "src/patchtrace/cli.py",
+    "src/patchtrace/nway/series.py"
+   ],
+   "status": "partial",
+   "implementation_pct": 50,
+   "validation_pct": 50,
+   "verified_by": [
+    "tests/test_kbc_cli.py (fixture)",
+    "tests/test_acquisition_cli.py (mocked transport)",
+    "tests/test_nway_series.py (synthetic)"
+   ],
+   "evidence_class": "mocked",
+   "remaining": [
+    "No verb creates a project from two local files without a KB investigation id, a network download, or a 3-8 build series (ProjectService.create, src/patchtrace/service.py:81, has no direct CLI caller).",
+    "No verb imports an existing Ghidriff JSON (ProjectService.prepare_import/apply_import, src/patchtrace/service.py:153,251; only caller is src/patchtrace/ui.py:2814).",
+    "SPEC-44 s7 still records `project` and `import` as 'not in the alpha' proposals; the spec must be amended before the verb is added (AGENTS.md)."
+   ],
+   "defects": [
+    {
+     "id": "F-D01",
+     "severity": "high",
+     "summary": "There is no headless way to turn two local binaries into an analysed project: no direct project-create verb, no Ghidriff-JSON import verb and no single-pair comparison verb.",
+     "evidence": "src/patchtrace/cli.py:651-676 (_run_pair is reachable only from `series create --run`); src/patchtrace/service.py:81,153,158 (create/import have no CLI caller); src/patchtrace/ui.py:1908,2755,2814 (the only callers)",
+     "failure_scenario": "An unattended job that holds old.dll and new.dll runs `patchtrace series create --builds old.dll new.dll --root R --run ...` and gets exit 2 'PT-NWAY-INPUT: a series needs 3-8 builds, got 2' (observed). `backend selftest` needs the bundled runtime and a function name to expect, and `kb import-pair` needs an investigation id and never runs Ghidriff. Every derived verb (rank, unified, export...) then has no completed run to work on, so the core workflow cannot be scripted.",
+     "proposed_fix": "Add `cli_commands/project.py` (create, info, import-json, backup) over ProjectService and `cli_commands/compare.py` over the `_run_pair` flow (tasks F-T07, F-T08), after amending SPEC-44 s7/s9.",
+     "regression_test": "tests/test_project_cli.py::test_create_then_import_json_then_rank_end_to_end (new, fixture); tests/test_compare_cli.py::test_compare_runs_one_pair_with_a_fake_backend (new, mocked)"
+    }
+   ],
+   "blockers": [
+    {
+     "type": "owner-decision",
+     "detail": "SPEC-44 s7 marks project/import as proposals 'not in the alpha'; the current directive's required CLI list supersedes that, but the spec text must change first."
+    },
+    {
+     "type": "other-lane",
+     "detail": "A new verb needs a docs/help page and a README index line (tests/test_help_docs.py); docs/help/** is lane L6."
+    }
+   ],
+   "effort_hours": 10,
+   "confidence": "high",
+   "acceptance_tests": [
+    "Basis: 4 acceptance items; 2 met (create through a KB investigation; create through acquisition), 2 not met (direct create from two files; Ghidriff JSON import).",
+    "tests/test_project_cli.py (new): create exits 0 and prints project path, artifact hashes and identical-input status; an existing project directory exits 2; import-json of a result for another pair exits 2 and leaves the project unchanged."
+   ],
+   "active_lane_overlap": "L6"
+  },
+  {
+   "id": "F-F04",
+   "name": "Headless primary comparison (Ghidriff analysis execution) for one pair",
+   "spec": [
+    "docs/specs/cli-umbrella.md",
+    "docs/specs/nway.md",
+    "docs/specs/ghidriff-launcher-symbols.md",
+    "docs/specs/ghidriff-timeout-progress.md"
+   ],
+   "code": [
+    "src/patchtrace/cli.py",
+    "src/patchtrace/backend.py",
+    "src/patchtrace/backend_cli.py",
+    "src/patchtrace/cli_backend_progress.py",
+    "src/patchtrace/symbols/cli_args.py"
+   ],
+   "status": "partial",
+   "implementation_pct": 50,
+   "validation_pct": 50,
+   "verified_by": [
+    "tests/test_cli_backend_progress.py (mocked backend.run_comparison)",
+    "tests/test_nway_series.py (fake Ghidriff)",
+    "tests/test_backend_cli.py (mocked)"
+   ],
+   "evidence_class": "mocked",
+   "remaining": [
+    "Single-pair run with an external Python + Ghidra is GUI-only (src/patchtrace/ui.py:2755); see F-D01.",
+    "The symbol flags (--symbols, --symbol-dir, --consent-online-symbols) and --timeout/--cache-dir exist only on `series create --run`.",
+    "`series create --timeout` has no range check in the CLI (BackendConfig only requires a positive integer, src/patchtrace/backend.py:150); other verbs enforce 10..86400 or 60..86400.",
+    "No live-native CLI comparison was run in this sandbox (Ghidra and Ghidriff are not installed)."
+   ],
+   "defects": [],
+   "blockers": [
+    {
+     "type": "external-tool",
+     "detail": "Ghidra/Ghidriff are not installed here: any CLI comparison evidence is mocked."
+    },
+    {
+     "type": "other-lane",
+     "detail": "backend.py is owned by L2/L5; a compare verb must call run_comparison without editing it."
+    }
+   ],
+   "effort_hours": 8,
+   "confidence": "medium",
+   "acceptance_tests": [
+    "Basis: 4 acceptance items; 2 met with mocked tests (series --run, bundle selftest), 2 not met (single-pair run with an external runtime; symbol and cache flags for a single pair).",
+    "tests/test_compare_cli.py (new, mocked): completed run is applied and exit 0; failed run is quarantined and exit 3; cancel exits 5 and records the terminal run; a project with a completed run is reused unless --refresh."
+   ],
+   "active_lane_overlap": "L2"
+  },
+  {
+   "id": "F-F05",
+   "name": "Derived enrichment verbs: rank, flags, correlate, cache",
+   "spec": [
+    "docs/specs/enrichment.md",
+    "docs/specs/cli-umbrella.md"
+   ],
+   "code": [
+    "src/patchtrace/cli.py",
+    "src/patchtrace/enrichment/pipeline.py",
+    "src/patchtrace/enrichment/cache.py",
+    "src/patchtrace/enrichment/profiles.py"
+   ],
+   "status": "implemented",
+   "implementation_pct": 100,
+   "validation_pct": 80,
+   "verified_by": [
+    "tests/test_cli.py (synthetic, 31 tests)",
+    "tests/test_cli_acq13.py (mocked providers)",
+    "tests/stress/test_cli_stress_verbs.py (synthetic)",
+    "scratch probes: rank 0, flags 4, correlate 4 on the sample (synthetic)"
+   ],
+   "evidence_class": "synthetic",
+   "remaining": [
+    "Live NVD/MSRC fetch through `correlate --fetch` was never recorded as a separate probe (tasks/todo.md:71, still unchecked).",
+    "SPEC-44 s6 rows 1-5: --dry-run, --run, --target-bytes, --providers, --api-key-env, --save-snapshot are not named in the owner spec enrichment.md.",
+    "No help text on flags --run, --feature-id, --dry-run; correlate --cve, --run, --dry-run; cache --target-bytes (SPEC-44 s6 row 15, still true in cli-help.txt).",
+    "No CSV output for the ranking table."
+   ],
+   "defects": [],
+   "blockers": [
+    {
+     "type": "live-network",
+     "detail": "NVD and MSRC are unreachable from the sandbox."
+    },
+    {
+     "type": "owner-decision",
+     "detail": "partial exits 0 for rank/correlate (SPEC-44 s8 item 1)."
+    }
+   ],
+   "effort_hours": 3,
+   "confidence": "high",
+   "acceptance_tests": [
+    "Basis: 4 verbs built (4/4); validation 4 offline-tested verbs out of 5 items (the fifth is the live provider probe).",
+    "tests/test_cli.py (existing)"
+   ],
+   "active_lane_overlap": "none"
+  },
+  {
+   "id": "F-F06",
+   "name": "Acquisition verbs: acquire search, acquire fetch",
+   "spec": [
+    "docs/specs/acquisition.md",
+    "docs/specs/network-egress-privacy.md"
+   ],
+   "code": [
+    "src/patchtrace/cli.py",
+    "src/patchtrace/acquisition/"
+   ],
+   "status": "implemented",
+   "implementation_pct": 100,
+   "validation_pct": 67,
+   "verified_by": [
+    "tests/test_acquisition_cli.py (mocked transport, 9 tests)",
+    "tests/test_cli_acq13.py (mocked)"
+   ],
+   "evidence_class": "mocked",
+   "remaining": [
+    "Live Winbindex / symbol-server run not possible here; tasks/todo.md:73 records an earlier live afd.sys probe (not re-verified: UNVERIFIED).",
+    "acquire fetch --project-name has no help text; --older/--newer are not format-checked at parse time (SPEC-44 s5.5)."
+   ],
+   "defects": [],
+   "blockers": [
+    {
+     "type": "live-network",
+     "detail": "winbindex.m417z.com and msdl.microsoft.com are unreachable from the sandbox."
+    }
+   ],
+   "effort_hours": 1,
+   "confidence": "medium",
+   "acceptance_tests": [
+    "Basis: 2 leaves built (2/2); validation 2 mocked leaves out of 3 items (third: a live download recorded in docs/qa.md, not re-verified)."
+   ],
+   "active_lane_overlap": "none"
+  },
+  {
+   "id": "F-F07",
+   "name": "Series verbs: series create, series chains (batch over 3-8 builds)",
+   "spec": [
+    "docs/specs/nway.md",
+    "docs/specs/series-window.md"
+   ],
+   "code": [
+    "src/patchtrace/cli.py",
+    "src/patchtrace/nway/series.py",
+    "src/patchtrace/symbols/cli_args.py"
+   ],
+   "status": "implemented",
+   "implementation_pct": 100,
+   "validation_pct": 75,
+   "verified_by": [
+    "tests/test_nway_series.py (synthetic, fake Ghidriff)",
+    "tests/test_cli_registry.py (synthetic)"
+   ],
+   "evidence_class": "synthetic",
+   "remaining": [
+    "--symbols, --symbol-dir, --consent-online-symbols are missing from docs/cli-reference.md:105-121 and SPEC-44 s5.6.",
+    "Native three-build CI run still open (tasks/todo.md:76).",
+    "SPEC-44 s6 rows 7-9: --direct, --python, --timeout, --cache-dir, --ghidra-dir, --replace-corrupt are not in the owner spec nway.md."
+   ],
+   "defects": [],
+   "blockers": [
+    {
+     "type": "external-tool",
+     "detail": "A native series run needs Ghidra/Ghidriff."
+    }
+   ],
+   "effort_hours": 2,
+   "confidence": "high",
+   "acceptance_tests": [
+    "Basis: 2 leaves built (2/2); validation 3 of 4 items (create offline, chains, create --run with a fake backend; missing: native three-build run)."
+   ],
+   "active_lane_overlap": "none"
+  },
+  {
+   "id": "F-F08",
+   "name": "Secondary engines and adapter selection: secondary run, rzdiff, import-bindiff, reconcile, binexport-check",
+   "spec": [
+    "docs/specs/multi-engine-orchestration.md",
+    "docs/specs/bindiff-execution.md",
+    "docs/specs/binexport2-support.md",
+    "docs/specs/secondary-engine.md"
+   ],
+   "code": [
+    "src/patchtrace/cli.py",
+    "src/patchtrace/secondary/cli_run.py",
+    "src/patchtrace/secondary/cli_bindiff.py",
+    "src/patchtrace/secondary/cli_binexport.py",
+    "src/patchtrace/secondary/bindiff.py",
+    "src/patchtrace/secondary/bindiff_inputs.py"
+   ],
+   "status": "implemented",
+   "implementation_pct": 90,
+   "validation_pct": 63,
+   "verified_by": [
+    "tests/test_cli_secondary.py (fixture)",
+    "tests/test_cli_secondary_run.py (fake engines)",
+    "tests/test_cli_bindiff.py (fake executable)",
+    "tests/test_binexport_cli.py (fixture)",
+    "tests/test_rzdiff_cli_env.py (mocked)",
+    "tests/test_secondary_help.py (synthetic)"
+   ],
+   "evidence_class": "mocked",
+   "remaining": [
+    "`secondary import-bindiff` with a missing input file exits 3 with a wrong message (F-D03).",
+    "`secondary --help` usage line still names the hidden `_binexport-worker` (src/patchtrace/cli.py:149 has no metavar; unified hides its worker with one, src/patchtrace/unified/cli.py:61). tests/test_secondary_help.py tolerates it explicitly.",
+    "`secondary run --json` with an unsupported engine exits 2 with status failed and no `error` key (the reason is only in `warnings` and `result.runs[].error_code`).",
+    "No standalone probe action (the GUI has 'Probe engines').",
+    "Live BinDiff and rizin runs are blocked (tasks/todo.md:78)."
+   ],
+   "defects": [
+    {
+     "id": "F-D03",
+     "severity": "medium",
+     "summary": "`secondary import-bindiff PROJECT FILE` reports a missing or unreadable FILE as a runtime failure (exit 3) with the message 'Could not prepare a private working folder (FileNotFoundError)', and creates runs/<id>/raw/secondary/ in the project first.",
+     "evidence": "src/patchtrace/secondary/bindiff.py:156-170 (_preserve mkdirs, then copy_and_hash); src/patchtrace/secondary/bindiff_inputs.py:154-157 (lstat failure -> PT-SECONDARY-RUN workdir error)",
+     "failure_scenario": "`patchtrace secondary import-bindiff ./proj ./typo.BinDiff` -> 'error: PT-SECONDARY-RUN: Could not prepare a private working folder (FileNotFoundError).' exit 3 (observed). The operator is told to look at disk or permissions when the path is simply wrong, and automation classifies a usage error as a runtime failure.",
+     "proposed_fix": "In `_preserve` (or at the top of import_bindiff when preserve_dir is set) check that the source is an existing regular file before creating the directory and raise the existing `_fail('cannot read BinDiff file: ...')` (PT-SECONDARY-INPUT -> exit 2).",
+     "regression_test": "tests/test_cli_secondary.py::test_import_bindiff_missing_file_is_exit_2_and_creates_nothing (new)"
+    }
+   ],
+   "blockers": [
+    {
+     "type": "external-tool",
+     "detail": "BinDiff 8 and rizin/rz-diff are not installed; BinDiff has no licensed install (tasks/todo.md:78)."
+    }
+   ],
+   "effort_hours": 3,
+   "confidence": "high",
+   "acceptance_tests": [
+    "Basis: implementation 4.5 of 5 visible leaves (import-bindiff has F-D03); validation 5 leaves with fake-engine or fixture tests out of 8 items (3 more: live rz-diff, live BinDiff, Windows scheduler cancel evidence).",
+    "tests/test_cli_secondary.py::test_import_bindiff_missing_file_is_exit_2_and_creates_nothing (new)"
+   ],
+   "active_lane_overlap": "none"
+  },
+  {
+   "id": "F-F09",
+   "name": "CVE lookup and patch correlation: intelligence, kb, kev",
+   "spec": [
+    "docs/specs/csaf-cve-interpretation-engine.md",
+    "docs/specs/kb-cve-correlation-and-acquisition.md",
+    "docs/specs/kev-exploitation-context.md",
+    "docs/specs/kb-patch-search-ui-cli-contract.md",
+    "docs/specs/network-egress-privacy.md"
+   ],
+   "code": [
+    "src/patchtrace/intelligence/cli.py",
+    "src/patchtrace/kbcorrelation/cli.py",
+    "src/patchtrace/kbcorrelation/cli_index.py",
+    "src/patchtrace/kbcorrelation/cli_online.py",
+    "src/patchtrace/kbcorrelation/cli_pairs.py",
+    "src/patchtrace/kbcorrelation/cli_leads.py",
+    "src/patchtrace/kbcorrelation/cli_acquire.py",
+    "src/patchtrace/kev/cli.py",
+    "src/patchtrace/cli_commands/kb.py",
+    "src/patchtrace/cli_commands/kev.py"
+   ],
+   "status": "implemented",
+   "implementation_pct": 96,
+   "validation_pct": 87,
+   "verified_by": [
+    "tests/test_intel_cli.py (fixture, 44 tests)",
+    "tests/test_kbc_cli.py (fixture)",
+    "tests/test_kbc_acquire_cli.py (mocked)",
+    "tests/test_kbc_cvrf_fetch.py (mocked opener)",
+    "tests/test_kbc_e0_e2e.py (fixture)",
+    "tests/test_kev_cli.py (fixture, 45 tests)"
+   ],
+   "evidence_class": "fixture",
+   "remaining": [
+    "`kb index sync --help` fails with exit 2 and the action is not listed anywhere (F-D02).",
+    "`kb --help` says 'offline, never fetches' although `kb index sync` and `kb acquire` fetch after consent (F-D02).",
+    "kb exits 3 for a missing project (F-D05, under F-F02).",
+    "SPEC-32C specifies a `patchtrace patch ...` grammar (docs/specs/kb-patch-search-ui-cli-contract.md:19-27); the built verb is `patchtrace kb ...`. The spec was never reconciled.",
+    "Live gates open: MSRC CVRF URL shape (probe L1), MSRC CSAF, NVD, CISA KEV download."
+   ],
+   "defects": [
+    {
+     "id": "F-D02",
+     "severity": "medium",
+     "summary": "`kb index sync` is a real, consent-gated network verb that help cannot show: `patchtrace kb index sync --help` exits 2 ('invalid choice: sync'), `kb index --help` does not list it, and `kb --help` describes the whole verb as 'offline, never fetches'.",
+     "evidence": "src/patchtrace/kbcorrelation/cli.py:113-114 (description), 125-131 (help is routed to cli_index, which has no sync parser); src/patchtrace/kbcorrelation/cli_online.py:61-77 (the unreachable sync parser); src/patchtrace/cli_commands/kb.py:20 (summary '(offline; ...)')",
+     "failure_scenario": "An operator reviewing what the tool may send reads `patchtrace kb --help` ('offline, never fetches') and `patchtrace kb index --help` (import, status, verify, plan) and concludes no kb action can reach the network; `patchtrace kb index sync --consent-hosts ... --consent-plan ...` and `patchtrace kb acquire ...` do. Asking for the sync flags (`kb index sync --help`) returns an error instead of the consent rules.",
+     "proposed_fix": "Route `kb index sync --help` to cli_online.build_parser().print_help(); add a listing-only `sync` entry to the `kb index` parser; change the kb description and adapter summary to 'offline unless you give consent flags (kb index sync, kb acquire)'.",
+     "regression_test": "tests/test_kbc_cli.py::test_index_sync_help_exits_0_and_names_the_consent_flags; ::test_kb_help_names_the_two_consented_network_actions (new)"
+    }
+   ],
+   "blockers": [
+    {
+     "type": "live-network",
+     "detail": "api.msrc.microsoft.com, msrc.microsoft.com, services.nvd.nist.gov, www.cisa.gov, raw.githubusercontent.com are unreachable."
+    }
+   ],
+   "effort_hours": 4,
+   "confidence": "high",
+   "acceptance_tests": [
+    "Basis: implementation 25 of 26 leaves fully usable (intelligence 3, kb 16 including index sync, kev 7; `kb index sync` help is broken); validation 26 leaves with offline tests out of 30 items (4 live provider gates open).",
+    "tests/test_kbc_cli.py::test_index_sync_help_exits_0_and_names_the_consent_flags (new)"
+   ],
+   "active_lane_overlap": "none"
+  },
+  {
+   "id": "F-F10",
+   "name": "Unified engine verbs: unified run, show, explain, status",
+   "spec": [
+    "docs/specs/unified-engine/07-ui-and-cli.md"
+   ],
+   "code": [
+    "src/patchtrace/unified/cli.py"
+   ],
+   "status": "partial",
+   "implementation_pct": 80,
+   "validation_pct": 80,
+   "verified_by": [
+    "tests/test_unified_cli.py (synthetic, 30 tests)",
+    "tests/test_unified_cli_show.py (synthetic)",
+    "tests/test_unified_wire_cli.py (synthetic)",
+    "scratch probe: unified run --in-process --no-extract on the sample -> status partial, exit 3 (synthetic)"
+   ],
+   "evidence_class": "synthetic",
+   "remaining": [
+    "`patchtrace unified extract` is specified (docs/specs/unified-engine/07-ui-and-cli.md:99) and not built.",
+    "docs/cli-reference.md:256,261 are stale for --no-extract and --sources (diaphora missing).",
+    "Live-native proof is lane L2's work."
+   ],
+   "defects": [],
+   "blockers": [
+    {
+     "type": "other-lane",
+     "detail": "L1 owns the unified engine internals and docs/specs/unified-engine/**; L2 owns the live gates."
+    }
+   ],
+   "effort_hours": 0,
+   "confidence": "medium",
+   "acceptance_tests": [
+    "Basis: 5 specified actions; 4 built and tested, 1 (`extract`) not built."
+   ],
+   "active_lane_overlap": "L1"
+  },
+  {
+   "id": "F-F11",
+   "name": "Static tool evidence verbs: intel-tools probe, run, delta, pairs",
+   "spec": [
+    "docs/specs/three-tool-evidence-adapters.md"
+   ],
+   "code": [
+    "src/patchtrace/intelligence/tools/cli.py"
+   ],
+   "status": "implemented",
+   "implementation_pct": 100,
+   "validation_pct": 57,
+   "verified_by": [
+    "tests/test_intel_tools_cli.py (fake tools)",
+    "tests/test_capa_cli.py (fixture goldens)"
+   ],
+   "evidence_class": "mocked",
+   "remaining": [
+    "`intel-tools pairs` has no section in docs/cli-reference.md and no row in SPEC-44 s4/s5.10.",
+    "probe and delta exit 2 with status complete (src/patchtrace/intelligence/tools/cli.py:151-152,232); owner decision SPEC-44 s8 item 5.",
+    "No help text on --floss-min-length, --diec-heuristic, --no-cache, --ghidra-dir, --java-home, --show-secrets, --show-features.",
+    "capa, FLOSS and DiE are not installed here: no native run."
+   ],
+   "defects": [],
+   "blockers": [
+    {
+     "type": "external-tool",
+     "detail": "capa, FLOSS, Detect It Easy not installed."
+    },
+    {
+     "type": "owner-decision",
+     "detail": "status/exit pairing for probe and delta."
+    }
+   ],
+   "effort_hours": 2,
+   "confidence": "medium",
+   "acceptance_tests": [
+    "Basis: 4 leaves built (4/4); validation 4 leaves with fake-tool or golden tests out of 7 items (3 native tool runs not possible here)."
+   ],
+   "active_lane_overlap": "none"
+  },
+  {
+   "id": "F-F12",
+   "name": "Diagnostics and health checks: backend status, verify, selftest, diagnose; probes; doctor",
+   "spec": [
+    "docs/specs/offline-backend-installer.md",
+    "docs/specs/runtime-discovery.md",
+    "docs/specs/program-e/BUNDLE-integration-plan.md",
+    "docs/specs/cli-umbrella.md"
+   ],
+   "code": [
+    "src/patchtrace/backend_cli.py",
+    "src/patchtrace/backend.py",
+    "src/patchtrace/runtime_discovery.py",
+    "src/patchtrace/optional_deps.py",
+    "src/patchtrace/rules/cli.py",
+    "src/patchtrace/search/cli.py",
+    "src/patchtrace/gui/cli.py"
+   ],
+   "status": "partial",
+   "implementation_pct": 67,
+   "validation_pct": 67,
+   "verified_by": [
+    "tests/test_backend_cli.py (mocked, 26 tests)",
+    "tests/test_rules_cli.py (fixture)",
+    "tests/test_search_cli.py (fixture)",
+    "tests/test_gui_core_cli.py (synthetic)",
+    "scratch probes: backend status/verify exit 4, diagnose/selftest exit 2 without a bundle (synthetic)"
+   ],
+   "evidence_class": "mocked",
+   "remaining": [
+    "`backend diagnose` only diagnoses a bundled runtime; an external Python + Ghidra configuration can be diagnosed only in the GUI (src/patchtrace/ui.py:1037 -> backend.diagnose, src/patchtrace/backend.py:366).",
+    "No aggregate `doctor` verb and no `--version`; SPEC-44 s7 records `doctor` as a proposal 'not in the alpha'.",
+    "No-bundle exit code differs between the four backend actions (owner decision).",
+    "Bundle acceptance on a disconnected Windows machine has not passed (docs/install.md:57)."
+   ],
+   "defects": [],
+   "blockers": [
+    {
+     "type": "other-lane",
+     "detail": "L5 owns the backend diagnose path and tests/test_backend_cli.py; L2 owns backend.py."
+    },
+    {
+     "type": "windows-only",
+     "detail": "Frozen-bundle selftest evidence needs a Windows run."
+    },
+    {
+     "type": "owner-decision",
+     "detail": "SPEC-44 s7 doctor proposal and s8 item 3."
+    }
+   ],
+   "effort_hours": 8,
+   "confidence": "medium",
+   "acceptance_tests": [
+    "Basis: 6 acceptance items; 4 met with mocked tests (bundle status, verify, selftest, diagnose), 2 not met (diagnose of an external runtime; one aggregate machine-readable health report with the version).",
+    "tests/test_doctor_cli.py (new): --json prints version, optional dependency summary, verb registry load failures, bundle fast check, discovered runtime candidates; exit 0 healthy, 3 when a verb failed to load, 4 when no runtime candidate exists."
+   ],
+   "active_lane_overlap": "L5"
+  },
+  {
+   "id": "F-F13",
+   "name": "Patch recommendations: pilot leads, why, review; kb leads; graph leads",
+   "spec": [
+    "docs/specs/patch-intent-localization-engine.md",
+    "docs/specs/kb-cve-correlation-and-acquisition.md"
+   ],
+   "code": [
+    "src/patchtrace/pilot/cli.py",
+    "src/patchtrace/kbcorrelation/cli_leads.py",
+    "src/patchtrace/callgraph/cli.py"
+   ],
+   "status": "implemented",
+   "implementation_pct": 100,
+   "validation_pct": 100,
+   "verified_by": [
+    "tests/test_pilot_cli.py (fixture, 27 tests)",
+    "tests/test_kbc_leads.py (fixture golden)",
+    "tests/test_callgraph_cli.py (fixture)",
+    "scratch probes: pilot leads --dry-run 0, graph leads 0 on the sample (synthetic)"
+   ],
+   "evidence_class": "fixture",
+   "remaining": [
+    "Accuracy of the leads is another workstream's gate (G-PIL); this row covers the CLI surface only.",
+    "pilot argparse failures label the envelope 'patchtrace' (F-D04)."
+   ],
+   "defects": [],
+   "blockers": [
+    {
+     "type": "none",
+     "detail": ""
+    }
+   ],
+   "effort_hours": 1,
+   "confidence": "high",
+   "acceptance_tests": [
+    "Basis: 5 leaves built and offline-tested (5/5)."
+   ],
+   "active_lane_overlap": "none"
+  },
+  {
+   "id": "F-F14",
+   "name": "Result export: export, strings export, graph export, kb export, rules export, --export flags",
+   "spec": [
+    "docs/specs/report-export-contract-v2.md",
+    "docs/specs/yara-x-rule-workflow.md"
+   ],
+   "code": [
+    "src/patchtrace/report2/cli.py",
+    "src/patchtrace/reports.py",
+    "src/patchtrace/strings/cli.py",
+    "src/patchtrace/callgraph/cli.py",
+    "src/patchtrace/kbcorrelation/cli.py",
+    "src/patchtrace/rules/cli.py"
+   ],
+   "status": "partial",
+   "implementation_pct": 75,
+   "validation_pct": 75,
+   "verified_by": [
+    "tests/test_report2_cli.py (fixture, 20 tests)",
+    "tests/test_strings_cli.py (synthetic)",
+    "tests/test_callgraph_cli.py (fixture)",
+    "tests/test_kbc_cli.py (fixture)",
+    "tests/test_rules_cli.py (fixture)",
+    "scratch probes: export json/md(v2)/html and strings export csv exit 0 on the sample (synthetic)"
+   ],
+   "evidence_class": "fixture",
+   "remaining": [
+    "CSV exists only for `strings export`; the match/ranking table, unified rows, leads and KEV lookups have no CSV.",
+    "Overwrite policy differs: `export` replaces an existing file silently (observed twice on the same --out), `strings export` needs --force, `kb export` and `graph export` need --overwrite, `rules export` never replaces.",
+    "docs/cli-reference.md:505 still lists `export` as not built; docs/specs/REGISTRY.md:85 says report/2 is not built."
+   ],
+   "defects": [],
+   "blockers": [
+    {
+     "type": "owner-decision",
+     "detail": "One overwrite rule for all export verbs; CSV columns need a SPEC-50 amendment."
+    }
+   ],
+   "effort_hours": 6,
+   "confidence": "high",
+   "acceptance_tests": [
+    "Basis: 8 acceptance items; 6 met (report json/md/html v1+v2; strings json/csv; graph dot/json; kb json/md; rules yar; --export on pilot and intelligence), 2 not met (CSV for tabular results; uniform overwrite rule).",
+    "tests/test_report2_cli.py::test_csv_export_has_one_row_per_match_and_neutralised_cells (new)"
+   ],
+   "active_lane_overlap": "none"
+  },
+  {
+   "id": "F-F15",
+   "name": "Historical run retrieval",
+   "spec": [
+    "docs/specs/cli-umbrella.md",
+    "docs/specs/enrichment.md"
+   ],
+   "code": [
+    "src/patchtrace/cli.py",
+    "src/patchtrace/unified/cli.py",
+    "src/patchtrace/rules/cli.py",
+    "src/patchtrace/kev/cli.py"
+   ],
+   "status": "partial",
+   "implementation_pct": 67,
+   "validation_pct": 67,
+   "verified_by": [
+    "tests/test_cli.py (synthetic: --run)",
+    "tests/test_unified_cli.py (synthetic: status lists runs)",
+    "tests/test_rules_cli.py (fixture: history)"
+   ],
+   "evidence_class": "synthetic",
+   "remaining": [
+    "No verb lists a project's analysis runs (id, status, backend, time), so the value for `--run RUN` can only be read in the GUI or from SQLite.",
+    "`--run` has help text on rank only."
+   ],
+   "defects": [],
+   "blockers": [
+    {
+     "type": "other-lane",
+     "detail": "A `project info` action arrives with the new project verb (docs/help page, lane L6)."
+    }
+   ],
+   "effort_hours": 2,
+   "confidence": "high",
+   "acceptance_tests": [
+    "Basis: 3 acceptance items; 2 met (select a run by id; per-feature history: unified status, rules history, kev diff), 1 not met (list the runs of a project).",
+    "tests/test_project_cli.py::test_info_lists_runs_newest_first (new)"
+   ],
+   "active_lane_overlap": "L6"
+  },
+  {
+   "id": "F-F16",
+   "name": "Manual correction and review-state import/export",
+   "spec": [
+    "docs/specs/architecture.md",
+    "docs/specs/ui.md",
+    "docs/specs/unified-engine/06-adapters.md"
+   ],
+   "code": [
+    "src/patchtrace/service.py"
+   ],
+   "status": "missing",
+   "implementation_pct": 0,
+   "validation_pct": 0,
+   "verified_by": [
+    "none for the CLI; the service methods are covered by GUI and service tests only"
+   ],
+   "evidence_class": "none",
+   "remaining": [
+    "List, export, import/apply and undo of manual match corrections (ProjectService.correct_match, restore_match_override; src/patchtrace/service.py:337,379).",
+    "Set a match review state and a finding review/conclusion (review_match, review_finding; src/patchtrace/service.py:313,321).",
+    "Project notes (annotate; src/patchtrace/service.py:330).",
+    "A portable corrections contract does not exist: function ids are project-local UUIDs, so an export must key functions by artifact SHA-256 + address and an import must validate artifact, run and orientation ownership (AGENTS.md: strict JSON, validate ownership). Spec first."
+   ],
+   "defects": [],
+   "blockers": [
+    {
+     "type": "owner-decision",
+     "detail": "New contract (corrections/1) and its spec are needed before code."
+    },
+    {
+     "type": "other-lane",
+     "detail": "L1 reads corrections in unified/sources/manual.py (no edit needed there, but orientation semantics are being changed by L1's swap-orientation work)."
+    }
+   ],
+   "effort_hours": 16,
+   "confidence": "medium",
+   "acceptance_tests": [
+    "Basis: 6 acceptance items (list, export, import/apply, undo, match review, finding review); 0 met.",
+    "tests/test_corrections_cli.py (new): export -> import into a fresh copy of the same pair reproduces the same matches; import for another pair or a swapped orientation exits 2 and changes nothing; undo restores the recorded relations."
+   ],
+   "active_lane_overlap": "L1"
+  },
+  {
+   "id": "F-F17",
+   "name": "Configuration management from the command line",
+   "spec": [
+    "docs/specs/app-settings.md",
+    "docs/specs/enrichment.md",
+    "docs/specs/runtime-discovery.md",
+    "docs/specs/offline-backend-installer.md"
+   ],
+   "code": [
+    "src/patchtrace/enrichment/profiles.py",
+    "src/patchtrace/runtime_discovery.py",
+    "src/patchtrace/offline_bundle.py",
+    "src/patchtrace/cli.py"
+   ],
+   "status": "partial",
+   "implementation_pct": 33,
+   "validation_pct": 33,
+   "verified_by": [
+    "tests/test_cli.py (synthetic: --profile)",
+    "tests/test_cli_bindiff.py, tests/test_intel_tools_cli.py (mocked: PATCHTRACE_* variables)"
+   ],
+   "evidence_class": "synthetic",
+   "remaining": [
+    "No profile verb: list, show, validate, save, delete (ProfileStore, src/patchtrace/enrichment/profiles.py:157-222) are GUI-only.",
+    "No headless runtime discovery (discover_local_runtimes, src/patchtrace/runtime_discovery.py:243).",
+    "No headless inspect/install of an offline backend ZIP (inspect_offline_bundle, install_offline_bundle; src/patchtrace/offline_bundle.py:279,369).",
+    "Backend settings (python, Ghidra, Java, timeout, env passthrough) live in Qt QSettings; the CLI takes them per call and cannot show or persist them. SPEC-44 s7 lists `config` as an open owner decision."
+   ],
+   "defects": [],
+   "blockers": [
+    {
+     "type": "owner-decision",
+     "detail": "Whether the CLI may read or write desktop settings (SPEC-43/SPEC-44 s7 `config`)."
+    },
+    {
+     "type": "other-lane",
+     "detail": "New verbs need docs/help pages (lane L6)."
+    }
+   ],
+   "effort_hours": 12,
+   "confidence": "medium",
+   "acceptance_tests": [
+    "Basis: 6 acceptance items; 2 met (use a profile by name or file; environment-variable configuration), 4 not met (list/show profiles; create/validate/delete profiles; runtime discovery; offline ZIP inspect/install).",
+    "tests/test_profile_cli.py (new)",
+    "tests/test_runtime_cli.py (new)"
+   ],
+   "active_lane_overlap": "L6"
+  },
+  {
+   "id": "F-F18",
+   "name": "Batch processing and scriptable end-to-end workflows",
+   "spec": [
+    "docs/specs/cli-umbrella.md",
+    "docs/specs/nway.md"
+   ],
+   "code": [
+    "src/patchtrace/cli.py",
+    "src/patchtrace/rules/cli.py"
+   ],
+   "status": "partial",
+   "implementation_pct": 50,
+   "validation_pct": 50,
+   "verified_by": [
+    "tests/test_nway_series.py (synthetic)",
+    "tests/test_rules_cli.py (fixture)",
+    "tests/test_kbc_e0_e2e.py (fixture: offline end to end without a Ghidriff run)"
+   ],
+   "evidence_class": "synthetic",
+   "remaining": [
+    "No end-to-end script from two files to a report is possible without the GUI (F-D01).",
+    "No multi-pair batch runner; a shell loop needs the missing create and compare verbs.",
+    "No worked example of an unattended pipeline in the docs."
+   ],
+   "defects": [],
+   "blockers": [
+    {
+     "type": "other-lane",
+     "detail": "Depends on the project and compare verbs (docs/help, L6)."
+    }
+   ],
+   "effort_hours": 4,
+   "confidence": "medium",
+   "acceptance_tests": [
+    "Basis: 4 acceptance items; 2 met (series batch; rules test over a build folder), 2 not met (multi-pair batch; two-files-to-report script).",
+    "tests/test_project_cli.py::test_create_then_import_json_then_rank_end_to_end (new)"
+   ],
+   "active_lane_overlap": "none"
+  },
+  {
+   "id": "F-F19",
+   "name": "Output formats: text, JSON, CSV, machine-readable diagnostics",
+   "spec": [
+    "docs/specs/cli-umbrella.md"
+   ],
+   "code": [
+    "src/patchtrace/cli.py",
+    "src/patchtrace/cli_commands/_support.py"
+   ],
+   "status": "partial",
+   "implementation_pct": 77,
+   "validation_pct": 75,
+   "verified_by": [
+    "cli-help.txt: all 86 visible leaves have --json (synthetic)",
+    "scratch probes: 100 --json invocations each printed exactly one enrichment-cli/1 document (synthetic)",
+    "tests/stress/test_cli_stress_verbs.py (synthetic)"
+   ],
+   "evidence_class": "synthetic",
+   "remaining": [
+    "CSV on 1 of about 12 tabular leaves (only `strings export --format csv`).",
+    "`cache` prints JSON text in text mode (SPEC-44 s8 item 13).",
+    "No JSON output mode is missing."
+   ],
+   "defects": [],
+   "blockers": [
+    {
+     "type": "none",
+     "detail": ""
+    }
+   ],
+   "effort_hours": 4,
+   "confidence": "high",
+   "acceptance_tests": [
+    "Basis: 4 acceptance items; text 86/86 leaves, JSON 86/86 leaves, machine-readable diagnostics yes, CSV 1 of 12 tabular leaves -> (1 + 1 + 1 + 0.08) / 4 = 77 %.",
+    "tests/test_cli_contract_matrix.py::test_every_visible_leaf_has_json (new)"
+   ],
+   "active_lane_overlap": "none"
+  },
+  {
+   "id": "F-F20",
+   "name": "Unattended execution without interactive prompts",
+   "spec": [
+    "docs/specs/cli-umbrella.md",
+    "docs/specs/network-egress-privacy.md"
+   ],
+   "code": [
+    "src/patchtrace/cli.py",
+    "src/patchtrace/jobs.py"
+   ],
+   "status": "implemented",
+   "implementation_pct": 100,
+   "validation_pct": 100,
+   "verified_by": [
+    "grep for input(, getpass, sys.stdin, isatty in src/patchtrace: no hit (code reading)",
+    "109 scratch probes with stdin=/dev/null: none hung (synthetic)",
+    "tests/stress/test_cli_stress_verbs.py (synthetic)",
+    "tests/test_kev_cli.py, tests/test_kbc_acquire_cli.py (mocked: consent only by flag)"
+   ],
+   "evidence_class": "synthetic",
+   "remaining": [
+    "None for prompts. Consent and confirmation are flags (--consent-hosts, --consent-providers, --consent-plan, --consent-online-symbols, --yes, --accept-*, --user-attest-pair)."
+   ],
+   "defects": [],
+   "blockers": [
+    {
+     "type": "none",
+     "detail": ""
+    }
+   ],
+   "effort_hours": 0,
+   "confidence": "high",
+   "acceptance_tests": [
+    "Basis: 3 acceptance items, 3 met (no stdin read; consent by flag; child stdin is DEVNULL)."
+   ],
+   "active_lane_overlap": "none"
+  },
+  {
+   "id": "F-F21",
+   "name": "CLI documentation: cli-reference.md, guide/16, help pages 53-76, SPEC-44",
+   "spec": [
+    "docs/specs/cli-umbrella.md"
+   ],
+   "code": [
+    "docs/cli-reference.md",
+    "docs/guide/16-cli-reference.md",
+    "docs/help/",
+    "docs/install.md",
+    "docs/guide/18-troubleshooting.md"
+   ],
+   "status": "partial",
+   "implementation_pct": 57,
+   "validation_pct": 28,
+   "verified_by": [
+    "tests/test_help_docs.py (synthetic: one help page per top-level verb, 24/24)",
+    "flag-level diff of cli-help.txt against docs/cli-reference.md (this inventory; scripted, results in parity-matrix.md section 4)"
+   ],
+   "evidence_class": "synthetic",
+   "remaining": [
+    "docs/cli-reference.md has no flag reference for 37 of 87 leaves: build-env 3, diaphora 3, export 1, graph 6, inspect 1, intel-tools pairs 1, kb 15 listed in help plus index sync, search 1, strings 5.",
+    "docs/cli-reference.md:11 (five registry verbs; there are 13), :105-121 (series create lacks 3 symbol flags), :256,:261-263 (stale unified run rows), :498-505 (export listed as not built).",
+    "docs/guide/16-cli-reference.md:13 and :203 tell readers that search, graph, strings, kb, build-env and export are not built.",
+    "docs/specs/cli-umbrella.md describes 11 verbs / 36 parser paths; main has 24 verbs / 106 help pages; s7 and s9 are stale.",
+    "docs/specs/REGISTRY.md:85 SPEC-50 row is stale.",
+    "No generator and no drift test for cli-reference.md although it claims to be generated from argparse.",
+    "docs/help/67-cli-kb.md does not mention `kb index sync` (docs/help/** is lane L6)."
+   ],
+   "defects": [],
+   "blockers": [
+    {
+     "type": "other-lane",
+     "detail": "docs/help/** is owned by L6; docs/specs/unified-engine/** by L1."
+    }
+   ],
+   "effort_hours": 8,
+   "confidence": "high",
+   "acceptance_tests": [
+    "Basis: implementation = 50 of 87 leaves have a flag table in docs/cli-reference.md (and one of those, series create, is incomplete); validation = 24 of 87 (only the existence of one help page per verb is tested).",
+    "tests/test_cli_reference_doc.py (new): the committed docs/cli-reference.md equals the generator output for the live parser."
+   ],
+   "active_lane_overlap": "L6"
+  },
+  {
+   "id": "F-F22",
+   "name": "Read-only analysis verbs behind the panels: build-env, graph, strings, search, fabric, inspect, diaphora, rules, panels",
+   "spec": [
+    "docs/specs/gui-framework.md",
+    "docs/specs/anchor-fabric.md",
+    "docs/specs/pe-version-authenticode.md",
+    "docs/specs/diaphora-optional-engine.md",
+    "docs/specs/yara-x-rule-workflow.md"
+   ],
+   "code": [
+    "src/patchtrace/buildenv/cli.py",
+    "src/patchtrace/callgraph/cli.py",
+    "src/patchtrace/strings/cli.py",
+    "src/patchtrace/search/cli.py",
+    "src/patchtrace/fabric/cli.py",
+    "src/patchtrace/pe_overview/cli.py",
+    "src/patchtrace/diaphora/cli.py",
+    "src/patchtrace/rules/cli.py",
+    "src/patchtrace/gui/cli.py"
+   ],
+   "status": "partial",
+   "implementation_pct": 97,
+   "validation_pct": 97,
+   "verified_by": [
+    "tests/test_buildenv_cli.py (fixture)",
+    "tests/test_callgraph_cli.py (fixture)",
+    "tests/test_strings_cli.py (synthetic)",
+    "tests/test_search_cli.py (fixture)",
+    "tests/test_fabric_cli.py (fixture)",
+    "tests/test_pe_inspect_cli.py (fixture)",
+    "tests/test_diaphora_cli.py (fixture)",
+    "tests/test_rules_cli.py (fixture; propose only through a monkeypatched backend)",
+    "tests/test_gui_core_cli.py (synthetic)",
+    "scratch probes on the sample project (synthetic)"
+   ],
+   "evidence_class": "fixture",
+   "remaining": [
+    "`rules propose` cannot succeed from the CLI on main (F-D07).",
+    "`inspect --trust cache|online` return PT-PE-TRUST-UNAVAILABLE by design (Windows trust is not implemented in this build).",
+    "`strings explain` unknown id: no error text in the envelope or on stderr.",
+    "`build-env` CLI does not persist fingerprints (tasks/todo.md:345)."
+   ],
+   "defects": [
+    {
+     "id": "F-D07",
+     "severity": "high",
+     "summary": "`patchtrace rules propose` always fails: the `BACKEND` seam that supplies the evidence of a match is assigned nowhere in src/, so the first step of the headless rules workflow exits 2 for every project.",
+     "evidence": "src/patchtrace/rules/cli.py:77 (BACKEND = None), 236-238 (raise PT-RULE-INPUT pair-source-missing); `grep -rn BACKEND src/patchtrace/rules src/patchtrace/cli_commands` finds no assignment; tests/test_rules_cli.py:85,442 set it by monkeypatch only; the panel uses src/patchtrace/rules/live.py instead",
+     "failure_scenario": "`patchtrace rules propose PROJECT --match ID --json` -> exit 2, 'PT-RULE-INPUT: This installation cannot read the evidence of a match yet; nothing was proposed [pair-source-missing]' (observed on the sample project). With no candidate, `rules decide`, `rules test` and `rules export` have nothing to act on, so the documented CLI workflow (docs/help/71-cli-rules.md) cannot be started without the desktop.",
+     "proposed_fix": "Provide a production PairBackend built on rules/live.py (`prepare` + `run_proposal`: verified PE reads, import and byte channels) and assign it lazily in rules/cli.py when BACKEND is None; keep the monkeypatch seam for tests. Update the yara-x rule workflow spec section for the CLI first.",
+     "regression_test": "tests/test_rules_cli.py::test_propose_uses_the_live_evidence_without_a_patched_backend (new, fixture pair); keep test_propose_without_the_evidence_stores_says_so only for a project whose builds cannot be read"
+    }
+   ],
+   "blockers": [
+    {
+     "type": "none",
+     "detail": ""
+    }
+   ],
+   "effort_hours": 6,
+   "confidence": "medium",
+   "acceptance_tests": [
+    "Basis: 32 leaves (build-env 3, graph 6, strings 5, search 1, fabric 4, inspect 1, diaphora 3, rules 7, panels 2); 31 work on a stored project, 1 (`rules propose`) cannot.",
+    "tests/test_rules_cli.py::test_propose_uses_the_live_evidence_without_a_patched_backend (new)"
+   ],
+   "active_lane_overlap": "none"
+  },
+  {
+   "id": "F-F23",
+   "name": "Headless AI interpretation (`interpret`) and finding review",
+   "spec": [
+    "docs/specs/ai-provider-interpretation.md",
+    "docs/specs/cli-umbrella.md"
+   ],
+   "code": [
+    "src/patchtrace/interpretation.py",
+    "src/patchtrace/providers.py",
+    "src/patchtrace/ui.py"
+   ],
+   "status": "deferred-by-design",
+   "implementation_pct": 0,
+   "validation_pct": 0,
+   "verified_by": [
+    "none for the CLI"
+   ],
+   "evidence_class": "none",
+   "remaining": [
+    "No `interpret` verb. SPEC-44 s7 lists it as open ('not in alpha; owner to decide'). Policy constraints: remote transmission must be explicit with an exact preview, credentials are session-only (AGENTS.md), so a headless form needs a consent-by-flag preview design before any code."
+   ],
+   "defects": [],
+   "blockers": [
+    {
+     "type": "owner-decision",
+     "detail": "SPEC-44 s7: interpret is an open owner decision; credential handling for unattended use is undefined."
+    },
+    {
+     "type": "live-network",
+     "detail": "Provider calls cannot be exercised offline."
+    }
+   ],
+   "effort_hours": 0,
+   "confidence": "medium",
+   "acceptance_tests": [
+    "Basis: 1 acceptance item (a consented, previewed headless interpretation); 0 met; deferred by the current spec."
+   ],
+   "active_lane_overlap": "none"
+  }
+ ],
+ "actionable_now": [
+  {
+   "id": "F-T01",
+   "title": "secondary import-bindiff: a missing or unreadable input file is exit 2 with a truthful message",
+   "why": "F-D03: today it exits 3 with 'Could not prepare a private working folder (FileNotFoundError)' and creates runs/<id>/raw/secondary/ first. Wrong class of error for automation and a misleading instruction for the operator.",
+   "files": [
+    "src/patchtrace/secondary/bindiff.py",
+    "tests/test_cli_secondary.py"
+   ],
+   "tests": [
+    "tests/test_cli_secondary.py::test_import_bindiff_missing_file_is_exit_2_and_creates_nothing"
+   ],
+   "size": "S",
+   "priority": 1,
+   "risk": "Low. Only the pre-copy check changes; the existing PT-SECONDARY-INPUT mapping (cli.py:847) already returns 2.",
+   "depends_on": [],
+   "lane_conflict": "none",
+   "acceptance": "`patchtrace secondary import-bindiff PROJECT missing.BinDiff --json` -> exit 2, error starts with PT-SECONDARY-INPUT and names the file problem; no new directory under the project; existing import tests stay green."
+  },
+  {
+   "id": "F-T02",
+   "title": "kb help tells the truth about network use: `kb index sync --help` works, sync is listed, the description names the two consented network actions",
+   "why": "F-D02: `kb --help` says 'offline, never fetches' while `kb index sync` and `kb acquire` fetch after consent; `kb index sync --help` exits 2 and `kb index --help` omits the action. Policy: remote transmission must be explicit.",
+   "files": [
+    "src/patchtrace/kbcorrelation/cli.py",
+    "src/patchtrace/kbcorrelation/cli_index.py",
+    "src/patchtrace/cli_commands/kb.py",
+    "tests/test_kbc_cli.py"
+   ],
+   "tests": [
+    "tests/test_kbc_cli.py::test_index_sync_help_exits_0_and_names_the_consent_flags",
+    "tests/test_kbc_cli.py::test_kb_help_names_the_two_consented_network_actions",
+    "tests/test_cli_registry.py (summary stays <= 80 ASCII characters, adapter <= 25 lines)"
+   ],
+   "size": "S",
+   "priority": 2,
+   "risk": "Low. Help text and routing only; the sync behaviour and its 49 hermetic tests are untouched. The matching line in docs/help/67-cli-kb.md is lane L6 and is left as a follow-up.",
+   "depends_on": [],
+   "lane_conflict": "none",
+   "acceptance": "`patchtrace kb index sync --help` exits 0 and prints --consent-hosts and --consent-plan; `patchtrace kb index --help` lists sync; `patchtrace kb --help` no longer says 'never fetches' without the consent exception."
+  },
+  {
+   "id": "F-T03",
+   "title": "rules propose works headless: default PairBackend over rules/live.py",
+   "why": "F-D07: `rules.cli.BACKEND` is never assigned, so `patchtrace rules propose` exits 2 for every project and the headless rules workflow cannot start; the panel already has the live evidence path in rules/live.py.",
+   "files": [
+    "docs/specs/yara-x-rule-workflow.md",
+    "src/patchtrace/rules/cli.py",
+    "src/patchtrace/rules/live.py",
+    "tests/test_rules_cli.py"
+   ],
+   "tests": [
+    "tests/test_rules_cli.py::test_propose_uses_the_live_evidence_without_a_patched_backend",
+    "tests/test_rules_cli.py (existing 26 tests)",
+    "tests/test_cli_commands_features.py"
+   ],
+   "size": "M",
+   "priority": 3,
+   "risk": "Medium. rules/live.py splits work between a GUI-thread `prepare` and a worker `run_proposal`; the CLI adapter must call both without Qt and keep the 'accepted pair' and 'unvetted' rules. `prepare` refuses a match whose review state is not 'accepted' (src/patchtrace/rules/live.py:56-57) and that state can only be set in the GUI today, so the test sets it through ProjectService.review_match and a fully headless flow also needs the `project review` action of F-T07. Needs the yara-x engine (present here: `rules probe` exits 0). Spec paragraph first.",
+   "depends_on": [],
+   "lane_conflict": "none",
+   "acceptance": "On a fixture project with two readable PE builds and an accepted match, `patchtrace rules propose PROJECT --match ID --json` exits 0 or 4 with candidates stored (never pair-source-missing); a project whose builds cannot be read still exits 2 with a clear reason; no Qt import on the CLI path."
+  },
+  {
+   "id": "F-T04",
+   "title": "kb explain, leads, export: a missing project directory is exit 2, a damaged store stays exit 3",
+   "why": "F-D05: the same typo exits 2 on every other verb and 3 on these three; scripts cannot tell bad input from a runtime failure.",
+   "files": [
+    "src/patchtrace/kbcorrelation/wiring.py",
+    "src/patchtrace/kbcorrelation/cli_leads.py",
+    "tests/test_kbc_cli.py"
+   ],
+   "tests": [
+    "tests/test_kbc_cli.py::test_missing_project_directory_is_exit_2"
+   ],
+   "size": "S",
+   "priority": 4,
+   "risk": "Low. Changes an exit code from 3 to 2 for one input class; documented contract (cli_index docstring) already says 2 for invalid arguments.",
+   "depends_on": [],
+   "lane_conflict": "none",
+   "acceptance": "`patchtrace kb explain|leads|export /does/not/exist --json` -> exit 2 with PT-KBC-INPUT; a truncated project.sqlite3 still exits 3 with PT-KBC-STORAGE."
+  },
+  {
+   "id": "F-T05",
+   "title": "Envelope and help hygiene: failure `command` label, strings explain error text, hidden worker in usage",
+   "why": "F-D04 and two smaller findings: failure envelopes name 'build-env'/'patchtrace'/'secondary' instead of the verb and action; `strings explain --id <unknown> --json` fails with no error text anywhere; `secondary --help` usage names `_binexport-worker`.",
+   "files": [
+    "src/patchtrace/cli.py",
+    "src/patchtrace/strings/cli.py",
+    "tests/test_cli_registry.py",
+    "tests/test_strings_cli.py",
+    "tests/test_secondary_help.py"
+   ],
+   "tests": [
+    "tests/test_cli_registry.py::test_failure_envelope_names_verb_and_action",
+    "tests/test_strings_cli.py::test_explain_unknown_id_says_so_on_stderr_and_in_the_envelope",
+    "tests/test_secondary_help.py::test_usage_line_does_not_name_the_hidden_worker",
+    "tests/test_cli_registry.py::test_cli_seam_budget"
+   ],
+   "size": "S",
+   "priority": 5,
+   "risk": "Medium for process, low for behaviour: cli.py is exactly at its seam budget (920 lines = baseline 914 + 6), so edits must be line-neutral (metavar on the existing line 149, expression changes on 874 and 882) or the baseline constant is raised with a bug-fix note. tests/test_cli_registry.py::test_the_builtin_envelope_names_are_unchanged pins the built-in success labels; keep them.",
+   "depends_on": [],
+   "lane_conflict": "none",
+   "acceptance": "Failure and success envelopes of one call carry the same `command`; parse failures of registry verbs name the verb (and action when given); the unknown string id message is on stderr and in `error`; `secondary --help` usage lists only the five visible actions."
+  },
+  {
+   "id": "F-T06",
+   "title": "Refresh SPEC-44 (CLI umbrella) to main and record the decisions the new verbs need",
+   "why": "AGENTS.md: update the specification before changing contracts. SPEC-44 still describes 11 verbs/36 paths, says cli_commands and export do not exist, and marks project/import/doctor/config as 'not in the alpha'. Tasks F-T07..F-T14 need the amended s4, s5, s7 and s9.",
+   "files": [
+    "docs/specs/cli-umbrella.md",
+    "docs/specs/REGISTRY.md"
+   ],
+   "tests": [
+    "tests/test_spec_registry.py"
+   ],
+   "size": "M",
+   "priority": 6,
+   "risk": "Low (docs only). The s7 change records the current directive's required CLI list as the decision; exit-code inconsistencies in s8 stay listed as open owner decisions, with the new ones added (status ok/too-broad, kb exit 3, export overwrite).",
+   "depends_on": [],
+   "lane_conflict": "none",
+   "acceptance": "SPEC-44 lists all 24 verbs and 87 leaves with an exit-code row each; s7 names project, compare, profile, corrections, doctor and runtime with their service functions and exit codes; s9 describes the built registry (adapter <= 25 lines, help page required, seam budget); REGISTRY rows for SPEC-44 and SPEC-50 match; tests/test_spec_registry.py green."
+  },
+  {
+   "id": "F-T07",
+   "title": "New verb `patchtrace project`: create, info, import-json, review, backup",
+   "why": "F-D01, F-F03, F-F15: binary import, Ghidriff JSON import, run listing and backup are GUI-only. Wraps ProjectService.create (service.py:81), .open + project.runs/artifacts/matches (info), .prepare_import/.apply_import (service.py:153,251), .review_match (service.py:313; `rules propose` needs an accepted match) and .backup (service.py:138).",
+   "files": [
+    "src/patchtrace/project_cli.py",
+    "src/patchtrace/cli_commands/project.py",
+    "tests/test_project_cli.py",
+    "docs/help/77-cli-project.md",
+    "docs/help/README.md"
+   ],
+   "tests": [
+    "tests/test_project_cli.py",
+    "tests/test_cli_registry.py",
+    "tests/test_help_docs.py",
+    "tests/test_cli_commands_features.py"
+   ],
+   "size": "M",
+   "priority": 7,
+   "risk": "Medium. `info` must open with maintenance=False so a read never mutates; import-json must go through prepare_import/apply_import so the pair-identity checks stay; text output must use the terminal escaping helpers. The help page and README line are inside docs/help/** (lane L6): the L6 branch does not touch README.md or page numbers above 52, so the overlap is an added file plus one added line, but it must be agreed with L6.",
+   "depends_on": [
+    "F-T06"
+   ],
+   "lane_conflict": "L6",
+   "acceptance": "create: exit 0, JSON result has project path, both artifact SHA-256 values and whether inputs are identical; exit 2 for a directory that already holds a project or a non-PE input. info: lists runs (id, status, backend, started), match count, revision, orientation; exit 0. import-json: exit 0 and matches present; a result for another pair exits 2 and leaves the revision unchanged. review: sets one match to a review state from the REVIEWS vocabulary, exit 2 for an unknown match or state. backup: writes a verified copy, never overwrites. No Qt import."
+  },
+  {
+   "id": "F-T08",
+   "title": "New verb `patchtrace compare PROJECT`: run the primary analysis for one pair",
+   "why": "F-D01, F-F04: single-pair analysis execution is GUI-only. Reuses the flow of cli._run_pair (cli.py:651-676): backend.run_comparison (backend.py:638), ProjectService.prepare_analysis/apply_import, quarantine_failed_run, record_terminal_run; flags as on `series create --run` (--python, --ghidra-dir, --java-home, --timeout, --cache-dir, symbols.cli_args).",
+   "files": [
+    "src/patchtrace/compare_cli.py",
+    "src/patchtrace/cli_commands/compare.py",
+    "tests/test_compare_cli.py",
+    "docs/help/78-cli-compare.md",
+    "docs/help/README.md"
+   ],
+   "tests": [
+    "tests/test_compare_cli.py",
+    "tests/test_cli_backend_progress.py",
+    "tests/test_cli_registry.py",
+    "tests/test_help_docs.py"
+   ],
+   "size": "M",
+   "priority": 8,
+   "risk": "Medium. Tests can only use a monkeypatched or fake backend (mocked evidence; no live claim). backend.py belongs to lanes L2/L5: call run_comparison, do not edit it, and re-check its signature when those branches merge. Timeout must be range-checked (10..86400 as in Setup).",
+   "depends_on": [
+    "F-T06",
+    "F-T07"
+   ],
+   "lane_conflict": "L6",
+   "acceptance": "With a fake backend: completed run applied, exit 0, JSON carries run id and match count; failed run quarantined, exit 3, project unchanged; Ctrl+C exits 5 and records a cancelled run; missing --python/--ghidra-dir exits 2; an existing completed run is reused unless --refresh; --symbols online without --consent-online-symbols exits 2."
+  },
+  {
+   "id": "F-T09",
+   "title": "New verb `patchtrace profile`: list, show, validate, save, delete",
+   "why": "F-F17: analysis profiles can be used by name but not managed headless. Wraps enrichment.profiles.ProfileStore.list/get/save/delete, load_file, profile_digest and default_profiles_dir (profiles.py:89-222).",
+   "files": [
+    "docs/specs/enrichment.md",
+    "src/patchtrace/enrichment/profile_cli.py",
+    "src/patchtrace/cli_commands/profile.py",
+    "tests/test_profile_cli.py",
+    "docs/help/79-cli-profile.md",
+    "docs/help/README.md"
+   ],
+   "tests": [
+    "tests/test_profile_cli.py",
+    "tests/test_cli_registry.py",
+    "tests/test_help_docs.py"
+   ],
+   "size": "S",
+   "priority": 9,
+   "risk": "Low. Pure file operations with an injectable directory (--profiles-dir) so tests never touch the user's profile folder. enrichment.md section 12 gets the verb paragraph first. Help page is lane L6 territory.",
+   "depends_on": [
+    "F-T06"
+   ],
+   "lane_conflict": "L6",
+   "acceptance": "list prints default first and reports invalid files as warnings (exit 0, or 3 when a file is invalid); show NAME prints the profile and its digest; validate FILE exits 2 with a one-line reason for a bad file; save refuses the name 'default' and a clashing name (exit 2); delete of a missing name exits 4."
+  },
+  {
+   "id": "F-T10",
+   "title": "Generate docs/cli-reference.md from the live parser and add a drift test; correct the stale lists in docs/guide/16-cli-reference.md",
+   "why": "F-F21: 37 of 87 leaves have no flag reference, six stale statements (lines 11, 105-121, 256, 261-263, 498-505) and the guide tells readers not to script built verbs (lines 13, 203). The file claims to be generated but no generator or test exists.",
+   "files": [
+    "tools/gen_cli_reference.py",
+    "docs/cli-reference.md",
+    "docs/guide/16-cli-reference.md",
+    "tests/test_cli_reference_doc.py"
+   ],
+   "tests": [
+    "tests/test_cli_reference_doc.py::test_committed_reference_matches_the_parser",
+    "tests/test_cli_reference_doc.py::test_every_visible_leaf_has_a_section",
+    "python -m ruff check tools tests"
+   ],
+   "size": "M",
+   "priority": 10,
+   "risk": "Low. The generator must build the full parser for each registry verb (register_all builds only the invoked verb) and handle the two passthrough verbs (kb, search) by calling their own build_parser; hidden workers stay out. Generated text is LF and deterministic.",
+   "depends_on": [],
+   "lane_conflict": "none",
+   "acceptance": "Running the generator reproduces the committed file byte for byte; the file has a section for all 87 visible leaves including `kb index sync`, `intel-tools pairs`, `export`, `inspect`, `diaphora *`; the guide no longer lists built verbs as not built."
+  },
+  {
+   "id": "F-T11",
+   "title": "Cross-verb CLI contract test (SPEC-44 s11)",
+   "why": "F-F02, F-F19: per-verb tests exist but nothing checks the shared rules across all 87 leaves, which is how F-D04, F-D05 and F-D06 went unnoticed.",
+   "files": [
+    "tests/test_cli_contract_matrix.py"
+   ],
+   "tests": [
+    "tests/test_cli_contract_matrix.py"
+   ],
+   "size": "M",
+   "priority": 11,
+   "risk": "Low. Test only. Known deviations awaiting an owner decision are recorded as an explicit allow-list with a reason, not as xfail, so a new deviation fails.",
+   "depends_on": [
+    "F-T04",
+    "F-T05"
+   ],
+   "lane_conflict": "none",
+   "acceptance": "For every visible leaf discovered from the parser: --help exits 0; --json exists; a nonexistent project yields exactly one envelope with status failed and exit 2 (allow-list empty after F-T04); every status value is in the documented vocabulary plus the allow-listed `ok`/`too-broad`; no leaf reads stdin; importing the CLI path loads no Qt module. Runs in under 30 s."
+  },
+  {
+   "id": "F-T12",
+   "title": "New verb `patchtrace doctor`: one machine-readable health report",
+   "why": "F-F12: there is no aggregate health check and no version output. Wraps patchtrace.__version__, optional_deps.summary_line, cli_commands.discover() failures, runtime_discovery.check_bundle (fast, starts no process) and runtime_discovery.discover_local_runtimes (runtime_discovery.py:75,243). Diagnosis of an external runtime (backend.diagnose) is left to lane L5.",
+   "files": [
+    "src/patchtrace/doctor_cli.py",
+    "src/patchtrace/cli_commands/doctor.py",
+    "tests/test_doctor_cli.py",
+    "docs/help/80-cli-doctor.md",
+    "docs/help/README.md"
+   ],
+   "tests": [
+    "tests/test_doctor_cli.py",
+    "tests/test_cli_registry.py",
+    "tests/test_help_docs.py"
+   ],
+   "size": "M",
+   "priority": 12,
+   "risk": "Medium. Must not start any process and must not print local paths that the redaction rules forbid; discovery results are candidates, not verified runtimes, and the text must say so. Overlaps in purpose (not in files) with L5's diagnose launcher work; help page is L6.",
+   "depends_on": [
+    "F-T06"
+   ],
+   "lane_conflict": "L5",
+   "acceptance": "`patchtrace doctor --json` prints one envelope with version, python version, optional dependency states, verbs that failed to load, bundle fast-check result and runtime candidates; exit 0 when usable, 3 when a verb failed to load or the bundle check failed, 4 when no runtime candidate is found; injectable environment and roots so the test is hermetic."
+  },
+  {
+   "id": "F-T13",
+   "title": "New verb `patchtrace runtime`: inspect-zip and install-zip for the offline backend archive",
+   "why": "F-F17: installing an offline backend ZIP is GUI-only. Wraps offline_bundle.inspect_offline_bundle (offline_bundle.py:279, with --sha256) and install_offline_bundle (offline_bundle.py:369).",
+   "files": [
+    "docs/specs/offline-backend-installer.md",
+    "src/patchtrace/runtime_cli.py",
+    "src/patchtrace/cli_commands/runtime.py",
+    "tests/test_runtime_cli.py",
+    "docs/help/81-cli-runtime.md",
+    "docs/help/README.md"
+   ],
+   "tests": [
+    "tests/test_runtime_cli.py",
+    "tests/test_offline_bundle.py",
+    "tests/test_cli_registry.py",
+    "tests/test_help_docs.py"
+   ],
+   "size": "M",
+   "priority": 13,
+   "risk": "Medium. install writes outside the project: require an explicit --runtimes-root or the documented default, never replace an installed runtime, map OfflineBundleCancelled to exit 5. Only synthetic archives exist (no official runtime archive has been produced), so evidence stays synthetic. SPEC-06 paragraph first; help page is L6.",
+   "depends_on": [
+    "F-T06"
+   ],
+   "lane_conflict": "L6",
+   "acceptance": "inspect-zip on the synthetic fixture exits 0 and prints runtime id, platform, file count and whether the given SHA-256 matched; a wrong --sha256 exits 2; a tampered archive exits 3 with the PT-OFFLINE code; install-zip installs once and a second run exits 2 without changes; cancel exits 5 and leaves no partial directory."
+  },
+  {
+   "id": "F-T14",
+   "title": "New verb `patchtrace corrections`: list, export, import, undo",
+   "why": "F-F16: manual correction import/export is the one item of the required CLI list with nothing built. Wraps ProjectService.correct_match (service.py:337), restore_match_override (379) and the match-override annotations (match review state is covered by `project review` in F-T07).",
+   "files": [
+    "docs/specs/manual-corrections-exchange.md",
+    "docs/specs/REGISTRY.md",
+    "src/patchtrace/corrections_cli.py",
+    "src/patchtrace/cli_commands/corrections.py",
+    "tests/test_corrections_cli.py",
+    "docs/help/82-cli-corrections.md",
+    "docs/help/README.md"
+   ],
+   "tests": [
+    "tests/test_corrections_cli.py",
+    "tests/test_cli_registry.py",
+    "tests/test_help_docs.py",
+    "tests/test_spec_registry.py"
+   ],
+   "size": "L",
+   "priority": 14,
+   "risk": "High relative to the others. A new exchange contract (corrections/1): functions must be keyed by artifact SHA-256 + address, not by project-local ids; import must be strict JSON and validate artifact, run and orientation ownership and apply all-or-nothing. L1 is changing swap-orientation semantics that manual corrections interact with; write the spec, then wait for L1's orientation fix before building import.",
+   "depends_on": [
+    "F-T06",
+    "F-T07"
+   ],
+   "lane_conflict": "L1",
+   "acceptance": "export then import into a second project of the same pair reproduces identical corrected matches; import for a different pair, a swapped orientation or a superseded run exits 2 and changes nothing; undo restores the recorded relations; every write goes through ProjectService so staleness invalidation still happens."
+  },
+  {
+   "id": "F-T15",
+   "title": "CSV for the match table: `patchtrace export --format csv`",
+   "why": "F-F14, F-F19: CSV exists only for strings. One row per match (category, review, manual flag, names, addresses, attention rank and score when stored) covers the 'result export, CSV where applicable' requirement.",
+   "files": [
+    "docs/specs/report-export-contract-v2.md",
+    "src/patchtrace/report2/cli.py",
+    "src/patchtrace/report2/csv_export.py",
+    "tests/test_report2_cli.py"
+   ],
+   "tests": [
+    "tests/test_report2_cli.py::test_csv_export_has_one_row_per_match_and_neutralised_cells"
+   ],
+   "size": "M",
+   "priority": 15,
+   "risk": "Medium. Cells hold untrusted names: apply the report/2 text normalisation and neutralise spreadsheet formula prefixes (=, +, -, @), as strings export already does. SPEC-50 amendment first. ui_export_v2.py (lane L6) is not touched.",
+   "depends_on": [],
+   "lane_conflict": "none",
+   "acceptance": "`patchtrace export PROJECT --format csv --out F` exits 0, writes LF-terminated UTF-8 with a fixed header and one row per match; a hostile function name beginning with '=' or containing bidi controls is neutralised; exit 4 for a project without matches; the manifest in --json names the format and SHA-256."
+  }
+ ],
+ "notes": "Method. Read-only. The real CLI was enumerated by running --help on the root and on every subcommand and sub-subcommand: 106 help pages, all exit 0, raw text in scratch:/inventory/cli-help.txt. 24 top-level verbs (11 built in, 13 from cli_commands/), 86 visible leaves in help, one real leaf that help cannot show (`kb index sync`), three hidden workers. Behaviour was probed with 109 invocations against a synthetic sample project in the scratch directory with stdin closed. The parity matrix is scratch:/inventory/parity-matrix.md (48 GUI capabilities: 23 full, 8 partial, 12 GUI-only, 5 not applicable; 19 required CLI items: 6 full, 12 partial, 1 missing; doc drift table in its section 4). Evidence. Everything here is mocked, synthetic or fixture evidence. No live-native CLI run exists in this inventory: Ghidra, Ghidriff, BinDiff, rizin, capa, FLOSS and DiE are not installed and NVD, MSRC, Winbindex and CISA are unreachable. validation_pct counts acceptance items that have a passing automated test of any offline class; it is not live compatibility evidence. Only tests/test_cli_registry.py and tests/test_help_docs.py were executed here (249 passed, 1 skipped, 2.1 s); other test files are cited from reading, not from a run. Audit follow-up. Of the findings in docs/audits/20261015-reports-cli.md and 20261015-qa-cli-persistence.md, CLI-2, CLI-3/QA-CLI-1, CLI-5/QA-CLI-3, CLI-6, CLI-7, QA-CLI-2 and QA-CLI-4 are fixed on main (verified in src/patchtrace/cli.py and by probe); CLI-1, CLI-4, CLI-12 wait for an owner decision; CLI-11, CLI-13, CLI-15 are still open; CLI-8/9/10 (reports) were not re-checked here. Constraints for implementers. (1) src/patchtrace/cli.py is exactly at its seam budget (920 lines; tests/test_cli_registry.py::test_cli_seam_budget allows baseline 914 + 6), and cli.COMMANDS must not change: a new verb is a cli_commands/<verb>.py adapter of at most 25 lines over a Qt-free feature module, with no registry line to edit (discovery is by file). (2) tests/test_help_docs.py requires a docs/help page titled `# `patchtrace <verb>`` linked from docs/help/README.md for every verb; docs/help/** is lane L6, so every new-verb task carries lane_conflict L6 for one added page and one added index line (the L6 branch does not touch README.md). (3) SPEC-44 section 7 still records project, import, doctor and config as proposals 'not in the alpha'; F-T06 amends the spec first. Lanes. No task edits backend.py, backend_cli.py, tests/test_backend_cli.py, tools/unified/**, unified/{sources,ladder,fusion,facts}/**, ui_export_v2.py or ui_inspection.py. Unverified. Windows behaviour of any verb; frozen-executable discovery of registry verbs; whether the GUI has a correlate or flags action beyond the profile fields (grep found none); whether the Rules panel can propose on a project where the CLI cannot; the earlier live acquisition probe recorded in tasks/todo.md.",
+ "completion": {
+  "implementation_pct": 63,
+  "validation_pct": 61,
+  "basis": "Directive's 19 required CLI items: 6 full (adapter selection, CVE lookup, patch correlation, patch recommendations, result export, unattended execution), 12 partial, 1 missing (manual correction import/export). Implementation = (6 + 12 x 0.5) / 19 = 63 %. Validation = 11.5 / 19 = 61 %: 6 full items and the built half of 10 partial items have offline automated tests (6 + 5), exit codes and docs count 0.25 each (no cross-verb contract test, no doc drift test). All evidence is mocked, synthetic or fixture; live-native CLI evidence is 0 of 19. Cross-check from the parity matrix: 43 applicable GUI capabilities = 23 full, 8 partial, 12 GUI-only -> (23 + 4) / 43 = 63 %. Only tests/test_cli_registry.py and tests/test_help_docs.py were run here (249 passed, 1 skipped)."
+ },
+ "external_blockers": [
+  "Ghidra/Ghidriff not installed: any CLI comparison evidence is mocked",
+  "BinDiff 8 and rizin not installed (BinDiff has no licensed install)",
+  "capa, FLOSS, Detect It Easy not installed",
+  "NVD, MSRC, Winbindex, CISA unreachable: live fetch paths unverified",
+  "Windows-only: frozen-bundle selftest and Windows console/CRLF behaviour unverified",
+  "Owner decision: SPEC-44 s8 exit-code rules (partial 0 vs 3, no-bundle 4 vs 2, backend 5, status vocabulary)",
+  "Owner decision: SPEC-44 s7 still marks project/import/doctor/config/interpret as not in the alpha",
+  "Lane L6 owns docs/help/**: every new verb needs a help page and index line there",
+  "Lanes L2/L5 own backend.py and the backend diagnose path",
+  "Lane L1 swap-orientation work precedes a corrections import contract"
+ ],
+ "summary": "The real CLI has 24 verbs and 87 leaves; all have text and JSON, none prompts, and 109 probes produced no traceback. Two high-severity gaps: two local binaries cannot be imported and compared without the GUI, and `rules propose` can never succeed from the CLI. Manual correction import/export is entirely missing; profiles, runtime discovery, offline ZIP install, backup and swap are GUI-only. Three medium defects are wrong exit codes or a false \"never fetches\" help claim. `docs/cli-reference.md` lacks 37 of 87 leaves, and the guide lists six built verbs as not built. Deliverables: F.json, parity-matrix.md, cli-help.txt in the inventory folder. New verbs need a docs/help page (lane L6)."
+}

@@ -1,0 +1,898 @@
+diff --git a/src/patchtrace/kbcorrelation/cli_leads.py b/src/patchtrace/kbcorrelation/cli_leads.py
+index e9f36fa8..a3b0d2c9 100644
+--- a/src/patchtrace/kbcorrelation/cli_leads.py
++++ b/src/patchtrace/kbcorrelation/cli_leads.py
+@@ -4,15 +4,22 @@ Reads the project's stored advisory context and the engine's stored ranking and
+ functions by CVE (:mod:`.leads`). It never fetches and never runs an engine: run ``patchtrace rank PROJECT`` first.
+ ``RealEngine`` and ``default_alignment`` import ``enrichment`` lazily; slice K8 moves them to ``adapters/engine.py``.
+ 
++``kb leads`` opens the project itself, which only works while nothing else holds it. For a project its owner keeps
++open (the desktop), ``read_snapshot`` takes the stored rows on the owner's thread and ``leads_from_snapshot`` builds
++the same report from them on any thread, through the same ``leads_report`` (store-threading-spec section 4a).
++
+ Hook for ``kbcorrelation/cli.py`` (applied in this slice): ``from . import cli_leads`` plus ``cli_leads.register`` in
+ ``REGISTRARS`` and ``**cli_leads.HANDLERS`` in ``HANDLERS``. ``patchtrace/cli.py`` needs nothing beyond the ``kb`` hook.
+ """
+ from __future__ import annotations
+ 
+ import argparse
++import dataclasses
+ import re
+ from collections import defaultdict
++from dataclasses import dataclass
+ from pathlib import Path
++from typing import TYPE_CHECKING, Any
+ 
+ from pydantic import ValidationError
+ 
+@@ -35,7 +42,12 @@ from .service import TEXT_KB17, KbService, Outcome
+ from .sources.importer import MINOR_RELATIONS
+ from .store import DB_NAME, KbcStoreError
+ 
++if TYPE_CHECKING:
++    from ..enrichment.storage import Entry
++
+ SIGNAL_SUMMARY = 160
++CONTEXT_KIND = 'kb-context'
++ENGINE_KINDS = ('pipeline', 'ranking', 'signals')  # every kind ``enrichment.pipeline.load_default`` reads
+ 
+ 
+ def default_alignment() -> Alignment:
+@@ -54,21 +66,25 @@ class RealEngine:
+     note = ''
+ 
+     def read(self, project_dir: str) -> EngineView | None:
+-        from ..enrichment.pipeline import load_default
+         from ..enrichment.storage import EnrichmentStore
+-        from ..enrichment.views import build_views
+         from ..service import ProjectService
+         try:
+             service = ProjectService.open(Path(project_dir), maintenance=False)
+         except Exception:
+             raise KbcStoreError('PT-KBC-STORAGE', 'the project cannot be opened') from None
+         try:
+-            result, sets, self.note = load_default(EnrichmentStore(service.store), service.project)
+-            if result is None:
+-                return None
+-            views = build_views(service.project)
++            return self.view(EnrichmentStore(service.store), service.project)
+         finally:
+             service.close()
++
++    def view(self, store, project) -> EngineView | None:
++        """The view of ``project`` from the rows ``store.entries`` returns; sets ``note``. It opens nothing."""
++        from ..enrichment.pipeline import load_default
++        from ..enrichment.views import build_views
++        result, sets, self.note = load_default(store, project)
++        if result is None:
++            return None
++        views = build_views(project)
+         by_match = {s.match_id: s for s in sets}
+         ranks = {e.match_id: e.rank for e in result.entries}
+         rows = []
+@@ -83,6 +99,64 @@ class RealEngine:
+         return EngineView(views.revision, views.run_id, views.older_sha256, views.newer_sha256, tuple(rows))
+ 
+ 
++@dataclass(frozen=True)
++class KbSnapshot:
++    """What ``kb leads`` reads from a project, taken by ``read_snapshot`` on the thread that owns the open project;
++    after that any thread may read it (store-threading-spec R1, R2). It holds no store, service or connection."""
++    project: Any  # the committed ``ComparisonProject``: the service replaces it on a commit and never edits it
++    rows: tuple[tuple[str, tuple[Entry, ...]], ...]  # (kind, the stored enrichment rows of that kind, newest first)
++
++    def entries(self, kind: str) -> tuple[Entry, ...]:
++        """The rows of ``kind``. A kind that was not taken is refused, never read as "no rows"."""
++        for taken, found in self.rows:
++            if taken == kind:
++                return found
++        raise KbcStoreError('PT-KBC-STATE', 'the project snapshot does not hold these rows')
++
++
++def read_snapshot(service) -> KbSnapshot:
++    """Owner thread only: the snapshot of a project that is ALREADY OPEN (``service`` is its ``ProjectService``).
++    Nothing is opened, closed or written, and nothing is computed: this is the row reads alone, so the caller's
++    thread is held only for them. The size is that of the stored rows of four kinds (the enrichment store caps a row
++    at 32 MiB and all rows at 128 MiB); the project value is shared, not copied."""
++    from ..enrichment.storage import EnrichmentStore
++    store = EnrichmentStore(service.store)
++    kinds = (CONTEXT_KIND, *ENGINE_KINDS)
++    return KbSnapshot(service.project, tuple((kind, tuple(store.entries(kind))) for kind in kinds))
++
++
++class SnapshotRows:
++    """The read side of ``EnrichmentStore`` that ``load_default`` uses, answered from a snapshot's rows. A row is
++    stale against ``current`` exactly as in ``EnrichmentStore.entries``: flagged in the store, or of another guard."""
++
++    def __init__(self, snapshot: KbSnapshot):
++        self._snapshot = snapshot
++
++    def entries(self, kind: str, current=None) -> list[Entry]:
++        return [dataclasses.replace(e, stale=e.stale or (current is not None and e.guard != current))
++                for e in self._snapshot.entries(kind)]
++
++
++class SnapshotEngine(RealEngine):
++    """``RealEngine`` over a snapshot instead of a directory: the same view, and it opens nothing."""
++
++    def __init__(self, snapshot: KbSnapshot):
++        self._snapshot = snapshot
++
++    def read(self, project_dir: str) -> EngineView | None:
++        return self.view(SnapshotRows(self._snapshot), self._snapshot.project)
++
++
++def leads_from_snapshot(service: KbService, snapshot: KbSnapshot, **options) -> LeadsReport | None:
++    """``leads_report`` for a project its owner holds open: ``service`` supplies the advisory workspace (a separate
++    file that allows concurrent readers), the project is read through ``snapshot`` only. Any thread may call it;
++    ``options`` are those of ``leads_report``. No directory is passed on: the snapshot ports need none."""
++    from .wiring import SnapshotProjectPort
++    port = SnapshotProjectPort(snapshot.project.id, {CONTEXT_KIND: snapshot.entries(CONTEXT_KIND)})
++    held = KbService(service.root, dataclasses.replace(service.env, project=lambda _workspace, _name: port))
++    return leads_report(held, SnapshotEngine(snapshot), '', **options)
++
++
+ def _elsewhere(service: KbService, bundle: ContextBundle) -> tuple[list[NotApplicable], list[str], list[str]]:
+     """CVEs of the bundle's source documents that the context leaves out (other products only, or a mention only), and
+     the bundle's source documents that a newer imported revision has replaced (``ReverseIndex.active_ids``). A source
+@@ -125,19 +199,28 @@ def _elsewhere(service: KbService, bundle: ContextBundle) -> tuple[list[NotAppli
+     return elsewhere, mentions, replaced
+ 
+ 
+-def leads_outcome(service: KbService, engine, project_dir: str, *, kev: ExploitationLookup | None = None,
+-                  cve: str | None = None, limit: int | None = None, alignment: Alignment | None = None) -> Outcome:
++def leads_report(service: KbService, engine, project_dir: str, *, kev: ExploitationLookup | None = None,
++                 cve: str | None = None, limit: int | None = None, alignment: Alignment | None = None
++                 ) -> LeadsReport | None:
++    """The report behind ``kb leads``, typed; None when the project has neither an advisory context nor a ranking."""
+     bundles = service._project_bundles(project_dir)
+     bundle = bundles[-1] if bundles else None
+     view = engine.read(project_dir)
+     if bundle is None and view is None:
+-        return Outcome(4, 'unavailable', {'contract': 'kbcorrelation/1', 'state': 'no-advisory'}, TEXT_KB17)
++        return None
+     wanted = _cve(cve)
+     elsewhere, mentions, replaced = _elsewhere(service, bundle) if bundle else ([], [], [])
+-    report = build_leads(bundle, view, alignment=alignment or default_alignment(), kev=kev, elsewhere=elsewhere,
+-                         mention_only=mentions, only_cve=wanted, limit=limit, replaced_sources=replaced,
+-                         engine_note=getattr(engine, 'note', '') if view is None else '')
+-    return _present(report, wanted)
++    return build_leads(bundle, view, alignment=alignment or default_alignment(), kev=kev, elsewhere=elsewhere,
++                       mention_only=mentions, only_cve=wanted, limit=limit, replaced_sources=replaced,
++                       engine_note=getattr(engine, 'note', '') if view is None else '')
++
++
++def leads_outcome(service: KbService, engine, project_dir: str, *, kev: ExploitationLookup | None = None,
++                  cve: str | None = None, limit: int | None = None, alignment: Alignment | None = None) -> Outcome:
++    report = leads_report(service, engine, project_dir, kev=kev, cve=cve, limit=limit, alignment=alignment)
++    if report is None:
++        return Outcome(4, 'unavailable', {'contract': 'kbcorrelation/1', 'state': 'no-advisory'}, TEXT_KB17)
++    return _present(report, _cve(cve))
+ 
+ 
+ def _cve(raw: str | None) -> str | None:
+diff --git a/src/patchtrace/kbcorrelation/panel_qt.py b/src/patchtrace/kbcorrelation/panel_qt.py
+index 06166a56..1c29b6fa 100644
+--- a/src/patchtrace/kbcorrelation/panel_qt.py
++++ b/src/patchtrace/kbcorrelation/panel_qt.py
+@@ -1,14 +1,18 @@
+ """Qt presentation of the KB and CVE dock (KB-integration-plan 8.2, slice K4b; GUI plan 8.10).
+ 
+ Everything that decides what is said lives in the Qt-free `view_model` and `panel_state`; this module moves it to
+-widgets. Reading the stored leads (the advisory workspace and the project's ranking) and building the table happen on
+-the `TaskRunner`, never on the GUI thread; a project switch cancels the request and a late result is dropped. The
+-panel reads stored results only: it opens no network connection, runs no tool and creates no window.
++widgets. The project the desktop holds open is read on the GUI thread only, which owns its connection: `read_project`
++takes a snapshot of the stored rows the leads are built from and computes nothing (store-threading-spec R1 and section
++4a). Checking the stored ranking against the comparison, reading the advisory workspace, building the leads and
++building the table happen on the `TaskRunner` from that snapshot; a worker never opens or touches the project. A
++project switch cancels the request and a late result is dropped. The panel reads stored results only: it opens no
++network connection, runs no tool and creates no window.
+ """
+ from __future__ import annotations
+ 
+ from collections.abc import Callable
+ from pathlib import Path
++from typing import TYPE_CHECKING
+ 
+ from PySide6.QtCore import Qt
+ from PySide6.QtWidgets import QComboBox, QHBoxLayout, QLineEdit, QPushButton, QSplitter, QVBoxLayout, QWidget
+@@ -18,6 +22,7 @@ from ..gui.qt.docks import ControllerBase
+ from ..gui.qt.labels import PlainLabel, SafeTextView
+ from ..gui.qt.state_view import StateView
+ from ..gui.qt.table import ROW_ROLE, VirtualTable
++from ..gui.qt.tasks import TaskFailure
+ from ..gui.registry import PanelContext
+ from ..gui.table_spec import ColumnSpec, PreparedTable, TableSpec, prepare_table
+ from ..gui.text import VIEW_LIMIT, sanitize_text
+@@ -27,10 +32,14 @@ from .panel_state import coverage_notice, failure_conditions, report_conditions
+ from .tooltip_entries import TEMPLATES, TIPS
+ from .view_model import ALL_GROUPS, COLUMN_NAMES, COPY_LIMIT, LeadsViewModel, TableRow
+ 
++if TYPE_CHECKING:
++    from .cli_leads import KbSnapshot
++
+ CHANNEL = 'kb.load'
+ ROWS_CHANNEL = 'kb.rows'
+ NOUN = 'KB and CVE leads'
+-Loader = Callable[[Path, str, object], LeadsReport]
++Reader = Callable[[object], object]  # GUI thread: the open project's service -> an immutable snapshot of it
++Loader = Callable[[Path, object, object], LeadsReport]  # worker: (workspace, that snapshot, cancel token)
+ 
+ COLUMNS = tuple(
+     ColumnSpec(key, title, (lambda r, i=i: r.cells[i]), width_em=width, accessible=(lambda r, i=i: r.accessible[i]),
+@@ -42,13 +51,22 @@ assert len(COLUMNS) == len(COLUMN_NAMES)
+ SPEC = TableSpec(row_key=lambda r: f'{r.kind}:{r.group}:{r.lead_id or ""}', search_text=lambda r: ' '.join(r.cells))
+ 
+ 
+-def load_report(workspace: Path, project_dir: str, token: object) -> LeadsReport:
+-    """Worker: the stored advisory context and ranking as a leads report. It opens no network connection."""
+-    from .cli_leads import RealEngine, default_alignment, leads_outcome
++def read_project(service) -> KbSnapshot:
++    """GUI thread: a snapshot of the stored rows the leads need from the project the desktop holds open; nothing is
++    computed here. The project is not opened again: a second open of an open project is refused, and its connection
++    belongs to this thread."""
++    from .cli_leads import read_snapshot
++    return read_snapshot(service)
++
++
++def load_report(workspace: Path, snapshot: KbSnapshot, token: object) -> LeadsReport:
++    """Worker: the leads report of the snapshot's advisory context and ranking. It reads the advisory workspace,
++    never the project, and opens no network connection."""
++    from .cli_leads import default_alignment, leads_from_snapshot
+     from .wiring import build_service
+-    outcome = leads_outcome(build_service(workspace), RealEngine(), project_dir)
+-    if 'text' in outcome.result:
+-        return LeadsReport.model_validate(outcome.result)
++    report = leads_from_snapshot(build_service(workspace), snapshot)
++    if report is not None:
++        return report
+     return build_leads(None, None, alignment=default_alignment())  # no advisory and no ranking: nothing to pair
+ 
+ 
+@@ -118,12 +136,13 @@ class KbPanel(QWidget):
+ class KbController(ControllerBase):
+     """Owns the loaded view model and the requests in flight. Hooks run on the GUI thread."""
+ 
+-    def __init__(self, ctx: PanelContext, *, loader: Loader = load_report, workspace: Path | None = None) -> None:
++    def __init__(self, ctx: PanelContext, *, reader: Reader = read_project, loader: Loader = load_report,
++                 workspace: Path | None = None) -> None:
+         register_gui_tips()  # idempotent; the StateView buttons use these tips
+         register_tips(TIPS, TEMPLATES)
+         panel = KbPanel()
+         super().__init__(panel)
+-        self.panel, self.ctx, self.loader = panel, ctx, loader
++        self.panel, self.ctx, self.reader, self.loader = panel, ctx, reader, loader
+         self.port, self.tasks = ctx.project, ctx.tasks
+         self.workspace = workspace
+         self.goto_tip = panel.buttons['goto'].toolTip()
+@@ -180,24 +199,26 @@ class KbController(ControllerBase):
+ 
+     # ---- loading -------------------------------------------------------------------------------------
+ 
+-    def _project_dir(self) -> str | None:
+-        root = getattr(getattr(self.port, 'service', None), 'root', None)
+-        return str(root) if root is not None else None
+-
+     def reload(self) -> None:
+-        directory = self._project_dir()
+-        if self.key is None or directory is None:
++        """Take the snapshot of the open project here, on the GUI thread, and build the leads from it on a worker."""
++        service = getattr(self.port, 'service', None)
++        if self.key is None or service is None:
+             if self.key is not None:
+                 self._render({'blocked': {'reason': 'the project folder is not available.',
+                                           'remedy': 'Reopen the project.'}}, False)
+             return
++        try:
++            snapshot = self.reader(service)
++        except Exception as exc:  # noqa: BLE001 - shown as a worker failure is: the class only, never the message
++            self.tasks.cancel(CHANNEL)
++            return self._failed(TaskFailure(type(exc).__name__))
+         key, group, loader = self.key, self.group, self.loader
+         workspace = self.workspace or _default_workspace()
+         self.loading = True
+         self._render({('refreshing' if self.model else 'loading'): {'noun': NOUN}}, self.model is not None)
+ 
+         def work(token, _report):
+-            report = loader(workspace, directory, token)
++            report = loader(workspace, snapshot, token)
+             return (key, report, *_prepare(report, group, token))
+         self.tasks.submit(CHANNEL, work, self._loaded, self._failed)
+ 
+diff --git a/src/patchtrace/kbcorrelation/wiring.py b/src/patchtrace/kbcorrelation/wiring.py
+index 6c43e25a..a8b6947d 100644
+--- a/src/patchtrace/kbcorrelation/wiring.py
++++ b/src/patchtrace/kbcorrelation/wiring.py
+@@ -7,6 +7,10 @@ the Protocol ports of ``ports.py`` and ``context.py`` and builds the :class:`~.s
+ returns the *existing* project when the directory already holds one (the attachment then compares the bytes), and a
+ project id resolves to its directory through a registry (in memory, backed by the workspace journal) so a repair in a
+ new process can still write rows.
++
++``RealProjectPort`` opens the project for every call, so it only works while nothing else holds the project. Rows of
++a project that its owner keeps open (the desktop) are read by that owner on its own thread and served from there on
++by ``SnapshotProjectPort`` (store-threading-spec section 4a).
+ """
+ from __future__ import annotations
+ 
+@@ -14,7 +18,7 @@ import hashlib
+ import json
+ import re
+ import struct
+-from collections.abc import Mapping
++from collections.abc import Mapping, Sequence
+ from pathlib import Path
+ from typing import Any
+ 
+@@ -310,9 +314,7 @@ class RealProjectPort:
+         from ..service import ProjectService
+         service = ProjectService.open(self._directory(project_id), maintenance=False)
+         try:
+-            prefix = f'{kind}:'
+-            return {e.id[len(prefix):]: json.dumps(e.body, sort_keys=True).encode()
+-                    for e in EnrichmentStore(service.store).entries(kind) if e.id.startswith(prefix)}
++            return encode_rows(EnrichmentStore(service.store).entries(kind), kind)
+         finally:
+             service.close()
+ 
+@@ -320,6 +322,39 @@ class RealProjectPort:
+         return self.list_rows(project_id, kind).get(key)
+ 
+ 
++def encode_rows(entries, kind: str) -> dict[str, bytes]:
++    """Stored enrichment entries of ``kind`` as the ``{key: body}`` rows of ``ProjectAccess.list_rows``."""
++    prefix = f'{kind}:'
++    return {e.id[len(prefix):]: json.dumps(e.body, sort_keys=True).encode() for e in entries if e.id.startswith(prefix)}
++
++
++class SnapshotProjectPort:
++    """Read-only ``ProjectAccess`` over enrichment entries that the owner of an open project read on its own thread
++    (``entries`` maps a kind to them). It opens no project and reaches no store, so any thread may use it. A kind that
++    was not taken is refused instead of read as empty (unknown is not "no rows"), and so is every write."""
++
++    def __init__(self, project_id: str, entries: Mapping[str, Sequence]):
++        self.project_id = project_id
++        self._entries = {kind: tuple(found) for kind, found in entries.items()}
++
++    def open_project(self, directory: str) -> str:
++        return self.project_id
++
++    def list_rows(self, project_id: str, kind: str) -> dict[str, bytes]:
++        if project_id != self.project_id or kind not in self._entries:
++            raise KbcStoreError('PT-KBC-STATE', 'the project snapshot does not hold these rows')
++        return encode_rows(self._entries[kind], kind)
++
++    def get_row(self, project_id: str, kind: str, key: str) -> bytes | None:
++        return self.list_rows(project_id, kind).get(key)
++
++    def create_project(self, older_path: str, newer_path: str, *, directory: str) -> Mapping[str, Any]:
++        raise KbcStoreError('PT-KBC-UNSUPPORTED', 'a project snapshot is read-only')
++
++    def put_row(self, project_id: str, kind: str, key: str, body: bytes) -> None:
++        raise KbcStoreError('PT-KBC-UNSUPPORTED', 'a project snapshot is read-only')
++
++
+ def escape_markdown(text: str) -> str:
+     from ..intelligence.reports import escape_md
+     return escape_md(text)
+diff --git a/tests/test_kbc_snapshot.py b/tests/test_kbc_snapshot.py
+new file mode 100644
+index 00000000..ead1096f
+--- /dev/null
++++ b/tests/test_kbc_snapshot.py
+@@ -0,0 +1,241 @@
++"""KBB-01: the snapshot the holder of an open project takes for ``kb leads`` (store-threading-spec section 4a).
++
++``kb leads`` opens the project by directory, which a second holder cannot do. The holder (the desktop) instead reads
++the stored rows on its own thread (``read_snapshot``) and any thread builds the same report from them
++(``leads_from_snapshot``). These tests hold a real project open, as the desktop does, and compare with the directory
++read. Offline and synthetic: fixture evidence, not a live run. The dock side is in ``tests/test_ui_kb_panel.py``.
++"""
++from __future__ import annotations
++
++import contextlib
++import dataclasses
++import hashlib
++import pickle
++import threading
++
++import pytest
++from kbc_k1_support import no_sockets  # noqa: F401
++from kbc_k3_support import Kb
++from kbc_k4a_support import analysed_project, apply_diff, attached_project
++
++from patchtrace.enrichment import pipeline, views
++from patchtrace.enrichment.storage import EnrichmentStore, Guard
++from patchtrace.kbcorrelation.cli_leads import (
++    CONTEXT_KIND,
++    ENGINE_KINDS,
++    RealEngine,
++    SnapshotEngine,
++    SnapshotRows,
++    leads_from_snapshot,
++    leads_report,
++    read_snapshot,
++)
++from patchtrace.kbcorrelation.service import KbService
++from patchtrace.kbcorrelation.store import KbcStoreError
++from patchtrace.kbcorrelation.wiring import RealProjectPort, SnapshotProjectPort
++from patchtrace.persistence import ProjectStore
++from patchtrace.service import ProjectService
++
++pytestmark = pytest.mark.usefixtures('no_sockets')
++CVE_A = 'CVE-2099-20001'
++
++
++@pytest.fixture
++def kb(tmp_path, capsys):
++    return Kb(tmp_path, capsys)
++
++
++@contextlib.contextmanager
++def held(project):
++    """The project kept open, as the desktop window keeps it."""
++    service = ProjectService.open(project)
++    try:
++        yield service
++    finally:
++        service.close()
++
++
++def on_another_thread(work):
++    """``work()`` on a thread that did not open the project; its value, or its error raised here."""
++    box = {}
++
++    def run():
++        try:
++            box['value'] = work()
++        except BaseException as exc:  # noqa: BLE001 - handed to the calling thread
++            box['error'] = exc
++    thread = threading.Thread(target=run)
++    thread.start()
++    thread.join(60)
++    assert not thread.is_alive()
++    if 'error' in box:
++        raise box['error']
++    return box['value']
++
++
++def ranked(kb, tmp_path, capsys):
++    return analysed_project(kb, tmp_path, capsys)
++
++
++def never_ranked(kb, tmp_path, capsys):
++    return analysed_project(kb, tmp_path, capsys, rank=False)
++
++
++def ranking_behind(kb, tmp_path, capsys):
++    """Ranked, then analysed again: the stored ranking belongs to an earlier run."""
++    project = analysed_project(kb, tmp_path, capsys)
++    apply_diff(project, tmp_path)
++    return project
++
++
++def no_analysis(kb, tmp_path, capsys):
++    return attached_project(kb, tmp_path)
++
++
++STATES = [pytest.param(ranked, id='ranked'), pytest.param(never_ranked, id='never-ranked'),
++          pytest.param(ranking_behind, id='ranking-behind'), pytest.param(no_analysis, id='no-analysis')]
++
++
++# ---- the same answer as the directory read ------------------------------------------------------------------------
++
++@pytest.mark.parametrize('build', STATES)
++def test_leads_from_a_snapshot_on_another_thread_equal_kb_leads_by_directory(build, kb, tmp_path, capsys):
++    project = build(kb, tmp_path, capsys)
++    service = KbService(kb.workspace, kb.env)
++    expected = leads_report(service, RealEngine(), str(project))  # nothing holds the project yet
++    with held(project) as owner:
++        snapshot = read_snapshot(owner)
++        actual = on_another_thread(lambda: leads_from_snapshot(service, snapshot))
++        with pytest.raises(KbcStoreError) as refused:  # by directory a held project stays refused, as before
++            RealEngine().read(str(project))
++    assert actual == expected and actual is not None
++    assert refused.value.code == 'PT-KBC-STORAGE'
++    assert actual.state == ('ready' if build is ranked else 'no-comparison')
++    if build is ranked:
++        assert [g.group for g in actual.groups] == [CVE_A] and actual.unattributed
++
++
++def test_the_options_of_kb_leads_reach_the_snapshot_report(kb, tmp_path, capsys):
++    project = ranked(kb, tmp_path, capsys)
++    service = KbService(kb.workspace, kb.env)
++    expected = leads_report(service, RealEngine(), str(project), cve=CVE_A, limit=1)
++    with held(project) as owner:
++        snapshot = read_snapshot(owner)
++    actual = leads_from_snapshot(service, snapshot, cve=CVE_A, limit=1)
++    assert actual == expected and [g.group for g in actual.groups] == [CVE_A]
++    assert actual != leads_from_snapshot(service, snapshot)  # the options did narrow the report
++
++
++@pytest.mark.parametrize('build', STATES)
++def test_the_engine_view_of_a_snapshot_equals_the_directory_read_with_its_reason(build, kb, tmp_path, capsys):
++    project = build(kb, tmp_path, capsys)
++    by_directory = RealEngine()
++    expected = by_directory.read(str(project))
++    with held(project) as owner:
++        engine = SnapshotEngine(read_snapshot(owner))
++        actual = on_another_thread(lambda: engine.read(''))
++    assert actual == expected and engine.note == by_directory.note
++    assert (actual is not None) == (build is ranked)
++    if build is ranking_behind:
++        assert engine.note.startswith('Stored ranking is stale')  # an earlier run's ranking is never served
++
++
++def test_a_project_with_no_context_and_no_ranking_has_no_report(kb, tmp_path):
++    owner = ProjectService.sample(tmp_path / 'case')
++    try:
++        assert leads_from_snapshot(KbService(kb.workspace, kb.env), read_snapshot(owner)) is None
++    finally:
++        owner.close()
++
++
++def test_snapshot_rows_are_stale_exactly_as_the_store_says(kb, tmp_path, capsys):
++    project = ranking_behind(kb, tmp_path, capsys)
++    with held(project) as owner:
++        store, rows = EnrichmentStore(owner.store), SnapshotRows(read_snapshot(owner))
++        now = pipeline.guard_for(owner.project)
++        earlier = store.entries('pipeline')[0].guard
++        other = Guard(now.project_id, 'another-run', now.raw_sha256, now.input_digest)
++        assert earlier != now
++        for kind in (CONTEXT_KIND, *ENGINE_KINDS):
++            for current in (None, now, earlier, other):
++                assert rows.entries(kind, current) == store.entries(kind, current), (kind, current)
++        assert [e.stale for e in rows.entries('pipeline', now)] == [True]
++        assert [e.stale for e in rows.entries('pipeline', earlier)] == [False]
++
++
++# ---- what a snapshot is -------------------------------------------------------------------------------------------
++
++def test_a_snapshot_is_a_value_that_holds_no_handle_and_outlives_a_commit(kb, tmp_path, capsys):
++    project = ranked(kb, tmp_path, capsys)
++    service = KbService(kb.workspace, kb.env)
++    with held(project) as owner:
++        snapshot = read_snapshot(owner)
++        assert snapshot == read_snapshot(owner)
++        assert pickle.dumps(snapshot)  # a connection, lock or service inside it could not be pickled
++        with pytest.raises(dataclasses.FrozenInstanceError):
++            snapshot.rows = ()
++        before = leads_from_snapshot(service, snapshot)
++        owner.annotate(owner.project.matches[0].id, 'reviewed while the dock was loading')
++        # A commit replaces the service's project; the one the snapshot holds is never edited.
++        assert owner.project is not snapshot.project and len(owner.project.annotations) == 1
++        assert not snapshot.project.annotations
++        assert leads_from_snapshot(service, snapshot) == before
++
++
++def test_taking_a_snapshot_opens_nothing_computes_nothing_and_writes_nothing(kb, tmp_path, capsys, monkeypatch):
++    project = ranked(kb, tmp_path, capsys)
++    with held(project) as owner:
++        called = []
++
++        def refuse(name):
++            def spy(*_args, **_kwargs):
++                called.append(name)
++                raise AssertionError(f'{name} while taking a snapshot')
++            return spy
++        monkeypatch.setattr(ProjectService, 'open', classmethod(refuse('ProjectService.open')))
++        monkeypatch.setattr(ProjectStore, '__init__', refuse('ProjectStore'))
++        # The owner's thread is held for the row reads only: what grows with the comparison is left to the reader.
++        monkeypatch.setattr(pipeline, 'load_default', refuse('load_default'))
++        monkeypatch.setattr(pipeline, 'guard_for', refuse('guard_for'))
++        monkeypatch.setattr(views, 'build_views', refuse('build_views'))
++        digest = hashlib.sha256((project / 'project.sqlite3').read_bytes()).hexdigest()
++        snapshot = read_snapshot(owner)
++        assert called == []
++        assert hashlib.sha256((project / 'project.sqlite3').read_bytes()).hexdigest() == digest
++    assert [kind for kind, _ in snapshot.rows] == [CONTEXT_KIND, *ENGINE_KINDS]
++    assert all(len(snapshot.entries(kind)) == 1 for kind in (CONTEXT_KIND, *ENGINE_KINDS))
++
++
++def test_a_snapshot_refuses_rows_it_did_not_take(kb, tmp_path, capsys):
++    project = ranked(kb, tmp_path, capsys)
++    with held(project) as owner:
++        snapshot = read_snapshot(owner)
++    for refused in (lambda: snapshot.entries('wil'), lambda: SnapshotRows(snapshot).entries('wil')):
++        with pytest.raises(KbcStoreError) as error:  # not "no rows": the kind was never read
++            refused()
++        assert error.value.code == 'PT-KBC-STATE'
++
++
++def test_the_snapshot_port_serves_the_stored_context_rows_and_refuses_the_rest(kb, tmp_path, capsys):
++    project = ranked(kb, tmp_path, capsys)
++    by_directory = RealProjectPort()
++    project_id = by_directory.open_project(str(project))
++    expected = by_directory.list_rows(project_id, CONTEXT_KIND)
++    with held(project) as owner:
++        snapshot = read_snapshot(owner)
++    port = SnapshotProjectPort(snapshot.project.id, {CONTEXT_KIND: snapshot.entries(CONTEXT_KIND)})
++    assert port.open_project('anywhere') == project_id == snapshot.project.id
++    assert port.list_rows(project_id, CONTEXT_KIND) == expected and len(expected) == 1
++    key = next(iter(expected))
++    assert port.get_row(project_id, CONTEXT_KIND, key) == expected[key]
++    assert port.get_row(project_id, CONTEXT_KIND, 'absent') is None
++    refusals = {
++        'another project': (lambda: port.list_rows('another-project', CONTEXT_KIND), 'PT-KBC-STATE'),
++        'a kind not taken': (lambda: port.list_rows(project_id, 'ranking'), 'PT-KBC-STATE'),
++        'create': (lambda: port.create_project('old', 'new', directory='d'), 'PT-KBC-UNSUPPORTED'),
++        'write': (lambda: port.put_row(project_id, CONTEXT_KIND, key, b'{}'), 'PT-KBC-UNSUPPORTED'),
++    }
++    for name, (call, code) in refusals.items():
++        with pytest.raises(KbcStoreError) as error:
++            call()
++        assert error.value.code == code, name
+diff --git a/tests/test_ui_kb_panel.py b/tests/test_ui_kb_panel.py
+index d08d143f..702589ba 100644
+--- a/tests/test_ui_kb_panel.py
++++ b/tests/test_ui_kb_panel.py
+@@ -1,26 +1,42 @@
+ """K4b KB and CVE dock: state matrix, hostile text, accessibility, stale results on project switch, shutdown, anchors
+-and actions (offscreen Qt). Synthetic reports only; the loader is injected, so nothing reads a workspace."""
++and actions (offscreen Qt). Synthetic reports only; the loader is injected, so nothing reads a workspace.
++
++The last section but one (KBB-01) is the exception: it drives the dock's production reader and loader over a real,
++synthetic project that the test holds open the way the desktop window does. Fixture evidence, not a live GUI run."""
+ from __future__ import annotations
+ 
++import hashlib
++import io
++import json
+ import subprocess
+ import sys
+ import threading
+ from pathlib import Path
+ from types import SimpleNamespace
+ 
++import pytest
++from kbc_k1_support import no_sockets  # noqa: F401
++from kbc_k3_support import Kb
++from kbc_k4a_support import analysed_project
+ from leads_support import FakeNav, FakeProject, FakeShell
+ from PySide6.QtWidgets import QApplication
+-from qt_support import a11y_audit, join_gui_threads, top_level_windows  # noqa: F401
++from qt_support import a11y_audit, join_gui_threads, main_window, settings, top_level_windows  # noqa: F401
+ from test_kbc_view_model import lead, report
+ 
++from patchtrace.enrichment import pipeline
++from patchtrace.enrichment.storage import EnrichmentStore
+ from patchtrace.gui import registry
+ from patchtrace.gui.anchors import AnchorRef
+ from patchtrace.gui.qt.tasks import TaskRunner
+ from patchtrace.gui.registry import PanelContext
+-from patchtrace.kbcorrelation.leads import TEXT_NO_COMPARISON
++from patchtrace.kbcorrelation import cli as kb_cli
++from patchtrace.kbcorrelation import cli_leads, panel_qt
++from patchtrace.kbcorrelation.leads import TEXT_NO_COMPARISON, NullExploitation
+ from patchtrace.kbcorrelation.panel import PANEL
+ from patchtrace.kbcorrelation.panel_qt import KbController
+ from patchtrace.panel_manifest import MANIFEST
++from patchtrace.persistence import ProjectStore
++from patchtrace.service import ProjectService
+ 
+ SRC = Path(__file__).resolve().parent.parent / 'src'
+ HOSTILE = '<b>x</b>&amp;{0}%s javascript:alert(1)\x1b[31m‮ '
+@@ -39,18 +55,19 @@ def audit(widget) -> list[str]:
+     return [p for p in a11y_audit(widget) if p != 'QHeaderView#?: not keyboard focusable']
+ 
+ 
+-def build(qtbot, loader, project=None):
++def build(qtbot, loader, project=None, reader=lambda _service: None):
++    """The injected loaders ignore the snapshot, so the stand-in reader of the fake project hands them none."""
+     project = project or FakeProject()
+     nav, shell = FakeNav(), NoticeShell(TaskRunner(reraise=True))
+-    controller = KbController(PanelContext(PANEL, project, SimpleNamespace(), nav, shell), loader=loader)
++    controller = KbController(PanelContext(PANEL, project, SimpleNamespace(), nav, shell), reader=reader, loader=loader)
+     qtbot.addWidget(controller.panel)
+     controller.panel.resize(1100, 700)
+     controller.panel.show()
+     return controller, nav, shell, project
+ 
+ 
+-def start(qtbot, loader, *, project=None):
+-    controller, nav, shell, project = build(qtbot, loader, project)
++def start(qtbot, loader, *, project=None, **options):
++    controller, nav, shell, project = build(qtbot, loader, project, **options)
+     controller.project_changed(project.key())
+     settle(qtbot, controller)
+     return controller, nav, shell, project
+@@ -262,6 +279,199 @@ def test_cve_anchor_selects_its_group_and_other_kinds_are_refused(qtbot):
+     assert controller.show_anchor(AnchorRef('string', 'x')).status == 'blocked'
+ 
+ 
++# ---- the production loader over a project the desktop holds open (KBB-01 / D-DEF-01) -------------------------------
++
++def hold(qtbot, held, workspace):
++    """The dock as the panel registry builds it (production reader and loader, nothing injected) over a project the
++    test keeps open, as the desktop window does. Only the advisory workspace is redirected, away from the user's."""
++    project = FakeProject(held)
++    shell = NoticeShell(TaskRunner(reraise=True))
++    controller = KbController(PanelContext(PANEL, project, SimpleNamespace(), FakeNav(), shell), workspace=workspace)
++    qtbot.addWidget(controller.panel)
++    controller.panel.show()
++    controller.project_changed(project.key())
++    settle(qtbot, controller)
++    return controller
++
++
++def watch_store(monkeypatch) -> SimpleNamespace:
++    """From now on: ``opens`` lists every ``ProjectService.open`` and every new ``ProjectStore`` (a second open of the
++    held project), ``touched`` the thread id of every project-store use (those opens, each checked store call and each
++    enrichment row read)."""
++    seen = SimpleNamespace(opens=[], touched=[])
++    service_open, store_init = ProjectService.open, ProjectStore.__init__
++    check_open, entries = ProjectStore._check_open, EnrichmentStore.entries
++
++    def spy_open(cls, *args, **kwargs):
++        seen.opens.append('ProjectService.open')
++        seen.touched.append(threading.get_ident())
++        return service_open(*args, **kwargs)
++
++    def spy_init(self, *args, **kwargs):
++        seen.opens.append('ProjectStore')
++        seen.touched.append(threading.get_ident())
++        store_init(self, *args, **kwargs)
++
++    def spy_check(self):
++        seen.touched.append(threading.get_ident())
++        check_open(self)
++
++    def spy_entries(self, *args, **kwargs):
++        seen.touched.append(threading.get_ident())
++        return entries(self, *args, **kwargs)
++    monkeypatch.setattr(ProjectService, 'open', classmethod(spy_open))
++    monkeypatch.setattr(ProjectStore, '__init__', spy_init)
++    monkeypatch.setattr(ProjectStore, '_check_open', spy_check)
++    monkeypatch.setattr(EnrichmentStore, 'entries', spy_entries)
++    return seen
++
++
++def watch_thread(monkeypatch, module, name: str, threads: dict) -> None:
++    """Record in ``threads[name]`` the thread id on which ``module.name`` is called from now on."""
++    real = getattr(module, name)
++
++    def spy(*args, **kwargs):
++        threads[name] = threading.get_ident()
++        return real(*args, **kwargs)
++    monkeypatch.setattr(module, name, spy)
++
++
++def test_production_loader_reads_a_project_the_host_holds_open(qtbot, tmp_path, monkeypatch):
++    held = ProjectService.sample(tmp_path / 'case')  # stays open for the whole test, as in the desktop window
++    try:
++        seen = watch_store(monkeypatch)
++        controller = hold(qtbot, held, tmp_path / 'ws')
++        kind, text = state(controller)
++        assert kind == 'idle', text  # the sample has no advisory and no ranking: explained, never a failure
++        assert controller.model.report.state == 'no-advisory'
++        assert seen.opens == []  # the open project is never opened a second time
++    finally:
++        held.close()
++
++
++@pytest.mark.usefixtures('no_sockets')
++def test_only_the_gui_thread_touches_the_held_project_and_a_worker_builds_the_leads(qtbot, tmp_path, monkeypatch,
++                                                                                     capsys):
++    project = analysed_project(Kb(tmp_path, capsys), tmp_path, capsys)  # an attached advisory context and a ranking
++    held = ProjectService.open(project)
++    try:
++        seen, computed = watch_store(monkeypatch), {}
++        watch_thread(monkeypatch, pipeline, 'load_default', computed)
++        watch_thread(monkeypatch, cli_leads, 'build_leads', computed)
++        controller = hold(qtbot, held, tmp_path / 'ws')
++        gui = threading.get_ident()
++        assert seen.touched and set(seen.touched) == {gui}  # R1: the project store is used by its owner thread only
++        assert seen.opens == []
++        # The GUI thread only reads rows: checking the ranking against the comparison and building the leads, the
++        # work that grows with the project, still run on a worker.
++        assert set(computed) == {'load_default', 'build_leads'} and gui not in computed.values()
++        assert state(controller)[0] == 'ready', state(controller)[1]
++    finally:
++        held.close()
++
++
++@pytest.mark.usefixtures('no_sockets')
++def test_the_dock_shows_what_kb_leads_prints_for_the_same_project(qtbot, tmp_path, capsys):
++    project = analysed_project(Kb(tmp_path, capsys), tmp_path, capsys)
++    out = io.StringIO()  # the headless CLI while nothing holds the project: the reference the dock has to match
++    # The dock loads no KEV catalog, so the reference run gets the same "not loaded" lookup instead of the user's.
++    assert kb_cli.main(['leads', str(project), '--workspace', str(tmp_path / 'ws'), '--json'], kev=NullExploitation(),
++                       stdout=out) == 0
++    expected = json.loads(out.getvalue())['result']
++    held = ProjectService.open(project)
++    try:
++        def stored():
++            return (hashlib.sha256((project / 'project.sqlite3').read_bytes()).hexdigest(),
++                    sorted(path.name for path in project.iterdir()))
++        before = stored()
++        controller = hold(qtbot, held, tmp_path / 'ws')
++        assert state(controller)[0] == 'ready', state(controller)[1]
++        assert controller.model.report.model_dump(mode='json') == expected
++        assert [name for name in names(controller) if '(' not in name] == [
++            'read_item', 'alloc_items', 'debug_dump', 'get_version', 'report_invalid_index']
++        assert stored() == before  # the dock reads the held project and writes nothing into it
++    finally:
++        held.close()
++
++
++def test_the_real_main_window_shows_the_kb_dock_for_the_project_it_holds(main_window, qtbot, tmp_path, monkeypatch):
++    """The whole production path: the panel registry's factory, the host's own port over ``window.service`` and the
++    default reader and loader. Only the advisory workspace folder is moved away from the user's."""
++    monkeypatch.setattr(panel_qt, '_default_workspace', lambda: tmp_path / 'ws')
++    seen = watch_store(monkeypatch)
++    controller = main_window.panels.show_panel('kb').controller
++    assert controller.port.service is main_window.service
++    qtbot.waitUntil(lambda: controller.model is not None or state(controller)[0] == 'error', timeout=5000)
++    kind, text = state(controller)
++    assert kind == 'idle', text
++    assert controller.model.report.state == 'no-advisory'
++    assert seen.opens == [] and set(seen.touched) == {threading.get_ident()}
++
++
++def test_refresh_takes_a_new_snapshot_on_the_gui_thread_and_hands_it_to_the_worker(qtbot):
++    taken, handed = [], []
++
++    def reader(service):
++        taken.append((service, threading.get_ident()))
++        return f'snapshot {len(taken)}'
++
++    def loader(_workspace, snapshot, _token):
++        handed.append((snapshot, threading.get_ident()))
++        return report()
++    controller, _nav, _shell, project = start(qtbot, loader, reader=reader)
++    controller.panel.buttons['refresh'].click()
++    settle(qtbot, controller)
++    gui = threading.get_ident()
++    assert taken == [(project.service, gui), (project.service, gui)]
++    assert [snapshot for snapshot, _ in handed] == ['snapshot 1', 'snapshot 2']
++    assert all(ident != gui for _, ident in handed)
++
++
++def test_a_failed_read_of_the_open_project_is_an_error_with_retry_and_keeps_earlier_rows(qtbot):
++    reads, loads = [], []
++
++    def reader(_service):
++        reads.append(1)
++        if len(reads) == 2:
++            raise OSError('/home/analyst/case cannot be read')
++
++    def loader(_workspace, _snapshot, _token):
++        loads.append(1)
++        return report()
++    controller, *_ = start(qtbot, loader, reader=reader)
++    controller.reload()  # the second read fails on the GUI thread; it becomes a state, not an exception inside Qt
++    kind, text = state(controller)
++    assert kind == 'error' and 'OSError stopped the work' in text and 'analyst' not in text  # the class, no message
++    assert 'Earlier results are unchanged' in text and len(names(controller)) == 5
++    assert len(loads) == 1 and not controller.tasks.busy()  # no worker was started for a snapshot that was not taken
++    assert controller.panel.buttons['refresh'].isEnabled()
++    controller.panel.state_view.action_button('retry').click()
++    settle(qtbot, controller)
++    assert state(controller)[0] == 'ready' and len(reads) == 3 and len(loads) == 2
++
++
++def test_a_failed_read_drops_the_load_still_in_flight(qtbot):
++    gate, started, reads = threading.Event(), threading.Event(), []
++
++    def reader(_service):
++        reads.append(1)
++        if len(reads) == 2:
++            raise RuntimeError('boom')
++
++    def loader(_workspace, _snapshot, _token):
++        started.set()
++        gate.wait(5)
++        return report()
++    controller, _nav, _shell, project = build(qtbot, loader, reader=reader)
++    controller.project_changed(project.key())
++    qtbot.waitUntil(started.is_set, timeout=5000)
++    controller.reload()
++    gate.set()
++    qtbot.waitUntil(lambda: not controller.tasks.busy(), timeout=5000)
++    QApplication.processEvents()
++    assert state(controller)[0] == 'error' and controller.model is None and names(controller) == []
++
++
+ # ---- the declaration ----------------------------------------------------------------------------------------------
+ 
+ def test_the_declaration_matches_its_manifest_slot_and_lints_clean():

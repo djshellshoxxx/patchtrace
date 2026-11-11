@@ -1,0 +1,1194 @@
+{
+ "workstream": "I1",
+ "title": "Security and reliability backlog verification against main",
+ "baseline": "main@882d1ca0",
+ "features": [
+  {
+   "id": "I1-F01",
+   "name": "TB: trust-boundary audit 2026-11-07 (TB-01..TB-15) plus new TB-16 found during verification",
+   "spec": [
+    "docs/qa/audit-trust-boundaries-20261107.md",
+    "docs/specs/pe-overview.md"
+   ],
+   "code": [
+    "src/patchtrace/acquisition/quarantine.py",
+    "src/patchtrace/persistence.py",
+    "src/patchtrace/ghidriff_launch/validate.py",
+    "src/patchtrace/hostile_text.py",
+    "src/patchtrace/acquisition/transport.py",
+    "src/patchtrace/artifact_inspection.py",
+    "src/patchtrace/offline_bundle.py",
+    "src/patchtrace/jobs.py",
+    "src/patchtrace/ingestion.py",
+    "src/patchtrace/acquisition/delta.py",
+    "src/patchtrace/backend_bundle.py",
+    "src/patchtrace/unified/extract/runner.py",
+    "src/patchtrace/unified/ir/reader.py",
+    "src/patchtrace/reports.py"
+   ],
+   "status": "partial",
+   "implementation_pct": 50,
+   "validation_pct": 47,
+   "verified_by": [
+    "tests/test_audit_trust_boundaries_20261107.py (synthetic; presence of the 7 named tests checked, not re-run here)",
+    "code read at main@882d1ca0 for every open item",
+    "ad-hoc read-only probe for TB-16 (synthetic, this session)"
+   ],
+   "evidence_class": "synthetic",
+   "remaining": [
+    "FIXED (7): TB-01 quarantine sweep symlink, TB-02 Last-Modified overflow, TB-03 U+2028/2029 in hostile rule (hostile_text.py:9 has Zl/Zp), TB-04 reader close on exception, TB-05 manifest file/dir prefix conflict, TB-06 launcher report strict JSON, TB-07 view/trigger refusal (persistence.py:377-380).",
+    "NOT-APPLICABLE (1): TB-14 full-verified marker keyed by manifest hash only; audit says no change needed.",
+    "STILL-OPEN TB-08 Low: acquisition/transport.py:68 `_check(blob=True)` admits any *.blob.core.windows.net host. Needs a data decision from live traffic (blocked live-network).",
+    "STILL-OPEN TB-09 (= WP-09) Low: jobs.py:323-330 terminate() runs os.killpg(child.pid) after the loop `while child.poll() is None` (line 359) has already reaped the leader (line 383), and again in `finally` (line 414).",
+    "STILL-OPEN TB-10 Low: offline_bundle.py:294-295 `zipfile.ZipFile(archive)` builds every central-directory entry before the MAX_MEMBERS check in `_zip_entries` (offline_bundle.py:229-230).",
+    "STILL-OPEN TB-11 Low (Windows only): artifact_inspection.py:107 verify_trust(safe_path(...)) receives the project path, not the verified handle.",
+    "STILL-OPEN TB-12 Info: ingestion.py:19-24 safe_path rejects drive letters/ADS/backslash/.. but not Windows device names (CON, NUL, COM1...) or trailing dot/space components; offline_bundle._safe_relative (offline_bundle.py:142) already has the rule.",
+    "STILL-OPEN TB-13 Info (Windows only): acquisition/delta.py:97 ApplyDeltaB parses the attacker-influenced delta in-process; hash checked after. Design change (contained child).",
+    "STILL-OPEN TB-15 Info: jobs.py:147 builds the Windows environment block with chr(0).join(...) and no NUL / \"=\" validation of keys and values.",
+    "STILL-OPEN TB-16 (NEW, extends the audit's \"plain json.loads call sites\" list): RecursionError is not a ValueError, so `except ValueError` around plain json.loads lets it escape untyped. Confirmed by run: unified/extract/runner.py:277 (_child_documents), unified/ir/reader.py:264 (read_manifest), reports.py:144 (_annotation), calibration/artifact.py:53 (strict_json), diaphora/provenance.py:23. Same pattern by reading: unified/extract/runner.py:468, search/service.py:511, raw_cleanup.py:156, backend_bundle.py:328, unified/pair_text.py:279 (except tuple at :286 has no RecursionError), backend.py:675 (L2/L5 lane), unified/sources/secondary.py:95 and diaphora.py:105 (L1 lane). Sites capped at 4 KiB (unified/pipeline.py:558, enrichment/cache.py:187) cannot reach the ~9,997-level threshold measured on CPython 3.12.3.",
+    "Not re-audited: areas the audit lists as NOT reviewed (tools/check_windows_exe.py, tools/package_windows_installer.py, tools/build_backend_bundle.py download(), Windows-only paths)."
+   ],
+   "defects": [
+    {
+     "id": "TB-16",
+     "severity": "medium",
+     "summary": "RecursionError from deeply nested JSON escapes `except ValueError` at plain json.loads sites that read child-process output, project files and analyst annotations",
+     "evidence": "src/patchtrace/unified/extract/runner.py:277; src/patchtrace/unified/ir/reader.py:264; src/patchtrace/reports.py:144; src/patchtrace/calibration/artifact.py:53; src/patchtrace/diaphora/provenance.py:23",
+     "failure_scenario": "A Ghidra extractor child that parsed a hostile binary prints one stdout line starting with \"{\" followed by 60,000 \"[\" (inside the 64 KiB STDOUT_LIMIT), or a shared project carries a match-override annotation whose text is 20,000 \"[\": `_child_documents`, `read_manifest` and `reports._annotation` raise RecursionError instead of UnifiedError/PT-* (run this session: \"ESCAPED RecursionError\", \"ir.reader.read_manifest -> RecursionError\", \"reports._annotation -> RecursionError\"). The unified run or report export ends as an untyped runtime error (CLI exit 3 with \"RecursionError: maximum recursion depth exceeded\"); no memory corruption.",
+     "proposed_fix": "Route each site through persistence.strict_json (already depth-safe) or add RecursionError to the except tuple; keep the typed PT-* error of each module. Leave backend.py and unified/sources/** to their lane owners.",
+     "regression_test": "New tests/test_json_recursion_boundaries.py: parametrized over the entry points with \"[\" * 60000 and '{\"a\":' * 60000; each must raise the module's typed error or return its \"unreadable\" value, never RecursionError."
+    },
+    {
+     "id": "TB-09",
+     "severity": "low",
+     "summary": "Process-group kill is sent after the group leader was reaped (pid reuse window)",
+     "evidence": "src/patchtrace/jobs.py:359,383,414 (terminate at 323-330)",
+     "failure_scenario": "A child exits normally; `child.poll()` reaps it; before terminate() runs the pid is recycled to a new process-group leader owned by the same user; os.killpg kills that unrelated group. Needs pid wrap-around inside milliseconds (UNVERIFIED in practice).",
+     "proposed_fix": "POSIX: detect exit with os.waitid(P_PID, pid, WEXITED | WNOWAIT) so the leader stays a zombie (pid cannot be recycled) while killpg runs, then reap; skip the kill in `finally` once the child is reaped.",
+     "regression_test": "tests/test_jobs.py: wrap os.killpg and assert every call happens while child.returncode is None (leader not yet reaped); existing descendant-kill tests stay green."
+    },
+    {
+     "id": "TB-10",
+     "severity": "low",
+     "summary": "Offline-bundle ZIP member cap is enforced after zipfile has materialised every central-directory entry",
+     "evidence": "src/patchtrace/offline_bundle.py:294-295 (cap at 229-230)",
+     "failure_scenario": "A user selects a hostile archive with millions of tiny central-directory records: memory proportional to entry count is allocated before \"too many members\" is reported. Bounded by the archive size the user chose.",
+     "proposed_fix": "Read the EOCD / ZIP64 EOCD total-entries field from the tail of the file and refuse above MAX_MEMBERS + 1 before constructing ZipFile.",
+     "regression_test": "tests/test_offline_bundle.py: archive with MAX_MEMBERS + 2 entries is refused while zipfile.ZipFile is monkeypatched to fail if constructed; ZIP64 variant; honest bundle still inspects."
+    },
+    {
+     "id": "TB-12",
+     "severity": "low",
+     "summary": "safe_path accepts Windows device names and trailing dot/space components",
+     "evidence": "src/patchtrace/ingestion.py:19-24",
+     "failure_scenario": "An attacker-edited project snapshot sets AnalysisRun.raw_path to \"runs/x/CON\" or \"runs/x/raw.json.\" ; on Windows the path resolves to the console device or to a different file than the one named. Other persisted paths are hash-derived. Not exercisable on Linux as an exploit, but the string rule is platform-neutral.",
+     "proposed_fix": "Reuse the offline_bundle._safe_relative component rules (WINDOWS_RESERVED, trailing dot/space) inside safe_path on every platform.",
+     "regression_test": "tests/test_core.py or tests/test_hostile_input_fuzz_regressions.py: parametrized safe_path refusals for CON, nul.txt, COM1, \"a./b\", \"a /b\"; existing artifacts/<sha>.bin paths still accepted."
+    },
+    {
+     "id": "TB-15",
+     "severity": "low",
+     "summary": "Windows child environment block is built without rejecting NUL or \"=\" in names/values",
+     "evidence": "src/patchtrace/jobs.py:147",
+     "failure_scenario": "A configured path or passthrough value containing NUL would terminate its entry early and inject a further NAME=value pair into the child environment. Values come from os.environ and configured paths, which cannot hold NUL on Windows today.",
+     "proposed_fix": "Validate env in run_process before spawning on every platform: reject NUL in keys/values and \"=\" or empty keys with a PT-BACKEND ValueError.",
+     "regression_test": "tests/test_jobs.py: run_process with env {\"A\": \"x\\0B=y\"} and {\"A=B\": \"x\"} raises ValueError matching PT-BACKEND before any spawn (spawn function monkeypatched to fail if reached)."
+    },
+    {
+     "id": "TB-08",
+     "severity": "low",
+     "summary": "Redirect allowlist admits any Azure storage account",
+     "evidence": "src/patchtrace/acquisition/transport.py:68",
+     "failure_scenario": "A spoofed symbol server redirects to an attacker-owned *.blob.core.windows.net account: the attacker learns the client IP and can drip a body; content is still rejected by the Winbindex SHA-256 and size check.",
+     "proposed_fix": "Pin the Microsoft symbol shard host pattern once confirmed from live traffic.",
+     "regression_test": "Loopback/fake-opener test that a non-pinned blob host is refused (after the data decision)."
+    },
+    {
+     "id": "TB-11",
+     "severity": "low",
+     "summary": "Authenticode probe is given a path, not the verified handle",
+     "evidence": "src/patchtrace/artifact_inspection.py:107",
+     "failure_scenario": "A writer in the project folder swaps the file between VerifiedArtifactReader verification and WinVerifyTrust; the trust verdict describes other bytes. Windows only.",
+     "proposed_fix": "Verify on a handle or re-hash after the probe.",
+     "regression_test": "Windows-only test with a swap hook between hash and probe."
+    }
+   ],
+   "blockers": [
+    {
+     "type": "live-network",
+     "detail": "TB-08 needs observed Microsoft symbol-server redirect hosts"
+    },
+    {
+     "type": "windows-only",
+     "detail": "TB-11, TB-13 and the runtime half of TB-12/TB-15 can only be exercised on Windows"
+    },
+    {
+     "type": "other-lane",
+     "detail": "TB-16 sites in backend.py (L2/L5) and unified/sources/** (L1) must be fixed by their owners"
+    }
+   ],
+   "effort_hours": 14,
+   "confidence": "high",
+   "acceptance_tests": [
+    "tests/test_audit_trust_boundaries_20261107.py stays green",
+    "new tests named in each defect are red before and green after"
+   ],
+   "active_lane_overlap": "L1"
+  },
+  {
+   "id": "I1-F02",
+   "name": "KBA: KB/CVE correlation audit 2026-11-07 (KBA-01..KBA-08)",
+   "spec": [
+    "docs/qa/audit-kb-correlation-20261107.md",
+    "docs/specs/kb-cve/31-C-product-build-pairs.md",
+    "docs/specs/report-export-contract-v2.md"
+   ],
+   "code": [
+    "src/patchtrace/kbcorrelation/lineage.py",
+    "src/patchtrace/kbcorrelation/alias_catalog.py",
+    "src/patchtrace/report2/contracts.py",
+    "src/patchtrace/kbcorrelation/index.py",
+    "src/patchtrace/kbcorrelation/resolver.py"
+   ],
+   "status": "partial",
+   "implementation_pct": 63,
+   "validation_pct": 63,
+   "verified_by": [
+    "tests/test_kbc_audit_20261107.py (synthetic; KBA-01..05 plain tests, KBA-06..08 strict xfail at lines 131, 150, 160)"
+   ],
+   "evidence_class": "synthetic",
+   "remaining": [
+    "FIXED (5): KBA-01 Windows 10 version-key spelling, KBA-02 timeline/watermark by UTC instant, KBA-03 revision tie-break, KBA-04 publisher namespace in group key, KBA-05 unreadable facts date.",
+    "STILL-OPEN KBA-06 Low: kbcorrelation/lineage.py:186 predecessor() can return an older row with the target's own SHA when the bytes revert across a preview row. Needs an owner decision between \"skip identical SHA\" and \"walk to before the earliest identical row\".",
+    "STILL-OPEN KBA-07 Low (latent): report2/contracts.py:199 accepts KB\\d{6,8}; kbcorrelation canonical ids are 4-10 digits. Not reachable today (adapters emit only cve/cwe). Widening changes an exported contract: spec first.",
+    "STILL-OPEN KBA-08 Medium (coverage): kbcorrelation/alias_catalog.py:27-30 RELEASE_PATTERNS has no rule for \"Windows 10 for x64-based Systems\" (RTM, Winbindex key 1507), so those products resolve to NO_KEY. Needs ALIAS_CATALOG_VERSION bump and new scope ids (decision).",
+    "Spec wording: docs/specs/kb-cve/31-C-product-build-pairs.md still calls `10-22H2` a \"version key\" (audit note; UNVERIFIED on main)."
+   ],
+   "defects": [
+    {
+     "id": "KBA-08",
+     "severity": "medium",
+     "summary": "Windows 10 RTM (1507) products get no Winbindex key",
+     "evidence": "src/patchtrace/kbcorrelation/alias_catalog.py:27-30",
+     "failure_scenario": "MSRC product \"Windows 10 for x64-based Systems\" is derived without a release token -> no winbindex_key -> resolver answers NO_KEY, so every KB for Windows 10 1507 is reported as not in the file index.",
+     "proposed_fix": "Add an alias rule mapping the token-less Windows 10 client name to release 1507; bump ALIAS_CATALOG_VERSION; define migration of scope ids.",
+     "regression_test": "tests/test_kbc_audit_20261107.py::test_kba08_windows_10_rtm_product_name_gets_a_file_index_key (remove strict xfail)."
+    },
+    {
+     "id": "KBA-06",
+     "severity": "low",
+     "summary": "predecessor() may return a row with the target's own bytes",
+     "evidence": "src/patchtrace/kbcorrelation/lineage.py:186",
+     "failure_scenario": "Timeline A, B(preview), A with same_class_only: the preview row is skipped and the older A row is returned, producing a byte-identical pair instead of \"no earlier build\".",
+     "proposed_fix": "Decide the rule, then skip rows whose SHA equals the target's.",
+     "regression_test": "tests/test_kbc_audit_20261107.py::test_kba06_predecessor_never_returns_a_row_with_the_targets_own_sha (remove strict xfail)."
+    },
+    {
+     "id": "KBA-07",
+     "severity": "low",
+     "summary": "report2 Advisory KB id pattern is narrower than the canonical KB id",
+     "evidence": "src/patchtrace/report2/contracts.py:199",
+     "failure_scenario": "Once an adapter emits kind=\"kb\" records, a canonical KB id of 4-5 or 9-10 digits makes PT-EXPORT-SECTION refuse the whole export.",
+     "proposed_fix": "Amend docs/specs/report-export-contract-v2.md, then widen to KB\\d{4,10}.",
+     "regression_test": "tests/test_kbc_audit_20261107.py::test_kba07_report2_advisory_accepts_every_canonical_kb_id (remove strict xfail)."
+    }
+   ],
+   "blockers": [
+    {
+     "type": "owner-decision",
+     "detail": "KBA-06 semantics, KBA-07 exported-contract change, KBA-08 alias catalogue version and scope-id migration"
+    }
+   ],
+   "effort_hours": 8,
+   "confidence": "high",
+   "acceptance_tests": [
+    "the three strict xfail tests become plain passing tests"
+   ],
+   "active_lane_overlap": "none"
+  },
+  {
+   "id": "I1-F03",
+   "name": "SEC: secondary-engines audit 2026-10-15 (SEC-1..SEC-13)",
+   "spec": [
+    "docs/audits/20261015-secondary-engines.md",
+    "docs/audits/20261015-fixes-secondary.md",
+    "docs/specs/bindiff-execution.md",
+    "docs/specs/secondary-engine.md"
+   ],
+   "code": [
+    "src/patchtrace/backend.py",
+    "src/patchtrace/secondary/scheduler.py",
+    "src/patchtrace/secondary/rzdiff.py",
+    "src/patchtrace/secondary/registry.py",
+    "src/patchtrace/secondary/runs.py",
+    "src/patchtrace/secondary/binexport_run.py",
+    "src/patchtrace/secondary/bindiff.py"
+   ],
+   "status": "partial",
+   "implementation_pct": 77,
+   "validation_pct": 54,
+   "verified_by": [
+    "tests/test_secondary_fixes.py (mocked/synthetic: sec1, sec2, sec4, sec5, sec6, sec7, sec9)",
+    "tests/test_backend_sec3.py (mocked child; 4 tests)",
+    "tests/test_jobs.py::test_input_hash_change_fails_before_child (fake backend)",
+    "tests/test_backend_bundle_env.py:127 (argv -I)"
+   ],
+   "evidence_class": "mocked",
+   "remaining": [
+    "FIXED since the master-todo line was written: SEC-3 (backend.py:330 probe and :562 Ghidriff argv use `-I -X utf8`; cwd is a scratch dir at :331 and :800) and the Ghidriff half of SEC-1 (backend.py:420-439 `_snapshot_input` copies to private scratch and compares the SHA-256; used at :772). master-todo-d.md \"Open from fix pass\" is stale for both.",
+    "FIXED: SEC-1 rz-diff half, SEC-2, SEC-4, SEC-6 (per-name cap; no total-bytes cap), SEC-7 (scheduler bound; CLI flag itself only `type=int`, cli.py:162), SEC-11, SEC-12 (docs; UNVERIFIED), SEC-13 (tests a-f now exist).",
+    "PARTIALLY-FIXED SEC-5: snapshots are content-addressed (binexport_run.py:164-167) but there is still no per-project byte cap for BinExport snapshots (policy decision).",
+    "PARTIALLY-FIXED SEC-9: secondary/runs.py sanitize_stderr still keeps U+009B (C1 CSI), U+0085, U+061C (Arabic letter mark, a bidi control), zero-width and tag characters (probe this session: 159 of 170 Cf code points survive). Display path strips C1.",
+    "STILL-OPEN SEC-8 Low: secondary/rzdiff.py:175 rejects any output containing U+FFFD after registry.py:87 decoded with errors=\"replace\"; a valid name containing U+FFFD fails as \"not valid UTF-8\". Pinned by tests/test_secondary_rzdiff.py: needs a decision.",
+    "STILL-OPEN SEC-10 Low: backend.py:67 `restrict_env: bool = False`; with an external install the Ghidriff child inherits proxies and tokens (also listed as a known gap in SECURITY.md and docs/qa.md [CONSENT]). In L2/L5 files; needs the native Windows check first.",
+    "Residual (Info): backend.py:299 the `java -version` probe still runs with cwd=ghidra_dir (not a Python sys.path issue)."
+   ],
+   "defects": [
+    {
+     "id": "SEC-10",
+     "severity": "medium",
+     "summary": "Default Ghidriff child inherits the full parent environment",
+     "evidence": "src/patchtrace/backend.py:67 (decision at :248)",
+     "failure_scenario": "A user with HTTPS_PROXY, cloud tokens or GH tokens in the environment runs an analysis with an external Ghidra install: the child (and any Ghidra extension or script it loads) sees every variable. `--no-symbols` limits only symbol lookups.",
+     "proposed_fix": "Flip the default to restricted after the native Windows variable list is validated, keeping PATCHTRACE_CHILD_ENV=inherit as the escape hatch.",
+     "regression_test": "tests/test_child_env.py: default BackendConfig produces the allow-listed environment; a planted AWS_SECRET_ACCESS_KEY is absent from the child env."
+    },
+    {
+     "id": "SEC-8",
+     "severity": "low",
+     "summary": "Valid rz-diff output containing U+FFFD is rejected as invalid UTF-8",
+     "evidence": "src/patchtrace/secondary/rzdiff.py:175; src/patchtrace/secondary/registry.py:87",
+     "failure_scenario": "A binary with a symbol name that legitimately contains U+FFFD makes the whole rz-diff run fail PT-SECONDARY-INPUT.",
+     "proposed_fix": "Decode the raw stdout bytes strictly in registry.py and report the byte offset; drop the U+FFFD text check.",
+     "regression_test": "tests/test_secondary_rzdiff.py: bytes with a valid encoded U+FFFD parse; bytes with 0xFF are refused with an offset."
+    },
+    {
+     "id": "SEC-9-residual",
+     "severity": "low",
+     "summary": "Stored stderr tail keeps C1 and some bidi/format characters",
+     "evidence": "src/patchtrace/secondary/runs.py:109-112",
+     "failure_scenario": "Engine stderr containing U+009B or U+061C is persisted in EngineRun.stderr_tail and reaches any sink that does not re-sanitise (JSON export, logs).",
+     "proposed_fix": "Build sanitize_stderr on hostile_text.is_hostile (keep newline and tab).",
+     "regression_test": "tests/test_secondary_fixes.py: parametrized battery over Cc/Cf/Cs/Zl/Zp; none survives except \\n and \\t."
+    }
+   ],
+   "blockers": [
+    {
+     "type": "other-lane",
+     "detail": "SEC-10 and the java-probe cwd are in backend.py (L2, L5)"
+    },
+    {
+     "type": "windows-only",
+     "detail": "SEC-10 default flip needs a native Windows run"
+    },
+    {
+     "type": "owner-decision",
+     "detail": "SEC-8 pinned U+FFFD contract; SEC-5 per-project byte cap policy"
+    }
+   ],
+   "effort_hours": 6,
+   "confidence": "high",
+   "acceptance_tests": [
+    "tests/test_secondary_fixes.py, tests/test_backend_sec3.py stay green",
+    "new SEC-9 battery test"
+   ],
+   "active_lane_overlap": "L2"
+  },
+  {
+   "id": "I1-F04",
+   "name": "ACQ: acquisition and enrichment audit 2026-10-15 (ACQ-1..ACQ-13, C-01)",
+   "spec": [
+    "docs/audits/20261015-acquisition-enrichment.md",
+    "docs/audits/20261015-fixes-acquisition.md",
+    "docs/specs/acquisition.md"
+   ],
+   "code": [
+    "src/patchtrace/acquisition/transport.py",
+    "src/patchtrace/acquisition/quarantine.py",
+    "src/patchtrace/enrichment/intelligence.py",
+    "src/patchtrace/enrichment/cache.py",
+    "src/patchtrace/enrichment/cve.py",
+    "src/patchtrace/verified_backup.py",
+    "src/patchtrace/raw_cleanup.py",
+    "src/patchtrace/cli.py"
+   ],
+   "status": "implemented",
+   "implementation_pct": 96,
+   "validation_pct": 85,
+   "verified_by": [
+    "tests/test_acquisition_transport.py (loopback/synthetic)",
+    "tests/test_enrichment_cache.py (synthetic)",
+    "tests/test_raw_legacy_cleanup.py (synthetic)",
+    "tests/test_prune_backup.py (synthetic)",
+    "tests/test_intel_audit_c_enrichment.py (synthetic)",
+    "tests/test_cli_acq13.py (mocked fetch)",
+    "tests/test_slow_drip_deadlines.py (loopback)"
+   ],
+   "evidence_class": "synthetic",
+   "remaining": [
+    "FIXED (12): ACQ-1..ACQ-8, ACQ-10, ACQ-11 (named tests present on main), ACQ-12 (docs/specs/acquisition.md:37 now names ingestion.validate_pe; no test names the function), ACQ-13 (cli.py:445-449 builds FetchConsent from the previewed URL list; tests/test_cli_acq13.py). master-todo-d.md still lists ACQ-12/13 as open: stale.",
+    "PARTIALLY-FIXED ACQ-9: torn owner files can no longer be created; `verify` still does not report a pre-existing unreadable lock as a warning (deferred part, about 20 lines plus a result-contract key).",
+    "Inherent residual ACQ-8: a replacement with identical size and mtime is undetectable by a (size, mtime_ns) fingerprint.",
+    "No live acquisition evidence: Winbindex/MSRC/NVD hosts are unreachable here; all tests are loopback or fake-opener."
+   ],
+   "defects": [
+    {
+     "id": "ACQ-9-residual",
+     "severity": "low",
+     "summary": "A pre-existing empty or unreadable cache lock/lease is never reported",
+     "evidence": "src/patchtrace/enrichment/cache.py (verify; _read_owner at :187)",
+     "failure_scenario": "A crash under an older build left an empty lock file: the key stays uncacheable forever and `cache verify` says nothing.",
+     "proposed_fix": "Have verify() list unreadable owner files as warnings (additive result key).",
+     "regression_test": "tests/test_enrichment_cache.py: verify() names an empty lock file in a `warnings` list and never steals it."
+    }
+   ],
+   "blockers": [
+    {
+     "type": "live-network",
+     "detail": "live acquisition/enrichment behaviour cannot be validated offline"
+    }
+   ],
+   "effort_hours": 2,
+   "confidence": "high",
+   "acceptance_tests": [
+    "listed test files stay green"
+   ],
+   "active_lane_overlap": "none"
+  },
+  {
+   "id": "I1-F05",
+   "name": "PE: PE/codetext/representations audit 2026-10-15 (PE-1..PE-13)",
+   "spec": [
+    "docs/audits/20261015-pe-codetext-representations.md",
+    "docs/audits/20261015-fixes-cli-pe-intel.md",
+    "docs/specs/pe-overview.md"
+   ],
+   "code": [
+    "src/patchtrace/artifact_bytes.py",
+    "src/patchtrace/pe_overview/tables.py",
+    "src/patchtrace/unified/ir/pe_tables.py",
+    "tools/calibration/tier_w/pe_tables.py",
+    "src/patchtrace/pe_overview/resources.py",
+    "src/patchtrace/codetext/intraline.py",
+    "src/patchtrace/pe_overview/imports_exports.py",
+    "src/patchtrace/pe_overview/exports_table.py",
+    "src/patchtrace/pe_overview/_common.py",
+    "src/patchtrace/codetext/tokens.py"
+   ],
+   "status": "partial",
+   "implementation_pct": 19,
+   "validation_pct": 15,
+   "verified_by": [
+    "tests/test_artifact_bytes.py::test_change_between_hash_chunks_is_detected (synthetic)",
+    "tests/test_rules_masks.py (synthetic; PE-2/PE-3 for pe_overview/tables.py only)",
+    "read-only probes this session (synthetic): 17 MiB reloc directory through unified/ir/pe_tables.py; sanitiser battery"
+   ],
+   "evidence_class": "synthetic",
+   "remaining": [
+    "FIXED: PE-1 (artifact_bytes.py:97 baseline taken before hashing, re-checked at :123).",
+    "PARTIALLY-FIXED PE-2: fixed in pe_overview/tables.py (chunked reads, :135,:150,:161). unified/ir/pe_tables.py:150 still does one read per mapped range and swallows ArtifactBytesError, so a .reloc of 16-32 MiB (under MAX_RELOC_DIRECTORY, :27) becomes `reloc-unreadable` with no relocations (run this session: 17,825,792-byte directory -> warnings [\"reloc-unreadable\"]). tools/calibration/tier_w/pe_tables.py:103 still does a single unchunked read and lets ArtifactBytesError escape read_rva (contract is PeTableError).",
+    "PARTIALLY-FIXED PE-3: warn-once in pe_overview/tables.py:69 and unified/ir/pe_tables.py:314-316; tools/calibration/tier_w/pe_tables.py:160-161 still appends one warning string per unknown-type entry (up to MAX_RELOCS 16,000,000).",
+    "STILL-OPEN PE-4 Low: pe_overview/resources.py sanitize_text is hand-written; 158 of 170 Cf code points survive (probe: ZWSP, BOM, SHY, tag, U+0600) plus lone surrogates.",
+    "STILL-OPEN PE-5 Low: codetext/intraline.py:62 _UNSAFE misses 29 Cf code points (probe confirms the audit count).",
+    "STILL-OPEN PE-6 Low: pe_overview/imports_exports.py:57-60 checks the DLL cap before reading the entry, so exactly 512 descriptors plus terminator reports `import_dlls_over_cap` (same pattern for the per-DLL and total caps, by reading).",
+    "STILL-OPEN PE-7 Low: pe_overview/exports_table.py:94 list membership scan, O(k^2) per ordinal, bounded by 20,000 names.",
+    "STILL-OPEN PE-8 Low: pe_overview/_common.py:61-63 reports \"a name longer than {cap} bytes\" when the cut was the section-bounded `limit`.",
+    "STILL-OPEN PE-9 Low: codetext/tokens.py:280 full-document tokenize() (no product caller; has max_chars cut; memory figure UNVERIFIED on main).",
+    "STILL-OPEN PE-10 Low (docs): docs/specs/pe-overview.md:106-111 \"Not done\" still says no version-info, manifest parsing or resource enumeration; `section_unmapped` still listed at :47. Emitted-vs-documented code list UNVERIFIED.",
+    "UNVERIFIED PE-11 (gutter width spec drift, representations/render.py).",
+    "STILL-OPEN PE-12 Low: pe_overview/tables.py PeTables takes `cancel` only for inspect_pe (:89-90); .pdata/.reloc loops do not poll.",
+    "PARTIALLY-FIXED PE-13: regression tests exist only for PE-1..PE-3."
+   ],
+   "defects": [
+    {
+     "id": "PE-2-tier_w",
+     "severity": "medium",
+     "summary": "tier_w PE view reads a whole RVA range in one call and leaks ArtifactBytesError",
+     "evidence": "tools/calibration/tier_w/pe_tables.py:103 (relocations at :147, pdata near :126)",
+     "failure_scenario": "A Tier W local run over a real image whose .reloc or .pdata is larger than 16 MiB raises ArtifactBytesError(\"read_too_large\") out of PeView.read_rva; callers that catch PeTableError (the module contract) crash the labelling run for that binary.",
+     "proposed_fix": "Read in MAX_READ_BYTES pieces and map ArtifactBytesError to PeTableError, as pe_overview/tables.py does (commit 9957da8).",
+     "regression_test": "tests/test_tier_w_pe.py: a directory larger than one read is read in pieces; a failed read is a PeTableError."
+    },
+    {
+     "id": "PE-3-tier_w",
+     "severity": "low",
+     "summary": "tier_w relocation reader appends one warning per unknown-type entry",
+     "evidence": "tools/calibration/tier_w/pe_tables.py:160-161",
+     "failure_scenario": "A crafted .reloc with millions of type-7 entries grows PeView.warnings to millions of strings (memory, and any report that prints them).",
+     "proposed_fix": "Warn once per type (set of seen kinds).",
+     "regression_test": "tests/test_tier_w_pe.py: 100,000 unknown-type entries give one warning per type."
+    },
+    {
+     "id": "PE-2-unified",
+     "severity": "low",
+     "summary": "Unified IR treats a 16-32 MiB relocation directory as unreadable",
+     "evidence": "src/patchtrace/unified/ir/pe_tables.py:150 (cap at :27, use at :295)",
+     "failure_scenario": "An image whose base-relocation directory is between MAX_READ_BYTES (16 MiB) and MAX_RELOC_DIRECTORY (32 MiB): `_Rva.read` asks the reader for one over-size read, the ArtifactBytesError is swallowed and the tables carry `reloc-unreadable` and zero relocations although the directory is inside the documented cap; relocation-aware address facts are lost for that side (downstream effect on verdicts UNVERIFIED).",
+     "proposed_fix": "Split each mapped range into MAX_READ_BYTES pieces inside `_Rva.read`.",
+     "regression_test": "tests/test_unified_ir_pe_tables.py: a 17 MiB directory of valid blocks yields relocations and no `reloc-unreadable` (or `reloc-cap` when over MAX_RELOCATIONS)."
+    },
+    {
+     "id": "PE-6",
+     "severity": "low",
+     "summary": "Import caps are checked before the terminating entry is read",
+     "evidence": "src/patchtrace/pe_overview/imports_exports.py:57-60",
+     "failure_scenario": "A valid import table with exactly 512 DLL descriptors and a zero terminator is reported truncated (`import_dlls_over_cap`), which makes api_delta and PeTables.import_slots report \"unavailable\" for a complete table.",
+     "proposed_fix": "At the cap, read the next entry and only warn/truncate when it is not the terminator (same for 4096 per DLL and 20000 total).",
+     "regression_test": "tests/test_pe_overview.py: 511, 512 (not truncated) and 513 (truncated) descriptors."
+    },
+    {
+     "id": "PE-4/PE-5",
+     "severity": "low",
+     "summary": "Hand-written sanitisers diverge from hostile_text.is_hostile",
+     "evidence": "src/patchtrace/pe_overview/resources.py:95-97; src/patchtrace/codetext/intraline.py:62",
+     "failure_scenario": "A resource name, version string or code line containing U+200B, U+FEFF, U+00AD, U+0600 or a tag character reaches stored fields and one-line summaries unescaped (homoglyph/invisible-text spoofing in labels and exports).",
+     "proposed_fix": "Build both on hostile_text.is_hostile.",
+     "regression_test": "tests/test_hostile_text.py: one parametrized battery over every sanitiser entry point."
+    }
+   ],
+   "blockers": [
+    {
+     "type": "none",
+     "detail": "all still-open PE items are pure Python and testable offline; unified/ir/pe_tables.py is adjacent to but outside the L1 file list"
+    }
+   ],
+   "effort_hours": 12,
+   "confidence": "medium",
+   "acceptance_tests": [
+    "tests/test_rules_masks.py and tests/test_pe_overview.py stay green",
+    "new tests named per defect"
+   ],
+   "active_lane_overlap": "none"
+  },
+  {
+   "id": "I1-F06",
+   "name": "CORE: core-app audit 2026-10-15 (CORE-1..CORE-12)",
+   "spec": [
+    "docs/audits/20261015-core-app.md",
+    "docs/audits/20261015-fixes-core-series.md"
+   ],
+   "code": [
+    "src/patchtrace/service.py",
+    "src/patchtrace/interpretation.py",
+    "src/patchtrace/normalization.py",
+    "src/patchtrace/persistence.py",
+    "src/patchtrace/diagnostics.py",
+    "src/patchtrace/ingestion.py",
+    "src/patchtrace/models.py",
+    "src/patchtrace/alignment.py"
+   ],
+   "status": "partial",
+   "implementation_pct": 54,
+   "validation_pct": 50,
+   "verified_by": [
+    "tests/test_interpretation.py::test_core1_* (synthetic)",
+    "tests/test_core.py::test_core2_*, test_core5_*, test_core6_* (synthetic)",
+    "test_core8_* (synthetic)",
+    "tests/test_ingestion_core10.py (synthetic)"
+   ],
+   "evidence_class": "synthetic",
+   "remaining": [
+    "FIXED (6): CORE-1, CORE-2, CORE-5 (service.py:342 PT-SCHEMA), CORE-6, CORE-8 (diagnostics.py:54-55 refuses limit < 1), CORE-10 (header validated before the copy).",
+    "PARTIALLY-FIXED CORE-7: persistence.load has recover_interrupted (persistence.py:540) and service.py:131 uses False for one path; whether every maintenance=False open avoids the write and the exclusive lock is UNVERIFIED.",
+    "STILL-OPEN CORE-3 Medium (owner decision pending): service.py:266 `candidate.matches = list(owned_matches)`: applying a second import replaces every match of earlier runs, which stay `completed` with no matches.",
+    "STILL-OPEN CORE-4 Low (perf, UNVERIFIED on main).",
+    "STILL-OPEN CORE-9 Low: alignment.py:64 `align_code = align_lines` dead alias; BackendCapabilities has no Python user.",
+    "STILL-OPEN CORE-11 Low: free-text fields are unbounded and carry no character policy (probe this session: FunctionRecord.name with an embedded newline and a 20,000-character AnalystAnnotation.text are accepted and saved).",
+    "UNVERIFIED CORE-12 (WB1 plan row F21 vs backup directories)."
+   ],
+   "defects": [
+    {
+     "id": "CORE-3",
+     "severity": "medium",
+     "summary": "A second import silently drops all matches of earlier runs",
+     "evidence": "src/patchtrace/service.py:266",
+     "failure_scenario": "Analyst imports run A (matches shown), then imports run B: project.matches now holds only B; run A is still listed `completed` but has no matches, with no warning.",
+     "proposed_fix": "Owner decision: keep matches per run (filter by active run) or mark superseded runs explicitly.",
+     "regression_test": "tests/test_core.py: after two imports, either both runs keep their matches or the first run is marked superseded."
+    }
+   ],
+   "blockers": [
+    {
+     "type": "owner-decision",
+     "detail": "CORE-3 semantics; CORE-11 persisted-contract bounds"
+    }
+   ],
+   "effort_hours": 6,
+   "confidence": "medium",
+   "acceptance_tests": [
+    "listed core tests stay green"
+   ],
+   "active_lane_overlap": "none"
+  },
+  {
+   "id": "I1-F07",
+   "name": "RA: random audit 1, 2026-10-14 (RA-1..RA-10)",
+   "spec": [
+    "docs/audits/random-audit-1-20261014.md",
+    "tasks/todo.md"
+   ],
+   "code": [
+    "src/patchtrace/pe_overview/entropy.py",
+    "src/patchtrace/kbcorrelation/sources/cvrf.py",
+    "src/patchtrace/netutil.py",
+    "src/patchtrace/intelligence/csaf/transport.py",
+    "src/patchtrace/enrichment/intelligence.py",
+    "src/patchtrace/providers.py",
+    "src/patchtrace/intelligence/tools/process.py",
+    "tools/bench_enrichment.py"
+   ],
+   "status": "implemented",
+   "implementation_pct": 100,
+   "validation_pct": 90,
+   "verified_by": [
+    "tests/test_pe_entropy_budget.py (synthetic)",
+    "tests/test_kbc_cvrf.py:389,408,471-481 (synthetic; RA-2, RA-5, RA-6)",
+    "tests/test_slow_drip_deadlines.py and tests/test_kev_transport.py (loopback; RA-3)",
+    "tests/test_intel_transport.py (synthetic; RA-4)",
+    "tests/test_providers_endpoint.py (synthetic; RA-7)",
+    "tests/test_hostile_text.py (RA-8)",
+    "tests/test_bench_enrichment_report.py (RA-10)"
+   ],
+   "evidence_class": "synthetic",
+   "remaining": [
+    "FIXED (10): RA-1 (entropy budget, entropy.py:30), RA-2 (cvrf.py:557-563 duplicate element refused), RA-3 (netutil.read_bounded used at csaf/transport.py:370 and enrichment/intelligence.py:409; acquisition uses read1 at transport.py:255), RA-4, RA-5 (cvrf.py:666 _TYPE_NUMBER), RA-6 (cvrf.py:678 _status_name_fits), RA-7 (providers.py:44), RA-8 (probe: intelligence.tools.process.sanitize keeps no hostile character), RA-9 (entropy.py:47), RA-10 (bench_enrichment.py:43).",
+    "Tracker drift: tasks/todo.md:573 and :650 still list RA-2, RA-3, RA-5, RA-6, RA-7 as open; docs/plans/master-todo-d.md A4 asks for a closure check. Both can be closed.",
+    "RA-9: no dedicated test for the positive-zero sign was located (UNVERIFIED).",
+    "Audit section 5 items (authenticode path vs handle = TB-11; junctions in _tree_entries; backend_bundle._hash_files mapping) are Windows-only and remain unexercised."
+   ],
+   "defects": [],
+   "blockers": [
+    {
+     "type": "windows-only",
+     "detail": "section 5 observations need a Windows host"
+    }
+   ],
+   "effort_hours": 1,
+   "confidence": "high",
+   "acceptance_tests": [
+    "listed tests stay green; tracker lines updated"
+   ],
+   "active_lane_overlap": "none"
+  },
+  {
+   "id": "I1-F08",
+   "name": "TA: tool-adapter audit 2026-10-14 (TA-1..TA-18)",
+   "spec": [
+    "docs/audits/20261014-C-tool-adapters.md",
+    "docs/specs/three-tool-evidence-adapters.md"
+   ],
+   "code": [
+    "src/patchtrace/intelligence/tools/capa.py",
+    "src/patchtrace/intelligence/tools/floss.py",
+    "src/patchtrace/intelligence/tools/diec.py",
+    "src/patchtrace/intelligence/tools/delta.py",
+    "src/patchtrace/intelligence/tools/process.py",
+    "src/patchtrace/intelligence/tools/common.py",
+    "src/patchtrace/secondary/engine_env.py"
+   ],
+   "status": "partial",
+   "implementation_pct": 72,
+   "validation_pct": 72,
+   "verified_by": [
+    "tests/test_intel_tools_audit.py (fixture goldens plus synthetic; ta1..ta12, ta16 tests present)"
+   ],
+   "evidence_class": "fixture",
+   "remaining": [
+    "FIXED (13): TA-1..TA-12 and TA-16 (tests/test_intel_tools_audit.py; tasks/todo.md:255). master-todo-d.md C2 \"TA-1..TA-12 tool-adapter audit fixes\" is stale.",
+    "STILL-OPEN TA-13 Low: capa.parse validates the whole document before the match cap (capa.py:584 applies max_rule_matches after validation); Match.children/captures unbounded (capa.py:375-377). Memory figure UNVERIFIED on main.",
+    "STILL-OPEN TA-14 Low: intelligence/tools/delta.py:264 environment key ignores `version` for library/format/overlay/other categories.",
+    "STILL-OPEN TA-15 Low (HYPOTHESIS, Windows): tool_env sets no PYTHONUTF8/PYTHONIOENCODING for capa/FLOSS (grep: only backend.py, rules/runner.py, secondary/binexport_run.py set them); onefile _MEI cleanup, MAX_PATH and junction notes unverified.",
+    "UNVERIFIED TA-17 (spec overclaims Ghidra backend coverage) and TA-18 (test-evidence gaps for process.py/probe functions; partly closed by test_intel_tools_audit.py).",
+    "No live-native evidence here: capa/FLOSS/DiE are not installed in this sandbox."
+   ],
+   "defects": [
+    {
+     "id": "TA-14",
+     "severity": "low",
+     "summary": "Environment delta key ignores version for non-toolchain categories",
+     "evidence": "src/patchtrace/intelligence/tools/delta.py:264",
+     "failure_scenario": "An embedded library changes version between builds (same detector rule): the environment delta reports `unchanged`.",
+     "proposed_fix": "Include `version` in the key for library/format/overlay/other.",
+     "regression_test": "tests/test_intel_tools_audit.py: two DiE sets differing only in a library version yield a changed entry."
+    }
+   ],
+   "blockers": [
+    {
+     "type": "external-tool",
+     "detail": "capa, FLOSS and DiE binaries are not installed; TA-13 memory and TA-15 need real tools"
+    },
+    {
+     "type": "windows-only",
+     "detail": "TA-15"
+    }
+   ],
+   "effort_hours": 5,
+   "confidence": "medium",
+   "acceptance_tests": [
+    "tests/test_intel_tools_audit.py stays green"
+   ],
+   "active_lane_overlap": "none"
+  },
+  {
+   "id": "I1-F09",
+   "name": "Sonar: PR #205 and PR #235 scanner triage (2026-11-05)",
+   "spec": [
+    "docs/qa/sonar-205-triage-20261105.md",
+    "docs/qa/sonar235-package-path-20261105.md"
+   ],
+   "code": [
+    "src/patchtrace/unified/facts/anchors.py",
+    "tools/unified/bench.py",
+    "tools/rzdiff/native_evidence.py",
+    "tools/rzdiff/patch_producer.py",
+    "tools/check_windows_package.py"
+   ],
+   "status": "blocked-external",
+   "implementation_pct": 33,
+   "validation_pct": 0,
+   "verified_by": [
+    "code read: no `_MD_LINE` regex remains under src/ or tools/; tools/rzdiff/patch_producer.py:50 has the containment check (not re-run)"
+   ],
+   "evidence_class": "none",
+   "remaining": [
+    "FIXED (2, by reading): parity `_MD_LINE` quadratic regex (#211) and research source patching SHA-256 plus containment (#212).",
+    "PENDING AUTHORISED REVIEW (4): pythonbugs:S2583 unified/facts/anchors.py:76, python:S2245 tools/unified/bench.py:254, pythonsecurity:S8707 tools/rzdiff/native_evidence.py:52, pythonsecurity:S8707 tools/check_windows_package.py:149. Each has a documented false-positive rationale; no status was changed. Current SonarCloud gate state is UNVERIFIED (no network).",
+    "Three of the four files are in other lanes (anchors.py L1; tools/unified/bench.py L2)."
+   ],
+   "defects": [],
+   "blockers": [
+    {
+     "type": "owner-decision",
+     "detail": "an authorised Sonar project reviewer must accept or reject the four false-positive dispositions"
+    },
+    {
+     "type": "live-network",
+     "detail": "SonarCloud is unreachable from this sandbox"
+    }
+   ],
+   "effort_hours": 1,
+   "confidence": "medium",
+   "acceptance_tests": [
+    "fresh Sonar scan on the current head with the dispositions applied"
+   ],
+   "active_lane_overlap": "L1"
+  },
+  {
+   "id": "I1-F10",
+   "name": "WP: whole-project audit 2026-10-15 (WP-01..WP-10) and the deferred CLI newline item",
+   "spec": [
+    "docs/audits/20261015-whole-project-audit-todo.md",
+    "docs/audits/20261015-fixes-cli-pe-intel.md"
+   ],
+   "code": [
+    "src/patchtrace/cli.py",
+    "src/patchtrace/hostile_text.py",
+    "src/patchtrace/ingestion.py",
+    "src/patchtrace/gui/text.py",
+    "src/patchtrace/secondary/bindiff_probe.py",
+    "src/patchtrace/secondary/runs.py",
+    "src/patchtrace/callgraph/text.py",
+    "src/patchtrace/secondary/evidence_view.py",
+    "src/patchtrace/kbcorrelation/products.py",
+    "tools/generate_schemas.py",
+    "src/patchtrace/service.py",
+    "src/patchtrace/gui/qt/tasks.py",
+    "src/patchtrace/rules/cli.py",
+    "tests/test_enrichment_intelligence.py"
+   ],
+   "status": "partial",
+   "implementation_pct": 35,
+   "validation_pct": 25,
+   "verified_by": [
+    "tests/test_cli.py::test_text_output_escapes_hostile_characters (synthetic)",
+    "tests/test_hostile_text.py (synthetic)",
+    "read-only probes this session: sanitiser battery; 10 CLI text verbs on a sample project whose function names carry an embedded newline"
+   ],
+   "evidence_class": "synthetic",
+   "remaining": [
+    "FIXED (3): WP-01 (cli.py:200 escape_text), WP-02 (ingestion.py:47-51 display_text replaces hostile characters; service.py:90 uses it), WP-06 (search/anchors.py exists).",
+    "PARTIALLY-FIXED WP-08: BaseException in workers handled (gui/qt/tasks.py:203); `_start` (tasks.py:320-327) still adds the task to `_running` and `_threads` and calls thread.start() unguarded.",
+    "STILL-OPEN WP-03 Low: sanitisers disagree. Probe (\"a\"+c+\"b\"): gui.text.sanitize_text keeps ZWSP, BOM, SHY, tag, U+0600 (158 of 170 Cf); secondary.bindiff_probe.sanitize keeps U+009B, U+0085, U+202E, U+2067, U+2028/2029, U+061C and lone surrogates (170 of 170 Cf); secondary.runs.sanitize_stderr, callgraph.text.sanitize and secondary.evidence_view.sanitize_text keep 159 of 170 Cf and lone surrogates; kbcorrelation.products.clean_text keeps U+2028/U+2029 (TB-03 added Zl/Zp to the shared rule only).",
+    "STILL-OPEN WP-04 Low: tests/test_enrichment_intelligence.py:297-299 can never fail (the set only ever contains \"patchtrace\").",
+    "STILL-OPEN WP-05 Low: tools/generate_schemas.py has no argument parsing and no --check; it rewrites docs/schemas on any invocation.",
+    "STILL-OPEN WP-07 Low: service.py:78 annotates _prepared as a 3-tuple; :247-248 stores 4 elements.",
+    "STILL-OPEN WP-09 = TB-09.",
+    "STILL-OPEN WP-10 Low: rules/cli.py:283-288 `rules show` with no candidates prints nothing (probe: stdout empty, exit 4).",
+    "DEFERRED ITEM \"text output keeps newlines (forged row risk)\": cli.py:200 still keeps \"\\n\" by design. Probe over rank, correlate, graph leads, pilot leads, strings list, unified status, search, flags, rules show, kb index with a name containing \"\\n  1 999.0 complete FORGED_ROW\": no forged line (rank collapses the newline to a space via plain_text). Not reproduced, but not proven for every verb renderer (about 40 subcommands); remains a defence-in-depth gap."
+   ],
+   "defects": [
+    {
+     "id": "WP-03",
+     "severity": "medium",
+     "summary": "About eight independent sanitisers let hostile format/control characters through that the shared rule forbids",
+     "evidence": "src/patchtrace/gui/text.py:20-21; src/patchtrace/secondary/bindiff_probe.py:53-58; src/patchtrace/secondary/runs.py:109-112; src/patchtrace/callgraph/text.py:14-19; src/patchtrace/secondary/evidence_view.py:101-109; src/patchtrace/kbcorrelation/products.py:40-50; src/patchtrace/pe_overview/resources.py:95",
+     "failure_scenario": "A function name, BinDiff version string, engine stderr line or MSRC product name carrying U+200B/U+FEFF/tag characters (invisible) or, for bindiff_probe and kbc products, U+202E / U+2028 reaches a Qt label or stored record: text can be visually reordered, hidden or split onto a second line in a one-line label.",
+     "proposed_fix": "Implement each on hostile_text.is_hostile (each sink keeps its own replacement and its newline/tab policy).",
+     "regression_test": "tests/test_hostile_text.py: one parametrized battery (every Cc/Cf/Cs/Zl/Zp code point except the sink's allowed breaks) over all sanitiser entry points."
+    },
+    {
+     "id": "WP-08-residual",
+     "severity": "low",
+     "summary": "A failed thread start leaves the channel busy forever",
+     "evidence": "src/patchtrace/gui/qt/tasks.py:320-327",
+     "failure_scenario": "Under thread exhaustion thread.start() raises RuntimeError after the task was added to _running/_threads: busy(channel) stays True and the panel's Run button stays disabled until restart.",
+     "proposed_fix": "Catch RuntimeError around start, discard the task and thread, deliver an error event.",
+     "regression_test": "tests/test_gui_tasks.py: Thread.start monkeypatched to raise; busy(channel) is False afterwards and on_error fired."
+    },
+    {
+     "id": "WP-05",
+     "severity": "low",
+     "summary": "generate_schemas.py ignores arguments and always rewrites",
+     "evidence": "tools/generate_schemas.py:1-17",
+     "failure_scenario": "A CI step or contributor runs `generate_schemas.py --check` expecting a drift check: exit 0 and files rewritten, so drift can never fail a build.",
+     "proposed_fix": "Add main(argv) with --check (compare, exit 1 on drift) and reject unknown arguments.",
+     "regression_test": "tests: main([\"--check\"]) returns 0 on a clean tree, 1 after a schema file is altered, and writes nothing in check mode."
+    }
+   ],
+   "blockers": [
+    {
+     "type": "none",
+     "detail": "all open WP items are pure Python and testable offline"
+    }
+   ],
+   "effort_hours": 12,
+   "confidence": "high",
+   "acceptance_tests": [
+    "new sanitiser battery test",
+    "tests/test_cli.py, tests/test_gui_tasks.py stay green"
+   ],
+   "active_lane_overlap": "none"
+  },
+  {
+   "id": "I1-F11",
+   "name": "Runtime reliability audit 2026-10-11 (P1/P2 table)",
+   "spec": [
+    "docs/audits/2026-10-11-runtime-reliability.md"
+   ],
+   "code": [
+    "src/patchtrace/backend.py",
+    "src/patchtrace/diagnostics.py",
+    "src/patchtrace/runtime_discovery.py",
+    "src/patchtrace/raw_cleanup.py"
+   ],
+   "status": "partial",
+   "implementation_pct": 44,
+   "validation_pct": 25,
+   "verified_by": [
+    "code read only: backend.py:569-570 appends --no-symbols unless online; diagnostics.describe_backend_exit (diagnostics.py:74-104)"
+   ],
+   "evidence_class": "mocked",
+   "remaining": [
+    "FIXED (2 of 8): P1 offline semantics (--no-symbols by default, SPEC-53 local symbols path); P2 troubleshooting precision (fixed-hint classifier).",
+    "PARTIAL (3): P1 dependency compatibility (probe is still metadata-level, backend.py:318-345; SPEC-53 diagnose is lane L5); P1 storage use (scratch isolation and raw cleanup exist; retention policy for symbol caches UNVERIFIED); P1 setup UX (runtime discovery and offline bundle exist; tools/backend_pin.json still has 1 PLACEHOLDER-UNRESOLVED).",
+    "OPEN/UNVERIFIED (3): P1 path-length inflation (inputs are copied as <sha>.bin into scratch, backend.py:772; Ghidra project name length on deep Windows profiles unmeasured); P2 configuration hygiene; P2 real-world QA (.sys inputs, OneDrive, long/Unicode paths, disk full).",
+    "All of this sits in backend.py and live gates owned by L2/L5."
+   ],
+   "defects": [],
+   "blockers": [
+    {
+     "type": "other-lane",
+     "detail": "backend.py and diagnose path are L2/L5"
+    },
+    {
+     "type": "external-tool",
+     "detail": "Ghidra/Ghidriff not installed here"
+    },
+    {
+     "type": "windows-only",
+     "detail": "path-length and OneDrive cases"
+    }
+   ],
+   "effort_hours": 0,
+   "confidence": "low",
+   "acceptance_tests": [
+    "native Windows Ghidriff fixture and OneDrive case (gate 6 of the audit)"
+   ],
+   "active_lane_overlap": "L2"
+  },
+  {
+   "id": "I1-F12",
+   "name": "2026-11-05 hardening slices (PE manifest backing, project lock identity, Winbindex record publication)",
+   "spec": [
+    "docs/qa/pe-parser-security-20261105.md",
+    "docs/qa/persistence-security-20261105.md",
+    "docs/qa/winbindex-publication-security-20261105.md"
+   ],
+   "code": [
+    "src/patchtrace/pe_overview/manifest.py",
+    "src/patchtrace/persistence.py",
+    "src/patchtrace/kbcorrelation/wiring.py",
+    "src/patchtrace/kbcorrelation/store.py"
+   ],
+   "status": "implemented",
+   "implementation_pct": 100,
+   "validation_pct": 100,
+   "verified_by": [
+    "tests/test_pe_parser_security_20261105.py (synthetic authored bytes)",
+    "tests/test_persistence_security_20261105.py (synthetic filesystem)",
+    "tests/test_winbindex_publication_security_20261105.py (synthetic)"
+   ],
+   "evidence_class": "synthetic",
+   "remaining": [
+    "FIXED (4 defects): incomplete manifest returns no facts (manifest.py:126,136); ProjectLock admission checks regular, singly linked inode (persistence.py:277-288); Winbindex record staged through store.atomic_write with link/junction refusal (wiring.py:117-120); raw descriptor ownership in atomic_write.",
+    "Documented limits, not defects: native Windows lock/junction acceptance unrun; a non-cooperating writer can still swap paths after the last check; creation-cleanup pathname race unchanged."
+   ],
+   "defects": [],
+   "blockers": [
+    {
+     "type": "windows-only",
+     "detail": "native Windows junction/lock acceptance has not been run"
+    }
+   ],
+   "effort_hours": 0,
+   "confidence": "high",
+   "acceptance_tests": [
+    "the three test files stay green on Linux and Windows CI"
+   ],
+   "active_lane_overlap": "none"
+  },
+  {
+   "id": "I1-F13",
+   "name": "SECURITY.md declared known gaps",
+   "spec": [
+    "SECURITY.md",
+    "docs/privacy.md",
+    "docs/specs/program-e/WIN-release-signing-policy.md",
+    "docs/specs/offline-backend-installer.md"
+   ],
+   "code": [
+    "tools/backend_pin.json",
+    "src/patchtrace/backend.py"
+   ],
+   "status": "blocked-external",
+   "implementation_pct": 0,
+   "validation_pct": 0,
+   "verified_by": [
+    "file read: tools/backend_pin.json contains 1 PLACEHOLDER-UNRESOLVED; bindiff_pin.json and intel_tools_pin.json contain none"
+   ],
+   "evidence_class": "none",
+   "remaining": [
+    "OPEN: GitHub private vulnerability reporting enablement is unverified (owner, GitHub settings).",
+    "OPEN: tools/backend_pin.json still has a PLACEHOLDER-UNRESOLVED component (owner permission for pins, master-todo T14).",
+    "OPEN: default child environment inherits the parent (= SEC-10).",
+    "OPEN: release packages are unsigned; signing policy only planned (owner: certificate).",
+    "DOC CHECK: \"Stronger export escaping is planned, not built\" may be stale now that report2 exists (UNVERIFIED)."
+   ],
+   "defects": [],
+   "blockers": [
+    {
+     "type": "owner-decision",
+     "detail": "private reporting, pins, signing certificate"
+    },
+    {
+     "type": "other-lane",
+     "detail": "SEC-10 in backend.py (L2/L5)"
+    }
+   ],
+   "effort_hours": 1,
+   "confidence": "medium",
+   "acceptance_tests": [
+    "SECURITY.md statements re-verified against repository state at release time"
+   ],
+   "active_lane_overlap": "L2"
+  }
+ ],
+ "actionable_now": [
+  {
+   "id": "I1-T01",
+   "title": "TB-16: make plain json.loads sites depth-safe (typed error instead of RecursionError)",
+   "why": "Confirmed by run on main: a 60,000-deep JSON line from the extractor child, a deep IR manifest or a deep match-override annotation raises RecursionError past `except ValueError`. Untrusted child output and shared-project data must fail typed.",
+   "files": [
+    "src/patchtrace/unified/extract/runner.py",
+    "src/patchtrace/unified/ir/reader.py",
+    "src/patchtrace/reports.py",
+    "src/patchtrace/search/service.py",
+    "src/patchtrace/calibration/artifact.py",
+    "src/patchtrace/diaphora/provenance.py",
+    "src/patchtrace/raw_cleanup.py",
+    "src/patchtrace/backend_bundle.py",
+    "src/patchtrace/unified/pair_text.py"
+   ],
+   "tests": [
+    "tests/test_json_recursion_boundaries.py (new, parametrized)",
+    "tests/test_unified_extract_runner.py",
+    "tests/test_unified_ir_reader.py"
+   ],
+   "size": "M",
+   "priority": 1,
+   "risk": "Touches nine modules with one-line except/loader changes; unified/extract and unified/ir are adjacent to lane L1 but outside its file list. backend.py:675 and unified/sources/** are deliberately excluded (L2/L5, L1).",
+   "depends_on": [],
+   "lane_conflict": "none",
+   "acceptance": "Each entry point given \"[\" * 60000 and '{\"a\":' * 60000 raises its module's typed error or returns its documented unreadable value; no RecursionError; existing suites for the touched modules stay green."
+  },
+  {
+   "id": "I1-T02",
+   "title": "WP-03 / SEC-9 residual / PE-4 / PE-5: storage-side sanitisers on the shared hostile-character rule",
+   "why": "Probe on main: bindiff_probe.sanitize keeps U+202E, U+2028 and C1 CSI; runs.sanitize_stderr keeps U+009B and U+061C; kbcorrelation.products.clean_text keeps U+2028/2029; pe_overview.resources.sanitize_text keeps 158 Cf code points; intraline _UNSAFE misses 29. These feed stored records and one-line summaries.",
+   "files": [
+    "src/patchtrace/secondary/bindiff_probe.py",
+    "src/patchtrace/secondary/runs.py",
+    "src/patchtrace/kbcorrelation/products.py",
+    "src/patchtrace/pe_overview/resources.py",
+    "src/patchtrace/codetext/intraline.py"
+   ],
+   "tests": [
+    "tests/test_hostile_text.py (new parametrized battery over the five entry points)",
+    "tests/test_secondary_fixes.py",
+    "tests/test_kbc_cvrf.py",
+    "tests/test_pe_overview.py"
+   ],
+   "size": "M",
+   "priority": 2,
+   "risk": "Goldens that contain soft hyphen or zero-width characters could change; kbcorrelation clean_text feeds persisted kbcorrelation/1 text (only newly imported documents change).",
+   "depends_on": [],
+   "lane_conflict": "none",
+   "acceptance": "No Cc/Cf/Cs/Zl/Zp code point survives any of the five functions except the breaks each sink documents; existing goldens unchanged or regenerated with a reviewed diff."
+  },
+  {
+   "id": "I1-T03",
+   "title": "TB-12: safe_path refuses Windows device names and trailing dot/space components",
+   "why": "ingestion.safe_path guards every persisted relative path; AnalysisRun.raw_path is a free string an edited snapshot can set. offline_bundle already has the rule.",
+   "files": [
+    "src/patchtrace/ingestion.py"
+   ],
+   "tests": [
+    "tests/test_core.py or tests/test_hostile_input_fuzz_regressions.py (new parametrized cases)"
+   ],
+   "size": "S",
+   "priority": 3,
+   "risk": "A legitimate existing path component that ends in a dot or equals a reserved name would be refused; persisted paths are hash-derived so none is expected.",
+   "depends_on": [],
+   "lane_conflict": "none",
+   "acceptance": "safe_path raises PT-STORAGE for CON, nul.txt, COM1, LPT9.bin, \"a./b\", \"a /b\" on every platform and still accepts artifacts/<sha>.bin and runs/<id>/raw/json/result.ghidriff.json."
+  },
+  {
+   "id": "I1-T04",
+   "title": "TB-10: check the ZIP entry count from the end-of-central-directory record before opening the archive",
+   "why": "offline_bundle.py:294 lets zipfile materialise every entry before MAX_MEMBERS is enforced (memory before refusal on a hostile archive).",
+   "files": [
+    "src/patchtrace/offline_bundle.py"
+   ],
+   "tests": [
+    "tests/test_offline_bundle.py (new: over-cap archive refused with zipfile.ZipFile patched to fail; ZIP64 EOCD case; honest bundle unchanged)"
+   ],
+   "size": "S",
+   "priority": 4,
+   "risk": "EOCD parsing must handle a trailing comment and ZIP64; a wrong parse would refuse valid bundles, so fall back to the existing path only when the count is within the cap.",
+   "depends_on": [],
+   "lane_conflict": "none",
+   "acceptance": "An archive whose EOCD declares more than MAX_MEMBERS + 1 entries fails with the existing member-count message without constructing ZipFile; all existing offline-bundle tests pass."
+  },
+  {
+   "id": "I1-T05",
+   "title": "PE-2 / PE-3 in tools/calibration/tier_w/pe_tables.py (the copy the fix pass skipped)",
+   "why": "tier_w PeView.read_rva still does one unchunked read (ArtifactBytesError escapes the PeTableError contract above 16 MiB) and appends a warning per unknown relocation entry.",
+   "files": [
+    "tools/calibration/tier_w/pe_tables.py"
+   ],
+   "tests": [
+    "tests/test_tier_w_pe.py (new: directory larger than one read; failed read is PeTableError; unknown types warn once)"
+   ],
+   "size": "S",
+   "priority": 5,
+   "risk": "Dev-only labelling tool; Tier W outputs for ordinary images must stay byte-identical.",
+   "depends_on": [],
+   "lane_conflict": "none",
+   "acceptance": "The three new tests are red on main and green after; tests/test_tier_w_*.py stay green."
+  },
+  {
+   "id": "I1-T06",
+   "title": "PE-2 in unified/ir/pe_tables.py: read relocation and table ranges in MAX_READ_BYTES pieces",
+   "why": "Run on main: a 17,825,792-byte relocation directory (under the 32 MiB cap) yields `reloc-unreadable` and no relocations because one over-size read is swallowed.",
+   "files": [
+    "src/patchtrace/unified/ir/pe_tables.py"
+   ],
+   "tests": [
+    "tests/test_unified_ir_pe_tables.py (new: 17 MiB directory parses or hits reloc-cap, never reloc-unreadable)"
+   ],
+   "size": "S",
+   "priority": 6,
+   "risk": "Changes facts only for images with 16-32 MiB directories; if any stored result depends on it an ingest revision bump may be needed (ask the L1 owner; the file is outside the L1 list).",
+   "depends_on": [],
+   "lane_conflict": "none",
+   "acceptance": "New test red on main, green after; tests/test_unified_ir_pe_tables.py and tests/test_unified_irx_pe.py stay green."
+  },
+  {
+   "id": "I1-T07",
+   "title": "TB-15: reject NUL and \"=\" in child environment names/values before spawning",
+   "why": "jobs.py:147 joins the Windows environment block with NUL without validation; the check is platform-neutral and belongs in run_process.",
+   "files": [
+    "src/patchtrace/jobs.py"
+   ],
+   "tests": [
+    "tests/test_jobs.py (new: env with NUL in a value, \"=\" in a key and an empty key raise PT-BACKEND ValueError before any spawn)"
+   ],
+   "size": "S",
+   "priority": 7,
+   "risk": "jobs.run_process is shared by the live harness lanes (L2/L5 call it from backend.py); the change only adds a refusal for inputs that cannot be valid.",
+   "depends_on": [],
+   "lane_conflict": "none",
+   "acceptance": "New tests red on main (POSIX currently raises an untyped \"embedded null byte\" or accepts \"=\" keys), green after; tests/test_jobs.py and tests/test_jobs_progress.py stay green."
+  },
+  {
+   "id": "I1-T08",
+   "title": "PE-6: import-table caps must not flag a table that ends exactly at the cap",
+   "why": "pe_overview/imports_exports.py:57-60 warns `import_dlls_over_cap` for exactly 512 descriptors plus terminator, making api_delta and import_slots unavailable for a complete table.",
+   "files": [
+    "src/patchtrace/pe_overview/imports_exports.py"
+   ],
+   "tests": [
+    "tests/test_pe_overview.py (new: 511 / 512 not truncated, 513 truncated; same for the per-DLL cap)"
+   ],
+   "size": "S",
+   "priority": 8,
+   "risk": "One extra 20-byte read at the cap; cancellation and budgets unchanged.",
+   "depends_on": [],
+   "lane_conflict": "none",
+   "acceptance": "New boundary tests red on main, green after; PE overview goldens unchanged."
+  },
+  {
+   "id": "I1-T09",
+   "title": "WP-08 residual: TaskRunner._start survives a failed thread start",
+   "why": "gui/qt/tasks.py:320-327 registers the task then calls thread.start() unguarded; a RuntimeError leaves busy(channel) True forever.",
+   "files": [
+    "src/patchtrace/gui/qt/tasks.py"
+   ],
+   "tests": [
+    "tests/test_gui_tasks.py (new: Thread.start raising RuntimeError leaves the channel idle and reports an error)"
+   ],
+   "size": "S",
+   "priority": 9,
+   "risk": "Qt teardown in this module is delicate (master-todo T15); keep the change inside _start.",
+   "depends_on": [],
+   "lane_conflict": "none",
+   "acceptance": "New test red on main, green after; tools/qt_gate.py --repeat 5 on tests/test_gui_tasks.py passes."
+  },
+  {
+   "id": "I1-T10",
+   "title": "WP-05: tools/generate_schemas.py gets main(argv) with --check and rejects unknown arguments",
+   "why": "Today any argument is ignored and docs/schemas is rewritten, so a drift check can never fail.",
+   "files": [
+    "tools/generate_schemas.py"
+   ],
+   "tests": [
+    "tests/test_core_schemas_check.py (new: --check 0 on clean tree, 1 after altering a schema in a temp copy, nothing written in check mode)"
+   ],
+   "size": "S",
+   "priority": 10,
+   "risk": "tests/test_unified_contracts.py and other callers import or run the script at module level; keep `python tools/generate_schemas.py` behaviour identical.",
+   "depends_on": [],
+   "lane_conflict": "none",
+   "acceptance": "New test passes; running the script with no arguments produces a byte-identical docs/schemas tree."
+  },
+  {
+   "id": "I1-T11",
+   "title": "WP-04: replace the Qt-import test that cannot fail",
+   "why": "tests/test_enrichment_intelligence.py:297-299 builds a set that only ever contains \"patchtrace\".",
+   "files": [
+    "tests/test_enrichment_intelligence.py"
+   ],
+   "tests": [
+    "tests/test_enrichment_intelligence.py::test_transport_imports_no_qt (subprocess import check, as tests/test_kbc_service.py does)"
+   ],
+   "size": "S",
+   "priority": 11,
+   "risk": "Test-only change; adds one short subprocess.",
+   "depends_on": [],
+   "lane_conflict": "none",
+   "acceptance": "The rewritten test fails when `import PySide6` is temporarily added to enrichment/intelligence.py (mutation check) and passes on main."
+  },
+  {
+   "id": "I1-T12",
+   "title": "PE-7 / PE-8: export-name set lookup and accurate name-truncation wording",
+   "why": "exports_table.py:94 is a quadratic list scan (1.8 s at the 20,000 cap per the audit); _common.py:63 says \"longer than {cap} bytes\" when the cut was the section boundary.",
+   "files": [
+    "src/patchtrace/pe_overview/exports_table.py",
+    "src/patchtrace/pe_overview/_common.py"
+   ],
+   "tests": [
+    "tests/test_pe_overview.py (new: 20,000 names on one ordinal under a generous time bound and same order; section-bounded cstring warning text names the boundary)"
+   ],
+   "size": "S",
+   "priority": 12,
+   "risk": "Warning text is not part of a pinned contract as far as checked (UNVERIFIED for goldens that quote it).",
+   "depends_on": [],
+   "lane_conflict": "none",
+   "acceptance": "New tests pass; existing PE overview tests and goldens unchanged."
+  },
+  {
+   "id": "I1-T13",
+   "title": "WP-10 / WP-07: `rules show` prints a one-line empty result; correct the _prepared annotation",
+   "why": "Probe on main: `patchtrace rules show <project>` prints nothing and exits 4. service.py:78 annotates a 3-tuple but stores four elements.",
+   "files": [
+    "src/patchtrace/rules/cli.py",
+    "src/patchtrace/service.py"
+   ],
+   "tests": [
+    "tests/test_rules_cli.py (new: empty store prints a \"no rule candidates or versions\" line in text mode; JSON unchanged)"
+   ],
+   "size": "S",
+   "priority": 13,
+   "risk": "Exit code stays 4; only text-mode stdout changes.",
+   "depends_on": [],
+   "lane_conflict": "none",
+   "acceptance": "New test red on main, green after."
+  },
+  {
+   "id": "I1-T14",
+   "title": "TB-09 / WP-09: never signal the process group after its leader has been reaped",
+   "why": "jobs.py calls os.killpg(child.pid) after poll() reaped the child and again in finally; a recycled pid could be hit.",
+   "files": [
+    "src/patchtrace/jobs.py"
+   ],
+   "tests": [
+    "tests/test_jobs.py (new: wrapped os.killpg asserts the leader is unreaped at every call; descendant-holding-the-pipe case still killed)"
+   ],
+   "size": "M",
+   "priority": 14,
+   "risk": "Core supervision used by every engine and by the L2 live harness; needs the POSIX waitid(WNOWAIT) path and unchanged Windows behaviour. Do after I1-T07 to avoid a second edit of the same file.",
+   "depends_on": [
+    "I1-T07"
+   ],
+   "lane_conflict": "none",
+   "acceptance": "New test red on main, green after; tests/test_jobs.py, tests/test_jobs_progress.py and tests/test_secondary_scheduler.py stay green."
+  },
+  {
+   "id": "I1-T15",
+   "title": "Tracker and spec drift from this verification (docs only)",
+   "why": "tasks/todo.md:573 and :650 list RA-2/3/5/6/7 as open (all fixed); docs/plans/master-todo-d.md still lists SEC-3, the Ghidriff half of SEC-1, ACQ-12/13 and TA-1..12 as open (all fixed); docs/specs/pe-overview.md:106-111 \"Not done\" contradicts built version-info/manifest/resource parsing (PE-10).",
+   "files": [
+    "tasks/todo.md",
+    "docs/plans/master-todo-d.md",
+    "docs/specs/pe-overview.md",
+    "docs/qa.md"
+   ],
+   "tests": [
+    "tests/test_spec_registry.py (existing doc consistency checks, if they cover these files)"
+   ],
+   "size": "S",
+   "priority": 15,
+   "risk": "Docs only; tasks/todo.md is a shared tracker (coordinate one tracker-only commit).",
+   "depends_on": [],
+   "lane_conflict": "none",
+   "acceptance": "Each corrected line cites the commit or test that closed the finding; no code change."
+  }
+ ],
+ "notes": "Method: every finding id in the brief's sources was looked up in current main by code reading; a subset was re-run with small read-only synthetic probes (sanitiser battery, CLI newline probe over 10 text verbs on ProjectService.sample, RecursionError probe, 17 MiB relocation directory). No pytest file was run (a baseline suite is running in the checkout); \"verified_by\" tests were checked for presence only. No live-native or live-network evidence exists for any item. Counts used for percentages (closed = fixed or not-applicable; partial counts 0.5): TB 8/16; KBA 5/8; SEC 9 closed + 2 partial of 13; ACQ 12 + 1 partial of 13; PE 1 + 3 partial of 13; CORE 6 + 1 partial of 12; RA 10/10; TA 13/18; Sonar 2/6; WP 3 + 1 partial of 10; runtime reliability 2 + 3 partial of 8; 2026-11-05 slices 4/4; SECURITY.md gaps 0/5. Total 136 items: 75 closed, 11 partial -> implementation 59 %; 65 of 136 closed with a named regression test present on main -> validation 48 %. Highest severities still open are Medium (TB-16 new, WP-03, KBA-08, CORE-3, SEC-10, PE-2 tier_w); no High or Critical finding remains open. Stale trackers: master-todo-d.md \"Open from fix pass\" (SEC-3, Ghidriff half of SEC-1, ACQ-12/13 are fixed) and C2 (TA-1..12 fixed); tasks/todo.md:573,650 (RA items fixed). Not covered: findings families outside the brief (PS-*, CLI-*, SER-*, GUI-*, OPS-*, TST-*, QA-FUZZ-*, INT-*, CODEX-*, unified 20261104 audits), and every area the source audits list as not reviewed. Lane notes: backend.py items (SEC-10, backend.py:675 json.loads, java probe cwd, runtime-reliability rows) belong to L2/L5; unified/sources/secondary.py:95 and diaphora.py:105 and facts/anchors.py belong to L1; no actionable task touches a lane file.",
+ "completion": {
+  "implementation_pct": 59,
+  "validation_pct": 48,
+  "basis": "136 counted findings across 13 families (TB 16 incl. new TB-16, KBA 8, SEC 13, ACQ 13, PE 13, CORE 12, RA 10, TA 18, Sonar 6, WP 10, runtime-reliability 8, 2026-11-05 slices 4, SECURITY.md gaps 5). 75 closed (fixed or not-applicable) + 11 partial at 0.5 = 80.5/136 = 59% implementation. 65/136 closed with a named regression test present on main = 48% validation. Tests were checked for presence only, not re-run; all evidence is mocked/synthetic/fixture, none live-native or live-network."
+ },
+ "external_blockers": [
+  "owner-decision: KBA-06 predecessor semantics, KBA-07 exported KB-id contract, KBA-08 alias catalogue version bump",
+  "owner-decision: CORE-3 (second import drops earlier matches), SEC-8 pinned U+FFFD contract, SEC-5 per-project BinExport byte cap",
+  "other-lane L2/L5: SEC-10 restrict_env default, backend.py:675 plain json.loads, java probe cwd, runtime-reliability rows (all in backend.py)",
+  "other-lane L1: plain json.loads in unified/sources/secondary.py:95 and diaphora.py:105; Sonar S2583 on unified/facts/anchors.py",
+  "windows-only: TB-11 Authenticode path-vs-handle, TB-13 in-process msdelta, TA-15 tool encoding/onefile cleanup, native lock/junction acceptance, SEC-10 variable list",
+  "live-network: TB-08 blob host pinning needs observed Microsoft redirect hosts; SonarCloud gate state unverifiable offline",
+  "external-tool: capa/FLOSS/DiE, Ghidra/Ghidriff, BinDiff, rizin not installed (TA-13 memory, runtime-reliability P1/P2)",
+  "owner: authorised Sonar reviewer for 4 false-positive dispositions; GitHub private vulnerability reporting; backend pin placeholder; release signing certificate"
+ ],
+ "summary": "No High or Critical finding is still open on main@882d1ca0; the worst open items are Medium. None of this has live-native evidence, and I checked regression tests for presence only (no pytest run).\n\nFixed, but trackers still list them open: SEC-3, the Ghidriff half of SEC-1, ACQ-12/13, TA-1..12 and all of RA-1..10.\n\nStill open:\n- **TB:** TB-08..13 and TB-15.\n- **KBA:** KBA-06..08 (owner decisions).\n- **SEC:** SEC-8 and SEC-10; SEC-5 and SEC-9 are partial.\n- **PE:** PE-4..12, plus PE-2/3 in the tier_w and unified copies.\n- **CORE/WP:** CORE-3 and WP-03/04/05/07/10.\n\nNew finding TB-16 (confirmed by run): deeply nested JSON raises RecursionError past `except ValueError` at about nine sites.\n\nThe file lists 15 offline-fixable tasks; none touches another lane's files."
+}

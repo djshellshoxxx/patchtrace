@@ -1,0 +1,2220 @@
+diff --git a/docs/schemas/corrections/CorrectionsExchange.json b/docs/schemas/corrections/CorrectionsExchange.json
+new file mode 100644
+index 00000000..e038f6fb
+--- /dev/null
++++ b/docs/schemas/corrections/CorrectionsExchange.json
+@@ -0,0 +1,264 @@
++{
++  "$defs": {
++    "Correction": {
++      "additionalProperties": false,
++      "properties": {
++        "category": {
++          "enum": [
++            "modified",
++            "added",
++            "removed",
++            "unmatched",
++            "ambiguous",
++            "split",
++            "merged",
++            "unchanged"
++          ],
++          "title": "Category",
++          "type": "string"
++        },
++        "newer": {
++          "items": {
++            "$ref": "#/$defs/Member"
++          },
++          "maxItems": 256,
++          "title": "Newer",
++          "type": "array"
++        },
++        "note": {
++          "maxLength": 32767,
++          "minLength": 1,
++          "title": "Note",
++          "type": "string"
++        },
++        "older": {
++          "items": {
++            "$ref": "#/$defs/Member"
++          },
++          "maxItems": 256,
++          "title": "Older",
++          "type": "array"
++        }
++      },
++      "required": [
++        "older",
++        "newer",
++        "category",
++        "note"
++      ],
++      "title": "Correction",
++      "type": "object"
++    },
++    "Member": {
++      "additionalProperties": false,
++      "properties": {
++        "address": {
++          "anyOf": [
++            {
++              "maxLength": 64,
++              "type": "string"
++            },
++            {
++              "type": "null"
++            }
++          ],
++          "default": null,
++          "title": "Address"
++        },
++        "id": {
++          "anyOf": [
++            {
++              "maxLength": 128,
++              "type": "string"
++            },
++            {
++              "type": "null"
++            }
++          ],
++          "default": null,
++          "title": "Id"
++        },
++        "name": {
++          "maxLength": 4096,
++          "title": "Name",
++          "type": "string"
++        }
++      },
++      "required": [
++        "name"
++      ],
++      "title": "Member",
++      "type": "object"
++    },
++    "Pair": {
++      "additionalProperties": false,
++      "properties": {
++        "newer_sha256": {
++          "pattern": "^[0-9a-f]{64}$",
++          "title": "Newer Sha256",
++          "type": "string"
++        },
++        "older_sha256": {
++          "pattern": "^[0-9a-f]{64}$",
++          "title": "Older Sha256",
++          "type": "string"
++        }
++      },
++      "required": [
++        "older_sha256",
++        "newer_sha256"
++      ],
++      "title": "Pair",
++      "type": "object"
++    },
++    "Review": {
++      "additionalProperties": false,
++      "properties": {
++        "findings": {
++          "items": {
++            "$ref": "#/$defs/ReviewedFinding"
++          },
++          "maxItems": 10000,
++          "title": "Findings",
++          "type": "array"
++        },
++        "matches": {
++          "items": {
++            "$ref": "#/$defs/ReviewedMatch"
++          },
++          "maxItems": 100000,
++          "title": "Matches",
++          "type": "array"
++        }
++      },
++      "required": [
++        "matches",
++        "findings"
++      ],
++      "title": "Review",
++      "type": "object"
++    },
++    "ReviewedFinding": {
++      "additionalProperties": false,
++      "properties": {
++        "conclusion": {
++          "maxLength": 32767,
++          "title": "Conclusion",
++          "type": "string"
++        },
++        "digest": {
++          "pattern": "^[0-9a-f]{64}$",
++          "title": "Digest",
++          "type": "string"
++        },
++        "id": {
++          "maxLength": 128,
++          "minLength": 1,
++          "title": "Id",
++          "type": "string"
++        },
++        "status": {
++          "enum": [
++            "unreviewed",
++            "accepted",
++            "rejected",
++            "needs-review"
++          ],
++          "title": "Status",
++          "type": "string"
++        },
++        "summary": {
++          "maxLength": 4096,
++          "title": "Summary",
++          "type": "string"
++        }
++      },
++      "required": [
++        "id",
++        "digest",
++        "summary",
++        "status",
++        "conclusion"
++      ],
++      "title": "ReviewedFinding",
++      "type": "object"
++    },
++    "ReviewedMatch": {
++      "additionalProperties": false,
++      "properties": {
++        "newer": {
++          "items": {
++            "$ref": "#/$defs/Member"
++          },
++          "maxItems": 256,
++          "title": "Newer",
++          "type": "array"
++        },
++        "older": {
++          "items": {
++            "$ref": "#/$defs/Member"
++          },
++          "maxItems": 256,
++          "title": "Older",
++          "type": "array"
++        },
++        "status": {
++          "enum": [
++            "unreviewed",
++            "accepted",
++            "rejected",
++            "needs-review"
++          ],
++          "title": "Status",
++          "type": "string"
++        }
++      },
++      "required": [
++        "older",
++        "newer",
++        "status"
++      ],
++      "title": "ReviewedMatch",
++      "type": "object"
++    }
++  },
++  "$id": "https://patchtrace.local/schemas/corrections-exchange/1/CorrectionsExchange.json",
++  "$schema": "https://json-schema.org/draft/2020-12/schema",
++  "additionalProperties": false,
++  "properties": {
++    "contract": {
++      "const": "corrections-exchange/1",
++      "title": "Contract",
++      "type": "string"
++    },
++    "corrections": {
++      "items": {
++        "$ref": "#/$defs/Correction"
++      },
++      "maxItems": 2000,
++      "title": "Corrections",
++      "type": "array"
++    },
++    "pair": {
++      "$ref": "#/$defs/Pair"
++    },
++    "review": {
++      "anyOf": [
++        {
++          "$ref": "#/$defs/Review"
++        },
++        {
++          "type": "null"
++        }
++      ],
++      "default": null
++    }
++  },
++  "required": [
++    "contract",
++    "pair",
++    "corrections"
++  ],
++  "title": "CorrectionsExchange",
++  "type": "object"
++}
+diff --git a/docs/specs/manual-corrections-exchange.md b/docs/specs/manual-corrections-exchange.md
+new file mode 100644
+index 00000000..d7aa4f78
+--- /dev/null
++++ b/docs/specs/manual-corrections-exchange.md
+@@ -0,0 +1,202 @@
++# Manual corrections and review state from the command line: `corrections-exchange/1`
++
++Status: built 2026-11-11 (slice CLI-B, findings F-T14 and F-F16). Evidence class of every test named here: hermetic,
++on the synthetic sample project (`ProjectService.sample`). Nothing in this file is live evidence; no analysis engine,
++no real Windows binary and no network is involved.
++
++Code: `src/patchtrace/corrections_exchange.py` (contract, export, import plan; no CLI, no Qt),
++`src/patchtrace/corrections_cli.py`, `src/patchtrace/review_cli.py` (dispatchers), `src/patchtrace/cli_commands/corrections.py`
++and `review.py` (registry adapters). Schema: `docs/schemas/corrections/CorrectionsExchange.json`
++(`tools/generate_corrections_schemas.py`). Tests: `tests/test_corrections_cli.py`, `tests/test_review_cli.py`.
++Help: `docs/help/79-cli-corrections.md`, `docs/help/80-cli-review.md`.
++
++## 1. Purpose and limits
++
++An analyst corrects function relations in the desktop (`Correct match`). Until this slice those corrections, and the
++review state of matches and findings, could not be listed, moved to another copy of the project, kept under version
++control or set without the desktop. Two verbs close that gap: `patchtrace corrections` and `patchtrace review`.
++
++Every write goes through `ProjectService` (`correct_match`, `restore_match_override`, `review_match`,
++`review_finding`, `annotate`, `save`); nothing here edits the project database or the model records directly, so
++the service's rules (one function belongs to one match, category and side rules, staleness of findings and of the
++unified result key) stay the single validation path. Never done by either verb: executing a target, any network
++request, any prompt (consent and confirmation are flags), any Qt import.
++
++## 2. What a manual correction is in a project
++
++`ProjectService.correct_match(match_id, older_ids, newer_ids, category, reason)` replaces the relation `match_id`
++with a relation that has `manual: true`, the chosen functions, the category and the analyst's reason. Every other
++relation that held one of the chosen functions loses it; what is left of such a relation becomes an `unmatched`
++remainder. The service also appends a `match-override` annotation that holds the replaced relations, and marks every
++earlier annotation and every finding stale.
++
++Consequences this contract is built on:
++
++- The effective corrections of a project are its relations with `manual: true`, in stored order. That is what
++  `patchtrace unified run PROJECT --sources manual` consumes, what the desktop lists and what this contract exchanges.
++- Only the latest correction has an active (not stale) `match-override` annotation, so only the latest correction
++  can be restored by `restore_match_override`. This is the service's rule and the desktop's `Undo match correction`
++  behaves the same way.
++- Function, match and annotation identifiers are random per project. Two projects made from the same two files
++  share SHA-256 values and function addresses, never identifiers.
++
++## 3. The document
++
++One JSON object. Written by `corrections export` as UTF-8, ASCII-only (`\uXXXX` escapes, so a bidirectional or
++zero-width character in a name or a note is visible in a diff tool), keys sorted, two-space indent, one trailing
++newline. No export time, no host name, no path: the same project state gives the same bytes.
++
++| Field | Type | Rule |
++|---|---|---|
++| `contract` | string | exactly `corrections-exchange/1` |
++| `pair.older_sha256`, `pair.newer_sha256` | 64 lower-case hex | SHA-256 of the two input files. The two role-named fields are the orientation at export |
++| `corrections` | list, at most 2 000 | the relations with `manual: true`, in stored order |
++| `corrections[].category` | string | a `FunctionMatch.category` value (read from the model) |
++| `corrections[].note` | string, 1 to 32 767 characters, not blank | the analyst's reason (`FunctionMatch.reason`) |
++| `corrections[].older`, `.newer` | list of members, at most 256 each, at least one member in total | the chosen functions per side, in stored order |
++| member `address` | string, at most 64 characters; absent when the project stores none | the function's address as stored (hex text) |
++| member `name` | string, at most 4 096 characters (longer names are cut at export) | the function's name: a reader's check, never the identity |
++| member `id` | string, at most 128 characters, optional | the function identifier as stored in the exporting project: a reader's check, never used to resolve |
++| `review` | object, present only with `--include-review` | review state, see below |
++| `review.matches[]` | at most 100 000 | every relation whose review state is not `unreviewed`: `older`, `newer` (members), `status` (a `FunctionMatch.review` value) |
++| `review.findings[]` | at most 10 000 | every finding whose review state is not `unreviewed` or that has an analyst conclusion: `id` (as stored), `digest`, `summary` (cut at 4 096), `status` (a `Finding.review` value), `conclusion` (at most 32 767) |
++
++Unknown fields, wrong types and values outside these bounds are refused (strict model, `extra: forbid`).
++
++Function identity is (side, address): the side is the list the member stands in, the address is compared as a
++number after the same hex parsing the unified engine's manual adapter uses (`unified.addressing.parse_va_text`).
++Finding identity is `digest`: the SHA-256 of the compact JSON list `[provider, model, prompt_version, category, cwe,
++summary, fix_purpose, hypothesis.explanation]` of the finding and its interpretation run.
++
++Not in the document, by design: the replaced relations and the remainders (history, not state), match and
++annotation identifiers, timestamps, analyst notes that are not correction reasons, code.
++
++## 4. Import rules
++
++All of them are checked, in this order, before the first write. Any refusal is exit 2, names the rule, and leaves
++the project unchanged.
++
++1. The file is a regular file of at most 16 MiB, valid UTF-8 and strict JSON, read with the project's
++   `persistence.strict_json`: duplicate keys (NFC-folded), `NaN`, `Infinity`, numbers that overflow, more than 128
++   nesting levels, unpaired surrogates and data after the document are refused. `PT-CORR-JSON`.
++2. The document validates against the contract model. `PT-CORR-CONTRACT`.
++3. Pair identity: both SHA-256 values equal the target project's. If they are equal the other way round the
++   refusal says so (`PT-CORR-ORIENTATION`); a correction is never mirrored silently. Any other difference is
++   `PT-CORR-PAIR`.
++4. Every member resolves: it has an address the parser accepts and exactly one function on that side of the target
++   project has that address. A member without an address, with no function or with several is `PT-CORR-MEMBER`
++   and refuses the whole document. This is the import side of the rule the unified engine applies when it reads
++   corrections (`manual/5`, PR #188: a correction with an unresolved member is dropped as a whole); refusing here
++   means an import never stores a correction that the engine would then discard for an address it cannot read.
++   A different name at the same address is not a refusal: it is reported as a warning (the first 20, then a count).
++5. No function is named twice in the corrections of one document. `PT-CORR-DUPLICATE`.
++6. Per correction, in document order, against the state the earlier corrections of the document produce:
++   - already present: the project has a `manual` relation with the same older set, the same newer set, the same
++     category and the same note. Counted, nothing to do.
++   - conflict: one of the members is part of a different `manual` relation. `PT-CORR-CONFLICT`; an import never
++     overwrites an analyst's existing correction. Undo or re-correct it first.
++   - otherwise the correction is applied with `ProjectService.correct_match`. The relation it replaces is the one
++     that holds the first older member (the first newer member when the older list is empty). A refusal by the
++     service (for example `split` without exactly one older function) is `PT-CORR-INVALID` with the service's text.
++7. Review state, when the document has it, after the corrections: a relation is found by its exact older and newer
++   member sets, a finding by its digest (several findings with one digest: the one with the stored `id`). No match
++   is `PT-CORR-REVIEW`. A state that already equals the document's is counted as already present; other states are
++   set with `review_match` and `review_finding`. States the document does not name are left alone.
++
++Guarantee (all or nothing). The service has no batch operation and commits once per call, so rule 6 and 7 run
++against an in-memory candidate: a second `ProjectService` over a copy of the project whose store validates exactly
++as `ProjectStore.save` does (`persistence.validate_project`) and writes nothing. Only when the whole document went
++through is the result committed, once, with `ProjectService.save()`: one `ProjectStore.save`, one SQLite
++transaction. Either the snapshot with every correction and review state of the document becomes current, or the
++prior snapshot stays (the store's own guarantee: `project save failed; prior snapshot retained`) and the open
++service is put back on the prior snapshot. A document that is valid for three corrections and invalid in the fourth
++applies none. Cost: each correction copies and validates the project once, as it does in the desktop; the
++2 000-correction bound keeps the loop finite. Cancellation (Ctrl+C) between corrections exits 5 with nothing written.
++
++Idempotent. Importing the same document again finds every correction and review state already present, writes
++nothing (the project revision and the database bytes do not change) and exits 0.
++
++`--dry-run` runs every rule, reports the same counts with `written: false` and writes nothing.
++
++What "writes nothing" and "leaves the project unchanged" mean. Every leaf of both verbs opens the project without
++the legacy raw cleanup (`ProjectService.open(maintenance=False)`), so a leaf that reads, a dry run and a refusal
++change no file except the lock file `.patchtrace.lock`, which records the process that holds the project and is
++rewritten on every open. One exception is the store's own: a project that holds an analysis run interrupted by a
++crash is recovered by `ProjectStore.load` whenever it is opened, by any verb and by the desktop.
++
++What an import reproduces, and what it does not. It reproduces the manual relations: members, category, note, and
++with `review` the review states. Exporting the target afterwards gives the same bytes as the imported document when
++both projects store the same function identifiers (a copy or a restored backup), and the same document apart from
++the `id` reader fields when the target was created independently from the same two files. It does not reproduce
++history: a relation that the source project dissolved on the way and did not end up correcting stays as the target
++has it, identifiers of the corrected relations are the target's, and after an import of several corrections only
++the last one can be undone (section 2).
++
++Untrusted text. Notes, names, summaries and conclusions are data: bounded as in section 3, stored unchanged through
++the service (never formatted, interpreted or executed), written to the export as ASCII JSON, and printed in text
++output through `hostile_text.escape_text` per field, so a control, bidirectional or line-break character can
++neither restyle a terminal nor forge a table row.
++
++## 5. `patchtrace corrections`
++
++| Leaf | Does | Writes |
++|---|---|---|
++| `corrections list PROJECT [--json]` | the manual relations: category, review state, members, note, and for the latest one the annotation that can be undone | nothing |
++| `corrections export PROJECT --out FILE [--include-review] [--force] [--json]` | writes the document | `FILE` only |
++| `corrections import PROJECT FILE [--dry-run] [--json]` | applies a document under the rules of section 4 | the project, one commit |
++| `corrections undo PROJECT [--annotation ID] [--json]` | `restore_match_override`: puts back the relations the correction replaced; default is the latest active correction, as the desktop does | the project |
++
++Export writes atomically: a temporary file in the destination directory, flushed and synced, then `os.replace`. An
++existing destination with the same bytes is left alone (`written: false`); an existing destination with different
++bytes is refused (`PT-CORR-EXISTS`, exit 2) unless `--force`; a destination that is a directory, or that lies inside
++the project directory, is refused (`PT-CORR-OUTPUT`, exit 2). A write failure is exit 3 and leaves a previous file
++unchanged. A correction with a member that has no usable address is exported as stored and named in a warning,
++because no import will accept it.
++
++JSON results (the `result` of the `enrichment-cli/1` envelope):
++
++- `list`: `pair`, `corrections[]` (`index`, `match_id`, `category`, `review`, `note`, `older`, `newer`,
++  `annotation_id`, `undoable`), `superseded_records` (stale `match-override` annotations).
++- `export`: `contract`, `path`, `bytes`, `sha256`, `corrections`, `review` (`matches`, `findings` counts, or null),
++  `written`.
++- `import`: `contract`, `dry_run`, `written`, `corrections` and `review.matches`, `review.findings` (each
++  `total`, `new`, `already_present`; `review` null when the document has none), `changes[]` (`index`, `action`
++  `apply` or `already-present`, `category`, `older`, `newer` names), `revision` (`before`, `after`).
++- `undo`: `annotation_id`, `match_id`, `restored_relations`, `revision`.
++
++Exit codes: 0 done (also: nothing to import because everything is present); 2 invalid arguments, a project that
++cannot be opened or is locked, every refusal of section 4, `PT-CORR-EXISTS`, `PT-CORR-OUTPUT`, a correction the
++service will not restore; 3 storage or write failure; 4 nothing to report (`list` with no manual correction, `undo`
++with no active correction); 5 cancelled.
++
++## 6. `patchtrace review`
++
++| Leaf | Wraps | Changes |
++|---|---|---|
++| `review match PROJECT --match ID --status STATUS [--json]` | `review_match` | the review state of that relation |
++| `review finding PROJECT --finding ID --status STATUS [--conclusion TEXT] [--json]` | `review_finding` | the review state of that finding and, when `--conclusion` is given, its analyst conclusion |
++| `review note PROJECT --target ID --text TEXT [--kind KIND] [--json]` | `annotate` | appends one annotation |
++
++`STATUS` choices are read from `FunctionMatch.review` and `Finding.review`; `KIND` choices from
++`AnalystAnnotation.kind` without the two kinds the service writes itself (`match-override`, `validation`); the
++default is `note`. Without `--conclusion` the stored conclusion is kept (the service call would otherwise erase it);
++`--conclusion ""` clears it. `--text` must not be blank and both texts are bounded at 32 767 characters. The target
++of a note must be an identifier the project owns (the store's rule). None of the three marks anything stale or
++changes the project revision.
++
++JSON results: `match`: `match_id`, `status`, `previous`; `finding`: `finding_id`, `status`, `previous`,
++`conclusion`; `note`: `annotation_id`, `target_id`, `kind`. Exit codes: 0 done; 2 invalid arguments, unknown
++identifier, a project that cannot be opened or is locked; 3 storage failure; 5 cancelled.
++
++## 7. Service gaps recorded by this slice (not changed here)
++
++- No batch apply: `ProjectService` commits once per call. The all-or-nothing guarantee is built in
++  `corrections_exchange.py` as described in section 4.
++- `review_finding(finding_id, status)` without a conclusion erases the stored conclusion; the CLI passes the stored
++  one back.
++- Only the latest correction can be restored (every correction marks all earlier annotations stale).
++
++## 8. Open
++
++- Live use on a project analysed by a real engine is UNVERIFIED by this slice.
++- No desktop control imports or exports a document yet.
+diff --git a/src/patchtrace/cli_commands/corrections.py b/src/patchtrace/cli_commands/corrections.py
+new file mode 100644
+index 00000000..ac47a052
+--- /dev/null
++++ b/src/patchtrace/cli_commands/corrections.py
+@@ -0,0 +1,17 @@
++"""`patchtrace corrections`: manual match corrections as a document (adapter over `corrections_cli`)."""
++from __future__ import annotations
++
++from . import CliCommand
++
++
++def _build(sub):
++    from ..corrections_cli import add_parser  # function-level: listing the verbs imports no feature
++    return add_parser(sub)
++
++
++def _run(args, cancel):
++    from ..corrections_cli import run
++    return run(args, cancel)
++
++
++COMMAND = CliCommand('corrections', 'manual match corrections: list, export, import, undo', _build, _run)
+diff --git a/src/patchtrace/cli_commands/review.py b/src/patchtrace/cli_commands/review.py
+new file mode 100644
+index 00000000..d85a4f38
+--- /dev/null
++++ b/src/patchtrace/cli_commands/review.py
+@@ -0,0 +1,17 @@
++"""`patchtrace review`: review state of relations and findings, analyst notes (adapter over `review_cli`)."""
++from __future__ import annotations
++
++from . import CliCommand
++
++
++def _build(sub):
++    from ..review_cli import add_parser  # function-level: listing the verbs imports no feature
++    return add_parser(sub)
++
++
++def _run(args, cancel):
++    from ..review_cli import run
++    return run(args, cancel)
++
++
++COMMAND = CliCommand('review', 'set the review state of a match or finding, add an analyst note', _build, _run)
+diff --git a/src/patchtrace/corrections_cli.py b/src/patchtrace/corrections_cli.py
+new file mode 100644
+index 00000000..006ffac1
+--- /dev/null
++++ b/src/patchtrace/corrections_cli.py
+@@ -0,0 +1,249 @@
++"""`patchtrace corrections list|export|import|undo` (docs/specs/manual-corrections-exchange.md section 5). No Qt.
++
++Output is the `enrichment-cli/1` envelope; with `--json` stdout carries exactly one document. Exit codes: 0 done;
++2 invalid arguments, a project that cannot be opened or is locked, and every refusal of the exchange rules
++(`PT-CORR-*`); 3 storage or write failure; 4 nothing to report (no manual correction to list or to undo);
++5 cancelled. Nothing is executed, no network is used and nothing is asked: confirmation is a flag. Every change of
++the project goes through `ProjectService`; an import is one commit or none.
++"""
++from __future__ import annotations
++
++import argparse
++import hashlib
++import os
++import tempfile
++from pathlib import Path
++
++from . import corrections_exchange as exchange
++from .cli_commands import CANCELLED, ENVIRONMENT, NO_RESULTS, OK, RUNTIME, CliError, emit
++from .hostile_text import escape_text
++
++SUMMARY = 'manual match corrections: list, export, import, undo'
++_COLUMNS = ('#', 'category', 'review', 'older', 'newer', 'undo', 'note')
++
++
++def add_parser(sub) -> argparse.ArgumentParser:
++    parser = sub.add_parser('corrections', help=SUMMARY)
++    actions = parser.add_subparsers(dest='action', required=True)
++
++    def leaf(name: str, help_: str) -> argparse.ArgumentParser:
++        item = actions.add_parser(name, help=help_)
++        item.set_defaults(command_label=f'corrections {name}')
++        item.add_argument('project', type=Path, help='project directory')
++        item.add_argument('--json', action='store_true', help='emit exactly one JSON document on stdout')
++        return item
++
++    leaf('list', 'the manual corrections of the project (reads only)')
++    item = leaf('export', f'write the corrections as a {exchange.CONTRACT} document')
++    item.add_argument('--out', type=Path, required=True, metavar='FILE')
++    item.add_argument('--include-review', action='store_true',
++                      help='also write the review state of relations and findings')
++    item.add_argument('--force', action='store_true', help='replace an existing FILE that has other content')
++    item = leaf('import', 'apply a document to a project of the same two files: all of it or nothing')
++    item.add_argument('file', type=Path, metavar='FILE')
++    item.add_argument('--dry-run', action='store_true', help='check everything and report; write nothing')
++    item = leaf('undo', 'restore the relations a correction replaced (default: the latest correction)')
++    item.add_argument('--annotation', metavar='ID', help='the correction record to undo (see `corrections list --json`)')
++    return parser
++
++
++def open_project(path: Path):
++    """`cli._open` without the legacy raw cleanup: a leaf that reads, or that refuses its input, changes no file."""
++    from .service import ProjectService
++    try:
++        return ProjectService.open(path, maintenance=False)
++    except ValueError as exc:
++        raise CliError(ENVIRONMENT, str(exc)) from None
++    except OSError as exc:  # e.g. a path that is too long: no absolute directory in the message
++        raise CliError(ENVIRONMENT, f'PT-STORAGE: project cannot be opened ({exc.strerror or type(exc).__name__})') from None
++
++
++def service_error(exc: ValueError) -> CliError:
++    """A refusal by the service is the caller's input (2); a store that could not write is a runtime failure (3)."""
++    text = exchange.service_text(exc)
++    return CliError(RUNTIME if text.startswith('PT-STORAGE') else ENVIRONMENT, text)
++
++
++def _cell(text: object, width: int) -> str:
++    shown = escape_text(str(text))  # per field: a line break inside a note must not start a new row
++    return shown if len(shown) <= width else shown[:width - 3] + '...'
++
++
++def _members(members: list[dict]) -> str:
++    return ', '.join(f'{member["name"]}@{member["address"] or "?"}' for member in members) or '-'
++
++
++def _table(rows: list[dict]) -> list[str]:
++    cells = [_COLUMNS] + [(str(row['index']), row['category'], row['review'], _cell(_members(row['older']), 60),
++                           _cell(_members(row['newer']), 60), 'yes' if row['undoable'] else 'no',
++                           _cell(row['note'], 160)) for row in rows]
++    widths = [max(len(line[column]) for line in cells) for column in range(len(_COLUMNS) - 1)]
++    return ['  '.join([*(value.ljust(width) for value, width in zip(line, widths, strict=False)), line[-1]]).rstrip()
++            for line in cells]
++
++
++def _list(args, cancel) -> int:
++    service = open_project(args.project)
++    try:
++        project = service.project
++        rows = exchange.list_corrections(project)
++        superseded = sum(a.kind == 'match-override' and a.stale for a in project.annotations)
++        pair = exchange.pair_of(project).model_dump(mode='json')
++    finally:
++        service.close()
++    result = {'pair': pair, 'corrections': rows, 'superseded_records': superseded}
++    if not rows:
++        emit(args, 'corrections list', 'complete', result, [], 'No manual corrections.')
++        return NO_RESULTS
++    lines = [f'Manual corrections: {len(rows)} (older {pair["older_sha256"][:16]}, newer {pair["newer_sha256"][:16]})',
++             *_table(rows)]
++    latest = next((row for row in rows if row['undoable']), None)
++    lines.append(f'Row {latest["index"]} can be undone: patchtrace corrections undo PROJECT' if latest else
++                 'No correction can be undone: the records are superseded by a later change of the project.')
++    emit(args, 'corrections list', 'complete', result, [], '\n'.join(lines))
++    return OK
++
++
++def _destination(out: Path, project_root: Path) -> Path:
++    if out.is_dir():
++        raise CliError(ENVIRONMENT, 'PT-CORR-OUTPUT: --out names a directory; give a file name')
++    if out.resolve().is_relative_to(project_root):
++        raise CliError(ENVIRONMENT, 'PT-CORR-OUTPUT: --out lies inside the project directory, which holds only '
++                       'files the project owns; choose a place outside it')
++    return out
++
++
++def _publish(path: Path, data: bytes, force: bool) -> bool:
++    """Atomic: a synced temporary file in the same directory, then `os.replace`. False when `path` already is `data`."""
++    try:
++        if path.is_file() and path.stat().st_size == len(data) and path.read_bytes() == data:
++            return False
++        if (path.exists() or path.is_symlink()) and not force:
++            raise CliError(ENVIRONMENT, f'PT-CORR-EXISTS: {path} exists and has other content; it was not changed. '
++                           'Use --force to replace it')
++        descriptor, temporary = tempfile.mkstemp(prefix='.corrections-', suffix='.tmp', dir=path.parent)
++        stage = Path(temporary)
++        try:
++            with os.fdopen(descriptor, 'wb') as stream:
++                stream.write(data)
++                stream.flush()
++                os.fsync(stream.fileno())
++            os.replace(stage, path)
++        finally:
++            stage.unlink(missing_ok=True)
++    except OSError as exc:
++        raise CliError(RUNTIME, 'PT-CORR-OUTPUT: the document could not be written '
++                       f'({exc.strerror or type(exc).__name__}); a previous file is unchanged') from None
++    return True
++
++
++def _export(args, cancel) -> int:
++    service = open_project(args.project)
++    try:
++        destination = _destination(args.out, service.root)
++        document = exchange.build_document(service.project, include_review=args.include_review)
++    except exchange.ExchangeError as exc:
++        raise CliError(RUNTIME, str(exc)) from None
++    finally:
++        service.close()
++    data = exchange.render(document)
++    written = _publish(destination, data, args.force)
++    review = document.review
++    lost = exchange.unresolvable(document)
++    warnings = [f'{lost} correction(s) name a function without a usable address; no import will accept the document '
++                'until they are corrected again'] if lost else []
++    result = {'contract': exchange.CONTRACT, 'path': str(args.out), 'bytes': len(data),
++              'sha256': hashlib.sha256(data).hexdigest(), 'corrections': len(document.corrections),
++              'review': None if review is None else {'matches': len(review.matches), 'findings': len(review.findings)},
++              'written': written}
++    states = '' if review is None else (f', {len(review.matches)} relation review state(s), '
++                                        f'{len(review.findings)} finding review state(s)')
++    emit(args, 'corrections export', 'complete', result, warnings,
++         f'{"Exported" if written else "Already up to date:"} {len(document.corrections)} correction(s){states} '
++         f'{"to" if written else "in"} {args.out}; sha256 {result["sha256"]}')
++    return OK
++
++
++def _import_text(plan: exchange.ImportPlan, dry_run: bool, written: bool, after: int) -> str:
++    counts = plan.corrections.as_dict()
++    review = '' if plan.matches is None else (f'; review states: {plan.matches.new} of {plan.matches.total} '
++                                              f'relation(s), {plan.findings.new} of {plan.findings.total} finding(s)')
++    if not plan.writes:
++        found = (f'all {counts["total"]} correction(s) are already present' if counts['total'] else
++                 'the document holds no correction')
++        return f'Nothing to import: {found}{review}. Nothing was written.'
++    head = (f'Dry run: would import {counts["new"]} of {counts["total"]} correction(s) '
++            f'({counts["already_present"]} already present){review}; nothing was written.' if dry_run else
++            f'Imported {counts["new"]} of {counts["total"]} correction(s) ({counts["already_present"]} already '
++            f'present){review}; project revision {plan.revision_before} -> {after}.')
++    rows = [f'  {change["index"]}. {change["action"]} {change["category"]}: '
++            f'{_cell(", ".join(change["older"]) or "-", 60)} -> {_cell(", ".join(change["newer"]) or "-", 60)}'
++            for change in plan.changes]
++    return '\n'.join([head, *rows])
++
++
++def _import(args, cancel) -> int:
++    service = open_project(args.project)
++    try:
++        document = exchange.read_document(args.file)
++        plan = exchange.plan_import(service, document, cancel.is_set)
++        written = False if args.dry_run else exchange.commit(service, plan)
++    except exchange.Cancelled:
++        emit(args, 'corrections import', 'cancelled', None, [], '')
++        return CANCELLED
++    except exchange.ExchangeError as exc:
++        raise CliError(ENVIRONMENT, str(exc)) from None
++    except ValueError as exc:
++        raise service_error(exc) from None
++    finally:
++        service.close()
++    after = plan.candidate.revision
++    result = {'contract': exchange.CONTRACT, 'dry_run': bool(args.dry_run), 'written': written,
++              'corrections': plan.corrections.as_dict(),
++              'review': None if plan.matches is None else {'matches': plan.matches.as_dict(),
++                                                           'findings': plan.findings.as_dict()},
++              'changes': plan.changes, 'revision': {'before': plan.revision_before, 'after': after}}
++    emit(args, 'corrections import', 'complete', result, plan.warnings,
++         _import_text(plan, bool(args.dry_run), written, after))
++    return OK
++
++
++def _undo(args, cancel) -> int:
++    from .persistence import strict_json
++    service = open_project(args.project)
++    try:
++        before = service.project.revision
++        overrides = [a for a in service.project.annotations if a.kind == 'match-override']
++        chosen = args.annotation or next((a.id for a in reversed(overrides) if not a.stale), None)  # as the desktop
++        if chosen is None:
++            emit(args, 'corrections undo', 'complete',
++                 {'annotation_id': None, 'match_id': None, 'restored_relations': 0,
++                  'revision': {'before': before, 'after': before}}, [],
++                 'Nothing to undo: the project has no active manual correction' + (
++                     f' ({len(overrides)} earlier correction record(s) are superseded and can no longer be restored).'
++                     if overrides else '.'))
++            return NO_RESULTS
++        try:
++            service.restore_match_override(chosen)
++        except ValueError as exc:
++            raise service_error(exc) from None
++        record = next(a for a in overrides if a.id == chosen)  # the service accepted it, so it exists and is well formed
++        restored = len(strict_json(record.text)['previous_matches'])
++        after = service.project.revision
++    finally:
++        service.close()
++    result = {'annotation_id': chosen, 'match_id': record.target_id, 'restored_relations': restored,
++              'revision': {'before': before, 'after': after}}
++    emit(args, 'corrections undo', 'complete', result, [],
++         f'Undid correction {chosen}: {restored} relation(s) restored; project revision {before} -> {after}.')
++    return OK
++
++
++_LEAVES = {'list': _list, 'export': _export, 'import': _import, 'undo': _undo}
++
++
++def run(args, cancel) -> int:
++    if cancel.is_set():
++        emit(args, f'corrections {args.action}', 'cancelled', None, [], '')
++        return CANCELLED
++    return _LEAVES[args.action](args, cancel)
+diff --git a/src/patchtrace/corrections_exchange.py b/src/patchtrace/corrections_exchange.py
+new file mode 100644
+index 00000000..2f9591d7
+--- /dev/null
++++ b/src/patchtrace/corrections_exchange.py
+@@ -0,0 +1,429 @@
++"""`corrections-exchange/1`: manual corrections and review state as a document (docs/specs/manual-corrections-exchange.md).
++
++No CLI and no Qt. A project's effective corrections are its relations with `manual: true`; the document names their
++functions by side and address, so it applies to any project of the same two files. Every change is made by
++`ProjectService` methods: an import runs them against an in-memory candidate (a second service whose store validates
++as `ProjectStore.save` does and writes nothing) and the caller commits the candidate once, so a document is applied
++completely or not at all.
++"""
++from __future__ import annotations
++
++import hashlib
++import json
++from collections.abc import Callable
++from dataclasses import dataclass, field
++from pathlib import Path
++from typing import Literal
++
++from pydantic import BaseModel, ConfigDict, Field, ValidationError, model_validator
++
++from .models import ComparisonProject, Finding, FunctionMatch, FunctionRecord, InterpretationRun
++from .persistence import strict_json, validate_project
++
++CONTRACT = 'corrections-exchange/1'
++MAX_DOCUMENT_BYTES = 16 * 1024 * 1024
++MAX_CORRECTIONS = 2000
++MAX_MEMBERS = 256
++MAX_NOTE = 32767   # the longest reason the desktop's one-line field accepts
++MAX_NAME = 4096
++MAX_REVIEWED_MATCHES = 100_000
++MAX_REVIEWED_FINDINGS = 10_000
++MAX_WARNINGS = 20
++SIDES = ('older', 'newer')
++_SHA256 = r'^[0-9a-f]{64}$'
++# The vocabularies are the models' own, so a new category or review state needs no edit here.
++_Category = FunctionMatch.model_fields['category'].annotation
++_MatchReview = FunctionMatch.model_fields['review'].annotation
++_FindingReview = Finding.model_fields['review'].annotation
++
++
++class ExchangeError(Exception):
++    """A refusal with its `PT-CORR-*` code; nothing was written."""
++
++    def __init__(self, code: str, message: str):
++        super().__init__(f'{code}: {message}')
++        self.code = code
++
++
++class Cancelled(Exception):
++    """The caller's cancel signal was seen between two corrections; nothing was written."""
++
++
++class _Strict(BaseModel):
++    model_config = ConfigDict(extra='forbid', strict=True, frozen=True)
++
++
++class Member(_Strict):
++    address: str | None = Field(default=None, max_length=64)
++    name: str = Field(max_length=MAX_NAME)
++    id: str | None = Field(default=None, max_length=128)
++
++
++class _Relation(_Strict):
++    older: list[Member] = Field(max_length=MAX_MEMBERS)
++    newer: list[Member] = Field(max_length=MAX_MEMBERS)
++
++    @model_validator(mode='after')
++    def names_a_function(self):
++        if not self.older and not self.newer:
++            raise ValueError('at least one function must be named')
++        return self
++
++
++class Correction(_Relation):
++    category: _Category
++    note: str = Field(min_length=1, max_length=MAX_NOTE)
++
++    @model_validator(mode='after')
++    def has_a_reason(self):
++        if not self.note.strip():
++            raise ValueError('the note must not be blank')
++        return self
++
++
++class ReviewedMatch(_Relation):
++    status: _MatchReview
++
++
++class ReviewedFinding(_Strict):
++    id: str = Field(min_length=1, max_length=128)
++    digest: str = Field(pattern=_SHA256)
++    summary: str = Field(max_length=MAX_NAME)
++    status: _FindingReview
++    conclusion: str = Field(max_length=MAX_NOTE)
++
++
++class Review(_Strict):
++    matches: list[ReviewedMatch] = Field(max_length=MAX_REVIEWED_MATCHES)
++    findings: list[ReviewedFinding] = Field(max_length=MAX_REVIEWED_FINDINGS)
++
++
++class Pair(_Strict):
++    older_sha256: str = Field(pattern=_SHA256)
++    newer_sha256: str = Field(pattern=_SHA256)
++
++
++class CorrectionsExchange(_Strict):
++    contract: Literal['corrections-exchange/1']
++    pair: Pair
++    corrections: list[Correction] = Field(max_length=MAX_CORRECTIONS)
++    review: Review | None = None
++
++
++# --- export ----------------------------------------------------------------------------------------------------------
++
++def _first_error(exc: ValidationError) -> str:
++    error = exc.errors(include_url=False, include_input=False)[0]
++    where = '.'.join(str(part) for part in error['loc'])
++    return f'{where}: {error["msg"]}'[:300] if where else error['msg'][:300]
++
++
++def service_text(exc: ValueError) -> str:
++    """One line for a refusal raised by the service or the store (a pydantic error prints a page otherwise)."""
++    return _first_error(exc) if isinstance(exc, ValidationError) else str(exc)
++
++
++def pair_of(project: ComparisonProject) -> Pair:
++    sha = {artifact.side: artifact.sha256 for artifact in project.artifacts}
++    return Pair(older_sha256=sha['older'], newer_sha256=sha['newer'])
++
++
++def member_of(function: FunctionRecord) -> Member:
++    return Member(address=function.address, name=function.name[:MAX_NAME], id=function.id)
++
++
++def finding_digest(run: InterpretationRun, finding: Finding) -> str:
++    """Identity of a finding across projects: what was claimed and by which provider, never a project identifier."""
++    payload = [run.provider, run.model, run.prompt_version, finding.category, finding.cwe, finding.summary,
++               finding.fix_purpose, finding.hypothesis.explanation]
++    return hashlib.sha256(json.dumps(payload, separators=(',', ':')).encode('ascii')).hexdigest()
++
++
++def _review_of(project: ComparisonProject) -> Review:
++    matches = [ReviewedMatch(older=[member_of(f) for f in match.older], newer=[member_of(f) for f in match.newer],
++                             status=match.review)
++               for match in project.matches if match.review != 'unreviewed']
++    findings = [ReviewedFinding(id=finding.id, digest=finding_digest(run, finding), summary=finding.summary[:MAX_NAME],
++                                status=finding.review, conclusion=finding.analyst_conclusion)
++                for run in project.interpretations for finding in run.findings
++                if finding.review != 'unreviewed' or finding.analyst_conclusion]
++    return Review(matches=matches, findings=findings)
++
++
++def build_document(project: ComparisonProject, *, include_review: bool = False) -> CorrectionsExchange:
++    try:
++        corrections = [Correction(category=match.category, note=match.reason,
++                                  older=[member_of(f) for f in match.older], newer=[member_of(f) for f in match.newer])
++                       for match in project.matches if match.manual]
++        return CorrectionsExchange(contract=CONTRACT, pair=pair_of(project), corrections=corrections,
++                                   review=_review_of(project) if include_review else None)
++    except ValidationError as exc:
++        raise ExchangeError('PT-CORR-LIMIT', 'the project state does not fit the contract bounds '
++                            f'({_first_error(exc)})') from None
++
++
++def render(document: CorrectionsExchange) -> bytes:
++    """The bytes of a document: ASCII (a hidden character in a note is a visible escape), sorted keys, one newline."""
++    data = document.model_dump(mode='json', exclude_none=True)
++    return (json.dumps(data, indent=2, sort_keys=True) + '\n').encode('ascii')
++
++
++def unresolvable(document: CorrectionsExchange) -> int:
++    """Corrections no import will accept because a member has no usable address."""
++    from .unified.addressing import parse_va_text
++    return sum(any(parse_va_text(member.address) is None for member in item.older + item.newer)
++               for item in document.corrections)
++
++
++# --- import ----------------------------------------------------------------------------------------------------------
++
++def read_document(path: Path) -> CorrectionsExchange:
++    path = Path(path)
++    try:
++        if not path.is_file():
++            raise ExchangeError('PT-CORR-JSON', 'the document is not a regular file')
++        with path.open('rb') as stream:
++            raw = stream.read(MAX_DOCUMENT_BYTES + 1)
++    except OSError as exc:
++        raise ExchangeError('PT-CORR-JSON', f'the document cannot be read ({exc.strerror or type(exc).__name__})') from None
++    if len(raw) > MAX_DOCUMENT_BYTES:
++        raise ExchangeError('PT-CORR-JSON', f'the document is larger than {MAX_DOCUMENT_BYTES} bytes')
++    try:
++        value = strict_json(raw.decode('utf-8'))
++    except UnicodeDecodeError:
++        raise ExchangeError('PT-CORR-JSON', 'the document is not UTF-8') from None
++    except ValueError as exc:  # json.JSONDecodeError included: syntax errors and data after the document
++        raise ExchangeError('PT-CORR-JSON', f'the document is not strict JSON ({exc})') from None
++    try:
++        return CorrectionsExchange.model_validate(value)
++    except ValidationError as exc:
++        raise ExchangeError('PT-CORR-CONTRACT', f'the document is not a {CONTRACT} document ({_first_error(exc)})') from None
++
++
++@dataclass(frozen=True)
++class Counts:
++    total: int
++    new: int
++
++    def as_dict(self) -> dict[str, int]:
++        return {'total': self.total, 'new': self.new, 'already_present': self.total - self.new}
++
++
++@dataclass
++class ImportPlan:
++    """What a document changes in one project, already applied to `candidate` and not yet stored."""
++    candidate: ComparisonProject
++    revision_before: int
++    corrections: Counts
++    matches: Counts | None = None
++    findings: Counts | None = None
++    changes: list[dict] = field(default_factory=list)
++    warnings: list[str] = field(default_factory=list)
++
++    @property
++    def writes(self) -> bool:
++        return any(counts is not None and counts.new for counts in (self.corrections, self.matches, self.findings))
++
++
++class _CandidateStore:
++    """Stands in for `ProjectStore` under a second `ProjectService`: validates as `save` does, writes nothing."""
++
++    @staticmethod
++    def save(project: ComparisonProject) -> ComparisonProject:
++        return validate_project(project)
++
++
++def _shown(text: str | None) -> str:
++    return repr(text if text is None or len(text) <= 120 else text[:117] + '...')
++
++
++def _check_pair(project: ComparisonProject, pair: Pair) -> None:
++    own = pair_of(project)
++    if pair == own:
++        return
++    if (pair.older_sha256, pair.newer_sha256) == (own.newer_sha256, own.older_sha256):
++        raise ExchangeError('PT-CORR-ORIENTATION', 'the document was exported with older and newer the other way '
++                            'round (its older file is this project\'s newer file). Nothing was imported: a '
++                            'correction is never mirrored silently. Swap the orientation of one of the two projects, '
++                            'then export or import again')
++    raise ExchangeError('PT-CORR-PAIR', 'the document belongs to another pair of files (older '
++                        f'{pair.older_sha256[:16]}, newer {pair.newer_sha256[:16]}; this project: older '
++                        f'{own.older_sha256[:16]}, newer {own.newer_sha256[:16]})')
++
++
++class _Resolver:
++    """(side, address) -> the one function of the project that has it; refuses everything else."""
++
++    def __init__(self, project: ComparisonProject):
++        from .unified.addressing import parse_va_text  # the parser the unified engine reads corrections with
++        self._parse = parse_va_text
++        self._found: dict[tuple[str, int], list[FunctionRecord]] = {}
++        self.warnings: list[str] = []
++        for match in project.matches:
++            for side in SIDES:
++                for function in getattr(match, side):
++                    address = parse_va_text(function.address)
++                    if address is not None:
++                        self._found.setdefault((side, address), []).append(function)
++
++    def one(self, side: str, member: Member, where: str) -> FunctionRecord:
++        address = self._parse(member.address)
++        if address is None:
++            raise ExchangeError('PT-CORR-MEMBER', f'{where}: the {side} function {_shown(member.name)} has no usable '
++                                f'address ({_shown(member.address)}), so it cannot be resolved in this project')
++        found = self._found.get((side, address), [])
++        if len(found) != 1:
++            raise ExchangeError('PT-CORR-MEMBER', f'{where}: this project has {len(found) or "no"} {side} '
++                                f'function{"s" if len(found) > 1 else ""} at address {member.address.strip()} '
++                                f'({_shown(member.name)} in the document)')
++        if found[0].name[:MAX_NAME] != member.name:
++            self.warnings.append(f'{where}: the {side} function at {member.address.strip()} is named '
++                                 f'{_shown(found[0].name)} in this project and {_shown(member.name)} in the document')
++        return found[0]
++
++    def sides(self, relation: _Relation, where: str) -> tuple[list[str], list[str]]:
++        return ([self.one('older', member, where).id for member in relation.older],
++                [self.one('newer', member, where).id for member in relation.newer])
++
++
++def _resolve_corrections(resolver: _Resolver, corrections: list[Correction]) -> list[tuple[list[str], list[str]]]:
++    resolved, named = [], {}
++    for number, correction in enumerate(corrections, 1):
++        older, newer = resolver.sides(correction, f'correction {number}')
++        for function_id in older + newer:
++            if function_id in named:
++                first = named[function_id]
++                raise ExchangeError('PT-CORR-DUPLICATE', f'correction {number} names a function that '
++                                    f'{"it already names" if first == number else f"correction {first} already names"}; '
++                                    'one function belongs to one relation')
++            named[function_id] = number
++        resolved.append((older, newer))
++    return resolved
++
++
++def _apply_corrections(scratch, document: CorrectionsExchange, resolved, cancelled: Callable[[], bool]) -> list[dict]:
++    changes, owner = [], None
++    for number, (correction, (older, newer)) in enumerate(zip(document.corrections, resolved, strict=True), 1):
++        if cancelled():
++            raise Cancelled
++        if owner is None:  # function id -> the relation that holds it now; rebuilt after every applied correction
++            owner = {f.id: match for match in scratch.project.matches for f in match.older + match.newer}
++        holders = {owner[function_id].id: owner[function_id] for function_id in older + newer}
++        present = any(match.manual and match.category == correction.category and match.reason == correction.note
++                      and {f.id for f in match.older} == set(older) and {f.id for f in match.newer} == set(newer)
++                      for match in holders.values())
++        names = {side: [_name(owner[function_id], function_id) for function_id in ids]
++                 for side, ids in (('older', older), ('newer', newer))}
++        changes.append({'index': number, 'action': 'already-present' if present else 'apply',
++                        'category': correction.category, **names})
++        if present:
++            continue
++        if any(match.manual for match in holders.values()):
++            raise ExchangeError('PT-CORR-CONFLICT', f'correction {number} names a function that is part of a '
++                                'different manual correction of this project. An import never overwrites an '
++                                'existing correction: undo or re-correct it first')
++        try:
++            scratch.correct_match(owner[(older + newer)[0]].id, older, newer, correction.category, correction.note)
++        except ValueError as exc:
++            raise ExchangeError('PT-CORR-INVALID', f'correction {number}: {service_text(exc)}') from None
++        owner = None
++    return changes
++
++
++def _name(match: FunctionMatch, function_id: str) -> str:
++    return next(f.name for f in match.older + match.newer if f.id == function_id)[:MAX_NAME]
++
++
++def _apply_match_reviews(scratch, entries: list[ReviewedMatch], resolved) -> Counts:
++    relations = {(frozenset(f.id for f in match.older), frozenset(f.id for f in match.newer)): match
++                 for match in scratch.project.matches}
++    state = {match.id: match.review for match in scratch.project.matches}
++    new = 0
++    for number, (entry, (older, newer)) in enumerate(zip(entries, resolved, strict=True), 1):
++        match = relations.get((frozenset(older), frozenset(newer)))
++        if match is None:
++            raise ExchangeError('PT-CORR-REVIEW', f'review of relation {number}: this project has no relation with '
++                                'exactly these functions')
++        if state[match.id] != entry.status:
++            scratch.review_match(match.id, entry.status)
++            state[match.id] = entry.status
++            new += 1
++    return Counts(len(entries), new)
++
++
++def _apply_finding_reviews(scratch, entries: list[ReviewedFinding]) -> Counts:
++    by_digest: dict[str, list[Finding]] = {}
++    for run in scratch.project.interpretations:
++        for finding in run.findings:
++            by_digest.setdefault(finding_digest(run, finding), []).append(finding)
++    state = {finding.id: (finding.review, finding.analyst_conclusion)
++             for found in by_digest.values() for finding in found}
++    new = 0
++    for number, entry in enumerate(entries, 1):
++        found = by_digest.get(entry.digest, [])
++        if len(found) > 1:
++            found = [finding for finding in found if finding.id == entry.id]
++        if len(found) != 1:
++            raise ExchangeError('PT-CORR-REVIEW', f'review of finding {number}: this project has no single finding '
++                                f'with the digest {entry.digest[:16]} ({_shown(entry.summary)} in the document)')
++        if state[found[0].id] != (entry.status, entry.conclusion):
++            scratch.review_finding(found[0].id, entry.status, entry.conclusion)
++            state[found[0].id] = (entry.status, entry.conclusion)
++            new += 1
++    return Counts(len(entries), new)
++
++
++def plan_import(service, document: CorrectionsExchange, cancelled: Callable[[], bool] = lambda: False) -> ImportPlan:
++    """Check the whole document against `service.project` and apply it to a candidate. Raises `ExchangeError` on
++    the first broken rule and `Cancelled`; never touches the project's store."""
++    from .service import ProjectService
++    project = service.project
++    _check_pair(project, document.pair)
++    resolver = _Resolver(project)
++    resolved = _resolve_corrections(resolver, document.corrections)
++    review = document.review
++    reviewed = [resolver.sides(entry, f'review of relation {number}')
++                for number, entry in enumerate(review.matches, 1)] if review is not None else []
++    if cancelled():
++        raise Cancelled
++    scratch = ProjectService(service.root, project.model_copy(deep=True), _CandidateStore())
++    changes = _apply_corrections(scratch, document, resolved, cancelled)
++    warnings = resolver.warnings[:MAX_WARNINGS]
++    if len(resolver.warnings) > MAX_WARNINGS:
++        warnings.append(f'{len(resolver.warnings) - MAX_WARNINGS} more functions are named differently in this project')
++    plan = ImportPlan(candidate=project, revision_before=project.revision, changes=changes, warnings=warnings,
++                      corrections=Counts(len(changes), sum(change['action'] == 'apply' for change in changes)))
++    if review is not None:
++        plan.matches = _apply_match_reviews(scratch, review.matches, reviewed)
++        plan.findings = _apply_finding_reviews(scratch, review.findings)
++    plan.candidate = scratch.project
++    return plan
++
++
++def commit(service, plan: ImportPlan) -> bool:
++    """Store the plan's candidate with one `ProjectService.save()` (one transaction). False when nothing is new."""
++    if not plan.writes:
++        return False
++    prior = service.project
++    service.project = plan.candidate
++    try:
++        service.save()
++    except BaseException:
++        service.project = prior  # the store kept the prior snapshot; keep the open service on it too
++        raise
++    return True
++
++
++def list_corrections(project: ComparisonProject) -> list[dict]:
++    """The manual relations in stored order; `annotation_id` is set where the service can still restore one."""
++    active = {annotation.target_id: annotation.id for annotation in project.annotations
++              if annotation.kind == 'match-override' and not annotation.stale}
++    rows = []
++    for match in project.matches:
++        if match.manual:
++            rows.append({'index': len(rows) + 1, 'match_id': match.id, 'category': match.category,
++                         'review': match.review, 'note': match.reason,
++                         'older': [member_of(f).model_dump(mode='json') for f in match.older],
++                         'newer': [member_of(f).model_dump(mode='json') for f in match.newer],
++                         'annotation_id': active.get(match.id), 'undoable': match.id in active})
++    return rows
+diff --git a/src/patchtrace/review_cli.py b/src/patchtrace/review_cli.py
+new file mode 100644
+index 00000000..eacfdb3f
+--- /dev/null
++++ b/src/patchtrace/review_cli.py
+@@ -0,0 +1,108 @@
++"""`patchtrace review match|finding|note` (docs/specs/manual-corrections-exchange.md section 6). No Qt.
++
++Thin wrappers over `ProjectService.review_match`, `review_finding` and `annotate`: the desktop's review boxes and
++note field for a script. Output is the `enrichment-cli/1` envelope. Exit codes: 0 done; 2 invalid arguments, an
++identifier the project does not own, a project that cannot be opened or is locked; 3 storage failure; 5 cancelled.
++The status and kind vocabularies are read from the models. Text given on the command line is stored unchanged as
++data and never printed back in text mode.
++"""
++from __future__ import annotations
++
++import argparse
++from pathlib import Path
++from typing import get_args
++
++from .cli_commands import CANCELLED, OK, emit
++from .corrections_cli import open_project, service_error
++from .corrections_exchange import MAX_NOTE
++from .models import AnalystAnnotation, Finding, FunctionMatch
++
++SUMMARY = 'set the review state of a match or finding, add an analyst note'
++MATCH_STATES = get_args(FunctionMatch.model_fields['review'].annotation)
++FINDING_STATES = get_args(Finding.model_fields['review'].annotation)
++_SERVICE_KINDS = frozenset({'match-override', 'validation'})  # written by correct_match and restore_match_override only
++NOTE_KINDS = tuple(kind for kind in get_args(AnalystAnnotation.model_fields['kind'].annotation)
++                   if kind not in _SERVICE_KINDS)
++
++
++def _bounded(text: str) -> str:
++    if len(text) > MAX_NOTE:
++        raise argparse.ArgumentTypeError(f'must be at most {MAX_NOTE} characters')
++    return text
++
++
++def _note_text(text: str) -> str:
++    if not text.strip():
++        raise argparse.ArgumentTypeError('must not be blank')
++    return _bounded(text)
++
++
++def add_parser(sub) -> argparse.ArgumentParser:
++    parser = sub.add_parser('review', help=SUMMARY)
++    actions = parser.add_subparsers(dest='action', required=True)
++
++    def leaf(name: str, help_: str) -> argparse.ArgumentParser:
++        item = actions.add_parser(name, help=help_)
++        item.set_defaults(command_label=f'review {name}')
++        item.add_argument('project', type=Path, help='project directory')
++        item.add_argument('--json', action='store_true', help='emit exactly one JSON document on stdout')
++        return item
++
++    item = leaf('match', 'set the review state of one function relation')
++    item.add_argument('--match', required=True, metavar='ID')
++    item.add_argument('--status', required=True, choices=MATCH_STATES)
++    item = leaf('finding', 'set the review state and the analyst conclusion of one finding')
++    item.add_argument('--finding', required=True, metavar='ID')
++    item.add_argument('--status', required=True, choices=FINDING_STATES)
++    item.add_argument('--conclusion', type=_bounded, default=None, metavar='TEXT',
++                      help='analyst conclusion; omitted: the stored one is kept; "": cleared')
++    item = leaf('note', 'add an analyst note or bookmark to a record of the project')
++    item.add_argument('--target', required=True, metavar='ID', help='a match, finding or other identifier of the project')
++    item.add_argument('--text', required=True, type=_note_text, metavar='TEXT')
++    item.add_argument('--kind', choices=NOTE_KINDS, default='note')
++    return parser
++
++
++def _match(service, args) -> tuple[dict, str]:
++    previous = next((match.review for match in service.project.matches if match.id == args.match), None)
++    service.review_match(args.match, args.status)
++    return ({'match_id': args.match, 'status': args.status, 'previous': previous},
++            f'Relation {args.match}: review {previous} -> {args.status}.')
++
++
++def _finding(service, args) -> tuple[dict, str]:
++    stored = next((finding for run in service.project.interpretations for finding in run.findings
++                   if finding.id == args.finding), None)
++    previous, kept = (stored.review, stored.analyst_conclusion) if stored is not None else (None, '')
++    # The service call replaces the conclusion; without --conclusion the stored one is passed back.
++    conclusion = kept if args.conclusion is None else args.conclusion
++    service.review_finding(args.finding, args.status, conclusion)
++    told = 'kept' if args.conclusion is None else f'set ({len(conclusion)} characters)' if conclusion else 'cleared'
++    return ({'finding_id': args.finding, 'status': args.status, 'previous': previous, 'conclusion': conclusion},
++            f'Finding {args.finding}: review {previous} -> {args.status}; conclusion {told}.')
++
++
++def _note(service, args) -> tuple[dict, str]:
++    service.annotate(args.target, args.text, kind=args.kind)
++    added = service.project.annotations[-1]
++    return ({'annotation_id': added.id, 'target_id': args.target, 'kind': args.kind},
++            f'Saved {args.kind} {added.id} on {args.target} ({len(args.text)} characters).')
++
++
++_LEAVES = {'match': _match, 'finding': _finding, 'note': _note}
++
++
++def run(args, cancel) -> int:
++    label = f'review {args.action}'
++    if cancel.is_set():
++        emit(args, label, 'cancelled', None, [], '')
++        return CANCELLED
++    service = open_project(args.project)
++    try:
++        result, text = _LEAVES[args.action](service, args)
++    except ValueError as exc:
++        raise service_error(exc) from None
++    finally:
++        service.close()
++    emit(args, label, 'complete', result, [], text)
++    return OK
+diff --git a/tests/test_corrections_cli.py b/tests/test_corrections_cli.py
+new file mode 100644
+index 00000000..e1966021
+--- /dev/null
++++ b/tests/test_corrections_cli.py
+@@ -0,0 +1,624 @@
++"""`patchtrace corrections` and the `corrections-exchange/1` document (docs/specs/manual-corrections-exchange.md).
++
++Evidence class: hermetic, on the synthetic sample project. Nothing here is live evidence.
++"""
++from __future__ import annotations
++
++import hashlib
++import importlib.util
++import json
++import os
++import shutil
++import subprocess
++import sys
++import threading
++from argparse import Namespace
++from pathlib import Path
++from typing import get_args
++
++import pytest
++
++from patchtrace import cli
++from patchtrace.cli_commands import discover
++from patchtrace.sample import create_sample
++from patchtrace.service import ProjectService
++
++ROOT = Path(__file__).resolve().parents[1]
++SRC = ROOT / 'src'
++CONTRACT = 'corrections-exchange/1'
++ESC, RLO = '\x1b', '‮'
++HOSTILE = f'looks fine{ESC}[31m{RLO}\n9  modified  accepted  forged row'
++# Three corrections of the sample that share no function: (older names, newer names, category, note).
++THREE = ((['read_item'], ['get_version'], 'modified', 'older read_item is the newer get_version'),
++         (['get_version'], [], 'removed', 'get_version has no counterpart'),
++         ([], ['read_item'], 'added', HOSTILE))
++
++
++@pytest.fixture
++def project(tmp_path):
++    create_sample(tmp_path / 'a').close()
++    return tmp_path / 'a'
++
++
++@pytest.fixture
++def copy(project, tmp_path):
++    """A file copy of the project taken before any correction: same function identifiers as `project`."""
++    return Path(shutil.copytree(project, tmp_path / 'copy'))
++
++
++@pytest.fixture
++def fresh(tmp_path):
++    """The same two files analysed again: same hashes and addresses, different identifiers."""
++    create_sample(tmp_path / 'fresh').close()
++    return tmp_path / 'fresh'
++
++
++def run(capsys, *argv):
++    code = cli.main([str(item) for item in argv])
++    out = capsys.readouterr()
++    return code, out.out, out.err
++
++
++def result(capsys, *argv):
++    code, out, err = run(capsys, *argv, '--json')
++    assert out.count('\n') == 1, (out, err)
++    envelope = json.loads(out)
++    assert envelope['contract'] == 'enrichment-cli/1' and set(envelope) >= {'command', 'status', 'result', 'warnings'}
++    return code, envelope, err
++
++
++def tree(root: Path) -> dict[str, str]:
++    """Every file by hash. The lock file records the process that holds the project, so every open rewrites it."""
++    return {path.relative_to(root).as_posix(): hashlib.sha256(path.read_bytes()).hexdigest()
++            for path in sorted(root.rglob('*')) if path.is_file() and path.name != '.patchtrace.lock'}
++
++
++def state(root: Path):
++    with ProjectService.open(root, maintenance=False) as service:
++        return service.project.model_copy(deep=True)
++
++
++def manual(root: Path) -> list[tuple]:
++    """The corrections as the consumer the desktop and the unified engine use sees them: `match.manual`."""
++    return [(m.category, m.reason, m.review, [(f.name, f.address) for f in m.older], [(f.name, f.address) for f in m.newer])
++            for m in state(root).matches if m.manual]
++
++
++def correct(root: Path, older: list[str], newer: list[str], category: str, note: str) -> None:
++    with ProjectService.open(root) as service:
++        ids = {(side, f.name): f.id for m in service.project.matches for side in ('older', 'newer')
++               for f in getattr(m, side)}
++        first = ('older', older[0]) if older else ('newer', newer[0])
++        target = next(m.id for m in service.project.matches
++                      if ids[first] in {f.id for f in m.older + m.newer})
++        service.correct_match(target, [ids['older', n] for n in older], [ids['newer', n] for n in newer], category, note)
++
++
++def corrected(root: Path, rows=THREE) -> Path:
++    for row in rows:
++        correct(root, *row)
++    return root
++
++
++def export(capsys, root: Path, out: Path, *flags) -> dict:
++    code, _out, err = run(capsys, 'corrections', 'export', root, '--out', out, *flags)
++    assert code == 0, err
++    return json.loads(out.read_text(encoding='utf-8'))
++
++
++def rewrite(path: Path, change) -> Path:
++    document = json.loads(path.read_text(encoding='utf-8'))
++    change(document)
++    path.write_text(json.dumps(document), encoding='utf-8', newline='\n')
++    return path
++
++
++# --- registry --------------------------------------------------------------------------------------------------------
++
++def test_the_adapter_is_discovered_and_thin():
++    verbs, failed = discover()
++    assert 'corrections' in verbs and 'corrections' not in failed
++    adapter = SRC / 'patchtrace' / 'cli_commands' / 'corrections.py'
++    assert len(adapter.read_text(encoding='utf-8').splitlines()) <= 25
++
++
++def test_no_qt_is_imported_on_any_corrections_path(project, tmp_path):
++    code = ('import sys\nfrom patchtrace import cli\n'
++            'import patchtrace.corrections_cli, patchtrace.corrections_exchange\n'
++            f'out = {str(tmp_path / "x.json")!r}\nproject = {str(project)!r}\n'
++            'codes = [cli.main(["corrections", "list", project, "--json"]),\n'
++            '         cli.main(["corrections", "export", project, "--out", out, "--include-review", "--json"]),\n'
++            '         cli.main(["corrections", "import", project, out, "--dry-run", "--json"]),\n'
++            '         cli.main(["corrections", "undo", project, "--json"])]\n'
++            'print(codes, sorted(m for m in sys.modules if m.startswith(("PySide6", "patchtrace.ui"))), file=sys.stderr)')
++    done = subprocess.run([sys.executable, '-c', code], capture_output=True, text=True, stdin=subprocess.DEVNULL,
++                          env=dict(os.environ, PYTHONPATH=str(SRC)), timeout=120)
++    assert done.returncode == 0, done.stderr
++    assert done.stderr.strip().splitlines()[-1] == '[4, 0, 0, 4] []'
++    assert [json.loads(line)['contract'] for line in done.stdout.splitlines()] == ['enrichment-cli/1'] * 4
++
++
++# --- list ------------------------------------------------------------------------------------------------------------
++
++def test_list_without_corrections_is_a_no_result(project, capsys):
++    before = tree(project)
++    code, envelope, _ = result(capsys, 'corrections', 'list', project)
++    assert (code, envelope['status'], envelope['command']) == (4, 'complete', 'corrections list')
++    assert envelope['result']['corrections'] == [] and tree(project) == before
++
++
++def test_list_shows_each_correction_and_marks_only_the_latest_as_undoable(project, capsys):
++    corrected(project)
++    before = tree(project)
++    code, envelope, _ = result(capsys, 'corrections', 'list', project)
++    rows = envelope['result']['corrections']
++    assert code == 0 and [row['index'] for row in rows] == [1, 2, 3]
++    assert [(row['category'], row['note']) for row in rows] == [(c, n) for _o, _n, c, n in THREE]
++    assert [[m['name'] for m in row['older']] for row in rows] == [o for o, _n, _c, _t in THREE]
++    assert rows[0]['older'][0]['address'] == '180001000' and rows[0]['newer'][0]['address'] == '180001700'
++    assert [row['undoable'] for row in rows] == [False, False, True]
++    annotations = {a.id for a in state(project).annotations if a.kind == 'match-override' and not a.stale}
++    assert {rows[2]['annotation_id']} == annotations and envelope['result']['superseded_records'] == 2
++    assert envelope['result']['pair'] == {a.side + '_sha256': a.sha256 for a in state(project).artifacts}
++    assert tree(project) == before
++
++
++def test_hostile_note_text_is_inert_in_text_output(project, capsys):
++    corrected(project)
++    code, out, _err = run(capsys, 'corrections', 'list', project)
++    assert code == 0 and ESC not in out and RLO not in out
++    assert '\\x1b[31m\\u202e\\x0a9  modified  accepted  forged row' in out
++    rows = [line for line in out.splitlines() if line[:1].isdigit()]
++    assert [line.split()[0] for line in rows] == ['1', '2', '3'], out  # the note's line break forged no fourth row
++
++
++# --- export ----------------------------------------------------------------------------------------------------------
++
++def test_export_is_deterministic_ascii_and_validates_against_the_contract_model(project, tmp_path, capsys):
++    from patchtrace.corrections_exchange import CorrectionsExchange
++    corrected(project)
++    before = tree(project)
++    first = export(capsys, project, tmp_path / 'one.json')
++    export(capsys, project, tmp_path / 'two.json')
++    raw = (tmp_path / 'one.json').read_bytes()
++    assert raw == (tmp_path / 'two.json').read_bytes() and raw.isascii() and raw.endswith(b'}\n')
++    assert b'\r' not in raw and tree(project) == before
++    assert first['contract'] == CONTRACT and 'review' not in first and sorted(first) == ['contract', 'corrections', 'pair']
++    assert first['corrections'][2]['note'] == HOSTILE  # stored and exported unchanged, as data
++    model = CorrectionsExchange.model_validate_json(raw)
++    assert [c.category for c in model.corrections] == ['modified', 'removed', 'added']
++    assert not {'created', 'exported', 'time', 'host'} & set(first)
++
++
++def test_export_reports_what_it_wrote(project, tmp_path, capsys):
++    corrected(project)
++    out = tmp_path / 'c.json'
++    code, envelope, _ = result(capsys, 'corrections', 'export', project, '--out', out, '--include-review')
++    raw = out.read_bytes()
++    assert code == 0 and envelope['command'] == 'corrections export' and envelope['status'] == 'complete'
++    assert envelope['result'] == {'contract': CONTRACT, 'path': str(out), 'bytes': len(raw),
++                                  'sha256': hashlib.sha256(raw).hexdigest(), 'corrections': 3,
++                                  'review': {'matches': 0, 'findings': 0}, 'written': True}
++
++
++def test_export_refuses_to_clobber_a_different_file(project, tmp_path, capsys):
++    corrected(project)
++    out = tmp_path / 'c.json'
++    out.write_text('analyst file', encoding='utf-8')
++    code, envelope, err = result(capsys, 'corrections', 'export', project, '--out', out)
++    assert code == 2 and envelope['status'] == 'failed' and 'PT-CORR-EXISTS' in err and '--force' in err
++    assert out.read_text(encoding='utf-8') == 'analyst file'
++    code, envelope, _ = result(capsys, 'corrections', 'export', project, '--out', out, '--force')
++    assert code == 0 and envelope['result']['written'] is True and json.loads(out.read_bytes())['contract'] == CONTRACT
++    stamp = out.stat().st_mtime_ns
++    code, envelope, _ = result(capsys, 'corrections', 'export', project, '--out', out)
++    assert code == 0 and envelope['result']['written'] is False and out.stat().st_mtime_ns == stamp
++    assert [p.name for p in tmp_path.iterdir() if p.name.startswith('.')] == []  # no temporary file is left behind
++
++
++@pytest.mark.parametrize('where', ['inside-project', 'directory', 'missing-parent'])
++def test_export_refuses_an_unusable_destination(project, tmp_path, capsys, where):
++    corrected(project)
++    before = tree(project)
++    out = {'inside-project': project / 'project.sqlite3', 'directory': tmp_path,
++           'missing-parent': tmp_path / 'absent' / 'c.json'}[where]
++    code, _out, err = run(capsys, 'corrections', 'export', project, '--out', out, '--force')
++    assert code == (3 if where == 'missing-parent' else 2) and 'PT-CORR-OUTPUT' in err
++    assert tree(project) == before
++
++
++# --- import: the round trip ------------------------------------------------------------------------------------------
++
++def reviewed(root: Path) -> Path:
++    corrected(root)
++    with ProjectService.open(root) as service:
++        by_note = {m.reason: m.id for m in service.project.matches if m.manual}
++        service.review_match(by_note[THREE[0][3]], 'accepted')
++        untouched = next(m.id for m in service.project.matches if m.category == 'removed' and not m.manual)
++        service.review_match(untouched, 'needs-review')
++        finding = service.project.interpretations[0].findings[0]
++        service.review_finding(finding.id, 'rejected', f'not a fix{RLO}')
++    return root
++
++
++def test_export_then_import_into_a_copy_gives_a_byte_identical_export(project, copy, tmp_path, capsys):
++    reviewed(project)
++    document = export(capsys, project, tmp_path / 'a.json', '--include-review')
++    assert len(document['review']['matches']) == 2 and len(document['review']['findings']) == 1
++    code, envelope, _ = result(capsys, 'corrections', 'import', copy, tmp_path / 'a.json')
++    assert code == 0 and envelope['command'] == 'corrections import' and envelope['status'] == 'complete'
++    assert envelope['result']['corrections'] == {'total': 3, 'new': 3, 'already_present': 0}
++    assert envelope['result']['review'] == {'matches': {'total': 2, 'new': 2, 'already_present': 0},
++                                            'findings': {'total': 1, 'new': 1, 'already_present': 0}}
++    assert envelope['result']['written'] is True and envelope['result']['dry_run'] is False
++    export(capsys, copy, tmp_path / 'b.json', '--include-review')
++    assert (tmp_path / 'b.json').read_bytes() == (tmp_path / 'a.json').read_bytes()
++    # Read back through the service: the corrections are what the desktop and `unified run --sources manual` consume.
++    assert manual(copy) == manual(project) and len(manual(copy)) == 3
++    finding = state(copy).interpretations[0].findings[0]
++    assert (finding.review, finding.analyst_conclusion, finding.stale) == ('rejected', f'not a fix{RLO}', True)
++
++
++def test_import_into_an_independently_created_project_differs_only_in_the_reader_ids(project, fresh, tmp_path, capsys):
++    reviewed(project)
++    source = export(capsys, project, tmp_path / 'a.json', '--include-review')
++    assert run(capsys, 'corrections', 'import', fresh, tmp_path / 'a.json')[0] == 0
++    target = export(capsys, fresh, tmp_path / 'b.json', '--include-review')
++    assert target != source and manual(fresh) == manual(project)
++
++    def without_ids(value):
++        if isinstance(value, dict):
++            return {key: without_ids(item) for key, item in value.items() if key != 'id'}
++        return [without_ids(item) for item in value] if isinstance(value, list) else value
++    assert without_ids(target) == without_ids(source)
++
++
++def test_importing_the_same_document_again_is_a_no_op(project, copy, tmp_path, capsys):
++    reviewed(project)
++    export(capsys, project, tmp_path / 'a.json', '--include-review')
++    assert run(capsys, 'corrections', 'import', copy, tmp_path / 'a.json')[0] == 0
++    before, revision = tree(copy), state(copy).revision
++    code, envelope, _ = result(capsys, 'corrections', 'import', copy, tmp_path / 'a.json')
++    assert code == 0 and envelope['status'] == 'complete' and envelope['result']['written'] is False
++    assert envelope['result']['corrections'] == {'total': 3, 'new': 0, 'already_present': 3}
++    assert envelope['result']['review']['matches'] == {'total': 2, 'new': 0, 'already_present': 2}
++    assert {change['action'] for change in envelope['result']['changes']} == {'already-present'}
++    assert tree(copy) == before and state(copy).revision == revision
++    assert sum(a.kind == 'match-override' for a in state(copy).annotations) == 3  # no duplicate override
++    assert 'already present' in run(capsys, 'corrections', 'import', copy, tmp_path / 'a.json')[1]
++
++
++def test_a_dry_run_reports_the_changes_and_writes_nothing(project, copy, tmp_path, capsys):
++    reviewed(project)
++    export(capsys, project, tmp_path / 'a.json', '--include-review')
++    before = tree(copy)
++    code, envelope, _ = result(capsys, 'corrections', 'import', copy, tmp_path / 'a.json', '--dry-run')
++    assert code == 0 and envelope['result']['dry_run'] is True and envelope['result']['written'] is False
++    assert envelope['result']['corrections'] == {'total': 3, 'new': 3, 'already_present': 0}
++    assert [(c['index'], c['action'], c['category']) for c in envelope['result']['changes']] == [
++        (1, 'apply', 'modified'), (2, 'apply', 'removed'), (3, 'apply', 'added')]
++    assert envelope['result']['revision']['after'] == envelope['result']['revision']['before'] + 3
++    assert tree(copy) == before and manual(copy) == []
++    text = run(capsys, 'corrections', 'import', copy, tmp_path / 'a.json', '--dry-run')[1]
++    assert 'Dry run' in text and 'nothing was written' in text and ESC not in text and tree(copy) == before
++
++
++def test_a_different_name_at_the_same_address_is_a_warning_not_a_refusal(project, copy, tmp_path, capsys):
++    corrected(project, THREE[:1])
++    export(capsys, project, tmp_path / 'a.json')
++    rewrite(tmp_path / 'a.json', lambda d: d['corrections'][0]['older'][0].update(name='FUN_180001000', id=None))
++    code, envelope, _ = result(capsys, 'corrections', 'import', copy, tmp_path / 'a.json')
++    assert code == 0 and len(envelope['warnings']) == 1 and 'FUN_180001000' in envelope['warnings'][0]
++    assert manual(copy) == manual(project)
++
++
++# --- import: refusals leave the project unchanged --------------------------------------------------------------------
++
++def refused(capsys, target: Path, document: Path, code_name: str) -> str:
++    before = tree(target)
++    code, envelope, err = result(capsys, 'corrections', 'import', target, document)
++    assert code == 2 and envelope['status'] == 'failed' and envelope['result'] is None, err
++    assert code_name in err and code_name in envelope['error']
++    assert tree(target) == before and manual(target) == []
++    return err
++
++
++def test_a_document_of_another_pair_is_refused(project, copy, tmp_path, capsys):
++    corrected(project)
++    export(capsys, project, tmp_path / 'a.json')
++    rewrite(tmp_path / 'a.json', lambda d: d['pair'].update(newer_sha256='0' * 64))
++    refused(capsys, copy, tmp_path / 'a.json', 'PT-CORR-PAIR')
++
++
++def test_a_document_in_the_swapped_orientation_is_refused_and_says_so(project, copy, tmp_path, capsys):
++    corrected(project)
++    export(capsys, project, tmp_path / 'a.json')
++    with ProjectService.open(copy) as service:
++        service.swap_orientation()
++    err = refused(capsys, copy, tmp_path / 'a.json', 'PT-CORR-ORIENTATION')
++    assert 'other way round' in err and 'never mirrored' in err
++
++
++@pytest.mark.parametrize('change', [
++    lambda m: m.update(address='180009990'), lambda m: m.pop('address'), lambda m: m.update(address='not hex'),
++], ids=['no-function-at-address', 'no-address', 'unreadable-address'])
++def test_an_unresolved_member_refuses_the_whole_document(project, copy, tmp_path, capsys, change):
++    corrected(project)
++    export(capsys, project, tmp_path / 'a.json')
++    rewrite(tmp_path / 'a.json', lambda d: change(d['corrections'][2]['newer'][0]))
++    err = refused(capsys, copy, tmp_path / 'a.json', 'PT-CORR-MEMBER')
++    assert 'correction 3' in err and 'newer' in err
++
++
++def test_three_valid_corrections_and_an_invalid_fourth_apply_none(project, copy, tmp_path, capsys):
++    corrected(project)
++    document = export(capsys, project, tmp_path / 'a.json')
++    older = next(f for m in state(project).matches for f in m.older if f.name == 'debug_dump')
++    newer = next(f for m in state(project).matches for f in m.newer if f.name == 'report_invalid_index')
++    # Every member resolves, so only the service can refuse it: a split needs several newer functions.
++    fourth = {'category': 'split', 'note': 'not a split', 'older': [{'address': older.address, 'name': older.name}],
++              'newer': [{'address': newer.address, 'name': newer.name}]}
++    rewrite(tmp_path / 'a.json', lambda d: d['corrections'].append(fourth))
++    assert len(document['corrections']) == 3
++    err = refused(capsys, copy, tmp_path / 'a.json', 'PT-CORR-INVALID')
++    assert 'correction 4' in err and 'split requires one older and multiple newer' in err
++    assert state(copy).revision == 1 and not any(a.kind == 'match-override' for a in state(copy).annotations)
++
++
++def test_a_function_named_by_two_corrections_is_refused(project, copy, tmp_path, capsys):
++    corrected(project)
++    export(capsys, project, tmp_path / 'a.json')
++    rewrite(tmp_path / 'a.json', lambda d: d['corrections'][1]['older'].append(d['corrections'][0]['older'][0]))
++    refused(capsys, copy, tmp_path / 'a.json', 'PT-CORR-DUPLICATE')
++
++
++def test_an_existing_different_correction_is_never_overwritten(project, copy, tmp_path, capsys):
++    corrected(project, THREE[:1])
++    export(capsys, project, tmp_path / 'a.json')
++    correct(copy, ['read_item'], ['read_item'], 'unchanged', 'the analyst of the copy disagrees')
++    before, kept = tree(copy), manual(copy)
++    code, _out, err = run(capsys, 'corrections', 'import', copy, tmp_path / 'a.json')
++    assert code == 2 and 'PT-CORR-CONFLICT' in err and tree(copy) == before and manual(copy) == kept
++
++
++@pytest.mark.parametrize('change', [
++    lambda d: d.update(contract='corrections-exchange/2'), lambda d: d.update(exported='2026-11-11'),
++    lambda d: d['corrections'][0].update(category='renamed'), lambda d: d['corrections'][0].update(note='  '),
++    lambda d: d['corrections'][0].update(note='x' * 32768), lambda d: d['pair'].update(older_sha256='ABC'),
++    lambda d: d['corrections'][0].update(older=[], newer=[]),
++    lambda d: d.update(review={'matches': [], 'findings': [], 'notes': []}),
++], ids=['other-contract', 'unknown-field', 'category-outside-the-model', 'blank-note', 'note-too-long', 'bad-sha256',
++        'no-member', 'unknown-review-field'])
++def test_a_document_outside_the_contract_is_refused(project, copy, tmp_path, capsys, change):
++    corrected(project)
++    export(capsys, project, tmp_path / 'a.json')
++    rewrite(tmp_path / 'a.json', change)
++    refused(capsys, copy, tmp_path / 'a.json', 'PT-CORR-CONTRACT')
++
++
++@pytest.mark.parametrize('text', [
++    '{"contract": "corrections-exchange/1", "contract": "corrections-exchange/1"}',
++    '[' * 200 + ']' * 200, '{"contract": NaN}', '{"contract": 1e999}', '{} {}', '{"a": "\\ud800"}', '',
++    b'\xff\xfe{}', b'\xef\xbb\xbf{}',
++], ids=['duplicate-key', 'deep-nesting', 'nan', 'overflowing-number', 'trailing-data', 'lone-surrogate', 'empty',
++        'not-utf-8', 'byte-order-mark'])
++def test_input_that_is_not_strict_json_is_refused_with_exit_2(copy, tmp_path, capsys, text):
++    path = tmp_path / 'bad.json'
++    path.write_bytes(text if isinstance(text, bytes) else text.encode('utf-8'))
++    refused(capsys, copy, path, 'PT-CORR-JSON')
++
++
++def test_a_document_over_the_size_cap_or_not_a_file_is_refused(copy, tmp_path, capsys, monkeypatch):
++    from patchtrace import corrections_exchange
++    assert corrections_exchange.MAX_DOCUMENT_BYTES == 16 * 1024 * 1024
++    monkeypatch.setattr(corrections_exchange, 'MAX_DOCUMENT_BYTES', 64)
++    (tmp_path / 'big.json').write_text('{"contract": "corrections-exchange/1", "padding": "' + 'x' * 64 + '"}',
++                                       encoding='utf-8')
++    assert '64 bytes' in refused(capsys, copy, tmp_path / 'big.json', 'PT-CORR-JSON')
++    refused(capsys, copy, tmp_path, 'PT-CORR-JSON')
++    refused(capsys, copy, tmp_path / 'absent.json', 'PT-CORR-JSON')
++
++
++def test_a_review_entry_that_names_no_relation_or_finding_is_refused(project, copy, tmp_path, capsys):
++    reviewed(project)
++    export(capsys, project, tmp_path / 'a.json', '--include-review')
++    rewrite(tmp_path / 'a.json', lambda d: d['review']['findings'][0].update(digest='0' * 64))
++    assert 'finding' in refused(capsys, copy, tmp_path / 'a.json', 'PT-CORR-REVIEW')
++    export(capsys, project, tmp_path / 'b.json', '--include-review')
++    rewrite(tmp_path / 'b.json', lambda d: d['review']['matches'][1].update(newer=d['corrections'][2]['newer']))
++    assert 'relation' in refused(capsys, copy, tmp_path / 'b.json', 'PT-CORR-REVIEW')
++
++
++def test_a_failed_commit_keeps_the_prior_snapshot(project, copy, tmp_path, capsys, monkeypatch):
++    from patchtrace.persistence import ProjectStore
++    corrected(project)
++    export(capsys, project, tmp_path / 'a.json')
++    before = tree(copy)
++
++    def fail(self, candidate):
++        raise ValueError('PT-STORAGE: project save failed; prior snapshot retained')
++    monkeypatch.setattr(ProjectStore, 'save', fail)
++    code, _out, err = run(capsys, 'corrections', 'import', copy, tmp_path / 'a.json')
++    monkeypatch.undo()
++    assert code == 3 and 'prior snapshot retained' in err and tree(copy) == before and manual(copy) == []
++
++
++def test_a_cancelled_import_writes_nothing(project, copy, tmp_path, capsys):
++    from patchtrace import corrections_cli
++    corrected(project)
++    export(capsys, project, tmp_path / 'a.json')
++    before, cancel = tree(copy), threading.Event()
++    cancel.set()
++    args = Namespace(action='import', project=copy, file=tmp_path / 'a.json', dry_run=False, json=True)
++    assert corrections_cli.run(args, cancel) == 5
++    assert json.loads(capsys.readouterr().out)['status'] == 'cancelled' and tree(copy) == before
++
++
++def test_a_locked_project_is_a_clean_refusal(project, tmp_path, capsys):
++    with ProjectService.open(project):
++        for leaf in (['list', project], ['undo', project], ['export', project, '--out', tmp_path / 'c.json']):
++            code, _out, err = run(capsys, 'corrections', *leaf)
++            assert code == 2 and 'PT-STORAGE: project is locked' in err and 'Traceback' not in err
++    assert not (tmp_path / 'c.json').exists()
++
++
++def test_cancellation_between_two_corrections_stops_before_anything_is_stored(project, copy, tmp_path, capsys):
++    from patchtrace import corrections_exchange as exchange
++    corrected(project)
++    export(capsys, project, tmp_path / 'a.json')
++    document, before = exchange.read_document(tmp_path / 'a.json'), tree(copy)
++    with ProjectService.open(copy, maintenance=False) as service:
++        answers = iter([False, False, True])  # before the first correction, at the first, at the second
++        with pytest.raises(exchange.Cancelled):
++            exchange.plan_import(service, document, lambda: next(answers))
++        assert not any(m.manual for m in service.project.matches)
++    assert tree(copy) == before
++
++
++def test_a_member_without_an_address_is_exported_with_a_warning_and_never_imported(project, copy, tmp_path, capsys):
++    with ProjectService.open(project) as service:
++        candidate = service.project.model_copy(deep=True)
++        next(f for m in candidate.matches for f in m.newer if f.name == 'get_version').address = None
++        service.project = candidate
++        service.save()
++    corrected(project, THREE[:1])
++    code, envelope, err = result(capsys, 'corrections', 'export', project, '--out', tmp_path / 'a.json')
++    assert code == 0 and len(envelope['warnings']) == 1 and '1 correction(s)' in envelope['warnings'][0]
++    member = json.loads((tmp_path / 'a.json').read_text(encoding='utf-8'))['corrections'][0]['newer'][0]
++    assert 'address' not in member and member['name'] == 'get_version'
++    assert 'no usable address' in refused(capsys, copy, tmp_path / 'a.json', 'PT-CORR-MEMBER')
++
++
++def twin_finding(root: Path) -> str:
++    """A second finding with the same claim from the same provider: same digest, another identifier."""
++    from patchtrace.models import uid
++    with ProjectService.open(root) as service:
++        run = service.project.interpretations[0].model_copy(deep=True)
++        run.id = uid()
++        for record in (run.findings[0], run.findings[0].hypothesis, *run.findings[0].alternatives):
++            record.id = uid()
++        service.add_interpretation(run)
++        return run.findings[0].id
++
++
++def test_findings_with_one_digest_are_told_apart_by_the_stored_id_or_refused(project, fresh, tmp_path, capsys):
++    twin = twin_finding(project)
++    target = Path(shutil.copytree(project, tmp_path / 'same-ids'))
++    with ProjectService.open(project) as service:
++        service.review_finding(twin, 'accepted', 'the second run is the one I checked')
++    document = export(capsys, project, tmp_path / 'a.json', '--include-review')
++    assert [f['id'] for f in document['review']['findings']] == [twin]
++    assert run(capsys, 'corrections', 'import', target, tmp_path / 'a.json')[0] == 0
++    states = {f.id: f.review for i in state(target).interpretations for f in i.findings}
++    assert states[twin] == 'accepted' and sorted(states.values()) == ['accepted', 'unreviewed']
++    twin_finding(fresh)  # two findings with that digest and neither has the document's id
++    assert 'no single finding' in refused(capsys, fresh, tmp_path / 'a.json', 'PT-CORR-REVIEW')
++
++
++def test_an_empty_document_imports_as_nothing_to_do(project, copy, tmp_path, capsys):
++    assert export(capsys, project, tmp_path / 'a.json')['corrections'] == []
++    before = tree(copy)
++    code, out, _err = run(capsys, 'corrections', 'import', copy, tmp_path / 'a.json')
++    assert code == 0 and 'holds no correction' in out and tree(copy) == before
++
++
++def test_name_warnings_are_bounded(project, copy, tmp_path, capsys, monkeypatch):
++    from patchtrace import corrections_exchange as exchange
++    corrected(project, THREE[:1])
++    export(capsys, project, tmp_path / 'a.json')
++    rewrite(tmp_path / 'a.json', lambda d: [m.update(name='other') for c in d['corrections'] for m in c['older'] + c['newer']])
++    monkeypatch.setattr(exchange, 'MAX_WARNINGS', 1)
++    code, envelope, _ = result(capsys, 'corrections', 'import', copy, tmp_path / 'a.json', '--dry-run')
++    assert code == 0 and len(envelope['warnings']) == 2 and envelope['warnings'][1].startswith('1 more functions')
++
++
++# --- undo ------------------------------------------------------------------------------------------------------------
++
++def relations(root: Path) -> list[dict]:
++    return sorted((m.model_dump(mode='json') for m in state(root).matches), key=lambda m: m['id'])
++
++
++def test_undo_restores_the_relations_the_latest_correction_replaced(project, capsys):
++    original = relations(project)
++    corrected(project, THREE[:1])
++    after_first = relations(project)
++    corrected(project, THREE[1:2])
++    assert relations(project) != after_first
++    latest = next(a.id for a in state(project).annotations if a.kind == 'match-override' and not a.stale)
++    code, envelope, _ = result(capsys, 'corrections', 'undo', project)
++    assert code == 0 and envelope['command'] == 'corrections undo' and envelope['status'] == 'complete'
++    assert envelope['result']['annotation_id'] == latest and envelope['result']['restored_relations'] == 1
++    assert envelope['result']['revision'] == {'before': 3, 'after': 4}
++    assert relations(project) == after_first and relations(project) != original  # only the latest one was undone
++    before = tree(project)
++    code, envelope, _ = result(capsys, 'corrections', 'undo', project)  # the service keeps one level of undo
++    assert code == 4 and envelope['status'] == 'complete' and tree(project) == before
++    assert 'superseded' in run(capsys, 'corrections', 'undo', project)[1]
++
++
++def test_undo_of_a_single_correction_gives_back_the_original_relations(project, capsys):
++    original = relations(project)
++    corrected(project, THREE[:1])
++    assert run(capsys, 'corrections', 'undo', project)[0] == 0
++    assert relations(project) == original and manual(project) == []
++
++
++def test_undo_of_a_named_annotation_goes_through_the_service_rule(project, capsys):
++    corrected(project, THREE[:2])
++    stale, active = [a.id for a in state(project).annotations if a.kind == 'match-override']
++    before = tree(project)
++    for annotation in (stale, 'no-such-annotation'):
++        code, _out, err = run(capsys, 'corrections', 'undo', project, '--annotation', annotation)
++        assert code == 2 and 'only an active override can be restored' in err and tree(project) == before
++    code, envelope, _ = result(capsys, 'corrections', 'undo', project, '--annotation', active)
++    assert code == 0 and envelope['result']['annotation_id'] == active
++
++
++def test_an_import_can_be_undone_one_step_like_the_desktop(project, copy, tmp_path, capsys):
++    corrected(project)
++    export(capsys, project, tmp_path / 'a.json')
++    assert run(capsys, 'corrections', 'import', copy, tmp_path / 'a.json')[0] == 0
++    assert run(capsys, 'corrections', 'undo', copy)[0] == 0
++    assert manual(copy) == manual(project)[:2]
++
++
++# --- usage and schema ------------------------------------------------------------------------------------------------
++
++@pytest.mark.parametrize('argv', [['corrections'], ['corrections', 'export', 'p'], ['corrections', 'import', 'p'],
++                                  ['corrections', 'frobnicate', 'p']],
++                         ids=['no-leaf', 'export-without-out', 'import-without-file', 'unknown-leaf'])
++def test_usage_errors_exit_2(capsys, argv):
++    code, out, err = run(capsys, *argv, '--json')
++    assert code == 2 and err.startswith('error: patchtrace corrections') and json.loads(out)['status'] == 'failed'
++
++
++def test_a_missing_project_exits_2_for_every_leaf(tmp_path, capsys):
++    for leaf in (['list'], ['undo'], ['export', '--out', tmp_path / 'c.json'], ['import', tmp_path / 'c.json']):
++        code, _out, err = run(capsys, 'corrections', leaf[0], tmp_path / 'absent', *leaf[1:])
++        assert code == 2 and 'PT-STORAGE' in err, leaf
++
++
++def generator():
++    spec = importlib.util.spec_from_file_location('generate_corrections_schemas',
++                                                  ROOT / 'tools' / 'generate_corrections_schemas.py')
++    module = importlib.util.module_from_spec(spec)
++    spec.loader.exec_module(module)
++    return module
++
++
++def test_the_committed_schema_equals_a_fresh_regeneration():
++    gen = generator()
++    rendered = gen.render()
++    assert [path.name for path in rendered] == ['CorrectionsExchange.json']
++    for path, text in rendered.items():
++        assert path.read_text(encoding='utf-8') == text, f'{path.relative_to(ROOT)} is stale; regenerate it'
++    assert {p.name for p in gen.OUT.iterdir()} == {p.name for p in rendered}
++
++
++def test_the_status_vocabularies_are_read_from_the_models():
++    from patchtrace import corrections_exchange as exchange
++    from patchtrace.models import Finding, FunctionMatch
++    schema = exchange.CorrectionsExchange.model_json_schema()['$defs']
++    assert tuple(schema['Correction']['properties']['category']['enum']) == get_args(FunctionMatch.model_fields['category'].annotation)
++    assert tuple(schema['ReviewedMatch']['properties']['status']['enum']) == get_args(FunctionMatch.model_fields['review'].annotation)
++    assert tuple(schema['ReviewedFinding']['properties']['status']['enum']) == get_args(Finding.model_fields['review'].annotation)
+diff --git a/tests/test_review_cli.py b/tests/test_review_cli.py
+new file mode 100644
+index 00000000..20922a42
+--- /dev/null
++++ b/tests/test_review_cli.py
+@@ -0,0 +1,207 @@
++"""`patchtrace review match|finding|note` (docs/specs/manual-corrections-exchange.md section 6).
++
++Evidence class: hermetic, on the synthetic sample project. Nothing here is live evidence.
++"""
++from __future__ import annotations
++
++import hashlib
++import json
++import os
++import subprocess
++import sys
++from pathlib import Path
++from typing import get_args
++
++import pytest
++
++from patchtrace import cli
++from patchtrace.cli_commands import discover
++from patchtrace.models import AnalystAnnotation, Finding, FunctionMatch
++from patchtrace.sample import create_sample
++from patchtrace.service import ProjectService
++
++SRC = Path(__file__).resolve().parents[1] / 'src'
++ESC, RLO = '\x1b', '‮'
++MATCH_STATES = get_args(FunctionMatch.model_fields['review'].annotation)
++FINDING_STATES = get_args(Finding.model_fields['review'].annotation)
++
++
++@pytest.fixture
++def project(tmp_path):
++    create_sample(tmp_path / 'p').close()
++    return tmp_path / 'p'
++
++
++def run(capsys, *argv):
++    code = cli.main([str(item) for item in argv])
++    out = capsys.readouterr()
++    return code, out.out, out.err
++
++
++def result(capsys, *argv):
++    code, out, err = run(capsys, *argv, '--json')
++    assert out.count('\n') == 1, (out, err)
++    envelope = json.loads(out)
++    assert envelope['contract'] == 'enrichment-cli/1' and set(envelope) >= {'command', 'status', 'result', 'warnings'}
++    return code, envelope, err
++
++
++def tree(root: Path) -> dict[str, str]:
++    return {path.relative_to(root).as_posix(): hashlib.sha256(path.read_bytes()).hexdigest()
++            for path in sorted(root.rglob('*')) if path.is_file() and path.name != '.patchtrace.lock'}
++
++
++def dump(root: Path) -> dict:
++    with ProjectService.open(root, maintenance=False) as service:
++        return service.project.model_dump(mode='json')
++
++
++def changed(before, after, path='') -> list[str]:
++    """Paths of every value that differs between two project dumps."""
++    if isinstance(before, dict) and isinstance(after, dict) and set(before) == set(after):
++        return [hit for key in sorted(before) for hit in changed(before[key], after[key], f'{path}/{key}')]
++    if isinstance(before, list) and isinstance(after, list) and len(before) == len(after):
++        return [hit for index, pair in enumerate(zip(before, after, strict=True))
++                for hit in changed(*pair, f'{path}/{index}')]
++    return [] if before == after else [path]
++
++
++def test_the_adapter_is_discovered_and_thin():
++    verbs, failed = discover()
++    assert 'review' in verbs and 'review' not in failed
++    adapter = SRC / 'patchtrace' / 'cli_commands' / 'review.py'
++    assert len(adapter.read_text(encoding='utf-8').splitlines()) <= 25
++
++
++def test_the_choices_are_the_model_vocabularies(capsys):
++    from patchtrace import review_cli
++    assert review_cli.MATCH_STATES == MATCH_STATES and review_cli.FINDING_STATES == FINDING_STATES
++    kinds = get_args(AnalystAnnotation.model_fields['kind'].annotation)
++    assert set(kinds) - set(review_cli.NOTE_KINDS) == {'match-override', 'validation'}  # written by the service only
++    assert review_cli.NOTE_KINDS == tuple(k for k in kinds if k in review_cli.NOTE_KINDS)
++    for leaf, states in (('match', MATCH_STATES), ('finding', FINDING_STATES)):
++        assert cli.main(['review', leaf, '--help']) == 0
++        text = capsys.readouterr().out
++        assert all(state in text for state in states), text
++
++
++@pytest.mark.parametrize('status', [s for s in MATCH_STATES if s != 'unreviewed'])
++def test_review_match_changes_exactly_that_relation(project, capsys, status):
++    before = dump(project)
++    target = before['matches'][2]
++    code, envelope, _ = result(capsys, 'review', 'match', project, '--match', target['id'], '--status', status)
++    assert code == 0 and envelope['command'] == 'review match' and envelope['status'] == 'complete'
++    assert envelope['result'] == {'match_id': target['id'], 'status': status, 'previous': 'unreviewed'}
++    assert changed(before, dump(project)) == ['/matches/2/review']
++    assert dump(project)['matches'][2]['review'] == status
++
++
++def test_review_finding_changes_exactly_that_finding_and_keeps_the_conclusion_unless_told(project, capsys):
++    before = dump(project)
++    finding = before['interpretations'][0]['findings'][0]
++    where = '/interpretations/0/findings/0'
++    conclusion = f'guard is real{RLO}\nsecond line'
++    code, envelope, _ = result(capsys, 'review', 'finding', project, '--finding', finding['id'],
++                               '--status', 'accepted', '--conclusion', conclusion)
++    assert code == 0 and envelope['command'] == 'review finding'
++    assert envelope['result'] == {'finding_id': finding['id'], 'status': 'accepted', 'previous': 'unreviewed',
++                                  'conclusion': conclusion}
++    first = dump(project)
++    assert changed(before, first) == [f'{where}/analyst_conclusion', f'{where}/review']
++    assert first['interpretations'][0]['findings'][0]['analyst_conclusion'] == conclusion  # stored unchanged, as data
++    # Without --conclusion the stored one is kept (the bare service call would erase it).
++    assert run(capsys, 'review', 'finding', project, '--finding', finding['id'], '--status', 'needs-review')[0] == 0
++    second = dump(project)
++    assert changed(first, second) == [f'{where}/review']
++    code, out, _err = run(capsys, 'review', 'finding', project, '--finding', finding['id'], '--status', 'needs-review',
++                          '--conclusion', '')
++    assert code == 0 and changed(second, dump(project)) == [f'{where}/analyst_conclusion']
++    assert dump(project)['interpretations'][0]['findings'][0]['analyst_conclusion'] == ''
++    assert dump(project)['revision'] == before['revision']
++
++
++@pytest.mark.parametrize('kind', ['note', 'bookmark'])
++def test_review_note_appends_exactly_one_annotation(project, capsys, kind):
++    before = dump(project)
++    target = before['matches'][0]['id']
++    text = f'check the caller{ESC}[2J{RLO}\nnext line'
++    flags = [] if kind == 'note' else ['--kind', kind]  # note is the default
++    code, envelope, _ = result(capsys, 'review', 'note', project, '--target', target, '--text', text, *flags)
++    after = dump(project)
++    added = after['annotations'][-1]
++    assert code == 0 and envelope['command'] == 'review note'
++    assert envelope['result'] == {'annotation_id': added['id'], 'target_id': target, 'kind': kind}
++    assert (added['target_id'], added['kind'], added['text'], added['stale']) == (target, kind, text, False)
++    assert len(after['annotations']) == len(before['annotations']) + 1
++    assert changed(before, {**after, 'annotations': after['annotations'][:-1]}) == []
++    assert after['revision'] == before['revision']
++
++
++def test_untrusted_text_is_escaped_in_text_output(project, capsys):
++    target = dump(project)['interpretations'][0]['findings'][0]['id']
++    hostile = f'a{ESC}[31mb{RLO}c\nforged: line'
++    for argv in (['note', project, '--target', target, '--text', hostile],
++                 ['finding', project, '--finding', target, '--status', 'accepted', '--conclusion', hostile]):
++        code, out, _err = run(capsys, 'review', *argv)
++        assert code == 0 and ESC not in out and RLO not in out and len(out.splitlines()) == 1, out
++
++
++@pytest.mark.parametrize('argv, message', [
++    (['match', '--match', 'no-such-id', '--status', 'accepted'], 'match does not belong to project'),
++    (['finding', '--finding', 'no-such-id', '--status', 'accepted'], 'finding does not belong to project'),
++    (['note', '--target', 'no-such-id', '--text', 'x'], 'annotation target is not owned by project'),
++    (['note', '--target', 'MATCH', '--text', '   '], 'must not be blank'),
++    (['note', '--target', 'MATCH', '--text', 'x' * 32768], '32767'),
++    (['finding', '--finding', 'FINDING', '--status', 'accepted', '--conclusion', 'x' * 32768], '32767'),
++    (['match', '--match', 'MATCH', '--status', 'approved'], "invalid choice: 'approved'"),
++    (['finding', '--finding', 'FINDING', '--status', 'approved'], "invalid choice: 'approved'"),
++    (['note', '--target', 'MATCH', '--text', 'x', '--kind', 'match-override'], "invalid choice: 'match-override'"),
++    (['note', '--target', 'MATCH', '--text', 'x', '--kind', 'validation'], "invalid choice: 'validation'"),
++    (['match', '--status', 'accepted'], '--match'),
++], ids=['unknown-match', 'unknown-finding', 'unknown-note-target', 'blank-note', 'note-too-long', 'conclusion-too-long',
++        'match-status-outside-the-model', 'finding-status-outside-the-model', 'kind-reserved-for-corrections',
++        'kind-reserved-for-restores', 'missing-identifier'])
++def test_refusals_exit_2_and_change_nothing(project, capsys, argv, message):
++    before, snapshot = tree(project), dump(project)
++    names = {'MATCH': snapshot['matches'][0]['id'], 'FINDING': snapshot['interpretations'][0]['findings'][0]['id']}
++    argv = [argv[0], project, *(names.get(item, item) for item in argv[1:])]
++    code, envelope, err = result(capsys, 'review', *argv)
++    assert code == 2 and envelope['status'] == 'failed' and envelope['result'] is None
++    assert message in err and 'Traceback' not in err and tree(project) == before
++
++
++def test_a_storage_failure_exits_3_and_keeps_the_prior_snapshot(project, capsys, monkeypatch):
++    from patchtrace.persistence import ProjectStore
++    before = tree(project)
++    target = dump(project)['matches'][0]['id']
++
++    def fail(self, candidate):
++        raise ValueError('PT-STORAGE: project save failed; prior snapshot retained')
++    monkeypatch.setattr(ProjectStore, 'save', fail)
++    code, _out, err = run(capsys, 'review', 'match', project, '--match', target, '--status', 'accepted')
++    monkeypatch.undo()
++    assert code == 3 and 'prior snapshot retained' in err and tree(project) == before
++
++
++def test_a_locked_or_missing_project_is_a_clean_exit_2(project, tmp_path, capsys):
++    target = dump(project)['matches'][0]['id']
++    with ProjectService.open(project):
++        code, _out, err = run(capsys, 'review', 'match', project, '--match', target, '--status', 'accepted')
++        assert code == 2 and 'PT-STORAGE: project is locked' in err and 'Traceback' not in err
++    code, _out, err = run(capsys, 'review', 'note', tmp_path / 'absent', '--target', 'x', '--text', 'y')
++    assert code == 2 and 'PT-STORAGE' in err
++
++
++def test_no_qt_is_imported_on_any_review_path(project):
++    snapshot = dump(project)
++    code = ('import sys\nfrom patchtrace import cli\nimport patchtrace.review_cli\n'
++            f'p = {str(project)!r}\n'
++            f'codes = [cli.main(["review", "match", p, "--match", {snapshot["matches"][0]["id"]!r}, "--status", "accepted", "--json"]),\n'
++            f'         cli.main(["review", "finding", p, "--finding", {snapshot["interpretations"][0]["findings"][0]["id"]!r}, "--status", "rejected", "--json"]),\n'
++            f'         cli.main(["review", "note", p, "--target", {snapshot["id"]!r}, "--text", "from a script", "--json"])]\n'
++            'print(codes, sorted(m for m in sys.modules if m.startswith(("PySide6", "patchtrace.ui"))), file=sys.stderr)')
++    done = subprocess.run([sys.executable, '-c', code], capture_output=True, text=True, stdin=subprocess.DEVNULL,
++                          env=dict(os.environ, PYTHONPATH=str(SRC)), timeout=120)
++    assert done.returncode == 0, done.stderr
++    assert done.stderr.strip().splitlines()[-1] == '[0, 0, 0] []'
++    assert [json.loads(line)['status'] for line in done.stdout.splitlines()] == ['complete'] * 3
+diff --git a/tools/generate_corrections_schemas.py b/tools/generate_corrections_schemas.py
+new file mode 100644
+index 00000000..da91b105
+--- /dev/null
++++ b/tools/generate_corrections_schemas.py
+@@ -0,0 +1,43 @@
++"""Regenerate the corrections-exchange/1 JSON Schema (docs/specs/manual-corrections-exchange.md section 3).
++
++Run from the repository root:
++
++    PYTHONPATH=src python tools/generate_corrections_schemas.py          # write
++    PYTHONPATH=src python tools/generate_corrections_schemas.py --check  # exit 1 on drift
++
++Output, deterministic and offline: ``docs/schemas/corrections/CorrectionsExchange.json``.
++"""
++from __future__ import annotations
++
++import json
++import sys
++from pathlib import Path
++
++ROOT = Path(__file__).resolve().parents[1]
++OUT = ROOT / 'docs' / 'schemas' / 'corrections'
++SCHEMA_BASE = 'https://patchtrace.local/schemas/corrections-exchange/1/'
++
++
++def render() -> dict[Path, str]:
++    from patchtrace.corrections_exchange import CorrectionsExchange
++    schema = CorrectionsExchange.model_json_schema()
++    schema['$id'] = f'{SCHEMA_BASE}CorrectionsExchange.json'
++    schema['$schema'] = 'https://json-schema.org/draft/2020-12/schema'
++    return {OUT / 'CorrectionsExchange.json': json.dumps(schema, indent=2, sort_keys=True) + '\n'}
++
++
++def main(argv: list[str]) -> int:
++    rendered = render()
++    if '--check' in argv:
++        stale = [p for p, text in rendered.items() if not p.is_file() or p.read_text(encoding='utf-8') != text]
++        for path in stale:
++            print(f'stale: {path.relative_to(ROOT)}', file=sys.stderr)
++        return 1 if stale else 0
++    OUT.mkdir(parents=True, exist_ok=True)
++    for path, text in rendered.items():
++        path.write_text(text, encoding='utf-8', newline='\n')
++    return 0
++
++
++if __name__ == '__main__':
++    raise SystemExit(main(sys.argv[1:]))

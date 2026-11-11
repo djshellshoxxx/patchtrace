@@ -1,0 +1,1544 @@
+{
+ "workstream": "B",
+ "title": "Native binary analysis adapters (Ghidriff/Ghidra, Rizin rz-diff, BinDiff, BinExport2, Diaphora, capa/FLOSS/DiE)",
+ "baseline": "main@882d1ca0",
+ "completion": {
+  "implementation_pct": 82,
+  "validation_pct": 19,
+  "basis": "6 adapters x 14 checks = 84 cells (Ghidriff, rz-diff, BinDiff, BinExport2, Diaphora, capa/FLOSS/DiE). Implementation score 69.0/84 (yes=1, partial=0.5, no=0). Validation counts only cells with live-native evidence: 16/84 (Ghidriff 4 on Windows, rz-diff 4 on Linux+Windows, BinDiff 4 on Linux, intel tools 4 on Linux, BinExport2 0, Diaphora 0). Separately 69/84 cells have an automated test of any class (mocked/synthetic/fixture), which is not compatibility evidence. Non-adapter features (timeout program, SPEC-53 launcher, bundle, rz-diff producer research, orchestration, BinExport producer, docs) carry their own counted bases in the file and are not blended into these two numbers."
+ },
+ "live_workflow_runs_on_main": {
+  "live-backend.yml": [
+   {
+    "run_id": 42584073996,
+    "date": "2026-11-09",
+    "event": "push",
+    "head_sha": "252030f6",
+    "conclusion": "success",
+    "native_step_ran": true,
+    "note": "5 Windows matrix legs; native steps executed in every leg (other legs` steps are skipped by design)"
+   },
+   {
+    "run_id": 42583886407,
+    "date": "2026-11-09",
+    "event": "push",
+    "head_sha": "a44596b8",
+    "conclusion": "cancelled",
+    "native_step_ran": false,
+    "note": "superseded by the next push (concurrency cancel)"
+   }
+  ],
+  "live-rizin.yml": [
+   {
+    "run_id": 42346042490,
+    "date": "2026-11-07",
+    "event": "push",
+    "head_sha": "7ac01478",
+    "conclusion": "success",
+    "native_step_ran": true,
+    "note": "ubuntu-latest and windows-latest; step \"Run live rz-diff check\" success on both"
+   },
+   {
+    "run_id": 41409950627,
+    "date": "2026-11-02",
+    "event": "push",
+    "head_sha": "25c9795b",
+    "conclusion": "success",
+    "native_step_ran": "UNVERIFIED",
+    "note": "jobs not listed in this pass"
+   }
+  ],
+  "live-bindiff.yml": [
+   {
+    "run_id": 42620821985,
+    "date": "2026-11-09",
+    "event": "schedule",
+    "head_sha": "882d1ca0",
+    "conclusion": "success",
+    "native_step_ran": true,
+    "note": "Linux: bindiff.json passed (all live checks). Windows: provisioned, bindiff.json blocked (no_network check is Linux-only); advisory leg, so the green conclusion is not Windows evidence"
+   },
+   {
+    "run_id": 41444737130,
+    "date": "2026-11-02",
+    "event": "schedule",
+    "head_sha": "25c9795b",
+    "conclusion": "success",
+    "native_step_ran": "UNVERIFIED",
+    "note": "jobs not listed in this pass"
+   }
+  ],
+  "live-capa.yml": [],
+  "live-capa.yml_note": "0 runs on main and 0 runs overall (workflow_dispatch only): no native evidence from this workflow",
+  "live-intel-tools.yml": [
+   {
+    "run_id": 42819978053,
+    "date": "2026-11-10",
+    "event": "schedule",
+    "head_sha": "882d1ca0",
+    "conclusion": "success",
+    "native_step_ran": true,
+    "note": "Linux: capa, FLOSS, diec and FLOSS-offline passed. Windows (advisory): capa failed, FLOSS failed, diec passed, FLOSS-offline blocked. Job `live build environment` skipped (dispatch only)"
+   },
+   {
+    "run_id": 41634514664,
+    "date": "2026-11-03",
+    "event": "schedule",
+    "head_sha": "1b817406",
+    "conclusion": "success",
+    "native_step_ran": "UNVERIFIED",
+    "note": "jobs not listed in this pass"
+   }
+  ],
+  "backend-bundle.yml": [
+   {
+    "run_id": 38660893572,
+    "date": "2026-10-15",
+    "event": "workflow_dispatch",
+    "head_sha": "78154a9d",
+    "conclusion": "failure",
+    "native_step_ran": false,
+    "note": "ended after 33 s"
+   },
+   {
+    "run_id": 38660818187,
+    "date": "2026-10-15",
+    "event": "workflow_dispatch",
+    "head_sha": "eb66a07b",
+    "conclusion": "failure",
+    "native_step_ran": false,
+    "note": "ended after 30 s"
+   }
+  ]
+ },
+ "features": [
+  {
+   "id": "B-F01",
+   "name": "Ghidriff/Ghidra primary backend adapter (probe, isolated run, raw preservation, cache)",
+   "spec": [
+    "docs/specs/ghidriff-launcher-symbols.md",
+    "docs/specs/runtime-discovery.md",
+    "docs/specs/ghidriff-timeout-progress.md"
+   ],
+   "code": [
+    "src/patchtrace/backend.py",
+    "src/patchtrace/jobs.py",
+    "src/patchtrace/backend_progress.py",
+    "src/patchtrace/runtime_discovery.py",
+    "src/patchtrace/preflight.py"
+   ],
+   "status": "implemented",
+   "implementation_pct": 89,
+   "validation_pct": 29,
+   "pct_basis": "14 adapter checks: implementation score 12.5/14 (yes=1, partial=0.5); live-native verified 4/14 (Windows only, one tool combination); 13/14 have at least one automated test of any class.",
+   "verified_by": [
+    "live-backend.yml run 42584073996 (push, 2026-11-09, main@252030f6, 5/5 Windows matrix legs success; no src/** change between 252030f6 and 882d1ca0) (live-native, Windows, synthetic fixture DLLs)",
+    "tests/test_backend_cli.py, test_backend_sec1.py, test_backend_sec3.py, test_backend_progress.py, test_ghidriff_threading.py (mocked: fake ghidriff; not run in this pass)",
+    "tests/test_runtime_discovery.py 5 passed, test_runtime_discovery_bindiff.py 4 passed, test_runtime_discovery_bundle.py 28 passed 1 skipped (fixture; run here 2026-11-11)"
+   ],
+   "evidence_class": "live-native",
+   "checks": {
+    "installation_dependency_detection": {
+     "impl": "yes",
+     "evidence": "live-native",
+     "note": "backend._config_errors, _probe_backend (isolated `python -I -X utf8 -c`, scratch cwd; backend.py:319-351), _java_executable, runtime_discovery.py (read-only, never executes). Exercised by the live Windows legs."
+    },
+    "version_compatibility": {
+     "impl": "partial",
+     "evidence": "live-native",
+     "note": "Only Python >= 3.10 and `ghidriff` importability are gated (backend.py:340-351). Ghidriff/pyghidra/Ghidra/JVM versions are recorded and keyed into the raw cache, but there is no compatibility matrix; diagnose says \"Ghidra/JDK compatibility requires a real analysis check\" (backend.py:399). Live evidence covers one combination only (Ghidra 12.0.4, ghidriff@4f5d895, Temurin 25, windows-latest). The owner timeout report used Ghidra 12.1.4 (docs/qa/ghidriff-timeout-20261106.md): untested combination."
+    },
+    "native_execution_test": {
+     "impl": "yes",
+     "evidence": "live-native",
+     "note": "live-backend.yml run 42584073996 (push, 2026-11-09, main@252030f6, 5/5 Windows matrix legs success; no src/** change between 252030f6 and 882d1ca0): legs repro-plain-ghidriff, patchtrace-clean, patchtrace-seeded-store, patchtrace-seeded-store-no-adjacent-pdb, raw-cache-hit. Inputs are MSVC-built synthetic fixture DLLs (tests/fixtures/old.c,new.c). Windows only; the previous run 42583886407 was cancelled (superseded). Linux native Ghidriff evidence belongs to L2 workflows and was not read here (UNVERIFIED)."
+    },
+    "output_parsing": {
+     "impl": "yes",
+     "evidence": "live-native",
+     "note": "backend.py publish(): 100 MiB cap, strict shape gate (functions.added/deleted/modified lists), exactly one *.ghidriff.json (backend.py:667-690, 842-845). Live legs complete a PatchTrace offline analysis and a byte-identical raw-cache hit."
+    },
+    "result_normalization": {
+     "impl": "yes",
+     "evidence": "fixture",
+     "note": "normalization.py turns raw PDiff JSON into FunctionMatch records (owned by another workstream); adapter side only guarantees raw preservation. Open live gate tasks/todo.md:272 (real `matches` label forms)."
+    },
+    "missing_executable_handling": {
+     "impl": "yes",
+     "evidence": "mocked",
+     "note": "PT-BACKEND config errors, `install ghidriff ...` message, Java-not-found line (backend.py:348-351, 396-397); hermetic fake-ghidriff tests (tests/test_backend_*.py)."
+    },
+    "unsupported_binaries": {
+     "impl": "partial",
+     "evidence": "mocked",
+     "note": "No pre-check that the pair is a format/architecture Ghidra supports; a failing import surfaces as a non-zero Ghidriff exit through diagnostics.describe_backend_exit. No test with a real unsupported binary."
+    },
+    "timeout_behaviour": {
+     "impl": "yes",
+     "evidence": "mocked",
+     "note": "jobs.run_process deadline + SPEC-01a progress/receipt (backend_progress.py, backend-execution.json). Open: PT-TIMEOUT-1 (timeout-entry validation/presets + Windows acceptance), PT-TIMEOUT-2..4 and the recorded-pair rerun (tasks/todo.md:9-13). No live timeout evidence."
+    },
+    "subprocess_cleanup_process_tree_kill": {
+     "impl": "yes",
+     "evidence": "synthetic",
+     "note": "Windows Job Object TerminateJobObject / POSIX start_new_session + killpg, terminate in `finally` (jobs.py:323-330, 369-372, 415-427); scratch removed after the tree is dead (backend.py:816-821). Tested with real throw-away child processes, not with a real Ghidra JVM tree; a grandchild that calls setsid escapes on POSIX (docs/audits/process-supervision-20261014.md)."
+    },
+    "reversed_input_comparisons": {
+     "impl": "yes",
+     "evidence": "fixture",
+     "note": "Sides come from the project artifacts, each re-hashed (_input_path) and re-hashed again while copied to private scratch (_snapshot_input, backend.py:404-438); identical hashes short-circuit to status `identical`. A reversed pair is a different project by construction."
+    },
+    "consistent_function_ownership": {
+     "impl": "partial",
+     "evidence": "fixture",
+     "note": "Function side ownership is decided downstream by normalization of Ghidriff JSON; the live gate \"confirm the real Ghidriff matches label forms\" is still open (tasks/todo.md:272)."
+    },
+    "malformed_outputs": {
+     "impl": "yes",
+     "evidence": "mocked",
+     "note": "Oversize/unsafe output stops the child (_output_scan, backend.py:450-461), symlink/escape checks, schema mismatch -> quarantine with failure.txt; prior runs untouched."
+    },
+    "adapter_fallback_behaviour": {
+     "impl": "yes",
+     "evidence": "mocked",
+     "note": "Failure -> runs/quarantine-<id> + failed AnalysisRun; unusable cache entry falls back to a real analysis (backend.py:735-746); cache admission failure never fails a run."
+    },
+    "setup_and_troubleshooting_docs": {
+     "impl": "yes",
+     "evidence": "none",
+     "note": "docs/install.md, docs/windows.md, docs/linux.md, docs/offline-backend.md, docs/guide/18-troubleshooting.md, docs/help/11-14 (help is lane L6)."
+    }
+   },
+   "remaining": [
+    "Version compatibility gate or documented tested matrix (Ghidra 12.0.4 vs 12.1.4, JDK 21 pin vs JDK 25 in CI).",
+    "Unsupported-binary pre-check or a clearer classified failure.",
+    "Linux native Ghidriff acceptance on main recorded next to the Windows one (tasks/todo.md:64).",
+    "Windows OneDrive-backed project confirmations (tasks/todo.md:59-60).",
+    "SEC-10 (docs/audits/20261015-secondary-engines.md): restrict_env still defaults to False (backend.py:64-67): the Ghidriff child inherits proxies/tokens unless a bundle is used.",
+    "tools/backend_pin.json ci_lane_freeze is `unverified` (CI lane installs pyghidra/JPype1/mdutils unpinned)."
+   ],
+   "defects": [],
+   "blockers": [
+    {
+     "type": "other-lane",
+     "detail": "backend.py is owned by L2 (live gates/native proof) and L5 (SPEC-53 diagnose launcher, #280): no task proposed inside it."
+    },
+    {
+     "type": "windows-only",
+     "detail": "OneDrive/long-path/DPI and the owner timeout pair can only be confirmed on Windows."
+    },
+    {
+     "type": "external-tool",
+     "detail": "Ghidra, a JDK and Ghidriff are not installed in this sandbox."
+    }
+   ],
+   "effort_hours": 12,
+   "confidence": "medium",
+   "acceptance_tests": [
+    "live-backend.yml green on the release head (all five legs)",
+    "a recorded Linux native Ghidriff run on main",
+    "tests/test_backend_*.py green on Linux and Windows CI"
+   ],
+   "active_lane_overlap": "L2"
+  },
+  {
+   "id": "B-F02",
+   "name": "Ghidriff timeout diagnostics and recurring Windows timeout (SPEC-01a, PT-TIMEOUT-1..4)",
+   "spec": [
+    "docs/specs/ghidriff-timeout-progress.md"
+   ],
+   "code": [
+    "src/patchtrace/backend_progress.py",
+    "src/patchtrace/backend.py",
+    "src/patchtrace/cli_backend_progress.py",
+    "src/patchtrace/ui_job_events.py"
+   ],
+   "status": "partial",
+   "implementation_pct": 10,
+   "validation_pct": 0,
+   "pct_basis": "5 open tracker items (tasks/todo.md:9-13: PT-TIMEOUT-1, -2, -3, -4, Acceptance): 0 closed, 1 partially implemented (PT-TIMEOUT-1) = 0.5/5; 0/5 validated on the recorded Windows pair.",
+   "verified_by": [
+    "tests/test_backend_progress.py, tests/test_cli_backend_progress.py, tests/test_ui_backend_progress.py (mocked/synthetic; not run in this pass)",
+    "docs/qa/ghidriff-timeout-20261106.md (owner-reported failure, status OPEN)"
+   ],
+   "evidence_class": "mocked",
+   "remaining": [
+    "PT-TIMEOUT-1: timeout-entry validation/presets; native Windows input-pair acceptance.",
+    "PT-TIMEOUT-2: profile the 2,161,955-entry StructuralGraphHash expansion and downstream JSON work through the supported engine boundary.",
+    "PT-TIMEOUT-3: FUN_100ca86c decompiler timeout, missing PDB metadata, capture real runtime versions (log shows Ghidra 12.1.4).",
+    "PT-TIMEOUT-4: verify successful-cache reuse; failed-run checkpoints need a spec.",
+    "Acceptance: rerun the recorded pair on Windows with effective timeout and version provenance."
+   ],
+   "defects": [],
+   "blockers": [
+    {
+     "type": "windows-only",
+     "detail": "The recorded pair and the owner runtime exist only on the owner Windows machine."
+    },
+    {
+     "type": "other-lane",
+     "detail": "backend.py changes fall under L2/L5."
+    }
+   ],
+   "effort_hours": 24,
+   "confidence": "medium",
+   "acceptance_tests": [
+    "Recorded pair completes or times out with an actionable receipt on Windows; backend-execution.json shows stage, elapsed and versions"
+   ],
+   "active_lane_overlap": "L2"
+  },
+  {
+   "id": "B-F03",
+   "name": "PatchTrace Ghidriff launcher with local symbol mode (SPEC-53, ptlaunch/1)",
+   "spec": [
+    "docs/specs/ghidriff-launcher-symbols.md"
+   ],
+   "code": [
+    "src/patchtrace/ghidriff_launch/ptlaunch.py",
+    "src/patchtrace/ghidriff_launch/validate.py",
+    "src/patchtrace/symbols/",
+    "src/patchtrace/backend.py"
+   ],
+   "status": "partial",
+   "implementation_pct": 44,
+   "validation_pct": 0,
+   "pct_basis": "9 items named by docs/specs/REGISTRY.md:102 (GHR-1, GHR-2, GHR-3, CLI flags built; Setup radios, Profiles value, diagnose lines, GHR-5 native air-gap matrix, GHR-6 open): 4/9 built. 0/9 with live-native evidence (hermetic fake-ghidriff tests only). GHR-4 is not mentioned in the registry row: UNVERIFIED.",
+   "verified_by": [
+    "tests/test_backend_launcher_report.py, tests/test_backend_symbol_local.py (mocked: fake ghidriff; not run in this pass)"
+   ],
+   "evidence_class": "mocked",
+   "remaining": [
+    "Setup radios and Profiles value (GUI).",
+    "diagnose lines (lane L5, #280).",
+    "GHR-5 native air-gap matrix.",
+    "GHR-6."
+   ],
+   "defects": [],
+   "blockers": [
+    {
+     "type": "other-lane",
+     "detail": "L5 owns the backend.py diagnose path and tests/test_backend_cli.py."
+    },
+    {
+     "type": "external-tool",
+     "detail": "A native Ghidra run with staged PDBs is needed for GHR-5."
+    }
+   ],
+   "effort_hours": 16,
+   "confidence": "low",
+   "acceptance_tests": [
+    "Local-mode run on a real Ghidra with identity-gated staged PDBs and an empty server list; ptlaunch-report.json validated"
+   ],
+   "active_lane_overlap": "L5"
+  },
+  {
+   "id": "B-F04",
+   "name": "Zero-download backend bundle and offline runtime import (SPEC-06, BUNDLE)",
+   "spec": [
+    "docs/specs/offline-backend-installer.md"
+   ],
+   "code": [
+    "src/patchtrace/backend_bundle.py",
+    "src/patchtrace/offline_bundle.py",
+    "src/patchtrace/backend_cli.py",
+    "tools/backend_pin.json",
+    "tools/build_backend_bundle.py"
+   ],
+   "status": "blocked-external",
+   "implementation_pct": 92,
+   "validation_pct": 0,
+   "pct_basis": "13 items: 12 code slices reported merged by docs/handoff/backend-bundle.md (B1-B8, B3b, B5a, B5b, B7) + 1 open (assemble/license-audit/publish a real relocatable payload, tasks/todo.md:81) = 12/13. Validation 0/4 acceptance items verified in this pass (Windows full build, Linux full build, disconnected Windows 11 validation, license audit); the handoff claims one green Windows full build (run 38676664372 on a branch): UNVERIFIED here.",
+   "verified_by": [
+    "backend-bundle.yml latest two runs on main: 38660893572 and 38660818187 (workflow_dispatch, 2026-10-15) both concluded failure; 5 runs total on main",
+    "tests/test_offline_bundle.py 38 passed (synthetic archives; run here 2026-11-11)",
+    "tests/test_runtime_discovery_bundle.py 28 passed 1 skipped (fixture; run here)"
+   ],
+   "evidence_class": "synthetic",
+   "remaining": [
+    "A green backend-bundle.yml run on main for both platforms (none among the latest two).",
+    "Linux full build Ghidriff tarball pin mismatch reported in the handoff (UNVERIFIED whether since fixed; pin file now marks the tarball `pinned`).",
+    "Validation from a fully disconnected Windows 11 with a known-patch fixture (tasks/todo.md:81).",
+    "Publisher authenticity: manifests prove integrity only (module docstrings)."
+   ],
+   "defects": [],
+   "blockers": [
+    {
+     "type": "windows-only",
+     "detail": "Disconnected Windows 11 acceptance."
+    },
+    {
+     "type": "live-network",
+     "detail": "The full build downloads ~1.1 GB of pinned assets; unreachable from this sandbox."
+    },
+    {
+     "type": "owner-decision",
+     "detail": "Never publish a final release without the owner (handoff rule)."
+    }
+   ],
+   "effort_hours": 16,
+   "confidence": "low",
+   "acceptance_tests": [
+    "backend-bundle.yml dispatch on main: both platform jobs green and `backend selftest` passing from the extracted archive"
+   ],
+   "active_lane_overlap": "L4"
+  },
+  {
+   "id": "B-F05",
+   "name": "Rizin rz-diff secondary engine adapter (probe, supervised run, strict parser)",
+   "spec": [
+    "docs/specs/secondary-engine.md",
+    "docs/specs/multi-engine-orchestration.md"
+   ],
+   "code": [
+    "src/patchtrace/secondary/rzdiff.py",
+    "src/patchtrace/secondary/registry.py",
+    "src/patchtrace/secondary/engine_env.py",
+    "tools/live_rzdiff_check.py",
+    ".github/workflows/live-rizin.yml"
+   ],
+   "status": "partial",
+   "implementation_pct": 82,
+   "validation_pct": 29,
+   "pct_basis": "14 adapter checks: implementation score 11.5/14; live-native verified 4/14 (pinned rizin 0.9.1, Linux + Windows, synthetic PE pair); 11/14 have an automated test of any class.",
+   "verified_by": [
+    "live-rizin.yml run 42346042490 (push, 2026-11-07, main@7ac01478, ubuntu-latest + windows-latest success; \"Run live rz-diff check\" step executed on both) (live-native)",
+    "tests/test_secondary_rzdiff.py 66 passed (synthetic + trimmed real fixture; run here 2026-11-11)",
+    "tests/test_secondary_scheduler.py 20 passed (synthetic; run here)",
+    "tests/test_live_rzdiff_check.py, tests/test_rzdiff_cli_env.py (mocked; not run in this pass)"
+   ],
+   "evidence_class": "live-native",
+   "checks": {
+    "installation_dependency_detection": {
+     "impl": "yes",
+     "evidence": "live-native",
+     "note": "`shutil.which` on the allow-listed PATH or an absolute --rz-diff path (registry.py:68-72), then `rz-diff -v`. No GUI path setting and no runtime_discovery entry (grep for rz/rizin in runtime_discovery.py and ui_engine_setup.py is empty); the binary is not hashed or pinned (EngineRun.executable_path_sha256 hashes the path string)."
+    },
+    "version_compatibility": {
+     "impl": "partial",
+     "evidence": "live-native",
+     "note": ">= 0.9.0 gate only (rzdiff.py:28, :67). No upper bound and no untested flag at adapter level (the unified adapter flags non-0.9.x, lane L1). The only version with live evidence, stock 0.9.1, has the known singleton ownership defect (B-D01)."
+    },
+    "native_execution_test": {
+     "impl": "yes",
+     "evidence": "live-native",
+     "note": "live-rizin.yml run 42346042490 (push, 2026-11-07, main@7ac01478, ubuntu-latest + windows-latest success; \"Run live rz-diff check\" step executed on both); pinned static rizin 0.9.1 on a MinGW/MSVC synthetic PE pair through engine_env + registry + scheduler.run_engines (tools/live_rzdiff_check.py). The previous run 41409950627 (2026-11-02) was also green. Path filter misses src/patchtrace/jobs.py, backend.py and persistence.py, which changed on main after 7ac01478 (fd32e2d1, 1a1e1951, 38be184c): the supervision code has not been re-run live."
+    },
+    "output_parsing": {
+     "impl": "yes",
+     "evidence": "live-native",
+     "note": "Strict JSON array parser (rzdiff.py:92-131): exact key sets, type and range checks, 64 MiB cap; live run requires at least one match; fixture tests/fixtures/secondary/rzdiff-functions.json (trimmed real output)."
+    },
+    "result_normalization": {
+     "impl": "yes",
+     "evidence": "fixture",
+     "note": "SecondaryMatch records with milli similarity and upstream text; address-only mapping (contracts.py)."
+    },
+    "missing_executable_handling": {
+     "impl": "yes",
+     "evidence": "synthetic",
+     "note": "Not found on PATH -> `unsupported` with reason (registry.py:70-71); probe failure -> unsupported (rzdiff.py:56-70). RuntimeError from the runner escapes (B-D05)."
+    },
+    "unsupported_binaries": {
+     "impl": "partial",
+     "evidence": "none",
+     "note": "No format pre-check; exit 0 with empty stdout becomes a generic PT-SECONDARY-INPUT (B-D09). Real \"No functions found\" behaviour is evidenced only on a draft-PR branch (#224)."
+    },
+    "timeout_behaviour": {
+     "impl": "yes",
+     "evidence": "synthetic",
+     "note": "Scheduler deadline 0 < t <= 86400 s (scheduler.py:152-155), CLI 60..86400 (cli.py:777), preparation time counted; timeout -> status `timeout`. SEC-7 fixed."
+    },
+    "subprocess_cleanup_process_tree_kill": {
+     "impl": "yes",
+     "evidence": "synthetic",
+     "note": "jobs.run_process tree kill; scheduler joins workers before returning (scheduler.py:228). Tested with fake children, not a real rizin tree."
+    },
+    "reversed_input_comparisons": {
+     "impl": "partial",
+     "evidence": "synthetic",
+     "note": "The scheduler copies both artifacts, re-hashes them against the declared SHA-256 and passes them in declared order (scheduler.py:52-62, SEC-1 fixed). rz-diff output carries no file identity, so a reversed or singleton-swapped result cannot be detected from the output; standalone rzdiff.run_rzdiff still reads unverified paths (rzdiff.py:135-160)."
+    },
+    "consistent_function_ownership": {
+     "impl": "partial",
+     "evidence": "none",
+     "note": "Many-to-one on the newer side is expected upstream behaviour and is flagged `non-exclusive` in the unified adapter (unified/sources/secondary.py:271-279, lane L1). The singleton side swap is unguarded on main (B-D01)."
+    },
+    "malformed_outputs": {
+     "impl": "yes",
+     "evidence": "synthetic",
+     "note": "Non-array, wrong keys/types, NaN, duplicate keys, deep nesting, oversize and empty output are typed errors (tests/test_secondary_rzdiff.py: 66 passed here). Lossy decode remains (B-D06)."
+    },
+    "adapter_fallback_behaviour": {
+     "impl": "yes",
+     "evidence": "synthetic",
+     "note": "Per-engine failure isolation, partial success exit 3, previous current set kept, per-pair selection (store.select_current, SEC-2 fixed)."
+    },
+    "setup_and_troubleshooting_docs": {
+     "impl": "partial",
+     "evidence": "none",
+     "note": "docs/cli-reference.md, docs/guide/12 and 18, docs/help/44 (L6). docs/install.md has no rz-diff section; the singleton limitation is not documented for users (no hit for it in docs/guide or docs/help)."
+    }
+   },
+   "remaining": [
+    "Guard or quarantine the singleton ownership defect on main (B-D01).",
+    "Record the rz-diff binary SHA-256 and an untested-version flag in EngineRun.provenance (RzDiffAdapter has no provenance hook; registry.py:61-89).",
+    "GUI path setting / discovery for rz-diff (tasks/todo.md:88: engines remain CLI/opt-in).",
+    "Re-run live-rizin after the jobs.py/backend.py changes and widen its path filter.",
+    "docs/specs/REGISTRY.md:43 still says \"open: first live rizin evidence\" although two green live runs exist."
+   ],
+   "defects": [
+    {
+     "id": "B-D01",
+     "severity": "high",
+     "summary": "rz-diff side ownership is trusted unconditionally although stock Rizin 0.9.1 swaps original/modified when the older file has exactly one recovered function; the quarantine written for this exists only on unmerged branches.",
+     "evidence": "src/patchtrace/secondary/rzdiff.py:119-120 (original -> older, modified -> newer, no cardinality guard); guard absent on main (`git grep rzdiff_orientation_unverified main` is empty) but present at b58bb53d:src/patchtrace/secondary/reconcile.py:66 and b58bb53d:src/patchtrace/unified/compute.py:55; real stock output origin/qualify/native-cli-seeding-20261105:docs/qa/native-cli-20261105/seeded-stock-elf-pair-1-2.stdout.log",
+     "failure_scenario": "Older artifact with one recovered function, newer with two: stock rz-diff emits `{\"original\": sym.helper@0x401013 (a NEWER-only function), \"modified\": entry0@0x401000}`. parse_output accepted exactly that text in this pass and stored older_address=0x401013. reconcile then reports a wrong-side disagreement/agreement (secondary/evidence.py adds +8 or marks `contested`), and unified atoms carry swapped RVAs. Identical JSON is produced for the 1:2 and 2:1 inputs, so the stored set cannot be told apart afterwards.",
+     "proposed_fix": "Spec first (docs/specs/secondary-engine.md): refuse, never swap. When the modified side holds at most one distinct function across matched and one-sided rows, raise PT-SECONDARY-ORIENTATION (kind `rzdiff-singleton-ownership`) for producers without a qualified ownership fix; keep every other shape unchanged. Do not port the version-wide quarantine without an owner decision.",
+     "regression_test": "tests/test_secondary_rzdiff.py: parametrised over the four retained stdout shapes (1:1, 1:2, 2:1 refused; 2:2 and corrected 1-original/2-modified accepted) plus a scheduler-level test that the run is `failed` with error_code PT-SECONDARY-ORIENTATION and nothing is published."
+    },
+    {
+     "id": "B-D05",
+     "severity": "low",
+     "summary": "rz-diff probe can raise instead of reporting `unsupported`; the default-engine probe in `secondary run` is unguarded.",
+     "evidence": "src/patchtrace/secondary/rzdiff.py:56 (catches OSError/ValueError only), rzdiff.py:52 and :148 (TemporaryDirectory without ignore_cleanup_errors), src/patchtrace/secondary/cli_run.py:73",
+     "failure_scenario": "jobs.run_process raises RuntimeError(\"PT-BACKEND: terminated child did not exit\") or Windows cannot delete the probe scratch: `patchtrace secondary run PROJECT` (no --engine) ends with a traceback instead of an unsupported engine row. Reproduced the RuntimeError escape with an injected runner.",
+     "proposed_fix": "Catch RuntimeError in rzdiff.probe, use ignore_cleanup_errors=True, and wrap the default-engine probe loop in cli_run.execute like evidence_panel_service.probe_engines does.",
+     "regression_test": "tests/test_secondary_rzdiff.py::test_probe_never_raises_on_runner_runtime_error; tests/test_cli_secondary_run.py::test_default_engine_probe_failure_is_unsupported"
+    },
+    {
+     "id": "B-D06",
+     "severity": "low",
+     "summary": "SEC-8 still open: rz-diff stdout is decoded lossily and any U+FFFD is treated as invalid UTF-8.",
+     "evidence": "src/patchtrace/secondary/registry.py:81 and :87; src/patchtrace/secondary/rzdiff.py:175",
+     "failure_scenario": "A function name that legitimately contains U+FFFD (valid UTF-8 EF BF BD) makes the whole run fail with \"rz-diff output is not valid UTF-8\"; the digest is computed over re-encoded text rather than the captured bytes.",
+     "proposed_fix": "Use ProcessResult.log_bytes (jobs.py:51) in RzDiffAdapter.run, decode strictly in parse and hash the raw bytes.",
+     "regression_test": "tests/test_secondary_rzdiff.py::test_valid_replacement_character_is_accepted and ::test_invalid_utf8_bytes_are_rejected_with_offset"
+    },
+    {
+     "id": "B-D09",
+     "severity": "low",
+     "summary": "A file in which rz-diff finds no functions is reported as a generic input error.",
+     "evidence": "src/patchtrace/secondary/rzdiff.py:102; real stderr `No functions found in file0` with exit 0 and empty stdout in origin/qualify/native-cli-seeding-20261105:docs/qa/native-cli-20261105/README.md",
+     "failure_scenario": "Unsupported or function-less binary: the run is `failed [PT-SECONDARY-INPUT] rz-diff produced no output`; the user cannot tell an unsupported binary from a broken tool without opening the stored stderr tail.",
+     "proposed_fix": "When stdout is empty and stderr contains the fixed \"No functions found in file\" marker, raise PT-SECONDARY-INPUT with kind `no-functions` and a message naming the side.",
+     "regression_test": "tests/test_secondary_rzdiff.py::test_no_functions_is_classified"
+    }
+   ],
+   "blockers": [
+    {
+     "type": "external-tool",
+     "detail": "No rizin in this sandbox; a corrected producer needs the pinned source build (see B-F06)."
+    },
+    {
+     "type": "owner-decision",
+     "detail": "Policy for stock 0.9.1 output: conditional refusal (proposed) versus the version-wide quarantine of PRs #163/#164."
+    }
+   ],
+   "effort_hours": 10,
+   "confidence": "high",
+   "acceptance_tests": [
+    "tests/test_secondary_rzdiff.py singleton-shape tests red before and green after",
+    "live-rizin.yml green on both OSes after the change",
+    "tests/test_secondary_scheduler.py and tests/test_cli_secondary_run.py green"
+   ],
+   "active_lane_overlap": "none"
+  },
+  {
+   "id": "B-F06",
+   "name": "rz-diff producer ownership research controls (singleton path) and their branch state (#165, #168, #222, #224)",
+   "spec": [
+    "docs/specs/secondary-engine.md"
+   ],
+   "code": [
+    "tools/rzdiff/singleton-ownership.patch",
+    "tools/rzdiff/patch_producer.py",
+    "tools/rzdiff/boundary_control.c",
+    "tools/rzdiff/native_control.c",
+    "tools/rzdiff/native_evidence.py"
+   ],
+   "status": "blocked-external",
+   "implementation_pct": 25,
+   "validation_pct": 0,
+   "pct_basis": "8 qualification items from docs/handoff/rzdiff-producer-implementation.md and rzdiff-native-red-control.md: (1) exact-blob source patch + applicator, (2) compiled wrapper-double red/green, (3) native API 32-row stock-red/corrected-green matrix, (4) distinct-byte IO-context controls, (5) production CLI JSON acceptance with recovered inventories, (6) wrong-input/tool witness rejection + application adoption, (7) PE/Windows qualification, (8) independent review + Tier R requalification. On main: 2/8 (items 1-2). Native evidence on main: 0/8. On unmerged draft branches: items 3-4 executed (#222), item 5 attempted and failed at baseline (#224).",
+   "verified_by": [
+    "tests/test_rzdiff_producer_patch.py, tests/test_rzdiff_native_evidence.py (synthetic / compiled helper double; not run in this pass)",
+    "origin/qualify/native-provision-20261105:docs/qa/native-api-io-20261105/final/summary.json (live-native API oracle, branch only: stock io rc 1, corrected io rc 0, negative controls rc 1)",
+    "origin/qualify/native-cli-seeding-20261105:docs/qa/native-cli-20261105/ (live-native CLI, branch only: 16 baseline cases exit 0 with empty stdout; seeded experiment reproduces the singleton swap)"
+   ],
+   "evidence_class": "synthetic",
+   "main_versus_branches": {
+    "on_main": [
+     "tools/rzdiff/* research tooling and its two test files, ported by cherry-picks ed924522 (from #165 51e5b4b1), afdf4a4a (#166 edab7d91), bc7b176e and e0c469d7 (#168 4013cdd5, b304034e), plus 72ea7334 and c3be348b; the .github/workflows/rzdiff-producer.yml hunks were dropped (\"frozen\")",
+     "docs/specs/secondary-engine.md section 8 (research controls) and docs/handoff/rzdiff-*.md",
+     "Parser: no global swap and no quarantine; `original` is always older, `modified` always newer (rzdiff.py:119-120)"
+    ],
+    "only_on_branches": [
+     "#165 (open draft, head 4d66af55, branch repair/rzdiff-producer-ownership, 60 ahead / 403 behind main): original patch + boundary CI; superseded by the ports above",
+     "#168 (open draft, head b304034e, repair/rzdiff-native-red-control-20261103, 63 ahead / 403 behind): the only place that still has .github/workflows/rzdiff-producer.yml",
+     "#222 (open draft, head c50ab287, qualify/native-provision-20261105, 4 ahead / 195 behind, base integrate/swarm-qualified-20261105): `--io-context` controls in tools/rzdiff/native_control.c (+115 lines), a spec paragraph and docs/qa/native-api-io-20261105 + native-provision receipts",
+     "#224 (open draft, head 8fae317b, qualify/native-cli-seeding-20261105, stacked on #222): docs/qa/native-cli-20261105 (123 hashed artifacts): failed production-flag CLI baseline and the unsupported two-call seeding experiment",
+     "Application quarantine of PRs #163/#164 (head b58bb53d): secondary/contracts.rzdiff_orientation_unverified, reconcile.quarantine_report, unified MATCH_POLICY_VERSION `matching/3`, tests/test_rzdiff_orientation_20261101.py: none of it is on main"
+    ],
+    "singleton_path": "Upstream defect confirmed by retained native evidence: rz_analysis_match_functions takes a singleton branch when list_a has one element and returns pair_a/pair_b and the unmatched lists swapped; rz-diff serialises them as original/modified without undoing it. The C correction (swap back after the helper returns) is on main as a patch file only; no corrected binary is built, pinned or accepted anywhere.",
+    "global_parser_swap": "Not implemented anywhere, and must not be: the inversion is conditional on recovered cardinality, and the 1:2 and 2:1 inputs produce byte-identical JSON (stdout SHA-256 d5e968e6... in the #164 investigation), so a global field swap in the parser would corrupt every ordinary (non-singleton) result."
+   },
+   "remaining": [
+    "Merge or re-port the #222/#224 receipts and the `--io-context` control (branches are 195 commits behind main; consolidation is lane L3).",
+    "Production `rz-diff -C -j -t functions` acceptance on a fully installed pinned runtime (baseline returned \"No functions found in file0\" for all 16 authored ELF cases; cause not established).",
+    "PE and Windows qualification; witness rejection; application adoption; both Tier R shards afterwards."
+   ],
+   "defects": [],
+   "blockers": [
+    {
+     "type": "external-tool",
+     "detail": "Needs Meson/Ninja and the pinned Rizin v0.9.1 source build (c3a90e92) with development headers; not present here."
+    },
+    {
+     "type": "other-lane",
+     "detail": "L3 owns open-PR consolidation (#179); tools/calibration/tier_r is L2."
+    },
+    {
+     "type": "owner-decision",
+     "detail": "Whether PatchTrace may depend on a patched Rizin build at all (it does not bundle rizin)."
+    }
+   ],
+   "effort_hours": 40,
+   "confidence": "medium",
+   "acceptance_tests": [
+    "Stock-red and corrected-green 32-row native matrices plus IO-context controls retained on main",
+    "Corrected CLI JSON with complete owned-side inventory coverage in both orientations on PE inputs"
+   ],
+   "active_lane_overlap": "L3"
+  },
+  {
+   "id": "B-F07",
+   "name": "Multi-engine orchestration: registry, scheduler, run records, current-set store (SPEC-28)",
+   "spec": [
+    "docs/specs/multi-engine-orchestration.md"
+   ],
+   "code": [
+    "src/patchtrace/secondary/scheduler.py",
+    "src/patchtrace/secondary/registry.py",
+    "src/patchtrace/secondary/runs.py",
+    "src/patchtrace/secondary/store.py",
+    "src/patchtrace/secondary/cli_run.py",
+    "src/patchtrace/secondary/reconcile.py",
+    "src/patchtrace/secondary/evidence.py"
+   ],
+   "status": "implemented",
+   "implementation_pct": 86,
+   "validation_pct": 14,
+   "pct_basis": "7 items from docs/specs/REGISTRY.md:44: P1-P5 built (5), C2 live workflow (exists and green: the registry row is stale), adapters emitting alternatives (not built: no adapter produces AlternativeMatch rows) = 6/7. Live-native: 1/7 (the live rz-diff run drives scheduler.run_engines end to end).",
+   "verified_by": [
+    "live-rizin.yml run 42346042490 (push, 2026-11-07, main@7ac01478, ubuntu-latest + windows-latest success; \"Run live rz-diff check\" step executed on both) (live-native, through scheduler.run_engines)",
+    "tests/test_secondary_scheduler.py 20 passed (synthetic; run here)",
+    "tests/test_secondary_runs.py, test_secondary_store.py, test_secondary_current.py, test_cli_secondary_run.py, test_secondary_reconcile.py, test_secondary_evidence.py (synthetic; not run in this pass)"
+   ],
+   "evidence_class": "synthetic",
+   "audit_status_20261015_secondary_engines": {
+    "SEC-1": "fixed: scheduler._verified_inputs copies and re-hashes (scheduler.py:52-62); Ghidriff side fixed by backend._snapshot_input (backend.py:420-438)",
+    "SEC-2": "fixed: store.select_current(rows, pair) (store.py:30-48); callers pass the pair (cli.py:806, report2/adapters.py:104, evidence_panel_service.py:108, unified/pipeline.py:324). pilot/collect.py:136 calls current_sets() without a pair: UNVERIFIED whether intended",
+    "SEC-3": "fixed: `-I -X utf8` and scratch cwd for the probe and the Ghidriff run (backend.py:330, 562, 800)",
+    "SEC-4": "fixed: import_bindiff(preserve_dir=...) (bindiff.py:104-171; cli.py:841-842; ui_evidence.py:1292)",
+    "SEC-5": "fixed: content-addressed snapshots (binexport_run.py:164-173); no per-project byte cap",
+    "SEC-6": "fixed: NAME_LIMIT 64 KiB (bindiff.py:36, 96-101)",
+    "SEC-7": "fixed: scheduler.py:152-155 and cli.py:777",
+    "SEC-8": "open (B-D06)",
+    "SEC-9": "fixed: runs.sanitize_stderr strips bidi controls (runs.py:109-115)",
+    "SEC-10": "open by decision: restrict_env defaults to False (backend.py:64-67)",
+    "SEC-11": "UNVERIFIED (binexport.validate_binexport callers not re-checked)",
+    "SEC-12": "UNVERIFIED (spec wording for the 256 MiB cap not re-read)",
+    "SEC-13": "partly closed by the fixes above; test coverage for each not individually re-checked"
+   },
+   "remaining": [
+    "Adapters emitting alternatives (BinDiff/rz-diff emit none; the unified adapter counts them as unused).",
+    "One-sided secondary records count as `disagreement` in reconcile.py:88-100; verdict deferred to SPEC-31 U-04 (lane L1).",
+    "Registry row and tasks/todo.md still list the live workflow as open."
+   ],
+   "defects": [],
+   "blockers": [
+    {
+     "type": "none",
+     "detail": ""
+    }
+   ],
+   "effort_hours": 8,
+   "confidence": "high",
+   "acceptance_tests": [
+    "tests/test_secondary_*.py and tests/test_cli_secondary*.py green",
+    "live-rizin.yml green"
+   ],
+   "active_lane_overlap": "none"
+  },
+  {
+   "id": "B-F08",
+   "name": "BinDiff adapter: probe, supervised execution and .BinDiff import (SPEC-10, SPEC-29)",
+   "spec": [
+    "docs/specs/bindiff-adapter.md",
+    "docs/specs/bindiff-execution.md"
+   ],
+   "code": [
+    "src/patchtrace/secondary/bindiff.py",
+    "src/patchtrace/secondary/bindiff_probe.py",
+    "src/patchtrace/secondary/bindiff_inputs.py",
+    "src/patchtrace/secondary/bindiff_run.py",
+    "src/patchtrace/secondary/cli_bindiff.py",
+    "tools/provision_bindiff.py",
+    "tools/bindiff_pin.json"
+   ],
+   "status": "implemented",
+   "implementation_pct": 89,
+   "validation_pct": 29,
+   "pct_basis": "14 adapter checks: implementation score 12.5/14; live-native verified 4/14 (Linux, real BinDiff 8, synthetic BinExport2 inputs); 13/14 have an automated test of any class.",
+   "verified_by": [
+    "live-bindiff.yml run 42620821985 (schedule, 2026-11-09, main@882d1ca0) (live-native on Linux; Windows blocked/advisory)",
+    "tests/test_bindiff_run.py 40 passed, tests/test_bindiff_probe.py 38 passed, tests/test_bindiff_import_hardening.py 20 passed (synthetic; run here 2026-11-11)",
+    "tests/test_bindiff_real_golden.py (fixture: real BinDiff 8 output on a synthetic pair; not run in this pass)"
+   ],
+   "evidence_class": "live-native",
+   "checks": {
+    "installation_dependency_detection": {
+     "impl": "yes",
+     "evidence": "live-native",
+     "note": "Explicit absolute path only, never PATH (registry.py:120-124); check_path resolves symlinks and refuses bindiff_ui/bindiff_cli (bindiff_probe.py:106-125); runtime_discovery lists candidates; tools/provision_bindiff.py + tools/bindiff_pin.json for CI (pin `verified: false`, trust-on-first-use)."
+    },
+    "version_compatibility": {
+     "impl": "yes",
+     "evidence": "live-native",
+     "note": "Major >= 8, `untested_version` for > 8, required-option check on --help, database version consistency (bindiff_probe.py:25-30, 190-208; bindiff_run.py:285-287). Live for 8 (@568181968) only."
+    },
+    "native_execution_test": {
+     "impl": "yes",
+     "evidence": "live-native",
+     "note": "live-bindiff.yml run 42620821985 (schedule, 2026-11-09, main@882d1ca0): ubuntu-22.04 status table `bindiff.json | passed | all live checks passed` (real BinDiff 8 on a SYNTHETIC BinExport2 pair, tests/test_live_bindiff.py). windows-latest: provisioned, status `blocked` (no_network check is Linux-only; advisory leg); the individual Windows probe/run check results were not read (UNVERIFIED). Previous run 41444737130 (2026-11-02) success."
+    },
+    "output_parsing": {
+     "impl": "yes",
+     "evidence": "live-native",
+     "note": "Hardened read-only SQLite importer (bindiff.py): immutable URI, authorizer, schema-object check, deadline; real golden tests/fixtures/secondary/bindiff-v8-real-on-synthetic.BinDiff."
+    },
+    "result_normalization": {
+     "impl": "yes",
+     "evidence": "fixture",
+     "note": "SecondaryMatch with flags, algorithm, basicblocks; unsigned address recovery (bindiff.py:89-93)."
+    },
+    "missing_executable_handling": {
+     "impl": "yes",
+     "evidence": "synthetic",
+     "note": "not-configured / not-found / probe-failed kinds with user messages (bindiff_probe.py:37-42); tests with tests/fake_bindiff.py."
+    },
+    "unsupported_binaries": {
+     "impl": "partial",
+     "evidence": "synthetic",
+     "note": "Refused before spawn: architecture mismatch between the two .BinExport files, unbound or wrong-artifact inputs (bindiff_inputs.py). BinDiff rejecting an input is a non-zero exit. No real-driver pair evidence."
+    },
+    "timeout_behaviour": {
+     "impl": "yes",
+     "evidence": "synthetic",
+     "note": "Validated 60..86400 s; any non-clean stop discards out/ unread (bindiff_run.py:223-242). Probe timeout is cached (B-D04)."
+    },
+    "subprocess_cleanup_process_tree_kill": {
+     "impl": "yes",
+     "evidence": "synthetic",
+     "note": "jobs.run_process plus out_guard polled every 50 ms; workdir removed in `finally` with retries (bindiff_run.py:137-146, 260-261)."
+    },
+    "reversed_input_comparisons": {
+     "impl": "yes",
+     "evidence": "synthetic",
+     "note": "bind_pair refuses swapped SHA-256 executable ids (bindiff_inputs.py:95-101) and the importer re-checks file.hash order (contracts.check_pair). Unbound (MD5/empty id) inputs rely on the user assertion and cannot be orientation-checked."
+    },
+    "consistent_function_ownership": {
+     "impl": "yes",
+     "evidence": "fixture",
+     "note": "Each address may appear in at most one match per side (bindiff.py:241-244); rows are always two-sided."
+    },
+    "malformed_outputs": {
+     "impl": "partial",
+     "evidence": "synthetic",
+     "note": "Triggers, views, virtual tables, bad pages, wrong hashes and killed-run output are refused (tests/test_bindiff_import_hardening.py: 20 passed here). No row cap (B-D02); raw OSError after exit (B-D07)."
+    },
+    "adapter_fallback_behaviour": {
+     "impl": "yes",
+     "evidence": "synthetic",
+     "note": "Typed failure kinds, previous sets never touched, cache keyed by both .BinExport hashes; unsupported engine yields an `unsupported` run row."
+    },
+    "setup_and_troubleshooting_docs": {
+     "impl": "partial",
+     "evidence": "none",
+     "note": "docs/help/44 and 45 (L6), docs/guide/12 and 18, docs/runbooks (1 file). docs/install.md has no BinDiff section."
+    }
+   },
+   "remaining": [
+    "Importer row cap (B-D02) and probe cache of transient failures (B-D04).",
+    "Windows: real bindiff.exe through the GUI, msiexec /a layout, VC++ runtime (tasks/todo.md:114, 120, 184).",
+    "Real-driver .BinExport pair for runtime, memory and executable_id formats (tasks/todo.md:121).",
+    "Pin independence: tools/bindiff_pin.json is trust-on-first-use with signature unverified.",
+    "live-bindiff promotion to a required check after 10 green runs (owner).",
+    "docs/specs/REGISTRY.md:45 and tasks/todo.md:120 still list the first green Linux live run as open."
+   ],
+   "defects": [
+    {
+     "id": "B-D02",
+     "severity": "medium",
+     "summary": "The .BinDiff importer has no row cap: a hostile or corrupt database can exhaust memory before the 120 s deadline.",
+     "evidence": "src/patchtrace/secondary/bindiff.py:226-240 (unbounded loop building one pydantic record per `function` row); limits are only the 512 MiB file size (bindiff.py:35) and the wall clock (bindiff.py:38). tasks/todo.md:123 lists \"Importer per-table row caps\" as open.",
+     "failure_scenario": "A user imports a 512 MiB .BinDiff holding ~10 million minimal `function` rows through `secondary import-bindiff` or the Engine evidence dialog. Measured here on synthetic rows: about 1.4 KB per SecondaryMatch and more than 60,000 rows per second, so several GB are allocated inside the GUI or CLI process before the deadline fires; the 32 MiB store-row limit only rejects the result afterwards.",
+     "proposed_fix": "Spec first (docs/specs/bindiff-execution.md section 7.2): `SELECT COUNT(*) FROM function` against a MAX_FUNCTION_ROWS constant before the loop (and a counter inside it), raising PT-SECONDARY-LIMIT.",
+     "regression_test": "tests/test_bindiff_import_hardening.py::test_function_row_cap (builder database with cap+1 rows and a monkeypatched small cap) and ::test_row_cap_boundary_is_accepted"
+    },
+    {
+     "id": "B-D04",
+     "severity": "medium",
+     "summary": "A transient BinDiff probe failure (timeout or spawn error) is cached for the life of the process.",
+     "evidence": "src/patchtrace/secondary/bindiff_probe.py:157 (only `probe-cancelled` is excluded), :177 and :186 (timeout and spawn errors become `probe-failed`); clear_probe_cache is never called from src/",
+     "failure_scenario": "First probe of bindiff.exe in a GUI session exceeds the 30 s budget (cold antivirus scan): every later probe and run in that session reports \"BinDiff did not report a version\" until restart or until the file mtime changes. Reproduced here: two probe_report calls with a runner returning reason=timeout made one runner call.",
+     "proposed_fix": "Mirror the intel-tools TA-10 fix: let _probe return (report, cacheable) and skip caching when the version or help run ended with a reason or a spawn exception; give the timeout its own kind/message.",
+     "regression_test": "tests/test_bindiff_probe.py::test_timeout_is_not_cached and ::test_spawn_failure_is_not_cached"
+    },
+    {
+     "id": "B-D07",
+     "severity": "low",
+     "summary": "Filesystem errors after a clean BinDiff exit escape as raw OSError without a SPEC-29 section 6 failure kind.",
+     "evidence": "src/patchtrace/secondary/bindiff_run.py:244, :254, :257 (outside the OSError handlers)",
+     "failure_scenario": "out/ becomes unreadable (antivirus lock, permissions) between exit and import: the scheduler records `failed PT-SECONDARY-RUN OSError` with no kind, and the standalone run_bindiff used by live tools raises OSError.",
+     "proposed_fix": "Wrap the listing, stat and hashing in `except OSError -> _err(\"PT-SECONDARY-RUN\", \"output-unreadable\", ...)`.",
+     "regression_test": "tests/test_bindiff_run.py::test_unreadable_output_is_typed"
+    }
+   ],
+   "blockers": [
+    {
+     "type": "windows-only",
+     "detail": "Windows leg is advisory and currently reports `blocked`."
+    },
+    {
+     "type": "external-tool",
+     "detail": "BinDiff 8 and a BinExport producer are not available here."
+    },
+    {
+     "type": "live-network",
+     "detail": "Independent re-hash of the pinned assets needs the upstream release pages."
+    }
+   ],
+   "effort_hours": 8,
+   "confidence": "high",
+   "acceptance_tests": [
+    "tests/test_bindiff_import_hardening.py row-cap tests",
+    "tests/test_bindiff_probe.py transient-cache tests",
+    "live-bindiff.yml Linux leg green"
+   ],
+   "active_lane_overlap": "none"
+  },
+  {
+   "id": "B-F09",
+   "name": "BinExport2 input validation and binding (SPEC-10b)",
+   "spec": [
+    "docs/specs/binexport2-support.md"
+   ],
+   "code": [
+    "src/patchtrace/secondary/binexport.py",
+    "src/patchtrace/secondary/binexport_run.py",
+    "src/patchtrace/secondary/binexport_check.py",
+    "src/patchtrace/secondary/binexport_prescan.py",
+    "src/patchtrace/secondary/binexport_pipeline.py",
+    "src/patchtrace/secondary/binexport_limits.py",
+    "src/patchtrace/secondary/binexport_identity.py",
+    "src/patchtrace/secondary/binexport_proto.py",
+    "src/patchtrace/secondary/cli_binexport.py",
+    "tools/fuzz_binexport.py"
+   ],
+   "status": "implemented",
+   "implementation_pct": 86,
+   "validation_pct": 0,
+   "pct_basis": "14 adapter checks: implementation score 12.0/14; live-native verified 0/14 (no real-producer .BinExport exists in the repo or CI); 11/14 have synthetic tests.",
+   "verified_by": [
+    "tests/test_binexport_check.py, test_binexport_prescan.py, test_binexport_pipeline.py, test_binexport_property.py, test_binexport_isolation.py, test_binexport_cli.py, test_secondary_binexport.py (synthetic; not run in this pass)",
+    "live-bindiff.yml run 42620821985 (schedule, 2026-11-09, main@882d1ca0) consumed accepted synthetic snapshots on Linux"
+   ],
+   "evidence_class": "synthetic",
+   "checks": {
+    "installation_dependency_detection": {
+     "impl": "yes",
+     "evidence": "synthetic",
+     "note": "protobuf runtime probe with typed reasons protobuf_missing / protobuf_not_upb / protobuf_too_old / descriptor_mismatch (binexport_proto.py:44-56); pyproject pins protobuf==7.36.2 (installed here)."
+    },
+    "version_compatibility": {
+     "impl": "partial",
+     "evidence": "none",
+     "note": "The descriptor set is pinned by hash; which BinExport producer versions (Ghidra/IDA plugin) and executable_id formats are accepted is unverified against real exports (SPEC-29 U9, tasks/todo.md:121)."
+    },
+    "native_execution_test": {
+     "impl": "no",
+     "evidence": "none",
+     "note": "No real-driver .BinExport has ever been validated; fixtures come from tests/binexport_builder.py. The live BinDiff job consumes the synthetic pair only (PATCHTRACE_LIVE_SYNTHETIC_PAIR=1)."
+    },
+    "output_parsing": {
+     "impl": "yes",
+     "evidence": "synthetic",
+     "note": "Prescan of varints/lengths, structural checker, capped worker process (binexport_prescan.py, binexport_check.py, binexport_run.py); property tests and tools/fuzz_binexport.py."
+    },
+    "result_normalization": {
+     "impl": "yes",
+     "evidence": "synthetic",
+     "note": "BinExportSummary + AcceptedBinExport with content-addressed read-only snapshot (binexport_run.py:151-173)."
+    },
+    "missing_executable_handling": {
+     "impl": "yes",
+     "evidence": "synthetic",
+     "note": "Missing or unsuitable protobuf -> PT-SECONDARY-UNSUPPORTED with a reason slug (binexport_run.py:117-120)."
+    },
+    "unsupported_binaries": {
+     "impl": "yes",
+     "evidence": "synthetic",
+     "note": "PE layout / machine mismatch and architecture mismatch are refused (binexport_identity.py, bindiff_inputs.py:132-136)."
+    },
+    "timeout_behaviour": {
+     "impl": "yes",
+     "evidence": "synthetic",
+     "note": "limits.wall_seconds + grace -> worker_timeout (binexport_run.py:135-141)."
+    },
+    "subprocess_cleanup_process_tree_kill": {
+     "impl": "yes",
+     "evidence": "synthetic",
+     "note": "Worker runs through jobs.run_process with a memory cap; work dir removed on any failure (binexport_run.py:159-161). Windows Job Object memory-limit behaviour (U7) is an open Windows CI item (tasks/todo.md:133)."
+    },
+    "reversed_input_comparisons": {
+     "impl": "yes",
+     "evidence": "synthetic",
+     "note": "A 64-hex executable_id equal to the other side is PT-SECONDARY-ORIENTATION (bindiff_inputs.py:95-99)."
+    },
+    "consistent_function_ownership": {
+     "impl": "yes",
+     "evidence": "synthetic",
+     "note": "File-to-artifact binding by SHA-256 executable_id; any other id needs an explicit, recorded assertion (bindiff_inputs.py:102-110)."
+    },
+    "malformed_outputs": {
+     "impl": "yes",
+     "evidence": "synthetic",
+     "note": "Hostile-input handling is the core of this module (prescan, limits, strict worker result); nightly-fuzz.yml evidence was not read here (UNVERIFIED)."
+    },
+    "adapter_fallback_behaviour": {
+     "impl": "yes",
+     "evidence": "synthetic",
+     "note": "Typed SecondaryError with reason slugs; no partial state; the original file is never touched."
+    },
+    "setup_and_troubleshooting_docs": {
+     "impl": "partial",
+     "evidence": "none",
+     "note": "docs/help/45 (L6), docs/guide/12, docs/cli-reference.md `secondary binexport-check`. No how-to for producing a .BinExport with Ghidra or IDA."
+    }
+   },
+   "remaining": [
+    "C3-7 real Ghidra/IDA goldens and live rows U1/U3/U5/U6/U9/U12 (tasks/todo.md:135).",
+    "Windows CI: Job Object memory-limit run and frozen-exe B1/B2 (tasks/todo.md:133).",
+    "CI steps for the nightly fuzz and pin assertions (tasks/todo.md:134).",
+    "GUI wiring of BinExport selection is listed open at tasks/todo.md:136; a GUI BinDiff setup exists in evidence_panel_service (UNVERIFIED which parts remain).",
+    "No per-project cap on stored snapshot bytes (up to 256 MiB each)."
+   ],
+   "defects": [],
+   "blockers": [
+    {
+     "type": "external-tool",
+     "detail": "A BinExport producer (Ghidra extension or IDA plugin) is required for real inputs."
+    },
+    {
+     "type": "windows-only",
+     "detail": "Memory-cap behaviour under a Job Object."
+    }
+   ],
+   "effort_hours": 12,
+   "confidence": "medium",
+   "acceptance_tests": [
+    "A committed repo-owned real-producer .BinExport pair passes `secondary binexport-check` and a live BinDiff run"
+   ],
+   "active_lane_overlap": "none"
+  },
+  {
+   "id": "B-F10",
+   "name": "BinExport2 producer on the Ghidra host (SPEC-49 ADR)",
+   "spec": [
+    "docs/specs/binexport-producer-ghidra-host.md"
+   ],
+   "code": [],
+   "status": "missing",
+   "implementation_pct": 0,
+   "validation_pct": 0,
+   "pct_basis": "docs/specs/REGISTRY.md:65 marks SPEC-49 as `draft` (ADR: who produces BinExport2). 0 code items exist; users must supply .BinExport files produced outside PatchTrace.",
+   "verified_by": [],
+   "evidence_class": "none",
+   "remaining": [
+    "Owner decision on the ADR; then a producer slice with a pinned BinExport build and live evidence."
+   ],
+   "defects": [],
+   "blockers": [
+    {
+     "type": "owner-decision",
+     "detail": "ADR is a draft."
+    },
+    {
+     "type": "external-tool",
+     "detail": "Needs Ghidra plus the BinExport extension."
+    }
+   ],
+   "effort_hours": 40,
+   "confidence": "low",
+   "acceptance_tests": [
+    "A PatchTrace-driven export of both artifacts whose executable_id equals the artifact SHA-256, accepted by binexport-check"
+   ],
+   "active_lane_overlap": "L2"
+  },
+  {
+   "id": "B-F11",
+   "name": "Diaphora optional engine, Mode A result import (SPEC-DA-01)",
+   "spec": [
+    "docs/specs/diaphora-optional-engine.md"
+   ],
+   "code": [
+    "src/patchtrace/diaphora/sqlite_guard.py",
+    "src/patchtrace/diaphora/result_import.py",
+    "src/patchtrace/diaphora/address_map.py",
+    "src/patchtrace/diaphora/provenance.py",
+    "src/patchtrace/diaphora/bridge.py",
+    "src/patchtrace/diaphora/service.py",
+    "src/patchtrace/diaphora/cli.py",
+    "src/patchtrace/diaphora/contracts.py"
+   ],
+   "status": "partial",
+   "implementation_pct": 54,
+   "validation_pct": 0,
+   "pct_basis": "14 adapter checks: implementation score 7.5/14 (three checks are not applicable to Mode A and count as not built because Modes B/C are open); live-native verified 0/14; 8/14 have synthetic tests.",
+   "verified_by": [
+    "tests/test_diaphora_import.py 38 passed, tests/test_diaphora_cli.py 14 passed (synthetic; run here 2026-11-11)",
+    "tests/test_diaphora_deadline.py, test_diaphora_schemas.py, test_unified_diaphora_adapter.py, test_unified_diaphora_wire.py (synthetic; not run in this pass)"
+   ],
+   "evidence_class": "synthetic",
+   "checks": {
+    "installation_dependency_detection": {
+     "impl": "no",
+     "evidence": "none",
+     "note": "Mode A only imports an existing result; nothing detects Diaphora or IDA. Modes B/C (compare exports, full IDA export) are not built (docs/specs/REGISTRY.md:55)."
+    },
+    "version_compatibility": {
+     "impl": "partial",
+     "evidence": "none",
+     "note": "`config.version` is recorded as engine_version or \"unknown\" (result_import.py:163); no supported-version gate and no untested flag, although the spec warns about 3.4.x behaviour changes."
+    },
+    "native_execution_test": {
+     "impl": "no",
+     "evidence": "none",
+     "note": "Never executed and no real .diaphora result is in the repo: fixtures are synthetic (tests/diaphora_support.py). No workflow."
+    },
+    "output_parsing": {
+     "impl": "yes",
+     "evidence": "synthetic",
+     "note": "Fixed-shape row reader with categories, EA parsing, ratio handling (result_import.py); tests/test_diaphora_import.py: 38 passed here."
+    },
+    "result_normalization": {
+     "impl": "yes",
+     "evidence": "synthetic",
+     "note": "DiaphoraMatchSet (diaphora/1) with per-side EA -> RVA mapping and address_status (address_map.py)."
+    },
+    "missing_executable_handling": {
+     "impl": "no",
+     "evidence": "none",
+     "note": "Not applicable to Mode A (no executable); listed as not built for Modes B/C."
+    },
+    "unsupported_binaries": {
+     "impl": "partial",
+     "evidence": "synthetic",
+     "note": "A PE that cannot be read maps nothing (`ambiguous`), so rows never count as agreeing (service.py:18-29); no architecture or format cross-check between the result and the pair."
+    },
+    "timeout_behaviour": {
+     "impl": "yes",
+     "evidence": "synthetic",
+     "note": "60 s deadline per query via the SQLite progress handler plus cancel (sqlite_guard.py:28, 88-95, 159-160); tests/test_diaphora_deadline.py."
+    },
+    "subprocess_cleanup_process_tree_kill": {
+     "impl": "no",
+     "evidence": "none",
+     "note": "No subprocess in Mode A; nothing to clean up. Not built for Modes B/C."
+    },
+    "reversed_input_comparisons": {
+     "impl": "partial",
+     "evidence": "synthetic",
+     "note": "Manifest-bound results are checked for reversed binaries (provenance.py:40-41); a user-attested import has no orientation check at all (primary is assumed to be older, result_import.py:151)."
+    },
+    "consistent_function_ownership": {
+     "impl": "yes",
+     "evidence": "synthetic",
+     "note": "Duplicate (category, older, newer) rows keep the first and are counted; rows without verified RVAs are never agreement (bridge.py:65-67)."
+    },
+    "malformed_outputs": {
+     "impl": "partial",
+     "evidence": "synthetic",
+     "note": "Fails closed on missing tables/columns, unknown categories, bad addresses, NUL or oversize text and row budgets; views, triggers and virtual tables are accepted (B-D03)."
+    },
+    "adapter_fallback_behaviour": {
+     "impl": "yes",
+     "evidence": "synthetic",
+     "note": "Typed PT-DIAPHORA-* errors; invalid stored rows are skipped, storage errors mapped (service.py:53-54, 67-77)."
+    },
+    "setup_and_troubleshooting_docs": {
+     "impl": "partial",
+     "evidence": "none",
+     "note": "Mentioned in 2 docs/help files (L6) only: no entry in docs/guide, docs/install.md or docs/cli-reference.md (generated 2026-10-14, before the verb existed) although `patchtrace diaphora` is a registered command."
+    }
+   },
+   "remaining": [
+    "SQLite guard hardening (B-D03).",
+    "Export-database import, signals, code context, GUI (no reference to diaphora in ui*.py or gui/), Modes B and C (REGISTRY.md:55).",
+    "A real .diaphora result from a licensed IDA + Diaphora run as a golden.",
+    "Orientation sanity for user-attested imports; version gate.",
+    "User documentation outside docs/help."
+   ],
+   "defects": [
+    {
+     "id": "B-D03",
+     "severity": "medium",
+     "summary": "The Diaphora result guard accepts view-backed tables, triggers and virtual tables, and its authorizer is not restricted to the fixed tables its docstring promises.",
+     "evidence": "src/patchtrace/diaphora/sqlite_guard.py:109-114 (any SELECT/READ allowed), :171-174 (PRAGMA table_info accepts a view; no sqlite_master object check); contrast src/patchtrace/secondary/bindiff.py:174-190",
+     "failure_scenario": "Reproduced here: a .diaphora file whose `results` is a VIEW over a hidden table (plus a trigger) imports successfully and yields a `verified-rva` match. A crafted view over a recursive or cross-join query makes every read compute rows on the fly, bounded only by the 60 s per-query deadline, and reads tables outside the documented allowlist. The module contract (\"allows only SELECT/READ of the fixed tables\") is not what the code enforces.",
+     "proposed_fix": "Port the BinDiff schema-object check (refuse trigger, view, virtual table; indexes only on real tables), restrict SQLITE_READ to the SCHEMA tables plus sqlite_master, and add cell_size_check, defensive mode and max_page_count as in bindiff._harden. Update the spec sentence on SQLite safety.",
+     "regression_test": "tests/test_diaphora_import.py::test_view_backed_results_is_rejected, ::test_trigger_is_rejected, ::test_virtual_table_is_rejected, ::test_read_of_unlisted_table_is_denied"
+    }
+   ],
+   "blockers": [
+    {
+     "type": "external-tool",
+     "detail": "IDA Pro, Hex-Rays and Diaphora (AGPL) are required for any real result; none is available here."
+    },
+    {
+     "type": "owner-decision",
+     "detail": "License review before any distribution-coupled mode (spec item 9)."
+    }
+   ],
+   "effort_hours": 10,
+   "confidence": "high",
+   "acceptance_tests": [
+    "tests/test_diaphora_import.py schema-object tests red before and green after",
+    "A real result imported with a manifest and reconciled"
+   ],
+   "active_lane_overlap": "none"
+  },
+  {
+   "id": "B-F12",
+   "name": "Intel tool adapters: capa, FLOSS, Detect It Easy (SPEC-36); YARA-X noted",
+   "spec": [
+    "docs/specs/three-tool-evidence-adapters.md"
+   ],
+   "code": [
+    "src/patchtrace/intelligence/tools/capa.py",
+    "src/patchtrace/intelligence/tools/floss.py",
+    "src/patchtrace/intelligence/tools/diec.py",
+    "src/patchtrace/intelligence/tools/process.py",
+    "src/patchtrace/intelligence/tools/runner.py",
+    "src/patchtrace/intelligence/tools/delta.py",
+    "src/patchtrace/intelligence/tools/pins.py",
+    "tools/provision_intel_tools.py",
+    "tools/intel_tools_pin.json"
+   ],
+   "status": "partial",
+   "implementation_pct": 93,
+   "validation_pct": 29,
+   "pct_basis": "14 adapter checks: implementation score 13.0/14; live-native verified 4/14 (Linux only; Windows capa and FLOSS fail); 13/14 have an automated test of any class.",
+   "verified_by": [
+    "live-intel-tools.yml run 42819978053 (schedule, 2026-11-10, main@882d1ca0) (live-native: Linux passed for all three tools; Windows capa/FLOSS failed)",
+    "tests/test_intel_tools_audit.py 35 passed (synthetic regression tests for TA-1..12, 16; run here 2026-11-11)",
+    "tests/test_intel_tools_parsers.py, test_intel_tools_runner.py, test_intel_tools_cli.py, test_provision_intel_tools.py (fixture/synthetic; not run in this pass)"
+   ],
+   "evidence_class": "live-native",
+   "checks": {
+    "installation_dependency_detection": {
+     "impl": "yes",
+     "evidence": "live-native",
+     "note": "Explicit absolute path or PATCHTRACE_CAPA / PATCHTRACE_FLOSS / PATCHTRACE_DIEC; never PATH (process.regular_file); tools/provision_intel_tools.py + tools/intel_tools_pin.json (`verified: false`, trust-on-first-use)."
+    },
+    "version_compatibility": {
+     "impl": "yes",
+     "evidence": "live-native",
+     "note": "Executable SHA-256 must equal the pin unless --*-accept-untested (capa.py:170-195, floss.py:147-170, diec.py:147-188); rules/signature tree digests re-checked before a run (PT-TOOL-STALE)."
+    },
+    "native_execution_test": {
+     "impl": "yes",
+     "evidence": "live-native",
+     "note": "live-intel-tools.yml run 42819978053 (schedule, 2026-11-10, main@882d1ca0): ubuntu-22.04 status table: capa 9.4.0, FLOSS 3.1.1 and diec 3.21 `passed` (goldens reproduced on the synthetic pair), FLOSS offline in an empty network namespace `passed`. windows-latest (advisory): capa failed, FLOSS failed, diec passed, floss-offline blocked (B-D10). The `live build environment` job was skipped (dispatch only). live-capa.yml has never run (0 runs)."
+    },
+    "output_parsing": {
+     "impl": "yes",
+     "evidence": "live-native",
+     "note": "Strict parsers for capa result documents, FLOSS JSON and diec JSON; Linux live run compares with committed goldens."
+    },
+    "result_normalization": {
+     "impl": "yes",
+     "evidence": "fixture",
+     "note": "normalize.py / delta.py over tool-evidence/1; goldens are real tool output on synthetic PE inputs."
+    },
+    "missing_executable_handling": {
+     "impl": "yes",
+     "evidence": "synthetic",
+     "note": "Unconfigured, missing, relative or non-regular executable -> unsupported manifest with a reason (capa.py:133-141)."
+    },
+    "unsupported_binaries": {
+     "impl": "partial",
+     "evidence": "synthetic",
+     "note": "Tool exit codes are classified; no real run on a non-PE or packed real binary. DiE golden for a UPX image is an open live gate (tasks/todo.md:329)."
+    },
+    "timeout_behaviour": {
+     "impl": "yes",
+     "evidence": "synthetic",
+     "note": "Per-tool timeouts; an output flood stops at max_output_bytes instead of the full timeout (process.py:318-340; TA-5 fixed)."
+    },
+    "subprocess_cleanup_process_tree_kill": {
+     "impl": "yes",
+     "evidence": "synthetic",
+     "note": "jobs.run_process; scratch removal with retries. Windows PyInstaller onefile leftovers after a kill are an unverified hypothesis (TA-15)."
+    },
+    "reversed_input_comparisons": {
+     "impl": "yes",
+     "evidence": "fixture",
+     "note": "capa output is bound to the sample by md5/sha1/sha256; sides come from the project pair."
+    },
+    "consistent_function_ownership": {
+     "impl": "yes",
+     "evidence": "fixture",
+     "note": "RVAs are checked against SizeOfImage and section layout; no nearest-function guessing; image-base disagreement is an anomaly (TA-12 fixed)."
+    },
+    "malformed_outputs": {
+     "impl": "yes",
+     "evidence": "synthetic",
+     "note": "TA-1..TA-12 and TA-16 are fixed with regression tests (tests/test_intel_tools_audit.py: 35 passed here). TA-13 (capa document validated in full before the match cap, capa.py:538 vs :584) and TA-14 (B-D08) remain."
+    },
+    "adapter_fallback_behaviour": {
+     "impl": "yes",
+     "evidence": "synthetic",
+     "note": "A failing job is that job`s failed run; other tools and prior evidence are unaffected (runner.py)."
+    },
+    "setup_and_troubleshooting_docs": {
+     "impl": "partial",
+     "evidence": "none",
+     "note": "docs/help/25-27 (L6), docs/guide (8 files mention capa), docs/cli-reference.md `intel-tools`. No provisioning or troubleshooting section in docs/install.md; the Windows status is not documented."
+    }
+   },
+   "audit_status_20261014_tool_adapters": {
+    "TA-1": "fixed: ValidationError wrapped into ToolError, PT-TOOL-ADDRESS raised (capa.py:526-552, floss.py:334-369, diec.py:300-323)",
+    "TA-2": "fixed: extra localized links become added/removed sub-entries (delta.py:203-212)",
+    "TA-3": "fixed: truncated side -> `unknown` / `indeterminate` (delta.py:191-193, 275-277, 380-381)",
+    "TA-4": "fixed: ProcessResult.log_bytes and byte-count oversize (jobs.py:51; process.py:335-340)",
+    "TA-5": "fixed: max_output_bytes stop and optional memory_limit_bytes (jobs.py:268-270, 364; process.py:318-331); capa memory limit wiring is still listed open at tasks/todo.md:294",
+    "TA-6": "fixed: pin enforced, executable re-verified before spawn (capa.py:170-195; runner.py:160); the swap window is narrowed, not closed (tasks/todo.md:257)",
+    "TA-7": "fixed: floss.py:357-363",
+    "TA-8": "fixed: DiE text goes through process.tool_text, not the path scrubber (diec.py:258-271)",
+    "TA-9": "fixed: label built with process.tool_text (diec.py:264)",
+    "TA-10": "fixed: transient probe outcomes are not cached and probes do not raise (capa.py:149-161; process.py:379-397)",
+    "TA-11": "fixed: hash-suffixed long rule ids (capa.py:516)",
+    "TA-12": "fixed: floss.py:370-371 records base-differs",
+    "TA-13": "open: whole capa document validated by pydantic before the match cap (capa.py:538 vs :584); whether parsing runs in a capped worker was not checked (UNVERIFIED)",
+    "TA-14": "open (B-D08)",
+    "TA-15": "open, Windows hypothesis; the live Windows failures of capa and FLOSS are consistent with it but the cause is UNVERIFIED",
+    "TA-16": "fixed: finite-float check in load_json_strict (common.py:389, 433)",
+    "TA-17": "UNVERIFIED (Ghidra-backend test coverage not re-checked)",
+    "TA-18": "informational"
+   },
+   "remaining": [
+    "Windows: make capa and FLOSS probes work and turn the advisory leg strict (B-D10).",
+    "First run of live-capa.yml (0 runs) and of the dispatch-only live-buildenv job.",
+    "DiE value gate (no false-lead-reduction claim), Ghidra backend for capa, capa memory limit wiring (tasks/todo.md:258, 294).",
+    "TA-13 and TA-14.",
+    "YARA-X (rules/, yara-x==1.21.0 optional extra) is an in-process library in a capped worker, not an external executable; it was not audited in this pass (UNVERIFIED)."
+   ],
+   "defects": [
+    {
+     "id": "B-D10",
+     "severity": "high",
+     "summary": "The pinned capa and FLOSS builds are unusable through the adapters on Windows: the probe gets no version.",
+     "evidence": "src/patchtrace/intelligence/tools/capa.py:186 and floss.py:160 (messages); live-intel-tools.yml run 42819978053 (schedule, 2026-11-10, main@882d1ca0) job 129842721671 (windows-latest) status table: `intel-tools-capa | failed | capa did not report a version (exit 0)`, `intel-tools-floss | failed | FLOSS did not report a version (exit 1)`",
+     "failure_scenario": "On Windows (the primary desktop target) with the pinned capa 9.4.0 and FLOSS 3.1.1 provisioned, `intel-tools probe` marks both unsupported, so the Capabilities and FLOSS-backed string evidence cannot be produced. The job is advisory (continue-on-error), so the workflow stays green. Root cause UNVERIFIED (candidates: PyInstaller onefile start-up inside the from-scratch environment of engine_env._bindiff_env, output encoding; audit item TA-15).",
+     "proposed_fix": "Reproduce on a Windows runner with the stderr/stdout of the probe retained in the status JSON; then fix the environment (for example variables the onefile bootloader needs) or the version regex, and make the Windows leg strict.",
+     "regression_test": "tests/test_live_intel_tools.py Windows leg reports `passed` for capa and floss; a fake-executable test for the discovered cause in tests/test_intel_tools_runner.py"
+    },
+    {
+     "id": "B-D08",
+     "severity": "low",
+     "summary": "TA-14 still open: the build-environment delta key ignores the version for library, format, overlay and other categories.",
+     "evidence": "src/patchtrace/intelligence/tools/delta.py:263-265",
+     "failure_scenario": "An embedded runtime library detected by DiE as the same name with a new version (for example zlib 1.2.11 -> 1.3.1) is reported as `unchanged` in the environment delta.",
+     "proposed_fix": "Include `item.version` in the key for categories whose label is the bare detector rule, or emit a `version-changed` note; spec T6 first.",
+     "regression_test": "tests/test_intel_tools_audit.py::test_ta14_library_version_change_is_reported"
+    }
+   ],
+   "blockers": [
+    {
+     "type": "windows-only",
+     "detail": "capa/FLOSS probe failure reproduces only on a Windows runner."
+    },
+    {
+     "type": "live-network",
+     "detail": "Provisioning downloads the pinned assets; pins are trust-on-first-use until re-hashed from a second network path."
+    }
+   ],
+   "effort_hours": 14,
+   "confidence": "medium",
+   "acceptance_tests": [
+    "live-intel-tools.yml Windows leg: capa and floss `passed`",
+    "tests/test_intel_tools_audit.py TA-14 test"
+   ],
+   "active_lane_overlap": "none"
+  },
+  {
+   "id": "B-F13",
+   "name": "Adapter setup and troubleshooting documentation and tracker accuracy",
+   "spec": [
+    "docs/specs/REGISTRY.md"
+   ],
+   "code": [
+    "docs/install.md",
+    "docs/guide/12-evidence-and-engines.md",
+    "docs/guide/18-troubleshooting.md",
+    "docs/cli-reference.md",
+    "docs/specs/REGISTRY.md",
+    "tasks/todo.md",
+    "docs/qa.md"
+   ],
+   "status": "partial",
+   "implementation_pct": 58,
+   "validation_pct": 0,
+   "pct_basis": "6 adapters x 4 documents (docs/install.md, docs/guide/12 engines, docs/guide/18 troubleshooting, docs/cli-reference.md) = 24 cells; a cell counts when the adapter is mentioned at all (grep counts taken here): Ghidriff 4, rz-diff 3, BinDiff 3, BinExport 3, intel tools 3 (missing from install.md), Diaphora 0 = 16/24 = 67%, minus 2 cells for known-wrong content (REGISTRY.md:43-45 stale live status; cli-reference lacks the diaphora verb) = 14/24. No documentation acceptance test exists for these claims (0 validated).",
+   "verified_by": [],
+   "evidence_class": "none",
+   "remaining": [
+    "docs/install.md: optional engines (rz-diff, BinDiff + BinExport, capa/FLOSS/diec provisioning, Diaphora import).",
+    "docs/guide/18-troubleshooting.md: Diaphora errors, rz-diff \"no functions\" and singleton limitation, BinDiff probe failures, Windows status of capa/FLOSS.",
+    "docs/cli-reference.md regenerate (no `patchtrace diaphora`; intel-tools help text still cites SPEC-29).",
+    "Stale tracker rows: docs/specs/REGISTRY.md:43 (rz-diff \"open: first live rizin evidence\"), :44 (C2 live workflow), :45 (P6 Linux), :53 (live runs); tasks/todo.md:120 (first green live-bindiff), :165-167 (intel-tools runner/CLI/provisioning listed as not built), :257 (first run of live-intel-tools.yml)."
+   ],
+   "defects": [],
+   "blockers": [
+    {
+     "type": "other-lane",
+     "detail": "docs/help/** belongs to L6; tasks/todo.md and docs/qa.md are shared by every lane (merge-conflict risk)."
+    }
+   ],
+   "effort_hours": 6,
+   "confidence": "medium",
+   "acceptance_tests": [
+    "Every adapter appears in install, engines guide, troubleshooting and CLI reference; registry rows cite the run ids listed in this inventory"
+   ],
+   "active_lane_overlap": "L6"
+  }
+ ],
+ "actionable_now": [
+  {
+   "id": "B-T01",
+   "title": "Refuse rz-diff results whose side ownership is ambiguous (singleton shape); spec first, never swap",
+   "why": "B-D01: stock Rizin 0.9.1 swaps original/modified when the older file has one recovered function; main stores the swapped set as correct and the only guard lives on unmerged PRs #163/#164.",
+   "files": [
+    "docs/specs/secondary-engine.md",
+    "src/patchtrace/secondary/rzdiff.py",
+    "src/patchtrace/secondary/contracts.py",
+    "tests/test_secondary_rzdiff.py",
+    "tests/fixtures/secondary/rzdiff-singleton-shapes.json",
+    "docs/qa.md"
+   ],
+   "tests": [
+    "tests/test_secondary_rzdiff.py (new singleton-shape cases)",
+    "tests/test_secondary_scheduler.py",
+    "tests/test_live_rzdiff_check.py"
+   ],
+   "size": "M",
+   "priority": 1,
+   "risk": "Policy choice (conditional refusal versus version-wide quarantine) may need the owner; true N-versus-1 pairs become refused (conservative). Stored match sets change for those shapes, which feeds the unified engine: tell lane L1, no L1 file is touched. The live fixture pair has several functions on both sides, so live-rizin stays green.",
+   "depends_on": [],
+   "lane_conflict": "none",
+   "acceptance": "The four retained stdout shapes from origin/qualify/native-cli-seeding-20261105 are covered: 1:1, 1:2 and 2:1 raise PT-SECONDARY-ORIENTATION with kind rzdiff-singleton-ownership; 2:2 and a 1-original/2-modified shape parse unchanged; scheduler outcome is `failed` and nothing is published; existing 66 tests stay green."
+  },
+  {
+   "id": "B-T02",
+   "title": "Cap the number of `function` rows the .BinDiff importer will read",
+   "why": "B-D02: memory exhaustion on a hostile or corrupt database before the 120 s deadline; open tracker item tasks/todo.md:123.",
+   "files": [
+    "docs/specs/bindiff-execution.md",
+    "src/patchtrace/secondary/bindiff.py",
+    "tests/test_bindiff_import_hardening.py"
+   ],
+   "tests": [
+    "tests/test_bindiff_import_hardening.py",
+    "tests/test_bindiff_real_golden.py",
+    "tests/test_secondary_bindiff.py"
+   ],
+   "size": "S",
+   "priority": 2,
+   "risk": "Choosing the cap: must stay above real results (Diaphora uses 500,000 match rows; pick with the spec).",
+   "depends_on": [],
+   "lane_conflict": "none",
+   "acceptance": "A database with cap+1 function rows raises PT-SECONDARY-LIMIT before any record is built; cap rows import; real golden still imports."
+  },
+  {
+   "id": "B-T03",
+   "title": "Harden the Diaphora SQLite guard: refuse views, triggers and virtual tables; restrict reads to the fixed tables",
+   "why": "B-D03: reproduced acceptance of a view-backed `results` table; code contradicts its own contract and the stricter BinDiff importer.",
+   "files": [
+    "docs/specs/diaphora-optional-engine.md",
+    "src/patchtrace/diaphora/sqlite_guard.py",
+    "tests/test_diaphora_import.py"
+   ],
+   "tests": [
+    "tests/test_diaphora_import.py",
+    "tests/test_diaphora_deadline.py",
+    "tests/test_diaphora_cli.py"
+   ],
+   "size": "S",
+   "priority": 3,
+   "risk": "Real Diaphora result files might carry indexes or extra tables: allow plain tables and their indexes, refuse only executable or indirect objects; no real result is available to confirm.",
+   "depends_on": [],
+   "lane_conflict": "none",
+   "acceptance": "View, trigger and virtual-table fixtures raise PT-DIAPHORA-DB; a read of a table outside SCHEMA is denied by the authorizer; all 38 + 14 existing tests stay green."
+  },
+  {
+   "id": "B-T04",
+   "title": "Probe robustness: do not cache transient BinDiff probe failures; rz-diff and default-engine probes never raise",
+   "why": "B-D04 and B-D05: a single slow start disables BinDiff for the whole session; a supervisor RuntimeError or scratch cleanup error crashes `secondary run`.",
+   "files": [
+    "src/patchtrace/secondary/bindiff_probe.py",
+    "src/patchtrace/secondary/rzdiff.py",
+    "src/patchtrace/secondary/cli_run.py",
+    "tests/test_bindiff_probe.py",
+    "tests/test_secondary_rzdiff.py",
+    "tests/test_cli_secondary_run.py"
+   ],
+   "tests": [
+    "tests/test_bindiff_probe.py",
+    "tests/test_secondary_rzdiff.py",
+    "tests/test_cli_secondary_run.py"
+   ],
+   "size": "S",
+   "priority": 4,
+   "risk": "Shares rzdiff.py with B-T01 and B-T05: give the three tasks one owner or run them in sequence.",
+   "depends_on": [
+    "B-T01"
+   ],
+   "lane_conflict": "none",
+   "acceptance": "Two probes with a runner returning reason=timeout make two runner calls; a runner raising RuntimeError yields an unsupported Capability; `secondary run` without --engine reports unsupported instead of a traceback."
+  },
+  {
+   "id": "B-T05",
+   "title": "rz-diff adapter fidelity: byte-exact stdout, `no-functions` failure kind, binary hash and untested-version provenance",
+   "why": "B-D06 (SEC-8) and B-D09; EngineRun rows cannot identify which rz-diff binary produced a set, which the producer-ownership work needs.",
+   "files": [
+    "docs/specs/secondary-engine.md",
+    "src/patchtrace/secondary/registry.py",
+    "src/patchtrace/secondary/rzdiff.py",
+    "tests/test_secondary_rzdiff.py",
+    "tests/test_secondary_scheduler.py"
+   ],
+   "tests": [
+    "tests/test_secondary_rzdiff.py",
+    "tests/test_secondary_scheduler.py",
+    "tests/test_secondary_runs.py"
+   ],
+   "size": "M",
+   "priority": 5,
+   "risk": "provenance is an append-only optional field (16 keys, 256 chars): keep existing rows byte-identical when the hook returns nothing new; hashing the executable adds one file read per run.",
+   "depends_on": [
+    "B-T01",
+    "B-T04"
+   ],
+   "lane_conflict": "none",
+   "acceptance": "Valid U+FFFD in a name parses; invalid bytes are refused; output_sha256 equals SHA-256 of the captured bytes; empty stdout with the \"No functions found\" marker gives kind no-functions; provenance carries executable_sha256 and untested_version for a non-0.9.x version."
+  },
+  {
+   "id": "B-T06",
+   "title": "Type the post-exit filesystem failures in bindiff_run.execute",
+   "why": "B-D07: raw OSError loses the SPEC-29 section 6 failure kind and escapes from run_bindiff.",
+   "files": [
+    "src/patchtrace/secondary/bindiff_run.py",
+    "tests/test_bindiff_run.py"
+   ],
+   "tests": [
+    "tests/test_bindiff_run.py"
+   ],
+   "size": "S",
+   "priority": 6,
+   "risk": "Low; behaviour on the success path is unchanged.",
+   "depends_on": [],
+   "lane_conflict": "none",
+   "acceptance": "An unreadable out/ after exit 0 raises SecondaryError PT-SECONDARY-RUN with a kind; the workdir is still removed; 40 existing tests stay green."
+  },
+  {
+   "id": "B-T07",
+   "title": "Close TA-14: report a version change for library/format detections in the build-environment delta",
+   "why": "B-D08: an embedded library update reads as unchanged.",
+   "files": [
+    "docs/specs/three-tool-evidence-adapters.md",
+    "src/patchtrace/intelligence/tools/delta.py",
+    "tests/test_intel_tools_audit.py"
+   ],
+   "tests": [
+    "tests/test_intel_tools_audit.py",
+    "tests/test_intel_tools_delta_wb3.py"
+   ],
+   "size": "S",
+   "priority": 7,
+   "risk": "Committed delta goldens may change; regenerate schemas only if the contract changes (prefer a note over a new field).",
+   "depends_on": [],
+   "lane_conflict": "none",
+   "acceptance": "Two DiE library rows that differ only in version produce a reported change; goldens for unchanged pairs are byte-identical."
+  },
+  {
+   "id": "B-T08",
+   "title": "Documentation and tracker truth-up for the native adapters",
+   "why": "B-F13: Diaphora has no user documentation outside docs/help; install.md covers only Ghidriff; registry and todo rows contradict the live runs recorded here.",
+   "files": [
+    "docs/install.md",
+    "docs/guide/12-evidence-and-engines.md",
+    "docs/guide/18-troubleshooting.md",
+    "docs/cli-reference.md",
+    "docs/specs/REGISTRY.md",
+    "tasks/todo.md",
+    "docs/qa.md"
+   ],
+   "tests": [
+    "tests/test_secondary_help.py",
+    "any docs link/consistency test that exists for docs/guide (UNVERIFIED which)"
+   ],
+   "size": "M",
+   "priority": 8,
+   "risk": "tasks/todo.md and docs/qa.md are edited by every lane: keep the change to the cited rows. docs/help/** is L6 and must not be touched. Record live evidence with its class, OS and run id only.",
+   "depends_on": [
+    "B-T01"
+   ],
+   "lane_conflict": "none",
+   "acceptance": "Each of the six adapters has install, usage and troubleshooting text; REGISTRY rows 43-45 and 53 cite runs 42346042490, 42620821985 and 42819978053 with their limits (Linux only, synthetic inputs, Windows capa/FLOSS failing); cli-reference lists `patchtrace diaphora`."
+  },
+  {
+   "id": "B-T09",
+   "title": "Widen the live-rizin path filter to the supervision code it exercises, with a static guard test",
+   "why": "jobs.py, backend.py (engine_env depends on build_child_env) and persistence.py changed on main after the last live rz-diff run (2026-11-07) without triggering it.",
+   "files": [
+    ".github/workflows/live-rizin.yml",
+    "tests/test_live_rzdiff_check.py"
+   ],
+   "tests": [
+    "tests/test_live_rzdiff_check.py (static assertion on the workflow path lists)"
+   ],
+   "size": "S",
+   "priority": 9,
+   "risk": "The workflow itself cannot be run here; only the static test is verifiable in the sandbox. More frequent live runs on main.",
+   "depends_on": [],
+   "lane_conflict": "none",
+   "acceptance": "Both push and pull_request path lists contain src/patchtrace/jobs.py, src/patchtrace/backend.py and src/patchtrace/persistence.py; the static test fails if one is removed."
+  }
+ ],
+ "notes": "Read-only pass on main@882d1ca0, 2026-11-11. Evidence classes are kept apart: a check counts as validated only with live-native evidence; mocked, synthetic and fixture tests are listed but never counted as compatibility evidence. Reproduced in this pass with throw-away scripts outside the checkout: rz-diff stock singleton stdout accepted by parse_output (B-D01), view-backed Diaphora `results` accepted (B-D03), BinDiff probe timeout cached (B-D04), rz-diff probe RuntimeError escape (B-D05), about 1.4 KB and more than 60,000 rows/s per BinDiff match record (B-D02, synthetic measurement). Focused test files run here, each alone: test_secondary_rzdiff 66 passed, test_secondary_scheduler 20, test_bindiff_run 40, test_bindiff_probe 38, test_bindiff_import_hardening 20, test_diaphora_import 38, test_diaphora_cli 14, test_intel_tools_audit 35, test_offline_bundle 38, test_runtime_discovery 5, test_runtime_discovery_bindiff 4, test_runtime_discovery_bundle 28 passed 1 skipped. Not run: every other test file, the full suite, any native tool. GitHub was read only (workflow runs, four job logs, PRs #165, #168, #222, #224: all four are open drafts). Each adapter feature carries an extra `checks` object with the 14 required checks (impl yes/partial/no, evidence class, note) and a `pct_basis` string; B-F06 carries `main_versus_branches`; B-F07 and B-F12 carry the per-finding status of the two audits. No task is proposed inside backend.py (L2/L5), unified/sources (L1), docs/help (L6) or tools/calibration/tier_r (L2). UNVERIFIED items are marked in place; notably the Windows cause of B-D10, Linux native Ghidriff evidence, the nightly fuzz evidence and the handoff claim of one green Windows bundle build.",
+ "external_blockers": [
+  "No Ghidra, Rizin, BinDiff, capa/FLOSS/diec, IDA or Diaphora in the sandbox: no native run possible here",
+  "Windows runner needed: capa/FLOSS probe failure (run 42819978053), BinDiff Windows leg reports blocked/advisory (run 42620821985), PT-TIMEOUT acceptance on the owner's recorded pair, OneDrive/long-path checks",
+  "rz-diff producer qualification needs a pinned Rizin v0.9.1 source build (Meson/Ninja + dev headers); native API evidence (#222) and failed CLI baseline (#224) exist only on open draft PR branches 195 commits behind main; #165 and #168 are also open drafts",
+  "Owner decision: rz-diff policy for stock 0.9.1 (conditional refusal vs version-wide quarantine) and whether a patched Rizin may be required",
+  "No real-producer .BinExport pair exists (only synthetic); BinExport producer ADR SPEC-49 is a draft (owner decision)",
+  "Diaphora: any real .diaphora result needs licensed IDA/Hex-Rays + Diaphora (AGPL review); Modes B/C not built",
+  "backend-bundle.yml: latest two runs on main failed (38660893572, 38660818187, 2026-10-15); real relocatable payload never validated on a disconnected Windows 11",
+  "live-capa.yml has never run (0 runs); live-buildenv job is dispatch-only and was skipped",
+  "Pins for BinDiff and intel tools are trust-on-first-use (verified: false); independent re-hash needs upstream network access",
+  "backend.py is owned by lanes L2/L5, unified/sources by L1, docs/help by L6, PR consolidation by L3: no tasks proposed there"
+ ],
+ "summary": "Six native adapters inventoried against 14 checks each: implementation 82%, live-native validation 19% (mocked/synthetic tests are not counted). Live evidence on main: Ghidriff on Windows (run 42584073996), rz-diff on Linux and Windows (42346042490), BinDiff on Linux only (42620821985), capa/FLOSS/diec on Linux only (42819978053). BinExport2 and Diaphora have none. Main stores rz-diff results with no guard against the known Rizin singleton side swap; the quarantine and native evidence sit on open draft PRs. capa and FLOSS fail their probe on Windows. Nine offline tasks are listed, none in an active lane; the first three fix reproduced defects. Audit items TA-1..12 and most SEC items are fixed."
+}

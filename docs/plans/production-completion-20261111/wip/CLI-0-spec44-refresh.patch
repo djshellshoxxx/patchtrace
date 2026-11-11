@@ -1,0 +1,697 @@
+diff --git a/docs/specs/cli-umbrella.md b/docs/specs/cli-umbrella.md
+index ffd4f4f7..60ca7813 100644
+--- a/docs/specs/cli-umbrella.md
++++ b/docs/specs/cli-umbrella.md
+@@ -1,169 +1,234 @@
+ # CLI umbrella contract (SPEC-44)
+ 
+-Status: draft, 2026-10-14. Describes the headless `patchtrace` CLI at worktree HEAD `fd6cdba` (local refs only; GitHub not queried). Envelope `enrichment-cli/1` unchanged; no version bump proposed. Number as briefed: section 10, item 1.
++Status: partial, refreshed 2026-11-11 against `main` at `882d1ca0`. The first draft (2026-10-14) described worktree HEAD `fd6cdba`; its inventory (11 verbs, 36 parser paths, no `cli_commands/`, no `export`) was out of date by 13 verbs. Sections 0 to 6 and 9 describe built behaviour; sections 7 and 8 carry decisions and proposals. Envelope `enrichment-cli/1` unchanged; no version bump proposed. Number as briefed: SPEC-44 (section 10, item 1).
+ 
+ ## 0. Scope and basis
+ 
+-This umbrella fixes the rules every headless verb follows and lists each verb's flags. Per-verb behaviour stays in the owner specs named in the tables. It adds no verb and changes no code. The headless path imports no Qt: `import patchtrace.cli` and parser construction load no PySide6 or `ui` module (checked). `python -m patchtrace` sends any first argument other than `--self-test`, `-platform` or `-style` to `cli.main` before Qt loads (`__main__.py:13-15`).
++This umbrella fixes the rules every headless verb follows, lists each verb with its owner spec, and records the exit-code contract with the places where shipped verbs depart from it. Per-verb behaviour stays in the owner specs named in section 1. It adds no verb and changes no code. The headless path imports no Qt: `import patchtrace.cli`, parser construction and `cli_commands.discover()` load no `PySide6` or `patchtrace.ui` module (checked at `882d1ca0`; the tests are in section 11). `python -m patchtrace` sends any first argument other than `--self-test`, `-platform` or `-style` to `cli.main` before Qt loads; Ctrl+C while the CLI modules import exits 5 (`__main__.py:13-19`). With no arguments the desktop opens.
+ 
+-Basis: `cli.py` (869 lines) and the modules it registers: `secondary/cli_bindiff.py`, `secondary/cli_binexport.py`, `secondary/cli_run.py`, `intelligence/cli.py`, `intelligence/tools/cli.py`, `unified/cli.py`, `backend_cli.py`. `nway/` has no dispatcher; `series` is in `cli.py:646-732` over `nway/series.py`. All 36 parser paths, including actions and hidden workers, were run with `python -m patchtrace <path> --help` and exited 0; types and defaults come from an argparse dump of the same parsers. `kbcorrelation/cli_index.py:84` builds a `patchtrace kb index` parser that nothing registers, so it is unreachable.
++Basis at `882d1ca0`: `cli.py` (920 lines) and the modules it registers: `secondary/cli_bindiff.py`, `secondary/cli_binexport.py`, `secondary/cli_run.py`, `intelligence/cli.py`, `intelligence/tools/cli.py`, `unified/cli.py`, `backend_cli.py`, `symbols/cli_args.py`; and the 13 adapters of `cli_commands/` with the feature dispatchers they call. Counts come from `python -m patchtrace <path> --help` run on the root and on every subcommand and action found by walking the printed choices: 106 help pages (root plus 105), all exit 0; 24 top-level verbs (11 built in, 13 from `cli_commands/`); 86 visible leaves; one more real leaf that no help page lists, `kb index sync`; three hidden workers (`secondary _binexport-worker`, `unified _worker`, `rules _rules-worker`). Types and defaults come from the same help text and the `add_argument` lines. Evidence class of every behaviour statement below that says "checked": synthetic (a generated sample project, stdin closed, no network, no external tool); nothing here is live-native evidence.
+ 
+-Drift: `docs/specs/REGISTRY.md` snapshots `main` at 1560531. HEAD is 8 commits ahead (`git rev-list 1560531..HEAD`), with #42, #46, #48, #49 and #50 merged. `unified/`, `intelligence/tools/`, `kbcorrelation/` and `backend_cli.py` exist at HEAD, where the registry still says planned. The worker brief named by the task (`docs/plans/worker-brief.md`) is absent at HEAD; its sections 1-3 were read from commit `cf1862d`, which is not an ancestor of HEAD.
++What changed since the 2026-10-14 draft: the registry exists and holds 13 verbs (section 9); `unified` was rewritten around the read model (new `show` filters, `--no-residual`, `--python`, `--ghidra-dir`); `intel-tools` gained `pairs`; `series create` gained the three symbol flags; `correlate --cve` is checked at parse time; the failure envelope carries redacted text and a `cancelled` status; `secondary --help` no longer prints `==SUPPRESS==`; text output printed through `cli._emit` is escaped for terminals (`cli.py:193-201`). `kbcorrelation/cli_index.py` is no longer unreachable: `kb` is a registry verb.
+ 
+ ## 1. Naming, dispatch and global flags
+ 
+-Verbs (`cli.COMMANDS`, `cli.py:21-22`): `rank`, `flags`, `correlate`, `cache`, `acquire`, `series`, `secondary`, `intelligence`, `unified`, `intel-tools`, `backend`. Handlers: `HANDLERS` (`cli.py:827-831`); `unified` registers its own (`unified/cli.py:69`). Names are lower-case with hyphens. Actions: `acquire` search, fetch; `series` create, chains; `secondary` import-bindiff, run, rzdiff (an alias of run), reconcile, binexport-check; `intelligence` import, fetch, explain; `unified` run, show, explain, status; `intel-tools` probe, run, delta; `backend` status, verify, selftest, diagnose. `cache` takes a positional action (`cli.py:99`). With no arguments the desktop opens (`__main__.py:17-54`).
++Verbs, in the order `patchtrace --help` lists them: the 11 built-in verbs of `cli.COMMANDS` (`cli.py:25-26`) followed by the 13 discovered by `cli_commands.names()` (section 9). Names are lower-case with hyphens (`^[a-z][a-z0-9-]{1,23}$` for a registry verb). Built-in handlers: `HANDLERS` (`cli.py:866-870`); `unified` registers its own (`unified/cli.py:110`). Registry verbs are dispatched through the `run` of their `COMMAND` (`cli.py:894`).
+ 
+-Hidden actions begin with `_` and are left out of help: `unified _worker` (`unified/cli.py:65`). `secondary _binexport-worker` also uses `help=argparse.SUPPRESS`, but `secondary --help` prints it as `==SUPPRESS==` (`cli_binexport.py:40`; section 8, item 12).
+-
+-There are no global flags. `--json` is added to each leaf (`cli.py:50-52`); `patchtrace --json rank x` exits 2 with "unrecognized arguments: --json" (checked). `--help` exits 0 (`cli.py:861-862`). Shared groups: `common` (`--json`), `profiled` (`--profile`), `cached` (`--cache-dir`, `--refresh`) (`cli.py:50-63`); `secondary run` adds the BinDiff options (`cli_bindiff.py:22-29`).
++| Verb | Source | Owner spec | Visible leaves | Help page |
++|---|---|---|---|---|
++| `rank` | `cli.py` | `enrichment.md` sections 11-12 | the verb | `docs/help/53-cli-rank.md` |
++| `flags` | `cli.py` | `enrichment.md` section 11 | the verb | `54-cli-flags.md` |
++| `correlate` | `cli.py` | `enrichment.md` section 11 | the verb | `55-cli-correlate.md` |
++| `cache` | `cli.py` | `enrichment.md` sections 9 and 11 | the verb (positional action status, verify, prune) | `56-cli-cache.md` |
++| `acquire` | `cli.py` | `acquisition.md` (SPEC-08) | search, fetch | `57-cli-acquire.md` |
++| `series` | `cli.py` | `nway.md` (SPEC-09); `series-window.md` (SPEC-09b); `ghidriff-launcher-symbols.md` (SPEC-53) for the symbol flags | create, chains | `58-cli-series.md` |
++| `secondary` | `cli.py`, `secondary/cli_*.py` | `multi-engine-orchestration.md` (SPEC-28); `bindiff-execution.md` (SPEC-29); `binexport2-support.md` (SPEC-10b) | import-bindiff, run, rzdiff (alias of run), reconcile, binexport-check | `59-cli-secondary.md` |
++| `intelligence` | `intelligence/cli.py` | `csaf-cve-interpretation-engine.md` (SPEC-35) | import, fetch, explain | `60-cli-intelligence.md` |
++| `unified` | `unified/cli.py` | `unified-engine/07-ui-and-cli.md` (SPEC-31/07) | run, show, explain, status | `61-cli-unified.md` |
++| `intel-tools` | `intelligence/tools/cli.py` | `three-tool-evidence-adapters.md` (SPEC-36); `program-e/CAP-integration-plan.md` for `pairs` | probe, run, delta, pairs | `62-cli-intel-tools.md` |
++| `backend` | `backend_cli.py` | `offline-backend-installer.md` (SPEC-06); `program-e/BUNDLE-integration-plan.md` | status, verify, selftest, diagnose | `63-cli-backend.md` |
++| `build-env` | `cli_commands/build_env.py` (23 lines) | `program-e/DIE-integration-plan.md` section 8 | show, delta, timeline | `64-cli-build-env.md` |
++| `diaphora` | `cli_commands/diaphora.py` (17) | `diaphora-optional-engine.md` (SPEC-DA-01) | inspect, import, show | `74-cli-diaphora.md` |
++| `export` | `cli_commands/export.py` (17) | `report-export-contract-v2.md` (SPEC-50) section 8 | the verb | `75-cli-export.md` |
++| `fabric` | `cli_commands/fabric.py` (20) | `anchor-fabric.md` (SPEC-48); `program-e/FAB-integration-plan.md` section 8 | list, show, resolve, stats | `65-cli-fabric.md` |
++| `graph` | `cli_commands/graph.py` (23) | `workbench/02-networkx-callgraph.md`; `program-e/WB2-integration-plan.md` section 8.1 | neighbours, delta, leads, paths, export, series | `66-cli-graph.md` |
++| `inspect` | `cli_commands/inspect.py` (22) | `pe-version-authenticode.md` (SPEC-51) | the verb | `76-cli-inspect.md` |
++| `kb` | `cli_commands/kb.py` (20; passthrough) | `kb-cve-correlation-and-acquisition.md` (SPEC-34); `program-e/KB-integration-plan.md` section 8.1 | index import, index status, index verify, index plan, search, attach, explain, export, products, components, pairs, import-pair, plan, leads, acquire (15), plus the unlisted `index sync` | `67-cli-kb.md` |
++| `kev` | `cli_commands/kev.py` (17) | `kev-exploitation-context.md` (SPEC-46); `program-e/KEV-integration-plan.md` section 8 | status, plan, fetch, import, lookup, diff, prune | `68-cli-kev.md` |
++| `panels` | `cli_commands/panels.py` (17) | `gui-framework.md` (SPEC-54) | list, check | `69-cli-panels.md` |
++| `pilot` | `cli_commands/pilot.py` (17) | `patch-intent-localization-engine.md` (SPEC-30); `program-e/PIL-integration-plan.md` section 8 | leads, why, review | `70-cli-pilot.md` |
++| `rules` | `cli_commands/rules.py` (21) | `yara-x-rule-workflow.md` (SPEC-47); `program-e/YRX-integration-plan.md` section 8 | probe, propose, show, decide, test, export, history | `71-cli-rules.md` |
++| `search` | `cli_commands/search.py` (20; passthrough) | `workbench/01-search-fts5-rapidfuzz.md`; `program-e/WB1-integration-plan.md` section 8 | the verb | `72-cli-search.md` |
++| `strings` | `cli_commands/strings.py` (23) | `workbench/03-floss-strings.md`; `program-e/WB3-integration-plan.md` section 8 | list, delta, explain, scan, export | `73-cli-strings.md` |
++
++Leaf count: 28 on the built-in verbs, 58 on the registry verbs, 86 in total; with `kb index sync`, 87. `kb` and `search` are passthrough adapters: the feature parses its own argv, so even `--help` is the feature's (`cli_commands/_support.py:7-14`). The remaining registry adapters build a normal argparse subtree. `kb` with no action prints the help and exits 0 (`cli_commands/kb.py:16`); every other verb group without an action exits 2 (section 8, item 18).
++
++Specified but not built, so absent from every list above: `patchtrace unified extract` (`unified-engine/07-ui-and-cli.md:99`), the `patchtrace patch ...` grammar of `kb-patch-search-ui-cli-contract.md:19-27` (the built grammar is `kb`), and the verbs `pe-meta` and `calibration` that the GUI plan names. `rules propose` is built but cannot succeed: the `rules.cli.BACKEND` seam (`rules/cli.py:77, 236-239`) is assigned nowhere in `src/`, so it always exits 2 with `PT-RULE-INPUT ... [pair-source-missing]` (checked); the panel proposes through `rules/live.py`.
++
++Hidden actions have no `help=` and are left out of the action listing: `unified _worker` (`unified/cli.py:106`), `rules _rules-worker` (`rules/cli.py:54, 137`) and `secondary _binexport-worker` (`cli_binexport.py:40-42`); the last still appears in the `secondary` usage line.
++
++There are no global flags. `--json` is added to each leaf (`cli.py:63-65`); `patchtrace --json rank x` exits 2 with "unrecognized arguments: --json" on stderr and, because `--json` appears in argv, a failure envelope with `command: "patchtrace"` on stdout (checked; `cli.py:878-882`). `--help` exits 0 (`cli.py:912-913`). There is no `--version`: `patchtrace --version` exits 2 ("the following arguments are required: command", checked). Shared groups of the built-in verbs: `common` (`--json`), `profiled` (`--profile`), `cached` (`--cache-dir`, `--refresh`) (`cli.py:63-76`); `secondary run` adds the BinDiff options (`cli_bindiff.py:22-29`).
+ 
+ ## 2. The enrichment-cli/1 envelope
+ 
+-With `--json`, stdout carries exactly one document with sorted keys and a final newline (`cli.py:177-180`): `{"command", "contract": "enrichment-cli/1", "result", "status", "warnings"}`. A failure adds `"error"` (`cli.py:848-853`, `866-868`). Cancellation emits `status: "cancelled"` with `result: null` and no `error` (`cli.py:857-859`). `command` is the verb, plus the action for every verb except `rank`, `flags`, `correlate` and `cache` (`cli.py:533, 649, 747, 820`; `unified/cli.py:155`; `backend_cli.py:56`; failure form `cli.py:834-835`). `warnings` are strings; text mode prints each as `warning: <text>` on stderr (`cli.py:182-183`). Unified puts its standing NOTE first in every envelope (`unified/cli.py:7-8`).
++With `--json`, stdout carries exactly one document with sorted keys and a final newline (`cli.py:193-196`): `{"command", "contract": "enrichment-cli/1", "result", "status", "warnings"}`. A failure adds `"error"`, redacted by `diagnostics.redact_log` (`cli.py:895-903`, `914-920`). Cancellation emits `status: "cancelled"` with `result: null`; a Ctrl+C caught by `main` (`cli.py:904-911`) and the verbs that emit it themselves add no `error`, a `CliError` that carries exit code 5 does (`cli.py:899-903`). A failure that happens while parsing still produces an envelope when `--json` is anywhere in argv (`cli.py:878-882`, `898`).
+ 
+-Evolution rule (additive only). Within `enrichment-cli/1` a change may add an optional `result` key, add `warnings` entries, add a verb or action (section 9), or add a flag whose default keeps the old behaviour. It may not remove or rename a key, change a key's type or an exit code's meaning, or add a status outside section 4. Anything else needs `enrichment-cli/2`. Consumers ignore unknown keys.
++`command` is the verb, plus the action for every built-in verb except `rank`, `flags`, `correlate` and `cache` (`cli.py:569, 686, 784, 859`; `unified/cli.py:205`; `backend_cli.py:56`). A registry verb's adapter sets `command_label` to the bare verb name (`cli_commands/__init__.py:84`) and the feature emits its own label on success (`build-env show`, `graph leads`, `strings scan`, `kb explain`). The failure label is `_command_name(args)` (`cli.py:873-875`): the bare verb for a registry verb, the built-in `verb action` for a built-in one, and `patchtrace` for a failure before parsing finished, unless argv starts with a built-in verb (`cli.py:881`). So a failure of `build-env show` says `build-env`, a failure of `pilot why` with a bad `--candidate` says `patchtrace`, and a failure of `secondary binexport-check` with a bad `--artifact-sha256` says `secondary` (checked; section 8, item 15). `warnings` are strings; text mode prints each as `warning: <text>` on stderr (`cli.py:198-199`). Unified puts its standing NOTE first in every envelope (`unified/cli.py:7-8, 205`).
+ 
+-## 3. Streams, environment and executable lookup
++Evolution rule (additive only). Within `enrichment-cli/1` a change may add an optional `result` key, add `warnings` entries, add a verb or action (section 9), or add a flag whose default keeps the old behaviour. It may not remove or rename a key, change a key's type or an exit code's meaning, or add a status outside section 4. Anything else needs `enrichment-cli/2`. Consumers ignore unknown keys. Several registry verbs nest a versioned record in `result` (`{"contract": "kev/1" | "yara-rules/1" | "search/1" | "build-environment/1", ...}`): that record is the verb's own contract and follows the same additive rule.
+ 
+-- stdin: no verb reads it. Child processes get `stdin=DEVNULL` (`jobs.py:275`). There are no prompts; consent is given by flag (section 8, item 10).
+-- stdout: UTF-8 with `errors=replace` (`cli.py:840-842`). With `--json` the only stdout content should be the envelope (help excepted); every path was not exercised [unverified].
+-- stderr, in every mode: `request: <METHOD> <url>` before each network request (`cli.py:415, 516, 579, 588`; `intelligence/cli.py:226`); progress (`cli.py:277`; `unified/cli.py:114-116`); `error: <message>` (`cli.py:849, 864`); `cancelled` (`cli.py:856`); extra validation findings (`intelligence/cli.py:139-146`); diagnostics (`cli_binexport.py:63-64`). A JSON consumer reads stdout only.
+-- Untrusted text (advisory fields, file names, worker stderr) is made terminal-safe first: `plain_text` (`intelligence/cli.py:103-108`), `sanitize_text` (`unified/cli.py:99-102`).
+-- Environment read: `PATCHTRACE_BINDIFF` (`cli_bindiff.py:19, 71`); `PATCHTRACE_CAPA`, `_FLOSS`, `_DIEC`, `_DIEC_DB`, `_DIEC_LIB`, `_CAPA_RULES`, `_CAPA_SIGS` (`intelligence/tools/cli.py:17-19`); the variable named by `--api-key-env` (`cli.py:93, 174, 416`), never printed. Analysis profiles come from the desktop profile directory (`enrichment.md` section 12).
+-- Executables: `rz-diff` is looked up on PATH (`cli.py:143`). BinDiff and the intel-tools binaries must be absolute; PATH is never searched (`cli_bindiff.py:3-4`; `intelligence/tools/cli.py:75-77`). Engines get the filtered environment from `engine_env` (`cli_run.py:71`).
++## 3. Streams, environment, executable lookup and unattended operation
++
++- stdin: no verb reads it. `grep` for `input(`, `getpass`, `sys.stdin` and `isatty` over `src/patchtrace` finds nothing. Child processes get `stdin=DEVNULL` (`jobs.py:296`; Windows: `jobs.py:144`). There is no prompt on any path: every confirmation is a flag (`--consent-hosts`, `--consent-plan`, `--consent-providers`, `--consent-online`, `--confirm-material`, `--confirm-same-component`, `--accept-*`, `--user-attest-pair`, `--yes`, `--force`, `--overwrite`), and a missing flag is exit 2 with the exact plan or reason (section 8, item 10). A new verb adds no prompt (section 7).
++- stdout: UTF-8 with `errors=replace` (`cli.py:887-889`). With `--json` the only stdout content is the envelope (help excepted); in the inventory of 2026-11-11 (not committed) a probe of 109 invocations on a generated sample project, stdin closed, printed exactly one document per `--json` call and no traceback (synthetic; the probe list is not part of the test suite and was not re-run in full for this refresh).
++- stderr, in every mode: `request: <METHOD> <url>` before each network request (`cli.py:448, 552, 615, 624`; `intelligence/cli.py:226`); the exact plan before a consented fetch of `kb index sync`, `kb acquire` and `kev fetch` (`kbcorrelation/cli_online.py:1-16`; `kbcorrelation/cli_acquire.py:1-5`; `kev/cli.py:1-12`); progress (`cli.py:308`; `unified/cli.py:155-157`); `error: <message>` (`cli.py:897, 916`); `cancelled` (`cli.py:906`); extra validation findings (`intelligence/cli.py:139-146`); diagnostics (`cli_binexport.py:64-65`). A JSON consumer reads stdout only.
++- Untrusted text (advisory fields, file names, worker stderr, symbol names) is made terminal-safe before it is printed: `escape_text` in `cli._emit` (`cli.py:198-201`), `plain_text` (`intelligence/cli.py:103-108`; `cli.py:204-211`), `sanitize_text` (`unified/cli.py:140-143`).
++- Environment read: `PATCHTRACE_BINDIFF` (`cli_bindiff.py:19, 71`); `PATCHTRACE_CAPA`, `_FLOSS`, `_DIEC`, `_DIEC_DB`, `_DIEC_LIB`, `_CAPA_RULES`, `_CAPA_SIGS` (`intelligence/tools/cli.py:18-20`); `PATCHTRACE_BUNDLE_DIR` when locating the bundle (`backend_bundle.py:30, 126`); `PATCHTRACE_CHILD_ENV=inherit` to let an analysis child inherit the environment (`backend.py:248`); the variable named by `--api-key-env` (`cli.py:106, 190, 450`), never printed. Credentials are session-only: no verb stores a key. Analysis profiles come from the desktop profile directory (`enrichment.md` section 12).
++- Executables: `rz-diff` is looked up on PATH (`cli.py:157`). BinDiff and the intel-tools binaries must be absolute; PATH is never searched (`cli_bindiff.py:3-4`; `intelligence/tools/cli.py:101-103`). Engines get the filtered environment from `engine_env` (`cli_run.py:71`). No verb executes a target binary.
++- Consent. Network access exists in `acquire`, `correlate --fetch`, `intelligence fetch`, `kb index sync`, `kb acquire` and `kev fetch`; each needs the exact host or plan on the command line and announces its requests on stderr. `inspect --trust cache|online` is accepted and exits 3 `PT-PE-TRUST-UNAVAILABLE` after the consent rule is checked (`pe_overview/cli.py:1-9`).
++- Output files. `export`, `graph export`, `kb export`, `strings export`, `rules export`, `pilot leads --export`, `intelligence explain --export`, `kev lookup --md` and `correlate --save-snapshot` write a file the caller names; formats and overwrite flags are in section 5. The overwrite policy differs per verb (`graph export --overwrite`, `kb export --overwrite`, `strings export --force`, `rules export` never replaces) and is not unified here (section 8, item 14).
+ 
+ ## 4. Exit codes and status
+ 
+-Contract (`cli.py:1-6`, `23`): 0 success; 2 invalid arguments, configuration or environment, argparse errors included (`cli.py:34-35`); 3 runtime failure; 4 legitimate no result (complete evidence, zero rows); 5 cancellation (Ctrl+C maps here, `cli.py:854-860`). An unexpected exception prints one line, with the exception text passed through `diagnostics.redact_log` on stderr and in the `--json` `error` field, and exits 3 (`cli.py:863-869`). Visible verbs return only 0, 2, 3, 4 or 5. Hidden workers do not: `unified _worker` returns 0, 1, 2, 3, 5 or 22 (`unified/worker.py:20`) and `secondary _binexport-worker` returns 0, 2, 20, 21 or 22 (`binexport_worker.py:14`), which reach the process exit code unchanged (`cli.py:847`).
++Contract (`cli.py:1-6, 27`): 0 success; 2 invalid arguments, configuration or environment, argparse errors included (`cli.py:38-39`; a usage error prints one line and no usage block); 3 runtime failure; 4 legitimate no result (complete evidence, zero rows); 5 cancellation (Ctrl+C maps here, `cli.py:904-911`, `__main__.py:17-19`). An unexpected exception prints one line, with the exception text passed through `diagnostics.redact_log` on stderr and in the `--json` `error` field, and exits 3 (`cli.py:914-920`). Visible verbs return only 0, 2, 3, 4 or 5. Hidden workers do not: `unified _worker` returns 0, 1, 2, 3, 5 or 22 (`unified/worker.py:20`), `secondary _binexport-worker` 0, 2, 20, 21 or 22 (`binexport_worker.py:14`) and `rules _rules-worker` 0, 2, 20, 21, 22 or 23 (`rules/worker.py:36`); each reaches the process exit code unchanged (`cli.py:894`; `cli_binexport.py:45-48`; `rules/cli.py:146-148`).
++
++Observed `status` values of the built-in verbs: `complete`, `partial`, `failed`, `cancelled`, `unavailable` (`cli.py:501`), `stale` (`cli.py:763`), `no-results` (`backend_cli.py:90, 280`; `export`, `report2/cli.py:50`). The registry verbs add values outside that set: `ok` (`panels list|check`, `gui/cli.py:55`; `search --status` and `--probe`, `search/cli.py:122, 130`) and the whole `ResultStatus` of `search/1`, `ok, partial, no-results, too-broad, indexing, unsupported, stale, cancelled, error` (`search/contracts.py:35-36`), where `ok`, `too-broad` and `stale` exit 0 (`search/cli.py:147-158`). The registry verbs' other statuses were not enumerated [unverified]. Section 8, item 4.
+ 
+-Observed `status` values: `complete`, `partial`, `failed`, `cancelled`, `unavailable` (`cli.py:467`), `stale` (`cli.py:726`), `no-results` (`backend_cli.py:90, 277`). Section 8, item 4.
++Rows for the built-in verbs (4.1) cite the branch that returns the code; rows for the registry verbs (4.2) restate the module docstring and are not re-derived branch by branch [unverified at branch level].
++
++### 4.1 Built-in verbs
+ 
+ | Verb (action) | 0 | 2 | 3 | 4 | 5 |
+ |---|---|---|---|---|---|
+-| rank | ranking, incl. partial (`cli.py:327-330`) | bad weights, detector, profile (`cli.py:197-234`) | no ranking (`cli.py:311-313`) | complete, zero entries (`cli.py:328-329`) | `cli.py:308-310` |
+-| flags | WIL complete (`cli.py:354`) | feature ID not uint32 (`cli.py:337-338`) | WIL not complete (`cli.py:352-353`) | complete, zero transitions (`cli.py:354`) | `cli.py:350-351` |
+-| correlate | any status (`cli.py:480`) | consent mismatch (`cli.py:408-409`); bad snapshot (`cli.py:398-399`) | fetch failed, no response (`cli.py:441`); no result (`cli.py:468`) | no result and no snapshot (`cli.py:468`) | `cli.py:440, 464` |
+-| cache | always (`cli.py:497`) | bad cache config (`cli.py:495`) | runtime (`cli.py:495`) | none | none |
+-| acquire search | usable candidate (`cli.py:553`) | name, consent (`cli.py:535-537, 541`) | other (`cli.py:508`) | no downloadable candidate (`cli.py:553`) | `cli.py:507` |
+-| acquire fetch | project created (`cli.py:607`) | equal SHAs, existing project, consent (`cli.py:554-559`) | promote or other (`cli.py:508, 594-595`) | not found, update-only (`cli.py:507, 582`) | `cli.py:507` |
+-| series create | complete (`cli.py:701`) | `--run` needs python and ghidra (`cli.py:655-656`); NwayError (`cli.py:664-665`) | a pair failed, partial (`cli.py:699-701`); write error (`cli.py:685`) | none | `cli.py:671, 677` |
+-| series chains | rows or stale reasons (`cli.py:732`) | bad `--address` (`cli.py:714`) | none | no chain and no stale reason (`cli.py:732`) | none |
+-| secondary import-bindiff | matches stored (`cli.py:822`) | input, pair, orientation, format (`cli.py:806-810`) | other (`cli.py:815-816`) | zero matches (`cli.py:822`) | `cli.py:807` |
+-| secondary run, rzdiff | complete with matches (`cli_run.py:58`) | timeout range (`cli.py:739-740`); no run (`cli.py:798-799`); no engine (`cli_run.py:75-77`); input-class failures (`cli_run.py:61-62`) | partial; other failures (`cli_run.py:59-63`) | complete, no matches (`cli_run.py:58`) | `cli_run.py:55-56` |
+-| secondary reconcile | complete (`cli.py:797`) | none | assessment error (`cli.py:777-778`) | no stored sets (`cli.py:771-772`) | none |
+-| secondary binexport-check | valid (`cli_binexport.py:80`) | other codes (`cli_binexport.py:61`) | PT-SECONDARY-RUN (`cli_binexport.py:61`) | none | `cli_binexport.py:60` |
++| rank | ranking, incl. partial (`cli.py:358-361`) | bad weights, detector, profile (`cli.py:224-261`); `--refresh` without `--cache-dir` (`cli.py:282-283`); `--cache-dir` that is not a directory (`cli.py:285-286`) | no ranking (`cli.py:342-344`) | complete, zero entries (`cli.py:359-360`) | `cli.py:339-341` |
++| flags | WIL complete (`cli.py:385`) | feature ID not uint32 (`cli.py:368-369`) | WIL not complete (`cli.py:383-384`) | complete, zero transitions (`cli.py:385`) | `cli.py:381-382` |
++| correlate | any status (`cli.py:514`) | consent mismatch (`cli.py:439-440`); bad snapshot (`cli.py:429-430`) | fetch failed, no response (`cli.py:475`); no result (`cli.py:502`) | no result and no snapshot (`cli.py:502`) | `cli.py:474, 498` |
++| cache | always (`cli.py:533`) | bad cache config (`cli.py:529`); a cache that reports an `error` (`cli.py:530-531`) | other `EnrichmentError` (`cli.py:529`) | none | none |
++| acquire search | usable candidate (`cli.py:589`) | name, consent (`cli.py:571-573, 577`) | other (`cli.py:544`) | no downloadable candidate (`cli.py:589`) | `cli.py:543` |
++| acquire fetch | project created (`cli.py:643`) | equal SHAs, existing project, consent (`cli.py:590-595`) | promote or other (`cli.py:544, 630-631`) | not found, update-only (`cli.py:543, 618`) | `cli.py:543` |
++| series create | complete (`cli.py:738`) | `--run` needs python and ghidra (`cli.py:692-693`); NwayError (`cli.py:701-702`) | a pair failed, partial (`cli.py:736-738`); write error (`cli.py:722`) | none | `cli.py:708, 714` |
++| series chains | rows or stale reasons (`cli.py:769`) | bad `--address` (`cli.py:751`) | none | no chain and no stale reason (`cli.py:769`) | none |
++| secondary import-bindiff | matches stored (`cli.py:861`) | input, pair, orientation, format (`cli.py:845-849`) | other (`cli.py:854-855`) | zero matches (`cli.py:861`) | `cli.py:846` |
++| secondary run, rzdiff | complete with matches (`cli_run.py:58`) | timeout range (`cli.py:776-777`); no run (`cli.py:836-837`); no engine (`cli_run.py:75-77`); input-class failures (`cli_run.py:61-62`) | partial; other failures (`cli_run.py:59-63`) | complete, no matches (`cli_run.py:58`) | `cli_run.py:55-56` |
++| secondary reconcile | complete (`cli.py:835`) | none | assessment error (`cli.py:815-816`) | no stored sets (`cli.py:809-810`) | none |
++| secondary binexport-check | valid (`cli_binexport.py:81`) | other codes (`cli_binexport.py:62`) | PT-SECONDARY-RUN (`cli_binexport.py:62`) | none | `cli_binexport.py:61` |
+ | intelligence import | complete (`intelligence/cli.py:197`) | malformed file, validation, CVE not listed, over 16 MiB (`:37, 77, 174, 190`) | other (`:79`) | none | `:95-97` |
+ | intelligence fetch | stored, or offline read (`:289`) | consent missing; `--offline` without cache (`:239-244`) | none acceptable (`:278-282`) | no index entry (`:263-268`) | `:95-97` |
+ | intelligence explain | complete (`:365`) | export path, product IDs (`:313-330`) | partial: warnings (`:347-349, 365`) | no stored advisory (`:350-352`) | `:95-97` |
+-| unified run | complete (`unified/cli.py:159`) | ENVIRONMENT codes, bad `--sources` (`:83-86, 110`) | partial (`:157-158`) | `--fail-on-none`, no material row (`:159`) | `:140-142` |
+-| unified show | rows match (`:245`) | no result yet (`:183-184`) | unusable result (`:185-187`) | zero matching rows (`:245`) | none |
+-| unified explain | row shown (`:330`) | `--row` under 8 hex digits; no row (`:295-296, 253-255`) | `UnifiedError` (`:306`) | none | none |
+-| unified status | always (`:369`) | none | none | none | none |
+-| intel-tools probe | a supported engine (`intelligence/tools/cli.py:122`) | none supported (`:122`) | none | none | none |
+-| intel-tools run | all evidence (`:146`) | no engine runnable; PT-TOOL-INPUT or CONSENT (`:141, 173`) | partial or failed (`:144`) | ran, no evidence (`:146`) | `:138-139` |
+-| intel-tools delta | comparable changes (`:240-241`) | no stored evidence, literal 2 (`:203-205`) | rejected engine: partial (`:236-237`) | no changes (`:241`) | none |
++| unified run | complete (`unified/cli.py:209`) | `PT-UNIFIED-INPUT`, `-PAIR`, `-ORIENTATION`, `-UNSUPPORTED` (`unified/limits.py:14-17`; `unified/cli.py:118-127`); bad `--sources` (`:146-152`); `--timeout` outside 60..86400 (`:49-52, 174`); `--python` without `--ghidra-dir` or the reverse (`:175-176`) | partial (`:207-208`); every other `UnifiedError` code (`unified/limits.py:17`) | `--fail-on-none` and no material or review row (`:209`) | `PT-UNIFIED-CANCEL` (`:190-192`) |
++| unified show | rows listed (`:346`) | no result yet (`:231-232`); `--limit` below 0 (`:320-321`) | unusable stored result (`:233-235, 261-262, 327-328`); damaged part (`UnifiedError`, `:118-121`) | no row after filtering (`:346`) | cancel while reading (`:259-260`, then `cli.py:904-911`) |
++| unified explain | row shown (`:376`) | `--row` not 8 or more hex digits (`:353-354`); no row or an ambiguous prefix (`:361-363`); no result yet (`:231-232`) | unusable stored result (`:233-235`); damaged part (`:118-121`) | none | none |
++| unified status | always, also with no result (`:427`) | none | none | none | none |
++| intel-tools probe | a supported engine (`intelligence/tools/cli.py:152`) | none supported (`:152`), with status `complete` | none | none | none |
++| intel-tools run | all evidence (`:176`) | no engine runnable or supported (`:170-171`); `PT-TOOL-INPUT`, `-CONSENT`, `-PAIRING` (`:91-95, 203`) | partial or failed (`:172-175`); other tool errors (`:203`) | ran, no evidence (`:176`) | `:168-169` |
++| intel-tools delta | comparable changes (`:269-270`) | no stored evidence at all, literal 2 with status `complete` (`:232-234`); evidence missing for a requested engine, literal 2 with status `partial` or `failed` (`:267-268`) | rejected engine: partial (`:265-266`) | no changes (`:270`) | none |
++| intel-tools pairs | gained, lost or moved rows (`:374`) | evidence missing for a side, status `failed` (`:340-342`); no completed run so no pairing, status `partial` (`:369-372`) | rejected: mismatch or stale (`:366-367`); other tool errors (`:354`) | comparable, no such rows (`:374`) | `:355-356` |
+ | backend status | fast check ok (`backend_cli.py:126`) | none | none | no bundle (`:89-92`) | bundle failed (`:95-99`) |
+ | backend verify | verified (`:153`) | none | none | no bundle (`:89-92`) | failed (`:155-158`); cancel (`:129-131`) |
+-| backend selftest | expectations met (`:275`) | timeout range, paths, no bundle, dir not empty, identical builds (`:198-205, 224-225, 238-239`) | run failed (`:255`) | expected function absent (`:279`) | bundle not ok (`:207`); cancel (`:255`) |
++| backend selftest | expectations met (`:278`) | timeout range, paths, no bundle, dir not empty, identical builds (`:199-206, 225-226, 240-241`) | run failed (`:258`) | expected function absent (`:282`) | bundle not ok (`:208`); cancel (`:258`) |
+ | backend diagnose | no problems (`:187`) | no bundle (`:176`) | backend problems (`:187`) | none | bundle problems (`:178, 187`) |
+ 
++### 4.2 Registry verbs
++
++The column meanings are the contract's. Each row restates the verb's module docstring (given in the first column) and, where marked, a branch that was read. Cases named only by the docstring are not re-derived [unverified at branch level].
++
++| Verb (docstring) | 0 | 2 | 3 | 4 | 5 |
++|---|---|---|---|---|---|
++| build-env show (`buildenv/cli.py:1-8`) | every side read (`:163`) | no side readable, status `failed` (`:163-164`) | one side read, partial (`:163`) | none | `:156-158` |
++| build-env delta | a toolchain difference, changed option or caution (`:202-204`) | neither side readable (`:227`) | stale evidence or one side unreadable, partial (`:200-201, 227`) | comparable, no difference (`:204`) | `:216-218` |
++| build-env timeline | every hop complete (`:284`) | not a usable series folder (`:273`) | any hop incomplete (`:284`) | none | `:277-279` |
++| diaphora inspect, import, show (`diaphora/cli.py:1-5`) | ok | environment or input | runtime | no matches or no stored sets (`:69, 80`) | cancelled |
++| export (`report2/cli.py:1-7`) | exported (`:64-70`) | invalid arguments or an unopenable project (`:46`) | export failure (`:62-63`); a destination inside the project is one (checked; section 8, item 16) | the project has no matches, status `no-results` (`:49-51`) | `:52-54` |
++| fabric list, show, resolve, stats (`fabric/cli.py:1-8`) | ok | invalid input | runtime, or partial: a stale or unreadable batch, a skipped anchor | legitimate no result | cancelled |
++| graph neighbours, delta, leads, paths, export, series (`callgraph/cli.py:1-6`) | results | invalid arguments or environment; an unknown or unindexed function | runtime failure or a truncated or partial result | complete with zero entries | cancelled |
++| inspect (`pe_overview/cli.py:1-9`) | ok | invalid arguments; `--trust online` without `--consent-online` (`PT-PE-CONSENT-REQUIRED`) | runtime failure or partial result; `--trust cache` and `online` (`PT-PE-TRUST-UNAVAILABLE`) | no PE input | cancelled |
++| kb (`kbcorrelation/cli_index.py:1-14`; `cli_online.py:1-16`; `cli_acquire.py:1-5`) | ok; `index sync`: every month stored or present | invalid arguments, consent or `--offline` refusal, unreadable or malformed local file (`ARGUMENT_CODES`, `cli_index.py:40, 159`); `kb acquire` and `index sync` without matching consent print the plan and exit 2 | runtime failure, damaged workspace; `index sync`: any month missing or failed; a project directory that cannot be opened (`PT-KBC-STORAGE`, `wiring.py:284-289`; section 8, item 19) | nothing to report yet, e.g. an empty index | cancelled |
++| kev (`kev/cli.py:1-12`) | success, a stale catalog included (status `partial`) | invalid use, consent, or input file | runtime, network, provider, integrity or storage failure; `status --max-age-days` exceeded | no catalog, or fewer than two stored catalogs | cancelled |
++| panels list, check (`gui/cli.py:1-7, 51-57`) | ok, status `ok` | a broken manifest or spec rule | a spec module raised on import (3 wins over 2) | no panel is built yet | `:40-43` |
++| pilot leads, why, review (`pilot/cli.py:1-12`) | ok | invalid arguments or input | runtime, storage, integrity, or a partial result (an adapter failed) | no completed run, no stored advisory for a named CVE, no lead, nothing stored | cancelled |
++| rules (`rules/cli.py:1-16`) | success | invalid use, refusal, unavailable engine; `propose` always (section 1) | runtime failure or partial (a file not scanned, a stored row unreadable) | complete but empty: no rule passed the checks | `:150-152` |
++| search (`search/cli.py:1-14, 147-158`) | usable result, or the probe ran | invalid query or arguments, no FTS5, locked project, status `unsupported` | runtime or store failure, or absence unproven | no results with every requested group indexed | cancelled |
++| strings list, delta, explain, scan, export (`strings/cli.py:1-8`) | results | invalid input or nothing readable; `explain` with an unknown id (`:288-291`; section 8, item 17) | rejected or partial: basis, truncation, failed source | complete without results | cancelled |
++
++Section 8 lists where these rows depart from the built-in verbs' rows. The registry verbs' tests are named in section 11.
++
+ ## 5. Flags per verb
+ 
+-One table per verb. `--json` is on every leaf and is not repeated. Defaults are argparse defaults; `none` means no default. Sources are the `add_argument` lines unless stated. Shared flags are listed once, in 5.1.
++One table per built-in verb (5.1 to 5.11), then the registry verbs' usage lines (5.12). `--json` is on every leaf and is not repeated. Defaults are argparse defaults; `none` means no default. Sources are the `add_argument` lines unless stated. Shared flags are listed once, in 5.1. Four of the 106 help pages mention exit codes (`unified`, `unified run`, `unified show`, `kev status`; checked by searching the help text for "exit").
+ 
+ ### 5.1 rank (owner: `enrichment.md` sections 11-12)
+ 
+ | Action | Flag | Type, default | Meaning (source) |
+ |---|---|---|---|
+-| - | `PROJECT` | path, required | project directory (`cli.py:66`) |
+-| - | `--cache-dir DIR` | path, none | derived-stage cache root; else the profile `cache_dir` (`cli.py:60-61`). Shared with flags, correlate |
+-| - | `--refresh` | flag, off | recompute cached stages; needs `--cache-dir` (`cli.py:62, 253-254`). Shared |
+-| - | `--profile NAME or FILE` | string, none | analysis profile; excludes `--weights`, `--disable`, `--feature-id` (`cli.py:55-56, 193-196`). Shared |
+-| - | `--run ID` | string, latest completed | analysis run; help on rank only (`cli.py:69`); `flags`, `correlate` lack help (`cli.py:79, 95`) |
+-| - | `--weights FILE` | path, RankingConfig defaults | JSON object: eight detector IDs to integers 0..100; unknown ID exits 2 (`cli.py:70, 215-226`) |
+-| - | `--disable DETECTOR` | string, repeatable, `[]` | turns a detector off; unknown ID exits 2 (`cli.py:71, 227-229`); no help text |
+-| - | `--limit N` | int, 0 | at most N entries; 0 = all (`cli.py:72, 314`) |
+-| - | `--dry-run` | flag, off | publish nothing to the project (`cli.py:73, 283`) |
++| - | `PROJECT` | path, required | project directory (`cli.py:79`) |
++| - | `--cache-dir DIR` | path, none | derived-stage cache root; else the profile `cache_dir` (`cli.py:73-74`). Shared with flags, correlate |
++| - | `--refresh` | flag, off | recompute cached stages; needs `--cache-dir` (`cli.py:75, 282-283`). Shared |
++| - | `--profile NAME or FILE` | string, none | analysis profile; excludes `--weights`, `--disable`, `--feature-id` (`cli.py:68-69, 220-223`). Shared |
++| - | `--run ID` | string, latest completed | analysis run; help on rank only (`cli.py:82`); `flags`, `correlate` lack help (`cli.py:92, 108`) |
++| - | `--weights FILE` | path, RankingConfig defaults | JSON object: eight detector IDs to integers 0..100; unknown ID exits 2 (`cli.py:83, 242-253`) |
++| - | `--disable DETECTOR` | string, repeatable, `[]` | turns a detector off; unknown ID exits 2 (`cli.py:84, 254-256`); no help text |
++| - | `--limit N` | int, 0 | at most N entries; 0 = all (`cli.py:85, 345`) |
++| - | `--dry-run` | flag, off | publish nothing to the project (`cli.py:86, 314`) |
+ 
+ ### 5.2 flags (owner: `enrichment.md` section 11)
+ 
+ | Action | Flag | Type, default | Meaning (source) |
+ |---|---|---|---|
+-| - | `PROJECT`, `--cache-dir`, `--refresh`, `--profile`, `--run` | as rank (5.1) | shared; `--run` has no help text here (`cli.py:79`) |
+-| - | `--feature-id N` | int, repeatable, none (all) | keep these WIL feature IDs, 0..4294967295; no help text (`cli.py:80, 336-338`) |
+-| - | `--dry-run` | flag, off | as rank; no help text (`cli.py:81`) |
++| - | `PROJECT`, `--cache-dir`, `--refresh`, `--profile`, `--run` | as rank (5.1) | shared; `--run` has no help text here (`cli.py:92`) |
++| - | `--feature-id N` | int, repeatable, none (all) | keep these WIL feature IDs, 0..4294967295; no help text (`cli.py:93, 367-369`) |
++| - | `--dry-run` | flag, off | as rank; no help text (`cli.py:94`) |
+ 
+ ### 5.3 correlate (owner: `enrichment.md` section 11)
+ 
+ | Action | Flag | Type, default | Meaning (source) |
+ |---|---|---|---|
+-| - | `PROJECT`, `--cache-dir`, `--refresh`, `--profile`, `--run`, `--dry-run` | as rank (5.1) | shared; `--run` and `--dry-run` lack help text (`cli.py:95-96`) |
+-| - | `--cve CVE-YYYY-NNNN` | string, repeatable, required | no parse-time check (`cli.py:87`); the fetch path checks it (`cli.py:411`) |
+-| - | `--snapshot FILE` | path, repeatable, `[]` | offline snapshot JSON read to its size cap; marked unverified (`cli.py:88-89, 390-399`) |
+-| - | `--fetch` | flag, off | retrieve from providers; needs `--consent-providers` (`cli.py:90, 402-409`) |
+-| - | `--consent-providers LIST` | string, `''` | must equal `--providers`; ignored without `--fetch` (`cli.py:91, 407-408`) |
+-| - | `--providers LIST` | string, profile or `nvd,msrc` | providers to query (`cli.py:92, 385-386`) |
+-| - | `--api-key-env VAR` | string, `''` | environment variable holding the NVD key (`cli.py:93, 174, 416`) |
+-| - | `--save-snapshot FILE` | path, none | write normalized snapshots as JSON (`cli.py:94, 455-457`) |
++| - | `PROJECT`, `--cache-dir`, `--refresh`, `--profile`, `--run`, `--dry-run` | as rank (5.1) | shared; `--run` and `--dry-run` lack help text (`cli.py:108-109`) |
++| - | `--cve CVE-YYYY-NNNN` | string, repeatable, required | checked at parse time by `_cve_id` (`CVE-` and four digits, then 4 to 19 digits; `cli.py:48-52, 100`); a bad ID exits 2 |
++| - | `--snapshot FILE` | path, repeatable, `[]` | offline snapshot JSON read to its size cap; marked unverified (`cli.py:101-102, 421-430`) |
++| - | `--fetch` | flag, off | retrieve from providers; needs `--consent-providers` (`cli.py:103, 433-440`) |
++| - | `--consent-providers LIST` | string, `''` | must equal `--providers`; ignored without `--fetch` (`cli.py:104, 438-439`) |
++| - | `--providers LIST` | string, profile or `nvd,msrc` | providers to query (`cli.py:105, 416-417`) |
++| - | `--api-key-env VAR` | string, `''` | environment variable holding the NVD key (`cli.py:106, 190, 450`) |
++| - | `--save-snapshot FILE` | path, none | write normalized snapshots as JSON (`cli.py:107, 489-491`) |
+ 
+ ### 5.4 cache (owner: `enrichment.md` section 9 and 11)
+ 
+ | Action | Flag | Type, default | Meaning (source) |
+ |---|---|---|---|
+-| status, verify, prune | `action` | choice, required | operation (`cli.py:99`) |
+-| all | `--cache-dir DIR` | path, required | cache root (`cli.py:100, 487`) |
+-| prune | `--target-bytes N` | int, none | prune target; ignored by status and verify (`cli.py:101, 493`) |
++| status, verify, prune | `action` | choice, required | operation (`cli.py:112`) |
++| all | `--cache-dir DIR` | path, required | cache root (`cli.py:113, 521`) |
++| prune | `--target-bytes N` | int, none | prune target; ignored by status and verify (`cli.py:114, 527`) |
+ 
+ ### 5.5 acquire (owner: `acquisition.md`, SPEC-08)
+ 
+ | Action | Flag | Type, default | Meaning (source) |
+ |---|---|---|---|
+-| search, fetch | `NAME` | string, required | lowercase file name, validated (`cli.py:106, 109, 535-537`) |
+-| search | `--consent-hosts HOST` | string, `''` | exactly `winbindex.m417z.com` (`cli.py:107, 541`) |
+-| fetch | `--older SHA256`, `--newer SHA256` | string, required | lowercased; must differ and be in the Winbindex record; no format check at parse time (`cli.py:110-111, 555-557, 567-568`) |
+-| fetch | `--project DIR` | path, required | new project directory; refused when a project exists (`cli.py:112, 558-559`) |
+-| fetch | `--project-name NAME` | string, `''` | default `<name> (symbol server)` (`cli.py:113, 592-593`); no help text |
+-| fetch | `--consent-hosts HOSTS` | string, `''` | exactly `winbindex.m417z.com,msdl.microsoft.com` (`cli.py:114-115, 554`) |
++| search, fetch | `NAME` | string, required | lowercase file name, validated (`cli.py:119, 122, 571-573`) |
++| search | `--consent-hosts HOST` | string, `''` | exactly `winbindex.m417z.com` (`cli.py:120, 577`) |
++| fetch | `--older SHA256`, `--newer SHA256` | string, required | lowercased; must differ and be in the Winbindex record; no format check at parse time (`cli.py:123-124, 591-593, 603-604`) |
++| fetch | `--project DIR` | path, required | new project directory; refused when a project exists (`cli.py:125, 594-595`) |
++| fetch | `--project-name NAME` | string, `''` | default `<name> (symbol server)` (`cli.py:126, 628-629`); no help text |
++| fetch | `--consent-hosts HOSTS` | string, `''` | exactly `winbindex.m417z.com,msdl.microsoft.com` (`cli.py:127-128, 590`) |
+ 
+ ### 5.6 series (owner: `nway.md` SPEC-09; `series-window.md` SPEC-09b)
+ 
+ | Action | Flag | Type, default | Meaning (source) |
+ |---|---|---|---|
+-| create | `--builds FILE...` | path, 3 to 8 values, required | analyst order, oldest first; never inferred (`cli.py:120-121`; `nway/contracts.py:14`; `nway/series.py:168-169`) |
+-| create | `--root DIR` | path, required | holds `series.json` and the pair projects (`cli.py:122`) |
+-| create | `--labels LABEL...` | strings, none | labels for the builds; count not checked here (`cli.py:123`); no help text |
+-| create | `--direct` | flag, off | also a first-to-last pair (`cli.py:124-125`) |
+-| create | `--replace-corrupt` | flag, off | keep a `series.json.corrupt-*` copy, then replace (`cli.py:126-127`; `nway/series.py:234`) |
+-| create | `--run` | flag, off | run Ghidriff on pairs without a completed run; needs `--python` and `--ghidra-dir` (`cli.py:128-129, 653-656`) |
+-| create | `--python PATH` | string, `''` | external Python for `--run` (`cli.py:130`) |
+-| create | `--ghidra-dir DIR` | string, `''` | Ghidra installation for `--run` (`cli.py:131`) |
+-| create | `--timeout S` | int, 3600 | per-pair timeout; no range check here (`cli.py:132, 657-659`) |
+-| create | `--cache-dir DIR` | path, none | raw-output cache; only with `--run` (`cli.py:133, 660-661`) |
+-| chains | `SERIES_JSON` | path, required | (`cli.py:160`) |
+-| chains | `--function NAME` or `--address HEX` | mutually exclusive, none | filter chains; bad hex exits 2 (`cli.py:161-163, 711-714`) |
++| create | `--builds FILE...` | path, 3 to 8 values, required | analyst order, oldest first; never inferred (`cli.py:133-134`; `nway/contracts.py:14`; `nway/series.py:169-170`) |
++| create | `--root DIR` | path, required | holds `series.json` and the pair projects (`cli.py:135`) |
++| create | `--labels LABEL...` | strings, none | labels for the builds; count not checked here (`cli.py:136`); no help text |
++| create | `--direct` | flag, off | also a first-to-last pair (`cli.py:137-138`) |
++| create | `--replace-corrupt` | flag, off | keep a `series.json.corrupt-*` copy, then replace (`cli.py:139-140`; `nway/series.py:283, 346-355`) |
++| create | `--run` | flag, off | run Ghidriff on pairs without a completed run; needs `--python` and `--ghidra-dir` (`cli.py:141-142, 690-693`) |
++| create | `--python PATH` | string, `''` | external Python for `--run` (`cli.py:143`) |
++| create | `--ghidra-dir DIR` | string, `''` | Ghidra installation for `--run` (`cli.py:144`) |
++| create | `--symbols {off,local,online}`, `--symbol-dir DIR`, `--consent-online-symbols` | choice, off; path, repeatable; flag, off | Ghidra symbol policy for `--run` (SPEC-53); `online` needs the consent flag (exit 2 `PT-SYMBOL-NETWORK-REFUSED`), `--symbol-dir` needs `local` (exit 2 `PT-SYMBOL-MODE`); without `--run` any of them exits 2 (`symbols/cli_args.py:9-14, 17-19, 25-28`; `cli.py:147, 697-698`) |
++| create | `--timeout S` | int, 3600 | per-pair timeout; no range check here (`cli.py:145, 694-696`) |
++| create | `--cache-dir DIR` | path, none | raw-output cache; only with `--run` (`cli.py:146, 697-698`) |
++| chains | `SERIES_JSON` | path, required | (`cli.py:174`) |
++| chains | `--function NAME` or `--address HEX` | mutually exclusive, none | filter chains; bad hex exits 2 (`cli.py:175-177, 748-751`) |
+ 
+ ### 5.7 secondary (owners: `multi-engine-orchestration.md` SPEC-28; `bindiff-execution.md` SPEC-29; `binexport2-support.md` SPEC-10b)
+ 
+ | Action | Flag | Type, default | Meaning (source) |
+ |---|---|---|---|
+-| import-bindiff | `PROJECT BINDIFF` | paths, required | a genuine `.BinDiff` for this exact pair; the project needs a completed run (`cli.py:136-138, 798-799`) |
+-| run | `PROJECT` | path, required | (`cli.py:140`) |
+-| run | `--engine rz-diff or bindiff` | choice, repeatable, every supported engine | default probes each engine (`cli.py:141-142`; `cli_run.py:72-73`) |
+-| run | `--rz-diff EXE` | string, `rz-diff` | absolute path or PATH lookup (`cli.py:143`) |
+-| run | `--bindiff EXE` | string, none | absolute BinDiff 8 path; else `PATCHTRACE_BINDIFF` (`cli.py:144`; `cli_bindiff.py:71-73`) |
++| import-bindiff | `PROJECT BINDIFF` | paths, required | a genuine `.BinDiff` for this exact pair; the project needs a completed run (`cli.py:150-152, 836-837`) |
++| run | `PROJECT` | path, required | (`cli.py:154`) |
++| run | `--engine rz-diff or bindiff` | choice, repeatable, every supported engine | default probes each engine (`cli.py:155-156`; `cli_run.py:72-73`) |
++| run | `--rz-diff EXE` | string, `rz-diff` | absolute path or PATH lookup (`cli.py:157`) |
++| run | `--bindiff EXE` | string, none | absolute BinDiff 8 path; else `PATCHTRACE_BINDIFF` (`cli.py:158`; `cli_bindiff.py:71-73`) |
+ | run | `--older-binexport FILE`, `--newer-binexport FILE` | paths, none | BinExport2 inputs for BinDiff (`cli_bindiff.py:23-26`) |
+ | run | `--accept-unbound-binexport` | flag, off | accept a BinExport with no SHA-256 executable id; recorded (`cli_bindiff.py:27-29`) |
+-| run | `--max-parallel {1,2}` | int, 1 | engines in parallel (`cli.py:147`) |
+-| run | `--timeout S` | int, 1800; 60..86400 | per-engine limit, enforced (`cli.py:148, 739-740`) |
+-| run | `--no-cache` | flag, off | ignore stored engine runs (`cli.py:149, 744`) |
+-| rzdiff | `PROJECT`, `--rz-diff`, `--timeout` | as run; timeout 1800 | engine fixed to rz-diff, one at a time, cache on (`cli.py:150-154`); `--timeout` has no help text (`cli.py:153`) |
+-| reconcile | `PROJECT` | path, required | no flags (`cli.py:155-156`) |
++| run | `--max-parallel {1,2}` | int, 1 | engines in parallel (`cli.py:161`) |
++| run | `--timeout S` | int, 1800; 60..86400 | per-engine limit, enforced (`cli.py:162, 776-777`) |
++| run | `--no-cache` | flag, off | ignore stored engine runs (`cli.py:163, 781`) |
++| rzdiff | `PROJECT`, `--rz-diff`, `--timeout` | as run; timeout 1800 | engine fixed to rz-diff, one at a time, cache on (`cli.py:164-168`); `--timeout` has no help text (`cli.py:167`) |
++| reconcile | `PROJECT` | path, required | no flags (`cli.py:169-170`) |
+ | binexport-check | `FILE` | path, required | the export to validate (`cli_binexport.py:33`) |
+ | binexport-check | `--artifact-sha256 HEX64` | 64 hex digits, required | SHA-256 of the binary the export describes (`cli_binexport.py:21-22, 34-35`) |
+ | binexport-check | `--role {older,newer}` | choice, required | (`cli_binexport.py:36`) |
+ | binexport-check | `--accept-unbound` | flag, off | confirms an executable id that is not SHA-256; recorded as `id_binding` (`cli_binexport.py:37-39`) |
+-| _binexport-worker | `--request FILE` | string, required; hidden | internal request handle (`cli_binexport.py:40-41`) |
++| _binexport-worker | `--request FILE` | string, required; hidden | internal request handle; no `help=`, so `secondary --help` omits the action (`cli_binexport.py:40-42`), but the usage line still names it (section 8, item 12) |
+ 
+ ### 5.8 intelligence (owner: `csaf-cve-interpretation-engine.md`, draft)
+ 
+@@ -182,43 +247,54 @@ One table per verb. `--json` is on every leaf and is not repeated. Defaults are
+ 
+ ### 5.9 unified (owner: `unified-engine/07-ui-and-cli.md`, SPEC-31/07)
+ 
++`unified --help`, `unified run --help` and `unified show --help` carry an exit-code epilog (`unified/cli.py:38-40, 57-64, 86-87`).
++
+ | Action | Flag | Type, default | Meaning (source) |
+ |---|---|---|---|
+-| run, show, explain, status | `PROJECT` | path, required | (`unified/cli.py:39, 54, 61, 64`) |
+-| run | `--no-extract` | flag, off | silences the no-extraction warning only (`:40-41, 154`) |
+-| run | `--no-decompile` | flag, off | accepted and unused (`:42`) |
+-| run | `--sources LIST` | string, all four | subset of ghidriff, bindiff, rz-diff, manual (`:43-44, 105-111`) |
+-| run | `--isolate` (default) or `--in-process` | mutually exclusive | capped child worker, or in-process for tests (`:45-49`) |
+-| run | `--timeout S` | int, 3600; help 60..86400 | worker limit; checked by `limits.checked_timeout` (`:50`; `pipeline.py:291`) |
+-| run | `--refresh` | flag, off | recompute although inputs match; not in owner spec (`:51`) |
+-| run | `--fail-on-none` | flag, off | exit 4 when no row is material or review (`:52, 159`) |
+-| show | `--decision`, `--change`, `--class` | choices, repeatable, none | filters; choice sets at `:21-25` (`:55-58`) |
+-| show | `--limit N` | int, 200 | rows printed; totals always shown (`:59`) |
+-| explain | `--row ID` | string, required; 8+ hex digits | row id or unique prefix (`:62, 294-296`) |
+-| _worker | `--request`, `--result-dir`, `--self-check` | hidden | internal (`:65-68`) |
++| run, show, explain, status | `PROJECT` | path, required | (`unified/cli.py:65, 88, 102, 105`) |
++| run | `--no-extract` | flag, off | S0 mode: use the stored engine outputs only, even when a ProgramIR is placed for the project (`:66-68, 182, 204`) |
++| run | `--no-residual` | flag, off | skip the residual passes P16-P19 of the ladder; another result, another id (`:69-70, 183`); not in owner spec |
++| run | `--no-decompile` | flag, off | skip the on-demand decompile of review pairs (`:71-72, 183`) |
++| run | `--python PATH`, `--ghidra-dir DIR` | strings, `''` | go together, else exit 2; enable the decompile of review pairs (`:73-75, 175-180`); not in owner spec |
++| run | `--sources LIST` | string, all five | subset of ghidriff, bindiff, rz-diff, diaphora, manual (`:27, 76-77, 146-152`) |
++| run | `--isolate` (default) or `--in-process` | mutually exclusive | capped child worker, or in-process for tests (`:78-82`) |
++| run | `--timeout S` | int, 3600; 60..86400 | worker limit, refused outside the range (`:37, 49-52, 83, 174`) |
++| run | `--refresh` | flag, off | recompute although inputs match; not in owner spec (`:84`) |
++| run | `--fail-on-none` | flag, off | exit 4 when no row is material or review (`:85, 209`) |
++| show | `--decision`, `--change`, `--class` | choices, repeatable, none | filters; choice sets at `:28-32` (`:89-92`) |
++| show | `--source SOURCE` | lower-case slug, repeatable, none | only rows with a record from this source (`:35, 43-46, 93-94`) |
++| show | `--search TEXT` | string, `''` | function names or hexadecimal RVAs, with or without 0x (`:95-96`) |
++| show | `--all` | flag, off | also list the unchanged rows and the cosmetic rows with a structural proof, which are collapsed by default; an explicit `--change` lists them too (`:97-99, 304-314`) |
++| show | `--limit N` | int, 200 | rows printed; totals always shown; a negative value exits 2 (`:100, 320-321`) |
++| explain | `--row ID` | string, required; 8+ hex digits | row id or unique prefix (`:103, 352-354`) |
++| _worker | `--request`, `--result-dir`, `--self-check` | hidden | internal (`:106-109`) |
+ 
+ ### 5.10 intel-tools (owner: `three-tool-evidence-adapters.md`, SPEC-36)
+ 
+-probe and run share the tool locations `--capa`, `--floss`, `--diec` (absolute paths), `--diec-db`, `--diec-lib`, `--capa-rules`, `--capa-sigs` and `--{capa,floss,diec}-accept-untested` (`intelligence/tools/cli.py:29-39`). Environment fallbacks: section 3.
++probe and run share the tool locations `--capa`, `--floss`, `--diec` (absolute paths), `--diec-db`, `--diec-lib`, `--capa-rules`, `--capa-sigs` and `--{capa,floss,diec}-accept-untested` (`intelligence/tools/cli.py:37-47`). Environment fallbacks: section 3.
+ 
+ | Action | Flag | Type, default | Meaning (source) |
+ |---|---|---|---|
+-| probe | the shared tool locations | paths or env, none | runs `--version` or `--help` on each tool (`:45-46, 112-122`) |
+-| run | `PROJECT` | path, required | (`:48`) |
+-| run | `--profile {basic,context,full}` | choice, basic | engines per profile (`:49`) |
+-| run | `--engines LIST` | none (profile) | subset of capa, floss, diec (`:50, 22-26`) |
+-| run | `--floss-deobfuscate` | flag, off | FLOSS stack, tight and decoded extraction; prints consent text on stderr (`:51-52, 157-159`) |
+-| run | `--floss-min-length N` | int, none | (`:53`); not in owner spec |
+-| run | `--floss-large-file` | flag, off | pass `-L` (emulate above 16 MiB) (`:54`); not in owner spec |
+-| run | `--diec-heuristic` | flag, off | (`:55`) |
+-| run | `--capa-backend {vivisect,ghidra}` | choice, vivisect | (`:56`) |
+-| run | `--ghidra-dir DIR`, `--java-home DIR` | paths, none | (`:57-58`) |
+-| run | `--timeout S` | int, none (engine default) | 10..86400 enforced (`:59`; `runner.py:99`); defaults capa 1800, floss 600, diec 120 (`capa.py:41`, `floss.py:41`, `diec.py:40`) |
+-| run | `--memory-mb N` | int, none (FLOSS emulation 4096) | per-process cap (`:60-61`); not in owner spec |
+-| run | `--max-parallel {1,2}`, `--no-cache` | int 1; flag off | (`:62-63`) |
+-| run | `--scratch DIR` | path, none | parent of per-job scratch directories (`:64`) |
+-| delta | `PROJECT` | path, required | never runs a tool (`:66-67`) |
+-| delta | `--engines LIST`, `--show-secrets` | none (engines with stored runs); off | `--show-secrets` turns off redaction (`:68-69`) |
++| probe | the shared tool locations | paths or env, none | runs `--version` or `--help` on each tool (`:53-54, 140-152`) |
++| run | `PROJECT` | path, required | (`:56`) |
++| run | `--profile {basic,context,full}` | choice, basic | engines per profile (`:57`) |
++| run | `--engines LIST` | none (profile) | subset of capa, floss, diec (`:58, 23-27`) |
++| run | `--floss-deobfuscate` | flag, off | FLOSS stack, tight and decoded extraction; prints consent text on stderr (`:59-60, 187-189`) |
++| run | `--floss-min-length N` | int, none | (`:61`); not in owner spec |
++| run | `--floss-large-file` | flag, off | pass `-L` (emulate above 16 MiB) (`:62`); not in owner spec |
++| run | `--diec-heuristic` | flag, off | (`:63`) |
++| run | `--capa-backend {vivisect,ghidra}` | choice, vivisect | (`:64`) |
++| run | `--ghidra-dir DIR`, `--java-home DIR` | paths, none | (`:65-66`) |
++| run | `--timeout S` | int, none (engine default) | 10..86400 enforced (`:67`; `runner.py:99`); defaults capa 1800, floss 600, diec 120 (`capa.py:48`, `floss.py:41`, `diec.py:41`) |
++| run | `--memory-mb N` | int, none (FLOSS emulation 4096) | per-process cap (`:68-69`); not in owner spec |
++| run | `--max-parallel {1,2}`, `--no-cache` | int 1; flag off | (`:70-71`) |
++| run | `--scratch DIR` | path, none | parent of per-job scratch directories (`:72`) |
++| delta | `PROJECT` | path, required | never runs a tool (`:74-75`) |
++| delta | `--engines LIST`, `--show-secrets` | none (engines with stored runs); off | `--show-secrets` turns off redaction (`:76-77`) |
++| pairs | `PROJECT` | path, required | capa capability changes per matched function pair; reads stored evidence and the stored pairing, never runs a tool (`:78-80, 312-374`) |
++| pairs | `--engine {capa}` | choice, capa | (`:81`) |
++| pairs | `--change LIST` | comma list of gained, lost, moved, unchanged, not-compared; default gained,lost,moved | (`:23-28, 82-83, 345`) |
++| pairs | `--namespace PREFIX`, `--include-noise`, `--include-library`, `--show-features`, `--show-secrets` | string; flags off | filters and disclosure; `--show-secrets` turns redaction off (`:84-88`, `:310-321`) |
+ 
+ ### 5.11 backend (owner: `offline-backend-installer.md` SPEC-06; `program-e/BUNDLE-integration-plan.md`)
+ 
+@@ -227,101 +303,221 @@ status, verify, selftest and diagnose all take `--bundle-dir DIR` (default: next
+ | Action | Flag | Type, default | Meaning (source) |
+ |---|---|---|---|
+ | verify | `--full` | flag, off | hash every file; slow, cancellable (`backend_cli.py:37`) |
+-| selftest | `--older PATH`, `--newer PATH` | files, required | PE x64 artifacts; never executed (`:39-40, 200-202`) |
++| selftest | `--older PATH`, `--newer PATH` | files, required | PE x64 artifacts; never executed (`:39-40, 201-203`) |
+ | selftest | `--expect-function NAME` | string, repeatable, required | must appear in the result (`:41-42`) |
+-| selftest | `--project-dir DIR` | path, none | new or empty; default under the work dir (`:43-44, 224-225`) |
+-| selftest | `--timeout S` | int, 3600; 10..86400 | enforced (`:45, 198-199`); not in owner spec |
++| selftest | `--project-dir DIR` | path, none | new or empty; default under the work dir (`:43-44, 225-226`) |
++| selftest | `--timeout S` | int, 3600; 10..86400 | enforced (`:45, 199-200`); not in owner spec |
++
++### 5.12 Registry verbs
++
++The registry verbs have no per-flag tables here: each feature owns its grammar in the spec of section 1, and the one place that lists all of them is the verb's `--help`. The usage lines below are the parsers' own, taken from `python -m patchtrace <verb> <action> --help` at `882d1ca0`; a flag in square brackets is optional, `|` separates alternatives, `PROJECT` is a project directory. `--json` is on every leaf. The `fabric` leaves take `--project PATH` as a required flag, not a positional. Defaults and meanings are in each leaf's help text and help page (`docs/help/64..76`); section 6, row 18 records that those pages name few of the flags.
++
++| Leaf | Usage (after `patchtrace <leaf>`) |
++|---|---|
++| build-env show | `[--side {older,newer,both}] [--technical] PROJECT` |
++| build-env delta | `PROJECT` |
++| build-env timeline | `SERIES_DIR` |
++| diaphora inspect | `RESULT` |
++| diaphora import | `--diff DIFF [--manifest MANIFEST] [--user-attest-pair] PROJECT` |
++| diaphora show | `PROJECT` |
++| export | `[--format {json,md,html}] [--report-version {1,2}] [--profile {local,share}] [--include-code] [--include-notes \| --no-include-notes] [--finding ID] --out PATH [--include-ordinal-index] [--urls {text,defanged,removed}] PROJECT` |
++| fabric list | `--project PATH [--kind KIND] [--side SIDE] [--role ROLE] [--subject SUBJECT] [--limit LIMIT]` |
++| fabric show | `--project PATH ANCHOR_ID` |
++| fabric resolve | `--project PATH --kind KIND [--side SIDE] VALUE` |
++| fabric stats | `--project PATH` |
++| graph neighbours | `(--match ID \| --function ID \| --name LABEL) [--side {older,newer,both}] [--direction {callers,callees,both}] [--depth DEPTH] [--max-nodes MAX_NODES] [--max-edges MAX_EDGES] PROJECT` |
++| graph delta | `[--match ID] [--limit LIMIT] PROJECT` |
++| graph leads | `[--limit LIMIT] PROJECT` |
++| graph paths | `--from FUNCTION --to API\|FUNCTION [--side {older,newer}] [--max-paths MAX_PATHS] PROJECT` |
++| graph export | `--match ID --format {dot,json} --output FILE [--overwrite] [--depth DEPTH] PROJECT` |
++| graph series | `--chain ID ROOT` |
++| inspect | `[--side {older,newer,both}] [--trust {offline,cache,online}] [--consent-online] PROJECT` |
++| kb index import | `[--workspace WORKSPACE] [--winbindex NAME] [--data-date YYYY-MM-DD] FILE [FILE ...]` |
++| kb index status, kb index verify | `[--workspace WORKSPACE]` |
++| kb index plan | `[--workspace WORKSPACE] (--months YYYY-MM[,..] \| --since YYYY-MM) [--until YYYY-MM] [--with-index]` |
++| kb index sync (not in any help page) | `[--workspace WORKSPACE] [--months YYYY-MM[,..] \| --since YYYY-MM \| --window-months N] [--until YYYY-MM] [--consent-hosts HOST[,..]] [--consent-plan SHA256] [--offline]` (`kbcorrelation/cli_online.py:61-75`; read from the parser, the verb has no help page) |
++| kb search | `[--workspace WORKSPACE] [--months YYYY-Mon[,..] \| --scope-file F] [--offline] [--product ID] [--investigation ID] KB\|CVE` |
++| kb attach | `[--workspace WORKSPACE] --investigation INV [--repair] PROJECT` |
++| kb explain | `[--workspace WORKSPACE] [--cve CVE] [--kev-dir DIR] PROJECT` |
++| kb export | `[--workspace WORKSPACE] [--overwrite] [--kev-dir DIR] PROJECT FILE.json\|FILE.md` |
++| kb products | `[--workspace WORKSPACE] INV` |
++| kb components, kb pairs | `[--workspace WORKSPACE] [--product ID] [--file NAME] INV` |
++| kb import-pair | `[--workspace WORKSPACE] --older FILE --newer FILE --project DIR [--name N] [--confirm-same-component] [--dry-run] INV` |
++| kb plan | `[--workspace WORKSPACE] [--pair ID] [--product ID] [--file NAME] INV` |
++| kb leads | `[--workspace WORKSPACE] [--cve CVE] [--limit N] [--kev-dir DIR] PROJECT` |
++| kb acquire | `[--workspace WORKSPACE] [--pair ID] --project DIR [--product ID] [--file NAME] [--name N] [--consent-hosts HOST[,..]] [--consent-plan SHA] [--offline] INV` |
++| kev status | `[--kev-dir DIR] [--max-age-days N]` |
++| kev plan | `--source {cisa-github,cisa-site}` |
++| kev fetch | `[--kev-dir DIR] --source {cisa-github,cisa-site} [--consent-hosts HOST] [--accept-shrink]` |
++| kev import | `[--kev-dir DIR] [--accept-shrink] FILE` |
++| kev lookup | `[--kev-dir DIR] [--from-cve-snapshot FILE] [--catalog FILE] [--md] [CVE ...]` |
++| kev diff | `[--kev-dir DIR] [--from ID] [--to ID]` |
++| kev prune | `[--kev-dir DIR] --keep N [--yes]` |
++| panels list, panels check | (no flags) |
++| pilot leads | `[--cve CVE-YYYY-NNNN] [--assume-applies CVE-YYYY-NNNN] [--class {fit,review,partial,code,queue}] [--limit LIMIT] [--no-unified] [--show-dismissed] [--dry-run] [--export FILE] PROJECT` |
++| pilot why | `--candidate KEY [--cve CVE-YYYY-NNNN] PROJECT` |
++| pilot review | `--candidate KEY --action {pin,unpin,dismiss,restore,note} [--cve CVE-YYYY-NNNN] [--text TEXT] PROJECT` |
++| rules probe | (no flags) |
++| rules propose | `--match ID [--direction {older,newer,both}] [--confirm-material] PROJECT` |
++| rules show | `[--candidate ID \| --version ID] PROJECT` |
++| rules decide | `--candidate ID (--accept \| --reject \| --defer \| --archive) [--label TEXT] [--cve ID] [--kb ID] [--cwe ID] [--note TEXT] PROJECT` |
++| rules test | `--version ID [--series DIR] [--extra FILE] [--clean-dir DIR] [--expect FILE.json] [--timeout S] PROJECT` |
++| rules export | `--version ID --out FILE.yar [--include-names] [--allow-git-tree] [--with-warnings] PROJECT` (a new file; never replaced) |
++| rules history | `[--lineage ID] PROJECT` |
++| search | `[--query TEXT] [--kind K] [--side {older,newer,both}] [--scope {indexed,changed}] [--mode {auto,words,exact,prefix,substring,similar}] [--sort {relevance,change,name,address}] [--limit N] [--cursor C] [--no-group] [--no-expand] [--rebuild] [--no-index-build] [--cache-dir D] [--status] [--probe] [--anchors-from CVE-ID] [PROJECT]` |
++| strings list | `[--source {auto,floss,builtin}] [--min-length N] [--anchors FILE] [--show-secrets] [--side {older,newer,both}] [--change {only-newer,only-older,edited,changed,all}] [--type {static,stack,tight,decoded,language} ...] [--function ID] [--cue K ...] [--limit N] PROJECT` |
++| strings delta | `[--source {auto,floss,builtin}] [--min-length N] [--anchors FILE] [--show-secrets] PROJECT` |
++| strings explain | the strings delta flags and `--id STRING_ID` (required) |
++| strings scan | `[--builtin] [--min-length N] PROJECT` |
++| strings export | the strings delta flags and `--out FILE --format {json,csv} [--scope {changed,all}] [--force]` (the only CSV in the CLI) |
+ 
+ ## 6. Flag registry: flags no owner spec documents
+ 
+-The owner check searched each owner spec for the literal flag; "not named" means no line of that file contains it. Rows 1 and 4-9 are the audit's twelve flags (`docs/audits/spec-gaps-20261014.md:35-40`); row 10 is a naming gap the audit missed; rows 2, 3 and 11-14 are new; row 15 is a help gap.
++The owner check searched each owner spec for the literal flag; "not named" means no line of that file contains it. Rows 1 and 4-9 are the audit's twelve flags (`docs/audits/spec-gaps-20261014.md:35-40`); row 10 is a naming gap the audit missed; rows 2, 3 and 11-14 and 16-17 are new; row 15 is a help gap. Re-checked 2026-11-11 with `grep -c` on each owner spec: every row 1-14 still holds at 882d1ca0.
+ 
+ | # | Verb | Flag(s) | Owner spec | Origin |
+ |---|---|---|---|---|
+ | 1 | rank, flags, correlate | `--dry-run` | `enrichment.md`: not named | audit |
+ | 2 | rank, flags, correlate | `--run` | `enrichment.md`: not named (`nway.md` names it for `series create`) | new |
+-| 3 | rank, flags, correlate | `--cache-dir` | `enrichment.md:139` names it for `cache` only; the others reach it through the profile (sections 12-13) | new, partial |
++| 3 | rank, flags, correlate | `--cache-dir` | `enrichment.md:141` names it for `cache` only; the others reach it through the profile (sections 12-13) | new, partial |
+ | 4 | cache | `--target-bytes` | `enrichment.md`: not named | audit |
+ | 5 | correlate | `--providers`, `--api-key-env`, `--save-snapshot` | `enrichment.md`: not named | audit |
+ | 6 | acquire fetch | `--project-name` | `acquisition.md`: not named | audit |
+-| 7 | series create | `--direct`, `--python`, `--timeout`, `--cache-dir` | `nway.md`: not named; `windows-acceptance-and-milestone-builds.md:89` uses `--python` in a planned step | audit |
+-| 8 | series create | `--ghidra-dir` | `nway.md`: not named; `windows-acceptance-and-milestone-builds.md:89` uses it in a planned step | audit |
+-| 9 | series create | `--replace-corrupt` | `nway.md`: not named; `series-window.md:76,168,175` (SPEC-09b, not the owner) | audit |
++| 7 | series create | `--direct`, `--python`, `--timeout`, `--cache-dir` | `nway.md`: not named; `windows-acceptance-and-milestone-builds.md:127` uses `--python` in a planned step | audit |
++| 8 | series create | `--ghidra-dir` | `nway.md`: not named; `windows-acceptance-and-milestone-builds.md:127` uses it in a planned step | audit |
++| 9 | series create | `--replace-corrupt` | `nway.md`: not named; `series-window.md:78, 171, 178` (SPEC-09b, not the owner) | audit |
+ | 10 | secondary binexport-check | `--accept-unbound` | `binexport2-support.md` names the parameter `accept_unbound` (`:136, :166`), not the flag | audit says none; naming gap |
+ | 11 | intel-tools run | `--floss-min-length`, `--floss-large-file`, `--memory-mb` | `three-tool-evidence-adapters.md`: not named | new |
+ | 12 | unified run | `--refresh` | `unified-engine/07-ui-and-cli.md`: not named | new |
+ | 13 | backend (four actions) | `--bundle-dir`, `--work-dir` | no file under `docs/specs/` names them | new |
+ | 14 | backend selftest | `--timeout` | `BUNDLE-integration-plan.md`: not named | new |
+-| 15 | several | no help text: `rank --disable` (`cli.py:71`); `flags --run`, `--feature-id`, `--dry-run` (`:79-81`); `correlate --cve`, `--run`, `--dry-run` (`:87, 95-96`); `cache --target-bytes` (`:101`); `acquire fetch --project-name` (`:113`); `series create --labels` (`:123`); `secondary rzdiff --timeout` (`:153`); `intel-tools run --floss-min-length`, `--diec-heuristic`, `--no-cache`, `--ghidra-dir`, `--java-home` (`intelligence/tools/cli.py:53, 55, 63, 57-58`) | none | help gap |
++| 15 | several | no help text: `rank --disable` (`cli.py:84`); `flags --run`, `--feature-id`, `--dry-run` (`:92-94`); `correlate --cve`, `--run`, `--dry-run` (`:100, 108-109`); `cache --cache-dir`, `--target-bytes` (`:113-114`); `acquire fetch --older`, `--newer`, `--project-name` (`:123-126`); `series create --labels` (`:136`); `secondary run --max-parallel` (`:161`); `secondary rzdiff --timeout` (`:167`); `intel-tools run --floss-min-length`, `--diec-heuristic`, `--no-cache`, `--ghidra-dir`, `--java-home`, `intel-tools pairs --show-features` (`intelligence/tools/cli.py`, `add_argument` lines without `help=`) | none | help gap |
++| 16 | unified run | `--no-residual`, `--python`, `--ghidra-dir` | `unified-engine/07-ui-and-cli.md`: not named (`--source`, `--search` and `--all` of `show` are named) | new |
++| 17 | intel-tools pairs | the whole action | named in `program-e/CAP-integration-plan.md:197` (a plan, with a `--hypothesis` flag that is not built), not in `three-tool-evidence-adapters.md` | new |
++| 18 | the registry verbs | most flags | owner specs name each verb's grammar, but the user help pages name few of the flags (a substring search of `docs/help/64..76` for each verb's flags, 2026-11-11: `build-env` 0 of 2, `fabric` 0 of 6, `graph` 0 of 16, `kb` 0 of 26, `kev` 1 of 12, `rules` 1 of 24, `strings` 1 of 16, `pilot` 6 of 11, `search` 13 of 16; `diaphora`, `export` and `inspect` name all); the flags are in section 5.12 | new |
++
++## 7. Scope: GUI/CLI parity, and the verbs that are not built yet [decision, 2026-11-11]
++
++Recorded 2026-11-11. The owner directive of that date asks for GUI/CLI parity: every substantial GUI capability has a CLI equivalent unless that is impossible or inappropriate. This replaces the default of the 2026-10-14 draft, which kept `doctor`, `export`, `import`, `show` and `project` out of the alpha (`docs/audits/spec-gaps-20261014.md:41`; `docs/specs/completeness-audit.md:40`). The directive's own list (binary import, comparison, adapter selection, analysis execution, CVE lookup, patch correlation and recommendations, historical run retrieval, manual correction import and export, result export, configuration, diagnostics, health checks, batch processing, scriptable workflows, output formats, stable exit codes, unattended execution, command-line procedures) was compared with the CLI of `882d1ca0` in an inventory of the same date (not committed). Capabilities that the GUI has and the CLI lacks, by that inventory: creating a project from two local binaries, importing a Ghidriff JSON result, running the primary comparison for one pair, reviewing and annotating findings and matches, manual match corrections and their undo, swapping orientation, backing a project up, listing a project's analysis runs, managing analysis profiles, discovering local runtimes, and installing and verifying the offline backend. Everything after "a project exists and has a completed run" is already scriptable (sections 4 and 5).
+ 
+-## 7. Decisions on doctor, export, import, show, project [proposal]
++### 7.1 Verbs in scope
+ 
+-Default for all five: not in the alpha. The audit left them open (`spec-gaps-20261014.md:41`); `completeness-audit.md:40` records them as not implemented.
++Each verb is specified in its own file, which parallel slices of this session are writing; this umbrella names the files and does not write them. The file decides each verb's actions, flags, service calls and per-case exit codes within the rules of 7.2. Intended coverage is a proposal until the file lands.
+ 
+-| Verb | State at HEAD | Source | Proposal |
++| Verb | Intended coverage | Spec file | State at `882d1ca0` |
+ |---|---|---|---|
+-| doctor | no verb | `completeness-audit.md:40` | [proposal] not in alpha. Diagnosis stays with `backend diagnose` (`backend_cli.py:46`) and `intel-tools probe`. |
+-| export | no verb; RPT2 specifies `export PROJECT --format json\|md\|html` with exits 0/2/3/4/5 | `docs/specs/report-export-contract-v2.md:121` (status: draft for build) | [proposal] not in alpha. If the RPT2 build slice is approved it ships as `cli_commands/export.py` (section 9). Owner decision: RPT2 build or alpha. |
+-| import | no verb; the two imports are `intelligence import` (`intelligence/cli.py:151`) and `secondary import-bindiff` (`cli.py:136`) | `cli.py:136` | [proposal] not in alpha. A generic `import` would hide two different inputs. |
+-| show | `unified show` and `unified explain` exist (`unified/cli.py:53-62`) | `unified/cli.py` | [proposal] not in alpha. A top-level `show` would duplicate them. |
+-| project | no code | `completeness-audit.md:40` | [proposal] not in alpha. Projects come from `acquire fetch`, `series create` and the desktop. |
+-
+-Open, not briefed: `diff`, `config`, `interpret` (`completeness-audit.md:40`). Default: not in alpha; owner to decide.
+-
+-## 8. Inconsistencies between verbs
+-
+-1. Partial exit code. `rank` (`cli.py:327-330`) and `correlate` (`cli.py:480`) exit 0 with `status: partial`; `flags` (`cli.py:352-353`), `series create` (`cli.py:701`), `secondary run` (`cli_run.py:60`), `unified run` (`unified/cli.py:157-158`), `intelligence explain` (`intelligence/cli.py:365`) and `intel-tools run` (`intelligence/tools/cli.py:144`) exit 3. [proposal] keep existing codes (additive rule); new verbs use 3.
+-2. Zero results. `rank` exits 4 for zero entries (`cli.py:328-329`); `correlate` exits 0 for zero contextual entries (`cli.py:480`). [proposal] document; change only in `enrichment-cli/2`.
+-3. No bundle. `backend status` and `verify` exit 4 (`backend_cli.py:89-92`); `selftest` and `diagnose` exit 2 (`:176, 205`). [proposal] 4 for "no bundle" everywhere.
+-4. Status vocabulary. `enrichment.md:32` closes the set at complete, partial, unavailable, cancelled, failed; `stale` and `no-results` are outside it. [proposal] add both to `enrichment.md` section 2 as observed v1 values (a note, not a version bump).
+-5. `intel-tools delta` with no stored evidence exits 2 with `status: complete` (`intelligence/tools/cli.py:203-205`); `intel-tools run` reports `failed` for the same class (`:141`). [proposal] `failed`.
+-6. `unified status` exits 0 with no result (`unified/cli.py:369`); `unified show` exits 2 (`:183-184`). [proposal] keep; document.
+-7. Cache names. `--refresh` recomputes (`cli.py:62`; `unified/cli.py:51`); `--no-cache` ignores stored runs (`cli.py:149`; `intelligence/tools/cli.py:63`); `--cache-dir` means a derived-stage cache (`cli.py:60`), an HTTP response cache (`intelligence/cli.py:215`) or a raw-output cache (`cli.py:133`). [proposal] keep names; section 5 states the meaning per verb.
+-8. Timeouts. 60..86400 for secondary (`cli.py:739-740`) and unified (help only); 10..86400 for intel-tools (`runner.py:99`) and backend (`backend_cli.py:198-199`); `series create --timeout` has no check (`cli.py:132`) [unverified in `BackendConfig`]. [proposal] one range per engine family, stated in section 5.
+-9. Inert flags. `cache --target-bytes` does nothing outside prune (`cli.py:493`); `correlate --consent-providers` does nothing without `--fetch` (`cli.py:402-407`); `unified run --no-decompile` is unused (`unified/cli.py:42`); `--no-extract` only hides a warning (`unified/cli.py:154`). [proposal] new verbs reject inert flags with exit 2; existing ones are documented.
+-10. Consent. `acquire` and `intelligence fetch` require an exact host list (`cli.py:500-503`; `intelligence/cli.py:242-246`); `correlate` requires a provider list equal to `--providers` (`cli.py:408`); `--floss-deobfuscate` prints its consent text and proceeds (`intelligence/tools/cli.py:157-159`). [proposal] new network verbs use an exact host list and a `request:` line on stderr.
+-11. PATH policy. `rz-diff` is looked up on PATH (`cli.py:143`); BinDiff and intel-tools are not (`cli_bindiff.py:3-4`; `intelligence/tools/cli.py:75-77`). [proposal] keep; say so in the `--rz-diff` help.
+-12. Hidden workers. `secondary _binexport-worker` prints `==SUPPRESS==` in `secondary --help` (`cli_binexport.py:40`); `unified _worker` is hidden correctly (`unified/cli.py:65`). Worker codes (section 4) lie outside 0/2/3/4/5; the BinExport parent maps 0, 20 and 22 itself (`binexport_run.py:91, 142`). [proposal] drop the `help=` argument, as `unified` does.
+-13. Minor. `cache` has no action in `command` (`cli.py:496`); alias `secondary rzdiff` reports its own name (`cli.py:747`); `rank --limit` 0 means all (`cli.py:72`) while `unified show --limit` defaults to 200 (`unified/cli.py:59`); `cache` prints JSON in text mode (`cli.py:496`). [proposal] keep (additive rule); document.
+-
+-## 9. Extension rule: the cli_commands registry (F1b) [proposal]
+-
+-Status: F1b is being built in a parallel slice (`docs/specs/program-e/GUI-integration-plan.md` section 8.12). `src/patchtrace/cli_commands/` is absent at HEAD. Until it merges, these rules govern new verbs and each new verb is an integrator ask.
+-
+-- A verb is `src/patchtrace/cli_commands/<verb>.py`: an adapter of at most 25 lines over the feature's own Qt-free `<package>/cli.py` (`GUI-integration-plan.md:396`). File `build_env.py` gives verb `build-env`; the name matches `^[a-z][a-z0-9-]{1,23}$`, is unique and is not in `cli.COMMANDS` (section 8.12).
+-- The adapter exports `COMMAND = CliCommand(name, summary, build, run)`: `summary` at most 80 ASCII characters, `build(sub)` returns the parser, `run(args, cancel)` returns 0, 2, 3, 4 or 5 (section 8.12). It re-exports `CliError`, `emit` (= `cli._emit`) and the exit constants from `cli`.
+-- Discovery is `cli_commands.discover()` (sorted; `_private.py` skipped), `names()` for smoke tests and `register_all(sub, invoked)` (section 8.12). A new verb edits none of `cli.py`, `tools/frozen_smoke.py` or `tests/test_acceptance_smoke.py`, and adds no PyInstaller hook (`GUI-integration-plan.md:396`).
+-- Built-in verbs stay in `cli.py`; the default in section 8.12 is no move (`GUI-integration-plan.md:446`). Existing package hooks keep working: `intelligence_cli.register` (`cli.py:164`), `cli_unified.register` (`:166`), `intel_tools_cli.register` (`:167`), `register_backend` (`:168`), `cli_binexport.register` (`:158`).
+-- Plans written before HEAD list `unified` and `intelligence` as new verbs (`GUI-integration-plan.md:322`); both exist at HEAD. The line numbers in section 8.12 (`cli.py` L16, L817, L821) are stale (HEAD: L21, L827, L834).
+-- Planned verbs that this umbrella does not define (section 8.12): `panels`, `patch`, `search`, `graph`, `strings`, `kb`, `kev`, `build-env`, `rules`, `pe-meta`, `calibration`. Each owns its spec. KBC has no registration today (`kbcorrelation/cli_index.py:84`); when built, its verb is a `cli_commands/kb.py` adapter [proposal].
++| `project` | create a project from two local binaries; open, inspect and back up one; swap orientation; import a Ghidriff JSON result; list a project's analysis runs | `docs/specs/cli-project-compare.md` | no verb |
++| `compare` | run the primary comparison for one pair on an external or bundled runtime; adapter selection | `docs/specs/cli-project-compare.md` | no verb (today only `series create --run` with 3 to 8 builds, and `backend selftest` on the bundle) |
++| `corrections` | export, import, apply and undo manual match corrections | `docs/specs/manual-corrections-exchange.md` | no verb (the stored corrections are consumed by `unified run --sources manual`) |
++| `review` | record review status and conclusions for findings and matches, notes and bookmarks | `docs/specs/manual-corrections-exchange.md` | no verb (`pilot review` and `rules decide` record other analyst events) |
++| `profile` | list, show, validate, save, duplicate and delete analysis profiles | `docs/specs/cli-profile-doctor-runtime.md` | no verb (profiles are only consumed through `--profile`) |
++| `doctor` | one aggregate health check over the existing diagnostics | `docs/specs/cli-profile-doctor-runtime.md` | no verb (parts exist: `backend diagnose`, `intel-tools probe`, `rules probe`, `search --probe`, `panels check`) |
++| `runtime` | discover local runtimes; inspect, install and verify the offline backend ZIP; configure external runtime paths | `docs/specs/cli-profile-doctor-runtime.md` | no verb (`backend status|verify|selftest|diagnose` cover the bundled runtime only) |
++
++Decided without a new verb: `export` is built (`report-export-contract-v2.md` section 8, SPEC-50), so the 2026-10-14 row "not in alpha" is withdrawn. There is no generic top-level `import`: the existing imports take different inputs (`intelligence import`, `secondary import-bindiff`, `diaphora import`, `kb index import`, `kev import`), and importing a Ghidriff result belongs to the `project` file. There is no top-level `show`: `unified show`, `build-env show` and the per-verb readers already exist. `diff` is `compare`. A separate `config` verb is not proposed: configuration is `profile` plus `runtime`; the owner may overrule this.
++
++Open owner decision: `interpret` (headless AI interpretation of a selection). The GUI offers it (context preview, then send); credentials are session-only by policy (`AGENTS.md`) and remote transmission needs an exact preview and explicit consent, so a headless verb would need a key supplied per call through an environment variable named by a flag, plus a preview-then-consent flag pair like `--consent-plan`. Default until decided: not built.
++
++### 7.2 Rules every verb of 7.1 follows
++
++1. Envelope and codes. Exactly one `enrichment-cli/1` document per `--json` call; exit codes 0, 2, 3, 4, 5 with the meanings of section 4; `command` is `verb action` on success and on failure (section 8, item 15 is a defect, not a model); a partial result exits 3; a missing or unopenable project directory, a bad argument, an inert flag and a missing consent each exit 2.
++2. No Qt. The verb is a `cli_commands/<verb>.py` adapter of at most 25 lines over a Qt-free `<package>/cli.py` (section 9); the headless entry never imports `PySide6` or `patchtrace.ui` (test, section 11).
++3. No prompt on any path. Consent and confirmation are flags; a network verb announces each request on stderr and needs an exact host or plan; a secret is never a flag value (name an environment variable instead).
++4. Read-only verbs never write to the project. They open it with `ProjectService.open(path, maintenance=False)` (`service.py:102-110`), take no write path at all, and say in their spec that they are read-only. (The built-in `cli._open` opens with maintenance on, which section 8, item 24 records.)
++5. Mutations go through `ProjectService` only. No verb edits `project.sqlite3`, a sidecar or a raw output directly; the spec of each mutating verb names the service method it calls, and a failed mutation preserves earlier committed results (`AGENTS.md`).
++6. Output files. A verb that writes a file writes only to a path the caller names, outside the project unless it goes through the service, and replaces an existing file only behind an explicit flag (section 8, item 14 records the spellings already in use).
++7. Determinism and bounds. Sorted iteration, no clock in results, every loop over untrusted input bounded; untrusted text escaped before printing (section 3).
++8. A help page per verb. `docs/help/NN-cli-<verb>.md`, whose first line is the verb's heading `# \`patchtrace <verb>\``, linked from `docs/help/README.md`; `tests/test_help_docs.py:54, 70-75` fail otherwise. The adapter and its help page land together.
++9. Parity statement. A GUI capability that the verb deliberately does not offer (an interactive viewer, a drag-and-drop gesture) is listed in the verb's spec under "not applicable" with the reason, so that "impossible or inappropriate" is a recorded decision and not an omission.
++10. Tests. Each verb adds a contract test of the shape in section 11 and states its evidence class; fixture tests are never live evidence.
++
++## 8. Inconsistencies between verbs (exit-code decisions pending the owner)
++
++Items 1 to 13 are the 2026-10-14 list, refreshed; items 14 to 25 are deviations found in the 2026-11-11 refresh. They are listed as they are: none is normalised away, and none changes a shipped code without the owner's decision (the additive rule of section 2). The proposals are a recommendation, not a decision.
++
++1. Partial exit code. `rank` (`cli.py:358-361`) and `correlate` (`cli.py:514`) exit 0 with `status: partial`; `flags` (`cli.py:383-384`), `series create` (`cli.py:738`), `secondary run` (`cli_run.py:60`), `unified run` (`unified/cli.py:207-208`), `intelligence explain` (`intelligence/cli.py:365`) and `intel-tools run` (`intelligence/tools/cli.py:174`) exit 3. Among the registry verbs, `kev` exits 0 for a stale catalog (`kev/cli.py:1-12`); `build-env`, `fabric`, `graph`, `inspect`, `pilot` and `strings` exit 3 for a partial result (their docstrings; `buildenv/cli.py:163, 201`). [proposal] keep existing codes (additive rule); new verbs use 3 (section 7.2).
++2. Zero results. `rank` exits 4 for zero entries (`cli.py:359-360`); `correlate` exits 0 for zero contextual entries (`cli.py:514`). [proposal] document; change only in `enrichment-cli/2`.
++3. No bundle. `backend status` and `verify` exit 4 (`backend_cli.py:89-92`); `selftest` and `diagnose` exit 2 (`:176, 206`). [proposal] 4 for "no bundle" everywhere.
++4. Status vocabulary. `enrichment.md:32` closes the set at complete, partial, unavailable, cancelled, failed; `stale` and `no-results` are outside it, and so are `ok` (`panels`, `search`), `too-broad`, `indexing`, `unsupported` and `error` (`search/1`; section 4). A consumer that rejects any status outside the five would reject every successful `search` and `panels` call (both observed with status `ok`, exit 0). Owner decision, two options: [proposal A] list all of them in `enrichment.md` section 2 as observed v1 values (a note, not a version bump); [proposal B] map them to the five in `enrichment-cli/2`. Until decided the shipped values are not changed.
++5. `intel-tools delta` with no stored evidence exits 2 with `status: complete` (`intelligence/tools/cli.py:232-234`); `intel-tools run` reports `failed` for the same class (`:171`). [proposal] `failed`. Also item 21.
++6. `unified status` exits 0 with no result (`unified/cli.py:427`); `unified show` exits 2 (`:231-232`). [proposal] keep; document.
++7. Cache names. `--refresh` recomputes (`cli.py:75`; `unified/cli.py:84`); `--no-cache` ignores stored runs (`cli.py:163`; `intelligence/tools/cli.py:71`); `--cache-dir` means a derived-stage cache (`cli.py:73`), an HTTP response cache (`intelligence/cli.py:215`), a raw-output cache (`cli.py:146`) or the search index cache (`search --cache-dir`). [proposal] keep names; section 5 states the meaning per verb.
++8. Timeouts. 60..86400 for secondary (`cli.py:776-777`) and unified (enforced, `unified/cli.py:49-52`); 10..86400 for intel-tools (`runner.py:99`) and backend (`backend_cli.py:199-200`); `series create --timeout` has no check (`cli.py:145`) [unverified in `BackendConfig`]. [proposal] one range per engine family, stated in section 5.
++9. Inert flags. `cache --target-bytes` does nothing outside prune (`cli.py:527`); `correlate --consent-providers` does nothing without `--fetch` (`cli.py:433-438`). (`unified run --no-decompile` and `--no-extract`, inert in the 2026-10-14 draft, now act: `unified/cli.py:182-183`.) [proposal] new verbs reject inert flags with exit 2; existing ones are documented.
++10. Consent. `acquire` and `intelligence fetch` require an exact host list (`cli.py:536-539`; `intelligence/cli.py:242-246`); `correlate` requires a provider list equal to `--providers` (`cli.py:439`); `kb index sync` and `kb acquire` require `--consent-hosts` and a `--consent-plan` digest and print the plan when either is missing (`kbcorrelation/cli_online.py:1-16`; `cli_acquire.py:1-5`); `kev fetch` requires `--source` and a host (`kev/cli.py:1-12`); `--floss-deobfuscate` prints its consent text and proceeds (`intelligence/tools/cli.py:187-189`). [proposal] new network verbs use an exact host list and a `request:` line on stderr.
++11. PATH policy. `rz-diff` is looked up on PATH (`cli.py:157`); BinDiff and intel-tools are not (`cli_bindiff.py:3-4`; `intelligence/tools/cli.py:101-103`). [proposal] keep; say so in the `--rz-diff` help.
++12. Hidden workers. `secondary _binexport-worker` no longer prints `==SUPPRESS==` (its `help=` was dropped, `cli_binexport.py:40-42`), but the `secondary` usage line still names it; `unified _worker` and `rules _rules-worker` are hidden the same way (`unified/cli.py:106`; `rules/cli.py:137`). Worker codes lie outside 0/2/3/4/5 (section 4); the BinExport parent maps 0, 20 and 22 itself (`binexport_run.py:91, 142`). [proposal] keep.
++13. Minor. `cache` has no action in `command` (`cli.py:532`); alias `secondary rzdiff` reports its own name (`cli.py:784`); `rank --limit` 0 means all (`cli.py:85`) while `unified show --limit` defaults to 200 (`unified/cli.py:100`); `cache` prints JSON in text mode (`cli.py:532`). [proposal] keep (additive rule); document.
++14. Output-file overwrite policies differ: `graph export --overwrite` (`graph export --help`), `kb export --overwrite`, `strings export --force`, `rules export` never replaces (`rules export --help`), `export --out` reports "the previous file, if any, is unchanged" on failure (`report2/cli.py:63`). `correlate --save-snapshot` overwrites silently. [proposal] keep the spellings; new verbs use `--overwrite`.
++15. Failure-envelope label. A registry verb's failure says the bare verb and a parse failure says `patchtrace` or the bare built-in verb, where success says `verb action` (section 2). Observed: `build-env show MISSING --json` fails as `build-env`; `pilot why PROJECT --candidate x --json` fails as `patchtrace`; `secondary binexport-check F --artifact-sha256 00 --role older --json` fails as `secondary`. A consumer that routes on `command` cannot match a failure to its call. Cause: `_command_name` and `_json_envelope` (`cli.py:873-882`) and `command_label` (`cli_commands/__init__.py:84`). `cli.py` is at its seam budget (section 9), so a fix must be line-neutral or raise the baseline.
++16. `export --out` with a destination inside the project exits 3 (`PT-EXPORT: choose exports/ or a destination outside the project`, checked; `report2/cli.py:62-63`) although it is an invalid argument. [proposal] 2.
++17. `strings explain --id` with an unknown id exits 2 with `status: failed` and no `error` text on stderr or in the envelope (`strings/cli.py:288-291`; checked). [proposal] carry an `error`.
++18. `kb` with no action prints its help and exits 0 (`cli_commands/kb.py:16`), while every other verb group exits 2 and `kb --json` exits 2. `kb index sync` is a real, consent-gated leaf (`kbcorrelation/cli.py:125-127`) that `kb index --help` does not list, and `kb index sync --help` exits 2 ("invalid choice: 'sync'", checked). [proposal] list it; exit 2 for no action.
++19. Missing project directory. `kb explain`, `kb leads` and `kb export` exit 3 (`PT-KBC-STORAGE: the project cannot be opened`; `kbcorrelation/wiring.py:284-289`; `cli_leads.py:61-64`; `cli_index.py:159`) for a directory that does not exist, where `rank` and every other project verb exit 2 (`PT-STORAGE`, `cli.py:262-271`); checked on `kb explain`, `kb leads`, `kb export`. A script that retries on 3 and stops on 2 retries a typo forever. [proposal] a missing or non-project directory is `PT-KBC-INPUT` (already an argument code, `cli_index.py:40`), exit 2; keep `PT-KBC-STORAGE` for a damaged or locked store. Also `build-env show` exits 2 when neither side can be read and 3 when one side can (`buildenv/cli.py:163-164`).
++20. `secondary import-bindiff` with a missing input file exits 3 with `PT-SECONDARY-RUN: Could not prepare a private working folder (FileNotFoundError)` (checked), a message that does not name the file; `PT-SECONDARY-INPUT` would be exit 2 (`cli.py:845-849`). [proposal] check the file first and exit 2.
++21. Status and exit pairs that disagree. `intel-tools probe` with no supported engine and `intel-tools delta` with no stored evidence exit 2 with status `complete` (`intelligence/tools/cli.py:152, 232-234`); `delta` with an engine missing exits 2 with `partial` (`:267-268`); `pairs` with no completed run exits 2 with `partial` (`:369-372`). `backend` exits 5, the cancellation code, for a failed bundle (`backend_cli.py:16, 95-99, 155-158`). `panels check` exits 2 with `failed` for a spec rule finding. [proposal] document; revisit in `enrichment-cli/2`.
++22. Usage errors print one line without the usage block (`cli.py:38-39`), and there is no `--version`. [proposal] add `--version` additively; usage block on stderr.
++23. `correlate --save-snapshot` writes with `Path.write_text(..., encoding='utf-8')` (`cli.py:489-491`): not atomic, and on Windows the default newline translation writes CRLF [Windows behaviour unverified]. [proposal] write through the project's atomic writer with `newline='\n'`.
++24. Read-only verbs open the project with maintenance on. `cli._open` calls `ProjectService.open(project)` (`cli.py:262-265`), whose default runs the journalled H8 legacy-raw-duplicate cleanup (`service.py:102-110`); readers such as `unified show` go through it (`unified/cli.py:243`). Whether the cleanup changes a given project was not examined [unverified]. [proposal] a `read_only` option on `_open` that passes `maintenance=False`; section 7.2 requires it of new read-only verbs.
++25. `rules propose` always exits 2 (`PT-RULE-INPUT [pair-source-missing]`) because `rules.cli.BACKEND` is assigned nowhere in `src/` (`rules/cli.py:77, 236-239`; checked): the other six actions work, but nothing exists to `decide`, `test` or `export` through the CLI until a candidate does. Not an exit-code deviation; recorded so that nobody reads section 4 as saying `propose` can succeed.
++
++## 9. Extension rule: the cli_commands registry (F1b) [built]
++
++Status: built. `src/patchtrace/cli_commands/` exists at `882d1ca0` with the registry (`__init__.py`, 89 lines), the shared helpers (`_support.py`) and 13 adapters. The rules below describe the code; where a test enforces one, the test is named.
++
++- A verb is `cli_commands/<verb>.py`: the file name with `_` read as `-` (`cli_commands/__init__.py:40-41`; `build_env.py` is `build-env`). The name matches `^[a-z][a-z0-9-]{1,23}$` (`:34`), is unique and is not in `cli.COMMANDS`; a file that names a built-in verb or that two files claim makes both unavailable, never an override (`:57-69`; `tests/test_cli_registry.py`, `test_a_built_in_verb_name_is_never_overridden`, `test_two_files_claiming_one_verb_are_both_unavailable`).
++- The adapter exports `COMMAND = CliCommand(name, summary, build, run)` (`:26-37`). `summary` is 1 to 80 printable ASCII characters; `build(sub)` adds and returns the full parser; `run(args, cancel)` returns 0, 2, 3, 4 or 5 and raises `CliError` for 2 and 3. The adapter re-exports `CliError`, `emit` (= `cli._emit`) and the exit constants (`:18-22`).
++- Adapters stay small. At most 25 lines (the 13 range from 17 to 23), importing only the package and the standard library at module level; the feature is imported inside `build` and `run`, so listing the verbs loads no feature (`tests/test_cli_registry.py:403-410, 459-463`; `tests/test_cli_commands_features.py:85-90`). The adapter wraps the feature's own Qt-free `<package>/cli.py`, which owns the grammar (`add_parser` and `run`, or `register` for a dispatcher that already exists). `kb` and `search` are passthrough adapters (`_support.py:7-14`).
++- Discovery is by file. `discover()` returns `(verbs, failed)`, both sorted; files that start with `_` are skipped (`:44-47, 57-69`). `names()` lists `cli.COMMANDS` then every discovered verb, unavailable ones included, importing nothing (`:72-74`; test: 25 ms budget with slack, `test_names_over_twenty_verbs_is_fast_and_imports_none_of_them`). `register_all(sub, invoked)` builds the full parser of the invoked verb only and a bare listing for the rest (`:77-89`). The parser's choices equal `names()` (`test_parser_choices_equal_names_even_with_broken_clashing_and_duplicate_files`).
++- A broken file is listed as unavailable and exits 3. It keeps its name in `patchtrace --help` with the summary `unavailable (could not be loaded)` (`:23, 88-89`); invoking it, with or without `--help`, exits 3 `PT-CLI-COMMAND` while the other verbs still run (`:85-86`; `tests/test_cli_registry.py:365`). One broken file never hides another (`:183`).
++- Labels. `register_all` sets `command_label` to the verb name (`:84`); the feature emits `verb action` on success. The failure label gap is section 8, item 15.
++- Seam budget. `cli.py` may exceed 914 lines by 6 and holds exactly one function-level `cli_commands` import (`cli.py:183-184`; it is at 920 lines now); `cli.COMMANDS` stays the 11 built-in verbs; the registry module stays at most 90 lines (`tests/test_cli_registry.py:394-401`). A new verb edits none of `cli.py`, `tools/frozen_smoke.py` or `tests/test_acceptance_smoke.py` and adds no PyInstaller hook: the smoke list is derived from the registry (`test_the_frozen_smoke_list_is_derived_from_the_registry`) and the hook collects the whole package (`test_the_hook_collects_exactly_the_registry_package_and_its_files`).
++- Qt-free. The registry and discovery import neither Qt nor pydantic (`test_the_registry_and_discovery_never_import_qt_or_pydantic`); a feature dispatcher may import pydantic once its verb is invoked (`pilot/cli.py:1-12`).
++- A help page is required for every verb (section 7.2, item 8): `tests/test_help_docs.py:54, 70-74` fail without `docs/help/NN-cli-<verb>.md` and its index line.
++- Built-in verbs stay in `cli.py` (no move). Their package hooks keep working: `intelligence_cli.register` (`cli.py:178`), `cli_unified.register` (`:180`), `intel_tools_cli.register` (`:181`), `register_backend` (`:182`), `cli_binexport.register` (`:172`).
++- Specified but not built, so no adapter file yet: the seven verbs of section 7.1 (`project`, `compare`, `corrections`, `review`, `profile`, `doctor`, `runtime`), `patch` (superseded by `kb`), `pe-meta` and `calibration`. Each owns its spec. The line numbers in `GUI-integration-plan.md` section 8.12 (`cli.py` L16, L817, L821) are stale and moot: no verb edits those lines any more.
+ 
+ ## 10. Integrator asks
+ 
+-No existing file was edited for this spec. The integration owner applies these.
++This refresh edits `docs/specs/cli-umbrella.md` only. The integration owner applies these.
++
++1. REGISTRY row for this file (`docs/specs/REGISTRY.md`, Table A, currently line 83). Replace it with the row below. Status draft becomes partial (sections 0 to 6 and 9 describe built behaviour; section 7 is a decision on unbuilt verbs). The number question of the 2026-10-14 draft is closed: REGISTRY section 1, rule 4 lists SPEC-41 to SPEC-55 as allocated and the row already says SPEC-44; the file keeps SPEC-44.
++
++```
++| `docs/specs/cli-umbrella.md` | none (SPEC-44 proposed) | SPEC-44 | partial | cli.py, cli_commands/ (registry and 13 adapters), backend_cli.py, secondary/cli_*.py, intelligence/cli.py, intelligence/tools/cli.py, unified/cli.py, symbols/cli_args.py | Umbrella CLI contract refreshed 2026-11-11 at main 882d1ca0: 24 verbs and 87 leaves with owner spec, envelope, exit-code rows and the known deviations (section 8); registry rules (section 9); section 7 records the 2026-11-11 GUI/CLI parity directive and puts project, compare, corrections, review, profile, doctor and runtime in scope |
++```
+ 
+-1. REGISTRY row. Add to `docs/specs/REGISTRY.md` Table A. `tests/test_spec_registry.py` fails until the file is cited (REGISTRY section 1, rule 7):
++2. Three new REGISTRY rows, one per spec file that this session's parallel slices write (`tests/test_spec_registry.py` fails until each file is cited, REGISTRY section 1, rule 7). Add them to Table A when the files land; the numbers are not assigned (rule 4: the next free number is SPEC-56 but the historical record gives it to PR #61), so cite by path until the owner confirms:
+ 
+ ```
+-| `docs/specs/cli-umbrella.md` | SPEC-44 (as briefed; proposed) | SPEC-44 | draft | cli.py, backend_cli.py, secondary/cli_*.py, intelligence/cli.py, intelligence/tools/cli.py, unified/cli.py (dispatch) | Umbrella CLI rules, per-verb flags, flag registry (section 6); doctor, export, import, show, project proposed not in alpha (section 7) |
++| `docs/specs/cli-project-compare.md` | none (number pending; cite by path) | none | draft | none (verbs `project` and `compare` not built) | CLI for creating, opening, backing up and importing projects and for running one pair's comparison; follows cli-umbrella.md section 7.2 |
++| `docs/specs/manual-corrections-exchange.md` | none (number pending; cite by path) | none | draft | none (verbs `corrections` and `review` not built) | Export, import, apply and undo of manual match corrections and review records; follows cli-umbrella.md section 7.2 |
++| `docs/specs/cli-profile-doctor-runtime.md` | none (number pending; cite by path) | none | draft | none (verbs `profile`, `doctor` and `runtime` not built) | CLI for analysis profiles, an aggregate health check and runtime discovery and offline-bundle install; follows cli-umbrella.md section 7.2 |
+ ```
+ 
+-The number needs a decision. REGISTRY section 1, rule 4 names SPEC-41 as the next free number. Either reserve 41 to 43 and keep SPEC-44, or rename this file and title to SPEC-41.
+-2. Owner-spec flag amendments (section 6), each in its own slice: `enrichment.md` section 11 (rows 1-5); `nway.md` (rows 7-9); `acquisition.md` (row 6); `binexport2-support.md` (row 10); `three-tool-evidence-adapters.md` (row 11); `unified-engine/07-ui-and-cli.md` (row 12); `BUNDLE-integration-plan.md` (rows 13-14); help text (row 15).
+-3. `enrichment.md` section 2: status note for `stale` and `no-results` (section 8, item 4).
+-4. Owner decisions: the export row in section 7, and the partial exit code (section 8, item 1).
+-5. Audit row 10 (`spec-gaps-20261014.md:125`) can cite this file. No code change is requested here. A future verb needs one adapter ask under section 9.
++3. Outside this card, noticed while checking the registry: the SPEC-50 row (`REGISTRY.md` line 85) says "v2 not built" and "draft for build", while `report-export-contract-v2.md:3` says built 2026-11-04 and `patchtrace export` exists (`cli_commands/export.py`). Suggested row text: status `partial`, owner `report2/ (adapters, assemble, blocks, cli, contracts, export, export_vm, inputs, options); reports.py (v1); cli_commands/export.py`, basis "RPT2-1 to RPT2-5 and the CLI half of RPT2-6 built and integrated 2026-11-04; open items are in the spec's own status line".
++4. Owner-spec flag amendments (section 6), each in its own slice: `enrichment.md` section 11 (rows 1-5); `nway.md` (rows 7-9); `acquisition.md` (row 6); `binexport2-support.md` (row 10); `three-tool-evidence-adapters.md` (rows 11 and 17); `unified-engine/07-ui-and-cli.md` (rows 12 and 16); `program-e/BUNDLE-integration-plan.md` (rows 13-14); help text (row 15). `docs/cli-reference.md`, `docs/guide/16-cli-reference.md` and `docs/help/` carry the drift listed in the 2026-11-11 inventory (13 registry verbs, `intel-tools pairs`, the symbol flags, `kb index sync`, `export` still listed as not built); each is another slice's file.
++5. `enrichment.md` section 2: status note for the values of section 8, item 4, once the owner picks proposal A or B.
++6. Owner decisions, all listed with their facts in section 8: the partial exit code (item 1), no-bundle and backend 5 (items 3 and 21), the status vocabulary (item 4), the missing-project code of `kb` (item 19), `interpret` (section 7.1). Fixes for items 15 to 17, 19, 20, 22 and 24 touch `cli.py` (frozen: integrator) and feature modules (other lanes); none is requested here.
+ 
+ ## 11. Acceptance and tests
+ 
+-- Existing CLI tests at HEAD (11 files): `tests/test_cli.py`, `test_cli_secondary.py`, `test_cli_secondary_run.py`, `test_cli_bindiff.py`, `test_binexport_cli.py`, `test_rzdiff_cli_env.py`, `test_acquisition_cli.py`, `test_intel_cli.py`, `test_intel_tools_cli.py`, `test_unified_cli.py`, `test_backend_cli.py`. Per-flag coverage was not measured [unverified].
+-- [proposal] One contract test: every parser path in section 5 exists; every flag is in section 5 or section 6; `import patchtrace.cli` loads no Qt module; the exit table of section 4 holds for one case per verb. Hermetic, no network, no target execution.
++- Existing CLI tests at `882d1ca0`: `tests/test_cli.py`, `test_cli_secondary.py`, `test_cli_secondary_run.py`, `test_cli_bindiff.py`, `test_binexport_cli.py`, `test_rzdiff_cli_env.py`, `test_acquisition_cli.py`, `test_cli_acq13.py`, `test_cli_backend_progress.py`, `test_intel_cli.py`, `test_intel_tools_cli.py`, `test_capa_cli.py`, `test_unified_cli.py`, `test_unified_cli_show.py`, `test_unified_wire_cli.py`, `test_backend_cli.py` (built-in verbs); `test_cli_registry.py`, `test_cli_commands_features.py` (registry and the five first adapters); `test_buildenv_cli.py`, `test_diaphora_cli.py`, `test_report2_cli.py`, `test_fabric_cli.py`, `test_callgraph_cli.py`, `test_pe_inspect_cli.py`, `test_kbc_cli.py`, `test_kbc_acquire_cli.py`, `test_kev_cli.py`, `test_gui_core_cli.py`, `test_pilot_cli.py`, `test_rules_cli.py`, `test_search_cli.py`, `test_strings_cli.py`, `test_strings_clit.py` (registry verbs); `tests/stress/test_cli_stress_*.py` (paths, verbs, recovery, concurrency, performance). All are synthetic or mocked: Ghidra, Ghidriff, BinDiff, rizin, capa, FLOSS, DiE and every network provider are absent from the test environment. Per-flag coverage was not measured [unverified].
++- The Qt-free rule is tested by `tests/test_cli.py:28` (`test_headless_entry_never_imports_qt`: `rank --json --dry-run` through `__main__.main` in a subprocess, no `PySide6` or `patchtrace.ui` module), `tests/test_cli_commands_features.py:73` (help and one offline run of `kb`, `search`, `graph`, `strings` and `build-env`, same check) and `tests/test_cli_registry.py:465` (registry and discovery import neither Qt nor pydantic).
++- Not built: a cross-verb contract test. [proposal] One hermetic, network-free test file with: every visible leaf of section 5 exists (walk the parser); every flag is in section 5 or section 6; for every leaf a nonexistent project directory with `--json` yields one envelope with status `failed` and exit 2 (this fails today for `kb explain`, `kb leads` and `kb export`, section 8, item 19); every `status` is in the vocabulary of section 4; the failure envelope's `command` equals the success envelope's (fails today, section 8, item 15). The new verbs of section 7.1 add their rows to it.
++- Evidence class of this document's checks: help walk, parser introspection and the probes named "checked" were run on 2026-11-11 against `main` at `882d1ca0` in a scratch directory with a generated sample project (synthetic).
+ 
+ ## 12. Unverified items
+ 
+-- GitHub state (default-branch SHA, open PRs, checks) was not queried; this spec uses local refs only. The REGISTRY snapshot predates HEAD.
+-- The range and path checks in `BackendConfig` (for `series create --timeout` and `--python`) and the timeout limit in `limits.checked_timeout` (`unified/limits.py`) were not read.
++- GitHub state (default-branch SHA, open PRs, checks) was not queried; this refresh uses the worktree at `882d1ca0` only.
++- The exit cases of the 13 registry verbs (section 4.2) restate module docstrings; only the cases marked "checked" in sections 1, 4 and 8 were run.
++- The statuses emitted by the registry verbs were not enumerated beyond `ok` and the `search/1` set (section 4).
++- Windows behaviour of `correlate --save-snapshot` (section 8, item 23) and of the registry adapters was not run; the sandbox is Linux.
++- Whether the maintenance cleanup of `ProjectService.open` changes a given project (section 8, item 24).
++- The range and path checks in `BackendConfig` (for `series create --timeout` and `--python`) were not read.
+ - Exit 1 from an interpreter failure before `main` was not exercised.
+ - `intel-tools run --floss-large-file` means `-L` according to its help text only.
+ - `intelligence fetch` default provider-metadata location (`discovery.DEFAULT_PROVIDER_METADATA`) was not read; its help calls it unverified.
+-- The status values of the unified result manifest were not enumerated; `unified run` uses only `complete` or `partial` (`unified/pipeline.py:174`).
+-- Whether `kbcorrelation/cli_index.py` is the intended KBC verb was not read (no registration, no spec reference).
++- The status values of the unified result manifest were not enumerated; `unified run` uses `complete` or `partial` through `report.result_status` (`unified/cli.py:205-208`).
++- The three spec files named in section 7.1 do not exist yet; their content, and the intended coverage column of section 7.1, are the owners' to decide.
++- The GUI side of section 7 (which capabilities the GUI has) comes from the 2026-11-11 inventory, which is not committed; this document did not re-read `ui.py`.

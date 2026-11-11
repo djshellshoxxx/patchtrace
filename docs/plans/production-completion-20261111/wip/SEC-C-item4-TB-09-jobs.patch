@@ -1,0 +1,171 @@
+diff --git a/src/patchtrace/jobs.py b/src/patchtrace/jobs.py
+index 47ba5c90..3bd26d09 100644
+--- a/src/patchtrace/jobs.py
++++ b/src/patchtrace/jobs.py
+@@ -332,10 +332,24 @@ def run_process(argv: Sequence[str], *, cwd: Path, env: Mapping[str, str],
+     if separate_streams:
+         readers.append(threading.Thread(target=collect, args=(child.stderr, err_tail, stderr_limit, 'err'),
+                                         name='patchtrace-err', daemon=True))
++    # POSIX invariant (TB-09): the group is signalled only while its leader is unreaped. A reaped leader's pid can
++    # be recycled, and killpg would then reach an unrelated group. So the exit is observed without reaping (WNOWAIT
++    # leaves the zombie holding the pid), the group is killed, and only then does wait() reap. Without os.waitid
++    # (macOS before Python 3.13) the older reap-then-kill order stays: skipping the kill would leave descendants.
++    peek_exit = os.name != 'nt' and hasattr(os, 'waitid')
++
++    def running() -> bool:
++        if peek_exit:
++            try:
++                return os.waitid(os.P_PID, child.pid, os.WEXITED | os.WNOHANG | os.WNOWAIT) is None
++            except OSError:
++                pass  # reaped elsewhere, or no WNOWAIT here: poll() records the reap and terminate() stands down
++        return child.poll() is None
++
+     def terminate():
+         if os.name == 'nt':
+             child.kill_tree()
+-        else:
++        elif child.returncode is None or not peek_exit:
+             try:
+                 os.killpg(child.pid, signal.SIGKILL)
+             except ProcessLookupError:
+@@ -368,7 +382,7 @@ def run_process(argv: Sequence[str], *, cwd: Path, env: Mapping[str, str],
+         started, reason = time.monotonic(), None
+         next_progress = started
+         stopped: float | None = None
+-        while child.poll() is None:
++        while running():
+             if cancel.is_set():
+                 reason = 'cancelled'
+             elif time.monotonic() - started >= timeout_seconds:
+diff --git a/tests/test_jobs.py b/tests/test_jobs.py
+index 3b72d4ab..71a40434 100644
+--- a/tests/test_jobs.py
++++ b/tests/test_jobs.py
+@@ -8,7 +8,7 @@ import time
+ from pathlib import Path
+ 
+ import pytest
+-from liveness_support import heartbeat_code, heartbeat_stopped, wait_for
++from liveness_support import cancel_when_started, heartbeat_code, heartbeat_stopped, wait_for
+ 
+ from patchtrace import backend, jobs
+ from patchtrace.backend import BackendConfig, quarantine_failed_run, run_comparison
+@@ -712,3 +712,118 @@ def test_valid_child_environment_reaches_the_child_unchanged(tmp_path):
+                          env={**os.environ, **values}, cancel=threading.Event(), timeout_seconds=30)
+     assert result.returncode == 0
+     assert json.loads(result.log_tail) == values
++
++
++# ---- TB-09 / WP-09: the process group is never signalled once its leader has been reaped ----
++
++needs_exit_peek = pytest.mark.skipif(os.name == 'nt' or not hasattr(os, 'waitid'),
++                                     reason='POSIX process groups; the probe needs os.waitid')
++
++
++@pytest.fixture
++def group_kills(monkeypatch):
++    """One entry per `os.killpg` call: True when the group leader was still unreaped at that moment.
++
++    The probe asks the kernel and reaps nothing (WNOWAIT). Once the leader is reaped it is no longer our child
++    (ECHILD) and its pid may belong to an unrelated process, which is exactly when a group kill is unsafe.
++    """
++    calls = []
++    real_killpg = os.killpg
++
++    def probing_killpg(pgid, sig):
++        try:
++            os.waitid(os.P_PID, pgid, os.WEXITED | os.WNOHANG | os.WNOWAIT)
++            calls.append(True)
++        except ChildProcessError:
++            calls.append(False)
++        real_killpg(pgid, sig)
++
++    monkeypatch.setattr(os, 'killpg', probing_killpg)
++    return calls
++
++
++def _spawn_beating_descendant(beat):
++    """Parent code: start a descendant that inherits the output pipe and return only once it provably beats,
++    so that neither an early exit nor an early stop can kill it before there is anything to observe."""
++    return ('import os,subprocess,sys,time\n'
++            f'subprocess.Popen([sys.executable,"-c",{heartbeat_code(beat)!r}])\n'
++            f'while not (os.path.exists({str(beat)!r}) and os.path.getsize({str(beat)!r})):\n    time.sleep(0.01)\n')
++
++
++def _assert_only_unreaped_leaders_were_signalled(calls):
++    assert calls, 'the process group was never signalled, so the check would pass vacuously'
++    assert all(calls), f'os.killpg was called after the group leader was reaped: {calls}'
++
++
++@needs_exit_peek
++@pytest.mark.parametrize(('code', 'returncode'), [('pass', 0), ('raise SystemExit(7)', 7),
++                                                  ('import os,signal;os.kill(os.getpid(),signal.SIGTERM)', -15)],
++                         ids=['exit-0', 'exit-7', 'killed-by-signal'])
++def test_group_is_signalled_only_before_the_leader_is_reaped_on_exit(tmp_path, group_kills, code, returncode):
++    result = execute(tmp_path, code, timeout=30)
++    assert (result.returncode, result.reason) == (returncode, None)  # the peeked exit status is the one reported
++    _assert_only_unreaped_leaders_were_signalled(group_kills)
++
++
++@needs_exit_peek
++def test_descendant_holding_the_pipe_is_killed_while_the_exited_leader_is_unreaped(tmp_path, group_kills):
++    beat = tmp_path / 'descendant-beat'
++    code = _spawn_beating_descendant(beat) + 'print("spawned",flush=True)\n'
++    started = time.monotonic()
++    result = execute(tmp_path, code, timeout=30)
++    assert (result.returncode, result.reason, result.log_tail.strip()) == (0, None, 'spawned')
++    assert heartbeat_stopped(beat), 'the descendant never ran, or survived its parent'
++    assert time.monotonic() - started < 15  # the readers saw EOF: nothing kept the pipe open until the join timeout
++    _assert_only_unreaped_leaders_were_signalled(group_kills)
++
++
++@needs_exit_peek
++@pytest.mark.parametrize('cancelled', [False, True], ids=['timeout', 'cancelled'])
++def test_group_is_signalled_only_before_the_leader_is_reaped_on_stop(tmp_path, group_kills, cancelled):
++    beat, started = tmp_path / 'descendant-beat', tmp_path / 'started'
++    code = (_spawn_beating_descendant(beat)
++            + f'import pathlib\npathlib.Path({str(started)!r}).write_text("x")\ntime.sleep(60)\n')
++    cancel = cancel_when_started(started) if cancelled else threading.Event()
++    result = execute(tmp_path, code, cancel=cancel, timeout=30 if cancelled else 3)
++    assert (result.returncode, result.reason) == (-9, 'cancelled' if cancelled else 'timeout')
++    assert started.exists() and heartbeat_stopped(beat), 'the descendant never ran, or survived the stop'
++    _assert_only_unreaped_leaders_were_signalled(group_kills)
++
++
++@needs_exit_peek
++def test_group_is_not_signalled_again_after_a_failed_memory_cap_reaped_the_leader(tmp_path, monkeypatch, group_kills):
++    import resource
++
++    def refuse(*args):
++        raise PermissionError('prlimit refused')
++
++    monkeypatch.setattr(resource, 'prlimit', refuse)
++    with pytest.raises(PermissionError, match='prlimit refused'):
++        execute(tmp_path, 'import time;time.sleep(60)', timeout=30, memory_limit_bytes=1 << 30)
++    _assert_only_unreaped_leaders_were_signalled(group_kills)
++
++
++@needs_exit_peek
++def test_group_is_not_signalled_again_when_the_final_wait_times_out(tmp_path, monkeypatch, group_kills):
++    import subprocess
++    real_wait = subprocess.Popen.wait
++
++    def stuck(self, timeout=None):
++        real_wait(self)  # reaps, then reports the timeout the supervisor turns into PT-BACKEND
++        raise subprocess.TimeoutExpired(self.args, timeout)
++
++    monkeypatch.setattr(subprocess.Popen, 'wait', stuck)
++    with pytest.raises(RuntimeError, match='PT-BACKEND: terminated child did not exit'):
++        execute(tmp_path, 'pass', timeout=30)
++    _assert_only_unreaped_leaders_were_signalled(group_kills)
++
++
++@pytest.mark.skipif(os.name == 'nt', reason='POSIX process groups')
++def test_without_waitid_the_descendant_is_still_killed_and_the_exit_status_kept(tmp_path, monkeypatch):
++    """macOS before Python 3.13 has no os.waitid: the older reap-then-kill order must keep working there."""
++    monkeypatch.delattr(os, 'waitid', raising=False)
++    beat = tmp_path / 'descendant-beat'
++    code = _spawn_beating_descendant(beat) + 'raise SystemExit(7)\n'
++    result = execute(tmp_path, code, timeout=30)
++    assert (result.returncode, result.reason) == (7, None)
++    assert heartbeat_stopped(beat), 'the descendant never ran, or survived its parent'
