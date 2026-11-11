@@ -10,6 +10,7 @@ minimal in-memory reader stub for the property test); never live evidence.
 """
 from __future__ import annotations
 
+import pytest
 from hypothesis import HealthCheck, given, settings
 from hypothesis import strategies as st
 from unified_facts_builder import DATA_SECTIONS, NEW_SHA, OLD_SHA, build_reader, function, run_facts
@@ -285,3 +286,98 @@ def mirror_label(token):
         return None
     first, second = token[3:].split('.')
     return f'@D:{second}.{first}'
+
+
+# --- review findings (05 s2.7 rules 3 and 4(b) as amended after the independent review) ----------------------------------
+
+A, B, C, D, E, F = 0x3000, 0x3040, 0x3080, 0x30c0, 0x3100, 0x3140
+
+
+def vote_map(votes, sections=((0x3000, 0x4000),)):
+    """A forward and a mirrored `TargetMap` over a reader stub: function i casts the data votes `votes[i]` [(t, u), ...]
+    (same shape on both sides, equal h1, matched to itself)."""
+    old, new = [], []
+    for i, pairs in enumerate(votes):
+        rva = 0x1000 + 0x40 * i
+        old.append({'rva': rva, 'h1': 1, 'h0': rva, 'kind': 0,
+                    'refs': [RefRow(k, 0, 'data', t, None) for k, (t, _u) in enumerate(pairs)]})
+        new.append({'rva': rva, 'h1': 1, 'h0': rva, 'kind': 0,
+                    'refs': [RefRow(k, 0, 'data', u, None) for k, (_t, u) in enumerate(pairs)]})
+    rows = [(r['rva'], r['rva']) for r in old]
+    forward = TargetMap(StubReader(old), StubReader(new), rows, older_sections=sections, newer_sections=sections)
+    mirror = TargetMap(StubReader(new), StubReader(old), rows, older_sections=sections, newer_sections=sections)
+    return forward, mirror
+
+
+def states(votes):
+    """The state of every vote of every function, checked against the mirrored map."""
+    forward, mirror = vote_map(votes)
+    out = []
+    for i, pairs in enumerate(votes):
+        voter = (0x1000 + 0x40 * i,) * 2
+        for t, u in pairs:
+            state = forward.data_state(t, u, voter)
+            assert state == mirror.data_state(u, t, voter), (i, t, u)
+            out.append(state)
+    return out
+
+
+@pytest.mark.parametrize('n', [3, 4, 5])
+def test_a_stationary_competing_claim_blocks_with_a_single_voter(n):
+    """Review finding 1, rule 3 (stationary claim): f0..f(n-1) retarget A -> B, g0 keeps B, which sits at the same
+    address on both sides. The claim (B, B) has one voter but is stationary and B-old has no raw consensus elsewhere, so
+    it blocks consensus(A) = B: no f is mapped; g0 is the dissenter of consensus(B-new) = A (`conflict`)."""
+    got = states([[(A, B)]] * n + [[(B, B)]])
+    assert got[:n] == [UNMAPPED] * n and got[n] == CONFLICT
+
+
+def test_residual_a_retarget_to_a_moved_global_with_one_referrer_still_maps():
+    """Documented residual (A-30): the same retarget when B MOVED (B -> F) is a single moved dissent, which never blocks;
+    by votes alone it is the typical "F is A moved, g0 retargeted" patch, so the f's map and g0 conflicts."""
+    got = states([[(A, F)]] * 3 + [[(B, F)]])
+    assert got == [MAPPED] * 3 + [CONFLICT]
+
+
+@pytest.mark.parametrize('swap, keep', [(2, 1), (3, 2), (2, 2), (2, 3)])
+def test_swapped_globals_never_map(swap, keep):
+    """Review finding 2, rule 3 (no-swap explanation): `swap` functions read A -> B and `swap` read B -> A, `keep` read
+    A -> A and `keep` B -> B. The claim (B, B) on consensus(A) = B is "explained" by raw(B-old) = A only if A itself casts
+    no vote for A-new; it does, so the explanation is void and nothing maps."""
+    got = states([[(A, B)]] * swap + [[(B, A)]] * swap + [[(A, A)]] * keep + [[(B, B)]] * keep)
+    assert MAPPED not in got, got
+
+
+def test_an_explained_dissent_needs_a_blocking_aware_consensus():
+    """Review finding 2, rule 4(b): a dissent (A, B) is ignored only when B-new has a full-table rule-3 consensus other
+    than A. Here raw(B-new) = D but the claim (D, F) with two voters blocks it, so the dissent still counts and the two
+    referrers of A (moved to C) tie with it instead of mapping."""
+    votes = [[(A, C)]] * 2 + [[(A, B)]] + [[(D, B)]] * 3 + [[(D, F)]] * 2
+    forward, _mirror = vote_map(votes)
+    assert forward._raw('n', 'data', B) == D and forward._consensus('n', 'data', B) is None
+    assert states(votes)[:2] == [UNMAPPED, UNMAPPED]
+
+
+def test_the_two_voter_floor_counts_the_judged_row_but_never_lets_it_tip():
+    """Review finding 4, rule 4(b): at least two voters in all (r's own vote counts) and a strict majority among the
+    voters other than r. r votes + one other -> mapped; r does not vote + one other -> unmapped; r does not vote + two
+    others agreeing -> mapped."""
+    stranger = (0x9000, 0x9000)
+    forward, mirror = vote_map([[(A, C)]] * 2)
+    assert forward.data_state(A, C, (0x1000, 0x1000)) == MAPPED
+    one, one_mirror = vote_map([[(A, C)]])
+    assert one.data_state(A, C, stranger) == UNMAPPED == one_mirror.data_state(C, A, stranger)
+    assert forward.data_state(A, C, stranger) == MAPPED == mirror.data_state(C, A, stranger)
+
+
+def test_judging_every_row_costs_one_table_build_per_datum():
+    """Review finding 3: 2,000 single claims (t_i, B) beside 2,500 voters of (A, B). Judging every voter builds the
+    filtered table and the competing-claim check once per datum (the old code rebuilt both per voter: quadratic, > 9 s
+    for a smaller case)."""
+    import time
+    votes = [[(0x5000 + 0x10 * i, B)] for i in range(2000)] + [[(A, B)]] * 2500
+    forward, _mirror = vote_map(votes, sections=())
+    start = time.perf_counter()
+    for i in range(2000, 4500):
+        assert forward.data_state(A, B, (0x1000 + 0x40 * i,) * 2) == MAPPED
+    assert forward.work['filtered'] <= 2 and forward.work['blocked'] <= 2, forward.work
+    assert time.perf_counter() - start < 5.0
