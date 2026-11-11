@@ -2,6 +2,7 @@
 self-made fixture (clang+lld) plus synthetic PEs from tests/pe_builder.py; nothing is executed."""
 from __future__ import annotations
 
+import hashlib
 import struct
 import sys
 
@@ -9,8 +10,11 @@ import pytest
 from pe_builder import RDATA, PeSpec, SectionSpec, build_pe, build_pe_ex
 from tier_w_builders import ROOT, TIER_W_FIXTURES
 
+from patchtrace import artifact_bytes
+from patchtrace.artifact_bytes import MAX_READ_BYTES
+
 sys.path.insert(0, str(ROOT))
-from tools.calibration.tier_w import msf  # noqa: E402
+from tools.calibration.tier_w import msf, pe_tables  # noqa: E402
 from tools.calibration.tier_w.pe_tables import PeTableError, PeView, masked_body_sha256  # noqa: E402
 
 
@@ -115,3 +119,65 @@ def test_non_pe_rejected(tmp_path):
         PeView(path)
     with pytest.raises(PeTableError):
         PeView(TIER_W_FIXTURES / 'tiny_v1.pe', expected_sha256='0' * 64)
+
+
+# -- PE-2 / PE-3 (audit 20261015): the fixes the product readers got, applied to this copy ------------------------------
+def test_directory_larger_than_one_read_is_read_completely(tmp_path):
+    # A real 17 MiB .reloc: two blocks, the end-of-table zero block, then padding that ends in a marker. One reader
+    # call is capped at MAX_READ_BYTES (16 MiB), so the directory can only be read in pieces.
+    size = MAX_READ_BYTES + 1024 * 1024
+    head = (struct.pack('<II', 0x1000, 12) + struct.pack('<2H', 0xA010, 0x3020)
+            + struct.pack('<II', 0x2000, 12) + struct.pack('<2H', 0xA000, 0x0000))
+    marker = bytes(range(1, 65))
+    reloc = head + bytes(size - len(head) - len(marker)) + marker
+    with PeView(synth(tmp_path / 'big.pe', reloc=reloc)) as view:
+        assert view.overview.directory('BaseReloc').size == size
+        assert view.relocations() == ([0x1010, 0x1020, 0x2000], [8, 4, 8])
+        data = view.read_rva(0x4000, size)
+        assert len(data) == size and data[:len(head)] == head and data[-len(marker):] == marker
+        assert hashlib.sha256(data).digest() == hashlib.sha256(reloc).digest()
+
+
+def test_small_pieces_give_the_same_tables_as_one_read(tmp_path, monkeypatch):
+    # Piece boundaries fall inside relocation blocks, .pdata entries and a function body.
+    reloc = b''.join(struct.pack('<II', 0x1000 + 0x1000 * page, 8 + 2 * 30)
+                     + struct.pack('<30H', *(0xA000 | 8 * i for i in range(30))) for page in range(3))
+    pdata = b''.join(rf(0x1000 + 0x10 * i, 0x1010 + 0x10 * i) for i in range(12))
+    path = synth(tmp_path / 'p.pe', reloc=reloc, pdata=pdata, text=bytes(range(256)))
+    with PeView(path) as view:
+        whole = (view.relocations(), view.runtime_functions(), view.read_rva(0x0F80, 0x200),
+                 masked_body_sha256(view, [(0x1000, 0x1100)], view.relocations()))
+        monkeypatch.setattr(artifact_bytes, 'MAX_READ_BYTES', 64)
+        monkeypatch.setattr(pe_tables, 'MAX_READ_BYTES', 64, raising=False)
+        pieces = (view.relocations(), view.runtime_functions(), view.read_rva(0x0F80, 0x200),
+                  masked_body_sha256(view, [(0x1000, 0x1100)], view.relocations()))
+    assert pieces == whole
+    assert len(whole[0][0]) == 90 and len(whole[1]) == 12 and whole[2] == bytes(0x80) + bytes(range(256)) + bytes(0x80)
+
+
+@pytest.mark.parametrize('call', [
+    lambda view: view.read_rva(0x1000, 2),
+    lambda view: view.runtime_functions(),
+    lambda view: view.relocations(),
+    lambda view: masked_body_sha256(view, [(0x1000, 0x1010)], ([], [])),
+], ids=['read_rva', 'pdata', 'reloc', 'body_hash'])
+def test_failed_read_is_a_pe_table_error(tmp_path, call):
+    reloc = struct.pack('<II', 0x1000, 12) + struct.pack('<2H', 0xA010, 0x0000)
+    with PeView(synth(tmp_path / 'c.pe', reloc=reloc, pdata=rf(0x1000, 0x1010))) as view:
+        view.reader.close()   # every later read fails with ArtifactBytesError('closed')
+        with pytest.raises(PeTableError, match='closed'):
+            call(view)
+
+
+def test_unknown_relocation_types_warn_once_per_type(tmp_path):
+    kinds = (5, 7, 11)
+    count = 99_999
+    entries = [(kinds[i % 3] << 12) | (i & 0xFFF) for i in range(count)] + [0]
+    reloc = struct.pack('<II', 0x1000, 8 + 2 * len(entries)) + struct.pack(f'<{len(entries)}H', *entries)
+    with PeView(synth(tmp_path / 'u.pe', reloc=reloc)) as view:
+        before = len(view.warnings)
+        starts, widths = view.relocations()
+        assert view.warnings[before:] == [f'relocation type {kind} masked as 8 bytes' for kind in kinds]
+        assert len(starts) == count and set(widths) == {8} and starts == sorted(starts)   # no entry was dropped
+        view.relocations()
+        assert len(view.warnings) == before + len(kinds)   # a second walk of the same table adds nothing
