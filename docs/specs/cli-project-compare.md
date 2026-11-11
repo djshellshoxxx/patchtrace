@@ -34,7 +34,7 @@ Wraps `ProjectService.create`. Both files are copied into `DIR/artifacts/<sha256
 
 ### 3.2 `project sample --project DIR [--json]`
 
-Wraps `ProjectService.sample`: the synthetic walkthrough project (authored PE fixtures, authored Ghidriff-shaped result, authored finding; no engine and no model is run). For scripted smoke tests and first trials. Same directory refusals and result fields as `create`, plus `sample: true`, `run_id` and `matches`.
+Wraps `ProjectService.sample`: the synthetic walkthrough project (authored PE fixtures, authored Ghidriff-shaped result, authored finding; no engine and no model is run). For scripted smoke tests and first trials. Same directory refusals and result fields as `create`, plus `sample: true`, `run_id` and `matches` (`total`, `by_category`).
 
 ### 3.3 `project info PROJECT [--json]`
 
@@ -63,7 +63,7 @@ Exit 0 with at least one run; exit 4 (`status: complete`, empty `runs`) for a pr
 Wraps `ProjectService.prepare_import` and `apply_import`: imports an existing Ghidriff JSON result for exactly this pair. Strict JSON parsing, the 100 MiB bound, the input-hash identity check and normalization are the service's. The raw bytes are preserved under `runs/<id>/raw/result.ghidriff.json` and the run is recorded as `completed`, backend `ghidriff-import`.
 
 - Exit 2 (bad input, project unchanged): `PT-SCHEMA: ...` and `PT-INPUT: ...` refusals (unreadable or malformed file, duplicate keys, a result for another pair, an unsupported shape) and a record that violates the function contract.
-- Exit 3 (storage failure): `PT-STORAGE: ...` refusals and operating-system errors while the raw copy is staged or the snapshot is committed. A prepared import that is not applied is discarded, so no staged raw copy stays behind.
+- Exit 3 (storage failure): `PT-STORAGE: ...` refusals and operating-system errors while the raw copy is staged or the snapshot is committed. A prepared import that is not applied is discarded (also on Ctrl+C), so no staged raw copy and no empty `runs` directory stays behind.
 - Result: `run_id`, `backend`, `revision`, `raw_path`, `raw_sha256`, `matches` (`total`, `by_category`).
 
 Importing invalidates like any new analysis: the revision rises and stored interpretations, findings and annotations are marked stale.
@@ -74,7 +74,7 @@ Wraps `ProjectService.backup`: a complete new copy (SQLite online backup plus `a
 
 ### 3.7 `project swap PROJECT --confirm [--json]`
 
-Wraps `ProjectService.swap_orientation`. Without `--confirm` it exits 2 (`PT-CLI-CONFIRM`) and explains the effect; it never prompts. Effect, as the service implements it: the older and the newer artifact exchange sides; every match is mirrored (`added` and `removed` swap, `split` and `merged` swap); the project revision rises by one; every interpretation context, every finding and every annotation (notes, bookmarks, manual-correction records) is marked stale. Analysis runs, preserved raw results and derived results in the database are not touched; whether a derived result is still current is decided by its own reader. Result: `revision`, `artifacts`, `matches`, `invalidated` (`interpretations`, `findings`, `annotations`: the records this swap marked stale).
+Wraps `ProjectService.swap_orientation`. Without `--confirm` it exits 2 (`PT-CLI-CONFIRM`) and explains the effect; it never prompts. Effect, as the service implements it: the older and the newer artifact exchange sides; every match is mirrored (`added` and `removed` swap, `split` and `merged` swap); the project revision rises by one; every interpretation context, every finding and every annotation (notes, bookmarks, manual-correction records) is marked stale. Analysis runs, preserved raw results and derived results in the database are not touched; whether a derived result is still current is decided by its own reader. Result: `revision`, `artifacts`, `matches` (`total`, `by_category`), `invalidated` (`interpretations`, `findings`, `annotations`: the records this swap marked stale).
 
 ## 4. `patchtrace compare PROJECT`
 
