@@ -20,13 +20,14 @@ import os
 import re
 import subprocess
 import sys
+import tempfile
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 LABEL_RE = re.compile(r'^(\d{1,5})\.(\d{1,5})\.(\d{1,5})(?:-([0-9A-Za-z]{1,16}(?:\.[0-9A-Za-z]{1,16}){0,3}))?$')
-COMMIT_RE = re.compile(r'^[0-9a-f]{7,40}$')
+COMMIT_RE = re.compile(r'^[0-9a-f]{40}$')
 COPYRIGHT_RE = re.compile(r'^Copyright \(c\) [0-9]{4}(?:-[0-9]{4})? [A-Za-z0-9 .,&-]{1,80}$')
 VS_FF_PRERELEASE = 0x2
 EXE_NAME = 'PatchTrace.exe'
@@ -58,7 +59,7 @@ class VersionFields:
 
 
 def _parts(label: str) -> tuple[int, int, int]:
-    match = LABEL_RE.match(label)
+    match = LABEL_RE.fullmatch(label)
     if not match:
         raise ValueError(f'PT-BUILD: version label {label!r} is not <major>.<minor>.<patch>[-<tag>]')
     numbers = tuple(int(part) for part in match.group(1, 2, 3))
@@ -94,7 +95,7 @@ def copyright_line(license_text: str) -> str:
     for line in license_text.splitlines():
         line = line.strip()
         if line.startswith('Copyright'):
-            if not COPYRIGHT_RE.match(line):
+            if not COPYRIGHT_RE.fullmatch(line):
                 raise ValueError(f'PT-BUILD: unexpected copyright line {line!r}')
             return line
     raise ValueError('PT-BUILD: LICENSE has no copyright line')
@@ -104,9 +105,9 @@ def make_fields(label: str, commit: str, build: int, copyright: str) -> VersionF
     major, minor, patch = _parts(label)
     if not 0 <= build <= 0xFFFF:
         raise ValueError(f'PT-BUILD: build number {build} is outside 0..65535')
-    if not COMMIT_RE.match(commit):
+    if not COMMIT_RE.fullmatch(commit):
         raise ValueError(f'PT-BUILD: commit {commit!r} is not a lowercase hex SHA')
-    if not COPYRIGHT_RE.match(copyright):
+    if not COPYRIGHT_RE.fullmatch(copyright):
         raise ValueError(f'PT-BUILD: unexpected copyright line {copyright!r}')
     return VersionFields(label, (major, minor, patch, build), commit, copyright)
 
@@ -144,12 +145,12 @@ def render(fields: VersionFields) -> str:
 
 def current_commit(env: Mapping[str, str], root: Path = ROOT) -> str:
     """GITHUB_SHA on CI, else `git rev-parse HEAD` (argument list, no shell); validated either way."""
-    commit = env.get('GITHUB_SHA', '').strip().lower()
+    commit = env.get('GITHUB_SHA', '')
     if not commit:
         result = subprocess.run(['git', 'rev-parse', '--verify', 'HEAD'], cwd=root, capture_output=True,
                                 text=True, timeout=30, check=False)
         commit = result.stdout.strip().lower() if result.returncode == 0 else ''
-    if not COMMIT_RE.match(commit):
+    if not COMMIT_RE.fullmatch(commit):
         raise ValueError('PT-BUILD: cannot determine the commit being built (set GITHUB_SHA or build from git)')
     return commit
 
@@ -162,9 +163,18 @@ def fields_for_build(version: str, env: Mapping[str, str] | None = None, root: P
 
 def write(fields: VersionFields, out: Path) -> Path:
     out.parent.mkdir(parents=True, exist_ok=True)
-    staged = out.with_name(out.name + '.tmp')
-    staged.write_text(render(fields), encoding='utf-8', newline='\n')
-    os.replace(staged, out)
+    staged = None
+    try:
+        with tempfile.NamedTemporaryFile(mode='w', encoding='utf-8', newline='\n',
+                                         prefix='.patchtrace-version-', suffix='.tmp',
+                                         dir=out.parent, delete=False) as stream:
+            staged = Path(stream.name)
+            stream.write(render(fields))
+        os.replace(staged, out)
+        staged = None
+    finally:
+        if staged is not None:
+            staged.unlink(missing_ok=True)
     return out
 
 

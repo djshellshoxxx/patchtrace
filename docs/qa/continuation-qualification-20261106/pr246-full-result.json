@@ -1,0 +1,18 @@
+{
+  "start": "2026-11-06T07:46:29.319797+00:00",
+  "finish": "2026-11-06T08:38:20.837999+00:00",
+  "head": "e52047ae1b1bbb19a42680b8d9881338f2595f93",
+  "tree": "cf59135e03b1c4a84ff628b29b4abb9d308a2b7d",
+  "command": [
+    "/workspace/scratch/e6b4398e92df/pt-venv/bin/python",
+    "-m",
+    "pytest",
+    "-q",
+    "--junitxml=/workspace/scratch/c4fbe5e6f72c/venv-qualification/pytest.xml"
+  ],
+  "returncode": 1,
+  "seconds": 3111.5104816069997,
+  "log_sha256": "da5dda8a4512bf5143e656a42aa9f76d81e1ffeaaaed0e04c309ab9b791a50c9",
+  "final_head": "e52047ae1b1bbb19a42680b8d9881338f2595f93",
+  "final_status": ""
+}

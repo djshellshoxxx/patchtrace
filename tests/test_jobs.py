@@ -8,6 +8,7 @@ import time
 from pathlib import Path
 
 import pytest
+from liveness_support import heartbeat_code, heartbeat_stopped, wait_for
 
 from patchtrace import backend
 from patchtrace.backend import BackendConfig, quarantine_failed_run, run_comparison
@@ -70,9 +71,18 @@ def test_cancel_and_timeout_terminate_children(tmp_path, cancelled):
             kernel.CloseHandle(handle)
     else:
         state = Path(f'/proc/{pid}/stat')
-        # A terminated orphan may briefly remain a zombie until host init reaps it.
-        if state.exists():
-            assert state.read_text().split()[2] == 'Z'
+        # SIGKILL delivery and host reaping are asynchronous. Observe one state per iteration so successful
+        # reaping between an existence check and a read cannot turn cleanup into a FileNotFoundError.
+        deadline, pause = time.monotonic() + 10, threading.Event()  # `event` may already be set (cancel case)
+        while True:
+            try:
+                process_state = state.read_text().split()[2]
+            except FileNotFoundError:
+                break
+            if process_state == 'Z':
+                break
+            assert time.monotonic() < deadline, f'child {pid} remains in state {process_state}'
+            pause.wait(.02)
 
 
 def test_precancel_does_not_start(tmp_path):
@@ -104,6 +114,16 @@ def fake_runtime(tmp_path, monkeypatch):
         artifact.write_bytes(content)
         artifacts.append(Artifact(side=side, name=artifact.name, size=len(content),
                                   sha256=hashlib.sha256(content).hexdigest(), relative_path=artifact.name))
+    real_run = backend.run_process
+
+    def run_fake(argv, **kwargs):
+        if '-m' in argv and argv[argv.index('-m') + 1] == 'ghidriff':
+            index = argv.index('-m')
+            argv = [*argv[:index], str(package / '__main__.py'), *argv[index + 2:]]
+        return real_run(argv, **kwargs)
+
+    # The fixture must not depend on importing a planted package from the child's cwd.
+    monkeypatch.setattr(backend, 'run_process', run_fake)
     project = ComparisonProject(name='fake-runtime-fixture', artifacts=artifacts)
     config = BackendConfig(str(Path(sys.executable).resolve()), str(ghidra))
     return tmp_path, package, project, config
@@ -128,7 +148,9 @@ def test_completed_raw_is_unique_and_project_unchanged(fake_runtime):
     assert run.raw_path == path.relative_to(root).as_posix()
     assert run.raw_sha256 == hashlib.sha256(path.read_bytes()).hexdigest()
     assert project.model_dump_json() == original
-    assert [event.stage for event in events] == ['preflight', 'analysis', 'completed']
+    assert [event.stage for event in events
+            if event.stage not in {'analysis-progress', 'analysis-stage', 'analysis-stopped'}] == [
+        'preflight', 'analysis', 'completed']
     path2, run2 = run_comparison(config, project, root, threading.Event(), events.append)
     assert path != path2 and run.id != run2.id
 
@@ -600,19 +622,6 @@ def test_merged_default_is_unchanged(tmp_path):
     assert sorted(result.log_tail) == ['e', 'o'] and result.stderr_tail == ''
 
 
-def _heartbeat_child(beat: Path) -> str:
-    """A child that appends to `beat` every 50 ms for 20 s: self-limiting even if containment regresses."""
-    return (f'import time\nf=open({str(beat)!r},"ab",buffering=0)\n'
-            'for _ in range(400):\n    f.write(b"x")\n    time.sleep(0.05)\n')
-
-
-def _stops_growing(beat: Path) -> bool:
-    time.sleep(1.0)  # a surviving child starts, imports and appends within this window
-    size = beat.stat().st_size if beat.exists() else 0
-    time.sleep(0.5)
-    return (beat.stat().st_size if beat.exists() else 0) == size
-
-
 def test_failure_between_spawn_and_supervision_still_kills_the_child(tmp_path, monkeypatch):
     """Thread exhaustion after the spawn must not orphan the child tree (audit PS-1)."""
     beat = tmp_path / 'beat'
@@ -620,14 +629,16 @@ def test_failure_between_spawn_and_supervision_still_kills_the_child(tmp_path, m
 
     def start(self):
         if self.name == 'patchtrace-log':
+            # fail only once the child provably runs, so "stopped growing" below cannot pass vacuously
+            assert wait_for(lambda: beat.exists() and beat.stat().st_size > 0), 'the child never started'
             raise RuntimeError("can't start new thread")
         real_start(self)
 
     monkeypatch.setattr(threading.Thread, 'start', start)
     with pytest.raises(RuntimeError, match="can't start new thread"):
-        execute(tmp_path, _heartbeat_child(beat), timeout=30)
+        execute(tmp_path, heartbeat_code(beat), timeout=30)
     monkeypatch.undo()
-    assert _stops_growing(beat), 'the child kept running after run_process raised'
+    assert heartbeat_stopped(beat), 'the child never started, or kept running after run_process raised'
 
 
 @pytest.mark.parametrize('limit', [1 << 62, 1 << 64, 1 << 80])
@@ -636,7 +647,7 @@ def test_memory_limit_outside_the_rlimit_range_is_rejected_before_spawn(tmp_path
     marker = tmp_path / 'started'
     with pytest.raises(ValueError, match='memory limit'):
         execute(tmp_path, f'import pathlib;pathlib.Path({str(marker)!r}).write_text("x")', memory_limit_bytes=limit)
-    time.sleep(0.5)
+    time.sleep(0.5)  # inherent: the absence of a spawn can only be observed by waiting; the child would write within ms
     assert not marker.exists()
 
 
@@ -651,7 +662,7 @@ def test_ignored_sigchld_fails_closed_instead_of_reporting_exit_zero(tmp_path):
             execute(tmp_path, f'import pathlib;pathlib.Path({str(marker)!r}).write_text("x")')
     finally:
         signal.signal(signal.SIGCHLD, previous)
-    time.sleep(0.3)
+    time.sleep(0.3)  # inherent: the absence of a spawn can only be observed by waiting
     assert not marker.exists()
 
 

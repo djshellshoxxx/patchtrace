@@ -194,9 +194,15 @@ def load_view(series_path: Path, reader: PairReader, cancel: threading.Event) ->
         raise NwayError('PT-NWAY-CANCEL', 'loading the series was cancelled')
     # A locked pair cannot be compared with its recorded revision: unknown, so degraded, not stale.
     locked = {i for i, s in snapshots.items() if s.state == 'locked'}
-    effective = series_store.Staleness(staleness.pairs - locked, staleness.direct, tuple(
-        r for r in staleness.reasons if not any(r.startswith(f'pair {i}→{i + 1}:') for i in locked)))
     last = len(series.builds) - 1
+    # The direct pair has no snapshot; its lock shows only in the staleness reason.
+    direct_prefix = f'pair 0→{last}: cannot open'
+    direct_locked = staleness.direct and any(
+        r.startswith(direct_prefix) and 'locked' in r.lower() for r in staleness.reasons)
+    effective = series_store.Staleness(staleness.pairs - locked, staleness.direct and not direct_locked, tuple(
+        r for r in staleness.reasons
+        if not any(r.startswith(f'pair {i}→{i + 1}:') for i in locked)
+        and not (direct_locked and r.startswith(direct_prefix))))
     entries = {i: ({e.match_id: e for e in s.ranking.entries} if s.ranking is not None else {})
                for i, s in snapshots.items()}
     totals = {i: (len(s.ranking.entries) if s.ranking is not None else 0) for i, s in snapshots.items()}

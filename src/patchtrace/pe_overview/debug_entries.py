@@ -21,8 +21,8 @@ class DebugEntries:
 def parse_debug_entry_types(ctx: Ctx, smap: SectionMap, rva: int, size: int) -> DebugEntries | None:
     declared = size // ENTRY_SIZE
     count = min(declared, MAX_ENTRIES)
-    off = smap.rva_to_offset(rva) if count else None
-    raw = ctx.read(off, count * ENTRY_SIZE) if off is not None else b''
+    span = smap.backed_prefix(rva, count * ENTRY_SIZE) if count else None
+    raw = ctx.read(*span) if span is not None else b''
     if len(raw) < ENTRY_SIZE:
         return None
     types = tuple(struct.unpack_from('<I', raw, i * ENTRY_SIZE + 12)[0] for i in range(len(raw) // ENTRY_SIZE))

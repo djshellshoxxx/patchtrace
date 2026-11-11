@@ -12,16 +12,20 @@ import importlib.util
 import json
 import os
 import sys
+import uuid
 from collections.abc import Sequence
 from pathlib import Path
 
+from .. import vendoring_scan as V
 from ..label import AnnotationLog
 from . import annotate as A
+from . import bodyrecord as BR
 from . import contracts as C
 from . import evaluate as E
 from . import factory as F
 from . import fetch as FE
 from . import manifest as M
+from . import output_store as OS
 from . import report_schemas as RS
 from . import schemas as S
 from .toolchain import PROFILE_TOOLS, Blocked, probe
@@ -215,14 +219,26 @@ def cmd_evaluate(args) -> tuple[int, dict]:
     imports = Path(args.imports) if args.imports else store / 'imports'
     providers = E.default_providers(store, imports, rz_diff=args.rz_diff or os.environ.get('RZ_DIFF') or None,
                                     engines=engines)
-    report = E.evaluate(docs, providers, symbols=args.symbols)
-    out = Path(args.out) if args.out else store / 'reports' / f'tier-r-{args.symbols}-{report["report_sha256"][:12]}.json'
-    out.parent.mkdir(parents=True, exist_ok=True)
-    out.write_bytes(C.dump_json(report))
-    out.with_suffix('.md').write_text(E.render_markdown(report), encoding='utf-8', newline='\n')
+    run_token = uuid.uuid4().hex
+    outputs = Path(args.outputs) if args.outputs else store / 'outputs' / run_token
+    try:
+        report = E.evaluate(docs, providers, symbols=args.symbols, output_dir=outputs)
+    except E.EvaluationRetentionError as exc:
+        return FINDINGS, {'command': 'evaluate', 'status': 'failed', 'credited': False, 'error': str(exc),
+                          'outputs': exc.outputs.as_posix(), 'diagnostics': exc.diagnostics,
+                          **({'report_data': exc.report} if 'report' not in exc.diagnostics else {})}
+    out = Path(args.out) if args.out else store / 'reports' / (
+        f'tier-r-{args.symbols}-{report["report_sha256"][:12]}-{run_token}.json')
+    try:
+        OS.publish_bytes(out, C.dump_json(report))
+        OS.publish_bytes(out.with_suffix('.md'), E.render_markdown(report).encode('utf-8'))
+    except OS.OutputError as exc:
+        return USAGE, {'command': 'evaluate', 'status': 'error', 'error': str(exc),
+                       'outputs': outputs.as_posix(), 'report_path': out.as_posix(), 'report_data': report}
     problems = E.blocked_engines(report)
     states = {e['engine']: e['status'] for e in report['engines']}
-    doc = {'command': 'evaluate', 'report': out.as_posix(), 'report_sha256': report['report_sha256'],
+    doc = {'command': 'evaluate', 'report': out.as_posix(), 'outputs': outputs.as_posix(),
+           'report_sha256': report['report_sha256'],
            'engines': states, 'blocked': {e['engine']: e['reason'] for e in problems if e['status'] == 'blocked'}}
     if all(s == 'blocked' for s in states.values()):
         doc['status'] = 'blocked'
@@ -268,6 +284,24 @@ def cmd_annotate(args) -> tuple[int, dict]:
     out_path.write_bytes(A.dump_jsonl(records))
     return OK, {'command': 'annotate', 'status': 'ok', 'log': log.path.as_posix(), 'labels': out_path.as_posix(),
                 'records': len(records), 'blocked_engines': blocked, **summary, **stats}
+
+
+def cmd_vendoring(args) -> tuple[int, dict]:
+    if not 0 < args.threshold <= 1 or args.hub_max_lineages < 1:
+        raise Usage('vendoring: --threshold must be in (0, 1] and --hub-max-lineages at least 1')
+    store = _store(args)
+    folder = Path(args.bodies) if args.bodies else store / 'bodies'
+    bodies = BR.load_folder(folder) if folder.is_dir() else {}
+    if not bodies:
+        raise Usage(f'vendoring: no *{BR.SUFFIX} records in {folder.as_posix()}')
+    result = V.scan(bodies, threshold=args.threshold, hub_max_lineages=args.hub_max_lineages)
+    out = Path(args.out) if args.out else store / 'vendoring-proposals.json'
+    out.parent.mkdir(parents=True, exist_ok=True)
+    out.write_bytes(C.dump_json({'threshold': args.threshold, 'hub_max_lineages': args.hub_max_lineages,
+                                 'lineages': len(bodies), **V.to_json(result)}))
+    return (FINDINGS if result.proposals else OK), {
+        'command': 'vendoring', 'status': 'proposals' if result.proposals else 'ok', 'proposals': out.as_posix(),
+        'lineages': len(bodies), 'merge_proposals': len(result.proposals), 'hub_bodies': len(result.hub_bodies)}
 
 
 def cmd_schemas(args) -> tuple[int, dict]:
@@ -354,6 +388,7 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument('--engines', default=','.join(E.ENGINES))
     p.add_argument('--rz-diff', help='absolute path of rz-diff (default: PATH lookup)')
     p.add_argument('--out', help='report JSON path; a Markdown file is written beside it')
+    p.add_argument('--outputs', help='nonexisting directory for retained normalized outputs (default: fresh store run)')
     p = add('manifest', cmd_manifest, 'emit a calibration-corpus/1 manifest of the label documents')
     p.add_argument('--labels')
     p.add_argument('--out')
@@ -366,6 +401,11 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument('--out')
     p.add_argument('--engines', default='', help='optional engines whose predicted pairs become candidates')
     p.add_argument('--imports')
+    p = add('vendoring', cmd_vendoring, 'propose lineage merges from shared masked bodies (merge-only, PREREG 2.4)')
+    p.add_argument('--bodies', help='folder of *.bodies.json (default <store>/bodies)')
+    p.add_argument('--threshold', type=float, required=True)
+    p.add_argument('--hub-max-lineages', type=int, required=True)
+    p.add_argument('--out')
     p = add('schemas', cmd_schemas, 'regenerate docs/schemas/corpus (contracts and report schemas)', store=False)
     p.add_argument('--out', default=str(REPO / 'docs' / 'schemas' / 'corpus'))
     add('catalogue-check', cmd_catalogue_check, 'offline consistency of recipes and case cards', store=False)

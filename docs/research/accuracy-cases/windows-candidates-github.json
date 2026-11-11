@@ -1,0 +1,266 @@
+{
+  "schema": "rq-case-manifest/1",
+  "cases": [
+    {
+      "id": "win-cve-2024-38063-tcpip",
+      "layer": "L3",
+      "stratum": "tcpip-ipv6-options",
+      "project": "windows-tcpip",
+      "source_url": "https://malwaretech.com/2024/08/exploiting-CVE-2024-38063.html",
+      "licence": "reference-only",
+      "older": {
+        "ref": "tcpip.sys, 2024-Jul (pre-patch)"
+      },
+      "newer": {
+        "ref": "tcpip.sys, 2024-Aug Patch Tuesday"
+      },
+      "expected": {
+        "function": "Ipv6pProcessOptions",
+        "cve": "CVE-2024-38063"
+      },
+      "facts": "unverified",
+      "holdout": false,
+      "notes": "MalwareTech page says only one function in the driver changed (Ipv6pProcessOptions, one call swapped from IppSendErrorList to IppSendError); no build or KB on that page. A clearbluejar ghidriff gist (tcpip.sys.x64.10.0.22000.3079 vs 3147; its own metadata also says 3139) lists Ipv6pProcessOptions among 6 modified functions (also WfpAleForceReclassifyLayer, WfpAleStreamLayerChanged, IppFindOrCreatePath, IppRemoveSourcesFromMulticastGroup, DriverEntry) but does not tie them to the CVE; those are not accepted. CONTRADICTION: KernelSight lists Ipv6pReassembleDatagram, Ipv6pReceiveFragment, IppReassembleDatagram as affected (vulnerable-only, fixed 10.0.22621.4036 KB5041585) and says the fix added overflow checks in reassembly. Reconcile on the real pair before scoring."
+    },
+    {
+      "id": "win-cve-2019-0708-termdd",
+      "layer": "L3",
+      "stratum": "termdd-virtual-channel-bind",
+      "project": "windows-termdd",
+      "source_url": "https://www.malwaretech.com/2019/05/analysis-of-cve-2019-0708-bluekeep.html",
+      "licence": "reference-only",
+      "older": {
+        "ref": "termdd.sys, 2019-May (pre-patch)"
+      },
+      "newer": {
+        "ref": "termdd.sys, 2019-May Patch Tuesday"
+      },
+      "expected": {
+        "function": "IcaBindVirtualChannels",
+        "cve": "CVE-2019-0708",
+        "accept": [
+          "IcaRebindVirtualChannels"
+        ]
+      },
+      "facts": "unverified",
+      "holdout": false,
+      "notes": "MalwareTech names two functions with identical change in TermDD.sys, spelled with a leading underscore (_IcaBindVirtualChannels, _IcaRebindVirtualChannels; x86 cdecl decoration). Expected uses the undecorated form; check which form the symbol dump gives. No build, KB or month on the page, so the 2019-May refs are unverified."
+    },
+    {
+      "id": "win-cve-2019-1181-rdpbase",
+      "layer": "L3",
+      "stratum": "rdp-decompress-heap",
+      "project": "windows-rdpbase",
+      "source_url": "https://www.coresecurity.com/blog/dejablue-vulnerabilities-windows-7-windows-10-cve-2019-1181-and-cve-2019-1182",
+      "licence": "reference-only",
+      "older": {
+        "ref": "rdpbase.dll 10.0.18362.1 (vulnerable)"
+      },
+      "newer": {
+        "ref": "rdpbase.dll 10.0.18362.295 (patched)"
+      },
+      "expected": {
+        "function": "DecompressUnchopper::Decompress",
+        "cve": "CVE-2019-1181"
+      },
+      "facts": "unverified",
+      "holdout": false,
+      "notes": "Core Security page names DecompressUnchopper::Decompress as the patched function and gives the build pair above; no KB or month on the page. CONTRADICTION on binary: MalwareTech (dejablue-analyzing-a-rdp-heap-overflow) says on Windows 7 the only changed RDP file is RDPCoreTS.dll and identifies the same routine; Win10 1903 binary is rdpbase.dll per Core. Page covers CVE-2019-1181 and CVE-2019-1182 together."
+    },
+    {
+      "id": "win-cve-2020-1350-dns",
+      "layer": "L3",
+      "stratum": "dns-sig-record-overflow",
+      "project": "windows-dns-server",
+      "source_url": "https://labs.k7computing.com/index.php/the-forgotten-windns-cve-2020-1350/",
+      "licence": "reference-only",
+      "older": {
+        "ref": "dns.exe 6.3.9600.16384 (vulnerable)"
+      },
+      "newer": {
+        "ref": "dns.exe 6.3.9600.19759, 2020-Jul"
+      },
+      "expected": {
+        "function": "SigWireRead",
+        "cve": "CVE-2020-1350"
+      },
+      "facts": "unverified",
+      "holdout": false,
+      "notes": "K7 names SigWireRead as the function Microsoft patched (added overflow checks before RR_AllocateEx; RR_AllocateEx not stated as changed). 0patch SigRed post shows vulnerable SigWireRead vs its patched counterpart from Microsoft (Server 2012 builds, July 2020) and says the July update modified three dns.exe functions, naming only SigWireRead. No KB on either page. Minor inconsistency: 0patch says Server 2012, K7 build 6.3.9600 is the 2012 R2 line."
+    },
+    {
+      "id": "win-cve-2020-1472-netlogon",
+      "layer": "L3",
+      "stratum": "netlogon-zerologon-auth",
+      "project": "windows-netlogon",
+      "source_url": "https://0patch.com/blog/micropatch-for-zerologon-perfect",
+      "licence": "reference-only",
+      "older": {
+        "ref": "netlogon.dll, 2020-Jul (Server 2012)"
+      },
+      "newer": {
+        "ref": "netlogon.dll, 2020-Aug (Server 2012)"
+      },
+      "expected": {
+        "function": "NetrServerAuthenticate3",
+        "cve": "CVE-2020-1472",
+        "accept": [
+          "NlIsChallengeCredentialPairVulnerable"
+        ]
+      },
+      "facts": "unverified",
+      "holdout": false,
+      "notes": "0patch diff of July vs August 2020 Server 2012 netlogon.dll: NetrServerAuthenticate3 gained a new check and NlIsChallengeCredentialPairVulnerable is newly added (listed as accepted post-patch addition). Secura Zerologon factsheet was read and names NO patched function (author says internals unknown), so it is not a source. No build or KB on the 0patch page."
+    },
+    {
+      "id": "win-cve-2025-33073-mrxsmb",
+      "layer": "L3",
+      "stratum": "smb-client-ntlm-reflection",
+      "project": "windows-mrxsmb",
+      "source_url": "https://synacktiv.com/en/publications/ntlm-reflection-is-dead-long-live-ntlm-reflection-an-in-depth-analysis-of-cve-2025",
+      "licence": "reference-only",
+      "older": {
+        "ref": "mrxsmb.sys, pre-patch (month not stated)"
+      },
+      "newer": {
+        "ref": "mrxsmb.sys, Microsoft fix (month not stated)"
+      },
+      "expected": {
+        "function": "SmbCeCreateSrvCall",
+        "cve": "CVE-2025-33073"
+      },
+      "facts": "unverified",
+      "holdout": false,
+      "notes": "Synacktiv: only a few functions modified, only mrxsmb!SmbCeCreateSrvCall named; patched code calls ksecdd!CredUnmarshalTargetInfo (called, not stated as changed, so not accepted). anorak001 write-up independently names SmbCeCreateSrvCall in the mrxsmb.sys diff. Neither page gives build, KB or month. Related but separate: a later Synacktiv post says the same CVE fix ADDED srv2!Smb2ValidateLoopbackAddress and srvnet!SrvNetIsAddressLoopback; the changed pre-existing server-side callers are not named, so no srv2/srvnet case is made."
+    },
+    {
+      "id": "win-cve-2023-29360-mskssrv",
+      "layer": "L3",
+      "stratum": "mskssrv-mdl-probe-mode",
+      "project": "windows-mskssrv",
+      "source_url": "https://onlyfm252.starlabs.sg/data/patch_diffs/mskssrv_sys-kb5027231.md",
+      "licence": "reference-only",
+      "older": {
+        "ref": "mskssrv.sys 10.0.22621.1 (PE ProductVersion 10.0.22621.1774)"
+      },
+      "newer": {
+        "ref": "mskssrv.sys named 10.0.22621.1848 (PE version shows 10.0.22621.2050)"
+      },
+      "expected": {
+        "function": "FsAllocAndLockMdl",
+        "cve": "CVE-2023-29360"
+      },
+      "facts": "unverified",
+      "holdout": false,
+      "notes": "Diff report names FsAllocAndLockMdl as the changed function. KernelSight lists FsAllocAndLockMdl and FsAllocateAndLock as affected (vulnerable list, not confirmed changed, so not accepted) and says the fix switches the MmProbeAndLockPages access mode from KernelMode to UserMode, fixed build 10.0.22621.1848 KB5027231 (vulnerable 10.0.22621.1702 KB5026372). CONTRADICTION: the report file name says 1848 but PE FileVersion/ProductVersion say 2050; confirm the pair by hash. Host onlyfm252.starlabs.sg has unclear provenance (see md). Second mskssrv case; CVE-2023-36802 is in the other manifest."
+    },
+    {
+      "id": "win-cve-2024-30085-cldflt",
+      "layer": "L3",
+      "stratum": "cldflt-bitmap-copy-size",
+      "project": "windows-cldflt",
+      "source_url": "https://starlabs.sg/blog/2024/12-all-i-want-for-christmas-is-a-cve-2024-30085-exploit/",
+      "licence": "reference-only",
+      "older": {
+        "ref": "cldflt.sys, 2024-May (pre-patch)"
+      },
+      "newer": {
+        "ref": "cldflt.sys, 2024-Jun KB5039211"
+      },
+      "expected": {
+        "function": "HsmIBitmapNORMALOpen",
+        "cve": "CVE-2024-30085"
+      },
+      "facts": "unverified",
+      "holdout": false,
+      "notes": "StarLabs blog says Microsoft changed HsmIBitmapNORMALOpen (new check that memcpy_size <= 0x1000 before the copy); KB5039211 for Win10 22H2, linked KB page cites builds 19044.4529 / 19045.4529 (blog body gives no build). A mirrored RCA page on onlyfm252.starlabs.sg agrees (function, KB5039211, June 2024). Name has capital I after Hsm in both sources, kept as written."
+    },
+    {
+      "id": "win-cve-2025-55680-cldflt",
+      "layer": "L3",
+      "stratum": "cldflt-placeholder-toctou",
+      "project": "windows-cldflt",
+      "source_url": "https://onlyfm252.starlabs.sg/data/patch_diffs/cldflt_sys-kb5066835.md",
+      "licence": "reference-only",
+      "older": {
+        "ref": "cldflt.sys 10.0.26100.6725 (KB5065789, 2025-Sep preview)"
+      },
+      "newer": {
+        "ref": "cldflt.sys 10.0.26100.6899 (KB5066835, 2025-Oct)"
+      },
+      "expected": {
+        "function": "HsmpOpCreatePlaceholders",
+        "cve": "CVE-2025-55680"
+      },
+      "facts": "unverified",
+      "holdout": false,
+      "notes": "ghidriff report (Ghidra VersionTrackingDiff with cldflt.pdb) lists cldflt!HsmpOpCreatePlaceholders as the code-changed function; 4 code-changed and 4 added functions reported but only this one named. Same function is the only security-relevant change in the CVE-2025-50170 report (KB5063878, 10.0.26100.4484 to 4946), so those two CVEs overlap in function. Cap of 2 per binary reached; CVE-2023-36036 (KernelSight: HsmFltProcessReparse, HsmpRpReadBuffer, HsmpRpWriteBuffer, KB5032190, 10.0.22621.2715) held back. Host provenance unclear."
+    },
+    {
+      "id": "win-cve-2024-38106-ntoskrnl",
+      "layer": "L3",
+      "stratum": "ntoskrnl-vsm-secure-context",
+      "project": "windows-ntoskrnl",
+      "source_url": "https://splintersfury.github.io/KernelSight/case-studies/CVE-2024-38106",
+      "licence": "reference-only",
+      "older": {
+        "ref": "ntoskrnl.exe, pre-patch (month not stated)"
+      },
+      "newer": {
+        "ref": "ntoskrnl.exe 10.0.22621.4169 KB5043076"
+      },
+      "expected": {
+        "function": "VslpEnterIumSecureMode",
+        "cve": "CVE-2024-38106",
+        "accept": [
+          "VslGetSetSecureContext"
+        ]
+      },
+      "facts": "unverified",
+      "holdout": false,
+      "notes": "KernelSight case page lists VslpEnterIumSecureMode (spinlock added around read-validate-use) and VslGetSetSecureContext (lock added) as fixed, fixed build 10.0.22621.4169 KB5043076, no month. The same site Patch Patterns page names VslpEnterIumSecureMode as the patched function. The stated KB may be later than the first update carrying the fix; confirm against MSRC before choosing the pair. Derived catalog, no raw diff output."
+    },
+    {
+      "id": "win-cve-2022-21882-win32kfull",
+      "layer": "L3",
+      "stratum": "win32k-callback-type-confusion",
+      "project": "windows-win32k",
+      "source_url": "https://www.coresecurity.com/core-labs/articles/analysis-cve-2022-21882-win32k-window-object-type-confusion-exploit",
+      "licence": "reference-only",
+      "older": {
+        "ref": "win32kfull.sys, 2021-Dec (pre-patch)"
+      },
+      "newer": {
+        "ref": "win32kfull.sys, 2022-Jan Patch Tuesday"
+      },
+      "expected": {
+        "function": "xxxClientAllocWindowClassExtraBytes",
+        "cve": "CVE-2022-21882"
+      },
+      "facts": "unverified",
+      "holdout": false,
+      "notes": "Core Security says the patch added a check of tagWND ExStyle2 bit 0x800 (console mode) in win32kfull!xxxClientAllocWindowClassExtraBytes. Page: January 2022 patch, exploit tested on Win10 21H1 19043.1110 (vulnerable); no patched build or KB. Second win32kfull case (CVE-2019-1436 is in the other manifest)."
+    },
+    {
+      "id": "win-cve-2025-60705-csc",
+      "layer": "L3",
+      "stratum": "csc-reboot-rename-key",
+      "project": "windows-csc",
+      "source_url": "https://onlyfm252.starlabs.sg/data/patch_diffs/csc_sys-kb5068861.md",
+      "licence": "reference-only",
+      "older": {
+        "ref": "csc.sys 10.0.26100.5074"
+      },
+      "newer": {
+        "ref": "csc.sys 10.0.26100.7171 (KB5068861, 2025-Nov)"
+      },
+      "expected": {
+        "function": "CscRebootRenamepOpenKey",
+        "cve": "CVE-2025-60705"
+      },
+      "facts": "unverified",
+      "holdout": false,
+      "notes": "LOW CONFIDENCE: single source, one-off disassembly report (capstone + pefile, no ghidriff, no symbols stated). Lists CscRebootRenamepOpenKey as changed plus two names (FeatureFlagEvaluator, PrivilegeCheckHelper) that may be analyst labels, not symbols; those are not accepted. Page says pre-patch C code came from an MSRC submission, odd for a public diff. Treat as a probe of how the engine copes with unsymbolised names."
+    }
+  ]
+}

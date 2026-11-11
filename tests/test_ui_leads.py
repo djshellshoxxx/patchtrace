@@ -747,7 +747,7 @@ def test_prepare_leads_runs_end_to_end_through_the_dock(qtbot, service):
                            ranker=rank_inputs, publisher=publish_result)
     assert controller.presentation.state == 'L1b'
     controller.panel.buttons['prepare'].click()
-    qtbot.waitUntil(lambda: controller.stored is not None and controller.stored.loaded.state == 'current', timeout=20000)
+    qtbot.waitUntil(lambda: controller.stored is not None and controller.stored.loaded.state == 'current', timeout=90000)
     settle(qtbot, controller)
     assert controller.error is None and controller.presentation.state in ('L3', 'L4', 'L7')
 

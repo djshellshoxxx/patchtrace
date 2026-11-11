@@ -113,6 +113,8 @@ def test_capability_and_outcome_views():
 
 
 class FakeRz(RzDiffAdapter):
+    reads_artifacts = False  # the sample project's declared hashes have no files behind them
+
     def __init__(self, code):
         super().__init__()
         self.code = code

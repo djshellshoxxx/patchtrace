@@ -77,3 +77,15 @@ def test_redact_log_hides_whole_authorization_value():
     from patchtrace.diagnostics import redact_log
     for line in ('Authorization: Token abcdefghijk123', 'Authorization: ApiKey abc123def456'):
         assert redact_log(line) == 'Authorization: [redacted]'
+
+
+@pytest.mark.parametrize('fmt', ['json', 'md', 'html'])
+def test_export_neutralises_bidi_and_escape_controls(tmp_path, fmt):
+    from patchtrace.reports import export_project
+    from patchtrace.sample import create_sample
+    service = create_sample(tmp_path / 'p')
+    project = service.project.model_copy(update={'name': 'Project\u202egnp\x1b[2J'})
+    out = tmp_path / f'r.{fmt}'
+    export_project(project, fmt, out)
+    text = out.read_text(encoding='utf-8')
+    assert not any(ch in text for ch in '\u202e\x1b') and 'gnp' in text

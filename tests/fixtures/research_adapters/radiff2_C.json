@@ -1,0 +1,6 @@
+[
+  {"name": "sym.parse_header", "name2": "sym.parse_header", "type": "unmatch", "similarity": 0.412},
+  {"name": "sym.checksum", "name2": "sym.checksum", "type": "match", "similarity": 0.93},
+  {"name": "sym.same", "name2": "sym.same", "type": "match", "similarity": 1.0},
+  {"name": "sym.new_func", "type": "new"}
+]

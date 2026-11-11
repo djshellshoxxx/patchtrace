@@ -20,7 +20,9 @@ from __future__ import annotations
 import re
 from collections import Counter
 from collections.abc import Callable, Mapping
+from collections.abc import Set as AbstractSet
 from dataclasses import dataclass
+from functools import cached_property
 
 from ..contracts import BLOCK_CLASSES, Delta
 from . import CALL_CLASSES
@@ -41,6 +43,38 @@ class AnchorInputs:
     bindiff_flags: tuple[str, ...] | None
     identity: Callable[[str, CallTarget | None], str | None]    # a callee as the canonical text names it
     data_token: Callable[[str, int], str | None]
+
+    # One pair can carry thousands of deltas: every set and multiset difference below is built once per pair.
+    @cached_property
+    def leftovers(self) -> tuple[frozenset[CallTarget], frozenset[CallTarget]]:
+        return frozenset(self.pair.leftovers[0]), frozenset(self.pair.leftovers[1])
+
+    @cached_property
+    def calls_diff(self) -> tuple[Counter, Counter]:
+        return _removed_added(self.canon_old.calls, self.canon_new.calls)
+
+    @cached_property
+    def numbers_diff(self) -> tuple[Counter, Counter]:
+        return _removed_added(self.canon_old.numbers, self.canon_new.numbers)
+
+    @cached_property
+    def tokens_diff(self) -> tuple[Counter, Counter]:
+        return _removed_added(self.canon_old.tokens, self.canon_new.tokens)
+
+    @cached_property
+    def offsets_diff(self) -> tuple[set[int], set[int]]:
+        """Struct offsets spelled as `field_0x..` names among the removed and the added canonical tokens."""
+        removed, added = self.tokens_diff
+        return _offsets(removed), _offsets(added)
+
+    @cached_property
+    def strings_diff(self) -> tuple[Counter, Counter]:
+        return _removed_added(self.canon_old.strings, self.canon_new.strings)
+
+    @cached_property
+    def operators_changed(self) -> bool:
+        return (Counter(self.canon_old.relational) != Counter(self.canon_new.relational)
+                or Counter(self.canon_old.logical) != Counter(self.canon_new.logical))
 
 
 def _removed_added(old: tuple, new: tuple) -> tuple[Counter, Counter]:
@@ -63,21 +97,21 @@ def _offsets(counter: Counter) -> set[int]:
     return found
 
 
-def _shows(counter: Counter, value: int | None, *, offsets: bool = False) -> bool:
+def _shows(counter: Counter, value: int | None, offsets: AbstractSet[int] = frozenset()) -> bool:
     if value is None:
         return True
-    return bool(_literal_forms(value) & counter.keys()) or (offsets and value in _offsets(counter))
+    return bool(_literal_forms(value) & counter.keys()) or value in offsets
 
 
 def _call_anchor(delta: Delta, info: DeltaInfo, inp: AnchorInputs) -> str | None:
     old_target, new_target = info.tokens
-    pair, states = inp.pair, inp.states
+    states = inp.states
     if delta.channel != 'C4' and states.get('C4') == 'differs' and (old_target or new_target) \
-            and (old_target is None or old_target in pair.leftovers[0]) \
-            and (new_target is None or new_target in pair.leftovers[1]):
+            and (old_target is None or old_target in inp.leftovers[0]) \
+            and (new_target is None or new_target in inp.leftovers[1]):
         return 'C4'
     if states.get('C6') == 'differs' and inp.canon_old is not None and inp.canon_new is not None:
-        removed, added = _removed_added(inp.canon_old.calls, inp.canon_new.calls)
+        removed, added = inp.calls_diff
         ids = (inp.identity('older', old_target), inp.identity('newer', new_target))
         if (ids[0] is not None and ids[0] in removed) or (ids[1] is not None and ids[1] in added):
             return 'C6'
@@ -103,31 +137,26 @@ def anchor_for(delta: Delta, info: DeltaInfo, inp: AnchorInputs) -> str | None:
         if inp.pair.counts_differ and inp.states.get('C3') == 'differs':
             return 'C3'
         return 'C8' if inp.states.get('C8') == 'differs' and inp.bindiff_flags and 'G' in inp.bindiff_flags else None
-    canon = _c6_texts(inp)
-    if canon is None:
+    if _c6_texts(inp) is None:
         return None
-    old, new = canon
     if cls in ('constant', 'struct-offset'):
         if info.values == (None, None):
             return None
-        removed, added = _removed_added(old.numbers, new.numbers)
-        removed_tokens, added_tokens = _removed_added(old.tokens, new.tokens)
-        offsets = cls == 'struct-offset'
-        return 'C6' if (_shows(removed, info.values[0]) or (offsets and _shows(removed_tokens, info.values[0], offsets=True))) \
-            and (_shows(added, info.values[1]) or (offsets and _shows(added_tokens, info.values[1], offsets=True))) \
+        removed, added = inp.numbers_diff
+        offsets_old, offsets_new = inp.offsets_diff if cls == 'struct-offset' else (frozenset(), frozenset())
+        return 'C6' if _shows(removed, info.values[0], offsets_old) and _shows(added, info.values[1], offsets_new) \
             else None
     if cls in ('comparison', 'condition'):
-        return 'C6' if (Counter(old.relational) != Counter(new.relational)
-                        or Counter(old.logical) != Counter(new.logical)) else None
+        return 'C6' if inp.operators_changed else None
     if cls == 'data-ref':
         token_old = inp.data_token('older', info.data[0]) if info.data[0] is not None else None
         token_new = inp.data_token('newer', info.data[1]) if info.data[1] is not None else None
         if token_old is None or token_new is None:
             return None
-        removed, added = _removed_added(old.tokens, new.tokens)
+        removed, added = inp.tokens_diff
         return 'C6' if token_old in removed and token_new in added else None
     if cls == 'string':
-        removed, added = _removed_added(old.strings, new.strings)
+        removed, added = inp.strings_diff
         return 'C6' if _string_shown(removed, info.strings[0]) and _string_shown(added, info.strings[1]) else None
     return None
 
@@ -139,6 +168,6 @@ def _string_shown(literals: Counter, prefix: str | None) -> bool:
         return False
     for literal in literals:
         text = literal[1:-1].replace('\\"', '"') if len(literal) >= 2 else literal
-        if text.startswith(prefix) or prefix.startswith(text) and text:
+        if text.startswith(prefix) or (text and prefix.startswith(text)):   # an empty text never matches
             return True
     return False

@@ -17,10 +17,11 @@ from dataclasses import dataclass
 from pathlib import Path
 from uuid import UUID
 
+from .backend_progress import RECEIPT_LIMIT, RECEIPT_NAME, RECEIPT_WARNING, BackendProgress
 from .diagnostics import describe_backend_exit, redact_log
-from .ingestion import safe_path
+from .ingestion import MAX_ARTIFACT_BYTES, safe_path
 from .jobs import run_process
-from .models import AnalysisRun, ComparisonProject, JobEvent, uid
+from .models import AnalysisRun, ComparisonProject, JobEvent, now, uid
 
 JSON_LIMIT = 100 * 1024 * 1024
 
@@ -70,6 +71,10 @@ class BackendConfig:
     bundle: bool = False
     # SPEC-31 D-05: keep the two analysed GZFs Ghidriff writes (off by default; argv and cache fingerprint unchanged).
     retain_gzf: bool = False
+    # SPEC-53: '' derives from allow_symbol_downloads (False -> off, True -> online). 'local' enables symbols with an
+    # empty server list and PDBs only from the analyst-chosen folders below (identity-gated, copied per run).
+    symbol_mode: str = ''
+    symbol_pdb_dirs: tuple[str, ...] = ()
 
 
 _PASSTHROUGH_NAME = re.compile(r'^[A-Za-z_][A-Za-z0-9_()]*$')
@@ -99,6 +104,35 @@ def _passthrough_error(name: object) -> bool:
             or upper.startswith(('PYTHON', 'LD_', 'DYLD_')))
 
 
+def _symbol_config_errors(config: BackendConfig) -> list[str]:
+    from .symbols.modes import SymbolError, resolve_mode
+    from .symbols.staging import validate_dirs
+    if not isinstance(config.allow_symbol_downloads, bool) or not isinstance(config.symbol_mode, str):
+        return []   # reported by the boolean check
+    if not isinstance(config.symbol_pdb_dirs, tuple) or not all(isinstance(d, str) for d in config.symbol_pdb_dirs):
+        return ['PT-SYMBOL-MODE: symbol_pdb_dirs must be a tuple of absolute folder paths']
+    try:
+        mode = resolve_mode(config.symbol_mode, config.allow_symbol_downloads)
+        if config.symbol_pdb_dirs and mode != 'local':
+            raise SymbolError('PT-SYMBOL-MODE', 'PDB folders are only used in local symbol mode')
+        validate_dirs(config.symbol_pdb_dirs)
+    except SymbolError as exc:
+        return [str(exc)]
+    return []
+
+
+def _symbol_mode(config: BackendConfig) -> str:
+    from .symbols.modes import resolve_mode
+    return resolve_mode(config.symbol_mode, config.allow_symbol_downloads)
+
+
+def _is_online(config: BackendConfig) -> bool:
+    try:
+        return _symbol_mode(config) == 'online'
+    except ValueError:
+        return config.allow_symbol_downloads is True
+
+
 def _config_errors(config: BackendConfig) -> list[str]:
     errors = []
     python = Path(config.python_executable)
@@ -117,6 +151,7 @@ def _config_errors(config: BackendConfig) -> list[str]:
         errors.append('PT-BACKEND: timeout_seconds must be a positive integer')
     if not isinstance(config.allow_symbol_downloads, bool):
         errors.append('PT-BACKEND: allow_symbol_downloads must be a boolean')
+    errors.extend(_symbol_config_errors(config))
     if not isinstance(config.cache_dir, str) or (config.cache_dir and not Path(config.cache_dir).is_absolute()):
         errors.append('PT-BACKEND: cache directory must be an absolute path')
     if not isinstance(config.no_cache, bool) or not isinstance(config.refresh, bool):
@@ -211,7 +246,7 @@ def build_child_env(base: Mapping[str, str], config: BackendConfig, settings_dir
 
 def _environment(config: BackendConfig, settings_dir: Path | None = None) -> dict[str, str]:
     if config.bundle or (config.restrict_env and os.environ.get('PATCHTRACE_CHILD_ENV') != 'inherit'):
-        return build_child_env(os.environ, config, settings_dir, symbol_downloads=config.allow_symbol_downloads,
+        return build_child_env(os.environ, config, settings_dir, symbol_downloads=_is_online(config),
                                for_tool='ghidra')
     env = os.environ.copy()
     # A case directory or inherited development path must not supply Python modules.
@@ -247,19 +282,38 @@ def _java_executable(config: BackendConfig) -> str | None:
 
 
 def _java_version(config: BackendConfig, cancel: threading.Event | None = None) -> str:
-    """Probed JVM version, or 'unknown' (which makes raw output uncacheable)."""
+    """Probed JVM version, or 'unknown' (which makes raw output uncacheable).
+
+    A cold JVM may exceed the initial probe timeout. Retry that timeout once
+    with a longer bound; cancellation and other failures return immediately.
+    """
     java = _java_executable(config)
     if java is None:
         return 'unknown'
-    try:
-        result = run_process([java, '-version'], cwd=Path(config.ghidra_dir), env=_environment(config),
-                             cancel=cancel or threading.Event(), timeout_seconds=15, log_limit=4096)
-    except OSError:
-        return 'unknown'
-    if result.reason or result.returncode:
-        return 'unknown'
-    match = re.search(r'version "([A-Za-z0-9_.+-]{1,64})"', result.log_tail)
-    return match.group(1) if match else 'unknown'
+
+    cancel_event = cancel or threading.Event()
+    for attempt, timeout_seconds in enumerate((15, 30)):
+        try:
+            result = run_process(
+                [java, '-version'],
+                cwd=Path(config.ghidra_dir),
+                env=_environment(config),
+                cancel=cancel_event,
+                timeout_seconds=timeout_seconds,
+                log_limit=4096,
+            )
+        except OSError:
+            return 'unknown'
+
+        if result.reason == 'timeout' and attempt == 0 and not cancel_event.is_set():
+            continue
+        if result.reason or result.returncode:
+            return 'unknown'
+
+        match = re.search(r'version "([A-Za-z0-9_.+-]{1,64})"', result.log_tail)
+        return match.group(1) if match else 'unknown'
+
+    return 'unknown'
 
 
 def _probe_backend(config: BackendConfig, cancel: threading.Event | None = None) -> dict:
@@ -272,9 +326,10 @@ def _probe_backend(config: BackendConfig, cancel: threading.Event | None = None)
         '"ghidriff":version("ghidriff"),"pyghidra":version("pyghidra"),'
         '"available":u.find_spec("ghidriff") is not None}))'
     )
-    result = run_process([str(Path(config.python_executable).resolve()), '-c', code],
-                         cwd=Path(config.ghidra_dir), env=_environment(config),
-                         cancel=cancel or threading.Event(), timeout_seconds=15, log_limit=16384)
+    with tempfile.TemporaryDirectory(prefix='patchtrace-probe-') as scratch:
+        result = run_process([os.path.abspath(config.python_executable), '-I', '-X', 'utf8', '-c', code],
+                             cwd=Path(scratch), env=_environment(config),
+                             cancel=cancel or threading.Event(), timeout_seconds=15, log_limit=16384)
     if result.reason == 'cancelled':
         raise RuntimeError('PT-CANCEL: analysis cancelled during dependency check')
     if result.reason or result.returncode:
@@ -291,7 +346,9 @@ def _probe_backend(config: BackendConfig, cancel: threading.Event | None = None)
             raise ValueError('Python is too old')
         return metadata
     except (ValueError, TypeError, KeyError):
-        raise RuntimeError('PT-BACKEND: install ghidriff in the selected Python 3.10+ environment') from None
+        raise RuntimeError('PT-BACKEND: install ghidriff and its dependencies in the selected Python 3.10+ '
+                           "environment's own site-packages (for example, a venv); isolated mode ignores "
+                           '--user installs and PYTHONPATH') from None
 
 
 def _bundle_line(config: BackendConfig) -> str:
@@ -319,8 +376,12 @@ def diagnose(config: BackendConfig) -> list[str]:
                 f'Ghidra installation: root verified; version {ghidra_version}']
     if config.bundle:
         statuses.append(_bundle_line(config))
-    statuses.append('Ghidriff symbol-server lookup: enabled by analyst' if config.allow_symbol_downloads
-                    else 'Ghidriff symbol-server lookup: disabled (local/offline option)')
+    if _symbol_mode(config) == 'local':
+        statuses.append(f'Ghidriff symbol-server lookup: local PDB folders only, no servers '
+                        f'({len(config.symbol_pdb_dirs)} folder(s) configured)')
+    else:
+        statuses.append('Ghidriff symbol-server lookup: enabled by analyst' if config.allow_symbol_downloads
+                        else 'Ghidriff symbol-server lookup: disabled (local/offline option)')
     try:
         metadata = _probe_backend(config)
         statuses.append(f'Python {metadata["python"]}; ghidriff {metadata["ghidriff"]}; '
@@ -356,6 +417,28 @@ def _input_path(root: Path, relative: str, digest: str, cancel: threading.Event)
     return resolved
 
 
+def _snapshot_input(source: Path, destination: Path, digest: str, cancel: threading.Event) -> Path:
+    """Hash the exact bytes copied to private scratch before handing them to Ghidriff."""
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    hasher = hashlib.sha256()
+    copied = 0
+    with source.open('rb') as original, destination.open('xb') as target:
+        while True:
+            if cancel.is_set():
+                raise RuntimeError('PT-CANCEL: analysis cancelled during input validation')
+            chunk = original.read(1024 * 1024)
+            if not chunk:
+                break
+            copied += len(chunk)
+            if copied > MAX_ARTIFACT_BYTES:
+                raise ValueError('PT-INPUT: project artifact exceeds the 1 GiB limit')
+            target.write(chunk)
+            hasher.update(chunk)
+    if hasher.hexdigest() != digest:
+        raise ValueError('PT-INPUT: project artifact hash changed; re-import the original binary')
+    return destination
+
+
 def _output_error(directory: Path) -> str | None:
     try:
         return _output_scan(directory)
@@ -376,6 +459,30 @@ def _output_scan(directory: Path) -> str | None:
         if total > JSON_LIMIT:
             return 'output-limit'
     return None
+
+
+def _keep_launcher_report(source: Path, target: Path) -> None:
+    """Copy the (size-capped) launcher report out of scratch before it is removed; absence is validated later."""
+    staged = None
+    try:
+        if source.is_file() and not source.is_symlink() and source.stat().st_size <= 64 * 1024:
+            with source.open('rb') as stream:
+                payload = stream.read(64 * 1024 + 1)
+            if len(payload) > 64 * 1024:
+                return
+            # Replace a destination link itself, never follow it to overwrite an unrelated file.
+            with tempfile.NamedTemporaryFile(dir=target.parent, prefix='ptlaunch-report-', delete=False) as stream:
+                staged = Path(stream.name)
+                stream.write(payload)
+            os.replace(staged, target)
+    except OSError:
+        pass
+    finally:
+        if staged is not None:
+            try:
+                staged.unlink(missing_ok=True)
+            except OSError:
+                pass
 
 
 def _remove_scratch(path: Path, attempts: int = 5) -> str | None:
@@ -436,26 +543,43 @@ def quarantine_failed_run(root: Path, run: AnalysisRun, error: str) -> AnalysisR
 RAW_ADAPTER_VERSION = 'patchtrace-ghidriff-adapter/2'  # serialized Ghidriff analysis changes raw output provenance
 
 
+@dataclass(frozen=True)
+class _LocalSymbols:
+    """Everything `_ghidriff_argv` needs for local mode: launcher copy, its report path, the staged store, PDB names."""
+    launcher: Path
+    report: Path
+    store: Path
+    staged_names: tuple[str, ...]
+
+
 def _ghidriff_argv(config: BackendConfig, older: Path, newer: Path, raw: Path,
-                   engine_project: Path, engine_gzfs: Path) -> list[str]:
-    """Build a sequential Ghidriff invocation, testable without launching Java."""
-    argv = [str(Path(config.python_executable).resolve()), *(('-I', '-X', 'utf8') if config.bundle else ()),
-            '-m', 'ghidriff', str(older), str(newer), '--output-path',
-            str(_validated_ghidra_output_path(raw)), '--project-location',
-            str(engine_project), '--gzfs-path', str(engine_gzfs), '--no-threaded']
-    if not config.allow_symbol_downloads:
-        argv.append('--no-symbols')
-    return argv
+                   engine_project: Path, engine_gzfs: Path, local: _LocalSymbols | None = None) -> list[str]:
+    """Build a sequential Ghidriff invocation, testable without launching Java.
+
+    `local` (SPEC-53) routes the call through the PatchTrace launcher with symbols on and an empty server list.
+    """
+    # Preserve a venv's executable symlink: resolving it selects the base interpreter's site-packages.
+    python = [os.path.abspath(config.python_executable), '-I', '-X', 'utf8']
+    args = [str(older), str(newer), '--output-path', str(_validated_ghidra_output_path(raw)),
+            '--project-location', str(engine_project), '--gzfs-path', str(engine_gzfs), '--no-threaded']
+    if local is not None:
+        staged = [x for name in local.staged_names for x in ('--pt-staged', name)]
+        return [*python, str(local.launcher), '--pt-mode', 'local', '--pt-report', str(local.report), *staged,
+                '--', *args, '--symbols-path', str(local.store)]
+    if not _is_online(config):
+        args.append('--no-symbols')
+    return [*python, '-m', 'ghidriff', *args]
 
 
 def _open_raw_cache(config: BackendConfig, backend_version: str, settings: dict,
-                    cancel: threading.Event):
+                    cancel: threading.Event, symbol_digest: str = 'none'):
     """(cache, fingerprint) for an eligible run, else (None, None); never raises."""
     from .enrichment.cache import CacheConfig, DerivedCache, RuntimeFingerprint
     from .enrichment.contracts import EnrichmentError
     java_version = _java_version(config, cancel)
     settings['java_runtime_version'] = java_version if java_version != 'unknown' else 'unverified'
-    symbols = 'disabled' if config.allow_symbol_downloads is False else 'online'
+    from .symbols.modes import cache_policy
+    symbols = cache_policy(_symbol_mode(config))
     # Only probed values enter the key; any unprobed value is 'unknown' and ineligible.
     fingerprint = RuntimeFingerprint(
         engine='ghidriff', ghidriff_revision=backend_version,
@@ -464,7 +588,7 @@ def _open_raw_cache(config: BackendConfig, backend_version: str, settings: dict,
         python_version=str(settings.get('python_version', 'unknown')),
         java_version=java_version, platform_arch=platform.machine().lower() or 'unknown',
         loader_options='default', analysis_options='--no-symbols' if symbols == 'disabled' else 'symbols',
-        adapter_version=RAW_ADAPTER_VERSION, symbol_policy=symbols, symbol_input_digest='none')
+        adapter_version=RAW_ADAPTER_VERSION, symbol_policy=symbols, symbol_input_digest=symbol_digest)
     if not fingerprint.eligible()[0]:
         return None, None
     try:
@@ -488,6 +612,29 @@ def _read_raw_cache(cache, fingerprint, settings: dict) -> tuple[bytes, dict] | 
         return None
 
 
+def _write_execution_receipt(directory: Path, document: dict) -> None:
+    """Sync a bounded temporary file before replacement; failures preserve the earlier receipt.
+
+    The caller owns the new run directory and isolates every ordinary diagnostic error from
+    analysis status. Never follow a destination symlink or overwrite a partial file in place.
+    """
+    payload = (json.dumps(document, ensure_ascii=True, allow_nan=False, indent=2, sort_keys=True) + '\n').encode()
+    if len(payload) > RECEIPT_LIMIT or directory.is_symlink():
+        raise ValueError('invalid execution receipt')
+    temporary = None
+    try:
+        with tempfile.NamedTemporaryFile(dir=directory, prefix='backend-execution-', suffix='.tmp',
+                                         delete=False) as stream:
+            temporary = Path(stream.name)
+            stream.write(payload)
+            stream.flush()
+            os.fsync(stream.fileno())
+        os.replace(temporary, directory / RECEIPT_NAME)
+    finally:
+        if temporary is not None:
+            temporary.unlink(missing_ok=True)
+
+
 def run_comparison(config: BackendConfig, project: ComparisonProject, root: Path,
                    cancel: threading.Event, on_event: Callable[[JobEvent], None]) -> tuple[Path, AnalysisRun]:
     """Return completed raw JSON and a new run, or a quarantined directory on failure.
@@ -506,13 +653,16 @@ def run_comparison(config: BackendConfig, project: ComparisonProject, root: Path
     raw.mkdir()
     settings = {'timeout_seconds': config.timeout_seconds,
                 'allow_symbol_downloads': config.allow_symbol_downloads,
-                'symbol_policy': 'online' if config.allow_symbol_downloads is True else 'disabled',
+                'symbol_policy': 'online' if _is_online(config) else 'disabled',
                 'ghidra_settings': 'isolated-per-run',
                 'older_sha256': next(a.sha256 for a in project.artifacts if a.side == 'older'),
                 'newer_sha256': next(a.sha256 for a in project.artifacts if a.side == 'newer')}
     backend_version = 'unknown'
     raw_cache = None
     fingerprint = None
+    scratch_root: Path | None = None    # created early in local symbol mode (PDB staging); removed in `finally`
+    local_result = None
+    symbol_mode = 'off'
 
     def publish(source: Path, origin: dict | None = None) -> tuple[Path, AnalysisRun]:
         # Fresh and cache-served output share this check and the same run layout.
@@ -551,6 +701,7 @@ def run_comparison(config: BackendConfig, project: ComparisonProject, root: Path
         errors = _config_errors(config)
         if errors:
             raise RuntimeError('; '.join(errors))
+        symbol_mode = _symbol_mode(config)
         paths = {a.side: _input_path(root, a.relative_path, a.sha256, cancel) for a in project.artifacts}
         _validated_ghidra_output_path(raw)
         metadata = _probe_backend(config, cancel)
@@ -563,8 +714,21 @@ def run_comparison(config: BackendConfig, project: ComparisonProject, root: Path
             event('identical', 'Copied binaries have identical SHA-256 hashes; analysis skipped')
             return destination, AnalysisRun(id=run_id, status='identical',
                                            backend_version=backend_version, settings=settings)
+        from .symbols.project import run_settings
+        if symbol_mode == 'local':
+            # SPEC-53: identity-gated PDBs are copied into this run's scratch; their hashes enter the cache key.
+            from . import __version__
+            from .symbols.project import stage_for_project
+            event('symbols', 'Staging matching PDBs from the configured folders (no network)')
+            scratch_root = Path(tempfile.mkdtemp(prefix='patchtrace-ghidra-')).resolve()
+            local_result = stage_for_project(project, root, config.symbol_pdb_dirs, scratch_root / 'symbols', cancel)
+            settings.update(run_settings(symbol_mode, local_result, __version__))
+            settings['symbol_policy'] = 'local'
+        elif symbol_mode != 'off':
+            settings.update(run_settings(symbol_mode, None, ''))   # off keeps today's settings byte for byte
         if config.cache_dir and not config.no_cache:
-            raw_cache, fingerprint = _open_raw_cache(config, backend_version, settings, cancel)
+            raw_cache, fingerprint = _open_raw_cache(config, backend_version, settings, cancel,
+                                                     local_result.digest if local_result else 'none')
         if raw_cache is not None and fingerprint is not None and not config.refresh:
             hit = _read_raw_cache(raw_cache, fingerprint, settings)
             if hit is not None:
@@ -590,23 +754,69 @@ def run_comparison(config: BackendConfig, project: ComparisonProject, root: Path
         # TemporaryDirectory has a randomized private name; no shared static workspace
         # is used between concurrent comparisons. Cleanup runs on success and failure.
         event('analysis', 'Ghidriff is performing static analysis; detailed counts are unavailable')
-        scratch_root = Path(tempfile.mkdtemp(prefix='patchtrace-ghidra-')).resolve()
+        if scratch_root is None:
+            scratch_root = Path(tempfile.mkdtemp(prefix='patchtrace-ghidra-')).resolve()
+        local = None
         try:
             engine_project = _validated_ghidra_output_path(scratch_root / 'projects')
             engine_gzfs = _validated_ghidra_output_path(scratch_root / 'gzfs')
             ghidra_settings = scratch_root / 'ghidra-settings'
             ghidra_settings.mkdir()
-            argv = _ghidriff_argv(config, paths['older'], paths['newer'], raw, engine_project, engine_gzfs)
-            result = run_process(argv, cwd=Path(config.ghidra_dir), env=_environment(config, ghidra_settings),
-                                 cancel=cancel,
-                                 timeout_seconds=config.timeout_seconds,
-                                 check_output=lambda: _output_error(raw))
+            if local_result is not None:
+                from .ghidriff_launch.validate import write_private_copy
+                launcher_dir = scratch_root / 'launcher'
+                launcher_dir.mkdir()
+                (scratch_root / 'symbols').mkdir(exist_ok=True)
+                local = _LocalSymbols(write_private_copy(launcher_dir), scratch_root / 'ptlaunch-report.json',
+                                      scratch_root / 'symbols', tuple(s.pdb_name for s in local_result.staged))
+            paths = {side: _snapshot_input(path, scratch_root / 'inputs' / side / path.name,
+                                           settings[f'{side}_sha256'], cancel)
+                     for side, path in paths.items()}
+            argv = _ghidriff_argv(config, paths['older'], paths['newer'], raw, engine_project, engine_gzfs, local)
+            environment = _environment(config, ghidra_settings)
+            progress = BackendProgress(config.timeout_seconds)
+            from . import __version__ as patchtrace_version
+            versions = {'patchtrace': patchtrace_version, 'ghidriff': backend_version,
+                        'python': settings.get('python_version'), 'pyghidra': settings.get('pyghidra_version'),
+                        'ghidra': settings.get('ghidra_version'), 'jvm': settings.get('java_runtime_version')}
+            started_at = now()
+
+            def record_execution(result=None, *, supervision_error=False):
+                try:
+                    document = progress.receipt(run_id, started_at, versions, result=result,
+                                                stopped_at=now() if result is not None else None,
+                                                supervision_error=supervision_error)
+                    _write_execution_receipt(quarantine, document)
+                except Exception:  # noqa: BLE001 - diagnostic persistence cannot change a process outcome
+                    event('warning', RECEIPT_WARNING)
+
+            def observe(snapshot):
+                if progress.observe(snapshot):
+                    event('analysis-stage', f'Ghidriff stage: {progress.stage}')
+                event('analysis-progress', progress.summary())
+
+            record_execution()
+            try:
+                result = run_process(argv, cwd=scratch_root, env=environment, cancel=cancel,
+                                     timeout_seconds=config.timeout_seconds,
+                                     check_output=lambda: _output_error(raw), on_progress=observe)
+            except BaseException:
+                event('analysis-stopped', 'Ghidriff process supervision ended.')
+                # A failed supervisor/spawn must not be presented as an observed process exit.
+                record_execution(supervision_error=True)
+                raise
+            event('analysis-stopped', 'Ghidriff process supervision ended.')
+            progress.finish(result)
+            record_execution(result)
             if config.retain_gzf and result.returncode == 0 and not result.reason and not cancel.is_set():
                 from .unified.extract.retain import retain_run_gzfs  # lazy: the unified engine stays optional
                 retain_run_gzfs(engine_gzfs, quarantine, paths, settings, event)
+            if local is not None:
+                _keep_launcher_report(local.report, quarantine / 'ptlaunch-report.json')
         finally:
             # run_process returns only after the contained tree is terminated.
             leftover = _remove_scratch(scratch_root)
+            scratch_root = None   # removed once; the outer `finally` only covers early exits
             if leftover:
                 event('warning', f'Temporary Ghidra workspace could not be removed: {leftover}')
         sanitized_log = redact_log(result.log_tail)
@@ -617,13 +827,18 @@ def run_comparison(config: BackendConfig, project: ComparisonProject, root: Path
         if result.reason == 'cancelled' or cancel.is_set():
             raise RuntimeError('PT-CANCEL: analysis cancelled; partial output retained in quarantine')
         if result.reason == 'timeout':
-            raise RuntimeError('PT-BACKEND: analysis timed out; increase the configured timeout and retry')
+            raise RuntimeError(progress.timeout_error(run_id))
         if result.reason == 'output-check-failed' or _output_error(raw) == 'output-check-failed':
             raise RuntimeError('PT-BACKEND: output directory could not be inspected; partial output quarantined')
         if result.reason or _output_error(raw):
             raise RuntimeError('PT-BACKEND: unsafe or oversized JSON output; partial output quarantined')
+        if local is not None:
+            from .ghidriff_launch.validate import check_exit, validate_run
+            check_exit(result.returncode, sanitized_log)
         if result.returncode:
             raise RuntimeError(describe_backend_exit(result.returncode, sanitized_log))
+        if local is not None:
+            validate_run('local', quarantine / 'ptlaunch-report.json', sanitized_log, local.staged_names)
         candidates = list((raw / 'json').glob('*.ghidriff.json'))
         if len(candidates) != 1:
             raise RuntimeError('PT-BACKEND: expected exactly one Ghidriff PDiff JSON; check runtime compatibility')
@@ -646,3 +861,6 @@ def run_comparison(config: BackendConfig, project: ComparisonProject, root: Path
         event(status, message)
         return quarantine, AnalysisRun(id=run_id, status=status, backend_version=backend_version,
                                        settings=settings, error=message)
+    finally:
+        if scratch_root is not None:
+            _remove_scratch(scratch_root)

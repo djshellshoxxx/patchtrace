@@ -15,7 +15,7 @@ from .registry import DESCRIPTION_LIMIT, TIPS_CODE
 GUI_TIP_IDS = ('gui.state_retry', 'gui.state_copy', 'gui.state_setup', 'gui.state_refresh', 'gui.notice',
                'gui.notice_details', 'gui.notice_dismiss', 'gui.notice_text', 'gui.palette', 'gui.palette_list', 'gui.reset_layout',
                'gui.cycle_panels', 'gui.navigate', 'panels.dock_tabs', 'menu.view', 'menu.view.theme', 'gui.theme_dark',
-               'gui.theme_system', 'gui.theme_note')
+               'gui.theme_system', 'gui.theme_note', 'gui.table', 'gui.code_copy', 'gui.code_pane', 'gui.graph')
 
 
 class TipError(ValueError):
@@ -107,6 +107,22 @@ def gui_tips() -> dict:
             'Windows high contrast is on, so the colours come from your Windows theme.',
             'High contrast is automatic and overrides the chosen theme while it is on.',
             'Nothing to change here; turn high contrast off in Windows settings to use the choice again.'),
+        'gui.table': TooltipEntry(
+            'A table of rows; click a column title to sort by it.',
+            'Large result lists stay readable and reachable with the keyboard.',
+            'Enter opens the selected row, Space shows its detail, Ctrl+C copies the selected rows as text.'),
+        'gui.code_copy': TooltipEntry(
+            'Copy the code of this side to the clipboard.',
+            'Lets you paste the shown lines into a note or report.',
+            'Puts text on the clipboard only; nothing is changed or sent anywhere.'),
+        'gui.code_pane': TooltipEntry(
+            'Read-only code of one side of the comparison, aligned line by line with the other side.',
+            'Shows what changed between the older and newer artifact next to each other.',
+            'Select and copy text; the code is shown as text and is never run.'),
+        'gui.graph': TooltipEntry(
+            'A graph of related items; arrow keys move between them.',
+            'Shows how items connect when a list would hide the relations.',
+            'Enter opens the focused item and Space selects it; the graph is read-only.'),
     }
 
 

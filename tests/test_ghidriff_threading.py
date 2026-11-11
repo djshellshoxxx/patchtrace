@@ -16,5 +16,5 @@ def test_ghidriff_launch_serializes_analysis(tmp_path: Path, bundled: bool, onli
     assert argv.count('--no-threaded') == 1
     assert '--threaded' not in argv
     assert ('--no-symbols' in argv) is not online
-    assert ('-I' in argv) is bundled
+    assert argv[1:4] == ['-I', '-X', 'utf8']
     assert argv.index('--no-threaded') > argv.index('--gzfs-path')

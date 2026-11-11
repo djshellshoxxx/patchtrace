@@ -11,6 +11,7 @@ from pathlib import Path
 
 import pytest
 from fake_bindiff import launcher_names, make_fake_bindiff, spy_calls
+from liveness_support import heartbeat_stopped
 from test_bindiff_inputs import Accepted, Summary, accepted
 
 from patchtrace.jobs import run_process
@@ -198,12 +199,8 @@ def test_timeout_kills_tree_and_records_kind(tmp_path):
     assert out.run.status == 'timeout' and out.run.provenance['failure_kind'] == 'timeout'
     assert time.monotonic() - started < 60
     beat = tmp_path / 'bd' / 'heartbeat.txt'
-    deadline = time.monotonic() + 10
-    while not beat.exists() and time.monotonic() < deadline:
-        time.sleep(0.1)
-    size = beat.stat().st_size if beat.exists() else 0
-    time.sleep(0.6)
-    assert (beat.stat().st_size if beat.exists() else 0) == size  # grandchild is dead: heartbeat stopped
+    assert beat.exists(), 'grandchild never started within the timeout'     # else "stopped growing" is vacuous
+    assert heartbeat_stopped(beat, settle=0.6)                             # grandchild is dead: heartbeat stopped
 
 
 def test_cancel_stops_run(tmp_path):

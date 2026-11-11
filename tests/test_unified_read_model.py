@@ -186,8 +186,8 @@ def test_read_model_states_and_precedence(tmp_path):
         'Partial unified result: raw-missing. Missing evidence is unknown, not disagreement.')
     vm = load(stale, extraction_configured=True, changed_inputs=('manual_digest', 'sources'))
     assert vm.state == 'U6' and vm.stale_reason.startswith('a manual correction')
-    assert vm.state_text == ('The unified result is stale: a manual correction changed the inputs; the stored engine '
-                             'results changed. It is shown for reference only.')
+    assert vm.state_text == ('The unified result is stale: a manual correction changed the inputs; a stored engine '
+                             'result was added, removed, updated or its status changed. It is shown for reference only.')
     both = load(stale_partial, extraction_configured=True)           # U6 outranks U4, which stays visible beneath it
     assert both.state == 'U6' and [b.split(':')[0] for b in both.banners] == ['The unified result is stale',
                                                                              'Partial unified result']
@@ -817,9 +817,10 @@ def test_filter_and_sort_budget_at_100000_rows():
     _, t_name = took(lambda: rm.sort_rows(rows, everything, rm.column_sort_key(vm, 'function'), descending=True))
     assert sorted(ordered) == everything and max(t_sort, t_cell, t_name) < 0.75, (t_sort, t_cell, t_name)
     # paint-time access is O(1) and independent of N: 7 x visible cells x 1.2 + 20 calls (GUI plan 8.4)
-    start = time.perf_counter()
-    texts = [rm.cell_text(row, column) for row in rows[50_000:50_030] for column in range(5) for _ in range(7)]
-    assert len(texts) == 1050 and time.perf_counter() - start < 0.05
+    def paint():
+        return [rm.cell_text(row, column) for row in rows[50_000:50_030] for column in range(5) for _ in range(7)]
+    best = min(took(paint)[1] for _ in range(5))      # best of 5: one scheduler hiccup on a shared runner is not O(N)
+    assert len(paint()) == 1050 and best < 0.05
 
 
 def test_load_stays_light_per_row(tmp_path):

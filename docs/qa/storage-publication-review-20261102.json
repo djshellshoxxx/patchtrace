@@ -1,0 +1,55 @@
+{
+  "date_utc": "2026-11-02",
+  "reviewer": "/root/msrc_recover",
+  "author": "/root/rd_recover",
+  "base": "9c468bc75077484c1780305d7cc927b30fd0bc8b",
+  "head": "58c1c12e6fb76e9ae8453724166b76f70d8aa8f6",
+  "tree": "36d8cbdf04f14bcc632726e9fce83a7cb24f3e27",
+  "worktree": "/workspace/scratch/142cb233d750/wt-storage-adoption-review",
+  "clean": true,
+  "conclusion": "No blocking findings in revised candidate; previous pending-scan fail-open blocker resolved.",
+  "findings": [],
+  "resolved_finding": {
+    "previous_head": "536aebc787e0df06ff650c373647ad6fa3fb0c5c",
+    "receipt": "/workspace/scratch/142cb233d750/reviews-msrc/storage-admission-blocker-20261102.json",
+    "result": "Path.glob swallowed pending-scan errors; explicit os.scandir now propagates opening, iteration and metadata errors into refusal.",
+    "red": "3 failed, 1 passed in 0.41s"
+  },
+  "checks": {
+    "previous_author_selection": "60 passed in 4.58s at 536aebc; did not cover scan-error blocker",
+    "revised_focused": "67 passed in 5.12s (63 author tests plus 4 independent controls)",
+    "expanded_independent": "6 passed in 0.48s (three scan exception classes, two candidate-entry metadata exceptions, actual second-thread in-flight/completion)",
+    "ruff": "Changed production/test files passed",
+    "diff": "git diff --check base..head passed"
+  },
+  "changed_file_sha256": {
+    "docs/modules.md": "c31c37304649a3822d4b71bea70fd26b5dfebaad9b8d76b8a0caf2f4bd5ba8de",
+    "docs/qa.md": "9216f21c6fbc926db4e599bef5c253a3ab2820e1e3308b9e3c6882c9872cdacc",
+    "docs/qa/backup-publication-admission-20261102.md": "58be27fcbe7489e85d958e6dfba9796d70d424262507f7090cc3df4c3833fe68",
+    "docs/qa/backup-publication-admission-20261102.tar.gz": "3cc0f44d04419983e8c513ea4257b8397a2082040f488600d1c40f28ebd0c0d7",
+    "docs/qa/backup-publication-admission-scan-20261102.tar.gz": "d594cf9df4467cf4f6bd2748111fc5191712979b00bbfa867346715b8bf86ff7",
+    "docs/specs/enrichment-hardening-backlog.md": "7a8418a4cc42b4d7ebfaf6b5fa2be2e9c34d165eaa032317e7ffc94e187b505f",
+    "src/patchtrace/verified_backup.py": "02332ed6cd9a01e0c668ca49c9017c97ec2585c63f8b6be46bfa1b4206cdf102",
+    "tasks/todo.md": "61fc91c679c5f7af1d8a9c728447f8ae82fd28a106b537f5d217eac98a206cf9",
+    "tests/test_verified_backup_publication_admission.py": "34baea146237d9296af599970c5098f96456bcd5f51bdd943dfac0b57f0a0f1b"
+  },
+  "independent_control": {
+    "path": "/workspace/scratch/142cb233d750/reviews-msrc/test_storage_admission_controls_20261102.py",
+    "sha256": "8f96eeb8c262c8d3006d7f93df8abe0374d989b4d9be2e8684afb5e8b2036855"
+  },
+  "reviewed_contract": [
+    "Failed post-link publication retains owned stage and final diagnostic bytes and raises BackupError",
+    "Matching pending stage excludes final from discovery, including cold verdict cache and actual project reopen",
+    "Earlier completed backup remains eligible; no final path is unlinked or renamed",
+    "Only this attempt owned stage can be cleaned after byte revalidation; foreign/replaced stages and finals preserved",
+    "Directory open/iteration/entry-metadata errors return no candidates; cannot use unreadable pending scan as empty",
+    "Actual concurrent reader rejects linked unvalidated final, then accepts completed publication",
+    "Actual retention/history tests retain rows while backup publication fails; fresh complete backup restores pruning"
+  ],
+  "limits": [
+    "No author worktree or production edits by reviewer",
+    "No remote writes, native/heavy/full-suite job, Windows acceptance or power-loss guarantee",
+    "Legacy unmarked backups retain existing policy; arbitrary same-user namespace mutation remains outside claim",
+    "Receipt is independent evidence, not GitHub APPROVE event"
+  ]
+}

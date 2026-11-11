@@ -82,3 +82,14 @@ def test_busy_changes_gate_the_run_button(main_window, busy, reason, monkeypatch
     controller.busy_changed(busy)
     blocked = controller.panel.run_blocked_reason
     assert (reason in blocked) if reason else blocked == ''
+
+
+def test_a_project_change_does_not_probe_engines_until_asked(main_window, qtbot):
+    controller = main_window.panels.controller('evidence')
+    calls = []
+    controller.probe = lambda token: calls.append(1) or {}
+    controller.project_changed(controller.port.key())
+    assert controller.probe_token is None and not controller.probed
+    controller.start_probe()  # the explicit action
+    qtbot.waitUntil(lambda: controller.probe_token is None, timeout=5000)
+    assert calls == [1]

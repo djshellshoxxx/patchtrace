@@ -19,8 +19,8 @@ Not built here: purchase of a certificate or enrolment (owner action), SmartScre
 
 | claim | source | retrieved | confidence |
 |---|---|---|---|
-| Windows build is `--onedir --console --hide-console hide-early`, with `--icon` and `--version-file` since 2026-10-28 (WIN-1, section 9), no `--manifest`; archive `PatchTrace-0.1.0-windows-x64.zip` plus `.zip.sha256` (`<sha256>  <name>\n`); `file-inventory.json` and `dependency-versions.json` inside | `tools/build_windows.py` (this repo) | 2026-10-14 | high |
-| Release job: `permissions: contents: write`, `softprops/action-gh-release` (v2, SHA-pinned to v2.6.2 `3bb1273` since 2026-10-28), `prerelease: true`, tag `v0.1.0-beta.<run_number>` or the pushed `v*` tag, name hard-coded "PatchTrace beta N" | `.github/workflows/qa-windows.yml` (this repo) | 2026-10-14 | high |
+| Windows build is `--onedir --console --hide-console hide-early`, no `--icon`, no `--version-file`, no `--manifest`; archive `PatchTrace-0.1.0-windows-x64.zip` plus `.zip.sha256` (`<sha256>  <name>\n`); `file-inventory.json` and `dependency-versions.json` inside | `tools/build_windows.py` (this repo) | 2026-10-14 | high |
+| Release job: `permissions: contents: write`, `softprops/action-gh-release@v2`, `prerelease: true`, tag `v0.1.0-beta.<run_number>` or the pushed `v*` tag, name hard-coded "PatchTrace beta N" | `.github/workflows/qa-windows.yml` (this repo) | 2026-10-14 | high |
 | Publishing returned HTTP 403 "Resource not accessible by integration" when a commit changes `.github/workflows/*`; the zip then exists only as an Actions artifact | `docs/plans/claude-autonomous-alpha-handoff-20261013.md` B1; `windows-acceptance-and-milestone-builds.md` 1.1 | 2026-10-14 | high |
 | Repo licence MIT, copyright "Circuit Drift Labs" | `LICENSE` (this repo) | 2026-10-14 | high |
 | PyInstaller 6.22.3 pinned; bootloader is an executable inside the folder that is the only PatchTrace-built PE | `pyproject.toml` dev extra, `build_windows.py` | 2026-10-14 | high |
@@ -127,12 +127,6 @@ GUI: the existing Help menu (`ui.py`, `help_menu`) has no About entry today; add
 | WIN-5 | Signing job (disabled by `if: vars.SIGNING_ENABLED == 'true'`) | `.github/workflows/sign-windows.yml` (new) | WIN-4, owner decision | sonnet; opus only for the key-custody review | M | dry run with a throwaway local test key on a fixture exe, never a real key; job skipped by default | leave off |
 | WIN-6 | About dialog lines | `ui.py` Help menu (shared file: serialize with other `ui.py` edits via the integration owner) | WIN-2 | sonnet | S | offscreen test of the three lines | omit GUI |
 
-Status 2026-10-28 (branch `claude/patchtrace-haiku-agent-motpbx`, PR #102):
-
-- **WIN-1 built without the manifest** (the fallback above): `tools/windows_version_info.py` writes the version file (ProductVersion and FileVersion = release label: `v<label>` tag, `<version>-beta.<run>` on a main push, `<version>-dev[.<run>]` otherwise; Comments `Unsigned build of commit <sha>`; no CompanyName), `tools/windows_icon.py` the `.ico` (PNG frames of the owner mark `src/patchtrace/resources/patchtrace-mark.svg`, byte-identical to `site/assets/cdl-mark.svg`), and `tools/build_windows.py` reads the built exe back with `tools/check_windows_exe.py` (pe_overview) and fails on a wrong label or commit or a missing icon group. The same mark is the runtime window icon (`patchtrace.app_icon`); `--self-test` fails when it does not load. Gate evidence: the Windows CI `windows-package` job; locally, PyInstaller's own serializer round-trips through pe_overview (tests/test_windows_build_resources.py).
-- **WIN-4 in part**: the release name derives from `github.ref_name` for a `v*` tag; the Windows jobs are split (`qa-windows`, `windows-package`, `windows-validate`, all on main/tags/dispatch only). Policy step and attestation are not built.
-- WIN-2, WIN-3, WIN-5, WIN-6: not built.
-
 ## 10. Amendments, test and QA plan
 
 Amendments: `windows-acceptance-and-milestone-builds.md` 1.2 (naming table above) and 4 (notes template: add Signed, SmartScreen, Provenance, Supersedes); `docs/windows.md` last paragraphs: replace "Unsigned beta package" with the exact policy sentence and link here; `docs/modules.md`: add `tools/release_policy_check.py`, `tools/windows_version_info.py`; `README.md`: one-line unsigned notice and verification command; `docs/notices.md`: unchanged. `tests/test_spec_registry.py` excludes program-e (no registry edit until promotion).
@@ -148,3 +142,7 @@ Gates only the owner or Windows hardware can close and that are reported separat
 3. Include the Linux tarball in the attestation? Default yes, same step.
 4. Show the Mark-of-the-Web guidance? Default: one README sentence ("if Windows warns, compare the SHA-256 first"), no instruction to disable SmartScreen or add Defender exclusions, ever.
 5. Version number: `0.1.0` is hard-coded in six places; WIN-1 introduces one `src/patchtrace/__init__.py` source of truth only if the owner approves editing it (default: generator reads `pyproject.toml`).
+
+## WIN-1 continuation amendment (2026-10-30)
+
+The selective PR #102 metadata/icon reconciliation is governed by the WIN-1 acceptance amendment in `windows-acceptance-and-milestone-builds.md`. It is a candidate until exact-source Windows CI passes. The historical no-installer statement in section 1 is superseded by the existing per-user NSIS installer in `docs/release-process.md`; no new installer or signing path is introduced. Historical source observations in section 2 are dated evidence, not claims about this candidate. Manifest work remains deferred under WIN-1 fallback. Windows version-resource labels require a numeric `<major>.<minor>.<patch>` base (each component at most 65535); unsupported archive-only labels must fail clearly before freezing.

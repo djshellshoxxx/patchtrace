@@ -42,6 +42,9 @@ class StringRowVM:
     description: str
     tooltip: str
     sides: tuple[Side, ...]
+    pair: str = ''                                      # how the first linked function is paired, in words
+    function_cell: str = ''                             # the Function column: a name, or unknown with its reason
+    open_target: tuple[str, Side] | None = None         # (function id, side) when exactly one function is meant
 
     @property
     def key(self) -> tuple[str, str]:
@@ -60,6 +63,7 @@ class StringsFilter:
     function: str | None = None
     scope: str = 'differences'
     hide_noise: bool = False
+    linked_only: bool = False
 
     def __post_init__(self) -> None:
         if self.change not in _FILTER_CHANGES:
@@ -102,6 +106,49 @@ def _function_ids(change: StringChange) -> tuple[str, ...]:
     return tuple(dict.fromkeys(ids))
 
 
+PAIR_CELL = {**copy.PAIR_LABELS, 'unknown': 'pairing unknown'}
+NO_LINK = 'No supported function link'
+
+
+def _first_link(change: StringChange):
+    return next((link for link in change.links if link.function.name or link.function.rva is not None), None)
+
+
+def _function_cell(change: StringChange, function: str, unknown_reason: str | None) -> tuple[str, str]:
+    """(pair words, Function column). A function that is linked keeps its name; otherwise the cell says unknown (no pairing
+    could be built, with the reason) or that no supported link exists. Nothing here infers a function."""
+    link = _first_link(change)
+    if link is None:
+        return '', (f'Unknown: {display_text(unknown_reason, 120)}' if unknown_reason else NO_LINK)
+    more = len({_ref_key(item) for item in change.links}) - 1   # the two records of one match are one function
+    tail = f' +{more} more' if more > 0 else ''
+    if link.function.ambiguous:
+        return 'ambiguous', function + tail
+    pair = PAIR_CELL[link.pair_status]
+    return pair, f'{function} ({pair}){tail}'
+
+
+def _ref_key(link) -> tuple:
+    function = link.function
+    return function.match_id or function.project_function_id or function.name or function.rva
+
+
+def _open_target(change: StringChange, preferred: Side) -> tuple[str, Side] | None:
+    """The one function a click may open: every link names an id, none is ambiguous, and they agree on one match (or on
+    one function). Links that disagree open nothing; the first is never taken for the others."""
+    if not change.links or any(link.function.ambiguous for link in change.links):
+        return None
+    refs = [(link.function.project_function_id or link.function.match_id, link.function.side, link.function.match_id)
+            for link in change.links]
+    if any(ref[0] is None for ref in refs):
+        return None
+    matches = {ref[2] for ref in refs}
+    if not (len(matches) == 1 and None not in matches or len({(ref[0], ref[1]) for ref in refs}) == 1):
+        return None
+    chosen = next((ref for ref in refs if ref[1] == preferred), refs[0])
+    return chosen[0], chosen[1]
+
+
 def _types(change: StringChange) -> tuple[str, ...]:
     return tuple(dict.fromkeys(t for side in (change.older, change.newer) if side for t in side.types))
 
@@ -134,13 +181,15 @@ def _source(change: StringChange, source_of: dict[Side, str]) -> str:
                      and s in source_of)
 
 
-def row_for(change: StringChange, source_of: dict[Side, str] | None = None) -> StringRowVM:
+def row_for(change: StringChange, source_of: dict[Side, str] | None = None, *,
+            unknown_reason: str | None = None) -> StringRowVM:
     text = display_text(change.display)
     function = _function_name(change)
     types = _types(change)
     sentence = _sentence(change, function, types[0] if types else 'static')
     sides = tuple(s for s, o in (('older', change.older), ('newer', change.newer)) if o is not None) \
         or ('newer',)
+    pair, function_cell = _function_cell(change, function, unknown_reason)
     return StringRowVM(
         id=change.id, value_sha256=change.value_sha256, status=change.status,
         change=copy.CHANGE_LABELS[change.status], text=text, length=change.length, type=', '.join(copy.TYPE_LABELS[t] for t in types), types=types,
@@ -148,12 +197,15 @@ def row_for(change: StringChange, source_of: dict[Side, str] | None = None) -> S
         function_ids=_function_ids(change), cues=change.cues,
         cue_text=', '.join(copy.CUE_LABELS[c] for c in change.cues), source=_source(change, source_of or {}),
         tier=change.review_tier, sentence=sentence, description=_description(change),
-        tooltip=(sentence + ' ' + text)[:TOOLTIP_CHARS], sides=sides)
+        tooltip=(sentence + ' ' + text)[:TOOLTIP_CHARS], sides=sides, pair=pair, function_cell=function_cell,
+        open_target=_open_target(change, sides[0]))
 
 
-def build_rows(delta: StringsDelta, source_of: dict[Side, str] | None = None) -> tuple[StringRowVM, ...]:
-    """Rows of a comparable delta in review order; a non-comparable delta has none."""
-    return tuple(row_for(c, source_of) for c in sorted(delta.changes, key=sort_key))
+def build_rows(delta: StringsDelta, source_of: dict[Side, str] | None = None, *,
+               unknown_reason: str | None = None) -> tuple[StringRowVM, ...]:
+    """Rows of a comparable delta in review order; a non-comparable delta has none. `unknown_reason` is why no function
+    pairing exists (None when one was built): rows without a link then read "Unknown: reason" instead of "no link"."""
+    return tuple(row_for(c, source_of, unknown_reason=unknown_reason) for c in sorted(delta.changes, key=sort_key))
 
 
 def _matches(row: StringRowVM, flt: StringsFilter, needle: str) -> bool:
@@ -168,6 +220,8 @@ def _matches(row: StringRowVM, flt: StringsFilter, needle: str) -> bool:
     if flt.cues and not flt.cues & set(row.cues):
         return False
     if flt.function and flt.function not in row.function_ids:
+        return False
+    if flt.linked_only and not row.function_ids:
         return False
     return not needle or needle in row.text.casefold()
 
@@ -185,6 +239,14 @@ def apply_filter(rows: Iterable[StringRowVM], flt: StringsFilter) -> FilterResul
             continue
         kept.append(row)
     return FilterResult(tuple(kept), hidden)
+
+
+def pairing_summary(rows: Sequence[StringRowVM], unknown_reason: str | None) -> str:
+    """One line for the footer: how many strings have a function link, or why that is unknown. A count, never a score."""
+    if unknown_reason:
+        return f'Function pairing unknown: {display_text(unknown_reason, 160)}.'
+    linked = sum(1 for row in rows if row.function_ids)
+    return f'{linked} of {len(rows)} strings have a function link.'
 
 
 def differing(rows: Iterable[StringRowVM]) -> int:

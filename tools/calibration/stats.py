@@ -30,6 +30,20 @@ def binom_cdf(k: int, n: int, p: float) -> float:
     return min(1.0, math.fsum(terms))
 
 
+def clopper_pearson_upper(k: int, n: int, alpha: float = 0.05) -> float:
+    """One-sided exact upper confidence bound for a binomial proportion after k events in n trials, so that
+    "0 of n" is never read as "0": the p at which P(X <= k) falls to alpha."""
+    if n <= 0 or k >= n:
+        return 1.0
+    if k <= 0:
+        return 1.0 - alpha ** (1.0 / n)
+    lo, hi = k / n, 1.0
+    for _ in range(100):
+        mid = (lo + hi) / 2
+        lo, hi = (mid, hi) if binom_cdf(k, n, mid) > alpha else (lo, mid)
+    return hi
+
+
 def binom_draw(n: int, p: float, seed, *key) -> int:
     """Deterministic Binomial(n, p) draw: exact inverse CDF when n*p*(1-p) < 50, else a rounded normal
     approximation (documented approximation; used only for null simulations)."""

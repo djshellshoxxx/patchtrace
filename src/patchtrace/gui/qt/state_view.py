@@ -91,6 +91,7 @@ class StateView(QWidget):
         """The panel's own widget, shown below the strip in the states that keep results."""
         if self._content is not None:
             self._layout.removeWidget(self._content)
+            self._content.hide()  # removed from the layout but still a child: it would float over the strip
         self._content = widget
         self._layout.addWidget(widget, 1)
         self._apply_content_visibility()

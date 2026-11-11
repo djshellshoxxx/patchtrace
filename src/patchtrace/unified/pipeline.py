@@ -42,6 +42,7 @@ from pydantic import ValidationError
 
 from ..artifact_bytes import ArtifactBytesError, VerifiedArtifactReader
 from ..backend import BackendConfig
+from ..diaphora.service import stored_sets as stored_diaphora_sets
 from ..enrichment.contracts import EnrichmentError
 from ..enrichment.storage import EnrichmentStore, Guard
 from ..ingestion import safe_path
@@ -68,6 +69,7 @@ from .exchange import (
     read_report,
     write_refacts,
 )
+from .extract.decomp import DecompRecord, part_lines
 from .extract.runner import DecompileJob, ExtractProgress, decompile_side
 from .ir.pe_tables import read_pe_tables
 from .ir.place import list_ir
@@ -75,6 +77,7 @@ from .limits import DEFAULT_LIMITS, ERROR_CODES, Budget, BudgetExhausted, Unifie
 from .registry import REGISTRY, Registry
 from .sources import (
     GhidriffRun,
+    LoadedDiaphora,
     LoadedSecondary,
     RawGhidriff,
     SnapshotMatch,
@@ -82,15 +85,18 @@ from .sources import (
     snapshot_from_project,
     write_snapshot,
 )
-from .sources.ghidriff import MAX_RAW_BYTES
+from .sources.diaphora import write_loaded as write_diaphora
+from .sources.ghidriff import MAX_RAW_BYTES, load_raw
 from .sources.secondary import write_loaded
 
 __all__ = ['ALL_SOURCES', 'PlacedIr', 'Plan', 'RunReport', 'StageEvent', 'UnifiedOptions', 'UnifiedRequest',
-           'WorkerOutput', 'cached', 'execute', 'load_current', 'make_plan', 'prepare', 'publish', 'recent_runs',
+           'WorkerOutput', 'cached', 'capture_plan', 'capture_request', 'execute', 'load_current', 'make_plan',
+           'prepare', 'publish', 'recent_runs', 'resolve_plan', 'resolve_request',
            'run_unified', 'total_ram_bytes']
 
 SECONDARY_ENGINES = ('bindiff', 'rz-diff')
 MODE_S0, MODE_IR = 's0', 'ir'
+WORKER_GRACE_S = 30   # the child's own deadline precedes the parent's kill by this much (at most a quarter of the timeout)
 RUN_STATUS = {'PT-UNIFIED-CANCEL': 'cancelled', 'PT-UNIFIED-TIMEOUT': 'timeout', 'PT-UNIFIED-UNSUPPORTED': 'unsupported'}
 IR_ASYMMETRIC = ('The ProgramIR of the two sides was produced differently (producer, mode, options or symbols), so '
                  'the result uses stored engine outputs only.')
@@ -141,14 +147,22 @@ class Plan:
     ir: tuple[PlacedIr, PlacedIr] | None = None     # older, newer; None = S0 mode
     ir_note: str | None = None                      # why placed sidecars were not used (a warning of the report)
     residual: bool = True
+    raw_verdict: str | None = None                  # the worker's own classification of a raw output that hashed fine
+    use_ir: bool = True                             # what the run asked for; `ir` says what it got (None: S0)
+    diaphora: tuple[LoadedDiaphora, ...] = ()       # stored `diaphora-matches` sets (06 s5); () leaves every id unchanged
+    _identity_inputs: SourceInputs | None = field(default=None, init=False, compare=False, repr=False)
 
     @property
     def result_id(self) -> str:
-        return self.identity.result_id  # type: ignore[union-attr]
+        if self.identity is None:
+            raise fail('PT-UNIFIED-INPUT', 'plan-unresolved')
+        return self.identity.result_id
 
     @property
     def config_digest(self) -> str:
-        return self.identity.config_digest  # type: ignore[union-attr]
+        if self.identity is None:
+            raise fail('PT-UNIFIED-INPUT', 'plan-unresolved')
+        return self.identity.config_digest
 
     @property
     def mode(self) -> str:
@@ -161,10 +175,15 @@ class Plan:
         return AddressMap(self.older_layout, self.newer_layout)
 
     def inputs(self, matches: Iterable[SnapshotMatch] | None = None, raw_status: str | None = None) -> SourceInputs:
-        raw = RawGhidriff(status=raw_status or self.raw_status, sha256=self.raw_sha256)  # type: ignore[arg-type]
-        return SourceInputs(older_sha256=self.older_sha256, newer_sha256=self.newer_sha256,
-                            run=GhidriffRun(self.run_id, self.backend_version, raw),
-                            matches=self.manual if matches is None else tuple(matches), secondary=self.secondary)
+        raw = RawGhidriff(status=raw_status or self.raw_verdict or self.raw_status, sha256=self.raw_sha256)  # type: ignore[arg-type]
+        inputs = SourceInputs(older_sha256=self.older_sha256, newer_sha256=self.newer_sha256,
+                              run=GhidriffRun(self.run_id, self.backend_version, raw),
+                              matches=self.manual if matches is None else tuple(matches), secondary=self.secondary,
+                              diaphora=self.diaphora)
+        if matches is None and self._identity_inputs is not None:
+            # This exact immutable plan owns the completed digest; replace() drops its private cache.
+            object.__setattr__(inputs, '_manual_digest', self._identity_inputs._manual_digest)
+        return inputs
 
     def guard(self, result_id: str | None = None) -> Guard:
         return Guard(self.project_id, self.run_id, self.raw_sha256, result_id or self.result_id)
@@ -297,15 +316,29 @@ def _validate_sources(sources: Iterable[str]) -> tuple[str, ...]:
     return chosen
 
 
-def _stored_sets(service, sources: tuple[str, ...]) -> tuple[LoadedSecondary, ...]:
+def _stored_sets(service, sources: tuple[str, ...], pair: tuple[str, str] | None = None) -> tuple[LoadedSecondary, ...]:
     wanted = set(sources) & set(SECONDARY_ENGINES)
     if not wanted:
         return ()
     try:
-        rows = current_sets(EnrichmentStore(service.store))
+        rows = current_sets(EnrichmentStore(service.store), pair=pair)
     except (EnrichmentError, sqlite3.Error, ValueError):
         raise fail('PT-UNIFIED-STORE', 'secondary-unreadable') from None
-    return tuple(LoadedSecondary(entry.id, match_set) for entry, match_set in rows if match_set.engine in wanted)
+    return tuple(LoadedSecondary.from_verified_body(entry.id, match_set, entry.body_json, entry.body_sha256)
+                 if entry.body_json is not None and entry.body_sha256 is not None else LoadedSecondary(entry.id, match_set)
+                 for entry, match_set in rows if match_set.engine in wanted)
+
+
+def _stored_diaphora(service, sources: tuple[str, ...]) -> tuple[LoadedDiaphora, ...]:
+    """Owner thread, read-only: the project's valid `diaphora-matches` sets for the current pair and run. The store
+    rows are re-validated by `diaphora.service.stored_sets`; no `.diaphora` file is ever opened."""
+    if 'diaphora' not in sources:
+        return ()
+    try:
+        rows = stored_diaphora_sets(service)
+    except (EnrichmentError, sqlite3.Error, ValueError):
+        raise fail('PT-UNIFIED-STORE', 'diaphora-unreadable') from None
+    return tuple(sorted((LoadedDiaphora(entry.id, match_set) for entry, match_set in rows), key=lambda s: s.entry_id))
 
 
 def _producer(manifest: ProgramIrManifest) -> tuple:
@@ -335,9 +368,9 @@ def _find_ir(root: Path, run_id: str, older: tuple[str, PeLayout],
     return None, IR_ASYMMETRIC
 
 
-def make_plan(service, sources: Iterable[str] = ALL_SOURCES, *, limits: UnifiedLimits = DEFAULT_LIMITS,
-              registry: Registry = REGISTRY, use_ir: bool = True, residual: bool = True) -> Plan:
-    """Owner thread, read-only. Raises `UnifiedError(INPUT)` when there is nothing to build a result from."""
+def capture_plan(service, sources: Iterable[str] = ALL_SOURCES, *, limits: UnifiedLimits = DEFAULT_LIMITS,
+                 use_ir: bool = True, residual: bool = True) -> Plan:
+    """Owner-thread snapshot only. The returned capture has no result identity until `resolve_plan`."""
     chosen = _validate_sources(sources)
     project = service.project
     run = _completed_run(project)
@@ -346,17 +379,51 @@ def make_plan(service, sources: Iterable[str] = ALL_SOURCES, *, limits: UnifiedL
     older, newer = _layouts(service)
     raw_path, raw_status = _raw_state(service.root, run)
     manual = snapshot_from_project(project, run.id, limits, manual_only=True)
-    secondary = _stored_sets(service, chosen)
     sides = {a.side: a.sha256 for a in project.artifacts}
+    secondary = _stored_sets(service, chosen, (sides['older'], sides['newer']) if {'older', 'newer'} <= sides.keys() else None)
+    diaphora = _stored_diaphora(service, chosen)
     placed, note = (_find_ir(service.root, run.id, (sides['older'], older), (sides['newer'], newer)) if use_ir
                     else (None, None))
-    base = Plan(project_id=project.id, revision=project.revision, run_id=run.id, raw_sha256=run.raw_sha256,
+    return Plan(project_id=project.id, revision=project.revision, run_id=run.id, raw_sha256=run.raw_sha256,
                 raw_path=raw_path, raw_status=raw_status, backend_version=str(run.backend_version)[:64],
                 older_sha256=sides['older'], newer_sha256=sides['newer'], older_layout=older, newer_layout=newer,
-                sources=chosen, secondary=secondary, manual=manual, ir=placed, ir_note=note, residual=residual)
-    identity = plan_identity(base.inputs(), base.addr(), chosen, registry, limits, ir=base.ir_digests(),
-                             residual=residual)
-    return dataclasses.replace(base, identity=identity)
+                sources=chosen, secondary=secondary, manual=manual, ir=placed, ir_note=note, residual=residual,
+                diaphora=diaphora, use_ir=use_ir)
+
+
+def resolve_plan(plan: Plan, *, limits: UnifiedLimits = DEFAULT_LIMITS, registry: Registry = REGISTRY,
+                 budget: Budget | None = None, previous: Plan | None = None) -> Plan:
+    """Pure task work over validated captures; never accesses the project or trusts a transported digest."""
+    budget = budget or Budget()
+    budget.check()
+    if plan.raw_status == 'ok' and plan.raw_verdict is None and plan.raw_path is not None:
+        # The capture only hashed the file; the worker also shape-checks it (`load_raw`: no `address_matches` is
+        # `missing`, a malformed table `unparsable`) and those give other source refs. Predict the id it will publish.
+        plan = dataclasses.replace(plan, raw_verdict=load_raw(plan.raw_path, plan.raw_sha256, limits).status)
+        budget.check()
+    inputs = plan.inputs()
+    prior = None if previous is None else previous._identity_inputs
+    if prior is not None and prior._manual_digest is not None and len(prior.matches) == len(inputs.matches):
+        for old, new in zip(prior.matches, inputs.matches, strict=True):
+            budget.check()
+            if old != new:
+                break
+        else:
+            budget.check()
+            object.__setattr__(inputs, '_manual_digest', prior._manual_digest)
+    identity = plan_identity(inputs, plan.addr(), plan.sources, registry, limits, ir=plan.ir_digests(),
+                             residual=plan.residual, budget=budget)
+    budget.check()
+    resolved = dataclasses.replace(plan, identity=identity)
+    object.__setattr__(resolved, '_identity_inputs', inputs)
+    return resolved
+
+
+def make_plan(service, sources: Iterable[str] = ALL_SOURCES, *, limits: UnifiedLimits = DEFAULT_LIMITS,
+              registry: Registry = REGISTRY, use_ir: bool = True, residual: bool = True) -> Plan:
+    """Synchronous owner-thread API for CLI callers; Qt captures first and resolves in task work."""
+    return resolve_plan(capture_plan(service, sources, limits=limits, use_ir=use_ir, residual=residual),
+                        limits=limits, registry=registry)
 
 
 def _sections(service) -> tuple[tuple[tuple[int, int], ...], tuple[tuple[int, int], ...]]:
@@ -375,13 +442,13 @@ def _sections(service) -> tuple[tuple[tuple[int, int], ...], tuple[tuple[int, in
     return found['older'], found['newer']
 
 
-def prepare(service, options: UnifiedOptions | None = None, *, limits: UnifiedLimits = DEFAULT_LIMITS,
-            registry: Registry = REGISTRY) -> UnifiedRequest:
-    """Owner thread: everything `execute` needs, copied out of the project."""
+def capture_request(service, options: UnifiedOptions | None = None, *,
+                    limits: UnifiedLimits = DEFAULT_LIMITS) -> UnifiedRequest:
+    """Owner thread: capture validated inputs; identity resolution remains separate task work."""
     options = options or UnifiedOptions()
     timeout = limits.checked_timeout(options.timeout_s, kind='worker')
     started_utc, started = _now(), time.monotonic()
-    plan = make_plan(service, options.sources, limits=limits, registry=registry, use_ir=options.use_ir,
+    plan = capture_plan(service, options.sources, limits=limits, use_ir=options.use_ir,
                      residual=options.residual)
     snapshot = snapshot_from_project(service.project, plan.run_id, limits)
     ram = options.total_ram_bytes if options.total_ram_bytes is not None else total_ram_bytes()
@@ -398,7 +465,29 @@ def prepare(service, options: UnifiedOptions | None = None, *, limits: UnifiedLi
                                         if isinstance(info, dict) and isinstance(info.get('sha256'), str)})
 
 
+def resolve_request(request: UnifiedRequest, *, cancel=None, limits: UnifiedLimits = DEFAULT_LIMITS,
+                    registry: Registry = REGISTRY, previous: Plan | None = None) -> UnifiedRequest:
+    """Complete a captured request off-thread before executing or publishing it."""
+    budget = Budget(request.started_monotonic + request.timeout_s, cancel)
+    plan = resolve_plan(request.plan, limits=limits, registry=registry, budget=budget, previous=previous)
+    return dataclasses.replace(request, plan=plan, prepare_ms=_ms(request.started_monotonic))
+
+
+def prepare(service, options: UnifiedOptions | None = None, *, limits: UnifiedLimits = DEFAULT_LIMITS,
+            registry: Registry = REGISTRY) -> UnifiedRequest:
+    """Synchronous capture and identity resolution for CLI callers."""
+    return resolve_request(capture_request(service, options, limits=limits), limits=limits, registry=registry)
+
+
 # --- execute (no SQLite; any thread) ------------------------------------------------------------------------------
+
+def worker_budget_seconds(timeout_s: int) -> int:
+    """The deadline the child works to. The parent kills the process tree at `timeout_s` after the spawn, but the
+    child's clock starts only after its interpreter booted and its inputs were read, so an equal budget would always
+    lose that race and U7-06's partial result (a spent deadline after the ladder) could never be written; the child
+    therefore stops `WORKER_GRACE_S` earlier (at most a quarter of the timeout)."""
+    return max(1, timeout_s - min(WORKER_GRACE_S, timeout_s // 4))
+
 
 def _write_request(request: UnifiedRequest, private: Path) -> Path:
     plan = request.plan
@@ -409,6 +498,11 @@ def _write_request(request: UnifiedRequest, private: Path) -> Path:
         path = private / f'secondary-{index}.json'
         sha, length = write_loaded(path, loaded)
         files.append(WorkerFile(path=str(path), sha256=sha, size=length))
+    diaphora_files = []
+    for index, loaded in enumerate(sorted(plan.diaphora, key=lambda s: s.entry_id)):
+        path = private / f'diaphora-{index}.json'
+        sha, length = write_diaphora(path, loaded)
+        diaphora_files.append(WorkerFile(path=str(path), sha256=sha, size=length))
     req = WorkerRequest(
         older_sha256=plan.older_sha256, newer_sha256=plan.newer_sha256,
         older_layout=WorkerLayout(image_base=plan.older_layout.image_base,
@@ -419,9 +513,9 @@ def _write_request(request: UnifiedRequest, private: Path) -> Path:
         raw_status=plan.raw_status,  # type: ignore[arg-type]
         raw_path=str(plan.raw_path) if plan.raw_path is not None and plan.raw_status == 'ok' else None,
         snapshot=WorkerFile(path=str(snapshot_path), sha256=digest, size=size), snapshot_lines=lines,
-        secondary=tuple(files), sources=plan.sources,  # type: ignore[arg-type]
+        secondary=tuple(files), diaphora=tuple(diaphora_files), sources=plan.sources,  # type: ignore[arg-type]
         report_path=str(private / 'report.json'), progress_path=str(private / 'progress.json'),
-        budget_seconds=request.timeout_s, residual=plan.residual, **_ir_fields(request))
+        budget_seconds=worker_budget_seconds(request.timeout_s), residual=plan.residual, **_ir_fields(request))
     request_path = private / 'request.json'
     request_path.write_text(req.model_dump_json(), encoding='utf-8')
     return request_path
@@ -520,17 +614,19 @@ def _retained_gzf(request: UnifiedRequest, side: str) -> tuple[Path, str] | str:
 
 
 def _decompile(request: UnifiedRequest, pairs: tuple[tuple[int, int], ...], cancel: threading.Event, emit, runner,
-               limits: UnifiedLimits) -> tuple[dict[str, dict[int, str]], str | None]:
-    """The C text of the chosen functions, per side and RVA, from one extractor child per side (05 s2.8). The reason
-    is set when no text could be had (`no-backend`, `no-gzf`, `gzf-changed`, `timeout` or the extractor's slug); a
-    cancel is not a reason, it ends the run."""
+               limits: UnifiedLimits) -> tuple[dict[str, dict[int, str]], str | None, dict[str, dict[int, DecompRecord]]]:
+    """The C text of the chosen functions, per side and RVA, from one extractor child per side (05 s2.8), and the
+    validated records of the sides that ran (every status, for the stored part). The reason is set when no text could
+    be had (`no-backend`, `no-gzf`, `gzf-changed`, `timeout` or the extractor's slug); a cancel is not a reason, it
+    ends the run."""
     texts: dict[str, dict[int, str]] = {'older': {}, 'newer': {}}
+    records: dict[str, dict[int, DecompRecord]] = {}
     if request.backend is None:
-        return texts, 'no-backend'
+        return texts, 'no-backend', records
     programs = {side: _retained_gzf(request, side) for side in texts}
     unusable = next((found for found in programs.values() if isinstance(found, str)), None)
     if unusable is not None:
-        return texts, unusable
+        return texts, unusable, records
     sha = {'older': request.plan.older_sha256, 'newer': request.plan.newer_sha256}
     rvas = {'older': sorted({o for o, _ in pairs}), 'newer': sorted({n for _, n in pairs})}
 
@@ -547,15 +643,48 @@ def _decompile(request: UnifiedRequest, pairs: tuple[tuple[int, int], ...], canc
         except BudgetExhausted as exc:
             if exc.code == 'PT-UNIFIED-CANCEL':
                 raise
-            return texts, 'timeout'
+            return texts, 'timeout', records
         except UnifiedError as exc:
-            return texts, exc.reason or 'extract-failed'
+            return texts, exc.reason or 'extract-failed', records
         try:
+            records[side] = dict(output.records)
             texts[side] = {rva: rec.code for rva, rec in output.records.items()
                            if rec.status == 'ok' and rec.code is not None}
         finally:
             output.cleanup()
-    return texts, None
+    return texts, None, records
+
+
+def _store_decomp(staged: Path, records: dict[str, dict[int, DecompRecord]], limits: UnifiedLimits) -> tuple[str, ...]:
+    """Write the additive part `decomp.jsonl.gz` into the staged result (07 s6): the code pane reads it, readers that
+    do not know it ignore it. Its hash, size and record count are in the manifest. A part that cannot be stored costs
+    the text only, never the run: it comes back as a limitation."""
+    lines = part_lines(records, limits)
+    if not lines:
+        return ()
+    manifest_path = staged / store.MANIFEST
+    previous = None
+    try:
+        with manifest_path.open('rb') as stream:
+            previous = stream.read(store.MANIFEST_MAX_BYTES + 1)
+        if len(previous) > store.MANIFEST_MAX_BYTES:
+            raise fail('PT-UNIFIED-STORE', 'manifest-too-large')
+        store.add_part(staged, store.write_part(staged, store.DECOMP, lines, limits))
+    except (UnifiedError, OSError) as exc:
+        try:
+            if previous is not None and len(previous) <= store.MANIFEST_MAX_BYTES:
+                with manifest_path.open('rb') as stream:
+                    current = stream.read(store.MANIFEST_MAX_BYTES + 1)
+                if current != previous:
+                    temporary = staged / f'{store.MANIFEST}.part'
+                    temporary.write_bytes(previous)
+                    os.replace(temporary, manifest_path)
+            for name in (store.DECOMP, f'{store.DECOMP}.part', f'{store.MANIFEST}.part'):
+                (staged / name).unlink(missing_ok=True)
+        except OSError:
+            raise fail('PT-UNIFIED-STORE', 'decompile-cleanup-failed') from None
+        return (f'decompile-part-skipped:{getattr(exc, "reason", None) or "io-error"}',)
+    return ()
 
 
 def _decompile_stage(started: float, pairs, texts, reason: str | None) -> tuple[StageRecord, tuple[str, ...]]:
@@ -611,12 +740,13 @@ def execute(request: UnifiedRequest, cancel: threading.Event | None = None,
             report = run_request(request_path, staged, cancel=cancel, emit=emit, limits=limits, registry=registry)
         if error is None and report is not None and report.refacts and request.decompile:
             began = time.monotonic()
-            texts, reason = _decompile(request, report.refacts, cancel, emit, runner, limits)
+            texts, reason, records = _decompile(request, report.refacts, cancel, emit, runner, limits)
             stage, notes = _decompile_stage(began, report.refacts, texts, reason)
             decompile_ms = stage.duration_ms
             if reason is None and any(o in texts['older'] and n in texts['newer'] for o, n in report.refacts):
                 report, tail, peak = _judge_again(request, report, texts, request_path, staged, private, cancel, emit,
                                                   runner, limits, registry)
+            notes = (*notes, *_store_decomp(staged, records, limits))
             if notes:
                 store.add_limitations(staged, notes)
     except UnifiedError as exc:
@@ -625,6 +755,9 @@ def execute(request: UnifiedRequest, cancel: threading.Event | None = None,
         error = fail('PT-UNIFIED-LIMIT', 'worker-oom')
     except Exception as exc:  # noqa: BLE001 - class name only, never the message (01 s6)
         error = fail('PT-UNIFIED-INTERNAL', type(exc).__name__)
+    except BaseException:   # an interrupt or exit: no staging directory may outlive it (the sweep takes a day)
+        _discard(staged)
+        raise
     finally:
         _discard(private)
     if error is not None or report is None:
@@ -641,6 +774,9 @@ def _provenance(request: UnifiedRequest, config_digest: str | None) -> dict[str,
     out = {'mode': request.plan.mode, 'engine_version': keys.ENGINE_VERSION, 'sources': ','.join(request.plan.sources),
            'worker': 'child' if request.isolate else 'in-process',
            'python': '.'.join(str(n) for n in sys.version_info[:3]), 'registry': REGISTRY.digest()[:16]}
+    # the options the result was asked for: the read model judges staleness against the plan of these (GUI-09)
+    out['use_ir'] = 'yes' if request.plan.use_ir else 'no'
+    out['residual'] = 'yes' if request.plan.residual else 'no'
     if config_digest:
         out['config'] = config_digest[:16]
     return out
@@ -684,6 +820,8 @@ def cached(service, request: UnifiedRequest, *, enrichment: EnrichmentStore | No
     hit = store.cached_result(enrichment, request.plan.result_id, limits)  # a damaged result is a miss, not an error
     if hit is None or hit.manifest is None or hit.directory is None or (hit.entry is not None and hit.entry.stale):
         return None
+    if store.is_timeout_partial(hit.manifest):
+        return None     # the deadline, not the inputs, cut it short: compute again (publish may replace it)
     t = time.monotonic()
     stages = [StageRecord(stage='prepare', status='ok', duration_ms=request.prepare_ms), _stage('cache', t)]
     warnings = _record(enrichment, service, request, status='cached', result_id=hit.manifest.result_id, error=None,
@@ -714,10 +852,14 @@ def publish(service, request: UnifiedRequest, output: WorkerOutput, *, enrichmen
         manifest = store.verify_result_dir(output.staged, expected_result_id=expected.result_id, limits=limits)
         stages.append(_stage('verify', t))
         t = time.monotonic()
+        # A skipped or incomplete attempt must not replace a committed decompile and its verdicts.
         published = store.publish_result(enrichment, output.staged, guard=plan.guard(expected.result_id),
                                          current=_current_guard(service.project, expected.result_id),
                                          revision=service.project.revision, limits=limits,
-                                         upgrade=bool(output.stages))
+                                         upgrade=any(stage.stage == 'decompile' and stage.status == 'ok'
+                                                     for stage in output.stages)
+                                         and not any(note.startswith('decompile-part-skipped:')
+                                                     for note in output.notes))
         stages.append(_stage('publish', t))
     except UnifiedError as error:
         _discard(output.staged)
@@ -743,7 +885,7 @@ def run_unified(service, options: UnifiedOptions | None = None, *, cancel: threa
     cancel = cancel or threading.Event()
     if cancel.is_set():
         raise fail('PT-UNIFIED-CANCEL', 'cancelled')
-    request = prepare(service, options)
+    request = resolve_request(capture_request(service, options), cancel=cancel)
     hit = cached(service, request, enrichment=enrichment)
     if hit is not None:
         return hit

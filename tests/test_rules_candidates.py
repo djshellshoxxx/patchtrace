@@ -975,4 +975,6 @@ def test_only_the_engine_modules_import_the_extensions():
 
 def test_no_qt_in_the_rules_package():
     for path in sorted((ROOT / 'src' / 'patchtrace' / 'rules').rglob('*.py')):
+        if path.name == 'qt_panel.py':  # the one Qt module of the package: the Rules dock's widgets
+            continue
         assert not {m for m in imported_modules(path) if m.startswith(('PySide', 'shiboken'))}, path.name

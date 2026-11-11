@@ -1,0 +1,81 @@
+{
+  "base": "6f923758efb57e3f19a43b5b1d2c1ba8319e1823",
+  "source_head": "724fea224920625563982889f7e2fd6d928dc96b",
+  "source_tree": "5bd5ce176394c40010e14cfd1ad1617c7a12d93f",
+  "source_files": {
+    "docs/modules.md": "56d85345e988d78d95b7dc5285253c1d3472e4a0733497cc16879f79316b716e",
+    "docs/schemas/intelligence/CweProfile.json": "16c1a52d092fc3f2338ed639261a98db5f479b4ae76486c180cb92b3c595d836",
+    "docs/schemas/intelligence/HypothesisSet.json": "2da6fbaaf26f99458524478a5bcdf5ca6371220eb4a3a25b6aab919fe7d62941",
+    "docs/schemas/intelligence/IntelligenceReport.json": "9f281391215c0b8ce10b60bd560fabcd1e17f50ba1e4b2555d45edb127819e80",
+    "docs/schemas/kbcorrelation/ContextBundle.json": "ce10858931e34ffac67078fa76130cce3c3826677e98687c8d4e18bcc2a04984",
+    "docs/schemas/kbcorrelation/ContextReport.json": "456595f34e2eb3f0789421e6477633a405c744a6e4060991b0878950a1e17042",
+    "docs/schemas/pilot/Lead.json": "1557c9d255410b68e4fa07d5b77c7679c74a19a1f80f3620bcf5121ea2b7367e",
+    "docs/schemas/pilot/PilotAssessment.json": "cadd8f5003898dcfaa380f606770765ebc5d9755f09a6349dff295dce7bc7860",
+    "docs/specs/kb-cve/31-E-evidence-intent.md": "6804590821de1107c7731c57f11a9366abb5dbbc93182f3870aa644152998cff",
+    "src/patchtrace/intelligence/contracts.py": "75c50c0d651688400fe996e815016fbbb9ae89f2dba300147bab42ce42e99a4f",
+    "src/patchtrace/intelligence/lexicon.py": "ff232886ba2f16c0460862fda17c55524b3cc80591c5acd0b93ed4c4505c0e3a",
+    "src/patchtrace/kbcorrelation/card_provenance.py": "c9998835032e877c36bf7aa0a352b5c268f9948ab5ffe9e1ebbc8501acdad6df",
+    "src/patchtrace/kbcorrelation/context.py": "ae38102aecabbe95fcea8a919a075fdd9355cb6fbcf7a672a457fa6263b58df8",
+    "src/patchtrace/kbcorrelation/sources/importer.py": "e8b08c04a122f4ec5158e74ab15552dec32b78c636d3f3537d6230fe7b96ac59",
+    "src/patchtrace/kbcorrelation/wiring.py": "49ce3f3d6475b01fd0f14eac82476d43c843d88c5879824cf4639da86ca2df42",
+    "src/patchtrace/pilot/contracts.py": "1bb86d5afcff0d7995ec7eadedd7bb46ebb7ca895ac268ecbb07bda025e0e0e1",
+    "src/patchtrace/pilot/ranking.py": "60c532560f6ed169b985a9d1d605633c413fc8ccb6a777022362bd20e7d1df2f",
+    "src/patchtrace/pilot/sources/advisory.py": "20292180547b1804f2f17c5f729f53b0a2fb812b3897b7103779af819a06efe9",
+    "src/patchtrace/pilot/why.py": "532b397ebd250a773e1291fe142913641b427b7377848bb802c93747ba9479a0",
+    "tests/test_kbc_card_field_provenance.py": "38231507d0b47c67835a57079aa73cdbe2f031c6ff323e1b1d5f5e5e98816487",
+    "tests/test_kbc_schemas.py": "8dec14ff08175d22e518d98b0e16e9dbac6efb19957566cff3c09acae13cd188",
+    "tools/generate_kbc_schemas.py": "17576ec62889acee77912e6066638660746f7f2c72055765fad17ceca92682d4"
+  },
+  "combined_parent": "14b5568f84aeadc62a2f8043860ee78bb891bd2c",
+  "combined_head": "a3ec52ec2aa88bbe3db79594e1f46516e8e11679",
+  "combined_tree": "3bfe566c8b9d9396d5226a92c7ee909b90c3b434",
+  "checks": [
+    {
+      "selection": "new field provenance, context, card context sources, contracts/schemas, CVRF/CSAF/index/store/recovery/service, intelligence lexicon/hypotheses, pilot contracts/ranking",
+      "passed": 804,
+      "seconds": 16.17
+    },
+    {
+      "selection": "intelligence schemas, pilot advisory sources, KB scope",
+      "passed": 188,
+      "seconds": 1.83
+    },
+    {
+      "selection": "combined field provenance, saved scope, card context sources, two external saved-scope attachment controls",
+      "passed": 73,
+      "seconds": 2.84
+    },
+    {
+      "selection": "exact base with copied external final regression file",
+      "failed": 17,
+      "seconds": 0.89,
+      "expected": true
+    }
+  ],
+  "static_checks": [
+    "selected-source/test/tool Ruff passed",
+    "git diff --check passed",
+    "all intelligence/KB/pilot schema generators --check passed"
+  ],
+  "limits": [
+    "Synthetic authored advisories only; no live compatibility claim",
+    "No target, native, binary comparison, full-suite or Windows execution",
+    "Independent review pending at QA receipt creation",
+    "Old stored bundles remain readable as recorded; strict older readers may reject additive new fields/basis",
+    "Raw cards/edges unchanged; XML context cannot fabricate JSON field references",
+    "An initial baseline invocation resolved the implementation through pytest test-root injection and is not baseline evidence; final copied external test invocation used exact baseline sources"
+  ],
+  "archive_sha256": "225fac7d0d5be7348fcfe958ed80b25f9c9de3dc1f335157894576636be976ad",
+  "artifacts": {
+    "card_attribution_probe_20261102.py": "5df22f0df09995e44f33e13e124e2bdea5863bc0c83659a7f80ea283c73b6452",
+    "card-attribution-review-20261102.md": "6f3223b0b63212812569c695020abe502379c98e13982d48c7bd28b039b7e867",
+    "card-attribution-review-20261102.json": "eb346c06a8c64189d9977416dbc9dc76e3e1eb8501e6090c0790672d9939f570",
+    "card-field-provenance-baseline.log": "b61fe124e52218fa3ff561ffd335cc16b8d8735a08ecfa393981516096386128",
+    "test_card_field_final_20261102.py": "38231507d0b47c67835a57079aa73cdbe2f031c6ff323e1b1d5f5e5e98816487",
+    "test_card_field_scope_combined_20261102.py": "cbee934172cc85abb1e9fd3eca5f2b212cf6411f3175b47b00c0e7ae89d0582a",
+    "card-attribution-6f923758/authored-csaf.json": "1ccc84401a2fad9facdf0e2efae2f1f734822e917ee167589974a804ebe5d22c",
+    "card-attribution-6f923758/authored-cvrf.json": "7cb267b98313458fae086a31761e32e5076384578038cf498bc49b8027a0150d",
+    "card-attribution-6f923758/context.json": "4738368bffa19d4da81c7167d2b78bb159d47a19b42914e4edf8ef4ed6f427a8",
+    "card-attribution-6f923758/result.json": "a335385cd728630a8b11533d9ab58e57786c08af8f98723322a89063d68964b2"
+  }
+}

@@ -8,6 +8,29 @@ A Microsoft KB number is not a unique product/build/file tuple. Require distinct
 
 Define ProductScopeRef as (ProductScopeId, verification_state, evidence_ids, conflict_ids). User selections persist an assertion (may lower ambiguity) but do not change vendor verification status. A file present across Windows client/server with identical SHA may be reused as the *same bytes*, not evidence the Windows products are equivalent.
 
+Known Windows client generations must remain distinct even when release labels coincide (Windows 10 22H2 and Windows 11 22H2). Their scope identity uses `kbc.scope` version 2 with the derived `winbindex_key` (`10-22H2` versus `11-22H2`) alongside the existing dimensions. Scopes without a known client key retain the version 1 formula. This is an identity correction, not a claim of verified product mapping.
+
+Compatibility: immutable stored contexts, pair records, decisions and investigation history retain their original identifiers; a legacy scope ID must never be guessed or rebound to one of the new generations. The reverse index is rebuilt from retained raw advisory bytes. An investigation whose selected product is absent from that rebuilt index must refuse index pairing with an explicit instruction to repeat the search and select the product again. Existing context exports remain historical records. The persisted SQL edge dictionaries remain historical ingestion data; current correlation uses the reparsed reverse index. No destructive migration or implicit historical-context rewrite occurs.
+
+Product listing must also refuse a stale investigation with that refresh instruction when any stored scope no longer exists in the rebuilt index, including a mixed list with surviving server scopes. It must not claim that a legacy mapping loss means the lead has no products or that a partial surviving list is complete.
+
+Local product-start amendment (2026-11-06): a product catalogue may be built
+without a KB/CVE lead from the active documents of a captured local reverse
+index. Merge their source product references with the existing scope rules;
+retain tied/ambiguous active revisions and their mapping states. A superseded
+document alone must not keep a removed product selectable. Selection records
+the complete ProductScope and its source identities, and a new local pair is
+bound to that scope only after source-snapshot admission and full scope equality
+are checked. This establishes an analyst-selected scope, not binary product
+membership, affectedness or a fix attribution. Source digests/raw sidecars may
+support that selection without adding any CVE cards to its saved context.
+
+Unreadable stored documents make current product activity uncertain, including
+same-month tied native revisions and CSAF groups whose tracking identity cannot
+be recovered. Product-only listing/admission therefore refuses conservatively
+when any source cannot be read or parsed; it must not revive an older definition
+from the remaining documents. Existing partial KB/CVE lookup behavior is unchanged.
+
 ## C2. Partial-order update graph
 
 Represent product-specific release instances, not global KB nodes:
@@ -41,6 +64,8 @@ Phase 2 stable preference tuple for compatible candidates:
 6. deterministic stable IDs as final sort.
 
 This ordering must not be exposed as a vulnerability probability. If a newer version is shared across multiple KBs, attribution window is ambiguous even if the pair is otherwise compatible.
+
+The existing index-row proposal seam must enforce the component and orientation checks even when called directly, outside the filename-filtered resolver. Distinct normalized basenames carry the existing NAME_MISMATCH hard block. The timeline's KB identifier, SHA-256 and BASE-row ordering are deterministic display tie-breakers only; they cannot establish temporal order when both rows have equal release date and numeric build/UBR. Such proposals retain their rows with ORDER_UNVERIFIED, incompatible lineage and grade X. This does not change manual pair selection or imply verified product mapping, complete update coverage or a vulnerability probability.
 
 ## C4. Formal interval algorithm
 

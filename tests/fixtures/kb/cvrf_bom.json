@@ -1,0 +1,13 @@
+﻿{
+  "dialect": "cvrf-json/0",
+  "synthetic": true,
+  "document": {
+    "release_id": "2099-Jan",
+    "tracking_id": "PT-ENCODING-BOM",
+    "publisher": "PatchTrace synthetic fixture",
+    "title": "BOM encoding fixture",
+    "current_release_date": "2099-01-01"
+  },
+  "product_tree": [],
+  "vulnerabilities": []
+}

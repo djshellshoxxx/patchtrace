@@ -410,3 +410,11 @@ def test_check_orientation_against_the_bound_pair(name):
         return
     err = raised(ids.check_orientation, anchor, fs.OLDER, fs.NEWER)
     assert (err.code, err.reason) == ('PT-FAB-ORIENTATION', reason)
+
+
+def test_more_witnesses_than_the_contract_allows_is_a_limit_error_not_an_input_error():
+    witnesses = [fs.wit(batch=f'b{number}', label=f'evidence {number}')
+                 for number in range(contracts._L.f03_witnesses_per_anchor + 1)]
+    with pytest.raises(FabricError) as caught:
+        ids.make_anchor(kind='import', key=ids.api_key('Fake'), side='none', role='hint', witnesses=witnesses)
+    assert (caught.value.code, caught.value.reason) == ('PT-FAB-LIMIT', 'witnesses')

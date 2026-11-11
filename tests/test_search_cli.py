@@ -114,9 +114,52 @@ def test_locked_project_exits_2_without_paths(tmp_path):
     assert code == 2 and 'close the desktop' in document(out.getvalue())['error']
 
 
-def test_anchors_from_is_a_capability_error_until_s10(tmp_path):
-    code, out, _ = run(tmp_path, '--anchors-from', 'CVE-2099-10001', '--json')
-    assert code == 2 and 'PT-SEARCH-CAPABILITY' in document(out)['error']
+def _anchor_set(*values, cve='CVE-2099-10001'):
+    from patchtrace.intelligence.anchors import _anchor
+    from patchtrace.intelligence.contracts import AnchorSet
+    items = tuple(_anchor(kind, value, 'csaf-title', '/vulnerabilities/0/title', 'derived', 'test anchor')
+                  for kind, value in values)
+    return AnchorSet(cve=cve, anchors=tuple(sorted(items, key=lambda a: (a.kind, a.value))))
+
+
+def run_anchors(tmp_path, anchor_set, *extra, cve='CVE-2099-10001'):
+    service = make_project(tmp_path / 'project')
+    out, err = io.StringIO(), io.StringIO()
+    code = cli.main(['PROJECT', '--cache-dir', str(tmp_path / 'cache'), '--anchors-from', cve, *extra],
+                    opener=lambda _path: (service, attention), extra_specs=extra_specs,
+                    anchors=lambda _service, _cve: (anchor_set, []), stdout=out, stderr=err)
+    return code, out.getvalue()
+
+
+def test_anchors_from_returns_per_anchor_coverage(tmp_path):
+    anchors = _anchor_set(('feature', 'ClfsValidateContainerSize'), ('feature', 'zzqqxx'))
+    code, out = run_anchors(tmp_path, anchors, '--json')
+    doc = document(out)
+    assert code == 0 and doc['contract'] == 'enrichment-cli/1' and doc['command'] == 'search'
+    assert doc['status'] == 'complete' and doc['result']['cve'] == 'CVE-2099-10001'
+    by_value = {row['value']: row for row in doc['result']['anchors']}
+    assert by_value['ClfsValidateContainerSize']['status'] in ('changed', 'indexed-only')
+    assert by_value['ClfsValidateContainerSize']['hits'] >= 1
+    # the synthetic project has no IR group indexed, so a miss is `unknown`, never a proven `none`
+    assert by_value['zzqqxx']['status'] == 'unknown' and by_value['zzqqxx']['unindexed']
+    assert str(tmp_path) not in out
+
+
+def test_anchors_from_text_mode_is_one_line_per_anchor(tmp_path):
+    code, out = run_anchors(tmp_path, _anchor_set(('feature', 'ClfsValidateContainerSize')))
+    assert code == 0 and out.startswith('CVE-2099-10001: 1 anchor') and 'ClfsValidateContainerSize' in out
+
+
+def test_anchors_from_with_no_stored_advisory_exits_4(tmp_path):
+    code, out = run_anchors(tmp_path, None, '--json')
+    assert code == 4 and document(out)['result']['anchors'] == []
+
+
+def test_anchors_from_rejects_a_malformed_cve_and_a_query(tmp_path):
+    code, out = run_anchors(tmp_path, None, '--json', cve='not-a-cve')
+    assert code == 2 and 'CVE' in document(out)['error']
+    code, out = run_anchors(tmp_path, _anchor_set(), '--query', 'x', '--json')
+    assert code == 2 and 'anchors-from' in document(out)['error']
 
 
 def test_unexpected_failure_is_exit_3_without_traceback(tmp_path):
@@ -182,3 +225,26 @@ def test_search_cli_never_imports_qt():
             "sys.exit(any(m.startswith(('PySide', 'PyQt')) for m in sys.modules))")
     done = subprocess.run([sys.executable, '-c', code], capture_output=True, text=True, timeout=120)
     assert done.returncode == 0, done.stderr
+
+
+def test_stored_anchors_come_from_the_imported_advisory(tmp_path):
+    from pathlib import Path
+
+    from patchtrace.enrichment.storage import EnrichmentStore
+    from patchtrace.intelligence.storage import AdvisoryStore
+    from patchtrace.search.anchor_cli import stored_anchors
+    from patchtrace.service import ProjectService
+    raw = (Path(__file__).parent / 'fixtures' / 'csaf' / 'synthetic-advisory-rev1.json').read_bytes()
+    with ProjectService.sample(tmp_path / 'case') as service:
+        assert stored_anchors(service, 'CVE-2099-10001')[0] is None
+        AdvisoryStore(service.root, EnrichmentStore(service.store), service.project.id,
+                      service.project.revision).add(raw, origin='local-import', uri=None, file_name='a.json',
+                                                    retrieved_at='2099-03-01T00:00:00Z')
+        found, _ = stored_anchors(service, 'CVE-2099-10001')
+    assert found is not None and found.cve == 'CVE-2099-10001' and found.anchors
+
+
+def test_text_mode_never_prints_control_or_bidi_characters(tmp_path):
+    code, out, err = run(tmp_path, '--query', 'zz\x1b[31m‮qq')
+    assert code in (0, 2, 3, 4)
+    assert not [c for c in out + err if c != '\n' and c in '\x1b‮'], (out, err)

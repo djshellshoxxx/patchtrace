@@ -29,7 +29,7 @@ WINDOWS_PDBS = frozenset({
 TIER_W_CONTRACTS = frozenset({
     'tier-w-catalogue/1', 'tier-w-pairs/1', 'tier-w-fetch/1', 'ghidra-symbols/1', 'symbol-map/1',
     'tier-w-label-detail/1', 'tier-w-review/1', 'tier-w-audit-key/1', 'tier-w-audit-report/1', 'tier-w-matches/1',
-    'tier-w-run/1', 'tier-w-evaluation/1'})
+    'tier-w-run/1', 'tier-w-evaluation/1', 'tier-w-aggregate/1'})
 LABEL_KEYS = frozenset({'pair', 'match_id', 'A', 'source'})
 
 

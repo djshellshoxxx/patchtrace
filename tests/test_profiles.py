@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import json
+from pathlib import Path
 
 import pytest
 
@@ -101,9 +102,17 @@ def test_digest_invariant_under_presentation_edits(tmp_path):
     reordered = profiles.build(CUSTOM | {'enabled': list(reversed(CUSTOM['enabled']))})
     assert profile_digest(reordered) == profile_digest(base)
     assert reordered.ranking_config() == base.ranking_config()
-    for change in ({'snapshot_max_age_days': 8}, {'symbol_policy': 'online'}, {'feature_ids': [5]},
+    for change in ({'snapshot_max_age_days': 8}, {'symbol_policy': 'online'}, {'symbol_policy': 'local'}, {'feature_ids': [5]},
                    {'cve_providers': ['nvd', 'msrc']}, {'weights': {**CUSTOM['weights'], 'ERR': 1}}):
         assert profile_digest(profiles.build(CUSTOM | change)) != profile_digest(base)
+
+
+def test_local_symbol_policy_is_explicit_and_never_enables_network():
+    profile = profiles.build(CUSTOM | {'symbol_policy': 'local'})
+    assert profile.symbol_policy == 'local' and not profile.allow_symbol_downloads
+    assert profile_digest(profile) != profile_digest(profiles.build(CUSTOM))
+    schema = json.loads((Path(__file__).parents[1] / 'docs/schemas/profile/AnalysisProfile.json').read_text())
+    assert schema['properties']['symbol_policy']['enum'] == ['disabled', 'local', 'online']
 
 
 def test_store_rules(store, tmp_path):

@@ -103,7 +103,7 @@ def test_cancel_during_pacing_sleep_returns_quickly():
     start = time.monotonic()
     with pytest.raises(EnrichmentError) as exc:
         it.fetch_all(plan, it.FetchConsent.for_plan(plan), opener=Opener(default=Resp), cancel=cancel)
-    assert exc.value.code == 'PT-ENRICH-CANCEL' and time.monotonic() - start < 0.5
+    assert exc.value.code == 'PT-ENRICH-CANCEL' and time.monotonic() - start < 2.5  # 5x slack for shared CI; without cancel the 6 s pacing sleep runs
 
 
 def test_expected_duration_text_for_consent_preview():

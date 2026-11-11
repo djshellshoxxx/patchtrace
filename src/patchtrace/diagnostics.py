@@ -47,6 +47,8 @@ def redact_log(text: str, limit: int = 2 * 1024 * 1024) -> str:
 
     Linear on any input: each pattern has a literal or lookbehind anchor and no nested quantifier;
     tests/test_redaction_coverage.py runs hostile one-MiB inputs."""
+    if limit < 1:
+        raise ValueError('log tail limit must be positive')
     text = _URL_AUTH.sub(r'\1[redacted]@', text)
     text = _AUTH_HEADER.sub(r'\1[redacted]', text)
     text = _COOKIE_HEADER.sub(r'\1[redacted]', text)

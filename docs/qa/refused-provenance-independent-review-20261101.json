@@ -1,0 +1,47 @@
+{
+  "reviewer": "/root/cancel_fix",
+  "date": "2026-11-01",
+  "worktree": "/workspace/scratch/142cb233d750/wt-refused-test",
+  "base": "f005c6674e0d7e7e151668494bb9c5a299f2635b",
+  "reviewed_commit": "c971831a173363733515b25e7531b985885cf893",
+  "reviewed_tree": "5eba18a8ceb54f018c75a2bf6cae9dc50f06c65c",
+  "changed_files": ["tests/test_unified_worker.py"],
+  "test_file_sha256": "7937c9c6c8689b14e7e463219724907f2d55a06222e84915e6612fe2f18f9aa2",
+  "worktree_clean": true,
+  "verdict": "PASS: test-contract repair correctly asserts content identity and original provenance; no runtime change or weakened safety assertion",
+  "contract_review": [
+    "SPEC31 02-data-model identity amendment requires unified-source-content/2 fallback over original stored entry id and complete validated normalized snapshot for in-memory LoadedSecondary.",
+    "The refused single-match fixture has no stored body hash and no alternatives, so /2 fallback and omission of empty alternatives are appropriate; no production identity helper computes the expected value.",
+    "Independent stdlib JSON/SHA oracle matches the domain-separated protocol. The tuple requires source bindiff, exact derived id, original raw-file SHA-256 of 64 nines and upstream version 8.0.",
+    "AST comparison confirmed the existing partial/refusal assertion, manifest/file byte determinism assertion, and changed-result-ID assertion are identical. Four assertions remain; only the stale literal-id assertion was replaced.",
+    "Only a hashlib import and the replacement expected-provenance calculation/assertion changed. Product source, safety behavior and schemas are untouched."
+  ],
+  "checks": [
+    {
+      "command": "QT_QPA_PLATFORM=offscreen PYTHONPATH=src /workspace/scratch/142cb233d750/full-venv/bin/python -m pytest -q --tb=short tests/test_unified_worker.py tests/test_unified_sources.py tests/test_unified_identity_budget_20261101.py",
+      "result": "92 passed in 1.12s",
+      "raw_log": "/workspace/scratch/142cb233d750/reconciliation/refused-provenance-independent-green.log"
+    },
+    {
+      "script": "/workspace/scratch/142cb233d750/reconciliation/refused-provenance-independent-sensitivity.py",
+      "result": "Two independent returned-reference faults (old literal entry_id and missing raw file_sha256) each reach and fail the new final tuple assertion after all original refusal, determinism and result-id checks pass.",
+      "raw_log": "/workspace/scratch/142cb233d750/reconciliation/refused-provenance-independent-sensitivity.log"
+    },
+    {
+      "result": "Scoped Ruff and git diff --check HEAD~1..HEAD passed; final committed file hash matches the reviewed/tested file."
+    }
+  ],
+  "main_only_port": {
+    "worktree": "/workspace/scratch/142cb233d750/wt-identity-main",
+    "source_head": "65857d4aad2a67d1d2a8ede3a4856ba0caba4fcd",
+    "apply_check": "git apply --check of the exact test patch passed without modifying the worktree",
+    "patch": "/workspace/scratch/142cb233d750/reconciliation/refused-provenance-test-review.patch",
+    "runtime_check": "Exact copied revised test executed against explicit wt-identity-main/src and wt-identity-main/tests PYTHONPATH: 1 passed in 0.44s",
+    "raw_log": "/workspace/scratch/142cb233d750/reconciliation/refused-provenance-independent-main-port.log"
+  },
+  "limits": [
+    "No full suite or performance run was repeated; the coordinator owns full acceptance and integration.",
+    "Main-only port was verified read-only through patch applicability and an exact copied test; no branch was edited or pushed by the reviewer.",
+    "All fixture inputs are synthetic; no target binaries or corpus data were executed or consumed."
+  ]
+}

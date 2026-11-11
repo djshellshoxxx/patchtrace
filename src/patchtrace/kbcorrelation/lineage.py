@@ -23,10 +23,11 @@ MACHINES: dict[int, Arch] = {0x8664: 'amd64', 0xAA64: 'arm64', 0x14C: 'x86'}
 Change = Literal['yes', 'no', 'unknown']
 
 _SHA = re.compile(r'[0-9a-f]{64}')
-_DATE = re.compile(r'\d{4}-\d{2}-\d{2}')
-_UBR = re.compile(r'(\d{1,6})\.(\d{1,6})')
-_BUILD_IN_TEXT = re.compile(r'(?<![\d.])\d{1,6}\.\d{1,6}(?![\d.])')
-_FILE_VERSION = re.compile(r'\d{1,5}(?:\.\d{1,5}){3}')
+# ASCII digits only: Python's \d also matches other scripts' digits (issue #105 BUG-KBC-7).
+_DATE = re.compile(r'[0-9]{4}-[0-9]{2}-[0-9]{2}')
+_UBR = re.compile(r'([0-9]{1,6})\.([0-9]{1,6})')
+_BUILD_IN_TEXT = re.compile(r'(?<![0-9.])[0-9]{1,6}\.[0-9]{1,6}(?![0-9.])')
+_FILE_VERSION = re.compile(r'[0-9]{1,5}(?:\.[0-9]{1,5}){3}')
 _DELTA_VARIANTS = ('delta', 'delta+')
 
 

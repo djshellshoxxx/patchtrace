@@ -19,6 +19,7 @@ from pe_rsrc_builder import LANG_EN_US, RT_VERSION, rsrc_pe, tree
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / 'tools'))
 
+import build_linux  # noqa: E402
 import build_windows  # noqa: E402
 import check_windows_exe  # noqa: E402
 import windows_icon  # noqa: E402
@@ -134,7 +135,7 @@ def _exe(tmp_path, resources):
     return path
 
 
-def test_generated_file_is_what_pyinstaller_embeds_and_patchtrace_reads_it_back(tmp_path, monkeypatch):
+def test_generated_file_is_what_pyinstaller_embeds_and_patchtrace_reads_it_back(tmp_path, monkeypatch, qapp):
     versioninfo = _pyinstaller_versioninfo(monkeypatch)
     fields = wvi.make_fields('0.1.0-alpha.1', COMMIT, 7, COPYRIGHT)
     info = versioninfo.load_version_info_from_text_file(str(wvi.write(fields, tmp_path / 'version-info.txt')))
@@ -144,24 +145,26 @@ def test_generated_file_is_what_pyinstaller_embeds_and_patchtrace_reads_it_back(
     without_icon = check_windows_exe.read_resources(_exe(tmp_path, {RT_VERSION: {1: {LANG_EN_US: raw}}}))
     assert without_icon['file_version'] == '0.1.0.7'
     assert without_icon['strings'] == fields.strings()
-    assert check_windows_exe.problems(without_icon, fields.label, COMMIT) == ['PT-REL-ICON: no RT_GROUP_ICON resource']
+    assert check_windows_exe.problems(without_icon, fields.label, COMMIT, fields.quad) == ['PT-REL-ICON: no RT_GROUP_ICON resource']
 
-    group = struct.pack('<HHH', 0, 1, 0)
+    png = app_icon_module.render_png(mark_svg(), 16)
+    group = _group(png)
     found = check_windows_exe.read_resources(
-        _exe(tmp_path, {RT_VERSION: {1: {LANG_EN_US: raw}}, RT_GROUP_ICON: {1: {LANG_EN_US: group}}}))
+        _exe(tmp_path, {RT_VERSION: {1: {LANG_EN_US: raw}}, RT_GROUP_ICON: {1: {LANG_EN_US: group}}, 3: {7: {LANG_EN_US: png}}}))
     assert found['icon_groups'] == 1
-    assert check_windows_exe.problems(found, fields.label, COMMIT) == []
-    assert check_windows_exe.problems(found, '0.1.0-alpha.2', COMMIT)  # a stale label is caught
-    assert check_windows_exe.problems(found, fields.label, 'f' * 40)  # so is the wrong commit
+    assert check_windows_exe.problems(found, fields.label, COMMIT, fields.quad) == []
+    assert check_windows_exe.problems(found, '0.1.0-alpha.2', COMMIT, fields.quad)  # a stale label is caught
+    assert check_windows_exe.problems(found, fields.label, 'f' * 40, fields.quad)  # so is the wrong commit
 
 
 def test_check_rejects_a_publisher_name_and_a_missing_version_resource(tmp_path):
     strings = {**wvi.make_fields('0.1.0', COMMIT, 0, COPYRIGHT).strings(), 'CompanyName': 'Someone'}
-    found = {'status': 'ok', 'strings': strings, 'file_version': '0.1.0.0', 'icon_groups': 1}
-    assert check_windows_exe.problems(found, '0.1.0', COMMIT) == [
+    found = {**_valid_found(), 'strings': strings}
+    assert check_windows_exe.problems(found, '0.1.0', COMMIT, (0, 1, 0, 0)) == [
         'PT-REL-PUBLISHER: unsigned builds must not carry a CompanyName (SPEC-52)']
     bare = check_windows_exe.read_resources(_exe(tmp_path, {RT_GROUP_ICON: {1: {LANG_EN_US: b'\0' * 6}}}))
-    assert bare['strings'] == {} and len(check_windows_exe.problems(bare, '0.1.0', COMMIT)) == 4
+    assert bare['strings'] == {}
+    assert check_windows_exe.problems(bare, '0.1.0', COMMIT, (0, 1, 0, 0))
 
 
 # ---- .ico packing -------------------------------------------------------------------------------------------
@@ -243,3 +246,265 @@ def test_pyinstaller_command_embeds_icon_and_version_resource(tmp_path):
     assert command[command.index('--version-file') + 1] == str(version_file)
     assert command[command.index('--hide-console') + 1] == 'hide-early'
     assert {'--onedir', '--console'} <= set(command) and '--manifest' not in command
+
+
+@pytest.mark.parametrize('label,commit,copyright', [
+    ('0.1.0\n', COMMIT, COPYRIGHT),
+    ('0.1.0', COMMIT + '\n', COPYRIGHT),
+    ('0.1.0', COMMIT[:7], COPYRIGHT),
+    ('0.1.0', COMMIT, COPYRIGHT + '\n'),
+])
+def test_version_fields_reject_trailing_controls_and_abbreviated_commit(label, commit, copyright):
+    with pytest.raises(ValueError):
+        wvi.make_fields(label, commit, 0, copyright)
+
+
+def _valid_found():
+    return {'status': 'ok', 'strings': wvi.make_fields('0.1.0', COMMIT, 0, COPYRIGHT).strings(),
+            'file_version': '0.1.0.0', 'product_version': '0.1.0.0', 'icon_groups': 1,
+            'invalid_icon_groups': 0, 'resource_truncated': False, 'version_statuses': ['ok'],
+            'version_warnings': [], 'contradictions': [], 'version_shape_valid': True}
+
+
+@pytest.mark.parametrize('change', [
+    {'status': 'partial'}, {'file_version': '9.9.9.9'}, {'product_version': '9.9.9.9'},
+    {'resource_truncated': True}, {'version_statuses': ['partial']}, {'version_statuses': []},
+    {'version_warnings': ['version_over_cap']}, {'contradictions': ['fixed_disagree:file_version']},
+    {'invalid_icon_groups': 1},
+])
+def test_readback_gate_refuses_incomplete_or_mismatched_resource_evidence(change):
+    found = {**_valid_found(), **change}
+    assert check_windows_exe.problems(found, '0.1.0', COMMIT, (0, 1, 0, 0))
+
+
+def _group(png, *, size=16, ident=7):
+    return struct.pack('<HHHBBBBHHIH', 0, 1, 1, size, size, 0, 0, 1, 32, len(png), ident)
+
+
+@pytest.mark.parametrize('case', ['empty', 'missing', 'unreadable', 'wrong-size', 'bad-payload', 'bad-count'])
+def test_readback_refuses_empty_or_broken_icon_references(tmp_path, qapp, case):
+    from pe_rsrc_builder import RT_ICON, Data
+
+    png = app_icon_module.render_png(mark_svg(), 16)
+    payload = png
+    group = _group(png)
+    if case == 'empty':
+        group = struct.pack('<HHH', 0, 1, 0)
+    elif case == 'wrong-size':
+        group = _group(png, size=32)
+    elif case == 'bad-payload':
+        payload = b'x' * len(png)
+    elif case == 'unreadable':
+        payload = Data(png, rva=0x7fffffff)
+    elif case == 'bad-count':
+        group = struct.pack('<HHH', 0, 1, 2) + group[6:]
+    resources = {RT_GROUP_ICON: {1: {LANG_EN_US: group}}}
+    if case != 'missing':
+        resources[RT_ICON] = {7: {LANG_EN_US: payload}}
+    found = check_windows_exe.read_resources(_exe(tmp_path, resources))
+    assert found.get('invalid_icon_groups', 0) == 1
+
+
+def test_readback_accepts_real_png_reference(tmp_path, qapp):
+    from pe_rsrc_builder import RT_ICON
+
+    png = app_icon_module.render_png(mark_svg(), 16)
+    found = check_windows_exe.read_resources(_exe(tmp_path, {
+        RT_GROUP_ICON: {1: {LANG_EN_US: _group(png)}}, RT_ICON: {7: {LANG_EN_US: png}}}))
+    assert found.get('invalid_icon_groups', -1) == 0
+
+
+def test_release_label_and_numeric_build_are_checked_independently():
+    found = {**_valid_found(), 'contradictions': ['fixed_vs_string:FileVersion', 'fixed_vs_string:ProductVersion']}
+    assert check_windows_exe.problems(found, '0.1.0', COMMIT, (0, 1, 0, 0)) == []
+    assert check_windows_exe.problems(found, '0.1.0', COMMIT, (0, 1, 0, 8))
+    assert check_windows_exe.problems(found, '0.1.0-beta.8', COMMIT, (0, 1, 0, 0))
+
+
+def test_readback_refuses_excess_icon_groups(tmp_path, qapp):
+    from pe_rsrc_builder import RT_ICON
+
+    png = app_icon_module.render_png(mark_svg(), 16)
+    found = check_windows_exe.read_resources(_exe(tmp_path, {
+        RT_GROUP_ICON: {i: {LANG_EN_US: _group(png)} for i in range(1, 18)},
+        RT_ICON: {7: {LANG_EN_US: png}}}))
+    assert found['invalid_icon_groups'] == 17
+
+
+def test_readback_refuses_version_blocks_hidden_by_parser_cap(tmp_path, qapp, monkeypatch):
+    from pe_rsrc_builder import RT_ICON
+
+    versioninfo = _pyinstaller_versioninfo(monkeypatch)
+    fields = wvi.make_fields('0.1.0-beta.7', COMMIT, 7, COPYRIGHT)
+    good = bytes(versioninfo.load_version_info_from_text_file(str(wvi.write(fields, tmp_path / 'good.txt'))).toRaw())
+    wrong = wvi.make_fields('0.1.0-beta.8', 'f' * 40, 8, COPYRIGHT)
+    bad = bytes(versioninfo.load_version_info_from_text_file(str(wvi.write(wrong, tmp_path / 'bad.txt'))).toRaw())
+    png = app_icon_module.render_png(mark_svg(), 16)
+    versions = {i: {LANG_EN_US: good} for i in range(1, 17)}
+    resources = {RT_VERSION: versions, RT_GROUP_ICON: {1: {LANG_EN_US: _group(png)}},
+                 RT_ICON: {7: {LANG_EN_US: png}}}
+    at_cap = check_windows_exe.read_resources(_exe(tmp_path, resources))
+    assert check_windows_exe.problems(at_cap, fields.label, COMMIT, fields.quad)
+    versions[17] = {LANG_EN_US: bad}
+    over_cap = check_windows_exe.read_resources(_exe(tmp_path, resources))
+    assert 'version_over_cap' in over_cap['version_warnings']
+    assert check_windows_exe.problems(over_cap, fields.label, COMMIT, fields.quad)
+
+
+@pytest.mark.parametrize('location', ['second-block', 'second-language-table', 'duplicate-key'])
+def test_readback_checks_identity_in_every_version_table(tmp_path, qapp, monkeypatch, location):
+    from pe_rsrc_builder import RT_ICON
+
+    versioninfo = _pyinstaller_versioninfo(monkeypatch)
+    fields = wvi.make_fields('0.1.0-beta.7', COMMIT, 7, COPYRIGHT)
+    good = versioninfo.load_version_info_from_text_file(str(wvi.write(fields, tmp_path / 'good.txt')))
+    wrong = wvi.make_fields(fields.label, 'f' * 40, 7, COPYRIGHT)
+    bad = versioninfo.load_version_info_from_text_file(str(wvi.write(wrong, tmp_path / 'bad.txt')))
+    versions = {1: {LANG_EN_US: bytes(good.toRaw())}}
+    if location == 'second-block':
+        versions[2] = {LANG_EN_US: bytes(bad.toRaw())}
+    elif location == 'second-language-table':
+        table = bad.kids[0].kids[0]
+        table.name = '041904B0'
+        good.kids[0].kids.insert(0, table)  # expected table comes last, hiding the first identity
+        versions[1] = {LANG_EN_US: bytes(good.toRaw())}
+    else:
+        good.kids[0].kids[0].kids.insert(0, versioninfo.StringStruct('Comments', 'Unsigned build of commit ' + 'f' * 40))
+        versions[1] = {LANG_EN_US: bytes(good.toRaw())}
+    png = app_icon_module.render_png(mark_svg(), 16)
+    found = check_windows_exe.read_resources(_exe(tmp_path, {
+        RT_VERSION: versions, RT_GROUP_ICON: {1: {LANG_EN_US: _group(png)}}, RT_ICON: {7: {LANG_EN_US: png}}}))
+    assert not found['contradictions'] or set(found['contradictions']) <= {
+        'fixed_vs_string:FileVersion', 'fixed_vs_string:ProductVersion'}
+    assert check_windows_exe.problems(found, fields.label, COMMIT, fields.quad)
+
+
+def test_png_frames_require_intact_crc_complete_zlib_and_bounded_pixels(qapp):
+    import zlib
+
+    def chunk(kind, body):
+        return struct.pack('>I', len(body)) + kind + body + struct.pack('>I', zlib.crc32(kind + body))
+
+    png = app_icon_module.render_png(mark_svg(), 16)
+    assert check_windows_exe._png_valid(png, 16, 16)
+    assert not check_windows_exe._png_valid(png[:-1], 16, 16)
+    assert not check_windows_exe._png_valid(png + b'extra', 16, 16)
+    assert not check_windows_exe._png_valid(png[:-5] + b'x' + png[-4:], 16, 16)
+    header = PNG + chunk(b'IHDR', struct.pack('>IIBBBBB', 16, 16, 8, 6, 0, 0, 0))
+    unknown_critical = header + chunk(b'NOPE', b'x') + chunk(b'IDAT', zlib.compress(b'\0' * 1040))
+    assert not check_windows_exe._png_valid(unknown_critical + chunk(b'IEND', b''), 16, 16)
+    for compressed in (b'not zlib', zlib.compress(b'\0' * (1 << 20)), zlib.compress(b'\0' * 1040) + b'extra'):
+        assert not check_windows_exe._png_valid(header + chunk(b'IDAT', compressed) + chunk(b'IEND', b''), 16, 16)
+
+
+@pytest.mark.parametrize('platform_key,library', [('windows', '_internal/Qt6Svg.dll'),
+                                                ('linux', '_internal/PySide6/Qt/lib/libQt6Svg.so.6')])
+def test_frozen_mark_requires_svg_bytes_library_and_pinned_notices(tmp_path, platform_key, library):
+    import shutil
+
+    package = tmp_path / 'package'
+    mark = package / '_internal/patchtrace/resources/patchtrace-mark.svg'
+    mark.parent.mkdir(parents=True)
+    mark.write_bytes(mark_svg())
+    with pytest.raises(RuntimeError, match='QtSvg'):
+        build_linux.check_desktop_mark(package, ROOT, platform_key)
+    lib = package / library
+    lib.parent.mkdir(parents=True, exist_ok=True)
+    lib.write_bytes(b'synthetic library; never executed')
+    build_linux.check_desktop_mark(package, ROOT, platform_key)
+    mark.write_bytes(b'<svg/>')
+    with pytest.raises(RuntimeError, match='mark'):
+        build_linux.check_desktop_mark(package, ROOT, platform_key)
+    mark.write_bytes(mark_svg())
+    fixture_root = tmp_path / 'source'
+    shutil.copytree(ROOT / 'third_party/notices/qtsvg-6.12.0',
+                    fixture_root / 'third_party/notices/qtsvg-6.12.0')
+    target = fixture_root / 'src/patchtrace/resources/patchtrace-mark.svg'
+    target.parent.mkdir(parents=True)
+    target.write_bytes(mark_svg())
+    (fixture_root / 'third_party/notices/qtsvg-6.12.0/LICENSES/LGPL-3.0-only.txt').unlink()
+    with pytest.raises(RuntimeError, match='notice'):
+        build_linux.check_desktop_mark(package, fixture_root, platform_key)
+
+
+# ---- build-output staging preserves unrelated pre-existing paths ------------------------------------------
+
+def _write_generated_resource(kind, out):
+    if kind == 'version':
+        fields = wvi.make_fields('0.1.0', COMMIT, 0, COPYRIGHT)
+        assert wvi.write(fields, out) == out
+    else:
+        assert windows_icon.main(['--out', str(out)]) == 0
+
+
+@pytest.mark.parametrize('kind', ['version', 'icon'])
+@pytest.mark.parametrize('existing_stage', ['file', 'symlink'])
+def test_generators_preserve_preexisting_stage_and_symlink_target(tmp_path, qapp, kind, existing_stage):
+    out = tmp_path / 'caller-selected' / 'resource.out'
+    out.parent.mkdir()
+    stale = out.with_name(out.name + '.tmp')
+    victim = tmp_path / 'unrelated.txt'
+    victim.write_bytes(b'preserve unrelated contents')
+    if existing_stage == 'symlink':
+        try:
+            stale.symlink_to(victim)
+        except OSError as exc:
+            pytest.skip(f'host cannot create symlinks: {exc}')
+    else:
+        stale.write_bytes(b'preserve old stage')
+    _write_generated_resource(kind, out)
+    assert victim.read_bytes() == b'preserve unrelated contents'
+    assert stale.is_symlink() == (existing_stage == 'symlink')
+    assert stale.read_bytes() == (b'preserve unrelated contents' if existing_stage == 'symlink' else b'preserve old stage')
+    assert not out.is_symlink()
+    if kind == 'version':
+        assert out.read_bytes().startswith(b'# UTF-8\n') and b'\r\n' not in out.read_bytes()
+    else:
+        assert struct.unpack_from('<HHH', out.read_bytes()) == (0, 1, len(ICON_SIZES))
+    assert set(out.parent.iterdir()) == {out, stale}
+
+
+@pytest.mark.parametrize('kind', ['version', 'icon'])
+def test_generators_remove_owned_stage_after_failed_replace(tmp_path, qapp, monkeypatch, kind):
+    out = tmp_path / 'resource.out'
+    out.write_bytes(b'previous selected output')
+    stale = out.with_name(out.name + '.tmp')
+    stale.write_bytes(b'preserve unrelated stage')
+
+    def denied(source, destination):
+        raise PermissionError('synthetic replacement denial')
+
+    monkeypatch.setattr(os, 'replace', denied)
+    with pytest.raises(PermissionError, match='synthetic replacement denial'):
+        _write_generated_resource(kind, out)
+    assert out.read_bytes() == b'previous selected output'
+    assert stale.read_bytes() == b'preserve unrelated stage'
+    assert set(tmp_path.iterdir()) == {out, stale}
+
+
+@pytest.mark.parametrize('kind', ['version', 'icon'])
+def test_generators_remove_owned_stage_after_partial_write(tmp_path, qapp, monkeypatch, kind):
+    import tempfile
+    from contextlib import contextmanager
+
+    out = tmp_path / 'resource.out'
+    out.write_bytes(b'previous selected output')
+    create = tempfile.NamedTemporaryFile
+
+    @contextmanager
+    def fail_during_write(*args, **kwargs):
+        with create(*args, **kwargs) as stream:
+            class FailingWrite:
+                name = stream.name
+
+                def write(self, data):
+                    stream.write(data[:1])
+                    raise OSError('synthetic partial-write failure')
+
+            yield FailingWrite()
+
+    monkeypatch.setattr(tempfile, 'NamedTemporaryFile', fail_during_write)
+    with pytest.raises(OSError, match='synthetic partial-write failure'):
+        _write_generated_resource(kind, out)
+    assert out.read_bytes() == b'previous selected output'
+    assert set(tmp_path.iterdir()) == {out}

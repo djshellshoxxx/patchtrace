@@ -147,15 +147,22 @@ def restore_raw_duplicates(root: Path) -> int:
     if not journal.is_file():
         return 0
     restored = 0
+    # Validate every line first so a torn journal fails typed before any file is written.
+    entries = []
     for number, line in enumerate(journal.read_text(encoding='ascii').splitlines(), 1):
         if not line.strip():
             continue
-        entry = json.loads(line)
+        try:
+            entry = json.loads(line)
+        except ValueError:
+            entry = None
         shape = _REMOVED.fullmatch(entry.get('removed', '')) if isinstance(entry, dict) and isinstance(
             entry.get('removed'), str) else None
         if (shape is None or entry.get('v') != JOURNAL_VERSION or entry.get('kept') != _KEPT.format(run=shape['run'])
                 or not isinstance(entry.get('sha256'), str)):
             raise ValueError(f'PT-STORAGE: raw duplicate journal line {number} is malformed')
+        entries.append((number, entry))
+    for number, entry in entries:
         target = safe_path(root, entry['removed'])
         if target.exists() or target.is_symlink():
             continue

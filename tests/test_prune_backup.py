@@ -4,6 +4,7 @@ Synthetic projects only (`synthetic_pe` / `ProjectService.sample`); real SQLite 
 """
 from __future__ import annotations
 
+import os
 import shutil
 import sqlite3
 
@@ -134,6 +135,26 @@ def test_foreign_project_backup_not_trusted(service, tmp_path, monkeypatch):
     for i in range(3):
         _save(service, f'n{i}')
     assert len(_backups(service.root, 'history-prune')) == 2
+
+
+def test_backup_swapped_during_verification_is_not_trusted(service, monkeypatch):
+    monkeypatch.setattr(persistence, 'HISTORY_KEEP', 2)
+    for i in range(3):
+        _save(service, f'n{i}')
+    (backup,) = _backups(service.root, 'history-prune')
+    verified_backup.forget_all()
+    real = verified_backup._verify
+
+    def swap_after_check(path, *args, **kwargs):
+        verdict = real(path, *args, **kwargs)
+        stat = path.stat()
+        _corrupt(path)  # same size, newer mtime: only a fingerprint taken before the check can tell
+        os.utime(path, ns=(stat.st_atime_ns, stat.st_mtime_ns + 5_000_000_000))
+        return verdict
+    monkeypatch.setattr(verified_backup, '_verify', swap_after_check)
+    assert verified_backup.find_verified_backup(service.root, 'history-prune') is None
+    assert verified_backup.trusted_backup(service.root, 'history-prune') is None
+    assert backup.exists()
 
 
 def test_backup_reverified_once_per_file_version(service, monkeypatch):

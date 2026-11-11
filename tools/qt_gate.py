@@ -2,6 +2,7 @@
 
     python tools/qt_gate.py --repeat 20                    # Linux PR job and nightly (Windows PR job: 5)
     python tools/qt_gate.py --repeat 5 tests/test_gui_tasks.py
+    python tools/qt_gate.py --repeat 20 --shard 2/4        # the 2nd of 4 round-robin slices of the files (CI matrix)
 
 The files are listed ``--repeat`` times with ``--keep-duplicates`` (the method behind the ``docs/qa.md`` Qt abort
 rows) and ``PYTHONFAULTHANDLER=1``, so a SIGABRT from a destroyed running QThread prints every thread's stack.
@@ -23,6 +24,17 @@ def default_files(root: Path = ROOT) -> list[str]:
     return sorted(path.relative_to(root).as_posix() for path in found)
 
 
+def shard_files(files: list[str], shard: str) -> list[str]:
+    """Slice ``K/N`` (1-based) of the sorted files, dealt round-robin so every slice mixes the heavy and light files."""
+    try:
+        index, count = (int(part) for part in shard.split('/'))
+    except ValueError:
+        raise ValueError(f'--shard must look like K/N, got {shard!r}') from None
+    if count < 1 or not 1 <= index <= count:
+        raise ValueError(f'--shard K/N needs 1 <= K <= N, got {shard!r}')
+    return sorted(files)[index - 1::count]
+
+
 def build_command(files: list[str], repeat: int, python: str = sys.executable) -> list[str]:
     if repeat < 1:
         raise ValueError('--repeat must be at least 1')
@@ -41,11 +53,12 @@ def environment(base: dict[str, str] | None = None) -> dict[str, str]:
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.split('\n')[0])
     parser.add_argument('--repeat', type=int, default=20, help='times to list each file (default 20)')
+    parser.add_argument('--shard', default='1/1', help='run slice K of N of the files, e.g. 2/4 (default 1/1: all)')
     parser.add_argument('--print-command', action='store_true', help='print the pytest command and exit')
     parser.add_argument('files', nargs='*', help='test files (default: every GUI test file)')
     args = parser.parse_args(argv)
     try:
-        command = build_command(args.files or default_files(), args.repeat)
+        command = build_command(shard_files(args.files or default_files(), args.shard), args.repeat)
     except ValueError as exc:
         parser.error(str(exc))
     if args.print_command:

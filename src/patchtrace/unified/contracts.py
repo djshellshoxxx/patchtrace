@@ -59,6 +59,7 @@ def _char_class(ranges) -> re.Pattern:
 
 
 _UNSAFE_TEXT = _char_class(((0x00, 0x1F), *_INVISIBLE_RANGES))
+_SURROGATES = _char_class(((0xD800, 0xDFFF),))
 _STDERR_UNSAFE = _char_class(((0x00, 0x08), (0x0B, 0x1F), *_INVISIBLE_RANGES))  # tab and newline stay
 _UTC = r'^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\.[0-9]{1,6})?(\+00:00|Z)$'
 _UTC_FULL = re.compile(_UTC[1:-1])
@@ -82,6 +83,17 @@ def _display(value):
     if isinstance(value, str) and not (value.isascii() and value.isprintable()):
         return _UNSAFE_TEXT.sub(REPLACEMENT, value)
     return value
+
+
+def replace_surrogates(text: str, replacement: str = REPLACEMENT) -> str:
+    """Lone surrogates (JSON `\\ud800` escapes decode to them) cannot be encoded as UTF-8: they become `replacement`."""
+    return _SURROGATES.sub(replacement, text)
+
+
+def strip_unsafe(text: str, *, keep_layout: bool = False, replacement: str = REPLACEMENT) -> str:
+    """Untrusted text made safe to show or store: lone surrogates, controls (TAB and LF stay with `keep_layout`) and
+    every invisible or bidirectional character are replaced. The one definition the readers and panes share."""
+    return replace_surrogates((_STDERR_UNSAFE if keep_layout else _UNSAFE_TEXT).sub(replacement, text), replacement)
 
 
 def _identifier(value: str, *, nfc: bool = True) -> str:

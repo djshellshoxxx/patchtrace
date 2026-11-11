@@ -10,7 +10,6 @@ from __future__ import annotations
 from collections.abc import Iterable
 
 from ..contracts import Delta
-from ..ir.features import F_CALL
 from ..ir.operands import VK_REGISTER, VK_SCALAR
 from .datamap import TargetMap
 from .fnview import FnView
@@ -58,11 +57,8 @@ def feeds_tracing_call(view: FnView, side: str, index: int, targets: TargetMap) 
     """The instruction loads an argument register and a later call of its block goes to a tracing function."""
     if not _feeds_argument(view, index):
         return False
-    block = view.block_of[index]
-    for later in view.block_kept[block]:
-        if later > index and view.insns[later].flags & F_CALL:
-            return _tracing_target(view, side, later, targets)
-    return False
+    later = view.following_call(index)
+    return later is not None and _tracing_target(view, side, later, targets)
 
 
 def trace_arg_only(old: FnView, new: FnView, deltas: Iterable[tuple[Delta, DeltaInfo]], targets: TargetMap) -> bool:

@@ -16,6 +16,9 @@ on:
             '.github/workflows/live-bindiff.yml']
 permissions:
   contents: read
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event_name }}-${{ github.ref }}
+  cancel-in-progress: true
 jobs:
   live-bindiff:
     name: live BinDiff (${{ matrix.os }})

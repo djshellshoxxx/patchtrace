@@ -31,7 +31,7 @@ from pathlib import Path
 
 import pytest
 from bindiff_live_pair import write_pair
-from conftest import live_status_dir
+from live_status import live_status_dir
 
 from patchtrace.jobs import run_process
 from patchtrace.secondary import bindiff_probe, bindiff_run

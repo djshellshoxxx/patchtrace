@@ -76,8 +76,8 @@ def test_ctrl_c_during_creation_removes_the_half_initialised_database(tmp_path, 
     root = tmp_path / 'case'
     real = service_module.inspect_artifact
 
-    def interrupted(path, side, project_root):
-        artifact = real(path, side, project_root)
+    def interrupted(path, side, project_root, **kwargs):
+        artifact = real(path, side, project_root, **kwargs)
         if side == 'newer':
             raise KeyboardInterrupt
         return artifact
@@ -175,3 +175,9 @@ def test_future_snapshot_fails_with_pt_schema_and_does_not_echo_values(service, 
     with pytest.raises(ValueError, match='PT-SCHEMA') as caught:
         ProjectService.open(root)
     assert 'input_value' not in str(caught.value)
+
+
+def test_display_text_replaces_hostile_characters_wp02():
+    from patchtrace.ingestion import display_text
+    assert display_text("old\x1b[2Jevil\u202egpj\x00\x9b\u200b\r\n.exe") == "old?[2Jevil?gpj?????.exe"
+    assert display_text("bad\udcff.dll") == "bad\\udcff.dll"

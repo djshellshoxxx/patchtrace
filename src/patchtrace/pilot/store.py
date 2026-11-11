@@ -128,7 +128,10 @@ def _rmtree(path: Path) -> None:
 
 def _write(path: Path, data: bytes) -> None:
     part = path.with_name(path.name + '.part')
-    part.write_bytes(data)
+    with open(part, 'wb') as handle:
+        handle.write(data)
+        handle.flush()
+        os.fsync(handle.fileno())
     _replace(part, path)
 
 

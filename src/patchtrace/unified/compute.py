@@ -43,15 +43,23 @@ from .ir.ladder_port import ReaderMnemonics, ReaderSide
 from .ir.reader import IrReader
 from .ladder.engine import run_ladder
 from .ladder.residual import pass_table, table_digest
-from .limits import DEFAULT_LIMITS, Budget, UnifiedError, UnifiedLimits
+from .limits import DEFAULT_LIMITS, Budget, BudgetExhausted, UnifiedError, UnifiedLimits
 from .registry import REGISTRY, Registry
 from .sources import DEGRADING, AdapterOutput, GhidriffRun, RawGhidriff, SourceInputs, read_snapshot
+from .sources.diaphora import DiaphoraAdapter
+from .sources.diaphora import read_loaded as read_diaphora
+from .sources.diaphora import source_ref_of as diaphora_ref
 from .sources.ghidriff import GhidriffAdapter, load_raw
 from .sources.ladder import anchor_pairs, ladder_output
 from .sources.manual import ManualAdapter, manual_digest_of
 from .sources.secondary import SecondaryAdapter, bindiff_flags, read_loaded, source_ref_of
 
+TIMEOUT = 'timeout'    # limitation: the deadline passed after the ladder began; unfinished rows stay `unknown` (U7-06)
 DEGRADING_SUFFIXES = ('-address-basis-not-comparable', '-pair-mismatch')
+# 07 U4: a cap hit makes the result partial; `neighbour-cap` only trims context and keeps the result complete
+# (tools/unified/bench.py `_row_checks` agrees)
+DEGRADING_LIMITS = ('ladder-limit-block-cap', 'ladder-limit-assign-time-cap', 'ladder-limit-assign-bucket-cap',
+                    'ladder-limit-callsite-cap', 'ladder-limit-rehash-wave-cap')
 Sections = tuple[tuple[int, int], ...]
 
 
@@ -109,20 +117,23 @@ def compute_config_digest(registry: Registry = REGISTRY, limits: UnifiedLimits =
 
 def plan_identity(inputs: SourceInputs, addr: AddressMap, sources: Iterable[str], registry: Registry = REGISTRY,
                   limits: UnifiedLimits = DEFAULT_LIMITS, *, ir: tuple[str, str] | None = None,
-                  residual: bool = True) -> Identity:
+                  residual: bool = True, budget: Budget | None = None) -> Identity:
     """The inputs that make a result (02 s5) without computing it: the owner calls this before the run (cache
     lookup) and again with the worker's observed raw status to check the answer. `ir` = the content digests of the
     two ProgramIR sidecars the run will use, or None for S0 mode."""
+    if budget is not None:
+        budget.check()
     selected = frozenset(sources)
     refs: list[SourceRef] = []
     if 'ghidriff' in selected:
         refs.append(GhidriffAdapter(registry).source_ref(inputs))
     # Every stored set of a selected engine is an input, one for another pair included: it is refused with a
     # degrading limitation, which changes the result, so it must change the id (same id, same content).
-    refs.extend(source_ref_of(s) for s in inputs.secondary if s.match_set.engine in selected)
-    manual_refs = ManualAdapter().source_refs(inputs, addr) if 'manual' in selected else ()
+    refs.extend(source_ref_of(s, budget) for s in inputs.secondary if s.match_set.engine in selected)
+    refs.extend(diaphora_ref(s, budget) for s in inputs.diaphora if 'diaphora' in selected)
+    manual_refs = ManualAdapter().source_refs(inputs, addr, budget) if 'manual' in selected else ()
     refs.extend(manual_refs)
-    manual = manual_digest_of(inputs, addr) if manual_refs else keys.manual_digest([])
+    manual = manual_digest_of(inputs, addr, budget) if manual_refs else keys.manual_digest([])
     config = compute_config_digest(registry, limits, residual=residual)
     raw_sha = inputs.run.raw.sha256
     if raw_sha is None:
@@ -138,7 +149,7 @@ def plan_identity(inputs: SourceInputs, addr: AddressMap, sources: Iterable[str]
 def is_degrading(limitation: str) -> bool:
     """A limitation that makes the result `partial` (a missing or unusable input), as opposed to a plain note."""
     slug = limitation.split(':', 1)[0]
-    return slug in DEGRADING or slug.endswith(DEGRADING_SUFFIXES)
+    return slug in DEGRADING or slug == TIMEOUT or slug in DEGRADING_LIMITS or slug.endswith(DEGRADING_SUFFIXES)
 
 
 def _ladder(ir: IrInputs, manual: AdapterOutput, limits: UnifiedLimits, budget: Budget, residual: bool) -> AdapterOutput:
@@ -168,15 +179,18 @@ def compute_stage(inputs: SourceInputs, addr: AddressMap, *, result_dir: Path, s
     budget = budget or Budget()
     say = _announce(emit, ir is not None)
     selected = frozenset(sources)
-    ident = plan_identity(inputs, addr, selected, registry, limits, residual=residual)  # refs and digests of the manifest
+    ident = plan_identity(inputs, addr, selected, registry, limits, residual=residual, budget=budget)
     say('sources')
     scoped = dataclasses.replace(inputs, secondary=tuple(s for s in inputs.secondary
-                                                          if s.match_set.engine in selected))
+                                                          if s.match_set.engine in selected),
+                                 diaphora=inputs.diaphora if 'diaphora' in selected else ())
     outputs = []
     if 'ghidriff' in selected:
         outputs.append(GhidriffAdapter(registry).atoms(inputs, addr, budget))
     if scoped.secondary:
         outputs.append(SecondaryAdapter(registry).atoms(scoped, addr, budget))
+    if scoped.diaphora:
+        outputs.append(DiaphoraAdapter().atoms(scoped, addr, budget))
     manual = ManualAdapter().atoms(inputs, addr, budget) if 'manual' in selected else AdapterOutput()
     if 'manual' in selected:
         outputs.append(manual)
@@ -187,19 +201,32 @@ def compute_stage(inputs: SourceInputs, addr: AddressMap, *, result_dir: Path, s
     groups = [g for o in outputs for g in o.groups]
     nodes = arbiter.merge_nodes(o.nodes for o in outputs)
     say('fusion')
-    decided = arbiter.decide(atoms, groups, nodes, registry=registry, budget=budget, limits=limits)
+    if budget.cancel is not None and budget.cancel.is_set():
+        budget.check()                              # a cancel always aborts; only a spent deadline keeps the partial
+    # U7-06: a deadline the ladder already spent must not discard its partial result, so fusion and the fact context
+    # (bounded work over the ladder's output) run under a cancel-only budget and the row loop below stops by itself.
+    late = ir is not None and budget.expired()
+    shared = Budget(None, budget.cancel, check_every=budget.check_every, clock=budget.clock) if late else budget
+    decided = arbiter.decide(atoms, groups, nodes, registry=registry, budget=shared, limits=limits)
     say('facts')
     sides = None if ir is None else IrSides(ir.older, ir.newer, ir.older_sections, ir.newer_sections,
                                             identical=inputs.older_sha256 == inputs.newer_sha256)
     context = FactsContext.build(older_sha256=inputs.older_sha256, newer_sha256=inputs.newer_sha256, addr=addr,
-                                 matches=inputs.matches, rows=decided, bindiff_flags=bindiff_flags(scoped, addr),
-                                 limits=limits, ir_sides=sides, budget=budget)
+                                 matches=inputs.matches, rows=decided, bindiff_flags=bindiff_flags(scoped, addr, shared),
+                                 limits=limits, ir_sides=sides, budget=shared)
     rows: list[UnifiedMatch] = []
     facts = []
     judged_pairs = []
+    truncated = False
     for d in decided:
-        budget.tick()
-        if d.pair is not None and d.decision in ('matched', 'tentative', 'candidate', 'contested'):
+        if not truncated:
+            try:
+                budget.tick()
+            except BudgetExhausted as exc:
+                if exc.code == 'PT-UNIFIED-CANCEL':
+                    raise
+                truncated = True                    # the rest keep their decision and an `unknown` materiality
+        if not truncated and d.pair is not None and d.decision in ('matched', 'tentative', 'candidate', 'contested'):
             row_id = keys.row_id(inputs.older_sha256, inputs.newer_sha256, d.older, d.newer)
             judged = verdict.judge(row_id, d.decision, context.collect(d), limits)
             facts.append(judged.facts)
@@ -211,6 +238,8 @@ def compute_stage(inputs: SourceInputs, addr: AddressMap, *, result_dir: Path, s
             rows.append(arbiter.to_match(d, nodes, inputs.older_sha256, inputs.newer_sha256))
     say('write')
     limitations = sorted({*(['ir-not-extracted'] if ir is None else []), *(x for o in outputs for x in o.limitations)})
+    if truncated or 'ladder-partial:deadline' in limitations:
+        limitations = sorted({*limitations, TIMEOUT})
     status = 'partial' if any(is_degrading(x) for x in limitations) else 'complete'
     refs = (None, None) if ir is None else ir.refs()
     manifest = store.write_result(
@@ -242,13 +271,14 @@ def refacts_stage(inputs: SourceInputs, addr: AddressMap, *, result_dir: Path, i
     written again. A pair without a text on both sides is left as it is. The result id does not change: the text is
     deterministic given the retained programs and is not an input of the key (a text only ever adds a second channel)."""
     budget = budget or Budget()
+    budget.check()
     result_dir = Path(result_dir)
     if emit is not None:
         emit(StageEvent('refacts', 0, 1))
     manifest, _sha = store.read_manifest(result_dir)
     selected = frozenset(sources)
     if manifest.result_id != plan_identity(inputs, addr, selected, registry, limits, ir=ir.digests(),
-                                           residual=residual).result_id:
+                                           residual=residual, budget=budget).result_id:
         raise UnifiedError('PT-UNIFIED-STORE', 'The staged result is not the one this request describes',
                            reason='staged-mismatch')
     texts = {side: refacts.texts(side) for side in ('older', 'newer')}
@@ -264,7 +294,7 @@ def refacts_stage(inputs: SourceInputs, addr: AddressMap, *, result_dir: Path, i
     sides = IrSides(ir.older, ir.newer, ir.older_sections, ir.newer_sections,
                     identical=inputs.older_sha256 == inputs.newer_sha256)
     context = FactsContext.build(older_sha256=inputs.older_sha256, newer_sha256=inputs.newer_sha256, addr=addr,
-                                 matches=inputs.matches, rows=decided, bindiff_flags=bindiff_flags(scoped, addr),
+                                 matches=inputs.matches, rows=decided, bindiff_flags=bindiff_flags(scoped, addr, budget),
                                  limits=limits, ir_sides=sides, budget=budget, decompiled=texts)
     index = {d.pair: i for i, d in enumerate(decided) if d.pair is not None}
     again: dict[str, ChangeFacts] = {}
@@ -343,15 +373,20 @@ def run_request(request_path: Path, result_dir: Path, *, cancel: threading.Event
     private = request_path.parent
     snapshot = read_snapshot(inside(req.snapshot.path, private), expected_sha256=req.snapshot.sha256,
                              expected_lines=req.snapshot_lines, limits=limits)
-    secondary = tuple(read_loaded(inside(f.path, private), expected_sha256=f.sha256, expected_size=f.size)
+    load_budget = Budget(started + req.budget_seconds, cancel)
+    secondary = tuple(read_loaded(inside(f.path, private), expected_sha256=f.sha256, expected_size=f.size,
+                                  budget=load_budget)
                       for f in req.secondary)
+    diaphora = tuple(read_diaphora(inside(f.path, private), expected_sha256=f.sha256, expected_size=f.size,
+                                   budget=load_budget)
+                     for f in req.diaphora)
     if req.raw_status == 'ok':
         raw = load_raw(Path(req.raw_path) if req.raw_path else None, req.raw_sha256, limits)
     else:
         raw = RawGhidriff(status=req.raw_status, sha256=req.raw_sha256)
     inputs = SourceInputs(older_sha256=req.older_sha256, newer_sha256=req.newer_sha256,
                           run=GhidriffRun(run_id=req.run_id, backend_version=req.backend_version, raw=raw),
-                          matches=snapshot, secondary=secondary)
+                          matches=snapshot, secondary=secondary, diaphora=diaphora)
     addr = AddressMap(PeLayout(**req.older_layout.model_dump()), PeLayout(**req.newer_layout.model_dump()))
     marks: dict[str, int] = {}
 
@@ -366,7 +401,7 @@ def run_request(request_path: Path, result_dir: Path, *, cancel: threading.Event
         if emit:
             emit(event)
     ir = open_ir(req)
-    budget = Budget.after(req.budget_seconds, cancel)
+    budget = load_budget
     try:
         if req.refacts is None:
             computed = compute_stage(inputs, addr, result_dir=Path(result_dir), sources=req.sources,

@@ -1,0 +1,60 @@
+
+name: PatchTrace Codex Cloud Test
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: patchtrace-codex-test
+  cancel-in-progress: false
+
+jobs:
+  codex-test:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+
+    steps:
+      - name: Verify API key secret is available
+        env:
+          CODEX_KEY_PRESENT: ${{ secrets.PATCHTRACE_OPENAI_API_KEY != '' }}
+        run: |
+          if [ "$CODEX_KEY_PRESENT" != 'true' ]; then
+            echo '::error::PATCHTRACE_OPENAI_API_KEY is unavailable or empty. Check the repository Actions secret name and workflow branch.'
+            exit 1
+          fi
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Run API-funded Codex
+        id: codex
+        uses: openai/codex-action@v1
+        with:
+          openai-api-key: ${{ secrets.PATCHTRACE_OPENAI_API_KEY }}
+          permission-profile: ":workspace"
+          output-file: codex-report.txt
+          prompt: |
+            You are working on PatchTrace.
+
+            Inspect the repository and identify
+            one small, unfinished task involving
+            CVE correlation, binary comparison,
+            or regression testing.
+
+            Implement one focused improvement.
+
+            Run relevant tests where feasible.
+
+            Do not change unrelated files.
+            Do not create commits or push.
+            Do not install large dependencies.
+
+            Report:
+            - What you changed
+            - Tests executed and results
+            - Remaining issues

@@ -35,8 +35,9 @@ SEVERITY_ORDER: tuple[frozenset[str], ...] = tuple(frozenset(group.split()) for 
 NO_SEVERITY = len(SEVERITY_ORDER)
 MECHANISM_INDEX = MappingProxyType({'moderate': 0, 'contested': 1, 'tentative': 2, 'unexplained': 3,
                                     'not-assessed': 4})  # `strong` is not assignable, so it has no index
-BASIS_INDEX = MappingProxyType({'explicit-csaf-cwe': 0, 'cwe-id-in-text': 1, 'curated-vocabulary': 2})
-NO_BASIS = len(BASIS_INDEX)
+BASIS_INDEX = MappingProxyType({'explicit-csaf-cwe': 0, 'explicit-advisory-cwe': 0,
+                               'cwe-id-in-text': 1, 'curated-vocabulary': 2})
+NO_BASIS = max(BASIS_INDEX.values()) + 1
 
 
 class Place(NamedTuple):

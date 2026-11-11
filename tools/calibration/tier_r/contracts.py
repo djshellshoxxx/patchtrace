@@ -23,6 +23,9 @@ from pydantic import (
 
 from ..common import canonical_json, digest, strict_json
 
+MAX_ENGINE_NAME_CHARS = 4096
+MAX_ENGINE_VERSION_CHARS = 1024
+
 
 def _relative(value: str) -> str:
     """Repository/source-relative POSIX path: no absolute path, drive, backslash or `..` component."""
@@ -67,6 +70,13 @@ SEMANTIC_OPERATORS = ('cmp-flip', 'const-change', 'bounds-check-insert', 'bounds
 OPT_OPERATORS = ('loop-extract', 'hotcoldsplit', 'mergefunc', 'always-inline', 'partial-inliner')
 COSMETIC_OPERATORS = ('ws-comment', 'dead-code', 'reorder-defs', 'local-rename', 'macro-rewrite', 'inline-toggle',
                       *OPT_OPERATORS)
+
+
+def masked_body_must_match(operator: str) -> bool:
+    """LBL-26 D-05 (plan 4.5): a source-level cosmetic operator must leave the target's address-masked body equal.
+    The `opt` pass operators restructure code by design, so the equality rule does not apply to them."""
+    return operator in COSMETIC_OPERATORS and operator not in OPT_OPERATORS
+
 Operator = Literal['cmp-flip', 'const-change', 'bounds-check-insert', 'bounds-check-remove', 'call-add', 'call-remove',
                    'arg-swap', 'loop-bound', 'off-by-one', 'int-width', 'ws-comment', 'dead-code', 'reorder-defs',
                    'local-rename', 'macro-rewrite', 'inline-toggle',
@@ -535,8 +545,8 @@ class WrongMatch(_Strict):
     kind: Literal['wrong-counterpart', 'paired-no-counterpart', 'paired-unlabelled']
     old_rva: Rva | None
     new_rva: Rva | None
-    old_name: str | None = Field(default=None, max_length=512)
-    new_name: str | None = Field(default=None, max_length=512)
+    old_name: str | None = Field(default=None, max_length=MAX_ENGINE_NAME_CHARS)
+    new_name: str | None = Field(default=None, max_length=MAX_ENGINE_NAME_CHARS)
     expected_new_rva: Rva | None = None
     expected_old_rva: Rva | None = None
     similarity_milli: int | None = Field(default=None, ge=0, le=1000)

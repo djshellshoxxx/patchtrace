@@ -330,12 +330,14 @@ def _imports(tree: ast.AST):
 
 ADAPTERS = {'store.py', 'pins.py'}  # the modules over the enrichment store: the only ones that may reach it and SQLite
 CLI_ADAPTER = 'cli.py'  # the Qt-free dispatcher: the only module that reaches the CLI envelope, a project and paths
+PANEL_LAYER = {'panel.py', 'related.py'}  # Qt-free panel declaration and view model: may use the GUI framework's pure modules
+PANEL_GUI_IMPORTS = {'gui.registry', 'gui.anchors', 'gui.state', 'gui.table_spec', 'gui.text', 'tooltips', 'ui_related'}  # ui_related: the lazy controller factory
 
 
 def test_package_imports_no_qt_io_or_other_feature():
     files = sorted(PACKAGE.glob('*.py'))
     assert {f.name for f in files} == {'__init__.py', 'contracts.py', 'convert.py', 'ids.py', 'limits.py',
-                                       'memory.py', 'origins.py', 'ports.py', *ADAPTERS, CLI_ADAPTER}
+                                       'memory.py', 'origins.py', 'ports.py', *ADAPTERS, CLI_ADAPTER, *PANEL_LAYER}
     for path in files:
         adapter = path.name in ADAPTERS
         cli_adapter = path.name == CLI_ADAPTER
@@ -348,6 +350,7 @@ def test_package_imports_no_qt_io_or_other_feature():
                 allowed = {'enrichment.identity'}
                 allowed |= {'enrichment.storage', 'enrichment.contracts'} if adapter else set()
                 allowed |= {'cli', 'service', 'enrichment.storage'} if cli_adapter else set()
+                allowed |= PANEL_GUI_IMPORTS if path.name in PANEL_LAYER else set()
                 assert module in allowed, f'{path.name} imports ..{module}'
             else:
                 assert level == 1, f'{path.name} reaches {level} levels up'

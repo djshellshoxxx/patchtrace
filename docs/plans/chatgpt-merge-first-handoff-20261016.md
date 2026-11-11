@@ -1,0 +1,65 @@
+# PatchTrace integration handoff — 2026-10-16, merge-first session
+
+This is a **live-branch coordination note**, not an acceptance certificate. On every continuation read `AGENTS.md`, `CLAUDE.md`, `docs/plans/master-todo-d.md`, the LBL-31 handoff on PR #78, current GitHub PRs, merge bases and current-head Actions. Do not treat CI from an earlier SHA as current. Never execute inspected binaries, claim synthetic labels are real-world accuracy, change the ordinal calibration display, force-push another worker's branch or merge a failed/unverified draft.
+
+## Source-of-truth and merge completed
+
+- Repo: `djshellshoxxx/patchtrace`; main observed after merge at `70e33fd77570329ba23afc58a38616270636d37c`.
+- **PR #77** (`docs: Instance C handoff and a ChatGPT prompt`) passed `QA and Windows standalone` at head `cebf38a30ce3d4967ed00a4773f8f9898a9ea708`. Reviewed its two documentation-only file patches, marked it ready and **squash-merged** to main at `70e33fd77570329ba23afc58a38616270636d37c`. `docs/plans/instance-c-handoff.md` now exists on main.
+- No other merge was accepted at this checkpoint. The original #77 draft status prevented direct merging until ready-for-review was set.
+
+## Open integration gates, exact evidence
+
+| Track / PR | Current evidence and owner-safe action | Status |
+|---|---|---|
+| **#64** (`claude/instance-d-gui` -> main) | Last inspected head `53f366e8b50ac60a95bdb3734b815daac82cd63d`; QA run [38825090271](https://github.com/djshellshoxxx/patchtrace/actions/runs/38825090271) Linux passed; Windows **2 failed / 17,876 passed / 79 skipped / 6 xfailed**. Both are `test_masked_body_rule_rejects_address_only_changes_and_records_them` (string-literal/shout, callee-swap/dispatch). Do **not** merge until repaired and current-head CI green. | BLOCKED |
+| **#78 LBL-31** (`chatgpt/lbl31-output-persistence-20261015` -> `claude/instance-d-gui`) | Head `5f30a79119b59e337b11a21d81b5e3b12d2bd92a`. [QA run 38883698492](https://github.com/djshellshoxxx/patchtrace/actions/runs/38883698492): Linux QA and Windows Qt 5x succeeded; Windows QA and Ubuntu Qt 20x were still running at last check. Corpus Tier R run 38883698797 succeeded. Patch includes a COFF/ELF function boundary fix likely relevant to the two #64 Windows failures; **not yet proof** until fresh Windows suite completes. After all gates green, mark ready and merge #78 into D using expected head SHA, then recheck D CI. | WAITING CI |
+| **#76 Java retry** (`codex/java-version-retry-20261015` -> main) | [QA run 38802363214](https://github.com/djshellshoxxx/patchtrace/actions/runs/38802363214): Linux **15,751 passed** but Ruff I001 import ordering error; Windows also failed Ruff. | BLOCKED |
+| **#80 Java retry QA correction** (`chatgpt/java-probe-qa-fix-20261016` -> #76) | Fixes I001 and adds bounded-retry/cancellation/missing-Java/OSError tests, no production changes. Run 38889191976 was in progress. Review and merge #80 to #76 only with current-head green, then require new #76 CI before merging #76 to main. | WAITING CI |
+| **#81 duplicate Java correction** | Created from #76 with just the Ruff fix; closed without merge upon discovering the broader parallel #80. Do not revive or duplicate the work. | CLOSED, SUPERSEDED |
+| **#61 skills/SPEC-56** | QA run [38664539071](https://github.com/djshellshoxxx/patchtrace/actions/runs/38664539071) failed frozen Windows smoke (`No module named 'patchtrace.unified.ir.cfg'`) on historical head; main has since advanced, so require new integrated branch build before any merge. | BLOCKED |
+| **#83 UE-R7** | Separate unified P15 unresolved-callee exact-identity correction, base D; verify and merge only with full current-head CI, avoiding concurrent edits to D. | OPEN, VERIFY |
+| **#79 and #82 LBL-32** | Both propose recipe-card A/A and noise controls, overlapping in `tier_r/shard.py`. #79 is stacked on #78 and deduplicates same pinned project/commit; #82 is based directly on D and carries LBL-31 changes. **Compare semantics, coverage, provenance and real recipe acceptance; select one integration path**, or factor distinct parts. Never blindly merge both. | DUPLICATE/OVERLAP |
+| **#67-#72 partial drafts** | Not presumed verified. #72 explicitly requests remaining draft/unmerged. #71 and #70 reported incomplete/unverified; inspect and validate separately, do not sweep-merge. | HELD |
+
+## Exact next sequence
+
+1. Poll current-head CI for #78 and #80, not earlier runs. Inspect failed job logs and repair on owner-safe isolated branches with red regression first. If green, merge in dependency order: #78 -> D and #80 -> #76 (merge commits on dependency branches to preserve ancestry); rerun D/#76 CI. Merge #76 or #64 to main only after the new SHA's Linux/Windows QA, Ruff and relevant native tests pass; respect expected head SHA and branch ownership.
+2. Reconcile #79 versus #82 before accepting LBL-32. Confirm no case selection can fabricate or suppress labels, source identity and licensing are verified, old/new controls remain clearly separated, and A/A and compiler-noise metrics do not become vulnerability/accuracy percentages. Keep the preregistered locked evaluation untouched.
+3. Continue the next unowned requirement from `docs/plans/master-todo-d.md` and `docs/plans/ledger-D.md` (unified G-U1..G-U8 live gates, label correctness and Tier R/Tier W acceptance, modular architecture, Windows standalone). Add specs before contract changes, focused red-green tests, exact evidence, full CI and schema drift checks. Do not mistake fixture-gate pass for actual engine success.
+
+## Verification and ownership
+
+This coordination session inspected source branches, diffs and GitHub Actions jobs, including full failure logs for #61, #64 and #76. It did **not** clone/run the repository locally: the execution container could not resolve `github.com`; GitHub connector reads/writes worked. No synthetic evaluation was promoted to real-world accuracy. The active implementation work belongs to the original PR owners; this note is tracked on the dedicated `chatgpt/merge-first-handoff-20261016` branch for review.
+
+For the following session, begin with the real main head and open PR list; verify whether #78, #80, #79, #82 and #83 have progressed since this snapshot. Keep `tasks/todo.md` and `docs/qa.md` aligned when feature merges actually land.
+
+
+## Current-head follow-up: #78 Windows QA failure and independently isolated repair
+
+The earlier table's #78 "WAITING CI" status was superseded by [Windows QA run 38883698492](https://github.com/djshellshoxxx/patchtrace/actions/runs/38883698492), which completed with **2 failed, 17,891 passed, 81 skipped, 6 xfailed**. Exact failures:
+
+1. `tests/test_mutations_more.py::test_masked_body_rule_rejects_address_only_changes_and_records_them[string-literal-shout]`: a false positive still accepts a function whose only change is the address/decorated symbol of a string literal. The prior #78 COFF function-end repair cleared the `callee-swap` failure from #64 but did not mask quoted COFF RIP-relative relocation names.
+2. `tests/test_unified_read_model.py::test_filter_and_sort_budget_at_100000_rows`: the default sort took 0.8823 seconds versus the test's 0.75-second 5x shared-runner allowance; explicit column sorts took 0.0699 and 0.0756 seconds. Investigate repeatability and benchmark performance without relaxing acceptance merely to pass one noisy run.
+
+For item 1, a Linux Clang 17 cross-target (`x86_64-pc-windows-msvc`) synthetic C test confirmed that `emit("hello", v)` produces a quoted `"??_C@_05...hello..."` RIP-relative symbol and changing the literal decorates a different name even with otherwise identical function instructions. The original masking regex did not normalize those names; a standalone Python repro showed the mismatch.
+
+An isolated test-first repair now lives in **PR #92**, branch `chatgpt/lbl31-coff-quoted-rip-20261016` -> `chatgpt/lbl31-output-persistence-20261015`. Test commit `c72600debeae62445932e894b03726f3baae9539` adds `test_masked_body_ignores_msvc_coff_quoted_rip_symbols` with actual COFF assembly forms. Code commit `6e71bfabbf5ef75449b46981e9e822f7e555a6bf` masks entire double-quoted RIP operand symbol tokens, preserving bare symbol behavior. The standalone regex check succeeded, but **no current-head full repository Python/ruff or Windows Clang 20 test pass has been claimed yet**. Integrate #92 into #78 only with green QA on #92, then require new #78 current-head CI; the 100k-row failure is separately open.
+
+PR #81 remained closed without merge after discovering PR #80 already addressed the Java probe lint failure more thoroughly. PRs #85, #86, #88, #89 are parallel in-flight work on other areas; avoid duplicate patches and branch ownership conflicts.
+
+
+### Independent performance-test stabilization (PR #94)
+
+The separate test-only PR [#94](https://github.com/djshellshoxxx/patchtrace/pull/94), branch `chatgpt/unified-sort-perf-qa-20261016` -> LBL-31 branch, addresses the 100k-row sort timing failure from run 38883698492. Every sort is run three times; the full output is verified identical across attempts; the lowest elapsed time is checked against the **unchanged 0.75-second threshold**, matching the test file's pre-existing best-of-five paint measurement. No production sorting algorithm, contract, or display behavior was changed. A standalone 100k tuple-key CPython 3.13 microbenchmark on Linux measured ~0.04–0.07 seconds, but this is NOT an actual PatchTrace 100k UnifiedViewModel or Windows CI measurement. Recheck the #94 current-head GHA; merge only after passing tests. Because #92 and #94 are independent siblings based on #78, merge each into #78 in sequence (expected SHA, no force-push), then run #78's merged-head cross-OS gates before integrating D.
+
+
+### Supersession update: owner branch advanced during coordination
+
+**PR #92 is now CLOSED UNMERGED**, because the owner of PR #78 independently implemented and tested the same COFF quoted-literal masking bug, including unquoted decorated labels and richer Windows assembly diagnostics. The earlier PR #92 implementation and tests remain as an audit trail but should **not** be merged. Owner PR #78 advanced from 5f30a791 through 6c8cb748 to 2019a37fa65fc37f4758469143c2daadc07e0098; look up its live head again.
+
+PR #78's latest implementation also added a second **identical unreachable** `if key is _default_key: sorted(indices,...)` fast-path block to `src/patchtrace/unified/read_model.py` (commit 0380502), although the first identical fast path already existed at 5f30a791. This makes the second performance change a no-op. Review comment 6214037887 reports this and recommends removing the duplicate; do not accept it as benchmark evidence.
+
+PR #94 remains an independent, **test-only** three-trial best-of check with unchanged 0.75s budget. It is not merged, current CI was queued at the last check; it can be retained if the 100k-row test remains nondeterministic under shared CI scheduling. The owner added an additive Windows-focused `.github/workflows/lbl31-regressions.yml` gate (head 2019a37) with both compiler and sorting regressions, while full cross-OS QA remains mandatory. At the check, runs 38890860837 (native), 38890860906 (focused Windows), 38890860899 (corpus) and 38890861001 (full QA) were pending/queued.
+
+PR #80's revised head is 89500e12068656fa1958443ef634064effcbc40b and QA run 38889673943 was in progress. Docs handoff PR #87 head `116a2e257fe7c0a6ef2ca44c92b540878a0256c4` was queued for QA run 38890775089. **No unverified PR was merged**. The next integrator should re-poll these exact current heads and promote only fresh green checks, without repeating superseded #92 code.

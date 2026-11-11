@@ -1,0 +1,48 @@
+{
+  "$id": "https://patchtrace.local/schemas/diaphora/1/DiaphoraDiffManifest.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "Sidecar a user (or a later PatchTrace runner) writes next to the result; binds it to the exact pair.",
+  "properties": {
+    "contract": {
+      "const": "diaphora-diff/1",
+      "title": "Contract",
+      "type": "string"
+    },
+    "diaphora_version": {
+      "default": "",
+      "maxLength": 4096,
+      "title": "Diaphora Version",
+      "type": "string"
+    },
+    "newer_binary_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Newer Binary Sha256",
+      "type": "string"
+    },
+    "older_binary_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Older Binary Sha256",
+      "type": "string"
+    },
+    "orientation": {
+      "const": "older->newer",
+      "title": "Orientation",
+      "type": "string"
+    },
+    "result_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Result Sha256",
+      "type": "string"
+    }
+  },
+  "required": [
+    "contract",
+    "orientation",
+    "older_binary_sha256",
+    "newer_binary_sha256",
+    "result_sha256"
+  ],
+  "title": "DiaphoraDiffManifest",
+  "type": "object"
+}

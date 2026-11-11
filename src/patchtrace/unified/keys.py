@@ -1,20 +1,22 @@
 """SPEC-31 identities and cache keys (02 s5): every input digest, nothing else. Pure.
 
-Each key is `enrichment.identity.domain_id(<domain>, 1, payload)` over canonical JSON; domains are listed in
+Keys use `enrichment.identity.domain_id(<domain>, version, payload)` over canonical JSON; domains are listed in
 `DOMAINS`. Timestamps, absolute paths and display preferences are never hashed, except the event identity
 `unified_run_id`, whose payload is defined to include `started_utc` (02 s4).
 """
 from __future__ import annotations
 
+import hashlib
+import json
 import re
 from collections.abc import Iterable, Mapping, Sequence
 
 from ..enrichment.identity import domain_id
 from .contracts import IrKeyInputs, ResultKeyInputs, SourceRef, UnifiedResultManifest, canonical_utc
-from .limits import DEFAULT_LIMITS, UnifiedLimits
+from .limits import DEFAULT_LIMITS, Budget, UnifiedLimits
 
 DOMAINS = ('unified-ir', 'unified-result', 'unified-config', 'unified-manual', 'unified-row', 'unified-run',
-           'unified-limits', 'unified-ingest-limits', 'unified-sources')
+           'unified-limits', 'unified-ingest-limits', 'unified-sources', 'unified-source-content')
 ENGINE_VERSION = 'ude/1'
 _RVA_MAX = 2**32 - 1
 _SHA256 = re.compile(r'[0-9a-f]{64}')
@@ -56,6 +58,42 @@ def ir_cache_eligible(inputs: IrKeyInputs) -> bool:
 
 def source_set_digest(sources: Iterable[SourceRef]) -> str:
     return domain_id('unified-sources', 1, _source_rows(sources))
+
+
+def text_sha256(text: str, budget: Budget | None = None) -> str:
+    """Hash exact UTF-8 source text with bounded cooperative checkpoints, without one large byte copy."""
+    digest = hashlib.sha256()
+    if budget is not None:
+        budget.check()
+    for start in range(0, len(text), 65536):
+        if budget is not None:
+            budget.check()
+        digest.update(text[start:start + 65536].encode('utf-8'))
+    if budget is not None:
+        budget.check()
+    return digest.hexdigest()
+
+
+def source_content_digest(source: str, snapshot: object, *, budget: Budget | None = None) -> str:
+    """Bind a validated source snapshot without folding text that remains distinct in persisted rows.
+
+    Dictionary keys are canonical, record-list order is retained, and ASCII escaping also preserves lone
+    surrogates for the adapters' existing sanitizers. Hash before domain separation so NFC normalization in
+    the shared identity encoder cannot collapse distinct source text.
+    """
+    if budget is not None:
+        budget.check()
+    digest = hashlib.sha256()
+    encoder = json.JSONEncoder(sort_keys=True, separators=(',', ':'), ensure_ascii=True, allow_nan=False)
+    for text in encoder.iterencode(snapshot):
+        for start in range(0, len(text), 65536):
+            if budget is not None:
+                budget.check()
+            digest.update(text[start:start + 65536].encode('ascii'))
+    if budget is not None:
+        budget.check()
+    return domain_id('unified-source-content', 2,
+                     {'source': source, 'snapshot_sha256': digest.hexdigest()})
 
 
 def result_key(inputs: ResultKeyInputs) -> str:

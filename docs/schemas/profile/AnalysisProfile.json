@@ -82,6 +82,7 @@
       "default": "disabled",
       "enum": [
         "disabled",
+        "local",
         "online"
       ],
       "title": "Symbol Policy",

@@ -87,7 +87,7 @@ def test_widget_ids_tooltips_and_accessible_names(qtbot, window):
                                  (bundle.cancel_button, 'setup.backend.verify_cancel',
                                   'Cancel bundle verification')):
         assert widget.objectName() == tip_id and widget.accessibleName() == name
-        assert widget.toolTip() == tooltip(tip_id) and widget.accessibleDescription().startswith('What:')
+        assert widget.toolTip() == tooltip(tip_id) and widget.accessibleDescription() and not widget.accessibleDescription().startswith('What:')
 
 
 def test_hidden_without_a_bundle(qtbot, window, monkeypatch):

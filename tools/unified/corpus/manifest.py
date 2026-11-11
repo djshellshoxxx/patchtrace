@@ -12,7 +12,7 @@ import json
 from collections.abc import Iterable, Mapping
 from typing import Literal
 
-from pydantic import BaseModel, ConfigDict, ValidationError
+from pydantic import BaseModel, ConfigDict, ValidationError, model_serializer
 
 from tools.calibration.common import digest, strict_json
 from tools.calibration.tier_r import contracts as C
@@ -58,6 +58,17 @@ class ManifestPair(_Strict):
     functions: int
     by_label: dict[str, int]
     mutation: MutationFacts | None = None
+    variant: str = ''                 # P1 only: `link-order` or the nuisance (icf, timestamp, guid, path)
+    older_rvas: tuple[C.Rva, ...] | None = None   # None: legacy manifest, cannot attest endpoint coverage
+    newer_rvas: tuple[C.Rva, ...] | None = None
+
+    @model_serializer(mode='wrap')
+    def _omit_legacy_coverage(self, handler):
+        data = handler(self)
+        for key in ('older_rvas', 'newer_rvas'):
+            if data.get(key) is None:
+                data.pop(key, None)
+        return data
 
 
 class Pending(_Strict):
@@ -81,8 +92,16 @@ def role_of(doc: C.KnownAnswerLabels) -> tuple[str | None, str]:
     if doc.stratum in STRATUM_ROLE:
         return STRATUM_ROLE[doc.stratum], ''
     if doc.stratum == 'mutation':
-        known = doc.case.get('unified_class') in classes.BY_ID
-        return ('mutation' if known else None), 'the case has no known unified_class'
+        case = doc.case
+        if case.get('unified_class') not in classes.BY_ID:
+            return None, 'the case has no known unified_class'
+        if not isinstance(case.get('target'), str) or not isinstance(case.get('verdicts'), list):
+            return None, 'the case has no target or no verdicts'
+        if tuple(case['verdicts']) != classes.BY_ID[case['unified_class']].verdicts:
+            # the accepted verdicts belong to the class registry; a document that widens them (a leak verdict, `unknown`)
+            # would turn a normaliser bug into a detected mutant
+            return None, f'the case verdicts differ from the {case["unified_class"]} class registry'
+        return 'mutation', ''
     return None, f'stratum {doc.stratum} belongs to the SPEC-32 evaluation'
 
 
@@ -91,18 +110,19 @@ def _pair(doc: C.KnownAnswerLabels, role: str) -> ManifestPair:
         return Image(sha256=side.sha256, size=side.size, file_name=side.file_name)
     case = doc.case
     mutation = MutationFacts(unified_class=case['unified_class'], target=case['target'],
-                             verdicts=tuple(case['verdicts'])) if role == 'mutation' else None
+                             verdicts=classes.BY_ID[case['unified_class']].verdicts) if role == 'mutation' else None
     return ManifestPair(
         pair_id=doc.pair_id, role=role, gates=GATES[role], gated=role not in NOT_GATED, project=doc.project,
         lineage=doc.lineage, x_vs_x=doc.older.sha256 == doc.newer.sha256, older=image(doc.older),
         newer=image(doc.newer), labels_sha256=doc.digest_sha256, functions=doc.summary.functions,
-        by_label=dict(doc.summary.by_label), mutation=mutation)
+        by_label=dict(doc.summary.by_label), mutation=mutation,
+        variant=aa.variant_of(doc) if role == 'P1' else '',
+        older_rvas=tuple(sorted({f.old_rva for f in doc.functions if f.old_rva is not None})),
+        newer_rvas=tuple(sorted({f.new_rva for f in doc.functions if f.new_rva is not None})))
 
 
 def pending() -> tuple[Pending, ...]:
-    p1 = [Pending(item=f'P1:{name}', reason=f'{what}; {aa.P1_PENDING_REASON}') for name, what in aa.P1_PENDING]
-    muts = [Pending(item=f'mutation:{p.id}', reason=f'needs {p.needs}: {p.reason}') for p in classes.PENDING]
-    return tuple(p1 + muts)
+    return tuple(Pending(item=f'mutation:{p.id}', reason=f'needs {p.needs}: {p.reason}') for p in classes.PENDING)
 
 
 def build(docs: Iterable[C.KnownAnswerLabels], toolchain: Mapping[str, str]) -> CorpusManifest:

@@ -17,6 +17,7 @@ import socket
 import sqlite3
 import stat
 import tempfile
+import unicodedata
 from pathlib import Path
 from uuid import uuid4
 
@@ -56,10 +57,12 @@ def _within_depth(value, limit: int = MAX_JSON_DEPTH) -> bool:
 
 def strict_json(text: str) -> dict:
     def pairs(items):
-        value = {}
+        value, seen = {}, set()
         for key, item in items:
-            if key in value:
+            folded = unicodedata.normalize('NFC', key)  # NFC and NFD spellings are one key, as for archive member names
+            if folded in seen:
                 raise ValueError(f'PT-SCHEMA: duplicate JSON key {key}')
+            seen.add(folded)
             value[key] = item
         return value
     def invalid_constant(value):
@@ -244,15 +247,50 @@ def _abandoned_creation(path: Path) -> bool:
         return False
 
 
+def creation_directory_available(root: Path) -> bool:
+    """Read-only preflight; actual create still owns kernel locking and database refusal.
+
+    Failed creation intentionally leaves the persistent lock inode. Only that one
+    regular entry is allowed alongside otherwise unused destination space.
+    """
+    root = Path(root)
+    try:
+        try:
+            metadata = root.lstat()
+        except FileNotFoundError:
+            return True
+        if not stat.S_ISDIR(metadata.st_mode):
+            return False
+        with os.scandir(root) as entries:
+            first = next(entries, None)
+            return first is None or (first.name == '.patchtrace.lock'
+                                     and first.is_file(follow_symlinks=False) and next(entries, None) is None)
+    except (OSError, ValueError):
+        return False
+
+
 class ProjectLock:
     """Kernel-owned advisory lock; crashes release it without stealing a live lock file."""
+    def _check_identity(self, descriptor: int) -> None:
+        opened = os.fstat(descriptor)
+        current = self.path.lstat()
+        if (not stat.S_ISREG(opened.st_mode) or not stat.S_ISREG(current.st_mode)
+                or opened.st_nlink != 1 or current.st_nlink != 1
+                or not os.path.samestat(opened, current)):
+            raise OSError('Project lock is not one unchanged regular file')
+
     def __init__(self, root: Path):
         self.path = safe_path(root, '.patchtrace.lock')
         self.stream = None
+        descriptor = None
         try:
-            flags = os.O_RDWR | os.O_CREAT | getattr(os, 'O_NOFOLLOW', 0)
-            fd = os.open(self.path, flags, 0o600)
-            self.stream = os.fdopen(fd, 'r+b')
+            flags = (os.O_RDWR | os.O_CREAT | getattr(os, 'O_NOFOLLOW', 0)
+                     | getattr(os, 'O_NONBLOCK', 0))
+            descriptor = os.open(self.path, flags, 0o600)
+            self._check_identity(descriptor)
+            self.stream = os.fdopen(descriptor, 'r+b')
+            descriptor = None  # the buffered stream now owns this handle
+            fd = self.stream.fileno()
             if os.name == 'nt':
                 import msvcrt
                 if os.fstat(fd).st_size == 0:
@@ -263,12 +301,15 @@ class ProjectLock:
             else:
                 import fcntl
                 fcntl.flock(fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
+            self._check_identity(fd)
             payload = json.dumps({'pid': os.getpid(), 'host': socket.gethostname(),
                                   'token': str(uuid4()), 'opened': now()}).encode()
             self.stream.seek(0)
             self.stream.write(payload.ljust(4096, b' '))
             self.stream.flush()
         except OSError as exc:
+            if descriptor is not None:
+                os.close(descriptor)
             if self.stream:
                 self.stream.close()
                 self.stream = None
@@ -303,7 +344,8 @@ class ProjectStore:
             except OSError as exc:
                 raise ValueError(f'PT-STORAGE: project directory cannot be created: {exc.strerror or exc}') from exc
         if not self.root.is_dir():
-            raise ValueError('PT-STORAGE: project directory does not exist')
+            raise ValueError('PT-STORAGE: project path is not a directory' if self.root.exists()
+                             else 'PT-STORAGE: project directory does not exist')
         self.lock = ProjectLock(self.root)
         created_database = False
         try:
@@ -332,6 +374,10 @@ class ProjectStore:
                 version = self.connection.execute('PRAGMA user_version').fetchone()[0]
                 if version != SCHEMA_VERSION:
                     raise ValueError(f'PT-SCHEMA: unsupported database version {version}')
+                # PatchTrace writes two plain tables. A view or trigger can only come from someone else's file, and a
+                # view named current_snapshot could run an unbounded query inside load().
+                if self.connection.execute("SELECT 1 FROM sqlite_master WHERE type IN ('view','trigger') LIMIT 1").fetchone():
+                    raise ValueError('PT-STORAGE: project database contains views or triggers; refusing to open')
                 if self.connection.execute('PRAGMA quick_check').fetchone()[0] != 'ok':
                     raise ValueError('PT-STORAGE: database integrity check failed')
         except Exception as exc:
@@ -491,7 +537,7 @@ class ProjectStore:
             chunk = delete[start:start + 500]
             self.connection.execute(f'DELETE FROM history WHERE sequence IN ({",".join("?" * len(chunk))})', chunk)
 
-    def load(self) -> ComparisonProject:
+    def load(self, *, recover_interrupted: bool = True) -> ComparisonProject:
         import hashlib
         self._check_open()
         try:
@@ -508,7 +554,7 @@ class ProjectStore:
                                  f'(at {_error_location(exc)})') from None
             self._verify_files(project)
             self.project_id = project.id
-            interrupted = [run for run in project.runs if run.status in {'queued', 'running'}]
+            interrupted = [run for run in project.runs if recover_interrupted and run.status in {'queued', 'running'}]
             for run in interrupted:
                 run.status = 'failed'
                 run.error = 'Analysis was interrupted before a terminal result was saved'

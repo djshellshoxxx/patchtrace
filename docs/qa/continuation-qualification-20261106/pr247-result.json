@@ -1,0 +1,48 @@
+{
+  "head": "75903db30b8f66e6426d3f5674b1d84fe2b190c3",
+  "tree": "cdbab24d14295b4450cd0d3c744d76734c98a561",
+  "initial_status": "",
+  "worktree": "/workspace/scratch/c4fbe5e6f72c/pt-continuation",
+  "command": [
+    "/workspace/scratch/e6b4398e92df/pt-venv/bin/python",
+    "-m",
+    "pytest",
+    "-q",
+    "--junitxml=/workspace/scratch/c4fbe5e6f72c/continuation-full/pytest.xml"
+  ],
+  "environment": {
+    "PYTEST_ADDOPTS": "unset",
+    "PYTHONPATH": "src",
+    "QT_QPA_PLATFORM": "offscreen",
+    "PYTHONDONTWRITEBYTECODE": "1"
+  },
+  "start_utc": "2026-11-06T08:22:54.199479+00:00",
+  "returncode": 1,
+  "duration_seconds": 3366.415,
+  "end_utc": "2026-11-06T09:19:00.614932+00:00",
+  "final_head": "75903db30b8f66e6426d3f5674b1d84fe2b190c3",
+  "final_tree": "cdbab24d14295b4450cd0d3c744d76734c98a561",
+  "final_status": "",
+  "log_sha256": "ce41380945b1cff7ceed9b4e45276c3a92c99d7893e4b03a7bed3d84ee97f290",
+  "junit_sha256": "17b1ca01e4e734b273e0244101f7922e6d148201a6e8daaba3ceaf702400cbd0",
+  "suites": [
+    {
+      "name": "pytest",
+      "errors": "0",
+      "failures": "1",
+      "skipped": "145",
+      "tests": "20430",
+      "time": "3355.624",
+      "timestamp": "2026-11-06T00:22:54.633964-08:00",
+      "hostname": "abfc2396d032"
+    }
+  ],
+  "failures": [
+    {
+      "file": "tests.test_network_consent_guard",
+      "name": "test_a_local_unix_socket_is_not_network",
+      "kind": "failure",
+      "message": "PermissionError: [Errno 1] Operation not permitted"
+    }
+  ]
+}

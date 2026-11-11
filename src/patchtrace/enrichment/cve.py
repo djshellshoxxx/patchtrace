@@ -161,13 +161,28 @@ def parse_snapshots(data: bytes) -> list[CveSnapshot]:
         if not isinstance(item, dict):
             raise EnrichmentError('PT-ENRICH-INPUT', f'snapshot {index} is not an object')
         try:
-            snapshots.append(CveSnapshot.model_validate_json(json.dumps(item)))
+            snapshot = CveSnapshot.model_validate_json(json.dumps(item))
         except ValidationError as exc:
             problem = exc.errors()[0]
             where = '.'.join(str(part) for part in problem.get('loc', ()))
             raise EnrichmentError('PT-ENRICH-INPUT', f'snapshot {index} is not an enrichment/1 record '
                                   f'({where}: {problem.get("msg", "invalid")})'[:300]) from None
+        try:
+            _timestamp(snapshot.retrieved_at)
+        except EnrichmentError:
+            raise EnrichmentError('PT-ENRICH-INPUT', f'snapshot {index} retrieved_at is not ISO 8601 with a '
+                                  'timezone') from None
+        if snapshot.snapshot_id != _snapshot_id(snapshot.cve_id, snapshot.normalization_version,
+                                                snapshot.response_digests):
+            raise EnrichmentError('PT-ENRICH-INPUT', f'snapshot {index} snapshot_id does not match its '
+                                  'provider digests')
+        snapshots.append(snapshot)
     return snapshots
+
+
+def _snapshot_id(cve_id: str, normalization_version: int, digests: Mapping[str, str]) -> str:
+    return identity.domain_id('cve-snapshot', 1, {
+        'cve_id': cve_id, 'normalization_version': normalization_version, 'response_digests': dict(digests)})
 
 
 def _tenths(value) -> int | None:
@@ -360,8 +375,7 @@ def _snapshot(cve_id: str, responses: Mapping[str, bytes], retrieved_at: str) ->
 
     cvss = [r for data in parsed.values() for r in data['cvss']]
     return CveSnapshot(
-        snapshot_id=identity.domain_id('cve-snapshot', 1, {
-            'cve_id': cve_id, 'normalization_version': NORMALIZATION_VERSION, 'response_digests': digests}),
+        snapshot_id=_snapshot_id(cve_id, NORMALIZATION_VERSION, digests),
         cve_id=cve_id, normalization_version=NORMALIZATION_VERSION, response_digests=digests,
         retrieved_at=retrieved_at,
         descriptions=tuple(d for data in parsed.values() for d in data['descriptions']),
@@ -409,8 +423,7 @@ def _merge_snapshots(cve_id: str, chosen: Mapping[str, CveSnapshot]) -> CveSnaps
     for c in cwes:
         cwes_by.setdefault(c.source, []).append(c.value)
     return CveSnapshot(
-        snapshot_id=identity.domain_id('cve-snapshot', 1, {
-            'cve_id': cve_id, 'normalization_version': NORMALIZATION_VERSION, 'response_digests': digests}),
+        snapshot_id=_snapshot_id(cve_id, NORMALIZATION_VERSION, digests),
         cve_id=cve_id, normalization_version=NORMALIZATION_VERSION, response_digests=digests,
         retrieved_at=oldest.retrieved_at,
         descriptions=tuple(d for p in providers for d in chosen[p].descriptions if _provider(d.source) == p),

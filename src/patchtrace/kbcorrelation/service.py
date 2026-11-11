@@ -12,6 +12,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import threading
 import uuid
 from collections.abc import Callable, Iterable, Mapping, Sequence
 from dataclasses import dataclass, field
@@ -34,6 +35,7 @@ from .contracts import (
     CveCard,
     InvestigationRevision,
     Lead,
+    ProductScope,
     SearchScope,
     SourceRef,
     domain_id,
@@ -41,13 +43,15 @@ from .contracts import (
 from .export import EXTENSIONS, to_json, to_markdown
 from .ids import KbSyntaxError, normalise_cve, normalise_kb_edge
 from .index import Lookup, ReverseIndex
+from .leads import CARD_KEV, ExploitationLookup, NullExploitation, kev_source_of, kev_text
 from .limits import MAX_SEARCH_MONTHS
 from .lineage import IndexRow
 from .pairs import LocalFile
 from .plan import index_plan, local_plan
 from .ports import AdvisoryPort, ClockPort, ProjectPort
-from .products import clean_text
+from .products import clean_text, find_scopes
 from .recovery import repair
+from .sources.cvrf import SourceError, load_json
 from .store import AttachRequest, Fault, KbcStoreError, ProjectAttachment, WorkspaceStore, atomic_write
 from .workflow import Event
 
@@ -63,6 +67,7 @@ OUTCOME_BY_STATUS = {'found': 'METADATA_READY', 'partial': 'METADATA_PARTIAL', '
                      'not_searched': 'SCOPE_REQUIRED'}
 UNSELECTED_SCOPE = domain_id('kbc.scope', 1, {'unselected': True})
 SCOPE_FILE_BYTES = 64 * 1024
+PRODUCTS_SHOWN = 200
 TEXT_KB6 = 'This update applies to several products. Choose the product and architecture of the files you are analyzing.'
 TEXT_KB7 = ('The advisory does not name the changed file. Enter a file name such as clfs.sys, or choose two files '
             'you already have.')
@@ -121,6 +126,9 @@ class Outcome:
 
 def _fail(code: str, message: str) -> KbcStoreError:
     return KbcStoreError(code, message)
+
+
+MIN_PAIR_PREFIX = 8
 
 
 def parse_lead(raw: str) -> tuple[str, str]:
@@ -193,12 +201,20 @@ class KbService:
         if months:
             names = [m.strip() for m in months.split(',') if m.strip()]
         if scope_file is not None:
+            # The strict source-document JSON rules apply: no duplicate keys, NaN or invalid UTF-8, bounded depth,
+            # and both values must be lists of strings (issue #105 BUG-KBC-3).
+            bad = _fail('PT-KBC-SCOPE', 'the scope file is not JSON with "months" and "doc_ids" lists of strings')
             try:
-                data = json.loads(self._read_small(scope_file))
-                names += list(data.get('months', []))
-                doc_ids += list(data.get('doc_ids', []))
-            except (ValueError, AttributeError, TypeError):
-                raise _fail('PT-KBC-SCOPE', 'the scope file is not JSON with "months" and "doc_ids" lists') from None
+                data = load_json(self._read_small(scope_file))
+            except SourceError:
+                raise bad from None
+            if not isinstance(data, dict):
+                raise bad
+            for key, target in (('months', names), ('doc_ids', doc_ids)):
+                values = data.get(key, [])
+                if not isinstance(values, list) or not all(isinstance(v, str) for v in values):
+                    raise bad
+                target += values
         if not names and not doc_ids:
             return None
         if len(set(names)) > MAX_SEARCH_MONTHS:
@@ -213,7 +229,7 @@ class KbService:
             raise _fail('PT-KBC-SCOPE', 'the scope names an invalid month (YYYY-Mon) or document id') from None
 
     @staticmethod
-    def _read_small(path: Path) -> str:
+    def _read_small(path: Path) -> bytes:
         try:
             with open(path, 'rb') as handle:
                 data = handle.read(SCOPE_FILE_BYTES + 1)
@@ -221,7 +237,7 @@ class KbService:
             raise _fail('PT-KBC-INPUT', 'the scope file cannot be read') from None
         if len(data) > SCOPE_FILE_BYTES:
             raise _fail('PT-KBC-SCOPE', 'the scope file is too large')
-        return data.decode('utf-8', errors='replace')
+        return data
 
     @staticmethod
     def _lookup(index: ReverseIndex, kind: str, value: str, scope: SearchScope | None, scope_id: str | None,
@@ -297,12 +313,52 @@ class KbService:
 
     # ------------------------------------------------------------------------------------------ products, components
 
+    def product_catalogue(self, query: str = '', *, cancel: threading.Event | None = None) -> Outcome:
+        """Browse active local product records without inventing a lead or creating an investigation."""
+        if not isinstance(query, str) or len(query) > 200:
+            raise _fail('PT-KBC-INPUT', 'The product filter must be text of at most 200 characters.')
+        if cancel is not None and cancel.is_set():
+            raise _fail('PT-KBC-CANCEL', 'Product browsing was cancelled.')
+        with self._open(create=False) as ws:
+            sources = ws.sources()
+            snapshot = tuple(source.model_dump_json() for source in sources)
+            index, unreadable = load_index(ws, self.ports)
+            if cancel is not None and cancel.is_set():
+                raise _fail('PT-KBC-CANCEL', 'Product browsing was cancelled.')
+            if tuple(source.model_dump_json() for source in ws.sources()) != snapshot:
+                raise _fail('PT-KBC-STALE', 'The advisory sources changed during product browsing; list them again.')
+            if unreadable:
+                raise _fail('PT-KBC-VERIFY', 'Some stored sources are unreadable; restore them before listing products. '
+                            'A missing newer revision could otherwise revive an older product.')
+        scopes = index.active_scopes()
+        if query.strip():
+            scopes = find_scopes(scopes, query)
+        scopes = sorted(scopes, key=lambda scope: (scope.display_name, scope.scope_id))
+        shown = scopes[:PRODUCTS_SHOWN]
+        result = {'contract': 'kbcorrelation/1', 'products': [scope.model_dump(mode='json') for scope in shown],
+                  'source_snapshot': snapshot, 'sources': [source.model_dump(mode='json') for source in sources],
+                  'unreadable': unreadable, 'total_matches': len(scopes), 'limit': PRODUCTS_SHOWN,
+                  'truncated': len(scopes) > len(shown)}
+        lines = ['Stored products only; no KB/CVE lookup or binary applicability is inferred.',
+                 'Choose a product explicitly, then preview two local files.']
+        lines += [f'{scope.scope_id[:12]}  {clean_text(scope.display_name, 150)}  '
+                  f'{scope.architecture}  ({scope.mapping} mapping; {len(scope.source_product_ids)} source product refs)'
+                  for scope in shown]
+        if not shown:
+            lines.append('No matching products in the readable active local documents. Import sources or refine the filter.')
+        if result['truncated']:
+            lines.append(f'Showing {len(shown)} of {len(scopes)} matches. Refine the product filter to see other rows.')
+        return Outcome(0 if shown else 4, 'complete', result, '\n'.join(lines))
+
     def products(self, investigation: str) -> Outcome:
         with self._open() as ws:
             rev = self._get(ws, investigation)
             index, _ = load_index(ws, self.ports)
         wanted = set(rev.scope_ids)
         scopes = [_scope_dict(s) for s in index.scopes() if s.scope_id in wanted]
+        if wanted - {s['scope_id'] for s in scopes}:
+            raise _fail('PT-KBC-INPUT', 'the product mapping is no longer current; repeat the search '
+                        'and select the product again before listing products')
         result = {'contract': 'kbcorrelation/1', 'investigation_id': rev.investigation_id,
                   'selected_scope_id': rev.selected_scope_id, 'products': scopes}
         if not scopes:
@@ -412,7 +468,10 @@ class KbService:
                 raise _fail('PT-KBC-INPUT', 'that product is not one of the products listed for the lead')
             rev = rev.model_copy(update={'selected_scope_id': scope_id})
             index, _ = load_index(ws, self.ports)
-            scope = next(s for s in index.scopes() if s.scope_id == scope_id)
+            scope = next((s for s in index.scopes() if s.scope_id == scope_id), None)
+            if scope is None:
+                raise _fail('PT-KBC-INPUT', 'the selected product mapping is no longer current; repeat the search '
+                            'and select the product again before resolving pairs')
             entered = sorted({*names, *(d.next for d in ws.decisions(rev.investigation_id)
                                         if d.op == 'component-name')})
             cards, refs = self._lead_cards(index, rev, ws)
@@ -475,14 +534,22 @@ class KbService:
 
     @staticmethod
     def _pick_pair(found, pair_id: str | None):
-        """The pair named by ``pair_id`` (a prefix), else the first unblocked candidate, else None."""
+        """The explicitly named pair, else the sole distinct unblocked candidate; never infer a choice from order."""
         every = [pair for res in found for pair in res.pairs]
         if pair_id is None:
-            return next((p for p in every if p.grade != 'X'), None)
-        pair = next((p for p in every if p.pair_id.startswith(pair_id)), None)
-        if pair is None:
+            viable = {p.pair_id: p for p in every if p.grade != 'X'}
+            if len(viable) > 1:
+                raise _fail('PT-KBC-INPUT', f'{len(viable)} viable pairs remain; list them with \"kb pairs\" '
+                            'and select one with --pair')
+            return next(iter(viable.values()), None)
+        if len(pair_id) < MIN_PAIR_PREFIX:
+            raise _fail('PT-KBC-INPUT', f'name a pair by at least {MIN_PAIR_PREFIX} characters of its id')
+        matches = {p.pair_id: p for p in every if p.pair_id.startswith(pair_id)}
+        if len(matches) > 1:                        # never pick one silently (issue #105 BUG-KBC-9)
+            raise _fail('PT-KBC-INPUT', f'{len(matches)} pairs start with that prefix; give more of the id')
+        if not matches:
             raise _fail('PT-KBC-INPUT', 'that pair is not a candidate for this lead; list them with "kb pairs"')
-        return pair
+        return next(iter(matches.values()))
 
     def plan(self, investigation: str, *, pair_id: str | None = None, product: str | None = None,
              files: Iterable[str] = ()) -> Outcome:
@@ -504,19 +571,31 @@ class KbService:
 
     # ------------------------------------------------------------------------------------------ acquire
 
+    def _acquire_owner(self, investigation: str) -> tuple[int, str, tuple[str, ...]]:
+        with self._open(create=False) as ws:
+            revision = self._get(ws, investigation)
+            return (revision.revision, revision.model_dump_json(),
+                    tuple(source.model_dump_json() for source in ws.sources()))
+
     def acquire(self, investigation: str, directory: str, *, pair_id: str | None = None, product: str | None = None,
                 files: Iterable[str] = (), name: str | None = None, consent_hosts: Sequence[str] = (),
-                consent_plan: str = '', offline: bool = False) -> Outcome:
+                consent_plan: str = '', offline: bool = False, cancel: threading.Event | None = None,
+                expected_revision: int | None = None) -> Outcome:
         """Plan the file-index pair, and fetch it only for consent naming exactly the planned hosts and ``plan_sha``.
         Without matching consent the exact plan is returned with exit 2 and nothing is requested."""
         if self.env.acquirer is None or self.env.file_index is None:
             raise _fail('PT-KBC-UNSUPPORTED', 'downloading is not available in this build')
+        result = {'contract': 'kbcorrelation/1', 'investigation_id': investigation, 'plan': None, 'pair': None}
+        if cancel is not None and cancel.is_set():
+            return Outcome(5, 'cancelled', result, 'Acquisition cancelled; nothing was imported.')
+        owner = self._acquire_owner(investigation)
+        if expected_revision is not None and owner[0] != expected_revision:
+            raise _fail('PT-KBC-STALE', 'the investigation changed after preview; review the acquisition again')
         got = self._resolve_pairs(investigation, product, files)
         if isinstance(got[1], Outcome):
             return got[1]
         rev, found, _, _ = got
         pair = self._pick_pair(found, pair_id)
-        result = {'contract': 'kbcorrelation/1', 'investigation_id': rev.investigation_id, 'plan': None, 'pair': None}
         if pair is None:
             return Outcome(4, 'unavailable', result, 'There is no pair candidate to acquire; see "kb pairs".')
         result['pair'] = self._pair_dict(pair)
@@ -534,10 +613,22 @@ class KbService:
             text = plan.text if result['plan'] else exc.message
             return Outcome(2, 'failed', result, text, error=f'{exc.code}: {exc.message}')
         try:
+            def check_current():
+                if cancel is not None and cancel.is_set():
+                    raise _fail('PT-KBC-CANCEL', 'Acquisition cancelled; nothing was imported.')
+                if self._acquire_owner(investigation) != owner:
+                    raise _fail('PT-KBC-STALE', 'the investigation or advisory sources changed during acquisition; '
+                                'review the acquisition again')
+
+            def import_current(older, newer, destination):
+                check_current()
+                return self.import_pair(rev.investigation_id, older, newer, destination, name=name,
+                                        expected_revision=owner[0], expected_source_snapshot=owner[2])
+
+            check_current()
             done = run_acquire(
                 plan, older_row, newer_row, port=self.env.acquirer, directory=directory, consent_hosts=consent_hosts,
-                consent_plan=consent_plan, offline=offline,
-                import_pair=lambda o, n, d: self.import_pair(rev.investigation_id, o, n, d, name=name))
+                consent_plan=consent_plan, offline=offline, cancel=cancel, import_pair=import_current)
         except KbcStoreError as exc:
             if exc.code != 'PT-KBC-CANCEL':
                 raise
@@ -550,26 +641,66 @@ class KbService:
     # ------------------------------------------------------------------------------------------ import-pair
 
     def import_pair(self, investigation: str, older: str, newer: str, directory: str, *, name: str | None = None,
-                    confirm_same_component: bool = False, dry_run: bool = False) -> Outcome:
+                    confirm_same_component: bool = False, dry_run: bool = False,
+                    expected_pair_id: str | None = None, expected_revision: int | None = None,
+                    expected_source_snapshot: tuple[str, ...] | None = None,
+                    selected_product: ProductScope | None = None) -> Outcome:
+        if selected_product is not None and (investigation != 'new' or expected_revision is not None
+                                             or expected_source_snapshot is None):
+            raise _fail('PT-KBC-INPUT', 'A product-only pair needs a new investigation and captured source records.')
         older_f, newer_f = self.env.inspect(older), self.env.inspect(newer)
         with self._open() as ws:
             rev = None if investigation == 'new' else self._get(ws, investigation)
-            scope_id = rev.selected_scope_id if rev and rev.selected_scope_id else UNSELECTED_SCOPE
+            if expected_revision is not None and (rev is None or rev.revision != expected_revision):
+                raise _fail('PT-KBC-STALE', 'the investigation changed after preview; review the pair again')
+            admitted_index = None
+            if expected_source_snapshot is not None:
+                admitted_index, unreadable = load_index(ws, self.ports)
+                # Sources are append-only: check after the read, then retain this index for the whole import.
+                if tuple(source.model_dump_json() for source in ws.sources()) != expected_source_snapshot:
+                    raise _fail('PT-KBC-STALE', 'the advisory sources changed after preview; review the pair again')
+                if selected_product is not None and unreadable:
+                    raise _fail('PT-KBC-STALE', 'a stored source can no longer be read; restore it and list products again')
+            scope_id = (selected_product.scope_id if selected_product is not None else
+                        rev.selected_scope_id if rev and rev.selected_scope_id else UNSELECTED_SCOPE)
+            if scope_id != UNSELECTED_SCOPE:
+                index = admitted_index
+                if index is None:
+                    index, _ = load_index(ws, self.ports)
+                scopes = index.active_scopes() if selected_product is not None else index.scopes()
+                selected = next((s for s in scopes if s.scope_id == scope_id), None)
+                if selected is None or (selected_product is not None and selected_product != selected):
+                    raise _fail('PT-KBC-STALE', 'the selected product mapping changed; select the product again')
+                if selected.architecture != 'unknown' and any(
+                        file.machine != selected.architecture for file in (older_f, newer_f)):
+                    raise _fail('PT-KBC-VERIFY', 'the selected product architecture contradicts these files; '
+                                'choose a matching product')
             pair = pr.propose_manual(older_f, newer_f, scope_id=scope_id,
                                      confirm_same_component=confirm_same_component)
+            if expected_pair_id is not None and pair.pair_id != expected_pair_id:
+                raise _fail('PT-KBC-STALE', 'the binary pair or product changed after preview; review the pair again')
             plan = local_plan(pair)
             if pair.grade == 'X':
                 return self._blocked(pair)
             if dry_run:
                 return Outcome(0, 'complete', {'contract': 'kbcorrelation/1', 'plan': plan.as_dict(),
+                                               'investigation_revision': rev.revision if rev is not None else None,
+                                               **({'selected_product': selected_product.model_dump(mode='json')}
+                                                  if selected_product is not None else {}),
                                                'pair': self._pair_dict(pair)}, plan.text)
-            rev = self._approve_pair(ws, rev, pair, older_f, newer_f, confirm_same_component)
-            index, _ = load_index(ws, self.ports)
+            approval = ({'selected_product': selected_product,
+                         'product_coverage': admitted_index.coverage(now=self._now())}
+                        if selected_product is not None else {})
+            rev = self._approve_pair(ws, rev, pair, older_f, newer_f, confirm_same_component, **approval)
+            index = admitted_index
+            if index is None:
+                index, _ = load_index(ws, self.ports)
             bundle = self._bundle(index, ws, rev, base=rev.revision, pair_id=pair.pair_id, older=pair.older.sha256,
                                   newer=pair.newer.sha256)
             request = AttachRequest(revision=rev, pair_id=pair.pair_id, older_path=older, newer_path=newer,
                                     older_sha=pair.older.sha256, newer_sha=pair.newer.sha256, directory=directory,
-                                    source_shas=tuple(d.sha256 for d in bundle.sources), plan_sha=plan.plan_sha)
+                                    source_shas=tuple(d.sha256 for d in bundle.sources), plan_sha=plan.plan_sha,
+                                    selected_product=selected_product)
             port = self.env.project(ws, clean_text(name or '', 200) or 'KB comparison')
             outcome = ProjectAttachment(ws, port).attach(request, ((bundle.context_key,
                                                                     bundle.model_dump_json().encode()),))
@@ -592,8 +723,11 @@ class KbService:
         return Outcome(2, 'failed', result, text, error=f'{", ".join(codes)}: {text}')
 
     def _approve_pair(self, ws: WorkspaceStore, rev: InvestigationRevision | None, pair, older_f: LocalFile,
-                      newer_f: LocalFile, confirmed: bool) -> InvestigationRevision:
+                      newer_f: LocalFile, confirmed: bool, *, selected_product: ProductScope | None = None,
+                      product_coverage: Coverage | None = None) -> InvestigationRevision:
         """New or existing investigation to BYTES_VERIFIED for this pair, recording each analyst decision."""
+        if selected_product is not None and product_coverage is None:
+            raise _fail('PT-KBC-INPUT', 'A product-only pair requires the admitted source coverage.')
         if rev is None:
             rev = InvestigationRevision(
                 investigation_id=str(uuid.uuid4()), revision=1, state='NEW',
@@ -604,6 +738,18 @@ class KbService:
         if rev.state == 'NEW':
             rev = self._step(ws, rev, 'lead_parsed')
         inv = rev.investigation_id
+        if selected_product is not None:
+            ws.put_coverage(product_coverage)
+            state = 'METADATA_READY' if product_coverage.state == 'complete_in_scope' else 'METADATA_PARTIAL'
+            rev = self._step(ws, rev, 'search_done', outcome=state,
+                             scope_ids=(selected_product.scope_id,), coverage_ids=(product_coverage.coverage_id,))
+            rev = self._step(ws, rev, 'product_selected', scope_id=selected_product.scope_id)
+            ws.append_decision(inv, AnalystDecision(
+                op='product-selection', prior='unselected', next=selected_product.scope_id,
+                reason=f'The analyst selected stored product {clean_text(selected_product.display_name, 200)}. '
+                       'Binary membership and KB/CVE attribution remain unverified.', created_at=self._now(),
+                refs=tuple(SourceRef(doc_id=doc_id, pointer='/', assertion='analyst_statement')
+                           for doc_id in sorted({ref.doc_id for ref in selected_product.source_product_ids}))))
         rev = self._step(ws, rev, 'pair_proposed', outcome='PAIR_PROPOSED', pair_id=pair.pair_id)
         self._decide(ws, inv, 'orientation', 'unverified',
                      f'older={pair.older.sha256[:12]} newer={pair.newer.sha256[:12]}',
@@ -679,8 +825,34 @@ class KbService:
 
     def _rebuilt_rows(self, index: ReverseIndex, ws: WorkspaceStore, body: dict) -> tuple[tuple[str, bytes], ...]:
         rev = InvestigationRevision.model_validate_json(json.dumps(body['revision']))
+        product_only = ('selected_product' in body or
+                        (rev.lead.kind in {'pair', 'file'} and rev.selected_scope_id is not None))
+        if product_only:
+            try:
+                selected = ProductScope.model_validate_json(json.dumps(body.get('selected_product')))
+            except ValidationError:
+                raise _fail('PT-KBC-STALE', 'the original product snapshot is unavailable; the project is retained') from None
+            if rev.lead.kind not in {'pair', 'file'} or selected.scope_id != rev.selected_scope_id:
+                raise _fail('PT-KBC-STALE', 'the original product does not match its investigation; the project is retained')
+            source_shas = body.get('source_shas')
+            if not isinstance(source_shas, list) or not source_shas or not all(isinstance(sha, str) for sha in source_shas):
+                raise _fail('PT-KBC-STALE', 'the original product source set is unavailable; the project is retained')
+            historical = ReverseIndex()
+            expected_sources = set(source_shas)
+            for doc in index.documents:
+                if doc.source.sha256 in expected_sources:
+                    historical.add(doc)
+            if not expected_sources or {doc.source.sha256 for doc in historical.documents} != expected_sources:
+                raise _fail('PT-KBC-STALE', 'an original product source is unreadable; restore it before repair')
+            original_scope = next((scope for scope in historical.active_scopes()
+                                   if scope.scope_id == rev.selected_scope_id), None)
+            if original_scope != selected:
+                raise _fail('PT-KBC-STALE', 'the original product interpretation changed; the project is retained')
+            index = historical
         bundle = self._bundle(index, ws, rev, base=body['base'], pair_id=body['pair_id'], older=body['older_sha'],
                               newer=body['newer_sha'])
+        if product_only and {source.sha256 for source in bundle.sources} != expected_sources:
+            raise _fail('PT-KBC-STALE', 'the original product source set changed; the project is retained')
         return ((bundle.context_key, bundle.model_dump_json().encode()),)
 
     # ------------------------------------------------------------------------------------------ explain, export
@@ -695,7 +867,10 @@ class KbService:
             raise _fail('PT-KBC-VERIFY', 'a stored advisory context failed validation') from None
         return sorted(bundles, key=lambda b: (b.base_revision, b.context_key))
 
-    def explain(self, project_dir: str, cve: str | None) -> Outcome:
+    def explain(self, project_dir: str, cve: str | None, *, kev: ExploitationLookup | None = None) -> Outcome:
+        """The stored context of a project. ``kev`` (the catalog in use, read now) sets each card's KEV state and adds
+        ``kev_source``; the stored bundle is never changed (KB-integration-plan A-13)."""
+        lookup = kev or NullExploitation()
         bundles = self._project_bundles(project_dir)
         if not bundles:
             return Outcome(4, 'unavailable', {'contract': 'kbcorrelation/1', 'cves': []}, TEXT_KB17)
@@ -705,14 +880,16 @@ class KbService:
         for card, profile, hypothesis in zip(bundle.context.cards, bundle.cwe_profiles, bundle.hypotheses,
                                              strict=True):
             if wanted is None or card.cve == wanted:
-                rows.append({'cve': card.cve, 'card': _card_dict(card),
+                fact = lookup.status(card.cve)
+                rows.append({'cve': card.cve, 'card': _card_dict(card.model_copy(update={'kev': CARD_KEV[fact.state]})),
+                             'kev_text': kev_text(fact),
                              'cwe_status': profile.status,
                              'hypotheses': [h.model_dump(mode='json') for h in hypothesis.hypotheses],
                              'hypothesis_unknowns': list(hypothesis.unknowns)})
         result = {'contract': 'kbcorrelation/1', 'context_key': bundle.context_key, 'cves': rows,
                   'coverage': [c.model_dump(mode='json') for c in bundle.context.coverage],
                   'unknowns': list(bundle.context.unknowns), 'limitations': list(bundle.context.limitations),
-                  'hooks': list(bundle.context.hooks)}
+                  'hooks': list(bundle.context.hooks), 'kev_source': kev_source_of(lookup).model_dump(mode='json')}
         if not rows:
             return Outcome(4, 'unavailable', result, f'{wanted} is not part of this project\'s advisory context.')
         lines = []
@@ -722,11 +899,14 @@ class KbService:
             if card['stated_cwe']:
                 lines.append(f'  {card["stated_cwe"]} {card["stated_by"]}')
             lines += [f'  Hypothesis {h["rule_id"]}: {"; ".join(h["expected_operations"])}' for h in row['hypotheses']]
-            lines.append(f'  Applicability: {card["applicability"]}; KEV: {card["kev"]}')
+            lines.append(f'  Applicability: {card["applicability"]}; {row["kev_text"]}')
         lines += [f'Unknown: {u}' for u in bundle.context.unknowns] + [f'Limit: {x}' for x in bundle.context.limitations]
+        lines.append(kev_source_of(lookup).text)
         return Outcome(0, 'complete', result, '\n'.join(lines))
 
-    def export(self, project_dir: str, target: str, *, overwrite: bool) -> Outcome:
+    def export(self, project_dir: str, target: str, *, overwrite: bool,
+               kev: ExploitationLookup | None = None) -> Outcome:
+        """JSON is the stored bundle byte for byte; Markdown applies ``kev`` (the catalog in use) when it is given."""
         path = Path(target)
         fmt = EXTENSIONS.get(path.suffix.lower())
         if fmt is None:
@@ -737,7 +917,7 @@ class KbService:
         if not bundles:
             return Outcome(4, 'unavailable', {'contract': 'kbcorrelation/1', 'written': False}, TEXT_KB17)
         bundle = bundles[-1]
-        data = to_json(bundle) if fmt == 'json' else to_markdown(bundle, self.env.escape).encode('utf-8')
+        data = to_json(bundle) if fmt == 'json' else to_markdown(bundle, self.env.escape, kev).encode('utf-8')
         try:
             atomic_write(path, data)
         except OSError:

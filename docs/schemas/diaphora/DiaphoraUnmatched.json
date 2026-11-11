@@ -1,0 +1,78 @@
+{
+  "$id": "https://patchtrace.local/schemas/diaphora/1/DiaphoraUnmatched.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "address_status": {
+      "enum": [
+        "verified-rva",
+        "external-ea-only",
+        "ambiguous"
+      ],
+      "title": "Address Status",
+      "type": "string"
+    },
+    "ea": {
+      "maximum": 18446744073709551615,
+      "minimum": 0,
+      "title": "Ea",
+      "type": "integer"
+    },
+    "ea_text": {
+      "maxLength": 4096,
+      "title": "Ea Text",
+      "type": "string"
+    },
+    "index": {
+      "minimum": 0,
+      "title": "Index",
+      "type": "integer"
+    },
+    "name": {
+      "maxLength": 4096,
+      "title": "Name",
+      "type": "string"
+    },
+    "rva": {
+      "anyOf": [
+        {
+          "maximum": 18446744073709551615,
+          "minimum": 0,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Rva"
+    },
+    "side": {
+      "enum": [
+        "older",
+        "newer"
+      ],
+      "title": "Side",
+      "type": "string"
+    },
+    "source_side": {
+      "enum": [
+        "primary",
+        "secondary"
+      ],
+      "title": "Source Side",
+      "type": "string"
+    }
+  },
+  "required": [
+    "index",
+    "source_side",
+    "side",
+    "ea_text",
+    "ea",
+    "rva",
+    "name",
+    "address_status"
+  ],
+  "title": "DiaphoraUnmatched",
+  "type": "object"
+}

@@ -44,7 +44,9 @@ REPORT_CONTRACT = 'parity-report/1'
 MAX_LISTED = 200                       # disagreements / misses listed per group (the rest is counted)
 MAX_DUMP_BYTES = 64 * 1024 * 1024
 MAX_JSON_BYTES = 512 * 1024 * 1024
-_MD_LINE = re.compile(r'^\s*(?:0x)?([0-9A-Fa-f]{1,16})\s*[:,=\s]\s*(-?\d+\.\d+)\s*$')
+MD_MIN_BLOCKS = 5                      # R02 s14 G1 / 08 s1 G-U3: the MD index is compared on functions with n_bb >= 5
+_MD_ADDRESS = re.compile(r'(?:0x)?([0-9A-Fa-f]{1,16})')
+_MD_VALUE = re.compile(r'-?\d{1,30}\.\d{1,30}')
 _LADDER_SOURCES = ('pt-ladder', 'pt-bytes')
 _RVA_MAX = 2**32 - 1
 
@@ -203,6 +205,26 @@ def bindiff_rows_from_file(path: Path, older_sha256: str, newer_sha256: str) -> 
 
 # ---- MD index ------------------------------------------------------------------------------------------------------------------
 
+def _parse_md_line(line: str) -> tuple[int, str] | None:
+    # Scan whitespace once per boundary; adjacent regex quantifiers would explore
+    # every partition of a hostile whitespace run before rejecting its final token.
+    stripped = line.strip()
+    address = _MD_ADDRESS.match(stripped)
+    if address is None:
+        return None
+    tail = stripped[address.end():]
+    value = tail.lstrip()
+    separated = len(value) < len(tail)
+    if value and value[0] in ':,=':
+        value = value[1:].lstrip()
+    elif not separated:
+        return None
+    # A bounded token check also protects subsequent Decimal arithmetic.
+    if len(value) > 62 or _MD_VALUE.fullmatch(value) is None:
+        return None
+    return int(address.group(1), 16), value
+
+
 def parse_md_dump(text: str) -> tuple[dict[int, str], int]:
     """(address -> decimal text, number of lines that could not be parsed). Later lines win for a repeated address."""
     values: dict[int, str] = {}
@@ -210,11 +232,12 @@ def parse_md_dump(text: str) -> tuple[dict[int, str], int]:
     for line in text.splitlines():
         if not line.strip():
             continue
-        match = _MD_LINE.match(line)
-        if match is None:
+        parsed = _parse_md_line(line)
+        if parsed is None:
             unparsed += 1
             continue
-        values[int(match.group(1), 16)] = match.group(2)
+        address, value = parsed
+        values[address] = value
     return values, unparsed
 
 
@@ -260,13 +283,16 @@ def compare_md(ir_keys: Mapping[int, int | None], dump: Mapping[int, str], *, im
             'dropped': dict(sorted(dropped.items())), 'differing_samples': samples}
 
 
-def read_ir_md(path: Path) -> dict[int, int | None]:
-    """{rva: md_td} from a `program-ir/1` sidecar (frozen DDL, 02 s3), opened read-only and immutable."""
+def read_ir_md(path: Path, min_blocks: int | None = None) -> dict[int, int | None]:
+    """{rva: md_td} from a `program-ir/1` sidecar (frozen DDL, 02 s3), opened read-only and immutable; with `min_blocks`
+    only functions with at least that many basic blocks (the CLI passes `MD_MIN_BLOCKS`)."""
     db = sqlite3.connect(f'{Path(path).resolve().as_uri()}?mode=ro&immutable=1', uri=True)
     try:
         db.execute('PRAGMA query_only=1')
         db.execute('PRAGMA trusted_schema=OFF')
-        return {rva: td for rva, td in db.execute('SELECT rva, md_td FROM fn ORDER BY rva')}
+        if min_blocks is None:
+            return {rva: td for rva, td in db.execute('SELECT rva, md_td FROM fn ORDER BY rva')}
+        return {rva: td for rva, td in db.execute('SELECT rva, md_td FROM fn WHERE n_bb >= ? ORDER BY rva', (min_blocks,))}
     finally:
         db.close()
 
@@ -423,6 +449,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     rep.add_argument('--newer-image-base', type=_parse_int, default=0)
     rep.add_argument('--bindiff-basis', choices=('va', 'rva'), default='rva')
     rep.add_argument('--ir-older', type=Path, help='program-ir/1 ir.sqlite3 of the older side (MD comparison)')
+    rep.add_argument('--md-min-blocks', type=int, default=MD_MIN_BLOCKS, help='compare the MD index only on functions with at least this many blocks')
     rep.add_argument('--md-dump', type=Path, help='text dump of `bindiff --md_index` for the older BinExport')
     rep.add_argument('--out', type=Path, required=True)
     dump = sub.add_parser('md-dump', help='run bindiff --md_index on a BinExport copy (dev only, live)')
@@ -451,10 +478,13 @@ def main(argv: Sequence[str] | None = None) -> int:
                                     base_o, base_n))
     md = None
     if args.ir_older and args.md_dump:
+        if args.md_dump.stat().st_size > MAX_DUMP_BYTES:
+            parser.error('--md-dump is larger than 64 MiB')
         dump_values, unparsed = parse_md_dump(args.md_dump.read_text(encoding='utf-8'))
-        md = compare_md(read_ir_md(args.ir_older), dump_values,
+        md = compare_md(read_ir_md(args.ir_older, args.md_min_blocks), dump_values,
                         image_base=args.older_image_base if args.bindiff_basis == 'va' else 0)
         md['dump_lines_unparsed'] = unparsed
+        md['min_blocks'] = args.md_min_blocks
     report = build_report(ladder, oracles, md=md, meta={'tool': 'tools/unified/parity.py'})
     args.out.write_text(canonical(report), encoding='utf-8', newline='\n')
     print(report['report_sha256'])

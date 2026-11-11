@@ -1,20 +1,66 @@
 """Session hooks shared by the suite. Live acceptance is never skipped silently (SPEC-29 §9.4):
-live tests record `passed | failed | blocked` JSON under build/live-status/ (override with
-PATCHTRACE_LIVE_STATUS_DIR) and blocked checks are printed in a `LIVE ACCEPTANCE BLOCKED` section."""
+live tests record `passed | failed | blocked` JSON into PATCHTRACE_LIVE_STATUS_DIR (the live workflows set it to
+build/live-status; a plain run uses a throwaway temp directory so it never clobbers a real live run's files) and
+blocked checks are printed in a `LIVE ACCEPTANCE BLOCKED` section. Each entry says whether it is `mocked`:
+PATCHTRACE_LIVE_MOCKED=1 (set by the harness tests that run against fake executables) or `mocked=True`."""
 from __future__ import annotations
 
+import gc
 import json
 import os
 from pathlib import Path
 
 import pytest
+from live_status import live_status_dir
 
 ROOT = Path(__file__).resolve().parents[1]
 LIVE_STATUS_KEY = pytest.StashKey[list]()
 
 
-def live_status_dir() -> Path:
-    return Path(os.environ.get('PATCHTRACE_LIVE_STATUS_DIR') or ROOT / 'build' / 'live-status')
+MODAL_WATCHDOG_MS = 30_000
+
+
+@pytest.fixture(autouse=True)
+def _no_blocking_modal_dialogs(request, monkeypatch):
+    """An error path that opens QMessageBox.exec() blocks the whole job forever under the offscreen platform (CI qa hung
+    for two hours on one). Keep the real dialog (some tests inspect and close it from a timer) but reject it after
+    MODAL_WATCHDOG_MS and fail the test that opened it."""
+    if 'qtbot' not in request.fixturenames and 'window' not in request.fixturenames:
+        return
+    try:
+        from PySide6.QtCore import QTimer
+        from PySide6.QtWidgets import QMessageBox
+    except ImportError:  # no Qt in this environment
+        return
+    real_exec = QMessageBox.exec
+
+    def watched(self, *args, **kwargs):
+        expired = []
+
+        def expire():
+            expired.append(True)
+            self.reject()
+        timer = QTimer(self)
+        timer.setSingleShot(True)
+        timer.timeout.connect(expire)
+        timer.start(MODAL_WATCHDOG_MS)
+        result = real_exec(self, *args, **kwargs)
+        timer.stop()
+        if expired:
+            raise AssertionError(f'modal dialog was never answered: {self.windowTitle()}: {self.text()}')
+        return result
+    monkeypatch.setattr(QMessageBox, 'exec', watched)
+
+
+@pytest.fixture(autouse=True)
+def _collect_qt_garbage(request):
+    """CI qt-gate segfaulted inside the cyclic GC on the GUI thread (Shiboken wrappers of earlier tests' widgets
+    collected while a later test's worker thread ran). Collect at each Qt test's end, when no worker is live."""
+    yield
+    if 'qtbot' in request.fixturenames:
+        gc.collect()
+
+
 
 
 def pytest_configure(config):
@@ -23,13 +69,15 @@ def pytest_configure(config):
 
 @pytest.fixture
 def record_live_status(request):
-    """record(engine, status, reason, **extra) -> Path of the written status JSON."""
-    def record(engine: str, status: str, reason: str, **extra) -> Path:
+    """record(engine, status, reason, mocked=None, **extra) -> Path of the written status JSON."""
+    def record(engine: str, status: str, reason: str, *, mocked: bool | None = None, **extra) -> Path:
         if status not in ('passed', 'failed', 'blocked'):
             raise ValueError(f'unknown live status {status!r}')
         directory = live_status_dir()
         directory.mkdir(parents=True, exist_ok=True)
-        entry = {'engine': engine, 'status': status, 'reason': reason, 'mocked': False, **extra}
+        if mocked is None:
+            mocked = os.environ.get('PATCHTRACE_LIVE_MOCKED') == '1'
+        entry = {'engine': engine, 'status': status, 'reason': reason, 'mocked': mocked, **extra}
         path = directory / f'{engine}.json'
         path.write_text(json.dumps(entry, indent=2, sort_keys=True) + '\n', encoding='utf-8')
         request.config.stash[LIVE_STATUS_KEY].append(entry)
@@ -44,3 +92,11 @@ def pytest_terminal_summary(terminalreporter, exitstatus, config):
         terminalreporter.write_sep('=', 'LIVE ACCEPTANCE BLOCKED')
         for entry in blocked:
             terminalreporter.write_line(f'LIVE ACCEPTANCE BLOCKED: {entry["engine"]} ({entry["reason"]})')
+
+
+@pytest.fixture(autouse=True)
+def _no_real_kev_catalog(monkeypatch, tmp_path_factory):
+    """``kb leads`` reads the KEV catalog in use from the user's data folder by default; point that at an empty
+    folder so no test depends on a catalog installed on the machine that runs it."""
+    from patchtrace.kbcorrelation.adapters import kev as kev_adapter
+    monkeypatch.setattr(kev_adapter, 'default_kev_dir', lambda: tmp_path_factory.getbasetemp() / 'no-kev-catalog')

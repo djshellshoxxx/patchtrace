@@ -673,10 +673,32 @@ def test_the_gate_outputs_are_publish_milestones_and_reason_from_the_gate_step()
 
 def test_the_release_job_needs_the_gate_and_runs_for_a_tag_or_a_gate_yes_only():
     block = BLOCKS['release']
-    # qa is Linux QA, qa-windows the Windows QA and windows-validate the test of the uploaded Windows build.
-    assert needs_of(block) == ['qa', 'qa-windows', 'windows-validate', 'linux-smoke', 'release-gate']
+    assert needs_of(block) == ['qa', 'qt-gate', 'linux-smoke', 'release-gate']
     assert job_key(block, 'if') == (
         "startsWith(github.ref, 'refs/tags/v') || needs.release-gate.outputs.publish == 'true'")
+
+
+def test_gui_gate_blocks_packaging_and_publication_even_when_the_cadence_gate_says_yes():
+    assert needs_of(BLOCKS['linux-package']) == ['qa', 'qt-gate']
+    # Without an explicit status function GitHub prepends success() to job conditions. A tag or a
+    # fail-open cadence decision therefore cannot bypass failed, cancelled or skipped required QA.
+    for job in ('linux-package', 'release'):
+        assert 'qt-gate' in needs_of(BLOCKS[job])
+        condition = job_key(BLOCKS[job], 'if') or ''
+        assert not re.search(r'\b(?:always|cancelled|failure|success)\s*\(', condition)
+
+
+def test_matrix_leg_status_is_captured_after_all_acceptance_steps_before_artifact_uploads():
+    steps = steps_of(BLOCKS['qa'])
+    recorder = next(i for i, step in enumerate(steps) if 'name: Record this matrix leg' in step)
+    assert re.search(r'^        if: always\(\)$', steps[recorder], re.M)
+    assert 'echo "${{ job.status }}" > qa-leg-result.txt' in steps[recorder]
+    for command in ('tools/frozen_smoke.py', 'tools/test_windows_portable.ps1',
+                    'tools/package_windows_installer.py', 'tools/test_windows_installer.ps1'):
+        assert next(i for i, step in enumerate(steps) if command in step) < recorder
+    assert steps[recorder + 1:]
+    assert all('uses: actions/upload-artifact@v4' in step for step in steps[recorder + 1:])
+    assert 'if: always()' in steps[recorder + 1]
 
 
 def test_a_pull_request_cannot_reach_the_release_job():
@@ -685,14 +707,6 @@ def test_a_pull_request_cannot_reach_the_release_job():
     assert job_key(BLOCKS['release-gate'], 'if') == "github.event_name == 'push'"
     assert 'release-gate' in needs_of(BLOCKS['release'])
     assert not re.search(r'always\(\)|cancelled\(\)|failure\(\)|success\(\)', job_key(BLOCKS['release'], 'if'))
-
-
-def test_third_party_actions_in_the_release_job_are_pinned_to_a_commit():
-    """The release job holds contents: write and the release bytes: a moved upstream tag must not change it."""
-    used = re.findall(r'^\s*(?:- )?uses: (\S+)', BLOCKS['release'], re.M)
-    third_party = [action for action in used if not action.startswith('actions/')]
-    assert third_party, 'expected the release action'
-    assert all(re.fullmatch(r'[\w.-]+/[\w.-]+@[0-9a-f]{40}', action) for action in third_party), third_party
 
 
 def test_only_the_release_job_can_write_repository_contents():

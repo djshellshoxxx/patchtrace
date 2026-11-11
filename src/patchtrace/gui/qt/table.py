@@ -14,6 +14,7 @@ from PySide6.QtGui import QGuiApplication, QKeyEvent, QKeySequence
 from PySide6.QtWidgets import QAbstractItemView, QHeaderView, QTableView, QWidget
 
 from ..table_spec import PreparedTable, build_tsv, order_by
+from ..tips import apply_tip, register_gui_tips
 from .metrics import MetricsWatcher
 
 KEY_ROLE = Qt.ItemDataRole.UserRole + 1    # row_key of the row
@@ -236,6 +237,9 @@ class VirtualTable(QTableView):
 
     def __init__(self, name: str, parent: QWidget | None = None) -> None:
         super().__init__(parent)
+        register_gui_tips()  # idempotent: a bare embed or a test has not done it
+        apply_tip(self, 'gui.table', name='table.' + name.lower().replace(' ', '_'))
+        self.setObjectName('')  # the owning panel names the table by its own tip id
         self.setAccessibleName(name)
         self.table_model = VirtualTableModel(self)
         self.setModel(self.table_model)

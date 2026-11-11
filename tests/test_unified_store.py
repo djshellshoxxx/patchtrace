@@ -770,3 +770,161 @@ def test_a_truncated_part_is_a_typed_failure(case, tmp_path, name, cut):
             store.verify_result_dir(work)
     finally:
         (work / name).write_bytes(original)
+
+# --- UE-R3: optional C parts must pass deep verification before publication ----------------------------------------
+
+@pytest.mark.parametrize('document', [
+    {'side': 'wrong', 'rva': 0x1000, 'status': 'ok', 'code': 'int f;'},
+    {'side': 'older', 'rva': -1, 'status': 'ok', 'code': 'int f;'},
+    {'side': 'older', 'rva': 0x1000, 'status': 'ok', 'code': None},
+    {'side': 'older', 'rva': 0x1000, 'status': 'failed', 'code': 'int f;'},
+    {'side': 'older', 'rva': 0x7777, 'status': 'ok', 'code': 'int ghost;'},
+    {'side': 'older', 'rva': 0x1000, 'status': 'ok', 'code': 'int f;', 'extra': True},
+], ids=['side', 'negative-rva', 'null-ok', 'code-on-failure', 'foreign-rva', 'extra'])
+def test_decomp_part_rejects_invalid_but_rehashed_records(case, document):
+    staged, _manifest, _ = _stage(case)
+    part = store.write_part(staged, store.DECOMP, [document])
+    store.add_part(staged, part)
+    with pytest.raises(UnifiedError, match='decompile'):
+        store.verify_result_dir(staged)
+
+
+def test_decomp_part_rejects_duplicate_records_even_when_hashes_are_correct(case):
+    staged, _manifest, _ = _stage(case)
+    row = {'side': 'older', 'rva': 0x1000, 'status': 'ok', 'code': 'int f;'}
+    store.add_part(staged, store.write_part(staged, store.DECOMP, [row, row]))
+    with pytest.raises(UnifiedError, match='decompile'):
+        store.verify_result_dir(staged)
+
+
+def test_decomp_part_accepts_owned_rvas_and_preserves_the_result_key(case):
+    staged, before, _guard = _stage(case)
+    part = store.write_part(staged, store.DECOMP, [
+        {'side': 'older', 'rva': 0x1000, 'status': 'ok', 'code': 'int f;'},
+        {'side': 'newer', 'rva': 0x2000, 'status': 'ok', 'code': 'int f() { return 1; }'},
+    ])
+    after = store.add_part(staged, part)
+    assert store.verify_result_dir(staged) == after
+    assert after.result_id == before.result_id
+
+
+@pytest.mark.parametrize('code', [0, False, [], {}, ''])
+def test_decomp_failed_record_requires_null(case, code):
+    staged, _manifest, _ = _stage(case)
+    row = {'side': 'older', 'rva': 0x1000, 'status': 'failed', 'code': code}
+    store.add_part(staged, store.write_part(staged, store.DECOMP, [row]))
+    with pytest.raises(UnifiedError, match='decompile'):
+        store.verify_result_dir(staged)
+
+
+@pytest.mark.parametrize('failure', ['install', 'pointer'])
+def test_failed_upgrade_preserves_committed_result(case, monkeypatch, failure):
+    first = _publish(case)
+    staged, _manifest, guard = _stage(case, n=3)
+    enrichment = EnrichmentStore(case.store)
+    replace = store._replace
+
+    def fail_install(source, target):
+        if source == staged:
+            raise OSError('injected install failure')
+        replace(source, target)
+
+    def fail_publish(*args, **kwargs):
+        raise storage.EnrichmentError('PT-ENRICH-STORAGE', 'injected pointer failure')
+
+    if failure == 'install':
+        monkeypatch.setattr(store, '_replace', fail_install)
+    else:
+        monkeypatch.setattr(enrichment, 'publish', fail_publish)
+    with pytest.raises((OSError, UnifiedError)):
+        store.publish_result(enrichment, staged, guard=guard, current=guard, revision=1, upgrade=True)
+    loaded = store.load_result(enrichment, first.entry.guard)
+    assert loaded.state == 'current' and loaded.manifest == first.manifest
+    assert first.directory.is_dir()
+
+
+@pytest.mark.parametrize('replacement_installed', [False, True])
+def test_interrupted_upgrade_recovers_exact_committed_manifest(case, replacement_installed):
+    first = _publish(case)
+    previous = first.directory.with_name(f'prev-{first.manifest.result_id[:16]}-'
+                                         f'{first.pointer.manifest_sha256[:16]}')
+    first.directory.rename(previous)
+    if replacement_installed:
+        staged, _manifest, _guard = _stage(case, n=3)
+        staged.rename(first.directory)
+    enrichment = EnrichmentStore(case.store)
+    loaded = store.load_result(enrichment, first.entry.guard)
+    assert loaded.state == 'current' and loaded.manifest == first.manifest
+    assert loaded.directory == previous
+    assert store.cached_result(enrichment, first.manifest.result_id).manifest == first.manifest
+    _age(previous, 3600)
+    store.sweep_orphans(enrichment, first.manifest.ghidriff_run_id)
+    assert previous.is_dir()
+
+
+def test_interrupted_upgrade_recovery_refuses_tampered_previous_directory(case):
+    first = _publish(case)
+    previous = first.directory.with_name(f'prev-{first.manifest.result_id[:16]}-'
+                                         f'{first.pointer.manifest_sha256[:16]}')
+    first.directory.rename(previous)
+    (previous / store.ROWS).write_bytes(b'not the committed data')
+    loaded = store.load_result(EnrichmentStore(case.store), first.entry.guard)
+    assert loaded.state == 'invalid'
+
+
+@pytest.mark.parametrize('code', ['', '\ud800', 'x' * 21, '\n' * 3])
+def test_decomp_success_requires_bounded_nonempty_utf8(case, code):
+    staged, _manifest, _ = _stage(case)
+    row = {'side': 'older', 'rva': 0x1000, 'status': 'ok', 'code': code}
+    manifest = store.add_part(staged, store.write_part(staged, store.DECOMP, [{**row, 'code': 'valid'}]))
+    _recertify(staged, manifest, store.DECOMP, [json.dumps(row).encode('ascii') + b'\n'])
+    limits = dataclasses.replace(DEFAULT_LIMITS, l29_pseudo_chars=20, l29_pseudo_lines=3)
+    with pytest.raises(UnifiedError, match='decompile'):
+        store.verify_result_dir(staged, limits=limits)
+
+
+def test_previous_generation_is_swept_only_after_pointer_stops_referencing_it(case):
+    first = _publish(case)
+    previous = first.directory.with_name(f'prev-{first.manifest.result_id[:16]}-'
+                                         f'{first.pointer.manifest_sha256[:16]}')
+    first.directory.rename(previous)
+    staged, _manifest, guard = _stage(case, n=3)
+    staged.rename(first.directory)  # interrupted after installation, before pointer commit
+    _age(previous, 3600)
+    enrichment = EnrichmentStore(case.store)
+    staged, _manifest, _guard = _stage(case, n=3)
+    second = store.publish_result(enrichment, staged, guard=guard, current=guard, revision=1, upgrade=True)
+    assert second.manifest.counts.total() == 3
+    assert not previous.exists()
+    assert store.load_result(enrichment, guard).manifest == second.manifest
+
+
+def test_failed_rollback_preserves_a_readable_committed_generation(case, monkeypatch):
+    first = _publish(case)
+    staged, _manifest, guard = _stage(case, n=3)
+    enrichment = EnrichmentStore(case.store)
+    replace = store._replace
+
+    def fail_install_and_restore(source, target):
+        if target == first.directory:
+            raise OSError('injected install and rollback failure')
+        replace(source, target)
+
+    monkeypatch.setattr(store, '_replace', fail_install_and_restore)
+    with pytest.raises(OSError):
+        store.publish_result(enrichment, staged, guard=guard, current=guard, revision=1, upgrade=True)
+    loaded = store.load_result(enrichment, guard)
+    assert loaded.state == 'current' and loaded.manifest == first.manifest
+
+
+def test_orphan_sweep_preserves_previous_generations_when_pointer_is_corrupt(case):
+    first = _publish(case)
+    previous = first.directory.with_name(f'prev-{first.manifest.result_id[:16]}-'
+                                         f'{first.pointer.manifest_sha256[:16]}')
+    first.directory.rename(previous)
+    _age(previous, 3600)
+    case.store.connection.execute('UPDATE enrichment_entries SET body_sha256=? WHERE id=?',
+                                  ('0' * 64, first.entry.id))
+    case.store.connection.commit()
+    store.sweep_orphans(EnrichmentStore(case.store), first.manifest.ghidriff_run_id)
+    assert previous.is_dir()

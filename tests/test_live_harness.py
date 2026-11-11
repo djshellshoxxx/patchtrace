@@ -11,6 +11,7 @@ from pathlib import Path
 
 import pytest
 from fake_bindiff import make_fake_bindiff
+from live_status import live_status_dir
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / 'tools'))
@@ -80,7 +81,7 @@ def run_live(tmp_path: Path, **env) -> tuple[int, dict, str]:
     base = {k: v for k, v in os.environ.items() if not k.startswith('PATCHTRACE_')}
     proc = subprocess.run([sys.executable, '-m', 'pytest', '-q', '-p', 'no:cacheprovider', '-rA',
                            str(ROOT / 'tests' / 'test_live_bindiff.py')], cwd=ROOT, capture_output=True, text=True,
-                          timeout=300, env={**base, 'PATCHTRACE_LIVE_STATUS_DIR': str(status), **env})
+                          timeout=300, env={**base, 'PATCHTRACE_LIVE_STATUS_DIR': str(status), 'PATCHTRACE_LIVE_MOCKED': '1', **env})
     return proc.returncode, json.loads((status / 'bindiff.json').read_text()), proc.stdout
 
 
@@ -88,6 +89,19 @@ def test_live_test_reports_blocked_not_skipped(tmp_path):
     code, record, out = run_live(tmp_path)
     assert code == 0 and record['status'] == 'blocked' and 'LIVE ACCEPTANCE BLOCKED: bindiff' in out
     assert 'skipped' not in out
+    assert record['mocked'] is True                                    # this harness run is declared mocked
+
+
+def test_live_status_mocked_flag_is_false_without_the_mock_declaration(tmp_path):
+    # positive control: the flag can be False, so the `is True` checks around it are not vacuous
+    _code, record, _out = run_live(tmp_path, PATCHTRACE_LIVE_MOCKED='0')
+    assert record['mocked'] is False
+
+
+def test_plain_run_never_writes_into_the_repo_live_status_dir(monkeypatch):
+    monkeypatch.delenv('PATCHTRACE_LIVE_STATUS_DIR', raising=False)
+    directory = live_status_dir().resolve()
+    assert (ROOT / 'build').resolve() not in (directory, *directory.parents)
 
 
 def test_live_test_fails_when_required_and_absent(tmp_path):

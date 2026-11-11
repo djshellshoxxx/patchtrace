@@ -32,16 +32,18 @@ HOSTILE = ['<b>pwn</b>', '<img src=x onerror=1>', '&lt;', '{0}', '%s', '\x1b[31m
            'a\x00b', 'l1\u2028l2']
 HOSTILE_PARAMS = [pytest.param(text, id=f'h{index}') for index, text in enumerate(HOSTILE)]
 
-_LEGACY_MODULES = ('ui_engine_setup', 'ui_series', 'ui_bundle_setup', 'ui_inspection')
+_LEGACY_REGISTRIES = (('ui_engine_setup', '_LIVE_THREADS'), ('ui_series', '_LIVE_THREADS'),
+                      ('ui_bundle_setup', '_LIVE_THREADS'), ('ui_inspection', '_LIVE_THREADS'),
+                      ('ui', '_DISCOVERY_THREADS'), ('ui_bundle_setup', '_THREADS'))
 JOIN_MS = 5000
 
 
 def legacy_threads() -> list:
-    """Alive QThreads held by the status-quo module registries (``_LIVE_THREADS``)."""
+    """Alive QThreads held by the status-quo module registries."""
     found = []
-    for name in _LEGACY_MODULES:
+    for name, registry in _LEGACY_REGISTRIES:
         module = sys.modules.get(f'patchtrace.{name}')
-        found += [t for t in list(getattr(module, '_LIVE_THREADS', ())) if _alive(t)]
+        found += [t for t in list(getattr(module, registry, ())) if _alive(t)]
     return found
 
 

@@ -17,7 +17,9 @@ from datetime import UTC, datetime
 from pathlib import Path
 from typing import Literal, Protocol
 
+from ..ingestion import MAX_ARTIFACT_BYTES
 from ..jobs import run_process
+from .bindiff_inputs import copy_and_hash
 from .contracts import Capability, SecondaryError, SecondaryMatchSet
 from .registry import REGISTRY, EngineAdapter, EngineJob, RawResult
 from .runs import (
@@ -36,6 +38,7 @@ from .rzdiff import STDOUT_LIMIT
 
 MAX_PARALLEL = 2
 DEFAULT_DEADLINE = 1800.0
+MAX_DEADLINE = 86400.0
 
 
 @dataclass(frozen=True)
@@ -44,6 +47,19 @@ class ProjectRef:
     newer: Path
     older_sha256: str
     newer_sha256: str
+
+
+def _verified_inputs(project: ProjectRef, workdir: Path, check: Callable[[], None] | None = None
+                     ) -> tuple[Path, Path]:
+    """Private copies of both artifacts whose SHA-256 equals the declared one; closes check-then-use."""
+    copies = []
+    for role, source, declared in (('older', project.older, project.older_sha256),
+                                   ('newer', project.newer, project.newer_sha256)):
+        target = workdir / f'{role}.bin'
+        if copy_and_hash(source, target, max_bytes=MAX_ARTIFACT_BYTES, check=check) != declared:
+            raise SecondaryError('PT-SECONDARY-INPUT', f'The {role} artifact does not match its recorded SHA-256.')
+        copies.append(target)
+    return copies[0], copies[1]
 
 
 @dataclass(frozen=True)
@@ -133,11 +149,27 @@ def run_engines(project: ProjectRef, engines: Sequence[EngineId], *, max_paralle
                         'PT-SECONDARY-UNSUPPORTED: ')))
             # Best-effort removal: on Windows a scanner or lingering handle can make the delete fail, and that must
             # not turn a finished run into 'failed' (or emit a second 'finished' event for it).
+            deadline = float(deadlines.get(eid, DEFAULT_DEADLINE))
+            if not 0 < deadline <= MAX_DEADLINE:
+                raise SecondaryError('PT-SECONDARY-INPUT', f'timeout must be above 0 and at most {MAX_DEADLINE:g} s')
+            expires = time.monotonic() + deadline  # The probe has its own budget outside this deadline.
             with tempfile.TemporaryDirectory(prefix='patchtrace-engine-', ignore_cleanup_errors=True) as workdir:
-                job = EngineJob(project.older, project.newer, project.older_sha256, project.newer_sha256, env,
-                                Path(workdir), cancel, float(deadlines.get(eid, DEFAULT_DEADLINE)), runner,
+                def check() -> None:
+                    if cancel.is_set():
+                        raise SecondaryError('PT-SECONDARY-CANCEL', 'cancelled while preparing the artifacts')
+                    if time.monotonic() >= expires:
+                        raise SecondaryError('PT-SECONDARY-TIMEOUT', f'exceeded the {deadline:g} s deadline '
+                                             'while preparing the artifacts')
+
+                prepared = getattr(adapter, 'reads_artifacts', False)
+                older, newer = (_verified_inputs(project, Path(workdir), check) if prepared
+                                else (project.older, project.newer))
+                if prepared:
+                    check()
+                job = EngineJob(older, newer, project.older_sha256, project.newer_sha256, env,
+                                Path(workdir), cancel, max(expires - time.monotonic(), 0.001) if prepared else deadline, runner,
                                 stdout_limit)
-                digest = argv_digest(adapter.argv(cap, job), project.older, project.newer)
+                digest = argv_digest(adapter.argv(cap, job), older, newer)
                 extra = getattr(adapter, 'cache_extra', None)  # SPEC-29 §5: e.g. the .BinExport hashes
                 key = cache_key(eid, cap.version, digest, project.older_sha256, project.newer_sha256,
                                 extra=tuple(extra(cap, job)) if extra else ())

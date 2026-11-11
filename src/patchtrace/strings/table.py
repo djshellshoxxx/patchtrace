@@ -16,7 +16,7 @@ from dataclasses import dataclass
 from typing import get_args
 
 from .contracts import Encoding, StringBasis, StringsError, StringType
-from .limits import MAX_FRAGMENTS, MAX_ROWS_PER_SIDE, MAX_TABLE_BYTES, NONE_U32
+from .limits import DISPLAY_CHARS, MAX_FRAGMENTS, MAX_ROWS_PER_SIDE, MAX_TABLE_BYTES, NONE_U32
 
 MAGIC = b'PTSTRT1\n'
 TYPES: tuple[str, ...] = get_args(StringType)
@@ -75,7 +75,10 @@ def _decode_pool(data: memoryview, pos: int, count: int) -> tuple[list[str], int
         pos += 4
         if pos + size > len(data):
             raise _fail('truncated string pool')
-        out.append(str(data[pos:pos + size], 'utf-8', 'surrogatepass'))
+        try:
+            out.append(str(data[pos:pos + size], 'utf-8', 'surrogatepass'))
+        except UnicodeDecodeError:
+            raise _fail('invalid string pool') from None    # a typed error, never a bare ValueError (#105)
         pos += size
     return out, pos
 
@@ -201,6 +204,8 @@ class StringTable:
             raise _fail('unknown flag bits')
         if any(i >= len(self.displays) for i in self._wide['disp']):
             raise _fail('display index out of range')
+        if any(len(display) > DISPLAY_CHARS for display in self.displays):
+            raise _fail('display text too long')           # every later step assumes the bound (#105 BUG-STR-3)
         if any(i != NONE_U32 and i >= len(self.fragments) for i in self._wide['frag']):
             raise _fail('fragment index out of range')
 

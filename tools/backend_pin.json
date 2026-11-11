@@ -5,14 +5,14 @@
   "trust": "Every digest names its source in digest_source: vendor-file (a .sha256.txt / SHA256SUMS published next to the asset by its vendor), vendor-listing (digest from the vendor's release page, also re-hashed by the resolver), pypi-json (PyPI JSON API, TLS only, cross-checked against Ghidra's own pypkg/dist where present). A component with status 'placeholder' carries the literal sha256 PLACEHOLDER-UNRESOLVED: the host was blocked for the resolver on 2026-10-14 [unverified]. tools/check_backend_pin.py --release (and the build) refuse any placeholder, so none can reach a release build. Resolve the placeholders in slice B10 from a networked CI run and mark them digest_source 'tofu' when the vendor publishes no digest.",
   "components": {
     "python-windows": {
-      "status": "placeholder",
-      "digest_source": "none",
+      "status": "pinned",
+      "digest_source": "sigstore-verified",
       "url": "https://www.python.org/ftp/python/3.12.10/python-3.12.10-embed-amd64.zip",
-      "sha256": "PLACEHOLDER-UNRESOLVED",
-      "size": null,
+      "sha256": "4acbed6dd1c744b0376e3b1cf57ce906f9dc9e95e68824584c8099a63025a3c3",
+      "size": 11133606,
       "spdx": "PSF-2.0",
       "version": "3.12.10",
-      "note": "www.python.org returned HTTP 403 through the egress proxy on 2026-10-14 [unverified]. python.org publishes an MD5 and a sigstore/GPG signature per file; record the MD5 plus an own SHA-256 (tofu) in B10.",
+      "note": "Sigstore-verified (sigstore 4.5.0, identity thomas@python.org, issuer https://accounts.google.com, python.org 3.12 release-manager table) in backend-bundle.yml pin_verify run 38661029764 on 2026-10-15; recorded with the owner approval of 2026-10-15. No trust on first use.",
       "fallback": {
         "name": "cpython-3.12.10+20250409-x86_64-pc-windows-msvc-install_only_stripped.tar.gz",
         "url": "https://github.com/astral-sh/python-build-standalone/releases/download/20250409/cpython-3.12.10%2B20250409-x86_64-pc-windows-msvc-install_only_stripped.tar.gz",
@@ -146,12 +146,13 @@
     "requires": {"pyghidra": ">=3.0.0,<4", "mdutils": "==1.6.0", "python": ">=3.10"},
     "source_tarball": {
       "name": "ghidriff-4f5d895-source.tar.gz",
-      "status": "placeholder",
-      "digest_source": "none",
+      "status": "pinned",
+      "digest_source": "git-rebuilt",
       "url": "https://github.com/clearbluejar/ghidriff/archive/4f5d895fcbb1eacd65efd81145922c15bb7e741d.tar.gz",
-      "sha256": "PLACEHOLDER-UNRESOLVED",
-      "size": null,
-      "note": "Archive downloads for clearbluejar/ghidriff were refused (HTTP 403) on 2026-10-14 [unverified]; GitHub generates this tarball on demand, so record its digest as tofu in B10 and re-check that two downloads agree."
+      "sha256": "613449a2743e50a11c96b8a6cf6856095816cfece77a021c49cac6e4fe4fe87f",
+      "size": 7086648,
+      "content_sha256": "b7c9aec8ee249be052256c5db06cdaf876dba5cefc955e249c26d6ff3b75d9fc",
+      "note": "Deterministic git-rebuilt tarball (verify_backend_pins.py rebuild from the pinned commit); the GitHub archive was compared member by member (117 identical) and the rebuild is byte-identical twice, pin_verify run 38661029764; recorded with the owner approval of 2026-10-15. No trust on first use."
     }
   },
   "ghidra_pypkg_crosscheck": {
@@ -202,8 +203,11 @@
     }
   },
   "strip": {
-    "ghidra": ["docs/**", "Extensions/Eclipse/**", "**/os/{other-OS}/**", "GPL/**"],
+    "ghidra": ["docs/**", "Extensions/**", "**/os/{other-OS}/**", "GPL/**", "Ghidra/Features/Base/data/typeinfo/golang/**",
+               "Ghidra/Features/Jython/**", "Ghidra/Features/BSim/**", "Ghidra/Features/GhidraServer/**", "Ghidra/Debug/**"],
+    "ghidra_fid": ["Ghidra/Features/FunctionID/data/*.fidbf"],
     "jdk": ["lib/src.zip", "jmods/**"],
-    "keep": ["LICENSE", "licenses/**", "Ghidra/Processors/**", "Ghidra/Debug/**", "Ghidra/Features/**", "legal/**", "bin/javac*"]
-  }
+    "keep": ["LICENSE", "licenses/**", "Ghidra/Processors/**", "Ghidra/Features/**", "legal/**", "bin/javac*"]
+  },
+  "jlink": {"modules": ["java.base", "java.desktop", "java.xml", "java.logging", "java.datatransfer", "java.management", "java.sql", "java.naming", "java.rmi", "java.scripting", "java.compiler", "java.net.http", "java.security.jgss", "java.prefs", "java.instrument", "jdk.unsupported", "jdk.xml.dom", "jdk.security.auth", "jdk.net", "jdk.management", "jdk.crypto.ec", "jdk.zipfs", "jdk.charsets", "jdk.jdi", "jdk.jshell", "jdk.compiler"]}
 }

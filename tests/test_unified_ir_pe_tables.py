@@ -200,3 +200,23 @@ def test_chain_cycles_are_discarded(tmp_path):
             as reader:
         tables = pt.read_pe_tables(reader)
     assert tables.primaries == {} and 'pdata-unreadable' in tables.warnings
+
+
+def _many_scopes(tmp_path, count, end_shift, name):
+    begin = TEXT
+    records = b''.join(struct.pack('<IIII', begin + 2 * i, begin + 2 * i + 1 + (end_shift if i == 0 else 0), 1,
+                                   begin + 0x1f0) for i in range(count))
+    xdata = unwind(flags=1, prolog=7, codes=b'\x01\x74\x02\x00', frame=0x15, handler=TEXT + 0x7f0,
+                   data=struct.pack('<I', count) + records)
+    with image(tmp_path, xdata=xdata, functions=[(begin, begin + 0x200, XDATA)], name=name) as reader:
+        return pt.read_pe_tables(reader).eh_for(begin)
+
+
+def test_a_c_scope_table_longer_than_the_cap_is_unavailable_never_handler_only(tmp_path):
+    """More than MAX_SCOPES records cannot be compared record by record; read as handler-only, two different tables
+    looked EH-equal and let UNCH/1 through (FCT-10). Only a count that cannot be a C scope table (an RVA, >= 0x1000)
+    stays opaque handler data."""
+    count = pt.MAX_SCOPES + 1
+    a = _many_scopes(tmp_path, count, 0, 'a.dll')
+    b = _many_scopes(tmp_path, count, 1, 'b.dll')         # one scope ends a byte later
+    assert a == pt.EH_UNAVAILABLE and b == pt.EH_UNAVAILABLE

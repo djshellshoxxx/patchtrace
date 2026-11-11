@@ -27,7 +27,8 @@ def load_secondary(store: EnrichmentStore, current: Guard | None = None) -> list
     for entry in store.entries(KIND, current, on_corrupt=corrupt):
         try:
             # Strict models reject JSON lists as tuples in Python mode; JSON mode revalidates stored rows exactly.
-            out.append((entry, SecondaryMatchSet.model_validate_json(json.dumps(entry.body))))
+            body = entry.body_json if entry.body_json is not None else json.dumps(entry.body)
+            out.append((entry, SecondaryMatchSet.model_validate_json(body)))
         except ValueError as exc:
             _log.warning('Skipping secondary row %s: %s', entry.id, str(exc).splitlines()[0][:120])
     return out

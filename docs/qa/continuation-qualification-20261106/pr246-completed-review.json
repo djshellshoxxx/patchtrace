@@ -1,0 +1,372 @@
+{
+  "schema": "patchtrace-full-qualification-evidence/1",
+  "status": "completed_non_green",
+  "repository": "djshellshoxxx/patchtrace",
+  "pr": 246,
+  "remote_head": "c804e4d94430368c0eafe1da899493a8cf6520aa",
+  "tested_local_equivalent": "e52047ae1b1bbb19a42680b8d9881338f2595f93",
+  "tested_tree": "cf59135e03b1c4a84ff628b29b4abb9d308a2b7d",
+  "remote_and_local_tree_equal": true,
+  "run": {
+    "start": "2026-11-06T07:46:29.319797+00:00",
+    "finish": "2026-11-06T08:38:20.837999+00:00",
+    "head": "e52047ae1b1bbb19a42680b8d9881338f2595f93",
+    "tree": "cf59135e03b1c4a84ff628b29b4abb9d308a2b7d",
+    "command": [
+      "/workspace/scratch/e6b4398e92df/pt-venv/bin/python",
+      "-m",
+      "pytest",
+      "-q",
+      "--junitxml=/workspace/scratch/c4fbe5e6f72c/venv-qualification/pytest.xml"
+    ],
+    "returncode": 1,
+    "seconds": 3111.5104816069997,
+    "log_sha256": "da5dda8a4512bf5143e656a42aa9f76d81e1ffeaaaed0e04c309ab9b791a50c9",
+    "final_head": "e52047ae1b1bbb19a42680b8d9881338f2595f93",
+    "final_status": ""
+  },
+  "pytest_summary": "5 failed, 18637 passed, 134 skipped, 7 xfailed, 1 warning in 3101.65s (0:51:41)",
+  "counts": {
+    "failed": 5,
+    "passed": 18637,
+    "skipped": 134,
+    "xfailed": 7,
+    "warnings": 1,
+    "pytest_seconds": 3101.65
+  },
+  "artifact_digests": [
+    {
+      "name": "pytest.log",
+      "path": "/workspace/scratch/c4fbe5e6f72c/venv-qualification/pytest.log",
+      "bytes": 45255,
+      "sha256": "da5dda8a4512bf5143e656a42aa9f76d81e1ffeaaaed0e04c309ab9b791a50c9"
+    },
+    {
+      "name": "pytest.xml",
+      "path": "/workspace/scratch/c4fbe5e6f72c/venv-qualification/pytest.xml",
+      "bytes": 2593037,
+      "sha256": "d77fb606aced4b1711eb9a4ae72a826c9bf0eb460fa9c20779a6f406f201b97c"
+    },
+    {
+      "name": "result.json",
+      "path": "/workspace/scratch/c4fbe5e6f72c/venv-qualification/result.json",
+      "bytes": 615,
+      "sha256": "f0a3a6b9a7cde05b46e14475a95924b3b316b1b68e01f76d69fbd808b5f7b840"
+    }
+  ],
+  "junit_suite_attributes": [
+    {
+      "name": "pytest",
+      "errors": "0",
+      "failures": "5",
+      "skipped": "141",
+      "tests": "18783",
+      "time": "3100.808",
+      "timestamp": "2026-11-05T23:46:30.275540-08:00",
+      "hostname": "abfc2396d032"
+    }
+  ],
+  "collection_reconciliation": {
+    "collected_runnable_nodes": 18780,
+    "junit_cases": 18783,
+    "collection_skips": [
+      {
+        "classname": "",
+        "name": "tests.test_backend_bundle_workflow",
+        "message": "collection skipped"
+      },
+      {
+        "classname": "",
+        "name": "tests.test_unified_corpus_workflow",
+        "message": "collection skipped"
+      },
+      {
+        "classname": "",
+        "name": "tests.test_unified_live_workflow",
+        "message": "collection skipped"
+      }
+    ],
+    "runtime_skip_count": 131,
+    "xfail_count": 7,
+    "explanation": "The 18,780 collected runnable nodes plus three collection-skip records produce 18,783 JUnit cases. JUnit skipped=141 includes 134 pytest skips and 7 expected failures."
+  },
+  "provisional_mappings_confirmed": true,
+  "failures": [
+    {
+      "nodeid": "tests/test_codetext_tokens.py::test_hostile_text_is_covered_within_a_loose_time_bound[char-flood-c]",
+      "junit_whole_test_seconds": 9.341,
+      "message": "assert 9.31498351099981 < 3.0",
+      "classification": "wall-clock performance threshold failure",
+      "clock": "time.perf_counter",
+      "measured_seconds": 9.31498351099981,
+      "comparison": "<",
+      "limit_seconds": 3.0,
+      "invariants": "assert_covers completed before the failing time assertion",
+      "trace_excerpt": [
+        "        started = time.perf_counter()",
+        "        elapsed = time.perf_counter() - started",
+        "        assert_covers(text, found)",
+        ">       assert elapsed < 3.0  # a quadratic scanner needs minutes here; a linear one about a tenth of a second",
+        "E       assert 9.31498351099981 < 3.0"
+      ],
+      "prior_pr245_local_case": {
+        "classname": "tests.test_codetext_tokens",
+        "name": "test_hostile_text_is_covered_within_a_loose_time_bound[char-flood-c]",
+        "junit_whole_test_seconds": 0.702,
+        "status": "passed",
+        "failure_message": null
+      }
+    },
+    {
+      "nodeid": "tests/test_codetext_tokens.py::test_hostile_text_is_covered_within_a_loose_time_bound[comment-openers-asm]",
+      "junit_whole_test_seconds": 3.151,
+      "message": "assert 3.0742130130001897 < 3.0",
+      "classification": "wall-clock performance threshold failure",
+      "clock": "time.perf_counter",
+      "measured_seconds": 3.0742130130001897,
+      "comparison": "<",
+      "limit_seconds": 3.0,
+      "invariants": "assert_covers completed before the failing time assertion",
+      "trace_excerpt": [
+        "        started = time.perf_counter()",
+        "        elapsed = time.perf_counter() - started",
+        "        assert_covers(text, found)",
+        ">       assert elapsed < 3.0  # a quadratic scanner needs minutes here; a linear one about a tenth of a second",
+        "E       assert 3.0742130130001897 < 3.0"
+      ],
+      "prior_pr245_local_case": {
+        "classname": "tests.test_codetext_tokens",
+        "name": "test_hostile_text_is_covered_within_a_loose_time_bound[comment-openers-asm]",
+        "junit_whole_test_seconds": 0.163,
+        "status": "passed",
+        "failure_message": null
+      }
+    },
+    {
+      "nodeid": "tests/test_network_consent_guard.py::test_a_local_unix_socket_is_not_network",
+      "junit_whole_test_seconds": 0.001,
+      "message": "PermissionError: [Errno 1] Operation not permitted",
+      "classification": "environment denied AF_UNIX construction",
+      "invariants": "EPERM occurred while constructing sockets, before binding, connecting, or entering NetworkGuard",
+      "trace_excerpt": [
+        ">       with socket.socket(socket.AF_UNIX) as server, socket.socket(socket.AF_UNIX) as client:",
+        ">       _socket.socket.__init__(self, family, type, proto, fileno)",
+        "E       PermissionError: [Errno 1] Operation not permitted"
+      ],
+      "prior_pr245_local_case": {
+        "classname": "tests.test_network_consent_guard",
+        "name": "test_a_local_unix_socket_is_not_network",
+        "junit_whole_test_seconds": 0.002,
+        "status": "failed",
+        "failure_message": "PermissionError: [Errno 1] Operation not permitted"
+      }
+    },
+    {
+      "nodeid": "tests/test_pilot_properties.py::test_5000_pairs_by_8_cves_localize_within_the_5_second_target",
+      "junit_whole_test_seconds": 7.508,
+      "message": "AssertionError: 5.31 s of CPU\nassert 5.312991951999948 <= 5.0",
+      "classification": "CPU-time performance threshold failure",
+      "clock": "time.process_time",
+      "measured_seconds": 5.312991951999948,
+      "comparison": "<=",
+      "limit_seconds": 5.0,
+      "invariants": "Later result-count/status/schema assertions were not reached after the CPU-time failure",
+      "trace_excerpt": [
+        "        started = time.process_time()",
+        "        elapsed = time.process_time() - started",
+        ">       assert elapsed <= 5.0, f'{elapsed:.2f} s of CPU'",
+        "E       AssertionError: 5.31 s of CPU",
+        "E       assert 5.312991951999948 <= 5.0"
+      ],
+      "prior_pr245_local_case": {
+        "classname": "tests.test_pilot_properties",
+        "name": "test_5000_pairs_by_8_cves_localize_within_the_5_second_target",
+        "junit_whole_test_seconds": 7.349,
+        "status": "passed",
+        "failure_message": null
+      }
+    },
+    {
+      "nodeid": "tests/test_ui_related_panel.py::test_one_hundred_thousand_rows_are_read_in_pages_and_cost_what_they_show",
+      "junit_whole_test_seconds": 8.039,
+      "message": "pytestqt.exceptions.TimeoutError: waitUntil timed out in 5000 milliseconds",
+      "classification": "GUI synchronization wait expired",
+      "wait_milliseconds": 5000,
+      "invariants": "Failure occurred in start()/settle(); row/page/state assertions were not reached",
+      "trace_excerpt": [
+        ">       controller, *_ = start(qtbot, reader)",
+        ">       qtbot.waitUntil(lambda: not controller.tasks.busy() and not controller.loading, timeout=5000)",
+        "E       pytestqt.exceptions.TimeoutError: waitUntil timed out in 5000 milliseconds"
+      ],
+      "prior_pr245_local_case": {
+        "classname": "tests.test_ui_related_panel",
+        "name": "test_one_hundred_thousand_rows_are_read_in_pages_and_cost_what_they_show",
+        "junit_whole_test_seconds": 6.615,
+        "status": "passed",
+        "failure_message": null
+      }
+    }
+  ],
+  "source_relationship": {
+    "comparison_file": "/workspace/scratch/c4fbe5e6f72c/recovery-review/pr246-pr247-provisional-performance-comparison.json",
+    "comparison_sha256": "6736d2a805b468bbcaa5d7bb01653323f30b52480e5df5cca216cd441527cfca",
+    "pr247_remote_head": "37b771300053e8872febead1fc384fea9126ae90",
+    "pr247_tree": "cdbab24d14295b4450cd0d3c744d76734c98a561",
+    "critical_blobs": [
+      {
+        "path": "tests/test_codetext_tokens.py",
+        "pr246": "5180a37a39914e2ffc8891a6db2edf937059380f",
+        "pr247_local_equivalent": "5180a37a39914e2ffc8891a6db2edf937059380f",
+        "pr245_baseline": "5180a37a39914e2ffc8891a6db2edf937059380f",
+        "pr246_equals_pr247": true,
+        "pr245_equals_pr247": true
+      },
+      {
+        "path": "src/patchtrace/codetext/tokens.py",
+        "pr246": "10bdd826799e74e1cf030a7b73962d95661f52d4",
+        "pr247_local_equivalent": "10bdd826799e74e1cf030a7b73962d95661f52d4",
+        "pr245_baseline": "10bdd826799e74e1cf030a7b73962d95661f52d4",
+        "pr246_equals_pr247": true,
+        "pr245_equals_pr247": true
+      },
+      {
+        "path": "tests/test_pilot_properties.py",
+        "pr246": "d9df1b5243c563b64694050c0140e1dbd69d7c23",
+        "pr247_local_equivalent": "d9df1b5243c563b64694050c0140e1dbd69d7c23",
+        "pr245_baseline": "d9df1b5243c563b64694050c0140e1dbd69d7c23",
+        "pr246_equals_pr247": true,
+        "pr245_equals_pr247": true
+      },
+      {
+        "path": "tests/pilot_localize_support.py",
+        "pr246": "9e3d1d7e1bcc72c5d41475f785b743a22132ae28",
+        "pr247_local_equivalent": "9e3d1d7e1bcc72c5d41475f785b743a22132ae28",
+        "pr245_baseline": "9e3d1d7e1bcc72c5d41475f785b743a22132ae28",
+        "pr246_equals_pr247": true,
+        "pr245_equals_pr247": true
+      },
+      {
+        "path": "src/patchtrace/pilot/service.py",
+        "pr246": "0bcce1856dd3cfd6d9699417dde91ca35f397350",
+        "pr247_local_equivalent": "0bcce1856dd3cfd6d9699417dde91ca35f397350",
+        "pr245_baseline": "0bcce1856dd3cfd6d9699417dde91ca35f397350",
+        "pr246_equals_pr247": true,
+        "pr245_equals_pr247": true
+      },
+      {
+        "path": "tests/test_ui_related_panel.py",
+        "pr246": "f169b127046f5077e551b75081c63d3d7b82b319",
+        "pr247_local_equivalent": "e31f5c3d65c77fbbf263af9f4de8cb3ec28d53ab",
+        "pr245_baseline": "e31f5c3d65c77fbbf263af9f4de8cb3ec28d53ab",
+        "pr246_equals_pr247": false,
+        "pr245_equals_pr247": true
+      },
+      {
+        "path": "src/patchtrace/ui_related.py",
+        "pr246": "271f914031f2fac3c04d4a37aeb4853b3009c2c7",
+        "pr247_local_equivalent": "271f914031f2fac3c04d4a37aeb4853b3009c2c7",
+        "pr245_baseline": "271f914031f2fac3c04d4a37aeb4853b3009c2c7",
+        "pr246_equals_pr247": true,
+        "pr245_equals_pr247": true
+      }
+    ],
+    "existing_gui_wait_fix": {
+      "introduced_by": "b14b536d3af237939c96416053e9a77f1d0d537a",
+      "pr246_wait_ms": 5000,
+      "pr247_wait_ms": 30000,
+      "production_and_target_test_invariants_unchanged": true,
+      "scope": "Only settle() synchronization timeout changes in this test file; the timeout is the exact failure seen in the completed #246 trace."
+    },
+    "pilot_collection_change": "Only pilot/collect.py differs in that package; the synthetic performance test calls service.localize directly and does not exercise collect."
+  },
+  "prior_local_baseline": {
+    "head": "4465a0492367d08f324e80b290a594791921691c",
+    "result_path": "/workspace/scratch/e6b4398e92df/pr245-qualification/result.json",
+    "metadata_times": {
+      "started_at": "2026-11-06T05:38:49.008845+00:00",
+      "finished_at": "2026-11-06T06:21:13.902940+00:00"
+    },
+    "junit_path": "/workspace/scratch/e6b4398e92df/pr245-qualification/junit.xml",
+    "junit_sha256": "d6b3bd3119bb0496f2178def33b3c3279f1d3654caf28ad123324823bec9b07a",
+    "cases": [
+      {
+        "classname": "tests.test_codetext_tokens",
+        "name": "test_hostile_text_is_covered_within_a_loose_time_bound[char-flood-c]",
+        "junit_whole_test_seconds": 0.702,
+        "status": "passed",
+        "failure_message": null
+      },
+      {
+        "classname": "tests.test_codetext_tokens",
+        "name": "test_hostile_text_is_covered_within_a_loose_time_bound[comment-openers-asm]",
+        "junit_whole_test_seconds": 0.163,
+        "status": "passed",
+        "failure_message": null
+      },
+      {
+        "classname": "tests.test_network_consent_guard",
+        "name": "test_a_local_unix_socket_is_not_network",
+        "junit_whole_test_seconds": 0.002,
+        "status": "failed",
+        "failure_message": "PermissionError: [Errno 1] Operation not permitted"
+      },
+      {
+        "classname": "tests.test_pilot_properties",
+        "name": "test_5000_pairs_by_8_cves_localize_within_the_5_second_target",
+        "junit_whole_test_seconds": 7.349,
+        "status": "passed",
+        "failure_message": null
+      },
+      {
+        "classname": "tests.test_ui_related_panel",
+        "name": "test_one_hundred_thousand_rows_are_read_in_pages_and_cost_what_they_show",
+        "junit_whole_test_seconds": 6.615,
+        "status": "passed",
+        "failure_message": null
+      }
+    ],
+    "timing_caveat": "JUnit times cover the entire test and are not the internal CPU or scanner interval measurements."
+  },
+  "interpretation_limits": [
+    "The original full run has exit code 1 and remains non-green; later focused controls cannot relabel it.",
+    "Passing #245 timings establish previous observed outcomes, not a demonstrated cause for the #246 failures.",
+    "JUnit whole-test durations are not internal CPU or tokenizer interval measurements.",
+    "Resource contention is not established as the cause. The separate #247 full run started at 08:22:54 UTC; earlier failures may predate its overlap.",
+    "The pilot failure is measured in process CPU time and must not be dismissed as mere scheduler delay.",
+    "No source, assertion, threshold, environment permission, or skip exemption was changed by this evidence task."
+  ],
+  "followup_controls": [
+    {
+      "control": "Read #247 final full report first",
+      "precondition": "#247 full run has finished",
+      "executed": false,
+      "purpose": "Determine which identical-code performance cases and the already-repaired GUI wait remain unresolved before choosing further work."
+    },
+    {
+      "control": "One isolated tokenizer/pilot selection on frozen #246 source",
+      "precondition": "#247 full run has finished; no other concurrent qualification run launched",
+      "executed": false,
+      "nodeids": [
+        "tests/test_codetext_tokens.py::test_hostile_text_is_covered_within_a_loose_time_bound[char-flood-c]",
+        "tests/test_codetext_tokens.py::test_hostile_text_is_covered_within_a_loose_time_bound[comment-openers-asm]",
+        "tests/test_pilot_properties.py::test_5000_pairs_by_8_cves_localize_within_the_5_second_target"
+      ],
+      "purpose": "Retain original inputs, clock types and limits; capture independent JUnit/log evidence. If CPU or wall limits still fail, investigate/profile the relevant workload before proposing any source change. A pass does not erase the full-suite failure."
+    },
+    {
+      "control": "GUI wait verification on existing #247 fix, only if its full report leaves this unresolved",
+      "precondition": "#247 full run has finished",
+      "executed": false,
+      "nodeid": "tests/test_ui_related_panel.py::test_one_hundred_thousand_rows_are_read_in_pages_and_cost_what_they_show",
+      "purpose": "Use the existing 30-second synchronization wait and unchanged row/page/state assertions; avoid changing the frozen #246 candidate."
+    },
+    {
+      "control": "AF_UNIX acceptance on an authorized suitable Linux runner",
+      "precondition": "Use existing hosted evidence where it covers the intended source; do not retry with permission overrides in this restricted executor",
+      "executed": false,
+      "purpose": "Preserve explicit EPERM evidence and normal network-guard assertions."
+    }
+  ],
+  "replays_performed": false,
+  "repository_or_pr_mutations": false
+}

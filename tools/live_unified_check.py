@@ -216,14 +216,15 @@ def l5_report(label: str, ghidra_rows: dict, rows: dict[int, dict], records: Seq
 
     report: dict = {}
     compared = compare_hasher_classes(ghidra_rows, rows, 'bytes', 'h0')
-    checks.check(f'L5 {label}: h0 classes equal Ghidra ExactBytes classes ({classes(compared)})', compared['equal'],
+    checks.check(f'L5 {label}: h0 classes equal Ghidra ExactBytes classes ({classes(compared)})',
+                 compared['equal'] and compared['functions'] > 0,
                  difference(compared))
     report['h0'] = shape(compared)
     for name, ghidra_key, key, what in (('ExactInstructions', 'insns', 'h3x', 'masked instruction bytes'),
                                         ('ExactMnemonics', 'mnem', 'hmx', 'mnemonics with operand counts')):
         compared = compare_hasher_classes(ghidra_rows, exported, ghidra_key, key)
         if not checks.check(f'L5 {label}: exported {what} induce Ghidra {name} classes ({classes(compared)})',
-                            compared['equal'], difference(compared)):
+                            compared['equal'] and compared['functions'] > 0, difference(compared)):
             checks.info(f'L5 {label}: {name} groups', explain_groups(compared['only_ghidra'] + compared['only_ir'], facts))
         report[key] = shape(compared)
     outside = sorted(rva for rva, fact in facts.items()
@@ -244,13 +245,13 @@ def l5_report(label: str, ghidra_rows: dict, rows: dict[int, dict], records: Seq
         detail = {'straddling': refined['straddling']}
         if key == 'h3':
             # h3 reads the same masked bytes as Ghidra: it must equal Ghidra's classes wherever nothing is skipped
-            ok = refined['refines'] and on_clean['equal']
+            ok = refined['refines'] and on_clean['equal'] and refined['functions'] > 0
             detail.update(only_ghidra=on_clean['only_ghidra'], only_ir=on_clean['only_ir'])
             title = (f'{key} never separates what Ghidra {name} equates and equals it on the {on_clean["functions"]} '
                      'functions without skipped instructions')
         else:
             # hm leaves out Ghidra's operand counts, so it is coarser than Ghidra's even without skipped instructions
-            ok = refined['refines']
+            ok = refined['refines'] and refined['functions'] > 0
             title = f'{key} never separates what Ghidra {name} equates ({refined["functions"]} functions)'
             checks.info(f'L5 {label}: {key} on the {on_clean["functions"]} functions without skipped instructions is '
                         f'{"equal to" if on_clean["equal"] else "coarser than"} Ghidra {name} ({on_clean["classes_ir"]} '

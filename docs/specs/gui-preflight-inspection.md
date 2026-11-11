@@ -1,5 +1,7 @@
 # Immediate next-build GUI and preliminary PE inspection requirements (SPEC-26 proposal)
 
+> **SPEC-31 status amendment (2026-11-04, A-09, documentation only):** the file-level radiff2-inspired items are hosted as SPEC-26 extensions, not SPEC-31: RD-F01 (byte spans), RD-F02 (PE layout delta) and RD-F03 (offset alignment). This file is part of SPEC-26.
+
 Status: IN PROGRESS. Code fix in this PR: cross-function next/previous diff navigation and provenance tooltips for the code panes/hunk controls. Other requirements below are NOT implemented by this PR yet and must not be advertised as shipped. Priority P0 for next release. Coordinate with SPEC-12–25 planning and current Phase 3; do not change analysis results.
 
 ## Acceptance requirement A: universal informative hover tips
@@ -52,9 +54,7 @@ All raw-byte consumers (PE inspection, Hex/Binary/Base64 views) read through `pa
 
 Landed (requirement A, first slice): `src/patchtrace/tooltips.py` holds a declarative registry of `TooltipEntry` records (what, why, effect, source, availability) keyed by semantic IDs such as `action.run_comparison`, `viewer.older_code` and `setup.ghidra_dir`. Static controls use `tooltip(id)`; dynamic items (recent project paths, detector IDs) use `template(id, **values)`, which strips control characters, caps values at 200 characters and escapes them. `apply_tooltip` sets tooltip, what's-this, status tip (actions), accessible description (widgets) and an empty object name. Every MainWindow action and widget, NewProjectDialog, AcquisitionDialog, SetupDialog (both tabs and profiles), ContextDialog, CorrectMatchDialog, ExportDialog, the file overview dialog, text dialogs and Yes/No confirmation buttons use it. New and Open are the only exempt actions (`EXEMPT_IDS`). The code pane entries state the required provenance wording. `tests/test_tooltips.py` enumerates actions and focusable widgets in each window and dialog and fails on missing, short or non-registry tooltips.
 
-Second slice (2026-10-28): the swap-orientation confirmation is an instance box whose Yes/No buttons use `confirm.yes` and `confirm.no`, and the critical error box's OK button uses `error.dismiss`. `tests/test_tooltips.py` covers both.
-
-Still open: per-item tooltips for list and table rows still use the earlier ad hoc escaped text (`plain_tip`) rather than registry templates; tooltips for the Hex, Binary and Base64 representations and the whole file, file range and function RVA range labelling (requirement B) wait for those features; both-theme and display-scaling tests are not yet written; New and Open are intentionally untouched.
+Still open: per-item tooltips for list and table rows still use the earlier ad hoc escaped text (`plain_tip`) rather than registry templates; the swap-orientation question box and the critical error box are built with static QMessageBox helpers and have no registry tooltips; tooltips for the Hex, Binary and Base64 representations and the whole file, file range and function RVA range labelling (requirement B) wait for those features; both-theme and display-scaling tests are not yet written; New and Open are intentionally untouched.
 
 ## Alpha integration (artifact_inspection.py, raw_view.py, ui_inspection.py)
 
@@ -63,3 +63,7 @@ Still open: per-item tooltips for list and table rows still use the earlier ad h
 **Deliberate limits:** Ghidriff records carry an entry address but no verified contiguous function body, so "From function entry" pages forward from the mapped entry offset and states that the function extent is not determined; unmappable/virtual-only/ambiguous entries show unavailable. Split/merge relationships use the first function per side for entry scope (stated in the header line). Page reads (at most 4 KiB) run on the GUI thread; hashing and PE parsing run off-thread. The PE comparison is not persisted per artifact hash yet. The Authenticode probe (`pe_overview/authenticode.py`: embedded signature only, WinVerifyTrust with no revocation and cache-only URL retrieval) runs on each hash-verified copy and appears as a row whose wording never claims full validity; it reports "not checked on this platform" off Windows. It opens the file by path after the hash check, which is acceptable for immutable project copies; signed/trusted/revoked samples still need native Windows acceptance. Section entropy, packer hints and parser warnings are in `PeOverview` but only partially surfaced.
 
 Migration M3 (GUI plan section 8, slice F9): the File overview dialog becomes a `files` dock, and `ui.py` loses about 65 lines. Until F9 it is a recorded exception to "one main window" (GUI plan open question 7).
+
+### Superseded inspection failures
+
+An inspection failure carrying a project/artifact key different from the current inspection key is ignored, just as a superseded successful result is ignored. It must not replace the current Files status, set its error state, or append a misleading current-project error to the log. A current-key failure and a failure without a key still report normally.

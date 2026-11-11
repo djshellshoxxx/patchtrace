@@ -8,6 +8,8 @@ labelled data that SPEC-30 may evaluate against verified binary observations; 28
 """
 from __future__ import annotations
 
+import functools
+
 from ..enrichment.identity import domain_id
 from .contracts import CweProfile, HypothesisSet, PatchHypothesis, Rule
 
@@ -230,6 +232,7 @@ RULES: tuple[Rule, ...] = (
 _BY_FAMILY = {rule.family: rule for rule in RULES}
 
 
+@functools.cache  # RULES are module data fixed at import
 def rules_digest() -> str:
     return domain_id('patch-rules', 1, [rule.model_dump(mode='json') for rule in RULES])
 

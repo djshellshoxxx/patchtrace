@@ -1,0 +1,338 @@
+{
+  "$defs": {
+    "DiaphoraMatch": {
+      "additionalProperties": false,
+      "properties": {
+        "address_status": {
+          "enum": [
+            "verified-rva",
+            "external-ea-only",
+            "ambiguous"
+          ],
+          "title": "Address Status",
+          "type": "string"
+        },
+        "category": {
+          "enum": [
+            "best",
+            "partial",
+            "unreliable",
+            "multimatch"
+          ],
+          "title": "Category",
+          "type": "string"
+        },
+        "heuristic": {
+          "maxLength": 4096,
+          "title": "Heuristic",
+          "type": "string"
+        },
+        "index": {
+          "minimum": 0,
+          "title": "Index",
+          "type": "integer"
+        },
+        "newer_ea": {
+          "maximum": 18446744073709551615,
+          "minimum": 0,
+          "title": "Newer Ea",
+          "type": "integer"
+        },
+        "newer_ea_text": {
+          "maxLength": 4096,
+          "title": "Newer Ea Text",
+          "type": "string"
+        },
+        "newer_name": {
+          "maxLength": 4096,
+          "title": "Newer Name",
+          "type": "string"
+        },
+        "newer_nodes": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Newer Nodes"
+        },
+        "newer_rva": {
+          "anyOf": [
+            {
+              "maximum": 18446744073709551615,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Newer Rva"
+        },
+        "older_ea": {
+          "maximum": 18446744073709551615,
+          "minimum": 0,
+          "title": "Older Ea",
+          "type": "integer"
+        },
+        "older_ea_text": {
+          "maxLength": 4096,
+          "title": "Older Ea Text",
+          "type": "string"
+        },
+        "older_name": {
+          "maxLength": 4096,
+          "title": "Older Name",
+          "type": "string"
+        },
+        "older_nodes": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Older Nodes"
+        },
+        "older_rva": {
+          "anyOf": [
+            {
+              "maximum": 18446744073709551615,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Older Rva"
+        },
+        "ratio_milli": {
+          "anyOf": [
+            {
+              "maximum": 1000,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Ratio Milli"
+        },
+        "ratio_text": {
+          "maxLength": 4096,
+          "title": "Ratio Text",
+          "type": "string"
+        },
+        "ratio_transform": {
+          "enum": [
+            "direct",
+            "capped-bonus",
+            "unavailable"
+          ],
+          "title": "Ratio Transform",
+          "type": "string"
+        }
+      },
+      "required": [
+        "index",
+        "category",
+        "older_ea_text",
+        "newer_ea_text",
+        "older_ea",
+        "newer_ea",
+        "older_rva",
+        "newer_rva",
+        "older_name",
+        "newer_name",
+        "ratio_text",
+        "ratio_milli",
+        "ratio_transform",
+        "older_nodes",
+        "newer_nodes",
+        "heuristic",
+        "address_status"
+      ],
+      "title": "DiaphoraMatch",
+      "type": "object"
+    },
+    "DiaphoraUnmatched": {
+      "additionalProperties": false,
+      "properties": {
+        "address_status": {
+          "enum": [
+            "verified-rva",
+            "external-ea-only",
+            "ambiguous"
+          ],
+          "title": "Address Status",
+          "type": "string"
+        },
+        "ea": {
+          "maximum": 18446744073709551615,
+          "minimum": 0,
+          "title": "Ea",
+          "type": "integer"
+        },
+        "ea_text": {
+          "maxLength": 4096,
+          "title": "Ea Text",
+          "type": "string"
+        },
+        "index": {
+          "minimum": 0,
+          "title": "Index",
+          "type": "integer"
+        },
+        "name": {
+          "maxLength": 4096,
+          "title": "Name",
+          "type": "string"
+        },
+        "rva": {
+          "anyOf": [
+            {
+              "maximum": 18446744073709551615,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Rva"
+        },
+        "side": {
+          "enum": [
+            "older",
+            "newer"
+          ],
+          "title": "Side",
+          "type": "string"
+        },
+        "source_side": {
+          "enum": [
+            "primary",
+            "secondary"
+          ],
+          "title": "Source Side",
+          "type": "string"
+        }
+      },
+      "required": [
+        "index",
+        "source_side",
+        "side",
+        "ea_text",
+        "ea",
+        "rva",
+        "name",
+        "address_status"
+      ],
+      "title": "DiaphoraUnmatched",
+      "type": "object"
+    }
+  },
+  "$id": "https://patchtrace.local/schemas/diaphora/1/DiaphoraMatchSet.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "contract": {
+      "const": "diaphora/1",
+      "default": "diaphora/1",
+      "title": "Contract",
+      "type": "string"
+    },
+    "duplicate_rows": {
+      "default": 0,
+      "minimum": 0,
+      "title": "Duplicate Rows",
+      "type": "integer"
+    },
+    "engine": {
+      "const": "diaphora",
+      "default": "diaphora",
+      "title": "Engine",
+      "type": "string"
+    },
+    "engine_version": {
+      "maxLength": 4096,
+      "title": "Engine Version",
+      "type": "string"
+    },
+    "limitations": {
+      "default": [
+        "Diaphora ratio is a Diaphora-specific heuristic similarity, not a BinDiff confidence or a probability.",
+        "Pseudocode, microcode and graph evidence from Diaphora is often correlated with Ghidriff; agreement is not independent proof.",
+        "Imported rows were produced outside PatchTrace; only the file and pair hashes are verified here."
+      ],
+      "items": {
+        "type": "string"
+      },
+      "title": "Limitations",
+      "type": "array"
+    },
+    "matches": {
+      "items": {
+        "$ref": "#/$defs/DiaphoraMatch"
+      },
+      "title": "Matches",
+      "type": "array"
+    },
+    "newer_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Newer Sha256",
+      "type": "string"
+    },
+    "older_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Older Sha256",
+      "type": "string"
+    },
+    "orientation": {
+      "const": "older->newer",
+      "default": "older->newer",
+      "title": "Orientation",
+      "type": "string"
+    },
+    "result_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Result Sha256",
+      "type": "string"
+    },
+    "trust": {
+      "enum": [
+        "manifest-bound",
+        "user-attested"
+      ],
+      "title": "Trust",
+      "type": "string"
+    },
+    "unmatched": {
+      "items": {
+        "$ref": "#/$defs/DiaphoraUnmatched"
+      },
+      "title": "Unmatched",
+      "type": "array"
+    }
+  },
+  "required": [
+    "engine_version",
+    "older_sha256",
+    "newer_sha256",
+    "result_sha256",
+    "trust",
+    "matches",
+    "unmatched"
+  ],
+  "title": "DiaphoraMatchSet",
+  "type": "object"
+}

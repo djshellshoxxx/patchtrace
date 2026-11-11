@@ -9,13 +9,15 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-# Pure shared helpers; importing build_linux runs no build.
 import check_windows_exe  # noqa: E402
 import windows_icon  # noqa: E402
 import windows_version_info  # noqa: E402
+
+# Pure shared helpers; importing build_linux runs no build.
 from build_linux import (  # noqa: E402
     attach_backend,
     check_archive_size,
+    check_desktop_mark,
     full_archive_name,
     parse_args,
     sha256_file,
@@ -29,6 +31,8 @@ BINEXPORT_NOTICES = [f'protobuf-{PROTOBUF_PIN}/LICENSE', 'binexport-2bff7af/LICE
 BINDIFF_NOTICES = ['bindiff-v8-aecc14d/LICENSE', 'bindiff-v8-aecc14d/PROVENANCE.txt']
 # SPEC-31 03 s3: the Ghidra extractor script runs in the user's external Python, so it travels as a data file.
 EXTRACTOR_SCRIPT = 'patchtrace/unified/extract/ghidra_script.py'
+# SPEC-53 GHR-2: the Ghidriff launcher also runs in the user's external Python, so it is a data file too.
+LAUNCHER_SCRIPT = 'patchtrace/ghidriff_launch/ptlaunch.py'
 
 
 def _installed(name):
@@ -71,8 +75,12 @@ def main(argv=None):
         raise SystemExit('Build on Windows: PyInstaller cannot cross-compile the Windows runtime.')
     root = Path(__file__).resolve().parents[1]
     require_upb_protobuf()
+    # Validate metadata before any build work; shared archive-version parsing stays unchanged.
+    try:
+        fields = windows_version_info.fields_for_build(args.version, root=root)
+    except ValueError as exc:
+        raise SystemExit(str(exc)) from exc
     resources = root / 'build' / 'windows-resources'
-    fields = windows_version_info.fields_for_build(args.version, root=root)
     version_file = windows_version_info.write(fields, resources / 'version-info.txt')
     icon = resources / 'PatchTrace.ico'
     icon.write_bytes(windows_icon.pack_ico(windows_icon.render_frames()))
@@ -138,11 +146,14 @@ def main(argv=None):
     packaged = [item for item in inventory if item.endswith('/' + EXTRACTOR_SCRIPT)]
     if len(packaged) != 1 or (package / packaged[0]).read_bytes() != (root / 'src' / EXTRACTOR_SCRIPT).read_bytes():
         raise RuntimeError('Extractor script data file is missing or differs from the source tree')
+    packaged = [item for item in inventory if item.endswith('/' + LAUNCHER_SCRIPT)]
+    if len(packaged) != 1 or (package / packaged[0]).read_bytes() != (root / 'src' / LAUNCHER_SCRIPT).read_bytes():
+        raise RuntimeError('Ghidriff launcher data file is missing or differs from the source tree')
+    check_desktop_mark(package, root, 'windows')
     (package / 'file-inventory.json').write_text(json.dumps(inventory, indent=2), encoding='utf-8')
     subprocess.run([str(package / 'PatchTrace.exe'), '--self-test'], timeout=60, check=True)
-    # Read the built file back with PatchTrace's own PE reader: the release must name the commit it came from.
     issues = check_windows_exe.problems(check_windows_exe.read_resources(package / 'PatchTrace.exe'),
-                                        fields.label, fields.commit)
+                                        fields.label, fields.commit, fields.quad)
     if issues:
         raise RuntimeError('; '.join(issues))
     # Frozen headless smoke: help must reach stdout and exit 0 without Qt.

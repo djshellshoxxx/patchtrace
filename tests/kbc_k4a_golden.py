@@ -13,7 +13,11 @@ GOLDEN = Path(__file__).resolve().parent / 'fixtures' / 'kbcorrelation' / 'expec
 
 def snapshot_file(path: Path, cwes: dict[str, str]) -> Path:
     """One ``CveSnapshot`` per CVE carrying a single msrc CWE, retrieved 2099-02-14 (plan s5 baseline)."""
-    items = [{'contract': 'enrichment/1', 'snapshot_id': f'{index:064x}', 'cve_id': cve, 'normalization_version': 1,
+    from patchtrace.enrichment.cve import (
+        _snapshot_id,  # imported snapshots must carry their real identity (ACQ-10)
+    )
+    items = [{'contract': 'enrichment/1', 'snapshot_id': _snapshot_id(cve, 1, {'msrc': '0' * 64}), 'cve_id': cve,
+              'normalization_version': 1,
               'response_digests': {'msrc': '0' * 64}, 'retrieved_at': '2099-02-14T00:00:00+00:00',
               'cwes': [{'contract': 'enrichment/1', 'source': 'msrc', 'value': cwe}]}
              for index, (cve, cwe) in enumerate(sorted(cwes.items()), 1)]

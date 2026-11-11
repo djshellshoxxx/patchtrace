@@ -21,6 +21,8 @@ from collections.abc import Iterable, Mapping, Sequence
 from .common import canonical_json
 
 CONTROL_STRATA = frozenset({'aa', 'noise', 'mutation'})
+MIN_LINEAGES_HEADLINE = 30     # below this a lineage bootstrap is anti-conservative (bootstrap.MIN_GROUPS_HEADLINE)
+MIN_LINEAGES_LOCKED = 12       # gates.G0_MIN['locked_lineages']
 STRATUM_TAG = 'stratum:'
 
 
@@ -141,7 +143,33 @@ def audit_manifest(manifest: Mapping, roles: Mapping[str, str] | None = None) ->
     for role in ('dev', 'locked-test', 'shift-test'):
         if not by_role.get(role):
             warnings.append(f'role {role} has no lineage (tiny corpus: no claim can rest on it)')
+    if 0 < by_role.get('locked-test', 0) < MIN_LINEAGES_LOCKED:
+        warnings.append(f'role locked-test has {by_role["locked-test"]} lineages (< {MIN_LINEAGES_LOCKED}): a locked '
+                        'look is insufficient-data')
+    if 0 < len(manifest['lineages']) < MIN_LINEAGES_HEADLINE:
+        warnings.append(f'{len(manifest["lineages"])} lineages (< {MIN_LINEAGES_HEADLINE}): lineage-bootstrap '
+                        'intervals are anti-conservative and no headline can pass')
     return {'violations': violations, 'warnings': warnings, 'roles': by_role}
+
+
+def audit_identity_roles(cands: Iterable, roles: Mapping[str, str], *, hubs: Iterable[str] = ()) -> list[str]:
+    """Split audit by function identity (spec 4.5 amended): a non-hub identity (`lineage.CandidateIdentity`) held by
+    lineages of different roles leaks between dev, locked-test and shift-test, because roles are assigned per
+    lineage while a shared body links lineages. Hub identities (shared CRT or static code) are reported through
+    `seen_body`, not here. A lineage without a role fails closed."""
+    hub = frozenset(hubs)
+    held: dict[str, set[str]] = {}
+    violations = []
+    for c in cands:
+        if c.lineage not in roles:
+            violations.append(f'candidate {c.id}: lineage {c.lineage} has no role')
+            continue
+        for ident in c.identities:
+            if ident not in hub:
+                held.setdefault(ident, set()).add(roles[c.lineage])
+    violations += [f'identity {ident} is on both sides of the split: {sorted(rs)}'
+                   for ident, rs in sorted(held.items()) if len(rs) > 1]
+    return violations
 
 
 def canonical_manifest_sha256(manifest: Mapping) -> str:

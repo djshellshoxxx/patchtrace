@@ -10,10 +10,11 @@ from __future__ import annotations
 
 from bisect import bisect_right
 from dataclasses import dataclass
+from functools import cached_property
 from typing import Literal, NamedTuple
 
 from ..ir import schema
-from ..ir.features import F_NOP, is_direct_branch
+from ..ir.features import F_CALL, F_NOP, is_direct_branch
 from ..ir.ins import Insn
 from ..ir.reader import BlockRow, ConstRow, IrReader, RefRow, StringRow
 
@@ -51,6 +52,35 @@ class FnView:
     consts: tuple[ConstRow, ...]
     eh: str | None
     h1: bytes | None = None                     # address-masked body key of the whole function (C1)
+
+    @cached_property
+    def calls_at(self) -> dict[int, tuple[Call, ...]]:
+        """The call rows of every call site, sorted (one lookup per call instead of a scan of all calls)."""
+        out: dict[int, list[Call]] = {}
+        for call in self.calls:
+            out.setdefault(call.site, []).append(call)
+        return {site: tuple(sorted(rows)) for site, rows in out.items()}
+
+    @cached_property
+    def _next_calls(self) -> dict[int, int | None]:
+        """Per non-NOP instruction: the next call instruction of its block, or None (built once, O(instructions))."""
+        out: dict[int, int | None] = {}
+        for members in self.block_kept:
+            following = None
+            for index in reversed(members):
+                out[index] = following
+                if self.insns[index].flags & F_CALL:
+                    following = index
+        return out
+
+    def following_call(self, index: int) -> int | None:
+        """The first call instruction after `index` among the non-NOP instructions of its block, else None."""
+        members = self.block_kept[self.block_of[index]]
+        position = bisect_right(members, index)
+        if position == len(members):
+            return None
+        first = members[position]
+        return first if self.insns[first].flags & F_CALL else self._next_calls[first]
 
     def text(self, index: int) -> str:
         if 0 <= index < len(self.texts):

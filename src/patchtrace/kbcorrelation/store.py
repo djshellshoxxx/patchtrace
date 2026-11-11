@@ -29,12 +29,14 @@ from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
+from ..persistence import creation_directory_available
 from .contracts import (
     AnalystDecision,
     Attempt,
     Contract,
     Coverage,
     InvestigationRevision,
+    ProductScope,
     ProjectLink,
     SourceDoc,
     domain_id,
@@ -108,13 +110,19 @@ def atomic_write(path: Path, data: bytes) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     fd, tmp = tempfile.mkstemp(prefix='.kbc-', suffix='.tmp', dir=path.parent)
     try:
-        with os.fdopen(fd, 'wb') as handle:
+        handle = os.fdopen(fd, 'wb')
+        fd = None  # ownership transferred only after buffering succeeds
+        with handle:
             handle.write(data)
             handle.flush()
             os.fsync(handle.fileno())
         os.replace(tmp, path)
     except BaseException:
-        Path(tmp).unlink(missing_ok=True)
+        try:
+            if fd is not None:
+                os.close(fd)
+        finally:
+            Path(tmp).unlink(missing_ok=True)
         raise
 
 
@@ -149,7 +157,8 @@ class WorkspaceStore:
             version = self.db.execute('PRAGMA user_version').fetchone()[0]
             if version > SCHEMA_VERSION:
                 self.db.close()
-                self.db = sqlite3.connect(f'{path.as_uri()}?mode=ro', uri=True, timeout=5, isolation_level=None)
+                self.db = sqlite3.connect(f'{path.resolve().as_uri()}?mode=ro', uri=True, timeout=5,
+                                          isolation_level=None)   # resolve: a relative root has no file URI (#105)
                 self.read_only = True
             elif version == 0:
                 self._create()
@@ -463,6 +472,7 @@ class AttachRequest:
     directory: str
     source_shas: tuple[str, ...] = ()
     plan_sha: str | None = None
+    selected_product: ProductScope | None = None
 
 
 def _file_sha(path: str) -> str:
@@ -533,13 +543,17 @@ class ProjectAttachment:
         current = self.ws.current_revision(request.revision.investigation_id)
         if current is None or current.revision != request.revision.revision or current.state != 'BYTES_VERIFIED':
             raise KbcStoreError('PT-KBC-STALE', 'attach needs the current BYTES_VERIFIED revision')
+        if request.selected_product is not None and (
+                request.revision.lead.kind not in {'pair', 'file'} or
+                request.selected_product.scope_id != request.revision.selected_scope_id):
+            raise KbcStoreError('PT-KBC-INPUT', 'the captured product must match the product-only investigation')
         if request.older_sha == request.newer_sha:
             raise KbcStoreError('PT-KBC-VERIFY', 'the two sides are the same bytes')
         for path, sha in ((request.older_path, request.older_sha), (request.newer_path, request.newer_sha)):
             if _file_sha(path) != sha:
                 raise KbcStoreError('PT-KBC-VERIFY', 'an input file does not match its verified SHA-256')
         directory = Path(request.directory)
-        if directory.exists() and (not directory.is_dir() or any(directory.iterdir())):
+        if not creation_directory_available(directory):
             raise KbcStoreError('PT-KBC-STORAGE', 'the project directory exists and is not empty')
         for sha in request.source_shas:
             self.ws.read_object(sha)  # fail before any side effect if a source object is damaged
@@ -547,6 +561,8 @@ class ProjectAttachment:
             'state': 'intent', 'directory': directory.resolve().as_posix(), 'older_path': request.older_path,
             'newer_path': request.newer_path, 'older_sha': request.older_sha, 'newer_sha': request.newer_sha,
             'pair_id': request.pair_id, 'plan_sha': request.plan_sha, 'source_shas': list(request.source_shas),
+            **({'selected_product': request.selected_product.model_dump(mode='json')}
+               if request.selected_product is not None else {}),
             'revision': request.revision.model_dump(mode='json'), 'base': request.revision.revision,
             'cas_created': False, 'cas_final': False, 'project_id': None, 'project_revision': None,
             'link_state': None, 'interrupted': False})
@@ -593,7 +609,9 @@ class ProjectAttachment:
         return body, failure
 
     def _attach_context(self, op_id: str, body: dict, context: tuple[tuple[str, bytes], ...]) -> dict:
-        """`kb attach --repair` with a rebuilt context: add the missing rows to an already created project."""
+        """`kb attach --repair` with a rebuilt context: add the missing sidecars and rows to an already created
+        project. The sidecars are written here too: a first attach can fail before them (issue #105 BUG-KBC-4)."""
+        self._sidecars(body)
         self._rows(body, context)
         body = self._cas(op_id, {**body, 'link_state': 'attached'}, 'context_attached', flag='cas_final', final=True)
         self._record(body, True)
@@ -631,6 +649,13 @@ class ProjectAttachment:
         return path
 
     def _sidecars(self, body: dict) -> None:
+        try:
+            self._write_sidecars(body)
+        except OSError as exc:                      # disk full, permissions, a file in the way (issue #105 KBC-5)
+            raise KbcStoreError('PT-KBC-STORAGE', 'a project sidecar could not be written',
+                                details={'cause': type(exc).__name__}) from exc
+
+    def _write_sidecars(self, body: dict) -> None:
         directory = Path(body['directory'])
         rev = _revision_of(body)
         budget = self.ws.limits.project_sources_bytes

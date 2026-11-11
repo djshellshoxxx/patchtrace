@@ -143,11 +143,16 @@ PASSES: tuple[PassSpec, ...] = (
 
 # Versions of implemented rules; they change `config_digest` (02 s5). S3 added the IR channels C0-C5, DATA-MAP/1,
 # the alignment, EH-EQ and the structural proofs.
+# Version 2 (2026-11-04, audit card fct): C1 reports a Jcc condition change inside a block body (FCT-04); C2 sees SIB
+# scale, access size and segment changes (FCT-06); DATA-MAP never builds consensus over a capped vote table and never
+# maps an unresolved target (FCT-02, FCT-05); COS-LAYOUT/1 checks the condition and fall-through of a conditional tail
+# call and anchors a retargeted tail jump (FCT-01, FCT-07); COS-PSEUDO/1 is blocked by a register-only delta (FCT-03).
+# The bumps move `config_digest`, so results stored with the old rules are recomputed instead of served from the cache.
 CHANNEL_VERSIONS: tuple[tuple[str, int], ...] = (
-    ('C0', 1), ('C1', 1), ('C2', 1), ('C3', 1), ('C4', 1), ('C4n', 1), ('C5', 1), ('C5t', 1), ('C6', 1), ('C8', 1),
-    ('align', 1), ('canon', 1), ('datamap', 1), ('eh-eq', 1))
+    ('C0', 1), ('C1', 2), ('C2', 2), ('C3', 1), ('C4', 1), ('C4n', 1), ('C5', 1), ('C5t', 1), ('C6', 1), ('C8', 1),
+    ('align', 1), ('canon', 1), ('datamap', 2), ('eh-eq', 1))
 PROOF_VERSIONS: tuple[tuple[str, int], ...] = (
-    ('COS-ADDR/1', 1), ('COS-LAYOUT/1', 1), ('COS-PSEUDO/1', 1), ('UNCH/1', 1))
+    ('COS-ADDR/1', 1), ('COS-LAYOUT/1', 2), ('COS-PSEUDO/1', 2), ('UNCH/1', 1))
 RZDIFF_META: tuple[str, Tier, EvidenceClass] = ('levenshtein-bytes', 'W', 'E-BODY')
 
 _FAMILY_BY_KIND = {'manual': 'F-MANUAL', 'pe': 'F-PT-PE', 'names': 'F-PT-NAMES'}

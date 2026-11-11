@@ -72,3 +72,56 @@ def test_an_oversized_existing_file_is_refused_not_replaced(tmp_path, project, m
     with pytest.raises(ExportError, match='larger than any report'):
         export_project(project, 'md', out)
     assert out.read_bytes() == b'x' * (cap + 1) and backups(tmp_path) == []
+
+
+def test_an_existing_incomplete_backup_never_allows_replacing_the_original(tmp_path, project):
+    out = tmp_path / 'report.md'
+    previous = b'annotated report that must survive\n'
+    out.write_bytes(previous)
+    backup = previous_copy_path(out, previous)
+    backup.write_bytes(b'annotated')  # previous interrupted write, unrelated file, or hash-prefix collision
+    with pytest.raises(ExportError, match='backup'):
+        export_project(project, 'md', out)
+    assert out.read_bytes() == previous
+    assert backup.read_bytes() == b'annotated'
+
+
+def test_failed_backup_fsync_removes_own_partial_file_and_retry_preserves_bytes(tmp_path, project, monkeypatch):
+    out = tmp_path / 'report.md'
+    previous = b'keep all these analyst notes\n'
+    out.write_bytes(previous)
+    backup = previous_copy_path(out, previous)
+    real_fsync = os.fsync
+    calls = 0
+
+    def fail_second_fsync(fd):
+        nonlocal calls
+        calls += 1
+        if calls == 2:  # first the new report staging file, then the previous report backup
+            raise OSError('simulated full disk')
+        return real_fsync(fd)
+
+    with monkeypatch.context() as patch:
+        patch.setattr(reports.os, 'fsync', fail_second_fsync)
+        with pytest.raises(ExportError, match='PT-EXPORT'):
+            export_project(project, 'md', out)
+    assert calls == 2 and out.read_bytes() == previous
+    assert not backup.exists()
+    export_project(project, 'md', out)
+    assert backup.read_bytes() == previous
+
+
+def test_existing_backup_symlink_is_not_accepted_as_preserved_bytes(tmp_path, project):
+    out = tmp_path / 'report.md'
+    previous = b'analyst notes\n'
+    out.write_bytes(previous)
+    external = tmp_path / 'elsewhere.md'
+    external.write_bytes(previous)
+    backup = previous_copy_path(out, previous)
+    try:
+        backup.symlink_to(external)
+    except OSError:
+        pytest.skip('symlink creation is unavailable')
+    with pytest.raises(ExportError, match='backup'):
+        export_project(project, 'md', out)
+    assert out.read_bytes() == previous and backup.is_symlink()

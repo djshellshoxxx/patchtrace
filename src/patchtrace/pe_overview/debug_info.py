@@ -14,8 +14,8 @@ MAX_ENTRIES = 16
 
 def parse_codeview(ctx: Ctx, smap: SectionMap, rva: int, size: int) -> CodeViewInfo | None:
     count = min(size // ENTRY_SIZE, MAX_ENTRIES)
-    off = smap.rva_to_offset(rva) if count else None
-    raw = ctx.read(off, count * ENTRY_SIZE) if off is not None else b''
+    span = smap.backed_prefix(rva, count * ENTRY_SIZE) if count else None
+    raw = ctx.read(*span) if span is not None else b''
     if count and len(raw) < ENTRY_SIZE:
         ctx.warn('debug_unparseable', 'debug directory is not backed by file data')
         return None

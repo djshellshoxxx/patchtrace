@@ -19,7 +19,7 @@ import json
 import logging
 import sqlite3
 from collections.abc import Callable, Collection, Iterable
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
 
@@ -56,7 +56,10 @@ KINDS = frozenset({'signals', 'ranking', 'wil', 'cve-snapshot', 'contextual', 'p
                    'anchor-batch',
                    # Program E (FAB-4): the analyst's pins on anchors, append-only events. Same rule: never derived,
                    # so retention never deletes them and no producer retraction can reach them.
-                   'anchor-pin'})
+                   'anchor-pin',
+                   # SPEC-DA-01 Mode A: an imported Diaphora result (diaphora/1). Imported evidence, never derived,
+                   # so retention never deletes it; no extension_version bump, as `anchor-batch`.
+                   'diaphora-matches'})
 
 # Retention (SPEC-07h H1). Only recomputable derived kinds are ever deleted; imported evidence
 # (`secondary-matches`), `cve-snapshot` and unknown kinds are never evicted.
@@ -89,6 +92,9 @@ class Entry:
     stale: bool
     created: str
     body: dict
+    # Immutable bytes already checked by entries(); body remains mutable for legacy consumers.
+    body_json: str | None = field(default=None, compare=False, repr=False)
+    body_sha256: str | None = field(default=None, compare=False, repr=False)
 
 
 def _snapshot_sha(db: sqlite3.Connection):
@@ -227,7 +233,10 @@ class EnrichmentStore:
         self.ensure()
         if self.read_only:
             raise EnrichmentError('PT-ENRICH-STALE', 'project enrichment data was written by a newer PatchTrace')
-        text = json.dumps(body, sort_keys=True, separators=(',', ':'), ensure_ascii=False, allow_nan=False)
+        try:
+            text = json.dumps(body, sort_keys=True, separators=(',', ':'), ensure_ascii=False, allow_nan=False)
+        except ValueError as exc:  # NaN or infinity in the body
+            raise EnrichmentError('PT-ENRICH-INPUT', 'enrichment result contains a non-finite number') from exc
         size = len(text.encode('utf-8'))
         if size > MAX_ROW:
             raise EnrichmentError('PT-ENRICH-LIMIT', 'enrichment result exceeds 32 MiB row limit')
@@ -275,7 +284,7 @@ class EnrichmentStore:
                 raise EnrichmentError('PT-ENRICH-INPUT', 'stored enrichment row failed its integrity hash')
             guard = Guard(row[2], row[4], row[5], row[6])
             stale = bool(row[8]) or (current is not None and guard != current)
-            out.append(Entry(row[0], row[1], guard, row[3], row[7], stale, row[9], json.loads(row[10])))
+            out.append(Entry(row[0], row[1], guard, row[3], row[7], stale, row[9], json.loads(row[10]), row[10], row[11]))
         return out
 
     def current(self, kind: str, guard: Guard) -> Entry | None:

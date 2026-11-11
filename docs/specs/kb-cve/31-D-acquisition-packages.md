@@ -14,6 +14,22 @@ SPEC-08 constraints remain authoritative for symbol-server use: Winbindex metada
 
 Metadata fetch + binary fetch are two separate grants. An acquired sample's SHA matching Winbindex proves index consistency, not Microsoft vendor signature. Preserve source entry hash, expected vs observed bytes/hash, original and final response host, source record time and parser version.
 
+Workspace metadata publication amendment (2026-11-05): after validating exact
+Winbindex record bytes, `save_winbindex_record` uses the existing shared atomic
+writer: create an exclusive, unique same-directory stage, write/flush/fsync,
+then atomically replace the explicit same-name/date record. Existing fixed
+`<record>.tmp` entries are foreign to this attempt and must not be opened,
+modified, published or removed. A pre-publication write/flush/replace failure
+preserves the prior committed record and cleans only the attempt's stage.
+If buffering the newly created stage fails, close the still-owned raw
+descriptor as well as cleaning the stage; once buffering succeeds, the stream
+owns that descriptor and closes it exactly once.
+Plain/gzip same-name/date replacement remains explicit and compatible. This
+publication refuses an observed symlink or Windows junction at the workspace's
+`winbindex` child before staging, preserving any aliased foreign directory.
+It does not promise a sandbox against a noncooperating writer replacing parent
+directories or stage/final pathnames after ownership checks.
+
 ## D3. Verification precedence and authenticity states
 
 Mandatory: stream to private non-executable staging, bounded size, SHA-256, final PE parse, supported architecture, filename identity, selected product/build association, chronology check, stable final bytes (no TOCTOU between verification and project copy). Promote only after re-opening/hash verification via existing ingestion path. Use private scratch names chosen by program; reject symlink traversal and path escape.
@@ -55,6 +71,39 @@ Default optional package limits (tune with real fixtures): input ≤4 GiB, total
 ## D7. Crash and cancellation
 
 A plan can be retried only when same plan_sha and expected bytes; staging artifact SHA must be verified again after restart. Partial files carry separate .partial marker and cannot be selected by pair resolver. Cancellation closes handles, terminates controlled jobs, retains completed verified source caches but never updates active project on incomplete state. Interrupted attempt journal records plan_id, side, last completed stage, file/hash, failure reason and cleanup outcome; stale workdirs are removed only if owned by the job and no live lock. No implicit resume that accesses network.
+
+Service lifecycle amendment (2026-11-05): `KbService.acquire` accepts optional
+`cancel` and `expected_revision` keyword arguments with backwards-compatible
+defaults. A supplied stale revision is refused before staging/networking; an
+already-set cancellation token returns cancelled without staging. Forward the
+same token into the existing acquisition bridge and check it again at the
+final import boundary. Capture the exact committed investigation revision and
+ordered source records before resolution, and compare that snapshot before
+staging and immediately before importing verified bytes. Source additions before
+final source admission or revision/lead/scope changes invalidate the in-flight
+operation even when the binary request plan itself is unchanged. Always pass
+the captured revision to `import_pair`, whose in-store guard refuses a later
+revision change. The acquisition callback also passes optional
+`expected_source_snapshot` (the exact
+ordered SourceDoc JSON strings, default `None` for existing manual callers).
+
+Source admission amendment (2026-11-06): build one advisory index from the
+workspace's materialized, ordered source records, then compare the current
+source records with the captured snapshot before approval/project writes.
+Cooperative source imports append immutable records and content-addressed
+objects, so an addition before or during index construction returns stale
+without creating a project. On successful admission, reuse that exact index
+for selected-product validation, lead resolution and ContextBundle construction;
+do not reload sources after approval. A source committed after admission remains
+available in the workspace but is excluded from this operation's context and
+source sidecars. Stored search coverage remains bound to the immutable coverage
+IDs in the captured investigation revision; revision compare-and-swap and
+attachment journal behavior remain unchanged. Existing manual callers without
+`expected_source_snapshot` retain their current index-loading behavior.
+Refusals discard owned staging and preserve prior completed projects; ordinary
+CLI product/file selection and exact request-plan consent remain unchanged.
+Snapshot comparison is an admission check, not one atomic transaction spanning
+download and import; cancellation does not undo an already committed project.
 
 ## D8. Fault injection and acceptance
 

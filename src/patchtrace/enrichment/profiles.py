@@ -42,7 +42,7 @@ class AnalysisProfile(BaseModel):
     weights: dict[DetectorId, int] = Field(default_factory=lambda: dict(DEFAULT_WEIGHTS))
     enabled: tuple[DetectorId, ...] = DETECTOR_IDS
     feature_ids: tuple[FeatureId, ...] | None = Field(default=None, max_length=256)
-    symbol_policy: Literal['disabled', 'online'] = 'disabled'
+    symbol_policy: Literal['disabled', 'local', 'online'] = 'disabled'
     cve_providers: tuple[Literal['nvd', 'msrc'], ...] = CVE_PROVIDERS
     snapshot_max_age_days: int = Field(default=30, ge=1, le=3650)
     cache_dir: str | None = Field(default=None, min_length=1, max_length=1024)

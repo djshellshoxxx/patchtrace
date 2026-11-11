@@ -11,7 +11,6 @@ import struct
 import pytest
 
 from patchtrace.acquisition import winbindex
-from patchtrace.acquisition.contracts import AcquisitionError
 from patchtrace.ingestion import safe_path
 from patchtrace.pe_overview import tables
 from patchtrace.persistence import MAX_JSON_DEPTH, strict_json
@@ -77,11 +76,13 @@ def test_a_huge_integer_ratio_is_a_schema_error(tmp_path, service):
 
 # ---- F6: Winbindex records with a lone surrogate escape -----------------------------------------------------------
 
-def test_winbindex_lone_surrogate_is_an_acquisition_error():
+def test_winbindex_lone_surrogate_skips_the_entry_instead_of_escaping_untagged():
+    # Entry-local policy (docs/specs/acquisition.md, 2026-10-29): the entry is skipped and counted; no
+    # UnicodeEncodeError escapes when the record is hashed.
     document = ('{"' + SHA_A + '": {"fileInfo": {"sha256": "' + SHA_A + '", "size": 1, "timestamp": 1, '
                 '"machineType": 34404}, "x": "\\ud800"}}').encode('ascii')
-    with pytest.raises(AcquisitionError):
-        winbindex.parse(document, 'afd.sys', '2026-01-01', compressed=False)
+    result = winbindex.parse(document, 'afd.sys', '2026-01-01', compressed=False)
+    assert result.candidates == () and result.skipped == 1
 
 
 # ---- F8: crafted relative paths inside a project file -------------------------------------------------------------
@@ -102,13 +103,13 @@ def test_safe_path_still_accepts_a_normal_relative_path(tmp_path, relative):
 # ---- F7: rz-diff and BinDiff tool output ----------------------------------------------------------------------------
 
 def test_rzdiff_deeply_nested_output_is_an_input_error():
-    with pytest.raises(SecondaryError, match='not valid JSON'):
+    with pytest.raises(SecondaryError, match='not valid strict JSON'):
         rzdiff.parse_output(nested(20_000), '0.9.1', SHA_A, SHA_B)
 
 
 def test_rzdiff_lone_surrogate_name_is_an_input_error():
     stdout = '[{"similarity":0,"type":"UNLIKE","original":{"addr":0,"name":"\\ud800","size":0},"modified":null}]'
-    with pytest.raises(SecondaryError, match='not valid JSON'):
+    with pytest.raises(SecondaryError, match='not valid strict JSON'):
         rzdiff.parse_output(stdout, '0.9.1', SHA_A, SHA_B)
 
 

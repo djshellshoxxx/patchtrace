@@ -1,0 +1,96 @@
+{
+  "format": "patchtrace-recovery-forward-independent-review/1",
+  "reviewed_at_utc": "2026-11-06T08:52:47.345271+00:00",
+  "result": "passed; no findings",
+  "scope": "Read-only review of frozen staged merge; no application tests or source changes",
+  "worktree": "/workspace/scratch/c4fbe5e6f72c/pt-recovery-forward",
+  "destination_head": "afc8a2967ba3dec6b1ac3351d20dd08c193ba9bc",
+  "source_head": "4465a0492367d08f324e80b290a594791921691c",
+  "common_base": "f33e2a0aaa3399644367f2419fee21cfe2e8702b",
+  "destination_tree": "d920e7baf93cdde3ee6ce0c185438e459fc9d0b5",
+  "independently_expected_tree": "b59a105796e4c5cc8665cf157d5fbbae0c2ed9fd",
+  "staged_tree_computed_in_memory": "b59a105796e4c5cc8665cf157d5fbbae0c2ed9fd",
+  "source_owned_files": [
+    {
+      "path": "docs/qa/nway-windows-recovery-20261106.md",
+      "blob": "6ba850cfea074b294865099c6983f58fd11604b8",
+      "bytes": 6028,
+      "sha256": "d125df85d2983c3b43ecb39b6355195f4c0b68dbf7900e68650d2197d726acf8",
+      "source_bytes_identical": true
+    },
+    {
+      "path": "docs/specs/series-window.md",
+      "blob": "04b70504e793d364badf2af1574c84d0f7858059",
+      "bytes": 20451,
+      "sha256": "a706199b6a5c28b3623181dc175fc3c305784262175decf95442bee870328ec5",
+      "source_bytes_identical": true
+    },
+    {
+      "path": "src/patchtrace/nway/series.py",
+      "blob": "99953cee69be48e529d486be307b9909ed1caebf",
+      "bytes": 20103,
+      "sha256": "0146a7164e2947ea17a11e2d0392ae751e48f964865db4e639263938e0cf3939",
+      "source_bytes_identical": true
+    },
+    {
+      "path": "tests/test_nway_recovery_copy_20261105.py",
+      "blob": "436b2066fc86939949b3bcb3bc1881fd4064b1ad",
+      "bytes": 10349,
+      "sha256": "0d099a0ffaa52b493277e5f0cbcf3535752adbf9829c7e7524c86c7997058ec8",
+      "source_bytes_identical": true
+    }
+  ],
+  "ledgers": [
+    {
+      "path": "docs/qa.md",
+      "destination_bytes": 329134,
+      "suffix_bytes": 727,
+      "staged_bytes": 329861,
+      "destination_prefix_exact": true,
+      "source_suffix_exact": true,
+      "full_suffix_occurrences": 1,
+      "blob": "9fed1bc2011506a21fd16445683ce2e75b2a78d1",
+      "sha256": "41e57f594278b8bf9fe6704b1615aec6f19b6361486cac58b2aa7e99b2a8e6fe",
+      "suffix_sha256": "3c16bff5cf6782079b9477ee916783d1752b4e29d0f620c1c01c6932b05f52a5"
+    },
+    {
+      "path": "tasks/todo.md",
+      "destination_bytes": 193620,
+      "suffix_bytes": 600,
+      "staged_bytes": 194220,
+      "destination_prefix_exact": true,
+      "source_suffix_exact": true,
+      "full_suffix_occurrences": 1,
+      "blob": "5f6123bd779f49ff0c22c125507ed8ecee45fd0f",
+      "sha256": "297767c5dda478afefed914c61c7596b435a5b97a3acfabe8c02aa7312b9f4c9",
+      "suffix_sha256": "bc12e2490d75bc3cc4109f18c84ef74bd0e1f07d9bf46336f948755f32df3beb"
+    }
+  ],
+  "crash_fixture": {
+    "path": "tests/stress/test_cli_stress_recovery.py",
+    "blob": "bf1ef0c5c0d1b3148b727068cafdc1241a57a25f",
+    "bytes": 6212,
+    "sha256": "a9f7442be8874bb6b9d259dbe663d1ba2af2952aa7ee3f8c17ab047af8a1bfc0",
+    "identical_at_source_destination_and_original_fix": true
+  },
+  "changed_paths": [
+    "docs/qa.md",
+    "docs/qa/nway-windows-recovery-20261106.md",
+    "docs/specs/series-window.md",
+    "src/patchtrace/nway/series.py",
+    "tasks/todo.md",
+    "tests/test_nway_recovery_copy_20261105.py"
+  ],
+  "changed_count": 6,
+  "all_other_destination_entries_preserved": true,
+  "destination_entry_count": 3277,
+  "staged_entry_count": 3278,
+  "unexpected_paths": [],
+  "unresolved_index_entries": 0,
+  "unstaged_changes": [],
+  "untracked_files": [],
+  "staged_diff_hygiene": "passed",
+  "candidate_stable_during_review": true,
+  "application_tests_run": 0,
+  "qualification_scope": "This proves preservation/integration content only. Parent owns focused tests, Ruff, and current qualification state; native/hosted results are not inferred."
+}

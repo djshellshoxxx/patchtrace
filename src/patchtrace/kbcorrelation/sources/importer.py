@@ -14,10 +14,11 @@ from __future__ import annotations
 
 import hashlib
 import zlib
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 
 from pydantic import ValidationError
 
+from ..card_provenance import CardFactRef, locate_cards
 from ..contracts import CveCard, KbCveEdge, ProductScope, SourceDoc, domain_id
 from ..limits import DEFAULT_LIMITS, KbcLimits
 from ..ports import AdvisoryPort
@@ -31,6 +32,7 @@ from .cvrf import (
     SourceError,
     StatusRow,
     build_edges,
+    guard_json_dialect,
     load_json,
     parse_cvrf,
     parse_json_document,
@@ -51,6 +53,9 @@ class ImportedDocument:
     problems: tuple[Problem, ...]
     vulnerabilities: int
     tracking_id: str | None = None
+    card_facts: tuple[CardFactRef, ...] = ()
+    revision: str | None = None      # CSAF ``version`` text; orders revisions that share a release instant
+    publisher: str | None = None     # CSAF publisher namespace; a tracking id is only unique inside it
 
     @property
     def doc_id(self) -> str:
@@ -64,7 +69,7 @@ class ImportedDocument:
                 'edges': sum(1 for e in rows if e.relation not in MINOR_RELATIONS),
                 'mention_only': sum(1 for e in rows if e.relation == 'mention-only'),
                 'disputed': sum(1 for e in rows if e.relation == 'disputed'),
-                'edge_rows': len(rows), 'scopes': len(self.scopes),
+                'edge_rows': len(rows), 'scopes': len({s.scope_id for s in self.scopes}),  # distinct (#105 KBC-13)
                 'problems': sum(1 for p in self.problems if p.level != 'info')}
 
     def summary(self) -> dict:
@@ -126,11 +131,14 @@ def _import_plain(raw: bytes, now: str, advisory: AdvisoryPort | None, limits: K
     if head != b'{':
         raise SourceError('PT-KBC-SOURCE', 'CVRF dialect unknown: the document is neither a JSON object nor XML')
     value = load_json(raw, limits)
+    guard_json_dialect(value)
     document = value.get('document') if isinstance(value, dict) else None
     if isinstance(value, dict) and 'dialect' not in value and isinstance(document, dict) \
             and 'csaf_version' in document:
-        return _from_csaf(raw, now, advisory)
-    return _from_cvrf(parse_json_document(value, limits), raw, now, limits)
+        doc = _from_csaf(raw, now, advisory)
+    else:
+        doc = _from_cvrf(parse_json_document(value, limits), raw, now, limits)
+    return replace(doc, card_facts=locate_cards(value, doc.source, doc.cards))
 
 
 def _from_cvrf(parsed, raw: bytes, now: str, limits: KbcLimits) -> ImportedDocument:
@@ -159,10 +167,13 @@ def _from_csaf(raw: bytes, now: str, advisory: AdvisoryPort | None) -> ImportedD
     meta = facts_meta(facts)
     source = _source_doc('csaf', raw, now=now, release_id=None, current=meta['current_release_date'],
                          dialect=CSAF_DIALECT, parser_version=BRIDGE_VERSION)
-    return _assemble(source, bridge_facts(facts, source.doc_id), meta['tracking_id'])
+    namespace = facts.get('publisher_namespace')
+    return _assemble(source, bridge_facts(facts, source.doc_id), meta['tracking_id'], revision=meta['revision'],
+                     publisher=namespace if isinstance(namespace, str) else None)
 
 
-def _assemble(source: SourceDoc, built: DocumentEdges, tracking_id: str | None) -> ImportedDocument:
+def _assemble(source: SourceDoc, built: DocumentEdges, tracking_id: str | None, *, revision: str | None = None,
+              publisher: str | None = None) -> ImportedDocument:
     return ImportedDocument(source=source, scopes=built.scopes, edges=built.edges, cards=built.cards,
                             statuses=built.statuses, problems=built.problems, vulnerabilities=built.vulnerabilities,
-                            tracking_id=tracking_id)
+                            tracking_id=tracking_id, revision=revision, publisher=publisher)

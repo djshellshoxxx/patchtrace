@@ -1,0 +1,185 @@
+{
+  "schema": "patchtrace-independent-review/1",
+  "observed_at_utc": "2026-11-06 07:44:06 UTC",
+  "repository": "djshellshoxxx/patchtrace",
+  "pull_request": 245,
+  "pr_url": "https://github.com/djshellshoxxx/patchtrace/pull/245",
+  "inspected_head": "4465a0492367d08f324e80b290a594791921691c",
+  "base": "f33e2a0aaa3399644367f2419fee21cfe2e8702b",
+  "head_tree": "6db3490e96da2a8f0a200d834f8816bc41421f57",
+  "tested_merge_ref": {
+    "sha": "9e0bfefa3d036d080efef30f62ead1a5578ed6f5",
+    "parents": [
+      "f33e2a0aaa3399644367f2419fee21cfe2e8702b",
+      "4465a0492367d08f324e80b290a594791921691c"
+    ],
+    "tree": "6db3490e96da2a8f0a200d834f8816bc41421f57",
+    "head_tree_equal": true,
+    "source_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/git/commits/9e0bfefa3d036d080efef30f62ead1a5578ed6f5"
+  },
+  "windows_qa": {
+    "run_id": 42169559762,
+    "job_id": 127733918608,
+    "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/42169559762/job/127733918608",
+    "conclusion": "success",
+    "python": "3.12.10",
+    "passed": 19671,
+    "skipped": 90,
+    "xfailed": 5,
+    "warnings": 1,
+    "seconds": 2750.13,
+    "successful_steps": [
+      "Dependency consistency and pinned protobuf upb check",
+      "Full pytest suite",
+      "Repository Ruff",
+      "Windows standalone build",
+      "Frozen executable smoke A1-A4 and self-test",
+      "Extract and run portable ZIP outside checkout",
+      "Per-user Windows installer build",
+      "Install, launch, and non-destructive uninstall"
+    ],
+    "raw_log_excerpts": [
+      "2026-11-06T06:32:26.2500125Z HEAD is now at 9e0bfef Merge 4465a0492367d08f324e80b290a594791921691c into f33e2a0aaa3399644367f2419fee21cfe2e8702b",
+      "2026-11-06T07:19:10.8721740Z 19671 passed, 90 skipped, 5 xfailed, 1 warning in 2750.13s (0:45:50)",
+      "2026-11-06T07:21:55.5341148Z PASS A4 --self-test exits 0",
+      "2026-11-06T07:21:55.5341534Z PASS A4 self-test reports every optional dependency present",
+      "2026-11-06T07:21:55.5341940Z PASS A4 self-test temp directory removed",
+      "2026-11-06T07:22:48.3519740Z Installer registration, Qt/runtime checks, frozen self-test, non-destructive uninstall passed."
+    ]
+  },
+  "artifacts": [
+    {
+      "id": 13485625163,
+      "name": "PatchTrace-windows-x64",
+      "size_in_bytes": 130974130,
+      "digest": "sha256:22a1321a848127dc8ab1f2293c9d07f02b7e082cef804f762f566775fdcb334b",
+      "head_sha": "4465a0492367d08f324e80b290a594791921691c",
+      "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/42169559762/artifacts/13485625163",
+      "created_at": "2026-11-06T07:22:56Z",
+      "expires_at": "2027-02-04T05:37:54Z"
+    },
+    {
+      "id": 13485291168,
+      "name": "qa-Windows",
+      "size_in_bytes": 348495,
+      "digest": "sha256:5fd4d0ebc68b6e0c16c0b42360c112b81e98ca33d569546894e002eb7ccace95",
+      "head_sha": "4465a0492367d08f324e80b290a594791921691c",
+      "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/42169559762/artifacts/13485291168",
+      "created_at": "2026-11-06T07:22:50Z",
+      "expires_at": "2027-02-04T05:37:54Z"
+    }
+  ],
+  "qa_jobs_as_of_observation": [
+    {
+      "id": 127733918608,
+      "name": "qa (windows-latest)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 127733918786,
+      "name": "qt-gate (ubuntu-latest, 20, 2/4)",
+      "status": "queued",
+      "conclusion": null
+    },
+    {
+      "id": 127733918805,
+      "name": "qa (ubuntu-latest)",
+      "status": "in_progress",
+      "conclusion": null
+    },
+    {
+      "id": 127733918858,
+      "name": "qt-gate (windows-latest, 5, 1/1)",
+      "status": "in_progress",
+      "conclusion": null
+    },
+    {
+      "id": 127733918945,
+      "name": "qt-gate (ubuntu-latest, 20, 4/4)",
+      "status": "queued",
+      "conclusion": null
+    },
+    {
+      "id": 127733918952,
+      "name": "qt-gate (ubuntu-latest, 20, 1/4)",
+      "status": "queued",
+      "conclusion": null
+    },
+    {
+      "id": 127733918953,
+      "name": "qt-gate (ubuntu-latest, 20, 3/4)",
+      "status": "queued",
+      "conclusion": null
+    },
+    {
+      "id": 127733920049,
+      "name": "release-gate",
+      "status": "completed",
+      "conclusion": "skipped"
+    }
+  ],
+  "native_jobs_as_of_observation": [
+    {
+      "id": 127733919429,
+      "name": "native (patchtrace-clean)",
+      "status": "queued",
+      "conclusion": null
+    },
+    {
+      "id": 127733919585,
+      "name": "native (patchtrace-seeded-store-no-adjacent-pdb)",
+      "status": "queued",
+      "conclusion": null
+    },
+    {
+      "id": 127733919641,
+      "name": "native (patchtrace-seeded-store)",
+      "status": "queued",
+      "conclusion": null
+    },
+    {
+      "id": 127733919693,
+      "name": "native (raw-cache-hit)",
+      "status": "queued",
+      "conclusion": null
+    },
+    {
+      "id": 127733919723,
+      "name": "native (repro-plain-ghidriff)",
+      "status": "queued",
+      "conclusion": null
+    }
+  ],
+  "scanner_review_observation": {
+    "sonarcloud": "success; zero new issues and zero new security hotspots",
+    "snyk": "success",
+    "coderabbit": "skipped: reviews disabled for base branch",
+    "submitted_github_reviews": 0,
+    "inline_review_threads": 0,
+    "note": "Read during initial independent review; skipped CodeRabbit is not completed review."
+  },
+  "independent_source_review": {
+    "reviewer": "ChatGPT recovery_review subagent",
+    "finding_count": 0,
+    "scope": [
+      "src/patchtrace/nway/series.py",
+      "tests/test_nway_recovery_copy_20261105.py",
+      "tests/stress/test_cli_stress_recovery.py",
+      "docs/specs/series-window.md"
+    ],
+    "conclusion": "No new defect found. Separate path and descriptor change-time baselines preserve cross-view device/inode/size/mtime equality, independent stability checks, two-pass byte verification, exclusive creation, fsync, and owned-copy cleanup. Crash-test pause double accepts production keyword arguments without changing recovery assertions.",
+    "formal_github_review_submitted": false
+  },
+  "independent_tests": {
+    "command": "QT_QPA_PLATFORM=offscreen /workspace/scratch/e6b4398e92df/pt-binexport-copied-launcher/bin/python -m pytest -q -p no:cacheprovider tests/test_nway_recovery_copy_20261105.py tests/test_nway_series_tolerance.py tests/test_nway_series.py tests/stress/test_cli_stress_recovery.py",
+    "passed": 54,
+    "seconds": 5.57,
+    "full_suite": false,
+    "ruff": "Scoped Ruff passed using existing pt-venv/bin/ruff executable",
+    "diff_check": "passed",
+    "ending_worktree": "clean"
+  },
+  "acceptance": "Windows QA and packaging pass. Linux, repeated Qt, applicable native checks, and normal integration/review requirements remain pending; no merge or release acceptance claimed.",
+  "mutations": "No refs, PR metadata, or tracked repository files changed by this review."
+}

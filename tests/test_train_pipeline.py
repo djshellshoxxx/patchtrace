@@ -366,10 +366,13 @@ def test_template_suite_end_to_end_under_a_minute(record_live_status, tmp_path, 
     only.mkdir()
     for path in sorted(labels_dir.glob('ours-*.json')):
         (only / path.name).write_bytes(path.read_bytes())
-    assert run_cli('run', '--labels', only, '--outputs', outputs, '--smoke', '--out', tmp_path / 'out') == 0
+    # LBL-26 C-3/C-6: authored suite candidates are adversarial, never natural evidence, so the run halts (exit 1) with
+    # a valid insufficient-data report and the rows stay in their own table.
+    assert run_cli('run', '--labels', only, '--outputs', outputs, '--smoke', '--out', tmp_path / 'out') == T.FINDINGS
     report = json.loads((tmp_path / 'out' / 'report.json').read_text())
     assert time.monotonic() - started < 60
-    assert report['claim'] == TIER_R_CLAIM and report['dataset']['n_natural'] > 0
+    assert report['claim'] == TIER_R_CLAIM and report['dataset']['n_natural'] == 0
+    assert report['dataset']['adversarial_table']['authored']['rows'] > 0
     assert {g['status'] for g in report['gates'].values()} == {'insufficient-data'}
 
 

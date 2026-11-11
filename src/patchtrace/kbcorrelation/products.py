@@ -17,6 +17,7 @@ from __future__ import annotations
 import hashlib
 import json
 import re
+import unicodedata
 from collections.abc import Iterable
 from dataclasses import dataclass
 
@@ -38,7 +39,7 @@ _KEYABLE = re.compile(r'^(?:[0-9]{2}H[12]|[0-9]{4})$')
 
 def clean_text(value: object, limit: int = 1000) -> str:
     """Untrusted advisory text as plain text: C0/C1 controls (newline and tab become a space) and bidirectional
-    formatting characters are removed, surrogates are replaced, the result is cut to ``limit`` characters. Markup is
+    formatting and other invisible format characters (zero-width, BOM, soft hyphen, tag) are removed, surrogates are replaced, the result is cut to ``limit`` characters. Markup is
     kept verbatim (it is data; renderers must treat it as plain text)."""
     if not isinstance(value, str):
         return ''
@@ -47,7 +48,7 @@ def clean_text(value: object, limit: int = 1000) -> str:
         code = ord(ch)
         if ch in '\n\r\t':
             out.append(' ')
-        elif code < 0x20 or 0x7f <= code < 0xa0:
+        elif code < 0x20 or 0x7f <= code < 0xa0 or unicodedata.category(ch) == 'Cf':
             continue
         elif 0xd800 <= code <= 0xdfff:
             out.append('�')
@@ -139,6 +140,11 @@ def scope_id_for(facts: ProductFacts) -> str:
     key = {'family': facts.family, 'release': facts.release, 'architecture': facts.architecture,
            'channel': facts.channel, 'edition': facts.edition, 'build': None,
            'name': None if informative else facts.name_key}
+    if facts.family == 'windows-client' and facts.winbindex_key is not None:
+        # Release labels overlap between Windows 10 and 11. Preserve that generation in identity;
+        # v1 scopes without a client key and historical persisted records retain their identifiers.
+        key['winbindex_key'] = facts.winbindex_key
+        return domain_id('kbc.scope', 2, key)
     return domain_id('kbc.scope', 1, key)
 
 

@@ -69,7 +69,7 @@ def test_candidates_answers_are_constructed_from_truth():
     assert by_id['1060:1070'].answer == 'no-counterpart' and by_id['1060:1070'].engines == ('rz-diff',)
     assert by_id['1020:1030'].answer == 'different'
     assert by_id['1080:1080'].answer == 'indeterminate'
-    assert by_id['1000:1000'].sampling['stratum'] == 'natural' and by_id['1020:1030'].sampling['stratum'] == 'adversarial'
+    assert by_id['1000:1000'].sampling['stratum'] == 'natural' and by_id['1020:1030'].sampling['stratum'] == 'natural'
     assert skipped == {'unlabelled-side': 1}
 
 

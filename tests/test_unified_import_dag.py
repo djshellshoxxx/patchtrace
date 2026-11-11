@@ -25,7 +25,7 @@ GUI_FACTORY = {'panel'}  # the pure PanelSpec declaration names its Qt factory m
 # 01 s3 rule 3, completed with the modules of this slice: a module may import only modules of a lower or equal rank.
 RANK = {'limits': 0, 'contracts': 1, 'addressing': 1, 'exchange': 1, 'keys': 2, 'registry': 2, 'store': 3,
         'read_text': 3, 'sources': 4, 'fusion': 5, 'facts': 6, 'compute': 7, 'pipeline': 8, 'read_model': 9,
-        'worker': 9, 'cli': 10}
+        'worker': 9, 'cli': 10, 'pair_text': 10}
 NEVER = {('ladder', 'fusion'), ('ladder', 'facts'), ('fusion', 'ladder'), ('sources', 'fusion'),
          ('sources', 'facts'), ('fusion', 'facts'), ('pipeline', 'worker'), ('pipeline', 'cli'),
          ('compute', 'pipeline'), ('compute', 'worker')}

@@ -1,0 +1,104 @@
+{
+  "format": "patchtrace-documentation-reconciliation/1",
+  "scope": "original source bytes and selective dispositions; no whole-PR or runtime acceptance",
+  "source_pr": 183,
+  "reviewed_main_commit": "5d504ff5c046bfb758623182b472976003632bba",
+  "reviewed_candidate_commit": "ccfe175d44a70947203c75bbd033a9a9e2633f0f",
+  "adaptation_note": "Source hashes identify historical bytes. An adapted destination is not claimed to match those bytes. Reference-only destinations identify existing coverage, not an exact text port.",
+  "files": [
+    {
+      "path": "docs/specs/DOCKABLE-WORKSPACE-SPEC.md",
+      "source_commit": "ed70e6ddac449a42f843f1c60aa878416ab31727",
+      "source_blob_oid": "6b7a496729c752eae101d1483d480a7395c0fe0f",
+      "sha256": "76a83442737b7db6deef5c358b44cabcf2372a5eef190979f7b637df97b8c122",
+      "bytes": 35676,
+      "source_url": "https://github.com/djshellshoxxx/patchtrace/blob/ed70e6ddac449a42f843f1c60aa878416ab31727/docs/specs/DOCKABLE-WORKSPACE-SPEC.md",
+      "disposition": "adapted-proposal",
+      "destinations": [
+        "docs/specs/DOCKABLE-WORKSPACE-SPEC.md"
+      ]
+    },
+    {
+      "path": "docs/wiki/Architecture-and-Design-Rationale.md",
+      "source_commit": "ed70e6ddac449a42f843f1c60aa878416ab31727",
+      "source_blob_oid": "edf393c1146d4e6efb662b3e48b2e0728e98054f",
+      "sha256": "e3acc488289af78c0b33f643ea60c2fdb80249f8f664af36febf4a28221434c6",
+      "bytes": 2213,
+      "source_url": "https://github.com/djshellshoxxx/patchtrace/blob/ed70e6ddac449a42f843f1c60aa878416ab31727/docs/wiki/Architecture-and-Design-Rationale.md",
+      "disposition": "reference-only",
+      "destinations": [
+        "docs/internals/20-architecture.md",
+        "docs/internals/31-decisions-and-tradeoffs.md",
+        "docs/specs/architecture.md"
+      ]
+    },
+    {
+      "path": "docs/wiki/Codebase-Map.md",
+      "source_commit": "ed70e6ddac449a42f843f1c60aa878416ab31727",
+      "source_blob_oid": "9c46c4691d44cf97249305da8834c401829aede7",
+      "sha256": "acadc10c9c616a87df4e176a3c8e5623dde701b91b0e30ef1f8932b13bfdc016",
+      "bytes": 1492,
+      "source_url": "https://github.com/djshellshoxxx/patchtrace/blob/ed70e6ddac449a42f843f1c60aa878416ab31727/docs/wiki/Codebase-Map.md",
+      "disposition": "reference-only",
+      "destinations": [
+        "docs/modules.md",
+        "docs/internals.md"
+      ]
+    },
+    {
+      "path": "docs/wiki/Developer-Guide.md",
+      "source_commit": "ed70e6ddac449a42f843f1c60aa878416ab31727",
+      "source_blob_oid": "eb1055607761103f9655d5cad641f04bac363c54",
+      "sha256": "c9a71fa9699da28cd6b56e1e005c6e93167cc29bba7a1d6c034517613e2609a9",
+      "bytes": 1479,
+      "source_url": "https://github.com/djshellshoxxx/patchtrace/blob/ed70e6ddac449a42f843f1c60aa878416ab31727/docs/wiki/Developer-Guide.md",
+      "disposition": "reference-only",
+      "destinations": [
+        "docs/internals/32-how-to-extend.md",
+        "docs/internals/27-testing-and-ci.md",
+        "docs/windows.md",
+        "AGENTS.md"
+      ]
+    },
+    {
+      "path": "docs/wiki/Home.md",
+      "source_commit": "ed70e6ddac449a42f843f1c60aa878416ab31727",
+      "source_blob_oid": "0d887469e77d4c7e93d11e95a1b318a378da091a",
+      "sha256": "6aa31c74e66b113412f102ecefb86028c039a8b38a3cb47361e0b1c775dbfbd8",
+      "bytes": 692,
+      "source_url": "https://github.com/djshellshoxxx/patchtrace/blob/ed70e6ddac449a42f843f1c60aa878416ab31727/docs/wiki/Home.md",
+      "disposition": "reference-only",
+      "destinations": [
+        "docs/README.md",
+        "docs/guide/00-index.md"
+      ]
+    },
+    {
+      "path": "docs/wiki/User-Guide.md",
+      "source_commit": "ed70e6ddac449a42f843f1c60aa878416ab31727",
+      "source_blob_oid": "7e00f06b84b949c75b125dc041355eb8df2940f6",
+      "sha256": "da24ce558d12e0ad9ed64d62e5f90681e51fd96267a5f11cdca0cb03c98e1f6a",
+      "bytes": 1158,
+      "source_url": "https://github.com/djshellshoxxx/patchtrace/blob/ed70e6ddac449a42f843f1c60aa878416ab31727/docs/wiki/User-Guide.md",
+      "disposition": "reference-only",
+      "destinations": [
+        "docs/user-guide.md",
+        "docs/guide/10-getting-started.md",
+        "docs/help/README.md"
+      ]
+    },
+    {
+      "path": "docs/wiki/_Sidebar.md",
+      "source_commit": "ed70e6ddac449a42f843f1c60aa878416ab31727",
+      "source_blob_oid": "9b07d4666227983aa4c85679defeda1fe9d1037c",
+      "sha256": "ded5f036239a93b6a25c708552f293a60f154aff666032d6b6f8c7c1e24a5f97",
+      "bytes": 199,
+      "source_url": "https://github.com/djshellshoxxx/patchtrace/blob/ed70e6ddac449a42f843f1c60aa878416ab31727/docs/wiki/_Sidebar.md",
+      "disposition": "reference-only",
+      "destinations": [
+        "docs/README.md",
+        "docs/guide/00-index.md"
+      ]
+    }
+  ]
+}

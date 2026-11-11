@@ -140,7 +140,7 @@ def test_probe_classifies_blocked_vs_failed(monkeypatch, tmp_path, name):
     assert (result['status'], result['sources']['cisa-site']['result'], result['sources']['cisa-github']['result']) == (
         status, site_result, mirror_result), result['reason']
     assert text in result['reason'] and len(result['reason']) <= probe_mod.REASON_CHARS
-    assert result['mocked'] is False and result['engine'] == 'kev-catalog'
+    assert result['mocked'] is True and result['engine'] == 'kev-catalog'     # fake transport: labelled mocked
     for host, url in ((SITE_HOST, SITE.url), (MIRROR_HOST, MIRROR.url)):
         assert (url in net.urls) is (host not in down)                 # a host that is down is never asked
 
@@ -382,6 +382,14 @@ def test_main_writes_a_blocked_status_file_and_says_so_loudly(monkeypatch, tmp_p
     assert not (tmp_path / 'w' / 'cisa-site').exists()                      # nothing was fetched
 
 
+def test_mocked_label_is_false_only_for_the_production_seams(monkeypatch):
+    # positive control: the label can be False, so the `is True` assertions above are not vacuous
+    assert probe_mod._mocked(probe_mod.reachable, probe_mod.run_cli, probe_mod.fetch_live_schema) is False
+    assert probe_mod._mocked(up, probe_mod.run_cli, probe_mod.fetch_live_schema) is True
+    Net(monkeypatch, {})
+    assert probe_mod._mocked(probe_mod.reachable, probe_mod.run_cli, probe_mod.fetch_live_schema) is True
+
+
 def test_main_exits_one_when_the_probe_fails_and_zero_when_it_passes(monkeypatch, tmp_path, capsys):
     net = Net(monkeypatch, {SITE.url: 404, MIRROR.url: GOOD, probe_mod.SCHEMA_URL: SCHEMA})
     monkeypatch.setattr(probe_mod, 'reachable', up)
@@ -393,7 +401,7 @@ def test_main_exits_one_when_the_probe_fails_and_zero_when_it_passes(monkeypatch
     out = tmp_path / 'passed.json'
     assert probe_mod.main(['--out', str(out), '--work', str(tmp_path / 'b')]) == 0
     status = json.loads(out.read_text(encoding='utf-8'))
-    assert status['status'] == 'passed' and status['mocked'] is False and status['canonical_probed'] is True
+    assert status['status'] == 'passed' and status['mocked'] is True and status['canonical_probed'] is True
     assert json.loads(capsys.readouterr().out.splitlines()[-1]) == {
         'engine': 'kev-catalog', 'status': 'passed', 'reason': status['reason']}
     rows = check_live_status.load(out.parent)

@@ -21,7 +21,7 @@ from pydantic import BaseModel, ConfigDict, Field, ValidationError, model_valida
 from ..persistence import strict_json
 from .limits import UnifiedError
 
-ALL_SOURCES = ('ghidriff', 'bindiff', 'rz-diff', 'manual')
+ALL_SOURCES = ('ghidriff', 'bindiff', 'rz-diff', 'diaphora', 'manual')
 EXCHANGE_MAX_BYTES = 1024 * 1024
 MESSAGES = {
     'PT-UNIFIED-INPUT': 'The unified inputs are not usable', 'PT-UNIFIED-PAIR': 'The inputs are not the project pair',
@@ -92,7 +92,9 @@ class WorkerRequest(_Strict):
     snapshot: WorkerFile
     snapshot_lines: int = Field(ge=0)
     secondary: tuple[WorkerFile, ...] = Field(default=(), max_length=8)
-    sources: tuple[Literal['ghidriff', 'bindiff', 'rz-diff', 'manual'], ...] = Field(min_length=1, max_length=4)
+    diaphora: tuple[WorkerFile, ...] = Field(default=(), max_length=8)    # stored `diaphora/1` sets (06 s5), additive
+    sources: tuple[Literal['ghidriff', 'bindiff', 'rz-diff', 'diaphora', 'manual'], ...] = Field(min_length=1,
+                                                                                                 max_length=5)
     report_path: str = Field(min_length=1, max_length=1024)
     progress_path: str | None = Field(default=None, max_length=1024)
     budget_seconds: int = Field(ge=1, le=86_400)
@@ -188,7 +190,9 @@ def read_report(path: Path) -> WorkerReport | None:
     try:
         if Path(path).stat().st_size > EXCHANGE_MAX_BYTES:
             return None
-        return WorkerReport.model_validate_json(Path(path).read_text(encoding='utf-8'))
+        text = Path(path).read_text(encoding='utf-8')
+        strict_json(text)
+        return WorkerReport.model_validate_json(text)
     except (OSError, ValueError):
         return None
 

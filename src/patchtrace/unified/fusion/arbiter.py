@@ -83,7 +83,7 @@ def decide(atoms: Sequence[Atom], groups: Sequence[SourceGroup], nodes: Mapping 
     def key(a: Atom) -> tuple:
         return (int(component(a)[1:]), -TIER_RANK[a.tier], a.source, a.step,
                 -1 if a.older_rva is None else a.older_rva, -1 if a.newer_rva is None else a.newer_rva, a.cls,
-                a.cardinality, a.ref or '')
+                a.cardinality, a.ref or '', a.native)  # `native` last: atoms equal in all else must still sort alike
 
     for group in groups:  # an unregistered source is a bug, found before anything is decided
         for a in group.atoms:

@@ -10,7 +10,7 @@
         "new_name": {
           "anyOf": [
             {
-              "maxLength": 512,
+              "maxLength": 4096,
               "type": "string"
             },
             {
@@ -29,7 +29,7 @@
         "old_name": {
           "anyOf": [
             {
-              "maxLength": 512,
+              "maxLength": 4096,
               "type": "string"
             },
             {
@@ -44,6 +44,33 @@
           "minimum": 0,
           "title": "Old Rva",
           "type": "integer"
+        },
+        "order_key": {
+          "anyOf": [
+            {
+              "items": {
+                "anyOf": [
+                  {
+                    "type": "integer"
+                  },
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "maxLength": 4096,
+                    "type": "string"
+                  }
+                ]
+              },
+              "maxItems": 16,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Order Key"
         },
         "similarity_milli": {
           "anyOf": [
@@ -83,7 +110,8 @@
       "enum": [
         "rz-diff",
         "bindiff",
-        "ghidriff"
+        "ghidriff",
+        "attention"
       ],
       "title": "Engine",
       "type": "string"
@@ -150,7 +178,7 @@
     "version": {
       "anyOf": [
         {
-          "maxLength": 200,
+          "maxLength": 1024,
           "type": "string"
         },
         {
