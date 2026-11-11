@@ -1,0 +1,1929 @@
+{
+ "workstream": "E",
+ "title": "GUI and analyst experience",
+ "baseline": "main@882d1ca0",
+ "features": [
+  {
+   "id": "E-F01",
+   "name": "Binary selection and import",
+   "spec": [
+    "docs/specs/ui.md",
+    "docs/specs/gui-preflight-inspection.md"
+   ],
+   "code": [
+    "src/patchtrace/ui.py:229-298 (NewProjectDialog)",
+    "src/patchtrace/ui.py:135-151 (ArtifactPathEdit drag and drop)",
+    "src/patchtrace/ui.py:300-699 (AcquisitionDialog)",
+    "src/patchtrace/ui.py:2814-2829 (import_diff)",
+    "src/patchtrace/gui/qt/project_adoption.py"
+   ],
+   "status": "partial",
+   "implementation_pct": 75,
+   "validation_pct": 50,
+   "counts": {
+    "implemented_items": 6,
+    "implementation_items": 8,
+    "validated_items": 4,
+    "validation_items": 8
+   },
+   "verified_by": [
+    "tests/test_gui_creation_retry.py (fixture)",
+    "tests/test_gui_project_adoption.py (fixture)",
+    "tests/test_ui_acquisition.py (mocked transport)",
+    "tests/test_pilot_sample_e2e.py (synthetic)"
+   ],
+   "evidence_class": "fixture",
+   "remaining": [
+    "Open project / recent / sample run ProjectService.open on the GUI thread (ui.py:1886,1949,1960)",
+    "Native Windows file dialogs and a real PE pair through the GUI are not accepted (manual)",
+    "Only PE x86-64 is accepted by the model (models.py:32-33): by design",
+    "Counted items: explicit older/newer dialog, drag and drop, open/recent, import on a worker, acquisition dialog, transactional adoption = 6 built; open off the GUI thread and Windows-native acceptance = 2 open"
+   ],
+   "defects": [
+    {
+     "id": "E-D03",
+     "severity": "medium",
+     "summary": "Several operations still run on the GUI thread and scale with project size: project open/recent/sample, report export, backup, save, the result commit plus full refresh, a deep copy of the whole project before Run comparison and Rank changes, and a full navigator rebuild on every search keystroke.",
+     "evidence": "src/patchtrace/ui.py:1886,1894,1949,1960,1964 (open/backup/sample/save via _guard), :3009 (export_report), :2767 and :2440 (project.model_copy(deep=True)), :1987-2041 (filter_matches rebuild, connected to search.textChanged), :2797-2800 (apply_import/apply_analysis + refresh in the result slot)",
+     "failure_scenario": "Synthetic measurement in this sandbox (shared 4 cores, FunctionRecord code+assembly 1.5 KB per side): 30,000 matches -> model_copy(deep=True) 1.31 s and filter_matches 0.23-0.30 s per keystroke on the GUI thread; 10,000 matches -> 0.39 s and 0.09-0.12 s. Export/backup/open of a large project were not measured (UNVERIFIED) but have no worker. The window does not repaint or accept Cancel during these calls.",
+     "proposed_fix": "Debounce the navigator search (single-shot QTimer); move export, backup and open to start_job/TaskRunner with the existing adopt-on-GUI-thread pattern; build the run snapshot inside the worker from an immutable handle or copy only what run_comparison reads.",
+     "regression_test": "New tests/test_ui_responsiveness.py: 30k synthetic matches, type 5 characters with QTest -> filter_matches called once after the debounce; export_report with a blocking fake service keeps window.worker set and the event loop spinning (a QTimer tick fires before completion)."
+    }
+   ],
+   "blockers": [
+    {
+     "type": "windows-only",
+     "detail": "Clean Windows interactive acceptance (native dialogs, DPI 125/150/200 %, NVDA/Narrator, high contrast: manual gates M19-M23) is not-run; tasks/todo.md:58,89,106,410"
+    },
+    {
+     "type": "live-network",
+     "detail": "Acquisition against Winbindex/MSRC cannot be exercised here; tests use a mocked transport"
+    }
+   ],
+   "effort_hours": 10,
+   "confidence": "medium",
+   "acceptance_tests": [
+    "Open of a 30k-match project keeps the event loop responsive (timer tick during open)",
+    "Windows: New, Open, Import with native dialogs on a real PE pair"
+   ],
+   "active_lane_overlap": "none"
+  },
+  {
+   "id": "E-F02",
+   "name": "Analysis configuration (Setup, profiles, offline bundle, discovery)",
+   "spec": [
+    "docs/specs/ui.md"
+   ],
+   "code": [
+    "src/patchtrace/ui.py:959-1250 (SetupDialog)",
+    "src/patchtrace/ui.py:701-945 (ProfilesPanel)",
+    "src/patchtrace/ui_bundle_setup.py",
+    "src/patchtrace/ui_profiles.py",
+    "src/patchtrace/ui_symbols.py"
+   ],
+   "status": "partial",
+   "implementation_pct": 86,
+   "validation_pct": 71,
+   "counts": {
+    "implemented_items": 6,
+    "implementation_items": 7,
+    "validated_items": 5,
+    "validation_items": 7
+   },
+   "verified_by": [
+    "tests/test_ui_setup_dialog.py (fixture)",
+    "tests/test_ui_profiles.py (fixture)",
+    "tests/test_ui_bundle_setup.py (mocked)",
+    "tests/test_ui_symbol_local.py (fixture)"
+   ],
+   "evidence_class": "fixture",
+   "remaining": [
+    "13 Setup controls have no accessible name (8 detector-weight spin boxes, python/ghidra/java/symbol path edits, diagnostics view)",
+    "Three 'Browse…' buttons share one name in SetupDialog and three in NewProjectDialog",
+    "Counted items: backend fields, profiles CRUD, runtime discovery on a worker, offline bundle install on a worker, diagnose, settings persistence = 6 built; accessible naming of the form = open; Windows acceptance unvalidated"
+   ],
+   "defects": [
+    {
+     "id": "E-D07",
+     "severity": "medium",
+     "summary": "44 interactive controls have neither an accessible name nor a label buddy (55 counting 11 header views; 75 counting 20 that are named only through a form-label buddy) out of 560 interactive controls in the main window, the 13 built panels and 7 dialogs.",
+     "evidence": "Introspection on main (scratch script, offscreen): main window 17 (job.log, findings.search, findings.review_filter, findings.stale_filter, findings.list, findings.detail, findings.evidence, findings.review_status, findings.conclusion, findings.note_target, findings.notes, viewer.mode, viewer.raw_scope, viewer.raw_page, viewer.raw_goto, 2 unnamed QToolButtons) built in src/patchtrace/ui.py:1684-1840; SetupDialog 13 (8 profile.detector_weight.* spin boxes, setup.python, setup.ghidra_dir, setup.java_home, setup.symbol_dirs, setup.diagnostics); AcquisitionDialog 4; NewProjectDialog 3; ContextDialog 3; CorrectMatchDialog 2; ExportDialog 2",
+     "failure_scenario": "A screen reader announces 'edit' or 'combo box' with no name for the findings review status, the viewer mode selector or the eight detector weight spin boxes; the analyst cannot tell them apart. SPEC-45 recorded 54 on 2026-10-14 with a source scan; this is a re-measure by widget introspection, so the two numbers are not the same method.",
+     "proposed_fix": "Add a names table keyed by the existing tip/object ids and let tooltips.apply_tooltip set the accessible name when the widget has none (no ui.py growth); name the two tool buttons where they are built; make the tooltip audit require a name.",
+     "regression_test": "tests/test_tooltips.py audit(): assert every interactive control under MainWindow and each dialog has accessibleName() or button text; the scratch counter becomes a test with an expected count of 0 (headers excluded)."
+    }
+   ],
+   "blockers": [
+    {
+     "type": "windows-only",
+     "detail": "Clean Windows interactive acceptance (native dialogs, DPI 125/150/200 %, NVDA/Narrator, high contrast: manual gates M19-M23) is not-run; tasks/todo.md:58,89,106,410"
+    }
+   ],
+   "effort_hours": 4,
+   "confidence": "medium",
+   "acceptance_tests": [
+    "a11y audit of SetupDialog returns no unnamed control"
+   ],
+   "active_lane_overlap": "none"
+  },
+  {
+   "id": "E-F03",
+   "name": "Adapter / engine selection",
+   "spec": [
+    "docs/specs/multi-engine-evidence-panel.md"
+   ],
+   "code": [
+    "src/patchtrace/ui_evidence.py:440-470,1095-1145",
+    "src/patchtrace/ui_engine_setup.py",
+    "src/patchtrace/ui_capabilities_setup.py"
+   ],
+   "status": "partial",
+   "implementation_pct": 83,
+   "validation_pct": 50,
+   "counts": {
+    "implemented_items": 5,
+    "implementation_items": 6,
+    "validated_items": 3,
+    "validation_items": 6
+   },
+   "verified_by": [
+    "tests/test_ui_engine_setup.py (mocked)",
+    "tests/test_ui_engine_setup_service.py (mocked)",
+    "tests/test_evidence_host.py (fixture)"
+   ],
+   "evidence_class": "mocked",
+   "remaining": [
+    "GUI wiring of BinExport selection is still open (tasks/todo.md:136)",
+    "Real bindiff.exe and a real .BinExport pair through the GUI: never run (tasks/todo.md:184-185)",
+    "Engine probe is an explicit action (audit GUI-7 fixed); Diaphora has no GUI selection (CLI only, UNVERIFIED beyond grep)",
+    "Counted items: secondary engine checkboxes, BinDiff setup section, explicit probe, capa setup, engine rows = 5 built; BinExport selection wiring = open; three live-tool gates unvalidated"
+   ],
+   "defects": [],
+   "blockers": [
+    {
+     "type": "external-tool",
+     "detail": "BinDiff, Rizin and Ghidra are not installed in this sandbox; mocked tests are not live evidence"
+    },
+    {
+     "type": "other-lane",
+     "detail": "Live native proof belongs to lane L2"
+    }
+   ],
+   "effort_hours": 8,
+   "confidence": "medium",
+   "acceptance_tests": [
+    "Windows: real BinDiff 8 run selected from the Engines tab"
+   ],
+   "active_lane_overlap": "L2"
+  },
+  {
+   "id": "E-F04",
+   "name": "Comparison execution from the GUI",
+   "spec": [
+    "docs/specs/ui.md",
+    "docs/specs/ghidriff-timeout-progress.md"
+   ],
+   "code": [
+    "src/patchtrace/ui.py:2755-2812 (run_analysis, complete_analysis)",
+    "src/patchtrace/ui.py:2870-2890 (start_job)",
+    "src/patchtrace/ui_unified.py:912-941",
+    "src/patchtrace/ui_evidence.py:1134-1200"
+   ],
+   "status": "implemented",
+   "implementation_pct": 100,
+   "validation_pct": 71,
+   "counts": {
+    "implemented_items": 6,
+    "implementation_items": 6,
+    "validated_items": 5,
+    "validation_items": 7
+   },
+   "verified_by": [
+    "tests/test_ui_backend_progress.py (mocked backend)",
+    "tests/test_ui_unified_pipeline.py (synthetic)",
+    "tests/test_evidence_host.py (fixture)",
+    "tests/test_ui_audit_p2.py (fixture)"
+   ],
+   "evidence_class": "mocked",
+   "remaining": [
+    "A real Ghidriff comparison started from the GUI has no evidence in this sandbox (Ghidra absent)",
+    "project.model_copy(deep=True) runs on the GUI thread before the worker starts (ui.py:2767): 1.31 s at 30k synthetic matches",
+    "Counted items: worker run, identical-hash skip, failed-run quarantine, cancel before commit, unified run on TaskRunner, evidence run on TaskRunner = 6 built; validation adds one live-native item (not run) and counts the frozen-EXE run as unvalidated"
+   ],
+   "defects": [],
+   "blockers": [
+    {
+     "type": "external-tool",
+     "detail": "Ghidra/Ghidriff not installed here"
+    },
+    {
+     "type": "other-lane",
+     "detail": "backend.py belongs to lanes L2/L5"
+    }
+   ],
+   "effort_hours": 4,
+   "confidence": "medium",
+   "acceptance_tests": [
+    "Windows package: F5 on a real PE pair completes and commits matches"
+   ],
+   "active_lane_overlap": "L2"
+  },
+  {
+   "id": "E-F05",
+   "name": "Progress reporting",
+   "spec": [
+    "docs/specs/ghidriff-timeout-progress.md",
+    "docs/specs/program-e/GUI-integration-plan.md"
+   ],
+   "code": [
+    "src/patchtrace/ui.py:2891-2920 (job_event, _elapsed)",
+    "src/patchtrace/ui_job_events.py",
+    "src/patchtrace/gui/qt/tasks.py:351-366 (10 Hz latest-wins progress)",
+    "src/patchtrace/backend_progress.py"
+   ],
+   "status": "partial",
+   "implementation_pct": 83,
+   "validation_pct": 67,
+   "counts": {
+    "implemented_items": 5,
+    "implementation_items": 6,
+    "validated_items": 4,
+    "validation_items": 6
+   },
+   "verified_by": [
+    "tests/test_ui_backend_progress.py (mocked)",
+    "tests/test_gui_tasks.py (synthetic)",
+    "tests/stress/test_gui_stress_tasks.py (synthetic)"
+   ],
+   "evidence_class": "mocked",
+   "remaining": [
+    "The main job status label is a plain label that is not routed through StatusAnnouncer, so job stage changes are not announced (static reading of ui.py:2877,2901; screen-reader behaviour UNVERIFIED)",
+    "PT-TIMEOUT-1 is 'partially implemented' in tasks/todo.md:9",
+    "Counted items: elapsed timer, backend stage heartbeat, determinate bar when a value exists, throttled TaskRunner progress, per-panel progress = 5 built; announcement of job progress = open"
+   ],
+   "defects": [],
+   "blockers": [
+    {
+     "type": "windows-only",
+     "detail": "Clean Windows interactive acceptance (native dialogs, DPI 125/150/200 %, NVDA/Narrator, high contrast: manual gates M19-M23) is not-run; tasks/todo.md:58,89,106,410"
+    }
+   ],
+   "effort_hours": 3,
+   "confidence": "medium",
+   "acceptance_tests": [
+    "RecordingAnnouncer receives one message per terminal job state"
+   ],
+   "active_lane_overlap": "none"
+  },
+  {
+   "id": "E-F06",
+   "name": "Function comparison views",
+   "spec": [
+    "docs/specs/ui.md",
+    "docs/specs/gui-preflight-inspection.md",
+    "docs/specs/unified-engine/07-ui-and-cli.md"
+   ],
+   "code": [
+    "src/patchtrace/ui.py:2050-2127 (render_match)",
+    "src/patchtrace/ui.py:2562-2680 (raw byte views)",
+    "src/patchtrace/gui/qt/codediff.py",
+    "src/patchtrace/ui_codetext.py",
+    "src/patchtrace/ui_unified.py"
+   ],
+   "status": "partial",
+   "implementation_pct": 75,
+   "validation_pct": 62,
+   "counts": {
+    "implemented_items": 6,
+    "implementation_items": 8,
+    "validated_items": 5,
+    "validation_items": 8
+   },
+   "verified_by": [
+    "tests/test_ui_m4_selections.py (fixture)",
+    "tests/test_gui_codediff.py (synthetic)",
+    "tests/stress/test_gui_stress_codediff.py (synthetic; QA-GUI-1 form-feed bug is fixed, no xfail left)",
+    "tests/test_ui_unified_code.py (synthetic)",
+    "tests/test_ui_codetext.py (synthetic)"
+   ],
+   "evidence_class": "synthetic",
+   "remaining": [
+    "Legacy panes ignore the active theme for changed-row tints (E-D01)",
+    "Legacy panes and the navigator show untrusted text unsanitized (E-D02)",
+    "MainWindow has not adopted CodeDiffView (tasks/todo.md:543)",
+    "Counted items: aligned decompiled/assembly/metadata views, raw byte views, synchronized scroll, truncation notice, CodeDiffView, unified code view = 6 built; theme-correct tints and sanitized display = 2 open"
+   ],
+   "defects": [
+    {
+     "id": "E-D01",
+     "severity": "high",
+     "summary": "Legacy code panes always tint changed rows with the DARK theme tokens and never re-highlight on a theme change, so in the System theme on a light palette (and in a light OS high-contrast theme, which is applied automatically) changed lines render dark-on-dark.",
+     "evidence": "src/patchtrace/ui.py:2131 and :2634 (DARK.hunk_replace / DARK.hunk_other); src/patchtrace/gui/qt/theme.py:250 (stylesheet cleared for non-dark); host.py:365-369 (theme_changed reaches panels only)",
+     "failure_scenario": "Offscreen repro on the synthetic sample (scratch script, PySide6 6.12.0): View > Theme > System on a light palette -> changed row background #263a43 with pane text #000000, contrast 1.77:1 (WCAG AA needs 4.5:1; dark theme measures 9.01:1). The changed code, the product's core output, is unreadable. Rendering on real Windows high-contrast themes is UNVERIFIED.",
+     "proposed_fix": "Use the host's current tokens (self.panels.tokens.hunk_replace/hunk_other, underline in high contrast) in _highlight_hunks and _render_raw, and re-run the highlight when ThemeController.theme_changed fires. Net ui.py growth must stay within the 12-line seam headroom (3065 of 3077).",
+     "regression_test": "tests/test_ui_m4_selections.py: set_variant('system') on a light palette, select the sample's modified match, assert every 'diff' extra selection background equals host.tokens.hunk_* and contrast_ratio(pane text, background) >= 4.5; switch back to dark and assert #263a43."
+    },
+    {
+     "id": "E-D02",
+     "severity": "medium",
+     "summary": "Function names and code from an analysis run or an imported Ghidriff JSON reach the match navigator and the legacy code panes without the untrusted-text sanitizer (bidirectional overrides and C0 controls pass through).",
+     "evidence": "src/patchtrace/ui.py:2014-2019 (QListWidgetItem text from f.name), :2077-2118 (setPlainText of raw code); src/patchtrace/normalization.py:37-104 (no character filtering); contrast: show_external_pair uses codediff.view_text (ui.py:2383-2391)",
+     "failure_scenario": "Offscreen repro: a FunctionRecord named 'check_\\u202ehtua' with code containing U+202E and BEL -> navigator item text and older pane text both still contain U+202E and \\x07. A crafted import (File > Import Ghidriff JSON) or symbol name can visually reorder a function name or a code line (Trojan-Source style) in a tool whose purpose is security review. No code execution.",
+     "proposed_fix": "Sanitize at display: gui.text.sanitize_text for navigator labels; replace hostile non-line-break characters per line (hostile_text.escape_text) before alignment so row counts and evidence line numbers are unchanged. Provenance copy keeps the stored text.",
+     "regression_test": "tests/test_ui_audit_p2.py (or new tests/test_ui_untrusted_text.py): inject a match whose name and code carry U+202E, U+2066 and \\x07; assert neither navigator.item().text() nor views[side].toPlainText() contains a Cf/Cc character other than newline, and that the hunk row index still points at the changed line."
+    }
+   ],
+   "blockers": [
+    {
+     "type": "windows-only",
+     "detail": "Clean Windows interactive acceptance (native dialogs, DPI 125/150/200 %, NVDA/Narrator, high contrast: manual gates M19-M23) is not-run; tasks/todo.md:58,89,106,410"
+    }
+   ],
+   "effort_hours": 8,
+   "confidence": "high",
+   "acceptance_tests": [
+    "Changed-row contrast >= 4.5:1 in dark, System-light and high-contrast tokens",
+    "No Cf/Cc character other than newline in a pane"
+   ],
+   "active_lane_overlap": "none"
+  },
+  {
+   "id": "E-F07",
+   "name": "Difference navigation",
+   "spec": [
+    "docs/specs/gui-preflight-inspection.md"
+   ],
+   "code": [
+    "src/patchtrace/ui.py:2135-2181 (navigate_hunk, select_hunk)",
+    "src/patchtrace/ui.py:1720-1721 (Alt+Down / Alt+Up)",
+    "src/patchtrace/gui/qt/codediff.py (next_hunk/previous_hunk)"
+   ],
+   "status": "implemented",
+   "implementation_pct": 100,
+   "validation_pct": 75,
+   "counts": {
+    "implemented_items": 4,
+    "implementation_items": 4,
+    "validated_items": 3,
+    "validation_items": 4
+   },
+   "verified_by": [
+    "tests/test_ui_audit_p2.py (fixture)",
+    "tests/stress/test_gui_stress_codediff.py::test_walking_two_thousand_hunks_visits_each_once_and_stops_at_both_ends (synthetic)"
+   ],
+   "evidence_class": "fixture",
+   "remaining": [
+    "Keyboard walk on Windows (M21) not run",
+    "Counted items: hunk list, next/previous with shortcuts, crossing to the next function, raw-mode message = 4 built"
+   ],
+   "defects": [],
+   "blockers": [
+    {
+     "type": "windows-only",
+     "detail": "Clean Windows interactive acceptance (native dialogs, DPI 125/150/200 %, NVDA/Narrator, high contrast: manual gates M19-M23) is not-run; tasks/todo.md:58,89,106,410"
+    }
+   ],
+   "effort_hours": 1,
+   "confidence": "medium",
+   "acceptance_tests": [
+    "M21 keyboard-only walk"
+   ],
+   "active_lane_overlap": "none"
+  },
+  {
+   "id": "E-F08",
+   "name": "CVE correlation results (KB, KEV, investigation)",
+   "spec": [
+    "docs/specs/kb-cve/31-F-workflow-ui-persistence.md",
+    "docs/specs/kev-exploitation-context.md"
+   ],
+   "code": [
+    "src/patchtrace/kbcorrelation/panel_qt.py",
+    "src/patchtrace/kbcorrelation/investigation_qt.py",
+    "src/patchtrace/ui_kev.py",
+    "src/patchtrace/ui_kev_model.py"
+   ],
+   "status": "partial",
+   "implementation_pct": 75,
+   "validation_pct": 50,
+   "counts": {
+    "implemented_items": 3,
+    "implementation_items": 4,
+    "validated_items": 2,
+    "validation_items": 4
+   },
+   "verified_by": [
+    "tests/test_ui_kb_panel.py (fixture)",
+    "tests/test_ui_kb_investigation.py (fixture)",
+    "tests/test_kb_accessibility_20261105.py (fixture)",
+    "tests/test_ui_kev_panel.py (fixture)"
+   ],
+   "evidence_class": "fixture",
+   "remaining": [
+    "K7 online acquisition UI (ui_kb_online.py) does not exist (tasks/todo.md:391)",
+    "KB StateView has no announcer (E-D06)",
+    "Live NVD/MSRC/CISA data has never been shown in the GUI here",
+    "Counted items: KB leads panel, KEV panel, offline investigation dialog = 3 built; online acquisition UI = open"
+   ],
+   "defects": [
+    {
+     "id": "E-D06",
+     "severity": "medium",
+     "summary": "Three panels build their StateView without an announcer, so their state changes (loading, error, stale, blocked) are never sent to assistive technology.",
+     "evidence": "src/patchtrace/ui_evidence.py:396; src/patchtrace/search/qt_panel.py:131; src/patchtrace/kbcorrelation/panel_qt.py:67 (StateView(...) with no announcer argument; gui/qt/state_view.py:107-108 announces only when one is injected)",
+     "failure_scenario": "A screen-reader user starts an evidence load that fails: the strip text changes to the error but nothing is announced (the status label deliberately has an empty accessible name, state_view.py:54). Real NVDA/Narrator output is UNVERIFIED (manual gate).",
+     "proposed_fix": "Port 647502ce (EvidencePanel(announcer=ctx.shell)); pass ctx.shell to the Search and KB StateViews the same way.",
+     "regression_test": "tests/test_evidence_host.py::test_the_evidence_state_view_announces_through_the_host_shell (in 647502ce); equivalent assertions in tests/test_ui_search_panel.py and tests/test_ui_kb_panel.py using qt_support.RecordingAnnouncer and a forced error state."
+    }
+   ],
+   "blockers": [
+    {
+     "type": "live-network",
+     "detail": "NVD, MSRC and CISA hosts are unreachable in this sandbox"
+    }
+   ],
+   "effort_hours": 12,
+   "confidence": "medium",
+   "acceptance_tests": [
+    "Fixture advisory -> lead row -> comparison row navigation",
+    "Live feed gate (blocked)"
+   ],
+   "active_lane_overlap": "none"
+  },
+  {
+   "id": "E-F09",
+   "name": "Patch-intent leads (the product's form of patch recommendations)",
+   "spec": [
+    "docs/specs/patch-intent-localization-engine.md"
+   ],
+   "code": [
+    "src/patchtrace/ui_leads.py",
+    "src/patchtrace/pilot/panel.py"
+   ],
+   "status": "partial",
+   "implementation_pct": 75,
+   "validation_pct": 50,
+   "counts": {
+    "implemented_items": 3,
+    "implementation_items": 4,
+    "validated_items": 2,
+    "validation_items": 4
+   },
+   "verified_by": [
+    "tests/test_ui_leads.py (fixture)",
+    "tests/test_pilot_sample_e2e.py (synthetic)"
+   ],
+   "evidence_class": "synthetic",
+   "remaining": [
+    "The GUI ranks and explains leads; it does not recommend a patch to apply. Whether the directive's 'patch recommendations' means more than leads is an owner question (UNVERIFIED)",
+    "Leads emits advisory_phrase and import anchors that nothing handles (E-D15)",
+    "Counted items: ranked leads table, per-lead evidence, review storage = 3 built; navigation for every emitted anchor kind = open"
+   ],
+   "defects": [
+    {
+     "id": "E-D15",
+     "severity": "low",
+     "summary": "Three built panels emit anchor kinds that no built panel handles.",
+     "evidence": "`patchtrace panels check` on main prints: 'warning: search emits import anchors that no built panel handles', the same for capabilities, and 'leads emits advisory_phrase, import anchors that no built panel handles'",
+     "failure_scenario": "The analyst activates an import row in Search or Capabilities, or an advisory phrase in Leads: navigation has no target and only a status message can result.",
+     "proposed_fix": "Decide the handler (a Files or Strings panel handler for 'import', the KB panel for 'advisory_phrase') or stop emitting the kinds; then make the warning an error in the check.",
+     "regression_test": "tests/test_gui_core_manifest.py: the shipped manifest yields no 'no built panel handles' warning."
+    }
+   ],
+   "blockers": [
+    {
+     "type": "owner-decision",
+     "detail": "Definition of 'patch recommendations' for the GUI"
+    }
+   ],
+   "effort_hours": 4,
+   "confidence": "low",
+   "acceptance_tests": [
+    "Every anchor kind a built panel emits has a handler"
+   ],
+   "active_lane_overlap": "none"
+  },
+  {
+   "id": "E-F10",
+   "name": "Evidence inspection",
+   "spec": [
+    "docs/specs/multi-engine-evidence-panel.md",
+    "docs/specs/panels/related.md"
+   ],
+   "code": [
+    "src/patchtrace/ui_evidence.py",
+    "src/patchtrace/ui.py:2474-2533 (jump_evidence, bookmark)",
+    "src/patchtrace/ui_related.py",
+    "src/patchtrace/fabric/panel.py"
+   ],
+   "status": "partial",
+   "implementation_pct": 60,
+   "validation_pct": 60,
+   "counts": {
+    "implemented_items": 3,
+    "implementation_items": 5,
+    "validated_items": 3,
+    "validation_items": 5
+   },
+   "verified_by": [
+    "tests/test_evidence_host.py (fixture)",
+    "tests/test_evidence_panel_service.py (fixture)",
+    "tests/test_ui_related_panel.py (fixture)"
+   ],
+   "evidence_class": "fixture",
+   "remaining": [
+    "The 'related' panel (fabric/panel.py:59, ui_related.py) is built but has no manifest slot, so users cannot open it",
+    "Evidence StateView has no announcer (E-D06)",
+    "C8 manual gates and D5 export status open (REGISTRY.md:47)",
+    "Counted items: per-match engine evidence table, finding evidence jump and bookmark, stale-evidence handling = 3 built; related panel registration and anchor handlers = 2 open"
+   ],
+   "defects": [
+    {
+     "id": "E-D06",
+     "severity": "medium",
+     "summary": "Three panels build their StateView without an announcer, so their state changes (loading, error, stale, blocked) are never sent to assistive technology.",
+     "evidence": "src/patchtrace/ui_evidence.py:396; src/patchtrace/search/qt_panel.py:131; src/patchtrace/kbcorrelation/panel_qt.py:67 (StateView(...) with no announcer argument; gui/qt/state_view.py:107-108 announces only when one is injected)",
+     "failure_scenario": "A screen-reader user starts an evidence load that fails: the strip text changes to the error but nothing is announced (the status label deliberately has an empty accessible name, state_view.py:54). Real NVDA/Narrator output is UNVERIFIED (manual gate).",
+     "proposed_fix": "Port 647502ce (EvidencePanel(announcer=ctx.shell)); pass ctx.shell to the Search and KB StateViews the same way.",
+     "regression_test": "tests/test_evidence_host.py::test_the_evidence_state_view_announces_through_the_host_shell (in 647502ce); equivalent assertions in tests/test_ui_search_panel.py and tests/test_ui_kb_panel.py using qt_support.RecordingAnnouncer and a forced error state."
+    }
+   ],
+   "blockers": [
+    {
+     "type": "windows-only",
+     "detail": "Clean Windows interactive acceptance (native dialogs, DPI 125/150/200 %, NVDA/Narrator, high contrast: manual gates M19-M23) is not-run; tasks/todo.md:58,89,106,410"
+    }
+   ],
+   "effort_hours": 6,
+   "confidence": "medium",
+   "acceptance_tests": [
+    "related panel listed by `patchtrace panels list`"
+   ],
+   "active_lane_overlap": "none"
+  },
+  {
+   "id": "E-F11",
+   "name": "Manual corrections and review",
+   "spec": [
+    "docs/specs/ui.md"
+   ],
+   "code": [
+    "src/patchtrace/ui.py:1319-1377 (CorrectMatchDialog)",
+    "src/patchtrace/ui.py:1899-1906 (undo)",
+    "src/patchtrace/ui.py:2207-2230 (review, correct, swap)",
+    "src/patchtrace/ui.py:2512-2533 (notes, finding review)"
+   ],
+   "status": "implemented",
+   "implementation_pct": 100,
+   "validation_pct": 80,
+   "counts": {
+    "implemented_items": 5,
+    "implementation_items": 5,
+    "validated_items": 4,
+    "validation_items": 5
+   },
+   "verified_by": [
+    "tests/test_ui_audit_p2.py (fixture)",
+    "tests/test_gui_host.py (fixture, MutationPort)"
+   ],
+   "evidence_class": "fixture",
+   "remaining": [
+    "correct.older_list and correct.newer_list have no accessible name",
+    "Counted items: correct relationship, review status, undo last override, swap orientation with confirmation, notes = 5 built"
+   ],
+   "defects": [],
+   "blockers": [
+    {
+     "type": "none",
+     "detail": ""
+    }
+   ],
+   "effort_hours": 1,
+   "confidence": "medium",
+   "acceptance_tests": [
+    "a11y audit of CorrectMatchDialog clean"
+   ],
+   "active_lane_overlap": "none"
+  },
+  {
+   "id": "E-F12",
+   "name": "Analysis history",
+   "spec": [
+    "docs/specs/ui.md"
+   ],
+   "code": [
+    "src/patchtrace/models.py:177-194 (AnalysisRun, runs)",
+    "src/patchtrace/ui.py:2534-2540 (inspect_responses)",
+    "src/patchtrace/gui/qt/host.py:619-623 (navigate back/forward)"
+   ],
+   "status": "partial",
+   "implementation_pct": 60,
+   "validation_pct": 40,
+   "counts": {
+    "implemented_items": 3,
+    "implementation_items": 5,
+    "validated_items": 2,
+    "validation_items": 5
+   },
+   "verified_by": [
+    "tests/test_gui_core_anchors.py (synthetic, navigation history)"
+   ],
+   "evidence_class": "synthetic",
+   "remaining": [
+    "No GUI view lists analysis runs (status, time, backend, error): project.runs is read only for a tooltip and an enable rule (ui.py:1998, 2960)",
+    "No way to pick or compare an earlier run in the GUI",
+    "Counted items: runs kept in the project, raw interpretation responses viewable, back/forward navigation history = 3 built; run list view and run selection = 2 missing"
+   ],
+   "defects": [],
+   "blockers": [
+    {
+     "type": "owner-decision",
+     "detail": "No spec defines a run-history view; needs a short spec before code (AGENTS.md)"
+    }
+   ],
+   "effort_hours": 10,
+   "confidence": "medium",
+   "acceptance_tests": [
+    "A failed and a completed run are both listed with status and error text"
+   ],
+   "active_lane_overlap": "none"
+  },
+  {
+   "id": "E-F13",
+   "name": "Result filtering and searching",
+   "spec": [
+    "docs/specs/ui.md",
+    "docs/specs/program-e/GUI-integration-plan.md"
+   ],
+   "code": [
+    "src/patchtrace/ui.py:1987-2041 (filter_matches)",
+    "src/patchtrace/search/qt_panel.py",
+    "src/patchtrace/gui/qt/table.py:78-128 (filter and sort)"
+   ],
+   "status": "partial",
+   "implementation_pct": 71,
+   "validation_pct": 71,
+   "counts": {
+    "implemented_items": 5,
+    "implementation_items": 7,
+    "validated_items": 5,
+    "validation_items": 7
+   },
+   "verified_by": [
+    "tests/test_gui_table.py (synthetic)",
+    "tests/stress/test_gui_stress_table.py (synthetic, 100k rows)",
+    "tests/test_ui_search_panel.py (fixture)"
+   ],
+   "evidence_class": "synthetic",
+   "remaining": [
+    "Navigator rebuild on every keystroke, no debounce (E-D03)",
+    "No keyboard sort on VirtualTable headers (E-D05)",
+    "Counted items: navigator text/category/review/manual/finding filters, ranked order, Search panel, VirtualTable filter and sort, findings filters = 5 built; debounce and keyboard sort = 2 open"
+   ],
+   "defects": [
+    {
+     "id": "E-D05",
+     "severity": "medium",
+     "summary": "VirtualTable has no keyboard path to sort by a column: sorting needs a mouse click on the header (18 VirtualTables in the 13 built panels).",
+     "evidence": "src/patchtrace/gui/qt/table.py:353-364 (keyPressEvent handles Copy, Enter, Space only); :259-265 (header click is the only sort trigger); no sort command in gui/qt/commands.py",
+     "failure_scenario": "A keyboard-only or screen-reader user opens KB and CVE leads, Strings or Search results and cannot reorder by score or address; GUI plan 8.3 'every function reachable without a mouse' is not met (to-do T4, tasks/todo.md:532).",
+     "proposed_fix": "Add VirtualTable.sort_current_column and a key chord that does not collide with the window's Alt+Up/Alt+Down actions (see notes: the ws-p chord is dead inside MainWindow); expose it as a palette command.",
+     "regression_test": "tests/test_gui_table.py: chord on a bare table sorts the current column asc/desc/default; tests/test_gui_host_seam.py: with a real MainWindow and a focused panel table, the chord changes header.sortIndicatorSection() and Alt+Down still calls navigate_hunk."
+    }
+   ],
+   "blockers": [
+    {
+     "type": "none",
+     "detail": ""
+    }
+   ],
+   "effort_hours": 5,
+   "confidence": "high",
+   "acceptance_tests": [
+    "Keyboard chord sorts the focused table inside MainWindow"
+   ],
+   "active_lane_overlap": "none"
+  },
+  {
+   "id": "E-F14",
+   "name": "Export",
+   "spec": [
+    "docs/specs/ui.md"
+   ],
+   "code": [
+    "src/patchtrace/ui.py:1379-1468 (ExportDialog)",
+    "src/patchtrace/ui.py:2999-3013",
+    "src/patchtrace/ui_export_v2.py"
+   ],
+   "status": "partial",
+   "implementation_pct": 67,
+   "validation_pct": 67,
+   "counts": {
+    "implemented_items": 4,
+    "implementation_items": 6,
+    "validated_items": 4,
+    "validation_items": 6
+   },
+   "verified_by": [
+    "tests/test_ui_export_v2.py (fixture)",
+    "tests/test_audit116_export_copy.py (fixture)"
+   ],
+   "evidence_class": "fixture",
+   "remaining": [
+    "service.export_report runs on the GUI thread (ui.py:3009)",
+    "export.destination and export.preview are unnamed; keyboard focus work is in flight on lane L6 (origin/codex/analyst-accessibility-20261109)",
+    "Counted items: exact preview, three formats, content options, v2 sections = 4 built; export on a worker and accessible naming = 2 open"
+   ],
+   "defects": [],
+   "blockers": [
+    {
+     "type": "other-lane",
+     "detail": "ui_export_v2.py is owned by lane L6"
+    }
+   ],
+   "effort_hours": 4,
+   "confidence": "medium",
+   "acceptance_tests": [
+    "Export of a large report keeps the window responsive"
+   ],
+   "active_lane_overlap": "L6"
+  },
+  {
+   "id": "E-F15",
+   "name": "Error reporting",
+   "spec": [
+    "docs/specs/program-e/GUI-integration-plan.md"
+   ],
+   "code": [
+    "src/patchtrace/ui.py:1851-1864 (_guard, show_error)",
+    "src/patchtrace/gui/qt/state_view.py",
+    "src/patchtrace/gui/state.py",
+    "src/patchtrace/gui/qt/tasks.py:62-70 (TaskFailure)"
+   ],
+   "status": "partial",
+   "implementation_pct": 62,
+   "validation_pct": 62,
+   "counts": {
+    "implemented_items": 5,
+    "implementation_items": 8,
+    "validated_items": 5,
+    "validation_items": 8
+   },
+   "verified_by": [
+    "tests/test_gui_state_view.py (synthetic)",
+    "tests/test_gui_core_state.py (synthetic)",
+    "tests/stress/test_gui_stress_teardown.py (synthetic)",
+    "tests/test_audit116_stale_inspection_failure.py (fixture)"
+   ],
+   "evidence_class": "synthetic",
+   "remaining": [
+    "Counted items: plain-text modal error with log line, twelve-state StateView, NoticeStrip, class-only TaskFailure, completed-with-note path = 5 built; Worker BaseException, lane-init BaseException, silent clipboard refusal = 3 open"
+   ],
+   "defects": [
+    {
+     "id": "E-D09",
+     "severity": "low",
+     "summary": "ui.Worker.run catches Exception only. A task that raises SystemExit leaves the QThread running forever under PySide6 6.12, so the window stays busy, Cancel does nothing and closing the window is refused.",
+     "evidence": "src/patchtrace/ui.py:222-226 (except Exception), :3049-3054 (closeEvent ignores the close while self.worker is set)",
+     "failure_scenario": "Repro (bare QThread, PySide6 6.12.0 offscreen): run() raising SystemExit -> no finished signal, isRunning() True after 3 s; in MainWindow the job label keeps counting and worker never clears. No production code path that raises SystemExit inside a worker task was found (grep: only __main__ style entry points), so this is defence in depth.",
+     "proposed_fix": "Catch BaseException in Worker.run and emit failed(type name), as gui/qt/tasks.py:_execute already does.",
+     "regression_test": "New test in tests/test_ui_backend_progress.py: start_job with a task raising SystemExit(3); wait until window.worker is None; assert show_error was called once and the job label starts with 'Error'."
+    },
+    {
+     "id": "E-D11",
+     "severity": "low",
+     "summary": "A Lane whose init raises a BaseException (not an Exception) dies silently: every queued request stays in TaskRunner._running and busy() is true for ever.",
+     "evidence": "src/patchtrace/gui/qt/tasks.py:426-429 (_lane_loop: except Exception around init()); audit GUI-13 fixed only the task path (docs/audits/20261015-fixes-gui-ops.md)",
+     "failure_scenario": "A lane init that raises KeyboardInterrupt or SystemExit ends the lane thread before the request loop; later lane.submit calls never deliver a result or an error. Static finding.",
+     "proposed_fix": "Catch BaseException around init and keep serving requests with the failure, as the Exception path does.",
+     "regression_test": "tests/test_gui_tasks.py: lane with init raising SystemExit; submit one request; assert on_error receives TaskFailure('SystemExit') and runner.busy() becomes False."
+    },
+    {
+     "id": "E-D13",
+     "severity": "low",
+     "summary": "MainWindowPort.copy_text refuses text over 16 KiB by returning False, and most callers ignore the result, so Copy can do nothing without any message. One caller truncates by characters, not bytes.",
+     "evidence": "src/patchtrace/gui/qt/host.py:185-189; callers that ignore the result: src/patchtrace/callgraph/panel_qt.py:704 ([:16 * 1024] characters), src/patchtrace/ui_leads.py:681, src/patchtrace/intelligence/tools/capa_qt.py:529, src/patchtrace/buildenv/qt_panel.py:133, src/patchtrace/search/qt_panel.py:423",
+     "failure_scenario": "The Calls detail pane holds 16,384 characters including one non-ASCII character (a function name): the slice is 16,384 characters but more than 16,384 bytes, copy_text returns False and the clipboard keeps its old content while the user believes the detail was copied. Static finding.",
+     "proposed_fix": "Have copy_text report the refusal through status and announce ('Too large to copy: limit 16 KiB'), and truncate the Calls detail on a UTF-8 byte boundary.",
+     "regression_test": "tests/test_gui_host.py: copy_text of 16 KiB + 1 returns False and the recording announcer holds one message; tests/test_ui_graph_panel.py: a detail of 16,384 'é' copies at most 16,384 bytes."
+    }
+   ],
+   "blockers": [
+    {
+     "type": "none",
+     "detail": ""
+    }
+   ],
+   "effort_hours": 4,
+   "confidence": "high",
+   "acceptance_tests": [
+    "SystemExit in a worker ends as one error, not a stuck window"
+   ],
+   "active_lane_overlap": "none"
+  },
+  {
+   "id": "E-F16",
+   "name": "Keyboard navigation",
+   "spec": [
+    "docs/specs/accessibility-baseline.md",
+    "docs/specs/program-e/GUI-integration-plan.md"
+   ],
+   "code": [
+    "src/patchtrace/gui/shortcuts.py",
+    "src/patchtrace/gui/qt/commands.py",
+    "src/patchtrace/gui/qt/palette.py",
+    "src/patchtrace/gui/qt/host.py:602-617 (cycle_focus, F6)"
+   ],
+   "status": "partial",
+   "implementation_pct": 71,
+   "validation_pct": 62,
+   "counts": {
+    "implemented_items": 5,
+    "implementation_items": 7,
+    "validated_items": 5,
+    "validation_items": 8
+   },
+   "verified_by": [
+    "tests/test_gui_core_shortcuts.py (synthetic)",
+    "tests/test_gui_host_palette.py (fixture)",
+    "tests/test_gui_host_layout.py (fixture)",
+    "tests/test_kb_accessibility_20261105.py (fixture)"
+   ],
+   "evidence_class": "fixture",
+   "remaining": [
+    "Keyboard header sort (E-D05) and full palette list (E-D04) open",
+    "M21 keyboard-only walk on Windows not run",
+    "Counted items: shortcut table with collision check, F6/Shift+F6 cycle, command palette, panel toggle shortcuts, Alt+Left/Right history = 5 built; keyboard sort and complete palette list = 2 open; validation adds the manual walk"
+   ],
+   "defects": [
+    {
+     "id": "E-D04",
+     "severity": "medium",
+     "summary": "The command palette truncates the empty-query list at 50, so more than half of the commands cannot be browsed and are reachable only by typing a matching word.",
+     "evidence": "src/patchtrace/gui/registry.py:49 (PALETTE_RESULTS = 50); src/patchtrace/gui/qt/palette.py:45-53 (found[:PALETTE_RESULTS])",
+     "failure_scenario": "Measured on main with the sample project (offscreen): the palette holds 106 entries, the empty query shows 50, 56 are cut (from 'Float or dock KB and CVE panel' onward: KEV, Leads, Series, Files panel commands). A keyboard-only user exploring the palette never sees them.",
+     "proposed_fix": "Port the palette hunk of 4a9e32bb (origin/claude/ws-p-20261104): PALETTE_LIST_MAX = 400 for the empty query, 50 for typed queries.",
+     "regression_test": "tests/test_gui_host_palette.py::test_the_empty_query_lists_every_command_up_to_a_larger_bound (in 4a9e32bb) plus a MainWindow assertion that len(palette._shown) == len(palette._entries) for the shipped manifest."
+    },
+    {
+     "id": "E-D05",
+     "severity": "medium",
+     "summary": "VirtualTable has no keyboard path to sort by a column: sorting needs a mouse click on the header (18 VirtualTables in the 13 built panels).",
+     "evidence": "src/patchtrace/gui/qt/table.py:353-364 (keyPressEvent handles Copy, Enter, Space only); :259-265 (header click is the only sort trigger); no sort command in gui/qt/commands.py",
+     "failure_scenario": "A keyboard-only or screen-reader user opens KB and CVE leads, Strings or Search results and cannot reorder by score or address; GUI plan 8.3 'every function reachable without a mouse' is not met (to-do T4, tasks/todo.md:532).",
+     "proposed_fix": "Add VirtualTable.sort_current_column and a key chord that does not collide with the window's Alt+Up/Alt+Down actions (see notes: the ws-p chord is dead inside MainWindow); expose it as a palette command.",
+     "regression_test": "tests/test_gui_table.py: chord on a bare table sorts the current column asc/desc/default; tests/test_gui_host_seam.py: with a real MainWindow and a focused panel table, the chord changes header.sortIndicatorSection() and Alt+Down still calls navigate_hunk."
+    }
+   ],
+   "blockers": [
+    {
+     "type": "windows-only",
+     "detail": "Clean Windows interactive acceptance (native dialogs, DPI 125/150/200 %, NVDA/Narrator, high contrast: manual gates M19-M23) is not-run; tasks/todo.md:58,89,106,410"
+    }
+   ],
+   "effort_hours": 4,
+   "confidence": "high",
+   "acceptance_tests": [
+    "All 106 palette entries listed for the empty query"
+   ],
+   "active_lane_overlap": "none"
+  },
+  {
+   "id": "E-F17",
+   "name": "Accessibility",
+   "spec": [
+    "docs/specs/accessibility-baseline.md"
+   ],
+   "code": [
+    "src/patchtrace/tooltips.py:1110-1125 (apply_tooltip)",
+    "src/patchtrace/gui/tips.py",
+    "src/patchtrace/gui/qt/announce.py",
+    "src/patchtrace/gui/qt/theme.py"
+   ],
+   "status": "partial",
+   "implementation_pct": 57,
+   "validation_pct": 33,
+   "counts": {
+    "implemented_items": 4,
+    "implementation_items": 7,
+    "validated_items": 4,
+    "validation_items": 12
+   },
+   "verified_by": [
+    "tests/test_tooltips.py (fixture)",
+    "tests/test_gui_announce.py (synthetic)",
+    "tests/test_gui_theme_variants.py (synthetic)",
+    "tests/test_kb_accessibility_20261105.py (fixture)",
+    "tests/qt_support.py a11y_audit (helper)"
+   ],
+   "evidence_class": "fixture",
+   "remaining": [
+    "44 controls without name or buddy (E-D07)",
+    "3 StateViews without announcer (E-D06)",
+    "Changed-row contrast 1.77:1 in System-light (E-D01)",
+    "SPEC-45 is still 'draft' (REGISTRY.md:82)",
+    "Five manual gates M19-M23 (NVDA, Narrator, keyboard walk, high contrast, DPI) are not-run",
+    "Counted items: 'what' descriptions from the tooltip registry, status announcer, high-contrast tokens, KB investigation keyboard access = 4 built; names on every control, announcers on every StateView, theme-correct legacy panes = 3 open; validation adds the five manual gates"
+   ],
+   "defects": [
+    {
+     "id": "E-D07",
+     "severity": "medium",
+     "summary": "44 interactive controls have neither an accessible name nor a label buddy (55 counting 11 header views; 75 counting 20 that are named only through a form-label buddy) out of 560 interactive controls in the main window, the 13 built panels and 7 dialogs.",
+     "evidence": "Introspection on main (scratch script, offscreen): main window 17 (job.log, findings.search, findings.review_filter, findings.stale_filter, findings.list, findings.detail, findings.evidence, findings.review_status, findings.conclusion, findings.note_target, findings.notes, viewer.mode, viewer.raw_scope, viewer.raw_page, viewer.raw_goto, 2 unnamed QToolButtons) built in src/patchtrace/ui.py:1684-1840; SetupDialog 13 (8 profile.detector_weight.* spin boxes, setup.python, setup.ghidra_dir, setup.java_home, setup.symbol_dirs, setup.diagnostics); AcquisitionDialog 4; NewProjectDialog 3; ContextDialog 3; CorrectMatchDialog 2; ExportDialog 2",
+     "failure_scenario": "A screen reader announces 'edit' or 'combo box' with no name for the findings review status, the viewer mode selector or the eight detector weight spin boxes; the analyst cannot tell them apart. SPEC-45 recorded 54 on 2026-10-14 with a source scan; this is a re-measure by widget introspection, so the two numbers are not the same method.",
+     "proposed_fix": "Add a names table keyed by the existing tip/object ids and let tooltips.apply_tooltip set the accessible name when the widget has none (no ui.py growth); name the two tool buttons where they are built; make the tooltip audit require a name.",
+     "regression_test": "tests/test_tooltips.py audit(): assert every interactive control under MainWindow and each dialog has accessibleName() or button text; the scratch counter becomes a test with an expected count of 0 (headers excluded)."
+    },
+    {
+     "id": "E-D06",
+     "severity": "medium",
+     "summary": "Three panels build their StateView without an announcer, so their state changes (loading, error, stale, blocked) are never sent to assistive technology.",
+     "evidence": "src/patchtrace/ui_evidence.py:396; src/patchtrace/search/qt_panel.py:131; src/patchtrace/kbcorrelation/panel_qt.py:67 (StateView(...) with no announcer argument; gui/qt/state_view.py:107-108 announces only when one is injected)",
+     "failure_scenario": "A screen-reader user starts an evidence load that fails: the strip text changes to the error but nothing is announced (the status label deliberately has an empty accessible name, state_view.py:54). Real NVDA/Narrator output is UNVERIFIED (manual gate).",
+     "proposed_fix": "Port 647502ce (EvidencePanel(announcer=ctx.shell)); pass ctx.shell to the Search and KB StateViews the same way.",
+     "regression_test": "tests/test_evidence_host.py::test_the_evidence_state_view_announces_through_the_host_shell (in 647502ce); equivalent assertions in tests/test_ui_search_panel.py and tests/test_ui_kb_panel.py using qt_support.RecordingAnnouncer and a forced error state."
+    },
+    {
+     "id": "E-D01",
+     "severity": "high",
+     "summary": "Legacy code panes always tint changed rows with the DARK theme tokens and never re-highlight on a theme change, so in the System theme on a light palette (and in a light OS high-contrast theme, which is applied automatically) changed lines render dark-on-dark.",
+     "evidence": "src/patchtrace/ui.py:2131 and :2634 (DARK.hunk_replace / DARK.hunk_other); src/patchtrace/gui/qt/theme.py:250 (stylesheet cleared for non-dark); host.py:365-369 (theme_changed reaches panels only)",
+     "failure_scenario": "Offscreen repro on the synthetic sample (scratch script, PySide6 6.12.0): View > Theme > System on a light palette -> changed row background #263a43 with pane text #000000, contrast 1.77:1 (WCAG AA needs 4.5:1; dark theme measures 9.01:1). The changed code, the product's core output, is unreadable. Rendering on real Windows high-contrast themes is UNVERIFIED.",
+     "proposed_fix": "Use the host's current tokens (self.panels.tokens.hunk_replace/hunk_other, underline in high contrast) in _highlight_hunks and _render_raw, and re-run the highlight when ThemeController.theme_changed fires. Net ui.py growth must stay within the 12-line seam headroom (3065 of 3077).",
+     "regression_test": "tests/test_ui_m4_selections.py: set_variant('system') on a light palette, select the sample's modified match, assert every 'diff' extra selection background equals host.tokens.hunk_* and contrast_ratio(pane text, background) >= 4.5; switch back to dark and assert #263a43."
+    }
+   ],
+   "blockers": [
+    {
+     "type": "windows-only",
+     "detail": "Clean Windows interactive acceptance (native dialogs, DPI 125/150/200 %, NVDA/Narrator, high contrast: manual gates M19-M23) is not-run; tasks/todo.md:58,89,106,410"
+    },
+    {
+     "type": "other-lane",
+     "detail": "Lane L6 owns ui_export_v2.py, ui_inspection.py and docs/help"
+    }
+   ],
+   "effort_hours": 12,
+   "confidence": "high",
+   "acceptance_tests": [
+    "Introspection count of unnamed controls = 0",
+    "Contrast gate for all three token sets"
+   ],
+   "active_lane_overlap": "L6"
+  },
+  {
+   "id": "E-F18",
+   "name": "First-run onboarding",
+   "spec": [
+    "docs/specs/ui.md",
+    "docs/specs/DOCKABLE-WORKSPACE-SPEC.md"
+   ],
+   "code": [
+    "src/patchtrace/sample.py",
+    "src/patchtrace/ui.py:1955-1960 (open_sample)",
+    "src/patchtrace/ui.py:1579 (empty-state text)",
+    "src/patchtrace/gui/qt/host.py:356-359 (default_visible)"
+   ],
+   "status": "partial",
+   "implementation_pct": 60,
+   "validation_pct": 40,
+   "counts": {
+    "implemented_items": 3,
+    "implementation_items": 5,
+    "validated_items": 2,
+    "validation_items": 5
+   },
+   "verified_by": [
+    "tests/test_pilot_sample_e2e.py (synthetic)",
+    "tests/qt_support.py main_window fixture (synthetic sample)"
+   ],
+   "evidence_class": "synthetic",
+   "remaining": [
+    "No PanelSpec sets default_visible, so a first run shows none of the 13 built panels (grep: 0 hits outside gui/); to-do G6 policy is undecided",
+    "The Guide panel (slot 'guide', Ctrl+Shift+H) is not built: src/patchtrace/guide/ does not exist",
+    "Sample asks for a parent directory before showing anything",
+    "Counted items: synthetic sample project, empty-state hint, Setup opened automatically when Run lacks a backend (ui.py:2759-2761) = 3 built; default panel arrangement and guide = 2 open"
+   ],
+   "defects": [],
+   "blockers": [
+    {
+     "type": "owner-decision",
+     "detail": "default_visible policy and first-run layout (to-do G6; SPEC-DW-01 is a draft)"
+    }
+   ],
+   "effort_hours": 8,
+   "confidence": "medium",
+   "acceptance_tests": [
+    "Fresh settings: the agreed default panels are visible after first show"
+   ],
+   "active_lane_overlap": "none"
+  },
+  {
+   "id": "E-F19",
+   "name": "Help and troubleshooting",
+   "spec": [
+    "docs/specs/ui.md"
+   ],
+   "code": [
+    "src/patchtrace/ui_help.py",
+    "src/patchtrace/ui.py:3015-3016 (F1)",
+    "src/patchtrace/tooltips.py",
+    "docs/help/ (76 numbered pages)"
+   ],
+   "status": "partial",
+   "implementation_pct": 67,
+   "validation_pct": 67,
+   "counts": {
+    "implemented_items": 4,
+    "implementation_items": 6,
+    "validated_items": 4,
+    "validation_items": 6
+   },
+   "verified_by": [
+    "tests/test_help_docs.py (fixture: every CLI verb and built panel has a page; error codes named)",
+    "tests/test_tooltips.py (fixture)",
+    "tests/test_secondary_help.py (fixture)"
+   ],
+   "evidence_class": "fixture",
+   "remaining": [
+    "The 76 help pages are copied into the Windows package (tools/build_windows.py:91) but nothing in the GUI opens them: F1 shows a fixed 20-line text (grep for docs/help, openUrl, QDesktopServices in src/: none)",
+    "No contextual guide (Guide panel not built)",
+    "docs/help content is owned by lane L6",
+    "Counted items: F1 workflow help, tooltip registry on controls, help page set with invariants test, troubleshooting page with error codes = 4 built; in-app access to the pages and contextual guide = 2 open"
+   ],
+   "defects": [],
+   "blockers": [
+    {
+     "type": "other-lane",
+     "detail": "docs/help/** is owned by lane L6"
+    }
+   ],
+   "effort_hours": 6,
+   "confidence": "medium",
+   "acceptance_tests": [
+    "Help menu opens the packaged help index"
+   ],
+   "active_lane_overlap": "L6"
+  },
+  {
+   "id": "E-F20",
+   "name": "Long-running operations off the GUI thread",
+   "spec": [
+    "docs/specs/program-e/GUI-integration-plan.md"
+   ],
+   "code": [
+    "src/patchtrace/gui/qt/tasks.py",
+    "src/patchtrace/ui.py:211-226 (Worker)",
+    "src/patchtrace/ui_inspection.py:61 (InspectionThread)",
+    "src/patchtrace/ui_series.py:73",
+    "src/patchtrace/ui_engine_setup.py:147"
+   ],
+   "status": "partial",
+   "implementation_pct": 60,
+   "validation_pct": 45,
+   "counts": {
+    "implemented_items": 12,
+    "implementation_items": 20,
+    "validated_items": 9,
+    "validation_items": 20
+   },
+   "verified_by": [
+    "tests/test_gui_tasks.py (synthetic)",
+    "tests/stress/test_gui_stress_tasks.py (synthetic)",
+    "tests/test_unified_w2b_async_actions.py (synthetic)",
+    "scratch measurement of GUI-thread cost (synthetic, this session)"
+   ],
+   "evidence_class": "synthetic",
+   "remaining": [
+    "Off the GUI thread (12): comparison, import parse, interpretation, ranking, project creation, file inspection, runtime discovery, offline bundle install, evidence load/run/probe, unified load/run/detail/code/actions, series load, table preparation",
+    "Still on the GUI thread (8): open project, open recent, create sample, export report, backup, save, result commit plus full refresh, pre-run deep copy and per-keystroke navigator rebuild (E-D03); AcquisitionDialog.complete_download promotes the project on the GUI thread by design (ui.py:300-306)",
+    "The inspection thread is still owned by MainWindow, not the TaskRunner (to-do G2; ui.py:2686-2745)",
+    "Validation counts only operations with a responsiveness or thread test located by name; Windows timings UNVERIFIED"
+   ],
+   "defects": [
+    {
+     "id": "E-D03",
+     "severity": "medium",
+     "summary": "Several operations still run on the GUI thread and scale with project size: project open/recent/sample, report export, backup, save, the result commit plus full refresh, a deep copy of the whole project before Run comparison and Rank changes, and a full navigator rebuild on every search keystroke.",
+     "evidence": "src/patchtrace/ui.py:1886,1894,1949,1960,1964 (open/backup/sample/save via _guard), :3009 (export_report), :2767 and :2440 (project.model_copy(deep=True)), :1987-2041 (filter_matches rebuild, connected to search.textChanged), :2797-2800 (apply_import/apply_analysis + refresh in the result slot)",
+     "failure_scenario": "Synthetic measurement in this sandbox (shared 4 cores, FunctionRecord code+assembly 1.5 KB per side): 30,000 matches -> model_copy(deep=True) 1.31 s and filter_matches 0.23-0.30 s per keystroke on the GUI thread; 10,000 matches -> 0.39 s and 0.09-0.12 s. Export/backup/open of a large project were not measured (UNVERIFIED) but have no worker. The window does not repaint or accept Cancel during these calls.",
+     "proposed_fix": "Debounce the navigator search (single-shot QTimer); move export, backup and open to start_job/TaskRunner with the existing adopt-on-GUI-thread pattern; build the run snapshot inside the worker from an immutable handle or copy only what run_comparison reads.",
+     "regression_test": "New tests/test_ui_responsiveness.py: 30k synthetic matches, type 5 characters with QTest -> filter_matches called once after the debounce; export_report with a blocking fake service keeps window.worker set and the event loop spinning (a QTimer tick fires before completion)."
+    },
+    {
+     "id": "E-D10",
+     "severity": "low",
+     "summary": "Closing the window waits without a time limit for every inspection thread.",
+     "evidence": "src/patchtrace/ui.py:2737-2742 (thread.wait() with no timeout in _stop_inspection, called from closeEvent :3061)",
+     "failure_scenario": "An artifact on a stalled network share blocks a read inside the inspection worker; the user closes PatchTrace and the window hangs until the read returns, while the host's own shutdown is bounded to 5 s (gui/qt/tasks.py JOIN_SECONDS). Not reproduced here (static).",
+     "proposed_fix": "Move the inspection worker to the host TaskRunner (to-do G2) or bound the wait and leave the thread to the module registry that join_legacy_threads already adopts. ui_inspection.py is owned by lane L6.",
+     "regression_test": "tests/test_ui_graph_inspection.py or a new test: an InspectionThread blocked on an Event; window.close() returns within 6 s and the thread is reported by tasks.legacy_threads()."
+    }
+   ],
+   "blockers": [
+    {
+     "type": "other-lane",
+     "detail": "ui_inspection.py is owned by lane L6"
+    }
+   ],
+   "effort_hours": 16,
+   "confidence": "medium",
+   "acceptance_tests": [
+    "Each listed GUI-thread operation either moves to a worker or has a measured bound under 100 ms at 30k matches"
+   ],
+   "active_lane_overlap": "L6"
+  },
+  {
+   "id": "E-F21",
+   "name": "Cancellation correctness",
+   "spec": [
+    "docs/specs/ui.md",
+    "docs/specs/program-e/GUI-integration-plan.md"
+   ],
+   "code": [
+    "src/patchtrace/ui.py:2787-2812, 2822-2829, 2852-2856, 2922-2940, 3049-3054",
+    "src/patchtrace/gui/qt/tasks.py:246-248, 312-318"
+   ],
+   "status": "partial",
+   "implementation_pct": 67,
+   "validation_pct": 67,
+   "counts": {
+    "implemented_items": 6,
+    "implementation_items": 9,
+    "validated_items": 6,
+    "validation_items": 9
+   },
+   "verified_by": [
+    "tests/stress/test_gui_stress_tasks.py (synthetic: 100 cancelled tasks deliver nothing)",
+    "tests/test_ui_backend_progress.py (mocked)",
+    "tests/test_unified_gui_hardening.py (synthetic: staged directory removed after a dropped run)",
+    "tests/test_gui_tasks.py (synthetic)"
+   ],
+   "evidence_class": "synthetic",
+   "remaining": [
+    "Counted items: comparison cancel before normalization and before commit, import cancel discards the prepared import, interpretation cancel records no findings, ranking cancel stores nothing, TaskRunner supersede/drop, close during a job waits for the worker = 6 built",
+    "Open (3): project creation and JSON import ignore the cancel flag while running (ui.py:1914-1918, 2829: the job only stops after the step ends); unbounded wait for inspection threads at close (E-D10); a worker that never finishes blocks close for ever (E-D09)"
+   ],
+   "defects": [
+    {
+     "id": "E-D09",
+     "severity": "low",
+     "summary": "ui.Worker.run catches Exception only. A task that raises SystemExit leaves the QThread running forever under PySide6 6.12, so the window stays busy, Cancel does nothing and closing the window is refused.",
+     "evidence": "src/patchtrace/ui.py:222-226 (except Exception), :3049-3054 (closeEvent ignores the close while self.worker is set)",
+     "failure_scenario": "Repro (bare QThread, PySide6 6.12.0 offscreen): run() raising SystemExit -> no finished signal, isRunning() True after 3 s; in MainWindow the job label keeps counting and worker never clears. No production code path that raises SystemExit inside a worker task was found (grep: only __main__ style entry points), so this is defence in depth.",
+     "proposed_fix": "Catch BaseException in Worker.run and emit failed(type name), as gui/qt/tasks.py:_execute already does.",
+     "regression_test": "New test in tests/test_ui_backend_progress.py: start_job with a task raising SystemExit(3); wait until window.worker is None; assert show_error was called once and the job label starts with 'Error'."
+    },
+    {
+     "id": "E-D10",
+     "severity": "low",
+     "summary": "Closing the window waits without a time limit for every inspection thread.",
+     "evidence": "src/patchtrace/ui.py:2737-2742 (thread.wait() with no timeout in _stop_inspection, called from closeEvent :3061)",
+     "failure_scenario": "An artifact on a stalled network share blocks a read inside the inspection worker; the user closes PatchTrace and the window hangs until the read returns, while the host's own shutdown is bounded to 5 s (gui/qt/tasks.py JOIN_SECONDS). Not reproduced here (static).",
+     "proposed_fix": "Move the inspection worker to the host TaskRunner (to-do G2) or bound the wait and leave the thread to the module registry that join_legacy_threads already adopts. ui_inspection.py is owned by lane L6.",
+     "regression_test": "tests/test_ui_graph_inspection.py or a new test: an InspectionThread blocked on an Event; window.close() returns within 6 s and the thread is reported by tasks.legacy_threads()."
+    }
+   ],
+   "blockers": [
+    {
+     "type": "none",
+     "detail": ""
+    }
+   ],
+   "effort_hours": 6,
+   "confidence": "medium",
+   "acceptance_tests": [
+    "Cancel during 'Creating project' stops hashing within one chunk"
+   ],
+   "active_lane_overlap": "none"
+  },
+  {
+   "id": "E-F22",
+   "name": "GUI framework core (F0-F9: registry, host, docks, VirtualTable, StateView, TaskRunner, palette, GraphCanvas, CodeDiffView, theme, chips, anchors)",
+   "spec": [
+    "docs/specs/gui-framework.md",
+    "docs/specs/program-e/GUI-integration-plan.md"
+   ],
+   "code": [
+    "src/patchtrace/gui/**",
+    "src/patchtrace/panel_manifest.py",
+    "src/patchtrace/gui/qt/host.py",
+    "src/patchtrace/gui/qt/table.py",
+    "src/patchtrace/gui/qt/tasks.py"
+   ],
+   "status": "partial",
+   "implementation_pct": 68,
+   "validation_pct": 65,
+   "counts": {
+    "implemented_items": 13,
+    "implementation_items": 19,
+    "validated_items": 13,
+    "validation_items": 20
+   },
+   "verified_by": [
+    "tests/test_gui_*.py (27 files, synthetic/fixture)",
+    "tests/stress/test_gui_stress_*.py (synthetic)",
+    "tests/test_ui_m3_docks.py, tests/test_ui_m4_selections.py (fixture)",
+    "`patchtrace panels check` run here: 14 listed, 13 built, 0 failed, conflicts none"
+   ],
+   "evidence_class": "synthetic",
+   "remaining": [
+    "Counted items: 13 components built (registry and lint, manifest, host, docks, VirtualTable, StateView and NoticeStrip, TaskRunner and Lane, palette, GraphCanvas, CodeDiffView, theme, chips, anchor router)",
+    "6 follow-ups open: ColumnSpec.tip_id (E-D08), keyboard sort (E-D05), palette cap (E-D04), failed-factory retry gate (E-D12), lane-init BaseException (E-D11), clipboard refusal feedback (E-D13)",
+    "T15 TaskRunner teardown hardening is done: module registry _RUNNERS and process-wide _Hub (tasks.py:10-13,132-174; tests/test_gui_tasks.py:519)",
+    "Windows 5x qt-gate result UNVERIFIED here (job exists: .github/workflows/qa-windows.yml:119)",
+    "AnchorRef.from_fabric lives in fabric/related.py:104 as a function, not in gui/anchors.py (audit GUI-11)"
+   ],
+   "defects": [
+    {
+     "id": "E-D04",
+     "severity": "medium",
+     "summary": "The command palette truncates the empty-query list at 50, so more than half of the commands cannot be browsed and are reachable only by typing a matching word.",
+     "evidence": "src/patchtrace/gui/registry.py:49 (PALETTE_RESULTS = 50); src/patchtrace/gui/qt/palette.py:45-53 (found[:PALETTE_RESULTS])",
+     "failure_scenario": "Measured on main with the sample project (offscreen): the palette holds 106 entries, the empty query shows 50, 56 are cut (from 'Float or dock KB and CVE panel' onward: KEV, Leads, Series, Files panel commands). A keyboard-only user exploring the palette never sees them.",
+     "proposed_fix": "Port the palette hunk of 4a9e32bb (origin/claude/ws-p-20261104): PALETTE_LIST_MAX = 400 for the empty query, 50 for typed queries.",
+     "regression_test": "tests/test_gui_host_palette.py::test_the_empty_query_lists_every_command_up_to_a_larger_bound (in 4a9e32bb) plus a MainWindow assertion that len(palette._shown) == len(palette._entries) for the shipped manifest."
+    },
+    {
+     "id": "E-D05",
+     "severity": "medium",
+     "summary": "VirtualTable has no keyboard path to sort by a column: sorting needs a mouse click on the header (18 VirtualTables in the 13 built panels).",
+     "evidence": "src/patchtrace/gui/qt/table.py:353-364 (keyPressEvent handles Copy, Enter, Space only); :259-265 (header click is the only sort trigger); no sort command in gui/qt/commands.py",
+     "failure_scenario": "A keyboard-only or screen-reader user opens KB and CVE leads, Strings or Search results and cannot reorder by score or address; GUI plan 8.3 'every function reachable without a mouse' is not met (to-do T4, tasks/todo.md:532).",
+     "proposed_fix": "Add VirtualTable.sort_current_column and a key chord that does not collide with the window's Alt+Up/Alt+Down actions (see notes: the ws-p chord is dead inside MainWindow); expose it as a palette command.",
+     "regression_test": "tests/test_gui_table.py: chord on a bare table sorts the current column asc/desc/default; tests/test_gui_host_seam.py: with a real MainWindow and a focused panel table, the chord changes header.sortIndicatorSection() and Alt+Down still calls navigate_hunk."
+    },
+    {
+     "id": "E-D08",
+     "severity": "low",
+     "summary": "ColumnSpec has no tip_id and headerData never serves a registered tooltip, so registered column tips (for example strings.col.*) cannot appear on VirtualTable headers; headers show only the title.",
+     "evidence": "src/patchtrace/gui/table_spec.py:24-38 (no tip_id field; removed as unread in c885cdc); src/patchtrace/gui/qt/table.py:178-186 (headerData tooltip = title); src/patchtrace/strings/tooltip_entries.py:29-33 (strings.col.* entries exist)",
+     "failure_scenario": "Hovering or focusing the 'Change' header of the Strings table shows 'Change' instead of the registered What/Why text; 90 ColumnSpec declarations have no way to attach a header explanation.",
+     "proposed_fix": "Port the tip_id hunks of 4a9e32bb, then set tip_id on the Strings columns.",
+     "regression_test": "tests/test_gui_table.py::test_a_column_tip_id_serves_the_header_tooltip_and_a_missing_id_falls_back (in 4a9e32bb); tests/test_ui_strings_panel.py: header tooltip of column 'change' equals tooltips.tooltip('strings.col.change')."
+    },
+    {
+     "id": "E-D11",
+     "severity": "low",
+     "summary": "A Lane whose init raises a BaseException (not an Exception) dies silently: every queued request stays in TaskRunner._running and busy() is true for ever.",
+     "evidence": "src/patchtrace/gui/qt/tasks.py:426-429 (_lane_loop: except Exception around init()); audit GUI-13 fixed only the task path (docs/audits/20261015-fixes-gui-ops.md)",
+     "failure_scenario": "A lane init that raises KeyboardInterrupt or SystemExit ends the lane thread before the request loop; later lane.submit calls never deliver a result or an error. Static finding.",
+     "proposed_fix": "Catch BaseException around init and keep serving requests with the failure, as the Exception path does.",
+     "regression_test": "tests/test_gui_tasks.py: lane with init raising SystemExit; submit one request; assert on_error receives TaskFailure('SystemExit') and runner.busy() becomes False."
+    },
+    {
+     "id": "E-D12",
+     "severity": "low",
+     "summary": "A panel whose factory raised is rebuilt on every activation and visibility change instead of waiting for Retry (audit GUI-15, deferred).",
+     "evidence": "src/patchtrace/gui/qt/host.py:437-454 (_construct runs whenever controller is None), :456-464 (_activate), :466-472 (_reconcile)",
+     "failure_scenario": "A panel factory that fails after a slow import or a failing store open repeats that work each time the dock is shown, tabbed to, or the layout is reconciled, and logs PT-GUI-FACTORY each time.",
+     "proposed_fix": "Skip _construct while panel.failure is set; _retry clears it.",
+     "regression_test": "tests/test_gui_host.py: a factory that counts calls and raises; show, hide, show the dock -> count == 1; Retry -> count == 2."
+    },
+    {
+     "id": "E-D13",
+     "severity": "low",
+     "summary": "MainWindowPort.copy_text refuses text over 16 KiB by returning False, and most callers ignore the result, so Copy can do nothing without any message. One caller truncates by characters, not bytes.",
+     "evidence": "src/patchtrace/gui/qt/host.py:185-189; callers that ignore the result: src/patchtrace/callgraph/panel_qt.py:704 ([:16 * 1024] characters), src/patchtrace/ui_leads.py:681, src/patchtrace/intelligence/tools/capa_qt.py:529, src/patchtrace/buildenv/qt_panel.py:133, src/patchtrace/search/qt_panel.py:423",
+     "failure_scenario": "The Calls detail pane holds 16,384 characters including one non-ASCII character (a function name): the slice is 16,384 characters but more than 16,384 bytes, copy_text returns False and the clipboard keeps its old content while the user believes the detail was copied. Static finding.",
+     "proposed_fix": "Have copy_text report the refusal through status and announce ('Too large to copy: limit 16 KiB'), and truncate the Calls detail on a UTF-8 byte boundary.",
+     "regression_test": "tests/test_gui_host.py: copy_text of 16 KiB + 1 returns False and the recording announcer holds one message; tests/test_ui_graph_panel.py: a detail of 16,384 'é' copies at most 16,384 bytes."
+    }
+   ],
+   "blockers": [
+    {
+     "type": "windows-only",
+     "detail": "Clean Windows interactive acceptance (native dialogs, DPI 125/150/200 %, NVDA/Narrator, high contrast: manual gates M19-M23) is not-run; tasks/todo.md:58,89,106,410"
+    }
+   ],
+   "effort_hours": 10,
+   "confidence": "high",
+   "acceptance_tests": [
+    "Ported tests from 4a9e32bb and 647502ce pass",
+    "tools/qt_gate.py --repeat 20 green on Linux"
+   ],
+   "active_lane_overlap": "none"
+  },
+  {
+   "id": "E-F23",
+   "name": "Panel manifest: built versus stubbed",
+   "spec": [
+    "docs/specs/program-e/GUI-integration-plan.md",
+    "docs/specs/panels/README.md"
+   ],
+   "code": [
+    "src/patchtrace/panel_manifest.py:90-106"
+   ],
+   "status": "partial",
+   "implementation_pct": 93,
+   "validation_pct": 93,
+   "counts": {
+    "implemented_items": 13,
+    "implementation_items": 14,
+    "validated_items": 13,
+    "validation_items": 14
+   },
+   "verified_by": [
+    "tests/test_gui_host_seam.py::test_the_shipped_manifest_builds_only_the_migrated_panels_and_has_no_problem (fixture)",
+    "`patchtrace panels check` (run here)"
+   ],
+   "evidence_class": "fixture",
+   "remaining": [
+    "Built (13): evidence, unified, search, graph, strings, capabilities, build_env, rules, kb, kev, leads, series, files",
+    "Stubbed (1): guide (module patchtrace.guide.panel absent; deferred)",
+    "Built but not in the manifest: related (fabric/panel.py)",
+    "Per-panel specs exist for 2 panels only (docs/specs/panels/related.md, graph-inspection.md): to-do Q1 open",
+    "The built set is hard-coded in tests/test_gui_host_seam.py:116-117 (to-do Q3 open)",
+    "All panel data shown in tests is fixture or synthetic; no panel has live-native evidence here"
+   ],
+   "defects": [
+    {
+     "id": "E-D15",
+     "severity": "low",
+     "summary": "Three built panels emit anchor kinds that no built panel handles.",
+     "evidence": "`patchtrace panels check` on main prints: 'warning: search emits import anchors that no built panel handles', the same for capabilities, and 'leads emits advisory_phrase, import anchors that no built panel handles'",
+     "failure_scenario": "The analyst activates an import row in Search or Capabilities, or an advisory phrase in Leads: navigation has no target and only a status message can result.",
+     "proposed_fix": "Decide the handler (a Files or Strings panel handler for 'import', the KB panel for 'advisory_phrase') or stop emitting the kinds; then make the warning an error in the check.",
+     "regression_test": "tests/test_gui_core_manifest.py: the shipped manifest yields no 'no built panel handles' warning."
+    }
+   ],
+   "blockers": [
+    {
+     "type": "owner-decision",
+     "detail": "Guide panel is deferred"
+    }
+   ],
+   "effort_hours": 6,
+   "confidence": "high",
+   "acceptance_tests": [
+    "Host test derives the built set from the manifest"
+   ],
+   "active_lane_overlap": "none"
+  },
+  {
+   "id": "E-F24",
+   "name": "Dockable core workspace (SPEC-DW-01)",
+   "spec": [
+    "docs/specs/DOCKABLE-WORKSPACE-SPEC.md"
+   ],
+   "code": [
+    "src/patchtrace/ui.py:1571-1612 (_build_workspace: fixed splitters)"
+   ],
+   "status": "deferred-by-design",
+   "implementation_pct": 0,
+   "validation_pct": 0,
+   "counts": {
+    "implemented_items": 0,
+    "implementation_items": 13,
+    "validated_items": 0,
+    "validation_items": 13
+   },
+   "verified_by": [],
+   "evidence_class": "none",
+   "remaining": [
+    "Draft proposal: 13 proposed section ids (matches, change_signals, compare_controls, code_older, code_newer, findings, finding_detail, finding_review, analyst_notes, diagnostics, engine_controls, unified_detail, unified_code), none implemented; the spec itself claims no implementation",
+    "Excluded from the workstream totals because it is a draft, not an accepted requirement"
+   ],
+   "defects": [],
+   "blockers": [
+    {
+     "type": "owner-decision",
+     "detail": "Spec status is 'draft / proposed' (DOCKABLE-WORKSPACE-SPEC.md:3)"
+    }
+   ],
+   "effort_hours": 60,
+   "confidence": "high",
+   "acceptance_tests": [
+    "Spec section 3 extraction with center sizing demonstrated first"
+   ],
+   "active_lane_overlap": "none"
+  },
+  {
+   "id": "E-F25",
+   "name": "Themes (dark, System, high contrast, reduced motion)",
+   "spec": [
+    "docs/specs/gui-framework.md",
+    "docs/specs/accessibility-baseline.md"
+   ],
+   "code": [
+    "src/patchtrace/gui/qt/theme.py",
+    "src/patchtrace/gui/qt/theme_stylesheet.py",
+    "src/patchtrace/gui/theme_math.py",
+    "src/patchtrace/gui/qt/chips.py"
+   ],
+   "status": "partial",
+   "implementation_pct": 83,
+   "validation_pct": 57,
+   "counts": {
+    "implemented_items": 5,
+    "implementation_items": 6,
+    "validated_items": 4,
+    "validation_items": 7
+   },
+   "verified_by": [
+    "tests/test_gui_theme.py (synthetic)",
+    "tests/test_gui_theme_variants.py (synthetic)",
+    "tests/test_gui_core_theme_math.py (synthetic)",
+    "tests/stress/test_gui_stress_theme.py (synthetic)"
+   ],
+   "evidence_class": "synthetic",
+   "remaining": [
+    "Legacy MainWindow panes do not follow the theme (E-D01)",
+    "Real OS light/dark switch and Windows high-contrast themes not run (M22)",
+    "Counted items: dark tokens, System tokens from the palette, high-contrast tokens, Theme menu, reduced-motion read = 5 built; legacy panes on tokens = 1 open; validation adds the OS-change gate"
+   ],
+   "defects": [
+    {
+     "id": "E-D01",
+     "severity": "high",
+     "summary": "Legacy code panes always tint changed rows with the DARK theme tokens and never re-highlight on a theme change, so in the System theme on a light palette (and in a light OS high-contrast theme, which is applied automatically) changed lines render dark-on-dark.",
+     "evidence": "src/patchtrace/ui.py:2131 and :2634 (DARK.hunk_replace / DARK.hunk_other); src/patchtrace/gui/qt/theme.py:250 (stylesheet cleared for non-dark); host.py:365-369 (theme_changed reaches panels only)",
+     "failure_scenario": "Offscreen repro on the synthetic sample (scratch script, PySide6 6.12.0): View > Theme > System on a light palette -> changed row background #263a43 with pane text #000000, contrast 1.77:1 (WCAG AA needs 4.5:1; dark theme measures 9.01:1). The changed code, the product's core output, is unreadable. Rendering on real Windows high-contrast themes is UNVERIFIED.",
+     "proposed_fix": "Use the host's current tokens (self.panels.tokens.hunk_replace/hunk_other, underline in high contrast) in _highlight_hunks and _render_raw, and re-run the highlight when ThemeController.theme_changed fires. Net ui.py growth must stay within the 12-line seam headroom (3065 of 3077).",
+     "regression_test": "tests/test_ui_m4_selections.py: set_variant('system') on a light palette, select the sample's modified match, assert every 'diff' extra selection background equals host.tokens.hunk_* and contrast_ratio(pane text, background) >= 4.5; switch back to dark and assert #263a43."
+    }
+   ],
+   "blockers": [
+    {
+     "type": "windows-only",
+     "detail": "Clean Windows interactive acceptance (native dialogs, DPI 125/150/200 %, NVDA/Narrator, high contrast: manual gates M19-M23) is not-run; tasks/todo.md:58,89,106,410"
+    }
+   ],
+   "effort_hours": 3,
+   "confidence": "high",
+   "acceptance_tests": [
+    "Contrast gate over legacy panes for every token set"
+   ],
+   "active_lane_overlap": "none"
+  },
+  {
+   "id": "E-F26",
+   "name": "GUI specs and trackers match the code",
+   "spec": [
+    "docs/specs/gui-framework.md",
+    "docs/specs/ui.md",
+    "docs/specs/panels/README.md",
+    "docs/specs/REGISTRY.md"
+   ],
+   "code": [
+    "docs only"
+   ],
+   "status": "partial",
+   "implementation_pct": 40,
+   "validation_pct": 0,
+   "counts": {
+    "implemented_items": 2,
+    "implementation_items": 5,
+    "validated_items": 0,
+    "validation_items": 5
+   },
+   "verified_by": [],
+   "evidence_class": "none",
+   "remaining": [
+    "gui-framework.md:3 still says 'partial, 2026-10-14' and marks the Qt host layer [planned] although it is on main (to-do G8)",
+    "ui.md still says the GUI framework is 'planned, not built' in its Program E paragraph (to-do G8)",
+    "11 of 13 built panels have no per-panel spec (to-do Q1)",
+    "Counted items: REGISTRY rows exist for ui.md and gui-framework.md, panels index exists = 2 done; refreshed gui-framework.md, refreshed ui.md, per-panel specs = 3 open. Lane L6's branch edits gui-framework.md and accessibility-baseline.md (+18 lines each): coordinate"
+   ],
+   "defects": [],
+   "blockers": [
+    {
+     "type": "other-lane",
+     "detail": "L6 branch touches gui-framework.md and accessibility-baseline.md"
+    }
+   ],
+   "effort_hours": 10,
+   "confidence": "medium",
+   "acceptance_tests": [
+    "Spec status lines name the built modules"
+   ],
+   "active_lane_overlap": "L6"
+  }
+ ],
+ "actionable_now": [
+  {
+   "id": "E-T01",
+   "title": "Make the legacy code panes use the active theme tokens for changed-row tints and re-highlight on theme change",
+   "why": "E-D01: measured contrast 1.77:1 for changed lines in the System theme on a light palette; high contrast is applied automatically from the OS",
+   "files": [
+    "src/patchtrace/ui.py (lines 2129-2133, 2634; connect ThemeController.theme_changed)",
+    "tests/test_ui_m4_selections.py"
+   ],
+   "tests": [
+    "tests/test_ui_m4_selections.py::test_changed_rows_follow_the_active_theme_tokens (new, red first)",
+    "tests/test_gui_host_seam.py::test_ui_seam_budget"
+   ],
+   "size": "S",
+   "priority": 1,
+   "risk": "ui.py has 12 lines of seam headroom (3065 of 3077); keep the change net <= +4 lines. Windows high-contrast rendering stays a manual gate.",
+   "depends_on": [],
+   "lane_conflict": "none",
+   "acceptance": "With variant 'system' on a light palette every 'diff' extra selection uses host.tokens.hunk_* and contrast_ratio(text, background) >= 4.5; dark stays #263a43/#33392b; seam budget test green."
+  },
+  {
+   "id": "E-T02",
+   "title": "Sanitize untrusted function names and code at display in the navigator and legacy code panes",
+   "why": "E-D02: U+202E and control characters from imported JSON or symbol names reach the navigator and panes (repro on main)",
+   "files": [
+    "src/patchtrace/ui.py (filter_matches label, render_match body lines)",
+    "tests/test_ui_audit_p2.py or new tests/test_ui_untrusted_text.py"
+   ],
+   "tests": [
+    "tests/test_ui_untrusted_text.py::test_navigator_and_panes_carry_no_format_or_control_characters (new)",
+    "tests/test_ui_audit_p2.py",
+    "tests/test_ui_m4_selections.py"
+   ],
+   "size": "M",
+   "priority": 2,
+   "risk": "Row alignment and evidence line numbers must not move: replace characters per line, never remove or add line breaks. Same 12-line ui.py budget; put the helper in gui/text.py or hostile_text.py.",
+   "depends_on": [],
+   "lane_conflict": "none",
+   "acceptance": "A match whose name and code hold U+202E, U+2066 and BEL shows none of them; hunk index and jump_evidence still land on the same lines; provenance copy still carries the stored text."
+  },
+  {
+   "id": "E-T03",
+   "title": "Wire announcers into the evidence, Search and KB StateViews (port 647502ce, extend to two more panels)",
+   "why": "E-D06 / to-do T5, G5: three panels' state changes are never announced",
+   "files": [
+    "src/patchtrace/ui_evidence.py",
+    "src/patchtrace/search/qt_panel.py",
+    "src/patchtrace/kbcorrelation/panel_qt.py",
+    "tests/test_evidence_host.py",
+    "tests/test_ui_search_panel.py",
+    "tests/test_ui_kb_panel.py"
+   ],
+   "tests": [
+    "tests/test_evidence_host.py::test_the_evidence_state_view_announces_through_the_host_shell (from 647502ce)",
+    "new announcer assertions in tests/test_ui_search_panel.py and tests/test_ui_kb_panel.py"
+   ],
+   "size": "S",
+   "priority": 3,
+   "risk": "647502ce applies cleanly to main (git apply --check). The Search panel already announces result messages (qt_panel.py:438): avoid double announcements.",
+   "depends_on": [],
+   "lane_conflict": "none",
+   "acceptance": "A forced error state in each of the three panels produces exactly one assertive announcement on a RecordingAnnouncer."
+  },
+  {
+   "id": "E-T04",
+   "title": "List every command for the empty palette query (port the palette hunk of 4a9e32bb)",
+   "why": "E-D04 / to-do T16: 56 of 106 commands are cut from the browsable list",
+   "files": [
+    "src/patchtrace/gui/registry.py",
+    "src/patchtrace/gui/qt/palette.py",
+    "tests/test_gui_host_palette.py"
+   ],
+   "tests": [
+    "tests/test_gui_host_palette.py::test_the_empty_query_lists_every_command_up_to_a_larger_bound (from 4a9e32bb)"
+   ],
+   "size": "S",
+   "priority": 4,
+   "risk": "Low; 400 list items is cheap. Keep the typed-query cap at 50.",
+   "depends_on": [],
+   "lane_conflict": "none",
+   "acceptance": "On the shipped manifest len(palette._shown) == len(palette._entries) for the empty query; typed queries still return at most 50."
+  },
+  {
+   "id": "E-T05",
+   "title": "Keyboard sort for VirtualTable headers with a chord that works inside MainWindow, plus a palette command",
+   "why": "E-D05 / to-do T4: sorting is mouse-only on 18 tables. The ws-p chord (Alt+Up/Down) is taken by window actions and never reaches the table (repro)",
+   "files": [
+    "src/patchtrace/gui/qt/table.py",
+    "src/patchtrace/gui/shortcuts.py",
+    "src/patchtrace/gui/qt/commands.py",
+    "tests/test_gui_table.py",
+    "tests/test_gui_host_seam.py",
+    "docs/specs/program-e/GUI-integration-plan.md (section 6 key table)"
+   ],
+   "tests": [
+    "tests/test_gui_table.py::test_the_header_sorts_from_the_keyboard_on_the_current_column (adapt from 4a9e32bb with the new chord)",
+    "new MainWindow test: focused panel table + chord changes sortIndicatorSection; Alt+Down still calls navigate_hunk"
+   ],
+   "size": "M",
+   "priority": 5,
+   "risk": "Shortcut choice is a contract change: update the spec key table first (AGENTS.md). Suggested Alt+Shift+Down / Alt+Shift+Up / Alt+Shift+Backspace (not in RESERVED or FRAMEWORK); confirm no OS-level clash on Windows.",
+   "depends_on": [],
+   "lane_conflict": "none",
+   "acceptance": "Inside a real MainWindow the chord sorts the focused VirtualTable ascending, descending and back to default order, and the window's next/previous difference actions still work."
+  },
+  {
+   "id": "E-T06",
+   "title": "Serve registered header tooltips through ColumnSpec.tip_id and attach the strings.col.* tips",
+   "why": "E-D08 / to-do T17: registered column tips cannot be shown on headers",
+   "files": [
+    "src/patchtrace/gui/table_spec.py",
+    "src/patchtrace/gui/qt/table.py",
+    "src/patchtrace/strings/table.py or strings/qt_panel.py (column declarations)",
+    "tests/test_gui_table.py",
+    "tests/test_ui_strings_panel.py"
+   ],
+   "tests": [
+    "tests/test_gui_table.py::test_a_column_tip_id_serves_the_header_tooltip_and_a_missing_id_falls_back (from 4a9e32bb)",
+    "tests/test_ui_strings_panel.py header tooltip assertion (new)"
+   ],
+   "size": "S",
+   "priority": 6,
+   "risk": "4a9e32bb touches table.py in the same region as E-T05: land E-T05 and E-T06 from one branch or in sequence.",
+   "depends_on": [
+    "E-T05"
+   ],
+   "lane_conflict": "none",
+   "acceptance": "headerData(ToolTipRole) returns tooltips.tooltip(tip_id) for a registered id and the plain title otherwise; the Strings 'Change' header shows its registered tip."
+  },
+  {
+   "id": "E-T07",
+   "title": "Give the 44 unnamed controls accessible names from one names table applied by apply_tooltip",
+   "why": "E-D07 / to-do Q4: re-measured 44 controls with no name and no label (of 560)",
+   "files": [
+    "src/patchtrace/tooltips.py (apply_tooltip sets a name when empty)",
+    "new src/patchtrace/ui_names.py (id -> name table)",
+    "src/patchtrace/ui.py (only the two unnamed QToolButtons, <= 2 lines)",
+    "tests/test_tooltips.py"
+   ],
+   "tests": [
+    "tests/test_tooltips.py audit(): require accessibleName() or button text for every interactive control in MainWindow, NewProjectDialog, AcquisitionDialog, SetupDialog, ContextDialog, CorrectMatchDialog"
+   ],
+   "size": "M",
+   "priority": 7,
+   "risk": "tooltips.py is a shared file with many importers; names are user-visible text (SPEC-45 R-N3). Leave export.* and Files-dock controls to lane L6. Status labels must keep an empty name (R-N4).",
+   "depends_on": [],
+   "lane_conflict": "none",
+   "acceptance": "The introspection count of interactive controls with neither name nor buddy is 0 outside lane L6's widgets (headers excluded); existing tooltip tests stay green."
+  },
+  {
+   "id": "E-T08",
+   "title": "Report non-Exception worker failures instead of hanging the job (ui.Worker and Lane init)",
+   "why": "E-D09, E-D11: SystemExit in a QThread leaves it running for ever (repro); lane init catches Exception only",
+   "files": [
+    "src/patchtrace/ui.py (Worker.run, 1 line)",
+    "src/patchtrace/gui/qt/tasks.py (_lane_loop)",
+    "tests/test_ui_backend_progress.py",
+    "tests/test_gui_tasks.py"
+   ],
+   "tests": [
+    "new: start_job with a task raising SystemExit -> window.worker becomes None and show_error called once",
+    "new: lane init raising SystemExit -> on_error TaskFailure('SystemExit'), busy() False"
+   ],
+   "size": "S",
+   "priority": 8,
+   "risk": "Low. Do not swallow KeyboardInterrupt on the GUI thread; this is worker-thread only.",
+   "depends_on": [],
+   "lane_conflict": "none",
+   "acceptance": "Both new tests fail on main (the first by timeout) and pass after the change."
+  },
+  {
+   "id": "E-T09",
+   "title": "Debounce the navigator search so a burst of typing rebuilds the list once",
+   "why": "E-D03: filter_matches costs 0.23-0.30 s per keystroke at 30k synthetic matches on the GUI thread",
+   "files": [
+    "src/patchtrace/ui.py (_build_navigator: single-shot QTimer between search.textChanged and filter_matches)",
+    "new tests/test_ui_responsiveness.py"
+   ],
+   "tests": [
+    "tests/test_ui_responsiveness.py::test_typing_rebuilds_the_navigator_once (new)"
+   ],
+   "size": "S",
+   "priority": 9,
+   "risk": "ui.py seam budget (competes with E-T01/E-T02 for 12 lines); existing tests that set search text and read the list synchronously need a wait or a direct filter_matches() call.",
+   "depends_on": [
+    "E-T01",
+    "E-T02"
+   ],
+   "lane_conflict": "none",
+   "acceptance": "Five key presses within 100 ms call filter_matches once; the final list equals the undebounced result."
+  },
+  {
+   "id": "E-T10",
+   "title": "Tell the user when Copy is refused for size, and cut the Calls detail on a byte boundary",
+   "why": "E-D13: copy_text returns False silently for text over 16 KiB; five callers ignore it",
+   "files": [
+    "src/patchtrace/gui/qt/host.py (MainWindowPort.copy_text)",
+    "src/patchtrace/callgraph/panel_qt.py:704",
+    "tests/test_gui_host.py",
+    "tests/test_ui_graph_panel.py"
+   ],
+   "tests": [
+    "tests/test_gui_host.py::test_copy_text_refuses_more_than_16_kib (extend: one status line and one announcement)",
+    "tests/test_ui_graph_panel.py: 16,384 non-ASCII characters copy at most 16,384 bytes"
+   ],
+   "size": "S",
+   "priority": 10,
+   "risk": "rules/qt_panel.py:351 and ui_unified.py:1080 already report the result: avoid a duplicate message there.",
+   "depends_on": [],
+   "lane_conflict": "none",
+   "acceptance": "A refused copy produces exactly one status message naming the 16 KiB limit; the Calls copy never returns False for long non-ASCII detail."
+  },
+  {
+   "id": "E-T11",
+   "title": "Do not rebuild a failed panel until Retry",
+   "why": "E-D12 / audit GUI-15 (deferred): a failing factory is re-run on every activation and visibility change",
+   "files": [
+    "src/patchtrace/gui/qt/host.py (_construct / _retry)",
+    "tests/test_gui_host.py"
+   ],
+   "tests": [
+    "tests/test_gui_host.py::test_a_failed_factory_runs_again_only_on_retry (new)"
+   ],
+   "size": "S",
+   "priority": 11,
+   "risk": "self_check and build_all_for_test call _construct directly and must keep reporting the failure.",
+   "depends_on": [],
+   "lane_conflict": "none",
+   "acceptance": "Show, hide and show a dock whose factory raises: the factory ran once; Retry runs it a second time."
+  },
+  {
+   "id": "E-T12",
+   "title": "Derive the built-panel set in the host seam test from the manifest",
+   "why": "to-do Q3: tests/test_gui_host_seam.py:116-117 hard-codes 13 ids, so every new panel edits a shared test",
+   "files": [
+    "tests/test_gui_host_seam.py"
+   ],
+   "tests": [
+    "tests/test_gui_host_seam.py::test_the_shipped_manifest_builds_only_the_migrated_panels_and_has_no_problem"
+   ],
+   "size": "S",
+   "priority": 12,
+   "risk": "Keep one explicit assertion that 'guide' is the only not-built slot so a silently missing module still fails.",
+   "depends_on": [],
+   "lane_conflict": "none",
+   "acceptance": "The test computes the built set from importlib.util.find_spec over MANIFEST modules and still fails when a built panel's module is removed."
+  }
+ ],
+ "tracker_verification": [
+  {
+   "item": "T1",
+   "state": "obsolete",
+   "evidence": "PR #58 (GUI framework) is long merged: gui/ is on main; current CI state UNVERIFIED (no GitHub read in this brief)"
+  },
+  {
+   "item": "T2",
+   "state": "done",
+   "evidence": "src/patchtrace/tooltips.py:756,761 (action.series, series.window entries); tests/test_tooltips.py:144 (len(REGISTRY) >= 100 floor)"
+  },
+  {
+   "item": "T3",
+   "state": "done",
+   "evidence": "src/patchtrace/ui.py:2863-2866 shows run.error as a note on completed interpretation runs"
+  },
+  {
+   "item": "T4",
+   "state": "open",
+   "evidence": "src/patchtrace/gui/qt/table.py:353-364 has no sort key path; candidate port 4a9e32bb needs a different chord (see notes)"
+  },
+  {
+   "item": "T5",
+   "state": "open",
+   "evidence": "src/patchtrace/ui_evidence.py:396 StateView without announcer (also search/qt_panel.py:131, kbcorrelation/panel_qt.py:67); port 647502ce"
+  },
+  {
+   "item": "T6",
+   "state": "done",
+   "evidence": "tests/test_gui_host_seam.py:25-31: ceiling 3142-65 = 3077; ui.py is 3065 lines (12 lines headroom)"
+  },
+  {
+   "item": "T7",
+   "state": "done",
+   "evidence": ".github/workflows/qa-windows.yml:83-119 job qt-gate (Linux 20x in 4 shards, Windows 5x); file owned by lane L4; run results UNVERIFIED"
+  },
+  {
+   "item": "T8",
+   "state": "done (flake history UNVERIFIED)",
+   "evidence": "tests/test_gui_table.py:113-115 uses a 5.0 s ceiling, no fixed sleeps"
+  },
+  {
+   "item": "T9",
+   "state": "done",
+   "evidence": "checked off in docs/plans/master-todo-d.md:14"
+  },
+  {
+   "item": "T10",
+   "state": "done (out of scope, low confidence)",
+   "evidence": "src/patchtrace/backend.py:~287 _java_version retries a cold-JVM timeout; file owned by lanes L2/L5"
+  },
+  {
+   "item": "T11",
+   "state": "partial",
+   "evidence": "pyproject.toml:9 declares shiboken6==6.12.0; third_party/notices has no rapidfuzz or yara-x directory (git ls-files); dependency-versions.json not found; bundle scope, not GUI"
+  },
+  {
+   "item": "T12",
+   "state": "UNVERIFIED",
+   "evidence": "tracker hygiene; tasks/todo.md has 417 open and 395 checked lines"
+  },
+  {
+   "item": "T13",
+   "state": "open",
+   "evidence": "docs/specs/gui-framework.md:3 status line is stale (see G8); REGISTRY.md:33,103"
+  },
+  {
+   "item": "T14",
+   "state": "blocked (owner)",
+   "evidence": "bundle pins; not GUI"
+  },
+  {
+   "item": "T15",
+   "state": "done",
+   "evidence": "src/patchtrace/gui/qt/tasks.py:10-13 (ownership rule), :132-174 (_Hub, _RUNNERS); tests/test_gui_tasks.py:519; tests/stress/test_gui_stress_teardown.py"
+  },
+  {
+   "item": "T16",
+   "state": "open",
+   "evidence": "src/patchtrace/gui/registry.py:49; gui/qt/palette.py:53; measured 106 entries, 50 shown"
+  },
+  {
+   "item": "T17",
+   "state": "open",
+   "evidence": "src/patchtrace/gui/table_spec.py:24-38 has no tip_id; gui/qt/table.py:178-186; strings/tooltip_entries.py:29-33 tips exist unused on headers"
+  },
+  {
+   "item": "T18",
+   "state": "partial / UNVERIFIED",
+   "evidence": "src/patchtrace/search/tooltip_data.py:24 still says 'Plain words are safe' but `patchtrace panels check` reports no claims finding; strings/cli.py:183-191 compute() still builds its own ToolStore; strings unchanged-row behaviour not checked"
+  },
+  {
+   "item": "T19",
+   "state": "obsolete",
+   "evidence": "KB and WB panels are on main (kbcorrelation/panel_qt.py, search/qt_panel.py, strings/qt_panel.py); docs/plans/pending-patches/ does not exist"
+  },
+  {
+   "item": "G1",
+   "state": "blocked-external",
+   "evidence": "Windows manual gates M19-M23 not-run (tasks/todo.md:410)"
+  },
+  {
+   "item": "G2",
+   "state": "open",
+   "evidence": "src/patchtrace/ui.py:2686-2745 MainWindow still owns the inspection thread; :2741 unbounded wait; ui_inspection.py is lane L6"
+  },
+  {
+   "item": "G3",
+   "state": "partial",
+   "evidence": "src/patchtrace/gui/qt/theme.py:161-180 QtSystemPrefs, :236 reduced_motion; real OS change simulation UNVERIFIED; legacy panes ignore the theme (E-D01)"
+  },
+  {
+   "item": "G4",
+   "state": "done (minimap); timing tightness UNVERIFIED",
+   "evidence": "src/patchtrace/callgraph/minimap_qt.py; docs/specs/panels/graph-inspection.md is 'built' in REGISTRY.md:90"
+  },
+  {
+   "item": "G5",
+   "state": "open (announcer); rest UNVERIFIED",
+   "evidence": "same as T5; Windows coarse-clock and repaint-bound flakes not checked"
+  },
+  {
+   "item": "G6",
+   "state": "open",
+   "evidence": "no PanelSpec sets default_visible (grep); `panels check` appears in no workflow (grep .github/workflows); CLI works: 14 listed, 13 built, conflicts none"
+  },
+  {
+   "item": "G7",
+   "state": "done (audit), follow-ups open",
+   "evidence": "docs/audits/20261015-gui-framework.md: 16 findings; 12 fixed per 20261015-fixes-gui-ops.md; GUI-9, GUI-11, GUI-15 and the lane half of GUI-13 remain (verified on main)"
+  },
+  {
+   "item": "G8",
+   "state": "open",
+   "evidence": "docs/specs/gui-framework.md:3 'partial, 2026-10-14 ... planned Qt host layer'; docs/specs/ui.md Program E paragraph says 'planned, not built'"
+  },
+  {
+   "item": "Q1",
+   "state": "open",
+   "evidence": "docs/specs/panels/ holds README.md, related.md, graph-inspection.md only: 2 panel specs for 13 built panels"
+  },
+  {
+   "item": "Q2",
+   "state": "mostly done",
+   "evidence": "13 of 14 manifest slots built (panel_manifest.py:90-106); guide deferred; live gates (CAP-8..11, DIE, KEV K6) are outside this workstream"
+  },
+  {
+   "item": "Q3",
+   "state": "open",
+   "evidence": "tests/test_gui_host_seam.py:116-117 hard-coded built set"
+  },
+  {
+   "item": "Q4",
+   "state": "open",
+   "evidence": "re-measured by introspection: 44 controls with no name and no buddy, 55 with header views, 75 with buddy-only, of 560 interactive controls"
+  }
+ ],
+ "completion": {
+  "implementation_pct": 73,
+  "validation_pct": 59,
+  "implemented_items": 136,
+  "implementation_items": 187,
+  "validated_items": 116,
+  "validation_items": 196,
+  "basis": "136 of 187 counted implementation items and 116 of 196 counted validation items across 25 features (E-F24 dockable workspace is a draft spec, 0 of 13 sections, excluded). An item counts as validated when an automated offscreen test file covering it was located by name; I did not re-run those tests. All such evidence is mocked, synthetic or fixture: none is live-native, and the Windows manual gates M19-M23 are not-run."
+ },
+ "notes": "Completion basis: 136 of 187 counted implementation items (73 %) and 116 of 196 counted validation items (59 %) over 25 features (E-F24, a draft spec with 0 of 13 proposed sections, is excluded). An item counts as validated when an automated offscreen test file covering it was located by name; none of that is live-native evidence. Tests were not re-run by this analyst (the orchestrator runs the baseline suite); the measurements below were run. Measurements made in this session on main@882d1ca0, offscreen PySide6 6.12.0, synthetic sample project, shared 4 cores (scratch scripts under inventory/tmp-E, nothing written to the checkout): (1) accessible names: 560 interactive controls, 75 without a name, 55 without name or buddy, 44 excluding header views; (2) palette: 106 entries, 50 shown for the empty query; (3) GUI-thread cost at 30,000 synthetic matches: model_copy(deep=True) 1.31 s, filter_matches 0.23-0.30 s; at 10,000: 0.39 s and 0.09-0.12 s; (4) theme: changed-row contrast 9.01:1 in dark, 1.77:1 in System on a light palette; (5) a window QAction on Alt+Down wins over a focused table's keyPressEvent (action fired 1, key handler 0); (6) a QThread whose run() raises SystemExit never finishes; (7) `patchtrace panels check`: 14 listed, 13 built, 1 not built, 0 failed, conflicts none, 3 unhandled-anchor warnings. PR #176 / origin/claude/ws-p-20261104 (tip 597a8b10, 397 commits behind main; merge-base 25b2ac80): do not merge the branch (a two-dot diff against main would shrink ui.py and kbcorrelation/investigation_qt.py, which main has since advanced). Cherry-pick instead: 647502ce 'fix(gui): announce evidence panel state changes (T5/G5)' applies cleanly to main (git apply --check) and can be ported as is; 4a9e32bb 'gui: header tooltips from ColumnSpec.tip_id, keyboard header sort, full empty-query palette list' also applies cleanly: port its palette hunks (T16) and tip_id hunks (T17) as is, but change the keyboard-sort chord before porting, because Alt+Up and Alt+Down are WindowShortcut actions in MainWindow (ui.py:1720-1721, reserved in gui/shortcuts.py:24) and the table never receives them; its test passes only because it uses a bare table. ebc9fb74 (superseded inspection failures) needs no port: main already has the key check (ui.py:2715-2718) and the test has no xfail. 37a6fed0 (KB investigation and project adoption) is already on main in a newer form. Active-lane notes: L6 owns ui_export_v2.py, ui_inspection.py and docs/help; its branch also edits gui-framework.md and accessibility-baseline.md. No actionable task touches those files. ui.py is in no lane but has only 12 lines of seam budget left, so E-T01, E-T02 and E-T09 must be sequenced by one owner. Not reviewed in depth: ui_unified.py, ui_leads.py, ui_kev.py, ui_series.py and the feature-package panels beyond the points cited; AcquisitionDialog network paths; Windows behaviour of anything.",
+ "external_blockers": [
+  "Windows-only manual gates M19-M23 (NVDA, Narrator, keyboard walk, high contrast, DPI 125/150/200 %) and clean Windows GUI acceptance are not-run",
+  "Ghidra, BinDiff and Rizin are not installed: no live-native comparison or engine run through the GUI (lane L2)",
+  "NVD, MSRC, CISA and Winbindex are unreachable: KB/KEV/acquisition GUI paths have fixture or mocked evidence only",
+  "Owner decisions: default_visible / first-run panel policy (G6), Guide panel (deferred), run-history view has no spec, meaning of 'patch recommendations', SPEC-DW-01 dockable workspace is still a draft",
+  "Lane L6 owns ui_export_v2.py, ui_inspection.py and docs/help (export accessibility, inspection thread move G2, in-app help content)",
+  "ui.py has only 12 lines of seam budget left (3065 of 3077), so E-T01, E-T02 and E-T09 need one owner in sequence",
+  "Windows qt-gate 5x and Linux 20x CI results were not read (UNVERIFIED)"
+ ],
+ "summary": "GUI inventory written: 26 features, 14 defects (1 high), 12 actionable tasks, plus T1-T19/G1-G8/Q1-Q4 verified with file:line. 13 of 14 manifest panels are built; only guide is stubbed. Open on main: T4, T5, T13, T16, T17, G2, G6, G8, Q1, Q3, Q4; T15 is done. Measured offscreen: 44 of 560 controls unnamed, palette shows 50 of 106 commands, changed-row contrast 1.77:1 in System theme, 1.3 s GUI-thread deep copy at 30k synthetic matches. From PR #176, cherry-pick 647502ce as is and 4a9e32bb with a new sort chord (Alt+Up/Down belong to window actions); do not merge the branch."
+}
