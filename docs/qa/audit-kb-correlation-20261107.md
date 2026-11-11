@@ -40,3 +40,7 @@ No security-class finding. KBA-05 is a crash on hostile persisted data (denial o
 ## Test results
 
 See the PR description for the focused and full-suite runs.
+
+## Dispositions after the audit
+
+- 2026-11-11 KBA-06 fixed (decision: skip identical bytes). `lineage.predecessor` passes over every earlier row that carries the target's own SHA-256; those rows stay in the window, the nearest earlier admissible build with other bytes is the older side, and none is `NO_OLDER`. Rule recorded in `docs/specs/kb-cve/31-C-product-build-pairs.md` C4. The strict xfail is now a plain test; added `test_kba06_*` in `tests/test_kbc_lineage.py` and `tests/test_kbc_resolver.py` (pair ids of the committed fixtures pinned to the pre-fix values). Evidence class: synthetic timelines only, no live Winbindex data.

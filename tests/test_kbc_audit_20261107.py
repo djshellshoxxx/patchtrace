@@ -128,10 +128,9 @@ def test_kba05_supersession_survives_a_facts_date_that_is_only_shaped_like_a_tim
 
 # --- reported, not fixed (strict xfail: an unexpected pass means the finding was fixed and the marker must go) ---
 
-@pytest.mark.xfail(strict=True, reason='KBA-06 open: predecessor() can return a row with the target\'s own bytes')
 def test_kba06_predecessor_never_returns_a_row_with_the_targets_own_sha():
-    """A, B(preview), A: with ``same_class_only`` the preview row is skipped as a confounder and the older A row is
-    returned, so the pair is byte-identical (grade X, IDENTICAL_CONTENT) instead of 'no earlier build'."""
+    """A, B(preview), A: with ``same_class_only`` the preview row is skipped as a confounder and the older A row was
+    returned, so the pair was byte-identical (grade X, IDENTICAL_CONTENT) instead of 'no earlier build'."""
     from patchtrace.kbcorrelation.lineage import index_rows, predecessor, timeline
 
     def row(kb, sha, day, ubr, heading_class):

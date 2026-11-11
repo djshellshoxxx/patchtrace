@@ -191,6 +191,10 @@ def predecessor(line: Sequence[IndexRow], target: IndexRow, *,
     rows where it stayed unchanged become the window. With ``same_class_only`` a Preview, Out-of-band or EXPIRED
     row is not taken as the older side of a standard update (and the reverse); it stays in the window as a
     confounder. The older row is the last row of its own SHA run, so rows with the older bytes never count.
+
+    The older row never carries ``target``'s own bytes (spec 31-C C4, audit KBA-06): when a build reverted across a
+    row of another class, the earlier rows with those bytes are passed over and stay in the window, and the nearest
+    earlier build with other bytes is returned. No such build is ``(None, ())``, never a byte-identical pair.
     """
     index = start = line.index(target)
     while start > 0 and line[start - 1].sha256 == target.sha256:
@@ -198,6 +202,8 @@ def predecessor(line: Sequence[IndexRow], target: IndexRow, *,
     anchor_class = line[start].build.heading_class
     for j in range(start - 1, -1, -1):
         row = line[j]
+        if row.sha256 == target.sha256:
+            continue
         if same_class_only and row.kb is not None and row.build.heading_class != anchor_class:
             continue
         last = j

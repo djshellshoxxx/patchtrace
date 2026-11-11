@@ -98,6 +98,8 @@ def classify_pair(target, older, newer, graph):
 
 A valid 'no change for file' assessment may use an equal-hash pair for metadata inspection but cannot be sent to the modified-function correlation engine. A pair from before and after many cumulative updates remains eligible for manual analysis with 'wide-window' warning. Metadata missing on either side returns needs_older or needs_newer; it is not evidence of absence of a security fix.
 
+Reverted-content amendment (2026-11-11, audit KBA-06): the older side of a resolver proposal never carries the target build's SHA-256. When a file's bytes return to an earlier value across a row of another update class (timeline Z, A, B(preview), A with target the last A), the backward search passes over every row holding the target's own bytes as well as the rows of the other class, and takes the nearest earlier admissible row with different bytes (Z). Every row passed over stays in the window, so the proposal is named WINDOW_CONFOUNDED. Nearest wins: for Z, A, Y, B(preview), A the older side is Y, not Z. When no such row exists the answer is NO_OLDER, never an equal-hash pair. Proposal identifiers of timelines without such a reversion are unchanged. The equal-hash 'no change for file' assessment above remains available to a direct caller of the proposal seam (grade X, IDENTICAL_CONTENT); the resolver does not offer it as a candidate pair.
+
 ## C5. Identity fusion: evidence examples
 
 Synthetic:

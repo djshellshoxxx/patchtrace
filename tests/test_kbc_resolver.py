@@ -6,6 +6,7 @@ import itertools
 import pytest
 from kbc_k5_support import SHA, record, rows_of, scope
 
+from patchtrace.kbcorrelation import lineage as ln
 from patchtrace.kbcorrelation import resolver as rs
 
 NAME = 'exampledrv.sys'
@@ -206,3 +207,77 @@ def test_resolution_is_deterministic():
 def test_malformed_kb_is_rejected():
     with pytest.raises(ValueError):
         resolve('5099001')
+
+
+# --- audit KBA-06: reverted bytes (spec 31-C C4) ---------------------------------------------------------------
+
+# Pair ids of the committed fixtures as origin/main 882d1ca0 produced them (key 11-24H2, both class modes). The
+# KBA-06 rule changes reverted timelines only, so every one of these is pinned.
+MAIN_PAIR_IDS = {
+    ('exampledrv.sys', 'KB5096000'): '3ce8d74792c32f7f6f4bf44b19a7f024caa91de47bb6673793305d98021f01a4',
+    ('exampledrv.sys', 'KB5097000'): 'c7bc8acfec1f63a62fe40672e571b059e5d64d88709c49b782675e76d0a2d8d4',
+    ('exampledrv.sys', 'KB5098000'): '927bfdff8b3b515e0951acd892d6e0d3202d4a1b55bbe46c4b7f1383ec5d8260',
+    ('exampledrv.sys', 'KB5099001'): '3748ac4f43f306ff757eaf17fb756582c716c009a09a0463115743d2a021729b',
+    ('examplenet.sys', 'KB5097000'): 'df5293e0ef559649fb98fe1d4774dcb0d2e0182b4a2fd6d0e7676961f5752bb0',
+    ('examplenet.sys', 'KB5098000'): '5c3d52670d35f6737975752e0ee333e0699d84e63050861f6b0c208dddae8b85',
+    ('examplenet.sys', 'KB5099001'): '179c8d861150e55ab3820ab8872557a268666c10ae081a60398fe5bc61102879',
+}
+STD, PRE = 'standard', 'preview'
+
+
+def synthetic_rows(*spec):
+    """Index rows of one 11-24H2 timeline from ``(sha letter, heading class)`` in release order, from KB5000000."""
+    maps = [{'sha256': sha * 64, 'kb': f'KB500000{i}', 'version_key': '11-24H2', 'release_date': f'2099-01-{i + 1:02d}',
+             'release_version': f'26100.{100 * (i + 1)}', 'machine_type': 0x8664, 'size': 100, 'heading_class': cls,
+             'variant': 'full', 'download': 'direct', 'record_sha256': 'e' * 64} for i, (sha, cls) in enumerate(spec)]
+    rows, rejected = ln.index_rows(maps, file_name='x.sys')
+    assert rejected == 0
+    return rows
+
+
+def test_kba06_pair_ids_of_the_committed_fixtures_are_unchanged():
+    seen = {}
+    for name in ('exampledrv.sys', 'examplenet.sys'):
+        rows, skipped = rows_of(record(name), name)
+        for key, kb in itertools.product(ln.version_keys(rows), sorted({r.kb for r in rows if r.kb})):
+            for same_class_only in (True, False):
+                res = rs.resolve(rows, kb=kb, scope=scope(key), file_name=name, skipped_rows=skipped,
+                                 same_class_only=same_class_only)
+                assert key == '11-24H2' or res.pairs == ()
+                for pair in res.pairs:
+                    assert seen.setdefault((name, kb), pair.pair_id) == pair.pair_id
+    assert seen == MAIN_PAIR_IDS
+
+
+def test_kba06_reverted_build_pairs_with_the_earlier_distinct_build_not_its_own_bytes():
+    rows = synthetic_rows(('f', STD), ('a', STD), ('b', PRE), ('a', STD))
+    res = rs.resolve(rows, kb='KB5000003', scope=scope(), file_name='x.sys')
+    (pair,) = res.pairs
+    assert (pair.older.sha256, pair.newer.sha256, pair.grade) == ('f' * 64, 'a' * 64, 'A')
+    assert pair.window == ('KB5000001', 'KB5000002') and pair.reason_codes == ('WINDOW_CONFOUNDED',)
+    assert res.changed_in_kb == 'yes' and res.blockers == ()
+
+
+def test_kba06_reverted_build_without_a_distinct_earlier_build_has_no_older():
+    res = rs.resolve(synthetic_rows(('a', STD), ('b', PRE), ('a', STD)), kb='KB5000002', scope=scope(),
+                     file_name='x.sys')
+    assert res.pairs == () and res.blockers == ('NO_OLDER',)
+
+
+def test_kba06_no_resolver_pair_carries_identical_content():
+    """Every 4-row timeline over three contents and two update classes, every target, both class modes: the older
+    side is the nearest earlier row with other bytes that the class rule admits, never the target's own bytes."""
+    kinds = list(itertools.product('abc', (STD, PRE)))
+    for spec in itertools.product(kinds, repeat=4):
+        rows = ln.timeline(synthetic_rows(*spec), '11-24H2')
+        for (position, target), same_class_only in itertools.product(enumerate(rows), (True, False)):
+            res = rs.resolve(rows, kb=target.kb, scope=scope(), file_name='x.sys', same_class_only=same_class_only)
+            start = position
+            while start and rows[start - 1].sha256 == target.sha256:
+                start -= 1
+            anchor = rows[start].build.heading_class
+            admitted = [r.sha256 for r in rows[:start] if r.sha256 != target.sha256
+                        and (not same_class_only or r.build.heading_class == anchor)]
+            assert [p.older.sha256 for p in res.pairs] == admitted[-1:], (spec, target.kb, same_class_only)
+            assert all('IDENTICAL_CONTENT' not in p.reason_codes for p in res.pairs)
+            assert (res.blockers == ('NO_OLDER',)) == (not admitted)
