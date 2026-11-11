@@ -68,7 +68,7 @@ Expected: version channel `1.0.0.0 -> 1.0.1.0` changed; manifest channel `asInvo
 |---|---|
 | "Signed" read as "safe" | Closed label set (7.4); no label contains "valid", "verified" or "trusted" except the existing Windows text suffixed "(no revocation check)" |
 | Digest match mistaken for trust | Separate rows Structure, Digest, Chain, Revocation, Timestamp; each defaults to `not_evaluated` off Windows |
-| Hostile strings (bidi override, control characters, huge values) | UTF-16 decode with `errors='replace'`; drop C0/C1 and bidi controls U+202A-U+202E, U+2066-U+2069; 1024 chars per value, 64 keys per table, `truncated` flag |
+| Hostile strings (bidi override, control characters, huge values) | UTF-16 decode with `errors='replace'`; drop C0/C1 and bidi controls U+202A-U+202E, U+2066-U+2069 (amended 2026-11-11, SEC-B: drop every character `patchtrace.hostile_text.is_hostile` rejects, that is categories `Cc`, `Cf`, `Cs`, `Zl`, `Zp`; the list before kept the soft hyphen, zero-width and tag characters); 1024 chars per value, 64 keys per table, `truncated` flag |
 | Manifest XML bombs, XXE | Reject any manifest containing `<!DOCTYPE` or `<!ENTITY` before parsing; 256 KiB cap; `xml.etree.ElementTree` only after that check; no URL resolution; `schemaLocation` shown as inert text |
 | Resource tree cycles and fan-out | Depth exactly 3, visited set of directory offsets, 512 entries per directory, 4096 nodes, data reads capped (version 64 KiB, manifest 256 KiB) |
 | Timestamp shown as signing or file date | Show "claimed signing time (not verified)" from timestamp or counter-signature attributes only; never a file date; expired-at-signing not evaluated |
