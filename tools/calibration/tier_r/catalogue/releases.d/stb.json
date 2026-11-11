@@ -1,0 +1,413 @@
+[
+ {
+  "contract": "case-card/1",
+  "id": "stb-stb_image-2.23-2020-02-02-to-stb_image-2.26",
+  "project": "stb",
+  "upstream_git": "https://github.com/nothings/stb.git",
+  "license_spdx": "MIT",
+  "license_evidence": "LICENSE at 314d0a6f9af5af27e585336eecea333e95c5a2d8: ALTERNATIVE A - MIT License / Permission is hereby granted, free of charge, to any person obtaining a copy of this software (sha256 bebfe904...ff63; read at 5e4a0617 too, sha256 bebfe904...ff63)",
+  "old": {
+   "ref": "stb_image-2.23-2020-02-02",
+   "commit": "5e4a0617b72fd4db2e1fc4d5c2d8b483d948d573"
+  },
+  "new": {
+   "ref": "stb_image-2.26",
+   "commit": "314d0a6f9af5af27e585336eecea333e95c5a2d8"
+  },
+  "kind": "release",
+  "cve": [],
+  "semantic_change": true,
+  "changed_functions": [
+   {
+    "name": "stbi__skip",
+    "file": "stb_image.h",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "stbi__stdio_skip",
+    "file": "stb_image.h",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "stbi__stdio_eof",
+    "file": "stb_image.h",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "stbi__fill_bits",
+    "file": "stb_image.h",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "stbi__zhuffman_decode",
+    "file": "stb_image.h",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "stbi__zexpand",
+    "file": "stb_image.h",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "stbi__convert_format16",
+    "file": "stb_image.h",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "stbi__compute_huffman_codes",
+    "file": "stb_image.h",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "stbi__convert_format",
+    "file": "stb_image.h",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "stbi__create_png_image_raw",
+    "file": "stb_image.h",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "stbi__extend_receive",
+    "file": "stb_image.h",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "stbi__hdr_load",
+    "file": "stb_image.h",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "stbi__bmp_parse_header",
+    "file": "stb_image.h",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "stbi__bmp_load",
+    "file": "stb_image.h",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "stbi__gif_header",
+    "file": "stb_image.h",
+    "change": "source and code changed (factory label changed/source-diff)"
+   }
+  ],
+  "unchanged_controls": [
+   "stbi__bitreverse16",
+   "stbi__high_bit",
+   "stbi__mad3sizes_valid"
+  ],
+  "build": {
+   "system": "single",
+   "mingw_ok": "yes",
+   "recipe_notes": "tier_r recipe stb (mingw-gcc 13-win32 -O2 -g, explicit file list from recipes.json, stb.dll)"
+  },
+  "verification": {
+   "method": "tools.calibration.tier_r build-card on fetched pins (mingw-gcc 13-win32 O2): 318 project functions, 169 unchanged, 35 changed, 90 ambiguous, 10 no-counterpart (bodies: 63 identical, 123 address-only, 122 different); git diff --numstat stb_image-2.23-2020-02-02..stb_image-2.26 -- '*.c' '*.h': 28 files.; rebuilt from the committed card: 0 disagreements; A/A rebuild, reversed-order and rotated-order links of stb_image-2.26 at O2 byte-identical (tier_r aa)",
+   "files_changed": 28,
+   "functions_changed_count": 35,
+   "verified_by_agent_run": true,
+   "build_verified": true,
+   "status": "verified"
+  },
+  "sources": [
+   "https://github.com/nothings/stb/commit/314d0a6f9af5af27e585336eecea333e95c5a2d8",
+   "https://github.com/nothings/stb/compare/5e4a0617b72fd4db2e1fc4d5c2d8b483d948d573...314d0a6f9af5af27e585336eecea333e95c5a2d8"
+  ],
+  "risks": [
+   "90 ambiguous record(s) (source changed with identical code, or induced by macro/header/inlining) are excluded from changed-set scoring by design.",
+   "changed_functions lists the first 15 of 35 factory-labelled changed functions."
+  ]
+ },
+ {
+  "contract": "case-card/1",
+  "id": "stb-stb_image-2.26-to-stb_image-2.27",
+  "project": "stb",
+  "upstream_git": "https://github.com/nothings/stb.git",
+  "license_spdx": "MIT",
+  "license_evidence": "LICENSE at 1ee679ca2ef753a528db5ba6801e1067b40481b8: ALTERNATIVE A - MIT License / Permission is hereby granted, free of charge, to any person obtaining a copy of this software (sha256 bebfe904...ff63; read at 314d0a6f too, sha256 bebfe904...ff63)",
+  "old": {
+   "ref": "stb_image-2.26",
+   "commit": "314d0a6f9af5af27e585336eecea333e95c5a2d8"
+  },
+  "new": {
+   "ref": "stb_image-2.27",
+   "commit": "1ee679ca2ef753a528db5ba6801e1067b40481b8"
+  },
+  "kind": "release",
+  "cve": [],
+  "semantic_change": true,
+  "changed_functions": [
+   {
+    "name": "stbi__extend_receive",
+    "file": "stb_image.h",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "stbi__jpeg_decode_block",
+    "file": "stb_image.h",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "stbi__jpeg_decode_block_prog_dc",
+    "file": "stb_image.h",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "stbi__bmp_parse_header",
+    "file": "stb_image.h",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "stbi__pnm_info",
+    "file": "stb_image.h",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "stbi__bmp_load",
+    "file": "stb_image.h",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "stbi__load_gif_main",
+    "file": "stb_image.h",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "stbi__load_main",
+    "file": "stb_image.h",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "stbi__is_16_main",
+    "file": "stb_image.h",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "stbiw__write3",
+    "file": "stb_image_write.h",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "stbi_write_bmp_core",
+    "file": "stb_image_write.h",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "stbi_zlib_compress",
+    "file": "stb_image_write.h",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "rect_original_order",
+    "file": "stb_rect_pack.h",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "rect_height_compare",
+    "file": "stb_rect_pack.h",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "stbrp_init_target",
+    "file": "stb_rect_pack.h",
+    "change": "source and code changed (factory label changed/source-diff)"
+   }
+  ],
+  "unchanged_controls": [
+   "stbi__bitreverse16",
+   "stbi__fill_bits",
+   "stbi__high_bit"
+  ],
+  "build": {
+   "system": "single",
+   "mingw_ok": "yes",
+   "recipe_notes": "tier_r recipe stb (mingw-gcc 13-win32 -O2 -g, explicit file list from recipes.json, stb.dll)"
+  },
+  "verification": {
+   "method": "tools.calibration.tier_r build-card on fetched pins (mingw-gcc 13-win32 O2): 319 project functions, 231 unchanged, 24 changed, 58 ambiguous, 6 no-counterpart (bodies: 61 identical, 180 address-only, 72 different); git diff --numstat stb_image-2.26..stb_image-2.27 -- '*.c' '*.h': 22 files.; rebuilt from the committed card: 0 disagreements; A/A rebuild, reversed-order and rotated-order links of stb_image-2.26 at O2 byte-identical (tier_r aa)",
+   "files_changed": 22,
+   "functions_changed_count": 24,
+   "verified_by_agent_run": true,
+   "build_verified": true,
+   "status": "verified"
+  },
+  "sources": [
+   "https://github.com/nothings/stb/commit/1ee679ca2ef753a528db5ba6801e1067b40481b8",
+   "https://github.com/nothings/stb/compare/314d0a6f9af5af27e585336eecea333e95c5a2d8...1ee679ca2ef753a528db5ba6801e1067b40481b8"
+  ],
+  "risks": [
+   "58 ambiguous record(s) (source changed with identical code, or induced by macro/header/inlining) are excluded from changed-set scoring by design.",
+   "changed_functions lists the first 15 of 24 factory-labelled changed functions."
+  ]
+ },
+ {
+  "contract": "case-card/1",
+  "id": "stb-stb_image-2.27-to-stb_image-2.28",
+  "project": "stb",
+  "upstream_git": "https://github.com/nothings/stb.git",
+  "license_spdx": "MIT",
+  "license_evidence": "LICENSE at 6199bf77130da41fd424722eeb7a8db4d766c4c6: ALTERNATIVE A - MIT License / Permission is hereby granted, free of charge, to any person obtaining a copy of this software (sha256 bebfe904...ff63; read at 1ee679ca too, sha256 bebfe904...ff63)",
+  "old": {
+   "ref": "stb_image-2.27",
+   "commit": "1ee679ca2ef753a528db5ba6801e1067b40481b8"
+  },
+  "new": {
+   "ref": "stb_image-2.28",
+   "commit": "6199bf77130da41fd424722eeb7a8db4d766c4c6"
+  },
+  "kind": "release",
+  "cve": [],
+  "semantic_change": true,
+  "changed_functions": [
+   {
+    "name": "stbi__build_huffman",
+    "file": "stb_image.h",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "stbi__extend_receive",
+    "file": "stb_image.h",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "stbi__jpeg_huff_decode",
+    "file": "stb_image.h",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "stbi__jpeg_decode_block",
+    "file": "stb_image.h",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "stbi__jpeg_decode_block_prog_dc",
+    "file": "stb_image.h",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "stbi__pnm_info",
+    "file": "stb_image.h",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "stbi__bmp_load",
+    "file": "stb_image.h",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "stbi__hdr_load",
+    "file": "stb_image.h",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "stbi__process_marker",
+    "file": "stb_image.h",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "stbi__decode_jpeg_image",
+    "file": "stb_image.h",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "stbi__parse_png_file",
+    "file": "stb_image.h",
+    "change": "source and code changed (factory label changed/source-diff)"
+   }
+  ],
+  "unchanged_controls": [
+   "stbi__bitreverse16",
+   "stbi__fill_bits",
+   "stbi__high_bit"
+  ],
+  "build": {
+   "system": "single",
+   "mingw_ok": "yes",
+   "recipe_notes": "tier_r recipe stb (mingw-gcc 13-win32 -O2 -g, explicit file list from recipes.json, stb.dll)"
+  },
+  "verification": {
+   "method": "tools.calibration.tier_r build-card on fetched pins (mingw-gcc 13-win32 O2): 320 project functions, 279 unchanged, 11 changed, 26 ambiguous, 4 no-counterpart (bodies: 130 identical, 149 address-only, 37 different); git diff --numstat stb_image-2.27..stb_image-2.28 -- '*.c' '*.h': 6 files.; rebuilt from the committed card: 0 disagreements; A/A rebuild, reversed-order and rotated-order links of stb_image-2.26 at O2 byte-identical (tier_r aa)",
+   "files_changed": 6,
+   "functions_changed_count": 11,
+   "verified_by_agent_run": true,
+   "build_verified": true,
+   "status": "verified"
+  },
+  "sources": [
+   "https://github.com/nothings/stb/commit/6199bf77130da41fd424722eeb7a8db4d766c4c6",
+   "https://github.com/nothings/stb/compare/1ee679ca2ef753a528db5ba6801e1067b40481b8...6199bf77130da41fd424722eeb7a8db4d766c4c6"
+  ],
+  "risks": [
+   "26 ambiguous record(s) (source changed with identical code, or induced by macro/header/inlining) are excluded from changed-set scoring by design."
+  ]
+ },
+ {
+  "contract": "case-card/1",
+  "id": "stb-stb_image-2.28-to-stb_image-2.30",
+  "project": "stb",
+  "upstream_git": "https://github.com/nothings/stb.git",
+  "license_spdx": "MIT",
+  "license_evidence": "LICENSE at 013ac3beddff3dbffafd5177e7972067cd2b5083: ALTERNATIVE A - MIT License / Permission is hereby granted, free of charge, to any person obtaining a copy of this software (sha256 bebfe904...ff63; read at 6199bf77 too, sha256 bebfe904...ff63)",
+  "old": {
+   "ref": "stb_image-2.28",
+   "commit": "6199bf77130da41fd424722eeb7a8db4d766c4c6"
+  },
+  "new": {
+   "ref": "stb_image-2.30",
+   "commit": "013ac3beddff3dbffafd5177e7972067cd2b5083"
+  },
+  "kind": "release",
+  "cve": [],
+  "semantic_change": true,
+  "changed_functions": [
+   {
+    "name": "stbi__zhuffman_decode",
+    "file": "stb_image.h",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "stbi__create_png_image_raw",
+    "file": "stb_image.h",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "stbi__parse_zlib",
+    "file": "stb_image.h",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "stbi__parse_png_file",
+    "file": "stb_image.h",
+    "change": "source and code changed (factory label changed/source-diff)"
+   }
+  ],
+  "unchanged_controls": [
+   "stbi__bitreverse16",
+   "stbi__high_bit",
+   "stbi__mad3sizes_valid"
+  ],
+  "build": {
+   "system": "single",
+   "mingw_ok": "yes",
+   "recipe_notes": "tier_r recipe stb (mingw-gcc 13-win32 -O2 -g, explicit file list from recipes.json, stb.dll)"
+  },
+  "verification": {
+   "method": "tools.calibration.tier_r build-card on fetched pins (mingw-gcc 13-win32 O2): 320 project functions, 297 unchanged, 4 changed, 18 ambiguous, 1 no-counterpart (bodies: 140 identical, 157 address-only, 22 different); git diff --numstat stb_image-2.28..stb_image-2.30 -- '*.c' '*.h': 11 files.; rebuilt from the committed card: 0 disagreements; A/A rebuild, reversed-order and rotated-order links of stb_image-2.26 at O2 byte-identical (tier_r aa)",
+   "files_changed": 11,
+   "functions_changed_count": 4,
+   "verified_by_agent_run": true,
+   "build_verified": true,
+   "status": "verified"
+  },
+  "sources": [
+   "https://github.com/nothings/stb/commit/013ac3beddff3dbffafd5177e7972067cd2b5083",
+   "https://github.com/nothings/stb/compare/6199bf77130da41fd424722eeb7a8db4d766c4c6...013ac3beddff3dbffafd5177e7972067cd2b5083"
+  ],
+  "risks": [
+   "18 ambiguous record(s) (source changed with identical code, or induced by macro/header/inlining) are excluded from changed-set scoring by design."
+  ]
+ }
+]

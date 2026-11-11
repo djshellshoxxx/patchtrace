@@ -3,11 +3,15 @@ from __future__ import annotations
 
 import math
 
+from .enrichment.identity import parse_address
 from .models import ComparisonProject, FunctionMatch, FunctionRecord
 
 ROOT_KEYS = {'program_options', 'matches', 'symbols', 'strings', 'functions', 'stats',
              'old_meta', 'new_meta', 'md_credits', 'html_credits', 'old_pe_url', 'new_pe_url'}
 HASH_KEYS = ('Executable SHA256', 'SHA256', 'sha256', 'sha256_hash', 'Executable SHA-256')
+# These claims belong to PatchTrace, never to an imported enhanced function.
+RESERVED_METADATA = frozenset({'upstream_similarity', 'diff_types', 'upstream_name', 'instructions_hash',
+                               'assembly_unavailable', 'upstream_one_to_many'})
 
 
 def _strings(value, label: str) -> list[str]:
@@ -41,6 +45,7 @@ def normalize_ghidriff(raw: dict, project: ComparisonProject, run_id: str) -> li
     if run_id not in {run.id for run in project.runs}:
         raise ValueError('PT-SCHEMA: normalization requires a project-owned analysis run')
     artifacts = {artifact.side: artifact for artifact in project.artifacts}
+    seen: set[tuple[str, str, int | None]] = set()
 
     def function(record, side: str) -> FunctionRecord:
         if not isinstance(record, dict) or not isinstance(record.get('name'), str) or not record['name']:
@@ -48,6 +53,9 @@ def normalize_ghidriff(raw: dict, project: ComparisonProject, run_id: str) -> li
         for key in ['fullname', 'address', 'code']:
             if record.get(key) is not None and not isinstance(record[key], str):
                 raise ValueError(f'PT-SCHEMA: function {key} must be text or null')
+        planted = sorted(RESERVED_METADATA.intersection(record))
+        if planted:
+            raise ValueError(f'PT-SCHEMA: upstream function carries the PatchTrace-reserved metadata key {planted[0]}')
         instructions = record.get('instructions')
         assembly = None
         metadata = {key: value for key, value in record.items()
@@ -61,6 +69,11 @@ def normalize_ghidriff(raw: dict, project: ComparisonProject, run_id: str) -> li
             else:
                 raise ValueError('PT-SCHEMA: instructions must be a string list, integer hash or null')
         metadata['upstream_name'] = record['name']
+        # Use the same address interpretation as consumers while preserving upstream text in the record.
+        identity = (side, record.get('fullname') or record['name'], parse_address(record.get('address')))
+        if identity in seen:
+            raise ValueError('PT-SCHEMA: upstream function is repeated; shared evidence counts once')
+        seen.add(identity)
         return FunctionRecord(artifact_id=artifacts[side].id, run_id=run_id,
                               name=record.get('fullname') or record['name'], address=record.get('address'),
                               address_space='virtual' if record.get('address') else 'unknown',
@@ -80,7 +93,7 @@ def normalize_ghidriff(raw: dict, project: ComparisonProject, run_id: str) -> li
         diff_types = _strings(item.get('diff_type', []), 'diff_type')
         ratio = item.get('ratio')
         if ratio is not None and (isinstance(ratio, bool) or not isinstance(ratio, (int, float))
-                                  or not math.isfinite(ratio) or not 0 <= ratio <= 1):
+                                  or not 0 <= ratio <= 1 or not math.isfinite(ratio)):
             raise ValueError('PT-SCHEMA: upstream ratio must be a finite number from zero to one')
         old, new = function(item['old'], 'older'), function(item['new'], 'newer')
         old.metadata['diff_types'] = diff_types

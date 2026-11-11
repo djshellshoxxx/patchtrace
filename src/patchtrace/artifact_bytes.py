@@ -30,6 +30,8 @@ from .models import Artifact
 
 MAX_READ_BYTES = 16 * 1024 * 1024
 HASH_CHUNK = 1024 * 1024
+VERIFY_BLOCK_BYTES = 4 * 1024
+_DIGEST_BYTES = hashlib.sha256().digest_size
 
 
 class ArtifactBytesError(Exception):
@@ -41,16 +43,22 @@ class ArtifactBytesError(Exception):
 
 
 def _stat_key(stream: BinaryIO) -> tuple[int, int, int]:
-    """Identity of the open file's current state.
-
-    ``st_mtime_ns`` alone can be restored with ``utime`` after an in-place edit. On POSIX
-    ``st_ctime_ns`` is the inode change time and cannot be set by user code, so it detects
-    that. On Windows ``st_ctime_ns`` is the creation time and adds nothing; there an
-    in-place edit that preserves size and mtime is a documented residual risk (artifacts
-    are project-owned read-only copies).
-    """
+    """Cheap change hint; content verification also handles restored/coarse timestamps on every platform."""
     info = os.fstat(stream.fileno())
     return info.st_size, info.st_mtime_ns, info.st_ctime_ns
+
+
+def _read_exact(stream: BinaryIO, size: int, cancel: Callable[[], bool] | None = None) -> bytes:
+    """FileIO may return short data without EOF; keep verification blocks aligned to file offsets."""
+    data = bytearray()
+    while len(data) < size:
+        if data and cancel is not None and cancel():
+            raise ArtifactBytesError('cancelled', 'verification cancelled')
+        part = stream.read(size - len(data))
+        if not part:
+            break
+        data.extend(part)
+    return bytes(data)
 
 
 class VerifiedArtifactReader:
@@ -61,12 +69,14 @@ class VerifiedArtifactReader:
     still perform reads off the GUI thread.
     """
 
-    def __init__(self, stream: BinaryIO, size: int, sha256: str, label: str):
+    def __init__(self, stream: BinaryIO, size: int, sha256: str, label: str, stat: tuple[int, int, int],
+                 block_digests: bytes):
         self._stream: BinaryIO | None = stream
         self._size = size
         self._sha256 = sha256
         self._label = label
-        self._stat = _stat_key(stream)
+        self._stat = stat
+        self._block_digests = block_digests
         self._lock = threading.Lock()
 
     # -- construction -----------------------------------------------------
@@ -78,30 +88,41 @@ class VerifiedArtifactReader:
         try:
             # O_NONBLOCK so a FIFO cannot hang the open; the regular-file check follows.
             descriptor = os.open(path, os.O_RDONLY | getattr(os, 'O_BINARY', 0) | getattr(os, 'O_NONBLOCK', 0))
-            stream = os.fdopen(descriptor, 'rb')
+            stream = os.fdopen(descriptor, 'rb', buffering=0)
         except OSError as exc:
             raise ArtifactBytesError('unreadable', f'cannot open input: {exc.strerror or exc}') from exc
         try:
             if not stat.S_ISREG(os.fstat(stream.fileno()).st_mode):
                 raise ArtifactBytesError('unreadable', 'input is not a regular file')
-            size = _stat_key(stream)[0]
+            baseline = _stat_key(stream)  # taken before hashing so a change during verification is caught
+            size = baseline[0]
             if expected_size is not None and size != expected_size:
                 raise ArtifactBytesError('size_mismatch', f'expected {expected_size} bytes, found {size}')
             digest = hashlib.sha256()
+            block_digests = bytearray()
+            hashed = 0
             while True:
                 if cancel is not None and cancel():
                     raise ArtifactBytesError('cancelled', 'verification cancelled')
-                chunk = stream.read(HASH_CHUNK)
-                if not chunk:
+                request = min(HASH_CHUNK, size - hashed)
+                if not request:
+                    if stream.read(1):
+                        raise ArtifactBytesError('artifact_changed', 'file grew during verification')
                     break
+                chunk = _read_exact(stream, request, cancel)
+                if len(chunk) != request:
+                    raise ArtifactBytesError('artifact_changed', 'short read during verification')
                 digest.update(chunk)
+                hashed += len(chunk)
+                view = memoryview(chunk)
+                for start in range(0, len(chunk), VERIFY_BLOCK_BYTES):
+                    block_digests.extend(hashlib.sha256(view[start:start + VERIFY_BLOCK_BYTES]).digest())
             actual = digest.hexdigest()
             if expected_sha256 is not None and actual != expected_sha256.lower():
                 raise ArtifactBytesError('hash_mismatch', 'file content differs from the recorded SHA-256')
-            reader = cls(stream, size, actual, Path(path).name)
-            if reader._stat[0] != size:
-                raise ArtifactBytesError('artifact_changed', 'file size changed during verification')
-            return reader
+            if hashed != size or _stat_key(stream) != baseline:
+                raise ArtifactBytesError('artifact_changed', 'file changed during verification')
+            return cls(stream, size, actual, Path(path).name, baseline, bytes(block_digests))
         except BaseException:
             stream.close()
             raise
@@ -155,19 +176,34 @@ class VerifiedArtifactReader:
             if _stat_key(stream) != self._stat:
                 raise ArtifactBytesError('artifact_changed', 'file changed after verification')
             try:
-                stream.seek(offset)
-                data = stream.read(end - offset)
+                data = bytearray()
+                if end > offset:
+                    first = offset // VERIFY_BLOCK_BYTES
+                    last = (end - 1) // VERIFY_BLOCK_BYTES
+                    for index in range(first, last + 1):
+                        start = index * VERIFY_BLOCK_BYTES
+                        block_size = min(VERIFY_BLOCK_BYTES, self._size - start)
+                        stream.seek(start)
+                        block = _read_exact(stream, block_size)
+                        digest_start = index * _DIGEST_BYTES
+                        expected = self._block_digests[digest_start:digest_start + _DIGEST_BYTES]
+                        if len(block) != block_size or hashlib.sha256(block).digest() != expected:
+                            raise ArtifactBytesError('artifact_changed', 'file content changed after verification')
+                        data.extend(block[max(0, offset - start):min(block_size, end - start)])
+                if _stat_key(stream) != self._stat:
+                    raise ArtifactBytesError('artifact_changed', 'file changed during read')
             except OSError as exc:
                 raise ArtifactBytesError('unreadable', f'read failed: {exc.strerror or exc}') from exc
         if len(data) != end - offset:
             raise ArtifactBytesError('artifact_changed', 'short read; file changed after verification')
-        return data
+        return bytes(data)
 
     def close(self) -> None:
         with self._lock:
             if self._stream is not None:
                 self._stream.close()
                 self._stream = None
+                self._block_digests = b''
 
     def __enter__(self) -> VerifiedArtifactReader:
         return self

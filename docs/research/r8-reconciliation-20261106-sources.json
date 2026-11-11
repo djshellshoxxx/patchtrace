@@ -1,0 +1,189 @@
+{
+  "format": "patchtrace-historical-research-import/1",
+  "evidence_scope": "byte-preserved historical research; no new acceptance",
+  "date": "2026-11-06",
+  "source_pr": 183,
+  "source_commit": "ed70e6ddac449a42f843f1c60aa878416ab31727",
+  "comparison_commit": "37b771300053e8872febead1fc384fea9126ae90",
+  "comparison_tree": "cdbab24d14295b4450cd0d3c744d76734c98a561",
+  "original_r8": {
+    "branch": "research/r8-deep-uncertainty-20261030",
+    "commit": "12dd4f2b41b468b0eb566bd502219daa821012df",
+    "port_commit": "f8a6aa5a177e6ec3290e79f8245bced4be7373ef",
+    "whitespace_cleanup_commit": "2ee1d2aaeb1a96e0c08c9597ebf484dc229f6b72",
+    "relationship": "Four files differ only in trailing whitespace; uncertainty-register.md is byte-identical. Imported bytes match the PR #183 source, not all original R8 blobs."
+  },
+  "total_imported_bytes": 42639,
+  "files": [
+    {
+      "path": "docs/research/deep-uncertainty-r8/01-typed-literal-counterexamples.md",
+      "source_commit": "ed70e6ddac449a42f843f1c60aa878416ab31727",
+      "git_blob": "1361d15f8de3633d282a8ac3c2395480394bcfb6",
+      "sha256": "0c8dd1b5e2aa551a9d3b855676ea6593b9cc956d40c10dbe61073d8befbcae2c",
+      "bytes": 9462,
+      "source_url": "https://github.com/djshellshoxxx/patchtrace/blob/ed70e6ddac449a42f843f1c60aa878416ab31727/docs/research/deep-uncertainty-r8/01-typed-literal-counterexamples.md",
+      "disposition": "byte-preserved historical research; no current requirement or implementation acceptance",
+      "original_source": {
+        "commit": "12dd4f2b41b468b0eb566bd502219daa821012df",
+        "git_blob": "722f04706d1e00bd5e57dcb4c0c61a7bb222584c",
+        "sha256": "1a0e2f312bb34cdbe41f6c5afe2d29584b1cfa86f04f30a8639b309e440aa91c",
+        "bytes": 9468,
+        "source_url": "https://github.com/djshellshoxxx/patchtrace/blob/12dd4f2b41b468b0eb566bd502219daa821012df/docs/research/deep-uncertainty-r8/01-typed-literal-counterexamples.md",
+        "byte_identical": false,
+        "equal_after_trailing_whitespace_normalization": true
+      }
+    },
+    {
+      "path": "docs/research/deep-uncertainty-r8/02-icf-function-identity.md",
+      "source_commit": "ed70e6ddac449a42f843f1c60aa878416ab31727",
+      "git_blob": "82dffe8d7807eefb9595dcf0afcff51df369ae65",
+      "sha256": "41686d35f40ab3eaccc60faa6883b7aa925ff6b3e6289f232e48422efebfde67",
+      "bytes": 4988,
+      "source_url": "https://github.com/djshellshoxxx/patchtrace/blob/ed70e6ddac449a42f843f1c60aa878416ab31727/docs/research/deep-uncertainty-r8/02-icf-function-identity.md",
+      "disposition": "byte-preserved historical research; no current requirement or implementation acceptance",
+      "original_source": {
+        "commit": "12dd4f2b41b468b0eb566bd502219daa821012df",
+        "git_blob": "1aaa7b6f9597a33aea6874feb2aa534591bd0ee7",
+        "sha256": "59b77eb56311d8c3b639438ed08b7422b359a8eb617805e81df9d7a6ecf2bbc9",
+        "bytes": 4994,
+        "source_url": "https://github.com/djshellshoxxx/patchtrace/blob/12dd4f2b41b468b0eb566bd502219daa821012df/docs/research/deep-uncertainty-r8/02-icf-function-identity.md",
+        "byte_identical": false,
+        "equal_after_trailing_whitespace_normalization": true
+      }
+    },
+    {
+      "path": "docs/research/deep-uncertainty-r8/03-integration-handoff-and-release-risk.md",
+      "source_commit": "ed70e6ddac449a42f843f1c60aa878416ab31727",
+      "git_blob": "0dde1799fc58cf53d1a51df12ba8419bcf1d104b",
+      "sha256": "fce3a86bd8b39c0de82b47301d9d6888a159f56a319a70e7accb55a3a4b2ff58",
+      "bytes": 12432,
+      "source_url": "https://github.com/djshellshoxxx/patchtrace/blob/ed70e6ddac449a42f843f1c60aa878416ab31727/docs/research/deep-uncertainty-r8/03-integration-handoff-and-release-risk.md",
+      "disposition": "byte-preserved historical research; no current requirement or implementation acceptance",
+      "original_source": {
+        "commit": "12dd4f2b41b468b0eb566bd502219daa821012df",
+        "git_blob": "f32a4adf0024c0c087700894b9f612bd7cb9a507",
+        "sha256": "20f5ba8d6b6ff5d43369e67414a7ffe482210950622ca1393be9283b184df042",
+        "bytes": 12436,
+        "source_url": "https://github.com/djshellshoxxx/patchtrace/blob/12dd4f2b41b468b0eb566bd502219daa821012df/docs/research/deep-uncertainty-r8/03-integration-handoff-and-release-risk.md",
+        "byte_identical": false,
+        "equal_after_trailing_whitespace_normalization": true
+      }
+    },
+    {
+      "path": "docs/research/deep-uncertainty-r8/README.md",
+      "source_commit": "ed70e6ddac449a42f843f1c60aa878416ab31727",
+      "git_blob": "0e217cf063d5eb903390239797f79756cec4230e",
+      "sha256": "edc1b434f5e5ff83ef60b5dfa6467d3cada809da02d04a2648fddccca02da9fa",
+      "bytes": 5745,
+      "source_url": "https://github.com/djshellshoxxx/patchtrace/blob/ed70e6ddac449a42f843f1c60aa878416ab31727/docs/research/deep-uncertainty-r8/README.md",
+      "disposition": "byte-preserved historical research; no current requirement or implementation acceptance",
+      "original_source": {
+        "commit": "12dd4f2b41b468b0eb566bd502219daa821012df",
+        "git_blob": "1a594d46bedabe87ec0849f54f4ee5580ef39a24",
+        "sha256": "b9f9309fb19f082f0e86aee617fb0847f63e591cdb5fba42b7fbac4864c0f04d",
+        "bytes": 5749,
+        "source_url": "https://github.com/djshellshoxxx/patchtrace/blob/12dd4f2b41b468b0eb566bd502219daa821012df/docs/research/deep-uncertainty-r8/README.md",
+        "byte_identical": false,
+        "equal_after_trailing_whitespace_normalization": true
+      }
+    },
+    {
+      "path": "docs/research/deep-uncertainty-r8/uncertainty-register.md",
+      "source_commit": "ed70e6ddac449a42f843f1c60aa878416ab31727",
+      "git_blob": "38f118afb8878b3f2e8ffddecf55c4e575b7526a",
+      "sha256": "976e7bc255988cd9ac547038da117fc6b886579080837903f6d5ca21aad95d3a",
+      "bytes": 10012,
+      "source_url": "https://github.com/djshellshoxxx/patchtrace/blob/ed70e6ddac449a42f843f1c60aa878416ab31727/docs/research/deep-uncertainty-r8/uncertainty-register.md",
+      "disposition": "byte-preserved historical research; no current requirement or implementation acceptance",
+      "original_source": {
+        "commit": "12dd4f2b41b468b0eb566bd502219daa821012df",
+        "git_blob": "38f118afb8878b3f2e8ffddecf55c4e575b7526a",
+        "sha256": "976e7bc255988cd9ac547038da117fc6b886579080837903f6d5ca21aad95d3a",
+        "bytes": 10012,
+        "source_url": "https://github.com/djshellshoxxx/patchtrace/blob/12dd4f2b41b468b0eb566bd502219daa821012df/docs/research/deep-uncertainty-r8/uncertainty-register.md",
+        "byte_identical": true,
+        "equal_after_trailing_whitespace_normalization": true
+      }
+    }
+  ],
+  "reference_only_files": [
+    {
+      "path": "tools/research/r8_icf_probe.py",
+      "source_commit": "12dd4f2b41b468b0eb566bd502219daa821012df",
+      "git_blob": "e405cb94b488d16ebd5e75174cb590b93baafb3d",
+      "sha256": "f2758898911cb205d2eec365241f4125f9eaaa503495e0e286e595f50b7f3d41",
+      "bytes": 3736,
+      "source_url": "https://github.com/djshellshoxxx/patchtrace/blob/12dd4f2b41b468b0eb566bd502219daa821012df/tools/research/r8_icf_probe.py",
+      "present_in_pr183": false,
+      "present_in_comparison": false,
+      "disposition": "immutable source reference only; code not imported or executed",
+      "preserved_relative_links_from": "docs/research/deep-uncertainty-r8/README.md",
+      "preserved_relative_link_lines": [
+        28,
+        42
+      ]
+    },
+    {
+      "path": "tests/test_r8_literal_types.py",
+      "source_commit": "12dd4f2b41b468b0eb566bd502219daa821012df",
+      "git_blob": "88fd3ad53cc84c2d97f0d81be237021e0195a330",
+      "sha256": "538c191aaa0d0bf55f61594e1277d9cd4299df60f368d73c1734df49b51f57d8",
+      "bytes": 3555,
+      "source_url": "https://github.com/djshellshoxxx/patchtrace/blob/12dd4f2b41b468b0eb566bd502219daa821012df/tests/test_r8_literal_types.py",
+      "present_in_pr183": false,
+      "present_in_comparison": false,
+      "disposition": "immutable source reference only; code not imported or executed",
+      "preserved_relative_links_from": "docs/research/deep-uncertainty-r8/README.md",
+      "preserved_relative_link_lines": [
+        29
+      ]
+    }
+  ],
+  "current_dispositions": [
+    {
+      "topic": "typed literals",
+      "disposition": "The R8 implementation is unported. Current pseudo.py is byte-identical to the PR #183 baseline; registry canon remains 1. Any future canon/2 work requires its own spec/owner decision, including the existing FCT-11/A3 address-label question.",
+      "paths": [
+        "src/patchtrace/unified/facts/pseudo.py",
+        "src/patchtrace/unified/registry.py",
+        "docs/specs/unified-engine/05-fusion-and-noise.md",
+        "docs/audits/20261104-unified-fct.md"
+      ]
+    },
+    {
+      "topic": "ICF identity",
+      "disposition": "Existing group handling, nuisance variants and truth-label guidance overlap with the historical recommendations. R8 supplies a dated compiler/linker witness and does not establish a current matcher defect or live/native acceptance.",
+      "paths": [
+        "src/patchtrace/unified/ladder/groups.py",
+        "docs/specs/unified-engine/05-fusion-and-noise.md",
+        "docs/specs/unified-engine/08-evaluation.md",
+        "docs/specs/calibration-corpus-and-model.md"
+      ]
+    },
+    {
+      "topic": "register-only proof blocker",
+      "disposition": "Already repaired independently as FCT-03; the current blocker set includes register-only and COS-PSEUDO/1 is version 2. Historical not-merged handoff language is not current behavior evidence.",
+      "paths": [
+        "src/patchtrace/unified/facts/verdict.py",
+        "src/patchtrace/unified/registry.py",
+        "docs/audits/20261104-unified-fct.md"
+      ]
+    },
+    {
+      "topic": "historical handoffs and gates",
+      "disposition": "Old active/not-merged statuses, owner assignments, test counts, future gates and QA/todo snippets remain dated research. They are not copied into active trackers or accepted as current requirements.",
+      "paths": [
+        "docs/plans/branch-merge-plan-20261106.md",
+        "docs/research/reconciliation-20261105.md"
+      ]
+    }
+  ],
+  "limits": [
+    "Three original README relative links target the two reference-only code files; the pinned URLs above provide provenance while original document bytes remain unchanged.",
+    "Textual source snippets, versions, digests and reported compiler/linker observations are preserved. This slice does not supply compiled artifacts or a self-contained reproduction archive.",
+    "No historical probe, test or target binary is executed. Historical counts are not current verification.",
+    "No source, test, specification, registry, QA, task, workflow or packaging files are imported or changed.",
+    "This receipt does not account for all of PR #183 or establish its ancestry in the continuation. Preserve its branch and the other historical groups.",
+    "Native Windows/package lanes and paid automation remain separate and unchanged."
+  ]
+}

@@ -496,9 +496,13 @@ SOURCE = 'CISA KEV catalog, CC0 1.0'
 def test_tooltip_entries_follow_registry_rules():
     own, templates = tooltip_entries.KEV_TOOLTIPS, tooltip_entries.KEV_TEMPLATES
     assert set(own) == STATIC_IDS and set(templates) == TEMPLATE_IDS
-    assert not (set(own) | set(templates)) & (set(tooltips.REGISTRY) | set(tooltips.TEMPLATES))
-    rendered, whats = {}, {entry_.what for entry_ in tooltips.REGISTRY.values()}
-    existing = {entry_.render() for entry_ in tooltips.REGISTRY.values()}
+    # the KEV panel registers these same entries globally once any test builds it, so compare against everything else
+    mine = {**own, **templates}
+    others = {key: entry_ for key, entry_ in {**tooltips.REGISTRY, **tooltips.TEMPLATES}.items()
+              if mine.get(key) != entry_}
+    assert not set(mine) & set(others)
+    rendered, whats = {}, {entry_.what for key, entry_ in tooltips.REGISTRY.items() if key not in mine}
+    existing = {entry_.render() for key, entry_ in tooltips.REGISTRY.items() if key not in mine}
     for key, entry_ in (*own.items(), *templates.items()):
         assert isinstance(entry_, tooltips.TooltipEntry), key
         assert entry_.what and entry_.why and entry_.effect, key

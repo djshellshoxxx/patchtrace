@@ -409,3 +409,47 @@ def test_verified_reader_refuses_non_regular_file(tmp_path):
     os.mkfifo(fifo)
     with pytest.raises(ArtifactBytesError):
         VerifiedArtifactReader.open_path(fifo)
+
+
+def test_core2_normalizer_rejects_repeated_upstream_function(project):
+    run = AnalysisRun(status='completed')
+    candidate = project.project.model_copy(deep=True)
+    candidate.runs.append(run)
+    raw = sample_diff(candidate)
+    raw['functions']['modified'].append(copy.deepcopy(raw['functions']['modified'][0]))
+    with pytest.raises(ValueError, match='PT-SCHEMA: .*repeated'):
+        normalize_ghidriff(raw, candidate, run.id)
+
+
+def test_core5_empty_correction_has_schema_error_and_keeps_snapshot(project, tmp_path):
+    project.import_diff(raw_file(project, tmp_path))
+    match = next(m for m in project.project.matches if m.category == 'modified')
+    before = project.project.model_dump_json()
+    history = len(project.store.history())
+    with pytest.raises(ValueError, match='^PT-SCHEMA: correction must select at least one function'):
+        project.correct_match(match.id, [], [], 'modified', 'Check empty selection')
+    assert project.project.model_dump_json() == before
+    assert project.store.load().model_dump_json() == before
+    assert len(project.store.history()) == history
+
+
+@pytest.mark.parametrize('finish', ['discard', 'apply'], ids=['discard', 'apply'])
+def test_core6_repeated_preparation_keeps_first_import_owned(project, tmp_path, finish):
+    run = AnalysisRun(status='completed')
+    raw = raw_file(project, tmp_path)
+    prepared = project.prepare_analysis(raw, run)
+    staged = project.root / prepared.run.raw_path
+    expected = staged.read_bytes()
+    with pytest.raises(ValueError, match='^PT-SCHEMA: analysis run already has a prepared import'):
+        project.prepare_analysis(raw, run)
+    assert staged.read_bytes() == expected
+    if finish == 'discard':
+        project.discard_import(prepared)
+        assert not staged.exists()
+        assert not list((project.root / 'runs').rglob('*.ghidriff.json'))
+        assert not project.project.runs
+    else:
+        project.apply_import(prepared)
+        assert staged.read_bytes() == expected
+        assert project.project.runs[-1].id == run.id
+        assert project.store.load() == project.project

@@ -180,3 +180,8 @@ def test_switch_interval_is_set_only_in_runtime_py():
     offenders = [p.name for p in root.glob('*.py') if p.name != 'runtime.py'
                  and 'setswitchinterval' in p.read_text(encoding='utf-8')]
     assert offenders == []
+
+
+@pytest.mark.parametrize('char', ['؜', '‎', '‏', '‮', '⁦'], ids=['alm', 'lrm', 'rlm', 'rlo', 'lri'])
+def test_announcements_drop_every_bidi_control(char):
+    assert char not in announce._UNSAFE.sub(' ', f'a{char}b')

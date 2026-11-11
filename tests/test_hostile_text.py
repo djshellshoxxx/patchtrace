@@ -53,3 +53,16 @@ def test_clean_text_replaces_every_hostile_latin1_character():
 def test_both_sinks_judge_the_same_characters():
     hostile = [b for b in range(256) if is_hostile(chr(b))]
     assert hostile and all(clean_text(bytes([b])) == '?' and sanitize(f'a{chr(b)}b') == 'a b' for b in hostile)
+
+
+@pytest.mark.parametrize(('text', 'expected'), [
+    ('a\x1b[2Jb', 'a\\x1b[2Jb'), ('x\u202ey', 'x\\u202ey'), ('k\U000e0041', 'k\\U000e0041'), ('plain \xe9', 'plain \xe9')],
+    ids=['esc', 'rlo', 'tag', 'clean'])
+def test_escape_text_makes_hostile_characters_visible(text, expected):
+    from patchtrace.hostile_text import escape_text
+    assert escape_text(text) == expected
+
+
+def test_escape_text_can_keep_newlines():
+    from patchtrace.hostile_text import escape_text
+    assert escape_text('a\nb\x00', keep='\n') == 'a\nb\\x00'

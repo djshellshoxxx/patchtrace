@@ -396,6 +396,8 @@ def make_anchor(*, kind: str, side: str, role: str, witnesses: Iterable[Witness]
     if not all(isinstance(witness, Witness) for witness in members):
         raise _error('PT-FAB-INPUT', 'A record field is malformed', 'anchor-witnesses')
     ordered = tuple({w.witness_id: w for w in sorted(members, key=lambda w: w.witness_id)}.values())
+    if len(ordered) > _L.f03_witnesses_per_anchor:
+        raise FabricError('PT-FAB-LIMIT', 'An anchor holds more witnesses than allowed', reason='witnesses')
     try:
         probe = Anchor(anchor_id=_ZERO, kind=kind, key=key, side=side, role=role, subject=subject, pair=pair,
                        witnesses=ordered)

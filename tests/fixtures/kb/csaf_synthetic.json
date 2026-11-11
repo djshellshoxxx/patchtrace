@@ -1,0 +1,1681 @@
+{
+  "contract": "kb-fixture-documents/1",
+  "format": "csaf",
+  "documents": [
+    {
+      "fixture_id": "SYN-CSAF-001",
+      "scenario": "unknown-remediation-type",
+      "document": {
+        "document": {
+          "category": "csaf_vex",
+          "csaf_version": "2.0",
+          "distribution": {
+            "text": "Synthetic fixture only"
+          },
+          "publisher": {
+            "category": "vendor",
+            "name": "PatchTrace Synthetic Publisher",
+            "namespace": "https://example.invalid/patchtrace/synthetic"
+          },
+          "title": "Synthetic unknown-remediation-type advisory 1",
+          "tracking": {
+            "current_release_date": "2099-01-01T00:00:00Z",
+            "id": "PT-CSAF-001",
+            "initial_release_date": "2099-01-01T00:00:00Z",
+            "revision_history": [
+              {
+                "date": "2099-01-01T00:00:00Z",
+                "number": "1",
+                "summary": "Synthetic"
+              }
+            ],
+            "status": "final",
+            "version": "1"
+          }
+        },
+        "product_tree": {
+          "branches": [
+            {
+              "category": "product_name",
+              "name": "Synthetic SYN-PROD-01",
+              "branches": [
+                {
+                  "category": "product_version",
+                  "name": "1.0",
+                  "product": {
+                    "name": "Synthetic SYN-PROD-01 1.0",
+                    "product_id": "SYN-PROD-01"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "vulnerabilities": [
+          {
+            "cve": "CVE-2099-20001",
+            "title": "Synthetic unknown-remediation-type advisory 1",
+            "notes": [
+              {
+                "category": "description",
+                "text": "Synthetic unknown-remediation-type note"
+              }
+            ],
+            "product_status": {
+              "known_affected": [
+                "SYN-PROD-01"
+              ],
+              "known_not_affected": []
+            },
+            "remediations": [
+              {
+                "category": "vendor_fix",
+                "details": "Synthetic vendor fix",
+                "product_ids": [
+                  "SYN-PROD-01"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "synthetic": true,
+        "origin": "hand-authored synthetic data; not Microsoft-derived",
+        "sha256": "UNVERIFIED",
+        "byte_length": "UNVERIFIED",
+        "license": "UNVERIFIED: repository redistribution status not rechecked"
+      }
+    },
+    {
+      "fixture_id": "SYN-CSAF-002",
+      "scenario": "same-month-unrelated-cve",
+      "document": {
+        "document": {
+          "category": "csaf_vex",
+          "csaf_version": "2.0",
+          "distribution": {
+            "text": "Synthetic fixture only"
+          },
+          "publisher": {
+            "category": "vendor",
+            "name": "PatchTrace Synthetic Publisher",
+            "namespace": "https://example.invalid/patchtrace/synthetic"
+          },
+          "title": "Synthetic same-month-unrelated-cve advisory 2",
+          "tracking": {
+            "current_release_date": "2099-01-01T00:00:00Z",
+            "id": "PT-CSAF-002",
+            "initial_release_date": "2099-01-01T00:00:00Z",
+            "revision_history": [
+              {
+                "date": "2099-01-01T00:00:00Z",
+                "number": "1",
+                "summary": "Synthetic"
+              }
+            ],
+            "status": "final",
+            "version": "1"
+          }
+        },
+        "product_tree": {
+          "branches": [
+            {
+              "category": "product_name",
+              "name": "Synthetic SYN-PROD-02",
+              "branches": [
+                {
+                  "category": "product_version",
+                  "name": "1.0",
+                  "product": {
+                    "name": "Synthetic SYN-PROD-02 1.0",
+                    "product_id": "SYN-PROD-02"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "vulnerabilities": [
+          {
+            "cve": "CVE-2099-20002",
+            "title": "Synthetic same-month-unrelated-cve advisory 2",
+            "notes": [
+              {
+                "category": "description",
+                "text": "Synthetic same-month-unrelated-cve note"
+              }
+            ],
+            "product_status": {
+              "known_affected": [
+                "SYN-PROD-02"
+              ],
+              "known_not_affected": []
+            },
+            "remediations": [
+              {
+                "category": "vendor_fix",
+                "details": "Synthetic vendor fix",
+                "product_ids": [
+                  "SYN-PROD-02"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "synthetic": true,
+        "origin": "hand-authored synthetic data; not Microsoft-derived",
+        "sha256": "UNVERIFIED",
+        "byte_length": "UNVERIFIED",
+        "license": "UNVERIFIED: repository redistribution status not rechecked"
+      }
+    },
+    {
+      "fixture_id": "SYN-CSAF-003",
+      "scenario": "product-scope-mismatch",
+      "document": {
+        "document": {
+          "category": "csaf_vex",
+          "csaf_version": "2.0",
+          "distribution": {
+            "text": "Synthetic fixture only"
+          },
+          "publisher": {
+            "category": "vendor",
+            "name": "PatchTrace Synthetic Publisher",
+            "namespace": "https://example.invalid/patchtrace/synthetic"
+          },
+          "title": "Synthetic product-scope-mismatch advisory 3",
+          "tracking": {
+            "current_release_date": "2099-01-01T00:00:00Z",
+            "id": "PT-CSAF-003",
+            "initial_release_date": "2099-01-01T00:00:00Z",
+            "revision_history": [
+              {
+                "date": "2099-01-01T00:00:00Z",
+                "number": "1",
+                "summary": "Synthetic"
+              }
+            ],
+            "status": "final",
+            "version": "1"
+          }
+        },
+        "product_tree": {
+          "branches": [
+            {
+              "category": "product_name",
+              "name": "Synthetic SYN-PROD-03",
+              "branches": [
+                {
+                  "category": "product_version",
+                  "name": "1.0",
+                  "product": {
+                    "name": "Synthetic SYN-PROD-03 1.0",
+                    "product_id": "SYN-PROD-03"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "vulnerabilities": [
+          {
+            "cve": "CVE-2099-20003",
+            "title": "Synthetic product-scope-mismatch advisory 3",
+            "notes": [
+              {
+                "category": "description",
+                "text": "Synthetic product-scope-mismatch note"
+              }
+            ],
+            "product_status": {
+              "known_affected": [
+                "SYN-PROD-03"
+              ],
+              "known_not_affected": []
+            },
+            "remediations": [
+              {
+                "category": "vendor_fix",
+                "details": "Synthetic vendor fix",
+                "product_ids": [
+                  "SYN-PROD-03"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "synthetic": true,
+        "origin": "hand-authored synthetic data; not Microsoft-derived",
+        "sha256": "UNVERIFIED",
+        "byte_length": "UNVERIFIED",
+        "license": "UNVERIFIED: repository redistribution status not rechecked"
+      }
+    },
+    {
+      "fixture_id": "SYN-CSAF-004",
+      "scenario": "fixed-versus-affected",
+      "document": {
+        "document": {
+          "category": "csaf_vex",
+          "csaf_version": "2.0",
+          "distribution": {
+            "text": "Synthetic fixture only"
+          },
+          "publisher": {
+            "category": "vendor",
+            "name": "PatchTrace Synthetic Publisher",
+            "namespace": "https://example.invalid/patchtrace/synthetic"
+          },
+          "title": "Synthetic fixed-versus-affected advisory 4",
+          "tracking": {
+            "current_release_date": "2099-01-01T00:00:00Z",
+            "id": "PT-CSAF-004",
+            "initial_release_date": "2099-01-01T00:00:00Z",
+            "revision_history": [
+              {
+                "date": "2099-01-01T00:00:00Z",
+                "number": "1",
+                "summary": "Synthetic"
+              }
+            ],
+            "status": "final",
+            "version": "1"
+          }
+        },
+        "product_tree": {
+          "branches": [
+            {
+              "category": "product_name",
+              "name": "Synthetic SYN-PROD-04",
+              "branches": [
+                {
+                  "category": "product_version",
+                  "name": "1.0",
+                  "product": {
+                    "name": "Synthetic SYN-PROD-04 1.0",
+                    "product_id": "SYN-PROD-04"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "vulnerabilities": [
+          {
+            "cve": "CVE-2099-20004",
+            "title": "Synthetic fixed-versus-affected advisory 4",
+            "notes": [
+              {
+                "category": "description",
+                "text": "Synthetic fixed-versus-affected note"
+              }
+            ],
+            "product_status": {
+              "known_affected": [
+                "SYN-PROD-04"
+              ],
+              "known_not_affected": []
+            },
+            "remediations": [
+              {
+                "category": "vendor_fix",
+                "details": "Synthetic vendor fix",
+                "product_ids": [
+                  "SYN-PROD-04"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "synthetic": true,
+        "origin": "hand-authored synthetic data; not Microsoft-derived",
+        "sha256": "UNVERIFIED",
+        "byte_length": "UNVERIFIED",
+        "license": "UNVERIFIED: repository redistribution status not rechecked"
+      }
+    },
+    {
+      "fixture_id": "SYN-CSAF-005",
+      "scenario": "empty-vulnerability-list",
+      "document": {
+        "document": {
+          "category": "csaf_vex",
+          "csaf_version": "2.0",
+          "distribution": {
+            "text": "Synthetic fixture only"
+          },
+          "publisher": {
+            "category": "vendor",
+            "name": "PatchTrace Synthetic Publisher",
+            "namespace": "https://example.invalid/patchtrace/synthetic"
+          },
+          "title": "Synthetic empty-vulnerability-list advisory 5",
+          "tracking": {
+            "current_release_date": "2099-01-01T00:00:00Z",
+            "id": "PT-CSAF-005",
+            "initial_release_date": "2099-01-01T00:00:00Z",
+            "revision_history": [
+              {
+                "date": "2099-01-01T00:00:00Z",
+                "number": "1",
+                "summary": "Synthetic"
+              }
+            ],
+            "status": "final",
+            "version": "1"
+          }
+        },
+        "product_tree": {
+          "branches": [
+            {
+              "category": "product_name",
+              "name": "Synthetic SYN-PROD-05",
+              "branches": [
+                {
+                  "category": "product_version",
+                  "name": "1.0",
+                  "product": {
+                    "name": "Synthetic SYN-PROD-05 1.0",
+                    "product_id": "SYN-PROD-05"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "vulnerabilities": []
+      },
+      "metadata": {
+        "synthetic": true,
+        "origin": "hand-authored synthetic data; not Microsoft-derived",
+        "sha256": "UNVERIFIED",
+        "byte_length": "UNVERIFIED",
+        "license": "UNVERIFIED: repository redistribution status not rechecked"
+      }
+    },
+    {
+      "fixture_id": "SYN-CSAF-006",
+      "scenario": "null-source-field",
+      "document": {
+        "document": {
+          "category": "csaf_vex",
+          "csaf_version": "2.0",
+          "distribution": {
+            "text": "Synthetic fixture only"
+          },
+          "publisher": {
+            "category": "vendor",
+            "name": "PatchTrace Synthetic Publisher",
+            "namespace": "https://example.invalid/patchtrace/synthetic"
+          },
+          "title": "Synthetic null-source-field advisory 6",
+          "tracking": {
+            "current_release_date": "2099-01-01T00:00:00Z",
+            "id": "PT-CSAF-006",
+            "initial_release_date": "2099-01-01T00:00:00Z",
+            "revision_history": [
+              {
+                "date": "2099-01-01T00:00:00Z",
+                "number": "1",
+                "summary": "Synthetic"
+              }
+            ],
+            "status": "final",
+            "version": "1"
+          }
+        },
+        "product_tree": {
+          "branches": [
+            {
+              "category": "product_name",
+              "name": "Synthetic SYN-PROD-01",
+              "branches": [
+                {
+                  "category": "product_version",
+                  "name": "1.0",
+                  "product": {
+                    "name": "Synthetic SYN-PROD-01 1.0",
+                    "product_id": "SYN-PROD-01"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "vulnerabilities": [
+          {
+            "cve": "CVE-2099-20006",
+            "title": "Synthetic null-source-field advisory 6",
+            "notes": [
+              {
+                "category": "description",
+                "text": "Synthetic null-source-field note"
+              }
+            ],
+            "product_status": {
+              "known_affected": [
+                "SYN-PROD-01"
+              ],
+              "known_not_affected": []
+            },
+            "remediations": [
+              {
+                "category": "vendor_fix",
+                "details": "Synthetic vendor fix",
+                "product_ids": [
+                  "SYN-PROD-01"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "synthetic": true,
+        "origin": "hand-authored synthetic data; not Microsoft-derived",
+        "sha256": "UNVERIFIED",
+        "byte_length": "UNVERIFIED",
+        "license": "UNVERIFIED: repository redistribution status not rechecked"
+      }
+    },
+    {
+      "fixture_id": "SYN-CSAF-007",
+      "scenario": "invalid-date",
+      "document": {
+        "document": {
+          "category": "csaf_vex",
+          "csaf_version": "2.0",
+          "distribution": {
+            "text": "Synthetic fixture only"
+          },
+          "publisher": {
+            "category": "vendor",
+            "name": "PatchTrace Synthetic Publisher",
+            "namespace": "https://example.invalid/patchtrace/synthetic"
+          },
+          "title": "Synthetic invalid-date advisory 7",
+          "tracking": {
+            "current_release_date": "2099-01-01T00:00:00Z",
+            "id": "PT-CSAF-007",
+            "initial_release_date": "2099-01-01T00:00:00Z",
+            "revision_history": [
+              {
+                "date": "2099-01-01T00:00:00Z",
+                "number": "1",
+                "summary": "Synthetic"
+              }
+            ],
+            "status": "final",
+            "version": "1"
+          }
+        },
+        "product_tree": {
+          "branches": [
+            {
+              "category": "product_name",
+              "name": "Synthetic SYN-PROD-02",
+              "branches": [
+                {
+                  "category": "product_version",
+                  "name": "1.0",
+                  "product": {
+                    "name": "Synthetic SYN-PROD-02 1.0",
+                    "product_id": "SYN-PROD-02"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "vulnerabilities": [
+          {
+            "cve": "CVE-2099-20007",
+            "title": "Synthetic invalid-date advisory 7",
+            "notes": [
+              {
+                "category": "description",
+                "text": "Synthetic invalid-date note"
+              }
+            ],
+            "product_status": {
+              "known_affected": [
+                "SYN-PROD-02"
+              ],
+              "known_not_affected": []
+            },
+            "remediations": [
+              {
+                "category": "vendor_fix",
+                "details": "Synthetic vendor fix",
+                "product_ids": [
+                  "SYN-PROD-02"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "synthetic": true,
+        "origin": "hand-authored synthetic data; not Microsoft-derived",
+        "sha256": "UNVERIFIED",
+        "byte_length": "UNVERIFIED",
+        "license": "UNVERIFIED: repository redistribution status not rechecked"
+      }
+    },
+    {
+      "fixture_id": "SYN-CSAF-008",
+      "scenario": "duplicate-product-id",
+      "document": {
+        "document": {
+          "category": "csaf_vex",
+          "csaf_version": "2.0",
+          "distribution": {
+            "text": "Synthetic fixture only"
+          },
+          "publisher": {
+            "category": "vendor",
+            "name": "PatchTrace Synthetic Publisher",
+            "namespace": "https://example.invalid/patchtrace/synthetic"
+          },
+          "title": "Synthetic duplicate-product-id advisory 8",
+          "tracking": {
+            "current_release_date": "2099-01-01T00:00:00Z",
+            "id": "PT-CSAF-008",
+            "initial_release_date": "2099-01-01T00:00:00Z",
+            "revision_history": [
+              {
+                "date": "2099-01-01T00:00:00Z",
+                "number": "1",
+                "summary": "Synthetic"
+              }
+            ],
+            "status": "final",
+            "version": "1"
+          }
+        },
+        "product_tree": {
+          "branches": [
+            {
+              "category": "product_name",
+              "name": "Synthetic SYN-PROD-03",
+              "branches": [
+                {
+                  "category": "product_version",
+                  "name": "1.0",
+                  "product": {
+                    "name": "Synthetic SYN-PROD-03 1.0",
+                    "product_id": "SYN-PROD-03"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "vulnerabilities": [
+          {
+            "cve": "CVE-2099-20008",
+            "title": "Synthetic duplicate-product-id advisory 8",
+            "notes": [
+              {
+                "category": "description",
+                "text": "Synthetic duplicate-product-id note"
+              }
+            ],
+            "product_status": {
+              "known_affected": [
+                "SYN-PROD-03"
+              ],
+              "known_not_affected": []
+            },
+            "remediations": [
+              {
+                "category": "vendor_fix",
+                "details": "Synthetic vendor fix",
+                "product_ids": [
+                  "SYN-PROD-03"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "synthetic": true,
+        "origin": "hand-authored synthetic data; not Microsoft-derived",
+        "sha256": "UNVERIFIED",
+        "byte_length": "UNVERIFIED",
+        "license": "UNVERIFIED: repository redistribution status not rechecked"
+      }
+    },
+    {
+      "fixture_id": "SYN-CSAF-009",
+      "scenario": "unknown-product-reference",
+      "document": {
+        "document": {
+          "category": "csaf_vex",
+          "csaf_version": "2.0",
+          "distribution": {
+            "text": "Synthetic fixture only"
+          },
+          "publisher": {
+            "category": "vendor",
+            "name": "PatchTrace Synthetic Publisher",
+            "namespace": "https://example.invalid/patchtrace/synthetic"
+          },
+          "title": "Synthetic unknown-product-reference advisory 9",
+          "tracking": {
+            "current_release_date": "2099-01-01T00:00:00Z",
+            "id": "PT-CSAF-009",
+            "initial_release_date": "2099-01-01T00:00:00Z",
+            "revision_history": [
+              {
+                "date": "2099-01-01T00:00:00Z",
+                "number": "1",
+                "summary": "Synthetic"
+              }
+            ],
+            "status": "final",
+            "version": "1"
+          }
+        },
+        "product_tree": {
+          "branches": [
+            {
+              "category": "product_name",
+              "name": "Synthetic SYN-PROD-04",
+              "branches": [
+                {
+                  "category": "product_version",
+                  "name": "1.0",
+                  "product": {
+                    "name": "Synthetic SYN-PROD-04 1.0",
+                    "product_id": "SYN-PROD-04"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "vulnerabilities": [
+          {
+            "cve": "CVE-2099-20009",
+            "title": "Synthetic unknown-product-reference advisory 9",
+            "notes": [
+              {
+                "category": "description",
+                "text": "Synthetic unknown-product-reference note"
+              }
+            ],
+            "product_status": {
+              "known_affected": [
+                "SYN-PROD-04"
+              ],
+              "known_not_affected": []
+            },
+            "remediations": [
+              {
+                "category": "vendor_fix",
+                "details": "Synthetic vendor fix",
+                "product_ids": [
+                  "SYN-PROD-04"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "synthetic": true,
+        "origin": "hand-authored synthetic data; not Microsoft-derived",
+        "sha256": "UNVERIFIED",
+        "byte_length": "UNVERIFIED",
+        "license": "UNVERIFIED: repository redistribution status not rechecked"
+      }
+    },
+    {
+      "fixture_id": "SYN-CSAF-010",
+      "scenario": "csaf-group-expansion",
+      "document": {
+        "document": {
+          "category": "csaf_vex",
+          "csaf_version": "2.0",
+          "distribution": {
+            "text": "Synthetic fixture only"
+          },
+          "publisher": {
+            "category": "vendor",
+            "name": "PatchTrace Synthetic Publisher",
+            "namespace": "https://example.invalid/patchtrace/synthetic"
+          },
+          "title": "Synthetic csaf-group-expansion advisory 10",
+          "tracking": {
+            "current_release_date": "2099-01-01T00:00:00Z",
+            "id": "PT-CSAF-010",
+            "initial_release_date": "2099-01-01T00:00:00Z",
+            "revision_history": [
+              {
+                "date": "2099-01-01T00:00:00Z",
+                "number": "1",
+                "summary": "Synthetic"
+              }
+            ],
+            "status": "final",
+            "version": "1"
+          }
+        },
+        "product_tree": {
+          "branches": [
+            {
+              "category": "product_name",
+              "name": "Synthetic SYN-PROD-05",
+              "branches": [
+                {
+                  "category": "product_version",
+                  "name": "1.0",
+                  "product": {
+                    "name": "Synthetic SYN-PROD-05 1.0",
+                    "product_id": "SYN-PROD-05"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "vulnerabilities": [
+          {
+            "cve": "CVE-2099-20010",
+            "title": "Synthetic csaf-group-expansion advisory 10",
+            "notes": [
+              {
+                "category": "description",
+                "text": "Synthetic csaf-group-expansion note"
+              }
+            ],
+            "product_status": {
+              "known_affected": [
+                "SYN-PROD-05"
+              ],
+              "known_not_affected": []
+            },
+            "remediations": [
+              {
+                "category": "vendor_fix",
+                "details": "Synthetic vendor fix",
+                "product_ids": [
+                  "SYN-PROD-05"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "synthetic": true,
+        "origin": "hand-authored synthetic data; not Microsoft-derived",
+        "sha256": "UNVERIFIED",
+        "byte_length": "UNVERIFIED",
+        "license": "UNVERIFIED: repository redistribution status not rechecked"
+      }
+    },
+    {
+      "fixture_id": "SYN-CSAF-011",
+      "scenario": "csaf-known-not-affected",
+      "document": {
+        "document": {
+          "category": "csaf_vex",
+          "csaf_version": "2.0",
+          "distribution": {
+            "text": "Synthetic fixture only"
+          },
+          "publisher": {
+            "category": "vendor",
+            "name": "PatchTrace Synthetic Publisher",
+            "namespace": "https://example.invalid/patchtrace/synthetic"
+          },
+          "title": "Synthetic csaf-known-not-affected advisory 11",
+          "tracking": {
+            "current_release_date": "2099-01-01T00:00:00Z",
+            "id": "PT-CSAF-011",
+            "initial_release_date": "2099-01-01T00:00:00Z",
+            "revision_history": [
+              {
+                "date": "2099-01-01T00:00:00Z",
+                "number": "1",
+                "summary": "Synthetic"
+              }
+            ],
+            "status": "final",
+            "version": "1"
+          }
+        },
+        "product_tree": {
+          "branches": [
+            {
+              "category": "product_name",
+              "name": "Synthetic SYN-PROD-01",
+              "branches": [
+                {
+                  "category": "product_version",
+                  "name": "1.0",
+                  "product": {
+                    "name": "Synthetic SYN-PROD-01 1.0",
+                    "product_id": "SYN-PROD-01"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "vulnerabilities": [
+          {
+            "cve": "CVE-2099-20011",
+            "title": "Synthetic csaf-known-not-affected advisory 11",
+            "notes": [
+              {
+                "category": "description",
+                "text": "Synthetic csaf-known-not-affected note"
+              }
+            ],
+            "product_status": {
+              "known_affected": [
+                "SYN-PROD-01"
+              ],
+              "known_not_affected": [
+                "SYN-PROD-01"
+              ]
+            },
+            "remediations": [
+              {
+                "category": "vendor_fix",
+                "details": "Synthetic vendor fix",
+                "product_ids": [
+                  "SYN-PROD-01"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "synthetic": true,
+        "origin": "hand-authored synthetic data; not Microsoft-derived",
+        "sha256": "UNVERIFIED",
+        "byte_length": "UNVERIFIED",
+        "license": "UNVERIFIED: repository redistribution status not rechecked"
+      }
+    },
+    {
+      "fixture_id": "SYN-CSAF-012",
+      "scenario": "csaf-vendor-fix-without-kb",
+      "document": {
+        "document": {
+          "category": "csaf_vex",
+          "csaf_version": "2.0",
+          "distribution": {
+            "text": "Synthetic fixture only"
+          },
+          "publisher": {
+            "category": "vendor",
+            "name": "PatchTrace Synthetic Publisher",
+            "namespace": "https://example.invalid/patchtrace/synthetic"
+          },
+          "title": "Synthetic csaf-vendor-fix-without-kb advisory 12",
+          "tracking": {
+            "current_release_date": "2099-01-01T00:00:00Z",
+            "id": "PT-CSAF-012",
+            "initial_release_date": "2099-01-01T00:00:00Z",
+            "revision_history": [
+              {
+                "date": "2099-01-01T00:00:00Z",
+                "number": "1",
+                "summary": "Synthetic"
+              }
+            ],
+            "status": "final",
+            "version": "1"
+          }
+        },
+        "product_tree": {
+          "branches": [
+            {
+              "category": "product_name",
+              "name": "Synthetic SYN-PROD-02",
+              "branches": [
+                {
+                  "category": "product_version",
+                  "name": "1.0",
+                  "product": {
+                    "name": "Synthetic SYN-PROD-02 1.0",
+                    "product_id": "SYN-PROD-02"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "vulnerabilities": [
+          {
+            "cve": "CVE-2099-20012",
+            "title": "Synthetic csaf-vendor-fix-without-kb advisory 12",
+            "notes": [
+              {
+                "category": "description",
+                "text": "Synthetic csaf-vendor-fix-without-kb note"
+              }
+            ],
+            "product_status": {
+              "known_affected": [
+                "SYN-PROD-02"
+              ],
+              "known_not_affected": []
+            },
+            "remediations": [
+              {
+                "category": "vendor_fix",
+                "details": "Synthetic fix; no KB identifier"
+              }
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "synthetic": true,
+        "origin": "hand-authored synthetic data; not Microsoft-derived",
+        "sha256": "UNVERIFIED",
+        "byte_length": "UNVERIFIED",
+        "license": "UNVERIFIED: repository redistribution status not rechecked"
+      }
+    },
+    {
+      "fixture_id": "SYN-CSAF-013",
+      "scenario": "csaf-kb-text-hint",
+      "document": {
+        "document": {
+          "category": "csaf_vex",
+          "csaf_version": "2.0",
+          "distribution": {
+            "text": "Synthetic fixture only"
+          },
+          "publisher": {
+            "category": "vendor",
+            "name": "PatchTrace Synthetic Publisher",
+            "namespace": "https://example.invalid/patchtrace/synthetic"
+          },
+          "title": "Synthetic csaf-kb-text-hint advisory 13",
+          "tracking": {
+            "current_release_date": "2099-01-01T00:00:00Z",
+            "id": "PT-CSAF-013",
+            "initial_release_date": "2099-01-01T00:00:00Z",
+            "revision_history": [
+              {
+                "date": "2099-01-01T00:00:00Z",
+                "number": "1",
+                "summary": "Synthetic"
+              }
+            ],
+            "status": "final",
+            "version": "1"
+          }
+        },
+        "product_tree": {
+          "branches": [
+            {
+              "category": "product_name",
+              "name": "Synthetic SYN-PROD-03",
+              "branches": [
+                {
+                  "category": "product_version",
+                  "name": "1.0",
+                  "product": {
+                    "name": "Synthetic SYN-PROD-03 1.0",
+                    "product_id": "SYN-PROD-03"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "vulnerabilities": [
+          {
+            "cve": "CVE-2099-20013",
+            "title": "Synthetic csaf-kb-text-hint advisory 13",
+            "notes": [
+              {
+                "category": "description",
+                "text": "Synthetic csaf-kb-text-hint note"
+              }
+            ],
+            "product_status": {
+              "known_affected": [
+                "SYN-PROD-03"
+              ],
+              "known_not_affected": []
+            },
+            "remediations": [
+              {
+                "category": "vendor_fix",
+                "details": "Synthetic hint KB9000013",
+                "product_ids": [
+                  "SYN-PROD-03"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "synthetic": true,
+        "origin": "hand-authored synthetic data; not Microsoft-derived",
+        "sha256": "UNVERIFIED",
+        "byte_length": "UNVERIFIED",
+        "license": "UNVERIFIED: repository redistribution status not rechecked"
+      }
+    },
+    {
+      "fixture_id": "SYN-CSAF-014",
+      "scenario": "vex-not-affected",
+      "document": {
+        "document": {
+          "category": "csaf_vex",
+          "csaf_version": "2.0",
+          "distribution": {
+            "text": "Synthetic fixture only"
+          },
+          "publisher": {
+            "category": "vendor",
+            "name": "PatchTrace Synthetic Publisher",
+            "namespace": "https://example.invalid/patchtrace/synthetic"
+          },
+          "title": "Synthetic vex-not-affected advisory 14",
+          "tracking": {
+            "current_release_date": "2099-01-01T00:00:00Z",
+            "id": "PT-CSAF-014",
+            "initial_release_date": "2099-01-01T00:00:00Z",
+            "revision_history": [
+              {
+                "date": "2099-01-01T00:00:00Z",
+                "number": "1",
+                "summary": "Synthetic"
+              }
+            ],
+            "status": "final",
+            "version": "1"
+          }
+        },
+        "product_tree": {
+          "branches": [
+            {
+              "category": "product_name",
+              "name": "Synthetic SYN-PROD-04",
+              "branches": [
+                {
+                  "category": "product_version",
+                  "name": "1.0",
+                  "product": {
+                    "name": "Synthetic SYN-PROD-04 1.0",
+                    "product_id": "SYN-PROD-04"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "vulnerabilities": [
+          {
+            "cve": "CVE-2099-20014",
+            "title": "Synthetic vex-not-affected advisory 14",
+            "notes": [
+              {
+                "category": "description",
+                "text": "Synthetic vex-not-affected note"
+              }
+            ],
+            "product_status": {
+              "known_affected": [
+                "SYN-PROD-04"
+              ],
+              "known_not_affected": [
+                "SYN-PROD-04"
+              ]
+            },
+            "remediations": [
+              {
+                "category": "vendor_fix",
+                "details": "Synthetic vendor fix",
+                "product_ids": [
+                  "SYN-PROD-04"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "synthetic": true,
+        "origin": "hand-authored synthetic data; not Microsoft-derived",
+        "sha256": "UNVERIFIED",
+        "byte_length": "UNVERIFIED",
+        "license": "UNVERIFIED: repository redistribution status not rechecked"
+      }
+    },
+    {
+      "fixture_id": "SYN-CSAF-015",
+      "scenario": "vex-under-investigation",
+      "document": {
+        "document": {
+          "category": "csaf_vex",
+          "csaf_version": "2.0",
+          "distribution": {
+            "text": "Synthetic fixture only"
+          },
+          "publisher": {
+            "category": "vendor",
+            "name": "PatchTrace Synthetic Publisher",
+            "namespace": "https://example.invalid/patchtrace/synthetic"
+          },
+          "title": "Synthetic vex-under-investigation advisory 15",
+          "tracking": {
+            "current_release_date": "2099-01-01T00:00:00Z",
+            "id": "PT-CSAF-015",
+            "initial_release_date": "2099-01-01T00:00:00Z",
+            "revision_history": [
+              {
+                "date": "2099-01-01T00:00:00Z",
+                "number": "1",
+                "summary": "Synthetic"
+              }
+            ],
+            "status": "final",
+            "version": "1"
+          }
+        },
+        "product_tree": {
+          "branches": [
+            {
+              "category": "product_name",
+              "name": "Synthetic SYN-PROD-05",
+              "branches": [
+                {
+                  "category": "product_version",
+                  "name": "1.0",
+                  "product": {
+                    "name": "Synthetic SYN-PROD-05 1.0",
+                    "product_id": "SYN-PROD-05"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "vulnerabilities": [
+          {
+            "cve": "CVE-2099-20015",
+            "title": "Synthetic vex-under-investigation advisory 15",
+            "notes": [
+              {
+                "category": "description",
+                "text": "Synthetic vex-under-investigation note"
+              }
+            ],
+            "product_status": {
+              "known_affected": [
+                "SYN-PROD-05"
+              ],
+              "known_not_affected": []
+            },
+            "remediations": [
+              {
+                "category": "vendor_fix",
+                "details": "Synthetic vendor fix",
+                "product_ids": [
+                  "SYN-PROD-05"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "synthetic": true,
+        "origin": "hand-authored synthetic data; not Microsoft-derived",
+        "sha256": "UNVERIFIED",
+        "byte_length": "UNVERIFIED",
+        "license": "UNVERIFIED: repository redistribution status not rechecked"
+      }
+    },
+    {
+      "fixture_id": "SYN-CSAF-016",
+      "scenario": "vex-fixed",
+      "document": {
+        "document": {
+          "category": "csaf_vex",
+          "csaf_version": "2.0",
+          "distribution": {
+            "text": "Synthetic fixture only"
+          },
+          "publisher": {
+            "category": "vendor",
+            "name": "PatchTrace Synthetic Publisher",
+            "namespace": "https://example.invalid/patchtrace/synthetic"
+          },
+          "title": "Synthetic vex-fixed advisory 16",
+          "tracking": {
+            "current_release_date": "2099-01-01T00:00:00Z",
+            "id": "PT-CSAF-016",
+            "initial_release_date": "2099-01-01T00:00:00Z",
+            "revision_history": [
+              {
+                "date": "2099-01-01T00:00:00Z",
+                "number": "1",
+                "summary": "Synthetic"
+              }
+            ],
+            "status": "final",
+            "version": "1"
+          }
+        },
+        "product_tree": {
+          "branches": [
+            {
+              "category": "product_name",
+              "name": "Synthetic SYN-PROD-01",
+              "branches": [
+                {
+                  "category": "product_version",
+                  "name": "1.0",
+                  "product": {
+                    "name": "Synthetic SYN-PROD-01 1.0",
+                    "product_id": "SYN-PROD-01"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "vulnerabilities": [
+          {
+            "cve": "CVE-2099-20016",
+            "title": "Synthetic vex-fixed advisory 16",
+            "notes": [
+              {
+                "category": "description",
+                "text": "Synthetic vex-fixed note"
+              }
+            ],
+            "product_status": {
+              "known_affected": [
+                "SYN-PROD-01"
+              ],
+              "known_not_affected": []
+            },
+            "remediations": [
+              {
+                "category": "vendor_fix",
+                "details": "Synthetic vendor fix",
+                "product_ids": [
+                  "SYN-PROD-01"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "synthetic": true,
+        "origin": "hand-authored synthetic data; not Microsoft-derived",
+        "sha256": "UNVERIFIED",
+        "byte_length": "UNVERIFIED",
+        "license": "UNVERIFIED: repository redistribution status not rechecked"
+      }
+    },
+    {
+      "fixture_id": "SYN-CSAF-017",
+      "scenario": "vex-affected",
+      "document": {
+        "document": {
+          "category": "csaf_vex",
+          "csaf_version": "2.0",
+          "distribution": {
+            "text": "Synthetic fixture only"
+          },
+          "publisher": {
+            "category": "vendor",
+            "name": "PatchTrace Synthetic Publisher",
+            "namespace": "https://example.invalid/patchtrace/synthetic"
+          },
+          "title": "Synthetic vex-affected advisory 17",
+          "tracking": {
+            "current_release_date": "2099-01-01T00:00:00Z",
+            "id": "PT-CSAF-017",
+            "initial_release_date": "2099-01-01T00:00:00Z",
+            "revision_history": [
+              {
+                "date": "2099-01-01T00:00:00Z",
+                "number": "1",
+                "summary": "Synthetic"
+              }
+            ],
+            "status": "final",
+            "version": "1"
+          }
+        },
+        "product_tree": {
+          "branches": [
+            {
+              "category": "product_name",
+              "name": "Synthetic SYN-PROD-02",
+              "branches": [
+                {
+                  "category": "product_version",
+                  "name": "1.0",
+                  "product": {
+                    "name": "Synthetic SYN-PROD-02 1.0",
+                    "product_id": "SYN-PROD-02"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "vulnerabilities": [
+          {
+            "cve": "CVE-2099-20017",
+            "title": "Synthetic vex-affected advisory 17",
+            "notes": [
+              {
+                "category": "description",
+                "text": "Synthetic vex-affected note"
+              }
+            ],
+            "product_status": {
+              "known_affected": [
+                "SYN-PROD-02"
+              ],
+              "known_not_affected": []
+            },
+            "remediations": [
+              {
+                "category": "vendor_fix",
+                "details": "Synthetic vendor fix",
+                "product_ids": [
+                  "SYN-PROD-02"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "synthetic": true,
+        "origin": "hand-authored synthetic data; not Microsoft-derived",
+        "sha256": "UNVERIFIED",
+        "byte_length": "UNVERIFIED",
+        "license": "UNVERIFIED: repository redistribution status not rechecked"
+      }
+    },
+    {
+      "fixture_id": "SYN-CSAF-018",
+      "scenario": "vex-unknown",
+      "document": {
+        "document": {
+          "category": "csaf_vex",
+          "csaf_version": "2.0",
+          "distribution": {
+            "text": "Synthetic fixture only"
+          },
+          "publisher": {
+            "category": "vendor",
+            "name": "PatchTrace Synthetic Publisher",
+            "namespace": "https://example.invalid/patchtrace/synthetic"
+          },
+          "title": "Synthetic vex-unknown advisory 18",
+          "tracking": {
+            "current_release_date": "2099-01-01T00:00:00Z",
+            "id": "PT-CSAF-018",
+            "initial_release_date": "2099-01-01T00:00:00Z",
+            "revision_history": [
+              {
+                "date": "2099-01-01T00:00:00Z",
+                "number": "1",
+                "summary": "Synthetic"
+              }
+            ],
+            "status": "final",
+            "version": "1"
+          }
+        },
+        "product_tree": {
+          "branches": [
+            {
+              "category": "product_name",
+              "name": "Synthetic SYN-PROD-03",
+              "branches": [
+                {
+                  "category": "product_version",
+                  "name": "1.0",
+                  "product": {
+                    "name": "Synthetic SYN-PROD-03 1.0",
+                    "product_id": "SYN-PROD-03"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "vulnerabilities": [
+          {
+            "cve": "CVE-2099-20018",
+            "title": "Synthetic vex-unknown advisory 18",
+            "notes": [
+              {
+                "category": "description",
+                "text": "Synthetic vex-unknown note"
+              }
+            ],
+            "product_status": {
+              "known_affected": [
+                "SYN-PROD-03"
+              ],
+              "known_not_affected": []
+            },
+            "remediations": [
+              {
+                "category": "vendor_fix",
+                "details": "Synthetic vendor fix",
+                "product_ids": [
+                  "SYN-PROD-03"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "synthetic": true,
+        "origin": "hand-authored synthetic data; not Microsoft-derived",
+        "sha256": "UNVERIFIED",
+        "byte_length": "UNVERIFIED",
+        "license": "UNVERIFIED: repository redistribution status not rechecked"
+      }
+    },
+    {
+      "fixture_id": "SYN-CSAF-019",
+      "scenario": "withdrawn-product-status",
+      "document": {
+        "document": {
+          "category": "csaf_vex",
+          "csaf_version": "2.0",
+          "distribution": {
+            "text": "Synthetic fixture only"
+          },
+          "publisher": {
+            "category": "vendor",
+            "name": "PatchTrace Synthetic Publisher",
+            "namespace": "https://example.invalid/patchtrace/synthetic"
+          },
+          "title": "Synthetic withdrawn-product-status advisory 19",
+          "tracking": {
+            "current_release_date": "2099-01-01T00:00:00Z",
+            "id": "PT-CSAF-019",
+            "initial_release_date": "2099-01-01T00:00:00Z",
+            "revision_history": [
+              {
+                "date": "2099-01-01T00:00:00Z",
+                "number": "1",
+                "summary": "Synthetic"
+              }
+            ],
+            "status": "final",
+            "version": "1"
+          }
+        },
+        "product_tree": {
+          "branches": [
+            {
+              "category": "product_name",
+              "name": "Synthetic SYN-PROD-04",
+              "branches": [
+                {
+                  "category": "product_version",
+                  "name": "1.0",
+                  "product": {
+                    "name": "Synthetic SYN-PROD-04 1.0",
+                    "product_id": "SYN-PROD-04"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "vulnerabilities": [
+          {
+            "cve": "CVE-2099-20019",
+            "title": "Synthetic withdrawn-product-status advisory 19",
+            "notes": [
+              {
+                "category": "description",
+                "text": "Synthetic withdrawn-product-status note"
+              }
+            ],
+            "product_status": {
+              "known_affected": [
+                "SYN-PROD-04"
+              ],
+              "known_not_affected": []
+            },
+            "remediations": [
+              {
+                "category": "vendor_fix",
+                "details": "Synthetic vendor fix",
+                "product_ids": [
+                  "SYN-PROD-04"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "synthetic": true,
+        "origin": "hand-authored synthetic data; not Microsoft-derived",
+        "sha256": "UNVERIFIED",
+        "byte_length": "UNVERIFIED",
+        "license": "UNVERIFIED: repository redistribution status not rechecked"
+      }
+    },
+    {
+      "fixture_id": "SYN-CSAF-020",
+      "scenario": "reissued-product-status",
+      "document": {
+        "document": {
+          "category": "csaf_vex",
+          "csaf_version": "2.0",
+          "distribution": {
+            "text": "Synthetic fixture only"
+          },
+          "publisher": {
+            "category": "vendor",
+            "name": "PatchTrace Synthetic Publisher",
+            "namespace": "https://example.invalid/patchtrace/synthetic"
+          },
+          "title": "Synthetic reissued-product-status advisory 20",
+          "tracking": {
+            "current_release_date": "2099-01-01T00:00:00Z",
+            "id": "PT-CSAF-020",
+            "initial_release_date": "2099-01-01T00:00:00Z",
+            "revision_history": [
+              {
+                "date": "2099-01-01T00:00:00Z",
+                "number": "1",
+                "summary": "Synthetic"
+              }
+            ],
+            "status": "final",
+            "version": "1"
+          }
+        },
+        "product_tree": {
+          "branches": [
+            {
+              "category": "product_name",
+              "name": "Synthetic SYN-PROD-05",
+              "branches": [
+                {
+                  "category": "product_version",
+                  "name": "1.0",
+                  "product": {
+                    "name": "Synthetic SYN-PROD-05 1.0",
+                    "product_id": "SYN-PROD-05"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "vulnerabilities": [
+          {
+            "cve": "CVE-2099-20020",
+            "title": "Synthetic reissued-product-status advisory 20",
+            "notes": [
+              {
+                "category": "description",
+                "text": "Synthetic reissued-product-status note"
+              }
+            ],
+            "product_status": {
+              "known_affected": [
+                "SYN-PROD-05"
+              ],
+              "known_not_affected": []
+            },
+            "remediations": [
+              {
+                "category": "vendor_fix",
+                "details": "Synthetic vendor fix",
+                "product_ids": [
+                  "SYN-PROD-05"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "synthetic": true,
+        "origin": "hand-authored synthetic data; not Microsoft-derived",
+        "sha256": "UNVERIFIED",
+        "byte_length": "UNVERIFIED",
+        "license": "UNVERIFIED: repository redistribution status not rechecked"
+      }
+    }
+  ]
+}

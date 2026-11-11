@@ -10,6 +10,7 @@ CFG logic's (`layout.py`).
 """
 from __future__ import annotations
 
+import re
 from dataclasses import dataclass, field
 from typing import NamedTuple
 
@@ -17,6 +18,7 @@ from ..contracts import Delta
 from ..ir.features import F_CALL, F_NOP
 from ..ir.ins import Insn, Op
 from ..ir.operands import VK_ADDRESS, VK_MEMORY, VK_REGISTER, VK_SCALAR, VK_STACK
+from ..ir.records import MAX_TEXT
 from .align import Alignment, family
 from .datamap import CONFLICT, MAPPED, STRING, UNMAPPED, TargetMap, Voter, string_sha
 from .fnview import FnView
@@ -25,6 +27,8 @@ TEXT_LIMIT = 120
 NON_WRITING = frozenset({'CMP', 'TEST', 'BT', 'PUSH', 'JMP', 'CALL', 'NOP', 'LEA', 'UCOMISS', 'UCOMISD', 'COMISS',
                          'COMISD', 'CMPPS', 'CMPPD', 'PREFETCHT0', 'PREFETCHT1', 'PREFETCHT2', 'PREFETCHNTA'})
 FRAME_REGISTERS = frozenset({'RSP', 'ESP'})
+# Every literal of an instruction text (address, immediate, displacement) except an index scale (`RCX*0x4`).
+_LITERAL = re.compile(r'(?<![*\w])-?(?:0x[0-9a-fA-F]+|\d+)')
 
 
 class CallTarget(NamedTuple):
@@ -95,8 +99,7 @@ def holds_effect(view: FnView, block: int) -> bool:
 
 
 def call_target(view: FnView, index: int) -> CallTarget | None:
-    site = view.insns[index].rva
-    rows = sorted(c for c in view.calls if c.site == site)
+    rows = view.calls_at.get(view.insns[index].rva, ())
     if not rows:
         return None
     first = rows[0]
@@ -165,8 +168,27 @@ def _delta(cls: str, old: FnView, new: FnView, i: int | None, j: int | None, inf
             info or DeltaInfo())
 
 
+def _shape(text: str) -> str | None:
+    """The listing text with its literals masked: what an instruction encodes beside its operand values (index scale,
+    access size, segment); None when the text may have been cut at the IR text cap."""
+    return None if len(text) >= MAX_TEXT else _LITERAL.sub('#', text)
+
+
 def _compare_operands(old: FnView, new: FnView, i: int, j: int, align: Alignment, targets: TargetMap,
                       voter: Voter | None, out: OperandResult) -> None:
+    before = len(out.deltas)
+    _compare_operand_values(old, new, i, j, align, targets, voter, out)
+    x, y = old.insns[i], new.insns[j]
+    if len(out.deltas) == before and x.mnem == y.mnem and x.raw != y.raw:
+        # The operand facts carry no SIB scale and no access size: equal facts over differing bytes and a differing
+        # listing shape (`*0x4` -> `*0x8`, `dword ptr` -> `qword ptr`) is a change no operand class describes.
+        shape_old, shape_new = _shape(old.text(i)), _shape(new.text(j))
+        if shape_old is not None and shape_new is not None and shape_old != shape_new:
+            out.deltas.append(_delta('unknown', old, new, i, j))
+
+
+def _compare_operand_values(old: FnView, new: FnView, i: int, j: int, align: Alignment, targets: TargetMap,
+                            voter: Voter | None, out: OperandResult) -> None:
     x, y = old.insns[i], new.insns[j]
     if len(x.ops) != len(y.ops):
         out.deltas.append(_delta('unknown', old, new, i, j))
@@ -229,6 +251,10 @@ def operand_deltas(old: FnView, new: FnView, align: Alignment, targets: TargetMa
         x, y = old.insns[i], new.insns[j]
         if x.mnem != y.mnem and family(x.mnem) in ('SETcc', 'CMOVcc'):
             out.deltas.append(_delta('comparison', old, new, i, j, DeltaInfo(condition=True)))
+        elif x.mnem != y.mnem and family(x.mnem) == 'Jcc':
+            # A Jcc inside a body (a call-terminator override, or no block list) is no layout edge: its targets are
+            # compared as operands, so no successor swap can make a changed condition a layout change.
+            out.deltas.append(_delta('condition', old, new, i, j, DeltaInfo(condition=True)))
         _compare_operands(old, new, i, j, align, targets, voter, out)
     for i in align.old_only:
         target = call_target(old, i) if old.insns[i].flags & F_CALL else None

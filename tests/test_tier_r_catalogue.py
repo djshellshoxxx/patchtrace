@@ -27,7 +27,7 @@ CARD_FILES = ('releases.json', 'cves.json')
 CARDS = [card for name in CARD_FILES for card in C.load_cards((CATALOGUE / name).read_bytes())]
 HEX40, HEX64 = re.compile(r'^[0-9a-f]{40}$'), re.compile(r'^[0-9a-f]{64}$')
 CVE_ID = re.compile(r'^CVE-\d{4}-\d{4,7}$')
-MAX_PROJECTS = 14
+MAX_PROJECTS = 16  # 13 + LBL-02..04 (libdeflate, stb, c-ares); LBL plan s9 allows 14 + reserve
 RECIPES = [pytest.param(r, id=r.project) for r in BOOK.recipes]
 CARD_PARAMS = [pytest.param(c, id=c.id) for c in CARDS]
 

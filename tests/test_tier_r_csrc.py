@@ -106,3 +106,34 @@ def test_unterminated_constructs_do_not_hang():
     for text in ('int f(void) { return "abc', 'int f(void) { /* open', "char c = '", 'int f(void) {{{', '#define X \\'):
         src = Source(text)
         assert isinstance(src.functions, list)
+
+
+EXTERN_C = '''#include <stdio.h>
+#ifdef __cplusplus
+extern "C" {
+#endif
+int before(int a)
+{
+    return a;
+}
+static int inner(void) { return 1; }
+#ifdef __cplusplus
+}
+#endif
+extern "C++" { int cxx(int a) { return a + 1; } }
+extern "C" int single(int a) { return a; }
+int after(int a) { return a * 2; }
+'''
+
+
+def test_functions_inside_extern_c_blocks_are_found():
+    names = [f.name for f in Source(EXTERN_C).functions]
+    assert names == ['before', 'inner', 'cxx', 'single', 'after']
+
+
+def test_extern_c_block_does_not_swallow_the_following_chunk():
+    src = Source(EXTERN_C)
+    after = src.by_name('after')[0]
+    assert not after.is_static and src.text[after.start:after.end].startswith('int after')
+    inner = src.by_name('inner')[0]
+    assert inner.is_static and src.text[inner.start:inner.end].startswith('static int inner')

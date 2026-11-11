@@ -529,63 +529,6 @@
   },
   {
     "contract": "case-card/1",
-    "id": "postgresql-libpq-untrusted-error-cve-2024-10977",
-    "project": "postgresql-libpq",
-    "upstream_git": "https://github.com/postgres/postgres.git",
-    "license_spdx": "PostgreSQL",
-    "license_evidence": "COPYRIGHT at bf8835ea9717: 'Permission to use, copy, modify, and distribute this software and its documentation for any purpose, without fee, and without a written agreement is hereby granted'",
-    "old": {
-      "ref": "bf8835ea9717~1",
-      "commit": "5d4298e75f252b162008ad0475f29349023573cb"
-    },
-    "new": {
-      "ref": "bf8835ea9717",
-      "commit": "bf8835ea9717df50230c12133cff1b486dcc57be"
-    },
-    "kind": "cve-fix",
-    "cve": [
-      "CVE-2024-10977"
-    ],
-    "semantic_change": true,
-    "changed_functions": [
-      {
-        "name": "PQconnectPoll",
-        "file": "src/interfaces/libpq/fe-connect.c",
-        "change": "SSL and GSS negotiation error handling: a server \"E\" reply during the SSL exchange no longer flips into CONNECTION_AWAITING_RESPONSE to read the (unauthenticated) message but appends \"server sent an error response during SSL exchange\" and goes to error_return; the GSS encryption case likewise appends \"server sent an error response during GSS encryption exchange\" and uses CONNECTION_FAILED(); the old plaintext fallback bookkeeping (failed_enc_methods) for the SSL case is removed"
-      }
-    ],
-    "unchanged_controls": [
-      "pqConnectOptions2",
-      "PQsetdbLogin",
-      "pqConnectDBComplete",
-      "pqMakeEmptyPGconn",
-      "pqDropConnection",
-      "pqConnectDBStart"
-    ],
-    "build": {
-      "system": "meson",
-      "recipe_notes": "meson setup build && ninja -C build (src/interfaces/libpq/meson.build builds libpq); autotools (configure.ac) also exists; only libpq (src/interfaces/libpq) is of interest.",
-      "mingw_ok": "plausible: configure.ac maps mingw*) to the win32 template and libpq has win32.c / pthread-win32.c; .cirrus.tasks.yml has Windows CI tasks; not built by this agent"
-    },
-    "verification": {
-      "method": "git clone --filter=blob:none --no-checkout https://github.com/postgres/postgres.git; git rev-parse --verify bf8835ea9717df50230c12133cff1b486dcc57be~1^{commit} bf8835ea9717df50230c12133cff1b486dcc57be^{commit}; git diff --stat 5d4298e75f25..bf8835ea9717 -- '*.c' '*.h'; git diff -U0 5d4298e75f25..bf8835ea9717 -- '*.c' '*.h' (every hunk read; enclosing functions taken from universal-ctags function spans of both revisions); unchanged controls checked byte-identical at both revisions with the same ctags spans; git show bf8835ea9717:COPYRIGHT; git show -s bf8835ea9717 (trailer: Security: CVE-2024-10977); curl -sS https://raw.githubusercontent.com/CVEProject/cvelistV5/main/cves/2024/10xxx/CVE-2024-10977.json | jq (CVE Program record; NVD, cve.org and the MITRE API are blocked by the sandbox egress policy, so this JSON is the CVE source)",
-      "files_changed": 1,
-      "functions_changed_count": 1,
-      "verified_by_agent_run": true
-    },
-    "sources": [
-      "https://www.cve.org/CVERecord?id=CVE-2024-10977",
-      "https://raw.githubusercontent.com/CVEProject/cvelistV5/main/cves/2024/10xxx/CVE-2024-10977.json",
-      "https://github.com/postgres/postgres/commit/bf8835ea9717df50230c12133cff1b486dcc57be",
-      "https://www.postgresql.org/support/security/CVE-2024-10977/"
-    ],
-    "risks": [
-      "PQconnectPoll is a 1,700-line extern function, so unrelated code in it shifts in a binary",
-      "commit is on PostgreSQL master; the same fix was back-patched to stable branches as separate commits"
-    ]
-  },
-  {
-    "contract": "case-card/1",
     "id": "libevent-dnsname-to-labels-oob-write",
     "project": "libevent",
     "upstream_git": "https://github.com/libevent/libevent.git",

@@ -9,7 +9,7 @@
    "upstream_git": "https://github.com/Mbed-TLS/mbedtls.git",
    "license_spdx": "Apache-2.0",
    "license_file": "LICENSE",
-   "license_evidence": "LICENSE read at all 4 pins (first 107ea89d), 1 distinct SHA-256: LICENSE: Mbed TLS files are provided under a dual Apache-2.0 OR GPL-2.0-or-later license; users may choose which (Apache-2.0 recorded)",
+   "license_evidence": "LICENSE read at all 6 pins (first 2ca6c285), 1 distinct SHA-256: LICENSE: Mbed TLS files are provided under a dual Apache-2.0 OR GPL-2.0-or-later license; users may choose which (Apache-2.0 recorded)",
    "libc": "mingw",
    "output": "mbedtls.dll",
    "sources": [
@@ -29,6 +29,18 @@
     "MBEDTLS_TEST_NULL_ENTROPY"
    ],
    "pins": [
+    {
+     "ref": "v3.6.0",
+     "commit": "2ca6c285a0dd3f33982dd57299012dacab1ff206",
+     "license_sha256": "9b405ef4c89342f5eae1dd828882f931747f71001cfba7d114801039b52ad09b",
+     "date": "2024-03-26"
+    },
+    {
+     "ref": "v3.6.1",
+     "commit": "71c569d44bf3a8bd53d874c81ee8ac644dd6e9e3",
+     "license_sha256": "9b405ef4c89342f5eae1dd828882f931747f71001cfba7d114801039b52ad09b",
+     "date": "2024-08-30"
+    },
     {
      "ref": "v3.6.2",
      "commit": "107ea89daaefb9867ea9121002fbbdf926780e98",

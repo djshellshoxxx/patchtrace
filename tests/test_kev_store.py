@@ -512,6 +512,17 @@ def test_prune_keeps_the_catalog_in_use_even_when_it_is_not_among_the_newest(kev
     assert kev_store.load_current().catalog.meta.snapshot_id == in_use.snapshot_id
 
 
+def test_prune_keeps_the_snapshot_the_pointer_names_when_its_description_is_gone(kev_store, tmp_path):
+    root = tmp_path / 'kev'
+    in_use, _ = installed(kev_store, 5)
+    digest = raw_hash(root, in_use.snapshot_id)
+    installed(kev_store, 9)
+    point_at(root, in_use.snapshot_id)
+    (root / 'meta' / f'{in_use.snapshot_id}.json').unlink()
+    kev_store.prune(keep=1, yes=True)
+    assert (root / 'snapshots' / f'{digest}.json.gz').exists()
+
+
 @pytest.mark.parametrize('keep', [0, -1])
 def test_prune_refuses_nonsense_counts(kev_store, keep):
     installed(kev_store, 1)

@@ -80,7 +80,17 @@ class Runtime:
 def runtime(tmp_path, monkeypatch):
     monkeypatch.setattr(backend, '_probe_backend', lambda *_: {
         'python': '3.12.0', 'ghidriff': 'fake-test-only', 'pyghidra': 'fake-test-only', 'available': True})
-    return Runtime(tmp_path)
+    view = Runtime(tmp_path)
+    real_run = backend.run_process
+
+    def run_fake(argv, **kwargs):
+        index = argv.index('-m')
+        script = view.ghidra / 'ghidriff' / '__main__.py'
+        return real_run([*argv[:index], str(script), *argv[index + 2:]], **kwargs)
+
+    # Record the child environment without depending on cwd module injection.
+    monkeypatch.setattr(backend, 'run_process', run_fake)
+    return view
 
 
 def test_a_default_comparison_disables_symbol_lookup_and_opens_no_socket(runtime, network_guard):

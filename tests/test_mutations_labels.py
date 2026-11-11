@@ -41,7 +41,7 @@ def test_semantic_target_with_equal_masked_body_disagrees():
 
 
 def test_cosmetic_never_induces_ambiguity():
-    facts = [F('t', True, True, False), F('o', True, True, False), F('p', True, True, True)]
+    facts = [F('t', True, True, True), F('o', True, True, False), F('p', True, True, True)]   # plan 4.5: target masked-equal
     d = by_name(L.label_mutation('local-rename', 't', facts))
     assert d['t'].label == 'cosmetic' and d['t'].change_kind == 'local-rename' and d['t'].check == 'ok'
     assert d['o'].label == 'unchanged' and d['p'].label == 'unchanged'

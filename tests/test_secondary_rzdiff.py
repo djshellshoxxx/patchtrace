@@ -241,3 +241,44 @@ def test_run_requests_separate_streams(tmp_path):
 def test_malformed_entries_raise_structured_error(over):
     with pytest.raises(SecondaryError):
         parse_output(variant(**over), '0.9.1', OLD, NEW)
+
+
+@pytest.mark.parametrize('text', [
+    variant(original={'addr': 1, 'name': '\ud800', 'size': 1}),
+    variant(original={'addr': 1, 'name': '\udfff', 'size': 1}),
+    '[' * 20_000 + '0' + ']' * 20_000,
+], ids=['high-surrogate', 'low-surrogate', 'excessive-depth'])
+def test_hostile_json_never_escapes_as_an_unserializable_set(text):
+    with pytest.raises(SecondaryError) as info:
+        parse_output(text, '0.9.1', OLD, NEW)
+    assert info.value.code == 'PT-SECONDARY-INPUT'
+
+
+def test_valid_unicode_name_round_trips_without_changing_evidence_hash():
+    import hashlib
+
+    text = variant(original={'addr': 1, 'name': 'café_𝄞', 'size': 1})
+    result = parse_output(text, '0.9.1', OLD, NEW)
+    assert result.matches[0].older_name == 'café_𝄞'
+    assert json.loads(result.model_dump_json())['matches'][0]['older_name'] == 'café_𝄞'
+    assert result.file_sha256 == hashlib.sha256(text.encode('utf-8')).hexdigest()
+
+
+@pytest.mark.parametrize('text', [' ' * 257, 'é' * 129], ids=['ascii-limit', 'utf8-byte-limit'])
+def test_parser_entry_point_enforces_output_byte_limit(text, monkeypatch):
+    from patchtrace.secondary import rzdiff
+
+    monkeypatch.setattr(rzdiff, 'STDOUT_LIMIT', 256)
+    with pytest.raises(SecondaryError) as info:
+        parse_output(text, '0.9.1', OLD, NEW)
+    assert info.value.code == 'PT-SECONDARY-LIMIT'
+
+
+@pytest.mark.parametrize('version', [
+    '١.٩.١', '０.９.１', '9' * 5000 + '.0.0',
+], ids=['arabic-digits', 'fullwidth-digits', 'oversized-component'])
+def test_malformed_version_is_unsupported_without_raising(version):
+    assert parse_version('rz-diff ' + version) is None
+    result = probe(Path('/opt/rz-diff'), {}, runner=runner_returning('rz-diff ' + version))
+    assert not result.supported
+    assert result.version is None

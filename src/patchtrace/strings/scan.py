@@ -37,6 +37,7 @@ DEFAULT_MAX_ROWS = 200_000          # per side, until the S0 gate raises it (WB3
 # character-class repeat (measured 3-6x); the string text is then cut from the original bytes.
 _MARKS = bytes(1 if 0x20 <= b <= 0x7E or b == 9 else 2 if b == 0 else 0 for b in range(256))
 _PREFIX = 8
+_LOOKBEHIND_FROM = 32           # min_length above this uses the run-start lookbehind (#105 BUG-STR-4)
 
 Cancel = Callable[[], bool]
 
@@ -75,9 +76,27 @@ class ScanResult:
 
 @lru_cache(maxsize=8)
 def _pattern(unit: int, min_length: int) -> re.Pattern[bytes]:
+    # The lookbehind refuses to start inside a run: a run shorter than `min_length` is then tried once, not once
+    # per position, which was quadratic in `min_length` (issue #105 BUG-STR-4). A match can only ever start where
+    # the previous unit is not a string unit, so the matches are the same.
+    # Short minimums keep the plain pattern: the retry cost is bounded by min_length squared and the lookbehind
+    # would slow the common scan about fivefold.
+    if min_length <= _LOOKBEHIND_FROM:
+        return re.compile(_body(unit, min_length))
+    one = b'\x01' if unit == 1 else b'\x01\x02'
+    return re.compile(b'(?<!' + one + b')' + _body(unit, min_length))
+
+
+@lru_cache(maxsize=8)
+def _follow(unit: int, min_length: int) -> re.Pattern[bytes]:
+    """The rest of a run that was split at `max_run`: it starts inside the run on purpose (anchored, no lookbehind)."""
+    return re.compile(_body(unit, min_length))
+
+
+def _body(unit: int, min_length: int) -> bytes:
     one = b'\x01' if unit == 1 else b'\x01\x02'
     head = min(min_length, _PREFIX)
-    return re.compile(one * head + b'(?:' + one + b'){%d,}' % (min_length - head))
+    return one * head + b'(?:' + one + b'){%d,}' % (min_length - head)
 
 
 def read_chunks(path: Path, chunk_bytes: int = CHUNK_BYTES) -> Iterator[bytes]:
@@ -92,7 +111,7 @@ def _runs(chunks: Iterable[bytes], *, unit: int, min_length: int, max_run: int, 
 
     A match is final once at least one more unit follows it. The carried tail starts at an undecided match or at
     the first position that could still begin one, so no match is lost or split at a chunk boundary."""
-    pattern = _pattern(unit, min_length)
+    pattern, follow = _pattern(unit, min_length), _follow(unit, min_length)
     cut = max_run - max_run % unit
     buf, base = b'', 0
     pending = iter(chunks)
@@ -107,12 +126,21 @@ def _runs(chunks: Iterable[bytes], *, unit: int, min_length: int, max_run: int, 
         marks = buf.translate(_MARKS)
         pos = 0
         held: int | None = None
-        while (match := pattern.search(marks, pos)) is not None:
+        anchored = False
+        while True:
+            match = follow.match(marks, pos) if anchored else pattern.search(marks, pos)
+            if match is None:
+                if anchored:                            # the rest of a split run is too short: search on
+                    anchored = False
+                    continue
+                break
+            anchored = False
             start, end = match.span()
             if end - start > cut:
                 stats.split_runs += 1
                 yield base + start, buf[start:start + cut]
                 pos = start + cut
+                anchored = True
             elif not last and end + unit > len(buf):
                 held = start
                 break

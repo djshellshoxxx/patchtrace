@@ -11,6 +11,10 @@ from .common import Row, det_uniform
 
 Stat = Callable[[list[Row], Mapping[str, float]], float | None]
 MIN_GROUPS_HEADLINE = 30
+# PROPOSED (LBL-26 C-8; to be recorded in the lock commit): a headline interval is refused when more than this share of
+# the lineage resamples has an undefined statistic (e.g. no accepted row at tau), because the percentile bounds of the
+# defined resamples then describe a selected subset of the draws.
+MAX_UNDEFINED_SHARE = 0.05
 
 
 def group_rows(rows: Sequence[Row]) -> dict[str, list[Row]]:
@@ -25,17 +29,23 @@ def draws(groups: Sequence[str], b_count: int, seed) -> list[list[str]]:
     return [[groups[int(det_uniform(seed, 'bs', b, j) * n)] for j in range(n)] for b in range(b_count)]
 
 
-def _interval(vals: list[float], b_count: int, alpha: float, n_groups: int) -> dict:
+def _interval(vals: list[float], b_count: int, alpha: float, n_groups: int, max_undefined: float | None = None) -> dict:
+    """Percentile interval of the defined resamples. `undefined` counts the others; `undefined_share` is their share and
+    `refused` is True (bounds None) when `max_undefined` is given and the share exceeds it."""
     vals = sorted(vals)
-    if not vals:
-        return {'lo': None, 'hi': None, 'undefined': b_count, 'anti_conservative': n_groups < MIN_GROUPS_HEADLINE}
-    lo = vals[int(alpha / 2 * len(vals))]
-    hi = vals[min(len(vals) - 1, int((1 - alpha / 2) * len(vals)))]
-    return {'lo': lo, 'hi': hi, 'undefined': b_count - len(vals), 'anti_conservative': n_groups < MIN_GROUPS_HEADLINE}
+    undefined = b_count - len(vals)
+    share = undefined / b_count if b_count else 0.0
+    refused = max_undefined is not None and share > max_undefined
+    out = {'lo': None, 'hi': None, 'undefined': undefined, 'undefined_share': share, 'refused': refused,
+           'anti_conservative': n_groups < MIN_GROUPS_HEADLINE}
+    if vals and not refused:
+        out['lo'] = vals[int(alpha / 2 * len(vals))]
+        out['hi'] = vals[min(len(vals) - 1, int((1 - alpha / 2) * len(vals)))]
+    return out
 
 
 def cluster_bootstrap(rows: Sequence[Row], preds: Mapping[str, float], stat_fn: Stat, b_count: int, seed,
-                      alpha: float = 0.05) -> dict:
+                      alpha: float = 0.05, max_undefined: float | None = None) -> dict:
     by_g = group_rows(rows)
     gs = sorted(by_g)
     vals = []
@@ -43,14 +53,15 @@ def cluster_bootstrap(rows: Sequence[Row], preds: Mapping[str, float], stat_fn: 
         value = stat_fn([r for g in draw for r in by_g[g]], preds)
         if value is not None:
             vals.append(value)
-    out = _interval(vals, b_count, alpha, len(gs))
+    out = _interval(vals, b_count, alpha, len(gs), max_undefined)
     out['point'] = stat_fn(list(rows), preds)
     return out
 
 
 def cluster_bootstrap_many(rows: Sequence[Row], preds: Mapping[str, float],
                            stat_fn: Callable[[list[Row], Mapping[str, float]], Sequence[float] | None],
-                           names: Sequence[str], b_count: int, seed, alpha: float = 0.05) -> dict[str, dict]:
+                           names: Sequence[str], b_count: int, seed, alpha: float = 0.05,
+                           max_undefined: float | None = None) -> dict[str, dict]:
     """Several statistics from ONE set of lineage resamples (e.g. calibration slope and intercept)."""
     by_g = group_rows(rows)
     gs = sorted(by_g)
@@ -63,7 +74,7 @@ def cluster_bootstrap_many(rows: Sequence[Row], preds: Mapping[str, float],
     point = stat_fn(list(rows), preds)
     out = {}
     for k, name in enumerate(names):
-        out[name] = _interval(vals[k], b_count, alpha, len(gs))
+        out[name] = _interval(vals[k], b_count, alpha, len(gs), max_undefined)
         out[name]['point'] = None if point is None else point[k]
     return out
 

@@ -133,6 +133,38 @@ def test_builder_rebuilds_from_the_commit_and_checks_the_pin(tmp_path, repo):
     assert caught.value.code == 'PT-BUNDLE-PIN-MISMATCH'
 
 
+def _relaid(src: Path, dst: Path, *, change: bool = False) -> None:
+    """Same members, different byte layout (reversed order, other mtime and tar format); `change` alters one file."""
+    with tarfile.open(src) as source, tarfile.open(dst, 'w:gz', format=tarfile.PAX_FORMAT) as target:
+        for member in reversed(list(source)):
+            member.mtime = 5
+            body = source.extractfile(member).read() if member.isreg() else None
+            if change and body is not None:
+                body, member.size = body + b'x', len(body) + 1
+            target.addfile(member, io.BytesIO(body) if body is not None else None)
+
+
+def test_builder_accepts_other_tar_layout_with_the_same_contents_and_refuses_changed_contents(tmp_path, repo):
+    path, commit = repo
+    info = rec.build_tarball(path, commit, tmp_path / 'ref.tar.gz')
+    relaid, changed = tmp_path / 'relaid.tar.gz', tmp_path / 'changed.tar.gz'
+    _relaid(tmp_path / 'ref.tar.gz', relaid)
+    _relaid(tmp_path / 'ref.tar.gz', changed, change=True)
+    assert relaid.read_bytes() != (tmp_path / 'ref.tar.gz').read_bytes()
+    entry = {'digest_source': 'git-rebuilt', 'sha256': info['sha256'], 'size': info['size'],
+             'content_sha256': rec.content_digest(tmp_path / 'ref.tar.gz')}
+    ghidriff = {'repo': str(path), 'sha': commit, 'source_tarball': entry}
+    assert rec.content_digest(relaid) == entry['content_sha256'] != rec.content_digest(changed)
+    # a runner whose git/zlib lays the tar out differently has another whole-file hash but the same contents
+    entry['sha256'] = '0' * 64
+    accepted = builder.rebuild_ghidriff_tarball(ghidriff, tmp_path / 'w')
+    assert rec.content_digest(accepted) == entry['content_sha256']
+    entry['content_sha256'] = '1' * 64
+    with pytest.raises(builder.BundleBuildError) as caught:
+        builder.rebuild_ghidriff_tarball(ghidriff, tmp_path / 'w2')
+    assert caught.value.code == 'PT-BUNDLE-PIN-MISMATCH'
+
+
 @pytest.mark.parametrize('source', ['tofu', 'none', 'vendor-file', 'sigstore-verified'])
 def test_builder_refuses_other_tarball_sources(tmp_path, source):
     entry = {'digest_source': source, 'sha256': 'a' * 64, 'size': 5}

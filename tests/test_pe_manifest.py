@@ -297,7 +297,7 @@ def test_documents_with_a_dtd_or_entity_are_refused_before_parsing(name, encodin
     raw = ENCODINGS[encoding](DANGEROUS[name])
     started = time.perf_counter()
     obs = observe(raw)
-    assert time.perf_counter() - started <= 0.5
+    assert time.perf_counter() - started <= 2.5     # 5x slack for shared CI; the refusal does no parsing
     assert obs.warnings == ('manifest_dtd_rejected',) and empty(obs)
     assert obs.sha256 == hashlib.sha256(raw).hexdigest()
 

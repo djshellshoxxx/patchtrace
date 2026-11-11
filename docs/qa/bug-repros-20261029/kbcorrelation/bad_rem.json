@@ -1,0 +1,1 @@
+{"dialect":"cvrf-json/0","document":{"release_id":"2099-Feb"},"product_tree":[{"product_id":"A","name":"Windows 11 Version 24H2 for x64-based Systems"}],"vulnerabilities":[{"cve":"CVE-2099-0001","remediations":5}]}

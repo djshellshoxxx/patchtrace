@@ -1,0 +1,39 @@
+{
+  "file": "2026-Oct.json",
+  "elapsed_s": 3.76,
+  "counts": {
+    "vulnerabilities": 3424,
+    "edges": 29694,
+    "mention_only": 0,
+    "disputed": 0,
+    "edge_rows": 29694,
+    "scopes": 407,
+    "problems": 3359
+  },
+  "source": {
+    "contract": "kbcorrelation/1",
+    "doc_id": "cf8922a51bb5df5e114b0217fbf7f5a6d03bf33478abbca81154332f2e14325c",
+    "kind": "cvrf-month",
+    "sha256": "6cc40e5d3f2036d14b0413ad6604ca20a6a3ca9e97079c51ea8cfbc3f0f22c68",
+    "size": 29658577,
+    "origin": "local-import",
+    "uri": null,
+    "retrieved_at": "2026-11-01T12:00:00Z",
+    "release_id": "2026-Oct",
+    "current_release_date": null,
+    "dialect": "msrc-cvrf-json/1",
+    "parser_version": 1,
+    "authenticity": "unverified-local-file",
+    "lineage": "msrc",
+    "object_path": "objects/6c/6cc40e5d3f2036d14b0413ad6604ca20a6a3ca9e97079c51ea8cfbc3f0f22c68.gz"
+  },
+  "problem_codes": {
+    "DATE_ZONE_UNKNOWN": 1,
+    "KB_UNPARSED": 2909,
+    "CWE_MULTIPLE": 113,
+    "FIXED_BUILD_UNPARSED": 335,
+    "CVE_INVALID": 1
+  },
+  "sample_edge": null,
+  "all_edge_and_problem_pointers_resolved": true
+}

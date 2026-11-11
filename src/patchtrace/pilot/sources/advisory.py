@@ -139,7 +139,7 @@ def cwe_summary(profile: CweProfile) -> CweSummary:
 def _detail(classification: CweClassification, noun: str) -> str:
     if classification.assessment != 'advisory-claim':
         text = f'{classification.cwe_id} inferred from the {noun} wording ({classification.family})'
-    elif classification.basis == 'explicit-csaf-cwe':
+    elif classification.basis in ('explicit-csaf-cwe', 'explicit-advisory-cwe'):
         text = f'{classification.cwe_id} as stated by the {noun}'
     else:
         text = f'{classification.cwe_id} named in the {noun}'

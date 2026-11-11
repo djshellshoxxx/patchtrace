@@ -3,6 +3,7 @@
 importer/normaliser. None of this is live engine evidence: absent real tools are asserted as BLOCKED, not skipped."""
 from __future__ import annotations
 
+import hashlib
 import json
 import os
 import stat
@@ -15,10 +16,23 @@ from test_tier_r_eval_metrics import FUNCS, make_labels
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
+from tools.calibration.tier_r import contracts as C  # noqa: E402
 from tools.calibration.tier_r import evaluate as E  # noqa: E402
 
 BASE = 0x180000000
-LABELS = make_labels(FUNCS, pair_id='syn-eng')
+PLACEHOLDER = b'MZ synthetic image placeholder'
+
+
+def _with_real_hashes(labels):
+    """The scheduler verifies stored images against their recorded SHA-256, so the placeholder bytes must hash to it."""
+    doc = labels.model_dump(mode='json')
+    for side, key in (('older', b'-o'), ('newer', b'-n')):
+        doc[side]['sha256'] = hashlib.sha256(PLACEHOLDER + key).hexdigest()
+        doc[side]['debug_sha256'] = hashlib.sha256(PLACEHOLDER + key + b'-dbg').hexdigest()
+    return C.load_labels(C.dump_json(C.finalize_labels(doc)))
+
+
+LABELS = _with_real_hashes(make_labels(FUNCS, pair_id='syn-eng'))
 
 
 def _store(tmp_path, labels=LABELS, symbols='hidden'):
@@ -26,7 +40,8 @@ def _store(tmp_path, labels=LABELS, symbols='hidden'):
         sha = side.sha256 if symbols == 'hidden' else side.debug_sha256
         folder = tmp_path / 'store' / 'images' / sha
         folder.mkdir(parents=True, exist_ok=True)
-        (folder / side.file_name).write_bytes(b'MZ synthetic image placeholder')
+        key = b'-o' if side is labels.older else b'-n'
+        (folder / side.file_name).write_bytes(PLACEHOLDER + key + (b'' if symbols == 'hidden' else b'-dbg'))
     return tmp_path / 'store'
 
 

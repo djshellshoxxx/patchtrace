@@ -47,6 +47,8 @@ REQUIRED_NOTICES = ['qtbase-6.12.0/LICENSES/LGPL-3.0-only.txt', f'protobuf-{PROT
                     'bindiff-v8-aecc14d/LICENSE', 'bindiff-v8-aecc14d/PROVENANCE.txt']
 # SPEC-31 03 s3: the Ghidra extractor script runs in the user's external Python, so it travels as a data file.
 EXTRACTOR_SCRIPT = 'patchtrace/unified/extract/ghidra_script.py'
+# SPEC-53 GHR-2: the Ghidriff launcher also runs in the user's external Python, so it is a data file too.
+LAUNCHER_SCRIPT = 'patchtrace/ghidriff_launch/ptlaunch.py'
 
 
 # --- full variant (BUNDLE-integration-plan B8): pure helpers, shared with build_windows.py ---------------
@@ -374,6 +376,23 @@ def python_license() -> Path:
     raise RuntimeError('Python redistribution license is missing')
 
 
+def check_desktop_mark(package: Path, root: Path, platform_key: str) -> None:
+    """Never archive a desktop whose owner mark, SVG runtime or pinned notices are absent."""
+    mark_name = 'patchtrace/resources/patchtrace-mark.svg'
+    copies = [p for p in package.rglob('patchtrace-mark.svg') if p.as_posix().endswith('/' + mark_name)]
+    if len(copies) != 1 or copies[0].read_bytes() != (root / 'src' / mark_name).read_bytes():
+        raise RuntimeError('Application mark is missing or differs from source')
+    library = 'Qt6Svg.dll' if platform_key == 'windows' else 'libQt6Svg.so.6'
+    if not any(p.is_file() for p in package.rglob(library)):
+        raise RuntimeError('QtSvg runtime library missing from frozen package')
+    notices = root / 'third_party' / 'notices' / 'qtsvg-6.12.0'
+    required = ['LICENSES/LGPL-3.0-only.txt', 'LICENSES/GPL-2.0-only.txt', 'LICENSES/GPL-3.0-only.txt',
+                'LICENSES/BSD-3-Clause.txt',
+                'REUSE.toml', 'SOURCE-HEADERS.txt', 'PROVENANCE.txt']
+    if any(not (notices / name).is_file() for name in required):
+        raise RuntimeError('Pinned QtSvg notices are missing; refusing to publish distribution')
+
+
 def main(argv: list[str] | None = None) -> None:
     args = parse_args(argv)
     if not sys.platform.startswith('linux') or platform.machine() not in {'x86_64', 'AMD64'}:
@@ -399,7 +418,10 @@ def main(argv: list[str] | None = None) -> None:
     for name in DISTRIBUTIONS + [n for n in OPTIONAL_DISTRIBUTIONS if _installed(n)]:
         dist = importlib.metadata.distribution(name)
         versions[name] = dist.version
-        for file in dist.files or []:
+        files = dist.files
+        if not files:
+            raise RuntimeError(f'{name}: no installed file list; cannot copy its licenses')
+        for file in files:
             if any(word in file.name.lower() for word in ['license', 'copying', 'notice']):
                 source = Path(dist.locate_file(file))
                 if source.is_file():
@@ -420,6 +442,10 @@ def main(argv: list[str] | None = None) -> None:
     packaged = [item for item in inventory if item.endswith('/' + EXTRACTOR_SCRIPT)]
     if len(packaged) != 1 or (package / packaged[0]).read_bytes() != (root / 'src' / EXTRACTOR_SCRIPT).read_bytes():
         raise RuntimeError('Extractor script data file is missing or differs from the source tree')
+    packaged = [item for item in inventory if item.endswith('/' + LAUNCHER_SCRIPT)]
+    if len(packaged) != 1 or (package / packaged[0]).read_bytes() != (root / 'src' / LAUNCHER_SCRIPT).read_bytes():
+        raise RuntimeError('Ghidriff launcher data file is missing or differs from the source tree')
+    check_desktop_mark(package, root, 'linux')
     (package / 'file-inventory.json').write_text(json.dumps(inventory, indent=2), encoding='utf-8')
     executable = package / 'PatchTrace'
     if not os.access(executable, os.X_OK):

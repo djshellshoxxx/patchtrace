@@ -187,3 +187,116 @@ def test_unexpected_exception_maps_to_runtime_exit_with_json(monkeypatch, capsys
     assert cli.main(['rank', '--json', 'x']) == 3
     document = json.loads(capsys.readouterr().out)
     assert document['status'] == 'failed' and 'boom' in document['error']
+
+
+def test_text_mode_names_are_terminal_safe_wp01():
+    from types import SimpleNamespace as NS
+    hostile = 'f\x1b[2J\nforged‮evil\x9b'
+    match = NS(match_id='m', older=[NS(name=hostile)], newer=[])
+    names = cli._match_names([match])
+    assert names['m'] and not any(ord(c) < 32 or 0x7f <= ord(c) < 0xa0 or c == '‮' for c in names['m'])
+    assert '\\u001b' in names['m']
+
+
+def test_cache_on_a_file_root_fails_cli_b_01(tmp_path, capsys):
+    afile = tmp_path / "afile.txt"
+    afile.write_text("x")
+    for action in ("status", "verify", "prune"):
+        code, out, _ = run(["cache", action, "--cache-dir", str(afile), "--json"], capsys)
+        doc = json.loads(out)
+        assert code != 0 and doc["status"] == "failed" and "cache" in doc["error"], (action, code, doc)
+
+
+def test_usage_errors_emit_json_envelope_cli_b_02(project, capsys):
+    for argv, name in ((["rank", str(project), "--json", "--limit", "-1"], "rank"), (["bogus", "--json"], "patchtrace"),
+                       (["cache", "wipe", "--json"], "cache")):
+        code, out, _ = run(argv, capsys)
+        doc = json.loads(out)
+        assert code == 2 and doc["status"] == "failed" and doc["command"] == name and doc["error"], argv
+
+
+def test_interrupt_before_parse_emits_cancelled_envelope_cli_b_03(monkeypatch, capsys):
+    def boom(argv):
+        raise KeyboardInterrupt
+    monkeypatch.setattr(cli, "_parser", boom)
+    code, out, _ = run(["rank", "x", "--json"], capsys)
+    doc = json.loads(out)
+    assert code == cli.CANCELLED and doc["status"] == "cancelled" and doc["command"] == "rank"
+
+
+def test_interrupt_during_cli_dispatch_exits_cancelled_cli_b_04(monkeypatch, capsys):
+    from patchtrace import __main__ as entry
+    def boom(argv):
+        raise KeyboardInterrupt
+    monkeypatch.setattr(cli, "main", boom)
+    monkeypatch.setattr(sys, "argv", ["patchtrace", "rank", "x"])
+    assert entry.main() == cli.CANCELLED
+    assert capsys.readouterr().err.strip() == "cancelled"
+
+
+def test_text_mode_usage_error_is_terminal_safe_cli_b_09(project, capsys):
+    code, _, err = run(["rank", str(project), "\x1b[2J\u202e\x07"], capsys)
+    assert code == 2 and "\x1b" not in err and "\u202e" not in err and "\x07" not in err
+
+
+def test_cancel_clierror_writes_cancelled_envelope(project, capsys, monkeypatch):
+    def cancelled(*_a, **_k):
+        raise cli.CliError(cli.CANCELLED, 'cancelled by test')
+    monkeypatch.setitem(cli.HANDLERS, 'rank', cancelled)
+    code, out, _ = run(['rank', str(project), '--json'], capsys)
+    assert code == 5 and json.loads(out)['status'] == 'cancelled'
+
+
+
+@pytest.mark.parametrize('argv', [['rank', '--json'], ['bogus', '--json']], ids=['missing-arg', 'bad-verb'])
+def test_json_usage_error_prints_envelope(argv, capsys):
+    code, out, _ = run(argv, capsys)
+    doc = json.loads(out)
+    assert code == 2 and doc['status'] == 'failed' and doc['contract'] == cli.CLI_CONTRACT and doc['error']
+
+
+
+def test_clierror_message_is_redacted(project, capsys, monkeypatch):
+    def leaky(*_a, **_k):
+        raise cli.CliError(cli.RUNTIME, 'bad profile apiKey=abcdef123456SECRET')
+    monkeypatch.setitem(cli.HANDLERS, 'rank', leaky)
+    code, out, err = run(['rank', str(project), '--json'], capsys)
+    assert code == 3 and 'abcdef123456SECRET' not in out + err and 'redacted' in out
+
+
+
+def test_cache_status_unusable_path_is_an_environment_error(tmp_path, capsys):
+    blocker = tmp_path / 'file'
+    blocker.write_text('x')
+    code, out, _ = run(['cache', 'status', '--cache-dir', str(blocker), '--json'], capsys)
+    assert code == 2 and json.loads(out)['status'] == 'failed'
+
+
+@pytest.mark.parametrize('name', ['evil\x1b[2J\x1b[31mNAME', 'gnp\u202eexe', 'c1\x9b2Jx'], ids=['esc', 'rlo', 'c1-csi'])
+def test_text_output_escapes_hostile_characters(name, capsys):
+    from argparse import Namespace
+    cli._emit(Namespace(json=False), 'rank', 'complete', None, [f'warn {name}'], f'  1 {name}\nsecond line')
+    captured = capsys.readouterr()
+    for stream in (captured.out, captured.err):
+        assert not any(ch in stream for ch in '\x1b\x9b\u202e')
+    assert captured.out.endswith('second line\n') and captured.out.count('\n') == 2
+
+
+def test_unopenable_project_path_is_a_usage_error_without_absolute_path_cli_b_07(tmp_path, capsys):
+    code, out, _ = run(["rank", "A" * 5000, "--json"], capsys)
+    doc = json.loads(out)
+    assert code == 2 and doc["status"] == "failed" and str(tmp_path) not in doc["error"] and len(doc["error"]) < 300
+
+
+def test_file_as_project_path_is_reported_as_not_a_directory_cli_b_10(tmp_path, capsys):
+    afile = tmp_path / "afile.txt"
+    afile.write_text("x")
+    code, out, _ = run(["rank", str(afile), "--json"], capsys)
+    assert code == 2 and "not a directory" in json.loads(out)["error"]
+
+
+def test_kb_usage_error_command_label_has_no_placeholder_cli_b_11(project, capsys):
+    for argv, name in ((["kb", str(project), "--json"], "kb"), (["kb", "index", str(project), "--json"], "kb index")):
+        code, out, _ = run(argv, capsys)
+        doc = json.loads(out)
+        assert code == 2 and doc["command"] == name, (argv, doc)

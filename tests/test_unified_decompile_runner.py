@@ -234,7 +234,7 @@ def test_the_process_timeout_is_the_l41_run_budget_plus_the_start_overhead(tmp_p
 def test_the_deadline_of_the_run_caps_the_timeout(tmp_path):
     seen = []
     runner.decompile_side(job_for(tmp_path), Budget.after(30.0), runner=spy_runner(seen)).cleanup()
-    assert 0 < seen[0] <= 30.0
+    assert 0 < seen[0] <= 30.0 + 1e-6  # float rounding of deadline - clock() at a large monotonic reading
 
 
 def test_a_hung_child_is_killed_at_the_timeout_and_nothing_is_left(tmp_path, private_tempdir):

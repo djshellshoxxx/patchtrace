@@ -19,9 +19,14 @@ def test_triggers_are_push_to_main_on_site_paths_and_manual_dispatch():
 
 
 def test_permissions_are_minimal_for_pages_deployment():
+    # Workflow level is read-only; only the deploy job may write Pages / mint the OIDC token (CODEX-3).
     block = TEXT.split('permissions:\n', 1)[1].split('\nconcurrency:', 1)[0]
-    assert sorted(line.strip() for line in block.splitlines()) == ['contents: read', 'id-token: write',
-                                                                    'pages: write']
+    assert sorted(line.strip() for line in block.splitlines()) == ['contents: read']
+    deploy = TEXT.split('\n  deploy:\n', 1)[1]
+    deploy_perms = deploy.split('    permissions:\n', 1)[1].split('\n    environment:', 1)[0]
+    assert sorted(line.strip() for line in deploy_perms.splitlines()) == ['id-token: write', 'pages: write']
+    build = TEXT.split('\n  build:\n', 1)[1].split('\n  deploy:\n', 1)[0]
+    assert 'pages: write' not in build and 'id-token: write' not in build
 
 
 def test_one_deployment_at_a_time_without_cancelling_a_running_one():

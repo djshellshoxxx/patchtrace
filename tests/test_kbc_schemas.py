@@ -23,7 +23,7 @@ def generator():
 
 def test_committed_files_equal_a_fresh_regeneration():
     rendered = generator().render()
-    assert len(rendered) == len(generator().CONTRACTS) + 1
+    assert len(rendered) == len(generator().CONTRACTS) + 2  # examples and the persisted ContextBundle schema
     for path, text in rendered.items():
         assert path.read_text(encoding='utf-8') == text, f'{path.relative_to(ROOT)} is stale; regenerate it'
 

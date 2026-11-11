@@ -28,7 +28,7 @@ class Context:
     """Builds the production service lazily so ``--help`` and argument errors never import ``intelligence``."""
     env: object | None = None
     engine: object | None = None  # EngineEvidence for ``kb leads`` (default: the stored ranking of the project)
-    kev: object | None = None  # ExploitationLookup (K8); default: KEV not loaded
+    kev: object | None = None  # ExploitationLookup (K8); default: the local KEV catalog in use, read at first need
 
     def _env(self):
         if self.env is None:
@@ -39,6 +39,15 @@ class Context:
     def service(self, args):
         from .service import KbService
         return KbService(workspace_root(args), self._env())
+
+    def exploitation(self, kev_dir: Path | None):
+        """The injected lookup, else the catalog ``patchtrace kev`` keeps under ``kev_dir`` (default folder when None),
+        answered at the KB clock's moment. Offline and read-only; a missing or damaged store reads as not loaded."""
+        if self.kev is None:
+            from .adapters import kev as kev_adapter
+            self.kev = kev_adapter.load_exploitation(kev_dir or kev_adapter.default_kev_dir(),
+                                                     kev_adapter.clock_moment(self._env().clock))
+        return self.kev
 
     def index_ports(self) -> IndexPorts:
         env = self._env()
@@ -62,10 +71,14 @@ def _register_core(sub) -> None:
     explain = add_common(sub.add_parser('explain', help='show a project\'s advisory context'))
     explain.add_argument('project', metavar='PROJECT')
     explain.add_argument('--cve', metavar='CVE')
+    explain.add_argument('--kev-dir', type=Path, metavar='DIR', help='KEV catalog folder of "patchtrace kev" (read '
+                         'only; default: its usual folder)')
     export = add_common(sub.add_parser('export', help='write the advisory context as JSON or escaped Markdown'))
     export.add_argument('project', metavar='PROJECT')
     export.add_argument('file', metavar='FILE.json|FILE.md')
     export.add_argument('--overwrite', action='store_true')
+    export.add_argument('--kev-dir', type=Path, metavar='DIR', help='KEV catalog folder for the Markdown export (read '
+                        'only; the JSON export is the stored context as attached)')
 
 
 def cmd_search(args, context, out) -> int:
@@ -80,12 +93,14 @@ def cmd_attach(args, context, out) -> int:
 
 
 def cmd_explain(args, context, out) -> int:
-    return present(out, 'kb explain', args, context.service(args).explain(args.project, args.cve))
+    return present(out, 'kb explain', args, context.service(args).explain(args.project, args.cve,
+                                                                           kev=context.exploitation(args.kev_dir)))
 
 
 def cmd_export(args, context, out) -> int:
+    kev = context.exploitation(args.kev_dir) if args.file.lower().endswith('.md') else None
     return present(out, 'kb export', args, context.service(args).export(args.project, args.file,
-                                                                         overwrite=args.overwrite))
+                                                                         overwrite=args.overwrite, kev=kev))
 
 
 HANDLERS = {'search': cmd_search, 'attach': cmd_attach, 'explain': cmd_explain, 'export': cmd_export,

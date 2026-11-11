@@ -322,3 +322,49 @@ def test_tampered_raw_output_is_rejected(builds, tmp_path, capsys):
     # Through the CLI, ProjectService.open already refuses the changed raw file.
     code, doc, _ = create(capsys, builds[:3], root)
     assert code == 2 and 'preserved raw output' in doc['error']
+
+
+def test_symbol_flags_are_validated_before_any_work(capsys, builds, tmp_path):
+    """SPEC-53 section 8: online needs explicit consent, PDB folders only fit local mode, flags need --run."""
+    root = tmp_path / 's'
+    python, ghidra = sys.executable, str(tmp_path)
+    run_args = ['--run', '--python', python, '--ghidra-dir', ghidra]
+    code, doc, _ = create(capsys, builds[:3], root, *run_args, '--symbols', 'online')
+    assert code == 2 and 'PT-SYMBOL-NETWORK-REFUSED' in json.dumps(doc)
+    code, doc, _ = create(capsys, builds[:3], root, *run_args, '--symbol-dir', str(tmp_path))
+    assert code == 2 and 'PT-SYMBOL-MODE' in json.dumps(doc)
+    code, doc, _ = create(capsys, builds[:3], root, '--symbols', 'local')
+    assert code == 2 and not root.exists()
+
+
+def test_external_raw_match_skips_survive_series_persistence(builds, tmp_path, capsys):
+    """Real imported pair -> saved series notes: skipped import locations never become chain edges."""
+    root = tmp_path / 'external-series'
+    code, doc, _ = create(capsys, builds[:3], root)
+    assert code == 0, doc
+    pair_paths = [root / ref['path'] for ref in doc['result']['pair_projects']]
+    raw_matches = {
+        'address_matches': {
+            '1000': [['1010', ['ExactBytesFunctionHasher']]],
+            'EXTERNAL:0000000c': [['EXTERNAL:0000000d', ['SymbolsHash']]],
+            # The valid 1200 -> 1201 target must not leak through an EXTERNAL-touching row.
+            '1200': [['1201', ['SymbolsHash']], ['EXTERNAL:00000010', ['SymbolsHash']]],
+        },
+    }
+    import_pair(pair_paths[0], [], matches=raw_matches)
+    import_pair(pair_paths[1], [(('f', 0x1010, 'v1'), ('f', 0x1020, 'v2'), 0.5)])
+    code, doc, _ = create(capsys, builds[:3], root)
+    assert code == 0, doc
+
+    saved = store.load(root / 'series.json')
+    assert saved.pair_projects[0].notes == (
+        '2 raw address_matches entries at EXTERNAL:<hex> import locations skipped: '
+        'not functions of either build, so no edges',
+    )
+    assert len(saved.chains) == 1
+    assert [n.address for n in saved.chains[0].nodes] == [0x1000, 0x1010, 0x1020]
+    assert not any(n.address in (0x1200, 0x1201) for chain in saved.chains for n in chain.nodes)
+
+    before = (root / 'series.json').read_bytes()
+    assert create(capsys, builds[:3], root)[0] == 0
+    assert (root / 'series.json').read_bytes() == before

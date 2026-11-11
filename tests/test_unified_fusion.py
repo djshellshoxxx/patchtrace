@@ -311,3 +311,52 @@ def test_node_records_merge_with_the_first_source_winning():
     merged = arbiter.merge_nodes([[NodeRecord('older', 1, 'from-ghidriff'), NodeRecord('newer', 2, None)],
                                   [NodeRecord('older', 1, 'from-bindiff'), NodeRecord('newer', 2, 'only-here')]])
     assert merged[('older', 1)].name == 'from-ghidriff' and merged[('newer', 2)].name == 'only-here'
+
+
+# --- U7-05: BinDiff stub rows (basicblocks = 0) ---------------------------------------------------------------------
+
+def _bindiff_atoms(rows):
+    from unified_s0_fixtures import addr_map, bindiff_set, inputs, loaded
+
+    from patchtrace.unified.limits import Budget
+    from patchtrace.unified.sources.secondary import SecondaryAdapter
+    out = SecondaryAdapter().atoms(inputs([], secondary=[loaded(bindiff_set(rows), 'bd-entry')]), addr_map(), Budget())
+    return list(out.atoms), out
+
+
+def _stub_and_real():
+    from unified_s0_fixtures import bd
+    stub, real = bd(0x1000, 0x1080), bd(0x1100, 0x1180)
+    return stub.model_copy(update={'basicblocks': 0}), real.model_copy(update={'basicblocks': 7})
+
+
+@pytest.mark.parametrize('blocks', [0, None, 7], ids=['stub', 'unknown', 'real'])
+def test_bindiff_stub_row_alone_is_never_matched(blocks):
+    from unified_s0_fixtures import bd
+    atoms, out = _bindiff_atoms([bd(0x1000, 0x1080).model_copy(update={'basicblocks': blocks})])
+    row = only(decide(atoms), 0x1000, 0x1080)
+    assert row.decision == ('candidate' if blocks == 0 else 'matched')
+    if blocks == 0:
+        assert dict(atoms[0].native)['demoted'] == 'stub-basicblocks-0'
+        assert atoms[0].source == 'bindiff' and atoms[0].ref == 'bd-entry' and atoms[0].tier == 'C'
+        assert 'bindiff-stub-rows-demoted:1' in out.limitations
+
+
+def test_bindiff_non_stub_rows_keep_their_tier_and_old_rows_still_parse():
+    from patchtrace.secondary.contracts import SecondaryMatch
+    stub, real = _stub_and_real()
+    atoms, out = _bindiff_atoms([stub, real])
+    assert [(a.older_rva, a.tier) for a in atoms] == [(0x1000, 'C'), (0x1100, 'A')]
+    assert 'bindiff-stub-rows-not-identified' not in out.limitations
+    legacy = json.loads(real.model_dump_json())
+    del legacy['basicblocks']
+    assert SecondaryMatch.model_validate_json(json.dumps(legacy)).basicblocks is None
+
+
+def test_stub_row_with_an_independent_agreeing_source_follows_the_corroboration_rules():
+    stub, _ = _stub_and_real()
+    atoms, _ = _bindiff_atoms([stub])
+    # a stub (tier C) adds no usable class, so one agreeing tier-B source stays tentative
+    assert only(decide([*atoms, ptbytes(0x1000, 0x1080)]), 0x1000, 0x1080).decision == 'tentative'
+    # an independent tier-A source decides alone, exactly as without the stub
+    assert only(decide([*atoms, ghid(0x1000, 0x1080)]), 0x1000, 0x1080).decision == 'matched'

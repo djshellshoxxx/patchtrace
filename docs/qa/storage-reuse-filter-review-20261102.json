@@ -1,0 +1,82 @@
+{
+  "reviewer": "/root/rd_recover",
+  "date": "2026-11-02",
+  "candidate": "94caeb1e3ac723163f47f952ba395346a197cd02",
+  "parent": "7d9dce5c228235cecb7a08f3b55895addeb05b86",
+  "worktree": "/workspace/scratch/142cb233d750/wt-storage-filter",
+  "status": "no_blocking_findings",
+  "clean_worktree": true,
+  "changed_file_sha256": {
+    "docs/qa/backup-reuse-filter-20261102.md": "48ef42d5500f5ef89f04a3541240f6228101ddab0e491041f065573f5ec133a9",
+    "docs/qa/backup-reuse-filter-20261102.tar.gz": "5f3cf20d687a28edf81da05e43bb2901675c7e1daeb6cf5168617723ccd6cc21",
+    "docs/specs/enrichment-hardening-backlog.md": "f0b07db0eb9e8279778cf28fe692f7733857c45bfaa9958f609da32b390baf5e",
+    "src/patchtrace/verified_backup.py": "905649de5d52274c637eb2c3a049b11fe46f65d3e13df224a0befc4368be3589",
+    "tests/test_verified_backup_reuse_filter.py": "c1ac14a427e3ae9ff9b65c60a178f342b3d08431d6c1b234c9d36e2c70a1565d"
+  },
+  "checks": [
+    {
+      "cwd": "/workspace/scratch/142cb233d750/wt-storage-filter",
+      "environment": {
+        "PYTHONPATH": ".:src:tests",
+        "QT_QPA_PLATFORM": "offscreen"
+      },
+      "command": "/workspace/scratch/142cb233d750/venv/bin/python -m pytest -q tests/test_verified_backup_reuse_filter.py tests/test_verified_backup_byte_integrity.py tests/test_verified_backup_stat_api.py tests/test_enrichment_retention.py tests/test_history_bound.py tests/test_prune_backup.py",
+      "result": "52 passed in 4.24s",
+      "log": "storage-filter-review/focused.log",
+      "junit": "storage-filter-review/focused.xml"
+    },
+    {
+      "cwd": "/workspace/scratch/142cb233d750/wt-storage-filter-baseline-review",
+      "environment": {
+        "PYTHONPATH": ".:src:tests",
+        "QT_QPA_PLATFORM": "offscreen"
+      },
+      "command": "/workspace/scratch/142cb233d750/venv/bin/python -m pytest -q /workspace/scratch/142cb233d750/reviews-resume/storage-filter-review/test_final_reuse_filter.py",
+      "result": "4 failed in 0.41s; expected baseline failures at reads == [] assertions",
+      "log": "storage-filter-review/baseline-final-test.log",
+      "junit": "storage-filter-review/baseline-final-test.xml"
+    },
+    {
+      "cwd": "/workspace/scratch/142cb233d750/wt-storage-filter",
+      "environment": {
+        "PYTHONPATH": ".:src:tests",
+        "QT_QPA_PLATFORM": "offscreen"
+      },
+      "command": "/workspace/scratch/142cb233d750/venv/bin/python -m pytest -q /workspace/scratch/142cb233d750/reviews-resume/storage-filter-review/test_independent_storage_filter.py",
+      "result": "7 passed in 0.53s",
+      "log": "storage-filter-review/independent.log",
+      "junit": "storage-filter-review/independent.xml"
+    },
+    {
+      "command": "/workspace/scratch/142cb233d750/venv/bin/python -m ruff check src tests tools",
+      "result": "All checks passed!"
+    },
+    {
+      "command": "git diff --check 7d9dce5c228235cecb7a08f3b55895addeb05b86 94caeb1e3ac723163f47f952ba395346a197cd02",
+      "result": "passed; no output"
+    }
+  ],
+  "independent_controls": [
+    "Real SQLite candidate changes after prefilter; verified replacement facts for failed SQLite, foreign project, different snapshot, and missing history table all reach _cached as known verdicts and are refused by final facts check.",
+    "Cache removal after prefilter refuses trust and preserves prior backup bytes.",
+    "Newer foreign-project cached candidate is skipped; older eligible backup is freshly hashed and returned, with both backup byte streams preserved.",
+    "Public ProjectStore.save with a foreign cached backup and an unverifiable replacement commits the save, retains all prior history rows, and preserves the foreign backup bytes; no temporary copy remains."
+  ],
+  "nonblocking_notes": [
+    "Pre-existing docs/modules.md verified-backup row still says rename; the newer normative spec and implementation correctly require non-replacing hard-link publication."
+  ],
+  "limits": [
+    "Bounded local Linux tests only; no full suite, throughput, native Windows, or power-loss claim.",
+    "No remote writes. Candidate source and callgraph candidate 96256be remain unchanged."
+  ],
+  "artifact_sha256": {
+    "baseline-final-test.log": "9872844df731c2e5ba851a1988e049bc3a0a624130b5feb5b16db2a3c48df539",
+    "baseline-final-test.xml": "7a6c796e3ed126801b937cbc93a6229c2250fb8e9c53636608138efd0de268db",
+    "focused.log": "e35d4beb236b6d821390b9d161cfa3430210d798cdedd6158785ba3ca576ee02",
+    "focused.xml": "30f40c42b0109020445705a22c0c56703a46df9b62d216814d2d21611bda7f9f",
+    "independent.log": "3b1c284313edd5ff13ac9245822f8e0e4750778ea8e7d8c0189bf4d979c7433a",
+    "independent.xml": "0fe2323d4b55eb2dfa4a9e0c3fe1d8652703493c3fa4b25bc6b699588332e839",
+    "test_final_reuse_filter.py": "c1ac14a427e3ae9ff9b65c60a178f342b3d08431d6c1b234c9d36e2c70a1565d",
+    "test_independent_storage_filter.py": "aeff0ae325ac3c4ba6b568d2c0677d53276f954b0bcc1748bbb304fc1a0091e0"
+  }
+}

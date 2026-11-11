@@ -105,7 +105,7 @@ Status: contract-freeze draft, 2026-10-14, base `main` = `cb25132`. Number check
 | U-04 | Retire the C6 Evidence tab once the Unified tab passes G-U gates? | keep both until gates pass, then retire (single drill-down) |
 | U-05 | Feature flag default | OFF in alpha; ON only after G-U1..G-U6 pass |
 | U-06 | Show tier-B rows without cross-component, cross-class corroboration as `tentative`? | yes (never counted as matched; their targets never count as `mapped` for proofs, 05 s2.7) |
-| U-07 | Tier R corpus builds on Windows CI runners (clang-cl/mingw/MSVC) for A/A and planted-mutation gates | yes (consistent with spec-decisions O6) |
+| U-07 | Tier R corpus builds on Windows CI runners (clang-cl/mingw/MSVC) for A/A and planted-mutation gates | yes (consistent with spec-decisions O6). 2026-10-15: runners confirmed to carry MSVC and LLVM components (`../../research/ue-open-questions.md` Q2) |
 | U-08 | IR storage: project-local only, or also the global derived cache when a profile `cache_dir` is set? | both; global cache optional |
 | U-09 | Memory cap for the unified worker | L-42 = min(4 GiB, 50 % RAM) with C3's OOM classification (prototype peak 0.3 GiB at 60k functions [own] leaves > 10x headroom); never on the JVM |
 | U-10 | Run unified analysis automatically after each Ghidriff run when the flag is on? | no: explicit action (analyst control); CLI `unified run` |
@@ -114,3 +114,5 @@ Status: contract-freeze draft, 2026-10-14, base `main` = `cb25132`. Number check
 
 ## 5. Conventions used by all SPEC-31 files
 Tier letters: M manual, A auto-accept key, B corroborating key, C candidate, W weak external evidence. "Component" = independence component (05 s1). Numbers live in 02 s6 (single source); other files repeat them only with a pointer. Error codes `PT-UNIFIED-*` in 01 s6.
+
+Open-question research (2026-10-15): `../../research/ue-open-questions.md` resolves the FID marker and U-07, keeps the other defaults, and lists owner questions O1-O3.

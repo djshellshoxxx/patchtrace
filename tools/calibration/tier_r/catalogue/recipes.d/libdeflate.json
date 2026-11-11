@@ -1,0 +1,76 @@
+{
+ "contract": "tier-r-recipes/1",
+ "excluded": [],
+ "recipes": [
+  {
+   "contract": "tier-r-recipe/1",
+   "project": "libdeflate",
+   "family": "compression",
+   "upstream_git": "https://github.com/ebiggers/libdeflate.git",
+   "license_spdx": "MIT",
+   "license_file": "COPYING",
+   "license_evidence": "COPYING read at all 8 pins (first 02013385), 2 distinct SHA-256: MIT licence / Copyright Eric Biggers / Permission is hereby granted, free of charge, to any person obtaining a copy of this software (the copyright line gains Google LLC from v1.21)",
+   "libc": "mingw",
+   "output": "libdeflate.dll",
+   "sources": [
+    "lib/*.c",
+    "lib/x86/*.c",
+    "lib/arm/*.c"
+   ],
+   "include_dirs": [
+    "."
+   ],
+   "pins": [
+    {
+     "ref": "v1.15",
+     "commit": "020133854ff73b8506fe59f92a9b5b622d360716",
+     "license_sha256": "5d246dd2537307b80fed9ba5fdddf5d0fe7a8f023393a071182b9daed56b40fe",
+     "date": "2022-12-04"
+    },
+    {
+     "ref": "v1.16",
+     "commit": "7e11d509789df468151b52f7ed64ca4e566996c4",
+     "license_sha256": "5d246dd2537307b80fed9ba5fdddf5d0fe7a8f023393a071182b9daed56b40fe",
+     "date": "2023-01-12"
+    },
+    {
+     "ref": "v1.17",
+     "commit": "bd925ae68e99f65d69f20181cb845aaba5c8f098",
+     "license_sha256": "5d246dd2537307b80fed9ba5fdddf5d0fe7a8f023393a071182b9daed56b40fe",
+     "date": "2023-01-15"
+    },
+    {
+     "ref": "v1.18",
+     "commit": "495fee110ebb48a5eb63b75fd67e42b2955871e2",
+     "license_sha256": "5d246dd2537307b80fed9ba5fdddf5d0fe7a8f023393a071182b9daed56b40fe",
+     "date": "2023-03-23"
+    },
+    {
+     "ref": "v1.19",
+     "commit": "dd12ff2b36d603dbb7fa8838fe7e7176fcbd4f6f",
+     "license_sha256": "5d246dd2537307b80fed9ba5fdddf5d0fe7a8f023393a071182b9daed56b40fe",
+     "date": "2023-09-16"
+    },
+    {
+     "ref": "v1.20",
+     "commit": "275aa5141db6eda3587214e0f1d3a134768f557d",
+     "license_sha256": "5d246dd2537307b80fed9ba5fdddf5d0fe7a8f023393a071182b9daed56b40fe",
+     "date": "2024-03-17"
+    },
+    {
+     "ref": "v1.23",
+     "commit": "78051988f96dc8d8916310d8b24021f01bd9e102",
+     "license_sha256": "4ad69099cb4374836fd27583d9991e2838cd86b6e4666ab26b2d32582c91e73a",
+     "date": "2024-12-10"
+    },
+    {
+     "ref": "v1.24",
+     "commit": "96836d7d9d10e3e0d53e6edb54eb908514e336c4",
+     "license_sha256": "4ad69099cb4374836fd27583d9991e2838cd86b6e4666ab26b2d32582c91e73a",
+     "date": "2025-05-11"
+    }
+   ],
+   "notes": "Library sources only (programs/, scripts/ and tests are not compiled); no cmake or make: lib/*.c plus the per-arch cpu_features.c files, whose bodies compile out on the other architecture. Each pin passes native gcc -std=gnu11 -fsyntax-only -I. on all 11 sources; built with mingw-w64 gcc 13-win32 -O2 -g at every card pin. Upstream uses no dllexport without LIBDEFLATE_DLL, so the DLL exports every global symbol."
+  }
+ ]
+}

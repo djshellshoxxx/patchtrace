@@ -542,7 +542,7 @@ def test_lookup_markdown_is_a_report_block_with_every_untrusted_value_escaped(wo
     markdown = run.result['markdown']
     lines = markdown.splitlines()
     assert lines[0] == '### Exploitation context (CISA KEV)'
-    assert lines[2].startswith('Catalog 2099.03.01, released 2099-03-01 18:00:00 UTC, 4 entries, retrieved 2099-03-02')
+    assert lines[2].startswith('Catalog 2099\\.03\\.01, released 2099-03-01 18:00:00 UTC, 4 entries, retrieved 2099-03-02')
     assert 'SHA-256 ' in lines[2] and lines[2].endswith('CC0 1.0.')
     assert '| CVE | KEV | Added to KEV | CISA due date | Known ransomware campaign use | Forensic triage required by CISA |' in lines
     assert f'| {LISTED_KNOWN} | Listed - ransomware known | 2099-02-10 | 2099-02-13 | Known | Yes |' in lines

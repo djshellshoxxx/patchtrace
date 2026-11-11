@@ -271,3 +271,34 @@ def test_overridden_engine_edge_does_not_create_a_second_chain_through_the_node(
     chains, _ = extract_chains(H[:3], [p.build() for p in pairs])
     through_n = [c for c in chains if any(n.name == 'n' for n in c.nodes)]
     assert len(through_n) == 1 and all(e.manual for e in through_n[0].edges[:1])
+
+
+def test_ser2_over_long_name_is_an_nway_error_not_a_contract_error():
+    ps = pairs(3)
+    ps[0].one(fn('x' * 5000, 0x1000), fn('f', 0x1001))
+    ps[1].one(fn('f', 0x1001), fn('f', 0x1002))
+    with pytest.raises(NwayError, match='PT-NWAY-INPUT'):
+        extract_chains(H[:3], [p.build() for p in ps])
+
+
+def test_ser2_empty_name_with_an_address_becomes_an_address_only_node():
+    ps = pairs(3)
+    ps[0].one(fn('', 0x1000), fn('', 0x1001))
+    ps[1].one(fn('', 0x1001), fn('', 0x1002))
+    chain = extract_chains(H[:3], [p.build() for p in ps])[0][0]
+    assert [(n.address, n.name) for n in chain.nodes] == [(0x1000, None), (0x1001, None), (0x1002, None)]
+
+
+def test_ser2_empty_name_without_an_address_is_an_nway_error():
+    ps = pairs(3)
+    ps[0].one(fn('', None), fn('f', 0x1001))
+    ps[1].one(fn('f', 0x1001), fn('f', 0x1002))
+    with pytest.raises(NwayError, match='PT-NWAY-INPUT'):
+        extract_chains(H[:3], [p.build() for p in ps])
+
+
+def test_ser3_split_that_includes_the_chain_end_is_inferred_not_contradicted():
+    built = [p.build() for p in straight(3)]
+    d = PairBuilder(H[0], H[2])
+    d.rel('split', older=[fn('f', 0x1000)], newer=[fn('f', 0x1002), fn('g', 0x5000)], match_types=())
+    assert extract_chains(H[:3], built, d.build())[0][0].status == 'inferred'

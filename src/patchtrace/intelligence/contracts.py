@@ -52,7 +52,7 @@ BranchCategory = Literal['architecture', 'host_name', 'language', 'legacy', 'pat
                          'product_name', 'product_version', 'product_version_range', 'service_pack',
                          'specification', 'vendor']
 NoteCategory = Literal['description', 'details', 'faq', 'general', 'legal_disclaimer', 'other', 'summary']
-CweBasis = Literal['explicit-csaf-cwe', 'cwe-id-in-text', 'curated-vocabulary']
+CweBasis = Literal['explicit-csaf-cwe', 'explicit-advisory-cwe', 'cwe-id-in-text', 'curated-vocabulary']
 LexiconScope = Literal['weakness', 'effect', 'component', 'primitive']
 
 
@@ -454,11 +454,11 @@ class CweClassification(Record):
 
     @model_validator(mode='after')
     def _honest(self):
-        claim = self.basis in ('explicit-csaf-cwe', 'cwe-id-in-text')
+        claim = self.basis in ('explicit-csaf-cwe', 'explicit-advisory-cwe', 'cwe-id-in-text')
         if claim != (self.assessment == 'advisory-claim'):
             raise ValueError('only vendor-stated CWEs are advisory claims; vocabulary matches are hypotheses')
-        if (self.basis == 'explicit-csaf-cwe') != (self.confidence == 'explicit'):
-            raise ValueError('confidence "explicit" is reserved for the CSAF cwe field')
+        if self.basis.startswith('explicit-') != (self.confidence == 'explicit'):
+            raise ValueError('confidence "explicit" is reserved for a stated advisory CWE field')
         return self
 
 
@@ -478,8 +478,8 @@ class CweProfile(Contract):
         confident = [c for c in self.classifications if c.confidence != 'weak']
         if self.status in ('vague', 'none') and confident:
             raise ValueError('vague or empty text never carries a confident classification')
-        if self.status == 'explicit' and not any(c.basis == 'explicit-csaf-cwe' for c in self.classifications):
-            raise ValueError('status explicit requires the CSAF cwe field')
+        if self.status == 'explicit' and not any(c.basis.startswith('explicit-') for c in self.classifications):
+            raise ValueError('status explicit requires a stated advisory CWE field')
         return self
 
 

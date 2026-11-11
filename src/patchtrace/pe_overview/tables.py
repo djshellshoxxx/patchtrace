@@ -16,7 +16,7 @@ import struct
 from collections.abc import Callable, Iterator
 from dataclasses import dataclass
 
-from patchtrace.artifact_bytes import MAX_READ_BYTES, VerifiedArtifactReader
+from patchtrace.artifact_bytes import MAX_READ_BYTES, ArtifactBytesError, VerifiedArtifactReader
 
 from .inspect import inspect_pe
 from .models import PeOverview
@@ -44,6 +44,33 @@ class RuntimeFunction:
 def _placeholder(text: str) -> bool:
     """`parse_imports` stands in `<unreadable ...>` or `<invalid thunk ...>` for entries it could not read."""
     return text.startswith('<') and text.endswith('>')
+
+
+def parse_base_relocations(data: bytes, warnings: list[str]) -> list[tuple[int, int]]:
+    """(RVA, width) of every relocation in a .reloc directory. Every entry, including zero-width ABSOLUTE padding,
+    counts toward MAX_RELOCS, and a block's declared count is checked before it is walked, so a huge zero-filled
+    (virtual) directory is refused at once. An unknown type is reported once and masked as 8 bytes."""
+    pos, seen, entries, unknown = 0, 0, [], set()
+    while pos + 8 <= len(data):
+        page, block = struct.unpack_from('<II', data, pos)
+        if block == 0 and page == 0:
+            break
+        if block < 8 or pos + block > len(data) or block % 2:
+            raise PeTableError('malformed base relocation block')
+        seen += (block - 8) // 2
+        if seen > MAX_RELOCS:
+            raise PeTableError('too many base relocations')
+        for i in range((block - 8) // 2):
+            (entry,) = struct.unpack_from('<H', data, pos + 8 + 2 * i)
+            kind, offset = entry >> 12, entry & 0xFFF
+            width = RELOC_WIDTH.get(kind, 8)
+            if kind not in RELOC_WIDTH and kind not in unknown:
+                unknown.add(kind)
+                warnings.append(f'relocation type {kind} masked as 8 bytes')
+            if width:
+                entries.append((page + offset, width))
+        pos += block
+    return entries
 
 
 class PeTables:
@@ -82,6 +109,12 @@ class PeTables:
         """Bytes at [rva, rva+length); RVA space the file does not back (BSS, gaps) reads as zero."""
         if length < 0 or rva < 0 or rva + length > 2**32:
             raise PeTableError('RVA range out of 32-bit space')
+        try:
+            return self._read_rva(rva, length)
+        except ArtifactBytesError as exc:
+            raise PeTableError(f'{exc.code}: {exc}') from exc
+
+    def _read_rva(self, rva: int, length: int) -> bytes:
         out = bytearray()
         cursor, end = rva, rva + length
         regions = self._regions
@@ -97,9 +130,11 @@ class PeTables:
             backed_end = region.start + region.backed
             if cursor < backed_end:
                 take = min(stop, backed_end)
-                data = self.reader.read(region.file_offset + cursor - region.start, take - cursor)
-                out += data.ljust(take - cursor, b'\0')
-                cursor = take
+                while cursor < take:  # one reader call is capped, a directory may be larger
+                    piece = min(take, cursor + MAX_READ_BYTES)
+                    data = self.reader.read(region.file_offset + cursor - region.start, piece - cursor)
+                    out += data.ljust(piece - cursor, b'\0')
+                    cursor = piece
             if cursor < stop:
                 out += bytes(stop - cursor)
                 cursor = stop
@@ -111,7 +146,9 @@ class PeTables:
         ranges = self.smap.rva_to_file_ranges(rva, length)
         if not ranges or len(ranges) != 1 or ranges[0].length != length:
             return None
-        return self.reader.read(ranges[0].file_offset, length, clip=False)
+        start = ranges[0].file_offset
+        return b''.join(self.reader.read(start + done, min(MAX_READ_BYTES, length - done), clip=False)
+                        for done in range(0, length, MAX_READ_BYTES))
 
     def rva_to_offset(self, rva: int) -> int | None:
         return self.smap.rva_to_offset(rva)
@@ -173,25 +210,7 @@ class PeTables:
             self._relocs = ([], [])
             return self._relocs
         rva, size = found
-        data = self.read_rva(rva, size)
-        pos, entries = 0, []
-        while pos + 8 <= len(data):
-            page, block = struct.unpack_from('<II', data, pos)
-            if block == 0 and page == 0:
-                break
-            if block < 8 or pos + block > len(data) or block % 2:
-                raise PeTableError('malformed base relocation block')
-            for i in range((block - 8) // 2):
-                (entry,) = struct.unpack_from('<H', data, pos + 8 + 2 * i)
-                kind, offset = entry >> 12, entry & 0xFFF
-                width = RELOC_WIDTH.get(kind, 8)
-                if kind not in RELOC_WIDTH:
-                    self.warnings.append(f'relocation type {kind} masked as 8 bytes')
-                if width:
-                    entries.append((page + offset, width))
-                    if len(entries) > MAX_RELOCS:
-                        raise PeTableError('too many base relocations')
-            pos += block
+        entries = parse_base_relocations(self.read_rva(rva, size), self.warnings)
         entries.sort()
         self._relocs = ([e[0] for e in entries], [e[1] for e in entries])
         return self._relocs

@@ -1,6 +1,6 @@
 # PatchTrace privacy statement
 
-Plain-language summary of what PatchTrace sends over the network. The authoritative inventory, with code citations, is `docs/specs/network-egress-privacy.md` (SPEC-42, draft); settings are in `docs/specs/app-settings.md` (SPEC-43) and the AI path in `docs/specs/ai-provider-interpretation.md` (SPEC-41). Checked against the repository on 2026-10-14; the known gaps at the end are things that are not yet as good as this text would like.
+Plain-language summary of what PatchTrace sends over the network. The authoritative inventory, with code citations, is `docs/specs/network-egress-privacy.md` (SPEC-42, draft); settings are in `docs/specs/app-settings.md` (SPEC-43) and the AI path in `docs/specs/ai-provider-interpretation.md` (SPEC-41). Checked against the repository on 2026-10-15 (download staging and key handling re-read that day); the known gaps at the end are things that are not yet as good as this text would like.
 
 ## The short version
 
@@ -14,7 +14,7 @@ Plain-language summary of what PatchTrace sends over the network. The authoritat
 | What | Host | When | What is sent | How to keep it off |
 |---|---|---|---|---|
 | Find builds (Winbindex) | `winbindex.m417z.com` | Only when you run acquisition and approve the host (GUI dialog, or CLI `acquire search --consent-hosts winbindex.m417z.com`) | The lower-case file name in the URL and a `User-Agent: PatchTrace` header | Do not run acquisition; there is no background lookup |
-| Download builds | `msdl.microsoft.com`, then one redirect to `*.blob.core.windows.net` | Only after you approve the displayed download plan | The public file name, timestamp and image size in the URL; no body. Downloads are checked against the Winbindex size and SHA-256, held in quarantine and never executed | Do not approve the plan |
+| Download builds | `msdl.microsoft.com`, then one redirect to `*.blob.core.windows.net` | Only after you approve the displayed download plan | The public file name, timestamp and image size in the URL; no body. Each download is written to a private temporary staging folder under the system temp directory (`tempfile.gettempdir()`, `acquisition/quarantine.py`), checked against the Winbindex size and SHA-256, then promoted into the project folder you name with `acquire fetch --project`; the staging folder is removed afterwards. Nothing is executed | Do not approve the plan |
 | CVE data | `api.msrc.microsoft.com`, `services.nvd.nist.gov` | Only for `correlate --fetch` with `--consent-providers` naming exactly the providers | The CVE ID, standard headers, and an NVD API key if you supply one (header to NVD only; dropped on a cross-host redirect). At most 64 CVEs per plan | Omit `--fetch`; `correlate` then reads only snapshot files you give it |
 | Advisories (CSAF) | `msrc.microsoft.com` | Only for `intelligence fetch` with `--consent-hosts msrc.microsoft.com` | GET requests for the index and documents named by CVE | Use `--offline` (reads only `--cache-dir`, opens no socket) |
 | AI interpretation, remote | A URL you type; the dialog default is `https://api.openai.com/v1` | Only when you press Send in the context preview | The exact preview text (system prompt plus decompiled function lines, names, callers, callees; default 24,000 characters) and your key as a bearer header. HTTPS is required and redirects are refused | Do not use the AI feature; Cancel sends nothing |
@@ -27,7 +27,7 @@ Developer-only tools (not part of the shipped app, each run by hand): pinned rel
 
 - Projects, evidence, notes and reports are files on your computer. Each project has an `analysis.log` (Ghidriff log tail with credential-looking text redacted).
 - Preferences are in Qt `QSettings('PatchTrace', 'PatchTrace')` (on Windows, the per-user registry). SPEC-43 lists 27 keys: window layout, paths to Python/Ghidra/BinDiff, timeouts, the symbol-lookup checkbox, the AI kind, endpoint and model, recent projects. No credential key exists.
-- AI key: typed into the preview dialog (password field "Session only; never saved"), held in memory for the session. The setting write stores only kind, endpoint and model.
+- AI key: typed into the preview dialog (password field "Session only; never saved"), kept in memory for the current request only and never saved (`ui.py`, `tooltips.py`). The setting write stores only kind, endpoint and model.
 - NVD key: read from the environment variable you name with `--api-key-env`; never stored.
 - Lock and cache files record this computer's host name and process id locally; they are never sent anywhere.
 

@@ -50,6 +50,72 @@ def test_sample_navigation_filters_and_missing_assembly(window):
     assert 'No older function' in window.views['older'].toPlainText()
 
 
+def test_failed_note_save_keeps_analyst_text(window, monkeypatch):
+    window.notes.setPlainText('Important unsaved assessment')
+    old_count = len(window.project.annotations)
+    errors = []
+    monkeypatch.setattr(window, 'show_error', errors.append)
+
+    def fail(*_args, **_kwargs):
+        raise OSError('simulated storage failure')
+
+    monkeypatch.setattr(window.service, 'annotate', fail)
+    window.save_note()
+    assert window.notes.toPlainText() == 'Important unsaved assessment'
+    assert len(window.project.annotations) == old_count
+    assert errors == ['simulated storage failure']
+    assert window.statusBar().currentMessage() != 'Analyst note saved.'
+
+
+def test_failed_bookmark_does_not_claim_success(window, monkeypatch):
+    window.findings_list.setCurrentRow(0)
+    window.evidence_list.setCurrentRow(0)
+    assert window.evidence_list.currentItem() is not None
+    old_count = len(window.project.annotations)
+    errors = []
+    monkeypatch.setattr(window, 'show_error', errors.append)
+
+    def fail(*_args, **_kwargs):
+        raise OSError('bookmark write failed')
+
+    monkeypatch.setattr(window.service, 'annotate', fail)
+    window.bookmark_evidence()
+    assert len(window.project.annotations) == old_count
+    assert errors == ['bookmark write failed']
+    assert window.statusBar().currentMessage() != 'Evidence bookmark saved.'
+
+
+def test_failed_project_save_does_not_claim_success(window, monkeypatch):
+    errors = []
+    monkeypatch.setattr(window, 'show_error', errors.append)
+
+    def fail():
+        raise OSError('save write failed')
+
+    monkeypatch.setattr(window.service, 'save', fail)
+    window.save_project()
+    assert errors == ['save write failed']
+    assert window.statusBar().currentMessage() != 'Project saved'
+
+
+def test_failed_finding_review_preserves_draft(window, monkeypatch):
+    window.findings_list.setCurrentRow(0)
+    window.finding_review.setCurrentText('needs-review')
+    window.conclusion.setPlainText('Unsaved review reasoning')
+    old_review = window._finding.review
+    errors = []
+    monkeypatch.setattr(window, 'show_error', errors.append)
+
+    def fail(*_args, **_kwargs):
+        raise OSError('finding write failed')
+
+    monkeypatch.setattr(window.service, 'review_finding', fail)
+    window.review_finding()
+    assert window.conclusion.toPlainText() == 'Unsaved review reasoning'
+    assert window._finding.review == old_review
+    assert errors == ['finding write failed']
+
+
 def test_match_review_note_and_provenance_clipboard(window):
     window.search.setText('read_item')
     match_id = window.current_match().id
@@ -231,9 +297,9 @@ def test_cancelled_prepared_import_never_changes_revision(window, monkeypatch, q
 def test_context_budget_is_used_in_preview(window, monkeypatch):
     original = build_context
     seen = []
-    def capture(project, ids, max_chars):
+    def capture(project, ids, max_chars, **kwargs):
         seen.append(max_chars)
-        return original(project, ids, max_chars=max_chars)
+        return original(project, ids, max_chars=max_chars, **kwargs)
     window.settings.setValue('provider/context_budget', 12000)
     monkeypatch.setattr('patchtrace.ui.build_context', capture)
     monkeypatch.setattr(ContextDialog, 'exec', lambda dialog: QDialog.DialogCode.Rejected)

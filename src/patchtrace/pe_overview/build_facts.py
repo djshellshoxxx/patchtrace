@@ -80,9 +80,10 @@ def _version_pairs(ctx: Ctx, opt_offset: int) -> dict[str, tuple[int, int] | Non
             'image': struct.unpack_from('<HH', raw, 44), 'subsystem': struct.unpack_from('<HH', raw, 48)}
 
 
-def _load_config(ctx: Ctx, ov: PeOverview, offset: int | None, size: int) -> tuple[tuple[str, ...] | None, bool | None]:
+def _load_config(ctx: Ctx, ov: PeOverview, span: tuple[int, int] | None,
+                 size: int) -> tuple[tuple[str, ...] | None, bool | None]:
     layout = _LOAD_CONFIG.get(ov.optional_magic or '')
-    raw = ctx.read(offset, min(size, 160)) if layout is not None and offset is not None else b''
+    raw = ctx.read(*span) if layout is not None and span is not None else b''
     if layout is None or len(raw) < 4:
         return None, None
     cookie_at, width, flags_at = layout
@@ -162,7 +163,8 @@ def _collect(ctx: Ctx, ov: PeOverview, out: dict[str, Any], anomalies: list[str]
             anomalies.append('clr-header-unreadable')
     if cfg is not None and cfg.present:
         out['load_config'] = _guarded(
-            ctx, 'load-config', lambda: _load_config(ctx, ov, smap.rva_to_offset(cfg.rva), cfg.size), anomalies)
+            ctx, 'load-config', lambda: _load_config(ctx, ov, smap.backed_prefix(cfg.rva, min(cfg.size, 160)),
+                                                     cfg.size), anomalies)
 
 
 def _assemble(ov: PeOverview, out: dict[str, Any], anomalies: list[str]) -> PeBuildFacts:

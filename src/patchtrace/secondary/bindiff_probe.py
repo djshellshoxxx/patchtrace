@@ -91,7 +91,7 @@ def make_private_dirs(workdir: Path) -> None:
 def parse_version(text: str) -> tuple[int, str] | None:
     """First line `BinDiff <major><detail>` -> (major, detail<=120 chars, control characters stripped)."""
     for line in text.splitlines():
-        if match := _VERSION.match(line.strip()):
+        if (match := _VERSION.match(line.strip())) and len(match.group(1)) <= 9:
             detail = ''.join(c for c in match.group(2) if ord(c) >= 32 and ord(c) != 127)[:120]
             return int(match.group(1)), detail
     return None

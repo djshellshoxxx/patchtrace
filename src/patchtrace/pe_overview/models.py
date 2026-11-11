@@ -21,6 +21,13 @@ class Limits:
     checksum_max_file: int = 256 * 1024 * 1024
     max_certificates: int = 64
     chunk: int = 1024 * 1024
+    # SPEC-51 7.3: PKCS#7 reading
+    max_der_bytes: int = 262144
+    max_der_depth: int = 32  # SPEC-51 says 12; a timestamped or nested signature is 18 deep
+    max_der_nodes: int = 20000
+    max_signers: int = 4
+    max_signature_certs: int = 64
+    max_nested_signatures: int = 4
 
 
 @dataclass(frozen=True, slots=True)
@@ -140,6 +147,77 @@ class PackerHint:
     name: str
     confidence: str
     evidence: str
+
+
+TIMESTAMP_NOTE = 'Claimed by the signature container; its signature and chain were not verified.'
+
+
+@dataclass(frozen=True, slots=True)
+class CertificateSummary:
+    """Identity and validity window of one certificate carried in a signature (text from the file, untrusted)."""
+    subject_cn: str | None
+    subject_dn: str
+    issuer_cn: str | None
+    issuer_dn: str
+    serial_hex: str
+    not_before: str | None
+    not_after: str | None
+    eku_code_signing: bool | None
+
+
+@dataclass(frozen=True, slots=True)
+class SignerInfo:
+    issuer_cn: str | None
+    issuer_dn: str
+    serial_hex: str
+    subject_cn: str | None
+    subject_dn: str | None
+    not_before: str | None
+    not_after: str | None
+    eku_code_signing: bool | None
+    digest_alg: str
+    signature_alg_oid: str | None
+    signer_cert_found: bool
+
+
+@dataclass(frozen=True, slots=True)
+class TimestampClaim:
+    kind: str  # rfc3161 | ms_countersignature
+    claimed_time_utc: str | None
+    token_structure_ok: bool
+    note: str = TIMESTAMP_NOTE
+
+
+@dataclass(frozen=True, slots=True)
+class CatalogResult:
+    """Windows catalog signature lookup. `state` is present_trusted_no_revocation_check | present_untrusted | absent |
+    not_checked | unavailable; `catalog_name` is a cleaned basename."""
+    state: str
+    catalog_name: str | None
+    hresult: int | None
+
+
+@dataclass(frozen=True, slots=True)
+class SignatureInfo:
+    """One WIN_CERTIFICATE signature; nested signatures follow their parent with `nested_depth` + 1.
+
+    Facts about structure and digest only. `signature_math`, `chain` and `revocation` say what was NOT evaluated.
+    """
+    index: int
+    nested_depth: int
+    structure: str  # ok | malformed | unsupported_type
+    digest_algorithm: str  # sha1 | sha256 | sha384 | sha512 | md5 | unknown
+    digest_claimed_hex: str | None
+    digest_computed_hex: str | None
+    digest_match: bool | None
+    weak_digest: bool
+    signers: tuple[SignerInfo, ...]
+    certificates: tuple[CertificateSummary, ...]
+    timestamps: tuple[TimestampClaim, ...]
+    signature_math: str = 'not_evaluated'
+    chain: str = 'not_evaluated'
+    revocation: str = 'not_checked'
+    warnings: tuple[str, ...] = ()
 
 
 @dataclass(frozen=True, slots=True)
@@ -264,3 +342,17 @@ class SectionMap:
     def rva_to_offset(self, rva: int) -> int | None:
         ranges = self.rva_to_file_ranges(rva, 1)
         return ranges[0].file_offset if ranges else None
+
+    def backed_prefix(self, rva: int, want: int) -> tuple[int, int] | None:
+        """(file offset, length) of the longest prefix of [rva, rva+want) that one section backs in the file, or
+        None when `rva` itself is not backed. A bulk read of `want` bytes from `rva_to_offset` would run into the
+        next section's file bytes when the structure straddles two sections (issue #105 BUG-PE-3)."""
+        first = self.rva_to_file_ranges(rva, 1)
+        if not first or want <= 0:
+            return None
+        region = next(r for r in self.regions if r.start <= rva < r.start + r.extent)
+        end = min(rva + want, region.start + region.backed)
+        for other in self.regions:
+            if other is not region and rva < other.start < end:
+                end = other.start
+        return first[0].file_offset, end - rva

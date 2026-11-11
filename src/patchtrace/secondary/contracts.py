@@ -63,6 +63,7 @@ class SecondaryMatch(_Strict):
     flags: tuple[str, ...]
     algorithm: str = Field(min_length=1)
     match_type: str | None = None
+    basicblocks: int | None = Field(default=None, ge=0)  # BinDiff basic-block count; 0 marks a stub or thunk row
 
     @model_validator(mode='after')
     def consistent(self):
@@ -88,6 +89,15 @@ class AlternativeMatch(_Strict):
     candidate: SecondaryMatch
     source: Literal['rz-diff', 'bindiff', 'ghidriff-baseline']
     rank: int = Field(ge=1)
+
+    @model_validator(mode='after')
+    def consistent(self):
+        if self.source != self.candidate.engine:
+            raise ValueError('alternative source differs from candidate engine')
+        address = getattr(self.candidate, f'{self.anchor_side}_address')
+        if address is None or address != self.anchor_address:
+            raise ValueError('alternative anchor differs from candidate endpoint')
+        return self
 
 
 class SecondaryMatchSet(_Strict):
@@ -122,6 +132,10 @@ class SecondaryMatchSet(_Strict):
             raise ValueError('PT-SECONDARY-LIMIT: too many alternative matches')
         per_anchor: dict[tuple[str, int], int] = {}
         for alt in self.alternatives:
+            alt.consistent()
+            if (alt.source != self.engine or alt.candidate.engine != self.engine
+                    or alt.candidate.engine_version != self.engine_version):
+                raise ValueError('alternative engine or version differs from set engine')
             key = (alt.anchor_side, alt.anchor_address)
             per_anchor[key] = per_anchor.get(key, 0) + 1
             if per_anchor[key] > MAX_ALTERNATIVES_PER_ANCHOR:

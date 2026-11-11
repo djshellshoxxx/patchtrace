@@ -138,8 +138,9 @@ def run_cli(prefix: str, build: Callable[[], argparse.ArgumentParser], handlers:
     def failed(status: str, message: str | None) -> None:
         if '--json' not in argv:
             return
-        action = args.action if args is not None else next((a for a in argv if a in handlers), '?')
-        doc = {'contract': CLI_CONTRACT, 'command': f'{prefix} {action}', 'status': status, 'result': None,
+        action = args.action if args is not None else next((a for a in argv if a in handlers), None)
+        doc = {'contract': CLI_CONTRACT, 'command': f'{prefix} {action}' if action else prefix, 'status': status,
+               'result': None,
                'warnings': []}
         if message is not None:
             doc['error'] = message

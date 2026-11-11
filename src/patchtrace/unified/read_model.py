@@ -19,6 +19,7 @@ first-party rows (F16), trace-argument constants last (F17), then severity (05 s
 from __future__ import annotations
 
 import functools
+import re
 from collections import Counter
 from collections.abc import Callable, Collection, Mapping, Sequence
 from dataclasses import dataclass, field
@@ -87,9 +88,9 @@ STATE_TEXT: dict[str, str] = {
 }
 STALE_REASONS: dict[str, str] = {
     'older_sha256': 'the older artifact changed', 'newer_sha256': 'the newer artifact changed',
-    'orientation': 'the comparison direction changed', 'ghidriff_raw_sha256': 'the Ghidriff run changed',
+    'orientation': 'the comparison direction changed', 'ghidriff_raw_sha256': 'the Ghidriff raw output changed',
     'ir_older_digest': 'the older ProgramIR changed', 'ir_newer_digest': 'the newer ProgramIR changed',
-    'sources': 'the stored engine results changed', 'manual_digest': 'a manual correction changed the inputs',
+    'sources': 'a stored engine result was added, removed, updated or its status changed', 'manual_digest': 'a manual correction changed the inputs',
     'config_digest': 'the engine configuration changed'}
 STALE_FALLBACK = 'the project changed after this result was computed'
 
@@ -241,6 +242,7 @@ class UnifiedViewModel:
     edit_groups: tuple[EditGroup, ...] = ()
     records: RecordSource | None = None
     error: str | None = None
+    result_dir: Path | None = None      # the published result directory (the ProgramIR sidecars are found from it)
 
 
 @dataclass(frozen=True)
@@ -417,7 +419,8 @@ def _labels(m: UnifiedMatch) -> tuple[str, str, str]:
     label = f'{new} (was {old})' if old and new and old != new else new or old or unnamed
     names = ' '.join(clean(s.name, LABEL_LIMIT) for s in (*m.older, *m.newer) if s.name)
     hexes = ' '.join(f'{s.rva:x}' for s in (*m.older, *m.newer))
-    return label, f'{_side_label(m.older)} > {_side_label(m.newer)}', f'{names} {hexes}'.lower()[:SEARCH_KEY_CAP]
+    # addresses first: the cap must cut long names of a group row, never the addresses a person searches by
+    return label, f'{_side_label(m.older)} > {_side_label(m.newer)}', f'{hexes} {names}'.lower()[:SEARCH_KEY_CAP]
 
 
 class _Builder:
@@ -598,7 +601,7 @@ def _assemble(req: UnifiedLoadRequest, manifest: UnifiedResultManifest, director
         display_level=calibration_display_level(), result_id=manifest.result_id, manifest=manifest,
         banners=tuple(banners), absent_sources=tuple(s.display for s in req.registry.sources if s.id not in ids),
         evidence_classes=MappingProxyType(dict(evidence)), edit_groups=groups,
-        records=SidecarRecords(directory, manifest, req.limits))
+        records=SidecarRecords(directory, manifest, req.limits), result_dir=directory)
 
 
 def _counts(rows: Sequence[UnifiedRowView]) -> dict[str, int]:
@@ -700,6 +703,31 @@ def columns(vm: UnifiedViewModel) -> tuple[ColumnSpec, ...]:
     native values is in its header (`unit`) as well as in the words of its cells."""
     return FIXED_COLUMNS + tuple(
         ColumnSpec(f'source:{s.source}', s.display, s.unit_caption, 22, s.tooltip_id, s.source) for s in vm.sources)
+
+
+COLUMN_WIDTH_RANGE = (24, 4000)     # pixels a remembered width may have; anything else is the default (U5)
+MAX_SAVED_COLUMNS = 32              # the settings list limit of the panel host
+_COLUMN_KEY = re.compile(r'(?:function|decision|change|source:[a-z0-9][a-z0-9_.-]{0,63})')
+
+
+def parse_column_widths(items: Sequence[str]) -> dict[str, int]:
+    """`key:pixels` items of the `unified/columns` setting. Untrusted: keys that are no column key, non-decimal numbers,
+    widths outside COLUMN_WIDTH_RANGE and repeats are ignored (the first valid item of a key wins). Keys of sources
+    that this result does not show stay in the dict and are simply not applied."""
+    out: dict[str, int] = {}
+    low, high = COLUMN_WIDTH_RANGE
+    for item in items:
+        key, _, number = item.rpartition(':')
+        # ASCII digits and a bounded length: `int()` raises ValueError past 4,300 digits, and the setting is untrusted
+        if (_COLUMN_KEY.fullmatch(key) and key not in out and number.isascii() and number.isdecimal()
+                and len(number) <= len(str(high)) and low <= int(number) <= high):
+            out[key] = int(number)
+    return out
+
+
+def format_column_widths(widths: Mapping[str, int]) -> tuple[str, ...]:
+    """The setting value: valid keys only, sorted, at most MAX_SAVED_COLUMNS items."""
+    return tuple(f'{key}:{widths[key]}' for key in sorted(widths) if _COLUMN_KEY.fullmatch(key))[:MAX_SAVED_COLUMNS]
 
 
 def cell_text(row: UnifiedRowView, column: int) -> str:
@@ -858,16 +886,104 @@ def changed_inputs(loaded: store.LoadedResult, plan) -> list[str]:
     return list(keys.changed_inputs(keys.result_key_inputs(loaded.manifest), plan.identity.key_inputs))
 
 
+@dataclass(frozen=True)
+class PlanCandidates:
+    """Owner-thread captures of the plans a stored result may have been made from. A result stored with `--sources`,
+    `--no-extract` or `--no-residual` has another `result_id` than the default plan; comparing it only with the default
+    would show it stale forever. The manifest records what is derivable (IR used or not, the engines through the run
+    row); the residual flag is not recorded, so both values are tried. `choose_plan` picks the plan whose inputs
+    differ least from the stored result (none when equal)."""
+    plans: tuple
+    manifest: UnifiedResultManifest | None = None
+
+
+def _stored_sources(service, manifest: UnifiedResultManifest, all_sources: Sequence[str]) -> tuple[str, ...] | None:
+    """The sources the run that stored this result chose (its run row records them), or None when not recorded."""
+    from . import pipeline
+    for run in pipeline.recent_runs(service, 50):
+        if run.result_id == manifest.result_id and 'sources' in run.provenance:
+            chosen = tuple(sorted(set(run.provenance['sources'].split(','))))
+            return chosen if chosen and set(chosen) <= set(all_sources) else None
+    return None
+
+
+def _stored_flag(service, manifest: UnifiedResultManifest, key: str) -> bool | None:
+    """A yes/no option (`use_ir`, `residual`) the runs of this result recorded, or None when no run recorded it or
+    the runs disagree (rows written before the option was recorded say nothing)."""
+    from . import pipeline
+    seen = {run.provenance.get(key) for run in pipeline.recent_runs(service, 50)
+            if run.result_id == manifest.result_id and run.provenance.get(key) in ('yes', 'no')}
+    return (seen == {'yes'}) if len(seen) == 1 else None
+
+
+def capture_candidates(service: ProjectService) -> PlanCandidates:
+    """OWNER thread only: the default plan first, then (only when a result is stored) the variants it may come from."""
+    import dataclasses
+
+    from . import pipeline
+    from .exchange import ALL_SOURCES
+    base = pipeline.capture_plan(service)
+    try:
+        manifest = pipeline.load_current(service, None).manifest
+    except UnifiedError:
+        manifest = None
+    if manifest is None:
+        return PlanCandidates((base,))
+    sources = _stored_sources(service, manifest, ALL_SOURCES)
+    bases = [base] if sources in (None, base.sources) else [base, pipeline.capture_plan(service, sources)]
+    residuals = _stored_flag(service, manifest, 'residual')
+    asked_ir = _stored_flag(service, manifest, 'use_ir')
+    plans, seen = [], set()
+    for plan in bases:
+        for residual in ((plan.residual, not plan.residual) if residuals is None else (residuals,)):
+            # An S0 result whose run asked for ProgramIR was S0 only because none was placed: once one is placed the
+            # IR plan is the comparison (stale, a better result is possible). An explicit `--no-extract` run, or one
+            # that did not record its choice, may also be compared with the S0 variant.
+            s0_variant = plan.ir is not None and manifest.ir_older is None and asked_ir is not True
+            for ir in ((plan.ir, None) if s0_variant else (plan.ir,)):
+                variant = dataclasses.replace(plan, residual=residual, ir=ir, ir_note=plan.ir_note if ir else None)
+                key = (variant.sources, residual, ir is None)
+                if key not in seen:
+                    seen.add(key)
+                    plans.append(variant)
+    return PlanCandidates(tuple(plans), manifest)
+
+
+def resolve_best(candidates: PlanCandidates, *, budget=None, previous=None):
+    """Worker side: resolve every candidate and return the one closest to the stored result (the first on a tie, so
+    the default plan wins when nothing matches better). `None` when nothing could be captured."""
+    from . import keys, pipeline
+    best, best_distance = None, None
+    for plan in candidates.plans:
+        resolved = pipeline.resolve_plan(plan, budget=budget, previous=previous)
+        manifest = candidates.manifest
+        if manifest is None or manifest.result_id == resolved.result_id:
+            distance = 0
+        else:
+            distance = len(keys.changed_inputs(keys.result_key_inputs(manifest), resolved.identity.key_inputs))
+        if best_distance is None or distance < best_distance:
+            best, best_distance = resolved, distance
+        if distance == 0:
+            break
+    return best
+
+
 def request_from_service(service: ProjectService, *, extraction_configured: bool = False,
                          attention: Mapping[str, int] | None = None) -> UnifiedLoadRequest:
     """OWNER thread only (it reads the project database): the plan, the stored pointer row and what changed since.
     A failure becomes the request's `error` (state U5), never an exception."""
-    from . import pipeline
-    project = service.project
     try:
-        plan = pipeline.make_plan(service)
+        plan = resolve_best(capture_candidates(service))
     except UnifiedError:
         plan = None  # nothing to compare with: a stored result is then reported as stale
+    return request_from_plan(service, plan, extraction_configured=extraction_configured, attention=attention)
+
+
+def request_from_plan(service: ProjectService, plan, *, extraction_configured: bool = False,
+                      attention: Mapping[str, int] | None = None) -> UnifiedLoadRequest:
+    """Owner-thread exact-key pointer lookup after task work resolves a captured plan."""
+    from . import pipeline
+    project = service.project
     run_id = plan.run_id if plan else None
     try:
         loaded = pipeline.load_current(service, plan)
@@ -884,7 +1000,8 @@ TOOLTIP_IDS: tuple[str, ...] = (
     'unified.view_switch', 'unified.run', 'unified.cancel', 'unified.filter_decision', 'unified.filter_change',
     'unified.filter_class', 'unified.filter_source', 'unified.search', 'unified.show_hidden', 'unified.table',
     'unified.tab', 'unified.detail', 'unified.goto', 'unified.correct', 'unified.copy', 'unified.explain',
-    'unified.retry', 'unified.copy_error', 'unified.stale_banner', 'unified.source.unknown')
+    'unified.retry', 'unified.copy_error', 'unified.stale_banner', 'unified.source.unknown', 'unified.code_mode',
+    'unified.code_prev', 'unified.code_next', 'unified.code_copy', 'unified.code_older', 'unified.code_newer')
 TOOLTIP_TEMPLATE_IDS: tuple[str, ...] = ('unified.row', 'unified.cell', 'unified.badge', 'unified.delta')
 
 

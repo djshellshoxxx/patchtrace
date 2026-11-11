@@ -61,7 +61,7 @@ def test_known_resolved_values(pin):
 def test_digest_sources_are_traceable(pin):
     for name, entry in pin['components'].items():
         if entry['status'] == 'pinned':
-            assert entry['digest_source'] in ('vendor-file', 'vendor-listing'), name
+            assert entry['digest_source'] in ('vendor-file', 'vendor-listing', 'sigstore-verified', 'gpg-verified'), name
         if entry['digest_source'] == 'vendor-file':
             assert entry['digest_file'].startswith('https://'), name
 
@@ -83,11 +83,16 @@ def test_ghidriff_requirements_match_the_pins(pin):
     assert pin['ghidra_pypkg_crosscheck']['jpype1']['same_sha256_as_pinned'] is True
 
 
-def test_placeholders_are_declared_and_listed(pin):
-    unresolved = checker.release_problems(pin)
-    assert len(unresolved) == 2
-    assert any(line.startswith('components.python-windows') for line in unresolved)
-    assert any(line.startswith('ghidriff.source_tarball') for line in unresolved)
+def test_no_placeholder_remains_and_the_two_late_pins_are_verified(pin):
+    """2026-10-15: python-windows is sigstore-verified and the Ghidriff tarball is git-rebuilt (pin_verify run
+    38661029764); neither is trust-on-first-use."""
+    assert checker.release_problems(pin) == []
+    python = pin['components']['python-windows']
+    assert python['digest_source'] == 'sigstore-verified' and python['size'] == 11133606
+    assert python['sha256'].startswith('4acbed6d')
+    tarball = pin['ghidriff']['source_tarball']
+    assert tarball['digest_source'] == 'git-rebuilt' and tarball['size'] == 7086648
+    assert tarball['sha256'].startswith('613449a2')
 
 
 def _break(data: dict, path: str, value) -> None:
@@ -138,8 +143,8 @@ def test_unpinned_dependency_rejected(pin, dist):
     assert any(dist in line for line in checker.validate_pin(pin))
 
 
-def test_placeholder_needs_exact_marker_and_null_size(pin):
-    pin['components']['python-windows']['size'] = 5
+def test_a_pinned_entry_needs_a_real_digest_and_a_size(pin):
+    pin['components']['python-windows']['size'] = None
     pin['ghidriff']['source_tarball']['sha256'] = 'deadbeef'
     problems = checker.validate_pin(pin)
     assert len(problems) >= 2
@@ -166,15 +171,23 @@ def run_tool(*args: str) -> subprocess.CompletedProcess:
     return subprocess.run([sys.executable, '-I', str(TOOL), *args], capture_output=True, text=True, timeout=60, check=False)
 
 
-def test_cli_default_mode_accepts_placeholders():
+def test_cli_default_mode_accepts_the_committed_pin():
     result = run_tool()
     assert result.returncode == 0, result.stderr
-    assert 'backend pin ok' in result.stdout and '2 unresolved' in result.stdout
+    assert 'backend pin ok' in result.stdout and 'unresolved' not in result.stdout
 
 
-def test_cli_release_mode_refuses_the_committed_placeholders():
-    """The release gate: while any placeholder remains, a release build (--release) must fail."""
-    result = run_tool('--release')
+def test_cli_release_mode_accepts_the_committed_resolved_pin():
+    """The release gate passes now that no placeholder remains; the gate itself is covered by the placeholder tests below."""
+    assert run_tool('--release').returncode == 0
+
+
+def test_cli_release_mode_refuses_a_placeholder(pin, tmp_path):
+    data = resolved(pin)
+    data['components']['python-windows'].update(status='placeholder', digest_source='none', sha256=checker.PLACEHOLDER, size=None)
+    path = tmp_path / 'pin.json'
+    path.write_text(json.dumps(data), encoding='utf-8')
+    result = run_tool('--pin', str(path), '--release')
     assert result.returncode == 3
     assert 'unresolved placeholder' in result.stderr
 

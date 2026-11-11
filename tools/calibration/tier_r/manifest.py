@@ -62,6 +62,7 @@ def build_manifest(docs: Sequence[C.KnownAnswerLabels], *, corpus_id: str = 'kno
     """Raises ManifestError when one image would belong to two lineages (a lineage is never split or merged here)."""
     binaries: dict[str, dict] = {}
     owner: dict[str, str] = {}
+    image_owner: dict[str, str] = {}     # by content: the binary id carries the project, the image hash does not
     families: dict[str, Counter] = {}
     pairs = []
     for doc in sorted(docs, key=lambda d: d.pair_id):
@@ -70,6 +71,9 @@ def build_manifest(docs: Sequence[C.KnownAnswerLabels], *, corpus_id: str = 'kno
             bid = binary_id(doc.project, side.sha256)
             if owner.setdefault(bid, doc.lineage) != doc.lineage:
                 raise ManifestError(f'image {side.sha256[:12]} is claimed by lineages {owner[bid]} and {doc.lineage}')
+            if image_owner.setdefault(side.sha256, doc.lineage) != doc.lineage:
+                raise ManifestError(f'image {side.sha256[:12]} is claimed by lineages {image_owner[side.sha256]} '
+                                    f'and {doc.lineage} (same content under two projects)')
             binaries.setdefault(bid, _binary(side, doc.project))
             ids.append(bid)
         families.setdefault(doc.lineage, Counter())[doc.family] += 1
@@ -88,7 +92,7 @@ def build_manifest(docs: Sequence[C.KnownAnswerLabels], *, corpus_id: str = 'kno
                          'family': sorted(counts, key=lambda f: (-counts[f], f))[0]})
     document = {'contract': 'calibration-corpus/1', 'corpus_id': corpus_id, 'created': created, 'tool_git': tool_git,
                 'binaries': [binaries[k] for k in sorted(binaries)], 'pairs': pairs, 'lineages': lineages,
-                'split': dict(SPLIT)}
+                'split': {**SPLIT, 'shift_test_lineages': list(SPLIT['shift_test_lineages'])}}
     load_manifest(canonical_json(document))     # raises ContractError when the result is not a valid manifest
     return document
 

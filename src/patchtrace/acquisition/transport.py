@@ -134,6 +134,9 @@ class _Response:
         if sock is not None and not isinstance(sock, _SlicedSocket):
             io._sock = _SlicedSocket(sock, guard, self._timeout)
 
+    def read1(self, size: int) -> bytes:
+        return self._raw.read1(size)
+
     def close(self) -> None:
         self._raw.close()
 
@@ -182,7 +185,10 @@ def _retry_after(value: str | None, now: datetime) -> float | None:
         return None
     if when.tzinfo is None:
         return None
-    return float(max(0, int((when - now).total_seconds()) + 1))
+    try:
+        return float(max(0, int((when - now).total_seconds()) + 1))
+    except OverflowError:
+        return None
 
 
 def _stamp(now: datetime) -> str:
@@ -197,9 +203,9 @@ class Transport:
     clock: Callable[[], float] = time.monotonic
     now: Callable[[], datetime] = lambda: datetime.now(UTC)
 
-    def _with_retries(self, action: Callable[[], object]):
+    def _with_retries(self, action: Callable[[], object], *, deadline: float | None = None):
         for attempt in range(1, MAX_ATTEMPTS + 1):
-            _cancelled(self.cancel)
+            self._live(deadline)
             try:
                 return action()
             except _Retry as retry:
@@ -210,7 +216,14 @@ class Transport:
                 if wait > MAX_RETRY_AFTER:
                     raise AcquisitionError('PT-ACQ-NETWORK', 'server asked to retry later than 60 s',
                                            recoverable=True) from None
+                if deadline is not None:
+                    self._live(deadline)
+                    if wait >= deadline - self.clock():
+                        raise AcquisitionError('PT-ACQ-NETWORK', 'retry wait exceeds the remaining time budget',
+                                               recoverable=True) from None
                 self.sleep(wait, self.cancel)
+                if deadline is not None:
+                    self._live(deadline)
         raise AssertionError('unreachable')
 
     def _open(self, method: str, url: str, timeout: float = TIMEOUT):
@@ -218,7 +231,7 @@ class Transport:
             return self.opener(method, url, dict(HEADERS), timeout)
         except TimeoutError:
             raise _Retry(None) from None
-        except OSError:
+        except (OSError, http.client.HTTPException):
             raise AcquisitionError('PT-ACQ-NETWORK', 'connection failed', recoverable=True) from None
 
     def _retryable(self, response) -> None:
@@ -239,10 +252,13 @@ class Transport:
     def _read_chunks(self, response, sink: Callable[[bytes], None], cap: int, what: str,
                      deadline: float | None) -> None:
         total = 0
+        # read1 returns after one socket receive, so cancel and the deadline are looked at
+        # between receives; read(n) would block until n bytes arrive however slowly.
+        read = getattr(response, 'read1', response.read)
         while True:
             self._live(deadline)
             try:
-                chunk = response.read(min(_CHUNK, cap + 1 - total))
+                chunk = read(min(_CHUNK, cap + 1 - total))
             except (OSError, ValueError, http.client.HTTPException) as exc:
                 if isinstance(exc, TimeoutError):
                     raise _Retry(None) from None
@@ -267,8 +283,13 @@ class Transport:
         deadline = self.clock() + METADATA_DEADLINE
 
         def attempt():
-            response = self._open('GET', url)
+            self._live(deadline)
+            remaining = deadline - self.clock()
+            if remaining <= 0:
+                raise AcquisitionError('PT-ACQ-NETWORK', 'total timeout exceeded', recoverable=True)
+            response = self._open('GET', url, min(TIMEOUT, remaining))
             try:
+                self._live(deadline)
                 if response.status == 404:
                     raise AcquisitionError('PT-ACQ-NOTFOUND', f'Winbindex has no record for {file_name}')
                 if response.status in REDIRECT_STATUS:
@@ -283,7 +304,7 @@ class Transport:
                                         _date(response.headers.get('Last-Modified')))
             finally:
                 response.close()
-        return self._with_retries(attempt)
+        return self._with_retries(attempt, deadline=deadline)
 
     # -- candidate resolution -----------------------------------------------------------
     def probe(self, url: str, consent: AcquisitionConsent) -> bool:
@@ -368,7 +389,10 @@ class Transport:
                 location = response.headers.get('Location')
                 if not location:
                     raise AcquisitionError('PT-ACQ-PROVIDER', 'redirect without Location')
-                target = urllib.parse.urljoin(url, location)
+                try:
+                    target = urllib.parse.urljoin(url, location)
+                except ValueError:
+                    raise AcquisitionError('PT-ACQ-NETWORK', 'invalid URL refused') from None
                 redirect_host = _check(target, blob=True)
                 response.close()
                 response = self._open('GET', target)
@@ -379,13 +403,14 @@ class Transport:
                 raise AcquisitionError('PT-ACQ-PROVIDER', f'download returned HTTP {response.status}')
             fd, name = tempfile.mkstemp(prefix='.download-', dir=directory)
             path = Path(name)
+            out = os.fdopen(fd, 'wb')               # owns the descriptor before any callback can raise
             digest = hashlib.sha256()
             size = reported = 0
             step = max(planned.size // 100, 1)
             try:
                 if progress:
                     progress(0, planned.size)
-                with os.fdopen(fd, 'wb') as out:
+                with out:
                     def sink(chunk: bytes) -> None:
                         nonlocal size, reported
                         size += len(chunk)
@@ -404,6 +429,7 @@ class Transport:
                 if digest.hexdigest() != planned.sha256:
                     raise AcquisitionError('PT-ACQ-VERIFY', 'SHA-256 does not match the Winbindex record')
             except BaseException:
+                out.close()                         # idempotent; closes the file when progress(0) raised
                 path.unlink(missing_ok=True)
                 raise
             return Downloaded(path, digest.hexdigest(), size, planned.url, redirect_host, _stamp(self.now()))
@@ -423,7 +449,12 @@ def _date(value: str | None) -> str | None:
         when = email.utils.parsedate_to_datetime(value)
     except (TypeError, ValueError):
         return None
-    return when.astimezone(UTC).date().isoformat() if when.tzinfo else None
+    if not when.tzinfo:
+        return None
+    try:
+        return when.astimezone(UTC).date().isoformat()
+    except OverflowError:  # 9999-12-31 with a negative offset leaves the year range; the header is just ignored
+        return None
 
 
 @dataclass(frozen=True)

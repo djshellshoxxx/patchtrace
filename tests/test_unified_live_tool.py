@@ -303,3 +303,13 @@ def test_workflow_analyses_the_same_dll_bytes_on_both_operating_systems():
         assert (ROOT / source).is_file()
     for ignored in ('.pdb', '/Zi'):
         assert ignored not in text                                    # no symbols: Ghidra must not look for a PDB
+
+
+def test_l5_fails_when_no_function_was_compared_ue_b_01():
+    empty_values = {str(rva): {'name': 'x', 'bytes': None, 'insns': None, 'mnem': None, 'data': 0} for rva in (4096, 4112)}
+    for ghidra in ({}, empty_values):
+        lines = []
+        checks = tool.Checks(emit=lines.append)
+        tool.l5_report('older', ghidra, l5_stored(), l5_records(), checks)
+        assert checks.failures, ghidra
+        assert not any(line.startswith('PASS L5') and ': h0 classes' in line for line in lines)

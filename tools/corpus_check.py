@@ -19,7 +19,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 SPDX = {'MIT', 'Apache-2.0', 'BSD-2-Clause', 'BSD-3-Clause', 'Zlib', 'ISC', 'CC0-1.0', 'Unlicense', 'Libpng-2.0',
-        'curl', 'IJG', 'BSL-1.0', 'blessing', 'OpenSSL', 'PostgreSQL'}
+        'curl', 'IJG', 'BSL-1.0', 'blessing', 'OpenSSL', 'BSD-3-Clause WITH PCRE2-exception'}
 CARD_KINDS = {'release', 'cve-fix', 'constant-only', 'bounds-only', 'refactor-control', 'large-rewrite',
               'build-system-only', 'no-op'}
 BUILD_SYSTEMS = {'make', 'cmake', 'autotools', 'meson', 'single', 'other'}

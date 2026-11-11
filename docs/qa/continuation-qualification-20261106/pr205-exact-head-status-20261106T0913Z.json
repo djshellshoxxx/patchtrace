@@ -1,0 +1,366 @@
+{
+  "repository": "djshellshoxxx/patchtrace",
+  "pr": 205,
+  "pr_metadata": {
+    "state": "open",
+    "draft": false,
+    "merged": false,
+    "mergeable": true,
+    "head": "6095f702400e7fe19c2f462ae79f6ab650c5db58",
+    "base_branch": "main",
+    "normalized_base_sha_stale": "5d504ff5c046bfb758623182b472976003632bba"
+  },
+  "source": {
+    "sha": "6095f702400e7fe19c2f462ae79f6ab650c5db58",
+    "tree": "6db3490e96da2a8f0a200d834f8816bc41421f57"
+  },
+  "written_at_utc": "2026-11-06 09:22:40 UTC",
+  "api_observation_window_utc": {
+    "start_utc": "2026-11-06T09:13:47Z",
+    "end_utc": "2026-11-06T09:17:21Z"
+  },
+  "actual_main_ref": {
+    "sha": "d02b94bcedb29dae201941f01f2c94d42ebbb297",
+    "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/git/ref/heads/main"
+  },
+  "prospective_merge": {
+    "sha": "b9946a7cc5441119b3f4fcf77b1ec30f658ff083",
+    "tree": "6db3490e96da2a8f0a200d834f8816bc41421f57",
+    "parents": [
+      "d02b94bcedb29dae201941f01f2c94d42ebbb297",
+      "6095f702400e7fe19c2f462ae79f6ab650c5db58"
+    ],
+    "source_tree_equal": true
+  },
+  "stale_base_caveat": "The normalized PR metadata and CodeRabbit range retain 5d504ff5c046bfb758623182b472976003632bba. Direct main ref and prospective merge object establish actual main d02 and parents d02 + 6095; stale normalized base must not be used for source comparison.",
+  "formal_reviews": [],
+  "review_threads": [],
+  "initial_exact_head_checks": [
+    {
+      "id": 127809145387,
+      "name": "CodeRabbit",
+      "head_sha": "6095f702400e7fe19c2f462ae79f6ab650c5db58",
+      "status": "completed",
+      "conclusion": "skipped",
+      "completed_at": "2026-11-06T09:09:56Z",
+      "url": "https://coderabbit.ai?utm_source=cr_app&utm_medium=github",
+      "annotations_count": 0
+    },
+    {
+      "id": 127807997139,
+      "name": "SonarCloud Code Analysis",
+      "head_sha": "6095f702400e7fe19c2f462ae79f6ab650c5db58",
+      "status": "completed",
+      "conclusion": "failure",
+      "completed_at": "2026-11-06T09:07:08Z",
+      "url": "https://sonarcloud.io/dashboard?id=djshellshoxxx_patchtrace&pullRequest=205",
+      "annotations_count": 3
+    },
+    {
+      "id": 127807401332,
+      "name": "release-gate",
+      "head_sha": "6095f702400e7fe19c2f462ae79f6ab650c5db58",
+      "status": "completed",
+      "conclusion": "skipped",
+      "completed_at": "2026-11-06T09:05:44Z",
+      "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/42192416667/job/127807401332",
+      "annotations_count": 0
+    },
+    {
+      "id": 127807401136,
+      "name": "native (repro-plain-ghidriff)",
+      "head_sha": "6095f702400e7fe19c2f462ae79f6ab650c5db58",
+      "status": "in_progress",
+      "conclusion": null,
+      "completed_at": null,
+      "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/42192416844/job/127807401136",
+      "annotations_count": 0
+    },
+    {
+      "id": 127807400925,
+      "name": "windows",
+      "head_sha": "6095f702400e7fe19c2f462ae79f6ab650c5db58",
+      "status": "in_progress",
+      "conclusion": null,
+      "completed_at": null,
+      "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/42192416960/job/127807400925",
+      "annotations_count": 0
+    },
+    {
+      "id": 127807400440,
+      "name": "native (raw-cache-hit)",
+      "head_sha": "6095f702400e7fe19c2f462ae79f6ab650c5db58",
+      "status": "completed",
+      "conclusion": "success",
+      "completed_at": "2026-11-06T09:13:33Z",
+      "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/42192416844/job/127807400440",
+      "annotations_count": 2
+    },
+    {
+      "id": 127807400390,
+      "name": "native (patchtrace-seeded-store-no-adjacent-pdb)",
+      "head_sha": "6095f702400e7fe19c2f462ae79f6ab650c5db58",
+      "status": "completed",
+      "conclusion": "success",
+      "completed_at": "2026-11-06T09:12:29Z",
+      "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/42192416844/job/127807400390",
+      "annotations_count": 2
+    },
+    {
+      "id": 127807400311,
+      "name": "native (patchtrace-seeded-store)",
+      "head_sha": "6095f702400e7fe19c2f462ae79f6ab650c5db58",
+      "status": "completed",
+      "conclusion": "success",
+      "completed_at": "2026-11-06T09:12:18Z",
+      "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/42192416844/job/127807400311",
+      "annotations_count": 2
+    },
+    {
+      "id": 127807400051,
+      "name": "native (patchtrace-clean)",
+      "head_sha": "6095f702400e7fe19c2f462ae79f6ab650c5db58",
+      "status": "completed",
+      "conclusion": "success",
+      "completed_at": "2026-11-06T09:10:47Z",
+      "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/42192416844/job/127807400051",
+      "annotations_count": 2
+    },
+    {
+      "id": 127807399992,
+      "name": "qa (ubuntu-latest)",
+      "head_sha": "6095f702400e7fe19c2f462ae79f6ab650c5db58",
+      "status": "in_progress",
+      "conclusion": null,
+      "completed_at": null,
+      "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/42192416667/job/127807399992",
+      "annotations_count": 0
+    },
+    {
+      "id": 127807399952,
+      "name": "qt-gate (ubuntu-latest, 20, 2/4)",
+      "head_sha": "6095f702400e7fe19c2f462ae79f6ab650c5db58",
+      "status": "in_progress",
+      "conclusion": null,
+      "completed_at": null,
+      "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/42192416667/job/127807399952",
+      "annotations_count": 0
+    },
+    {
+      "id": 127807399937,
+      "name": "qt-gate (ubuntu-latest, 20, 1/4)",
+      "head_sha": "6095f702400e7fe19c2f462ae79f6ab650c5db58",
+      "status": "in_progress",
+      "conclusion": null,
+      "completed_at": null,
+      "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/42192416667/job/127807399937",
+      "annotations_count": 0
+    },
+    {
+      "id": 127807399924,
+      "name": "live rz-diff (windows-latest)",
+      "head_sha": "6095f702400e7fe19c2f462ae79f6ab650c5db58",
+      "status": "completed",
+      "conclusion": "success",
+      "completed_at": "2026-11-06T09:07:11Z",
+      "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/42192416706/job/127807399924",
+      "annotations_count": 1
+    },
+    {
+      "id": 127807399895,
+      "name": "qa (windows-latest)",
+      "head_sha": "6095f702400e7fe19c2f462ae79f6ab650c5db58",
+      "status": "in_progress",
+      "conclusion": null,
+      "completed_at": null,
+      "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/42192416667/job/127807399895",
+      "annotations_count": 0
+    },
+    {
+      "id": 127807399878,
+      "name": "qt-gate (ubuntu-latest, 20, 4/4)",
+      "head_sha": "6095f702400e7fe19c2f462ae79f6ab650c5db58",
+      "status": "in_progress",
+      "conclusion": null,
+      "completed_at": null,
+      "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/42192416667/job/127807399878",
+      "annotations_count": 0
+    },
+    {
+      "id": 127807399861,
+      "name": "qt-gate (windows-latest, 5, 1/1)",
+      "head_sha": "6095f702400e7fe19c2f462ae79f6ab650c5db58",
+      "status": "in_progress",
+      "conclusion": null,
+      "completed_at": null,
+      "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/42192416667/job/127807399861",
+      "annotations_count": 0
+    },
+    {
+      "id": 127807399851,
+      "name": "qt-gate (ubuntu-latest, 20, 3/4)",
+      "head_sha": "6095f702400e7fe19c2f462ae79f6ab650c5db58",
+      "status": "in_progress",
+      "conclusion": null,
+      "completed_at": null,
+      "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/42192416667/job/127807399851",
+      "annotations_count": 0
+    },
+    {
+      "id": 127807399321,
+      "name": "live BinDiff (windows-latest)",
+      "head_sha": "6095f702400e7fe19c2f462ae79f6ab650c5db58",
+      "status": "completed",
+      "conclusion": "success",
+      "completed_at": "2026-11-06T09:07:03Z",
+      "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/42192416730/job/127807399321",
+      "annotations_count": 1
+    },
+    {
+      "id": 127807399291,
+      "name": "live rz-diff (ubuntu-latest)",
+      "head_sha": "6095f702400e7fe19c2f462ae79f6ab650c5db58",
+      "status": "completed",
+      "conclusion": "success",
+      "completed_at": "2026-11-06T09:06:29Z",
+      "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/42192416706/job/127807399291",
+      "annotations_count": 2
+    },
+    {
+      "id": 127807399233,
+      "name": "live BinDiff (ubuntu-22.04)",
+      "head_sha": "6095f702400e7fe19c2f462ae79f6ab650c5db58",
+      "status": "completed",
+      "conclusion": "success",
+      "completed_at": "2026-11-06T09:06:58Z",
+      "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/42192416730/job/127807399233",
+      "annotations_count": 1
+    }
+  ],
+  "commit_statuses": [
+    {
+      "context": "security/snyk (djshellshoxxx)",
+      "state": "success",
+      "target_url": "https://app.snyk.io/org/djshellshoxxx/pr-checks/b31a1e80-0ddb-43fd-856e-42359d2256fe"
+    }
+  ],
+  "workflow_runs": [
+    {
+      "id": 42192416960,
+      "name": "Live unified extraction (SPEC-31 S1)",
+      "status": "in_progress",
+      "conclusion": null
+    },
+    {
+      "id": 42192416844,
+      "name": "Native Windows Ghidriff acceptance",
+      "status": "in_progress",
+      "conclusion": null
+    },
+    {
+      "id": 42192416730,
+      "name": "Live BinDiff acceptance",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 42192416706,
+      "name": "Live rizin rz-diff acceptance",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 42192416667,
+      "name": "QA and Windows standalone",
+      "status": "in_progress",
+      "conclusion": null
+    }
+  ],
+  "sonar": {
+    "check_id": 127807997139,
+    "head": "6095f702400e7fe19c2f462ae79f6ab650c5db58",
+    "conclusion": "failure",
+    "completed_at_utc": "2026-11-06T09:07:08Z",
+    "security_rating_on_new_code": "C",
+    "reliability_rating_on_new_code": "C",
+    "required_ratings": "A",
+    "annotation_count": 3,
+    "annotation_observation": {
+      "source": "Visible GitHub check-run page in read-only browser",
+      "url": "https://github.com/djshellshoxxx/patchtrace/pull/205/checks?check_run_id=127807997139",
+      "window_utc": {
+        "start": "2026-11-06T09:17:21Z",
+        "end": "2026-11-06T09:20:06Z"
+      }
+    },
+    "annotations": [
+      {
+        "path": "src/patchtrace/unified/facts/anchors.py",
+        "line": 76,
+        "level": "warning",
+        "message": "Fix this condition that always evaluates to true.",
+        "issue_id": "AaGtnA_agOTilgf5uNvJ",
+        "prior_triage_rule": "pythonbugs:S2583"
+      },
+      {
+        "path": "tools/rzdiff/native_evidence.py",
+        "line": 52,
+        "level": "failure",
+        "message": "Path Traversal via faulty LLM-supplied CLI arguments in native_evidence.run()",
+        "issue_id": "AaGtnBi4gOTilgf5uNvY",
+        "prior_triage_rule": "pythonsecurity:S8707"
+      },
+      {
+        "path": "tools/unified/bench.py",
+        "line": 254,
+        "level": "warning",
+        "message": "Make sure that using this pseudorandom number generator is safe here.",
+        "issue_id": "AaGtnBgjgOTilgf5uNvU",
+        "prior_triage_rule": "python:S2245"
+      }
+    ],
+    "baseline_comparison": {
+      "document": "https://github.com/djshellshoxxx/patchtrace/blob/6095f702400e7fe19c2f462ae79f6ab650c5db58/docs/qa/sonar-205-triage-20261105.md",
+      "result": "All three current annotation locations and concerns match the prior documented false-positive review. No fourth or additional annotation is present in this check. Historical issue IDs were not re-fetched.",
+      "disposition": "Existing authored review evidence does not clear the failing gate. An authorized Sonar reviewer still must disposition these through normal controls; this review changed no scanner state."
+    },
+    "api_limitation": "The GitHub fetch connector rejects the check-run annotations endpoint. The check summary/count were fetched through the commit check-runs endpoint; annotation messages and issue IDs were read from the visible GitHub UI."
+  },
+  "code_rabbit": {
+    "check_id": 127809145387,
+    "conclusion": "skipped",
+    "reason": "304 selected files exceed the 300-file limit",
+    "comment_id": 6669973978,
+    "updated_at_utc": "2026-11-06T09:09:54Z",
+    "is_review_pass": false
+  },
+  "qodo": {
+    "summary_comment_id": 6681380028,
+    "created_at_utc": "2026-11-06T09:12:28Z",
+    "url": "https://github.com/djshellshoxxx/patchtrace/pull/205#issuecomment-6681380028",
+    "disposition": "Fresh AI description, assessment and changed-file summary. Comment is truncated; it is not formal approval or a zero-findings report."
+  },
+  "later_browser_workflow_observation": {
+    "window_utc": {
+      "start": "2026-11-06T09:17:21Z",
+      "end": "2026-11-06T09:20:06Z"
+    },
+    "live_unified_run": 42192416960,
+    "windows": {
+      "job_id": 127807400925,
+      "conclusion": "success"
+    },
+    "linux": {
+      "job_id": 127811763918,
+      "status": "in_progress"
+    }
+  },
+  "remaining_gates": [
+    "Sonar security/reliability quality gate remains failed.",
+    "QA Windows/Linux and five Qt jobs were in progress in initial exact-head check snapshot; dependent packaging/smoke stages remain unqualified.",
+    "Native repro-plain-ghidriff was still in progress in the initial snapshot.",
+    "Live unified Windows subsequently passed, Linux job 127811763918 was in progress in the browser observation.",
+    "No formal reviews or inline threads; CodeRabbit skipped for scope size and Qodo summary is not approval."
+  ],
+  "actions": "Read-only connector, Git-object, repository-document and browser observations. No tests, reruns, branch/PR mutations or scanner changes."
+}

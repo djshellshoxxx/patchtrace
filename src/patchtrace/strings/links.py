@@ -200,12 +200,13 @@ def _link_xrefs(side: Side, table: StringTable, functions: SideFunctions, pairin
     if not located:
         return []
     starts = [item[0] for item in located]
-    widest = max(item[1] for item in located)
+    ends = [start + span for start, span, _ in located]
+    earlier = _previous_longer(ends)
     unjoined = ambiguous = 0
     for entry in ghidriff.entries:
         if entry.side != side:
             continue
-        hit, join = _join_row(entry.rva, located, starts, widest)
+        hit, join = _join_row(entry.rva, located, starts, ends, earlier)
         if hit is None:
             ambiguous += join == 'ambiguous'
             unjoined += join != 'ambiguous'
@@ -221,19 +222,42 @@ def _link_xrefs(side: Side, table: StringTable, functions: SideFunctions, pairin
     return notes
 
 
-def _join_row(rva: int, located: list, starts: list[int], widest: int) -> tuple[StringRow | None, str]:
-    """Exact start, else the one string whose bytes contain `rva`; several candidates join nothing."""
+def _previous_longer(ends: list[int]) -> list[int]:
+    """For each row, the nearest earlier row whose bytes end later (-1 for none): one stack pass."""
+    out, stack = [], []
+    for index, end in enumerate(ends):
+        while stack and ends[stack[-1]] <= end:
+            stack.pop()
+        out.append(stack[-1] if stack else -1)
+        stack.append(index)
+    return out
+
+
+def _join_row(rva: int, located: list, starts: list[int], ends: list[int],
+              earlier: list[int]) -> tuple[StringRow | None, str]:
+    """Exact start, else the one string whose bytes contain `rva`; several candidates join nothing.
+
+    Rows that start before `rva` are visited newest first, as before, but a row that ends at or before `rva` jumps
+    to the nearest earlier row that ends later: every row in between ends earlier still, so none can contain `rva`.
+    One very long string therefore no longer makes every lookup walk most of the table (issue #105 BUG-STR-2)."""
     low, high = bisect_left(starts, rva), bisect_right(starts, rva)
     if high > low:
         return _single((item[2] for item in located[low:high]), 'exact')
-    inside = []
-    for index in range(low - 1, -1, -1):
-        start, span, row = located[index]
-        if start + widest <= rva:
-            break
-        if rva < start + span:
-            inside.append(row)
-    return _single(inside, 'contains')
+    hit = None
+    value = None
+    index = low - 1
+    while index >= 0:
+        if ends[index] > rva:
+            row = located[index][2]
+            digest = row.value_sha256
+            if hit is None:
+                hit, value = row, digest
+            elif digest != value:
+                return None, 'ambiguous'
+            index -= 1
+        else:
+            index = earlier[index]
+    return (hit, 'contains') if hit is not None else (None, 'none')
 
 
 def _single(rows: Iterable[StringRow], join: str) -> tuple[StringRow | None, str]:
@@ -298,13 +322,13 @@ def _link_literals(side: Side, table: StringTable, functions: SideFunctions, pai
 
 def _link_prefixes(side: Side, table: StringTable, prefixes: list, functions: SideFunctions,
                    pairing: FunctionPairing, group: str, found: dict[LinkKey, list[StringLink]]) -> None:
-    shown = sorted((row.display, row) for row in table)
-    displays = [item[0] for item in shown]
+    shown = sorted(table, key=lambda row: row.display)    # never compares rows: equal displays are legal (#105)
+    displays = [row.display for row in shown]
     for wide, text, hit in prefixes:
         needle = display_text(text, limit=len(text) * 10 + 4)
         index, taken = bisect_left(displays, needle), 0
         while index < len(shown) and displays[index].startswith(needle) and taken < MAX_PREFIX_HITS:
-            row = shown[index][1]
+            row = shown[index]
             if (row.encoding == _WIDE) == wide and row.length > len(text):
                 found.setdefault(_row_key(side, row), []).append(_literal_link(side, hit, 'contains', functions,
                                                                                pairing, group))

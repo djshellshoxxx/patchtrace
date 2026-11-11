@@ -75,10 +75,16 @@ def test_recorded_responses_pass_through_cli(monkeypatch, tmp_path):
     result = probe_mod.probe([CVE], ['nvd', 'msrc'], tmp_path, 60, check_host=_up, runner=_inprocess)
     assert result['status'] == 'passed', result['reason']
     assert {p: d['result'] for p, d in result['providers'].items()} == {'nvd': 'ok', 'msrc': 'ok'}
-    assert len(result['snapshot_ids']) == 1 and result['mocked'] is False  # the probe's own label
+    assert len(result['snapshot_ids']) == 1 and result['mocked'] is True  # fake transport: labelled mocked
     assert result['cli_exit'] == 0 and any(line.startswith('request: nvd') for line in result['consent_preview'])
     assert sorted(p for p, _u, _h in seen) == ['msrc', 'nvd']
     assert all('apiKey' not in h for _p, _u, h in seen)  # keyless
+
+
+def test_mocked_label_is_false_only_for_the_production_seams():
+    # positive control: probe() with the real seams would hit the network, so compare the seam pair directly
+    assert (probe_mod.reachable, probe_mod.run_cli) == probe_mod._LIVE_PARTS
+    assert (_up, probe_mod.run_cli) != probe_mod._LIVE_PARTS
 
 
 def test_unreachable_hosts_are_blocked_without_cli(tmp_path):

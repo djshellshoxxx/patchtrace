@@ -56,6 +56,8 @@ def long_enough(literal: int, longest_run: int) -> Gate:
 
 
 def not_mostly_wildcards(length: int, literal: int) -> Gate:
+    if length <= 0:  # an empty window has no bytes to vouch for, so it cannot pass
+        return Gate(gate_id='wild', state='fail', detail='the window is empty')
     wild = length - literal
     state = 'pass' if wild * 100 <= MAX_WILDCARD_PERCENT * length else 'fail'
     return Gate(gate_id='wild', state=state, measured=wild * 100 // length,

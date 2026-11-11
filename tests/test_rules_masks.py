@@ -968,3 +968,31 @@ def test_a_remembered_comparison_belongs_to_its_two_functions(monkeypatch):
     assert tool._opcodes('older', older, None) is None and len(calls) == 2
     other = masks.mask_function(body(1, 2, 3, 4), 0x1000, DECODER.decode(body(1, 2, 3, 4), 0x1000))
     assert tool._opcodes('older', other, near) == [('replace', 1, 2, 1, 2), ('delete', 3, 4, 3, 3)] and len(calls) == 3
+
+
+def test_unknown_relocation_types_warn_once(tmp_path):
+    reloc = struct.pack('<II', 0x1000, 8 + 2 * 100) + struct.pack('<100H', *[0x4000 + i for i in range(100)])
+    tables, reader, _ = pe_image(tmp_path, reloc=reloc)
+    with reader:
+        assert len(tables.relocations()[0]) == 100
+        assert [w for w in tables.warnings if 'type 4' in w] == ['relocation type 4 masked as 8 bytes']
+
+
+def test_a_directory_larger_than_one_read_is_read_in_pieces(tmp_path, monkeypatch):
+    reloc = struct.pack('<II', 0x1000, 8 + 2 * 96) + struct.pack('<96H', *[0xA000 + i for i in range(96)])
+    tables, reader, _ = pe_image(tmp_path, reloc=reloc)
+    monkeypatch.setattr('patchtrace.artifact_bytes.MAX_READ_BYTES', 64)
+    monkeypatch.setattr(pt, 'MAX_READ_BYTES', 64)
+    with reader:
+        assert tables.relocations()[0] == [0x1000 + i for i in range(96)]
+
+
+def test_a_failed_table_read_is_a_table_error(tmp_path, monkeypatch):
+    from patchtrace.artifact_bytes import ArtifactBytesError
+    tables, reader, _ = pe_image(tmp_path)
+
+    def broken(*_a, **_k):
+        raise ArtifactBytesError('artifact_changed', 'file changed after verification')
+    monkeypatch.setattr(reader, 'read', broken)
+    with reader, pytest.raises(pt.PeTableError, match='artifact_changed'):
+        tables.read_rva(0x1000, 4)

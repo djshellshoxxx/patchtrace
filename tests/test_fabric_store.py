@@ -439,6 +439,17 @@ def test_an_unreadable_row_is_listed_and_does_not_hide_the_others(project, store
     assert [a.key for a in reader.find(P, ALL).items] == ['kept']
 
 
+def test_a_witness_whose_origin_tags_the_registry_does_not_give_its_source_is_skipped(project, store):
+    store.publish(P, [fs.import_anchor('Kept', batch='c1')])
+    honest = as_json(fs.import_anchor('Fine', batch='c2'))
+    inflated = as_json(fs.import_anchor('Inflated', batch='c2', origin=('D_ghidra',)))
+    put_row(project, 'cap', 'c2', [honest, inflated])
+    reader = fss.make_store(project)
+    by_batch = {b.batch: b for b in reader.batches(P)}
+    assert (by_batch['c2'].anchors, by_batch['c2'].skipped) == (1, 1)
+    assert {a.key for a in reader.find(P, ALL).items} == {'kept', 'fine'}
+
+
 def test_a_witness_beyond_the_limit_is_skipped_when_rows_are_merged(project, store):
     c = calls()
     store.publish(P, [c['cap'][0]])

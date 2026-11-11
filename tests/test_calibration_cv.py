@@ -269,7 +269,7 @@ def test_baselines_include_raw_bytes_m0b_and_h4_uses_best(well_specified):
     world, res = well_specified
     names = ['G.ratio', 'R.similarity']
     base = all_baselines(world.rows, names)
-    assert set(base) == {'M0', 'M0b', 'M2'}
+    assert set(base) == {'M0', 'M0b'}   # D-07: no agreement columns, so M2 is unavailable, not a constant
     assert m0b(world.rows, ['G.ratio']) is None  # no R family -> no raw-bytes baseline for profile G
     fdr = res.evaluation['fdr_reduction']
     assert fdr['baseline'] in base and fdr['lo'] > 0  # truth uses both features: beats the best baseline

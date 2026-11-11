@@ -133,7 +133,9 @@ def parse_manifests(ctx: Ctx, smap: SectionMap, inventory: ResourceInventory,
 def observe_manifest(leaf: ResourceLeaf, raw: bytes, *, complete: bool = True,
                      limits: ResourceLimits = DEFAULT_RESOURCE_LIMITS) -> ManifestObservation:
     """Parse the stored bytes of one manifest. `complete` says `raw` is the whole leaf (it is hashed only then)."""
-    digest = hashlib.sha256(raw).hexdigest() if complete else None
+    if not complete:
+        return ManifestObservation(leaf, None, warnings=('manifest_xml_invalid',))
+    digest = hashlib.sha256(raw).hexdigest()
     if len(raw) > limits.max_manifest_bytes:
         return ManifestObservation(leaf, digest, warnings=('manifest_over_cap',))
     text = _decode(raw)

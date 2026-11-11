@@ -3,7 +3,9 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
 import struct
+import time
 import zlib
 
 import pytest
@@ -108,6 +110,37 @@ def test_end_to_end_acquire_and_promote(tmp_path):
         service.close()
     q.remove_staging(staging)
     assert not staging.exists()
+
+
+def test_remove_staging_tolerates_a_locked_file(tmp_path, monkeypatch):
+    staging = q.create_staging(tmp_path)
+    (staging / 'a.sys').write_bytes(b'x')
+    (staging / 'b.bin').write_bytes(b'y')
+    real = os.unlink
+
+    def locked(path, *args, **kw):
+        if str(path).endswith('.sys'):
+            raise PermissionError(13, 'sharing violation')
+        return real(path, *args, **kw)
+    monkeypatch.setattr(os, 'unlink', locked)
+    assert q.remove_staging(staging, delay=0) is False  # never raises
+    assert not (staging / 'b.bin').exists() and (staging / 'a.sys').exists()
+    monkeypatch.undo()
+    assert q.remove_staging(staging, delay=0) is True and not staging.exists()
+
+
+def test_create_staging_sweeps_stale_directories_only(tmp_path):
+    old = tmp_path / 'patchtrace-acquire-old'
+    recent = tmp_path / 'patchtrace-acquire-recent'
+    other = tmp_path / 'unrelated-old'
+    for path in (old, recent, other):
+        path.mkdir()
+        (path / 'f').write_bytes(b'x')
+    stale = time.time() - q.STALE_STAGING_SECONDS - 60
+    for path in (old, other):
+        os.utime(path, (stale, stale))
+    fresh = q.create_staging(tmp_path)
+    assert not old.exists() and recent.exists() and other.exists() and fresh.is_dir()
 
 
 def test_wrong_hash_never_reaches_staging_as_artifact(tmp_path):

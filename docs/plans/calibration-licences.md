@@ -39,10 +39,12 @@ Permitted use for all rows: build from a pinned commit as a diff-engine test inp
 | openssl | Apache-2.0 | |
 | mbedtls | Apache-2.0 | upstream is dual Apache-2.0 OR GPL-2.0-or-later; the elected licence is Apache-2.0 (LBL note A, spec 11 Q4). Record the election in the pin's receipt. |
 | nghttp2, libuv, lua, cJSON, expat, jansson, libyaml | MIT | Lua text is in `lua.h`; libyaml licence in `License` |
-| postgresql-libpq | PostgreSQL | **Blocked**: `PostgreSQL` is not in `PERMISSIVE_SPDX`, so the Tier R validator rejects this pin. Do not use it until the owner or integrator decides on the allow-list (open item 7). |
+| postgresql-libpq | PostgreSQL | **Excluded** (owner, 2026-10-15): `PostgreSQL` is not in `PERMISSIVE_SPDX`. The found card moved to `corpus/excluded/postgresql-libpq-untrusted-error-cve-2024-10977.json` with its reason; revisit only if the owner extends the allow-list (open item 7). |
 | libevent | BSD-3-Clause | |
 | libwebp | BSD-3-Clause | |
-| pcre2 | BSD-3-Clause (catalogue) | **Discrepancy**: LBL note A records `BSD-3-Clause WITH PCRE2-exception`. The catalogue value must be fixed to match the licence file before any pin is used. Until then the entry is "do not use". |
+| pcre2 | BSD-3-Clause WITH PCRE2-exception | Catalogue (`recipes.d/pcre2.json`, `recipes.json`) now equals LBL note A and the licence file (owner accepted 2026-10-15). The exception covers binary-form linking only. |
+| brotli | MIT | LICENSE reads MIT at the pinned releases (recipe evidence). |
+| zstd | BSD-3-Clause | zstd is dual BSD-3-Clause / GPL-2.0-only; the BSD-3-Clause option (the `LICENSE` file, not `COPYING`) is elected and recorded; the GPL option is not used. |
 | stb | MIT | upstream reads `MIT OR Unlicense`; record MIT (spec 11 Q4) |
 
 Used in label training today: `recipes.json` holds one recipe (zlib). The other recipes are planned under LBL-01 to LBL-03. The three excluded projects (sqlite3, bzip2, giflib) are not used: sqlite3 needs generated host tools, which the build must not execute; bzip2 and giflib had no verified pins.

@@ -29,6 +29,7 @@ from typing import NamedTuple
 
 from ...enrichment.identity import domain_id
 from ..limits import UnifiedLimits
+from . import blocking as _blocking
 from .assign import assign_with_rejection
 from .blocking import (
     Blocked,
@@ -344,7 +345,8 @@ class _Residual:
     def _block(self, st: State) -> tuple[Blocked, bool]:
         if self._state is not st:                 # a table reused for another run never sees stale signatures
             hasher, limit = MinHasher(), st.limits.l06_fn_instructions
-            older, newer = (None if source is None else Signatures(source, hasher, limit) for source in self._sources)
+            older, newer = (None if source is None else Signatures(source, hasher, limit, st.budget.tick)
+                            for source in self._sources)
             self._sigs, self._state = (older, newer), st
         return block(st, *self._sigs), any(sigs is None for sigs in self._sigs)
 
@@ -469,4 +471,8 @@ def table_digest(passes: Sequence[PassSpec] = PASSES) -> str:
     base = pass_table_digest(passes)
     if not any(spec.id in RESIDUAL_IDS for spec in passes):
         return base
-    return domain_id('unified-pass-table-residual', 1, {'table': base, 'residual': RESIDUAL_VERSION})
+    constants = {'shingle': _blocking.SHINGLE, 'permutations': _blocking.PERMUTATIONS, 'bands': _blocking.BANDS,
+                 'min_shared': _blocking.MIN_SHARED, 'mnemonic_chars': _blocking.MNEMONIC_CHARS,
+                 'padding': sorted(_blocking.PADDING), 'max_anchors': MAX_ANCHORS}
+    return domain_id('unified-pass-table-residual', 2, {'table': base, 'residual': RESIDUAL_VERSION,
+                                                        'constants': constants})

@@ -71,7 +71,7 @@ class ScopeNotice:
 def notice(level: str, ledger, artifacts: Mapping | None = None) -> ScopeNotice:
     """Pure status for the Evidence dock and reports. `ledger` is a `ledger.LedgerResult` (or None);
     `artifacts` maps profile to `artifact.LoadResult`. Windows-tested needs a non-ordinal display level."""
-    entries = tuple(getattr(ledger, 'entries', ()) or ())
+    entries = ledger.live_entries() if ledger is not None else ()
     reason = getattr(ledger, 'reason', 'missing')
     broken = any(getattr(r, 'artifact', None) is None for r in (artifacts or {}).values())
     if reason == 'expired':

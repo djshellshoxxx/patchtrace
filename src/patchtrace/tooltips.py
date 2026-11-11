@@ -68,6 +68,11 @@ REGISTRY: dict[str, TooltipEntry] = {
                      'Opens the New comparison dialog.'),
     'action.open': _e('Open an existing PatchTrace project folder.',
                       'Resume earlier work.', 'Replaces the project shown in the window.'),
+    'action.kb_investigation': _e(
+        'Investigate a KB or CVE using local advisory documents and local binaries.',
+        'Preview exact files before creating a separate comparison project.',
+        'Local workspace only; target binaries are never executed.',
+        'No online discovery or download is performed.'),
     'action.acquire': _e(
         'Search Winbindex metadata and download exact-hash Microsoft binaries for comparison.',
         'Obtains an older and a newer build of a Windows file without hunting for them by hand.',
@@ -503,6 +508,21 @@ REGISTRY: dict[str, TooltipEntry] = {
         'Symbols improve names but contact a symbol server.',
         'When on, comparison may make network requests. When off, none are made.',
         'Applies to Ghidriff symbol lookups only.'),
+    'setup.symbol_off': _e(
+        'Disable symbol loading for the comparison.',
+        'This is the default and requires no symbol files or network access.',
+        'Use local folders to name functions from matching PDBs without network access, or choose online with explicit consent.'),
+    'setup.symbol_local': _e(
+        'Name functions from PDB symbol files you already have, without any network access.',
+        'Symbols improve names; this keeps every lookup on your machine.',
+        'PatchTrace copies only a PDB whose GUID and age match the binary into a private per-run folder and '
+        'tells Ghidra to use no symbol servers. Off by default.',
+        'Cannot be combined with Internet symbol lookups.'),
+    'setup.symbol_dirs': _e(
+        'Folders searched for PDB files, separated by semicolons, at most 16.',
+        'Only a PDB named in the binary and matching its GUID and age is used; others are skipped.',
+        'Saved with Save setup. Folders are searched one level deep by exact file name.',
+        availability='Used only when local PDB mode is on.'),
     'setup.timeout': _e(
         'Seconds a comparison may run before it is stopped, a whole number from 10 to 86400.',
         'Prevents a stuck backend from running forever.', 'Saved with Save setup.'),
@@ -585,8 +605,8 @@ REGISTRY: dict[str, TooltipEntry] = {
         'Restricts the WIL detector to features you care about.',
         'Saved with the profile.', availability=_DEFAULT_RO),
     'profile.symbol_policy': _e(
-        'Symbol policy: disabled or online.', 'Controls whether symbol lookups may use the network.',
-        'Saved with the profile; online permits network lookups.',
+        'Symbol policy: disabled, local, or online.', 'Controls whether a profile may use local PDB folders or network lookups.',
+        'A profile can narrow the Setup symbol mode, never widen it. Local uses only matching PDBs from Setup folders; online also requires Setup consent.',
         availability=_DEFAULT_RO),
     'profile.max_age': _e(
         'Maximum age in days of enrichment snapshots, a whole number from 1 to 3650.',
@@ -689,6 +709,21 @@ REGISTRY: dict[str, TooltipEntry] = {
         'Read-only preview of the exact report.', 'You review what will be written.',
         'Nothing changes. Absolute source paths are redacted and raw provider responses excluded.',
         'Generated from saved project data.'),
+    'export.contract': _e(
+        'Report contract: Report v1 (current) or Report v2.', 'Report v2 adds engine evidence, build facts, '
+        'advisories, leads and an unknowns list, each with its provenance.',
+        'Changes the preview and the file. Report v1 output is unchanged.',
+        'Report v2 reads stored results of this project; nothing is fetched.'),
+    'export.profile': _e(
+        'Redaction profile: Local analysis or Share with others.', 'Share removes code, notes and file paths and '
+        'writes web addresses as inert text, so the report is safer to pass on.',
+        'Share needs Report v2 and switches to it. It disables the code and notes options.',
+        'Applied when the report is written; the preview shows the result.'),
+    'export.sections': _e(
+        'Optional Report v2 sections, each with the number of stored items.', 'Leave out what the reader does '
+        'not need.', 'Unchecked sections are not written. A section with no stored data is disabled with the reason.',
+        'Counts come from the secondary engines, advisories, pilot leads and PE files stored in this project.',
+        availability='Needs Report v2.'),
     'export.accept': _e(
         'Write the report to the chosen destination.', 'Produces the file you previewed.',
         'Creates or overwrites the destination file.', availability='Needs a destination.'),
@@ -1072,11 +1107,11 @@ def _rich(text: str) -> str:
     return '<p style="white-space:pre-wrap">' + html.escape(text).replace('\n', '<br>') + '</p>'
 
 
-def apply_tooltip(target, tip_id: str, *, name: str | None = None, accessible: str = 'full', **values: object) -> None:
+def apply_tooltip(target, tip_id: str, *, name: str | None = None, accessible: str = 'what', **values: object) -> None:
     """Apply a registry entry to a QWidget or QAction (the work is `gui.tips.apply_tip`).
 
-    Sets toolTip and whatsThis on both, plus statusTip on actions and accessibleDescription on widgets. The legacy
-    description is the whole flattened text; panels pass ``accessible='what'`` for the short What line.
+    Sets toolTip and whatsThis on both, plus statusTip on actions and accessibleDescription on widgets. The description
+    is the short What line; pass ``accessible='full'`` for the whole flattened text.
     ``objectName`` is set to ``name`` (default: the ID) only when still empty. Dynamic IDs (those in TEMPLATES)
     take their values as keyword arguments.
     """

@@ -206,7 +206,7 @@ Facts marked [own] were measured on Ghidra 12.0.4 / pyghidra 3.0.2 / JPype 1.5.2
 4. `ir_key` is computed by the ingest from the validated header (actual probed versions) via `ir.ingest.ir_key_inputs`; the runner can predict it before extraction from the run settings (`extract.runner.predict_ir_key`), and a different actual key only costs a cache miss.
 5. A-04b (global `DerivedCache` stage `program-ir`) is NOT built: `enrichment/cache.py` belongs to the hardening track this wave and U-08 makes the global copy optional. The project-local IR (`runs/<run_id>/unified/ir/<ir_key[:16]>/`) is complete without it.
 6. `place_ir`/`find_ir` (deferred by S0a, 02 s9 item 9) live in `ir/place.py`, not in `store.py`.
-7. `lib` stays `false` and `RowFlag` `library` is never set (FID marker unverified, s4); the script's `--self-check` lists missing classes.
+7. `lib` stays `false` and `RowFlag` `library` is never set. The marker is now known (research note `../../research/ue-open-questions.md` Q1): FID sets a plate comment `Library Function - Single Match.`, a bookmark of type Analysis and category `Function ID Analyzer` (`Function ID Conflict` for ambiguous matches), no tag and no flag; reading the bookmark category is the follow-up, pending a live probe with an FID database; the script's `--self-check` lists missing classes.
 8. `ExtractRequest`, `IrExtractHeader` and `IrExtractFooter` are used unchanged; everything else in this section is S1-internal and versioned by `ingest_version` `ir-ingest/1` / `norm_version` `norm/1`.
 
 ### 12.3 `ir-extract/1` `fn` line (all keys required, unknown keys rejected)

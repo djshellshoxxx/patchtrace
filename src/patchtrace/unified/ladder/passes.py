@@ -25,12 +25,13 @@ from ...enrichment.identity import domain_id
 from ..limits import UnifiedLimits
 from .passspec import PassSpec, Verdict
 from .side import K_EXTERNAL, SideData
-from .state import State
-from .types import FAMILY_BYTES, TIER_RANK
+from .state import SoftCand, State
+from .types import FAMILY_BYTES, TIER_RANK, weaker
 
-LADDER_VERSION = 'ladder/1'
+LADDER_VERSION = 'ladder/4'
 FAMILY_STRUCT = 'F-PT-STRUCT'
 P15_MAX_WAVES = 8
+MAX_CALL_SITES = 512                 # 04 s5.1: a call-site sequence longer than this casts no implied-match votes
 _SQ = (math.sqrt(2), math.sqrt(3), math.sqrt(5), math.sqrt(7), math.sqrt(11), math.sqrt(13))
 
 
@@ -227,6 +228,59 @@ def _guard_set(st: State, a: int, b: int, key: object) -> Verdict | None:
     return Verdict('B') if ratio_ok(st.a.size[a], st.b.size[b], st.limits) else None
 
 
+def accept_global(st: State, spec: PassSpec, x: int, y: int, key: object, rnd: int, cap: str,
+                  chain: tuple[PassSpec, ...]) -> None:
+    """Guard, tier and family of a pair whose key was unique on both sides, then accept it (tier C: soft candidate)."""
+    tier = weaker(cap, spec.tier)
+    hints: tuple[str, ...] = ()
+    if spec.guard is not None:
+        verdict = spec.guard(st, x, y, key)
+        if verdict is None:
+            st.bump(f'guard-rejected:{spec.id}')
+            return
+        tier, hints = weaker(tier, verdict.tier), verdict.hints
+    family, cls = classify_pair(spec, chain, bool(st.a.pdata[x] and st.b.pdata[y]))
+    chain_ids = tuple(c.id for c in chain)
+    if tier == 'C':
+        st.add_soft(SoftCand(x, y, spec.id, spec.step, family, cls, rnd, chain_ids, (), hints))
+        return
+    st.accept(x, y, pass_id=spec.id, step=spec.step, tier=tier, family=family, cls=cls, rnd=rnd, chain=chain_ids,
+              hints=hints)
+
+
+def name_exact(st: State, rnd: int) -> None:
+    """P03 (LAD-6): every function is indexed under EACH of its names (primary and aliases), so a changed ICF fold
+    set keeps the match. A pair needs a name that is unique on both sides among the unmatched functions AND no other
+    unmatched function may share any name of either member (I2; otherwise abstain). Pairs are decided from the state
+    at the start of the pass; an accepted pair shares no name with another candidate, so the order cannot matter.
+    `keys` (the whole name tuple) stays for P01/P02 drill-down only."""
+    spec = PASS_BY_ID['P03']
+    index_a = _name_index(st.a, st.pool_a(spec))
+    index_b = _name_index(st.b, st.pool_b(spec))
+    for name in sorted(index_a.keys() & index_b.keys()):
+        st.budget.tick()
+        if len(index_a[name]) != 1 or len(index_b[name]) != 1:
+            st.bump(f'ambiguous:{spec.id}')
+            continue
+        x, y = index_a[name][0], index_b[name][0]
+        if st.mate_a[x] >= 0 or st.mate_b[y] >= 0:                      # taken through another shared name
+            continue
+        names = {*st.a.names[x], *st.b.names[y]}
+        if ({f for n in names for f in index_a.get(n, ())} != {x}
+                or {f for n in names for f in index_b.get(n, ())} != {y}):
+            st.bump(f'ambiguous:{spec.id}')
+            continue
+        accept_global(st, spec, x, y, name, rnd, 'A', ())
+
+
+def _name_index(side: SideData, pool: Sequence[int]) -> dict[str, list[int]]:
+    out: dict[str, list[int]] = {}
+    for fid in pool:
+        for name in side.names[fid]:
+            out.setdefault(name, []).append(fid)
+    return out
+
+
 # ---- P15 rehash-exact ----------------------------------------------------------------------------------------------------
 
 def _rehash_keys(st: State, side_letter: str):
@@ -249,7 +303,10 @@ def _rehash_keys(st: State, side_letter: str):
             if ikey:
                 tokens.append(('I', ikey, jump))
             elif callee < 0:
-                tokens.append(('?', jump))
+                # An unknown callee could refer to a different target on each side.
+                # A generic '?' token is not exact identity evidence.
+                tokens = None
+                break
             elif callee == f:
                 tokens.append(('S', jump))
             elif mate[callee] >= 0:
@@ -299,7 +356,7 @@ P00 = PassSpec('P00', 'manual', 0, 'M', 'F-MANUAL', 'E-MANUAL')
 PASSES: tuple[PassSpec, ...] = (
     PassSpec('P01', 'import-key', 0, 'A', 'F-PT-PE', 'E-NAME', _keys_import, hubs=True),
     PassSpec('P02', 'export-key', 0, 'A', 'F-PT-PE', 'E-NAME', _keys_export, hubs=True),
-    PassSpec('P03', 'name-exact', 0, 'A', 'F-PT-NAMES', 'E-NAME', _keys_name, _guard_name, hubs=True),
+    PassSpec('P03', 'name-exact', 0, 'A', 'F-PT-NAMES', 'E-NAME', _keys_name, _guard_name, hubs=True, run=name_exact),
     PassSpec('P04', 'bytes-exact', 1, 'A', FAMILY_STRUCT, 'E-BODY', _keys_h0, hubs=True, neighbour=True,
              bytes_family=True),
     PassSpec('P05', 'masked-exact', 1, 'A', FAMILY_STRUCT, 'E-BODY', _keys_h1, hubs=True, neighbour=True,
@@ -324,14 +381,22 @@ NEIGHBOUR_PASSES: tuple[PassSpec, ...] = tuple(p for p in PASSES if p.neighbour)
 assert all(PASS_BY_ID[p.id] is p for p in PASSES)
 
 
+def _ident(function: object) -> str | None:
+    """Stable identity of a key/guard/run function: swapping one for another changes the table, though the row flags
+    (`guard is not None`) would not show it."""
+    return None if function is None else f'{function.__module__}.{function.__qualname__}'  # type: ignore[attr-defined]
+
+
 def pass_table_digest(passes: Sequence[PassSpec] = PASSES) -> str:
-    """Identity of the table for `keys.config_digest(pass_table_digest=...)`: any rule change changes it."""
+    """Identity of the table for `keys.config_digest(pass_table_digest=...)`: any rule change changes it. A rule inside
+    a function body is covered by `LADDER_VERSION` (bump it with the change); the rows, the identity of the functions
+    they use and the engine's tuning constants are covered here."""
     rows = [[p.id, p.name, p.stage, p.tier, p.family, p.cls, p.hubs, p.neighbour, p.bytes_family,
-             p.guard is not None, p.run is not None, p.keys is not None] for p in passes]
-    return domain_id('unified-pass-table', 1, {'version': LADDER_VERSION, 'passes': rows,
-                                               'p15_max_waves': P15_MAX_WAVES})
+             _ident(p.keys), _ident(p.guard), _ident(p.run)] for p in passes]
+    return domain_id('unified-pass-table', 2, {'version': LADDER_VERSION, 'passes': rows,
+                                               'p15_max_waves': P15_MAX_WAVES, 'max_call_sites': MAX_CALL_SITES})
 
 
 PASS_TABLE_DIGEST = pass_table_digest()
-__all__ = ['FAMILY_STRUCT', 'LADDER_VERSION', 'NEIGHBOUR_PASSES', 'P00', 'PASSES', 'PASS_BY_ID', 'PASS_TABLE_DIGEST',
-           'PassSpec', 'Verdict', 'classify_pair', 'pass_table_digest', 'ratio_ok', 'rehash_exact']
+__all__ = ['FAMILY_STRUCT', 'LADDER_VERSION', 'MAX_CALL_SITES', 'NEIGHBOUR_PASSES', 'P00', 'PASSES', 'PASS_BY_ID', 'PASS_TABLE_DIGEST',
+           'PassSpec', 'Verdict', 'accept_global', 'classify_pair', 'pass_table_digest', 'ratio_ok', 'name_exact', 'rehash_exact']

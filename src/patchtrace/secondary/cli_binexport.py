@@ -37,7 +37,8 @@ def register(sec, common) -> None:
     check.add_argument('--accept-unbound', action='store_true',
                        help='I confirm this file belongs to the artifact although its executable_id is not a '
                             'SHA-256 (MD5/empty ids from IDA); recorded as id_binding')
-    worker = sec.add_parser('_binexport-worker', help=argparse.SUPPRESS)
+    # Omitting help hides the listing; help=SUPPRESS instead prints a literal placeholder in argparse.
+    worker = sec.add_parser('_binexport-worker')
     worker.add_argument('--request', required=True)
 
 

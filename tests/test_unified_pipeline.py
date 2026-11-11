@@ -319,7 +319,16 @@ def test_the_worker_memory_cap_is_half_the_ram_up_to_four_gib(project, ram, cap)
     assert runner.calls[0]['memory_limit_bytes'] == cap and runner.calls[0]['timeout_seconds'] == 120
 
 
-def test_children_get_absolute_argv_and_a_private_cwd(project):
+@pytest.fixture
+def private_tempdir(tmp_path_factory, monkeypatch):
+    # Parallel test workers create and remove their own pt-unified-* folders in the shared system temp directory,
+    # so a before/after listing of it races; a private temp root keeps those comparisons exact.
+    root = tmp_path_factory.mktemp('tmproot')
+    monkeypatch.setattr(tempfile, 'tempdir', str(root))
+    return root
+
+
+def test_children_get_absolute_argv_and_a_private_cwd(project, private_tempdir):
     runner = StubRunner()
     before = {p.name for p in Path(tempfile.gettempdir()).glob('pt-unified-*')}
     pipeline.run_unified(project, isolated(runner))
@@ -349,7 +358,7 @@ def test_the_child_inputs_are_private_files_listed_with_their_hashes(project):
     assert request['contract'] == 'unified-worker-request/1' and request['raw_status'] == 'ok'
     assert Path(request['raw_path']).is_relative_to(project.root)  # the one input read in place, re-hashed by the worker
     assert len(request['snapshot']['sha256']) == 64 and request['snapshot_lines'] == len(project.project.matches) == 5
-    assert request['sources'] == ['bindiff', 'ghidriff', 'manual', 'rz-diff']
+    assert request['sources'] == ['bindiff', 'diaphora', 'ghidriff', 'manual', 'rz-diff']
 
 
 def test_progress_comes_from_the_childs_progress_file(project):
@@ -644,13 +653,13 @@ def test_no_network_during_unified_run(project):
     assert hasattr(socket, 'socket')  # the guard above really watched the module the code could have used
 
 
-def test_runs_leave_no_stray_files_behind(project):
-    before = {p.name for p in Path(tempfile.gettempdir()).glob('pt-unified-*')}
+def test_runs_leave_no_stray_files_behind(project, private_tempdir):
+    before = {p.name for p in private_tempdir.glob('pt-unified-*')}
     pipeline.run_unified(project, inproc())
     for behaviour in (answer(ProcessResult(22, '', None, '')), error_document):
         with pytest.raises(UnifiedError):
             pipeline.run_unified(project, isolated(StubRunner(behaviour), refresh=True))
-    assert {p.name for p in Path(tempfile.gettempdir()).glob('pt-unified-*')} == before
+    assert {p.name for p in private_tempdir.glob('pt-unified-*')} == before
     root = results_dir(project)
     assert [p.name for p in root.iterdir()] == [pipeline.make_plan(project).result_id[:16]]
     assert sorted(p.name for p in root.iterdir().__next__().iterdir()) == [

@@ -23,6 +23,16 @@ _CHANGED_ORDER = {'yes': 0, 'unknown': 1, 'no': 2}
 _AVAILABILITY_ORDER = {'local': 0, 'direct': 1, 'candidates': 2, 'delta-only': 3, 'unavailable': 4}
 NOT_IN_INDEX = 'Not in the file index (Windows 10/11 client x64 only).'
 NO_KEY = 'No file-index key is known for this product.'
+_CLIENT_10_PREFIX = '10-'
+
+
+def index_keys(winbindex_key: str) -> tuple[str, ...]:
+    """The version keys a scope's ``winbindex_key`` may carry in a Winbindex record. Scope identity writes Windows 10
+    as ``10-22H2`` to keep it apart from ``11-22H2``, but Winbindex itself keys Windows 10 as ``22H2`` (``1507`` to
+    ``22H2``) and only Windows 11 with the ``11-`` prefix, so both spellings are tried (audit KBA-01)."""
+    if winbindex_key.startswith(_CLIENT_10_PREFIX):
+        return winbindex_key, winbindex_key[len(_CLIENT_10_PREFIX):]
+    return (winbindex_key,)
 
 
 @dataclass(frozen=True)
@@ -69,13 +79,16 @@ def _builds(row: IndexRow) -> set[str]:
 
 def _reasons(older: IndexRow, newer: IndexRow, intervening: Sequence[IndexRow], skipped_rows: int) -> set[str]:
     reasons: set[str] = set()
+    if older.build.file_name != newer.build.file_name:
+        reasons.add('NAME_MISMATCH')
     if older.sha256 == newer.sha256:
         reasons.add('IDENTICAL_CONTENT')
     if SUPPORTED_ARCH != older.machine or SUPPORTED_ARCH != newer.machine:
         reasons.add('ARCH')
     if older.build.version_key != newer.build.version_key:
         reasons.add('CROSS_PRODUCT')
-    if order_key(older) >= order_key(newer):
+    # KB/SHA/BASE tie-breakers keep display order stable; they are not chronology evidence.
+    if order_key(older)[:2] >= order_key(newer)[:2]:
         reasons.add('ORDER_UNVERIFIED')
     if {older.availability, newer.availability} & {'delta-only', 'unavailable'}:
         reasons.add('DELTA_ONLY')
@@ -126,9 +139,14 @@ def resolve(rows: Sequence[IndexRow], *, kb: str, scope: ProductScope, file_name
     if scope.family == 'windows-server':
         return _empty(kb, file_name, scope, scope.winbindex_key, ('SERVER_NOT_COVERED',),
                       reason_text('SERVER_NOT_COVERED'), skipped_rows)
+    if scope.architecture != SUPPORTED_ARCH:
+        return _empty(kb, file_name, scope, scope.winbindex_key, ('ARCH',),
+                      f'File-index pairing supports Windows client AMD64 only; selected product is {scope.architecture}.',
+                      skipped_rows)
     if scope.winbindex_key is None:
         return _empty(kb, file_name, scope, None, ('NO_NEWER',), NO_KEY, skipped_rows)
-    line = timeline((r for r in rows if r.build.file_name == file_name), scope.winbindex_key)
+    named = [r for r in rows if r.build.file_name == file_name]
+    line = tuple(sorted((r for key in index_keys(scope.winbindex_key) for r in timeline(named, key)), key=order_key))
     change: ChangeInfo = change_in_kb(line, kb)
     if not change.target_rows:
         return _empty(kb, file_name, scope, scope.winbindex_key, ('NO_NEWER',), NOT_IN_INDEX, skipped_rows)

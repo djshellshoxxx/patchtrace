@@ -1,0 +1,317 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'"><title>PatchTrace — Synthetic bounds-check walkthrough</title><style>body{max-width:1000px;margin:2rem auto;padding:0 1rem;font:16px sans-serif;}pre{white-space:pre-wrap;overflow-wrap:anywhere;}article{border-top:1px solid #aaa;padding:1rem 0;}</style></head><body><h1>Synthetic bounds-check walkthrough</h1><p>PatchTrace static comparison report; revision 1.</p><article><h2>Synthetic example: guard added before indexed buffer access</h2><p>Return an error for a null buffer or index outside the supplied length</p><p>Review: unreviewed; stale: false</p></article><h2>Evidence and provenance</h2><pre>{
+  &quot;analysis_runs&quot;: [
+    {
+      &quot;backend&quot;: &quot;synthetic-sample&quot;,
+      &quot;backend_version&quot;: &quot;1&quot;,
+      &quot;created&quot;: &quot;2026-10-14T00:00:00+00:00&quot;,
+      &quot;error&quot;: null,
+      &quot;id&quot;: &quot;00000000-0000-4000-8000-000000000007&quot;,
+      &quot;raw_sha256&quot;: &quot;25483166fb8d80011d03ffc8fcce7bf82de77fe3f7e0dd9c158c8dce43d1f3de&quot;,
+      &quot;schema_version&quot;: 1,
+      &quot;settings&quot;: {},
+      &quot;status&quot;: &quot;completed&quot;
+    }
+  ],
+  &quot;annotations&quot;: [
+    {
+      &quot;created&quot;: &quot;2026-10-14T00:00:00+00:00&quot;,
+      &quot;id&quot;: &quot;00000000-0000-4000-8000-000000000001&quot;,
+      &quot;kind&quot;: &quot;note&quot;,
+      &quot;schema_version&quot;: 1,
+      &quot;stale&quot;: false,
+      &quot;target_id&quot;: &quot;00000000-0000-4000-8000-000000000002&quot;,
+      &quot;text&quot;: &quot;Synthetic sample only. PE fixtures, decompilation and finding are authored examples; no backend or model was run, and no vulnerability is established.&quot;
+    }
+  ],
+  &quot;artifacts&quot;: [
+    {
+      &quot;architecture&quot;: &quot;x86-64&quot;,
+      &quot;format&quot;: &quot;PE&quot;,
+      &quot;id&quot;: &quot;00000000-0000-4000-8000-000000000003&quot;,
+      &quot;name&quot;: &quot;older_sample.dll&quot;,
+      &quot;sha256&quot;: &quot;dc71b8420acc68418eaebfb8a4848cd2f63626125868e9977f017010c8d30215&quot;,
+      &quot;side&quot;: &quot;older&quot;,
+      &quot;size&quot;: 1024
+    },
+    {
+      &quot;architecture&quot;: &quot;x86-64&quot;,
+      &quot;format&quot;: &quot;PE&quot;,
+      &quot;id&quot;: &quot;00000000-0000-4000-8000-000000000004&quot;,
+      &quot;name&quot;: &quot;newer_sample.dll&quot;,
+      &quot;sha256&quot;: &quot;4af23bcb773054ad469c57363d50e2b53a6590bfba2286f16a06b4fb1440a168&quot;,
+      &quot;side&quot;: &quot;newer&quot;,
+      &quot;size&quot;: 1024
+    }
+  ],
+  &quot;change_ranking&quot;: null,
+  &quot;created&quot;: &quot;2026-10-14T00:00:00+00:00&quot;,
+  &quot;interpretations&quot;: [
+    {
+      &quot;context&quot;: {
+        &quot;digest&quot;: &quot;4c8bf36c37e79bc5edadfe222e7a71b25ad495efdc0a19753812e4ada99b9317&quot;,
+        &quot;evidence&quot;: [
+          {
+            &quot;artifact_id&quot;: &quot;00000000-0000-4000-8000-000000000004&quot;,
+            &quot;end_line&quot;: 3,
+            &quot;function_id&quot;: &quot;00000000-0000-4000-8000-000000000009&quot;,
+            &quot;id&quot;: &quot;ev-6e416eb90b1b0be50ef1ef4c2d298497fd7ba022e7db265fc1d4b2f3744bdd07&quot;,
+            &quot;run_id&quot;: &quot;00000000-0000-4000-8000-000000000007&quot;,
+            &quot;schema_version&quot;: 1,
+            &quot;side&quot;: &quot;newer&quot;,
+            &quot;start_line&quot;: 1
+          },
+          {
+            &quot;artifact_id&quot;: &quot;00000000-0000-4000-8000-000000000004&quot;,
+            &quot;end_line&quot;: 6,
+            &quot;function_id&quot;: &quot;00000000-0000-4000-8000-000000000006&quot;,
+            &quot;id&quot;: &quot;ev-9590ec745b0b894dd2e10e35159bf287543da7d787ea6580f1a4f5317f874507&quot;,
+            &quot;run_id&quot;: &quot;00000000-0000-4000-8000-000000000007&quot;,
+            &quot;schema_version&quot;: 1,
+            &quot;side&quot;: &quot;newer&quot;,
+            &quot;start_line&quot;: 1
+          },
+          {
+            &quot;artifact_id&quot;: &quot;00000000-0000-4000-8000-000000000003&quot;,
+            &quot;end_line&quot;: 3,
+            &quot;function_id&quot;: &quot;00000000-0000-4000-8000-000000000008&quot;,
+            &quot;id&quot;: &quot;ev-e10b28b84d92f4e58523b9a19f50b2b95dd842080c946ba32da9fc098d4cf63a&quot;,
+            &quot;run_id&quot;: &quot;00000000-0000-4000-8000-000000000007&quot;,
+            &quot;schema_version&quot;: 1,
+            &quot;side&quot;: &quot;older&quot;,
+            &quot;start_line&quot;: 1
+          }
+        ],
+        &quot;id&quot;: &quot;ctx-4c8bf36c37e79bc5edadfe222e7a71b25ad495efdc0a19753812e4ada99b9317&quot;,
+        &quot;match_ids&quot;: [
+          &quot;00000000-0000-4000-8000-000000000002&quot;
+        ],
+        &quot;omitted&quot;: [
+          &quot;3 omitted or unavailable context entries&quot;
+        ],
+        &quot;project_id&quot;: &quot;00000000-0000-4000-8000-000000000005&quot;,
+        &quot;revision&quot;: 1,
+        &quot;schema_version&quot;: 1,
+        &quot;stale&quot;: false,
+        &quot;token_estimate&quot;: 778
+      },
+      &quot;created&quot;: &quot;2026-10-14T00:00:00+00:00&quot;,
+      &quot;duration_seconds&quot;: 0.0,
+      &quot;endpoint&quot;: null,
+      &quot;error&quot;: null,
+      &quot;findings&quot;: [
+        {
+          &quot;alternatives&quot;: [
+            {
+              &quot;confidence&quot;: &quot;unknown&quot;,
+              &quot;contradicting&quot;: [
+                &quot;ev-e10b28b84d92f4e58523b9a19f50b2b95dd842080c946ba32da9fc098d4cf63a&quot;
+              ],
+              &quot;explanation&quot;: &quot;Caller validation may already have prevented invalid access.&quot;,
+              &quot;id&quot;: &quot;00000000-0000-4000-8000-000000000010&quot;,
+              &quot;preconditions&quot;: [],
+              &quot;schema_version&quot;: 1,
+              &quot;supporting&quot;: [],
+              &quot;unknowns&quot;: [
+                &quot;No caller implementation was provided.&quot;
+              ],
+              &quot;verification&quot;: []
+            }
+          ],
+          &quot;analyst_conclusion&quot;: &quot;&quot;,
+          &quot;category&quot;: &quot;ordinary-bug&quot;,
+          &quot;context_id&quot;: &quot;ctx-4c8bf36c37e79bc5edadfe222e7a71b25ad495efdc0a19753812e4ada99b9317&quot;,
+          &quot;cwe&quot;: null,
+          &quot;cwe_rationale&quot;: null,
+          &quot;fix_purpose&quot;: &quot;Return an error for a null buffer or index outside the supplied length&quot;,
+          &quot;hypothesis&quot;: {
+            &quot;confidence&quot;: &quot;medium&quot;,
+            &quot;contradicting&quot;: [],
+            &quot;explanation&quot;: &quot;The sample now checks the pointer and index before dereferencing the buffer.&quot;,
+            &quot;id&quot;: &quot;00000000-0000-4000-8000-000000000011&quot;,
+            &quot;preconditions&quot;: [
+              &quot;The supplied length accurately describes the readable buffer.&quot;
+            ],
+            &quot;schema_version&quot;: 1,
+            &quot;supporting&quot;: [
+              &quot;ev-e10b28b84d92f4e58523b9a19f50b2b95dd842080c946ba32da9fc098d4cf63a&quot;,
+              &quot;ev-9590ec745b0b894dd2e10e35159bf287543da7d787ea6580f1a4f5317f874507&quot;
+            ],
+            &quot;unknowns&quot;: [
+              &quot;Caller validation and actual shipped machine code are outside this synthetic example.&quot;
+            ],
+            &quot;verification&quot;: [
+              &quot;Review callers and test null, empty, boundary and out-of-range inputs.&quot;
+            ]
+          },
+          &quot;id&quot;: &quot;00000000-0000-4000-8000-000000000012&quot;,
+          &quot;match_ids&quot;: [
+            &quot;00000000-0000-4000-8000-000000000002&quot;
+          ],
+          &quot;review&quot;: &quot;unreviewed&quot;,
+          &quot;schema_version&quot;: 1,
+          &quot;stale&quot;: false,
+          &quot;summary&quot;: &quot;Synthetic example: guard added before indexed buffer access&quot;
+        }
+      ],
+      &quot;id&quot;: &quot;00000000-0000-4000-8000-000000000013&quot;,
+      &quot;model&quot;: &quot;no model invoked&quot;,
+      &quot;prompt_version&quot;: &quot;patchtrace-1&quot;,
+      &quot;provider&quot;: &quot;curated synthetic sample&quot;,
+      &quot;schema_version&quot;: 1,
+      &quot;status&quot;: &quot;completed&quot;
+    }
+  ],
+  &quot;limitations&quot;: [
+    &quot;Static evidence and hypotheses require analyst verification.&quot;,
+    &quot;Qualitative confidence is not a vulnerability probability.&quot;,
+    &quot;Unavailable context and stale findings remain explicitly identified.&quot;,
+    &quot;Raw provider responses and original source paths are excluded.&quot;
+  ],
+  &quot;matches&quot;: [
+    {
+      &quot;category&quot;: &quot;modified&quot;,
+      &quot;id&quot;: &quot;00000000-0000-4000-8000-000000000002&quot;,
+      &quot;manual&quot;: false,
+      &quot;match_types&quot;: [
+        &quot;Symbols&quot;,
+        &quot;StructuralGraph&quot;
+      ],
+      &quot;newer&quot;: [
+        {
+          &quot;address&quot;: &quot;180001080&quot;,
+          &quot;address_space&quot;: &quot;virtual&quot;,
+          &quot;artifact_id&quot;: &quot;00000000-0000-4000-8000-000000000004&quot;,
+          &quot;callees&quot;: [
+            &quot;report_invalid_index&quot;
+          ],
+          &quot;callers&quot;: [],
+          &quot;id&quot;: &quot;00000000-0000-4000-8000-000000000006&quot;,
+          &quot;name&quot;: &quot;read_item&quot;,
+          &quot;run_id&quot;: &quot;00000000-0000-4000-8000-000000000007&quot;,
+          &quot;schema_version&quot;: 1
+        }
+      ],
+      &quot;older&quot;: [
+        {
+          &quot;address&quot;: &quot;180001000&quot;,
+          &quot;address_space&quot;: &quot;virtual&quot;,
+          &quot;artifact_id&quot;: &quot;00000000-0000-4000-8000-000000000003&quot;,
+          &quot;callees&quot;: [],
+          &quot;callers&quot;: [],
+          &quot;id&quot;: &quot;00000000-0000-4000-8000-000000000008&quot;,
+          &quot;name&quot;: &quot;read_item&quot;,
+          &quot;run_id&quot;: &quot;00000000-0000-4000-8000-000000000007&quot;,
+          &quot;schema_version&quot;: 1
+        }
+      ],
+      &quot;quality&quot;: &quot;upstream similarity 0.58 (uncalibrated)&quot;,
+      &quot;reason&quot;: &quot;&quot;,
+      &quot;review&quot;: &quot;unreviewed&quot;,
+      &quot;run_id&quot;: &quot;00000000-0000-4000-8000-000000000007&quot;,
+      &quot;schema_version&quot;: 1
+    },
+    {
+      &quot;category&quot;: &quot;added&quot;,
+      &quot;id&quot;: &quot;00000000-0000-4000-8000-000000000014&quot;,
+      &quot;manual&quot;: false,
+      &quot;match_types&quot;: [],
+      &quot;newer&quot;: [
+        {
+          &quot;address&quot;: &quot;180001200&quot;,
+          &quot;address_space&quot;: &quot;virtual&quot;,
+          &quot;artifact_id&quot;: &quot;00000000-0000-4000-8000-000000000004&quot;,
+          &quot;callees&quot;: [],
+          &quot;callers&quot;: [
+            &quot;read_item&quot;
+          ],
+          &quot;id&quot;: &quot;00000000-0000-4000-8000-000000000009&quot;,
+          &quot;name&quot;: &quot;report_invalid_index&quot;,
+          &quot;run_id&quot;: &quot;00000000-0000-4000-8000-000000000007&quot;,
+          &quot;schema_version&quot;: 1
+        }
+      ],
+      &quot;older&quot;: [],
+      &quot;quality&quot;: &quot;unknown&quot;,
+      &quot;reason&quot;: &quot;&quot;,
+      &quot;review&quot;: &quot;unreviewed&quot;,
+      &quot;run_id&quot;: &quot;00000000-0000-4000-8000-000000000007&quot;,
+      &quot;schema_version&quot;: 1
+    },
+    {
+      &quot;category&quot;: &quot;removed&quot;,
+      &quot;id&quot;: &quot;00000000-0000-4000-8000-000000000015&quot;,
+      &quot;manual&quot;: false,
+      &quot;match_types&quot;: [],
+      &quot;newer&quot;: [],
+      &quot;older&quot;: [
+        {
+          &quot;address&quot;: &quot;180001400&quot;,
+          &quot;address_space&quot;: &quot;virtual&quot;,
+          &quot;artifact_id&quot;: &quot;00000000-0000-4000-8000-000000000003&quot;,
+          &quot;callees&quot;: [],
+          &quot;callers&quot;: [],
+          &quot;id&quot;: &quot;00000000-0000-4000-8000-000000000016&quot;,
+          &quot;name&quot;: &quot;debug_dump&quot;,
+          &quot;run_id&quot;: &quot;00000000-0000-4000-8000-000000000007&quot;,
+          &quot;schema_version&quot;: 1
+        }
+      ],
+      &quot;quality&quot;: &quot;unknown&quot;,
+      &quot;reason&quot;: &quot;&quot;,
+      &quot;review&quot;: &quot;unreviewed&quot;,
+      &quot;run_id&quot;: &quot;00000000-0000-4000-8000-000000000007&quot;,
+      &quot;schema_version&quot;: 1
+    },
+    {
+      &quot;category&quot;: &quot;modified&quot;,
+      &quot;id&quot;: &quot;00000000-0000-4000-8000-000000000017&quot;,
+      &quot;manual&quot;: false,
+      &quot;match_types&quot;: [
+        &quot;Symbols&quot;
+      ],
+      &quot;newer&quot;: [
+        {
+          &quot;address&quot;: &quot;180001700&quot;,
+          &quot;address_space&quot;: &quot;virtual&quot;,
+          &quot;artifact_id&quot;: &quot;00000000-0000-4000-8000-000000000004&quot;,
+          &quot;callees&quot;: [],
+          &quot;callers&quot;: [],
+          &quot;id&quot;: &quot;00000000-0000-4000-8000-000000000018&quot;,
+          &quot;name&quot;: &quot;get_version&quot;,
+          &quot;run_id&quot;: &quot;00000000-0000-4000-8000-000000000007&quot;,
+          &quot;schema_version&quot;: 1
+        }
+      ],
+      &quot;older&quot;: [
+        {
+          &quot;address&quot;: &quot;180001600&quot;,
+          &quot;address_space&quot;: &quot;virtual&quot;,
+          &quot;artifact_id&quot;: &quot;00000000-0000-4000-8000-000000000003&quot;,
+          &quot;callees&quot;: [],
+          &quot;callers&quot;: [],
+          &quot;id&quot;: &quot;00000000-0000-4000-8000-000000000019&quot;,
+          &quot;name&quot;: &quot;get_version&quot;,
+          &quot;run_id&quot;: &quot;00000000-0000-4000-8000-000000000007&quot;,
+          &quot;schema_version&quot;: 1
+        }
+      ],
+      &quot;quality&quot;: &quot;upstream similarity 0.94 (uncalibrated)&quot;,
+      &quot;reason&quot;: &quot;&quot;,
+      &quot;review&quot;: &quot;unreviewed&quot;,
+      &quot;run_id&quot;: &quot;00000000-0000-4000-8000-000000000007&quot;,
+      &quot;schema_version&quot;: 1
+    }
+  ],
+  &quot;name&quot;: &quot;Synthetic bounds-check walkthrough&quot;,
+  &quot;project_id&quot;: &quot;00000000-0000-4000-8000-000000000005&quot;,
+  &quot;revision&quot;: 1,
+  &quot;sample&quot;: true,
+  &quot;schema_version&quot;: 1,
+  &quot;selection&quot;: {
+    &quot;finding_ids&quot;: [
+      &quot;00000000-0000-4000-8000-000000000012&quot;
+    ],
+    &quot;include_code&quot;: false,
+    &quot;include_notes&quot;: true
+  }
+}</pre></body></html>

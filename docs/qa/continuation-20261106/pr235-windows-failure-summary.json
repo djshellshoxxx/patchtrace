@@ -1,0 +1,98 @@
+{
+  "artifact_id": 13483243960,
+  "run_id": 42133327940,
+  "job_id": 127615155412,
+  "commit": "ccfe175d44a70947203c75bbd033a9a9e2633f0f",
+  "artifact_sha256": "4e1532cd7c3bf60b2a8ba77d3d15b557d6bf240edae2cbc1651b28cd00bf4eac",
+  "xml_sha256": "8ac777147c3eb5dfdafbb923e337d0bdd30ef6ef4183e411230bc592a6b14c99",
+  "suites": [
+    {
+      "name": "pytest",
+      "errors": "0",
+      "failures": "7",
+      "skipped": "98",
+      "tests": "20312",
+      "time": "4329.154",
+      "timestamp": "2026-11-06T05:41:04.750418+00:00",
+      "hostname": "runnervmhao91"
+    }
+  ],
+  "failures": [
+    {
+      "test": {
+        "classname": "tests.test_nway_recovery_copy_20261105",
+        "name": "test_exact_recovery_copy_is_reused_without_replacement",
+        "time": "0.166"
+      },
+      "kind": "failure",
+      "message": "patchtrace.nway.contracts.NwayError: PT-NWAY-STORAGE: series.json could not be preserved in a verified recovery copy; the damaged series was retained"
+    },
+    {
+      "test": {
+        "classname": "tests.test_nway_recovery_copy_20261105",
+        "name": "test_oversized_recovery_never_uses_read_bytes",
+        "time": "0.177"
+      },
+      "kind": "failure",
+      "message": "patchtrace.nway.contracts.NwayError: PT-NWAY-STORAGE: series.json could not be preserved in a verified recovery copy; the damaged series was retained"
+    },
+    {
+      "test": {
+        "classname": "tests.test_nway_recovery_copy_20261105",
+        "name": "test_stream_failure_preserves_original_and_prior_copy[changed-False]",
+        "time": "919.855"
+      },
+      "kind": "failure",
+      "message": "AssertionError: assert b'xxxxxxxxxxx...xxxxxxxxxxxxx' == b'yyyyyyyyyyy...yyyyyyyyyyyyy'\n  \n  At index 0 diff: b'x' != b'y'\n  \n  Full diff: (-: missing in left side, +: extra in left side)\n  - (b'yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy'\n  -  b'yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy'\n  -  b'yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy'\n[+27593 more lines; full report in element text]"
+    },
+    {
+      "test": {
+        "classname": "tests.test_nway_recovery_copy_20261105",
+        "name": "test_stream_failure_preserves_original_and_prior_copy[changed-True]",
+        "time": "925.435"
+      },
+      "kind": "failure",
+      "message": "AssertionError: assert b'xxxxxxxxxxx...xxxxxxxxxxxxx' == b'yyyyyyyyyyy...yyyyyyyyyyyyy'\n  \n  At index 0 diff: b'x' != b'y'\n  \n  Full diff: (-: missing in left side, +: extra in left side)\n  - (b'yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy'\n  -  b'yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy'\n  -  b'yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy'\n[+27593 more lines; full report in element text]"
+    },
+    {
+      "test": {
+        "classname": "tests.test_nway_recovery_copy_20261105",
+        "name": "test_replaced_new_copy_prevents_series_replacement",
+        "time": "0.210"
+      },
+      "kind": "failure",
+      "message": "FileNotFoundError: [Errno 2] No such file or directory: 'C:\\\\Users\\\\runneradmin\\\\AppData\\\\Local\\\\Temp\\\\pytest-of-runneradmin\\\\pytest-0\\\\test_replaced_new_copy_prevent0\\\\series\\\\series.json.corrupt-f39b98b8'"
+    },
+    {
+      "test": {
+        "classname": "tests.test_nway_series_tolerance",
+        "name": "test_save_refuses_corrupt_series_unless_replace_corrupt",
+        "time": "0.234"
+      },
+      "kind": "failure",
+      "message": "AssertionError: {'command': 'series create', 'contract': 'enrichment-cli/1', 'error': 'PT-NWAY-STORAGE: series.json could not be preserved in a verified recovery copy; the damaged series was retained', 'result': None, ...}\nassert 2 == 0"
+    },
+    {
+      "test": {
+        "classname": "tests.test_nway_series_tolerance",
+        "name": "test_ser1_replace_corrupt_replaces_an_oversized_file",
+        "time": "0.185"
+      },
+      "kind": "failure",
+      "message": "patchtrace.nway.contracts.NwayError: PT-NWAY-STORAGE: series.json could not be preserved in a verified recovery copy; the damaged series was retained"
+    }
+  ],
+  "skip_types": {
+    "collection-skip": 3,
+    "pytest.skip": 90,
+    "pytest.xfail": 5
+  },
+  "counts": {
+    "passed": 20207,
+    "failed": 7,
+    "skipped": 93,
+    "xfailed": 5
+  },
+  "failure_diff_seconds": 1845.29,
+  "failure_diff_fraction": 0.4262472529274772
+}

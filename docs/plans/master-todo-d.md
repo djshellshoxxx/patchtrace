@@ -11,7 +11,7 @@ Tags: [BUILD] code to write, [SPEC] a spec is missing or thin, [PLAN] needs a sh
 - T6 [PLAN] S: reconcile `UI_TRANSITIONAL_CEILING` (-65) and the `panels` budget in `test_gui_host_seam.py` after PR merges.
 - T7 [BUG] S: CI repeat job: add `python tools/qt_gate.py --repeat 20` (Linux) / `--repeat 5` (Windows) job text from `docs/qa.md` [GUI-F5:host] to `.github/workflows` (A owns workflows: send as integrator ask or do in D's PR).
 - T8 [BUG] S: F4 timing test (data-calls) flaked once under load: make the ceiling load-tolerant (`>=` style, no fixed sleeps).
-- T9 [BUG] S: ghidriff `csrc.find_functions` skips code inside `extern "C" {` (LBL).
+- [x] T9 [BUG] S: ghidriff `csrc.find_functions` skips code inside `extern "C" {` (LBL); fixed and covered by `tests/test_tier_r_csrc.py` (2026-10-20).
 - T10 [BUG] S: `_java_version` timeout in `backend.py` (A's note) - bundle owner path.
 - T11 [BUG] S: B-0 follow-ups (rapidfuzz/yara-x licences in `licenses/`, `dependency-versions.json`, `copy_metadata`, declare `shiboken6==6.12.0`).
 - T12 [PLAN] S: tasks/todo.md duplicate lines (F8 in OUTSTANDING ledger): collapse in one tracker-only commit.
@@ -54,7 +54,7 @@ Tags: [BUILD] code to write, [SPEC] a spec is missing or thin, [PLAN] needs a sh
 - L1 [PLAN] M: LBL remaining-slice dependency map from `LBL-integration-plan.md` section 9: LBL-02..05, 07, 08, 12, 13, 15, 16, 18..25 (state which are hard).
 - L2 [BUILD] XL: implement in order; recipes from permissive sources only, planted mutations, A/A controls, CVE-fix cases; evaluation harness; shard runner; honest-scope policy.
 - L3 [QA][EXT] XL: Tier R training run in Actions matrices (aggregate metrics only, never images, no Microsoft data); preregistration hash recorded; strong results required: report paired bootstrap CIs, power, A/A false-positive rate, no leakage; if results are weak, stop and ask the owner.
-- L4 [BUG] S: csrc extern "C" (T9); `power.py` formulas flagged for review (review them).
+- L4 [BUG] S: `csrc` extern "C" (T9) fixed 2026-10-20; `power.py` formulas flagged for review (review them).
 - L5 [AUDIT] L: audit calibration + tools/calibration (leakage, label noise, honest scope).
 - L6 [OWNER] Tier W local runs (Microsoft-derived data stays on the owner machine).
 
@@ -84,3 +84,7 @@ Tags: [BUILD] code to write, [SPEC] a spec is missing or thin, [PLAN] needs a sh
 
 ## R. Release
 - R1 [BUILD] M: Windows alpha prerelease (after merge sweep). R2 [OWNER] signing, Pages source, logo, Monero address. R3 [BUILD] S: beta notes. No final release without the owner.
+- L7 [BUILD] S: add an additive `deltas` field (paired deltas with sd, minimum detectable delta, power, non-inferiority) to `tier-r-report/1` in `tools/calibration/tier_r/contracts.py`; `evaluate_full()` already returns them (LBL-11). Not produced yet: tier-precision and reliability curves; live Ghidriff run; first real BinDiff export-driven run.
+- U8 [BUILD] M: provision `tools/bindiff_pin.json` (BinDiff v8 pinned with a verified digest) so G-U3 can leave `blocked`; until then O2 ("G-U1..G-U6 pass") cannot be met. G-U7 needs >= 30 B+B rows per class pair. First dispatch of `unified-live-gates.yml` is still to be done (about 240 Ghidriff runs for G-U2).
+- Open from fix pass: SEC-3, Ghidriff half of SEC-1 and SEC-10 (backend.py, bundle-owned), SEC-8 (strict UTF-8 changes a pinned contract), ACQ-12/13, text output keeps newlines (forged row risk), PE-2/PE-3 not copied to unified/ir/pe_tables.py and tier_w, no per-project byte cap for BinExport snapshots.
+- B7 [BUILD] M: apply `docs/research/ghidra-headless-large-pe.md` to the bundle builder after the first green full build: stronger Ghidra strip (Function ID databases, Jython, BSim, GhidraServer, Debug: 847 MB to 234 MB, identical output measured on Linux), jlink 26-module Java runtime (78 MB vs 346 MB), JDK stays 21 (25 unsupported for Ghidra 12.0.x), ghidriff must disable remote symbol servers (offline policy), add an external analysis timeout (no in-process one on the PyGhidra path). Heap for ntoskrnl-class PEs and Windows/MSVC determinism are unmeasured.

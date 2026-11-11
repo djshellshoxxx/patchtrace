@@ -11,8 +11,12 @@ def main() -> int:
     # Headless commands dispatch before any Qt import (SPEC-07 §11).
     # Any other first argument is a CLI typo and must fail with exit 2, never start Qt
     if len(sys.argv) > 1 and sys.argv[1] != '--self-test' and not sys.argv[1].startswith(('-platform', '-style')):
-        from .cli import main as cli_main
-        return cli_main(sys.argv[1:])
+        try:
+            from .cli import main as cli_main
+            return cli_main(sys.argv[1:])
+        except KeyboardInterrupt:  # Ctrl+C while the CLI modules are still importing: exit 5, no traceback
+            print('cancelled', file=sys.stderr)
+            return 5
 
     self_test = '--self-test' in sys.argv
     if self_test:
@@ -24,11 +28,16 @@ def main() -> int:
     app = QApplication.instance() or QApplication(sys.argv)
     app.setApplicationName('PatchTrace')
     app.setOrganizationName('PatchTrace')
+    from .app_icon import app_icon
+
+    app.setWindowIcon(app_icon())
     if self_test:
         from PySide6.QtCore import QSettings
 
         from .optional_deps import summary_line
         from .service import ProjectService
+        if app.windowIcon().isNull():
+            raise RuntimeError('Application icon did not load: the packaged mark is missing or invalid')
         print(summary_line())  # frozen_smoke asserts the guarded imports survive PyInstaller
         with tempfile.TemporaryDirectory(prefix='patchtrace-self-test-') as directory:
             root = Path(directory)

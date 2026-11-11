@@ -1,5 +1,39 @@
 # Windows acceptance and milestone builds
 
+## Desktop archive preflight amendment (2026-11-05)
+
+`tools/check_windows_package.py ARCHIVE --sha256 DIGEST --commit SHA --label LABEL`
+checks a Windows **desktop** portable ZIP against an independently obtained expected
+SHA-256 and source identity. It never extracts or executes archive contents, downloads
+dependencies, or marks Windows acceptance passed. Its JSON receipt records archive
+size/digest, manifest identity and file count; Windows smoke, native and manual gates
+remain `not-run`. A matching digest establishes equality to the supplied digest, not
+publisher authenticity.
+
+Before opening ZIP members, bound archive size to 2 GiB, central directory to 16 MiB
+and entries to 50,000; refuse ZIP64 and split archives explicitly. Accept only stored
+and DEFLATE compression, as emitted by the current builder. Bound total declared
+expanded bytes to 4 GiB and each metadata JSON to 4 MiB. Reject encrypted members,
+non-file/non-directory Unix types, duplicate/casefold/NFC-colliding names, unsafe
+Windows path components (255 UTF-16 code units maximum), NUL-truncated ZIP names,
+and file/directory-prefix conflicts. Require the single
+`PatchTrace/` root, a nonempty `PatchTrace.exe`, replaceable Qt6Core DLL and Windows
+platform plugin, a Python DLL, Python and Qt LGPL notices, `dependency-versions.json`
+and `file-inventory.json`. Runtime files must occupy the current PyInstaller layout:
+`_internal/python3*.dll`, `_internal/PySide6/Qt6Core.dll` and
+`_internal/PySide6/plugins/platforms/qwindows.dll`. Parse JSON strictly. The dependency manifest must identify
+the exact expected PatchTrace label and 40-character lowercase source commit, plus
+nonempty Python/PySide6 versions. Inventory must equal the archive's files except
+the inventory itself (the current builder emits its inventory before writing it).
+Archive contents and inventory names use identical path validation. Check the opened
+archive's metadata for mutation after hashing and metadata inspection. Do not claim
+protection against a hostile writer that can alter and restore all observed metadata.
+
+This is a structural preflight: executable resource identity remains
+`check_windows_exe.py`, decompression/CRC of every payload and frozen execution remain
+the clean Windows extraction/smoke. The full offline bundle uses its existing backend
+manifest validator and disconnected qualification; this preflight does not qualify it.
+
 Status: draft spec, 2026-10-14. Sections marked **(new)** are not implemented; everything else describes current behaviour, including the release gate paragraph of section 1.1 (slice RG).
 
 Observed state (read-only GitHub REST, 2026-10-14; re-check before acting): remote `main` = `4985132535` (local HEAD `c0df3ad` adds this file and is unpushed); open PRs = 0; latest prerelease `v0.1.0-beta.131` targets `b7e819a`. The `main` push run 135 at `4985132` **failed in `qa (ubuntu-latest)`** at the `pytest` step, so `release` was skipped and no prerelease exists for that commit. The run log was not retrievable from this session, so the failing test is unknown.
@@ -14,12 +48,14 @@ From `.github/workflows/qa-windows.yml`:
 
 | Trigger | Jobs that run | Publishes a GitHub prerelease? |
 |---|---|---|
-| `push` to `main` | `qa` (ubuntu-latest, windows-latest), `linux-package`, `linux-smoke` (22.04, 24.04), `release-gate`, `release` | Only if `qa` and `linux-smoke` succeed and the release gate says so (every third counted merge, see the release gate paragraph below). Tag `v0.1.0-beta.<run_number>` |
+| `push` to `main` | `qa` (ubuntu-latest, windows-latest), `qt-gate` (Linux and Windows), `linux-package`, `linux-smoke` (22.04, 24.04), `release-gate`, `release` | Only if `qa`, `qt-gate` and `linux-smoke` succeed and the release gate says so (every third counted merge, see the release gate paragraph below). Tag `v0.1.0-beta.<run_number>` |
 | `push` of a tag matching `v*` | same jobs | Yes. The tag name is used as the release tag |
 | `pull_request`, `workflow_dispatch` | QA jobs only | No |
 
 - `live-backend.yml` (native Ghidriff matrix) never publishes. It is a gate for the same SHA.
 - The `release` job has no `paths` filter; the release gate (paragraph below) limits publication to every third counted merge, and a docs-only merge that carries a skip marker neither runs the workflow nor counts.
+- `linux-package` requires both `qa` and `qt-gate`. `release` directly requires `qa`, `qt-gate`, `linux-smoke` and `release-gate`; its condition retains GitHub's implicit success check. A tag or `publish=true` cannot bypass a failed, cancelled or skipped GUI gate. The cadence gate's fail-open policy does not bypass acceptance checks.
+- Each `qa` matrix leg records `job.status` after its final acceptance step (including Windows portable and installer acceptance), immediately before the always-run evidence artifact upload. Release notes read these per-leg results and use the aggregate QA result only when a status file is missing.
 - `run_number` counts every run of the workflow, including PR and failed runs. Observed tags therefore have gaps (beta.118, .120, .127, .129, .131).
 - Release body is hard-coded and says "beta"; `target_commitish` is `github.sha`.
 - Uploaded release assets (`release/*`): `PatchTrace-0.1.0-windows-x64.zip`, `PatchTrace-0.1.0-windows-x64.zip.sha256`, `PatchTrace-0.1.0-linux-x86_64.tar.gz`, `PatchTrace-0.1.0-linux-x86_64.tar.gz.sha256`. The version `0.1.0` is hard-coded in `pyproject.toml`, both build scripts and the workflow, so the tag is not in the filenames.
@@ -31,7 +67,7 @@ From `.github/workflows/qa-windows.yml`:
 
 A commit is a **milestone candidate** only when all of these hold on that exact SHA:
 
-1. `qa (ubuntu-latest)`, `qa (windows-latest)`, `linux-smoke (ubuntu-22.04)` and `linux-smoke (ubuntu-24.04)` are green.
+1. `qa (ubuntu-latest)`, `qa (windows-latest)`, every `qt-gate` matrix leg, `linux-smoke (ubuntu-22.04)` and `linux-smoke (ubuntu-24.04)` are green.
 2. `Native Windows Ghidriff acceptance` is green when `src/**`, `tools/live_*`, `tools/seed_symbol_cache.py` or `tests/fixtures/**` changed.
 3. The automated additions in section 2 are green (once implemented).
 4. The release notes (section 4) list every open gate. No manual check is marked passed without a row in the section 3 record.
@@ -221,3 +257,19 @@ Clean Windows 11 checklist (section 3): <n> pass, <n> fail, <n> not-run. Record:
 
 - Limitations: unsigned beta; Ghidra, Java and Ghidriff external. Release publication: <published | not published (403), Actions artifact only>.
 ```
+
+## WIN-1 reconciliation acceptance (2026-10-30)
+
+Port the executable/window owner mark and version resource from PR #102 commit `9121bbc3e307c9641a47df475fbeecec1a7e6f71`, preserving current workflow policy and launcher/extractor inventory checks. Generate validated release labels and fixed version fields from the existing package/build version and CI ref/run; include the source commit in Comments and dependency-versions.json. Unsigned builds must not invent CompanyName. Use the byte-identical existing `site/assets/cdl-mark.svg`; package it for the window icon and render PNG frames into the executable ICO. Keep PyInstaller's default manifest.
+
+Before archiving, read back the executable with the bounded PE parser and reject missing/incomplete version information, mismatched string/fixed versions or commit, and missing/empty/unreadable icon groups. Validate actual referenced icon payloads, rather than accepting an empty group directory. Linux tests prove generation/parser/rendering only; frozen Windows startup, resource read-back and installer acceptance require exact-head Windows CI. No signing, publisher-identity or Windows-acceptance claim follows from synthetic fixtures.
+
+Read-back compares both fixed file/product quads with the explicit build fields (including the run/build component), and string versions with the exact release label. The general PE parser pads a three-component string prefix with zero, so its `fixed_vs_string:FileVersion` / `fixed_vs_string:ProductVersion` observations are expected for a nonzero CI build component. Only these two observations may be ignored when the independent exact string and quad checks pass; cross-resource conflicts, malformed/incomplete blocks, and all other contradictions still fail. Source-commit provenance requires the full 40-character lowercase Git SHA.
+
+The generated PatchTrace executable must have exactly one RT_VERSION leaf/block, matching PyInstaller 6.22.3's single resource-ID-1 version writer. Reject additional version leaves before accepting primary-block identity; this build-only checker is not a general multi-language PE acceptance tool. This prevents a parser cap or alternate stale-commit/publisher block from hiding behind the primary block. Resource/version context warnings are incomplete evidence and must also refuse publication.
+
+Within that version block, require one StringFileInfo language/codepage and unique string keys before building the identity dictionary. Duplicate identity fields or alternate language tables must not be collapsed with last-wins semantics. The generated version writer emits this canonical single-table shape.
+
+## WIN-1 build-output staging amendment (2026-10-30)
+
+The version-info and ICO generators keep their caller-selected `--out` destinations; these are build-tool output paths, not application/model instructions. Each writer must exclusively create a random adjacent staging file, write through its owned handle, close it before atomic replacement, and remove its stage after a write or replacement failure. Existing predictable `<out>.tmp` files or symlinks, and their targets, must remain untouched. Normal output bytes and replacement of the explicitly selected destination remain supported. This bounded repair does not claim hostile-parent-directory confinement or resolve the separate Sonar quality finding without fresh evidence.

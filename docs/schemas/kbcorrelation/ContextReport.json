@@ -883,6 +883,7 @@
         "basis": {
           "enum": [
             "explicit-csaf-cwe",
+            "explicit-advisory-cwe",
             "cwe-id-in-text",
             "curated-vocabulary"
           ],
@@ -1359,6 +1360,7 @@
         "basis": {
           "enum": [
             "explicit-csaf-cwe",
+            "explicit-advisory-cwe",
             "cwe-id-in-text",
             "curated-vocabulary"
           ],

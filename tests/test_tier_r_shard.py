@@ -429,10 +429,14 @@ def test_workflow_structure_and_pins():
     assert 'c3b458661d69e26e203d739c0c82d143cc8a4a29d9e571f099c2cf4bda62a120' in text
     for line in text.splitlines():
         if 'uses:' in line:
-            assert '@v' in line, line
+            action = line.split('uses:', 1)[1].split('#', 1)[0].strip()
+            if action.startswith('ilammy/msvc-dev-cmd@'):
+                assert action == 'ilammy/msvc-dev-cmd@0b201ec74fa43914dc39ae48a89fd1d8cb592756'
+            else:
+                assert '@v' in action, line
     yaml = pytest.importorskip('yaml')
     doc = yaml.safe_load(text)
-    assert set(doc['jobs']) == {'plan', 'shard', 'merge', 'windows-advisory'}
+    assert set(doc['jobs']) == {'plan', 'shard', 'merge', 'windows-advisory', 'msvc-advisory'}
     assert doc[True]['workflow_dispatch']['inputs'].keys() == {'shards', 'seed', 'engines', 'subset'}
     assert 'tools/calibration/**' in doc[True]['push']['paths']
     assert doc['jobs']['windows-advisory']['continue-on-error'] is True

@@ -7,17 +7,20 @@ Rules that keep the claim small:
   (the map and the confidences arrive as :class:`Alignment`, bound by the caller); every other function goes to
   ``unattributed``, which is always listed. Several groups per function are allowed, one :class:`LeadRow` each.
 * inside a group the engine's own order is kept; groups sort by (KEV listed, supporting channel set, CVE id). KEV is a
-  group header chip only: it moves a group, never a function within it.
+  group header chip only: it moves a group, never a function within it, and it never counts as supporting evidence.
 * the only number shown is the engine's attention order, labelled as such; channels are listed in words, never counted.
   Missing or unavailable evidence is ``unknown`` or ``not-run``, never a negative vote. Contested engine verdicts keep
   the lead and say so.
 * a CVE the context does not cover for the chosen product is listed apart (``not_applicable``) and contributes nothing;
   a mention in advisory text only is ``mention_only``.
-* stale means the project's ordered SHA-256 pair differs from the pair the context was prepared for; navigation is off.
+* stale means the project's ordered SHA-256 pair differs from the pair the context was prepared for, or an advisory
+  document the context was prepared from has been replaced by a newer imported revision; navigation is off and
+  ``stale_reasons`` says which. A ranking from an earlier analysis run is never read (``load_default`` guards it), and the
+  engine's reason is shown instead of "not ranked yet".
 """
 from __future__ import annotations
 
-from collections.abc import Iterable, Mapping, Sequence
+from collections.abc import Collection, Iterable, Mapping, Sequence
 from dataclasses import dataclass
 from typing import Literal, Protocol
 
@@ -43,20 +46,26 @@ from .products import clean_text
 from .sources.scope import coverage_text
 
 LeadsState = Literal['ready', 'no-comparison', 'no-advisory', 'stale']
+StaleReason = Literal['file-pair', 'advisory-revision']
 KevState = Literal['listed', 'not-listed', 'no-snapshot']
 
 TEXT_NO_COMPARISON = ('No comparison has been ranked for this project yet, so only the advisory context is shown. '
                       'Run the comparison and rank it to see leads.')
 TEXT_NO_ADVISORY = ('No advisory context is attached to this project, so the engine\'s own order is shown alone. '
                     'Search a KB or CVE to attach one.')
-TEXT_STALE = ('This context was prepared for a different file pair, analysis run or advisory revision. It is shown '
-              'for reference; navigation is off.')
+TEXT_STALE_PAIR = 'This context was prepared for a different file pair.'
+TEXT_STALE_ADVISORY = 'A newer revision of an advisory document this context was prepared from has been imported since.'
+TEXT_STALE_TAIL = 'It is shown for reference; navigation is off.'
+TEXT_NO_CURRENT_RANKING = ('The stored ranking does not match the current analysis, so only the advisory context is '
+                           'shown. {note}')
 TEXT_READY = ('Leads pair the advisory context with the comparison. The order inside a group is the engine\'s own '
               'attention order; it does not show that any changed function addresses a vulnerability.')
 TEXT_GUARD = 'absence of a signal is not a negative finding'
 BASIS_RANKED = 'attention order {rank} of {total} (the engine\'s own order, not a measure of risk)'
 BASIS_UNRANKED = 'no attention order (the engine did not rank this change)'
 KEV_TEXTS = {'no-snapshot': 'KEV: not loaded', 'not-listed': 'KEV: not in the loaded snapshot'}
+KevSourceState = Literal['loaded', 'not-loaded', 'unreadable']
+TEXT_KEV_NOT_LOADED = 'KEV: not loaded.'
 UNATTRIBUTED = 'unattributed'
 _LINE_SEPARATORS = str.maketrans({'\u2028': ' ', '\u2029': ' '})
 
@@ -114,17 +123,25 @@ class Alignment:
 
 @dataclass(frozen=True)
 class KevFact:
+    """What the loaded KEV snapshot says about one CVE. ``snapshot_sha256`` is the snapshot id; the catalog version,
+    freshness and age come from a real snapshot (``adapters.kev``) and stay None for a bare fact."""
     state: KevState
     date_added: str | None = None
     snapshot_sha256: str | None = None
+    catalog_version: str | None = None
+    freshness: str | None = None
+    age_days: int | None = None
 
 
 class ExploitationLookup(Protocol):
+    """Answers one CVE. A lookup may also carry ``source`` (a :class:`KevSource`); one without it is reported as
+    not loaded at report level (capability probe, plan 9 K8)."""
+
     def status(self, cve: str) -> KevFact: ...
 
 
 class NullExploitation:
-    """KEV is not loaded (the adapter is slice K8): every answer is 'not loaded'."""
+    """KEV is not loaded: every answer is 'not loaded'."""
 
     def status(self, cve: str) -> KevFact:
         return KevFact('no-snapshot')
@@ -156,6 +173,23 @@ class NotApplicableCve(Record):
     text: Short
 
 
+class KevSource(Record):
+    """The KEV snapshot behind every group's KEV chip, for the whole report: identity, origin and age, or why there is
+    none. ``unreadable`` means catalogs are stored but none could be read; it says nothing about any CVE."""
+    state: KevSourceState = 'not-loaded'
+    text: Short = TEXT_KEV_NOT_LOADED
+    snapshot_id: Sha256 | None = None
+    catalog_version: Short | None = None
+    date_released: Short | None = None
+    retrieved_at: Short | None = None
+    source: Short | None = None
+    authenticity: Short | None = None
+    freshness: Short | None = None
+    age_days: int | None = None
+    banner: Short | None = None
+    notes: tuple[Short, ...] = ()
+
+
 class LeadsReport(Contract):
     state: LeadsState
     text: Short
@@ -163,6 +197,7 @@ class LeadsReport(Contract):
     project_revision: int | None = None
     run_id: Short | None = None
     stale: bool = False
+    stale_reasons: tuple[StaleReason, ...] = ()
     coverage: tuple[Coverage, ...] = ()
     coverage_text: tuple[Short, ...] = ()
     groups: tuple[LeadGroup, ...] = ()
@@ -173,6 +208,7 @@ class LeadsReport(Contract):
     limitations: tuple[Short, ...] = ()
     truncated: int = 0
     hooks: tuple[Hook, ...] = ()
+    kev_source: KevSource = KevSource()
 
 
 # ---------------------------------------------------------------------------------------------- chips
@@ -207,7 +243,7 @@ def _code_chip(row: EngineRow, hits: Sequence[EngineSignal], aligned: bool = Tru
 
 
 def _member_chips(card: CveCard, rules: Sequence[str], row: EngineRow, hits: Sequence[EngineSignal],
-                  kev: KevFact, stale: bool) -> tuple[Chip, ...]:
+                  kev: KevFact, pair_stale: bool) -> tuple[Chip, ...]:
     detectors = ', '.join(sorted({s.detector for s in hits}))
     rule = rules[0] if rules else 'no curated hypothesis'
     doc = f'stated by vendor ({card.source_kind.upper()}), unverified local file; 1 source family'
@@ -216,23 +252,43 @@ def _member_chips(card: CveCard, rules: Sequence[str], row: EngineRow, hits: Seq
         _chip('applicability', 'unknown', card.applicability or 'applicability unknown'),
         _kev_chip(kev),
         _chip('hypothesis', 'supports', f'hypothesis {rule} aligns with detector {detectors}'),
-        _chip('binary-identity', 'unknown' if stale else 'supports',
-              'the file pair differs from the one the context was prepared for' if stale
+        _chip('binary-identity', 'unknown' if pair_stale else 'supports',
+              'the file pair differs from the one the context was prepared for' if pair_stale
               else 'the two files are the pair the context was prepared for (SHA-256)'),
         _code_chip(row, hits),
         _chip('anchor', 'not-run', 'anchor facts are not loaded'),
     )
 
 
+def _snapshot_clause(kev: KevFact) -> str:
+    """`` (catalog V, N days old)`` for a fact from a real snapshot; empty for a bare fact. A stale or future-dated
+    snapshot says so, because a CVE it does not list may have been added since."""
+    if kev.catalog_version is None:
+        return ''
+    if kev.freshness == 'future':
+        age = 'release time in the future; check this computer\'s clock'
+    elif kev.age_days is None:
+        age = 'age not known'
+    else:
+        age = 'today' if kev.age_days == 0 else '1 day old' if kev.age_days == 1 else f'{kev.age_days} days old'
+        if kev.freshness == 'stale':
+            age += '; it may lack newer entries'
+    return f' (catalog {kev.catalog_version}, {age})'
+
+
 def _kev_chip(kev: KevFact) -> Chip:
+    clause = _snapshot_clause(kev)
     if kev.state == 'listed':
-        return _chip('exploitation', 'supports', f'KEV listed {kev.date_added or "(date unknown)"}; '
+        return _chip('exploitation', 'supports', f'KEV listed {kev.date_added or "(date unknown)"}{clause}; '
                                                  'a CVE-level fact, not about this function')
+    if kev.state == 'not-listed' and clause:
+        return _chip('exploitation', 'neutral', f'{KEV_TEXTS["not-listed"]}{clause}; not listed does not mean not '
+                                                'exploited')
     return _chip('exploitation', 'not-run' if kev.state == 'no-snapshot' else 'neutral', KEV_TEXTS[kev.state])
 
 
 def _loose_chips(row: EngineRow, elsewhere: Sequence[NotApplicable], alignment: Alignment,
-                 stale: bool) -> tuple[Chip, ...]:
+                 pair_stale: bool) -> tuple[Chip, ...]:
     other = next((n for n in elsewhere if alignment.hits(n.stated_cwe, row)), None)
     if other is not None:
         where = ', '.join(other.products) or 'other products'
@@ -240,7 +296,7 @@ def _loose_chips(row: EngineRow, elsewhere: Sequence[NotApplicable], alignment: 
     else:
         text = 'no applicable CVE in the context aligns with this change'
     chips = [_chip('applicability', 'neutral', text), _code_chip(row, (), aligned=False)]
-    if stale:
+    if pair_stale:
         chips.append(_chip('binary-identity', 'unknown', 'the file pair differs from the one the context was prepared '
                                                          'for'))
     return tuple(sorted(chips, key=lambda c: c.channel))
@@ -265,8 +321,19 @@ def _order(rows: Iterable[EngineRow]) -> list[EngineRow]:
     return sorted(rows, key=lambda r: (r.attention_rank is None, r.attention_rank or 0, r.match_id))
 
 
+CARD_KEV = {'listed': 'listed', 'not-listed': 'not-in-snapshot', 'no-snapshot': 'not-loaded'}
+
+
+def kev_text(kev: KevFact) -> str:
+    """The one KEV sentence for a CVE, as the leads chip shows it (``kb explain`` and the Markdown export reuse it)."""
+    return _kev_chip(kev).text
+
+
 def _supporting(leads: Sequence[LeadRow]) -> frozenset[str]:
-    return frozenset(c.channel for lead in leads for c in lead.chips if c.state == 'supports')
+    """Channels that support a group's leads. ``exploitation`` is a CVE-level fact, never evidence about a function, so
+    KEV moves a group only through its own sort key and never strengthens the evidence count."""
+    return frozenset(c.channel for lead in leads for c in lead.chips
+                     if c.state == 'supports' and c.channel != 'exploitation')
 
 
 def _group(card: CveCard, rules: Sequence[str], leads: list[LeadRow], kev: KevFact) -> LeadGroup:
@@ -288,18 +355,23 @@ def _not_applicable(items: Sequence[NotApplicable]) -> tuple[NotApplicableCve, .
 
 def build_leads(bundle: ContextBundle | None, view: EngineView | None, *, alignment: Alignment,
                 kev: ExploitationLookup | None = None, elsewhere: Sequence[NotApplicable] = (),
-                mention_only: Sequence[str] = (), only_cve: str | None = None, limit: int | None = None
-                ) -> LeadsReport:
-    """Group the engine's changed functions by the CVEs of ``bundle``. ``bundle`` None means no advisory is attached."""
+                mention_only: Sequence[str] = (), only_cve: str | None = None, limit: int | None = None,
+                replaced_sources: Collection[str] = (), engine_note: str = '') -> LeadsReport:
+    """Group the engine's changed functions by the CVEs of ``bundle``. ``bundle`` None means no advisory is attached.
+    ``replaced_sources`` are document ids of ``bundle.sources`` that a newer imported revision has replaced;
+    ``engine_note`` is the engine's reason when ``view`` is None (for example a ranking behind the analysis)."""
     kev = kev or NullExploitation()
     report: ContextReport | None = bundle.context if bundle else None
     cards = tuple(report.cards) if report else ()
     rules = [[h.rule_id for h in hs.hypotheses] for hs in bundle.hypotheses] if bundle else []
-    stale = bool(bundle and view and (bundle.older_sha, bundle.newer_sha) != (view.older_sha, view.newer_sha))
+    pair_stale = bool(bundle and view and (bundle.older_sha, bundle.newer_sha) != (view.older_sha, view.newer_sha))
+    replaced = bool(bundle and view and {s.doc_id for s in bundle.sources} & set(replaced_sources))
+    reasons: tuple[StaleReason, ...] = (*(('file-pair',) if pair_stale else ()),
+                                        *(('advisory-revision',) if replaced else ()))
+    stale = bool(reasons)
     state: LeadsState = ('no-advisory' if bundle is None else 'no-comparison' if view is None
                          else 'stale' if stale else 'ready')
-    text = {'ready': TEXT_READY, 'no-comparison': TEXT_NO_COMPARISON, 'no-advisory': TEXT_NO_ADVISORY,
-            'stale': TEXT_STALE}[state]
+    text = _state_text(state, reasons, engine_note)
     key = bundle.context_key if bundle else None
     facts = {card.cve: kev.status(card.cve) for card in cards}
     grouped: dict[str, list[LeadRow]] = {card.cve: [] for card in cards}
@@ -314,10 +386,11 @@ def build_leads(bundle: ContextBundle | None, view: EngineView | None, *, alignm
             member = True
             hooks: tuple[Hook, ...] = ('kb.meaning.hypothesis', 'kb.next.review_lead')
             grouped[card.cve].append(_lead(row, card.cve, _member_chips(card, rule_ids, row, hits, facts[card.cve],
-                                                                        stale), len(rows), view, key, stale, hooks))
+                                                                        pair_stale), len(rows), view, key, stale,
+                                           hooks))
         if not member:
-            loose.append(_lead(row, UNATTRIBUTED, _loose_chips(row, elsewhere, alignment, stale), len(rows), view,
-                               key, stale, ('kb.next.review_lead',)))
+            loose.append(_lead(row, UNATTRIBUTED, _loose_chips(row, elsewhere, alignment, pair_stale), len(rows),
+                               view, key, stale, ('kb.next.review_lead',)))
     groups = [_group(card, rule_ids, grouped[card.cve], facts[card.cve]) for card, rule_ids in zip(cards, rules,
                                                                                                     strict=True)]
     groups.sort(key=lambda g: (g.kev != 'listed', -len(_supporting(g.leads)), g.group))
@@ -326,11 +399,27 @@ def build_leads(bundle: ContextBundle | None, view: EngineView | None, *, alignm
     groups, loose, dropped = _limited(groups, loose, limit)
     return LeadsReport(
         state=state, text=text, context_key=key, project_revision=view.project_revision if view else None,
-        run_id=view.run_id if view else None, stale=stale, coverage=tuple(report.coverage) if report else (),
+        run_id=view.run_id if view else None, stale=stale, stale_reasons=reasons, coverage=tuple(report.coverage) if report else (),
         coverage_text=tuple(coverage_text(c) for c in report.coverage) if report else (), groups=tuple(groups),
         unattributed=tuple(loose), not_applicable=_not_applicable(elsewhere),
         mention_only=tuple(sorted(set(mention_only))), unknowns=tuple(report.unknowns) if report else (),
-        limitations=tuple(report.limitations) if report else (), truncated=dropped, hooks=_hooks(state))
+        limitations=tuple(report.limitations) if report else (), truncated=dropped, hooks=_hooks(state),
+        kev_source=kev_source_of(kev))
+
+
+def kev_source_of(kev: ExploitationLookup | None) -> KevSource:
+    """The lookup's ``source`` when it has one (capability probe), else 'not loaded'."""
+    source = getattr(kev, 'source', None)
+    return source if isinstance(source, KevSource) else KevSource()
+
+
+def _state_text(state: LeadsState, reasons: Sequence[StaleReason], engine_note: str) -> str:
+    if state == 'stale':
+        parts = {'file-pair': TEXT_STALE_PAIR, 'advisory-revision': TEXT_STALE_ADVISORY}
+        return ' '.join([*(parts[r] for r in reasons), TEXT_STALE_TAIL])
+    if state == 'no-comparison' and engine_note:
+        return plain_text(TEXT_NO_CURRENT_RANKING.format(note=engine_note), 1000)
+    return {'ready': TEXT_READY, 'no-comparison': TEXT_NO_COMPARISON, 'no-advisory': TEXT_NO_ADVISORY}[state]
 
 
 def _hooks(state: LeadsState) -> tuple[Hook, ...]:
@@ -358,7 +447,9 @@ def lead_summary(lead: LeadRow) -> str:
 
 
 def render_text(report: LeadsReport) -> str:
-    lines = [*report.coverage_text, report.text]
+    kev = report.kev_source
+    lines = [*report.coverage_text, report.text, kev.text, *([kev.banner] if kev.banner else []),
+             *(f'KEV note: {note}' for note in kev.notes)]
     ordinal = 0
 
     def emit(lead: LeadRow) -> None:

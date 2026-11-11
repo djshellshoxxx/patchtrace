@@ -53,10 +53,17 @@ class Context:
         from patchtrace.service import ProjectService
         from patchtrace.ui import MainWindow
         self.app = QApplication.instance() or QApplication(['patchtrace-site'])
-        self.service = ProjectService.sample(tmp / 'sample-project')
         settings = QSettings(str(tmp / 'ui.ini'), QSettings.Format.IniFormat)
-        self.window = MainWindow(self.service, settings, tmp / 'profiles')
-        self.window.evidence.auto_probe = False  # never probe the machine for engines while rendering
+        # Construct the real window before attaching a project so the eager evidence panel can be
+        # configured before project_changed() runs. Screenshot generation must never probe host tools.
+        self.window = MainWindow(None, settings, tmp / 'profiles')
+        evidence = self.window.panels.controller('evidence')
+        if evidence is None:
+            raise ScreenshotError('the eager engine evidence panel was not constructed')
+        evidence.auto_probe = False
+        self.service = ProjectService.sample(tmp / 'sample-project')
+        self.window.service = self.service
+        self.window.refresh()
         self.window.resize(WIDTH, HEIGHT)
         self.window.show()
         self.pump()
@@ -96,7 +103,7 @@ class Context:
     def close(self):
         window = self.window
         try:
-            window.evidence.shutdown()
+            window.panels.shutdown()
         finally:
             window.close()
             if window.service:
@@ -138,11 +145,12 @@ def shot_ranked(ctx: Context):
 def shot_overview(ctx: Context):
     w = ctx.window
     w.show_file_overview()
-    dialog = w._preflight_dialog
-    ctx.wait(lambda: w._preflight_status.text().startswith('File inspection complete'), 'the PE inspection')
-    dialog.resize(1180, 960)
+    files = w.panels.controller('files')
+    if files is None:
+        raise ScreenshotError('the Files panel was not constructed')
+    ctx.wait(lambda: files.status.text().startswith('File inspection complete'), 'the PE inspection')
     ctx.pump()
-    return dialog
+    return w
 
 
 def shot_hex(ctx: Context):
@@ -196,13 +204,12 @@ SHOTS: tuple[Shot, ...] = (
          'panes.',
          'Raw Hex, Binary and Base64 views of the verified original bytes, with differing lines '
          'highlighted.', shot_hex),
-    Shot('overview', 'PE file overview',
-         'The File overview dialog. A first table lists recorded fields for the older and newer files '
-         '(name, size, size change, SHA-256, hash comparison, format). A status line reads file inspection '
-         'complete. A second, longer table lists parsed PE fields for both files, such as machine type '
-         'AMD64, characteristics, entry point, image base, alignment and subsystem.',
-         'File overview: recorded metadata plus a bounded, read-only PE comparison that works before any '
-         'analysis is run.', shot_overview),
+    Shot('overview', 'Files panel',
+         'The PatchTrace workspace with the Files dock open below it. The dock compares recorded fields for '
+         'the older and newer files (name, size, size change, SHA-256, hash comparison, format) with parsed '
+         'PE fields for both files, including machine type AMD64, characteristics, entry point, image base, '
+         'alignment and subsystem. The status line reports file inspection complete.',
+         'Files panel: recorded metadata and a bounded, read-only PE comparison alongside the workspace.', shot_overview),
     Shot('export', 'Report export preview',
          'The Export dialog. A format selector set to md, a destination field, a checkbox to include '
          'function code (off), one to include analyst notes (on), a note that absolute paths are redacted '

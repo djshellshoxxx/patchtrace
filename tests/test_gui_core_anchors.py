@@ -118,6 +118,44 @@ def test_ambiguity_lists_candidates_up_to_twenty_but_counts_them_all():
     assert NavResult.ambiguous('x', candidates[:2]).message == '2 candidates match x. Choose one.'
 
 
+def test_ambiguity_accepts_an_empty_iterator():
+    result = NavResult.ambiguous('missing', iter(()))
+    assert result.status == 'ambiguous'
+    assert result.message == '0 candidates match missing. Choose one.'
+    assert result.candidates == ()
+
+
+def test_ambiguity_consumes_one_shot_generator_in_order():
+    visited = []
+
+    def generate():
+        for i in range(25):
+            visited.append(i)
+            yield AnchorRef('match', f'm{i}')
+
+    result = NavResult.ambiguous('function', generate())
+    assert visited == list(range(25))
+    assert result.message == '25 candidates match function. Choose one.'
+    assert [item.key for item in result.candidates] == [f'm{i}' for i in range(MAX_CANDIDATES)]
+
+
+def test_ambiguity_bounds_peak_memory_for_large_stream():
+    import tracemalloc
+    from itertools import repeat
+
+    candidate = AnchorRef('match', 'repeated')
+    tracemalloc.start()
+    try:
+        result = NavResult.ambiguous('function', repeat(candidate, 100_000))
+        peak = tracemalloc.get_traced_memory()[1]
+    finally:
+        tracemalloc.stop()
+
+    assert result.message == '100000 candidates match function. Choose one.'
+    assert result.candidates == (candidate,) * MAX_CANDIDATES
+    assert peak < 500_000, f'candidate iterator was materialized: {peak} bytes peak'
+
+
 def test_nav_result_messages_sanitize_untrusted_labels():
     result = NavResult.not_found('a\nb' + chr(0x202e), 'r\n1')
     assert '\n' not in result.message and chr(0x202e) not in result.message

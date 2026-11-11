@@ -158,6 +158,9 @@ def make_project(work: Path) -> Path:
         service.close()
 
 
+_LIVE_PARTS = (reachable, run_cli)
+
+
 def probe(cves: Sequence[str], providers: Sequence[str], work: Path, timeout: float, *,
           check_host: Callable[[str], tuple[bool, str]] | None = None,
           runner: Callable[[Sequence[str], float], CliRun] | None = None) -> dict:
@@ -192,7 +195,7 @@ def probe(cves: Sequence[str], providers: Sequence[str], work: Path, timeout: fl
         result['reason'] = (f'keyless NVD pacing broken: {result["pacing"]["observed_s"]} s for '
                             f'{result["pacing"]["nvd_requests"]} requests')
     preview = [line for line in run.stderr.splitlines() if line.startswith('request: ') or 'NVD request' in line]
-    return {'engine': ENGINE, 'mocked': False, 'cves': list(cves), 'providers_requested': list(providers),
+    return {'engine': ENGINE, 'mocked': (check_host, runner) != _LIVE_PARTS, 'cves': list(cves), 'providers_requested': list(providers),
             'cli_exit': run.exit_code, 'cli_seconds': round(run.seconds, 2), 'consent_preview': preview[:20],
             'snapshot_ids': sorted(s.get('snapshot_id') for s in snapshots if isinstance(s, dict)
                                    and isinstance(s.get('snapshot_id'), str)),

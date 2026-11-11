@@ -72,3 +72,7 @@ Alpha can have incomplete specs if explicitly labelled. Produce a Windows standa
 Return one compact status report: current main/PR SHA; exact issue/CI blockers **with links**; implemented modules/GUI controls; files changed; tests and Windows build/run numbers; downloadable alpha artifact URL if produced; accepted/incomplete/unverified checklist; PRs opened/merged; next 3 priority slices. If a task cannot be completed because of permissions, mark it blocked with required maintainer action instead of repeatedly spending tokens retrying.
 
 The user has authorized autonomous modular implementation and merge **after passing checks**. Do not stop to ask about routine decisions. Stop only for credentials, external repo settings, destructive operations, unapproved external transmission or a genuine product-scope choice that cannot be reasonably inferred.
+
+## Continuation pointer (2026-10-16)
+
+For the current merge-first PR state, verified #77 merge, current-head CI blockers for #64/#76/#78/#61, stacked #80 dependency and overlapping #79/#82 label proposals, read [chatgpt-merge-first-handoff-20261016.md](chatgpt-merge-first-handoff-20261016.md) before resuming. Both documents are time-stamped snapshots: GitHub branch tips and current CI supersede them.

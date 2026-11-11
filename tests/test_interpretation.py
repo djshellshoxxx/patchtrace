@@ -543,3 +543,9 @@ CLAIM_TABLE = [
 def test_identifier_claim_grammar(text, expected):
     from patchtrace.interpretation import identifier_claims
     assert identifier_claims(text) == expected
+
+
+def test_core1_context_for_code_ending_in_blank_line_validates(project):
+    project.matches[0].older[0].code = 'int bounds(int n) {\nreturn n + 1;\n}\n\n'
+    context = build_context(project, ['match'])
+    validate_context(context)
