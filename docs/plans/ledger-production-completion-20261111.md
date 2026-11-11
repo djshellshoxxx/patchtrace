@@ -30,38 +30,40 @@ Read from GitHub on 2026-11-11 between 00:40 and 00:55 UTC. Re-read before actin
 | Instance C: unified bench and parity fixes (UE-B-03, UE-B-07) | #283 `claude/instance-c-research` | `tools/unified/bench.py`, `tools/unified/parity.py` |
 | R7 research prototypes | #282 `consolidate/research-r7-20261104` | `tools/research/r7/**` |
 
-## 3. Slices this session is building (file claims)
+## 3. Slices of this session: state at the stop (all file claims released)
 
-Every slice has its own worktree and local branch `claude/sleepy-fermi-<name>`; slices are pushed grouped into a few
-pull requests. A row is released when its state says `released`. Files not listed here are not being edited by this
-session. All `src/patchtrace/unified/**`, `backend.py`, `tools/unified/**`, `rules/**`, `callgraph/**` and the files in
-section 2 are left to their owners; findings that fall there are listed in section 5.
+The session was stopped by the owner on 2026-11-11 (section 6). No slice is being worked on any more: every file claim
+this ledger made earlier is released. "Verified" names the checks that were run in the session's Linux container; none
+of it is Windows, native-tool or live evidence. PR numbers are in section 6.
 
-| Slice | What | Files being edited | State |
+| Slice | What | State at stop | Where |
 |---|---|---|---|
-| SEC-A | TB-16: deep JSON fails typed, not with RecursionError (non-unified sites) | `reports.py`, `search/service.py`, `calibration/artifact.py`, `diaphora/provenance.py`, `raw_cleanup.py`, `backend_bundle.py` | built, in review |
-| SEC-B | WP-03, SEC-9 residual, PE-4/5: storage-side sanitisers use `hostile_text.is_hostile` | `secondary/bindiff_probe.py`, `secondary/runs.py`, `kbcorrelation/products.py` (`clean_text`), `pe_overview/resources.py`, `codetext/intraline.py`, `hostile_text.py` | building |
-| SEC-C | TB-12, TB-10, TB-15, TB-09/WP-09 | `ingestion.py`, `offline_bundle.py`, `jobs.py` | building |
-| SEC-D | PE-2/PE-3 (Tier W copy), PE-6, PE-7, PE-8 | `tools/calibration/tier_w/pe_tables.py`, `pe_overview/imports_exports.py`, `pe_overview/exports_table.py`, `pe_overview/_common.py` | building |
-| K1 | KBA-06, KBA-08, `kb leads` state text | `kbcorrelation/lineage.py`, `alias_catalog.py`, `products.py` (derive/keys), `leads.py` | building |
-| K2 | KBA-07, report/2 export of the KB context | `report2/contracts.py`, `report2/adapters.py` | building |
-| K3 | KB dock loader fails for every open project (KBB-01) | `kbcorrelation/panel_qt.py`, `cli_leads.py`, `wiring.py` | building |
-| K4 | `kb index sync --help`, `kb products --all`, KEV state in `pilot leads` and `kb search` | `kbcorrelation/cli.py`, `cli_index.py`, `cli_pairs.py`, `service.py` (KEV edge state), `pilot/collect.py`, `pilot/cli.py` | building |
-| K5 | L1 advisory-join runner over the candidate manifest (mechanics only, synthetic) | `tools/research_qualification/l1_run.py` (new), `__main__.py` (one subcommand) | building |
-| NA-1 | rz-diff: refuse results whose side ownership is ambiguous (Rizin singleton swap); adapter fidelity | `secondary/rzdiff.py`, `secondary/contracts.py`, `secondary/registry.py`, `docs/specs/secondary-engine.md` | building |
-| NA-2 | BinDiff importer row cap, typed post-exit failures, `import-bindiff` exit code | `secondary/bindiff.py`, `secondary/bindiff_run.py` | queued |
-| NA-3 | Diaphora SQLite guard refuses views, triggers, virtual tables | `diaphora/sqlite_guard.py` | queued |
-| CLI-0 | SPEC-44 brought up to main; decisions for the new verbs | `docs/specs/cli-umbrella.md` | building |
-| CLI-A | New verbs `project` (create, info, runs, import-json, backup, swap, sample) and `compare` | new `project_cli.py`, `compare_cli.py`, `cli_commands/project.py`, `cli_commands/compare.py`, help pages 77-78 | building |
-| CLI-B | New verbs `corrections` (list, export, import, undo) and `review`; contract `corrections-exchange/1` | new `corrections_cli.py`, `review_cli.py`, `cli_commands/corrections.py`, `cli_commands/review.py`, help pages 79-80 | building |
-| CLI-C | New verbs `profile`, `doctor`, `runtime` | new `enrichment/profile_cli.py`, `doctor_cli.py`, `runtime_cli.py`, three `cli_commands/` adapters, help pages 81-83 | building |
-| TR-A | Tests that cannot fail or skip silently; PyYAML declared for the 39 skipped workflow-contract tests; pytest strict config | `tests/**` named files, `pyproject.toml` (dev extra, pytest options) | queued (first commit done) |
-| TR-B | Skip ledger tool, live-status honesty, base-ref triage, schema drift `--check` | `tools/run_test_suite.py`, `tools/check_live_status.py`, `tools/skip_ledger.py` (new), `tools/generate_schemas.py` | queued |
-| GUI-A | Changed-row contrast in light themes, untrusted text at display, navigator debounce, worker failure, accessible names | `ui.py` (within the 12-line seam budget), `tooltips.py`, new `ui_names.py` | queued |
-| GUI-B | Palette list, header tooltips, keyboard header sort, lane start failures, failed-panel rebuild, copy refusal | `gui/registry.py`, `gui/table_spec.py`, `gui/shortcuts.py`, `gui/qt/{palette,table,commands,tasks,host}.py` | queued |
-| GUI-C | State announcements for the evidence and Search panels | `ui_evidence.py`, `search/qt_panel.py` | queued |
-| INT-1 | Withdrawn advisory claims, untested CSAF validation listed, CVSS consistency warnings, redirect refusal | `intelligence/explain.py`, `intelligence/cli.py`, `intelligence/csaf/validate.py`, `intelligence/csaf/transport.py` | queued |
-| INT-2 | Typed CVSS/time errors, ASCII-only CVE id contract, KEV provenance never downgrades | `enrichment/cve.py`, `enrichment/contracts.py`, `kev/store.py`, `kev/service.py` | queued |
+| SEC-A | TB-16: deep JSON fails typed at six non-unified parse sites | built; reviewed twice (one major fixed; second round one of two reviewers finished: approve with a nit) | security PR |
+| SEC-B | WP-03, SEC-9 residual, PE-4/5: five storage sanitisers on `hostile_text.is_hostile` | built (2 commits); worker stopped before its report; not reviewed | security PR |
+| SEC-C | TB-12, TB-10, TB-15 built; TB-09 not built | 3 of 4 items; not reviewed; TB-09 as an unfinished diff | security PR; `wip/SEC-C-item4-TB-09-jobs.patch` |
+| SEC-D | PE-2/PE-3 (Tier W copy), PE-6, PE-7, PE-8 | built; review interrupted | security PR |
+| K1 | KBA-06, KBA-08, `kb leads` state text | built; not reviewed | KB/CVE PR |
+| K2 | KBA-07, report/2 export of the KB context | built; one reviewer of two finished: approve with one minor finding and nits | KB/CVE PR |
+| K3 | KB dock loader fails for every open project (KBB-01, high) | unfinished, untested diff | `wip/K3-kb-dock-owner-thread-snapshot.patch` |
+| K4 | `kb index sync --help`, `kb products --all`, KEV state in `pilot leads` and `kb search` | not started (card ready) | `cards/K4.md` |
+| K5 | L1 advisory-join runner (mechanics only; no accuracy figure) | built; not reviewed | L1 runner PR |
+| NA-1 | rz-diff: refuse ambiguous side ownership (Rizin singleton swap); byte-exact stdout and producer provenance | built; worker stopped before its report; not reviewed | rz-diff PR |
+| NA-2 | BinDiff importer row cap, typed post-exit failures, `import-bindiff` exit code | not started (card ready) | `cards/NA-2.md` |
+| NA-3 | Diaphora SQLite guard refuses views, triggers, virtual tables | not started (card ready) | `cards/NA-3.md` |
+| CLI-0 | SPEC-44 brought up to main | unfinished draft | `wip/CLI-0-spec44-refresh.patch` |
+| CLI-A | `patchtrace project` (create, info, runs, import-json, backup, swap, sample) and `patchtrace compare` | built; worker stopped before its report; not reviewed; fake backend only | CLI PR |
+| CLI-B | `patchtrace corrections` and `patchtrace review`; contract `corrections-exchange/1` | spec drafted, code unfinished and untested | `wip/CLI-B-corrections-review-code.patch` |
+| CLI-C | `patchtrace profile`, `patchtrace doctor` built; `patchtrace runtime` specified, not built | 2 of 3 verbs; not reviewed | CLI PR |
+| TR-A | Tests that cannot fail or skip silently; PyYAML for the 39 skipped workflow-contract tests; pytest strict config | 1 of 6 items (the xdist-only test) | test-reliability PR; `cards/TR-A.md` |
+| TR-B | Skip ledger tool, live-status honesty, base-ref triage, schema drift `--check` | not started (card ready) | `cards/TR-B.md` |
+| GUI-A | Changed-row contrast in light themes (high), untrusted text at display, navigator debounce, worker failure, accessible names | not started (card ready) | `cards/GUI-A.md` |
+| GUI-B | Palette list, header tooltips, keyboard header sort, lane start failures, failed-panel rebuild, copy refusal | not started (card ready) | `cards/GUI-B.md` |
+| GUI-C | State announcements for the evidence and Search panels | not started (card ready) | `cards/GUI-C.md` |
+| INT-1 | Withdrawn advisory claims, untested CSAF validation listed, CVSS consistency warnings, redirect refusal | not started (card ready) | `cards/INT-1.md` |
+| INT-2 | Typed CVSS/time errors, ASCII-only CVE id contract, KEV provenance never downgrades | not started (card ready) | `cards/INT-2.md` |
+| ST | Status roll-up: inventories, generator, drift test | built (36 tests pass); not reviewed | this branch |
+
+`cards/`, `wip/` and `reports/` are under `docs/plans/production-completion-20261111/`.
 
 ## 4. Events
 
@@ -73,6 +75,12 @@ section 2 are left to their owners; findings that fall there are listed in secti
 | 2026-11-11 01:04 to 01:20 | Inventory analysts | 9 of 17 returned (I1 security backlog, D patch correlation, E GUI, K testing and CI, B native adapters, F CLI and parity, C CVE intelligence, T1 tracker part 1) | results held for `docs/status/`; the other 8 were cut off by an account usage-credit limit and re-queued on other models |
 | 2026-11-11 01:12 to 01:21 | Account usage-credit limit | recovered with a model fallback chain | interrupted workers left partial commits in their worktrees; each slice is resumed from them, nothing was pushed |
 | 2026-11-11 01:22 | Slices in flight | see section 3 | no code pushed yet; first push follows the first reviewed slice |
+| 2026-11-11 01:25 | Stop instruction | received and verified | relayed by the owner's shutdown session; the owner's own message in that session (2026-11-11 01:06 UTC): "stop all workers except the ones working on ghostpay and p2p offramp. the others should finish gracefully and update to github" |
+| 2026-11-11 01:27 | Inventory analysts | stopped | 9 of 17 complete: B, C, D, E, F, I1, K, T1, T2 under `docs/status/inventory/`; A, G, H, I2, I3, J, L, R not inventoried |
+| 2026-11-11 01:37 | Implementation workers | stopped after a bounded window to reach a commit | section 3; unfinished working-tree diffs saved under `docs/plans/production-completion-20261111/wip/` |
+| 2026-11-11 01:38 to 01:46 | Focused verification of every committed slice | done | per-slice results in section 3 of each pull request body and in `docs/status/slices.json` |
+| 2026-11-11 01:50 | Full suite on the local union of the six code branches (a throwaway merge, not pushed) | 10 failed, 21,331 passed, 48 skipped, 5 xfailed in 468 s | 2 failures: registry rows missing for the two new CLI spec files (added on the CLI branch afterwards; `tests/test_spec_registry.py` 104 passed). 8 failures: the rz-diff refusal branch (#293), left red and documented there |
+| 2026-11-11 01:55 | Branches pushed, draft pull requests opened | done | section 6 |
 
 ## 5. Findings handed to other lanes (not fixed here)
 
@@ -85,3 +93,28 @@ section 2 are left to their owners; findings that fall there are listed in secti
 | `rules show` prints nothing for an empty result (WP-10) | `rules/cli.py` | rules bug-fix lane |
 | Copy of the Calls detail cut on a character, not a byte, boundary | `callgraph/panel_qt.py:704` | call-graph lanes |
 | rz-diff refusal changes which stored match sets exist for singleton shapes; the unified engine consumes them | `secondary/rzdiff.py` (slice NA-1) | information for the unified soundness lane |
+
+## 6. State at the stop (2026-11-11, about 01:55 UTC)
+
+Nothing was merged to `main`. No pull request of this session is being watched: CI results on these heads were not
+read. Every branch is based on `main` `882d1ca0`.
+
+| Pull request | Branch | Head | Content | State |
+|---|---|---|---|---|
+| #284 | `claude/sleepy-fermi-y3z4yj` | see GitHub | this ledger, `docs/status/` (inventories, generator, drift test, parity matrix), `docs/plans/production-completion-20261111/` (cards, briefs, reports, unfinished diffs, resume steps) | draft; record branch |
+| #290 | `claude/sleepy-fermi-security-1` | `aaffd54a` | SEC-A, SEC-B, SEC-C (3 of 4 items), SEC-D | draft; only SEC-A reviewed |
+| #291 | `claude/sleepy-fermi-kbc-1` | `53f5dd26` | K1, K2 | draft; K2 half reviewed |
+| #292 | `claude/sleepy-fermi-cli-parity-1` | `74718a3e` | CLI-A (`project`, `compare`), CLI-C (`profile`, `doctor`) | draft; not reviewed |
+| #293 | `claude/sleepy-fermi-na-rzdiff-ownership` | `7ac011b1` | NA-1 | draft; not reviewed; RED: 8 existing tests fail |
+| #294 | `claude/sleepy-fermi-rq-l1-runner` | `ff53dbbc` | K5 | draft; not reviewed |
+| #295 | `claude/sleepy-fermi-test-reliability` | `c70ac0bd` | first item of TR-A | draft; small and self-contained |
+
+Known interactions: #290 and #291 both append tests to `tests/test_kbc_products.py` (keep both blocks when the second
+one merges). #293 changes which rz-diff match sets are stored for singleton shapes; the Tier R evaluator and the unified
+engine consume them.
+
+Local-only branches that were not pushed because they hold nothing beyond what the pull requests and the patch files
+carry: the per-slice branches that were merged into #290, #291 and #292, the union-check merge, and the worktrees of
+slices that were never started.
+
+To resume, follow `docs/plans/production-completion-20261111/README.md`.

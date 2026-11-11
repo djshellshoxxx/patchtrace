@@ -1,1 +1,170 @@
-[]
+[
+ {
+  "id": "SEC-A",
+  "title": "TB-16: deep JSON fails typed at six non-unified parse sites",
+  "state": "built; reviewed (one major fixed; round 2: one of two reviewers finished, approve with a nit)",
+  "branch": "claude/sleepy-fermi-security-1",
+  "pr": "#290",
+  "evidence": "focused: 226 passed"
+ },
+ {
+  "id": "SEC-B",
+  "title": "WP-03, SEC-9 residual, PE-4/5: five storage sanitisers on hostile_text.is_hostile",
+  "state": "built; worker stopped before its report; not reviewed",
+  "branch": "claude/sleepy-fermi-security-1",
+  "pr": "#290",
+  "evidence": "focused: 1,330 passed, 2 skipped"
+ },
+ {
+  "id": "SEC-C",
+  "title": "TB-12, TB-10, TB-15 (TB-09 not built)",
+  "state": "3 of 4 items; not reviewed",
+  "branch": "claude/sleepy-fermi-security-1",
+  "pr": "#290",
+  "evidence": "focused: 216 passed, 3 skipped; TB-09 diff: docs/plans/production-completion-20261111/wip/SEC-C-item4-TB-09-jobs.patch"
+ },
+ {
+  "id": "SEC-D",
+  "title": "PE-2/PE-3 (Tier W copy), PE-6, PE-7, PE-8",
+  "state": "built; review interrupted",
+  "branch": "claude/sleepy-fermi-security-1",
+  "pr": "#290",
+  "evidence": "focused: 864 passed, 5 skipped, 1 xfailed"
+ },
+ {
+  "id": "K1",
+  "title": "KBA-06, KBA-08, kb leads state text",
+  "state": "built; not reviewed",
+  "branch": "claude/sleepy-fermi-kbc-1",
+  "pr": "#291",
+  "evidence": "merged branch focused: 1,722 passed"
+ },
+ {
+  "id": "K2",
+  "title": "KBA-07, report/2 export of the KB context",
+  "state": "built; one of two reviewers finished (approve, one minor finding open)",
+  "branch": "claude/sleepy-fermi-kbc-1",
+  "pr": "#291",
+  "evidence": "merged branch focused: 1,722 passed"
+ },
+ {
+  "id": "K3",
+  "title": "KB and CVE dock loader fails for every open project (KBB-01, high)",
+  "state": "unfinished, untested diff",
+  "evidence": "docs/plans/production-completion-20261111/wip/K3-kb-dock-owner-thread-snapshot.patch"
+ },
+ {
+  "id": "K4",
+  "title": "kb index sync --help, kb products --all, KEV state in pilot leads and kb search",
+  "state": "not started",
+  "evidence": "docs/plans/production-completion-20261111/cards/K4.md"
+ },
+ {
+  "id": "K5",
+  "title": "L1 advisory-join runner (mechanics only; no accuracy figure)",
+  "state": "built; not reviewed",
+  "branch": "claude/sleepy-fermi-rq-l1-runner",
+  "pr": "#294",
+  "evidence": "focused, serial: 31 passed"
+ },
+ {
+  "id": "NA-1",
+  "title": "rz-diff: refuse ambiguous side ownership (Rizin singleton swap); byte-exact stdout, producer provenance",
+  "state": "built; not reviewed; RED: 8 existing tests fail (evidence panel 4, Tier R evaluation 4)",
+  "branch": "claude/sleepy-fermi-na-rzdiff-ownership",
+  "pr": "#293",
+  "evidence": "focused: 295 passed, 4 skipped; 8 failed in tests/test_evidence_ui.py, tests/test_evidence_panel_service.py, tests/test_tier_r_eval_metrics.py"
+ },
+ {
+  "id": "NA-2",
+  "title": "BinDiff importer row cap, typed post-exit failures, import-bindiff exit code",
+  "state": "not started",
+  "evidence": "docs/plans/production-completion-20261111/cards/NA-2.md"
+ },
+ {
+  "id": "NA-3",
+  "title": "Diaphora SQLite guard refuses views, triggers, virtual tables",
+  "state": "not started",
+  "evidence": "docs/plans/production-completion-20261111/cards/NA-3.md"
+ },
+ {
+  "id": "CLI-0",
+  "title": "SPEC-44 (CLI umbrella) brought up to main",
+  "state": "unfinished draft",
+  "evidence": "docs/plans/production-completion-20261111/wip/CLI-0-spec44-refresh.patch"
+ },
+ {
+  "id": "CLI-A",
+  "title": "patchtrace project (create, info, runs, import-json, backup, swap, sample) and patchtrace compare",
+  "state": "built; worker stopped before its report; not reviewed; fake backend only",
+  "branch": "claude/sleepy-fermi-cli-parity-1",
+  "pr": "#292",
+  "evidence": "merged branch focused: 421 passed, 1 skipped"
+ },
+ {
+  "id": "CLI-B",
+  "title": "patchtrace corrections and patchtrace review; contract corrections-exchange/1",
+  "state": "spec drafted; code unfinished and untested",
+  "evidence": "docs/plans/production-completion-20261111/wip/CLI-B-corrections-review-code.patch"
+ },
+ {
+  "id": "CLI-C",
+  "title": "patchtrace profile and patchtrace doctor (patchtrace runtime specified, not built)",
+  "state": "2 of 3 verbs; not reviewed",
+  "branch": "claude/sleepy-fermi-cli-parity-1",
+  "pr": "#292",
+  "evidence": "merged branch focused: 421 passed, 1 skipped"
+ },
+ {
+  "id": "TR-A",
+  "title": "Test reliability: xdist-only pathguard test fixed; 5 further items not started",
+  "state": "1 of 6 items",
+  "branch": "claude/sleepy-fermi-test-reliability",
+  "pr": "#295",
+  "evidence": "6 passed alone and with -n 4; rest: docs/plans/production-completion-20261111/cards/TR-A.md"
+ },
+ {
+  "id": "TR-B",
+  "title": "Skip ledger tool, live-status honesty, base-ref triage, schema drift --check",
+  "state": "not started",
+  "evidence": "docs/plans/production-completion-20261111/cards/TR-B.md"
+ },
+ {
+  "id": "GUI-A",
+  "title": "Changed-row contrast in light themes (high), untrusted text at display, navigator debounce, worker failure, accessible names",
+  "state": "not started",
+  "evidence": "docs/plans/production-completion-20261111/cards/GUI-A.md"
+ },
+ {
+  "id": "GUI-B",
+  "title": "Palette list, header tooltips, keyboard header sort, lane start failures, failed-panel rebuild, copy refusal",
+  "state": "not started",
+  "evidence": "docs/plans/production-completion-20261111/cards/GUI-B.md"
+ },
+ {
+  "id": "GUI-C",
+  "title": "State announcements for the evidence and Search panels",
+  "state": "not started",
+  "evidence": "docs/plans/production-completion-20261111/cards/GUI-C.md"
+ },
+ {
+  "id": "INT-1",
+  "title": "Withdrawn advisory claims, untested CSAF validation listed, CVSS consistency warnings, redirect refusal",
+  "state": "not started",
+  "evidence": "docs/plans/production-completion-20261111/cards/INT-1.md"
+ },
+ {
+  "id": "INT-2",
+  "title": "Typed CVSS/time errors, ASCII-only CVE id contract, KEV provenance never downgrades",
+  "state": "not started",
+  "evidence": "docs/plans/production-completion-20261111/cards/INT-2.md"
+ },
+ {
+  "id": "ST",
+  "title": "Status roll-up: inventories, generator, drift test",
+  "state": "built; not reviewed",
+  "branch": "claude/sleepy-fermi-y3z4yj",
+  "pr": "#284",
+  "evidence": "tests/test_status_docs.py: 36 passed"
+ }
+]

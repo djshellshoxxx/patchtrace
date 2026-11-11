@@ -1,0 +1,50 @@
+{
+ "status": "done",
+ "branch": "claude/sleepy-fermi-sec-json-depth",
+ "commits": [
+  {
+   "sha": "6ad9ef23",
+   "subject": "TB-16: fail typed on deeply nested JSON at six plain parse sites"
+  },
+  {
+   "sha": "1106ce31",
+   "subject": "TB-16: make the parsed-but-deep test hold on Windows parser limits"
+  }
+ ],
+ "files_changed": [
+  "src/patchtrace/backend_bundle.py",
+  "src/patchtrace/calibration/artifact.py",
+  "src/patchtrace/diaphora/provenance.py",
+  "src/patchtrace/raw_cleanup.py",
+  "src/patchtrace/reports.py",
+  "src/patchtrace/search/service.py",
+  "tests/test_json_recursion_boundaries.py"
+ ],
+ "tests_added": [
+  "tests/test_json_recursion_boundaries.py (new file, 22 cases)",
+  "round 1: test_calibration_artifact_parsed_but_deep now has 4 cases, [array|object] x [native|windows-room]; the windows-room cases run the whole test body from inside the C JSON scanner with only 3,000 nesting levels left (helpers parser_room / in_parser_room in the same file)"
+ ],
+ "red_evidence": "Both reviewers' finding is correct and reproduced; it was a test-only defect, so round 1 changed no file under src.\n\n1. Reproduction on Linux (fixture evidence, simulated C budget, not a Windows run). Probe <scratch>/work/SEC-A/probe_budget.py printed:\n   python 3.12.3 frame limit 1000 deepest parse here 9997\n   budget 3000 deepest inside 2996\n     depth 3000 array -> ValueError: JSON nesting limit exceeded\n     depth 3000 object -> ValueError: JSON nesting limit exceeded\n     depth 1500 array -> parsed\n     depth 1500 object -> parsed\n   /usr/include/python3.12/cpython/pystate.h:265-266 sets C_RECURSION_LIMIT to 3000 for _WIN32.\n\n2. Red test for the finding (new windows-room cases, depth still 3000):\n   FAILED tests/test_json_recursion_boundaries.py::test_calibration_artifact_parsed_but_deep[array-windows-room]\n   FAILED tests/test_json_recursion_boundaries.py::test_calibration_artifact_parsed_but_deep[object-windows-room]\n   failing line: `assert strict_json(data) is not None` -> src/patchtrace/calibration/artifact.py:57: ValueError: JSON nesting limit exceeded\n   (2 failed, 2 passed; the 2 native cases passed, as they do on Linux CI). Saved in <scratch>/work/SEC-A/red-round1.txt.\n   After changing the depth to sys.getrecursionlimit() + 500: 22 passed.\n\n3. Red on base 882d1ca0 for the whole file (base tree extracted with git archive into the scratchpad, final test file copied in): 17 failed, 5 passed, every failure a RecursionError. All four parsed_but_deep cases fail there with `RecursionError: maximum recursion depth exceeded` from the _finite walk. Saved in <scratch>/work/SEC-A/red-base-round1.txt. The 5 that pass on base pin paths that were already safe (parse_artifact on unclosed input, diaphora manifest over 64 KiB, the bundle manifest loader).",
+ "focused_tests": "cd <worktrees>/sec-json-depth && QT_QPA_PLATFORM=offscreen PYTHONPATH=<worktrees>/sec-json-depth/src nice -n 10 python -m pytest -q -p no:cacheprovider tests/test_json_recursion_boundaries.py -> 22 passed.\nSame command with -n 4 over tests/test_json_recursion_boundaries.py tests/test_report_export_backup.py tests/test_export_destination_guard.py tests/test_search_synergy.py tests/test_search_paths.py tests/test_search_view_model.py tests/test_calibration_hardening.py tests/test_calibration_runtime.py tests/test_calibration_invariants_20261105.py tests/test_diaphora_import.py tests/test_diaphora_schemas.py tests/test_raw_legacy_cleanup.py tests/test_backend_bundle.py tests/test_backend_bundle_env.py tests/test_runtime_discovery_bundle.py -> 380 passed, 1 skipped. The full suite was not run (orchestrator's job).",
+ "ruff": "`python -m ruff check src tests tools` -> All checks passed!",
+ "schemas_regenerated": "not needed (no contract or model changed)",
+ "spec_amendments": [],
+ "deviations": "Round 1 went slightly beyond the two findings, all inside tests/test_json_recursion_boundaries.py:\n1. Depth is now `sys.getrecursionlimit() + 500` (1,500 by default), as both reviewers proposed, and the closed() docstring no longer claims a platform-independent property.\n2. Added the windows-room parameter so the finding has a test that fails on Linux. It nests the test body inside a json.loads call that keeps (measured parser depth - 3000) arrays open, which leaves about 2,996 levels; on real Windows the burn is 0 and the body runs with the native budget.\n3. The parsed-but-deep document is now wrapped in an object for both shapes and the test requires the message 'not strict JSON'. Before, the array shape was rejected by the isinstance check and never reached the walk, so that case was green on base and proved nothing. No assertion was weakened.\nFrom the first commit (unchanged): no shared helper was added; strict_json converts RecursionError to ValueError locally because its callers catch ValueError.",
+ "integrator_asks": [
+  "Still open for TB-16 in other lanes (not mine; I listed the plain json.loads sites by grep on this branch and did not test them): src/patchtrace/unified/extract/runner.py:252, :277, :468; src/patchtrace/unified/ir/reader.py:202, :205, :264, :305 (line 82 already catches RecursionError for one path); src/patchtrace/unified/pair_text.py:279; src/patchtrace/backend.py:341, :609, :675; src/patchtrace/unified/sources/secondary.py:95 and src/patchtrace/unified/sources/diaphora.py:105.",
+  "Both commits carry the trailer `Co-Authored-By: Claude <noreply@anthropic.com>` (harness reminder); normalise before pushing if the repository wants the plain form.",
+  "No frozen or tracker file was edited; paste the tracker rows below into tasks/todo.md and docs/qa.md."
+ ],
+ "tracker_rows": "### [sleepy-fermi:SEC-A]\ntasks/todo.md:\n- [x] TB-16 (non-unified part): deeply nested JSON fails typed at the plain parse sites of reports.py, search/service.py, calibration/artifact.py, diaphora/provenance.py, raw_cleanup.py and backend_bundle.py (commits 6ad9ef23, 1106ce31). Guard: tests/test_json_recursion_boundaries.py, 22 cases.\n- [ ] TB-16 (unified and backend part, other lanes): unified/extract/runner.py, unified/ir/reader.py, unified/pair_text.py, backend.py, unified/sources/secondary.py, unified/sources/diaphora.py still have plain json.loads sites to check for RecursionError.\n\ndocs/qa.md:\n| TB-16 deep JSON, non-unified sites | tests/test_json_recursion_boundaries.py | 22 passed on Linux, Python 3.12.3 (synthetic fixture evidence); 17 of 22 fail with RecursionError on base 882d1ca0 | The Windows parser limit (3,000 levels) is simulated on Linux by the windows-room cases; no real Windows run yet |",
+ "open_risks": [
+  "test_calibration_artifact_parsed_but_deep needs a C parser limit above about 1,525 levels. It holds for the QA matrix (Linux 10,000; Windows x64 3,000 on CPython 3.12 and 3.13) but its precondition would fail, loudly, on Windows ARM64 with 3.13 (1,000), s390x (800) and debug builds (500). None of these is in CI.",
+  "The depth follows sys.getrecursionlimit(). If something in the same process raises the Python limit above roughly 2,400, the document no longer fits the Windows parser and the precondition assert fails; nothing in src, tests or tools calls setrecursionlimit today.",
+  "The windows-room cases depend on CPython counting one C recursion unit per JSON nesting level. On an interpreter that bounds C recursion by stack size instead (3.14), the simulated budget is looser than 3,000 and those cases still pass but prove less.",
+  "The test now pins the message 'not strict JSON' for a parsed-but-too-deep artifact. A later rewrite of _finite as an iterative walk would make the schema check reject such a document instead, and this test would then need its expected message updated."
+ ],
+ "unverified": [
+  "Nothing was run on Windows. That the fixed test passes there rests on the 3.12/3.13 headers (C_RECURSION_LIMIT 3000 for _WIN32) and on the Linux simulation, where 2,996 levels were left and the 1,501-level document parsed.",
+  "The full test suite was not run, only the 15 focused files listed.",
+  "The JSON sites listed under integrator asks were found by grep only; I did not check which of them already handle RecursionError through an outer handler."
+ ]
+}

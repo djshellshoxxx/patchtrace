@@ -264,7 +264,32 @@ Open-box lines listed: 175.
 
 ## Slices built by the completion session
 
-No slice is recorded in `slices.json`.
+| Id | Title | State | Branch or PR | Verification evidence |
+| --- | --- | --- | --- | --- |
+| SEC-A | TB-16: deep JSON fails typed at six non-unified parse sites | built; reviewed (one major fixed; round 2: one of two reviewers finished, approve with a nit) | claude/sleepy-fermi-security-1, #290 | focused: 226 passed |
+| SEC-B | WP-03, SEC-9 residual, PE-4/5: five storage sanitisers on hostile_text.is_hostile | built; worker stopped before its report; not reviewed | claude/sleepy-fermi-security-1, #290 | focused: 1,330 passed, 2 skipped |
+| SEC-C | TB-12, TB-10, TB-15 (TB-09 not built) | 3 of 4 items; not reviewed | claude/sleepy-fermi-security-1, #290 | focused: 216 passed, 3 skipped; TB-09 diff: docs/plans/production-completion-20261111/wip/SEC-C-item4-TB-09-jobs.patch |
+| SEC-D | PE-2/PE-3 (Tier W copy), PE-6, PE-7, PE-8 | built; review interrupted | claude/sleepy-fermi-security-1, #290 | focused: 864 passed, 5 skipped, 1 xfailed |
+| K1 | KBA-06, KBA-08, kb leads state text | built; not reviewed | claude/sleepy-fermi-kbc-1, #291 | merged branch focused: 1,722 passed |
+| K2 | KBA-07, report/2 export of the KB context | built; one of two reviewers finished (approve, one minor finding open) | claude/sleepy-fermi-kbc-1, #291 | merged branch focused: 1,722 passed |
+| K3 | KB and CVE dock loader fails for every open project (KBB-01, high) | unfinished, untested diff | not stated | docs/plans/production-completion-20261111/wip/K3-kb-dock-owner-thread-snapshot.patch |
+| K4 | kb index sync --help, kb products --all, KEV state in pilot leads and kb search | not started | not stated | docs/plans/production-completion-20261111/cards/K4.md |
+| K5 | L1 advisory-join runner (mechanics only; no accuracy figure) | built; not reviewed | claude/sleepy-fermi-rq-l1-runner, #294 | focused, serial: 31 passed |
+| NA-1 | rz-diff: refuse ambiguous side ownership (Rizin singleton swap); byte-exact stdout, producer provenance | built; not reviewed; RED: 8 existing tests fail (evidence panel 4, Tier R evaluation 4) | claude/sleepy-fermi-na-rzdiff-ownership, #293 | focused: 295 passed, 4 skipped; 8 failed in tests/test_evidence_ui.py, tests/test_evidence_panel_service.py, tests/test_tier_r_eval_metrics.py |
+| NA-2 | BinDiff importer row cap, typed post-exit failures, import-bindiff exit code | not started | not stated | docs/plans/production-completion-20261111/cards/NA-2.md |
+| NA-3 | Diaphora SQLite guard refuses views, triggers, virtual tables | not started | not stated | docs/plans/production-completion-20261111/cards/NA-3.md |
+| CLI-0 | SPEC-44 (CLI umbrella) brought up to main | unfinished draft | not stated | docs/plans/production-completion-20261111/wip/CLI-0-spec44-refresh.patch |
+| CLI-A | patchtrace project (create, info, runs, import-json, backup, swap, sample) and patchtrace compare | built; worker stopped before its report; not reviewed; fake backend only | claude/sleepy-fermi-cli-parity-1, #292 | merged branch focused: 421 passed, 1 skipped |
+| CLI-B | patchtrace corrections and patchtrace review; contract corrections-exchange/1 | spec drafted; code unfinished and untested | not stated | docs/plans/production-completion-20261111/wip/CLI-B-corrections-review-code.patch |
+| CLI-C | patchtrace profile and patchtrace doctor (patchtrace runtime specified, not built) | 2 of 3 verbs; not reviewed | claude/sleepy-fermi-cli-parity-1, #292 | merged branch focused: 421 passed, 1 skipped |
+| TR-A | Test reliability: xdist-only pathguard test fixed; 5 further items not started | 1 of 6 items | claude/sleepy-fermi-test-reliability, #295 | 6 passed alone and with -n 4; rest: docs/plans/production-completion-20261111/cards/TR-A.md |
+| TR-B | Skip ledger tool, live-status honesty, base-ref triage, schema drift --check | not started | not stated | docs/plans/production-completion-20261111/cards/TR-B.md |
+| GUI-A | Changed-row contrast in light themes (high), untrusted text at display, navigator debounce, worker failure, accessibl... | not started | not stated | docs/plans/production-completion-20261111/cards/GUI-A.md |
+| GUI-B | Palette list, header tooltips, keyboard header sort, lane start failures, failed-panel rebuild, copy refusal | not started | not stated | docs/plans/production-completion-20261111/cards/GUI-B.md |
+| GUI-C | State announcements for the evidence and Search panels | not started | not stated | docs/plans/production-completion-20261111/cards/GUI-C.md |
+| INT-1 | Withdrawn advisory claims, untested CSAF validation listed, CVSS consistency warnings, redirect refusal | not started | not stated | docs/plans/production-completion-20261111/cards/INT-1.md |
+| INT-2 | Typed CVSS/time errors, ASCII-only CVE id contract, KEV provenance never downgrades | not started | not stated | docs/plans/production-completion-20261111/cards/INT-2.md |
+| ST | Status roll-up: inventories, generator, drift test | built; not reviewed | claude/sleepy-fermi-y3z4yj, #284 | tests/test_status_docs.py: 36 passed |
 
 ## Not yet inventoried
 
