@@ -127,9 +127,12 @@ class FakeRz(RzDiffAdapter):
         return (sys.executable, '-c', self.code)
 
 
-GOOD = ('import json,sys; sys.stderr.write("<b>warn</b>\\n"); print(json.dumps([{"similarity": 0.5, '
-        '"type": "PARTIAL", "original": {"addr": 16, "name": "f", "size": 1}, '
-        '"modified": {"addr": 32, "name": "g", "size": 1}}]))')
+# Two distinct newer functions: a result with at most one is refused as ambiguous (SPEC-11 section 9).
+GOOD = ('import json,sys; sys.stderr.write("<b>warn</b>\\n"); print(json.dumps(['
+        '{"similarity": 0.5, "type": "PARTIAL", "original": {"addr": 16, "name": "f", "size": 1}, '
+        '"modified": {"addr": 32, "name": "g", "size": 1}}, '
+        '{"similarity": 1.0, "type": "COMPLETE", "original": {"addr": 48, "name": "h", "size": 1}, '
+        '"modified": {"addr": 64, "name": "k", "size": 1}}]))')
 
 
 def run_request(tmp_path, engines=('rz-diff',)):
