@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import base64
 import json
+import sys
 
 import pytest
 from search_synergy_builders import attention, extra_specs, make_project
@@ -29,9 +30,44 @@ DEEP = {'array': '[' * 60000, 'object': '{"a":' * 60000}
 deep = pytest.mark.parametrize('text', list(DEEP.values()), ids=list(DEEP))
 
 
+WINDOWS_C_LIMIT = 3000  # CPython 3.12 and 3.13 C_RECURSION_LIMIT on Windows x64; Linux has 10000
+
+
 def closed(depth: int, shape: str) -> str:
-    """Well-formed JSON that the C parser accepts but that is deeper than the Python frame limit."""
+    """Well-formed JSON nested `depth` levels. Whether the C parser accepts it depends on the platform's C
+    recursion limit, so the caller picks a depth that fits the smallest one it has to run on."""
     return '[' * depth + '1' + ']' * depth if shape == 'array' else '{"a":' * depth + '1' + '}' * depth
+
+
+def parser_room() -> int:
+    """How many array levels json.loads accepts from the calling frame on this interpreter."""
+    low, high = 1, 200_000
+    while low < high:
+        mid = (low + high + 1) // 2
+        try:
+            json.loads(closed(mid, 'array'))
+        except RecursionError:
+            high = mid - 1
+        else:
+            low = mid
+    return low
+
+
+def in_parser_room(room: int, check) -> None:
+    """Run check() from inside the C parser, so that at most `room` nesting levels are left for its own parses.
+
+    The hook of the innermost object runs while every enclosing array is still open in the C scanner. That
+    reproduces a platform with a smaller C recursion limit on one with a larger limit.
+    """
+    burn = max(0, parser_room() - room)
+    ran = []
+
+    def hook(pairs):
+        ran.append(check())
+        return {}
+
+    json.loads('[' * burn + '{}' + ']' * burn, object_pairs_hook=hook)
+    assert ran == [None]
 
 
 # ---- reports: a match-override annotation in a shared project carries JSON text ----------------
@@ -85,13 +121,24 @@ def test_calibration_artifact(text):
     assert load_artifact(text.encode('ascii')).artifact is None
 
 
+@pytest.mark.parametrize('room', [None, WINDOWS_C_LIMIT], ids=['native', 'windows-room'])
 @pytest.mark.parametrize('shape', ['array', 'object'])
-def test_calibration_artifact_parsed_but_deep(shape):
-    data = closed(3000, shape).encode('ascii')
-    assert strict_json(data) is not None  # well formed for the parser: the walk after it must fail typed too
-    with pytest.raises(ArtifactError):
-        parse_artifact(data)
-    assert load_artifact(data).artifact is None
+def test_calibration_artifact_parsed_but_deep(shape, room):
+    # Past the Python frame limit that stops the recursive walk, and at half the smallest C parser limit of the
+    # QA matrix: 3,000 levels parse on Linux but not on Windows.
+    depth = sys.getrecursionlimit() + 500
+    data = ('{"a":' + closed(depth, shape) + '}').encode('ascii')  # an object, so the walk is reached for both shapes
+
+    def check():
+        assert strict_json(data) is not None  # well formed for the parser: the walk after it must fail typed too
+        with pytest.raises(ArtifactError, match='not strict JSON'):  # the walk overflowed, not the schema check
+            parse_artifact(data)
+        assert load_artifact(data).artifact is None
+
+    if room is None:
+        check()
+    else:
+        in_parser_room(room, check)
 
 
 # ---- diaphora: sidecar manifest next to an imported result ------------------------------------
