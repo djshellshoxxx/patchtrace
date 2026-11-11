@@ -147,7 +147,6 @@ def test_kba06_predecessor_never_returns_a_row_with_the_targets_own_sha():
     assert older is None or older.sha256 != target.sha256
 
 
-@pytest.mark.xfail(strict=True, reason='KBA-07 open: report2 KB ids are 6-8 digits, kbcorrelation canonical ids 4-10')
 def test_kba07_report2_advisory_accepts_every_canonical_kb_id():
     from patchtrace.kbcorrelation.ids import canonical_kb
     from patchtrace.report2.contracts import Advisory

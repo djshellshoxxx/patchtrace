@@ -196,7 +196,10 @@ class Symbols(_Model):
         return self
 
 
-_ADVISORY_ID = {'cve': re.compile(r'CVE-\d{4}-\d{4,19}', re.ASCII), 'kb': re.compile(r'KB\d{6,8}', re.ASCII),
+# The canonical `kb-syntax/1` id (`kbcorrelation.ids.KB_PATTERN` without its anchors). A contract module imports no
+# other feature, so this is a copy; `tests/test_report2_contracts.py` pins the two together (SPEC-50 A-1).
+KB_ID_PATTERN = r'KB[0-9]{4,10}'
+_ADVISORY_ID = {'cve': re.compile(r'CVE-\d{4}-\d{4,19}', re.ASCII), 'kb': re.compile(KB_ID_PATTERN),
                 'cwe': re.compile(r'CWE-\d{1,6}', re.ASCII)}
 
 

@@ -40,3 +40,5 @@ No security-class finding. KBA-05 is a crash on hostile persisted data (denial o
 ## Test results
 
 See the PR description for the focused and full-suite runs.
+
+- 2026-11-11 disposition, KBA-07: fixed. `report2/contracts.py` accepts the canonical `kb-syntax/1` id (`KB` + 4-10 ASCII digits) after spec amendment A-1 of `docs/specs/report-export-contract-v2.md`; the strict xfail marker of `test_kba07_report2_advisory_accepts_every_canonical_kb_id` is removed and `tests/test_report2_contracts.py` pins the pattern to `kbcorrelation.ids.KB_PATTERN`. Evidence class: synthetic unit tests.
