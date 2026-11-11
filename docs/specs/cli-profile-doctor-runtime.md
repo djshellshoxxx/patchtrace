@@ -20,7 +20,7 @@ Every leaf takes `--profiles-dir DIR` (default: `default_profiles_dir()`, the di
 
 | Leaf | Does | Writes |
 |---|---|---|
-| `profile list` | The built-in `default` first, then every stored profile by name (case-insensitive order): name and digest. A stored file that does not validate is reported as a warning and under `result.invalid`; valid profiles are still listed. At most 1,000 stored names are read; more sets `result.truncated` and a warning. | nothing |
+| `profile list` | The built-in `default` first, then every stored profile by name (case-insensitive order): name and digest. A stored file that does not validate is reported as a warning and under `result.invalid`; valid profiles are still listed. A stored `default.json` is reported the same way and ignored (the built-in is never shadowed). At most 1,000 stored names are read; more sets `result.truncated` and a warning. | nothing |
 | `profile show NAME\|FILE` | One profile and its digest. The argument is a file when it ends in `.json` or contains a path separator (the rule of `--profile`), otherwise a stored name; `default` is the built-in. `result.source` is `built-in`, `stored` or `file`. | nothing |
 | `profile validate FILE` | Validates a file without storing it: name, digest, and whether the name is reserved (`default`) or already stored (`result.name_taken`; each is also a warning). | nothing |
 | `profile save FILE [--name NAME] [--force]` | Validates FILE and stores it as `<name>.json` (atomic write by `ProfileStore.save`). `--name` stores it under another name (validated by the same model). A name that is already stored, compared case-insensitively, is refused without `--force`; with `--force` the stored profile is replaced, including one whose name differs only in case. The name `default` is always refused. | `<profiles-dir>/<name>.json` (the directory is created when missing) |
@@ -32,7 +32,7 @@ Text output: `list` prints one line per profile, `<name>  <digest>` with `(built
 
 | Leaf | 0 | 2 | 3 | 4 |
 |---|---|---|---|---|
-| list | all stored files are valid | bad `--profiles-dir` | at least one stored file is invalid (`status: partial`; the valid ones are still printed) | - |
+| list | all stored files are valid | bad `--profiles-dir` | at least one stored file is invalid, or the list was truncated (`status: partial`; the valid ones are still printed) | - |
 | show | found and valid | unknown name, invalid name, unreadable or invalid file | - | - |
 | validate | valid | missing, not a regular file, over 64 KiB, or refused by the model | - | - |
 | save | stored | invalid file or `--name`; reserved name; name taken without `--force` | the directory or file cannot be written | - |

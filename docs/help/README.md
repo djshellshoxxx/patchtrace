@@ -107,3 +107,4 @@ Every verb is also listed by `patchtrace --help`. Each page gives the verb's sub
 - [`diaphora`](74-cli-diaphora.md) - import existing Diaphora result evidence (Mode A)
 - [`export`](75-cli-export.md) - write a stored project report in JSON, Markdown or HTML
 - [`inspect`](76-cli-inspect.md) - inspect static PE version, manifest and signature facts
+- [`profile`](81-cli-profile.md) - list, check, store and delete analysis profiles
