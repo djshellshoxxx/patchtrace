@@ -470,3 +470,102 @@ def test_attempt_that_never_launches_records_only_the_scheduler_kind(tmp_path):
     cancel.set()
     [out] = go(tmp_path, {'rz-diff': PyEngine(f'print({GOOD!r})')}, ['rz-diff'], cancel=cancel)
     assert (out.run.status, out.run.provenance) == ('cancelled', {'failure_kind': 'cancelled'})
+
+
+# ---- SPEC-11 section 3 and 9: failed attempts commit no evidence and keep the earlier set -----------------
+
+def emit_then(stdout: str, tail: str) -> str:
+    """Child source that writes exactly `stdout` (binary), flushes, then runs `tail`."""
+    return f"import sys,time\nsys.stdout.buffer.write({stdout.encode('utf-8')!r})\nsys.stdout.flush()\n{tail}"
+
+
+@pytest.mark.parametrize('stdout', [
+    GOOD[:30],                                   # truncated mid-document
+    GOOD + ' trailing',                          # bytes after the array
+    '{"matches": ' + GOOD + '}',                 # an object, not an array
+    GOOD.replace('0.5', 'NaN', 1),               # non-finite number
+], ids=['truncated', 'trailing-bytes', 'not-an-array', 'non-finite'])
+def test_malformed_backend_json_is_rejected_and_not_committed(tmp_path, stdout):
+    [out] = go(tmp_path, {'rz-diff': PyEngine(emit(stdout))}, ['rz-diff'])
+    assert (out.run.status, out.run.error_code, out.run.returncode) == ('failed', 'PT-SECONDARY-INPUT', 0)
+    assert out.match_set is None and out.run.match_set_id is None and out.run.output_sha256 is None
+
+
+def test_timeout_after_a_complete_document_commits_nothing(tmp_path):
+    [out] = go(tmp_path, {'rz-diff': PyEngine(emit_then(GOOD, 'time.sleep(60)'))}, ['rz-diff'],
+               per_engine_timeout={'rz-diff': 3.0})
+    assert (out.run.status, out.run.error_code) == ('timeout', 'PT-SECONDARY-TIMEOUT')
+    assert out.match_set is None and out.run.match_set_id is None and out.run.output_sha256 is None
+
+
+def test_cancel_after_a_complete_document_commits_nothing(tmp_path):
+    cancel = threading.Event()
+    threading.Timer(2.0, cancel.set).start()
+    [out] = go(tmp_path, {'rz-diff': PyEngine(emit_then(GOOD, 'time.sleep(60)'))}, ['rz-diff'], cancel=cancel)
+    assert (out.run.status, out.run.error_code) == ('cancelled', 'PT-SECONDARY-CANCEL')
+    assert out.match_set is None and out.run.match_set_id is None and out.run.output_sha256 is None
+
+
+def test_nonzero_exit_after_a_partial_document_commits_nothing(tmp_path):
+    [out] = go(tmp_path, {'rz-diff': PyEngine(emit_then(GOOD[:30], 'sys.exit(3)'))}, ['rz-diff'])
+    assert (out.run.status, out.run.error_code, out.run.returncode) == ('failed', 'PT-SECONDARY-RUN', 3)
+    assert out.match_set is None and out.run.match_set_id is None and out.run.output_sha256 is None
+
+
+@pytest.mark.parametrize('kind, body, error_code', [
+    ('truncated', f"sys.stdout.buffer.write({GOOD[:30].encode('utf-8')!r})", 'PT-SECONDARY-INPUT'),
+    ('exit-after-partial', f"sys.stdout.buffer.write({GOOD[:30].encode('utf-8')!r})\nsys.exit(4)",
+     'PT-SECONDARY-RUN'),
+    ('no-functions', "sys.stderr.write('ERROR: rz-diff: No functions found in file0.\\n')", 'PT-SECONDARY-INPUT'),
+    ('singleton', f"sys.stdout.buffer.write({SHAPES['stock-elf-1-2']['stdout'].encode('utf-8')!r})",
+     'PT-SECONDARY-ORIENTATION'),
+], ids=['truncated', 'exit-after-partial', 'no-functions', 'singleton'])
+def test_failed_cli_run_keeps_the_earlier_current_set(tmp_path, capsys, kind, body, error_code):
+    """`secondary run` with a good result stored first: a later failing run stores nothing and changes nothing."""
+    from fake_exe import make_fake_exe
+
+    from patchtrace import cli
+    from patchtrace.enrichment.storage import EnrichmentStore
+    from patchtrace.service import ProjectService
+
+    def fake_rz(name: str, output: str) -> str:
+        source = ("import sys\nif sys.argv[1:] == ['-v']:\n    print('rz-diff 0.9.1')\n    sys.exit(0)\n"
+                  f"{output}\n")
+        return str(make_fake_exe(tmp_path / name, 'rz-diff', source))
+
+    def run(root, exe):
+        code = cli.main(['secondary', 'run', str(root), '--json', '--rz-diff', exe, '--engine', 'rz-diff',
+                         '--no-cache'])
+        return code, json.loads(capsys.readouterr().out)
+
+    def stored_sets(root) -> list[str]:
+        service = ProjectService.open(root)
+        try:
+            return [e.body['file_sha256'] for e in EnrichmentStore(service.store).entries('secondary-matches')]
+        finally:
+            service.close()
+
+    service = ProjectService.sample(tmp_path / 'case')
+    root = service.root
+    service.close()
+    code, doc = run(root, fake_rz('good', f"sys.stdout.buffer.write({GOOD.encode('utf-8')!r})"))
+    assert code == 0 and doc['result']['runs'][0]['status'] == 'ok'
+    kept = stored_sets(root)
+    assert len(kept) == 1
+    code, doc = run(root, fake_rz(kind, body))
+    [row] = doc['result']['runs']
+    assert code != 0 and (row['status'], row['error_code']) == ('failed', error_code)
+    assert stored_sets(root) == kept
+
+
+def test_adapter_refuses_a_stopped_run_even_when_it_exited_zero(tmp_path):
+    """SPEC-11 section 3: a timed-out or cancelled run is no evidence, whatever its exit code says."""
+    from patchtrace.secondary.registry import EngineJob, RawResult
+
+    adapter = RzDiffAdapter('definitely-not-installed-rz-diff')
+    cap = Capability(engine='rz-diff', supported=True, version='0.9.1', path=sys.executable, supports_json=True)
+    job = EngineJob(tmp_path / 'old', tmp_path / 'new', 'a' * 64, 'b' * 64, {}, tmp_path, threading.Event(), 60.0)
+    for reason in ('timeout', 'cancelled', 'output-limit'):
+        raw = RawResult(0, GOOD.encode('ascii'), '', None, reason, False)
+        with pytest.raises(SecondaryError):
+            adapter.parse(raw, cap, job)

@@ -114,6 +114,8 @@ class RzDiffAdapter:
                          None, result.reason, lossy)
 
     def parse(self, raw: RawResult, cap: Capability, job: EngineJob) -> SecondaryMatchSet:
+        if raw.reason:  # timeout, cancel or output limit: partial stdout is never evidence (SPEC-11 section 3)
+            raise SecondaryError('PT-SECONDARY-RUN', f'stopped: {raw.reason}')
         if raw.returncode != 0:  # stderr is kept in the EngineRun, never echoed into the message
             raise SecondaryError('PT-SECONDARY-RUN', f'rz-diff exited with {raw.returncode}')
         stdout = raw.stdout or b''
