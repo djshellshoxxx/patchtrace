@@ -338,3 +338,75 @@ Deferred until the other coordinator's next PR lands (it owns `unified/**`, `kbc
 | 2026-11-04 06:32 | Other coordinator ack | RECEIVED | session_01KtKj8jsKzTB3u2eRDSCGGQ is not porting my list; its next PR touches unified/kbcorrelation/secondary/intelligence/tools/calibration/tools/unified; keep tracker edits append-only |
 | 2026-11-04 07:00 | Wave 1 verification | DONE | 76 branches, 53 agents, 0 errors; 39 SUPERSEDED-VERIFIED upheld, 2 refuted |
 | 2026-11-04 07:00 | Wave 2 trains | RUNNING | workflow wf_86df9a33-4cd (W2-A, W2-B, W2-C, W2-E) |
+
+## Wave 3: open-PR verification against main `882d1ca0` (2026-11-11, workflow wf_5c3497f7-46d)
+
+Re-inventory (`tools/dev/branch_inventory.py`): 282 remote branches; 112 MERGED, 12 EQUIVALENT, 53 SUPERSEDED, 20 DOCS, 46 LIVE, 38 STALE. 48 open PRs. Excluded as active work: #259, #268, #279. Read-only analysts checked the other PRs' own commits for behavior present on main (searching by behavior, since #205/#218/#235 re-landed much old work under new commits). Each close candidate went to an independent refuter.
+
+### Owner actions: safe to close (19)
+
+| PR | Evidence |
+|---|---|
+| #188 | head is an ancestor of `main` (0 commits ahead) |
+| #192 | head is an ancestor of `main` (0 commits ahead) |
+| #203 | head is an ancestor of `main` (0 commits ahead) |
+| #206 | head is an ancestor of `main` (0 commits ahead) |
+| #207 | head is an ancestor of `main` (0 commits ahead) |
+| #208 | head is an ancestor of `main` (0 commits ahead) |
+| #215 | head is an ancestor of `main` (0 commits ahead) |
+| #216 | head is an ancestor of `main` (0 commits ahead) |
+| #217 | head is an ancestor of `main` (0 commits ahead) |
+| #219 | head is an ancestor of `main` (0 commits ahead) |
+| #154 | SUPERSEDED-VERIFIED, refuter upheld. main:tools/calibration/prereg_gate.py (Selection, PreregGateError), train.py:73,794 uses PG; tests/test_train_prereg_selection.py:42,63,72,87,96,118 cover corpus-read refusal |
+| #157 | SUPERSEDED-VERIFIED, refuter upheld. main tools/calibration/tier_r/output_store.py (OutputStore, canonical_output_bytes, publish_bytes); schema EngineOutputDoc.json; tests/test_tier_r_output_persistence.py |
+| #172 | ABANDON-PROPOSED, refuter upheld. tasks/todo.md is readable text on main, guarded by tests/test_tracker_text.py. |
+| #187 | ABANDON-PROPOSED, refuter upheld. Docs-only ledger. todo.md and qa.md edits are tracker noise. Safe to close if the owner accepts the Nov 6 consolidation inventory as the replacement. |
+| #86 | SUPERSEDED-VERIFIED, refuter upheld. main:src/patchtrace/unified/store.py:324-374 check_decomp, row_rvas, decompile-invalid/decompile-rva; tests/test_unified_store.py:772-815 (side, negative rva, null-ok, foreign rva, duplicates), commit 58bfa01f tests |
+| #70 | SUPERSEDED-VERIFIED, refuter upheld. main has rewritten docs/help/01-76: 21-34 panel pages (engine, unified, search, graph, strings, capabilities, build-env, rules, KB, KEV, leads, series, files, guide), 36 calibration, 49 keyboard (F6), 13 offline bundle |
+| #98 | SUPERSEDED-VERIFIED, refuter upheld. docs/research/workspace-docs-reconciliation-20261106.md:12-17 dispositions all 6 wiki pages as reference-only; guides/internals/modules.md cover substance; branch-merge-plan-20261106.md:24,152 |
+| #125 | ABANDON-PROPOSED, refuter upheld. Stale one-time prompt bound to a 2026-10-30 snapshot; main since has newer handoffs (docs/handoff/AUTONOMOUS-DEVELOPMENT-LATEST.md, docs/plans/accuracy-program-handoff-20261107.md). File absent on main. |
+| #137 | ABANDON-PROPOSED, refuter upheld. Point-in-time assessment pinned to main a04f5a2 / beta.543 on 2026-10-30; since superseded by consolidation (#205/#218/#235), 2026-11-06 merge plan, accuracy handoffs. Its qa.md/todo.md appends are ledger noise. Files ab |
+
+### Still holding unique content (25): do not close
+
+| PR | Verdict | Still-applicable missing items (high value) | Port risk | Belongs to | Main gap (abridged) |
+|---|---|---|---|---|---|
+| #139 | RESIDUAL | 3 (3) | medium | unified live-gate lane (#268 owner) | live_pairs.analyse_pair: dataclasses.replace(backend, retain_gzf=True); reject status 'ide; unified-live-gates.yml: restore Ghidra exec permissions from zip on Linux (pairs+mutants j |
+| #140 | RESIDUAL | 3 (2) | medium | unified live-gate lane (#268 owner) | BackendConfig.force_identical_diff opt-in (validated bool, --force-diff argv, settings fla; tests/test_unified_live_force_identical.py (103 lines) native A/A control tests |
+| #141 | RESIDUAL | 2 (0) | medium | unified live-gate lane (#268 owner) | backend output-rejection cause distinction again (same as fb91cff6 variant) plus test_jobs; live_pairs.py 4-line change and test adjustments (live_pairs_r1, native_failure_details, f |
+| #143 | PARTIAL | 1 (1) | low | unified live-gate lane (#268 owner) | GT-01 native harness code carried through this branch (identical-control, failure sidecar, |
+| #144 | PARTIAL | 3 (3) | high | unified live-gate lane (#268 owner) | canon/2 typed-literal canonicalization (_opaque_number sha256 fallback, suffix/radix hints; exponent float scan before octal, typed literals through channels/anchors, numeric-part su |
+| #164 | PARTIAL | 3 (0) | low | secondary/rz-diff qualification lane | persist_build_record: content-addressed builds/<sha>.json full build receipts, hardlink-at; Session.sides cache keyed by (spec, debug_sha256, recipe_digest, source_digest, resolved s |
+| #165 | PARTIAL | 1 (1) | medium | secondary/rz-diff qualification lane | .github/workflows/rzdiff-producer.yml (pinned Rizin build, boundary test, patch apply, nat |
+| #168 | PARTIAL | 1 (1) | medium | secondary/rz-diff qualification lane | .github/workflows/rzdiff-producer.yml hunks: stock-vs-corrected native matrix runs through |
+| #174 | PARTIAL | 7 (3) | high | see row | GT-01 live_pairs fixes: service.apply_analysis(raw_path, run) so the unified step sees a c; Native identical-byte (A/A) control: force_identical_diff replace(...) path plus 'Ghidriff |
+| #176 | PARTIAL | 4 (0) | medium | see row | Keep a search's document scope: SearchScope threaded through _stored_scope in kbcorrelatio; GUI: column header tooltips via ColumnSpec.tip_id, Alt+Up/Down/Backspace keyboard header s |
+| #222 | RESIDUAL | 2 (0) | medium | see row | native_control.c --io-context mode (distinct IO contexts, --wrong-bytes/--wrong-io negativ; docs/qa/native-api-io-20261105 retained red/green evidence (stock vs corrected IO runs); a |
+| #224 | RESIDUAL | 1 (0) | low | see row | docs/qa/native-cli-20261105/ (about 120 files): failed baseline of 16 'No functions found  |
+| #78 | PARTIAL | 6 (0) | medium | calibration / Tier R lane | Digest-bound label and engine-output export from shard, verification at merge. No training; CI wiring for the training JSON artifacts plus the workflow test; absent on main |
+| #79 | RESIDUAL | 3 (2) | medium | calibration / Tier R lane | aa-card:ID:old/new and noise-card ids in enumerate_cases/case_steps. main shard.py _CASE a; _card_controls representative per (project, commit); no equivalent on main |
+| #82 | RESIDUAL | 4 (1) | medium | calibration / Tier R lane | Same missing feature as #79: aa-card:ID:SIDE and noise-card:ID:SIDE ids and case_steps [fe; Duplicate-pin dedupe and collision refusal in planner; no test or code on main |
+| #85 | RESIDUAL | 5 (3) | high | calibration / Tier R lane | main train.py has no final_locked_test, no run_locked_test use, no PT-KA-LOCK. main spec c; No require_signoff or approval tokens in main prereg_gate.py |
+| #150 | RESIDUAL | 1 (0) | high | calibration / Tier R lane | tier_r/receipts.py (155 lines), parent-race tests (344 lines) and research_build/research_ |
+| #68 | RESIDUAL | 1 (0) | low | calibration / Tier R lane | 24 proposal-only tools/calibration/catalogue/*-candidate.json files. None exist on main; m |
+| #129 | PARTIAL | 1 (1) | low | unified engine lane (#259 owner) for src changes; research tools ported here | IR-mode COS-PSEUDO/1 requires eh in (equal,absent); main _pseudo_proof (verdict.py:88-92)  |
+| #134 | RESIDUAL | 2 (0) | low | unified engine lane (#259 owner) for src changes; research tools ported here | tools/research/r7/slicer.py bounded SSA dependency slicer, bench.py, tests/test_r7_slicing; tools/research/r7/patterns.py guard-to-sink prototype with CBRANCH/opaque pcode fixes, tes |
+| #135 | RESIDUAL | 4 (2) | medium | unified engine lane (#259 owner) for src changes; research tools ported here | Spec 05 'R8 adversarial correction proposal: typed numeric literals' section (R8-LIT-01, c; pseudo.py _number typed-literal canon (u/l suffix, octal, f suffix, >INT32_MAX radix) and  |
+| #61 | RESIDUAL | 1 (0) | medium | unified engine lane (#259 owner) for src changes; research tools ported here | SPEC-56 docs/specs/agent-skill-workflow.md, skills/README.md, 7 Caveman skills + licenses  |
+| #72 | RESIDUAL | 2 (0) | low | docs reconciliation (owner decision after #183 close) | Nine panel specs docs/specs/panels/{capabilities,kev,build_env,rules,guide,graph,strings,s; docs/plans/panels-build-plan.md: binding conflict resolutions (placement, shortcuts, threa |
+| #130 | RESIDUAL | 1 (0) | low | docs reconciliation (owner decision after #183 close) | docs/research/vulnerability-correlation-r4/ (README + 01-08: inventory, source compatibili |
+| #133 | RESIDUAL | 1 (0) | low | docs reconciliation (owner decision after #183 close) | docs/research/final-integration-r6/ (README + 01-08: reconciliation, unified engine, secon |
+
+Highest-value gaps on main:
+- GT-01 live-gate harness (#139/#140/#141, #174): `force_identical_diff` A/A controls, failure sidecars and the workflow executable-restore and EGL steps. #268 is reworking the same live gate, so its owner should take these.
+- Unified engine (#144/#135/#129): canon/2 typed-literal canonicalization, PSEUDO_BLOCKERS/EH-EQ gating, `matching/2` policy key and R2 regression tests. This overlaps #259, the active unified follow-up.
+- Tier R calibration (#79/#82/#85/#150): A/A and noise controls, single-use final training, receipt parent anchoring.
+
+Ported by this coordinator: R7 research tools (#134) in `consolidate/research-r7-20261104` (isolated `tools/research/r7`, 2 tests, docs).
+
+| Time (UTC) | Item | State | Evidence |
+|---|---|---|---|
+| 2026-11-07 06:44 | #181, #184 | CLOSED (superseded) | fixes on main as 93643524, 9d66abb2, fa203813; closing comments on each PR |
+| 2026-11-07 06:43 | #182, #183 | CLOSED by owner triage | "content already landed on main"; #183 research folders calibration-r5, deep-uncertainty-r8, unified-matching-r2, final-integration-r6 are not on main (reported to owner) |
+| 2026-11-11 00:40 | Wave 3 verification | DONE | 34 PRs, 15 agents, 0 errors; 9 close candidates upheld + 10 merged |
+| 2026-11-11 00:45 | #179 gate after main merge | 1 failed / 20872 passed | `test_research_qualification_cli.py::test_paths_outside_allowed_roots_are_refused` fails only under `-n 4`; passes in isolation on main and on this branch (not this branch's change) |
