@@ -18,6 +18,8 @@ from patchtrace.kbcorrelation import cli, wiring
 from patchtrace.kbcorrelation.cli_leads import RealEngine, default_alignment
 from patchtrace.kbcorrelation.contracts import Chip, LeadNav, LeadRow
 from patchtrace.kbcorrelation.leads import (
+    TEXT_NO_COMPARISON,
+    TEXT_NO_CURRENT_RANKING,
     Alignment,
     EngineRow,
     EngineSignal,
@@ -141,6 +143,64 @@ def test_state_wording_and_hooks_per_state(baked):
         report = build_leads(b, v, alignment=alignment)
         assert report.state == state and report.hooks == (hook,)
         assert banned_in(all_text(report.model_dump(mode='json'))) == []
+
+
+def test_no_comparison_text_states_what_is_true_for_each_engine_reason(tmp_path):
+    """D-DEF-04. The reasons are the real ones of ``enrichment.pipeline.load_default`` read through ``RealEngine``:
+    without a completed analysis run nothing is stored, so the text must not speak of a stored ranking."""
+    from patchtrace.enrichment.pipeline import OLDER_ALGORITHM_NOTE
+
+    env, ws, project = wiring.build_env(clock=FixedClock()), str(tmp_path / 'ws'), str(tmp_path / 'P')
+
+    def kb(*argv):
+        out = io.StringIO()
+        code = cli.main([*argv, '--workspace', ws, '--json'], env=env, stdout=out)
+        return code, json.loads(out.getvalue())
+
+    def reason():
+        engine = RealEngine()
+        assert engine.read(project) is None
+        return engine.note
+
+    assert kb('index', 'import', fixture(BASELINE))[0] == 0
+    inv = kb('search', 'KB5099001')[1]['result']['investigation_id']
+    older, newer = write_pair(tmp_path)
+    assert kb('import-pair', inv, '--older', str(older), '--newer', str(newer), '--project', project)[0] == 0
+    no_run = reason()
+    code, doc = kb('leads', project)
+    assert no_run and doc['result']['state'] == 'no-comparison'
+    assert doc['result']['text'] == f'{TEXT_NO_COMPARISON} {no_run}'
+    assert 'stored ranking' not in doc['result']['text'].lower()
+    apply_diff(tmp_path / 'P', tmp_path)
+    assert reason() == ''
+    with contextlib.redirect_stdout(io.StringIO()):
+        assert main_cli.main(['rank', project]) == 0
+    assert RealEngine().read(project) is not None
+    apply_diff(tmp_path / 'P', tmp_path)
+    changed = reason()
+    assert changed and changed != no_run
+    bundle = KbService(tmp_path / 'ws', env)._project_bundles(project)[-1]
+    for note, text in ((no_run, f'{TEXT_NO_COMPARISON} {no_run}'), ('', TEXT_NO_COMPARISON),
+                       (changed, TEXT_NO_CURRENT_RANKING.format(note=changed)),
+                       (OLDER_ALGORITHM_NOTE, TEXT_NO_CURRENT_RANKING.format(note=OLDER_ALGORITHM_NOTE))):
+        report = build_leads(bundle, None, alignment=default_alignment(), engine_note=note)
+        assert (report.state, report.text) == ('no-comparison', text)
+        assert banned_in(all_text(report.model_dump(mode='json'))) == []
+
+
+def test_unattributed_chip_says_no_context_is_attached_when_none_is(baked):
+    """D-DEF-04: without an attached context there is no CVE "in the context" that could fail to align."""
+    bundle, view = baked
+
+    def applicability(report):
+        return {c.text for row in report.unattributed for c in row.chips if c.channel == 'applicability'}
+
+    bare = build_leads(None, view, alignment=default_alignment())
+    assert bare.state == 'no-advisory' and len(bare.unattributed) == len(view.rows)
+    assert applicability(bare) == {'no advisory context is attached, so no CVE is compared with this change'}
+    assert banned_in(all_text(bare.model_dump(mode='json'))) == []
+    attached = build_leads(bundle, view, alignment=default_alignment())
+    assert applicability(attached) == {'no applicable CVE in the context aligns with this change'}
 
 
 def test_text_report_numbers_leads_and_lists_the_footer(baked):

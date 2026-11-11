@@ -31,6 +31,8 @@ _FAMILY = [(f, re.compile(p)) for f, p in catalog.FAMILY_PATTERNS]
 _CLIENT_VERSION = re.compile(catalog.CLIENT_VERSION_PATTERN)
 _RELEASE = [re.compile(p) for p in catalog.RELEASE_PATTERNS]
 _SERVER_YEAR = re.compile(catalog.SERVER_YEAR_PATTERN)
+_IMPLIED_CLIENT = re.compile(catalog.IMPLIED_CLIENT_NAME_PATTERN)
+_IMPLIED_RELEASE = dict(catalog.IMPLIED_CLIENT_RELEASES)
 _ARCH = [(v, re.compile(p)) for v, p in catalog.ARCH_PATTERNS]
 _EDITION = [(v, re.compile(p)) for v, p in catalog.EDITION_PATTERNS]
 _CHANNEL = [(v, re.compile(p)) for v, p in catalog.CHANNEL_PATTERNS]
@@ -115,6 +117,10 @@ def derive(name: str, *, family_hint: str | None = None, arch_hint: str | None =
         match = _SERVER_YEAR.search(text)
         if match:
             release = match.group(1).upper()
+    if release is None and family == 'windows-client':
+        match = _IMPLIED_CLIENT.fullmatch(text)
+        if match:
+            release = _IMPLIED_RELEASE[match.group(1)]
     archs = sorted({v for v, pattern in _ARCH if pattern.search(text)})
     arch = archs[0] if len(archs) == 1 else 'unknown'
     hint_arch = arch_hint if arch_hint in catalog.ARCH_VALUES and arch_hint != 'unknown' else None
