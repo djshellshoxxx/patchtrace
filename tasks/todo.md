@@ -23,7 +23,8 @@ Plan and worker briefs: [unified-soundness-swarm-prompt-20261111](../docs/plans/
 - [x] p15 DATA-MAP soundness and p11 symmetry (A-30): consensus blocked by a competing claim of >= 2 unexplained voters; leave-one-out majority among the other voters with explained dissents ignored; symmetric call-operand votes and region shift; `datamap` 3. `tests/test_unified_followup_datamap.py` (300-example mirror property).
 - [x] p17 alignment symmetry (A-31): symmetric block-pairing seed, canonical-orientation LCS/patience ties, symmetric layout edge check; `align` 2. `tests/test_unified_followup_align.py` (300-example mirror property, 60-example end-to-end verdict mirror).
 - [x] Whole unified set plus pilot/report2/UI neighbours green on Linux (counts in `docs/qa.md`); Ruff clean; no schema drift.
-- [ ] Independent adversarial review of the combined diff; fix any CONFIRMED finding with a red test.
+- [x] Independent adversarial review of the combined diff: 4 CONFIRMED findings fixed in `a81bc814` with red tests (details in `docs/qa.md`); residuals documented in `facts/datamap.py`.
+- [ ] **PAUSED by the owner (2026-11-11 01:06 UTC: stop all workers except ghostpay/p2p offramp).** Everything is committed and pushed at `a81bc814`; PR #287 is a draft with CI running on that head and not yet recorded; no local work is in flight. Resume by checking PR #287 CI, then the items below.
 - [x] Draft PR to `main`: [#287](https://github.com/djshellshoxxx/patchtrace/pull/287) (head `b2651bcf` at creation).
 - [ ] Linux and Windows CI (`qa-windows.yml`) green on the exact PR head; then promote and merge; close #259 as superseded (keep its branch).
 - [ ] Known cost to watch on real pairs: two functions retargeted together to a brand-new global make every referrer of the old datum `review` (never a wrong `cosmetic`). Measure on the next live unified gate run (G-U1/G-U3) before any threshold is touched.
