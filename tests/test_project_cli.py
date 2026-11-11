@@ -514,6 +514,47 @@ def test_a_storage_failure_during_import_exits_3_and_discards_the_staged_copy(pr
     assert tree(project) == before  # the raw copy staged by prepare_import is gone again
 
 
+def test_a_reversed_result_is_refused_and_never_swaps_the_sides(project, inputs, tmp_path, capsys):
+    """An older/newer exchange is explicit (`project swap --confirm`) and never silent: a result whose sides are the
+    other way round is refused and the project keeps its orientation and every byte."""
+    path = tmp_path / 'reversed.json'
+    path.write_text(json.dumps(ghidriff_json(sha(inputs[1]), sha(inputs[0]))), encoding='utf-8')
+    before = tree(project)
+    _, info, _ = jrun(['project', 'info', project], capsys)
+    code, doc, err = jrun(['project', 'import-json', project, path], capsys)
+    assert code == 2 and doc['error'].startswith('PT-SCHEMA: ') and 'Traceback' not in err
+    assert tree(project) == before
+    code, after, _ = jrun(['project', 'info', project], capsys)
+    assert code == 0 and after['result']['orientation'] == info['result']['orientation']
+    assert after['result']['runs'] == info['result']['runs']
+
+
+def test_a_failed_import_keeps_the_result_already_committed(project, inputs, result_file, tmp_path, capsys):
+    code, first, _ = jrun(['project', 'import-json', project, result_file], capsys)
+    assert code == 0
+    raw = project / first['result']['raw_path']
+    before = tree(project)
+    code, doc, err = jrun(['project', 'import-json', project, _malformed(tmp_path, inputs)], capsys)
+    assert code == 2 and doc['status'] == 'failed' and doc['error'].startswith('PT-SCHEMA') and 'Traceback' not in err
+    assert tree(project) == before
+    assert sha(raw) == first['result']['raw_sha256']  # the earlier raw result is byte-identical
+    code, listing, _ = jrun(['project', 'runs', project], capsys)
+    assert code == 0 and [r['id'] for r in listing['result']['runs']] == [first['result']['run_id']]
+    assert listing['result']['latest_completed'] == first['result']['run_id']
+
+
+def test_ctrl_c_during_an_import_exits_5_and_leaves_the_project_as_it_was(project, result_file, capsys, monkeypatch):
+    before = tree(project)
+
+    def interrupted(self, prepared):
+        raise KeyboardInterrupt()  # what the first Ctrl+C delivers while the snapshot is being committed
+    monkeypatch.setattr(ProjectService, 'apply_import', interrupted)
+    code, doc, err = jrun(['project', 'import-json', project, result_file], capsys)
+    assert code == 5 and doc['command'] == 'project import-json' and doc['status'] == 'cancelled'
+    assert doc['result'] is None and 'cancelled' in err
+    assert tree(project) == before  # the staged raw copy is discarded and the empty runs directory is removed
+
+
 # --- backup -------------------------------------------------------------------------------------------------
 
 def test_backup_writes_a_verified_copy(sample, tmp_path, capsys):
