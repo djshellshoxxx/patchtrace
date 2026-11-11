@@ -862,7 +862,8 @@ Done: dock with state matrix, consent, import, changes, copy, go to CVE. Open: r
 - [ ] Run full Linux pytest, Ruff, and current-head Linux/Windows QA, GUI repetition, frozen smoke, portable ZIP and installer lifecycle on the combined branch. Local full pytest and collection attempts remained CPU-bound for 10+ and 2+ minutes respectively and were interrupted; no complete local result is claimed.
 - [x] SPEC-53 Setup three-radio mode group and accessible PDB folder list with Add/Remove, empty-list guidance, and legacy online migration.
 - [x] SPEC-53 profile `local` policy; new profile digest is distinct while old `disabled`/`online` digests remain stable, and per-profile policy only narrows the Setup mode.
-- [ ] Complete remaining feasible SPEC-53 work: diagnostics, GHR-5 native air-gap evidence, and decide whether GHR-6 is in release scope.
+- [x] SPEC-53 `backend diagnose` launcher revision line (tested/untested).
+- [ ] Complete remaining SPEC-53 work: GHR-5 native air-gap evidence, and decide whether GHR-6 is in release scope.
 - [ ] Continue SPEC-DA-01 by dependency order: validate real Diaphora 3.4.3 output before relying on guessed schema details; then implement export import, bounded signals/context, GUI, Mode B, and only pursue Mode C after licensed Windows and distribution review.
 - [ ] Inspect open PRs and handoffs for independent unmerged work; deduplicate overlapping LBL-31/LBL-32 and Java/UE changes before porting. Merge only after their current-head checks pass.
 - [ ] Generate and validate Windows x64 release artifacts only from the tested combined source state; record hashes and CI run URLs. Do not claim real Ghidriff/Diaphora or owner-only UI evidence from synthetic tests.
