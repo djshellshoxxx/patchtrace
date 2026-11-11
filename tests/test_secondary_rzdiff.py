@@ -1,6 +1,7 @@
 """SPEC-11: rz-diff probe, supervised run via fake executables, and strict parser."""
 from __future__ import annotations
 
+import hashlib
 import json
 import os
 import threading
@@ -16,6 +17,10 @@ from patchtrace.secondary.rzdiff import parse_output, parse_version, probe, run_
 
 OLD, NEW = 'a' * 64, 'b' * 64
 FIXTURE = Path(__file__).parent / 'fixtures' / 'secondary' / 'rzdiff-functions.json'
+# Retained native rz-diff stdout (another session's capture, see the fixture's `source`); nothing here runs rz-diff.
+SHAPES = json.loads(FIXTURE.with_name('rzdiff-singleton-shapes.json').read_text(encoding='utf-8'))
+REFUSED = [s for s in SHAPES['shapes'] if s['expect'] == 'refused']
+PARSED = [s for s in SHAPES['shapes'] if s['expect'] == 'parsed']
 
 
 def fake(tmp_path, body: str) -> Path:
@@ -53,6 +58,15 @@ ENTRY = {'similarity': 0.5, 'type': 'PARTIAL', 'original': {'addr': 1, 'name': '
 def variant(**over):
     entry = {**ENTRY, **over}
     return json.dumps([{k: v for k, v in entry.items() if v != '<drop>'}])
+
+
+SECOND = {'similarity': 1.0, 'type': 'COMPLETE', 'original': {'addr': 3, 'name': 'h', 'size': 1},
+          'modified': {'addr': 4, 'name': 'h', 'size': 1}}
+
+
+def accepted(**over):
+    """`variant` plus a second newer function: a one-row document is refused (SPEC-11 section 9)."""
+    return json.dumps([{**ENTRY, **over}, SECOND])
 
 
 @pytest.mark.parametrize('text', [
@@ -257,7 +271,7 @@ def test_hostile_json_never_escapes_as_an_unserializable_set(text):
 def test_valid_unicode_name_round_trips_without_changing_evidence_hash():
     import hashlib
 
-    text = variant(original={'addr': 1, 'name': 'café_𝄞', 'size': 1})
+    text = accepted(original={'addr': 1, 'name': 'café_𝄞', 'size': 1})
     result = parse_output(text, '0.9.1', OLD, NEW)
     assert result.matches[0].older_name == 'café_𝄞'
     assert json.loads(result.model_dump_json())['matches'][0]['older_name'] == 'café_𝄞'
@@ -282,3 +296,77 @@ def test_malformed_version_is_unsupported_without_raising(version):
     result = probe(Path('/opt/rz-diff'), {}, runner=runner_returning('rz-diff ' + version))
     assert not result.supported
     assert result.version is None
+
+
+def sha256_text(text: str) -> str:
+    return hashlib.sha256(text.encode('utf-8')).hexdigest()
+
+
+def rows(*pairs) -> str:
+    """Synthetic document from (original addr | None, modified addr | None) pairs."""
+    side = lambda addr: None if addr is None else {'addr': addr, 'name': f'fcn.{addr}', 'size': 1}  # noqa: E731
+    return json.dumps([{'similarity': 0.5, 'type': 'PARTIAL', 'original': side(o), 'modified': side(m)}
+                       for o, m in pairs])
+
+
+def test_singleton_fixture_is_the_retained_evidence():
+    assert [s['id'] for s in REFUSED] == ['stock-elf-1-1', 'stock-elf-1-2', 'stock-elf-2-1',
+                                          'stock-o-1-1', 'stock-o-1-2', 'stock-o-2-1']
+    assert [s['id'] for s in PARSED] == ['stock-elf-2-2', 'corrected-elf-1-2', 'stock-o-2-2', 'corrected-o-1-2']
+    for shape in SHAPES['shapes']:
+        assert sha256_text(shape['stdout']) == shape['stdout_sha256'], shape['id']
+    assert sha256_text(SHAPES['no_functions']['stderr']) == SHAPES['no_functions']['stderr_sha256']
+
+
+def test_retained_one_to_two_output_reports_a_newer_function_as_original():
+    """The defect itself: the newer-only helper (size 22) sits under `original`; the two-to-one output has the
+    same structure, so nothing in the document says which of the two was swapped."""
+    by_id = {s['id']: json.loads(s['stdout']) for s in SHAPES['shapes']}
+    swapped, ordinary, corrected = by_id['stock-elf-1-2'], by_id['stock-elf-2-1'], by_id['corrected-elf-1-2']
+    assert swapped[1]['original'] == {'name': 'sym.helper', 'addr': 4198419, 'size': 22}
+    assert corrected[1]['modified'] == swapped[1]['original']
+    shape = lambda doc: [(e['original']['addr'], e['modified']['addr']) for e in doc]  # noqa: E731
+    assert shape(swapped) == shape(ordinary)
+
+
+@pytest.mark.parametrize('shape', REFUSED, ids=[s['id'] for s in REFUSED])
+def test_singleton_shape_is_refused_never_swapped(shape):
+    with pytest.raises(SecondaryError) as info:
+        parse_output(shape['stdout'], '0.9.1', OLD, NEW)
+    assert (info.value.code, info.value.kind) == ('PT-SECONDARY-ORIENTATION', 'rzdiff-singleton-ownership')
+    message = info.value.message
+    assert 'not stored' in message and 'use another engine' in message and 'may be fine' in message
+    assert '\n' not in message and len(message) <= 200  # the evidence view shows the first 200 characters
+
+
+@pytest.mark.parametrize('shape', PARSED, ids=[s['id'] for s in PARSED])
+def test_two_newer_functions_parse_byte_identically_to_main(shape):
+    result = parse_output(shape['stdout'], '0.9.1', OLD, NEW)
+    assert sha256_text(result.model_dump_json()) == shape['main_parse_sha256']
+    assert result.file_sha256 == shape['stdout_sha256']
+    document = json.loads(shape['stdout'])
+    assert [(m.older_address, m.newer_address) for m in result.matches] == \
+        [(e['original']['addr'], e['modified']['addr']) for e in document]
+
+
+@pytest.mark.parametrize('text', [
+    rows((1, None)), rows((1, None), (None, 2)), rows((1, 9), (2, 9), (3, None)), rows((None, 2)),
+], ids=['older-only-rows', 'one-newer-only-row', 'many-to-one', 'single-newer-only'])
+def test_at_most_one_distinct_newer_function_is_refused(text):
+    """Synthetic boundary cases of the SPEC-11 section 9 condition."""
+    with pytest.raises(SecondaryError) as info:
+        parse_output(text, '0.9.1', OLD, NEW)
+    assert (info.value.code, info.value.kind) == ('PT-SECONDARY-ORIENTATION', 'rzdiff-singleton-ownership')
+
+
+@pytest.mark.parametrize('text, count', [
+    (rows((1, 8), (None, 9)), 2), (rows((1, None), (None, 8), (None, 9)), 3), (rows((1, 8), (1, 9)), 2),
+], ids=['matched-plus-newer-only', 'only-one-sided', 'one-older-two-newer'])
+def test_two_distinct_newer_functions_are_accepted(text, count):
+    assert len(parse_output(text, '0.9.1', OLD, NEW).matches) == count
+
+
+def test_malformed_singleton_document_is_still_an_input_error():
+    with pytest.raises(SecondaryError) as info:
+        parse_output(variant(similarity=1.01), '0.9.1', OLD, NEW)
+    assert info.value.code == 'PT-SECONDARY-INPUT' and info.value.kind is None

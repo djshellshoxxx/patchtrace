@@ -23,8 +23,11 @@ from patchtrace.secondary.registry import (
 from patchtrace.secondary.scheduler import ProjectRef, run_engines
 
 OLD_BYTES, NEW_BYTES = b'old-artifact', b'new-artifact'
+# Two distinct newer functions: a result with at most one is refused (SPEC-11 section 9).
 GOOD = json.dumps([{'similarity': 0.5, 'type': 'PARTIAL', 'original': {'addr': 1, 'name': 'f', 'size': 1},
-                    'modified': {'addr': 2, 'name': 'g', 'size': 1}}])
+                    'modified': {'addr': 2, 'name': 'g', 'size': 1}},
+                   {'similarity': 1.0, 'type': 'COMPLETE', 'original': {'addr': 3, 'name': 'h', 'size': 1},
+                    'modified': {'addr': 4, 'name': 'h', 'size': 1}}])
 
 
 class PyEngine(RzDiffAdapter):
@@ -267,3 +270,75 @@ def test_workdir_cleanup_failure_does_not_discard_a_finished_run(tmp_path):
             path.unlink(missing_ok=True)
     assert (out.run.status, out.run.error_code) == ('ok', None) and out.match_set is not None
     assert [e.phase for e in events] == ['started', 'finished']
+
+
+SHAPES = {s['id']: s for s in json.loads(
+    (Path(__file__).parent / 'fixtures' / 'secondary' / 'rzdiff-singleton-shapes.json').read_text(
+        encoding='utf-8'))['shapes']}
+
+
+def emit(stdout: str) -> str:
+    """Child source that writes exactly `stdout` (binary, so Windows adds no carriage returns)."""
+    return f"import sys\nsys.stdout.buffer.write({stdout.encode('utf-8')!r})"
+
+
+@pytest.mark.parametrize('shape_id', ['stock-elf-1-1', 'stock-elf-1-2', 'stock-elf-2-1'])
+def test_singleton_shape_fails_the_run_and_produces_no_set(tmp_path, shape_id):
+    """SPEC-11 section 9 on retained native stdout: refused, so there is nothing to publish, cache or reconcile."""
+    delivered = []
+    [out] = go(tmp_path, {'rz-diff': PyEngine(emit(SHAPES[shape_id]['stdout']))}, ['rz-diff'],
+               on_outcome=delivered.append)
+    assert (out.run.status, out.run.error_code, out.run.returncode) == ('failed', 'PT-SECONDARY-ORIENTATION', 0)
+    assert out.error is not None and out.error.kind == 'rzdiff-singleton-ownership'
+    assert out.match_set is None and out.run.match_set_id is None and out.run.output_sha256 is None
+    assert delivered == [out]
+
+
+def test_two_newer_functions_still_run_ok(tmp_path):
+    shape = SHAPES['stock-elf-2-2']
+    [out] = go(tmp_path, {'rz-diff': PyEngine(emit(shape['stdout']))}, ['rz-diff'])
+    assert out.run.status == 'ok' and len(out.match_set.matches) == 2
+    assert out.run.output_sha256 == shape['stdout_sha256'] == out.match_set.file_sha256
+
+
+def test_cli_singleton_run_stores_no_set_and_keeps_the_earlier_one(tmp_path, capsys):
+    """End to end through `secondary run` and the project store (fake rz-diff printing retained stdout)."""
+    from fake_exe import make_fake_exe
+
+    from patchtrace import cli
+    from patchtrace.enrichment.storage import EnrichmentStore
+    from patchtrace.service import ProjectService
+
+    def fake_rz(name: str, shape_id: str) -> str:
+        source = ("import sys\nif sys.argv[1:] == ['-v']:\n    print('rz-diff 0.9.1')\n    sys.exit(0)\n"
+                  f"sys.stdout.buffer.write({SHAPES[shape_id]['stdout'].encode('utf-8')!r})\n")
+        return str(make_fake_exe(tmp_path / name, 'rz-diff', source))
+
+    def run(root, exe):
+        code = cli.main(['secondary', 'run', str(root), '--json', '--rz-diff', exe, '--engine', 'rz-diff',
+                         '--no-cache'])
+        return code, json.loads(capsys.readouterr().out)
+
+    def stored_sets(root) -> list[str]:
+        service = ProjectService.open(root)
+        try:
+            return [e.body['file_sha256'] for e in EnrichmentStore(service.store).entries('secondary-matches')]
+        finally:
+            service.close()
+
+    service = ProjectService.sample(tmp_path / 'case')
+    root = service.root
+    service.close()
+    code, doc = run(root, fake_rz('swapped', 'stock-elf-1-2'))
+    [row] = doc['result']['runs']
+    assert (code, doc['status']) == (2, 'failed')  # SPEC-28 section 7 maps PT-SECONDARY-ORIENTATION to exit 2
+    assert (row['status'], row['error_code'], row['matches']) == ('failed', 'PT-SECONDARY-ORIENTATION', 0)
+    assert doc['result']['reconciliation']['reports'] == [] and stored_sets(root) == []
+    assert any('not stored' in w and 'use another engine' in w for w in doc['warnings'])
+
+    assert run(root, fake_rz('ordinary', 'stock-elf-2-2'))[0] == 0
+    kept = stored_sets(root)
+    assert kept == [SHAPES['stock-elf-2-2']['stdout_sha256']]
+    assert run(root, fake_rz('again', 'stock-elf-2-1'))[1]['result']['runs'][0]['error_code'] == \
+        'PT-SECONDARY-ORIENTATION'
+    assert stored_sets(root) == kept  # the earlier current set is untouched

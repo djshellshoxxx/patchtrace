@@ -35,6 +35,11 @@ TYPES = frozenset({'COMPLETE', 'PARTIAL', 'UNLIKE'})
 ENTRY_KEYS = frozenset({'similarity', 'type', 'original', 'modified'})
 SIDE_KEYS = frozenset({'addr', 'name', 'size'})
 _VERSION = re.compile(r'^rz-diff ([0-9]{1,9})\.([0-9]{1,9})\.([0-9]{1,9})\b')
+SINGLETON_KIND = 'rzdiff-singleton-ownership'
+# Shown truncated to 200 characters by the evidence view, so the whole text stays below that.
+SINGLETON_MESSAGE = ('rz-diff result not stored: it lists at most one newer-side function, and for that shape rz-diff '
+                     'can swap older and newer sides without a trace. The pair itself may be fine; use another '
+                     'engine for it.')
 
 
 def parse_version(text: str) -> tuple[str, tuple[int, int, int]] | None:
@@ -107,6 +112,7 @@ def parse_output(stdout: str, version: str, older_sha256: str, newer_sha256: str
     if not isinstance(document, list):
         raise _fail('rz-diff output is not a JSON array')
     matches = []
+    newer_functions: set[int] = set()
     for index, entry in enumerate(document):
         if not isinstance(entry, dict) or set(entry) != ENTRY_KEYS:
             raise _fail(f'entry {index}: expected keys similarity, type, original, modified')
@@ -120,12 +126,18 @@ def parse_output(stdout: str, version: str, older_sha256: str, newer_sha256: str
         newer = _side(entry['modified'], index, 'modified')
         if older is None and newer is None:
             raise _fail(f'entry {index}: both sides are null')
+        if newer is not None:
+            newer_functions.add(newer[0])
         matches.append(SecondaryMatch(
             engine='rz-diff', engine_version=version,
             older_address=older[0] if older else None, newer_address=newer[0] if newer else None,
             older_name=older[1] if older else None, newer_name=newer[1] if newer else None,
             similarity_milli=milli, similarity_text=text, confidence_milli=None, confidence_text=None,
             flags=(), algorithm='levenshtein-bytes', match_type=entry['type']))
+    if matches and len(newer_functions) <= 1:
+        # SPEC-11 section 9: rizin 0.9.1 swaps the sides when the older file has one function, and the output
+        # cannot show whether it did. Refused, never swapped back: a swap would corrupt every ordinary result.
+        raise SecondaryError('PT-SECONDARY-ORIENTATION', SINGLETON_MESSAGE, kind=SINGLETON_KIND)
     return SecondaryMatchSet(engine='rz-diff', engine_version=version, older_sha256=older_sha256,
                              newer_sha256=newer_sha256,
                              file_sha256=hashlib.sha256(data).hexdigest(),
