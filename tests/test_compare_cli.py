@@ -256,6 +256,38 @@ def test_a_second_ctrl_c_exits_5_unrecorded_and_keeps_its_partial_output_in_quar
     assert (quarantine / 'raw' / 'partial.txt').read_text(encoding='utf-8') == 'keep me'
 
 
+def test_a_second_ctrl_c_while_the_result_is_committed_keeps_it_out_of_the_runs(runtime, capsys, monkeypatch):
+    """The backend finished, then the second Ctrl+C lands during the commit. Nothing is recorded, and the completed
+    output must not stay under runs/<id> looking like a result: it moves to runs/quarantine-<id>."""
+    root, _, flags = runtime
+
+    def interrupted(self, prepared):
+        raise KeyboardInterrupt()
+    monkeypatch.setattr(ProjectService, 'apply_import', interrupted)
+    code, doc, err = jrun(['compare', root, *flags], capsys)
+    assert code == 5 and doc['status'] == 'cancelled' and 'Traceback' not in err
+    project = runs_of(root)
+    assert project.runs == [] and project.revision == 0 and project.matches == []
+    [quarantine] = (root / 'runs').glob('quarantine-*')
+    assert [p.name for p in (root / 'runs').iterdir()] == [quarantine.name]
+    assert (quarantine / 'raw' / 'json' / 'a-b.ghidriff.json').is_file()
+    assert (quarantine / 'failure.txt').read_text(encoding='utf-8').startswith('PT-CANCEL')
+
+
+def test_an_interrupt_after_the_commit_never_moves_the_committed_output(runtime, capsys, monkeypatch):
+    root, _, flags = runtime
+    committed_by = ProjectService.apply_import
+
+    def committed_then_interrupted(self, prepared):
+        committed_by(self, prepared)
+        raise KeyboardInterrupt()  # the snapshot is saved; only the return is lost
+    monkeypatch.setattr(ProjectService, 'apply_import', committed_then_interrupted)
+    jrun(['compare', root, *flags], capsys)
+    [kept] = runs_of(root).runs
+    assert kept.status == 'completed' and (root / 'runs' / kept.id).is_dir()
+    assert list((root / 'runs').glob('quarantine-*')) == []
+
+
 def test_a_failed_forced_compare_keeps_the_committed_result(runtime, capsys):
     """A forced run that fails is recorded beside the committed result: that run, its raw file, its matches and the
     project revision are untouched, and the committed run stays the current one."""

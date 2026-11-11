@@ -105,8 +105,25 @@ def _run(service, config, cancel: threading.Event):
             run = backend.quarantine_failed_run(service.root, run, str(exc))
             if cancel.is_set():
                 run = run.model_copy(update={'status': 'cancelled'})
+        except BaseException:  # a second Ctrl+C during the commit: nothing is recorded, the output is kept aside
+            _keep_interrupted_output(service, run)
+            raise
     service.record_terminal_run(run)
     return run
+
+
+def _keep_interrupted_output(service, run) -> None:
+    """Move the completed but uncommitted output of an interrupted commit to runs/quarantine-<id>, so it never looks
+    like a result. A run that did get committed before the interrupt is a result and stays where it is."""
+    from . import backend
+    if any(item.id == run.id for item in service.project.runs):
+        return
+    try:
+        backend.quarantine_failed_run(service.root, run, 'PT-CANCEL: interrupted before the result was committed; '
+                                      'partial output retained in quarantine')
+    except (ValueError, OSError):
+        print('compare: the interrupted output could not be moved to quarantine; it is left under runs/',
+              file=sys.stderr)
 
 
 def _reused(args: Namespace, project, run) -> int:
