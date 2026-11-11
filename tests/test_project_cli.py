@@ -8,6 +8,7 @@ from __future__ import annotations
 import hashlib
 import json
 import os
+import shutil
 import struct
 import subprocess
 import sys
@@ -598,6 +599,20 @@ def test_a_backup_that_does_not_verify_exits_3_and_names_the_copy(sample, tmp_pa
     code, doc, err = jrun(['project', 'backup', sample, '--out', out], capsys)
     assert code == 3 and 'PT-STORAGE: backup did not verify' in doc['error'] and str(out.resolve()) in doc['error']
     assert out.is_dir() and 'Traceback' not in err  # kept for inspection, never reported as verified
+
+
+def test_ctrl_c_during_a_backup_exits_5_and_publishes_nothing(sample, tmp_path, capsys, monkeypatch):
+    before = tree(sample)
+    out = tmp_path / 'copy'
+
+    def interrupted(source, destination, *args, **kwargs):
+        raise KeyboardInterrupt()  # the first Ctrl+C lands while the artifacts are being copied
+    monkeypatch.setattr(shutil, 'copytree', interrupted)
+    code, doc, err = jrun(['project', 'backup', sample, '--out', out], capsys)
+    assert code == 5 and doc['command'] == 'project backup' and doc['status'] == 'cancelled'
+    assert 'Traceback' not in err and not out.exists()
+    assert [p.name for p in tmp_path.iterdir() if p.name.startswith('.patchtrace-backup-')] == []  # stage removed
+    assert tree(sample) == before
 
 
 # --- swap ---------------------------------------------------------------------------------------------------
