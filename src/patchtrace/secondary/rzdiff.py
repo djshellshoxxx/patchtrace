@@ -3,7 +3,8 @@
 stdout (the JSON document) and stderr (diagnostics) are captured independently with
 `run_process(separate_streams=True)`, so diagnostics written on success cannot corrupt the
 document. Stdout that is still not strict JSON is an error rather than salvaged: a
-partially recovered match list would look complete.
+partially recovered match list would look complete. The parser works on the captured bytes
+(SPEC-11 section 10): they are decoded strictly and they are what the digest covers.
 """
 from __future__ import annotations
 
@@ -26,6 +27,7 @@ from .contracts import (
 )
 
 MIN_VERSION = (0, 9, 0)
+TESTED_SERIES = '0.9.'  # the only series with live evidence; the unified adapter flags the same boundary
 STDOUT_LIMIT = 64 * 1024 * 1024
 STDERR_TAIL = 2 * 1024 * 1024
 DEFAULT_TIMEOUT = 1800
@@ -40,6 +42,10 @@ SINGLETON_KIND = 'rzdiff-singleton-ownership'
 SINGLETON_MESSAGE = ('rz-diff result not stored: it lists at most one newer-side function, and for that shape rz-diff '
                      'can swap older and newer sides without a trace. The pair itself may be fine; use another '
                      'engine for it.')
+NO_FUNCTIONS_KIND = 'no-functions'
+# rz-diff numbers its two positional files; file0 is the retained native form, file1 follows the same message.
+_NO_FUNCTIONS = re.compile(r'No functions found in file([01])')
+_SIDES = {'0': 'older', '1': 'newer'}
 
 
 def parse_version(text: str) -> tuple[str, tuple[int, int, int]] | None:
@@ -75,8 +81,36 @@ def probe(executable: Path, env: Mapping[str, str], cancel: threading.Event | No
     return Capability(engine='rz-diff', supported=True, version=text, path=path, supports_json=True)
 
 
+def untested_version(version: str) -> bool:
+    return not version.startswith(TESTED_SERIES)
+
+
+def captured_stdout(result) -> bytes | str:
+    """The exact bytes `jobs.run_process` captured; the lossy text only for a runner that kept no bytes."""
+    data = getattr(result, 'log_bytes', None)
+    return result.log_tail if data is None else data
+
+
 def _fail(message: str) -> SecondaryError:
     return SecondaryError('PT-SECONDARY-INPUT', message)
+
+
+def _text_and_bytes(stdout: str | bytes) -> tuple[str, bytes]:
+    """JSON text and the bytes the digest covers. Bytes are decoded strictly: nothing is replaced."""
+    if len(stdout) > STDOUT_LIMIT:  # for text a cheap first check; its UTF-8 size is checked below
+        raise SecondaryError('PT-SECONDARY-LIMIT', 'rz-diff output exceeds 64 MiB')
+    if isinstance(stdout, bytes):
+        try:
+            return stdout.decode('utf-8'), stdout
+        except UnicodeDecodeError as exc:
+            raise _fail(f'rz-diff output is not valid UTF-8 at byte offset {exc.start}') from None
+    try:
+        data = stdout.encode('utf-8')
+    except UnicodeEncodeError:
+        raise _fail('rz-diff output is not valid UTF-8') from None
+    if len(data) > STDOUT_LIMIT:
+        raise SecondaryError('PT-SECONDARY-LIMIT', 'rz-diff output exceeds 64 MiB')
+    return stdout, data
 
 
 def _side(value, index: int, label: str) -> tuple[int, str] | None:
@@ -94,19 +128,12 @@ def _side(value, index: int, label: str) -> tuple[int, str] | None:
     return addr, name
 
 
-def parse_output(stdout: str, version: str, older_sha256: str, newer_sha256: str) -> SecondaryMatchSet:
-    if len(stdout) > STDOUT_LIMIT:
-        raise SecondaryError('PT-SECONDARY-LIMIT', 'rz-diff output exceeds 64 MiB')
-    try:
-        data = stdout.encode('utf-8')
-    except UnicodeEncodeError:
-        raise _fail('rz-diff output is not valid UTF-8') from None
-    if len(data) > STDOUT_LIMIT:
-        raise SecondaryError('PT-SECONDARY-LIMIT', 'rz-diff output exceeds 64 MiB')
-    if not stdout.strip():
+def parse_output(stdout: str | bytes, version: str, older_sha256: str, newer_sha256: str) -> SecondaryMatchSet:
+    text, data = _text_and_bytes(stdout)
+    if not text.strip():
         raise _fail('rz-diff produced no output')
     try:
-        document = strict_json(stdout)
+        document = strict_json(text)
     except ValueError:
         raise _fail('rz-diff output is not valid strict JSON') from None
     if not isinstance(document, list):
@@ -167,7 +194,7 @@ def run_rzdiff(capability: Capability, older: Path, newer: Path, older_sha256: s
         raise SecondaryError('PT-SECONDARY-RUN', f'rz-diff exceeded the {timeout_seconds} s timeout')
     if result.reason:
         raise SecondaryError('PT-SECONDARY-RUN', f'rz-diff stopped: {result.reason}')
-    return interpret(result.returncode, result.log_tail, result.stderr_tail, capability.version,
+    return interpret(result.returncode, captured_stdout(result), result.stderr_tail, capability.version,
                      older_sha256, newer_sha256)
 
 
@@ -176,14 +203,23 @@ def rzdiff_argv(executable: str, older: Path, newer: Path) -> tuple[str, ...]:
     return (executable, '-C', '-j', '-t', 'functions', str(older), str(newer))
 
 
-def interpret(returncode: int, output: str, stderr_tail: str, version: str, older_sha256: str,
+def interpret(returncode: int, output: str | bytes, stderr_tail: str, version: str, older_sha256: str,
               newer_sha256: str, stdout_limit: int = STDOUT_LIMIT) -> SecondaryMatchSet:
-    """Turn a finished rz-diff process (no cancel/timeout) into a strict match set."""
+    """Turn a finished rz-diff process (no cancel/timeout) into a strict match set.
+
+    `output` is the captured stdout bytes, or the lossy text of a runner that kept no bytes."""
+    exact = isinstance(output, bytes)
     if returncode != 0:
-        tail = (stderr_tail or output).encode('utf-8')[-STDERR_TAIL:].decode('utf-8', errors='replace')
+        shown = stderr_tail or (output.decode('utf-8', errors='replace') if exact else output)
+        tail = shown.encode('utf-8')[-STDERR_TAIL:].decode('utf-8', errors='replace')
         raise SecondaryError('PT-SECONDARY-RUN', f'rz-diff exited with {returncode}: {tail}')
-    if len(output.encode('utf-8')) > stdout_limit:
+    if len(output if exact else output.encode('utf-8')) > stdout_limit:
         raise SecondaryError('PT-SECONDARY-LIMIT', 'rz-diff output exceeds 64 MiB')
-    if '\ufffd' in output:
+    if not exact and '\ufffd' in output:  # lossy text: this may stand for a byte that was replaced
         raise SecondaryError('PT-SECONDARY-INPUT', 'rz-diff output is not valid UTF-8')
+    if not output.strip() and (found := _NO_FUNCTIONS.search(stderr_tail)):
+        raise SecondaryError(
+            'PT-SECONDARY-INPUT', f'rz-diff reported no functions in the {_SIDES[found.group(1)]} file, so it '
+            'compared nothing. rz-diff may not support this file; use another engine for this pair.',
+            kind=NO_FUNCTIONS_KIND)
     return parse_output(output, version, older_sha256, newer_sha256)

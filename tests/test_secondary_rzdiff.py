@@ -370,3 +370,105 @@ def test_malformed_singleton_document_is_still_an_input_error():
     with pytest.raises(SecondaryError) as info:
         parse_output(variant(similarity=1.01), '0.9.1', OLD, NEW)
     assert info.value.code == 'PT-SECONDARY-INPUT' and info.value.kind is None
+
+
+# ---- SPEC-11 section 10: byte-exact stdout and the no-functions failure kind ----------------------------
+
+def named(name: bytes) -> bytes:
+    """Two-row document (so section 9 does not apply) whose first older name is the raw bytes `name`."""
+    return (b'[{"similarity":0.5,"type":"PARTIAL","original":{"name":"' + name + b'","addr":1,"size":1},'
+            b'"modified":{"name":"g","addr":2,"size":1}},' + json.dumps(SECOND).encode('ascii') + b']\r\n')
+
+
+def bytes_runner(data: bytes, stderr: str = ''):
+    """A runner as `jobs.run_process` answers: lossy text plus the exact captured bytes."""
+    def run(argv, **kwargs):
+        return ProcessResult(0, data.decode('utf-8', errors='replace'), None, stderr, log_bytes=data)
+    return run
+
+
+def test_valid_replacement_character_is_accepted(tmp_path):
+    data = named('caf\u00e9_\ufffd'.encode('utf-8'))
+    for result in (parse_output(data, '0.9.1', OLD, NEW),
+                   run_rzdiff(cap(), *artifacts(tmp_path), OLD, NEW, env={}, cancel=threading.Event(),
+                              runner=bytes_runner(data))):
+        assert result.matches[0].older_name == 'caf\u00e9_\ufffd'
+        assert result.file_sha256 == hashlib.sha256(data).hexdigest()
+
+
+@pytest.mark.parametrize('name, offset', [(b'ab\xffcd', 58), (b'ab\xe2\x82', 58), (b'\xed\xa0\x80', 56)],
+                         ids=['stray-byte', 'truncated-sequence', 'encoded-surrogate'])
+def test_invalid_utf8_bytes_are_rejected_with_offset(tmp_path, name, offset):
+    data = named(name)
+    assert data.index(name) + name.index(name.lstrip(b'ab')) == offset
+    for call in (lambda: parse_output(data, '0.9.1', OLD, NEW),
+                 lambda: run_rzdiff(cap(), *artifacts(tmp_path), OLD, NEW, env={}, cancel=threading.Event(),
+                                    runner=bytes_runner(data))):
+        with pytest.raises(SecondaryError) as info:
+            call()
+        assert info.value.code == 'PT-SECONDARY-INPUT'
+        assert info.value.message == f'rz-diff output is not valid UTF-8 at byte offset {offset}'
+
+
+def test_digest_is_of_the_captured_bytes_not_of_the_lossy_text(tmp_path):
+    data = named(b'f')
+    assert data.endswith(b'\r\n')
+
+    def runner(argv, **kwargs):  # the text differs from the bytes; only the bytes are evidence
+        return ProcessResult(0, data.decode('ascii').strip(), None, log_bytes=data)
+
+    result = run_rzdiff(cap(), *artifacts(tmp_path), OLD, NEW, env={}, cancel=threading.Event(), runner=runner)
+    assert result.file_sha256 == hashlib.sha256(data).hexdigest()
+
+
+def test_byte_input_enforces_the_output_limit(monkeypatch):
+    from patchtrace.secondary import rzdiff
+
+    monkeypatch.setattr(rzdiff, 'STDOUT_LIMIT', 256)
+    with pytest.raises(SecondaryError) as info:
+        parse_output(b' ' * 257, '0.9.1', OLD, NEW)
+    assert info.value.code == 'PT-SECONDARY-LIMIT'
+
+
+@pytest.mark.parametrize('stderr, side', [
+    (SHAPES['no_functions']['stderr'], 'older'),  # retained native stderr
+    ('ERROR: rz-diff: No functions found in file1.\n', 'newer'),  # synthetic: inferred from the same message
+], ids=['file0-retained', 'file1-synthetic'])
+def test_no_functions_is_classified(tmp_path, stderr, side):
+    with pytest.raises(SecondaryError) as info:
+        run_rzdiff(cap(), *artifacts(tmp_path), OLD, NEW, env={}, cancel=threading.Event(),
+                   runner=bytes_runner(b'', stderr))
+    assert (info.value.code, info.value.kind) == ('PT-SECONDARY-INPUT', 'no-functions')
+    assert f'reported no functions in the {side} file' in info.value.message
+    assert 'use another engine' in info.value.message and len(info.value.message) <= 200
+
+
+@pytest.mark.parametrize('stdout, stderr', [(b'', 'WARNING: something else\n'), (b'', '')],
+                         ids=['other-stderr', 'silent'])
+def test_empty_stdout_without_the_marker_stays_a_generic_input_error(tmp_path, stdout, stderr):
+    with pytest.raises(SecondaryError, match='no output') as info:
+        run_rzdiff(cap(), *artifacts(tmp_path), OLD, NEW, env={}, cancel=threading.Event(),
+                   runner=bytes_runner(stdout, stderr))
+    assert (info.value.code, info.value.kind) == ('PT-SECONDARY-INPUT', None)
+
+
+def test_marker_next_to_a_document_does_not_hide_the_document(tmp_path):
+    result = run_rzdiff(cap(), *artifacts(tmp_path), OLD, NEW, env={}, cancel=threading.Event(),
+                        runner=bytes_runner(named(b'f'), SHAPES['no_functions']['stderr']))
+    assert len(result.matches) == 2
+
+
+def test_real_fake_executable_bytes_end_to_end(tmp_path):
+    """Through the real `jobs.run_process`: the child's exact bytes reach the parser and the digest."""
+    older, newer = artifacts(tmp_path)
+    data = named('\ufffd'.encode('utf-8'))
+    exe = fake(tmp_path, f'sys.stdout.buffer.write({data!r})')
+    result = run_rzdiff(cap(exe), older, newer, OLD, NEW, env=dict(os.environ), cancel=threading.Event())
+    assert result.matches[0].older_name == '\ufffd' and result.file_sha256 == hashlib.sha256(data).hexdigest()
+    bad = fake(tmp_path / 'bad', f'sys.stdout.buffer.write({named(bytes([255]))!r})')
+    with pytest.raises(SecondaryError, match='byte offset 56'):
+        run_rzdiff(cap(bad), older, newer, OLD, NEW, env=dict(os.environ), cancel=threading.Event())
+    silent = fake(tmp_path / 'silent', f'sys.stderr.write({SHAPES["no_functions"]["stderr"]!r})')
+    with pytest.raises(SecondaryError) as info:
+        run_rzdiff(cap(silent), older, newer, OLD, NEW, env=dict(os.environ), cancel=threading.Event())
+    assert info.value.kind == 'no-functions'
