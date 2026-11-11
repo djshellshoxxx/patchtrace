@@ -98,3 +98,43 @@ def test_engine_run_kind_is_stored_and_ignored_by_secondary_readers(case):  # no
     assert _store(root, load_secondary) == []
     [entry] = _store(root, lambda s: s.entries('engine-run'))
     assert entry.body['contract'] == 'engine-run/1'
+
+
+# A row exactly as `EngineRun.model_dump_json()` wrote it before `provenance` gained the rz-diff keys
+# (SPEC-11 section 10): no `provenance` member at all.
+STORED_ROW = (
+    '{"contract":"engine-run/1","run_id":"' + 'c' * 64 + '","engine":"rz-diff","engine_version":"0.9.1",'
+    '"executable_path_sha256":"' + 'e' * 64 + '","argv_digest":"' + 'd' * 64 + '","older_sha256":"' + OLD + '",'
+    '"newer_sha256":"' + NEW + '","orientation":"older->newer","cache_key":"' + 'f' * 64 + '","status":"ok",'
+    '"error_code":null,"returncode":0,"started_utc":"2026-10-20T10:00:00+00:00","duration_ms":1234,'
+    '"stderr_tail":"","output_sha256":"' + '1' * 64 + '","match_set_id":"' + '2' * 64 + '","superseded_by":null}')
+
+
+def test_row_stored_before_the_rzdiff_provenance_keys_stays_byte_identical():
+    run = EngineRun.model_validate_json(STORED_ROW)
+    assert run.provenance == {}
+    assert run.model_dump_json() == STORED_ROW
+    assert 'provenance' not in run.model_dump(mode='json')
+
+
+def test_rzdiff_provenance_keys_round_trip_within_the_bounds():
+    """Append-only: the new keys only ever add a `provenance` member; every other member keeps its bytes."""
+    notes = {'executable_sha256': '3' * 64, 'untested_version': 'true', 'failure_kind': 'rzdiff-singleton-ownership'}
+    run = EngineRun.model_validate_json(STORED_ROW).model_copy(update={'provenance': notes})
+    text = run.model_dump_json()
+    assert text == STORED_ROW[:-1] + ',"provenance":' + json.dumps(notes, separators=(',', ':')) + '}'
+    assert EngineRun.model_validate_json(text) == run
+    payload = json.loads(text)
+    for bad in ({**notes, 'executable_sha256': 'x' * 257}, {f'k{i}': 'v' for i in range(17)}):
+        with pytest.raises(ValueError):
+            EngineRun.model_validate_json(json.dumps({**payload, 'provenance': bad}))
+
+
+def test_stored_row_without_provenance_is_read_back_unchanged_from_the_store(case):  # noqa: F811
+    root, sides, run, revision, pid = case
+    guard = Guard(pid, run.id, run.raw_sha256, 'f' * 64)
+    record = EngineRun.model_validate_json(STORED_ROW)
+    _store(root, lambda s: publish_run(s, guard, guard, revision, record))
+    [entry] = _store(root, lambda s: s.entries('engine-run'))
+    assert entry.body == json.loads(STORED_ROW)
+    assert EngineRun.model_validate_json(json.dumps(entry.body)).model_dump_json() == STORED_ROW

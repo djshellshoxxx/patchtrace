@@ -11,8 +11,12 @@ from test_secondary_bindiff import build
 from patchtrace import cli
 from patchtrace.service import ProjectService
 
+# Two functions on each side: a result with at most one function on the modified side is refused
+# (rzdiff-singleton-ownership, SPEC secondary-engine), so a one-pair fixture can no longer stand for a good run.
 GOOD = json.dumps([{'similarity': 0.5, 'type': 'PARTIAL', 'original': {'addr': 1, 'name': 'f', 'size': 1},
-                    'modified': {'addr': 2, 'name': 'g', 'size': 1}}])
+                    'modified': {'addr': 2, 'name': 'g', 'size': 1}},
+                   {'similarity': 0.5, 'type': 'PARTIAL', 'original': {'addr': 3, 'name': 'h', 'size': 1},
+                    'modified': {'addr': 4, 'name': 'k', 'size': 1}}])
 
 
 @pytest.fixture
@@ -42,7 +46,7 @@ def test_run_json_complete_then_cached_then_reconcile_after_reruns(project, tmp_
     code, doc = run_cli(root, '--rz-diff', exe, '--engine', 'rz-diff', capsys=capsys)
     assert code == 0 and doc['status'] == 'complete'
     [row] = doc['result']['runs']
-    assert row['engine'] == 'rz-diff' and row['status'] == 'ok' and row['matches'] == 1 and not row['cache']
+    assert row['engine'] == 'rz-diff' and row['status'] == 'ok' and row['matches'] == 2 and not row['cache']
     code, doc = run_cli(root, '--rz-diff', exe, '--engine', 'rz-diff', capsys=capsys)
     assert code == 0 and doc['result']['runs'][0]['status'] == 'cached' and doc['result']['runs'][0]['cache']
     assert run_cli(root, '--rz-diff', exe, '--no-cache', capsys=capsys)[1]['result']['runs'][0]['status'] == 'ok'

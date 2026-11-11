@@ -1,6 +1,7 @@
 """Engine adapters and the immutable registry (SPEC-28 §4.2). No Qt; spawns only via `EngineJob.runner`."""
 from __future__ import annotations
 
+import hashlib
 import shutil
 import threading
 from collections.abc import Callable, Mapping
@@ -16,6 +17,7 @@ from .contracts import Capability, SecondaryError, SecondaryMatchSet
 from .runs import EngineId
 
 DISPLAY_ORDER: tuple[EngineId, ...] = ('rz-diff', 'bindiff', 'ghidriff-baseline')
+EXECUTABLE_HASH_LIMIT = 512 * 1024 * 1024
 BINDIFF_UNSUPPORTED = 'PT-SECONDARY-UNSUPPORTED: ' + bindiff_probe.MESSAGES['not-configured']
 
 
@@ -40,6 +42,8 @@ class RawResult:
     stderr_tail: str
     file_path: Path | None
     reason: str | None
+    # Additive (SPEC-11 section 10): True when the runner kept no bytes and `stdout` re-encodes its lossy text.
+    lossy_stdout: bool = False
 
 
 class EngineAdapter(Protocol):
@@ -58,14 +62,33 @@ def _unsupported(engine, path: str, reason: str) -> Capability:
     return Capability(engine=engine, supported=False, version=None, path=path, supports_json=False, reason=reason)
 
 
+def executable_sha256(path: str, limit: int = EXECUTABLE_HASH_LIMIT) -> str | None:
+    """SHA-256 of the file at `path`; None when it cannot be read or exceeds `limit` (never an error)."""
+    digest, total = hashlib.sha256(), 0
+    try:
+        with open(path, 'rb') as handle:
+            while chunk := handle.read(1024 * 1024):
+                total += len(chunk)
+                if total > limit:
+                    return None
+                digest.update(chunk)
+    except OSError:
+        return None
+    return digest.hexdigest()
+
+
 class RzDiffAdapter:
     id: EngineId = 'rz-diff'
     reads_artifacts = True  # the scheduler hands it hash-verified private copies
 
     def __init__(self, executable: str = 'rz-diff'):
         self.executable = executable
+        # One instance serves every run of the module registry, so the notes of an attempt live on its
+        # worker thread (the scheduler probes, runs, parses and reads provenance on one thread).
+        self._attempt = threading.local()
 
     def probe(self, job_env: Mapping[str, str], cancel: threading.Event) -> Capability:
+        self._attempt.notes = {}
         found = shutil.which(self.executable, path=job_env.get('PATH')) or self.executable
         if not Path(found).is_absolute():
             return _unsupported('rz-diff', found, f'rz-diff executable {self.executable!r} not found')
@@ -75,18 +98,35 @@ class RzDiffAdapter:
         return rzdiff.rzdiff_argv(cap.path, job.older, job.newer)
 
     def run(self, cap: Capability, job: EngineJob) -> RawResult:
-        result = job.runner(list(self.argv(cap, job)), cwd=job.workdir, env=job.env, cancel=job.cancel,
+        argv = list(self.argv(cap, job))
+        notes = {}
+        if (digest := executable_sha256(argv[0])) is not None:
+            notes['executable_sha256'] = digest
+        if rzdiff.untested_version(cap.version or ''):
+            notes['untested_version'] = 'true'
+        self._attempt.notes = notes
+        result = job.runner(argv, cwd=job.workdir, env=job.env, cancel=job.cancel,
                             timeout_seconds=job.deadline_seconds, log_limit=job.stdout_limit + 1,
                             separate_streams=True, stderr_limit=rzdiff.STDERR_TAIL)
-        return RawResult(result.returncode, result.log_tail.encode('utf-8'), result.stderr_tail, None,
-                         result.reason)
+        stdout = rzdiff.captured_stdout(result)
+        lossy = isinstance(stdout, str)
+        return RawResult(result.returncode, stdout.encode('utf-8') if lossy else stdout, result.stderr_tail,
+                         None, result.reason, lossy)
 
     def parse(self, raw: RawResult, cap: Capability, job: EngineJob) -> SecondaryMatchSet:
+        if raw.reason:  # timeout, cancel or output limit: partial stdout is never evidence (SPEC-11 section 3)
+            raise SecondaryError('PT-SECONDARY-RUN', f'stopped: {raw.reason}')
         if raw.returncode != 0:  # stderr is kept in the EngineRun, never echoed into the message
             raise SecondaryError('PT-SECONDARY-RUN', f'rz-diff exited with {raw.returncode}')
-        return rzdiff.interpret(raw.returncode, (raw.stdout or b'').decode('utf-8', errors='replace'),
+        stdout = raw.stdout or b''
+        return rzdiff.interpret(raw.returncode, stdout.decode('utf-8') if raw.lossy_stdout else stdout,
                                 raw.stderr_tail, cap.version or '', job.older_sha256, job.newer_sha256,
                                 job.stdout_limit)
+
+    def provenance(self) -> dict[str, str]:
+        """Bounded `EngineRun.provenance` of this thread's attempt (SPEC-11 section 10). Empty until `run`
+        launches rz-diff, so unsupported and cached rows stay without a `provenance` member."""
+        return dict(getattr(self._attempt, 'notes', {}))
 
 
 Acceptor = Callable[..., AcceptedBinExportLike]
