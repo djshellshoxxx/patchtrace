@@ -79,7 +79,7 @@ Research CLI path scope: the evidence runner accepts explicit executable and out
 
 **Provenance.** `EngineRun.provenance` (append-only and optional, at most 16 keys of at most 256 characters, SPEC-29 section 5) gains two rz-diff keys, recorded only for an attempt that launches rz-diff:
 
-- `executable_sha256`: SHA-256 of the file at the probed executable path, read immediately before the launch. It is left out when the file cannot be read or is larger than 512 MiB.
+- `executable_sha256`: SHA-256 of the file the adapter launches (`argv[0]`, the probed executable path), read immediately before the launch. It is left out when the file cannot be read or is larger than 512 MiB.
 - `untested_version`: `true` when the probed version is outside the tested 0.9.x series.
 
 `failure_kind` carries the kind of a refusal (`rzdiff-singleton-ownership`, `no-functions`) and, as for BinDiff, `timeout` or `cancelled`. A row of an attempt that records none of these (an unsupported engine, a cache hit, a successful run of a tested version whose executable could not be read) has no `provenance` member, and rows written before this amendment read and serialise byte-identically.
