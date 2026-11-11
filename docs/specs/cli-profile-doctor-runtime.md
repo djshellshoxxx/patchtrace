@@ -51,7 +51,7 @@ One health report that needs no process and no network: `patchtrace doctor [--js
 | `version` | `patchtrace.__version__` | always | - | - | - |
 | `python` | `sys.version_info`, implementation, pointer width, frozen or source | 64-bit | - | a 32-bit interpreter (the analysis runtime and the limits assume 64-bit) | - |
 | `platform` | `sys.platform`, `os.name`, machine from `os.uname()` or `PROCESSOR_ARCHITECTURE` (the `platform` module is not used: it can start `uname`) | always | - | - | - |
-| `optional-deps` | `optional_deps.probe()`; `detail` is `optional_deps.summary_line()` | all present | one or more missing (the features that need them say so; remedy names the pip extra) | - | - |
+| `optional-deps` | `optional_deps.probe()`; `detail` is `optional_deps.summary_line()` without its `optional-deps: ` prefix | all present | one or more missing (the features that need them say so; remedy names the pip extra) | - | - |
 | `cli-verbs` | `cli_commands.discover()` | every verb file loads | - | a verb file cannot be loaded (module and exception class) | - |
 | `bundle` | `runtime_discovery.check_bundle` (fast check: file presence, type and size; no hashing, no process) | fast check ok | - | a `backend` directory exists and fails (first `PT-BUNDLE-` code) | no `backend` directory next to PatchTrace |
 | `runtimes` | `runtime_discovery.discover_local_runtimes` | at least one Python and one Ghidra candidate | none or only one kind found; or `PATCHTRACE_BACKEND_PYTHON` / `GHIDRA_INSTALL_DIR` is set and was not accepted as a candidate | - | - |
