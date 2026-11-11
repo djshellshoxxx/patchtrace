@@ -1,5 +1,22 @@
 # QA and audit record
 
+## 2026-11-11 SPEC-31 unified-engine soundness follow-up (PR #259 open defects) — Linux, synthetic only
+
+Branch `claude/funny-feynman-d2m0b5` (`main` `882d1ca0` + #259's five commits merged cleanly + four fixes). Plan and worker briefs: [unified-soundness-swarm-prompt-20261111](plans/unified-soundness-swarm-prompt-20261111.md); spec amendments A-28..A-31 in `docs/specs/unified-engine/10-amendments.md`. Each defect had a red test before its fix (counts in the commit messages `78c0c544`, `3bf12d61`, `c0bf3d05`, `a28676c8`).
+
+| Defect | Fix | Red/green evidence |
+| --- | --- | --- |
+| p1 raw Ghidriff table read the wrong way round after `swap_orientation` | document identity (`old_meta`/`new_meta`) recorded by `load_raw`; table flipped when crosswise; new raw failure kind `identity-mismatch`; `ENGINE_VERSION` ude/2 | `tests/test_unified_followup_orientation.py`: 6 failed before, 6 pass after |
+| p7 IR-only runs dropped one-sided functions | ladder leftovers of kind function/thunk become one-sided `pt-ladder` atoms and rows; `LADDER_VERSION` ladder/5 | `tests/test_unified_followup_ironly.py`: 4 failed before, 6 pass after |
+| p15 coordinated retarget to an existing global became COS-ADDR/1; p11 asymmetric function vote | competing-claim abstention, leave-one-out among the other voters with explained dissents ignored, symmetric votes and region shift; `datamap` 3 | `tests/test_unified_followup_datamap.py`: 6 of 7 failed before, 9 pass after (300-example mirror property) |
+| p17 alignment tie-breaks differed when the sides were swapped | symmetric block-pairing seed, canonical-orientation LCS/patience ties, symmetric layout edge check; `align` 2 | `tests/test_unified_followup_align.py`: 7 failed before, 10 pass after (300-example mirror property, 60-example end-to-end verdict mirror) |
+
+Whole unified set plus neighbours at head `a28676c8` (Python 3.13.18, PySide6 6.12.0, offscreen): `QT_QPA_PLATFORM=offscreen python -m pytest -q -p no:cacheprovider -n 8 --dist loadfile tests/test_unified_*.py tests/test_ui_unified*.py tests/test_evalcore_unified.py tests/test_context_unified_notes.py tests/test_search_sources_unified.py tests/test_pilot*.py tests/test_report2*.py` → **4,236 passed, 0 failed, 0 skipped in 129 s** (baseline before the fixes on `fb038ab9`: 2,628 passed for the unified files alone). `python -m ruff check src tests tools` clean; `python tools/generate_schemas.py` produced no drift; `git diff --check` clean.
+
+Expectation changes made on purpose (each keeps the test's purpose): `test_the_residual_stage_runs_and_backup_b07_switches_it_off` now expects the two ladder leftovers as one-sided rows; `test_a_capped_vote_table_never_turns_a_dissenter_into_a_proof` runs on a lone-dissenter fixture (two competing claimants with two voters each now abstain by design); S0 fixtures carry a document identity like every imported raw file; key golden and CLI status pins follow ude/2; the fct-audit version pin includes datamap 3 and align 2.
+
+Not evidence of: live Ghidriff, Windows, real-pair accuracy, or the unified live gates. Known coverage cost of A-30 (two functions retargeted together to a brand-new global make every referrer of the old datum `review`) is to be measured on the next live gate run. Independent adversarial review of the combined diff: recorded below when complete.
+
 ## 2026-11-06 PT-TIMEOUT-1: live progress and execution diagnostics
 
 Implemented [SPEC-01a](specs/ghidriff-timeout-progress.md) on `fix/ghidriff-timeout-progress-20261106`, based on `d8cfd7b1d8bffa90af1c7af94dda012b89886b76`. Process observations are bounded to 16 KiB per captured stream, delivered on the supervisor thread outside the reader lock at most once per second plus a final snapshot. The UI shows the effective subprocess budget, elapsed time, last observed stage and output age with indeterminate progress. Heartbeats do not fill the log; cancellation, terminal text and exact-worker identity take precedence. Timeout errors include the Setup route and project-relative diagnostics directory. Atomic best-effort `backend-execution.json` receipts record process outcome and available safe runtime identifiers without claiming normalized comparison success or inventing unprobed versions. No matching, argv, timeout-default, cache-key or threading changes.
