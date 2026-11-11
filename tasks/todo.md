@@ -24,7 +24,8 @@ Plan and worker briefs: [unified-soundness-swarm-prompt-20261111](../docs/plans/
 - [x] p17 alignment symmetry (A-31): symmetric block-pairing seed, canonical-orientation LCS/patience ties, symmetric layout edge check; `align` 2. `tests/test_unified_followup_align.py` (300-example mirror property, 60-example end-to-end verdict mirror).
 - [x] Whole unified set plus pilot/report2/UI neighbours green on Linux (counts in `docs/qa.md`); Ruff clean; no schema drift.
 - [ ] Independent adversarial review of the combined diff; fix any CONFIRMED finding with a red test.
-- [ ] Draft PR to `main`, Linux and Windows CI (`qa-windows.yml`) green on the exact head; then promote and merge; close #259 as superseded (keep its branch).
+- [x] Draft PR to `main`: [#287](https://github.com/djshellshoxxx/patchtrace/pull/287) (head `b2651bcf` at creation).
+- [ ] Linux and Windows CI (`qa-windows.yml`) green on the exact PR head; then promote and merge; close #259 as superseded (keep its branch).
 - [ ] Known cost to watch on real pairs: two functions retargeted together to a brand-new global make every referrer of the old datum `review` (never a wrong `cosmetic`). Measure on the next live unified gate run (G-U1/G-U3) before any threshold is touched.
 - [ ] Not addressed here (owner-side or runner-side): PT-TIMEOUT-2..4, #268 live-gate runner provisioning, L3 real-pair scoring.
 
