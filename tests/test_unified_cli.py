@@ -375,7 +375,7 @@ def test_status_reports_none_current_stale_and_why(capsys, root):
     assert result['state'] == 'current' and result['result_id'] == result['planned_result_id']
     assert result['sources'] == [{'source': 'ghidriff', 'version': '1'}] and result['status'] == 'complete'
     assert result['limitations'] == ['ir-not-extracted'] and result['changed_inputs'] == []
-    assert [r['status'] for r in result['runs']] == ['ok'] and result['engine_version'] == 'ude/1'
+    assert [r['status'] for r in result['runs']] == ['ok'] and result['engine_version'] == 'ude/2'
     with opened(root) as service:
         move_on(service)
     code, out, _ = call(capsys, 'unified', 'status', root, '--json')

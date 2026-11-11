@@ -168,7 +168,7 @@ def _ladder(ir: IrInputs, manual: AdapterOutput, limits: UnifiedLimits, budget: 
     passes = pass_table(residual=residual, older=ReaderMnemonics(ir.older), newer=ReaderMnemonics(ir.newer))
     correspondence = run_ladder(ReaderSide(ir.older, limits), ReaderSide(ir.newer, limits), anchors=anchors,
                                 limits=limits, budget=budget, passes=passes)
-    return ladder_output(correspondence, ir.older, ir.newer, anchors_skipped=outside)
+    return ladder_output(correspondence, ir.older, ir.newer, anchors_skipped=outside, budget=budget)
 
 
 def _announce(emit: Callable[[StageEvent], None] | None, ir: bool) -> Callable[[str], None]:
@@ -390,7 +390,8 @@ def run_request(request_path: Path, result_dir: Path, *, cancel: threading.Event
                                    budget=load_budget)
                      for f in req.diaphora)
     if req.raw_status == 'ok':
-        raw = load_raw(Path(req.raw_path) if req.raw_path else None, req.raw_sha256, limits)
+        raw = load_raw(Path(req.raw_path) if req.raw_path else None, req.raw_sha256, limits,
+                       (req.older_sha256, req.newer_sha256))
     else:
         raw = RawGhidriff(status=req.raw_status, sha256=req.raw_sha256)
     inputs = SourceInputs(older_sha256=req.older_sha256, newer_sha256=req.newer_sha256,

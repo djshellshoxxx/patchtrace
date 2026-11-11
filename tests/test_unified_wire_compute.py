@@ -46,7 +46,9 @@ def probe(tmp_path, *, matches=(), same=False):
     new, tables_new, data_new = (old, tables_old, data_old) if same else recorded(tmp_path, 'probe_new')
     layout = PeLayout(image_base=old.manifest.image_base, size_of_image=old.manifest.size_of_image)
     inputs = SourceInputs(older_sha256=data_old['sha256'], newer_sha256=data_new['sha256'],
-                          run=GhidriffRun('run-1', '1', RAW), matches=tuple(matches))
+                          run=GhidriffRun('run-1', '1', dataclasses.replace(  # identity recorded as `load_raw` does (A-28)
+                              RAW, older_sha256=data_old['sha256'], newer_sha256=data_new['sha256'])),
+                          matches=tuple(matches))
     return inputs, AddressMap(layout, layout), IrInputs(old, new, sections(tables_old), sections(tables_new))
 
 
@@ -181,7 +183,12 @@ def test_the_residual_stage_runs_and_backup_b07_switches_it_off(tmp_path):
     assert len(gap) == 1 and gap[0].decision == 'candidate'
     assert [(a.source, a.step, a.tier) for a in gap[0].atoms] == [('pt-ladder', 'P18-layout-gap', 'C')]
     assert full.counts.decisions.candidate == 1 and skipped.counts.decisions.candidate == 0
-    assert [r.older[0].rva for r in store.read_rows(skipped_dir, skipped)] == [0x1000, 0x1200]
+    # A-29: the functions the residual stage would have paired are ladder leftovers, so without it they are
+    # one-sided rows (hint `one-sided-by:pt-ladder`), never dropped
+    rows = store.read_rows(skipped_dir, skipped)
+    assert [(r.older[0].rva if r.older else None, r.newer[0].rva if r.newer else None) for r in rows] == \
+        [(0x1000, 0x1000), (0x1100, None), (0x1200, 0x1200), (None, 0x1100)]
+    assert all('one-sided-by:pt-ladder' in r.hints for r in rows if len(r.older) + len(r.newer) == 1)
     assert full.result_id != skipped.result_id and full.config_digest != skipped.config_digest
 
 
