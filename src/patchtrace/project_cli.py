@@ -108,7 +108,7 @@ def _nonzero(counts: dict[str, int]) -> str:
     return ', '.join(f'{key} {count}' for key, count in counts.items() if count)
 
 
-def _counted(total: int, counts: dict[str, int]) -> str:
+def counted(total: int, counts: dict[str, int]) -> str:
     return f'{total} ({_nonzero(counts)})' if total else '0'
 
 
@@ -243,10 +243,10 @@ def _summary_text(result: dict[str, Any]) -> str:
              f'{"yes" if project["sample"] else "no"}',
              *(f'{line}, {a["format"]} {a["architecture"]}' for line, a in
                zip(_artifact_lines(result['artifacts']), result['artifacts'], strict=True)),
-             f'runs: {_counted(runs["total"], runs["by_status"])}; latest completed: '
+             f'runs: {counted(runs["total"], runs["by_status"])}; latest completed: '
              f'{safe(runs["latest_completed"], 128) if runs["latest_completed"] else "none"}',
-             f'matches: {_counted(matches["total"], matches["by_category"])}{review}',
-             f'findings: {_counted(findings["total"], findings["by_review"])} in {findings["interpretations"]} '
+             f'matches: {counted(matches["total"], matches["by_category"])}{review}',
+             f'findings: {counted(findings["total"], findings["by_review"])} in {findings["interpretations"]} '
              f'interpretation(s); stale {findings["stale"]}',
              f'annotations: notes {notes["note"]["total"]}, bookmarks {notes["bookmark"]["total"]}, manual '
              f'corrections {notes["match-override"]["total"]}, validation records {notes["validation"]["total"]}; '
@@ -264,7 +264,7 @@ def _info(args: Namespace, cancel: threading.Event) -> int:
 
 # --- runs ---------------------------------------------------------------------------------------------------
 
-def _output_dir(root: Path, run_id: str) -> str | None:
+def output_dir(root: Path, run_id: str) -> str | None:
     """`runs/<id>` or `runs/quarantine-<id>` when it exists; only a canonical UUID is ever joined to the root."""
     from uuid import UUID
 
@@ -279,7 +279,7 @@ def _output_dir(root: Path, run_id: str) -> str | None:
 
 
 def _run_row(run, root: Path, current: str | None) -> dict[str, Any]:
-    output = _output_dir(root, run.id)
+    output = output_dir(root, run.id)
     return {'id': run.id, 'status': run.status, 'backend': run.backend, 'backend_version': run.backend_version,
             'created': run.created,
             'tools': {key: run.settings[key] for key in TOOL_KEYS if isinstance(run.settings.get(key), str)},
@@ -292,11 +292,11 @@ def _run_row(run, root: Path, current: str | None) -> dict[str, Any]:
 def _runs_text(rows: list[dict[str, Any]]) -> str:
     if not rows:
         return 'No analysis runs recorded.'
-    lines = [f'  {"run":<36}  {"status":<9}  {"backend":<16}  {"version":<10}  {"recorded":<32}  result']
+    lines = [f'  {"run":<36}  {"status":<9}  {"backend":<16}  {"version":<14}  {"recorded":<32}  result']
     for row in rows:
         where = row['raw_path'] or row['output_dir']
         lines.append(f'{"*" if row["current"] else " "} {safe(row["id"], 128):<36}  {row["status"]:<9}  '
-                     f'{safe(row["backend"], 24):<16}  {safe(row["backend_version"], 24):<10}  '
+                     f'{safe(row["backend"], 24):<16}  {safe(row["backend_version"], 24):<14}  '
                      f'{safe(row["created"], 40):<32}  {safe(where) if where else "-"}')
         if row['error']:
             lines.append(f'    error: {safe(row["error"])}')
@@ -337,7 +337,7 @@ def _import_json(args: Namespace, cancel: threading.Event) -> int:
         result = {'run_id': run.id, 'backend': run.backend, 'revision': project.revision,
                   'raw_path': run.raw_path, 'raw_sha256': run.raw_sha256, 'matches': match_counts(project)}
     text = (f'imported run {run.id} ({run.backend}); project revision {result["revision"]}\n'
-            f'matches: {_counted(result["matches"]["total"], result["matches"]["by_category"])}\n'
+            f'matches: {counted(result["matches"]["total"], result["matches"]["by_category"])}\n'
             f'raw result preserved: {safe(run.raw_path)} sha256 {run.raw_sha256}')
     _emit(args, 'project import-json', 'complete', result, [], text)
     return OK
