@@ -1333,3 +1333,7 @@ binds pending repair to its exact original scope/source subset. New-reader
 repair is required for those journals; public schemas and SQL version stay
 unchanged. Tests: `test_kb_product_start_20261106.py`,
 `test_kb_product_acceptance_20261106.py`, plus existing service/recovery journeys.
+
+### [C0:branch-inventory] Read-only branch inventory for consolidation (2026-11-04)
+
+`tools/dev/branch_inventory.py` (stdlib, read-only git, no network) records every remote branch against a base ref: ahead/behind, merge-base, `git cherry` upstream/unique counts, files touched by unique commits, optional PR metadata from a caller-supplied JSON file, and a class (MERGED, EQUIVALENT, SUPERSEDED by strict patch-id containment, DOCS, LIVE, STALE). LIVE/STALE branches are clustered by shared files, ignoring docs and hub files (the shared-file list, workflows, build scripts, and any file touched by at least `--hub-threshold` branches). Tests: `tests/test_branch_inventory.py` (temporary repository). Ledger: `docs/plans/ledger-consolidation-20261104.md`.
