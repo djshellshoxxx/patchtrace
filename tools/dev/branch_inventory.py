@@ -8,6 +8,8 @@ Only read-only git commands run (``rev-list``, ``merge-base``, ``cherry``, ``dif
 ``patch-id``, ``log``, ``for-each-ref``, ``diff``). No network. Commands are argument arrays, never
 shell strings. PR metadata comes from an optional JSON file the caller fetched separately.
 
+File arguments (--repo, --prs, --out) must resolve under the working directory or the system temp directory.
+
 Usage:
     python tools/dev/branch_inventory.py --repo . --base origin/main [--prs prs.json] [--now ISO] [--out FILE]
 
@@ -21,6 +23,7 @@ import json
 import re
 import subprocess
 import sys
+import tempfile
 from dataclasses import asdict, dataclass, field
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
@@ -264,6 +267,18 @@ def build_inventory(repo: Path, base: str, remote: str, prs: list[dict], now: da
             'branches': [asdict(b) for b in branches]}
 
 
+def confined(path: Path, what: str) -> Path:
+    """Resolve a caller-supplied file argument and require it under the working directory or the system temp
+    directory, so --repo, --prs and --out cannot read or write elsewhere ('..' and symlinks resolve first)."""
+    if not str(path) or '\0' in str(path):
+        raise ValueError(f'{what} is empty or contains a NUL byte')
+    resolved = path.expanduser().resolve()
+    for root in (Path.cwd().resolve(), Path(tempfile.gettempdir()).resolve()):
+        if resolved.is_relative_to(root):
+            return resolved
+    raise ValueError(f'{what} must be under the working directory or the system temp directory: {path}')
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument('--repo', type=Path, default=Path('.'))
@@ -284,6 +299,12 @@ def main(argv: list[str] | None = None) -> int:
         parser.error(str(exc))
     if not REMOTE_NAME.match(args.remote):
         parser.error(f'invalid remote name: {args.remote!r}')
+    try:
+        args.repo = confined(args.repo, '--repo')
+        args.prs = confined(args.prs, '--prs') if args.prs else None
+        args.out = confined(args.out, '--out') if args.out else None
+    except ValueError as exc:
+        parser.error(str(exc))
     prs = json.loads(args.prs.read_text(encoding='utf-8')) if args.prs else []
     if not isinstance(prs, list) or not all(isinstance(p, dict) and 'number' in p and 'head' in p for p in prs):
         parser.error('--prs must be a JSON list of objects with number and head')

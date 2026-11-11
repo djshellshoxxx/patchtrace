@@ -181,3 +181,26 @@ def test_bad_remote_name_is_rejected(tmp_path, remote):
 def test_base_is_resolved_to_a_commit_sha(inventory):
     data, _ = inventory
     assert len(data['base_sha']) == 40 and all(c in '0123456789abcdef' for c in data['base_sha'])
+
+
+def _outside_allowed_roots() -> Path:
+    import tempfile
+    anchor = Path(tempfile.gettempdir()).resolve().anchor
+    return Path(anchor) / 'pt-branch-inventory-not-allowed' / 'x.json'
+
+
+@pytest.mark.parametrize('flag', ['--out', '--prs', '--repo'], ids=['out', 'prs', 'repo'])
+def test_file_arguments_outside_cwd_and_temp_are_refused(tmp_path, flag):
+    tool = _load()
+    outside = _outside_allowed_roots()
+    args = {'--repo': str(tmp_path), '--now': NOW.isoformat(), flag: str(outside)}
+    with pytest.raises(SystemExit):
+        tool.main([item for pair in args.items() for item in pair])
+    assert not outside.exists()
+
+
+def test_dotdot_cannot_escape_the_temp_root(tmp_path):
+    tool = _load()
+    sneaky = tmp_path / ('../' * 40) / 'pt-branch-inventory-escape.json'
+    with pytest.raises(SystemExit):
+        tool.main(['--repo', str(tmp_path), '--now', NOW.isoformat(), '--out', str(sneaky)])
