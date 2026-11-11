@@ -296,6 +296,18 @@ def test_a_project_directory_that_is_a_regular_file_is_refused_and_untouched(inp
     assert target.read_text(encoding='utf-8') == 'mine'
 
 
+def test_ctrl_c_while_a_project_is_created_rolls_it_back_and_exits_5(inputs, tmp_path, capsys, monkeypatch):
+    root = tmp_path / 'proj'
+
+    def interrupted(self, project):
+        raise KeyboardInterrupt()  # the first Ctrl+C lands after both inputs are copied, before the snapshot is saved
+    monkeypatch.setattr(ProjectStore, 'save', interrupted)
+    code, doc, err = jrun(['project', 'create', '--older', inputs[0], '--newer', inputs[1], '--project', root], capsys)
+    assert code == 5 and doc['command'] == 'project create' and doc['status'] == 'cancelled'
+    assert 'Traceback' not in err and not (root / 'project.sqlite3').exists() and not (root / 'artifacts').exists()
+    assert not root.exists() or [p.name for p in root.rglob('*')] == [LOCK]
+
+
 # --- sample -------------------------------------------------------------------------------------------------
 
 def test_sample_creates_the_synthetic_project(tmp_path, capsys):
@@ -644,6 +656,17 @@ def test_swap_with_confirm_exchanges_the_sides_and_reports_what_went_stale(sampl
     assert all(a.stale for a in now.annotations) and now.runs == was.runs
     code, out, _ = run(['project', 'swap', sample, '--confirm'], capsys)
     assert code == 0 and 'older and newer exchanged' in out
+
+
+def test_ctrl_c_while_the_swap_is_saved_changes_nothing(sample, capsys, monkeypatch):
+    before = tree(sample)
+
+    def interrupted(self, candidate):
+        raise KeyboardInterrupt()  # the first Ctrl+C lands while the exchanged snapshot is being saved
+    monkeypatch.setattr(ProjectStore, 'save', interrupted)
+    code, doc, err = jrun(['project', 'swap', sample, '--confirm'], capsys)
+    assert code == 5 and doc['command'] == 'project swap' and doc['status'] == 'cancelled'
+    assert 'Traceback' not in err and tree(sample) == before
 
 
 # --- failures that are not the analyst's input --------------------------------------------------------------
