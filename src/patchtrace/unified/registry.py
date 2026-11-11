@@ -151,9 +151,12 @@ PASSES: tuple[PassSpec, ...] = (
 # align 2 (2026-11-11, A-31, p17): block pairing, patience anchors and the LCS fill break ties deterministically AND
 # orientation-symmetrically, so align(newer, older) mirrors align(older, newer); COS-LAYOUT/1 counts an unpaired
 # new-side successor the same way as an old-side one.
+# datamap 3 (2026-11-11, A-30, p15/p11): a consensus is blocked by a competing claim of >= 2 unexplained voters, so a
+# coordinated retarget to an existing global never maps; leave-one-out is a majority among the OTHER voters with
+# explained dissents ignored; call-operand votes and the region shift are orientation-symmetric.
 CHANNEL_VERSIONS: tuple[tuple[str, int], ...] = (
     ('C0', 1), ('C1', 2), ('C2', 2), ('C3', 1), ('C4', 1), ('C4n', 1), ('C5', 1), ('C5t', 1), ('C6', 1), ('C8', 1),
-    ('align', 2), ('canon', 1), ('datamap', 2), ('eh-eq', 1))
+    ('align', 2), ('canon', 1), ('datamap', 3), ('eh-eq', 1))
 PROOF_VERSIONS: tuple[tuple[str, int], ...] = (
     ('COS-ADDR/1', 1), ('COS-LAYOUT/1', 2), ('COS-PSEUDO/1', 2), ('UNCH/1', 1))
 RZDIFF_META: tuple[str, Tier, EvidenceClass] = ('levenshtein-bytes', 'W', 'E-BODY')
