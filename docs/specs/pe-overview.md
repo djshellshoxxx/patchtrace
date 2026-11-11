@@ -70,6 +70,16 @@ zero terminator there ends the table with no warning, and one that is not backed
 `import_rva_out_of_file` as anywhere else in the table. The caps, the amount listed and the cancellation
 polls are unchanged.
 
+Name truncation wording amendment (2026-11-11, audit 20261015 PE-8): `name_truncated` keeps its code and its
+effect (the name is cut and its table marked truncated); only the message changes, so that it names the limit
+that applied. A name with more than 512 bytes before its terminator is `a name longer than 512 bytes was
+truncated`, as before. A name whose section data ends before a terminator and before the 512-byte limit is
+reported as cut at the end of its section data, with the number of bytes read; it is not called longer than
+the limit, which is not known. With a non-default `max_name_length` above the 1 MiB single-read clip, a name
+that fills one read is reported as cut by that read. A name that runs to the end of the file without a
+terminator is still returned whole with no warning. As for every warning code, a file keeps one message per
+code, the first.
+
 ## Semantics
 
 - Kind: `DLL` if IMAGE_FILE_DLL; else `SYS` if subsystem is NATIVE; else `EXE` if IMAGE_FILE_EXECUTABLE_IMAGE;
