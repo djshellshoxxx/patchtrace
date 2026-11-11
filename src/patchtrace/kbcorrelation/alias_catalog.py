@@ -6,11 +6,16 @@ catalog says what a name probably means, not what a vendor document proves. Bump
 change in meaning; `products.catalog_digest()` also changes when a pattern is edited, and the version belongs to the
 parse key (`{doc_sha256, dialect, parser_version, alias_catalog_version}`).
 
-Patterns are matched against the lower-cased, whitespace-collapsed name with `re.search`.
+Patterns are matched against the lower-cased, whitespace-collapsed name with `re.search`; only
+`IMPLIED_CLIENT_NAME_PATTERN` must match the whole name.
+
+Version 2 (audit KBA-08, spec 31-C C1): `Version 2004` is a release token, and the exact client names that carry no
+release token get the first release of their generation. Only names with the token `version 2004` or of that exact
+form derive other attributes than under version 1; the scope id of every other name is unchanged.
 """
 from __future__ import annotations
 
-ALIAS_CATALOG_VERSION = 1
+ALIAS_CATALOG_VERSION = 2
 
 # (family, pattern); the first match wins, so "windows server" must precede the client rule.
 FAMILY_PATTERNS = (
@@ -26,8 +31,12 @@ CLIENT_VERSION_PATTERN = r'\bwindows (10|11)\b'
 # Release tokens, tried in order; the first capture group (upper-cased) is the release.
 RELEASE_PATTERNS = (
     r'\b((?:19|2[0-9])h[12])\b',
-    r'\bversion (1[5-9][0-9]{2})\b',
+    r'\bversion (1[5-9][0-9]{2}|2004)\b',
 )
+# A client name without a release token names the first release of its generation, but only in this exact vendor
+# form (the whole name; the group is the generation). LTSC/LTSB, IoT and any other wording stay without a release.
+IMPLIED_CLIENT_NAME_PATTERN = r'windows (10|11) for (?:x64-based|32-bit|arm64-based) systems'
+IMPLIED_CLIENT_RELEASES = (('10', '1507'), ('11', '21H2'))
 SERVER_YEAR_PATTERN = r'\bwindows server (20[0-9]{2}(?: r2)?)\b'
 
 # (value, pattern); every distinct matching value is collected. Exactly one value is kept, otherwise `unknown`.

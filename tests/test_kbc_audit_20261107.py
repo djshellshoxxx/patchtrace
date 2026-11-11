@@ -156,7 +156,7 @@ def test_kba07_report2_advisory_accepts_every_canonical_kb_id():
         Advisory(kind='kb', id=kb, text='vendor text')
 
 
-@pytest.mark.xfail(strict=True, reason='KBA-08 open: MSRC names Windows 10 RTM (1507) without a version token')
 def test_kba08_windows_10_rtm_product_name_gets_a_file_index_key():
+    """MSRC names Windows 10 RTM (1507) without a version token; alias catalog 2 keys the exact vendor form."""
     scope = scope_for('d' * 64, 'P1', 'Windows 10 for x64-based Systems')
     assert scope.family == 'windows-client' and scope.winbindex_key is not None

@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import itertools
+import json
 
 import pytest
 from kbc_k5_support import SHA, record, rows_of, scope
@@ -281,3 +282,17 @@ def test_kba06_no_resolver_pair_carries_identical_content():
             assert [p.older.sha256 for p in res.pairs] == admitted[-1:], (spec, target.kb, same_class_only)
             assert all('IDENTICAL_CONTENT' not in p.reason_codes for p in res.pairs)
             assert (res.blockers == ('NO_OLDER',)) == (not admitted)
+
+
+# --- audit KBA-08: a release-less Windows 10 name against the real Winbindex spelling ---------------------------
+
+def test_kba08_release_less_windows_10_scope_resolves_rows_under_the_bare_1507_key():
+    """Scope identity writes ``10-1507``; Winbindex itself keys Windows 10 bare (``1507``, audit KBA-01)."""
+    from patchtrace.kbcorrelation.products import scope_for
+
+    rtm = scope_for('d' * 64, 'P1', 'Windows 10 for x64-based Systems')
+    res = resolve('KB5097000', json.loads(json.dumps(record()).replace('"11-24H2"', '"1507"')), sc=rtm)
+    assert (res.version_key, res.blockers, res.changed_in_kb) == ('10-1507', (), 'yes')
+    (pair,), (base,) = res.pairs, resolve('KB5097000').pairs
+    assert (pair.older.sha256, pair.newer.sha256, pair.grade, pair.window) == (
+        base.older.sha256, base.newer.sha256, base.grade, base.window)
