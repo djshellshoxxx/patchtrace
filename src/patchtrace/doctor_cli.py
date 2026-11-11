@@ -149,12 +149,12 @@ def _runtimes_check(bundle_dir: Path | None, environ: Mapping[str, str], bundle_
     if not pythons and not ghidras:
         return Check('runtimes', 'warning', 'no Python and no Ghidra candidate found; comparing two files needs an '
                      'analysis runtime, everything else works without one',
-                     'install an offline runtime archive with `patchtrace runtime install-zip`, or set the paths '
-                     'in the desktop Setup dialog'), facts
+                     'install an offline backend ZIP or set the paths in the desktop Setup dialog '
+                     '(Install offline backend ZIP)'), facts
     if not pythons or not ghidras:
         return Check('runtimes', 'warning', _line(f'{count} found; a runtime needs both ({paths})'),
-                     'install the missing part, or an offline runtime archive with `patchtrace runtime '
-                     'install-zip`'), facts
+                     'install the missing part, or an offline backend ZIP from the desktop Setup '
+                     'dialog'), facts
     return Check('runtimes', 'ok', _line(f'{count} found, not verified (no process was started); {paths}')), facts
 
 

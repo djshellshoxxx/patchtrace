@@ -22,7 +22,7 @@ ok              platform: linux (posix), x86_64
 ok              optional-deps: present=rapidfuzz=3.14.6,yara-x=1.21.0,iced-x86=1.21.0 missing=none
 ok              cli-verbs: all 15 verb files load
 not-applicable  bundle: no bundled runtime next to PatchTrace (no backend directory)
-warning         runtimes: no Python and no Ghidra candidate found; comparing two files needs an analysis runtime, everything else works without one - remedy: install an offline runtime archive with `patchtrace runtime install-zip`, or set the paths in the desktop Setup dialog
+warning         runtimes: no Python and no Ghidra candidate found; comparing two files needs an analysis runtime, everything else works without one - remedy: install an offline backend ZIP or set the paths in the desktop Setup dialog (Install offline backend ZIP)
 ok              work-dir: ~/.local/state/patchtrace/work does not exist yet and can be created under ~
 ok              profiles-dir: ~/.config/PatchTrace/profiles does not exist yet and can be created under ~
 doctor: no problem found (7 ok, 1 warning, 0 problem, 1 not-applicable)

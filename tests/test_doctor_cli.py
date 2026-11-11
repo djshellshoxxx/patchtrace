@@ -229,7 +229,8 @@ def test_no_runtime_candidate_is_a_warning_with_a_remedy(box, capsys):
     check = by_id(doc)['runtimes']
     assert (code, doc['status'], doc['result']['healthy']) == (0, 'complete', True)
     assert check['status'] == 'warning' and 'no Python and no Ghidra candidate' in check['detail']
-    assert 'patchtrace runtime install-zip' in check['remedy']
+    # the remedy names only what exists: `patchtrace runtime` is specified but not built yet
+    assert 'offline backend ZIP' in check['remedy'] and 'patchtrace runtime' not in check['remedy']
     assert doc['result']['summary']['warning'] == 1
 
 

@@ -1,5 +1,5 @@
 # SPEC-06: Verified offline backend bundle and installer
-Status: implementation contract, 2026-10-11. Scope: PatchTrace Windows x64 beta. Amendment 2026-11-11: the archive can also be inspected and installed from the command line with `patchtrace runtime inspect-zip|install-zip` over the same `inspect_offline_bundle` and `install_offline_bundle`; the contract is `docs/specs/cli-profile-doctor-runtime.md` section 4.
+Status: implementation contract, 2026-10-11. Scope: PatchTrace Windows x64 beta. Amendment 2026-11-11: inspecting and installing the archive from the command line (`patchtrace runtime inspect-zip|install-zip`, over the same `inspect_offline_bundle` and `install_offline_bundle`) is specified in `docs/specs/cli-profile-doctor-runtime.md` section 4 and is NOT yet built.
 
 ## 1. Outcome and exclusions
 
