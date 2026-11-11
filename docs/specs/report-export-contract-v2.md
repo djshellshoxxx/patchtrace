@@ -85,7 +85,7 @@ Top level keeps every v1 key (`schema_version: 1`, `project_id`, `name`, `revisi
 - `unified_result`: `{result_id, manifest_sha256, engines, status, stale}`.
 - `build_facts`: `[{side, fact, value, source, claim_level, truncated}]` with `fact` from a closed list (`file_version`, `product_version`, `original_filename`, `pdb_guid_age`, `signer_subject`, `timestamp_claim`, `manifest_exec_level`, ...).
 - `symbols`: `{mode, servers: [str], staged: [{pdb_name, guid_age, sha256}], launcher_version, consent: {...}|null}`.
-- `advisories`: `[{kind: 'cve'|'kb'|'cwe'|'phrase', id, vendor, url_text, fetched_at, snapshot_digest, claim_level: 'vendor-claim', text, truncated}]`.
+- `advisories`: `[{kind: 'cve'|'kb'|'cwe'|'phrase', id, vendor, url_text, fetched_at, snapshot_digest, claim_level: 'vendor-claim', text, truncated}]` Id grammars (full match, ASCII digits only, case-sensitive; any other id refuses the export with `PT-EXPORT-SECTION`): `cve` `CVE-[0-9]{4}-[0-9]{4,19}`, `kb` `KB[0-9]{4,10}` (the canonical `kb-syntax/1` id of `kbcorrelation/ids.py`; amendment A-1, section 12), `cwe` `CWE-[0-9]{1,6}`; a `phrase` id is free normalized text.
 - `leads`: `[{lead_id, kind, channels: [str], statement, evidence_ids}]`.
 - `redaction`: `{profile: 'local'|'share'|'custom', paths: bool, code: bool, notes: bool, urls: 'text'|'defanged'|'removed', rules_applied: {rule: count}}`.
 
@@ -146,3 +146,9 @@ Tests: goldens (JSON, MD, HTML) for the synergy fixture; hypothesis properties o
 3. Defang URLs by default in the `local` profile? Default `text` (inert) locally, `defanged` in `share`.
 4. Include `raw_response` of providers? Default never (unchanged); a future AI-narrative spec decides.
 5. Add CSV for the ranking table? Default no; if added, prefix cells starting with `=`, `+`, `-`, `@`, tab or CR with a single quote and test it.
+
+## 12. Dated amendments
+
+| id | date | section | change | reason |
+|---|---|---|---|---|
+| A-1 | 2026-11-11 | 7.2 `advisories` | The `kb` id grammar is `KB[0-9]{4,10}` (was `KB` + 6-8 digits in `report2/contracts.py`; the spec text named no width). Widening only: every id accepted before is still accepted. `report2/contracts.py` keeps its own copy of the pattern (`KB_ID_PATTERN`) because a contract module does not import another feature; `tests/test_report2_contracts.py` pins it to `kbcorrelation.ids.KB_PATTERN`. No JSON schema file carries the pattern (model validator). | Audit finding KBA-07 (`docs/qa/audit-kb-correlation-20261107.md`): `kb-syntax/1` canonical ids are 4-10 digits, so one canonical id outside 6-8 digits would have refused the whole export once KB advisories are exported. |
