@@ -237,6 +237,100 @@ def test_the_first_ctrl_c_during_a_comparison_cancels_it_cleanly(runtime, capsys
     assert signal.getsignal(signal.SIGINT) is previous
 
 
+def test_a_second_ctrl_c_exits_5_unrecorded_and_keeps_its_partial_output_in_quarantine(runtime, capsys, monkeypatch):
+    """The second Ctrl+C interrupts as everywhere else in the CLI: exit 5, no run recorded, nothing committed, and the
+    partial output stays under runs/quarantine-<id> for inspection."""
+    root, package, flags = runtime
+    write_backend(package, FAKE_GHIDRIFF + '\n(out/"partial.txt").write_text("keep me")\n')
+    real = backend.run_process
+
+    def interrupted(argv, **kwargs):
+        real(argv, **kwargs)  # the child finishes; the analyst's second Ctrl+C lands during supervision
+        raise KeyboardInterrupt()
+    monkeypatch.setattr(backend, 'run_process', interrupted)
+    code, doc, err = jrun(['compare', root, *flags], capsys)
+    assert code == 5 and doc['status'] == 'cancelled' and doc['result'] is None and 'Traceback' not in err
+    project = runs_of(root)
+    assert project.runs == [] and project.revision == 0 and project.matches == []
+    [quarantine] = (root / 'runs').glob('quarantine-*')
+    assert (quarantine / 'raw' / 'partial.txt').read_text(encoding='utf-8') == 'keep me'
+
+
+def test_a_failed_forced_compare_keeps_the_committed_result(runtime, capsys):
+    """A forced run that fails is recorded beside the committed result: that run, its raw file, its matches and the
+    project revision are untouched, and the committed run stays the current one."""
+    root, package, flags = runtime
+    assert run(['compare', root, *flags], capsys)[0] == 0
+    committed = runs_of(root)
+    [kept] = committed.runs
+    raw = (root / kept.raw_path).read_bytes()
+    write_backend(package, 'sys.exit(7)\n')
+    code, doc, _ = jrun(['compare', root, *flags, '--force'], capsys)
+    assert code == 3 and doc['status'] == 'failed' and doc['result']['forced'] is True
+    after = runs_of(root)
+    assert [r.status for r in after.runs] == ['completed', 'failed']
+    assert after.runs[0] == kept and (root / kept.raw_path).read_bytes() == raw
+    assert after.revision == committed.revision and after.matches == committed.matches
+    code, listing, _ = run(['project', 'runs', root, '--json'], capsys)
+    listed = json.loads(listing)['result']
+    assert code == 0 and listed['latest_completed'] == kept.id
+    assert [row['current'] for row in listed['runs']] == [False, True]
+
+
+def test_a_cancelled_forced_compare_keeps_the_committed_result(runtime, capsys, monkeypatch):
+    root, _, flags = runtime
+    assert run(['compare', root, *flags], capsys)[0] == 0
+    committed = runs_of(root)
+    original = threading.Event
+
+    class Preset(original):
+        def __init__(self):
+            super().__init__()
+            self.set()
+    monkeypatch.setattr(cli.threading, 'Event', Preset)
+    code, doc, _ = jrun(['compare', root, *flags, '--force'], capsys)
+    assert code == 5 and doc['status'] == 'cancelled' and doc['result']['forced'] is True
+    after = runs_of(root)
+    assert [r.status for r in after.runs] == ['completed', 'cancelled']
+    assert after.runs[0] == committed.runs[0] and after.revision == committed.revision
+    assert after.matches == committed.matches
+
+
+def test_a_backend_that_raises_exits_3_with_a_json_envelope_and_records_nothing(runtime, capsys, monkeypatch):
+    root, _, flags = runtime
+    before = tree(root)
+
+    def broken(*args, **kwargs):
+        raise RuntimeError('backend exploded')
+    monkeypatch.setattr(backend, 'run_comparison', broken)
+    code, out, err = run(['compare', root, *flags, '--json'], capsys)
+    assert code == 3 and out.count('\n') == 1
+    doc = json.loads(out)
+    assert doc['command'] == 'compare' and doc['status'] == 'failed' and doc['result'] is None
+    assert doc['error'] == 'RuntimeError: backend exploded' and 'Traceback' not in err
+    assert tree(root) == before and runs_of(root).runs == []
+
+
+def test_a_forced_compare_after_an_explicit_swap_hands_the_backend_the_swapped_sides(runtime, capsys):
+    """Orientation is explicit: the backend receives the project's current older file first, so after
+    `project swap --confirm` the raw result records the exchanged pair, and compare never swaps on its own."""
+    root, _, flags = runtime
+    with ProjectService.open(root, maintenance=False) as service:
+        before = {a.side: a.sha256 for a in service.project.artifacts}
+    assert run(['compare', root, *flags], capsys)[0] == 0
+    [first] = runs_of(root).runs
+    assert json.loads((root / first.raw_path).read_text(encoding='utf-8'))['old_meta']['SHA256'] == before['older']
+    assert run(['project', 'swap', root, '--confirm'], capsys)[0] == 0
+    code, doc, _ = jrun(['compare', root, *flags, '--force'], capsys)
+    assert code == 0 and doc['result']['ran'] is True
+    second = runs_of(root).runs[1]
+    raw = json.loads((root / second.raw_path).read_text(encoding='utf-8'))
+    assert raw['old_meta']['SHA256'] == before['newer'] and raw['new_meta']['SHA256'] == before['older']
+    with ProjectService.open(root, maintenance=False) as service:
+        assert {a.side: a.sha256 for a in service.project.artifacts} == {'older': before['newer'],
+                                                                          'newer': before['older']}
+
+
 # --- preflight: exit 2 before anything is written -----------------------------------------------------------
 
 def _bad_flags(tmp: Path, good: list[str]) -> dict[str, tuple[list[str], str]]:
