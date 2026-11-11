@@ -50,6 +50,8 @@ from .ports import MaskSource
 
 CONTEXT = 1                    # instructions of context kept on each side of a changed range
 MAX_DIFF_PAIRS = 1_000_000     # pairs of equal instructions `difflib` may weigh (about 0.5 s at most; provisional)
+MAX_DIFF_CELLS = 9_000_000     # middle length x middle length `difflib` may weigh: equal pairs alone do not bound
+                               # its longest-match search (#105 BUG-RULE-7; about 0.6 s at most; provisional)
 MAX_EVALUATIONS = 32           # windows whose hits are counted in one call
 CACHE_BYTES = 64 * 1024 ** 2   # executable bytes kept in memory per build for repeated counting
 _OPPOSITE: dict[str, Side] = {'older': 'newer', 'newer': 'older'}
@@ -126,13 +128,14 @@ def _shared_ends(older: list[str], newer: list[str]) -> tuple[int, int]:
 def diff_opcodes(older: MaskedFunction, newer: MaskedFunction) -> list[Opcode]:
     """What differs between two bodies after masking, instruction by instruction: `difflib`'s opcodes without the equal
     ones, as indexes of the bodies. The start and the end the bodies share are not compared, and a middle with more than
-    `MAX_DIFF_PAIRS` pairs of equal instructions (the measure of `difflib`'s cost) is not compared either: it is one
-    `replace`, so the checks on the windows (`uniq`, `sep`) decide instead."""
+    `MAX_DIFF_PAIRS` pairs of equal instructions or more than `MAX_DIFF_CELLS` cells (the measures of `difflib`'s cost)
+    is not compared either: it is one `replace`, so the checks on the windows (`uniq`, `sep`) decide instead."""
     a, b = [i.key for i in older.instructions], [i.key for i in newer.instructions]
     head, tail = _shared_ends(a, b)
     a, b = a[head:len(a) - tail], b[head:len(b) - tail]
     in_b = Counter(b)
-    if sum(count * in_b[key] for key, count in Counter(a).items()) > MAX_DIFF_PAIRS:
+    if len(a) * len(b) > MAX_DIFF_CELLS \
+            or sum(count * in_b[key] for key, count in Counter(a).items()) > MAX_DIFF_PAIRS:
         return [('replace', head, head + len(a), head, head + len(b))]
     matcher = difflib.SequenceMatcher(None, a, b, autojunk=False)
     return [(tag, head + i1, head + i2, head + j1, head + j2)
