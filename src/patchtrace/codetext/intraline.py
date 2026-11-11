@@ -37,6 +37,7 @@ from __future__ import annotations
 import re
 from typing import NamedTuple
 
+from ..hostile_text import is_hostile
 from .marks import Mark, RowMarks
 from .names import AUTO_NAME, parse_auto_name
 from .operands import CONDITIONAL_JUMPS, Operand, OperandSource, TextOperandSource, asm_mnemonic
@@ -59,6 +60,8 @@ _LOGICAL = frozenset({'&&', '||', '!'})
 # Characters that could reorder, hide or break a line of the summary: C0 and C1 controls, no-break and other
 # spaces, bidirectional controls, zero-width and default-ignorable characters, line and paragraph separators, the
 # BOM, variation selectors, tags and lone surrogates. Spelled with \U escapes so that this file holds none of them.
+# The table is the summary's own addition (spaces, fillers, variation selectors) to the one rule of `hostile_text`,
+# which `_snippet` asks first: a format character this table does not list (U+0600, U+110BD) is still spelled out.
 _UNSAFE = re.compile(
     r'[\x00-\x1f\x7f-\xa0\xad\U0000034f\U0000061c\U0000115f\U00001160\U00001680\U000017b4\U000017b5'
     r'\U0000180b-\U0000180f\U00002000-\U0000200f\U00002028-\U0000202f\U0000205f-\U0000206f\U00002800'
@@ -354,11 +357,11 @@ def _events(old: list[_Tok], new: list[_Tok], pairs: list[tuple[int, int]], targ
 
 def _snippet(text: str) -> str:
     """A printable rendering of untrusted code text for a one-line status sentence, cut at `_SNIPPET_CHARS` characters
-    as they are shown: a control or invisible character is written as `<U+202E>`, so it can neither hide nor reorder
-    the sentence."""
+    as they are shown: a hostile (`hostile_text`) or otherwise invisible character is written as `<U+202E>`, so it can
+    neither hide nor reorder the sentence."""
     shown, size = [], 0
     for char in text:
-        piece = f'<U+{ord(char):04X}>' if _UNSAFE.match(char) else char
+        piece = f'<U+{ord(char):04X}>' if is_hostile(char) or _UNSAFE.match(char) else char
         if size + len(piece) > _SNIPPET_CHARS:
             return ''.join(shown) + '...'
         shown.append(piece)
