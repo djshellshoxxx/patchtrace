@@ -3,7 +3,7 @@ name: Unified live gates (SPEC-31 S6b, advisory)
 # sources on Linux (never executed), then runs the WHOLE unified pipeline on them with a real Ghidra, Ghidriff and the
 # extractor, on Linux and on Windows over the SAME image bytes (the release and A/A pairs, and every planted-mutant class),
 # and feeds the outcomes, a bench report and the G-U8 test results of both systems to the gate report (G-U1..G-U8).
-# Only aggregate numbers and RVA-keyed verdict rows leave a job: no function bytes, no decompiled text, no PDB.
+# Aggregate numbers, RVA-keyed verdict rows and bounded failure summaries leave a job; no program/debug artifacts.
 # The images are open-source test builds (no Microsoft binary) and live as artifacts for three days only.
 # Results belong in docs/qa.md with the run URL; nothing here gates a merge and the unified flag stays off (U-05).
 on:
@@ -102,6 +102,19 @@ jobs:
           echo "$GHIDRA_SHA256  ghidra.zip" | sha256sum -c -
           python -m zipfile -e ghidra.zip ghidra-runtime
           echo "GHIDRA_INSTALL_DIR=$(python -c "import glob,os;print(os.path.abspath(glob.glob('ghidra-runtime/*')[0]))")" >> "$GITHUB_ENV"
+      - name: Restore Ghidra executable permissions
+        if: runner.os == 'Linux'
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile
+          with ZipFile('ghidra.zip') as archive:
+              for info in archive.infolist():
+                  executable = (info.external_attr >> 16) & 0o111
+                  if executable and not info.is_dir():
+                      path = Path('ghidra-runtime') / info.filename
+                      path.chmod(path.stat().st_mode | executable)
+          PY
       - run: "python -m pip install --only-binary=:all: -e . pyghidra==3.0.2"
       - name: Install the pinned Ghidriff, a source revision built like live-unified does
         run: python -m pip install "$GHIDRIFF_PIN"
@@ -114,7 +127,9 @@ jobs:
         with:
           name: unified-live-outcomes-pairs-${{ runner.os }}
           if-no-files-found: ignore
-          path: out/outcomes-*.json
+          path: |
+            out/outcomes-*.json
+            out/outcomes-*.failures.txt
   mutants:
     name: planted mutants of the class ${{ matrix.cls }} (${{ matrix.os }})
     needs: build
@@ -148,6 +163,19 @@ jobs:
           echo "$GHIDRA_SHA256  ghidra.zip" | sha256sum -c -
           python -m zipfile -e ghidra.zip ghidra-runtime
           echo "GHIDRA_INSTALL_DIR=$(python -c "import glob,os;print(os.path.abspath(glob.glob('ghidra-runtime/*')[0]))")" >> "$GITHUB_ENV"
+      - name: Restore Ghidra executable permissions
+        if: runner.os == 'Linux'
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile
+          with ZipFile('ghidra.zip') as archive:
+              for info in archive.infolist():
+                  executable = (info.external_attr >> 16) & 0o111
+                  if executable and not info.is_dir():
+                      path = Path('ghidra-runtime') / info.filename
+                      path.chmod(path.stat().st_mode | executable)
+          PY
       - run: "python -m pip install --only-binary=:all: -e . pyghidra==3.0.2"
       - name: Install the pinned Ghidriff, a source revision built like live-unified does
         run: python -m pip install "$GHIDRIFF_PIN"
@@ -160,7 +188,9 @@ jobs:
         with:
           name: unified-live-outcomes-mutants-${{ matrix.cls }}-${{ matrix.os }}
           if-no-files-found: ignore
-          path: out/outcomes-*.json
+          path: |
+            out/outcomes-*.json
+            out/outcomes-*.failures.txt
   integrity:
     name: bench and integrity tests (${{ matrix.os }})
     runs-on: ${{ matrix.os }}
@@ -180,6 +210,8 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+      - if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install -y libegl1 libopengl0 libgl1
       - run: "python -m pip install --only-binary=:all: -e '.[dev]'"
       - name: Bench report (G-U5)
         run: python -m tools.unified.bench --sizes 10000,60000 --out "out/bench-$RUNNER_OS.json"

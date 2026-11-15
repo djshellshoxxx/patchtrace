@@ -8,7 +8,8 @@ engine images (`<store>/images/<sha256>/<file>`, never executed), a real Ghidrif
 extractor in `gzf` mode on each, the sidecars placed below the run, then `unified run` with decompilation, and the stored
 rows reduced to `unified-outcomes/1`. `--swap` also runs the older/newer swapped orientation of each pair (G-U4).
 A pair that cannot run is listed on stderr and left out of the document, so the gate reports `insufficient-data`
-for it instead of a pass. Exit codes: 0 ok, 1 a pair failed, 2 usage or contract error.
+for it instead of a pass. Bounded failure summaries are retained next to the output as `<stem>.failures.txt`.
+Exit codes: 0 ok, 1 a pair failed, 2 usage or contract error.
 """
 from __future__ import annotations
 
@@ -19,6 +20,7 @@ import sys
 import tempfile
 import threading
 from collections.abc import Sequence
+from dataclasses import replace
 from pathlib import Path
 
 from patchtrace import backend as backend_module
@@ -71,16 +73,43 @@ def analyse_pair(doc: C.KnownAnswerLabels, store_dir: Path, backend: BackendConf
     old, new = image_path(store_dir, doc.older), image_path(store_dir, doc.newer)
     if orientation == 'swapped':
         old, new = new, old
-    retaining = BackendConfig(backend.python_executable, backend.ghidra_dir, backend.timeout_seconds, retain_gzf=True)
+    identical = doc.older.sha256 == doc.newer.sha256
+    # Never substitute the default identical shortcut or cached JSON for a
+    # native unchanged control. Normal comparison policy remains untouched.
+    retaining = (replace(backend, retain_gzf=True, force_identical_diff=True,
+                         no_cache=True, refresh=False) if identical
+                 else replace(backend, retain_gzf=True))
     service = ProjectService.create(old, new, doc.pair_id, work / f'{doc.pair_id}-{orientation}')
     sides: dict[str, Side] = {}
     try:
-        _, run = backend_module.run_comparison(retaining, service.project, service.root, threading.Event(), lambda _e: None)
+        raw_path, run = backend_module.run_comparison(retaining, service.project, service.root,
+                                                     threading.Event(), lambda _e: None)
+        if run.status == 'identical':
+            raise RuntimeError('Ghidriff was not executed: the backend skipped identical image hashes; '
+                               'A/A acceptance requires independent analysis of both inputs')
         if run.status != 'completed':
-            raise RuntimeError(f'Ghidriff run {run.status}: {run.error}')
+            reason = f'Ghidriff run {run.status}: {run.error}'
+            if run.status == 'failed':
+                # A failed backend returns a quarantined directory, not a JSON path.
+                # The analysis log there has already been redacted by run_comparison.
+                log = Path(raw_path) / 'analysis.log'
+                try:
+                    if (not log.is_symlink() and log.is_file()
+                            and log.stat().st_size <= 2 * 1024 * 1024):
+                        # Redact before truncating to avoid leaking a cut credential.
+                        tail = backend_module.redact_log(
+                            log.read_text(encoding='utf-8', errors='replace'), 2048)
+                        if tail:
+                            reason += f' [analysis.log tail: {tail}]'
+                except OSError:
+                    pass  # Missing/unreadable diagnostics must not mask native failure.
+            raise RuntimeError(reason)
+        service.apply_analysis(raw_path, run)
         gzf = service.root / 'runs' / run.id / 'unified' / 'gzf'
+        extraction_work = service.root / 'extraction-work'
+        extraction_work.mkdir()
         for label, dll, other in (('older', old, new), ('newer', new, old)):
-            sides[label] = Side(label, dll, file_sha256(other), backend, work)
+            sides[label] = Side(label, dll, file_sha256(other), backend, extraction_work)
             program = gzf / f'{label}.gzf'
             built = sides[label].run('gzf', program, file_sha256(program))
             place_ir(service.root, run.id, built['directory'])
@@ -143,8 +172,14 @@ def main(argv: Sequence[str] | None = None) -> int:
     args.out.parent.mkdir(parents=True, exist_ok=True)
     args.out.write_bytes(outcomes.dump(outcomes.build(args.run, f'{platform.system()}-{platform.release()}', done)))
     print(f'{len(done)} outcomes written to {args.out}')
+    # Temporary projects and their native logs were deleted above; retain the bounded failure explanation.
+    # Write an empty sidecar after success so an earlier failure file cannot describe this output.
+    diagnostics = backend_module.redact_log('\n'.join(failed)).encode('utf-8', errors='replace')
+    if len(diagnostics) > 65_536:
+        diagnostics = diagnostics[:65_500].decode('utf-8', errors='ignore').encode('utf-8') + b'\n[diagnostics truncated]\n'
+    args.out.with_suffix('.failures.txt').write_bytes(diagnostics)
     if failed:
-        print('\n'.join(failed), file=sys.stderr)
+        print(diagnostics.decode('utf-8'), file=sys.stderr)
     return PAIR_FAILED if failed else OK
 
 
