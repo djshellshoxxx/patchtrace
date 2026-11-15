@@ -363,6 +363,18 @@ def _bundle_line(config: BackendConfig) -> str:
     return status.line()
 
 
+TESTED_GHIDRIFF_REVISIONS = ('4f5d895',)
+
+
+def _launcher_line(ghidriff_version: object) -> str:
+    """SPEC-53: tell the analyst whether the symbol launcher hook was exercised against this Ghidriff."""
+    text = str(ghidriff_version)[:64]
+    if any(rev in text for rev in TESTED_GHIDRIFF_REVISIONS):
+        return f'Launcher: tested with ghidriff {text}'
+    return (f'Launcher: untested revision {text}; local symbol mode fails closed if the launcher hook is '
+            f'missing; off mode needs no hook')
+
+
 def diagnose(config: BackendConfig) -> list[str]:
     """Actionable, credential-free configuration and dependency summaries."""
     errors = _config_errors(config)
@@ -386,6 +398,7 @@ def diagnose(config: BackendConfig) -> list[str]:
         metadata = _probe_backend(config)
         statuses.append(f'Python {metadata["python"]}; ghidriff {metadata["ghidriff"]}; '
                         f'pyghidra {metadata["pyghidra"]}')
+        statuses.append(_launcher_line(metadata['ghidriff']))
         if metadata['pyghidra'] == 'unknown':
             statuses.append('PT-BACKEND: pyghidra version unavailable; install ghidriff with its dependencies')
     except (OSError, RuntimeError, ValueError) as error:

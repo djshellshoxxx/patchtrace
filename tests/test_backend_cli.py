@@ -332,3 +332,15 @@ def test_cli_help_lists_backend(capsys):
     out = capsys.readouterr().out
     for action in ('status', 'verify', 'selftest', 'diagnose'):
         assert action in out
+
+
+def test_launcher_line_marks_tested_and_untested_revisions():
+    assert backend._launcher_line('0.0+4f5d895') == 'Launcher: tested with ghidriff 0.0+4f5d895'
+    assert backend._launcher_line('9.9.9').startswith('Launcher: untested revision 9.9.9')
+
+
+def test_diagnose_includes_launcher_line(app, capsys, probed):
+    exe, _ = app
+    find_bundled_runtime(exe, host=HOST).python.chmod(0o755)
+    _, doc = run_json(capsys, app, 'diagnose')
+    assert any(line.startswith('Launcher: ') for line in doc['result']['lines'])
