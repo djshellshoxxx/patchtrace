@@ -87,7 +87,8 @@ def provenance_block(older: BuildFingerprint, newer: BuildFingerprint) -> str:
         lines += [f'{fp.side.upper()} artifact sha256 {fp.artifact_sha256}',
                   f'{fp.side.upper()} PE facts {fp.built_from.pe_facts_version}', *_die_lines(fp)]
     lines.append(DISCLAIMER)
-    return display_text('\n'.join(lines), PROVENANCE_LIMIT)
+    # Each line is made safe on its own: escaping the joined block showed the line breaks as literal `\n` (#105 B1).
+    return '\n'.join(display_text(line, PROVENANCE_LIMIT) for line in lines)[:PROVENANCE_LIMIT]
 
 
 def technical_lines(older: BuildFingerprint, newer: BuildFingerprint) -> tuple[str, ...]:

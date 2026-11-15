@@ -54,7 +54,8 @@ class BuildEnvSection(_Strict):
     findings: tuple[ReportFinding, ...] = Field(max_length=128)
     notices: tuple[ReportNotice, ...] = Field(max_length=16)
     provenance: Line
-    technical: tuple[Line, ...] = Field(default=(), max_length=130)
+    # Up to 64 Rich entries and 16 anomalies per side (view_model.technical_lines); 130 refused real input (#105 B2).
+    technical: tuple[Line, ...] = Field(default=(), max_length=160)
     disclaimer: Literal[DISCLAIMER] = DISCLAIMER
 
 
@@ -100,7 +101,7 @@ def render_markdown(data: dict) -> str:
         parts += ['| Fact | OLDER | NEWER | Status | Basis |', '|---|---|---|---|---|']
         parts += ['| ' + ' | '.join(_cell(f[k]) for k in ('label', 'older', 'newer', 'status', 'basis')) + ' |'
                   for f in data['findings']] + ['']
-    parts += ['### Provenance', '', _markdown_escape(data['provenance']), '']
+    parts += ['### Provenance', '', *[f'- {_markdown_escape(line)}' for line in data['provenance'].split('\n')], '']
     if data['technical']:
         parts += ['### Technical details', '', *[f'- {_markdown_escape(line)}' for line in data['technical']], '']
     parts += [_markdown_escape(data['disclaimer']), '']
