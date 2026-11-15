@@ -61,8 +61,8 @@ def direction_of(version: RuleVersion) -> str:
 
 # --- the builds ------------------------------------------------------------------------------------------------------
 
-def _digest(path: Path) -> tuple[str, int]:
-    """SHA-256 and size of a regular file. A device, FIFO or socket is refused before it is opened (a FIFO's open
+def _digest(path: Path, max_bytes: int = DEFAULT_LIMITS.file_bytes) -> tuple[str, int]:
+    """SHA-256 and size of a regular file of at most `max_bytes` (issue #105 BUG-RULE-6). A device, FIFO or socket is refused before it is opened (a FIFO's open
     blocks, /dev/zero never ends) and again on a nonblocking handle (POSIX FIFO replacement cannot stall open)."""
     sha, size = hashlib.sha256(), 0
     try:
@@ -70,9 +70,14 @@ def _digest(path: Path) -> tuple[str, int]:
             raise RuleError('PT-RULE-INPUT', 'A file of the test is not a regular file', reason='not-a-file')
         flags = os.O_RDONLY | getattr(os, 'O_BINARY', 0) | getattr(os, 'O_NONBLOCK', 0)
         with os.fdopen(os.open(path, flags), 'rb') as handle:
-            if not stat.S_ISREG(os.fstat(handle.fileno()).st_mode):
+            info = os.fstat(handle.fileno())
+            if not stat.S_ISREG(info.st_mode):
                 raise RuleError('PT-RULE-INPUT', 'A file of the test is not a regular file', reason='not-a-file')
+            if info.st_size > max_bytes:
+                raise RuleError('PT-RULE-INPUT', 'A file of the test is too large', reason='too-large')
             while chunk := handle.read(READ_CHUNK):
+                if size + len(chunk) > max_bytes:      # it grew while being read
+                    raise RuleError('PT-RULE-INPUT', 'A file of the test is too large', reason='too-large')
                 sha.update(chunk)
                 size += len(chunk)
     except OSError:
