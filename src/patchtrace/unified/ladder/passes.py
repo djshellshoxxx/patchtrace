@@ -28,7 +28,7 @@ from .side import K_EXTERNAL, SideData
 from .state import SoftCand, State
 from .types import FAMILY_BYTES, TIER_RANK, weaker
 
-LADDER_VERSION = 'ladder/4'
+LADDER_VERSION = 'ladder/5'  # A-29: leftovers reach fusion as one-sided atoms
 FAMILY_STRUCT = 'F-PT-STRUCT'
 P15_MAX_WAVES = 8
 MAX_CALL_SITES = 512                 # 04 s5.1: a call-site sequence longer than this casts no implied-match votes

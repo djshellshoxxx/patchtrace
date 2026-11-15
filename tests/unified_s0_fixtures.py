@@ -46,8 +46,12 @@ def match(mid: str, category: str, older=(), newer=(), types=(), manual: bool = 
                          newer=tuple(newer))
 
 
-def raw_ok(table=None, sha: str = RAW_SHA) -> RawGhidriff:
-    return RawGhidriff(status='ok', address_matches=table if table is not None else {}, sha256=sha)
+def raw_ok(table=None, sha: str = RAW_SHA, older_sha256: str | None = OLD_SHA,
+           newer_sha256: str | None = NEW_SHA) -> RawGhidriff:
+    """A usable raw table that, like every imported raw file (`verify_diff_identity`), names its own sides (A-28);
+    pass `older_sha256=None, newer_sha256=None` for the identity-less object only fixtures can build."""
+    return RawGhidriff(status='ok', address_matches=table if table is not None else {}, sha256=sha,
+                       older_sha256=older_sha256, newer_sha256=newer_sha256)
 
 
 def inputs(matches=(), raw=None, secondary=(), run_id: str = 'run-1', version: str = '1') -> SourceInputs:
@@ -205,7 +209,8 @@ def rich_inputs(flip: bool = False) -> SourceInputs:
     secondary = (loaded(bindiff_set(bindiff_rows, older=older, newer=newer)),
                  loaded(rzdiff_set([rzrow(0x1000, 0x1080), rzrow(0x1c00, 0x1c80)], older=older, newer=newer)))
     return SourceInputs(older_sha256=older, newer_sha256=newer,
-                        run=GhidriffRun(run_id='run-1', backend_version='1', raw=raw_ok(table)),
+                        run=GhidriffRun(run_id='run-1', backend_version='1',
+                                        raw=raw_ok(table, older_sha256=older, newer_sha256=newer)),
                         matches=tuple(matches), secondary=secondary)
 
 
@@ -251,8 +256,13 @@ def write_worker_request(directory, data: SourceInputs, *, sources=('ghidriff', 
     private = directory / 'private'
     private.mkdir(parents=True)
     raw_path = directory / 'raw.json'
-    raw_path.write_text(json.dumps({'matches': {'address_matches': data.run.raw.address_matches or {}}}),
-                        encoding='utf-8')
+    document = {'matches': {'address_matches': data.run.raw.address_matches or {}}}
+    # the document names its own sides exactly as an imported raw file does (A-28); an identity-less in-memory raw
+    # stays identity-less on disk so the worker and the in-memory run agree
+    for key, value in (('old_meta', data.run.raw.older_sha256), ('new_meta', data.run.raw.newer_sha256)):
+        if value is not None:
+            document[key] = {'Executable SHA256': value}
+    raw_path.write_text(json.dumps(document), encoding='utf-8')
     raw_sha = hashlib.sha256(raw_path.read_bytes()).hexdigest()
     digest, size, lines = write_snapshot(private / 'matches.jsonl', data.matches)
     files = []

@@ -1,4 +1,4 @@
-"""DATA-MAP/1 and target consistency (SPEC-31 05 s2.7, review R-01, S3). Pure, deterministic, bounded.
+"""DATA-MAP/1 and target consistency (SPEC-31 05 s2.7, review R-01, S3, amendment A-30). Pure, deterministic, bounded.
 
 Equal bytes at a moved address re-target every relative operand, so no proof may trust an address operand until its
 target is proven to reach the counterpart. `TargetMap` answers, for a pair of targets (t in the older image, u in the
@@ -8,17 +8,43 @@ different content).
 
 Function targets are mapped by (i) a `matched` row of tier A or M (`pairs`), (ii) two imports with the same key,
 (iii) two thunks whose targets are mapped, (iv) two bodies with equal `h0` that sit at the same RVA or are the consensus
-of the call operands of another matched pair. Data targets are mapped by (a) two defined strings with equal SHA-256,
-unique per side, (b) the bidirectional consensus of the data operands of OTHER matched pairs with equal `h1`
-(leave-one-out: a function never proves its own references), (c) a region shift: a single-use datum between neighbours
-that moved by the same displacement within one section, (d) the PE header region, which does not shift. A consensus that
-points elsewhere is a `conflict`: the patched function of a swapped global is a dissenter, the innocent ones keep their
-mapping. Identical artifacts (X vs X) map every address to itself.
+of the call operands of other matched pairs. Data targets are mapped by (a) two defined strings with equal SHA-256,
+unique per side, (b) the bidirectional consensus of the data operands of OTHER matched pairs with equal `h1`, (c) a
+region shift: a single-use datum between neighbours that moved by the same displacement within one section, (d) the PE
+header region, which does not shift. A consensus that points elsewhere is a `conflict`: the patched function of a
+swapped global is a dissenter, the innocent ones keep their mapping. Identical artifacts (X vs X) map every address to
+itself.
+
+Consensus (A-30, p15, and the review amendments of 05 s2.7 rules 3 and 4(b)). The raw consensus of a datum is the
+partner voted by a strict majority of its voters, with at least two voters (none when the datum is incomplete, L-40).
+The consensus additionally needs no blocking competing claim: for consensus(t) = u, a claim (t', u), t' != t, is
+explained when t' has a raw consensus u' != u AND t itself casts no vote for u' (an explanation contested by the datum
+under judgment is void: two globals swapped). An unexplained claim blocks when it has >= 2 voters, or with ANY number of
+voters when it is stationary (t' == u: the same address on both sides, still referenced as itself); an incomplete t'
+(or an incomplete u) always blocks. Symmetrically for consensus(u) = t with claims (t, u'). Leave-one-out (rule 4(b)):
+row r maps (t, u) when at least two voters in all voted for it (r's own vote counts toward that floor) and u is the
+strict majority of the voters of t OTHER than r (and t of u's), with no blocking claim; r's vote never tips the
+majority. In that count an explained dissent is ignored: a vote for (t, u') whose u' has a full-table (blocking-aware)
+consensus other than t, symmetrically (t', u); a dissent whose other datum has no consensus still counts (p15: two
+retargets against one genuine referrer are a tie). `data_token`, the confirmed neighbours of the region shift and the
+`conflict` test use the full-table consensus. Every table is built once per datum and cached, and a row's leave-one-out
+count subtracts only its own votes, so judging all rows is O(votes).
+
+What is still decided by majority: a lone MOVED dissenting vote never blocks, so the typical patched function stays a
+`conflict` beside the innocent `mapped` referrers. The innocent mapping rests on at least two agreeing functions with no
+unexplained competing claim, and the dissenter itself is never mapped. Documented residual: several functions retargeted
+A -> B' where B moved to B' and kept a single referrer still map (by votes alone it is "B' is A moved, the referrer of B
+retargeted"); likewise two globals that swap places with no other referrers map as a layout swap. Known cost: two
+functions retargeted together to a brand-new global make every referrer of the old datum `unmapped`, and swapped globals
+make their keepers `unmapped` (`review`, never a wrong `cosmetic`).
+
+Orientation (A-30, p11): every rule is symmetric under swapping the images and mirroring the pairs, except which vote
+pairs a capped table (`datamap-cap`) keeps; the data of a dropped pair are incomplete and abstain either way.
 """
 from __future__ import annotations
 
 from bisect import bisect_left, bisect_right
-from collections import defaultdict
+from collections import Counter, defaultdict
 from collections.abc import Iterable, Sequence
 
 from ..ir.operands import VK_ADDRESS
@@ -63,6 +89,7 @@ class _Votes:
         self.voters_new: dict[tuple, set[Voter]] = {}
         self.incomplete_old: dict[str, set[int]] = {'data': set(), 'fn': set()}
         self.incomplete_new: dict[str, set[int]] = {'data': set(), 'fn': set()}
+        self.of: dict[Voter, set[tuple]] = {}             # the kept votes of each voter, for leave-one-out (O(votes))
         self.capped = False
 
     def add(self, cls: str, t: int, u: int, voter: Voter) -> None:
@@ -75,6 +102,7 @@ class _Votes:
                 return
             self.count[key] = 0
         self.count[key] += 1
+        self.of.setdefault(voter, set()).add(key)
         self.by_old[cls].setdefault(t, {})[u] = self.count[key]
         self.by_new[cls].setdefault(u, {})[t] = self.count[key]
         for table, datum in ((self.voters_old, (cls, t)), (self.voters_new, (cls, u))):
@@ -83,8 +111,9 @@ class _Votes:
                 seen.add(voter)
 
     @staticmethod
-    def consensus(table: dict[int, int] | None) -> int | None:
-        """The partner chosen by a strict majority of the voters, with at least two of them (05 s2.7 rule 3)."""
+    def majority(table: dict[int, int] | None) -> int | None:
+        """The partner chosen by a strict majority of the voters, with at least two of them (the raw consensus of
+        05 s2.7 rule 3)."""
         if not table:
             return None
         total = sum(table.values())
@@ -107,7 +136,11 @@ class TargetMap:
         self.limits_hit: set[str] = set()
         self._votes = _Votes(limits.l40_data_pairs, limits.l40_votes_kept)
         self._consensus_cache: dict[tuple, int | None] = {}
-        self._confirmed: tuple[list[int], list[int]] | None = None
+        self._blocked_cache: dict[tuple, bool] = {}
+        self._filtered_cache: dict[tuple, tuple[int, frozenset[int]]] = {}
+        self._own_index: dict[Voter, dict[tuple, tuple[int, ...]]] = {}
+        self.work: Counter[str] = Counter()                     # per-datum table builds (bounded-work tests)
+        self._confirmed: tuple[list[tuple[int, int]], list[int], list[tuple[int, int]], list[int]] | None = None
         self._strings: dict[str, dict[str, set[int]]] | None = None
         if not identical:
             self._collect_votes(self.budget)
@@ -138,24 +171,115 @@ class TargetMap:
                     continue
                 if a.kind == 'data':
                     seen.add(('data', a.target, b.target))
-                elif a.kind == 'code' and a.target in old_rvas and b.target in new_rvas and a.target not in self.pair_old:
-                    seen.add(('fn', a.target, b.target))
+                elif a.kind == 'code' and a.target in old_rvas and b.target in new_rvas and \
+                        a.target not in self.pair_old and b.target not in self.pair_new:
+                    seen.add(('fn', a.target, b.target))         # rule 2: neither target is in a pair (A-30, p11)
             for cls, t, u in sorted(seen):
                 self._votes.add(cls, t, u, (o, n))
 
-    def _consensus_old(self, cls: str, t: int) -> int | None:
-        key = ('o', cls, t)
+    # --- consensus (rule 3, A-30) --------------------------------------------------------------------------------------------
+    # `side` is 'o' (an older datum x and its newer partners) or 'n' (the converse). Everything here is cached per datum
+    # (or per datum pair), so judging every row costs O(votes) in all, not O(voters x partners) (review finding 3).
+
+    def _incomplete(self, side: str, cls: str, x: int) -> bool:
+        return x in (self._votes.incomplete_old if side == 'o' else self._votes.incomplete_new)[cls]
+
+    def _partners(self, side: str, cls: str, x: int) -> dict[int, int]:
+        """Voters per partner of x (full tables)."""
+        return (self._votes.by_old if side == 'o' else self._votes.by_new)[cls].get(x) or {}
+
+    def _votes_for(self, cls: str, t: int, u: int) -> int:
+        return self._votes.count.get((cls, t, u), 0)
+
+    def _raw(self, side: str, cls: str, x: int) -> int | None:
+        """The raw consensus: a strict majority of >= 2 voters, none for an incomplete datum."""
+        key = ('raw', side, cls, x)
         if key not in self._consensus_cache:
-            self._consensus_cache[key] = None if t in self._votes.incomplete_old[cls] else \
-                _Votes.consensus(self._votes.by_old[cls].get(t))
+            self._consensus_cache[key] = None if self._incomplete(side, cls, x) else \
+                _Votes.majority(self._partners(side, cls, x))
         return self._consensus_cache[key]
 
-    def _consensus_new(self, cls: str, u: int) -> int | None:
-        key = ('n', cls, u)
+    def _blocked(self, side: str, cls: str, x: int, y: int) -> bool:
+        """Rule 3 on the full tables, for consensus(x) = y. y incomplete blocks (the claims of its dropped pairs are
+        unknown). A competing claim (x', y), x' != x, is explained when x' has a raw consensus y' other than y AND x
+        itself casts no vote for y' (an explanation contested by the datum under judgment is void: a swap). An
+        unexplained claim blocks when it has >= 2 voters, or with any number of voters when it is stationary (x' == y,
+        the same address on both sides); an incomplete x' always blocks. A single moved dissenting vote never blocks."""
+        key = (side, cls, x, y)
+        if key in self._blocked_cache:
+            return self._blocked_cache[key]
+        self.work['blocked'] += 1
+        other = 'n' if side == 'o' else 'o'
+        blocked = self._incomplete(other, cls, y)
+        if not blocked:
+            for x2, count in sorted(self._partners(other, cls, y).items()):
+                if x2 == x:
+                    continue
+                if self._incomplete(side, cls, x2):
+                    blocked = True
+                    break
+                y2 = self._raw(side, cls, x2)
+                vote = (cls, x, y2) if side == 'o' else (cls, y2, x)
+                explained = y2 is not None and y2 != y and self._votes.count.get(vote, 0) == 0
+                if not explained and (count >= 2 or x2 == y):
+                    blocked = True
+                    break
+        self._blocked_cache[key] = blocked
+        return blocked
+
+    def _consensus(self, side: str, cls: str, x: int) -> int | None:
+        """The rule-3 consensus of x on the full tables: its raw consensus y unless a competing claim blocks it."""
+        key = ('cons', side, cls, x)
         if key not in self._consensus_cache:
-            self._consensus_cache[key] = None if u in self._votes.incomplete_new[cls] else \
-                _Votes.consensus(self._votes.by_new[cls].get(u))
+            y = self._raw(side, cls, x)
+            self._consensus_cache[key] = None if y is None or self._blocked(side, cls, x, y) else y
         return self._consensus_cache[key]
+
+    def _filtered(self, side: str, cls: str, x: int) -> tuple[int, frozenset[int]]:
+        """Rule 4(b), once per datum: the total of the votes of x that count, and the partners whose votes are an
+        explained dissent (a partner with a full-table consensus other than x), which are ignored."""
+        key = (side, cls, x)
+        if key not in self._filtered_cache:
+            self.work['filtered'] += 1
+            other = 'n' if side == 'o' else 'o'
+            ignored = frozenset(p for p in self._partners(side, cls, x) if self._consensus(other, cls, p) not in (None, x))
+            total = sum(c for p, c in self._partners(side, cls, x).items() if p not in ignored)
+            self._filtered_cache[key] = (total, ignored)
+        return self._filtered_cache[key]
+
+    def _own_partners(self, voter: Voter, side: str, cls: str, x: int) -> tuple[int, ...]:
+        """The partners of x that `voter` itself voted for (indexed once per voter)."""
+        index = self._own_index.get(voter)
+        if index is None:
+            index = {}
+            for cls_, t, u in sorted(self._votes.of.get(voter, ())):
+                index.setdefault(('o', cls_, t), []).append(u)
+                index.setdefault(('n', cls_, u), []).append(t)
+            self._own_index[voter] = index = {k: tuple(v) for k, v in index.items()}
+        return index.get((side, cls, x), ())
+
+    def _others_agree(self, side: str, cls: str, x: int, y: int, voter: Voter) -> bool:
+        """Rule 4(b) for one direction, O(the voter's own partners of x) after the per-datum tables: at least two voters
+        for y in all (the voter's own vote counts toward that floor), y the strict majority of the voters of x OTHER
+        than `voter` (an explained dissent ignored, y itself always counted), and no competing claim blocks y."""
+        if self._incomplete(side, cls, x):
+            return False
+        total, ignored = self._filtered(side, cls, x)
+        count = self._partners(side, cls, x).get(y, 0)
+        if y in ignored:
+            total += count                                       # y itself always counts
+        own = self._own_partners(voter, side, cls, x)
+        mine = y in own
+        others_y = count - mine
+        others_total = total - sum(1 for p in own if p == y or p not in ignored)
+        return count >= 2 and others_y >= 1 and others_y * 2 > others_total and not self._blocked(side, cls, x, y)
+
+    def _bidirectional(self, cls: str, t: int, u: int, voter: Voter | None = None) -> bool:
+        """consensus(t) = u and consensus(u) = t: on the full tables without `voter`, else over the other voters (rule
+        4(b), A-30)."""
+        if voter is None:
+            return self._consensus('o', cls, t) == u and self._consensus('n', cls, u) == t
+        return self._others_agree('o', cls, t, u, voter) and self._others_agree('n', cls, u, t, voter)
 
     def _voted_by_others(self, voters: set[Voter] | None, voter: Voter | None) -> bool:
         return bool(voters) and bool(voters - {voter})
@@ -209,8 +333,8 @@ class TargetMap:
         if h0 is not None and h0 == self._h0('newer', u):
             if t == u:
                 return MAPPED
-            if self._consensus_old('fn', t) == u and self._consensus_new('fn', u) == t:
-                return MAPPED                                    # >= 2 callers voted, so somebody besides `voter` did
+            if self._bidirectional('fn', t, u, voter):
+                return MAPPED                                    # the callers other than `voter` agree
         return UNMAPPED
 
     # --- data targets -------------------------------------------------------------------------------------------------------
@@ -246,17 +370,21 @@ class TargetMap:
                     out[row.sha].add(target)
         return out
 
-    def _confirmed_pairs(self) -> tuple[list[int], list[int]]:
-        """(old datum, new datum) pairs with a bidirectional consensus, ascending by the old datum."""
+    def _confirmed_pairs(self) -> tuple[list[tuple[int, int]], list[int], list[tuple[int, int]], list[int]]:
+        """(old datum, new datum) pairs with a bidirectional consensus (full tables), ascending by the old datum and by
+        the new one, with their keys for bisection."""
         if self._confirmed is None:
             found = sorted((t, u) for t in self._votes.by_old['data']
-                           if (u := self._consensus_old('data', t)) is not None and self._consensus_new('data', u) == t)
-            self._confirmed = ([t for t, _ in found], [u for _, u in found])
+                           if (u := self._consensus('o', 'data', t)) is not None and self._consensus('n', 'data', u) == t)
+            by_new = sorted(found, key=lambda pair: (pair[1], pair[0]))
+            self._confirmed = (found, [t for t, _ in found], by_new, [u for _, u in by_new])
         return self._confirmed
 
     def _region_shift(self, t: int, u: int, voter: Voter | None) -> bool:
-        """Rule (c): no consensus and no vote from another function, neighbours below and above (in the same section)
-        moved by the same displacement and keep their order."""
+        """Rule (c): no consensus and no vote from another function; the nearest confirmed pairs below and above t (in
+        older order, within t's section) and below and above u (in newer order, within u's section) all sit in both
+        sections and moved by the same displacement u - t (which keeps their order); at least one exists. Symmetric
+        under swapping the images (A-30, p11)."""
         if t in self._votes.incomplete_old['data'] or u in self._votes.incomplete_new['data']:
             return False                                         # dropped votes: "nobody else voted" is unknown
         for cls_votes, datum in ((self._votes.voters_old, ('data', t)), (self._votes.voters_new, ('data', u))):
@@ -265,21 +393,16 @@ class TargetMap:
         section_old, section_new = self._section('older', t), self._section('newer', u)
         if section_old is None or section_new is None:
             return False
-        olds, news = self._confirmed_pairs()
-        index = bisect_left(olds, t)
-        displacement = u - t
-        neighbours = 0
-        for position, side in ((index - 1, -1), (index, 1)):
-            if not 0 <= position < len(olds):
-                continue
-            t_n, u_n = olds[position], news[position]
-            if not (section_old[0] <= t_n < section_old[1]):
-                continue
-            if u_n - t_n != displacement or not (section_new[0] <= u_n < section_new[1]) or \
-                    (side < 0 and not u_n < u) or (side > 0 and not u_n > u):
-                return False
-            neighbours += 1
-        return neighbours > 0
+        by_old, olds, by_new, news = self._confirmed_pairs()
+        neighbours: set[tuple[int, int]] = set()
+        for ordered, keys, at, index, section in ((by_old, olds, t, 0, section_old), (by_new, news, u, 1, section_new)):
+            position = bisect_left(keys, at)
+            for candidate in (position - 1, position):
+                if 0 <= candidate < len(ordered) and section[0] <= ordered[candidate][index] < section[1]:
+                    neighbours.add(ordered[candidate])
+        return bool(neighbours) and all(
+            section_old[0] <= t_n < section_old[1] and section_new[0] <= u_n < section_new[1] and u_n - t_n == u - t
+            for t_n, u_n in neighbours)
 
     def data_token(self, side: str, rva: int) -> str | None:
         """The token of the datum pair a data address belongs to (bidirectional consensus), else None: the same text
@@ -287,10 +410,10 @@ class TargetMap:
         if self.identical:
             return f'@D:{rva:x}'
         if side == 'older':
-            partner = self._consensus_old('data', rva)
-            return None if partner is None or self._consensus_new('data', partner) != rva else f'@D:{rva:x}.{partner:x}'
-        partner = self._consensus_new('data', rva)
-        return None if partner is None or self._consensus_old('data', partner) != rva else f'@D:{partner:x}.{rva:x}'
+            partner = self._consensus('o', 'data', rva)
+            return None if partner is None or self._consensus('n', 'data', partner) != rva else f'@D:{rva:x}.{partner:x}'
+        partner = self._consensus('n', 'data', rva)
+        return None if partner is None or self._consensus('o', 'data', partner) != rva else f'@D:{partner:x}.{rva:x}'
 
     def data_state(self, t: int, u: int, voter: Voter | None = None,
                    shas: tuple[str | None, str | None] = (None, None)) -> str:
@@ -306,11 +429,11 @@ class TargetMap:
         header = [s[0] for s in (self.sections['older'][:1] + self.sections['newer'][:1])]
         if t == u and header and t < min(header):
             return MAPPED                                        # the PE header region does not shift
-        cons_old, cons_new = self._consensus_old('data', t), self._consensus_new('data', u)
+        cons_old, cons_new = self._consensus('o', 'data', t), self._consensus('n', 'data', u)
         if (cons_old is not None and cons_old != u) or (cons_new is not None and cons_new != t):
-            return CONFLICT
-        if cons_old == u and cons_new == t:
-            return MAPPED                                        # >= 2 voters, so somebody besides `voter` voted
+            return CONFLICT                                      # r is a dissenter of the full-table consensus
+        if self._bidirectional('data', t, u, voter):
+            return MAPPED                                        # the other functions agree, nothing competes
         if cons_old is None and cons_new is None and self._region_shift(t, u, voter):
             return MAPPED
         return UNMAPPED

@@ -119,6 +119,15 @@ class Correspondence:
         out.sort(key=lambda a: (a.older_rva, a.newer_rva, a.source, a.step))
         return tuple(out)
 
+    def leftover_atom(self, side: Literal['older', 'newer'], item: Leftover) -> Atom:
+        """The one-sided observation of one leftover (A-29): tier W, class E-UNKNOWN, the reason as display text in
+        `native`, the hints as bounded `ref` text. Absence of evidence: fusion never lets it contest a pairing."""
+        rva = (self.older_rva if side == 'older' else self.newer_rva)[item.fid]
+        hints = ','.join(sorted(item.hints))[:128] or None
+        return Atom(source=SOURCE_LADDER, step='leftover', tier='W', cardinality='1:1', cls='E-UNKNOWN',
+                    older_rva=rva if side == 'older' else None, newer_rva=rva if side == 'newer' else None,
+                    native=(('reason', item.reason[:120]),), ref=hints)
+
     def digest(self) -> str:
         """SHA-256 over a canonical text encoding of everything but `seq`: equal digests == equal results
         (G-U4 style determinism checks across processes and hash seeds)."""

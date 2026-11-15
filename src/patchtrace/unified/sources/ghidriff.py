@@ -12,6 +12,7 @@ from collections.abc import Mapping
 from pathlib import Path
 
 from ...enrichment.identity import parse_address
+from ...normalization import HASH_KEYS
 from ...persistence import strict_json
 from ..addressing import AddressMap, is_external_key, parse_va_text
 from ..contracts import Atom, SourceRef
@@ -34,9 +35,12 @@ from . import (
 MAX_RAW_BYTES = 100 * 1024 * 1024  # service.MAX_RAW_BYTES / backend.JSON_LIMIT
 
 
-def load_raw(path: Path | None, expected_sha256: str | None, limits: UnifiedLimits = DEFAULT_LIMITS) -> RawGhidriff:
+def load_raw(path: Path | None, expected_sha256: str | None, limits: UnifiedLimits = DEFAULT_LIMITS,
+             sides: tuple[str, str] | None = None) -> RawGhidriff:
     """Verify (size, SHA-256 of the recorded run) and shape-check the preserved raw table; never raises for data
-    problems, the status says why the table is unusable (06 s2 failure kinds)."""
+    problems, the status says why the table is unusable (06 s2 failure kinds). The document's own identity is recorded
+    (A-28); with `sides` = the project's current (older, newer) input SHA-256 a document whose identity matches
+    neither orientation is `identity-mismatch`. Owner thread and worker pass the same sides, so they agree."""
     if path is None or expected_sha256 is None:
         return RawGhidriff(status='missing', sha256=expected_sha256)
     try:
@@ -60,7 +64,48 @@ def load_raw(path: Path | None, expected_sha256: str | None, limits: UnifiedLimi
     table = matches.get('address_matches') if isinstance(matches, dict) else None
     if not _valid_table(table):
         return RawGhidriff(status='unparsable', sha256=expected_sha256)
-    return RawGhidriff(status='ok', address_matches=table, sha256=expected_sha256)
+    older_id, newer_id = _identity(document)
+    raw = RawGhidriff(status='ok', address_matches=table, sha256=expected_sha256, older_sha256=older_id,
+                      newer_sha256=newer_id)
+    if sides is not None and _orientation(raw, sides[0], sides[1]) == 'mismatch':
+        return RawGhidriff(status='identity-mismatch', sha256=expected_sha256, older_sha256=older_id,
+                           newer_sha256=newer_id)
+    return raw
+
+
+def _side_identity(document: object, key: str) -> str | None:
+    meta = document.get(key) if isinstance(document, dict) else None
+    if not isinstance(meta, dict):
+        return None
+    hashes = [meta[k] for k in HASH_KEYS if k in meta]
+    if not hashes or any(not isinstance(h, str) for h in hashes):
+        return None
+    lowered = {h.lower() for h in hashes}
+    return lowered.pop() if len(lowered) == 1 else None
+
+
+def _identity(document: object) -> tuple[str | None, str | None]:
+    return _side_identity(document, 'old_meta'), _side_identity(document, 'new_meta')
+
+
+def _orientation(raw: RawGhidriff, older: str, newer: str) -> str:
+    """'forward' | 'crosswise' | 'unverified' (identity not recorded) | 'mismatch' (A-28)."""
+    if raw.older_sha256 is None or raw.newer_sha256 is None:
+        return 'unverified'
+    pair = (raw.older_sha256, raw.newer_sha256)
+    if pair == (older, newer):
+        return 'forward'
+    if pair == (newer, older):
+        return 'crosswise'
+    return 'mismatch'
+
+
+def effective_status(inputs: SourceInputs) -> str:
+    """The raw status including the identity verdict, whoever built the `RawGhidriff`."""
+    raw = inputs.run.raw
+    if raw.status == 'ok' and _orientation(raw, inputs.older_sha256, inputs.newer_sha256) == 'mismatch':
+        return 'identity-mismatch'
+    return raw.status
 
 
 def _valid_table(table: object) -> bool:
@@ -92,9 +137,11 @@ class GhidriffAdapter:
         self.registry = registry
 
     def available(self, inputs: SourceInputs) -> Availability:
-        if inputs.run.raw.status != 'ok':
-            return Availability('stale' if inputs.run.raw.status == 'hash-mismatch' else 'missing',
-                                inputs.run.raw.status)
+        status = effective_status(inputs)
+        if status != 'ok':
+            # identity-mismatch is `missing`, not `stale`: the file is intact (hash verified) but names other inputs,
+            # so there is no table of THIS comparison to use; `stale` is kept for a file that changed since the run.
+            return Availability('stale' if status == 'hash-mismatch' else 'missing', status)
         return Availability('ok')
 
     def source_ref(self, inputs: SourceInputs) -> SourceRef:
@@ -102,21 +149,30 @@ class GhidriffAdapter:
         failure kinds give three different limitations, so they must give three different result ids (the store
         refuses one id with two contents: `result-drift`)."""
         raw = inputs.run.raw
-        mark = '' if raw.status == 'ok' else f' [raw-{raw.status}]'
+        status = effective_status(inputs)
+        mark = '' if status == 'ok' else f' [raw-{status}]'
         return SourceRef(source='ghidriff', entry_id=inputs.run.run_id,
-                         file_sha256=raw.sha256 if raw.status == 'ok' else None,
+                         file_sha256=raw.sha256 if status == 'ok' else None,
                          version=inputs.run.backend_version[:64 - len(mark)] + mark)
 
     def atoms(self, inputs: SourceInputs, addr: AddressMap, budget: Budget) -> AdapterOutput:
         ledger = Ledger()
         raw = inputs.run.raw
-        if raw.status != 'ok':
-            ledger.flag({'missing': 'raw-missing', 'hash-mismatch': 'raw-hash-mismatch',
-                         'unparsable': 'raw-unparsable'}[raw.status])
+        status = effective_status(inputs)
+        orientation = 'forward'
+        if status != 'ok':
+            ledger.flag({'missing': 'raw-missing', 'hash-mismatch': 'raw-hash-mismatch', 'unparsable': 'raw-unparsable',
+                         'identity-mismatch': 'raw-identity-mismatch'}[status])
+        else:
+            orientation = _orientation(raw, inputs.older_sha256, inputs.newer_sha256)
+            if orientation == 'unverified':
+                ledger.count('raw-identity-unverified')
         matches = sorted((m for m in inputs.matches if not m.manual), key=lambda m: m.id)
         # pass 1: parse every address once so the basis is decided per SET
         records = self._records(matches)
-        relations = self._relations(raw.address_matches if raw.status == 'ok' else None, ledger, budget)
+        relations = self._relations(raw.address_matches if status == 'ok' else None, ledger, budget)
+        if orientation == 'crosswise':  # the table is keyed by the VA of the run's older file = now the newer side
+            relations = [(n, o, t) for o, n, t in relations]
         older_values = sorted({v for side, v in records if side == 'older'} | {o for o, _n, _t in relations})
         newer_values = sorted({v for side, v in records if side == 'newer'} | {n for _o, n, _t in relations})
         basis = addr.set_basis(older_values, newer_values)

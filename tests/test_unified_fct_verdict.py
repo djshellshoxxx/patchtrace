@@ -54,5 +54,6 @@ def test_the_rule_versions_changed_by_the_fct_audit_move_the_result_key():
     """Verdicts computed with the old rules must be recomputed, never served from the cache (02 s5)."""
     from patchtrace.unified.registry import CHANNEL_VERSIONS, PROOF_VERSIONS
     channels, proofs = dict(CHANNEL_VERSIONS), dict(PROOF_VERSIONS)
-    assert (channels['C1'], channels['C2'], channels['datamap']) == (2, 2, 2)
+    # fct audit (2026-11-04): C1, C2 and datamap moved to 2; A-30/A-31 (2026-11-11): datamap 3, align 2
+    assert (channels['C1'], channels['C2'], channels['datamap'], channels['align']) == (2, 2, 3, 2)
     assert (proofs['COS-LAYOUT/1'], proofs['COS-PSEUDO/1']) == (2, 2)

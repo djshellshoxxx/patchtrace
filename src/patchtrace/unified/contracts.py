@@ -834,6 +834,10 @@ class ResultKeyInputs(_Strict):
     sources: tuple[SourceRef, ...] = Field(default=(), max_length=MAX_SOURCES)
     manual_digest: Sha256
     config_digest: Sha256
+    # The ProgramIR sidecars a result names (`IrRef.ir_key`): identical content from another extraction is another
+    # result, so a cached manifest never names a sidecar the plan no longer uses. None in S0 mode (keys omit them).
+    ir_older_key: Sha256 | None = None
+    ir_newer_key: Sha256 | None = None
 
 
 SCHEMA_MODELS = ((UnifiedMatch, 'unified-match/1'), (ChangeFacts, 'change-facts/1'),

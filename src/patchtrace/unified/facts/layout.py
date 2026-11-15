@@ -66,8 +66,9 @@ def _block_delta(cls: str, old: FnView, new: FnView, bo: int | None, bn: int | N
 
 
 def _same_edges(edges_old, edges_new, mapping: dict[int, int]) -> tuple[bool, bool]:
-    """(old edges map onto the new edges, some old successor has no paired block)."""
-    unpaired = any(t not in mapping for t, _ in edges_old)
+    """(old edges map onto the new edges, some successor of either side has no paired block)."""
+    paired_new = set(mapping.values())          # symmetric: an unpaired successor on EITHER side counts (A-31)
+    unpaired = any(t not in mapping for t, _ in edges_old) or any(t not in paired_new for t, _ in edges_new)
     if unpaired:
         return False, True
     return sorted((mapping[t], k) for t, k in edges_old) == sorted(edges_new), False

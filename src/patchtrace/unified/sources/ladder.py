@@ -14,6 +14,7 @@ from ..contracts import Atom
 from ..ir import schema
 from ..ir.reader import IrReader
 from ..ladder.types import Correspondence
+from ..limits import Budget
 from . import AdapterOutput, Ledger, NodeRecord, clean_name
 
 _IMPORT = schema.FN_FLAGS['import']
@@ -42,9 +43,12 @@ def _node(side: str, reader: IrReader, fid: int) -> NodeRecord:
     return NodeRecord(side, table.get('rva', fid), clean_name(table.name[fid]), kind)  # type: ignore[arg-type]
 
 
-def ladder_output(corr: Correspondence, older: IrReader, newer: IrReader, *, anchors_skipped: int = 0) -> AdapterOutput:
+def ladder_output(corr: Correspondence, older: IrReader, newer: IrReader, *, anchors_skipped: int = 0,
+                  budget: Budget | None = None) -> AdapterOutput:
     """Atoms, names and limitations of one ladder run. A `partial` run (deadline or cancel) names its stop reason: it is
-    a degrading limitation, so the result is `partial` too."""
+    a degrading limitation, so the result is `partial` too. Leftovers of kind `function` or `thunk` become one-sided
+    tier-W atoms with a node each (A-29: an IR-only result shows them as `older-only`/`newer-only` rows); imports and
+    externals are only counted."""
     ledger = Ledger()
     if corr.status == 'partial':
         ledger.flag(f'ladder-partial:{corr.stop_reason}')
@@ -54,4 +58,15 @@ def ladder_output(corr: Correspondence, older: IrReader, newer: IrReader, *, anc
     ledger.count('ladder-anchors-outside-ir', anchors_skipped)
     nodes = {(pair.older_fid, pair.newer_fid) for pair in corr.pairs}
     records = [_node('older', older, o) for o, _ in sorted(nodes)] + [_node('newer', newer, n) for _, n in sorted(nodes)]
-    return AdapterOutput(atoms=corr.atoms(), nodes=tuple(records), limitations=ledger.render())
+    atoms = list(corr.atoms())
+    for side, reader, items in (('older', older, corr.older_only), ('newer', newer, corr.newer_only)):
+        for item in sorted(items, key=lambda i: (corr.older_rva if side == 'older' else corr.newer_rva)[i.fid]):
+            if budget is not None:
+                budget.tick()
+            record = _node(side, reader, item.fid)  # type: ignore[arg-type]
+            if record.kind in ('function', 'thunk'):
+                atoms.append(corr.leftover_atom(side, item))  # type: ignore[arg-type]
+                records.append(record)
+            else:
+                ledger.count(f'ladder-leftovers-not-shown:{record.kind}', 1)
+    return AdapterOutput(atoms=tuple(atoms), nodes=tuple(records), limitations=ledger.render())

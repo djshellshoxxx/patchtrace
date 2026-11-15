@@ -109,7 +109,10 @@ def test_a_function_never_proves_its_own_reference(tmp_path):
     two = [('r', 0x1000, [('load_g', 'EAX', 'g_a'), RET]), ('s', 0x1100, [('load_g', 'ECX', 'g_a'), RET])]
     tm2 = targets_of(tmp_path, two, two, {'g_a': 0x3000}, shifted)
     assert tm2.data_state(0x3000, 0x3040, (0x1000, 0x1000)) == MAPPED        # ... two are, and each has the other
-    only_self = TargetMap(tm2.older, tm2.newer, [(0x1000, 0x1000)])
+    three = two + [('t', 0x1200, [('load_g', 'EDX', 'g_a'), RET])]
+    tm3 = targets_of(tmp_path, three, three, {'g_a': 0x3000}, shifted)
+    assert tm3.data_state(0x3000, 0x3040, (0x1000, 0x1000)) == MAPPED        # ... and so are three
+    only_self = TargetMap(tm3.older, tm3.newer, [(0x1000, 0x1000)])
     assert only_self.data_state(0x3000, 0x3040, (0x1000, 0x1000)) == UNMAPPED
 
 

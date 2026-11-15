@@ -186,9 +186,13 @@ def test_the_source_selection_is_part_of_the_identity():
     everything = plan_identity(data, addr_map(), ALL_SOURCES)
     only_ghidriff = plan_identity(data, addr_map(), ['ghidriff'])
     assert only_ghidriff.result_id != everything.result_id
-    # inputs of a source that is not selected never matter
-    stripped = dataclasses.replace(data, secondary=(), matches=tuple(m for m in data.matches if not m.manual))
+    # stored sets of an engine that is not selected never matter
+    stripped = dataclasses.replace(data, secondary=())
     assert plan_identity(stripped, addr_map(), ['ghidriff']).result_id == only_ghidriff.result_id
+    # the analyst's corrections always do: correct_match also reshapes the non-manual matches the Ghidriff adapter and
+    # the facts read, so they are bound even when the manual source is not selected (follow-up p9)
+    uncorrected = dataclasses.replace(data, matches=tuple(m for m in data.matches if not m.manual))
+    assert plan_identity(uncorrected, addr_map(), ['ghidriff']).result_id != only_ghidriff.result_id
 
 
 def test_content_limits_are_part_of_the_identity_and_operational_ones_are_not():

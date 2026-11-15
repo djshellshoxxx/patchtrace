@@ -150,6 +150,7 @@ class Plan:
     raw_verdict: str | None = None                  # the worker's own classification of a raw output that hashed fine
     use_ir: bool = True                             # what the run asked for; `ir` says what it got (None: S0)
     diaphora: tuple[LoadedDiaphora, ...] = ()       # stored `diaphora-matches` sets (06 s5); () leaves every id unchanged
+    raw_identity: tuple[str | None, str | None] = (None, None)   # the raw document's own sides (A-28), from `load_raw`
     _identity_inputs: SourceInputs | None = field(default=None, init=False, compare=False, repr=False)
 
     @property
@@ -171,11 +172,15 @@ class Plan:
     def ir_digests(self) -> tuple[str, str] | None:
         return None if self.ir is None else (self.ir[0].content_digest, self.ir[1].content_digest)
 
+    def ir_keys(self) -> tuple[str, str] | None:
+        return None if self.ir is None else (self.ir[0].ir_key, self.ir[1].ir_key)
+
     def addr(self) -> AddressMap:
         return AddressMap(self.older_layout, self.newer_layout)
 
     def inputs(self, matches: Iterable[SnapshotMatch] | None = None, raw_status: str | None = None) -> SourceInputs:
-        raw = RawGhidriff(status=raw_status or self.raw_verdict or self.raw_status, sha256=self.raw_sha256)  # type: ignore[arg-type]
+        raw = RawGhidriff(status=raw_status or self.raw_verdict or self.raw_status, sha256=self.raw_sha256,  # type: ignore[arg-type]
+                          older_sha256=self.raw_identity[0], newer_sha256=self.raw_identity[1])
         inputs = SourceInputs(older_sha256=self.older_sha256, newer_sha256=self.newer_sha256,
                               run=GhidriffRun(self.run_id, self.backend_version, raw),
                               matches=self.manual if matches is None else tuple(matches), secondary=self.secondary,
@@ -399,7 +404,10 @@ def resolve_plan(plan: Plan, *, limits: UnifiedLimits = DEFAULT_LIMITS, registry
     if plan.raw_status == 'ok' and plan.raw_verdict is None and plan.raw_path is not None:
         # The capture only hashed the file; the worker also shape-checks it (`load_raw`: no `address_matches` is
         # `missing`, a malformed table `unparsable`) and those give other source refs. Predict the id it will publish.
-        plan = dataclasses.replace(plan, raw_verdict=load_raw(plan.raw_path, plan.raw_sha256, limits).status)
+        # Judged against the plan's current sides, as the worker does (A-28: a document of other inputs is `identity-mismatch`).
+        loaded = load_raw(plan.raw_path, plan.raw_sha256, limits, (plan.older_sha256, plan.newer_sha256))
+        plan = dataclasses.replace(plan, raw_verdict=loaded.status,
+                                   raw_identity=(loaded.older_sha256, loaded.newer_sha256))
         budget.check()
     inputs = plan.inputs()
     prior = None if previous is None else previous._identity_inputs
@@ -412,7 +420,7 @@ def resolve_plan(plan: Plan, *, limits: UnifiedLimits = DEFAULT_LIMITS, registry
             budget.check()
             object.__setattr__(inputs, '_manual_digest', prior._manual_digest)
     identity = plan_identity(inputs, plan.addr(), plan.sources, registry, limits, ir=plan.ir_digests(),
-                             residual=plan.residual, budget=budget)
+                             ir_keys=plan.ir_keys(), residual=plan.residual, budget=budget)
     budget.check()
     resolved = dataclasses.replace(plan, identity=identity)
     object.__setattr__(resolved, '_identity_inputs', inputs)
@@ -845,7 +853,8 @@ def publish(service, request: UnifiedRequest, output: WorkerOutput, *, enrichmen
                                   duration_ms=output.compute_ms))
         stages.extend(output.stages)
         expected = plan_identity(plan.inputs(raw_status=report.raw_status or plan.raw_status), plan.addr(),
-                                 plan.sources, REGISTRY, limits, ir=plan.ir_digests(), residual=plan.residual)
+                                 plan.sources, REGISTRY, limits, ir=plan.ir_digests(), ir_keys=plan.ir_keys(),
+                                 residual=plan.residual)
         if report.result_id != expected.result_id:
             raise fail('PT-UNIFIED-STORE', 'result-id-mismatch')
         t = time.monotonic()

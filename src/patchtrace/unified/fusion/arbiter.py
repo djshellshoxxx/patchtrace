@@ -231,7 +231,7 @@ def decide(atoms: Sequence[Atom], groups: Sequence[SourceGroup], nodes: Mapping 
         for rva in nodes_:
             budget.tick()
             lost = adj.get(rva, [])
-            hints = []
+            hints = [f'one-sided-by:{s}' for s in sorted({a.source for a in table.get(rva, ())})]
             if lost:
                 others = [(e[1] if side == 'older' else e[0]) for e in lost]
                 other_group = group_new if side == 'older' else group_old

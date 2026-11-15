@@ -121,7 +121,7 @@ class WorkerReport(_Strict):
     reason: str | None = Field(default=None, max_length=48)
     status: Literal['complete', 'partial'] | None = None
     result_id: str | None = Field(default=None, pattern=r'^[0-9a-f]{64}$')
-    raw_status: Literal['ok', 'missing', 'hash-mismatch', 'unparsable'] | None = None
+    raw_status: Literal['ok', 'missing', 'hash-mismatch', 'unparsable', 'identity-mismatch'] | None = None
     rows: int = Field(default=0, ge=0)
     facts: int = Field(default=0, ge=0)
     limitations: tuple[str, ...] = Field(default=(), max_length=64)
