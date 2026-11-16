@@ -160,9 +160,9 @@ def inspect_artifact(path: Path, side: str, root: Path, *,
     stage: Path | None = None
     try:
         before = source.stat()
-        before_fingerprint = file_fingerprint(source)
         if not stat.S_ISREG(before.st_mode):
             raise ValueError('PT-INPUT: input must be a regular file')
+        before_fingerprint = file_fingerprint(source)
         if not 1 <= before.st_size <= MAX_ARTIFACT_BYTES:
             raise ValueError('PT-INPUT: input exceeds 1 GiB or is empty')
         destdir = safe_path(root, 'artifacts')
