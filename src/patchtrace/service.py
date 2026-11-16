@@ -249,9 +249,11 @@ class ProjectService:
                     # Record before exclusive publication: an interrupt can land after linking succeeds.
                     created.append((destination, stage.stat()))
                     os.link(stage, destination)  # never overwrite a foreign file published concurrently
-                    destination.chmod(0o444)
                 finally:
                     stage.unlink(missing_ok=True)
+                # Hard links share the Windows read-only attribute. Remove the
+                # staging name before protecting the published inode.
+                destination.chmod(0o444)
             owned_run.raw_path, owned_run.raw_sha256 = relative, digest
             prepared = PreparedImport(candidate.id, candidate.revision, owned_run, tuple(normalized),
                                       self.store.file_fingerprint(destination))
