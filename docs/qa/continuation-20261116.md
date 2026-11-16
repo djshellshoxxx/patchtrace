@@ -28,7 +28,8 @@ branches remain intact. This is not an exhaustive audit of all historical code.
 | #295 test reliability | Integrated | Serial and xdist pathguard tests, explicit PyYAML dependency |
 | #289 large integration | Preserved, not merged wholesale | Diverged 331-file delta; selective recovery from focused branches |
 | #282 research prototypes | Preserved as research | Not product-wired or qualified |
-| Analyst accessibility branch | Not integrated in this checkpoint | Unique work remains for feature-level review |
+| Analyst accessibility branch | Three feature/help commits recovered; trackers excluded | Independent 290-test Qt/help review; deleted-worker retry fixed |
+| Late live-proof measurement fixes | Selectively recovered e6a8d1df + 18efb7ef | Empty oracle refusal, build-root provenance, exported seeds and truthful verdict breakdown |
 
 ## Feature queue
 
@@ -36,7 +37,7 @@ branches remain intact. This is not an exhaustive audit of all historical code.
 |---|---|---|---|
 | CLI-CORE | Project, compare, profile, doctor | Implemented locally | Final combined and hosted platform checks |
 | CLI-RUNTIME | Inspect/install offline runtime | Implemented locally | Native/frozen Windows and final combined checks |
-| CLI-REST | Corrections and review commands | PARTIAL/MISSING | Recover unfinished spec/code, implement and independently test |
+| CLI-REST | Corrections and review commands | Implemented locally | Exact-head hosted/frozen acceptance; bounded atomic import/export regressions passed |
 | SEC | Hostile input, ZIP, PE, process boundaries | Implemented locally | Final combined/platform checks; no global vulnerability-free claim |
 | RZ | Ambiguous ownership and legacy evidence | Implemented locally | Final combined and native gates |
 | KB-K3 | Held-project desktop loader | Implemented locally | Native Windows and measured large-project latency |
@@ -92,6 +93,21 @@ Detailed installed-tool and native blockers: [native qualification](native-quali
 - Runtime CLI: inspect Windows/Linux archives without execution; install only on supported host with explicit confirmation and exact SHA. Track only newly owned directories for cleanup and preserve published installations on interruption.
 - Linux bundles: producer retains safe executable bits; installer restores only safe modes and refuses missing launcher metadata. Independent runtime/offline selection: 128 passed.
 - Secondary CLI facade: extract existing orchestration to `secondary/cli_import.py`; preserve the CLI seam guard and no-Qt/import-order behavior (38 focused tests passed).
+
+## Final core implementation batch
+
+- Corrections list/export/import/undo and review match/finding/note are implemented through isolated CLI modules. The historical draft was repaired before integration: duplicate targets, stale plans, unbounded planning, export races, size asymmetry, missing cancellation and postcommit state reconciliation all gained regressions. Independent 152 passed/1 skipped; worker final 273 passed/1 skipped.
+- Accessibility: export tab order/mnemonics/focus behavior, Files/signing announcements and explicit retry recovered. A deleted inspection worker caused a real Qt retry exception; identity-bound pointer clearing fixes it. Independent 290 tests passed. Native screen-reader acceptance remains unverified.
+- Measurement: recover only late live-proof changes, reject same-source qualification whenever either inventory is empty, normalize build-root provenance, export planted mutation functions and expose unpaired/mispaired verdicts. Independent tests pass with unavailable compiler cases skipped; no accuracy improvement claimed.
+- Complete ancestry/patch inventory is stored in [branch-inventory-20261116.json](branch-inventory-20261116.json), pinned to `90071d2e1a9688166376c467c9752b99e17a8654`: 297 refs, 118 MERGED, 16 EQUIVALENT, 56 SUPERSEDED, 20 DOCS, 41 LIVE, 46 STALE. Patch uniqueness is not semantic uniqueness; the generated count is not an unfinished-feature count.
+
+## Final validation and blockers
+
+The full diagnostic run collected 21,682 tests. It confirmed the AF_UNIX socket test failure, then lost workers in large/stress fixtures and subsequent worker restarts. It was stopped without a full-suite pass claim. The socket failure independently reproduces on unchanged main `74010784` and isolated stdlib Python (`PermissionError`, errno 1 before bind). Worker termination causes are not proven; memory/resource exhaustion is a hypothesis, not a diagnosis. No test was weakened or skipped to make these disappear.
+
+Fresh-process deterministic-world and workflow-dependency controls both pass. A bounded single-process large-ladder check is recorded separately when available. Hosted CI, original Windows timeout-pair reproduction, clean-machine package/manual GUI and assistive-technology acceptance remain required. Original pair bytes and original logs are absent; the local machine lacks native runtimes and supported corpus compilers.
+
+Final affected-code integration verification: **2,442 passed, 6 skipped** across 61 test files in eight serial batches. The last integration defect was a missing full-path corrections-spec registry citation; repaired, then the entire affected batch reran successfully. Exact file lists and summaries are in [continuation-tests-20261116.json](continuation-tests-20261116.json). The 60k ladder passed independently in 14.94 seconds; two fresh-process deterministic-world/dependency controls passed. These results do not replace the incomplete full-suite gate. Latest hosted results are maintained in PR #297. Ruff, dependency consistency, schema regeneration and diff hygiene passed. Scope review has no remaining confirmed blocking finding in the integrated changes; this is not an assertion that every historical branch or the entire application has been exhaustively audited.
 
 ## Continuation
 

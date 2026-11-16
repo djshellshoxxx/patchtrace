@@ -3,9 +3,10 @@
 ## 2026-11-16 continuation
 
 Current integration: `codex/release-integration-20261116`; see
-[checkpoint](../docs/qa/continuation-20261116.md). Core historical ports and
-review repairs are under final combined validation. Corrections/review
-CLI, further historical consolidation and native/release acceptance remain open.
+[checkpoint](../docs/qa/continuation-20261116.md). Core historical ports, review repairs and the remaining core CLI verbs are implemented
+on the integration branch. Hosted CI, further historical semantic review and
+native/release acceptance remain open; full local verification hit environment
+and worker-termination blockers documented in the checkpoint.
 
 ## P1 — Recurring Windows comparison timeout (reported 2026-11-06)
 

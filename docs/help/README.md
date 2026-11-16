@@ -113,3 +113,6 @@ Every verb is also listed by `patchtrace --help`. Each page gives the verb's sub
 - [`doctor`](82-cli-doctor.md) - health report of the installation (starts no program)
 
 - [Offline runtime CLI](83-cli-runtime.md)
+
+- [Manual corrections CLI](79-cli-corrections.md)
+- [Review CLI](80-cli-review.md)

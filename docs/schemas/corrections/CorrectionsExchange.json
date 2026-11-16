@@ -1,0 +1,264 @@
+{
+  "$defs": {
+    "Correction": {
+      "additionalProperties": false,
+      "properties": {
+        "category": {
+          "enum": [
+            "modified",
+            "added",
+            "removed",
+            "unmatched",
+            "ambiguous",
+            "split",
+            "merged",
+            "unchanged"
+          ],
+          "title": "Category",
+          "type": "string"
+        },
+        "newer": {
+          "items": {
+            "$ref": "#/$defs/Member"
+          },
+          "maxItems": 256,
+          "title": "Newer",
+          "type": "array"
+        },
+        "note": {
+          "maxLength": 32767,
+          "minLength": 1,
+          "title": "Note",
+          "type": "string"
+        },
+        "older": {
+          "items": {
+            "$ref": "#/$defs/Member"
+          },
+          "maxItems": 256,
+          "title": "Older",
+          "type": "array"
+        }
+      },
+      "required": [
+        "older",
+        "newer",
+        "category",
+        "note"
+      ],
+      "title": "Correction",
+      "type": "object"
+    },
+    "Member": {
+      "additionalProperties": false,
+      "properties": {
+        "address": {
+          "anyOf": [
+            {
+              "maxLength": 64,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Address"
+        },
+        "id": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Id"
+        },
+        "name": {
+          "maxLength": 4096,
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "Member",
+      "type": "object"
+    },
+    "Pair": {
+      "additionalProperties": false,
+      "properties": {
+        "newer_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Newer Sha256",
+          "type": "string"
+        },
+        "older_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Older Sha256",
+          "type": "string"
+        }
+      },
+      "required": [
+        "older_sha256",
+        "newer_sha256"
+      ],
+      "title": "Pair",
+      "type": "object"
+    },
+    "Review": {
+      "additionalProperties": false,
+      "properties": {
+        "findings": {
+          "items": {
+            "$ref": "#/$defs/ReviewedFinding"
+          },
+          "maxItems": 10000,
+          "title": "Findings",
+          "type": "array"
+        },
+        "matches": {
+          "items": {
+            "$ref": "#/$defs/ReviewedMatch"
+          },
+          "maxItems": 100000,
+          "title": "Matches",
+          "type": "array"
+        }
+      },
+      "required": [
+        "matches",
+        "findings"
+      ],
+      "title": "Review",
+      "type": "object"
+    },
+    "ReviewedFinding": {
+      "additionalProperties": false,
+      "properties": {
+        "conclusion": {
+          "maxLength": 32767,
+          "title": "Conclusion",
+          "type": "string"
+        },
+        "digest": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Digest",
+          "type": "string"
+        },
+        "id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "unreviewed",
+            "accepted",
+            "rejected",
+            "needs-review"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "summary": {
+          "maxLength": 4096,
+          "title": "Summary",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "digest",
+        "summary",
+        "status",
+        "conclusion"
+      ],
+      "title": "ReviewedFinding",
+      "type": "object"
+    },
+    "ReviewedMatch": {
+      "additionalProperties": false,
+      "properties": {
+        "newer": {
+          "items": {
+            "$ref": "#/$defs/Member"
+          },
+          "maxItems": 256,
+          "title": "Newer",
+          "type": "array"
+        },
+        "older": {
+          "items": {
+            "$ref": "#/$defs/Member"
+          },
+          "maxItems": 256,
+          "title": "Older",
+          "type": "array"
+        },
+        "status": {
+          "enum": [
+            "unreviewed",
+            "accepted",
+            "rejected",
+            "needs-review"
+          ],
+          "title": "Status",
+          "type": "string"
+        }
+      },
+      "required": [
+        "older",
+        "newer",
+        "status"
+      ],
+      "title": "ReviewedMatch",
+      "type": "object"
+    }
+  },
+  "$id": "https://patchtrace.local/schemas/corrections-exchange/1/CorrectionsExchange.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "contract": {
+      "const": "corrections-exchange/1",
+      "title": "Contract",
+      "type": "string"
+    },
+    "corrections": {
+      "items": {
+        "$ref": "#/$defs/Correction"
+      },
+      "maxItems": 2000,
+      "title": "Corrections",
+      "type": "array"
+    },
+    "pair": {
+      "$ref": "#/$defs/Pair"
+    },
+    "review": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Review"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    }
+  },
+  "required": [
+    "contract",
+    "pair",
+    "corrections"
+  ],
+  "title": "CorrectionsExchange",
+  "type": "object"
+}

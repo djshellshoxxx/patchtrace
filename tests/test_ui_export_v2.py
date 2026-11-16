@@ -76,7 +76,7 @@ def test_new_rows_follow_destination_and_names_are_accessible(qtbot, window):
     form = dialog.findChild(type(dialog.layout().itemAt(0).layout()))
     labels = [form.itemAt(r, form.ItemRole.LabelRole).widget().text() for r in range(form.rowCount())
               if form.itemAt(r, form.ItemRole.LabelRole)]
-    assert labels[:5] == ['Format', 'Destination', 'Contract', 'Profile', 'Sections']
+    assert labels[:5] == ['Format', 'Destination', '&Contract', '&Profile', '&Sections']
     for widget, key in ((dialog.contract, 'contract'), (dialog.profile, 'profile'),
                         (dialog.sections_list, 'sections')):
         assert widget.accessibleName() == export_vm.ACCESSIBLE_NAMES[key] and widget.toolTip()

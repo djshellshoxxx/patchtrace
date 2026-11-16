@@ -1350,3 +1350,5 @@ unchanged. Tests: `test_kb_product_start_20261106.py`,
 
 | offline runtime CLI | runtime_cli.py; cli_commands/runtime.py | Headless bounded archive inspection and confirmed installation through offline_bundle services; ownership-checked empty ancestor cleanup | offline_bundle, backend_bundle | tests/test_runtime_cli.py; synthetic archives, no runtime execution |
 | secondary CLI dispatch | secondary/cli_import.py | Qt-free secondary command orchestration: input preflight, reconciliation and import/run dispatch; cli.py is a lazy delegate | secondary services, CLI presentation helpers imported at dispatch | CLI import/reconcile/run and no-Qt module import regression tests |
+
+| manual corrections exchange and review CLI | corrections_exchange.py; corrections_cli.py; review_cli.py; cli_commands/corrections.py; cli_commands/review.py | Bound transactional correction exchange, immutable export, headless reviews through ProjectService | persistence, models, service | tests/test_corrections_cli.py; tests/test_review_cli.py; synthetic fixtures |

@@ -136,6 +136,7 @@ class BuildResult:
     compiler_version: str
     source_digest: str
     input_files: dict[str, str] = field(default_factory=dict)
+    source_dirs: tuple[str, ...] = ()    # the scratch source directory the compiler may have recorded unmapped
 
 
 def _check_rel(rel: str) -> None:
@@ -280,6 +281,12 @@ def build(spec: BuildSpec, tools: Toolchain, store: Path, *, scratch_parent: Pat
             shutil.rmtree(scratch, ignore_errors=True)
 
 
+def source_dirs(src_dir: Path) -> tuple[str, ...]:
+    """Every spelling of the scratch source directory a compiler may record: as passed, and resolved (symlinked temp
+    parents such as /var -> /private/var; on Windows the long form of an 8.3 RUNNER~1 component)."""
+    return tuple(dict.fromkeys((str(src_dir), str(src_dir.resolve()))))
+
+
 def _build_in(spec: BuildSpec, tools: Toolchain, store: Path, root: Path, scratch: Path) -> BuildResult:
     src_dir, obj_dir, out_dir, tmp = (scratch / n for n in ('src', 'obj', 'out', 'tmp'))
     for d in (src_dir, obj_dir, out_dir, tmp):
@@ -379,7 +386,7 @@ def _build_in(spec: BuildSpec, tools: Toolchain, store: Path, root: Path, scratc
     (debug_dir / 'build.json').write_bytes(json.dumps(record, sort_keys=True, indent=1).encode('utf-8') + b'\n')
     return BuildResult(spec, recipe_digest, debug_dir / spec.output, engine_dir / spec.output, pdb_target,
                        engine_sha, debug_sha, pdb_sha, len(engine_img.data), engine_img.image_base, compiler,
-                       tools.get(compiler).version or 'unknown', source_digest, inputs)
+                       tools.get(compiler).version or 'unknown', source_digest, inputs, source_dirs(src_dir))
 
 
 def _runtime_archive(tools: Toolchain, spec: BuildSpec, scratch: Path, env: dict) -> str:

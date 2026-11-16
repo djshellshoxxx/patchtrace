@@ -1,6 +1,6 @@
 # Navigate panels with the keyboard
 
-Experimental: command-palette and panel-focus infrastructure exists in the reviewed framework source. Availability in your installed package is UNVERIFIED.
+The current source includes the command palette and panel-focus commands below. Check the **View** menu in an older installed package before assuming it contains the same controls.
 
 Use `Ctrl+Shift+P` to open the command palette. Search for an action by name, inspect its availability, and activate the intended command.
 
@@ -25,4 +25,6 @@ Use `Tab` and `Shift+Tab` between controls. Use arrow keys within tables, trees,
 
 Disabled commands can reflect a missing project, selection, dependency, or idle worker. Inspect the stated reason before retrying.
 
-Sources: src/patchtrace/gui/qt/commands.py; src/patchtrace/panel_manifest.py; README.md.
+For a first exercise, [open the synthetic sample](03-explore-the-sample.md). For reports, follow [Export](47-preview-and-export-reports.md).
+
+Sources: `src/patchtrace/gui/qt/commands.py`; `src/patchtrace/panel_manifest.py`; `src/patchtrace/ui.py`.

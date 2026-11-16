@@ -77,6 +77,24 @@ K5 SHOULD menu titles and dialog labels carry access keys (`&`). None do today (
 K6 MUST dialogs built by `dialog_buttons()` (`ui.py:167-173`) keep the standard OK and Cancel keys `[inf]`.
 K7 MUST each dock and panel have keyboard commands for show, hide, float and move (GUI plan 8.7, "Dock = Pane"). Close and Float are not focusable today, per that finding.
 
+### Export dialog implementation, 2026-11-09
+
+The Export dialog's report options use label buddies and access keys:
+`Alt+C` Contract, `Alt+P` Profile, and `Alt+S` Sections. Its explicit tab chain
+follows the displayed controls: Format, Destination, Browse, Contract, Profile,
+Sections, Include function code, Include analyst notes, Only selected findings,
+Preview, Write report, Cancel. Qt skips unavailable controls; Shift+Tab reverses
+the chain. Arrow keys and Space retain their native list and checkbox behavior.
+
+To implement SPEC-50 section 8, Return/Enter activates Write report only while
+that button has focus. Browse and Cancel likewise respond while focused; moving
+back to an option or the destination clears the button default. Normal text
+editing, combo popups, Space on a focused button, and Escape remain native Qt
+behavior. This is confined to `ui_export_v2.py`; other dialogs are unchanged.
+`tests/test_ui_export_accessibility.py` exercises real Qt focus and key events
+offscreen. These are automated proxies; Windows screen readers, focus rendering,
+and platform-specific assistive technology remain manual acceptance in section 9.
+
 ## 5. Shortcut registry
 
 S1 MUST one module own every shortcut: identifier, key sequence, `Qt.ShortcutContext`, owning panel, enabled rule and tooltip identifier. Only that module calls `setShortcut` or builds a `QShortcut`. A QAction's default context is `WindowShortcut` `[Q8]` `:367-371`; the contexts are `WidgetShortcut`, `WindowShortcut`, `ApplicationShortcut` and `WidgetWithChildrenShortcut` `[Q7]` `:1322-1327`. Today twelve keys are set in three places: Ctrl+N, Ctrl+O, F5, Escape, Ctrl+I, Ctrl+E, Ctrl+S, F1 and Ctrl+R (`ui.py:1542-1559`); Alt+Down and Alt+Up (`ui.py:1735-1736`); Ctrl+Shift+E (`ui_evidence.py:1311`).
