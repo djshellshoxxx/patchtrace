@@ -33,6 +33,12 @@ from .contracts import (
 
 MAGIC = b'SQLite format 3\x00'
 MAX_SIZE = 512 * 1024 * 1024
+MAX_FUNCTIONS = 100_000
+MAX_SCHEMA_OBJECTS = 256
+MAX_ALGORITHMS = 1024
+MAX_TOTAL_NAME_CHARS = 16 * 1024 * 1024
+MAX_SQLITE_RECORD_BYTES = 1024 * 1024
+LABEL_LIMIT = 256
 NAME_LIMIT = 64 * 1024  # characters per function name, as on the BinExport side
 MASK = 0xFFFF_FFFF_FFFF_FFFF
 DEFAULT_DEADLINE = 120.0     # seconds of wall clock for the whole import, checked by the progress handler
@@ -70,6 +76,7 @@ def _authorizer(action: int, arg1, arg2, dbname, source) -> int:
 
 
 def _harden(db: sqlite3.Connection, file_size: int) -> None:
+    db.setlimit(sqlite3.SQLITE_LIMIT_LENGTH, MAX_SQLITE_RECORD_BYTES)
     db.execute('PRAGMA trusted_schema=OFF')
     db.execute('PRAGMA query_only=1')
     db.execute('PRAGMA cell_size_check=ON')
@@ -123,9 +130,16 @@ def import_bindiff(path: Path, older_sha256: str, newer_sha256: str, *,
     if size > MAX_SIZE:
         raise SecondaryError('PT-SECONDARY-LIMIT', 'BinDiff file exceeds 512 MiB')
     digest = hashlib.sha256()
-    with path.open('rb') as handle:
-        while chunk := handle.read(1 << 20):
-            digest.update(chunk)
+    try:
+        total = 0
+        with path.open('rb') as handle:
+            while chunk := handle.read(1 << 20):
+                total += len(chunk)
+                if total > MAX_SIZE:
+                    raise SecondaryError('PT-SECONDARY-LIMIT', 'BinDiff file exceeds 512 MiB')
+                digest.update(chunk)
+    except OSError as exc:
+        raise _fail(f'cannot read BinDiff file: {type(exc).__name__}') from None
     try:
         db = sqlite3.connect(f'{path.as_uri()}?mode=ro&immutable=1', uri=True)
     except sqlite3.Error:
@@ -145,6 +159,8 @@ def import_bindiff(path: Path, older_sha256: str, newer_sha256: str, *,
         _harden(db, size)
         return _read(db, older_sha256, newer_sha256, digest.hexdigest(), expected_hashes)
     except (sqlite3.Error, UnicodeDecodeError, OverflowError) as exc:  # corrupt text/varints, not just pages
+        if getattr(exc, 'sqlite_errorcode', None) == sqlite3.SQLITE_TOOBIG:
+            raise SecondaryError('PT-SECONDARY-LIMIT', 'BinDiff SQLite record exceeds the safety limit') from None
         if expired:
             raise SecondaryError('PT-SECONDARY-LIMIT', f'BinDiff database import exceeded the '
                                  f'{deadline_seconds:g} s time limit') from None
@@ -174,7 +190,10 @@ def _preserve(source: Path, directory: Path) -> Path:
 def _check_schema_objects(db: sqlite3.Connection) -> set[str]:
     """Only plain tables and their indexes are acceptable; anything executable or indirect is refused."""
     tables: set[str] = set()
-    entries = db.execute('SELECT type, name, tbl_name, sql FROM sqlite_master').fetchall()
+    entries = db.execute('SELECT type, name, tbl_name, sql FROM sqlite_master LIMIT ?',
+                         (MAX_SCHEMA_OBJECTS + 1,)).fetchall()
+    if len(entries) > MAX_SCHEMA_OBJECTS:
+        raise SecondaryError('PT-SECONDARY-LIMIT', 'BinDiff schema object count exceeds the safety limit')
     for kind, name, _table, sql in entries:
         if kind in ('trigger', 'view'):
             raise _fail(f'BinDiff database contains a {kind}; refusing to read it')
@@ -199,7 +218,7 @@ def _read(db: sqlite3.Connection, older_sha256: str, newer_sha256: str, file_sha
         present = {row[1] for row in db.execute(f'PRAGMA table_info("{table}")')}
         if missing := columns - present:
             raise _fail(f'table {table!r} lacks columns {sorted(missing)}')
-    meta = db.execute('SELECT version, file1, file2, similarity, confidence FROM metadata').fetchall()
+    meta = db.execute('SELECT version, file1, file2, similarity, confidence FROM metadata LIMIT 2').fetchall()
     if len(meta) != 1:
         raise _fail('metadata must contain exactly one row')
     version, file1, file2, similarity, confidence = meta[0]
@@ -207,22 +226,35 @@ def _read(db: sqlite3.Connection, older_sha256: str, newer_sha256: str, file_sha
     to_milli(confidence, 'metadata.confidence')
     if not isinstance(version, str) or not version.startswith('BinDiff ') or len(version) <= 8:
         raise _fail('metadata.version is not a BinDiff version')
+    if len(version) > LABEL_LIMIT:
+        raise SecondaryError('PT-SECONDARY-LIMIT', 'BinDiff version text exceeds the safety limit')
     if (file1, file2) != (1, 2):
         raise _fail('metadata must reference file ids 1 and 2')
-    files = dict(db.execute('SELECT id, hash FROM file').fetchall())
-    if db.execute('SELECT COUNT(*) FROM file').fetchone()[0] != 2 or set(files) != {1, 2}:
+    file_rows = db.execute('SELECT id, hash FROM file LIMIT 3').fetchall()
+    files = dict(file_rows)
+    if len(file_rows) != 2 or set(files) != {1, 2}:
         raise _fail('file table must contain exactly ids 1 and 2')
     if not all(isinstance(files[i], str) for i in (1, 2)):
         raise _fail('file.hash must be text')
     want_older, want_newer = expected_hashes or (older_sha256, newer_sha256)
     check_pair(files[1], files[2], want_older.strip().lower(), want_newer.strip().lower())
     algorithms = {}
-    for ident, name in db.execute('SELECT id, name FROM functionalgorithm'):
+    for index, (ident, name) in enumerate(db.execute('SELECT id, name FROM functionalgorithm LIMIT ?',
+                                                    (MAX_ALGORITHMS + 1,))):
+        if index >= MAX_ALGORITHMS:
+            raise SecondaryError('PT-SECONDARY-LIMIT', 'BinDiff algorithm count exceeds the safety limit')
         if not isinstance(name, str) or not name.strip():
             raise _fail('functionalgorithm row without a name')
+        if len(name) > LABEL_LIMIT:
+            raise SecondaryError('PT-SECONDARY-LIMIT', 'BinDiff algorithm name exceeds the safety limit')
         algorithms[ident] = name
     engine_version = version[len('BinDiff '):]
+    count = db.execute('SELECT COUNT(*) FROM (SELECT 1 FROM function LIMIT ?)',
+                       (MAX_FUNCTIONS + 1,)).fetchone()[0]
+    if count > MAX_FUNCTIONS:
+        raise SecondaryError('PT-SECONDARY-LIMIT', 'BinDiff function count exceeds the safety limit')
     matches = []
+    name_chars = 0
     for row in db.execute('SELECT address1, name1, address2, name2, similarity, confidence, flags, algorithm, basicblocks '
                           'FROM function ORDER BY address1, address2'):
         address1, name1, address2, name2, similarity, confidence, flags, algorithm, basicblocks = row
@@ -230,6 +262,10 @@ def _read(db: sqlite3.Connection, older_sha256: str, newer_sha256: str, file_sha
             raise _fail(f'function.algorithm {algorithm!r} has no functionalgorithm row')
         sim_milli, sim_text = to_milli(similarity, 'function.similarity')
         conf_milli, conf_text = to_milli(confidence, 'function.confidence')
+        name1, name2 = _name(name1), _name(name2)
+        name_chars += len(name1 or '') + len(name2 or '')
+        if name_chars > MAX_TOTAL_NAME_CHARS:
+            raise SecondaryError('PT-SECONDARY-LIMIT', 'BinDiff aggregate function names exceed the safety limit')
         matches.append(SecondaryMatch(
             engine='bindiff', engine_version=engine_version,
             older_address=_address(address1), newer_address=_address(address2),

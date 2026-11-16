@@ -465,6 +465,7 @@ def _publish_no_replace(stage: Path, destination: Path) -> None:
 
 
 def install_offline_bundle(plan: OfflineBundlePlan, runtimes_root: Path, *,
+                           created_directories: list[tuple[Path, os.stat_result]] | None = None,
                            cancel: threading.Event | None = None,
                            event: Callable[[str], None] | None = None) -> InstalledRuntime:
     """Verify again, extract to private staging, publish atomically, never overwrite."""
@@ -481,6 +482,15 @@ def install_offline_bundle(plan: OfflineBundlePlan, runtimes_root: Path, *,
         if 'SHA-256 differs' in str(exc):
             _fail('bundle changed after inspection: archive SHA-256 differs')
         raise
+    if verified.platform == 'linux':
+        try:
+            with zipfile.ZipFile(verified.archive, 'r') as archive:
+                for launcher in (verified.python_relative, verified.java_relative + '/bin/java'):
+                    info = archive.getinfo(launcher)
+                    if info.create_system != 3 or not (info.external_attr >> 16) & 0o100:
+                        _fail('Linux launcher lacks executable metadata; rebuild the archive from executable files')
+        except (*_READ_ERRORS, KeyError) as exc:
+            _fail(f'cannot verify Linux launcher metadata ({type(exc).__name__})')
     destination = destination_root / verified.runtime_id
     _no_symlink_ancestors(destination)
     disk_path = destination_root
@@ -494,7 +504,20 @@ def install_offline_bundle(plan: OfflineBundlePlan, runtimes_root: Path, *,
         _fail('cannot determine available disk space for offline backend')
     if destination.exists():
         _fail('runtime already installed; existing files were not overwritten')
-    destination_root.mkdir(parents=True, exist_ok=True)
+    missing = []
+    parent = destination_root
+    while not parent.exists():
+        missing.append(parent)
+        parent = parent.parent
+    for directory in reversed(missing):
+        try:
+            directory.mkdir()
+        except FileExistsError:
+            if not directory.is_dir():
+                raise
+        else:
+            if created_directories is not None:
+                created_directories.append((directory, directory.stat()))
     lock = destination_root / f'.runtime-{verified.runtime_id}.lock'
     stage = None
     lock_fd = None
@@ -517,6 +540,10 @@ def install_offline_bundle(plan: OfflineBundlePlan, runtimes_root: Path, *,
                 with zf.open('payload/' + item.path) as src, target.open('xb') as output:
                     _verify_stream(src, item, cancel, output)
                     output.flush()
+                if verified.platform == 'linux' and os.name != 'nt':
+                    info = zf.getinfo('payload/' + item.path)
+                    execute = (info.external_attr >> 16) & 0o111 if info.create_system == 3 else 0
+                    target.chmod(0o644 | execute)  # never adopt special bits or group/world write permissions
                 if event is not None:
                     event(f'Verified {index + 1} of {verified.file_count} files')
         (stage / 'manifest.json').write_bytes(verified.manifest_bytes)
@@ -622,7 +649,9 @@ def build_offline_bundle(source_payload: Path, runtime_id: str, versions: Mappin
                     _fail('payload changed during packaging')
                 header = zipfile.ZipInfo('payload/' + relative, date_time=(1980, 1, 1, 0, 0, 0))
                 header.compress_type = zipfile.ZIP_DEFLATED
-                header.external_attr = 0o100644 << 16
+                header.create_system = 3
+                execute = path.stat().st_mode & 0o111 if platform == 'linux' else 0
+                header.external_attr = (0o100644 | execute) << 16
                 with path.open('rb') as stream, output.open(header, 'w') as member:
                     while chunk := stream.read(CHUNK):
                         member.write(chunk)

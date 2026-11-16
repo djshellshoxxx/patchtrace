@@ -1347,3 +1347,6 @@ binds pending repair to its exact original scope/source subset. New-reader
 repair is required for those journals; public schemas and SQL version stay
 unchanged. Tests: `test_kb_product_start_20261106.py`,
 `test_kb_product_acceptance_20261106.py`, plus existing service/recovery journeys.
+
+| offline runtime CLI | runtime_cli.py; cli_commands/runtime.py | Headless bounded archive inspection and confirmed installation through offline_bundle services; ownership-checked empty ancestor cleanup | offline_bundle, backend_bundle | tests/test_runtime_cli.py; synthetic archives, no runtime execution |
+| secondary CLI dispatch | secondary/cli_import.py | Qt-free secondary command orchestration: input preflight, reconciliation and import/run dispatch; cli.py is a lazy delegate | secondary services, CLI presentation helpers imported at dispatch | CLI import/reconcile/run and no-Qt module import regression tests |

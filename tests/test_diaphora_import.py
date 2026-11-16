@@ -255,3 +255,47 @@ def test_result_changed_after_binding_is_refused(tmp_path):
     with pytest.raises(DiaphoraError) as exc:
         do_import(path, expected_result_sha256='f' * 64)
     assert exc.value.code == 'PT-DIAPHORA-PROVENANCE'
+
+
+@pytest.mark.parametrize('sql', [
+    ('ALTER TABLE results RENAME TO private_rows',
+     'CREATE VIEW results AS SELECT rowid AS rowid, * FROM private_rows'),
+    ('CREATE TRIGGER hidden_trigger AFTER INSERT ON results BEGIN DELETE FROM unmatched; END',),
+])
+def test_indirect_schema_objects_are_refused(tmp_path, sql):
+    path = make_result(tmp_path / 'indirect.diaphora', [row()], extra_sql=sql)
+    assert code_of(lambda: result_import.inspect_result(path)) == 'PT-DIAPHORA-DB'
+
+
+@pytest.mark.parametrize('declaration', ['CREATE VIRTUAL TABLE', 'CREATE/* comment */VIRTUAL\nTABLE',
+                                        'cReAtE-- comment\nViRtUaL/**/TABLE'])
+def test_virtual_tables_are_refused_even_when_unrelated(tmp_path, declaration):
+    try:
+        path = make_result(tmp_path / 'virtual.diaphora', [row()], extra_sql=(
+            f'{declaration} hidden_index USING rtree(id, min_x, max_x)',))
+    except sqlite3.OperationalError as exc:
+        if 'no such module: rtree' in str(exc):
+            pytest.skip('SQLite build has no rtree module')
+        raise
+    assert code_of(lambda: result_import.inspect_result(path)) == 'PT-DIAPHORA-DB'
+
+
+def test_plain_extra_tables_and_indexes_are_accepted_but_not_readable(tmp_path):
+    path = make_result(tmp_path / 'plain.diaphora', [row()], extra_sql=(
+        'CREATE TABLE unrelated(value TEXT)', "INSERT INTO unrelated VALUES ('authored sentinel')",
+        'CREATE INDEX result_address_index ON results(address)',
+        'ALTER TABLE results ADD COLUMN extra_field TEXT',))
+    assert len(do_import(path).matches) == 1
+    with sqlite_guard.open_snapshot(path) as snap:
+        assert snap.count('results') == 1
+        assert len(list(snap.rows('results', 1))) == 1
+        for query in ('SELECT value FROM unrelated', 'SELECT extra_field FROM results',
+                      'SELECT name FROM sqlite_master'):
+            with pytest.raises(sqlite3.DatabaseError):
+                snap.conn.execute(query).fetchall()
+
+
+def test_sqlite_case_insensitive_table_names_remain_accepted(tmp_path):
+    path = make_result(tmp_path / 'case.diaphora', [row()], extra_sql=(
+        'ALTER TABLE results RENAME TO renamed_results', 'ALTER TABLE renamed_results RENAME TO Results',))
+    assert len(do_import(path).matches) == 1

@@ -4,7 +4,7 @@
 
 Current integration: `codex/release-integration-20261116`; see
 [checkpoint](../docs/qa/continuation-20261116.md). Core historical ports and
-review repairs are under final combined validation. Runtime/corrections/review
+review repairs are under final combined validation. Corrections/review
 CLI, further historical consolidation and native/release acceptance remain open.
 
 ## P1 — Recurring Windows comparison timeout (reported 2026-11-06)

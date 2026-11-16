@@ -269,7 +269,7 @@ read-only behavior and cancellation; synthetic tests do not qualify native runti
 | export | JSON, Markdown and HTML report export through `cli_commands/export.py` | `report-export-contract-v2.md` |
 | import | no generic top-level verb; typed imports include `project import-json`, `intelligence import` and `secondary import-bindiff` | owner specification of each input format |
 | show | no generic top-level verb; use `project info`, `project runs`, `profile show`, `unified show` or `unified explain` | owner specification of each result type |
-| runtime | specified, not implemented | `cli-profile-doctor-runtime.md` section 4 |
+| runtime | inspect a local archive and explicitly install a verified archive | `cli-profile-doctor-runtime.md` section 4 |
 
 `diff`, `config` and `interpret` remain unbriefed top-level proposals. They are not
 implemented by this headless workflow slice.

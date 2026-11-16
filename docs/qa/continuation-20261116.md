@@ -35,7 +35,8 @@ branches remain intact. This is not an exhaustive audit of all historical code.
 | ID | Feature | State | Remaining work / acceptance |
 |---|---|---|---|
 | CLI-CORE | Project, compare, profile, doctor | Implemented locally | Final combined and hosted platform checks |
-| CLI-REST | Runtime, corrections, review commands | PARTIAL/MISSING | Recover unfinished spec/code, implement and independently test |
+| CLI-RUNTIME | Inspect/install offline runtime | Implemented locally | Native/frozen Windows and final combined checks |
+| CLI-REST | Corrections and review commands | PARTIAL/MISSING | Recover unfinished spec/code, implement and independently test |
 | SEC | Hostile input, ZIP, PE, process boundaries | Implemented locally | Final combined/platform checks; no global vulnerability-free claim |
 | RZ | Ambiguous ownership and legacy evidence | Implemented locally | Final combined and native gates |
 | KB-K3 | Held-project desktop loader | Implemented locally | Native Windows and measured large-project latency |
@@ -77,10 +78,20 @@ external professional certification or the entire application.
 - Local dependency consistency, protobuf 7.36.2/upb, Ruff and diff checks passed.
 - Schema regeneration produced no drift at the checked integration state.
 - First whole-suite attempt stopped at collection: a timestamp in a gzip parameter changed test IDs across workers. Fixed with `mtime=0`; 33 tests passed under four workers. No whole-suite pass is inferred.
-- Final combined test results and exact code/tree identity are recorded below when complete.
+- The next whole-suite attempt lost one worker, recorded failures, then stopped progressing at 99%; interrupted without a pass claim. One confirmed failure was the CLI seam budget, repaired by extracting secondary orchestration rather than weakening its guard.
+- A full diagnostic run with per-test names and 120-second faulthandler traces follows the second integration batch. Latest exact-head results are maintained in [PR #297](https://github.com/djshellshoxxx/patchtrace/pull/297).
+- Published checkpoint `f403f81b58a0cdc2d3869810294681527f8268a2` (tree `24c3afe2c2abf5231c7743e169e8e40a05097ff7`) passed hosted rz-diff on Windows and Linux (`43837495435`), BinDiff acceptance (`43837495493`), and dependency-wheel checks. These are workflow fixture qualifications, not the original Windows pair or a release acceptance claim.
 
 Detailed security evidence: [security integration](security-integration-20261116.md).
 Detailed installed-tool and native blockers: [native qualification](native-qualification-20261116.md).
+
+## Second bounded batch
+
+- Diaphora: reject views/triggers/virtual tables before result processing; permit only approved table/column reads, retaining mixed-case compatibility. Independent 70-test selection plus compatibility regression passed.
+- BinDiff: cap function/schema/algorithm counts, row bytes and aggregate names before unbounded model allocation; preserve exact-limit acceptance; classify post-exit filesystem errors; reject missing CLI input before project mutation. Lead diff review and bounded/golden regression selections passed.
+- Runtime CLI: inspect Windows/Linux archives without execution; install only on supported host with explicit confirmation and exact SHA. Track only newly owned directories for cleanup and preserve published installations on interruption.
+- Linux bundles: producer retains safe executable bits; installer restores only safe modes and refuses missing launcher metadata. Independent runtime/offline selection: 128 passed.
+- Secondary CLI facade: extract existing orchestration to `secondary/cli_import.py`; preserve the CLI seam guard and no-Qt/import-order behavior (38 focused tests passed).
 
 ## Continuation
 

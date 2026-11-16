@@ -333,3 +333,10 @@ Implemented P1-P5 against fakes; P6 (live run, real pin, real golden) stays open
 ### Cancellable private copying (2026-11-05)
 
 `copy_and_hash(source, destination, *, max_bytes=MAX_BINEXPORT_BYTES, check=None)` optionally invokes a no-argument callback before each bounded 1 MiB read, including the first read of an empty file. A `SecondaryError` raised by the callback propagates; existing `OSError` handling still maps filesystem failures to a workdir error. Copying does not rewrite or remove the source. The exclusive destination may contain a partial private copy, which the owning temporary working directory discards. Callers without a callback retain existing behavior and must still compare the returned digest against their validated identity. No persisted contract changes.
+
+
+### Import resource bounds and post-exit failures (2026-11-16)
+
+The in-process SQLite importer rejects more than 100,000 function rows before allocating match models, more than 256 schema objects, or more than 1,024 function algorithms. Metadata/file queries fetch at most two/three rows to enforce their exact cardinalities. Aggregate function-name characters are capped at 16 Mi characters; algorithm names and the metadata version at 256 characters. SQLite's decoded record length is capped at 1 MiB before reads. These are conservative application import budgets, not native-process memory caps or measured platform RSS guarantees. Exceeding a resource budget returns `PT-SECONDARY-LIMIT`, never a truncated successful set.
+
+Final output size is rechecked before hashing or preservation, including output written between supervision polls. Post-exit directory listing, stat, or hash failures return `PT-SECONDARY-RUN`, kind `output-invalid`; no result is published and private work directories are cleaned. A database changed or unreadable during input hashing is a typed input error. Missing/unreadable `secondary import-bindiff` input is rejected before opening the project or creating its raw preservation directory.
