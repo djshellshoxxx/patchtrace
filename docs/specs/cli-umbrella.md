@@ -254,19 +254,25 @@ The owner check searched each owner spec for the literal flag; "not named" means
 | 14 | backend selftest | `--timeout` | `BUNDLE-integration-plan.md`: not named | new |
 | 15 | several | no help text: `rank --disable` (`cli.py:71`); `flags --run`, `--feature-id`, `--dry-run` (`:79-81`); `correlate --cve`, `--run`, `--dry-run` (`:87, 95-96`); `cache --target-bytes` (`:101`); `acquire fetch --project-name` (`:113`); `series create --labels` (`:123`); `secondary rzdiff --timeout` (`:153`); `intel-tools run --floss-min-length`, `--diec-heuristic`, `--no-cache`, `--ghidra-dir`, `--java-home` (`intelligence/tools/cli.py:53, 55, 63, 57-58`) | none | help gap |
 
-## 7. Decisions on doctor, export, import, show, project [proposal]
+## 7. Headless workflow verbs
 
-Default for all five: not in the alpha. The audit left them open (`spec-gaps-20261014.md:41`); `completeness-audit.md:40` records them as not implemented.
+The earlier proposal to omit project and doctor is superseded by the implemented
+registry commands below. Their owner specifications define flags, exit codes,
+read-only behavior and cancellation; synthetic tests do not qualify native runtimes.
 
-| Verb | State at HEAD | Source | Proposal |
-|---|---|---|---|
-| doctor | no verb | `completeness-audit.md:40` | [proposal] not in alpha. Diagnosis stays with `backend diagnose` (`backend_cli.py:46`) and `intel-tools probe`. |
-| export | no verb; RPT2 specifies `export PROJECT --format json\|md\|html` with exits 0/2/3/4/5 | `docs/specs/report-export-contract-v2.md:121` (status: draft for build) | [proposal] not in alpha. If the RPT2 build slice is approved it ships as `cli_commands/export.py` (section 9). Owner decision: RPT2 build or alpha. |
-| import | no verb; the two imports are `intelligence import` (`intelligence/cli.py:151`) and `secondary import-bindiff` (`cli.py:136`) | `cli.py:136` | [proposal] not in alpha. A generic `import` would hide two different inputs. |
-| show | `unified show` and `unified explain` exist (`unified/cli.py:53-62`) | `unified/cli.py` | [proposal] not in alpha. A top-level `show` would duplicate them. |
-| project | no code | `completeness-audit.md:40` | [proposal] not in alpha. Projects come from `acquire fetch`, `series create` and the desktop. |
+| Verb | Implemented behavior | Owner specification |
+|---|---|---|
+| project | create, sample, info, runs, import-json, backup and confirmed orientation swap | `cli-project-compare.md` section 3 |
+| compare | primary static analysis of one project pair through the existing backend and project service | `cli-project-compare.md` section 4 |
+| profile | list, show, validate, save and confirmed delete | `cli-profile-doctor-runtime.md` section 2 |
+| doctor | local health report without process execution or network access | `cli-profile-doctor-runtime.md` section 3 |
+| export | JSON, Markdown and HTML report export through `cli_commands/export.py` | `report-export-contract-v2.md` |
+| import | no generic top-level verb; typed imports include `project import-json`, `intelligence import` and `secondary import-bindiff` | owner specification of each input format |
+| show | no generic top-level verb; use `project info`, `project runs`, `profile show`, `unified show` or `unified explain` | owner specification of each result type |
+| runtime | specified, not implemented | `cli-profile-doctor-runtime.md` section 4 |
 
-Open, not briefed: `diff`, `config`, `interpret` (`completeness-audit.md:40`). Default: not in alpha; owner to decide.
+`diff`, `config` and `interpret` remain unbriefed top-level proposals. They are not
+implemented by this headless workflow slice.
 
 ## 8. Inconsistencies between verbs
 

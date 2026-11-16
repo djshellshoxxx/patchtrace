@@ -164,3 +164,16 @@ def test_ghidriff_wrong_hash_or_bad_json_is_failed(tmp_path):
 def test_ghidriff_absent_import_is_blocked(tmp_path):
     result = E.GhidriffImportProvider(tmp_path)(LABELS, 'hidden')
     assert result.status == 'blocked' and 'Ghidra/Java/Ghidriff are not run' in result.reason
+
+
+@posix_only
+def test_ambiguous_rzdiff_ownership_is_not_scored(tmp_path):
+    provider = E.RzDiffProvider(_store(tmp_path), executable=_fake_rz(
+        tmp_path, entries=[(1.0, 'COMPLETE', 0x1000, 0x1000)]))
+    result = provider(LABELS, 'hidden')
+    assert result.status == 'failed'
+    assert 'can swap older and newer sides without a trace' in result.reason
+    assert not result.predictions
+    report = E.evaluate([LABELS], [provider])
+    assert report['engines'][0]['status'] == 'failed'
+    assert report['strata'] == {}

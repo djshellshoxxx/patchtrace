@@ -75,7 +75,8 @@ class ProjectService:
         self.root = Path(root).resolve()
         self.project = project
         self.store = store
-        self._prepared: dict[str, tuple[PreparedImport, AnalysisRun, tuple[FunctionMatch, ...]]] = {}
+        self._prepared: dict[str, tuple[PreparedImport, AnalysisRun, tuple[FunctionMatch, ...],
+                                        tuple[tuple[Path, os.stat_result], ...]]] = {}
 
     @classmethod
     def create(cls, older: Path, newer: Path, name: str, root: Path) -> ProjectService:
@@ -132,7 +133,8 @@ class ProjectService:
         return export_project(committed, format, destination, project_root=self.root, **options)
 
     def close(self) -> None:
-        self._prepared.clear()
+        for owned in tuple(self._prepared.values()):
+            self.discard_import(owned[0])
         self.store.close()
 
     def backup(self, destination: Path) -> Path:
@@ -210,43 +212,59 @@ class ProjectService:
         run_dir = (self.root / 'runs' / run.id).resolve()
         in_place = (not source.is_symlink() and source.resolve().is_relative_to(run_dir)
                     and run.raw_path is not None and safe_path(self.root, run.raw_path) == source.resolve())
-        staged: Path | None = None
-        if in_place:
-            # H8: the backend already published the bytes inside this run's directory; keep one copy.
-            relative = run.raw_path
-            destination = source.resolve()
-            try:
-                destination.chmod(0o444)
-            except OSError:
+        created: list[tuple[Path, os.stat_result]] = []
+        try:
+            if in_place:
+                # H8: the backend already published the bytes inside this run's directory; keep one copy.
+                relative = run.raw_path
+                destination = source.resolve()
+                try:
+                    destination.chmod(0o444)
+                except OSError:
+                    pass
+            else:
+                relative = f'runs/{run.id}/raw/result.ghidriff.json'
+                destination = safe_path(self.root, relative)
+                for directory in (self.root / 'runs', destination.parent.parent, destination.parent):
+                    try:
+                        directory.mkdir()
+                    except FileExistsError:
+                        if not directory.is_dir():
+                            raise
+                    else:
+                        created.append((directory, directory.stat()))
+            if in_place:
                 pass
-        else:
-            relative = f'runs/{run.id}/raw/result.ghidriff.json'
-            destination = safe_path(self.root, relative)
-            destination.parent.mkdir(parents=True, exist_ok=True)
-        if in_place:
-            pass
-        elif destination.exists():
-            if destination.read_bytes() != raw_bytes:
-                raise ValueError('PT-STORAGE: preserved raw output cannot be replaced')
-        else:
-            staged = destination
-            fd, temporary = tempfile.mkstemp(prefix='.raw-', dir=destination.parent)
-            stage = Path(temporary)
-            try:
-                with os.fdopen(fd, 'wb') as stream:
-                    stream.write(raw_bytes)
-                    stream.flush()
-                    os.fsync(stream.fileno())
-                os.replace(stage, destination)
-                destination.chmod(0o444)
-            finally:
-                stage.unlink(missing_ok=True)
-        owned_run.raw_path, owned_run.raw_sha256 = relative, digest
-        prepared = PreparedImport(candidate.id, candidate.revision, owned_run, tuple(normalized),
-                                  self.store.file_fingerprint(destination))
-        self._prepared[run.id] = (prepared, owned_run.model_copy(deep=True),
-                                  tuple(match.model_copy(deep=True) for match in normalized), staged)
-        return prepared
+            elif destination.exists():
+                if destination.read_bytes() != raw_bytes:
+                    raise ValueError('PT-STORAGE: preserved raw output cannot be replaced')
+            else:
+                fd, temporary = tempfile.mkstemp(prefix='.raw-', dir=destination.parent)
+                stage = Path(temporary)
+                try:
+                    with os.fdopen(fd, 'wb') as stream:
+                        stream.write(raw_bytes)
+                        stream.flush()
+                        os.fsync(stream.fileno())
+                    # Record before exclusive publication: an interrupt can land after linking succeeds.
+                    created.append((destination, stage.stat()))
+                    os.link(stage, destination)  # never overwrite a foreign file published concurrently
+                    destination.chmod(0o444)
+                finally:
+                    stage.unlink(missing_ok=True)
+            owned_run.raw_path, owned_run.raw_sha256 = relative, digest
+            prepared = PreparedImport(candidate.id, candidate.revision, owned_run, tuple(normalized),
+                                      self.store.file_fingerprint(destination))
+            self._prepared[run.id] = (prepared, owned_run.model_copy(deep=True),
+                                      tuple(match.model_copy(deep=True) for match in normalized), tuple(created))
+            return prepared
+        except BaseException:
+            # No snapshot is committed during preparation. Remove only this attempt's unchanged publications;
+            # backend-owned in-place output and pre-existing directories have no ledger entry and are retained.
+            self._prepared.pop(run.id, None)
+            for path, recorded in reversed(created):
+                _remove_owned(path, recorded)
+            raise
 
     def apply_import(self, prepared: PreparedImport) -> None:
         self.store._check_open()
@@ -272,17 +290,18 @@ class ProjectService:
         owned = self._prepared.get(prepared.run.id)
         if owned is not None and owned[0] is prepared:
             self._prepared.pop(prepared.run.id, None)
-            staged = owned[3]
             committed = any(item.id == prepared.run.id for item in self.project.runs)
-            if staged is not None and not committed:
-                # H8: a staged copy that never became part of the project snapshot is removed.
+            if not committed:
+                # save() can commit and then be interrupted before _commit assigns self.project. The database
+                # is authoritative; uncertain state must retain evidence rather than guess it is abandoned.
                 try:
-                    staged.chmod(0o644)
-                    staged.unlink(missing_ok=True)
-                    for parent in (staged.parent, staged.parent.parent):
-                        parent.rmdir()
-                except OSError:
-                    pass
+                    persisted = self.store.load(recover_interrupted=False)
+                except Exception:
+                    return
+                committed = any(item.id == prepared.run.id for item in persisted.runs)
+            if not committed:
+                for path, recorded in reversed(owned[3]):
+                    _remove_owned(path, recorded)
 
     def record_terminal_run(self, run: AnalysisRun) -> None:
         if run.status not in {'failed', 'cancelled', 'identical'}:

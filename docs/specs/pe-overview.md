@@ -62,6 +62,24 @@ not at all (`entropy` None, `entropy_bytes` 0, `sampled=True`), and the file get
 `entropy_budget_exhausted` (status `partial`); checksum skipped with a warning above 256 MiB. Reads are
 made in at most 1 MiB pieces. `cancel()` is polled between stages and between chunks.
 
+Import cap boundary amendment (2026-11-11, audit 20261015 PE-6): the three import caps count entries, and a
+table that ends exactly at a cap is complete. `import_dlls_over_cap`, `import_functions_over_cap` and
+`import_names_over_cap` are raised (and the table or DLL marked truncated) only when a further non-terminator
+entry was read past the cap; that entry is not listed. The reader therefore reads the entry after the cap: a
+zero terminator there ends the table with no warning, and one that is not backed by file data gives
+`import_rva_out_of_file` as anywhere else in the table. The caps, the amount listed and the cancellation
+polls are unchanged.
+
+Name truncation wording amendment (2026-11-11, audit 20261015 PE-8): `name_truncated` keeps its code and its
+effect (the name is cut and its table marked truncated); only the message changes, so that it names the limit
+that applied. A name with more than 512 bytes before its terminator is `a name longer than 512 bytes was
+truncated`, as before. A name whose section data ends before a terminator and before the 512-byte limit is
+reported as cut at the end of its section data, with the number of bytes read; it is not called longer than
+the limit, which is not known. With a non-default `max_name_length` above the 1 MiB single-read clip, a name
+that fills one read is reported as cut by that read. A name that runs to the end of the file without a
+terminator is still returned whole with no warning. As for every warning code, a file keeps one message per
+code, the first.
+
 ## Semantics
 
 - Kind: `DLL` if IMAGE_FILE_DLL; else `SYS` if subsystem is NATIVE; else `EXE` if IMAGE_FILE_EXECUTABLE_IMAGE;
@@ -75,7 +93,11 @@ made in at most 1 MiB pieces. `cancel()` is polled between stages and between ch
   (C0, DEL and C1, U+0080 to U+009F) and the format characters (categories `Cc` and `Cf`, in Latin-1 only the
   soft hyphen U+00AD), the surrogates, and the line and paragraph separators U+2028 and U+2029 (categories `Zl` and
   `Zp`, added 2026-11-07 because Qt breaks a one-line label at them), as judged by `patchtrace.hostile_text.is_hostile`, the one rule that
-  `intelligence.tools.process.sanitize` shares. Entropy is Shannon entropy of raw bytes (bits/byte, four
+  `intelligence.tools.process.sanitize` shares. Amended 2026-11-11 (SEC-B; PE-4, PE-5): resource text
+  (`resources.sanitize_text`: resource names, VERSIONINFO keys and values, manifest attributes and settings) is
+  judged by the same rule and the character is dropped, not replaced; before, the reader's own list kept the soft
+  hyphen, the zero-width and tag characters and every other format character outside the bidirectional controls
+  (158 code points). Entropy is Shannon entropy of raw bytes (bits/byte, four
   decimals; constant data is `0.0`, never `-0.0`).
 - Overlay: bytes after the last section raw end, excluding the certificate table (which is a file-offset
   directory, not an RVA, and not overlay).

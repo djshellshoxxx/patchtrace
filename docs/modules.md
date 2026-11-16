@@ -1,5 +1,17 @@
 # Module index
 
+### November 2026 continuation interfaces
+
+| Module | Responsibility | Verification seam |
+|---|---|---|
+| `project_cli.py`, `cli_commands/project.py` | Headless project creation, inspection, imports, backups and orientation swap through existing services | `test_project_cli.py`; refusal, cancellation and read-only invariants |
+| `compare_cli.py`, `cli_commands/compare.py` | Supervised primary comparison and transactional result application | `test_compare_cli.py`; fake backend, retained results and cancellation |
+| `doctor_cli.py`, `cli_commands/doctor.py` | Local health report without network or subprocess execution | `test_doctor_cli.py` |
+| `enrichment/profile_cli.py`, `cli_commands/profile.py` | Shared profile repository operations and validation | `test_profile_cli.py` |
+| `tools/research_qualification/l1_run.py` | Frozen-manifest offline advisory-join receipts, excluding unverified cases | `test_research_qualification_l1_run.py`; synthetic mechanics, not real accuracy |
+| `report2/kb_context.py` | Inert advisory records from the project's captured KB context | KB report regression tests |
+| `kbcorrelation/cli_leads.py`, `wiring.py`, `panel_qt.py` | Owner-thread snapshots for worker-side lead calculation without reopening the held project | Default-loader lifecycle regression tests |
+
 2026-11-05 investigation extension: the existing `kbcorrelation/investigation_service.py`
 facade also builds the existing monthly IndexPlan, strictly checks captured plan and
 consent, and orchestrates existing CVRF transport/per-document WorkspaceStore commits.

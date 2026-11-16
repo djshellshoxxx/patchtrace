@@ -11,6 +11,7 @@ from pathlib import Path
 
 from .hostile_text import is_hostile
 from .models import Artifact
+from .offline_bundle import windows_unsafe_component
 
 MAX_ARTIFACT_BYTES = 1024 * 1024 * 1024
 CHUNK_SIZE = 1024 * 1024
@@ -27,7 +28,9 @@ def safe_path(root: Path, relative: str) -> Path:
         too_long = any(len(part.encode('utf-8')) > 255 for part in rel.parts)
     except UnicodeEncodeError:
         too_long = True
-    if '\x00' in relative or too_long:
+    # TB-12: also on POSIX, because the project is opened on Windows later, where `runs/x/CON` is the console
+    # device and `raw.json.` names another file than the one written.
+    if '\x00' in relative or too_long or any(windows_unsafe_component(part) for part in rel.parts):
         raise ValueError('PT-STORAGE: project path has an invalid or over-long component')
     candidate = base / rel
     try:

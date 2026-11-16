@@ -7,6 +7,10 @@ the Protocol ports of ``ports.py`` and ``context.py`` and builds the :class:`~.s
 returns the *existing* project when the directory already holds one (the attachment then compares the bytes), and a
 project id resolves to its directory through a registry (in memory, backed by the workspace journal) so a repair in a
 new process can still write rows.
+
+``RealProjectPort`` opens the project for every call, so it only works while nothing else holds the project. Rows of
+a project that its owner keeps open (the desktop) are read by that owner on its own thread and served from there on
+by ``SnapshotProjectPort`` (store-threading-spec section 4a).
 """
 from __future__ import annotations
 
@@ -14,7 +18,7 @@ import hashlib
 import json
 import re
 import struct
-from collections.abc import Mapping
+from collections.abc import Mapping, Sequence
 from pathlib import Path
 from typing import Any
 
@@ -310,14 +314,45 @@ class RealProjectPort:
         from ..service import ProjectService
         service = ProjectService.open(self._directory(project_id), maintenance=False)
         try:
-            prefix = f'{kind}:'
-            return {e.id[len(prefix):]: json.dumps(e.body, sort_keys=True).encode()
-                    for e in EnrichmentStore(service.store).entries(kind) if e.id.startswith(prefix)}
+            return encode_rows(EnrichmentStore(service.store).entries(kind), kind)
         finally:
             service.close()
 
     def get_row(self, project_id: str, kind: str, key: str) -> bytes | None:
         return self.list_rows(project_id, kind).get(key)
+
+
+def encode_rows(entries, kind: str) -> dict[str, bytes]:
+    """Stored enrichment entries of ``kind`` as the ``{key: body}`` rows of ``ProjectAccess.list_rows``."""
+    prefix = f'{kind}:'
+    return {e.id[len(prefix):]: json.dumps(e.body, sort_keys=True).encode() for e in entries if e.id.startswith(prefix)}
+
+
+class SnapshotProjectPort:
+    """Read-only ``ProjectAccess`` over enrichment entries that the owner of an open project read on its own thread
+    (``entries`` maps a kind to them). It opens no project and reaches no store, so any thread may use it. A kind that
+    was not taken is refused instead of read as empty (unknown is not "no rows"), and so is every write."""
+
+    def __init__(self, project_id: str, entries: Mapping[str, Sequence]):
+        self.project_id = project_id
+        self._entries = {kind: tuple(found) for kind, found in entries.items()}
+
+    def open_project(self, directory: str) -> str:
+        return self.project_id
+
+    def list_rows(self, project_id: str, kind: str) -> dict[str, bytes]:
+        if project_id != self.project_id or kind not in self._entries:
+            raise KbcStoreError('PT-KBC-STATE', 'the project snapshot does not hold these rows')
+        return encode_rows(self._entries[kind], kind)
+
+    def get_row(self, project_id: str, kind: str, key: str) -> bytes | None:
+        return self.list_rows(project_id, kind).get(key)
+
+    def create_project(self, older_path: str, newer_path: str, *, directory: str) -> Mapping[str, Any]:
+        raise KbcStoreError('PT-KBC-UNSUPPORTED', 'a project snapshot is read-only')
+
+    def put_row(self, project_id: str, kind: str, key: str, body: bytes) -> None:
+        raise KbcStoreError('PT-KBC-UNSUPPORTED', 'a project snapshot is read-only')
 
 
 def escape_markdown(text: str) -> str:

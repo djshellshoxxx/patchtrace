@@ -14,6 +14,7 @@ from pydantic import ValidationError
 from ...enrichment.identity import domain_id
 from ...persistence import strict_json
 from ...secondary.contracts import AlternativeMatch, SecondaryMatch, SecondaryMatchSet
+from ...secondary.rzdiff import SINGLETON_KIND, ambiguous_stored_ownership
 from .. import keys
 from ..addressing import AddressMap
 from ..contracts import Atom, SourceRef
@@ -115,7 +116,7 @@ def read_loaded(path: Path, *, expected_sha256: str, expected_size: int,
 
 def usable_sets(inputs: SourceInputs, selected) -> list[LoadedSecondary]:
     """The stored sets of the selected engines that belong to this artifact pair (the `select_current` rule)."""
-    return [s for s in inputs.secondary if s.match_set.engine in selected
+    return [s for s in inputs.secondary if s.match_set.engine in selected and not ambiguous_stored_ownership(s.match_set)
             and (s.match_set.older_sha256, s.match_set.newer_sha256) == (inputs.older_sha256, inputs.newer_sha256)]
 
 
@@ -155,6 +156,8 @@ def source_ref_of(loaded: LoadedSecondary, budget: Budget | None = None) -> Sour
         content_id = domain_id('unified-source-content', 3,
                                {'source': match_set.engine, 'entry_id_digest': entry_digest,
                                 'validated_body_sha256': loaded._body_sha256})
+        if match_set.engine == 'rz-diff':
+            content_id = domain_id('rzdiff-ownership', 2, {'content_id': content_id})
         ref = SourceRef(source=match_set.engine, entry_id=content_id, file_sha256=match_set.file_sha256,
                         version=match_set.engine_version[:64])
         object.__setattr__(loaded, '_source_ref', ref)
@@ -172,6 +175,8 @@ def source_ref_of(loaded: LoadedSecondary, budget: Budget | None = None) -> Sour
     content_id = keys.source_content_digest(match_set.engine,
                                            {'entry_id': loaded.entry_id,
                                             'match_set': snapshot}, budget=budget)
+    if match_set.engine == 'rz-diff':
+        content_id = domain_id('rzdiff-ownership', 2, {'content_id': content_id})
     ref = SourceRef(source=match_set.engine, entry_id=content_id, file_sha256=match_set.file_sha256,
                     version=match_set.engine_version[:64])
     object.__setattr__(loaded, '_source_ref', ref)
@@ -202,6 +207,9 @@ class SecondaryAdapter:
             refs.append(ref)  # every set looked at is an input, a refused one included
             if (match_set.older_sha256, match_set.newer_sha256) != (inputs.older_sha256, inputs.newer_sha256):
                 ledger.flag(f'{engine}-pair-mismatch')
+                continue
+            if ambiguous_stored_ownership(match_set):
+                ledger.flag(SINGLETON_KIND)
                 continue
             rows = list(match_set.matches)
             for alt in match_set.alternatives:

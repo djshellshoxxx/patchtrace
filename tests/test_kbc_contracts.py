@@ -378,7 +378,9 @@ ALLOWED_SIBLINGS = {'contracts.py': {'acquisition', 'enrichment', 'intelligence'
                     # the Leads dock: PanelSpec, state notices, tooltip entries and the Qt view use the GUI framework
                     'panel.py': {'gui'}, 'panel_state.py': {'gui'}, 'tooltip_entries.py': {'tooltips'},
                     'panel_qt.py': {'gui'}, 'investigation_qt.py': {'gui', 'tooltips'},
-                    'investigation_service.py': {'models', 'artifact_bytes'}}
+                    'investigation_service.py': {'models', 'artifact_bytes'},
+                    # `clean_text` applies the one hostile-character rule; that module is stdlib-only and pure
+                    'products.py': {'hostile_text'}}
 
 
 def _imports(path):

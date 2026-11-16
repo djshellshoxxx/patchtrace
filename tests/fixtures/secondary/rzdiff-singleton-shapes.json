@@ -1,0 +1,163 @@
+{
+  "contract": "rzdiff-singleton-shapes/1",
+  "evidence_class": "retained native rz-diff output captured by another session on 2026-11-05; the slice that added this fixture (sleepy-fermi NA-1) copied the bytes and ran no native tool",
+  "source": {
+    "branch": "origin/qualify/native-cli-seeding-20261105",
+    "commit": "8fae317bcac6cb125956965cd3ebbb39e9f9bbd2",
+    "directory": "docs/qa/native-cli-20261105",
+    "producer": "rz-diff 0.9.1 built from the pinned source (c3a90e92) and run as `rz-diff -C -j -t functions OLDER NEWER` on authored synthetic ELF inputs with one or two functions. Every seeded-* file comes from the experimental two-call analysis-seeding build described in the directory README (outside the approved pin; without it all 16 baseline runs printed no JSON).",
+    "limits": "Authored ELF only; no PE or Windows input; the experimental producer is not qualified. The files show the output shapes, nothing more."
+  },
+  "main_parse": {
+    "commit": "882d1ca0b4190bccddb6ce1f66b46c4db856703b",
+    "engine_version": "0.9.1",
+    "older_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "newer_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    "meaning": "SHA-256 of SecondaryMatchSet.model_dump_json() as parsed by that commit"
+  },
+  "no_functions": {
+    "path": "docs/qa/native-cli-20261105/stock-pair-1-1.stderr.log",
+    "returncode": 0,
+    "stdout_bytes": 0,
+    "stderr_sha256": "5be659fc7e3ca797d79359c574f05619e61269dbdef6a779ea384cb6f91f0762",
+    "stderr": "ERROR: rz-diff: No functions found in file0.\n"
+  },
+  "shapes": [
+    {
+      "id": "stock-elf-1-1",
+      "matcher_library": "stock librz_arch 0.9.1",
+      "input_format": "ELF executable",
+      "older_functions": 1,
+      "newer_functions": 1,
+      "path": "docs/qa/native-cli-20261105/seeded-stock-elf-pair-1-1.stdout.log",
+      "byte_identical_retained_files": [
+        "docs/qa/native-cli-20261105/seeded-corrected-elf-pair-1-1.stdout.log"
+      ],
+      "stdout_sha256": "f7ed1051ba39e8b281a618083c4f44496176ec41a9d98ab38e4a19a3074150e9",
+      "stdout": "[{\"similarity\":0.947368,\"type\":\"PARTIAL\",\"original\":{\"name\":\"entry0\",\"addr\":4198400,\"size\":19},\"modified\":{\"name\":\"entry0\",\"addr\":4198400,\"size\":19}}]\n",
+      "expect": "refused"
+    },
+    {
+      "id": "stock-elf-1-2",
+      "matcher_library": "stock librz_arch 0.9.1",
+      "input_format": "ELF executable",
+      "older_functions": 1,
+      "newer_functions": 2,
+      "path": "docs/qa/native-cli-20261105/seeded-stock-elf-pair-1-2.stdout.log",
+      "byte_identical_retained_files": [],
+      "stdout_sha256": "65dbf0815d88e2a7c8ccd52dbf76a01d92383c31e7b888dda6489345c4507e7e",
+      "stdout": "[{\"similarity\":0.947368,\"type\":\"PARTIAL\",\"original\":{\"name\":\"entry0\",\"addr\":4198400,\"size\":19},\"modified\":{\"name\":\"entry0\",\"addr\":4198400,\"size\":19}},{\"similarity\":0.772727,\"type\":\"PARTIAL\",\"original\":{\"name\":\"sym.helper\",\"addr\":4198419,\"size\":22},\"modified\":{\"name\":\"entry0\",\"addr\":4198400,\"size\":19}}]\n",
+      "expect": "refused"
+    },
+    {
+      "id": "stock-elf-2-1",
+      "matcher_library": "stock librz_arch 0.9.1",
+      "input_format": "ELF executable",
+      "older_functions": 2,
+      "newer_functions": 1,
+      "path": "docs/qa/native-cli-20261105/seeded-stock-elf-pair-2-1.stdout.log",
+      "byte_identical_retained_files": [
+        "docs/qa/native-cli-20261105/seeded-corrected-elf-pair-2-1.stdout.log"
+      ],
+      "stdout_sha256": "ac3574a6ea159cad2be0c998ed6d3068ffdc912c7242a44d47836565db546e0f",
+      "stdout": "[{\"similarity\":0.947368,\"type\":\"PARTIAL\",\"original\":{\"name\":\"entry0\",\"addr\":4198400,\"size\":19},\"modified\":{\"name\":\"entry0\",\"addr\":4198400,\"size\":19}},{\"similarity\":0.894737,\"type\":\"PARTIAL\",\"original\":{\"name\":\"sym.helper\",\"addr\":4198419,\"size\":18},\"modified\":{\"name\":\"entry0\",\"addr\":4198400,\"size\":19}}]\n",
+      "expect": "refused"
+    },
+    {
+      "id": "stock-elf-2-2",
+      "matcher_library": "stock librz_arch 0.9.1",
+      "input_format": "ELF executable",
+      "older_functions": 2,
+      "newer_functions": 2,
+      "path": "docs/qa/native-cli-20261105/seeded-stock-elf-pair-2-2.stdout.log",
+      "byte_identical_retained_files": [
+        "docs/qa/native-cli-20261105/seeded-corrected-elf-pair-2-2.stdout.log"
+      ],
+      "stdout_sha256": "01dccb4f1653debcbc66bbc8d0b069b73c50e819214c8d0e18fc59f9ab5081bf",
+      "stdout": "[{\"similarity\":0.947368,\"type\":\"PARTIAL\",\"original\":{\"name\":\"entry0\",\"addr\":4198400,\"size\":19},\"modified\":{\"name\":\"entry0\",\"addr\":4198400,\"size\":19}},{\"similarity\":0.772727,\"type\":\"PARTIAL\",\"original\":{\"name\":\"sym.helper\",\"addr\":4198419,\"size\":18},\"modified\":{\"name\":\"sym.helper\",\"addr\":4198419,\"size\":22}}]\n",
+      "expect": "parsed",
+      "main_parse_sha256": "b8d383b6214faf7a5585377c8ead7176b663028add5c90a72292a717048d8187"
+    },
+    {
+      "id": "corrected-elf-1-2",
+      "matcher_library": "research librz_arch 0.9.1 with tools/rzdiff/singleton-ownership.patch (not a qualified producer)",
+      "input_format": "ELF executable",
+      "older_functions": 1,
+      "newer_functions": 2,
+      "path": "docs/qa/native-cli-20261105/seeded-corrected-elf-pair-1-2.stdout.log",
+      "byte_identical_retained_files": [],
+      "stdout_sha256": "c9c9abb5156320638b015321acce7d5d39dd3886ed0a2d0df8ca09a087022061",
+      "stdout": "[{\"similarity\":0.947368,\"type\":\"PARTIAL\",\"original\":{\"name\":\"entry0\",\"addr\":4198400,\"size\":19},\"modified\":{\"name\":\"entry0\",\"addr\":4198400,\"size\":19}},{\"similarity\":0.772727,\"type\":\"PARTIAL\",\"original\":{\"name\":\"entry0\",\"addr\":4198400,\"size\":19},\"modified\":{\"name\":\"sym.helper\",\"addr\":4198419,\"size\":22}}]\n",
+      "expect": "parsed",
+      "main_parse_sha256": "5c2705a2234e02d9700eae3790786f3869018402066a57d683b3c398eb3632f8"
+    },
+    {
+      "id": "stock-o-1-1",
+      "matcher_library": "stock librz_arch 0.9.1",
+      "input_format": "ELF relocatable",
+      "older_functions": 1,
+      "newer_functions": 1,
+      "path": "docs/qa/native-cli-20261105/seeded-stock-o-pair-1-1.stdout.log",
+      "byte_identical_retained_files": [
+        "docs/qa/native-cli-20261105/seeded-corrected-o-pair-1-1.stdout.log"
+      ],
+      "stdout_sha256": "ea3de2c7d09371bf887c423201fcf333eeff184042271c08e7c811e650df076f",
+      "stdout": "[{\"similarity\":0.947368,\"type\":\"PARTIAL\",\"original\":{\"name\":\"sym.component\",\"addr\":134217792,\"size\":19},\"modified\":{\"name\":\"sym.component\",\"addr\":134217792,\"size\":19}}]\n",
+      "expect": "refused"
+    },
+    {
+      "id": "stock-o-1-2",
+      "matcher_library": "stock librz_arch 0.9.1",
+      "input_format": "ELF relocatable",
+      "older_functions": 1,
+      "newer_functions": 2,
+      "path": "docs/qa/native-cli-20261105/seeded-stock-o-pair-1-2.stdout.log",
+      "byte_identical_retained_files": [],
+      "stdout_sha256": "b9126020ee953ee9852522d8a1e99a27bc51300a75f72bf05cfa62b0907cff71",
+      "stdout": "[{\"similarity\":0.947368,\"type\":\"PARTIAL\",\"original\":{\"name\":\"sym.component\",\"addr\":134217792,\"size\":19},\"modified\":{\"name\":\"sym.component\",\"addr\":134217792,\"size\":19}},{\"similarity\":0.772727,\"type\":\"PARTIAL\",\"original\":{\"name\":\"sym.helper\",\"addr\":134217811,\"size\":22},\"modified\":{\"name\":\"sym.component\",\"addr\":134217792,\"size\":19}}]\n",
+      "expect": "refused"
+    },
+    {
+      "id": "stock-o-2-1",
+      "matcher_library": "stock librz_arch 0.9.1",
+      "input_format": "ELF relocatable",
+      "older_functions": 2,
+      "newer_functions": 1,
+      "path": "docs/qa/native-cli-20261105/seeded-stock-o-pair-2-1.stdout.log",
+      "byte_identical_retained_files": [
+        "docs/qa/native-cli-20261105/seeded-corrected-o-pair-2-1.stdout.log"
+      ],
+      "stdout_sha256": "401f0cd42db2586b0e0b7bf09555c6eadb6e26a51b4930c50ecc47756d125f5a",
+      "stdout": "[{\"similarity\":0.947368,\"type\":\"PARTIAL\",\"original\":{\"name\":\"sym.component\",\"addr\":134217792,\"size\":19},\"modified\":{\"name\":\"sym.component\",\"addr\":134217792,\"size\":19}},{\"similarity\":0.894737,\"type\":\"PARTIAL\",\"original\":{\"name\":\"sym.helper\",\"addr\":134217811,\"size\":18},\"modified\":{\"name\":\"sym.component\",\"addr\":134217792,\"size\":19}}]\n",
+      "expect": "refused"
+    },
+    {
+      "id": "stock-o-2-2",
+      "matcher_library": "stock librz_arch 0.9.1",
+      "input_format": "ELF relocatable",
+      "older_functions": 2,
+      "newer_functions": 2,
+      "path": "docs/qa/native-cli-20261105/seeded-stock-o-pair-2-2.stdout.log",
+      "byte_identical_retained_files": [
+        "docs/qa/native-cli-20261105/seeded-corrected-o-pair-2-2.stdout.log"
+      ],
+      "stdout_sha256": "9883bb80676557efaa227bc67fb504b47a5d81994c16209920873eae0b43895b",
+      "stdout": "[{\"similarity\":0.947368,\"type\":\"PARTIAL\",\"original\":{\"name\":\"sym.component\",\"addr\":134217792,\"size\":19},\"modified\":{\"name\":\"sym.component\",\"addr\":134217792,\"size\":19}},{\"similarity\":0.772727,\"type\":\"PARTIAL\",\"original\":{\"name\":\"sym.helper\",\"addr\":134217811,\"size\":18},\"modified\":{\"name\":\"sym.helper\",\"addr\":134217811,\"size\":22}}]\n",
+      "expect": "parsed",
+      "main_parse_sha256": "c182f9f4d6fdb09369dde6edd7a7979cac79673c5ee3bca1d9cf8e9cac839a7d"
+    },
+    {
+      "id": "corrected-o-1-2",
+      "matcher_library": "research librz_arch 0.9.1 with tools/rzdiff/singleton-ownership.patch (not a qualified producer)",
+      "input_format": "ELF relocatable",
+      "older_functions": 1,
+      "newer_functions": 2,
+      "path": "docs/qa/native-cli-20261105/seeded-corrected-o-pair-1-2.stdout.log",
+      "byte_identical_retained_files": [],
+      "stdout_sha256": "78783ae78a6ff70f958d9ffbea9b472ce8b76a75cea31f6a9a52966b2ea8c8a1",
+      "stdout": "[{\"similarity\":0.947368,\"type\":\"PARTIAL\",\"original\":{\"name\":\"sym.component\",\"addr\":134217792,\"size\":19},\"modified\":{\"name\":\"sym.component\",\"addr\":134217792,\"size\":19}},{\"similarity\":0.772727,\"type\":\"PARTIAL\",\"original\":{\"name\":\"sym.component\",\"addr\":134217792,\"size\":19},\"modified\":{\"name\":\"sym.helper\",\"addr\":134217811,\"size\":22}}]\n",
+      "expect": "parsed",
+      "main_parse_sha256": "bb913529fe9c61f9904adae9a8e21340e2542da91b460bd39b694c9b2341850e"
+    }
+  ]
+}

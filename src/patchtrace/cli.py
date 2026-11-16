@@ -806,7 +806,8 @@ def cmd_secondary(args, cancel) -> int:
             chosen, superseded = select_current(load_secondary(store), pair)
             sets = [m for _, m in chosen]
             if not sets:
-                _emit(args, 'secondary reconcile', 'complete', {'reports': []}, [], 'No secondary match sets stored.')
+                _emit(args, 'secondary reconcile', 'complete', {'reports': []}, superseded,
+                      'No usable secondary match sets stored.')
                 return NO_RESULTS
             reports = [reconcile(project.matches, m) for m in sets]
             from .secondary.evidence import assess_reports

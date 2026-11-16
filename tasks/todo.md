@@ -1,5 +1,12 @@
 # PatchTrace delivery tracker
 
+## 2026-11-16 continuation
+
+Current integration: `codex/release-integration-20261116`; see
+[checkpoint](../docs/qa/continuation-20261116.md). Core historical ports and
+review repairs are under final combined validation. Runtime/corrections/review
+CLI, further historical consolidation and native/release acceptance remain open.
+
 ## P1 — Recurring Windows comparison timeout (reported 2026-11-06)
 
 **OPEN / high priority.** The owner's usual two-file test failed with `PT-BACKEND: analysis timed out`. Both Ghidra analyses completed; `StructuralGraphHash` then reported **2,161,955 entries**, followed by a **28m 41.755s** quiet interval after "Sorting functions". Later `72/72` progress was only an enhanced-symbol (`esym`) substage. The configured timeout and actual termination time are absent from the supplied logs; the source default of 3,600 seconds is not proof of the value used in this run.

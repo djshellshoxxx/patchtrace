@@ -326,7 +326,7 @@ def is_full_verified(ref: BundleRef, work_dir: Path) -> bool:
     """True when a marker for exactly this manifest hash exists; never raises."""
     try:
         data = json.loads(_marker_path(ref, work_dir).read_text(encoding='utf-8'))
-    except (OSError, ValueError):
+    except (OSError, ValueError, RecursionError):
         return False
     return (isinstance(data, dict) and data.get('format') == CACHE_FORMAT
             and data.get('manifest_sha256') == ref.manifest_sha256)

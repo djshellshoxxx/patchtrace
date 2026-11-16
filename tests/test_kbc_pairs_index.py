@@ -2,6 +2,7 @@
 (KB-integration-plan 7.2 pair rules, 8.1). Synthetic records; sockets denied; nothing is fetched."""
 from __future__ import annotations
 
+import dataclasses
 import gzip
 import json
 
@@ -132,6 +133,47 @@ def test_legacy_product_identity_is_retained_but_cannot_resolve_current_pairs(kb
     fresh, current = investigation(kb)
     assert current['client'] != scopes['client']
     code, doc, _ = kb('pairs', fresh, '--product', current['client'], '--file', NET)
+    assert code == 0 and doc['result']['pairs']
+
+
+RTM = 'Windows 10 for x64-based Systems'
+# The scope id origin/main 882d1ca0 (alias catalog 1) derived for RTM: no release, no key, so the name is in the id.
+RTM_CATALOG_1_SCOPE_ID = '7e6607cf3e2b0f5589edb1f90b1c4404bcc9ffc276974f557571dec6fdb389a3'
+
+
+def test_kba08_stored_investigation_on_a_rekeyed_product_must_repeat_the_search(kb, monkeypatch):
+    """Alias catalog 2 keys the release-less Windows 10 name (audit KBA-08). An investigation stored under catalog 1
+    keeps its name-keyed scope id, is refused with the refresh instruction and is never rebound; a new search gets
+    the keyed scope and resolves against the bare ``1507`` key Winbindex uses."""
+    from patchtrace.kbcorrelation import alias_catalog, products
+
+    current = products.derive
+
+    def catalog_1(name, **hints):
+        facts = current(name, **hints)
+        rekeyed = facts.name_key == RTM.lower()
+        return dataclasses.replace(facts, release=None, winbindex_key=None) if rekeyed else facts
+
+    raw = h.read_fixture_bytes('cvrf-2099-Feb.json').replace(b'Example OS 24H2 x64', RTM.encode('ascii'))
+    with monkeypatch.context() as previous:
+        previous.setattr(products, 'derive', catalog_1)
+        previous.setattr(alias_catalog, 'ALIAS_CATALOG_VERSION', 1)
+        with WorkspaceStore(kb.workspace) as ws:
+            ws.add_document(import_bytes(raw, now=NOW), raw)
+        inv, scopes = investigation(kb)
+    assert scopes['client'] == RTM_CATALOG_1_SCOPE_ID
+    save_record(kb, NET, doc=json.loads(json.dumps(record(NET)).replace('"11-24H2"', '"1507"')))
+    with WorkspaceStore(kb.workspace) as ws:
+        before = ws.current_revision(inv).model_dump_json()
+    code, doc, _ = kb('products', inv)
+    assert code == 2 and 'repeat the search' in doc['error'] and 'no product' not in doc['error']
+    code, doc, _ = kb('pairs', inv, '--product', scopes['client'], '--file', NET)
+    assert code != 0 and 'repeat the search' in str(doc)
+    with WorkspaceStore(kb.workspace) as ws:
+        assert ws.current_revision(inv).model_dump_json() == before
+    fresh, rekeyed = investigation(kb)
+    assert rekeyed['client'] != scopes['client'] and rekeyed['server'] == scopes['server']
+    code, doc, _ = kb('pairs', fresh, '--product', rekeyed['client'], '--file', NET)
     assert code == 0 and doc['result']['pairs']
 
 

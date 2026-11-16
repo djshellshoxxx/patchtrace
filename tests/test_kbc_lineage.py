@@ -76,6 +76,40 @@ def test_predecessor_of_unchanged_row_starts_at_the_run_start():
     assert older.kb == 'KB5096000' and [r.kb for r in between] == ['KB5097000', 'KB5098000']
 
 
+def synthetic(*spec):
+    """One version key's timeline from ``(sha letter, heading class)`` in release order; the first KB is KB5000000."""
+    maps = [{'sha256': sha * 64, 'kb': f'KB500000{i}', 'version_key': '11-24H2', 'release_date': f'2099-01-{i + 1:02d}',
+             'release_version': f'26100.{100 * (i + 1)}', 'machine_type': 0x8664, 'size': 100, 'heading_class': cls,
+             'variant': 'full', 'download': 'direct', 'record_sha256': 'e' * 64} for i, (sha, cls) in enumerate(spec)]
+    rows, rejected = ln.index_rows(maps, file_name='x.sys')
+    assert rejected == 0
+    return ln.timeline(rows, '11-24H2')
+
+
+STD, PRE = 'standard', 'preview'
+
+
+@pytest.mark.parametrize('spec, older_kb, window', [
+    ((('f', STD), ('a', STD), ('b', PRE), ('a', STD)), 'KB5000000', ['KB5000001', 'KB5000002']),
+    ((('f', STD), ('a', STD), ('c', STD), ('b', PRE), ('a', STD)), 'KB5000002', ['KB5000003']),
+    ((('f', STD), ('f', STD), ('a', STD), ('b', PRE), ('a', STD)), 'KB5000001', ['KB5000002', 'KB5000003']),
+    ((('a', STD), ('b', PRE), ('a', STD)), None, []),
+    ((('a', STD), ('b', PRE), ('a', STD), ('a', STD)), None, [])],
+    ids=['Z-A-Bpre-A', 'Z-A-Y-Bpre-A', 'older-run-end', 'no-distinct-older', 'unchanged-after-revert'])
+def test_kba06_predecessor_of_reverted_bytes_is_the_nearest_distinct_same_class_build(spec, older_kb, window):
+    """Audit KBA-06 (spec 31-C C4): the older side never carries the target's SHA; rows passed over stay the window."""
+    rows = synthetic(*spec)
+    older, between = ln.predecessor(rows, rows[-1])
+    assert (older.kb if older else None) == older_kb and [r.kb for r in between] == window
+    assert older is None or older.sha256 != rows[-1].sha256
+
+
+def test_kba06_without_the_class_rule_the_adjacent_distinct_row_is_still_the_older_side():
+    rows = synthetic(('f', STD), ('a', STD), ('b', PRE), ('a', STD))
+    older, between = ln.predecessor(rows, rows[-1], same_class_only=False)
+    assert older.kb == 'KB5000002' and between == ()
+
+
 def test_shared_with_lists_the_other_kbs_of_the_same_bytes():
     preview = next(r for r in line() if r.kb == 'KB5098000')
     assert preview.build.shared_with == ('KB5097000',)
