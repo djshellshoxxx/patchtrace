@@ -2,6 +2,13 @@
 
 ### November 2026 continuation interfaces
 
+Historical R7 research recovery (2026-11-16): `tools/research/r7/{slicer,patterns,bench}.py`
+contains bounded synthetic dependency slicing, conservative guard-delta motifs and
+an optional benchmark. These development tools do not modify production analysis,
+ranking, schemas or Qt. Source: `1f4a0784` / `abadcb36` on
+`consolidate/research-r7-20261104` (PR #282; original PR #134).
+Verification seams: `tests/test_r7_slicing.py`, `tests/test_r7_patterns.py`.
+
 | Module | Responsibility | Verification seam |
 |---|---|---|
 | `project_cli.py`, `cli_commands/project.py` | Headless project creation, inspection, imports, backups and orientation swap through existing services | `test_project_cli.py`; refusal, cancellation and read-only invariants |
