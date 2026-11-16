@@ -12,7 +12,8 @@ from pathlib import Path
 
 COUNTS = ((1, 1), (1, 2), (2, 1), (2, 2), (1, 0), (0, 1), (2, 0), (0, 2))
 ROW = re.compile(r"(\d+):(\d+) overlap=([01]) errors=(\d+)")
-IO_ROW = re.compile(r"distinct-io ([12]):([12]) overlap=([01]) errors=([0-9]{1,6}) reads=([0-9]{1,6}),([0-9]{1,6})")
+IO_ROW = re.compile(r"distinct-io ([12]):([12]) overlap=([01]) errors=([0-9]{1,6}) "
+                    r"reads=([0-9]{1,6}),([0-9]{1,6}) workers=([0-9]{1,6})")
 MODE_ARGS = {
     "matrix": (), "io": ("--io-context",),
     "io-wrong-bytes": ("--io-context", "--wrong-bytes"),
@@ -30,27 +31,35 @@ def control_args(variant: str, mode: str) -> tuple[str, ...]:
     return MODE_ARGS[mode]
 
 
-def validate_io(variant: str, returncode: int, stdout: str, mode: str) -> None:
+def check_worker_count(worker_count: int | None) -> None:
+    if type(worker_count) is not int or not 1 <= worker_count <= 65536:
+        raise ValueError("native IO requires an independent worker count from 1 through 65536")
+
+
+def validate_io(variant: str, returncode: int, stdout: str, mode: str, worker_count: int | None) -> None:
     """Pinned authored oracle: exact inventory, errors and matcher-only reads."""
     control_args(variant, mode)
     if mode == "matrix":
         raise ValueError("matrix is not an IO control")
+    check_worker_count(worker_count)
     expected = {}
     for overlap in ((1,) if mode == "io-wrong-io" else (0, 1)):
         for a, b in ((1, 2), (2, 1)):
             if mode == "io-wrong-io":
-                observation = (3 if a == 1 else 2, 4, 0)
+                observation = (3 if a == 1 else 2, worker_count + 2 if a == 1 else 4, 0)
             elif mode == "io-wrong-bytes":
-                observation = (2, 2, 2)
+                observation = (2, worker_count if a == 1 else 2, 2)
             else:
-                observation = (3 if variant == "stock" and a == 1 else 0, 2, 2)
+                observation = (3 if variant == "stock" and a == 1 else 0, worker_count if a == 1 else 2, 2)
             expected[(a, b, overlap)] = observation
     seen = {}
     for line in stdout.splitlines():
         match = IO_ROW.fullmatch(line)
         if not match:
             raise ValueError("malformed native IO row")
-        a, b, overlap, errors, reads_a, reads_b = map(int, match.groups())
+        a, b, overlap, errors, reads_a, reads_b, workers = map(int, match.groups())
+        if workers != worker_count:
+            raise ValueError("native IO worker count disagrees with independent observation")
         key = (a, b, overlap)
         if key in seen:
             raise ValueError("duplicated native IO row")
@@ -62,11 +71,12 @@ def validate_io(variant: str, returncode: int, stdout: str, mode: str) -> None:
         raise ValueError("unexpected native IO process exit")
 
 
-def validate(variant: str, returncode: int, stdout: str, *, mode: str = "matrix") -> None:
+def validate(variant: str, returncode: int, stdout: str, *, mode: str = "matrix",
+             worker_count: int | None = None) -> None:
     """Check full multiplicity, not just exit 1 (which could mean a crash)."""
     control_args(variant, mode)
     if mode != "matrix":
-        validate_io(variant, returncode, stdout, mode)
+        validate_io(variant, returncode, stdout, mode, worker_count)
         return
     expected = Counter(
         (left, right, overlap)
@@ -121,13 +131,18 @@ def run(variant: str, executable: Path, output: Path, timeout: float = 120, *, m
     }
     stdout, stderr = b"", b""
     try:
+        worker_count = None
+        if mode != "matrix":
+            worker_count = os.cpu_count()
+            receipt.update(worker_count=worker_count, worker_count_source="os.cpu_count")
+            check_worker_count(worker_count)
         receipt["executable_sha256"] = hashlib.sha256(executable.read_bytes()).hexdigest()
         result = subprocess.run(
             [str(executable), *arguments], capture_output=True, timeout=timeout, check=False,
         )
         stdout, stderr = result.stdout, result.stderr
         receipt["returncode"] = result.returncode
-        validate(variant, result.returncode, stdout.decode("utf-8"), mode=mode)
+        validate(variant, result.returncode, stdout.decode("utf-8"), mode=mode, worker_count=worker_count)
         if mode != "matrix" and stderr:
             raise ValueError("unexpected native IO stderr")
         receipt["accepted"] = True

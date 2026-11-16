@@ -11,9 +11,15 @@ import pytest
 from tools.rzdiff import native_evidence as evidence
 
 
-def rows(errors=(0, 0, 0, 0), reads=(2, 2), overlaps=(0, 1)):
+@pytest.fixture(autouse=True)
+def fixed_host_cpu_count(monkeypatch):
+    monkeypatch.setattr(evidence.os, 'cpu_count', lambda: 2)
+
+
+def rows(errors=(0, 0, 0, 0), reads=(2, 2), overlaps=(0, 1), workers=2):
     keys = [(a, b, overlap) for overlap in overlaps for a, b in ((1, 2), (2, 1))]
-    return ''.join(f'distinct-io {a}:{b} overlap={overlap} errors={error} reads={reads[0]},{reads[1]}\n'
+    return ''.join(f'distinct-io {a}:{b} overlap={overlap} errors={error} '
+                   f'reads={workers + (2 if reads[1] == 0 else 0) if a == 1 else reads[0]},{reads[1]} workers={workers}\n'
                    for (a, b, overlap), error in zip(keys, errors, strict=True))
 
 
@@ -28,8 +34,8 @@ IDS = ['stock', 'corrected', 'wrong-bytes', 'wrong-io']
 
 @pytest.mark.parametrize('variant,mode,code,stdout', CASES, ids=IDS)
 def test_exact_mode_observations_pass_and_row_order_is_irrelevant(variant, mode, code, stdout):
-    evidence.validate(variant, code, stdout, mode=mode)
-    evidence.validate(variant, code, '\n'.join(reversed(stdout.splitlines())), mode=mode)
+    evidence.validate(variant, code, stdout, mode=mode, worker_count=2)
+    evidence.validate(variant, code, '\n'.join(reversed(stdout.splitlines())), mode=mode, worker_count=2)
 
 
 @pytest.mark.parametrize('variant,mode,code,stdout', CASES, ids=IDS)
@@ -47,22 +53,22 @@ def test_exact_mode_observations_pass_and_row_order_is_irrelevant(variant, mode,
         'missing-left-reads', 'wrong-right-reads', 'extra-output'])
 def test_incomplete_or_changed_io_evidence_fails(variant, mode, code, stdout, mutation):
     with pytest.raises(ValueError):
-        evidence.validate(variant, code, mutation(stdout), mode=mode)
+        evidence.validate(variant, code, mutation(stdout), mode=mode, worker_count=2)
 
 
 @pytest.mark.parametrize('variant,mode,code,stdout', CASES, ids=IDS)
 @pytest.mark.parametrize('wrong_exit', [-11, 2, 127])
 def test_complete_rows_cannot_hide_process_failure(variant, mode, code, stdout, wrong_exit):
     with pytest.raises(ValueError):
-        evidence.validate(variant, wrong_exit, stdout, mode=mode)
+        evidence.validate(variant, wrong_exit, stdout, mode=mode, worker_count=2)
     with pytest.raises(ValueError):
-        evidence.validate(variant, 1 - code, stdout, mode=mode)
+        evidence.validate(variant, 1 - code, stdout, mode=mode, worker_count=2)
 
 
 @pytest.mark.parametrize('mode', ['io-wrong-bytes', 'io-wrong-io'])
 def test_negative_control_requires_real_observed_failure(mode):
     with pytest.raises(ValueError):
-        evidence.validate('corrected', 1, rows(), mode=mode)
+        evidence.validate('corrected', 1, rows(), mode=mode, worker_count=2)
 
 
 @pytest.mark.parametrize('variant,mode', [('unknown', 'io'), ('corrected', 'unknown'),
@@ -151,3 +157,55 @@ def test_cli_rejects_stock_negative_mode_before_run(tmp_path, monkeypatch):
         evidence.main()
     assert stopped.value.code == 2
     assert not (tmp_path / 'out').exists()
+
+
+@pytest.mark.parametrize('workers', [1, 2, 9, 64, 65536])
+@pytest.mark.parametrize('variant,mode,code,_stdout', CASES, ids=IDS)
+def test_io_read_counts_follow_independently_observed_workers(workers, variant, mode, code, _stdout):
+    if mode == 'io-wrong-io':
+        stdout = rows((3, 2), reads=(4, 0), overlaps=(1,), workers=workers)
+    elif mode == 'io-wrong-bytes':
+        stdout = rows((2, 2, 2, 2), workers=workers)
+    else:
+        stdout = rows((3, 0, 3, 0) if variant == 'stock' else (0, 0, 0, 0), workers=workers)
+    evidence.validate(variant, code, stdout, mode=mode, worker_count=workers)
+    with pytest.raises(ValueError):
+        evidence.validate(variant, code, stdout.replace(f'workers={workers}', 'workers=0', 1),
+                          mode=mode, worker_count=workers)
+    with pytest.raises(ValueError):
+        evidence.validate(variant, code, stdout.replace(f'workers={workers}', f'workers={workers+1}'),
+                          mode=mode, worker_count=workers)
+    with pytest.raises(ValueError):
+        evidence.validate(variant, code, stdout.replace(f' workers={workers}', ''),
+                          mode=mode, worker_count=workers)
+
+
+@pytest.mark.parametrize('workers', [None, 0, -1, True, False, '2', 2.0, 65537])
+def test_missing_or_invalid_independent_workers_fail_before_execution(workers, tmp_path, monkeypatch):
+    with pytest.raises(ValueError):
+        evidence.validate('corrected', 0, rows(), mode='io', worker_count=workers)
+    monkeypatch.setattr(evidence.os, 'cpu_count', lambda: workers)
+    monkeypatch.setattr(subprocess, 'run', lambda *a, **k: pytest.fail('must not execute'))
+    out = tmp_path / 'evidence'
+    assert not evidence.run('corrected', tmp_path / 'absent', out, mode='io')
+    receipt = json.loads((out / 'native-result.json').read_text())
+    assert receipt['accepted'] is False
+    assert receipt['worker_count'] == workers
+    assert receipt['worker_count_source'] == 'os.cpu_count'
+    assert receipt['returncode'] is None
+
+
+def test_validator_does_not_guess_missing_worker_count():
+    with pytest.raises(ValueError):
+        evidence.validate('corrected', 0, rows(), mode='io')
+
+
+def test_matrix_does_not_depend_on_cpu_count(tmp_path, monkeypatch):
+    from test_rzdiff_native_evidence import matrix
+
+    monkeypatch.setattr(evidence.os, 'cpu_count', lambda: pytest.fail('matrix must not query workers'))
+    executable = tmp_path / 'fake'
+    executable.write_bytes(b'fake')
+    monkeypatch.setattr(subprocess, 'run', lambda argv, **k:
+                        subprocess.CompletedProcess(argv, 0, matrix().encode(), b''))
+    assert evidence.run('corrected', executable, tmp_path / 'matrix')

@@ -1,0 +1,4 @@
+corrected matrix runner_exit 0
+corrected io runner_exit 1
+corrected io-wrong-bytes runner_exit 1
+corrected io-wrong-io runner_exit 1

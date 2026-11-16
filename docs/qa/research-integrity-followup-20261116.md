@@ -46,10 +46,19 @@ mode/variant selection fails before mutation/execution. Each attempt reserves
 exclusive evidence names and preserves failed-run raw bytes and provenance.
 
 Integrated `test_rzdiff_io_evidence.py` and `test_rzdiff_native_evidence.py`:
-**106 passed**, including the compiled repository-authored C coverage helper.
+**136 passed** after the worker-count portability repair, including the compiled repository-authored C coverage helper.
 That helper uses list doubles; it is not linked-native Rizin qualification.
 Independent source review found no blocking issue. No product singleton refusal,
 runtime approval, cache policy or quarantine changes were made.
+
+Fresh pinned Linux API execution exposed an incorrect fixed two-worker read-count
+assumption. Pinned source analysis established the per-worker singleton preread.
+The repaired validator requires native and independent host counts to agree,
+derives exact read counts from that observation, and retains all other exact
+negative-control invariants. All six fresh stock/corrected/negative modes matched
+expectations. [Raw receipts and provenance](native-api-20261116/README.md) retain
+the earlier loader and fixed-count failures separately. This qualifies authored
+Linux API controls only; it does not qualify CLI JSON or product acceptance.
 
 Whole-tree Ruff and whitespace checks passed. Hosted and live native qualification
 remain separate. These test counts do not imply Windows, CLI JSON, real-binary

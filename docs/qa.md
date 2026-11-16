@@ -4,8 +4,10 @@
 
 See [research recovery evidence](qa/research-integrity-followup-20261116.md):
 Tier R provenance/labels/immutable receipts (155 passed, 8 native skips), native
-IO research validator (106 passed), and independent scoped reviews. Final-head
-hosted/native gates remain separate; no real-binary accuracy claim is made.
+IO research validator (136 passed), and independent scoped reviews. Fresh pinned
+Linux API controls matched all six expected stock/corrected/negative outcomes;
+prior failures and worker-count diagnosis are preserved with raw receipts.
+Final-head hosted/platform gates remain separate; no real-binary accuracy claim is made.
 
 ## 2026-11-16 consolidation follow-up
 

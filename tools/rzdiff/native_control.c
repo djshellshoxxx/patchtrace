@@ -144,6 +144,7 @@ static int check_distinct(unsigned na, unsigned nb, bool overlap, unsigned fault
     distinct_reads[0] = distinct_reads[1] = 0;
     RzAnalysisMatchOpt opt = {0};
     opt.analysis_a = analysis[0]; opt.analysis_b = analysis[1];
+    RzThreadNCores workers = rz_th_max_threads(RZ_THREAD_N_CORES_ALL_AVAILABLE);
     result = rz_analysis_match_functions(lists[0],lists[1],&opt);
     if (!result) goto cleanup;
     errors = 0;
@@ -165,8 +166,8 @@ static int check_distinct(unsigned na, unsigned nb, bool overlap, unsigned fault
     RzAnalysisFunction *unmatched;
     rz_list_foreach (result->unmatch_a,it,unmatched) { if (!owned(lists[0],unmatched)) errors++; }
     rz_list_foreach (result->unmatch_b,it,unmatched) { if (!owned(lists[1],unmatched)) errors++; }
-    printf("distinct-io %u:%u overlap=%d errors=%d reads=%u,%u\n",na,nb,overlap,errors,
-           distinct_reads[0],distinct_reads[1]);
+    printf("distinct-io %u:%u overlap=%d errors=%d reads=%u,%u workers=%u\n",na,nb,overlap,errors,
+           distinct_reads[0],distinct_reads[1],(unsigned)workers);
 cleanup:
     if (result) rz_analysis_match_result_free(result);
     for (unsigned side=0; side<2; side++) {
