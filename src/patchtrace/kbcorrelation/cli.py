@@ -55,7 +55,7 @@ class Context:
 
 
 def _register_core(sub) -> None:
-    sub.add_parser('index', help='offline index: import, status, verify, plan (see "kb index --help")')
+    sub.add_parser('index', help='index: offline import/status/verify/plan; consented sync (see "kb index --help")')
     search = add_common(sub.add_parser('search', help='find the CVEs and products of a KB or CVE in loaded documents'))
     search.add_argument('lead', metavar='KB|CVE', help='KB5012345, 5012345 or CVE-2024-12345')
     scope = search.add_mutually_exclusive_group()
@@ -122,9 +122,9 @@ def main(argv: list[str] | None = None, *, env=None, engine=None, kev=None, stdo
     """Run ``kb <verb> ...``. ``env``, ``engine`` and ``kev`` replace the production ports (tests)."""
     argv = list(sys.argv[1:] if argv is None else argv)
     context = Context(env, engine, kev)
-    if argv[:2] == ['index', 'sync'] and not ({'-h', '--help'} & set(argv[2:])):
-        return cli_online.main(argv[2:], ports=cli_online.OnlinePorts(context.index_ports()), stdout=stdout,
-                               stderr=stderr)
+    if argv[:2] == ['index', 'sync']:
+        ports = None if {'-h', '--help'} & set(argv[2:]) else cli_online.OnlinePorts(context.index_ports())
+        return cli_online.main(argv[2:], ports=ports, stdout=stdout, stderr=stderr)
     if argv[:1] == ['index']:
         if '-h' in argv[1:] or '--help' in argv[1:]:
             return cli_index.main(argv[1:], stdout=stdout, stderr=stderr)

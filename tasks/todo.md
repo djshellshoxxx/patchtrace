@@ -1,5 +1,17 @@
 # PatchTrace delivery tracker
 
+## 2026-11-16 paths, KB parity and R7 continuation
+
+- [x] Repair both Windows QA path-classification failures without weakening assertions.
+- [x] Complete sync help and active stored-product catalogue CLI access (K4 items 1–2).
+- [x] Review/recover unique isolated #282 R7 research tooling and its tests/docs.
+- [x] Inventory 300 fetched branch refs; distinguish ancestry from semantic integration.
+- [x] Pass 724 affected tests, whole Ruff, dependency and whitespace checks.
+- [ ] Obtain passing current-head hosted full QA, Qt and platform packages before merging #297.
+- [ ] Finish remaining historical semantic review, K4 KEV wiring and release/native/manual gates.
+
+[Continuation evidence](../docs/qa/continuation-paths-kb-r7-20261116.md).
+
 ## 2026-11-16 research integrity recovery
 
 Recovered the missing #164 Tier R provenance/label/receipt slice and #222 native

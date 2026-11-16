@@ -1,14 +1,16 @@
 # `patchtrace kb`
 
-Correlates Microsoft KB numbers and CVE identifiers with advisory documents and file pairs. Everything except `acquire` is offline. `acquire` is the only verb that downloads, and it needs consent for the exact hosts. Coverage is stated with every answer: a "not found" applies only to the documents that were checked.
+Correlates Microsoft KB numbers and CVE identifiers with advisory documents and file pairs. `index sync` fetches monthly advisory metadata with consent for the exact hosts and request plan. `acquire` downloads file pairs with consent for the exact hosts. Other verbs use local data. Coverage is stated with every answer: a "not found" applies only to the documents that were checked.
 
 ```
 patchtrace kb index ...         # offline index: import, status, verify, plan (see "kb index --help")
+patchtrace kb index sync --help # monthly metadata fetching and its consent flags
 patchtrace kb search ...        # find the CVEs and products of a KB or CVE in loaded documents
 patchtrace kb attach ...        # finish or inspect the context attach of a project
 patchtrace kb explain ...       # show a project's advisory context
 patchtrace kb export ...        # write the advisory context as JSON or escaped Markdown
 patchtrace kb products ...      # list the product scopes of an investigation
+patchtrace kb products --all --query 24H2 # browse active stored products without creating an investigation
 patchtrace kb components ...    # component hints (analyst names and advisory title names)
 patchtrace kb pairs ...         # pair candidates from the saved Winbindex records
 patchtrace kb import-pair ...   # compare two files you hold: create and attach a project

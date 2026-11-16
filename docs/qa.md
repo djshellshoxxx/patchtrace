@@ -1,5 +1,14 @@
 # QA and audit record
 
+## 2026-11-16 path, KB CLI and historical research continuation
+
+Repaired both observed Windows CLI path failures, completed metadata-sync help
+and stored-product catalogue CLI access, and recovered the isolated R7 research
+slice from #282. Combined affected verification: **724 passed**; whole Ruff,
+dependency and whitespace checks passed. The full single-process attempt was
+killed (137); hosted/current Windows and release gates remain open. See
+[source-pinned evidence and limits](qa/continuation-paths-kb-r7-20261116.md).
+
 ## 2026-11-16 research integrity recovery
 
 See [research recovery evidence](qa/research-integrity-followup-20261116.md):
