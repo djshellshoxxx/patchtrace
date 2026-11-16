@@ -1,5 +1,14 @@
 # PatchTrace delivery tracker
 
+## 2026-11-16 consolidation follow-up
+
+Timeout validation/presets and recovered benchmark/parity/release repairs are
+implemented on the separate follow-up branch; see
+[evidence and disposition](../docs/qa/consolidation-followup-20261116.md).
+Ten already-integrated PR records are closed, with source branches preserved.
+Merge the integration and follow-up only after their respective hosted gates pass.
+The remaining Tier R provenance/label/receipt recovery is a separate slice.
+
 ## 2026-11-16 continuation
 
 Current integration: `codex/release-integration-20261116`; see
@@ -14,7 +23,7 @@ and worker-termination blockers documented in the checkpoint.
 
 Incident evidence, source references, attachment hashes, implementation options and closure criteria: **[P1 timeout investigation](../docs/qa/ghidriff-timeout-20261106.md)**. Preserve the original tracker history below.
 
-- [ ] **PT-TIMEOUT-1 — partially implemented:** Live elapsed/budget status, last observed stage/output age, actionable timeout text and bounded `backend-execution.json` receipts are implemented in [SPEC-01a](../docs/specs/ghidriff-timeout-progress.md). The elapsed timer and late worker events also preserve terminal/cancel messages. Timeout-entry validation/presets and original-pair Windows acceptance remain open. Existing interim option: **Setup → Backend and desktop → Comparison timeout (seconds) → 7200 (2h) or 14400 (4h) → Save setup**, then start a new run. The current GUI range is 10–86,400 seconds. A longer budget is not a verified performance fix.
+- [ ] **PT-TIMEOUT-1 — original-pair acceptance open:** Live elapsed/budget status, last observed stage/output age, actionable timeout text, bounded `backend-execution.json` receipts, explicit timeout-entry validation and Custom/1h/2h/4h presets are implemented in [SPEC-01a](../docs/specs/ghidriff-timeout-progress.md). The elapsed timer and late worker events preserve terminal/cancel messages. Original-pair Windows acceptance remains open. **Setup → Backend and desktop → Comparison timeout (seconds) → 7200 (2h) or 14400 (4h) → Save setup**, then start a new run. The GUI range remains 10–86,400 seconds. A longer budget is not a verified performance fix.
 - [ ] **PT-TIMEOUT-2:** Profile the structural-candidate expansion and downstream conversion/filtering/deduplication/JSON work; implement a measured, semantics-preserving repair through the supported external-engine boundary. Preserve ambiguity and disclose any incomplete result caused by resource limits.
 - [ ] **PT-TIMEOUT-3:** Diagnose the separate `FUN_100ca86c` decompiler timeout, missing PDB metadata and nonfatal resource-parser warnings. An outer timeout extension does not automatically fix the per-function timeout. Capture actual runtime versions; this log uses Ghidra 12.1.4.
 - [ ] **PT-TIMEOUT-4:** Verify successful-cache reuse and evaluate separately specified failed-run checkpoints. Keep `--no-threaded`, workspace isolation, failure logs and prior results; do not remove the Windows lock safeguard as an untested speed fix.

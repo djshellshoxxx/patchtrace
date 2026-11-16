@@ -1352,3 +1352,5 @@ unchanged. Tests: `test_kb_product_start_20261106.py`,
 | secondary CLI dispatch | secondary/cli_import.py | Qt-free secondary command orchestration: input preflight, reconciliation and import/run dispatch; cli.py is a lazy delegate | secondary services, CLI presentation helpers imported at dispatch | CLI import/reconcile/run and no-Qt module import regression tests |
 
 | manual corrections exchange and review CLI | corrections_exchange.py; corrections_cli.py; review_cli.py; cli_commands/corrections.py; cli_commands/review.py | Bound transactional correction exchange, immutable export, headless reviews through ProjectService | persistence, models, service | tests/test_corrections_cli.py; tests/test_review_cli.py; synthetic fixtures |
+
+| timeout setup UI | src/patchtrace/ui_timeout.py | Preserved-text 10..86400-second validation, explicit 1h/2h/4h presets and inline errors for Setup; no backend execution or settings writes | PySide6, tooltip registry | tests/test_ui_timeout.py; SPEC-01a docs/specs/ghidriff-timeout-progress.md |

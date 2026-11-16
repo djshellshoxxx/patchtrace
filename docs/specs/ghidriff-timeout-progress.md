@@ -1,6 +1,6 @@
 # Ghidriff timeout and progress diagnostics (SPEC-01a)
 
-Status: **partial** — bounded observation, timeout guidance and execution receipts are implemented. Timeout-entry validation/presets and original-pair Windows acceptance remain open in PT-TIMEOUT-1.
+Status: **partial** — bounded observation, timeout guidance and execution receipts are implemented. Timeout-entry validation and presets are implemented; original-pair Windows acceptance remains open in PT-TIMEOUT-1.
 
 Scope: PT-TIMEOUT-1 from [the reported Windows timeout](../qa/ghidriff-timeout-20261106.md). This amendment is an additive process-observation contract. It does not change Ghidriff matching, argv, threading, raw-cache identity, the configured deadline, or publication acceptance. The expensive candidate processing and original-pair Windows acceptance remain open.
 
@@ -35,6 +35,12 @@ Command-line backend listeners omit `analysis-progress` heartbeats and defer `an
 Keep the worker-specific Qt relay in `ui_job_events.py`, preserving the existing `ui.py` seam-size ceiling. The relay owns no backend logic and forwards only events from the exact active worker on the GUI thread.
 
 Treat `analysis-progress` as a status update: display its summary while the comparison worker is active, without appending each heartbeat to the log widget. Keep indeterminate progress, so an upstream substage's 100% is never shown as overall completion. Preserve Cancel/cancelling text. Reset progress-specific state at each job start and finish; unrelated jobs retain their existing elapsed display. `analysis-stage` and other events keep existing log behavior. Queued signals must not overwrite terminal error/cancel state after completion.
+
+### Timeout entry and presets
+
+Setup retains the existing 10..86,400-second whole-process budget and 3,600-second default. The timeout entry preserves invalid text (including empty, non-integer and out-of-range input) instead of silently reverting or clamping it. Save setup and Diagnose dependencies reject invalid input with an inline, accessible error and return focus to the timeout entry. Settings and backend diagnosis remain untouched on rejection. Entering a valid ASCII whole number clears the error; no unlimited value is offered.
+
+A keyboard-accessible preset selector offers Custom, 1 hour (3600 seconds), 2 hours (7200 seconds), and 4 hours (14400 seconds). Selecting a duration changes only the unsaved entry. Custom preserves the entry. Editing the number updates the preset indication. Saving remains explicit, and cancelling the dialog preserves the prior setting. Explain that this is the whole-comparison budget, not a per-function timeout, and a longer budget is not a performance fix. Keep the controls in `ui_timeout.py` to preserve the main-window seam.
 
 ## Verification
 

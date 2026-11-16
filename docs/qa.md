@@ -1,5 +1,12 @@
 # QA and audit record
 
+## 2026-11-16 consolidation follow-up
+
+See [follow-up evidence](qa/consolidation-followup-20261116.md): timeout entry
+controls, benchmark/parity and release repairs, independent review, 480 combined
+passes/3 expected failures plus 13 backup checks, and ten redundant PR closures.
+Hosted final-head qualification remains pending.
+
 ## 2026-11-16 continuation
 
 See [continuation evidence](qa/continuation-20261116.md), including independent
