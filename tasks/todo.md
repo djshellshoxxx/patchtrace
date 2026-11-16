@@ -1,5 +1,13 @@
 # PatchTrace delivery tracker
 
+## 2026-11-16 research integrity recovery
+
+Recovered the missing #164 Tier R provenance/label/receipt slice and #222 native
+research IO controls with reusable exact validation. See
+[scoped evidence](../docs/qa/research-integrity-followup-20261116.md).
+Implementation and independent reviews pass; hosted/native acceptance remains
+open. Twelve redundant PR records are now closed; original branches remain.
+
 ## 2026-11-16 consolidation follow-up
 
 Timeout validation/presets and recovered benchmark/parity/release repairs are

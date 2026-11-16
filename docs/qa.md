@@ -1,5 +1,12 @@
 # QA and audit record
 
+## 2026-11-16 research integrity recovery
+
+See [research recovery evidence](qa/research-integrity-followup-20261116.md):
+Tier R provenance/labels/immutable receipts (155 passed, 8 native skips), native
+IO research validator (106 passed), and independent scoped reviews. Final-head
+hosted/native gates remain separate; no real-binary accuracy claim is made.
+
 ## 2026-11-16 consolidation follow-up
 
 See [follow-up evidence](qa/consolidation-followup-20261116.md): timeout entry
