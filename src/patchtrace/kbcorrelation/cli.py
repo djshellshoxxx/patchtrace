@@ -64,6 +64,7 @@ def _register_core(sub) -> None:
     search.add_argument('--offline', action='store_true', help='accepted for clarity; search never fetches')
     search.add_argument('--product', metavar='ID', help='keep one product scope; others are listed as not applicable')
     search.add_argument('--investigation', metavar='ID', help='continue an investigation instead of starting one')
+    search.add_argument('--kev-dir', type=Path, metavar='DIR', help='local KEV catalog folder (read only)')
     attach = add_common(sub.add_parser('attach', help='finish or inspect the context attach of a project'))
     attach.add_argument('project', metavar='PROJECT')
     attach.add_argument('--investigation', required=True, metavar='INV')
@@ -84,7 +85,7 @@ def _register_core(sub) -> None:
 def cmd_search(args, context, out) -> int:
     return present(out, 'kb search', args, context.service(args).search(
         args.lead, months=args.months, scope_file=args.scope_file, product=args.product,
-        investigation=args.investigation))
+        investigation=args.investigation, kev=context.exploitation(args.kev_dir)))
 
 
 def cmd_attach(args, context, out) -> int:

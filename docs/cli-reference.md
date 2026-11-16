@@ -4,6 +4,12 @@ Generated 2026-10-14 from `argparse` (`patchtrace.cli._parser`) and the `cli_com
 
 ## Conventions
 
+KEV context continuation (2026-11-16): `kb search --kev-dir DIR` selects a local
+catalogue for CVE-level edge/card context and provenance (defaults to the usual
+KEV directory). `pilot leads` binds the current verified local catalogue into
+its result identity; `pilot why/review` compare that snapshot when loading stored
+results. Catalogue context never changes function ranking or makes a request.
+
 KB continuation (2026-11-16): `patchtrace kb index sync --help` shows the exact
 metadata fetch and consent flags; it performs no request. `patchtrace kb products INV`
 lists the product scopes of an investigation. `patchtrace kb products --all [--query TEXT]`

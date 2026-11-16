@@ -21,6 +21,12 @@ patchtrace kb acquire ...       # download, verify and compare a file-index pair
 
 Check the product and architecture before you read an association. An advisory mention, a vendor remediation statement and a disputed applicability are different things.
 
+`search --kev-dir DIR` uses a local KEV catalogue (the default is the catalogue
+used by `patchtrace kev`). Search JSON includes CVE-level status, listing date,
+snapshot identity and catalogue provenance. No catalogue means not loaded;
+absence from a loaded snapshot says nothing about exploitation. KEV does not
+change advisory edges or the order of functions.
+
 Desktop equivalent: the [KB and CVE panel](29-kb-and-cve-investigation-panel.md).
 
 Sources: `src/patchtrace/kbcorrelation/cli.py`, `cli_online.py`, `cli_index.py`, `cli_acquire.py`, `cli_pairs.py`, `cli_leads.py`, `src/patchtrace/cli_commands/kb.py`, top-level `patchtrace --help`.

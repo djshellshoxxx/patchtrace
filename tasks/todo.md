@@ -1,5 +1,15 @@
 # PatchTrace delivery tracker
 
+## 2026-11-16 local KEV continuation
+
+- [x] Complete K4 item 3: local KEV context in pilot leads and KB search.
+- [x] Bind catalogue snapshot changes to stored-result identity/staleness.
+- [x] Preserve provenance, unknown states and function order; 1,224 affected tests pass.
+- [ ] Complete hosted current-head QA/Windows/package gates and remaining historical review.
+- [ ] Resolve native/timeout-pair/clean-machine/manual acceptance with real evidence.
+
+[KEV continuation evidence](../docs/qa/kev-cli-continuation-20261116.md).
+
 ## 2026-11-16 paths, KB parity and R7 continuation
 
 - [x] Repair both Windows QA path-classification failures without weakening assertions.
@@ -8,7 +18,7 @@
 - [x] Inventory 300 fetched branch refs; distinguish ancestry from semantic integration.
 - [x] Pass 724 affected tests, whole Ruff, dependency and whitespace checks.
 - [ ] Obtain passing current-head hosted full QA, Qt and platform packages before merging #297.
-- [ ] Finish remaining historical semantic review, K4 KEV wiring and release/native/manual gates.
+- [ ] Finish remaining historical semantic review and release/native/manual gates.
 
 [Continuation evidence](../docs/qa/continuation-paths-kb-r7-20261116.md).
 

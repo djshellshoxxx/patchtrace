@@ -2,6 +2,13 @@
 
 ### November 2026 continuation interfaces
 
+KEV CLI context continuation (2026-11-16): `pilot/collect.py:local_kev` reads the
+existing verified snapshot store into `pilot/sources/kev.py:CatalogKev`.
+`pilot/cli.py` compares the current snapshot id when reading stored results;
+`kbcorrelation/service.py` accepts the existing exploitation lookup for search
+edge/card context. No new stored schema or ranking algorithm is introduced.
+Verification: `test_pilot_cli.py`, `test_kbc_cli.py`, KEV and pilot suites.
+
 Historical R7 research recovery (2026-11-16): `tools/research/r7/{slicer,patterns,bench}.py`
 contains bounded synthetic dependency slicing, conservative guard-delta motifs and
 an optional benchmark. These development tools do not modify production analysis,

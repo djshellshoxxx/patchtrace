@@ -80,6 +80,30 @@ def test_products_catalogue_rejects_ambiguous_selection_without_writes(kb, args)
     assert not kb.workspace.exists()
 
 
+def test_search_uses_local_kev_without_changing_edges_or_coverage(kb, tmp_path):
+    from kev_helpers import document, entry, parse_bytes, render
+
+    from patchtrace.kev.store import KevStore
+
+    kb.loaded()
+    before = kb.search()[1]['result']
+    folder = tmp_path / 'kev'
+    raw = render(document([entry(cveID='CVE-2099-20001')]))
+    catalog = parse_bytes(raw)
+    KevStore(folder).install(raw, catalog, now='2099-03-02T00:00:00Z')
+    code, doc, err = kb('search', 'KB5099001', '--kev-dir', str(folder))
+    assert code == 0 and err == ''
+    result = doc['result']
+    assert result['coverage'] == before['coverage']
+    assert [(e['cve'], e['kb'], e['scope_id']) for e in result['edges']] == [
+        (e['cve'], e['kb'], e['scope_id']) for e in before['edges']]
+    for edge in result['edges']:
+        assert edge['kev'] == ('listed' if edge['cve'] == 'CVE-2099-20001' else 'not-in-snapshot')
+        assert edge['kev_snapshot_id'] == catalog.meta.snapshot_id
+    assert result['kev_source']['snapshot_id'] == catalog.meta.snapshot_id
+    assert {c['cve']: c['kev'] for c in result['cards']}['CVE-2099-20001'] == 'listed'
+
+
 def test_search_exit_codes_found_not_observed_partial_and_empty(kb, tmp_path):
     empty, doc = kb.search()
     assert empty == 3 and doc['result']['coverage']['state'] == 'not_searched'  # nothing loaded is never "no result"

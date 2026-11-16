@@ -144,11 +144,16 @@ def _scope_dict(scope) -> dict:
             'architecture': scope.architecture, 'release': scope.release, 'mapping': scope.mapping}
 
 
-def _edge_dict(group, names: Mapping[str, str]) -> dict:
+def _edge_dict(group, names: Mapping[str, str], kev: ExploitationLookup | None = None) -> dict:
+    context = {}
+    if kev is not None:
+        fact = kev.status(group.cve)
+        context = {'kev': CARD_KEV[fact.state], 'kev_date_added': fact.date_added,
+                   'kev_snapshot_id': fact.snapshot_sha256}
     return {'kb': group.kb, 'cve': group.cve, 'scope_id': group.scope_id, 'product': names.get(group.scope_id, ''),
             'relation': group.relation, 'label': RELATION_LABEL.get(group.relation, group.relation),
             'fixed_builds': list(group.fixed_builds), 'releases': list(group.release_ids), 'kev': 'not-loaded',
-            'refs': [{'doc_id': r.doc_id, 'pointer': r.pointer} for r in group.refs]}
+            'refs': [{'doc_id': r.doc_id, 'pointer': r.pointer} for r in group.refs], **context}
 
 
 def _plain_edge(edge, names: Mapping[str, str]) -> dict:
@@ -248,7 +253,8 @@ class KbService:
     # ------------------------------------------------------------------------------------------ search
 
     def search(self, lead: str, *, months: str | None = None, scope_file: Path | None = None,
-               product: str | None = None, investigation: str | None = None) -> Outcome:
+               product: str | None = None, investigation: str | None = None,
+               kev: ExploitationLookup | None = None) -> Outcome:
         kind, value = parse_lead(lead)
         with self._open() as ws:
             index, unreadable = load_index(ws, self.ports)
@@ -264,7 +270,7 @@ class KbService:
             rev = self._record_search(ws, rev, Lead(kind=kind, value=value, raw=lead.strip()[:200]), full, product)
             cves = sorted({e.cve for e in shown.edges}) if kind == 'kb' else [value]
             cards = [_card_dict(c) for cve in cves for c in self._lookup(index, 'cve', cve, scope, None, now).cards]
-        return self._search_outcome(rev, kind, value, full, shown, product, cards, names, unreadable)
+        return self._search_outcome(rev, kind, value, full, shown, product, cards, names, unreadable, kev)
 
     def _record_search(self, ws: WorkspaceStore, rev: InvestigationRevision | None, lead: Lead, full: Lookup,
                        product: str | None) -> InvestigationRevision:
@@ -280,7 +286,7 @@ class KbService:
             rev = self._step(ws, rev, 'product_selected', scope_id=product)
         return rev
 
-    def _search_outcome(self, rev, kind, value, full, shown, product, cards, names, unreadable) -> Outcome:
+    def _search_outcome(self, rev, kind, value, full, shown, product, cards, names, unreadable, kev=None) -> Outcome:
         scopes = [_scope_dict(s) for s in full.scopes]
         kept = {(e.cve, e.kb, e.scope_id) for e in shown.edges}
         elsewhere = [_plain_edge(e, names) for e in full.edges if (e.cve, e.kb, e.scope_id) not in kept]
@@ -293,11 +299,14 @@ class KbService:
                   'lead': {'kind': kind, 'value': value}, 'coverage': {'state': full.coverage.state,
                                                                        'text': full.text, 'detail': full.coverage
                                                                        .model_dump(mode='json')},
-                  'scopes': scopes, 'edges': [_edge_dict(g, names) for g in shown.groups], 'cards': cards,
+                  'scopes': scopes, 'edges': [_edge_dict(g, names, kev) for g in shown.groups], 'cards': cards,
                   'mention_only': [_plain_edge(e, names) for e in shown.mention_only],
                   'not_applicable': elsewhere, 'disputed': [_plain_edge(e, names) for e in shown.disputed],
                   'warnings': warnings, 'next': 'kb.next.choose_product' if len(scopes) > 1 and not product else None}
         lines = [full.text]
+        if kev is not None:
+            result['kev_source'] = kev_source_of(kev).model_dump(mode='json')
+            result['cards'] = [{**card, 'kev': CARD_KEV[kev.status(card['cve']).state]} for card in cards]
         lines += [f'{e["kb"]}  {e["cve"]}  {e["product"]}  {e["label"]}' for e in result['edges']]
         lines += [f'Mentioned only: {e["cve"]} (advisory text, not a remediation)' for e in result['mention_only']]
         if len(scopes) > 1 and not product:

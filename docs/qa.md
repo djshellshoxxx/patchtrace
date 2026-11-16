@@ -1,5 +1,14 @@
 # QA and audit record
 
+## 2026-11-16 local KEV CLI context completion
+
+Completed the remaining K4 context wiring through verified local catalogs,
+including snapshot staleness and provenance without function-ranking changes.
+Final combined affected selection: **1,224 passed**. Broader local acceptance
+still encounters the documented AF_UNIX runner restriction and grouped process
+terminations; hosted Windows/full-suite/release gates remain open. See
+[KEV continuation evidence](qa/kev-cli-continuation-20261116.md).
+
 ## 2026-11-16 path, KB CLI and historical research continuation
 
 Repaired both observed Windows CLI path failures, completed metadata-sync help
