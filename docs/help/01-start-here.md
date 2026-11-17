@@ -4,6 +4,8 @@ PatchTrace compares an explicitly chosen older and newer Windows binary. Use it 
 
 The documented desktop target is Windows 11 x64. The initial input contract accepts PE AMD64 executables, DLLs, and drivers. A filename extension does not establish the file format or architecture. PatchTrace validates the input headers.
 
+For keyboard navigation, press `Ctrl+Shift+P` to open the command palette. Use `F6` and `Shift+F6` to move between workspace regions. See [keyboard and command navigation](49-keyboard-and-command-navigation.md).
+
 Choose your starting point:
 
 | Your starting material | Start with |
