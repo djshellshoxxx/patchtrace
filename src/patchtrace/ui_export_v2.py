@@ -8,9 +8,19 @@ existing tooltip and test surface stays the same.
 from __future__ import annotations
 
 from collections.abc import Callable
+from itertools import pairwise
 
-from PySide6.QtCore import Qt
-from PySide6.QtWidgets import QComboBox, QDialog, QFormLayout, QListWidget, QListWidgetItem
+from PySide6.QtCore import QEvent, QObject, Qt
+from PySide6.QtWidgets import (
+    QComboBox,
+    QDialog,
+    QDialogButtonBox,
+    QFormLayout,
+    QListWidget,
+    QListWidgetItem,
+    QPushButton,
+    QWidget,
+)
 
 from .gui.qt.labels import PlainLabel
 from .report2 import export_vm
@@ -32,8 +42,8 @@ def attach(dialog: QDialog, form: QFormLayout, project, sections, refresh: Calla
     for name, widget in (('contract', dialog.contract), ('profile', dialog.profile),
                          ('sections', dialog.sections_list)):
         widget.setAccessibleName(export_vm.ACCESSIBLE_NAMES[name])
-    for offset, (label, widget) in enumerate((('Contract', dialog.contract), ('Profile', dialog.profile),
-                                              ('Sections', dialog.sections_list))):
+    for offset, (label, widget) in enumerate((('&Contract', dialog.contract), ('&Profile', dialog.profile),
+                                              ('&Sections', dialog.sections_list))):
         form.insertRow(FIRST_ROW + offset, label, widget)
     form.insertRow(FIRST_ROW + 3, dialog.hint)
     apply_tooltips(dialog, {'contract': 'export.contract', 'profile': 'export.profile',
@@ -79,6 +89,43 @@ def show(dialog: QDialog, notice: str | None = None) -> None:
             checkbox.setEnabled(not sharing)
     warning = dialog.vm.take_local_warning() if dialog.vm.report_version == 2 else None
     dialog.hint.setText(' '.join(filter(None, (notice, dialog.vm.profile_hint() or warning))))
+    _configure_keyboard(dialog)
+
+
+class _FocusedButtonDefaults(QObject):
+    """Keep Qt's Enter/Space handling, but never leave a default action behind in an export field."""
+
+    def eventFilter(self, watched: QObject, event: QEvent) -> bool:  # noqa: N802
+        if isinstance(watched, QDialogButtonBox) and event.type() == QEvent.Type.ShowToParent:
+            # QDialogButtonBox assigns its first AcceptRole button as default in showEvent,
+            # even with autoDefault disabled. ShowToParent follows that native initialization.
+            for button in watched.buttons():
+                button.setDefault(button.hasFocus())
+        elif isinstance(watched, QPushButton):
+            if event.type() == QEvent.Type.FocusIn:
+                watched.setDefault(True)
+            elif event.type() == QEvent.Type.FocusOut:
+                watched.setDefault(False)
+        return super().eventFilter(watched, event)
+
+
+def _configure_keyboard(dialog: QDialog) -> None:
+    """Run once, on the constructor's final show() call after the legacy controls and buttons exist."""
+    if not hasattr(dialog, 'buttons') or hasattr(dialog, '_export_keyboard'):
+        return
+    browse = dialog.findChild(QPushButton, 'export.browse')
+    write = dialog.buttons.button(QDialogButtonBox.StandardButton.Ok)
+    cancel = dialog.buttons.button(QDialogButtonBox.StandardButton.Cancel)
+    dialog._export_keyboard = _FocusedButtonDefaults(dialog)
+    dialog.buttons.installEventFilter(dialog._export_keyboard)
+    for button in (browse, write, cancel):
+        button.setAutoDefault(False)
+        button.setDefault(False)
+        button.installEventFilter(dialog._export_keyboard)
+    controls = (dialog.format, dialog.destination, browse, dialog.contract, dialog.profile,
+                dialog.sections_list, dialog.code, dialog.notes, dialog.selection, dialog.preview, write, cancel)
+    for before, after in pairwise(controls):
+        QWidget.setTabOrder(before, after)
 
 
 def report_sections(service, log: Callable[[str], None]):

@@ -2731,6 +2731,8 @@ class MainWindow(QMainWindow):
             if thread.isRunning():
                 alive.append(thread)
             else:
+                if thread is self._inspection_thread:
+                    self._inspection_thread = None
                 thread.deleteLater()
         self._inspection_threads = alive
 

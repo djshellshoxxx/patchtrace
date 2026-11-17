@@ -17,6 +17,8 @@ The sample contains an authored, synthetic bounds-check example and a curated fi
 
 An unavailable representation should be identified explicitly. Missing assembly must not be replaced with invented instructions.
 
+Use `Tab` and `Shift+Tab` to move between controls and the arrow keys to select list rows. See [keyboard navigation](49-keyboard-and-command-navigation.md).
+
 Each use of `Sample` creates a separate persistent project. Keep the exercise if you want to test saving, reopening, and exporting.
 
 A successful sample exercise confirms those paths for synthetic data. It does not establish native backend compatibility, general matching accuracy, or the correctness of generated interpretations.
