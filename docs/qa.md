@@ -1955,3 +1955,16 @@ PR #304 at `bb4277ae` failed the hosted Windows publication boundary: **15 faile
 ## [CURRENT302-INTEGRATION-20261118]
 
 Fresh REST inspection found eleven new #302 commits at `121ffb0b`; six repairs match earlier #304 patch IDs, while four behavior commits repair additional ZIP/lineage/selection/budget defects. Actual merge parents preserve both that head and #304 `6cc6b6b7`. Independent review verified all forty #304-only paths remain unchanged. A copied-target chronology-cache regression was reproduced and fixed; four stale test-double failures were preserved and repaired through fixture flags only. Disjoint affected selections total **1,650 passed, 2 native Windows skips**, with separate independent controls, whole Ruff and schema checks passing. Final code/tree is local `3693ca3b` / published `34c06d9e`, tree `42327753`. Hosted exact-head acceptance and guarded merge remain pending; no PR closure or accuracy promotion follows from local checks. [Evidence and limits](qa/current302-integration-20261118.md).
+
+## [SAVED-SEARCH-WORKFLOW-20261118]
+
+Source `e705974b` wires the existing project-owned saved-search store into GUI
+and CLI workflows, preserves validated mode/effective filters, and adds bounded,
+explicitly per-user recent text. Initial controls recorded **14 failed, 8 passed**;
+two later self-review failures were also reproduced and repaired. Final affected
+selection: **374 passed in 16.65 s**, including actual default GUI and current-source
+headless CLI journeys, ownership/reopen/stale-row controls and the global tooltip
+sweep. Whole Ruff and whitespace pass. UI host, generic settings limits, schemas
+and enrichment storage are unchanged. Independent review and combined current-head,
+hosted, Windows and native/manual gates remain open.
+[Commands, source identities and preserved failures](qa/saved-search-workflow-20261118.md).

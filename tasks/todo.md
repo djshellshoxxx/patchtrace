@@ -1430,3 +1430,10 @@ Full `QT_QPA_PLATFORM=offscreen python -m pytest -q` for this isolated native sl
 ## Accuracy validation (opened 2026-11-06)
 - [ ] Follow [accuracy validation plan](../docs/plans/accuracy-validation-plan-20261106.md): per-layer claims (L1 advisory join, L2 open-source pair diff, L3 real Windows pairs), manifests frozen before engine runs. AV-0 and AV-1 done, AV-2 next; no accuracy result exists yet.
 - [ ] 2026-11-07 status and findings: see [accuracy program findings](../docs/qa/accuracy-program-findings-20261107.md) (PR triage, CI observations, Windows candidate research, open gates).
+
+### [SAVED-SEARCH-WORKFLOW-20261118]
+
+- [x] Define saved/recent desktop and CLI ownership, replay, bounds and no-execution contracts before source changes; preserve the 14-failure baseline.
+- [x] Wire the existing stores with compatible mode/filter replay, project/epoch guards, bounded per-user text recall and explicit saved run/delete actions; preserve and correct both self-review defects.
+- [x] Pass the 374-test affected selection, actual default GUI and current-source headless CLI journeys, global tooltip coverage and whole Ruff without changing generic settings, project schemas or the UI host.
+- [ ] Independently review source `e705974b` with spec/test-first `ada1a164`; publish as a focused follow-on to the retained integration and complete actual-head/hosted/native/manual gates. [QA receipt](../docs/qa/saved-search-workflow-20261118.md).
