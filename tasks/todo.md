@@ -1443,3 +1443,10 @@ Full `QT_QPA_PLATFORM=offscreen python -m pytest -q` for this isolated native sl
 - [x] Repair delayed Build autosubmit after recent recall; preserve coverage and normal Build behavior (`c30c7911`).
 - [x] Preserve independent red and authored red/green receipts; affected selection 376 passed.
 - [ ] Root independent recheck and combined qualification/publication.
+
+### [SAVED-SEARCH-INDEPENDENT-INTEGRATION-20261118]
+
+- [x] Independently review saved event replay, CLI lifecycle, Qt ownership and bounded recent settings.
+- [x] Reproduce and repair delayed Build auto-submission of recalled text; preserve red and independent green plus positive execution-intent controls.
+- [x] Integrate onto published #307 and execute376 affected checks, required Ruff and whitespace.
+- [ ] Publish focused candidate and complete all exact-head/full/platform/manual gates before promotion. [Evidence](../docs/qa/saved-search-reviewed-20261118/README.md).
