@@ -184,6 +184,8 @@ class PackageBudget:
         return token
 
     def complete_output(self, reservation, count: int) -> None:
+        if self._worker_closed:
+            self._fail('PT-ACQ-VERIFY', 'terminal worker accounting cannot accept output completion')
         # A completed write's known bytes remain evidence even if cancellation
         # or the original deadline became visible while the sink was writing.
         output = self._owned(reservation, 'output', self._outputs)
@@ -198,6 +200,8 @@ class PackageBudget:
         self.check()
 
     def fail_output(self, reservation) -> None:
+        if self._worker_closed:
+            self._fail('PT-ACQ-VERIFY', 'terminal worker accounting cannot consume an output token')
         output = self._owned(reservation, 'output', self._outputs)
         del self._outputs[reservation]
         self._entries[output.entry].pending -= 1
