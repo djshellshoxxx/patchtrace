@@ -419,3 +419,23 @@ support. Completion is based on the existing D/R/J/G milestones, not test counts
 Windows inventory encoding and native descendant diagnostics are active focused
 workstreams. Final full/platform/native/package/security/reproducibility gates,
 real CVE/KB journeys and frozen research limitations remain open.
+
+
+## Internal KB held-input propagation candidate — 2026-11-18
+
+Source `d9a939911f39f3641bd5eed97a2ce067d618856b` implements only the approved
+internal capability in existing KB service/wiring/attachment. Its exact
+15-file authored gate passes 300 cases with zero skips, and the unchanged
+independent short-read probe passes all five cases. Earlier API and short-read
+failures remain in [the sealed receipt](../qa/kb-held-input-propagation-20261118.md).
+These overlapping counts are evidence at this source, not feature percentages.
+
+| Boundary | Current evidence | Remaining gate |
+| --- | --- | --- |
+| Internal KB held capability | Same live pair/checkpoint, full hashes, finite PE prefix, ordinary injection, saved/global admission and typed stop/commit controls | Root final independent replay and integration |
+| Held-origin package route | No CLI/GUI/package entry point added; serialized records unchanged | Durable expected identity/provenance and refusal of reader-less source-path recovery before exposure |
+| Whole PW02 local package fallback | Still partial; no working native package-to-project journey | Native stage/FDI/worker lease transfer, durable reconciliation, postcommit read accounting, Windows/frozen journey and final applicable gates |
+
+The existing injected post-create fault and postcommit project-copy reads remain
+explicit limits. Portable descriptor and SQLite tests do not supply native or
+manual acceptance. No whole-feature completion or release credit is added.

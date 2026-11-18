@@ -2374,3 +2374,17 @@ in the [sealed source and evidence packet](qa/windows-dependency-encoding-202611
 Authored CP1252 simulations do not rerun native pip. Corrected hosted Windows
 inventory/audit, source-independent review and actual scan acceptance remain
 separate; no scanner policy, pins, exclusions or raw-output handling changed.
+
+## 2026-11-18 — internal KB held-input propagation candidate
+
+Following the approved three-file scope, source `d9a93991` carries the same
+operation pair through existing inspection, attachment hashes and core create.
+The [sealed 147-member receipt](qa/kb-held-input-propagation-20261118.md) retains
+the initial 32-fail/1-positive missing-API result, initial 33/39-pass candidates,
+root's actual short-read 3-fail/2-positive proof and subsequent 6-fail/6-positive
+regression before its bounded-prefix correction. Exact final affected gate:
+300 passed, zero skips/errors/failures, 99 source-pinned imported modules;
+unchanged independent probe: 5 passed. Full required Ruff and diff check pass.
+Root independent review/integration remains pending. This is internal capability
+propagation only; durable held-origin recovery, postcommit checkpoint coverage,
+native Windows/FDI and the complete package journey remain unqualified.

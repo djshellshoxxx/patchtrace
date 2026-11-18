@@ -1791,3 +1791,11 @@ See the [immutable continuation checkpoint](../docs/qa/verified-continuation-202
 - [x] Verify exact source `6dea194a`: 167 passed, no skips, 41 pinned imports; all other command arguments/order preserved, normal Ruff and diff checks pass. See `docs/qa/windows-dependency-encoding-20261118.md`.
 - [ ] Independently review/replay and selectively integrate the source and sealed QA chain.
 - [ ] Obtain corrected actual-candidate Windows installation, inventory, closure and audit evidence. Portable simulations provide no native or clean-security acceptance.
+
+### Internal KB held-input propagation candidate (2026-11-18)
+
+- [x] Implement root-approved internal reader plumbing in exactly service/wiring/store after contract and genuine failing regressions; preserve ordinary calls, full admission and original operation lifetime/accounting.
+- [x] Retain root's short-read PE-prefix failure unchanged; specify and correct accumulation within the existing 4096-byte bound.
+- [x] Seal exact-source 300-pass affected gate, unchanged 5-case peer replay, required full Ruff and all earlier reds; see `docs/qa/kb-held-input-propagation-20261118.md`.
+- [ ] Root independently review and replay the final three-file candidate before selective integration.
+- [ ] Keep held-origin CLI/GUI/package routes unavailable until a separate durable facade prevents reader-less package-path recovery; native worker/FDI, expected project identity and postcommit read-checkpoint limits remain separate gates.
