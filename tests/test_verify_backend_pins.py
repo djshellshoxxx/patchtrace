@@ -198,7 +198,10 @@ def test_verification_sources_do_not_fit_other_components(source):
 
 
 def test_verify_without_inputs_records_nothing(tmp_path, monkeypatch):
+    fetches, calls = [], []
+
     def offline(url, dest=None, limit=0):
+        fetches.append(url)
         raise OSError('offline')
 
     def uninjected_process(*args, **kwargs):
@@ -208,9 +211,36 @@ def test_verify_without_inputs_records_nothing(tmp_path, monkeypatch):
     monkeypatch.setattr(subprocess, 'run', uninjected_process)
     args = argparse.Namespace(pin=ROOT / 'tools' / 'backend_pin.json', workdir=tmp_path / 'w', sigstore_identity='',
                               sigstore_issuer='', gpg_fingerprint='')
-    evidence, problems = rec.verify_all(args)
+    before = args.pin.read_bytes()
+    pin = json.loads(before)
+    clone = args.workdir / 'ghidriff-git'
+    init = ['git', '-c', 'core.autocrlf=false', 'init', '-q']
+    fetch = ['git', '-c', 'core.autocrlf=false', 'fetch', '-q', '--no-tags', '--depth', '1',
+             pin['ghidriff']['repo'], pin['ghidriff']['sha']]
+
+    def offline_run(argv, cwd):
+        calls.append((list(argv), cwd))
+        if list(argv) in (['git', '--version'], ['gpg', '--version']):
+            assert cwd is None
+            raise OSError('offline tools')
+        assert cwd == clone
+        if list(argv) == init:
+            return subprocess.CompletedProcess(argv, 0, '', '')
+        assert list(argv) == fetch
+        return subprocess.CompletedProcess(argv, 1, '', 'authored offline git fetch')
+
+    evidence, problems = rec.verify_all(args, run=offline_run)
     assert problems and evidence['result'] == 'FAILED' and evidence['record_in_pin'] is None
     assert evidence['schema'] == rec.SCHEMA and 'sigstore' in evidence['tools']
+    assert calls == [(['git', '--version'], None), (['gpg', '--version'], None), (init, clone), (fetch, clone)]
+    assert fetches == [*rec.PAGES, pin['components']['python-windows']['url']]
+    assert evidence['tools']['git'] == evidence['tools']['gpg'] == 'unavailable'
+    assert evidence['python_windows']['checks'] == []
+    assert evidence['ghidriff'] == {'repo': pin['ghidriff']['repo'], 'commit': pin['ghidriff']['sha']}
+    assert problems == ['python-windows: offline',
+                        'ghidriff: git fetch -q --no-tags failed: authored offline git fetch']
+    assert args.pin.read_bytes() == before
+    assert not any(path.is_file() for path in args.workdir.rglob('*'))
 
 
 def test_bad_sigstore_signature_is_reported(tmp_path):
