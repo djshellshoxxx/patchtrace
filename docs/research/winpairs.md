@@ -5,11 +5,32 @@ Helper: `python -m tools.research_qualification.winpairs --manifest CASES.json -
 ## Contract
 
 - Each case side (`older`, `newer`) names a binary. Explicit keys win: `file`, `version`, `kb`, `sha256`, `month` (`YYYY-MM`), `machine` (`amd64` default, `x86`, `arm64`). Otherwise the free-text `ref` is mined: first token is the file, then a `10.x.y.z` version, a `KBnnnnnnn`, and a `YYYY-Mon` month.
-- Selection never guesses. If more than one distinct sha256 matches and the case has no version, KB or sha256 pin, the side is `missing` with reason `ambiguous`. A pinned multi-match picks highest version, then newest timestamp, then sha256 (deterministic). Many current candidate refs are month-only, so expect `missing` until the case is pinned.
-- Download: https only, hosts `winbindex.m417z.com` and `msdl.microsoft.com`; redirects are followed by hand (max 3) and every hop is re-checked. A redirect hop may additionally land on `*.blob.core.windows.net` (see Verified). 200 MiB cap per binary, 64 MiB cap on the compressed index plus a decompression cap, 60 s timeout. sha256 of the download must equal the Winbindex sha256 or the side becomes `missing` and the file is deleted.
+- Selection never guesses. Every query must resolve to exactly one SHA-256 identity. Version, KB and month constraints narrow candidates but do not authorize choosing the highest version or newest timestamp among different hashes. A version is matched as four exact integer components, not as a textual prefix. Distinct remaining hashes or conflicting identity metadata for one hash make the side `missing` with reason `ambiguous`; add an independently verified exact hash to resolve distinct-hash ambiguity. A valid Winbindex SHA-256 is required before downloading.
+- Download: https only, hosts `winbindex.m417z.com` and `msdl.microsoft.com`; redirects are followed by hand (max 3) and every hop is re-checked. A redirect hop may additionally land on `*.blob.core.windows.net` (see Verified). 200 MiB cap per binary, 64 MiB cap on the compressed index plus a decompression cap, 60 s timeout. The downloaded SHA-256 must equal the Winbindex SHA-256 and its byte length must agree with a supplied size. A mismatch makes the side `missing`; it never removes or changes an earlier artifact.
 - Manifest records case id, file, version, timestamp, virtual size, expected and actual sha256, size, symbol-server URL, relative path, status `found`/`missing` and a reason. Redirect (signed blob) URLs are never recorded. A case is `found` only when both sides are.
 - Exit codes: 0 at least one case found, 1 every requested case missing, 2 blocked or usage (bad manifest, unknown case id, unsafe name, path outside the allowed roots via `pathguard.confine`). Missing pairs are data, not errors.
 - Fetched binaries are never executed and never committed. The workflow uploads them as `winpairs-binaries` and the manifest as `winpairs-manifest`, both with 7-day retention.
+
+### Immutable output and retry amendment (2026-11-18)
+
+Use a new output location for each acquisition attempt. Existing binary paths,
+including links and directories, are refused before downloading that side. An
+existing pair-manifest path is refused before any network operation. An earlier
+valid or damaged result is never overwritten, adopted or deleted by a retry.
+The manifest and each binary are staged in their destination directory, flushed
+and fsynced, then published with an exclusive atomic hard link. A destination
+created concurrently wins; its contents remain intact. Unsupported hard-link
+publication fails closed instead of falling back to a partial or overwriting
+write. Failed or interrupted publication removes only the attempt's own staging
+file. Successful earlier sides remain available if a later side or the manifest
+fails. These are separate immutable artifacts, not an all-files transaction.
+
+This helper proves acquired byte identity only. Its `found` status does not prove
+the two sides have the same product scope, that their chronology is correct, or
+that any changed function fixes a CVE. Those facts require the separately reviewed
+case/pin provenance and qualification protocol. Exact-hash disambiguation does not
+replace that review. No real binary or native engine acceptance follows from the
+authored offline regression tests for this amendment.
 
 ## Verified (2026-11-06, live from this shell, not from memory)
 

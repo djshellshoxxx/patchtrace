@@ -9,8 +9,10 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import os
 import re
 import sys
+import tempfile
 import urllib.error
 import urllib.parse
 import urllib.request
@@ -35,6 +37,7 @@ MAX_REDIRECTS = 3
 TIMEOUT = 60
 MACHINES = {'amd64': 0x8664, 'x86': 0x14C, 'arm64': 0xAA64}
 _SAFE = re.compile(r'^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$')
+_HEX64 = re.compile(r'^[0-9a-fA-F]{64}$')
 _VER = re.compile(r'\b(\d+\.\d+\.\d+\.\d+)\b')
 _KB = re.compile(r'\b(KB\d{6,8})\b', re.I)
 _MONTH = re.compile(r'\b(\d{4})-(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\b')
@@ -101,19 +104,26 @@ def parse_ref(side: dict[str, Any]) -> dict[str, Any]:
 
 
 def _vkey(v: str) -> tuple[int, ...]:
-    m = _VER.search(v or '')
+    m = _VER.search(v) if isinstance(v, str) else None
     return tuple(int(x) for x in m[1].split('.')) if m else ()
 
 
 def _matches(entry: dict[str, Any], q: dict[str, Any]) -> bool:
     fi = entry.get('fileInfo') or {}
-    if not isinstance(fi.get('timestamp'), int) or not isinstance(fi.get('virtualSize'), int):
+    if not isinstance(fi, dict):
+        return False
+    if not isinstance(fi.get('sha256'), str) or not _HEX64.fullmatch(fi['sha256']):
+        return False  # missing identity can never become a verified acquisition
+    if (type(fi.get('timestamp')) is not int or not 0 <= fi['timestamp'] <= 0xffffffff or
+            type(fi.get('virtualSize')) is not int or not 0 < fi['virtualSize'] <= 0xffffffff):
         return False  # symbol-server key needs both
+    if fi.get('size') is not None and (type(fi['size']) is not int or not 0 <= fi['size'] <= MAX_BINARY_BYTES):
+        return False
     if fi.get('machineType') != MACHINES[q['machine']]:
         return False
     if q['sha256'] and fi.get('sha256', '').lower() != q['sha256']:
         return False
-    if q['version'] and not str(fi.get('version', '')).startswith(q['version']):
+    if q['version'] and (not _vkey(q['version']) or _vkey(fi.get('version', '')) != _vkey(q['version'])):
         return False
     updates = [u for kbs in (entry.get('windowsVersions') or {}).values() for u in kbs.items()]
     if q['kb'] and not any(k.upper() == q['kb'] for k, _ in updates):
@@ -125,16 +135,20 @@ def _matches(entry: dict[str, Any], q: dict[str, Any]) -> bool:
 
 
 def select_entry(index: dict[str, Any], q: dict[str, Any]) -> tuple[dict[str, Any] | None, str]:
-    """Return (fileInfo, reason). Unpinned multi-match is refused (never a silent wrong pair); a pinned multi-match
-    picks the highest version, then newest timestamp, then sha256 for determinism."""
+    """Return only an unambiguous byte identity. KB/version/month constraints are not unique hash pins."""
     cands = [e['fileInfo'] for e in index.values() if isinstance(e, dict) and _matches(e, q)]
     if not cands:
         return None, 'no matching Winbindex entry with timestamp and virtualSize'
-    pinned = bool(q['version'] or q['kb'] or q['sha256'])
-    if len({c['sha256'] for c in cands}) > 1 and not pinned:
-        return None, f'ambiguous: {len(cands)} candidates; pin version, kb or sha256 in the case'
-    best = sorted(cands, key=lambda c: (_vkey(c.get('version', '')), c['timestamp'], c['sha256']))[-1]
-    return best, f'{len(cands)} candidate(s)'
+    if len({c['sha256'].lower() for c in cands}) > 1:
+        return None, f'ambiguous: {len(cands)} candidates; pin an independently verified sha256 in the case'
+    identities = {(c['timestamp'], c['virtualSize'], c.get('size'), _vkey(c.get('version')), c['machineType'])
+                  for c in cands}
+    if len(identities) > 1:
+        return None, 'ambiguous: one sha256 has conflicting identity metadata'
+    # Identical acquisition identities may recur under multiple index keys. Keep
+    # presentation deterministic without choosing between different bytes.
+    best = min(cands, key=lambda c: str(c.get('version', '')))
+    return best, f'{len(cands)} candidate(s), one sha256 identity'
 
 
 def side_record(name: str, fi: dict[str, Any] | None, reason: str) -> dict[str, Any]:
@@ -223,22 +237,61 @@ def resolve_side(fetch: Fetcher, side: dict[str, Any], cache: dict[str, Any]) ->
                 'reason': f'{type(e).__name__}: {e}'[:200]}
 
 
+def _check_destination(target: Path) -> None:
+    """Refuse prior paths, including dangling links; publication also has an atomic no-clobber guard."""
+    for parent in target.parents:
+        if parent.is_symlink() or parent.is_junction():
+            raise WinpairsError('an output parent is a link; use a new ordinary directory')
+    try:
+        target.lstat()
+    except FileNotFoundError:
+        return
+    raise FileExistsError('destination already exists; prior evidence is preserved')
+
+
+def _publish_bytes(target: Path, data: bytes) -> None:
+    """Publish complete bytes exclusively. Only this attempt's temporary file may be removed."""
+    _check_destination(target)
+    target.parent.mkdir(parents=True, exist_ok=True)
+    temporary = None
+    try:
+        fd, temporary = tempfile.mkstemp(prefix='.winpairs-', suffix='.tmp', dir=target.parent)
+        with os.fdopen(fd, 'wb') as handle:
+            handle.write(data)
+            handle.flush()
+            os.fsync(handle.fileno())
+        os.link(temporary, target)  # fails if a concurrent publisher already owns the destination
+    finally:
+        if temporary is not None:
+            Path(temporary).unlink(missing_ok=True)
+
+
 def download_side(fetch: Fetcher, rec: dict[str, Any], dest: Path, rel: str) -> None:
-    """Fill rec in place; on any failure mark it missing and leave no file behind."""
+    """Fill rec in place; refuse ambiguous identities and preserve every earlier or concurrent artifact."""
     if rec['status'] != 'found':
         return
     try:
+        _check_destination(dest)
+        exp = rec.get('expected_sha256')
+        if not isinstance(exp, str) or not _HEX64.fullmatch(exp):
+            raise WinpairsError('a valid expected sha256 is required before downloading')
+        size = rec.get('expected_size')
+        if size is not None and (type(size) is not int or not 0 <= size <= MAX_BINARY_BYTES):
+            raise WinpairsError('invalid expected byte size')
         body = fetch_checked(fetch, rec['source_url'], MAX_BINARY_BYTES)
         got = hashlib.sha256(body).hexdigest()
-        exp = (rec.get('expected_sha256') or '').lower()
-        if exp and got != exp:
+        if got != exp.lower():
             raise WinpairsError('sha256 mismatch against Winbindex')
-        dest.parent.mkdir(parents=True, exist_ok=True)
-        dest.write_bytes(body)
-        rec.update(sha256=got, size=len(body), path=rel, sha256_verified=bool(exp))
-    except (WinpairsError, OSError) as e:
+        if size is not None and len(body) != size:
+            raise WinpairsError('byte size mismatch against Winbindex')
+        _publish_bytes(dest, body)
+        rec.update(sha256=got, size=len(body), path=rel, sha256_verified=True)
+    except FileExistsError:
+        rec.update(status='missing', reason='destination already exists; prior evidence is preserved')
+    except WinpairsError as e:
         rec.update(status='missing', reason=f'download failed: {e}'[:200])
-        dest.unlink(missing_ok=True)
+    except OSError as e:
+        rec.update(status='missing', reason=f'artifact publication failed: {type(e).__name__}')
 
 
 def run(cases: list[dict[str, Any]], fetch: Fetcher, out_dir: Path | None) -> dict[str, Any]:
@@ -276,6 +329,7 @@ def main(argv: list[str] | None = None, fetch: Fetcher = urllib_fetcher) -> int:
     try:
         mpath = confine(a.manifest, 'manifest')
         out_dir = confine(a.out_dir, 'out-dir')
+        _check_destination(Path(a.pair_manifest).expanduser())
         pm = confine(a.pair_manifest, 'pair-manifest')
         data = json.loads(mpath.read_text(encoding='utf-8'))
         if data.get('schema') != IN_SCHEMA or not isinstance(data.get('cases'), list):
@@ -287,8 +341,7 @@ def main(argv: list[str] | None = None, fetch: Fetcher = urllib_fetcher) -> int:
         if unknown or not cases:
             raise WinpairsError(f'no such case id(s): {sorted(unknown)}' if unknown else 'no cases selected')
         manifest = run(cases, fetch, None if a.resolve_only else out_dir)
-        pm.parent.mkdir(parents=True, exist_ok=True)
-        pm.write_text(json.dumps(manifest, indent=2, sort_keys=True) + '\n', encoding='utf-8')
+        _publish_bytes(pm, (json.dumps(manifest, indent=2, sort_keys=True) + '\n').encode('utf-8'))
     except (PathGuardError, WinpairsError, OSError, ValueError) as e:
         print(f'winpairs: blocked: {e}', file=sys.stderr)
         return 2
