@@ -1223,7 +1223,8 @@ Full `QT_QPA_PLATFORM=offscreen python -m pytest -q` for this isolated native sl
 
 - [x] Review/integrate #220 reserved derived metadata boundary and #221 explicit binary-only local-pair desktop start;339 combined passes.
 - [ ] Product-only desktop/domain starting path and single-binary patch discovery remain separate accepted work.
-- [ ] Complete remaining #174 one-to-many normalization/GT-01 controls; narrow reserved-key integration alone is not full native acceptance.
+- [x] #174/#289 one-to-many normalization ported as SPEC-31 **A-32** (2026-11-18, PR #301): per-group abstention, unified adapter count `ghidriff-one-to-many-abstained:<n>`, reconcile/features/leads/evalcore consumers, "Import note" label; 45 ported tests red-then-green.
+- [ ] A-32 live acceptance: rerun RB-01 `lua-v5.4.6-to-v5.4.7-O2` (both orientations, Linux and Windows) through `unified-live-gates.yml` and record that it normalizes with the abstention instead of `PT-SCHEMA`; the remaining GT-01 native controls stay open.
 
 - [x] Account #222 finite pinned-native provisioning evidence and #223 canonical function identity; verify14 complete raw-log receipts and357 combined focused passes.
 - [ ] Finish actual native API linkage/stock-red-corrected-green and distinct-byte/IO controls; optional control tooling remains separate pending verified source.
