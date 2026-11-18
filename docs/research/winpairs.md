@@ -44,12 +44,23 @@ and after publication. `O_TMPFILE` and linking the owned descriptor through proc
 must be supported by the host and filesystem. No named-stage fallback is allowed.
 
 On Windows, ordinary ancestor directories are opened root to leaf and held without
-write/delete sharing. All child opens and creation use the held parent as their
+delete sharing. Directory guards allow read/write sharing so the native rename
+operation can open its destination directory for `FILE_WRITE_DATA | SYNCHRONIZE`;
+that internal open must not conflict with the guard. This does not grant another
+handle delete/rename access to the guarded directory. All child opens and creation use the held parent as their
 `RootDirectory`, with reparse processing refused; sharing locks alone do not cover
 attribute changes. The source handle also denies write/delete sharing. Publication
 renames the exact source handle into the held parent with `ReplaceIfExists = FALSE`;
 failure cleanup marks only that held source handle for deletion. The named parent's
 identity is checked before and after publication. Reparse parents are refused.
+
+The source file still denies write/delete sharing; directory write sharing must
+never propagate to the staged byte source. Existing collision, held-ancestor,
+source-write, reparse-mutation and cleanup controls remain mandatory. The relevant
+native contracts are Microsoft's [FILE_RENAME_INFORMATION](https://learn.microsoft.com/windows-hardware/drivers/ddi/ntifs/ns-ntifs-_file_rename_information)
+and [NtCreateFile sharing rules](https://learn.microsoft.com/windows/win32/api/winternl/nf-winternl-ntcreatefile).
+Portable API-contract controls test the requested sharing modes only. They do not
+replace a Windows filesystem run of publication and hostile-parent controls.
 
 If the platform, filesystem or sharing environment cannot support this contract,
 publication reports `BLOCKED: safe publication ...` rather than performing a

@@ -5,6 +5,8 @@ import ctypes
 import json
 import os
 import sys
+from contextlib import ExitStack
+from pathlib import PureWindowsPath
 from types import SimpleNamespace
 
 import pytest
@@ -187,6 +189,76 @@ def _portable_windows_information_calls(status_code=0):
     win.nt = SimpleNamespace(NtSetInformationFile=set_information, RtlNtStatusToDosError=translate)
     win.kernel = SimpleNamespace(SetFileInformationByHandle=forbidden_win32)
     return win, calls, translated
+
+
+def _portable_windows_open_calls():
+    """Capture requested access, not a Windows filesystem or native success oracle."""
+    class UnicodeString(ctypes.Structure):
+        _fields_ = [('Length', ctypes.c_uint16), ('MaximumLength', ctypes.c_uint16),
+                    ('Buffer', ctypes.c_wchar_p)]
+
+    class ObjectAttributes(ctypes.Structure):
+        _fields_ = [('Length', ctypes.c_uint32), ('RootDirectory', ctypes.c_void_p),
+                    ('ObjectName', ctypes.POINTER(UnicodeString)), ('Attributes', ctypes.c_uint32),
+                    ('SecurityDescriptor', ctypes.c_void_p), ('SecurityQualityOfService', ctypes.c_void_p)]
+
+    win, _, _ = _portable_windows_information_calls()
+    win.wt.HANDLE, win.wt.LPWSTR = ctypes.c_void_p, ctypes.c_wchar_p
+    win.UnicodeString, win.ObjectAttributes = UnicodeString, ObjectAttributes
+    calls = []
+
+    def root_open(name, access, share, security, disposition, flags, template):
+        calls.append((access, share, None, flags))
+        return len(calls)
+
+    def child_open(result, access, attributes, status, allocation, file_attributes,
+                   share, disposition, options, extra, extra_length):
+        parent = ctypes.cast(attributes, ctypes.POINTER(ObjectAttributes)).contents
+        assert parent.Attributes & 0x1000  # OBJ_DONT_REPARSE
+        calls.append((access, share, parent.RootDirectory, options))
+        ctypes.cast(result, ctypes.POINTER(ctypes.c_void_p)).contents.value = len(calls)
+        return 0
+
+    win.kernel = SimpleNamespace(CreateFileW=root_open, CloseHandle=lambda handle: True)
+    win.nt.NtCreateFile = child_open
+    win.identity = lambda handle, **kwargs: (1, 0, handle)
+    return win, calls
+
+
+def _sharing_compatible(access, share, incoming_access, incoming_share):
+    """Microsoft sharing contract, with generic read/write included for source handles."""
+    for access_bits, share_bit in ((0x80000021, 1), (0x40000006, 2), (0x10000, 4)):
+        if incoming_access & access_bits and not share & share_bit:
+            return False
+        if access & access_bits and not incoming_share & share_bit:
+            return False
+    return True
+
+
+@pytest.mark.parametrize('guard_index', [0, 1, 2])
+def test_windows_directory_guards_allow_native_rename_target_open_without_delete_sharing(guard_index):
+    win, calls = _portable_windows_open_calls()
+    with ExitStack() as stack:
+        assert win.directory(PureWindowsPath('C:/owned/parent'), stack, create=True) == 3
+    assert len(calls) == 3
+    access, share, parent, options = calls[guard_index]
+    assert parent == (None if guard_index == 0 else guard_index)
+    # FileRenameInformation internally requests FILE_WRITE_DATA | SYNCHRONIZE
+    # for the destination directory. Its guard must admit that open in both directions.
+    assert _sharing_compatible(access, share, 0x100002, 3)
+    # Retaining a handle without FILE_SHARE_DELETE must still prevent namespace replacement.
+    assert not _sharing_compatible(access, share, 0x10000, 7)
+    assert options & 0x200000  # FILE_OPEN_REPARSE_POINT
+
+
+@pytest.mark.parametrize('incoming_access', [0x2, 0x4, 0x40000000, 0x10000])
+def test_windows_staging_source_still_denies_other_writers_and_renamers(incoming_access):
+    win, calls = _portable_windows_open_calls()
+    assert win.open_child(29, '.winpairs-authored.tmp', directory=False, create=True) == 1
+    access, share, parent, options = calls[0]
+    assert parent == 29 and options & 0x200000
+    assert access & 0x10000  # only the owned source can be renamed/discarded
+    assert not _sharing_compatible(access, share, incoming_access, 7)
 
 
 @pytest.mark.parametrize('name', ['p', 'receipt-\u0394.json', 'receipt-\U0001f9ea.json'])
