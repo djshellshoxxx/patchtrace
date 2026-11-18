@@ -16,6 +16,18 @@ modules, plus `test_owned_publication.py`. Portable tests do not certify Windows
 filesystem behavior; the QA publication prerequisite runs these controls on both
 Linux and Windows before the full suite.
 
+## Dependency/security qualification candidate (2026-11-18)
+
+`tools/dependency_security.py` records actual isolated runtime/packaging Python
+inventories, runs pinned dependency/static scanners, and validates bounded
+source-owned receipts. `.github/workflows/dependency-security.yml` supplies four
+native OS/profile dependency jobs plus the static-security job; failures retain
+raw artifacts and remain failures. Repository-owned source is distinguished from
+auditable external distributions and explicitly unaudited native categories.
+Contract: `docs/specs/dependency-security-qualification.md`; authored tests in
+`tests/test_dependency_security.py`. No scan pass or native qualification follows
+from those tests. The shared release policy requires every named native profile.
+
 ## Exact-source release qualification (2026-11-18)
 
 `tools/release_qualification.py` is the stdlib, read-only publication guard shared

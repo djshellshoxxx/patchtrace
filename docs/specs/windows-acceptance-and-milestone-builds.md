@@ -144,6 +144,15 @@ support. All parsed JSON numbers must remain finite, including exponent overflow
 inside otherwise unused metadata. Distinct platform artifacts must have distinct
 artifact IDs; one archive cannot qualify two platform results.
 
+Dependency/security lane candidate (2026-11-18): the reserved dependency audit
+job expands to four exact native OS/profile jobs, covering runtime and packaging
+inventories on ubuntu-latest and windows-latest. The critical audit step and
+security-scan job/step names stay explicit. The bounded receipt and actual scan
+contract is `dependency-security-qualification.md`. Its existence grants no
+qualification; all four audits and the unsuppressed static scan must actually
+succeed on the canonical source. Missing, failed or unaudited results retain
+their stated limits.
+
 ### 1.3 Verification after each release
 
 Replace `<TAG>` and `<SHA>`. Use an empty directory for downloads.
