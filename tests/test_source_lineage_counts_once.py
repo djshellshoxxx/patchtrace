@@ -84,4 +84,3 @@ def test_a_genuinely_different_origin_still_counts_separately(forms):
     assert origins.independent_count(sets) == 1
     sets.append(origins.DefaultOriginRegistry().tags_for('kev-catalog'))
     assert origins.independent_count(sets) == 2
-

@@ -12,7 +12,7 @@ from dataclasses import dataclass
 from typing import Literal
 
 from patchtrace.intelligence.contracts import Anchor, AnchorSet
-from patchtrace.search.contracts import QueryPlan, SearchRequest, SearchResult
+from patchtrace.search.contracts import QueryPlan, SearchKind, SearchRequest, SearchResult
 from patchtrace.search.errors import SearchError
 from patchtrace.search.query import parse_query
 
@@ -20,14 +20,14 @@ AnchorStatus = Literal['changed', 'indexed-only', 'none', 'unknown', 'not-search
 # Circularity guard (spec section 5.1): an anchor is derived from advisory text, so a `module`, `feature`, `component`
 # or `api` hint must only ever match binary evidence, never the `advisory`/`cve`/`cwe`/`kb`/`note`/`finding` document
 # it came from. A PDB name is a build fact and a quoted string is a string; every other kind is restricted to the
-# binary-evidence allow-list below, emitted as a union of `kind:` filters (`parse_query` unions and sorts them).
-BINARY_KINDS: tuple[str, ...] = ('function', 'code', 'asm', 'string', 'import', 'export', 'capability', 'rule', 'build')
-_KIND_OVERRIDES: dict[str, tuple[str, ...]] = {'pdb': ('build',), 'string': ('string',)}
+# binary-evidence allow-list below. The validated plan carries this union without consuming the payload budget.
+BINARY_KINDS: tuple[SearchKind, ...] = ('function', 'code', 'asm', 'string', 'import', 'export', 'capability', 'rule', 'build')
+_KIND_OVERRIDES: dict[str, tuple[SearchKind, ...]] = {'pdb': ('build',), 'string': ('string',)}
 NO_PLAN = 'The anchor text cannot be turned into a search query.'
 UNKNOWN_ABSENCE = 'Some search groups are not indexed, so the absence is unknown.'
 
 
-def kinds_for(kind: str) -> tuple[str, ...]:
+def kinds_for(kind: str) -> tuple[SearchKind, ...]:
     """The binary-evidence kinds an anchor of `kind` may match (spec section 5.1). A `pdb` anchor is a build fact and a
     `string` anchor is a string; every other kind is the full `BINARY_KINDS` allow-list, so a hint can never match the
     advisory text it was derived from."""
@@ -59,10 +59,12 @@ def _phrase(value: str) -> str:
 
 
 def query_text(anchor: Anchor, *, changed: bool) -> str:
-    """Typed query text for one anchor; always a quoted phrase, so no anchor character acts as query syntax. The kind
-    filter is a closed union of binary-evidence kinds (spec section 5.1), so the query can never reach the advisory
-    groups the anchor was derived from."""
-    kinds = ' '.join(f'kind:{kind}' for kind in kinds_for(anchor.kind))
+    """Original bounded parsing text; `plan_for` adds the closed binary-kind union to the validated typed plan.
+
+    Always a quoted phrase, so no anchor character acts as query syntax. Retain the original pdb/string tokens and
+    query budget; generated union filters must not make previously searchable anchor values too long.
+    """
+    kinds = ' '.join(f'kind:{kind}' for kind in _KIND_OVERRIDES.get(anchor.kind, ()))
     parts = [kinds, 'scope:changed' if changed else '', _phrase(anchor.value)]
     return ' '.join(part for part in parts if part)
 
@@ -72,6 +74,7 @@ def plan_for(anchor: Anchor, *, changed: bool = True) -> AnchorPlan:
         plan = parse_query(query_text(anchor, changed=changed), mode='words')
     except SearchError as error:
         return AnchorPlan(anchor.anchor_id, anchor.kind, anchor.label, None, error.message)
+    plan = QueryPlan.model_validate({**plan.model_dump(), 'kinds': tuple(sorted(kinds_for(anchor.kind)))})
     return AnchorPlan(anchor.anchor_id, anchor.kind, anchor.label, plan)
 
 

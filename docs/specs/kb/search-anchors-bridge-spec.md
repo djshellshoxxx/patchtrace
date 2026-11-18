@@ -1,6 +1,6 @@
 # `patchtrace search --anchors-from CVE`: wiring the S10 anchor bridge (KBF-05)
 
-Status: draft, developer-ready design. Nothing in sections 4 to 9 is built. Date: 2026-10-15. Base commit: `54fd085`. Proposed alias: KBF-05. Owner packages: `search/{cli,anchors,service,build}.py`, `search/sources/{advisory,tools,unified}.py`, `intelligence/{anchors,storage,explain}.py`, `kbcorrelation/context.py`. Reads with `docs/specs/program-e/WB1-integration-plan.md` (s5 S10, s8), `docs/specs/workbench/01-search-fts5-rapidfuzz.md`, KBF-04.
+Original design: 2026-10-15, base commit `54fd085`, proposed alias KBF-05. Section 2 describes that historical snapshot, and the fuller result shape in section 4 remains a design proposal. The existing CLI bridge and the circularity guard are implemented; the 2026-11-18 compatibility amendment below specifies the bounded typed plan and the default stored-advisory port. It does not introduce the proposed result contract or change existing CLI exits. Owner packages: `search/{cli,anchors,service,build}.py`, `search/sources/{advisory,tools,unified}.py`, `intelligence/{anchors,storage,explain}.py`, `kbcorrelation/context.py`. Reads with `docs/specs/program-e/WB1-integration-plan.md` (s5 S10, s8), `docs/specs/workbench/01-search-fts5-rapidfuzz.md`, KBF-04.
 
 ## 1. Purpose and non-goals
 
@@ -75,10 +75,17 @@ Before this guard, `plan_for` filtered only `pdb` -> `kind:build` and `string` -
 
 ```
 BINARY_KINDS = ('function', 'code', 'asm', 'string', 'import', 'export', 'capability', 'rule', 'build')
-query_text(anchor) = ' '.join(['kind:' + k for k in kinds_for(anchor.kind)] + [scope] + [phrase])
 kinds_for('pdb') = ('build',); kinds_for('string') = ('string',); otherwise BINARY_KINDS
+plan = parse_query(original_bounded_query_text(anchor), mode='words')
+plan = QueryPlan.model_validate({**plan.model_dump(), 'kinds': tuple(sorted(kinds_for(anchor.kind)))})
 ```
-(`advisory`, `cve`, `cwe`, `kb`, `note`, `finding` are excluded: they are the analyst's and the vendor's words.) Multiple `kind:` tokens are a union (`parse_query` sorts the set). Red test (now `tests/test_search_anchors_real.py`): a real `SearchService` over a synthetic project with a CSAF advisory whose title names `clfs.sys` and a binary with no such name — the module anchor is never `indexed-only` (no advisory match); with every binary group indexed it is `none`, and with the IR group unavailable it is the honest `unknown` (absence unproven), never a false hit.
+(`advisory`, `cve`, `cwe`, `kb`, `note`, `finding` are excluded: they are the analyst's and the vendor's words.) The sorted typed kinds form a closed union, included in the query digest. Red test (now `tests/test_search_anchors_real.py`): a real `SearchService` over a synthetic project with a CSAF advisory whose title names `clfs.sys` and a binary with no such name — the module anchor is never `indexed-only` (no advisory match); with every binary group indexed it is `none`, and with the IR group unavailable it is the honest `unknown` (absence unproven), never a false hit.
+
+### 5.2 Query-budget and stored-port compatibility (2026-11-18 amendment)
+
+Generated binary-kind filters must not consume the original 256-character search-query budget. `query_text` retains the original scope plus quoted phrase, including the pre-existing single `kind:build` or `kind:string` token for those two overrides. `plan_for` parses that text normally, then constructs a validated `QueryPlan` with the sorted closed kind union. `QueryPlan.text`, normalization, term bounds and the global parser limit remain unchanged; no oversized text is smuggled through an unchecked model copy. A plain changed-scope component of 240 characters remains accepted, and 241 remains `not-searchable`. Controls at 134, 135 and 160 characters cover the prefix regression. The restrictions apply to both changed and indexed queries; advisory or analyst text cannot be counted as a binary hit. Quotes and apparent filter syntax inside an anchor remain literal phrase text.
+
+The CLI's default anchor source reads from the already-open underlying `ProjectService`, which owns the root, project and store; `SearchService` is only the search facade. Do not reopen the project or bypass its lock. The injected `AnchorSource` test port keeps its existing `SearchService` argument. A real persisted synthetic CSAF must be readable by the default CLI opener and default anchor source, including the empty-store exit-4 control and a second invocation proving the project lock was released. This is offline stored-source compatibility, not live provider or vulnerability-accuracy evidence.
 
 ## 6. Where CVRF-only CVEs get anchors
 
