@@ -118,6 +118,27 @@ def test_repair_validates_current_and_captured_scope_before_mark_interrupted(tmp
                            service, project, monkeypatch)
 
 
+def test_repair_preflights_every_selected_journal_before_resuming_the_first(tmp_path, monkeypatch):
+    def interrupt(point):
+        if point == 'after_sidecar_write':
+            raise RuntimeError('authored interruption')
+
+    service, _doc, investigation, _product = seeded(tmp_path, fault=interrupt)
+    older, newer = write_pair(tmp_path)
+    project = tmp_path / 'project'
+    with pytest.raises(RuntimeError, match='authored interruption'):
+        service.import_pair(investigation, str(older), str(newer), str(project))
+    service = wiring.build_service(service.root, clock=FixedClock())
+    with WorkspaceStore(service.root) as store:
+        op, state, body = store.journal_ops()[0]
+        store.journal_put('0' * 64, state, body)
+        bad = {**body, 'revision': {**body['revision'], 'coverage_ids': ['f' * 64]}}
+        store.journal_put(op, state, bad)
+        assert [key for key, _, _ in store.journal_ops()] == ['0' * 64, op]
+    refused_without_writes(lambda: service.attach(str(project), investigation, repair_it=True),
+                           service, project, monkeypatch)
+
+
 @pytest.mark.parametrize('change', ['missing-month-arrives', 'month-watermark-changes', 'source-disappears'])
 def test_detectable_month_drift_requires_explicit_repeat_search_before_writes(tmp_path, monkeypatch, change):
     service, doc, investigation, product = seeded(tmp_path)
