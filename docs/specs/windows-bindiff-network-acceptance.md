@@ -128,6 +128,52 @@ mandatory control and the real native adapter run. Mocks prove orchestration
 only. Neither Linux unit tests nor a green advisory job establish Windows
 qualification. The original blocked artifact is never rewritten.
 
+### 5.1 Bounded native failure diagnostics
+
+At head `f3f4492981f2c76c8d461d6a6d3eb1ac682fb996`, preview
+`a94495abb6117400c138eaaa0127d260c3010094`, run 44395588057 / job
+135124463954 retains artifact 14470410950. The restricted probe records only
+depth 0, four loopback timeouts and external TCP access denial, then exits 125.
+Socket errors alone do not cause that exit in the authored probe; descendant
+launch/resume/wait or an early child failure is unresolved. This original
+receipt remains failed. No specific Windows API cause is inferred from 125.
+
+Diagnostic-only records go to the already bounded stderr capture. They never
+extend successful stdout cases, replace required receipts, change an exit/
+qualification decision, or turn a timeout into access denial. The fixed
+`windows-network-diagnostic/1` record contains sequence, stage, kind, owner PID,
+subject PID, error, socket index, sent bytes and received bytes. These are
+bounded unsigned 32-bit fields and fixed vocabulary strings; absent socket
+index is `UINT32_MAX`, other unavailable numeric values are zero. No raw argv,
+path, environment, nonce, SID or token information is emitted. Diagnostic PIDs
+are context for an existing captured launch, not an independent identity proof.
+
+The shared C formatter permits at most 16 attempted records per process, each
+strictly below 512 bytes. The sixteenth record is a fixed diagnostic-budget /
+truncated marker and further calls emit nothing, even if writes fail. Thus one
+helper/probe process attempts fewer than 8 KiB of diagnostic output. The bounded
+three-process probe chain plus its launcher permits fewer than 32 KiB; existing
+per-command capture limits and whole-check time/process bounds remain. No
+polling loop emits a record per iteration. Missing/truncated diagnostics cannot
+create successful acceptance or prove cleanup.
+
+Win32/WSA failure values are captured at the failing boundary before cleanup or
+logging can replace them. Native precondition/token mismatch is explicitly
+distinct from an OS error. Socket diagnostics retain the connect/send/receive
+or wait phase and known byte counts; application-authored timeout is labeled
+as such. Native launch, identity, resume, child exit, wait and cleanup failures
+retain fixed stage context. Logging preserves the caller's Win32 last-error
+value. Existing OS calls, flags, capabilities, handle lists, Job decisions,
+cleanup attempts, cancellation behavior and return values remain unchanged.
+
+Portable tests compile and run only the extracted authored standard-C formatter,
+without Windows API stubs or downloaded native images. They exercise actual
+formatted JSON, finite vocabulary, maximum numeric values, and the total
+record/byte bound. Source-order checks are explicitly static; existing evidence
+controls continue to refuse incomplete chains, code 125 and non-access-denied
+socket results even when diagnostic text is present. Windows compilation and
+actual error-path/runtime behavior remain a separate hosted requirement.
+
 ## 6. Budgets and workflow
 
 Per socket attempt: at most 5 seconds. Three processes per control chain, depth
