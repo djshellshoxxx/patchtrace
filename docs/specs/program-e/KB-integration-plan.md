@@ -236,11 +236,17 @@ layout returns fixed nonrecoverable `PT-KBC-STORAGE`; missing/unavailable I/O
 retains bounded storage-error mapping. No raw SQLite/schema text or untrusted
 path enters the public message.
 
-Once a connection has returned, every new-mode refusal or BaseException closes
-that owned connection. A secondary close failure preserves the primary typed or
-mapped error, including the original interrupt, and adds one fixed bounded note
-that resources may remain. No file/directory is deleted, and ordinary cleanup
-policy is unchanged. This protection begins after a connection is returned.
+The protected new-mode admission region includes version/layout/root checks
+and the final assignment of the acquired connection to `self.db`. A refusal or
+BaseException in that region closes the owned connection, including an interrupt
+immediately before that final assignment. A secondary close failure preserves
+the primary typed or mapped error, including the original interrupt, and adds
+one fixed bounded note that resources may remain. No file/directory is deleted,
+and ordinary cleanup policy is unchanged. Protection starts when the opener
+acquires the returned connection; it does not cover a partial failure inside
+SQLite connect. Nor does this make Python construction universally atomic:
+asynchronous interruption after the protected region returns, during later
+constructor/caller handoff, remains outside this guarantee.
 
 The guarantee is absence of application initialization/version writes/WAL setup.
 SQLite's own hot-journal recovery and lock/shared-memory activity remain possible
