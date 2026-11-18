@@ -95,6 +95,17 @@ all three probe chains, their actual launch identities, every native launch, the
 adapter result and cleanup. Lifecycle entries retain the observed process
 creation identities, actual launch owner, interruption reason/exit and bounded
 post-stop liveness-query result; success booleans alone are insufficient.
+Every process creation time is the canonical ASCII decimal string emitted by
+the native helper: one to twenty characters, first character `1` through `9`,
+remaining characters `0` through `9`, and numerical value at most `2^64 - 1`.
+Zero, leading zeroes, Unicode decimal spellings, signs, whitespace, absent or
+non-string values, and oversized values are refused before a launch identity
+is admitted or a liveness query is invoked. The same rule covers positive and
+denied probe chains, lifecycle chains and their launch records, serial native
+launches, and cleanup liveness identities. A `(PID, creation time)` pair cannot
+be credited twice through a different spelling; genuine PID reuse with a
+different canonical creation time remains valid. Profile `created: true` is a
+separate ownership flag and is not a process creation timestamp.
 Duplicate keys, nonfinite numbers (including exponent overflow), missing fields,
 unknown states, bool-as-integer identities, reused PIDs within a chain, wrong
 SID/source/build ownership, incomplete control sets and contradictory cleanup
@@ -136,6 +147,7 @@ qualification; a PR preview alone is insufficient.
 
 Hermetic controls cover complete positive evidence, every missing phase/field,
 wrong token/source/build/nonce, child/grandchild omission, duplicate identities,
+noncanonical creation-time spellings and bounded liveness-query admission,
 count-equal semantic differences, incomplete socket cases, non-access-denied
 errors, cleanup failure and refusal to remove a replaced work tree. Workflow
 controls ensure both probe and diff seams are wired and failed evidence retained.

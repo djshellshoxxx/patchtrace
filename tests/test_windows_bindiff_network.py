@@ -510,3 +510,110 @@ def test_native_probe_requires_complete_strict_byte_capture(net, change):
         result = replace(result, log_bytes=bad, log_tail=bad.decode('utf-8', errors='replace'), stdout_total=len(bad))
     with pytest.raises(net.NetworkEvidenceError):
         net._probe_rows(result)
+
+
+CREATION_LOCATIONS = (
+    'probe-before', 'probe-denied', 'probe-after', 'probe-version', 'probe-help', 'diff',
+    'cancel-root', 'cancel-child', 'timeout-root', 'timeout-child', 'owner_exit-root', 'owner_exit-child',
+)
+
+
+def _creation_records(doc, location):
+    """Mutate linked records together so ordinary ownership equality still holds."""
+    if location in ('probe-version', 'probe-help', 'diff'):
+        return [next(row for row in doc['launches'] if row['purpose'] == location)]
+    if location.startswith('probe-'):
+        phase = location.removeprefix('probe-')
+        return [doc['probes'][phase][0], *([doc['probe_launch']] if phase == 'denied' else [])]
+    label, depth = location.rsplit('-', 1)
+    record = doc['lifecycle'][label]
+    return [record['processes'][0], record['launch']] if depth == 'root' else [record['processes'][2]]
+
+
+@pytest.mark.parametrize('location', CREATION_LOCATIONS)
+@pytest.mark.parametrize('spelling', ['leading-zero', 'unicode-decimal', 'mixed-decimal'])
+def test_every_receipt_creation_identity_requires_canonical_native_spelling(net, location, spelling):
+    doc = evidence(net)
+    validate(net, doc)
+    records = _creation_records(doc, location)
+    original = records[0]['created']
+    if spelling == 'leading-zero':
+        disguised = '0' + original
+    elif spelling == 'unicode-decimal':
+        disguised = ''.join(chr(0x660 + int(digit)) for digit in original)
+    else:
+        disguised = original[:-1] + chr(0xFF10 + int(original[-1]))
+    assert disguised != original and int(disguised) == int(original)
+    for row in records:
+        row['created'] = disguised
+    decoded = net.read_evidence_bytes(json.dumps(doc, ensure_ascii=False).encode('utf-8'))
+    with pytest.raises(net.NetworkEvidenceError, match='creation'):
+        validate(net, decoded)
+
+
+_MISSING_CREATION = object()
+MALFORMED_CREATIONS = [
+    pytest.param(_MISSING_CREATION, id='missing'), pytest.param(None, id='null'),
+    pytest.param(True, id='boolean'), pytest.param(1100, id='integer'), pytest.param('', id='empty'),
+    pytest.param('0', id='zero'), pytest.param('00', id='zeroes'), pytest.param('01100', id='leading-zero'),
+    pytest.param('\u0661\u0661\u0660\u0660', id='unicode-decimal'),
+    pytest.param('11\uff100', id='mixed-decimal'), pytest.param('+1100', id='sign'),
+    pytest.param(' 1100', id='whitespace'), pytest.param('1100\n', id='newline'),
+    pytest.param('1.1', id='fraction'), pytest.param('1e3', id='exponent'),
+    pytest.param(str(1 << 64), id='overflow'), pytest.param('9' * 5000, id='overlong'),
+    pytest.param('1\x00', id='nul'),
+]
+
+
+def _native_identity_context(net, tmp_path, monkeypatch, created):
+    context = net.NativeContext(tmp_path, tmp_path, tmp_path, NONCE, tmp_path / 'inert.exe')
+    context.profile = {'sid': SID}
+    start = dict(evidence(net)['launches'][0], phase='started')
+    if created is _MISSING_CREATION:
+        del start['created']
+    else:
+        start['created'] = created
+    monkeypatch.setattr(net, '_lines', lambda _path: [start])
+    calls = []
+
+    def command(argv, label):
+        calls.append((argv, label))
+        return SimpleNamespace(log_tail='{"alive":[],"uncertain":false}', stderr_tail='',
+                               reason=None, returncode=0)
+
+    monkeypatch.setattr(context, '_command', command)
+    return context, start, calls
+
+
+@pytest.mark.parametrize('created', MALFORMED_CREATIONS)
+@pytest.mark.parametrize('entry_point', ['started', 'gone'])
+def test_native_creation_identity_is_refused_before_admission_or_liveness_query(
+        net, tmp_path, monkeypatch, created, entry_point):
+    context, start, calls = _native_identity_context(net, tmp_path, monkeypatch, created)
+    with pytest.raises(net.NetworkEvidenceError, match='creation'):
+        if entry_point == 'started':
+            context.started(tmp_path / 'authored-start.ndjson')
+        else:
+            context.gone([start], 'authored')
+    assert calls == []  # malformed identities never reach the native liveness helper
+
+
+@pytest.mark.parametrize('created', ['1', '1100', str((1 << 64) - 1)])
+@pytest.mark.parametrize('entry_point', ['started', 'gone'])
+def test_canonical_native_creation_bounds_remain_usable(net, tmp_path, monkeypatch, created, entry_point):
+    context, start, calls = _native_identity_context(net, tmp_path, monkeypatch, created)
+    if entry_point == 'started':
+        admitted, _rows = context.started(tmp_path / 'authored-start.ndjson')
+        assert admitted['created'] == created and calls == []
+    else:
+        assert context.gone([start], 'authored') == {'alive': [], 'uncertain': False}
+        assert calls == [(['alive', str(start['pid']) + ':' + created], 'authored-alive')]
+
+
+@pytest.mark.parametrize('created', ['1', str((1 << 64) - 1)])
+def test_all_receipt_locations_accept_canonical_creation_bounds(net, created):
+    doc = evidence(net)
+    for location in CREATION_LOCATIONS:
+        for row in _creation_records(doc, location):
+            row['created'] = created
+    validate(net, doc)
