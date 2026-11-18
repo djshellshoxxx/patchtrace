@@ -1,5 +1,20 @@
 # QA and audit record
 
+## 2026-11-18 PW-01 capacity and retained-page compatibility
+
+Frozen source `0be3b9eb` preserves current #303 `2b697222` as an actual parent,
+including its source-admission repair. V1 keeps its published 50,000-entry
+default; v2 pages retain an independent strict 5,000 ceiling. Captured v1/v2
+records replay without rebinding identities. Local inventory/service/CLI/Qt/schema
+verification passes **581 tests**; independent read-only review passes **44**
+overlapping focused/adversarial controls. Ruff, schema and whitespace checks pass.
+Nine sequential offline CLI operations on the existing real CSV preserve the
+37,595-entry v1 source, bounded AMD64 pages, exact conflict witnesses and prior
+IDs. An earlier external-launcher failure is retained separately. Peak child RSS
+was observed at 459,328 KiB, not an enforced ceiling. Hosted/full/Windows/package
+and production-fetch acceptance remain separate. See the
+[exact source and archived evidence](qa/pw01-capacity-compat-20261118.md).
+
 ## 2026-11-18 PW-01 KB file inventories
 
 Implemented the registered bounded CSV/support-link contract, immutable source

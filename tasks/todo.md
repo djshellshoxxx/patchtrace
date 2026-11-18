@@ -1,5 +1,14 @@
 # PatchTrace delivery tracker
 
+## 2026-11-18 current PW-01 capacity compatibility
+
+- [x] Preserve fresh #303 `2b697222` as an actual parent, including its independently reviewed source-admission repair.
+- [x] Keep v1 default/hard 50,000 and separate v2 default/hard 5,000; replay captured 5,000/50,000 v1 and existing v2 bytes/IDs exactly.
+- [x] Preserve raw red receipts; pass 581 focused tests, independent 44 controls, Ruff/schema checks, and nine sequential offline real-CSV CLI operations at source `0be3b9eb`.
+- [ ] Integrate the current consolidation parent and qualify the resulting exact head on all required hosted/native/package gates before merge completion.
+
+[Source, scope and archived evidence](../docs/qa/pw01-capacity-compat-20261118.md).
+
 ## 2026-11-18 retained inventory pages and native pilot
 
 - [x] Preserve exact published #303 and #304 histories in the inventory continuation; keep every remote branch.
