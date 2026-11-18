@@ -18,12 +18,46 @@ including links and directories, are refused before downloading that side. An
 existing pair-manifest path is refused before any network operation. An earlier
 valid or damaged result is never overwritten, adopted or deleted by a retry.
 The manifest and each binary are staged in their destination directory, flushed
-and fsynced, then published with an exclusive atomic hard link. A destination
-created concurrently wins; its contents remain intact. Unsupported hard-link
-publication fails closed instead of falling back to a partial or overwriting
-write. Failed or interrupted publication removes only the attempt's own staging
-file. Successful earlier sides remain available if a later side or the manifest
+and fsynced, then published atomically without replacing any existing destination.
+A destination created concurrently wins; its contents remain intact. Failed or
+interrupted publication cleans up only the exact staging object owned by this
+attempt. Successful earlier sides remain available if a later side or the manifest
 fails. These are separate immutable artifacts, not an all-files transaction.
+
+### Open-file publication amendment (2026-11-18)
+
+Path checks alone do not establish ownership. Publication must bind both its
+source and destination parent to open filesystem objects. A renamed/replaced
+parent must never redirect publication or cleanup into the replacement directory.
+The staged byte length, SHA-256 and open-file identity are checked before
+publication. Cleanup must not unlink a staging name that could now belong to a
+different file. Parent replacement makes the attempt blocked, with no verified
+receipt for the replacement path. If the replacement occurs after the atomic
+publication, an already published owned artifact may remain in the original
+directory; the helper must not delete either directory's final path.
+
+On Linux, staging is an anonymous `O_TMPFILE` in a no-follow, descriptor-anchored
+parent. An exclusive link from the owned open file publishes that exact inode;
+closing the descriptor cleans up an unpublished anonymous stage. Every parent is
+opened without following links, and the named parent's identity is checked before
+and after publication. `O_TMPFILE` and linking the owned descriptor through procfs
+must be supported by the host and filesystem. No named-stage fallback is allowed.
+
+On Windows, ordinary ancestor directories are opened root to leaf and held without
+write/delete sharing. All child opens and creation use the held parent as their
+`RootDirectory`, with reparse processing refused; sharing locks alone do not cover
+attribute changes. The source handle also denies write/delete sharing. Publication
+renames the exact source handle into the held parent with `ReplaceIfExists = FALSE`;
+failure cleanup marks only that held source handle for deletion. The named parent's
+identity is checked before and after publication. Reparse parents are refused.
+
+If the platform, filesystem or sharing environment cannot support this contract,
+publication reports `BLOCKED: safe publication ...` rather than performing a
+path-based replacement. A blocked binary side uses the existing `missing` status
+with that explicit reason; the CLI returns 2 if any side is blocked. A blocked
+manifest publication also returns 2. The persisted `rq-pair-manifest/1` schema is
+unchanged. Local Linux regressions do not certify the Windows API path; native
+Windows tests remain a separate acceptance gate.
 
 This helper proves acquired byte identity only. Its `found` status does not prove
 the two sides have the same product scope, that their chronology is correct, or

@@ -4,7 +4,6 @@ from __future__ import annotations
 import copy
 import json
 import os
-from pathlib import Path
 
 import pytest
 from test_research_qualification_winpairs import (
@@ -125,19 +124,22 @@ def test_interrupted_binary_publication_exposes_no_partial_file(tmp_path, monkey
 
 def test_binary_is_complete_before_exclusive_publication(tmp_path, monkeypatch):
     destination = tmp_path / 'tcpip.sys'
-    real_link = os.link
-    published = []
+    real_fsync = os.fsync
+    complete = []
 
-    def observe(source, target, **kwargs):
+    def observe(fd):
         assert not destination.exists()
-        assert Path(source).read_bytes() == BIN_A
-        real_link(source, target, **kwargs)
-        published.append(Path(target))
+        position = os.lseek(fd, 0, os.SEEK_CUR)
+        os.lseek(fd, 0, os.SEEK_SET)
+        assert os.read(fd, len(BIN_A) + 1) == BIN_A
+        os.lseek(fd, position, os.SEEK_SET)
+        real_fsync(fd)
+        complete.append(destination)
 
-    monkeypatch.setattr(os, 'link', observe)
+    monkeypatch.setattr(os, 'fsync', observe)
     result = record()
     wp.download_side(Fake({URL_A: BIN_A}), result, destination, 'case/older/tcpip.sys')
-    assert published == [destination]
+    assert complete == [destination]
     assert result['status'] == 'found' and result['sha256_verified']
     assert destination.read_bytes() == BIN_A and list(tmp_path.iterdir()) == [destination]
 
@@ -145,15 +147,16 @@ def test_binary_is_complete_before_exclusive_publication(tmp_path, monkeypatch):
 @pytest.mark.parametrize('concurrent', [False, True])
 def test_exclusive_publication_never_falls_back_to_replacement(tmp_path, monkeypatch, concurrent):
     destination = tmp_path / 'tcpip.sys'
-    real_link = os.link
+    owner, method = (wp._WindowsPublication, 'rename') if os.name == 'nt' else (os, 'link')
+    real_publish = getattr(owner, method)
 
-    def unavailable(source, target, **kwargs):
+    def unavailable(*args, **kwargs):
         if concurrent:
             destination.write_bytes(b'concurrent complete artifact')
-            return real_link(source, target, **kwargs)
-        raise OSError('hard-link publication unsupported')
+            return real_publish(*args, **kwargs)
+        raise OSError('exclusive publication unsupported')
 
-    monkeypatch.setattr(os, 'link', unavailable)
+    monkeypatch.setattr(owner, method, unavailable)
     result = record()
     wp.download_side(Fake({URL_A: BIN_A}), result, destination, 'case/older/tcpip.sys')
     assert result['status'] == 'missing'

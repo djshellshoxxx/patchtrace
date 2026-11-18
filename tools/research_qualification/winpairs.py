@@ -11,12 +11,14 @@ import hashlib
 import json
 import os
 import re
+import secrets
+import stat
 import sys
-import tempfile
 import urllib.error
 import urllib.parse
 import urllib.request
 import zlib
+from contextlib import ExitStack
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Protocol
@@ -46,6 +48,10 @@ _MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct',
 
 class WinpairsError(RuntimeError):
     """A blocked or unsafe request (bad URL, oversize, bad manifest)."""
+
+
+class PublicationBlocked(WinpairsError):
+    """The platform cannot preserve open-file ownership for this publication."""
 
 
 @dataclass
@@ -249,21 +255,259 @@ def _check_destination(target: Path) -> None:
     raise FileExistsError('destination already exists; prior evidence is preserved')
 
 
-def _publish_bytes(target: Path, data: bytes) -> None:
-    """Publish complete bytes exclusively. Only this attempt's temporary file may be removed."""
-    _check_destination(target)
-    target.parent.mkdir(parents=True, exist_ok=True)
-    temporary = None
+def _file_identity(info: os.stat_result) -> tuple[int, int]:
+    return info.st_dev, info.st_ino
+
+
+def _write_stage(fd: int, data: bytes) -> tuple[int, int]:
+    """Keep the exact source open; verify the flushed bytes through that descriptor."""
+    before = os.fstat(fd)
+    if not stat.S_ISREG(before.st_mode):
+        raise PublicationBlocked('safe publication requires an ordinary staging file')
+    with os.fdopen(fd, 'w+b', closefd=False) as handle:
+        handle.write(data)
+        handle.flush()
+        os.fsync(fd)
+        handle.seek(0)
+        digest = hashlib.file_digest(handle, 'sha256').digest()
+    after = os.fstat(fd)
+    if (_file_identity(before) != _file_identity(after) or after.st_size != len(data) or
+            digest != hashlib.sha256(data).digest()):
+        raise PublicationBlocked('safe publication staging identity or bytes changed')
+    return _file_identity(after)
+
+
+def _linux_directory(path: Path, *, create: bool) -> int:
+    """Open root to leaf without following any parent link, creating only anchored children."""
+    flags = os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW | os.O_CLOEXEC
+    current = os.open(path.anchor, flags)
     try:
-        fd, temporary = tempfile.mkstemp(prefix='.winpairs-', suffix='.tmp', dir=target.parent)
-        with os.fdopen(fd, 'wb') as handle:
-            handle.write(data)
-            handle.flush()
-            os.fsync(handle.fileno())
-        os.link(temporary, target)  # fails if a concurrent publisher already owns the destination
+        for component in path.parts[1:]:
+            try:
+                child = os.open(component, flags, dir_fd=current)
+            except FileNotFoundError:
+                if not create:
+                    raise
+                try:
+                    os.mkdir(component, mode=0o700, dir_fd=current)
+                except FileExistsError:
+                    pass
+                child = os.open(component, flags, dir_fd=current)
+            os.close(current)
+            current = child
+        return current
+    except BaseException:
+        os.close(current)
+        raise
+
+
+def _check_linux_parent(path: Path, owned: int) -> None:
+    try:
+        observed = _linux_directory(path, create=False)
+    except OSError:
+        raise PublicationBlocked('safe publication parent changed or became a link') from None
+    try:
+        if _file_identity(os.fstat(observed)) != _file_identity(os.fstat(owned)):
+            raise PublicationBlocked('safe publication parent changed')
     finally:
-        if temporary is not None:
-            Path(temporary).unlink(missing_ok=True)
+        os.close(observed)
+
+
+def _publish_linux(target: Path, data: bytes) -> None:
+    if not hasattr(os, 'O_TMPFILE'):
+        raise PublicationBlocked('safe publication requires Linux anonymous staging support')
+    with ExitStack() as stack:
+        parent = _linux_directory(target.parent, create=True)
+        stack.callback(os.close, parent)
+        # There is no staging pathname to replace or to unlink on failure.
+        fd = os.open('.', os.O_TMPFILE | os.O_RDWR | os.O_CLOEXEC, 0o600, dir_fd=parent)
+        stack.callback(os.close, fd)
+        identity = _write_stage(fd, data)
+        _check_linux_parent(target.parent, parent)
+        # procfs names this process's owned descriptor, not a directory entry an
+        # attacker can substitute. dst_dir_fd pins the original destination parent.
+        os.link(f'/proc/self/fd/{fd}', target.name, dst_dir_fd=parent, follow_symlinks=True)
+        if _file_identity(os.stat(target.name, dir_fd=parent, follow_symlinks=False)) != identity:
+            raise PublicationBlocked('safe publication destination identity changed')
+        _check_linux_parent(target.parent, parent)
+
+
+class _WindowsPublication:
+    """Rooted NT opens plus Win32 handle rename; never reopen a stage for cleanup.
+
+    Sharing locks alone do not protect reparse attributes. Every child operation
+    therefore uses RootDirectory and rejects reparse processing as well.
+    """
+
+    def __init__(self) -> None:
+        import ctypes
+        from ctypes import wintypes as wt
+
+        self.ct = ctypes
+        self.wt = wt
+        self.kernel = ctypes.WinDLL('kernel32', use_last_error=True)
+        self.nt = ctypes.WinDLL('ntdll')
+
+        class UnicodeString(ctypes.Structure):
+            _fields_ = [('Length', wt.USHORT), ('MaximumLength', wt.USHORT), ('Buffer', wt.LPWSTR)]
+
+        class ObjectAttributes(ctypes.Structure):
+            _fields_ = [('Length', wt.ULONG), ('RootDirectory', wt.HANDLE),
+                        ('ObjectName', ctypes.POINTER(UnicodeString)), ('Attributes', wt.ULONG),
+                        ('SecurityDescriptor', wt.LPVOID), ('SecurityQualityOfService', wt.LPVOID)]
+
+        class IoStatus(ctypes.Structure):
+            _fields_ = [('StatusOrPointer', wt.LPVOID), ('Information', ctypes.c_size_t)]
+
+        class FileInfo(ctypes.Structure):
+            _fields_ = [('Attributes', wt.DWORD), ('Creation', wt.FILETIME), ('Access', wt.FILETIME),
+                        ('Write', wt.FILETIME), ('Volume', wt.DWORD), ('SizeHigh', wt.DWORD),
+                        ('SizeLow', wt.DWORD), ('Links', wt.DWORD), ('IndexHigh', wt.DWORD),
+                        ('IndexLow', wt.DWORD)]
+
+        class RenameInfo(ctypes.Structure):
+            _fields_ = [('ReplaceIfExists', wt.BOOLEAN), ('RootDirectory', wt.HANDLE),
+                        ('FileNameLength', wt.DWORD), ('FileName', wt.WCHAR * 1)]
+
+        self.UnicodeString, self.ObjectAttributes, self.IoStatus = UnicodeString, ObjectAttributes, IoStatus
+        self.FileInfo, self.RenameInfo = FileInfo, RenameInfo
+        self.kernel.CreateFileW.argtypes = [wt.LPCWSTR, wt.DWORD, wt.DWORD, wt.LPVOID,
+                                            wt.DWORD, wt.DWORD, wt.HANDLE]
+        self.kernel.CreateFileW.restype = wt.HANDLE
+        self.kernel.CloseHandle.argtypes = [wt.HANDLE]
+        self.kernel.CloseHandle.restype = wt.BOOL
+        self.kernel.GetFileInformationByHandle.argtypes = [wt.HANDLE, ctypes.POINTER(FileInfo)]
+        self.kernel.GetFileInformationByHandle.restype = wt.BOOL
+        self.kernel.SetFileInformationByHandle.argtypes = [wt.HANDLE, ctypes.c_int, wt.LPVOID, wt.DWORD]
+        self.kernel.SetFileInformationByHandle.restype = wt.BOOL
+        self.nt.NtCreateFile.argtypes = [ctypes.POINTER(wt.HANDLE), wt.DWORD,
+                                         ctypes.POINTER(ObjectAttributes), ctypes.POINTER(IoStatus),
+                                         wt.LPVOID, wt.DWORD, wt.DWORD, wt.DWORD, wt.DWORD,
+                                         wt.LPVOID, wt.DWORD]
+        self.nt.NtCreateFile.restype = wt.LONG
+        self.nt.RtlNtStatusToDosError.argtypes = [wt.LONG]
+        self.nt.RtlNtStatusToDosError.restype = wt.ULONG
+
+    def error(self, code: int | None = None) -> None:
+        code = self.ct.get_last_error() if code is None else code
+        if code in (80, 183):  # ERROR_FILE_EXISTS / ERROR_ALREADY_EXISTS
+            raise FileExistsError('destination already exists; prior evidence is preserved')
+        raise self.ct.WinError(code)
+
+    def identity(self, handle: int, *, directory: bool = False) -> tuple[int, int, int]:
+        info = self.FileInfo()
+        if not self.kernel.GetFileInformationByHandle(handle, self.ct.byref(info)):
+            self.error()
+        if info.Attributes & 0x400 or (directory and not info.Attributes & 0x10):
+            raise PublicationBlocked('safe publication requires ordinary, non-reparse directories/files')
+        if not (info.IndexHigh or info.IndexLow):
+            raise PublicationBlocked('safe publication file identity is unavailable')
+        return info.Volume, info.IndexHigh, info.IndexLow
+
+    def open_child(self, parent: int, name: str, *, directory: bool, create: bool) -> int:
+        encoded = name.encode('utf-16-le')
+        if len(encoded) > 65532:
+            raise PublicationBlocked('safe publication component is too long')
+        buffer = self.ct.create_unicode_buffer(name)
+        text = self.UnicodeString(len(encoded), len(encoded) + 2, self.ct.cast(buffer, self.wt.LPWSTR))
+        attrs = self.ObjectAttributes(self.ct.sizeof(self.ObjectAttributes), parent, self.ct.pointer(text),
+                                      0x1040, None, None)  # OBJ_CASE_INSENSITIVE | OBJ_DONT_REPARSE
+        result, status = self.wt.HANDLE(), self.IoStatus()
+        access = 0x1000A0 if directory else 0xC0110000  # traverse/attributes/sync; R/W, DELETE, sync
+        disposition = (3 if create else 1) if directory else 2  # OPEN_IF / OPEN; CREATE, never overwrite
+        options = 0x200020 | (1 if directory else 0x40)  # no reparse, sync; directory / ordinary file
+        code = self.nt.NtCreateFile(self.ct.byref(result), access, self.ct.byref(attrs),
+                                    self.ct.byref(status), None, 0x80, 1, disposition, options, None, 0)
+        if code < 0:
+            self.error(self.nt.RtlNtStatusToDosError(code))
+        return result.value
+
+    def directory(self, path: Path, stack: ExitStack, *, create: bool) -> int:
+        # Only the volume/share root is opened by path. Every descendant is rooted
+        # in its already held parent, including creation of missing directories.
+        parent = self.kernel.CreateFileW(str(path.anchor), 0x1000A0, 1, None, 3, 0x2200000, None)
+        if parent == self.ct.c_void_p(-1).value:
+            self.error()
+        stack.callback(self.kernel.CloseHandle, parent)
+        self.identity(parent, directory=True)
+        for component in path.parts[1:]:
+            parent = self.open_child(parent, component, directory=True, create=create)
+            stack.callback(self.kernel.CloseHandle, parent)
+            self.identity(parent, directory=True)
+        return parent
+
+    def check_parent(self, path: Path, owned: int) -> None:
+        try:
+            with ExitStack() as stack:
+                observed = self.directory(path, stack, create=False)
+                if self.identity(observed, directory=True) != self.identity(owned, directory=True):
+                    raise PublicationBlocked('safe publication parent changed')
+        except OSError:
+            raise PublicationBlocked('safe publication parent changed or became unavailable') from None
+
+    def rename(self, source: int, parent: int, name: str) -> None:
+        encoded = name.encode('utf-16-le')
+        buffer = self.ct.create_string_buffer(self.ct.sizeof(self.RenameInfo) + len(encoded))
+        info = self.RenameInfo.from_buffer(buffer)
+        info.ReplaceIfExists, info.RootDirectory, info.FileNameLength = False, parent, len(encoded)
+        self.ct.memmove(self.ct.addressof(buffer) + self.RenameInfo.FileName.offset, encoded, len(encoded))
+        if not self.kernel.SetFileInformationByHandle(source, 3, buffer, len(buffer)):
+            self.error()
+
+    def discard(self, source: int) -> None:
+        delete = self.wt.BOOLEAN(True)  # FILE_DISPOSITION_INFO, exact held source
+        if not self.kernel.SetFileInformationByHandle(source, 4, self.ct.byref(delete), self.ct.sizeof(delete)):
+            self.error()
+
+
+def _publish_windows(target: Path, data: bytes) -> None:
+    import msvcrt
+
+    win = _WindowsPublication()
+    with ExitStack() as stack:
+        parent = win.directory(target.parent, stack, create=True)
+        source = win.open_child(parent, f'.winpairs-{secrets.token_hex(16)}.tmp', directory=False, create=True)
+        fd, published = None, False
+        try:
+            identity = win.identity(source)
+            fd = msvcrt.open_osfhandle(source, os.O_RDWR | os.O_BINARY)
+            _write_stage(fd, data)
+            win.check_parent(target.parent, parent)
+            if win.identity(source) != identity:
+                raise PublicationBlocked('safe publication staging identity changed')
+            win.rename(source, parent, target.name)
+            published = True
+            win.check_parent(target.parent, parent)
+            if win.identity(source) != identity:
+                raise PublicationBlocked('safe publication destination identity changed')
+        finally:
+            try:
+                if not published:
+                    win.discard(source)
+            finally:
+                if fd is None:
+                    win.kernel.CloseHandle(source)
+                else:
+                    os.close(fd)  # owns the Windows handle after open_osfhandle succeeds
+
+
+def _publish_bytes(target: Path, data: bytes) -> None:
+    """Publish the exact owned source into its held parent, with no replacing fallback."""
+    _check_destination(target)
+    target = Path(os.path.abspath(target))
+    try:
+        if sys.platform.startswith('linux'):
+            _publish_linux(target, data)
+        elif os.name == 'nt':
+            _publish_windows(target, data)
+        else:
+            raise PublicationBlocked('safe publication is unsupported on this platform')
+    except FileExistsError:
+        raise
+    except (OSError, NotImplementedError, AttributeError) as e:
+        code = getattr(e, 'winerror', None) or getattr(e, 'errno', None)
+        detail = f' (OS error {code})' if code is not None else ''
+        raise PublicationBlocked(f'safe publication unavailable: {type(e).__name__}{detail}') from None
 
 
 def download_side(fetch: Fetcher, rec: dict[str, Any], dest: Path, rel: str) -> None:
@@ -288,6 +532,8 @@ def download_side(fetch: Fetcher, rec: dict[str, Any], dest: Path, rel: str) -> 
         rec.update(sha256=got, size=len(body), path=rel, sha256_verified=True)
     except FileExistsError:
         rec.update(status='missing', reason='destination already exists; prior evidence is preserved')
+    except PublicationBlocked as e:
+        rec.update(status='missing', reason=f'BLOCKED: {e}'[:200])
     except WinpairsError as e:
         rec.update(status='missing', reason=f'download failed: {e}'[:200])
     except OSError as e:
@@ -311,6 +557,9 @@ def run(cases: list[dict[str, Any]], fetch: Fetcher, out_dir: Path | None) -> di
 
 def exit_code(manifest: dict[str, Any]) -> int:
     cases = manifest['cases']
+    if any(str(c.get(side, {}).get('reason', '')).startswith('BLOCKED:')
+           for c in cases for side in ('older', 'newer')):
+        return 2
     return 0 if any(c['status'] == 'found' for c in cases) else 1
 
 
