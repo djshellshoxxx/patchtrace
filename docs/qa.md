@@ -2273,3 +2273,13 @@ combined gate or native frozen acceptance. Source-CLI and five builder boundary
 controls pass; required Ruff passes after an unused test-import cleanup. Complete
 receipts: `docs/qa/linux-full-frozen-smoke-20261118.md`. Root owns independent
 review and the separate directory-publication import-boundary repair.
+
+## 2026-11-18 — Directory publication import boundary
+
+Exact source `73bd7ead` defers ctypes until Linux native publication. The original
+IR purity assertion is unchanged. Spec-first7 failures/36 positives are retained;
+corrected ten-file gate442 passed/1 native Windows junction skip, with required
+Ruff passing. Initial nonexistent-test-path usage failure is preserved separately.
+Native calls/errno/path/ownership assertions remain identical. Complete source
+and original evidence: `docs/qa/directory-publication-import-purity-20261118.md`.
+Root independent integration and native Windows qualification remain separate.

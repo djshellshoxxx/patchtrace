@@ -1715,3 +1715,8 @@ See the [immutable continuation checkpoint](../docs/qa/verified-continuation-202
 - [ ] Independently qualify that source, repair the separately confirmed IR
   import-purity reachability, and obtain actual frozen/native hosted evidence.
   See `docs/qa/linux-full-frozen-smoke-20261118.md`; CODEX-5 remains open.
+
+- [x] Implement the separate directory-publication import-boundary candidate
+  (`73bd7ead`) without changing native publication semantics. Original pure IR
+  import test passes unchanged;442 affected passes, native Windows junction
+  remains unrun here. See `docs/qa/directory-publication-import-purity-20261118.md`.
