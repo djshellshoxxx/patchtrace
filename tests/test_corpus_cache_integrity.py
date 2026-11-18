@@ -38,7 +38,8 @@ def _fixture_archive(kind):
             archive.addfile(member, io.BytesIO(BODY))
     else:
         with zipfile.ZipFile(stream, 'w') as archive:
-            archive.writestr('ghidra_authored/support/fixture.txt', BODY)
+            member = zipfile.ZipInfo('ghidra_authored/support/fixture.txt', (2026, 1, 1, 0, 0, 0))
+            archive.writestr(member, BODY)
     return stream.getvalue()
 
 
