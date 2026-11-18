@@ -1,0 +1,53 @@
+{
+  "files": [
+    {
+      "bytes": 59832,
+      "path": "implementation/implementation-evidence.zip",
+      "sha256": "53bdc13bb42fa89411ee19b443fde52712c631a09480509b016398cc121e9c0b"
+    },
+    {
+      "bytes": 61132,
+      "path": "independent/independent-review.zip",
+      "sha256": "f49ee21ff8302a57022d7487a7ca0ac84522f582bf428c3d51faaa19ef72e3e6"
+    },
+    {
+      "bytes": 11960,
+      "path": "initial-review/review-evidence.zip",
+      "sha256": "5175128232265a4cd23690596bbea0314542341d6f6780181edc1ed13feb5341"
+    },
+    {
+      "bytes": 3711,
+      "path": "publication/export_commits.py",
+      "sha256": "fcd402727cc31707667101b1ee598f1f318a6cec71594bec2d917e4569146b1d"
+    },
+    {
+      "bytes": 1023,
+      "path": "publication/source-mappings.json",
+      "sha256": "48f2df428d4d1f7c684d127456a337bfe0247cdd32c6171c33db2979eb22cb2f"
+    },
+    {
+      "bytes": 7612,
+      "path": "root/qa-record.md",
+      "sha256": "0f39eda2cf219bfbadea7025b5236456fc0b1af302fcca36a631b0ab9f4e0900"
+    },
+    {
+      "bytes": 5481,
+      "path": "root/replay-3b22a27c.json",
+      "sha256": "86dc378bb593d06263fc7fee30900482cd21948b19bae2a0e64be69600230679"
+    },
+    {
+      "bytes": 5481,
+      "path": "root/replay-61b7cfb4.json",
+      "sha256": "84a735763890895b9bf4bfc968b3498f4b13cb664383ac8f5bceffede7c78edd"
+    },
+    {
+      "bytes": 3737,
+      "path": "root/replay_records.py",
+      "sha256": "a09054b38b6121202b5f35bd78952c5b7ef8de13245f850c3c85bef62833ea9f"
+    }
+  ],
+  "published_source_sha": "2b4fbd50e1136a876ffba865cbad86eb6b018627",
+  "scope": "Original red/green, independent review, retained authored-output parsing and REST publication mappings; no original pilot rerun.",
+  "source_sha": "61b7cfb49a6f496eb85efd091b2820d114e7d444",
+  "source_tree": "b639fb11db07761195fba5c309476474cd19caba"
+}

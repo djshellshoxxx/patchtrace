@@ -19,8 +19,17 @@ The local combined candidate has actual parents `d492c0e6` and published `75ffee
 Its REST-published counterpart is `5eee139279e77c25c5fb292caa11a165af696059`,
 with the identical tree and actual parents `f5b1c737` and `75ffee38`.
 The [full local-to-published mapping](pw01-current-integration-20261118/publication-code-mappings.json)
-preserves all thirteen source/merge/QA stages. The next commit adds only
-qualification records and this handoff.
+preserves the first thirteen source/merge/QA stages. Published `3123b6d4` then
+added qualification records and this handoff without changing product source.
+
+An append-only qualification correction now follows published `3123b6d4`:
+local source `61b7cfb49a6f496eb85efd091b2820d114e7d444` / REST counterpart
+`2b4fbd50e1136a876ffba865cbad86eb6b018627`, tree
+`b639fb11db07761195fba5c309476474cd19caba`. It changes the existing research Rizin
+adapter, its contract and one new regression module. The [identity guard record](rq-rizin-identity-20261118.md)
+preserves the separate 202-test result, 114 plus 18 independent controls, real
+authored-output parsing and limits. It does not relabel the earlier 2,121-test
+run or alter production matching, frozen pilot outcomes or acquisition consent.
 PW already preserves current #303 `2b697222` and its prior `76de3933` history.
 The integration lead's blob audit found the 38 PW and 11 search changed paths
 disjoint and exact to their owning parents; only two additive documentation
@@ -48,6 +57,7 @@ refers to archive members; the readable review removes trailing whitespace only.
 | Advisory search anchors | Closed binary-kind restrictions prevent advisory/note circularity; long valid anchors retain the original query budget; default stored-source CLI uses the existing project owner | Search matches remain hints. Ranking accuracy and unsupported source coverage are separate work. See [search integration](search-anchor-integration-20261118.md). |
 | PW-01 inventory workflow | Saved CSV/support metadata, exact consent plans, immutable provenance, explicit filename selection, CLI/Qt retention and visible cross-page witnesses | V1 default/hard ceiling 50,000; independent v2 ceiling 5,000. Production retrieval and native/manual acceptance remain open. See [capacity qualification](pw01-capacity-compat-20261118.md). |
 | Research receipt identity | Bounded linked-worktree gitdir/commondir/ref handling for future receipts; no Git process, config or hook execution | Historical null-SHA receipts stay unchanged; a commit ID alone does not prove a clean or authentic tree. See [receipt identity](pw01-retained-pages-20261118.md#research-receipt-identity). |
+| Native research candidate identity | All observable native endpoints and names are validated before lossy name ranking; conflicts and orphan native rows refuse scoring | Legacy formats remain unverified; production strict parsing, prospective source/binary identity and native report discovery are separate prerequisites. See [identity guard](rq-rizin-identity-20261118.md). |
 | Owned pair publication | Linux ownership controls and reviewed Windows native-handle/status/cleanup repair preserve prior evidence | Native Windows execution is still mandatory; portable checks are not that acceptance. See [Windows repair](winpairs-windows-native-20261118.md). |
 | L1 / L2 / L3 | Separate frozen source replay, immutable native pilot, and metadata-only acquisition planning | No blended score, inferred aggregate accuracy, or promotion of unverified facts. |
 
@@ -111,6 +121,20 @@ pair. Target/PDB/package acquisition is unapproved. Keep `facts: unverified`;
 there is no function-ranking score or acquisition authorization by inheritance.
 
 ## Gates and highest next steps
+
+The [54-PR inventory supplement](pw01-current-integration-20261118/pr-inventory.md)
+records exact captured heads, freshly observed bases, merge bases, changed-file
+counts/lists, REST review/comment counts and current-head check/status summaries.
+Its observation window is 2026-11-18 10:52:27–10:58:29 UTC, before the identity
+guard append. All 54 comparisons are complete; 36 historical PR-payload base
+SHAs differ from the fresh branch tips. Ancestry is reported separately from
+uncomputed patch equivalence and unresolved semantic behavior. The
+[verbatim inventory evidence](pw01-current-integration-20261118/pr-inventory-evidence.zip)
+preserves the original disposition fields, errors and exact Git/REST receipts.
+The earlier full remote enumeration has 307 branches (306 topics and main), with
+all 300 historical topic names and tips unchanged; no merge, closure or deletion
+is implied. Later #307 append mappings are recorded in its PR and the identity
+guard record rather than silently rewriting this captured inventory.
 
 The earlier full-file attempt remains **INCOMPLETE**: completed batches reported
 **5,308 passed, 1 failed and 31 skipped**; eight other batches ended -9/137 without

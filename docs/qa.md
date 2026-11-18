@@ -1,5 +1,18 @@
 # QA and audit record
 
+## 2026-11-18 native research ranking identity guard
+
+The research Rizin adapter now refuses conflicting native endpoint/name ownership
+before reducing reports to a ranked name list, including conflicts on unchanged
+rows. Independent review also closed an orphan-native recognition gap. Final
+source `61b7cfb4` / identical-tree REST counterpart `2b4fbd50` passes 202 focused
+tests and 114 plus 18 independent controls; whole Ruff and whitespace checks pass.
+Six retained authored shared/executable outputs remain accepted; three PE outputs
+are conservatively refused for conflicting endpoint matches. No original pilot
+was rerun or rescored, and production matching/tool selection is unchanged.
+Legacy compatibility and source-to-binary identity remain explicit limitations.
+See [the exact contract, original failures and evidence](qa/rq-rizin-identity-20261118.md).
+
 ## 2026-11-18 isolated native Rizin discovery experiment
 
 A narrow CLI correction against pinned Rizin 0.9.1 seeds function analysis before

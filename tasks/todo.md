@@ -6,6 +6,7 @@
 - [x] Pass the exact combined 63-file selection: 2,121 tests, 2 native Windows skips; whole Ruff/schema checks pass. Independently verify merge preservation and archived raw evidence.
 - [x] Preserve the actual CSV replays, immutable first L2 MISS and source-specific L1 FAIL receipt without new accuracy claims.
 - [x] Build an isolated pinned Rizin discovery correction, prove unchanged-rebuild equivalence, and retain native authored controls plus an independent shared-pair rerun; keep production selection and scoring unchanged.
+- [x] Refuse observable native Rizin endpoint/name ambiguity before research ranking; preserve red controls and the orphan-record follow-up. Final source `61b7cfb4` passes 202 focused tests and 114 plus 18 independent controls; native-record replay is separate from accuracy scoring. See [identity evidence](../docs/qa/rq-rizin-identity-20261118.md).
 - [ ] Propose a separately pinned tool update with Windows/native/cancellation/ownership qualification and a prospective symbol-identity contract before production adoption or new scored claims.
 - [ ] Qualify and merge #304 with the exact-head REST SHA guard and `[no release]`; then retarget this inventory continuation to canonical main and re-evaluate its exact-head/base gates before merging.
 - [ ] Verify main integration and fresh PR heads before superseded closures; preserve every remote branch and remaining partial scope.
