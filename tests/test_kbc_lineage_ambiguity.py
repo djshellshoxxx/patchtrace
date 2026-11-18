@@ -122,3 +122,37 @@ def test_unambiguous_pair_uses_explicit_within_family_chronology(old_date, old_b
     (pair,) = result.pairs
     assert (pair.grade, pair.fix_boundary) == ('A', 'source-supported')
     assert KbService._pick_pair([result], None) == pair
+
+
+@pytest.mark.parametrize('peer_sha', ['a', 'c'], ids=['peer-sorts-before', 'peer-sorts-after'])
+def test_change_stays_unknown_when_prior_variants_disagree_on_target_content(peer_sha):
+    result = resolve([
+        mapping('b', 'KB5000001', '26100.100', day='2099-01-01'),
+        mapping(peer_sha, 'KB5000001', '26100.100', day='2099-01-01'),
+        mapping('b', 'KB5000003', '26100.200'),
+    ])
+    assert result.ambiguous
+    assert all(pair.fix_boundary == 'unverified' for pair in result.pairs)
+    assert (result.changed_in_kb, result.last_changed_in) == ('unknown', None)
+
+
+@pytest.mark.parametrize('peer_sha', ['a', 'c'], ids=['peer-sorts-before', 'peer-sorts-after'])
+def test_unchanged_run_cannot_attribute_its_origin_to_a_hash_sorted_kb(peer_sha):
+    result = resolve([
+        mapping('b', 'KB5000000', '26100.50', day='2098-12-15'),
+        mapping(peer_sha, 'KB5000000', '26100.50', day='2098-12-15'),
+        mapping('b', 'KB5000001', '26100.100', day='2099-01-01'),
+        mapping('b', 'KB5000003', '26100.200'),
+    ])
+    assert result.ambiguous
+    assert result.changed_in_kb in ('unknown', 'no')
+    assert result.last_changed_in is None
+
+
+def test_strictly_ordered_different_bytes_between_observations_keep_reversion():
+    result = resolve([
+        mapping('b', 'KB5000000', '26100.50', day='2098-12-15'),
+        mapping('c', 'KB5000001', '26100.100', day='2099-01-01'),
+        mapping('b', 'KB5000003', '26100.200'),
+    ])
+    assert (result.changed_in_kb, result.last_changed_in, result.ambiguous) == ('yes', None, False)

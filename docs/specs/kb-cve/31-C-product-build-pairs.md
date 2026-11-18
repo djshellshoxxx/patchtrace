@@ -118,6 +118,10 @@ regardless of where KB or hash display tie-breakers place them, so they cannot
 support a fix boundary. Unordered predecessor alternatives also require an
 explicit choice, even when every possible older byte identity differs from the
 target and the target's change claim is therefore still `yes`.
+When unordered observations at the asserted change or unchanged-run frontier
+disagree about whether they already contain the target bytes, both
+`changed_in_kb` and the claimed first-change KB remain unknown. A hash tie-breaker
+must not switch the answer between `yes` and `no` or invent `last_changed_in`.
 If no ordered predecessor exists, an otherwise eligible displayed predecessor
 may remain as a diagnostic proposal with `ORDER_UNVERIFIED` and grade X.
 Same-time variants must never become each other's asserted older version.

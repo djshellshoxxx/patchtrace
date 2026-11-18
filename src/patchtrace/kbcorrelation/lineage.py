@@ -227,6 +227,12 @@ def change_in_kb(line: Sequence[IndexRow], kb: str) -> ChangeInfo:
     start = index
     while start > 0 and line[start - 1].sha256 == targets[0].sha256:
         start -= 1
+    # Check both sides of the run frontier: a peer sorted before or after it may disagree on whether these bytes
+    # already existed. Display order must not turn the same observations into either a new or unchanged claim.
+    for row in line[max(0, start - 1):start + 1]:
+        same_content = {peer.sha256 == target.sha256 for peer in (row, *_unordered_rows(line, row))}
+        if len(same_content) > 1:
+            return ChangeInfo('unknown', 'order-unverified', None, targets)
     if start < index:
         if any(not chronologically_before(line[i], line[i + 1]) for i in range(start, index)):
             return ChangeInfo('unknown', 'order-unverified', None, targets)
