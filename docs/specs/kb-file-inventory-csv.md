@@ -261,6 +261,8 @@ reasons. They are not upgraded to official structured tier A or validated packag
 tier B. Multiple selected rows for one basename preserve all references; the
 component presentation may group the name. Selection is bounded to 5,000 claims
 per investigation; stale selections stay recorded but cannot feed pair lookup.
+Replay groups claims by import and retains at most one parsed inventory between
+groups, rather than accumulating up to 5,000 full bounded source records in memory.
 
 Eligible selected basenames feed the existing component and saved-Winbindex pair
 workflow. CSV metadata never becomes BuildCandidate, binary SHA-256, verified PE

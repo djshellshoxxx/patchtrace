@@ -5,6 +5,7 @@ import io
 import json
 import os
 import threading
+import weakref
 
 import kbc_helpers as h
 import pytest
@@ -146,6 +147,30 @@ def test_selected_duplicate_rows_keep_both_claims_without_two_names(service, tmp
     hints = service.components(inv, product=scope, files=['exampledrv.sys']).result['hints']
     assert len(hints) == 1 and len(hints[0]['inventory_refs']) == 2 and hints[0]['tier'] == 'E'
     assert {ref['logical_record'] for ref in hints[0]['inventory_refs']} == {2, 3}
+
+
+def test_selection_replay_does_not_accumulate_full_inventory_models(service, tmp_path, monkeypatch):
+    from patchtrace.kbcorrelation import inventory_selection
+
+    inv, scope, revision = investigation(service)
+    for n in range(4):
+        raw = CSV.replace(b'exampledrv.sys', f'example{n}.sys'.encode())
+        _, import_id, entries = imported(service, tmp_path, raw)
+        revision = select(service, inv, scope, revision, import_id, entries[0]['entry_id']).result['revision']
+    original, observed = inventory_selection.get_inventory, []
+
+    def measured(*args, **kwargs):
+        # A single inventory can retain thousands of rows. Before reading the
+        # next one, only the immediately previous source may still be alive.
+        assert sum(ref() is not None for ref in observed) <= 1
+        record = original(*args, **kwargs)
+        observed.append(weakref.ref(record))
+        return record
+
+    monkeypatch.setattr(inventory_selection, 'get_inventory', measured)
+    hints = service.components(inv, product=scope, files=[]).result['hints']
+    assert {hint['basename'] for hint in hints} == {f'example{n}.sys' for n in range(4)}
+    assert len(observed) == 4 and all(ref() is None for ref in observed)
 
 
 def test_selection_requires_explicit_mapping_and_exact_revision(service, tmp_path):

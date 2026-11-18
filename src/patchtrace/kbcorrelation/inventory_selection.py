@@ -175,12 +175,12 @@ def selected_hints(svc, ws, rev, scope_id, *, cancel=None):
     if not matching:
         return ()
     scope, kbs = _scope(svc, ws, rev, scope_id)
-    deadline, cache, hints = time.monotonic() + 60.0, {}, []
-    for selected in matching:
+    deadline, cached_id, record, hints = time.monotonic() + 60.0, None, None, []
+    for selected in sorted(matching, key=lambda item: item.import_id):
         _check(cancel, deadline)
-        if selected.import_id not in cache:
-            cache[selected.import_id] = get_inventory(ws, selected.import_id, verify=True, cancel=cancel)
-        record = cache[selected.import_id]
+        if selected.import_id != cached_id:
+            record = get_inventory(ws, selected.import_id, verify=True, cancel=cancel)
+            cached_id = selected.import_id
         if record is None:
             raise KbcStoreError('PT-KBC-VERIFY', 'a selected inventory is missing; earlier results were preserved')
         entry = _entry(record, selected.entry_id)
