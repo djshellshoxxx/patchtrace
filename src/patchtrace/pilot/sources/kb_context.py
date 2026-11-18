@@ -205,9 +205,12 @@ def capture(service, enrichment, *, project=None, budget: Budget | None = None) 
     try:
         if 'enrichment_entries' not in enrichment._tables():
             return ContextSnapshot()
-        types = ','.join(f'typeof({column})' for column in (*_TEXT_COLUMNS, *_INTEGER_COLUMNS))
+        columns = (*_TEXT_COLUMNS, *_INTEGER_COLUMNS)
+        types = ','.join(f'typeof({column})' for column in columns)
+        row_bytes = '+'.join(f'length(CAST({column} AS BLOB))' for column in columns)
         metadata = enrichment._db.execute(
-            f'SELECT substr(id,1,160),length(id),length(CAST(body AS BLOB)),substr(body_sha256,1,65),{types} '
+            f'SELECT substr(id,1,160),length(id),length(CAST(body AS BLOB)),substr(body_sha256,1,65),'
+            f'{types},{row_bytes} '
             'FROM enrichment_entries WHERE kind=? ORDER BY id LIMIT ?', ('kb-context', MAX_ROWS + 1)).fetchall()
         if not metadata:
             return ContextSnapshot()
@@ -216,10 +219,10 @@ def capture(service, enrichment, *, project=None, budget: Budget | None = None) 
         identity['rows'] = [tuple(_metadata_value(value) for value in row[:4]) for row in metadata]
         if len(metadata) > MAX_ROWS:
             raise _Unavailable('retained context exceeds the row or byte limit')
-        if any(row[4:] != _STORAGE_CLASSES or type(row[0]) is not str or type(row[1]) is not int
-               or type(row[2]) is not int or type(row[3]) is not str for row in metadata):
+        if any(row[4:-1] != _STORAGE_CLASSES or type(row[0]) is not str or type(row[1]) is not int
+               or type(row[2]) is not int or type(row[3]) is not str or type(row[-1]) is not int for row in metadata):
             raise _Unavailable('a retained context has invalid SQLite storage classes; older cards are withheld')
-        if sum(row[2] for row in metadata) > MAX_BYTES:
+        if sum(row[-1] for row in metadata) > MAX_BYTES:
             raise _Unavailable('retained context exceeds the row or byte limit')
         corrupt = []
         entries = enrichment.entries('kb-context', on_corrupt=corrupt.append)
