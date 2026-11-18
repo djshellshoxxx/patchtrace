@@ -2,15 +2,23 @@
 from __future__ import annotations
 
 import copy
+import hashlib
 import importlib
 import json
+import os
+import subprocess
+import sys
+import time
+from dataclasses import replace
 from pathlib import Path
+from types import SimpleNamespace
 
 import pytest
 
 SOURCE = 'a' * 40
 TREE = 'b' * 40
 HELPER = 'c' * 64
+PROBE = '6' * 64
 EXE = 'd' * 64
 NONCE = 'e' * 32
 SID = 'S-1-15-2-1-2-3-4-5-6-7'
@@ -33,7 +41,8 @@ def match_set():
 
 
 def chain(blocked=False, start=100):
-    return [{'pid': start + depth, 'parent_pid': start + depth - 1, 'depth': depth, 'nonce': NONCE,
+    return [{'pid': start + depth, 'parent_pid': start + depth - 1, 'created': str(start + depth + 1000),
+             'depth': depth, 'nonce': NONCE,
              'appcontainer': blocked, 'sid': SID if blocked else '', 'capability_count': 0,
              'cases': [{'case': case, 'status': 'denied' if blocked else 'connected',
                         'error': 10013 if blocked else 0} for case in CASES]}
@@ -42,18 +51,31 @@ def chain(blocked=False, start=100):
 
 def evidence(net):
     semantic = net.semantic_fingerprint(match_set())
+    def launch(pid, image):
+        return {'owner_pid': pid - 1, 'pid': pid, 'created': str(pid + 1000), 'sid': SID,
+                'capability_count': 0, 'appcontainer': True, 'suspended': True, 'job_before_resume': True,
+                'token_before_resume': True, 'image_locked': True, 'handles': ['nul', 'pipe', 'pipe'],
+                'tree_empty': True, 'executable_sha256': image}
+
+    lifecycle = {}
+    for index, (name, reason) in enumerate((('cancel', 'cancelled'), ('timeout', 'timeout'),
+                                           ('owner_exit', 'owner-exit'))):
+        pid = 500 + 10 * index
+        rows = chain(True, pid)
+        for row in rows:
+            row['cases'] = []
+        lifecycle[name] = {'reason': reason, 'owner_exit_code': 1, 'processes': rows,
+                           'launch': launch(pid, PROBE), 'observed': {'alive': [], 'uncertain': False}}
     return {
         'contract': 'bindiff-network/1', 'native': True, 'nonce': NONCE,
         'source': {'commit': SOURCE, 'tree': TREE},
-        'helper_sha256': HELPER, 'executable_sha256': EXE,
+        'helper_sha256': HELPER, 'probe_sha256': PROBE, 'executable_sha256': EXE,
         'profile': {'name': 'PatchTrace.Acceptance.' + NONCE, 'sid': SID, 'capability_count': 0},
         'probes': {'before': chain(), 'denied': chain(True, 200), 'after': chain(start=300)},
-        'launches': [{'purpose': purpose, 'pid': 400 + index, 'sid': SID, 'capability_count': 0,
-                      'appcontainer': True, 'suspended': True, 'job_before_resume': True,
-                      'token_before_resume': True, 'handles': ['nul', 'pipe', 'pipe'],
-                      'tree_empty': True, 'executable_sha256': EXE}
+        'probe_launch': launch(200, PROBE),
+        'launches': [{'purpose': purpose, **launch(400 + index, EXE)}
                      for index, purpose in enumerate(('probe-version', 'probe-help', 'diff'))],
-        'lifecycle': {'cancel': True, 'timeout': True, 'owner_exit': True},
+        'lifecycle': lifecycle,
         'adapter': {'status': 'passed', 'matches': 1, 'semantic_sha256': semantic,
                     'output_sha256': 'f' * 64, 'acceptance': 'C3 accept_binexport'},
         'cleanup': {'profile_deleted': True, 'tree_removed': True, 'process_tree_empty': True},
@@ -62,7 +84,7 @@ def evidence(net):
 
 
 def validate(net, doc):
-    return net.validate_evidence(doc, source_sha=SOURCE, source_tree=TREE, helper_sha=HELPER,
+    return net.validate_evidence(doc, source_sha=SOURCE, source_tree=TREE, helper_sha=HELPER, probe_sha=PROBE,
                                  executable_sha=EXE, nonce=NONCE, baseline_count=1,
                                  baseline_semantic=net.semantic_fingerprint(match_set()))
 
@@ -72,7 +94,8 @@ def test_complete_authored_evidence_is_accepted(net):
 
 
 @pytest.mark.parametrize('field', ['contract', 'native', 'nonce', 'source', 'helper_sha256',
-                                  'executable_sha256', 'profile', 'probes', 'launches', 'lifecycle',
+                                  'executable_sha256', 'probe_sha256', 'profile', 'probes', 'probe_launch',
+                                  'launches', 'lifecycle',
                                   'adapter', 'cleanup', 'elapsed_s'])
 def test_missing_receipt_component_is_refused(net, field):
     doc = evidence(net)
@@ -146,7 +169,7 @@ def test_other_source_is_not_qualified(net, key):
         validate(net, doc)
 
 
-@pytest.mark.parametrize('key', ['helper_sha256', 'executable_sha256'])
+@pytest.mark.parametrize('key', ['helper_sha256', 'probe_sha256', 'executable_sha256'])
 def test_other_build_is_not_qualified(net, key):
     doc = evidence(net)
     validate(net, doc)
@@ -248,3 +271,242 @@ def test_mutation_fixtures_do_not_alias():
     b = copy.deepcopy(a)
     b[0]['cases'][0]['status'] = 'connected'
     assert a[0]['cases'][0]['status'] == 'denied'
+
+
+def test_file_reads_do_not_treat_access_time_as_content_mutation(net, tmp_path):
+    payload = tmp_path / 'data'
+    payload.write_bytes(b'{"authored":true}\n')
+    os.utime(payload, (1, 2))
+    assert net._read(payload) == {'authored': True}
+    os.utime(payload, (1, 2))
+    assert len(net._sha(payload)) == 64
+
+
+def test_lifecycle_booleans_without_observations_are_not_evidence(net):
+    doc = evidence(net)
+    doc['lifecycle'] = {'cancel': True, 'timeout': True, 'owner_exit': True}
+    with pytest.raises(net.NetworkEvidenceError):
+        validate(net, doc)
+
+
+def test_partial_probe_stdout_is_seen_before_owner_exit(net, tmp_path):
+    """Real short pipe writes, fake native identity/containment; no Windows credit."""
+    work = tmp_path / 'work'
+    work.mkdir()
+    receipt = tmp_path / 'start.json'
+    rows = chain(True)
+    for row in rows:
+        row['cases'] = []
+        row['created'] = str(row['pid'] + 1000)
+    script = ('import json,os,time; from pathlib import Path; '
+              f'Path({str(receipt)!r}).write_text(json.dumps({{"owner_pid":os.getpid(),"pid":100}})); '
+              f'rows=json.loads({json.dumps(rows)!r}); '
+              '[print(json.dumps(r),flush=True) for r in rows]; time.sleep(30)')
+
+    class FakeContext:
+        stage = output = tmp_path
+        nonce = NONCE
+        profile = {'sid': SID}
+
+        def launch_args(self, argv, label, timeout):
+            return [sys.executable, '-u', '-c', script], receipt
+
+        def started(self, _receipt):
+            return json.loads(receipt.read_text()), []
+
+        def gone(self, _rows, _label):
+            return {'alive': [], 'uncertain': False}
+
+    started = time.monotonic()
+    assert net._owner_exit(FakeContext(), [Path(sys.executable).resolve()],
+                           {**os.environ, 'PYTHONPATH': str(Path(__file__).parents[1] / 'src')})
+    assert time.monotonic() - started < 5
+
+
+@pytest.mark.parametrize('change', ['hash', 'size', 'version', 'bool_size'])
+def test_native_tool_must_match_existing_repository_pin(net, tmp_path, monkeypatch, change):
+    image = tmp_path / 'bindiff.exe'
+    image.write_bytes(b'authored inert tool bytes')
+    digest = hashlib.sha256(image.read_bytes()).hexdigest()
+    pin = {'contract': 'bindiff-pin/1', 'version_text': 'BinDiff 8', 'assets': {'windows': {
+        'executable_size': image.stat().st_size, 'executable_sha256': digest}}}
+    monkeypatch.setattr(net, '_read', lambda _path: pin)
+    assert net._pinned_executable(image, '8') == digest
+    if change == 'hash':
+        pin['assets']['windows']['executable_sha256'] = '0' * 64
+    elif change == 'size':
+        pin['assets']['windows']['executable_size'] += 1
+    elif change == 'bool_size':
+        pin['assets']['windows']['executable_size'] = True
+    else:
+        pin['version_text'] = 'BinDiff 9'
+    with pytest.raises(net.NetworkEvidenceError):
+        net._pinned_executable(image, '8')
+
+
+@pytest.mark.parametrize('field', ['processes', 'observed', 'launch', 'reason', 'owner_exit_code'])
+def test_lifecycle_raw_observation_is_required(net, field):
+    doc = evidence(net)
+    validate(net, doc)
+    del doc['lifecycle']['owner_exit'][field]
+    with pytest.raises(net.NetworkEvidenceError):
+        validate(net, doc)
+
+
+@pytest.mark.parametrize('field,value', [('owner_pid', 9999), ('created', '999999'),
+                                      ('executable_sha256', '0' * 64), ('pid', 9999)])
+def test_denied_probe_matches_its_actual_launch(net, field, value):
+    doc = evidence(net)
+    validate(net, doc)
+    doc['probe_launch'][field] = value
+    with pytest.raises(net.NetworkEvidenceError):
+        validate(net, doc)
+
+
+def test_outer_timeout_precedes_native_failsafe(net, tmp_path, monkeypatch):
+    from patchtrace.jobs import ProcessResult
+    image = tmp_path / 'inert.exe'
+    image.write_bytes(b'authored inert bytes')
+    context = net.NativeContext(tmp_path, tmp_path, tmp_path, NONCE, image)
+    context.profile = {'sid': SID}
+    calls = []
+
+    def fake_run(argv, **kwargs):
+        calls.append((argv, kwargs))
+        return ProcessResult(1, '', 'timeout')
+
+    monkeypatch.setattr('patchtrace.jobs.run_process', fake_run)
+    monkeypatch.setattr(context, 'started', lambda _path: ({}, []))
+    result, _receipt = context.wrapped([image], 'timeout-control', cwd=tmp_path, timeout=2)
+    assert result.reason == 'timeout'
+    argv, kwargs = calls[0]
+    assert int(argv[4]) > kwargs['timeout_seconds'] * 1000
+    assert int(argv[4]) <= 120000
+
+
+@pytest.mark.parametrize('record', [
+    {'error': 0x800700B7},
+    {'created': True, 'name': 'different-profile', 'sid': SID, 'capability_count': 0, 'folder': 'unused'},
+])
+def test_foreign_or_colliding_profile_is_never_deleted(net, tmp_path, monkeypatch, record):
+    context = net.NativeContext(tmp_path, tmp_path, tmp_path, NONCE, tmp_path / 'inert.exe')
+    calls = []
+
+    def command(argv, _name):
+        calls.append(argv)
+        return SimpleNamespace(log_tail=json.dumps(record), stderr_tail='', reason=None,
+                               returncode=125 if 'error' in record else 0)
+
+    monkeypatch.setattr(context, '_command', command)
+    with pytest.raises(net.NetworkEvidenceError):
+        context.create()
+    assert context.close() is True
+    assert calls == [['profile-create', context.name]]
+
+
+@pytest.mark.parametrize('change', ['case_type', 'elapsed_huge', 'pid_bool', 'created_huge', 'cleanup_number'])
+def test_malformed_observations_refuse_with_controlled_error(net, change):
+    doc = evidence(net)
+    validate(net, doc)
+    if change == 'case_type':
+        doc['probes']['before'][0]['cases'][0]['case'] = []
+    elif change == 'elapsed_huge':
+        doc['elapsed_s'] = 10 ** 1000
+    elif change == 'pid_bool':
+        doc['probes']['before'][0]['pid'] = True
+    elif change == 'created_huge':
+        doc['probes']['before'][0]['created'] = '9' * 5000
+    else:
+        doc['cleanup']['profile_deleted'] = 1
+    with pytest.raises(net.NetworkEvidenceError):
+        validate(net, doc)
+
+
+def test_untracked_acceptance_implementation_cannot_claim_an_older_tree(net, tmp_path, monkeypatch):
+    """A clean unrelated Git tree is not proof for newly added helper code."""
+    (tmp_path / 'README').write_text('authored source ownership control\n')
+    for args in (['init', '-q'], ['add', 'README'],
+                 ['-c', 'user.name=Authored Control', '-c', 'user.email=control@example.invalid',
+                  'commit', '-qm', 'authored source [no release]']):
+        subprocess.run(['git', *args], cwd=tmp_path, check=True, capture_output=True, timeout=15)
+    monkeypatch.setattr(net, 'ROOT', tmp_path)
+    with pytest.raises(net.NetworkEvidenceError):
+        net._source()
+
+
+def test_actual_adapter_routes_both_probe_and_diff_through_selected_runner(tmp_path, monkeypatch):
+    """Real adapter/scheduler and authored fake child; not real BinDiff evidence."""
+    import test_live_bindiff as live
+    from fake_bindiff import launcher_names, make_fake_bindiff
+    from test_bindiff_inputs import accepted
+
+    from patchtrace.jobs import run_process
+    from patchtrace.secondary import bindiff_probe
+    monkeypatch.setattr(bindiff_probe, 'EXECUTABLE_NAMES', bindiff_probe.EXECUTABLE_NAMES | launcher_names())
+    older, newer = tmp_path / 'older.artifact', tmp_path / 'newer.artifact'
+    older.write_bytes(b'MZ authored older')
+    newer.write_bytes(b'MZ authored newer')
+    old_sha, new_sha = (hashlib.sha256(path.read_bytes()).hexdigest() for path in (older, newer))
+    exports = tmp_path / 'exports'
+    exports.mkdir()
+    inputs = live.Inputs(accepted(exports, 'older', old_sha), accepted(exports, 'newer', new_sha),
+                         old_sha, new_sha, older, newer, 'AUTHORED MOCK', 'known fake identity', True)
+    executable = make_fake_bindiff(tmp_path / 'fake')
+    calls = []
+
+    def runner(argv, **kwargs):
+        calls.append(list(argv))
+        return run_process(argv, **kwargs)
+
+    observed = live._end_to_end(str(executable), inputs, tmp_path / 'adapter', None, runner=runner,
+                                evidence_dir=tmp_path / 'evidence')
+    assert observed['status'] == 'passed', observed
+    assert observed['matches'] == 2 and len(observed['semantic_sha256']) == 64
+    assert calls[0][1:] == ['--version']
+    assert calls[1][1:] == ['--nologo', '--help']
+    assert len(calls) == 3 and '--output_format=bin' in calls[2]
+    assert (tmp_path / 'evidence' / 'bindiff-live.BinDiff').is_file()
+
+
+@pytest.mark.parametrize('same_semantics,expected', [(True, 'passed'), (False, 'failed')])
+def test_linux_count_parity_does_not_replace_semantic_parity(tmp_path, monkeypatch, same_semantics, expected):
+    """Mocked namespace/adapter observations test the acceptance decision only."""
+    import test_live_bindiff as live
+
+    from patchtrace.jobs import ProcessResult
+    monkeypatch.setattr(live, 'os', SimpleNamespace(name='posix'))
+    monkeypatch.setattr(live.shutil, 'which', lambda *_args, **_kwargs: '/authored/unshare')
+    monkeypatch.setattr(live, 'run_process', lambda *_args, **_kwargs: ProcessResult(0, ''))
+    monkeypatch.setattr(live, '_end_to_end', lambda *_args, **_kwargs: {
+        'status': 'passed', 'matches': 2, 'semantic_sha256': 'a' * 64 if same_semantics else 'b' * 64})
+    result = live._no_network(SimpleNamespace(path='/authored/bindiff', version='8'), None, None,
+                              tmp_path / 'nonet', 2, 'a' * 64)
+    assert result['status'] == expected
+
+
+def test_serial_launch_pid_reuse_requires_distinct_creation_identity(net):
+    doc = evidence(net)
+    validate(net, doc)
+    second = doc['launches'][1]
+    second.update(pid=doc['launches'][0]['pid'], owner_pid=900)
+    validate(net, doc)  # terminated process IDs may be reused in a later launch
+    second['created'] = doc['launches'][0]['created']
+    with pytest.raises(net.NetworkEvidenceError):
+        validate(net, doc)
+
+
+@pytest.mark.parametrize('change', ['missing_bytes', 'truncated', 'invalid_utf8'])
+def test_native_probe_requires_complete_strict_byte_capture(net, change):
+    from patchtrace.jobs import ProcessResult
+    raw = b'{"authored":true}\n'
+    result = ProcessResult(0, raw.decode(), log_bytes=raw, stdout_total=len(raw))
+    assert net._probe_rows(result) == [{'authored': True}]
+    if change == 'missing_bytes':
+        result = replace(result, log_bytes=None)
+    elif change == 'truncated':
+        result = replace(result, stdout_total=len(raw) + 100)
+    else:
+        bad = b'{"authored":"\xff"}\n'
+        result = replace(result, log_bytes=bad, log_tail=bad.decode('utf-8', errors='replace'), stdout_total=len(bad))
+    with pytest.raises(net.NetworkEvidenceError):
+        net._probe_rows(result)

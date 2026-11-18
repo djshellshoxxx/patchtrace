@@ -13,6 +13,8 @@ on:
   pull_request:
     paths: ['src/patchtrace/secondary/bindiff*', 'tools/bindiff_pin.json', 'tools/provision_bindiff.py',
             'tools/check_live_status.py', 'tests/test_live_bindiff.py', 'tests/bindiff_live_pair.py',
+            'tools/windows_bindiff_network.py', 'tools/windows_network/**',
+            'tests/test_windows_bindiff_network.py',
             '.github/workflows/live-bindiff.yml']
 permissions:
   contents: read
@@ -40,6 +42,10 @@ jobs:
       PATCHTRACE_LIVE_STATUS_DIR: ${{ github.workspace }}/build/live-status
       PATCHTRACE_LIVE_SYNTHETIC_PAIR: '1'
       QT_QPA_PLATFORM: offscreen
+      # Acceptance verifies literal tracked bytes against the source commit.
+      GIT_CONFIG_COUNT: '1'
+      GIT_CONFIG_KEY_0: core.autocrlf
+      GIT_CONFIG_VALUE_0: 'false'
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -61,6 +67,9 @@ jobs:
       - name: Provision pinned BinDiff (download + verify + extract; never executes it)
         shell: bash
         run: python tools/provision_bindiff.py --os ${{ matrix.pin_os }} ${{ matrix.provision_flags }} --github-env "$GITHUB_ENV"
+      - name: Build native Windows network acceptance helper
+        if: runner.os == 'Windows'
+        run: python tools/windows_bindiff_network.py build
       - name: Live BinDiff tests (records passed / failed / blocked)
         continue-on-error: ${{ matrix.advisory }}
         shell: bash
@@ -69,6 +78,14 @@ jobs:
         if: always()
         shell: bash
         run: python tools/check_live_status.py --summary "$GITHUB_STEP_SUMMARY"
+      - name: Preserve Windows network helper build evidence
+        if: always() && runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force build/live-status/network-build | Out-Null
+          if (Test-Path build/windows-network-helper) {
+            Copy-Item build/windows-network-helper/* build/live-status/network-build -Force
+          }
       - uses: actions/upload-artifact@v4
         if: always()
         with:

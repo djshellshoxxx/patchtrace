@@ -90,8 +90,11 @@ alternatives or limitations fail. Reordering identical rows is permitted.
 ## 5. Evidence and cleanup
 
 The bounded strict `bindiff-network/1` receipt binds the exact source commit/tree,
-helper build/source hashes, pinned native executable hash, unique nonce/profile,
-all three probe chains, every native launch, the adapter result and cleanup.
+helper/probe build/source hashes, repository-pinned native executable size/hash/version, unique nonce/profile,
+all three probe chains, their actual launch identities, every native launch, the
+adapter result and cleanup. Lifecycle entries retain the observed process
+creation identities, actual launch owner, interruption reason/exit and bounded
+post-stop liveness-query result; success booleans alone are insufficient.
 Duplicate keys, nonfinite numbers (including exponent overflow), missing fields,
 unknown states, bool-as-integer identities, reused PIDs within a chain, wrong
 SID/source/build ownership, incomplete control sets and contradictory cleanup
