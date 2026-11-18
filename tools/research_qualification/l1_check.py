@@ -15,6 +15,8 @@ from collections import Counter
 from pathlib import Path
 from typing import Any
 
+from . import pathguard as PG
+
 SCHEMA = 'rq-l1-manifest/1'
 FACTS = ('verified', 'unverified')
 STRATA = ('baseline-driver', 'baseline-usermode', 'shared-file-kb', 'multi-product-kb', 'supersedence',
@@ -108,9 +110,12 @@ def manifest_hash(m: dict[str, Any]) -> str:
 
 def main(argv: list[str] | None = None) -> int:
     args = sys.argv[1:] if argv is None else argv
-    path = Path(args[0]) if args else DEFAULT_PATH
     try:
+        path = PG.confine(args[0], 'manifest') if args else DEFAULT_PATH
         summary = check_manifest(json.loads(path.read_text(encoding='utf-8')))
+    except PG.PathGuardError as exc:
+        print(f'l1_check: error: {exc}', file=sys.stderr)
+        return 2
     except (OSError, ValueError) as exc:
         print(f'l1_check: FAILED: {exc}', file=sys.stderr)
         return 1

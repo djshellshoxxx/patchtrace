@@ -72,6 +72,7 @@ def _bind_names(ctx: Ctx, smap: SectionMap, pointers: list[int],
     A repeated name pointer cannot occur in a well-formed table, so later repeats are skipped.
     """
     by_index: dict[int, list[str]] = {}
+    bound: set[tuple[int, str]] = set()  # what `by_index` holds; scanning its lists was quadratic per slot (PE-7)
     mentioned: set[int] = set()
     seen: set[int] = set()
     lost = False
@@ -91,8 +92,9 @@ def _bind_names(ctx: Ctx, smap: SectionMap, pointers: list[int],
             continue
         name, cut = found
         lost = lost or cut
-        if name not in by_index.setdefault(index, []):
-            by_index[index].append(name)
+        if (index, name) not in bound:
+            bound.add((index, name))
+            by_index.setdefault(index, []).append(name)
     return by_index, mentioned, lost
 
 

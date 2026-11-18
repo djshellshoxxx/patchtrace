@@ -47,7 +47,10 @@ def linux_zip(tmp_path, data=None):
     with zipfile.ZipFile(archive, 'w', compression=zipfile.ZIP_DEFLATED) as out:
         out.writestr('manifest.json', json.dumps(manifest(data)))
         for name, blob in data.items():
-            out.writestr('payload/' + name, blob)
+            header = zipfile.ZipInfo('payload/' + name)
+            header.create_system = 3
+            header.external_attr = (0o100755 if name in ('python/bin/python3', 'jdk/bin/java') else 0o100644) << 16
+            out.writestr(header, blob)
     return archive
 
 

@@ -78,6 +78,33 @@ def test_destination_preflight_is_readonly_and_bounded(tmp_path, monkeypatch, ki
         assert (root / 'notes.txt').read_bytes() == b'contributor notes'
 
 
+@pytest.mark.parametrize('blocked', [False, True])
+def test_absent_destination_checks_nearest_existing_parent_on_windows(tmp_path, monkeypatch, blocked):
+    from pathlib import Path
+
+    from patchtrace.persistence import creation_directory_available
+
+    parent = tmp_path / 'parent'
+    if blocked:
+        parent.write_bytes(b'retained contributor file')
+    else:
+        parent.mkdir()
+    root = parent / 'missing' / 'project'
+    real_lstat = Path.lstat
+
+    def windows_missing(path, *args, **kwargs):
+        # Windows reports ENOENT for descendants of a regular file, unlike POSIX ENOTDIR.
+        if path in (root, root.parent):
+            raise FileNotFoundError(2, 'The system cannot find the path specified')
+        return real_lstat(path, *args, **kwargs)
+
+    monkeypatch.setattr(Path, 'lstat', windows_missing)
+    assert creation_directory_available(root) is (not blocked)
+    assert not root.exists()
+    if blocked:
+        assert parent.read_bytes() == b'retained contributor file'
+
+
 def test_active_lock_preflight_does_not_bypass_actual_writer_lock(tmp_path):
     from patchtrace.persistence import ProjectLock, creation_directory_available
 

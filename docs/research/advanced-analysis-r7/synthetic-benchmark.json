@@ -1,0 +1,37 @@
+{
+  "kind": "R7 synthetic-only, non-native feasibility measurement",
+  "python": "3.13.5",
+  "system": "Linux-6.18.57-x86_64-with-glibc2.41",
+  "results": [
+    {
+      "input_ops": 128,
+      "median_ms": 0.0562,
+      "p95_ms": 0.0709,
+      "peak_tracemalloc_kib": 35.74,
+      "reduction_vs_input_percent": 93.75,
+      "repetitions": 30,
+      "slice_ops": 8,
+      "unknowns": []
+    },
+    {
+      "input_ops": 1024,
+      "median_ms": 0.3861,
+      "p95_ms": 0.4314,
+      "peak_tracemalloc_kib": 262.7,
+      "reduction_vs_input_percent": 99.22,
+      "repetitions": 30,
+      "slice_ops": 8,
+      "unknowns": []
+    },
+    {
+      "input_ops": 4096,
+      "median_ms": 1.8314,
+      "p95_ms": 2.3387,
+      "peak_tracemalloc_kib": 1036.01,
+      "reduction_vs_input_percent": 99.8,
+      "repetitions": 30,
+      "slice_ops": 8,
+      "unknowns": []
+    }
+  ]
+}

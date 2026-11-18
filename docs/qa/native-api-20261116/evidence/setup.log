@@ -1,0 +1,800 @@
+Initialized empty Git repository in /workspace/scratch/ce0115371bb9/rizin-api-20261116/source/subprojects/capstone-next/.git/
+From https://github.com/capstone-engine/capstone
+ * branch            3df6ff015fb6afd81307e325fdd9c82dbf184b28 -> FETCH_HEAD
+HEAD is now at 3df6ff0 Bump actions/labeler from 4 to 6 (#2945)
+The Meson build system
+Version: 1.12.1
+Source dir: /workspace/scratch/ce0115371bb9/rizin-api-20261116/source
+Build dir: /workspace/scratch/ce0115371bb9/rizin-api-20261116/source/build
+Build type: native build
+Project name: rizin
+Project version: v0.9.1
+C compiler for the host machine: cc (gcc 14.2.0 "cc (Debian 14.2.0-19) 14.2.0")
+C linker for the host machine: cc ld.bfd 2.44
+Host machine cpu family: x86_64
+Host machine cpu: x86_64
+Program python3 found: YES (/workspace/scratch/ce0115371bb9/patchtrace-venv/bin/python)
+Program git found: YES (/usr/local/bin/git)
+Message: rizin lib version: 0.9
+Compiler for C supports arguments -Wenum-conversion: YES 
+Compiler for C supports arguments -Wenum-compare: YES 
+Compiler for C supports arguments -std=gnu99: YES 
+meson.build:95: WARNING: Consider using the built-in option for language standard version instead of using "-std=gnu99".
+Compiler for C supports arguments -Werror=sizeof-pointer-memaccess: YES 
+Compiler for C supports arguments -Wimplicit-fallthrough=3: YES 
+Compiler for C supports arguments -fvisibility=hidden: YES 
+Dependency capstone for host machine skipped: feature use_sys_capstone disabled
+
+Executing subproject capstone-next for machine: host 
+
+capstone-next| Project name: capstone
+capstone-next| Project version: next
+capstone-next| C compiler for the host machine: cc (gcc 14.2.0 "cc (Debian 14.2.0-19) 14.2.0")
+capstone-next| C linker for the host machine: cc ld.bfd 2.44
+capstone-next| Compiler for C supports arguments --std=gnu99: YES
+capstone-next| Compiler for C supports arguments -Wmaybe-uninitialized: YES
+capstone-next| Build targets in project: 1
+capstone-next| Subproject capstone-next finished.
+
+Checking if "Capstone has M68K CPU32 mode" compiles: YES 
+Checking if "Capstone has M68K ColdFire modes" compiles: YES 
+Checking if "Capstone has M680X HCS12X mode" compiles: YES 
+Found pkg-config: YES (/usr/bin/pkg-config) 1.8.1
+Run-time dependency libpcre2-8 found: YES 10.46
+Run-time dependency libpcre2-16 found: YES 10.46
+Run-time dependency libpcre2-32 found: YES 10.46
+Downloading zydis source from https://github.com/zyantific/zydis/releases/download/v4.1.0/zydis-amalgamated.tar.gz
+Cloning into 'libmspack'...
+warning: refs/tags/v1.11 22a3766046e6dda10e9da4f12260b77331fe4cc2 is not a commit!
+Initialized empty Git repository in /workspace/scratch/ce0115371bb9/rizin-api-20261116/source/subprojects/libdemangle/.git/
+From https://github.com/rizinorg/rz-libdemangle
+ * branch            e633061e901208a20ed90f8aaf0b64f25caf73eb -> FETCH_HEAD
+HEAD is now at e633061 Fix template parameter scope double free (#85)
+Initialized empty Git repository in /workspace/scratch/ce0115371bb9/rizin-api-20261116/source/subprojects/blake2/.git/
+From https://github.com/BLAKE2/BLAKE2
+ * branch            ed1974ea83433eba7b2d95c5dcd9ac33cb847913 -> FETCH_HEAD
+HEAD is now at ed1974e fix key length check
+Initialized empty Git repository in /workspace/scratch/ce0115371bb9/rizin-api-20261116/source/subprojects/blake3/.git/
+From https://github.com/BLAKE3-team/BLAKE3
+ * branch            2de3cb1a21d09cdee4c8b6b14513063198cf1b82 -> FETCH_HEAD
+HEAD is now at 2de3cb1 clarify a comment
+
+Executing subproject zydis for machine: host 
+
+zydis| Project name: zydis
+zydis| Project version: 4.1.0
+zydis| C compiler for the host machine: cc (gcc 14.2.0 "cc (Debian 14.2.0-19) 14.2.0")
+zydis| C linker for the host machine: cc ld.bfd 2.44
+zydis| Compiler for C supports arguments --std=gnu99: YES (cached)
+zydis| Compiler for C supports arguments -w: YES
+zydis| Build targets in project: 2
+zydis| Subproject zydis finished.
+
+
+Executing subproject libmspack for machine: host 
+
+libmspack| Project name: libmspack
+libmspack| Project version: 0.10.1alpha
+libmspack| C compiler for the host machine: cc (gcc 14.2.0 "cc (Debian 14.2.0-19) 14.2.0")
+libmspack| C linker for the host machine: cc ld.bfd 2.44
+libmspack| Compiler for C supports arguments --std=c99: YES
+libmspack| Has header "dlfcn.h" : YES
+libmspack| Has header "inttypes.h" : YES
+libmspack| Has header "stdint.h" : YES
+libmspack| Has header "stdio.h" : YES
+libmspack| Has header "stdlib.h" : YES
+libmspack| Has header "strings.h" : YES
+libmspack| Has header "string.h" : YES
+libmspack| Has header "sys/stat.h" : YES
+libmspack| Has header "sys/types.h" : YES
+libmspack| Has header "unistd.h" : YES
+libmspack| Checking for function "fseeko" : YES
+libmspack| Checking for function "mkdir" : YES
+libmspack| Checking for function "_mkdir" : NO
+libmspack| Checking for function "towlower" : YES
+libmspack| Checking if "mkdir has one argument" links: NO
+libmspack| Checking for size of "mode_t" : 4
+libmspack| Checking for size of "off_t" : 8
+libmspack| Checking for size of "size_t" : 8
+libmspack| Checking for size of "long int" : 8
+libmspack| Configuring config.h using configuration
+libmspack| Build targets in project: 3
+libmspack| Subproject libmspack finished.
+
+
+Executing subproject xxhash for machine: host 
+
+xxhash| Project name: xxhash
+xxhash| Project version: 0.6.5
+xxhash| C compiler for the host machine: cc (gcc 14.2.0 "cc (Debian 14.2.0-19) 14.2.0")
+xxhash| C linker for the host machine: cc ld.bfd 2.44
+xxhash| Compiler for C supports arguments --std=c99: YES (cached)
+xxhash| Build targets in project: 4
+xxhash| Subproject xxhash finished.
+
+
+Executing subproject libdemangle for machine: host 
+
+libdemangle| Project name: libdemangle
+libdemangle| Project version: undefined
+libdemangle| C compiler for the host machine: cc (gcc 14.2.0 "cc (Debian 14.2.0-19) 14.2.0")
+libdemangle| C linker for the host machine: cc ld.bfd 2.44
+libdemangle| Compiler for C supports arguments --std=gnu99: YES (cached)
+libdemangle| Build targets in project: 6
+libdemangle| Subproject libdemangle finished.
+
+Did not find CMake 'cmake'
+Found CMake: NO
+Run-time dependency libblake2 found: NO  (tried pkg-config and cmake)
+Looking for a fallback subproject for the dependency libblake2
+
+Executing subproject blake2 for machine: host 
+
+blake2| Project name: blake2
+blake2| Project version: 0.0.1
+blake2| C compiler for the host machine: cc (gcc 14.2.0 "cc (Debian 14.2.0-19) 14.2.0")
+blake2| C linker for the host machine: cc ld.bfd 2.44
+blake2| Build targets in project: 7
+blake2| Subproject blake2 finished.
+
+Dependency libblake2 for host machine found: YES 0.0.1 (overridden)
+Dependency libblake3 for host machine skipped: feature use_sys_blake3 disabled
+
+Executing subproject blake3 for machine: host 
+
+blake3| Project name: blake3
+blake3| Project version: 1.3.1
+blake3| C compiler for the host machine: cc (gcc 14.2.0 "cc (Debian 14.2.0-19) 14.2.0")
+blake3| C linker for the host machine: cc ld.bfd 2.44
+blake3| Has header "immintrin.h" : YES
+blake3| Checking if "asm_syntax" compiles: YES
+blake3| Checking if "avx2" compiles: YES
+blake3| Checking if "avx512vl" compiles: YES
+blake3| Checking if "sse2" compiles: YES
+blake3| Checking if "sse41" compiles: YES
+blake3| Build targets in project: 12
+blake3| Subproject blake3 finished.
+
+Dependency openssl for host machine skipped: feature use_sys_openssl disabled
+Dependency tree-sitter for host machine skipped: feature use_sys_tree_sitter disabled
+Downloading tree-sitter source from https://github.com/tree-sitter/tree-sitter/archive/refs/tags/v0.26.9.tar.gz
+Initialized empty Git repository in /workspace/scratch/ce0115371bb9/rizin-api-20261116/source/subprojects/rizin-grammar-c/.git/
+From https://github.com/rizinorg/rizin-grammar-c
+ * branch            6a9d542145c2c783230ee4f9006bb81e3fbea635 -> FETCH_HEAD
+HEAD is now at 6a9d542 Regenerate grammar
+
+Executing subproject tree-sitter for machine: host 
+
+tree-sitter| Project name: tree-sitter
+tree-sitter| Project version: undefined
+tree-sitter| C compiler for the host machine: cc (gcc 14.2.0 "cc (Debian 14.2.0-19) 14.2.0")
+tree-sitter| C linker for the host machine: cc ld.bfd 2.44
+tree-sitter| Compiler for C supports arguments --std=gnu99: YES (cached)
+tree-sitter| Build targets in project: 13
+tree-sitter| Subproject tree-sitter finished.
+
+
+Executing subproject rizin-grammar-c for machine: host 
+
+rizin-grammar-c| Project name: rizin-grammar-c
+rizin-grammar-c| Project version: undefined
+rizin-grammar-c| C compiler for the host machine: cc (gcc 14.2.0 "cc (Debian 14.2.0-19) 14.2.0")
+rizin-grammar-c| C linker for the host machine: cc ld.bfd 2.44
+rizin-grammar-c| Compiler for C supports arguments --std=c99: YES (cached)
+rizin-grammar-c| Dependency tree-sitter for host machine found: YES undefined (overridden)
+rizin-grammar-c| Build targets in project: 14
+rizin-grammar-c| Subproject rizin-grammar-c finished.
+
+Message: HAVE_PTRACE: true
+Message: USE_PTRACE_WRAP: true
+Message: RZ_CHECKS_LEVEL: 2
+Library util found: NO
+Library dl found: YES
+Run-time dependency threads found: YES
+Library m found: YES
+Checking for function "clock_gettime" : YES 
+Library rt found: YES
+Library execinfo found: NO
+Header "sys/personality.h" has symbol "ADDR_NO_RANDOMIZE" : YES 
+Header "sys/procctl.h" has symbol "PROC_ASLR_CTL" : NO 
+Program ld found: YES (/usr/bin/ld)
+Checking if "have extern char **environ" links: YES 
+Message: HAVE_ENVIRON: true
+Checking if "target is ios" links: NO 
+Message: IS_IOS: false
+Checking for function "arc4random" : YES 
+Checking for function "arc4random_uniform" : YES 
+Checking for function "explicit_bzero" : YES 
+Checking for function "explicit_memset" : NO 
+Checking for function "clock_nanosleep" : YES 
+Checking for function "clock_gettime" with dependency -lrt: YES 
+Checking for function "sigaction" : YES 
+Checking for function "pipe" : YES 
+Checking for function "execv" : YES 
+Checking for function "execve" : YES 
+Checking for function "execvp" : YES 
+Checking for function "execl" : YES 
+Checking for function "system" : YES 
+Checking for function "realpath" : YES 
+Checking for function "fork" : YES 
+Checking for function "nice" : YES 
+Checking for function "copyfile" : NO 
+Checking for function "strlcpy" : YES 
+Checking for function "strlcat" : YES 
+Checking for function "strnlen" : YES 
+Checking for function "shm_open" with dependency -lrt: YES 
+Checking for function "openpty" with dependency -lutil: YES 
+Checking for function "forkpty" with dependency -lutil: YES 
+Checking for function "login_tty" with dependency -lutil: YES 
+Checking for function "pipe2" : YES 
+Checking for function "copy_file_range" : YES 
+Checking for function "backtrace" with dependency -lexecinfo: YES 
+Checking for function "__builtin_bswap16" : YES 
+Checking for function "__builtin_bswap32" : YES 
+Checking for function "__builtin_bswap64" : YES 
+Checking for function "__builtin_clzll" : YES 
+Checking for function "__builtin_ctzll" : YES 
+Checking for function "__builtin_expect" : YES 
+Checking for function "posix_memalign" : YES 
+Checking for function "_aligned_malloc" : NO 
+Checking if "SSE2 code snippet" compiles: YES 
+Has header "linux/ashmem.h" : NO 
+Has header "sys/shm.h" : YES 
+Has header "sys/ipc.h" : YES 
+Has header "sys/mman.h" : YES 
+Has header "inttypes.h" : YES (cached)
+Configuring rz_userconf.h using configuration
+Message: Version Major: 00
+Message: Version Minor: 90
+Message: Version Patch: 10
+Configuring rz_build_version.h using configuration
+Dependency zlib for host machine skipped: feature use_sys_zlib disabled
+Downloading zlib source from https://raw.githubusercontent.com/rizinorg/fallback-repo/main/zlib-1.3.2.tar.gz
+
+Executing subproject zlib for machine: host 
+
+zlib| Project name: zlib
+zlib| Project version: 1.3.2
+zlib| C compiler for the host machine: cc (gcc 14.2.0 "cc (Debian 14.2.0-19) 14.2.0")
+zlib| C linker for the host machine: cc ld.bfd 2.44
+zlib| Compiler for C supports arguments --std=c99: YES (cached)
+zlib| Compiler for C supports arguments -Wno-implicit-fallthrough: YES
+zlib| Has header "unistd.h" : YES (cached)
+zlib| Has header "stdarg.h" : YES
+zlib| Build targets in project: 16
+zlib| Subproject zlib finished.
+
+Dependency liblz4 for host machine skipped: feature use_sys_lz4 disabled
+Downloading lz4 source from https://github.com/lz4/lz4/archive/v1.10.0.tar.gz
+
+Executing subproject lz4 for machine: host 
+
+lz4| Project name: lz4
+lz4| Project version: 1.10.0
+lz4| C compiler for the host machine: cc (gcc 14.2.0 "cc (Debian 14.2.0-19) 14.2.0")
+lz4| C linker for the host machine: cc ld.bfd 2.44
+lz4| Compiler for C supports arguments --std=c99: YES (cached)
+lz4| Build targets in project: 17
+lz4| Subproject lz4 finished.
+
+Dependency liblzma for host machine skipped: feature use_sys_lzma disabled
+Downloading liblzma source from https://raw.githubusercontent.com/rizinorg/fallback-repo/main/xz-5.8.3.tar.gz
+Initialized empty Git repository in /workspace/scratch/ce0115371bb9/rizin-api-20261116/source/subprojects/softfloat/.git/
+From https://github.com/rizinorg/softfloat
+ * branch            537d18e71a51aea70f6b54334854f7014c6458c7 -> FETCH_HEAD
+HEAD is now at 537d18e Add cross native support
+
+Executing subproject liblzma for machine: host 
+
+liblzma| Project name: liblzma
+liblzma| Project version: 5.8.3
+liblzma| C compiler for the host machine: cc (gcc 14.2.0 "cc (Debian 14.2.0-19) 14.2.0")
+liblzma| C linker for the host machine: cc ld.bfd 2.44
+liblzma| Compiler for C supports arguments --std=gnu99: YES (cached)
+liblzma| Has header "byteswap.h" : YES
+liblzma| Has header "CommonCrypto/CommonDigest.h" : NO
+liblzma| Has header "dlfcn.h" : YES (cached)
+liblzma| Has header "fcntl.h" : YES
+liblzma| Has header "getopt.h" : YES
+liblzma| Has header "inttypes.h" : YES (cached)
+liblzma| Has header "limits.h" : YES
+liblzma| Has header "memory.h" : YES
+liblzma| Has header "minix/sha2.h" : NO
+liblzma| Has header "sha256.h" : NO
+liblzma| Has header "sha2.h" : NO
+liblzma| Has header "stdbool.h" : YES
+liblzma| Has header "stdint.h" : YES (cached)
+liblzma| Has header "stdlib.h" : YES (cached)
+liblzma| Has header "string.h" : YES (cached)
+liblzma| Has header "strings.h" : YES (cached)
+liblzma| Has header "sys/byteorder.h" : NO
+liblzma| Has header "sys/endian.h" : NO
+liblzma| Has header "sys/param.h" : YES
+liblzma| Has header "sys/stat.h" : YES (cached)
+liblzma| Has header "sys/time.h" : YES
+liblzma| Has header "sys/types.h" : YES (cached)
+liblzma| Has header "unistd.h" : YES (cached)
+liblzma| Has header "immintrin.h" : YES
+liblzma| Checking for function "wcwidth" : YES
+liblzma| Checking for function "_futime" : NO
+liblzma| Checking for function "futimens" : YES
+liblzma| Checking for function "getopt_long" : YES
+liblzma| Checking for function "mbrtowc" : YES
+liblzma| Checking for function "posix_fadvise" : YES
+liblzma| Checking whether type "struct stat" has member "st_atim.tv_nsec" : YES
+liblzma| Checking whether type "struct stat" has member "st_atimespec.tv_nsec" : NO
+liblzma| Checking whether type "struct stat" has member "st_atimensec" : NO
+liblzma| Checking whether type "struct stat" has member "st_uatime" : NO
+liblzma| Checking whether type "struct stat" has member "st_atim.st__tim.tv_nsec" : NO
+liblzma| Checking for type "_Bool" : YES
+liblzma| Checking for type "mbstate_t" : YES
+liblzma| Checking for type "uintptr_t" : YES
+liblzma| Checking for size of "size_t" : 8
+liblzma| Configuring config.h using configuration
+liblzma| Build targets in project: 18
+liblzma| Subproject liblzma finished.
+
+Dependency softfloat for host machine skipped: feature use_sys_softfloat disabled
+
+Executing subproject softfloat for machine: host 
+
+softfloat| Project name: softfloat
+softfloat| Project version: 3e
+softfloat| C compiler for the host machine: cc (gcc 14.2.0 "cc (Debian 14.2.0-19) 14.2.0")
+softfloat| C linker for the host machine: cc ld.bfd 2.44
+softfloat| Build targets in project: 19
+softfloat| Subproject softfloat finished.
+
+Dependency libzip for host machine skipped: feature use_sys_libzip disabled
+Downloading libzip source from https://libzip.org/download/libzip-1.11.4.tar.gz
+
+Executing subproject libzip for machine: host 
+
+libzip| Project name: libzip
+libzip| Project version: 1.11.4
+libzip| C compiler for the host machine: cc (gcc 14.2.0 "cc (Debian 14.2.0-19) 14.2.0")
+libzip| C linker for the host machine: cc ld.bfd 2.44
+libzip| Program python3 found: YES (/workspace/scratch/ce0115371bb9/patchtrace-venv/bin/python)
+libzip| Compiler for C supports arguments --std=gnu99: YES (cached)
+libzip| Dependency zlib for host machine found: YES 1.3.2 (overridden)
+libzip| Run-time dependency bzip2 found: NO  (tried pkg-config and cmake)
+libzip| Dependency liblzma for host machine found: YES 5.8.3 (overridden)
+libzip| Checking for function "strcasecmp" : YES
+libzip| Checking for function "arc4random_buf" : YES
+libzip| Checking for function "arc4random" : YES
+libzip| Checking for function "clonefile" : NO
+libzip| Checking for function "clonefile" : NO
+libzip| Checking for function "explicit_bzero" : YES
+libzip| Checking for function "explicit_memset" : NO
+libzip| Checking for function "explicit_memset" : NO
+libzip| Checking for function "fileno" : YES
+libzip| Checking for function "fseeko" : YES
+libzip| Checking for function "ftello" : YES
+libzip| Checking for function "getprogname" : NO
+libzip| Checking for function "getprogname" : NO
+libzip| Checking for function "localtime_r" : YES
+libzip| Checking for function "memcpy_s" : NO
+libzip| Checking for function "memcpy_s" : NO
+libzip| Checking for function "mkstemp" : YES
+libzip| Checking for function "setmode" : NO
+libzip| Checking for function "setmode" : NO
+libzip| Checking for function "snprintf" : YES
+libzip| Checking for function "strdup" : YES
+libzip| Checking for function "strncpy" : YES
+libzip| Checking for function "strncpy_s" : NO
+libzip| Checking for function "strncpy_s" : NO
+libzip| Checking for function "strerror_s" : NO
+libzip| Checking for function "strerror_s" : NO
+libzip| Checking for function "stricmp" : NO
+libzip| Checking for function "stricmp" : NO
+libzip| Checking for function "strtoll" : YES
+libzip| Checking for function "strtoull" : YES
+libzip| Checking for function "_close" : NO
+libzip| Checking for function "_close" : NO
+libzip| Checking for function "_dup" : NO
+libzip| Checking for function "_dup" : NO
+libzip| Checking for function "_fdopen" : NO
+libzip| Checking for function "_fdopen" : NO
+libzip| Checking for function "_fileno" : NO
+libzip| Checking for function "_fileno" : NO
+libzip| Checking for function "_setmode" : NO
+libzip| Checking for function "_setmode" : NO
+libzip| Checking for function "_snprintf" : NO
+libzip| Checking for function "_snprintf" : NO
+libzip| Checking for function "_snwprintf_s" : NO
+libzip| Checking for function "_snwprintf_s" : NO
+libzip| Checking for function "_strdup" : NO
+libzip| Checking for function "_strdup" : NO
+libzip| Checking for function "_stricmp" : NO
+libzip| Checking for function "_stricmp" : NO
+libzip| Checking for function "_strtoi64" : NO
+libzip| Checking for function "_strtoi64" : NO
+libzip| Checking for function "_strtoui64" : NO
+libzip| Checking for function "_strtoui64" : NO
+libzip| Checking for function "_umask" : NO
+libzip| Checking for function "_umask" : NO
+libzip| Checking for function "_unlink" : NO
+libzip| Checking for function "_unlink" : NO
+libzip| Checking for function "fdopen" : YES
+libzip| Has header "stdbool.h" : YES (cached)
+libzip| Has header "strings.h" : YES (cached)
+libzip| Has header "unistd.h" : YES (cached)
+libzip| Has header "dirent.h" : YES
+libzip| Has header "fts.h" : YES
+libzip| Has header "ndir.h" : NO
+libzip| Has header "sys/dir.h" : YES
+libzip| Has header "sys/ndir.h" : NO
+libzip| Has header "sys/attr.h" : NO
+libzip| Checking for size of "off_t" : 8
+libzip| Checking for size of "size_t" : 8 (cached)
+libzip| Configuring config.h using configuration
+libzip| Has header "limits.h" : YES (cached)
+libzip| Has header "inttypes.h" : YES (cached)
+libzip| Checking for type "int8_t" : YES
+libzip| Checking for type "uint8_t" : YES
+libzip| Checking for type "int16_t" : YES
+libzip| Checking for type "uint16_t" : YES
+libzip| Checking for type "int32_t" : YES
+libzip| Checking for type "uint32_t" : YES
+libzip| Checking for type "int64_t" : YES
+libzip| Checking for type "uint64_t" : YES
+libzip| Checking for type "__int8" : NO
+libzip| Checking for type "__int16" : NO
+libzip| Checking for type "__int32" : NO
+libzip| Checking for type "__int64" : NO
+libzip| Configuring zipconf.h using configuration
+libzip| Build targets in project: 21
+libzip| Subproject libzip finished.
+
+Dependency libzstd for host machine skipped: feature use_sys_libzstd disabled
+Downloading zstd source from https://github.com/facebook/zstd/releases/download/v1.5.7/zstd-1.5.7.tar.gz
+
+Executing subproject zstd for machine: host 
+
+zstd| Project name: zstd
+zstd| Project version: 1.5.7
+zstd| C compiler for the host machine: cc (gcc 14.2.0 "cc (Debian 14.2.0-19) 14.2.0")
+zstd| C linker for the host machine: cc ld.bfd 2.44
+zstd| Library m found: YES
+zstd| Run-time dependency threads found: YES
+zstd| Dependency zlib for host machine found: YES 1.3.2 (overridden)
+zstd| Dependency liblzma for host machine found: YES 5.8.3 (overridden)
+zstd| Dependency lz4 for host machine from subproject subprojects/lz4-1.10.0 found: YES 1.10.0
+zstd| Message: Enable legacy support back to version 0.5
+zstd| Message: Enable multi-threading support
+zstd| Build targets in project: 22
+zstd| Subproject zstd finished.
+
+
+Executing subproject yxml for machine: host 
+
+yxml| Project name: yxml
+yxml| Project version: 66507906673bc6159d5d620414479954c9c21c24
+yxml| C compiler for the host machine: cc (gcc 14.2.0 "cc (Debian 14.2.0-19) 14.2.0")
+yxml| C linker for the host machine: cc ld.bfd 2.44
+yxml| Build targets in project: 23
+yxml| Subproject yxml finished.
+
+
+Executing subproject rzheap for machine: host 
+
+rzheap| Project name: rzheap
+rzheap| Project version: undefined
+rzheap| C compiler for the host machine: cc (gcc 14.2.0 "cc (Debian 14.2.0-19) 14.2.0")
+rzheap| C linker for the host machine: cc ld.bfd 2.44
+rzheap| Build targets in project: 23
+rzheap| Subproject rzheap finished.
+
+
+Executing subproject nettle for machine: host 
+
+nettle| Project name: nettle
+nettle| Project version: 3.7.3
+nettle| C compiler for the host machine: cc (gcc 14.2.0 "cc (Debian 14.2.0-19) 14.2.0")
+nettle| C linker for the host machine: cc ld.bfd 2.44
+nettle| Build targets in project: 29
+nettle| Subproject nettle finished.
+
+Library m found: YES
+Run-time dependency rzgdb found: NO  (tried pkg-config and cmake)
+Looking for a fallback subproject for the dependency rzgdb
+
+Executing subproject rzgdb for machine: host 
+
+rzgdb| Project name: rzw32dbg_wrap
+rzgdb| Project version: undefined
+rzgdb| C compiler for the host machine: cc (gcc 14.2.0 "cc (Debian 14.2.0-19) 14.2.0")
+rzgdb| C linker for the host machine: cc ld.bfd 2.44
+rzgdb| Compiler for C supports arguments --std=gnu99: YES (cached)
+rzgdb| Dependency rz_util for host machine found: YES v0.9.1 (overridden)
+rzgdb| Dependency rz_cons for host machine found: YES v0.9.1 (overridden)
+rzgdb| Dependency rz_socket for host machine found: YES v0.9.1 (overridden)
+rzgdb| Build targets in project: 33
+rzgdb| Subproject rzgdb finished.
+
+Dependency rzgdb for host machine found: YES undefined (overridden)
+Run-time dependency rzwinkd found: NO  (tried pkg-config and cmake)
+Looking for a fallback subproject for the dependency rzwinkd
+
+Executing subproject rzwinkd for machine: host 
+
+rzwinkd| Project name: rzwinkd
+rzwinkd| Project version: undefined
+rzwinkd| C compiler for the host machine: cc (gcc 14.2.0 "cc (Debian 14.2.0-19) 14.2.0")
+rzwinkd| C linker for the host machine: cc ld.bfd 2.44
+rzwinkd| Compiler for C supports arguments --std=gnu99: YES (cached)
+rzwinkd| Dependency rz_util for host machine found: YES v0.9.1 (overridden)
+rzwinkd| Dependency rz_socket for host machine found: YES v0.9.1 (overridden)
+rzwinkd| Dependency rz_hash for host machine found: YES v0.9.1 (overridden)
+rzwinkd| Dependency rz_crypto for host machine found: YES v0.9.1 (overridden)
+rzwinkd| Build targets in project: 34
+rzwinkd| Subproject rzwinkd finished.
+
+Dependency rzwinkd for host machine found: YES undefined (overridden)
+Run-time dependency rzar found: NO  (tried pkg-config and cmake)
+Looking for a fallback subproject for the dependency rzar
+
+Executing subproject rzar for machine: host 
+
+rzar| Project name: rzar
+rzar| Project version: undefined
+rzar| C compiler for the host machine: cc (gcc 14.2.0 "cc (Debian 14.2.0-19) 14.2.0")
+rzar| C linker for the host machine: cc ld.bfd 2.44
+rzar| Compiler for C supports arguments --std=gnu99: YES (cached)
+rzar| Dependency rz_util for host machine found: YES v0.9.1 (overridden)
+rzar| Build targets in project: 35
+rzar| Subproject rzar finished.
+
+Dependency rzar for host machine found: YES undefined (overridden)
+Run-time dependency rzqnx found: NO  (tried pkg-config and cmake)
+Looking for a fallback subproject for the dependency rzqnx
+
+Executing subproject rzqnx for machine: host 
+
+rzqnx| Project name: rzqnx
+rzqnx| Project version: undefined
+rzqnx| C compiler for the host machine: cc (gcc 14.2.0 "cc (Debian 14.2.0-19) 14.2.0")
+rzqnx| C linker for the host machine: cc ld.bfd 2.44
+rzqnx| Compiler for C supports arguments --std=gnu99: YES (cached)
+rzqnx| Dependency rz_util for host machine found: YES v0.9.1 (overridden)
+rzqnx| Dependency rz_socket for host machine found: YES v0.9.1 (overridden)
+rzqnx| Build targets in project: 36
+rzqnx| Subproject rzqnx finished.
+
+Dependency rzqnx for host machine found: YES undefined (overridden)
+Run-time dependency ptrace-wrap found: NO  (tried pkg-config and cmake)
+Looking for a fallback subproject for the dependency ptrace-wrap
+
+Executing subproject ptrace-wrap for machine: host 
+
+ptrace-wrap| Project name: ptrace-wrap
+ptrace-wrap| Project version: undefined
+ptrace-wrap| C compiler for the host machine: cc (gcc 14.2.0 "cc (Debian 14.2.0-19) 14.2.0")
+ptrace-wrap| C linker for the host machine: cc ld.bfd 2.44
+ptrace-wrap| Dependency threads for host machine found: YES unknown (cached)
+ptrace-wrap| Dependency rz_util for host machine found: YES v0.9.1 (overridden)
+ptrace-wrap| Build targets in project: 37
+ptrace-wrap| Subproject ptrace-wrap finished.
+
+Dependency ptrace-wrap for host machine found: YES undefined (overridden)
+Message: Use bundled magic library
+Run-time dependency rzspp found: NO  (tried pkg-config and cmake)
+Looking for a fallback subproject for the dependency rzspp
+
+Executing subproject rzspp for machine: host 
+
+rzspp| Project name: rzspp
+rzspp| Project version: undefined
+rzspp| C compiler for the host machine: cc (gcc 14.2.0 "cc (Debian 14.2.0-19) 14.2.0")
+rzspp| C linker for the host machine: cc ld.bfd 2.44
+rzspp| Dependency rz_util for host machine found: YES v0.9.1 (overridden)
+rzspp| Checking for function "system" : YES (cached)
+rzspp| Checking for function "fork" : YES (cached)
+rzspp| Configuring config.h using configuration
+rzspp| Build targets in project: 334
+rzspp| Subproject rzspp finished.
+
+Dependency rzspp for host machine found: YES undefined (overridden)
+Dependency rzgdb for host machine found: YES undefined (overridden)
+Dependency rzwinkd for host machine found: YES undefined (overridden)
+Dependency rzqnx for host machine found: YES undefined (overridden)
+librz/core/cmd_descs/meson.build:56: WARNING: PyYAML python module was not found, using cmd_descs.c/cmd_descs.h from source directory. Install PyYAML (either from your package manager or through pip) if you need to modify cmd_descs files.
+Run-time dependency rizin-shell-parser found: NO  (tried pkg-config and cmake)
+Looking for a fallback subproject for the dependency rizin-shell-parser
+
+Executing subproject rizin-shell-parser for machine: host 
+
+rizin-shell-parser| Project name: rizin-shell-parser
+rizin-shell-parser| Project version: undefined
+rizin-shell-parser| C compiler for the host machine: cc (gcc 14.2.0 "cc (Debian 14.2.0-19) 14.2.0")
+rizin-shell-parser| C linker for the host machine: cc ld.bfd 2.44
+rizin-shell-parser| Compiler for C supports arguments --std=c99: YES (cached)
+rizin-shell-parser| Dependency tree-sitter for host machine found: YES undefined (overridden)
+rizin-shell-parser| Program tree-sitter found: NO
+rizin-shell-parser| Program node found: YES (/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node)
+rizin-shell-parser| Build targets in project: 339
+rizin-shell-parser| Subproject rizin-shell-parser finished.
+
+Dependency rizin-shell-parser for host machine found: YES undefined (overridden)
+Dependency rzgdb for host machine found: YES undefined (overridden)
+Dependency rzar for host machine found: YES undefined (overridden)
+Found pkg-config: YES (/usr/bin/pkg-config) 1.8.1
+Configuring rz_utilConfig.cmake using configuration
+Configuring rz_demanglerConfig.cmake using configuration
+Configuring rz_demangler_plugins.h using configuration
+Configuring rz_socketConfig.cmake using configuration
+Configuring rz_hashConfig.cmake using configuration
+Configuring rz_hash_plugins.h using configuration
+Configuring rz_cryptoConfig.cmake using configuration
+Configuring rz_crypto_plugins.h using configuration
+Configuring rz_consConfig.cmake using configuration
+Configuring rz_diffConfig.cmake using configuration
+Configuring rz_ioConfig.cmake using configuration
+Configuring rz_io_plugins.h using configuration
+Configuring rz_syscallConfig.cmake using configuration
+Configuring rz_magicConfig.cmake using configuration
+Configuring rz_searchConfig.cmake using configuration
+Configuring rz_flagConfig.cmake using configuration
+Configuring rz_markConfig.cmake using configuration
+Configuring rz_regConfig.cmake using configuration
+Configuring rz_typeConfig.cmake using configuration
+Configuring rz_binConfig.cmake using configuration
+Configuring rz_bin_plugins.h using configuration
+Configuring rz_bin_xtr_plugins.h using configuration
+Configuring rz_configConfig.cmake using configuration
+Configuring rz_langConfig.cmake using configuration
+Configuring rz_lang_plugins.h using configuration
+Configuring rz_ilConfig.cmake using configuration
+Configuring rz_archConfig.cmake using configuration
+Configuring rz_arch_plugins.h using configuration
+Configuring rz_signConfig.cmake using configuration
+Configuring rz_eggConfig.cmake using configuration
+Configuring rz_egg_plugins.h using configuration
+Configuring rz_debugConfig.cmake using configuration
+Configuring rz_debug_plugins.h using configuration
+Configuring rz_coreConfig.cmake using configuration
+Configuring rz_core_plugins.h using configuration
+Configuring rz_mainConfig.cmake using configuration
+Configuring RizinConfig.cmake using configuration
+meson.build:906: WARNING: Conditional on version '< 0.57.0' always evaluates to false
+Build targets in project: 352
+NOTICE: Future-deprecated features used:
+ * 1.12.0: {'"library" keyword argument "name_prefix" of type list', '"library" keyword argument "name_suffix" of type list'}
+
+rizin v0.9.1
+
+  Directories
+    prefix                    : /usr/local
+    bindir                    : bin
+    libdir                    : lib/x86_64-linux-gnu
+    includedir                : include/librz
+    datadir                   : share
+    wwwroot                   : share/rizin/www
+    sdb                       : share/rizin
+    sigdb                     : share/rizin/sigdb
+    themes                    : share/rizin/cons
+    fortunes                  : share/rizin/fortunes
+    flags                     : share/rizin/flag
+    hud                       : share/rizin/hud
+    plugins                   : lib/x86_64-linux-gnu/rizin/plugins
+    bindings                  : lib/x86_64-linux-gnu/rizin-bindings
+
+  Configuration
+    GPL code                  : YES
+    Install sigdb             : NO
+    Debugger enabled          : YES
+    Capstone version          : next
+    PCRE2 version             : 10.46
+    PCRE2 JIT                 : YES
+    System magic library      : NO
+    System pcre2 library      : YES
+    System xxhash library     : NO
+    System libmspack library  : NO
+    System openssl library    : NO
+    System capstone library   : NO
+    System zydis library      : NO
+    System tree-sitter library: NO
+    System lz4 library        : NO
+    System lzma library       : NO
+    System softfloat library  : NO
+    System zlib library       : NO
+    System zstd library       : NO
+    System zip library        : NO
+    System blake3 library     : NO
+    System blake2 library     : NO
+    Use ptrace-wrap           : YES
+    Use RPATH                 : relative
+
+  Plugins
+    Arch Plugins              : 6502, 8051, amd29k, arm_as, arm_cs, avr, bf,
+                                c166, chip8, cil, cr16, dalvik, dcpu16, ebc,
+                                gb, h8300, h8500, hexagon, i4004, i8080, java,
+                                lh5801, lm32, luac, m680x_cs, m68k_cs,
+                                malbolge, mcore, mcs96, milstd1750, mips_cs,
+                                msp430, null, or1k, pic, ppc_as, ppc_cs,
+                                propeller, pyc, rl78, rsp, rx, sh, snes,
+                                sparc_cs, spc700, sysz, tms320, v810, v850,
+                                vax, wasm, x86_as, x86_nasm, x86_nz, xap,
+                                xcore_cs, x86_zydis, cbpf_cs, riscv_cs,
+                                tricore_cs, alpha_cs, hppa_cs, loongarch_cs,
+                                xtensa_cs, arc_gnu, cris_gnu, lanai_gnu,
+                                z80_gnu
+    Binary Plugins            : any, art, avr, bf, bflt, bios, bootimg, c166,
+                                cgc, coff, dex, dmp64, dol, dyldcache, ecoff,
+                                elf, elf64, gns1, hunk, java, le, luac, mach0,
+                                mach064, mbn, mdmp, mdt, menuet, mz, ne, nes,
+                                nin3ds, ninds, ningb, ningba, nro, nso, omf,
+                                omf166, p9, pe, pe64, pebble, pef, prg, psxexe,
+                                pyc, qnx, sfc, smd, sms, spc700, symbols, te,
+                                vsf, wasm, xbe, xnu_kernelcache, z64, zimg
+    BinXtr Plugins            : cart, fatmach0, sep64
+    Core Plugins              : java, dex
+    Crypto Plugins            : aes, aes_cbc, base16, base32, base36, base64,
+                                base85, base91, blowfish, cps2, des, punycode,
+                                rc2, rc4, rc6, rol, ror, rot, serpent, xor,
+                                sm4_ecb
+    Debug Plugins             : bochs, dmp, gdb, io, null, winkd, qnx, native
+    Egg Plugins               : exec, xor
+    IO Plugins                : ar, fd, bochs, debug, default, dmp, gdb, gzip,
+                                http, ihex, srec, mach, malloc, null, procpid,
+                                ptrace, self, shm, sparse, tcp, titxt, winkd,
+                                winedbg, zip, qnx
+    Lang Plugins              : lib, pipe, c, cpipe
+    Hash Plugins              : md2, md4, md5, sha1, sha256, sha384, sha512,
+                                sha3_224, sha3_256, sha3_384, sha3_512,
+                                keccak_256, keccak_384, keccak_512,
+                                murmur3_x86_32, murmur3_x86_128,
+                                murmur3_x64_128, sm3, blake2b, blake2bp,
+                                blake2xb, blake2s, blake2sp, blake2xs, blake3,
+                                fletcher8, fletcher16, fletcher32, fletcher64,
+                                fnv1a, adler32, mod255, crca_crc(8smbus,
+                                8cdma2000, 8darc, 8dvbs2, 8ebu, 8icode, 8itu,
+                                8maxim, 8rohc, 8wcdma, 15can, 16, 16citt,
+                                16usb, 16hdlc, 16augccitt, 16buypass,
+                                16cdma2000, 16dds110, 16dectr, 16dectx, 16dnp,
+                                16en13757, 16genibus, 16maxim, 16mcrf4xx,
+                                16riello, 16t10dif, 16teledisk, 16tms37157, a,
+                                16kermit, 16modbus, 16x25, 16xmodem, 24, 32,
+                                32ecma267, 32c, 32bzip2, 32d, 32mpeg2, 32posix,
+                                32q, 32jam, 32xfer, 64, 64ecma182, 64we, 64xz,
+                                64iso), jenkins, xor8, xor16, xxhash32,
+                                xxhash64, ssdeep, parity, entropy,
+                                entropy_fract, temperature, chisquare, ioc,
+                                minentropy, serialcorr
+    Demangler Plugins         : java, msvc, objc, pascal, cpp, rust
+
+  Subprojects (for host machine)
+    blake2                    : YES
+    blake3                    : YES
+    capstone-next             : YES
+    libdemangle               : YES
+    liblzma                   : YES
+    libmspack                 : YES
+    libzip                    : YES
+    lz4                       : YES
+    nettle                    : YES
+    ptrace-wrap               : YES
+    rizin-grammar-c           : YES
+    rizin-shell-parser        : YES
+    rzar                      : YES
+    rzgdb                     : YES
+    rzheap                    : YES
+    rzqnx                     : YES
+    rzspp                     : YES
+    rzwinkd                   : YES
+    softfloat                 : YES
+    tree-sitter               : YES
+    xxhash                    : YES
+    yxml                      : YES
+    zlib                      : YES
+    zstd                      : YES
+    zydis                     : YES
+
+  User defined options
+    buildtype                 : plain
+    enable_rz_test            : false
+    enable_tests              : false
+    regenerate_cmds           : disabled
+    use_sys_pcre2             : enabled
+
+Found ninja-1.13.2.git.kitware.jobserver-pipe-1 at /workspace/scratch/ce0115371bb9/patchtrace-venv/bin/ninja

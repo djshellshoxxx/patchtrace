@@ -29,7 +29,7 @@ from ..enrichment.storage import EnrichmentStore
 from ..intelligence.contracts import IntelError
 from ..intelligence.reports import plain_text
 from . import report, review, store
-from .collect import CONFIG, NO_RUN, collect
+from .collect import CONFIG, NO_RUN, collect, local_kev
 from .contracts import LEAD_CLASSES, CveContext, Lead, PilotAssessment, ReviewAction
 from .limits import PilotError
 from .review import LeadReview
@@ -177,10 +177,11 @@ def _export_target(path: Path | None):
 
 def _known(project) -> dict[str, object]:
     """What a stored result's identity can be compared with without recomputing it: the pair and its orientation, the
-    analysis run and its output."""
+    analysis run, its output and the verified local KEV snapshot."""
     sides = {a.side: a.sha256 for a in project.artifacts}
     run = store.completed_run(project)
     return {'older_sha256': sides.get('older'), 'newer_sha256': sides.get('newer'),
+            'kev_snapshot_id': local_kev()[0].snapshot_id(),
             'ghidriff_run_id': run.id if run else None, 'raw_sha256': run.raw_sha256 if run else None}
 
 

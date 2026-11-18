@@ -1,6 +1,7 @@
 """K5: file-index lineage (plan 6 traps, RK2 s2.3). Pure; synthetic records."""
 from __future__ import annotations
 
+import copy
 import json
 
 import pytest
@@ -76,6 +77,40 @@ def test_predecessor_of_unchanged_row_starts_at_the_run_start():
     assert older.kb == 'KB5096000' and [r.kb for r in between] == ['KB5097000', 'KB5098000']
 
 
+def synthetic(*spec):
+    """One version key's timeline from ``(sha letter, heading class)`` in release order; the first KB is KB5000000."""
+    maps = [{'sha256': sha * 64, 'kb': f'KB500000{i}', 'version_key': '11-24H2', 'release_date': f'2099-01-{i + 1:02d}',
+             'release_version': f'26100.{100 * (i + 1)}', 'machine_type': 0x8664, 'size': 100, 'heading_class': cls,
+             'variant': 'full', 'download': 'direct', 'record_sha256': 'e' * 64} for i, (sha, cls) in enumerate(spec)]
+    rows, rejected = ln.index_rows(maps, file_name='x.sys')
+    assert rejected == 0
+    return ln.timeline(rows, '11-24H2')
+
+
+STD, PRE = 'standard', 'preview'
+
+
+@pytest.mark.parametrize('spec, older_kb, window', [
+    ((('f', STD), ('a', STD), ('b', PRE), ('a', STD)), 'KB5000000', ['KB5000001', 'KB5000002']),
+    ((('f', STD), ('a', STD), ('c', STD), ('b', PRE), ('a', STD)), 'KB5000002', ['KB5000003']),
+    ((('f', STD), ('f', STD), ('a', STD), ('b', PRE), ('a', STD)), 'KB5000001', ['KB5000002', 'KB5000003']),
+    ((('a', STD), ('b', PRE), ('a', STD)), None, []),
+    ((('a', STD), ('b', PRE), ('a', STD), ('a', STD)), None, [])],
+    ids=['Z-A-Bpre-A', 'Z-A-Y-Bpre-A', 'older-run-end', 'no-distinct-older', 'unchanged-after-revert'])
+def test_kba06_predecessor_of_reverted_bytes_is_the_nearest_distinct_same_class_build(spec, older_kb, window):
+    """Audit KBA-06 (spec 31-C C4): the older side never carries the target's SHA; rows passed over stay the window."""
+    rows = synthetic(*spec)
+    older, between = ln.predecessor(rows, rows[-1])
+    assert (older.kb if older else None) == older_kb and [r.kb for r in between] == window
+    assert older is None or older.sha256 != rows[-1].sha256
+
+
+def test_kba06_without_the_class_rule_the_adjacent_distinct_row_is_still_the_older_side():
+    rows = synthetic(('f', STD), ('a', STD), ('b', PRE), ('a', STD))
+    older, between = ln.predecessor(rows, rows[-1], same_class_only=False)
+    assert older.kb == 'KB5000002' and between == ()
+
+
 def test_shared_with_lists_the_other_kbs_of_the_same_bytes():
     preview = next(r for r in line() if r.kb == 'KB5098000')
     assert preview.build.shared_with == ('KB5097000',)
@@ -86,6 +121,34 @@ def test_hostile_mappings_are_counted_not_guessed():
     bad = [{'sha256': 'zz', 'version_key': '11-24H2'}, 'not a mapping', dict(good, kb='kb12')]
     rows, rejected = ln.index_rows([good, *bad], file_name='exampledrv.sys')
     assert len(rows) == 1 and rejected == 3
+
+
+@pytest.mark.parametrize('others', [7, 0, False, None, '', '11-25H2', b'11-25H2', {'11-25H2': True},
+                                   {'11-25H2'}, ['11-25H2', 7], ('11-25H2', None), ['']],
+                         ids=['integer', 'zero', 'boolean', 'null', 'empty-text', 'text', 'bytes', 'mapping',
+                              'set', 'mixed-list', 'mixed-tuple', 'empty-key'])
+def test_malformed_other_versions_rejects_one_mapping_and_preserves_valid_rows(others):
+    good = next(iter(mappings()))
+    bad = good | {'other_versions': others}
+    original = copy.deepcopy(bad)
+    expected, _ = ln.index_rows((good,), file_name='exampledrv.sys')
+    rows, rejected = ln.index_rows((bad, good), file_name='exampledrv.sys')
+    assert (rows, rejected) == (expected, 1)
+    assert bad == original
+
+
+@pytest.mark.parametrize('others', [[], (), ['11-25H2'], ('11-25H2',)],
+                         ids=['empty-list', 'empty-tuple', 'list', 'tuple'])
+def test_valid_other_versions_containers_preserve_sharing_and_source_identities(others):
+    mapping = next(iter(mappings())) | {'version_key': '11-24H2', 'other_versions': others}
+    original = copy.deepcopy(mapping)
+    rows, rejected = ln.index_rows((mapping,), file_name='exampledrv.sys')
+    assert rejected == 0
+    assert {row.build.version_key for row in rows} == {'11-24H2', *others}
+    for row in rows:
+        assert row.sha256 == mapping['sha256'] and row.build.record_sha256 == mapping['record_sha256']
+        assert row.shared_from == (None if row.build.version_key == '11-24H2' else '11-24H2')
+    assert mapping == original
 
 
 def mappings():

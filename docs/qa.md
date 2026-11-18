@@ -1,5 +1,124 @@
 # QA and audit record
 
+## 2026-11-18 PW-01 KB file inventories
+
+Implemented the registered bounded CSV/support-link contract, immutable source
+store, atomic scoped selection, seven CLI verbs and a separate KB inventory
+dialog. Independent parser/source, selection and interface reviews reproduced
+and verified repairs for input grouping, HTTP framing, product/build scope,
+failure preservation and keyboard deselection. The combined focused selection
+passes **816 tests**, including a later-architecture capacity regression.
+After normally merging repaired consolidation `121ffb0b`, the combined selection
+passes **1,016 tests**; fresh independent review repeats those tests and passes
+four additional socket-denied integration controls. The feature still supplies
+metadata-only selection and retains exact acquisition consent.
+A final independent source-admission review reproduced five races before the
+repair at `433440a3`. The repaired combined gate passes **1,023 tests**, and the
+independent reviewer passes all seven admission controls. Selection now checks
+the evaluated advisory snapshot inside admission, including repeated no-op
+selection; stale source or revision changes preserve prior decisions.
+Schemas, whole-tree Ruff, dependency compatibility and protobuf runtime checks
+pass. Full local and hosted runs are tracked against
+their own exact trees in [PW-01 evidence](qa/pw01-20261118.md).
+
+The original 5,000-entry budget truncated the real saved KB5036893 capture before
+its x64 section. The independently checked 50,000-entry correction scans all
+42,845 records and retains 37,595 rows across ARM64 and AMD64, including 2,020
+AMD64 metadata-only claims. Rejections and conflicts remain explicit; the CLI
+still returns partial / exit 3. Old captured budgets replay unchanged, and all
+other limits remain in force. Both production support/CSV fetch attempts
+failed with PT-KBC-ACQUIRE because this runner cannot resolve the approved hosts.
+No proxy or injected transport substituted for that live gate. PW-02 and native
+Windows/manual/release/accuracy acceptance remain separate.
+
+## 2026-11-18 current consolidation correctness follow-up
+
+The #302 continuation selectively incorporates six independently reviewed
+correctness fixes from concurrent #304, then repairs ZIP separator handling,
+ambiguous chronology/change provenance and unbounded variant evaluation.
+Independent final core review at `bce67e93`: **239 passed** (225 project cases
+plus 14 independent controls). Separate verifier/L1/schema selection: **242
+passed**. Whole Ruff, schema regeneration and whitespace checks pass. A broader
+combined local process ended 137 without a summary and is not a passing run.
+Exact source/continuation trees, old-head hosted counts and remaining gates are
+in [the follow-up record](qa/consolidation-correctness-20261118.md). Existing
+automatic prerelease policy is unchanged; fresh published-head CI remains the
+merge gate. PRs #304, #305 and #306 retain their separate remaining scope.
+
+## 2026-11-18 independently reviewed consolidation successor
+
+`codex/consolidation-reviewed-20261118` directly continues #301, preserving #297
+and its source ancestry. The corrected full-clone inventory contains **300 topic
+branches**, of which **113** are ancestors of starting main; all 300 have a merge
+base. All remote branches remain intact. Independent core and security review
+reproduced and repaired zero-address normalization, L-39 cap asymmetry,
+recent-query JSON ingress, and release archive type/link validation. The unsafe
+archive/delete helper is excluded. See the exact references, scope, focused test
+counts and deferred work in the [decision log](qa/branch-consolidation-20261118.md).
+The successor full local run finished with **22,461 passed, 137 skipped,
+6 xfailed and 1 failed** in 1,794.23 seconds. The existing Unix-socket test fails
+because this executor denies AF_UNIX creation; no test was weakened or skipped.
+Exact-head hosted gates remain pending until their own results are recorded;
+the historical section below is not current qualification.
+
+## 2026-11-18 full branch consolidation (PR #301)
+
+Historical author report (branch-count claims corrected by the decision log):
+carried #297 and ported eight initially listed never-merged
+items (release verifier, parser fuzz harness, KB scope retention #118 P1a, R8
+typed-literal canon/2 with EH-EQ, Windows batch-launch hardening, saved
+searches, RD-F03 alignment core, A-32 Ghidriff one-to-many abstention).
+Local Linux, Python 3.13, pytest-xdist `-n 3 --dist loadfile`, CI extras
+installed: `main` + #297 baseline **21,692 passed, 7 failed** (6 need the
+`rapidfuzz` extra, 1 xdist ordering; all 7 pass with extras installed); head
+`a59891cf` (before A-32) **22,348 passed, 48 skipped, 5 xfailed, 0 failed**;
+A-32 affected selection **2,918 passed** plus UI and seam tests; final code
+head `4534b763` (all ports, including A-32, rz-diff flood stop and
+bundle-acceptance fixes) **22,477 passed, 48 skipped, 5 xfailed, 0 failed**.
+Whole Ruff passed. Exact-head #301 hosted results were subsequently refreshed in
+the decision log; they do not qualify the successor. Targeted native RB-01,
+Windows desktop and release acceptance remain open. See
+[consolidation record](qa/branch-consolidation-20261118.md).
+
+## 2026-11-16 local KEV CLI context completion
+
+Completed the remaining K4 context wiring through verified local catalogs,
+including snapshot staleness and provenance without function-ranking changes.
+Final combined affected selection: **1,224 passed**. Broader local acceptance
+still encounters the documented AF_UNIX runner restriction and grouped process
+terminations; hosted Windows/full-suite/release gates remain open. See
+[KEV continuation evidence](qa/kev-cli-continuation-20261116.md).
+
+## 2026-11-16 path, KB CLI and historical research continuation
+
+Repaired both observed Windows CLI path failures, completed metadata-sync help
+and stored-product catalogue CLI access, and recovered the isolated R7 research
+slice from #282. Combined affected verification: **724 passed**; whole Ruff,
+dependency and whitespace checks passed. The full single-process attempt was
+killed (137); hosted/current Windows and release gates remain open. See
+[source-pinned evidence and limits](qa/continuation-paths-kb-r7-20261116.md).
+
+## 2026-11-16 research integrity recovery
+
+See [research recovery evidence](qa/research-integrity-followup-20261116.md):
+Tier R provenance/labels/immutable receipts (155 passed, 8 native skips), native
+IO research validator (136 passed), and independent scoped reviews. Fresh pinned
+Linux API controls matched all six expected stock/corrected/negative outcomes;
+prior failures and worker-count diagnosis are preserved with raw receipts.
+Final-head hosted/platform gates remain separate; no real-binary accuracy claim is made.
+
+## 2026-11-16 consolidation follow-up
+
+See [follow-up evidence](qa/consolidation-followup-20261116.md): timeout entry
+controls, benchmark/parity and release repairs, independent review, 480 combined
+passes/3 expected failures plus 13 backup checks, and ten redundant PR closures.
+Hosted final-head qualification remains pending.
+
+## 2026-11-16 continuation
+
+See [continuation evidence](qa/continuation-20261116.md), including independent
+review findings, branch dispositions and explicit native/release blockers.
+
 ## 2026-11-11 SPEC-31 unified-engine soundness follow-up (PR #259 open defects) — Linux, synthetic only
 
 Branch `claude/funny-feynman-d2m0b5` (`main` `882d1ca0` + #259's five commits merged cleanly + four fixes). Plan and worker briefs: [unified-soundness-swarm-prompt-20261111](plans/unified-soundness-swarm-prompt-20261111.md); spec amendments A-28..A-31 in `docs/specs/unified-engine/10-amendments.md`. Each defect had a red test before its fix (counts in the commit messages `78c0c544`, `3bf12d61`, `c0bf3d05`, `a28676c8`).

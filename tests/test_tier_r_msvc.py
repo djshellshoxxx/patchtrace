@@ -3,6 +3,7 @@ real-compiler test needs a Windows host with the Visual Studio environment and r
 (`failed` when PATCHTRACE_REQUIRE_MSVC=1, as on the windows-2022 advisory leg). Nothing here runs a built image."""
 from __future__ import annotations
 
+import json
 import os
 import stat
 import types
@@ -151,8 +152,15 @@ def test_build_through_fake_cl_is_deterministic_and_records_the_compiler(posix_f
     assert [c.split()[0] for c in calls[:3]] == ['cl', 'cl', 'link'] and '/OPT:NOICF' in calls[2]
     assert '00000.obj' in calls[2] and first.pdb is not None
     icf = B.build(spec(source_root=src, files=('a.c', 'b.c'), defines=('K=1',), nuisance='icf'), chain,
-                  tmp_path / 'store3')
+                  tmp_path / 'store1')
     assert icf.recipe_digest != first.recipe_digest and '/opt:icf' in log.read_text(encoding='utf-8')
+    # These fake compiler images are byte-identical even with different recipe
+    # provenance; exercise the actual builder's retention call, not just its helper.
+    assert icf.debug_image == first.debug_image
+    receipts = [json.loads(path.read_bytes()) for path in (first.debug_image.parent / 'builds').glob('*.json')]
+    assert {item['recipe_digest'] for item in receipts} == {first.recipe_digest, icf.recipe_digest}
+    assert all(item['inputs'] == first.input_files for item in receipts)
+    assert first.source_dirs and icf.source_dirs
 
 
 # ---- real cl (Windows host with the Visual Studio environment) ----------------------------------------------------

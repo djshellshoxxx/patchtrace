@@ -526,6 +526,10 @@ REGISTRY: dict[str, TooltipEntry] = {
     'setup.timeout': _e(
         'Seconds a comparison may run before it is stopped, a whole number from 10 to 86400.',
         'Prevents a stuck backend from running forever.', 'Saved with Save setup.'),
+    'setup.timeout_preset': _e(
+        'Choose a whole-comparison budget of 1, 2 or 4 hours, or enter custom seconds.',
+        'A longer budget allows more time but does not repair a performance problem.',
+        'Changes the entry only; Save setup applies it to future comparisons. Custom retains the entry.'),
     'setup.font_size': _e(
         'Code font size in points, a whole number from 8 to 28.', 'Adjusts readability of the code panes.',
         'Applied when you save setup.'),

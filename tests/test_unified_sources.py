@@ -279,17 +279,18 @@ def test_rzdiff_shared_newer_endpoint_is_non_exclusive():
 
 
 def test_rzdiff_similarity_text_is_native_only():
-    a = run(SecondaryAdapter(), inputs([], secondary=[loaded(rzdiff_set([rz(0x1000, 0x1080, sim=100)]))]))
-    b = run(SecondaryAdapter(), inputs([], secondary=[loaded(rzdiff_set([rz(0x1000, 0x1080, sim=999)]))]))
+    a = run(SecondaryAdapter(), inputs([], secondary=[loaded(rzdiff_set([rz(0x1000, 0x1080, sim=100), rz(0x1100, 0x1180)]))]))
+    b = run(SecondaryAdapter(), inputs([], secondary=[loaded(rzdiff_set([rz(0x1000, 0x1080, sim=999), rz(0x1100, 0x1180)]))]))
     strip = [[(x.source, x.step, x.tier, x.cls, x.cardinality, x.older_rva, x.newer_rva) for x in o.atoms]
              for o in (a, b)]
     assert strip[0] == strip[1] and a.atoms != b.atoms  # only the display text differs
 
 
 def test_rzdiff_untested_version_is_noted():
-    out = run(SecondaryAdapter(), inputs([], secondary=[loaded(rzdiff_set([rz(0x1000, 0x1080, version='0.10.0')],
+    out = run(SecondaryAdapter(), inputs([], secondary=[loaded(rzdiff_set([rz(0x1000, 0x1080, version='0.10.0'),
+                                                                          rz(0x1100, 0x1180, version='0.10.0')],
                                                                           version='0.10.0'))]))
-    assert out.limitations == ('rz-diff-untested-version:0.10.0',) and len(out.atoms) == 1
+    assert out.limitations == ('rz-diff-untested-version:0.10.0',) and len(out.atoms) == 2
 
 
 def test_secondary_set_of_another_pair_is_refused_with_a_limitation_but_stays_an_input():

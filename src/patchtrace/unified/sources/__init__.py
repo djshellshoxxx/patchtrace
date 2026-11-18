@@ -27,7 +27,7 @@ LINE_MAX_BYTES = 256 * 1024 * 1024
 Category = Literal['modified', 'added', 'removed', 'unmatched', 'ambiguous', 'split', 'merged', 'unchanged']
 Short = Annotated[str, Field(max_length=64)]
 DEGRADING = frozenset({'raw-missing', 'raw-hash-mismatch', 'raw-unparsable', 'raw-identity-mismatch', 'ladder-partial',
-                       'manual-unresolved'})
+                       'manual-unresolved', 'rzdiff-singleton-ownership'})
 
 
 class _Strict(BaseModel):

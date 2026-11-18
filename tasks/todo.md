@@ -1,12 +1,77 @@
 # PatchTrace delivery tracker
 
+## 2026-11-18 branch consolidation and PW-01 continuation
+
+- [x] Refresh full branch history and all REST PR pages; correct the 300-topic inventory, ancestry counts and unsupported supersession/deletion claims.
+- [x] Independently review #301's full consolidation; repair reproduced normalization, mirror-cap, JSON-ingress and release-verifier defects; exclude unsafe archive/delete tooling.
+- [x] Preserve every remote branch and separately track unresolved or deferred UI, research, matching and environment work.
+- [x] Independently review six narrow correctness ports from concurrent #304 and repair ZIP normalization, ambiguous change provenance and bounded pair enumeration; preserve its separate remaining scope and existing release policy.
+- [ ] Keep concurrent #305/#306 and the pre-existing mixed Windows 10 source-key issue separately tracked; do not turn their remaining scope into a completed-consolidation claim.
+- [ ] Qualify and merge `codex/consolidation-reviewed-20261118` on current-head/base hosted gates; then close only exactly accounted-for PRs with replacement references.
+- [x] Implement and independently review PW-01 bounded CSV parsing, support links/retrieval, provenance/store, CLI and KB panel; register contracts and regenerate schemas. Combined focused gate: 816 passed, including later-section capacity while preserving old-budget replay. See [PW-01 evidence](../docs/qa/pw01-20261118.md).
+- [ ] Qualify and merge PW-01 on current-head hosted Linux/Windows/package gates; complete production Microsoft retrieval on a runner with direct DNS/TLS access. Both exact-plan attempts here returned PT-KBC-ACQUIRE after DNS failure; the saved real capture is offline evidence only.
+- [x] Normally merge corrected consolidation `121ffb0b` into PW-01, retain both QA sections, and independently verify 1,016 combined project tests plus four socket-denied integration controls. Current published-head hosted gates remain separate.
+- [x] Reproduce and independently review the PW-01 source-admission race repair at `433440a3`: current source-snapshot and no-op revision guards; 1,023 combined tests and seven independent admission controls pass. Current-head hosted qualification remains pending.
+- [ ] Follow PW-01 with the separate bounded local MSU/CAB PW-02 slice; native Windows extraction remains a distinct acceptance gate.
+- [ ] Keep manual desktop/accessibility, RB-01 targeted live, original timeout-pair, clean-machine release and L1/L2/L3 acceptance open until evidenced.
+- [ ] Separate strings-export follow-ups: race-safe no-clobber publication and compatible document-level extraction/truncation/redaction metadata, including empty exports.
+
+[Current decision log](../docs/qa/branch-consolidation-20261118.md).
+
+## 2026-11-16 local KEV continuation
+
+- [x] Complete K4 item 3: local KEV context in pilot leads and KB search.
+- [x] Bind catalogue snapshot changes to stored-result identity/staleness.
+- [x] Preserve provenance, unknown states and function order; 1,224 affected tests pass.
+- [ ] Complete hosted current-head QA/Windows/package gates and remaining historical review.
+- [ ] Resolve native/timeout-pair/clean-machine/manual acceptance with real evidence.
+
+[KEV continuation evidence](../docs/qa/kev-cli-continuation-20261116.md).
+
+## 2026-11-16 paths, KB parity and R7 continuation
+
+- [x] Repair both Windows QA path-classification failures without weakening assertions.
+- [x] Complete sync help and active stored-product catalogue CLI access (K4 items 1–2).
+- [x] Review/recover unique isolated #282 R7 research tooling and its tests/docs.
+- [x] Inventory 300 fetched branch refs; distinguish ancestry from semantic integration.
+- [x] Pass 724 affected tests, whole Ruff, dependency and whitespace checks.
+- [ ] Obtain passing current-head hosted full QA, Qt and platform packages before merging #297.
+- [ ] Finish remaining historical semantic review and release/native/manual gates.
+
+[Continuation evidence](../docs/qa/continuation-paths-kb-r7-20261116.md).
+
+## 2026-11-16 research integrity recovery
+
+Recovered the missing #164 Tier R provenance/label/receipt slice and #222 native
+research IO controls with reusable exact validation. See
+[scoped evidence](../docs/qa/research-integrity-followup-20261116.md).
+Implementation and independent reviews pass; hosted/native acceptance remains
+open. Twelve redundant PR records are now closed; original branches remain.
+
+## 2026-11-16 consolidation follow-up
+
+Timeout validation/presets and recovered benchmark/parity/release repairs are
+implemented on the separate follow-up branch; see
+[evidence and disposition](../docs/qa/consolidation-followup-20261116.md).
+Ten already-integrated PR records are closed, with source branches preserved.
+Merge the integration and follow-up only after their respective hosted gates pass.
+The remaining Tier R provenance/label/receipt recovery is a separate slice.
+
+## 2026-11-16 continuation
+
+Current integration: `codex/release-integration-20261116`; see
+[checkpoint](../docs/qa/continuation-20261116.md). Core historical ports, review repairs and the remaining core CLI verbs are implemented
+on the integration branch. Hosted CI, further historical semantic review and
+native/release acceptance remain open; full local verification hit environment
+and worker-termination blockers documented in the checkpoint.
+
 ## P1 — Recurring Windows comparison timeout (reported 2026-11-06)
 
 **OPEN / high priority.** The owner's usual two-file test failed with `PT-BACKEND: analysis timed out`. Both Ghidra analyses completed; `StructuralGraphHash` then reported **2,161,955 entries**, followed by a **28m 41.755s** quiet interval after "Sorting functions". Later `72/72` progress was only an enhanced-symbol (`esym`) substage. The configured timeout and actual termination time are absent from the supplied logs; the source default of 3,600 seconds is not proof of the value used in this run.
 
 Incident evidence, source references, attachment hashes, implementation options and closure criteria: **[P1 timeout investigation](../docs/qa/ghidriff-timeout-20261106.md)**. Preserve the original tracker history below.
 
-- [ ] **PT-TIMEOUT-1 — partially implemented:** Live elapsed/budget status, last observed stage/output age, actionable timeout text and bounded `backend-execution.json` receipts are implemented in [SPEC-01a](../docs/specs/ghidriff-timeout-progress.md). The elapsed timer and late worker events also preserve terminal/cancel messages. Timeout-entry validation/presets and original-pair Windows acceptance remain open. Existing interim option: **Setup → Backend and desktop → Comparison timeout (seconds) → 7200 (2h) or 14400 (4h) → Save setup**, then start a new run. The current GUI range is 10–86,400 seconds. A longer budget is not a verified performance fix.
+- [ ] **PT-TIMEOUT-1 — original-pair acceptance open:** Live elapsed/budget status, last observed stage/output age, actionable timeout text, bounded `backend-execution.json` receipts, explicit timeout-entry validation and Custom/1h/2h/4h presets are implemented in [SPEC-01a](../docs/specs/ghidriff-timeout-progress.md). The elapsed timer and late worker events preserve terminal/cancel messages. Original-pair Windows acceptance remains open. **Setup → Backend and desktop → Comparison timeout (seconds) → 7200 (2h) or 14400 (4h) → Save setup**, then start a new run. The GUI range remains 10–86,400 seconds. A longer budget is not a verified performance fix.
 - [ ] **PT-TIMEOUT-2:** Profile the structural-candidate expansion and downstream conversion/filtering/deduplication/JSON work; implement a measured, semantics-preserving repair through the supported external-engine boundary. Preserve ambiguity and disclose any incomplete result caused by resource limits.
 - [ ] **PT-TIMEOUT-3:** Diagnose the separate `FUN_100ca86c` decompiler timeout, missing PDB metadata and nonfatal resource-parser warnings. An outer timeout extension does not automatically fix the per-function timeout. Capture actual runtime versions; this log uses Ghidra 12.1.4.
 - [ ] **PT-TIMEOUT-4:** Verify successful-cache reuse and evaluate separately specified failed-run checkpoints. Keep `--no-threaded`, workspace isolation, failure logs and prior results; do not remove the Windows lock safeguard as an untested speed fix.
@@ -832,6 +897,7 @@ Plan and worker briefs: [unified-soundness-swarm-prompt-20261111](../docs/plans/
 ### [WB1-S7:search-panel]
 - [x] Search dock on the panel framework (states Q0-Q12, paged rows, navigation, cancel, shutdown).
 - [ ] Kinds menu, saved searches, suggestion popup, hit-span delegate, F3/Shift+F3, feature-owned paged model (see commit notes).
+- [x] Saved searches and recent queries, pure part: `search/saved.py` stores and tests (ported 2026-11-18 from `claude/instance-b-features`); the dock menu and CLI hook are still open.
 
 ### [WB2-G5G6:calls-panel]
 - [ ] Calls panel follow-ups: graph.export_dot, graph.callsite, graph/* settings, Tree as a lazy model, entry paths.
@@ -1175,7 +1241,8 @@ Full `QT_QPA_PLATFORM=offscreen python -m pytest -q` for this isolated native sl
 
 - [x] Review/integrate #220 reserved derived metadata boundary and #221 explicit binary-only local-pair desktop start;339 combined passes.
 - [ ] Product-only desktop/domain starting path and single-binary patch discovery remain separate accepted work.
-- [ ] Complete remaining #174 one-to-many normalization/GT-01 controls; narrow reserved-key integration alone is not full native acceptance.
+- [x] #174/#289 one-to-many normalization ported as SPEC-31 **A-32** (2026-11-18, PR #301): per-group abstention, unified adapter count `ghidriff-one-to-many-abstained:<n>`, reconcile/features/leads/evalcore consumers, "Import note" label; 45 ported tests red-then-green.
+- [ ] A-32 live acceptance: rerun RB-01 `lua-v5.4.6-to-v5.4.7-O2` (both orientations, Linux and Windows) through `unified-live-gates.yml` and record that it normalizes with the abstention instead of `PT-SCHEMA`; the remaining GT-01 native controls stay open.
 
 - [x] Account #222 finite pinned-native provisioning evidence and #223 canonical function identity; verify14 complete raw-log receipts and357 combined focused passes.
 - [ ] Finish actual native API linkage/stock-red-corrected-green and distinct-byte/IO controls; optional control tooling remains separate pending verified source.

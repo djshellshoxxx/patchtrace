@@ -106,8 +106,9 @@ def select_sets(rows: Sequence[tuple[Entry, SecondaryMatchSet]], pair: tuple[str
                 ) -> tuple[tuple[tuple[Entry, SecondaryMatchSet], ...], tuple[str, ...]]:
     """Newest non-stale set per engine (SPEC-28 C5); duplicates never reach reconcile/assess."""
     chosen, notes = select_current(list(rows), pair)
-    engines = sorted({note.split(':', 1)[0] for note in notes})
-    warnings = tuple(f'Multiple stored sets for {engine}; showing the newest.' for engine in engines)
+    quarantined = tuple(note for note in notes if ': quarantined entry ' in note)
+    engines = sorted({note.split(':', 1)[0] for note in notes if note not in quarantined})
+    warnings = tuple(f'Multiple stored sets for {engine}; showing the newest.' for engine in engines) + quarantined
     return tuple(chosen), warnings
 
 

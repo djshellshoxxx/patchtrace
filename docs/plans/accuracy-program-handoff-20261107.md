@@ -1,5 +1,14 @@
 # Accuracy program handoff (tool-neutral)
 
+## Continuation checkpoint — 2026-11-16
+
+The historical open-PR lists below are not current. Starting main is
+`7401078490eb7a447f5ec7274339cb08b051f395`; #286 and #287 already integrated
+the live harness changes and four unified soundness repairs, and #296 fixed
+the Windows workflow path test. See `docs/qa/continuation-20261116.md` for
+the new integration, review findings and remaining acceptance gates. No native
+Windows or real-pair accuracy claim follows from synthetic/offscreen tests.
+
 ## Current checkpoint (2026-11-09 08:16 UTC)
 
 This checkpoint supersedes the November 7 open-PR queue and next-task list below. Re-check current refs and runs before acting.

@@ -1188,6 +1188,17 @@ def test_every_invisible_or_control_character_is_escaped_in_the_summary(code):
     assert f'<U+{code:04X}>' in row.summary
 
 
+@pytest.mark.parametrize('code', [0x600, 0x605, 0x6DD, 0x70F, 0x890, 0x891, 0x8E2, 0x110BD, 0x110CD, 0x13430, 0x1343F],
+                         ids=lambda code: f'U+{code:04X}')
+def test_a_format_character_the_summary_table_does_not_list_is_escaped_by_the_shared_rule(code):
+    """SEC-B: the table knew 2256 of the 2285 code points of `hostile_text`; the 29 it missed (Arabic, Syriac and
+    Kaithi number and abbreviation marks, the Egyptian hieroglyph format controls) reached the summary raw."""
+    old = f'x = "{chr(code)}";'
+    row = diff_row(old, 'x = "y";', 'c')
+    assert row.has_change and not unsafe_characters(row.summary) and f'<U+{code:04X}>' in row.summary
+    assert [(m.start, m.end) for m in row.old] == [(4, 7)] and old[4:7] == f'"{chr(code)}"'  # offsets are the text's
+
+
 def test_a_snippet_is_cut_at_forty_shown_characters_and_marked_as_cut():
     row = diff_row('x = "' + 'a' * 300 + '";', 'x = "' + 'b' * 300 + '";', 'c')
     assert row.summary == f'Line 1 of 1: 1 change: string "{"a" * 39}... -> "{"b" * 39}....'

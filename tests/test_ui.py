@@ -509,3 +509,16 @@ def test_completed_interpretation_shows_its_error_note(window, error):
                                                      status='completed', error=error))
     shown = window.job_label.text() + window.statusBar().currentMessage() + window.logs.toPlainText()
     assert (error in shown) if error else ('PT-' not in shown)
+
+
+@pytest.mark.parametrize(('manual', 'label'), [(False, 'Import note'), (True, 'Analyst correction reason')])
+def test_match_reason_is_labelled_by_its_origin(window, monkeypatch, manual, label):
+    """A-32: an import's one-to-many abstention note is not shown as an analyst's correction reason."""
+    window.search.setText('read_item')
+    match = window.current_match().model_copy(update={'manual': manual, 'reason': 'claimed by several counterparts'})
+    monkeypatch.setattr(window, 'current_match', lambda: match)
+    window.show_match_annotations()
+    text = window.finding_detail.toPlainText()
+    assert f'{label}: claimed by several counterparts' in text
+    other = 'Analyst correction reason' if label == 'Import note' else 'Import note'
+    assert f'{other}:' not in text

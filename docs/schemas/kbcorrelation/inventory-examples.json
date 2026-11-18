@@ -1,0 +1,2268 @@
+{
+  "CsvDiagnostic": {
+    "invalid": [
+      {
+        "example": {
+          "code": "INVALID_SIZE",
+          "level": "warning",
+          "message": "The size is unknown: grouping or numeric syntax does not match the selected locale.",
+          "reference": {
+            "line_end": 5,
+            "line_start": 5,
+            "logical_record": 4,
+            "raw_sha256": "26601e1b533b95d67134d53d404616f2a26e0be62a30a1ac6a4bd5b209cd6d93",
+            "section_index": 0
+          },
+          "unexpected_field": 1
+        },
+        "reason": "extra fields are forbidden"
+      },
+      {
+        "example": {
+          "code": "ARBITRARY_CODE",
+          "level": "warning",
+          "message": "The size is unknown: grouping or numeric syntax does not match the selected locale.",
+          "reference": {
+            "line_end": 5,
+            "line_start": 5,
+            "logical_record": 4,
+            "raw_sha256": "26601e1b533b95d67134d53d404616f2a26e0be62a30a1ac6a4bd5b209cd6d93",
+            "section_index": 0
+          }
+        },
+        "reason": "diagnostics use the documented code vocabulary"
+      }
+    ],
+    "valid": {
+      "code": "INVALID_SIZE",
+      "level": "warning",
+      "message": "The size is unknown: grouping or numeric syntax does not match the selected locale.",
+      "reference": {
+        "line_end": 5,
+        "line_start": 5,
+        "logical_record": 4,
+        "raw_sha256": "26601e1b533b95d67134d53d404616f2a26e0be62a30a1ac6a4bd5b209cd6d93",
+        "section_index": 0
+      }
+    }
+  },
+  "CsvInventory": {
+    "invalid": [
+      {
+        "example": {
+          "accepted_count": 2,
+          "conflict_count": 0,
+          "context": {
+            "architecture": "unknown",
+            "build": "26100.5001",
+            "delimiter": "comma",
+            "kb": "KB5099001",
+            "locale": "en-US",
+            "product": "Example OS",
+            "product_scope_id": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+            "release": "24H2"
+          },
+          "contract": "kb-file-inventory/1",
+          "diagnostics": [
+            {
+              "code": "INVALID_SIZE",
+              "level": "warning",
+              "message": "The size is unknown: grouping or numeric syntax does not match the selected locale.",
+              "reference": {
+                "line_end": 5,
+                "line_start": 5,
+                "logical_record": 4,
+                "raw_sha256": "26601e1b533b95d67134d53d404616f2a26e0be62a30a1ac6a4bd5b209cd6d93",
+                "section_index": 0
+              }
+            }
+          ],
+          "diagnostics_omitted": 0,
+          "duplicate_count": 0,
+          "encoding": "utf-8",
+          "entries": [
+            {
+              "architecture": "amd64",
+              "architecture_basis": "section",
+              "basename": "examplesvc.dll",
+              "build": "26100.5001",
+              "conflict_group": null,
+              "date_text": "2099-03-\r\n01",
+              "diagnostics": [],
+              "duplicate_of": null,
+              "entry_id": "b0ad9b1cfb111ac9b233e646bc1d5303b3a4edcfccb044c40b8124dbbc18085e",
+              "original_fields": [
+                "ExampleSvc.dll",
+                "10.0.26100.5001",
+                "1,024",
+                "2099-03-\r\n01",
+                "12:00"
+              ],
+              "original_filename": "ExampleSvc.dll",
+              "original_size": "1,024",
+              "original_version": "10.0.26100.5001",
+              "product": "Example OS",
+              "reference": {
+                "line_end": 4,
+                "line_start": 3,
+                "logical_record": 3,
+                "raw_sha256": "26601e1b533b95d67134d53d404616f2a26e0be62a30a1ac6a4bd5b209cd6d93",
+                "section_index": 0
+              },
+              "release": "24H2",
+              "size_bytes": 1024,
+              "state": "metadata-only",
+              "time_text": "12:00",
+              "version_components": [
+                10,
+                0,
+                26100,
+                5001
+              ]
+            },
+            {
+              "architecture": "amd64",
+              "architecture_basis": "section",
+              "basename": "exampledata.dll",
+              "build": "26100.5001",
+              "conflict_group": null,
+              "date_text": "2099-03-01",
+              "diagnostics": [
+                "INVALID_SIZE"
+              ],
+              "duplicate_of": null,
+              "entry_id": "127320fdd4f8c292ad8b9643a1bb3efdfb09bfdc31b6705ca21e49089a68edb3",
+              "original_fields": [
+                "ExampleData.dll",
+                "10.0.26100.5001",
+                "unknown",
+                "2099-03-01",
+                "12:00"
+              ],
+              "original_filename": "ExampleData.dll",
+              "original_size": "unknown",
+              "original_version": "10.0.26100.5001",
+              "product": "Example OS",
+              "reference": {
+                "line_end": 5,
+                "line_start": 5,
+                "logical_record": 4,
+                "raw_sha256": "26601e1b533b95d67134d53d404616f2a26e0be62a30a1ac6a4bd5b209cd6d93",
+                "section_index": 0
+              },
+              "release": "24H2",
+              "size_bytes": null,
+              "state": "unknown",
+              "time_text": "12:00",
+              "version_components": [
+                10,
+                0,
+                26100,
+                5001
+              ]
+            }
+          ],
+          "inventory_id": "a2711d24ba5cdb9b50af3e5fad99851092ff41e3ad33c680f8cd572c09414d6e",
+          "limits": {
+            "max_bytes": 16777216,
+            "max_columns": 32,
+            "max_diagnostics": 1000,
+            "max_entries": 50000,
+            "max_field_chars": 65536,
+            "max_record_chars": 262144,
+            "max_records": 100000,
+            "max_seconds": 10.0,
+            "max_sections": 1000,
+            "max_text_chars": 16777216
+          },
+          "parser_version": 1,
+          "raw_sha256": "26601e1b533b95d67134d53d404616f2a26e0be62a30a1ac6a4bd5b209cd6d93",
+          "raw_size": 202,
+          "records_scanned": 4,
+          "rejected_count": 0,
+          "sections": [
+            {
+              "architecture": "amd64",
+              "banner": "Example OS 24H2 for x64-based Systems",
+              "index": 0,
+              "reference": {
+                "line_end": 1,
+                "line_start": 1,
+                "logical_record": 1,
+                "raw_sha256": "26601e1b533b95d67134d53d404616f2a26e0be62a30a1ac6a4bd5b209cd6d93",
+                "section_index": 0
+              }
+            }
+          ],
+          "status": "partial",
+          "truncated": false,
+          "unexpected_field": 1
+        },
+        "reason": "extra fields are forbidden"
+      },
+      {
+        "example": {
+          "accepted_count": 2,
+          "conflict_count": 0,
+          "context": {
+            "architecture": "unknown",
+            "build": "26100.5001",
+            "delimiter": "comma",
+            "kb": "KB5099001",
+            "locale": "en-US",
+            "product": "Example OS",
+            "product_scope_id": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+            "release": "24H2"
+          },
+          "contract": "kb-file-inventory/2",
+          "diagnostics": [
+            {
+              "code": "INVALID_SIZE",
+              "level": "warning",
+              "message": "The size is unknown: grouping or numeric syntax does not match the selected locale.",
+              "reference": {
+                "line_end": 5,
+                "line_start": 5,
+                "logical_record": 4,
+                "raw_sha256": "26601e1b533b95d67134d53d404616f2a26e0be62a30a1ac6a4bd5b209cd6d93",
+                "section_index": 0
+              }
+            }
+          ],
+          "diagnostics_omitted": 0,
+          "duplicate_count": 0,
+          "encoding": "utf-8",
+          "entries": [
+            {
+              "architecture": "amd64",
+              "architecture_basis": "section",
+              "basename": "examplesvc.dll",
+              "build": "26100.5001",
+              "conflict_group": null,
+              "date_text": "2099-03-\r\n01",
+              "diagnostics": [],
+              "duplicate_of": null,
+              "entry_id": "b0ad9b1cfb111ac9b233e646bc1d5303b3a4edcfccb044c40b8124dbbc18085e",
+              "original_fields": [
+                "ExampleSvc.dll",
+                "10.0.26100.5001",
+                "1,024",
+                "2099-03-\r\n01",
+                "12:00"
+              ],
+              "original_filename": "ExampleSvc.dll",
+              "original_size": "1,024",
+              "original_version": "10.0.26100.5001",
+              "product": "Example OS",
+              "reference": {
+                "line_end": 4,
+                "line_start": 3,
+                "logical_record": 3,
+                "raw_sha256": "26601e1b533b95d67134d53d404616f2a26e0be62a30a1ac6a4bd5b209cd6d93",
+                "section_index": 0
+              },
+              "release": "24H2",
+              "size_bytes": 1024,
+              "state": "metadata-only",
+              "time_text": "12:00",
+              "version_components": [
+                10,
+                0,
+                26100,
+                5001
+              ]
+            },
+            {
+              "architecture": "amd64",
+              "architecture_basis": "section",
+              "basename": "exampledata.dll",
+              "build": "26100.5001",
+              "conflict_group": null,
+              "date_text": "2099-03-01",
+              "diagnostics": [
+                "INVALID_SIZE"
+              ],
+              "duplicate_of": null,
+              "entry_id": "127320fdd4f8c292ad8b9643a1bb3efdfb09bfdc31b6705ca21e49089a68edb3",
+              "original_fields": [
+                "ExampleData.dll",
+                "10.0.26100.5001",
+                "unknown",
+                "2099-03-01",
+                "12:00"
+              ],
+              "original_filename": "ExampleData.dll",
+              "original_size": "unknown",
+              "original_version": "10.0.26100.5001",
+              "product": "Example OS",
+              "reference": {
+                "line_end": 5,
+                "line_start": 5,
+                "logical_record": 4,
+                "raw_sha256": "26601e1b533b95d67134d53d404616f2a26e0be62a30a1ac6a4bd5b209cd6d93",
+                "section_index": 0
+              },
+              "release": "24H2",
+              "size_bytes": null,
+              "state": "unknown",
+              "time_text": "12:00",
+              "version_components": [
+                10,
+                0,
+                26100,
+                5001
+              ]
+            }
+          ],
+          "inventory_id": "a2711d24ba5cdb9b50af3e5fad99851092ff41e3ad33c680f8cd572c09414d6e",
+          "limits": {
+            "max_bytes": 16777216,
+            "max_columns": 32,
+            "max_diagnostics": 1000,
+            "max_entries": 50000,
+            "max_field_chars": 65536,
+            "max_record_chars": 262144,
+            "max_records": 100000,
+            "max_seconds": 10.0,
+            "max_sections": 1000,
+            "max_text_chars": 16777216
+          },
+          "parser_version": 1,
+          "raw_sha256": "26601e1b533b95d67134d53d404616f2a26e0be62a30a1ac6a4bd5b209cd6d93",
+          "raw_size": 202,
+          "records_scanned": 4,
+          "rejected_count": 0,
+          "sections": [
+            {
+              "architecture": "amd64",
+              "banner": "Example OS 24H2 for x64-based Systems",
+              "index": 0,
+              "reference": {
+                "line_end": 1,
+                "line_start": 1,
+                "logical_record": 1,
+                "raw_sha256": "26601e1b533b95d67134d53d404616f2a26e0be62a30a1ac6a4bd5b209cd6d93",
+                "section_index": 0
+              }
+            }
+          ],
+          "status": "partial",
+          "truncated": false
+        },
+        "reason": "unsupported future contract version"
+      },
+      {
+        "example": {
+          "accepted_count": 0,
+          "conflict_count": 0,
+          "context": {
+            "architecture": "unknown",
+            "build": "26100.5001",
+            "delimiter": "comma",
+            "kb": "KB5099001",
+            "locale": "en-US",
+            "product": "Example OS",
+            "product_scope_id": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+            "release": "24H2"
+          },
+          "contract": "kb-file-inventory/1",
+          "diagnostics": [
+            {
+              "code": "INVALID_SIZE",
+              "level": "warning",
+              "message": "The size is unknown: grouping or numeric syntax does not match the selected locale.",
+              "reference": {
+                "line_end": 5,
+                "line_start": 5,
+                "logical_record": 4,
+                "raw_sha256": "26601e1b533b95d67134d53d404616f2a26e0be62a30a1ac6a4bd5b209cd6d93",
+                "section_index": 0
+              }
+            }
+          ],
+          "diagnostics_omitted": 0,
+          "duplicate_count": 0,
+          "encoding": "utf-8",
+          "entries": [
+            {
+              "architecture": "amd64",
+              "architecture_basis": "section",
+              "basename": "examplesvc.dll",
+              "build": "26100.5001",
+              "conflict_group": null,
+              "date_text": "2099-03-\r\n01",
+              "diagnostics": [],
+              "duplicate_of": null,
+              "entry_id": "b0ad9b1cfb111ac9b233e646bc1d5303b3a4edcfccb044c40b8124dbbc18085e",
+              "original_fields": [
+                "ExampleSvc.dll",
+                "10.0.26100.5001",
+                "1,024",
+                "2099-03-\r\n01",
+                "12:00"
+              ],
+              "original_filename": "ExampleSvc.dll",
+              "original_size": "1,024",
+              "original_version": "10.0.26100.5001",
+              "product": "Example OS",
+              "reference": {
+                "line_end": 4,
+                "line_start": 3,
+                "logical_record": 3,
+                "raw_sha256": "26601e1b533b95d67134d53d404616f2a26e0be62a30a1ac6a4bd5b209cd6d93",
+                "section_index": 0
+              },
+              "release": "24H2",
+              "size_bytes": 1024,
+              "state": "metadata-only",
+              "time_text": "12:00",
+              "version_components": [
+                10,
+                0,
+                26100,
+                5001
+              ]
+            },
+            {
+              "architecture": "amd64",
+              "architecture_basis": "section",
+              "basename": "exampledata.dll",
+              "build": "26100.5001",
+              "conflict_group": null,
+              "date_text": "2099-03-01",
+              "diagnostics": [
+                "INVALID_SIZE"
+              ],
+              "duplicate_of": null,
+              "entry_id": "127320fdd4f8c292ad8b9643a1bb3efdfb09bfdc31b6705ca21e49089a68edb3",
+              "original_fields": [
+                "ExampleData.dll",
+                "10.0.26100.5001",
+                "unknown",
+                "2099-03-01",
+                "12:00"
+              ],
+              "original_filename": "ExampleData.dll",
+              "original_size": "unknown",
+              "original_version": "10.0.26100.5001",
+              "product": "Example OS",
+              "reference": {
+                "line_end": 5,
+                "line_start": 5,
+                "logical_record": 4,
+                "raw_sha256": "26601e1b533b95d67134d53d404616f2a26e0be62a30a1ac6a4bd5b209cd6d93",
+                "section_index": 0
+              },
+              "release": "24H2",
+              "size_bytes": null,
+              "state": "unknown",
+              "time_text": "12:00",
+              "version_components": [
+                10,
+                0,
+                26100,
+                5001
+              ]
+            }
+          ],
+          "inventory_id": "a2711d24ba5cdb9b50af3e5fad99851092ff41e3ad33c680f8cd572c09414d6e",
+          "limits": {
+            "max_bytes": 16777216,
+            "max_columns": 32,
+            "max_diagnostics": 1000,
+            "max_entries": 50000,
+            "max_field_chars": 65536,
+            "max_record_chars": 262144,
+            "max_records": 100000,
+            "max_seconds": 10.0,
+            "max_sections": 1000,
+            "max_text_chars": 16777216
+          },
+          "parser_version": 1,
+          "raw_sha256": "26601e1b533b95d67134d53d404616f2a26e0be62a30a1ac6a4bd5b209cd6d93",
+          "raw_size": 202,
+          "records_scanned": 4,
+          "rejected_count": 0,
+          "sections": [
+            {
+              "architecture": "amd64",
+              "banner": "Example OS 24H2 for x64-based Systems",
+              "index": 0,
+              "reference": {
+                "line_end": 1,
+                "line_start": 1,
+                "logical_record": 1,
+                "raw_sha256": "26601e1b533b95d67134d53d404616f2a26e0be62a30a1ac6a4bd5b209cd6d93",
+                "section_index": 0
+              }
+            }
+          ],
+          "status": "partial",
+          "truncated": false
+        },
+        "reason": "accepted count must match retained entries"
+      },
+      {
+        "example": {
+          "accepted_count": 2,
+          "conflict_count": 0,
+          "context": {
+            "architecture": "unknown",
+            "build": "26100.5001",
+            "delimiter": "comma",
+            "kb": "KB5099001",
+            "locale": "en-US",
+            "product": "Example OS",
+            "product_scope_id": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+            "release": "24H2"
+          },
+          "contract": "kb-file-inventory/1",
+          "diagnostics": [
+            {
+              "code": "INVALID_SIZE",
+              "level": "warning",
+              "message": "The size is unknown: grouping or numeric syntax does not match the selected locale.",
+              "reference": {
+                "line_end": 5,
+                "line_start": 5,
+                "logical_record": 4,
+                "raw_sha256": "26601e1b533b95d67134d53d404616f2a26e0be62a30a1ac6a4bd5b209cd6d93",
+                "section_index": 0
+              }
+            }
+          ],
+          "diagnostics_omitted": 0,
+          "duplicate_count": 0,
+          "encoding": "utf-8",
+          "entries": [
+            {
+              "architecture": "amd64",
+              "architecture_basis": "section",
+              "basename": "examplesvc.dll",
+              "build": "26100.5001",
+              "conflict_group": null,
+              "date_text": "2099-03-\r\n01",
+              "diagnostics": [],
+              "duplicate_of": null,
+              "entry_id": "b0ad9b1cfb111ac9b233e646bc1d5303b3a4edcfccb044c40b8124dbbc18085e",
+              "original_fields": [
+                "ExampleSvc.dll",
+                "10.0.26100.5001",
+                "1,024",
+                "2099-03-\r\n01",
+                "12:00"
+              ],
+              "original_filename": "ExampleSvc.dll",
+              "original_size": "1,024",
+              "original_version": "10.0.26100.5001",
+              "product": "Example OS",
+              "reference": {
+                "line_end": 4,
+                "line_start": 3,
+                "logical_record": 3,
+                "raw_sha256": "26601e1b533b95d67134d53d404616f2a26e0be62a30a1ac6a4bd5b209cd6d93",
+                "section_index": 0
+              },
+              "release": "24H2",
+              "size_bytes": 1024,
+              "state": "metadata-only",
+              "time_text": "12:00",
+              "version_components": [
+                10,
+                0,
+                26100,
+                5001
+              ]
+            },
+            {
+              "architecture": "amd64",
+              "architecture_basis": "section",
+              "basename": "exampledata.dll",
+              "build": "26100.5001",
+              "conflict_group": null,
+              "date_text": "2099-03-01",
+              "diagnostics": [
+                "INVALID_SIZE"
+              ],
+              "duplicate_of": null,
+              "entry_id": "127320fdd4f8c292ad8b9643a1bb3efdfb09bfdc31b6705ca21e49089a68edb3",
+              "original_fields": [
+                "ExampleData.dll",
+                "10.0.26100.5001",
+                "unknown",
+                "2099-03-01",
+                "12:00"
+              ],
+              "original_filename": "ExampleData.dll",
+              "original_size": "unknown",
+              "original_version": "10.0.26100.5001",
+              "product": "Example OS",
+              "reference": {
+                "line_end": 5,
+                "line_start": 5,
+                "logical_record": 4,
+                "raw_sha256": "26601e1b533b95d67134d53d404616f2a26e0be62a30a1ac6a4bd5b209cd6d93",
+                "section_index": 0
+              },
+              "release": "24H2",
+              "size_bytes": null,
+              "state": "unknown",
+              "time_text": "12:00",
+              "version_components": [
+                10,
+                0,
+                26100,
+                5001
+              ]
+            }
+          ],
+          "inventory_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "limits": {
+            "max_bytes": 16777216,
+            "max_columns": 32,
+            "max_diagnostics": 1000,
+            "max_entries": 50000,
+            "max_field_chars": 65536,
+            "max_record_chars": 262144,
+            "max_records": 100000,
+            "max_seconds": 10.0,
+            "max_sections": 1000,
+            "max_text_chars": 16777216
+          },
+          "parser_version": 1,
+          "raw_sha256": "26601e1b533b95d67134d53d404616f2a26e0be62a30a1ac6a4bd5b209cd6d93",
+          "raw_size": 202,
+          "records_scanned": 4,
+          "rejected_count": 0,
+          "sections": [
+            {
+              "architecture": "amd64",
+              "banner": "Example OS 24H2 for x64-based Systems",
+              "index": 0,
+              "reference": {
+                "line_end": 1,
+                "line_start": 1,
+                "logical_record": 1,
+                "raw_sha256": "26601e1b533b95d67134d53d404616f2a26e0be62a30a1ac6a4bd5b209cd6d93",
+                "section_index": 0
+              }
+            }
+          ],
+          "status": "partial",
+          "truncated": false
+        },
+        "reason": "identity binds exact bytes, context and parsing budgets"
+      },
+      {
+        "example": {
+          "accepted_count": 2,
+          "conflict_count": 0,
+          "context": {
+            "architecture": "unknown",
+            "build": "26100.5001",
+            "delimiter": "comma",
+            "kb": "KB5099001",
+            "locale": "en-US",
+            "product": "Example OS",
+            "product_scope_id": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+            "release": "24H2"
+          },
+          "contract": "kb-file-inventory/1",
+          "diagnostics": [
+            {
+              "code": "INVALID_SIZE",
+              "level": "warning",
+              "message": "The size is unknown: grouping or numeric syntax does not match the selected locale.",
+              "reference": {
+                "line_end": 5,
+                "line_start": 5,
+                "logical_record": 4,
+                "raw_sha256": "26601e1b533b95d67134d53d404616f2a26e0be62a30a1ac6a4bd5b209cd6d93",
+                "section_index": 0
+              }
+            }
+          ],
+          "diagnostics_omitted": 0,
+          "duplicate_count": 0,
+          "encoding": "utf-8",
+          "entries": [
+            {
+              "architecture": "amd64",
+              "architecture_basis": "section",
+              "basename": "examplesvc.dll",
+              "build": "26100.5001",
+              "conflict_group": null,
+              "date_text": "2099-03-\r\n01",
+              "diagnostics": [],
+              "duplicate_of": null,
+              "entry_id": "b0ad9b1cfb111ac9b233e646bc1d5303b3a4edcfccb044c40b8124dbbc18085e",
+              "original_fields": [
+                "ExampleSvc.dll",
+                "10.0.26100.5001",
+                "1,024",
+                "2099-03-\r\n01",
+                "12:00"
+              ],
+              "original_filename": "ExampleSvc.dll",
+              "original_size": "1,024",
+              "original_version": "10.0.26100.5001",
+              "product": "Example OS",
+              "reference": {
+                "line_end": 4,
+                "line_start": 3,
+                "logical_record": 3,
+                "raw_sha256": "26601e1b533b95d67134d53d404616f2a26e0be62a30a1ac6a4bd5b209cd6d93",
+                "section_index": 0
+              },
+              "release": "24H2",
+              "size_bytes": 1024,
+              "state": "metadata-only",
+              "time_text": "12:00",
+              "version_components": [
+                10,
+                0,
+                26100,
+                5001
+              ]
+            },
+            {
+              "architecture": "amd64",
+              "architecture_basis": "section",
+              "basename": "exampledata.dll",
+              "build": "26100.5001",
+              "conflict_group": null,
+              "date_text": "2099-03-01",
+              "diagnostics": [
+                "INVALID_SIZE"
+              ],
+              "duplicate_of": null,
+              "entry_id": "127320fdd4f8c292ad8b9643a1bb3efdfb09bfdc31b6705ca21e49089a68edb3",
+              "original_fields": [
+                "ExampleData.dll",
+                "10.0.26100.5001",
+                "unknown",
+                "2099-03-01",
+                "12:00"
+              ],
+              "original_filename": "ExampleData.dll",
+              "original_size": "unknown",
+              "original_version": "10.0.26100.5001",
+              "product": "Example OS",
+              "reference": {
+                "line_end": 5,
+                "line_start": 5,
+                "logical_record": 4,
+                "raw_sha256": "26601e1b533b95d67134d53d404616f2a26e0be62a30a1ac6a4bd5b209cd6d93",
+                "section_index": 0
+              },
+              "release": "24H2",
+              "size_bytes": null,
+              "state": "unknown",
+              "time_text": "12:00",
+              "version_components": [
+                10,
+                0,
+                26100,
+                5001
+              ]
+            }
+          ],
+          "inventory_id": "a2711d24ba5cdb9b50af3e5fad99851092ff41e3ad33c680f8cd572c09414d6e",
+          "limits": {
+            "max_bytes": 16777216,
+            "max_columns": 32,
+            "max_diagnostics": 1000,
+            "max_entries": 50000,
+            "max_field_chars": 65536,
+            "max_record_chars": 262144,
+            "max_records": 100000,
+            "max_seconds": 10.0,
+            "max_sections": 1000,
+            "max_text_chars": 16777216
+          },
+          "parser_version": true,
+          "raw_sha256": "26601e1b533b95d67134d53d404616f2a26e0be62a30a1ac6a4bd5b209cd6d93",
+          "raw_size": 202,
+          "records_scanned": 4,
+          "rejected_count": 0,
+          "sections": [
+            {
+              "architecture": "amd64",
+              "banner": "Example OS 24H2 for x64-based Systems",
+              "index": 0,
+              "reference": {
+                "line_end": 1,
+                "line_start": 1,
+                "logical_record": 1,
+                "raw_sha256": "26601e1b533b95d67134d53d404616f2a26e0be62a30a1ac6a4bd5b209cd6d93",
+                "section_index": 0
+              }
+            }
+          ],
+          "status": "partial",
+          "truncated": false
+        },
+        "reason": "parser version does not coerce a boolean literal"
+      }
+    ],
+    "valid": {
+      "accepted_count": 2,
+      "conflict_count": 0,
+      "context": {
+        "architecture": "unknown",
+        "build": "26100.5001",
+        "delimiter": "comma",
+        "kb": "KB5099001",
+        "locale": "en-US",
+        "product": "Example OS",
+        "product_scope_id": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "release": "24H2"
+      },
+      "contract": "kb-file-inventory/1",
+      "diagnostics": [
+        {
+          "code": "INVALID_SIZE",
+          "level": "warning",
+          "message": "The size is unknown: grouping or numeric syntax does not match the selected locale.",
+          "reference": {
+            "line_end": 5,
+            "line_start": 5,
+            "logical_record": 4,
+            "raw_sha256": "26601e1b533b95d67134d53d404616f2a26e0be62a30a1ac6a4bd5b209cd6d93",
+            "section_index": 0
+          }
+        }
+      ],
+      "diagnostics_omitted": 0,
+      "duplicate_count": 0,
+      "encoding": "utf-8",
+      "entries": [
+        {
+          "architecture": "amd64",
+          "architecture_basis": "section",
+          "basename": "examplesvc.dll",
+          "build": "26100.5001",
+          "conflict_group": null,
+          "date_text": "2099-03-\r\n01",
+          "diagnostics": [],
+          "duplicate_of": null,
+          "entry_id": "b0ad9b1cfb111ac9b233e646bc1d5303b3a4edcfccb044c40b8124dbbc18085e",
+          "original_fields": [
+            "ExampleSvc.dll",
+            "10.0.26100.5001",
+            "1,024",
+            "2099-03-\r\n01",
+            "12:00"
+          ],
+          "original_filename": "ExampleSvc.dll",
+          "original_size": "1,024",
+          "original_version": "10.0.26100.5001",
+          "product": "Example OS",
+          "reference": {
+            "line_end": 4,
+            "line_start": 3,
+            "logical_record": 3,
+            "raw_sha256": "26601e1b533b95d67134d53d404616f2a26e0be62a30a1ac6a4bd5b209cd6d93",
+            "section_index": 0
+          },
+          "release": "24H2",
+          "size_bytes": 1024,
+          "state": "metadata-only",
+          "time_text": "12:00",
+          "version_components": [
+            10,
+            0,
+            26100,
+            5001
+          ]
+        },
+        {
+          "architecture": "amd64",
+          "architecture_basis": "section",
+          "basename": "exampledata.dll",
+          "build": "26100.5001",
+          "conflict_group": null,
+          "date_text": "2099-03-01",
+          "diagnostics": [
+            "INVALID_SIZE"
+          ],
+          "duplicate_of": null,
+          "entry_id": "127320fdd4f8c292ad8b9643a1bb3efdfb09bfdc31b6705ca21e49089a68edb3",
+          "original_fields": [
+            "ExampleData.dll",
+            "10.0.26100.5001",
+            "unknown",
+            "2099-03-01",
+            "12:00"
+          ],
+          "original_filename": "ExampleData.dll",
+          "original_size": "unknown",
+          "original_version": "10.0.26100.5001",
+          "product": "Example OS",
+          "reference": {
+            "line_end": 5,
+            "line_start": 5,
+            "logical_record": 4,
+            "raw_sha256": "26601e1b533b95d67134d53d404616f2a26e0be62a30a1ac6a4bd5b209cd6d93",
+            "section_index": 0
+          },
+          "release": "24H2",
+          "size_bytes": null,
+          "state": "unknown",
+          "time_text": "12:00",
+          "version_components": [
+            10,
+            0,
+            26100,
+            5001
+          ]
+        }
+      ],
+      "inventory_id": "a2711d24ba5cdb9b50af3e5fad99851092ff41e3ad33c680f8cd572c09414d6e",
+      "limits": {
+        "max_bytes": 16777216,
+        "max_columns": 32,
+        "max_diagnostics": 1000,
+        "max_entries": 50000,
+        "max_field_chars": 65536,
+        "max_record_chars": 262144,
+        "max_records": 100000,
+        "max_seconds": 10.0,
+        "max_sections": 1000,
+        "max_text_chars": 16777216
+      },
+      "parser_version": 1,
+      "raw_sha256": "26601e1b533b95d67134d53d404616f2a26e0be62a30a1ac6a4bd5b209cd6d93",
+      "raw_size": 202,
+      "records_scanned": 4,
+      "rejected_count": 0,
+      "sections": [
+        {
+          "architecture": "amd64",
+          "banner": "Example OS 24H2 for x64-based Systems",
+          "index": 0,
+          "reference": {
+            "line_end": 1,
+            "line_start": 1,
+            "logical_record": 1,
+            "raw_sha256": "26601e1b533b95d67134d53d404616f2a26e0be62a30a1ac6a4bd5b209cd6d93",
+            "section_index": 0
+          }
+        }
+      ],
+      "status": "partial",
+      "truncated": false
+    }
+  },
+  "CsvRecordRef": {
+    "invalid": [
+      {
+        "example": {
+          "line_end": 4,
+          "line_start": 3,
+          "logical_record": 3,
+          "raw_sha256": "26601e1b533b95d67134d53d404616f2a26e0be62a30a1ac6a4bd5b209cd6d93",
+          "section_index": 0,
+          "unexpected_field": 1
+        },
+        "reason": "extra fields are forbidden"
+      },
+      {
+        "example": {
+          "line_end": 4,
+          "line_start": 3,
+          "logical_record": 0,
+          "raw_sha256": "26601e1b533b95d67134d53d404616f2a26e0be62a30a1ac6a4bd5b209cd6d93",
+          "section_index": 0
+        },
+        "reason": "logical CSV records are one-based"
+      }
+    ],
+    "valid": {
+      "line_end": 4,
+      "line_start": 3,
+      "logical_record": 3,
+      "raw_sha256": "26601e1b533b95d67134d53d404616f2a26e0be62a30a1ac6a4bd5b209cd6d93",
+      "section_index": 0
+    }
+  },
+  "InventoryClaimRef": {
+    "invalid": [
+      {
+        "example": {
+          "entry_id": "b0ad9b1cfb111ac9b233e646bc1d5303b3a4edcfccb044c40b8124dbbc18085e",
+          "import_id": "01364bd19ea70c51e75354a9f0166edd33fe1abee70d0a9aa564523aedf69dae",
+          "line_end": 4,
+          "line_start": 3,
+          "logical_record": 3,
+          "raw_sha256": "26601e1b533b95d67134d53d404616f2a26e0be62a30a1ac6a4bd5b209cd6d93",
+          "section_index": 0,
+          "unexpected_field": 1
+        },
+        "reason": "extra fields are forbidden"
+      },
+      {
+        "example": {
+          "entry_id": "b0ad9b1cfb111ac9b233e646bc1d5303b3a4edcfccb044c40b8124dbbc18085e",
+          "import_id": "01364bd19ea70c51e75354a9f0166edd33fe1abee70d0a9aa564523aedf69dae",
+          "line_end": 1,
+          "line_start": 3,
+          "logical_record": 3,
+          "raw_sha256": "26601e1b533b95d67134d53d404616f2a26e0be62a30a1ac6a4bd5b209cd6d93",
+          "section_index": 0
+        },
+        "reason": "a physical line span cannot run backwards"
+      }
+    ],
+    "valid": {
+      "entry_id": "b0ad9b1cfb111ac9b233e646bc1d5303b3a4edcfccb044c40b8124dbbc18085e",
+      "import_id": "01364bd19ea70c51e75354a9f0166edd33fe1abee70d0a9aa564523aedf69dae",
+      "line_end": 4,
+      "line_start": 3,
+      "logical_record": 3,
+      "raw_sha256": "26601e1b533b95d67134d53d404616f2a26e0be62a30a1ac6a4bd5b209cd6d93",
+      "section_index": 0
+    }
+  },
+  "InventoryContext": {
+    "invalid": [
+      {
+        "example": {
+          "architecture": "unknown",
+          "build": "26100.5001",
+          "delimiter": "comma",
+          "kb": "KB5099001",
+          "locale": "en-US",
+          "product": "Example OS",
+          "product_scope_id": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+          "release": "24H2",
+          "unexpected_field": 1
+        },
+        "reason": "extra fields are forbidden"
+      },
+      {
+        "example": {
+          "architecture": "x64",
+          "build": "26100.5001",
+          "delimiter": "comma",
+          "kb": "KB5099001",
+          "locale": "en-US",
+          "product": "Example OS",
+          "product_scope_id": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+          "release": "24H2"
+        },
+        "reason": "context uses the canonical amd64 architecture"
+      }
+    ],
+    "valid": {
+      "architecture": "unknown",
+      "build": "26100.5001",
+      "delimiter": "comma",
+      "kb": "KB5099001",
+      "locale": "en-US",
+      "product": "Example OS",
+      "product_scope_id": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+      "release": "24H2"
+    }
+  },
+  "InventoryEntry": {
+    "invalid": [
+      {
+        "example": {
+          "architecture": "amd64",
+          "architecture_basis": "section",
+          "basename": "examplesvc.dll",
+          "build": "26100.5001",
+          "conflict_group": null,
+          "date_text": "2099-03-\r\n01",
+          "diagnostics": [],
+          "duplicate_of": null,
+          "entry_id": "b0ad9b1cfb111ac9b233e646bc1d5303b3a4edcfccb044c40b8124dbbc18085e",
+          "original_fields": [
+            "ExampleSvc.dll",
+            "10.0.26100.5001",
+            "1,024",
+            "2099-03-\r\n01",
+            "12:00"
+          ],
+          "original_filename": "ExampleSvc.dll",
+          "original_size": "1,024",
+          "original_version": "10.0.26100.5001",
+          "product": "Example OS",
+          "reference": {
+            "line_end": 4,
+            "line_start": 3,
+            "logical_record": 3,
+            "raw_sha256": "26601e1b533b95d67134d53d404616f2a26e0be62a30a1ac6a4bd5b209cd6d93",
+            "section_index": 0
+          },
+          "release": "24H2",
+          "size_bytes": 1024,
+          "state": "metadata-only",
+          "time_text": "12:00",
+          "unexpected_field": 1,
+          "version_components": [
+            10,
+            0,
+            26100,
+            5001
+          ]
+        },
+        "reason": "extra fields are forbidden"
+      },
+      {
+        "example": {
+          "architecture": "amd64",
+          "architecture_basis": "section",
+          "basename": "../evil.dll",
+          "build": "26100.5001",
+          "conflict_group": null,
+          "date_text": "2099-03-\r\n01",
+          "diagnostics": [],
+          "duplicate_of": null,
+          "entry_id": "b0ad9b1cfb111ac9b233e646bc1d5303b3a4edcfccb044c40b8124dbbc18085e",
+          "original_fields": [
+            "ExampleSvc.dll",
+            "10.0.26100.5001",
+            "1,024",
+            "2099-03-\r\n01",
+            "12:00"
+          ],
+          "original_filename": "ExampleSvc.dll",
+          "original_size": "1,024",
+          "original_version": "10.0.26100.5001",
+          "product": "Example OS",
+          "reference": {
+            "line_end": 4,
+            "line_start": 3,
+            "logical_record": 3,
+            "raw_sha256": "26601e1b533b95d67134d53d404616f2a26e0be62a30a1ac6a4bd5b209cd6d93",
+            "section_index": 0
+          },
+          "release": "24H2",
+          "size_bytes": 1024,
+          "state": "metadata-only",
+          "time_text": "12:00",
+          "version_components": [
+            10,
+            0,
+            26100,
+            5001
+          ]
+        },
+        "reason": "normalized names cannot be source paths"
+      },
+      {
+        "example": {
+          "architecture": "amd64",
+          "architecture_basis": "section",
+          "basename": "examplesvc.dll",
+          "build": "26100.5001",
+          "conflict_group": null,
+          "date_text": "2099-03-\r\n01",
+          "diagnostics": [],
+          "duplicate_of": null,
+          "entry_id": "b0ad9b1cfb111ac9b233e646bc1d5303b3a4edcfccb044c40b8124dbbc18085e",
+          "original_fields": [
+            "ExampleSvc.dll",
+            "10.0.26100.5001",
+            "1,024",
+            "2099-03-\r\n01",
+            "12:00"
+          ],
+          "original_filename": "ExampleSvc.dll",
+          "original_size": "1,024",
+          "original_version": "10.0.26100.5001",
+          "product": "Example OS",
+          "reference": {
+            "line_end": 4,
+            "line_start": 3,
+            "logical_record": 3,
+            "raw_sha256": "26601e1b533b95d67134d53d404616f2a26e0be62a30a1ac6a4bd5b209cd6d93",
+            "section_index": 0
+          },
+          "release": "24H2",
+          "size_bytes": 1024,
+          "state": "metadata-only",
+          "time_text": "12:00",
+          "version_components": [
+            10,
+            0,
+            26100
+          ]
+        },
+        "reason": "known versions retain exactly four integers"
+      }
+    ],
+    "valid": {
+      "architecture": "amd64",
+      "architecture_basis": "section",
+      "basename": "examplesvc.dll",
+      "build": "26100.5001",
+      "conflict_group": null,
+      "date_text": "2099-03-\r\n01",
+      "diagnostics": [],
+      "duplicate_of": null,
+      "entry_id": "b0ad9b1cfb111ac9b233e646bc1d5303b3a4edcfccb044c40b8124dbbc18085e",
+      "original_fields": [
+        "ExampleSvc.dll",
+        "10.0.26100.5001",
+        "1,024",
+        "2099-03-\r\n01",
+        "12:00"
+      ],
+      "original_filename": "ExampleSvc.dll",
+      "original_size": "1,024",
+      "original_version": "10.0.26100.5001",
+      "product": "Example OS",
+      "reference": {
+        "line_end": 4,
+        "line_start": 3,
+        "logical_record": 3,
+        "raw_sha256": "26601e1b533b95d67134d53d404616f2a26e0be62a30a1ac6a4bd5b209cd6d93",
+        "section_index": 0
+      },
+      "release": "24H2",
+      "size_bytes": 1024,
+      "state": "metadata-only",
+      "time_text": "12:00",
+      "version_components": [
+        10,
+        0,
+        26100,
+        5001
+      ]
+    }
+  },
+  "InventoryImport": {
+    "invalid": [
+      {
+        "example": {
+          "asserted_source": "https://example.invalid/KB5099001.csv",
+          "contract": "kb-inventory-import/1",
+          "import_id": "01364bd19ea70c51e75354a9f0166edd33fe1abee70d0a9aa564523aedf69dae",
+          "parsed": {
+            "accepted_count": 2,
+            "conflict_count": 0,
+            "context": {
+              "architecture": "unknown",
+              "build": "26100.5001",
+              "delimiter": "comma",
+              "kb": "KB5099001",
+              "locale": "en-US",
+              "product": "Example OS",
+              "product_scope_id": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+              "release": "24H2"
+            },
+            "contract": "kb-file-inventory/1",
+            "diagnostics": [
+              {
+                "code": "INVALID_SIZE",
+                "level": "warning",
+                "message": "The size is unknown: grouping or numeric syntax does not match the selected locale.",
+                "reference": {
+                  "line_end": 5,
+                  "line_start": 5,
+                  "logical_record": 4,
+                  "raw_sha256": "26601e1b533b95d67134d53d404616f2a26e0be62a30a1ac6a4bd5b209cd6d93",
+                  "section_index": 0
+                }
+              }
+            ],
+            "diagnostics_omitted": 0,
+            "duplicate_count": 0,
+            "encoding": "utf-8",
+            "entries": [
+              {
+                "architecture": "amd64",
+                "architecture_basis": "section",
+                "basename": "examplesvc.dll",
+                "build": "26100.5001",
+                "conflict_group": null,
+                "date_text": "2099-03-\r\n01",
+                "diagnostics": [],
+                "duplicate_of": null,
+                "entry_id": "b0ad9b1cfb111ac9b233e646bc1d5303b3a4edcfccb044c40b8124dbbc18085e",
+                "original_fields": [
+                  "ExampleSvc.dll",
+                  "10.0.26100.5001",
+                  "1,024",
+                  "2099-03-\r\n01",
+                  "12:00"
+                ],
+                "original_filename": "ExampleSvc.dll",
+                "original_size": "1,024",
+                "original_version": "10.0.26100.5001",
+                "product": "Example OS",
+                "reference": {
+                  "line_end": 4,
+                  "line_start": 3,
+                  "logical_record": 3,
+                  "raw_sha256": "26601e1b533b95d67134d53d404616f2a26e0be62a30a1ac6a4bd5b209cd6d93",
+                  "section_index": 0
+                },
+                "release": "24H2",
+                "size_bytes": 1024,
+                "state": "metadata-only",
+                "time_text": "12:00",
+                "version_components": [
+                  10,
+                  0,
+                  26100,
+                  5001
+                ]
+              },
+              {
+                "architecture": "amd64",
+                "architecture_basis": "section",
+                "basename": "exampledata.dll",
+                "build": "26100.5001",
+                "conflict_group": null,
+                "date_text": "2099-03-01",
+                "diagnostics": [
+                  "INVALID_SIZE"
+                ],
+                "duplicate_of": null,
+                "entry_id": "127320fdd4f8c292ad8b9643a1bb3efdfb09bfdc31b6705ca21e49089a68edb3",
+                "original_fields": [
+                  "ExampleData.dll",
+                  "10.0.26100.5001",
+                  "unknown",
+                  "2099-03-01",
+                  "12:00"
+                ],
+                "original_filename": "ExampleData.dll",
+                "original_size": "unknown",
+                "original_version": "10.0.26100.5001",
+                "product": "Example OS",
+                "reference": {
+                  "line_end": 5,
+                  "line_start": 5,
+                  "logical_record": 4,
+                  "raw_sha256": "26601e1b533b95d67134d53d404616f2a26e0be62a30a1ac6a4bd5b209cd6d93",
+                  "section_index": 0
+                },
+                "release": "24H2",
+                "size_bytes": null,
+                "state": "unknown",
+                "time_text": "12:00",
+                "version_components": [
+                  10,
+                  0,
+                  26100,
+                  5001
+                ]
+              }
+            ],
+            "inventory_id": "a2711d24ba5cdb9b50af3e5fad99851092ff41e3ad33c680f8cd572c09414d6e",
+            "limits": {
+              "max_bytes": 16777216,
+              "max_columns": 32,
+              "max_diagnostics": 1000,
+              "max_entries": 50000,
+              "max_field_chars": 65536,
+              "max_record_chars": 262144,
+              "max_records": 100000,
+              "max_seconds": 10.0,
+              "max_sections": 1000,
+              "max_text_chars": 16777216
+            },
+            "parser_version": 1,
+            "raw_sha256": "26601e1b533b95d67134d53d404616f2a26e0be62a30a1ac6a4bd5b209cd6d93",
+            "raw_size": 202,
+            "records_scanned": 4,
+            "rejected_count": 0,
+            "sections": [
+              {
+                "architecture": "amd64",
+                "banner": "Example OS 24H2 for x64-based Systems",
+                "index": 0,
+                "reference": {
+                  "line_end": 1,
+                  "line_start": 1,
+                  "logical_record": 1,
+                  "raw_sha256": "26601e1b533b95d67134d53d404616f2a26e0be62a30a1ac6a4bd5b209cd6d93",
+                  "section_index": 0
+                }
+              }
+            ],
+            "status": "partial",
+            "truncated": false
+          },
+          "retrieval": null,
+          "source": {
+            "authenticity": "unverified-local-file",
+            "contract": "kbcorrelation/1",
+            "current_release_date": null,
+            "dialect": "csv-file-inventory/1",
+            "doc_id": "76eb7afa23a39e738ca8f0c9767699ffc713db9b89b3abe7cd640b8d7bf0ea5f",
+            "kind": "kb-file-csv",
+            "lineage": "analyst",
+            "object_path": "objects/26/26601e1b533b95d67134d53d404616f2a26e0be62a30a1ac6a4bd5b209cd6d93.gz",
+            "origin": "local-import",
+            "parser_version": 1,
+            "release_id": null,
+            "retrieved_at": "2099-03-01T00:00:00Z",
+            "sha256": "26601e1b533b95d67134d53d404616f2a26e0be62a30a1ac6a4bd5b209cd6d93",
+            "size": 202,
+            "uri": null
+          },
+          "unexpected_field": 1
+        },
+        "reason": "extra fields are forbidden"
+      },
+      {
+        "example": {
+          "asserted_source": "https://example.invalid/KB5099001.csv",
+          "contract": "kb-inventory-import/2",
+          "import_id": "01364bd19ea70c51e75354a9f0166edd33fe1abee70d0a9aa564523aedf69dae",
+          "parsed": {
+            "accepted_count": 2,
+            "conflict_count": 0,
+            "context": {
+              "architecture": "unknown",
+              "build": "26100.5001",
+              "delimiter": "comma",
+              "kb": "KB5099001",
+              "locale": "en-US",
+              "product": "Example OS",
+              "product_scope_id": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+              "release": "24H2"
+            },
+            "contract": "kb-file-inventory/1",
+            "diagnostics": [
+              {
+                "code": "INVALID_SIZE",
+                "level": "warning",
+                "message": "The size is unknown: grouping or numeric syntax does not match the selected locale.",
+                "reference": {
+                  "line_end": 5,
+                  "line_start": 5,
+                  "logical_record": 4,
+                  "raw_sha256": "26601e1b533b95d67134d53d404616f2a26e0be62a30a1ac6a4bd5b209cd6d93",
+                  "section_index": 0
+                }
+              }
+            ],
+            "diagnostics_omitted": 0,
+            "duplicate_count": 0,
+            "encoding": "utf-8",
+            "entries": [
+              {
+                "architecture": "amd64",
+                "architecture_basis": "section",
+                "basename": "examplesvc.dll",
+                "build": "26100.5001",
+                "conflict_group": null,
+                "date_text": "2099-03-\r\n01",
+                "diagnostics": [],
+                "duplicate_of": null,
+                "entry_id": "b0ad9b1cfb111ac9b233e646bc1d5303b3a4edcfccb044c40b8124dbbc18085e",
+                "original_fields": [
+                  "ExampleSvc.dll",
+                  "10.0.26100.5001",
+                  "1,024",
+                  "2099-03-\r\n01",
+                  "12:00"
+                ],
+                "original_filename": "ExampleSvc.dll",
+                "original_size": "1,024",
+                "original_version": "10.0.26100.5001",
+                "product": "Example OS",
+                "reference": {
+                  "line_end": 4,
+                  "line_start": 3,
+                  "logical_record": 3,
+                  "raw_sha256": "26601e1b533b95d67134d53d404616f2a26e0be62a30a1ac6a4bd5b209cd6d93",
+                  "section_index": 0
+                },
+                "release": "24H2",
+                "size_bytes": 1024,
+                "state": "metadata-only",
+                "time_text": "12:00",
+                "version_components": [
+                  10,
+                  0,
+                  26100,
+                  5001
+                ]
+              },
+              {
+                "architecture": "amd64",
+                "architecture_basis": "section",
+                "basename": "exampledata.dll",
+                "build": "26100.5001",
+                "conflict_group": null,
+                "date_text": "2099-03-01",
+                "diagnostics": [
+                  "INVALID_SIZE"
+                ],
+                "duplicate_of": null,
+                "entry_id": "127320fdd4f8c292ad8b9643a1bb3efdfb09bfdc31b6705ca21e49089a68edb3",
+                "original_fields": [
+                  "ExampleData.dll",
+                  "10.0.26100.5001",
+                  "unknown",
+                  "2099-03-01",
+                  "12:00"
+                ],
+                "original_filename": "ExampleData.dll",
+                "original_size": "unknown",
+                "original_version": "10.0.26100.5001",
+                "product": "Example OS",
+                "reference": {
+                  "line_end": 5,
+                  "line_start": 5,
+                  "logical_record": 4,
+                  "raw_sha256": "26601e1b533b95d67134d53d404616f2a26e0be62a30a1ac6a4bd5b209cd6d93",
+                  "section_index": 0
+                },
+                "release": "24H2",
+                "size_bytes": null,
+                "state": "unknown",
+                "time_text": "12:00",
+                "version_components": [
+                  10,
+                  0,
+                  26100,
+                  5001
+                ]
+              }
+            ],
+            "inventory_id": "a2711d24ba5cdb9b50af3e5fad99851092ff41e3ad33c680f8cd572c09414d6e",
+            "limits": {
+              "max_bytes": 16777216,
+              "max_columns": 32,
+              "max_diagnostics": 1000,
+              "max_entries": 50000,
+              "max_field_chars": 65536,
+              "max_record_chars": 262144,
+              "max_records": 100000,
+              "max_seconds": 10.0,
+              "max_sections": 1000,
+              "max_text_chars": 16777216
+            },
+            "parser_version": 1,
+            "raw_sha256": "26601e1b533b95d67134d53d404616f2a26e0be62a30a1ac6a4bd5b209cd6d93",
+            "raw_size": 202,
+            "records_scanned": 4,
+            "rejected_count": 0,
+            "sections": [
+              {
+                "architecture": "amd64",
+                "banner": "Example OS 24H2 for x64-based Systems",
+                "index": 0,
+                "reference": {
+                  "line_end": 1,
+                  "line_start": 1,
+                  "logical_record": 1,
+                  "raw_sha256": "26601e1b533b95d67134d53d404616f2a26e0be62a30a1ac6a4bd5b209cd6d93",
+                  "section_index": 0
+                }
+              }
+            ],
+            "status": "partial",
+            "truncated": false
+          },
+          "retrieval": null,
+          "source": {
+            "authenticity": "unverified-local-file",
+            "contract": "kbcorrelation/1",
+            "current_release_date": null,
+            "dialect": "csv-file-inventory/1",
+            "doc_id": "76eb7afa23a39e738ca8f0c9767699ffc713db9b89b3abe7cd640b8d7bf0ea5f",
+            "kind": "kb-file-csv",
+            "lineage": "analyst",
+            "object_path": "objects/26/26601e1b533b95d67134d53d404616f2a26e0be62a30a1ac6a4bd5b209cd6d93.gz",
+            "origin": "local-import",
+            "parser_version": 1,
+            "release_id": null,
+            "retrieved_at": "2099-03-01T00:00:00Z",
+            "sha256": "26601e1b533b95d67134d53d404616f2a26e0be62a30a1ac6a4bd5b209cd6d93",
+            "size": 202,
+            "uri": null
+          }
+        },
+        "reason": "unsupported future contract version"
+      },
+      {
+        "example": {
+          "asserted_source": "https://example.invalid/KB5099001.csv",
+          "contract": "kb-inventory-import/1",
+          "import_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "parsed": {
+            "accepted_count": 2,
+            "conflict_count": 0,
+            "context": {
+              "architecture": "unknown",
+              "build": "26100.5001",
+              "delimiter": "comma",
+              "kb": "KB5099001",
+              "locale": "en-US",
+              "product": "Example OS",
+              "product_scope_id": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+              "release": "24H2"
+            },
+            "contract": "kb-file-inventory/1",
+            "diagnostics": [
+              {
+                "code": "INVALID_SIZE",
+                "level": "warning",
+                "message": "The size is unknown: grouping or numeric syntax does not match the selected locale.",
+                "reference": {
+                  "line_end": 5,
+                  "line_start": 5,
+                  "logical_record": 4,
+                  "raw_sha256": "26601e1b533b95d67134d53d404616f2a26e0be62a30a1ac6a4bd5b209cd6d93",
+                  "section_index": 0
+                }
+              }
+            ],
+            "diagnostics_omitted": 0,
+            "duplicate_count": 0,
+            "encoding": "utf-8",
+            "entries": [
+              {
+                "architecture": "amd64",
+                "architecture_basis": "section",
+                "basename": "examplesvc.dll",
+                "build": "26100.5001",
+                "conflict_group": null,
+                "date_text": "2099-03-\r\n01",
+                "diagnostics": [],
+                "duplicate_of": null,
+                "entry_id": "b0ad9b1cfb111ac9b233e646bc1d5303b3a4edcfccb044c40b8124dbbc18085e",
+                "original_fields": [
+                  "ExampleSvc.dll",
+                  "10.0.26100.5001",
+                  "1,024",
+                  "2099-03-\r\n01",
+                  "12:00"
+                ],
+                "original_filename": "ExampleSvc.dll",
+                "original_size": "1,024",
+                "original_version": "10.0.26100.5001",
+                "product": "Example OS",
+                "reference": {
+                  "line_end": 4,
+                  "line_start": 3,
+                  "logical_record": 3,
+                  "raw_sha256": "26601e1b533b95d67134d53d404616f2a26e0be62a30a1ac6a4bd5b209cd6d93",
+                  "section_index": 0
+                },
+                "release": "24H2",
+                "size_bytes": 1024,
+                "state": "metadata-only",
+                "time_text": "12:00",
+                "version_components": [
+                  10,
+                  0,
+                  26100,
+                  5001
+                ]
+              },
+              {
+                "architecture": "amd64",
+                "architecture_basis": "section",
+                "basename": "exampledata.dll",
+                "build": "26100.5001",
+                "conflict_group": null,
+                "date_text": "2099-03-01",
+                "diagnostics": [
+                  "INVALID_SIZE"
+                ],
+                "duplicate_of": null,
+                "entry_id": "127320fdd4f8c292ad8b9643a1bb3efdfb09bfdc31b6705ca21e49089a68edb3",
+                "original_fields": [
+                  "ExampleData.dll",
+                  "10.0.26100.5001",
+                  "unknown",
+                  "2099-03-01",
+                  "12:00"
+                ],
+                "original_filename": "ExampleData.dll",
+                "original_size": "unknown",
+                "original_version": "10.0.26100.5001",
+                "product": "Example OS",
+                "reference": {
+                  "line_end": 5,
+                  "line_start": 5,
+                  "logical_record": 4,
+                  "raw_sha256": "26601e1b533b95d67134d53d404616f2a26e0be62a30a1ac6a4bd5b209cd6d93",
+                  "section_index": 0
+                },
+                "release": "24H2",
+                "size_bytes": null,
+                "state": "unknown",
+                "time_text": "12:00",
+                "version_components": [
+                  10,
+                  0,
+                  26100,
+                  5001
+                ]
+              }
+            ],
+            "inventory_id": "a2711d24ba5cdb9b50af3e5fad99851092ff41e3ad33c680f8cd572c09414d6e",
+            "limits": {
+              "max_bytes": 16777216,
+              "max_columns": 32,
+              "max_diagnostics": 1000,
+              "max_entries": 50000,
+              "max_field_chars": 65536,
+              "max_record_chars": 262144,
+              "max_records": 100000,
+              "max_seconds": 10.0,
+              "max_sections": 1000,
+              "max_text_chars": 16777216
+            },
+            "parser_version": 1,
+            "raw_sha256": "26601e1b533b95d67134d53d404616f2a26e0be62a30a1ac6a4bd5b209cd6d93",
+            "raw_size": 202,
+            "records_scanned": 4,
+            "rejected_count": 0,
+            "sections": [
+              {
+                "architecture": "amd64",
+                "banner": "Example OS 24H2 for x64-based Systems",
+                "index": 0,
+                "reference": {
+                  "line_end": 1,
+                  "line_start": 1,
+                  "logical_record": 1,
+                  "raw_sha256": "26601e1b533b95d67134d53d404616f2a26e0be62a30a1ac6a4bd5b209cd6d93",
+                  "section_index": 0
+                }
+              }
+            ],
+            "status": "partial",
+            "truncated": false
+          },
+          "retrieval": null,
+          "source": {
+            "authenticity": "unverified-local-file",
+            "contract": "kbcorrelation/1",
+            "current_release_date": null,
+            "dialect": "csv-file-inventory/1",
+            "doc_id": "76eb7afa23a39e738ca8f0c9767699ffc713db9b89b3abe7cd640b8d7bf0ea5f",
+            "kind": "kb-file-csv",
+            "lineage": "analyst",
+            "object_path": "objects/26/26601e1b533b95d67134d53d404616f2a26e0be62a30a1ac6a4bd5b209cd6d93.gz",
+            "origin": "local-import",
+            "parser_version": 1,
+            "release_id": null,
+            "retrieved_at": "2099-03-01T00:00:00Z",
+            "sha256": "26601e1b533b95d67134d53d404616f2a26e0be62a30a1ac6a4bd5b209cd6d93",
+            "size": 202,
+            "uri": null
+          }
+        },
+        "reason": "import identity binds parser identity and source provenance"
+      }
+    ],
+    "valid": {
+      "asserted_source": "https://example.invalid/KB5099001.csv",
+      "contract": "kb-inventory-import/1",
+      "import_id": "01364bd19ea70c51e75354a9f0166edd33fe1abee70d0a9aa564523aedf69dae",
+      "parsed": {
+        "accepted_count": 2,
+        "conflict_count": 0,
+        "context": {
+          "architecture": "unknown",
+          "build": "26100.5001",
+          "delimiter": "comma",
+          "kb": "KB5099001",
+          "locale": "en-US",
+          "product": "Example OS",
+          "product_scope_id": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+          "release": "24H2"
+        },
+        "contract": "kb-file-inventory/1",
+        "diagnostics": [
+          {
+            "code": "INVALID_SIZE",
+            "level": "warning",
+            "message": "The size is unknown: grouping or numeric syntax does not match the selected locale.",
+            "reference": {
+              "line_end": 5,
+              "line_start": 5,
+              "logical_record": 4,
+              "raw_sha256": "26601e1b533b95d67134d53d404616f2a26e0be62a30a1ac6a4bd5b209cd6d93",
+              "section_index": 0
+            }
+          }
+        ],
+        "diagnostics_omitted": 0,
+        "duplicate_count": 0,
+        "encoding": "utf-8",
+        "entries": [
+          {
+            "architecture": "amd64",
+            "architecture_basis": "section",
+            "basename": "examplesvc.dll",
+            "build": "26100.5001",
+            "conflict_group": null,
+            "date_text": "2099-03-\r\n01",
+            "diagnostics": [],
+            "duplicate_of": null,
+            "entry_id": "b0ad9b1cfb111ac9b233e646bc1d5303b3a4edcfccb044c40b8124dbbc18085e",
+            "original_fields": [
+              "ExampleSvc.dll",
+              "10.0.26100.5001",
+              "1,024",
+              "2099-03-\r\n01",
+              "12:00"
+            ],
+            "original_filename": "ExampleSvc.dll",
+            "original_size": "1,024",
+            "original_version": "10.0.26100.5001",
+            "product": "Example OS",
+            "reference": {
+              "line_end": 4,
+              "line_start": 3,
+              "logical_record": 3,
+              "raw_sha256": "26601e1b533b95d67134d53d404616f2a26e0be62a30a1ac6a4bd5b209cd6d93",
+              "section_index": 0
+            },
+            "release": "24H2",
+            "size_bytes": 1024,
+            "state": "metadata-only",
+            "time_text": "12:00",
+            "version_components": [
+              10,
+              0,
+              26100,
+              5001
+            ]
+          },
+          {
+            "architecture": "amd64",
+            "architecture_basis": "section",
+            "basename": "exampledata.dll",
+            "build": "26100.5001",
+            "conflict_group": null,
+            "date_text": "2099-03-01",
+            "diagnostics": [
+              "INVALID_SIZE"
+            ],
+            "duplicate_of": null,
+            "entry_id": "127320fdd4f8c292ad8b9643a1bb3efdfb09bfdc31b6705ca21e49089a68edb3",
+            "original_fields": [
+              "ExampleData.dll",
+              "10.0.26100.5001",
+              "unknown",
+              "2099-03-01",
+              "12:00"
+            ],
+            "original_filename": "ExampleData.dll",
+            "original_size": "unknown",
+            "original_version": "10.0.26100.5001",
+            "product": "Example OS",
+            "reference": {
+              "line_end": 5,
+              "line_start": 5,
+              "logical_record": 4,
+              "raw_sha256": "26601e1b533b95d67134d53d404616f2a26e0be62a30a1ac6a4bd5b209cd6d93",
+              "section_index": 0
+            },
+            "release": "24H2",
+            "size_bytes": null,
+            "state": "unknown",
+            "time_text": "12:00",
+            "version_components": [
+              10,
+              0,
+              26100,
+              5001
+            ]
+          }
+        ],
+        "inventory_id": "a2711d24ba5cdb9b50af3e5fad99851092ff41e3ad33c680f8cd572c09414d6e",
+        "limits": {
+          "max_bytes": 16777216,
+          "max_columns": 32,
+          "max_diagnostics": 1000,
+          "max_entries": 50000,
+          "max_field_chars": 65536,
+          "max_record_chars": 262144,
+          "max_records": 100000,
+          "max_seconds": 10.0,
+          "max_sections": 1000,
+          "max_text_chars": 16777216
+        },
+        "parser_version": 1,
+        "raw_sha256": "26601e1b533b95d67134d53d404616f2a26e0be62a30a1ac6a4bd5b209cd6d93",
+        "raw_size": 202,
+        "records_scanned": 4,
+        "rejected_count": 0,
+        "sections": [
+          {
+            "architecture": "amd64",
+            "banner": "Example OS 24H2 for x64-based Systems",
+            "index": 0,
+            "reference": {
+              "line_end": 1,
+              "line_start": 1,
+              "logical_record": 1,
+              "raw_sha256": "26601e1b533b95d67134d53d404616f2a26e0be62a30a1ac6a4bd5b209cd6d93",
+              "section_index": 0
+            }
+          }
+        ],
+        "status": "partial",
+        "truncated": false
+      },
+      "retrieval": null,
+      "source": {
+        "authenticity": "unverified-local-file",
+        "contract": "kbcorrelation/1",
+        "current_release_date": null,
+        "dialect": "csv-file-inventory/1",
+        "doc_id": "76eb7afa23a39e738ca8f0c9767699ffc713db9b89b3abe7cd640b8d7bf0ea5f",
+        "kind": "kb-file-csv",
+        "lineage": "analyst",
+        "object_path": "objects/26/26601e1b533b95d67134d53d404616f2a26e0be62a30a1ac6a4bd5b209cd6d93.gz",
+        "origin": "local-import",
+        "parser_version": 1,
+        "release_id": null,
+        "retrieved_at": "2099-03-01T00:00:00Z",
+        "sha256": "26601e1b533b95d67134d53d404616f2a26e0be62a30a1ac6a4bd5b209cd6d93",
+        "size": 202,
+        "uri": null
+      }
+    }
+  },
+  "InventoryLimits": {
+    "invalid": [
+      {
+        "example": {
+          "max_bytes": 16777216,
+          "max_columns": 32,
+          "max_diagnostics": 1000,
+          "max_entries": 50000,
+          "max_field_chars": 65536,
+          "max_record_chars": 262144,
+          "max_records": 100000,
+          "max_seconds": 10.0,
+          "max_sections": 1000,
+          "max_text_chars": 16777216,
+          "unexpected_field": 1
+        },
+        "reason": "extra fields are forbidden"
+      },
+      {
+        "example": {
+          "max_bytes": 16777217,
+          "max_columns": 32,
+          "max_diagnostics": 1000,
+          "max_entries": 50000,
+          "max_field_chars": 65536,
+          "max_record_chars": 262144,
+          "max_records": 100000,
+          "max_seconds": 10.0,
+          "max_sections": 1000,
+          "max_text_chars": 16777216
+        },
+        "reason": "callers cannot raise the hard byte ceiling"
+      },
+      {
+        "example": {
+          "max_bytes": 16777216,
+          "max_columns": 32,
+          "max_diagnostics": 1000,
+          "max_entries": 50000,
+          "max_field_chars": 65536,
+          "max_record_chars": 262144,
+          "max_records": true,
+          "max_seconds": 10.0,
+          "max_sections": 1000,
+          "max_text_chars": 16777216
+        },
+        "reason": "integer budgets do not coerce booleans"
+      }
+    ],
+    "valid": {
+      "max_bytes": 16777216,
+      "max_columns": 32,
+      "max_diagnostics": 1000,
+      "max_entries": 50000,
+      "max_field_chars": 65536,
+      "max_record_chars": 262144,
+      "max_records": 100000,
+      "max_seconds": 10.0,
+      "max_sections": 1000,
+      "max_text_chars": 16777216
+    }
+  },
+  "InventorySection": {
+    "invalid": [
+      {
+        "example": {
+          "architecture": "amd64",
+          "banner": "Example OS 24H2 for x64-based Systems",
+          "index": 0,
+          "reference": {
+            "line_end": 1,
+            "line_start": 1,
+            "logical_record": 1,
+            "raw_sha256": "26601e1b533b95d67134d53d404616f2a26e0be62a30a1ac6a4bd5b209cd6d93",
+            "section_index": 0
+          },
+          "unexpected_field": 1
+        },
+        "reason": "extra fields are forbidden"
+      },
+      {
+        "example": {
+          "architecture": "amd64",
+          "banner": "Example OS 24H2 for x64-based Systems",
+          "index": 999,
+          "reference": {
+            "line_end": 1,
+            "line_start": 1,
+            "logical_record": 1,
+            "raw_sha256": "26601e1b533b95d67134d53d404616f2a26e0be62a30a1ac6a4bd5b209cd6d93",
+            "section_index": 0
+          }
+        },
+        "reason": "section index must agree with its source reference"
+      }
+    ],
+    "valid": {
+      "architecture": "amd64",
+      "banner": "Example OS 24H2 for x64-based Systems",
+      "index": 0,
+      "reference": {
+        "line_end": 1,
+        "line_start": 1,
+        "logical_record": 1,
+        "raw_sha256": "26601e1b533b95d67134d53d404616f2a26e0be62a30a1ac6a4bd5b209cd6d93",
+        "section_index": 0
+      }
+    }
+  },
+  "InventorySelection": {
+    "invalid": [
+      {
+        "example": {
+          "asserted_scope": false,
+          "coverage_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "entry_id": "b0ad9b1cfb111ac9b233e646bc1d5303b3a4edcfccb044c40b8124dbbc18085e",
+          "import_id": "01364bd19ea70c51e75354a9f0166edd33fe1abee70d0a9aa564523aedf69dae",
+          "scope_id": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+          "unexpected_field": 1
+        },
+        "reason": "extra fields are forbidden"
+      },
+      {
+        "example": {
+          "asserted_scope": "false",
+          "coverage_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "entry_id": "b0ad9b1cfb111ac9b233e646bc1d5303b3a4edcfccb044c40b8124dbbc18085e",
+          "import_id": "01364bd19ea70c51e75354a9f0166edd33fe1abee70d0a9aa564523aedf69dae",
+          "scope_id": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+        },
+        "reason": "an explicit scope assertion is a strict boolean"
+      }
+    ],
+    "valid": {
+      "asserted_scope": false,
+      "coverage_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "entry_id": "b0ad9b1cfb111ac9b233e646bc1d5303b3a4edcfccb044c40b8124dbbc18085e",
+      "import_id": "01364bd19ea70c51e75354a9f0166edd33fe1abee70d0a9aa564523aedf69dae",
+      "scope_id": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+    }
+  },
+  "RetrievalProvenance": {
+    "invalid": [
+      {
+        "example": {
+          "final_url": "https://download.microsoft.com/download/synthetic/KB5099001.csv",
+          "kind": "file-inventory",
+          "original_url": "https://go.microsoft.com/fwlink/?linkid=20995099001",
+          "plan_sha": "bc6ffdcce31db47c0ea5c1332cb124cabf187f20afab0b028740c59b943123d6",
+          "redirect_chain": [
+            "https://go.microsoft.com/fwlink/?linkid=20995099001",
+            "https://download.microsoft.com/download/synthetic/KB5099001.csv"
+          ],
+          "retrieved_at": "2099-03-01T00:00:00Z",
+          "sha256": "26601e1b533b95d67134d53d404616f2a26e0be62a30a1ac6a4bd5b209cd6d93",
+          "size": 202,
+          "unexpected_field": 1
+        },
+        "reason": "extra fields are forbidden"
+      },
+      {
+        "example": {
+          "final_url": "https://download.microsoft.com/download/synthetic/KB5099001.csv",
+          "kind": "file-inventory",
+          "original_url": "https://go.microsoft.com/fwlink/?linkid=20995099001",
+          "plan_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "redirect_chain": [
+            "https://go.microsoft.com/fwlink/?linkid=20995099001",
+            "https://download.microsoft.com/download/synthetic/KB5099001.csv"
+          ],
+          "retrieved_at": "2099-03-01T00:00:00Z",
+          "sha256": "26601e1b533b95d67134d53d404616f2a26e0be62a30a1ac6a4bd5b209cd6d93",
+          "size": 202
+        },
+        "reason": "receipt digest binds the exact ordered request plan"
+      }
+    ],
+    "valid": {
+      "final_url": "https://download.microsoft.com/download/synthetic/KB5099001.csv",
+      "kind": "file-inventory",
+      "original_url": "https://go.microsoft.com/fwlink/?linkid=20995099001",
+      "plan_sha": "bc6ffdcce31db47c0ea5c1332cb124cabf187f20afab0b028740c59b943123d6",
+      "redirect_chain": [
+        "https://go.microsoft.com/fwlink/?linkid=20995099001",
+        "https://download.microsoft.com/download/synthetic/KB5099001.csv"
+      ],
+      "retrieved_at": "2099-03-01T00:00:00Z",
+      "sha256": "26601e1b533b95d67134d53d404616f2a26e0be62a30a1ac6a4bd5b209cd6d93",
+      "size": 202
+    }
+  },
+  "SupportImport": {
+    "invalid": [
+      {
+        "example": {
+          "contract": "kb-support-import/1",
+          "extraction_sha256": "f7a1cf6e88789fc7cc462951e152f0468bff661a667e3c6f6c925e0e741d9db1",
+          "import_id": "0a59e0ece74d181fbd41712680345e2c67e93dfd0920284134f717d953bc19f2",
+          "page_url": "https://support.microsoft.com/help/5099001",
+          "parser_version": 1,
+          "retrieval": null,
+          "source": {
+            "authenticity": "unverified-local-file",
+            "contract": "kbcorrelation/1",
+            "current_release_date": null,
+            "dialect": "support-html/1",
+            "doc_id": "b383993bb37396126de0c0583899da50daa2ec7d3be79ac99341b18e6f83ed42",
+            "kind": "kb-support-html",
+            "lineage": "analyst",
+            "object_path": "objects/9b/9b10486f668de7793bd04cd9ce7396011082ec8016bc53e582a7d4a8b9060e8c.gz",
+            "origin": "local-import",
+            "parser_version": 1,
+            "release_id": null,
+            "retrieved_at": "2099-03-01T00:00:00Z",
+            "sha256": "9b10486f668de7793bd04cd9ce7396011082ec8016bc53e582a7d4a8b9060e8c",
+            "size": 193,
+            "uri": null
+          },
+          "unexpected_field": 1
+        },
+        "reason": "extra fields are forbidden"
+      },
+      {
+        "example": {
+          "contract": "kb-support-import/2",
+          "extraction_sha256": "f7a1cf6e88789fc7cc462951e152f0468bff661a667e3c6f6c925e0e741d9db1",
+          "import_id": "0a59e0ece74d181fbd41712680345e2c67e93dfd0920284134f717d953bc19f2",
+          "page_url": "https://support.microsoft.com/help/5099001",
+          "parser_version": 1,
+          "retrieval": null,
+          "source": {
+            "authenticity": "unverified-local-file",
+            "contract": "kbcorrelation/1",
+            "current_release_date": null,
+            "dialect": "support-html/1",
+            "doc_id": "b383993bb37396126de0c0583899da50daa2ec7d3be79ac99341b18e6f83ed42",
+            "kind": "kb-support-html",
+            "lineage": "analyst",
+            "object_path": "objects/9b/9b10486f668de7793bd04cd9ce7396011082ec8016bc53e582a7d4a8b9060e8c.gz",
+            "origin": "local-import",
+            "parser_version": 1,
+            "release_id": null,
+            "retrieved_at": "2099-03-01T00:00:00Z",
+            "sha256": "9b10486f668de7793bd04cd9ce7396011082ec8016bc53e582a7d4a8b9060e8c",
+            "size": 193,
+            "uri": null
+          }
+        },
+        "reason": "unsupported future contract version"
+      },
+      {
+        "example": {
+          "contract": "kb-support-import/1",
+          "extraction_sha256": "f7a1cf6e88789fc7cc462951e152f0468bff661a667e3c6f6c925e0e741d9db1",
+          "import_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "page_url": "https://support.microsoft.com/help/5099001",
+          "parser_version": 1,
+          "retrieval": null,
+          "source": {
+            "authenticity": "unverified-local-file",
+            "contract": "kbcorrelation/1",
+            "current_release_date": null,
+            "dialect": "support-html/1",
+            "doc_id": "b383993bb37396126de0c0583899da50daa2ec7d3be79ac99341b18e6f83ed42",
+            "kind": "kb-support-html",
+            "lineage": "analyst",
+            "object_path": "objects/9b/9b10486f668de7793bd04cd9ce7396011082ec8016bc53e582a7d4a8b9060e8c.gz",
+            "origin": "local-import",
+            "parser_version": 1,
+            "release_id": null,
+            "retrieved_at": "2099-03-01T00:00:00Z",
+            "sha256": "9b10486f668de7793bd04cd9ce7396011082ec8016bc53e582a7d4a8b9060e8c",
+            "size": 193,
+            "uri": null
+          }
+        },
+        "reason": "support identity binds source, explicit page and link digest"
+      },
+      {
+        "example": {
+          "contract": "kb-support-import/1",
+          "extraction_sha256": "f7a1cf6e88789fc7cc462951e152f0468bff661a667e3c6f6c925e0e741d9db1",
+          "import_id": "0a59e0ece74d181fbd41712680345e2c67e93dfd0920284134f717d953bc19f2",
+          "page_url": "https://support.microsoft.com/help/5099001",
+          "parser_version": true,
+          "retrieval": null,
+          "source": {
+            "authenticity": "unverified-local-file",
+            "contract": "kbcorrelation/1",
+            "current_release_date": null,
+            "dialect": "support-html/1",
+            "doc_id": "b383993bb37396126de0c0583899da50daa2ec7d3be79ac99341b18e6f83ed42",
+            "kind": "kb-support-html",
+            "lineage": "analyst",
+            "object_path": "objects/9b/9b10486f668de7793bd04cd9ce7396011082ec8016bc53e582a7d4a8b9060e8c.gz",
+            "origin": "local-import",
+            "parser_version": 1,
+            "release_id": null,
+            "retrieved_at": "2099-03-01T00:00:00Z",
+            "sha256": "9b10486f668de7793bd04cd9ce7396011082ec8016bc53e582a7d4a8b9060e8c",
+            "size": 193,
+            "uri": null
+          }
+        },
+        "reason": "parser version does not coerce a boolean literal"
+      }
+    ],
+    "valid": {
+      "contract": "kb-support-import/1",
+      "extraction_sha256": "f7a1cf6e88789fc7cc462951e152f0468bff661a667e3c6f6c925e0e741d9db1",
+      "import_id": "0a59e0ece74d181fbd41712680345e2c67e93dfd0920284134f717d953bc19f2",
+      "page_url": "https://support.microsoft.com/help/5099001",
+      "parser_version": 1,
+      "retrieval": null,
+      "source": {
+        "authenticity": "unverified-local-file",
+        "contract": "kbcorrelation/1",
+        "current_release_date": null,
+        "dialect": "support-html/1",
+        "doc_id": "b383993bb37396126de0c0583899da50daa2ec7d3be79ac99341b18e6f83ed42",
+        "kind": "kb-support-html",
+        "lineage": "analyst",
+        "object_path": "objects/9b/9b10486f668de7793bd04cd9ce7396011082ec8016bc53e582a7d4a8b9060e8c.gz",
+        "origin": "local-import",
+        "parser_version": 1,
+        "release_id": null,
+        "retrieved_at": "2099-03-01T00:00:00Z",
+        "sha256": "9b10486f668de7793bd04cd9ce7396011082ec8016bc53e582a7d4a8b9060e8c",
+        "size": 193,
+        "uri": null
+      }
+    }
+  }
+}

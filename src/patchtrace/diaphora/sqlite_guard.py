@@ -107,11 +107,58 @@ def _db(exc: BaseException) -> DiaphoraError:
 
 
 def _authorizer(action, arg1, arg2, dbname, source):
-    if action in (sqlite3.SQLITE_SELECT, sqlite3.SQLITE_READ):
+    if source is not None:  # views/triggers must never acquire permission through an allowed table
+        return sqlite3.SQLITE_DENY
+    if action == sqlite3.SQLITE_SELECT:
+        return sqlite3.SQLITE_OK
+    # SQLite identifiers are case-insensitive, but authorizer table names preserve declaration case.
+    table = arg1.lower() if isinstance(arg1, str) else None
+    # SQLite emits dbname=None for COUNT(*)'s empty-column READ. ATTACH/temp-table creation are denied.
+    if (action == sqlite3.SQLITE_READ and (dbname == 'main' or (dbname is None and arg2 == ''))
+            and table in SCHEMA and arg2 in (*SCHEMA[table], 'ROWID', '')):
         return sqlite3.SQLITE_OK
     if action == sqlite3.SQLITE_FUNCTION and arg2 in _ALLOWED_FUNCTIONS:
         return sqlite3.SQLITE_OK
     return sqlite3.SQLITE_DENY
+
+
+def _is_virtual_table(sql: str) -> bool:
+    """Read just the three declaration keywords, skipping SQL comments without regex backtracking."""
+    position = 0
+    for keyword in ('CREATE', 'VIRTUAL', 'TABLE'):
+        while position < len(sql):
+            if sql[position].isspace():
+                position += 1
+            elif sql.startswith('/*', position):
+                end = sql.find('*/', position + 2)
+                if end < 0:
+                    return False
+                position = end + 2
+            elif sql.startswith('--', position):
+                end = sql.find('\n', position + 2)
+                if end < 0:
+                    return False
+                position = end + 1
+            else:
+                break
+        end = position + len(keyword)
+        if sql[position:end].upper() != keyword:
+            return False
+        if end < len(sql) and (sql[end].isalnum() or sql[end] in '_$'):
+            return False
+        position = end
+    return True
+
+
+def _check_schema_objects(conn: sqlite3.Connection) -> None:
+    """Reject indirect/executable schema objects before integrity checking or reading result rows."""
+    for kind, _name, sql in conn.execute('SELECT type, name, sql FROM sqlite_master'):
+        if kind in ('view', 'trigger'):
+            raise DiaphoraError('PT-DIAPHORA-DB', 'the result database contains a view or trigger')
+        if kind == 'table' and isinstance(sql, str) and _is_virtual_table(sql):
+            raise DiaphoraError('PT-DIAPHORA-DB', 'the result database contains a virtual table')
+        if kind not in ('table', 'index'):
+            raise DiaphoraError('PT-DIAPHORA-DB', 'the result database contains an unsupported schema object')
 
 
 def _copy_private(path: Path, target: Path, cancel: threading.Event | None) -> tuple[str, int]:
@@ -164,6 +211,7 @@ def open_snapshot(path: Path, cancel: threading.Event | None = None) -> Iterator
             conn.set_progress_handler(progress, 10_000)
             conn.execute('PRAGMA query_only=ON')
             conn.execute('PRAGMA trusted_schema=OFF')
+            _check_schema_objects(conn)
             if conn.execute('PRAGMA quick_check(1)').fetchone() != ('ok',):
                 raise DiaphoraError('PT-DIAPHORA-DB', 'the SQLite integrity check failed')
             tables = {}

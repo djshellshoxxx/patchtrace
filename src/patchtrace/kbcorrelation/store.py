@@ -247,7 +247,10 @@ class WorkspaceStore:
 
     def unreferenced_objects(self) -> tuple[str, ...]:
         """SHA-256 of objects no document row refers to (crash leftovers); eviction is the caller's choice."""
+        from .inventory_store import referenced_raw_hashes
+
         known = {r[0] for r in self.db.execute('SELECT sha256 FROM docs')}
+        known.update(referenced_raw_hashes(self))
         base = self.root / 'objects'
         found = {p.stem for p in base.glob('*/*.gz')} if base.is_dir() else set()
         return tuple(sorted(found - known))
@@ -371,7 +374,9 @@ class WorkspaceStore:
                    (rev.investigation_id, rev.revision, body, _sha(body.encode()), now))
 
     def append_revision(self, rev: InvestigationRevision, *, expected_current: int,
-                        journal: tuple[str, str, dict] | None = None) -> None:
+                        journal: tuple[str, str, dict] | None = None,
+                        decisions: tuple[AnalystDecision, ...] = (),
+                        guard: Callable[[], None] | None = None) -> None:
         """Compare-and-swap: commits only if the current revision is ``expected_current``. An optional journal
         update (op_id, state, body) lands in the same transaction, so the step and its record cannot diverge."""
         if rev.revision != expected_current + 1 or rev.parent != expected_current:
@@ -380,14 +385,23 @@ class WorkspaceStore:
         self.fault('before_cas')
 
         def work(db: sqlite3.Connection) -> None:
+            if guard is not None:
+                guard()
             now = self.clock.now_utc()
             changed = db.execute('UPDATE investigations SET current_revision=? WHERE investigation_id=? '
                                  'AND current_revision=?', (rev.revision, rev.investigation_id, expected_current))
             if changed.rowcount != 1:
                 raise KbcStoreError('PT-KBC-STALE', 'the investigation moved on; reload it')
             self._insert_revision(db, rev, now)
+            for decision in decisions:
+                db.execute('INSERT INTO decisions(investigation_id, body) VALUES (?,?)',
+                           (rev.investigation_id, _json(decision)))
+            if decisions:
+                self.fault('after_revision_decisions')
             if journal is not None:
                 self._journal_write(db, *journal, now=now)
+            if guard is not None:
+                guard()
 
         self._transaction(work)
 

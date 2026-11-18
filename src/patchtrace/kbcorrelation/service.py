@@ -144,11 +144,16 @@ def _scope_dict(scope) -> dict:
             'architecture': scope.architecture, 'release': scope.release, 'mapping': scope.mapping}
 
 
-def _edge_dict(group, names: Mapping[str, str]) -> dict:
+def _edge_dict(group, names: Mapping[str, str], kev: ExploitationLookup | None = None) -> dict:
+    context = {}
+    if kev is not None:
+        fact = kev.status(group.cve)
+        context = {'kev': CARD_KEV[fact.state], 'kev_date_added': fact.date_added,
+                   'kev_snapshot_id': fact.snapshot_sha256}
     return {'kb': group.kb, 'cve': group.cve, 'scope_id': group.scope_id, 'product': names.get(group.scope_id, ''),
             'relation': group.relation, 'label': RELATION_LABEL.get(group.relation, group.relation),
             'fixed_builds': list(group.fixed_builds), 'releases': list(group.release_ids), 'kev': 'not-loaded',
-            'refs': [{'doc_id': r.doc_id, 'pointer': r.pointer} for r in group.refs]}
+            'refs': [{'doc_id': r.doc_id, 'pointer': r.pointer} for r in group.refs], **context}
 
 
 def _plain_edge(edge, names: Mapping[str, str]) -> dict:
@@ -168,6 +173,40 @@ class KbService:
         self.root = Path(root).expanduser()
         self.env = env
         self.ports = IndexPorts(advisory=env.advisory, clock=env.clock)
+
+    # PW-01 delegates keep file parsing, persistence and network policy outside
+    # this existing orchestration module and outside Qt.
+    def import_inventory(self, path, context, **kwargs) -> Outcome:
+        from .inventory_service import import_inventory
+        return import_inventory(self, path, context, **kwargs)
+
+    def inventories(self, **kwargs) -> Outcome:
+        from .inventory_service import inventories
+        return inventories(self, **kwargs)
+
+    def inventory_details(self, import_id, **kwargs) -> Outcome:
+        from .inventory_service import inventory_details
+        return inventory_details(self, import_id, **kwargs)
+
+    def support_links(self, path, **kwargs) -> Outcome:
+        from .inventory_service import support_links
+        return support_links(self, path, **kwargs)
+
+    def inventory_plan(self, url, **kwargs) -> Outcome:
+        from .inventory_service import inventory_plan
+        return inventory_plan(self, url, **kwargs)
+
+    def fetch_inventory(self, plan, **kwargs) -> Outcome:
+        from .inventory_service import fetch_inventory
+        return fetch_inventory(self, plan, **kwargs)
+
+    def select_inventory(self, investigation, import_id, entry_id, **kwargs) -> Outcome:
+        from .inventory_service import select_inventory
+        return select_inventory(self, investigation, import_id, entry_id, **kwargs)
+
+    def _inventory_hints(self, ws, rev, scope_id):
+        from .inventory_selection import selected_hints
+        return selected_hints(self, ws, rev, scope_id)
 
     # ------------------------------------------------------------------------------------------ plumbing
 
@@ -248,7 +287,8 @@ class KbService:
     # ------------------------------------------------------------------------------------------ search
 
     def search(self, lead: str, *, months: str | None = None, scope_file: Path | None = None,
-               product: str | None = None, investigation: str | None = None) -> Outcome:
+               product: str | None = None, investigation: str | None = None,
+               kev: ExploitationLookup | None = None) -> Outcome:
         kind, value = parse_lead(lead)
         with self._open() as ws:
             index, unreadable = load_index(ws, self.ports)
@@ -264,7 +304,7 @@ class KbService:
             rev = self._record_search(ws, rev, Lead(kind=kind, value=value, raw=lead.strip()[:200]), full, product)
             cves = sorted({e.cve for e in shown.edges}) if kind == 'kb' else [value]
             cards = [_card_dict(c) for cve in cves for c in self._lookup(index, 'cve', cve, scope, None, now).cards]
-        return self._search_outcome(rev, kind, value, full, shown, product, cards, names, unreadable)
+        return self._search_outcome(rev, kind, value, full, shown, product, cards, names, unreadable, kev)
 
     def _record_search(self, ws: WorkspaceStore, rev: InvestigationRevision | None, lead: Lead, full: Lookup,
                        product: str | None) -> InvestigationRevision:
@@ -280,7 +320,7 @@ class KbService:
             rev = self._step(ws, rev, 'product_selected', scope_id=product)
         return rev
 
-    def _search_outcome(self, rev, kind, value, full, shown, product, cards, names, unreadable) -> Outcome:
+    def _search_outcome(self, rev, kind, value, full, shown, product, cards, names, unreadable, kev=None) -> Outcome:
         scopes = [_scope_dict(s) for s in full.scopes]
         kept = {(e.cve, e.kb, e.scope_id) for e in shown.edges}
         elsewhere = [_plain_edge(e, names) for e in full.edges if (e.cve, e.kb, e.scope_id) not in kept]
@@ -290,14 +330,18 @@ class KbService:
         status = 'partial' if full.status in ('partial', 'not_searched') or (
             unreadable and full.status == 'not_observed') else full.status
         result = {'contract': 'kbcorrelation/1', 'investigation_id': rev.investigation_id, 'state': rev.state,
+                  'revision': rev.revision,
                   'lead': {'kind': kind, 'value': value}, 'coverage': {'state': full.coverage.state,
                                                                        'text': full.text, 'detail': full.coverage
                                                                        .model_dump(mode='json')},
-                  'scopes': scopes, 'edges': [_edge_dict(g, names) for g in shown.groups], 'cards': cards,
+                  'scopes': scopes, 'edges': [_edge_dict(g, names, kev) for g in shown.groups], 'cards': cards,
                   'mention_only': [_plain_edge(e, names) for e in shown.mention_only],
                   'not_applicable': elsewhere, 'disputed': [_plain_edge(e, names) for e in shown.disputed],
                   'warnings': warnings, 'next': 'kb.next.choose_product' if len(scopes) > 1 and not product else None}
         lines = [full.text]
+        if kev is not None:
+            result['kev_source'] = kev_source_of(kev).model_dump(mode='json')
+            result['cards'] = [{**card, 'kev': CARD_KEV[kev.status(card['cve']).state]} for card in cards]
         lines += [f'{e["kb"]}  {e["cve"]}  {e["product"]}  {e["label"]}' for e in result['edges']]
         lines += [f'Mentioned only: {e["cve"]} (advisory text, not a remediation)' for e in result['mention_only']]
         if len(scopes) > 1 and not product:
@@ -360,10 +404,11 @@ class KbService:
             raise _fail('PT-KBC-INPUT', 'the product mapping is no longer current; repeat the search '
                         'and select the product again before listing products')
         result = {'contract': 'kbcorrelation/1', 'investigation_id': rev.investigation_id,
-                  'selected_scope_id': rev.selected_scope_id, 'products': scopes}
+                  'revision': rev.revision, 'selected_scope_id': rev.selected_scope_id, 'products': scopes}
         if not scopes:
             return Outcome(4, 'unavailable', result, 'The search found no product for this lead.')
-        lines = [f'{s["scope_id"][:12]}  {s["display_name"]}  {s["architecture"]}  ({s["mapping"]} mapping)'
+        lines = [f'Investigation revision: {rev.revision}']
+        lines += [f'{s["scope_id"]}  {s["display_name"]}  {s["architecture"]}  ({s["mapping"]} mapping)'
                  for s in scopes]
         if len(scopes) > 1 and rev.selected_scope_id is None:
             lines.append(TEXT_KB6)
@@ -381,6 +426,10 @@ class KbService:
                 raise _fail('PT-KBC-INPUT', TEXT_KB6)
             if scope_id not in rev.scope_ids:
                 raise _fail('PT-KBC-INPUT', 'that product is not one of the products listed for the lead')
+            # Replay retained inventory evidence before publishing a product
+            # change or newly entered filenames. A corrupt source must leave
+            # the caller's previous decisions and revision unchanged.
+            inventory_hints = self._inventory_hints(ws, rev, scope_id)
             if rev.selected_scope_id != scope_id:
                 rev = self._step(ws, rev, 'product_selected', scope_id=scope_id)
             for name in names:
@@ -391,8 +440,11 @@ class KbService:
             index, _ = load_index(ws, self.ports)
             cards, refs = self._lead_cards(index, rev, ws)
             hints, truncated = comp.hints_for(cards, refs, entered, scope_id)
+            hints, inventory_cut = comp.with_inventory(hints, inventory_hints)
+            truncated = truncated or inventory_cut
             rev = self._step(ws, rev, 'components_ready' if comp.selectable(hints) else 'needs_filename')
         result = {'contract': 'kbcorrelation/1', 'investigation_id': rev.investigation_id, 'state': rev.state,
+                  'revision': rev.revision,
                   'scope_id': scope_id, 'truncated': truncated,
                   'hints': [h.model_dump(mode='json', exclude={'contract'}) for h in hints]}
         lines = [f'{h.tier}  {h.basename}  ({"; ".join(h.reasons)}); changed in this KB: {h.changed_in_kb}'
@@ -402,13 +454,23 @@ class KbService:
         return Outcome(0 if comp.selectable(hints) else 4, 'complete' if comp.selectable(hints) else 'unavailable',
                        result, '\n'.join(lines))
 
+    @staticmethod
+    def _stored_scope(ws: WorkspaceStore, rev: InvestigationRevision) -> SearchScope | None:
+        """The document scope the investigation's recorded search used (issue #118 P1a). Every later lookup keeps it,
+        so an investigation is never widened without a new recorded search. None means the whole cached corpus."""
+        coverage = ws.get_coverage(rev.coverage_ids[-1]) if rev.coverage_ids else None
+        if coverage is None or coverage.scope.kind == 'cached_corpus':
+            return None
+        return coverage.scope
+
     def _lead_cards(self, index: ReverseIndex, rev: InvestigationRevision,
                     ws: WorkspaceStore) -> tuple[list[CveCard], dict[str, SourceRef]]:
         cves, _, _ = self._lead_cves(index, rev, ws)
+        scope = self._stored_scope(ws, rev)
         cards: list[CveCard] = []
         refs: dict[str, SourceRef] = {}
         for cve in cves:
-            look = index.lookup_cve(cve, scope_id=rev.selected_scope_id, now=self._now())
+            look = index.lookup_cve(cve, scope=scope, scope_id=rev.selected_scope_id, now=self._now())
             cards += look.cards[:1]
             if look.edges:
                 edge = look.edges[0]
@@ -422,22 +484,23 @@ class KbService:
         coverage = tuple(c for c in (ws.get_coverage(i) for i in rev.coverage_ids) if c is not None)
         now, scope_id, lead = self._now(), rev.selected_scope_id, rev.lead
         if lead.kind == 'kb':
-            look = index.lookup_kb(lead.value, scope_id=scope_id, now=now)
+            look = index.lookup_kb(lead.value, scope=self._stored_scope(ws, rev), scope_id=scope_id, now=now)
             return (tuple(sorted({e.cve for e in look.edges})), tuple(sorted({e.cve for e in look.mention_only})),
                     coverage or (look.coverage,))
         if lead.kind == 'cve':
             return (lead.value,), (), coverage
         return (), (), coverage
 
-    def _lead_kbs(self, index: ReverseIndex, rev: InvestigationRevision) -> dict[str, str | None]:
+    def _lead_kbs(self, index: ReverseIndex, rev: InvestigationRevision,
+                  scope: SearchScope | None = None) -> dict[str, str | None]:
         """KB ids the lead leads to under the selected product, each with its one vendor-stated fixed build (or None
         when the documents state none or disagree)."""
         lead, scope_id, now = rev.lead, rev.selected_scope_id, self._now()
         if lead.kind == 'kb':
-            look = index.lookup_kb(lead.value, scope_id=scope_id, now=now)
+            look = index.lookup_kb(lead.value, scope=scope, scope_id=scope_id, now=now)
             kbs = {lead.value}
         elif lead.kind == 'cve':
-            look = index.lookup_cve(lead.value, scope_id=scope_id, now=now)
+            look = index.lookup_cve(lead.value, scope=scope, scope_id=scope_id, now=now)
             kbs = {e.kb for e in look.edges}
         else:
             raise _fail('PT-KBC-INPUT', 'this investigation started from two files and has no KB to look up')
@@ -476,8 +539,9 @@ class KbService:
                                         if d.op == 'component-name')})
             cards, refs = self._lead_cards(index, rev, ws)
             hints, _ = comp.hints_for(cards, refs, entered, scope_id)
+            hints, _ = comp.with_inventory(hints, self._inventory_hints(ws, rev, scope_id))
             chosen = sorted({h.basename for h in hints if h.tier in comp.SELECTING_TIERS})
-            kbs = self._lead_kbs(index, rev)
+            kbs = self._lead_kbs(index, rev, self._stored_scope(ws, rev))
         if not chosen:
             return rev, self._unanswered(rev, 'no file name', TEXT_KB7)
         covered = scope.family != 'windows-server' and scope.winbindex_key is not None
@@ -503,7 +567,7 @@ class KbService:
         return {'kb': res.kb, 'file_name': res.file_name, 'version_key': res.version_key,
                 'changed_in_kb': res.changed_in_kb, 'last_changed_in': res.last_changed_in,
                 'blockers': list(res.blockers), 'note': res.note, 'skipped_rows': res.skipped_rows,
-                'truncated': res.truncated}
+                'truncated': res.truncated, 'ambiguous': res.ambiguous}
 
     def pairs(self, investigation: str, *, product: str | None = None, files: Iterable[str] = ()) -> Outcome:
         got = self._resolve_pairs(investigation, product, files)
@@ -518,7 +582,7 @@ class KbService:
         lines = [f'{c["grade"]}/{c["tier"]}  {c["file_name"]}  {c["kb"]}  older {c["older_sha256"][:12]} -> newer '
                  f'{c["newer_sha256"][:12]}  [{", ".join(c["reason_codes"]) or "no flags"}]  {c["pair_id"][:12]}'
                  for c in candidates]
-        lines += [f'{r.file_name}  {r.kb}: {r.note}' for r in found if not r.pairs and r.note]
+        lines += [f'{r.file_name}  {r.kb}: {r.note}' for r in found if r.note]
         lines += [f'{name}: no Winbindex record is saved in this workspace.' for name in missing]
         text = '\n'.join(lines)
         if skipped:  # an index with unreadable entries cannot say the newest builds are absent
@@ -538,6 +602,9 @@ class KbService:
         every = [pair for res in found for pair in res.pairs]
         if pair_id is None:
             viable = {p.pair_id: p for p in every if p.grade != 'X'}
+            if viable and any(res.ambiguous or res.truncated for res in found):
+                raise _fail('PT-KBC-INPUT', 'the candidate evidence is ambiguous or truncated; list pairs with '
+                            '"kb pairs" and select one with --pair')
             if len(viable) > 1:
                 raise _fail('PT-KBC-INPUT', f'{len(viable)} viable pairs remain; list them with \"kb pairs\" '
                             'and select one with --pair')
@@ -769,7 +836,7 @@ class KbService:
         return build_bundle(investigation_id=rev.investigation_id, base_revision=base, lead=rev.lead, cves=cves,
                             index=index, rules=self.env.rules, now=self._now(), coverage=coverage,
                             scope_id=rev.selected_scope_id, pair_id=pair_id, older_sha=older, newer_sha=newer,
-                            mention_only=mention)
+                            mention_only=mention, scope=self._stored_scope(ws, rev))
 
     def _attach_outcome(self, outcome, investigation_id: str, pair, plan_sha: str, context_key: str) -> Outcome:
         link = outcome.value

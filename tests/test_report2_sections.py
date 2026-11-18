@@ -210,6 +210,12 @@ def test_advisory_bad_ids_refuse_the_export(kind, ident):
         build_advisories(_Port([AdvisoryRecord(kind, ident, 't')]))
 
 
+@pytest.mark.parametrize('ident', ['KB1234', 'KB12345', 'KB1234567890'], ids=['4', '5', '10'])
+def test_advisory_canonical_kb_ids_of_any_width_do_not_refuse_the_export(ident):
+    """KBA-07: one canonical `kb-syntax/1` id outside 6-8 digits refused the whole export."""
+    assert build_advisories(_Port([AdvisoryRecord('kb', ident, 't')])).value[0].id == ident
+
+
 def test_advisory_cap_summarizes_the_rest(monkeypatch):
     monkeypatch.setattr(text, 'MAX_ADVISORIES', 2)
     built = build_advisories(_Port([AdvisoryRecord('cve', f'CVE-2024-{1000 + i}', 't') for i in range(5)]))

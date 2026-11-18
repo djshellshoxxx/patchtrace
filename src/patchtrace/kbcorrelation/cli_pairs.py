@@ -4,7 +4,7 @@ builds the :class:`~.service.KbService`. Offline: nothing here can fetch.
 """
 from __future__ import annotations
 
-from .cli_index import add_common, present
+from .cli_index import ENVIRONMENT, CliError, add_common, present
 
 
 def _investigation(parser) -> None:
@@ -12,8 +12,10 @@ def _investigation(parser) -> None:
 
 
 def register(sub) -> None:
-    add_common(sub.add_parser('products', help='list the product scopes of an investigation')).add_argument(
-        'investigation', metavar='INV')
+    products = add_common(sub.add_parser('products', help='list investigation scopes or browse stored products'))
+    products.add_argument('investigation', nargs='?', metavar='INV')
+    products.add_argument('--all', action='store_true', help='browse active local products without an investigation')
+    products.add_argument('--query', metavar='TEXT', help='filter the stored catalogue (requires --all)')
     comp = add_common(sub.add_parser('components', help='component hints (analyst names and advisory title names)'))
     _investigation(comp)
     comp.add_argument('--product', metavar='ID', help='product scope id; chooses the product when none is chosen')
@@ -39,6 +41,12 @@ def register(sub) -> None:
 
 
 def cmd_products(args, context, out) -> int:
+    if args.all:
+        if args.investigation is not None:
+            raise CliError(ENVIRONMENT, 'choose an investigation or --all, not both')
+        return present(out, 'kb products', args, context.service(args).product_catalogue(args.query or ''))
+    if args.investigation is None or args.query is not None:
+        raise CliError(ENVIRONMENT, 'supply an investigation or --all; --query requires --all')
     return present(out, 'kb products', args, context.service(args).products(args.investigation))
 
 

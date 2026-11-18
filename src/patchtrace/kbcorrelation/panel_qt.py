@@ -1,14 +1,19 @@
 """Qt presentation of the KB and CVE dock (KB-integration-plan 8.2, slice K4b; GUI plan 8.10).
 
 Everything that decides what is said lives in the Qt-free `view_model` and `panel_state`; this module moves it to
-widgets. Reading the stored leads (the advisory workspace and the project's ranking) and building the table happen on
-the `TaskRunner`, never on the GUI thread; a project switch cancels the request and a late result is dropped. The
-panel reads stored results only: it opens no network connection, runs no tool and creates no window.
+widgets. The project the desktop holds open is read on the GUI thread only, which owns its connection: `read_project`
+takes a bounded snapshot of stored rows, including integrity checks (store-threading-spec R1 and section
+4a). Checking the stored ranking against the comparison, reading the advisory workspace, building the leads and
+building the table happen on the `TaskRunner` from that snapshot; a worker never opens or touches the project. A
+project switch cancels the request and a late result is dropped. The panel reads stored results only: it opens no
+network connection and runs no tool. Its explicit file-inventory action opens a
+separate dialog with local import and separately consented source retrieval.
 """
 from __future__ import annotations
 
 from collections.abc import Callable
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QComboBox, QHBoxLayout, QLineEdit, QPushButton, QSplitter, QVBoxLayout, QWidget
@@ -18,19 +23,25 @@ from ..gui.qt.docks import ControllerBase
 from ..gui.qt.labels import PlainLabel, SafeTextView
 from ..gui.qt.state_view import StateView
 from ..gui.qt.table import ROW_ROLE, VirtualTable
+from ..gui.qt.tasks import TaskFailure
 from ..gui.registry import PanelContext
 from ..gui.table_spec import ColumnSpec, PreparedTable, TableSpec, prepare_table
 from ..gui.text import VIEW_LIMIT, sanitize_text
 from ..gui.tips import apply_tip, escaped_tip, register_gui_tips, register_tips
 from .leads import LeadsReport, build_leads
 from .panel_state import coverage_notice, failure_conditions, report_conditions
+from .store import KbcStoreError
 from .tooltip_entries import TEMPLATES, TIPS
 from .view_model import ALL_GROUPS, COLUMN_NAMES, COPY_LIMIT, LeadsViewModel, TableRow
+
+if TYPE_CHECKING:
+    from .cli_leads import KbSnapshot
 
 CHANNEL = 'kb.load'
 ROWS_CHANNEL = 'kb.rows'
 NOUN = 'KB and CVE leads'
-Loader = Callable[[Path, str, object], LeadsReport]
+Reader = Callable[[object], object]  # GUI thread: the open project's service -> an immutable snapshot of it
+Loader = Callable[[Path, object, object], LeadsReport]  # worker: (workspace, that snapshot, cancel token)
 
 COLUMNS = tuple(
     ColumnSpec(key, title, (lambda r, i=i: r.cells[i]), width_em=width, accessible=(lambda r, i=i: r.accessible[i]),
@@ -42,13 +53,21 @@ assert len(COLUMNS) == len(COLUMN_NAMES)
 SPEC = TableSpec(row_key=lambda r: f'{r.kind}:{r.group}:{r.lead_id or ""}', search_text=lambda r: ' '.join(r.cells))
 
 
-def load_report(workspace: Path, project_dir: str, token: object) -> LeadsReport:
-    """Worker: the stored advisory context and ranking as a leads report. It opens no network connection."""
-    from .cli_leads import RealEngine, default_alignment, leads_outcome
+def read_project(service) -> KbSnapshot:
+    """GUI thread: a bounded snapshot of the stored rows the leads need from the project the desktop holds open. The project is not opened again: a second open of an open project is refused, and its connection
+    belongs to this thread."""
+    from .cli_leads import read_snapshot
+    return read_snapshot(service)
+
+
+def load_report(workspace: Path, snapshot: KbSnapshot, token: object) -> LeadsReport:
+    """Worker: the leads report of the snapshot's advisory context and ranking. It reads the advisory workspace,
+    never the project, and opens no network connection."""
+    from .cli_leads import default_alignment, leads_from_snapshot
     from .wiring import build_service
-    outcome = leads_outcome(build_service(workspace), RealEngine(), project_dir)
-    if 'text' in outcome.result:
-        return LeadsReport.model_validate(outcome.result)
+    report = leads_from_snapshot(build_service(workspace), snapshot)
+    if report is not None:
+        return report
     return build_leads(None, None, alignment=default_alignment())  # no advisory and no ranking: nothing to pair
 
 
@@ -63,6 +82,8 @@ class KbPanel(QWidget):
 
     def __init__(self) -> None:
         super().__init__()
+        from .inventory_qt import register_inventory_tips
+        register_inventory_tips()
         self.setObjectName('kb.panel')
         self.state_view = StateView('kb.leads', NOUN, text_limit=VIEW_LIMIT, multiline=True)
         self.group = QComboBox()
@@ -75,7 +96,8 @@ class KbPanel(QWidget):
         self.buttons = {name: self._button(name, text, accessible) for name, text, accessible in (
             ('refresh', 'Refresh', 'Refresh the stored KB and CVE leads'),
             ('goto', 'Go to function', 'Go to the selected function in the code panes'),
-            ('copy', 'Copy evidence', 'Copy the evidence of the selected row'))}
+            ('copy', 'Copy evidence', 'Copy the evidence of the selected row'),
+            ('inventory', 'File inventories…', 'Open KB file inventories, including without a project'))}
         self.table = VirtualTable('KB and CVE leads table')
         self.table.setObjectName('kb.table')
         self.detail = SafeTextView('Evidence of the selected row', wrap=True)
@@ -100,6 +122,7 @@ class KbPanel(QWidget):
         column.addWidget(self.footer)
         root = QVBoxLayout(self)
         root.setContentsMargins(4, 4, 4, 4)
+        root.addWidget(self.buttons['inventory'])
         root.addWidget(self.state_view, 1)
         self.state_view.set_content(self.content)
         self.group.view().setAccessibleName('CVE group of the leads options')
@@ -118,12 +141,13 @@ class KbPanel(QWidget):
 class KbController(ControllerBase):
     """Owns the loaded view model and the requests in flight. Hooks run on the GUI thread."""
 
-    def __init__(self, ctx: PanelContext, *, loader: Loader = load_report, workspace: Path | None = None) -> None:
+    def __init__(self, ctx: PanelContext, *, reader: Reader = read_project, loader: Loader = load_report,
+                 workspace: Path | None = None) -> None:
         register_gui_tips()  # idempotent; the StateView buttons use these tips
         register_tips(TIPS, TEMPLATES)
         panel = KbPanel()
         super().__init__(panel)
-        self.panel, self.ctx, self.loader = panel, ctx, loader
+        self.panel, self.ctx, self.reader, self.loader = panel, ctx, reader, loader
         self.port, self.tasks = ctx.project, ctx.tasks
         self.workspace = workspace
         self.goto_tip = panel.buttons['goto'].toolTip()
@@ -131,6 +155,7 @@ class KbController(ControllerBase):
         self.model: LeadsViewModel | None = None
         self.group = ALL_GROUPS
         self.loading = False
+        self._inventory_dialog = None
         self._wire()
         self._render({'idle': {'hint': 'Open a project to read its KB and CVE leads.'}}, False)
 
@@ -141,6 +166,7 @@ class KbController(ControllerBase):
         panel.buttons['refresh'].clicked.connect(self.reload)
         panel.buttons['goto'].clicked.connect(self.go)
         panel.buttons['copy'].clicked.connect(self.copy_evidence)
+        panel.buttons['inventory'].clicked.connect(self.open_inventory)
         panel.state_view.retry_requested.connect(self.reload)
         panel.state_view.refresh_requested.connect(self.reload)
         panel.state_view.copy_requested.connect(self.ctx.shell.copy_text)
@@ -151,6 +177,8 @@ class KbController(ControllerBase):
     # ---- host hooks ----------------------------------------------------------------------------------
 
     def project_changed(self, key) -> None:
+        if self._inventory_dialog is not None:
+            self._inventory_dialog.clear_selection_target()
         self.tasks.cancel(CHANNEL)
         self.tasks.cancel(ROWS_CHANNEL)
         self.key, self.model, self.group, self.loading = key, None, ALL_GROUPS, False
@@ -166,6 +194,8 @@ class KbController(ControllerBase):
         self._enable()
 
     def shutdown(self) -> None:
+        if self._inventory_dialog is not None:
+            self._inventory_dialog.reject()
         self.tasks.cancel(CHANNEL)
         self.tasks.cancel(ROWS_CHANNEL)
 
@@ -180,24 +210,34 @@ class KbController(ControllerBase):
 
     # ---- loading -------------------------------------------------------------------------------------
 
-    def _project_dir(self) -> str | None:
-        root = getattr(getattr(self.port, 'service', None), 'root', None)
-        return str(root) if root is not None else None
-
     def reload(self) -> None:
-        directory = self._project_dir()
-        if self.key is None or directory is None:
+        """Take the snapshot of the open project here, on the GUI thread, and build the leads from it on a worker."""
+        self.tasks.cancel(CHANNEL)
+        self.tasks.cancel(ROWS_CHANNEL)
+        service = getattr(self.port, 'service', None)
+        if self.key is None or service is None:
             if self.key is not None:
                 self._render({'blocked': {'reason': 'the project folder is not available.',
                                           'remedy': 'Reopen the project.'}}, False)
             return
+        try:
+            snapshot = self.reader(service)
+        except Exception as exc:  # noqa: BLE001 - shown as a worker failure is: the class only, never the message
+            self.tasks.cancel(CHANNEL)
+            if isinstance(exc, KbcStoreError) and exc.code == 'PT-KBC-LIMIT':
+                self.loading = False
+                self._render(failure_conditions(
+                    'PT-KBC-LIMIT', 'The project exceeds the desktop snapshot limit. Use patchtrace kb leads '
+                    'from the CLI with the desktop project closed.'), self.model is not None)
+                return
+            return self._failed(TaskFailure(type(exc).__name__))
         key, group, loader = self.key, self.group, self.loader
         workspace = self.workspace or _default_workspace()
         self.loading = True
         self._render({('refreshing' if self.model else 'loading'): {'noun': NOUN}}, self.model is not None)
 
         def work(token, _report):
-            report = loader(workspace, directory, token)
+            report = loader(workspace, snapshot, token)
             return (key, report, *_prepare(report, group, token))
         self.tasks.submit(CHANNEL, work, self._loaded, self._failed)
 
@@ -282,6 +322,20 @@ class KbController(ControllerBase):
         row = self.current_row()
         if row is not None and row.kind == 'lead':
             self.ctx.shell.copy_text(row.copy_text[:COPY_LIMIT])
+
+    def open_inventory(self) -> None:
+        from .inventory_qt import InventoryDialog
+        if self._inventory_dialog is None:
+            dialog = InventoryDialog(self.panel, workspace=self.workspace or _default_workspace(), tasks=self.tasks)
+            dialog.setAttribute(Qt.WidgetAttribute.WA_DeleteOnClose)
+            dialog.finished.connect(self._inventory_finished)
+            self._inventory_dialog = dialog
+        self._inventory_dialog.show()
+        self._inventory_dialog.raise_()
+        self._inventory_dialog.activateWindow()
+
+    def _inventory_finished(self, _result) -> None:
+        self._inventory_dialog = None
 
 
 def _default_workspace() -> Path:

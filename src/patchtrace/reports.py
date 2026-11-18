@@ -114,7 +114,7 @@ def _ranking_section(project: ComparisonProject, enrichment: dict | None, select
         raise ExportError('PT-EXPORT: malformed ranking profile')
     try:
         ranking = RankingResult.model_validate_json(json.dumps(enrichment['ranking']))
-    except ValueError:
+    except (ValueError, RecursionError):
         raise ExportError('PT-EXPORT: ranking failed validation') from None
     known = {m.id: m for m in project.matches}
     if any(e.match_id not in known for e in ranking.entries):
@@ -144,7 +144,7 @@ def _annotation(annotation, include_code: bool) -> dict:
             record = json.loads(annotation.text)
             data['text'] = json.dumps({k: record.get(k) for k in ('category', 'reason', 'older_ids', 'newer_ids')},
                                       ensure_ascii=False, sort_keys=True)
-        except (ValueError, AttributeError):
+        except (ValueError, AttributeError, RecursionError):
             data['text'] = ''
     return data
 
