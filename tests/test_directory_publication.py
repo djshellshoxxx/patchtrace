@@ -5,6 +5,7 @@ import ctypes
 import errno
 import importlib
 import os
+import subprocess
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 from threading import Barrier
@@ -205,6 +206,42 @@ def test_source_must_be_an_ordinary_stage_directory(tmp_path, monkeypatch, kind)
     with pytest.raises((OSError, ValueError)):
         publisher.publish_directory_no_replace(stage, tmp_path / 'destination')
     assert os.path.lexists(stage)
+
+
+@pytest.mark.parametrize('tag', [0, 0xA0000003], ids=['reparse-attribute', 'junction-metadata'])
+def test_windows_reparse_directory_metadata_is_refused_before_native_move(tmp_path, monkeypatch, tag):
+    publisher = api()
+    stage = staged(tmp_path)
+    destination = tmp_path / 'destination'
+    lstat = Path.lstat
+    info = stage.lstat()
+    metadata = SimpleNamespace(st_mode=info.st_mode, st_file_attributes=0x410, st_reparse_tag=tag)
+    calls = []
+    monkeypatch.setattr(Path, 'lstat', lambda path, *a, **kw:
+                        metadata if path == stage else lstat(path, *a, **kw))
+    monkeypatch.setattr(publisher, '_native_move', lambda *args: calls.append(args))
+    with pytest.raises(OSError):
+        publisher.publish_directory_no_replace(stage, destination)
+    assert not calls and not os.path.lexists(destination)
+    assert (stage / 'nested' / 'payload.txt').read_bytes() == b'complete authored payload'
+
+
+@pytest.mark.skipif(os.name != 'nt', reason='native Windows junction creation is required')
+def test_native_windows_stage_junction_is_not_published(tmp_path):
+    publisher = api()
+    target = staged(tmp_path, 'junction-target')
+    stage = tmp_path / 'stage-junction'
+    destination = tmp_path / 'destination'
+    command = Path(os.environ['SystemRoot']) / 'System32' / 'cmd.exe'
+    created = subprocess.run([str(command), '/d', '/c', 'mklink', '/J', str(stage), str(target)],
+                             capture_output=True, text=True, timeout=10, check=False)
+    if created.returncode:
+        pytest.skip(f'native Windows junction capability unavailable (exit {created.returncode})')
+    assert stage.is_junction() and stage.lstat().st_file_attributes & 0x400
+    with pytest.raises(OSError):
+        publisher.publish_directory_no_replace(stage, destination)
+    assert stage.is_junction() and not os.path.lexists(destination)
+    assert (target / 'nested' / 'payload.txt').read_bytes() == b'complete authored payload'
 
 
 @pytest.mark.parametrize('code', [errno.EXDEV, errno.ENOSYS, errno.EINVAL, errno.EOPNOTSUPP, errno.EACCES, errno.EIO])

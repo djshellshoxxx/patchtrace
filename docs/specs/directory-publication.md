@@ -11,6 +11,10 @@ paths to siblings under the caller-controlled parent. The stage is an ordinary
 directory privately created and populated by that caller. Embedded NUL is
 refused before any native C-string conversion. Source links and nonsibling or
 relative paths are outside this internal contract and are refused.
+On Windows, the source's `lstat` reparse-point attribute is also refused,
+regardless of the reported directory mode or reparse tag. Junctions can retain
+directory mode and cannot be admitted by an `S_ISDIR` check alone. Portable
+metadata controls are separate from a native Windows junction control.
 
 The final publication is one native operation that refuses **any existing
 destination entry**, including an empty directory, a file or a dangling link.
