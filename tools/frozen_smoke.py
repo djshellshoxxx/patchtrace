@@ -1,6 +1,6 @@
 """Headless smoke of the frozen desktop executable (windows-acceptance spec section 2).
 
-usage: frozen_smoke.py PATH_TO_PatchTrace.exe
+usage: frozen_smoke.py PATH_TO_FROZEN_EXECUTABLE
 
 Checks (each prints PASS/FAIL; any FAIL gives exit 1):
   A1  every command answers --help with exit 0 and `usage:` on stdout
@@ -30,7 +30,9 @@ Checks (each prints PASS/FAIL; any FAIL gives exit 1):
 Project and series fixtures are written by the host interpreter (the source tree, `pip install -e`); only the
 program under test is launched as a subprocess. `run_checks` is also used by tests/test_acceptance_smoke.py
 with `python -m patchtrace` as the launcher, which verifies the logic everywhere but proves nothing about the
-frozen package: only the Windows CI step does.
+frozen package. The Windows CI step and Linux builder invoke this same harness
+against their staged executables; frozen compatibility requires an actual
+successful run on the exact packaged source and platform.
 """
 from __future__ import annotations
 
