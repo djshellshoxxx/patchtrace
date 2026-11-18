@@ -257,7 +257,7 @@ def test_linux_native_errors_do_not_trigger_weaker_fallback(tmp_path, monkeypatc
         return -1
 
     monkeypatch.setattr(publisher, 'sys', SimpleNamespace(platform='linux'))
-    monkeypatch.setattr(publisher.ctypes, 'CDLL', lambda *a, **kw: SimpleNamespace(renameat2=native))
+    monkeypatch.setattr(ctypes, 'CDLL', lambda *a, **kw: SimpleNamespace(renameat2=native))
     monkeypatch.setattr(publisher.os, 'rename', lambda *_: pytest.fail('unsafe fallback'))
     monkeypatch.setattr(publisher.os, 'replace', lambda *_: pytest.fail('unsafe fallback'))
     with pytest.raises(OSError) as caught:
@@ -273,7 +273,7 @@ def test_unavailable_native_operation_fails_closed(tmp_path, monkeypatch, platfo
     stage = staged(tmp_path)
     destination = tmp_path / 'destination'
     monkeypatch.setattr(publisher, 'sys', SimpleNamespace(platform='linux' if platform == 'missing-libc-symbol' else 'other'))
-    monkeypatch.setattr(publisher.ctypes, 'CDLL', lambda *a, **kw: SimpleNamespace())
+    monkeypatch.setattr(ctypes, 'CDLL', lambda *a, **kw: SimpleNamespace())
     monkeypatch.setattr(publisher.os, 'rename', lambda *_: pytest.fail('unsafe fallback'))
     with pytest.raises(OSError) as caught:
         publisher.publish_directory_no_replace(stage, destination)
@@ -287,6 +287,6 @@ def test_windows_dispatch_uses_the_existing_nonreplacing_python_primitive(tmp_pa
     calls = []
     monkeypatch.setattr(publisher, 'sys', SimpleNamespace(platform='win32'))
     monkeypatch.setattr(publisher.os, 'rename', lambda *args: calls.append(args))
-    monkeypatch.setattr(publisher.ctypes, 'CDLL', lambda *_a, **_k: pytest.fail('Windows loaded Linux primitive'))
+    monkeypatch.setattr(ctypes, 'CDLL', lambda *_a, **_k: pytest.fail('Windows loaded Linux primitive'))
     publisher.publish_directory_no_replace(stage, destination)
     assert calls == [(stage, destination)]

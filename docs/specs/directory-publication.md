@@ -35,6 +35,22 @@ retry with a weaker primitive. No architecture-dependent raw syscall number,
 external executable, new dependency, network operation or target execution is
 introduced. Existing backup and offline-installer error envelopes remain.
 
+## Import boundary (2026-11-18)
+
+Importing the publisher and its pure IR/ingestion callers must not load ctypes,
+Qt, subprocess or network modules. Load the Linux FFI only when the validated
+publication operation selects the Linux native path. Windows dispatch and
+unsupported-platform refusal happen before that import; invalid paths also
+refuse before native dependencies are loaded. If the Linux FFI is unavailable,
+the publication fails without a weaker fallback or any source/destination
+mutation. This changes import timing only: native calls, errno propagation,
+path admission, reparse refusal and caller-owned cleanup remain as specified.
+
+Fresh-interpreter controls must preserve the original IR import-purity assertion
+and prove both import refusal boundaries and the existing publication behavior.
+Authored Windows dispatch remains a portable contract control, never native
+Windows acceptance. Existing POSIX/Windows ownership controls remain required.
+
 ## Ownership boundary
 
 The caller retains the existing controlled parent and private-stage ownership
