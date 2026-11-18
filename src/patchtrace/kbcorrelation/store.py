@@ -29,6 +29,7 @@ from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
+from ..input_readers import HeldInput, InputReadError, PairInputReaders
 from ..owned_publication import (
     OwnedPublicationError,
     directory_anchor,
@@ -527,12 +528,36 @@ class AttachRequest:
     selected_product: ProductScope | None = None
 
 
-def _file_sha(path: str) -> str:
+def _check_input_readers(readers: PairInputReaders | None, older: str, newer: str) -> None:
+    if readers is not None:
+        readers.checkpoint(0)
+        readers.older.check(Path(older))
+        readers.newer.check(Path(newer))
+        readers.checkpoint(0)
+
+
+def _reader_options(readers: PairInputReaders | None) -> tuple[dict, dict]:
+    return ({}, {}) if readers is None else ({'reader': readers.older}, {'reader': readers.newer})
+
+
+def _input_block(handle, *, held: bool) -> bytes:
+    block = handle.read(1 << 20)
+    if held and (type(block) is not bytes or len(block) > 1 << 20):
+        raise InputReadError('invalid')
+    return block
+
+
+def _file_sha(path: str, *, reader: HeldInput | None = None) -> str:
     digest = hashlib.sha256()
+    target = Path(path)
     try:
-        with open(path, 'rb') as handle:
-            for block in iter(lambda: handle.read(1 << 20), b''):
+        if reader is not None:
+            reader.check(target)
+        with (open(path, 'rb') if reader is None else reader.open_reader(target)) as handle:
+            for block in iter(lambda: _input_block(handle, held=reader is not None), b''):
                 digest.update(block)
+        if reader is not None:
+            reader.check(target)
     except OSError as exc:
         raise KbcStoreError('PT-KBC-VERIFY', 'an input file cannot be read', details={'errno': exc.errno}) from exc
     return digest.hexdigest()
@@ -545,9 +570,11 @@ def _revision_of(body: dict) -> InvestigationRevision:
 class ProjectAttachment:
     """Two-phase, journalled attach of an investigation to a new project; ``attach`` and ``resume`` share one path."""
 
-    def __init__(self, workspace: WorkspaceStore, project: ProjectPort):
+    def __init__(self, workspace: WorkspaceStore, project: ProjectPort, *,
+                 input_readers: PairInputReaders | None = None):
         self.ws = workspace
         self.project = project
+        self._input_readers = input_readers
         self.fault = workspace.fault
         self.clock = workspace.clock
 
@@ -592,6 +619,7 @@ class ProjectAttachment:
             'newer': request.newer_sha, 'directory': Path(request.directory).resolve().as_posix()})
 
     def _begin(self, op_id: str, request: AttachRequest) -> None:
+        _check_input_readers(self._input_readers, request.older_path, request.newer_path)
         current = self.ws.current_revision(request.revision.investigation_id)
         if current is None or current.revision != request.revision.revision or current.state != 'BYTES_VERIFIED':
             raise KbcStoreError('PT-KBC-STALE', 'attach needs the current BYTES_VERIFIED revision')
@@ -601,14 +629,16 @@ class ProjectAttachment:
             raise KbcStoreError('PT-KBC-INPUT', 'the captured product must match the product-only investigation')
         if request.older_sha == request.newer_sha:
             raise KbcStoreError('PT-KBC-VERIFY', 'the two sides are the same bytes')
-        for path, sha in ((request.older_path, request.older_sha), (request.newer_path, request.newer_sha)):
-            if _file_sha(path) != sha:
+        files = ((request.older_path, request.older_sha), (request.newer_path, request.newer_sha))
+        for (path, sha), options in zip(files, _reader_options(self._input_readers), strict=True):
+            if _file_sha(path, **options) != sha:
                 raise KbcStoreError('PT-KBC-VERIFY', 'an input file does not match its verified SHA-256')
         directory = Path(request.directory)
         if not creation_directory_available(directory):
             raise KbcStoreError('PT-KBC-STORAGE', 'the project directory exists and is not empty')
         for sha in request.source_shas:
             self.ws.read_object(sha)  # fail before any side effect if a source object is damaged
+        _check_input_readers(self._input_readers, request.older_path, request.newer_path)
         self.ws.journal_put(op_id, 'intent', {
             'state': 'intent', 'directory': directory.resolve().as_posix(), 'older_path': request.older_path,
             'newer_path': request.newer_path, 'older_sha': request.older_sha, 'newer_sha': request.newer_sha,
@@ -621,12 +651,15 @@ class ProjectAttachment:
 
     def _create(self, op_id: str, body: dict) -> dict:
         # Re-verify: a resume may run long after the intent was written.
-        for path, sha in ((body['older_path'], body['older_sha']), (body['newer_path'], body['newer_sha'])):
-            if _file_sha(path) != sha:
+        _check_input_readers(self._input_readers, body['older_path'], body['newer_path'])
+        files = ((body['older_path'], body['older_sha']), (body['newer_path'], body['newer_sha']))
+        for (path, sha), options in zip(files, _reader_options(self._input_readers), strict=True):
+            if _file_sha(path, **options) != sha:
                 raise KbcStoreError('PT-KBC-VERIFY', 'an input file changed since it was verified')
+        _check_input_readers(self._input_readers, body['older_path'], body['newer_path'])
         try:
             made = self.project.create_project(body['older_path'], body['newer_path'], directory=body['directory'])
-        except KbcStoreError:
+        except (KbcStoreError, InputReadError):
             raise
         except Exception as exc:
             raise KbcStoreError('PT-KBC-STORAGE', 'the project could not be created',

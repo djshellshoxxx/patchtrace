@@ -21,6 +21,7 @@ from typing import Any, Protocol
 
 from pydantic import ValidationError
 
+from ..input_readers import HeldInput, PairInputReaders
 from . import components as comp
 from . import pairs as pr
 from . import resolver
@@ -54,7 +55,16 @@ from .recovery import repair
 from .saved_scope import SavedScopeError
 from .saved_scope import resolve as saved_scope
 from .sources.cvrf import SourceError, load_json
-from .store import AttachRequest, Fault, KbcStoreError, ProjectAttachment, WorkspaceStore, atomic_write
+from .store import (
+    AttachRequest,
+    Fault,
+    KbcStoreError,
+    ProjectAttachment,
+    WorkspaceStore,
+    _check_input_readers,
+    _reader_options,
+    atomic_write,
+)
 from .workflow import Event
 
 RELATION_LABEL = {
@@ -102,14 +112,23 @@ class ProjectAccess(ProjectPort, Protocol):
     def list_rows(self, project_id: str, kind: str) -> Mapping[str, bytes]: ...
 
 
+class FileInspector(Protocol):
+    def __call__(self, path: str, *, reader: HeldInput | None = None) -> LocalFile: ...
+
+
+class ProjectFactory(Protocol):
+    def __call__(self, workspace: WorkspaceStore | None, name: str, *,
+                 input_readers: PairInputReaders | None = None) -> ProjectAccess: ...
+
+
 @dataclass(frozen=True)
 class Env:
     advisory: AdvisoryPort
     clock: ClockPort
     rules: RulesPort
-    inspect: Callable[[str], LocalFile]
+    inspect: FileInspector
     escape: Callable[[str], str]
-    project: Callable[[WorkspaceStore | None, str], ProjectAccess]
+    project: ProjectFactory
     fault: Fault | None = None
     file_index: Callable[[Path], FileIndex] | None = None
     acquirer: AcquirePort | None = None
@@ -743,11 +762,14 @@ class KbService:
                     confirm_same_component: bool = False, dry_run: bool = False,
                     expected_pair_id: str | None = None, expected_revision: int | None = None,
                     expected_source_snapshot: tuple[str, ...] | None = None,
-                    selected_product: ProductScope | None = None) -> Outcome:
+                    selected_product: ProductScope | None = None,
+                    input_readers: PairInputReaders | None = None) -> Outcome:
         if selected_product is not None and (investigation != 'new' or expected_revision is not None
                                              or expected_source_snapshot is None):
             raise _fail('PT-KBC-INPUT', 'A product-only pair needs a new investigation and captured source records.')
-        older_f, newer_f = self.env.inspect(older), self.env.inspect(newer)
+        _check_input_readers(input_readers, older, newer)
+        older_options, newer_options = _reader_options(input_readers)
+        older_f, newer_f = self.env.inspect(older, **older_options), self.env.inspect(newer, **newer_options)
         with self._open() as ws:
             rev = None if investigation == 'new' else self._get(ws, investigation)
             if expected_revision is not None and (rev is None or rev.revision != expected_revision):
@@ -785,6 +807,7 @@ class KbService:
             if expected_pair_id is not None and pair.pair_id != expected_pair_id:
                 raise _fail('PT-KBC-STALE', 'the binary pair or product changed after preview; review the pair again')
             plan = local_plan(pair)
+            _check_input_readers(input_readers, older, newer)
             if pair.grade == 'X':
                 return self._blocked(pair)
             if dry_run:
@@ -806,9 +829,10 @@ class KbService:
                                     older_sha=pair.older.sha256, newer_sha=pair.newer.sha256, directory=directory,
                                     source_shas=tuple(d.sha256 for d in bundle.sources), plan_sha=plan.plan_sha,
                                     selected_product=selected_product)
-            port = self.env.project(ws, clean_text(name or '', 200) or 'KB comparison')
-            outcome = ProjectAttachment(ws, port).attach(request, ((bundle.context_key,
-                                                                    bundle.model_dump_json().encode()),))
+            options = {'input_readers': input_readers} if input_readers is not None else {}
+            port = self.env.project(ws, clean_text(name or '', 200) or 'KB comparison', **options)
+            outcome = ProjectAttachment(ws, port, **options).attach(
+                request, ((bundle.context_key, bundle.model_dump_json().encode()),))
         return self._attach_outcome(outcome, rev.investigation_id, pair, plan.plan_sha, bundle.context_key)
 
     @staticmethod
