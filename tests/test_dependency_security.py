@@ -42,12 +42,17 @@ def inspected(root, *, packaging=False):
                 ('rule-engine', '3.0'), ('pip', '26.0'), ('setuptools', '85.0')]
     if packaging:
         packages.append(('builder', '6.2'))
-    result = {'version': '1', 'pip_version': '26.0',
-              'environment': {'platform_system': 'Linux', 'python_version': '3.12'},
+    result = {'version': '1', 'pip_version': '26.0', 'environment': native_environment(),
               'installed': [{'metadata': {'name': name, 'version': version}}
                             for name, version in packages]}
     result['installed'][0]['direct_url'] = {'url': root.as_uri(), 'dir_info': {'editable': True}}
     return result
+
+
+def native_environment():
+    return {'platform_system': 'Linux', 'python_version': '3.12', 'python_full_version': '3.12.14',
+            'implementation_name': 'cpython', 'implementation_version': '3.12.14',
+            'platform_python_implementation': 'CPython', 'platform_machine': 'x86_64'}
 
 
 def encoded(data):
@@ -324,7 +329,7 @@ def installation_report(packages, root):
                 {'url': f'https://files.pythonhosted.org/packages/{name}-{version}-py3-none-any.whl',
                  'archive_info': {'hashes': {'sha256': 'f' * 64}}})
         rows.append({'metadata': {'name': name, 'version': version}, 'download_info': info, 'is_yanked': False})
-    return {'version': '1', 'pip_version': '26.0', 'install': rows}
+    return {'version': '1', 'pip_version': '26.0', 'environment': native_environment(), 'install': rows}
 
 
 def authored_evidence(scan, out, root, project, *, static=False):
@@ -338,8 +343,7 @@ def authored_evidence(scan, out, root, project, *, static=False):
         receipt = {'argv': argv, 'exit_code': 0, 'timed_out': False, 'output_limited': False, 'error': None,
                    'started_at': dt.datetime.now(dt.UTC).isoformat(), 'timeout_s': 600, 'elapsed_s': 0.1}
         (out / f'{name}.process.json').write_text(json.dumps(receipt))
-    tooling = {'version': '1', 'pip_version': '26.0',
-               'environment': {'platform_system': 'Linux', 'python_version': '3.12'},
+    tooling = {'version': '1', 'pip_version': '26.0', 'environment': native_environment(),
                'installed': [{'metadata': {'name': name, 'version': version}}
                              for name, version in [('pip', '26.0'), ('ruff', '0.17.5'), ('pip-audit', '2.10.1')]]}
     (out / 'scanner-inspect.stdout').write_bytes(encoded(tooling))
@@ -351,7 +355,7 @@ def authored_evidence(scan, out, root, project, *, static=False):
     for label in environments:
         identity = {'executable': scan.python_path(out, f'{label}-env'), 'version': '3.12.14',
                     'prefix': str(out / f'{label}-env'), 'base_prefix': str(out / 'controller'),
-                    'implementation': 'CPython', 'system': 'Linux', 'ensurepip': '26.0'}
+                    'implementation': 'CPython', 'system': 'Linux', 'machine': 'x86_64', 'ensurepip': '26.0'}
         (out / f'{label}-identity.stdout').write_bytes(encoded(identity))
     if static:
         (out / 'static.stdout').write_bytes(b'[]')
@@ -471,3 +475,82 @@ def test_source_scanner_does_not_follow_tracked_outside_symlink(scan, tmp_path):
     git('commit', '-qm', 'Authored external symlink')
     with pytest.raises(scan.EvidenceError):
         scan.checked_tree(root, git('rev-parse', 'HEAD'))
+
+
+@pytest.mark.parametrize('field', ['python_full_version', 'python_version', 'platform_system',
+                                   'platform_machine', 'implementation_name', 'implementation_version',
+                                   'platform_python_implementation'])
+@pytest.mark.parametrize('mutation', ['missing', 'wrong', 'wrong-type'])
+def test_inventory_requires_complete_matching_native_interpreter_metadata(scan, tmp_path, field, mutation):
+    identity = {'executable': str(tmp_path / 'env/bin/python'), 'prefix': str(tmp_path / 'env'),
+                'base_prefix': str(tmp_path / 'base'), 'version': '3.12.14', 'implementation': 'CPython',
+                'system': 'Linux', 'machine': 'x86_64', 'ensurepip': '26.0'}
+    inspect = inspected(tmp_path)
+    if mutation == 'missing':
+        inspect['environment'].pop(field)
+    else:
+        inspect['environment'][field] = 'unrelated' if mutation == 'wrong' else None
+    with pytest.raises(scan.EvidenceError):
+        scan.validate_interpreter(identity, identity['executable'], 'Linux', inspect)
+
+
+@pytest.mark.parametrize('field', ['version', 'implementation', 'machine', 'executable', 'prefix',
+                                   'base_prefix', 'system', 'ensurepip'])
+def test_interpreter_identity_missing_fields_are_not_verified(scan, tmp_path, field):
+    identity = {'executable': str(tmp_path / 'env/bin/python'), 'prefix': str(tmp_path / 'env'),
+                'base_prefix': str(tmp_path / 'base'), 'version': '3.12.14', 'implementation': 'CPython',
+                'system': 'Linux', 'machine': 'x86_64', 'ensurepip': '26.0'}
+    python = identity['executable']
+    identity.pop(field)
+    with pytest.raises(scan.EvidenceError):
+        scan.validate_interpreter(identity, python, 'Linux', inspected(tmp_path))
+
+
+@pytest.mark.parametrize(('where', 'mutation'), [
+    ('inspect-pip', 'different'), ('report-pip', 'different'), ('report-pip', 'missing'),
+    ('report-environment', 'different'), ('report-environment', 'missing'),
+    ('report-environment', 'incomplete'), ('report-environment', 'wrong-type'),
+])
+def test_installation_requires_same_pip_and_complete_environment(scan, tmp_path, project, where, mutation):
+    out = tmp_path / 'evidence'
+    out.mkdir()
+    authored_evidence(scan, out, tmp_path, project)
+    inspect = scan.read_json(out / 'profile-inspect.stdout')
+    identity = scan.read_json(out / 'profile-identity.stdout')
+    reports = [scan.read_json(out / 'build-install.json'), scan.read_json(out / 'profile-install.json')]
+    if where == 'inspect-pip':
+        inspect['pip_version'] = '27.0'
+    elif where == 'report-pip':
+        if mutation == 'missing':
+            reports[0].pop('pip_version')
+        else:
+            reports[0]['pip_version'] = '27.0'
+    elif mutation == 'missing':
+        reports[0].pop('environment')
+    elif mutation == 'incomplete':
+        reports[0]['environment'].pop('platform_machine')
+    elif mutation == 'wrong-type':
+        reports[0]['environment']['platform_machine'] = None
+    else:
+        reports[0]['environment']['platform_system'] = 'Windows'
+    with pytest.raises(scan.EvidenceError):
+        scan.validate_installation(inspect, identity, reports, tmp_path, owned=True)
+
+
+@pytest.mark.parametrize('requirement', ['--prefix=/unrelated', 'tool @ https://example.invalid/tool.whl',
+                                       'tool>=1; python_version > "3.10"', 'tool[extra]==1'])
+def test_unhandled_requirement_cannot_reach_an_installer_command(scan, tmp_path, project, requirement):
+    project['build-system']['requires'] = [requirement]
+    with pytest.raises(scan.EvidenceError):
+        scan.commands(tmp_path, tmp_path, project, 'runtime')
+
+
+@pytest.mark.parametrize('bad', [None, [], 'missing'])
+def test_malformed_interpreter_inputs_are_refused_with_a_receipt_error(scan, tmp_path, bad):
+    identity = {'executable': str(tmp_path / 'env/bin/python'), 'prefix': str(tmp_path / 'env'),
+                'base_prefix': str(tmp_path / 'base'), 'version': '3.12.14', 'implementation': 'CPython',
+                'system': 'Linux', 'machine': 'x86_64', 'ensurepip': '26.0'}
+    with pytest.raises(scan.EvidenceError):
+        scan.validate_interpreter(identity, identity['executable'], 'Linux', bad)
+    with pytest.raises(scan.EvidenceError):
+        scan.validate_installation(inspected(tmp_path), bad, [], tmp_path)

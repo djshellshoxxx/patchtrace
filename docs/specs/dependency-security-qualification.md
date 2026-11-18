@@ -40,6 +40,16 @@ Record the exact install command, pip installation report, interpreter identity,
 pip check outcome, and full pip inspect JSON. An installation report is evidence
 of that resolution; it is not treated as a lock file.
 
+Cross-check pip's environment against the independently executed interpreter
+identity: exact full Python and implementation versions, Python major/minor,
+implementation name and display name, native system and machine architecture.
+All required fields must be present strings; a partial matching prefix does not
+verify a different interpreter. The inspect pip version, installed pip version,
+bootstrap ensurepip version, and every installation-report pip version must
+agree. Every installation report must preserve the same complete environment
+mapping as the final inspection. Missing or contradictory provenance fails even
+when the dependency names and versions otherwise appear consistent.
+
 Require all installed distributions, including transitive/bootstrap packages,
 to be uniquely represented. Only the one patchtrace distribution may be
 classified repository-owned, after its name/version and editable direct origin
@@ -57,7 +67,10 @@ reports; the bootstrap pip identity must match that interpreter's ensurepip.
 Currently selected requirements use plain names, exact versions or numeric
 version bounds. Refuse an unsupported requirement/marker/version form instead of
 guessing whether it is satisfied. Preserve that limitation if project metadata
-later gains more expressive requirements.
+later gains more expressive requirements. Validate this subset before constructing
+or launching installer commands; an unsupported requirement is never forwarded as
+an installer option. Malformed interpreter or report shapes produce a recorded
+refusal rather than being treated as absent optional provenance.
 
 Generate fully pinned audit requirements from all remaining installed
 distributions. Audit that already-resolved closure using pinned pip-audit 2.10.1,

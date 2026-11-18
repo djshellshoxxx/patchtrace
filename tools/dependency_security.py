@@ -139,20 +139,28 @@ def selected_requirements(project, profile):
     return [item for group in groups for item in group]
 
 
+def requirement_parts(requirement):
+    """Parse the repository's bounded subset before any installer sees an argv."""
+    require(isinstance(requirement, str) and len(requirement) <= 1000, 'invalid selected requirement')
+    match = re.fullmatch(r'([A-Za-z0-9][A-Za-z0-9._-]*)([^\s;\[\]@]+)', requirement)
+    require(match is not None, 'unsupported selected requirement syntax')
+    bounds = []
+    for constraint in match[2].split(','):
+        bound = re.fullmatch(r'(==|>=|<=|<|>)([0-9][A-Za-z0-9.!+_-]*)', constraint)
+        require(bound is not None and VERSION.fullmatch(bound[2]), 'unsupported selected version constraint')
+        require(bound[1] == '==' or NUMERIC.fullmatch(bound[2]), 'unsupported nonnumeric version bound')
+        bounds.append(bound.groups())
+    return canonical_name(match[1]), bounds
+
+
 def require_selected(installed, requirements):
     """The repository uses this bounded subset; new PEP 508 forms fail closed."""
     require(len(requirements) <= MAX_ITEMS, 'too many selected requirements')
     for requirement in requirements:
-        require(isinstance(requirement, str), 'invalid selected requirement')
-        match = re.fullmatch(r'([A-Za-z0-9][A-Za-z0-9._-]*)([^\s;\[\]@]+)', requirement)
-        require(match is not None, 'unsupported selected requirement syntax')
-        name, constraints = canonical_name(match[1]), match[2]
+        name, bounds = requirement_parts(requirement)
         require(name in installed, f'{name}: selected dependency is missing')
         version = installed[name][0]
-        for constraint in constraints.split(','):
-            bound = re.fullmatch(r'(==|>=|<=|<|>)([0-9][A-Za-z0-9.!+_-]*)', constraint)
-            require(bound is not None, 'unsupported selected version constraint')
-            operator, wanted = bound.groups()
+        for operator, wanted in bounds:
             if operator == '==':
                 require(version == wanted, f'{name}: installed version differs from exact requirement')
                 continue
@@ -417,6 +425,9 @@ def static_argv(python, root):
 
 
 def commands(out, root, project, profile):
+    if profile != 'static':
+        for requirement in selected_requirements(project, profile):
+            requirement_parts(requirement)
     scanner, product = python_path(out, 'scanner-env'), python_path(out, 'profile-env')
     pins = [f'{name}=={version}' for name, version in PINS.items() if profile != 'static' or name == 'ruff']
     result = {
@@ -443,22 +454,39 @@ def commands(out, root, project, profile):
 
 
 def validate_interpreter(identity, python, system, inspect):
-    require(isinstance(identity, dict) and identity.get('system') == system and
-            identity.get('implementation') == 'CPython', 'interpreter platform/implementation differs')
-    require(identity.get('prefix') != identity.get('base_prefix') and
-            Path(identity.get('executable', '')).absolute() == Path(python).absolute(),
+    fields = ('executable', 'prefix', 'base_prefix', 'version', 'implementation', 'system', 'machine', 'ensurepip')
+    require(isinstance(identity, dict) and all(isinstance(identity.get(key), str) and identity[key] for key in fields),
+            'missing or malformed interpreter identity')
+    require(identity['system'] == system and system in PLATFORMS.values() and
+            identity['implementation'] == 'CPython', 'interpreter platform/implementation differs')
+    require(Path(identity['prefix']).absolute() != Path(identity['base_prefix']).absolute() and
+            Path(identity['executable']).absolute() == Path(python).absolute() and
+            Path(python).absolute().parent.parent == Path(identity['prefix']).absolute(),
             'inventory interpreter is not the requested isolated environment')
-    require(identity.get('version', '').startswith('3.12.'), 'scan interpreter is not Python 3.12')
+    require(re.fullmatch(r'3\.12\.[0-9]+', identity['version']) and VERSION.fullmatch(identity['ensurepip']),
+            'scan interpreter/bootstrap version is malformed or not stable Python 3.12')
+    require(isinstance(inspect, dict), 'missing or malformed interpreter inspection')
     environment = inspect.get('environment', {})
-    require(environment.get('platform_system') == system and environment.get('python_version') == '3.12',
+    require(isinstance(environment, dict) and 7 <= len(environment) <= 32 and
+            all(isinstance(key, str) and isinstance(value, str) and value for key, value in environment.items()),
+            'missing or malformed pip interpreter environment')
+    expected = {'platform_system': system, 'python_version': '3.12', 'python_full_version': identity['version'],
+                'implementation_name': 'cpython', 'implementation_version': identity['version'],
+                'platform_python_implementation': identity['implementation'], 'platform_machine': identity['machine']}
+    require(all(environment.get(key) == value for key, value in expected.items()),
             'pip inspect interpreter metadata differs')
 
 
 def validate_installation(inspect, identity, reports, root, *, owned=False):
     installed, reported = distributions(inspect), {}
+    require(isinstance(identity, dict), 'missing or malformed interpreter identity')
+    validate_interpreter(identity, identity.get('executable'), identity.get('system'), inspect)
+    require('pip' in installed and inspect['pip_version'] == installed['pip'][0] == identity['ensurepip'],
+            'inspect/installed/bootstrap pip identities differ')
     for report in reports:
         require(isinstance(report, dict) and report.get('version') == '1' and
-                isinstance(report.get('pip_version'), str) and isinstance(report.get('install'), list) and
+                report.get('pip_version') == inspect['pip_version'] and
+                report.get('environment') == inspect['environment'] and isinstance(report.get('install'), list) and
                 0 < len(report['install']) <= MAX_ITEMS, 'invalid installation report')
         for row in report['install']:
             require(isinstance(row, dict) and row.get('is_yanked') is False, 'yanked or malformed installation')
@@ -478,7 +506,6 @@ def validate_installation(inspect, identity, reports, root, *, owned=False):
                 require(isinstance(hashes, dict) and isinstance(hashes.get('sha256'), str) and
                         SHA256.fullmatch(hashes['sha256']), 'missing installed wheel digest')
             reported[name] = version
-    require('pip' in installed and installed['pip'][0] == identity.get('ensurepip'), 'bootstrap pip identity differs')
     require(set(installed) == set(reported) | {'pip'}, 'installed distribution has no build/install origin receipt')
 
 
