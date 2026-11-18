@@ -15,7 +15,9 @@ from test_release_qualification import authored_checkout
 
 @pytest.fixture
 def gate():
-    return importlib.import_module('tools.release_qualification')
+    module = importlib.import_module('tools.release_qualification')
+    assert Path(module.__file__).resolve() == Path(__file__).resolve().parents[1] / 'tools/release_qualification.py'
+    return module
 
 
 class OSView:
