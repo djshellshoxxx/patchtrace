@@ -5,6 +5,7 @@ import hashlib
 import os
 import stat
 import struct
+import sys
 import tempfile
 from contextlib import contextmanager
 from itertools import chain
@@ -298,7 +299,13 @@ def inspect_artifact(path: Path, side: str, root: Path, *,
         raise ValueError(f'PT-INPUT: cannot read or preserve input: {exc.strerror or exc}') from exc
     finally:
         if stage is not None:
-            stage.unlink(missing_ok=True)
+            primary = sys.exception()
+            try:
+                stage.unlink(missing_ok=True)
+            except OSError:
+                if primary is None:
+                    raise
+                primary.add_note('PT-STORAGE: input staging cleanup failed; temporary bytes may remain')
 
 
 def verify_artifact(artifact: Artifact, root: Path, *, checkpoint: ReadCheckpoint | None = None) -> None:
