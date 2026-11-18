@@ -1968,3 +1968,11 @@ sweep. Whole Ruff and whitespace pass. UI host, generic settings limits, schemas
 and enrichment storage are unchanged. Independent review and combined current-head,
 hosted, Windows and native/manual gates remain open.
 [Commands, source identities and preserved failures](qa/saved-search-workflow-20261118.md).
+
+### 2026-11-18 saved-search delayed Build repair
+
+Independent review reproduced recalled text executing on an earlier Build completion.
+Source `c30c7911` binds autosubmit to the captured query generation. Regression red
+1 failed/1 passed; affected rerun 376 passed; unchanged independent reproducer author
+replay 1 passed; whole Ruff passed. See [receipt](qa/saved-search-build-race-20261118.md).
+Independent recheck/full combined/native gates remain separate.

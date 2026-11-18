@@ -1437,3 +1437,9 @@ Full `QT_QPA_PLATFORM=offscreen python -m pytest -q` for this isolated native sl
 - [x] Wire the existing stores with compatible mode/filter replay, project/epoch guards, bounded per-user text recall and explicit saved run/delete actions; preserve and correct both self-review defects.
 - [x] Pass the 374-test affected selection, actual default GUI and current-source headless CLI journeys, global tooltip coverage and whole Ruff without changing generic settings, project schemas or the UI host.
 - [ ] Independently review source `e705974b` with spec/test-first `ada1a164`; publish as a focused follow-on to the retained integration and complete actual-head/hosted/native/manual gates. [QA receipt](../docs/qa/saved-search-workflow-20261118.md).
+
+### 2026-11-18 saved-search review follow-up
+
+- [x] Repair delayed Build autosubmit after recent recall; preserve coverage and normal Build behavior (`c30c7911`).
+- [x] Preserve independent red and authored red/green receipts; affected selection 376 passed.
+- [ ] Root independent recheck and combined qualification/publication.

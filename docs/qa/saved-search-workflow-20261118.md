@@ -133,3 +133,10 @@ acceptance and broader performance gates remain separate. No target binary,
 analysis engine, network acquisition or model provider ran for this work. The
 older tool/advisory source-snapshot wiring gap remains a distinct scope; this
 change does not claim completion of every planned search capability.
+
+## Subsequent independent-review repair
+
+Root later found a delayed Build completion executing recalled recent text without
+Enter. The original results above remain historical. Source `c30c7911` binds
+automatic submission to the captured query generation; the [repair receipt](saved-search-build-race-20261118.md)
+retains the independent failure and 376-test affected qualification.
