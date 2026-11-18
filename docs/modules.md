@@ -1,5 +1,9 @@
 # Module index
 
+| Module | Responsibility | Verification seam |
+|---|---|---|
+| `tools/branch_inventory.py` | Read-only full-history branch ancestry, patch evidence and exact-tip inventory replay; no ref mutation or deletion authorization | Real authored Git graphs and atomic report preservation in `tests/test_branch_inventory.py` |
+
 ### November 2026 continuation interfaces
 
 KEV CLI context continuation (2026-11-16): `pilot/collect.py:local_kev` reads the

@@ -53,7 +53,10 @@ successful generation so failures preserve the previous report.
 6. Retain every branch. The existing seven TSV columns remain compatible with
    existing readers; **every `delete_safe` value is `no`**. The `note` column is
    a JSON object containing the evidence. No similarity percentage can authorize
-   closure, archiving or deletion. Do not run the archive script for this task.
+   closure, archiving or deletion. The successor excludes the archive/delete
+   helper from #301: its preflight snapshot did not protect a later deletion
+   against concurrent branch movement, and ref removal is outside this task.
+   The read-only inventory generator is the retained operational tool.
 
 Generation command (the PR JSON is an operator-saved REST snapshot):
 
