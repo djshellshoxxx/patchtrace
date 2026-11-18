@@ -207,4 +207,5 @@ These supporting contracts are cited by path; no numeric SPEC alias is allocated
 |---|---|---|---|
 | `docs/specs/dependency-security-qualification.md` | Exact-source dependency and security qualification | Implemented; external scanner and hosted acceptance remain separate gates | Dependency/security qualification tooling |
 | `docs/specs/directory-publication.md` | Atomic no-replacement publication of complete private directories | Implemented and independently reviewed; native Windows acceptance pending | Shared directory publisher, project backup and offline runtime installer |
+| `docs/specs/core-held-inputs.md` | Optional operation-held input readers and precommit read checkpoints | Neutral core candidate; KB/native/package composition and Windows qualification remain separate | Input reader protocols, ingestion and project creation/verification |
 | `docs/specs/windows-bindiff-network-acceptance.md` | Source-bound native BinDiff network-denial and process-ownership evidence | Portable validation independently reviewed; Windows build, containment and actual BinDiff acceptance pending | Windows native acceptance tooling and live BinDiff workflow |
