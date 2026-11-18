@@ -88,6 +88,16 @@ Project-backed report writes use `ProjectService.export_report` and pass `projec
 
 Committed report reads are non-mutating: `ProjectStore.load(*, recover_interrupted=True)` retains existing default startup recovery, while service export uses `recover_interrupted=False`. Export must neither mark queued/running records failed nor publish recovery/history changes, including when a destination is refused; normal reopen recovery remains unchanged.
 
+The optional core admission identity/checkpoint extension is specified in
+`core-held-inputs.md`. A supplied `ProjectService.create(..., project_id=...)`
+uses the existing strict bounded ID field and first-save transaction, with
+validation before store/source I/O and no additional reuse/deletion authority.
+`ProjectService.open` can explicitly forward `recover_interrupted=False` and the
+original read checkpoint; callers requiring a non-mutating read also select
+`maintenance=False`. Defaults preserve current startup behavior. Failed owned
+opens close their resources and preserve the primary failure if close also fails;
+committed or uncertain project data is never creation-rolled-back by this path.
+
 
 ## Failed initial project creation ownership (2026-11-05)
 

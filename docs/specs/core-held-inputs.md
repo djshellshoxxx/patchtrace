@@ -95,3 +95,63 @@ immediately before COMMIT. Brand-new cleanup, preexisting empty/zero-byte retry,
 foreign-file preservation, cached verification and ordinary call shapes remain
 positive controls. Portable descriptor tests are not Windows sharing or frozen
 package qualification.
+
+## Preallocated creation identity and postcommit reads
+
+`ProjectService.create(..., project_id=None)` optionally commits a caller-chosen
+ID through the existing project model. Validate a supplied value with the strict
+bounded `Record.id` contract before store creation, source I/O or held-reader
+checks. Omission retains default UUID generation and existing injected call
+shapes. This does not tighten historical IDs to UUIDs, add a project/schema field,
+authorize reuse of a committed database, or bypass full input/aggregate/ownership
+validation. Eligible empty/zero-byte retries retain their existing rules.
+
+The returned identity must come from the actual saved/validated project. An
+exception after COMMIT is not proof that no project exists: keep the existing
+committed/unknown-outcome retention policy. A caller's expected ID, equal pair
+hashes or directory existence does not grant deletion or adoption authority.
+Later package composition must durably bind the expected ID before create and
+compare the actual ID and side-keyed ordered hashes before association; those
+durable fields and the held-origin recovery marker are outside this core slice.
+
+`ProjectStore.load(..., checkpoint=None)` carries an explicitly supplied original
+operation callback through snapshot validation and `_verify_files`. Checks occur
+before reading and around payload/aggregate verification. Existing path reads
+charge actual bytes; cache hits still check without positive-byte charges.
+If interrupted-run recovery remains enabled, its existing save receives the same
+callback and existing pre-COMMIT check. No callback runs after that save commits.
+No callback is retained on the project/store for future unrelated operations.
+
+`ProjectService.open(..., maintenance=True, recover_interrupted=True,
+checkpoint=None)` forwards explicit nondefault options to the existing load.
+With a callback, check it before acquiring the store. When options are omitted,
+preserve the current `load()` and verification call shapes, including legacy
+injected functions without new keywords. `maintenance=False` skips legacy raw
+cleanup; `recover_interrupted=False` skips application recovery writes. Both are
+required for the package verifier's non-mutating read. Such a read changes no
+healthy project snapshot/history/raw bytes; the existing lock-holder record is
+still written, and this is not a new physically read-only SQLite mode.
+
+A failed open closes only the store acquired by that invocation, including when
+the primary failure is `KeyboardInterrupt` or `SystemExit`. If that close also
+fails, preserve the original failure object and add a fixed bounded note that
+resources may remain open. Do not echo secondary exception text, claim successful
+close, invoke creation rollback or delete project data. A close failure on an
+otherwise successful path remains observable through the existing close API.
+Neutral cancellation/limit reasons remain intact. Unknown committed results and
+foreign/preexisting projects remain retained.
+
+Postcommit reads use the same deadline/cancel/read-work callback, without new
+allowances or extraction-output charges. SQLite work, JSON validation and OS
+calls remain cooperative boundaries. This hook does not checkpoint legacy raw
+maintenance, enrichment backup/publication, package provenance or generic KB
+recovery. KB/facade propagation and held-origin CLI/GUI/native exposure remain
+separate, explicitly unqualified work.
+
+Required new controls precede implementation: real preallocated create/reopen;
+invalid-ID refusal before I/O; ordinary call compatibility; foreign/reused create
+refusal; first-save cancellation and after-commit retention; explicit no-recovery
+open with queued/running records; exact checkpoint and positive-byte propagation
+through artifact/raw/PE/cache reads; neutral-stop identity and connection closure;
+secondary-close masking; no callback retention; full corrupt-copy refusal; and
+checkpointed default recovery without a callback after its committed save.
