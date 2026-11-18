@@ -144,6 +144,33 @@ support. All parsed JSON numbers must remain finite, including exponent overflow
 inside otherwise unused metadata. Distinct platform artifacts must have distinct
 artifact IDs; one archive cannot qualify two platform results.
 
+Windows source-observation amendment (2026-11-18): the same byte guard is also
+used by native acceptance and dependency-profile producers. On supported
+CPython 3.12 Windows, a path stat reports creation time in `st_ctime_ns`, while
+the descriptor stat reports metadata change time. Path stat also synthesizes
+execute bits from `.exe`, `.com`, `.bat` and `.cmd` suffixes; descriptor stat
+does not. These observations are not interchangeable proof of a changed file.
+The inspected primary implementations are CPython v3.12.10
+[`win32_xstat` / `update_st_mode_from_path`](https://github.com/python/cpython/blob/v3.12.10/Modules/posixmodule.c)
+and [`_Py_fstat_noraise` / `_Py_attribute_data_to_stat`](https://github.com/python/cpython/blob/v3.12.10/Python/fileutils.c).
+
+Keep complete path state stable across path observations and complete descriptor
+state stable across descriptor observations. The Windows cross-view comparison
+must still bind device, file identity, physical mode without suffix-derived
+execute bits, size, modification time, explicit creation time and file attributes.
+Missing Windows observation fields are an unsupported source-verification error.
+Retain the full existing cross-view state comparison on other platforms. Continue
+hashing actual bytes against canonical Git blobs, checking parent identities and
+the final path states, and honoring the commit hold before any remote access.
+Do not remove change-time checks, trust index caches, or skip validation on Windows.
+
+Authored observation tests qualify this compatibility rule only. Native Windows
+tests must hash inert rewritten `.txt`, `.cmd` and `.exe` fixtures and retain
+both stat views; those filenames never authorize execution. A successful test
+does not supply BinDiff, dependency-scan, package or release acceptance. The
+historical hosted failure has no offending-path/stat-field diagnostics, so its
+precise field mismatch remains unobserved until a source-pinned native replay.
+
 Dependency/security lane candidate (2026-11-18): the reserved dependency audit
 job expands to four exact native OS/profile jobs, covering runtime and packaging
 inventories on ubuntu-latest and windows-latest. The critical audit step and
