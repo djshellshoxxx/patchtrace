@@ -133,6 +133,17 @@ automatically dispatched or polled indefinitely. The desktop/NSIS build artifact
 remain available independently of a publication hold. GitHub Pages is a separate
 site deployment workflow and is not invoked or changed by this release repair.
 
+Independent-review clarification (2026-11-18): source identity requires the actual
+tracked file bytes and modes to match the canonical commit tree. Do not trust Git
+replacement objects, index flags/stat caches, external diff drivers or clean
+filters as evidence of those bytes. Verify bounded regular-file/symlink content
+against canonical blob identities and refuse unsupported or changing entries.
+The two publishers run on Linux with canonical checkout bytes; a filtered
+checkout whose bytes differ must be refused, without changing product platform
+support. All parsed JSON numbers must remain finite, including exponent overflow
+inside otherwise unused metadata. Distinct platform artifacts must have distinct
+artifact IDs; one archive cannot qualify two platform results.
+
 ### 1.3 Verification after each release
 
 Replace `<TAG>` and `<SHA>`. Use an empty directory for downloads.

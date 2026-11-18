@@ -288,6 +288,19 @@ def test_strict_json_refuses_ambiguous_or_non_json_values(gate, raw):
         gate.strict_json(raw)
 
 
+@pytest.mark.parametrize('raw', [b'{"elapsed":1e999}', b'{"nested":[{"elapsed":-1e999}]}'])
+def test_overflowed_json_numbers_are_not_finite_evidence(gate, raw):
+    with pytest.raises(gate.QualificationError):
+        gate.strict_json(raw)
+
+
+def test_one_native_artifact_id_cannot_qualify_two_platforms(gate):
+    api = AuthoredAPI(gate)
+    artifacts = next(iter(api.artifacts_data.values()))
+    artifacts[1]['id'] = artifacts[0]['id']
+    assert not assess(gate, api)['qualified']
+
+
 def test_native_artifact_report_bytes_are_bounded_before_json(gate, monkeypatch):
     monkeypatch.setattr(gate, 'MAX_REPORT', 10)
     with pytest.raises(gate.QualificationError):
@@ -345,7 +358,7 @@ def authored_checkout(tmp_path, message='Authored qualification fixture'):
     root = tmp_path / 'source'
     root.mkdir()
     env = {**__import__('os').environ, 'GIT_CONFIG_NOSYSTEM': '1'}
-    commands = [['init', '-q'], ['config', 'user.name', 'Authored fixture'],
+    commands = [['init', '-q'], ['config', 'core.autocrlf', 'false'], ['config', 'user.name', 'Authored fixture'],
                 ['config', 'user.email', 'fixture@example.invalid']]
     (root / 'sample.txt').write_text('authored data\n')
     commands += [['add', 'sample.txt'], ['commit', '-q', '-m', message]]
@@ -353,6 +366,32 @@ def authored_checkout(tmp_path, message='Authored qualification fixture'):
         subprocess.run(['git', *args], cwd=root, env=env, check=True, capture_output=True)
     sha = subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=root, env=env, text=True).strip()
     return root, sha
+
+
+@pytest.mark.parametrize('mask', ['assume-unchanged', 'skip-worktree', 'replacement', 'stat-cache', 'clean-filter'])
+def test_source_identity_checks_bytes_independently_of_the_git_index(gate, tmp_path, mask):
+    import os
+    import subprocess
+
+    root, sha = authored_checkout(tmp_path)
+    file = root / 'sample.txt'
+    before = file.stat()
+    if mask in ('assume-unchanged', 'skip-worktree'):
+        subprocess.run(['git', 'update-index', '--' + mask, 'sample.txt'], cwd=root, check=True)
+    file.write_text('modified data\n')  # same length as original fixture
+    if mask == 'replacement':
+        subprocess.run(['git', 'add', 'sample.txt'], cwd=root, check=True)
+        subprocess.run(['git', 'commit', '-q', '-m', 'Authored replacement'], cwd=root, check=True)
+        replacement = subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=root, text=True).strip()
+        subprocess.run(['git', 'reset', '--soft', sha], cwd=root, check=True)
+        subprocess.run(['git', 'replace', sha, replacement], cwd=root, check=True)
+    if mask == 'stat-cache':
+        os.utime(file, ns=(before.st_atime_ns, before.st_mtime_ns))
+    if mask == 'clean-filter':
+        (root / '.git/info/attributes').write_text('sample.txt filter=hide\n')
+        subprocess.run(['git', 'config', 'filter.hide.clean', "printf 'authored data\\n'"], cwd=root, check=True)
+    with pytest.raises(gate.QualificationError):
+        gate.checked_source(root, sha)
 
 
 @pytest.mark.parametrize('mode', ['clean', 'wrong-head', 'modified', 'hold'])

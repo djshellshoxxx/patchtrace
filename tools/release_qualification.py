@@ -8,8 +8,10 @@ from __future__ import annotations
 import argparse
 import copy
 import datetime as dt
+import hashlib
 import io
 import json
+import math
 import os
 import re
 import stat
@@ -25,6 +27,8 @@ MAX_ARCHIVE = 64 * 1024 * 1024
 MAX_REPORT = 1024 * 1024
 MAX_PAGES = 10
 MAX_TAG_DEPTH = 8
+MAX_SOURCE_FILES = 50_000
+MAX_SOURCE_BYTES = 2 * 1024 * 1024 * 1024
 BINDIFF_CHECKS = frozenset({
     'probe', 'pinned_version', 'reversed_refused', 'end_to_end',
     'cancel_at_first_output', 'timeout_mid_run', 'no_network',
@@ -136,8 +140,14 @@ def strict_json(raw, limit=MAX_JSON):
     def constant(_):
         raise QualificationError('nonfinite JSON number')
 
+    def finite_float(token):
+        value = float(token)
+        require(math.isfinite(value), 'nonfinite JSON number')
+        return value
+
     try:
-        return json.loads(raw.decode('utf-8'), object_pairs_hook=pairs, parse_constant=constant)
+        return json.loads(raw.decode('utf-8'), object_pairs_hook=pairs, parse_constant=constant,
+                          parse_float=finite_float)
     except (ValueError, UnicodeError, RecursionError) as exc:
         raise QualificationError('invalid strict JSON evidence') from exc
 
@@ -348,6 +358,8 @@ def bindiff_report(raw):
 def native_artifacts(api, run, jobs, sha):
     artifacts = api.artifacts(run['id'])
     require(isinstance(artifacts, list) and len(artifacts) <= 1000, 'invalid native artifacts list')
+    require(all(isinstance(a, dict) and positive_int(a.get('id')) for a in artifacts) and
+            len({a['id'] for a in artifacts}) == len(artifacts), 'ambiguous native artifact identity')
     receipt = []
     for platform, job_platform in (('linux', 'ubuntu-22.04'), ('windows', 'windows-latest')):
         name = f'live-bindiff-{platform}'
@@ -469,16 +481,86 @@ def qualify(api, *, sha, current_run, profile, platforms, tag, assets, current_a
     return report
 
 
+def source_state(info):
+    return (info.st_dev, info.st_ino, info.st_mode, info.st_size, info.st_mtime_ns, info.st_ctime_ns)
+
+
+def source_blob(path, mode, size):
+    """Hash actual bytes in Git's blob format, independent of the index and filters."""
+    before = path.lstat()
+    # SHA-1 is the repository's Git object format, not a new security digest choice.
+    digest = hashlib.sha1(b'blob ' + str(size).encode('ascii') + b'\0', usedforsecurity=False)
+    if mode == b'120000':
+        require(stat.S_ISLNK(before.st_mode), 'tracked symlink type changed')
+        target = os.readlink(os.fsencode(path))
+        require(len(target) == size, 'tracked symlink bytes changed')
+        digest.update(target)
+    else:
+        require(stat.S_ISREG(before.st_mode) and before.st_size == size and
+                not getattr(before, 'st_file_attributes', 0) & 0x400, 'tracked file type or size changed')
+        if os.name != 'nt':
+            require(bool(before.st_mode & stat.S_IXUSR) == (mode == b'100755'), 'tracked executable mode changed')
+        flags = os.O_RDONLY | getattr(os, 'O_NOFOLLOW', 0) | getattr(os, 'O_NONBLOCK', 0)
+        with os.fdopen(os.open(path, flags), 'rb') as stream:
+            require(source_state(os.fstat(stream.fileno())) == source_state(before), 'tracked file changed at open')
+            remaining = size
+            while remaining:
+                chunk = stream.read(min(remaining, 1024 * 1024))
+                require(bool(chunk), 'tracked file shortened during verification')
+                remaining -= len(chunk)
+                digest.update(chunk)
+            require(not stream.read(1) and source_state(os.fstat(stream.fileno())) == source_state(before),
+                    'tracked file changed during verification')
+    require(source_state(path.lstat()) == source_state(before), 'tracked source entry was replaced')
+    return digest.hexdigest().encode('ascii'), source_state(before)
+
+
 def checked_source(root, sha):
     require(isinstance(sha, str) and SHA_RE.fullmatch(sha), 'full lowercase source SHA required')
-    actual = command(['git', '--no-replace-objects', 'rev-parse', '--verify', 'HEAD'], cwd=root).decode().strip()
+    root = Path(root).resolve(strict=True)
+    git = ['git', '--no-replace-objects']
+    actual = command([*git, 'rev-parse', '--verify', 'HEAD'], cwd=root).decode().strip()
     require(actual == sha, 'checked-out HEAD differs from requested source SHA')
-    try:
-        command(['git', 'diff', '--quiet', 'HEAD', '--'], cwd=root)
-    except QualificationError as exc:
-        raise QualificationError('checked-out source tree has tracked changes or cannot be verified') from exc
-    message = command(['git', '--no-replace-objects', 'show', '-s', '--format=%B', 'HEAD'], cwd=root).decode('utf-8')
+    message = command([*git, 'show', '-s', '--format=%B', sha], cwd=root).decode('utf-8')
     require('[no release]' not in message, 'actual checked-out commit contains [no release]')
+    # Never use diff/status/index stat caches to establish the bytes being executed.
+    raw = command([*git, 'ls-tree', '-r', '-z', '-l', '--full-tree', sha], cwd=root)
+    require(raw.endswith(b'\0'), 'empty or malformed canonical source tree')
+    entries = raw[:-1].split(b'\0')
+    require(len(entries) <= MAX_SOURCE_FILES, 'source file count exceeds verification limit')
+    directories, files, total = {}, {}, 0
+    try:
+        for entry in entries:
+            header, name = entry.split(b'\t', 1)
+            mode, kind, oid, length = header.split()
+            require(kind == b'blob' and mode in {b'100644', b'100755', b'120000'} and
+                    SHA_RE.fullmatch(oid.decode('ascii')) and length.isdigit(), 'unsupported canonical source entry')
+            size = int(length)
+            total += size
+            require(total <= MAX_SOURCE_BYTES, 'source bytes exceed verification limit')
+            parts = os.fsdecode(name).split('/')
+            require(all(part and part not in {'.', '..'} for part in parts), 'invalid canonical source path')
+            path = root.joinpath(*parts)
+            require(path.is_relative_to(root) and path not in files, 'ambiguous canonical source path')
+            for parent in (root, *reversed(path.parents[:len(parts) - 1])):
+                info = parent.lstat()
+                require(stat.S_ISDIR(info.st_mode) and not getattr(info, 'st_file_attributes', 0) & 0x400,
+                        'source parent is not a plain directory')
+                identity = (info.st_dev, info.st_ino, info.st_mode)
+                require(parent not in directories or directories[parent] == identity, 'source parent was replaced')
+                directories[parent] = identity
+            actual, state = source_blob(path, mode, size)
+            require(actual == oid, 'tracked source bytes differ from canonical commit')
+            files[path] = state
+        require(all(source_state(path.lstat()) == state for path, state in files.items()),
+                'tracked source changed before verification finished')
+        for parent, identity in directories.items():
+            info = parent.lstat()
+            require((info.st_dev, info.st_ino, info.st_mode) == identity, 'source parent changed during verification')
+    except (OSError, ValueError, UnicodeError) as exc:
+        raise QualificationError('canonical source bytes cannot be verified: ' + str(exc)[:500]) from exc
+    require(command([*git, 'rev-parse', '--verify', 'HEAD'], cwd=root).decode().strip() == sha,
+            'checked-out HEAD changed during source verification')
 
 
 def asset_names(directory):
