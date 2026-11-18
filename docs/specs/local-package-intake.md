@@ -75,6 +75,11 @@ and file/directory-prefix collisions in either arrival order. Invalid names are
 never echoed unescaped into diagnostics. Selected PE basenames use the existing
 acquisition basename policy after ASCII case normalization.
 
+Selected-basename admission checks the original basename for ASCII before any
+case conversion. Unicode characters that lowercase to ASCII, including U+212A,
+cannot match an ASCII expected basename. This does not change Unicode logical
+inventory names or Unicode parent components around an otherwise ASCII basename.
+
 ## 4. One operation budget and deadline
 
 All counters and one monotonic absolute deadline belong to the parent operation,
