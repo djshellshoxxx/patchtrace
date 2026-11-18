@@ -2254,3 +2254,12 @@ pinned;101 owner paths exact; original observations unchanged. Normal Ruff passe
 strict S remains80 identical sites and fails. Main merge/native/platform/package/
 full final acceptance remains blocked. [Sealed checkpoint](qa/continuation-tail-20261118/README.md)
 and [older-source hosted14ef](qa/hosted-pr316-14ef-20261118/README.md).
+
+## 2026-11-18 — Corpus archive cache verification
+
+Source `693d0bc7`, final tests `451e463d`: actual inert-archive Linux shell controls
+verify every cold/restored archive before fresh extraction. Fifteen-file gate:
+495 passed / 2 retained xfails; unchanged original cache probe passes. Prior
+11-red/2-positive, four type-refusal reds and the missed action-tag neighbor are
+retained in `docs/qa/corpus-archive-cache-20261118.md` and its sealed archive.
+This does not qualify hosted cache restoration or native engines/packages.

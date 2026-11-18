@@ -1704,3 +1704,8 @@ See the [immutable continuation checkpoint](../docs/qa/verified-continuation-202
 - [ ] Complete portable worker-grant and neutral core reader/checkpoint slices, then native stage/FDI/supervisor and existing KB propagation/durable package linkage.
 - [ ] Reconcile Phase2 reference contracts and complete approved platform/profile dependency hash-lock design and implementation.
 - [ ] Obtain complete actual-candidate full/Linux/Windows/Qt/native/frozen/package/security/reproducibility gates; no beta/release readiness yet.
+
+- [x] Implement and locally qualify the separate CODEX-6 archive-cache candidate
+  (`693d0bc7`, tests `451e463d`); root independent review/hosted execution remains
+  pending. Dependency hashes and Linux full frozen smoke remain separately open
+  in this exact receipt; see `docs/qa/corpus-archive-cache-20261118.md`.
