@@ -1373,3 +1373,12 @@ unchanged. Tests: `test_kb_product_start_20261106.py`,
 | manual corrections exchange and review CLI | corrections_exchange.py; corrections_cli.py; review_cli.py; cli_commands/corrections.py; cli_commands/review.py | Bound transactional correction exchange, immutable export, headless reviews through ProjectService | persistence, models, service | tests/test_corrections_cli.py; tests/test_review_cli.py; synthetic fixtures |
 
 | timeout setup UI | src/patchtrace/ui_timeout.py | Preserved-text 10..86400-second validation, explicit 1h/2h/4h presets and inline errors for Setup; no backend execution or settings writes | PySide6, tooltip registry | tests/test_ui_timeout.py; SPEC-01a docs/specs/ghidriff-timeout-progress.md |
+
+## PW-01 KB file inventory extension
+
+| Module | Responsibility | Verification seam |
+|---|---|---|
+| `kbcorrelation/inventory_contracts.py`, `inventory_csv.py` | Frozen CSV record/provenance contracts and pure bounded parser | Authored CSV, hostile input, replay/property tests |
+| `kbcorrelation/sources/support_links.py`, `inventory_fetch.py` | Inert support HTML links and exact consented bounded retrieval | Offline parser, injected transport, URL/DNS/redirect/cancellation tests |
+| `kbcorrelation/inventory_store.py`, `inventory_service.py` | Content-addressed raw retention, immutable contextual imports, scoped selection | Real workspace rollback/replay and selection tests |
+| `kbcorrelation/cli_inventory.py`, `inventory_qt.py` | Shared-service CLI and desktop inventory controls | CLI envelope and offscreen Qt lifecycle tests |
