@@ -42,6 +42,7 @@ def publish_directory_no_replace(stage: Path, destination: Path) -> None:
     if (not stage.is_absolute() or not destination.is_absolute()
             or stage == destination or stage.parent != destination.parent):
         raise ValueError('directory publication requires distinct absolute sibling paths')
-    if not stat.S_ISDIR(stage.lstat().st_mode):
+    info = stage.lstat()
+    if not stat.S_ISDIR(info.st_mode) or getattr(info, 'st_file_attributes', 0) & 0x400:
         raise NotADirectoryError(errno.ENOTDIR, 'publication stage must be an ordinary directory', os.fspath(stage))
     _native_move(stage, destination)
