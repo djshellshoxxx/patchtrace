@@ -72,3 +72,26 @@ outside the creation checkpoint. This internal propagation does not claim safe
 durable package recovery or a fully interruptible/read-accounted association.
 Those protections must precede any exposed package route. Portable descriptor
 tests are not native sharing, worker/FDI, frozen-package or Windows acceptance.
+
+## Exact shared-reader import boundary
+
+The internal capability above reuses the standard-library-only `input_readers`
+module. The KB architecture guard permits these explicit relative imports:
+
+| KB module | Allowed symbols from `..input_readers` |
+| --- | --- |
+| `service.py` | `HeldInput`, `PairInputReaders` |
+| `store.py` | `HeldInput`, `InputReadError`, `PairInputReaders` |
+| `wiring.py` | `HeldInput`, `PairInputReaders` |
+
+These are per-file, per-symbol exceptions, not permission to import the whole
+module or its other exports. Aliases, wildcard imports, absolute imports,
+submodule imports and mixed approved/unapproved symbols must fail the guard.
+Other KB domain modules have no shared-reader import exception. Existing Qt,
+network, database, persistence and other sibling-module restrictions remain in
+force, including when a permitted reader import appears in the same file.
+
+The guard must accept the actual reviewed reader declarations and reject
+authored forbidden-import variants. This specification records the already
+implemented capability boundary; it introduces no new runtime dependency,
+reader behavior, persisted field or externally available route.

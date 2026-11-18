@@ -556,3 +556,65 @@ def test_workspace_destination_preflight_is_exact_helper_import(tmp_path, source
     else:
         with pytest.raises(AssertionError):
             test_domain_modules_import_no_qt_network_or_database(path)
+
+
+@pytest.mark.parametrize('name,symbols', [
+    ('service.py', 'HeldInput'),
+    ('service.py', 'PairInputReaders'),
+    ('store.py', 'HeldInput'),
+    ('store.py', 'InputReadError'),
+    ('store.py', 'PairInputReaders'),
+    ('wiring.py', 'HeldInput'),
+    ('wiring.py', 'PairInputReaders'),
+    ('service.py', 'HeldInput, PairInputReaders'),
+    ('store.py', 'HeldInput, InputReadError, PairInputReaders'),
+    ('wiring.py', 'HeldInput, PairInputReaders'),
+])
+def test_named_held_reader_imports_match_the_internal_capability(tmp_path, name, symbols):
+    path = tmp_path / name
+    path.write_text(f'from ..input_readers import {symbols}\n', encoding='utf-8')
+    test_domain_modules_import_no_qt_network_or_database(path)
+
+
+@pytest.mark.parametrize('name', ['service.py', 'store.py', 'wiring.py'])
+@pytest.mark.parametrize('source', [
+    'from ..input_readers import *',
+    'from ..input_readers import HeldInput as Reader',
+    'from ..input_readers import PairInputReaders as HeldInput',
+    'from ..input_readers import HeldInput, ReadCheckpoint',
+    'from ..input_readers import ReadCheckpoint',
+    'from ..input_readers import Path',
+    'from .. import input_readers',
+    'from .. import input_readers as readers',
+    'import patchtrace.input_readers',
+    'from patchtrace.input_readers import HeldInput',
+    'from ..input_readers.capabilities import HeldInput',
+    'from ..input_readers import HeldInput\nimport socket',
+    'from ..input_readers import HeldInput\nimport PySide6',
+    'from ..input_readers import HeldInput\nfrom ..persistence import ProjectStore',
+    'from ..input_readers import HeldInput\nfrom ..input_readers import PairInputReaders as readers',
+])
+def test_held_reader_exception_cannot_expand_import_authority(tmp_path, name, source):
+    path = tmp_path / name
+    path.write_text(source + '\n', encoding='utf-8')
+    with pytest.raises(AssertionError, match='imports'):
+        test_domain_modules_import_no_qt_network_or_database(path)
+
+
+@pytest.mark.parametrize('name', ['service.py', 'wiring.py'])
+def test_held_reader_error_import_remains_specific_to_store(tmp_path, name):
+    path = tmp_path / name
+    path.write_text('from ..input_readers import InputReadError\n', encoding='utf-8')
+    with pytest.raises(AssertionError, match='imports'):
+        test_domain_modules_import_no_qt_network_or_database(path)
+
+
+@pytest.mark.parametrize('name', [
+    'ports.py', 'contracts.py', 'investigation_service.py', 'inventory_service.py', 'inventory_store.py',
+])
+@pytest.mark.parametrize('symbol', ['HeldInput', 'PairInputReaders'])
+def test_other_domain_modules_do_not_gain_reader_imports(tmp_path, name, symbol):
+    path = tmp_path / name
+    path.write_text(f'from ..input_readers import {symbol}\n', encoding='utf-8')
+    with pytest.raises(AssertionError, match='imports'):
+        test_domain_modules_import_no_qt_network_or_database(path)
