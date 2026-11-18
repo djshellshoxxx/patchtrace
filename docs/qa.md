@@ -2095,3 +2095,7 @@ Five actual headless CLI calls preserve valid partial/complete/empty/identity
 results, hash-seed determinism and both project database hashes. Whole Ruff/diff
 pass. [Accepted source/QA receipt](qa/callgraph-path-budget-20261118.md).
 Native/manual/Windows, full-repository and package gates remain separate.
+
+## [VERIFIED-FOLLOWUP-INTEGRATION-20261118]
+
+Combined source `3be3af166897fc2376dc64850edc66485273dea1` preserves actual published #304/#307 and #308–#315 ancestry, plus reviewed scanner/bootstrap, project-retry and callgraph repairs. The selected current-source gate passes **1,770 cases with three existing expected failures**; all 75 changed source/test/tool/workflow files have reviewed ownership. Whole normal Ruff passes on identical code bytes. No full/platform/native/package acceptance transfers from another source. Fresh #304 hosted full suites and packages pass, but Windows BinDiff remains blocked inside its green job and compiler sweep is partial 5/11. Main remains `9c411ca3d7b47f950be5f0c6f01b3c54184554c6`; no PR merge/closure or release occurred. The checkpoint retains all original failures, source/parent mapping, independent reviews, raw hosted logs/artifacts and remaining assignments. [Complete checkpoint](qa/verified-followup-integration-20261118/README.md).

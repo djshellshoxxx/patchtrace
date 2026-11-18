@@ -1543,3 +1543,17 @@ Full `QT_QPA_PLATFORM=offscreen python -m pytest -q` for this isolated native sl
 - [x] Qualify exact source `f0b0eb02`: 489 affected cases, actual headless CLI journey, whole Ruff/diff; source-pinned receipts retained.
 - [x] Root independent review: 490 affected/oracle cases and 17 unchanged historical cases pass separately; no blocking finding.
 - [ ] Focused integration by root; final full/platform/native/manual/package gates remain open.
+
+### [VERIFIED-FOLLOWUP-INTEGRATION-20261118]
+
+- [x] Combine actual reviewed #308–#315 heads with the preserved #304/#307 chain, preserving append-only attribution and all prior evidence.
+- [x] Integrate independently accepted scanner provenance/bootstrap, schema/replacement refusal, callgraph cap truth and shared path budget repairs; 1,770 selected combined checks pass with three existing expected failures.
+- [x] Verify all 75 changed source/test/tool/workflow file owners and independently verify sealed evidence archives; record and correct the initial documentation-conflict error append-only.
+- [x] Inspect actual #304 Linux/Windows full QA, repeated Qt, native and package receipts; distinguish green checks from blocked/partial native outcomes.
+- [ ] Publish reviewed follow-up candidate and obtain its own complete exact-head full/platform/native/package/dependency/security gates before main integration.
+- [ ] Complete the remaining 111 semantic tip reviews and broad checkpoint residue; do not close older PRs before canonical proof.
+- [ ] Complete Windows BinDiff effective network denial, substantive static triage, compiler/native limitations and primary resource bounds.
+- [ ] Finish representative CVE/KB acquisition/analyst journeys, PW-02, packaged F8/recovery surfaces and manual/native acceptance.
+- [ ] Preserve frozen L1/L2 failures and L3 unverified status; qualify separate experiments without editing original outcomes.
+
+Current evidence and assigned work: [checkpoint](../docs/qa/verified-followup-integration-20261118/README.md). Earlier unchecked milestones remain historical observations; this dated append records completed narrow integrations without claiming final production acceptance.

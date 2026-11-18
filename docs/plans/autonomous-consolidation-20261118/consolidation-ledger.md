@@ -232,3 +232,9 @@ controls are preserved separately. These are scoped current-source results,
 not historical branch/native acceptance or a branch-closure decision. The 111
 unselected tips and unreviewed broad-tip residue remain open; the initial
 inventory and its historical classifications are unchanged.
+
+## Reviewed combined follow-up — 2026-11-18, 08:43 PST observation
+
+Main remains `9c411ca3d7b47f950be5f0c6f01b3c54184554c6`; all 62 observed PRs remain open. Candidate `3be3af166897fc2376dc64850edc66485273dea1` retains actual published #308–#315 ancestry and the #304/#307 chain, then selectively ports scanner/bootstrap, project-retry and two callgraph repair chains with attribution. All75 changed production/test/tool/workflow paths have reviewed ownership; the selected combined gate passes 1,770 with three existing expected failures. These are local integration commits, not main merge SHAs. No superseded closure, branch deletion, release or tag occurred.
+
+The first semantic batch's three reproduced gaps now have accepted narrow source repairs; broad checkpoint research residue, packaged F8 and explicit partial-creation recovery remain open. The remaining 111 tips enter a second bounded batch. No frozen branch entry is retroactively reclassified and no branch count becomes a product-completion score. Fresh #304 full/platform/package evidence is retained separately; its Windows BinDiff artifact is blocked and compiler sweep is partial despite green jobs. Actual combined-candidate gates are still required. See the [source, histories, independent reviews and raw evidence](../../qa/verified-followup-integration-20261118/README.md).
