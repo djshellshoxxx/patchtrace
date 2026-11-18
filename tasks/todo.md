@@ -1641,3 +1641,12 @@ See the [immutable continuation checkpoint](../docs/qa/verified-continuation-202
 - [ ] Complete append-only PR316 publication and verify remote head/tree/parents without main merge.
 - [ ] Repair saved advisory-scope admission before mutations; review remaining 51 original tips and broader residue.
 - [ ] Qualify PW-02 local package extraction, static artifact retention, current full/platform/native/package/security gates.
+
+## Semantic disposition batch 5 — 2026-11-18
+
+- [x] Inspect 20 further exact original source tips against frozen PR316 55f3; retain original probes, failures, source/ancestry proofs and broad residue.
+- [x] Classify all 44 historical saved-scope nodes and hand approved narrow design/evidence to its separate owner.
+- [x] Record current 34-file gate: 1,129 pass, one Windows-only skip, one CODEX-14 xfail, four explicit native/compiler deselections.
+- [ ] Independently review and selectively retain the docs-only batch5 checkpoint (root-owned).
+- [ ] Continue the 31 unselected original tips; no whole-branch closure or native/manual/package acceptance is implied.
+- [ ] Track separate COFF/saved-scope repairs and proposed A/A-only failure propagation; retain configuration/final-run/recipe/transfer/Windows-CI residue.

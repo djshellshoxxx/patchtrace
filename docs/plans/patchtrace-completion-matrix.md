@@ -276,3 +276,22 @@ failed/incomplete; the current source's separate strict scan remains 80 unchange
 sites. These results add no final candidate G credit. Saved advisory-scope repair,
 remaining branch dispositions, PW-02 local package intake, full/platform/package
 qualification and main integration remain unfinished. No beta/release readiness.
+
+## Semantic disposition checkpoint 5 — 2026-11-18
+
+Batch5 inspects 20 further exact source-bearing original tips against frozen actual PR316
+55f3d0742f7d4cf32357a42b8b1cc76d85875e71. Current-source gate: 1,129 passed,
+one Windows-only skip, one existing CODEX-14 xfail, four explicit compiler/native
+deselections. Original historical failures are retained and individually classified.
+
+Confirmed narrow omissions: saved advisory scope/digest (public reopened CLI and
+actual missing-coverage mutation), unquoted COFF false-change acceptance (fake
+producer) and A/A failures omitted from merged shard provenance (persisted public
+flow). COFF and saved-scope repairs have separate root-assigned ownership; no
+repair credit is included here. Typed config, final-run/recipe/transfer research
+workflows and part of the Windows CI proposal remain incomplete, with native and
+platform gates explicit. Earlier continuation repairs are separately attributed.
+
+100 of 131 original reconciliation tips now have selected scopes; 31 remain
+unselected. These counts do not close whole branches or estimate feature completion.
+See [batch5 ledger](autonomous-consolidation-20261118/semantic-disposition-batch5.md) and the exact JSON/archive.

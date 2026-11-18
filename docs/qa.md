@@ -2196,3 +2196,14 @@ batch4 proof and hosted55 receipt review retain original contrary evidence.
 [Sealed checkpoint](qa/continuation-r2-20261118/README.md) and
 [older-source hosted evidence](qa/hosted-pr316-55f3-20261118/README.md).
 No final native/package/full/security qualification, main merge or release credit.
+
+## Semantic disposition batch 5 — 2026-11-18
+
+Docs-only inspection of 20 original source-bearing tips against actual PR316
+55f3d0742f7d4cf32357a42b8b1cc76d85875e71; see [sealed QA](qa/semantic-disposition-batch5-20261118.md) and its exact ledger/source proofs.
+Current 34-file gate: 1,129 passed, one Windows skip, one existing CODEX-14 xfail,
+four explicit compiler/native deselections. Saved-scope/COFF/A-A public proofs
+remain red at this source; separate repairs are not credited here. Every original
+historical mismatch is classified. 100/131 original tips now have selected scopes;
+31 remain unselected, with broad/native/package residue explicit. No source edits,
+remote mutation, merge, whole-branch closure or native/manual acceptance.
