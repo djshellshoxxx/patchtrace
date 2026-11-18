@@ -164,12 +164,28 @@ hashing actual bytes against canonical Git blobs, checking parent identities and
 the final path states, and honoring the commit hold before any remote access.
 Do not remove change-time checks, trust index caches, or skip validation on Windows.
 
+The final all-files pass must also observe Windows descriptor change time after
+each file's hashing handle has closed. Retain the original path, compatible-open
+and descriptor observations in an opaque snapshot. Reopen one regular file at a
+time, bind it to the captured pathname identity and compare its full descriptor
+state, then check the pathname again. A same-inode, same-size rewrite with restored
+modification time must refuse before that final check finishes. Do not retain one
+descriptor per tracked file or claim that this point-in-time check locks future
+source changes. Both publication and dependency-tree checks use the same boundary.
+
+Dependency receipt reads use the same compatible path/descriptor comparison at
+open and retain complete descriptor checks across the read plus the final path
+check. Windows observation fields must be integers before their attribute bits
+are interpreted; unavailable or malformed observations yield a typed refusal.
+
 Authored observation tests qualify this compatibility rule only. Native Windows
 tests must hash inert rewritten `.txt`, `.cmd` and `.exe` fixtures and retain
 both stat views; those filenames never authorize execution. A successful test
 does not supply BinDiff, dependency-scan, package or release acceptance. The
 historical hosted failure has no offending-path/stat-field diagnostics, so its
 precise field mismatch remains unobserved until a source-pinned native replay.
+Native Windows controls also cover the final post-hash rewrite and inert receipt
+reading; portable observations alone do not establish those native results.
 
 Dependency/security lane candidate (2026-11-18): the reserved dependency audit
 job expands to four exact native OS/profile jobs, covering runtime and packaging

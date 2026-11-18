@@ -122,6 +122,113 @@ def test_missing_windows_observation_is_a_typed_refusal(gate, tmp_path, monkeypa
         gate.source_blob(path, b'100644', 9)
 
 
+@pytest.mark.parametrize('field', ['st_birthtime_ns', 'st_file_attributes'])
+@pytest.mark.parametrize('value', [None, 1.5, 'unavailable', True])
+def test_invalid_windows_path_observation_refuses_before_attribute_use(gate, tmp_path, monkeypatch, field, value):
+    path = tmp_path / 'source.txt'
+    path.write_bytes(b'unchanged')
+    observations(gate, monkeypatch, path, path_delta=lambda _count, _values: {field: value})
+    with pytest.raises(gate.QualificationError, match='Windows source observation is unavailable'):
+        gate.source_blob(path, b'100644', 9)
+
+
+def change_time_observations(gate, monkeypatch, path):
+    """Keep real inode/bytes and changing descriptor ctime; model Windows path ctime."""
+    original_lstat, original_fstat = Path.lstat, os.fstat
+    birth = original_lstat(path).st_ctime_ns
+
+    def view(info, *, pathname):
+        return SimpleNamespace(st_dev=info.st_dev, st_ino=info.st_ino, st_mode=stat.S_IFREG | 0o666,
+                               st_size=info.st_size, st_mtime_ns=info.st_mtime_ns,
+                               st_ctime_ns=birth if pathname else info.st_ctime_ns,
+                               st_birthtime_ns=birth, st_file_attributes=0x20)
+
+    def lstat(candidate, *args, **kwargs):
+        info = original_lstat(candidate, *args, **kwargs)
+        return view(info, pathname=True) if candidate == path else info
+
+    monkeypatch.setattr(Path, 'lstat', lstat)
+    monkeypatch.setattr(gate, 'os', OSView(name='nt',
+        fstat=lambda fd: view(original_fstat(fd), pathname=False)))
+    return original_lstat
+
+
+@pytest.mark.parametrize('consumer', ['publication', 'dependency'])
+@pytest.mark.parametrize('change', [False, True])
+@pytest.mark.parametrize('platform', ['modeled-windows', 'posix', pytest.param('native-windows',
+    marks=pytest.mark.skipif(os.name != 'nt', reason='Actual Windows final source observation needs Windows'))])
+def test_final_tree_pass_observes_post_hash_change_time(gate, tmp_path, monkeypatch, consumer, change, platform):
+    if platform == 'posix' and os.name == 'nt':
+        pytest.skip('Actual POSIX metadata needs a POSIX host')
+    root, source = authored_checkout(tmp_path)
+    path = root / 'sample.txt'
+    raw_lstat = Path.lstat
+    before = raw_lstat(path)
+    if platform == 'modeled-windows':
+        change_time_observations(gate, monkeypatch, path)
+    original_blob = gate.source_blob
+    changes = []
+
+    def after_hash(candidate, mode, size):
+        result = original_blob(candidate, mode, size)
+        if change:
+            assert candidate == path
+            path.write_bytes(b'modified data\n')
+            os.utime(path, ns=(before.st_atime_ns, before.st_mtime_ns))
+            after = raw_lstat(path)
+            assert (after.st_dev, after.st_ino, after.st_size, after.st_mtime_ns) == (
+                before.st_dev, before.st_ino, before.st_size, before.st_mtime_ns)
+            assert after.st_ctime_ns != before.st_ctime_ns or platform == 'native-windows'
+            changes.append(True)
+        return result
+
+    monkeypatch.setattr(gate, 'source_blob', after_hash)
+    check = gate.checked_source
+    if consumer == 'dependency':
+        dependency = importlib.import_module('tools.dependency_security')
+        assert dependency.gate is gate
+        check = dependency.checked_tree
+    if change:
+        with pytest.raises(gate.QualificationError, match='changed'):
+            check(root, source)
+        assert changes == [True] and path.read_bytes() == b'modified data\n'
+    else:
+        check(root, source)
+        assert not changes and path.read_bytes() == b'authored data\n'
+
+
+@pytest.mark.parametrize('suffix', ['.stdout', '.cmd'])
+@pytest.mark.parametrize('drift', [False, True])
+def test_dependency_receipt_reads_use_compatible_views_and_full_descriptor_state(
+        gate, tmp_path, monkeypatch, suffix, drift):
+    dependency = importlib.import_module('tools.dependency_security')
+    assert dependency.gate is gate
+    path = tmp_path / ('receipt' + suffix)
+    data = b'{"authored": true}\n'
+    path.write_bytes(data)
+    observations(gate, monkeypatch, path, descriptor_delta=(
+        (lambda count, _values: {'st_ctime_ns': 20 if count == 1 else 21}) if drift else None))
+    monkeypatch.setattr(dependency, 'os', gate.os)
+    if drift:
+        with pytest.raises(gate.QualificationError, match='changed during read'):
+            dependency.read_json(path)
+    else:
+        assert dependency.read_json(path) == {'authored': True}
+        assert dependency.digest(path) == hashlib.sha256(data).hexdigest()
+
+
+@pytest.mark.skipif(os.name != 'nt', reason='Actual Windows receipt metadata needs Windows')
+def test_native_windows_rewritten_inert_dependency_receipt_is_readable(tmp_path):
+    dependency = importlib.import_module('tools.dependency_security')
+    path = tmp_path / 'profile-inspect.stdout'
+    path.write_bytes(b'before')
+    data = b'{"authored": true}\n'
+    path.write_bytes(data)
+    os.utime(path, ns=(1_600_000_000_000_000_000, 1_600_000_000_000_000_000))
+    assert dependency.read_json(path) == {'authored': True}
+    assert dependency.digest(path) == hashlib.sha256(data).hexdigest()
+
+
 @pytest.mark.parametrize('changed', [False, True])
 def test_canonical_checkout_guard_keeps_actual_byte_check_with_windows_views(gate, tmp_path, monkeypatch, changed):
     root, source = authored_checkout(tmp_path)
