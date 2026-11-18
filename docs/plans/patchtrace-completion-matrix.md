@@ -467,3 +467,38 @@ Windows native/dependency failures and pending full/Qt jobs remain source-specif
 Frozen research outcomes, real CVE matching/calibration, full platform/Qt/native/
 package/security/reproducibility acceptance remain unchanged and incomplete.
 These completion fractions follow the existing D/R/J/G definitions, not test counts.
+
+
+## Core admission and actual Windows evidence — 2026-11-18
+
+Exact source `a8f698f6a1d075b673bc6ec94c991141113d2b30` passes **1,200 checks with zero failures, errors or
+skips in 17.85 seconds**. The 45-file scope preserves six original external probes,
+434 canonical project/tool imports and 21 reviewed owner paths. Core expected ID,
+explicit non-recovering checkpointed reads, acquired-open and constructor cleanup
+are independently reviewed and integrated. Normal Ruff passes; strict S still
+fails on 80 unchanged sites. Original failure evidence and both core author packets
+remain immutable. [Complete checkpoint](../qa/core-admission-integration-20261118/README.md).
+
+At published source 771e, both actual Windows dependency profiles now pass exact
+inventory/audit/UTF-8 verification (17 runtime, 34 packaging distributions). Native
+diagnostics compile and identify restricted NUL-open error 5 before descendant
+creation; complete no-network acceptance still fails. Unified Windows has a new
+preserved repeated-analysis digest mismatch, with the second-run records absent;
+six full QA/Qt jobs remain pending at the separate 22:37 snapshot. Durable package
+design is reviewed with an actual-connection non-initializing capture prerequisite.
+Main remains `9c411ca3d7b47f950be5f0c6f01b3c54184554c6`; PR304/307/316 stay open and unmerged. No tag/release/deployment.
+
+
+| Feature / bounded scope | Current state | Completion | Remaining work | Source | Dependencies | Tests | Security | Owner | Acceptance |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Core durable admission hooks | Implemented and independently integrated | D,R: 50% for this slice | Durable caller, native representative journey and final gates |441c47c2 /63ebc427; PR316 candidate|Existing core model/store and original reader checkpoint|Original open and constructor reds; author512/562; exact root1200|Strict early ID, complete verified reads, primary error and committed/foreign retention|Core + root|Per-call identity/ownership preserved through qualified durable/native journey and G|
+| Isolated dependency JSON UTF-8 | Actual Windows inventory/audit verified | D,R,J: 75% for this slice|Final candidate gates, dependency lock closure and explicit unaudited categories|6dea194a; hosted771e|Existing isolated process and strict raw evidence contracts|Original CP1252 reds; root1200 union; actual Windows17/34-distribution audits|No environment fallback, skipped audit row or bound/pin relaxation|CI + root|Exact final-source profile/audit and G; no whole-package completion claim|
+| Native failure diagnostics | Compiled and observed in actual Windows error path|D,R,J: 75% for diagnostics only|Trusted stdin transfer, effective-denial/descendant/adapter/lifecycle acceptance and final gates|9ca3c078; hosted771e|Existing C helpers, fixed bounded stderr protocol|Portable formatter controls; actual nine records/NUL error5; native overall failure retained|Timeout is not denial; source/handle/Job ownership remain required|CI + root|Complete native receipts at final source; diagnostics alone do not qualify isolation|
+| Unified native repeatability | Implemented; current Windows determinism failure|D,R: 50%|Retain bounded first/second evidence, identify cause, repair only demonstrated defect, rerun native/final gates|771e run44409973392|Ghidra12.0.4/Java21.0.13/pyghidra3.0.2 and exact fixture hashes|CI pair passes; probe newer digest differs; Linux downstream skipped|No canonical-digest weakening or success from first-only metadata|Binary analysis + CI|Repeated exact inputs produce defensible stable identity under original assertions|
+| Durable package intent/association/reconciliation|Reviewed design with confirmed capture prerequisite|None: 0% for implementation|Explicit non-initializing workspace mode; strict contracts, lazy storage/CAS/recovery/provenance and tests|efe68b18/988ce3f7 plus independent45-payload review|Accepted core hooks, original source budget and future native owner|Seven current-behavior positives; independent2-red/2-positive assumption counterexample|Legacy open writers remain possible; identity before sidecars; no stored-path revival|KB + core + root|Spec-first source, original/neighbor controls and representative durable journey|
+| Whole PW02 local package fallback|Partial; no exposed package-to-project route|None: 0% of whole-feature milestones|Native stage/FDI/worker transfer, durable facade, Windows/frozen journey and all final gates|Portable slices and retained designs|Qualified Windows lane and existing services|Component evidence only; whole journey absent|Live lease/ownership, preserved provenance, finite original budgets and retained unknown outcome|KB + core + CI|Complete stated D/R/J/G journey before exposure|
+
+These fractions count the existing named milestones for the stated bounded scope.
+They do not add together or measure project coding progress. Frozen research,
+real CVE matching/calibration, complete analyst, platform, packaging, security
+and reproducibility acceptance remain incomplete.

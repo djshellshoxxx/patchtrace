@@ -1844,3 +1844,17 @@ See the [immutable continuation checkpoint](../docs/qa/verified-continuation-202
 - [ ] Root independently review lazy v2 plus package-table isolation, exact new ownership/schema/caps, strict actual identity, association-before-sidecars, provenance idempotence and one-intent reconciliation before any source changes.
 - [ ] After approval, specify and retain genuine reds for each separate contract/storage, bound-admission and committed-reconciliation source slice; preserve ordinary and saved-scope positives.
 - [ ] Keep all package/CLI/UI exposure unavailable until accepted core hooks, durable safeguards, native stage/FDI/worker and actual Windows/frozen journey gates are complete; no lease reconstruction or cleanup from persisted evidence.
+
+
+### Core admission / hosted Windows evidence checkpoint — 2026-11-18
+
+- [x] Independently verify and port the specification-first create/open/load hooks and constructor follow-up; preserve both immutable author packets and original probes.
+- [x] Pass the exact a8f698f6 45-file gate: 1,200 checks, zero skips, 434 canonical imports and 21 owner paths. Preserve normal lint success and strict 80-site failure unchanged.
+- [x] Verify prior 18-commit publication to771e, fresh main/priority heads, actual Windows UTF-8 inventories/audits and exact native error-path source.
+- [x] Retain new unified Windows repeated-analysis failure and separate pending QA snapshot, without changing digests/acceptance or executing retained images.
+- [x] Review the durable design and preserve its already-open legacy-client and non-initializing capture counterexamples; keep ordinary default behavior distinct.
+- [ ] Publish this checkpoint append-only with exact remote tree/parent/ref/preview/body verification.
+- [ ] Specify, implement and independently qualify the actual-connection non-initializing workspace seam, then strict durable package contracts/storage/association/reconciliation.
+- [ ] Complete trusted stdin handoff and bounded first/second unified diagnostic retention, preserving native failures until actual-source acceptance.
+- [ ] Repair the independently reproduced TierR exit1 diagnostic loss; original native causes and frozen outcomes remain separate.
+- [ ] Complete full platform/Qt/native/frozen/package/dependency/security/reproducibility gates and real CVE/KB/analyst journeys; leave main and release blocked until qualified.

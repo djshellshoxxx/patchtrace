@@ -2463,3 +2463,23 @@ revision/CAS requirements remain explicit. The initial rg-order seal failure
 and multiset-only artifact correction are preserved; no product assertion was
 rewritten. Root independent design review, spec/test-first implementation and
 all native/frozen gates remain pending; no production or entry point changed.
+
+
+## Core admission and actual Windows evidence — 2026-11-18
+
+Exact source `a8f698f6a1d075b673bc6ec94c991141113d2b30` passes **1,200 checks with zero failures, errors or
+skips in 17.85 seconds**. The 45-file scope preserves six original external probes,
+434 canonical project/tool imports and 21 reviewed owner paths. Core expected ID,
+explicit non-recovering checkpointed reads, acquired-open and constructor cleanup
+are independently reviewed and integrated. Normal Ruff passes; strict S still
+fails on 80 unchanged sites. Original failure evidence and both core author packets
+remain immutable. [Complete checkpoint](qa/core-admission-integration-20261118/README.md).
+
+At published source 771e, both actual Windows dependency profiles now pass exact
+inventory/audit/UTF-8 verification (17 runtime, 34 packaging distributions). Native
+diagnostics compile and identify restricted NUL-open error 5 before descendant
+creation; complete no-network acceptance still fails. Unified Windows has a new
+preserved repeated-analysis digest mismatch, with the second-run records absent;
+six full QA/Qt jobs remain pending at the separate 22:37 snapshot. Durable package
+design is reviewed with an actual-connection non-initializing capture prerequisite.
+Main remains `9c411ca3d7b47f950be5f0c6f01b3c54184554c6`; PR304/307/316 stay open and unmerged. No tag/release/deployment.
