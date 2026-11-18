@@ -1,4 +1,4 @@
-"""Generate only local-package/1 schemas; deterministic, offline and Qt-free."""
+"""Generate the local-package schema bundle, including worker accounting; offline and Qt-free."""
 from __future__ import annotations
 
 import json
@@ -10,13 +10,15 @@ OUT = ROOT / 'docs' / 'schemas' / 'local-package'
 NAMES = ('PackageLimits', 'PackageFileIdentity', 'PackageSource', 'PackageDecoder', 'PackageCapability',
          'PackagePart', 'PackageContainer', 'PackageDiagnostic', 'PackageInventory', 'PackageSelection',
          'PackageUsage')
+WORKER_NAMES = ('PackageWorkerBinding', 'PackageWorkerGrant', 'PackageWorkerReceipt')
 
 
 def render() -> dict[str, str]:
-    from patchtrace.acquisition import package_contracts
+    from patchtrace.acquisition import package_contracts, package_worker_contracts
     result = {}
-    for name in NAMES:
-        schema = getattr(package_contracts, name).model_json_schema()
+    for name, module in [(name, package_contracts) for name in NAMES] + [
+            (name, package_worker_contracts) for name in WORKER_NAMES]:
+        schema = getattr(module, name).model_json_schema()
         schema['$id'] = f'https://patchtrace.local/schemas/local-package/1/{name}.json'
         schema['$schema'] = 'https://json-schema.org/draft/2020-12/schema'
         result[name + '.json'] = json.dumps(schema, indent=2, sort_keys=True, ensure_ascii=False) + '\n'

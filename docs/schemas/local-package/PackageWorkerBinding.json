@@ -1,0 +1,131 @@
+{
+  "$defs": {
+    "PackageFileIdentity": {
+      "additionalProperties": false,
+      "properties": {
+        "file_id": {
+          "maxLength": 32,
+          "minLength": 32,
+          "pattern": "^[0-9a-f]{32}$",
+          "title": "File Id",
+          "type": "string"
+        },
+        "last_write_ticks": {
+          "maximum": 18446744073709551615,
+          "minimum": 0,
+          "title": "Last Write Ticks",
+          "type": "integer"
+        },
+        "size": {
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Size",
+          "type": "integer"
+        },
+        "volume_serial": {
+          "maximum": 18446744073709551615,
+          "minimum": 0,
+          "title": "Volume Serial",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "volume_serial",
+        "file_id",
+        "size",
+        "last_write_ticks"
+      ],
+      "title": "PackageFileIdentity",
+      "type": "object"
+    },
+    "PackageSource": {
+      "additionalProperties": false,
+      "properties": {
+        "display_name": {
+          "maxLength": 1024,
+          "minLength": 1,
+          "title": "Display Name",
+          "type": "string"
+        },
+        "file_identity": {
+          "$ref": "#/$defs/PackageFileIdentity"
+        },
+        "sha256": {
+          "maxLength": 64,
+          "minLength": 64,
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Sha256",
+          "type": "string"
+        },
+        "signature_state": {
+          "const": "signature-unknown",
+          "default": "signature-unknown",
+          "title": "Signature State",
+          "type": "string"
+        },
+        "size": {
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Size",
+          "type": "integer"
+        },
+        "source_claims": {
+          "default": [],
+          "items": {
+            "maxLength": 1024,
+            "minLength": 1,
+            "type": "string"
+          },
+          "maxItems": 32,
+          "title": "Source Claims",
+          "type": "array"
+        }
+      },
+      "required": [
+        "sha256",
+        "size",
+        "file_identity",
+        "display_name"
+      ],
+      "title": "PackageSource",
+      "type": "object"
+    }
+  },
+  "$id": "https://patchtrace.local/schemas/local-package/1/PackageWorkerBinding.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "attempt_id": {
+      "maxLength": 64,
+      "minLength": 64,
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Attempt Id",
+      "type": "string"
+    },
+    "operation_id": {
+      "maxLength": 64,
+      "minLength": 64,
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Operation Id",
+      "type": "string"
+    },
+    "request_id": {
+      "maxLength": 64,
+      "minLength": 64,
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Request Id",
+      "type": "string"
+    },
+    "source": {
+      "$ref": "#/$defs/PackageSource"
+    }
+  },
+  "required": [
+    "operation_id",
+    "request_id",
+    "attempt_id",
+    "source"
+  ],
+  "title": "PackageWorkerBinding",
+  "type": "object"
+}
