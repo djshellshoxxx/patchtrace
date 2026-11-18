@@ -211,7 +211,7 @@ def test_file_leg_with_a_supplied_file_index(tmp_path, months, winbindex):
     cases = [case("l1-a-changed"),
              case("l1-b-unchanged", expected_files=["examplenet.sys"]),  # listed under the KB, last changed earlier
              case("l1-c-norecord", expected_files=["absent.sys"]),
-             case("l1-d-badname", expected_files=["example.tsp"])]  # the product's file index refuses this extension
+             case("l1-d-badname", expected_files=["example.txt"])]  # the product's file index refuses this extension
     code, rec = run(tmp_path, months, cases, "--winbindex", str(winbindex), "--winbindex-date", "2099-02-12")
     rows = rows_of(rec)
     assert code == 1
@@ -226,6 +226,15 @@ def test_file_leg_with_a_supplied_file_index(tmp_path, months, winbindex):
     assert rec["counts"]["checks"]["file"] == {"asked": 3, "passed": 1, "blocked": 1}
     assert [r["name"] for r in rec["inputs"]["winbindex"]["records"]] == ["exampledrv.sys", "examplenet.sys"]
     assert rec["inputs"]["winbindex"]["data_date"] == "2099-02-12"
+
+
+def test_supported_tsp_without_captured_metadata_is_blocked_not_an_invalid_name(tmp_path, months, winbindex):
+    code, rec = run(tmp_path, months, [case("l1-tsp-missing", expected_files=["example.tsp"])],
+                    "--winbindex", str(winbindex), "--winbindex-date", "2099-02-12")
+    row = rows_of(rec)["l1-tsp-missing"]
+    assert code == 2 and row["outcome"] == "BLOCKED" and row["checks"]["file"] == "blocked"
+    assert rec["counts"]["scored"] == 0
+    assert rec["counts"]["checks"]["file"] == {"asked": 0, "passed": 0, "blocked": 1}
 
 
 def test_winbindex_needs_an_explicit_data_date(tmp_path, months, winbindex, capsys):
