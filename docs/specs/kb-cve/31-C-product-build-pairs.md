@@ -137,8 +137,8 @@ listing explains the need for an explicit choice. Neither an explicit choice
 nor a candidate's availability upgrades the evidence or removes hard blocks.
 
 The pair limit is an enumeration limit, not only an output slice: it must be an
-integer from 1 through 1,000. Parse chronology facts once per resolution, retain
-their local cache only for that calculation, and cap the product of the selected
+integer from 1 through 1,000. Precompute chronology facts for repeated scans once
+per resolution, retain their local cache only for that calculation, and cap the product of the selected
 timeline's row count and enumerated target count at 1,000,000. Before evaluating
 pairs, visit target identities in stable availability/display order within those
 budgets. Rank the evaluated proposals normally. A truncated result does not
