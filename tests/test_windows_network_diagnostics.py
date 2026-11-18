@@ -89,7 +89,7 @@ def formatter(tmp_path_factory):
                 assert type(record[key]) is int and 0 <= record[key] <= 2**32 - 1
             assert 1 <= record['sequence'] <= 16
             assert re.fullmatch(r'[a-z-]{1,32}', record['stage'])
-            assert re.fullmatch(r'[a-z-]{1,32}', record['kind'])
+            assert re.fullmatch(r'[a-z][a-z0-9-]{0,31}', record['kind'])
         return records, result.stderr
 
     return invoke
