@@ -141,6 +141,20 @@ otherwise successful path remains observable through the existing close API.
 Neutral cancellation/limit reasons remain intact. Unknown committed results and
 foreign/preexisting projects remain retained.
 
+Before the store constructor returns, it owns cleanup for failures after it has
+acquired its project lock. Catch BaseException at that existing initialization
+boundary, including interrupts after SQLite connection acquisition. Preserve the
+original exception object and neutral reason, except for the established
+SQLite-to-`PT-STORAGE` ValueError mapping and original cause. A secondary cleanup
+failure cannot replace either outward result: append a fixed bounded note that
+resources or files may remain, without secondary messages or paths. Keep the
+existing connection-close, positively owned new-database discard and final
+store-close ordering. Do not expand deletion authority to preexisting, reused,
+replaced, foreign or committed files, and do not claim uncertain cleanup
+succeeded. Generic close and discard policy remain unchanged. Controls must
+exercise actual SQLite initialization, create/retry ownership, interrupt/neutral
+identity, existing error mapping and before/after-real-close secondary failures.
+
 Postcommit reads use the same deadline/cancel/read-work callback, without new
 allowances or extraction-output charges. SQLite work, JSON validation and OS
 calls remain cooperative boundaries. This hook does not checkpoint legacy raw
