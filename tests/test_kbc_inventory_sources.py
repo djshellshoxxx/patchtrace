@@ -9,6 +9,7 @@ import ssl
 import threading
 import time
 from datetime import UTC, datetime
+from http.client import HTTPResponse
 
 import pytest
 
@@ -21,6 +22,60 @@ PAGE = 'https://support.microsoft.com/help/5036893'
 GO = 'https://go.microsoft.com/fwlink/?LinkId=123456'
 CSV = 'https://download.microsoft.com/download/authored/inventory.csv'
 NOW = datetime(2026, 11, 18, 0, 0, tzinfo=UTC)
+
+
+def test_real_http_response_short_content_length_is_not_complete_inventory():
+    from patchtrace.acquisition.transport import _Response
+
+    body = b'File name,File version,Architecture\na.dll,1.2.3.4,x64\n'
+
+    class Socket:
+        def makefile(self, *_args):
+            return io.BytesIO(b'HTTP/1.1 200 OK\r\nContent-Length: 200\r\n\r\n' + body)
+
+    response = HTTPResponse(Socket())
+    response.begin()
+    plan = fetch.build_plan(CSV)
+    error('PT-KBC-SOURCE', lambda: fetch.fetch_source(
+        plan, consent_hosts=plan.hosts, consent_plan=plan.plan_sha,
+        opener=lambda *_args: _Response(response), now=lambda: NOW))
+
+
+@pytest.mark.parametrize('headers', [
+    b'Content-Length: +3\r\n', b'Content-Length: -1\r\n', b'Content-Length: 1.0\r\n',
+    b'Content-Length: 3, 3\r\n', b'Content-Length: \r\n',
+    b'Content-Length: 3\r\ncontent-length: 3\r\n',
+    b'Content-Length: 3\r\nTransfer-Encoding: chunked\r\n',
+    b'Transfer-Encoding: gzip\r\n', b'Content-Range: bytes 0-2/10\r\n',
+])
+def test_real_http_response_rejects_ambiguous_or_partial_framing(headers):
+    from patchtrace.acquisition.transport import _Response
+
+    class Socket:
+        def makefile(self, *_args):
+            return io.BytesIO(b'HTTP/1.1 200 OK\r\n' + headers + b'\r\nabc')
+
+    response = HTTPResponse(Socket())
+    response.begin()
+    plan = fetch.build_plan(CSV)
+    error('PT-KBC-SOURCE', lambda: run(plan, lambda *_: _Response(response)))
+
+
+@pytest.mark.parametrize('chunked', [False, True])
+def test_real_http_response_accepts_complete_bounded_framing(chunked):
+    from patchtrace.acquisition.transport import _Response
+
+    body = b'File name,File version\na.dll,1.2.3.4\n'
+    headers = b'Transfer-Encoding: chunked\r\n' if chunked else f'Content-Length: {len(body)}\r\n'.encode()
+    wire = f'{len(body):x}\r\n'.encode() + body + b'\r\n0\r\n\r\n' if chunked else body
+
+    class Socket:
+        def makefile(self, *_args):
+            return io.BytesIO(b'HTTP/1.1 200 OK\r\n' + headers + b'\r\n' + wire)
+
+    response = HTTPResponse(Socket())
+    response.begin()
+    assert run(fetch.build_plan(CSV), lambda *_: _Response(response)).raw == body
 
 
 def error(code, action):

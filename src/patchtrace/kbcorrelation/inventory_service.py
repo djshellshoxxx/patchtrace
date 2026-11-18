@@ -232,7 +232,10 @@ def _plan_input(value, cancel):
     if isinstance(value, InventoryPlan):
         return parse_plan(value.to_json())
     raw = read_file(value, PLAN_BYTES, cancel=cancel)
-    payload = load_json(raw)
+    try:
+        payload = load_json(raw)
+    except SourceError:
+        raise SourceError('PT-KBC-INPUT', 'the plan file is not strict bounded JSON') from None
     if isinstance(payload, dict) and payload.get('contract') == 'enrichment-cli/1':
         if payload.get('command') != 'kb inventory plan' or not isinstance(payload.get('result'), dict):
             raise SourceError('PT-KBC-INPUT', 'the plan file is not an inventory plan preview')

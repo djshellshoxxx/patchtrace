@@ -357,13 +357,14 @@ def test_duplicates_and_conflicts_keep_every_claim_without_selecting_a_version()
         ['a.dll', '9.2.3.4', '9999', 'amd64', 'desktop'],
     ])
     result = parse_inventory(raw, CONTEXT)
-    assert result.accepted_count == 6 and result.duplicate_count == 1 and result.conflict_count == 3
-    first, duplicate, conflict, *other_scopes = result.entries
+    assert result.accepted_count == 6 and result.duplicate_count == 1 and result.conflict_count == 4
+    first, duplicate, conflict, other_arch, other_product, case_variant = result.entries
     assert duplicate.duplicate_of == first.entry_id
     assert first.duplicate_of is conflict.duplicate_of is None
-    assert first.conflict_group == duplicate.conflict_group == conflict.conflict_group
+    assert first.conflict_group == duplicate.conflict_group == conflict.conflict_group == case_variant.conflict_group
     assert first.conflict_group is not None
-    assert all(entry.state == 'metadata-only' and entry.conflict_group is None for entry in other_scopes)
+    assert all(entry.state == 'metadata-only' and entry.conflict_group is None for entry in (other_arch, other_product))
+    assert case_variant.product == 'desktop' and case_variant.state == 'conflicted'
     assert len({entry.entry_id for entry in result.entries}) == 6
 
 
@@ -601,3 +602,27 @@ def test_quoted_fields_roundtrip_and_physical_spans_match_independent_csv_writer
         assert entry.reference.line_start == physical_line
         assert entry.reference.line_end == physical_line + date.count('\n')
         physical_line += date.count('\n') + 1
+@pytest.mark.parametrize('row', [b',x64', b' ,x64', b',,x64'])
+def test_empty_filename_row_cannot_change_section_architecture(row):
+    raw = (b'Windows arm64-based\nFile name,File version\na.dll,1.2.3.4\n' + row +
+           b'\nFile name,File version\nb.dll,1.2.3.4\n')
+    parsed = parse_inventory(raw, InventoryContext(kb='KB5099001'))
+    assert [entry.architecture for entry in parsed.entries] == ['arm64', 'arm64']
+    assert parsed.rejected_count == 1 and parsed.status == 'partial'
+    assert len(parsed.sections) == 1
+
+
+@pytest.mark.parametrize('second_version', ['1.0.0.0', '2.0.0.0'])
+def test_scope_case_variants_cannot_hide_duplicates_or_conflicts(second_version):
+    raw = ('File name,File version,Architecture,Product,Release,Build\n'
+           'x.dll,1.0.0.0,x64,Windows 11,22H2,Build A\n'
+           f'x.dll,{second_version},x64, windows 11 ,22h2,build a\n').encode()
+    context = InventoryContext(kb='KB5099001', product_scope_id='a' * 64,
+                               product='Windows 11', release='22H2', build='Build A')
+    parsed = parse_inventory(raw, context)
+    assert [entry.product for entry in parsed.entries] == ['Windows 11', 'windows 11']
+    if second_version == '1.0.0.0':
+        assert parsed.duplicate_count == 1 and parsed.entries[1].duplicate_of == parsed.entries[0].entry_id
+    else:
+        assert parsed.conflict_count == 2 and parsed.status == 'partial'
+        assert all(entry.state == 'conflicted' for entry in parsed.entries)

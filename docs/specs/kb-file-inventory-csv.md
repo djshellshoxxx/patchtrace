@@ -68,6 +68,8 @@ A bounded banner can contain an unquoted comma, as in the inspected upstream
 sample. Recognized architecture aliases are x64/amd64, arm64/aarch64 and x86/i386,
 including the documented '-based'/' based' section spellings. Recognize banners
 structurally, never by finding an architecture word anywhere in a data field.
+The banner text starts in the first field; an empty filename followed by an
+architecture token is a rejected data row and cannot change section scope.
 An unknown section resets architecture to unknown; it never inherits the prior
 section architecture. Conflicting column, section or explicit context architecture
 is retained as a conflict and cannot become an eligible analysis selection.
@@ -123,6 +125,9 @@ captured budgets. Wall-time exhaustion is fatal, never a time-dependent partial
 identity. Entry
 IDs hash inventory identity plus logical record. Duplicate identity compares
 normalized metadata within exact product/release/build/architecture scope;
+product, release and build comparison keys use the same trimmed case-folded
+semantics as source/context agreement, while each original spelling remains in
+its entry and raw fields. Case variants cannot hide duplicates or conflicts.
 different original records remain separate claims. Conflicting metadata for a
 shared basename in the same scope is grouped, never resolved automatically.
 Timestamp, elapsed time, random UUID and filesystem path never influence
@@ -162,6 +167,11 @@ requires a fresh digest/consent. Max four redirects, <=16 MiB CSV / <=4 MiB HTML
 10 seconds per connection, 60 seconds total, existing bounded retry policy.
 Preserve original/final URLs and actual redirect chain in a fetched receipt.
 No automatic link follow-up occurs during HTML parsing or after page retrieval.
+The returned source must have complete HTTP framing: reject malformed or
+duplicated Content-Length, ambiguous Content-Length/Transfer-Encoding, unsupported
+transfer/content encodings and an unexpected Content-Range. If Content-Length is
+present, the received byte count must equal it before a fetch receipt is published.
+A well-formed CSV prefix from a prematurely closed response is never complete.
 
 ## 5. Persistence and provenance
 

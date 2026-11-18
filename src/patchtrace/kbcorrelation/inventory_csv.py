@@ -154,6 +154,8 @@ def _rows(text: str, delimiter: str, limits: InventoryLimits, check: Callable[[]
 
 
 def _banner(row: _Row, delimiter: str) -> str | None:
+    if not row.fields or not row.fields[0].strip():
+        return None
     values = [value for value in row.fields if value.strip()]
     if row.start_line != row.end_line or not values or len(values) > 3:
         return None
@@ -209,7 +211,9 @@ def _size(value: str | None, locale: str) -> int | None:
 
 
 def _scope(entry: InventoryEntry) -> tuple:
-    return entry.basename, entry.architecture, entry.product, entry.release, entry.build
+    labels = tuple(value.strip().casefold() if value is not None else None
+                   for value in (entry.product, entry.release, entry.build))
+    return entry.basename, entry.architecture, *labels
 
 
 def _metadata(entry: InventoryEntry) -> tuple:

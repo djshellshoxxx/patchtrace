@@ -11,6 +11,7 @@ import functools
 import hashlib
 import itertools
 import json
+import re
 import time
 import urllib.parse
 from dataclasses import dataclass
@@ -182,6 +183,36 @@ def _drift(plan, urls):
                        details={'proposed_plan': proposed.as_dict(), 'preview': render_plan(proposed)})
 
 
+def _header_values(headers, name):
+    if callable(getattr(headers, 'get_all', None)):
+        return headers.get_all(name) or []
+    return [value for key, value in headers.items() if type(key) is str and key.casefold() == name.casefold()]
+
+
+def _framing(response, cap):
+    """Return an exact declared byte length, or None for chunked/EOF framing."""
+    fields = {name: _header_values(response.headers, name) for name in
+              ('Content-Length', 'Transfer-Encoding', 'Content-Encoding', 'Content-Range')}
+    if any(len(values) > 1 or any(type(value) is not str for value in values) for values in fields.values()):
+        raise SourceError('PT-KBC-SOURCE', 'inventory response has ambiguous framing headers')
+    length, transfer, encoding, content_range = (fields[name] for name in fields)
+    if content_range or (length and transfer):
+        raise SourceError('PT-KBC-SOURCE', 'inventory response has partial or ambiguous framing')
+    if transfer and transfer[0].strip().casefold() != 'chunked':
+        raise SourceError('PT-KBC-SOURCE', 'inventory response uses an unsupported transfer encoding')
+    if encoding and encoding[0].strip().casefold() != 'identity':
+        raise SourceError('PT-KBC-SOURCE', 'inventory source used an unrequested content encoding')
+    if not length:
+        return None
+    digits = length[0].strip(' \t')
+    if not re.fullmatch(r'[0-9]{1,20}', digits):
+        raise SourceError('PT-KBC-SOURCE', 'inventory response has an invalid Content-Length')
+    expected = int(digits)
+    if expected > cap:
+        raise SourceError('PT-KBC-LIMIT', 'inventory response exceeds its byte budget')
+    return expected
+
+
 def fetch_source(plan: InventoryPlan, *, consent_hosts, consent_plan: str, offline: bool = False,
                  cancel=None, opener=None, clock=time.monotonic, now=lambda: datetime.now(UTC),
                  sleep=tr.default_sleep) -> FetchedSource:
@@ -232,10 +263,11 @@ def fetch_source(plan: InventoryPlan, *, consent_hosts, consent_plan: str, offli
                                       details={'http': response.status})
                 if tuple(actual) != plan.urls:
                     raise _drift(plan, actual)
-                if response.headers.get('Content-Encoding', 'identity').strip().lower() != 'identity':
-                    raise SourceError('PT-KBC-SOURCE', 'inventory source used an unrequested content encoding')
+                expected = _framing(response, plan.max_bytes)
                 body = bytearray()
                 transport._read(response, body.extend, plan.max_bytes, 'inventory source', deadline)
+                if expected is not None and len(body) != expected:
+                    raise SourceError('PT-KBC-SOURCE', 'inventory response does not match its complete declared body')
                 transport._live(deadline)
                 return bytes(body)
             finally:
