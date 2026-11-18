@@ -113,3 +113,7 @@ Source `06f5b210e5c6daffaae2b4d51fd8950c28be25c3` repairs reproduced unbounded r
 ## Reviewed retained-CVE continuation — 2026-11-18
 
 Combined source `ac789497597fba3cb87696990d171a7a27024fca` adds retained CVRF candidate context, shared current-evidence checks for CLI/desktop/publication/navigation/reports, and two independently reproduced SQLite repairs. Root verification is 1,924 passed with zero skips, including six unchanged defect probes and six combined history/report controls. The source preserves actual PR #313 as an ancestor. D/R evidence is complete for these bounded slices; the wider CVE-to-function and report rows remain D/R = 50% because representative real-source/native J and final G are open. No accuracy or overall completion percentage is inferred. [Evidence and remaining tasks](../qa/pilot-cvrf-reviewed-20261118/README.md).
+
+## Paired raw-window independent integration checkpoint — 2026-11-18
+
+The paired raw-offset desktop slice now has independent source review (183 affected plus six additional controls) and 183 source-pinned combined passes on published #307, source `21552835`. D/R coverage remains **50%**: the implementation and regressions are verified locally, while representative native/manual J and exact-head full/platform/security G remain open. The original author receipt and failure history are retained; this entry does not promote the historical #168 research content or claim beta readiness. [Review and evidence](../qa/raw-alignment-reviewed-20261118/README.md).

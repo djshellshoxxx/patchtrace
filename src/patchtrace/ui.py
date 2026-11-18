@@ -75,6 +75,7 @@ from .ui_inspection import InspectionThread, side_summary
 from .ui_job_events import JobEventRelay
 from .ui_persistence import commit_and_report
 from .ui_profiles import PROFILE_SETTING, profiles_dir, selected_profile
+from .ui_raw_alignment import RawAlignmentController, build_raw_navigation
 from .ui_symbols import SymbolChoice, config_kwargs, configured_symbol_mode, effective_profile_symbol_mode
 from .ui_timeout import TimeoutChoice
 
@@ -1698,22 +1699,7 @@ class MainWindow(QMainWindow):
                             'Base64 (raw bytes)'])
         self.mode.currentTextChanged.connect(self._mode_changed)
         row.addWidget(self.mode)
-        self.raw_scope = QComboBox()
-        self.raw_scope.addItems(['Whole file', 'From function entry'])
-        self.raw_scope.currentIndexChanged.connect(self._raw_scope_changed)
-        row.addWidget(self.raw_scope)
-        self.raw_page = QSpinBox()
-        self.raw_page.setRange(1, 1)
-        self.raw_page.setPrefix('Page ')
-        self.raw_page.valueChanged.connect(lambda *_: self.render_match())
-        row.addWidget(self.raw_page)
-        self.raw_goto = QLineEdit()
-        self.raw_goto.setPlaceholderText('Go to file offset (hex)')
-        self.raw_goto.setMaximumWidth(170)
-        self.raw_goto.returnPressed.connect(self.raw_goto_offset)
-        row.addWidget(self.raw_goto)
-        for widget in (self.raw_scope, self.raw_page, self.raw_goto):
-            widget.setVisible(False)
+        build_raw_navigation(self, row)
         self.sync_scroll = QCheckBox('Sync scroll')
         self.sync_scroll.setChecked(True)
         row.addWidget(self.sync_scroll)
@@ -1764,6 +1750,7 @@ class MainWindow(QMainWindow):
         apply_tooltips(self, {'mode': 'viewer.mode', 'sync_scroll': 'viewer.sync_scroll',
                               'previous_diff': 'nav.previous_hunk', 'next_diff': 'nav.next_hunk',
                               'hunk_list': 'nav.hunk_list'})
+        self.raw_alignment = RawAlignmentController(self, pane, layout)
         self.workspace.addWidget(pane)
 
     def _build_findings(self):
@@ -2055,6 +2042,7 @@ class MainWindow(QMainWindow):
             self.panels.selection_changed(self.current_match())
 
     def render_match(self, *_):
+        self.raw_alignment.sync()
         match = self.current_match()
         self._render_signals(match)
         self._function_offsets = {}
@@ -2193,6 +2181,9 @@ class MainWindow(QMainWindow):
             return
         artifact = next(a for a in self.project.artifacts if a.side == side)
         text = f'PatchTrace project {self.project.id} / revision {self.project.revision}\n'
+        if self.raw_alignment.active():
+            self.raw_alignment.copy(side, text, artifact)
+            return
         if self._raw_mode():
             raw = self._raw_sides.get(side) if self._current_inspection() is not None else None
             if raw is None or raw.rendered is None:
@@ -2589,6 +2580,9 @@ class MainWindow(QMainWindow):
         return None
 
     def _render_raw(self, match, clamped_from: int | None = None):
+        if self.raw_alignment.active():
+            self.raw_alignment.render()
+            return
         self._hunks = []
         self._hunk_index = -1
         inspection = self._current_inspection()
@@ -2674,6 +2668,7 @@ class MainWindow(QMainWindow):
         if not sizes or offset < 0 or offset >= max(sizes):
             self.statusBar().showMessage('Offset is outside the verified artifact bytes.')
             return
+        self.raw_alignment.toggle.setChecked(False)
         self.raw_scope.blockSignals(True)
         self.raw_scope.setCurrentIndex(SCOPES.index('whole'))
         self.raw_scope.blockSignals(False)
@@ -2727,6 +2722,7 @@ class MainWindow(QMainWindow):
         self.logs.appendPlainText('File inspection failed: ' + message)
 
     def _clear_inspection(self):
+        self.raw_alignment.invalidate()
         if self._inspection is not None:
             self._inspection.close()
         self._inspection, self._inspection_key, self._raw_sides = None, None, {}
@@ -3065,6 +3061,7 @@ class MainWindow(QMainWindow):
         for name, splitter in [('workspace', self.workspace), ('vertical', self.vertical), ('code', self.code_split)]:
             self.settings.setValue('desktop/' + name, splitter.saveState())
         self.settings.setValue('desktop/sync', self.sync_scroll.isChecked())
+        self.raw_alignment.shutdown()
         self.panels.shutdown()
         self.settings.sync()
         self._stop_inspection()
