@@ -234,8 +234,8 @@ def inspect_local_file(path: str, *, basename: str | None = None, reader: HeldIn
             reader.check(target)
         with (open(target, 'rb') if reader is None else reader.open_reader(target)) as handle:
             for block in iter(lambda: _input_block(handle, held=reader is not None), b''):
-                if not head:
-                    head = block[:HEADER_BYTES]
+                if len(head) < HEADER_BYTES:
+                    head += block[:HEADER_BYTES - len(head)]
                 digest.update(block)
                 size += len(block)
         if reader is not None:
