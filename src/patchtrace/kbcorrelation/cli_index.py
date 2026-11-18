@@ -82,7 +82,9 @@ def add_common(parser: argparse.ArgumentParser) -> argparse.ArgumentParser:
 
 def build_parser(prog: str = 'patchtrace kb index') -> argparse.ArgumentParser:
     parser = Parser(prog=prog, description='Offline KB reverse index: import local documents, show status, verify, '
-                    'and preview (never perform) a sync.')
+                    'and preview (never perform) a sync.',
+                    epilog='Online metadata fetching is separate: "patchtrace kb index sync --help". '
+                    'Sync requires consent for the exact hosts and request plan.')
     sub = parser.add_subparsers(dest='action', required=True, parser_class=Parser)
     imp = add_common(sub.add_parser('import', help='import saved CVRF month or CSAF JSON files (all or nothing)'))
     imp.add_argument('files', nargs='+', type=Path, metavar='FILE')

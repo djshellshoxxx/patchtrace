@@ -1,5 +1,31 @@
 # Module index
 
+### November 2026 continuation interfaces
+
+KEV CLI context continuation (2026-11-16): `pilot/collect.py:local_kev` reads the
+existing verified snapshot store into `pilot/sources/kev.py:CatalogKev`.
+`pilot/cli.py` compares the current snapshot id when reading stored results;
+`kbcorrelation/service.py` accepts the existing exploitation lookup for search
+edge/card context. No new stored schema or ranking algorithm is introduced.
+Verification: `test_pilot_cli.py`, `test_kbc_cli.py`, KEV and pilot suites.
+
+Historical R7 research recovery (2026-11-16): `tools/research/r7/{slicer,patterns,bench}.py`
+contains bounded synthetic dependency slicing, conservative guard-delta motifs and
+an optional benchmark. These development tools do not modify production analysis,
+ranking, schemas or Qt. Source: `1f4a0784` / `abadcb36` on
+`consolidate/research-r7-20261104` (PR #282; original PR #134).
+Verification seams: `tests/test_r7_slicing.py`, `tests/test_r7_patterns.py`.
+
+| Module | Responsibility | Verification seam |
+|---|---|---|
+| `project_cli.py`, `cli_commands/project.py` | Headless project creation, inspection, imports, backups and orientation swap through existing services | `test_project_cli.py`; refusal, cancellation and read-only invariants |
+| `compare_cli.py`, `cli_commands/compare.py` | Supervised primary comparison and transactional result application | `test_compare_cli.py`; fake backend, retained results and cancellation |
+| `doctor_cli.py`, `cli_commands/doctor.py` | Local health report without network or subprocess execution | `test_doctor_cli.py` |
+| `enrichment/profile_cli.py`, `cli_commands/profile.py` | Shared profile repository operations and validation | `test_profile_cli.py` |
+| `tools/research_qualification/l1_run.py` | Frozen-manifest offline advisory-join receipts, excluding unverified cases | `test_research_qualification_l1_run.py`; synthetic mechanics, not real accuracy |
+| `report2/kb_context.py` | Inert advisory records from the project's captured KB context | KB report regression tests |
+| `kbcorrelation/cli_leads.py`, `wiring.py`, `panel_qt.py` | Owner-thread snapshots for worker-side lead calculation without reopening the held project | Default-loader lifecycle regression tests |
+
 2026-11-05 investigation extension: the existing `kbcorrelation/investigation_service.py`
 facade also builds the existing monthly IndexPlan, strictly checks captured plan and
 consent, and orchestrates existing CVRF transport/per-document WorkspaceStore commits.
@@ -1258,7 +1284,7 @@ Calls panel (id graph): `callgraph/panel.py` (PanelSpec), `panel_qt.py` (widgets
 
 | desktop project adoption | gui/qt/project_adoption.py | GUI-thread transaction for MainWindow.set_service: retain the previous service until incoming rendering and recent-project preferences succeed; rollback pointer/preferences and close rejected incoming service on failure. No project/backend logic. | MainWindow view/settings hooks | tests/test_gui_project_adoption.py; real ProjectService ownership and QSettings rollback |
 
-| rz-diff producer research controls | tools/rzdiff/{patch_producer.py,singleton-ownership.patch,boundary_control.c,native_control.c,native_evidence.py} | Exact-blob-only Rizin v0.9.1 ownership correction; compiled wrapper double; pinned-native API oracle and strict red/green matrix evidence runner. Research only, no runtime acceptance or quarantine change. | stdlib; external pinned Rizin for live API checks | tests/test_rzdiff_producer_patch.py; tests/test_rzdiff_native_evidence.py; synthetic/compiled-double evidence separate from native acceptance |
+| rz-diff producer research controls | tools/rzdiff/{patch_producer.py,singleton-ownership.patch,boundary_control.c,native_control.c,native_evidence.py} | Exact-blob-only Rizin v0.9.1 ownership correction; compiled wrapper double; pinned-native API oracle and strict red/green matrix plus distinct-IO/negative-control evidence runner with independently verified native worker counts. Research only, no runtime acceptance or quarantine change. | stdlib; external pinned Rizin for live API checks | tests/test_rzdiff_producer_patch.py; tests/test_rzdiff_native_evidence.py; tests/test_rzdiff_io_evidence.py; synthetic/compiled-double evidence separate from native acceptance |
 
 ### [UE-AUD-20261104:diaphora-source] Diaphora as a unified fusion source (06 s5, 2026-11-04, PR #180)
 
@@ -1335,3 +1361,10 @@ binds pending repair to its exact original scope/source subset. New-reader
 repair is required for those journals; public schemas and SQL version stay
 unchanged. Tests: `test_kb_product_start_20261106.py`,
 `test_kb_product_acceptance_20261106.py`, plus existing service/recovery journeys.
+
+| offline runtime CLI | runtime_cli.py; cli_commands/runtime.py | Headless bounded archive inspection and confirmed installation through offline_bundle services; ownership-checked empty ancestor cleanup | offline_bundle, backend_bundle | tests/test_runtime_cli.py; synthetic archives, no runtime execution |
+| secondary CLI dispatch | secondary/cli_import.py | Qt-free secondary command orchestration: input preflight, reconciliation and import/run dispatch; cli.py is a lazy delegate | secondary services, CLI presentation helpers imported at dispatch | CLI import/reconcile/run and no-Qt module import regression tests |
+
+| manual corrections exchange and review CLI | corrections_exchange.py; corrections_cli.py; review_cli.py; cli_commands/corrections.py; cli_commands/review.py | Bound transactional correction exchange, immutable export, headless reviews through ProjectService | persistence, models, service | tests/test_corrections_cli.py; tests/test_review_cli.py; synthetic fixtures |
+
+| timeout setup UI | src/patchtrace/ui_timeout.py | Preserved-text 10..86400-second validation, explicit 1h/2h/4h presets and inline errors for Setup; no backend execution or settings writes | PySide6, tooltip registry | tests/test_ui_timeout.py; SPEC-01a docs/specs/ghidriff-timeout-progress.md |

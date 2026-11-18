@@ -462,8 +462,9 @@ def main(argv: Sequence[str] | None = None) -> int:
     if args.command == 'md-dump':
         result = run_md_dump(args.bindiff_exe, args.binexport, timeout=args.timeout)
         args.out.write_text(result['stdout'], encoding='utf-8', newline='\n')
-        print(json.dumps({'exit': result['exit'], 'input_sha256': result['input_sha256'], 'bytes': len(result['stdout'])}))
-        return 0 if result['exit'] == 0 else 1
+        print(json.dumps({'exit': result['exit'], 'reason': result.get('reason'),
+                          'input_sha256': result['input_sha256'], 'bytes': len(result['stdout'])}))
+        return 0 if result['exit'] == 0 and not result.get('reason') else 1  # timeout, cancel, output-limit fail
 
     ladder = ladder_from_rows(_read_rows(args.rows))
     oracles = []

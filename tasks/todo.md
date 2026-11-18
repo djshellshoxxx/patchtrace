@@ -1,12 +1,59 @@
 # PatchTrace delivery tracker
 
+## 2026-11-16 local KEV continuation
+
+- [x] Complete K4 item 3: local KEV context in pilot leads and KB search.
+- [x] Bind catalogue snapshot changes to stored-result identity/staleness.
+- [x] Preserve provenance, unknown states and function order; 1,224 affected tests pass.
+- [ ] Complete hosted current-head QA/Windows/package gates and remaining historical review.
+- [ ] Resolve native/timeout-pair/clean-machine/manual acceptance with real evidence.
+
+[KEV continuation evidence](../docs/qa/kev-cli-continuation-20261116.md).
+
+## 2026-11-16 paths, KB parity and R7 continuation
+
+- [x] Repair both Windows QA path-classification failures without weakening assertions.
+- [x] Complete sync help and active stored-product catalogue CLI access (K4 items 1–2).
+- [x] Review/recover unique isolated #282 R7 research tooling and its tests/docs.
+- [x] Inventory 300 fetched branch refs; distinguish ancestry from semantic integration.
+- [x] Pass 724 affected tests, whole Ruff, dependency and whitespace checks.
+- [ ] Obtain passing current-head hosted full QA, Qt and platform packages before merging #297.
+- [ ] Finish remaining historical semantic review and release/native/manual gates.
+
+[Continuation evidence](../docs/qa/continuation-paths-kb-r7-20261116.md).
+
+## 2026-11-16 research integrity recovery
+
+Recovered the missing #164 Tier R provenance/label/receipt slice and #222 native
+research IO controls with reusable exact validation. See
+[scoped evidence](../docs/qa/research-integrity-followup-20261116.md).
+Implementation and independent reviews pass; hosted/native acceptance remains
+open. Twelve redundant PR records are now closed; original branches remain.
+
+## 2026-11-16 consolidation follow-up
+
+Timeout validation/presets and recovered benchmark/parity/release repairs are
+implemented on the separate follow-up branch; see
+[evidence and disposition](../docs/qa/consolidation-followup-20261116.md).
+Ten already-integrated PR records are closed, with source branches preserved.
+Merge the integration and follow-up only after their respective hosted gates pass.
+The remaining Tier R provenance/label/receipt recovery is a separate slice.
+
+## 2026-11-16 continuation
+
+Current integration: `codex/release-integration-20261116`; see
+[checkpoint](../docs/qa/continuation-20261116.md). Core historical ports, review repairs and the remaining core CLI verbs are implemented
+on the integration branch. Hosted CI, further historical semantic review and
+native/release acceptance remain open; full local verification hit environment
+and worker-termination blockers documented in the checkpoint.
+
 ## P1 — Recurring Windows comparison timeout (reported 2026-11-06)
 
 **OPEN / high priority.** The owner's usual two-file test failed with `PT-BACKEND: analysis timed out`. Both Ghidra analyses completed; `StructuralGraphHash` then reported **2,161,955 entries**, followed by a **28m 41.755s** quiet interval after "Sorting functions". Later `72/72` progress was only an enhanced-symbol (`esym`) substage. The configured timeout and actual termination time are absent from the supplied logs; the source default of 3,600 seconds is not proof of the value used in this run.
 
 Incident evidence, source references, attachment hashes, implementation options and closure criteria: **[P1 timeout investigation](../docs/qa/ghidriff-timeout-20261106.md)**. Preserve the original tracker history below.
 
-- [ ] **PT-TIMEOUT-1 — partially implemented:** Live elapsed/budget status, last observed stage/output age, actionable timeout text and bounded `backend-execution.json` receipts are implemented in [SPEC-01a](../docs/specs/ghidriff-timeout-progress.md). The elapsed timer and late worker events also preserve terminal/cancel messages. Timeout-entry validation/presets and original-pair Windows acceptance remain open. Existing interim option: **Setup → Backend and desktop → Comparison timeout (seconds) → 7200 (2h) or 14400 (4h) → Save setup**, then start a new run. The current GUI range is 10–86,400 seconds. A longer budget is not a verified performance fix.
+- [ ] **PT-TIMEOUT-1 — original-pair acceptance open:** Live elapsed/budget status, last observed stage/output age, actionable timeout text, bounded `backend-execution.json` receipts, explicit timeout-entry validation and Custom/1h/2h/4h presets are implemented in [SPEC-01a](../docs/specs/ghidriff-timeout-progress.md). The elapsed timer and late worker events preserve terminal/cancel messages. Original-pair Windows acceptance remains open. **Setup → Backend and desktop → Comparison timeout (seconds) → 7200 (2h) or 14400 (4h) → Save setup**, then start a new run. The GUI range remains 10–86,400 seconds. A longer budget is not a verified performance fix.
 - [ ] **PT-TIMEOUT-2:** Profile the structural-candidate expansion and downstream conversion/filtering/deduplication/JSON work; implement a measured, semantics-preserving repair through the supported external-engine boundary. Preserve ambiguity and disclose any incomplete result caused by resource limits.
 - [ ] **PT-TIMEOUT-3:** Diagnose the separate `FUN_100ca86c` decompiler timeout, missing PDB metadata and nonfatal resource-parser warnings. An outer timeout extension does not automatically fix the per-function timeout. Capture actual runtime versions; this log uses Ghidra 12.1.4.
 - [ ] **PT-TIMEOUT-4:** Verify successful-cache reuse and evaluate separately specified failed-run checkpoints. Keep `--no-threaded`, workspace isolation, failure logs and prior results; do not remove the Windows lock safeguard as an untested speed fix.

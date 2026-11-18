@@ -24,6 +24,15 @@ def _positive_int(value: object) -> bool:
     return isinstance(value, int) and not isinstance(value, bool) and value >= 1
 
 
+def _valid_environment(env: Mapping[str, str]) -> bool:
+    """TB-15: names and values that mean the same in a POSIX `environ` and in a NUL-separated Windows block.
+
+    A NUL would end an entry early and start another variable; `=` in a name moves the name/value boundary.
+    """
+    return all(isinstance(name, str) and isinstance(value, str) and name and '=' not in name
+               and '\0' not in name and '\0' not in value for name, value in env.items())
+
+
 @dataclass(frozen=True)
 class ProcessProgress:
     """Bounded, unredacted child output for trusted internal observers only."""
@@ -283,8 +292,15 @@ def run_process(argv: Sequence[str], *, cwd: Path, env: Mapping[str, str],
     if memory_limit_bytes is not None and not (_positive_int(memory_limit_bytes)
                                                and memory_limit_bytes < MEMORY_LIMIT_CEILING):
         raise ValueError('PT-BACKEND: memory limit must be a positive integer')
+    if not _valid_environment(env):
+        # The name and the value stay out of the message: either may be a credential or hostile text.
+        raise ValueError('PT-BACKEND: child environment has an invalid variable name or value')
     if cancel.is_set():
         return ProcessResult(-1, '', 'cancelled')
+    peek_exit = os.name != 'nt' and all(hasattr(os, name) for name in
+                                       ('waitid', 'P_PID', 'WEXITED', 'WNOHANG', 'WNOWAIT'))
+    if os.name != 'nt' and not peek_exit:
+        raise OSError('PT-BACKEND: safe process supervision requires POSIX waitid with WNOWAIT')
     if os.name == 'nt':
         child = _windows_process(argv, cwd, env, separate_streams, memory_limit_bytes)
     else:
@@ -320,10 +336,26 @@ def run_process(argv: Sequence[str], *, cwd: Path, env: Mapping[str, str],
     if separate_streams:
         readers.append(threading.Thread(target=collect, args=(child.stderr, err_tail, stderr_limit, 'err'),
                                         name='patchtrace-err', daemon=True))
+    # POSIX invariant (TB-09): the group is signalled only while its leader is unreaped. A reaped leader's pid can
+    # be recycled, and killpg would then reach an unrelated group. So the exit is observed without reaping (WNOWAIT
+    # leaves the zombie holding the pid), the group is killed, and only then does wait() reap. Unsupported POSIX
+    # runtimes are refused before spawn, because polling first can release the PID to an unrelated group.
+    group_owned = True
+
+    def running() -> bool:
+        nonlocal group_owned
+        if peek_exit:
+            try:
+                return os.waitid(os.P_PID, child.pid, os.WEXITED | os.WNOHANG | os.WNOWAIT) is None
+            except ChildProcessError:
+                group_owned = False  # An external reaper released the PID: never signal that group again.
+                raise RuntimeError('PT-BACKEND: child was reaped outside its supervisor') from None
+        return child.poll() is None
+
     def terminate():
         if os.name == 'nt':
             child.kill_tree()
-        else:
+        elif group_owned and child.returncode is None:
             try:
                 os.killpg(child.pid, signal.SIGKILL)
             except ProcessLookupError:
@@ -356,7 +388,7 @@ def run_process(argv: Sequence[str], *, cwd: Path, env: Mapping[str, str],
         started, reason = time.monotonic(), None
         next_progress = started
         stopped: float | None = None
-        while child.poll() is None:
+        while running():
             if cancel.is_set():
                 reason = 'cancelled'
             elif time.monotonic() - started >= timeout_seconds:

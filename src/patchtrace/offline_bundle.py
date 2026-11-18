@@ -11,6 +11,7 @@ import os
 import re
 import shutil
 import stat
+import struct
 import tempfile
 import threading
 import unicodedata
@@ -32,6 +33,13 @@ VERSION = re.compile(r'^[a-zA-Z0-9][a-zA-Z0-9._+\-]{0,95}$')
 WINDOWS_RESERVED = {'CON', 'PRN', 'AUX', 'NUL'} | {
     f'{kind}{index}' for kind in ('COM', 'LPT') for index in (*range(1, 10), '¹', '²', '³')
 } | {'CONIN$', 'CONOUT$'}
+# End-of-central-directory layouts (APPNOTE 4.3.14-4.3.16); the fixed record may be followed by a comment.
+_EOCD = struct.Struct('<4s4H2LH')
+_EOCD64_LOCATOR = struct.Struct('<4sLQL')
+_EOCD64 = struct.Struct('<4sQ2H2L4Q')
+_MAX_ZIP_COMMENT = 0xFFFF
+MAX_CENTRAL_DIRECTORY_BYTES = 128 * 1024 * 1024
+_CENTRAL_HEADER = struct.Struct('<4s6H3L5H2L')
 # Errors raised by zipfile/zlib for corrupt or unsupported members.
 _READ_ERRORS = (OSError, EOFError, zipfile.BadZipFile, zipfile.LargeZipFile, RuntimeError,
                 zlib.error, NotImplementedError, UnicodeError)
@@ -139,6 +147,15 @@ def _json_no_duplicates(raw: bytes) -> dict:
     return data
 
 
+def windows_unsafe_component(part: str) -> bool:
+    """True when Windows would not store this path component under the name given.
+
+    A trailing dot or space is stripped by Win32, and a reserved device name (with or without an extension)
+    opens the device. A rule on the string, not the running OS: the one copy shared with `ingestion.safe_path`.
+    """
+    return part.endswith((' ', '.')) or part.split('.')[0].rstrip(' ').upper() in WINDOWS_RESERVED
+
+
 def _safe_relative(name: str) -> str:
     """Validate literal portable POSIX paths, including Windows filesystem rules."""
     if not isinstance(name, str) or not name or len(name) > 512 or name.startswith('/'):
@@ -146,9 +163,8 @@ def _safe_relative(name: str) -> str:
     if '\\' in name or '//' in name or any(ord(c) < 32 or ord(c) == 127 for c in name):
         _fail('unsafe archive path')
     parts = name.split('/')
-    if any(part in ('', '.', '..') or part.endswith((' ', '.')) or ':' in part
-           or any(char in part for char in '<>"|?*')
-           or part.split('.')[0].rstrip(' ').upper() in WINDOWS_RESERVED for part in parts):
+    if any(part in ('', '.', '..') or ':' in part or any(char in part for char in '<>"|?*')
+           or windows_unsafe_component(part) for part in parts):
         _fail('unsafe archive path')
     return name
 
@@ -225,6 +241,84 @@ def validate_manifest(data: object, *, platforms: tuple[str, ...] = DEFAULT_PLAT
 _validated_manifest = validate_manifest  # historical private name
 
 
+def _declared_zip_entries(archive: Path) -> int | None:
+    """The total entry count the end-of-central-directory record declares, or None when no record is readable.
+
+    TB-10: read with struct from the tail of the file, so an archive that declares more entries than the cap is
+    refused before zipfile builds one object per directory entry. The record is located the way zipfile locates
+    it (last record that fits, ZIP64 record at the locator's offset or directly before the locator). None means
+    "zipfile reports it": this reader never turns its own doubt into a refusal.
+    """
+    try:
+        with archive.open('rb') as stream:
+            size = stream.seek(0, os.SEEK_END)
+            start = max(0, size - _EOCD.size - _MAX_ZIP_COMMENT - _EOCD64_LOCATOR.size)
+            stream.seek(start)
+            tail = stream.read(size - start)
+            at = len(tail) - _EOCD.size
+            if at < 0:
+                return None
+            if not (tail.startswith(b'PK\x05\x06', at) and tail.endswith(b'\x00\x00')):
+                at = tail.rfind(b'PK\x05\x06', max(0, at - _MAX_ZIP_COMMENT))
+                if at < 0 or at + _EOCD.size > len(tail):
+                    return None
+            locator_at = at - _EOCD64_LOCATOR.size
+            if locator_at < 0 or not tail.startswith(b'PK\x06\x07', locator_at):
+                return _EOCD.unpack_from(tail, at)[4]
+            declared_offset = _EOCD64_LOCATOR.unpack_from(tail, locator_at)[2]
+            for offset in (declared_offset, start + locator_at - _EOCD64.size):
+                if 0 <= offset <= size - _EOCD64.size:
+                    stream.seek(offset)
+                    record = stream.read(_EOCD64.size)
+                    if len(record) == _EOCD64.size and record.startswith(b'PK\x06\x06'):
+                        return _EOCD64.unpack(record)[7]
+    except OSError:
+        return None
+    return None
+
+
+def _preflight_zip_directory(archive: Path, cancel: threading.Event | None) -> None:
+    """Bound ZipFile's directory allocation and count real headers without materializing them.
+
+    Use the same bounded EOCD reader and offsets as ZipFile, including prepended ZIP64 archives.
+    Malformed records remain BadZipFile; no fallback may allocate an unchecked central directory.
+    """
+    with archive.open('rb') as stream:
+        end = zipfile._EndRecData(stream)
+        if end is None:
+            raise zipfile.BadZipFile('File is not a zip file')
+        size = end[zipfile._ECD_SIZE]
+        if size > MAX_CENTRAL_DIRECTORY_BYTES:
+            _fail('ZIP central directory exceeds size limit')
+        # CPython versions differ on whether _EndRecData normalizes the ZIP64 record location.
+        # Inspect the physical signature so both forms use the beginning of the end records.
+        location = end[zipfile._ECD_LOCATION]
+        stream.seek(location)
+        if stream.read(4) == b'PK\x05\x06' and location >= _EOCD64_LOCATOR.size:
+            stream.seek(location - _EOCD64_LOCATOR.size)
+            if stream.read(4) == b'PK\x06\x07':
+                location -= _EOCD64_LOCATOR.size + _EOCD64.size
+        offset = location - size
+        if offset < 0:
+            raise zipfile.BadZipFile('Bad offset for central directory')
+        stream.seek(offset)
+        consumed = count = 0
+        while consumed < size:
+            _cancel(cancel)
+            raw = stream.read(_CENTRAL_HEADER.size)
+            if len(raw) != _CENTRAL_HEADER.size or raw[:4] != b'PK\x01\x02':
+                raise zipfile.BadZipFile('Invalid central directory header')
+            header = _CENTRAL_HEADER.unpack(raw)
+            span = _CENTRAL_HEADER.size + sum(header[10:13])
+            if span > size - consumed:
+                raise zipfile.BadZipFile('Truncated central directory')
+            count += 1
+            if count > MAX_MEMBERS + 1:
+                _fail('ZIP contains too many entries')
+            stream.seek(span - _CENTRAL_HEADER.size, os.SEEK_CUR)
+            consumed += span
+
+
 def _zip_entries(archive: zipfile.ZipFile, files: tuple[BundleFile, ...]) -> None:
     entries = archive.infolist()
     if len(entries) > MAX_MEMBERS + 1:
@@ -291,6 +385,10 @@ def inspect_offline_bundle(archive: Path, *, expected_sha256: str | None = None,
         archive_hash = _sha256_file(archive, cancel)
         if expected_sha256 is not None and archive_hash != expected_sha256:
             _fail('archive SHA-256 differs from the trusted expected SHA-256')
+        declared = _declared_zip_entries(archive)
+        if declared is not None and declared > MAX_MEMBERS + 1:
+            _fail('ZIP contains too many entries')
+        _preflight_zip_directory(archive, cancel)
         with zipfile.ZipFile(archive, 'r') as zf:
             entries = zf.infolist()
             manifests = [info for info in entries if info.filename == 'manifest.json']
@@ -367,6 +465,7 @@ def _publish_no_replace(stage: Path, destination: Path) -> None:
 
 
 def install_offline_bundle(plan: OfflineBundlePlan, runtimes_root: Path, *,
+                           created_directories: list[tuple[Path, os.stat_result]] | None = None,
                            cancel: threading.Event | None = None,
                            event: Callable[[str], None] | None = None) -> InstalledRuntime:
     """Verify again, extract to private staging, publish atomically, never overwrite."""
@@ -383,6 +482,15 @@ def install_offline_bundle(plan: OfflineBundlePlan, runtimes_root: Path, *,
         if 'SHA-256 differs' in str(exc):
             _fail('bundle changed after inspection: archive SHA-256 differs')
         raise
+    if verified.platform == 'linux':
+        try:
+            with zipfile.ZipFile(verified.archive, 'r') as archive:
+                for launcher in (verified.python_relative, verified.java_relative + '/bin/java'):
+                    info = archive.getinfo(launcher)
+                    if info.create_system != 3 or not (info.external_attr >> 16) & 0o100:
+                        _fail('Linux launcher lacks executable metadata; rebuild the archive from executable files')
+        except (*_READ_ERRORS, KeyError) as exc:
+            _fail(f'cannot verify Linux launcher metadata ({type(exc).__name__})')
     destination = destination_root / verified.runtime_id
     _no_symlink_ancestors(destination)
     disk_path = destination_root
@@ -396,7 +504,20 @@ def install_offline_bundle(plan: OfflineBundlePlan, runtimes_root: Path, *,
         _fail('cannot determine available disk space for offline backend')
     if destination.exists():
         _fail('runtime already installed; existing files were not overwritten')
-    destination_root.mkdir(parents=True, exist_ok=True)
+    missing = []
+    parent = destination_root
+    while not parent.exists():
+        missing.append(parent)
+        parent = parent.parent
+    for directory in reversed(missing):
+        try:
+            directory.mkdir()
+        except FileExistsError:
+            if not directory.is_dir():
+                raise
+        else:
+            if created_directories is not None:
+                created_directories.append((directory, directory.stat()))
     lock = destination_root / f'.runtime-{verified.runtime_id}.lock'
     stage = None
     lock_fd = None
@@ -419,6 +540,10 @@ def install_offline_bundle(plan: OfflineBundlePlan, runtimes_root: Path, *,
                 with zf.open('payload/' + item.path) as src, target.open('xb') as output:
                     _verify_stream(src, item, cancel, output)
                     output.flush()
+                if verified.platform == 'linux' and os.name != 'nt':
+                    info = zf.getinfo('payload/' + item.path)
+                    execute = (info.external_attr >> 16) & 0o111 if info.create_system == 3 else 0
+                    target.chmod(0o644 | execute)  # never adopt special bits or group/world write permissions
                 if event is not None:
                     event(f'Verified {index + 1} of {verified.file_count} files')
         (stage / 'manifest.json').write_bytes(verified.manifest_bytes)
@@ -524,7 +649,9 @@ def build_offline_bundle(source_payload: Path, runtime_id: str, versions: Mappin
                     _fail('payload changed during packaging')
                 header = zipfile.ZipInfo('payload/' + relative, date_time=(1980, 1, 1, 0, 0, 0))
                 header.compress_type = zipfile.ZIP_DEFLATED
-                header.external_attr = 0o100644 << 16
+                header.create_system = 3
+                execute = path.stat().st_mode & 0o111 if platform == 'linux' else 0
+                header.external_attr = (0o100644 | execute) << 16
                 with path.open('rb') as stream, output.open(header, 'w') as member:
                     while chunk := stream.read(CHUNK):
                         member.write(chunk)

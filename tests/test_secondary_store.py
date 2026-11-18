@@ -14,8 +14,10 @@ def _set(older, newer, file_sha, address=0x10, engine='rz-diff'):
     match = SecondaryMatch(engine=engine, engine_version='0.9.1', older_address=address, newer_address=address,
                            older_name=None, newer_name=None, similarity_milli=500, similarity_text='0.5',
                            confidence_milli=None, confidence_text=None, flags=(), algorithm='levenshtein-bytes')
+    # Two newer addresses keep these storage/supersession fixtures outside ownership quarantine.
+    matches = (match, match.model_copy(update={'older_address': address + 1, 'newer_address': address + 1}))
     return SecondaryMatchSet(engine=engine, engine_version='0.9.1', older_sha256=older, newer_sha256=newer,
-                             file_sha256=file_sha, matches=(match,), limitations=('raw bytes',))
+                             file_sha256=file_sha, matches=matches, limitations=('raw bytes',))
 
 
 @pytest.fixture

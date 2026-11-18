@@ -172,6 +172,9 @@ def main(argv: Sequence[str] | None = None) -> int:
     args.out.parent.mkdir(parents=True, exist_ok=True)
     args.out.write_bytes(outcomes.dump(outcomes.build(args.run, f'{platform.system()}-{platform.release()}', done)))
     print(f'{len(done)} outcomes written to {args.out}')
+    empty = [f'{o.pair_id} ({o.orientation})' for o in done if not o.rows]
+    if empty:       # an engine that saw no function is a different finding from one that saw no change
+        print(f'warning: {len(empty)} outcomes have no unified row: {", ".join(empty[:10])}', file=sys.stderr)
     # Temporary projects and their native logs were deleted above; retain the bounded failure explanation.
     # Write an empty sidecar after success so an earlier failure file cannot describe this output.
     diagnostics = backend_module.redact_log('\n'.join(failed)).encode('utf-8', errors='replace')

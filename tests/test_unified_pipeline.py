@@ -665,3 +665,37 @@ def test_runs_leave_no_stray_files_behind(project, private_tempdir):
     assert sorted(p.name for p in root.iterdir().__next__().iterdir()) == [
         'facts.jsonl.gz', 'manifest.json', 'rows.jsonl.gz']
     assert not list(project.root.rglob('*.part'))
+
+
+def test_legacy_ambiguous_set_is_retained_only_as_refusal_provenance(project):
+    base = pipeline.run_unified(project, inproc())
+    pair = sides(project)
+    unsafe = rzdiff_set([rz(0x1000, 0x1080)], older=pair['older'], newer=pair['newer'])
+    publish_set(project, unsafe)
+    plan = pipeline.make_plan(project)
+    assert plan.result_id != base.result_id
+    report = pipeline.run_unified(project, inproc())
+    assert report.result_status == 'partial'
+    assert 'rzdiff-singleton-ownership' in report.limitations
+
+
+def test_newer_unambiguous_set_supersedes_quarantine_in_analysis(project):
+    from patchtrace.secondary import load_secondary, publish_secondary
+
+    pair = sides(project)
+    unsafe = rzdiff_set([rz(0x1000, 0x1080)], older=pair['older'], newer=pair['newer'])
+    unsafe = unsafe.model_copy(update={'contract': 'secondary/1', 'file_sha256': 'a' * 64})
+    current = project.project
+    run = current.runs[-1]
+    guard = Guard(current.id, run.id, run.raw_sha256, unsafe.file_sha256)
+    evidence = EnrichmentStore(project.store)
+    publish_secondary(evidence, guard, guard, current.revision, unsafe)
+    refused = pipeline.run_unified(project, inproc())
+    assert 'rzdiff-singleton-ownership' in refused.limitations
+    safe = rzdiff_set([rz(0x1000, 0x1080), rz(0x1100, 0x1180)],
+                      older=pair['older'], newer=pair['newer'])
+    publish_set(project, safe)
+    assert len(load_secondary(evidence)) == 2  # old evidence remains; it was not upserted away
+    accepted = pipeline.run_unified(project, inproc())
+    assert accepted.result_id != refused.result_id
+    assert 'rzdiff-singleton-ownership' not in accepted.limitations

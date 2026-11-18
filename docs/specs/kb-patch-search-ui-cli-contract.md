@@ -14,6 +14,24 @@ UI owner: one integration worker; CLI owner: one integration worker. Do not let 
 
 ## 1. CLI grammar (v1 decision)
 
+### Implemented KB grammar amendment — 2026-11-16
+
+The shipped namespace is `patchtrace kb`; the original `patchtrace patch` forms below
+are historical proposals. `kb index sync` owns consented monthly metadata fetching;
+`kb index --help` must list it and `kb index sync --help` must show its actual host
+and plan consent flags without building service ports, opening a workspace or fetching.
+The offline index module must remain independent of the online transport module.
+
+`kb products INV` retains its existing investigation-scoped behavior. The additive
+form `kb products --all [--query TEXT]` reads the existing active local product
+catalogue through `KbService.product_catalogue`. It creates no investigation and
+performs no network operation. `INV` and `--all` are mutually exclusive; `--query`
+requires `--all`. Missing selection is usage exit 2. Results reuse the catalogue's
+bounded output, provenance, truncation, verification and stale-source checks, with
+the existing `enrichment-cli/1` envelope. Matching products exit 0; an empty
+catalogue/filter exits 4. This is stored metadata browsing, not evidence that a
+binary is affected by a KB or CVE.
+
 All patch commands are offline/cache-only unless the user supplies both an explicit fetch flag and complete provider/host consent. Bare patch search must never fetch.
 
     patchtrace patch search KB5012345 --scope-file corpus.json --json

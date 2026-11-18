@@ -7,6 +7,17 @@ from patchtrace import ingestion
 from patchtrace.sample import synthetic_pe
 
 
+def test_directory_input_is_refused_before_open_based_fingerprint(tmp_path, monkeypatch):
+    def forbidden(path):
+        raise AssertionError('a directory must be refused before the Windows fingerprint opens it')
+
+    monkeypatch.setattr(ingestion, 'file_fingerprint', forbidden)
+    root = tmp_path / 'project'
+    with pytest.raises(ValueError, match='^PT-INPUT: input must be a regular file$'):
+        ingestion.inspect_artifact(tmp_path, 'older', root)
+    assert not root.exists()
+
+
 @pytest.mark.parametrize('kind', [
     'dos', 'short', 'offset', 'signature', 'machine', 'optional', 'magic', 'sections',
 ], ids=['dos', 'short', 'offset', 'signature', 'machine', 'optional', 'magic', 'sections'])

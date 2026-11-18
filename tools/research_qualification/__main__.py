@@ -12,6 +12,7 @@
     python -m tools.research_qualification fixtures build --out DIR
     python -m tools.research_qualification fixtures score --truth FILE --matches FILE
     python -m tools.research_qualification adapters {ghidriff,bindiff,rizin} FILE [--case ID]
+    python -m tools.research_qualification l1-run MANIFEST --months DIR --out RECEIPT --frozen-sha SHA --evidence-class C
 
 Exit codes: 0 ok, 1 failed/invalid/differs, 2 blocked or usage error. Nothing here executes target binaries
 unless the operator passes the command after `--`.
@@ -26,6 +27,7 @@ from pathlib import Path
 from . import call_model as CM
 from . import cases as CS
 from . import fixture_pairs as FP
+from . import l1_run as L1R
 from . import parity as PY
 from . import pathguard as PG
 from . import perf_harness as P
@@ -290,6 +292,8 @@ def build_parser() -> argparse.ArgumentParser:
     pt.add_argument("results_a")
     pt.add_argument("results_b")
     pt.add_argument("--k", type=int, default=5)
+    L1R.add_arguments(sub.add_parser("l1-run", help="ask PatchTrace's offline advisory join for every verified case "
+                                               "of a frozen L1 manifest (see l1_run.py)"))
     r = sub.add_parser("receipt", help="validate or compare receipts")
     r.add_argument("action", choices=["validate", "compare"])
     r.add_argument("files", nargs="+")
@@ -327,6 +331,8 @@ def _dispatch(a: argparse.Namespace, cmd: list[str]) -> int:
         return cmd_fixtures(a)
     if a.cmd == "adapters":
         return cmd_adapters(a)
+    if a.cmd == "l1-run":
+        return L1R.cmd(a)
     return cmd_receipt(a)
 
 

@@ -231,7 +231,7 @@ Existing codes stay: `PT-SECONDARY-INPUT, -PAIR, -ORIENTATION, -UNSUPPORTED, -RU
 | `PT-SECONDARY-TIMEOUT` | engine exceeded its deadline; process tree killed | 3 |
 | `PT-SECONDARY-FORMAT` | output not strict/understood (already used by the CLI mapping, now declared in `ErrorCode`) | 2 |
 | `PT-SECONDARY-CACHE` | cached set failed re-validation (internal, converted to a miss; recorded in `warnings`, never fatal) | n/a |
-`PT-SECONDARY-CANCEL` -> 5. Messages never echo untrusted stderr; stderr appears only in `EngineRun.stderr_tail`, sanitized (control characters other than `\n\t` replaced) and size-capped.
+`PT-SECONDARY-CANCEL` -> 5. Messages never echo untrusted stderr; stderr appears only in `EngineRun.stderr_tail`, sanitized (control characters other than `\n\t` replaced) and size-capped. Amended 2026-11-11 (SEC-B, SEC-9 residual): "control characters" is the one rule of `patchtrace.hostile_text.is_hostile` (categories `Cc`, `Cf`, `Cs`, `Zl`, `Zp`), each replaced by one `?`, so C1 controls (U+009B), U+061C and every other format character, surrogates and U+2028/U+2029 are replaced as well; the 64 KiB tail is cut first and then cleaned (same result, the replacement keeps the length). Records already stored are not rewritten.
 
 ## 9. Security invariants
 

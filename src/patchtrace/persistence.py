@@ -258,7 +258,15 @@ def creation_directory_available(root: Path) -> bool:
         try:
             metadata = root.lstat()
         except FileNotFoundError:
-            return True
+            # Windows can report a missing path even when an ancestor is a regular file.
+            # Check the nearest existing ancestor before advertising a creatable destination.
+            for parent in root.parents:
+                try:
+                    metadata = parent.lstat()
+                except FileNotFoundError:
+                    continue
+                return stat.S_ISDIR(metadata.st_mode)
+            return False
         if not stat.S_ISDIR(metadata.st_mode):
             return False
         with os.scandir(root) as entries:

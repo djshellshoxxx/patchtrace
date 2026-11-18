@@ -8,6 +8,13 @@ Status 2026-10-14: slices K0 (fixtures, vendored schema), K1a (pure core) and K1
 Source tags (every URL is `https://raw.githubusercontent.com/` + tag): R = `cisagov/kev-data/main/` (CISA's own repository), V = `cisagov/vulnrichment/develop/`, Q = `qt/qtbase/v6.12.0/`, W = `w3c/wcag/main/understanding/`, M = `MicrosoftDocs/win32/docs/desktop-src/WinAuto/`, S = `CERTCC/SSVC/main/docs/reference/decision_points/`. Confidence: verified (read or executed this session), inferred (derived from verified data), [unverified] (host blocked or not confirmable).
 
 ## 1. Verdict and scope
+
+CLI wiring continuation (2026-11-16): follow the CLI context wiring amendment in
+`../kev-exploitation-context.md`. `pilot leads/why/review` binds the verified local
+catalog snapshot and its staleness identity; `kb search` annotates CVE-level
+context without changing function order, advisory evidence or coverage. Missing
+catalogs remain unknown/not-loaded. No fetch or catalog installation is implied.
+
 - **Build**: a small pure `kev/1` package plus one dock in the main window. Consented whole-catalog fetch (about 1.8 MB; no CVE ID or KB is ever sent), file import, content-addressed offline snapshots with SHA-256 and explicit staleness, an exact-wording CVE join, snapshot delta, a project-attached `kev-context` row and report block, and shared badge/filter/sort/detail widgets that the KB/CVE result views embed.
 - **KEV is CVE-level context in its own lane.** It is never added to `attention/1` or `ContextualRanking`, never shown on a function row, never averaged with MSRC, SSVC, NVD or engine values. Its only ranking use is an opt-in, explained CVE reading order ("KEV-listed first", stable).
 - **Do not build**: a catalog browser (standalone duplicate), a bundled catalog (section 7), CSV import (no release metadata), KEV text in the CWE lexicon or hypothesis rules (shared origin), EPSS, NVD `cisa*`/SSVC lanes (evaluated in section 3, deferred), auto-refresh, auto-delete, any numeric score.

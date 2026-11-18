@@ -8,14 +8,16 @@ is clipped to the bytes the section map backs, and a monotonic budget plus the c
 Structure (directories, names, data entries) must lie inside the declared directory size; leaf data is only
 bound by the section map. An entry is a name or an id by the high bit of its first dword, as pefile and the CSAF
 identity reader decide. It reports facts and does not interpret leaves: the version and manifest readers do.
-Rules: docs/specs/program-e/WBQ-integration-plan.md sections 6 and 7. Text from the file is untrusted: control
-and bidirectional characters are dropped.
+Rules: docs/specs/program-e/WBQ-integration-plan.md sections 6 and 7. Text from the file is untrusted: every
+hostile character (the one rule of `patchtrace.hostile_text`) is dropped.
 """
 from __future__ import annotations
 
 import struct
 import time
 from dataclasses import dataclass
+
+from patchtrace.hostile_text import replace_hostile
 
 from ._common import Ctx
 from .models import FileRange, SectionMap
@@ -37,8 +39,6 @@ _HIGH = 0x80000000
 _LOW31 = 0x7FFFFFFF
 _RVA_SPAN = 1 << 32
 _MIN_EMBEDDED = 0x40
-_BIDI_CONTROLS = (0x061C, 0x200E, 0x200F, *range(0x202A, 0x202F), *range(0x2066, 0x206A))
-_DROPPED = {cp: None for cp in (*range(0x20), *range(0x7F, 0xA0), 0x2028, 0x2029, *_BIDI_CONTROLS)}
 
 
 @dataclass(frozen=True, slots=True)
@@ -93,8 +93,9 @@ class ResourceInventory:
 
 
 def sanitize_text(text: str) -> str:
-    """Drop C0/C1 controls, line and paragraph separators and bidirectional controls from untrusted text."""
-    return text.translate(_DROPPED)
+    """Drop every hostile character from untrusted text: C0, DEL and C1 controls, bidirectional, zero-width and other
+    format characters (soft hyphen, BOM, tags), surrogates, line and paragraph separators (`hostile_text`)."""
+    return replace_hostile(text)
 
 
 def decode_utf16(raw: bytes, max_chars: int) -> tuple[str, bool]:

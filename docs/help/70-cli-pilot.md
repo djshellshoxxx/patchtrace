@@ -1,5 +1,11 @@
 # `patchtrace pilot`
 
+`leads` reads the verified local CISA KEV catalogue, if available. It reports a
+CVE as listed (with the date added), not in that snapshot, or unknown when no
+readable catalogue is available. This context does not change function order.
+The catalogue snapshot is part of the result identity; `why` and `review`
+detect changes to it. An older stored result with matching inputs may be reused.
+
 Produces ordered, explained leads for changed function pairs. A lead is a place to look. The order follows explainable rules, not likelihood. A lead does not show that a function contains or fixes any CVE. The command reads stored results and sends nothing.
 
 ```

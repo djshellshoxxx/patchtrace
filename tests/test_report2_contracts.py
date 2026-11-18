@@ -166,3 +166,31 @@ def test_cwe_ids_allow_the_six_digits_supported_by_intelligence():
     assert contracts.Advisory(kind='cwe', id='CWE-100000', text='t').id == 'CWE-100000'
     with pytest.raises(ValidationError):
         contracts.Advisory(kind='cwe', id='CWE-1000000', text='t')
+
+
+@pytest.mark.parametrize('ident', ['KB1234', 'KB12345', 'KB0001234', 'KB12345678', 'KB1234567890'],
+                         ids=['4', '5', 'zeros', '8', '10'])
+def test_kb_ids_accept_every_canonical_width(ident):
+    assert contracts.Advisory(kind='kb', id=ident, text='t').id == ident
+
+
+@pytest.mark.parametrize('ident', ['KB123', 'KB12345678901', 'kb1234567', 'Kb1234567', 'KB１２３４',
+                                   'KB١٢٣٤', 'KB 1234567', 'KB1234567\n', '1234567', 'KB12345x'],
+                         ids=['3', '11', 'lower', 'mixed', 'fullwidth', 'arabic-indic', 'space', 'newline', 'bare',
+                              'suffix'])
+def test_kb_ids_outside_the_canonical_grammar_are_rejected(ident):
+    with pytest.raises(ValidationError):
+        contracts.Advisory(kind='kb', id=ident, text='t')
+
+
+def test_kb_id_pattern_is_the_kbcorrelation_canonical_one():
+    """report2 keeps its own copy (a contract module imports no other feature); this pins the two together."""
+    from patchtrace.kbcorrelation import ids
+    assert f'^{contracts.KB_ID_PATTERN}$' == ids.KB_PATTERN
+    for sample in ('KB1234', 'KB1234567890', 'KB123', 'KB12345678901', 'kb1234567', 'KB１２３４'):
+        accepted = True
+        try:
+            contracts.Advisory(kind='kb', id=sample, text='t')
+        except ValidationError:
+            accepted = False
+        assert accepted == ids.is_canonical_kb(sample), sample

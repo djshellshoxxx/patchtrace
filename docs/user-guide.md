@@ -1,6 +1,6 @@
 # User guide
 
-Task-oriented. Terms are defined in [concepts.md](concepts.md); setup is in [install.md](install.md); the first run is in [RUN.md](RUN.md). Commands below were checked against `--help` of this build; anything not built yet is marked "planned".
+Start with the [first-run task map](help/01-start-here.md) or [synthetic sample exercise](help/03-explore-the-sample.md). Terms are defined in [concepts.md](concepts.md); setup is in [install.md](install.md); launch instructions are in [RUN.md](RUN.md). This guide describes the repository source; an older downloaded package can have fewer controls.
 
 ## Compare two builds
 
@@ -37,15 +37,19 @@ An advisory says what the vendor claims. It does not show that a function contai
 
 ## Exports
 
-**Export** (Ctrl+E) writes `md`, `html` or `json` after showing the exact preview.
+**Export** (`Ctrl+E`) writes `md`, `html` or `json` after showing a preview. [Export help](help/47-preview-and-export-reports.md) describes the current **Contract**, **Profile**, **Sections**, and destination controls.
 
 | Option | Default | Effect |
 |---|---|---|
+| Contract | Report v1 (current) | Report v2 adds optional stored-evidence sections and versioned provenance |
+| Profile | Local analysis | Share with others selects v2, excludes code and notes, removes file paths and makes web addresses inert |
 | Include function code | off | Adds decompiled code to the report |
 | Include analyst notes | on | Adds your notes |
 | Only selected findings | off | Limits the findings section; not an anonymisation of project metadata |
 
-Reports carry provenance and the same ranking values as the app. Absolute source paths are redacted. Raw provider responses, API keys and full context payloads are excluded. HTML is self-contained with escaped content and no scripts. An export is not a backup and cannot be re-imported; use **Back up project...** for that. `intelligence explain --export FILE` writes the advisory report (suffix picks the format).
+For Report v2, available **Sections** have counts and checkboxes; unavailable sections explain what is missing. No analysis is started to fill a missing section. The share profile disables the code and notes controls; switching back to v1 returns to the local profile.
+
+Reports carry provenance and distinguish tool evidence from analyst review. Absolute source paths in ordinary local-report text are redacted, but included code and evidence excerpts can retain original paths. Raw provider responses, API keys and full context payloads are excluded. HTML is self-contained with escaped content and no scripts. Review the final preview; the v2 generation timestamp can change at write time, while the digest excludes timestamps. A share profile is not a guarantee of anonymity. An export is not a project backup; use **Back up project…** to retain an editable project. `intelligence explain --export FILE` writes the advisory report (suffix picks the format).
 
 ## Privacy and consent
 
@@ -70,9 +74,9 @@ Rules: binaries and project paths are never uploaded; a network call needs its o
 | Project locked | Close it in the other instance; check folder permissions |
 | Diagnose cannot find Ghidriff | Point Setup at the backend `python.exe`, not `PatchTrace.exe` |
 | Ghidra or Java failure | Select the unpacked Ghidra root, check `java -version`, restart PatchTrace after changing Java settings, read the job log |
-| Comparison times out | Raise the timeout in Setup; a retry is a new attempt and earlier results stay |
+| Comparison times out | Follow [timeout recovery](help/52-troubleshooting.md#comparison-timeout-or-quiet-progress): Setup → Backend and desktop → Comparison timeout (seconds) → Save setup; inspect the named quarantine diagnostics before another attempt |
 | Import rejected | Use raw Ghidriff JSON for the exact pair and orientation, not a rendered report |
-| Empty function list | Clear filters; an identical pair legitimately has no changed functions |
+| Empty function list | [Clear the function filters](help/52-troubleshooting.md#empty-function-or-finding-list) and check completion/run identity; an identical pair can legitimately have no changed functions |
 | Rank shows `[ — ]` | A detector lacked needed evidence (for example no decompiled code); that is unknown, not zero |
 | Assembly unavailable | The import did not keep instruction text; it is never fabricated |
 | Finding is stale | The project changed after it was made; reinterpret the current selection |

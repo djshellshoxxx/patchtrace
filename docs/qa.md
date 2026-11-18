@@ -1,5 +1,44 @@
 # QA and audit record
 
+## 2026-11-16 local KEV CLI context completion
+
+Completed the remaining K4 context wiring through verified local catalogs,
+including snapshot staleness and provenance without function-ranking changes.
+Final combined affected selection: **1,224 passed**. Broader local acceptance
+still encounters the documented AF_UNIX runner restriction and grouped process
+terminations; hosted Windows/full-suite/release gates remain open. See
+[KEV continuation evidence](qa/kev-cli-continuation-20261116.md).
+
+## 2026-11-16 path, KB CLI and historical research continuation
+
+Repaired both observed Windows CLI path failures, completed metadata-sync help
+and stored-product catalogue CLI access, and recovered the isolated R7 research
+slice from #282. Combined affected verification: **724 passed**; whole Ruff,
+dependency and whitespace checks passed. The full single-process attempt was
+killed (137); hosted/current Windows and release gates remain open. See
+[source-pinned evidence and limits](qa/continuation-paths-kb-r7-20261116.md).
+
+## 2026-11-16 research integrity recovery
+
+See [research recovery evidence](qa/research-integrity-followup-20261116.md):
+Tier R provenance/labels/immutable receipts (155 passed, 8 native skips), native
+IO research validator (136 passed), and independent scoped reviews. Fresh pinned
+Linux API controls matched all six expected stock/corrected/negative outcomes;
+prior failures and worker-count diagnosis are preserved with raw receipts.
+Final-head hosted/platform gates remain separate; no real-binary accuracy claim is made.
+
+## 2026-11-16 consolidation follow-up
+
+See [follow-up evidence](qa/consolidation-followup-20261116.md): timeout entry
+controls, benchmark/parity and release repairs, independent review, 480 combined
+passes/3 expected failures plus 13 backup checks, and ten redundant PR closures.
+Hosted final-head qualification remains pending.
+
+## 2026-11-16 continuation
+
+See [continuation evidence](qa/continuation-20261116.md), including independent
+review findings, branch dispositions and explicit native/release blockers.
+
 ## 2026-11-11 SPEC-31 unified-engine soundness follow-up (PR #259 open defects) — Linux, synthetic only
 
 Branch `claude/funny-feynman-d2m0b5` (`main` `882d1ca0` + #259's five commits merged cleanly + four fixes). Plan and worker briefs: [unified-soundness-swarm-prompt-20261111](plans/unified-soundness-swarm-prompt-20261111.md); spec amendments A-28..A-31 in `docs/specs/unified-engine/10-amendments.md`. Each defect had a red test before its fix (counts in the commit messages `78c0c544`, `3bf12d61`, `c0bf3d05`, `a28676c8`).
