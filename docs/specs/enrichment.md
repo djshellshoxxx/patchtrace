@@ -69,7 +69,13 @@ existing decompiled-code navigation, including address zero, and may switch
 from another display mode. Repeat activations recheck live data. Refusal writes
 no project, ranking, signal or derived-store data. This repairs the deferred
 desktop call site without changing detector, score, confidence, schema,
-publication or cache behavior.
+publication or cache behavior. The signal action supports only decompiled
+locations: a stored `assembly` or `metadata` location must be refused with a
+fixed `PT-ENRICH-INPUT` diagnosis before changing mode or selection, even when
+the existing shared validator accepts that representation's excerpt. The
+action must never substitute decompiled text for a validated assembly or
+metadata excerpt. `ui_signal_navigation.py` owns this presentation boundary;
+`views.validate_location` retains its existing broader semantics.
 
 ## 5. B1 change signals (`signals.py`)
 

@@ -139,6 +139,7 @@ Stable IDs are independent of filenames. Public interfaces in SPEC-01 and schema
 | providers | providers.py | Loopback Ollama and HTTPS OpenAI-compatible transports | stdlib | Session-only credentials; HTTP fixtures |
 | findings | service.py | Reviews, manual matches, notes, stale invalidation | contracts/persistence | Service owns project aggregate; transaction tests |
 | desktop | ui.py | Wizard/workspace/settings/context preview/evidence navigation | service/jobs | Main thread Qt; pytest-qt |
+| signal navigation | ui_signal_navigation.py | SPEC-07 P2-NAV-1: refuse representations unsupported by the decompiled signal action, validate the live location before mode/cursor changes, and show a bounded diagnosis without persistence changes | enrichment.views/contracts; existing desktop presentation | Real stored/reopened offscreen controls in `tests/test_signal_location_navigation.py`; existing host seam and tooltip gates |
 | desktop job events | ui_job_events.py | Main-thread event relay bound to the exact active worker; reject stale queued events | PySide6.QtCore | Offscreen Qt progress/lifecycle tests; keep the existing ui.py seam limit |
 | reports | reports.py | JSON/Markdown/self-contained HTML and manifests | contracts | Atomic exports; injection fixtures |
 | diagnostics | diagnostics.py | Dependency status, bounded redacted logs and pure fixed-text Ghidriff exit classification | stdlib | No credentials; redaction tests |
