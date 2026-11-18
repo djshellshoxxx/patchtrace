@@ -501,5 +501,3 @@ def directory_anchor(path: Path) -> DirectoryAnchor:
 def verify_anchor(anchor: DirectoryAnchor) -> None:
     if directory_anchor(anchor.path) != anchor:
         raise OwnedPublicationError('the selected workspace root identity changed')
-
-
