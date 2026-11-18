@@ -103,3 +103,8 @@ initial 307-branch/297-PR mechanical inventory. Empty GitHub review collections
 are not review approval. Four fresh #304 native fixture receipts are narrowly
 credited at their recorded source tree; full/Qt/Windows/package/security remain
 unverified. The local incomplete full-suite attempt is preserved, not counted.
+
+
+## Reviewed PE manifest boundary — 2026-11-18
+
+Source `e1c5006e51606caedd773bf079c20c145d290861` repairs an independently reproduced encoding-dependent DTD-policy bypass. Root exact-source gate passes 384 cases, including unchanged external probes; original failures remain retained. This supplies D/R for the narrow parser boundary and does not add native/platform J/G credit to PE inspection. Strict static scan findings and complete gates remain open. [Evidence](../qa/manifest-dtd-reviewed-20261118/README.md).
