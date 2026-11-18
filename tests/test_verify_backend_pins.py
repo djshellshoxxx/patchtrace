@@ -201,7 +201,11 @@ def test_verify_without_inputs_records_nothing(tmp_path, monkeypatch):
     def offline(url, dest=None, limit=0):
         raise OSError('offline')
 
+    def uninjected_process(*args, **kwargs):
+        pytest.fail('no-input verification fixture must inject its subprocess runner')
+
     monkeypatch.setattr(rec, '_fetch', offline)
+    monkeypatch.setattr(subprocess, 'run', uninjected_process)
     args = argparse.Namespace(pin=ROOT / 'tools' / 'backend_pin.json', workdir=tmp_path / 'w', sigstore_identity='',
                               sigstore_issuer='', gpg_fingerprint='')
     evidence, problems = rec.verify_all(args)
