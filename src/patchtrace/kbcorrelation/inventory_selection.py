@@ -6,11 +6,13 @@ file-index/pair workflow receives only explicitly selected eligible basenames.
 from __future__ import annotations
 
 import json
+import re
 import sqlite3
 import time
 
 from pydantic import ValidationError
 
+from .alias_catalog import CLIENT_VERSION_PATTERN
 from .contracts import AnalystDecision, ComponentHint, InventoryClaimRef, Record, Sha256, domain_id
 from .errors import KbcIssue
 from .inventory_store import get_inventory
@@ -74,6 +76,13 @@ def _product_agrees(entry, scope, *, asserted):
     if entry.product is None or normal_name(entry.product) == normal_name(scope.display_name):
         return
     facts = derive(entry.product)
+    # The shared derived key requires a release. An explicit client generation
+    # remains known even when the CSV omits that release and therefore the key.
+    actual_versions = set(re.findall(CLIENT_VERSION_PATTERN, normal_name(entry.product)))
+    expected_versions = set(re.findall(CLIENT_VERSION_PATTERN, normal_name(scope.display_name)))
+    if (len(actual_versions) > 1 or len(expected_versions) > 1 or
+            actual_versions and expected_versions and actual_versions != expected_versions):
+        raise KbcStoreError('PT-KBC-INPUT', 'the inventory Windows generation contradicts the selected product scope')
     for attr, unknown in (('family', 'unknown'), ('architecture', 'unknown'),
                           ('release', None), ('channel', None), ('edition', None), ('winbindex_key', None)):
         actual, expected = getattr(facts, attr), getattr(scope, attr)
@@ -98,8 +107,14 @@ def _eligible(record, entry, scope, kb_builds, *, asserted):
     if entry.basename is None or entry.state in ('conflicted', 'descriptive-only') or entry.version_components is None:
         raise KbcStoreError('PT-KBC-INPUT', 'select an eligible PE basename with a known version and no conflict')
     _product_agrees(entry, scope, asserted=asserted)
+    builds = set(kb_builds[record.parsed.context.kb])
+    if scope.build is not None:
+        builds.add(normal_name(scope.build))
+    if len(builds) > 1:
+        raise KbcStoreError('PT-KBC-INPUT', 'recorded advisory builds conflict; resolve the source scope before selection')
+    fixed_build = next(iter(builds), None)
     for actual, expected, label in ((entry.release, scope.release, 'release'),
-                                    (entry.build, scope.build or kb_builds[record.parsed.context.kb], 'build')):
+                                    (entry.build, fixed_build, 'build')):
         if actual is not None and expected is not None and normal_name(actual) != normal_name(expected):
             raise KbcStoreError('PT-KBC-INPUT', f'the inventory {label} contradicts the selected product or KB')
         if actual is not None and expected is None and not asserted:
@@ -117,10 +132,17 @@ def _scope(svc, ws, rev, scope_id):
         raise KbcStoreError('PT-KBC-INPUT', 'repeat the search; the selected product mapping is no longer available')
     scoped = rev.model_copy(update={'selected_scope_id': scope_id})
     stored = svc._stored_scope(ws, scoped)
-    kbs = svc._lead_kbs(index, scoped, stored)
     if scoped.lead.kind == 'kb':
         lookup = index.lookup_kb(scoped.lead.value, scope=stored, scope_id=scope_id, now=svc._now())
-        kbs = {kb: build for kb, build in kbs.items() if any(edge.kb == kb for edge in lookup.edges)}
+    elif scoped.lead.kind == 'cve':
+        lookup = index.lookup_cve(scoped.lead.value, scope=stored, scope_id=scope_id, now=svc._now())
+    else:
+        raise KbcStoreError('PT-KBC-INPUT', 'this investigation has no KB or CVE lead for inventory selection')
+    # Keep disagreement visible. The pair lookup's optional single build is not
+    # an adequate representation for deciding whether source claims conflict.
+    kbs = {kb: frozenset(normal_name(edge.fixed_build) for edge in lookup.edges
+                         if edge.kb == kb and edge.fixed_build)
+           for kb in {edge.kb for edge in lookup.edges}}
     return scope, kbs
 
 

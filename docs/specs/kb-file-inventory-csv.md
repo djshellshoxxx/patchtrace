@@ -231,6 +231,11 @@ Selection requires the exact current investigation revision, an explicit product
 scope ID and an explicit analyst scope assertion when the import lacks that ID.
 Any supplied scope ID or known product/release/build must agree with the selected
 scope; a user assertion cannot override contradictory source metadata. The selected
+product comparison retains an explicit Windows 10/11 generation even when the
+source omits a release. Multiple known advisory builds for the same KB and scope
+remain a conflict, never an unknown value that an assertion can override. Selection
+requires resolving that recorded advisory scope before adding a filename claim.
+The selected
 scope must be AMD64 and not mapping-conflicted. The CSV entry must be a valid
 AMD64 PE basename with known version and no metadata conflict. A missing size
 does not invent byte identity or prevent filename-only selection. The KB must
@@ -238,6 +243,9 @@ belong to the lead within its recorded search/document scope. Changing the recor
 inventory selection into the new scope: each decision binds the scope ID and coverage IDs. Persist decision and
 the resulting COMPONENTS_READY revision atomically through the existing revision
 compare-and-swap; stale or cancelled work leaves both unchanged.
+Existing component discovery must verify selected inventory evidence before
+publishing a product change or newly entered filenames. A failed raw replay
+therefore preserves the previous product, revision and analyst decisions.
 
 Selected inventory hints remain tier E (explicit analyst selection from metadata)
 and carry separate inventory row references, source authenticity and scope-assertion
