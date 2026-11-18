@@ -165,6 +165,14 @@ are never asked and are in no count.
   requires a preregistered sampling design with justified independent units; current counts are descriptive only.
 - If importing another revision into a month workspace fails, that month is unusable for the run: its cases are
   BLOCKED, rather than answered from a silently incomplete subset of supplied documents.
+- If a supplied document fails before the product validates its release month,
+  the entire supplied month set is unqualified. All verified cases are BLOCKED
+  and none is scored. A filename or partially parsed header cannot establish
+  that a rejected document belongs to a different month; it may be a newer or
+  conflicting revision of an accepted document. This rule applies regardless
+  of input order and includes unreadable, malformed and non-monthly documents.
+  Rejections retain their digest and reason in the input receipt. A failure
+  after the product has validated the month remains confined to that month.
 - Expected from the product's stated file-index coverage, not yet measured: with `--winbindex` the four verified
   cases whose `product` is a Windows Server name and the one case with a `.tsp` file will fail the file leg (the
   file index covers Windows 10/11 client x64 and refuses that extension).

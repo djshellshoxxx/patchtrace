@@ -233,13 +233,33 @@ def test_winbindex_needs_an_explicit_data_date(tmp_path, months, winbindex, caps
     assert code == 2 and rec is None and "--winbindex-date" in capsys.readouterr().err
 
 
-def test_a_rejected_month_file_is_recorded_and_blocks_only_its_cases(tmp_path, months):
+def test_a_rejected_month_file_cannot_be_scoped_by_its_filename(tmp_path, months):
+    # This filename says March, but the duplicate-key fixture contains February
+    # data. No validated month exists, so the older February source cannot score.
     shutil.copyfile(FX / "cvrf-2099-Feb-duplicate-key.json", months / "2099-Mar.json")
     code, rec = run(tmp_path, months, [case(PASS_ID), case(MONTH_ID, month="2099-Mar")])
     rows = rows_of(rec)
-    assert code == 2 and rows[PASS_ID]["outcome"] == "PASS" and rows[MONTH_ID]["outcome"] == "BLOCKED"
+    assert code == 2 and rows[PASS_ID]["outcome"] == "BLOCKED" and rows[MONTH_ID]["outcome"] == "BLOCKED"
+    assert rec["counts"]["scored"] == 0
     rejected = [m for m in rec["inputs"]["months"] if m["status"] == "rejected"]
     assert [m["file"] for m in rejected] == ["2099-Mar.json"] and rejected[0]["reason"]
+
+
+@pytest.mark.parametrize("filename", ["00-newer.json", "zz-newer.json"])
+def test_rejected_newer_revision_never_scores_the_older_advisory_subset(tmp_path, months, filename):
+    doc = json.loads((months / "2099-Feb.json").read_text(encoding="utf-8"))
+    doc["document"]["current_release_date"] = "2099-02-20"
+    doc["vulnerabilities"] = "invalid"
+    (months / filename).write_text(json.dumps(doc), encoding="utf-8")
+    code, rec = run(tmp_path, months, [case(PASS_ID), case(UNVERIFIED_ID, facts="unverified")])
+    assert code == 2 and rec["status"] == "BLOCKED"
+    assert rows_of(rec)[PASS_ID]["outcome"] == "BLOCKED"
+    assert rec["counts"]["scored"] == rec["counts"]["PASS"] == rec["counts"]["FAIL"] == 0
+    assert rec["counts"]["excluded_unverified"] == 1
+    assert rows_of(rec)[PASS_ID]["checks"] == {"edge": "not-asked", "scope": "not-asked", "file": "not-asked"}
+    rejected = [source for source in rec["inputs"]["months"] if source["status"] == "rejected"]
+    assert len(rejected) == 1 and rejected[0]["file"] == filename
+    assert len(rejected[0]["sha256"]) == 64 and rejected[0]["reason"]
 
 
 def test_invalid_manifest_is_a_usage_error(tmp_path, months, capsys):
@@ -338,7 +358,8 @@ def test_a_join_that_raises_while_importing_a_month_blocks_its_cases_and_writes_
     monkeypatch.setattr(L1R.ProductJoin, "_kb", boom)
     code, rec = run(tmp_path, months, [case(PASS_ID)])
     assert code == 2 and rec is not None and rec["status"] == "BLOCKED"
-    assert rows_of(rec)[PASS_ID]["outcome"] == "BLOCKED" and "month 2099-Feb is not present" in rows_of(rec)[PASS_ID]["reason"]
+    assert rows_of(rec)[PASS_ID]["outcome"] == "BLOCKED"
+    assert "month 2099-Feb has no qualified source set" in rows_of(rec)[PASS_ID]["reason"]
     assert [m["status"] for m in rec["inputs"]["months"]] == ["rejected"]
     assert "RuntimeError" in rec["inputs"]["months"][0]["reason"] and "someone" not in json.dumps(rec)
 
@@ -369,6 +390,10 @@ def test_no_kb_case_requires_the_cve_to_be_observed(tmp_path, months):
 def test_failed_second_revision_import_blocks_month(tmp_path, months, monkeypatch):
     from tools.research_qualification import l1_run as L1R
     shutil.copyfile(months / "2099-Feb.json", months / "second.json")
+    march = json.loads((months / "2099-Feb.json").read_text(encoding="utf-8"))
+    march["document"].update(release_id="2099-Mar", tracking_id="PT-CVRF-2099-Mar",
+                             current_release_date="2099-03-13")
+    (months / "2099-Mar.json").write_text(json.dumps(march), encoding="utf-8")
     real_kb = L1R.ProductJoin._kb
 
     # Match the workspace argument by path suffix, independent of temporary root.
@@ -379,9 +404,11 @@ def test_failed_second_revision_import_blocks_month(tmp_path, months, monkeypatc
         return real_kb(self, argv)
 
     monkeypatch.setattr(L1R.ProductJoin, "_kb", checked)
-    code, rec = run(tmp_path, months, [case(PASS_ID)])
+    code, rec = run(tmp_path, months, [case(PASS_ID), case(MONTH_ID, month="2099-Mar")])
     assert code == 2 and rows_of(rec)[PASS_ID]["outcome"] == "BLOCKED"
-    assert rec["inputs"]["months"][1]["status"] == "rejected"
+    assert rows_of(rec)[MONTH_ID]["outcome"] == "PASS"
+    assert rec["counts"]["scored"] == 1
+    assert rec["inputs"]["months"][2]["status"] == "rejected"
 
 
 def test_deep_manifest_is_a_usage_error(tmp_path):
