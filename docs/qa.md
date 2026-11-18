@@ -1999,3 +1999,28 @@ and manual acceptance remain open. [Scope, commands and preserved evidence](qa/r
 ## [RAW-ALIGNMENT-INDEPENDENT-INTEGRATION-20261118]
 
 Independent source review found no blocking defect, with 183 affected passes and six additional adversarial controls. The focused port onto published #307 `58fc1306` passed the same 183 affected checks in 31.01 s with explicit source-pinned children; required Ruff and whitespace checks pass. All earlier failure receipts remain. Published #307 separately passed 355 boundary checks with three native Windows skips. These are overlapping, scope-specific local results; hosted/full/native/manual acceptance remains open. [Complete review, exact identities and raw receipts](qa/raw-alignment-reviewed-20261118/README.md).
+
+## [SAVED-SEARCH-WORKFLOW-20261118]
+
+Source `e705974b` wires the existing project-owned saved-search store into GUI
+and CLI workflows, preserves validated mode/effective filters, and adds bounded,
+explicitly per-user recent text. Initial controls recorded **14 failed, 8 passed**;
+two later self-review failures were also reproduced and repaired. Final affected
+selection: **374 passed in 16.65 s**, including actual default GUI and current-source
+headless CLI journeys, ownership/reopen/stale-row controls and the global tooltip
+sweep. Whole Ruff and whitespace pass. UI host, generic settings limits, schemas
+and enrichment storage are unchanged. Independent review and combined current-head,
+hosted, Windows and native/manual gates remain open.
+[Commands, source identities and preserved failures](qa/saved-search-workflow-20261118.md).
+
+### 2026-11-18 saved-search delayed Build repair
+
+Independent review reproduced recalled text executing on an earlier Build completion.
+Source `c30c7911` binds autosubmit to the captured query generation. Regression red
+1 failed/1 passed; affected rerun 376 passed; unchanged independent reproducer author
+replay 1 passed; whole Ruff passed. See [receipt](qa/saved-search-build-race-20261118.md).
+Independent recheck/full combined/native gates remain separate.
+
+## [SAVED-SEARCH-INDEPENDENT-INTEGRATION-20261118]
+
+Root independently reproduced an old Build completion executing recent text without Enter, retained the failing probe, reviewed repair `c30c7911`, and reran that unchanged probe successfully. The focused port onto published #307 `58fc1306` passed 376 source-pinned affected checks in19.18 s; required Ruff and whitespace pass. Project-owned saved queries and bounded per-user recent text now have local review/regression evidence; full hosted/native/manual gates remain open. [Review, source mapping and original failures](qa/saved-search-reviewed-20261118/README.md).

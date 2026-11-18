@@ -117,3 +117,7 @@ Combined source `ac789497597fba3cb87696990d171a7a27024fca` adds retained CVRF ca
 ## Paired raw-window independent integration checkpoint — 2026-11-18
 
 The paired raw-offset desktop slice now has independent source review (183 affected plus six additional controls) and 183 source-pinned combined passes on published #307, source `21552835`. D/R coverage remains **50%**: the implementation and regressions are verified locally, while representative native/manual J and exact-head full/platform/security G remain open. The original author receipt and failure history are retained; this entry does not promote the historical #168 research content or claim beta readiness. [Review and evidence](../qa/raw-alignment-reviewed-20261118/README.md).
+
+## Saved-search independent integration checkpoint — 2026-11-18
+
+Saved/recent search advances to **D/R:50%** for the named slice: project-owned Save/Run/Delete and CLI operations, compatible mode/filter replay, and bounded per-user recent text are implemented and independently reviewed. The delayed Build execution-intent defect was reproduced and repaired at `c30c7911`; the combined published #307 base passed376 affected checks at `f021f2d0`. Real/native/manual J and exact-head full/platform/security G remain unverified. Original receipts and research boundaries remain unchanged. [Review and scope](../qa/saved-search-reviewed-20261118/README.md).
