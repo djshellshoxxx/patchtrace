@@ -103,3 +103,8 @@ initial 307-branch/297-PR mechanical inventory. Empty GitHub review collections
 are not review approval. Four fresh #304 native fixture receipts are narrowly
 credited at their recorded source tree; full/Qt/Windows/package/security remain
 unverified. The local incomplete full-suite attempt is preserved, not counted.
+
+
+## Reviewed advisory read-budget continuation — 2026-11-18
+
+Source `06f5b210e5c6daffaae2b4d51fd8950c28be25c3` repairs reproduced unbounded retained-file reads. Author and independent affected gates each pass 140 tests; 11 independent filesystem controls and five backup tests also pass. Original seven failures are retained. This supports D/R for the advisory storage repair only and adds no J/G credit to the broader advisory/persistence rows. Native Windows, full/platform gates and cumulative store budgets remain open. [Evidence](../qa/advisory-read-bounds-20261118.md).
