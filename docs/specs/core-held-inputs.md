@@ -72,7 +72,8 @@ preservation in `_rollback_creation` remains in place.
 
 New arguments are keyword-only. When absent, callers invoke existing injected
 functions with their old argument shapes; they do not pass unnecessary None
-keywords. Callback failures are propagated with their original type/reason.
+keywords. Operation stops use `InputReadError`, whose original object/reason propagates;
+unrelated `OSError`/SQLite failures retain the existing storage-error mapping.
 Ordinary paths, project schema, verification cache, locks and cleanup policy are
 unchanged. This slice does not alter KB Env/import/attachment, native readers,
 jobs, package budget/schema or durable package recovery.

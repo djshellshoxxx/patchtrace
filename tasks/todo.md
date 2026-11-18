@@ -1738,3 +1738,11 @@ See the [immutable continuation checkpoint](../docs/qa/verified-continuation-202
 - [x] Reconcile all nine reference record families against exact 068513a7 producers/consumers and preserve original 4522030f files/tests/outcomes; see `docs/plans/phase2-reference-contract-disposition-20261118.md`. This does not change the original 131-tip denominator or close whole branches.
 - [ ] P2-NAV-1: wire the existing live SourceLocation validator into actual signal navigation with bounded stale/invalid feedback. Original persisted/reopened desktop proof: 3 failed / 4 positive controls. Approved separate spec/test-first slice; source unchanged in this disposition.
 - [ ] Any reference interchange adapter, typed WIL/dataflow claim, richer B3 desktop/report projection or calibration change needs its own explicit contract and evidence; none is implied by reference JSON Schema validation.
+
+### [CORE-HELD-INPUTS-20261118]
+
+- [x] Specify and test optional neutral held-input capabilities and operation checkpoints before source.
+- [x] Preserve complete copy/hash/PE/ownership checks and ordinary call shapes; checkpoint inside the first-save transaction before COMMIT.
+- [x] Retain original red/setup-error receipts and the exact 297-pass, zero-skip affected gate with 301 source-pinned modules.
+- [ ] Root independent review and selective integration of `f3456f92` / `b85a0cf7` plus QA.
+- [ ] Separately implement and review KB propagation, durable package provenance/reconciliation and native Windows readers; no expired-lease recovery or native/package acceptance is credited here.
