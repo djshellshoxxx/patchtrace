@@ -76,7 +76,8 @@ def test_historical_csaf_inspection_heads_never_restore_current_withdrawn_claims
     tracking['version'] = '2'
     tracking['revision_history'].append({'date': tracking['current_release_date'],
                                           'number': '2', 'summary': 'Authored withdrawal'})
-    value['vulnerabilities'] = []
+    value['vulnerabilities'] = [copy.deepcopy(value['vulnerabilities'][0])]
+    value['vulnerabilities'][0]['cve'] = 'CVE-2099-29999'  # Original CVEs withdrawn; schema still requires one row.
     latest = csaf_add(service, value)
     with WorkspaceStore(service.root) as store:
         index = store.load_index(service.env.advisory)
