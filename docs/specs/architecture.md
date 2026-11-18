@@ -87,6 +87,37 @@ Before a first snapshot commits, `ProjectService.create` rolls back only files p
 
 Cleanup verifies the recorded file identity, size and modification time and refuses observed symlinks/replacements; it may clear read-only only on those owned files. It removes recorded directories only when empty. It never recursively walks or deletes unfamiliar paths. The SQLite connection closes before deleting this attempt's matching database, with the project lock held; already committed first snapshots are retained even if the caller receives a later failure. Uncertain ownership or cleanup errors retain files and preserve the original exception. The persistent `.patchtrace.lock` file is deliberately retained: kernel lock release permits retry, and unlinking a lock inode can split ownership between concurrent writers. Existing/prior files, reused artifacts and foreign paths observed before the final ownership check retain their bytes and permissions. This follows the existing cooperative project kernel-lock model, not an OS filesystem sandbox: metadata checks are not an atomically conditional unlink. A noncooperating process can replace an owned pathname between its last check and unlink/chmod; that residual race is explicitly outside this bounded guarantee. A quarantine or native handle-based hardening design remains open. No wire/schema changes.
 
+### Admission of an incomplete database for creation retry (2026-11-18)
+
+`ProjectStore(create=True)` may recycle an existing database only after a bounded,
+read-only check under the existing exclusive project lock. A nonempty file must
+be a regular, singly linked file no larger than 1 MiB, have the current
+`user_version`, and contain exactly the canonical `current_snapshot`, `history`
+and SQLite `sqlite_sequence` table definitions produced by current initialization.
+All three tables must be empty and the SQLite integrity check must succeed.
+Additional views, triggers, indexes, tables, columns or altered constraints are
+unrecognized schema and refuse reuse, even when both project tables have no rows.
+Nonempty databases with no schema, a changed version, retained sequence metadata,
+unreadable or damaged content, or exceeded validation budgets also refuse reuse.
+
+Retain the existing zero-byte regular-file retry when there are no SQLite
+companions. Any `-journal`, `-wal` or `-shm` entry refuses reuse before opening the
+database: an immutable read must not overlook data in a companion or cause
+recovery to mutate it. Validation opens only a read-only immutable connection,
+disables trusted schema, limits SQLite values to 1 MiB and SQL to 4 KiB, and bounds
+VM execution to 100,000 instructions with a 1,000-instruction callback interval.
+These are admission bounds, not a schema migration or a generic database repair.
+
+Refusal uses the existing `PT-STORAGE: project database already exists` result,
+releases the held lock, and preserves the original database, companion files and
+other project entries byte-for-byte. The lock holder record may change through
+ordinary lock acquisition, but its persistent inode remains. Positive checks
+must create and reopen a project through the real service using an exact current
+empty database and a zero-byte leftover. The current desktop and CLI destination
+preflights retain their existing stricter behavior; this amendment changes only
+the store's authoritative retry decision. The established cooperative-lock and
+noncooperating pathname-race limits above remain in force.
+
 ### Normalizer derived metadata boundary (2026-11-05)
 
 Enhanced upstream function records may not supply PatchTrace-reserved derived metadata keys `upstream_similarity`, `diff_types`, `upstream_name`, `instructions_hash`, `assembly_unavailable`, or `upstream_one_to_many`. The normalizer rejects their presence with `PT-SCHEMA` instead of accepting forged provenance, even when the supplied value is null. Ordinary upstream metadata remains preserved. Rejected imports preserve raw source bytes and prior committed results. This boundary does not introduce one-to-many normalization or change the stored schema.
