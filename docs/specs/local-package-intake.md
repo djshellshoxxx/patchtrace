@@ -106,6 +106,14 @@ freed allocation refuses; peak memory remains recorded after a legitimate free.
 Clock reversal/invalid clock values refuse. Reading/hash work consumes the same
 deadline and work counter; hashing does not manufacture expanded output bytes.
 
+An entry has at most one pending write reservation. If cancellation/deadline is
+observed after a write reports its byte count, record those confirmed bytes before
+refusing further work; an error must not erase known completed output. The raw
+inventory JSON, including otherwise insignificant whitespace, must obey its own
+captured JSON limit as well as the caller's limit. Constructed records also obey
+that serialization ceiling. Header-only entries cannot claim a content-based
+classification even when they omit an observed hash or PE machine.
+
 The output counter bounds bytes exposed to application WRITE callbacks. It does
 not claim to observe internal solid-folder prefix/gap decompression. Native work
 is additionally bounded by the Job memory cap, parent deadline and cancellation.
