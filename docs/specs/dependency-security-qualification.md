@@ -40,6 +40,18 @@ Record the exact install command, pip installation report, interpreter identity,
 pip check outcome, and full pip inspect JSON. An installation report is evidence
 of that resolution; it is not treated as a lock file.
 
+Every directly generated Python subprocess uses the canonical interpreter options
+`-I -X utf8` before `-m` or `-c`, including environment preparation, bootstrap,
+installer, identity, inspection, check and scanner commands. Explicit UTF-8 mode
+keeps Unicode dependency metadata representable on Windows redirected output;
+`-I` and the launcher's existing environment filtering remain in force. An
+environment-only `PYTHONUTF8`/`PYTHONIOENCODING` setting cannot supply this contract
+because isolated Python ignores those variables. Preserve complete raw output
+bytes and their digests; do not discard, replace or transliterate metadata to
+avoid an encoding error. Exact command-receipt validation includes the UTF-8
+option, so missing or altered flags cannot qualify current evidence. Interpreter
+UTF-8 mode also governs Python's documented text defaults in those subprocesses.
+
 Cross-check pip's environment against the independently executed interpreter
 identity: exact full Python and implementation versions, Python major/minor,
 implementation name and display name, native system and machine architecture.
@@ -181,3 +193,10 @@ and refusal of fabricated clean results. Authored fixtures are not live scans.
 Capture any available actual local scans with their real outcome and source
 provenance. Linux evidence does not supply Windows inventory or hosted credit.
 Final integrated-source CI and independent review remain required.
+
+The 2026-11-18 hosted Windows runtime/packaging receipts retain the original
+`pip inspect` CP1252 UnicodeEncodeError unchanged. Portable regression children
+may deliberately select CP1252 when the explicit mode is absent; label that as
+an authored producer simulation, not a Windows/pip rerun. Keep controls for
+Unicode byte preservation, isolation, raw failed output and exact argv refusal.
+A corrected hosted Windows inventory/audit remains a separate acceptance gate.
