@@ -2357,6 +2357,13 @@ class MainWindow(QMainWindow):
         if signal is None:
             return
         location = signal.locations[0]
+        from .enrichment.contracts import EnrichmentError
+        from .enrichment.views import validate_location
+        try:
+            validate_location(self.project, location)
+        except EnrichmentError as exc:
+            self.show_error(f'Signal location is unavailable ({exc.code}): {exc.message}'[:300])
+            return
         if self.mode.currentIndex() != 0:
             self.mode.setCurrentIndex(0)  # rebuilds the text-mode offsets that raw modes empty
         self.reveal_lines(location.function_id, location.start_line, location.end_line)
