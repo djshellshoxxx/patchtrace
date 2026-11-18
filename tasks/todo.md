@@ -1,5 +1,18 @@
 # PatchTrace delivery tracker
 
+## 2026-11-18 branch consolidation and PW-01 continuation
+
+- [x] Refresh full branch history and all REST PR pages; correct the 300-topic inventory, ancestry counts and unsupported supersession/deletion claims.
+- [x] Independently review #301's full consolidation; repair reproduced normalization, mirror-cap, JSON-ingress and release-verifier defects; exclude unsafe archive/delete tooling.
+- [x] Preserve every remote branch and separately track unresolved or deferred UI, research, matching and environment work.
+- [ ] Qualify and merge `codex/consolidation-reviewed-20261118` on current-head/base hosted gates; then close only exactly accounted-for PRs with replacement references.
+- [ ] Implement and independently verify PW-01 bounded CSV parsing, support links/retrieval, provenance/store, CLI and KB panel; keep its registered spec and schemas current.
+- [ ] Follow PW-01 with the separate bounded local MSU/CAB PW-02 slice; native Windows extraction remains a distinct acceptance gate.
+- [ ] Keep manual desktop/accessibility, RB-01 targeted live, original timeout-pair, clean-machine release and L1/L2/L3 acceptance open until evidenced.
+- [ ] Separate strings-export follow-ups: race-safe no-clobber publication and compatible document-level extraction/truncation/redaction metadata, including empty exports.
+
+[Current decision log](../docs/qa/branch-consolidation-20261118.md).
+
 ## 2026-11-16 local KEV continuation
 
 - [x] Complete K4 item 3: local KEV context in pilot leads and KB search.

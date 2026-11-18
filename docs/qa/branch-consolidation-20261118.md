@@ -162,8 +162,11 @@ The exact heads of #290, #291, #292, #293, #294, #295 and #297 are ancestors of
 #301. Do not replay them separately. Once a reviewed #301 or a documented
 successor is merged and resulting main is qualified, these seven PRs may close
 with the final replacement PR/commit cited. Their remote branches remain.
-If a successor carries #301, close #301 only after the same ancestry and
-current-main checks; this record does not choose or assert a successor.
+The continuation branch `codex/consolidation-reviewed-20261118` is based directly
+on #301 and preserves its complete ancestry. Close #301 only after this
+successor is merged and resulting main is qualified. The branch removes the
+unsafe archive/delete helper; it does not remove any remote branch or create
+archive refs.
 
 ## Candidate content under independent review
 
@@ -220,7 +223,7 @@ is tracking consolidation, not proof that their behavior is in main.
 | #168 stack | Raw-offset core and Qt-free paired-row model were ported. RD-F03 desktop wiring remains a separate UI slice. Historical native producer work is not permission to replace singleton refusal. |
 | #174 | One-to-many and harness changes overlap the candidate; retain research producer workflow/evidence residue for review. |
 | #176 | Search document-scope repair was ported. Keyboard sorting/header help needs conflict review against existing Alt+Up/Down navigation and #300 accessibility. |
-| #289 | Preserve the source branch. Reproduce UE-R7/L-39 cap symmetry from `7237c55cba6e134c58df7936f273fd269aa864c5` against the new arbiter before a minimal port. Keep later registry/config-digest fixes; unrelated UI/research slices are not CSV prerequisites. |
+| #289 | Preserve the source branch. UE-R7/L-39 cap symmetry from `7237c55cba6e134c58df7936f273fd269aa864c5` was reproduced and minimally repaired in successor commit `3ad941c1`, preserving newer registry/config-digest fixes. Other UI/research residue remains separate. |
 | `claude/instance-b-features` | Saved-search/recent-query stores were ported. Call-graph layout and capa raw-cache work remain separate. |
 | #279 | Review devcontainer configuration, Rizin fixtures and research parser tests independently. Historical identical forward/reverse results cannot establish compatibility after ownership refusal. |
 | #70, #78, #79, #82, #85, #86 | Historical help, corpus/persistence/card-control/preregistration and decompilation work needs full behavior-to-replacement mapping. Their source tips are not ancestors of main. The prior similarity-based closure claims are withdrawn. |
@@ -315,3 +318,47 @@ The product remains subject to the separate release and L1/L2/L3 accuracy gates.
 A final integration record must refresh main/head/check identities, report exact
 merged and closed PR mappings, and distinguish any automatic prerelease from
 completed release acceptance.
+
+## Successor review and repairs
+
+The lead assigned independent, non-overlapping core and security/evidence reviews
+of the full `9c411ca3..faddea30` change set. The core review covered unified
+soundness, KB scope, CLI/UI boundaries, reports, research tooling and CI/release.
+The security review covered process/environment/path handling, backend setup,
+normalization, secondary engines, persistence, raw output ownership and retained
+native receipts. The inventory review separately mapped all branch tips and all
+48 open PRs. The REST discussion timeline was fetched for all 48; no submitted
+review was returned. These agent reviews are independent engineering review,
+not invented GitHub approval submissions.
+
+| Finding | Reproduced behavior | Successor disposition |
+|---|---|---|
+| Ghidriff zero address | One-to-many identity sorting compared a string from address zero with a nonzero integer and raised `TypeError`. Four orientation/order cases failed before repair. | `3ad941c1` preserves zero as an integer and separately orders unavailable addresses; stable abstention/group identity is tested. |
+| UE-R7/L-39 mirror cap | At the real 64-atom cap, swapping older/newer changed which equally strong atoms survived. | `3ad941c1` ports the smallest orientation-independent cut from #289, retains current native tie-breaks and bumps only `arbiter` to 2. Current `ude/2`, proof and channel versions remain. |
+| Recent-query JSON | A 10,000-level array propagated `RecursionError`; oversized settings reached the decoder before output limits. | `3ad941c1` adds the 64 KiB pre-decode bound and lenient recursion recovery. |
+| Release ZIP special files | A required executable with FIFO mode passed the regular-file predicate. | `64f05310` rejects explicit FIFO/device/socket types, while accepting ordinary regular or unspecified ZIP type bits. |
+| Composed archive links | Individually in-root link strings composed to an escape through a linked ancestor. | `64f05310` validates normalized member identities and resolves link compositions within bounded budgets, without extracting or executing archive contents. |
+| Archive helper race | A post-snapshot remote update could be deleted by an unconditional deletion. An isolated temporary local-repository reproduction confirmed the race; the actual origin was never targeted. | `0b89be7f` excludes `tools/archive_branches.sh` from the successor. Only the read-only inventory generator remains. No further helper execution is authorized or needed. |
+
+The independent core reviewer reran the normalization, cap, recent-query and
+current soundness neighbours against the repaired source: **281 passed**.
+The lead's combined normalization/fusion/registry/search selection: **198 passed**.
+These overlap and must not be summed. The separately authored release-verifier
+repair has **130 passing tests**; the lead inspected its complete diff and ran
+the original independent reproducers with the verifier suite: **133 passed,
+1 unrelated case deselected**. The inventory generator has **7 passing tests**.
+Whole-tree Ruff, dependency compatibility, protobuf runtime and whitespace checks
+passed before this documentation update. Full local QA and exact-successor hosted
+Linux/Windows/package/native checks are still required and will be recorded by
+their own SHA; historical #301 green checks are not reused for the successor.
+
+Retained historical native manifests and receipts were checked against their raw
+digests and recorded semantics. That is artifact review, not a new native run.
+The separate manual Windows desktop/accessibility, clean-machine package,
+targeted RB-01 rerun, original timeout-pair and L1/L2/L3 acceptance gates remain
+open. Existing automatic prerelease policy is unchanged.
+
+Adjacent strings-export issues remain tracked outside PW-01: `write_atomic`
+with `force=False` has an existence-check/replace no-clobber race, and CSV export
+omits document-level extraction-basis and truncation/redaction metadata including
+empty exports. No strings-export behavior was changed in this continuation.
