@@ -18,6 +18,7 @@ from .limits import DEFAULT_LIMITS
 from .lineage import (
     ChangeInfo,
     IndexRow,
+    LineageOrder,
     change_in_kb,
     chronologically_before,
     order_key,
@@ -33,6 +34,7 @@ _AVAILABILITY_ORDER = {'local': 0, 'direct': 1, 'candidates': 2, 'delta-only': 3
 NOT_IN_INDEX = 'Not in the file index (Windows 10/11 client x64 only).'
 NO_KEY = 'No file-index key is known for this product.'
 _CLIENT_10_PREFIX = '10-'
+MAX_PAIR_ROW_WORK = 1_000_000
 
 
 def index_keys(winbindex_key: str) -> tuple[str, ...]:
@@ -153,6 +155,8 @@ def resolve(rows: Sequence[IndexRow], *, kb: str, scope: ProductScope, file_name
     """Candidate pairs for ``kb`` in ``scope``. An index that cannot answer says why instead of returning nothing."""
     if not is_canonical_kb(kb):
         raise ValueError('kb must be a canonical KB id')
+    if type(limit) is not int or not 1 <= limit <= DEFAULT_LIMITS.pairs_per_file:
+        raise ValueError('limit must be an integer from 1 through the configured pairs-per-file limit')
     if scope.family == 'windows-server':
         return _empty(kb, file_name, scope, scope.winbindex_key, ('SERVER_NOT_COVERED',),
                       reason_text('SERVER_NOT_COVERED'), skipped_rows)
@@ -167,7 +171,8 @@ def resolve(rows: Sequence[IndexRow], *, kb: str, scope: ProductScope, file_name
     # Winbindex includes native and WoW64 rows in one version key. Other machines are not predecessors or variants
     # of the selected file; keep the source rows intact and scope only this derived timeline.
     line = tuple(sorted((r for r in product_rows if r.machine == scope.architecture), key=order_key))
-    change: ChangeInfo = change_in_kb(line, kb)
+    order = LineageOrder(line)
+    change: ChangeInfo = change_in_kb(line, kb, order=order)
     if not change.target_rows:
         machines = sorted({r.machine for r in product_rows if r.kb == kb})
         if machines:
@@ -177,19 +182,24 @@ def resolve(rows: Sequence[IndexRow], *, kb: str, scope: ProductScope, file_name
         return _empty(kb, file_name, scope, scope.winbindex_key, ('NO_NEWER',), NOT_IN_INDEX, skipped_rows)
     pairs: dict[str, PairProposal] = {}
     ambiguous = change.reason in ('variants', 'order-unverified')
-    for target in {r.sha256: r for r in reversed(change.target_rows)}.values():
-        older, between = predecessor(line, target, same_class_only=same_class_only)
+    targets = sorted({r.sha256: r for r in reversed(change.target_rows)}.values(),
+                     key=lambda row: (_AVAILABILITY_ORDER[row.availability], order.position(row)))
+    capacity = min(limit, MAX_PAIR_ROW_WORK // max(1, len(line)))
+    truncated = len(targets) > capacity
+    for target in targets[:capacity]:
+        older, between = predecessor(line, target, same_class_only=same_class_only, order=order)
         if older is not None:
-            ambiguous |= any(not chronologically_before(older, row) or not chronologically_before(row, target)
+            ambiguous |= any(not order.before(older, row) or not order.before(row, target)
                              for row in between)
             pair = propose_index_pair(older, target, scope_id=scope.scope_id, intervening=between,
                                       fixed_build=fixed_build, skipped_rows=skipped_rows, tier=tier)
             pairs.setdefault(pair.pair_id, pair)
     ordered = sorted(pairs.values(), key=lambda p: rank_key(p, change.state))
-    blockers = () if ordered else ('NO_OLDER',)
-    truncated = len(ordered) > limit
-    note = '' if ordered else reason_text('NO_OLDER')
-    if ordered and (ambiguous or truncated):
+    blockers = () if ordered else ('INDEX_GAP',) if truncated else ('NO_OLDER',)
+    note = '' if ordered or truncated else reason_text('NO_OLDER')
+    if truncated or (ordered and ambiguous):
         note = 'Variants, unresolved chronology or a truncated list remain; select an explicit pair with --pair.'
+        if not ordered:
+            note = 'Pair enumeration is truncated; no predecessor conclusion can be drawn from the evaluated rows.'
     return Resolution(kb, file_name, scope.scope_id, scope.winbindex_key, change.state, change.last_changed_in,
                       tuple(ordered[:limit]), blockers, note, skipped_rows, truncated, ambiguous)

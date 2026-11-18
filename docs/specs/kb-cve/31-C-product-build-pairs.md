@@ -136,6 +136,16 @@ The JSON resolution exposes `ambiguous` alongside `truncated`, and the human
 listing explains the need for an explicit choice. Neither an explicit choice
 nor a candidate's availability upgrades the evidence or removes hard blocks.
 
+The pair limit is an enumeration limit, not only an output slice: it must be an
+integer from 1 through 1,000. Parse chronology facts once per resolution, retain
+their local cache only for that calculation, and cap the product of the selected
+timeline's row count and enumerated target count at 1,000,000. Before evaluating
+pairs, visit target identities in stable availability/display order within those
+budgets. Rank the evaluated proposals normally. A truncated result does not
+promise the globally best pair; preserve the full-source ambiguity flag and
+explain incomplete enumeration even if no evaluated target has a predecessor.
+In that case report `INDEX_GAP`, not a false `NO_OLDER` conclusion.
+
 Direct index mappings may omit `other_versions`; a present value must be a list
 or tuple of nonempty string keys. A malformed collection or member rejects that
 entire mapping once, without raising, discarding bad members silently, or
