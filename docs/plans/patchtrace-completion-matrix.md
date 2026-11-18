@@ -133,3 +133,24 @@ Combined source `ef0398577c97b926259b533c5776e88146244b24` on published #307 car
 ## Reviewed PE manifest boundary — 2026-11-18
 
 Source `e1c5006e51606caedd773bf079c20c145d290861` repairs an independently reproduced encoding-dependent DTD-policy bypass. Root exact-source gate passes 384 cases, including unchanged external probes; original failures remain retained. This supplies D/R for the narrow parser boundary and does not add native/platform J/G credit to PE inspection. Strict static scan findings and complete gates remain open. [Evidence](../qa/manifest-dtd-reviewed-20261118/README.md).
+
+## Semantic branch review continuation — 2026-11-18
+
+[Batch 1](autonomous-consolidation-20261118/semantic-disposition-batch1.md)
+provides scoped source evidence for 20 of the 131 mechanically unresolved tips
+at `ac789497597fba3cb87696990d171a7a27024fca`. Seventeen focal behaviors are
+retained; three overlapping checkpoint tips remain partial. No product
+completion percentage or acceptance milestone is added from branch counts or
+passing test counts. The other 111 tips and broad checkpoint research residue
+still need semantic review.
+
+| Scope | Current observation | Remaining work |
+|---|---|---|
+| Incomplete-project retry | Three real SQL controls show foreign views, triggers or columns can be replaced; healthy empty-schema retry passes | Narrow refusal repair, bounds and preservation review |
+| Callgraph completeness | Per-node omissions and duplicate focus inputs reproduce incorrect complete results | Selective query/export/UI cap-truth repair with negative and below-cap controls |
+| Callgraph path work | Shared-budget and cancellation controls reproduce prepass/copy work outside the intended bound | Separate lazy CSR/shared-budget repair, deterministic witness and order verification |
+| Packaged KB investigation journey | Historical synthetic F8 self-test exceeds current sample/panel-only self-test scope | Adapted source/frozen journey; native Windows and manual acceptance remain separate |
+
+The passing current replacement gates and original red controls are retained in
+the [QA receipt](../qa/semantic-disposition-batch1-20261118.md). They do not
+authorize merges, branch deletion, a release, or a native compatibility claim.

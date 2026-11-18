@@ -213,3 +213,22 @@ A focused branch on #307 `58fc1306` integrates reviewed release guard source `05
 ## Manifest parser security follow-on — 2026-11-18
 
 Focused source `e1c5006e` on published #307 now refuses parser-recognized doctypes independently of the decoded-text screen. Root independently reviewed and replayed 384 affected/external cases with no skips. Original internal-entity failures remain intact; no full/native acceptance or closure is implied. [Receipt](../../qa/manifest-dtd-reviewed-20261118/README.md).
+
+## Semantic reconciliation batch 1 — 2026-11-18
+
+The [first semantic batch](semantic-disposition-batch1.md) inspects 20 of the
+131 original `needs_reconciliation` tips against source
+`ac789497597fba3cb87696990d171a7a27024fca`. Seventeen retain their assessed
+focal behavior. Three broad, overlapping checkpoint tips remain partial:
+foreign-schema incomplete-creation refusal, callgraph cap truth and shared
+path-query work budgets have reproduced missing behavior; packaged synthetic
+KB journey and explicit partial-creation recovery are separate open scopes.
+All exact tips, source/patch evidence, replacement provenance and qualification
+limits are retained in the [machine-readable ledger](semantic-disposition-batch1.json).
+
+Current replacement gates passed 1,069 cases with one Windows-only skip, then
+51 owner-thread/adoption cases. Original schema and historical callgraph red
+controls are preserved separately. These are scoped current-source results,
+not historical branch/native acceptance or a branch-closure decision. The 111
+unselected tips and unreviewed broad-tip residue remain open; the initial
+inventory and its historical classifications are unchanged.
