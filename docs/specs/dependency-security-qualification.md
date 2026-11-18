@@ -44,9 +44,10 @@ Cross-check pip's environment against the independently executed interpreter
 identity: exact full Python and implementation versions, Python major/minor,
 implementation name and display name, native system and machine architecture.
 All required fields must be present strings; a partial matching prefix does not
-verify a different interpreter. The inspect pip version, installed pip version,
-bootstrap ensurepip version, and every installation-report pip version must
-agree. Every installation report must preserve the same complete environment
+verify a different interpreter. The inspect pip version, installed pip version
+and ordinary installation-report pip versions must agree. The original bootstrap
+must match ensurepip; an authorized transition separately proves its original
+issuer and installed target below. Every installation report preserves the same complete environment
 mapping as the final inspection. Missing or contradictory provenance fails even
 when the dependency names and versions otherwise appear consistent.
 
@@ -63,7 +64,7 @@ Install build requirements into that observed environment before the editable
 source install, with build isolation disabled for this scan build. Thus an
 unobserved temporary build environment cannot stand in for the recorded closure.
 All non-bootstrap installed distributions must be accounted for by those install
-reports; the bootstrap pip identity must match that interpreter's ensurepip.
+reports; the original bootstrap pip identity must match that interpreter's ensurepip.
 Currently selected requirements use plain names, exact versions or numeric
 version bounds. Refuse an unsupported requirement/marker/version form instead of
 guessing whether it is satisfied. Preserve that limitation if project metadata
@@ -76,8 +77,9 @@ Generate fully pinned audit requirements from all remaining installed
 distributions. Audit that already-resolved closure using pinned pip-audit 2.10.1,
 with strict collection, no dependency resolution, pip resolution disabled,
 explicit PyPI vulnerability service, bounded request/process time, and JSON
-output. No skip-editable, ignored vulnerability, dry run, auto-fix, dependency
-upgrade, or successful fallback is allowed. Preserve the raw output even on
+output. No skip-editable, ignored vulnerability, dry run, auto-fix, automatic
+dependency upgrade in response to findings, or successful fallback is allowed.
+Preserve the raw output even on
 nonzero exit or parse failure.
 
 Validation requires an exact name/version match between the full requested
@@ -86,6 +88,46 @@ an empty fixes list, valid bounded finite JSON, and exit zero. Nonzero exit,
 network denial, inaccessible advisory data, missing report, collection error,
 reported vulnerability, malformed evidence or incomplete coverage remains failed
 or unverified, never clean.
+
+## Explicit reviewed bootstrap remediation (2026-11-18 follow-on)
+
+The initial candidate's actual Linux environments contain ensurepip's pip
+25.0.1. Retain those failing inventories unchanged. A separate authorized
+preparation step pins pip 26.3 in each newly created scanner/product environment;
+it does not alter project dependencies or an existing user/shared environment.
+This pin is based on official PyPA advisory fixes and pip/PyPI release metadata,
+supports Python 3.12, and uses the universal wheel's recorded SHA-256:
+`f3b60b20ffaadd4415ed7957212a38ac63fa4c5fa375bd0f4a797777940fad13`.
+
+Before any third-party scanner/product installation, retain a separate bootstrap
+interpreter identity, full pip inspection and pip-check outcome. Require that
+fresh inventory to contain only the observed ensurepip-owned pip, with matching
+full native environment and issuer version. A newer/unrecognized bootstrap is
+refused rather than silently downgraded or assumed equivalent.
+
+Install only the reviewed pip wheel, with exact version and required hash,
+binary-only resolution and no dependencies. Reinstalling the same pin is allowed
+in this freshly owned environment so the installation report still records the
+actual wheel origin. Preserve the raw process exit/output, installer report and
+immediate prepared-environment inspection. The installer report's pip version
+is the original issuer; the one installed target is pip 26.3. Require the exact
+approved wheel URL/digest, non-yanked requested index distribution, no other
+installed target, the same complete native environment, and a prepared inventory
+containing exactly the pinned pip. Missing/mismatched/failed transition evidence
+blocks all subsequent scanner/product installation.
+
+The final environment must retain the same interpreter/ensurepip identity and
+native environment, while its installed/inspection pip and all subsequent
+installer-report issuer versions equal 26.3. The final audit still includes pip
+and every other non-owned distribution; this transition is not an audit exclusion
+or a clean-result waiver. Scanner findings remain blocking.
+
+The lower-level installation validator retains explicit predecessor semantics:
+without transition evidence it may validate an unmodified historical ensurepip
+environment only when all pip versions match. That API path cannot qualify the
+current pipeline: every current profile requires the complete bootstrap command
+receipts, pinned requirements, transition report and prepared inventory before
+the final inventory/scanner receipts can pass.
 
 ## Static security detector
 

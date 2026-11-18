@@ -27,6 +27,10 @@ auditable external distributions and explicitly unaudited native categories.
 Contract: `docs/specs/dependency-security-qualification.md`; authored tests in
 `tests/test_dependency_security.py`. No scan pass or native qualification follows
 from those tests. The shared release policy requires every named native profile.
+The separate reviewed-bootstrap follow-on records the original ensurepip
+inventory, hash-pinned pip 26.3 transition and final complete audited closure;
+`tests/test_dependency_security_bootstrap.py` verifies that transition without
+removing the original failing inventories or changing static/native gates.
 
 ## Exact-source release qualification (2026-11-18)
 
