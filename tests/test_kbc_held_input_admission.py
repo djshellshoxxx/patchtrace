@@ -11,6 +11,7 @@ from dataclasses import replace
 from pathlib import Path
 from types import SimpleNamespace
 
+import kbc_helpers as h
 import pytest
 from held_input_support import authored_pair, deny_source_opens
 from kbc_k1_support import no_sockets  # noqa: F401
@@ -22,6 +23,7 @@ from patchtrace.input_readers import InputReadError, PairInputReaders
 from patchtrace.kbcorrelation import service as service_module
 from patchtrace.kbcorrelation import store as store_module
 from patchtrace.kbcorrelation import wiring
+from patchtrace.kbcorrelation.context import ContextBundle
 from patchtrace.kbcorrelation.service import KbService
 from patchtrace.kbcorrelation.store import KbcStoreError, ProjectAttachment, WorkspaceStore
 from patchtrace.persistence import ProjectStore
@@ -391,3 +393,88 @@ def test_factories_preserve_policy_and_forward_the_same_pair(tmp_path, monkeypat
         factory(None, 'name')
         policy = {'reuse_existing': False} if factory is wiring.new_project_factory else {}
         assert calls == [((None, 'name'), policy | {'input_readers': supplied}), ((None, 'name'), policy)]
+        assert calls[0][1]['input_readers'] is supplied
+
+
+@pytest.mark.parametrize('admission', ['growth', 'superseded', 'empty'])
+def test_held_import_retains_finite_scope_and_global_revision_admission(tmp_path, monkeypatch, admission):
+    if admission == 'empty':
+        svc = service(tmp_path)
+        investigation = svc.search(h.KB_CLIENT).result['investigation_id']
+        initial = None
+        add(svc, document())
+    else:
+        svc, initial, investigation, _product = seeded(tmp_path, mode='cached')
+        if admission == 'growth':
+            add(svc, document('2099-Feb', h.CVE_B, date='2099-02-13'))
+        else:
+            newer = document(date='2099-02-14')
+            newer['vulnerabilities'] = []
+            add(svc, newer)
+    root = tmp_path / 'project'
+    with authored_pair(tmp_path / 'inputs') as (paths, readers):
+        deny_source_opens(monkeypatch, paths)
+        result = svc.import_pair(investigation, *map(str, paths), str(root), input_readers=pair(readers))
+        assert result.exit == 0
+        exported = tmp_path / 'context.json'
+        assert svc.export(str(root), str(exported), overwrite=False).exit == 0
+        context = ContextBundle.model_validate_json(exported.read_bytes())
+        if admission == 'growth':
+            assert [source.doc_id for source in context.sources] == [initial.doc_id]
+            assert {card.cve for card in context.context.cards} == {h.CVE_A}
+        else:
+            assert not context.sources and not context.context.cards
+        if admission == 'empty':
+            assert context.context.coverage[0].scope.doc_ids == ()
+
+
+@pytest.mark.parametrize('condition', ['live', 'other-path', 'expired'])
+def test_same_operation_resume_uses_only_its_bound_readers(tmp_path, monkeypatch, condition):
+    svc = service(tmp_path)
+    root = tmp_path / 'project'
+    original = WorkspaceStore.journal_put
+    interrupted = []
+
+    def journal(ws, op, state, body):
+        original(ws, op, state, body)
+        if state == 'intent' and not interrupted:
+            interrupted.append(True)
+            raise RuntimeError('authored interruption after intent')
+
+    monkeypatch.setattr(WorkspaceStore, 'journal_put', journal)
+    with authored_pair(tmp_path / 'inputs') as (paths, readers):
+        supplied = pair(readers)
+        error = InputReadError('unavailable' if condition == 'expired' else 'changed')
+        bound_check = readers.older.check
+
+        def check(path):
+            if Path(path) != paths[0]:
+                raise error
+            return bound_check(path)
+
+        readers.older.check = check
+        deny_source_opens(monkeypatch, paths)
+        with pytest.raises(RuntimeError, match='authored interruption after intent'):
+            svc.import_pair('new', *map(str, paths), str(root), input_readers=supplied)
+        assert not root.exists()
+        with WorkspaceStore(svc.root) as ws:
+            [(op, state, body)] = ws.journal_ops()
+            assert state == 'intent'
+            if condition == 'other-path':
+                ws.journal_put(op, state, body | {'older_path': str(paths[1])})
+            elif condition == 'expired':
+                readers.older.check = fail(error)
+            port = wiring.RealProjectPort(ws, input_readers=supplied)
+            attachment = ProjectAttachment(ws, port, input_readers=supplied)
+            if condition == 'live':
+                outcome = attachment.resume(op)
+                assert outcome.status == 'partial' and outcome.value.state == 'context-pending'
+                assert ws.journal_get(op)[0] == 'done'
+                with ProjectService.open(root, maintenance=False) as reopened:
+                    assert reopened.project.id == outcome.value.project_id
+            else:
+                with pytest.raises(InputReadError) as caught:
+                    attachment.resume(op)
+                assert caught.value is error and ws.journal_get(op)[0] == 'intent'
+                assert not root.exists()
+        assert all(lease.opened == lease.closed and not lease.active for lease in (readers.older, readers.newer))
