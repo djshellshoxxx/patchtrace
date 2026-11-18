@@ -343,6 +343,22 @@ reproducibility; label round trip (schema, annotation log, calibration-labels); 
 reports and label files only (never images). Windows leg (advisory, `continue-on-error`): the runner's LLVM clang/lld-link
 builds the freestanding suites and checks reproducibility; missing tools are recorded as BLOCKED.
 
+### A/A failure propagation (2026-11-18)
+
+A command summary with `command: aa` and a nonempty `not_byte_identical` list
+fails the byte-reproducibility requirement in section 9. For exit 0 or 1, the
+shard records that case as `failed`, retains a bounded A/A byte-identity reason,
+and stops the remaining steps of that case. Persisting/reloading the shard,
+merge provenance, Markdown and both shard/merge CLI exit decisions must retain
+the failure. Generic `findings` is not a successful A/A reproducibility result.
+
+Timeout, blocked and other failed exits retain their existing precedence and
+diagnostics. An empty A/A difference list keeps the existing exit classification;
+non-A/A noise, mutation and evaluation findings keep their current semantics.
+This change applies only to newly produced reports. It adds no card/recipe case
+grammar, changes no frozen receipt or expected corpus outcome, and establishes
+no native/compiler reproducibility result from the authored runner controls.
+
 ## 14. Tests (`tests/test_tier_r_*.py`; synthetic C compiled inside the tests; BLOCKED, never silently skipped, without a compiler)
 Contracts and schema drift; examples valid/invalid; locator on hostile C (comments, strings, K&R, macros, `#if`);
 every mutation operator (applies, compiles, deterministic, records); identity join and decision table; PDB and DWARF
