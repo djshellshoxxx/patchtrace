@@ -32,7 +32,10 @@ prospectively frozen source/binary/engine alias review remains required. No chan
 schema/scorer, production secondary evidence or tool pins follows from this gate. Frozen results stay unchanged.
 
 Any `original` or `modified` object key marks a JSON document as native before a legacy wrapper can select or
-discard a list. Native output must be a bare array. Every record in such a document must
+discard a list. A record with native type `COMPLETE`, `PARTIAL` or `UNLIKE` and neither legacy `name` nor `name2`
+field also marks the document as native: removing both side keys must not turn invalid native output into an
+empty legacy result. Explicitly named flat legacy records retain their tolerant type handling. Native output
+must be a bare array. Every record in such a document must
 have exactly `similarity`, `type`, `original`, `modified`; mixing native and legacy records or wrapping native
 records in a legacy object is refused. Type is `COMPLETE`, `PARTIAL` or `UNLIKE`; similarity is a finite number
 in 0..1, never a boolean. Each side is explicitly null or exactly `{addr, name, size}`: address is an unsigned
@@ -66,6 +69,9 @@ A refusal raises `ValueError`, never `[]`. The adapters CLI returns its existing
 records `BLOCKED: unparseable_report` and excludes it from scoring. A malformed or ambiguous report must not
 receive a no-change HIT or a function HIT/MISS. A valid complete report with no changes still returns `[]`.
 Production parse/ownership success and source-backed attribution remain separate prerequisites for native pilots.
+Legacy unnamed-row skipping remains unverified; arbitrary legacy shapes are not covered by the native identity
+proof. A verified native pilot must pass the production strict normalizer before this ranking adapter, and may
+not use legacy interpretation to bypass a failed production parse.
 
 Focused regressions: `tests/test_research_qualification_rizin_identity.py`, plus existing adapter/scoring/scorerun
 suites. Use authored JSON, retained native fixture bytes and legacy fixtures; synthetic controls establish this
