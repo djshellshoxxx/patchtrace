@@ -2448,3 +2448,18 @@ preserved. A fixed bounded note reports uncertain cleanup while retaining the
 primary failure. The original 441c/136-payload packet is unchanged. Root final
 independent review remains separate; native/package/durable-recovery acceptance
 is not claimed.
+
+## [PW02-DURABLE-ADMISSION-DESIGN-20261118]
+
+Read-only design at frozen `195e04af`, proposal `efe68b18`; the
+[sealed 93-member packet](qa/package-durable-admission-design-20261118.md)
+retains 42 Git snapshots, 56 complete symbol spans, 11 core/KB/worker equalities,
+five caller searches and 16 unchanged prior files. Seven new Linux SQLite
+observations pass with 32 exact imports and no network/child attempts. They
+show fresh-reader v2 refusal, but also the already-open v1 cached-write
+counterexample; package state outside legacy journal enumeration is therefore
+part of the proposed boundary. Sidecar-before-identity and operation-specific
+revision/CAS requirements remain explicit. The initial rg-order seal failure
+and multiset-only artifact correction are preserved; no product assertion was
+rewritten. Root independent design review, spec/test-first implementation and
+all native/frozen gates remain pending; no production or entry point changed.

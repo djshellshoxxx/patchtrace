@@ -1,0 +1,48 @@
+{
+  "source": "195e04af27f7a724c6a2037363b7fe68df418a6b",
+  "source_tree": "b976c61b0ac4ffb55b7b0e78d7a2b206742c00b1",
+  "design_commit": "efe68b18654459e704d358d64423fbc1820afc0a",
+  "archive_name": "package-durable-admission-design.zip",
+  "archive_sha256": "156c93ba411214921694e865a7615e0f9357b2d43ffbd82348cf65dfb58dec82",
+  "archive_bytes": 461545,
+  "archive_members": 93,
+  "manifest_sha256": "7ba6aa764f17a13b02b91e8e73eedb18a097d828df26ea84713deda69c2afa42",
+  "verification": {
+    "source": "195e04af27f7a724c6a2037363b7fe68df418a6b",
+    "source_tree": "b976c61b0ac4ffb55b7b0e78d7a2b206742c00b1",
+    "design_commit": "efe68b18654459e704d358d64423fbc1820afc0a",
+    "design_tree": "ab1438d6c5d1c2cf65fbd805e98036c1e358eac4",
+    "git_snapshots_verified": 42,
+    "source_equalities_verified": 11,
+    "full_symbol_spans_verified": 56,
+    "caller_searches_replayed": 5,
+    "original_prior_files_rehashed_unchanged": 16,
+    "project_imports_verified": 32,
+    "observations": {
+      "passed": 7,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0,
+      "scope": "frozen-current Linux SQLite behavior only"
+    },
+    "network_or_child_attempts": [],
+    "production_test_schema_workflow_files_changed": [],
+    "proposal_files": [
+      {
+        "path": "docs/plans/package-durable-admission-20261118.json",
+        "commit": "efe68b18654459e704d358d64423fbc1820afc0a",
+        "sha256": "cb25789d7d21f602ec9dc6857146db4f3754d3db0b7555c7713491192411c32b",
+        "bytes": 9323
+      },
+      {
+        "path": "docs/plans/package-durable-admission-20261118.md",
+        "commit": "efe68b18654459e704d358d64423fbc1820afc0a",
+        "sha256": "65050cef438edaaf6f2c93bda0b26203d1b3a5ab9b02f7ce9da65d18ebfb9caa",
+        "bytes": 43921
+      }
+    ],
+    "subsequent_core_diff_verified": "63ebc42746fbfbded311084288a339f26ed08d8c",
+    "design_not_implementation_acceptance": true,
+    "first_seal_harness_failure_preserved": "seal-harness-correction.json"
+  }
+}

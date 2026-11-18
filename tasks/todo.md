@@ -1835,3 +1835,12 @@ See the [immutable continuation checkpoint](../docs/qa/verified-continuation-202
 - [x] Commit the additional specification and 41 meaningful controls; retain 31 failures/19 positives before the narrowly owned handler correction.
 - [x] Verify exact source `63ebc427`: 50 focused and 562 affected passes, zero skips, 463 pinned parent imports, normal Ruff/diff success; seal the separate append packet without modifying the original checkpoint packet.
 - [ ] Root independently review/replay the corrected full core chain before integration; retain uncertainty when cleanup itself fails and keep partial lock acquisition/native/durable package work outside this receipt.
+
+### [PW02-DURABLE-ADMISSION-DESIGN-20261118]
+
+- [x] Freeze `195e04af` and read current package/native/core/KB contracts, attachment/recovery, real port, saved-scope and enrichment/object publication callers.
+- [x] Retain seven exact-source SQLite observations, including already-open v1 behavior, unknown-field marking, isolated-table visibility and authored transaction rollback; 32 pinned imports, no prohibited attempts.
+- [x] Commit the bounded proposal/machine index at `efe68b18` and seal 93 evidence members, preserving original prior observations and the artifact-verifier order correction.
+- [ ] Root independently review lazy v2 plus package-table isolation, exact new ownership/schema/caps, strict actual identity, association-before-sidecars, provenance idempotence and one-intent reconciliation before any source changes.
+- [ ] After approval, specify and retain genuine reds for each separate contract/storage, bound-admission and committed-reconciliation source slice; preserve ordinary and saved-scope positives.
+- [ ] Keep all package/CLI/UI exposure unavailable until accepted core hooks, durable safeguards, native stage/FDI/worker and actual Windows/frozen journey gates are complete; no lease reconstruction or cleanup from persisted evidence.
