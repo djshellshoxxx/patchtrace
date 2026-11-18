@@ -1866,3 +1866,11 @@ See the [immutable continuation checkpoint](../docs/qa/verified-continuation-202
 - [x] Specify seven exact file/symbol permissions, preserve 13-red/234-positive baseline and all prior assertions, and pass 247 cases independently.
 - [x] Preserve normal lint success and strict 80-site failure without suppression or waiver.
 - [ ] Publish the reviewed candidate append-only and require a new exact-head full/platform gate; do not relabel the historical hosted failure.
+
+### [KB-WORKSPACE-EXISTING-OPEN-20261118]
+
+- [x] Preserve the ordinary `create=False` initialization counterexample and specify a separate actual-connection existing-only mode before implementation.
+- [x] Retain 44 failures/2 positives before source, including the original recorder failure and unchanged corrected replay; implement only `kbcorrelation/store.py` at `c470a31a`.
+- [x] Seal 344 affected passes, 112 pinned imports, zero skips/prohibited attempts, full Ruff/diff success and exact normal-body/nonowned-source proofs in the 216-member packet.
+- [ ] Root independently review/replay the complete ownership handoff, including the proposed final-assignment interrupt boundary, before integration; preserve any confirmed follow-up separately.
+- [ ] Implement separately approved durable intent/provenance/recovery and package/native boundaries before any held-origin package route; this mode alone grants no admission authority.

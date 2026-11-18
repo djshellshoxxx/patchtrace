@@ -2504,3 +2504,7 @@ Ruff passes; strict S still fails on 80 unchanged sites. No waiver or suppressio
 [Complete correction and retained evidence](qa/kbc-held-import-guard-20261118/README.md).
 Five Windows/Qt jobs remain incomplete at the separate snapshot. Main merge,
 native/package/security and final beta acceptance remain blocked. No release.
+
+## [KB-WORKSPACE-EXISTING-OPEN-20261118]
+
+Spec/tests `f484b54c` precede source `c470a31a`: additive first-connection `mode=rw`, actual supported-v1 base layout, and owned-connection refusal cleanup. Ordinary defaults remain unchanged. The [216-member packet](qa/kb-workspace-existing-open-20261118.md) retains the original independent 2-red/2-positive capture counterexample, the initial 44-red/2-positive gate and its post-run recorder failure, corrected pinned red, 46 focused passes and final 344 affected passes (overlapping, not additive). All 112 affected imports match source; no skips or instrumented network/child attempts; full Ruff/diff pass. Root independent review, including a final-assignment interrupt probe, remains separate. No package exposure, schema-v2, recovery, native or platform acceptance is claimed.
