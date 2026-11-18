@@ -1,6 +1,5 @@
 # QA and audit record
 
-<<<<<<< HEAD
 ## 2026-11-18 autonomous repair and exact-source checkpoint
 
 The combined retained-inventory/report-integrity source `9002a1f4` preserves current
@@ -205,7 +204,7 @@ Hosted final-head qualification remains pending.
 
 See [continuation evidence](qa/continuation-20261116.md), including independent
 review findings, branch dispositions and explicit native/release blockers.
-=======
+
 ## 2026-11-18 strings export publication
 
 The focused publication repair at `922af3b8` preserves concurrent destinations,
@@ -213,7 +212,6 @@ uses exclusive unpredictable staging and retains interruption cleanup. Five
 baseline failures became 34 passing exporter/CLI checks; nine independent
 controls also passed. Native Windows and full-head qualification remain open.
 See [source, failures, review and scope](qa/strings-export-publication-20261118.md).
->>>>>>> 92a411bf02fc8beb00b7a148e39db2bf68efa061
 
 ## 2026-11-11 SPEC-31 unified-engine soundness follow-up (PR #259 open defects) — Linux, synthetic only
 

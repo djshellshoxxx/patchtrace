@@ -1,6 +1,5 @@
 # PatchTrace delivery tracker
 
-<<<<<<< HEAD
 ## 2026-11-18 autonomous consolidation checkpoint
 
 - [x] Refresh all 307 original branch tips and 297 PR records; retain exact ancestry/patch/conflict inventory without claiming exhaustive semantic review.
@@ -173,7 +172,7 @@ Current integration: `codex/release-integration-20261116`; see
 on the integration branch. Hosted CI, further historical semantic review and
 native/release acceptance remain open; full local verification hit environment
 and worker-termination blockers documented in the checkpoint.
-=======
+
 ## Strings publication continuation — 2026-11-18
 
 - [x] Implement and independently review concurrent-destination preservation,
@@ -182,7 +181,6 @@ and worker-termination blockers documented in the checkpoint.
 - [ ] Complete exact-head hosted Linux/Windows/package qualification before merge.
 - [ ] Complete compatible document-level extraction/truncation/redaction metadata,
   including empty CSV exports; the focused publication repair does not close this scope.
->>>>>>> 92a411bf02fc8beb00b7a148e39db2bf68efa061
 
 ## P1 — Recurring Windows comparison timeout (reported 2026-11-06)
 
