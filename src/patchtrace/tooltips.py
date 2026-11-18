@@ -497,8 +497,8 @@ REGISTRY: dict[str, TooltipEntry] = {
     'setup.restrict_env': _e(
         'Run Ghidra and Java with only an allowlisted set of environment variables.',
         'Keeps credentials and JVM or Python injection variables away from the process that loads binaries.',
-        'Saved with Save setup. Off by default until validated on your machine.',
-        availability='Experimental. Set PATCHTRACE_CHILD_ENV=inherit to override.'),
+        'Enabled by default. Saved with Save setup; existing explicit choices are retained.',
+        availability='Always enforced for bundles. External compatibility opt-out: PATCHTRACE_CHILD_ENV=inherit.'),
     'setup.env_passthrough': _e(
         'Extra environment variable names to keep when the allowlist is on, separated by commas.',
         'Corporate proxy or custom JDK setups may need extra variables.', 'Saved with Save setup.',

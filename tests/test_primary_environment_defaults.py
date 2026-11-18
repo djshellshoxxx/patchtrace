@@ -5,8 +5,8 @@ import os
 import sys
 
 import pytest
+import test_network_consent_symbols as symbol_support
 from PySide6.QtCore import QSettings
-from test_network_consent_symbols import runtime  # noqa: F401
 
 from patchtrace import backend, ui
 from patchtrace.backend import BackendConfig
@@ -17,6 +17,7 @@ from patchtrace.ui import MainWindow, SetupDialog
 SECRETS = ('GH_TOKEN', 'GITHUB_TOKEN', 'NVD_API_KEY', 'OPENAI_API_KEY', 'AWS_SECRET_ACCESS_KEY')
 PROXIES = ('HTTPS_PROXY', 'https_proxy', 'HTTP_PROXY', 'NO_PROXY', 'SSL_CERT_FILE', 'REQUESTS_CA_BUNDLE')
 INJECTION = ('JAVA_TOOL_OPTIONS', '_JAVA_OPTIONS', 'JDK_JAVA_OPTIONS', 'PYTHONPATH', 'PYTHONHOME', 'LD_PRELOAD')
+runtime = symbol_support.runtime
 
 
 @pytest.fixture
@@ -53,8 +54,10 @@ def test_default_environment_keeps_only_the_consented_network_settings(tmp_path,
 def test_actual_fake_engine_child_obeys_the_default_without_explicit_restrict_flag(
         runtime, parent_environment, online):
     _run, child = runtime.run(runtime.config(allow_symbol_downloads=online))
-    assert not set(SECRETS + INJECTION) & child['env'].keys()
-    assert set(PROXIES) & child['env'].keys() == (set(PROXIES) if online else set())
+    seen = {name.upper() for name in child['env']}  # Windows normalizes environment names.
+    assert not set(SECRETS + INJECTION) & seen
+    proxies = {name.upper() for name in PROXIES}
+    assert proxies & seen == (proxies if online else set())
     assert ('--no-symbols' in child['argv']) is not online
     assert child['settings_entries'] == []
 
