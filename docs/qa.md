@@ -10,8 +10,10 @@ Local Linux, Python 3.13, pytest-xdist `-n 3 --dist loadfile`, CI extras
 installed: `main` + #297 baseline **21,692 passed, 7 failed** (6 need the
 `rapidfuzz` extra, 1 xdist ordering; all 7 pass with extras installed); head
 `a59891cf` (before A-32) **22,348 passed, 48 skipped, 5 xfailed, 0 failed**;
-A-32 affected selection **2,918 passed** plus UI and seam tests. Whole Ruff
-passed. Hosted CI, native Ghidriff/RB-01 reruns, Windows desktop and release
+A-32 affected selection **2,918 passed** plus UI and seam tests; final code
+head `4534b763` (all ports, including A-32, rz-diff flood stop and
+bundle-acceptance fixes) **22,477 passed, 48 skipped, 5 xfailed, 0 failed**.
+Whole Ruff passed. Hosted CI, native Ghidriff/RB-01 reruns, Windows desktop and release
 acceptance remain open. See
 [consolidation record](qa/branch-consolidation-20261118.md).
 
