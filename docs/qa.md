@@ -1796,3 +1796,8 @@ At 09:29:12 UTC, #246 merged normally into main as `dc53b529560453e84cf45e356a40
 ## [CONTINUATION-WINDOWS-20261106:product-start-build]
 
 Frozen #247 Windows QA passed **20,331 tests, 94 skipped, 5 xfailed, 19 warnings in 2675.35s**, plus standalone/frozen/portable/installer checks. Artifact `13492805458`, source `37b77130`, contains the stored-product starting route. API/upload digest and tested/source tree identity agree. The 09:43–09:44 snapshot still has Linux packaging/smokes outstanding; original local failures and release/live/manual gates remain preserved. [Windows candidate and evidence](qa/continuation-windows-20261106.md).
+
+
+## [WINPAIRS-WINDOWS-NATIVE-20261118]
+
+PR #304 at `bb4277ae` failed the hosted Windows publication boundary: **15 failed, 61 passed, 3 skipped**; full Windows QA and packaging were not reached. The original raw failure is retained. Native information-call repair at local `1c49199e` preserves held-handle ownership/no replacement and fixes independently reproduced primary-error masking during cleanup. Twenty portable controls failed against the old implementation; the focused final result is **101 passed, 2 actual-Windows skips**. Whole Ruff and whitespace checks pass. Exact-head hosted acceptance and merge remain open; no native success or precise old Win32 error-87 cause is inferred from portable checks. [Evidence and limits](qa/winpairs-windows-native-20261118.md).

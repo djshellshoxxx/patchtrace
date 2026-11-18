@@ -1,0 +1,906 @@
+FFFFFFFFFFFFFFFFFFFF                                                     [100%]
+=================================== FAILURES ===================================
+___ test_windows_native_rename_dispatch_keeps_exact_parent_and_utf16_leaf[p] ___
+
+name = 'p'
+
+    @pytest.mark.parametrize('name', ['p', 'receipt-\u0394.json', 'receipt-\U0001f9ea.json'])
+    def test_windows_native_rename_dispatch_keeps_exact_parent_and_utf16_leaf(name):
+        win, calls, translated = _portable_windows_information_calls()
+>       win.rename(17, 29, name)
+
+tests/test_research_qualification_winpairs_publication.py:195: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tools/research_qualification/winpairs.py:454: in rename
+    if not self.kernel.SetFileInformationByHandle(source, 3, buffer, len(buffer)):
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+args = (17, 3, <ctypes.c_char_Array_26 object at 0x7fca2beec750>, 26)
+
+    def forbidden_win32(*args):
+>       pytest.fail('publication must use the specified native information classes')
+E       Failed: publication must use the specified native information classes
+
+tests/test_research_qualification_winpairs_publication.py:182: Failed
+_ test_windows_native_rename_dispatch_keeps_exact_parent_and_utf16_leaf[receipt-\u0394.json] _
+
+name = 'receipt-Δ.json'
+
+    @pytest.mark.parametrize('name', ['p', 'receipt-\u0394.json', 'receipt-\U0001f9ea.json'])
+    def test_windows_native_rename_dispatch_keeps_exact_parent_and_utf16_leaf(name):
+        win, calls, translated = _portable_windows_information_calls()
+>       win.rename(17, 29, name)
+
+tests/test_research_qualification_winpairs_publication.py:195: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tools/research_qualification/winpairs.py:454: in rename
+    if not self.kernel.SetFileInformationByHandle(source, 3, buffer, len(buffer)):
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+args = (17, 3, <ctypes.c_char_Array_52 object at 0x7fca2c057450>, 52)
+
+    def forbidden_win32(*args):
+>       pytest.fail('publication must use the specified native information classes')
+E       Failed: publication must use the specified native information classes
+
+tests/test_research_qualification_winpairs_publication.py:182: Failed
+_ test_windows_native_rename_dispatch_keeps_exact_parent_and_utf16_leaf[receipt-\U0001f9ea.json] _
+
+name = 'receipt-🧪.json'
+
+    @pytest.mark.parametrize('name', ['p', 'receipt-\u0394.json', 'receipt-\U0001f9ea.json'])
+    def test_windows_native_rename_dispatch_keeps_exact_parent_and_utf16_leaf(name):
+        win, calls, translated = _portable_windows_information_calls()
+>       win.rename(17, 29, name)
+
+tests/test_research_qualification_winpairs_publication.py:195: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tools/research_qualification/winpairs.py:454: in rename
+    if not self.kernel.SetFileInformationByHandle(source, 3, buffer, len(buffer)):
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+args = (17, 3, <ctypes.c_char_Array_54 object at 0x7fca2bd58950>, 54)
+
+    def forbidden_win32(*args):
+>       pytest.fail('publication must use the specified native information classes')
+E       Failed: publication must use the specified native information classes
+
+tests/test_research_qualification_winpairs_publication.py:182: Failed
+________ test_windows_native_disposition_targets_only_the_owned_handle _________
+
+    def test_windows_native_disposition_targets_only_the_owned_handle():
+        win, calls, translated = _portable_windows_information_calls()
+>       win.discard(17)
+
+tests/test_research_qualification_winpairs_publication.py:211: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tools/research_qualification/winpairs.py:459: in discard
+    if not self.kernel.SetFileInformationByHandle(source, 4, self.ct.byref(delete), self.ct.sizeof(delete)):
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+args = (17, 4, <cparam 'P' (0x7fca2bdf6d20)>, 1)
+
+    def forbidden_win32(*args):
+>       pytest.fail('publication must use the specified native information classes')
+E       Failed: publication must use the specified native information classes
+
+tests/test_research_qualification_winpairs_publication.py:182: Failed
+_______ test_windows_native_negative_status_uses_nt_translation[rename] ________
+
+operation = 'rename'
+
+    @pytest.mark.parametrize('operation', ['rename', 'discard'])
+    def test_windows_native_negative_status_uses_nt_translation(operation):
+        win, calls, translated = _portable_windows_information_calls(-1073741771)
+        with pytest.raises(FileExistsError, match='prior evidence'):
+>           getattr(win, operation)(17, 29, 'p') if operation == 'rename' else win.discard(17)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_research_qualification_winpairs_publication.py:219: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tools/research_qualification/winpairs.py:454: in rename
+    if not self.kernel.SetFileInformationByHandle(source, 3, buffer, len(buffer)):
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+args = (17, 3, <ctypes.c_char_Array_26 object at 0x7fca2bf0a6d0>, 26)
+
+    def forbidden_win32(*args):
+>       pytest.fail('publication must use the specified native information classes')
+E       Failed: publication must use the specified native information classes
+
+tests/test_research_qualification_winpairs_publication.py:182: Failed
+_______ test_windows_native_negative_status_uses_nt_translation[discard] _______
+
+operation = 'discard'
+
+    @pytest.mark.parametrize('operation', ['rename', 'discard'])
+    def test_windows_native_negative_status_uses_nt_translation(operation):
+        win, calls, translated = _portable_windows_information_calls(-1073741771)
+        with pytest.raises(FileExistsError, match='prior evidence'):
+>           getattr(win, operation)(17, 29, 'p') if operation == 'rename' else win.discard(17)
+                                                                               ^^^^^^^^^^^^^^^
+
+tests/test_research_qualification_winpairs_publication.py:219: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tools/research_qualification/winpairs.py:459: in discard
+    if not self.kernel.SetFileInformationByHandle(source, 4, self.ct.byref(delete), self.ct.sizeof(delete)):
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+args = (17, 4, <cparam 'P' (0x7fca2bd5a1a0)>, 1)
+
+    def forbidden_win32(*args):
+>       pytest.fail('publication must use the specified native information classes')
+E       Failed: publication must use the specified native information classes
+
+tests/test_research_qualification_winpairs_publication.py:182: Failed
+___ test_windows_native_incomplete_status_never_credits_success[259-rename] ____
+
+operation = 'rename', status = 259
+
+    @pytest.mark.parametrize('operation', ['rename', 'discard'])
+    @pytest.mark.parametrize('status', [0x103, 0x40000000])
+    def test_windows_native_incomplete_status_never_credits_success(operation, status):
+        win, calls, translated = _portable_windows_information_calls(status)
+        with pytest.raises(wp.PublicationBlocked, match='synchronously'):
+>           getattr(win, operation)(17, 29, 'p') if operation == 'rename' else win.discard(17)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_research_qualification_winpairs_publication.py:228: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tools/research_qualification/winpairs.py:454: in rename
+    if not self.kernel.SetFileInformationByHandle(source, 3, buffer, len(buffer)):
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+args = (17, 3, <ctypes.c_char_Array_26 object at 0x7fca2c056c50>, 26)
+
+    def forbidden_win32(*args):
+>       pytest.fail('publication must use the specified native information classes')
+E       Failed: publication must use the specified native information classes
+
+tests/test_research_qualification_winpairs_publication.py:182: Failed
+___ test_windows_native_incomplete_status_never_credits_success[259-discard] ___
+
+operation = 'discard', status = 259
+
+    @pytest.mark.parametrize('operation', ['rename', 'discard'])
+    @pytest.mark.parametrize('status', [0x103, 0x40000000])
+    def test_windows_native_incomplete_status_never_credits_success(operation, status):
+        win, calls, translated = _portable_windows_information_calls(status)
+        with pytest.raises(wp.PublicationBlocked, match='synchronously'):
+>           getattr(win, operation)(17, 29, 'p') if operation == 'rename' else win.discard(17)
+                                                                               ^^^^^^^^^^^^^^^
+
+tests/test_research_qualification_winpairs_publication.py:228: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tools/research_qualification/winpairs.py:459: in discard
+    if not self.kernel.SetFileInformationByHandle(source, 4, self.ct.byref(delete), self.ct.sizeof(delete)):
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+args = (17, 4, <cparam 'P' (0x7fca2d310e20)>, 1)
+
+    def forbidden_win32(*args):
+>       pytest.fail('publication must use the specified native information classes')
+E       Failed: publication must use the specified native information classes
+
+tests/test_research_qualification_winpairs_publication.py:182: Failed
+_ test_windows_native_incomplete_status_never_credits_success[1073741824-rename] _
+
+operation = 'rename', status = 1073741824
+
+    @pytest.mark.parametrize('operation', ['rename', 'discard'])
+    @pytest.mark.parametrize('status', [0x103, 0x40000000])
+    def test_windows_native_incomplete_status_never_credits_success(operation, status):
+        win, calls, translated = _portable_windows_information_calls(status)
+        with pytest.raises(wp.PublicationBlocked, match='synchronously'):
+>           getattr(win, operation)(17, 29, 'p') if operation == 'rename' else win.discard(17)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_research_qualification_winpairs_publication.py:228: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tools/research_qualification/winpairs.py:454: in rename
+    if not self.kernel.SetFileInformationByHandle(source, 3, buffer, len(buffer)):
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+args = (17, 3, <ctypes.c_char_Array_26 object at 0x7fca2bd2dfd0>, 26)
+
+    def forbidden_win32(*args):
+>       pytest.fail('publication must use the specified native information classes')
+E       Failed: publication must use the specified native information classes
+
+tests/test_research_qualification_winpairs_publication.py:182: Failed
+_ test_windows_native_incomplete_status_never_credits_success[1073741824-discard] _
+
+operation = 'discard', status = 1073741824
+
+    @pytest.mark.parametrize('operation', ['rename', 'discard'])
+    @pytest.mark.parametrize('status', [0x103, 0x40000000])
+    def test_windows_native_incomplete_status_never_credits_success(operation, status):
+        win, calls, translated = _portable_windows_information_calls(status)
+        with pytest.raises(wp.PublicationBlocked, match='synchronously'):
+>           getattr(win, operation)(17, 29, 'p') if operation == 'rename' else win.discard(17)
+                                                                               ^^^^^^^^^^^^^^^
+
+tests/test_research_qualification_winpairs_publication.py:228: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tools/research_qualification/winpairs.py:459: in discard
+    if not self.kernel.SetFileInformationByHandle(source, 4, self.ct.byref(delete), self.ct.sizeof(delete)):
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+args = (17, 4, <cparam 'P' (0x7fca2beec4a0)>, 1)
+
+    def forbidden_win32(*args):
+>       pytest.fail('publication must use the specified native information classes')
+E       Failed: publication must use the specified native information classes
+
+tests/test_research_qualification_winpairs_publication.py:182: Failed
+_ test_windows_cleanup_preserves_primary_error_and_closes_owned_fd[discard-write] _
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-195/test_windows_cleanup_preserves0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fca2c29bce0>
+primary_kind = 'write', cleanup_failure = 'discard'
+
+    @pytest.mark.parametrize('primary_kind', ['write', 'collision', 'cancel'])
+    @pytest.mark.parametrize('cleanup_failure', ['discard', 'close', 'both'])
+    def test_windows_cleanup_preserves_primary_error_and_closes_owned_fd(
+            tmp_path, monkeypatch, primary_kind, cleanup_failure):
+        primary = {'write': OSError(5, 'primary write failure'),
+                   'collision': FileExistsError('primary collision'), 'cancel': KeyboardInterrupt()}[primary_kind]
+        calls = []
+    
+        def stage(fd, data):
+            assert fd == 91 and data == b'authored'
+            if primary_kind != 'collision':
+                raise primary
+    
+        def rename(source, parent, name):
+            assert (source, parent, name) == (17, 29, 'receipt.json')
+            raise primary
+    
+        def discard(source):
+            calls.append(('discard', source))
+            if cleanup_failure in ('discard', 'both'):
+                raise OSError(87, 'secondary discard failure')
+    
+        def close(fd):
+            calls.append(('close', fd))
+            if cleanup_failure in ('close', 'both'):
+                raise OSError(6, 'secondary close failure')
+    
+        win = SimpleNamespace(directory=lambda *args, **kwargs: 29, open_child=lambda *args, **kwargs: 17,
+                              identity=lambda *args: (1, 2, 3), check_parent=lambda *args: None,
+                              rename=rename, discard=discard)
+        monkeypatch.setattr(wp, '_WindowsPublication', lambda: win)
+        monkeypatch.setattr(wp, '_write_stage', stage)
+        monkeypatch.setattr(wp, 'os', SimpleNamespace(O_RDWR=os.O_RDWR, O_BINARY=0, close=close))
+        monkeypatch.setitem(sys.modules, 'msvcrt', SimpleNamespace(open_osfhandle=lambda *args: 91))
+        with pytest.raises(type(primary)) as caught:
+            wp._publish_windows(tmp_path / 'receipt.json', b'authored')
+>       assert caught.value is primary
+E       AssertionError: assert OSError(87, 'secondary discard failure') is OSError(5, 'primary write failure')
+E        +  where OSError(87, 'secondary discard failure') = <ExceptionInfo OSError(87, 'secondary discard failure') tblen=3>.value
+
+tests/test_research_qualification_winpairs_publication.py:268: AssertionError
+_ test_windows_cleanup_preserves_primary_error_and_closes_owned_fd[discard-collision] _
+
+source = 17, parent = 29, name = 'receipt.json'
+
+    def rename(source, parent, name):
+        assert (source, parent, name) == (17, 29, 'receipt.json')
+>       raise primary
+E       FileExistsError: primary collision
+
+tests/test_research_qualification_winpairs_publication.py:247: FileExistsError
+
+During handling of the above exception, another exception occurred:
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-195/test_windows_cleanup_preserves1')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fca2c01d9d0>
+primary_kind = 'collision', cleanup_failure = 'discard'
+
+    @pytest.mark.parametrize('primary_kind', ['write', 'collision', 'cancel'])
+    @pytest.mark.parametrize('cleanup_failure', ['discard', 'close', 'both'])
+    def test_windows_cleanup_preserves_primary_error_and_closes_owned_fd(
+            tmp_path, monkeypatch, primary_kind, cleanup_failure):
+        primary = {'write': OSError(5, 'primary write failure'),
+                   'collision': FileExistsError('primary collision'), 'cancel': KeyboardInterrupt()}[primary_kind]
+        calls = []
+    
+        def stage(fd, data):
+            assert fd == 91 and data == b'authored'
+            if primary_kind != 'collision':
+                raise primary
+    
+        def rename(source, parent, name):
+            assert (source, parent, name) == (17, 29, 'receipt.json')
+            raise primary
+    
+        def discard(source):
+            calls.append(('discard', source))
+            if cleanup_failure in ('discard', 'both'):
+                raise OSError(87, 'secondary discard failure')
+    
+        def close(fd):
+            calls.append(('close', fd))
+            if cleanup_failure in ('close', 'both'):
+                raise OSError(6, 'secondary close failure')
+    
+        win = SimpleNamespace(directory=lambda *args, **kwargs: 29, open_child=lambda *args, **kwargs: 17,
+                              identity=lambda *args: (1, 2, 3), check_parent=lambda *args: None,
+                              rename=rename, discard=discard)
+        monkeypatch.setattr(wp, '_WindowsPublication', lambda: win)
+        monkeypatch.setattr(wp, '_write_stage', stage)
+        monkeypatch.setattr(wp, 'os', SimpleNamespace(O_RDWR=os.O_RDWR, O_BINARY=0, close=close))
+        monkeypatch.setitem(sys.modules, 'msvcrt', SimpleNamespace(open_osfhandle=lambda *args: 91))
+        with pytest.raises(type(primary)) as caught:
+>           wp._publish_windows(tmp_path / 'receipt.json', b'authored')
+
+tests/test_research_qualification_winpairs_publication.py:267: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tools/research_qualification/winpairs.py:486: in _publish_windows
+    win.discard(source)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+source = 17
+
+    def discard(source):
+        calls.append(('discard', source))
+        if cleanup_failure in ('discard', 'both'):
+>           raise OSError(87, 'secondary discard failure')
+E           OSError: [Errno 87] secondary discard failure
+
+tests/test_research_qualification_winpairs_publication.py:252: OSError
+_ test_windows_cleanup_preserves_primary_error_and_closes_owned_fd[discard-cancel] _
+
+fd = 91, data = b'authored'
+
+    def stage(fd, data):
+        assert fd == 91 and data == b'authored'
+        if primary_kind != 'collision':
+>           raise primary
+E           KeyboardInterrupt
+
+tests/test_research_qualification_winpairs_publication.py:243: KeyboardInterrupt
+
+During handling of the above exception, another exception occurred:
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-195/test_windows_cleanup_preserves2')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fca2c01ecf0>
+primary_kind = 'cancel', cleanup_failure = 'discard'
+
+    @pytest.mark.parametrize('primary_kind', ['write', 'collision', 'cancel'])
+    @pytest.mark.parametrize('cleanup_failure', ['discard', 'close', 'both'])
+    def test_windows_cleanup_preserves_primary_error_and_closes_owned_fd(
+            tmp_path, monkeypatch, primary_kind, cleanup_failure):
+        primary = {'write': OSError(5, 'primary write failure'),
+                   'collision': FileExistsError('primary collision'), 'cancel': KeyboardInterrupt()}[primary_kind]
+        calls = []
+    
+        def stage(fd, data):
+            assert fd == 91 and data == b'authored'
+            if primary_kind != 'collision':
+                raise primary
+    
+        def rename(source, parent, name):
+            assert (source, parent, name) == (17, 29, 'receipt.json')
+            raise primary
+    
+        def discard(source):
+            calls.append(('discard', source))
+            if cleanup_failure in ('discard', 'both'):
+                raise OSError(87, 'secondary discard failure')
+    
+        def close(fd):
+            calls.append(('close', fd))
+            if cleanup_failure in ('close', 'both'):
+                raise OSError(6, 'secondary close failure')
+    
+        win = SimpleNamespace(directory=lambda *args, **kwargs: 29, open_child=lambda *args, **kwargs: 17,
+                              identity=lambda *args: (1, 2, 3), check_parent=lambda *args: None,
+                              rename=rename, discard=discard)
+        monkeypatch.setattr(wp, '_WindowsPublication', lambda: win)
+        monkeypatch.setattr(wp, '_write_stage', stage)
+        monkeypatch.setattr(wp, 'os', SimpleNamespace(O_RDWR=os.O_RDWR, O_BINARY=0, close=close))
+        monkeypatch.setitem(sys.modules, 'msvcrt', SimpleNamespace(open_osfhandle=lambda *args: 91))
+        with pytest.raises(type(primary)) as caught:
+>           wp._publish_windows(tmp_path / 'receipt.json', b'authored')
+
+tests/test_research_qualification_winpairs_publication.py:267: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tools/research_qualification/winpairs.py:486: in _publish_windows
+    win.discard(source)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+source = 17
+
+    def discard(source):
+        calls.append(('discard', source))
+        if cleanup_failure in ('discard', 'both'):
+>           raise OSError(87, 'secondary discard failure')
+E           OSError: [Errno 87] secondary discard failure
+
+tests/test_research_qualification_winpairs_publication.py:252: OSError
+_ test_windows_cleanup_preserves_primary_error_and_closes_owned_fd[close-write] _
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-195/test_windows_cleanup_preserves3')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fca2c06b410>
+primary_kind = 'write', cleanup_failure = 'close'
+
+    @pytest.mark.parametrize('primary_kind', ['write', 'collision', 'cancel'])
+    @pytest.mark.parametrize('cleanup_failure', ['discard', 'close', 'both'])
+    def test_windows_cleanup_preserves_primary_error_and_closes_owned_fd(
+            tmp_path, monkeypatch, primary_kind, cleanup_failure):
+        primary = {'write': OSError(5, 'primary write failure'),
+                   'collision': FileExistsError('primary collision'), 'cancel': KeyboardInterrupt()}[primary_kind]
+        calls = []
+    
+        def stage(fd, data):
+            assert fd == 91 and data == b'authored'
+            if primary_kind != 'collision':
+                raise primary
+    
+        def rename(source, parent, name):
+            assert (source, parent, name) == (17, 29, 'receipt.json')
+            raise primary
+    
+        def discard(source):
+            calls.append(('discard', source))
+            if cleanup_failure in ('discard', 'both'):
+                raise OSError(87, 'secondary discard failure')
+    
+        def close(fd):
+            calls.append(('close', fd))
+            if cleanup_failure in ('close', 'both'):
+                raise OSError(6, 'secondary close failure')
+    
+        win = SimpleNamespace(directory=lambda *args, **kwargs: 29, open_child=lambda *args, **kwargs: 17,
+                              identity=lambda *args: (1, 2, 3), check_parent=lambda *args: None,
+                              rename=rename, discard=discard)
+        monkeypatch.setattr(wp, '_WindowsPublication', lambda: win)
+        monkeypatch.setattr(wp, '_write_stage', stage)
+        monkeypatch.setattr(wp, 'os', SimpleNamespace(O_RDWR=os.O_RDWR, O_BINARY=0, close=close))
+        monkeypatch.setitem(sys.modules, 'msvcrt', SimpleNamespace(open_osfhandle=lambda *args: 91))
+        with pytest.raises(type(primary)) as caught:
+            wp._publish_windows(tmp_path / 'receipt.json', b'authored')
+>       assert caught.value is primary
+E       AssertionError: assert OSError(6, 'secondary close failure') is OSError(5, 'primary write failure')
+E        +  where OSError(6, 'secondary close failure') = <ExceptionInfo OSError(6, 'secondary close failure') tblen=3>.value
+
+tests/test_research_qualification_winpairs_publication.py:268: AssertionError
+_ test_windows_cleanup_preserves_primary_error_and_closes_owned_fd[close-collision] _
+
+source = 17, parent = 29, name = 'receipt.json'
+
+    def rename(source, parent, name):
+        assert (source, parent, name) == (17, 29, 'receipt.json')
+>       raise primary
+E       FileExistsError: primary collision
+
+tests/test_research_qualification_winpairs_publication.py:247: FileExistsError
+
+During handling of the above exception, another exception occurred:
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-195/test_windows_cleanup_preserves4')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fca2c068f20>
+primary_kind = 'collision', cleanup_failure = 'close'
+
+    @pytest.mark.parametrize('primary_kind', ['write', 'collision', 'cancel'])
+    @pytest.mark.parametrize('cleanup_failure', ['discard', 'close', 'both'])
+    def test_windows_cleanup_preserves_primary_error_and_closes_owned_fd(
+            tmp_path, monkeypatch, primary_kind, cleanup_failure):
+        primary = {'write': OSError(5, 'primary write failure'),
+                   'collision': FileExistsError('primary collision'), 'cancel': KeyboardInterrupt()}[primary_kind]
+        calls = []
+    
+        def stage(fd, data):
+            assert fd == 91 and data == b'authored'
+            if primary_kind != 'collision':
+                raise primary
+    
+        def rename(source, parent, name):
+            assert (source, parent, name) == (17, 29, 'receipt.json')
+            raise primary
+    
+        def discard(source):
+            calls.append(('discard', source))
+            if cleanup_failure in ('discard', 'both'):
+                raise OSError(87, 'secondary discard failure')
+    
+        def close(fd):
+            calls.append(('close', fd))
+            if cleanup_failure in ('close', 'both'):
+                raise OSError(6, 'secondary close failure')
+    
+        win = SimpleNamespace(directory=lambda *args, **kwargs: 29, open_child=lambda *args, **kwargs: 17,
+                              identity=lambda *args: (1, 2, 3), check_parent=lambda *args: None,
+                              rename=rename, discard=discard)
+        monkeypatch.setattr(wp, '_WindowsPublication', lambda: win)
+        monkeypatch.setattr(wp, '_write_stage', stage)
+        monkeypatch.setattr(wp, 'os', SimpleNamespace(O_RDWR=os.O_RDWR, O_BINARY=0, close=close))
+        monkeypatch.setitem(sys.modules, 'msvcrt', SimpleNamespace(open_osfhandle=lambda *args: 91))
+        with pytest.raises(type(primary)) as caught:
+>           wp._publish_windows(tmp_path / 'receipt.json', b'authored')
+
+tests/test_research_qualification_winpairs_publication.py:267: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tools/research_qualification/winpairs.py:491: in _publish_windows
+    os.close(fd)  # owns the Windows handle after open_osfhandle succeeds
+    ^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+fd = 91
+
+    def close(fd):
+        calls.append(('close', fd))
+        if cleanup_failure in ('close', 'both'):
+>           raise OSError(6, 'secondary close failure')
+E           OSError: [Errno 6] secondary close failure
+
+tests/test_research_qualification_winpairs_publication.py:257: OSError
+_ test_windows_cleanup_preserves_primary_error_and_closes_owned_fd[close-cancel] _
+
+fd = 91, data = b'authored'
+
+    def stage(fd, data):
+        assert fd == 91 and data == b'authored'
+        if primary_kind != 'collision':
+>           raise primary
+E           KeyboardInterrupt
+
+tests/test_research_qualification_winpairs_publication.py:243: KeyboardInterrupt
+
+During handling of the above exception, another exception occurred:
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-195/test_windows_cleanup_preserves5')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fca2c01fdd0>
+primary_kind = 'cancel', cleanup_failure = 'close'
+
+    @pytest.mark.parametrize('primary_kind', ['write', 'collision', 'cancel'])
+    @pytest.mark.parametrize('cleanup_failure', ['discard', 'close', 'both'])
+    def test_windows_cleanup_preserves_primary_error_and_closes_owned_fd(
+            tmp_path, monkeypatch, primary_kind, cleanup_failure):
+        primary = {'write': OSError(5, 'primary write failure'),
+                   'collision': FileExistsError('primary collision'), 'cancel': KeyboardInterrupt()}[primary_kind]
+        calls = []
+    
+        def stage(fd, data):
+            assert fd == 91 and data == b'authored'
+            if primary_kind != 'collision':
+                raise primary
+    
+        def rename(source, parent, name):
+            assert (source, parent, name) == (17, 29, 'receipt.json')
+            raise primary
+    
+        def discard(source):
+            calls.append(('discard', source))
+            if cleanup_failure in ('discard', 'both'):
+                raise OSError(87, 'secondary discard failure')
+    
+        def close(fd):
+            calls.append(('close', fd))
+            if cleanup_failure in ('close', 'both'):
+                raise OSError(6, 'secondary close failure')
+    
+        win = SimpleNamespace(directory=lambda *args, **kwargs: 29, open_child=lambda *args, **kwargs: 17,
+                              identity=lambda *args: (1, 2, 3), check_parent=lambda *args: None,
+                              rename=rename, discard=discard)
+        monkeypatch.setattr(wp, '_WindowsPublication', lambda: win)
+        monkeypatch.setattr(wp, '_write_stage', stage)
+        monkeypatch.setattr(wp, 'os', SimpleNamespace(O_RDWR=os.O_RDWR, O_BINARY=0, close=close))
+        monkeypatch.setitem(sys.modules, 'msvcrt', SimpleNamespace(open_osfhandle=lambda *args: 91))
+        with pytest.raises(type(primary)) as caught:
+>           wp._publish_windows(tmp_path / 'receipt.json', b'authored')
+
+tests/test_research_qualification_winpairs_publication.py:267: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tools/research_qualification/winpairs.py:491: in _publish_windows
+    os.close(fd)  # owns the Windows handle after open_osfhandle succeeds
+    ^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+fd = 91
+
+    def close(fd):
+        calls.append(('close', fd))
+        if cleanup_failure in ('close', 'both'):
+>           raise OSError(6, 'secondary close failure')
+E           OSError: [Errno 6] secondary close failure
+
+tests/test_research_qualification_winpairs_publication.py:257: OSError
+_ test_windows_cleanup_preserves_primary_error_and_closes_owned_fd[both-write] _
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-195/test_windows_cleanup_preserves6')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fca2c01f860>
+primary_kind = 'write', cleanup_failure = 'both'
+
+    @pytest.mark.parametrize('primary_kind', ['write', 'collision', 'cancel'])
+    @pytest.mark.parametrize('cleanup_failure', ['discard', 'close', 'both'])
+    def test_windows_cleanup_preserves_primary_error_and_closes_owned_fd(
+            tmp_path, monkeypatch, primary_kind, cleanup_failure):
+        primary = {'write': OSError(5, 'primary write failure'),
+                   'collision': FileExistsError('primary collision'), 'cancel': KeyboardInterrupt()}[primary_kind]
+        calls = []
+    
+        def stage(fd, data):
+            assert fd == 91 and data == b'authored'
+            if primary_kind != 'collision':
+                raise primary
+    
+        def rename(source, parent, name):
+            assert (source, parent, name) == (17, 29, 'receipt.json')
+            raise primary
+    
+        def discard(source):
+            calls.append(('discard', source))
+            if cleanup_failure in ('discard', 'both'):
+                raise OSError(87, 'secondary discard failure')
+    
+        def close(fd):
+            calls.append(('close', fd))
+            if cleanup_failure in ('close', 'both'):
+                raise OSError(6, 'secondary close failure')
+    
+        win = SimpleNamespace(directory=lambda *args, **kwargs: 29, open_child=lambda *args, **kwargs: 17,
+                              identity=lambda *args: (1, 2, 3), check_parent=lambda *args: None,
+                              rename=rename, discard=discard)
+        monkeypatch.setattr(wp, '_WindowsPublication', lambda: win)
+        monkeypatch.setattr(wp, '_write_stage', stage)
+        monkeypatch.setattr(wp, 'os', SimpleNamespace(O_RDWR=os.O_RDWR, O_BINARY=0, close=close))
+        monkeypatch.setitem(sys.modules, 'msvcrt', SimpleNamespace(open_osfhandle=lambda *args: 91))
+        with pytest.raises(type(primary)) as caught:
+            wp._publish_windows(tmp_path / 'receipt.json', b'authored')
+>       assert caught.value is primary
+E       AssertionError: assert OSError(6, 'secondary close failure') is OSError(5, 'primary write failure')
+E        +  where OSError(6, 'secondary close failure') = <ExceptionInfo OSError(6, 'secondary close failure') tblen=3>.value
+
+tests/test_research_qualification_winpairs_publication.py:268: AssertionError
+_ test_windows_cleanup_preserves_primary_error_and_closes_owned_fd[both-collision] _
+
+source = 17, parent = 29, name = 'receipt.json'
+
+    def rename(source, parent, name):
+        assert (source, parent, name) == (17, 29, 'receipt.json')
+>       raise primary
+E       FileExistsError: primary collision
+
+tests/test_research_qualification_winpairs_publication.py:247: FileExistsError
+
+During handling of the above exception, another exception occurred:
+
+source = 17
+
+    def discard(source):
+        calls.append(('discard', source))
+        if cleanup_failure in ('discard', 'both'):
+>           raise OSError(87, 'secondary discard failure')
+E           OSError: [Errno 87] secondary discard failure
+
+tests/test_research_qualification_winpairs_publication.py:252: OSError
+
+During handling of the above exception, another exception occurred:
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-195/test_windows_cleanup_preserves7')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fca2c185c10>
+primary_kind = 'collision', cleanup_failure = 'both'
+
+    @pytest.mark.parametrize('primary_kind', ['write', 'collision', 'cancel'])
+    @pytest.mark.parametrize('cleanup_failure', ['discard', 'close', 'both'])
+    def test_windows_cleanup_preserves_primary_error_and_closes_owned_fd(
+            tmp_path, monkeypatch, primary_kind, cleanup_failure):
+        primary = {'write': OSError(5, 'primary write failure'),
+                   'collision': FileExistsError('primary collision'), 'cancel': KeyboardInterrupt()}[primary_kind]
+        calls = []
+    
+        def stage(fd, data):
+            assert fd == 91 and data == b'authored'
+            if primary_kind != 'collision':
+                raise primary
+    
+        def rename(source, parent, name):
+            assert (source, parent, name) == (17, 29, 'receipt.json')
+            raise primary
+    
+        def discard(source):
+            calls.append(('discard', source))
+            if cleanup_failure in ('discard', 'both'):
+                raise OSError(87, 'secondary discard failure')
+    
+        def close(fd):
+            calls.append(('close', fd))
+            if cleanup_failure in ('close', 'both'):
+                raise OSError(6, 'secondary close failure')
+    
+        win = SimpleNamespace(directory=lambda *args, **kwargs: 29, open_child=lambda *args, **kwargs: 17,
+                              identity=lambda *args: (1, 2, 3), check_parent=lambda *args: None,
+                              rename=rename, discard=discard)
+        monkeypatch.setattr(wp, '_WindowsPublication', lambda: win)
+        monkeypatch.setattr(wp, '_write_stage', stage)
+        monkeypatch.setattr(wp, 'os', SimpleNamespace(O_RDWR=os.O_RDWR, O_BINARY=0, close=close))
+        monkeypatch.setitem(sys.modules, 'msvcrt', SimpleNamespace(open_osfhandle=lambda *args: 91))
+        with pytest.raises(type(primary)) as caught:
+>           wp._publish_windows(tmp_path / 'receipt.json', b'authored')
+
+tests/test_research_qualification_winpairs_publication.py:267: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tools/research_qualification/winpairs.py:491: in _publish_windows
+    os.close(fd)  # owns the Windows handle after open_osfhandle succeeds
+    ^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+fd = 91
+
+    def close(fd):
+        calls.append(('close', fd))
+        if cleanup_failure in ('close', 'both'):
+>           raise OSError(6, 'secondary close failure')
+E           OSError: [Errno 6] secondary close failure
+
+tests/test_research_qualification_winpairs_publication.py:257: OSError
+_ test_windows_cleanup_preserves_primary_error_and_closes_owned_fd[both-cancel] _
+
+fd = 91, data = b'authored'
+
+    def stage(fd, data):
+        assert fd == 91 and data == b'authored'
+        if primary_kind != 'collision':
+>           raise primary
+E           KeyboardInterrupt
+
+tests/test_research_qualification_winpairs_publication.py:243: KeyboardInterrupt
+
+During handling of the above exception, another exception occurred:
+
+source = 17
+
+    def discard(source):
+        calls.append(('discard', source))
+        if cleanup_failure in ('discard', 'both'):
+>           raise OSError(87, 'secondary discard failure')
+E           OSError: [Errno 87] secondary discard failure
+
+tests/test_research_qualification_winpairs_publication.py:252: OSError
+
+During handling of the above exception, another exception occurred:
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-195/test_windows_cleanup_preserves8')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fca2c069310>
+primary_kind = 'cancel', cleanup_failure = 'both'
+
+    @pytest.mark.parametrize('primary_kind', ['write', 'collision', 'cancel'])
+    @pytest.mark.parametrize('cleanup_failure', ['discard', 'close', 'both'])
+    def test_windows_cleanup_preserves_primary_error_and_closes_owned_fd(
+            tmp_path, monkeypatch, primary_kind, cleanup_failure):
+        primary = {'write': OSError(5, 'primary write failure'),
+                   'collision': FileExistsError('primary collision'), 'cancel': KeyboardInterrupt()}[primary_kind]
+        calls = []
+    
+        def stage(fd, data):
+            assert fd == 91 and data == b'authored'
+            if primary_kind != 'collision':
+                raise primary
+    
+        def rename(source, parent, name):
+            assert (source, parent, name) == (17, 29, 'receipt.json')
+            raise primary
+    
+        def discard(source):
+            calls.append(('discard', source))
+            if cleanup_failure in ('discard', 'both'):
+                raise OSError(87, 'secondary discard failure')
+    
+        def close(fd):
+            calls.append(('close', fd))
+            if cleanup_failure in ('close', 'both'):
+                raise OSError(6, 'secondary close failure')
+    
+        win = SimpleNamespace(directory=lambda *args, **kwargs: 29, open_child=lambda *args, **kwargs: 17,
+                              identity=lambda *args: (1, 2, 3), check_parent=lambda *args: None,
+                              rename=rename, discard=discard)
+        monkeypatch.setattr(wp, '_WindowsPublication', lambda: win)
+        monkeypatch.setattr(wp, '_write_stage', stage)
+        monkeypatch.setattr(wp, 'os', SimpleNamespace(O_RDWR=os.O_RDWR, O_BINARY=0, close=close))
+        monkeypatch.setitem(sys.modules, 'msvcrt', SimpleNamespace(open_osfhandle=lambda *args: 91))
+        with pytest.raises(type(primary)) as caught:
+>           wp._publish_windows(tmp_path / 'receipt.json', b'authored')
+
+tests/test_research_qualification_winpairs_publication.py:267: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tools/research_qualification/winpairs.py:491: in _publish_windows
+    os.close(fd)  # owns the Windows handle after open_osfhandle succeeds
+    ^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+fd = 91
+
+    def close(fd):
+        calls.append(('close', fd))
+        if cleanup_failure in ('close', 'both'):
+>           raise OSError(6, 'secondary close failure')
+E           OSError: [Errno 6] secondary close failure
+
+tests/test_research_qualification_winpairs_publication.py:257: OSError
+_____ test_windows_cleanup_before_fd_transfer_closes_only_the_owned_handle _____
+
+args = (17, 2)
+
+    def no_transfer(*args):
+>       raise primary
+E       KeyboardInterrupt
+
+tests/test_research_qualification_winpairs_publication.py:280: KeyboardInterrupt
+
+During handling of the above exception, another exception occurred:
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-195/test_windows_cleanup_before_fd0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fca2c06b920>
+
+    def test_windows_cleanup_before_fd_transfer_closes_only_the_owned_handle(tmp_path, monkeypatch):
+        primary = KeyboardInterrupt()
+        calls = []
+    
+        def no_transfer(*args):
+            raise primary
+    
+        def discard(source):
+            calls.append(('discard', source))
+            raise OSError(87, 'secondary discard failure')
+    
+        def close_handle(source):
+            calls.append(('close_handle', source))
+            return True
+    
+        win = SimpleNamespace(directory=lambda *args, **kwargs: 29, open_child=lambda *args, **kwargs: 17,
+                              identity=lambda *args: (1, 2, 3), discard=discard,
+                              kernel=SimpleNamespace(CloseHandle=close_handle))
+        monkeypatch.setattr(wp, '_WindowsPublication', lambda: win)
+        monkeypatch.setattr(wp, 'os', SimpleNamespace(O_RDWR=os.O_RDWR, O_BINARY=0))
+        monkeypatch.setitem(sys.modules, 'msvcrt', SimpleNamespace(open_osfhandle=no_transfer))
+        with pytest.raises(KeyboardInterrupt) as caught:
+>           wp._publish_windows(tmp_path / 'receipt.json', b'authored')
+
+tests/test_research_qualification_winpairs_publication.py:297: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tools/research_qualification/winpairs.py:486: in _publish_windows
+    win.discard(source)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+source = 17
+
+    def discard(source):
+        calls.append(('discard', source))
+>       raise OSError(87, 'secondary discard failure')
+E       OSError: [Errno 87] secondary discard failure
+
+tests/test_research_qualification_winpairs_publication.py:284: OSError
+=========================== short test summary info ============================
+FAILED tests/test_research_qualification_winpairs_publication.py::test_windows_native_rename_dispatch_keeps_exact_parent_and_utf16_leaf[p]
+FAILED tests/test_research_qualification_winpairs_publication.py::test_windows_native_rename_dispatch_keeps_exact_parent_and_utf16_leaf[receipt-\u0394.json]
+FAILED tests/test_research_qualification_winpairs_publication.py::test_windows_native_rename_dispatch_keeps_exact_parent_and_utf16_leaf[receipt-\U0001f9ea.json]
+FAILED tests/test_research_qualification_winpairs_publication.py::test_windows_native_disposition_targets_only_the_owned_handle
+FAILED tests/test_research_qualification_winpairs_publication.py::test_windows_native_negative_status_uses_nt_translation[rename]
+FAILED tests/test_research_qualification_winpairs_publication.py::test_windows_native_negative_status_uses_nt_translation[discard]
+FAILED tests/test_research_qualification_winpairs_publication.py::test_windows_native_incomplete_status_never_credits_success[259-rename]
+FAILED tests/test_research_qualification_winpairs_publication.py::test_windows_native_incomplete_status_never_credits_success[259-discard]
+FAILED tests/test_research_qualification_winpairs_publication.py::test_windows_native_incomplete_status_never_credits_success[1073741824-rename]
+FAILED tests/test_research_qualification_winpairs_publication.py::test_windows_native_incomplete_status_never_credits_success[1073741824-discard]
+FAILED tests/test_research_qualification_winpairs_publication.py::test_windows_cleanup_preserves_primary_error_and_closes_owned_fd[discard-write]
+FAILED tests/test_research_qualification_winpairs_publication.py::test_windows_cleanup_preserves_primary_error_and_closes_owned_fd[discard-collision]
+FAILED tests/test_research_qualification_winpairs_publication.py::test_windows_cleanup_preserves_primary_error_and_closes_owned_fd[discard-cancel]
+FAILED tests/test_research_qualification_winpairs_publication.py::test_windows_cleanup_preserves_primary_error_and_closes_owned_fd[close-write]
+FAILED tests/test_research_qualification_winpairs_publication.py::test_windows_cleanup_preserves_primary_error_and_closes_owned_fd[close-collision]
+FAILED tests/test_research_qualification_winpairs_publication.py::test_windows_cleanup_preserves_primary_error_and_closes_owned_fd[close-cancel]
+FAILED tests/test_research_qualification_winpairs_publication.py::test_windows_cleanup_preserves_primary_error_and_closes_owned_fd[both-write]
+FAILED tests/test_research_qualification_winpairs_publication.py::test_windows_cleanup_preserves_primary_error_and_closes_owned_fd[both-collision]
+FAILED tests/test_research_qualification_winpairs_publication.py::test_windows_cleanup_preserves_primary_error_and_closes_owned_fd[both-cancel]
+FAILED tests/test_research_qualification_winpairs_publication.py::test_windows_cleanup_before_fd_transfer_closes_only_the_owned_handle
+20 failed, 16 deselected in 0.70s

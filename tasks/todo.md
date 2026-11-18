@@ -1,5 +1,16 @@
 # PatchTrace delivery tracker
 
+## 2026-11-18 Windows publication acceptance blocker
+
+- [x] Preserve #304 `bb4277ae` Windows failure: 15 failed/61 passed/3 skipped; full suite and package did not start.
+- [x] Amend the publication contract and reproduce native-dispatch/status and primary-error masking controls before repair.
+- [x] Implement native held-handle information calls and preserve primary failures/cancellation through cleanup; 101 focused passes, 2 native Windows skips, whole Ruff and whitespace checks pass.
+- [x] Independently review the exact repair: no blocking findings; 15 additional adversarial controls pass.
+- [ ] Pass new-head hosted Windows publication, full/package/Qt and all other required gates before merging.
+- [ ] Preserve all remote branches, use SHA-guarded REST merge with `[no release]`, then verify replacement ancestry before PR closures.
+
+[Failure, repair and qualification evidence](../docs/qa/winpairs-windows-native-20261118.md).
+
 ## 2026-11-18 CVE consolidation qualification
 
 - [x] Independently review #302 and repair reproduced archive, chronology, source-rejection and pair-evidence defects.
