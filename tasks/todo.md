@@ -1,5 +1,19 @@
 # PatchTrace delivery tracker
 
+## 2026-11-18 current PW-01 and search continuation
+
+- [x] Preserve actual current #303 and #304 histories, including 50,000-entry v1 compatibility, strict 5,000-entry v2 pages, source admission and advisory-search repairs.
+- [x] Pass the exact combined 63-file selection: 2,121 tests, 2 native Windows skips; whole Ruff/schema checks pass. Independently verify merge preservation and archived raw evidence.
+- [x] Preserve the actual CSV replays, immutable first L2 MISS and source-specific L1 FAIL receipt without new accuracy claims.
+- [x] Build an isolated pinned Rizin discovery correction, prove unchanged-rebuild equivalence, and retain native authored controls plus an independent shared-pair rerun; keep production selection and scoring unchanged.
+- [ ] Propose a separately pinned tool update with Windows/native/cancellation/ownership qualification and a prospective symbol-identity contract before production adoption or new scored claims.
+- [ ] Qualify and merge #304 with the exact-head REST SHA guard and `[no release]`; then retarget this inventory continuation to canonical main and re-evaluate its exact-head/base gates before merging.
+- [ ] Verify main integration and fresh PR heads before superseded closures; preserve every remote branch and remaining partial scope.
+- [ ] Complete production source retrieval, native/manual UI acceptance, separate PW-02, prospective ranking/label contracts and explicitly approved L3 acquisition.
+
+[Current handoff and feature matrix](../docs/qa/pw01-current-integration-20261118.md).
+
+
 ## 2026-11-18 current PW-01 capacity compatibility
 
 - [x] Preserve fresh #303 `2b697222` as an actual parent, including its independently reviewed source-admission repair.

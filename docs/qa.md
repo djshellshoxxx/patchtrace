@@ -1,5 +1,28 @@
 # QA and audit record
 
+## 2026-11-18 isolated native Rizin discovery experiment
+
+A narrow CLI correction against pinned Rizin 0.9.1 seeds function analysis before
+the existing deeper pass. An unchanged rebuild reproduces official-tool stdout
+and stderr on three authored controls. The patched shared/executable controls
+emit all four authored exports; nine raw outputs pass the existing normalizer.
+The integration reviewer independently repeats the shared comparison and source
+review. Production tools, the original CVE pilot MISS, oracles and scoring remain
+unchanged. This is native discovery evidence, with Windows and broader producer
+qualification still open. See [exact sources, tools, raw results and limits](qa/l2-rizin-discovery-patch-20261118.md).
+
+
+## 2026-11-18 current PW-01 and search integration
+
+The actual-parent merge `939d4a90` / REST-published `5eee1392` combines the
+reviewed PW continuation with current consolidation `75ffee38`. Independent
+review confirms 38 PW and 11 search source/test/tool paths retain their exact
+parent blobs; only two additive document conflicts were resolved. The 63-file
+combined selection passed **2,121 tests, with 2 native Windows skips**; whole
+Ruff and KBC schema checks passed. These focused results do not replace hosted
+full/Qt/native/package acceptance. See the [continuation and feature matrix](qa/pw01-current-integration-20261118.md).
+
+
 ## 2026-11-18 PW-01 capacity and retained-page compatibility
 
 Frozen source `0be3b9eb` preserves current #303 `2b697222` as an actual parent,
