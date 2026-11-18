@@ -400,3 +400,15 @@ All131 original focal dispositions are recorded; no whole-branch closure follows
 Fresh main `9c411ca3d7b47f950be5f0c6f01b3c54184554c6`; #304 d8c02cae and #30758fc1306 remain open and are verified
 ancestors of this local candidate; #31614ef remains open before append publication.
 No merges/closures/releases. [Checkpoint](../../qa/continuation-tail-20261118/README.md).
+
+
+## CI follow-up — 2026-11-18, source f3b7a0e8
+
+Source `f3b7a0e895c3b9928e08f93ac77d2afda5c56dd8` integrates independently reviewed archive-cache verification,
+full Linux frozen-smoke wiring and lazy publication ctypes imports. Exact
+30-file gate: **1,028 passed, two explicit skips, one CODEX5 expected failure**,
+zero failures/errors,22.89s. All221 imported modules and ten changed owner files
+match Git bytes. Normal Ruff passes; strict S remains80 unchanged findings and
+fails. The preceding PR316 f3 checkpoint was published with a verified non-force
+lease; main remains `9c411ca3d7b47f950be5f0c6f01b3c54184554c6`. No merge/release/platform acceptance follows.
+[Source-specific checkpoint](../../qa/ci-followup-20261118/README.md).

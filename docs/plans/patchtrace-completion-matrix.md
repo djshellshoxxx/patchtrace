@@ -348,3 +348,28 @@ remain unselected in that original partition. Whole-branch residue and research/
 native/platform work remain. This count is not a feature percentage. The separate
 cache/smoke/purity handoffs and next package work are absent from this frozen
 candidate. Historical rows above remain attributed to their own dates/sources.
+
+
+## CI follow-up — 2026-11-18, source f3b7a0e8
+
+Source `f3b7a0e895c3b9928e08f93ac77d2afda5c56dd8` integrates independently reviewed archive-cache verification,
+full Linux frozen-smoke wiring and lazy publication ctypes imports. Exact
+30-file gate: **1,028 passed, two explicit skips, one CODEX5 expected failure**,
+zero failures/errors,22.89s. All221 imported modules and ten changed owner files
+match Git bytes. Normal Ruff passes; strict S remains80 unchanged findings and
+fails. The preceding PR316 f3 checkpoint was published with a verified non-force
+lease; main remains `9c411ca3d7b47f950be5f0c6f01b3c54184554c6`. No merge/release/platform acceptance follows.
+[Source-specific checkpoint](../qa/ci-followup-20261118/README.md).
+
+
+| Feature / bounded scope | Current state | Completion | Remaining work | Source | Dependencies | Tests | Security | Owner | Acceptance |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Cached engine archive verification | Implemented and independently reviewed | D,R:50% for this slice | Hosted exact-source cold/cache-hit gates and full qualification |451e463d, PR316|Existing pins/download endpoints|Original failures,26 root checks,combined1,028|Verify before extraction; cooperative workspace boundary|CI + root|Native/hosted/final G remains open|
+| Full Linux frozen smoke invocation | Implemented and independently reviewed | D,R:50% for this slice | Actual new frozen executable/package gate |2a7e3147, PR316|Existing complete smoke harness|Required policy,5 builder controls,source CLI and combined gate|Failure/timeout prevents archive creation|CI + root|Actual artifact smoke and final G|
+| Pure IR import / native FFI boundary | Implemented and independently reviewed | D,R:50% for this slice | Native Windows and complete final gates |73bd7ead, PR316|Existing no-replace publication|Fresh subprocess imports,all existing ownership assertions,independent replay|No import-time FFI; move behavior unchanged|CI + root|Pure imports plus native/final G|
+
+Whole PW02 remains partial with no package-to-project journey. New Windows
+dependency encoding and BinDiff no-network failures are preserved on the prior
+f3/preview tree and assigned for focused diagnosis; successful job badges do not
+qualify those failed receipts. Worker grants, neutral core readers and signal
+navigation are separate candidates under review, absent from this source.

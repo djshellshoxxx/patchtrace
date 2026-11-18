@@ -1720,3 +1720,15 @@ See the [immutable continuation checkpoint](../docs/qa/verified-continuation-202
   (`73bd7ead`) without changing native publication semantics. Original pure IR
   import test passes unchanged;442 affected passes, native Windows junction
   remains unrun here. See `docs/qa/directory-publication-import-purity-20261118.md`.
+
+
+### CI follow-up checkpoint — 2026-11-18
+
+- [x] Verify preceding45-commit append-only PR316 publication and main/preview readback.
+- [x] Independently review/port cache, full smoke and import-purity fixes; exact30-file gate1,028pass/two skips/one CODEX5 xfail.
+- [x] Preserve ten owner paths,221 Git-pinned imports,unchanged strict80 findings and original probes.
+- [x] Retain API-hash-verified prior-f3 Windows dependency/BinDiff/static artifacts, including actual failures despite job success.
+- [ ] Publish this reviewed checkpoint append-only with exact object/ref/preview readback.
+- [ ] Finish independent worker/core/navigation reviews and integrate eligible repairs.
+- [ ] Diagnose and fix Windows pip inspection encoding and restricted-control exit125 without weakening gates.
+- [ ] Complete dependency hash closure, native intake/KB/durable provenance and all actual-candidate final acceptance.
