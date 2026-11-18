@@ -482,6 +482,14 @@ def get_support(ws: WorkspaceStore, import_id: str, verify: bool = True, *, canc
     return _get(ws, import_id, SUPPORT_TABLE, SupportImport, verify, cancel)
 
 
+def read_source(ws: WorkspaceStore, record: InventoryImport | SupportImport, *, cancel=None) -> bytes:
+    """Re-read exact source bytes under the bounded regular-object guard."""
+    _check_cancel(cancel)
+    raw = _read_raw(ws, record.source)
+    _check_cancel(cancel)
+    return raw
+
+
 def _list[T: (InventoryImport, SupportImport)](
         ws: WorkspaceStore, table: str, model: type[T], limit: int, offset: int,
         verify: bool, cancel) -> tuple[T, ...]:
