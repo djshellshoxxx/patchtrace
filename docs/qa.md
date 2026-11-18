@@ -2401,3 +2401,18 @@ The unchanged public after-create journal gap remains explicit. The
 recommend only existing create/open/load hooks; production and repository tests
 are unchanged. Implementation needs spec/test-first review, and durable package
 intent/held-origin/provenance/reconciliation plus native acceptance remain separate.
+
+
+## KB, UTF-8 and native diagnostic milestone — 2026-11-18
+
+Exact source `7b5f558fb1a51d45427648c39c15995ab3697e2c` passes803 tests with zero skips/failures/errors in9.76s.
+All118 imported project/tool modules and14 reviewed owner paths match Git; the
+same23-file gate retains the original802-pass/one-registry-failure result and its
+one-row documentation correction. Normal Ruff passes; strict S still fails on80
+unchanged sites. The KB short-read correction, isolated UTF-8 invocation and
+bounded stderr diagnostic source are independently reviewed and integrated.
+[Complete checkpoint](qa/kb-native-followup-20261118/README.md).
+Fresh316-branch/63-open-PR refresh preserves all131 focal tips and verifies all11
+changed/new tips as ancestors of fb09. Main remains `9c411ca3d7b47f950be5f0c6f01b3c54184554c6`; no main merge,
+closure, force-push, deletion, tag, release or deployment occurs. Current fb09
+Windows native/dependency failures and pending full/Qt jobs remain source-specific.

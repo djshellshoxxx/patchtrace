@@ -439,3 +439,31 @@ These overlapping counts are evidence at this source, not feature percentages.
 The existing injected post-create fault and postcommit project-copy reads remain
 explicit limits. Portable descriptor and SQLite tests do not supply native or
 manual acceptance. No whole-feature completion or release credit is added.
+
+
+## KB, UTF-8 and native diagnostic milestone — 2026-11-18
+
+Exact source `7b5f558fb1a51d45427648c39c15995ab3697e2c` passes803 tests with zero skips/failures/errors in9.76s.
+All118 imported project/tool modules and14 reviewed owner paths match Git; the
+same23-file gate retains the original802-pass/one-registry-failure result and its
+one-row documentation correction. Normal Ruff passes; strict S still fails on80
+unchanged sites. The KB short-read correction, isolated UTF-8 invocation and
+bounded stderr diagnostic source are independently reviewed and integrated.
+[Complete checkpoint](../qa/kb-native-followup-20261118/README.md).
+Fresh316-branch/63-open-PR refresh preserves all131 focal tips and verifies all11
+changed/new tips as ancestors of fb09. Main remains `9c411ca3d7b47f950be5f0c6f01b3c54184554c6`; no main merge,
+closure, force-push, deletion, tag, release or deployment occurs. Current fb09
+Windows native/dependency failures and pending full/Qt jobs remain source-specific.
+
+
+| Feature / bounded scope | Current state | Completion | Remaining work | Source | Dependencies | Tests | Security | Owner | Acceptance |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Internal KB held-reader propagation | Implemented and independently reviewed | D,R:50% for this slice | Durable held-origin intent/expected identity, postcommit checkpoints, native provider and final gates |d9a93991,PR316|Existing KB/core readers and caller-thread SQLite|Original32/1 and3/2 reds, author300, unchanged5 probe, combined803|No path fallback; full admission/hashes and finite prefix; retained committed outcome|KB + root|No exposed package route until durable recovery is qualified|
+| Isolated dependency JSON UTF-8 | Implemented and independently reviewed | D,R:50% for this slice | Exact-source Windows pip/audit/packaging and lock closure |6dea194a,PR316|Existing isolated Python argv/environment and evidence validation|Original encoding failures, author/root167, combined803|Same bounds/pins/strict raw validation; no environment fallback|CI + root|Actual hosted Windows and final G|
+| Native failure diagnostics | Implemented portable diagnostic support | D,R:50% for this diagnostic slice | Windows SDK build and actual error-path/complete native acceptance |9ca3c078/ace5db8b,PR316|Existing helper/Job/AppContainer evidence|Real portable formatter/refusal controls, preserved fixture errors, combined803|Fixed stderr vocabulary/numeric fields, finite lifetime budget; decisions unchanged|CI + root|Diagnostics cannot substitute for denial/cleanup/BinDiff receipts|
+| Core durable admission hooks | Reviewed design; implementation assigned | None:0% for proposed hook implementation | Spec/tests-first optional ID and open/load recovery/checkpoint forwarding |3e4abd88|Existing model/store and approved core ownership|Ten current-behavior observations only|Committed/foreign/unknown retention and close-only stops required|Core + root|Meaningful reds, source review and actual-candidate replay|
+| Whole PW02 local package fallback | Partial; no exposed package-to-project route | None:0% of whole-feature milestones | Native stage/FDI/worker handoff, durable intent/provenance/reconciliation, original budgets and frozen journey |Current portable slices and retained designs|Qualified Windows lane and existing KB/core services|Portable components only; whole journey absent|No lost-lease pathname resurrection or cross-project adoption|KB + core + CI|Complete specified D/R/J/G journey|
+
+Frozen research outcomes, real CVE matching/calibration, full platform/Qt/native/
+package/security/reproducibility acceptance remain unchanged and incomplete.
+These completion fractions follow the existing D/R/J/G definitions, not test counts.

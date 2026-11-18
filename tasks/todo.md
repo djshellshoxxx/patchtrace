@@ -1807,3 +1807,16 @@ See the [immutable continuation checkpoint](../docs/qa/verified-continuation-202
 - [ ] Root review the proposed preallocated-ID and explicit open/load recovery/checkpoint seams in `docs/plans/package-core-admission-seams-20261118.md` before implementation.
 - [ ] Commit meaningful failing integration controls and specification before the approved core source slice; these current-behavior passes are not implementation acceptance.
 - [ ] Separately bind durable package intent, held-origin marker, expected identity and idempotent provenance/reconciliation before exposing a package route; preserve unknown/foreign/committed projects.
+
+
+### KB / encoding / native diagnostic checkpoint — 2026-11-18
+
+- [x] Independently review and port UTF-8 invocation, three-file KB propagation/short-read correction and bounded diagnostic source; retain original failures and fixture corrections.
+- [x] Pass the exact7b5f558f combined23-file gate:803 passes/0skips,118 canonical imports,14 owner paths and unchanged original probes. Preserve the prior802/1 registry red and path-only verifier mistake.
+- [x] Preserve full normal lint success and unchanged unsuppressed strict80 failure.
+- [x] Verify316-branch/63-PR delta, original131 focal heads, prior25-commit fb09 publication and fresh source-bound hosted evidence.
+- [x] Review and approve the bounded existing-core admission design; assign spec/test-first implementation and separate durable KB design.
+- [ ] Publish this checkpoint append-only with exact remote tree/parent/ref/preview verification.
+- [ ] Independently review expected-ID/reopen checkpoint and owned-open failure handling before integration.
+- [ ] Implement/qualify durable held-origin intent, actual project identity, provenance and idempotent reconciliation before package exposure.
+- [ ] Qualify actual new-source Windows diagnostics/dependency fix, native stage/FDI/handoff, full platform/Qt/packaging/security/reproducibility gates and complete analyst/CVE journeys.
