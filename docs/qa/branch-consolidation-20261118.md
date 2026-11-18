@@ -223,7 +223,7 @@ is tracking consolidation, not proof that their behavior is in main.
 | #168 stack | Raw-offset core and Qt-free paired-row model were ported. RD-F03 desktop wiring remains a separate UI slice. Historical native producer work is not permission to replace singleton refusal. |
 | #174 | One-to-many and harness changes overlap the candidate; retain research producer workflow/evidence residue for review. |
 | #176 | Search document-scope repair was ported. Keyboard sorting/header help needs conflict review against existing Alt+Up/Down navigation and #300 accessibility. |
-| #289 | Preserve the source branch. UE-R7/L-39 cap symmetry from `7237c55cba6e134c58df7936f273fd269aa864c5` was reproduced and minimally repaired in successor commit `3ad941c1`, preserving newer registry/config-digest fixes. Other UI/research residue remains separate. |
+| #289 | Preserve the source branch. UE-R7/L-39 cap symmetry from `7237c55cba6e134c58df7936f273fd269aa864c5` was reproduced and minimally repaired in successor commit `81942db9`, preserving newer registry/config-digest fixes. Other UI/research residue remains separate. |
 | `claude/instance-b-features` | Saved-search/recent-query stores were ported. Call-graph layout and capa raw-cache work remain separate. |
 | #279 | Review devcontainer configuration, Rizin fixtures and research parser tests independently. Historical identical forward/reverse results cannot establish compatibility after ownership refusal. |
 | #70, #78, #79, #82, #85, #86 | Historical help, corpus/persistence/card-control/preregistration and decompilation work needs full behavior-to-replacement mapping. Their source tips are not ancestors of main. The prior similarity-based closure claims are withdrawn. |
@@ -333,12 +333,12 @@ not invented GitHub approval submissions.
 
 | Finding | Reproduced behavior | Successor disposition |
 |---|---|---|
-| Ghidriff zero address | One-to-many identity sorting compared a string from address zero with a nonzero integer and raised `TypeError`. Four orientation/order cases failed before repair. | `3ad941c1` preserves zero as an integer and separately orders unavailable addresses; stable abstention/group identity is tested. |
-| UE-R7/L-39 mirror cap | At the real 64-atom cap, swapping older/newer changed which equally strong atoms survived. | `3ad941c1` ports the smallest orientation-independent cut from #289, retains current native tie-breaks and bumps only `arbiter` to 2. Current `ude/2`, proof and channel versions remain. |
-| Recent-query JSON | A 10,000-level array propagated `RecursionError`; oversized settings reached the decoder before output limits. | `3ad941c1` adds the 64 KiB pre-decode bound and lenient recursion recovery. |
-| Release ZIP special files | A required executable with FIFO mode passed the regular-file predicate. | `64f05310` rejects explicit FIFO/device/socket types, while accepting ordinary regular or unspecified ZIP type bits. |
-| Composed archive links | Individually in-root link strings composed to an escape through a linked ancestor. | `64f05310` validates normalized member identities and resolves link compositions within bounded budgets, without extracting or executing archive contents. |
-| Archive helper race | A post-snapshot remote update could be deleted by an unconditional deletion. An isolated temporary local-repository reproduction confirmed the race; the actual origin was never targeted. | `0b89be7f` excludes `tools/archive_branches.sh` from the successor. Only the read-only inventory generator remains. No further helper execution is authorized or needed. |
+| Ghidriff zero address | One-to-many identity sorting compared a string from address zero with a nonzero integer and raised `TypeError`. Four orientation/order cases failed before repair. | `81942db9` preserves zero as an integer and separately orders unavailable addresses; stable abstention/group identity is tested. |
+| UE-R7/L-39 mirror cap | At the real 64-atom cap, swapping older/newer changed which equally strong atoms survived. | `81942db9` ports the smallest orientation-independent cut from #289, retains current native tie-breaks and bumps only `arbiter` to 2. Current `ude/2`, proof and channel versions remain. |
+| Recent-query JSON | A 10,000-level array propagated `RecursionError`; oversized settings reached the decoder before output limits. | `81942db9` adds the 64 KiB pre-decode bound and lenient recursion recovery. |
+| Release ZIP special files | A required executable with FIFO mode passed the regular-file predicate. | `ca76368c` rejects explicit FIFO/device/socket types, while accepting ordinary regular or unspecified ZIP type bits. |
+| Composed archive links | Individually in-root link strings composed to an escape through a linked ancestor. | `ca76368c` validates normalized member identities and resolves link compositions within bounded budgets, without extracting or executing archive contents. |
+| Archive helper race | A post-snapshot remote update could be deleted by an unconditional deletion. An isolated temporary local-repository reproduction confirmed the race; the actual origin was never targeted. | `b60a0cff` excludes `tools/archive_branches.sh` from the successor. Only the read-only inventory generator remains. No further helper execution is authorized or needed. |
 
 The independent core reviewer reran the normalization, cap, recent-query and
 current soundness neighbours against the repaired source: **281 passed**.
@@ -362,3 +362,18 @@ Adjacent strings-export issues remain tracked outside PW-01: `write_atomic`
 with `force=False` has an existence-check/replace no-clobber race, and CSV export
 omits document-level extraction-basis and truncation/redaction metadata including
 empty exports. No strings-export behavior was changed in this continuation.
+
+### Publication identity
+
+The checkout has no GitHub push credential. The connected GitHub REST Git-data
+interface published the reviewed changes as new commits, preserving #301 as the
+first parent and preserving every exact local tree. No existing remote history
+was rewritten. The local-to-published mappings are:
+
+| Local implementation | Published commit | Exact shared tree |
+|---|---|---|
+| `3ad941c1023cc314fd7603f0ef9bc71c53e8dcec` | `81942db9dec05c90c926978328b4f3b7308caaf3` | `c12f6f65a885649c31a7ace9a09d98a8121afed1` |
+| `5df3a0f7bce10e23ba6204aa3802ab10ed5dac51` | `5a3a6ad40453563159c825c75dbd37871ff85dae` | `d68eb87bcbc82bd3b37c726110036ed32bbb0611` |
+| `0b89be7f2b77c5716b7122e6537d95fd17884293` | `b60a0cffb37935d201a3ccd7a11dd1dfcc17647e` | `571ace7426f1eb89d6ee361aacce1c393c771783` |
+| `64f05310a196aee396772b62d03725171eb8cd22` | `ca76368cd7a7d24f6201af91f4b03bb56fc6c7e5` | `4da195ed54646340ec8dbe911133f260ee6977a1` |
+| `4f0730b8085b9d81c34cf0298ba8c90fa0438411` | `5b33d2db017acfb9522549d1e22322c34b211bb4` | `f88cb0f677bc2c003b7cadd593f57ee3143b331b` |
