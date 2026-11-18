@@ -161,6 +161,48 @@ def test_premature_application_exit_fails_and_closes_generator(qapp):
     assert cleaned == [True] and qapp.quitOnLastWindowClosed() == before
 
 
+def test_early_quit_with_active_project_cancels_owned_tasks(qtbot, qapp, tmp_path, monkeypatch, offline):
+    from patchtrace.gui.qt.tasks import live_task_threads
+    from patchtrace.service import ProjectService
+
+    journey, loop = modules()
+    stopped = threading.Event()
+
+    def worker(cancel, _report):
+        cancel.wait(3)
+        stopped.set()
+
+    def leave_early(window):
+        window.panels.tasks.submit('selftest-early-quit', worker)
+        QTimer.singleShot(0, qapp.quit)
+        yield loop.Wait(lambda: False, 'pending while app quits')
+
+    monkeypatch.setattr(journey, '_candidate', leave_early)
+    with pytest.raises(RuntimeError, match='exited before completion'):
+        journey.run_journey(qapp, tmp_path)
+    assert stopped.is_set() and not live_task_threads()
+    with ProjectService.open(tmp_path / CHILD / 'comparison-ε') as service:
+        assert service.project.matches
+
+
+def test_changed_child_cleanup_preserves_the_original_failure(qapp, tmp_path, monkeypatch):
+    journey, _ = modules()
+
+    def replace_then_fail(owned):
+        owned.path.rename(owned.path.with_name('retained-original'))
+        owned.path.mkdir()
+        (owned.path / 'foreign.txt').write_bytes(b'foreign replacement')
+        raise ValueError('original step failure')
+        yield
+
+    monkeypatch.setattr(journey, '_journey_steps', replace_then_fail)
+    with pytest.raises(ValueError, match='original step failure') as failure:
+        journey.run_journey(qapp, tmp_path)
+    assert any('RuntimeError' in note for note in failure.value.__notes__)
+    assert (tmp_path / CHILD / 'foreign.txt').read_bytes() == b'foreign replacement'
+    assert (tmp_path / 'retained-original').is_dir()
+
+
 def test_global_deadline_also_bounds_steps_that_keep_becoming_ready(qapp):
     _, loop = modules()
     cleaned = []

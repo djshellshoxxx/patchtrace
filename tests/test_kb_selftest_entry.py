@@ -70,8 +70,11 @@ kb_selftest._candidate = broken_candidate
 """,
         'cleanup': """
 from patchtrace.gui.qt import selftest_loop
-def refuse_cleanup(path):
-    raise PermissionError('controlled cleanup failure')
+real_cleanup = selftest_loop.shutil.rmtree
+def refuse_cleanup(path, *args, **kwargs):
+    if pathlib.Path(path).name.startswith('patchtrace-self-test-'):
+        raise PermissionError('controlled cleanup failure')
+    return real_cleanup(path, *args, **kwargs)
 selftest_loop.shutil.rmtree = refuse_cleanup
 """,
     }[failure]
