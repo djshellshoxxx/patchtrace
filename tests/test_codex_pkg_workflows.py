@@ -117,7 +117,6 @@ def test_pip_downloads_require_hashes():
     assert not unhashed, unhashed
 
 
-@pytest.mark.xfail(strict=True, reason='CODEX-6')
 def test_corpus_cache_does_not_skip_verification():
     source = (WORKFLOWS / 'corpus-tier-r.yml').read_text(encoding='utf-8')
     scripts = '\n'.join(run_scripts(source))

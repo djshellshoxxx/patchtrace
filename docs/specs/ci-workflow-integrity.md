@@ -27,6 +27,30 @@ Record an independent before/after comparison of every workflow, including all
 unchanged immutable references. Static source controls do not establish hosted
 execution or qualify a native package/release.
 
+## Corpus engine cache verification (2026-11-18)
+
+The Linux Tier R shard caches only the original Rizin and Ghidra archives under
+new archive-specific keys. A cache key or cache-hit result never admits runtime
+bytes. Before every extraction, including a hit, validate the configured SHA-256
+syntax and verify the complete archive against that pin. Download only when the
+archive is absent. A present corrupt archive fails the step; do not silently
+reuse an extracted tree or turn that failure into a successful retry.
+
+Refuse a nonregular or symlink archive and a preexisting runtime destination.
+Create the runtime directory exclusively after verification, then extract there.
+Keep the archive for future cache restores. Preserve the current engine-selection
+condition and environment-variable paths. Ghidriff installation and shard
+execution remain after successful archive verification/extraction.
+
+Authored Linux shell controls exercise the actual workflow scripts with small
+inert archives and a fixed fake downloader, never an engine or a target binary.
+They cover cold/warm valid archives, cache corruption, a bad configured digest,
+and refusal to reuse a runtime directory. The original CODEX-6 assertion remains
+unchanged in the external replay and becomes required in current tests. This is
+a cooperative CI workspace boundary; it does not claim resistance to an active
+local writer swapping an archive between the hash tool and extractor, nor does
+it replace hosted/native engine acceptance.
+
 ## Dependency-hash scope
 
 The historical dependency-hash finding is separate from action pinning. The
