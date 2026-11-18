@@ -675,7 +675,18 @@ def test_the_release_job_needs_the_gate_and_runs_for_a_tag_or_a_gate_yes_only():
     block = BLOCKS['release']
     assert needs_of(block) == ['qa', 'qt-gate', 'linux-smoke', 'release-gate']
     assert job_key(block, 'if') == (
-        "startsWith(github.ref, 'refs/tags/v') || needs.release-gate.outputs.publish == 'true'")
+        "(startsWith(github.ref, 'refs/tags/v') || needs.release-gate.outputs.publish == 'true') "
+        "&& !contains(github.event.head_commit.message, '[no release]')")
+
+
+def test_publication_hold_keeps_all_acceptance_jobs_and_artifact_uploads_enabled():
+    """A publishing hold must never turn into a QA skip or remove downloadable build artifacts."""
+    assert '[no release]' in (job_key(BLOCKS['release'], 'if') or '')
+    for job in ('qa', 'qt-gate', 'linux-package', 'linux-smoke', 'release-gate'):
+        assert '[no release]' not in BLOCKS[job]
+        assert 'head_commit.message' not in (job_key(BLOCKS[job], 'if') or '')
+    assert 'actions/upload-artifact@v4' in BLOCKS['qa']
+    assert 'actions/upload-artifact@v4' in BLOCKS['linux-package']
 
 
 def test_gui_gate_blocks_packaging_and_publication_even_when_the_cadence_gate_says_yes():

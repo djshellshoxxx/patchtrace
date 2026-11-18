@@ -15,7 +15,16 @@ from dataclasses import dataclass
 from .contracts import HARD_BLOCKS, BinaryRef, FixBoundary, PairProposal, ProductScope, domain_id
 from .ids import is_canonical_kb
 from .limits import DEFAULT_LIMITS
-from .lineage import ChangeInfo, IndexRow, change_in_kb, order_key, predecessor, timeline, ubr_key
+from .lineage import (
+    ChangeInfo,
+    IndexRow,
+    change_in_kb,
+    chronologically_before,
+    order_key,
+    predecessor,
+    timeline,
+    ubr_key,
+)
 from .pairs import SUPPORTED_ARCH, reason_text
 
 _UBR = re.compile(r'[0-9]{1,6}\.[0-9]{1,6}')
@@ -53,22 +62,29 @@ class Resolution:
 
 def binary_ref(row: IndexRow) -> BinaryRef:
     build = row.build
+    release = build.release_version if _UBR.fullmatch(build.release_version or '') else None
     return BinaryRef(sha256=build.sha256, size=row.size, basename=build.file_name, machine=row.machine,
-                     file_version=row.file_version, build_ubr=build.release_version, origin='index-row',
+                     file_version=row.file_version, build_ubr=release, origin='index-row',
                      availability=row.availability, authenticity='signature-unknown')
 
 
 def fix_boundary(older: IndexRow, newer: IndexRow, fixed_build: str | None,
                  intervening: Sequence[IndexRow]) -> FixBoundary:
     """Compare only with a build stated by the row itself (UBR or heading), never file version or timestamp."""
-    if fixed_build is None or not _UBR.fullmatch(fixed_build):
+    if fixed_build is None or not _UBR.fullmatch(fixed_build) or not chronologically_before(older, newer):
         return 'unverified'
-    if fixed_build in _builds(newer) and not intervening:
+    old_builds, new_builds = _builds(older), _builds(newer)
+    if any(not isinstance(build, str) or not _UBR.fullmatch(build) for build in old_builds | new_builds):
+        return 'unverified'
+    fixed = ubr_key(fixed_build)
+    # Compare numeric components; a spelling variant cannot conceal a contradiction.
+    older_same = [ubr_key(b) for b in old_builds if ubr_key(b)[0] == fixed[0]]
+    past_boundary = [b >= fixed for b in older_same]
+    if any(past_boundary):
+        return 'contradicted' if all(past_boundary) else 'unverified'
+    newer_same = {ubr_key(b) for b in new_builds if ubr_key(b)[0] == fixed[0]}
+    if newer_same == {fixed} and not intervening:
         return 'source-supported'
-    major = fixed_build.split('.')[0]
-    older_same = [b for b in _builds(older) if b.split('.')[0] == major]  # a sibling's prefix proves nothing
-    if older_same and all(ubr_key(b) >= ubr_key(fixed_build) for b in older_same):
-        return 'contradicted'
     return 'unverified'
 
 
@@ -88,7 +104,7 @@ def _reasons(older: IndexRow, newer: IndexRow, intervening: Sequence[IndexRow], 
     if older.build.version_key != newer.build.version_key:
         reasons.add('CROSS_PRODUCT')
     # KB/SHA/BASE tie-breakers keep display order stable; they are not chronology evidence.
-    if order_key(older)[:2] >= order_key(newer)[:2]:
+    if not chronologically_before(older, newer):
         reasons.add('ORDER_UNVERIFIED')
     if {older.availability, newer.availability} & {'delta-only', 'unavailable'}:
         reasons.add('DELTA_ONLY')
@@ -146,9 +162,17 @@ def resolve(rows: Sequence[IndexRow], *, kb: str, scope: ProductScope, file_name
     if scope.winbindex_key is None:
         return _empty(kb, file_name, scope, None, ('NO_NEWER',), NO_KEY, skipped_rows)
     named = [r for r in rows if r.build.file_name == file_name]
-    line = tuple(sorted((r for key in index_keys(scope.winbindex_key) for r in timeline(named, key)), key=order_key))
+    product_rows = tuple(r for key in index_keys(scope.winbindex_key) for r in timeline(named, key))
+    # Winbindex includes native and WoW64 rows in one version key. Other machines are not predecessors or variants
+    # of the selected file; keep the source rows intact and scope only this derived timeline.
+    line = tuple(sorted((r for r in product_rows if r.machine == scope.architecture), key=order_key))
     change: ChangeInfo = change_in_kb(line, kb)
     if not change.target_rows:
+        machines = sorted({r.machine for r in product_rows if r.kb == kb})
+        if machines:
+            return _empty(kb, file_name, scope, scope.winbindex_key, ('ARCH',),
+                          f'File-index rows for this KB are {", ".join(machines)}; selected product requires AMD64.',
+                          skipped_rows)
         return _empty(kb, file_name, scope, scope.winbindex_key, ('NO_NEWER',), NOT_IN_INDEX, skipped_rows)
     pairs: dict[str, PairProposal] = {}
     for target in {r.sha256: r for r in reversed(change.target_rows)}.values():

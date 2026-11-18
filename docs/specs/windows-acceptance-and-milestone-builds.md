@@ -121,8 +121,16 @@ stand in for a required file. Unsupported special members anywhere in ZIP or tar
 are archive-content failures.
 
 Member identities normalize dot and redundant separator aliases, treating both
-slash spellings as separators; Windows ZIP identities also fold case. Colliding
-member identities fail. No member may be located below a symbolic or hard link,
+slash spellings as separators; Windows ZIP identities also normalize Unicode to
+NFC and fold case. Colliding member identities fail. Windows ZIP member names
+and link targets reject components with trailing dots or spaces, reserved device
+names (case-insensitive, including extensions and the superscript COM/LPT forms),
+colon/alternate streams, Win32 forbidden characters or controls, invalid Unicode,
+and more than 255 UTF-16 code units. Dot and parent components in link targets
+retain their normal relative-path meaning and must still resolve inside the
+archive. ZIP names truncated at NUL by the ZIP reader fail rather than validating
+only their visible prefix. These Windows rules do not restrict Linux tar names.
+No member may be located below a symbolic or hard link,
 irrespective of archive order. Link targets are resolved component by component
 against the complete declared link map, so a link followed by `..` cannot hide
 an escape through lexical normalization. Symbolic targets start at their
@@ -294,3 +302,13 @@ Within that version block, require one StringFileInfo language/codepage and uniq
 ## WIN-1 build-output staging amendment (2026-10-30)
 
 The version-info and ICO generators keep their caller-selected `--out` destinations; these are build-tool output paths, not application/model instructions. Each writer must exclusively create a random adjacent staging file, write through its owned handle, close it before atomic replacement, and remove its stage after a write or replacement failure. Existing predictable `<out>.tmp` files or symlinks, and their targets, must remain untouched. Normal output bytes and replacement of the explicitly selected destination remain supported. This bounded repair does not claim hostile-parent-directory confinement or resolve the separate Sonar quality finding without fresh evidence.
+
+### Early native publication controls (2026-11-18)
+
+Run the ordinary, integrity and owned-handle research pair-publication regression
+files on both QA operating systems before the full suite. This makes Windows
+handle/rename and reparse failures visible before the longer suite and package
+build, without replacing or reducing either gate. Retain their JUnit receipt in
+the existing per-OS QA artifact even if a later stage fails. These authored-byte
+checks exercise native filesystem operations; they do not execute target binaries
+or qualify a real Windows vulnerability pair.

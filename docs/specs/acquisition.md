@@ -22,11 +22,21 @@ Pure modules import no network/Qt. The service creates projects through the exis
 
 ## 3. Records
 
-- `AcquisitionQuery`: `file_name` (lowercase basename, `^[a-z0-9._-]{1,128}$`, PE extension in {exe,dll,sys,efi,drv,ocx,cpl,scr}), `dataset: Literal['x64']`.
+- `AcquisitionQuery`: `file_name` (lowercase basename, `^[a-z0-9._-]{1,128}$`, PE extension in {exe,dll,sys,efi,drv,ocx,cpl,scr,tsp}), `dataset: Literal['x64']`.
 - `BuildCandidate`: `file_name`, `sha256`, `size` (int), `machine_type` (int; must be 34404 for x64 eligibility), `timestamp` (int, uint32), `virtual_size` (int|None), `last_section_va`/`last_section_raw` (int|None), `version` (str|None), `windows_versions` (sorted unique tuple), `kbs` (tuple of `{kb, release_date, release_version}`), `download: Literal['direct','candidates','unavailable']`, `source: 'winbindex@<data-date>'`.
 - `DownloadPlan`: ordered candidates (exactly two for a project: older, newer, chosen explicitly by the analyst), exact URLs (`https://msdl.microsoft.com/download/symbols/<name>/<%08X timestamp><%x size>/<name>`), expected sha256 and size.
 - `AcquiredArtifact`: local quarantine path, sha256, size, `format: Literal['pe','pa30','pa31','unknown']`, `machine`, provenance `{source_url, redirect_host, retrieved_at, winbindex_record_sha256}`.
 - Identity: `acquisition_id = domain_id('acquisition', 1, {file_name, sha256})`. A matching SHA-256 proves identity with the Winbindex record, **not** vendor authenticity; Authenticode verification is out of scope for this version and is labelled as such.
+
+### Telephony provider component names (2026-11-18)
+
+`.tsp` is an allowed PE component suffix. Microsoft documents telephony service
+providers as DLLs, including a provider named `MAIN.TSP` in the
+[Telephony architecture](https://learn.microsoft.com/en-us/windows/win32/tapi/architecture).
+The suffix makes a safe basename eligible for the existing metadata lookup and
+explicit acquisition plan; it does not prove PE format, architecture, identity,
+product applicability or a vulnerability fix. All existing hash, PE and consent
+checks still apply. Do not load a provider, register it with TAPI or execute it.
 
 ## 4. Behavior
 

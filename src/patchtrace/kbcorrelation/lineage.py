@@ -14,6 +14,7 @@ from __future__ import annotations
 import re
 from collections.abc import Iterable, Mapping, Sequence
 from dataclasses import dataclass
+from datetime import UTC, datetime
 from typing import Literal
 
 from .contracts import Arch, Availability, BuildRow
@@ -53,7 +54,7 @@ class IndexRow:
 
 @dataclass(frozen=True)
 class ChangeInfo:
-    """``reason`` is one of no-row, variants, first-row, new-build, unchanged."""
+    """``reason`` is no-row, variants, first-row, order-unverified, new-build or unchanged."""
     state: Change
     reason: str
     last_changed_in: str | None = None
@@ -65,11 +66,44 @@ def ubr_key(text: str | None) -> tuple[int, int]:
     return (int(match.group(1)), int(match.group(2))) if match else (0, 0)
 
 
+def _release_instant(text: str | None) -> str | None:
+    """Sortable UTC timestamp with all nine allowed fractional digits; invalid evidence has no ordering value."""
+    if text is None:
+        return None
+    try:
+        # fromisoformat normalizes an offset such as +00:99; that is not a valid source timestamp.
+        if text[-6:-5] in ('+', '-') and int(text[-2:]) > 59:
+            return None
+        value = datetime.fromisoformat(text)
+        if value.tzinfo is None:
+            return None
+        utc = value.astimezone(UTC).isoformat(timespec='microseconds')
+        fraction = re.search(r'\.([0-9]{1,9})', text)
+        residue = (fraction[1][6:] if fraction else '').ljust(3, '0')
+        return utc[:-6] + residue + '+00:00'  # datetime alone truncates the final three digits
+    except (ValueError, OverflowError):
+        return None
+
+
 def order_key(row: IndexRow) -> tuple:
-    """Chronology within one version key: date, then UBR; the dated BASE image first on a tie."""
+    """Stable display order: valid UTC date, then UBR; absent dates never prove chronology."""
     build = row.build
-    return (build.release_date or '', ubr_key(build.release_version), build.kb is not None,
+    instant = _release_instant(build.release_date)
+    return (instant or '',
+            ubr_key(build.release_version), build.kb is not None,
             kb_sort_key(build.kb) if build.kb else (0, ''), build.sha256)
+
+
+def chronologically_before(older: IndexRow, newer: IndexRow) -> bool:
+    """Whether stated source dates/builds establish order, without display-key defaults."""
+    old, new = older.build, newer.build
+    old_date, new_date = _release_instant(old.release_date), _release_instant(new.release_date)
+    if old.version_key != new.version_key or old_date is None or new_date is None:
+        return False
+    if old_date != new_date:
+        return old_date < new_date
+    return (bool(_UBR.fullmatch(old.release_version or '')) and bool(_UBR.fullmatch(new.release_version or ''))
+            and ubr_key(old.release_version) < ubr_key(new.release_version))
 
 
 def _availability(download: object, variant: str) -> Availability:
@@ -79,7 +113,10 @@ def _availability(download: object, variant: str) -> Availability:
 
 
 def _timestamp(date: object) -> str | None:
-    return f'{date}T00:00:00Z' if isinstance(date, str) and _DATE.fullmatch(date) else None
+    if not isinstance(date, str) or not _DATE.fullmatch(date):
+        return None
+    stamp = f'{date}T00:00:00Z'
+    return stamp if _release_instant(stamp) is not None else None
 
 
 def _text(value: object, default: str = '') -> str:
@@ -111,8 +148,10 @@ def _expanded(item: Mapping) -> Iterable[dict]:
     key = item.get('version_key')
     if not isinstance(key, str) or not key:
         return
-    for version_key, shared_from in [(key, None)] + [
-            (other, key) for other in (item.get('other_versions') or ()) if isinstance(other, str) and other]:
+    others = item.get('other_versions', ())
+    if not isinstance(others, (list, tuple)) or any(not isinstance(other, str) or not other for other in others):
+        return
+    for version_key, shared_from in [(key, None)] + [(other, key) for other in others]:
         fields = _row_fields(item, version_key, shared_from)
         if fields is not None:
             yield fields
@@ -173,10 +212,18 @@ def change_in_kb(line: Sequence[IndexRow], kb: str) -> ChangeInfo:
     if len({r.sha256 for r in targets}) > 1:
         return ChangeInfo('unknown', 'variants', None, targets)  # several SHAs for one KB: never auto-pick
     index = line.index(targets[0])
+    target = targets[0]
+    if (_release_instant(target.build.release_date) is None
+            or any(r.sha256 != target.sha256 and order_key(r)[:2] == order_key(target)[:2] for r in line)):
+        return ChangeInfo('unknown', 'order-unverified', None, targets)
+    if index > 0 and not chronologically_before(line[index - 1], target):
+        return ChangeInfo('unknown', 'order-unverified', None, targets)
     start = index
     while start > 0 and line[start - 1].sha256 == targets[0].sha256:
         start -= 1
     if start < index:
+        if any(not chronologically_before(line[i], line[i + 1]) for i in range(start, index)):
+            return ChangeInfo('unknown', 'order-unverified', None, targets)
         return ChangeInfo('no', 'unchanged', line[start].kb, targets)
     if index == 0:
         return ChangeInfo('unknown', 'first-row', None, targets)

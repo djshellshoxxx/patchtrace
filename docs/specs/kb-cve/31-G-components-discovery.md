@@ -25,7 +25,7 @@ A tier orders *how much file association is documented*. It is NOT a patch attri
 SourceComponentClaim {claim_id, product_scope_id?, kb?, cve?, original_component_text, explicit_basename?, source_document_id, source_pointer, source_kind, mapping_kind, claimed_release?, revision?}.
 FileCandidateHint {id, canonical_basename, original_spelling, product_scope_id, linked_cve_ids[], linked_kb_ids[], evidence_tier A..E, reasons[], source_claim_ids[], first_seen_build?, last_seen_build?, availability, validated_extension}.
 ComponentSearchResult {requested_kb/cve/product, candidates[], descriptive_only_claims[], rejected[], status, coverage_ids[], blockers[]}.
-Reject basenames containing directory separator, drive/UNC/ADS, path traversal, trailing dot/space, reserved Windows device name, NUL/control characters; normalize to lowercase ASCII where compatible with existing acquisition.validate_file_name. Use existing allowed PE extensions for automatic symbol-server search: exe, dll, sys, efi, drv, ocx, cpl, scr. Non-PE types remain descriptive leads; no Ghidriff input.
+Reject basenames containing directory separator, drive/UNC/ADS, path traversal, trailing dot/space, reserved Windows device name, NUL/control characters; normalize to lowercase ASCII where compatible with existing acquisition.validate_file_name. Use existing allowed PE extensions for automatic symbol-server search: exe, dll, sys, efi, drv, ocx, cpl, scr, tsp. Non-PE types remain descriptive leads; no Ghidriff input.
 
 ## G4. Pipeline design
 
@@ -69,3 +69,12 @@ validated package inventory nor a CVE-fix claim. Selection is revision/coverage
 bound, refuses known product/build/architecture contradictions, and feeds only
 names into the existing verified file-index/pair pipeline. Original metadata and
 conflicts remain visible; no hash, pair order or target bytes are invented.
+
+### Telephony filename hints (2026-11-18)
+
+Use the shared acquisition `.tsp` allowance for explicit analyst filenames. An
+exact `.tsp` basename in an advisory title is only a contextual tier-D hint; it
+cannot select a file or assert a fix. Explicit analyst selection remains tier E
+and preserves unknown change status until the existing index checks run. The
+frozen L1 manifest remains unchanged; expanding supported input names is an
+implementation change and requires a new exact-code receipt.

@@ -132,8 +132,9 @@ def test_arm64_product_name_does_not_resolve_to_amd64_index_pair():
 def test_arm64_side_is_a_hard_block():
     doc = record()
     doc[SHA['Y']]['fileInfo']['machineType'] = 43620
-    (pair,) = resolve('KB5097000', doc).pairs
-    assert pair.grade == 'X' and pair.bytes_state == 'incompatible' and 'ARCH' in pair.reason_codes
+    result = resolve('KB5097000', doc)
+    assert result.pairs == () and result.blockers == ('ARCH',)
+    assert result.changed_in_kb == 'unknown' and 'arm64' in result.note
 
 
 def test_reverse_order_is_never_grade_a():
