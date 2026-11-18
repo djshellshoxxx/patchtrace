@@ -58,7 +58,7 @@ Timestamps, display preferences and absolute paths are never hashed. Existing pr
 
 `SourceLocation`: `side`, `artifact_id`, `run_id`, `function_id`, `representation` (`decompiled|assembly|metadata`), `start_line`, `end_line` (1-based inclusive, `end >= start`), `excerpt_sha256` (SHA-256 of the exact UTF-8 lines joined by `\n`), optional `address` (int ≥ 0; 0 is valid; null = unknown). Before navigation or save, `validate_location(project, loc)` checks artifact/run/function ownership, side, line bounds and excerpt hash. Implemented as `views.validate_location(project_or_run_view, loc)` (`PT-ENRICH-OWNERSHIP` / `PT-ENRICH-STALE`; SPEC-07h Phase D amendment).
 
-Desktop navigation amendment (2026-11-18, P2-NAV-1): each signal activation must
+Desktop navigation amendment (2026-11-18, P2-NAV-1): each supported signal activation must
 call that existing validator against the live project before switching display
 mode or revealing any code. A schema-valid or checksum-valid stored row is not
 authorization to navigate. A mismatched function/run/artifact/side/address or
