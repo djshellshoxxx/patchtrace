@@ -52,8 +52,13 @@ def _remove_owned(path: Path, recorded: os.stat_result, *, database: bool = Fals
 def _rollback_creation(store: ProjectStore, database: os.stat_result | None,
                        created: list[tuple[Path, os.stat_result]]) -> None:
     try:
+        # A reused zero-byte database keeps schema initialization in the first-save
+        # transaction. Roll it back before deciding whether a snapshot committed.
+        store.connection.rollback()
         # save() can raise after its transaction committed. Preserve a usable first snapshot.
-        if store.connection.execute('SELECT COUNT(*) FROM current_snapshot').fetchone()[0]:
+        has_snapshot = store.connection.execute("SELECT 1 FROM sqlite_master WHERE type='table' "
+                                                "AND name='current_snapshot'").fetchone()
+        if has_snapshot and store.connection.execute('SELECT COUNT(*) FROM current_snapshot').fetchone()[0]:
             return
         store.connection.close()
         store.connection = None
@@ -85,7 +90,7 @@ class ProjectService:
         database = None
         created: list[tuple[Path, os.stat_result]] = []
         try:
-            database = (root / 'project.sqlite3').stat()
+            database = store.created_database
             artifacts = [inspect_artifact(older, 'older', root, created=created),
                          inspect_artifact(newer, 'newer', root, created=created)]
             project = ComparisonProject(name=display_text(name.strip()) or 'Untitled comparison',
