@@ -295,3 +295,16 @@ platform gates explicit. Earlier continuation repairs are separately attributed.
 100 of 131 original reconciliation tips now have selected scopes; 31 remain
 unselected. These counts do not close whole branches or estimate feature completion.
 See [batch5 ledger](autonomous-consolidation-20261118/semantic-disposition-batch5.md) and the exact JSON/archive.
+
+## Semantic branch disposition batch6 — frozen actual 55f3 comparison
+
+Twenty additional original tips have bounded focal dispositions: fourteen with
+net production-source deltas and six fixture/test-only tips. Cumulative selection
+is 120/131; eleven remain unselected. No new product defect was confirmed. This is
+not whole-branch closure or a product completion percentage. The fresh 29-file gate
+passed 173 cases with two explicit compiler deselections. Original Java 6 pass and
+unified fixture 1 fail/6 pass/1 error then 7 pass/1 error are retained and explained;
+current canonical controls pass without relaxing lineage or parser requirements.
+Prior exact 55f3 receipts for inherited scopes are referenced, never counted twice.
+Broad 79/85-path consolidation/research/native/platform residue remains open.
+See [batch6](autonomous-consolidation-20261118/semantic-disposition-batch6.md).

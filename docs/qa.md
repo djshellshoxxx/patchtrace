@@ -2219,3 +2219,7 @@ gate: 71 passed, zero skips. The independent fixture-budget correction is retain
 with its original 1-fail/69-pass result; no product change followed it. Source
 imports, old observations, exact Git snapshots and archive members are verified.
 No compiler/native/accuracy/frozen-result or release credit. [Full QA](qa/aa-shard-classification-20261118/README.md).
+
+### Semantic disposition batch6 (2026-11-18, frozen 55f3 source)
+
+Twenty focal records; fresh 173 passed/2 compiler deselections across 29 files. Exact historical Java 6 pass; unified originals 1 fail/6 pass/1 setup error and 7 pass/1 setup error, all classified as retained controls or fixture defects. Prior same-source observations are referenced separately. See [receipt](qa/semantic-disposition-batch6-20261118.md). No native/compiler/target/network/Windows/manual gate.

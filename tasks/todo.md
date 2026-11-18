@@ -1658,3 +1658,10 @@ See the [immutable continuation checkpoint](../docs/qa/verified-continuation-202
 - [x] Specify/test before the four-line classification/reason repair; preserve generic findings and prior error precedence.
 - [x] Retain exact-source author and independent controls, original fixture correction, raw outcomes and source hashes.
 - [ ] Selectively integrate attributed commits and verify the combined source; no frozen/native/accuracy or main-merge credit.
+
+### Semantic disposition batch6 (2026-11-18)
+
+- [x] Inspect 20 distinct original tips against frozen 55f3, preserving exact source/ancestry/caller and fixture evidence.
+- [x] Preserve 22 original historical outcomes and the 173-pass bounded current gate with two compiler deselections.
+- [ ] Complete the remaining 11 original focal dispositions; keep broad research/native/platform obligations open.
+- [ ] Root independent review and selective docs integration; no whole-branch closure or remote changes.
