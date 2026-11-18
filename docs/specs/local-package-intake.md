@@ -135,6 +135,8 @@ strict, reject additional fields/coercion/nonfinite or duplicate-key JSON, and
 have a hard 1 MiB wire ceiling. A grant/receipt also obeys the captured operation's
 lower JSON ceiling. The existing package/source/member/inventory models remain
 authoritative; worker records do not introduce alternate identities.
+Grant and receipt envelopes require their literal contract and integer version
+explicitly; an omitted envelope is not silently upgraded to this protocol.
 
 `PackageWorkerBinding` contains exact SHA-256-shaped operation, request and attempt
 IDs and the complete captured PackageSource. `PackageWorkerGrant` contains that
@@ -146,6 +148,8 @@ counter obey captured limits. No pending entry/write or live allocation crosses
 the parent-to-worker boundary. Grant creation consumes one original callback/work
 unit, so empty serial grants cannot evade the work ceiling. The first grant binds
 the parent's operation ID; later grants cannot change it. Attempt IDs cannot repeat.
+The baseline includes at least that issuance work unit and cannot reserve more
+output than its observed entry count times the captured per-entry maximum.
 
 `PackageBudget.issue_worker(binding)` returns the exact parent-owned active grant.
 Only one grant may be outstanding. Parent counter mutation while it is outstanding
@@ -177,6 +181,10 @@ or failed receipt's known consumption is retained before a later parent cancel/
 deadline is surfaced; it cannot erase work already reported as completed. The
 parent keeps its own current clock and original deadline for subsequent hashing
 or another side, rather than adopting a child's earlier clock observation.
+Because issuance requires all earlier entries closed, new output is bounded by
+the number of newly reported entries times the captured per-entry maximum.
+Reported open entries/writes can refer only to those new entries, including on a
+failed receipt. These consistency checks do not prove that native writes occurred.
 
 Malformed, oversized, mismatched, replayed, future-dated or overspent receipts
 permanently fail the operation without partial counter mutation. A valid failed
