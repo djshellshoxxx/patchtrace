@@ -396,3 +396,50 @@ E0 = K0, K0f, K1, K2, K3, K4a, K4b (K1 and K2 in parallel, K4a and K4b in parall
 CVRF release timestamps must be representable UTC instants, including after applying their stated offset. Out-of-range UTC conversion is a `DATE_INVALID` row problem. The reverse index treats such legacy stored dates as unknown, never an uncaught exception.
 
 A GUI local-pair approval supplies `expected_pair_id` from its dry-run preview to `KbService.import_pair`. A new hash/product-scope identity is refused with `PT-KBC-STALE` before approval, journal or project creation. The creation path retains its own ingestion identity checks after this preview guard.
+
+### Saved advisory search scope (2026-11-18)
+
+An investigation whose lead is a KB or CVE has exactly one saved search coverage
+reference. Before deriving products, components, pair candidates, plans or a new
+attachment, validate the reference against the coverage row's body identity and
+recomputed `kbc.coverage/1` identity. Reject missing, malformed or contradictory
+coverage with `PT-KBC-SCOPE` and repeat-search guidance. Check coherent scope fields,
+requested/inspected membership, the cached corpus digest and source readability.
+Validation precedes product decisions, component decisions, pair approval, journal
+writes and project creation. `attach --repair` preflights both the current advisory
+revision and every selected journal revision before generic recovery may mark an
+attempt interrupted. Refusal leaves workspace revisions, decisions, attempts,
+journals, project rows and sidecars unchanged. The recovery module's general policy
+is not changed by this boundary.
+
+`cached_corpus.doc_ids` is a finite selection, including the empty tuple. Reopening
+the service or importing another document cannot expand that selection. Provided
+files and the document part of mixed scopes are finite too; the month part remains
+the recorded month selector. Detectable changes to requested/inspected coverage or
+its revision watermark require a repeat search before deriving new results. Time
+passing alone does not rewrite saved coverage. Month-only coverage does not record
+each historical document digest, so this is not an immutable historical-snapshot
+claim. An explicit new search may widen or refresh the scope.
+
+All advisory admission still uses the full loaded index. A selected old source
+remains superseded when a newer source withdraws or contradicts its claim. Native
+unknown/tied revision conflicts are evaluated across the current source group before
+projecting selected documents. A subset index must not make an older or ambiguous
+claim current. Unreadable stored sources prevent a new saved-scope derivation when
+the full current admission set cannot be established; restoring the bytes and
+repeating the operation is permitted. No refresh, fetch or target execution occurs.
+
+The pure context builder enforces the same coverage boundary for KB/CVE leads,
+including a caller-supplied scope that contradicts saved coverage. Its edge digest
+retains `kbc.edgeset/1` and canonical sorted edge IDs, projected to selected documents
+intersected with the full index's active set. That single digest feeds both the
+bundle and its context key; an unrelated cached document cannot change the key.
+Persisted context bundles remain readable as recorded without revalidation or a
+schema migration. File/pair-only flows keep their existing product/provenance
+contracts and do not need a fictional KB/CVE search.
+
+Acceptance uses authored offline documents and synthetic PE bytes through real
+workspace/project stores, export and a source-pinned headless CLI. It covers cached
+growth/empty selection, coherent and damaged coverage, pre-mutation repair checks,
+explicit refresh, global supersession/ambiguity and unrelated-document key stability.
+These checks provide no native, vendor-format or frozen-corpus qualification credit.

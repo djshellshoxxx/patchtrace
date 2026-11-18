@@ -97,3 +97,29 @@ Q1 Should `snapshot_id` ever include `retrieved_at`? Default no (additive-only, 
 ## 13. Acceptance
 
 Sections 5 and 6 tests green; `grep -n "vulnerability(cve) is not None" src/patchtrace/intelligence/explain.py` shows the filter applies only to the `relevant` display list, never to the argument of `resolve`.
+
+## 14. Saved KB/CVE scope amendment (2026-11-18)
+
+For new derivations from a saved KB/CVE investigation, the coverage reference,
+coverage body and recomputed `kbc.coverage/1` identity must agree. Exactly one
+coherent, readable saved scope is required before service writes or recovery's
+interrupted-attempt writes. Repair checks both the current revision and each selected
+journal revision. An invalid or detectably changed scope is a `PT-KBC-SCOPE` refusal
+asking the analyst to repeat the search, with prior evidence and decisions retained.
+
+Cached scopes keep their exact `doc_ids`, including an empty set, and explicit file
+IDs remain finite. Month selectors retain their recorded months, but do not contain
+exact historical revision identities; detectable coverage/watermark drift requires
+a repeat search. The full current index determines active/superseded and native
+ambiguous admission before selection. Never reconstruct an advisory subset index
+to restore an older claim. Unreadable current source inputs prevent establishing
+that admission set. Pair/file-only product contexts keep their existing contract.
+
+For newly built contexts, `edge_set_digest` is the existing `kbc.edgeset/1` digest
+over canonical edge IDs of selected, globally active source documents. Reuse that
+same digest in the bundle and context key. Unrelated readable source additions do
+not change a saved context's key. This changes new derivation only: legacy bundle
+deserialization and recorded JSON exports remain unchanged, with no schema migration
+or automatic historical rewrite. See the saved-scope acceptance in the KB integration
+plan. The earlier draft's independent freshness proposals are not accepted or closed
+by this amendment.
