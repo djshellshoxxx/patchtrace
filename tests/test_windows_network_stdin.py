@@ -8,13 +8,12 @@ from __future__ import annotations
 
 import json
 import os
-from pathlib import Path
 import re
 import shutil
 import subprocess
+from pathlib import Path
 
 import pytest
-
 
 ROOT = Path(__file__).resolve().parents[1]
 NATIVE = ROOT / 'tools/windows_network'
