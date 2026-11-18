@@ -1828,3 +1828,10 @@ See the [immutable continuation checkpoint](../docs/qa/verified-continuation-202
 - [x] Seal unchanged source `441c47c2`: 512 affected checks, zero skips, 462 pinned parent imports; retain original runner/lint failures and normal Ruff/diff success. See `docs/qa/core-admission-checkpoints-20261118.md`.
 - [ ] Correct root's separately reproduced store-constructor interrupt cleanup boundary after an additional specification/regression commit; preserve the original 441c packet and independent probe.
 - [ ] Obtain independent final review/replay before integration. Durable package intent/provenance/recovery, held-origin exposure and native/frozen acceptance remain separate.
+
+### [CORE-CONSTRUCTOR-CLEANUP-20261118]
+
+- [x] Preserve the unchanged root constructor interrupt probe and reproduce secondary cleanup masking with actual SQLite connections before source edits.
+- [x] Commit the additional specification and 41 meaningful controls; retain 31 failures/19 positives before the narrowly owned handler correction.
+- [x] Verify exact source `63ebc427`: 50 focused and 562 affected passes, zero skips, 463 pinned parent imports, normal Ruff/diff success; seal the separate append packet without modifying the original checkpoint packet.
+- [ ] Root independently review/replay the corrected full core chain before integration; retain uncertainty when cleanup itself fails and keep partial lock acquisition/native/durable package work outside this receipt.

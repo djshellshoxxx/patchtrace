@@ -2432,3 +2432,19 @@ options change. Root separately reproduced an existing constructor interrupt
 cleanup gap before open receives the store; its authorized test-first follow-up
 is pending. This packet remains immutable and does not claim native/package
 admission or complete cleanup acceptance.
+
+## [CORE-CONSTRUCTOR-CLEANUP-20261118]
+
+Source `63ebc42746fbfbded311084288a339f26ed08d8c` corrects the separately
+reproduced constructor interrupt and secondary cleanup masking boundaries in
+the existing initialization handler. The original root 2-red/1-positive probe,
+the six-case cleanup probe, committed 31-red/19-positive regressions and final
+50/562-pass gates are retained in the
+[separate 140-payload append packet](qa/core-constructor-cleanup-20261118.md).
+All 463 affected parent imports match source; no skips or prohibited execution
+occurred, and normal Ruff/diff checks pass. Connection-close, owned discard and
+final-close ordering, generic close/discard policy and SQLite error mapping are
+preserved. A fixed bounded note reports uncertain cleanup while retaining the
+primary failure. The original 441c/136-payload packet is unchanged. Root final
+independent review remains separate; native/package/durable-recovery acceptance
+is not claimed.
