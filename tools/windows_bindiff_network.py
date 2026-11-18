@@ -33,6 +33,7 @@ SHA256 = re.compile(r'[0-9a-f]{64}\Z')
 SHA1 = re.compile(r'[0-9a-f]{40}\Z')
 NONCE = re.compile(r'[0-9a-f]{32}\Z')
 APP_SID = re.compile(r'S-1-15-2-(?:[0-9]{1,10}-){6}[0-9]{1,10}\Z')
+CREATION_TIME = re.compile(r'[1-9][0-9]{0,19}\Z')
 PROFILE_PREFIX = 'PatchTrace.Acceptance.'
 NATIVE_SOURCES = ('launcher.c', 'probe.c', 'common.h')
 
@@ -56,6 +57,11 @@ def _integer(value, low=0, high=(1 << 63) - 1):
 
 def _digest(value, pattern=SHA256):
     return isinstance(value, str) and pattern.fullmatch(value) is not None
+
+
+def _creation_time(value):
+    """One canonical spelling for the native helper's nonzero uint64 identity."""
+    return isinstance(value, str) and CREATION_TIME.fullmatch(value) is not None and int(value) < 1 << 64
 
 
 def _canonical(value):
@@ -130,9 +136,7 @@ def _chain_identity(rows, *, sid, nonce, blocked):
                 type(row.get('capability_count')) is int and row['capability_count'] == 0,
                 'native token or nonce differs')
         created = row.get('created')
-        require(isinstance(created, str) and 0 < len(created) <= 20 and created.isdecimal() and
-                0 < int(created) < 1 << 64,
-                'missing native process creation identity')
+        require(_creation_time(created), 'missing or noncanonical native process creation identity')
 
 
 def _probe_chain(rows, *, sid, nonce, blocked):
@@ -201,8 +205,7 @@ def validate_evidence(doc, *, source_sha, source_tree, helper_sha, probe_sha, ex
                     ('appcontainer', 'suspended', 'job_before_resume', 'token_before_resume', 'image_locked',
                      'tree_empty')) and
                 row.get('handles') == ['nul', 'pipe', 'pipe'], 'native launch containment unverified')
-        require(isinstance(created, str) and 0 < len(created) <= 20 and created.isdecimal() and
-                0 < int(created) < 1 << 64 and _integer(row.get('owner_pid'), 1, (1 << 32) - 1) and
+        require(_creation_time(created) and _integer(row.get('owner_pid'), 1, (1 << 32) - 1) and
                 row['owner_pid'] != pid, 'native launch creation/owner identity is incomplete')
         require((pid, created) not in seen, 'duplicate native process creation identity')
         seen.add((pid, created))
@@ -611,6 +614,7 @@ class NativeContext:
         rows = _lines(receipt)
         require(rows and rows[0].get('phase') == 'started', 'native child did not start under verified token')
         start = rows[0]
+        require(_creation_time(start.get('created')), 'missing or noncanonical native launch creation identity')
         require(start.get('appcontainer') is True and start.get('sid') == self.profile['sid'] and
                 type(start.get('capability_count')) is int and start['capability_count'] == 0 and
                 all(start.get(key) is True for key in ('suspended', 'job_before_resume', 'token_before_resume',
@@ -659,8 +663,8 @@ class NativeContext:
         identities = []
         for row in rows:
             created = row.get('created')
-            require(_integer(row.get('pid'), 1, (1 << 32) - 1) and isinstance(created, str) and
-                    created.isdecimal() and 0 < int(created) < 1 << 64, 'missing native process creation identity')
+            require(_integer(row.get('pid'), 1, (1 << 32) - 1) and _creation_time(created),
+                    'missing or noncanonical native process creation identity')
             identities.append(str(row['pid']) + ':' + created)
         result = self._command(['alive', *identities], label + '-alive')
         _completed(result, 'native descendant liveness query')
