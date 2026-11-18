@@ -1493,3 +1493,10 @@ Full `QT_QPA_PLATFORM=offscreen python -m pytest -q` for this isolated native sl
 - [x] Reproduce and repair delayed Build auto-submission of recalled text; preserve red and independent green plus positive execution-intent controls.
 - [x] Integrate onto published #307 and execute376 affected checks, required Ruff and whitespace.
 - [ ] Publish focused candidate and complete all exact-head/full/platform/manual gates before promotion. [Evidence](../docs/qa/saved-search-reviewed-20261118/README.md).
+
+### [PRIMARY-ENVIRONMENT-DEFAULTS-20261118]
+
+- [x] Reproduce default external-child credential/injection exposure with dummy values and specification-first controls.
+- [x] Enable the existing allowlist by default consistently for backend/CLI and fresh desktop settings; preserve explicit compatibility choices and forced bundle isolation.
+- [x] Obtain independent review and370 affected/additional passes with3 native Windows skips, without weakening redaction or process-tree assertions.
+- [ ] Complete native H7 Linux/Windows, full exact-head/platform/package/security gates before promotion; separately repair primary memory/total-output budgets. [Receipt](../docs/qa/primary-environment-20261118/README.md).

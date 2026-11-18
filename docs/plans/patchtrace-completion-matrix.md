@@ -121,3 +121,7 @@ The paired raw-offset desktop slice now has independent source review (183 affec
 ## Saved-search independent integration checkpoint — 2026-11-18
 
 Saved/recent search advances to **D/R:50%** for the named slice: project-owned Save/Run/Delete and CLI operations, compatible mode/filter replay, and bounded per-user recent text are implemented and independently reviewed. The delayed Build execution-intent defect was reproduced and repaired at `c30c7911`; the combined published #307 base passed376 affected checks at `f021f2d0`. Real/native/manual J and exact-head full/platform/security G remain unverified. Original receipts and research boundaries remain unchanged. [Review and scope](../qa/saved-search-reviewed-20261118/README.md).
+
+## Primary environment default repair checkpoint — 2026-11-18
+
+The default primary-child environment slice has specification, reproduced failure, minimal repair and independent regression evidence at `1f9ad863` (370 independent affected/additional passes,3 native Windows skips). D/R scope is50%; real native/manual J and exact-head full/platform/security G remain open. Explicit legacy full inheritance remains a documented analyst compatibility choice; default minimization is not a network sandbox. The broader primary resource-bound/security work remains incomplete. [Evidence](../qa/primary-environment-20261118/README.md).
