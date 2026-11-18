@@ -328,7 +328,8 @@ class KbService:
         scopes = [_scope_dict(s) for s in full.scopes]
         kept = {(e.cve, e.kb, e.scope_id) for e in shown.edges}
         elsewhere = [_plain_edge(e, names) for e in full.edges if (e.cve, e.kb, e.scope_id) not in kept]
-        warnings = list(full.warnings)
+        named_warnings = [w for w in shown.warnings if w.startswith('NAMED_SUPERSEDED:')]
+        warnings = [w for w in full.warnings if not w.startswith('NAMED_SUPERSEDED:')] + named_warnings
         if unreadable:
             warnings.append(f'{len(unreadable)} stored document(s) could not be read and were not searched')
         status = 'partial' if full.status in ('partial', 'not_searched') or (
@@ -354,7 +355,8 @@ class KbService:
             lines.append(TEXT_KB8.format(product=names.get(product, product)))
         exit_code = {'found': 0, 'not_observed': 4}.get(status, 3)
         public = {'found': 'complete', 'not_observed': 'unavailable'}.get(status, 'partial')
-        if status == 'not_observed':
+        lines.extend(named_warnings)
+        if status == 'not_observed' and not named_warnings:
             lines.append(f'{value} was not found in the documents checked. That does not mean it has no security '
                          'updates; these documents do not list it.')
         return Outcome(exit_code, public, result, '\n'.join(lines), warnings)

@@ -350,6 +350,8 @@ class ReverseIndex:
         mention = tuple(sorted((e for e in chosen if e.relation == 'mention-only'), key=key))
         disputed = tuple(sorted((e for e in chosen if e.relation == 'disputed'), key=key))
         superseded = tuple(sorted(old, key=key))
+        named_old = (sorted({e.ref.doc_id for e in superseded} & set(scope.doc_ids))
+                     if scope.kind in ('provided_files', 'mixed') else [])
         status = self._status(coverage, edges)
         used = {e.scope_id for e in (*edges, *mention, *disputed, *superseded)}
         scopes = tuple(s for s in self.scopes() if s.scope_id in used)
@@ -359,7 +361,7 @@ class ReverseIndex:
                       groups=distinct_groups(edges), mention_only=mention, disputed=disputed,
                       superseded=superseded, scopes=scopes, excluded=tuple(sorted(excluded.items())),
                       cards=cards if query_kind == 'cve' else (), card_doc_ids=card_doc_ids,
-                      warnings=self._warnings(coverage, picked, edges, mention, disputed, superseded, status)
+                      warnings=self._warnings(coverage, picked, edges, mention, disputed, superseded, status, named_old)
                       + tuple(f'REVISION_EDGE_CONFLICT: {month} has competing snapshots for {cve} {kb}; '
                               'the applicability is disputed and is not presented as current'
                               for month, cve, kb, _scope in sorted(set(revision_conflicts)))
@@ -383,7 +385,7 @@ class ReverseIndex:
         return 'found' if edges else 'not_observed'
 
     @staticmethod
-    def _warnings(coverage, picked, edges, mention, disputed, superseded, status) -> tuple[str, ...]:
+    def _warnings(coverage, picked, edges, mention, disputed, superseded, status, named_old=()) -> tuple[str, ...]:
         out = []
         if status == 'partial':
             out.append('PARTIAL: some requested documents are not loaded or unreadable; absence proves nothing')
@@ -402,6 +404,11 @@ class ReverseIndex:
             out.append('DISPUTED: a negative product status contradicts the fix; the row is left out of leads')
         if superseded:
             out.append('SUPERSEDED: older revisions of a loaded document are retained and listed apart')
+        if named_old:
+            # Validated SHA-256 IDs are 64 characters; five plus the count/wording stay below 500.
+            names = ', '.join(named_old[:5]) + (f' and {len(named_old) - 5} more' if len(named_old) > 5 else '')
+            out.append(f'NAMED_SUPERSEDED: {names}. Matching rows in these selected sources are superseded in '
+                       'the loaded index and excluded from active results.')
         groups: dict[tuple, list[ImportedDocument]] = {}
         for doc in picked:
             groups.setdefault(_group_key(doc), []).append(doc)
