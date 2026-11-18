@@ -1,6 +1,7 @@
 """Only authored temporary files: publication must retain filesystem ownership."""
 from __future__ import annotations
 
+import ctypes
 import json
 import os
 import sys
@@ -148,11 +149,190 @@ def test_destination_created_while_stage_is_flushed_is_preserved(tmp_path, monke
     assert list(tmp_path.iterdir()) == [destination]
 
 
-def test_publication_supports_unicode_parent_and_file_names(tmp_path):
-    destination = tmp_path / 'owned-\U0001f9ea' / 'receipt-\u0394.json'
+@pytest.mark.parametrize('name', ['p', 'receipt-\u0394.json', 'receipt-\U0001f9ea.json'])
+def test_publication_supports_unicode_parent_and_file_names(tmp_path, name):
+    destination = tmp_path / 'owned-\U0001f9ea' / name
     wp._publish_bytes(destination, b'{"authored":true}')
     assert destination.read_bytes() == b'{"authored":true}'
     assert list(destination.parent.iterdir()) == [destination]
+
+
+def _portable_windows_information_calls(status_code=0):
+    """Fixed Windows-width dispatch oracle; this does not emulate a filesystem."""
+    class RenameInfo(ctypes.Structure):
+        _fields_ = [('ReplaceIfExists', ctypes.c_ubyte), ('RootDirectory', ctypes.c_void_p),
+                    ('FileNameLength', ctypes.c_uint32), ('FileName', ctypes.c_uint16 * 1)]
+
+    class IoStatus(ctypes.Structure):
+        _fields_ = [('StatusOrPointer', ctypes.c_void_p), ('Information', ctypes.c_size_t)]
+
+    calls, translated = [], []
+
+    def set_information(source, status, buffer, size, information_class):
+        pending = ctypes.cast(status, ctypes.POINTER(IoStatus)).contents
+        assert pending.StatusOrPointer is None and pending.Information == 0
+        calls.append((source, information_class, ctypes.string_at(buffer, size)))
+        return status_code
+
+    def translate(code):
+        translated.append(code)
+        return 183  # actual .error() must preserve the no-replacement collision classification
+
+    def forbidden_win32(*args):
+        pytest.fail('publication must use the specified native information classes')
+
+    win = wp._WindowsPublication.__new__(wp._WindowsPublication)
+    win.ct, win.wt = ctypes, SimpleNamespace(BOOLEAN=ctypes.c_ubyte)
+    win.RenameInfo, win.IoStatus = RenameInfo, IoStatus
+    win.nt = SimpleNamespace(NtSetInformationFile=set_information, RtlNtStatusToDosError=translate)
+    win.kernel = SimpleNamespace(SetFileInformationByHandle=forbidden_win32)
+    return win, calls, translated
+
+
+@pytest.mark.parametrize('name', ['p', 'receipt-\u0394.json', 'receipt-\U0001f9ea.json'])
+def test_windows_native_rename_dispatch_keeps_exact_parent_and_utf16_leaf(name):
+    win, calls, translated = _portable_windows_information_calls()
+    win.rename(17, 29, name)
+    assert len(calls) == 1 and not translated
+    source, information_class, raw = calls[0]
+    assert source == 17 and information_class == 10
+    info = win.RenameInfo.from_buffer_copy(raw)
+    encoded = name.encode('utf-16-le')
+    assert not info.ReplaceIfExists and info.RootDirectory == 29
+    assert info.FileNameLength == len(encoded)
+    assert len(raw) >= ctypes.sizeof(win.RenameInfo) + len(encoded)
+    offset = win.RenameInfo.FileName.offset
+    assert raw[offset:offset + len(encoded)] == encoded
+    assert not any(raw[offset + len(encoded):])
+
+
+def test_windows_native_disposition_targets_only_the_owned_handle():
+    win, calls, translated = _portable_windows_information_calls()
+    win.discard(17)
+    assert calls == [(17, 13, b'\x01')] and not translated
+
+
+@pytest.mark.parametrize('operation', ['rename', 'discard'])
+def test_windows_native_negative_status_uses_nt_translation(operation):
+    win, calls, translated = _portable_windows_information_calls(-1073741771)
+    with pytest.raises(FileExistsError, match='prior evidence'):
+        getattr(win, operation)(17, 29, 'p') if operation == 'rename' else win.discard(17)
+    assert len(calls) == 1 and translated == [-1073741771]
+
+
+@pytest.mark.parametrize('operation', ['rename', 'discard'])
+@pytest.mark.parametrize('status', [0x103, 0x40000000])
+def test_windows_native_incomplete_status_never_credits_success(operation, status):
+    win, calls, translated = _portable_windows_information_calls(status)
+    with pytest.raises(wp.PublicationBlocked, match='synchronously'):
+        getattr(win, operation)(17, 29, 'p') if operation == 'rename' else win.discard(17)
+    assert len(calls) == 1 and not translated
+
+
+@pytest.mark.parametrize('primary_kind', ['write', 'collision', 'cancel'])
+@pytest.mark.parametrize('cleanup_failure', ['discard', 'close', 'both'])
+def test_windows_cleanup_preserves_primary_error_and_closes_owned_fd(
+        tmp_path, monkeypatch, primary_kind, cleanup_failure):
+    primary = {'write': OSError(5, 'primary write failure'),
+               'collision': FileExistsError('primary collision'), 'cancel': KeyboardInterrupt()}[primary_kind]
+    calls = []
+
+    def stage(fd, data):
+        assert fd == 91 and data == b'authored'
+        if primary_kind != 'collision':
+            raise primary
+
+    def rename(source, parent, name):
+        assert (source, parent, name) == (17, 29, 'receipt.json')
+        raise primary
+
+    def discard(source):
+        calls.append(('discard', source))
+        if cleanup_failure in ('discard', 'both'):
+            raise OSError(87, 'secondary discard failure')
+
+    def close(fd):
+        calls.append(('close', fd))
+        if cleanup_failure in ('close', 'both'):
+            raise OSError(6, 'secondary close failure')
+
+    win = SimpleNamespace(directory=lambda *args, **kwargs: 29, open_child=lambda *args, **kwargs: 17,
+                          identity=lambda *args: (1, 2, 3), check_parent=lambda *args: None,
+                          rename=rename, discard=discard)
+    monkeypatch.setattr(wp, '_WindowsPublication', lambda: win)
+    monkeypatch.setattr(wp, '_write_stage', stage)
+    monkeypatch.setattr(wp, 'os', SimpleNamespace(O_RDWR=os.O_RDWR, O_BINARY=0, close=close))
+    monkeypatch.setitem(sys.modules, 'msvcrt', SimpleNamespace(open_osfhandle=lambda *args: 91))
+    with pytest.raises(type(primary)) as caught:
+        wp._publish_windows(tmp_path / 'receipt.json', b'authored')
+    assert caught.value is primary
+    assert calls == [('discard', 17), ('close', 91)]
+    notes = primary.__notes__
+    assert len(notes) == (2 if cleanup_failure == 'both' else 1)
+    assert all('cleanup' in note and len(note) <= 160 for note in notes)
+
+
+def test_windows_cleanup_before_fd_transfer_closes_only_the_owned_handle(tmp_path, monkeypatch):
+    primary = KeyboardInterrupt()
+    calls = []
+
+    def no_transfer(*args):
+        raise primary
+
+    def discard(source):
+        calls.append(('discard', source))
+        raise OSError(87, 'secondary discard failure')
+
+    def close_handle(source):
+        calls.append(('close_handle', source))
+        return True
+
+    win = SimpleNamespace(directory=lambda *args, **kwargs: 29, open_child=lambda *args, **kwargs: 17,
+                          identity=lambda *args: (1, 2, 3), discard=discard,
+                          kernel=SimpleNamespace(CloseHandle=close_handle))
+    monkeypatch.setattr(wp, '_WindowsPublication', lambda: win)
+    monkeypatch.setattr(wp, 'os', SimpleNamespace(O_RDWR=os.O_RDWR, O_BINARY=0))
+    monkeypatch.setitem(sys.modules, 'msvcrt', SimpleNamespace(open_osfhandle=no_transfer))
+    with pytest.raises(KeyboardInterrupt) as caught:
+        wp._publish_windows(tmp_path / 'receipt.json', b'authored')
+    assert caught.value is primary
+    assert calls == [('discard', 17), ('close_handle', 17)]
+
+
+def test_windows_close_failure_after_rename_is_not_reported_as_success(tmp_path, monkeypatch):
+    calls = []
+    failure = OSError(6, 'owned close failure')
+
+    def close(fd):
+        calls.append(('close', fd))
+        raise failure
+
+    win = SimpleNamespace(directory=lambda *args, **kwargs: 29, open_child=lambda *args, **kwargs: 17,
+                          identity=lambda *args: (1, 2, 3), check_parent=lambda *args: None,
+                          rename=lambda *args: calls.append(('rename', args)),
+                          discard=lambda *args: pytest.fail('published evidence must not be discarded'))
+    monkeypatch.setattr(wp, '_WindowsPublication', lambda: win)
+    monkeypatch.setattr(wp, '_write_stage', lambda *args: None)
+    monkeypatch.setattr(wp, 'os', SimpleNamespace(O_RDWR=os.O_RDWR, O_BINARY=0, close=close))
+    monkeypatch.setitem(sys.modules, 'msvcrt', SimpleNamespace(open_osfhandle=lambda *args: 91))
+    with pytest.raises(OSError) as caught:
+        wp._publish_windows(tmp_path / 'receipt.json', b'authored')
+    assert caught.value is failure
+    assert calls == [('rename', (17, 29, 'receipt.json')), ('close', 91)]
+
+
+def test_blocked_publication_retains_bounded_secondary_cleanup_diagnostics(tmp_path, monkeypatch):
+    primary = OSError(5, 'primary failure')
+    primary.add_note('Windows discard cleanup also failed: OSError')
+
+    def fail(*args):
+        raise primary
+
+    monkeypatch.setattr(wp, '_publish_windows', fail)
+    monkeypatch.setattr(wp, '_publish_linux', fail)
+    with pytest.raises(wp.PublicationBlocked, match='OS error 5') as caught:
+        wp._publish_bytes(tmp_path / 'receipt.json', b'authored')
+    assert caught.value.__notes__ == primary.__notes__
 
 
 @pytest.mark.skipif(os.name != 'nt', reason='native Windows sharing/handle acceptance')
