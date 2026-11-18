@@ -56,4 +56,5 @@ def test_the_rule_versions_changed_by_the_fct_audit_move_the_result_key():
     channels, proofs = dict(CHANNEL_VERSIONS), dict(PROOF_VERSIONS)
     # fct audit (2026-11-04): C1, C2 and datamap moved to 2; A-30/A-31 (2026-11-11): datamap 3, align 2
     assert (channels['C1'], channels['C2'], channels['datamap'], channels['align']) == (2, 2, 3, 2)
-    assert (proofs['COS-LAYOUT/1'], proofs['COS-PSEUDO/1']) == (2, 2)
+    # R8 / R3-PC01 (2026-11-18, ported from PR #144): canon 2 keeps literal types; COS-PSEUDO/1 3 also needs EH-EQ
+    assert (proofs['COS-LAYOUT/1'], proofs['COS-PSEUDO/1'], channels['canon']) == (2, 3, 2)

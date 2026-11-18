@@ -55,7 +55,9 @@ class AnchorInputs:
 
     @cached_property
     def numbers_diff(self) -> tuple[Counter, Counter]:
-        return _removed_added(self.canon_old.numbers, self.canon_new.numbers)
+        # Project typed literals (`#N:suffix`, canon 2) to their machine value before subtraction: a suffix-only swap
+        # must not invent a numeric value change for a materiality anchor; C5/C6 equality keeps the type hints (R8).
+        return _removed_added(_values(self.canon_old.numbers), _values(self.canon_new.numbers))
 
     @cached_property
     def tokens_diff(self) -> tuple[Counter, Counter]:
@@ -75,6 +77,10 @@ class AnchorInputs:
     def operators_changed(self) -> bool:
         return (Counter(self.canon_old.relational) != Counter(self.canon_new.relational)
                 or Counter(self.canon_old.logical) != Counter(self.canon_new.logical))
+
+
+def _values(numbers: tuple) -> tuple:
+    return tuple(t.partition(':')[0] if t.startswith('#') else t for t in numbers)
 
 
 def _removed_added(old: tuple, new: tuple) -> tuple[Counter, Counter]:

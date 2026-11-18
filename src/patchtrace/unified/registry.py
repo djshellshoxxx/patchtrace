@@ -155,11 +155,15 @@ PASSES: tuple[PassSpec, ...] = (
 # stationary claim (the global kept its address) and by a swap explanation, so a coordinated retarget to an existing global
 # abstains unless that global moved and kept exactly one referrer against three or more retargeters; leave-one-out is a majority among the OTHER voters with
 # explained dissents ignored; call-operand votes and the region shift are orientation-symmetric.
+# canon 2 / COS-PSEUDO/1 3 (2026-11-18, R8, ported from PR #144): a typed literal keeps its C type in the canonical
+# token (`2147483648U`, `16L`, `0.1f` and octal `010` are no longer equal to `2147483648`, `16`, `0.1`, `8`), long
+# unparsable literals hash instead of truncating at 40 characters, and with IR present COS-PSEUDO/1 also needs EH-EQ
+# `equal` or `absent` (an unreadable unwind state no longer corroborates a benign change).
 CHANNEL_VERSIONS: tuple[tuple[str, int], ...] = (
     ('C0', 1), ('C1', 2), ('C2', 2), ('C3', 1), ('C4', 1), ('C4n', 1), ('C5', 1), ('C5t', 1), ('C6', 1), ('C8', 1),
-    ('align', 2), ('canon', 1), ('datamap', 3), ('eh-eq', 1))
+    ('align', 2), ('canon', 2), ('datamap', 3), ('eh-eq', 1))
 PROOF_VERSIONS: tuple[tuple[str, int], ...] = (
-    ('COS-ADDR/1', 1), ('COS-LAYOUT/1', 2), ('COS-PSEUDO/1', 2), ('UNCH/1', 1))
+    ('COS-ADDR/1', 1), ('COS-LAYOUT/1', 2), ('COS-PSEUDO/1', 3), ('UNCH/1', 1))
 RZDIFF_META: tuple[str, Tier, EvidenceClass] = ('levenshtein-bytes', 'W', 'E-BODY')
 
 _FAMILY_BY_KIND = {'manual': 'F-MANUAL', 'pe': 'F-PT-PE', 'names': 'F-PT-NAMES'}
