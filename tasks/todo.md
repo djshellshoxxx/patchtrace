@@ -1535,3 +1535,11 @@ Full `QT_QPA_PLATFORM=offscreen python -m pytest -q` for this isolated native sl
 - [x] Verify primary-source pip 26.3 compatibility/fix/pin evidence and record the original bootstrap, exact hash-pinned pip-only installation, prepared inventory and final complete closure.
 - [x] Independently review the transition and preserve actual Linux runtime17/packaging32 zero-advisory results with pip included; retain the original six failing snapshots unchanged.
 - [ ] Complete native Windows profiles, substantive static remediation and integrated gates; static remains79 and publication remains blocked. [Evidence](../docs/qa/autonomous-ci-20261118/pip-bootstrap/README.md).
+
+### [CALLGRAPH-PATH-BUDGET-20261118]
+
+- [x] Spec/test first; preserve original accounting/copy/cancellation failures and historical controls.
+- [x] Implement shared adjacency budget, lazy CSR membership, canonical completed-witness retention and truthful partial wording in four owned files.
+- [x] Qualify exact source `f0b0eb02`: 489 affected cases, actual headless CLI journey, whole Ruff/diff; source-pinned receipts retained.
+- [x] Root independent review: 490 affected/oracle cases and 17 unchanged historical cases pass separately; no blocking finding.
+- [ ] Focused integration by root; final full/platform/native/manual/package gates remain open.

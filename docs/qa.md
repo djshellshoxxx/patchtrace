@@ -2081,3 +2081,17 @@ package version versus the preserved failed predecessors. Static still refuses
 79 diagnostics. Windows/native/integrated publication holds remain; no full-suite
 rerun or overall clean-security claim follows.
 [Source, primary pins and complete transition receipts](qa/autonomous-ci-20261118/pip-bootstrap/README.md).
+
+## [CALLGRAPH-PATH-BUDGET-20261118]
+
+Separate accepted source `f0b0eb02617a87aea4cfe4b06079528d934d6285` bounds all
+path phases by actual adjacency examinations, avoids CSR/row copies and retains
+a completed canonical shortest witness on later exhaustion. Author gate: 489
+passed/zero skips in 24.72 s. Root independent gate: the same 489 plus a new
+varied-graph oracle pass (490 total, zero skips, 20.78 s); 17 unchanged historical
+controls pass separately. Original 20-fail/5-positive source red, original
+202-versus-40 control and root's duplicate-module collection error are retained.
+Five actual headless CLI calls preserve valid partial/complete/empty/identity
+results, hash-seed determinism and both project database hashes. Whole Ruff/diff
+pass. [Accepted source/QA receipt](qa/callgraph-path-budget-20261118.md).
+Native/manual/Windows, full-repository and package gates remain separate.
