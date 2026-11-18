@@ -1574,3 +1574,11 @@ Current evidence and assigned work: [checkpoint](../docs/qa/verified-followup-in
 - [x] Distinguish 18 retained focal scopes from two overlapping tips sharing the one missing selected-superseded-source explanation; preserve correct evidence withholding.
 - [ ] Propose and independently review a separate warning/presentation repair without altering source admission, status, ambiguity or conflicts.
 - [ ] Continue 91 unselected original tips plus broad residue from earlier selected scopes; no blanket branch closures or completion credit. [Receipt](../docs/qa/semantic-disposition-batch2-20261118.md).
+
+### [KB-NAMED-SUPERSEDED-20261118]
+
+- [x] Retain the unchanged historical omission/control and specify bounded selected-source explanations before source edits.
+- [x] Preserve corrected baseline18-fail/14-positive controls and all initial fixture failures; implement only the two approved index/presentation methods.
+- [x] Qualify exact source51f33d5a with411 affected cases, the original historical control, eight actual headless CLI calls, real offscreen presenter controls, whole Ruff and whitespace.
+- [ ] Root independent review, selective integration and exact combined/hosted qualification; no release or whole-branch closure credit.
+- [ ] Continue the next20 original semantic tips from the91 remaining, using published PR #31655f3 as the comparison baseline. [QA](../docs/qa/kb-named-superseded-20261118.md).

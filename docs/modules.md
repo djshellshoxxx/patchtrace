@@ -1497,3 +1497,13 @@ and `test_ui_kb_inventory_retention.py`, plus the existing inventory adapter sui
 ## Advisory sidecar read bounds — 2026-11-18
 
 `intelligence/storage.py` reuses `owned_publication.read_bytes` for bounded SHA-verified regular-file reads and expected-length idempotent reuse. Cached normalized facts have a64MiB cap; raw recovery uses the retained source length. Import checks derived size before any write. The existing cache-recovery and damaged-cache replacement policies remain; total store I/O and publication races are separate. Tests: `test_advisory_read_bounds.py`, `test_intel_storage.py`, shared owned-publication controls and adjacent CSAF/pilot readers.
+
+## Explicitly selected superseded sources (2026-11-18)
+
+`kbcorrelation/index.py` derives a bounded named-source explanation only from
+explicit provided/mixed source IDs and already product-filtered superseded rows.
+`kbcorrelation/service.py` carries the selected product's explanation into JSON
+and shared plain text without changing admission/status/exit behavior. Existing
+CLI and desktop presenters are reused. Tests: `test_kbc_named_superseded.py`,
+`test_ui_kbc_named_superseded.py`; [source/QA](qa/kb-named-superseded-20261118.md).
+No new module, persisted contract, source-scope UI or network operation.

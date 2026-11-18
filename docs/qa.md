@@ -2118,3 +2118,15 @@ Source/tests/tools are unchanged. [Complete source-pinned ledger and raw receipt
 The original 131-tip set now has 40 selected scopes and 91 unselected tips;
 broad residue, native/manual/package and independent source-repair gates remain
 open. No whole branch is closed and no completion percentage is inferred.
+
+## [KB-NAMED-SUPERSEDED-20261118]
+
+Author source `51f33d5a0f0e7e48868ff184a54635ff92606f96`, based on actual
+published PR #316 `55f3d074`, passes 411 affected cases with zero skips, including
+current global tooltip coverage; unchanged original historical control passes
+separately. Eight actual headless CLI calls preserve exit/evidence behavior and
+show the selected-old explanation. Whole Ruff/whitespace pass. Corrected
+baseline18-fail/14-positive results, initial fixture mistakes and all original
+historical failures remain retained. [Sealed source-pinned QA](qa/kb-named-superseded-20261118.md).
+Root independent review and integration remain pending; native/manual/package,
+full/hosted qualification and broad branch residue are separate gates.
