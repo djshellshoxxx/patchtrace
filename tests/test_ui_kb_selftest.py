@@ -294,8 +294,8 @@ def test_worker_that_exceeds_join_budget_prevents_temporary_cleanup(qtbot, qapp,
 
 
 def test_inventory_and_investigation_registry_what_texts_are_distinct(qapp, tmp_path):
-    from patchtrace.kbcorrelation.investigation_qt import InvestigationDialog
     from patchtrace.kbcorrelation.inventory_qt import register_inventory_tips
+    from patchtrace.kbcorrelation.investigation_qt import InvestigationDialog
     from patchtrace.tooltips import REGISTRY
 
     register_inventory_tips()

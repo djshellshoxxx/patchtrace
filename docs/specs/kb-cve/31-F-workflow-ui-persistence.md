@@ -101,8 +101,9 @@ On Windows release ZIP: login-free metadata-only/offline replay, documented cons
 ### Packaged synthetic offline control (2026-11-18)
 
 The existing `--self-test` entry retains the application-icon, optional-dependency,
-visible synthetic sample and panel-registry checks. It also executes a bounded
-authored KB/CVE investigation through the current desktop controllers, using one
+visible synthetic sample and panel-registry checks, including offending panel IDs
+and error classes on registry failure. It also executes a bounded authored KB/CVE
+investigation through the current desktop controllers, using one
 normal `QApplication.exec()` event loop on its owning thread. Calls from another
 thread or an already running event loop are refused before workspace creation.
 Timer continuations must propagate exceptions to the entry caller; premature

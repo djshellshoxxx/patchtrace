@@ -49,7 +49,7 @@ def test_source_pinned_entry_completes_synthetic_journey_and_cleans_temp(tmp_pat
     assert not list(temporary.glob('patchtrace-self-test-*'))
 
 
-@pytest.mark.parametrize('failure', ['sample', 'journey', 'cleanup'])
+@pytest.mark.parametrize('failure', ['sample', 'panel', 'journey', 'cleanup'])
 def test_entry_failure_keeps_nonzero_status_and_never_prints_success(tmp_path, failure):
     setup = {
         'sample': """
@@ -60,6 +60,10 @@ def broken_sample(root):
     service.project.sample = False
     return service
 ProjectService.sample = staticmethod(broken_sample)
+""",
+        'panel': """
+from patchtrace.gui.qt.host import PanelHost
+PanelHost.self_check = lambda self: ['sentinel-panel: PT-GUI-FACTORY ValueError']
 """,
         'journey': """
 from patchtrace.gui.qt import kb_selftest
@@ -81,7 +85,8 @@ selftest_loop.shutil.rmtree = refuse_cleanup
     result, temporary = child(tmp_path, setup)
     assert result.returncode != 0
     assert MARKER not in result.stdout and 'offline-investigation-receipt:' not in result.stdout
-    assert {'sample': 'Desktop self-test', 'journey': 'controlled journey failure',
+    assert {'sample': 'Desktop self-test', 'panel': 'sentinel-panel: PT-GUI-FACTORY ValueError',
+            'journey': 'controlled journey failure',
             'cleanup': 'controlled cleanup failure'}[failure] in result.stderr
     if failure != 'cleanup':
         assert not list(temporary.glob('patchtrace-self-test-*'))
