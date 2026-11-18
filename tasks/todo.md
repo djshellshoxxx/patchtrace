@@ -879,6 +879,7 @@ Plan and worker briefs: [unified-soundness-swarm-prompt-20261111](../docs/plans/
 ### [WB1-S7:search-panel]
 - [x] Search dock on the panel framework (states Q0-Q12, paged rows, navigation, cancel, shutdown).
 - [ ] Kinds menu, saved searches, suggestion popup, hit-span delegate, F3/Shift+F3, feature-owned paged model (see commit notes).
+- [x] Saved searches and recent queries, pure part: `search/saved.py` stores and tests (ported 2026-11-18 from `claude/instance-b-features`); the dock menu and CLI hook are still open.
 
 ### [WB2-G5G6:calls-panel]
 - [ ] Calls panel follow-ups: graph.export_dot, graph.callsite, graph/* settings, Tree as a lazy model, entry paths.
