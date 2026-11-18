@@ -57,6 +57,20 @@ Phase 1 hard filters for AUTO_VERIFIED pairs:
 
 Failing a hard filter emits reason codes instead of dropping row. USER_ASSERTED is allowed as separate lower-assurance mode for offline investigations: record full reason and never call it AUTO_VERIFIED. No auto-pick with more than one equally valid top pair. A SHA match against Winbindex record is a metadata consistency check only.
 
+Architecture-separated timeline amendment (2026-11-18): a Winbindex record can
+contain both native AMD64 and WoW64/x86 files under the same version key and KB.
+The selected product's supported machine partitions the timeline before change
+detection, variant detection and predecessor selection. An x86, ARM64 or unknown
+machine row must never interrupt an AMD64 SHA run, become its predecessor, or
+make distinct machine rows look like ambiguous variants of the selected file.
+All raw source records and parsed rows remain intact. A target KB listed only
+under other or unknown machines returns explicit `ARCH`; an AMD64 target with
+no earlier AMD64 observation returns `NO_OLDER`. Directly proposed mismatched
+pairs still carry grade X and `ARCH`. Multiple SHA variants within the selected
+machine remain ambiguous, and unchanged bytes already shipped in a preview
+remain unchanged in a later cumulative update. This does not widen supported
+architectures or establish a vulnerability fix boundary.
+
 Phase 2 stable preference tuple for compatible candidates:
 1. directly bracket target patch release with no known intervening updates;
 2. source-backed narrower build window;
