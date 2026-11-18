@@ -1,0 +1,46 @@
+{
+  "argv": [
+    "/workspace/scratch/3a6632a6e5ff/venv/bin/python",
+    "-m",
+    "pytest",
+    "-q",
+    "-o",
+    "addopts=",
+    "-p",
+    "no:cacheprovider",
+    "tests/test_research_qualification_rizin_identity.py",
+    "tests/test_research_qualification_adapters.py",
+    "tests/test_research_qualification_scoring.py",
+    "tests/test_research_qualification_scorerun.py",
+    "--junitxml=/workspace/scratch/e83fbf4505c3/rq-rizin-identity-evidence-20261118/final.xml"
+  ],
+  "cwd": "/workspace/scratch/e83fbf4505c3/repair-rq-rizin-identity",
+  "duration_seconds": 1.1660282049997477,
+  "env": {
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "PYTHONPATH": "src",
+    "QT_QPA_PLATFORM": "offscreen"
+  },
+  "exit_code": 0,
+  "junit": {
+    "errors": "0",
+    "failures": "0",
+    "hostname": "d05d1fa33505",
+    "name": "pytest",
+    "skipped": "0",
+    "tests": "202",
+    "time": "0.761",
+    "timestamp": "2026-11-18T03:06:32.198076-08:00"
+  },
+  "source": {
+    "commit": "61b7cfb49a6f496eb85efd091b2820d114e7d444",
+    "files": {
+      "docs/research/adapters.md": "f8fe7d468c76f35e5e2910a944f093172ef31498e130ce28e6d730079fe31c41",
+      "tests/test_research_qualification_rizin_identity.py": "eff5f0f22fff0658d884ca695c092e46910fb8991662831fcf432c51fdb81e28",
+      "tools/research_qualification/adapters/rizin.py": "421badb927d3ea9b7dd6e71b4cf5d949ece5c19d5c86df10e46f4c1ca09ab1c8"
+    },
+    "status": "",
+    "tree": "b639fb11db07761195fba5c309476474cd19caba"
+  },
+  "started_utc": "2026-11-18T11:06:32.032209+00:00"
+}

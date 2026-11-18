@@ -1,0 +1,125 @@
+{
+  "source_sha256": "b327eb5d0f8d7a0d6a9c8c2d1a7af1df134bc2a54c3e0da2eff0fb335547a627",
+  "source_size": 3300683,
+  "input_kind": "saved proxy capture, local unverified import",
+  "pages": [
+    {
+      "page": 1,
+      "inventory_id": "8dd1635ee4e79e16fa99f1b70db432b09bb6d2c4dc874d021b87f0d95f6dbf0c",
+      "import_id": "78fc4468dcb6c1766939491037f2bb7fdea013a60794becff9e44c0d90bdb3b8",
+      "retained": 5000,
+      "matching": 18761,
+      "excluded": 18834,
+      "omitted": 13761,
+      "rejected": 5244,
+      "records_scanned": 42845,
+      "logical_record_range": [
+        21263,
+        26503
+      ],
+      "conflict_count": 2030,
+      "witness_count": 537,
+      "aarsvc_witness": {
+        "conflict_group": "4bf9e93738147fc72683a424925cae97576e5174431c5489471f1c7a3bbd58e6",
+        "field": "size_bytes",
+        "first": {
+          "raw_sha256": "b327eb5d0f8d7a0d6a9c8c2d1a7af1df134bc2a54c3e0da2eff0fb335547a627",
+          "logical_record": 24355,
+          "line_start": 24355,
+          "line_end": 24355,
+          "section_index": 1
+        },
+        "second": {
+          "raw_sha256": "b327eb5d0f8d7a0d6a9c8c2d1a7af1df134bc2a54c3e0da2eff0fb335547a627",
+          "logical_record": 41380,
+          "line_start": 41380,
+          "line_end": 41380,
+          "section_index": 1
+        }
+      },
+      "retention_and_verified_replay_seconds": 3.907
+    },
+    {
+      "page": 2,
+      "inventory_id": "56e8f1cf36ed3bcbfed1e153ceddd210c8a3015bef8de2efa9155e24eafea8cf",
+      "import_id": "beaf23e27e70d343cf65cb88f09bdf12ab751cf6c162a93fec92fcf5903b6a85",
+      "retained": 5000,
+      "matching": 18761,
+      "excluded": 18834,
+      "omitted": 13761,
+      "rejected": 5244,
+      "records_scanned": 42845,
+      "logical_record_range": [
+        26504,
+        31522
+      ],
+      "conflict_count": 2871,
+      "witness_count": 767,
+      "aarsvc_witness": null,
+      "retention_and_verified_replay_seconds": 4.173
+    },
+    {
+      "page": 3,
+      "inventory_id": "f5cb4dbab5cadfc11901415752680c7a341c04e44a819dc0602667d59cd936d5",
+      "import_id": "6d97dc566d83b7ce190a941fe358810c0e3bb317832674ccedaf542453ada864",
+      "retained": 5000,
+      "matching": 18761,
+      "excluded": 18834,
+      "omitted": 13761,
+      "rejected": 5244,
+      "records_scanned": 42845,
+      "logical_record_range": [
+        31523,
+        36533
+      ],
+      "conflict_count": 2280,
+      "witness_count": 612,
+      "aarsvc_witness": null,
+      "retention_and_verified_replay_seconds": 4.39
+    },
+    {
+      "page": 4,
+      "inventory_id": "456215bb42db78c617149fb9ccd6e880adb1e7784ad7fc672663d34914455ce2",
+      "import_id": "3275af0de990b931ffcbfbac185c4fd9d6893ee0eeeb9bb82f9c09f4be68d3c6",
+      "retained": 3761,
+      "matching": 18761,
+      "excluded": 18834,
+      "omitted": 15000,
+      "rejected": 5244,
+      "records_scanned": 42845,
+      "logical_record_range": [
+        36534,
+        42845
+      ],
+      "conflict_count": 2719,
+      "witness_count": 1572,
+      "aarsvc_witness": {
+        "conflict_group": "f67784e5c83221ca39bca46b9ab3b108670a3af6f4f10000c283fa344cb2da8a",
+        "field": "size_bytes",
+        "first": {
+          "raw_sha256": "b327eb5d0f8d7a0d6a9c8c2d1a7af1df134bc2a54c3e0da2eff0fb335547a627",
+          "logical_record": 24355,
+          "line_start": 24355,
+          "line_end": 24355,
+          "section_index": 1
+        },
+        "second": {
+          "raw_sha256": "b327eb5d0f8d7a0d6a9c8c2d1a7af1df134bc2a54c3e0da2eff0fb335547a627",
+          "logical_record": 41380,
+          "line_start": 41380,
+          "line_end": 41380,
+          "section_index": 1
+        }
+      },
+      "retention_and_verified_replay_seconds": 5.499
+    }
+  ],
+  "amd64_rows_reachable": 18761,
+  "original_v1_replayed": true,
+  "source_provenance_unchanged": true,
+  "raw_object_unchanged": true,
+  "investigation_revisions": 0,
+  "cross_page_witness_replayed": true,
+  "repeated_retention_idempotent": true,
+  "capture_unchanged": true
+}

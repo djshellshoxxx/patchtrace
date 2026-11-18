@@ -1,0 +1,32 @@
+{
+  "candidate_reruns": 0,
+  "claim_limits": [
+    "No repaired-producer acceptance",
+    "No Windows/MSVC L2 acceptance",
+    "No CVE attribution accuracy",
+    "No desktop acquisition acceptance",
+    "No L3 result",
+    "No corpus accuracy percentage or bound"
+  ],
+  "controls_result_sha256": "6e35fa45f82752d9a3de73343310b0e7a3b47fca7b988eb3d2c6433dfd969875",
+  "finding": "Pinned rz-diff function path omits the symbol/entry seed pass performed by rizin automatic analysis; authored shared-library controls reproduce omitted exported bodies. Complete native rows are retained by the product adapter.",
+  "kind": "post-measurement-rizin-discovery-conclusion/1",
+  "native_repair_applied": false,
+  "original_oracle_sha256": "bbd619b791a64d39ec48740eebe8aeed84b0bff3dbd561b61bc0ce9aaed941d1",
+  "original_pilot_files_verified_unchanged": 16,
+  "original_pilot_manifest_sha256": "eac35dcc23d09ee59d9190986f8414560f6f19e4f4ac61225526cf24f3897f04",
+  "original_result": "MISS",
+  "patchtrace_commit": "9ac9cbeb8ba1947b5e0889e03dccad769a6d155b",
+  "primary_source_hashes": {
+    "canalysis.c": "d4b11429900a4596e5a5102e8ad3b7072d4bf709daeab67f179b0a16e8a68152",
+    "rizin.c": "e76d4229108d63922aeb028fa1e7bbfbb58e31a19db11c97191b9a630ec9408a",
+    "rz-diff.c": "d44bfe9d05da81ace0ce46eae8e69555c080719cebac3cb72d6686917ab1ea5b"
+  },
+  "product_edits": 0,
+  "proposed_native_change": "Seed rz_core_analysis_all for each input before rz_core_analysis_everything, or equivalent full automatic-analysis wrapper preserving interruption/error handling. Requires separate pinned build and qualification.",
+  "separate_future_naming_limit": "Actual native names include sym.; the current ranking preserves it and scorer compares literally. No current oracle/aliases/scorer changes.",
+  "target_executions": 0,
+  "tool_commit": "c3a90e9226d977f58f4e9c75f78fa6b07afe13c7",
+  "unsupported_shortcut": "Adding -B alone; function path already unconditionally calls analysis_everything.",
+  "utc": "2026-11-18T09:06:31.926836+00:00"
+}

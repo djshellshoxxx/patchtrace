@@ -1,0 +1,24 @@
+{
+  "argv_digest": "b7165fe711c2d7d25febc57cb9af3a1d3a55404045d66a54c7b6ba3b89e9da19",
+  "cache_key": "6cf767c72372a81b49fe4536061f494189ca011757dd46f479e9ea1bf55a0c8d",
+  "contract": "engine-run/1",
+  "duration_ms": 2004,
+  "engine": "rz-diff",
+  "engine_version": "0.9.1",
+  "error_code": null,
+  "executable_path_sha256": "653c151c81099908e84c229450be9df7feba885fb7c4a1803849415b915cbc70",
+  "match_set_id": "5a8f70cedd4dee05f21fd51e32b2584796a546f0c8dc5a315c59cef9e6c2105b",
+  "newer_sha256": "96bcb8a0b8f9201d12c81e30090d933e13e7679125c26d5d604ebb0f02028df0",
+  "older_sha256": "c3914b7f5f70b88dbfc25677211347ffa86ab38a833e065a5e51a0445c26133b",
+  "orientation": "older->newer",
+  "output_sha256": "52a42e2045d1c4d3368ed319eaf8be4ad40b5c1087806ed643a3be1e4ae7dbb2",
+  "provenance": {
+    "executable_sha256": "536987d5d0e5d2a35689f653502dc10f8be8751a46ef2ffd888e8d514ed9712e"
+  },
+  "returncode": 0,
+  "run_id": "de397a23fb0f49dbd70032f62e38e362d1df764d7cfa4bb73450b3bde7660e2c",
+  "started_utc": "2026-11-18T08:29:52.812680+00:00",
+  "status": "ok",
+  "stderr_tail": "ERROR: Cannot determine entrypoint, using 0x00002080.\nERROR: Cannot determine entrypoint, using 0x00002080.\n",
+  "superseded_by": null
+}

@@ -33,10 +33,11 @@ FileVersion = Annotated[str, Field(pattern=r'^[0-9]{1,5}(\.[0-9]{1,5}){3}$')]
 Uuid = Annotated[str, Field(pattern=r'^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$')]
 ErrorCodeText = Annotated[str, Field(pattern=r'^PT-KBC-[A-Z]{3,12}$')]
 
-SourceKind = Literal['cvrf-month', 'csaf', 'sug-cve', 'winbindex-file', 'kev', 'local-note']
+SourceKind = Literal['cvrf-month', 'csaf', 'sug-cve', 'winbindex-file', 'kev', 'local-note',
+                     'kb-file-csv', 'kb-support-html']
 Origin = Literal['local-import', 'https-fetch']
 Authenticity = Literal['unverified-local-file', 'tls-allowlisted-host', 'tls-allowlisted-host-hash-match']
-Lineage = Literal['msrc', 'winbindex', 'nvd', 'cisa', 'analyst']
+Lineage = Literal['msrc', 'winbindex', 'nvd', 'cisa', 'analyst', 'microsoft-support']
 Assertion = Literal['advisory_fact', 'index_claim', 'binary_observation', 'rule_hypothesis', 'analyst_statement']
 CoverageState = Literal['complete_in_scope', 'partial_in_scope', 'stale_cache', 'unknown_scope', 'not_searched']
 Family = Literal['windows-client', 'windows-server', 'other', 'unknown']
@@ -155,6 +156,23 @@ class SourceRef(Record):
     doc_id: Sha256
     pointer: Pointer
     assertion: Assertion
+
+
+class InventoryClaimRef(Record):
+    """A claim in original CSV bytes; deliberately separate from a JSON Pointer."""
+    import_id: Sha256
+    entry_id: Sha256
+    raw_sha256: Sha256
+    logical_record: int = Field(ge=1, le=100_000)
+    line_start: int = Field(ge=1)
+    line_end: int = Field(ge=1)
+    section_index: int = Field(ge=0, le=999)
+
+    @model_validator(mode='after')
+    def _span(self):
+        if self.line_end < self.line_start:
+            raise ValueError('a CSV record line span cannot run backwards')
+        return self
 
 
 class SearchScope(Record):
@@ -301,6 +319,7 @@ class ComponentHint(Contract):
     tier: Literal['A', 'B', 'C', 'D', 'E']
     reasons: tuple[Short, ...] = ()
     claim_refs: tuple[SourceRef, ...] = ()
+    inventory_refs: tuple[InventoryClaimRef, ...] = ()
     changed_in_kb: Literal['yes', 'no', 'unknown'] = 'unknown'
 
     @model_validator(mode='after')

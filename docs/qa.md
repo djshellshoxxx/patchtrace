@@ -1,5 +1,97 @@
 # QA and audit record
 
+## 2026-11-18 autonomous repair and exact-source checkpoint
+
+The combined retained-inventory/report-integrity source `9002a1f4` preserves current
+#304 ancestry and passes **2,866 affected tests, 4 explicitly unverified skips**.
+Independent reviews cover immutable object ownership, chronology/fixture/tooltip
+repairs and research Ghidriff ambiguity refusal. Native #304 Rizin Linux/Windows,
+BinDiff Linux and the clean Windows Ghidriff fixture have fresh retained receipts;
+full/Qt/package/security gates remain incomplete. No main merge, closure, tag or
+release is claimed. See the [complete checkpoint and hashed evidence](qa/autonomous-consolidation-20261118/checkpoint/README.md).
+
+## 2026-11-18 native research ranking identity guard
+
+The research Rizin adapter now refuses conflicting native endpoint/name ownership
+before reducing reports to a ranked name list, including conflicts on unchanged
+rows. Independent review also closed an orphan-native recognition gap. Final
+source `61b7cfb4` / identical-tree REST counterpart `2b4fbd50` passes 202 focused
+tests and 114 plus 18 independent controls; whole Ruff and whitespace checks pass.
+Six retained authored shared/executable outputs remain accepted; three PE outputs
+are conservatively refused for conflicting endpoint matches. No original pilot
+was rerun or rescored, and production matching/tool selection is unchanged.
+Legacy compatibility and source-to-binary identity remain explicit limitations.
+See [the exact contract, original failures and evidence](qa/rq-rizin-identity-20261118.md).
+
+## 2026-11-18 isolated native Rizin discovery experiment
+
+A narrow CLI correction against pinned Rizin 0.9.1 seeds function analysis before
+the existing deeper pass. An unchanged rebuild reproduces official-tool stdout
+and stderr on three authored controls. The patched shared/executable controls
+emit all four authored exports; nine raw outputs pass the existing normalizer.
+The integration reviewer independently repeats the shared comparison and source
+review. Production tools, the original CVE pilot MISS, oracles and scoring remain
+unchanged. This is native discovery evidence, with Windows and broader producer
+qualification still open. See [exact sources, tools, raw results and limits](qa/l2-rizin-discovery-patch-20261118.md).
+
+
+## 2026-11-18 current PW-01 and search integration
+
+The actual-parent merge `939d4a90` / REST-published `5eee1392` combines the
+reviewed PW continuation with current consolidation `75ffee38`. Independent
+review confirms 38 PW and 11 search source/test/tool paths retain their exact
+parent blobs; only two additive document conflicts were resolved. The 63-file
+combined selection passed **2,121 tests, with 2 native Windows skips**; whole
+Ruff and KBC schema checks passed. These focused results do not replace hosted
+full/Qt/native/package acceptance. See the [continuation and feature matrix](qa/pw01-current-integration-20261118.md).
+
+
+## 2026-11-18 PW-01 capacity and retained-page compatibility
+
+Frozen source `0be3b9eb` preserves current #303 `2b697222` as an actual parent,
+including its source-admission repair. V1 keeps its published 50,000-entry
+default; v2 pages retain an independent strict 5,000 ceiling. Captured v1/v2
+records replay without rebinding identities. Local inventory/service/CLI/Qt/schema
+verification passes **581 tests**; independent read-only review passes **44**
+overlapping focused/adversarial controls. Ruff, schema and whitespace checks pass.
+Nine sequential offline CLI operations on the existing real CSV preserve the
+37,595-entry v1 source, bounded AMD64 pages, exact conflict witnesses and prior
+IDs. An earlier external-launcher failure is retained separately. Peak child RSS
+was observed at 459,328 KiB, not an enforced ceiling. Hosted/full/Windows/package
+and production-fetch acceptance remain separate. See the
+[exact source and archived evidence](qa/pw01-capacity-compat-20261118.md).
+
+## 2026-11-18 PW-01 KB file inventories
+
+Implemented the registered bounded CSV/support-link contract, immutable source
+store, atomic scoped selection, seven CLI verbs and a separate KB inventory
+dialog. Independent parser/source, selection and interface reviews reproduced
+and verified repairs for input grouping, HTTP framing, product/build scope,
+failure preservation and keyboard deselection. The combined focused selection
+passes **816 tests**, including a later-architecture capacity regression.
+After normally merging repaired consolidation `121ffb0b`, the combined selection
+passes **1,016 tests**; fresh independent review repeats those tests and passes
+four additional socket-denied integration controls. The feature still supplies
+metadata-only selection and retains exact acquisition consent.
+A final independent source-admission review reproduced five races before the
+repair at `433440a3`. The repaired combined gate passes **1,023 tests**, and the
+independent reviewer passes all seven admission controls. Selection now checks
+the evaluated advisory snapshot inside admission, including repeated no-op
+selection; stale source or revision changes preserve prior decisions.
+Schemas, whole-tree Ruff, dependency compatibility and protobuf runtime checks
+pass. Full local and hosted runs are tracked against
+their own exact trees in [PW-01 evidence](qa/pw01-20261118.md).
+
+The original 5,000-entry budget truncated the real saved KB5036893 capture before
+its x64 section. The independently checked 50,000-entry correction scans all
+42,845 records and retains 37,595 rows across ARM64 and AMD64, including 2,020
+AMD64 metadata-only claims. Rejections and conflicts remain explicit; the CLI
+still returns partial / exit 3. Old captured budgets replay unchanged, and all
+other limits remain in force. Both production support/CSV fetch attempts
+failed with PT-KBC-ACQUIRE because this runner cannot resolve the approved hosts.
+No proxy or injected transport substituted for that live gate. PW-02 and native
+Windows/manual/release/accuracy acceptance remain separate.
+
 ## 2026-11-18 advisory anchor compatibility and final frozen L1 evidence
 
 The current successor preserves actual #305/#306 heads and repairs the reproduced
@@ -11,7 +103,6 @@ and whitespace passed. The preserved source-specific L1 replay at `f69614fa` is
 **73 PASS, 6 FAIL, 8 excluded**, exit 1; the six expected failures and all frozen
 inputs remain intact. Final-head hosted full/Windows/Qt/package/native gates are
 still mandatory. See [the integration and evidence record](qa/search-anchor-integration-20261118.md).
-
 
 ## 2026-11-18 CVE consolidation successor and real L1 replay
 
@@ -50,8 +141,11 @@ reproduced and repaired zero-address normalization, L-39 cap asymmetry,
 recent-query JSON ingress, and release archive type/link validation. The unsafe
 archive/delete helper is excluded. See the exact references, scope, focused test
 counts and deferred work in the [decision log](qa/branch-consolidation-20261118.md).
-Current-successor full QA and hosted gates remain pending until recorded against
-their exact commit; the historical section below is not current qualification.
+The successor full local run finished with **22,461 passed, 137 skipped,
+6 xfailed and 1 failed** in 1,794.23 seconds. The existing Unix-socket test fails
+because this executor denies AF_UNIX creation; no test was weakened or skipped.
+Exact-head hosted gates remain pending until their own results are recorded;
+the historical section below is not current qualification.
 
 ## 2026-11-18 full branch consolidation (PR #301)
 
@@ -1823,6 +1917,34 @@ At 09:29:12 UTC, #246 merged normally into main as `dc53b529560453e84cf45e356a40
 ## [CONTINUATION-WINDOWS-20261106:product-start-build]
 
 Frozen #247 Windows QA passed **20,331 tests, 94 skipped, 5 xfailed, 19 warnings in 2675.35s**, plus standalone/frozen/portable/installer checks. Artifact `13492805458`, source `37b77130`, contains the stored-product starting route. API/upload digest and tested/source tree identity agree. The 09:43–09:44 snapshot still has Linux packaging/smokes outstanding; original local failures and release/live/manual gates remain preserved. [Windows candidate and evidence](qa/continuation-windows-20261106.md).
+
+## 2026-11-18 retained source pages and first native L2 pilot
+
+Reviewed combined source `c023dec36a464c3e7e1a8689f52a22263f0c24c5` is published
+as `be9b168cf24620ad86d04be474660b5d31f655b9`, preserving PR303 and PR304 ancestry.
+Independent combined gate: 1076 passed, 2 native Windows skips; 10 independent
+service/CLI/Qt probes and a real 13-operation CLI journey passed. The saved
+KB5036893 CSV exposes all 18761 accepted AMD64 claims across four bounded pages
+with full-source conflict witnesses and unchanged original evidence. V1 replay
+compatibility and Qt witness truncation defects were reproduced and repaired.
+The whole-process local suite ended137 without a summary. Sequential full-file
+qualification also remains INCOMPLETE: four completed batches report 5308pass,
+1fail and31skip; eight other batches were killed without completed JUnit.
+Hosted exact-head acceptance remains separate. Production direct
+CSV fetching remains DNS-blocked here; proxy capture is offline evidence only.
+See [retained-page qualification](qa/pw01-retained-pages-20261118.md).
+
+The first independent source-backed ELF/GCC native pilot produced a preserved
+MISS/FAIL: Rizin emitted five unchanged matches and omitted the frozen expected
+http_parser_execute function. No target binary was executed, no expectation
+changed, and no aggregate bound claimed. See [first native pilot](qa/l2-native-pilot-20261118.md).
+
+
+## 2026-11-18 Rizin discovery diagnosis and pending native publication
+
+The sealed L2 MISS was followed by independently authored shared-library, executable and PE controls, without rerunning the candidate. Pinned Rizin source and retained native output show that the functions-mode diff path omits the symbol/entry seed pass used by ordinary automatic analysis. Operational success does not establish exhaustive discovery. A native repair and a separate source-oracle naming contract remain unqualified; no measured label or accuracy result changed. [Diagnosis and controls](qa/l2-rizin-discovery-20261118.md).
+
+PR304 now includes independently reviewed Windows publication repair at `6cc6b6b77564e12eaec2917877d94525a69c7102` (code540c7df, exact reviewed treeaa7749). The former bb4277 Windows failure remains retained; fresh hosted gates are pending. The continuation must integrate that exact ancestor before promotion.
 
 
 ## [WINPAIRS-WINDOWS-NATIVE-20261118]

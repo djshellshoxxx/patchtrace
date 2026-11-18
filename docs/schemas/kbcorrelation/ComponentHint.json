@@ -1,5 +1,59 @@
 {
   "$defs": {
+    "InventoryClaimRef": {
+      "additionalProperties": false,
+      "description": "A claim in original CSV bytes; deliberately separate from a JSON Pointer.",
+      "properties": {
+        "entry_id": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Entry Id",
+          "type": "string"
+        },
+        "import_id": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Import Id",
+          "type": "string"
+        },
+        "line_end": {
+          "minimum": 1,
+          "title": "Line End",
+          "type": "integer"
+        },
+        "line_start": {
+          "minimum": 1,
+          "title": "Line Start",
+          "type": "integer"
+        },
+        "logical_record": {
+          "maximum": 100000,
+          "minimum": 1,
+          "title": "Logical Record",
+          "type": "integer"
+        },
+        "raw_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Raw Sha256",
+          "type": "string"
+        },
+        "section_index": {
+          "maximum": 999,
+          "minimum": 0,
+          "title": "Section Index",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "import_id",
+        "entry_id",
+        "raw_sha256",
+        "logical_record",
+        "line_start",
+        "line_end",
+        "section_index"
+      ],
+      "title": "InventoryClaimRef",
+      "type": "object"
+    },
     "SourceRef": {
       "additionalProperties": false,
       "properties": {
@@ -73,6 +127,14 @@
       "pattern": "^[0-9a-f]{64}$",
       "title": "Hint Id",
       "type": "string"
+    },
+    "inventory_refs": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/InventoryClaimRef"
+      },
+      "title": "Inventory Refs",
+      "type": "array"
     },
     "reasons": {
       "default": [],

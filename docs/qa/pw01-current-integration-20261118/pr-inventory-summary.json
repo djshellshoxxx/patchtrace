@@ -1,0 +1,30 @@
+{
+  "input_count": 54,
+  "complete_local_file_comparisons": 54,
+  "complete_review_lists": 54,
+  "complete_inline_lists": 54,
+  "complete_ci_overviews": 54,
+  "fresh_base_refs": 14,
+  "historical_pr_base_sha_differs": 36,
+  "review_submissions": 0,
+  "inline_comments": 0,
+  "relationship_counts": {
+    "pr302": {
+      "diverged": 42,
+      "ancestor": 8,
+      "equal": 1,
+      "descendant": 3
+    },
+    "candidate75": {
+      "diverged": 41,
+      "ancestor": 11,
+      "equal": 1,
+      "descendant": 1
+    }
+  },
+  "raw_rest_receipts": 244,
+  "rest_error_receipts_preserved": 13,
+  "git_commands": 676,
+  "original_scope_and_disposition_preserved": true,
+  "incomplete_metadata_prs": []
+}

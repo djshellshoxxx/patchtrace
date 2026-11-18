@@ -1,0 +1,174 @@
+{
+  "captured_at": "2026-11-18T14:26:08.472599+00:00",
+  "repository": "djshellshoxxx/patchtrace",
+  "base_pr307": "1418617a80d6057de11f985488cfe6043a7787a2",
+  "sharing_fix_parent": "ba4da2d59076b61fd95435ece6321884d517f1bd",
+  "implementation_commit": "68aa6a5063172a2f46dce48a4373397f3f4ec95e",
+  "source_note": "The evidence checkpoint removes trailing empty lines in owned_publication.py; executable source is unchanged. Exact final source bytes are bound below.",
+  "test_environment": {
+    "python": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+    "executable": "/workspace/scratch/3a6632a6e5ff/venv/bin/python",
+    "owned_publication": "/workspace/scratch/c7a9e8d98848/object-publication/src/patchtrace/owned_publication.py",
+    "store": "/workspace/scratch/c7a9e8d98848/object-publication/src/patchtrace/kbcorrelation/store.py"
+  },
+  "red_provenance": "The original 11-failure reproduction used the sharing-fix parent. Root and alias red tests captured intermediate uncommitted implementations before the corresponding corrections.",
+  "results": {
+    "original_red": {
+      "failed": 11,
+      "passed": 2
+    },
+    "root_red": {
+      "failed": 3,
+      "deselected": 13
+    },
+    "alias_red": {
+      "failed": 2,
+      "deselected": 19
+    },
+    "focused": {
+      "passed": 393,
+      "skipped": 3
+    },
+    "native_prerequisite_local_linux": {
+      "passed": 134,
+      "skipped": 3
+    },
+    "kb_area": {
+      "passed": 2209,
+      "failed": 1,
+      "skipped": 1
+    },
+    "ruff_src_tests_tools": "passed",
+    "stdlib_only_research_command": "passed"
+  },
+  "remaining_failure": "tests/test_kbc_fixtures.py::test_manifest_lists_every_fixture_and_nothing_else: inventory-legacy-tsp.json and inventory-capacity-compat.json are missing from the starting PR307 manifest; independent integration repair owned by root/CVE reviewer.",
+  "qualification": "No native Windows execution, package, release, or tag was performed for this implementation. Full combined-head QA and native publication controls remain required.",
+  "source_files": [
+    {
+      "path": ".github/workflows/qa-windows.yml",
+      "sha256": "db5ad8bca023838fd1a7df381fac9afcd9fc4985c9be5b6457eb41e14b128643"
+    },
+    {
+      "path": "docs/modules.md",
+      "sha256": "e05a8e35c18244b620a3b6ea0710def0b56146e256e3d9be4437dfad765948f2"
+    },
+    {
+      "path": "docs/research/winpairs.md",
+      "sha256": "d0e47694579508db7e770d74c66be458b5be30c35597670abe31a2e56f5aeae1"
+    },
+    {
+      "path": "docs/specs/kb-file-inventory-csv.md",
+      "sha256": "f229acc1a47367186408722d2b488274421fa7a173529dbdf1b43b5381523aa4"
+    },
+    {
+      "path": "src/patchtrace/kbcorrelation/inventory_store.py",
+      "sha256": "bbd462564abeb5a7ba0076e5b3597604bb8090a720d25522eabe302d141ec418"
+    },
+    {
+      "path": "src/patchtrace/kbcorrelation/store.py",
+      "sha256": "df07391848ebaafd6a175888877f89de2f09bf506760f2e19f1eba1c5e3d93da"
+    },
+    {
+      "path": "src/patchtrace/owned_publication.py",
+      "sha256": "5903c6b9b568e20267880ffdf1ab47f02c35590b6ead6cddb3f5bfaf9b546e7b"
+    },
+    {
+      "path": "tests/test_kbc_contracts.py",
+      "sha256": "6d89b255108976b8fc0dc012f07ffeb6f8be28155f42353285dbb0d2b8793a69"
+    },
+    {
+      "path": "tests/test_kbc_object_publication.py",
+      "sha256": "c8486164904aeec06e32bad3305b050b3f7687c11dc32dac3849711f63736247"
+    },
+    {
+      "path": "tests/test_owned_publication.py",
+      "sha256": "717a82d6e39649cf900dacba6696234005eb950d3145d9f582020b98d781a7be"
+    },
+    {
+      "path": "tools/research_qualification/winpairs.py",
+      "sha256": "a46d86edb6aadbd955c6d8f898da6ad69923a60c9f2b52496956498a99167acd"
+    }
+  ],
+  "archive": {
+    "path": "evidence.zip",
+    "bytes": 61923,
+    "sha256": "ab8a957810e290ea4b3bcd2fc073a358e3394eaa179ab0be8596939a367e6f3e"
+  },
+  "payloads": [
+    {
+      "path": "object-publication-red.log",
+      "bytes": 16011,
+      "sha256": "1419e707860027a33c8a5a739de84acb13b8873325a0c23648bb08a06210653a"
+    },
+    {
+      "path": "object-publication-red.xml",
+      "bytes": 17239,
+      "sha256": "12a8bfb97dc7db75a23292e25cd88df4ae594d8b29a43740485e4d0daf8c4dc2"
+    },
+    {
+      "path": "object-publication-root-red.log",
+      "bytes": 5359,
+      "sha256": "ad5b12cc3ff237cfcba140bd9c947fb9dae1b874174fd30915db739b76b5563b"
+    },
+    {
+      "path": "object-publication-root-red.xml",
+      "bytes": 5464,
+      "sha256": "618955f5594c8ddf0ad31648a424bbb69fec9a109ffefeff189e12293e5df6b4"
+    },
+    {
+      "path": "object-publication-alias-red.log",
+      "bytes": 4609,
+      "sha256": "616d944245a9056cf9ce99171988e29841bf0ee9590a540599c5bc3a4bb93c78"
+    },
+    {
+      "path": "object-publication-alias-red.xml",
+      "bytes": 5538,
+      "sha256": "1c0bb61678b2e46feb980b57d2b4a47c8098a85f2da9b52d19735d7a8e169b8d"
+    },
+    {
+      "path": "object-publication-focused.log",
+      "bytes": 511,
+      "sha256": "0bef763c6236bf0678fc05033c3b96e863b3c0705ec7973155c5b3ed225f6fda"
+    },
+    {
+      "path": "object-publication-focused.xml",
+      "bytes": 57469,
+      "sha256": "183be0821f389bfd0e725173bf942196df741b091af5b9b7d22f9cd2336b7d6f"
+    },
+    {
+      "path": "object-publication-native-gate.log",
+      "bytes": 191,
+      "sha256": "4ac315cfca78d2fa3778de477f5261fd9616d7d8621b59dafec71bbb2a7607ed"
+    },
+    {
+      "path": "object-publication-native-gate.xml",
+      "bytes": 22377,
+      "sha256": "4678d09a55015b96a53e5b59bf557914c41672cbf2d81121e76f3398f080b4a2"
+    },
+    {
+      "path": "object-publication-kb-final.log",
+      "bytes": 3372,
+      "sha256": "b77716335184c8f685e74721534ba3fd0f65242b976f3b75ce85e303f992c62e"
+    },
+    {
+      "path": "object-publication-kb-final.xml",
+      "bytes": 313009,
+      "sha256": "4add61a343f88d70dbd0494a882fc029eeb16114e85b52bf0ce0956d6ce6c6f6"
+    },
+    {
+      "path": "object-publication-ruff.log",
+      "bytes": 19,
+      "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+    },
+    {
+      "path": "object-publication-stdlib-help.log",
+      "bytes": 654,
+      "sha256": "26bdbe1b0fcd145cfa730f51d87cfd4711158add8c14830da0dffa15927c50a2"
+    },
+    {
+      "path": "object-publication-source-provenance.json",
+      "bytes": 355,
+      "sha256": "6646f7285d2dba9b1c5e16b1382e306634763ef7a02863c54d6327e98440f001"
+    }
+  ]
+}

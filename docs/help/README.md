@@ -46,6 +46,7 @@ Each built panel is a dock. Open it from the **View** menu, or with its shortcut
 - [Build environment panel](27-build-environment-panel.md) - `Build environment` (`Ctrl+Shift+B`)
 - [Detection rules panel](28-detection-rules-panel.md) - `Detection rules` (`Ctrl+Shift+R`)
 - [KB and CVE panel](29-kb-and-cve-investigation-panel.md) - `KB and CVE` (`Ctrl+Shift+K`)
+- [KB file inventories](kb-file-inventory.md) - saved CSV, support links and explicit filename selection
 - [Exploitation context panel](30-kev-context-panel.md) - `Exploitation context` (`Ctrl+Shift+X`)
 - [Leads panel](31-leads-panel.md) - `Leads` (`Ctrl+Shift+L`)
 - [Series panel](32-series-panel.md) - `Series` (no shortcut)
@@ -98,6 +99,7 @@ Every verb is also listed by `patchtrace --help`. Each page gives the verb's sub
 - [`fabric`](65-cli-fabric.md) - read stored anchors
 - [`graph`](66-cli-graph.md) - call-graph explorer over stored call lists
 - [`kb`](67-cli-kb.md) - KB and CVE correlation
+- [`kb inventory`](kb-file-inventory.md) - bounded CSV import, inspection, scoped selection and consented sources
 - [`kev`](68-cli-kev.md) - CISA KEV catalog
 - [`panels`](69-cli-panels.md) - list and check the panel manifest
 - [`pilot`](70-cli-pilot.md) - ordered leads for changed pairs

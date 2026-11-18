@@ -1,0 +1,12 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+_________________ test_every_registry_id_is_applied_somewhere __________________
+tests/test_tooltips.py:216: in test_every_registry_id_is_applied_somewhere
+    check_text(widget.objectName(), widget.toolTip())
+tests/test_tooltips.py:59: in check_text
+    assert text, f'{label}: empty tooltip'
+E   AssertionError: kb.inventory.status: empty tooltip
+E   assert ''
+=========================== short test summary info ============================
+FAILED tests/test_tooltips.py::test_every_registry_id_is_applied_somewhere - ...
+1 failed in 1.46s

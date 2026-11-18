@@ -1,0 +1,71 @@
+{
+  "head": "939d4a9051ecbd6ebc0cc97e20756c1a881ee070",
+  "tree": "11358e92063107e484dc30906f55ddeb8a61dd4f",
+  "parents": [
+    "d492c0e630c783c287e4143266fd87f7a949317c",
+    "75ffee3840894adb52aff7f3df28043cc8e832ba"
+  ],
+  "merge_base": "f69614fa6b5bb9d25d4233b06a4c4ce179964a52",
+  "distinct_source_test_tool_paths": {
+    "pw": [
+      "src/patchtrace/kbcorrelation/cli.py",
+      "src/patchtrace/kbcorrelation/cli_inventory.py",
+      "src/patchtrace/kbcorrelation/components.py",
+      "src/patchtrace/kbcorrelation/contracts.py",
+      "src/patchtrace/kbcorrelation/inventory_contracts.py",
+      "src/patchtrace/kbcorrelation/inventory_csv.py",
+      "src/patchtrace/kbcorrelation/inventory_qt.py",
+      "src/patchtrace/kbcorrelation/inventory_selection.py",
+      "src/patchtrace/kbcorrelation/inventory_service.py",
+      "src/patchtrace/kbcorrelation/inventory_store.py",
+      "src/patchtrace/kbcorrelation/panel_qt.py",
+      "src/patchtrace/kbcorrelation/service.py",
+      "src/patchtrace/kbcorrelation/sources/inventory_fetch.py",
+      "src/patchtrace/kbcorrelation/sources/inventory_http.py",
+      "src/patchtrace/kbcorrelation/sources/support_links.py",
+      "src/patchtrace/kbcorrelation/store.py",
+      "src/patchtrace/secondary/cli_import.py",
+      "tests/fixtures/kbcorrelation/inventory-capacity-compat.json",
+      "tests/fixtures/kbcorrelation/inventory-legacy-tsp.json",
+      "tests/test_gui_tasks.py",
+      "tests/test_kbc_contracts.py",
+      "tests/test_kbc_inventory_capacity_compat.py",
+      "tests/test_kbc_inventory_cli.py",
+      "tests/test_kbc_inventory_csv.py",
+      "tests/test_kbc_inventory_pages.py",
+      "tests/test_kbc_inventory_retention_adapters.py",
+      "tests/test_kbc_inventory_schemas.py",
+      "tests/test_kbc_inventory_selection.py",
+      "tests/test_kbc_inventory_service.py",
+      "tests/test_kbc_inventory_source_admission.py",
+      "tests/test_kbc_inventory_sources.py",
+      "tests/test_kbc_inventory_store.py",
+      "tests/test_kbc_schemas.py",
+      "tests/test_research_qualification_git_identity.py",
+      "tests/test_ui_kb_inventory.py",
+      "tests/test_ui_kb_inventory_retention.py",
+      "tools/generate_kbc_schemas.py",
+      "tools/research_qualification/receipt.py"
+    ],
+    "search": [
+      "src/patchtrace/search/anchor_cli.py",
+      "src/patchtrace/search/anchors.py",
+      "src/patchtrace/search/contracts.py",
+      "tests/test_kbf04_false_positive_control.py",
+      "tests/test_kbf04_kb_lineage.py",
+      "tests/test_no_worker_opens_project.py",
+      "tests/test_osv_not_wired.py",
+      "tests/test_search_anchor_compatibility.py",
+      "tests/test_search_anchors.py",
+      "tests/test_search_anchors_real.py",
+      "tests/test_source_lineage_counts_once.py"
+    ]
+  },
+  "all_source_test_tool_blobs_equal_to_owning_parent": true,
+  "conflicts_resolved": [
+    "docs/qa.md",
+    "tasks/todo.md"
+  ],
+  "resolution": "Additive sections from both sides retained; no source/test/tool conflict.",
+  "worktree_clean": true
+}

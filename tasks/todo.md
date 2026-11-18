@@ -1,5 +1,63 @@
 # PatchTrace delivery tracker
 
+## 2026-11-18 autonomous consolidation checkpoint
+
+- [x] Refresh all 307 original branch tips and 297 PR records; retain exact ancestry/patch/conflict inventory without claiming exhaustive semantic review.
+- [x] Publish reviewed Windows/chronology repairs to #304 `d8c02cae` with a SHA guard; preserve all source history and `[no release]`.
+- [x] Independently review and combine immutable KB object publication, fixture/tooltip repair and Ghidriff ranking identity refusal at `9002a1f4`; 2,866 affected passes, four explicit skips; whole Ruff/whitespace pass.
+- [x] Refresh reviews, inline review comments and actual-head check runs for all 55 then-open PRs; all review/comment collections are empty, independent evidence remains separately recorded.
+- [x] Publish reviewed non-clobber strings export as #308; complete source-reviewed paired raw-window desktop slice for a focused follow-on PR.
+- [ ] Finish saved/recent search independent review; complete shared CVE assessment staleness, release qualification and primary environment-isolation repairs.
+- [ ] Complete full exact-head Linux/Windows/Qt/native/package/security qualification; the local full-suite attempt ended incomplete and must not count as a pass.
+- [ ] Merge qualified #304 into main, retarget/requalify #307, then close only proved replacements; never delete branches or publish/tag a release.
+- [ ] Complete real CVE/KB-to-function source/native journeys, approved acquisition, PW-02, CVRF-to-pilot bridge and remaining audit/feature dispositions.
+
+[Checkpoint and raw evidence](../docs/qa/autonomous-consolidation-20261118/checkpoint/README.md).
+
+## 2026-11-18 current PW-01 and search continuation
+
+- [x] Preserve actual current #303 and #304 histories, including 50,000-entry v1 compatibility, strict 5,000-entry v2 pages, source admission and advisory-search repairs.
+- [x] Pass the exact combined 63-file selection: 2,121 tests, 2 native Windows skips; whole Ruff/schema checks pass. Independently verify merge preservation and archived raw evidence.
+- [x] Preserve the actual CSV replays, immutable first L2 MISS and source-specific L1 FAIL receipt without new accuracy claims.
+- [x] Build an isolated pinned Rizin discovery correction, prove unchanged-rebuild equivalence, and retain native authored controls plus an independent shared-pair rerun; keep production selection and scoring unchanged.
+- [x] Refuse observable native Rizin endpoint/name ambiguity before research ranking; preserve red controls and the orphan-record follow-up. Final source `61b7cfb4` passes 202 focused tests and 114 plus 18 independent controls; native-record replay is separate from accuracy scoring. See [identity evidence](../docs/qa/rq-rizin-identity-20261118.md).
+- [ ] Propose a separately pinned tool update with Windows/native/cancellation/ownership qualification and a prospective symbol-identity contract before production adoption or new scored claims.
+- [ ] Qualify and merge #304 with the exact-head REST SHA guard and `[no release]`; then retarget this inventory continuation to canonical main and re-evaluate its exact-head/base gates before merging.
+- [ ] Verify main integration and fresh PR heads before superseded closures; preserve every remote branch and remaining partial scope.
+- [ ] Complete production source retrieval, native/manual UI acceptance, separate PW-02, prospective ranking/label contracts and explicitly approved L3 acquisition.
+
+[Current handoff and feature matrix](../docs/qa/pw01-current-integration-20261118.md).
+
+
+## 2026-11-18 current PW-01 capacity compatibility
+
+- [x] Preserve fresh #303 `2b697222` as an actual parent, including its independently reviewed source-admission repair.
+- [x] Keep v1 default/hard 50,000 and separate v2 default/hard 5,000; replay captured 5,000/50,000 v1 and existing v2 bytes/IDs exactly.
+- [x] Preserve raw red receipts; pass 581 focused tests, independent 44 controls, Ruff/schema checks, and nine sequential offline real-CSV CLI operations at source `0be3b9eb`.
+- [ ] Integrate the current consolidation parent and qualify the resulting exact head on all required hosted/native/package gates before merge completion.
+
+[Source, scope and archived evidence](../docs/qa/pw01-capacity-compat-20261118.md).
+
+## 2026-11-18 retained inventory pages and native pilot
+
+- [x] Preserve exact published #303 and #304 histories in the inventory continuation; keep every remote branch.
+- [x] Retain explicitly chosen source architecture/pages without raising input/entry budgets, changing v1 identities or mutating investigations; full-source conflict witnesses and incomplete-scan selection refusal are verified.
+- [x] Reproduce and repair legacy `.tsp` replay drift and bounded Qt conflict-witness visibility; preserve original failure receipts.
+- [x] Qualify the actual saved KB5036893 CSV through backend replay and 13 shipped-CLI operations: four AMD64 pages expose 18,761 accepted claims; source, original import and provenance remain unchanged.
+- [x] Independently review combined code `c023dec3` / published `be9b168c`: 1,076 focused passes, 2 native Windows skips and 10 external probes; Ruff and schema checks pass.
+- [x] Repair bounded linked-worktree Git identity in future research receipts without editing earlier receipts.
+- [x] Freeze and independently review one real open-source patch oracle, compile both sides identically, run native Rizin once and retain the MISS / FAIL outcome; no target execution or accuracy bound.
+- [ ] Complete current-head hosted consolidation gates, SHA-guard merge with `[no release]`, then reconcile only demonstrably replaced PRs.
+- [ ] Complete the separate inventory continuation's full/Qt/Windows/package/native gates and merge after its consolidation prerequisite.
+- [ ] Complete production CSV retrieval on a host with working direct DNS/TLS; saved proxy capture is not that acceptance.
+- [x] Diagnose the L2 function-discovery miss with pinned source and authored shared/executable/PE controls; preserve the scored pilot and separate source-only options review.
+- [ ] Separately specify/build/qualify native symbol-seeding repair and a prospective source-oracle naming contract; no rescoring or accuracy promotion from diagnosis.
+- [ ] Complete reviewed real Windows pair provenance/consent and L3 labels before acquisition/scoring; no implicit target downloads.
+
+[Inventory evidence and handoff](../docs/qa/pw01-retained-pages-20261118.md);
+[native L2 pilot](../docs/qa/l2-native-pilot-20261118.md);
+[post-measurement discovery diagnosis](../docs/qa/l2-rizin-discovery-20261118.md).
+
 ## 2026-11-18 advisory anchor integration
 
 - [x] Independently review #305/#306 and preserve both actual heads in successor history.
@@ -11,7 +69,6 @@
 - [ ] Verify main and fresh PR heads before any superseded closure; keep every remote branch and partial/unresolved scope.
 
 [Search integration and source-specific L1 evidence](../docs/qa/search-anchor-integration-20261118.md).
-
 
 ## 2026-11-18 refreshed #302 integration
 
@@ -59,7 +116,10 @@
 - [x] Independently review six narrow correctness ports from concurrent #304 and repair ZIP normalization, ambiguous change provenance and bounded pair enumeration; preserve its separate remaining scope and existing release policy.
 - [ ] Keep concurrent #305/#306 and the pre-existing mixed Windows 10 source-key issue separately tracked; do not turn their remaining scope into a completed-consolidation claim.
 - [ ] Qualify and merge `codex/consolidation-reviewed-20261118` on current-head/base hosted gates; then close only exactly accounted-for PRs with replacement references.
-- [ ] Implement and independently verify PW-01 bounded CSV parsing, support links/retrieval, provenance/store, CLI and KB panel; keep its registered spec and schemas current.
+- [x] Implement and independently review PW-01 bounded CSV parsing, support links/retrieval, provenance/store, CLI and KB panel; register contracts and regenerate schemas. Combined focused gate: 816 passed, including later-section capacity while preserving old-budget replay. See [PW-01 evidence](../docs/qa/pw01-20261118.md).
+- [ ] Qualify and merge PW-01 on current-head hosted Linux/Windows/package gates; complete production Microsoft retrieval on a runner with direct DNS/TLS access. Both exact-plan attempts here returned PT-KBC-ACQUIRE after DNS failure; the saved real capture is offline evidence only.
+- [x] Normally merge corrected consolidation `121ffb0b` into PW-01, retain both QA sections, and independently verify 1,016 combined project tests plus four socket-denied integration controls. Current published-head hosted gates remain separate.
+- [x] Reproduce and independently review the PW-01 source-admission race repair at `433440a3`: current source-snapshot and no-op revision guards; 1,023 combined tests and seven independent admission controls pass. Current-head hosted qualification remains pending.
 - [ ] Follow PW-01 with the separate bounded local MSU/CAB PW-02 slice; native Windows extraction remains a distinct acceptance gate.
 - [ ] Keep manual desktop/accessibility, RB-01 targeted live, original timeout-pair, clean-machine release and L1/L2/L3 acceptance open until evidenced.
 - [ ] Separate strings-export follow-ups: race-safe no-clobber publication and compatible document-level extraction/truncation/redaction metadata, including empty exports.

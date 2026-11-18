@@ -1,0 +1,1 @@
+{"all_source_claims_reachable": "PASS", "architecture_policies": 4, "deterministic_replay": "PASS", "global_conflict_oracle": "PASS", "pages_verified": 1770, "sources": 80}

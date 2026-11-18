@@ -181,3 +181,9 @@ This later draft registration does not refresh the historical tables or approve 
 | File | Proposed canonical alias | Status | Basis |
 |---|---|---|---|
 | `docs/specs/DOCKABLE-WORKSPACE-SPEC.md` | SPEC-DW-01 (proposed; cite by path) | draft | Compact adaptation of #183 at `ed70e6ddac449a42f843f1c60aa878416ab31727`; source baseline rechecked at candidate #235 `ccfe175d44a70947203c75bbd033a9a9e2633f0f`. Existing feature docks are present; independently dockable core sections, presets and durable workspace migration remain proposed. No runtime or release acceptance. |
+
+## PW-01 KB inventory extension
+
+| Path | Canonical alias | Status | Owner |
+|---|---|---|---|
+| `docs/specs/kb-file-inventory-csv.md` | PW-01 | implemented and independently reviewed; hosted/live acceptance tracked in QA | kbcorrelation inventory modules |

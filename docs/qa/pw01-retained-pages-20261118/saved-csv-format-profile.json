@@ -1,0 +1,84 @@
+{
+  "command": [
+    "/workspace/scratch/e83fbf4505c3/pw01-live-evidence/20261118T074241Z-e077563/profile_saved_csv.py"
+  ],
+  "created_at": "2026-11-18T07:47:45.130827+00:00",
+  "crlf_count": 42845,
+  "data_records": 42839,
+  "encoding": "UTF-8 without BOM",
+  "field_width_counts": {
+    "0": 2,
+    "1": 2,
+    "5": 42841
+  },
+  "implementation_used_only_for_name_rule": "e0775630700300ce2bb0cf0dbcdb302493b9260e",
+  "logical_records": 42845,
+  "other_structural_rows": [],
+  "physical_lines": 42845,
+  "qualification": "independent saved-source format profile; not a production parser result",
+  "sections": [
+    {
+      "banner_fields": [
+        "Windows 11 version 22H2 LCU arm64-based"
+      ],
+      "data_records": 21256,
+      "examples_path_names": [
+        {
+          "filename": "arm\\UNIDRV.DLL",
+          "logical_record": 4
+        },
+        {
+          "filename": "arm\\UNIRES.DLL",
+          "logical_record": 5
+        },
+        {
+          "filename": "arm\\UNIDRVUI.DLL",
+          "logical_record": 6
+        }
+      ],
+      "header_record": 2,
+      "logical_record": 1,
+      "not_versioned": 11541,
+      "path_valued_names": 2357,
+      "physical_line": 1,
+      "rejected_raw_names": 2422,
+      "safe_non_pe_names": 12248,
+      "safe_pe_names": 6586,
+      "version_four_components": 9715
+    },
+    {
+      "banner_fields": [
+        "Windows 11 version 22H2 LCU x64-based"
+      ],
+      "data_records": 21583,
+      "examples_path_names": [
+        {
+          "filename": "Amd64\\UNIDRV.DLL",
+          "logical_record": 21397
+        },
+        {
+          "filename": "Amd64\\UNIRES.DLL",
+          "logical_record": 21398
+        },
+        {
+          "filename": "Amd64\\UNIDRVUI.DLL",
+          "logical_record": 21399
+        }
+      ],
+      "header_record": 21262,
+      "logical_record": 21261,
+      "not_versioned": 13313,
+      "path_valued_names": 2753,
+      "physical_line": 21261,
+      "rejected_raw_names": 2822,
+      "safe_non_pe_names": 13650,
+      "safe_pe_names": 5111,
+      "version_four_components": 8270
+    }
+  ],
+  "source": {
+    "path": "/workspace/scratch/e83fbf4505c3/pw01-live-evidence/20261118T074241Z-e077563/proxy-csv-raw.csv",
+    "sha256": "b327eb5d0f8d7a0d6a9c8c2d1a7af1df134bc2a54c3e0da2eff0fb335547a627",
+    "size": 3300683
+  }
+}

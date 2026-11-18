@@ -58,6 +58,18 @@ Test dozens of malicious filenames, Unicode homoglyphs, path traversal, duplicat
 
 Interface: discover_components(request:ComponentRequest, claims:tuple[SourceComponentClaim,...], inventory:PackageInventory|None, metadata_index:FilenameIndex|None)->ComponentSearchResult. Service layer performs all fetching and passes validated input.
 
+## PW-01 CSV selection amendment (2026-11-18)
+
+The registered [PW-01 contract](../kb-file-inventory-csv.md) adds a bounded file
+inventory source and explicit scoped selection. Raw CSV claims use logical
+record/physical-line references, separate from advisory JSON Pointers. Their
+selected names remain tier E with the analyst's explicit mapping, every source
+claim and local/fetched authenticity visible. A support file list is neither a
+validated package inventory nor a CVE-fix claim. Selection is revision/coverage
+bound, refuses known product/build/architecture contradictions, and feeds only
+names into the existing verified file-index/pair pipeline. Original metadata and
+conflicts remain visible; no hash, pair order or target bytes are invented.
+
 ### Telephony filename hints (2026-11-18)
 
 Use the shared acquisition `.tsp` allowance for explicit analyst filenames. An

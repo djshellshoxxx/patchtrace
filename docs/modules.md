@@ -1,5 +1,21 @@
 # Module index
 
+## Owned immutable file publication (2026-11-18)
+
+`src/patchtrace/owned_publication.py` is the shared stdlib publication boundary for
+immutable files. It holds destination directories and the exact source object,
+refuses reparse/identity uncertainty, and never replaces a destination. Optional
+existing-content reuse requires a bounded read and a caller-supplied validator.
+An expected root anchor binds workspace object operations to the directory
+identity captured when its SQLite owner opened, including final revalidation.
+`WorkspaceStore.write_object` supplies bounded gzip/digest validation; the research
+winpairs helper reuses the same platform machinery without admitting existing
+files. Windows uses rooted native handles; Linux uses anonymous descriptor-backed
+staging. Tests: `test_kbc_object_publication.py` and the existing winpairs boundary
+modules, plus `test_owned_publication.py`. Portable tests do not certify Windows
+filesystem behavior; the QA publication prerequisite runs these controls on both
+Linux and Windows before the full suite.
+
 | Module | Responsibility | Verification seam |
 |---|---|---|
 | `tools/branch_inventory.py` | Read-only full-history branch ancestry, patch evidence and exact-tip inventory replay; no ref mutation or deletion authorization | Real authored Git graphs and atomic report preservation in `tests/test_branch_inventory.py` |
@@ -1385,3 +1401,23 @@ unchanged. Tests: `test_kb_product_start_20261106.py`,
 | manual corrections exchange and review CLI | corrections_exchange.py; corrections_cli.py; review_cli.py; cli_commands/corrections.py; cli_commands/review.py | Bound transactional correction exchange, immutable export, headless reviews through ProjectService | persistence, models, service | tests/test_corrections_cli.py; tests/test_review_cli.py; synthetic fixtures |
 
 | timeout setup UI | src/patchtrace/ui_timeout.py | Preserved-text 10..86400-second validation, explicit 1h/2h/4h presets and inline errors for Setup; no backend execution or settings writes | PySide6, tooltip registry | tests/test_ui_timeout.py; SPEC-01a docs/specs/ghidriff-timeout-progress.md |
+
+## PW-01 KB file inventory extension
+
+Retained-source page adapters (2026-11-18): `inventory_service.retain_inventory`
+and the `KbService` delegate validate a strict architecture/page policy and call
+the existing inventory store offline. `cli_inventory.py` exposes `retain
+IMPORT_ID --architecture amd64 --page 1`; `inventory_qt.py` captures that explicit
+saved-source request through its existing worker/cancel boundary. Source-page
+controls are separate from table pagination. Summaries expose v2 retention policy,
+scan completeness, observed counts and conflict-witness counts; incomplete source
+scans cannot enable UI filename selection. Existing v1 imports and investigation
+revisions are preserved. Verification: `test_kbc_inventory_retention_adapters.py`
+and `test_ui_kb_inventory_retention.py`, plus the existing inventory adapter suites.
+
+| Module | Responsibility | Verification seam |
+|---|---|---|
+| `kbcorrelation/inventory_contracts.py`, `inventory_csv.py` | Frozen CSV record/provenance contracts and pure parser; independent v1 50,000-entry and v2 5,000-entry budget profiles | Authored CSV, hostile input, captured-budget replay/property tests |
+| `kbcorrelation/sources/support_links.py`, `inventory_fetch.py`, `inventory_http.py` | Inert support HTML links, exact consented retrieval and DNS-pinned TLS transport | Offline parser, injected transport, URL/DNS/redirect/cancellation tests |
+| `kbcorrelation/inventory_store.py`, `inventory_service.py`, `inventory_selection.py` | Content-addressed raw retention, immutable contextual imports, source-snapshot and revision-guarded scoped selection | Real workspace rollback/replay, selection and concurrent source-admission tests |
+| `kbcorrelation/cli_inventory.py`, `inventory_qt.py` | Shared-service CLI and desktop inventory controls | CLI envelope and offscreen Qt lifecycle tests |

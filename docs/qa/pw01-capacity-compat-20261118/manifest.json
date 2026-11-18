@@ -1,0 +1,224 @@
+{
+  "source_commit": "0be3b9eb950a2a5a19261fd2f5d2f1fc2eb25b82",
+  "source_tree": "81ec2835ec0b1a7b87a55cbe7b061d8b4d948878",
+  "parents": [
+    "3fee13616a80ecc65eb544e2feb0670f2f2f2df9",
+    "2b697222b34359bb46adc90aad69fd0a12708601"
+  ],
+  "fresh_pr303": {
+    "observed_at_utc": "2026-11-18 10:10:10 UTC",
+    "pr_url": "https://github.com/djshellshoxxx/patchtrace/pull/303",
+    "head": "2b697222b34359bb46adc90aad69fd0a12708601",
+    "base": "9c411ca3d7b47f950be5f0c6f01b3c54184554c6",
+    "base_ref": "main",
+    "state": "open",
+    "updated_at": "2026-11-18T09:48:50Z",
+    "source_freeze_commit": "0be3b9eb950a2a5a19261fd2f5d2f1fc2eb25b82",
+    "matches_merge_parent": true,
+    "scope": "Final read-only PR metadata refresh; no remote writes"
+  },
+  "qualification": {
+    "baseline_c662": {
+      "failed": 12,
+      "passed": 6
+    },
+    "shared_ceiling_merge_before_fix": {
+      "failed": 11,
+      "passed": 7
+    },
+    "capacity_after_fix": {
+      "passed": 18
+    },
+    "inventory_adjacent": {
+      "files": 14,
+      "passed": 581,
+      "failed": 0,
+      "skipped": 0
+    },
+    "independent": {
+      "focused_passed": 38,
+      "separately_authored_passed": 6,
+      "approved": true
+    },
+    "ruff_src_tests_tools": "passed",
+    "schema_check": "passed",
+    "diff_check": "passed",
+    "counts_overlap": true
+  },
+  "actual_csv": {
+    "status": "passed",
+    "capture_sha256": "b327eb5d0f8d7a0d6a9c8c2d1a7af1df134bc2a54c3e0da2eff0fb335547a627",
+    "capture_bytes": 3300683,
+    "v1_import_id": "d07c25034bd1c33341bb4adbe6b48d3803b3d143f2336cf03fbafa480feca78a",
+    "before": {
+      "v1_body_bytes": 30948193,
+      "v1_body_sha256": "995c9cdfc9835b9c035b60a97be5fc4bf39f9b2ccefcb7c2dceff6c2e03dd0ef",
+      "raw_object_sha256": "e8f600157408d6e01c00ceaf63404629cfd34cb90ec244fb9a252ffb28ca5f7e",
+      "revisions": 0,
+      "decisions": 0
+    },
+    "after": {
+      "v1_body_bytes": 30948193,
+      "v1_body_sha256": "995c9cdfc9835b9c035b60a97be5fc4bf39f9b2ccefcb7c2dceff6c2e03dd0ef",
+      "raw_object_sha256": "e8f600157408d6e01c00ceaf63404629cfd34cb90ec244fb9a252ffb28ca5f7e",
+      "revisions": 0,
+      "decisions": 0
+    },
+    "pages": [
+      {
+        "page": 1,
+        "import_id": "78fc4468dcb6c1766939491037f2bb7fdea013a60794becff9e44c0d90bdb3b8",
+        "inventory_id": "8dd1635ee4e79e16fa99f1b70db432b09bb6d2c4dc874d021b87f0d95f6dbf0c",
+        "accepted_count": 5000,
+        "page_capacity": 5000,
+        "witness": {
+          "conflict_group": "4bf9e93738147fc72683a424925cae97576e5174431c5489471f1c7a3bbd58e6",
+          "field": "size_bytes",
+          "first": {
+            "line_end": 24355,
+            "line_start": 24355,
+            "logical_record": 24355,
+            "raw_sha256": "b327eb5d0f8d7a0d6a9c8c2d1a7af1df134bc2a54c3e0da2eff0fb335547a627",
+            "section_index": 1
+          },
+          "second": {
+            "line_end": 41380,
+            "line_start": 41380,
+            "logical_record": 41380,
+            "raw_sha256": "b327eb5d0f8d7a0d6a9c8c2d1a7af1df134bc2a54c3e0da2eff0fb335547a627",
+            "section_index": 1
+          }
+        },
+        "prior_v2_ids_exact": true
+      },
+      {
+        "page": 2,
+        "import_id": "beaf23e27e70d343cf65cb88f09bdf12ab751cf6c162a93fec92fcf5903b6a85",
+        "inventory_id": "56e8f1cf36ed3bcbfed1e153ceddd210c8a3015bef8de2efa9155e24eafea8cf",
+        "accepted_count": 5000,
+        "page_capacity": 5000,
+        "witness": null,
+        "prior_v2_ids_exact": true
+      },
+      {
+        "page": 4,
+        "import_id": "3275af0de990b931ffcbfbac185c4fd9d6893ee0eeeb9bb82f9c09f4be68d3c6",
+        "inventory_id": "456215bb42db78c617149fb9ccd6e880adb1e7784ad7fc672663d34914455ce2",
+        "accepted_count": 3761,
+        "page_capacity": 5000,
+        "witness": {
+          "conflict_group": "f67784e5c83221ca39bca46b9ab3b108670a3af6f4f10000c283fa344cb2da8a",
+          "field": "size_bytes",
+          "first": {
+            "line_end": 24355,
+            "line_start": 24355,
+            "logical_record": 24355,
+            "raw_sha256": "b327eb5d0f8d7a0d6a9c8c2d1a7af1df134bc2a54c3e0da2eff0fb335547a627",
+            "section_index": 1
+          },
+          "second": {
+            "line_end": 41380,
+            "line_start": 41380,
+            "logical_record": 41380,
+            "raw_sha256": "b327eb5d0f8d7a0d6a9c8c2d1a7af1df134bc2a54c3e0da2eff0fb335547a627",
+            "section_index": 1
+          }
+        },
+        "prior_v2_ids_exact": true
+      }
+    ],
+    "original_v1_and_raw_unchanged": true,
+    "repeat_idempotent": true,
+    "capture_unchanged": true,
+    "maximum_observed_child_rss_kib": 459328
+  },
+  "actual_csv_operations": [
+    {
+      "name": "01-import-v1",
+      "returncode": 3,
+      "signal": null,
+      "elapsed_seconds": 5.024,
+      "peak_rss_kib": 310940
+    },
+    {
+      "name": "02-retain-page1",
+      "returncode": 3,
+      "signal": null,
+      "elapsed_seconds": 5.94,
+      "peak_rss_kib": 459320
+    },
+    {
+      "name": "03-show-page1",
+      "returncode": 3,
+      "signal": null,
+      "elapsed_seconds": 1.992,
+      "peak_rss_kib": 139304
+    },
+    {
+      "name": "04-retain-page2",
+      "returncode": 3,
+      "signal": null,
+      "elapsed_seconds": 5.64,
+      "peak_rss_kib": 459328
+    },
+    {
+      "name": "05-show-page2",
+      "returncode": 3,
+      "signal": null,
+      "elapsed_seconds": 1.93,
+      "peak_rss_kib": 141388
+    },
+    {
+      "name": "06-retain-page4",
+      "returncode": 3,
+      "signal": null,
+      "elapsed_seconds": 5.595,
+      "peak_rss_kib": 459312
+    },
+    {
+      "name": "07-show-page4",
+      "returncode": 3,
+      "signal": null,
+      "elapsed_seconds": 1.933,
+      "peak_rss_kib": 133040
+    },
+    {
+      "name": "08-repeat-page1-from-page4",
+      "returncode": 3,
+      "signal": null,
+      "elapsed_seconds": 4.915,
+      "peak_rss_kib": 186268
+    },
+    {
+      "name": "09-show-v1",
+      "returncode": 3,
+      "signal": null,
+      "elapsed_seconds": 3.906,
+      "peak_rss_kib": 459000
+    }
+  ],
+  "rss_scope": "Linux per-child wait4 observations, not enforced process-memory ceilings.",
+  "first_external_harness_attempt": {
+    "driver_returncode": 1,
+    "cli_returncode": 3,
+    "status": "failed",
+    "workspace_created": false,
+    "failure_type": "AssertionError",
+    "failure": "error: TypeError: function() argument 'code' must be code, not str\n",
+    "original_launcher": "offline_cli-attempt1.py",
+    "original_driver": "run_actual_csv_cli-attempt1.py"
+  },
+  "scope": "Local code/tests and offline metadata only; no remote writes, production fetch, target acquisition/execution, selection or score.",
+  "archives": [
+    {
+      "path": "execution-evidence.zip",
+      "bytes": 299725,
+      "sha256": "04ddf48b44a20865d15dadb57032d680ce0fcda77c118fa95a95cc34eb1215b7"
+    },
+    {
+      "path": "independent-review.zip",
+      "bytes": 24760,
+      "sha256": "c30c3552746f006bff35aedb0d3d20620ef4c6cca92e48e3583f4387f943a956"
+    }
+  ]
+}

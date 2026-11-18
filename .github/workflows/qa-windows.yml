@@ -31,11 +31,12 @@ jobs:
       - run: python -m pip check
       - name: protobuf equals the pin and runs the upb backend (SPEC-10b)
         run: python tools/check_protobuf_runtime.py
-      - name: Native pair-publication boundary controls
+      - name: Native immutable-publication boundary controls
         run: >-
           python -m pytest -q tests/test_research_qualification_winpairs.py
           tests/test_research_qualification_winpairs_integrity.py
           tests/test_research_qualification_winpairs_publication.py
+          tests/test_owned_publication.py tests/test_kbc_object_publication.py
           --junitxml=pair-publication-results.xml
       - run: python -m pytest -q --junitxml=qa-results.xml
       - run: python -m ruff check src tests tools

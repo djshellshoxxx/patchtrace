@@ -174,6 +174,44 @@ class KbService:
         self.env = env
         self.ports = IndexPorts(advisory=env.advisory, clock=env.clock)
 
+    # PW-01 delegates keep file parsing, persistence and network policy outside
+    # this existing orchestration module and outside Qt.
+    def import_inventory(self, path, context, **kwargs) -> Outcome:
+        from .inventory_service import import_inventory
+        return import_inventory(self, path, context, **kwargs)
+
+    def retain_inventory(self, import_id, *, architecture='amd64', page=1, cancel=None) -> Outcome:
+        from .inventory_service import retain_inventory
+        return retain_inventory(self, import_id, architecture=architecture, page=page, cancel=cancel)
+
+    def inventories(self, **kwargs) -> Outcome:
+        from .inventory_service import inventories
+        return inventories(self, **kwargs)
+
+    def inventory_details(self, import_id, **kwargs) -> Outcome:
+        from .inventory_service import inventory_details
+        return inventory_details(self, import_id, **kwargs)
+
+    def support_links(self, path, **kwargs) -> Outcome:
+        from .inventory_service import support_links
+        return support_links(self, path, **kwargs)
+
+    def inventory_plan(self, url, **kwargs) -> Outcome:
+        from .inventory_service import inventory_plan
+        return inventory_plan(self, url, **kwargs)
+
+    def fetch_inventory(self, plan, **kwargs) -> Outcome:
+        from .inventory_service import fetch_inventory
+        return fetch_inventory(self, plan, **kwargs)
+
+    def select_inventory(self, investigation, import_id, entry_id, **kwargs) -> Outcome:
+        from .inventory_service import select_inventory
+        return select_inventory(self, investigation, import_id, entry_id, **kwargs)
+
+    def _inventory_hints(self, ws, rev, scope_id):
+        from .inventory_selection import selected_hints
+        return selected_hints(self, ws, rev, scope_id)
+
     # ------------------------------------------------------------------------------------------ plumbing
 
     def _open(self, *, create: bool = True) -> WorkspaceStore:
@@ -296,6 +334,7 @@ class KbService:
         status = 'partial' if full.status in ('partial', 'not_searched') or (
             unreadable and full.status == 'not_observed') else full.status
         result = {'contract': 'kbcorrelation/1', 'investigation_id': rev.investigation_id, 'state': rev.state,
+                  'revision': rev.revision,
                   'lead': {'kind': kind, 'value': value}, 'coverage': {'state': full.coverage.state,
                                                                        'text': full.text, 'detail': full.coverage
                                                                        .model_dump(mode='json')},
@@ -369,10 +408,11 @@ class KbService:
             raise _fail('PT-KBC-INPUT', 'the product mapping is no longer current; repeat the search '
                         'and select the product again before listing products')
         result = {'contract': 'kbcorrelation/1', 'investigation_id': rev.investigation_id,
-                  'selected_scope_id': rev.selected_scope_id, 'products': scopes}
+                  'revision': rev.revision, 'selected_scope_id': rev.selected_scope_id, 'products': scopes}
         if not scopes:
             return Outcome(4, 'unavailable', result, 'The search found no product for this lead.')
-        lines = [f'{s["scope_id"][:12]}  {s["display_name"]}  {s["architecture"]}  ({s["mapping"]} mapping)'
+        lines = [f'Investigation revision: {rev.revision}']
+        lines += [f'{s["scope_id"]}  {s["display_name"]}  {s["architecture"]}  ({s["mapping"]} mapping)'
                  for s in scopes]
         if len(scopes) > 1 and rev.selected_scope_id is None:
             lines.append(TEXT_KB6)
@@ -390,6 +430,10 @@ class KbService:
                 raise _fail('PT-KBC-INPUT', TEXT_KB6)
             if scope_id not in rev.scope_ids:
                 raise _fail('PT-KBC-INPUT', 'that product is not one of the products listed for the lead')
+            # Replay retained inventory evidence before publishing a product
+            # change or newly entered filenames. A corrupt source must leave
+            # the caller's previous decisions and revision unchanged.
+            inventory_hints = self._inventory_hints(ws, rev, scope_id)
             if rev.selected_scope_id != scope_id:
                 rev = self._step(ws, rev, 'product_selected', scope_id=scope_id)
             for name in names:
@@ -400,8 +444,11 @@ class KbService:
             index, _ = load_index(ws, self.ports)
             cards, refs = self._lead_cards(index, rev, ws)
             hints, truncated = comp.hints_for(cards, refs, entered, scope_id)
+            hints, inventory_cut = comp.with_inventory(hints, inventory_hints)
+            truncated = truncated or inventory_cut
             rev = self._step(ws, rev, 'components_ready' if comp.selectable(hints) else 'needs_filename')
         result = {'contract': 'kbcorrelation/1', 'investigation_id': rev.investigation_id, 'state': rev.state,
+                  'revision': rev.revision,
                   'scope_id': scope_id, 'truncated': truncated,
                   'hints': [h.model_dump(mode='json', exclude={'contract'}) for h in hints]}
         lines = [f'{h.tier}  {h.basename}  ({"; ".join(h.reasons)}); changed in this KB: {h.changed_in_kb}'
@@ -496,6 +543,7 @@ class KbService:
                                         if d.op == 'component-name')})
             cards, refs = self._lead_cards(index, rev, ws)
             hints, _ = comp.hints_for(cards, refs, entered, scope_id)
+            hints, _ = comp.with_inventory(hints, self._inventory_hints(ws, rev, scope_id))
             chosen = sorted({h.basename for h in hints if h.tier in comp.SELECTING_TIERS})
             kbs = self._lead_kbs(index, rev, self._stored_scope(ws, rev))
         if not chosen:

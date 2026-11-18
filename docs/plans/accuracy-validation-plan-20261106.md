@@ -58,6 +58,29 @@ Cases from one project or release are not independent; count distinct projects. 
 Each layer's claim is stated as "at least X% (95% one-sided), n independent cases, k errors" with the case manifest
 hash and receipts attached. A layer with fewer cases than its table row says so and claims less.
 
+## Receipt source identity in linked worktrees (2026-11-18)
+
+The shared research receipt helper must identify the requested checkout's HEAD
+without invoking Git, loading configuration or running hooks. Support ordinary
+`.git` directories and the documented `gitdir:` pointer used by linked worktrees
+and submodule checkouts. Read worktree-local HEAD; read shared branch refs and
+packed refs from the declared `commondir`, retaining per-worktree ref exceptions.
+Relative pointer paths resolve against the containing Git metadata location.
+See the [Git repository layout](https://git-scm.com/docs/gitrepository-layout)
+and [worktree details](https://git-scm.com/docs/git-worktree).
+
+Return only a validated lowercase 40-character commit identity. Missing, invalid,
+ambiguous, oversized or nonregular metadata yields unknown (`None`), never an
+arbitrary text value presented as a commit. Bound individual metadata files to
+64 KiB and packed refs to 8 MiB. Ref names must remain relative inside their Git
+metadata namespace; reject traversal and absolute paths. Do not substitute the
+main checkout's HEAD for a linked worktree's detached or branch HEAD.
+
+This metadata observation does not independently verify clean source content or
+authenticity. Exact-tree/dirty-state evidence and input hashes remain separate.
+Old receipts remain immutable; new execution produces new receipts with the
+resolved identity. No accuracy claim follows from source identification.
+
 ## Windows pair-publication contract (2026-11-18)
 
 Publication uses the exclusively held staging file and its held destination parent. Native

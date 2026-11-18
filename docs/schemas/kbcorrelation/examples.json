@@ -193,6 +193,7 @@
           ],
           "contract": "kbcorrelation/1",
           "hint_id": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+          "inventory_refs": [],
           "reasons": [
             "named-in-title"
           ],
@@ -215,6 +216,7 @@
           ],
           "contract": "kbcorrelation/2",
           "hint_id": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+          "inventory_refs": [],
           "reasons": [
             "named-in-title"
           ],
@@ -236,6 +238,7 @@
           ],
           "contract": "kbcorrelation/1",
           "hint_id": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+          "inventory_refs": [],
           "reasons": [
             "named-in-title"
           ],
@@ -257,6 +260,7 @@
       ],
       "contract": "kbcorrelation/1",
       "hint_id": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+      "inventory_refs": [],
       "reasons": [
         "named-in-title"
       ],
