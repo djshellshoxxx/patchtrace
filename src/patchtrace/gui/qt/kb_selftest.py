@@ -265,7 +265,8 @@ def _sample_steps(owned: Workspace):
         yield None
         _require(window.navigator.count() and 'SYNTHETIC SAMPLE' in window.project_label.text(),
                  'desktop sample matches did not display')
-        _require(not window.panels.self_check(), 'panel self-check failed')
+        problems = window.panels.self_check()
+        _require(not problems, 'panel self-check failed: ' + '; '.join(problems))
     except BaseException as error:
         failure = error
         raise
@@ -305,7 +306,7 @@ def _session_steps(root: Path | Workspace, *, sample: bool):
                 failure.add_note(f'Desktop self-test cleanup also failed: {type(cleanup).__name__}; files retained')
 
 
-def run_journey(app, root: Path) -> dict:
+def run_journey(app, root: Path | Workspace) -> dict:
     """Retain authored artifacts beneath an exclusive child of the supplied parent for inspection."""
     return run_steps(app, _session_steps(root, sample=False))
 
