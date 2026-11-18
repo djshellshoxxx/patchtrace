@@ -537,6 +537,15 @@ K3 notes: `workflow.py` now also allows `pair_proposed` from the searched states
 ### [G4:callgraph-cli]
 | callgraph.cli / cli_ports / dot / export_json | Qt-free `patchtrace graph neighbours, delta, leads, paths, export, series` dispatcher (`register(sub, common, handlers)`, `dispatch(args, cancel)`; `enrichment-cli/1`, exits 0/2/3/4/5; project opened read-only). `cli_ports` is the composition root: injects `nway.series.read_raw_matches`, `RuleHints` over `intelligence.hypotheses.RULES`, `DeltaContext` with `diff_types_by_match`, and a PE `EntryPort` (label `entry`, entry-point VA, export names). `export_json.build_export` gives the paired neighbourhood (`workbench-graph-export/1`, correspondence never a call) and `write_export` (temp file + `os.replace` retry, no overwrite without flag, default `callgraph-<sha12>`). `dot.render_dot`: 7.6 rules (positional `n<k>` ids, box only, attribute whitelist, `\\` then `"` escaping, clusters, dotted correspondence). Schemas: `tools/generate_callgraph_schemas.py` -> `docs/schemas/callgraph/`. Hook into `cli.py` is pending (integrator). | `tests/test_callgraph_{cli,dot,schemas}.py` |
 
+2026-11-18 cap-truth amendment: existing `callgraph/query.py` preserves duplicate
+focus and per-origin omission semantics; `export_json.py` and `dot.py` carry the
+partial reason into paired/visible exports; `view_model.py` and `panel_qt.py`
+combine current query/Changes limits without claiming a known global omitted
+count. Tests: `test_callgraph_cap_truth.py`, `test_callgraph_cap_boundaries.py`,
+`test_ui_callgraph_cap_truth.py`, `test_ui_callgraph_cap_boundaries.py`, and the
+existing graph/tooltip suites. No new runtime module or persisted contract;
+shared path budgets/lazy CSR remain a separate slice.
+
 ### [K5:kbc-lineage-resolver] KB-CVE correlator K5: Winbindex rows, lineage, pair resolver (2026-10-14)
 | part | files | what it does | tests |
 |---|---|---|---|

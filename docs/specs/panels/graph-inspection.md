@@ -51,3 +51,18 @@ Status: implemented contract for `graph.export_dot`, `graph.callsite` and `graph
 
 All three use the panel's `StateView` (no project, no run, loading, cancelled, error, stale, partial). No-graph
 disables Export DOT, hides the minimap and empties the call-site tables.
+
+### Capped views (2026-11-18 amendment)
+
+The visible neighbourhood's query cap remains a partial state when an independent
+Changes-table task completes. The controller recomputes its capped state from
+both current results; narrowing to an uncapped neighbourhood removes the old
+query warning only when the Changes result is also uncapped. Query truncation
+uses `The view is capped; some nodes or edges may be omitted.` followed by a
+narrowing suggestion. It must not present a displayed-table count such as
+`64 of 64` as the total of an incomplete graph.
+
+Export DOT preserves the visible view's truncation and limitations and renders
+the fixed partial warning as a DOT comment and graph label. A subsequent uncapped
+view/export has no stale cap warning. Existing navigation, project epochs,
+failure retention, output size limits and tooltip coverage remain in force.

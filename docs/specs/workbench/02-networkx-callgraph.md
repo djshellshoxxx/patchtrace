@@ -165,3 +165,44 @@ Test fixtures:
 15. Distinguish a missing edge (no observation) from contradictory evidence.
 
 Acceptance gate: users can select any changed function, immediately inspect source-backed nearby call relationships and open a valid linked function without running a new analysis; both side graphs remain separately identifiable; missing source data is visible; full existing project/CLI tests green.
+
+## 9. Capped-view truth amendment (2026-11-18)
+
+This amendment describes the existing `callgraph/` implementation's query,
+export and desktop boundary. It uses the current `GraphView.truncated`,
+`MoreMarker` and `GraphExport` fields; it adds no persisted schema.
+
+- Resolve and deduplicate focus node IDs in first-occurrence order before
+  applying the visible-root budget. Duplicate inputs must not hide a distinct
+  root, consume multiple root slots or alone imply truncation. Invalid IDs are
+  still refused.
+- Any omitted traversal caused by the per-node neighbour cap, visible node cap,
+  visible edge cap, or already truncated source makes the returned view
+  `truncated=True`. A `MoreMarker.count` remains a per-origin count of distinct
+  neighbours omitted from that origin's expansion. Counts from overlapping
+  frontiers must not be summed into an asserted global number of missing nodes.
+- Capped views carry the fixed limitation: `The view is capped; some nodes or
+  edges may be omitted.` This conservative wording also applies where another
+  frontier may have exposed an omitted neighbour. An uncapped requested view
+  keeps its existing completeness/provenance semantics; absence of a cap never
+  implies a complete program graph.
+- `graph neighbours` reports capped results as `partial`/exit 3 using its existing
+  result envelope. Paired exports retain the per-side flags and a top-level
+  truncated flag. Their limitations are the stable, deduplicated union of the
+  source and both side views, so JSON includes the reason for partial output.
+- DOT includes a fixed partial-result comment and a visible graph label when
+  the export is truncated. Uncapped DOT remains byte-stable, including existing
+  golden output. The label is fixed application text; untrusted labels retain
+  existing sanitation, escaping, size bounds and non-execution behavior.
+- The Calls panel combines Changes-row limits with current neighbourhood limits.
+  A later Changes-row delivery cannot clear a current query cap. A new uncapped
+  query clears an earlier query cap when no Changes-row limit remains. A query
+  cap uses the fixed conservative limitation and a narrowing suggestion instead
+  of claiming that the displayed table's known count is the total graph count.
+
+Acceptance uses actual normalized cycle/hub data, overlapping and duplicate
+claims, repeated focus IDs, below-cap controls, real CLI neighbours and JSON/DOT
+export, and offscreen Calls-controller delivery/narrowing. It preserves current
+source identities, navigation, worker epochs, cancellation and tooltips. Path
+traversal budgets, lazy CSR iteration and native/manual qualification are separate
+slices and are not changed by this amendment.
