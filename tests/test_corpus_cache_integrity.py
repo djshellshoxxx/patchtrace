@@ -47,7 +47,7 @@ def _runtime_file(root, kind):
                    else 'ghidra-runtime/ghidra_authored/support/fixture.txt')
 
 
-def _run(tmp_path, kind, *, hit, corrupt=False, bad_pin=False, existing_runtime=False):
+def _run(tmp_path, kind, *, hit, corrupt=False, bad_pin=False, existing_runtime=False, cache_object=None):
     if sys.platform != 'linux':
         pytest.skip('Actual Linux-only corpus setup shell; no Windows/native acceptance claim')
     programs = {name: shutil.which(name) for name in ('bash', 'sha256sum', 'tar', 'unzip')}
@@ -59,7 +59,14 @@ def _run(tmp_path, kind, *, hit, corrupt=False, bad_pin=False, existing_runtime=
     cached = tmp_path / cache['with']['path']
     archive_path = cached.suffix in {'.xz', '.zip'}
     if hit:
-        if archive_path:
+        if cache_object:
+            cached.parent.mkdir(parents=True, exist_ok=True)
+            if cache_object == 'directory':
+                cached.mkdir()
+            else:
+                assert cache_object == 'symlink'
+                cached.symlink_to(source)
+        elif archive_path:
             cached.parent.mkdir(parents=True)
             cached.write_bytes(payload + b'corrupt' if corrupt else payload)
         else:  # Historical extracted-cache layout, retained for the real red replay.
@@ -139,6 +146,15 @@ def test_malformed_pin_refuses_a_hit_before_any_work(tmp_path, kind):
     result, trace, exported = _run(tmp_path, kind, hit=True, bad_pin=True)
     assert result.returncode != 0
     assert trace == [] and not exported.exists()
+
+
+@pytest.mark.parametrize('kind', KINDS)
+@pytest.mark.parametrize('cache_object', ['directory', 'symlink'])
+def test_nonregular_or_link_cache_is_refused_before_hashing(tmp_path, kind, cache_object):
+    result, trace, exported = _run(tmp_path, kind, hit=True, cache_object=cache_object)
+    assert result.returncode != 0
+    assert trace == [] and not exported.exists()
+    assert (tmp_path / 'download-fixture').read_bytes() == _fixture_archive(kind)
 
 
 @pytest.mark.parametrize('kind', KINDS)
