@@ -1379,6 +1379,6 @@ unchanged. Tests: `test_kb_product_start_20261106.py`,
 | Module | Responsibility | Verification seam |
 |---|---|---|
 | `kbcorrelation/inventory_contracts.py`, `inventory_csv.py` | Frozen CSV record/provenance contracts and pure bounded parser | Authored CSV, hostile input, replay/property tests |
-| `kbcorrelation/sources/support_links.py`, `inventory_fetch.py` | Inert support HTML links and exact consented bounded retrieval | Offline parser, injected transport, URL/DNS/redirect/cancellation tests |
+| `kbcorrelation/sources/support_links.py`, `inventory_fetch.py`, `inventory_http.py` | Inert support HTML links, exact consented retrieval and DNS-pinned TLS transport | Offline parser, injected transport, URL/DNS/redirect/cancellation tests |
 | `kbcorrelation/inventory_store.py`, `inventory_service.py` | Content-addressed raw retention, immutable contextual imports, scoped selection | Real workspace rollback/replay and selection tests |
 | `kbcorrelation/cli_inventory.py`, `inventory_qt.py` | Shared-service CLI and desktop inventory controls | CLI envelope and offscreen Qt lifecycle tests |

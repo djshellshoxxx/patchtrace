@@ -108,7 +108,7 @@ Every accepted claim is retained, including duplicates and conflicting versions.
 `CsvDiagnostic`: code, message, level (warning/error), reference (optional).
 `InventorySection`: index, banner, architecture, reference.
 `CsvInventory`: contract='kb-file-inventory/1', parser_version=1, inventory_id,
-raw_sha256, raw_size, encoding, context, entries, sections, diagnostics,
+raw_sha256, raw_size, encoding, context, limits, entries, sections, diagnostics,
 records_scanned, accepted_count, rejected_count, duplicate_count, conflict_count,
 diagnostics_omitted, truncated, status (complete/partial).
 Accepted count is the retained accepted rows including duplicates; conflicts
@@ -116,12 +116,18 @@ count rows in conflicting claim groups. Rejected count is scanned data rows
 rejected, not skipped blank/header/banner rows. Truncation means unseen rows may
 remain; do not present a guessed total.
 
-The inventory ID hashes parser version, raw digest and canonical context. Entry
+The inventory ID hashes parser version, raw digest, canonical context and all
+validated parsing limits (including max_seconds serialized as canonical JSON
+text). Lower budgets can change partial results, so replay uses those exact
+captured budgets. Wall-time exhaustion is fatal, never a time-dependent partial
+identity. Entry
 IDs hash inventory identity plus logical record. Duplicate identity compares
 normalized metadata within exact product/release/build/architecture scope;
 different original records remain separate claims. Conflicting metadata for a
 shared basename in the same scope is grouped, never resolved automatically.
-Timestamp, random UUID and filesystem path never influence parser/entry identity.
+Timestamp, elapsed time, random UUID and filesystem path never influence
+parser/entry identity. A fetched import separately binds its exact retrieval
+receipt, including acquisition time; a local import's timestamp is not identity.
 
 ## 4. Saved HTML and exact network plans
 
@@ -208,6 +214,25 @@ show that assertion. Never select a first row/pair automatically. Record selecte
 import/entry IDs in an AnalystDecision; ComponentHint gains a backwards-compatible
 inventory_refs tuple of CsvRecordRef/import identity records. Do not misuse its
 existing JSON-Pointer SourceRef for raw CSV. Preserve every selected source claim.
+
+Selection requires the exact current investigation revision, an explicit product
+scope ID and an explicit analyst scope assertion when the import lacks that ID.
+Any supplied scope ID or known product/release/build must agree with the selected
+scope; a user assertion cannot override contradictory source metadata. The selected
+scope must be AMD64 and not mapping-conflicted. The CSV entry must be a valid
+AMD64 PE basename with known version and no metadata conflict. A missing size
+does not invent byte identity or prevent filename-only selection. The KB must
+belong to the lead within its recorded search/document scope. Changing the recorded search scope or product does not carry an earlier
+inventory selection into the new scope: each decision binds the scope ID and coverage IDs. Persist decision and
+the resulting COMPONENTS_READY revision atomically through the existing revision
+compare-and-swap; stale or cancelled work leaves both unchanged.
+
+Selected inventory hints remain tier E (explicit analyst selection from metadata)
+and carry separate inventory row references, source authenticity and scope-assertion
+reasons. They are not upgraded to official structured tier A or validated package
+tier B. Multiple selected rows for one basename preserve all references; the
+component presentation may group the name. Selection is bounded to 5,000 claims
+per investigation; stale selections stay recorded but cannot feed pair lookup.
 
 Eligible selected basenames feed the existing component and saved-Winbindex pair
 workflow. CSV metadata never becomes BuildCandidate, binary SHA-256, verified PE
