@@ -152,6 +152,12 @@ versions, full raw installed inventory, raw scanner JSON, command outcomes and
 SHA-256 digests. Upload artifacts even when a scan fails; uploading a failed
 receipt does not make a job successful. Missing required evidence is an error.
 
+Both dependency and static artifact uploads retain the raw text input receipts
+alongside JSON, stdout and stderr, including `bootstrap-pip.txt` when a scan
+fails. The upload patterns must include `*.txt` in each profile's evidence
+directory. This retention requirement does not change scanner execution or
+acceptance, and cannot repair a missing input in a historical artifact.
+
 Python package advisories and Ruff rules do not audit external Ghidra/JDK/Rizin/
 BinDiff/NSIS code, the operating system, vendored Qt/native libraries, or prove
 exploitability. Record these unaudited categories explicitly. Scanner tooling
