@@ -6,7 +6,6 @@ against a hostile process replacing those parent/source paths.
 """
 from __future__ import annotations
 
-import ctypes
 import errno
 import os
 import stat
@@ -21,6 +20,8 @@ def _native_move(stage: Path, destination: Path) -> None:
         return
     if sys.platform != 'linux':
         raise OSError(errno.ENOTSUP, 'exclusive directory publication is unavailable')
+    import ctypes
+
     try:
         rename = ctypes.CDLL(None, use_errno=True).renameat2
     except AttributeError:
