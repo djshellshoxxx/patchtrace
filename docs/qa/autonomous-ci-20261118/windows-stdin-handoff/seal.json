@@ -1,0 +1,14 @@
+{
+  "archive": "evidence.zip",
+  "bytes": 1153613,
+  "sha256": "02905ae0ce72b84a95cbd70e1e9c624e1767ad9b6c127c1b20075b3f1aa2420f",
+  "manifest_sha256": "9d81c881723473b051fff49ee03031f5c70a414773ec4d5d302e8669dbd8e4b2",
+  "members": 527,
+  "verified_payloads": 526,
+  "verified_git_source_snapshots": 39,
+  "verified_raw_child_outputs": 430,
+  "approved_design_payloads_verified": 10,
+  "production": "3d0831025d50d231171aa69c32be4021b18fe7f6",
+  "tested_tip": "49e2bf908b76e0296f645afb7450e634b6036b8a",
+  "native_qualification": false
+}
