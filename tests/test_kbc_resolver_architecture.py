@@ -111,10 +111,17 @@ def test_other_machine_does_not_break_an_unchanged_native_sha_run():
 def test_same_machine_variants_remain_unknown_and_tied_order_stays_blocked():
     document = record()
     document['f' * 64] = entry('f' * 64, AMD64, {NEW_KB: update('2025-02-11', '26100.3194')})
-    result = resolve(rows_of(document))
-    assert result.changed_in_kb == 'unknown' and len(result.pairs) == 2
+    rows = rows_of(document)
+    result = resolve(rows)
+    assert result.changed_in_kb == 'unknown' and result.ambiguous and len(result.pairs) == 2
     assert all(pair.older.machine == pair.newer.machine == 'amd64' for pair in result.pairs)
-    tied = next(pair for pair in result.pairs if pair.newer.sha256 == 'f' * 64)
+    assert {pair.newer.sha256 for pair in result.pairs} == {'e' * 64, 'f' * 64}
+    assert all(pair.older.sha256 == 'a' * 64 and pair.grade == 'A'
+               and pair.fix_boundary == 'unverified' and 'WINDOW_CONFOUNDED' in pair.reason_codes
+               for pair in result.pairs)
+    # An explicit comparison between same-time variants still cannot establish chronological order.
+    peers = [next(row for row in rows if row.sha256 == sha * 64) for sha in ('e', 'f')]
+    tied = rs.propose_index_pair(*peers, scope_id=SCOPE.scope_id)
     assert tied.grade == 'X' and 'ORDER_UNVERIFIED' in tied.reason_codes
 
 

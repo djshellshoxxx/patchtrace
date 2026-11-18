@@ -96,14 +96,45 @@ def order_key(row: IndexRow) -> tuple:
 
 def chronologically_before(older: IndexRow, newer: IndexRow) -> bool:
     """Whether stated source dates/builds establish order, without display-key defaults."""
-    old, new = older.build, newer.build
-    old_date, new_date = _release_instant(old.release_date), _release_instant(new.release_date)
-    if old.version_key != new.version_key or old_date is None or new_date is None:
+    return _before(_source_order(older), _source_order(newer))
+
+
+def _source_order(row: IndexRow) -> tuple[str, str | None, tuple[int, int] | None]:
+    build = row.build
+    return (build.version_key, _release_instant(build.release_date),
+            ubr_key(build.release_version) if _UBR.fullmatch(build.release_version or '') else None)
+
+
+def _before(old: tuple, new: tuple) -> bool:
+    old_key, old_date, old_build = old
+    new_key, new_date, new_build = new
+    if old_key != new_key or old_date is None or new_date is None:
         return False
     if old_date != new_date:
         return old_date < new_date
-    return (bool(_UBR.fullmatch(old.release_version or '')) and bool(_UBR.fullmatch(new.release_version or ''))
-            and ubr_key(old.release_version) < ubr_key(new.release_version))
+    return (old_build is not None and new_build is not None and old_build[0] == new_build[0]
+            and old_build < new_build)
+
+
+class LineageOrder:
+    """Per-calculation chronology facts and display positions; no global cache of untrusted source rows."""
+
+    def __init__(self, line: Sequence[IndexRow]):
+        self._facts = {id(row): _source_order(row) for row in line}
+        self._positions = {id(row): position for position, row in enumerate(line)}
+
+    def before(self, older: IndexRow, newer: IndexRow) -> bool:
+        return _before(self._facts[id(older)], self._facts[id(newer)])
+
+    def position(self, row: IndexRow) -> int:
+        return self._positions[id(row)]
+
+
+def _unordered_rows(line: Sequence[IndexRow], target: IndexRow, order: LineageOrder) -> tuple[IndexRow, ...]:
+    """Observations which display tie-breakers cannot place before or after the target."""
+    return tuple(row for row in line if row is not target and row.build.version_key == target.build.version_key
+                 and not order.before(row, target) and not order.before(target, row)
+                 and (row.sha256 != target.sha256 or row.kb != target.kb or row != target))
 
 
 def _availability(download: object, variant: str) -> Availability:
@@ -204,25 +235,31 @@ def version_keys(rows: Iterable[IndexRow]) -> tuple[str, ...]:
     return tuple(sorted({r.build.version_key for r in rows}))
 
 
-def change_in_kb(line: Sequence[IndexRow], kb: str) -> ChangeInfo:
+def change_in_kb(line: Sequence[IndexRow], kb: str, *, order: LineageOrder | None = None) -> ChangeInfo:
     """Did the file change in ``kb`` (an index claim for one version key; ``line`` is a :func:`timeline`)."""
     targets = tuple(r for r in line if r.kb == kb)
     if not targets:
         return ChangeInfo('unknown', 'no-row')
     if len({r.sha256 for r in targets}) > 1:
         return ChangeInfo('unknown', 'variants', None, targets)  # several SHAs for one KB: never auto-pick
+    order = order or LineageOrder(line)
     index = line.index(targets[0])
     target = targets[0]
-    if (_release_instant(target.build.release_date) is None
-            or any(r.sha256 != target.sha256 and order_key(r)[:2] == order_key(target)[:2] for r in line)):
+    if _release_instant(target.build.release_date) is None or _unordered_rows(line, target, order):
         return ChangeInfo('unknown', 'order-unverified', None, targets)
-    if index > 0 and not chronologically_before(line[index - 1], target):
+    if index > 0 and not order.before(line[index - 1], target):
         return ChangeInfo('unknown', 'order-unverified', None, targets)
     start = index
     while start > 0 and line[start - 1].sha256 == targets[0].sha256:
         start -= 1
+    # Check both sides of the run frontier: a peer sorted before or after it may disagree on whether these bytes
+    # already existed. Display order must not turn the same observations into either a new or unchanged claim.
+    for row in line[max(0, start - 1):start + 1]:
+        same_content = {peer.sha256 == target.sha256 for peer in (row, *_unordered_rows(line, row, order))}
+        if len(same_content) > 1:
+            return ChangeInfo('unknown', 'order-unverified', None, targets)
     if start < index:
-        if any(not chronologically_before(line[i], line[i + 1]) for i in range(start, index)):
+        if any(not order.before(line[i], line[i + 1]) for i in range(start, index)):
             return ChangeInfo('unknown', 'order-unverified', None, targets)
         return ChangeInfo('no', 'unchanged', line[start].kb, targets)
     if index == 0:
@@ -231,7 +268,8 @@ def change_in_kb(line: Sequence[IndexRow], kb: str) -> ChangeInfo:
 
 
 def predecessor(line: Sequence[IndexRow], target: IndexRow, *,
-                same_class_only: bool = True) -> tuple[IndexRow | None, tuple[IndexRow, ...]]:
+                same_class_only: bool = True, order: LineageOrder | None = None
+                ) -> tuple[IndexRow | None, tuple[IndexRow, ...]]:
     """The build before ``target``'s bytes first appeared (RK2 s2.3), and the rows between it and ``target``.
 
     The search starts at the first row of ``target``'s SHA run, so an unchanged file reports the real change and the
@@ -242,7 +280,25 @@ def predecessor(line: Sequence[IndexRow], target: IndexRow, *,
     The older row never carries ``target``'s own bytes (spec 31-C C4, audit KBA-06): when a build reverted across a
     row of another class, the earlier rows with those bytes are passed over and stay in the window, and the nearest
     earlier build with other bytes is returned. No such build is ``(None, ())``, never a byte-identical pair.
+
+    Unordered peers cannot become predecessors merely by KB/hash order. They stay in the confounding window.
+    If no established predecessor exists, preserve the display-derived proposal for its grade-X diagnostic.
     """
+    order = order or LineageOrder(line)
+    eligible = tuple(row for row in line if row == target or order.before(row, target))
+    older, between = _display_predecessor(eligible, target, same_class_only=same_class_only)
+    if older is None:
+        older, between = _display_predecessor(line, target, same_class_only=same_class_only)
+    if older is None:
+        return None, ()
+    included = {id(row) for row in (older, target, *between)}
+    unplaced = {id(row): row for endpoint in (older, target) for row in _unordered_rows(line, endpoint, order)
+                if id(row) not in included}
+    return older, tuple(sorted((*between, *unplaced.values()), key=order.position))
+
+
+def _display_predecessor(line: Sequence[IndexRow], target: IndexRow, *,
+                         same_class_only: bool) -> tuple[IndexRow | None, tuple[IndexRow, ...]]:
     index = start = line.index(target)
     while start > 0 and line[start - 1].sha256 == target.sha256:
         start -= 1

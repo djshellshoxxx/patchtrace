@@ -551,7 +551,7 @@ def read_zip(path: Path) -> Archive:
             names = [info.filename for info in infos]
             problems = member_problems(names, fold_case=True)
             problems += [f'truncated member name {shown(info.orig_filename)}' for info in infos
-                         if info.orig_filename != info.filename]
+                         if '\x00' in info.orig_filename]
             problems += [f'unsupported member type {shown(info.filename)}' for info in infos
                          if stat.S_IFMT(info.external_attr >> 16) not in
                          (0, stat.S_IFREG, stat.S_IFDIR, stat.S_IFLNK)]

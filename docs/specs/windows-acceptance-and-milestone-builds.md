@@ -129,7 +129,10 @@ colon/alternate streams, Win32 forbidden characters or controls, invalid Unicode
 and more than 255 UTF-16 code units. Dot and parent components in link targets
 retain their normal relative-path meaning and must still resolve inside the
 archive. ZIP names truncated at NUL by the ZIP reader fail rather than validating
-only their visible prefix. These Windows rules do not restrict Linux tar names.
+only their visible prefix. A reader's ordinary backslash-to-slash normalization
+is not NUL truncation and remains a valid separator alias; inspect the original
+name for NUL rather than treating every reader spelling change as corruption.
+These Windows rules do not restrict Linux tar names.
 No member may be located below a symbolic or hard link,
 irrespective of archive order. Link targets are resolved component by component
 against the complete declared link map, so a link followed by `..` cannot hide

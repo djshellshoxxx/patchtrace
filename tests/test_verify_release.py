@@ -880,6 +880,19 @@ def test_windows_zip_rejects_nul_truncated_member_name(release):
     assert code == 3 and failures(document) == {'archive:windows-zip': 'PT-REL-ARCHIVE-CONTENT'}
 
 
+@pytest.mark.parametrize('reader_separator', ['/', '\\'], ids=['posix-reader', 'windows-reader'])
+def test_windows_zip_accepts_benign_separator_normalization(tmp_path, monkeypatch, reader_separator):
+    # Patch both stored names after writing: ZipInfo itself normalizes separators
+    # on Windows, so writing a backslash name there would hide this counterexample.
+    literal = b'PatchTrace/optional?notes.txt'
+    data = zip_bytes(windows_members(**{literal.decode(): b'ordinary inert member'}))
+    assert data.count(literal) == 2
+    path = tmp_path / 'separator.zip'
+    path.write_bytes(data.replace(literal, literal.replace(b'?', b'\\')))
+    monkeypatch.setattr(zipfile.os, 'sep', reader_separator)
+    assert vr.read_zip(path).problems == []
+
+
 @pytest.mark.parametrize('aliases', [
     ('PatchTrace/caf\u00e9.dll', 'PatchTrace/cafe\u0301.dll'),
     ('PatchTrace/Name.dll', 'patchtrace/name.DLL'),
