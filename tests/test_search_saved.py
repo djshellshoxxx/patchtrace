@@ -325,3 +325,16 @@ def test_recent_queries_over_a_store():
 def test_recent_queries_survive_a_corrupt_backing_value():
     recent = RecentQueries(MemoryRecentStore('{{{'))
     assert recent.add('fresh') == ('fresh',)
+
+
+def test_recent_queries_survive_excessively_nested_json():
+    recent = RecentQueries(MemoryRecentStore('[' * 10000 + '0' + ']' * 10000))
+    assert recent.items() == ()
+    assert recent.add('fresh') == ('fresh',)
+
+
+def test_recent_queries_bound_input_before_json_decode(monkeypatch):
+    def refuse_decode(_text):
+        pytest.fail('oversized settings must not reach the JSON decoder')
+    monkeypatch.setattr(saved.json, 'loads', refuse_decode)
+    assert load_recent(' ' * (65536 + 1)) == ()

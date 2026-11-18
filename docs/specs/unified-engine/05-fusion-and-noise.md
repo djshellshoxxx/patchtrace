@@ -79,6 +79,19 @@ def base_decision(edge_atoms, registry):
 `row()` sets `decision='contested'` when `against` is non-empty (SPEC-27: any source pairing an endpoint differently), keeps the uncontested decision in `hints` (`uncontested:matched`), and sets `Contest.strength = 'strong'` iff any against-atom has tier M, A or B, else `'weak'` (D-12). Contested rows are never auto-anything; a manual row stays `matched` with its contest shown. One-sided observations (Ghidriff `added`/`deleted`, unmatched lists) are absence of evidence (D-14): they never contest a pairing; the row carries hint `one-sided-by:<source>` instead. **A-29 (2026-11-11, p7):** the ladder's leftovers are one-sided observations too: `ladder_output` emits one tier-W atom (source `pt-ladder`, step `leftover`, class E-UNKNOWN, the leftover reason as `native` text) and a `NodeRecord` per leftover function of kind `function` or `thunk`, so an IR-only result (no `ghidriff` source) shows `older-only`/`newer-only` rows exactly as a Ghidriff `added`/`deleted` list does; imports and externals are never rows (`ladder-leftovers-not-shown:<kind>`). `LADDER_VERSION` moves with this change. This deliberately differs from the C6 reconcile verdict for "removed(A) vs engine A->B" (R01 s3): A-08 records it and the Unified tab shows both texts (R-19).
 
 ### 1.4 Invariants and what fusion never does
+
+L-39 orientation amendment (2026-11-18 UTC, recovery of UE-R7 commit
+`7237c55cba6e134c58df7936f273fd269aa864c5`): the atom cap must preserve the
+same evidence when older and newer sides are exchanged. Rank cuts by an
+orientation-independent key including native evidence, keep mirror twins
+together, and reserve two opposing atoms when the strongest opposing claim is a
+twin pair. A capped row can consequently contain one fewer atom than the cap.
+Persisted row ordering remains unchanged. Register `arbiter=2` to invalidate
+cached results without rolling back newer channel or proof versions. The
+selected support atom can name either member of an indistinguishable mirror
+twin pair; support component and strength are invariant. Regression coverage
+includes the real 64-atom cap and bounded dense mirror properties.
+
 Never averages, sums or ranks native scores across sources; never treats a missing atom as a vote (absent sources leave `support` shorter, nothing else); never converts counts of agreeing sources into a number shown to users; never lets a model override `contested` (SPEC-28 calibration s9.5). Display level is read from `calibration.policy.display_level()` and is `'ordinal'` today; a future validated artifact for a unified profile may add bands through the read model only (C-09). Tests: `test_fusion_never_emits_numbers`, `test_absent_source_is_not_a_vote`, `test_weak_contest_still_contested`, `test_two_ghidra_derived_sources_are_one_component`, `test_same_class_never_corroborates_across_components` (Ghidriff ExactMnemonics + `pt-bytes` P08 -> `tentative`), `test_manual_row_accepted_with_contest_shown`, `test_greedy_matching_keeps_every_against_atom`, `test_one_sided_observation_never_contests`.
 
 ### 1.5 How the L1 false-positive rate is bounded

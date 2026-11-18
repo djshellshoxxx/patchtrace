@@ -1,5 +1,11 @@
 # WB1 integration plan: unified indexed search ("find anything": SQLite FTS5 + RapidFuzz + QCompleter)
 
+Recent-query ingress amendment (2026-11-18 UTC): reject settings text longer than
+65,536 characters before JSON decoding. Invalid or excessively nested JSON reads
+as an empty recent list. This limit admits every serialized 20-query list under
+the existing 256-character query limit, including JSON escaping. Saved-search
+records and append-only project persistence are unchanged.
+
 Research output, 2026-10-14, base `d972125` (`prep/program-e`). Reviewed: `workbench/01`, `workbench/04` (QW1, QW2, QW5), `plans/workbench-search-graph-floss-implementation.md` and the code they name. "Probe" = scratch scripts run in this session on a 4 vCPU Xeon 2.1 GHz, CPython 3.12.3, SQLite 3.45.1 (nothing committed; slice S0 ships `tools/bench_search.py` to reproduce them). `[F#]` points into the facts table.
 
 ## 1. Verdict and scope
