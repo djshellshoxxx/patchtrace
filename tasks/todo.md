@@ -20,6 +20,17 @@
 [native L2 pilot](../docs/qa/l2-native-pilot-20261118.md);
 [post-measurement discovery diagnosis](../docs/qa/l2-rizin-discovery-20261118.md).
 
+## 2026-11-18 refreshed #302 integration
+
+- [x] Refresh thirteen candidate PRs/main/settings; detect #302's eleven new commits and preserve all other current heads.
+- [x] Verify six duplicate patch IDs and independently reproduce four unique ZIP/lineage/selection/budget corrections; merge actual #302 `121ffb0b` and #304 `6cc6b6b7` parents.
+- [x] Preserve all forty #304-only paths and repair the reproduced copied-target chronology-cache regression without weakening evidence checks.
+- [x] Pass disjoint local selections totaling 1,650 tests with two native Windows skips; retain original red/failed receipts, independent controls, Ruff and schema verification.
+- [ ] Qualify final published head on hosted full/Qt/Windows/package/native gates before SHA-guarded REST merge with `[no release]`.
+- [ ] Recheck all current heads after main integration before accounting for any superseded PR; preserve every remote branch.
+
+[Current-head integration record](../docs/qa/current302-integration-20261118.md).
+
 ## 2026-11-18 Windows publication acceptance blocker
 
 - [x] Preserve #304 `bb4277ae` Windows failure: 15 failed/61 passed/3 skipped; full suite and package did not start.
@@ -52,6 +63,8 @@
 - [x] Refresh full branch history and all REST PR pages; correct the 300-topic inventory, ancestry counts and unsupported supersession/deletion claims.
 - [x] Independently review #301's full consolidation; repair reproduced normalization, mirror-cap, JSON-ingress and release-verifier defects; exclude unsafe archive/delete tooling.
 - [x] Preserve every remote branch and separately track unresolved or deferred UI, research, matching and environment work.
+- [x] Independently review six narrow correctness ports from concurrent #304 and repair ZIP normalization, ambiguous change provenance and bounded pair enumeration; preserve its separate remaining scope and existing release policy.
+- [ ] Keep concurrent #305/#306 and the pre-existing mixed Windows 10 source-key issue separately tracked; do not turn their remaining scope into a completed-consolidation claim.
 - [ ] Qualify and merge `codex/consolidation-reviewed-20261118` on current-head/base hosted gates; then close only exactly accounted-for PRs with replacement references.
 - [x] Implement and independently review PW-01 bounded CSV parsing, support links/retrieval, provenance/store, CLI and KB panel; register contracts and regenerate schemas. Combined focused gate: 815 passed. See [PW-01 evidence](../docs/qa/pw01-20261118.md).
 - [ ] Qualify and merge PW-01 on current-head hosted Linux/Windows/package gates; complete production Microsoft retrieval on a runner with direct DNS/TLS access. Both exact-plan attempts here returned PT-KBC-ACQUIRE after DNS failure; the saved real capture is offline evidence only.

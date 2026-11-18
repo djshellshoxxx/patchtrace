@@ -105,6 +105,32 @@ def test_a_clean_record_is_complete_and_names_the_confounding_window(ready):
     assert 'WINDOW_CONFOUNDED' in pair['reason_codes']
 
 
+@pytest.mark.parametrize('unavailable_variant', [False, True])
+def test_variants_are_visible_and_require_explicit_cli_plan_and_acquisition_choice(ready, unavailable_variant):
+    kb, inv, scopes = ready
+    document = record(DRV)
+    document['f' * 64] = copy.deepcopy(document['d' * 64])
+    document['f' * 64]['fileInfo']['sha256'] = 'f' * 64
+    if unavailable_variant:
+        del document['f' * 64]['fileInfo']['lastSectionVirtualAddress']
+    save_record(kb, DRV, doc=document)
+    flags = ('--product', scopes['client'], '--file', DRV)
+    code, out, _ = kb('pairs', inv, *flags)
+    assert code == 3  # the authored fixture also retains its two original rejected index entries
+    (resolution,) = out['result']['resolutions']
+    assert resolution['ambiguous'] and not resolution['truncated']
+    assert resolution['changed_in_kb'] == 'unknown' and '--pair' in resolution['note']
+    viable = [pair for pair in out['result']['pairs'] if pair['grade'] != 'X']
+    assert len(viable) == (1 if unavailable_variant else 2)
+    assert '--pair' in kb('pairs', inv, *flags, as_json=False)[1]
+    for verb, extra in [('plan', ()), ('acquire', ('--project', str(kb.workspace.parent / 'ambiguous-project')))]:
+        code, refused, _ = kb(verb, inv, *flags, *extra)
+        assert code == 2 and 'PT-KBC-INPUT' in refused['error'] and '--pair' in refused['error']
+    assert not (kb.workspace.parent / 'ambiguous-project').exists()
+    code, planned, _ = kb('plan', inv, *flags, '--pair', viable[0]['pair_id'][:12])
+    assert code == 0 and planned['result']['pair']['pair_id'] == viable[0]['pair_id']
+
+
 def test_the_selected_product_and_entered_names_come_from_earlier_steps(ready):
     kb, inv, scopes = ready
     save_record(kb, NET)

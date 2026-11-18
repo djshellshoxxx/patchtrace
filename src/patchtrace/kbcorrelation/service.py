@@ -571,7 +571,7 @@ class KbService:
         return {'kb': res.kb, 'file_name': res.file_name, 'version_key': res.version_key,
                 'changed_in_kb': res.changed_in_kb, 'last_changed_in': res.last_changed_in,
                 'blockers': list(res.blockers), 'note': res.note, 'skipped_rows': res.skipped_rows,
-                'truncated': res.truncated}
+                'truncated': res.truncated, 'ambiguous': res.ambiguous}
 
     def pairs(self, investigation: str, *, product: str | None = None, files: Iterable[str] = ()) -> Outcome:
         got = self._resolve_pairs(investigation, product, files)
@@ -586,7 +586,7 @@ class KbService:
         lines = [f'{c["grade"]}/{c["tier"]}  {c["file_name"]}  {c["kb"]}  older {c["older_sha256"][:12]} -> newer '
                  f'{c["newer_sha256"][:12]}  [{", ".join(c["reason_codes"]) or "no flags"}]  {c["pair_id"][:12]}'
                  for c in candidates]
-        lines += [f'{r.file_name}  {r.kb}: {r.note}' for r in found if not r.pairs and r.note]
+        lines += [f'{r.file_name}  {r.kb}: {r.note}' for r in found if r.note]
         lines += [f'{name}: no Winbindex record is saved in this workspace.' for name in missing]
         text = '\n'.join(lines)
         if skipped:  # an index with unreadable entries cannot say the newest builds are absent
@@ -606,6 +606,9 @@ class KbService:
         every = [pair for res in found for pair in res.pairs]
         if pair_id is None:
             viable = {p.pair_id: p for p in every if p.grade != 'X'}
+            if viable and any(res.ambiguous or res.truncated for res in found):
+                raise _fail('PT-KBC-INPUT', 'the candidate evidence is ambiguous or truncated; list pairs with '
+                            '"kb pairs" and select one with --pair')
             if len(viable) > 1:
                 raise _fail('PT-KBC-INPUT', f'{len(viable)} viable pairs remain; list them with \"kb pairs\" '
                             'and select one with --pair')

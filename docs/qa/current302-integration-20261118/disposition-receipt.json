@@ -1,0 +1,404 @@
+{
+  "kind": "premerge-pr-disposition-refresh/1",
+  "repository": "djshellshoxxx/patchtrace",
+  "window_utc": {
+    "started_at": "2026-11-18T09:11:36.163Z",
+    "finished_at": "2026-11-18T09:11:53.060Z",
+    "atomic_snapshot": false
+  },
+  "successful_rest_gets": 15,
+  "per_pr_gets": 1,
+  "source": "authenticated read-only GitHub REST connector; exact returned bodies and receipts retained",
+  "gh_cli_preflight": {
+    "failed_invocations": 15,
+    "exit_code": 4,
+    "http_requests_observed": 0,
+    "reason": "CLI lacked authentication and returned before any HTTP response; no CLI retry",
+    "receipts": "responses/"
+  },
+  "prior_disposition": {
+    "path": "/workspace/scratch/e83fbf4505c3/pw01-retention-integration/docs/qa/cve-pr-disposition-20261118.md",
+    "bytes": 18409,
+    "sha256": "3466aa0187439a4e1b2ad472da93333ce5c23f7d8c0390cf408cab6b117fb2e4"
+  },
+  "candidate": {
+    "requested_ref": "1c49199e",
+    "sha": "1c49199e9333e955e2bd947fda2824d68b7da65d",
+    "tree": "aa7749a9a1c2abe7c3a4bde2473e717411f7ac9e",
+    "local_git_repository": "/workspace/scratch/e83fbf4505c3/pw01-retention-integration"
+  },
+  "main": {
+    "sha": "9c411ca3d7b47f950be5f0c6f01b3c54184554c6",
+    "ref": "main",
+    "candidate_already_on_main": false,
+    "captured_at": "2026-11-18T09:11:36.685Z"
+  },
+  "repository_settings": {
+    "delete_branch_on_merge": false,
+    "default_branch": "main",
+    "captured_at": "2026-11-18T09:11:36.806Z"
+  },
+  "pull_requests": [
+    {
+      "number": 302,
+      "url": "https://github.com/djshellshoxxx/patchtrace/pull/302",
+      "state": "open",
+      "merged": false,
+      "draft": false,
+      "updated_at": "2026-11-18T09:08:31Z",
+      "head": {
+        "sha": "121ffb0bcdd6af4f24e5035389d4709dffddf263",
+        "ref": "codex/consolidation-reviewed-20261118"
+      },
+      "base": {
+        "sha": "9c411ca3d7b47f950be5f0c6f01b3c54184554c6",
+        "ref": "main"
+      },
+      "prior_head": "f7e075480999e2f5a3681ddd429dca0fd9cac986",
+      "prior_base": "9c411ca3d7b47f950be5f0c6f01b3c54184554c6",
+      "head_moved": true,
+      "base_moved": false,
+      "prior_relationship": "Exact ancestor or #302 itself",
+      "prior_scope_review": "Independently reviewed; additional source, lineage and publication defects require successor",
+      "captured_at": "2026-11-18T09:11:36.647Z",
+      "response_sha256": "f4efb51494f6bf85f638451bbc579b84d9a4ca235b8397ac476f59279ef7aaf7",
+      "fresh_head_local_object_available": true,
+      "fresh_head_is_ancestor_of_candidate": false,
+      "closure_condition": "DO NOT CLOSE AS SUPERSEDED: moved head contains four unique behavioral commits; preserve fresh accounting and qualified integration."
+    },
+    {
+      "number": 301,
+      "url": "https://github.com/djshellshoxxx/patchtrace/pull/301",
+      "state": "open",
+      "merged": false,
+      "draft": true,
+      "updated_at": "2026-11-18T05:19:00Z",
+      "head": {
+        "sha": "faddea300daf4058d38d24ff04a270be6f3d832b",
+        "ref": "claude/patchtraces-consolidation-trngn0"
+      },
+      "base": {
+        "sha": "9c411ca3d7b47f950be5f0c6f01b3c54184554c6",
+        "ref": "main"
+      },
+      "prior_head": "faddea300daf4058d38d24ff04a270be6f3d832b",
+      "prior_base": "9c411ca3d7b47f950be5f0c6f01b3c54184554c6",
+      "head_moved": false,
+      "base_moved": false,
+      "prior_relationship": "Exact ancestor or #302 itself",
+      "prior_scope_review": "Exact commit retained in #302 ancestry; no independent replay needed",
+      "captured_at": "2026-11-18T09:11:36.658Z",
+      "response_sha256": "494929b7e166e8ea66f8db8eaa259f7bcefde0d962df1eb3a1ed9f495d7914e2",
+      "fresh_head_local_object_available": true,
+      "fresh_head_is_ancestor_of_candidate": true,
+      "closure_condition": "Only after qualified304 merge, verification on main and a fresh exact-head check."
+    },
+    {
+      "number": 297,
+      "url": "https://github.com/djshellshoxxx/patchtrace/pull/297",
+      "state": "open",
+      "merged": false,
+      "draft": true,
+      "updated_at": "2026-11-17T00:02:22Z",
+      "head": {
+        "sha": "95db052a11cce162d2d633cae805f28119f783a1",
+        "ref": "codex/release-integration-20261116"
+      },
+      "base": {
+        "sha": "7401078490eb7a447f5ec7274339cb08b051f395",
+        "ref": "main"
+      },
+      "prior_head": "95db052a11cce162d2d633cae805f28119f783a1",
+      "prior_base": "7401078490eb7a447f5ec7274339cb08b051f395",
+      "head_moved": false,
+      "base_moved": false,
+      "prior_relationship": "Exact ancestor or #302 itself",
+      "prior_scope_review": "Exact commit retained in #302 ancestry; no independent replay needed",
+      "captured_at": "2026-11-18T09:11:51.502Z",
+      "response_sha256": "72b0885ffdc8cd42cdb03b25d96a2612f5b6d6725691a6188b881156917cd6fb",
+      "fresh_head_local_object_available": true,
+      "fresh_head_is_ancestor_of_candidate": true,
+      "closure_condition": "Only after qualified304 merge, verification on main and a fresh exact-head check."
+    },
+    {
+      "number": 290,
+      "url": "https://github.com/djshellshoxxx/patchtrace/pull/290",
+      "state": "open",
+      "merged": false,
+      "draft": true,
+      "updated_at": "2026-11-11T04:32:48Z",
+      "head": {
+        "sha": "1d5a022d2840c5c071ccece503664c8c961d63f1",
+        "ref": "claude/sleepy-fermi-security-1"
+      },
+      "base": {
+        "sha": "882d1ca0b4190bccddb6ce1f66b46c4db856703b",
+        "ref": "main"
+      },
+      "prior_head": "1d5a022d2840c5c071ccece503664c8c961d63f1",
+      "prior_base": "882d1ca0b4190bccddb6ce1f66b46c4db856703b",
+      "head_moved": false,
+      "base_moved": false,
+      "prior_relationship": "Exact ancestor or #302 itself",
+      "prior_scope_review": "Exact commit retained in #302 ancestry; no independent replay needed",
+      "captured_at": "2026-11-18T09:11:51.005Z",
+      "response_sha256": "d20604952f223f7645b76e24f23e9d7432e526532d07a8ce9220e2d5dcc1b78b",
+      "fresh_head_local_object_available": true,
+      "fresh_head_is_ancestor_of_candidate": true,
+      "closure_condition": "Only after qualified304 merge, verification on main and a fresh exact-head check."
+    },
+    {
+      "number": 291,
+      "url": "https://github.com/djshellshoxxx/patchtrace/pull/291",
+      "state": "open",
+      "merged": false,
+      "draft": true,
+      "updated_at": "2026-11-11T01:53:21Z",
+      "head": {
+        "sha": "53f5dd2611b38e3f69f8d72c3ca7cf73e9e896ab",
+        "ref": "claude/sleepy-fermi-kbc-1"
+      },
+      "base": {
+        "sha": "882d1ca0b4190bccddb6ce1f66b46c4db856703b",
+        "ref": "main"
+      },
+      "prior_head": "53f5dd2611b38e3f69f8d72c3ca7cf73e9e896ab",
+      "prior_base": "882d1ca0b4190bccddb6ce1f66b46c4db856703b",
+      "head_moved": false,
+      "base_moved": false,
+      "prior_relationship": "Exact ancestor or #302 itself",
+      "prior_scope_review": "Exact commit retained in #302 ancestry; no independent replay needed",
+      "captured_at": "2026-11-18T09:11:51.452Z",
+      "response_sha256": "5233d2f95cd36f8c1d4e0c2e1914c7aa4209f5f6a7b63e9bf6ab351390f30f36",
+      "fresh_head_local_object_available": true,
+      "fresh_head_is_ancestor_of_candidate": true,
+      "closure_condition": "Only after qualified304 merge, verification on main and a fresh exact-head check."
+    },
+    {
+      "number": 292,
+      "url": "https://github.com/djshellshoxxx/patchtrace/pull/292",
+      "state": "open",
+      "merged": false,
+      "draft": true,
+      "updated_at": "2026-11-11T04:36:47Z",
+      "head": {
+        "sha": "cf50b4e8725cb1291ac6150667f2e136f023aff3",
+        "ref": "claude/sleepy-fermi-cli-parity-1"
+      },
+      "base": {
+        "sha": "882d1ca0b4190bccddb6ce1f66b46c4db856703b",
+        "ref": "main"
+      },
+      "prior_head": "cf50b4e8725cb1291ac6150667f2e136f023aff3",
+      "prior_base": "882d1ca0b4190bccddb6ce1f66b46c4db856703b",
+      "head_moved": false,
+      "base_moved": false,
+      "prior_relationship": "Exact ancestor or #302 itself",
+      "prior_scope_review": "Exact commit retained in #302 ancestry; no independent replay needed",
+      "captured_at": "2026-11-18T09:11:51.070Z",
+      "response_sha256": "953ace434ad610c6a11d11ac51360f981ecb2bad9e2d1bb0e693d6057c8eba00",
+      "fresh_head_local_object_available": true,
+      "fresh_head_is_ancestor_of_candidate": true,
+      "closure_condition": "Only after qualified304 merge, verification on main and a fresh exact-head check."
+    },
+    {
+      "number": 293,
+      "url": "https://github.com/djshellshoxxx/patchtrace/pull/293",
+      "state": "open",
+      "merged": false,
+      "draft": true,
+      "updated_at": "2026-11-11T04:35:54Z",
+      "head": {
+        "sha": "aacb984e9d627be051ca8c8c3b88d5ceca0ff505",
+        "ref": "claude/sleepy-fermi-na-rzdiff-ownership"
+      },
+      "base": {
+        "sha": "882d1ca0b4190bccddb6ce1f66b46c4db856703b",
+        "ref": "main"
+      },
+      "prior_head": "aacb984e9d627be051ca8c8c3b88d5ceca0ff505",
+      "prior_base": "882d1ca0b4190bccddb6ce1f66b46c4db856703b",
+      "head_moved": false,
+      "base_moved": false,
+      "prior_relationship": "Exact ancestor or #302 itself",
+      "prior_scope_review": "Exact commit retained in #302 ancestry; no independent replay needed",
+      "captured_at": "2026-11-18T09:11:51.942Z",
+      "response_sha256": "3d627ef8bbf8fc963213e4c481b36b617b52b7ecb642f0bfcde8c021703548a4",
+      "fresh_head_local_object_available": true,
+      "fresh_head_is_ancestor_of_candidate": true,
+      "closure_condition": "Only after qualified304 merge, verification on main and a fresh exact-head check."
+    },
+    {
+      "number": 294,
+      "url": "https://github.com/djshellshoxxx/patchtrace/pull/294",
+      "state": "open",
+      "merged": false,
+      "draft": true,
+      "updated_at": "2026-11-11T04:31:12Z",
+      "head": {
+        "sha": "e88d748cf9846e04c0c81449976f530519da83a9",
+        "ref": "claude/sleepy-fermi-rq-l1-runner"
+      },
+      "base": {
+        "sha": "882d1ca0b4190bccddb6ce1f66b46c4db856703b",
+        "ref": "main"
+      },
+      "prior_head": "e88d748cf9846e04c0c81449976f530519da83a9",
+      "prior_base": "882d1ca0b4190bccddb6ce1f66b46c4db856703b",
+      "head_moved": false,
+      "base_moved": false,
+      "prior_relationship": "Exact ancestor or #302 itself",
+      "prior_scope_review": "Exact commit retained in #302 ancestry; no independent replay needed",
+      "captured_at": "2026-11-18T09:11:52.030Z",
+      "response_sha256": "fe011a225610d4439b98b9393928a6c3ae219da4a8305e52915264d284b28726",
+      "fresh_head_local_object_available": true,
+      "fresh_head_is_ancestor_of_candidate": true,
+      "closure_condition": "Only after qualified304 merge, verification on main and a fresh exact-head check."
+    },
+    {
+      "number": 295,
+      "url": "https://github.com/djshellshoxxx/patchtrace/pull/295",
+      "state": "open",
+      "merged": false,
+      "draft": true,
+      "updated_at": "2026-11-11T04:29:46Z",
+      "head": {
+        "sha": "37d9e47ca202b33f737b15f7af724649db8c3e15",
+        "ref": "claude/sleepy-fermi-test-reliability"
+      },
+      "base": {
+        "sha": "882d1ca0b4190bccddb6ce1f66b46c4db856703b",
+        "ref": "main"
+      },
+      "prior_head": "37d9e47ca202b33f737b15f7af724649db8c3e15",
+      "prior_base": "882d1ca0b4190bccddb6ce1f66b46c4db856703b",
+      "head_moved": false,
+      "base_moved": false,
+      "prior_relationship": "Exact ancestor or #302 itself",
+      "prior_scope_review": "Exact commit retained in #302 ancestry; no independent replay needed",
+      "captured_at": "2026-11-18T09:11:52.121Z",
+      "response_sha256": "9f6273dc8a62eb9b441724353b9580b8c73a2a5c240444f3ae654e1046894fdd",
+      "fresh_head_local_object_available": true,
+      "fresh_head_is_ancestor_of_candidate": true,
+      "closure_condition": "Only after qualified304 merge, verification on main and a fresh exact-head check."
+    },
+    {
+      "number": 268,
+      "url": "https://github.com/djshellshoxxx/patchtrace/pull/268",
+      "state": "open",
+      "merged": false,
+      "draft": true,
+      "updated_at": "2026-11-11T00:33:43Z",
+      "head": {
+        "sha": "b29351d41060f8e9330fc9673457d835e188f993",
+        "ref": "claude/affectionate-galileo-bqd3tw"
+      },
+      "base": {
+        "sha": "652677b0be6da09125c89c017e513b6b2baadbb2",
+        "ref": "main"
+      },
+      "prior_head": "b29351d41060f8e9330fc9673457d835e188f993",
+      "prior_base": "652677b0be6da09125c89c017e513b6b2baadbb2",
+      "head_moved": false,
+      "base_moved": false,
+      "prior_relationship": "Behaviorally reviewed selective port",
+      "prior_scope_review": "Close after verified #301 replacement; live RB-01 rerun remains separate.",
+      "captured_at": "2026-11-18T09:11:51.852Z",
+      "response_sha256": "e181601640e2bd12d85306bd29f01155c6c804458a53c858551245946b532cad",
+      "ancestry_claim": "none; selective semantic port only",
+      "closure_condition": "Only after qualified304 merge and verification of the specifically named semantic replacement on main; no whole-branch equivalence claim."
+    },
+    {
+      "number": 281,
+      "url": "https://github.com/djshellshoxxx/patchtrace/pull/281",
+      "state": "open",
+      "merged": false,
+      "draft": true,
+      "updated_at": "2026-11-11T01:19:27Z",
+      "head": {
+        "sha": "cbabc09e9df8a8190c769164ef0fae44f9c5cb1b",
+        "ref": "claude/patchtrace-haiku-agent-motpbx"
+      },
+      "base": {
+        "sha": "882d1ca0b4190bccddb6ce1f66b46c4db856703b",
+        "ref": "main"
+      },
+      "prior_head": "cbabc09e9df8a8190c769164ef0fae44f9c5cb1b",
+      "prior_base": "882d1ca0b4190bccddb6ce1f66b46c4db856703b",
+      "head_moved": false,
+      "base_moved": false,
+      "prior_relationship": "Behaviorally reviewed selective port",
+      "prior_scope_review": "Close only after release pin/title replacement is on verified main.",
+      "captured_at": "2026-11-18T09:11:52.608Z",
+      "response_sha256": "77c95b9dc26969290eb7a74b734f4874691d68c702125a01a55358e99ae87f16",
+      "ancestry_claim": "none; selective semantic port only",
+      "closure_condition": "Only after qualified304 merge and verification of the specifically named semantic replacement on main; no whole-branch equivalence claim."
+    },
+    {
+      "number": 282,
+      "url": "https://github.com/djshellshoxxx/patchtrace/pull/282",
+      "state": "open",
+      "merged": false,
+      "draft": true,
+      "updated_at": "2026-11-11T00:47:23Z",
+      "head": {
+        "sha": "552c29453c5de93e22c65e47ad4187ded91e993a",
+        "ref": "consolidate/research-r7-20261104"
+      },
+      "base": {
+        "sha": "882d1ca0b4190bccddb6ce1f66b46c4db856703b",
+        "ref": "main"
+      },
+      "prior_head": "552c29453c5de93e22c65e47ad4187ded91e993a",
+      "prior_base": "882d1ca0b4190bccddb6ce1f66b46c4db856703b",
+      "head_moved": false,
+      "base_moved": false,
+      "prior_relationship": "Behaviorally reviewed selective port",
+      "prior_scope_review": "Close after verified #301 replacement; all 11 files preserved.",
+      "captured_at": "2026-11-18T09:11:52.653Z",
+      "response_sha256": "76a1d923956a7033204aa2f00102bfaef529787439722712c414eb5c5bd7f16a",
+      "ancestry_claim": "none; selective semantic port only",
+      "closure_condition": "Only after qualified304 merge and verification of the specifically named semantic replacement on main; no whole-branch equivalence claim."
+    },
+    {
+      "number": 283,
+      "url": "https://github.com/djshellshoxxx/patchtrace/pull/283",
+      "state": "open",
+      "merged": false,
+      "draft": true,
+      "updated_at": "2026-11-11T00:55:01Z",
+      "head": {
+        "sha": "6f767ccef8ebfffd1d2373c5124d8a961dc54b41",
+        "ref": "claude/instance-c-research"
+      },
+      "base": {
+        "sha": "882d1ca0b4190bccddb6ce1f66b46c4db856703b",
+        "ref": "main"
+      },
+      "prior_head": "6f767ccef8ebfffd1d2373c5124d8a961dc54b41",
+      "prior_base": "882d1ca0b4190bccddb6ce1f66b46c4db856703b",
+      "head_moved": false,
+      "base_moved": false,
+      "prior_relationship": "Behaviorally reviewed selective port",
+      "prior_scope_review": "Close after verified #301 replacement; stronger tick checks retained.",
+      "captured_at": "2026-11-18T09:11:53.060Z",
+      "response_sha256": "b0b5c2f4d60f454f7d9cb7e886c1e67abf6f42c6a33f9498546e3412dbb6055a",
+      "ancestry_claim": "none; selective semantic port only",
+      "closure_condition": "Only after qualified304 merge and verification of the specifically named semantic replacement on main; no whole-branch equivalence claim."
+    }
+  ],
+  "moved_heads": [
+    302
+  ],
+  "moved_bases": [],
+  "fresh_ancestor_designated_heads_contained": 8,
+  "ancestor_designated_total": 9,
+  "blockers": [
+    "PR302 moved and its current tip is not contained in the candidate; four unique behavioral repairs plus separate documentation require accounting.",
+    "Qualified PR304 merge and postmerge main verification remain prerequisites for any closure."
+  ],
+  "overlap_map": "new302-overlap-map.json",
+  "remote_mutations": 0,
+  "git_fetches": 0,
+  "closures": 0
+}

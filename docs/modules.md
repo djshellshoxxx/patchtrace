@@ -510,6 +510,14 @@ K4a notes: `kbcorrelation/cli.py` gained `engine=` and `kev=` ports on `main`/`C
 ### [K5w:pairs-plan-glue]
 `kb pairs` and `kb plan` resolve candidates with `resolver.resolve` over Winbindex records saved in the offline workspace as `winbindex/<name>@YYYY-MM-DD.json[.gz]` (`wiring.WorkspaceFileIndex`: `rows_for` = `parse_rows(...).rows` -> `as_mapping()`; `rows` = `lineage.index_rows`, skipped entries become `skipped_rows`). Read-only; `kb plan` previews one pair and plans no request (network plan and consent stay with E1).
 
+2026-11-18 certainty update: selected-machine timelines use valid UTC chronology;
+equal instants require stated builds from the same numeric family. Unordered
+observations at either endpoint remain in the confounding window. Resolutions
+expose `ambiguous` before filtering or truncation, and plan/acquire require an
+explicit pair when either ambiguity or truncation remains. Regression coverage:
+`test_kbc_lineage_ambiguity.py`, `test_kbc_lineage_certainty.py`,
+`test_kbc_resolver_architecture.py`, `test_kbc_pairs_index.py`.
+
 ### [CAP-7:capa-hints]
 | capa hints | src/patchtrace/intelligence/tools/capa_hints.py, tools/capa_rules_inventory.py | `capability_context(HypothesisSet, PairChange rows, lineage=)` returns `MechanismContext(support='context')` per hypothesis and matched pair: exact API-hint join (`api_key`), else namespace tag via `FAMILY_TAGS` (only `path` and `search-path` today). Only clean gained/lost rows join (not moved, not-compared, noise, library). No score, no contradiction. `capa_rules_inventory.py --rules-dir DIR` builds a complete inventory (names, namespaces, scopes, lib, file sha256; no rule text) without PyYAML; `--from-results` builds a `derived-unverified` subset from capa results. |
 

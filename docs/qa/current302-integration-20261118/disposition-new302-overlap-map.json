@@ -1,0 +1,491 @@
+{
+  "checked_at": "2026-11-18T09:22:00.492451+00:00",
+  "base": "f7e075480999e2f5a3681ddd429dca0fd9cac986",
+  "candidate": "1c49199e9333e955e2bd947fda2824d68b7da65d",
+  "current304": "6cc6b6b77564e12eaec2917877d94525a69c7102",
+  "new302": "121ffb0bcdd6af4f24e5035389d4709dffddf263",
+  "merge_base": "f7e075480999e2f5a3681ddd429dca0fd9cac986",
+  "new302_is_ancestor_of_candidate": false,
+  "candidate_to_current304_changed_paths": [
+    "docs/qa.md",
+    "docs/qa/winpairs-windows-native-20261118.md",
+    "docs/qa/winpairs-windows-native-20261118/hosted-bb4277-windows-publication.log",
+    "docs/qa/winpairs-windows-native-20261118/independent-api-contract-review.md",
+    "docs/qa/winpairs-windows-native-20261118/independent-review.log",
+    "docs/qa/winpairs-windows-native-20261118/independent-review.xml",
+    "docs/qa/winpairs-windows-native-20261118/independent-test_review.py",
+    "docs/qa/winpairs-windows-native-20261118/manifest.json",
+    "docs/qa/winpairs-windows-native-20261118/portable-green-1c49199e.log",
+    "docs/qa/winpairs-windows-native-20261118/portable-red-bb4277.log",
+    "tasks/todo.md"
+  ],
+  "commits": [
+    {
+      "sha": "ed04746a110d800b73bf5824c82f454398154ec0",
+      "parents": [
+        "f7e075480999e2f5a3681ddd429dca0fd9cac986"
+      ],
+      "tree": "5e162549e6f793be2b45e0bca6f5902647fc0af0",
+      "author_date": "2026-11-18T00:51:35-08:00",
+      "committer_date": "2026-11-18T00:51:35-08:00",
+      "subject": "fix(release): reject unsafe Windows ZIP path identities",
+      "changed_files": [
+        "M\tdocs/specs/windows-acceptance-and-milestone-builds.md",
+        "M\ttests/test_verify_release.py",
+        "M\ttools/verify_release.py"
+      ],
+      "classification": "selective repair with identical stable patch ID",
+      "original304_commit": "de3d8bb752af384d7d0d9a47ff5ba077f96ec5fe"
+    },
+    {
+      "sha": "8bd9e6d9a5798d8cedffdd970fab7164f09612d8",
+      "parents": [
+        "ed04746a110d800b73bf5824c82f454398154ec0"
+      ],
+      "tree": "bf6cd6f2cf308236f6c4d4b2c5d8c47fc61dea0f",
+      "author_date": "2026-11-18T00:51:36-08:00",
+      "committer_date": "2026-11-18T00:51:36-08:00",
+      "subject": "fix(kb): preserve uncertainty in chronology and fix boundaries",
+      "changed_files": [
+        "M\tdocs/specs/kb-cve/31-C-product-build-pairs.md",
+        "M\tsrc/patchtrace/kbcorrelation/lineage.py",
+        "M\tsrc/patchtrace/kbcorrelation/resolver.py",
+        "A\ttests/test_kbc_lineage_certainty.py"
+      ],
+      "classification": "selective repair with identical stable patch ID",
+      "original304_commit": "485d9c0896cca1ac63e68f3e64205a754bdd15d4"
+    },
+    {
+      "sha": "609545ad0883cdf743bf81533790ea69c850e048",
+      "parents": [
+        "8bd9e6d9a5798d8cedffdd970fab7164f09612d8"
+      ],
+      "tree": "40c1f12d3a0798c4d9be477ef34e50cca14dc909",
+      "author_date": "2026-11-18T00:51:39-08:00",
+      "committer_date": "2026-11-18T00:51:39-08:00",
+      "subject": "fix(accuracy): block scoring after unattributed advisory rejection",
+      "changed_files": [
+        "M\tdocs/research/accuracy-cases/l1-join-candidates.md",
+        "M\ttests/test_research_qualification_l1_run.py",
+        "M\ttools/research_qualification/l1_run.py"
+      ],
+      "classification": "selective repair with identical stable patch ID",
+      "original304_commit": "bd994c07e3c626c3430b4707f99628079474f1aa"
+    },
+    {
+      "sha": "a56c20111853d499d90ff28588b883e187d8a0f3",
+      "parents": [
+        "609545ad0883cdf743bf81533790ea69c850e048"
+      ],
+      "tree": "ecdf8394c80e29ecce9d0f4f490fb8f4ebc50f58",
+      "author_date": "2026-11-18T00:51:40-08:00",
+      "committer_date": "2026-11-18T00:51:40-08:00",
+      "subject": "fix(kb): validate calendar evidence before establishing chronology",
+      "changed_files": [
+        "M\tdocs/specs/kb-cve/31-C-product-build-pairs.md",
+        "M\tsrc/patchtrace/kbcorrelation/lineage.py",
+        "M\ttests/test_kbc_lineage_certainty.py"
+      ],
+      "classification": "selective repair with identical stable patch ID",
+      "original304_commit": "07a335731839cc2bca40f207a5cb79228823857d"
+    },
+    {
+      "sha": "7eb701825b58e2b4afaab8ecb6736e3ef4e8fb28",
+      "parents": [
+        "a56c20111853d499d90ff28588b883e187d8a0f3"
+      ],
+      "tree": "2e9e33c0d1db3c877ed9a81176220e4889d644e3",
+      "author_date": "2026-11-18T00:51:41-08:00",
+      "committer_date": "2026-11-18T00:51:41-08:00",
+      "subject": "fix(kb): validate direct lineage builds and sibling mappings",
+      "changed_files": [
+        "M\tdocs/specs/kb-cve/31-C-product-build-pairs.md",
+        "M\tsrc/patchtrace/kbcorrelation/lineage.py",
+        "M\tsrc/patchtrace/kbcorrelation/resolver.py",
+        "M\ttests/test_kbc_lineage.py",
+        "M\ttests/test_kbc_lineage_certainty.py"
+      ],
+      "classification": "selective repair with identical stable patch ID",
+      "original304_commit": "aad3489bba2e6cd41fdaad486ce20c782d8be96c"
+    },
+    {
+      "sha": "b244369c296bceb13ce6e0d716f99e078d440f13",
+      "parents": [
+        "7eb701825b58e2b4afaab8ecb6736e3ef4e8fb28"
+      ],
+      "tree": "58bc87b65d86eec9a5940e9436e1b63a6c7c36e5",
+      "author_date": "2026-11-18T00:51:42-08:00",
+      "committer_date": "2026-11-18T00:51:42-08:00",
+      "subject": "fix(kb): isolate index lineage by selected architecture",
+      "changed_files": [
+        "M\tdocs/specs/kb-cve/31-C-product-build-pairs.md",
+        "M\tsrc/patchtrace/kbcorrelation/resolver.py",
+        "M\ttests/test_kbc_pairs_index.py",
+        "M\ttests/test_kbc_resolver.py",
+        "A\ttests/test_kbc_resolver_architecture.py"
+      ],
+      "classification": "selective repair with identical stable patch ID",
+      "original304_commit": "11e88b634af70a40f6860e0abb843b3f627ad5cc"
+    },
+    {
+      "sha": "b962facc70a4ed032b82afa9cebd217e25373a06",
+      "parents": [
+        "b244369c296bceb13ce6e0d716f99e078d440f13"
+      ],
+      "tree": "75d99f89e78f61b04656ba06bf105839ff9e7ab8",
+      "author_date": "2026-11-18T00:59:00-08:00",
+      "committer_date": "2026-11-18T00:59:00-08:00",
+      "subject": "fix(release): allow normalized Windows ZIP separators without accepting NUL truncation",
+      "changed_files": [
+        "M\tdocs/specs/windows-acceptance-and-milestone-builds.md",
+        "M\ttests/test_verify_release.py",
+        "M\ttools/verify_release.py"
+      ],
+      "classification": "unique ZIP reader normalization correction"
+    },
+    {
+      "sha": "fbc164d401b103237fad2fbb633dc2d124afb2b7",
+      "parents": [
+        "b962facc70a4ed032b82afa9cebd217e25373a06"
+      ],
+      "tree": "43968cdda9940c20ca5e4ede0a5c360a940e6c5a",
+      "author_date": "2026-11-18T00:59:01-08:00",
+      "committer_date": "2026-11-18T00:59:01-08:00",
+      "subject": "fix(kb): preserve partial-order uncertainty and require explicit ambiguous pair choice",
+      "changed_files": [
+        "M\tdocs/modules.md",
+        "M\tdocs/specs/kb-cve/31-C-product-build-pairs.md",
+        "M\tsrc/patchtrace/kbcorrelation/lineage.py",
+        "M\tsrc/patchtrace/kbcorrelation/resolver.py",
+        "M\tsrc/patchtrace/kbcorrelation/service.py",
+        "A\ttests/test_kbc_lineage_ambiguity.py",
+        "M\ttests/test_kbc_pairs_index.py",
+        "M\ttests/test_kbc_resolver_architecture.py"
+      ],
+      "classification": "unique lineage, pair-choice or bounded-enumeration behavior"
+    },
+    {
+      "sha": "154f030c7d170ebc757f8b1aa338c9f572f2133e",
+      "parents": [
+        "fbc164d401b103237fad2fbb633dc2d124afb2b7"
+      ],
+      "tree": "81a7f04868fd54616f3b92e8ea3e4dde3e16c27b",
+      "author_date": "2026-11-18T01:00:49-08:00",
+      "committer_date": "2026-11-18T01:00:49-08:00",
+      "subject": "fix(kb): withhold change provenance at ambiguous predecessor frontiers",
+      "changed_files": [
+        "M\tdocs/specs/kb-cve/31-C-product-build-pairs.md",
+        "M\tsrc/patchtrace/kbcorrelation/lineage.py",
+        "M\ttests/test_kbc_lineage_ambiguity.py"
+      ],
+      "classification": "unique lineage, pair-choice or bounded-enumeration behavior"
+    },
+    {
+      "sha": "7d80aee7b92eb9fe83c818cdfec7527f19efc252",
+      "parents": [
+        "154f030c7d170ebc757f8b1aa338c9f572f2133e"
+      ],
+      "tree": "dc1f6c0a3133692b2e214cd0f0907b2911dfd404",
+      "author_date": "2026-11-18T01:00:51-08:00",
+      "committer_date": "2026-11-18T01:00:51-08:00",
+      "subject": "fix(kb): bound variant enumeration and reuse chronology facts",
+      "changed_files": [
+        "M\tdocs/specs/kb-cve/31-C-product-build-pairs.md",
+        "M\tsrc/patchtrace/kbcorrelation/lineage.py",
+        "M\tsrc/patchtrace/kbcorrelation/resolver.py",
+        "A\ttests/test_kbc_resolver_bounds.py"
+      ],
+      "classification": "unique lineage, pair-choice or bounded-enumeration behavior"
+    },
+    {
+      "sha": "121ffb0bcdd6af4f24e5035389d4709dffddf263",
+      "parents": [
+        "7d80aee7b92eb9fe83c818cdfec7527f19efc252"
+      ],
+      "tree": "a42e1900fd049aa2f6d8efc4512a1b364ef50f98",
+      "author_date": "2026-11-18T01:07:01-08:00",
+      "committer_date": "2026-11-18T01:07:01-08:00",
+      "subject": "docs: record selective correctness review and exact continuation identities",
+      "changed_files": [
+        "M\tdocs/qa.md",
+        "M\tdocs/qa/branch-consolidation-20261118.md",
+        "A\tdocs/qa/consolidation-correctness-20261118.md",
+        "M\tdocs/specs/kb-cve/31-C-product-build-pairs.md",
+        "M\ttasks/todo.md"
+      ],
+      "classification": "separate QA, module index and publication identity documentation"
+    }
+  ],
+  "equivalent_ports": [
+    {
+      "original304_commit": "de3d8bb752af384d7d0d9a47ff5ba077f96ec5fe",
+      "new302_port": "ed04746a110d800b73bf5824c82f454398154ec0",
+      "stable_patch_id": "ff22f7015ae7bf18599e59cc582d5a1b2a61782e",
+      "same_stable_patch_id": true,
+      "original_is_ancestor_of_current304": true
+    },
+    {
+      "original304_commit": "485d9c0896cca1ac63e68f3e64205a754bdd15d4",
+      "new302_port": "8bd9e6d9a5798d8cedffdd970fab7164f09612d8",
+      "stable_patch_id": "5bc65e22bcefab52831743f716a587bf6ed8de13",
+      "same_stable_patch_id": true,
+      "original_is_ancestor_of_current304": true
+    },
+    {
+      "original304_commit": "bd994c07e3c626c3430b4707f99628079474f1aa",
+      "new302_port": "609545ad0883cdf743bf81533790ea69c850e048",
+      "stable_patch_id": "bfeb59d39326541ea6b8e0e66c13f065a25d839c",
+      "same_stable_patch_id": true,
+      "original_is_ancestor_of_current304": true
+    },
+    {
+      "original304_commit": "07a335731839cc2bca40f207a5cb79228823857d",
+      "new302_port": "a56c20111853d499d90ff28588b883e187d8a0f3",
+      "stable_patch_id": "f8338bc8b1ed78833455e5b4ab4a6043db6c1c00",
+      "same_stable_patch_id": true,
+      "original_is_ancestor_of_current304": true
+    },
+    {
+      "original304_commit": "aad3489bba2e6cd41fdaad486ce20c782d8be96c",
+      "new302_port": "7eb701825b58e2b4afaab8ecb6736e3ef4e8fb28",
+      "stable_patch_id": "c44b59abf2fac0f5ed95d1d363d3a7a33455d327",
+      "same_stable_patch_id": true,
+      "original_is_ancestor_of_current304": true
+    },
+    {
+      "original304_commit": "11e88b634af70a40f6860e0abb843b3f627ad5cc",
+      "new302_port": "b244369c296bceb13ce6e0d716f99e078d440f13",
+      "stable_patch_id": "abcd718491b875fc9d42f598e65b01b36f919c5d",
+      "same_stable_patch_id": true,
+      "original_is_ancestor_of_current304": true
+    }
+  ],
+  "files": [
+    {
+      "path": "docs/modules.md",
+      "base_blob": "594d2b61e2c66ed5352b04c282f60fb342ea62ee",
+      "current304_blob": "594d2b61e2c66ed5352b04c282f60fb342ea62ee",
+      "new302_blob": "9f4602d92061edd4bb41f4e14cd8a673796d3a8b",
+      "relation": "incoming_only_change",
+      "recommendation": "RETAIN INCOMING ADDITION with its exact source attribution."
+    },
+    {
+      "path": "docs/qa.md",
+      "base_blob": "b2f9f74ccf659313546750739abea4c5becbaecd",
+      "current304_blob": "7e757fa8b309b34f8650d17d99700a8bc4e9a174",
+      "new302_blob": "5e5227bd0584cb745687c36638b8283242dba3ed",
+      "relation": "both_changed_since_base",
+      "recommendation": "UNION: retain current304/native/L1 evidence and add new302 attributed findings; do not replace either history."
+    },
+    {
+      "path": "docs/qa/branch-consolidation-20261118.md",
+      "base_blob": "8a4ce2d263050524acae35438f9653d6cc926341",
+      "current304_blob": "8a4ce2d263050524acae35438f9653d6cc926341",
+      "new302_blob": "b96abbbac5f996a847fd70813a9eb3fff7b80117",
+      "relation": "incoming_only_change",
+      "recommendation": "RETAIN INCOMING ADDITION with its exact source attribution."
+    },
+    {
+      "path": "docs/qa/consolidation-correctness-20261118.md",
+      "base_blob": null,
+      "current304_blob": null,
+      "new302_blob": "df21c5da1ec1f32927122beeecbfc78ae28db737",
+      "relation": "incoming_only_change",
+      "recommendation": "RETAIN as attributed historical new302 report; its decision not to port release-hold/native controls does not override merged current304 policy."
+    },
+    {
+      "path": "docs/research/accuracy-cases/l1-join-candidates.md",
+      "base_blob": "67c78abfb9aa870b39360e0be04597b6ed50f88d",
+      "current304_blob": "db1a39302837e9719b488f70b44735ea65b03723",
+      "new302_blob": "db1a39302837e9719b488f70b44735ea65b03723",
+      "relation": "identical_current_and_incoming",
+      "recommendation": "UNCHANGED EQUIVALENT CONTENT: either side has the same blob."
+    },
+    {
+      "path": "docs/specs/kb-cve/31-C-product-build-pairs.md",
+      "base_blob": "2a617d287e42d25ef634c4a08defb6d468418ad8",
+      "current304_blob": "006abe3a19417a8b9c38658eaafccac147b730fc",
+      "new302_blob": "eaa78a059805f0d0ab1d4f17acf38de644175338",
+      "relation": "both_changed_since_base",
+      "recommendation": "RETAIN INCOMING ADDITIONS: source-order, frontier, explicit-choice and work-budget contracts extend equivalent earlier repairs."
+    },
+    {
+      "path": "docs/specs/windows-acceptance-and-milestone-builds.md",
+      "base_blob": "0636f1675ea013e28e64a2794f315b42ae6de35f",
+      "current304_blob": "7080446384d9d339db1b8887272c7e7953b29fbc",
+      "new302_blob": "68cabe687fb7c31c4ea586a516cf1983afa1905a",
+      "relation": "both_changed_since_base",
+      "recommendation": "UNION: add incoming benign separator-normalization rule; preserve current304 Early native publication controls appendix."
+    },
+    {
+      "path": "src/patchtrace/kbcorrelation/lineage.py",
+      "base_blob": "756d3041f195e2804c591c9fe6208096d9d33ba8",
+      "current304_blob": "726362787671ced7e40066aa238f35f8962c2af8",
+      "new302_blob": "3828a9abb9a49c59fdaa0401d5a028fa56b234ba",
+      "relation": "both_changed_since_base",
+      "recommendation": "RETAIN INCOMING BEHAVIOR after independent review: six earlier repair patches are equivalent and incoming adds the partial-order/frontier corrections."
+    },
+    {
+      "path": "src/patchtrace/kbcorrelation/resolver.py",
+      "base_blob": "03a92129d8c5109bf7e1a859f36f708df3927cf8",
+      "current304_blob": "33779ac3500e822d6e100a50f25b265e77c4758e",
+      "new302_blob": "17bdcfceb21b4ac7e6ed7ae9cdf6f26b0163e5cd",
+      "relation": "both_changed_since_base",
+      "recommendation": "RETAIN INCOMING BEHAVIOR after independent review: preserve ambiguity and bound evaluation work before output truncation."
+    },
+    {
+      "path": "src/patchtrace/kbcorrelation/service.py",
+      "base_blob": "741b99ad12b2141971ba94881d9d86e544e8c9b0",
+      "current304_blob": "741b99ad12b2141971ba94881d9d86e544e8c9b0",
+      "new302_blob": "fea8d13fe5e3fb6e4295992b2cce80ec1fc8390e",
+      "relation": "incoming_only_change",
+      "recommendation": "RETAIN INCOMING: propagate ambiguity and require explicit selection; preserve unrelated current304 behavior."
+    },
+    {
+      "path": "tasks/todo.md",
+      "base_blob": "653f0321c114b19a07b09b0cfcd88e7e0a29557b",
+      "current304_blob": "64452a86250ca4065342feffbcc119e0edac9248",
+      "new302_blob": "fa7ed59624a8e34bafa8d181d00c16f3df04b139",
+      "relation": "both_changed_since_base",
+      "recommendation": "UNION: keep both task histories and open qualification gates."
+    },
+    {
+      "path": "tests/test_kbc_lineage.py",
+      "base_blob": "60b761149f2cb4dc0144c17a900e74bdb333f459",
+      "current304_blob": "64b94cd9e3fd9cd3a08c75901e9b7daba1e533b3",
+      "new302_blob": "64b94cd9e3fd9cd3a08c75901e9b7daba1e533b3",
+      "relation": "identical_current_and_incoming",
+      "recommendation": "UNCHANGED EQUIVALENT CONTENT: either side has the same blob."
+    },
+    {
+      "path": "tests/test_kbc_lineage_ambiguity.py",
+      "base_blob": null,
+      "current304_blob": null,
+      "new302_blob": "13a9262f37d11ab0a0c0fa5a42d197ebe4291207",
+      "relation": "incoming_only_change",
+      "recommendation": "RETAIN INCOMING ADDITION with its exact source attribution."
+    },
+    {
+      "path": "tests/test_kbc_lineage_certainty.py",
+      "base_blob": null,
+      "current304_blob": "1399dd41207e3a9e33a1e67025587a54883db6d0",
+      "new302_blob": "1399dd41207e3a9e33a1e67025587a54883db6d0",
+      "relation": "identical_current_and_incoming",
+      "recommendation": "UNCHANGED EQUIVALENT CONTENT: either side has the same blob."
+    },
+    {
+      "path": "tests/test_kbc_pairs_index.py",
+      "base_blob": "ad12ae1c071b9eea8cc2e15f504c3a5dedda0257",
+      "current304_blob": "a4a4f2d2e122ce5889301b289d4c1e3579076e55",
+      "new302_blob": "3551eb45d7c419467e18e30f9da38dd6fb48b355",
+      "relation": "both_changed_since_base",
+      "recommendation": "RETAIN INCOMING ADDITIONS: two available/unavailable-variant CLI plan/acquire refusal controls; current304 port controls remain."
+    },
+    {
+      "path": "tests/test_kbc_resolver.py",
+      "base_blob": "2c53d511a796b35c8b23dca0c860e81c5986a802",
+      "current304_blob": "e3169d49e757c96eeb8e7ee77dc75f9cb767c923",
+      "new302_blob": "e3169d49e757c96eeb8e7ee77dc75f9cb767c923",
+      "relation": "identical_current_and_incoming",
+      "recommendation": "UNCHANGED EQUIVALENT CONTENT: either side has the same blob."
+    },
+    {
+      "path": "tests/test_kbc_resolver_architecture.py",
+      "base_blob": null,
+      "current304_blob": "192a69c5c9a9a33f66227c7cf1b3ea45c00490ff",
+      "new302_blob": "463824e146f40c2e087e1e1bd4c26c2c7d638083",
+      "relation": "both_changed_since_base",
+      "recommendation": "RETAIN INCOMING UPDATED CONTROL: variants use established older rows, while direct tied comparison remains blocked; review with lineage change."
+    },
+    {
+      "path": "tests/test_kbc_resolver_bounds.py",
+      "base_blob": null,
+      "current304_blob": null,
+      "new302_blob": "8c153141b0ba0a5b9bbbf863daa26f09cce35ab8",
+      "relation": "incoming_only_change",
+      "recommendation": "RETAIN INCOMING ADDITION with its exact source attribution."
+    },
+    {
+      "path": "tests/test_research_qualification_l1_run.py",
+      "base_blob": "c4f60e63f5d4474f6fcf66b15e0af7ce4689c5b5",
+      "current304_blob": "163a59087779608cff6c3627ab33e678ba1835c1",
+      "new302_blob": "2f46429537f3199731340f5bedb25bac5a169425",
+      "relation": "both_changed_since_base",
+      "recommendation": "KEEP CURRENT304: incoming differs only by undoing the valid .tsp fixture correction and deleting the .tsp missing-metadata BLOCKED control."
+    },
+    {
+      "path": "tests/test_verify_release.py",
+      "base_blob": "5be693fc75980242c5a4ddbf87557263399522db",
+      "current304_blob": "93a5947c0d291a5c0c919573ae376dee3389ba04",
+      "new302_blob": "2d3f96c3ba170234e208680a06677d99684e6aec",
+      "relation": "both_changed_since_base",
+      "recommendation": "RETAIN INCOMING ADDITION: POSIX/Windows separator controls supplement equivalent existing archive controls."
+    },
+    {
+      "path": "tools/research_qualification/l1_run.py",
+      "base_blob": "828fd1c045e73616e22132c3478b4b7a94f439b9",
+      "current304_blob": "a4954c83e23ca29a369e96a3d03081e7e752b368",
+      "new302_blob": "a4954c83e23ca29a369e96a3d03081e7e752b368",
+      "relation": "identical_current_and_incoming",
+      "recommendation": "UNCHANGED EQUIVALENT CONTENT: either side has the same blob."
+    },
+    {
+      "path": "tools/verify_release.py",
+      "base_blob": "8d3b0ff72f55ed5a6509e3bbc43b5b8ae0cdf427",
+      "current304_blob": "8a751a8a5228d95b1f2a9de300630c0bca514b6b",
+      "new302_blob": "aafad60657a2b98a203a4d8de26edf5e94523de1",
+      "relation": "both_changed_since_base",
+      "recommendation": "RETAIN INCOMING: test for actual NUL in orig_filename, not all reader normalization; independent authored ZIP controls reproduce the fix."
+    }
+  ],
+  "file_relation_counts": {
+    "incoming_only_change": 6,
+    "both_changed_since_base": 11,
+    "identical_current_and_incoming": 5
+  },
+  "current304_only_changed_paths": [
+    ".github/workflows/qa-windows.yml",
+    "docs/plans/accuracy-validation-plan-20261106.md",
+    "docs/qa/cve-consolidation-20261118.md",
+    "docs/qa/cve-consolidation-20261118/SHA256SUMS.json",
+    "docs/qa/cve-consolidation-20261118/advisory-receipt.json",
+    "docs/qa/cve-consolidation-20261118/branches-start.tsv",
+    "docs/qa/cve-consolidation-20261118/corrected-file-receipt.json",
+    "docs/qa/cve-consolidation-20261118/corrected-file-run-context.json",
+    "docs/qa/cve-consolidation-20261118/file-receipt.json",
+    "docs/qa/cve-consolidation-20261118/file-run-context.json",
+    "docs/qa/cve-consolidation-20261118/frozen-manifest.json",
+    "docs/qa/cve-consolidation-20261118/index-source-receipts.json",
+    "docs/qa/cve-consolidation-20261118/open-prs-start.json",
+    "docs/qa/cve-consolidation-20261118/run-context.json",
+    "docs/qa/cve-consolidation-20261118/source-receipts.json",
+    "docs/qa/cve-consolidation-publication-20261118.md",
+    "docs/qa/cve-pr-disposition-20261118.md",
+    "docs/qa/cve-winpairs-integrity-20261118.md",
+    "docs/qa/winpairs-windows-native-20261118.md",
+    "docs/qa/winpairs-windows-native-20261118/hosted-bb4277-windows-publication.log",
+    "docs/qa/winpairs-windows-native-20261118/independent-api-contract-review.md",
+    "docs/qa/winpairs-windows-native-20261118/independent-review.log",
+    "docs/qa/winpairs-windows-native-20261118/independent-review.xml",
+    "docs/qa/winpairs-windows-native-20261118/independent-test_review.py",
+    "docs/qa/winpairs-windows-native-20261118/manifest.json",
+    "docs/qa/winpairs-windows-native-20261118/portable-green-1c49199e.log",
+    "docs/qa/winpairs-windows-native-20261118/portable-red-bb4277.log",
+    "docs/release-process.md",
+    "docs/research/winpairs.md",
+    "docs/specs/acquisition.md",
+    "docs/specs/kb-cve/31-G-components-discovery.md",
+    "docs/specs/windows-release-signing-policy.md",
+    "src/patchtrace/acquisition/contracts.py",
+    "src/patchtrace/kbcorrelation/components.py",
+    "tests/test_kbc_tsp_components.py",
+    "tests/test_release_gate.py",
+    "tests/test_research_qualification_winpairs.py",
+    "tests/test_research_qualification_winpairs_integrity.py",
+    "tests/test_research_qualification_winpairs_publication.py",
+    "tools/research_qualification/winpairs.py"
+  ],
+  "policy": "preserve both parent histories; retain current304 release-hold, .tsp, native publication and source-evidence work; do not call new302 superseded or replace current304 wholesale",
+  "independent_zip_controls": "zip-normalization-review.json",
+  "independent_lineage_review": "/workspace/scratch/e83fbf4505c3/lineage302-review-20261118/; owned by cve_workflow_review, not rerun by this overlap reviewer"
+}

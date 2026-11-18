@@ -31,6 +31,20 @@ Exact-head hosted Windows/full/package gates remain mandatory. See the
 [source, repair and continuation record](qa/cve-consolidation-20261118.md).
 
 
+## 2026-11-18 current consolidation correctness follow-up
+
+The #302 continuation selectively incorporates six independently reviewed
+correctness fixes from concurrent #304, then repairs ZIP separator handling,
+ambiguous chronology/change provenance and unbounded variant evaluation.
+Independent final core review at `bce67e93`: **239 passed** (225 project cases
+plus 14 independent controls). Separate verifier/L1/schema selection: **242
+passed**. Whole Ruff, schema regeneration and whitespace checks pass. A broader
+combined local process ended 137 without a summary and is not a passing run.
+Exact source/continuation trees, old-head hosted counts and remaining gates are
+in [the follow-up record](qa/consolidation-correctness-20261118.md). Existing
+automatic prerelease policy is unchanged; fresh published-head CI remains the
+merge gate. PRs #304, #305 and #306 retain their separate remaining scope.
+
 ## 2026-11-18 independently reviewed consolidation successor
 
 `codex/consolidation-reviewed-20261118` directly continues #301, preserving #297
@@ -1850,3 +1864,8 @@ PR304 now includes independently reviewed Windows publication repair at `6cc6b6b
 ## [WINPAIRS-WINDOWS-NATIVE-20261118]
 
 PR #304 at `bb4277ae` failed the hosted Windows publication boundary: **15 failed, 61 passed, 3 skipped**; full Windows QA and packaging were not reached. The original raw failure is retained. Native information-call repair at local `1c49199e` preserves held-handle ownership/no replacement and fixes independently reproduced primary-error masking during cleanup. Twenty portable controls failed against the old implementation; the focused final result is **101 passed, 2 actual-Windows skips**. Whole Ruff and whitespace checks pass. Exact-head hosted acceptance and merge remain open; no native success or precise old Win32 error-87 cause is inferred from portable checks. [Evidence and limits](qa/winpairs-windows-native-20261118.md).
+
+
+## [CURRENT302-INTEGRATION-20261118]
+
+Fresh REST inspection found eleven new #302 commits at `121ffb0b`; six repairs match earlier #304 patch IDs, while four behavior commits repair additional ZIP/lineage/selection/budget defects. Actual merge parents preserve both that head and #304 `6cc6b6b7`. Independent review verified all forty #304-only paths remain unchanged. A copied-target chronology-cache regression was reproduced and fixed; four stale test-double failures were preserved and repaired through fixture flags only. Disjoint affected selections total **1,650 passed, 2 native Windows skips**, with separate independent controls, whole Ruff and schema checks passing. Final code/tree is local `3693ca3b` / published `34c06d9e`, tree `42327753`. Hosted exact-head acceptance and guarded merge remain pending; no PR closure or accuracy promotion follows from local checks. [Evidence and limits](qa/current302-integration-20261118.md).

@@ -107,6 +107,50 @@ malformed release build while the original row and its identities remain intact.
 Malformed release-build or heading-build claims also leave the fix boundary
 unverified, including a mix of malformed and otherwise valid matching claims.
 
+Partial-order and explicit-choice follow-up (2026-11-18): equal UTC instants
+permit numeric build ordering only when both rows state the same build-family
+prefix. A missing build, a different family, or equal builds remain unordered;
+an intervening sortable row cannot hide such an observation. The change claim
+stays unknown when another observation cannot be ordered against the target.
+For each target variant, search demonstrably earlier rows for the predecessor.
+Retain observations unordered against either endpoint in the confounding window,
+regardless of where KB or hash display tie-breakers place them, so they cannot
+support a fix boundary. Unordered predecessor alternatives also require an
+explicit choice, even when every possible older byte identity differs from the
+target and the target's change claim is therefore still `yes`.
+When unordered observations at the asserted change or unchanged-run frontier
+disagree about whether they already contain the target bytes, both
+`changed_in_kb` and the claimed first-change KB remain unknown. A hash tie-breaker
+must not switch the answer between `yes` and `no` or invent `last_changed_in`.
+If no ordered predecessor exists, an otherwise eligible displayed predecessor
+may remain as a diagnostic proposal with `ORDER_UNVERIFIED` and grade X.
+Same-time variants must never become each other's asserted older version.
+
+The derived resolution carries an `ambiguous` flag before candidate filtering
+or truncation. Multiple target byte identities and unresolved endpoint chronology
+set it, including when another variant is unavailable. A truncated resolution
+also requires an explicit choice. Planning and acquisition without `--pair`
+must refuse any remaining viable automatic choice when either condition holds;
+an explicit unique pair prefix may still select an otherwise valid alternative.
+The JSON resolution exposes `ambiguous` alongside `truncated`, and the human
+listing explains the need for an explicit choice. Neither an explicit choice
+nor a candidate's availability upgrades the evidence or removes hard blocks.
+
+The pair limit is an enumeration limit, not only an output slice: it must be an
+integer from 1 through 1,000. Precompute chronology facts for repeated scans once
+per resolution, retain their local cache only for that calculation, and cap the product of the selected
+timeline's row count and enumerated target count at 1,000,000. Before evaluating
+pairs, visit target identities in stable availability/display order within those
+budgets. Rank the evaluated proposals normally. A truncated result does not
+promise the globally best pair; preserve the full-source ambiguity flag and
+explain incomplete enumeration even if no evaluated target has a predecessor.
+In that case report `INDEX_GAP`, not a false `NO_OLDER` conclusion.
+
+The pure predecessor helper preserves its value-based target contract when
+chronology facts are cached: a target equal to an input row resolves to that
+row's local identity before cached lookups. A target absent from the supplied
+timeline raises `ValueError`, as before; it must not expose a cache `KeyError`.
+
 Direct index mappings may omit `other_versions`; a present value must be a list
 or tuple of nonempty string keys. A malformed collection or member rejects that
 entire mapping once, without raising, discarding bad members silently, or

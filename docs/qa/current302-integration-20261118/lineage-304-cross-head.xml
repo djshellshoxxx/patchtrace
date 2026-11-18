@@ -1,0 +1,398 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="22" skipped="0" tests="25" time="0.317" timestamp="2026-11-18T01:18:58.088994-08:00" hostname="d05d1fa33505"><testcase classname="cross-head-tests.test_kbc_lineage_ambiguity" name="test_incomparable_same_instant_bytes_are_not_sorted_away[None]" time="0.002"><failure message="AssertionError: assert 'yes' == 'unknown'&#10;  &#10;  - unknown&#10;  + yes">unknown_build = None
+
+    @pytest.mark.parametrize('unknown_build', [None, 'malformed'])
+    def test_incomparable_same_instant_bytes_are_not_sorted_away(unknown_build):
+        result = resolve([
+            mapping('a', 'KB5000001', unknown_build),
+            mapping('b', 'KB5000002', '26100.100'),
+            mapping('c', 'KB5000003', '26100.200'),
+        ])
+&gt;       assert result.changed_in_kb == 'unknown'
+E       AssertionError: assert 'yes' == 'unknown'
+E         
+E         - unknown
+E         + yes
+
+cross-head-tests/test_kbc_lineage_ambiguity.py:34: AssertionError</failure></testcase><testcase classname="cross-head-tests.test_kbc_lineage_ambiguity" name="test_incomparable_same_instant_bytes_are_not_sorted_away[malformed]" time="0.001"><failure message="AssertionError: assert 'yes' == 'unknown'&#10;  &#10;  - unknown&#10;  + yes">unknown_build = 'malformed'
+
+    @pytest.mark.parametrize('unknown_build', [None, 'malformed'])
+    def test_incomparable_same_instant_bytes_are_not_sorted_away(unknown_build):
+        result = resolve([
+            mapping('a', 'KB5000001', unknown_build),
+            mapping('b', 'KB5000002', '26100.100'),
+            mapping('c', 'KB5000003', '26100.200'),
+        ])
+&gt;       assert result.changed_in_kb == 'unknown'
+E       AssertionError: assert 'yes' == 'unknown'
+E         
+E         - unknown
+E         + yes
+
+cross-head-tests/test_kbc_lineage_ambiguity.py:34: AssertionError</failure></testcase><testcase classname="cross-head-tests.test_kbc_lineage_ambiguity" name="test_same_instant_different_build_families_do_not_establish_order" time="0.000"><failure message="AssertionError: assert 'yes' == 'unknown'&#10;  &#10;  - unknown&#10;  + yes">def test_same_instant_different_build_families_do_not_establish_order():
+        result = resolve([
+            mapping('a', 'KB5000001', '26000.100'),
+            mapping('b', 'KB5000003', '26100.200'),
+        ])
+&gt;       assert result.changed_in_kb == 'unknown'
+E       AssertionError: assert 'yes' == 'unknown'
+E         
+E         - unknown
+E         + yes
+
+cross-head-tests/test_kbc_lineage_ambiguity.py:43: AssertionError</failure></testcase><testcase classname="cross-head-tests.test_kbc_lineage_ambiguity" name="test_same_machine_same_build_variants_never_pick_one_by_sha" time="0.000"><failure message="AssertionError: [('a', 'b', 'A'), ('b', 'c', 'X')]&#10;assert 1 != 1&#10; +  where 1 = len([PairProposal(contract='kbcorrelation/1', pair_id='3a501436e021796703c8d4c248766c914acf68eac1bb1cfcf93b0fa1dd41d31a', ...dex-adjacent', fix_boundary='source-supported', window=(), window_complete=None, reason_codes=(), grade='A', tier='C')])">def test_same_machine_same_build_variants_never_pick_one_by_sha():
+        result = resolve([
+            mapping('a', 'KB5000001', '26100.100', day='2099-01-01'),
+            mapping('b', 'KB5000003', '26100.200'),
+            mapping('c', 'KB5000003', '26100.200'),
+        ])
+        assert result.changed_in_kb == 'unknown'
+        viable = [pair for pair in result.pairs if pair.grade != 'X']
+&gt;       assert len(viable) != 1, [(pair.older.sha256[0], pair.newer.sha256[0], pair.grade) for pair in result.pairs]
+E       AssertionError: [('a', 'b', 'A'), ('b', 'c', 'X')]
+E       assert 1 != 1
+E        +  where 1 = len([PairProposal(contract='kbcorrelation/1', pair_id='3a501436e021796703c8d4c248766c914acf68eac1bb1cfcf93b0fa1dd41d31a', ...dex-adjacent', fix_boundary='source-supported', window=(), window_complete=None, reason_codes=(), grade='A', tier='C')])
+
+cross-head-tests/test_kbc_lineage_ambiguity.py:55: AssertionError</failure></testcase><testcase classname="cross-head-tests.test_kbc_lineage_ambiguity" name="test_different_kb_tie_does_not_change_claim_based_on_kb_number" time="0.001"><failure message="AssertionError: assert [('X', 'unver...NVERIFIED',))] == [('A', 'sourc...pported', ())]&#10;  &#10;  At index 0 diff: ('X', 'unverified', ('ORDER_UNVERIFIED',)) != ('A', 'source-supported', ())&#10;  Use -v to get more diff">def test_different_kb_tie_does_not_change_claim_based_on_kb_number():
+        old = mapping('a', 'KB5000001', '26100.100', day='2099-01-01')
+        target = mapping('b', 'KB5000003', '26100.200')
+        before = resolve([old, target, mapping('c', 'KB5000002', '26100.200')])
+        after = resolve([old, target, mapping('c', 'KB5000004', '26100.200')])
+        assert before.changed_in_kb == after.changed_in_kb == 'unknown'
+&gt;       assert [(p.grade, p.fix_boundary, p.reason_codes) for p in before.pairs] == [
+            (p.grade, p.fix_boundary, p.reason_codes) for p in after.pairs
+        ]
+E       AssertionError: assert [('X', 'unver...NVERIFIED',))] == [('A', 'sourc...pported', ())]
+E         
+E         At index 0 diff: ('X', 'unverified', ('ORDER_UNVERIFIED',)) != ('A', 'source-supported', ())
+E         Use -v to get more diff
+
+cross-head-tests/test_kbc_lineage_ambiguity.py:70: AssertionError</failure></testcase><testcase classname="cross-head-tests.test_kbc_lineage_ambiguity" name="test_unordered_older_variants_withhold_fix_boundary_and_automatic_choice" time="0.000"><failure message="AttributeError: 'Resolution' object has no attribute 'ambiguous'">def test_unordered_older_variants_withhold_fix_boundary_and_automatic_choice():
+        result = resolve([
+            mapping('a', 'KB5000001', '26100.100', day='2099-01-01'),
+            mapping('c', 'KB5000001', '26100.100', day='2099-01-01'),
+            mapping('b', 'KB5000003', '26100.200'),
+        ])
+        assert result.changed_in_kb == 'yes'  # the target differs from either earlier variant
+&gt;       assert result.ambiguous
+               ^^^^^^^^^^^^^^^^
+E       AttributeError: 'Resolution' object has no attribute 'ambiguous'
+
+cross-head-tests/test_kbc_lineage_ambiguity.py:82: AttributeError</failure></testcase><testcase classname="cross-head-tests.test_kbc_lineage_ambiguity" name="test_variant_ambiguity_refuses_default_and_keeps_explicit_choice[unavailable-variant]" time="0.000"><failure message="AssertionError: assert PairProposal(contract='kbcorrelation/1', pair_id='3a501436e021796703c8d4c248766c914acf68eac1bb1cfcf93b0fa1dd41d31a', o...ate='index-adjacent', fix_boundary='unverified', window=(), window_complete=None, reason_codes=(), grade='A', tier='C') is None">sole_viable_cause = 'unavailable-variant'
+
+    @pytest.mark.parametrize('sole_viable_cause', ['unavailable-variant', 'truncated-list'])
+    def test_variant_ambiguity_refuses_default_and_keeps_explicit_choice(sole_viable_cause):
+        old = mapping('a', 'KB5000001', '26100.100', day='2099-01-01')
+        variant = mapping('c', 'KB5000003', '26100.200')
+        if sole_viable_cause == 'unavailable-variant':
+            variant.update(download=None, variant='delta')
+        rows, rejected = lineage.index_rows(
+            [old, mapping('b', 'KB5000003', '26100.200'), variant], file_name=FILE_NAME
+        )
+        assert rejected == 0
+        limit = 1 if sole_viable_cause == 'truncated-list' else 1000
+        result = resolver.resolve(rows, kb='KB5000003', scope=SCOPE, file_name=FILE_NAME, limit=limit)
+        assert result.changed_in_kb == 'unknown'
+        (only_viable,) = [pair for pair in result.pairs if pair.grade != 'X']
+        assert KbService._pick_pair([result], only_viable.pair_id[:12]) == only_viable
+        try:
+            default = KbService._pick_pair([result], None)
+        except KbcStoreError as exc:
+            assert exc.code == 'PT-KBC-INPUT'
+        else:
+&gt;           assert default is None
+E           AssertionError: assert PairProposal(contract='kbcorrelation/1', pair_id='3a501436e021796703c8d4c248766c914acf68eac1bb1cfcf93b0fa1dd41d31a', o...ate='index-adjacent', fix_boundary='unverified', window=(), window_complete=None, reason_codes=(), grade='A', tier='C') is None
+
+cross-head-tests/test_kbc_lineage_ambiguity.py:112: AssertionError</failure></testcase><testcase classname="cross-head-tests.test_kbc_lineage_ambiguity" name="test_variant_ambiguity_refuses_default_and_keeps_explicit_choice[truncated-list]" time="0.000"><failure message="AssertionError: assert PairProposal(contract='kbcorrelation/1', pair_id='3a501436e021796703c8d4c248766c914acf68eac1bb1cfcf93b0fa1dd41d31a', o...ate='index-adjacent', fix_boundary='unverified', window=(), window_complete=None, reason_codes=(), grade='A', tier='C') is None">sole_viable_cause = 'truncated-list'
+
+    @pytest.mark.parametrize('sole_viable_cause', ['unavailable-variant', 'truncated-list'])
+    def test_variant_ambiguity_refuses_default_and_keeps_explicit_choice(sole_viable_cause):
+        old = mapping('a', 'KB5000001', '26100.100', day='2099-01-01')
+        variant = mapping('c', 'KB5000003', '26100.200')
+        if sole_viable_cause == 'unavailable-variant':
+            variant.update(download=None, variant='delta')
+        rows, rejected = lineage.index_rows(
+            [old, mapping('b', 'KB5000003', '26100.200'), variant], file_name=FILE_NAME
+        )
+        assert rejected == 0
+        limit = 1 if sole_viable_cause == 'truncated-list' else 1000
+        result = resolver.resolve(rows, kb='KB5000003', scope=SCOPE, file_name=FILE_NAME, limit=limit)
+        assert result.changed_in_kb == 'unknown'
+        (only_viable,) = [pair for pair in result.pairs if pair.grade != 'X']
+        assert KbService._pick_pair([result], only_viable.pair_id[:12]) == only_viable
+        try:
+            default = KbService._pick_pair([result], None)
+        except KbcStoreError as exc:
+            assert exc.code == 'PT-KBC-INPUT'
+        else:
+&gt;           assert default is None
+E           AssertionError: assert PairProposal(contract='kbcorrelation/1', pair_id='3a501436e021796703c8d4c248766c914acf68eac1bb1cfcf93b0fa1dd41d31a', o...ate='index-adjacent', fix_boundary='unverified', window=(), window_complete=None, reason_codes=(), grade='A', tier='C') is None
+
+cross-head-tests/test_kbc_lineage_ambiguity.py:112: AssertionError</failure></testcase><testcase classname="cross-head-tests.test_kbc_lineage_ambiguity" name="test_unambiguous_pair_uses_explicit_within_family_chronology[2099-01-01-None]" time="0.000" /><testcase classname="cross-head-tests.test_kbc_lineage_ambiguity" name="test_unambiguous_pair_uses_explicit_within_family_chronology[2099-02-01-26100.100]" time="0.000" /><testcase classname="cross-head-tests.test_kbc_lineage_ambiguity" name="test_change_stays_unknown_when_prior_variants_disagree_on_target_content[peer-sorts-before]" time="0.000"><failure message="AttributeError: 'Resolution' object has no attribute 'ambiguous'">peer_sha = 'a'
+
+    @pytest.mark.parametrize('peer_sha', ['a', 'c'], ids=['peer-sorts-before', 'peer-sorts-after'])
+    def test_change_stays_unknown_when_prior_variants_disagree_on_target_content(peer_sha):
+        result = resolve([
+            mapping('b', 'KB5000001', '26100.100', day='2099-01-01'),
+            mapping(peer_sha, 'KB5000001', '26100.100', day='2099-01-01'),
+            mapping('b', 'KB5000003', '26100.200'),
+        ])
+&gt;       assert result.ambiguous
+               ^^^^^^^^^^^^^^^^
+E       AttributeError: 'Resolution' object has no attribute 'ambiguous'
+
+cross-head-tests/test_kbc_lineage_ambiguity.py:134: AttributeError</failure></testcase><testcase classname="cross-head-tests.test_kbc_lineage_ambiguity" name="test_change_stays_unknown_when_prior_variants_disagree_on_target_content[peer-sorts-after]" time="0.000"><failure message="AttributeError: 'Resolution' object has no attribute 'ambiguous'">peer_sha = 'c'
+
+    @pytest.mark.parametrize('peer_sha', ['a', 'c'], ids=['peer-sorts-before', 'peer-sorts-after'])
+    def test_change_stays_unknown_when_prior_variants_disagree_on_target_content(peer_sha):
+        result = resolve([
+            mapping('b', 'KB5000001', '26100.100', day='2099-01-01'),
+            mapping(peer_sha, 'KB5000001', '26100.100', day='2099-01-01'),
+            mapping('b', 'KB5000003', '26100.200'),
+        ])
+&gt;       assert result.ambiguous
+               ^^^^^^^^^^^^^^^^
+E       AttributeError: 'Resolution' object has no attribute 'ambiguous'
+
+cross-head-tests/test_kbc_lineage_ambiguity.py:134: AttributeError</failure></testcase><testcase classname="cross-head-tests.test_kbc_lineage_ambiguity" name="test_unchanged_run_cannot_attribute_its_origin_to_a_hash_sorted_kb[peer-sorts-before]" time="0.000"><failure message="AttributeError: 'Resolution' object has no attribute 'ambiguous'">peer_sha = 'a'
+
+    @pytest.mark.parametrize('peer_sha', ['a', 'c'], ids=['peer-sorts-before', 'peer-sorts-after'])
+    def test_unchanged_run_cannot_attribute_its_origin_to_a_hash_sorted_kb(peer_sha):
+        result = resolve([
+            mapping('b', 'KB5000000', '26100.50', day='2098-12-15'),
+            mapping(peer_sha, 'KB5000000', '26100.50', day='2098-12-15'),
+            mapping('b', 'KB5000001', '26100.100', day='2099-01-01'),
+            mapping('b', 'KB5000003', '26100.200'),
+        ])
+&gt;       assert result.ambiguous
+               ^^^^^^^^^^^^^^^^
+E       AttributeError: 'Resolution' object has no attribute 'ambiguous'
+
+cross-head-tests/test_kbc_lineage_ambiguity.py:147: AttributeError</failure></testcase><testcase classname="cross-head-tests.test_kbc_lineage_ambiguity" name="test_unchanged_run_cannot_attribute_its_origin_to_a_hash_sorted_kb[peer-sorts-after]" time="0.000"><failure message="AttributeError: 'Resolution' object has no attribute 'ambiguous'">peer_sha = 'c'
+
+    @pytest.mark.parametrize('peer_sha', ['a', 'c'], ids=['peer-sorts-before', 'peer-sorts-after'])
+    def test_unchanged_run_cannot_attribute_its_origin_to_a_hash_sorted_kb(peer_sha):
+        result = resolve([
+            mapping('b', 'KB5000000', '26100.50', day='2098-12-15'),
+            mapping(peer_sha, 'KB5000000', '26100.50', day='2098-12-15'),
+            mapping('b', 'KB5000001', '26100.100', day='2099-01-01'),
+            mapping('b', 'KB5000003', '26100.200'),
+        ])
+&gt;       assert result.ambiguous
+               ^^^^^^^^^^^^^^^^
+E       AttributeError: 'Resolution' object has no attribute 'ambiguous'
+
+cross-head-tests/test_kbc_lineage_ambiguity.py:147: AttributeError</failure></testcase><testcase classname="cross-head-tests.test_kbc_lineage_ambiguity" name="test_strictly_ordered_different_bytes_between_observations_keep_reversion" time="0.000"><failure message="AttributeError: 'Resolution' object has no attribute 'ambiguous'">def test_strictly_ordered_different_bytes_between_observations_keep_reversion():
+        result = resolve([
+            mapping('b', 'KB5000000', '26100.50', day='2098-12-15'),
+            mapping('c', 'KB5000001', '26100.100', day='2099-01-01'),
+            mapping('b', 'KB5000003', '26100.200'),
+        ])
+&gt;       assert (result.changed_in_kb, result.last_changed_in, result.ambiguous) == ('yes', None, False)
+                                                              ^^^^^^^^^^^^^^^^
+E       AttributeError: 'Resolution' object has no attribute 'ambiguous'
+
+cross-head-tests/test_kbc_lineage_ambiguity.py:158: AttributeError</failure></testcase><testcase classname="cross-head-tests.test_kbc_resolver_bounds" name="test_enumeration_stops_at_budget_before_grading_unreturned_variants[result-count]" time="0.003"><failure message="AssertionError: the limit must stop evaluation, not only slice its output&#10;assert 8 &lt;= 7&#10; +  where 8 = len([(IndexRow(build=BuildRow(contract='kbcorrelation/1', file_name='example.sys', sha256='0000000000000000000000000000000...one), size=8192, machine='amd64', file_version=None, availability='direct', heading_builds=(), shared_from=None)), ...])">monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7f53992e19d0&gt;
+budget = 'result-count'
+
+    @pytest.mark.parametrize('budget', ['result-count', 'row-work'])
+    def test_enumeration_stops_at_budget_before_grading_unreturned_variants(monkeypatch, budget):
+        source = rows()
+        limit, evaluated_cap = (7, 7) if budget == 'result-count' else (20, 7)
+        if budget == 'row-work':
+            monkeypatch.setattr(resolver, 'MAX_PAIR_ROW_WORK', len(source) * evaluated_cap)
+        original, evaluated = resolver.propose_index_pair, []
+    
+        def counted(*args, **kwargs):
+            evaluated.append(args)
+            assert len(evaluated) &lt;= evaluated_cap, 'the limit must stop evaluation, not only slice its output'
+            return original(*args, **kwargs)
+    
+        monkeypatch.setattr(resolver, 'propose_index_pair', counted)
+&gt;       result = resolver.resolve(source, kb=KB, scope=scope(), file_name=NAME, limit=limit)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+cross-head-tests/test_kbc_resolver_bounds.py:38: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+../review-304-lineage-6cc6b6b7/src/patchtrace/kbcorrelation/resolver.py:181: in resolve
+    pair = propose_index_pair(older, target, scope_id=scope.scope_id, intervening=between,
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+args = (IndexRow(build=BuildRow(contract='kbcorrelation/1', file_name='example.sys', sha256='00000000000000000000000000000000...date=None), size=8192, machine='amd64', file_version=None, availability='direct', heading_builds=(), shared_from=None))
+kwargs = {'scope_id': '1111111111111111111111111111111111111111111111111111111111111111', 'intervening': (), 'fixed_build': None, 'skipped_rows': 0, ...}
+
+    def counted(*args, **kwargs):
+        evaluated.append(args)
+&gt;       assert len(evaluated) &lt;= evaluated_cap, 'the limit must stop evaluation, not only slice its output'
+E       AssertionError: the limit must stop evaluation, not only slice its output
+E       assert 8 &lt;= 7
+E        +  where 8 = len([(IndexRow(build=BuildRow(contract='kbcorrelation/1', file_name='example.sys', sha256='0000000000000000000000000000000...one), size=8192, machine='amd64', file_version=None, availability='direct', heading_builds=(), shared_from=None)), ...])
+
+cross-head-tests/test_kbc_resolver_bounds.py:34: AssertionError</failure></testcase><testcase classname="cross-head-tests.test_kbc_resolver_bounds" name="test_enumeration_stops_at_budget_before_grading_unreturned_variants[row-work]" time="0.001"><failure message="AttributeError: &lt;module 'patchtrace.kbcorrelation.resolver' from '/workspace/scratch/e83fbf4505c3/review-304-lineage-6cc6b6b7/src/patchtrace/kbcorrelation/resolver.py'&gt; has no attribute 'MAX_PAIR_ROW_WORK'">monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7f53992e5b50&gt;
+budget = 'row-work'
+
+    @pytest.mark.parametrize('budget', ['result-count', 'row-work'])
+    def test_enumeration_stops_at_budget_before_grading_unreturned_variants(monkeypatch, budget):
+        source = rows()
+        limit, evaluated_cap = (7, 7) if budget == 'result-count' else (20, 7)
+        if budget == 'row-work':
+&gt;           monkeypatch.setattr(resolver, 'MAX_PAIR_ROW_WORK', len(source) * evaluated_cap)
+E           AttributeError: &lt;module 'patchtrace.kbcorrelation.resolver' from '/workspace/scratch/e83fbf4505c3/review-304-lineage-6cc6b6b7/src/patchtrace/kbcorrelation/resolver.py'&gt; has no attribute 'MAX_PAIR_ROW_WORK'
+
+cross-head-tests/test_kbc_resolver_bounds.py:29: AttributeError</failure></testcase><testcase classname="cross-head-tests.test_kbc_resolver_bounds" name="test_work_budget_with_no_enumerated_pair_is_a_gap_not_a_missing_predecessor" time="0.001"><failure message="AttributeError: &lt;module 'patchtrace.kbcorrelation.resolver' from '/workspace/scratch/e83fbf4505c3/review-304-lineage-6cc6b6b7/src/patchtrace/kbcorrelation/resolver.py'&gt; has no attribute 'MAX_PAIR_ROW_WORK'">monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7f53992e5e20&gt;
+
+    def test_work_budget_with_no_enumerated_pair_is_a_gap_not_a_missing_predecessor(monkeypatch):
+        source = rows()
+&gt;       monkeypatch.setattr(resolver, 'MAX_PAIR_ROW_WORK', len(source) - 1)
+E       AttributeError: &lt;module 'patchtrace.kbcorrelation.resolver' from '/workspace/scratch/e83fbf4505c3/review-304-lineage-6cc6b6b7/src/patchtrace/kbcorrelation/resolver.py'&gt; has no attribute 'MAX_PAIR_ROW_WORK'
+
+cross-head-tests/test_kbc_resolver_bounds.py:45: AttributeError</failure></testcase><testcase classname="cross-head-tests.test_kbc_resolver_bounds" name="test_repeated_variant_chronology_is_parsed_in_linear_work" time="0.007" /><testcase classname="cross-head-tests.test_kbc_resolver_bounds" name="test_pair_enumeration_limit_cannot_bypass_the_hard_cap[0]" time="0.000"><failure message="Failed: DID NOT RAISE ValueError">limit = 0
+
+    @pytest.mark.parametrize('limit', [0, -1, 1001, True, 1.5, None])
+    def test_pair_enumeration_limit_cannot_bypass_the_hard_cap(limit):
+&gt;       with pytest.raises(ValueError, match='limit'):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE ValueError
+
+cross-head-tests/test_kbc_resolver_bounds.py:67: Failed</failure></testcase><testcase classname="cross-head-tests.test_kbc_resolver_bounds" name="test_pair_enumeration_limit_cannot_bypass_the_hard_cap[-1]" time="0.000"><failure message="Failed: DID NOT RAISE ValueError">limit = -1
+
+    @pytest.mark.parametrize('limit', [0, -1, 1001, True, 1.5, None])
+    def test_pair_enumeration_limit_cannot_bypass_the_hard_cap(limit):
+&gt;       with pytest.raises(ValueError, match='limit'):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE ValueError
+
+cross-head-tests/test_kbc_resolver_bounds.py:67: Failed</failure></testcase><testcase classname="cross-head-tests.test_kbc_resolver_bounds" name="test_pair_enumeration_limit_cannot_bypass_the_hard_cap[1001]" time="0.000"><failure message="Failed: DID NOT RAISE ValueError">limit = 1001
+
+    @pytest.mark.parametrize('limit', [0, -1, 1001, True, 1.5, None])
+    def test_pair_enumeration_limit_cannot_bypass_the_hard_cap(limit):
+&gt;       with pytest.raises(ValueError, match='limit'):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE ValueError
+
+cross-head-tests/test_kbc_resolver_bounds.py:67: Failed</failure></testcase><testcase classname="cross-head-tests.test_kbc_resolver_bounds" name="test_pair_enumeration_limit_cannot_bypass_the_hard_cap[True]" time="0.000"><failure message="Failed: DID NOT RAISE ValueError">limit = True
+
+    @pytest.mark.parametrize('limit', [0, -1, 1001, True, 1.5, None])
+    def test_pair_enumeration_limit_cannot_bypass_the_hard_cap(limit):
+&gt;       with pytest.raises(ValueError, match='limit'):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE ValueError
+
+cross-head-tests/test_kbc_resolver_bounds.py:67: Failed</failure></testcase><testcase classname="cross-head-tests.test_kbc_resolver_bounds" name="test_pair_enumeration_limit_cannot_bypass_the_hard_cap[1.5]" time="0.000"><failure message="TypeError: slice indices must be integers or None or have an __index__ method">limit = 1.5
+
+    @pytest.mark.parametrize('limit', [0, -1, 1001, True, 1.5, None])
+    def test_pair_enumeration_limit_cannot_bypass_the_hard_cap(limit):
+        with pytest.raises(ValueError, match='limit'):
+&gt;           resolver.resolve(rows(1), kb=KB, scope=scope(), file_name=NAME, limit=limit)
+
+cross-head-tests/test_kbc_resolver_bounds.py:68: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+rows = (IndexRow(build=BuildRow(contract='kbcorrelation/1', file_name='example.sys', sha256='ffffffffffffffffffffffffffffffff...date=None), size=8192, machine='amd64', file_version=None, availability='direct', heading_builds=(), shared_from=None))
+kb = 'KB5000003'
+scope = ProductScope(contract='kbcorrelation/1', scope_id='1111111111111111111111111111111111111111111111111111111111111111', ...isplay_name='Example OS', source_product_ids=(), winbindex_key='11-24H2', mapping='candidate', alias_catalog_version=1)
+file_name = 'example.sys', fixed_build = None, skipped_rows = 0
+same_class_only = True, tier = 'C', limit = 1.5
+
+    def resolve(rows: Sequence[IndexRow], *, kb: str, scope: ProductScope, file_name: str, fixed_build: str | None = None,
+                skipped_rows: int = 0, same_class_only: bool = True, tier: str = 'C',
+                limit: int = DEFAULT_LIMITS.pairs_per_file) -&gt; Resolution:
+        """Candidate pairs for ``kb`` in ``scope``. An index that cannot answer says why instead of returning nothing."""
+        if not is_canonical_kb(kb):
+            raise ValueError('kb must be a canonical KB id')
+        if scope.family == 'windows-server':
+            return _empty(kb, file_name, scope, scope.winbindex_key, ('SERVER_NOT_COVERED',),
+                          reason_text('SERVER_NOT_COVERED'), skipped_rows)
+        if scope.architecture != SUPPORTED_ARCH:
+            return _empty(kb, file_name, scope, scope.winbindex_key, ('ARCH',),
+                          f'File-index pairing supports Windows client AMD64 only; selected product is {scope.architecture}.',
+                          skipped_rows)
+        if scope.winbindex_key is None:
+            return _empty(kb, file_name, scope, None, ('NO_NEWER',), NO_KEY, skipped_rows)
+        named = [r for r in rows if r.build.file_name == file_name]
+        product_rows = tuple(r for key in index_keys(scope.winbindex_key) for r in timeline(named, key))
+        # Winbindex includes native and WoW64 rows in one version key. Other machines are not predecessors or variants
+        # of the selected file; keep the source rows intact and scope only this derived timeline.
+        line = tuple(sorted((r for r in product_rows if r.machine == scope.architecture), key=order_key))
+        change: ChangeInfo = change_in_kb(line, kb)
+        if not change.target_rows:
+            machines = sorted({r.machine for r in product_rows if r.kb == kb})
+            if machines:
+                return _empty(kb, file_name, scope, scope.winbindex_key, ('ARCH',),
+                              f'File-index rows for this KB are {", ".join(machines)}; selected product requires AMD64.',
+                              skipped_rows)
+            return _empty(kb, file_name, scope, scope.winbindex_key, ('NO_NEWER',), NOT_IN_INDEX, skipped_rows)
+        pairs: dict[str, PairProposal] = {}
+        for target in {r.sha256: r for r in reversed(change.target_rows)}.values():
+            older, between = predecessor(line, target, same_class_only=same_class_only)
+            if older is not None:
+                pair = propose_index_pair(older, target, scope_id=scope.scope_id, intervening=between,
+                                          fixed_build=fixed_build, skipped_rows=skipped_rows, tier=tier)
+                pairs.setdefault(pair.pair_id, pair)
+        ordered = sorted(pairs.values(), key=lambda p: rank_key(p, change.state))
+        blockers = () if ordered else ('NO_OLDER',)
+        return Resolution(kb, file_name, scope.scope_id, scope.winbindex_key, change.state, change.last_changed_in,
+&gt;                         tuple(ordered[:limit]), blockers, '' if ordered else reason_text('NO_OLDER'), skipped_rows,
+                                ^^^^^^^^^^^^^^^
+                          len(ordered) &gt; limit)
+E       TypeError: slice indices must be integers or None or have an __index__ method
+
+../review-304-lineage-6cc6b6b7/src/patchtrace/kbcorrelation/resolver.py:187: TypeError</failure></testcase><testcase classname="cross-head-tests.test_kbc_resolver_bounds" name="test_pair_enumeration_limit_cannot_bypass_the_hard_cap[None]" time="0.000"><failure message="TypeError: '&gt;' not supported between instances of 'int' and 'NoneType'">limit = None
+
+    @pytest.mark.parametrize('limit', [0, -1, 1001, True, 1.5, None])
+    def test_pair_enumeration_limit_cannot_bypass_the_hard_cap(limit):
+        with pytest.raises(ValueError, match='limit'):
+&gt;           resolver.resolve(rows(1), kb=KB, scope=scope(), file_name=NAME, limit=limit)
+
+cross-head-tests/test_kbc_resolver_bounds.py:68: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+rows = (IndexRow(build=BuildRow(contract='kbcorrelation/1', file_name='example.sys', sha256='ffffffffffffffffffffffffffffffff...date=None), size=8192, machine='amd64', file_version=None, availability='direct', heading_builds=(), shared_from=None))
+kb = 'KB5000003'
+scope = ProductScope(contract='kbcorrelation/1', scope_id='1111111111111111111111111111111111111111111111111111111111111111', ...isplay_name='Example OS', source_product_ids=(), winbindex_key='11-24H2', mapping='candidate', alias_catalog_version=1)
+file_name = 'example.sys', fixed_build = None, skipped_rows = 0
+same_class_only = True, tier = 'C', limit = None
+
+    def resolve(rows: Sequence[IndexRow], *, kb: str, scope: ProductScope, file_name: str, fixed_build: str | None = None,
+                skipped_rows: int = 0, same_class_only: bool = True, tier: str = 'C',
+                limit: int = DEFAULT_LIMITS.pairs_per_file) -&gt; Resolution:
+        """Candidate pairs for ``kb`` in ``scope``. An index that cannot answer says why instead of returning nothing."""
+        if not is_canonical_kb(kb):
+            raise ValueError('kb must be a canonical KB id')
+        if scope.family == 'windows-server':
+            return _empty(kb, file_name, scope, scope.winbindex_key, ('SERVER_NOT_COVERED',),
+                          reason_text('SERVER_NOT_COVERED'), skipped_rows)
+        if scope.architecture != SUPPORTED_ARCH:
+            return _empty(kb, file_name, scope, scope.winbindex_key, ('ARCH',),
+                          f'File-index pairing supports Windows client AMD64 only; selected product is {scope.architecture}.',
+                          skipped_rows)
+        if scope.winbindex_key is None:
+            return _empty(kb, file_name, scope, None, ('NO_NEWER',), NO_KEY, skipped_rows)
+        named = [r for r in rows if r.build.file_name == file_name]
+        product_rows = tuple(r for key in index_keys(scope.winbindex_key) for r in timeline(named, key))
+        # Winbindex includes native and WoW64 rows in one version key. Other machines are not predecessors or variants
+        # of the selected file; keep the source rows intact and scope only this derived timeline.
+        line = tuple(sorted((r for r in product_rows if r.machine == scope.architecture), key=order_key))
+        change: ChangeInfo = change_in_kb(line, kb)
+        if not change.target_rows:
+            machines = sorted({r.machine for r in product_rows if r.kb == kb})
+            if machines:
+                return _empty(kb, file_name, scope, scope.winbindex_key, ('ARCH',),
+                              f'File-index rows for this KB are {", ".join(machines)}; selected product requires AMD64.',
+                              skipped_rows)
+            return _empty(kb, file_name, scope, scope.winbindex_key, ('NO_NEWER',), NOT_IN_INDEX, skipped_rows)
+        pairs: dict[str, PairProposal] = {}
+        for target in {r.sha256: r for r in reversed(change.target_rows)}.values():
+            older, between = predecessor(line, target, same_class_only=same_class_only)
+            if older is not None:
+                pair = propose_index_pair(older, target, scope_id=scope.scope_id, intervening=between,
+                                          fixed_build=fixed_build, skipped_rows=skipped_rows, tier=tier)
+                pairs.setdefault(pair.pair_id, pair)
+        ordered = sorted(pairs.values(), key=lambda p: rank_key(p, change.state))
+        blockers = () if ordered else ('NO_OLDER',)
+        return Resolution(kb, file_name, scope.scope_id, scope.winbindex_key, change.state, change.last_changed_in,
+                          tuple(ordered[:limit]), blockers, '' if ordered else reason_text('NO_OLDER'), skipped_rows,
+&gt;                         len(ordered) &gt; limit)
+                          ^^^^^^^^^^^^^^^^^^^^
+E       TypeError: '&gt;' not supported between instances of 'int' and 'NoneType'
+
+../review-304-lineage-6cc6b6b7/src/patchtrace/kbcorrelation/resolver.py:188: TypeError</failure></testcase></testsuite></testsuites>
