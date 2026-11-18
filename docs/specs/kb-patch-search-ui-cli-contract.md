@@ -47,6 +47,7 @@ All patch commands are offline/cache-only unless the user supplies both an expli
 Arguments:
 - search KB: required canonical KB input; may include --snapshot repeated; requires an explicit scope for online source search unless a user-selected bounded local corpus exists.
 - --scope-month YYYY-MM is repeatable, max 24 unique normalized months in a request; --scope-file is a versioned manifest of permitted source documents, not unchecked arbitrary URL list.
+- A recorded search scope is retained by the investigation (issue #118 P1a): lead CVEs, lead KBs, CVE cards, pair resolution and the context bundle are looked up only in the documents of the scope recorded with the latest search coverage. Only a new recorded search (for example "Expand scope") may widen it; `cached_corpus` means no document restriction.
 - --fetch-metadata: opt-in; requires exact source origins in --consent-hosts, matched to generated request preview. Even with --fetch-metadata, never download a PE.
 - --offline: force local snapshots only even if --fetch-metadata was accidentally supplied; reject contradictory options with invalid-argument status rather than silently choose one.
 - variants requires a persisted session or imported output; no hidden fetch.
