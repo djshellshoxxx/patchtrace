@@ -1783,3 +1783,11 @@ See the [immutable continuation checkpoint](../docs/qa/verified-continuation-202
 - [x] Propose bounded service/wiring/attachment ownership, ordinary call compatibility, typed-stop preservation and test-first acceptance.
 - [ ] Root approve production scope; specify and record genuine reds before implementing the three-file propagation.
 - [ ] Keep native adapter/FDI, durable provenance/lease recovery, postcommit checkpoint coverage and frozen/native acceptance separately owned and unqualified.
+
+### [DEPENDENCY-UTF8-20261118]
+
+- [x] Preserve both actual hosted Windows CP1252 failures and the original portable diagnostic/probe failures, with their distinct source limits.
+- [x] Commit the explicit isolated UTF-8 contract and meaningful failing controls before the 14-site canonical-prefix repair.
+- [x] Verify exact source `6dea194a`: 167 passed, no skips, 41 pinned imports; all other command arguments/order preserved, normal Ruff and diff checks pass. See `docs/qa/windows-dependency-encoding-20261118.md`.
+- [ ] Independently review/replay and selectively integrate the source and sealed QA chain.
+- [ ] Obtain corrected actual-candidate Windows installation, inventory, closure and audit evidence. Portable simulations provide no native or clean-security acceptance.

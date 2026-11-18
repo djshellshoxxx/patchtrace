@@ -2361,3 +2361,16 @@ and unchanged prior observations. No fresh product test or production edit.
 The proposed three-file reader plumbing preserves ordinary injection and saved
 full-index admission; durable package recovery and postcommit checkpoint
 extensions remain separate. Root specification/ownership review is pending.
+
+## [DEPENDENCY-UTF8-20261118]
+
+Exact source `6dea194adf52ae0257d94c1604707a056d11c92c` adds the canonical
+`-I -X utf8` prefix at all 14 direct dependency-tool Python invocation sites.
+The 167-case portable gate passes without skips; 41 loaded project/tool modules
+match the source, with no drift or prohibited execution. Full normal Ruff and
+source diff checks pass. Original hosted Windows CP1252 failures, the unchanged
+4-red/1-positive external probe and the spec-first 9-red/4-positive run remain
+in the [sealed source and evidence packet](qa/windows-dependency-encoding-20261118.md).
+Authored CP1252 simulations do not rerun native pip. Corrected hosted Windows
+inventory/audit, source-independent review and actual scan acceptance remain
+separate; no scanner policy, pins, exclusions or raw-output handling changed.
