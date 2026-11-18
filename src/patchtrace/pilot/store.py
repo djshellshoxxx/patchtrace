@@ -145,8 +145,9 @@ def stage(root: Path, assessment: PilotAssessment, config: PilotConfig, *, creat
         raise _error('PT-PILOT-LIMIT', 'The result exceeds the sidecar limit', 'sidecar-size')
     manifest = keys.make_manifest(assessment, config, created_utc=created_utc or _now())
     staged = _safe(Path(root), f'{keys.RELATIVE_ROOT}/tmp-{secrets.token_hex(8)}')
+    # Failed creation never owns the occupied path or its contents.
+    staged.mkdir(parents=True)
     try:
-        staged.mkdir(parents=True)
         _write(staged / keys.ASSESSMENT_NAME, gzip.compress(data, compresslevel=6, mtime=0))
         _write(staged / keys.MANIFEST_NAME, keys.canonical_bytes(manifest))
     except BaseException:
