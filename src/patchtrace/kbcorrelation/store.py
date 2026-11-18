@@ -27,7 +27,7 @@ from collections.abc import Callable, Iterable, Mapping
 from dataclasses import dataclass
 from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any
+from typing import Any, Literal
 
 from ..input_readers import HeldInput, InputReadError, PairInputReaders
 from ..owned_publication import (
@@ -85,6 +85,37 @@ _DDL = (
     *(f'CREATE TRIGGER {t}_{op.lower()} BEFORE {op} ON {t} BEGIN SELECT RAISE(ABORT, \'append-only\'); END'
       for t in ('revisions', 'attempts', 'decisions') for op in ('UPDATE', 'DELETE')),
 )
+
+# Supported v1 base format: WITHOUT ROWID flag and full table_xinfo columns
+# (name, declared type, NOT NULL, primary-key ordinal, hidden/generated flag).
+# This is format admission, not a certification of constraints, triggers or rows.
+_BASE_LAYOUT = {
+    'meta': (0, (('key', 'TEXT', 0, 1, 0), ('value', 'TEXT', 1, 0, 0))),
+    'docs': (0, (('doc_id', 'TEXT', 0, 1, 0), ('kind', 'TEXT', 1, 0, 0),
+                 ('sha256', 'TEXT', 1, 0, 0), ('release_id', 'TEXT', 0, 0, 0),
+                 ('current_release_date', 'TEXT', 0, 0, 0), ('retrieved_at', 'TEXT', 1, 0, 0),
+                 ('size', 'INTEGER', 1, 0, 0), ('body', 'TEXT', 1, 0, 0))),
+    'segments': (1, (('doc_id', 'TEXT', 1, 1, 0), ('name', 'TEXT', 1, 2, 0),
+                     ('rows', 'INTEGER', 1, 0, 0))),
+    'coverage': (0, (('coverage_id', 'TEXT', 0, 1, 0), ('body', 'TEXT', 1, 0, 0))),
+    'kbs': (0, (('id', 'INTEGER', 0, 1, 0), ('name', 'TEXT', 1, 0, 0))),
+    'cves': (0, (('id', 'INTEGER', 0, 1, 0), ('name', 'TEXT', 1, 0, 0))),
+    'products': (0, (('id', 'INTEGER', 0, 1, 0), ('name', 'TEXT', 1, 0, 0))),
+    'edges': (1, (('kb', 'INTEGER', 1, 1, 0), ('cve', 'INTEGER', 1, 2, 0),
+                  ('product', 'INTEGER', 1, 3, 0), ('doc', 'TEXT', 1, 4, 0),
+                  ('ptr', 'TEXT', 1, 5, 0), ('rel', 'TEXT', 1, 6, 0), ('fixed_build', 'TEXT', 0, 0, 0))),
+    'investigations': (0, (('investigation_id', 'TEXT', 0, 1, 0), ('created', 'TEXT', 1, 0, 0),
+                          ('current_revision', 'INTEGER', 1, 0, 0))),
+    'revisions': (1, (('investigation_id', 'TEXT', 1, 1, 0), ('revision', 'INTEGER', 1, 2, 0),
+                      ('body', 'TEXT', 1, 0, 0), ('body_sha256', 'TEXT', 1, 0, 0),
+                      ('created', 'TEXT', 1, 0, 0))),
+    'attempts': (0, (('seq', 'INTEGER', 0, 1, 0), ('investigation_id', 'TEXT', 1, 0, 0),
+                     ('body', 'TEXT', 1, 0, 0))),
+    'decisions': (0, (('seq', 'INTEGER', 0, 1, 0), ('investigation_id', 'TEXT', 1, 0, 0),
+                      ('body', 'TEXT', 1, 0, 0))),
+    'journal': (0, (('op_id', 'TEXT', 0, 1, 0), ('state', 'TEXT', 1, 0, 0),
+                    ('body', 'TEXT', 1, 0, 0), ('updated', 'TEXT', 1, 0, 0))),
+}
 
 
 class KbcStoreError(Exception):
@@ -146,14 +177,31 @@ def _json(model: Contract) -> str:
     return model.model_dump_json()
 
 
+def _check_existing_layout(db: sqlite3.Connection) -> None:
+    for name, (without_rowid, columns) in _BASE_LAYOUT.items():
+        table = db.execute("SELECT type,ncol,wr,strict FROM pragma_table_list(?) "
+                           "WHERE schema='main' LIMIT 2", (name,)).fetchall()
+        actual = db.execute('SELECT name,type,"notnull",pk,hidden FROM pragma_table_xinfo(?, \'main\') '
+                            'ORDER BY cid LIMIT ?', (name, len(columns) + 1)).fetchall()
+        if table != [('table', len(columns), without_rowid, 0)] or actual != list(columns):
+            raise KbcStoreError('PT-KBC-STORAGE', 'the workspace database has an unsupported base layout',
+                                recoverable=False)
+
+
 class WorkspaceStore:
     def __init__(self, root: Path, *, create: bool = True, limits: KbcLimits = DEFAULT_LIMITS,
-                 fault: Fault | None = None, clock: ClockPort | None = None):
+                 fault: Fault | None = None, clock: ClockPort | None = None,
+                 open_mode: Literal['normal', 'existing'] = 'normal'):
+        if type(open_mode) is not str or open_mode not in ('normal', 'existing'):
+            raise KbcStoreError('PT-KBC-INPUT', 'the workspace open mode is invalid', recoverable=False)
         self.root = Path(root)
         self.limits = limits
         self.fault = fault or (lambda point: None)
         self.clock: ClockPort = clock or SystemClock()
         self.read_only = False
+        if open_mode == 'existing':
+            self._open_existing()
+            return
         path = self.root / DB_NAME
         if not path.is_file():
             if not create:
@@ -188,6 +236,46 @@ class WorkspaceStore:
         except (OSError, OwnedPublicationError) as exc:
             self.db.close()
             raise KbcStoreError('PT-KBC-STORAGE', 'the workspace root changed while opening its database') from exc
+
+    def _open_existing(self) -> None:
+        try:
+            self._object_root = self.root.resolve(strict=True)
+            self._object_anchor = directory_anchor(self._object_root)
+        except (OSError, OwnedPublicationError) as exc:
+            raise KbcStoreError('PT-KBC-STORAGE', 'the workspace root cannot be held and verified') from exc
+        db = None
+        try:
+            # The first connection cannot create a replacement after a path check.
+            uri = (self._object_root / DB_NAME).as_uri() + '?mode=rw'
+            db = sqlite3.connect(uri, uri=True, timeout=5, isolation_level=None)
+            db.execute('PRAGMA busy_timeout=5000')
+            version = db.execute('PRAGMA user_version').fetchone()[0]
+            if version > SCHEMA_VERSION:
+                raise KbcStoreError('PT-KBC-UNSUPPORTED', 'the workspace database version is unsupported',
+                                    recoverable=False)
+            if version != SCHEMA_VERSION:
+                raise KbcStoreError('PT-KBC-STORAGE', 'the workspace database is not initialized',
+                                    recoverable=False)
+            _check_existing_layout(db)
+            try:
+                verify_anchor(self._object_anchor)
+            except (OSError, OwnedPublicationError) as exc:
+                raise KbcStoreError('PT-KBC-STORAGE',
+                                    'the workspace root changed while opening its database') from exc
+        except BaseException as exc:
+            failure = exc
+            if isinstance(exc, sqlite3.Error):
+                failure = KbcStoreError('PT-KBC-STORAGE', 'the workspace database cannot be opened',
+                                        details={'sqlite': type(exc).__name__})
+            if db is not None:
+                try:
+                    db.close()
+                except BaseException:
+                    failure.add_note('Workspace connection cleanup failed; resources may remain.')
+            if failure is not exc:
+                raise failure from exc
+            raise
+        self.db = db
 
     def _create(self) -> None:
         self.db.execute('BEGIN IMMEDIATE')
