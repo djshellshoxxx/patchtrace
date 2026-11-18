@@ -262,6 +262,7 @@ class WorkspaceStore:
             except (OSError, OwnedPublicationError) as exc:
                 raise KbcStoreError('PT-KBC-STORAGE',
                                     'the workspace root changed while opening its database') from exc
+            self.db = db
         except BaseException as exc:
             failure = exc
             if isinstance(exc, sqlite3.Error):
@@ -275,7 +276,6 @@ class WorkspaceStore:
             if failure is not exc:
                 raise failure from exc
             raise
-        self.db = db
 
     def _create(self) -> None:
         self.db.execute('BEGIN IMMEDIATE')
