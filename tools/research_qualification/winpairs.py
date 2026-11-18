@@ -415,10 +415,14 @@ class _WindowsPublication:
                                       0x1040, None, None)  # OBJ_CASE_INSENSITIVE | OBJ_DONT_REPARSE
         result, status = self.wt.HANDLE(), self.IoStatus()
         access = 0x1000A0 if directory else 0xC0110000  # traverse/attributes/sync; R/W, DELETE, sync
+        # Native rename opens the target directory for FILE_WRITE_DATA. Deny
+        # delete sharing on guards, but do not block that internal write open.
+        # The staged byte source must continue to deny both write and delete.
+        sharing = 3 if directory else 1  # READ | WRITE for directories; READ for the source
         disposition = (3 if create else 1) if directory else 2  # OPEN_IF / OPEN; CREATE, never overwrite
         options = 0x200020 | (1 if directory else 0x40)  # no reparse, sync; directory / ordinary file
         code = self.nt.NtCreateFile(self.ct.byref(result), access, self.ct.byref(attrs),
-                                    self.ct.byref(status), None, 0x80, 1, disposition, options, None, 0)
+                                    self.ct.byref(status), None, 0x80, sharing, disposition, options, None, 0)
         if code < 0:
             self.error(self.nt.RtlNtStatusToDosError(code))
         return result.value
@@ -426,7 +430,7 @@ class _WindowsPublication:
     def directory(self, path: Path, stack: ExitStack, *, create: bool) -> int:
         # Only the volume/share root is opened by path. Every descendant is rooted
         # in its already held parent, including creation of missing directories.
-        parent = self.kernel.CreateFileW(str(path.anchor), 0x1000A0, 1, None, 3, 0x2200000, None)
+        parent = self.kernel.CreateFileW(str(path.anchor), 0x1000A0, 3, None, 3, 0x2200000, None)
         if parent == self.ct.c_void_p(-1).value:
             self.error()
         stack.callback(self.kernel.CloseHandle, parent)
