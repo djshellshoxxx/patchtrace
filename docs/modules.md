@@ -550,6 +550,16 @@ count. Tests: `test_callgraph_cap_truth.py`, `test_callgraph_cap_boundaries.py`,
 existing graph/tooltip suites. No new runtime module or persisted contract;
 shared path budgets/lazy CSR remain a separate slice.
 
+2026-11-18 separate path-budget slice: `callgraph/csr.py` exposes lazy forward
+and reverse row iterators; `algo.py` shares charged adjacency work across all
+path phases and can retain a completed canonical shortest witness on later
+exhaustion; `paths.py` reuses the existing CSR/listed membership and carries
+partial-work wording. `limits.py` retains the 200,000-adjacency default and
+existing cancellation interval. Tests: unchanged historical
+`test_callgraph_path_budget.py`, independent finite-oracle and boundary controls
+in `test_callgraph_path_boundaries.py`, and existing algorithm/CLI/GUI suites.
+The cap-truth slice above remains separate; no new module or stored schema.
+
 ### [K5:kbc-lineage-resolver] KB-CVE correlator K5: Winbindex rows, lineage, pair resolver (2026-10-14)
 | part | files | what it does | tests |
 |---|---|---|---|
