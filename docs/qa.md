@@ -12,6 +12,11 @@ After normally merging repaired consolidation `121ffb0b`, the combined selection
 passes **1,016 tests**; fresh independent review repeats those tests and passes
 four additional socket-denied integration controls. The feature still supplies
 metadata-only selection and retains exact acquisition consent.
+A final independent source-admission review reproduced five races before the
+repair at `433440a3`. The repaired combined gate passes **1,023 tests**, and the
+independent reviewer passes all seven admission controls. Selection now checks
+the evaluated advisory snapshot inside admission, including repeated no-op
+selection; stale source or revision changes preserve prior decisions.
 Schemas, whole-tree Ruff, dependency compatibility and protobuf runtime checks
 pass. Full local and hosted runs are tracked against
 their own exact trees in [PW-01 evidence](qa/pw01-20261118.md).

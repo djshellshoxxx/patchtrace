@@ -77,7 +77,8 @@ values returned by your workspace; do not treat the example placeholders as IDs.
    product, release or build conflict. Selection requires an eligible AMD64 PE
    basename with a known version and no metadata conflict. ARM64/x86 metadata
    remains inspectable; it does not expand supported analysis architectures.
-   A stale revision fails without changing the recorded selection or revision.
+   A stale revision or advisory-source change during validation fails without
+   changing the recorded selection or revision, including repeated selections.
 
 5. Continue through saved file-index candidate selection:
 
@@ -201,12 +202,13 @@ screen-reader and high-DPI acceptance are tracked separately from offscreen test
 |---:|---|
 | 0 | Operation completed. |
 | 2 | Invalid arguments/context, rejected local CSV/HTML, unsupported input or missing/mismatched consent. |
-| 3 | Partial retained results, runtime/storage/verification failure, or stale revision. Inspect the envelope and counts. |
+| 3 | Partial retained results, runtime/storage/verification failure, or stale revision/source snapshot. Inspect the envelope and counts. |
 | 4 | No retained matching results. This does not establish source-wide absence after truncation. |
 | 5 | Cancelled. Prior committed results are preserved. |
 
-For a stale selection, inspect the investigation again and supply its current
-revision. For a damaged source, preserve it for diagnosis and restore the
+For a stale selection, inspect the investigation and advisory scope again and
+supply its current revision. Resolve any newly reported source conflict before
+retrying. For a damaged source, preserve it for diagnosis and restore the
 original bytes; verification does not silently rewrite a prior claim. For
 missing/conflicting product context, inspect the source and select or assert
 only a scope supported by that context.
