@@ -1,5 +1,15 @@
 # QA and audit record
 
+## 2026-11-18 autonomous repair and exact-source checkpoint
+
+The combined retained-inventory/report-integrity source `9002a1f4` preserves current
+#304 ancestry and passes **2,866 affected tests, 4 explicitly unverified skips**.
+Independent reviews cover immutable object ownership, chronology/fixture/tooltip
+repairs and research Ghidriff ambiguity refusal. Native #304 Rizin Linux/Windows,
+BinDiff Linux and the clean Windows Ghidriff fixture have fresh retained receipts;
+full/Qt/package/security gates remain incomplete. No main merge, closure, tag or
+release is claimed. See the [complete checkpoint and hashed evidence](qa/autonomous-consolidation-20261118/checkpoint/README.md).
+
 ## 2026-11-18 native research ranking identity guard
 
 The research Rizin adapter now refuses conflicting native endpoint/name ownership

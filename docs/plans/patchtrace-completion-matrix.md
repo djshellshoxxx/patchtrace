@@ -76,3 +76,30 @@ queued evidence. A changed head invalidates final-head acceptance; a documentati
 append must not disguise that distinction. Beta readiness requires every mandatory
 production journey and final gate, unresolved critical/high defects accounted for,
 and explicit disposition of branch residue. This matrix makes no beta-ready claim.
+
+## Later 2026-11-18 repair checkpoint
+
+Source `9002a1f44c6aebcf2c49b29d631aacf20e7ce9e3` combines the reviewed #304
+repair parent, golden-manifest/tooltip corrections, owned immutable KB objects and
+research Ghidriff identity guard. **2,866 affected tests pass; four native/optional
+checks are skipped and unverified.** Root independently reviewed the new storage
+and parser boundaries. The [checkpoint](../qa/autonomous-consolidation-20261118/checkpoint/README.md)
+records exact commands, source hashes, failures, reviews, fresh hosted receipts and
+remaining gates. Earlier rows remain the baseline; the following entries update
+only the named scope. No aggregate percentage or beta-ready claim is made.
+
+| Feature/scope | Updated state and milestone coverage | Remaining acceptance |
+|---|---|---|
+| KB inventory/object durability | Reproduced object races and root/alias drift repaired and independently reviewed; existing inventory D/R/J remains 75% | Full actual-head/native Windows/manual/package/security G is unverified |
+| Research Ghidriff name projection | Malformed/ambiguous reports block before scoring; decorated Markdown remains valid; separate parser-only evidence | Production/native ranking accuracy and frozen outcomes are unchanged |
+| Non-forced strings publication | Reviewed repair published in #308 `92a411bf`; D/R 50% for this bounded export slice | Native/full G, representative J and document-level extraction/truncation/redaction metadata |
+| Paired raw-offset desktop | Separate source `e4506666`, author 182 affected and independent 183 plus six controls; D/R 50% | Focused PR integration, native/manual J and final G |
+| Saved/recent search | Separate source `e705974b`, 374 affected passes; independent review pending, D remains 25% | Review, publish, repeated real journey and final gates; saved rows are project-owned, recent text is explicitly per-user |
+| CVE assessment freshness | Seven authored regressions confirm stale assessments can appear current after revision/advisory changes, and desktop KEV inputs differ | Assigned shared current-input/revision repair; preserve historical assessments and uncertainty |
+| Release qualification | Exact-source native/security gate gaps confirmed; no qualification milestone added | Shared fail-closed checker and scan policy, then actual complete qualifying evidence; no publication authorized |
+
+The 55-open-PR review/comment/check snapshot is preserved separately from the
+initial 307-branch/297-PR mechanical inventory. Empty GitHub review collections
+are not review approval. Four fresh #304 native fixture receipts are narrowly
+credited at their recorded source tree; full/Qt/Windows/package/security remain
+unverified. The local incomplete full-suite attempt is preserved, not counted.

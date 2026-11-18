@@ -1,5 +1,19 @@
 # PatchTrace delivery tracker
 
+## 2026-11-18 autonomous consolidation checkpoint
+
+- [x] Refresh all 307 original branch tips and 297 PR records; retain exact ancestry/patch/conflict inventory without claiming exhaustive semantic review.
+- [x] Publish reviewed Windows/chronology repairs to #304 `d8c02cae` with a SHA guard; preserve all source history and `[no release]`.
+- [x] Independently review and combine immutable KB object publication, fixture/tooltip repair and Ghidriff ranking identity refusal at `9002a1f4`; 2,866 affected passes, four explicit skips; whole Ruff/whitespace pass.
+- [x] Refresh reviews, inline review comments and actual-head check runs for all 55 then-open PRs; all review/comment collections are empty, independent evidence remains separately recorded.
+- [x] Publish reviewed non-clobber strings export as #308; complete source-reviewed paired raw-window desktop slice for a focused follow-on PR.
+- [ ] Finish saved/recent search independent review; complete shared CVE assessment staleness, release qualification and primary environment-isolation repairs.
+- [ ] Complete full exact-head Linux/Windows/Qt/native/package/security qualification; the local full-suite attempt ended incomplete and must not count as a pass.
+- [ ] Merge qualified #304 into main, retarget/requalify #307, then close only proved replacements; never delete branches or publish/tag a release.
+- [ ] Complete real CVE/KB-to-function source/native journeys, approved acquisition, PW-02, CVRF-to-pilot bridge and remaining audit/feature dispositions.
+
+[Checkpoint and raw evidence](../docs/qa/autonomous-consolidation-20261118/checkpoint/README.md).
+
 ## 2026-11-18 current PW-01 and search continuation
 
 - [x] Preserve actual current #303 and #304 histories, including 50,000-entry v1 compatibility, strict 5,000-entry v2 pages, source admission and advisory-search repairs.

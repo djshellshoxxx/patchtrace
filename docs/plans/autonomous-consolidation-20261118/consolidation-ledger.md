@@ -174,3 +174,24 @@ a later candidate, not a retroactive change to this inventory. Reconcile the
 new #304 history into the #307 continuation and re-evaluate combined-tree gates.
 Queued workflows are unverified; neither canonical integration nor a release
 is implied by this update.
+
+## Later qualification and focused-work checkpoint
+
+The published #304 head is now `d8c02caea407f6d323eecd636735849c1eb31a2d`;
+canonical main is still `9c411ca3d7b47f950be5f0c6f01b3c54184554c6`.
+Local reviewed #307 successor source `9002a1f44c6aebcf2c49b29d631aacf20e7ce9e3`
+preserves both that head and original #307 as actual ancestors. It adds reviewed
+object ownership, fixture/tooltip and research Ghidriff repairs. Combined
+verification is 2,866 passed/four unverified skips; full/native/package/security
+acceptance is not complete. No PR merge or superseded closure has occurred.
+
+A later REST capture inspected all **55 then-open PRs**, including new focused
+strings-publication #308 at `92a411bf02fc8beb00b7a148e39db2bf68efa061`.
+Every review and inline review-comment collection was empty; each head's check
+runs are captured without crediting stale or incomplete checks. The original
+inventory remains its explicitly dated 307-branch/297-PR snapshot, not a claim
+that no branch or PR was added afterward. Paired raw-offset desktop and
+saved/recent search are separate focused follow-on slices; neither historical
+#168 nor #289 is eligible for blanket closure from that selective work.
+See the [complete repair checkpoint](../../qa/autonomous-consolidation-20261118/checkpoint/README.md)
+for source/receipt mapping, native fixture limits and next assignments.
