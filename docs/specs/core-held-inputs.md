@@ -74,6 +74,14 @@ New arguments are keyword-only. When absent, callers invoke existing injected
 functions with their old argument shapes; they do not pass unnecessary None
 keywords. Operation stops use `InputReadError`, whose original object/reason propagates;
 unrelated `OSError`/SQLite failures retain the existing storage-error mapping.
+If removal of this attempt's temporary input raises `OSError` while a primary
+operation exception is propagating, cleanup preserves that original exception
+object and appends a fixed bounded note that temporary bytes may remain. The
+note contains no raw secondary exception text or path. It does not claim cleanup
+succeeded, retry unrelated paths, or authorize deleting an unowned file. A
+cleanup failure without a primary operation failure remains observable; it
+cannot turn an unsuccessful removal into a returned artifact. Ordinary input
+and storage-error mapping remains in place.
 Ordinary paths, project schema, verification cache, locks and cleanup policy are
 unchanged. This slice does not alter KB Env/import/attachment, native readers,
 jobs, package budget/schema or durable package recovery.
