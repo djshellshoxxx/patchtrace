@@ -145,13 +145,13 @@ def _scope(svc, ws, rev, scope_id):
     if scope_id not in rev.scope_ids:
         raise KbcStoreError('PT-KBC-INPUT', 'that product is not listed for the recorded lead')
     snapshot = _source_snapshot(ws)
-    index, _ = load_index(ws, svc.ports)
+    index, unreadable = load_index(ws, svc.ports)
     _require_sources(ws, snapshot)
     scope = next((item for item in index.scopes() if item.scope_id == scope_id), None)
     if scope is None:
         raise KbcStoreError('PT-KBC-INPUT', 'repeat the search; the selected product mapping is no longer available')
     scoped = rev.model_copy(update={'selected_scope_id': scope_id})
-    stored = svc._stored_scope(ws, scoped)
+    stored = svc._stored_scope(ws, scoped, index, unreadable=unreadable)
     if scoped.lead.kind == 'kb':
         lookup = index.lookup_kb(scoped.lead.value, scope=stored, scope_id=scope_id, now=svc._now())
     elif scoped.lead.kind == 'cve':

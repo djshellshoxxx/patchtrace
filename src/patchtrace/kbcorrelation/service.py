@@ -490,9 +490,9 @@ class KbService:
 
     @staticmethod
     def _stored_scope(ws: WorkspaceStore, rev: InvestigationRevision,
-                      index: ReverseIndex | None = None) -> SearchScope | None:
+                      index: ReverseIndex | None = None, *, unreadable=()) -> SearchScope | None:
         """Finite recorded selector; advisory coverage is never replaced with the current cache."""
-        return KbService._saved_search(ws, rev, index)[1]
+        return KbService._saved_search(ws, rev, index, unreadable=unreadable)[1]
 
     def _lead_cards(self, index: ReverseIndex, rev: InvestigationRevision,
                     ws: WorkspaceStore) -> tuple[list[CveCard], dict[str, SourceRef]]:
