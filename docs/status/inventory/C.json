@@ -1,0 +1,1385 @@
+{
+ "workstream": "C",
+ "title": "CVE and vulnerability intelligence",
+ "baseline": "main@882d1ca0",
+ "completion": {
+  "implementation_pct": 65.5,
+  "validation_pct": 58.5,
+  "basis": "93 of 142 counted acceptance items built and 83 of 142 validated across 22 features (per-feature item lists are in each feature's pct_basis in the OUTFILE). Validated means evidence of the class the item needs was seen: automated tests for logic items (mostly synthetic or mocked, never counted as live evidence) and a live run whose step summary I read for live items. Windows-only and live-only items count as built but not validated. Of 1,943 tests collected in the 58 scoped test files I ran three files (131 passed); the rest rests on the baseline suite."
+ },
+ "features": [
+  {
+   "id": "C-F01",
+   "name": "CVE ingestion: NVD API 2.0 and MSRC SUG per-CVE fetch, normalize, contextual rerank",
+   "spec": [
+    "docs/specs/enrichment.md",
+    "docs/specs/enrichment-hardening-backlog.md"
+   ],
+   "code": [
+    "src/patchtrace/enrichment/intelligence.py",
+    "src/patchtrace/enrichment/cve.py",
+    "src/patchtrace/cli.py (cmd_correlate)",
+    "tools/live_nvd_probe.py"
+   ],
+   "status": "partial",
+   "implementation_pct": 71,
+   "validation_pct": 71,
+   "pct_basis": "5/7 acceptance items built, 5/7 validated: BV exact request plan and consent preview; BV bounded transport: allowlist per hop, 4 MiB cap, 30 s total, retries, cancel; BV strict JSON normalize to CveSnapshot with attribution and digests; BV partial semantics: one failing provider or CVE never discards the rest; BV CLI correlate --fetch end to end against the real hosts; -- every malformed numeric/time value ends in a typed error (C-D02, C-D03); -- desktop entry point for CVE context (GUI Rank changes passes no snapshots; ui.py:2445)",
+   "verified_by": [
+    "tests/test_enrichment_cve.py (fixture: trimmed real responses; 58 passed here)",
+    "tests/test_enrichment_intelligence.py (mocked opener / loopback)",
+    "tests/test_nvd_pacing.py (mocked clock)",
+    "live-nvd.yml run 42632853488, 2026-11-09, main@882d1ca0: probe status passed (live network, ubuntu-latest)"
+   ],
+   "evidence_class": "live-native",
+   "remaining": [
+    "Fix C-D02 and C-D03",
+    "GUI entry for contextual ranking (profile field cve_providers exists, nothing uses it in the desktop): needs a spec decision",
+    "Record the live-nvd results in docs/qa.md (tracker says no run exists)"
+   ],
+   "defects": [
+    {
+     "id": "C-D02",
+     "severity": "medium",
+     "summary": "A CVSS baseScore with a huge exponent raises decimal.Overflow out of `cve.normalize` instead of PT-ENRICH-PROVIDER.",
+     "evidence": "src/patchtrace/enrichment/cve.py:193-196 (`Decimal(value) * 10` guarded only by InvalidOperation); callers catch EnrichmentError only: src/patchtrace/cli.py:392-407 and :472",
+     "failure_scenario": "An NVD (or MSRC) response carrying `\"baseScore\": 1E+1000000` (number or string). normalize() raises decimal.Overflow (reproduced with python -c, also for the string form). In `correlate --fetch` the exception is not an EnrichmentError, so `_normalize_available` cannot fall back to the other provider and the snapshots of every other requested CVE are discarded; the generic handler ends the command (CLI consequence by code reading; the provider hosts are unreachable here).",
+     "proposed_fix": "Catch decimal.ArithmeticError (or use a local decimal context without traps and test is_finite / range first) in _tenths and raise _err(...).",
+     "regression_test": "tests/test_enrichment_cve.py: parametrized baseScore in (1E+1000000, \"1E+1000000\") expects EnrichmentError PT-ENRICH-PROVIDER; tests/test_enrichment_review_regressions.py: batch survives one such response"
+    },
+    {
+     "id": "C-D03",
+     "severity": "low",
+     "summary": "An imported CVE snapshot whose retrieved_at lies at the edge of the datetime range passes `parse_snapshots` but raises OverflowError in `is_stale`.",
+     "evidence": "src/patchtrace/enrichment/cve.py:394 (`_timestamp(...).astimezone(UTC)`); accepted by cve.py:170-174; consumer src/patchtrace/enrichment/pipeline.py:351-355 catches EnrichmentError only",
+     "failure_scenario": "`patchtrace correlate PROJECT --cve CVE-2024-0001 --snapshot bad.json` where retrieved_at is \"0001-01-01T00:00:00+05:00\" (or \"9999-12-31T23:59:59-05:00\"): prints \"error: OverflowError: date value out of range\", exit 3, no contextual result (reproduced on a sample project).",
+     "proposed_fix": "Make _timestamp normalise to UTC inside its try (OverflowError -> PT-ENRICH-INPUT) so parse_snapshots rejects the file with the snapshot index; is_stale then cannot overflow.",
+     "regression_test": "tests/test_enrichment_cve.py: both boundary stamps rejected by parse_snapshots with PT-ENRICH-INPUT"
+    }
+   ],
+   "blockers": [
+    {
+     "type": "owner-decision",
+     "detail": "whether the desktop gets a CVE-context action"
+    }
+   ],
+   "effort_hours": 10,
+   "confidence": "high",
+   "acceptance_tests": [
+    "tests/test_enrichment_cve.py",
+    "tests/test_enrichment_intelligence.py",
+    "tests/test_nvd_pacing.py",
+    "tests/test_live_nvd_probe.py"
+   ],
+   "active_lane_overlap": "none"
+  },
+  {
+   "id": "C-F02",
+   "name": "CVE identifier normalization",
+   "spec": [
+    "docs/specs/enrichment.md",
+    "docs/specs/program-e/KEV-integration-plan.md (F18)"
+   ],
+   "code": [
+    "src/patchtrace/cli.py:49-55",
+    "src/patchtrace/intelligence/cli.py:55-59",
+    "src/patchtrace/kev/join.py",
+    "src/patchtrace/kev/contracts.py:100-105",
+    "src/patchtrace/enrichment/contracts.py:199"
+   ],
+   "status": "partial",
+   "implementation_pct": 50,
+   "validation_pct": 50,
+   "pct_basis": "3/6 acceptance items built, 3/6 validated: BV exact fullmatch, no trailing newline, length cap at every network boundary; BV ASCII-only digits in every code regex (cve.py, intelligence.py, kev, intelligence, pilot); -- ASCII-only digits in every persisted contract (CveSnapshot still \\d); -- lower-case and padded input normalised the same way on every verb; BV non-CVE text reported as invalid-id, never as not-listed (KEV); -- Unicode dash / zero-padded sequence / year bounds: documented behaviour",
+   "verified_by": [
+    "tests/test_kev_join.py (synthetic)",
+    "tests/test_enrichment_intelligence.py (mocked)",
+    "python -c probes in this review"
+   ],
+   "evidence_class": "synthetic",
+   "remaining": [
+    "Fix C-D06 and C-D07",
+    "Decide and document: pasted Unicode dashes are reported invalid (current), year 0000 and zero-padded sequences are distinct ids (current)"
+   ],
+   "defects": [
+    {
+     "id": "C-D06",
+     "severity": "low",
+     "summary": "`CveSnapshot.cve_id` uses `\\d`, which in the pydantic (Rust) regex matches non-ASCII digits; every other CVE pattern in the tree is ASCII-only.",
+     "evidence": "src/patchtrace/enrichment/contracts.py:199; generated docs/schemas/enrichment/CveSnapshot.json; open tracker item tasks/todo.md:496 (A5 / plan F18)",
+     "failure_scenario": "A snapshot file whose cve_id is \"CVE-\" + Arabic-Indic digits validates as enrichment/1 and passes parse_snapshots (reproduced). The CLI then drops it by set membership, but the stored contract and its JSON Schema admit look-alike identifiers for any other consumer.",
+     "proposed_fix": "Pattern `^CVE-[0-9]{4}-[0-9]{4,19}$`; regenerate the schema.",
+     "regression_test": "tests/test_enrichment_core.py: non-ASCII digit cve_id rejected; schema regeneration test stays green"
+    },
+    {
+     "id": "C-D07",
+     "severity": "low",
+     "summary": "CVE identifier normalisation differs per verb: `correlate --cve` rejects lower case and surrounding space, while `intelligence --cve` strips and upper-cases and `kev lookup` upper-cases ASCII tokens.",
+     "evidence": "src/patchtrace/cli.py:49-55 vs src/patchtrace/intelligence/cli.py:55-59 and src/patchtrace/kev/join.py:42-52",
+     "failure_scenario": "`patchtrace correlate P --cve cve-2024-38063` -> \"argument --cve: must look like CVE-YYYY-NNNN\"; the same text is accepted by `intelligence explain` (reproduced). No verb maps Unicode dashes; year 0000 and zero-padded sequences are accepted as distinct identifiers everywhere (shape check only).",
+     "proposed_fix": "One shared `normalize_cve_id` (strip, ASCII upper-case, exact fullmatch) used by cli.py, intelligence/cli.py and kev; document that dashes and bounds are not rewritten.",
+     "regression_test": "tests/test_enrichment_review_regressions.py or a new tests/test_cve_id_normalization.py covering the three verbs"
+    }
+   ],
+   "blockers": [
+    {
+     "type": "none",
+     "detail": ""
+    }
+   ],
+   "effort_hours": 4,
+   "confidence": "high",
+   "acceptance_tests": [
+    "tests/test_kev_join.py",
+    "new tests/test_cve_id_normalization.py"
+   ],
+   "active_lane_overlap": "none"
+  },
+  {
+   "id": "C-F03",
+   "name": "Vulnerability metadata persistence (CSAF sidecars and rows, KEV snapshots, CVE snapshots)",
+   "spec": [
+    "docs/specs/csaf-cve-interpretation-engine.md (section I)",
+    "docs/specs/kev-exploitation-context.md",
+    "docs/specs/enrichment.md"
+   ],
+   "code": [
+    "src/patchtrace/intelligence/storage.py",
+    "src/patchtrace/kev/store.py",
+    "src/patchtrace/kev/project_context.py",
+    "src/patchtrace/enrichment/storage.py"
+   ],
+   "status": "partial",
+   "implementation_pct": 38,
+   "validation_pct": 38,
+   "pct_basis": "3/8 acceptance items built, 3/8 validated: BV CSAF: validate fully, then content-addressed raw + facts sidecars and append-only pointer rows; BV CSAF: every sidecar read hash-verified, damaged facts recomputed from source; BV KEV: content-addressed snapshot store, atomic install, damaged-pointer fallback, prune; -- KEV: provenance of a stored snapshot is never silently replaced (C-D04); -- KEV: project row kev-context written by a product surface (built, no caller); -- NVD/MSRC: CveSnapshot stored in the project (kind cve-snapshot reserved, no writer); -- NVD/MSRC: raw provider bodies preserved for re-verification; -- NVD/MSRC: --save-snapshot file written atomically (C-D08)",
+   "verified_by": [
+    "tests/test_intel_storage.py (synthetic)",
+    "tests/test_kev_store.py (synthetic; 57 passed here)",
+    "tests/test_kev_project_context.py (synthetic, module only)"
+   ],
+   "evidence_class": "synthetic",
+   "remaining": [
+    "Fix C-D04, C-D08",
+    "Wire kev-context (see C-F17)",
+    "Decide whether CVE snapshots and raw bodies are persisted in the project (AGENTS.md: preserve upstream raw data); today a saved file is \"unverified\" by construction"
+   ],
+   "defects": [
+    {
+     "id": "C-D04",
+     "severity": "medium",
+     "summary": "KEV store provenance is last-writer-wins for a non-current snapshot and first-writer-wins for the current one: re-installing identical bytes from another source silently replaces (or keeps) the meta, losing the TLS authenticity and the consent record, and the service reports a description the store does not hold.",
+     "evidence": "src/patchtrace/kev/store.py:327-329 (meta published unconditionally), :315-318 (unchanged branch returns before any provenance comparison); src/patchtrace/kev/service.py:91-95 (`in_use = meta if result.current_id == meta.snapshot_id`)",
+     "failure_scenario": "Reproduced with kev-synthetic-2099.json: (C) fetched from cisa-site, a newer release installed, then the same old bytes imported from a local file -> meta/<id>.json changes from cisa-site/tls-allowlisted-host with consent to local-import/unverified-local-file with consent=None. (B) local import current, then the same bytes fetched over TLS -> outcome unchanged, store still says unverified-local-file while Installed.in_use (shown by `kev fetch`) says cisa-site.",
+     "proposed_fix": "Before publishing the meta, read the existing one for that snapshot id: never replace a tls-allowlisted-host meta with a local-import one; allow the upgrade local -> TLS (also in the unchanged branch); make the service return the stored meta. Record the rule in docs/specs/kev-exploitation-context.md first.",
+     "regression_test": "tests/test_kev_store.py: test_reimport_never_downgrades_provenance, test_fetch_upgrades_a_local_import; tests/test_kev_service.py: Installed.in_use equals store.read_meta"
+    },
+    {
+     "id": "C-D08",
+     "severity": "low",
+     "summary": "`correlate --save-snapshot` writes with Path.write_text after the network fetch: not atomic and the target is not checked first.",
+     "evidence": "src/patchtrace/cli.py:489-491",
+     "failure_scenario": "Target directory missing: the fetch (64 CVEs can take minutes of NVD pacing) completes, then \"error: FileNotFoundError ...\" exit 3 and the normalized snapshots are lost (reproduced with --snapshot input). A crash or full disk mid-write truncates the previous snapshot file the analyst reuses offline.",
+     "proposed_fix": "Check the parent directory before planning requests (exit 2); write to a temp file in the same directory, fsync, os.replace.",
+     "regression_test": "tests/test_enrichment_review_regressions.py: missing parent is exit 2 before any opener call; a failing write leaves the previous file intact"
+    }
+   ],
+   "blockers": [
+    {
+     "type": "owner-decision",
+     "detail": "project persistence of NVD/MSRC snapshots and raw bodies"
+    }
+   ],
+   "effort_hours": 16,
+   "confidence": "high",
+   "acceptance_tests": [
+    "tests/test_intel_storage.py",
+    "tests/test_kev_store.py",
+    "tests/test_kev_project_context.py"
+   ],
+   "active_lane_overlap": "none"
+  },
+  {
+   "id": "C-F04",
+   "name": "Vendor and product identification (CSAF product tree, helpers, artifact identity)",
+   "spec": [
+    "docs/specs/csaf-cve-interpretation-engine.md (sections F, G)"
+   ],
+   "code": [
+    "src/patchtrace/intelligence/csaf/normalize.py",
+    "src/patchtrace/intelligence/csaf/identity.py",
+    "src/patchtrace/intelligence/csaf/applicability.py"
+   ],
+   "status": "implemented",
+   "implementation_pct": 100,
+   "validation_pct": 83,
+   "pct_basis": "6/6 acceptance items built, 5/6 validated: BV branches, full_product_names, relationships and groups normalized with JSON pointers; BV identification helper: SHA-256 file hashes, cpe, purl kept; BV artifact identity from verified bytes (hash, VS_FIXEDFILEINFO, CodeView), record-only labelled; BV a file name never maps a product; B- real Microsoft CSAF documents through the normalizer; BV NVD CPE and MSRC tag product tokens kept with source attribution",
+   "verified_by": [
+    "tests/test_intel_normalize.py",
+    "tests/test_intel_identity.py",
+    "tests/test_intel_applicability.py (all synthetic)"
+   ],
+   "evidence_class": "synthetic",
+   "remaining": [
+    "Real Microsoft CSAF documents have never been run (host blocked from every authoring sandbox)",
+    "cpe/purl are stored but not used for matching; 6.1.13 PURL semantics not checked"
+   ],
+   "defects": [],
+   "blockers": [
+    {
+     "type": "live-network",
+     "detail": "msrc.microsoft.com CSAF documents unverified live"
+    }
+   ],
+   "effort_hours": 6,
+   "confidence": "medium",
+   "acceptance_tests": [
+    "tests/test_intel_normalize.py",
+    "tests/test_intel_identity.py"
+   ],
+   "active_lane_overlap": "none"
+  },
+  {
+   "id": "C-F05",
+   "name": "Version and affected-product mapping (OLD/NEW applicability)",
+   "spec": [
+    "docs/specs/csaf-cve-interpretation-engine.md (section G)"
+   ],
+   "code": [
+    "src/patchtrace/intelligence/csaf/applicability.py"
+   ],
+   "status": "partial",
+   "implementation_pct": 67,
+   "validation_pct": 67,
+   "pct_basis": "4/6 acceptance items built, 4/6 validated: BV mapping bases ordered: advisory file hash > relationship > asserted id > file-version equality > same name; BV status classes per side with pointers; missing status never means affected; BV product_version_range not evaluated (documented limitation); -- NVD CPE version ranges (versionStartIncluding ...) evaluated; BV orientation conflict (older fixed, newer affected) reported; -- explain uses store-wide supersession (C-D01)",
+   "verified_by": [
+    "tests/test_intel_applicability.py (synthetic)",
+    "tests/test_intel_explain.py (synthetic; 16 passed here)"
+   ],
+   "evidence_class": "synthetic",
+   "remaining": [
+    "Fix C-D01",
+    "CPE range evaluation is not built and not specified (only the product token of a CPE is kept)"
+   ],
+   "defects": [
+    {
+     "id": "C-D01",
+     "severity": "medium",
+     "summary": "`intelligence explain` resolves applicability without the store-wide supersession map, so the statuses of a revision whose CVE entry the vendor withdrew in a newer stored revision are reported as current (resolution affected/fixed, assessment advisory-claim); only an entry in `unknowns` hints at it and the terminal summary prints the resolution without it.",
+     "evidence": "src/patchtrace/intelligence/explain.py:151 (resolve() called with only the documents listing the CVE and no `superseded=`); src/patchtrace/intelligence/explain.py:130-135 (the workaround note); pinned as intended by tests/test_intel_explain.py:172-180; open tracker item tasks/todo.md:212",
+     "failure_scenario": "Store synthetic-advisory-rev1.json (lists CVE-2099-10001) and a revision 2 of the same tracking id that no longer lists it. `AdvisoryStore.applicability` returns older/newer = unknown/unknown with both statuses superseded; `build_report` (what `intelligence explain` prints and exports) returns older=affected, newer=fixed, superseded_sources=(), statuses superseded=False. Reproduced 2026-11-11 with a script over the committed fixtures.",
+     "proposed_fix": "In build_report pass `superseded={a.facts.facts_id: a.superseded for a in relevant}` to resolve() (the parameter exists for exactly this caller, applicability.py:288-295); drop the unknowns workaround or keep it as a limitation.",
+     "regression_test": "tests/test_intel_explain.py: new test with a derived revision 2 that drops the CVE asserting resolution unknown, statuses superseded and the withdrawal note in limitations; rewrite test_a_superseded_flag_the_applicability_cannot_see_is_an_unknown"
+    }
+   ],
+   "blockers": [
+    {
+     "type": "none",
+     "detail": ""
+    }
+   ],
+   "effort_hours": 6,
+   "confidence": "high",
+   "acceptance_tests": [
+    "tests/test_intel_applicability.py",
+    "tests/test_intel_explain.py"
+   ],
+   "active_lane_overlap": "none"
+  },
+  {
+   "id": "C-F06",
+   "name": "CVE-to-KB, KB-to-update and update-to-binary relationships (cross-reference; kbcorrelation is workstream D)",
+   "spec": [
+    "docs/specs/kb-cve-correlation-and-acquisition.md",
+    "docs/specs/acquisition.md",
+    "docs/specs/kb/advisory-revision-and-snapshot-identity-spec.md",
+    "docs/specs/program-e/KB2-source-facts.md"
+   ],
+   "code": [
+    "src/patchtrace/acquisition/winbindex.py",
+    "src/patchtrace/acquisition/contracts.py",
+    "src/patchtrace/acquisition/quarantine.py",
+    "src/patchtrace/acquisition/workflow.py",
+    "src/patchtrace/kbcorrelation/sources/** (D)"
+   ],
+   "status": "partial",
+   "implementation_pct": 88,
+   "validation_pct": 62,
+   "pct_basis": "7/8 acceptance items built, 5/8 validated: BV Winbindex record -> BuildCandidate (sha256, timestamp, sizes, KbRef list) with record hash; BV Winbindex per-row view (sha256, version key, KB, release date) for the KB index; BV symbol-server URL derived only from validated name, timestamp, SizeOfImage; BV download verified against the Winbindex SHA-256 in quarantine before promotion; BV CVE -> KB edges from MSRC CVRF remediations (D scope; live-kbc: CVE-2024-38063 -> 15 KB ids); -- KB list completeness/correctness against an independent oracle (AV-5); B- real symbol-server download of a pair on Windows; B- PA30/PA31 delta reconstruction on Windows (msdelta)",
+   "verified_by": [
+    "tests/test_acquisition_winbindex.py, test_acquisition_winbindex_rows.py (fixture: trimmed real afd.sys record + synthetic)",
+    "tests/test_acquisition_quarantine.py, test_acquisition_workflow.py (synthetic/mocked)",
+    "live-kbc.yml run 42346127399, 2026-11-07, main@652677b: passed, 7 live checks (docs/qa/kbc-live-probe-20261107.md)"
+   ],
+   "evidence_class": "fixture",
+   "remaining": [
+    "AV-5 join evaluation",
+    "Windows-only: msdelta apply, real pair download, GUI attach flow",
+    "ACQ-12 spec/code wording (inspect_artifact vs validate_pe) still deferred"
+   ],
+   "defects": [],
+   "blockers": [
+    {
+     "type": "windows-only",
+     "detail": "msdelta.dll and Windows acquisition acceptance"
+    },
+    {
+     "type": "live-network",
+     "detail": "winbindex.m417z.com and msdl.microsoft.com unreachable here"
+    }
+   ],
+   "effort_hours": 20,
+   "confidence": "medium",
+   "acceptance_tests": [
+    "tests/test_acquisition_*.py",
+    "tests/test_live_kbc_probe.py"
+   ],
+   "active_lane_overlap": "none"
+  },
+  {
+   "id": "C-F07",
+   "name": "Source provenance",
+   "spec": [
+    "docs/specs/csaf-cve-interpretation-engine.md",
+    "docs/specs/kev-exploitation-context.md",
+    "docs/specs/acquisition.md",
+    "docs/specs/kb/vendor-feeds-and-source-matrix-spec.md"
+   ],
+   "code": [
+    "src/patchtrace/intelligence/contracts.py (AdvisorySource)",
+    "src/patchtrace/kev/contracts.py (KevCatalogMeta, ConsentRecord)",
+    "src/patchtrace/enrichment/contracts.py (CveSnapshot)",
+    "src/patchtrace/acquisition/contracts.py (Provenance)"
+   ],
+   "status": "partial",
+   "implementation_pct": 57,
+   "validation_pct": 57,
+   "pct_basis": "4/7 acceptance items built, 4/7 validated: BV CSAF: origin, uri, retrieved_at, sha256, tracking id/revision, authenticity state, JSON pointer per claim; BV KEV: source, source/final URL, consent record, authenticity, parser version; BV CVE: per-provider response digests and attributed values; BV acquisition: source URL, redirect host only (no signed URL), Winbindex record hash; -- provenance never downgraded or replaced by a later identical-bytes install (C-D04); -- offline cache replay distinguishable from a TLS fetch (C-D10); -- one lineage counts once across CVRF + SUG + CSAF (test_source_lineage_counts_once.py absent)",
+   "verified_by": [
+    "tests/test_intel_storage.py",
+    "tests/test_kev_contracts.py",
+    "tests/test_kbc_msrc_provenance.py (D)",
+    "tests/test_acquisition_quarantine.py (all synthetic/mocked)"
+   ],
+   "evidence_class": "synthetic",
+   "remaining": [
+    "Fix C-D04",
+    "Owner decision on C-D10",
+    "Write the lineage test named by the vendor-feeds spec section 9"
+   ],
+   "defects": [
+    {
+     "id": "C-D10",
+     "severity": "low",
+     "summary": "A document replayed from `--offline --cache-dir` is stored as origin https-fetch with authenticity tls-allowlisted-host(-hash-match) although only a local directory was read; `Fetched.from_cache` is ignored.",
+     "evidence": "src/patchtrace/intelligence/csaf/discovery.py:166-174 and src/patchtrace/intelligence/csaf/transport.py:215-216, :281-287",
+     "failure_scenario": "A cache directory copied from elsewhere (or edited: the URL index is plain JSON, the body only has to match the hash the index names) yields advisories that `explain` does not flag as unauthenticated, unlike `intelligence import` of the same bytes. Spec section D sanctions the replay (\"the retrieval event is identical\"), so this is a design gap, not a regression.",
+     "proposed_fix": "Owner decision: additive authenticity state (for example offline-cache-replay) or an `unknowns` line when the source came from a cache; contract change needs the spec first.",
+     "regression_test": "tests/test_intel_offline_cache.py: replayed document carries the cache marker"
+    }
+   ],
+   "blockers": [
+    {
+     "type": "owner-decision",
+     "detail": "authenticity label of an offline cache replay"
+    }
+   ],
+   "effort_hours": 8,
+   "confidence": "high",
+   "acceptance_tests": [
+    "tests/test_kev_store.py",
+    "tests/test_intel_offline_cache.py"
+   ],
+   "active_lane_overlap": "none"
+  },
+  {
+   "id": "C-F08",
+   "name": "Evidence freshness tracking",
+   "spec": [
+    "docs/specs/kev-exploitation-context.md",
+    "docs/specs/enrichment.md"
+   ],
+   "code": [
+    "src/patchtrace/kev/join.py (freshness_of)",
+    "src/patchtrace/enrichment/cve.py (is_stale)",
+    "src/patchtrace/intelligence/csaf/applicability.py (supersession)"
+   ],
+   "status": "partial",
+   "implementation_pct": 67,
+   "validation_pct": 50,
+   "pct_basis": "4/6 acceptance items built, 3/6 validated: BV KEV: fresh/aging/stale/future from the release instant, future release never outranks; B- KEV: drift of recorded answers against a newer catalog (module built, unwired); BV CVE snapshots: stale after profile.snapshot_max_age_days, future retrieval = stale; -- CVE snapshots: boundary timestamps cannot crash staleness (C-D03); BV CSAF: superseded revision derived at read time; -- CSAF: age of the retrieval itself reported (no staleness on retrieved_at)",
+   "verified_by": [
+    "tests/test_kev_join.py",
+    "tests/test_enrichment_cve.py",
+    "tests/test_intel_applicability.py (synthetic)"
+   ],
+   "evidence_class": "synthetic",
+   "remaining": [
+    "Fix C-D03",
+    "CSAF advisories have no \"retrieved N days ago\" signal: an old fetch reads as current until a newer revision is stored"
+   ],
+   "defects": [],
+   "blockers": [
+    {
+     "type": "none",
+     "detail": ""
+    }
+   ],
+   "effort_hours": 6,
+   "confidence": "medium",
+   "acceptance_tests": [
+    "tests/test_kev_join.py",
+    "tests/test_enrichment_cve.py"
+   ],
+   "active_lane_overlap": "none"
+  },
+  {
+   "id": "C-F09",
+   "name": "Confidence and ambiguity reporting; CONFIRMED vs INFERRED separation",
+   "spec": [
+    "docs/specs/csaf-cve-interpretation-engine.md",
+    "docs/specs/enrichment.md (section 8)"
+   ],
+   "code": [
+    "src/patchtrace/intelligence/csaf/applicability.py",
+    "src/patchtrace/intelligence/explain.py",
+    "src/patchtrace/intelligence/reports.py",
+    "src/patchtrace/enrichment/cve.py (contextual_rank)",
+    "src/patchtrace/kev/join.py",
+    "src/patchtrace/kev/kb_adapter.py"
+   ],
+   "status": "partial",
+   "implementation_pct": 71,
+   "validation_pct": 71,
+   "pct_basis": "5/7 acceptance items built, 5/7 validated: BV product mapping tier verified only for an advisory file hash on verified bytes; all else candidate; BV resolution vocabulary: status class, unknown, ambiguous, contradictory; assessment advisory-claim; BV explicit unknowns list and fixed limitation sentences in every report; BV advisory text never changes a B1 score; context needs binary evidence (H4); BV KEV: invalid-id / unavailable / not-listed kept apart; not-listed never means safe; -- no path shows a withdrawn or superseded vendor claim as current (C-D01); -- CSAF validation tests that were not run are told to the user (6.1.8-6.1.13)",
+   "verified_by": [
+    "tests/test_intel_explain.py",
+    "tests/test_intel_applicability.py",
+    "tests/test_enrichment_cve.py",
+    "tests/test_kev_boundaries.py",
+    "tests/test_kev_synergy.py (synthetic)"
+   ],
+   "evidence_class": "synthetic",
+   "remaining": [
+    "Fix C-D01 (the one path found where a claim that is no longer the vendor's is presented as current)",
+    "Surface ValidationReport.tests_not_implemented in `intelligence import` and in report limitations (acceptance line of vendor-feeds spec section 11)"
+   ],
+   "defects": [],
+   "blockers": [
+    {
+     "type": "none",
+     "detail": ""
+    }
+   ],
+   "effort_hours": 5,
+   "confidence": "high",
+   "acceptance_tests": [
+    "tests/test_intel_explain.py",
+    "tests/test_intel_limitations_list_untested_validation.py (to write)"
+   ],
+   "active_lane_overlap": "none"
+  },
+  {
+   "id": "C-F10",
+   "name": "Duplicate and conflicting record handling",
+   "spec": [
+    "docs/specs/csaf-cve-interpretation-engine.md",
+    "docs/specs/enrichment-hardening-backlog.md (H12, H13)",
+    "docs/specs/kb/vendor-feeds-and-source-matrix-spec.md (section 5)"
+   ],
+   "code": [
+    "src/patchtrace/intelligence/storage.py",
+    "src/patchtrace/intelligence/csaf/applicability.py",
+    "src/patchtrace/enrichment/cve.py",
+    "src/patchtrace/kev/parse.py",
+    "src/patchtrace/kev/store.py"
+   ],
+   "status": "partial",
+   "implementation_pct": 83,
+   "validation_pct": 83,
+   "pct_basis": "5/6 acceptance items built, 5/6 validated: BV CSAF: identical bytes stored once, retrievals counted, rows never rewritten; BV CSAF: cross-revision, cross-document, VEX-vs-advisory and orientation contradictions kept unresolved; BV JSON duplicate keys rejected in every parser of the workstream; BV KEV: repeated CVE fails the catalog; count mismatch fails; identical bytes are one snapshot; BV CVE: select_latest per provider with merged snapshot; conflicts recorded, disputed CWE blocked; -- CVE: NVD Primary vs Secondary compared per type (C-D09 / audit C-23)",
+   "verified_by": [
+    "tests/test_intel_storage.py",
+    "tests/test_intel_applicability.py",
+    "tests/test_kev_parse.py",
+    "tests/test_enrichment_cve.py (synthetic/fixture)"
+   ],
+   "evidence_class": "synthetic",
+   "remaining": [
+    "Owner decision on C-D09 (two documents disagree: todo.md:211 \"by design\", vendor-feeds spec \"OPEN, fix KBB-04\")"
+   ],
+   "defects": [
+    {
+     "id": "C-D09",
+     "severity": "low",
+     "summary": "NVD Primary and Secondary weaknesses are flattened into one provider list, so a `cwe:` conflict is recorded when MSRC agrees with NVD Primary (audit C-23; listed OPEN in the vendor-feeds spec section 5 rule 2, recorded as \"by design\" in tasks/todo.md:211).",
+     "evidence": "src/patchtrace/enrichment/cve.py:242-246 and :319-323",
+     "failure_scenario": "NVD Primary CWE-787 + Secondary CWE-125, MSRC CWE-787 -> conflicts = (\"cwe: msrc=CWE-787; nvd=CWE-125,CWE-787\",) (reproduced). The snapshot is flagged as a provider disagreement and the Secondary source is not attributed.",
+     "proposed_fix": "Owner decision between the two documents; if KBB-04 stands: keep the NVD weakness `type`/`source` in the attribution and compare per provider-and-type (NORMALIZATION_VERSION bump).",
+     "regression_test": "tests/test_enrichment_cwe_per_provider.py (named by vendor-feeds spec section 9; does not exist)"
+    }
+   ],
+   "blockers": [
+    {
+     "type": "owner-decision",
+     "detail": "C-23 semantics"
+    }
+   ],
+   "effort_hours": 6,
+   "confidence": "high",
+   "acceptance_tests": [
+    "tests/test_enrichment_cwe_per_provider.py (to write)"
+   ],
+   "active_lane_overlap": "none"
+  },
+  {
+   "id": "C-F11",
+   "name": "Incremental refresh",
+   "spec": [
+    "docs/specs/kev-exploitation-context.md",
+    "docs/specs/csaf-cve-interpretation-engine.md",
+    "docs/specs/kb/live-acquisition-spec.md"
+   ],
+   "code": [
+    "src/patchtrace/kev/service.py",
+    "src/patchtrace/kev/store.py",
+    "src/patchtrace/kev/join.py (diff)",
+    "src/patchtrace/intelligence/csaf/discovery.py",
+    "src/patchtrace/enrichment/intelligence.py"
+   ],
+   "status": "partial",
+   "implementation_pct": 40,
+   "validation_pct": 40,
+   "pct_basis": "2/5 acceptance items built, 2/5 validated: BV KEV: refetch whole catalog, unchanged/kept-newer/installed outcome, 90 percent shrink guard, delta; BV CSAF: a newer revision is added next to the old one and supersedes it at read time; -- CSAF: change discovery (changes.csv / ROLIE) to find updated advisories; -- NVD/MSRC: refresh only what changed (lastModified) or reuse project snapshots; -- scheduled or prompted refresh on any surface",
+   "verified_by": [
+    "tests/test_kev_store.py",
+    "tests/test_kev_service.py",
+    "tests/test_intel_storage.py (synthetic)"
+   ],
+   "evidence_class": "synthetic",
+   "remaining": [
+    "CSAF and NVD/MSRC are refetched per CVE on demand only; no spec asks for more, so this is a design gap to decide, not a bug"
+   ],
+   "defects": [],
+   "blockers": [
+    {
+     "type": "owner-decision",
+     "detail": "whether incremental refresh beyond KEV is in scope"
+    }
+   ],
+   "effort_hours": 16,
+   "confidence": "medium",
+   "acceptance_tests": [
+    "tests/test_kev_service.py"
+   ],
+   "active_lane_overlap": "none"
+  },
+  {
+   "id": "C-F12",
+   "name": "Cache management (CSAF offline cache, KEV store, derived/raw cache)",
+   "spec": [
+    "docs/specs/csaf-cve-interpretation-engine.md (section D)",
+    "docs/specs/enrichment.md (section 9)"
+   ],
+   "code": [
+    "src/patchtrace/intelligence/csaf/transport.py (OfflineCache)",
+    "src/patchtrace/kev/store.py",
+    "src/patchtrace/enrichment/cache.py"
+   ],
+   "status": "partial",
+   "implementation_pct": 60,
+   "validation_pct": 60,
+   "pct_basis": "3/5 acceptance items built, 3/5 validated: BV CSAF cache: content-addressed bodies, sharded URL index, hash-verified reads, size-capped replay; -- CSAF cache: size accounting, prune or status command (bodies are never evicted); BV KEV store: prune --keep N --yes, crash leftovers, 256 MiB warning; BV derived/raw cache: verified reads, quarantine in budget, prune/verify/status CLI; -- derived cache hit within 500 ms at 10k pairs (measured 3.1 s / 1.79 s; owned by the performance workstream)",
+   "verified_by": [
+    "tests/test_intel_offline_cache.py",
+    "tests/test_kev_store.py",
+    "tests/test_enrichment_cache.py (synthetic)"
+   ],
+   "evidence_class": "synthetic",
+   "remaining": [
+    "CSAF OfflineCache grows without bound and has no maintenance verb",
+    "two processes can lose a URL-map update (C-22, costs a refetch)",
+    "500 ms objective not met (SPEC-07 section 10)"
+   ],
+   "defects": [],
+   "blockers": [
+    {
+     "type": "none",
+     "detail": ""
+    }
+   ],
+   "effort_hours": 8,
+   "confidence": "medium",
+   "acceptance_tests": [
+    "tests/test_intel_offline_cache.py"
+   ],
+   "active_lane_overlap": "none"
+  },
+  {
+   "id": "C-F13",
+   "name": "Offline operation and network egress policy",
+   "spec": [
+    "docs/specs/network-egress-privacy.md",
+    "docs/specs/non-goals.md"
+   ],
+   "code": [
+    "src/patchtrace/netutil.py",
+    "src/patchtrace/enrichment/intelligence.py",
+    "src/patchtrace/intelligence/csaf/transport.py",
+    "src/patchtrace/kev/transport.py",
+    "src/patchtrace/acquisition/transport.py",
+    "src/patchtrace/providers.py",
+    "tests/network_guard.py"
+   ],
+   "status": "partial",
+   "implementation_pct": 43,
+   "validation_pct": 43,
+   "pct_basis": "3/7 acceptance items built, 3/7 validated: BV nothing is requested without an explicit consent naming hosts/URLs (all five transports); BV environment proxies ignored, every redirect hop re-checked, bodies/time bounded, cancel observed; BV offline paths: intelligence import / fetch --offline, kev import, correlate --snapshot; -- SPEC-42 section 1 lists every host (www.cisa.gov, raw.githubusercontent.com missing; CVRF row 17 says \"planned, not bound\"); -- census test tests/test_network_census.py; -- global offline switch PATCHTRACE_OFFLINE / netpolicy.py (spec proposal); -- consent-gate tests F4 / F5 (blob host printed first; LLM send equals context.payload)",
+   "verified_by": [
+    "tests/test_network_consent_*.py (5 files, mocked with NetworkGuard)",
+    "tests/test_kev_transport.py (loopback)",
+    "tests/test_intel_transport.py (mocked)"
+   ],
+   "evidence_class": "mocked",
+   "remaining": [
+    "Add the census test and the missing inventory rows (actionable)",
+    "Offline switch needs the SPEC-42 proposal approved first (status draft)"
+   ],
+   "defects": [
+    {
+     "id": "C-D12",
+     "severity": "low",
+     "summary": "SPEC-42 section 1 network inventory omits the two KEV hosts and still describes the MSRC CVRF sync as unbound; the census test that would catch a new opener does not exist.",
+     "evidence": "docs/specs/network-egress-privacy.md:17-34 (rows 1-18; grep for cisa.gov / raw.githubusercontent.com: 0 hits), :119-121; src/patchtrace/kev/contracts.py:155-158; src/patchtrace/kbcorrelation/sources/cvrf_fetch.py:111-125",
+     "failure_scenario": "A reviewer or user reading the privacy inventory is told PatchTrace contacts 18 destinations; the KEV download hosts are not among them, and a new opener can land without any test failing.",
+     "proposed_fix": "Add rows 19-20 and refresh row 17; write tests/test_network_census.py (import scan limited to the owner modules of section 1).",
+     "regression_test": "tests/test_network_census.py"
+    }
+   ],
+   "blockers": [
+    {
+     "type": "owner-decision",
+     "detail": "SPEC-42 is a draft; the offline switch is a proposal"
+    }
+   ],
+   "effort_hours": 10,
+   "confidence": "high",
+   "acceptance_tests": [
+    "tests/test_network_census.py (to write)"
+   ],
+   "active_lane_overlap": "none"
+  },
+  {
+   "id": "C-F14",
+   "name": "Source adapter: NVD and API requirements (rate limit, API key, user-agent)",
+   "spec": [
+    "docs/specs/enrichment-hardening-backlog.md (H10)"
+   ],
+   "code": [
+    "src/patchtrace/enrichment/intelligence.py:49-58, 192-235, 397-401"
+   ],
+   "status": "implemented",
+   "implementation_pct": 83,
+   "validation_pct": 83,
+   "pct_basis": "5/6 acceptance items built, 5/6 validated: BV pacing 6.0 s keyless / 0.6 s with key between request starts, cancellable; BV apiKey header only for NVD, session-only from --api-key-env, never forwarded on a host change; BV 403 treated as throttling with backoff, Retry-After capped at 60 s, overall plan deadline; BV fixed User-Agent PatchTrace, Accept JSON; BV live acceptance of pacing and normalization; -- pacing state shared across CLI invocations",
+   "verified_by": [
+    "tests/test_nvd_pacing.py (mocked clock)",
+    "tests/test_enrichment_intelligence.py (mocked)",
+    "live-nvd.yml runs 42632853488 (2026-11-09, probe passed, log read) and 41456018069 (2026-11-02, conclusion success, probe status UNVERIFIED)"
+   ],
+   "evidence_class": "live-native",
+   "remaining": [
+    "Pacing is per process: looping the CLI one CVE at a time exceeds 5 requests / 30 s keyless and falls back to the 403 backoff (documented limit is respected only inside one plan)"
+   ],
+   "defects": [],
+   "blockers": [
+    {
+     "type": "none",
+     "detail": ""
+    }
+   ],
+   "effort_hours": 3,
+   "confidence": "high",
+   "acceptance_tests": [
+    "tests/test_nvd_pacing.py"
+   ],
+   "active_lane_overlap": "none"
+  },
+  {
+   "id": "C-F15",
+   "name": "Source adapter: CISA KEV (fetch, import, lookup, diff, prune, dock)",
+   "spec": [
+    "docs/specs/kev-exploitation-context.md",
+    "docs/specs/program-e/KEV-integration-plan.md"
+   ],
+   "code": [
+    "src/patchtrace/kev/**",
+    "src/patchtrace/ui_kev.py",
+    "src/patchtrace/ui_kev_model.py",
+    "src/patchtrace/cli_commands/kev.py",
+    "tools/live_kev_probe.py",
+    "tools/make_kev_catalog.py"
+   ],
+   "status": "implemented",
+   "implementation_pct": 78,
+   "validation_pct": 67,
+   "pct_basis": "7/9 acceptance items built, 6/9 validated: BV K1a contracts, strict parser, join, view model; BV K1b snapshot store; BV K2 transport, service, CLI (status/plan/fetch/import/lookup/diff/prune) and cli.py hook; BV K3 dock; BV K4 KB adapter module; BV K6 live probe: canonical www.cisa.gov URL and UA accepted, both sources same content; -- cisa-site as GUI default (plan question 1: only after a passed live-kev run); -- frozen smoke steps kev import/lookup/status (tools/frozen_smoke.py has none); B- Windows: TLS roots, replace-retry under antivirus",
+   "verified_by": [
+    "tests/test_kev_*.py (15 files, synthetic + 12 real CC0 entries as fixture)",
+    "tests/test_ui_kev_panel.py (offscreen Qt)",
+    "live-kev.yml run 41850105271, 2026-11-04, main@25b2ac80: probe passed (cisa-site and cisa-github, release 2026.11.03, same content, identical schema); run 40694148430, 2026-10-28: conclusion success, probe status UNVERIFIED"
+   ],
+   "evidence_class": "live-native",
+   "remaining": [
+    "Owner decision: flip the dock default to cisa-site now that the gate passed (ui_kev.py:67, :226)",
+    "Close stale tracker items (todo.md:443, :655; spec status line \"no KEV code on main\")",
+    "frozen smoke steps"
+   ],
+   "defects": [],
+   "blockers": [
+    {
+     "type": "owner-decision",
+     "detail": "GUI default source"
+    },
+    {
+     "type": "windows-only",
+     "detail": "Windows legs unverified"
+    }
+   ],
+   "effort_hours": 5,
+   "confidence": "high",
+   "acceptance_tests": [
+    "tests/test_kev_*.py",
+    "tests/test_live_kev_probe.py"
+   ],
+   "active_lane_overlap": "none"
+  },
+  {
+   "id": "C-F16",
+   "name": "Source adapter: MSRC CSAF 2.0 (discovery, fetch, validation engine)",
+   "spec": [
+    "docs/specs/csaf-cve-interpretation-engine.md"
+   ],
+   "code": [
+    "src/patchtrace/intelligence/csaf/**",
+    "src/patchtrace/intelligence/cli.py"
+   ],
+   "status": "blocked-external",
+   "implementation_pct": 50,
+   "validation_pct": 38,
+   "pct_basis": "4/8 acceptance items built, 3/8 validated: BV strict JSON, limits, vendored schema keywords; BV mandatory tests 6.1.1-6.1.7, 6.1.14-6.1.33; -- mandatory tests 6.1.8-6.1.10 (CVSS) ; -- mandatory tests 6.1.11-6.1.13 (CWE catalog, language, PURL); BV provider metadata + index.txt discovery, .sha256 comparison, per-candidate rejection; -- transport typed errors on every hostile response (C-D05); B- live: provider-metadata location, directory layout, real documents through the validator; -- live probe tool and workflow for CSAF (none exists; NVD, KEV and KBC have one)",
+   "verified_by": [
+    "tests/test_intel_validate.py, test_intel_discovery.py, test_intel_transport.py, test_intel_hostile_input.py (synthetic fixtures, fake opener)"
+   ],
+   "evidence_class": "synthetic",
+   "remaining": [
+    "Fix C-D05",
+    "Build tools/live_csaf_probe.py + recorded-fixture tests + advisory workflow",
+    "6.1.9 / 6.1.10 can be implemented offline (CVSS v3 arithmetic); spec question Q2 defaults to \"document the limitation\""
+   ],
+   "defects": [
+    {
+     "id": "C-D05",
+     "severity": "low",
+     "summary": "A malformed redirect Location raises a raw ValueError out of CsafTransport.get (the ACQ-1 fix covered the acquisition and enrichment transports, not this one).",
+     "evidence": "src/patchtrace/intelligence/csaf/transport.py:347 (`urllib.parse.urljoin(current, location)` outside any try)",
+     "failure_scenario": "Fake opener answering 302 with `Location: https://[::1/x` -> `ValueError: Invalid IPv6 URL` from transport.get (reproduced). In `intelligence fetch` the wrapper maps IntelError only, so the command ends in the generic handler instead of PT-INTEL-PROVIDER/CONFIG.",
+     "proposed_fix": "Wrap urljoin in try/except ValueError and raise IntelError(\"PT-INTEL-CONFIG\", \"invalid URL refused\").",
+     "regression_test": "tests/test_intel_transport.py: test_malformed_redirect_location_is_typed"
+    }
+   ],
+   "blockers": [
+    {
+     "type": "live-network",
+     "detail": "msrc.microsoft.com never reached; default provider-metadata URL unverified"
+    }
+   ],
+   "effort_hours": 20,
+   "confidence": "high",
+   "acceptance_tests": [
+    "tests/test_intel_validate.py",
+    "tests/test_intel_transport.py",
+    "tests/test_live_csaf_probe.py (to write)"
+   ],
+   "active_lane_overlap": "none"
+  },
+  {
+   "id": "C-F17",
+   "name": "KEV project context row, drift and report block (K5)",
+   "spec": [
+    "docs/specs/program-e/KEV-integration-plan.md (sections 4, 7, 8, A6)"
+   ],
+   "code": [
+    "src/patchtrace/kev/project_context.py",
+    "src/patchtrace/kev/report.py"
+   ],
+   "status": "partial",
+   "implementation_pct": 33,
+   "validation_pct": 33,
+   "pct_basis": "2/6 acceptance items built, 2/6 validated: BV build_context / publish_context / load_contexts / drift_lines; BV report_block text; -- dock or CLI records a lookup into the project (no caller outside kev/); -- report export includes the KEV block with drift (no caller); -- KEV column on kb search edge rows (service.py:150 still \"not-loaded\"; D scope); -- pilot collect passes a real catalog (pilot/collect.py:166-175 passes NO_CATALOG; D scope)",
+   "verified_by": [
+    "tests/test_kev_project_context.py (32 tests), tests/test_kev_report.py (58 tests): synthetic, module level only"
+   ],
+   "evidence_class": "synthetic",
+   "remaining": [
+    "Integrator wiring (todo.md:380, :628): dock/CLI call build_context + publish_context on the owner thread; report hook calls report_block(context, meta, drift=...)"
+   ],
+   "defects": [
+    {
+     "id": "C-D13",
+     "severity": "low",
+     "summary": "K5 is built and tested but unreachable: no production code writes a kev-context row or renders the KEV report block.",
+     "evidence": "src/patchtrace/kev/project_context.py:48, :83, :97, :123 and src/patchtrace/kev/report.py (grep for build_context, publish_context, report_block, drift_lines outside kev/: no hit)",
+     "failure_scenario": "An analyst looks up CVEs in the dock, exports the project report: the report says nothing about KEV, and reopening the project later cannot show what the catalog said on the day or that it changed.",
+     "proposed_fix": "Wire the dock (owner thread) and a CLI flag; add the report hook; spec text first.",
+     "regression_test": "tests/test_kev_cli.py and tests/test_ui_kev_panel.py: a lookup with a project records one row; export shows the block"
+    }
+   ],
+   "blockers": [
+    {
+     "type": "none",
+     "detail": ""
+    }
+   ],
+   "effort_hours": 12,
+   "confidence": "high",
+   "acceptance_tests": [
+    "tests/test_kev_project_context.py",
+    "tests/test_kev_report.py"
+   ],
+   "active_lane_overlap": "none"
+  },
+  {
+   "id": "C-F18",
+   "name": "Explain report, hypotheses, anchors, lexicon and exports",
+   "spec": [
+    "docs/specs/csaf-cve-interpretation-engine.md (sections H, J, L)",
+    "docs/specs/patch-intent-localization-engine.md"
+   ],
+   "code": [
+    "src/patchtrace/intelligence/explain.py",
+    "src/patchtrace/intelligence/reports.py",
+    "src/patchtrace/intelligence/hypotheses.py",
+    "src/patchtrace/intelligence/lexicon.py",
+    "src/patchtrace/intelligence/anchors.py",
+    "src/patchtrace/intelligence/cli.py"
+   ],
+   "status": "implemented",
+   "implementation_pct": 71,
+   "validation_pct": 57,
+   "pct_basis": "5/7 acceptance items built, 4/7 validated: BV build_report joins sources, facts, applicability, CWE profile, hypotheses, anchors, unknowns; BV canonical JSON and escaped Markdown export, byte-identical goldens, atomic write; BV CLI import / fetch / explain with enrichment-cli/1 envelope and exit codes; BV hostile advisory text neutralised on every terminal and export path; -- CWE names re-checked against cwe.mitre.org; -- desktop pane for CSAF intelligence (SPEC-30 pane; pilot Leads dock is workstream D); B- Windows: goldens byte-identical, frozen exe intelligence --help",
+   "verified_by": [
+    "tests/test_intel_explain.py, test_intel_reports.py, test_intel_cli.py, test_intel_hypotheses.py, test_intel_lexicon.py, test_intel_anchors.py (synthetic, goldens)"
+   ],
+   "evidence_class": "synthetic",
+   "remaining": [
+    "C-D01 lives here",
+    "Lexicon CWE names unverified against the catalog (host blocked)"
+   ],
+   "defects": [],
+   "blockers": [
+    {
+     "type": "live-network",
+     "detail": "cwe.mitre.org"
+    },
+    {
+     "type": "windows-only",
+     "detail": "golden byte identity on Windows CI"
+    }
+   ],
+   "effort_hours": 6,
+   "confidence": "medium",
+   "acceptance_tests": [
+    "tests/test_intel_reports.py",
+    "tests/test_intel_cli.py"
+   ],
+   "active_lane_overlap": "none"
+  },
+  {
+   "id": "C-F19",
+   "name": "Source adapter: Winbindex metadata and symbol-server acquisition",
+   "spec": [
+    "docs/specs/acquisition.md",
+    "docs/qa/winbindex-refresh-20261105.md",
+    "docs/qa/winbindex-metadata-budget-20261105.md",
+    "docs/qa/winbindex-publication-security-20261105.md"
+   ],
+   "code": [
+    "src/patchtrace/acquisition/winbindex.py",
+    "src/patchtrace/acquisition/transport.py",
+    "src/patchtrace/acquisition/quarantine.py",
+    "src/patchtrace/acquisition/workflow.py",
+    "src/patchtrace/acquisition/delta.py"
+   ],
+   "status": "partial",
+   "implementation_pct": 88,
+   "validation_pct": 62,
+   "pct_basis": "7/8 acceptance items built, 5/8 validated: BV bounded gzip + strict JSON parse; malformed entries skipped and counted; lone surrogates handled; BV consented transport: exact URLs, blob host only as the redirect target, slow-drip deadline, cancel; BV quarantine: SHA-256 verify, PE validation, staging cleanup that never raises, stale sweep; BV CLI acquire and GUI dialog over one workflow; BV live Winbindex record fetch (afd.sys in live-kbc); B- live symbol-server download of a pair; B- PA30/PA31 delta apply via msdelta on Windows; -- prompt cancel against a fully silent server (bounded by the 10 s socket timeout)",
+   "verified_by": [
+    "tests/test_acquisition_*.py (11 files), tests/test_winbindex_*.py (fixture + loopback drip server + synthetic)",
+    "live-kbc.yml run 42346127399 (winbindex record returned)"
+   ],
+   "evidence_class": "fixture",
+   "remaining": [
+    "Windows acceptance of acquisition and msdelta",
+    "ACQ-12 wording, cancel latency note (deferred in docs/audits/20261015-fixes-acquisition.md)"
+   ],
+   "defects": [],
+   "blockers": [
+    {
+     "type": "windows-only",
+     "detail": "msdelta.dll, native file handling"
+    },
+    {
+     "type": "live-network",
+     "detail": "msdl.microsoft.com download never run from CI evidence read here"
+    }
+   ],
+   "effort_hours": 12,
+   "confidence": "medium",
+   "acceptance_tests": [
+    "tests/test_acquisition_*.py",
+    "tests/test_winbindex_*.py"
+   ],
+   "active_lane_overlap": "none"
+  },
+  {
+   "id": "C-F20",
+   "name": "Vendor publications beyond Microsoft (other CSAF vendors, OSV, Update Catalog)",
+   "spec": [
+    "docs/specs/kb/vendor-feeds-and-source-matrix-spec.md (sections 3.1, 3.2)"
+   ],
+   "code": [
+    "src/patchtrace/intelligence/csaf/transport.py:31 (CONSENTABLE_HOSTS)"
+   ],
+   "status": "deferred-by-design",
+   "implementation_pct": 25,
+   "validation_pct": 25,
+   "pct_basis": "1/4 acceptance items built, 1/4 validated: BV any valid CSAF 2.0 file can be imported locally; -- fetch from a non-Microsoft CSAF host; -- OSV adapter (decision proposed: out); -- test_osv_not_wired.py guard named by the spec",
+   "verified_by": [
+    "tests/test_intel_validate.py (synthetic)"
+   ],
+   "evidence_class": "synthetic",
+   "remaining": [
+    "Owner confirms OSV out (gameplan D-4) and no second CSAF vendor (Q3); then only the guard test remains"
+   ],
+   "defects": [],
+   "blockers": [
+    {
+     "type": "owner-decision",
+     "detail": "OSV and second-vendor scope"
+    }
+   ],
+   "effort_hours": 2,
+   "confidence": "high",
+   "acceptance_tests": [
+    "tests/test_osv_not_wired.py (to write)"
+   ],
+   "active_lane_overlap": "none"
+  },
+  {
+   "id": "C-F21",
+   "name": "AI provider transport (providers.py)",
+   "spec": [
+    "docs/specs/ai-provider-interpretation.md",
+    "docs/specs/network-egress-privacy.md (rows 7, 8)"
+   ],
+   "code": [
+    "src/patchtrace/providers.py"
+   ],
+   "status": "implemented",
+   "implementation_pct": 100,
+   "validation_pct": 75,
+   "pct_basis": "4/4 acceptance items built, 3/4 validated: BV endpoint validation: https for remote, loopback only for Ollama, no credentials/query/fragment; BV no proxy, redirects refused, 2 MiB cap, 120 s deadline, cancel within about 0.1 s; BV credential printable-ASCII check, never in repr or error text; B- live local (Ollama) and remote provider acceptance (todo.md:57)",
+   "verified_by": [
+    "tests/test_providers_endpoint.py, tests/test_providers_transport.py (mocked / loopback)"
+   ],
+   "evidence_class": "mocked",
+   "remaining": [
+    "Live provider acceptance needs a model and credentials the owner supplies"
+   ],
+   "defects": [],
+   "blockers": [
+    {
+     "type": "external-tool",
+     "detail": "no model or credentials available"
+    }
+   ],
+   "effort_hours": 3,
+   "confidence": "medium",
+   "acceptance_tests": [
+    "tests/test_providers_*.py"
+   ],
+   "active_lane_overlap": "none"
+  },
+  {
+   "id": "C-F22",
+   "name": "Live probes and tracker truthfulness for this workstream",
+   "spec": [
+    "docs/specs/enrichment-hardening-backlog.md (H10)",
+    "docs/specs/program-e/KEV-integration-plan.md (K6)"
+   ],
+   "code": [
+    "tools/live_nvd_probe.py",
+    "tools/live_kev_probe.py",
+    "tools/live_kbc_probe.py",
+    ".github/workflows/live-nvd.yml",
+    ".github/workflows/live-kev.yml",
+    ".github/workflows/live-kbc.yml"
+   ],
+   "status": "partial",
+   "implementation_pct": 67,
+   "validation_pct": 67,
+   "pct_basis": "4/6 acceptance items built, 4/6 validated: BV probe tools with blocked-vs-failed classification and recorded-fixture tests; BV live-nvd passed on main; BV live-kev passed on main; BV live-kbc passed on main (one dispatch); -- results recorded in docs/qa.md and open tracker lines closed (only the KBC run is recorded); -- live CSAF probe",
+   "verified_by": [
+    "tests/test_live_nvd_probe.py, test_live_kev_probe.py, test_live_kbc_probe.py (recorded/mocked)",
+    "GitHub Actions read 2026-11-11: live-nvd 42632853488 (2026-11-09) and 41456018069 (2026-11-02); live-kev 41850105271 (2026-11-04) and 40694148430 (2026-10-28); live-kbc 42346127399 (2026-11-07, the only run): all conclusion success"
+   ],
+   "evidence_class": "live-native",
+   "remaining": [
+    "docs/qa.md:342 still says no live-nvd result exists; tasks/todo.md:71, :180 and :655 are open although the runs passed; REGISTRY.md:37 says \"open: first live run\"; vendor-feeds spec section 3 says \"first run not recorded\""
+   ],
+   "defects": [],
+   "blockers": [
+    {
+     "type": "none",
+     "detail": ""
+    }
+   ],
+   "effort_hours": 2,
+   "confidence": "high",
+   "acceptance_tests": [
+    "tests/test_tracker_text.py"
+   ],
+   "active_lane_overlap": "none"
+  }
+ ],
+ "actionable_now": [
+  {
+   "id": "C-T01",
+   "title": "explain: pass the store-wide supersession map to applicability.resolve",
+   "why": "C-D01: a withdrawn vendor claim is reported as the current resolution (affected/fixed) by `intelligence explain` and its exports; open tracker item todo.md:212.",
+   "files": [
+    "src/patchtrace/intelligence/explain.py",
+    "tests/test_intel_explain.py",
+    "docs/specs/csaf-cve-interpretation-engine.md",
+    "tasks/todo.md"
+   ],
+   "tests": [
+    "tests/test_intel_explain.py",
+    "tests/test_intel_reports.py",
+    "tests/test_intel_cli.py"
+   ],
+   "size": "S",
+   "priority": 1,
+   "risk": "tests/test_intel_explain.py:172-180 pins the old behaviour and must be rewritten; goldens under tests/fixtures/csaf/expected should not change (they hold no withdrawn case) but must be re-run",
+   "depends_on": [],
+   "lane_conflict": "none",
+   "acceptance": "Red first: rev1 + a derived rev2 without the CVE gives resolution unknown on both sides, statuses superseded, superseded_sources non-empty and the withdrawal sentence in limitations; the three test files pass."
+  },
+  {
+   "id": "C-T02",
+   "title": "cve.py: typed errors for CVSS score overflow and out-of-range retrieval times",
+   "why": "C-D02 and C-D03: decimal.Overflow and OverflowError escape normalize / is_stale and abort `correlate`, discarding valid responses of other providers and CVEs.",
+   "files": [
+    "src/patchtrace/enrichment/cve.py",
+    "tests/test_enrichment_cve.py",
+    "tests/test_enrichment_review_regressions.py"
+   ],
+   "tests": [
+    "tests/test_enrichment_cve.py",
+    "tests/test_algorithm_digests.py",
+    "tests/test_enrichment_hit_golden.py"
+   ],
+   "size": "S",
+   "priority": 2,
+   "risk": "tests/fixtures/algorithm_digests.json pins module constants of enrichment.cve: add no constant, or re-baseline deliberately",
+   "depends_on": [],
+   "lane_conflict": "none",
+   "acceptance": "baseScore 1E+1000000 (number and string) -> PT-ENRICH-PROVIDER; retrieved_at 0001-01-01T00:00:00+05:00 and 9999-12-31T23:59:59-05:00 -> PT-ENRICH-INPUT from parse_snapshots; digests test unchanged."
+  },
+  {
+   "id": "C-T03",
+   "title": "KEV store: never downgrade or silently replace snapshot provenance; service reports the stored meta",
+   "why": "C-D04: a re-import of identical bytes erases the TLS authenticity and consent record of a stored catalog, and `kev fetch` can print a source the store does not hold.",
+   "files": [
+    "src/patchtrace/kev/store.py",
+    "src/patchtrace/kev/service.py",
+    "tests/test_kev_store.py",
+    "tests/test_kev_service.py",
+    "docs/specs/kev-exploitation-context.md",
+    "docs/modules.md"
+   ],
+   "tests": [
+    "tests/test_kev_store.py",
+    "tests/test_kev_service.py",
+    "tests/test_kev_cli.py"
+   ],
+   "size": "S",
+   "priority": 3,
+   "risk": "the merge rule (keep TLS over local; allow local -> TLS upgrade) is a small contract statement: write it in the spec in the same change",
+   "depends_on": [],
+   "lane_conflict": "none",
+   "acceptance": "The two reproduced sequences (fetched then local import while not current; local import current then fetched) leave the stronger provenance stored and Installed.in_use == store.read_meta(current)."
+  },
+  {
+   "id": "C-T04",
+   "title": "CSAF transport: malformed redirect Location becomes a typed refusal",
+   "why": "C-D05: raw ValueError from urljoin; the twin fix ACQ-1 skipped this transport.",
+   "files": [
+    "src/patchtrace/intelligence/csaf/transport.py",
+    "tests/test_intel_transport.py"
+   ],
+   "tests": [
+    "tests/test_intel_transport.py"
+   ],
+   "size": "S",
+   "priority": 4,
+   "risk": "none known",
+   "depends_on": [],
+   "lane_conflict": "none",
+   "acceptance": "Fake opener 302 with Location \"https://[::1/x\" raises IntelError (PT-INTEL-CONFIG), never ValueError."
+  },
+  {
+   "id": "C-T05",
+   "title": "One CVE identifier rule: ASCII-only CveSnapshot pattern and shared CLI normalisation",
+   "why": "C-D06 and C-D07: the stored contract admits non-ASCII digits (open item todo.md:496 A5) and `correlate` rejects input the other verbs accept.",
+   "files": [
+    "src/patchtrace/enrichment/contracts.py",
+    "src/patchtrace/cli.py",
+    "src/patchtrace/intelligence/cli.py",
+    "docs/schemas/enrichment/CveSnapshot.json",
+    "tests/test_enrichment_core.py",
+    "tests/test_cve_id_normalization.py (new)"
+   ],
+   "tests": [
+    "tests/test_enrichment_core.py",
+    "tests/test_cve_id_normalization.py",
+    "tests/test_enrichment_review_regressions.py"
+   ],
+   "size": "S",
+   "priority": 5,
+   "risk": "cli.py is a shared file (keep the edit to _cve_id); the schema must be regenerated with the project generator",
+   "depends_on": [],
+   "lane_conflict": "none",
+   "acceptance": "Arabic-Indic digit cve_id fails CveSnapshot validation; `correlate --cve \" cve-2024-38063 \"` is accepted as CVE-2024-38063; schema regeneration test green."
+  },
+  {
+   "id": "C-T06",
+   "title": "SPEC-42 inventory rows for the KEV hosts and the census test",
+   "why": "C-D12: two production hosts are missing from the privacy inventory and nothing fails when a new opener lands.",
+   "files": [
+    "docs/specs/network-egress-privacy.md",
+    "tests/test_network_census.py (new)",
+    "docs/specs/REGISTRY.md"
+   ],
+   "tests": [
+    "tests/test_network_census.py",
+    "tests/test_tracker_text.py"
+   ],
+   "size": "M",
+   "priority": 6,
+   "risk": "the scan must allow the five owner modules plus tools/; keep it a source-text scan (no imports of Qt)",
+   "depends_on": [],
+   "lane_conflict": "none",
+   "acceptance": "Census test lists exactly acquisition/transport.py, enrichment/intelligence.py, intelligence/csaf/transport.py, kev/transport.py, providers.py (and their documented reusers) as opener owners and fails when a sixth appears; the spec names www.cisa.gov and raw.githubusercontent.com."
+  },
+  {
+   "id": "C-T07",
+   "title": "Tell the user which CSAF validation tests were not run",
+   "why": "A document with an inconsistent CVSS object is accepted and nothing printed says 6.1.8-6.1.13 were skipped (vendor-feeds spec section 11 acceptance line).",
+   "files": [
+    "src/patchtrace/intelligence/cli.py",
+    "src/patchtrace/intelligence/explain.py",
+    "tests/test_intel_limitations_list_untested_validation.py (new)",
+    "docs/specs/csaf-cve-interpretation-engine.md"
+   ],
+   "tests": [
+    "tests/test_intel_limitations_list_untested_validation.py",
+    "tests/test_intel_cli.py",
+    "tests/test_intel_reports.py"
+   ],
+   "size": "S",
+   "priority": 7,
+   "risk": "adding a limitation line changes the report goldens in tests/fixtures/csaf/expected (regenerate, LF)",
+   "depends_on": [],
+   "lane_conflict": "none",
+   "acceptance": "`intelligence import` text and JSON name the not-implemented tests from ValidationReport; the explain report limitations carry one fixed sentence."
+  },
+  {
+   "id": "C-T08",
+   "title": "correlate --save-snapshot: check the target first and write atomically",
+   "why": "C-D08: a fetch that took minutes is lost on a bad path, and an interrupted write truncates the previous file.",
+   "files": [
+    "src/patchtrace/cli.py",
+    "tests/test_enrichment_review_regressions.py"
+   ],
+   "tests": [
+    "tests/test_enrichment_review_regressions.py"
+   ],
+   "size": "S",
+   "priority": 8,
+   "risk": "shared file cli.py",
+   "depends_on": [],
+   "lane_conflict": "none",
+   "acceptance": "Missing parent directory is exit 2 before any opener call; a write that fails after the temp file leaves the old snapshot bytes unchanged."
+  },
+  {
+   "id": "C-T09",
+   "title": "Record the live-nvd and live-kev results and close the stale tracker lines",
+   "why": "The trackers still say the first live runs are missing; both gates have passed on main (C-F22).",
+   "files": [
+    "docs/qa.md",
+    "tasks/todo.md",
+    "docs/specs/REGISTRY.md",
+    "docs/specs/kev-exploitation-context.md",
+    "docs/specs/kb/vendor-feeds-and-source-matrix-spec.md"
+   ],
+   "tests": [
+    "tests/test_tracker_text.py"
+   ],
+   "size": "S",
+   "priority": 9,
+   "risk": "the probe status of live-nvd run 41456018069 and live-kev run 40694148430 was not read (conclusion success only): read their step summaries before writing \"passed\"",
+   "depends_on": [],
+   "lane_conflict": "none",
+   "acceptance": "docs/qa.md carries one table per workflow with run id, date, head sha and probe status; todo.md:71, :180, :443, :655 are closed or reworded; tracker text test green."
+  },
+  {
+   "id": "C-T10",
+   "title": "Wire the KEV project row and report block (K5) to the CLI and the dock",
+   "why": "C-D13: built and tested code with no caller; KEV answers are never recorded in a project or shown in an export.",
+   "files": [
+    "src/patchtrace/kev/cli.py",
+    "src/patchtrace/ui_kev.py",
+    "src/patchtrace/ui_kev_model.py",
+    "src/patchtrace/report2/adapters.py",
+    "docs/specs/kev-exploitation-context.md",
+    "tests/test_kev_cli.py",
+    "tests/test_ui_kev_panel.py"
+   ],
+   "tests": [
+    "tests/test_kev_cli.py",
+    "tests/test_ui_kev_panel.py",
+    "tests/test_kev_project_context.py",
+    "tests/test_kev_report.py"
+   ],
+   "size": "M",
+   "priority": 10,
+   "risk": "the CLI flag shape is not in the plan (plan section 7 lists `kev lookup` without a project): spec first; report2 belongs to another workstream, keep the hook to the adapter seam",
+   "depends_on": [
+    "C-T03"
+   ],
+   "lane_conflict": "none",
+   "acceptance": "A lookup with a project writes one kev-context row on the owner thread; reopening with a changed catalog shows drift lines; the report shows the block or \"snapshot no longer stored\"."
+  },
+  {
+   "id": "C-T11",
+   "title": "Live CSAF probe tool with recorded-fixture tests and an advisory workflow",
+   "why": "MSRC CSAF is the only adapter of the workstream with no live gate; its default provider-metadata URL has never been confirmed.",
+   "files": [
+    "tools/live_csaf_probe.py (new)",
+    "tests/test_live_csaf_probe.py (new)",
+    ".github/workflows/live-csaf.yml (new)",
+    "docs/modules.md"
+   ],
+   "tests": [
+    "tests/test_live_csaf_probe.py",
+    "tests/test_workflows.py"
+   ],
+   "size": "M",
+   "priority": 11,
+   "risk": "only the tool and its mocked tests are verifiable here; the first real run is an owner/CI step and must not be reported as live evidence until it has run",
+   "depends_on": [
+    "C-T04"
+   ],
+   "lane_conflict": "none",
+   "acceptance": "Probe classifies blocked vs failed like tools/live_kev_probe.py, writes build/live-status/csaf.json, never a required check; tests drive it with a fake opener."
+  },
+  {
+   "id": "C-T12",
+   "title": "CSAF mandatory tests 6.1.9 and 6.1.10 (CVSS v3 score and vector consistency), as warnings first",
+   "why": "Recorded conformance gap; pure arithmetic, no network. Spec question Q2 is open, so ship as warnings until the owner decides whether they reject.",
+   "files": [
+    "src/patchtrace/intelligence/csaf/validate.py",
+    "tests/test_intel_validate.py",
+    "docs/specs/csaf-cve-interpretation-engine.md"
+   ],
+   "tests": [
+    "tests/test_intel_validate.py",
+    "tests/test_intel_hostile_input.py",
+    "tests/test_intel_schemas.py"
+   ],
+   "size": "M",
+   "priority": 12,
+   "risk": "a VALIDATOR_VERSION bump changes facts ids (stored facts are recomputed from source on read); real Microsoft documents are unverified, so a hard rejection could refuse valid vendor files",
+   "depends_on": [
+    "C-T07"
+   ],
+   "lane_conflict": "none",
+   "acceptance": "FIRST CVSS 3.1 example vectors score exactly; a document whose baseScore or baseSeverity disagrees with its vector gets findings 6.1.9 / 6.1.10; TESTS_NOT_IMPLEMENTED shrinks accordingly."
+  }
+ ],
+ "github_live_runs": {
+  "live-nvd.yml": [
+   {
+    "id": 42632853488,
+    "date": "2026-11-09",
+    "event": "schedule",
+    "head": "882d1ca0",
+    "conclusion": "success",
+    "probe_status": "passed (step summary read)"
+   },
+   {
+    "id": 41456018069,
+    "date": "2026-11-02",
+    "event": "schedule",
+    "head": "25c9795b",
+    "conclusion": "success",
+    "probe_status": "UNVERIFIED (log not read)"
+   }
+  ],
+  "live-kev.yml": [
+   {
+    "id": 41850105271,
+    "date": "2026-11-04",
+    "event": "schedule",
+    "head": "25b2ac80",
+    "conclusion": "success",
+    "probe_status": "passed (step summary read: both sources, release 2026.11.03)"
+   },
+   {
+    "id": 40694148430,
+    "date": "2026-10-28",
+    "event": "schedule",
+    "head": "e093ade3",
+    "conclusion": "success",
+    "probe_status": "UNVERIFIED (log not read)"
+   }
+  ],
+  "live-kbc.yml": [
+   {
+    "id": 42346127399,
+    "date": "2026-11-07",
+    "event": "workflow_dispatch",
+    "head": "652677b0",
+    "conclusion": "success",
+    "probe_status": "passed, 7 checks (docs/qa/kbc-live-probe-20261107.md)",
+    "note": "total_count 1: there is no second run"
+   }
+  ]
+ },
+ "notes": "Scope read: enrichment/{cve,intelligence,contracts}.py, kev/{contracts,parse,join,store,transport,service,kb_adapter,project_context,limits}.py, intelligence/{explain,storage,cli}.py, intelligence/csaf/{normalize,applicability,transport,discovery}.py and the date/version parts of validate.py, acquisition/{winbindex,contracts}.py and the head of transport.py, netutil.py, providers.py. Skimmed only: enrichment/cache.py and storage.py (persistence workstream), acquisition/{quarantine,workflow,delta}.py, kev/{view_model,cli,report}.py, intelligence/{lexicon,hypotheses,anchors,reports}.py, most of csaf/validate.py. Not covered: intelligence/tools/** (capa/FLOSS/DiE, workstream B) and kbcorrelation/** (workstream D; C-F06 is a cross-reference). Tests: 1,943 tests collected in the 58 scoped test files; I ran three files here (131 passed: test_intel_explain, test_enrichment_cve, test_kev_store); the rest is UNVERIFIED by me and rests on the baseline suite. Every defect C-D01 to C-D09 was reproduced offline with a small script against main@882d1ca0 (scripts in scratchpad inventory/tmp-C); C-D10, C-D12 and C-D13 are by code reading and grep (there is no C-D11). No defect is rated high or critical: the earlier audits (20261014-C, 20261015 acquisition/enrichment, 20261015 intelligence/KEV) are fixed on main as their fix tables say, with ACQ-12, ACQ-13 and C-23 still deferred. CONFIRMED vs INFERRED: the code marks inference with product_mapping_status verified|candidate, mapping basis, assessment advisory-claim|unknown, resolution unknown|ambiguous|contradictory, ContextualEntry.blocked and the KEV statuses; the only path found that shows a claim more strongly than the evidence supports is C-D01. Active lanes: no feature or task here touches L1-L7 files (backend.py, unified/**, ui_export_v2.py, qa-windows.yml, .devcontainer are not needed by any task). Extra keys beyond the common shape: pct_basis per feature, completion and github_live_runs at top level.",
+ "external_blockers": [
+  "MSRC CSAF (msrc.microsoft.com): provider-metadata URL, directory layout and real documents never verified live; no live probe exists for it",
+  "Windows-only: msdelta PA30/PA31 apply, real symbol-server pair download, KEV store replace-retry and TLS roots, byte-identical report goldens",
+  "Owner decision: flip the KEV dock default to cisa-site (the live-kev gate passed on 2026-11-04)",
+  "Owner decision: persist NVD/MSRC CVE snapshots and raw provider bodies in the project (kind cve-snapshot is reserved but has no writer)",
+  "Owner decision: C-23 NVD Primary/Secondary CWE semantics (todo.md says by design, vendor-feeds spec says open)",
+  "Owner decision: authenticity label for an offline CSAF cache replay; OSV and second CSAF vendor scope; SPEC-42 offline switch (draft proposal)",
+  "cwe.mitre.org unreachable: lexicon CWE names unverified",
+  "AI provider live acceptance needs a model and credentials",
+  "AV-5 independent oracle for the CVE-to-KB join (workstream D)"
+ ],
+ "summary": "Inventory written: 22 features, 12 defects, 12 actionable tasks. No high or critical defect found; four are medium, and nine of the twelve were reproduced offline. The main one: `intelligence explain` shows a vendor-withdrawn CVE claim as the current affected/fixed resolution (explain.py:151), the only path found that overstates evidence. Others: KEV provenance overwritten on re-import, untyped overflow errors aborting `correlate`, raw ValueError in the CSAF transport. KEV project row and report block are built but have no caller. Live gates: live-nvd (2026-11-09) and live-kev (2026-11-04) passed on main but trackers still say no run exists; live-kbc has one run (passed). MSRC CSAF remains unverified live."
+}

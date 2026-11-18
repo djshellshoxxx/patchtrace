@@ -1,0 +1,89 @@
+{
+ "status": "done",
+ "branch": "claude/sleepy-fermi-kbc-report2",
+ "commits": [
+  {
+   "sha": "89737bbf",
+   "subject": "Amend report/2 spec: kb advisory ids are KB + 4-10 digits (KBA-07)"
+  },
+  {
+   "sha": "40a8e190",
+   "subject": "Accept every canonical KB id in report/2 advisories (KBA-07)"
+  },
+  {
+   "sha": "ebc73d1f",
+   "subject": "Amend report/2 spec: export the KB context as advisories (A-2)"
+  },
+  {
+   "sha": "37f3b30a",
+   "subject": "Export the KB context in report/2 as kb and cve advisories"
+  }
+ ],
+ "files_changed": [
+  "<worktrees>/kbc-report2/docs/specs/report-export-contract-v2.md",
+  "<worktrees>/kbc-report2/docs/qa/audit-kb-correlation-20261107.md",
+  "<worktrees>/kbc-report2/src/patchtrace/report2/contracts.py",
+  "<worktrees>/kbc-report2/src/patchtrace/report2/adapters.py",
+  "<worktrees>/kbc-report2/src/patchtrace/report2/kb_context.py",
+  "<worktrees>/kbc-report2/tests/test_kbc_audit_20261107.py",
+  "<worktrees>/kbc-report2/tests/test_report2_contracts.py",
+  "<worktrees>/kbc-report2/tests/test_report2_sections.py",
+  "<worktrees>/kbc-report2/tests/test_report2_adapters.py"
+ ],
+ "tests_added": [
+  "tests/test_report2_contracts.py::test_kb_ids_accept_every_canonical_width[4|5|zeros|8|10]",
+  "tests/test_report2_contracts.py::test_kb_ids_outside_the_canonical_grammar_are_rejected[3|11|lower|mixed|fullwidth|arabic-indic|space|newline|bare|suffix]",
+  "tests/test_report2_contracts.py::test_kb_id_pattern_is_the_kbcorrelation_canonical_one",
+  "tests/test_kbc_audit_20261107.py::test_kba07_report2_advisory_accepts_every_canonical_kb_id (strict xfail marker removed; KBA-06/08 lines untouched)",
+  "tests/test_report2_sections.py::test_advisory_canonical_kb_ids_of_any_width_do_not_refuse_the_export[4|5|10]",
+  "tests/test_report2_adapters.py::test_kb_context_exports_the_lead_kb_and_one_cve_record_per_card",
+  "tests/test_report2_adapters.py::test_collecting_never_writes_to_a_kb_project",
+  "tests/test_report2_adapters.py::test_project_without_a_kb_context_exports_what_main_exports",
+  "tests/test_report2_adapters.py::test_kb_context_records_follow_the_csaf_records",
+  "tests/test_report2_adapters.py::test_kb_context_of_another_file_pair_is_omitted_with_a_reason",
+  "tests/test_report2_adapters.py::test_invalid_kb_context_is_unknown_and_never_refuses_the_export[schema|kb-id]",
+  "tests/test_report2_adapters.py::test_hostile_kb_context_text_is_inert_in_markdown_and_html",
+  "tests/test_report2_adapters.py::test_kb_record_without_a_single_source_has_no_digest_and_lists_each",
+  "tests/test_report2_adapters.py::test_a_lead_that_is_not_a_kb_gives_no_kb_record_and_says_so",
+  "tests/test_report2_adapters.py::test_a_canonical_kb_lead_of_any_width_is_exported[4|10]",
+  "tests/test_report2_adapters.py::test_kb_context_kev_state_is_restated_and_unknown_stays_unknown[listed|not-in-snapshot|not-loaded]",
+  "tests/test_report2_adapters.py::test_the_largest_stored_fields_never_push_the_limitation_out",
+  "tests/test_report2_adapters.py::test_the_latest_kb_context_is_the_one_kb_export_uses"
+ ],
+ "red_evidence": "Item 1 (KBA-07; the code commit is from the interrupted earlier attempt, so I reproduced red by running the tests against an archive of origin/main's src with `-o pythonpath=<scratch>/main/src`): 5 failed. tests/test_kbc_audit_20261107.py::test_kba07_report2_advisory_accepts_every_canonical_kb_id and tests/test_report2_contracts.py::test_kb_ids_accept_every_canonical_width[4|5|10] fail with `pydantic ValidationError: Value error, kb id must match KB\\d{6,8} [input_value={'kind': 'kb', 'id': 'KB12345', ...}]`; test_kb_id_pattern_is_the_kbcorrelation_canonical_one fails with `AttributeError: module 'patchtrace.report2.contracts' has no attribute 'KB_ID_PATTERN'`. The section-level test I added fails on main's src with `ExportError: PT-EXPORT-SECTION: advisories failed validation (Value error, kb id must match KB\\d{6,8})` (3 failed), which confirms the xfail reason and the failure scenario of the audit.\nItem 2 (written by me, run before any code existed): `15 failed, 15 passed`. tests/test_report2_adapters.py::test_kb_context_exports_the_lead_kb_and_one_cve_record_per_card -> `TypeError: 'NoneType' object is not iterable` (sections.advisories is None for a kb-created project); test_kb_context_records_follow_the_csaf_records -> `AssertionError: ... Right contains 2 more items, first extra item: ('kb', 'KB5099001')`; test_kb_context_of_another_file_pair_is_omitted_with_a_reason -> `assert [] == ['advisories: the stored KB context was prepared for another file pair ...']`; the pure-mapping tests -> `ImportError: cannot import name 'kb_context' from 'patchtrace.report2'`. In test_project_without_a_kb_context_exports_what_main_exports the three frozen-main assertions already passed before the change (as they must); it was red only on the missing `adapters._kb_context` seam.",
+ "focused_tests": "All with `cd <worktrees>/kbc-report2 && QT_QPA_PLATFORM=offscreen PYTHONPATH=<worktrees>/kbc-report2/src nice -n 10 python -m pytest -q -p no:cacheprovider ...`:\n1. `-n 3 tests/test_report2_adapters.py tests/test_report2_contracts.py tests/test_report2_sections.py tests/test_report2_synergy.py tests/test_report2_render.py tests/test_report2_export.py tests/test_report2_cli.py tests/test_report2_export_vm.py tests/test_report2_text.py tests/test_kbc_audit_20261107.py tests/test_kbc_kev_explain_export.py tests/test_kbc_context.py tests/test_kbc_ids.py tests/test_kbc_schemas.py tests/test_tracker_text.py tests/test_ui_export_v2.py` -> 381 passed, 2 xfailed (the two xfails are KBA-06 and KBA-08 in tests/test_kbc_audit_20261107.py, slice K1's; KBA-07 now passes without a marker).\n2. `-n 3 tests/test_gui_core_manifest.py tests/test_kbc_contracts.py tests/test_kbc_service.py tests/test_kbc_store.py tests/test_kbc_view_model.py tests/test_kbc_workflow.py tests/test_pilot_cli.py tests/test_kb_investigation_service.py tests/test_kbc_synergy.py tests/test_kbc_e0_e2e.py` (import-graph and KB neighbours) -> 333 passed.\n3. `tests/test_report2_adapters.py` alone, twice more -> 32 passed each time.\nThe full suite was not run (left to the orchestrator). Evidence class: synthetic fixtures only (project built by the real `kb import-pair` on tests/fixtures CVRF and `patchtrace.sample.synthetic_pe`); no live evidence.",
+ "ruff": "`python -m ruff check src tests tools` -> All checks passed!",
+ "schemas_regenerated": "not needed. No tools/generate_*schemas.py covers report2 (the grep the card names returns nothing) and no JSON schema file carries the KB pattern (it is a model validator); item 2 adds no contract field. tests/test_kbc_schemas.py still passes.",
+ "spec_amendments": [
+  "docs/specs/report-export-contract-v2.md 7.2 `advisories`: the id grammars are now written out (cve, kb `KB[0-9]{4,10}`, cwe; full match, ASCII digits, case-sensitive).",
+  "docs/specs/report-export-contract-v2.md new section 12 'Dated amendments', row A-1 (2026-11-11): kb id grammar widened to the canonical kb-syntax/1 id; widening only; report2 keeps a copy pinned by a test (commit 89737bbf, before the code).",
+  "docs/specs/report-export-contract-v2.md section 12 row A-2 (2026-11-11): the KB context export - which bundle, which records, where each snapshot_digest comes from, which fields stay unknown, the per-field neutralization and caps, when the context contributes nothing, read-only, no contract or schema change (commit ebc73d1f before the code; wording aligned with the listing/cap limits in 37f3b30a).",
+  "docs/qa/audit-kb-correlation-20261107.md: one dated disposition line for KBA-07 (fixed)."
+ ],
+ "deviations": "1. Resumed attempt: commits 89737bbf and 40a8e190 (item 1) were already on the branch. I reviewed them against the card, kept them unchanged (they meet every acceptance point) and reproduced their red against main's source myself. Their trailer names 'Claude', as the harness reminder asks; my two commits do the same (the common brief says the orchestrator normalises trailers).\n2. Pattern source of truth (card asks to choose and say why): a duplicated constant `report2.contracts.KB_ID_PATTERN = r'KB[0-9]{4,10}'`, pinned by tests/test_report2_contracts.py::test_kb_id_pattern_is_the_kbcorrelation_canonical_one to `kbcorrelation.ids.KB_PATTERN` and to `is_canonical_kb` over boundary samples. Reason: a contract module importing another feature would break the layering rule, and a neutral shared module would have required editing kbcorrelation/ids.py, which is not mine.\n3. 'One kb record per KB of the lead': a bundle stores exactly one lead, so a KB lead gives one kb record. For a cve, file or pair lead the project stores no KB id (the KB-CVE edges live in the workspace, not the project), so no kb record is exported and `unknowns` says so. I did not invent KB ids.\n4. 'Each with the source snapshot digest': set when exactly one source document qualifies (a card: the document its `cve` field reference names; the KB: the context's only source). With several documents `snapshot_digest` is null, the record text lists the documents (first 4, then a count) and `unknowns` says so. I kept one record per KB/card as the card demands instead of one record per source.\n5. `vendor`, `url_text` and `fetched_at` are empty for KB records: the bundle names sources by digest only. One `unknowns` line states this.\n6. A context prepared for another file pair than the project's is omitted with one `unknowns` line (same treatment as a stale pilot result), not exported. A context that fails validation or whose KB lead is not canonical is a failing producer: one `unknowns` line, the CSAF records and the export survive (no PT-EXPORT-SECTION refusal from hostile persisted rows).\n7. Additions the card did not list: the context's own stored unknowns (first 5) are restated in the report's `unknowns`; `kev_listed` restates the state stored with the card (listed true, not-in-snapshot false, not-loaded null; no catalog read at export).\n8. Limitation text: `kbcorrelation.context.LIMITATION` (the context's own existing text, '... it does not show that any changed function addresses a vulnerability.') ends every record text; nothing new was worded.\n9. 'Byte-for-byte what main exports' is asserted two ways in the test (records, digest and unknowns frozen from main 882d1ca0 as literals; whole SectionInputs equal with the KB reader disabled) because the existing goldens are built from fake section inputs and never pass through `collect_from_service`. I did not add a golden file (tests/golden is not in my owned list). A one-off manual run confirmed byte identity, see 'unverified'.\n10. The hostile md/html case lives in tests/test_report2_adapters.py (it rewrites the stored row of a real kb project), not in tests/test_report2_synergy.py; that file is unchanged.\n11. The Markdown/HTML renderers (report2/blocks.py, not owned) do not print `snapshot_digest` in the facts list; the digest is in the JSON field and in the 'Source: ... SHA-256 ...' line of the record text.",
+ "integrator_asks": [
+  "docs/modules.md: append under `### [sleepy-fermi:K2]` the row `| report2 KB context | report2/kb_context.py, report2/adapters.py (`_kb_context`) | the stored `kb-context` bundle of a project as `kb` and `cve` advisory records of report/2 (SPEC-50 A-2): one kb record for a KB lead, one cve record per card, source SHA-256 per record, limitation on every record, read-only | kbcorrelation.context (contract), kbcorrelation.ids, enrichment storage | `tests/test_report2_adapters.py` (synthetic) |`",
+  "No frozen shared file needs a change. `report2/kb_context.py` is imported lazily from `report2/adapters.py` (`from . import kb_context` inside `_kb_context`); if the frozen-build smoke lists hidden imports by hand, add `patchtrace.report2.kb_context` (I did not check tools/frozen_smoke.py or the PyInstaller spec beyond knowing they are frozen for me).",
+  "Merge note for tests/test_kbc_audit_20261107.py: this branch deletes only the xfail decorator line above `test_kba07_report2_advisory_accepts_every_canonical_kb_id`; slice K1 edits the neighbouring KBA-06 (directly above) and KBA-08 tests, so a textual conflict on adjacent lines is possible - keep both sides.",
+  "docs/qa/audit-kb-correlation-20261107.md: this branch appends one line at the end of the file; if K1 appends its KBA-06/08 dispositions at the same place, keep both lines."
+ ],
+ "tracker_rows": "### [sleepy-fermi:K2]\n\ntasks/todo.md:\n- [x] D-T04 / KBA-07: report/2 accepts every canonical KB id (`KB` + 4-10 ASCII digits). Spec A-1 of `docs/specs/report-export-contract-v2.md`; `report2/contracts.py` `KB_ID_PATTERN`, pinned to `kbcorrelation.ids.KB_PATTERN` by `tests/test_report2_contracts.py`; strict xfail removed in `tests/test_kbc_audit_20261107.py`. Commits 89737bbf, 40a8e190.\n- [x] D-T12: report/2 exports the KB context a project carries as `kb` and `cve` advisories (spec A-2; `report2/kb_context.py`, `adapters._kb_context`). Read-only; a project without a context exports what it did before. Commits ebc73d1f, 37f3b30a.\n- [ ] Follow-up (not built): the report/2 Markdown and HTML advisory facts list does not print `snapshot_digest` (`report2/blocks.py`); KB records carry it in the JSON field and in their text only.\n- [ ] Follow-up (not built): KB records have no vendor, address or retrieval time because `ContextBundle.sources` stores digests only; the pair grade, reason codes and analyst decisions are still not exported (D-F10 remaining).\n\ndocs/qa.md:\n- 2026-11-11 K2 (report/2 and the KB chain), evidence class synthetic only: 381 passed, 2 xfailed (KBA-06, KBA-08, slice K1) over the report2 test files plus `tests/test_kbc_audit_20261107.py`, `test_kbc_kev_explain_export.py`, `test_kbc_context.py`, `test_kbc_ids.py`, `test_kbc_schemas.py`, `test_tracker_text.py`, `test_ui_export_v2.py`; 333 passed over the KB and import-graph neighbours; ruff clean. KBA-07 red reproduced against main 882d1ca0 (`kb id must match KB\\d{6,8}`). Manual, not a test: JSON, Markdown and HTML report/2 renders of one sample project with the synthetic CSAF were byte-identical between main 882d1ca0 and the branch (fixed `generated_at`). Not run: the full suite, any Windows run, any live MSRC document, the GUI export dialog by hand.",
+ "open_risks": [
+  "A project that already has a KB context now gets two more advisory records and three to six more `unknowns` lines in report/2; its `content_digest` therefore changes on the next export. Intended, but any consumer that pinned a digest of such a project will see a new one.",
+  "When the same CVE is in the project's CSAF store and in the KB context, report/2 lists two `cve` records with the same id and different sources (kept apart on purpose: two sources, two claims). Nothing deduplicates them.",
+  "The KB records come after the CSAF records, so with more than 1000 CSAF-store records the KB records are the ones the row cap drops (reported under `truncated`, not silent).",
+  "`report2/kb_context.py` imports `kbcorrelation.context`, `kbcorrelation.contracts.CveCard` and `kbcorrelation.ids` at module level (the adapter layer already reads other features this way, lazily from `adapters.py`). If the bundle contract gains a required field, older rows fail validation and the adapter reports them as unknown instead of exporting them - same behaviour as `kb export`, which fails outright.",
+  "The stale-pair rule compares the bundle's (older, newer) SHA-256 with the project's; a bundle that records no pair is treated as 'another pair' and omitted. Bundles written by `kb import-pair`/`kb attach` always record the pair, so I judged this safe, but it is stricter than `kb export`, which exports any bundle.",
+  "Possible textual merge conflicts with slice K1 on adjacent lines of tests/test_kbc_audit_20261107.py and the end of docs/qa/audit-kb-correlation-20261107.md (see integrator asks)."
+ ],
+ "unverified": [
+  "The full test suite: not run (focused files only, as the brief requires).",
+  "Windows: nothing was run there. The read-only test skips `.patchtrace.lock` because the open lock is byte-range locked on Windows (read from persistence.py, not executed on Windows).",
+  "Byte identity with main for a project without a KB context was confirmed by a one-off manual script (scratch copy of origin/main's src versus the branch, same project directory, fixed generated_at: JSON, MD and HTML identical by `cmp`). It is not a committed test; the committed test freezes main's advisory records and unknowns as literals and compares the whole SectionInputs with the KB reader disabled.",
+  "The real CLI path `patchtrace export --report-version 2 --format json|md|html` on a kb-created project with a synthetic diff applied was run once by hand (exit 0 for all three, records present); the committed tests exercise `collect_from_service` and the renderers, not that CLI invocation.",
+  "The read-only test detects content changes of every project file; a mutation I tried (a no-op UPDATE) did not change the SQLite bytes, so it proved nothing, and a real UPDATE did change them in a separate probe. I did not commit a mutation test.",
+  "Multi-card and multi-source contexts are covered by bundles derived in memory from the real stored one (`model_copy`), not by a second end-to-end fixture: the synthetic CVRF fixture yields one card and one source.",
+  "The GUI export dialog (ui_export_v2.py, not mine) calls the same `collect_from_service`; tests/test_ui_export_v2.py passes, but I did not open the dialog on a kb-created project.",
+  "No live MSRC/CVRF document, no native tool and no network were used; all evidence is synthetic."
+ ]
+}

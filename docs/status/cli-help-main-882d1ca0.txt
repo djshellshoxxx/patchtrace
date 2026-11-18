@@ -1,0 +1,1847 @@
+====================================================================================================
+$ patchtrace --help
+[exit 0]
+usage: patchtrace [-h]
+                  {rank,flags,correlate,cache,acquire,series,secondary,intelligence,unified,intel-tools,backend,build-env,diaphora,export,fabric,graph,inspect,kb,kev,panels,pilot,rules,search,strings}
+                  ...
+
+PatchTrace headless enrichment commands. Launch without arguments to open the desktop.
+
+positional arguments:
+  {rank,flags,correlate,cache,acquire,series,secondary,intelligence,unified,intel-tools,backend,build-env,diaphora,export,fabric,graph,inspect,kb,kev,panels,pilot,rules,search,strings}
+    rank                rank changed functions by attention/1 change signals
+    flags               list WIL feature-flag transitions
+    correlate           rerank with CVE context (base ranking unchanged)
+    cache               inspect or maintain the global derived/raw cache
+    acquire             download two builds from the Microsoft symbol server (SPEC-08)
+    series              N-way build series over adjacent pair projects (SPEC-09)
+    secondary           second-opinion match sets: BinDiff import, rz-diff (SPEC-10/11)
+    intelligence        advisory (CSAF) intelligence: import, fetch, explain
+    unified             unified match analysis (experimental, derived, ordinal); the Ghidriff result stays primary
+    intel-tools         capa / FLOSS / Detect It Easy evidence (SPEC-29; static, no execution)
+    backend             bundled analysis runtime: status, verify, selftest, diagnose
+    build-env           build environment of the older and newer file (reads only)
+    diaphora            import an existing Diaphora result as optional evidence
+    export              export a project as a report (json, md, html; report/1 or 2)
+    fabric              read the anchor fabric: list, show, resolve or stats (read-only)
+    graph               call-graph explorer over stored Ghidriff call lists (read-only)
+    inspect             version, manifest and signature facts of both files (static; no execution)
+    kb                  KB / CVE advisory correlation (offline; coverage always stated)
+    kev                 CISA KEV catalog: status, plan, fetch, import, lookup
+    panels              list or check the GUI panel manifest
+    pilot               rank changed functions against an advisory: leads, why, review
+    rules               detection rules: probe, propose, show, decide, test, export, history
+    search              search a project's saved names, strings, APIs, code, notes (offline)
+    strings             string changes between the two builds (static; never executes them)
+
+options:
+  -h, --help            show this help message and exit
+
+====================================================================================================
+$ patchtrace rank --help
+[exit 0]
+usage: patchtrace rank [-h] [--json] [--cache-dir CACHE_DIR] [--refresh] [--profile NAME|FILE] [--run RUN] [--weights WEIGHTS]
+                       [--disable DETECTOR] [--limit LIMIT] [--dry-run]
+                       project
+
+positional arguments:
+  project
+
+options:
+  -h, --help            show this help message and exit
+  --json                emit exactly one JSON document on stdout
+  --cache-dir CACHE_DIR
+                        global derived-stage cache (default: the profile cache_dir, else no cache)
+  --refresh             recompute cached stages (no network implied)
+  --profile NAME|FILE   analysis profile name from the desktop profiles directory, or a profile JSON file
+  --run RUN             analysis run ID (default: latest completed)
+  --weights WEIGHTS     JSON object of detector weights (integers 0..100)
+  --disable DETECTOR
+  --limit LIMIT         show at most N entries (0 = all)
+  --dry-run             do not persist results in the project
+
+====================================================================================================
+$ patchtrace flags --help
+[exit 0]
+usage: patchtrace flags [-h] [--json] [--cache-dir CACHE_DIR] [--refresh] [--profile NAME|FILE] [--run RUN] [--feature-id FEATURE_ID]
+                        [--dry-run]
+                        project
+
+positional arguments:
+  project
+
+options:
+  -h, --help            show this help message and exit
+  --json                emit exactly one JSON document on stdout
+  --cache-dir CACHE_DIR
+                        global derived-stage cache (default: the profile cache_dir, else no cache)
+  --refresh             recompute cached stages (no network implied)
+  --profile NAME|FILE   analysis profile name from the desktop profiles directory, or a profile JSON file
+  --run RUN
+  --feature-id FEATURE_ID
+  --dry-run
+
+====================================================================================================
+$ patchtrace correlate --help
+[exit 0]
+usage: patchtrace correlate [-h] [--json] [--cache-dir CACHE_DIR] [--refresh] [--profile NAME|FILE] --cve CVE-YYYY-NNNN
+                            [--snapshot SNAPSHOT] [--fetch] [--consent-providers CONSENT_PROVIDERS] [--providers PROVIDERS]
+                            [--api-key-env API_KEY_ENV] [--save-snapshot SAVE_SNAPSHOT] [--run RUN] [--dry-run]
+                            project
+
+positional arguments:
+  project
+
+options:
+  -h, --help            show this help message and exit
+  --json                emit exactly one JSON document on stdout
+  --cache-dir CACHE_DIR
+                        global derived-stage cache (default: the profile cache_dir, else no cache)
+  --refresh             recompute cached stages (no network implied)
+  --profile NAME|FILE   analysis profile name from the desktop profiles directory, or a profile JSON file
+  --cve CVE-YYYY-NNNN
+  --snapshot SNAPSHOT   previously saved CVE snapshot JSON (offline)
+  --fetch               retrieve from providers (requires consent)
+  --consent-providers CONSENT_PROVIDERS
+                        comma list, e.g. nvd,msrc; must match --providers
+  --providers PROVIDERS
+                        comma list (default: profile cve_providers, else nvd,msrc)
+  --api-key-env API_KEY_ENV
+                        environment variable holding an NVD API key
+  --save-snapshot SAVE_SNAPSHOT
+                        write normalized snapshots to this JSON file
+  --run RUN
+  --dry-run
+
+====================================================================================================
+$ patchtrace cache --help
+[exit 0]
+usage: patchtrace cache [-h] [--json] --cache-dir CACHE_DIR [--target-bytes TARGET_BYTES] {status,verify,prune}
+
+positional arguments:
+  {status,verify,prune}
+
+options:
+  -h, --help            show this help message and exit
+  --json                emit exactly one JSON document on stdout
+  --cache-dir CACHE_DIR
+  --target-bytes TARGET_BYTES
+
+====================================================================================================
+$ patchtrace acquire --help
+[exit 0]
+usage: patchtrace acquire [-h] {search,fetch} ...
+
+positional arguments:
+  {search,fetch}
+    search        list Winbindex x64 build candidates (metadata only)
+    fetch         download, verify and create a two-artifact project
+
+options:
+  -h, --help      show this help message and exit
+
+====================================================================================================
+$ patchtrace acquire search --help
+[exit 0]
+usage: patchtrace acquire search [-h] [--json] [--consent-hosts CONSENT_HOSTS] name
+
+positional arguments:
+  name                  lowercase file name, e.g. afd.sys
+
+options:
+  -h, --help            show this help message and exit
+  --json                emit exactly one JSON document on stdout
+  --consent-hosts CONSENT_HOSTS
+                        must be exactly winbindex.m417z.com
+
+====================================================================================================
+$ patchtrace acquire fetch --help
+[exit 0]
+usage: patchtrace acquire fetch [-h] [--json] --older SHA256 --newer SHA256 --project PROJECT [--project-name PROJECT_NAME]
+                                [--consent-hosts CONSENT_HOSTS]
+                                name
+
+positional arguments:
+  name
+
+options:
+  -h, --help            show this help message and exit
+  --json                emit exactly one JSON document on stdout
+  --older SHA256
+  --newer SHA256
+  --project PROJECT     new project directory
+  --project-name PROJECT_NAME
+  --consent-hosts CONSENT_HOSTS
+                        must be exactly winbindex.m417z.com,msdl.microsoft.com
+
+====================================================================================================
+$ patchtrace series --help
+[exit 0]
+usage: patchtrace series [-h] {create,chains} ...
+
+positional arguments:
+  {create,chains}
+    create         create/reuse adjacent pair projects and write series.json
+    chains         list chain hypotheses from series.json
+
+options:
+  -h, --help       show this help message and exit
+
+====================================================================================================
+$ patchtrace series create --help
+[exit 0]
+usage: patchtrace series create [-h] [--json] --builds FILE [FILE ...] --root ROOT [--labels LABEL [LABEL ...]] [--direct]
+                                [--replace-corrupt] [--run] [--python PYTHON] [--ghidra-dir GHIDRA_DIR] [--timeout TIMEOUT]
+                                [--cache-dir CACHE_DIR] [--symbols {off,local,online}] [--symbol-dir SYMBOL_DIR]
+                                [--consent-online-symbols]
+
+options:
+  -h, --help            show this help message and exit
+  --json                emit exactly one JSON document on stdout
+  --builds FILE [FILE ...]
+                        3-8 builds in analyst order, oldest first (order is never inferred)
+  --root ROOT           directory holding series.json and pair projects
+  --labels LABEL [LABEL ...]
+  --direct              also create a first-to-last pair project used to confirm/contradict chains
+  --replace-corrupt     if series.json is damaged, keep a series.json.corrupt-* copy and replace it
+  --run                 run Ghidriff for pair projects without a completed run (otherwise none runs)
+  --python PYTHON       external Python executable for --run
+  --ghidra-dir GHIDRA_DIR
+                        Ghidra installation root for --run
+  --timeout TIMEOUT     per-pair analysis timeout seconds
+  --cache-dir CACHE_DIR
+                        raw-output cache for --run
+  --symbols {off,local,online}
+                        Ghidra symbols for --run: off (default), local (PDB folders, no network) or online
+  --symbol-dir SYMBOL_DIR
+                        folder searched for PDBs by CodeView name in --symbols local (repeatable, at most 16)
+  --consent-online-symbols
+                        required with --symbols online: Ghidra may contact its configured symbol servers
+
+====================================================================================================
+$ patchtrace series chains --help
+[exit 0]
+usage: patchtrace series chains [-h] [--json] [--function NAME | --address HEX] series_json
+
+positional arguments:
+  series_json
+
+options:
+  -h, --help       show this help message and exit
+  --json           emit exactly one JSON document on stdout
+  --function NAME
+  --address HEX
+
+====================================================================================================
+$ patchtrace secondary --help
+[exit 0]
+usage: patchtrace secondary [-h] {import-bindiff,run,rzdiff,reconcile,binexport-check,_binexport-worker} ...
+
+positional arguments:
+  {import-bindiff,run,rzdiff,reconcile,binexport-check,_binexport-worker}
+    import-bindiff      import a genuine .BinDiff result for this exact pair
+    run                 run secondary engines on the project artifacts (SPEC-28)
+    rzdiff              alias for `secondary run --engine rz-diff`
+    reconcile           compare stored secondary match sets with Ghidriff matches
+    binexport-check     validate a user-supplied .BinExport for one artifact (isolated worker)
+
+options:
+  -h, --help            show this help message and exit
+
+====================================================================================================
+$ patchtrace secondary import-bindiff --help
+[exit 0]
+usage: patchtrace secondary import-bindiff [-h] [--json] project bindiff
+
+positional arguments:
+  project
+  bindiff
+
+options:
+  -h, --help  show this help message and exit
+  --json      emit exactly one JSON document on stdout
+
+====================================================================================================
+$ patchtrace secondary run --help
+[exit 0]
+usage: patchtrace secondary run [-h] [--json] [--engine {rz-diff,bindiff}] [--rz-diff RZ_DIFF] [--bindiff BINDIFF]
+                                [--older-binexport OLDER_BINEXPORT] [--newer-binexport NEWER_BINEXPORT] [--accept-unbound-binexport]
+                                [--max-parallel {1,2}] [--timeout TIMEOUT] [--no-cache]
+                                project
+
+positional arguments:
+  project
+
+options:
+  -h, --help            show this help message and exit
+  --json                emit exactly one JSON document on stdout
+  --engine {rz-diff,bindiff}
+                        repeatable; default: every engine that probes as supported
+  --rz-diff RZ_DIFF     rz-diff executable (absolute path or on PATH)
+  --bindiff BINDIFF     absolute path of the BinDiff 8 `bindiff` executable
+  --older-binexport OLDER_BINEXPORT
+                        .BinExport of the older artifact (BinDiff primary)
+  --newer-binexport NEWER_BINEXPORT
+                        .BinExport of the newer artifact (BinDiff secondary)
+  --accept-unbound-binexport
+                        I confirm these .BinExport files belong to this project's artifacts even though they record no SHA-256 executable
+                        id (recorded in provenance)
+  --max-parallel {1,2}
+  --timeout TIMEOUT     per-engine seconds (60..86400)
+  --no-cache            ignore stored engine runs
+
+====================================================================================================
+$ patchtrace secondary rzdiff --help
+[exit 0]
+usage: patchtrace secondary rzdiff [-h] [--json] [--rz-diff RZ_DIFF] [--timeout TIMEOUT] project
+
+positional arguments:
+  project
+
+options:
+  -h, --help         show this help message and exit
+  --json             emit exactly one JSON document on stdout
+  --rz-diff RZ_DIFF  rz-diff executable (absolute path or on PATH)
+  --timeout TIMEOUT
+
+====================================================================================================
+$ patchtrace secondary reconcile --help
+[exit 0]
+usage: patchtrace secondary reconcile [-h] [--json] project
+
+positional arguments:
+  project
+
+options:
+  -h, --help  show this help message and exit
+  --json      emit exactly one JSON document on stdout
+
+====================================================================================================
+$ patchtrace secondary binexport-check --help
+[exit 0]
+usage: patchtrace secondary binexport-check [-h] [--json] --artifact-sha256 ARTIFACT_SHA256 --role {older,newer} [--accept-unbound] file
+
+Validates a .BinExport (Ghidra: File > Export > Binary BinExport (v2) for BinDiff; IDA: Edit > Plugins > BinExport) in a memory/time-
+capped worker. Choose "Subtract Imagebase" identically for both files of a pair. Nothing is uploaded and the file is never modified.
+
+positional arguments:
+  file
+
+options:
+  -h, --help            show this help message and exit
+  --json                emit exactly one JSON document on stdout
+  --artifact-sha256 ARTIFACT_SHA256
+                        SHA-256 of the binary this export claims to describe
+  --role {older,newer}
+  --accept-unbound      I confirm this file belongs to the artifact although its executable_id is not a SHA-256 (MD5/empty ids from IDA);
+                        recorded as id_binding
+
+====================================================================================================
+$ patchtrace secondary _binexport-worker --help
+[exit 0]
+usage: patchtrace secondary _binexport-worker [-h] --request REQUEST
+
+options:
+  -h, --help         show this help message and exit
+  --request REQUEST
+
+====================================================================================================
+$ patchtrace intelligence --help
+[exit 0]
+usage: patchtrace intelligence [-h] {import,fetch,explain} ...
+
+Advisory facts are vendor claims with provenance; rule hypotheses are search guidance. Neither is verification of a vulnerability in a
+function.
+
+positional arguments:
+  {import,fetch,explain}
+    import              store a local CSAF 2.0 JSON file as an advisory source
+    fetch               download a CSAF advisory from msrc.microsoft.com (needs consent) or replay a cache
+    explain             explain a CVE for the older/newer artifacts from stored advisories (offline)
+
+options:
+  -h, --help            show this help message and exit
+
+====================================================================================================
+$ patchtrace intelligence import --help
+[exit 0]
+usage: patchtrace intelligence import [-h] [--json] --cve CVE-YYYY-NNNN project file
+
+Validates a CSAF 2.0 document (strict JSON, schema, mandatory tests) and stores its exact bytes and normalized facts in the project,
+append-only. The document must list the CVE. Nothing is sent anywhere; local paths are never stored.
+
+positional arguments:
+  project
+  file                 CSAF 2.0 JSON file
+
+options:
+  -h, --help           show this help message and exit
+  --json               emit exactly one JSON document on stdout
+  --cve CVE-YYYY-NNNN  a CVE the document must list
+
+====================================================================================================
+$ patchtrace intelligence fetch --help
+[exit 0]
+usage: patchtrace intelligence fetch [-h] [--json] --cve CVE-YYYY-NNNN [--consent-hosts HOSTS] [--provider-metadata URL]
+                                     [--cache-dir CACHE_DIR] [--offline]
+                                     project
+
+Reads the provider metadata and the directory index, selects index entries whose file name contains the CVE ID, downloads them, checks the
+.sha256 file when present and validates the document. HTTPS to msrc.microsoft.com only, bounded and cancellable. Nothing about the project
+or any binary is sent. --offline reads only the cache and opens no socket.
+
+positional arguments:
+  project
+
+options:
+  -h, --help            show this help message and exit
+  --json                emit exactly one JSON document on stdout
+  --cve CVE-YYYY-NNNN
+  --consent-hosts HOSTS
+                        must be exactly msrc.microsoft.com (not needed with --offline)
+  --provider-metadata URL
+                        provider-metadata.json URL inside the same allowlist (the default location is unverified)
+  --cache-dir CACHE_DIR
+                        opt-in content-addressed cache of every response
+  --offline             use only --cache-dir; no network, no consent needed
+
+====================================================================================================
+$ patchtrace intelligence explain --help
+[exit 0]
+usage: patchtrace intelligence explain [-h] [--json] --cve CVE-YYYY-NNNN [--older-product PID] [--newer-product PID] [--export FILE]
+                                       project
+
+Joins the stored advisories that list the CVE with the project's two artifacts: product applicability (verified identity only; a file name
+never maps), the CWE profile, rule hypotheses and search anchors, with explicit unknowns. It restates vendor claims; it does not show that
+any function contains or fixes the CVE. Never uses the network.
+
+positional arguments:
+  project
+
+options:
+  -h, --help           show this help message and exit
+  --json               emit exactly one JSON document on stdout
+  --cve CVE-YYYY-NNNN
+  --older-product PID  analyst assertion: this advisory product ID describes the older artifact (repeatable)
+  --newer-product PID  analyst assertion for the newer artifact (repeatable)
+  --export FILE        also write the report; the suffix chooses the format (.json or .md, escaped, LF)
+
+====================================================================================================
+$ patchtrace unified --help
+[exit 0]
+usage: patchtrace unified [-h] {run,show,explain,status} ...
+
+Derived, ordinal fusion of the stored engine outputs (experimental, derived, ordinal). It never changes the project, the Ghidriff results
+or any other stored result. Exit codes: 0 ok; 2 invalid argument or environment, or nothing runnable; 3 runtime failure or partial result;
+5 cancelled. 4 is for `show` with no row listed. With --json stdout carries exactly one enrichment-cli/1 document, also when the command
+fails.
+
+positional arguments:
+  {run,show,explain,status}
+    run                 compute and store the unified result for this project
+    show                list rows of the current unified result, most important first
+    explain             atoms, contest, facts and provenance of one row
+    status              current result, staleness, sources and recent runs
+
+options:
+  -h, --help            show this help message and exit
+
+====================================================================================================
+$ patchtrace unified run --help
+[exit 0]
+usage: patchtrace unified run [-h] [--json] [--no-extract] [--no-residual] [--no-decompile] [--python PYTHON] [--ghidra-dir GHIDRA_DIR]
+                              [--sources LIST] [--isolate | --in-process] [--timeout TIMEOUT] [--refresh] [--fail-on-none]
+                              project
+
+positional arguments:
+  project
+
+options:
+  -h, --help            show this help message and exit
+  --json                emit exactly one JSON document on stdout
+  --no-extract          S0 mode: use the stored engine outputs only, even when a ProgramIR is placed for the project (the ladder and the
+                        instruction-level facts need one)
+  --no-residual         backup B-07: skip the residual passes P16-P19 of the ladder (another result, another id)
+  --no-decompile        skip the on-demand decompile of review pairs (the constant-only pairs stay in review)
+  --python PYTHON       external Python executable of the extractor (with --ghidra-dir it enables the decompile of review pairs)
+  --ghidra-dir GHIDRA_DIR
+                        Ghidra installation root (with --python)
+  --sources LIST        comma list of ghidriff, bindiff, rz-diff, diaphora, manual (default: all)
+  --isolate             run the worker as a capped child process (default)
+  --in-process          run in this process (tests and debugging)
+  --timeout TIMEOUT     worker seconds (60..86400)
+  --refresh             recompute even when a stored result has these inputs
+  --fail-on-none        exit 4 when no row is material or review
+
+Exit codes: 0 ok; 2 invalid argument or environment, or nothing runnable; 3 runtime failure or partial result; 5 cancelled. 4 only with
+--fail-on-none. With --json stdout carries exactly one enrichment-cli/1 document, also when the command fails.
+
+====================================================================================================
+$ patchtrace unified show --help
+[exit 0]
+usage: patchtrace unified show [-h] [--json] [--decision DECISION] [--change CHANGE] [--class CLASS] [--source SOURCE] [--search TEXT]
+                               [--all] [--limit LIMIT]
+                               project
+
+positional arguments:
+  project
+
+options:
+  -h, --help           show this help message and exit
+  --json               emit exactly one JSON document on stdout
+  --decision DECISION
+  --change CHANGE      materiality: unchanged, cosmetic, material, review, unknown, not-applicable (listing one always shows its rows)
+  --class CLASS
+  --source SOURCE      only rows with a record from this source (repeatable)
+  --search TEXT        function names or hexadecimal RVAs, with or without 0x
+  --all                also list the unchanged rows and the cosmetic rows with a structural proof, which are collapsed by default
+  --limit LIMIT        rows printed (default 200; totals are always given)
+
+Exit codes: 0 ok; 2 invalid argument or environment, or nothing runnable; 3 runtime failure or partial result; 5 cancelled. 4 no row
+listed after filtering. With --json stdout carries exactly one enrichment-cli/1 document, also when the command fails.
+
+====================================================================================================
+$ patchtrace unified explain --help
+[exit 0]
+usage: patchtrace unified explain [-h] [--json] --row ROW_ID project
+
+positional arguments:
+  project
+
+options:
+  -h, --help    show this help message and exit
+  --json        emit exactly one JSON document on stdout
+  --row ROW_ID  a row id or a prefix of at least 8 digits
+
+====================================================================================================
+$ patchtrace unified status --help
+[exit 0]
+usage: patchtrace unified status [-h] [--json] project
+
+positional arguments:
+  project
+
+options:
+  -h, --help  show this help message and exit
+  --json      emit exactly one JSON document on stdout
+
+====================================================================================================
+$ patchtrace intel-tools --help
+[exit 0]
+usage: patchtrace intel-tools [-h] {probe,run,delta,pairs} ...
+
+positional arguments:
+  {probe,run,delta,pairs}
+    probe               verify the configured tool executables (runs --version / --help)
+    run                 run the profile engines on both artifacts and store the evidence
+    delta               compare stored older/newer evidence (never runs a tool)
+    pairs               capa capability changes per matched function pair (stored evidence; never runs a tool)
+
+options:
+  -h, --help            show this help message and exit
+
+====================================================================================================
+$ patchtrace intel-tools probe --help
+[exit 0]
+usage: patchtrace intel-tools probe [-h] [--json] [--capa EXE] [--floss EXE] [--diec EXE] [--diec-db DIR] [--diec-lib DIR]
+                                    [--capa-rules DIR] [--capa-sigs DIR] [--capa-accept-untested] [--floss-accept-untested]
+                                    [--diec-accept-untested]
+
+options:
+  -h, --help            show this help message and exit
+  --json                emit exactly one JSON document on stdout
+  --capa EXE
+  --floss EXE
+  --diec EXE
+  --diec-db DIR
+  --diec-lib DIR
+  --capa-rules DIR
+  --capa-sigs DIR
+  --capa-accept-untested
+                        accept a capa build that is not the pinned release (recorded as untested)
+  --floss-accept-untested
+                        accept a floss build that is not the pinned release (recorded as untested)
+  --diec-accept-untested
+                        accept a diec build that is not the pinned release (recorded as untested)
+
+====================================================================================================
+$ patchtrace intel-tools run --help
+[exit 0]
+usage: patchtrace intel-tools run [-h] [--json] [--profile {basic,context,full}] [--engines ENGINES] [--floss-deobfuscate]
+                                  [--floss-min-length N] [--floss-large-file] [--diec-heuristic] [--capa-backend {vivisect,ghidra}]
+                                  [--ghidra-dir GHIDRA_DIR] [--java-home JAVA_HOME] [--timeout TIMEOUT] [--memory-mb MEMORY_MB]
+                                  [--max-parallel {1,2}] [--no-cache] [--scratch SCRATCH] [--capa EXE] [--floss EXE] [--diec EXE]
+                                  [--diec-db DIR] [--diec-lib DIR] [--capa-rules DIR] [--capa-sigs DIR] [--capa-accept-untested]
+                                  [--floss-accept-untested] [--diec-accept-untested]
+                                  project
+
+positional arguments:
+  project
+
+options:
+  -h, --help            show this help message and exit
+  --json                emit exactly one JSON document on stdout
+  --profile {basic,context,full}
+  --engines ENGINES     subset of the profile, e.g. capa,floss
+  --floss-deobfuscate   also run FLOSS stack/tight/decoded extraction (CPU emulator; prints the consent text)
+  --floss-min-length N
+  --floss-large-file    pass -L (emulate files above 16 MiB)
+  --diec-heuristic
+  --capa-backend {vivisect,ghidra}
+  --ghidra-dir GHIDRA_DIR
+  --java-home JAVA_HOME
+  --timeout TIMEOUT     seconds per job (10..86400)
+  --memory-mb MEMORY_MB
+                        per-process memory cap in MiB (default: FLOSS emulation 4096, otherwise none)
+  --max-parallel {1,2}
+  --no-cache
+  --scratch SCRATCH     parent folder for the private per-job scratch directories
+  --capa EXE
+  --floss EXE
+  --diec EXE
+  --diec-db DIR
+  --diec-lib DIR
+  --capa-rules DIR
+  --capa-sigs DIR
+  --capa-accept-untested
+                        accept a capa build that is not the pinned release (recorded as untested)
+  --floss-accept-untested
+                        accept a floss build that is not the pinned release (recorded as untested)
+  --diec-accept-untested
+                        accept a diec build that is not the pinned release (recorded as untested)
+
+====================================================================================================
+$ patchtrace intel-tools delta --help
+[exit 0]
+usage: patchtrace intel-tools delta [-h] [--json] [--engines ENGINES] [--show-secrets] project
+
+positional arguments:
+  project
+
+options:
+  -h, --help         show this help message and exit
+  --json             emit exactly one JSON document on stdout
+  --engines ENGINES
+  --show-secrets
+
+====================================================================================================
+$ patchtrace intel-tools pairs --help
+[exit 0]
+usage: patchtrace intel-tools pairs [-h] [--json] [--engine {capa}] [--change CHANGE] [--namespace PREFIX] [--include-noise]
+                                    [--include-library] [--show-features] [--show-secrets]
+                                    project
+
+positional arguments:
+  project
+
+options:
+  -h, --help          show this help message and exit
+  --json              emit exactly one JSON document on stdout
+  --engine {capa}
+  --change CHANGE     comma list of gained,lost,moved,unchanged,not-compared (default gained,lost,moved)
+  --namespace PREFIX  keep rules whose namespace starts with PREFIX
+  --include-noise     also list differences in unchanged pairs
+  --include-library   also list building-block rules
+  --show-features
+  --show-secrets
+
+====================================================================================================
+$ patchtrace backend --help
+[exit 0]
+usage: patchtrace backend [-h] {status,verify,selftest,diagnose} ...
+
+positional arguments:
+  {status,verify,selftest,diagnose}
+    status              report the bundle next to PatchTrace after a fast file check (starts no process)
+    verify              verify the bundle files against backend/manifest.json
+    selftest            run a real comparison through the bundled runtime and check the result
+    diagnose            run the backend dependency diagnosis with the bundled runtime
+
+options:
+  -h, --help            show this help message and exit
+
+====================================================================================================
+$ patchtrace backend status --help
+[exit 0]
+usage: patchtrace backend status [-h] [--json] [--bundle-dir DIR] [--work-dir DIR]
+
+options:
+  -h, --help        show this help message and exit
+  --json            emit exactly one JSON document on stdout
+  --bundle-dir DIR  directory that contains backend/ (default: next to the executable)
+  --work-dir DIR    per-user writable work directory (default: the platform user state directory)
+
+====================================================================================================
+$ patchtrace backend verify --help
+[exit 0]
+usage: patchtrace backend verify [-h] [--json] [--bundle-dir DIR] [--work-dir DIR] [--full]
+
+options:
+  -h, --help        show this help message and exit
+  --json            emit exactly one JSON document on stdout
+  --bundle-dir DIR  directory that contains backend/ (default: next to the executable)
+  --work-dir DIR    per-user writable work directory (default: the platform user state directory)
+  --full            also hash every file (slow, cancellable)
+
+====================================================================================================
+$ patchtrace backend selftest --help
+[exit 0]
+usage: patchtrace backend selftest [-h] [--json] [--bundle-dir DIR] [--work-dir DIR] --older OLDER --newer NEWER --expect-function NAME
+                                   [--project-dir DIR] [--timeout TIMEOUT]
+
+options:
+  -h, --help            show this help message and exit
+  --json                emit exactly one JSON document on stdout
+  --bundle-dir DIR      directory that contains backend/ (default: next to the executable)
+  --work-dir DIR        per-user writable work directory (default: the platform user state directory)
+  --older OLDER         older PE x64 artifact (never executed)
+  --newer NEWER         newer PE x64 artifact (never executed)
+  --expect-function NAME
+                        function name that must appear in the result (repeatable)
+  --project-dir DIR     new empty project directory (default: under the work directory)
+  --timeout TIMEOUT     analysis timeout seconds (10..86400)
+
+====================================================================================================
+$ patchtrace backend diagnose --help
+[exit 0]
+usage: patchtrace backend diagnose [-h] [--json] [--bundle-dir DIR] [--work-dir DIR]
+
+options:
+  -h, --help        show this help message and exit
+  --json            emit exactly one JSON document on stdout
+  --bundle-dir DIR  directory that contains backend/ (default: next to the executable)
+  --work-dir DIR    per-user writable work directory (default: the platform user state directory)
+
+====================================================================================================
+$ patchtrace build-env --help
+[exit 0]
+usage: patchtrace build-env [-h] {show,delta,timeline} ...
+
+positional arguments:
+  {show,delta,timeline}
+    show                facts read from one or both files
+    delta               what changed between the older and the newer build environment
+    timeline            toolchain change per adjacent build of a series
+
+options:
+  -h, --help            show this help message and exit
+
+====================================================================================================
+$ patchtrace build-env show --help
+[exit 0]
+usage: patchtrace build-env show [-h] [--json] [--side {older,newer,both}] [--technical] project
+
+positional arguments:
+  project
+
+options:
+  -h, --help            show this help message and exit
+  --json                emit exactly one JSON document on stdout
+  --side {older,newer,both}
+  --technical           add raw Rich entries, database digest, argv version
+
+====================================================================================================
+$ patchtrace build-env delta --help
+[exit 0]
+usage: patchtrace build-env delta [-h] [--json] project
+
+positional arguments:
+  project
+
+options:
+  -h, --help  show this help message and exit
+  --json      emit exactly one JSON document on stdout
+
+====================================================================================================
+$ patchtrace build-env timeline --help
+[exit 0]
+usage: patchtrace build-env timeline [-h] [--json] series_dir
+
+positional arguments:
+  series_dir
+
+options:
+  -h, --help  show this help message and exit
+  --json      emit exactly one JSON document on stdout
+
+====================================================================================================
+$ patchtrace diaphora --help
+[exit 0]
+usage: patchtrace diaphora [-h] {inspect,import,show} ...
+
+positional arguments:
+  {inspect,import,show}
+    inspect             read a .diaphora result without a project (counts only)
+    import              bind a .diaphora result to the project pair and store it
+    show                summarise stored Diaphora sets and their reconciliation with Ghidriff
+
+options:
+  -h, --help            show this help message and exit
+
+====================================================================================================
+$ patchtrace diaphora inspect --help
+[exit 0]
+usage: patchtrace diaphora inspect [-h] [--json] result
+
+positional arguments:
+  result
+
+options:
+  -h, --help  show this help message and exit
+  --json      print one enrichment-cli/1 JSON document
+
+====================================================================================================
+$ patchtrace diaphora import --help
+[exit 0]
+usage: patchtrace diaphora import [-h] --diff DIFF [--manifest MANIFEST] [--user-attest-pair] [--json] project
+
+positional arguments:
+  project
+
+options:
+  -h, --help           show this help message and exit
+  --diff DIFF          the .diaphora result database
+  --manifest MANIFEST  diaphora-diff/1 sidecar binding result and pair
+  --user-attest-pair   without a manifest: you attest the result was made from exactly this older/newer pair
+  --json               print one enrichment-cli/1 JSON document
+
+====================================================================================================
+$ patchtrace diaphora show --help
+[exit 0]
+usage: patchtrace diaphora show [-h] [--json] project
+
+positional arguments:
+  project
+
+options:
+  -h, --help  show this help message and exit
+  --json      print one enrichment-cli/1 JSON document
+
+====================================================================================================
+$ patchtrace export --help
+[exit 0]
+usage: patchtrace export [-h] [--format {json,md,html}] [--report-version {1,2}] [--profile {local,share}] [--include-code]
+                         [--include-notes | --no-include-notes] [--finding ID] --out PATH [--include-ordinal-index]
+                         [--urls {text,defanged,removed}] [--json]
+                         project
+
+positional arguments:
+  project
+
+options:
+  -h, --help            show this help message and exit
+  --format {json,md,html}
+  --report-version {1,2}
+  --profile {local,share}
+  --include-code        include decompiled code and assembly
+  --include-notes, --no-include-notes
+                        include analyst notes (default: on for local, off for share)
+  --finding ID          export only this finding
+  --out PATH
+  --include-ordinal-index
+                        report/2: add the 0..83 ordinal evidence index (an uncalibrated triage aid)
+  --urls {text,defanged,removed}
+                        report/2: how web addresses are written (default: text, share: defanged)
+  --json                emit exactly one JSON document on stdout
+
+====================================================================================================
+$ patchtrace fabric --help
+[exit 0]
+usage: patchtrace fabric [-h] {list,show,resolve,stats} ...
+
+Read-only views of the anchors a project holds. Producers publish them and this command never changes them. Missing evidence is unknown,
+not a negative result.
+
+positional arguments:
+  {list,show,resolve,stats}
+    list                list the anchors of a project in canonical order
+    show                show one anchor with its witnesses
+    resolve             resolve a value to one anchor: found, ambiguous or unknown
+    stats               count the anchors and list the stored batches with their flags
+
+options:
+  -h, --help            show this help message and exit
+
+====================================================================================================
+$ patchtrace fabric list --help
+[exit 0]
+usage: patchtrace fabric list [-h] --project PATH [--json] [--kind KIND] [--side SIDE] [--role ROLE] [--subject SUBJECT] [--limit LIMIT]
+
+options:
+  -h, --help         show this help message and exit
+  --project PATH     project directory
+  --json             emit exactly one JSON document on stdout
+  --kind KIND        an anchor kind, for example function, import, string or cwe
+  --side SIDE        older, newer, both or none
+  --role ROLE        observed, stated or hint
+  --subject SUBJECT  the subject key of the anchors, for example a pair or image key
+  --limit LIMIT      rows to return, 1 to 500 (default 100)
+
+====================================================================================================
+$ patchtrace fabric show --help
+[exit 0]
+usage: patchtrace fabric show [-h] --project PATH [--json] ANCHOR_ID
+
+positional arguments:
+  ANCHOR_ID       a lower-case sha256 hex digest
+
+options:
+  -h, --help      show this help message and exit
+  --project PATH  project directory
+  --json          emit exactly one JSON document on stdout
+
+====================================================================================================
+$ patchtrace fabric resolve --help
+[exit 0]
+usage: patchtrace fabric resolve [-h] --project PATH [--json] --kind KIND [--side SIDE] VALUE
+
+positional arguments:
+  VALUE           a name or a key of that kind
+
+options:
+  -h, --help      show this help message and exit
+  --project PATH  project directory
+  --json          emit exactly one JSON document on stdout
+  --kind KIND     the kind that the value names
+  --side SIDE     older, newer, both or none (any side when omitted)
+
+====================================================================================================
+$ patchtrace fabric stats --help
+[exit 0]
+usage: patchtrace fabric stats [-h] --project PATH [--json]
+
+options:
+  -h, --help      show this help message and exit
+  --project PATH  project directory
+  --json          emit exactly one JSON document on stdout
+
+====================================================================================================
+$ patchtrace graph --help
+[exit 0]
+usage: patchtrace graph [-h] {neighbours,delta,leads,paths,export,series} ...
+
+positional arguments:
+  {neighbours,delta,leads,paths,export,series}
+    neighbours          callers and callees around one function
+    delta               callee changes of modified pairs
+    leads               ordinal graph signals per changed function
+    paths               observed call paths over the stored call lists
+    export              write one match neighbourhood as DOT or JSON
+    series              how a function neighbourhood changes across a series
+
+options:
+  -h, --help            show this help message and exit
+
+====================================================================================================
+$ patchtrace graph neighbours --help
+[exit 0]
+usage: patchtrace graph neighbours [-h] [--json] (--match ID | --function ID | --name LABEL) [--side {older,newer,both}]
+                                   [--direction {callers,callees,both}] [--depth DEPTH] [--max-nodes MAX_NODES] [--max-edges MAX_EDGES]
+                                   project
+
+positional arguments:
+  project
+
+options:
+  -h, --help            show this help message and exit
+  --json                emit exactly one JSON document on stdout
+  --match ID
+  --function ID
+  --name LABEL
+  --side {older,newer,both}
+  --direction {callers,callees,both}
+  --depth DEPTH
+  --max-nodes MAX_NODES
+  --max-edges MAX_EDGES
+
+====================================================================================================
+$ patchtrace graph delta --help
+[exit 0]
+usage: patchtrace graph delta [-h] [--json] [--match ID] [--limit LIMIT] project
+
+positional arguments:
+  project
+
+options:
+  -h, --help     show this help message and exit
+  --json         emit exactly one JSON document on stdout
+  --match ID
+  --limit LIMIT
+
+====================================================================================================
+$ patchtrace graph leads --help
+[exit 0]
+usage: patchtrace graph leads [-h] [--json] [--limit LIMIT] project
+
+positional arguments:
+  project
+
+options:
+  -h, --help     show this help message and exit
+  --json         emit exactly one JSON document on stdout
+  --limit LIMIT
+
+====================================================================================================
+$ patchtrace graph paths --help
+[exit 0]
+usage: patchtrace graph paths [-h] [--json] --from FUNCTION --to API|FUNCTION [--side {older,newer}] [--max-paths MAX_PATHS] project
+
+positional arguments:
+  project
+
+options:
+  -h, --help            show this help message and exit
+  --json                emit exactly one JSON document on stdout
+  --from FUNCTION
+  --to API|FUNCTION
+  --side {older,newer}
+  --max-paths MAX_PATHS
+
+====================================================================================================
+$ patchtrace graph export --help
+[exit 0]
+usage: patchtrace graph export [-h] [--json] --match ID --format {dot,json} --output FILE [--overwrite] [--depth DEPTH] project
+
+positional arguments:
+  project
+
+options:
+  -h, --help           show this help message and exit
+  --json               emit exactly one JSON document on stdout
+  --match ID
+  --format {dot,json}
+  --output FILE
+  --overwrite
+  --depth DEPTH
+
+====================================================================================================
+$ patchtrace graph series --help
+[exit 0]
+usage: patchtrace graph series [-h] [--json] --chain ID root
+
+positional arguments:
+  root
+
+options:
+  -h, --help  show this help message and exit
+  --json      emit exactly one JSON document on stdout
+  --chain ID
+
+====================================================================================================
+$ patchtrace inspect --help
+[exit 0]
+usage: patchtrace inspect [-h] [--json] [--side {older,newer,both}] [--trust {offline,cache,online}] [--consent-online] project
+
+positional arguments:
+  project
+
+options:
+  -h, --help            show this help message and exit
+  --json                emit exactly one JSON document on stdout
+  --side {older,newer,both}
+  --trust {offline,cache,online}
+                        offline reads structure and digest only; cache and online need Windows
+  --consent-online      required with --trust online: Windows may contact revocation servers named in the file
+
+====================================================================================================
+$ patchtrace kb --help
+[exit 0]
+usage: patchtrace kb [-h] {index,search,attach,explain,export,products,components,pairs,import-pair,plan,leads,acquire} ...
+
+KB / CVE advisory correlation: offline, never fetches, never runs a target. Coverage is stated for every answer.
+
+positional arguments:
+  {index,search,attach,explain,export,products,components,pairs,import-pair,plan,leads,acquire}
+    index               offline index: import, status, verify, plan (see "kb index --help")
+    search              find the CVEs and products of a KB or CVE in loaded documents
+    attach              finish or inspect the context attach of a project
+    explain             show a project's advisory context
+    export              write the advisory context as JSON or escaped Markdown
+    products            list the product scopes of an investigation
+    components          component hints (analyst names and advisory title names)
+    pairs               pair candidates from the saved Winbindex records
+    import-pair         compare two files you hold: create and attach a project
+    plan                preview what a file-index pair needs; makes no request
+    leads               group the changed functions by CVE (run "rank" first)
+    acquire             download, verify and compare a file-index pair (needs consent)
+
+options:
+  -h, --help            show this help message and exit
+
+====================================================================================================
+$ patchtrace kb index --help
+[exit 0]
+usage: patchtrace kb index [-h] {import,status,verify,plan} ...
+
+Offline KB reverse index: import local documents, show status, verify, and preview (never perform) a sync.
+
+positional arguments:
+  {import,status,verify,plan}
+    import              import saved CVRF month or CSAF JSON files (all or nothing)
+    status              list the loaded documents and their coverage
+    verify              re-hash and re-parse every stored document
+    plan                preview the exact requests of a sync (no network)
+
+options:
+  -h, --help            show this help message and exit
+
+====================================================================================================
+$ patchtrace kb index import --help
+[exit 0]
+usage: patchtrace kb index import [-h] [--json] [--workspace WORKSPACE] [--winbindex NAME] [--data-date YYYY-MM-DD] FILE [FILE ...]
+
+positional arguments:
+  FILE
+
+options:
+  -h, --help            show this help message and exit
+  --json                emit exactly one JSON document on stdout
+  --workspace WORKSPACE
+                        workspace directory (default: the per-user PatchTrace kb dir)
+  --winbindex NAME      FILE is a saved Winbindex record of this file name (for example afd.sys), stored for "kb pairs"; one file, .json
+                        or .json.gz
+  --data-date YYYY-MM-DD
+                        data date of the Winbindex record (default: today)
+
+====================================================================================================
+$ patchtrace kb index status --help
+[exit 0]
+usage: patchtrace kb index status [-h] [--json] [--workspace WORKSPACE]
+
+options:
+  -h, --help            show this help message and exit
+  --json                emit exactly one JSON document on stdout
+  --workspace WORKSPACE
+                        workspace directory (default: the per-user PatchTrace kb dir)
+
+====================================================================================================
+$ patchtrace kb index verify --help
+[exit 0]
+usage: patchtrace kb index verify [-h] [--json] [--workspace WORKSPACE]
+
+options:
+  -h, --help            show this help message and exit
+  --json                emit exactly one JSON document on stdout
+  --workspace WORKSPACE
+                        workspace directory (default: the per-user PatchTrace kb dir)
+
+====================================================================================================
+$ patchtrace kb index plan --help
+[exit 0]
+usage: patchtrace kb index plan [-h] [--json] [--workspace WORKSPACE] (--months YYYY-MM[,..] | --since YYYY-MM) [--until YYYY-MM]
+                                [--with-index]
+
+options:
+  -h, --help            show this help message and exit
+  --json                emit exactly one JSON document on stdout
+  --workspace WORKSPACE
+                        workspace directory (default: the per-user PatchTrace kb dir)
+  --months YYYY-MM[,..]
+                        comma-separated months (at most 24)
+  --since YYYY-MM       every month from here to --until (default: this month)
+  --until YYYY-MM       last month of --since (default: the current month)
+  --with-index          also list the document-id index request
+
+====================================================================================================
+$ patchtrace kb search --help
+[exit 0]
+usage: patchtrace kb search [-h] [--json] [--workspace WORKSPACE] [--months YYYY-Mon[,..] | --scope-file F] [--offline] [--product ID]
+                            [--investigation ID]
+                            KB|CVE
+
+positional arguments:
+  KB|CVE                KB5012345, 5012345 or CVE-2024-12345
+
+options:
+  -h, --help            show this help message and exit
+  --json                emit exactly one JSON document on stdout
+  --workspace WORKSPACE
+                        workspace directory (default: the per-user PatchTrace kb dir)
+  --months YYYY-Mon[,..]
+                        finite scope: release months (at most 24)
+  --scope-file F        JSON file with "months" and/or "doc_ids"
+  --offline             accepted for clarity; search never fetches
+  --product ID          keep one product scope; others are listed as not applicable
+  --investigation ID    continue an investigation instead of starting one
+
+====================================================================================================
+$ patchtrace kb attach --help
+[exit 0]
+usage: patchtrace kb attach [-h] [--json] [--workspace WORKSPACE] --investigation INV [--repair] PROJECT
+
+positional arguments:
+  PROJECT
+
+options:
+  -h, --help            show this help message and exit
+  --json                emit exactly one JSON document on stdout
+  --workspace WORKSPACE
+                        workspace directory (default: the per-user PatchTrace kb dir)
+  --investigation INV
+  --repair              finish an interrupted attach (idempotent)
+
+====================================================================================================
+$ patchtrace kb explain --help
+[exit 0]
+usage: patchtrace kb explain [-h] [--json] [--workspace WORKSPACE] [--cve CVE] [--kev-dir DIR] PROJECT
+
+positional arguments:
+  PROJECT
+
+options:
+  -h, --help            show this help message and exit
+  --json                emit exactly one JSON document on stdout
+  --workspace WORKSPACE
+                        workspace directory (default: the per-user PatchTrace kb dir)
+  --cve CVE
+  --kev-dir DIR         KEV catalog folder of "patchtrace kev" (read only; default: its usual folder)
+
+====================================================================================================
+$ patchtrace kb export --help
+[exit 0]
+usage: patchtrace kb export [-h] [--json] [--workspace WORKSPACE] [--overwrite] [--kev-dir DIR] PROJECT FILE.json|FILE.md
+
+positional arguments:
+  PROJECT
+  FILE.json|FILE.md
+
+options:
+  -h, --help            show this help message and exit
+  --json                emit exactly one JSON document on stdout
+  --workspace WORKSPACE
+                        workspace directory (default: the per-user PatchTrace kb dir)
+  --overwrite
+  --kev-dir DIR         KEV catalog folder for the Markdown export (read only; the JSON export is the stored context as attached)
+
+====================================================================================================
+$ patchtrace kb products --help
+[exit 0]
+usage: patchtrace kb products [-h] [--json] [--workspace WORKSPACE] INV
+
+positional arguments:
+  INV
+
+options:
+  -h, --help            show this help message and exit
+  --json                emit exactly one JSON document on stdout
+  --workspace WORKSPACE
+                        workspace directory (default: the per-user PatchTrace kb dir)
+
+====================================================================================================
+$ patchtrace kb components --help
+[exit 0]
+usage: patchtrace kb components [-h] [--json] [--workspace WORKSPACE] [--product ID] [--file NAME] INV
+
+positional arguments:
+  INV                   investigation id printed by "kb search"
+
+options:
+  -h, --help            show this help message and exit
+  --json                emit exactly one JSON document on stdout
+  --workspace WORKSPACE
+                        workspace directory (default: the per-user PatchTrace kb dir)
+  --product ID          product scope id; chooses the product when none is chosen
+  --file NAME           a file name you know (repeatable)
+
+====================================================================================================
+$ patchtrace kb pairs --help
+[exit 0]
+usage: patchtrace kb pairs [-h] [--json] [--workspace WORKSPACE] [--product ID] [--file NAME] INV
+
+positional arguments:
+  INV                   investigation id printed by "kb search"
+
+options:
+  -h, --help            show this help message and exit
+  --json                emit exactly one JSON document on stdout
+  --workspace WORKSPACE
+                        workspace directory (default: the per-user PatchTrace kb dir)
+  --product ID
+  --file NAME
+
+====================================================================================================
+$ patchtrace kb import-pair --help
+[exit 0]
+usage: patchtrace kb import-pair [-h] [--json] [--workspace WORKSPACE] --older FILE --newer FILE --project DIR [--name N]
+                                 [--confirm-same-component] [--dry-run]
+                                 INV
+
+positional arguments:
+  INV                   investigation id printed by "kb search"
+
+options:
+  -h, --help            show this help message and exit
+  --json                emit exactly one JSON document on stdout
+  --workspace WORKSPACE
+                        workspace directory (default: the per-user PatchTrace kb dir)
+  --older FILE
+  --newer FILE
+  --project DIR         new project directory (must be empty)
+  --name N              project name
+  --confirm-same-component
+                        the two differently named files are the same component
+  --dry-run             show the local plan and grade; create nothing
+
+====================================================================================================
+$ patchtrace kb plan --help
+[exit 0]
+usage: patchtrace kb plan [-h] [--json] [--workspace WORKSPACE] [--pair ID] [--product ID] [--file NAME] INV
+
+positional arguments:
+  INV                   investigation id printed by "kb search"
+
+options:
+  -h, --help            show this help message and exit
+  --json                emit exactly one JSON document on stdout
+  --workspace WORKSPACE
+                        workspace directory (default: the per-user PatchTrace kb dir)
+  --pair ID             pair id (or its first characters) from "kb pairs"
+  --product ID
+  --file NAME
+
+====================================================================================================
+$ patchtrace kb leads --help
+[exit 0]
+usage: patchtrace kb leads [-h] [--json] [--workspace WORKSPACE] [--cve CVE] [--limit N] [--kev-dir DIR] PROJECT
+
+positional arguments:
+  PROJECT
+
+options:
+  -h, --help            show this help message and exit
+  --json                emit exactly one JSON document on stdout
+  --workspace WORKSPACE
+                        workspace directory (default: the per-user PatchTrace kb dir)
+  --cve CVE             show one CVE group only
+  --limit N             at most N leads per group
+  --kev-dir DIR         KEV catalog folder of "patchtrace kev" (read only; default: its usual folder)
+
+====================================================================================================
+$ patchtrace kb acquire --help
+[exit 0]
+usage: patchtrace kb acquire [-h] [--json] [--workspace WORKSPACE] [--pair ID] --project DIR [--product ID] [--file NAME] [--name N]
+                             [--consent-hosts HOST[,..]] [--consent-plan SHA] [--offline]
+                             INV
+
+positional arguments:
+  INV                   investigation id printed by "kb search"
+
+options:
+  -h, --help            show this help message and exit
+  --json                emit exactly one JSON document on stdout
+  --workspace WORKSPACE
+                        workspace directory (default: the per-user PatchTrace kb dir)
+  --pair ID             pair id (or its first characters) from "kb pairs"
+  --project DIR         new project directory (absent or empty)
+  --product ID
+  --file NAME
+  --name N              project name
+  --consent-hosts HOST[,..]
+                        the hosts of the printed plan, exactly
+  --consent-plan SHA    the plan_sha of the printed plan
+  --offline             never fetch (any consent flag is then refused)
+
+====================================================================================================
+$ patchtrace kev --help
+[exit 0]
+usage: patchtrace kev [-h] {status,plan,fetch,import,lookup,diff,prune} ...
+
+positional arguments:
+  {status,plan,fetch,import,lookup,diff,prune}
+    status              show the catalog in use and its age (no network)
+    plan                show the exact request a fetch would send (no network)
+    fetch               download the catalog after you name the host (one GET)
+    import              read a KEV JSON file you saved (no network)
+    lookup              look up CVE IDs in the catalog (no network)
+    diff                show what changed between two stored catalogs (no network)
+    prune               delete old stored catalogs (the only deletion)
+
+options:
+  -h, --help            show this help message and exit
+
+====================================================================================================
+$ patchtrace kev status --help
+[exit 0]
+usage: patchtrace kev status [-h] [--kev-dir DIR] [--json] [--max-age-days N]
+
+options:
+  -h, --help        show this help message and exit
+  --kev-dir DIR     catalog folder (default: PatchTrace's data folder)
+  --json            emit exactly one JSON document on stdout
+  --max-age-days N  exit 3 (partial) when the catalog is older than N days
+
+====================================================================================================
+$ patchtrace kev plan --help
+[exit 0]
+usage: patchtrace kev plan [-h] [--json] --source {cisa-github,cisa-site}
+
+options:
+  -h, --help            show this help message and exit
+  --json                emit exactly one JSON document on stdout
+  --source {cisa-github,cisa-site}
+                        where to download from
+
+====================================================================================================
+$ patchtrace kev fetch --help
+[exit 0]
+usage: patchtrace kev fetch [-h] [--kev-dir DIR] [--json] --source {cisa-github,cisa-site} [--consent-hosts HOST] [--accept-shrink]
+
+options:
+  -h, --help            show this help message and exit
+  --kev-dir DIR         catalog folder (default: PatchTrace's data folder)
+  --json                emit exactly one JSON document on stdout
+  --source {cisa-github,cisa-site}
+                        where to download from
+  --consent-hosts HOST  must be exactly the host of --source: raw.githubusercontent.com (cisa-github), www.cisa.gov (cisa-site)
+  --accept-shrink       replace the catalog in use even if the new one has under 90 percent of its entries
+
+====================================================================================================
+$ patchtrace kev import --help
+[exit 0]
+usage: patchtrace kev import [-h] [--kev-dir DIR] [--json] [--accept-shrink] file
+
+positional arguments:
+  file
+
+options:
+  -h, --help       show this help message and exit
+  --kev-dir DIR    catalog folder (default: PatchTrace's data folder)
+  --json           emit exactly one JSON document on stdout
+  --accept-shrink  as for fetch
+
+====================================================================================================
+$ patchtrace kev lookup --help
+[exit 0]
+usage: patchtrace kev lookup [-h] [--kev-dir DIR] [--json] [--from-cve-snapshot FILE] [--catalog FILE] [--md] [CVE ...]
+
+positional arguments:
+  CVE                   CVE-YYYY-NNNN (ASCII digits)
+
+options:
+  -h, --help            show this help message and exit
+  --kev-dir DIR         catalog folder (default: PatchTrace's data folder)
+  --json                emit exactly one JSON document on stdout
+  --from-cve-snapshot FILE
+                        also look up the CVE IDs of a saved CVE snapshot file (repeatable)
+  --catalog FILE        use this KEV JSON file instead of the stored catalog (it is not installed)
+  --md                  also produce a Markdown report block
+
+====================================================================================================
+$ patchtrace kev diff --help
+[exit 0]
+usage: patchtrace kev diff [-h] [--kev-dir DIR] [--json] [--from ID] [--to ID]
+
+options:
+  -h, --help     show this help message and exit
+  --kev-dir DIR  catalog folder (default: PatchTrace's data folder)
+  --json         emit exactly one JSON document on stdout
+  --from ID      snapshot id (default: previous)
+  --to ID        snapshot id (default: in use)
+
+====================================================================================================
+$ patchtrace kev prune --help
+[exit 0]
+usage: patchtrace kev prune [-h] [--kev-dir DIR] [--json] --keep N [--yes]
+
+options:
+  -h, --help     show this help message and exit
+  --kev-dir DIR  catalog folder (default: PatchTrace's data folder)
+  --json         emit exactly one JSON document on stdout
+  --keep N       stored catalogs to keep
+  --yes          confirm the deletion
+
+====================================================================================================
+$ patchtrace panels --help
+[exit 0]
+usage: patchtrace panels [-h] {list,check} ...
+
+List the reserved GUI panels, or lint the manifest and every built panel spec (ids, shortcuts, tab groups, tooltip prefixes, claims,
+imports). Runs without a display.
+
+positional arguments:
+  {list,check}
+    list        list every reserved panel and whether it is built
+    check       lint the panel manifest and every built panel spec
+
+options:
+  -h, --help    show this help message and exit
+
+====================================================================================================
+$ patchtrace panels list --help
+[exit 0]
+usage: patchtrace panels list [-h] [--json]
+
+options:
+  -h, --help  show this help message and exit
+  --json      emit exactly one JSON document on stdout
+
+====================================================================================================
+$ patchtrace panels check --help
+[exit 0]
+usage: patchtrace panels check [-h] [--json]
+
+options:
+  -h, --help  show this help message and exit
+  --json      emit exactly one JSON document on stdout
+
+====================================================================================================
+$ patchtrace pilot --help
+[exit 0]
+usage: patchtrace pilot [-h] {leads,why,review} ...
+
+Ordered, explained leads for changed function pairs. A lead is a place to look: the order follows explainable rules, not likelihood, and a
+lead does not show that a function contains or fixes any CVE. Reads stored results only; nothing is sent or run.
+
+positional arguments:
+  {leads,why,review}
+    leads             compute, store and list the leads of the project
+    why               explain one lead from the stored result
+    review            pin, dismiss or annotate a lead (append only)
+
+options:
+  -h, --help          show this help message and exit
+
+====================================================================================================
+$ patchtrace pilot leads --help
+[exit 0]
+usage: patchtrace pilot leads [-h] [--json] [--cve CVE-YYYY-NNNN] [--assume-applies CVE-YYYY-NNNN]
+                              [--class {fit,review,partial,code,queue}] [--limit LIMIT] [--no-unified] [--show-dismissed] [--dry-run]
+                              [--export FILE]
+                              project
+
+Ranks every changed function pair for the code evidence alone and for each stored CVE advisory (--cve only chooses what is shown), stores
+the result in the project and lists it.
+
+positional arguments:
+  project
+
+options:
+  -h, --help            show this help message and exit
+  --json                emit exactly one JSON document on stdout
+  --cve CVE-YYYY-NNNN   show only this CVE (repeatable)
+  --assume-applies CVE-YYYY-NNNN
+                        analyst assumption: this CVE applies to these builds (only fills a gap the advisory leaves)
+  --class {fit,review,partial,code,queue}
+                        show only leads of this class (repeatable)
+  --limit LIMIT         leads shown per list (default 20, 0 = all)
+  --no-unified          ignore a unified result; pair by Ghidriff and BinDiff
+  --show-dismissed      also list leads the analyst dismissed
+  --dry-run             do not store the result in the project
+  --export FILE         also write the report; .json or .md (escaped, LF)
+
+====================================================================================================
+$ patchtrace pilot why --help
+[exit 0]
+usage: patchtrace pilot why [-h] [--json] --candidate KEY [--cve CVE-YYYY-NNNN] project
+
+Prints the plain-text explanation of a lead exactly as stored, with the analyst's statements.
+
+positional arguments:
+  project
+
+options:
+  -h, --help           show this help message and exit
+  --json               emit exactly one JSON document on stdout
+  --candidate KEY
+  --cve CVE-YYYY-NNNN  only the lead of this CVE
+
+====================================================================================================
+$ patchtrace pilot review --help
+[exit 0]
+usage: patchtrace pilot review [-h] [--json] --candidate KEY --action {pin,unpin,dismiss,restore,note} [--cve CVE-YYYY-NNNN] [--text TEXT]
+                               project
+
+Appends an analyst event. Events never change a lead's class and are never edited or deleted.
+
+positional arguments:
+  project
+
+options:
+  -h, --help            show this help message and exit
+  --json                emit exactly one JSON document on stdout
+  --candidate KEY
+  --action {pin,unpin,dismiss,restore,note}
+  --cve CVE-YYYY-NNNN   the CVE list the lead is in (omit for the code-only list)
+  --text TEXT           a note or a reason (plain text, at most 2 KiB)
+
+====================================================================================================
+$ patchtrace rules --help
+[exit 0]
+usage: patchtrace rules [-h] {probe,propose,show,decide,test,export,history} ...
+
+positional arguments:
+  {probe,propose,show,decide,test,export,history}
+    probe               check that the rule engine starts here (no project needed)
+    propose             propose rules for one accepted changed-function pair; nothing is accepted
+    show                show the stored candidates and versions, or one of them
+    decide              accept, reject, defer or archive ONE candidate; accepting saves a version and writes no file
+    test                scan builds with ONE rule version: the grid of matches and expectations
+    export              save ONE rule version as a .yar file on this computer; nothing is uploaded
+    history             decisions, versions, tests and exports in time order
+
+options:
+  -h, --help            show this help message and exit
+
+====================================================================================================
+$ patchtrace rules probe --help
+[exit 0]
+usage: patchtrace rules probe [-h] [--json]
+
+options:
+  -h, --help  show this help message and exit
+  --json      emit exactly one JSON document on stdout
+
+====================================================================================================
+$ patchtrace rules propose --help
+[exit 0]
+usage: patchtrace rules propose [-h] [--json] --match ID [--direction {older,newer,both}] [--confirm-material] PROJECT
+
+positional arguments:
+  PROJECT               project directory
+
+options:
+  -h, --help            show this help message and exit
+  --json                emit exactly one JSON document on stdout
+  --match ID            the match of the accepted pair
+  --direction {older,newer,both}
+  --confirm-material    you confirm the change is material (the rules are marked unvetted)
+
+====================================================================================================
+$ patchtrace rules show --help
+[exit 0]
+usage: patchtrace rules show [-h] [--json] [--candidate ID | --version ID] PROJECT
+
+positional arguments:
+  PROJECT         project directory
+
+options:
+  -h, --help      show this help message and exit
+  --json          emit exactly one JSON document on stdout
+  --candidate ID
+  --version ID
+
+====================================================================================================
+$ patchtrace rules decide --help
+[exit 0]
+usage: patchtrace rules decide [-h] [--json] --candidate ID (--accept | --reject | --defer | --archive) [--label TEXT] [--cve ID]
+                               [--kb ID] [--cwe ID] [--note TEXT]
+                               PROJECT
+
+positional arguments:
+  PROJECT         project directory
+
+options:
+  -h, --help      show this help message and exit
+  --json          emit exactly one JSON document on stdout
+  --candidate ID
+  --accept
+  --reject
+  --defer
+  --archive
+  --label TEXT    required to accept (1 to 120 characters)
+  --cve ID        an advisory id you give (repeatable)
+  --kb ID
+  --cwe ID
+  --note TEXT
+
+====================================================================================================
+$ patchtrace rules test --help
+[exit 0]
+usage: patchtrace rules test [-h] [--json] --version ID [--series DIR] [--extra FILE] [--clean-dir DIR] [--expect FILE.json] [--timeout S]
+                             PROJECT
+
+positional arguments:
+  PROJECT             project directory
+
+options:
+  -h, --help          show this help message and exit
+  --json              emit exactly one JSON document on stdout
+  --version ID
+  --series DIR        a folder of the series builds (at most 8 files)
+  --extra FILE        another build (repeatable)
+  --clean-dir DIR     a folder of files that must not match
+  --expect FILE.json  what you expect: file name or SHA-256 to hit or no-hit
+  --timeout S         seconds per file (5 to 300)
+
+====================================================================================================
+$ patchtrace rules export --help
+[exit 0]
+usage: patchtrace rules export [-h] [--json] --version ID --out FILE.yar [--include-names] [--allow-git-tree] [--with-warnings] PROJECT
+
+positional arguments:
+  PROJECT           project directory
+
+options:
+  -h, --help        show this help message and exit
+  --json            emit exactly one JSON document on stdout
+  --version ID
+  --out FILE.yar    a new file; it is never replaced
+  --include-names   write function names (they may come from symbols)
+  --allow-git-tree  allow a path inside a Git working tree
+  --with-warnings   export although the checklist has warnings
+
+====================================================================================================
+$ patchtrace rules history --help
+[exit 0]
+usage: patchtrace rules history [-h] [--json] [--lineage ID] PROJECT
+
+positional arguments:
+  PROJECT       project directory
+
+options:
+  -h, --help    show this help message and exit
+  --json        emit exactly one JSON document on stdout
+  --lineage ID
+
+====================================================================================================
+$ patchtrace search --help
+[exit 0]
+usage: patchtrace search [-h] [--query TEXT] [--kind K] [--side {older,newer,both}] [--scope {indexed,changed}]
+                         [--mode {auto,words,exact,prefix,substring,similar}] [--sort {relevance,change,name,address}] [--limit N]
+                         [--cursor C] [--no-group] [--no-expand] [--rebuild] [--no-index-build] [--cache-dir D] [--status] [--probe]
+                         [--anchors-from CVE-ID] [--json]
+                         [PROJECT]
+
+Search a project's saved data: names, strings, APIs, code, notes and advisories. Offline; nothing is uploaded and no target is run.
+
+positional arguments:
+  PROJECT
+
+options:
+  -h, --help            show this help message and exit
+  --query TEXT
+  --kind K
+  --side {older,newer,both}
+  --scope {indexed,changed}
+  --mode {auto,words,exact,prefix,substring,similar}
+  --sort {relevance,change,name,address}
+  --limit N
+  --cursor C
+  --no-group            one row per document, not per pairing
+  --no-expand           skip live pair expansion
+  --rebuild             rebuild the index segments first
+  --no-index-build      search finished segments only
+  --cache-dir D
+  --status              coverage, segment digests and staleness
+  --probe               runtime capabilities; needs no project
+  --anchors-from CVE-ID
+                        search the anchors of a stored advisory for this CVE and report per-anchor coverage (offline; run `intelligence
+                        import` first)
+  --json                emit exactly one JSON document on stdout
+
+====================================================================================================
+$ patchtrace strings --help
+[exit 0]
+usage: patchtrace strings [-h] {list,delta,explain,scan,export} ...
+
+positional arguments:
+  {list,delta,explain,scan,export}
+    list                changed strings in review order
+    delta               the whole strings-delta/1 document
+    explain             links, reasons and provenance of one changed string
+    scan                built-in scan of both artifacts (no FLOSS)
+    export              write the delta to a JSON or CSV file (redacted by default)
+
+options:
+  -h, --help            show this help message and exit
+
+====================================================================================================
+$ patchtrace strings list --help
+[exit 0]
+usage: patchtrace strings list [-h] [--json] [--source {auto,floss,builtin}] [--min-length N] [--anchors FILE] [--show-secrets]
+                               [--side {older,newer,both}] [--change {only-newer,only-older,edited,changed,all}]
+                               [--type {static,stack,tight,decoded,language} [{static,stack,tight,decoded,language} ...]] [--function ID]
+                               [--cue K [K ...]] [--limit N]
+                               project
+
+positional arguments:
+  project
+
+options:
+  -h, --help            show this help message and exit
+  --json                emit exactly one JSON document on stdout
+  --source {auto,floss,builtin}
+                        auto = the stored FLOSS evidence of a side when it has some, else the built-in scan
+  --min-length N        built-in scan minimum
+  --anchors FILE        an intelligence AnchorSet JSON file
+  --show-secrets
+  --side {older,newer,both}
+  --change {only-newer,only-older,edited,changed,all}
+  --type {static,stack,tight,decoded,language} [{static,stack,tight,decoded,language} ...]
+  --function ID         a project function id, match id or function name
+  --cue K [K ...]
+  --limit N
+
+====================================================================================================
+$ patchtrace strings delta --help
+[exit 0]
+usage: patchtrace strings delta [-h] [--json] [--source {auto,floss,builtin}] [--min-length N] [--anchors FILE] [--show-secrets] project
+
+positional arguments:
+  project
+
+options:
+  -h, --help            show this help message and exit
+  --json                emit exactly one JSON document on stdout
+  --source {auto,floss,builtin}
+                        auto = the stored FLOSS evidence of a side when it has some, else the built-in scan
+  --min-length N        built-in scan minimum
+  --anchors FILE        an intelligence AnchorSet JSON file
+  --show-secrets
+
+====================================================================================================
+$ patchtrace strings explain --help
+[exit 0]
+usage: patchtrace strings explain [-h] [--json] [--source {auto,floss,builtin}] [--min-length N] [--anchors FILE] [--show-secrets] --id
+                                  STRING_ID
+                                  project
+
+positional arguments:
+  project
+
+options:
+  -h, --help            show this help message and exit
+  --json                emit exactly one JSON document on stdout
+  --source {auto,floss,builtin}
+                        auto = the stored FLOSS evidence of a side when it has some, else the built-in scan
+  --min-length N        built-in scan minimum
+  --anchors FILE        an intelligence AnchorSet JSON file
+  --show-secrets
+  --id STRING_ID
+
+====================================================================================================
+$ patchtrace strings scan --help
+[exit 0]
+usage: patchtrace strings scan [-h] [--json] [--builtin] [--min-length N] project
+
+positional arguments:
+  project
+
+options:
+  -h, --help      show this help message and exit
+  --json          emit exactly one JSON document on stdout
+  --builtin       required: the in-process scan
+  --min-length N
+
+====================================================================================================
+$ patchtrace strings export --help
+[exit 0]
+usage: patchtrace strings export [-h] [--json] [--source {auto,floss,builtin}] [--min-length N] [--anchors FILE] [--show-secrets] --out
+                                 FILE --format {json,csv} [--scope {changed,all}] [--force]
+                                 project
+
+positional arguments:
+  project
+
+options:
+  -h, --help            show this help message and exit
+  --json                emit exactly one JSON document on stdout
+  --source {auto,floss,builtin}
+                        auto = the stored FLOSS evidence of a side when it has some, else the built-in scan
+  --min-length N        built-in scan minimum
+  --anchors FILE        an intelligence AnchorSet JSON file
+  --show-secrets
+  --out FILE
+  --format {json,csv}
+  --scope {changed,all}
+  --force               replace an existing file

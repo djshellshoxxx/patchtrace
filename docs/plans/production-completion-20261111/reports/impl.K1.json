@@ -1,0 +1,86 @@
+{
+ "status": "done",
+ "branch": "claude/sleepy-fermi-kbc-audit (worktree <worktrees>/kbc-audit, based on origin/main 882d1ca0)",
+ "commits": [
+  {
+   "sha": "8b6f1d4d",
+   "subject": "Fix KBA-06: predecessor never returns the target's own bytes"
+  },
+  {
+   "sha": "2a1deb3b",
+   "subject": "Fix KBA-08: key Windows 10 RTM, Version 2004 and Windows 11 RTM names"
+  },
+  {
+   "sha": "5e546799",
+   "subject": "Fix D-DEF-04: kb leads states what is true without a run or a context"
+  }
+ ],
+ "files_changed": [
+  "src/patchtrace/kbcorrelation/lineage.py",
+  "src/patchtrace/kbcorrelation/alias_catalog.py",
+  "src/patchtrace/kbcorrelation/products.py",
+  "src/patchtrace/kbcorrelation/leads.py",
+  "docs/specs/kb-cve/31-C-product-build-pairs.md",
+  "docs/qa/audit-kb-correlation-20261107.md",
+  "tests/test_kbc_audit_20261107.py",
+  "tests/test_kbc_lineage.py",
+  "tests/test_kbc_resolver.py",
+  "tests/test_kbc_pairs_index.py",
+  "tests/test_kbc_products.py",
+  "tests/test_kbc_leads.py"
+ ],
+ "tests_added": [
+  "tests/test_kbc_lineage.py::test_kba06_predecessor_of_reverted_bytes_is_the_nearest_distinct_same_class_build (5 cases)",
+  "tests/test_kbc_lineage.py::test_kba06_without_the_class_rule_the_adjacent_distinct_row_is_still_the_older_side",
+  "tests/test_kbc_resolver.py::test_kba06_pair_ids_of_the_committed_fixtures_are_unchanged",
+  "tests/test_kbc_resolver.py::test_kba06_reverted_build_pairs_with_the_earlier_distinct_build_not_its_own_bytes",
+  "tests/test_kbc_resolver.py::test_kba06_reverted_build_without_a_distinct_earlier_build_has_no_older",
+  "tests/test_kbc_resolver.py::test_kba06_no_resolver_pair_carries_identical_content",
+  "tests/test_kbc_audit_20261107.py::test_kba06_predecessor_never_returns_a_row_with_the_targets_own_sha (xfail marker removed)",
+  "tests/test_kbc_audit_20261107.py::test_kba08_windows_10_rtm_product_name_gets_a_file_index_key (xfail marker removed)",
+  "tests/test_kbc_products.py::test_kba08_client_names_without_a_release_token_get_the_first_release (8 cases)",
+  "tests/test_kbc_products.py::test_kba08_any_other_name_without_a_release_token_stays_unkeyed (10 cases, LTSC/LTSB/IoT included)",
+  "tests/test_kbc_products.py::test_kba08_an_implied_release_needs_the_client_family",
+  "tests/test_kbc_products.py::test_kba08_server_version_2004_gains_its_release_and_no_key",
+  "tests/test_kbc_products.py::test_kba08_alias_catalog_version_is_two",
+  "tests/test_kbc_products.py::test_kba08_scope_ids_of_the_committed_fixtures_change_only_for_the_rekeyed_names",
+  "tests/test_kbc_products.py::test_kba08_release_less_windows_11_name_is_the_21h2_scope",
+  "tests/test_kbc_resolver.py::test_kba08_release_less_windows_10_scope_resolves_rows_under_the_bare_1507_key",
+  "tests/test_kbc_pairs_index.py::test_kba08_stored_investigation_on_a_rekeyed_product_must_repeat_the_search",
+  "tests/test_kbc_leads.py::test_no_comparison_text_states_what_is_true_for_each_engine_reason",
+  "tests/test_kbc_leads.py::test_unattributed_chip_says_no_context_is_attached_when_none_is"
+ ],
+ "red_evidence": "KBA-06 (commit from the interrupted attempt, re-verified by me): I ran its tests against origin/main's source (git archive of origin/main src into the scratchpad, `-o pythonpath=<main src>`): 8 failed, 56 passed, 2 xfailed. Failing: tests/test_kbc_audit_20261107.py::test_kba06_predecessor_never_returns_a_row_with_the_targets_own_sha; tests/test_kbc_resolver.py::test_kba06_reverted_build_without_a_distinct_earlier_build_has_no_older -> `assert res.pairs == () and res.blockers == ('NO_OLDER',)` got one PairProposal with reason_codes=('IDENTICAL_CONTENT', 'WINDOW_CONFOUNDED'), grade='X'; test_kba06_no_resolver_pair_carries_identical_content -> `assert [p.older.sha256 for p in res.pairs] == admitted[-1:]` (left ['aaaa...'], right []). test_kba06_pair_ids_of_the_committed_fixtures_are_unchanged PASSES against main's source, so the pinned pair ids really are main's. The Z-A-Y-Bpre-A lineage case also passes on main (expected: Y was already the nearest row).\n\nKBA-08: the strict xfail was confirmed first (`XFAIL ... KBA-08 open: MSRC names Windows 10 RTM (1507) without a version token`; with --runxfail: `assert ('windows-client' == 'windows-client' and None is not None)`, winbindex_key=None). After adding my tests and removing the marker, before the fix: test_kbc_products derive cases `At index 1 diff: None != '1507'` / `None != '2004'` / `None != '21H2'`; `assert 1 == 2 (alias_catalog.ALIAS_CATALOG_VERSION)`; resolver test `assert (None, ('NO_N...,), 'unknown') == ('10-1507', (), 'yes')`; stored-investigation test `assert (0 == 2)` (products was not refused); Windows 11 scope test `'039871ac...' == '8daf292f...'`.\n\nD-DEF-04: tests/test_kbc_leads.py::test_no_comparison_text_states_what_is_true_for_each_engine_reason -> `- No comparison has been ranked for this project yet ... Ranking unavailable: no completed analysis run.` / `+ The stored ranking does not match the current analysis, so only the advisory context is shown. Ranking unavailable: no completed analysis run.`; test_unattributed_chip_says_no_context_is_attached_when_none_is -> left set {'no applicable CVE in the context aligns with this change'} vs right {'no advisory context is attached, so no CVE is compared with this change'}. 2 failed, 11 passed before the fix.",
+ "focused_tests": "All with `cd <worktrees>/kbc-audit && QT_QPA_PLATFORM=offscreen PYTHONPATH=<worktrees>/kbc-audit/src nice -n 10 python -m pytest -q -p no:cacheprovider -n 4 <files>` at HEAD 5e546799:\n- tests/test_kbc_audit_20261107.py tests/test_kbc_lineage.py tests/test_kbc_products.py tests/test_kbc_resolver.py tests/test_kbc_pairs_index.py tests/test_kbc_leads.py tests/test_kb_product_start_20261106.py tests/test_kbc_fixtures.py tests/test_kbc_synergy.py tests/test_kbc_view_model_status.py -> 357 passed, 1 xfailed (the xfail is KBA-07, slice K2's, untouched).\n- tests/test_kb*.py tests/test_kev*.py (59 files) -> 2347 passed, 1 xfailed.\n- After KBA-08 only: the 13 other test files that import kbcorrelation or its helpers outside test_kb*/test_kev* -> 470 passed.\n- After D-DEF-04: all 54 test files that mention leads -> 1924 passed, 1 failed: tests/test_ui_related_panel.py::test_the_model_is_lazy_at_one_hundred_thousand_rows. That file does not use kbcorrelation.leads (it matched my grep on the word \"leads\"); rerun alone it passed (35 passed). I did not investigate the cause; see open risks.\nThe full suite was not run (brief).",
+ "ruff": "`python -m ruff check src tests tools` -> All checks passed! (run after each of my two commits' changes)",
+ "schemas_regenerated": "Not needed. I ran tools/generate_kbc_schemas.py after the alias catalog change and it produced no diff (ProductScope.alias_catalog_version is an int field; the examples use a literal 1 from the generator, not the catalog constant). No contract model changed.",
+ "spec_amendments": [
+  "docs/specs/kb-cve/31-C-product-build-pairs.md C4: 'Reverted-content amendment (2026-11-11, audit KBA-06)' - the older side never carries the target's SHA-256; passed-over rows stay in the window; nearest wins; none -> NO_OLDER (in commit 8b6f1d4d).",
+  "docs/specs/kb-cve/31-C-product-build-pairs.md C1: 'Implied-release amendment (2026-11-11, audit KBA-08, alias catalog version 2)' - Version 2004 is a release token; the exact client form 'Windows 10|11 for x64-based|32-bit|ARM64-based Systems' gets 1507 / 21H2; other wording stays unkeyed; compatibility and the repeat-the-search rule; evidence statement (in commit 2a1deb3b).",
+  "docs/qa/audit-kb-correlation-20261107.md: new section 'Dispositions after the audit' with one dated line each for KBA-06 and KBA-08 (appended; the findings table is not rewritten, its status cells still read 'open').",
+  "D-DEF-04: no spec amendment. I found no spec that pins these two strings (grep over docs); it is a message correction, no contract change."
+ ],
+ "deviations": "1. Resume: commit 8b6f1d4d (KBA-06) came from the interrupted attempt. I reviewed the diff against the card and re-ran its tests against both main's source (red) and the worktree (green); I kept it unchanged.\n2. I amended my own just-created KBA-08 commit once (message only: Co-Authored-By trailer changed to the model-named form the harness reminder asks for; 39852fd2 became 2a1deb3b). No commit of the earlier attempt was touched. All three commits carry `Co-Authored-By: Claude <noreply@anthropic.com>` plus the Claude-Session trailer, not the bare `Claude` form of the brief; the brief says the orchestrator normalises this.\n3. KBA-08 follows the inventory design and widens the generic token to `version (1[5-9][0-9]{2}|2004)`. Consequence beyond the card's list: every name with the token 'Version 2004' now derives release 2004, including 'Windows Server, version 2004 (Server Core installation)' (still no key, as the 1903/1909 server names), so that name's scope id changes too. It is stated in the spec amendment, the audit line and a test. A differential run of 2,352 generated names between main and the fix showed changes only for names with that token or of the exact release-less client form.\n4. The implied-release pattern also accepts 'Windows 10 for ARM64-based Systems' and 'Windows 11 for 32-bit Systems' (products that never shipped); the resolver's architecture gate still blocks non-amd64 pairing.\n5. D-DEF-04: leads.py receives the engine's reason only as text and cli_leads.py (the adapter) is not an owned file, so the two cases are told apart by the reason's prefix 'Stored ranking' (constant STORED_RANKING_REASON). The test reads the real reasons through RealEngine so a reworded pipeline reason fails there.\n6. The synergy golden was not changed: rows with an attached context keep their text.",
+ "integrator_asks": [
+  "Optional follow-up outside my files: src/patchtrace/kbcorrelation/cli_leads.py RealEngine could expose a typed reason (for example 'no-run' | 'stored-not-served') instead of leads.py classifying the note by its 'Stored ranking' prefix.",
+  "tests/kbc_k5_support.py:28 and tools/generate_kbc_schemas.py:49 construct ProductScope with alias_catalog_version=1 literally. Nothing fails (the field is a free int), so no change is required; mentioned only because the catalog is now version 2.",
+  "No frozen shared file, .gitattributes line, dependency or KINDS change is needed."
+ ],
+ "tracker_rows": "### [sleepy-fermi:K1]\n\ntasks/todo.md:\n- [x] KBA-06 fixed: `lineage.predecessor` never returns a row with the target's own SHA-256; passed-over rows stay in the window (WINDOW_CONFOUNDED), none is NO_OLDER. Spec 31-C C4 amended. Commit 8b6f1d4d.\n- [x] KBA-08 fixed: alias catalog version 2 keys `Windows 10 for <arch> Systems` (10-1507), `Windows 10 Version 2004 ...` (10-2004) and `Windows 11 for <arch> Systems` (11-21H2); other release-less wording stays unkeyed. Spec 31-C C1 amended. Commit 2a1deb3b.\n- [x] D-DEF-04 fixed: `kb leads` no longer claims a stored-ranking mismatch when no analysis run exists, and no-advisory rows say no advisory context is attached. Commit 5e546799.\n- [ ] Verify against live MSRC data that the `Version 2004` and release-less Windows 11 product names occur as assumed (KBA-08; blocked offline).\n- [ ] Decide whether the no-advisory code-change chip text \"detector signals (...) do not align with any applicable CVE\" should also be reworded (not part of D-DEF-04 as written).\n\ndocs/qa.md:\n- 2026-11-11 K1 (KB/CVE audit follow-up). KBA-06, KBA-08 and D-DEF-04 fixed test-first on claude/sleepy-fermi-kbc-audit. Focused runs: 10 owned/named files 357 passed, 1 xfailed (KBA-07, open, other slice); tests/test_kb*.py + tests/test_kev*.py 2347 passed, 1 xfailed; ruff clean. Evidence class: synthetic timelines and committed fixtures only. Pair ids of the committed Winbindex fixtures and scope ids of 39 of the 41 fixture products are pinned to the values origin/main 882d1ca0 produced. NOT verified: any live Winbindex or MSRC lookup; MSRC use of the `Version 2004` and release-less Windows 11 names; Windows execution; the full suite.\n- 2026-11-11 Observation: tests/test_ui_related_panel.py::test_the_model_is_lazy_at_one_hundred_thousand_rows failed once in a 54-file `-n 4` run on a shared machine and passed when rerun alone (35 passed). Cause not investigated.",
+ "open_risks": [
+  "KBA-08 bumps ALIAS_CATALOG_VERSION to 2. Because product-start admission and journal repair compare the full stored ProductScope (alias_catalog_version included), every product-start selection that is still pending in a workspace journal from catalog 1 is refused with PT-KBC-STALE and must be repeated, not only selections on the re-keyed names. This is the existing guard (tests/test_kb_product_start_20261106.py::test_product_context_repair_refuses_changed_alias_interpretation) but it reaches wider than the changed names.",
+  "Stored investigations whose scope is one of the changed names (release-less Windows 10/11 client form, or any name with 'Version 2004', the server name included) get the 'repeat the search' refusal from `kb products` / `kb pairs`. Covered by a test for the Windows 10 name only; the 2004 and server names take the same code path but have no end-to-end test.",
+  "The release-less Windows 11 name now merges into the existing 11-21H2 scope of the same architecture. That is intended, but it rests on the assumption that MSRC's 'Windows 11 for x64-based Systems' means 21H2, which I could not check offline.",
+  "A contrived name carrying both a server year and 'Version 2004' (e.g. 'Windows Server 2019 Version 2004') now derives release 2004 instead of 2019, the same precedence 'Version 1909' already had. I know of no vendor name of that shape.",
+  "D-DEF-04 classification depends on the pipeline reasons starting with 'Stored ranking'. The 'Stored ranking is incomplete' reason is classified by reading the source only; my test produces the no-run, empty, project-changed and older-algorithm reasons, not the incomplete one.",
+  "In the no-advisory state the code-change chip still reads 'detector signals (...) do not align with any applicable CVE' and the applicability chip keeps state 'neutral'. I changed only the two texts the card names.",
+  "tests/test_ui_related_panel.py::test_the_model_is_lazy_at_one_hundred_thousand_rows failed once under a 54-file parallel run and passed alone. It does not touch the files of this slice, but I did not establish the cause."
+ ],
+ "unverified": [
+  "Real MSRC use of the 'Windows 10 Version 2004 for ...' and release-less 'Windows 11 for ...' product names is UNVERIFIED offline. Only the Windows 10 form ('Windows 10 for x64-based Systems', 'Windows 10 for 32-bit Systems') is evidenced, by the committed MSRC factual projection tests/fixtures/kbcve/msrc/2024-Aug-CVE-2024-38193.facts.json.",
+  "No live Winbindex lookup was run: that rows for these products really sit under the keys 1507, 2004 and 11-21H2 is taken from docs/research/kbcve/winbindex-servicing-catalog.md; my resolver test uses a synthetic record with its key renamed to 1507.",
+  "All evidence is synthetic or fixture based; none of it is live compatibility evidence.",
+  "The full test suite was not run (brief: focused files only). Windows behaviour was not executed; the changes are regex/data and string logic with no path or newline handling.",
+  "The KBA-06 behaviour on real reverted Winbindex timelines was not observed; only synthetic timelines and the exhaustive 4-row property."
+ ]
+}

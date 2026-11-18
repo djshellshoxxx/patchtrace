@@ -1,0 +1,2267 @@
+{
+ "workstream": "T2",
+ "title": "Tracker reconciliation, part 2 (tasks/todo.md lines 621-1239)",
+ "baseline": "main@882d1ca0",
+ "features": [],
+ "items": [
+  {
+   "line": 623,
+   "text": "OPEN for the KB wave merge (reported open, not done): plan section 5 item 9 (`test_three_lanes_stay_separate_for_cve_2024_38063`: the MSRC lane \"Exploited: No; ",
+   "area": "kb-cve",
+   "kind": "qa",
+   "blocked_by": "none",
+   "state": "open",
+   "evidence": "tests/ has no test_three_lanes_stay_separate; KB view model not read here (KB dock loader is in this session lane)",
+   "actionable_in_sandbox": false,
+   "size": "M"
+  },
+  {
+   "line": 624,
+   "text": "NOT built here: K2 transport, service and CLI, K3 GUI, K5 project row and report (next), K6 live probe",
+   "area": "kb-cve",
+   "kind": "build",
+   "blocked_by": "none",
+   "state": "done-on-main",
+   "evidence": "kev/transport.py (K2), ui_kev.py (K3), kev/project_context.py (K5), .github/workflows/live-kev.yml (K6) all exist on main; K7 not checked",
+   "actionable_in_sandbox": false,
+   "size": "S"
+  },
+  {
+   "line": 628,
+   "text": "OPEN for the integrator: the report hook (plan A6, decided with the FAB report contract) should call `report_block(context, meta, drift=drift_lines(context, kev",
+   "area": "kb-cve",
+   "kind": "build",
+   "blocked_by": "none",
+   "state": "open",
+   "evidence": "report_block defined at src/patchtrace/kev/report.py:93, no caller outside tests/test_kev_report.py; report/2 hook not wired",
+   "actionable_in_sandbox": true,
+   "size": "M"
+  },
+  {
+   "line": 629,
+   "text": "NOT built here: K2 transport, service and CLI, K3 GUI, K6 live probe, K7",
+   "area": "kb-cve",
+   "kind": "build",
+   "blocked_by": "none",
+   "state": "done-on-main",
+   "evidence": "K2/K3/K6 present (kev/transport.py, ui_kev.py, live-kev.yml); K7 unverified",
+   "actionable_in_sandbox": false,
+   "size": "S"
+  },
+  {
+   "line": 632,
+   "text": "Integrator asks: none for shared files beyond the committed `KINDS` line (no `.gitattributes` line: `docs/schemas/**/*.json` already covers the schemas); option",
+   "area": "other",
+   "kind": "build",
+   "blocked_by": "none",
+   "state": "open",
+   "evidence": "src/patchtrace/fabric/ids.py:35 DOMAINS lacks fabric-batch (store.py:58 BATCH_DOMAIN); tests/test_fabric_contracts.py:359-364 scans only ids.py and origins.py",
+   "actionable_in_sandbox": true,
+   "size": "S"
+  },
+  {
+   "line": 633,
+   "text": "Open risk for FAB-6: the store uses the project connection, so it must be used on the owner thread; the panel's worker-thread `find` pages need a hand-off (an i",
+   "area": "persistence",
+   "kind": "spec",
+   "blocked_by": "none",
+   "state": "unknown",
+   "evidence": "fabric/store.py uses the project connection; whether the panel hand-off is resolved was not traced (fabric/panel.py exists)",
+   "actionable_in_sandbox": false,
+   "size": "S"
+  },
+  {
+   "line": 634,
+   "text": "Open: rows are not atomic across several batches of one call (a crash between two rows is completed by repeating the call); an unreadable or newer row is only l",
+   "area": "persistence",
+   "kind": "spec",
+   "blocked_by": "none",
+   "state": "open",
+   "evidence": "accepted documented limitation (rows not atomic across batches); no code change planned",
+   "actionable_in_sandbox": false,
+   "size": "M"
+  },
+  {
+   "line": 635,
+   "text": "Not verified: Windows and CI; timings on Windows (Linux numbers in `docs/qa.md`); behaviour with a real producer, the GUI and the CLI (later slices)",
+   "area": "ci-testing",
+   "kind": "qa",
+   "blocked_by": "windows-only",
+   "state": "open",
+   "evidence": "Windows/CI evidence for FAB-1 not available on Linux",
+   "actionable_in_sandbox": false,
+   "size": "S"
+  },
+  {
+   "line": 638,
+   "text": "Integrator asks: none for shared files beyond the committed `KINDS` line; WB1 amends s4 as plan s10 says (pin becomes `PinPort.pin(project_key, anchor, note, vi",
+   "area": "other",
+   "kind": "owner",
+   "blocked_by": "owner-decision",
+   "state": "unknown",
+   "evidence": "integrator/owner amendment (PinPort.pin via); not verified",
+   "actionable_in_sandbox": false,
+   "size": "S"
+  },
+  {
+   "line": 639,
+   "text": "Open: pins are read whole on every call (about 27 ms at 1,000 events, a new pin about 50 ms), which is fine for an analyst's pins; a compaction of old events is",
+   "area": "performance",
+   "kind": "build",
+   "blocked_by": "none",
+   "state": "open",
+   "evidence": "pin compaction not built; deferred, 27 ms at 1,000 events per item text",
+   "actionable_in_sandbox": false,
+   "size": "M"
+  },
+  {
+   "line": 640,
+   "text": "Not verified: Windows and CI; a real WB1 or GUI caller",
+   "area": "ci-testing",
+   "kind": "qa",
+   "blocked_by": "windows-only",
+   "state": "open",
+   "evidence": "Windows CI and real WB1/GUI caller for FAB-4 unverified",
+   "actionable_in_sandbox": false,
+   "size": "S"
+  },
+  {
+   "line": 644,
+   "text": "BLOCKED / open (CI or the owner): the Windows leg of `tests/test_rules_synth.py` and of the goldens (byte for byte needs LF checkouts, see Integrator asks); the",
+   "area": "ci-testing",
+   "kind": "qa",
+   "blocked_by": "windows-only",
+   "state": "open",
+   "evidence": ".gitattributes:48-49 now carry the rules LF lines; Windows leg and YARA-X pin bump process remain CI-only",
+   "actionable_in_sandbox": false,
+   "size": "S"
+  },
+  {
+   "line": 645,
+   "text": "Integrator asks: `.gitattributes` += `tests/fixtures/rules/** text eol=lf` and `*.yar text eol=lf` (plan s10); nothing else (no dependency, KINDS, CLI, hook or ",
+   "area": "ci-testing",
+   "kind": "build",
+   "blocked_by": "none",
+   "state": "done-on-main",
+   "evidence": ".gitattributes:48-49 (tests/fixtures/rules/** and *.yar text eol=lf)",
+   "actionable_in_sandbox": false,
+   "size": "S"
+  },
+  {
+   "line": 649,
+   "text": "OPEN for the integrator (shared files): `tools/frozen_smoke.py` smoke steps `kev import`, `kev lookup`, `kev status` on `tests/fixtures/kev/kev-synthetic-2099.j",
+   "area": "ci-testing",
+   "kind": "build",
+   "blocked_by": "none",
+   "state": "open",
+   "evidence": "tools/frozen_smoke.py has no kev step (only COMMANDS=names() at :49); docs/specs/network-egress-privacy.md has no cisa.gov / raw.githubusercontent.com rows; fixture tests/fixtures/kev/kev-synthetic-2099.json exists",
+   "actionable_in_sandbox": true,
+   "size": "M"
+  },
+  {
+   "line": 650,
+   "text": "OPEN, not K2: RA-3 (a slow-drip server bypasses the deadline) still stands in `intelligence/csaf/transport.py`, `enrichment/intelligence.py` and `acquisition/tr",
+   "area": "security",
+   "kind": "bug",
+   "blocked_by": "none",
+   "state": "done-on-main",
+   "evidence": "netutil.read_bounded (netutil.py:87) used at enrichment/intelligence.py:409 and intelligence/csaf/transport.py:370; read1+deadline loops in kev/transport.py:259 and acquisition/transport.py:253",
+   "actionable_in_sandbox": false,
+   "size": "S"
+  },
+  {
+   "line": 651,
+   "text": "NOT built here: K3 GUI, K4 KB adapter and synergy test, K5 project row and report, K6 live probe (next in this chain), K7",
+   "area": "kb-cve",
+   "kind": "build",
+   "blocked_by": "none",
+   "state": "done-on-main",
+   "evidence": "ui_kev.py (K3), kev/kb_adapter.py + kbcorrelation/adapters/kev.py (K4), kev/project_context.py (K5), live-kev.yml (K6) exist",
+   "actionable_in_sandbox": false,
+   "size": "S"
+  },
+  {
+   "line": 655,
+   "text": "OPEN, closes only on GitHub: the first `live-kev` run (the canonical `www.cisa.gov` address with the fixed User-Agent, content equality of the two sources, sche",
+   "area": "kb-cve",
+   "kind": "qa",
+   "blocked_by": "live-network",
+   "state": "open",
+   "evidence": ".github/workflows/live-kev.yml exists; first live run result not recorded here (UNVERIFIED); live CISA host unreachable",
+   "actionable_in_sandbox": false,
+   "size": "S"
+  },
+  {
+   "line": 656,
+   "text": "OPEN for the integrator: no shared file needs a change (`tools/check_live_status.py` has no engine list); the workflow is new and unrequired, so do not add it t",
+   "area": "ci-testing",
+   "kind": "owner",
+   "blocked_by": "none",
+   "state": "obsolete",
+   "evidence": "informational note; live-kev.yml exists and needs no shared-file change",
+   "actionable_in_sandbox": false,
+   "size": "S"
+  },
+  {
+   "line": 657,
+   "text": "NOT built here: K3 GUI, K4, K5, K7",
+   "area": "kb-cve",
+   "kind": "build",
+   "blocked_by": "none",
+   "state": "done-on-main",
+   "evidence": "K3/K4/K5 modules exist on main (ui_kev.py, kev/kb_adapter.py, kev/project_context.py); K7 unchecked",
+   "actionable_in_sandbox": false,
+   "size": "S"
+  },
+  {
+   "line": 661,
+   "text": "Integrator asks: none for shared files. The launch prompt named `list/find/resolve/pin/unpin`; the card's section 8 is read-only `list/show/resolve/stats`, whic",
+   "area": "cli",
+   "kind": "spec",
+   "blocked_by": "owner-decision",
+   "state": "open",
+   "evidence": "CLI pin verb requires a card amendment first (owner/spec decision); fabric/cli.py is read-only list/show/resolve/stats",
+   "actionable_in_sandbox": false,
+   "size": "S"
+  },
+  {
+   "line": 662,
+   "text": "Open: `--offset` for paging past 500 anchors; the FAB-6 `related` panel reads the same store on the owner thread; the frozen smoke sees the new verb after the m",
+   "area": "cli",
+   "kind": "build",
+   "blocked_by": "none",
+   "state": "open",
+   "evidence": "src/patchtrace/fabric/cli.py:46,90 passes only --limit; AnchorQuery.offset already exists (fabric/contracts.py:204,218, memory.py:195)",
+   "actionable_in_sandbox": true,
+   "size": "S"
+  },
+  {
+   "line": 663,
+   "text": "Not verified: Windows CI (the child-process tests set `PYTHONPATH`); the full suite (the integrator runs it)",
+   "area": "ci-testing",
+   "kind": "qa",
+   "blocked_by": "windows-only",
+   "state": "open",
+   "evidence": "Windows CI of FAB-5 child-process tests unverified",
+   "actionable_in_sandbox": false,
+   "size": "S"
+  },
+  {
+   "line": 666,
+   "text": "Integrator asks: none for shared files. A textual conflict is possible only in the append-only docs and, if A41 edits the same lines, in the `RUNTIME_ALLOWED` t",
+   "area": "other",
+   "kind": "owner",
+   "blocked_by": "none",
+   "state": "obsolete",
+   "evidence": "informational merge-conflict note; no action item",
+   "actionable_in_sandbox": false,
+   "size": "S"
+  },
+  {
+   "line": 667,
+   "text": "Open: no PIL code publishes anchors yet (the publisher calls `fabric.convert.from_pilot_anchor`, which needs the pair record for a candidate); `Navigator` is st",
+   "area": "intelligence",
+   "kind": "build",
+   "blocked_by": "none",
+   "state": "open",
+   "evidence": "no caller of fabric.convert.from_pilot_anchor outside docs (pilot/ports.py:14 docstring only)",
+   "actionable_in_sandbox": true,
+   "size": "M"
+  },
+  {
+   "line": 668,
+   "text": "Not verified: Windows and CI; the full suite (the integrator runs it); the frozen build (nothing imports `patchtrace.pilot` at runtime yet).",
+   "area": "ci-testing",
+   "kind": "qa",
+   "blocked_by": "windows-only",
+   "state": "open",
+   "evidence": "frozen build and Windows CI unverified; cli_commands/pilot.py now imports pilot lazily",
+   "actionable_in_sandbox": false,
+   "size": "S"
+  },
+  {
+   "line": 672,
+   "text": "Integrator: wire `synth` as the `RuleRenderer` (`RuleSpec` carries source, direction, lineage, INCLUDED features, version) and re-run `tests/test_rules_candidat",
+   "area": "intelligence",
+   "kind": "build",
+   "blocked_by": "none",
+   "state": "done-on-main",
+   "evidence": "rules/candidates.py:112 synth_renderer is the production RuleRenderer and the default at :363",
+   "actionable_in_sandbox": false,
+   "size": "S"
+  },
+  {
+   "line": 673,
+   "text": "Open (R4/R5): bytes windows, pins and `xref`-linked strings (the decoder); `Sources` and the seams live in `candidates.py` because `ports.py` is R0's; the store",
+   "area": "intelligence",
+   "kind": "build",
+   "blocked_by": "other-lane",
+   "state": "open",
+   "evidence": "rules/** owned by the rules/call-graph bug-fix session; bytes windows, pins, xref strings, propose plumbing",
+   "actionable_in_sandbox": false,
+   "size": "S"
+  },
+  {
+   "line": 674,
+   "text": "BLOCKED, live evidence: real Ghidriff pairing and real capa/FLOSS output on real binaries (everything here is synthetic); Windows CI for the new tests",
+   "area": "native-adapters",
+   "kind": "external",
+   "blocked_by": "native-tool",
+   "state": "open",
+   "evidence": "needs real Ghidriff pairing and capa/FLOSS output on real binaries",
+   "actionable_in_sandbox": false,
+   "size": "S"
+  },
+  {
+   "line": 678,
+   "text": "Integrator: pin `iced-x86==1.21.0` (and `yara-x==1.21.0`, R2's ask) in `pyproject.toml`, `optional_deps.py`, the PyInstaller hook and `frozen_smoke` (R2 asks to",
+   "area": "ci-testing",
+   "kind": "build",
+   "blocked_by": "none",
+   "state": "done-on-main",
+   "evidence": "pyproject.toml:15 rules extra pins yara-x==1.21.0 and iced-x86==1.21.0; optional_deps.py:20-36; .gitattributes:48-49; PyInstaller hook and frozen_smoke not re-checked",
+   "actionable_in_sandbox": false,
+   "size": "S"
+  },
+  {
+   "line": 679,
+   "text": "Open: the decoder used by every test is the stand-in `rules_fixtures.SubsetDecoder`; it is equal to the real iced-x86 1.21.0 on all six fixture images and on th",
+   "area": "native-adapters",
+   "kind": "qa",
+   "blocked_by": "native-tool",
+   "state": "open",
+   "evidence": "iced decoder never run on a real-binary body (stand-in decoder in tests)",
+   "actionable_in_sandbox": false,
+   "size": "S"
+  },
+  {
+   "line": 680,
+   "text": "BLOCKED, live evidence: real compiler output (jump tables, thunks, alignment padding, SEH funclets, hot-patch NOPs), real Ghidriff pairs and Windows CI for the ",
+   "area": "native-adapters",
+   "kind": "external",
+   "blocked_by": "native-tool",
+   "state": "open",
+   "evidence": "real compiler output, Ghidriff pairs, Windows CI",
+   "actionable_in_sandbox": false,
+   "size": "S"
+  },
+  {
+   "line": 684,
+   "text": "Windows CI and CPython 3.12 for `tests/test_redaction_coverage.py` (Linux, CPython 3.13.16 only); its timing test starts one `python -c` child with `PYTHONPATH`",
+   "area": "ci-testing",
+   "kind": "qa",
+   "blocked_by": "windows-only",
+   "state": "open",
+   "evidence": "Windows CI and CPython 3.12 for tests/test_redaction_coverage.py",
+   "actionable_in_sandbox": false,
+   "size": "S"
+  },
+  {
+   "line": 685,
+   "text": "Owner decision: the `except CliError` branch of `cli.main` still prints `str(exc)` unredacted (messages written by the CLI, some wrapping `str(SecondaryError)` ",
+   "area": "security",
+   "kind": "owner",
+   "blocked_by": "none",
+   "state": "done-on-main",
+   "evidence": "src/patchtrace/cli.py:895-896 now routes str(exc) through redact_log before printing",
+   "actionable_in_sandbox": false,
+   "size": "S"
+  },
+  {
+   "line": 686,
+   "text": "Not covered, add if logs show them: short flags (`-p x`, `curl -u user:pass`), Azure `AccountKey=` connection strings, `X-Amz-Signature=`, Slack `xapp-` tokens;",
+   "area": "security",
+   "kind": "build",
+   "blocked_by": "none",
+   "state": "open",
+   "evidence": "diagnostics.redact_log (diagnostics.py:45) leaves short flags (curl -u user:pass), AccountKey=, X-Amz-Signature= and xapp- tokens unredacted (checked by running it)",
+   "actionable_in_sandbox": true,
+   "size": "S"
+  },
+  {
+   "line": 689,
+   "text": "Next in the WBQ chain: S9 (`ui_codetext.py`: `CodeHighlighter` over `CodeTextModel.spans`, merged formats per `(role, mark)` and theme, `compose_selections()`, ",
+   "area": "gui",
+   "kind": "build",
+   "blocked_by": "none",
+   "state": "unknown",
+   "evidence": "src/patchtrace/ui_codetext.py (S9) exists; S9b align and F8/tooltip rows not verified",
+   "actionable_in_sandbox": false,
+   "size": "S"
+  },
+  {
+   "line": 690,
+   "text": "Integrator: the S7 asks stand (amendment 4, `colorspacious` dev dependency, a `patchtrace.codetext` check in `tools/frozen_smoke.py`); the WBQ rows of docs/modu",
+   "area": "gui",
+   "kind": "owner",
+   "blocked_by": "none",
+   "state": "unknown",
+   "evidence": "integrator asks (amendment 4, colorspacious dev dep, frozen_smoke codetext check); not verified",
+   "actionable_in_sandbox": false,
+   "size": "S"
+  },
+  {
+   "line": 691,
+   "text": "Owner decision, not blocking: whether the single-edit exception to the 0.8 gate (`SMALL_EDIT`, deviation 1 in docs/modules.md) stays; whether short assembly lin",
+   "area": "gui",
+   "kind": "owner",
+   "blocked_by": "owner-decision",
+   "state": "open",
+   "evidence": "owner decision on SMALL_EDIT exception and short assembly lines",
+   "actionable_in_sandbox": false,
+   "size": "S"
+  },
+  {
+   "line": 692,
+   "text": "BLOCKED, owner and CI only: Windows CI (this slice ran on Linux, CPython 3.13.16 and 3.12.3), the timing gates on the Windows runner (they are loose on purpose:",
+   "area": "ci-testing",
+   "kind": "qa",
+   "blocked_by": "windows-only",
+   "state": "open",
+   "evidence": "Windows CI, real SPEC-31 insns.text and Qt S9 evidence",
+   "actionable_in_sandbox": false,
+   "size": "S"
+  },
+  {
+   "line": 696,
+   "text": "Integrator: the verb is `patchtrace pilot ...` (the card's adapter), the plan wrote `intelligence leads|why|review`; if the nested form is wanted, a 6-line alia",
+   "area": "cli",
+   "kind": "owner",
+   "blocked_by": "owner-decision",
+   "state": "open",
+   "evidence": "pilot verb exists (cli_commands/pilot.py:17); nested intelligence alias is an owner choice",
+   "actionable_in_sandbox": false,
+   "size": "S"
+  },
+  {
+   "line": 697,
+   "text": "Integrator (A1/B2 follow-up): `PilotInputs` has no field for the CVE selection, the B1 algorithm digests or the unified/tool results beyond their ids, so `resul",
+   "area": "intelligence",
+   "kind": "spec",
+   "blocked_by": "none",
+   "state": "unknown",
+   "evidence": "pilot/contracts.py:540-559 PilotInputs now has unified_result_id, tool_keys, advisory_facts_ids, kev_snapshot_id, kb_link_digest, asserted_gates; PilotManifest and B1 digest parts not checked",
+   "actionable_in_sandbox": false,
+   "size": "S"
+  },
+  {
+   "line": 698,
+   "text": "Integrator: amendment 6 (promote `backup_once`/`delete_own` to `EnrichmentStore`) is still open; `store.py` uses `verified_backup` and public attributes only an",
+   "area": "persistence",
+   "kind": "build",
+   "blocked_by": "none",
+   "state": "open",
+   "evidence": "backup_once/delete_own live only in unified/store.py:772,816, not promoted to EnrichmentStore; pilot store is the second copy",
+   "actionable_in_sandbox": true,
+   "size": "M"
+  },
+  {
+   "line": 699,
+   "text": "PIL-C2 reuses `collect.collect` for the Leads dock request (it is Qt-free and owner-thread) and `store.stage`/`store.read_sidecar` for the worker; `store.publis",
+   "area": "intelligence",
+   "kind": "build",
+   "blocked_by": "none",
+   "state": "done-on-main",
+   "evidence": "ui_leads.py:148 reuses pilot.collect; store.stage/publish present",
+   "actionable_in_sandbox": false,
+   "size": "S"
+  },
+  {
+   "line": 700,
+   "text": "Not built: stored capa/FLOSS/DiE deltas, CISA KEV and KB window as inputs, B3 snapshot CVEs, `--tools`; `tests/test_pilot_cli.py` pins that their channels say \"",
+   "area": "intelligence",
+   "kind": "build",
+   "blocked_by": "none",
+   "state": "unknown",
+   "evidence": "stored capa/FLOSS/DiE deltas, KEV/KB inputs, --tools: tests pin \"not run\" per item text; not re-verified",
+   "actionable_in_sandbox": false,
+   "size": "S"
+  },
+  {
+   "line": 701,
+   "text": "BLOCKED, owner and CI: Windows CI for the three test files (path and retry behaviour is exercised on Linux only; the symlink test skips without the privilege), ",
+   "area": "ci-testing",
+   "kind": "qa",
+   "blocked_by": "windows-only",
+   "state": "open",
+   "evidence": "Windows CI and live Ghidriff/capa evidence for PIL-C1",
+   "actionable_in_sandbox": false,
+   "size": "S"
+  },
+  {
+   "line": 706,
+   "text": "Integrator: the live `PairBackend` for `rules propose` (match to `PairSource`, strings, imports, capabilities, bytes and DiE flags from the project stores; trac",
+   "area": "intelligence",
+   "kind": "build",
+   "blocked_by": "other-lane",
+   "state": "open",
+   "evidence": "rules/cli.py:77 BACKEND stays None so rules propose exits 2; rules/** owned by another session",
+   "actionable_in_sandbox": false,
+   "size": "L"
+  },
+  {
+   "line": 707,
+   "text": "BLOCKED, live evidence: Windows CI for the new tests (CRLF checkout of the golden, file locking of the sidecar), a real series through `rules test`, and the fro",
+   "area": "ci-testing",
+   "kind": "qa",
+   "blocked_by": "windows-only",
+   "state": "open",
+   "evidence": "Windows CI of R5 tests and real series through rules test",
+   "actionable_in_sandbox": false,
+   "size": "S"
+  },
+  {
+   "line": 711,
+   "text": "arm runner over localize(), case/advisory loader, CLI: needs LBL M2/M5 pair labels and tools/calibration/pilot/advisories/<CVE>.json",
+   "area": "accuracy-calibration",
+   "kind": "build",
+   "blocked_by": "none",
+   "state": "unknown",
+   "evidence": "tools/calibration/pilot exists; arm runner/loader not inspected; needs LBL M2/M5 labels",
+   "actionable_in_sandbox": false,
+   "size": "S"
+  },
+  {
+   "line": 715,
+   "text": "ui_leads.py, leads.* tooltips, PANEL registration, reveal_location, storage prepare/commit split (GUI track)",
+   "area": "gui",
+   "kind": "build",
+   "blocked_by": "none",
+   "state": "open",
+   "evidence": "ui_leads.py and the leads panel exist (test_gui_host_seam.py:116) but reveal_location is absent from src/; storage prepare/commit split unverified",
+   "actionable_in_sandbox": true,
+   "size": "M"
+  },
+  {
+   "line": 718,
+   "text": "Integrator: Files panel hosts `PeMetaWidget` as a \"Build facts\" tab and feeds it a `PeMetaSnapshot` (needs WBQ S5 in `inspect.py`; S3 Rich header rows are not b",
+   "area": "gui",
+   "kind": "build",
+   "blocked_by": "other-lane",
+   "state": "open",
+   "evidence": "PeMetaWidget (ui_pemeta.py:57) has no host; Files panel is src/patchtrace/ui_inspection.py (lane L6)",
+   "actionable_in_sandbox": false,
+   "size": "M"
+  },
+  {
+   "line": 719,
+   "text": "BLOCKED, live evidence: NVDA and Narrator reading of the \"Line changes\" label, 125/150/200% DPI, Windows high contrast, bold advance in Consolas, pixel probe of",
+   "area": "gui",
+   "kind": "qa",
+   "blocked_by": "windows-only",
+   "state": "open",
+   "evidence": "NVDA/Narrator, DPI and high-contrast evidence needed on Windows",
+   "actionable_in_sandbox": false,
+   "size": "S"
+  },
+  {
+   "line": 722,
+   "text": "Integrator: tests/test_tooltips.py needs `unified.dock`, `unified.tab`, `unified.source.unknown` in the `names` set of `test_every_registry_id_is_applied_somewh",
+   "area": "gui",
+   "kind": "build",
+   "blocked_by": "none",
+   "state": "done-on-main",
+   "evidence": "tests/test_tooltips.py:229 adds unified.dock/unified.tab/unified.source.unknown/leads.dock; Explain-via-build_context part not checked",
+   "actionable_in_sandbox": false,
+   "size": "S"
+  },
+  {
+   "line": 723,
+   "text": "Open: reader for stored IR disassembly / decompiled pair text (`pair_texts` hook) to fill the code panes for rows without a Ghidriff match; persist `unified/col",
+   "area": "gui",
+   "kind": "build",
+   "blocked_by": "none",
+   "state": "open",
+   "evidence": "pair_texts hook absent from src/ (grep); unified/columns parsed at unified/read_model.py:714 only",
+   "actionable_in_sandbox": true,
+   "size": "M"
+  },
+  {
+   "line": 726,
+   "text": "Integrator: add `leads` to `built` in `tests/test_gui_host_seam.py::test_the_shipped_manifest_builds_only_the_migrated_panels_and_has_no_problem` and to the doc",
+   "area": "gui",
+   "kind": "build",
+   "blocked_by": "none",
+   "state": "done-on-main",
+   "evidence": "tests/test_gui_host_seam.py:116 built set includes leads; tests/test_tooltips.py:229 has leads.dock; default_visible decision not verified",
+   "actionable_in_sandbox": false,
+   "size": "S"
+  },
+  {
+   "line": 727,
+   "text": "A: a worker-safe `collect` (snapshot in, evidence out) so that Prepare leads does not hold the GUI thread while evidence is collected; public `collect.overview`",
+   "area": "gui",
+   "kind": "build",
+   "blocked_by": "none",
+   "state": "open",
+   "evidence": "ui_leads.py:148 imports private pilot.collect._overview; no public overview and collect is not worker-safe",
+   "actionable_in_sandbox": true,
+   "size": "S"
+  },
+  {
+   "line": 728,
+   "text": "BLOCKED, live evidence: real UIA/NVDA/Narrator announcement of the status lines, high-contrast and 200 percent DPI look of the chips, Windows CI of the new test",
+   "area": "gui",
+   "kind": "qa",
+   "blocked_by": "windows-only",
+   "state": "open",
+   "evidence": "UIA/NVDA/Narrator, high contrast and 200% DPI need Windows",
+   "actionable_in_sandbox": false,
+   "size": "S"
+  },
+  {
+   "line": 736,
+   "text": "BLOCKED / not run: the first dispatch of `unified-live-gates.yml` (static checks only), the Windows leg, `live_pairs` against a real Ghidra (its pure parts are ",
+   "area": "unified",
+   "kind": "qa",
+   "blocked_by": "ci-run",
+   "state": "open",
+   "evidence": "unified-live-gates.yml exists; first dispatch and live runs pending (lane L2)",
+   "actionable_in_sandbox": false,
+   "size": "S"
+  },
+  {
+   "line": 745,
+   "text": "BLOCKED / not run: every live part; whether lld honours each nuisance as intended is known only from the first Tier R build",
+   "area": "accuracy-calibration",
+   "kind": "qa",
+   "blocked_by": "native-tool",
+   "state": "open",
+   "evidence": "needs the first Tier R build with lld (lane L2)",
+   "actionable_in_sandbox": false,
+   "size": "S"
+  },
+  {
+   "line": 750,
+   "text": "Open: rows without a Ghidriff match still use the own preview (build_context needs a stored match); Windows DPI and screen-reader passes",
+   "area": "gui",
+   "kind": "build",
+   "blocked_by": "none",
+   "state": "unknown",
+   "evidence": "rows without Ghidriff match in build_context not checked",
+   "actionable_in_sandbox": false,
+   "size": "S"
+  },
+  {
+   "line": 755,
+   "text": "Open: decompiled C of S3b rows (`decomp.jsonl.gz`) is not yet read for the code panes; alignment gaps from `facts/align.py` are not drawn (the diff pane aligns ",
+   "area": "gui",
+   "kind": "build",
+   "blocked_by": "none",
+   "state": "unknown",
+   "evidence": "unified/extract/decomp.py:77 read_decomp exists; GUI consumption not verified",
+   "actionable_in_sandbox": false,
+   "size": "S"
+  },
+  {
+   "line": 760,
+   "text": "Integrator: write `decomp.jsonl.gz` (parts of the manifest, same line shape as `extract/decomp.py`) when the on-demand decompile ran; until then the C mode repo",
+   "area": "unified",
+   "kind": "build",
+   "blocked_by": "none",
+   "state": "unknown",
+   "evidence": "unified/contracts.py:403 allows decomp.jsonl.gz and extract/decomp.py:115 has the line builder; who writes it after on-demand decompile not verified",
+   "actionable_in_sandbox": false,
+   "size": "S"
+  },
+  {
+   "line": 764,
+   "text": "First green scheduled run on Actions (not verified here).",
+   "area": "ci-testing",
+   "kind": "qa",
+   "blocked_by": "ci-run",
+   "state": "open",
+   "evidence": "first green scheduled Actions run not verified (no network)",
+   "actionable_in_sandbox": false,
+   "size": "S"
+  },
+  {
+   "line": 768,
+   "text": "Before the lock: run the vendoring scan over the Tier R per-lineage masked body hashes and apply merge proposals.",
+   "area": "accuracy-calibration",
+   "kind": "build",
+   "blocked_by": "native-tool",
+   "state": "open",
+   "evidence": "needs Tier R per-lineage masked body hashes (Tier R build under lane L2)",
+   "actionable_in_sandbox": false,
+   "size": "S"
+  },
+  {
+   "line": 780,
+   "text": "Owner/CI: run the dispatch-only `msvc-advisory` job of `corpus-tier-r.yml` on windows-2022 (set repository variable TIER_R_MSVC=1) and check the recorded `cl` v",
+   "area": "accuracy-calibration",
+   "kind": "owner",
+   "blocked_by": "windows-only",
+   "state": "open",
+   "evidence": "corpus-tier-r.yml msvc-advisory job (:221) must be dispatched on windows-2022",
+   "actionable_in_sandbox": false,
+   "size": "S"
+  },
+  {
+   "line": 784,
+   "text": "Open: the `locate/cases/cli` split of row 06 (the 25 operators are usable through `engine.apply_case`); `buf-resize` must land `review` in the evaluation (frame",
+   "area": "accuracy-calibration",
+   "kind": "build",
+   "blocked_by": "none",
+   "state": "unknown",
+   "evidence": "LBL-06 locate/cases/cli split not inspected",
+   "actionable_in_sandbox": false,
+   "size": "S"
+  },
+  {
+   "line": 790,
+   "text": "U7-07 trace-arg mutant class for G-U2 (2026-11-04: now an explicit `PendingClass` naming its need, so G-U2 cannot pass silently; building it needs an import lib",
+   "area": "accuracy-calibration",
+   "kind": "build",
+   "blocked_by": "other-lane",
+   "state": "open",
+   "evidence": "needs tools/calibration/tier_r/build.py import library (lane L2)",
+   "actionable_in_sandbox": false,
+   "size": "S"
+  },
+  {
+   "line": 794,
+   "text": "LBL-07 follow-up: add `opt` to `tier_r/toolchain.CANDIDATES` so `probe()` reports it; wire `agreement_by_operator` into the farm report; IR counterparts for the",
+   "area": "accuracy-calibration",
+   "kind": "build",
+   "blocked_by": "other-lane",
+   "state": "open",
+   "evidence": "tools/calibration/tier_r/toolchain.CANDIDATES is in lane L2",
+   "actionable_in_sandbox": false,
+   "size": "S"
+  },
+  {
+   "line": 798,
+   "text": "LBL-26 for C: wire guards.audit_identity_roles, natural-only rows, indeterminate worst-case bound, nested tau (audit C-1..C-8)",
+   "area": "accuracy-calibration",
+   "kind": "build",
+   "blocked_by": "none",
+   "state": "unknown",
+   "evidence": "guards.audit_identity_roles exists (tools/calibration/guards.py:155) and is imported in train.py:85; C-2..C-8 not verified",
+   "actionable_in_sandbox": false,
+   "size": "S"
+  },
+  {
+   "line": 799,
+   "text": "LBL-26 deferred D-01..D-12 (audit doc)",
+   "area": "accuracy-calibration",
+   "kind": "audit",
+   "blocked_by": "none",
+   "state": "open",
+   "evidence": "deferred D-01..D-12 in audit doc; deferred by design",
+   "actionable_in_sandbox": false,
+   "size": "L"
+  },
+  {
+   "line": 806,
+   "text": "Wire `StringsRunController` into the Strings dock (needs S7b `ui_strings.py`); `ToolStore` built on the GUI thread.",
+   "area": "gui",
+   "kind": "build",
+   "blocked_by": "none",
+   "state": "open",
+   "evidence": "StringsRunController (ui_strings_run.py:21) has no importer in src/ besides its own module",
+   "actionable_in_sandbox": true,
+   "size": "M"
+  },
+  {
+   "line": 807,
+   "text": "Integrator: add `tests/test_live_strings.py` and `tests/fixtures/strings/goldens/**` to `.github/workflows/live-intel-tools.yml` paths and pytest list.",
+   "area": "ci-testing",
+   "kind": "build",
+   "blocked_by": "none",
+   "state": "open",
+   "evidence": ".github/workflows/live-intel-tools.yml has no test_live_strings or goldens path/pytest entry (grep)",
+   "actionable_in_sandbox": true,
+   "size": "S"
+  },
+  {
+   "line": 810,
+   "text": "D7 seams: `PairSnapshot.build_env`, `BuildTimelineStrip` in `ui_series.py` (integrator)",
+   "area": "gui",
+   "kind": "build",
+   "blocked_by": "none",
+   "state": "open",
+   "evidence": "PairSnapshot.build_env and BuildTimelineStrip do not exist in src/ (grep)",
+   "actionable_in_sandbox": true,
+   "size": "M"
+  },
+  {
+   "line": 812,
+   "text": "D9 run on real Tier R M4 outcomes (needs UE S2/S3 outcomes and the known-answer factory)",
+   "area": "accuracy-calibration",
+   "kind": "qa",
+   "blocked_by": "native-tool",
+   "state": "open",
+   "evidence": "needs Tier R M4 outcomes and known-answer factory",
+   "actionable_in_sandbox": false,
+   "size": "S"
+  },
+  {
+   "line": 813,
+   "text": "D8 first dispatch of `live-buildenv` (Actions) and golden confirmation; stays BLOCKED locally without PATCHTRACE_DIEC",
+   "area": "ci-testing",
+   "kind": "qa",
+   "blocked_by": "ci-run",
+   "state": "open",
+   "evidence": "no live-buildenv workflow in .github/workflows; DIEC missing locally",
+   "actionable_in_sandbox": false,
+   "size": "S"
+  },
+  {
+   "line": 817,
+   "text": "Kinds menu, saved searches, suggestion popup, hit-span delegate, F3/Shift+F3, feature-owned paged model (see commit notes).",
+   "area": "gui",
+   "kind": "build",
+   "blocked_by": "other-lane",
+   "state": "open",
+   "evidence": "search saved searches live in search/saved.py (instance B lane); kinds menu/F3 GUI parts not inspected",
+   "actionable_in_sandbox": false,
+   "size": "S"
+  },
+  {
+   "line": 820,
+   "text": "Calls panel follow-ups: graph.export_dot, graph.callsite, graph/* settings, Tree as a lazy model, entry paths.",
+   "area": "gui",
+   "kind": "build",
+   "blocked_by": "other-lane",
+   "state": "unknown",
+   "evidence": "callgraph/panel_qt.py:169,261 already has export_dot and callsite actions; settings, lazy tree, entry paths unchecked (callgraph owned by another session)",
+   "actionable_in_sandbox": false,
+   "size": "S"
+  },
+  {
+   "line": 824,
+   "text": "Strings panel: wire function pairing and stored observations into the loader; FLOSS run/probe/consent, export, settings (`strings/*`), column tips.",
+   "area": "gui",
+   "kind": "build",
+   "blocked_by": "none",
+   "state": "unknown",
+   "evidence": "strings panel wiring of pairing/FLOSS/export/settings not verified",
+   "actionable_in_sandbox": false,
+   "size": "S"
+  },
+  {
+   "line": 828,
+   "text": "Integrator: no `ui.py` change needed; host Open-setup and Run-comparison remedies are not wired.",
+   "area": "gui",
+   "kind": "build",
+   "blocked_by": "none",
+   "state": "unknown",
+   "evidence": "capabilities-panel host remedies not verified",
+   "actionable_in_sandbox": false,
+   "size": "S"
+  },
+  {
+   "line": 829,
+   "text": "Not built: grouped tree model (flat table with a Group column), commands, C13 reparse refresh, reported-match count for C12.",
+   "area": "gui",
+   "kind": "build",
+   "blocked_by": "none",
+   "state": "unknown",
+   "evidence": "grouped tree model, commands, C13 refresh, C12 count not verified",
+   "actionable_in_sandbox": false,
+   "size": "S"
+  },
+  {
+   "line": 839,
+   "text": "BLOCKED, owner/Windows runner: live msdl fetch, live Ghidra 12.0.4 export (`PATCHTRACE_GHIDRA_DIR`), `pyghidra` mode, PDB-forcing pre-script, adapter text for `",
+   "area": "native-adapters",
+   "kind": "external",
+   "blocked_by": "windows-only",
+   "state": "open",
+   "evidence": "live msdl fetch, live Ghidra 12.0.4 export, pyghidra mode need owner/Windows runner",
+   "actionable_in_sandbox": false,
+   "size": "S"
+  },
+  {
+   "line": 843,
+   "text": "LBL-22 wire to the runner (LBL-23) and real symbol maps (owner machine)",
+   "area": "accuracy-calibration",
+   "kind": "owner",
+   "blocked_by": "native-tool",
+   "state": "open",
+   "evidence": "needs real symbol maps from the owner machine",
+   "actionable_in_sandbox": false,
+   "size": "S"
+  },
+  {
+   "line": 847,
+   "text": "LBL-24 run on a real Tier W evaluation (owner only, O1)",
+   "area": "accuracy-calibration",
+   "kind": "owner",
+   "blocked_by": "owner-decision",
+   "state": "open",
+   "evidence": "real Tier W evaluation is owner-only (O1)",
+   "actionable_in_sandbox": false,
+   "size": "S"
+  },
+  {
+   "line": 852,
+   "text": "Confirm current-head Linux and Windows pytest/Ruff, Windows frozen smoke, installer build and installer lifecycle test.",
+   "area": "release-packaging",
+   "kind": "qa",
+   "blocked_by": "ci-run",
+   "state": "unknown",
+   "evidence": "installer workflow exists in .github/workflows/qa-windows.yml; current-head results not verifiable offline",
+   "actionable_in_sandbox": false,
+   "size": "S"
+  },
+  {
+   "line": 853,
+   "text": "Merge through the established PR checks and publish a new beta release containing the installer. The installer workflow change must be followed by a later non-w",
+   "area": "release-packaging",
+   "kind": "owner",
+   "blocked_by": "owner-decision",
+   "state": "unknown",
+   "evidence": "beta release publication needs owner and docs/release-process.md hazard handling",
+   "actionable_in_sandbox": false,
+   "size": "S"
+  },
+  {
+   "line": 860,
+   "text": "Run Ruff on the combined tree before the COFF fix; [ ] rerun after the fix and docs checkpoint.",
+   "area": "ci-testing",
+   "kind": "qa",
+   "blocked_by": "none",
+   "state": "obsolete",
+   "evidence": "stale 2026-10-22 Ruff rerun checkpoint; later consolidation merged (git log 252030f6)",
+   "actionable_in_sandbox": false,
+   "size": "S"
+  },
+  {
+   "line": 861,
+   "text": "Validate the fix on current-head Windows CI with real Clang; confirm `string-literal-shout` and `callee-swap-dispatch` both pass. PR #64 now points to the publi",
+   "area": "accuracy-calibration",
+   "kind": "qa",
+   "blocked_by": "windows-only",
+   "state": "open",
+   "evidence": "needs current-head Windows CI with real Clang; cannot run here",
+   "actionable_in_sandbox": false,
+   "size": "S"
+  },
+  {
+   "line": 862,
+   "text": "Run full Linux pytest, Ruff, and current-head Linux/Windows QA, GUI repetition, frozen smoke, portable ZIP and installer lifecycle on the combined branch. Local",
+   "area": "ci-testing",
+   "kind": "qa",
+   "blocked_by": "none",
+   "state": "obsolete",
+   "evidence": "stale branch-specific full-suite request from 2026-10-22; combined branch merged through #205/#218/#235",
+   "actionable_in_sandbox": false,
+   "size": "S"
+  },
+  {
+   "line": 865,
+   "text": "Complete remaining feasible SPEC-53 work: diagnostics, GHR-5 native air-gap evidence, and decide whether GHR-6 is in release scope.",
+   "area": "native-adapters",
+   "kind": "build",
+   "blocked_by": "other-lane",
+   "state": "open",
+   "evidence": "SPEC-53 diagnose launcher is lane L5; GHR-5 air-gap evidence is native",
+   "actionable_in_sandbox": false,
+   "size": "S"
+  },
+  {
+   "line": 866,
+   "text": "Continue SPEC-DA-01 by dependency order: validate real Diaphora 3.4.3 output before relying on guessed schema details; then implement export import, bounded sig",
+   "area": "native-adapters",
+   "kind": "build",
+   "blocked_by": "native-tool",
+   "state": "open",
+   "evidence": "validating real Diaphora 3.4.3 output needs the tool (diaphora/ package has result_import.py, bridge.py, cli.py)",
+   "actionable_in_sandbox": false,
+   "size": "S"
+  },
+  {
+   "line": 867,
+   "text": "Inspect open PRs and handoffs for independent unmerged work; deduplicate overlapping LBL-31/LBL-32 and Java/UE changes before porting. Merge only after their cu",
+   "area": "other",
+   "kind": "audit",
+   "blocked_by": "other-lane",
+   "state": "unknown",
+   "evidence": "open-PR/handoff deduplication belongs to the consolidation ledger (lane L3)",
+   "actionable_in_sandbox": false,
+   "size": "S"
+  },
+  {
+   "line": 868,
+   "text": "Generate and validate Windows x64 release artifacts only from the tested combined source state; record hashes and CI run URLs. Do not claim real Ghidriff/Diapho",
+   "area": "release-packaging",
+   "kind": "qa",
+   "blocked_by": "windows-only",
+   "state": "open",
+   "evidence": "Windows x64 release artifacts must be built on Windows",
+   "actionable_in_sandbox": false,
+   "size": "S"
+  },
+  {
+   "line": 872,
+   "text": "Verify against a real Diaphora 3.4.3 `.diaphora` result (EA text encoding, ratio range, `type` strings are assumptions); pinned release SHA",
+   "area": "native-adapters",
+   "kind": "qa",
+   "blocked_by": "native-tool",
+   "state": "open",
+   "evidence": "needs a real Diaphora 3.4.3 .diaphora result (EA encoding, ratio range, type strings)",
+   "actionable_in_sandbox": false,
+   "size": "S"
+  },
+  {
+   "line": 873,
+   "text": "Export-DB import (functions, blocks, CFG, compilation units), `signals`, `context`, `ui_diaphora.py`, HTML-safe report namespace; Mode B runner/probe (external ",
+   "area": "native-adapters",
+   "kind": "build",
+   "blocked_by": "native-tool",
+   "state": "open",
+   "evidence": "src/patchtrace/diaphora has result_import/bridge/service but no ui_diaphora.py or Mode B runner; export-DB import not verified",
+   "actionable_in_sandbox": false,
+   "size": "L"
+  },
+  {
+   "line": 877,
+   "text": "New regression `tests/test_nway_series.py::test_external_raw_match_skips_survive_series_persistence` adds real imported-pair -> series.json note/chain determini",
+   "area": "ci-testing",
+   "kind": "qa",
+   "blocked_by": "ci-run",
+   "state": "done-on-main",
+   "evidence": "tests/test_nway_series.py:340 test_external_raw_match_skips_survive_series_persistence exists; CI result for current head unverified",
+   "actionable_in_sandbox": false,
+   "size": "S"
+  },
+  {
+   "line": 885,
+   "text": "Finish combined full-suite and exact-head Linux/Windows/Qt/native packaging gates; merge only reviewed passing combined source.",
+   "area": "ci-testing",
+   "kind": "qa",
+   "blocked_by": "none",
+   "state": "obsolete",
+   "evidence": "per-PR merge/qualification gate; the PR range #180-#240 merged via #235 (252030f6; docs/plans/accuracy-program-handoff-20261107.md:8,50); exact-head results for the old branch head are historical, main-head gates are tracked by L3/release items",
+   "actionable_in_sandbox": false,
+   "size": "S"
+  },
+  {
+   "line": 886,
+   "text": "Reconcile remaining #69 synthetic fixtures and #72 proposed essential specs against current contracts; preserve source branches.",
+   "area": "other",
+   "kind": "audit",
+   "blocked_by": "other-lane",
+   "state": "open",
+   "evidence": "#69/#72 reconcile belongs to ledger lane L3",
+   "actionable_in_sandbox": false,
+   "size": "S"
+  },
+  {
+   "line": 887,
+   "text": "Preserve and separately reconcile #102 Windows branding/version work; avoid its PR Windows-QA skip policy.",
+   "area": "release-packaging",
+   "kind": "owner",
+   "blocked_by": "other-lane",
+   "state": "unknown",
+   "evidence": "#102 branding/version reconcile is ledger lane L3; exe identity work b0280c82 is on main",
+   "actionable_in_sandbox": false,
+   "size": "S"
+  },
+  {
+   "line": 888,
+   "text": "Before locked calibration, reconcile #78 output/artifact persistence, #79 A/A hard-failure guard, #82 recipe pin-collision controls and #85 final-look receipt g",
+   "area": "accuracy-calibration",
+   "kind": "build",
+   "blocked_by": "none",
+   "state": "unknown",
+   "evidence": "#78/#79/#82/#85 reconcile not inspected",
+   "actionable_in_sandbox": false,
+   "size": "S"
+  },
+  {
+   "line": 889,
+   "text": "Continue essential end-to-end/live acceptance using `docs/handoff/autonomous-continuation-20261030.md`; current source and checks override stale handoffs.",
+   "area": "docs",
+   "kind": "audit",
+   "blocked_by": "none",
+   "state": "obsolete",
+   "evidence": "item says stale handoffs are overridden by current source; superseded by docs/plans/accuracy-program-handoff-20261107.md",
+   "actionable_in_sandbox": false,
+   "size": "S"
+  },
+  {
+   "line": 892,
+   "text": "Validate the final combined review repairs on their own published head; merge and close only proven superseded work after acceptance.",
+   "area": "ci-testing",
+   "kind": "qa",
+   "blocked_by": "none",
+   "state": "obsolete",
+   "evidence": "per-PR merge/qualification gate; the PR range #180-#240 merged via #235 (252030f6; docs/plans/accuracy-program-handoff-20261107.md:8,50); exact-head results for the old branch head are historical, main-head gates are tracked by L3/release items",
+   "actionable_in_sandbox": false,
+   "size": "S"
+  },
+  {
+   "line": 898,
+   "text": "Merge these independently reviewed fixes only after exact-head applicable QA gates; native Windows is not inferred from Linux. Issue #121 memory caps and its ot",
+   "area": "persistence",
+   "kind": "qa",
+   "blocked_by": "none",
+   "state": "obsolete",
+   "evidence": "per-PR merge/qualification gate; the PR range #180-#240 merged via #235 (252030f6; docs/plans/accuracy-program-handoff-20261107.md:8,50); exact-head results for the old branch head are historical, main-head gates are tracked by L3/release items",
+   "actionable_in_sandbox": false,
+   "size": "S"
+  },
+  {
+   "line": 903,
+   "text": "Exact-head independent review and Linux/Windows QA/packaging for this focused PR; mark merged only after those checks pass.",
+   "area": "persistence",
+   "kind": "qa",
+   "blocked_by": "none",
+   "state": "obsolete",
+   "evidence": "per-PR merge/qualification gate; the PR range #180-#240 merged via #235 (252030f6; docs/plans/accuracy-program-handoff-20261107.md:8,50); exact-head results for the old branch head are historical, main-head gates are tracked by L3/release items",
+   "actionable_in_sandbox": false,
+   "size": "S"
+  },
+  {
+   "line": 906,
+   "text": "Qualify the updated storage head on full Windows/Linux/Qt/package/native gates before merge; existing prior-head success is historical.",
+   "area": "persistence",
+   "kind": "qa",
+   "blocked_by": "none",
+   "state": "obsolete",
+   "evidence": "per-PR merge/qualification gate; the PR range #180-#240 merged via #235 (252030f6; docs/plans/accuracy-program-handoff-20261107.md:8,50); exact-head results for the old branch head are historical, main-head gates are tracked by L3/release items",
+   "actionable_in_sandbox": false,
+   "size": "S"
+  },
+  {
+   "line": 913,
+   "text": "Root independent review, exact-head full pytest and applicable remote/native acceptance before publication or merge; current synthetic checks do not close broad",
+   "area": "persistence",
+   "kind": "qa",
+   "blocked_by": "none",
+   "state": "obsolete",
+   "evidence": "per-PR merge/qualification gate; the PR range #180-#240 merged via #235 (252030f6; docs/plans/accuracy-program-handoff-20261107.md:8,50); exact-head results for the old branch head are historical, main-head gates are tracked by L3/release items",
+   "actionable_in_sandbox": false,
+   "size": "S"
+  },
+  {
+   "line": 919,
+   "text": "Independent frozen-source review and central integration; native Windows/full-suite acceptance remains separate. Existing legacy backups with no matching unique",
+   "area": "persistence",
+   "kind": "qa",
+   "blocked_by": "none",
+   "state": "obsolete",
+   "evidence": "per-PR merge/qualification gate; the PR range #180-#240 merged via #235 (252030f6; docs/plans/accuracy-program-handoff-20261107.md:8,50); exact-head results for the old branch head are historical, main-head gates are tracked by L3/release items",
+   "actionable_in_sandbox": false,
+   "size": "S"
+  },
+  {
+   "line": 922,
+   "text": "Rereview amended storage admission source; `536aebc` alone is not an approved candidate.",
+   "area": "persistence",
+   "kind": "qa",
+   "blocked_by": "none",
+   "state": "obsolete",
+   "evidence": "per-PR merge/qualification gate; the PR range #180-#240 merged via #235 (252030f6; docs/plans/accuracy-program-handoff-20261107.md:8,50); exact-head results for the old branch head are historical, main-head gates are tracked by L3/release items",
+   "actionable_in_sandbox": false,
+   "size": "S"
+  },
+  {
+   "line": 925,
+   "text": "Fresh exact-head CI and independent review of the amended mixed-format conflict rule remain open.",
+   "area": "persistence",
+   "kind": "qa",
+   "blocked_by": "none",
+   "state": "obsolete",
+   "evidence": "per-PR merge/qualification gate; the PR range #180-#240 merged via #235 (252030f6; docs/plans/accuracy-program-handoff-20261107.md:8,50); exact-head results for the old branch head are historical, main-head gates are tracked by L3/release items",
+   "actionable_in_sandbox": false,
+   "size": "S"
+  },
+  {
+   "line": 928,
+   "text": "Independently review and integrate the frozen #151 cleanup-completion follow-up; exact published CI remains separate.",
+   "area": "persistence",
+   "kind": "qa",
+   "blocked_by": "none",
+   "state": "obsolete",
+   "evidence": "per-PR merge/qualification gate; the PR range #180-#240 merged via #235 (252030f6; docs/plans/accuracy-program-handoff-20261107.md:8,50); exact-head results for the old branch head are historical, main-head gates are tracked by L3/release items",
+   "actionable_in_sandbox": false,
+   "size": "S"
+  },
+  {
+   "line": 934,
+   "text": "PT-SAFETY-INTEGRATE acceptance: final product024a00b fully exercised (18,348 passed, one host Git-marker failure; unchanged isolated rerun passed), Linux build/",
+   "area": "release-packaging",
+   "kind": "qa",
+   "blocked_by": "owner-decision",
+   "state": "unknown",
+   "evidence": "publication was blocked on owner destination authorization on 2026-10-31; later merges not mapped",
+   "actionable_in_sandbox": false,
+   "size": "S"
+  },
+  {
+   "line": 935,
+   "text": "PR147 current-head Windows packaging and Sonar disposition after LF/output staging repairs; do not close original PR102 by partial adoption.",
+   "area": "release-packaging",
+   "kind": "qa",
+   "blocked_by": "windows-only",
+   "state": "unknown",
+   "evidence": "PR147 packaging; commit b0280c82 shows exe identity merged; Windows disposition not verifiable here",
+   "actionable_in_sandbox": false,
+   "size": "S"
+  },
+  {
+   "line": 940,
+   "text": "RB-01: dispatch `unified-live-gates.yml` on the integrated head and record evaluated A/A, release and mutant counts per OS (the exec-bit cause of \"permissions o",
+   "area": "unified",
+   "kind": "qa",
+   "blocked_by": "ci-run",
+   "state": "open",
+   "evidence": "dispatch of unified-live-gates.yml on integrated head (lane L2)",
+   "actionable_in_sandbox": false,
+   "size": "S"
+  },
+  {
+   "line": 941,
+   "text": "RB-07: native Windows read-back of the exe version resource and icon (CI only)",
+   "area": "release-packaging",
+   "kind": "qa",
+   "blocked_by": "windows-only",
+   "state": "open",
+   "evidence": "native Windows read-back of exe version resource and icon",
+   "actionable_in_sandbox": false,
+   "size": "S"
+  },
+  {
+   "line": 942,
+   "text": "Owner: original PRs #138-#141, #147, #148, #158, #165, #166, #168 can be closed as superseded once the replacement PRs merge (coordinator does not close other a",
+   "area": "other",
+   "kind": "owner",
+   "blocked_by": "owner-decision",
+   "state": "unknown",
+   "evidence": "owner closing of superseded PRs; #235 contained set closed per handoff-20261107:8, other PRs not checked",
+   "actionable_in_sandbox": false,
+   "size": "S"
+  },
+  {
+   "line": 946,
+   "text": "November 1 GT-05: review/integrate the narrow QA-bound preregistration selection repair (18 red → 255 bounded pass/1 missing-native-tools skip). Retain #78 norm",
+   "area": "accuracy-calibration",
+   "kind": "build",
+   "blocked_by": "none",
+   "state": "unknown",
+   "evidence": "GT-05 preregistration selection repair status not verified",
+   "actionable_in_sandbox": false,
+   "size": "S"
+  },
+  {
+   "line": 950,
+   "text": "Coordinator integration and exact-source cross-OS gates remain pending; library persistence is explicitly opt-in.",
+   "area": "accuracy-calibration",
+   "kind": "qa",
+   "blocked_by": "none",
+   "state": "obsolete",
+   "evidence": "per-PR merge/qualification gate; the PR range #180-#240 merged via #235 (252030f6; docs/plans/accuracy-program-handoff-20261107.md:8,50); exact-head results for the old branch head are historical, main-head gates are tracked by L3/release items",
+   "actionable_in_sandbox": false,
+   "size": "S"
+  },
+  {
+   "line": 951,
+   "text": "#78 verified shard/merge transfer and the remaining GT05 growth/source/pin/license, both-side recipe controls, pre-lock/native lineage/OOD, single-use-final CLI",
+   "area": "accuracy-calibration",
+   "kind": "build",
+   "blocked_by": "none",
+   "state": "open",
+   "evidence": "no locked evaluation consumed; GT05 growth/source/pin/license and final-run controls open per item text",
+   "actionable_in_sandbox": false,
+   "size": "S"
+  },
+  {
+   "line": 955,
+   "text": "Independent final review, coordinator integration/cross-OS and verified transfer integration remain pending; broader locked training/final-run/promotion safegua",
+   "area": "accuracy-calibration",
+   "kind": "qa",
+   "blocked_by": "none",
+   "state": "obsolete",
+   "evidence": "per-PR merge/qualification gate; the PR range #180-#240 merged via #235 (252030f6; docs/plans/accuracy-program-handoff-20261107.md:8,50); exact-head results for the old branch head are historical, main-head gates are tracked by L3/release items",
+   "actionable_in_sandbox": false,
+   "size": "S"
+  },
+  {
+   "line": 968,
+   "text": "Owner/spec decisions: G-U7 bound with a tier-A rate of 0 (U7-17), whether G-U6 may pass with Ghidriff alone, the attention order in the Unified table (needs a p",
+   "area": "unified",
+   "kind": "owner",
+   "blocked_by": "owner-decision",
+   "state": "open",
+   "evidence": "owner/spec decisions on G-U7, G-U6, attention order, category-vs-sides validation",
+   "actionable_in_sandbox": false,
+   "size": "S"
+  },
+  {
+   "line": 969,
+   "text": "SonarCloud \"Security Rating on New Code: C\" on PR #180: the issue list is on sonarcloud.io, unreachable from the agent session; needs the rule and file from the",
+   "area": "security",
+   "kind": "external",
+   "blocked_by": "live-network",
+   "state": "open",
+   "evidence": "SonarCloud issue list unreachable from agent sessions",
+   "actionable_in_sandbox": false,
+   "size": "S"
+  },
+  {
+   "line": 970,
+   "text": "Deferred Low findings listed in each audit record (FUS-07/08/10, GUI-11..13, irx-15..19, LAD-7..9, COR-07)",
+   "area": "unified",
+   "kind": "audit",
+   "blocked_by": "other-lane",
+   "state": "open",
+   "evidence": "deferred Low findings of unified audits (several in L1 files)",
+   "actionable_in_sandbox": false,
+   "size": "L"
+  },
+  {
+   "line": 971,
+   "text": "BLOCKED live: G-U1..G-U8 never ran live (PR #174), BinDiff pin, Windows frozen bench and the largest Tier R pair (G-U5), real Diaphora output for the heuristic-",
+   "area": "unified",
+   "kind": "qa",
+   "blocked_by": "native-tool",
+   "state": "open",
+   "evidence": "G-U1..G-U8 live runs, BinDiff pin, Windows frozen bench, real Diaphora output",
+   "actionable_in_sandbox": false,
+   "size": "S"
+  },
+  {
+   "line": 976,
+   "text": "SPEC-51 D2-4 Windows catalog and consented revocation: built against fakes only; BLOCKED until a Windows CI run reads a catalog-signed system DLL in place",
+   "area": "security",
+   "kind": "qa",
+   "blocked_by": "windows-only",
+   "state": "open",
+   "evidence": "WinVerifyTrust catalog and consented revocation built against fakes only",
+   "actionable_in_sandbox": false,
+   "size": "S"
+  },
+  {
+   "line": 977,
+   "text": "SPEC-51 7.6 persistence: `pe_overview/cache.py` port exists, but the `pe-metadata` kind, its store adapter and the callers are not wired (needs owner-thread sto",
+   "area": "persistence",
+   "kind": "build",
+   "blocked_by": "none",
+   "state": "open",
+   "evidence": "pe_overview/cache.py:3,16 declares the pe-metadata port, no store adapter or caller exists (grep)",
+   "actionable_in_sandbox": true,
+   "size": "M"
+  },
+  {
+   "line": 979,
+   "text": "report/2 `series` section: no project-scoped series record exists (N-way series live in their own folder); the section stays absent with a reason",
+   "area": "other",
+   "kind": "spec",
+   "blocked_by": "none",
+   "state": "open",
+   "evidence": "report/2 series section stays absent: no project-scoped series record",
+   "actionable_in_sandbox": false,
+   "size": "M"
+  },
+  {
+   "line": 980,
+   "text": "Owner decision (A3 of fct): whether canon/2 treats `xRam<hex>` names and in-image address literals as data labels (05 s2.4)",
+   "area": "unified",
+   "kind": "owner",
+   "blocked_by": "owner-decision",
+   "state": "open",
+   "evidence": "owner decision on canon/2 xRam names (lane L1 facts)",
+   "actionable_in_sandbox": false,
+   "size": "S"
+  },
+  {
+   "line": 987,
+   "text": "Full offscreen suite, exact-head GitHub CI and independent review; dependency PR #180 remains unmerged.",
+   "area": "ci-testing",
+   "kind": "qa",
+   "blocked_by": "none",
+   "state": "obsolete",
+   "evidence": "per-PR merge/qualification gate; the PR range #180-#240 merged via #235 (252030f6; docs/plans/accuracy-program-handoff-20261107.md:8,50); exact-head results for the old branch head are historical, main-head gates are tracked by L3/release items",
+   "actionable_in_sandbox": false,
+   "size": "S"
+  },
+  {
+   "line": 988,
+   "text": "Native G-U1–G-U8 and Windows release acceptance remain separate; none closed by synthetic tests.",
+   "area": "unified",
+   "kind": "qa",
+   "blocked_by": "native-tool",
+   "state": "open",
+   "evidence": "native G-U1..G-U8 and Windows release acceptance",
+   "actionable_in_sandbox": false,
+   "size": "S"
+  },
+  {
+   "line": 996,
+   "text": "Final exact-head CI/full-suite integration; frozen 31f51e76 full run still running with a failure, native CI on that old head succeeded but does not qualify sub",
+   "area": "ci-testing",
+   "kind": "qa",
+   "blocked_by": "none",
+   "state": "obsolete",
+   "evidence": "per-PR merge/qualification gate; the PR range #180-#240 merged via #235 (252030f6; docs/plans/accuracy-program-handoff-20261107.md:8,50); exact-head results for the old branch head are historical, main-head gates are tracked by L3/release items",
+   "actionable_in_sandbox": false,
+   "size": "S"
+  },
+  {
+   "line": 1005,
+   "text": "Exact-head Windows/Linux CI and full-suite qualification; #184 remains a dependency, not merged.",
+   "area": "ci-testing",
+   "kind": "qa",
+   "blocked_by": "none",
+   "state": "obsolete",
+   "evidence": "per-PR merge/qualification gate; the PR range #180-#240 merged via #235 (252030f6; docs/plans/accuracy-program-handoff-20261107.md:8,50); exact-head results for the old branch head are historical, main-head gates are tracked by L3/release items",
+   "actionable_in_sandbox": false,
+   "size": "S"
+  },
+  {
+   "line": 1010,
+   "text": "Full offscreen suite currently running; exact-head cross-OS CI and review remain required before merge.",
+   "area": "ci-testing",
+   "kind": "qa",
+   "blocked_by": "none",
+   "state": "obsolete",
+   "evidence": "per-PR merge/qualification gate; the PR range #180-#240 merged via #235 (252030f6; docs/plans/accuracy-program-handoff-20261107.md:8,50); exact-head results for the old branch head are historical, main-head gates are tracked by L3/release items",
+   "actionable_in_sandbox": false,
+   "size": "S"
+  },
+  {
+   "line": 1012,
+   "text": "Full-suite confirmed defect (2026-11-05): verified artifact reader accepted same-size/restored-mtime edit with colliding metadata. Repair requested-chunk integr",
+   "area": "persistence",
+   "kind": "bug",
+   "blocked_by": "none",
+   "state": "done-on-main",
+   "evidence": "tests/test_artifact_bytes.py:117 test_in_place_edit_with_restored_mtime_is_detected passes (1 passed, run here)",
+   "actionable_in_sandbox": false,
+   "size": "S"
+  },
+  {
+   "line": 1018,
+   "text": "Review and integrate repair; run exact-head full-suite and Windows CI. Do not count the skipped WinVerifyTrust test as native acceptance.",
+   "area": "persistence",
+   "kind": "qa",
+   "blocked_by": "windows-only",
+   "state": "unknown",
+   "evidence": "review/integration of byte-verification repair; WinVerifyTrust test skip is native-only",
+   "actionable_in_sandbox": false,
+   "size": "S"
+  },
+  {
+   "line": 1023,
+   "text": "Require current-head full/cross-OS checks and review before merge; preserve native acceptance gates independently.",
+   "area": "intelligence",
+   "kind": "qa",
+   "blocked_by": "none",
+   "state": "obsolete",
+   "evidence": "per-PR merge/qualification gate; the PR range #180-#240 merged via #235 (252030f6; docs/plans/accuracy-program-handoff-20261107.md:8,50); exact-head results for the old branch head are historical, main-head gates are tracked by L3/release items",
+   "actionable_in_sandbox": false,
+   "size": "S"
+  },
+  {
+   "line": 1030,
+   "text": "Exact-head CI, full-suite integration and Windows qualification. No live MSRC/Winbindex or vulnerability-attribution gate closed.",
+   "area": "kb-cve",
+   "kind": "qa",
+   "blocked_by": "none",
+   "state": "obsolete",
+   "evidence": "per-PR merge/qualification gate; the PR range #180-#240 merged via #235 (252030f6; docs/plans/accuracy-program-handoff-20261107.md:8,50); exact-head results for the old branch head are historical, main-head gates are tracked by L3/release items",
+   "actionable_in_sandbox": false,
+   "size": "S"
+  },
+  {
+   "line": 1036,
+   "text": "Coordinator: publish reviewed KB integration and run combined full-suite/Windows CI gates; retain source PRs until all changes are accounted for. Synthetic fixt",
+   "area": "kb-cve",
+   "kind": "qa",
+   "blocked_by": "none",
+   "state": "obsolete",
+   "evidence": "per-PR merge/qualification gate; the PR range #180-#240 merged via #235 (252030f6; docs/plans/accuracy-program-handoff-20261107.md:8,50); exact-head results for the old branch head are historical, main-head gates are tracked by L3/release items",
+   "actionable_in_sandbox": false,
+   "size": "S"
+  },
+  {
+   "line": 1041,
+   "text": "Verify exact-head Windows/full QA before merge; broader #176 project adoption/investigation/calibration work remains unintegrated.",
+   "area": "gui",
+   "kind": "qa",
+   "blocked_by": "none",
+   "state": "obsolete",
+   "evidence": "per-PR merge/qualification gate; the PR range #180-#240 merged via #235 (252030f6; docs/plans/accuracy-program-handoff-20261107.md:8,50); exact-head results for the old branch head are historical, main-head gates are tracked by L3/release items",
+   "actionable_in_sandbox": false,
+   "size": "S"
+  },
+  {
+   "line": 1054,
+   "text": "Coordinator review/publication and combined full-suite/Windows CI qualification for secondary preparation; no native acceptance claim.",
+   "area": "native-adapters",
+   "kind": "qa",
+   "blocked_by": "none",
+   "state": "obsolete",
+   "evidence": "per-PR merge/qualification gate; the PR range #180-#240 merged via #235 (252030f6; docs/plans/accuracy-program-handoff-20261107.md:8,50); exact-head results for the old branch head are historical, main-head gates are tracked by L3/release items",
+   "actionable_in_sandbox": false,
+   "size": "S"
+  },
+  {
+   "line": 1057,
+   "text": "Qualify this input-opening follow-up on native Windows and the combined integration/full suite. POSIX FIFO and synthetic controls do not establish native engine",
+   "area": "native-adapters",
+   "kind": "qa",
+   "blocked_by": "windows-only",
+   "state": "open",
+   "evidence": "POSIX FIFO/synthetic controls do not establish native Windows behaviour",
+   "actionable_in_sandbox": false,
+   "size": "S"
+  },
+  {
+   "line": 1074,
+   "text": "Native Windows release acceptance remains an independent gate; this audit uses only authored bytes and does not supply native evidence.",
+   "area": "ci-testing",
+   "kind": "audit",
+   "blocked_by": "windows-only",
+   "state": "open",
+   "evidence": "native Windows release acceptance is independent of the seeded audit",
+   "actionable_in_sandbox": false,
+   "size": "S"
+  },
+  {
+   "line": 1080,
+   "text": "Coordinator exact-head full suite/CI and independent review. Product-only/binary-only desktop starts, online acquisition wizard, native Windows/frozen accessibi",
+   "area": "gui",
+   "kind": "qa",
+   "blocked_by": "none",
+   "state": "obsolete",
+   "evidence": "per-PR merge/qualification gate; the PR range #180-#240 merged via #235 (252030f6; docs/plans/accuracy-program-handoff-20261107.md:8,50); exact-head results for the old branch head are historical, main-head gates are tracked by L3/release items",
+   "actionable_in_sandbox": false,
+   "size": "S"
+  },
+  {
+   "line": 1088,
+   "text": "Follow-up outside this one-defect wave: stream/hash the damaged original during nway recovery; `--replace-corrupt` currently reads it in full even when load rej",
+   "area": "persistence",
+   "kind": "bug",
+   "blocked_by": "none",
+   "state": "done-on-main",
+   "evidence": "nway/series.py:283-305 _keep_corrupt_copy streams the original in chunks and hashes incrementally (no full read)",
+   "actionable_in_sandbox": false,
+   "size": "S"
+  },
+  {
+   "line": 1093,
+   "text": "Exact-head integration/full/cross-OS CI. Existing paid automation proposals remain separate and unenabled by this repair.",
+   "area": "ci-testing",
+   "kind": "qa",
+   "blocked_by": "none",
+   "state": "obsolete",
+   "evidence": "per-PR merge/qualification gate; the PR range #180-#240 merged via #235 (252030f6; docs/plans/accuracy-program-handoff-20261107.md:8,50); exact-head results for the old branch head are historical, main-head gates are tracked by L3/release items",
+   "actionable_in_sandbox": false,
+   "size": "S"
+  },
+  {
+   "line": 1106,
+   "text": "Clean native Windows offline/full-runtime release acceptance still requires its own downloadable artifact and linked acceptance evidence; this Linux tooling sli",
+   "area": "release-packaging",
+   "kind": "qa",
+   "blocked_by": "windows-only",
+   "state": "open",
+   "evidence": "clean native Windows offline/full-runtime acceptance needs its own artifact",
+   "actionable_in_sandbox": false,
+   "size": "S"
+  },
+  {
+   "line": 1112,
+   "text": "Independent review and coordinator integration/full suite; native Windows hardlink/read-only lifecycle and other filesystem compatibility qualification remain o",
+   "area": "persistence",
+   "kind": "qa",
+   "blocked_by": "windows-only",
+   "state": "unknown",
+   "evidence": "native Windows hardlink/read-only lifecycle qualification",
+   "actionable_in_sandbox": false,
+   "size": "S"
+  },
+  {
+   "line": 1114,
+   "text": "Harden the residual exact-path replacement race between the last metadata check and unlink/chmod if support for hostile noncooperating filesystem writers is req",
+   "area": "security",
+   "kind": "owner",
+   "blocked_by": "owner-decision",
+   "state": "open",
+   "evidence": "residual exact-path replacement race; only needed if hostile noncooperating writers are in scope",
+   "actionable_in_sandbox": false,
+   "size": "L"
+  },
+  {
+   "line": 1115,
+   "text": "Verify desktop wizard retry after a failed creation: destination validation may reject the intentionally retained lock-only directory. Backend create retry is t",
+   "area": "gui",
+   "kind": "qa",
+   "blocked_by": "none",
+   "state": "done-on-main",
+   "evidence": "tests/test_gui_creation_retry.py:191 (wizard accepts lock-only destination) and :268; integration recorded at tasks/todo.md:1155",
+   "actionable_in_sandbox": false,
+   "size": "S"
+  },
+  {
+   "line": 1122,
+   "text": "Coordinator reruns actual Sonar/full qualification; this focused slice claims no native parity acceptance.",
+   "area": "ci-testing",
+   "kind": "qa",
+   "blocked_by": "none",
+   "state": "obsolete",
+   "evidence": "per-PR merge/qualification gate; the PR range #180-#240 merged via #235 (252030f6; docs/plans/accuracy-program-handoff-20261107.md:8,50); exact-head results for the old branch head are historical, main-head gates are tracked by L3/release items",
+   "actionable_in_sandbox": false,
+   "size": "S"
+  },
+  {
+   "line": 1127,
+   "text": "Resume combined qualification and require exact-head full/cross-OS checks; no test/gate bypass or broad Qt exemption.",
+   "area": "kb-cve",
+   "kind": "qa",
+   "blocked_by": "none",
+   "state": "obsolete",
+   "evidence": "per-PR merge/qualification gate; the PR range #180-#240 merged via #235 (252030f6; docs/plans/accuracy-program-handoff-20261107.md:8,50); exact-head results for the old branch head are historical, main-head gates are tracked by L3/release items",
+   "actionable_in_sandbox": false,
+   "size": "S"
+  },
+  {
+   "line": 1134,
+   "text": "Coordinator integration and native Windows/full-suite gates. Product-only/binary-only advisory lookup semantics remain outside this slice.",
+   "area": "ci-testing",
+   "kind": "qa",
+   "blocked_by": "none",
+   "state": "obsolete",
+   "evidence": "per-PR merge/qualification gate; the PR range #180-#240 merged via #235 (252030f6; docs/plans/accuracy-program-handoff-20261107.md:8,50); exact-head results for the old branch head are historical, main-head gates are tracked by L3/release items",
+   "actionable_in_sandbox": false,
+   "size": "S"
+  },
+  {
+   "line": 1135,
+   "text": "Separately specify label preservation if current-origin preview must support derived hash.bin-labelled projects or other original labels outside the existing .s",
+   "area": "gui",
+   "kind": "spec",
+   "blocked_by": "none",
+   "state": "open",
+   "evidence": "spec for label preservation with derived hash.bin-labelled projects not written (item text); current unsupported cases refuse explicitly",
+   "actionable_in_sandbox": true,
+   "size": "S"
+  },
+  {
+   "line": 1140,
+   "text": "Complete broader training regression and independent review before integrating this slice into #205.",
+   "area": "accuracy-calibration",
+   "kind": "qa",
+   "blocked_by": "none",
+   "state": "obsolete",
+   "evidence": "per-PR merge/qualification gate; the PR range #180-#240 merged via #235 (252030f6; docs/plans/accuracy-program-handoff-20261107.md:8,50); exact-head results for the old branch head are historical, main-head gates are tracked by L3/release items",
+   "actionable_in_sandbox": false,
+   "size": "S"
+  },
+  {
+   "line": 1141,
+   "text": "Consolidate the separate credited-output replay/persistence slice from #176; this checkpoint does not implement it.",
+   "area": "accuracy-calibration",
+   "kind": "qa",
+   "blocked_by": "none",
+   "state": "obsolete",
+   "evidence": "per-PR merge/qualification gate; the PR range #180-#240 merged via #235 (252030f6; docs/plans/accuracy-program-handoff-20261107.md:8,50); exact-head results for the old branch head are historical, main-head gates are tracked by L3/release items",
+   "actionable_in_sandbox": false,
+   "size": "S"
+  },
+  {
+   "line": 1146,
+   "text": "Independent security review and integration of this stacked replay slice; exact-head full suite/native/Windows gates remain open.",
+   "area": "accuracy-calibration",
+   "kind": "qa",
+   "blocked_by": "none",
+   "state": "obsolete",
+   "evidence": "per-PR merge/qualification gate; the PR range #180-#240 merged via #235 (252030f6; docs/plans/accuracy-program-handoff-20261107.md:8,50); exact-head results for the old branch head are historical, main-head gates are tracked by L3/release items",
+   "actionable_in_sandbox": false,
+   "size": "S"
+  },
+  {
+   "line": 1151,
+   "text": "Finish/review lock-only retry and retain committed promotion data on annotation failure; fix stale crash-test keyword double.",
+   "area": "persistence",
+   "kind": "bug",
+   "blocked_by": "none",
+   "state": "done-on-main",
+   "evidence": "tasks/todo.md:1155 records #219 lock-only retry integrated; tests/test_gui_creation_retry.py:191",
+   "actionable_in_sandbox": false,
+   "size": "S"
+  },
+  {
+   "line": 1152,
+   "text": "Collect exact f33 complete-suite receipt, then qualify updated candidate.",
+   "area": "ci-testing",
+   "kind": "qa",
+   "blocked_by": "none",
+   "state": "obsolete",
+   "evidence": "stale f33 candidate receipt request; superseded by merged integration",
+   "actionable_in_sandbox": false,
+   "size": "S"
+  },
+  {
+   "line": 1153,
+   "text": "Complete provisioned pinned-native controls and required current-head Windows/scanner/release gates.",
+   "area": "accuracy-calibration",
+   "kind": "qa",
+   "blocked_by": "native-tool",
+   "state": "open",
+   "evidence": "provisioned pinned-native controls and Windows/scanner/release gates",
+   "actionable_in_sandbox": false,
+   "size": "S"
+  },
+  {
+   "line": 1156,
+   "text": "Continue product-only desktop start and remaining unique #174 adapter functionality in exclusive worker worktrees.",
+   "area": "gui",
+   "kind": "build",
+   "blocked_by": "none",
+   "state": "unknown",
+   "evidence": "product-only desktop start; #221 binary-only start merged per todo.md:1158; product-only start not verified",
+   "actionable_in_sandbox": false,
+   "size": "S"
+  },
+  {
+   "line": 1159,
+   "text": "Product-only desktop/domain starting path and single-binary patch discovery remain separate accepted work.",
+   "area": "gui",
+   "kind": "build",
+   "blocked_by": "none",
+   "state": "unknown",
+   "evidence": "product-only desktop path and single-binary patch discovery not verified",
+   "actionable_in_sandbox": false,
+   "size": "S"
+  },
+  {
+   "line": 1160,
+   "text": "Complete remaining #174 one-to-many normalization/GT-01 controls; narrow reserved-key integration alone is not full native acceptance.",
+   "area": "accuracy-calibration",
+   "kind": "build",
+   "blocked_by": "native-tool",
+   "state": "open",
+   "evidence": "remaining #174 one-to-many normalization / GT-01 controls need native runs",
+   "actionable_in_sandbox": false,
+   "size": "S"
+  },
+  {
+   "line": 1163,
+   "text": "Finish actual native API linkage/stock-red-corrected-green and distinct-byte/IO controls; optional control tooling remains separate pending verified source.",
+   "area": "accuracy-calibration",
+   "kind": "build",
+   "blocked_by": "native-tool",
+   "state": "open",
+   "evidence": "native API linkage stock-red/corrected-green controls",
+   "actionable_in_sandbox": false,
+   "size": "S"
+  },
+  {
+   "line": 1170,
+   "text": "Finish #204 Linux smoke and normal review; merge only through normal expected-head GitHub gates.",
+   "area": "ci-testing",
+   "kind": "qa",
+   "blocked_by": "none",
+   "state": "done-on-main",
+   "evidence": "#204 merged: d02b94bc Merge pull request #204 (git log)",
+   "actionable_in_sandbox": false,
+   "size": "S"
+  },
+  {
+   "line": 1171,
+   "text": "Qualify/publish the isolated current integration candidate; preserve #205/native ownership and original source PRs.",
+   "area": "ci-testing",
+   "kind": "qa",
+   "blocked_by": "none",
+   "state": "unknown",
+   "evidence": "integration candidate status; #205 frozen under its owner (handoff-20261107:12) though 7ac01478 merged #205",
+   "actionable_in_sandbox": false,
+   "size": "S"
+  },
+  {
+   "line": 1172,
+   "text": "Repair and qualify the #205→#218→updated #235 promotion stages; keep Windows recovery and scanner findings explicit.",
+   "area": "ci-testing",
+   "kind": "qa",
+   "blocked_by": "none",
+   "state": "done-on-main",
+   "evidence": "#205 (7ac01478), #218 (7cf81a00) and #235 (252030f6) all merged on main",
+   "actionable_in_sandbox": false,
+   "size": "S"
+  },
+  {
+   "line": 1173,
+   "text": "Selectively reconcile remaining #183 docs and older unique work after source/behavior review; keep paid automation separate.",
+   "area": "docs",
+   "kind": "audit",
+   "blocked_by": "other-lane",
+   "state": "open",
+   "evidence": "#183 docs reconcile is ledger lane L3; 5347ccfd shows partial doc reconcile",
+   "actionable_in_sandbox": false,
+   "size": "S"
+  },
+  {
+   "line": 1181,
+   "text": "Independent review, coordinator integration and native Windows QA of the resulting commit. Linux fault injection does not qualify Windows packaging or release a",
+   "area": "persistence",
+   "kind": "qa",
+   "blocked_by": "none",
+   "state": "done-on-main",
+   "evidence": "#245 merged: 6095f702 Merge PR #245 qualify N-way recovery on Windows",
+   "actionable_in_sandbox": false,
+   "size": "S"
+  },
+  {
+   "line": 1187,
+   "text": "Independently review and integrate this isolated repair before resolving the review finding or promoting #244; retain all existing hosted/native/Windows/full-su",
+   "area": "kb-cve",
+   "kind": "qa",
+   "blocked_by": "none",
+   "state": "done-on-main",
+   "evidence": "#244 merged: e5560ffc Merge #244 qualified integration and source-admission repair",
+   "actionable_in_sandbox": false,
+   "size": "S"
+  },
+  {
+   "line": 1198,
+   "text": "Obtain suitable-runner full Linux/native Windows/current-head qualification and normal parent scanner/review dispositions for #245 and the application integrati",
+   "area": "ci-testing",
+   "kind": "qa",
+   "blocked_by": "none",
+   "state": "done-on-main",
+   "evidence": "#245 merged (6095f702); application integration train merged via #235",
+   "actionable_in_sandbox": false,
+   "size": "S"
+  },
+  {
+   "line": 1199,
+   "text": "Recheck accepted ancestry after main promotion before any source-PR disposition; retain native and automation ownership. See [QA evidence](../docs/qa/pr245-linu",
+   "area": "ci-testing",
+   "kind": "qa",
+   "blocked_by": "none",
+   "state": "done-on-main",
+   "evidence": "#245/#205 ancestry on main (6095f702, a1ed8c91)",
+   "actionable_in_sandbox": false,
+   "size": "S"
+  },
+  {
+   "line": 1205,
+   "text": "Complete current-head hosted qualification and normal merge review. Preserve the separate AF_UNIX runner restriction and native/release gates. See `docs/qa/subp",
+   "area": "persistence",
+   "kind": "qa",
+   "blocked_by": "none",
+   "state": "obsolete",
+   "evidence": "per-PR merge/qualification gate; the PR range #180-#240 merged via #235 (252030f6; docs/plans/accuracy-program-handoff-20261107.md:8,50); exact-head results for the old branch head are historical, main-head gates are tracked by L3/release items",
+   "actionable_in_sandbox": false,
+   "size": "S"
+  },
+  {
+   "line": 1213,
+   "text": "Complete combined current-source full tests, hosted/native qualification, normal review and outstanding parent scanner dispositions before promotion.",
+   "area": "ci-testing",
+   "kind": "qa",
+   "blocked_by": "none",
+   "state": "obsolete",
+   "evidence": "per-PR merge/qualification gate; the PR range #180-#240 merged via #235 (252030f6; docs/plans/accuracy-program-handoff-20261107.md:8,50); exact-head results for the old branch head are historical, main-head gates are tracked by L3/release items",
+   "actionable_in_sandbox": false,
+   "size": "S"
+  },
+  {
+   "line": 1214,
+   "text": "Product-only CLI/online acquisition and single-binary discovery remain separate accepted work. [Continuation receipt](../docs/qa/continuation-20261106.md).",
+   "area": "cli",
+   "kind": "build",
+   "blocked_by": "none",
+   "state": "open",
+   "evidence": "product-only CLI/online acquisition and single-binary discovery remain separate accepted work (not verified built)",
+   "actionable_in_sandbox": false,
+   "size": "L"
+  },
+  {
+   "line": 1223,
+   "text": "Finish current-head hosted gates, normal review, parent propagation and Sonar disposition; retain separate release/live/manual requirements. [Evidence](../docs/",
+   "area": "ci-testing",
+   "kind": "qa",
+   "blocked_by": "none",
+   "state": "obsolete",
+   "evidence": "per-PR merge/qualification gate; the PR range #180-#240 merged via #235 (252030f6; docs/plans/accuracy-program-handoff-20261107.md:8,50); exact-head results for the old branch head are historical, main-head gates are tracked by L3/release items",
+   "actionable_in_sandbox": false,
+   "size": "S"
+  },
+  {
+   "line": 1229,
+   "text": "Recheck parent application merge trees and gates against the advanced main before promotion.",
+   "area": "persistence",
+   "kind": "qa",
+   "blocked_by": "none",
+   "state": "obsolete",
+   "evidence": "per-PR merge/qualification gate; the PR range #180-#240 merged via #235 (252030f6; docs/plans/accuracy-program-handoff-20261107.md:8,50); exact-head results for the old branch head are historical, main-head gates are tracked by L3/release items",
+   "actionable_in_sandbox": false,
+   "size": "S"
+  },
+  {
+   "line": 1235,
+   "text": "Finish Linux packaging/smokes, normal parent promotion and remaining release/live/manual acceptance. [Windows evidence](../docs/qa/continuation-windows-20261106",
+   "area": "ci-testing",
+   "kind": "qa",
+   "blocked_by": "none",
+   "state": "obsolete",
+   "evidence": "per-PR merge/qualification gate; the PR range #180-#240 merged via #235 (252030f6; docs/plans/accuracy-program-handoff-20261107.md:8,50); exact-head results for the old branch head are historical, main-head gates are tracked by L3/release items",
+   "actionable_in_sandbox": false,
+   "size": "S"
+  },
+  {
+   "line": 1238,
+   "text": "Follow [accuracy validation plan](../docs/plans/accuracy-validation-plan-20261106.md): per-layer claims (L1 advisory join, L2 open-source pair diff, L3 real Win",
+   "area": "accuracy-calibration",
+   "kind": "qa",
+   "blocked_by": "native-tool",
+   "state": "open",
+   "evidence": "accuracy validation plan AV-2 next; no accuracy result exists (per item and handoff)",
+   "actionable_in_sandbox": false,
+   "size": "S"
+  },
+  {
+   "line": 1239,
+   "text": "2026-11-07 status and findings: see [accuracy program findings](../docs/qa/accuracy-program-findings-20261107.md) (PR triage, CI observations, Windows candidate",
+   "area": "accuracy-calibration",
+   "kind": "docs",
+   "blocked_by": "none",
+   "state": "obsolete",
+   "evidence": "pointer to docs/qa/accuracy-program-findings-20261107.md; not itself a work item",
+   "actionable_in_sandbox": false,
+   "size": "S"
+  }
+ ],
+ "counts": {
+  "total_open_listed": 175,
+  "by_state": {
+   "open": 81,
+   "done-on-main": 23,
+   "unknown": 30,
+   "obsolete": 41
+  },
+  "by_blocked_by": {
+   "none": 104,
+   "windows-only": 23,
+   "owner-decision": 11,
+   "live-network": 2,
+   "other-lane": 13,
+   "native-tool": 16,
+   "ci-run": 6
+  },
+  "by_area": {
+   "kb-cve": 11,
+   "other": 7,
+   "persistence": 20,
+   "ci-testing": 38,
+   "performance": 1,
+   "security": 6,
+   "cli": 4,
+   "intelligence": 8,
+   "native-adapters": 10,
+   "gui": 26,
+   "accuracy-calibration": 26,
+   "unified": 8,
+   "release-packaging": 8,
+   "docs": 2
+  },
+  "by_kind": {
+   "qa": 82,
+   "build": 55,
+   "spec": 6,
+   "owner": 16,
+   "bug": 4,
+   "external": 4,
+   "audit": 7,
+   "docs": 1
+  },
+  "actionable_in_sandbox": 15
+ },
+ "actionable_now": [
+  {
+   "id": "T2-T01",
+   "title": "Extend redact_log with short flags, AccountKey=, X-Amz-Signature= and xapp- tokens (todo.md:686)",
+   "why": "Verified by running redact_log: curl -u user:pass, AccountKey=..., X-Amz-Signature=... and xapp-1-... pass through unredacted; these reach logs and CLI errors.",
+   "files": [
+    "src/patchtrace/diagnostics.py",
+    "tests/test_redaction_coverage.py"
+   ],
+   "tests": [
+    "tests/test_redaction_coverage.py"
+   ],
+   "size": "S",
+   "priority": 1,
+   "risk": "Over-redaction of prose (e.g. -p as a port flag); keep linear-time anchors and the hostile 1 MiB timing test",
+   "depends_on": [],
+   "lane_conflict": "none",
+   "acceptance": "Red tests for each of the four shapes then green; existing hostile-input timing tests still pass; benign \"-p 80\" style text stays"
+  },
+  {
+   "id": "T2-T02",
+   "title": "Add fabric list --offset to the read-only fabric CLI (todo.md:662)",
+   "why": "fabric/cli.py:46,90 passes only --limit although AnchorQuery.offset already exists (contracts.py:204), so anchors beyond 500 are unreachable from the CLI.",
+   "files": [
+    "src/patchtrace/fabric/cli.py",
+    "tests/test_fabric_cli.py",
+    "docs/cli-reference.md"
+   ],
+   "tests": [
+    "tests/test_fabric_cli.py"
+   ],
+   "size": "S",
+   "priority": 2,
+   "risk": "CLI contract/help snapshot and parity tests may need regeneration",
+   "depends_on": [],
+   "lane_conflict": "none",
+   "acceptance": "list --offset N pages past the first page, validates N>=0, total unchanged; red/green test with >limit synthetic anchors"
+  },
+  {
+   "id": "T2-T03",
+   "title": "Document and smoke-test the KEV verbs: frozen_smoke kev steps plus network-egress-privacy rows (todo.md:649)",
+   "why": "tools/frozen_smoke.py has no kev step and docs/specs/network-egress-privacy.md lacks the www.cisa.gov and raw.githubusercontent.com rows the K2 slice asked for; the KEV transport is an egress path with no frozen-build coverage.",
+   "files": [
+    "tools/frozen_smoke.py",
+    "docs/specs/network-egress-privacy.md",
+    "tests/test_acceptance_smoke.py"
+   ],
+   "tests": [
+    "tests/test_acceptance_smoke.py",
+    "tests/test_kev_cli.py"
+   ],
+   "size": "M",
+   "priority": 3,
+   "risk": "frozen_smoke is shared with other lanes; keep the new steps offline on tests/fixtures/kev/kev-synthetic-2099.json",
+   "depends_on": [],
+   "lane_conflict": "none",
+   "acceptance": "run_checks in source mode passes kev import/lookup/status on the synthetic fixture; egress doc lists both hosts with consent flag"
+  },
+  {
+   "id": "T2-T04",
+   "title": "Add fabric-batch to ids.DOMAINS and make the domain test scan store.py (todo.md:632)",
+   "why": "store.py:58 uses BATCH_DOMAIN fabric-batch but ids.py:35 DOMAINS does not list it, so test_every_identity_domain_in_use_is_listed cannot protect the store identity.",
+   "files": [
+    "src/patchtrace/fabric/ids.py",
+    "tests/test_fabric_contracts.py"
+   ],
+   "tests": [
+    "tests/test_fabric_contracts.py",
+    "tests/test_fabric_store.py"
+   ],
+   "size": "S",
+   "priority": 4,
+   "risk": "Changing DOMAINS must not change any existing row id (domain strings already used in digests)",
+   "depends_on": [],
+   "lane_conflict": "none",
+   "acceptance": "test scans store.py and passes with fabric-batch listed; existing store ids unchanged (golden row ids)"
+  },
+  {
+   "id": "T2-T05",
+   "title": "Make leads use a public collect.overview and keep the Qt thread free of private imports (todo.md:727)",
+   "why": "ui_leads.py:148 imports pilot.collect._overview, a private name; a rename in collect silently breaks the dock.",
+   "files": [
+    "src/patchtrace/pilot/collect.py",
+    "src/patchtrace/ui_leads.py",
+    "tests/test_ui_leads.py"
+   ],
+   "tests": [
+    "tests/test_ui_leads.py",
+    "tests/test_pilot_cli.py"
+   ],
+   "size": "S",
+   "priority": 5,
+   "risk": "Low; pure rename with alias",
+   "depends_on": [],
+   "lane_conflict": "none",
+   "acceptance": "collect.overview public, ui_leads imports it, no private import left (grep test)"
+  },
+  {
+   "id": "T2-T06",
+   "title": "Add test_live_strings and goldens to live-intel-tools.yml paths and pytest list (todo.md:807)",
+   "why": "The live-strings test and goldens are not triggered by or run in the workflow that exercises the intel tools.",
+   "files": [
+    ".github/workflows/live-intel-tools.yml"
+   ],
+   "tests": [
+    "tests/test_live_strings.py"
+   ],
+   "size": "S",
+   "priority": 6,
+   "risk": "Workflow file edits cannot be exercised offline; verify with a YAML parse and a path assertion test",
+   "depends_on": [],
+   "lane_conflict": "none",
+   "acceptance": "workflow YAML parses; paths and pytest list contain tests/test_live_strings.py and tests/fixtures/strings/goldens/**"
+  },
+  {
+   "id": "T2-T07",
+   "title": "Specify label preservation for derived hash.bin-labelled projects (todo.md:1135)",
+   "why": "Current-origin preview refuses these projects explicitly; the spec for preserving labels is the missing piece.",
+   "files": [
+    "docs/specs/",
+    "docs/qa.md"
+   ],
+   "tests": [
+    "tests/test_spec_registry.py"
+   ],
+   "size": "S",
+   "priority": 7,
+   "risk": "Spec only; owner may want a different contract",
+   "depends_on": [],
+   "lane_conflict": "none",
+   "acceptance": "Spec section merged and REGISTRY row added; no code change"
+  },
+  {
+   "id": "T2-T08",
+   "title": "Wire StringsRunController into the Strings dock (todo.md:806)",
+   "why": "ui_strings_run.py:21 StringsRunController has no importer, so the strings run flow is unreachable from the GUI.",
+   "files": [
+    "src/patchtrace/ui_strings_run.py",
+    "src/patchtrace/strings/",
+    "tests/test_ui_strings_run.py"
+   ],
+   "tests": [
+    "tests/test_ui_strings_run.py",
+    "tests/test_gui_host_seam.py"
+   ],
+   "size": "M",
+   "priority": 8,
+   "risk": "Qt offscreen threading; ToolStore must be built on the GUI thread",
+   "depends_on": [],
+   "lane_conflict": "none",
+   "acceptance": "dock action starts a run on a synthetic project under offscreen Qt; tooltip and host-seam tests updated"
+  },
+  {
+   "id": "T2-T09",
+   "title": "Add reveal_location to the Leads panel (todo.md:715)",
+   "why": "reveal_location is absent from src/; leads rows cannot navigate to the function in the match view.",
+   "files": [
+    "src/patchtrace/ui_leads.py",
+    "tests/test_ui_leads.py"
+   ],
+   "tests": [
+    "tests/test_ui_leads.py"
+   ],
+   "size": "M",
+   "priority": 9,
+   "risk": "Needs a NavigationPort seam; keep PIL Navigator separate (todo.md:667)",
+   "depends_on": [],
+   "lane_conflict": "none",
+   "acceptance": "activating a lead row emits a navigation request for its anchor in an offscreen test"
+  },
+  {
+   "id": "T2-T10",
+   "title": "Add pair_texts reader for unified code panes (todo.md:723)",
+   "why": "Rows without a Ghidriff match have empty code panes because the pair_texts hook does not exist.",
+   "files": [
+    "src/patchtrace/ui_unified.py",
+    "src/patchtrace/unified/read_model.py",
+    "tests/test_ui_unified.py"
+   ],
+   "tests": [
+    "tests/test_ui_unified.py"
+   ],
+   "size": "M",
+   "priority": 10,
+   "risk": "Keep out of unified/{sources,ladder,fusion,facts} (lane L1)",
+   "depends_on": [],
+   "lane_conflict": "none",
+   "acceptance": "synthetic stored IR text appears in the panes for an unmatched row"
+  },
+  {
+   "id": "T2-T11",
+   "title": "Add BuildTimelineStrip and PairSnapshot.build_env to ui_series (todo.md:810)",
+   "why": "Neither exists in src/; D7 seam for build-environment context on series pairs.",
+   "files": [
+    "src/patchtrace/ui_series.py",
+    "src/patchtrace/buildenv/",
+    "tests/test_ui_series.py"
+   ],
+   "tests": [
+    "tests/test_ui_series.py"
+   ],
+   "size": "M",
+   "priority": 11,
+   "risk": "Qt offscreen layout; read-only display",
+   "depends_on": [],
+   "lane_conflict": "none",
+   "acceptance": "strip renders per-pair build facts from stored fixtures"
+  },
+  {
+   "id": "T2-T12",
+   "title": "Wire KEV report_block into the report/2 assembler (todo.md:628)",
+   "why": "kev/report.py:93 report_block has no caller; KEV drift never reaches reports.",
+   "files": [
+    "src/patchtrace/report2/assemble.py",
+    "src/patchtrace/kev/report.py",
+    "tests/test_report2_sections.py"
+   ],
+   "tests": [
+    "tests/test_kev_report.py",
+    "tests/test_report2_sections.py"
+   ],
+   "size": "M",
+   "priority": 12,
+   "risk": "report/2 contract change needs schema regeneration; check L6 does not edit report2",
+   "depends_on": [],
+   "lane_conflict": "none",
+   "acceptance": "report contains the KEV block when a context exists and omits it with a reason otherwise; schemas regenerated"
+  },
+  {
+   "id": "T2-T13",
+   "title": "Promote backup_once/delete_own to a shared EnrichmentStore helper (todo.md:698)",
+   "why": "unified/store.py:772,816 and pilot/store.py now carry two copies of the verified-backup pattern.",
+   "files": [
+    "src/patchtrace/enrichment/",
+    "src/patchtrace/unified/store.py",
+    "src/patchtrace/pilot/store.py"
+   ],
+   "tests": [
+    "tests/test_pilot_store.py",
+    "tests/test_unified_store.py"
+   ],
+   "size": "M",
+   "priority": 13,
+   "risk": "unified/store.py is adjacent to lane L1 files; behaviour must stay byte-identical",
+   "depends_on": [],
+   "lane_conflict": "none",
+   "acceptance": "both stores use the shared helper; existing store tests green"
+  },
+  {
+   "id": "T2-T14",
+   "title": "Write the pe-metadata store adapter for pe_overview/cache.py (todo.md:977)",
+   "why": "cache.py:3,16 defines the port but no adapter exists, so PE metadata is recomputed each time.",
+   "files": [
+    "src/patchtrace/pe_overview/cache.py",
+    "src/patchtrace/enrichment/",
+    "tests/test_pe_overview.py"
+   ],
+   "tests": [
+    "tests/test_pe_overview.py"
+   ],
+   "size": "M",
+   "priority": 14,
+   "risk": "Owner-thread store access vs the GUI metadata thread",
+   "depends_on": [],
+   "lane_conflict": "none",
+   "acceptance": "adapter round-trips a synthetic PeMetadata row with trust-mode keys; stale/hostile rows ignored"
+  },
+  {
+   "id": "T2-T15",
+   "title": "Pilot anchor publisher via fabric.convert.from_pilot_anchor (todo.md:667)",
+   "why": "No pilot code publishes anchors; the fabric converter is unused.",
+   "files": [
+    "src/patchtrace/pilot/",
+    "src/patchtrace/fabric/convert.py",
+    "tests/test_pilot_cli.py"
+   ],
+   "tests": [
+    "tests/test_pilot_cli.py",
+    "tests/test_fabric_adopt.py"
+   ],
+   "size": "M",
+   "priority": 15,
+   "risk": "A new origin row changes the PIL origins digest and stales stored results; re-pin the golden with the row",
+   "depends_on": [],
+   "lane_conflict": "none",
+   "acceptance": "publishing leads writes fabric anchors on a synthetic project; origins golden re-pinned"
+  }
+ ],
+ "notes": "Range holds 175 open and 179 checked items (354 total). Items are single todo.md lines; many are multi-clause, so state reflects the principal clause. state=obsolete for lines 898-1235 defaults means the PR gate was superseded by the merge of #235 (which contains #180-#240; handoff-20261107:8,50) and was not re-verified per branch head. Reconciled against 882d1ca0 by grep/ls/run of redact_log and one pytest (tests/test_artifact_bytes.py -k restored_mtime). Items inside lanes L1/L2/L5/L6 and the rules/callgraph, instance B/C lanes carry no actionable flag. Excluded as already in progress by this session: security backlog TB-*, WP-03, PE-*, KBA-06/07/08, KB dock loader, rz-diff/BinDiff/Diaphora guards, headless CLI verbs. Evidence classes: all code evidence here is source inspection; nothing live-native."
+}

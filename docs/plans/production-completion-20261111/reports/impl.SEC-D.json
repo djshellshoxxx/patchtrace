@@ -1,0 +1,70 @@
+{
+ "status": "done",
+ "branch": "claude/sleepy-fermi-sec-pe-bounds (worktree <worktrees>/sec-pe-bounds, base origin/main 882d1ca0)",
+ "commits": [
+  {
+   "sha": "b229ba1ac0402d5f89f7ce2f6b64b3ab13774ddb",
+   "subject": "Fix PE-2/PE-3 in the Tier W PE table copy (earlier attempt; reviewed, kept unchanged)"
+  },
+  {
+   "sha": "70fcaee78009a8288d13d71968cfa8916f472d35",
+   "subject": "Fix PE-6: an import table ending at a cap is complete (earlier attempt; reviewed, kept unchanged)"
+  },
+  {
+   "sha": "ab2a0b5b30fd142b76c7be9164686af181247cd0",
+   "subject": "Fix PE-7: bind export names to a slot in linear time"
+  },
+  {
+   "sha": "c28c4d17b05a72c395aa308eddd7c2fe39c8e417",
+   "subject": "Fix PE-8: name_truncated says which limit cut the name"
+  }
+ ],
+ "files_changed": [
+  "tools/calibration/tier_w/pe_tables.py",
+  "src/patchtrace/pe_overview/imports_exports.py",
+  "src/patchtrace/pe_overview/exports_table.py",
+  "src/patchtrace/pe_overview/_common.py",
+  "docs/specs/pe-overview.md",
+  "tests/test_tier_w_pe.py",
+  "tests/test_pe_overview_import_caps.py (new)",
+  "tests/test_pe_overview_export_names.py (new)",
+  "tests/test_pe_overview_name_truncation.py (new)"
+ ],
+ "tests_added": [
+  "tests/test_tier_w_pe.py: test_directory_larger_than_one_read_is_read_completely, test_small_pieces_give_the_same_tables_as_one_read, test_failed_read_is_a_pe_table_error[read_rva|pdata|reloc|body_hash], test_unknown_relocation_types_warn_once_per_type",
+  "tests/test_pe_overview_import_caps.py (14 tests): 511/512/513 boundary for the DLL cap, the per-DLL cap (4095/4096/4097) and the total-name cap (19999/20000/20001); an entry at the cap that is a repeat or unbacked; cancel-poll count unchanged; a complete 512-DLL table feeds api_delta and PeTables.import_slots",
+  "tests/test_pe_overview_export_names.py (5 tests): old _bind_names kept verbatim as oracle and compared on 200 seeded tables (seed 20261015; binder result incl. list order, ExportTable, warnings); two strings with one display text on a slot; comparison-count bound at 20,000 names on one ordinal (deterministic, aborts early); 20,000 strings collapsing to 2,500 names; relative time bound (one ordinal <= 3 x one-name-per-ordinal, best of three)",
+  "tests/test_pe_overview_name_truncation.py (14 tests): audit repro (limit=300 on a 2000-byte file); limit 1/511/512/513/812/None boundary; name running to end of file stays whole and silent (pinned); 1 MiB read-clip wording with a non-default max_name_length; real export name cut by its section end; overlong import name keeps the cap wording"
+ ],
+ "red_evidence": "All red runs are synthetic-fixture tests (tests/pe_builder.py, tests/pe_exports_builder.py), not live evidence.\nPE-2/PE-3 and PE-6 (earlier attempt's commits): I re-ran their tests with the two source files restored from origin/main, then restored HEAD. Seen failing: test_directory_larger_than_one_read_is_read_completely -> 'ArtifactBytesError: read_too_large: single read capped at 16777216 bytes'; test_failed_read_is_a_pe_table_error[read_rva|pdata|reloc|body_hash] -> 'ArtifactBytesError: closed: reader is closed' (not PeTableError); test_unknown_relocation_types_warn_once_per_type -> 'Left contains 99996 more items, first extra item: relocation type 5 masked as 8 bytes'; import caps -> \"assert ('import_dlls_over_cap' in {'import_dlls_over_cap'}) is False\", same for import_functions_over_cap and import_names_over_cap, and \"assert ('unavailable' == 'changed'\" for api_delta. I did not capture the pass/fail totals line of that run.\nPE-7 (before the fix, 3 failed / 2 passed): test_names_on_one_ordinal_are_compared_a_linear_number_of_times -> 'AssertionError: name binding compared names more often than a linear pass may; assert 40001 <= 40000'; test_equal_names_from_different_strings_on_one_ordinal_stay_linear -> same assertion; test_twenty_thousand_names_on_one_ordinal_cost_about_what_one_name_per_ordinal_costs -> 'one ordinal 1.678 s, one name per ordinal 0.281 s; assert (3 * 0.281) >= 1.678'. The 200-table oracle comparison is green before and after by design (identical output); I mutation-checked it: replacing the dedup test with 'if True:' fails it at 'case 6'.\nPE-8 (before the fix, 6 failed / 8 passed): test_section_bounded_name_is_not_called_longer_than_the_cap -> \"'a name longer than 512 bytes was truncated' != 'a name has no terminator before its section data ends; cut there after 300 bytes (the name limit is 512)'\"; test_which_limit_applied_at_the_boundary[one_byte|cap_minus_1|at_cap]; test_read_clip_is_named_when_the_name_limit_is_above_one_read ('a name longer than 2097152 bytes was truncated'); test_export_name_cut_by_the_end_of_its_section.",
+ "focused_tests": "Command form: cd <worktrees>/sec-pe-bounds && QT_QPA_PLATFORM=offscreen PYTHONPATH=<worktrees>/sec-pe-bounds/src nice -n 10 python -m pytest -q -p no:cacheprovider <files>\n- tests/test_tier_w_pe.py: 13 passed\n- tests/test_pe_overview_import_caps.py: 14 passed\n- tests/test_pe_overview_export_names.py: 5 passed\n- tests/test_pe_overview_name_truncation.py: 14 passed\n- -n 4 tests/test_pe_*.py tests/test_tier_w_*.py tests/test_unified_ir_pe_tables.py: 885 passed, 5 skipped, 1 xfailed (all six pre-existing: Windows-only, no distlib launcher in this pip, no --ghidra-dir)\n- -n 4 other users of the changed modules (test_binary_parsers_bugfixes_20261029, test_core_review_regressions_20261029, test_hostile_input_fuzz_regressions, test_hostile_text, test_pilot_sources_code, test_rules_candidates, test_rules_masks, test_rules_live, test_strings_regions, test_symbols_staging, test_ui_pemeta, test_ui_inspection_signing, test_alpha_integration, test_calibration_tools): 613 passed\nFull suite not run (left to the orchestrator).\nMeasured export parse at the 20,000-name cap on one ordinal: 1.62 s before, 0.24 s after (one name per ordinal: 0.25-0.27 s).",
+ "ruff": "ruff check src tests tools: All checks passed (run after the last code edit).",
+ "schemas_regenerated": "Not needed: no contract model changed (warning codes, ImportsInfo, ExportTable and Limits are untouched; only one warning message text and cap-boundary behaviour changed).",
+ "spec_amendments": [
+  "docs/specs/pe-overview.md: 'Import cap boundary amendment (2026-11-11, audit 20261015 PE-6)' after the Limits paragraph (commit 70fcaee7)",
+  "docs/specs/pe-overview.md: 'Name truncation wording amendment (2026-11-11, audit 20261015 PE-8)' directly below it (commit c28c4d17)",
+  "PE-2/PE-3 (Tier W dev tool) and PE-7 (no behaviour change) needed no spec text"
+ ],
+ "deviations": "1. Resumed slice: commits b229ba1a (PE-2/PE-3) and 70fcaee7 (PE-6) came from an interrupted earlier attempt. I reviewed both diffs against the card and the product fix in pe_overview/tables.py, reproduced their red against origin/main sources, and kept them unchanged; I added PE-7 and PE-8.\n2. Card item 3 is two commits (PE-7, PE-8) rather than one, because the two fixes are independent.\n3. PE-8 keeps the code name_truncated and changes only the message, as the card says; the audit had suggested a new code (name_unmapped). I also worded a third case the card does not name: the 1 MiB single-read clip, reachable only with a non-default max_name_length, which the old text also mislabelled.\n4. PE-7 uses a set of (index, name) pairs next to the existing lists instead of the audit's dict-of-dict, so _bind_names keeps its return type and list order.\n5. PE-6 (earlier attempt) also fixes the same off-by-one on the total-name cap (20000), which the card does not list explicitly.\n6. New tests are in three new files rather than tests/test_pe_overview.py (the card allows either); tests/test_pe_overview.py is unchanged.\n7. Co-Authored-By names 'Claude' on all four commits, following the harness reminder; IMPL-COMMON says the orchestrator normalises trailers.",
+ "integrator_asks": [
+  "src/patchtrace/unified/ir/pe_tables.py (other session's lane, not touched): the same PE-2 defect remains. _Rva.read (about line 150; cap at :27, use at :295) asks the reader for one over-size read, so a base-relocation directory between MAX_READ_BYTES (16 MiB) and MAX_RELOC_DIRECTORY (32 MiB) is swallowed as 'reloc-unreadable' with zero relocations. Proposed fix: split each mapped range into MAX_READ_BYTES pieces inside _Rva.read; regression test in tests/test_unified_ir_pe_tables.py with a 17 MiB directory of valid blocks.",
+  "docs/audits/20261015-pe-codetext-representations.md and docs/qa/pe-parser-security-20261105.md are not in my owned files: if those documents track status, mark PE-2/PE-3 (Tier W copy), PE-6, PE-7 and PE-8 as fixed on this branch.",
+  "Normalise the Co-Authored-By trailer on the four commits if required before pushing."
+ ],
+ "tracker_rows": "### [sleepy-fermi:SEC-D]\n\ntasks/todo.md:\n- [x] SEC-D PE-2/PE-3 (Tier W copy): tools/calibration/tier_w/pe_tables.py reads in MAX_READ_BYTES pieces, maps a failed read to PeTableError and warns once per unknown relocation type (b229ba1a).\n- [x] SEC-D PE-6: an import table that ends exactly at the DLL, per-DLL or total-name cap is complete; only a further non-terminator entry is over cap (70fcaee7).\n- [x] SEC-D PE-7: export names are bound to a slot in linear time; output identical to the list-scan implementation (ab2a0b5b).\n- [x] SEC-D PE-8: name_truncated message names the limit that applied (name limit, end of section data, read clip); code unchanged (c28c4d17).\n- [ ] PE-2 in src/patchtrace/unified/ir/pe_tables.py (_Rva.read, one unchunked read for a 16-32 MiB .reloc) is still open; owned by the unified-engine lane.\n\ndocs/qa.md:\n- SEC-D (2026-11-11, synthetic fixtures only, Linux; not live evidence): tests/test_tier_w_pe.py 13 passed; tests/test_pe_overview_import_caps.py 14 passed; tests/test_pe_overview_export_names.py 5 passed; tests/test_pe_overview_name_truncation.py 14 passed; tests/test_pe_*.py + tests/test_tier_w_*.py + tests/test_unified_ir_pe_tables.py 885 passed, 5 skipped, 1 xfailed (pre-existing); ruff clean. Export parse at the 20,000-name cap on one ordinal: 1.62 s before, 0.24 s after. Not run: full suite, Windows.",
+ "open_risks": [
+  "PE-8: Ctx.warn keeps the first message per code, so a file with both an over-long name and a section-cut name shows only the first one's wording (true but incomplete). This is the existing rule for every code; the spec amendment states it.",
+  "PE-8: a name that runs to the end of the FILE without a terminator is still returned whole with no warning (unchanged and now pinned by a test). If the file boundary should also be reported, that changes status on such files and needs a decision.",
+  "PE-7 timing test is a relative bound (one ordinal <= 3 x one-name-per-ordinal, best of three; measured 6.5x before, about 0.9x after). The deterministic comparison-count test is the strict guard; the timing one could still flake on a heavily loaded runner.",
+  "PE-6: at a cap the parser now reads one more entry; once the total-name cap is reached exactly, each later DLL costs one name read and one thunk read (bounded by the 512-DLL cap). An unbacked entry right after a cap now reports import_rva_out_of_file instead of an over-cap code.",
+  "Tier W: unknown-relocation warnings are deduplicated per PeView (a second relocations() call adds none), where the product copy deduplicates per parse; the Tier W test for the large directory writes a 17 MiB temporary file."
+ ],
+ "unverified": [
+  "Windows behaviour: nothing was run on Windows (the code uses no POSIX-only calls; tests write files through pathlib and tmp_path).",
+  "The full test suite was not run, only the focused selections listed.",
+  "Byte-identity of Tier W outputs is supported only by the existing tests/test_tier_w_*.py passing unchanged; no Tier W run over real images was made (no network, no Microsoft binaries).",
+  "No live or real-binary evidence for any item: all tests use synthetic PEs.",
+  "The exact pass/fail totals of the red re-run for the earlier attempt's two commits were not captured; the individual failing assertions were seen and are quoted.",
+  "Downstream effect of the changed name_truncated message on stored projects or UI text outside tests/, docs/specs and src was checked only by grep for the old wording (no quotes found in .py/.md/.json/.yaml/.txt)."
+ ]
+}
