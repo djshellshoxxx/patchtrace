@@ -259,6 +259,14 @@ belong to the lead within its recorded search/document scope. Changing the recor
 inventory selection into the new scope: each decision binds the scope ID and coverage IDs. Persist decision and
 the resulting COMPONENTS_READY revision atomically through the existing revision
 compare-and-swap; stale or cancelled work leaves both unchanged.
+Capture the ordered advisory source metadata before rebuilding the eligibility
+index and verify it is unchanged afterward. Before publishing a selection, check
+that same snapshot and cancellation inside the short revision transaction; a
+source import or metadata change during validation is PT-KBC-STALE, even if the
+investigation revision has not changed. Repeated selections that need no new
+decision or revision still check both the exact current revision and source
+snapshot together in a short guarded transaction before returning success.
+Keep source parsing and inventory replay outside these write transactions.
 Existing component discovery must verify selected inventory evidence before
 publishing a product change or newly entered filenames. A failed raw replay
 therefore preserves the previous product, revision and analyst decisions.
