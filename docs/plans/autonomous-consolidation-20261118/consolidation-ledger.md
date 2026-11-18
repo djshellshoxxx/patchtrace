@@ -261,3 +261,27 @@ effect. [Complete records](semantic-disposition-batch2.json) and the
 source/commands/hashes. The original 131-tip denominator now has 40 selected
 scopes and 91 unselected tips; broad residue and qualification are still open.
 No completion percentage is inferred from these counts.
+
+## Semantic reconciliation batch 3 — 2026-11-18
+
+
+The [third scoped batch](semantic-disposition-batch3.md) compares 20 further original tips
+with actual published PR #316 `55f3d0742f7d4cf32357a42b8b1cc76d85875e71`.
+Eighteen focal behaviors are retained; the old backup helper is retained but fails a
+new POSIX empty-directory ownership control, and a historical code-highlighter
+dispatch guard is absent. Root owns the separate backup follow-on; the highlighter
+requires a separately reviewed narrow slice. No product source changed in this review.
+
+The exact current 36-file gate passes 666 tests with four explicit Windows skips.
+The original backup 2-red/1-positive and historical highlighter 1-red/2-positive
+receipts remain unchanged. Tests are not added across overlapping branch mappings.
+All 143 old tooltip IDs/three templates survive, and Files/inspection/runtime and
+representation replacements are traced through actual source and callers.
+
+Batch 1/2/3 now select 60 of 131 original reconciliation tips; 71 remain unselected,
+with broader native/package/research residue still open. These are scope counts,
+not whole-branch closure or product-completion credit. The initial inventory is
+unchanged and no fresh GitHub state/remote action is claimed. Batch 2 is read from
+its separate `1a07861f` checkpoint, not retroactively inserted into this baseline.
+[Exact tips, source proof and remaining list](semantic-disposition-batch3.json);
+[sealed receipt](../../qa/semantic-disposition-batch3-20261118.md).

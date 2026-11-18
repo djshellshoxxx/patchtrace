@@ -2130,3 +2130,16 @@ baseline18-fail/14-positive results, initial fixture mistakes and all original
 historical failures remain retained. [Sealed source-pinned QA](qa/kb-named-superseded-20261118.md).
 Root independent review and integration remain pending; native/manual/package,
 full/hosted qualification and broad branch residue are separate gates.
+
+## [SEMANTIC-DISPOSITION-BATCH3-20261118]
+
+
+Read-only comparison at actual published #316 `55f3d074`: 20 exact original tips,
+18 retained focal scopes, one retained backup defect and one omitted highlighter
+dispatch guard. Current 36-file source/offscreen gate: **666 passed, four explicit
+Windows skips, 62.85 s**. Separate original contrary controls remain **2 failed/1
+passed** for public backup publication and **1 failed/2 passed** for unchanged
+historical highlighter behavior. No production/test/workflow edit, native run,
+fresh hosted observation or whole-branch closure. Cumulative selected scopes:
+60 of the original 131, with 71 still unselected and broader residue open.
+[Exact sources, commands, archive and limits](qa/semantic-disposition-batch3-20261118.md).

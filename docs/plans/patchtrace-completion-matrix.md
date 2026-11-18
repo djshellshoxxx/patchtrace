@@ -194,3 +194,22 @@ This documentation does not add D/R/J/G percentage credit or change a feature
 readiness estimate. Branch/test counts do not measure completed requirements.
 The separately reviewed creation and two callgraph repairs now present in the
 comparison tree retain their own acceptance receipts and original failure history.
+
+## Semantic batch 3 scope update — 2026-11-18
+
+
+This read-only update is pinned to actual PR #316 `55f3d074`, independently of later
+continuation source. It adds no product milestone or percentage: the denominator
+131 is original branch tips needing reconciliation, not feature acceptance criteria.
+Twenty more selected scopes bring the cumulative selection to 60; 71 remain
+unselected and broad-tip residue remains open.
+
+| Assessed scope | Current evidence at the pinned source | Remaining work/acceptance |
+|---|---|---|
+| Eighteen focal runtime/desktop/representation behaviors | Actual source/caller replacements and 666-pass shared gate, four Windows skips | Unreviewed branch residue; native/manual/package and final combined gates |
+| Backup destination ownership | Retained helper fails two POSIX empty-replacement controls; ordinary backup passes | Root-owned publication design/repair; preserve original database/foreign destination; separate Windows/native qualification |
+| Code-highlighter bulk-load dispatch | Original historical guard is absent; one unchanged failure with two formatting/scroll positives | Narrow spec/test-first guard repair and independent source/normal/high-DPI checks; no native timing claim |
+
+[Detailed exact-tip disposition](autonomous-consolidation-20261118/semantic-disposition-batch3.md)
+and [raw QA receipt](../qa/semantic-disposition-batch3-20261118.md) preserve the
+historical failures and current-source limits. No whole-branch closure follows.

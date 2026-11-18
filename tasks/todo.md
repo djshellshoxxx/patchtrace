@@ -1582,3 +1582,15 @@ Current evidence and assigned work: [checkpoint](../docs/qa/verified-followup-in
 - [x] Qualify exact source51f33d5a with411 affected cases, the original historical control, eight actual headless CLI calls, real offscreen presenter controls, whole Ruff and whitespace.
 - [ ] Root independent review, selective integration and exact combined/hosted qualification; no release or whole-branch closure credit.
 - [ ] Continue the next20 original semantic tips from the91 remaining, using published PR #31655f3 as the comparison baseline. [QA](../docs/qa/kb-named-superseded-20261118.md).
+
+### [SEMANTIC-DISPOSITION-BATCH3-20261118]
+
+
+- [x] Inspect 20 further exact source-bearing tips against actual #316 `55f3d074`; preserve real patch, caller, replacement and ancestry evidence.
+- [x] Run source-pinned 36-file current gate (666 passed, four Windows skips), preserving global tooltip coverage and all original contrary controls.
+- [x] Record two narrow candidates without source edits: retained backup ownership defect (root-owned follow-on) and missing code-highlighter dispatch guard.
+- [ ] Independently review and selectively retain this docs-only batch; preserve all branches and original mechanical inventory.
+- [ ] Design/repair/independently qualify backup directory publication in its separately assigned scope.
+- [ ] Propose, spec/test and independently qualify the one-file highlighter guard slice; retain unchanged historical test bytes.
+- [ ] Inspect the remaining 71 original tips and broader checkpoint/package/research residue; no blanket closure.
+- [ ] Complete actual final-source full/platform/native/package/manual gates; source/offscreen tests are not that acceptance.
