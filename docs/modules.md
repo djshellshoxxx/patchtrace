@@ -1383,6 +1383,14 @@ Calls panel (id graph): `callgraph/panel.py` (PanelSpec), `panel_qt.py` (widgets
 
 - `gui/qt/project_adoption.py`: `adopt_project(window, service)` owns the generic GUI transaction for service/render/preferences adoption and rollback; MainWindow.set_service stays a thin facade. Existing real-service entry regressions cover rollback and lock release.
 
+### [KB-F8:synthetic-packaged-control] Offline packaged investigation control (2026-11-18)
+
+| Module | Responsibility | Verification |
+|---|---|---|
+| `gui/qt/kb_selftest.py` | Package-authored sample and KB/CVE journey through current dialog, host adoption, rank/candidate, export and stale-reopen contracts; exclusive Unicode child, source-copy checks, synthetic receipt. Imported only by the explicit desktop self-test hook. | `tests/test_ui_kb_selftest.py`, `tests/test_kb_selftest_entry.py`; authored source/offscreen evidence only |
+| `gui/qt/selftest_loop.py` | One owning-thread Qt event loop with cooperative deadlines, exception propagation and cleanup; identity-checked temporary workspace ownership. No feature decisions or normal application-flow changes. | Same tests, including failure/cancel, early quit and foreign-root retention |
+| `__main__.py` self-test branch | Preserve icon/dependency checks, delegate packaged sample/journey, emit success only after owned temporary cleanup. Headless CLI dispatch remains before Qt imports. | Existing desktop audit and headless entry controls plus the source-pinned self-test child |
+
 ### [AF-0:wave1-ports] Autonomous finish wave 1 ports (2026-11-04)
 
 | Module | Files | Responsibility | Verification |
