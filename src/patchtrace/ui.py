@@ -997,8 +997,8 @@ class SetupDialog(QDialog):
         self.allow_symbol_downloads = QRadioButton('Allow Ghidriff symbol-server lookups (may access the Internet)')
         self.allow_symbol_downloads.setChecked(settings.value('backend/allow_symbol_downloads', False, type=bool))
         self.symbols = SymbolChoice(form, settings, self.allow_symbol_downloads)  # SPEC-53 local PDB mode
-        self.restrict_env = QCheckBox('Restrict backend environment to an allowlist (experimental)')
-        self.restrict_env.setChecked(settings.value('backend/restrict_env', False, type=bool))
+        self.restrict_env = QCheckBox('Restrict backend environment to an allowlist')
+        self.restrict_env.setChecked(settings.value('backend/restrict_env', True, type=bool))
         form.addRow(self.restrict_env)
         self.env_passthrough = QLineEdit(str(settings.value('backend/env_passthrough', '')))
         self.env_passthrough.setPlaceholderText('Extra variable names kept when restricted, comma-separated')
@@ -2557,7 +2557,7 @@ class MainWindow(QMainWindow):
                              allow_symbol_downloads=effective == 'online',
                              java_home=str(self.settings.value('backend/java_home', '')),
                              **config_kwargs(effective == 'local', symbol_dirs),
-                             restrict_env=self.settings.value('backend/restrict_env', False, type=bool),
+                             restrict_env=self.settings.value('backend/restrict_env', True, type=bool),
                              env_passthrough=parse_env_passthrough(str(self.settings.value('backend/env_passthrough', ''))),
                              # Raw-output reuse (SPEC-07 §13) is opt-in via the selected profile's cache_dir.
                              cache_dir=str(profile.cache_dir or ''))

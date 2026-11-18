@@ -195,3 +195,11 @@ linear I/O cost in backup size; it is a deliberate durability boundary, not a
 metadata-only performance shortcut or a lock against arbitrary later writers.
 
 The cached trust-only path may reject a known failed verdict or already-ineligible project/snapshot/table facts without reading the bytes. This is refusal only: every eligible verdict must still pass the complete fresh byte hash before it authorizes deletion. Preparatory verification remains able to inspect a changed candidate and establish a new verdict.
+
+## H7 default-isolation candidate amendment — 2026-11-18
+
+The next reviewed candidate sets `BackendConfig.restrict_env=True` by default and uses the same default for both desktop readers when `backend/restrict_env` is absent. The existing pure allowlist is reused without adding names. Thus normal external primary analysis, dependency/JVM probes and unified extraction drop unrelated inherited credentials and injection variables. Proxy/CA variables are inherited automatically only for explicit online symbol mode. This is process-environment minimization, not a network sandbox or a claim that a native engine obeys offline policy.
+
+Existing explicit compatibility choices remain: saved `False`, a direct `restrict_env=False`, named validated passthrough, and external-only `PATCHTRACE_CHILD_ENV=inherit`. Bundle mode still forces restriction despite those full-inheritance switches. A previous stored `False` cannot be distinguished from an intentional choice and is not silently rewritten. Discovery and default reads write no settings. No project/assessment schema changes.
+
+This amendment permits developing the default-on candidate and testing it before promotion. Merge still requires native Linux and Windows primary-engine qualification on the actual candidate, including raw-cache hit and authored secret/injection sentinel probes. Fake-engine/offscreen success cannot satisfy that gate. Missing variable compatibility must be repaired from native evidence, never by restoring implicit full inheritance.

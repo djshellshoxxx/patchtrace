@@ -103,3 +103,7 @@ initial 307-branch/297-PR mechanical inventory. Empty GitHub review collections
 are not review approval. Four fresh #304 native fixture receipts are narrowly
 credited at their recorded source tree; full/Qt/Windows/package/security remain
 unverified. The local incomplete full-suite attempt is preserved, not counted.
+
+## Primary environment default repair checkpoint — 2026-11-18
+
+The default primary-child environment slice has specification, reproduced failure, minimal repair and independent regression evidence at `1f9ad863` (370 independent affected/additional passes,3 native Windows skips). D/R scope is50%; real native/manual J and exact-head full/platform/security G remain open. Explicit legacy full inheritance remains a documented analyst compatibility choice; default minimization is not a network sandbox. The broader primary resource-bound/security work remains incomplete. [Evidence](../qa/primary-environment-20261118/README.md).

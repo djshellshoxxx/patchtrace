@@ -156,3 +156,7 @@ REGISTRY.md row for section 2, Table A, in the same change. `tests/test_spec_reg
 ```
 
 Also: confirm the number (section 9, decision 1). Once section 6 is approved, the README and the website may quote it.
+
+## Primary child default-isolation amendment — 2026-11-18
+
+Row 9's historical full-inheritance default is superseded in the reviewed candidate by H7 default isolation. Fresh GUI configuration and ordinary CLI/backend construction use the existing environment allowlist. Unrelated session credentials and Java/Python injection variables are absent; automatic proxy and CA inheritance follows explicit online symbol consent. Explicit legacy external inheritance and named passthrough remain compatibility choices, and previously saved `False` is retained. Bundle restriction remains mandatory. These assertions concern the child environment only; they do not establish a native network-denial sandbox, cap native memory/output, or qualify real Linux/Windows Ghidriff. Those independent gates remain open.
