@@ -1,0 +1,301 @@
+branch	tip_sha	pr	last_commit	category	delete_safe	note
+access-test-noprefix	726a371ab34d4589b0456d059865ade6b82fac88	-	2026-10-12	pre-squash-integrated	yes	pre-2026-10-14 history; 94% present, 53 absent lines are older spellings of evolved code
+audit/ai-reports	dd6402b9c00d5aae79f152f4fe5ce0fa8597dc24	-	2026-10-12	content-in-main	yes	94% of its added lines are in main (2 absent)
+audit/core	fae13b2ed3043ddce00bbf387e386e93e7b3ee06	-	2026-10-12	content-in-main	yes	99% of its added lines are in main (1 absent)
+audit/desktop	4d5e48ab7df30f6318a8f3177b37ac98741e2b1f	-	2026-10-12	content-in-main	yes	100% of its added lines are in main (0 absent)
+audit/enrichment	cbc5b079ad2c8cdea4ec161b1afe9ac554b8ed39	-	2026-10-12	pre-squash-integrated	yes	pre-2026-10-14 history; 95% present, 23 absent lines are older spellings of evolved code
+audit/integration	f6505928d8264343caa33f878deb253626752944	11	2026-10-12	content-in-main	yes	98% of its added lines are in main (49 absent)
+audit/kb-correlation-20261107	c760e6ccea0d3e4df04bf76e58139d9a7fc9e9e6	276	2026-11-06	merged-into-main	yes	tip is an ancestor of main
+audit/random-boundaries-20261105	802b5b1bb5f5e64118256e75414b7ca74ad61fcc	200	2026-11-05	merged-into-main	yes	tip is an ancestor of main
+audit/random-invariants-20261105	7716e2b02feaa04e59dce302c1c6cacbe800634b	216	2026-11-05	merged-into-main	yes	tip is an ancestor of main
+audit/random-lifecycle-20261105	f2b7d1786f60df27b0228f247aab9a00bd7c1078	202	2026-11-05	merged-into-main	yes	tip is an ancestor of main
+audit/runtime	9f32a6ecbd056249373b82bc1e814bd938da8c70	-	2026-10-12	content-in-main	yes	96% of its added lines are in main (7 absent)
+audit/trust-boundaries-20261107	d75c0490aa0109e3a983c5e6baea2cea1855f956	275	2026-11-06	merged-into-main	yes	tip is an ancestor of main
+automation/api-funded-persistent-codex-20261103	6fe6c4b1be060eb6e9d5208a68f0d68e1082b59c	170	2026-11-03	held	no	owner decision: scheduled paid-API agent workflow (twice daily); do not merge without explicit approval
+automation/parallel-api-eight-agents-20261103	f8050a1fef23b71fd3a02b216c5035bcac3f4889	171	2026-11-03	held	no	owner decision: scheduled paid-API workflow, up to 8 parallel agents 4x daily; do not merge without explicit approval
+automation/patchtrace-api-agent-pilot-20261103	def36c822a80c77ae94b8e9a77da6f1ee9de1160	167	2026-11-02	held	no	owner decision: manual-only paid-API pilot workflow
+chatgpt/corpus-1	b7a0f0a45d2de1462367d877b7386091b4d275ce	68	2026-10-14	held	no	pre-squash corpus batch; 83% present, remainder superseded by later corpus work (not reviewed line by line)
+chatgpt/deferred-audit-fixes-1	2174837f3172c3ff2a3c676da106f42b55648a70	67	2026-10-14	content-in-main	yes	99% of its added lines are in main (192 absent)
+chatgpt/ghidriff-sequential-lock-fix-20261017	f6b7545bcc7a161440ab7119233c204510571370	96	2026-10-17	content-in-main	yes	70% of its added lines are in main (10 absent)
+chatgpt/help-docs-1	e5bee6fe157c90a40f2d9f458768e2169ce123e5	70	2026-10-14	content-in-main	close-pr-first	open PR #70 uses this branch; close it as superseded first. 98% of its added lines are in main (357 absent)
+chatgpt/java-probe-boundaries-20261016	09bb4519d7d8e9ff8f40abcba7e11cb297d8b61e	84	2026-10-16	content-in-main	yes	100% of its added lines are in main (0 absent)
+chatgpt/java-probe-ci-fix-20261016	0254841e3e635ed717e35abcf83021f001d7df29	81	2026-10-16	superseded	yes	merging it into main changes no file
+chatgpt/java-probe-qa-fix-20261016	89500e12068656fa1958443ef634064effcbc40b	80	2026-10-16	merged-into-main	yes	tip is an ancestor of main
+chatgpt/kb-fixtures-1	781b36fb60e775ce01bf0c114e6a17b609fdb475	69	2026-10-14	content-in-main	yes	99% of its added lines are in main (177 absent)
+chatgpt/lbl30-prereg-guard-20261016	6ae2c079e6cafa2b7bd5396cac443cd34ba7138a	85	2026-10-16	content-in-main	close-pr-first	open PR #85 uses this branch; close it as superseded first. 98% of its added lines are in main (873 absent)
+chatgpt/lbl31-coff-quoted-rip-20261016	6e71bfabbf5ef75449b46981e9e822f7e555a6bf	92	2026-10-16	content-in-main	yes	99% of its added lines are in main (531 absent)
+chatgpt/lbl31-coff-symbol-mask-20261016	9622704d5c751d55700c4b642111131a7135d139	91	2026-10-16	content-in-main	yes	99% of its added lines are in main (546 absent)
+chatgpt/lbl31-output-persistence-20261015	2019a37fa65fc37f4758469143c2daadc07e0098	78	2026-10-16	content-in-main	close-pr-first	open PR #78 uses this branch; close it as superseded first. 99% of its added lines are in main (584 absent)
+chatgpt/lbl31-windows-qa-fixes-20261016-a	ddb2ff077a21c1f0053ba8079564f6f86c3e155f	93	2026-10-16	content-in-main	yes	99% of its added lines are in main (547 absent)
+chatgpt/lbl32-card-controls-20261016	9513bc05229dd7a8460fc229d7420154d61498db	79	2026-10-16	content-in-main	close-pr-first	open PR #79 uses this branch; close it as superseded first. 99% of its added lines are in main (653 absent)
+chatgpt/lbl32-recipe-aa-noise-20261016	eaa30013794a9bd0fedc9ec34bbe374d6db0cfc9	82	2026-10-16	content-in-main	close-pr-first	open PR #82 uses this branch; close it as superseded first. 98% of its added lines are in main (762 absent)
+chatgpt/merge-first-handoff-20261016	19153f10780e783bc931739dd26db97d8eaf2b92	87	2026-10-16	superseded	yes	merging it into main changes no file
+chatgpt/nway-external-note-qa-20261016	8c7288276d3e49b7794b7fd80db4b02d5891cf00	89	2026-10-16	content-in-main	yes	100% of its added lines are in main (130 absent)
+chatgpt/panels-1	cfd7cfff52f4f9b8b1264e8b7d70ef1bbef2d63f	72	2026-10-14	held	no	pre-squash Program E panel specs; 87% present
+chatgpt/patchwatch-reuse-roadmap-20261026	4eabf8dff2c4094681da70c7bd85ecd0da5aed9f	101	2026-10-26	superseded	yes	merging it into main changes no file
+chatgpt/r5-calibration-research-20261030	4d9d9051aea87319847a0b321a14d37b95cb8abd	132	2026-10-30	content-in-main	yes	100% of its added lines are in main (0 absent)
+chatgpt/semantic-analysis-r3-20261030	2698b9a04d33b2d04f49c1ab737636539c6ef6f7	129	2026-10-30	partly-ported	no	EH-EQ fix ported via #144; register-only blocker already on main; R3 prose docs not imported
+chatgpt/ue-r3-retain-decompiled-20261016	ebbd621d4f557905892aee5f7cf8cb7b0e2addc2	86	2026-10-16	content-in-main	close-pr-first	open PR #86 uses this branch; close it as superseded first. 100% of its added lines are in main (201 absent)
+chatgpt/ue-r7-p15-unresolved-20261016-a	292dc3953dd2b8f157752d12251aff68b6e5bda5	83	2026-10-16	content-in-main	yes	100% of its added lines are in main (131 absent)
+chatgpt/ue-r7-strict-worker-report-20261016-a	9c5f9a42b499133b842b14b9619bf8390010e1ff	88	2026-10-16	content-in-main	yes	100% of its added lines are in main (130 absent)
+chatgpt/unified-fixture-collection-fix-20261016	941c617b6854291e2448cad6d7d5710a24a8543d	90	2026-10-16	content-in-main	yes	99% of its added lines are in main (195 absent)
+chatgpt/unified-fixtures-1	161a88345efc6484f4d7809fc6963a0193bd0057	71	2026-10-14	content-in-main	yes	99% of its added lines are in main (174 absent)
+chatgpt/unified-sort-perf-qa-20261016	27b0a48bb8007f504b4a127a099136a6ea5c00b7	94	2026-10-16	content-in-main	yes	99% of its added lines are in main (530 absent)
+claude/access-test-1791773355	726a371ab34d4589b0456d059865ade6b82fac88	-	2026-10-12	pre-squash-integrated	yes	pre-2026-10-14 history; 94% present, 53 absent lines are older spellings of evolved code
+claude/affectionate-galileo-bqd3tw	b29351d41060f8e9330fc9673457d835e188f993	268	2026-11-07	content-in-#297	after-merge	96% of its added lines are in main+#297
+claude/audit-beta	c93ff945b9b523abe0b829247137105788a5ea27	-	2026-10-14	pre-squash-integrated	yes	pre-2026-10-14 history; 94% present, 23 absent lines are older spellings of evolved code
+claude/autonomous-finish-20261104	ad4c49282a65d17d2ef23dfcc03e82be065c9021	289	2026-11-11	partly-ported	no	partly ported: verify_release (A-I-2), fuzz_parsers + nightly job (RB-06), jobs.py batch-launcher hardening; remaining quarry: A-28 1:N abstention, bundle-acceptance fixes, rz-diff stdout flood, UE-R7 arbiter cut, BinDiff row caps, GUI a11y/KB slices, Tier W runner
+claude/awesome-ramanujan-o3pxx3-ci	0bf1f8309e8425ba34199657009d3055215336f1	-	2026-10-30	evidence-or-intermediate	review	52% present vs main+#297; absent mostly: .github/workflows:46;tests/test_release_gate.py:20;tests/test_codex_pkg_packaging.py:5;tests/test_milestone_notes.py:5
+claude/awesome-ramanujan-o3pxx3-hostile	077b04e681ac74b20c0ff8bf367aa720c277f2d2	-	2026-10-30	merged-into-main	yes	tip is an ancestor of main
+claude/awesome-ramanujan-o3pxx3-win1	7ac57759f3b9b332eaafb48c82f366566892f1b1	-	2026-10-30	evidence-or-intermediate	review	93% present vs main+#297; absent mostly: tests/test_windows_build_resources.py:9;tools/windows_version_info.py:9;tools/check_windows_exe.py:8;docs/specs:4
+claude/bugfix-kbc-20261029	653f384d1ca60b7e943bd658698e0989d826b696	109	2026-10-29	content-in-main	yes	98% of its added lines are in main (5 absent)
+claude/bugfix-kev-acq-20261029	fbe58d800da27aff2544c6a478f0a591ff7dad3b	107	2026-10-29	merged-into-main	yes	tip is an ancestor of main
+claude/bugfix-rules-cg-20261029	78d48cf80bf9a8c698e604dc1ce58e8aecedca45	-	2026-11-11	content-in-main	yes	97% of its added lines are in main (35 absent)
+claude/bugfix-rules-cg-rest-20261111	67b2bc456c59a510b854b0cdd9e85ed29d00b17d	285	2026-11-11	superseded	yes	merging it into main changes no file
+claude/bugfix-search-pilot-20261111	d1f7d9aa64b28c8a8ca0a1065bb88e1e2f15b7f0	288	2026-11-11	superseded	yes	merging it into main changes no file
+claude/bugfix-strings-pe-20261029	7ae041e79e419159299c32df98b8e69ab176e859	108	2026-10-29	content-in-main	yes	98% of its added lines are in main (4 absent)
+claude/bundle-license-gate	d3617acf9af7834582b4962a8c149969a7d55a22	65	2026-10-15	content-in-main	yes	99% of its added lines are in main (3 absent)
+claude/clever-clarke-s4nhi6	502402684b0d0aa35d7719bb5a3467de035982bc	63	2026-10-15	content-in-main	yes	100% of its added lines are in main (0 absent)
+claude/compassionate-goldberg-5uuqks	198eb21e8813b28de361422cfe3c002bdb9e3970	125	2026-10-30	evidence-or-intermediate	review	2% present vs main+#297; absent mostly: docs/plans:131
+claude/fix-deadline-test	22ff025a7710d07d7ad74be2c8f7cc0b4db0daf7	99	2026-10-21	superseded	yes	merging it into main changes no file
+claude/funny-feynman-d2m0b5	770c11f40ef70e11dfeb3fbc2f5646cc2b4b97b9	287	2026-11-11	superseded	yes	merging it into main changes no file
+claude/gallant-knuth-8gxuzd	f249edc8ee70ae003a1478eae5418d85ed629d87	259	2026-11-07	superseded	yes	merging it into main changes no file
+claude/instance-b-features	9237c2601c0f25d306b51883875c339bab8ed82b	-	2026-11-11	partly-ported	no	partly ported: saved searches + recent queries (06b26d83); remaining: callgraph ego layout (unwired), capa raw cache in run_job
+claude/instance-c-research	6f767ccef8ebfffd1d2373c5124d8a961dc54b41	283	2026-11-11	content-in-#297	after-merge	85% of its added lines are in main+#297
+claude/instance-d-gui	2fa113889d1ffee6b68496993d3b3b6ebb0ba035	64	2026-10-22	content-in-main	yes	100% of its added lines are in main (137 absent)
+claude/java-version-retry-integration	45fa67ad7e924cb4e2df1cd487c04a2c0ddab381	106	2026-10-29	merged-into-main	yes	tip is an ancestor of main
+claude/jolly-fermi-eghaxy	99f8328ce89d02f200cf9fbc5852d9801761af28	123	2026-10-30	merged-into-main	yes	tip is an ancestor of main
+claude/live-harness-infra-20261111	c59ccada97b649366af808a6d83bb465078c9011	286	2026-11-11	superseded	yes	merging it into main changes no file
+claude/live-proof-20261111	18efb7ef6d196775645f195552a32ad08e277459	-	2026-11-11	content-in-#297	after-merge	99% of its added lines are in main+#297
+claude/modest-hamilton-kz2gta	280bf05856eb60f4ddb0d58210616f65a3735816	126	2026-11-02	held	no	superseded by #181 except KBC-12 NAMED_SUPERSEDED warning (optional, owner decision open)
+claude/patchtrace-cli-dotpath-spec-er6hha	62b9a3de4d1036a6e4b9bd2618372f4042b15f7f	-	2026-10-11	held	no	keep: cited as CLI-DRAFT-05 in docs/audits/spec-gaps-20261014.md; code superseded (exit-code contract conflict)
+claude/patchtrace-features	66e9adc50fb118c04e5e24eacd0c221ca483a130	100	2026-10-21	content-in-main	yes	99% of its added lines are in main (43 absent)
+claude/patchtrace-haiku-agent-motpbx	cbabc09e9df8a8190c769164ef0fae44f9c5cb1b	281	2026-11-11	content-in-main	close-pr-first	open PR #281 uses this branch; close it as superseded first. 0% of its added lines are in main (20 absent)
+claude/patchtrace-multi-worker-consolidate-24ct7v	ca10acb506fbf61db8142a836acfbd1e50a2aeb3	179	2026-11-11	held	no	optional: tools/dev/branch_inventory.py + test (stdlib, offline); plan docs stale
+claude/patchtraces-consolidation-trngn0		-	2026-11-16	this-consolidation	no	branch carrying this consolidation (PR pending)
+claude/quirky-curie-n5pxf5	a5593fa58b2ead6ecf6adfe045db242232cd52a3	103	2026-10-29	content-in-main	yes	99% of its added lines are in main (7 absent)
+claude/serene-heisenberg-2y5kz6	7ed5cebfdaee4dc508b0cc739e86c18c1ff34a97	172	2026-11-11	evidence-or-intermediate	review	2% present vs main+#297; absent mostly: docs/plans:85
+claude/sleepy-fermi-cli-parity-1	cf50b4e8725cb1291ac6150667f2e136f023aff3	292	2026-11-11	contained-in-#297	after-merge	tip is an ancestor of the #297 head carried by this consolidation
+claude/sleepy-fermi-kbc-1	53f5dd2611b38e3f69f8d72c3ca7cf73e9e896ab	291	2026-11-11	contained-in-#297	after-merge	tip is an ancestor of the #297 head carried by this consolidation
+claude/sleepy-fermi-na-rzdiff-ownership	aacb984e9d627be051ca8c8c3b88d5ceca0ff505	293	2026-11-11	contained-in-#297	after-merge	tip is an ancestor of the #297 head carried by this consolidation
+claude/sleepy-fermi-rq-l1-runner	e88d748cf9846e04c0c81449976f530519da83a9	294	2026-11-11	contained-in-#297	after-merge	tip is an ancestor of the #297 head carried by this consolidation
+claude/sleepy-fermi-security-1	1d5a022d2840c5c071ccece503664c8c961d63f1	290	2026-11-11	contained-in-#297	after-merge	tip is an ancestor of the #297 head carried by this consolidation
+claude/sleepy-fermi-test-reliability	37d9e47ca202b33f737b15f7af724649db8c3e15	295	2026-11-11	contained-in-#297	after-merge	tip is an ancestor of the #297 head carried by this consolidation
+claude/sleepy-fermi-y3z4yj	160a60e838742b21f70effedb8e7bb48886d9266	284	2026-11-11	held	no	record only: generated status roll-up (2026-11-11) is stale; port tools/status generator only if wanted
+claude/spec53-diagnose-launcher	a00fcc14ea11751ce5ca05271e2be32d06dd4535	280	2026-11-11	superseded	yes	merging it into main changes no file
+claude/symbol-policy-isolated-settings	5db597257decc219db520c0dab8369b4d4e2ea5e	9	2026-10-12	content-in-main	yes	91% of its added lines are in main (3 absent)
+claude/ws-a-20261104	dabba4aea4ba0fa19e71ede05ce4fb8ab6741942	175	2026-11-04	content-in-main	yes	100% of its added lines are in main (0 absent)
+claude/ws-a2-ci-speed-20261104	bef720fdd50c0ab7c93a10955b3e5ec7d2a5f992	177	2026-11-04	held	no	skip for now: Windows QA xdist would risk Qt/temp-path flakes
+claude/ws-bc-20261104	e1193c8896e009930dae4edec974d9795876f0e0	174	2026-11-04	held	no	hold: A-28 Ghidriff 1:N abstention (real RB-01 bug, ingestion-contract change; needs a renumbered spec amendment, A-28 id is taken); carried also by autonomous-finish
+claude/ws-i-20261104	b03a77b8a2fe9e4fa65fbe43889e06f4e68180e9	173	2026-11-04	content-in-main	yes	94% of its added lines are in main (11 absent)
+claude/ws-p-20261104	597a8b106491cd587cedf1273ee5ef6d56d71508	176	2026-11-04	partly-ported	no	partly ported: #118 P1a KB scope retention (5984511c); remaining: GUI table header tooltips/keyboard sort (shortcut collision), KBC audit tests
+codex/agent-skills-spec56-20261014	4467d1f3c6e113a7da808a67e8dee9d4aa5083d8	61	2026-10-14	held	no	candidate: patchtrace-* skills + SPEC-56 + Caveman (Apache-2.0 with NOTICE); spec index edits conflict; separate slice
+codex/analyst-accessibility-20261109	b90a2cd49fa4ba71050a378abc753fe8c90733fd	-	2026-11-09	held	no	docs evidence; desktop keyboard recovery merged as #300
+codex/audit-1	c2070cf8b4e7b0ade76cb000a5805009754eec55	-	2026-10-14	content-in-main	yes	99% of its added lines are in main (1300 absent)
+codex/audit-2	08b12f1b279d917736cfc17d4b8e447c8f552616	56	2026-10-14	content-in-main	yes	97% of its added lines are in main (12 absent)
+codex/autonomous-checkpoint-20261102-0945	d038ddea43182b8709afd447140dc74fded487c5	-	2026-11-02	contained-in-kept-branch	yes	tip is an ancestor of kept branch repair/rzdiff-native-red-control-20261103 (nothing is lost while it is kept); 49% present vs main+#297; absent mostly: docs/qa:22964;src/patchtrace:1564;docs/research:1108;tests/fixtures:462
+codex/autonomous-checkpoint-20261102-1020	c13d3257c88140c23fb585a8a59a4dce81e81928	-	2026-11-02	contained-in-kept-branch	yes	tip is an ancestor of kept branch repair/rzdiff-native-red-control-20261103 (nothing is lost while it is kept); 48% present vs main+#297; absent mostly: docs/qa:23917;src/patchtrace:1777;docs/research:1108;tests/fixtures:462
+codex/autonomous-reconcile-20261101	0130bf81e2fe3154f30af7b68a0e6ab197946040	152	2026-11-02	contained-in-kept-branch	yes	tip is an ancestor of kept branch repair/rzdiff-native-red-control-20261103 (nothing is lost while it is kept); 48% present vs main+#297; absent mostly: docs/qa:23948;src/patchtrace:1777;docs/research:1108;tests/fixtures:462
+codex/codespaces-cs1-20261109	a5f049cd777d3d885ec8e1572f94ea8935c9cbb6	279	2026-11-09	held	no	candidate: open non-draft PR #279 (.devcontainer); review and merge on its own
+codex/consolidate-backup-stability-20261102	f1a55c4cf21ddb0dea243bd417b74f86caaed142	162	2026-11-02	merged-into-main	yes	tip is an ancestor of main
+codex/consolidate-prereg-prefix-20261102	9b9452b4677ee3809a6e0f43d49567a8d15602e6	161	2026-11-02	contained-in-kept-branch	yes	tip is an ancestor of kept branch repair/rzdiff-native-red-control-20261103 (nothing is lost while it is kept); 58% present vs main+#297; absent mostly: docs/qa:378
+codex/consolidate-replay-schema-20261102	ca411e77f43a9fd95ca5e0bcc7d2b58071ccae37	160	2026-11-02	contained-in-kept-branch	yes	tip is an ancestor of kept branch repair/rzdiff-native-red-control-20261103 (nothing is lost while it is kept); 74% present vs main+#297; absent mostly: docs/qa:921;docs/qa.md:3
+codex/consolidated-reviewed-20261102	6e82fd70f315b99c6798a42c9061a1424a02933e	163	2026-11-02	contained-in-kept-branch	yes	tip is an ancestor of kept branch repair/rzdiff-native-red-control-20261103 (nothing is lost while it is kept); 43% present vs main+#297; absent mostly: docs/qa:28441;src/patchtrace:1772;docs/research:1108;tests/fixtures:462
+codex/consolidation-audit-20261104	fbd9595351bf50217402b7a62b3e057de79f45f0	187	2026-11-04	held	no	evidence-only audit snapshot (open PR #187), superseded by this record
+codex/consolidation-evidence-20261102	44c320e37b84a38259f13fa8f0f444b542b96f2c	-	2026-11-02	contained-in-kept-branch	yes	tip is an ancestor of kept branch repair/rzdiff-native-red-control-20261103 (nothing is lost while it is kept); 40% present vs main+#297; absent mostly: docs/qa:33072;src/patchtrace:1772;docs/research:1185;tests/fixtures:462
+codex/consolidation-integrity-20261103	b58bb53debcb3323e5d8d634e09397cb7e02965f	164	2026-11-02	contained-in-kept-branch	close-pr-first	open PR #164 uses this branch; close it as superseded first. tip is an ancestor of kept branch repair/rzdiff-native-red-control-20261103 (nothing is lost while it is kept); 41% present vs main+#297; absent mostly: docs/qa:33488;src/patchtrace:1775;docs/research:1185;tests/fixtures:462
+codex/coordinator-rule-repairs-20261031	798e11ef345ed7a7a65508a466eaf77ee85ef77c	146	2026-10-31	held	no	superseded by #181 except KBC-12 warning (same as modest-hamilton)
+codex/corpus-integrity-20261116	6a5b6f2609604fe34a8da9cf347c713b21578834	299	2026-11-16	contained-in-#297	after-merge	tip is an ancestor of the #297 head carried by this consolidation
+codex/corpus-output-main-20261101	874e9a267fdc589a796ce573f2958e1aa84ea0f6	157	2026-11-02	contained-in-kept-branch	yes	tip is an ancestor of kept branch codex/consolidation-integrity-20261103 (nothing is lost while it is kept); 74% present vs main+#297; absent mostly: docs/qa:921;docs/qa.md:3
+codex/deep-review-consolidation-20261030	95e09548a82202ae4cfd9380522f36513da87a66	124	2026-10-30	merged-into-main	yes	tip is an ancestor of main
+codex/essential-combined-verification-20261030	a7f13e13ffb512f8e9621753a0ae162d78942f3b	143	2026-10-30	contained-in-kept-branch	close-pr-first	open PR #143 uses this branch; close it as superseded first. tip is an ancestor of kept branch codex/autonomous-checkpoint-20261102-0945 (nothing is lost while it is kept); 94% present vs main+#297; absent mostly: docs/qa:318;docs/branch-pr-inventory-2026-10-30.md:168;docs/integration:124;docs/wiki:95
+codex/essential-integration-20261029	5ed624e91468c410f2cf738ed4e36c2be3e0201d	110	2026-10-28	content-in-main	yes	100% of its added lines are in main (122 absent)
+codex/essential-project-safety-20261031	c3868d8335a8f32f676905032dc1a6d0e9f22fd6	148	2026-10-31	held	no	superseded: offline KB investigation re-implemented on main; acquisition pair-binding fields optional
+codex/fix-pr110-ci-gates-20261029	c0d1c38aee74461969ff0a8b4d61179c3dbb9b0b	114	2026-10-29	content-in-main	yes	100% of its added lines are in main (148 absent)
+codex/gt01-extraction-recovery-20261030	d76d23372acef4049115e9ae176acbeb538a82e5	141	2026-10-30	contained-in-kept-branch	close-pr-first	open PR #141 uses this branch; close it as superseded first. tip is an ancestor of kept branch codex/autonomous-checkpoint-20261102-0945 (nothing is lost while it is kept); 40% present vs main+#297; absent mostly: docs/branch-pr-inventory-2026-10-30.md:168;docs/qa:154;docs/integration:124;docs/wiki:95
+codex/gui-bounded-ambiguous-candidates-20261029	3287cb3d36052bd6e44420f631ed033baf939d64	111	2026-10-29	superseded	yes	merging it into main changes no file
+codex/identity-main-repair-20261101	4eebea4a5389af16bffe32a2bf9285c406d95fb1	156	2026-11-01	merged-into-main	yes	tip is an ancestor of main
+codex/java-version-retry-20261015	8ee61c623fa37c5a219f912cf7870bfeddcb1f70	76	2026-10-15	merged-into-main	yes	tip is an ancestor of main
+codex/kb-explicit-filename-selection-20261104	761b6b885f00143597c74f0457b1165a144fbdd4	190	2026-11-04	content-in-main	yes	100% of its added lines are in main (0 absent)
+codex/kb-fixture-contract-repairs-20261030	a4d1e6a38c34d1952584aa65d7f5f908c45547b3	142	2026-10-30	content-in-main	yes	97% of its added lines are in main (434 absent)
+codex/manual-correction-completeness-20261104	65f979a163a88ec5b32b3eb4173fa4a50ee9c920	188	2026-11-04	merged-into-main	yes	tip is an ancestor of main
+codex/msrc-mixed-format-revision-20261102	e1b79e048d3963d747bc9f07448b039a250180ed	158	2026-11-02	content-in-main	yes	24% of its added lines are in main (13 absent)
+codex/msrc-reconcile-integration-20261102	56374f867594dd923383c91ea71970cb7d24d173	159	2026-11-02	contained-in-kept-branch	yes	tip is an ancestor of kept branch codex/consolidated-reviewed-20261102 (nothing is lost while it is kept); 46% present vs main+#297; absent mostly: docs/qa:23946;src/patchtrace:1775;docs/research:1108;tests/fixtures:462
+codex/parser-test-cpu-budget-20261104	cb204f7625d4de496642926bbda37d07e2888131	189	2026-11-04	content-in-main	yes	95% of its added lines are in main (3 absent)
+codex/patchtrace-beta	c7937246a5bf3f1a09c7d121c0d438088b02040c	1	2026-10-11	content-in-main	yes	100% of its added lines are in main (0 absent)
+codex/post-consolidation-20261116	2d330075fbe00209fbe096ee29b60dcfd0e347b4	298	2026-11-16	contained-in-#297	after-merge	tip is an ancestor of the #297 head carried by this consolidation
+codex/pr110-ci-repairs-20261029	bb42828d05b775c59b73a7bbd02c0113b9b9bb3b	115	2026-10-29	content-in-main	yes	100% of its added lines are in main (151 absent)
+codex/pr110-kb-arch-scope-20261029	40e02daf93c8e13a94b74f5b80d86c1680fea7ad	122	2026-10-29	content-in-main	yes	100% of its added lines are in main (142 absent)
+codex/pr110-persistence-feedback-20261029	3e9cedb012b4c82da3b0e5f9bc977ecd7313b64c	119	2026-10-29	content-in-main	yes	100% of its added lines are in main (142 absent)
+codex/pr110-qa-wbjson-diaphora-help-20261029	aba4c2001a6b093f7f8cdc8b0ac20ab074ed57b8	112	2026-10-29	content-in-main	yes	100% of its added lines are in main (139 absent)
+codex/pr111-bounded-nav-into-integration-20261029	025300f8e169556f84b6a8cfed20413e0a26b019	117	2026-10-29	content-in-main	yes	100% of its added lines are in main (142 absent)
+codex/project-safe-export-20261101	e90254424c26ecd00e4c10c3c638e76d11b35841	149	2026-11-01	merged-into-main	yes	tip is an ancestor of main
+codex/r1-ground-truth-research-20261030	10856edf05afae8166291f09fb3ead92f297360d	128	2026-11-02	held	no	research-only (R1 ground truth docs, calibration tooling)
+codex/r1-receipt-publication-20261031	8c9eafc79b007a963453d8edf6cb40c804c9bc3d	145	2026-10-31	held	no	research-only, contained in receipt-parent-race chain
+codex/r2-unified-matching-research-20261030	b3ceb8b30d7a83da5e22c231c3b8c28179246816	131	2026-10-30	held	no	research-only (R2 probes and results JSON)
+codex/real-msrc-adapter-20261101	d99cd7712b76e9e42661ef0b268417d7ca322d3e	153	2026-11-02	merged-into-main	yes	tip is an ancestor of main
+codex/receipt-parent-race-20261101	2fdac2ea9042985ac3c98545d38ac3461d00f4cc	150	2026-11-01	held	no	research-only (R1 receipts); tools/calibration residue not reviewed in depth
+codex/release-integration-20261116	95db052a11cce162d2d633cae805f28119f783a1	297	2026-11-16	contained-in-#297	after-merge	tip is an ancestor of the #297 head carried by this consolidation
+codex/repair-openai-agent-20261104	f019606665a740dc252e745913924debf73adc48	186	2026-11-04	held	no	owner decision: manual-only OpenAI agent workflow
+codex/rzdiff-164-investigation	20ef68eaab59a2941bd2fb0db918eee36107c75f	-	2026-11-02	evidence-or-intermediate	review	40% present vs main+#297; absent mostly: docs/qa:33488;src/patchtrace:1775;docs/research:1185;docs/handoff:519
+codex/semantic-proof-reconciliation-20261031	745e93426a16e0a91a961b6e0bbcb71be69f2a7e	144	2026-10-31	partly-ported	no	partly ported: R8 typed literal canon/2 + R3-PC01 EH-EQ (17210eb7..c592b680); remaining: R2 D-32 corroboration witness + matching/2 (behaviour change, needs spec), ladder leftover guard
+codex/storage-integrity-20261101	9911af4d9130b81b1875f82179e03e0a89e89794	151	2026-11-02	merged-into-main	yes	tip is an ancestor of main
+codex/t9-qa-20261020	ecc4f2054c00dc2b324bb71134595c48dc4b6a18	97	2026-10-21	content-in-main	yes	100% of its added lines are in main (0 absent)
+codex/tier-w-fetch-20261015	5b7b2591e616e8c28c05c7070661b33e2ca0435c	-	2026-10-15	held	no	research tooling (Tier W fetch); not reviewed
+codex/training-prereg-identity-20261101	dfe8f421db390ccd3158393a60205fa5dd25df0b	154	2026-11-02	contained-in-kept-branch	yes	tip is an ancestor of kept branch codex/consolidation-integrity-20261103 (nothing is lost while it is kept); 58% present vs main+#297; absent mostly: docs/qa:378
+codex/windows-branding-reconcile-20261030	8f4c4a2e0021d424d403317c6780b6db026ad76b	147	2026-10-31	content-in-main	yes	99% of its added lines are in main (22 absent)
+codex/windows-setup-installer-20261017	9c5fe67bd10a5d1342440bb8ea6a524cca3ce1f2	95	2026-10-21	content-in-main	yes	99% of its added lines are in main (6 absent)
+consolidate/docs-20261104	ed70e6ddac449a42f843f1c60aa878416ab31727	183	2026-11-04	held	no	docs-only: R2-R6/R8 research, panel/dockable specs, wiki; not imported (stale claims need review first)
+consolidate/kb-fixtures-20261104	820d70744dff58ef484299791d073b2e712f0524	182	2026-11-04	content-in-main	yes	100% of its added lines are in main (0 absent)
+consolidate/research-r7-20261104	552c29453c5de93e22c65e47ad4187ded91e993a	282	2026-11-11	held	no	R7 prototypes recovered by #297 (909cd5f2)
+consolidate/rules-callgraph-20261104	7b3fcbaca88256971eafd55b8fb8fe9f44634a9e	181	2026-11-04	content-in-main	yes	98% of its added lines are in main (4 absent)
+consolidate/test-stability-20261104	64e8374d5d3ae97a719a2bb3ac800497c50892af	184	2026-11-04	content-in-main	yes	94% of its added lines are in main (3 absent)
+consolidation/desktop-keyboard-accessibility-20261116	45997cfc997b06996a982705e6cd60dc73a8fae1	300	2026-11-16	merged-into-main	yes	tip is an ancestor of main
+docs/claude-autonomous-alpha-handoff-20261013	1038d3f13f214d55c28ceeb51c1c13c9b43b1d3f	20	2026-10-13	content-in-main	yes	100% of its added lines are in main (0 absent)
+docs/codespaces-plan-20261107	c3536288ee3745826be814afb4d8fd07a53c526b	273	2026-11-06	merged-into-main	yes	tip is an ancestor of main
+docs/csaf-patch-intelligence-specs	24244831ec443fa19555586835e71da6dd4aac98	17	2026-10-12	content-in-main	yes	98% of its added lines are in main (2 absent)
+docs/diaphora-optional-engine-20261014	b75ac57d85c75e8d61c61af8d104119bb1c65587	37	2026-10-14	content-in-main	yes	99% of its added lines are in main (2 absent)
+docs/dockable-workspace-spec-20261030	6a1e3ce348a7e5f67bbabfe388315812cc830b03	127	2026-10-30	held	no	docs-only spec draft, not imported
+docs/findings-20261107	9d72402cc3fd884203c7a759f714fd0a4bd2c51f	262	2026-11-06	merged-into-main	yes	tip is an ancestor of main
+docs/handoff-20261107	39db34c5beaaf16cc60fec30f084acfde4035316	270	2026-11-06	merged-into-main	yes	tip is an ancestor of main
+docs/kbc-live-probe-result-20261107	c21d0ab8471ac1a541eb6d2ff929cce1fb34a2fd	258	2026-11-06	merged-into-main	yes	tip is an ancestor of main
+docs/nway-matches	f748cc48ea07b9af189d967979aa078610550eea	-	2026-10-12	content-in-main	yes	100% of its added lines are in main (0 absent)
+docs/post-consolidation-gap-analysis-20261030	61b5c2bade71a8cec58ca9e1514141f4508b7c79	137	2026-10-30	held	no	docs-only, stale
+docs/r8-reconciliation-20261106	5e1e19828b3801a2f0f7d50b4250ff9a273264ef	249	2026-11-06	merged-into-main	yes	tip is an ancestor of main
+docs/ranking-reuse-20261105	bc52940fb32d5b5f6d1a58a860062ec60d423d1e	232	2026-11-05	merged-into-main	yes	tip is an ancestor of main
+docs/readme-and-wiki	ad8fbe9f2f041653760c02e9d18a91a66dd11c39	98	2026-10-21	held	no	docs-only wiki pages (open PR #98)
+docs/refresh-accuracy-handoff-20261109	2e408e3c24c2efad6144bf8953d639edcf9fc489	278	2026-11-09	merged-into-main	yes	tip is an ancestor of main
+docs/research-reconciliation-20261105	febc9de57e61162da12fb1cc9280aef9b3ec2a99	231	2026-11-05	merged-into-main	yes	tip is an ancestor of main
+docs/research-tools-execution-plan-20261106	40da817650498eb7b87502016d2be90062467c50	-	2026-11-06	evidence-or-intermediate	review	1% present vs main+#297; absent mostly: docs/plans:108
+docs/semantic-ghidra-roadmap	8b9ebc01bb221a60ee65838dfdafd59d66e15f5d	14	2026-10-12	content-in-main	yes	100% of its added lines are in main (0 absent)
+docs/sonar235-package-path-20261105	c30f11fb6f94ab3325e3bf6252326004f792294d	241	2026-11-05	merged-into-main	yes	tip is an ancestor of main
+docs/spec-31-kb-cve-correlation-20261014	9088bf0e2e452c5d792f2a9e6e879f417e9fc120	40	2026-10-14	content-in-main	yes	100% of its added lines are in main (1 absent)
+docs/spec-32-kb-patch-search-20261014	d0ceb56f30f81f881f1f25fb4d1dba772ff476b9	41	2026-10-14	content-in-main	yes	100% of its added lines are in main (2 absent)
+docs/specs-plan	a5194581396b67395a0ae8453d73eec5ab024e54	-	2026-10-12	content-in-main	yes	97% of its added lines are in main (18 absent)
+docs/workbench-search-graph-floss-20261014	af15701d13b516662a36f20a00ece01b8462160f	43	2026-10-14	content-in-main	yes	99% of its added lines are in main (3 absent)
+feat/acquisition	293362a2d8cee7d5cc373439436945888b3b805a	-	2026-10-12	content-in-main	yes	98% of its added lines are in main (58 absent)
+feat/acquisition-gui	7ae34d8fa26a6b6c8b7acf40f5c16d99643151ce	-	2026-10-12	content-in-main	yes	99% of its added lines are in main (3 absent)
+feat/alpha-ui-integration	c7ed1d90a890afa9eb67c238f9f52f458db96432	25	2026-10-13	pre-squash-integrated	yes	pre-2026-10-14 history; 87% present, 96 absent lines are older spellings of evolved code
+feat/artifact-bytes-seam	91b35d09afd29e9c78169a3b095d9ea3be6c31b1	21	2026-10-13	content-in-main	yes	95% of its added lines are in main (11 absent)
+feat/byte-representations	303bc452d0bb6cd46ee67f731f64ec951e1ee215	23	2026-10-13	content-in-main	yes	100% of its added lines are in main (2 absent)
+feat/diffscore-workflow-20261107	a3aa53744006845e782c154ca6b51eb4ffcb6e1e	272	2026-11-06	merged-into-main	yes	tip is an ancestor of main
+feat/enrichment-cache	0368fd9b5453ab50166c08cf8dfc493e57b0ee52	-	2026-10-12	content-in-main	yes	99% of its added lines are in main (13 absent)
+feat/enrichment-contracts	010d809d2581d3a8ed8208e83325ba29f91b2419	10	2026-10-12	content-in-main	yes	97% of its added lines are in main (294 absent)
+feat/enrichment-cve	49bf245583d040a8b29d80daee8666d8c7f7b8d4	-	2026-10-12	pre-squash-integrated	yes	pre-2026-10-14 history; 96% present, 46 absent lines are older spellings of evolved code
+feat/enrichment-signals	e96441a1a90478d5b06e7b0d9b4320695a2018ed	-	2026-10-12	content-in-main	yes	98% of its added lines are in main (21 absent)
+feat/enrichment-wil	9a6999a0e644ef03670d10fc0b08524345c6c709	-	2026-10-12	content-in-main	yes	97% of its added lines are in main (13 absent)
+feat/local-runtime-discovery	b9198705ab4c144746214c1e42c15b6098063009	5	2026-10-11	pre-squash-integrated	yes	pre-2026-10-14 history; 88% present, 26 absent lines are older spellings of evolved code
+feat/nway	44d431788bcc55429a033049ed997fa33c92289b	-	2026-10-12	content-in-main	yes	98% of its added lines are in main (25 absent)
+feat/pe-overview	4b78a6d3c0015a5fd46d557cde6cc8f0a583795b	22	2026-10-13	content-in-main	yes	98% of its added lines are in main (33 absent)
+feat/phase2-finish	86afe3f6563b71e1fff5ed56a907f29c6703b96e	12	2026-10-12	content-in-main	yes	100% of its added lines are in main (0 absent)
+feat/phase3-batch	3581b520207b464b35a7baa39d188fb4f2a08cf1	13	2026-10-12	pre-squash-integrated	yes	pre-2026-10-14 history; 94% present, 176 absent lines are older spellings of evolved code
+feat/profiles	d21b5917a66041cb1ffa4f46931e551e55f3165a	-	2026-10-12	content-in-main	yes	99% of its added lines are in main (7 absent)
+feat/raw-cache	28bc476713fc9b77b876cfc8f5454760ea23d4e0	-	2026-10-12	content-in-main	yes	97% of its added lines are in main (8 absent)
+feat/rq-engine-adapters-20261107	b561ed60db9e9bed77b37faa76d875c93e7f3364	265	2026-11-06	merged-into-main	yes	tip is an ancestor of main
+feat/rq-parity-20261107	f8806bb7210793efdc8d0e2f8848c3452afd5d69	263	2026-11-06	merged-into-main	yes	tip is an ancestor of main
+feat/secondary	b932ae1a1c8916aeac7be2d49ce27c24717f2846	-	2026-10-12	pre-squash-integrated	yes	pre-2026-10-14 history; 88% present, 129 absent lines are older spellings of evolved code
+feat/tooltip-registry	0a3843ea2abe37d42ff0291d621fa9a7c9744bbc	24	2026-10-13	content-in-main	yes	98% of its added lines are in main (22 absent)
+feat/verified-offline-runtime-bundle	1724503d01be7aee13cb43a3a7a28b8a9ff54ece	7	2026-10-12	pre-squash-integrated	yes	pre-2026-10-14 history; 95% present, 26 absent lines are older spellings of evolved code
+feat/winpairs-workflow-20261107	2e43d3f4d7ee6327f1f95e20c5f5b505bcd8b624	271	2026-11-06	merged-into-main	yes	tip is an ancestor of main
+feature/alpha-file-overview-20261013	476016590be5cd1315613759af18ff61c7c27851	19	2026-10-13	pre-squash-integrated	yes	pre-2026-10-14 alpha slice; 73% present vs main+#297; under 40 absent lines, older spellings of code evolved on main
+feature/current-project-investigation-20261105	ef70e0bdf02a202cf7ce4780da37bba8ed63fafd	214	2026-11-05	merged-into-main	yes	tip is an ancestor of main
+feature/evidence-reconciliation-confidence	ddda35f40b94c145b2a9a9b68509b4ddb76a090a	16	2026-10-12	content-in-main	yes	98% of its added lines are in main (4 absent)
+feature/gui-inspection-preview	8b94227a81b71841c65783c775f704a538d35710	15	2026-10-13	pre-squash-integrated	yes	pre-2026-10-14 alpha slice; 69% present vs main+#297; under 40 absent lines, older spellings of code evolved on main
+fix/backend-exit-diagnostics	bc00a6912dde57482a301bf64ef6fbc3f324cb92	6	2026-10-11	pre-squash-integrated	yes	pre-2026-10-14 history; 90% present, 26 absent lines are older spellings of evolved code
+fix/codetext-budget-wave3	c7fb422c750f1d0e5591277b91492874afd79af7	-	2026-11-05	held	no	optional perf: codetext highlighter skip (c7fb422c); rest is evidence
+fix/codex-cloud-secret-preflight-20261103	bd3dbcae9254853f534b735864c0709f6766ced3	169	2026-11-03	merged-into-main	yes	tip is an ancestor of main
+fix/explicit-offline-symbol-policy	2e6618762ab6e15e5be0be60aec3fb8f56af44f3	4	2026-10-11	content-in-main	yes	85% of its added lines are in main (11 absent)
+fix/ghidra-dot-paths	5c3b1df94c0d2a908bb0459caceb336912527555	2	2026-10-11	content-in-main	yes	95% of its added lines are in main (3 absent)
+fix/ghidriff-timeout-progress-20261106	7e5d981935e2f8190790de90c2cc261834f9b519	251	2026-11-06	merged-into-main	yes	tip is an ancestor of main
+fix/isolate-ghidra-scratch	7ea7272311271a540a188e5d0de6d3aaa8864611	3	2026-10-11	content-in-main	yes	90% of its added lines are in main (10 absent)
+fix/pe-inspection-row-tooltips-20261013	0182a8035d64071fc88b5f299edc3ef3760946b5	26	2026-10-13	pre-squash-integrated	yes	pre-2026-10-14 alpha slice; 83% present vs main+#297; under 40 absent lines, older spellings of code evolved on main
+fix/pr110-ci-regressions-20261029	979ddfad860c95ceabeb5b670b771900b5617098	113	2026-10-29	merged-into-main	yes	tip is an ancestor of main
+fix/pr205-partial-pe-inspect-20261106	cce47934dfc4184bc33df63b712e188e9bca25ac	253	2026-11-06	merged-into-main	yes	tip is an ancestor of main
+fix/pr205-review-contracts-20261106	4f3e62c4f130227b6ff1201f798b3f449ab89c60	252	2026-11-06	merged-into-main	yes	tip is an ancestor of main
+fix/pr205-ui-seam-help-extraction-20261106	a53c7d1bd360f2dbc3c75ead8da8e978cbb4c314	254	2026-11-06	merged-into-main	yes	tip is an ancestor of main
+fix/remediation-53088704-982db3	15370a0bf690ea65f49d1f6cc67c40f73fd3d77c	155	2026-11-01	evidence-or-intermediate	review	67% present vs main+#297; absent mostly: docs/qa:173;tools/calibration:8;tests/test_train_prereg_selection.py:5
+fix/remediation-a58defa8-139db0	6d9c06c2d82cb778712cf2e3c963b63c6363f7c9	261	2026-11-07	content-in-main	yes	13% of its added lines are in main (13 absent)
+fix/remediation-b1ab7332-a8fac4	3feec96f6546e755061a458ce0dc6e8ee0fab640	267	2026-11-07	content-in-main	yes	17% of its added lines are in main (10 absent)
+fix/windows-posix-mingw-workflow-20261115	3b3ad32f60df9fd6994e25a8920cfb335cc3d602	296	2026-11-15	superseded	yes	merging it into main changes no file
+haiku/cli-help-suppress-20261027	37940b706f117f9786109433aed7751eca4e52a6	-	2026-10-27	content-in-main	yes	75% of its added lines are in main (6 absent)
+haiku/phase2-handoff-import-20261027	4522030ff3ff76d720a5efc33953aaa5e5837398	-	2026-10-27	held	no	docs/schemas import; not reviewed
+haiku/skills-manifest-import-20261027	039b0ef8a5d0cb5136aca72be5c65d11867c19af	-	2026-10-27	held	no	owner decision: imported third-party skills; 2 manifest entries are CC-BY-SA-4.0 (licence blocker for bundling)
+integrate/autonomous-20261105	3d6c37e665bd3039aa374dbb58e1dde4e8dd7d0e	194	2026-11-05	merged-into-main	yes	tip is an ancestor of main
+integrate/calibration-prereg-20261105	57f95e09d8a924b8469490cfa08387b849065179	215	2026-11-05	merged-into-main	yes	tip is an ancestor of main
+integrate/calibration-replay-20261105	f8ed23564166f1952512ae004543c91e85c4a6ee	217	2026-11-05	merged-into-main	yes	tip is an ancestor of main
+integrate/continuation-20261106	37b771300053e8872febead1fc384fea9126ae90	247	2026-11-06	merged-into-main	yes	tip is an ancestor of main
+integrate/gui-inspection-20261105	3fa22c611697d7593755c329fd762bfb47b39b84	196	2026-11-05	merged-into-main	yes	tip is an ancestor of main
+integrate/independent-wave4-20261105	6e9f4524776abb95a7da7f4f49de01483a2c5330	235	2026-11-06	merged-into-main	yes	tip is an ancestor of main
+integrate/kb-20261105	75c01a29ea791a2a5859d18d54f8e6db06f255b8	193	2026-11-05	merged-into-main	yes	tip is an ancestor of main
+integrate/kb-investigation-20261105	bdbfd7dc45083dd7439f4591f17724b6de651412	201	2026-11-05	merged-into-main	yes	tip is an ancestor of main
+integrate/merge-readiness-20261106	f393bb68ddc11eabb95a6598aa6f86650bd9aa37	244	2026-11-05	merged-into-main	yes	tip is an ancestor of main
+integrate/native-controls-20261105	a0f417466da80ddc18ee05cc31b8d3492e7cb98b	195	2026-11-05	merged-into-main	yes	tip is an ancestor of main
+integrate/project-adoption-20261105	1c97defacd54a593a8ecdcda2b9c11c85b073791	198	2026-11-05	merged-into-main	yes	tip is an ancestor of main
+integrate/recovery-forward-wave3-20261106	a1ed8c9167529fbf855d7dc088132379ee385cf4	248	2026-11-06	merged-into-main	yes	tip is an ancestor of main
+integrate/rules-20261105	c849d0087b7dbb647d887a2501259a87c79579f4	191	2026-11-05	merged-into-main	yes	tip is an ancestor of main
+integrate/secondary-prep-20261105	b6b5bf6c65611f50b9fa6524ce980a0ff07511ee	197	2026-11-05	merged-into-main	yes	tip is an ancestor of main
+integrate/swarm-followups-20261105	c6691ab1ca143930f746f5c5087d3f492fd544d1	213	2026-11-05	merged-into-main	yes	tip is an ancestor of main
+integrate/swarm-qualified-20261105	4e9f1d5d71cf1f193fb7ed500daf852e5156304f	205	2026-11-06	merged-into-main	yes	tip is an ancestor of main
+integrate/swarm-wave3-20261105	a0e2c80eda74b70be370bf5f6a93424365230b89	218	2026-11-06	merged-into-main	yes	tip is an ancestor of main
+integration/controlled-consolidation-20261030	f18687fd035b67961c1072af84f8c2b3442979e0	-	2026-10-30	contained-in-kept-branch	yes	tip is an ancestor of kept branch codex/autonomous-checkpoint-20261102-0945 (nothing is lost while it is kept); 3% present vs main+#297; absent mostly: docs/branch-pr-inventory-2026-10-30.md:168;docs/integration:124;docs/wiki:95;tasks/todo.md:14
+integration/kb-fixtures-pr69-20261030	2fcd627e52a6d784d5c2e5b4ea8105e90b8589b3	136	2026-10-30	content-in-main	yes	97% of its added lines are in main (424 absent)
+qualify/native-cli-seeding-20261105	8fae317bcac6cb125956965cd3ebbb39e9f9bbd2	224	2026-11-05	held	no	evidence-only (docs/qa); open stacked PR #224
+qualify/native-controls-20261105	dc3bf773fead3f10d3e825d56ccf035741f29c28	208	2026-11-05	merged-into-main	yes	tip is an ancestor of main
+qualify/native-provision-20261105	c50ab287de13982b132716d67f9e5fabe22799cb	222	2026-11-05	held	no	evidence-only (docs/qa); open stacked PR #222
+qualify/offline-tooling-20261105	c3370578086cbfda7b971a031d173b82e860a1f5	209	2026-11-05	merged-into-main	yes	tip is an ancestor of main
+repair/gt01-consolidated-native-evidence-20261030	c04ad725551fe8daa139b37aa2cdf46d6d161b65	139	2026-10-30	contained-in-kept-branch	close-pr-first	open PR #139 uses this branch; close it as superseded first. tip is an ancestor of kept branch codex/autonomous-checkpoint-20261102-0945 (nothing is lost while it is kept); 35% present vs main+#297; absent mostly: docs/branch-pr-inventory-2026-10-30.md:168;docs/integration:124;docs/wiki:95;docs/plans:33
+repair/gt01-native-identical-controls-20261030	fb91cff6d91c77a2c539c896b670d81180dcc637	140	2026-10-30	contained-in-kept-branch	close-pr-first	open PR #140 uses this branch; close it as superseded first. tip is an ancestor of kept branch codex/autonomous-checkpoint-20261102-0945 (nothing is lost while it is kept); 40% present vs main+#297; absent mostly: docs/branch-pr-inventory-2026-10-30.md:168;docs/integration:124;docs/wiki:95;docs/plans:51
+repair/gt01-unified-live-gates-20261030	ca1a36c0caea44a9225e487f3ba7b0828c90a567	138	2026-10-30	evidence-or-intermediate	review	7% present vs main+#297; absent mostly: docs/branch-pr-inventory-2026-10-30.md:168;docs/integration:124;docs/wiki:95;tests/test_unified_live_pairs.py:27
+repair/kb-ui-import-boundary-20261105	226ac7e514fd90ddb71ec7e3d295bb4aa5bc06b6	-	2026-11-05	merged-into-main	yes	tip is an ancestor of main
+repair/native-input-open-20261105	0526d546a247f47411b088ac083d6f1fe1e10781	206	2026-11-05	merged-into-main	yes	tip is an ancestor of main
+repair/native-normalizer-wave3-20261105	cf9cefff88b71dbae6af9131b8f59a1fbb82c894	220	2026-11-05	merged-into-main	yes	tip is an ancestor of main
+repair/native-source-identity-20261105	c3be348b544b5022b3f92858923d6d890538aa53	212	2026-11-05	merged-into-main	yes	tip is an ancestor of main
+repair/normalizer-address-identity-20261105	631b5e919699e722e0ce3e3dee11b29c9c40ce10	223	2026-11-05	merged-into-main	yes	tip is an ancestor of main
+repair/parity-parser-budget-20261105	c923039bd311449d8c97bee8ed09e97b339b6653	211	2026-11-05	merged-into-main	yes	tip is an ancestor of main
+repair/pr205-main-reconciliation-20261106	96e8e085cb95f2b75bd75b63c8ede436e2152499	250	2026-11-06	merged-into-main	yes	tip is an ancestor of main
+repair/pr205-qualification-20261106	4465a0492367d08f324e80b290a594791921691c	245	2026-11-05	merged-into-main	yes	tip is an ancestor of main
+repair/project-create-rollback-20261105	2a3639adde50585dd7ac6dbcb029f085ac0856c6	210	2026-11-05	merged-into-main	yes	tip is an ancestor of main
+repair/rzdiff-native-callback-size-20261103	edab7d916970144b33c98384834369773e5b0e62	166	2026-11-02	contained-in-kept-branch	yes	tip is an ancestor of kept branch repair/rzdiff-native-red-control-20261103 (nothing is lost while it is kept); 41% present vs main+#297; absent mostly: docs/qa:33488;src/patchtrace:1775;docs/research:1185;tests/fixtures:462
+repair/rzdiff-native-red-control-20261103	b304034e3c310528f7e0a3206eda48c94e0a6873	168	2026-11-02	partly-ported	no	partly ported: RD-F03 alignment core + Qt-free row model; remaining: RD-F03 desktop controls, GUI creation-retry acceptance test; rz-diff producer work is already superseded on main
+repair/rzdiff-producer-ownership	4d66af5577e6f6ad8f6e21440f6fe4187e0c8fe5	165	2026-11-02	contained-in-kept-branch	close-pr-first	open PR #165 uses this branch; close it as superseded first. tip is an ancestor of kept branch repair/rzdiff-native-callback-size-20261103 (nothing is lost while it is kept); 41% present vs main+#297; absent mostly: docs/qa:33488;src/patchtrace:1775;docs/research:1185;tests/fixtures:462
+repair/streamed-series-recovery-20261105	20a60f9d12d75b8df9d4f70f96a0fd27bd038331	207	2026-11-05	merged-into-main	yes	tip is an ancestor of main
+repair/subprocess-venv-20261106	c804e4d94430368c0eafe1da899493a8cf6520aa	246	2026-11-06	merged-into-main	yes	tip is an ancestor of main
+repair/unified-ci-20261105	b5f6e1381dfbe98ccc71d1e126a6fd02fc95aa81	192	2026-11-05	merged-into-main	yes	tip is an ancestor of main
+repair/unified-support-evidence-20261105	95749419783e6be7548be613e1000113497c6d2a	203	2026-11-05	merged-into-main	yes	tip is an ancestor of main
+repair/verified-bytes-20261105	e5f9302e20ee37e8e3323a8d8b177fd8b0649e6a	199	2026-11-05	merged-into-main	yes	tip is an ancestor of main
+repair/winbindex-metadata-budget-20261105	64eb58ece2f44914e8f94135ab1caefbb5a83f6b	237	2026-11-05	merged-into-main	yes	tip is an ancestor of main
+repair/wizard-lock-retry-20261105	38be184cda6fbe6f79a6f265b04e2efc6a2688dd	219	2026-11-05	merged-into-main	yes	tip is an ancestor of main
+repair/workflow-fragment-20261105	1229ca3bba6bc099d040c279ed9ebc8b91ae913e	204	2026-11-05	merged-into-main	yes	tip is an ancestor of main
+research/additional-reuse-claude-20261103	be4a58ff7d8facc57e99faac9c743cb8d60b36f4	178	2026-11-03	content-in-main	yes	100% of its added lines are in main (6 absent)
+research/kbc-live-probe-20261106	3839f3b62c923a80340c40c44855305890604f78	257	2026-11-06	merged-into-main	yes	tip is an ancestor of main
+research/l1-join-corpus-20261107	ca3572e7d7a5cf78d45732c18af7ebfe4922d350	269	2026-11-06	merged-into-main	yes	tip is an ancestor of main
+research/qualification-tools-rq00-rq01-20261106	941c0da4431f682537e99aa230df0da04013b4e1	256	2026-11-06	merged-into-main	yes	tip is an ancestor of main
+research/r4-vulnerability-correlation-20261030	ff570bdd784d02f745e4ad21d8aa7b4f1f776344	130	2026-10-30	held	no	docs-only research
+research/r6-final-integration-engineering-notes-20261030	3010f289dbb46a1db62218a35cca03420090e306	133	2026-10-30	held	no	docs-only research
+research/r7-advanced-binary-analysis-20261030	c9d1aab6a78847ce1632fe833d15af2e3b9c6e9b	134	2026-10-30	held	no	R7 prototypes recovered by #297 (909cd5f2); remaining docs only
+research/r8-deep-uncertainty-20261030	12dd4f2b41b468b0eb566bd502219daa821012df	135	2026-10-30	partly-ported	no	fix ported via #144 (R8 literal canon); ICF probe is research-only
+research/windows-candidates-gaps-20261107	1f11a43ba1904e5c6c9d5d4f261fa606347da6ca	274	2026-11-06	merged-into-main	yes	tip is an ancestor of main
+research/windows-candidates-github-20261107	35d7e3c980c0e04c7b6319bfd8fc6c7898c31226	266	2026-11-06	merged-into-main	yes	tip is an ancestor of main
+research/windows-candidates-sources-20261107	740961828e22ca8048cd881f21ef9c028955ab73	264	2026-11-06	merged-into-main	yes	tip is an ancestor of main
+research/windows-pair-candidates-20261107	e5e783f6b8ffae83341092f5915ba02b9856ecc1	260	2026-11-06	merged-into-main	yes	tip is an ancestor of main
+research/windows-pins-20261107	ac826a2efe428de7dbf290aa5894a2d357d7da0c	277	2026-11-06	merged-into-main	yes	tip is an ancestor of main
+resume/desktop-index-refresh-20261106	c9cea0671442a6051b068acfb69d17aabcf674ae	243	2026-11-05	merged-into-main	yes	tip is an ancestor of main
+resume/kb-acquire-lifecycle-20261106	b8bda98452b2f742ad55064aa2e1452700658a33	242	2026-11-06	merged-into-main	yes	tip is an ancestor of main
+security/offline-bundle-no-overwrite-20261013	a39cab81de3e0eeadf57e6255d2fe3e131b3294a	18	2026-10-13	content-in-main	yes	100% of its added lines are in main (0 absent)
+test/advisory-acceptance-20261105	69c705d052e6b6fb3c96ea49062d6a207829c1b8	233	2026-11-05	merged-into-main	yes	tip is an ancestor of main
+test/product-acceptance-20261106	81825ee9638454737d3fb7efa3e6c73b8f3eb105	-	2026-11-06	merged-into-main	yes	tip is an ancestor of main
+test/recovery-diagnostics-20261106	064f1c0075a4cfe5ec1eba2f9a04d3f1058ecf0c	-	2026-11-06	merged-into-main	yes	tip is an ancestor of main
+work/calibration-invariants-20261105	a6948be8049591247f0bc19a601645b85bc03eb7	230	2026-11-05	merged-into-main	yes	tip is an ancestor of main
+work/candidate-correlation-20261105	fee7c3664a2050aed30a3c3d43ea28c0c3621ee3	229	2026-11-05	merged-into-main	yes	tip is an ancestor of main
+work/consented-winbindex-refresh-20261105	83320a32c7249f92a1d7ba708c8fc8e12e4aa15c	239	2026-11-05	merged-into-main	yes	tip is an ancestor of main
+work/investigation-accessibility-20261105	b5d4bceabdc34f520120d9dc336d975768e20483	226	2026-11-05	merged-into-main	yes	tip is an ancestor of main
+work/investigation-candidates-20261105	bf3661966785a971f484b6339af81274278d1434	240	2026-11-05	merged-into-main	yes	tip is an ancestor of main
+work/online-adapter-20261105	e14b4445fd0705e2ecffa1bc4842ab73bce373e9	225	2026-11-05	merged-into-main	yes	tip is an ancestor of main
+work/online-investigation-20261105	bf46954ef2c6c9a278d9b78f5b4274242e617e09	234	2026-11-05	merged-into-main	yes	tip is an ancestor of main
+work/pe-parser-security-20261105	8975c517af22aca0c0f90eb931b8a06ab18687b5	236	2026-11-05	merged-into-main	yes	tip is an ancestor of main
+work/persistence-security-20261105	1a1e1951c55cdef46ff248145031639674ce1c63	227	2026-11-05	merged-into-main	yes	tip is an ancestor of main
+work/product-start-20261106	0b7d858149db0c88ffcf8f3e6ba474d99f39afeb	-	2026-11-06	merged-into-main	yes	tip is an ancestor of main
+work/product-start-wave3	7e7a52ebf4de1529cfc5da7274820a5e955126fc	221	2026-11-05	merged-into-main	yes	tip is an ancestor of main
+work/winbindex-publication-20261105	2afe874d6be17a4596d3955b71b493d5e0e4ed00	238	2026-11-05	merged-into-main	yes	tip is an ancestor of main
+work/windows-package-preflight-20261105	93b4b9a80d31c97659269429e0b680c9218fdf70	228	2026-11-05	merged-into-main	yes	tip is an ancestor of main
+worker/patchtrace-cli-help-20261104	81a9fb28f30630e2fd168422dc4672af3a34aa52	185	2026-11-04	merged-into-main	yes	tip is an ancestor of main
