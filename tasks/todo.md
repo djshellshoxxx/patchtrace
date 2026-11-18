@@ -1858,3 +1858,11 @@ See the [immutable continuation checkpoint](../docs/qa/verified-continuation-202
 - [ ] Complete trusted stdin handoff and bounded first/second unified diagnostic retention, preserving native failures until actual-source acceptance.
 - [ ] Repair the independently reproduced TierR exit1 diagnostic loss; original native causes and frozen outcomes remain separate.
 - [ ] Complete full platform/Qt/native/frozen/package/dependency/security/reproducibility gates and real CVE/KB/analyst journeys; leave main and release blocked until qualified.
+
+
+### Shared-reader architecture guard — 2026-11-18
+
+- [x] Retain the exact 771e Linux full-QA failure and original artifact/log/source evidence.
+- [x] Specify seven exact file/symbol permissions, preserve 13-red/234-positive baseline and all prior assertions, and pass 247 cases independently.
+- [x] Preserve normal lint success and strict 80-site failure without suppression or waiver.
+- [ ] Publish the reviewed candidate append-only and require a new exact-head full/platform gate; do not relabel the historical hosted failure.

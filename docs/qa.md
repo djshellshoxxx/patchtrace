@@ -2483,3 +2483,24 @@ preserved repeated-analysis digest mismatch, with the second-run records absent;
 six full QA/Qt jobs remain pending at the separate 22:37 snapshot. Durable package
 design is reviewed with an actual-connection non-initializing capture prerequisite.
 Main remains `9c411ca3d7b47f950be5f0c6f01b3c54184554c6`; PR304/307/316 stay open and unmerged. No tag/release/deployment.
+
+
+## Exact held-reader import guard and full Linux result — 2026-11-18
+
+The preceding published 771e Linux full run has 25,292 passes, 3 failures, 60 skips,
+3 expected failures and 21 warnings. Its three failures are stale static import
+guards for the already reviewed shared reader types in KB service/store/wiring.
+The original failed hosted result, API ownership, exact log and artifact remain
+immutable; newer candidate acceptance cannot reuse it as a pass.
+
+Guard 52a562b6 follows spec/regressions 5cdf1732: thirteen original failures,
+234 positives, then 247 passes with zero skips. Independent replay also passes
+all 247 with 39 canonical imports and no child/network events. Seven exact
+file/symbol exceptions preserve all previous import restrictions. All 45 original
+functions, 67 new controls and the prior guard AST are independently checked for
+preservation. Runtime/tools/workflows/configuration are unchanged. Full normal
+Ruff passes; strict S still fails on 80 unchanged sites. No waiver or suppression.
+
+[Complete correction and retained evidence](qa/kbc-held-import-guard-20261118/README.md).
+Five Windows/Qt jobs remain incomplete at the separate snapshot. Main merge,
+native/package/security and final beta acceptance remain blocked. No release.
