@@ -1430,3 +1430,10 @@ Full `QT_QPA_PLATFORM=offscreen python -m pytest -q` for this isolated native sl
 ## Accuracy validation (opened 2026-11-06)
 - [ ] Follow [accuracy validation plan](../docs/plans/accuracy-validation-plan-20261106.md): per-layer claims (L1 advisory join, L2 open-source pair diff, L3 real Windows pairs), manifests frozen before engine runs. AV-0 and AV-1 done, AV-2 next; no accuracy result exists yet.
 - [ ] 2026-11-07 status and findings: see [accuracy program findings](../docs/qa/accuracy-program-findings-20261107.md) (PR triage, CI observations, Windows candidate research, open gates).
+
+### [RAW-ALIGNMENT-DESKTOP-20261118]
+
+- [x] Compare #168 against current inspection/raw infrastructure and define the bounded paired-window desktop contract before implementation.
+- [x] Recover independent physical offsets, exact-window copy provenance, span navigation and cancellation/context guards through the existing pure backend and TaskRunner; retain the original failing control.
+- [x] Pass the 182-test affected selection, current-source headless CLI guard, complete tooltip sweep, unchanged host-seam limits and whole Ruff; retain the subprocess environment failure and correction.
+- [ ] Independently review and integrate source `e4506666` with spec/test-first `640baa22`; complete actual-head full/hosted/native/manual gates before broader acceptance. [Qualification receipt](../docs/qa/raw-alignment-workflow-20261118.md).
