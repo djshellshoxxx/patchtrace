@@ -363,6 +363,12 @@ counts, filters, explicit row selection, plain-text details, named keyboard-acce
 controls/tooltips, progress and cancel, and stale-result/revision guards. Use the
 visible selected row as the explicit filename choice; keyboard focus or a current
 cell left after deselection is not a selection and must disable the Select action.
+For each retained row with a metadata-conflict witness, its bounded plain-text
+detail must include that exact matching witness, including both complete source
+record references, before potentially long original fields. Build the witness
+lookup and row text on the worker. Do not depend on the whole-inventory preview
+or repeat unrelated witness arrays: a full diagnostic budget or long source
+fields must not hide the selected row's cross-page contradiction.
 Use the
 same service, and a fresh worker-owned store per operation. Do not grow ui.py or
 raise seam caps. Preserve existing KB and #300 navigation shortcuts.

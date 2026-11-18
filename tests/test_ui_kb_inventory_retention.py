@@ -7,13 +7,18 @@ from types import SimpleNamespace
 
 import pytest
 from kbc_k1_support import no_sockets  # noqa: F401
+from kbc_k3_support import FixedClock
 from PySide6.QtCore import Qt
 from qt_support import join_gui_threads  # noqa: F401
 from test_ui_kb_inventory import imported, make, reply, settle
 
 from patchtrace.gui.qt.tasks import TaskRunner
+from patchtrace.kbcorrelation import wiring
+from patchtrace.kbcorrelation.inventory_contracts import InventoryContext, InventoryLimits
 from patchtrace.kbcorrelation.inventory_qt import InventoryRequest, execute_inventory
+from patchtrace.kbcorrelation.inventory_store import add_inventory
 from patchtrace.kbcorrelation.service import Outcome
+from patchtrace.kbcorrelation.store import WorkspaceStore
 
 pytestmark = pytest.mark.usefixtures('no_sockets')
 
@@ -121,4 +126,54 @@ def test_failed_retention_keeps_the_inspected_source_rows_and_details(qtbot, tmp
     assert 'PT-KBC-INPUT' in dialog.status.full_text()
     assert dialog.imports.currentData() == source and dialog._shown is previous
     assert dialog.rows.rowCount() == 2 and dialog.details.toPlainText() == details
+    dialog.reject()
+
+
+@pytest.mark.parametrize('date_length', [10, 65536])
+def test_selected_row_keeps_its_exact_witness_before_long_fields_and_full_diagnostics(qtbot, tmp_path, date_length):
+    header = b'File name,File version,File size,Architecture,Date\n'
+    rejected = b'../unsafe.sys,1.2.3.4,128,x64,2026-01-01\n' * 1000
+    date = 'x' * date_length
+    claims = (f'first.sys,1.2.3.4,128,x64,{date}\n'
+              'second.sys,1.2.3.4,128,x64,2026-01-01\n'
+              'healthy.sys,1.2.3.4,128,x64,2026-01-01\n'
+              f'first.sys,1.2.3.4,256,x64,{date}\n'
+              'second.sys,1.2.3.4,512,x64,2026-01-01\n').encode()
+    service = wiring.build_service(tmp_path / 'ws', clock=FixedClock())
+    with WorkspaceStore(service.root) as ws:
+        original, _ = add_inventory(ws, header + rejected + claims, InventoryContext(kb='KB5099001'),
+                                    now=service._now(), limits=InventoryLimits(max_entries=3))
+    retained = service.retain_inventory(original.import_id).result['import_id']
+    dialog = make(qtbot, tmp_path)
+    dialog.tabs.setCurrentIndex(1)
+    dialog.imports.addItem('Chosen retained page', retained)
+    dialog.imports.setCurrentIndex(1)
+    dialog.buttons['inspect'].click()
+    settle(qtbot, dialog)
+    assert dialog.rows.rowCount() == 3
+    inventory = dialog._shown['inventory']
+    assert len(inventory['diagnostics']) == 1000 and inventory['diagnostics_omitted'] > 0
+    witnesses = {item['conflict_group']: item for item in inventory['conflict_witnesses']}
+    assert len(witnesses) == 2
+    assert '[Display truncated;' in dialog.details.toPlainText()
+    assert '"conflict_witnesses"' not in dialog.details.toPlainText()
+    for row in (0, 1):
+        dialog.rows.selectRow(row)
+        entry = dialog._shown['entries'][row]
+        expected = witnesses[entry['conflict_group']]
+        detail = dialog.details.toPlainText()
+        assert len(detail) <= 65536
+        assert 'Conflict witness:\n' in detail
+        witness_text = detail.split('Conflict witness:\n', 1)[1].split('\n\nEntry:\n', 1)[0]
+        assert json.loads(witness_text) == expected
+        assert detail.index('Conflict witness:\n') < detail.index('"original_fields"')
+        assert expected['first']['logical_record'] == 1002 + row
+        assert expected['second']['logical_record'] == 1005 + row
+        assert all(group not in detail for group in witnesses if group != entry['conflict_group'])
+        if date_length == 65536 and row == 0:
+            assert '[Display truncated;' in detail
+    dialog.rows.selectRow(2)
+    healthy = dialog.details.toPlainText()
+    assert 'healthy.sys' in healthy and 'Conflict witness:\n' not in healthy
+    assert all(group not in healthy for group in witnesses)
     dialog.reject()

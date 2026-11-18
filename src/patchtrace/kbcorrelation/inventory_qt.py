@@ -200,9 +200,17 @@ def execute_inventory(request: InventoryRequest, token, *, service_factory=_serv
                                                    'status', 'truncated', 'retention', 'scan_complete',
                                                    'matching_count', 'excluded_count', 'omitted_count',
                                                    'conflict_witness_count')}, ensure_ascii=False, indent=2), 16384)
-        row_texts = tuple(_bounded_details(source_text + '\n\nEntry:\n' +
-                                           json.dumps(entry, ensure_ascii=False, indent=2)) for entry in entries)
-        return InventoryReply(outcome=out, display_text=_bounded_details(display), entry_texts=row_texts)
+        witnesses = {item['conflict_group']: item for item in source.get('conflict_witnesses', ())}
+        row_texts = []
+        for entry in entries:
+            detail = source_text
+            witness = witnesses.get(entry.get('conflict_group'))
+            if witness is not None:
+                # Keep the exact matching evidence before original fields can exhaust the display budget.
+                detail += '\n\nConflict witness:\n' + json.dumps(witness, ensure_ascii=False, indent=2)
+            detail += '\n\nEntry:\n' + json.dumps(entry, ensure_ascii=False, indent=2)
+            row_texts.append(_bounded_details(detail))
+        return InventoryReply(outcome=out, display_text=_bounded_details(display), entry_texts=tuple(row_texts))
     except (SourceError, KbcStoreError) as exc:
         return InventoryReply(code=exc.code, message=exc.message, details=exc.details)
     except ValueError:

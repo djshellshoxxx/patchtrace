@@ -216,6 +216,10 @@ dialog is available without an open comparison project.
 - **Retained inventories** lists sources and verifies an explicitly chosen
   source. Filters and pages apply to retained rows. Row details expose the
   original values, source status, logical record and physical line span.
+  For a row with a cross-record metadata conflict, its matching **Conflict
+  witness** appears before the entry's original fields, with both exact source
+  record references. This evidence remains visible when long fields or the
+  overall source preview reach their display limit.
 - To recover a later CSV section, choose the saved source, set **Retain
   architecture** and **Source page**, then press **Retain source page**. The
   resulting source is available in the chooser; press **Inspect source** to
