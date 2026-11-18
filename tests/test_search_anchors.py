@@ -38,6 +38,11 @@ def fake_search(changed=0, indexed=0, missing=()):
     return search
 
 
+# Section 5.1 circularity guard: every anchor kind except the string/pdb overrides is restricted to this closed union
+# of binary-evidence kinds, so a hint derived from advisory text can never match the advisory document it came from.
+BINARY = ('asm', 'build', 'capability', 'code', 'export', 'function', 'import', 'rule', 'string')
+
+
 @pytest.mark.parametrize(('kind', 'value', 'expected'), [
     ('module', 'clfs.sys', 'scope:changed "clfs.sys"'),
     ('feature', 'IPv6', 'scope:changed "IPv6"'),
@@ -50,6 +55,7 @@ def test_each_kind_maps_to_a_plan(kind, value, expected):
     assert query_text(anchor(kind, value), changed=True) == expected
     item = plan_for(anchor(kind, value))
     assert item.plan is not None and item.plan.scope == 'changed' and item.plan.mode == 'words'
+    assert item.plan.kinds == {'pdb': ('build',), 'string': ('string',)}.get(kind, BINARY)
     # exact mode never matches a quoted phrase (service._names needs a single bare term), so it is not used
     assert item.plan.phrases
 

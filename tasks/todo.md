@@ -29,6 +29,18 @@
 [native L2 pilot](../docs/qa/l2-native-pilot-20261118.md);
 [post-measurement discovery diagnosis](../docs/qa/l2-rizin-discovery-20261118.md).
 
+## 2026-11-18 advisory anchor integration
+
+- [x] Independently review #305/#306 and preserve both actual heads in successor history.
+- [x] Reproduce advisory/note circularity, long valid anchor rejection, and default stored-source CLI failure; amend the narrow compatibility contract first.
+- [x] Preserve the original query budget with validated closed typed kinds, and read stored anchors through the existing project owner.
+- [x] Pass 942 affected tests, independent real-service/default-CLI/boundary/digest/cursor controls, whole Ruff and whitespace; retain all red and harness-failure evidence.
+- [x] Preserve the final `f69614fa` L1 FAIL receipt: 73 PASS, 6 FAIL, 8 excluded; record the extra ambiguous winspool candidate without changing expectations.
+- [ ] Qualify the final published successor on all exact-head hosted gates, then REST SHA-guard merge with `[no release]`.
+- [ ] Verify main and fresh PR heads before any superseded closure; keep every remote branch and partial/unresolved scope.
+
+[Search integration and source-specific L1 evidence](../docs/qa/search-anchor-integration-20261118.md).
+
 ## 2026-11-18 refreshed #302 integration
 
 - [x] Refresh thirteen candidate PRs/main/settings; detect #302's eleven new commits and preserve all other current heads.
