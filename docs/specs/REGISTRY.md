@@ -1,5 +1,9 @@
 # Spec registry
 
+2026-11-18 CI input-integrity amendment: `docs/specs/ci-workflow-integrity.md`
+(`CI-INT`, approved repair; hosted qualification remains separate) owns immutable
+remote action references and the separately scoped dependency-hash design.
+
 Canonical alias for every spec file under `docs/specs/`: the number each file's own text declares, its canonical alias, its status, and the code that owns it. Read this before you cite a spec number. Source files are not edited here. Where a title or prose uses another number, the alias in this file wins.
 
 **Status refresh, 2026-10-14 (branch `work/a`, 430d690).** Statuses and basis columns of Tables A and B were re-checked against code for SPEC-07h, 10, 10b, 11, 30, 31 (README and parts 02 to 08), 34, 35, 36 and the Table B rows (ledger findings F2 to F5 and F10 in `docs/specs/program-e/OUTSTANDING-specs-ledger.md`); SPEC-37 is not started. File lists and PR numbers in the snapshot below are historical.

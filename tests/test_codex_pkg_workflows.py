@@ -75,7 +75,6 @@ def gate():
     return runpy.run_path(str(ROOT / 'tools' / 'release_gate.py'))
 
 
-@pytest.mark.xfail(strict=True, reason='CODEX-1')
 def test_remote_actions_are_immutable():
     mutable = []
     for name, source in workflow_sources():
