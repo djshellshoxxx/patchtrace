@@ -154,3 +154,23 @@ python tools/branch_inventory.py \
 Conflict previews use `git merge-tree --write-tree --name-only --no-messages MAIN TIP`. They write local Git objects only, change no checkout/ref and do not authorize a merge. Conflict paths and resulting preview tree IDs are retained. Git evidence and JSON consistency were executed in this session; no product/native/Windows test execution is claimed by this worker.
 
 A later integration append must identify new heads, review results, commands, merge SHAs and remaining blockers. Preserve this observation rather than silently changing frozen evidence.
+
+## Follow-up observations in this session
+
+The first consistency check found 26 closed-PR source objects absent from the
+ordinary branch fetch. Their recorded `refs/pull/N/head` refs were then fetched
+into local `refs/inventory/pr/N`; no remote ref changed. The final JSON includes
+all 297 available PR source heads and their actual ancestry/merge bases. The
+original completeness assertion failed before this repair; no success was
+inferred from the earlier partial object set. Final JSON checks confirm 307
+unique branches, 297 PR source objects, all seven required ancestry links,
+306 classified topics and no deletion authorization.
+
+After this frozen branch snapshot, the integration coordinator reported an
+append-only #304 update to
+`d8c02caea407f6d323eecd636735849c1eb31a2d`, carrying independently reviewed
+Windows and chronology corrections with new hosted workflows queued. That is
+a later candidate, not a retroactive change to this inventory. Reconcile the
+new #304 history into the #307 continuation and re-evaluate combined-tree gates.
+Queued workflows are unverified; neither canonical integration nor a release
+is implied by this update.

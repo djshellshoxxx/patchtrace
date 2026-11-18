@@ -13,7 +13,8 @@ The percentages below measure **named acceptance milestones**, not estimated
 coding effort, number of commits, number of passing tests, measured accuracy or
 overall release readiness. Every feature has four equally counted milestones:
 
-1. **D — delivery:** the documented production slice has an implementation.
+1. **D — delivery:** a specified implementation boundary exists for the feature;
+   remaining user surfaces and partial scope are listed explicitly in the row.
 2. **R — regression evidence:** a retained, scoped implementation/test review
    supports that slice. Historical evidence is explicitly retained as historical.
 3. **J — representative journey:** the stated real analyst/source/native journey
