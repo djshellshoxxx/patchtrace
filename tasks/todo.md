@@ -1746,3 +1746,11 @@ See the [immutable continuation checkpoint](../docs/qa/verified-continuation-202
 - [x] Retain original red/setup-error receipts and the exact 297-pass, zero-skip affected gate with 301 source-pinned modules.
 - [ ] Root independent review and selective integration of `f3456f92` / `b85a0cf7` plus QA.
 - [ ] Separately implement and review KB propagation, durable package provenance/reconciliation and native Windows readers; no expired-lease recovery or native/package acceptance is credited here.
+
+
+### [CORE-HELD-INPUT-CLEANUP-20261118]
+
+- [x] Retain the original independent cleanup/error-precedence failure and unchanged probe.
+- [x] Specify and test then preserve the primary error plus a bounded retention note; no extra cleanup scope.
+- [x] Verify exact source `97408609`: 318 passed, no skips, 301 source-pinned modules; normal Ruff/diff pass.
+- [ ] Independently replay the corrected source and integrate only after review; keep Windows/native/KB/package gates separate.

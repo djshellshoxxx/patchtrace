@@ -2309,3 +2309,15 @@ and two ordinary positives, first 38-pass candidate, and one corrected external
 runner collection error remain. Full normal Ruff and diff checks pass.
 [Sealed source, tests and receipts](qa/core-held-inputs-20261118.md). Root review,
 KB/package propagation and native Windows qualification remain separate.
+
+
+## [CORE-HELD-INPUT-CLEANUP-20261118]
+
+Independent review exposed a temporary-cleanup OSError replacing the primary
+neutral cancellation. Spec/test-first correction `97408609` preserves the original
+exception and reports possible retained bytes with a fixed note; successful-path
+cleanup failures remain observable. Exact source passes 318 checks with no skips,
+301 owned imports, no drift, and full normal Ruff/diff checks. The original
+1-failed/51-passed and new 6-failed/15-passed receipts remain.
+[Complete correction receipt](qa/core-held-inputs-cleanup-20261118.md).
+Corrected independent review and native/package composition remain separate.
