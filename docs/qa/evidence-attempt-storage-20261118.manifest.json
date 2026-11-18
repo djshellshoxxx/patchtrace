@@ -1,0 +1,321 @@
+{
+  "source_sha": "7b4402a0d78dfd33852a79585a82374ce365104e",
+  "archive": "evidence-attempt-storage-20261118.evidence.zip",
+  "archive_bytes": 138203,
+  "archive_sha256": "581d71796ba73d68ca0ba6b860fd19fc61ef4df964eb9f0147d7c28aa63bdc55",
+  "payload_count": 52,
+  "payloads": [
+    {
+      "member": "author/baseline-ui_evidence.py.txt",
+      "origin": "/workspace/scratch/c7a9e8d98848/qa/evidence-attempt-storage/baseline-ui_evidence.py.txt",
+      "bytes": 63816,
+      "sha256": "2c8ac654d5a79c90b1fd1013ad1e59d82a96198c77a3f1be892f5146e4511b04"
+    },
+    {
+      "member": "author/commits.json",
+      "origin": "/workspace/scratch/c7a9e8d98848/qa/evidence-attempt-storage/commits.json",
+      "bytes": 235,
+      "sha256": "4929f42df3cd442306813985bf1ff3522e63cf05beed7446151011ec584fb859"
+    },
+    {
+      "member": "author/committed-tests-red-context.json",
+      "origin": "/workspace/scratch/c7a9e8d98848/qa/evidence-attempt-storage/committed-tests-red-context.json",
+      "bytes": 1321,
+      "sha256": "cacc8e7673941b135837281b0e9e1607e40e8918284dec2f525ceb72253a7e48"
+    },
+    {
+      "member": "author/committed-tests-red-exit.json",
+      "origin": "/workspace/scratch/c7a9e8d98848/qa/evidence-attempt-storage/committed-tests-red-exit.json",
+      "bytes": 38,
+      "sha256": "5d6a7e4bf2e666e4430a62c0b6cceced629a85d7ad467e772863a213cd0d8de2"
+    },
+    {
+      "member": "author/committed-tests-red.log",
+      "origin": "/workspace/scratch/c7a9e8d98848/qa/evidence-attempt-storage/committed-tests-red.log",
+      "bytes": 32828,
+      "sha256": "b77e655ae5ce71b1da87188247e63e6430f43eb001c95bd2e803ef3b2c7bd469"
+    },
+    {
+      "member": "author/committed-tests-red.xml",
+      "origin": "/workspace/scratch/c7a9e8d98848/qa/evidence-attempt-storage/committed-tests-red.xml",
+      "bytes": 41186,
+      "sha256": "7929f0eec792f5141d472c3104e930424c9546d6ba51c2908ebd334c1729e8ad"
+    },
+    {
+      "member": "author/corrected-tests-red-context.json",
+      "origin": "/workspace/scratch/c7a9e8d98848/qa/evidence-attempt-storage/corrected-tests-red-context.json",
+      "bytes": 1337,
+      "sha256": "e79a7905013d5971ad61585df990db7e6be754ebb20bb60beee3c0ce9d2e3953"
+    },
+    {
+      "member": "author/corrected-tests-red-exit.json",
+      "origin": "/workspace/scratch/c7a9e8d98848/qa/evidence-attempt-storage/corrected-tests-red-exit.json",
+      "bytes": 38,
+      "sha256": "f223890cc8ac2403547c1a0c0bdaf35bfaf4cd1b28f351e62b115e4343307d79"
+    },
+    {
+      "member": "author/corrected-tests-red.log",
+      "origin": "/workspace/scratch/c7a9e8d98848/qa/evidence-attempt-storage/corrected-tests-red.log",
+      "bytes": 32769,
+      "sha256": "41b7b414f93c1ed42d29d91f692c22f599f1f8778848239b7c9d3555f65b3e14"
+    },
+    {
+      "member": "author/corrected-tests-red.xml",
+      "origin": "/workspace/scratch/c7a9e8d98848/qa/evidence-attempt-storage/corrected-tests-red.xml",
+      "bytes": 41126,
+      "sha256": "c1c6496061603397796e368220d5994dc300f2b6ca3c4f626434afb452ac796b"
+    },
+    {
+      "member": "author/corrected-tests.py.txt",
+      "origin": "/workspace/scratch/c7a9e8d98848/qa/evidence-attempt-storage/corrected-tests.py.txt",
+      "bytes": 11929,
+      "sha256": "dfa1ebda633e8664a76bb36d79a06d11678c6d1fe3fe4ce679a40847c8191601"
+    },
+    {
+      "member": "author/diff-check.stderr",
+      "origin": "/workspace/scratch/c7a9e8d98848/qa/evidence-attempt-storage/diff-check.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "member": "author/diff-check.stdout",
+      "origin": "/workspace/scratch/c7a9e8d98848/qa/evidence-attempt-storage/diff-check.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "member": "author/exact-source-affected-context.json",
+      "origin": "/workspace/scratch/c7a9e8d98848/qa/evidence-attempt-storage/exact-source-affected-context.json",
+      "bytes": 1651,
+      "sha256": "374e1bddd10508f5eefcffb74bb29342a7bc0a82d42fd8c2e13f518140a93da3"
+    },
+    {
+      "member": "author/exact-source-affected-exit.json",
+      "origin": "/workspace/scratch/c7a9e8d98848/qa/evidence-attempt-storage/exact-source-affected-exit.json",
+      "bytes": 38,
+      "sha256": "6e86c271176207474cebb73f01ac8e7474b6825873eff42f1605a4bb9f5c423d"
+    },
+    {
+      "member": "author/exact-source-affected.log",
+      "origin": "/workspace/scratch/c7a9e8d98848/qa/evidence-attempt-storage/exact-source-affected.log",
+      "bytes": 261,
+      "sha256": "938ad68f5e533d118973a17e4ce0248f48d9ff391bdfea724fee3882a0d60421"
+    },
+    {
+      "member": "author/exact-source-affected.xml",
+      "origin": "/workspace/scratch/c7a9e8d98848/qa/evidence-attempt-storage/exact-source-affected.xml",
+      "bytes": 18440,
+      "sha256": "f43f4d49bf6f25552017023250b306f6c4c0e673102bb667fc7dc756776b0b7b"
+    },
+    {
+      "member": "author/first-authored-tests.py",
+      "origin": "/workspace/scratch/c7a9e8d98848/qa/evidence-attempt-storage/first-authored-tests.py",
+      "bytes": 11772,
+      "sha256": "958a59e7cad7c98c2c1f46f0af9dc682dfb3110c9872a600b4a8961dd1072340"
+    },
+    {
+      "member": "author/focused-first-green-context.json",
+      "origin": "/workspace/scratch/c7a9e8d98848/qa/evidence-attempt-storage/focused-first-green-context.json",
+      "bytes": 1321,
+      "sha256": "32097bdd3329f01e2ac6c6208285593cce5f6a953d0cb4361acd424458e1dd5d"
+    },
+    {
+      "member": "author/focused-first-green-exit.json",
+      "origin": "/workspace/scratch/c7a9e8d98848/qa/evidence-attempt-storage/focused-first-green-exit.json",
+      "bytes": 38,
+      "sha256": "5d6a7e4bf2e666e4430a62c0b6cceced629a85d7ad467e772863a213cd0d8de2"
+    },
+    {
+      "member": "author/focused-first-green.log",
+      "origin": "/workspace/scratch/c7a9e8d98848/qa/evidence-attempt-storage/focused-first-green.log",
+      "bytes": 5361,
+      "sha256": "2d4b8a580e5d3f26d305a8a76a3dafcabcff3733753b9bc89219de61171199f1"
+    },
+    {
+      "member": "author/focused-first-green.xml",
+      "origin": "/workspace/scratch/c7a9e8d98848/qa/evidence-attempt-storage/focused-first-green.xml",
+      "bytes": 8690,
+      "sha256": "535ac2850b00b307185890bc1758f8f0126c8a74c45823a56290690f81e73011"
+    },
+    {
+      "member": "author/focused-green-context.json",
+      "origin": "/workspace/scratch/c7a9e8d98848/qa/evidence-attempt-storage/focused-green-context.json",
+      "bytes": 1315,
+      "sha256": "7695c60463ea28f5a1093a51a1c6eb51899446bc476c1c251d475e594ad85baa"
+    },
+    {
+      "member": "author/focused-green-exit.json",
+      "origin": "/workspace/scratch/c7a9e8d98848/qa/evidence-attempt-storage/focused-green-exit.json",
+      "bytes": 38,
+      "sha256": "912a3fc0f11341c05b828c9a26d782b576502f2229f9dcd80d5e70187647c913"
+    },
+    {
+      "member": "author/focused-green.log",
+      "origin": "/workspace/scratch/c7a9e8d98848/qa/evidence-attempt-storage/focused-green.log",
+      "bytes": 99,
+      "sha256": "496ab5a723d828ea4094d4a93b7c45e97299fb9ce92936cbdb74158f52388233"
+    },
+    {
+      "member": "author/focused-green.xml",
+      "origin": "/workspace/scratch/c7a9e8d98848/qa/evidence-attempt-storage/focused-green.xml",
+      "bytes": 3603,
+      "sha256": "54beca44e9ea2b3958805b43c8184a1ab2599124d4c0d58bd757e0895f702680"
+    },
+    {
+      "member": "author/harness-correction.patch",
+      "origin": "/workspace/scratch/c7a9e8d98848/qa/evidence-attempt-storage/harness-correction.patch",
+      "bytes": 1240,
+      "sha256": "4e3a533895458bdff5149ae14c9169e67dad937b29c762f6b6cfaf12d0f67aa2"
+    },
+    {
+      "member": "author/result-kept-red-context.json",
+      "origin": "/workspace/scratch/c7a9e8d98848/qa/evidence-attempt-storage/result-kept-red-context.json",
+      "bytes": 1009,
+      "sha256": "a1b42fa1b8fb88204d4819271a66f7876e0a77ee6ca0aab568739cf63772fd9c"
+    },
+    {
+      "member": "author/result-kept-red-exit.json",
+      "origin": "/workspace/scratch/c7a9e8d98848/qa/evidence-attempt-storage/result-kept-red-exit.json",
+      "bytes": 38,
+      "sha256": "d9f7ece7c5ceff1a4b07eca62d89f0bd3f4f67561bba6b20e705bbe03efdeed9"
+    },
+    {
+      "member": "author/result-kept-red.log",
+      "origin": "/workspace/scratch/c7a9e8d98848/qa/evidence-attempt-storage/result-kept-red.log",
+      "bytes": 2223,
+      "sha256": "db4ff3c8ca003098a77fe7df80c2aaca837873e63e200b3cb773c5af42609895"
+    },
+    {
+      "member": "author/result-kept-red.xml",
+      "origin": "/workspace/scratch/c7a9e8d98848/qa/evidence-attempt-storage/result-kept-red.xml",
+      "bytes": 2654,
+      "sha256": "bd21760b92b451011a7b2035dd145216af7f5c4026f82a5930e3142e77c8dc2c"
+    },
+    {
+      "member": "author/ruff.stderr",
+      "origin": "/workspace/scratch/c7a9e8d98848/qa/evidence-attempt-storage/ruff.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "member": "author/ruff.stdout",
+      "origin": "/workspace/scratch/c7a9e8d98848/qa/evidence-attempt-storage/ruff.stdout",
+      "bytes": 19,
+      "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+    },
+    {
+      "member": "author/run_checks.py",
+      "origin": "/workspace/scratch/c7a9e8d98848/qa/evidence-attempt-storage/run_checks.py",
+      "bytes": 1829,
+      "sha256": "a9481521fa7ee960f0880b2e13cc7d872ddd2ac168f2268b6ecdec9420e06b7f"
+    },
+    {
+      "member": "author/source-and-checks.json",
+      "origin": "/workspace/scratch/c7a9e8d98848/qa/evidence-attempt-storage/source-and-checks.json",
+      "bytes": 1951,
+      "sha256": "7a08b9c213e2dbaf6ec9b324d145fa828bda2fbf751b4b499b861b9261573014"
+    },
+    {
+      "member": "author/source-spec.md.txt",
+      "origin": "/workspace/scratch/c7a9e8d98848/qa/evidence-attempt-storage/source-spec.md.txt",
+      "bytes": 86176,
+      "sha256": "e54867c8b326c9462729aeec56501f77e9f279bc8f674a7a501dbaa8c4611ff1"
+    },
+    {
+      "member": "author/source-ui_evidence.py.txt",
+      "origin": "/workspace/scratch/c7a9e8d98848/qa/evidence-attempt-storage/source-ui_evidence.py.txt",
+      "bytes": 65186,
+      "sha256": "d72a7c806750abe131b545b339cfe0ce66bc370390d81c181c3f2ba3421108cf"
+    },
+    {
+      "member": "author/source.patch",
+      "origin": "/workspace/scratch/c7a9e8d98848/qa/evidence-attempt-storage/source.patch",
+      "bytes": 8355,
+      "sha256": "3046ba8f7c7add563ae951890a8bb08eb4cef359107a9614438bc69948cd9f16"
+    },
+    {
+      "member": "author/spec-tests-red-context.json",
+      "origin": "/workspace/scratch/c7a9e8d98848/qa/evidence-attempt-storage/spec-tests-red-context.json",
+      "bytes": 1316,
+      "sha256": "8f1ca9cf0d995dc64166645676e61abf6337becbe5d0956d3c358e6d5b86d86b"
+    },
+    {
+      "member": "author/spec-tests-red-exit.json",
+      "origin": "/workspace/scratch/c7a9e8d98848/qa/evidence-attempt-storage/spec-tests-red-exit.json",
+      "bytes": 37,
+      "sha256": "5419ddf3a3b4e3966b3f7b3568a9a14d4b327360a2989d932784d48d32babef9"
+    },
+    {
+      "member": "author/spec-tests-red.log",
+      "origin": "/workspace/scratch/c7a9e8d98848/qa/evidence-attempt-storage/spec-tests-red.log",
+      "bytes": 32828,
+      "sha256": "cbc14dc8158802a1aa5373e9d63ca2074b35f693d878a57095225b2874964b3e"
+    },
+    {
+      "member": "author/spec-tests-red.xml",
+      "origin": "/workspace/scratch/c7a9e8d98848/qa/evidence-attempt-storage/spec-tests-red.xml",
+      "bytes": 41186,
+      "sha256": "bb906d818b9aa6176fe141b5dede479c8180d05946c618afc331de048eea898e"
+    },
+    {
+      "member": "author/strict-s110.stderr",
+      "origin": "/workspace/scratch/c7a9e8d98848/qa/evidence-attempt-storage/strict-s110.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "member": "author/strict-s110.stdout",
+      "origin": "/workspace/scratch/c7a9e8d98848/qa/evidence-attempt-storage/strict-s110.stdout",
+      "bytes": 6283,
+      "sha256": "de5219d6f2abd3f379dad6061fff63820824db54d657cd907d697a1d60d95ec8"
+    },
+    {
+      "member": "author/test-first.patch",
+      "origin": "/workspace/scratch/c7a9e8d98848/qa/evidence-attempt-storage/test-first.patch",
+      "bytes": 17952,
+      "sha256": "32340b2bffbf44ffc261d9b06f38514ab6e3daa422dfa9007a86a6b2a7133573"
+    },
+    {
+      "member": "author/test-first.py.txt",
+      "origin": "/workspace/scratch/c7a9e8d98848/qa/evidence-attempt-storage/test-first.py.txt",
+      "bytes": 11849,
+      "sha256": "057a5aeb9e9da44aa1038431372d2830b6808053eddbdb19031c377e08333409"
+    },
+    {
+      "member": "author/test_result_kept_external.py",
+      "origin": "/workspace/scratch/c7a9e8d98848/qa/evidence-attempt-storage/test_result_kept_external.py",
+      "bytes": 3396,
+      "sha256": "8154169950711fb48b89f919dfed0c346842c27d7ebe4c96098eec478f93db54"
+    },
+    {
+      "member": "independent-original/failed-attempt-red.log",
+      "origin": "/workspace/scratch/c7a9e8d98848/qa/security-s110-independent/failed-attempt-red.log",
+      "bytes": 5325,
+      "sha256": "92bdd83a90126b1775c46892ecdd711af56021ba729ed3baa712074dc96e8b76"
+    },
+    {
+      "member": "independent-original/failed-attempt-red.xml",
+      "origin": "/workspace/scratch/c7a9e8d98848/qa/security-s110-independent/failed-attempt-red.xml",
+      "bytes": 6241,
+      "sha256": "1fab935bf2f37e84aab029adac29d8285e0bf86241bbd27f996c58cd0e1c57f6"
+    },
+    {
+      "member": "independent-original/receipt.json",
+      "origin": "/workspace/scratch/c7a9e8d98848/qa/security-s110-independent/receipt.json",
+      "bytes": 6922,
+      "sha256": "addb9de564a47ae8e5dc99e50fa7b96781aaffbe4ae0f37aaddfa66ff38f6017"
+    },
+    {
+      "member": "independent-original/review.md",
+      "origin": "/workspace/scratch/c7a9e8d98848/qa/security-s110-independent/review.md",
+      "bytes": 5033,
+      "sha256": "513a792d461ca6c00e8f40148f1731392d92bce1a4d190cef351179956920364"
+    },
+    {
+      "member": "independent-original/test_failed_attempt_retention.py",
+      "origin": "/workspace/scratch/c7a9e8d98848/qa/security-s110-independent/test_failed_attempt_retention.py",
+      "bytes": 2989,
+      "sha256": "b8f3b937acbea15a5f89d604c4bf041bbb13f7d47acaa309e9e867a2a7c41781"
+    }
+  ]
+}
