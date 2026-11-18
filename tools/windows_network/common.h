@@ -28,6 +28,12 @@
     X(ARGUMENT_BOUND, "argument-bound") X(COMMAND_BUFFER, "command-buffer") \
     X(COMMAND_FORMAT, "command-format") X(IMAGE_OPEN, "image-open") \
     X(STDIO_KIND, "stdio-kind") X(NUL_OPEN, "nul-open") \
+    X(STDIN_MODE, "stdin-mode") X(STDIN_STARTUP, "stdin-startup") \
+    X(STDIN_TYPE, "stdin-type") X(STDIN_FLAGS, "stdin-flags") \
+    X(STDIN_MODULE, "stdin-module") X(STDIN_EXPORT, "stdin-export") \
+    X(STDIN_IDENTITY, "stdin-identity") X(STDIN_CAPTURE, "stdin-capture") \
+    X(STDIN_DUPLICATE, "stdin-duplicate") X(STDIN_CLOSE, "stdin-close") \
+    X(STDIN_MODULE_CLOSE, "stdin-module-close") \
     X(STDOUT_DUPLICATE, "stdout-duplicate") X(STDERR_DUPLICATE, "stderr-duplicate") \
     X(ATTRIBUTE_SIZE, "attribute-size") X(ATTRIBUTE_BUFFER, "attribute-buffer") \
     X(ATTRIBUTE_INITIALIZE, "attribute-initialize") X(ATTRIBUTE_HANDLES, "attribute-handles") \
@@ -113,6 +119,166 @@ void pt_diag_wait(PT_DIAG_STAGE stage, DWORD subject, DWORD result) {
     if (result == WAIT_FAILED) pt_diag_win32(stage, subject);
     else pt_diag_value(stage, result == WAIT_TIMEOUT ? PT_DK_TIMEOUT : PT_DK_WAIT_RESULT, subject, result);
 }
+
+/* PT_STDIN_PORTABLE_BEGIN */
+/* Extracted by authored tests with scripted APIs, not a Windows ABI substitute.
+   NUL origin comes from the controlled creator; CHAR alone is not that proof. */
+typedef BOOL (WINAPI *PT_COMPARE_OBJECT_HANDLES)(HANDLE, HANDLE);
+typedef struct {
+    HANDLE held;
+    HMODULE comparison_module;
+    PT_COMPARE_OBJECT_HANDLES compare;
+} PT_STDIN;
+
+BOOL pt_stdin_invalid(PT_DIAG_STAGE stage) {
+    SetLastError(ERROR_INVALID_DATA);
+    pt_diag_validation(stage, 0);
+    SetLastError(ERROR_INVALID_DATA);
+    return FALSE;
+}
+
+BOOL pt_stdin_kind(HANDLE handle) {
+    DWORD type, error;
+    if (!handle || handle == INVALID_HANDLE_VALUE) return pt_stdin_invalid(PT_DG_STDIN_TYPE);
+    SetLastError(ERROR_SUCCESS);
+    type = GetFileType(handle);
+    error = GetLastError();
+    if (type == FILE_TYPE_CHAR) return TRUE;
+    if (type == FILE_TYPE_UNKNOWN && error) {
+        SetLastError(error); pt_diag_win32(PT_DG_STDIN_TYPE, 0); return FALSE;
+    }
+    return pt_stdin_invalid(PT_DG_STDIN_TYPE);
+}
+
+BOOL pt_stdin_flags(HANDLE handle, DWORD wanted) {
+    DWORD flags = 0;
+    if (!GetHandleInformation(handle, &flags)) { pt_diag_win32(PT_DG_STDIN_FLAGS, 0); return FALSE; }
+    if (flags != wanted) return pt_stdin_invalid(PT_DG_STDIN_FLAGS);
+    return TRUE;
+}
+
+BOOL pt_stdin_drop(HANDLE *owned) {
+    HANDLE handle = *owned;
+    *owned = NULL; /* Consume ownership before any close; never retry a stale value. */
+    if (!handle) return TRUE;
+    if (handle == INVALID_HANDLE_VALUE) return pt_stdin_invalid(PT_DG_STDIN_CLOSE);
+    if (!CloseHandle(handle)) { pt_diag_win32(PT_DG_STDIN_CLOSE, 0); return FALSE; }
+    return TRUE;
+}
+
+BOOL pt_stdin_release(PT_STDIN *input) {
+    HMODULE module;
+    DWORD entry = GetLastError(), first = ERROR_SUCCESS;
+    if (!input) return pt_stdin_invalid(PT_DG_STDIN_STARTUP);
+    module = input->comparison_module;
+    input->comparison_module = NULL;
+    input->compare = NULL; /* No call may outlive the owned loader reference. */
+    if (!pt_stdin_drop(&input->held)) {
+        first = GetLastError();
+        if (!first) first = ERROR_INVALID_DATA;
+    }
+    if (module && !FreeLibrary(module)) {
+        DWORD error = GetLastError();
+        pt_diag_win32(PT_DG_STDIN_MODULE_CLOSE, 0);
+        if (!first) first = error ? error : ERROR_INVALID_DATA;
+    }
+    SetLastError(first ? first : entry);
+    return first == ERROR_SUCCESS;
+}
+
+BOOL pt_stdin_check(const PT_STDIN *input) {
+    STARTUPINFOW startup;
+    HANDLE current;
+    if (!input || !input->held || !input->comparison_module || !input->compare)
+        return pt_stdin_invalid(PT_DG_STDIN_STARTUP);
+    ZeroMemory(&startup, sizeof(startup));
+    GetStartupInfoW(&startup);
+    current = GetStdHandle(STD_INPUT_HANDLE);
+    if (!(startup.dwFlags & STARTF_USESTDHANDLES)) return pt_stdin_invalid(PT_DG_STDIN_STARTUP);
+    if (!pt_stdin_kind(input->held) || !pt_stdin_kind(startup.hStdInput) || !pt_stdin_kind(current) ||
+        !pt_stdin_flags(input->held, 0)) return FALSE;
+    if (!input->compare(input->held, startup.hStdInput) || !input->compare(input->held, current))
+        return pt_stdin_invalid(PT_DG_STDIN_IDENTITY);
+    return TRUE;
+}
+
+BOOL pt_stdin_capture(PT_STDIN *input) {
+    STARTUPINFOW startup;
+    HANDLE current, captured = NULL;
+    FARPROC symbol;
+    DWORD primary;
+    if (!input || input->held || input->comparison_module || input->compare)
+        return pt_stdin_invalid(PT_DG_STDIN_STARTUP);
+    ZeroMemory(&startup, sizeof(startup));
+    GetStartupInfoW(&startup);
+    current = GetStdHandle(STD_INPUT_HANDLE);
+    if (!(startup.dwFlags & STARTF_USESTDHANDLES)) return pt_stdin_invalid(PT_DG_STDIN_STARTUP);
+    if (!pt_stdin_kind(current) || !pt_stdin_kind(startup.hStdInput)) return FALSE;
+    /* Runtime API floor: Windows 10 / Server 2016. No fallback or import/SDK change. */
+    input->comparison_module = LoadLibraryExW(L"kernelbase.dll", NULL, LOAD_LIBRARY_SEARCH_SYSTEM32);
+    if (!input->comparison_module) { pt_diag_win32(PT_DG_STDIN_MODULE, 0); return FALSE; }
+    symbol = GetProcAddress(input->comparison_module, "CompareObjectHandles");
+    if (!symbol) { pt_diag_win32(PT_DG_STDIN_EXPORT, 0); goto failed; }
+    input->compare = (PT_COMPARE_OBJECT_HANDLES)symbol;
+    if (!input->compare(current, startup.hStdInput)) {
+        pt_stdin_invalid(PT_DG_STDIN_IDENTITY); goto failed;
+    }
+    if (!DuplicateHandle(GetCurrentProcess(), current, GetCurrentProcess(),
+                         &captured, 0, FALSE, DUPLICATE_SAME_ACCESS)) {
+        pt_diag_win32(PT_DG_STDIN_CAPTURE, 0); goto failed;
+    }
+    input->held = captured; /* Only a successful duplicate establishes ownership. */
+    if (!pt_stdin_check(input)) goto failed;
+    return TRUE;
+failed:
+    primary = GetLastError();
+    pt_stdin_release(input);
+    SetLastError(primary);
+    return FALSE;
+}
+
+BOOL pt_stdin_duplicate(const PT_STDIN *input, HANDLE *out) {
+    HANDLE created = NULL;
+    DWORD primary;
+    if (!out || *out) return pt_stdin_invalid(PT_DG_STDIN_DUPLICATE);
+    if (!pt_stdin_check(input)) return FALSE;
+    if (!DuplicateHandle(GetCurrentProcess(), input->held, GetCurrentProcess(),
+                         &created, 0, TRUE, DUPLICATE_SAME_ACCESS)) {
+        pt_diag_win32(PT_DG_STDIN_DUPLICATE, 0); return FALSE;
+    }
+    if (!pt_stdin_kind(created) || !pt_stdin_flags(created, HANDLE_FLAG_INHERIT)) goto failed;
+    if (!input->compare(input->held, created)) {
+        pt_stdin_invalid(PT_DG_STDIN_IDENTITY); goto failed;
+    }
+    if (!pt_stdin_check(input)) goto failed;
+    *out = created;
+    return TRUE;
+failed:
+    primary = GetLastError();
+    pt_stdin_drop(&created);
+    SetLastError(primary);
+    return FALSE;
+}
+
+BOOL pt_stdin_select(PSID app_sid, const PT_STDIN *input, HANDLE *out) {
+    SECURITY_ATTRIBUTES security = {sizeof(SECURITY_ATTRIBUTES), NULL, TRUE};
+    HANDLE created;
+    DWORD primary;
+    if (!out || *out || ((app_sid != NULL) == (input != NULL))) return pt_stdin_invalid(PT_DG_STDIN_MODE);
+    if (input) return pt_stdin_duplicate(input, out);
+    created = CreateFileW(L"NUL", GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE,
+                          &security, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+    if (created == INVALID_HANDLE_VALUE) { pt_diag_win32(PT_DG_NUL_OPEN, 0); return FALSE; }
+    if (!pt_stdin_kind(created) || !pt_stdin_flags(created, HANDLE_FLAG_INHERIT)) {
+        primary = GetLastError();
+        pt_stdin_drop(&created);
+        SetLastError(primary);
+        return FALSE;
+    }
+    *out = created;
+    return TRUE;
+}
+/* PT_STDIN_PORTABLE_END */
 
 typedef struct {
     DWORD pid, parent, capabilities;
@@ -224,16 +390,15 @@ BOOL pt_command(int count, wchar_t **args, wchar_t *out) {
 
 /* Returns a suspended, token-verified child in an owned non-breakaway job.
    Only three fresh stdio handles are inherited. Never resumes on failure. */
-BOOL pt_spawn(int count, wchar_t **args, PSID app_sid, PT_CHILD *child) {
+BOOL pt_spawn(int count, wchar_t **args, PSID app_sid, const PT_STDIN *inherited_input, PT_CHILD *child) {
     STARTUPINFOEXW startup;
-    SECURITY_ATTRIBUTES security = {sizeof(SECURITY_ATTRIBUTES), NULL, TRUE};
     SECURITY_CAPABILITIES caps;
     JOBOBJECT_EXTENDED_LIMIT_INFORMATION limits;
     PT_IDENTITY expected;
     HANDLE handles[3] = {NULL, NULL, NULL};
     SIZE_T size = 0;
     wchar_t *command = NULL, *wanted = NULL;
-    BOOL ok = FALSE, attributes_ready = FALSE;
+    BOOL ok = FALSE, attributes_ready = FALSE, stdin_owned = FALSE;
     DWORD saved = ERROR_INVALID_DATA;
     int i;
     ZeroMemory(child, sizeof(*child));
@@ -255,11 +420,8 @@ BOOL pt_spawn(int count, wchar_t **args, PSID app_sid, PT_CHILD *child) {
         GetFileType(GetStdHandle(STD_ERROR_HANDLE)) != FILE_TYPE_PIPE) {
         pt_diag_validation(PT_DG_STDIO_KIND, 0); goto done;
     }
-    handles[0] = CreateFileW(L"NUL", GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE,
-                             &security, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
-    if (handles[0] == INVALID_HANDLE_VALUE) {
-        pt_diag_win32(PT_DG_NUL_OPEN, 0); handles[0] = NULL; goto done;
-    }
+    if (!pt_stdin_select(app_sid, inherited_input, &handles[0])) goto done;
+    stdin_owned = TRUE;
     if (!DuplicateHandle(GetCurrentProcess(), GetStdHandle(STD_OUTPUT_HANDLE), GetCurrentProcess(),
                          &handles[1], 0, TRUE, DUPLICATE_SAME_ACCESS)) {
         pt_diag_win32(PT_DG_STDOUT_DUPLICATE, 0); goto done;
@@ -329,6 +491,10 @@ BOOL pt_spawn(int count, wchar_t **args, PSID app_sid, PT_CHILD *child) {
             pt_diag_validation(PT_DG_TOKEN_MATCH, child->identity.pid); goto done;
         }
     }
+    /* The attribute array/value remains alive until DeleteProcThreadAttributeList.
+       Consume only our ownership; a failed close cannot authorize resume. */
+    stdin_owned = FALSE; /* consumed */
+    if (!CloseHandle(handles[0])) { pt_diag_win32(PT_DG_STDIN_CLOSE, child->identity.pid); goto done; }
     ok = TRUE;
 done:
     if (!ok) {
@@ -352,7 +518,8 @@ done:
         free(startup.lpAttributeList);
     }
     for (i = 0; i < 3; ++i)
-        if (handles[i] && !CloseHandle(handles[i])) pt_diag_win32(PT_DG_HANDLE_CLOSE, child->process.dwProcessId);
+        if (handles[i] && (i != 0 || stdin_owned) && !CloseHandle(handles[i]))
+            pt_diag_win32(PT_DG_HANDLE_CLOSE, child->process.dwProcessId);
     if (wanted) LocalFree(wanted);
     free(command);
     if (!ok) SetLastError(saved);

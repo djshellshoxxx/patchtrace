@@ -115,7 +115,7 @@ done:
     return error;
 }
 
-int wmain(int argc, wchar_t **argv) {
+int pt_probe_main(int argc, wchar_t **argv, const PT_STDIN *input) {
     static const char *names[] = {"tcp4-loopback", "tcp6-loopback", "udp4-loopback",
                                   "udp6-loopback", "tcp4-external"};
     WSADATA winsock;
@@ -181,7 +181,7 @@ int wmain(int argc, wchar_t **argv) {
         child_args[3] = depth_text;
         /* No security-capability override: this child must inherit its actual
            parent's AppContainer token, even from a different executable path. */
-        if (!pt_spawn(10, child_args, NULL, &child)) { pt_diag_win32(PT_DG_CHILD_SPAWN, 0); return 125; }
+        if (!pt_spawn(10, child_args, NULL, input, &child)) { pt_diag_win32(PT_DG_CHILD_SPAWN, 0); return 125; }
         child_pid = child.identity.pid;
         if (ResumeThread(child.process.hThread) == (DWORD)-1) {
             pt_diag_win32(PT_DG_CHILD_RESUME, child_pid);
@@ -199,4 +199,19 @@ int wmain(int argc, wchar_t **argv) {
     }
     if (lifetime) for (;;) Sleep(50);  /* Bounded externally; proves descendant termination. */
     return 0;
+}
+
+int wmain(int argc, wchar_t **argv) {
+    PT_STDIN input = {0};
+    DWORD primary;
+    int code;
+    if (!pt_stdin_capture(&input)) return 125;
+    code = pt_probe_main(argc, argv, &input);
+    primary = GetLastError();
+    if (!pt_stdin_release(&input)) {
+        if (code) SetLastError(primary);
+        return 125;
+    }
+    if (code) SetLastError(primary);
+    return code;
 }

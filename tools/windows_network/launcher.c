@@ -100,7 +100,7 @@ int wmain(int argc, wchar_t **argv) {
     receipt = CreateFileW(argv[3], GENERIC_WRITE, FILE_SHARE_READ, NULL, CREATE_NEW,
                           FILE_ATTRIBUTE_NORMAL, NULL);
     if (receipt == INVALID_HANDLE_VALUE) { pt_diag_win32(PT_DG_RECEIPT_OPEN, 0); LocalFree(sid); return 125; }
-    if (!pt_spawn(argc - 6, argv + 6, sid, &child)) {
+    if (!pt_spawn(argc - 6, argv + 6, sid, NULL, &child)) {
         pt_diag_win32(PT_DG_CHILD_SPAWN, 0);
         snprintf(record, sizeof(record), "{\"phase\":\"refused\",\"error\":%lu}\n", GetLastError());
         write_record(receipt, record);
