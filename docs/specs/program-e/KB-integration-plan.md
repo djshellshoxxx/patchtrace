@@ -197,6 +197,62 @@ Name map: EvidenceOrigin / SourceDocument / SourceSnapshot / SourceReference -> 
 - Project side: enrichment rows `kb-investigation:<inv>:<rev>` (append-only) and `kb-context:<context_key>` (derived, Guard-stale), both new KINDS outside `DERIVED_KINDS`; sidecars `kb/sources/<sha>.json.gz` and `kb/investigations/<inv>-<rev>.json`. CSAF documents go through `AdvisoryStore.add` (standard `advisory-*` rows) and are not copied twice.
 - Attach is two-phase: verify both files -> write the journal intent (plan_sha, project directory, ordered SHAs) -> `ProjectService.create` -> record project id and revision in the journal -> sidecars -> rows -> mark the attempt done. An interruption before create removes only operation-owned staging; after create it leaves `CONTEXT_PENDING`; `kb attach --repair` is idempotent and never deletes the project or a user file.
 
+#### Existing workspace open mode (2026-11-18)
+
+`WorkspaceStore(..., open_mode='normal')` keeps the ordinary behavior. In
+particular, `create=False` rejects a missing database but may initialize an
+existing version-zero database; higher versions still open read-only through
+that ordinary path. Existing callers omit the new optional keyword.
+
+`open_mode='existing'` requires an initialized supported workspace. The first
+SQLite connection uses a canonically encoded file URI with `mode=rw`, so it
+cannot create a missing database after a pathname check. URI encoding preserves
+literal `?`, `#`, `%`, spaces and Unicode in platform-valid path names. On the
+actual returned connection, require supported `user_version=1` and the current
+writer's base table layout before returning. This mode never creates directories,
+calls `_create`, stamps a version or configures WAL. The `create` flag does not
+authorize creation in this explicit mode.
+
+The bounded format check requires ordinary main-schema tables with the current
+column order, declared types, NOT NULL flags, primary-key ordinals, WITHOUT ROWID
+and STRICT flags. It inspects the full column list, including hidden/generated
+columns, and rejects extra, missing or contradictory base columns. Legitimate
+additional tables outside the known base names remain allowed. It does not
+certify CHECK/UNIQUE/foreign-key expressions, collations/default expressions,
+indexes/triggers, every row's integrity, database authenticity or namespace
+exclusion. Existing strict record/object checks remain necessary when data is
+used. No whole-database integrity scan is introduced.
+
+Existing mode is writable after successful format admission. Later writes still
+require their existing explicit transaction/admission checks; constructor success
+does not approve package capture, project attachment, recovery or a schema upgrade.
+Current/captured identity, revision, source and scope must be checked inside any
+later accepting transaction.
+
+Invalid new-mode type/value returns fixed nonrecoverable `PT-KBC-INPUT` before
+path/connect work. An unknown higher version returns fixed nonrecoverable
+`PT-KBC-UNSUPPORTED` in existing mode only. Zero/uninitialized or contradictory
+layout returns fixed nonrecoverable `PT-KBC-STORAGE`; missing/unavailable I/O
+retains bounded storage-error mapping. No raw SQLite/schema text or untrusted
+path enters the public message.
+
+Once a connection has returned, every new-mode refusal or BaseException closes
+that owned connection. A secondary close failure preserves the primary typed or
+mapped error, including the original interrupt, and adds one fixed bounded note
+that resources may remain. No file/directory is deleted, and ordinary cleanup
+policy is unchanged. This protection begins after a connection is returned.
+
+The guarantee is absence of application initialization/version writes/WAL setup.
+SQLite's own hot-journal recovery and lock/shared-memory activity remain possible
+with `mode=rw`; quiescent byte-equality tests do not establish forensic zero
+filesystem mutation. No immutable/read-only bypass hides required engine work.
+This internal seam adds no package tables, facade, native or CLI/UI route.
+
+Spec-first controls call the explicit mode and preserve ordinary zero/v0
+initialization positives. The unchanged independent `create=False` probe remains
+the 2-red/2-positive counterexample to an earlier capture assumption; it is not
+rewritten or wrapped to appear green after this additive mode is implemented.
+
 ### 7.4 Errors, limits, keys, versioning
 - Codes: `PT-KBC-INPUT, SCOPE, CONSENT, SOURCE, PRODUCT, LINEAGE, ACQUIRE, VERIFY, UNSUPPORTED, STALE, STATE, STORAGE, LIMIT, CANCEL, INTERNAL`; acquisition and enrichment codes are nested in `details`, never re-mapped.
 - `KbcLimits` (provisional until live probe L1): CVRF document 32 MiB raw, depth 64, 5,000,000 JSON nodes, 500,000 edges per document; 24 documents per plan, 60 months in the index, fetch concurrency 1, request 60 s, plan 15 min, 3 attempts, Retry-After <=60 s; text field 64 KiB; hints 5,000 (paged); pairs 1,000 per file (truncation flagged); 20 files per investigation; 500 investigations; project sources 256 MiB; workspace objects 4 GiB (evict only unreferenced objects after a verified listing).
