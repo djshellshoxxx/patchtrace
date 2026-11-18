@@ -333,7 +333,7 @@ def _publish_linux(target: Path, data: bytes) -> None:
 
 
 class _WindowsPublication:
-    """Rooted NT opens plus Win32 handle rename; never reopen a stage for cleanup.
+    """Rooted NT opens and information calls; never reopen a stage for cleanup.
 
     Sharing locks alone do not protect reparse attributes. Every child operation
     therefore uses RootDirectory and rejects reparse processing as well.
@@ -378,13 +378,14 @@ class _WindowsPublication:
         self.kernel.CloseHandle.restype = wt.BOOL
         self.kernel.GetFileInformationByHandle.argtypes = [wt.HANDLE, ctypes.POINTER(FileInfo)]
         self.kernel.GetFileInformationByHandle.restype = wt.BOOL
-        self.kernel.SetFileInformationByHandle.argtypes = [wt.HANDLE, ctypes.c_int, wt.LPVOID, wt.DWORD]
-        self.kernel.SetFileInformationByHandle.restype = wt.BOOL
         self.nt.NtCreateFile.argtypes = [ctypes.POINTER(wt.HANDLE), wt.DWORD,
                                          ctypes.POINTER(ObjectAttributes), ctypes.POINTER(IoStatus),
                                          wt.LPVOID, wt.DWORD, wt.DWORD, wt.DWORD, wt.DWORD,
                                          wt.LPVOID, wt.DWORD]
         self.nt.NtCreateFile.restype = wt.LONG
+        self.nt.NtSetInformationFile.argtypes = [wt.HANDLE, ctypes.POINTER(IoStatus), wt.LPVOID,
+                                                wt.ULONG, ctypes.c_int]
+        self.nt.NtSetInformationFile.restype = wt.LONG
         self.nt.RtlNtStatusToDosError.argtypes = [wt.LONG]
         self.nt.RtlNtStatusToDosError.restype = wt.ULONG
 
@@ -445,19 +446,27 @@ class _WindowsPublication:
         except OSError:
             raise PublicationBlocked('safe publication parent changed or became unavailable') from None
 
+    def _set_information(self, source: int, buffer: Any, size: int, information_class: int) -> None:
+        status = self.IoStatus()
+        code = self.nt.NtSetInformationFile(source, self.ct.byref(status), buffer, size, information_class)
+        if code < 0:
+            self.error(self.nt.RtlNtStatusToDosError(code))
+        if code != 0:
+            # The owned source was opened synchronously and nonalertably. Never
+            # credit STATUS_PENDING or an unexpected informational return as done.
+            raise PublicationBlocked('safe publication information call did not complete synchronously')
+
     def rename(self, source: int, parent: int, name: str) -> None:
         encoded = name.encode('utf-16-le')
         buffer = self.ct.create_string_buffer(self.ct.sizeof(self.RenameInfo) + len(encoded))
         info = self.RenameInfo.from_buffer(buffer)
         info.ReplaceIfExists, info.RootDirectory, info.FileNameLength = False, parent, len(encoded)
         self.ct.memmove(self.ct.addressof(buffer) + self.RenameInfo.FileName.offset, encoded, len(encoded))
-        if not self.kernel.SetFileInformationByHandle(source, 3, buffer, len(buffer)):
-            self.error()
+        self._set_information(source, buffer, len(buffer), 10)  # FileRenameInformation
 
     def discard(self, source: int) -> None:
-        delete = self.wt.BOOLEAN(True)  # FILE_DISPOSITION_INFO, exact held source
-        if not self.kernel.SetFileInformationByHandle(source, 4, self.ct.byref(delete), self.ct.sizeof(delete)):
-            self.error()
+        delete = self.wt.BOOLEAN(True)  # FILE_DISPOSITION_INFORMATION, exact held source
+        self._set_information(source, self.ct.byref(delete), self.ct.sizeof(delete), 13)
 
 
 def _publish_windows(target: Path, data: bytes) -> None:
@@ -468,6 +477,7 @@ def _publish_windows(target: Path, data: bytes) -> None:
         parent = win.directory(target.parent, stack, create=True)
         source = win.open_child(parent, f'.winpairs-{secrets.token_hex(16)}.tmp', directory=False, create=True)
         fd, published = None, False
+        primary: BaseException | None = None
         try:
             identity = win.identity(source)
             fd = msvcrt.open_osfhandle(source, os.O_RDWR | os.O_BINARY)
@@ -480,15 +490,31 @@ def _publish_windows(target: Path, data: bytes) -> None:
             win.check_parent(target.parent, parent)
             if win.identity(source) != identity:
                 raise PublicationBlocked('safe publication destination identity changed')
+        except BaseException as exc:
+            primary = exc
+            raise
         finally:
+            failures: list[tuple[str, BaseException]] = []
             try:
                 if not published:
                     win.discard(source)
-            finally:
+            except BaseException as exc:
+                failures.append(('discard', exc))
+            try:
                 if fd is None:
-                    win.kernel.CloseHandle(source)
+                    if not win.kernel.CloseHandle(source):
+                        win.error()
                 else:
                     os.close(fd)  # owns the Windows handle after open_osfhandle succeeds
+            except BaseException as exc:
+                failures.append(('close', exc))
+            if failures:
+                error = primary if primary is not None else failures[0][1]
+                for operation, failure in failures:
+                    if failure is not error:
+                        error.add_note(f'Windows {operation} cleanup also failed: {type(failure).__name__}'[:160])
+                if primary is None:
+                    raise error
 
 
 def _publish_bytes(target: Path, data: bytes) -> None:
@@ -507,7 +533,10 @@ def _publish_bytes(target: Path, data: bytes) -> None:
     except (OSError, NotImplementedError, AttributeError) as e:
         code = getattr(e, 'winerror', None) or getattr(e, 'errno', None)
         detail = f' (OS error {code})' if code is not None else ''
-        raise PublicationBlocked(f'safe publication unavailable: {type(e).__name__}{detail}') from None
+        blocked = PublicationBlocked(f'safe publication unavailable: {type(e).__name__}{detail}')
+        for note in getattr(e, '__notes__', ())[:2]:
+            blocked.add_note(note[:160])
+        raise blocked from None
 
 
 def download_side(fetch: Fetcher, rec: dict[str, Any], dest: Path, rel: str) -> None:

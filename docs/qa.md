@@ -1845,3 +1845,8 @@ changed, and no aggregate bound claimed. See [first native pilot](qa/l2-native-p
 The sealed L2 MISS was followed by independently authored shared-library, executable and PE controls, without rerunning the candidate. Pinned Rizin source and retained native output show that the functions-mode diff path omits the symbol/entry seed pass used by ordinary automatic analysis. Operational success does not establish exhaustive discovery. A native repair and a separate source-oracle naming contract remain unqualified; no measured label or accuracy result changed. [Diagnosis and controls](qa/l2-rizin-discovery-20261118.md).
 
 PR304 now includes independently reviewed Windows publication repair at `6cc6b6b77564e12eaec2917877d94525a69c7102` (code540c7df, exact reviewed treeaa7749). The former bb4277 Windows failure remains retained; fresh hosted gates are pending. The continuation must integrate that exact ancestor before promotion.
+
+
+## [WINPAIRS-WINDOWS-NATIVE-20261118]
+
+PR #304 at `bb4277ae` failed the hosted Windows publication boundary: **15 failed, 61 passed, 3 skipped**; full Windows QA and packaging were not reached. The original raw failure is retained. Native information-call repair at local `1c49199e` preserves held-handle ownership/no replacement and fixes independently reproduced primary-error masking during cleanup. Twenty portable controls failed against the old implementation; the focused final result is **101 passed, 2 actual-Windows skips**. Whole Ruff and whitespace checks pass. Exact-head hosted acceptance and merge remain open; no native success or precise old Win32 error-87 cause is inferred from portable checks. [Evidence and limits](qa/winpairs-windows-native-20261118.md).
