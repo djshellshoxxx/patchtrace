@@ -647,7 +647,7 @@ def test_the_gate_job_runs_only_on_push_with_read_only_access_full_history_and_n
     assert job_key(block, 'runs-on') == 'ubuntu-latest' and needs_of(block) == []
     assert re.search(r'^    permissions:\n      contents: read$', block, re.M)
     assert 'write' not in re.search(r'^    permissions:\n(?:      .*\n)+', block, re.M).group(0)
-    checkout = next(step for step in steps_of(block) if 'actions/checkout@v4' in step)
+    checkout = next(step for step in steps_of(block) if 'actions/checkout@11d5960a326750d5838078e36cf38b85af677262' in step)
     assert re.search(r'^          fetch-depth: 0$', checkout, re.M)
     assert re.search(r'^          persist-credentials: false$', checkout, re.M)
 
@@ -660,7 +660,7 @@ def test_the_gate_step_gets_only_the_job_token_and_writes_to_github_output():
     assert run_texts(step) == [GATE_COMMAND]
     env = re.search(r'env:\n((?:          .*\n?)+)', step).group(1)
     assert env.strip() == 'GH_TOKEN: ${{ github.token }}'
-    interpreter = next(index for index, item in enumerate(steps) if 'actions/setup-python@v5' in item)
+    interpreter = next(index for index, item in enumerate(steps) if 'actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065' in item)
     assert interpreter < steps.index(step)
 
 
@@ -685,8 +685,8 @@ def test_publication_hold_keeps_all_acceptance_jobs_and_artifact_uploads_enabled
     for job in ('qa', 'qt-gate', 'linux-package', 'linux-smoke', 'release-gate'):
         assert '[no release]' not in BLOCKS[job]
         assert 'head_commit.message' not in (job_key(BLOCKS[job], 'if') or '')
-    assert 'actions/upload-artifact@v4' in BLOCKS['qa']
-    assert 'actions/upload-artifact@v4' in BLOCKS['linux-package']
+    assert 'actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02' in BLOCKS['qa']
+    assert 'actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02' in BLOCKS['linux-package']
 
 
 def test_gui_gate_blocks_packaging_and_publication_even_when_the_cadence_gate_says_yes():
@@ -708,7 +708,7 @@ def test_matrix_leg_status_is_captured_after_all_acceptance_steps_before_artifac
                     'tools/package_windows_installer.py', 'tools/test_windows_installer.ps1'):
         assert next(i for i, step in enumerate(steps) if command in step) < recorder
     assert steps[recorder + 1:]
-    assert all('uses: actions/upload-artifact@v4' in step for step in steps[recorder + 1:])
+    assert all('uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02' in step for step in steps[recorder + 1:])
     assert 'if: always()' in steps[recorder + 1]
 
 

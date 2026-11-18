@@ -286,8 +286,8 @@ def test_workflow_is_read_only_pinned_to_known_actions_and_free_of_event_data():
     text = WORKFLOW.read_text(encoding='utf-8')
     assert re.search(r'^permissions:\n  contents: read$', text, re.M)
     for action in re.findall(r'uses: (\S+)', text):
-        assert action in {'actions/checkout@v4', 'actions/setup-python@v5', 'actions/setup-java@v4',
-                          'actions/upload-artifact@v4', 'actions/download-artifact@v4', 'ilammy/msvc-dev-cmd@v1'}, action
+        assert action in {'actions/checkout@11d5960a326750d5838078e36cf38b85af677262', 'actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065', 'actions/setup-java@cf277c60eb25467037889841efdb72551f06f6c3',
+                          'actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02', 'actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093', 'ilammy/msvc-dev-cmd@0b201ec74fa43914dc39ae48a89fd1d8cb592756'}, action
     assert '${{ github.event' not in text and 'secrets.' not in text
     assert 'java-version: \'21\'' in text and text.count('tools/live_unified_check.py') >= 4
 
