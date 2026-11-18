@@ -164,6 +164,8 @@ def test_final_tree_pass_observes_post_hash_change_time(gate, tmp_path, monkeypa
     path = root / 'sample.txt'
     raw_lstat = Path.lstat
     before = raw_lstat(path)
+    with path.open('rb') as stream:
+        descriptor_change_before = os.fstat(stream.fileno()).st_ctime_ns
     if platform == 'modeled-windows':
         change_time_observations(gate, monkeypatch, path)
     original_blob = gate.source_blob
@@ -178,7 +180,8 @@ def test_final_tree_pass_observes_post_hash_change_time(gate, tmp_path, monkeypa
             after = raw_lstat(path)
             assert (after.st_dev, after.st_ino, after.st_size, after.st_mtime_ns) == (
                 before.st_dev, before.st_ino, before.st_size, before.st_mtime_ns)
-            assert after.st_ctime_ns != before.st_ctime_ns or platform == 'native-windows'
+            with path.open('rb') as stream:
+                assert os.fstat(stream.fileno()).st_ctime_ns != descriptor_change_before
             changes.append(True)
         return result
 
