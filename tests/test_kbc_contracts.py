@@ -394,6 +394,12 @@ INVENTORY_SIBLING_SYMBOLS = {
     'inventory_csv.py': {'hostile_text': {'replace_hostile'}},
     'inventory_store.py': {'hostile_text': {'replace_hostile'}, 'persistence': {'strict_json'}},
 }
+HELD_INPUT_SIBLING_SYMBOLS = {
+    # kb-held-inputs.md: only these neutral capability declarations cross the boundary.
+    'service.py': {'HeldInput', 'PairInputReaders'},
+    'store.py': {'HeldInput', 'InputReadError', 'PairInputReaders'},
+    'wiring.py': {'HeldInput', 'PairInputReaders'},
+}
 
 
 def _imports(path):
@@ -415,7 +421,14 @@ def test_domain_modules_import_no_qt_network_or_database(path):
             assert top not in FORBIDDEN - ALLOWED_FORBIDDEN.get(path.name, set()), f'{path.name} imports {module}'
             assert top != 'patchtrace', f'{path.name} must use relative imports'
         elif level == 2:  # `..x` is a sibling package
-            if path.name in INVENTORY_SIBLING_SYMBOLS:
+            if module == 'input_readers':
+                symbols = HELD_INPUT_SIBLING_SYMBOLS.get(path.name)
+                assert symbols is not None, f'{path.name} imports sibling {module}'
+                nodes = [n for n in ast.walk(ast.parse(path.read_text(encoding='utf-8')))
+                         if isinstance(n, ast.ImportFrom) and n.level == 2 and n.module == module]
+                assert all(a.name in symbols and a.asname is None for n in nodes for a in n.names), (
+                    f'{path.name} imports sibling {module} forbidden symbols')
+            elif path.name in INVENTORY_SIBLING_SYMBOLS:
                 symbols = INVENTORY_SIBLING_SYMBOLS[path.name].get(module)
                 assert symbols is not None, f'{path.name} imports sibling {module}'
                 nodes = [n for n in ast.walk(ast.parse(path.read_text(encoding='utf-8')))
