@@ -1,0 +1,304 @@
+{
+  "scope": "Read-only reconciliation of nine historical Phase 2 reference contracts against actual enrichment/pilot production consumers. Not whole-branch closure, not an implementation or calibration migration.",
+  "baseline": "068513a72e8a1412ce3960d3024c462d68d51376",
+  "tree": "2183dcf3b9cfee268c3ebb163ad9f3e9e928e10f",
+  "reference_tip": "4522030ff3ff76d720a5efc33953aaa5e5837398",
+  "original_inventory": "All 131 original reconciliation tips already received bounded focal dispositions in batches 1\u20137; this follow-up does not alter that denominator or close broader residues.",
+  "reference_provenance": {
+    "reference": "4522030ff3ff76d720a5efc33953aaa5e5837398",
+    "comparison": "068513a72e8a1412ce3960d3024c462d68d51376",
+    "files": [
+      {
+        "path": "docs/specs/phase2/PatchTrace-Extension-Specification-2026-10-11.md",
+        "commit": "4522030ff3ff76d720a5efc33953aaa5e5837398",
+        "git_blob": "4853772f4ad57d5cc4933de41f56fbb4d28f1420",
+        "sha256": "cdd94117ee9a4e847a9ffe2dcf14c21e1a9c68c9ce250751ccb5d4ccacc9209d",
+        "bytes": 97123
+      },
+      {
+        "path": "docs/specs/phase2/PROVENANCE.md",
+        "commit": "4522030ff3ff76d720a5efc33953aaa5e5837398",
+        "git_blob": "130598b4142066235046115c7d7e02faa474d18b",
+        "sha256": "8d24da1d2680a64b7f00f70539cf633a30b27025d344f220c4f72cc33ff47c79",
+        "bytes": 2103
+      },
+      {
+        "path": "docs/schemas/phase2/PatchTrace-Phase2-Contracts-v1.schema.json",
+        "commit": "4522030ff3ff76d720a5efc33953aaa5e5837398",
+        "git_blob": "639a9de00b3bafa7e3647723e975edc667e333ee",
+        "sha256": "e903f4a604bcef4d7a8728317198a99b8e49bd1cfb5b9725dc8d6b647472522c",
+        "bytes": 33507
+      },
+      {
+        "path": "docs/schemas/phase2/PatchTrace-Phase2-Synthetic-Examples-v1.json",
+        "commit": "4522030ff3ff76d720a5efc33953aaa5e5837398",
+        "git_blob": "d28221381ff048188210fb1b127dd37ffde61b24",
+        "sha256": "9a579d01bdb0ec771f83e8f83ef2a9ad1a715c9b76938e0dd8de394593c3b0eb",
+        "bytes": 26071
+      },
+      {
+        "path": "tests/test_phase2_contract_examples.py",
+        "commit": "4522030ff3ff76d720a5efc33953aaa5e5837398",
+        "git_blob": "72087c1ec1f2da805f247a079f50df88162281b6",
+        "sha256": "5d38fee13be891eb5f83637ead9354268091f5463e4b0b74b6758285dbb5b0e7",
+        "bytes": 3031
+      }
+    ]
+  },
+  "record_count": 9,
+  "records": [
+    {
+      "reference": "EvidenceRefV1",
+      "current_projection": [
+        "SourceLocation",
+        "RunView",
+        "Guard",
+        "FunctionView"
+      ],
+      "producers": [
+        "views.FunctionView.location",
+        "views.build_views"
+      ],
+      "consumers": [
+        "pipeline._locations_owned",
+        "MainWindow.jump_signal",
+        "pilot.sources.code._b1_observations"
+      ],
+      "retained_behavior": "Owned function/run/artifact/side, inclusive line ranges, exact excerpt SHA256, zero address distinct from absent, domain-separated input identity.",
+      "wire_and_semantic_differences": "Reference combines project/run/artifact SHA/raw/diff/occurrence identity, source kind, pointer, address kind and quality in one object. Current SourceLocation contains project-owned IDs and line/excerpt data; RunView/Guard supply outer identity. Hash prefix and occurrence recipes differ, so old IDs cannot be aliases. Pilot ObsRef/Nav are separate source/RVA contracts.",
+      "residual_obligation": "Confirmed UI omission: current jump_signal bypasses existing live validator. Reference p-code/raw-json locators are not automatically supported by enrichment SourceLocation; no invented conversion.",
+      "disposition": "Explicit incompatible reference wire shape; retain current versioned contract and listed behavior; no wholesale port"
+    },
+    {
+      "reference": "FeatureGateV1",
+      "current_projection": [
+        "FeatureSite",
+        "FeatureTransition"
+      ],
+      "producers": [
+        "wil.analyze",
+        "wil.wil_signals"
+      ],
+      "consumers": [
+        "pipeline._run",
+        "cli.cmd_flags",
+        "MainWindow._render_signals"
+      ],
+      "retained_behavior": "Numeric identifiers, duplicate sites, lexical enclosure versus adjacent/unknown, old/new transition, bounded scanning and explicit uncertainty; no CFG claim.",
+      "wire_and_semantic_differences": "Current records omit friendly-name provenance, explicit parent feature IDs and resolved-symbol hashes from the proposed record. Pipeline invokes analyze with absent symbol status; it does not supply an authenticated PDB-name map. Nested lexical enclosure tests are not a graph or typed dominance proof.",
+      "residual_obligation": "Typed dominance, authenticated private-wrapper/name mapping and explicit nesting provenance need separate evidence and versioned design; no stronger tier inferred.",
+      "disposition": "Explicit incompatible reference wire shape; retain current versioned contract and listed behavior; no wholesale port"
+    },
+    {
+      "reference": "ChangeSignalV1",
+      "current_projection": [
+        "ChangeSignal",
+        "SignalSet",
+        "DetectorOutcome",
+        "StageResult"
+      ],
+      "producers": [
+        "signals.detect",
+        "wil.wil_signals",
+        "pipeline._run"
+      ],
+      "consumers": [
+        "ranking.rank",
+        "MainWindow._render_signals",
+        "pilot.sources.code.B1Evidence"
+      ],
+      "retained_behavior": "Eight detector IDs, two-sided prerequisites, edit grouping, confidence limitations, exact locations, unavailable separated from complete zero output.",
+      "wire_and_semantic_differences": "Reference places common stage metadata, category, base weight and presence flags inside each signal. Current groups these across SignalSet/DetectorOutcome and pipeline/config records. typed_evidence is not created by importing a schema or by a higher numeric score.",
+      "residual_obligation": "Current lexical detectors remain heuristic; reference typed-IR acceptance requires a separately implemented trusted source and independent qualification.",
+      "disposition": "Explicit incompatible reference wire shape; retain current versioned contract and listed behavior; no wholesale port"
+    },
+    {
+      "reference": "RankingConfigV1",
+      "current_projection": [
+        "RankingConfig"
+      ],
+      "producers": [
+        "cli._config",
+        "profiles.AnalysisProfile.ranking_config"
+      ],
+      "consumers": [
+        "ranking.config_digest",
+        "ranking.score_signals",
+        "pipeline._run"
+      ],
+      "retained_behavior": "Same eight default weights, exact integer arithmetic, 40-point group cap, 80-point raw cap, attention/1 formula and semantic config digest.",
+      "wire_and_semantic_differences": "Reference schema serializes multipliers, caps, id and disabled_detectors. Current has weights/enabled/formula; multipliers and caps are fixed algorithm constants. The schema permits alternative multiplier values even though the reference prose defines defaults; that does not authorize changing current calibration semantics.",
+      "residual_obligation": "No migration or configurable multiplier feature is approved. Never reinterpret current attention as probability or pilot confidence.",
+      "disposition": "Explicit incompatible reference wire shape; retain current versioned contract and listed behavior; no wholesale port"
+    },
+    {
+      "reference": "FunctionRankingV1",
+      "current_projection": [
+        "RankingEntry",
+        "RankingResult"
+      ],
+      "producers": [
+        "ranking.rank"
+      ],
+      "consumers": [
+        "cli.cmd_rank",
+        "MainWindow._load_enrichment",
+        "reports._ranking_section"
+      ],
+      "retained_behavior": "Score/raw/group subtotals, deterministic score/strong-group/pairing order, separate match certainty/evidence status, default-profile/staleness guards and same displayed/exported base values.",
+      "wire_and_semantic_differences": "Reference missing_reasons, tie_key and common provenance are not fields of RankingEntry. Current diagnostics live in outcomes/stages/notes, ties are deterministic rather than pilot tie classes. No direct reference object can be loaded as RankingEntry.",
+      "residual_obligation": "Do not claim all proposed per-row diagnostics are exported; richer projection would require explicit versioned output scope. Pilot consumes signals rather than this numeric score.",
+      "disposition": "Explicit incompatible reference wire shape; retain current versioned contract and listed behavior; no wholesale port"
+    },
+    {
+      "reference": "CVEContextV1",
+      "current_projection": [
+        "CveSnapshot",
+        "AttributedText",
+        "AttributedValue",
+        "CvssRecord"
+      ],
+      "producers": [
+        "cve.normalize",
+        "cve.select_latest",
+        "cli.cmd_correlate"
+      ],
+      "consumers": [
+        "cve.contextual_rank",
+        "cve.parse_snapshots"
+      ],
+      "retained_behavior": "Bounded strict provider/import parsing, provider attribution, response-pinned identity, conflicts, conservative freshness, explicit consent and imported-file unverified warning with feature-ID claims removed.",
+      "wire_and_semantic_differences": "Reference adds modified timestamp, richer affected predicates and common availability/provenance fields. Current snapshot ID binds CVE/normalization/provider byte digests, not the reference object recipe. Current CVE limit/ASCII boundary differs from the prose; the reference schema itself omits the prose total-length cap. No automatic wire conversion exists.",
+      "residual_obligation": "Richer advisory predicates in intelligence/pilot do not turn B3 snapshots into authenticated CSAF. Live provider qualification and any new normalized fields remain separate.",
+      "disposition": "Explicit incompatible reference wire shape; retain current versioned contract and listed behavior; no wholesale port"
+    },
+    {
+      "reference": "ContextualRankingV1",
+      "current_projection": [
+        "ContextContribution",
+        "ContextualEntry",
+        "ContextualRanking"
+      ],
+      "producers": [
+        "cve.contextual_rank",
+        "pipeline._run"
+      ],
+      "consumers": [
+        "cli.cmd_correlate",
+        "pipeline.publish"
+      ],
+      "retained_behavior": "Base score/rank preserved, bounded +12/+10/+8/+4 contributions and +30 cap, binary-support and conflicting-CWE guards, explicit stale/term-limit partial status.",
+      "wire_and_semantic_differences": "Current separates result-wide snapshot/input identity from each entry. ContextContribution stores source label/binary reference/detail, not every proposed field-digest/token/rule field. CLI is the actual snapshot-fed pipeline entry; desktop rank_changes supplies no snapshots, and current report ranking adapter emits base ranking only.",
+      "residual_obligation": "Full proposed B3 desktop contextual-rank/report projection is not proven replaced by Leads. Treat it as an additional product design decision; never feed B3 points into pilot tiers.",
+      "disposition": "Explicit incompatible reference wire shape; retain current versioned contract and listed behavior; no wholesale port"
+    },
+    {
+      "reference": "CacheManifestV1",
+      "current_projection": [
+        "CacheManifest",
+        "CacheConfig",
+        "RuntimeFingerprint"
+      ],
+      "producers": [
+        "enrichment.cache.DerivedCache",
+        "enrichment.cache.RuntimeFingerprint.raw_key"
+      ],
+      "consumers": [
+        "pipeline._cached",
+        "backend.run_comparison"
+      ],
+      "retained_behavior": "Content/stage keys, payload size/hash verification, strict manifest, ownership revalidation, private staging and manifest publication, lease/retention policy and raw fingerprint eligibility.",
+      "wire_and_semantic_differences": "Reference has a files list, explicit state/integrity algorithm/tool digest and durable access field. Current manifest describes one payload, complete state is implied by publication, access uses mtime, and tool inputs are in stage/raw keys. These are not interchangeable wire objects.",
+      "residual_obligation": "This packet inspects cache source but does not rerun native power-loss/Windows locking or raw engine acceptance. Recorded cache performance objectives are not qualified here.",
+      "disposition": "Explicit incompatible reference wire shape; retain current versioned contract and listed behavior; no wholesale port"
+    },
+    {
+      "reference": "PipelineExecutionV1",
+      "current_projection": [
+        "PipelineStatus",
+        "StageResult",
+        "PipelineOptions",
+        "PipelineResult",
+        "enrichment.storage.Entry"
+      ],
+      "producers": [
+        "pipeline._run",
+        "pipeline.publish"
+      ],
+      "consumers": [
+        "cli._run_pipeline",
+        "MainWindow.rank_changes",
+        "pipeline.load_default",
+        "pilot.collect._signal_sets"
+      ],
+      "retained_behavior": "Owner-thread publication, guard/current input checks, separate stage statuses, cancellation refusal, preservation of earlier work, version/config identities and additive SQLite extension.",
+      "wire_and_semantic_differences": "Reference stores offline/cache policy and common provenance in each execution. Current operational policy is in options/profile/cache adapters; pipeline rows carry stage/config/algorithm metadata. Current currency excludes note-only revision changes by an explicit later contract. A different field layout is not a drop-in migration.",
+      "residual_obligation": "Publication validation and complete provenance export deserve their own scopes; this narrow confirmed repair is navigation only and leaves stored evidence unchanged.",
+      "disposition": "Explicit incompatible reference wire shape; retain current versioned contract and listed behavior; no wholesale port"
+    }
+  ],
+  "runtime_search": "reference-runtime-call-search.json",
+  "caller_proofs": "caller-proofs.json",
+  "pilot_boundary": {
+    "inputs": "collect._signal_sets loads/computes B1 SignalSets; B1Evidence emits tool-reported code shape observations from Ghidra origin. It does not consume attention/1 or contextual numeric scores.",
+    "classification": "pilot/1 is ordinal mechanism/class with explicit gates, component independence and tie-aware ordering; STRONG_REACHABLE is False, AssignedMechanism excludes strong.",
+    "future_tie_note": "pilot/ranking.py states the plan attention-rank tie preference has no supplying source yet; current exact tie behavior is candidate_key order, preserved."
+  },
+  "confirmed_gap": {
+    "id": "P2-NAV-1",
+    "state": "Existing documented open contract boundary reproduced; source unchanged",
+    "source": "src/patchtrace/ui.py:MainWindow.jump_signal",
+    "existing_validator": "src/patchtrace/enrichment/views.py:validate_location",
+    "historical_scope_note": "docs/specs/enrichment-hardening-backlog.md explicitly deferred UI wiring to its owner.",
+    "probe": "test_phase2_navigation_boundary.py",
+    "probe_sha256": "61b5d7c21778e12ba71bc6d32a0779f7d1d457656955bf2bfdab64c8c5953688",
+    "outcomes": {
+      "failed": 3,
+      "passed": 4,
+      "seconds": 1.67
+    },
+    "reachability": "Authored checksum-valid derived row through real pipeline publication, project close/reopen, real MainWindow load and actual code cursor selection; invalid excerpt/side/run each reaches reveal_lines.",
+    "limit": "Does not claim normal detectors produce invalid rows, that checksums authenticate origins, or native/manual acceptance. Publication behavior is observed, not included in the approved navigation-only repair."
+  },
+  "qualification": [
+    {
+      "run": "current-contracts",
+      "passed": 697,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 8.29,
+      "scope": "11 inspected current enrichment/UI/pilot test files; authored fixtures, source-only Python child import/schema checks, offscreen Qt."
+    },
+    {
+      "run": "reference-original",
+      "passed": 23,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 0.12,
+      "scope": "Exact original reference test bytes; existing runtime JSON Schema dependency, no installation/network/processes in tests; no semantic or runtime compatibility claim."
+    },
+    {
+      "run": "wire-boundary",
+      "passed": 10,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 0.21,
+      "scope": "Nine reference-valid wire objects refused by their current projection, plus public snapshot parser typed refusal. Refusal is expected and protective."
+    },
+    {
+      "run": "navigation-boundary-red",
+      "passed": 4,
+      "failed": 3,
+      "skipped": 0,
+      "seconds": 1.67,
+      "scope": "Actual persisted/reopened GUI navigation defect and pure-validator/valid-navigation positives."
+    }
+  ],
+  "limits": [
+    "No production or existing test changes.",
+    "Original batch7 missing-jsonschema collection error and later historical 23-pass run retained with original source attribution.",
+    "No live CVE fetch, target execution, native engine, compiler, Windows package, frozen application, calibration run or manual desktop acceptance.",
+    "Current-source tests do not turn reference schema examples into operational authenticity or complete supplied-schema support.",
+    "No percentages or additive coverage totals; gates overlap and have different purposes."
+  ]
+}

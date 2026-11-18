@@ -2295,3 +2295,7 @@ match Git bytes. Normal Ruff passes; strict S remains80 unchanged findings and
 fails. The preceding PR316 f3 checkpoint was published with a verified non-force
 lease; main remains `9c411ca3d7b47f950be5f0c6f01b3c54184554c6`. No merge/release/platform acceptance follows.
 [Source-specific checkpoint](qa/ci-followup-20261118/README.md).
+
+## Phase 2 reference-contract disposition, 2026-11-18
+
+Pinned current source 068513a7; original reference 4522030f. The [nine-family disposition](plans/phase2-reference-contract-disposition-20261118.md) traces real enrichment/pilot callers and keeps their distinct contracts. [Sealed QA](qa/phase2-reference-contract-disposition-20261118.md) retains 697 passing current cases, 23 unchanged reference checks, 10 expected wire-format refusals and a separate **3-fail/4-positive** persisted/reopened GUI navigation proof. The pre-existing live-validator wiring omission is approved for a separate narrow repair; no source change or calibration claim in this checkpoint.

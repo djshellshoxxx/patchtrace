@@ -373,3 +373,7 @@ dependency encoding and BinDiff no-network failures are preserved on the prior
 f3/preview tree and assigned for focused diagnosis; successful job badges do not
 qualify those failed receipts. Worker grants, neutral core readers and signal
 navigation are separate candidates under review, absent from this source.
+
+### Phase 2 reference disposition supplement (frozen 068513a7)
+
+All nine historical reference record families now have an explicit producer/consumer and incompatible-field disposition in [the follow-up](phase2-reference-contract-disposition-20261118.md). This adds no whole-branch closure or product-completion percentage. Current enrichment/1 and pilot/1 remain separate. The documented UI live-location validation omission has a real saved-row/reopen/navigation reproduction (3 failed / 4 positives) and is assigned as a separate repair; 697 passing neighboring checks do not close it. Native/provider/calibration and broader reference-only gaps remain stated in the receipt.

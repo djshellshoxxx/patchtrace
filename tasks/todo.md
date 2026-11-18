@@ -1732,3 +1732,9 @@ See the [immutable continuation checkpoint](../docs/qa/verified-continuation-202
 - [ ] Finish independent worker/core/navigation reviews and integrate eligible repairs.
 - [ ] Diagnose and fix Windows pip inspection encoding and restricted-control exit125 without weakening gates.
 - [ ] Complete dependency hash closure, native intake/KB/durable provenance and all actual-candidate final acceptance.
+
+## Phase 2 reference follow-up, 2026-11-18
+
+- [x] Reconcile all nine reference record families against exact 068513a7 producers/consumers and preserve original 4522030f files/tests/outcomes; see `docs/plans/phase2-reference-contract-disposition-20261118.md`. This does not change the original 131-tip denominator or close whole branches.
+- [ ] P2-NAV-1: wire the existing live SourceLocation validator into actual signal navigation with bounded stale/invalid feedback. Original persisted/reopened desktop proof: 3 failed / 4 positive controls. Approved separate spec/test-first slice; source unchanged in this disposition.
+- [ ] Any reference interchange adapter, typed WIL/dataflow claim, richer B3 desktop/report projection or calibration change needs its own explicit contract and evidence; none is implied by reference JSON Schema validation.
