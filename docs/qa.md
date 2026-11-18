@@ -1969,3 +1969,8 @@ current-input hook, combined independent review and native/manual gates remain o
 ## [ADVISORY-READ-BOUNDS-20261118]
 
 Seven unbounded-read/byte-limit failures reproduced and repaired; exact source independently passes 140 affected plus 16 filesystem/backup controls. Native Windows and cumulative store budgets remain unverified. [Evidence](qa/advisory-read-bounds-20261118.md).
+
+
+## [PILOT-CVRF-COMBINED-20261118]
+
+Retained-context bridge, current-input/report hook and independent SQLite repairs pass 1,924 checks on combined source `ac789497`. No skips. The six root reproducers pass unchanged, with six additional corruption/history/export controls. Full/native/platform gates and real CVE attribution remain open. [Receipt](qa/pilot-cvrf-reviewed-20261118/README.md).

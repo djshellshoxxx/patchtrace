@@ -108,3 +108,8 @@ unverified. The local incomplete full-suite attempt is preserved, not counted.
 ## Reviewed advisory read-budget continuation — 2026-11-18
 
 Source `06f5b210e5c6daffaae2b4d51fd8950c28be25c3` repairs reproduced unbounded retained-file reads. Author and independent affected gates each pass 140 tests; 11 independent filesystem controls and five backup tests also pass. Original seven failures are retained. This supports D/R for the advisory storage repair only and adds no J/G credit to the broader advisory/persistence rows. Native Windows, full/platform gates and cumulative store budgets remain open. [Evidence](../qa/advisory-read-bounds-20261118.md).
+
+
+## Reviewed retained-CVE continuation — 2026-11-18
+
+Combined source `ac789497597fba3cb87696990d171a7a27024fca` adds retained CVRF candidate context, shared current-evidence checks for CLI/desktop/publication/navigation/reports, and two independently reproduced SQLite repairs. Root verification is 1,924 passed with zero skips, including six unchanged defect probes and six combined history/report controls. The source preserves actual PR #313 as an ancestor. D/R evidence is complete for these bounded slices; the wider CVE-to-function and report rows remain D/R = 50% because representative real-source/native J and final G are open. No accuracy or overall completion percentage is inferred. [Evidence and remaining tasks](../qa/pilot-cvrf-reviewed-20261118/README.md).

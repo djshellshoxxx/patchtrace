@@ -1444,3 +1444,10 @@ Full `QT_QPA_PLATFORM=offscreen python -m pytest -q` for this isolated native sl
 
 - [x] Bound individual advisory sidecar reads through the shared held-file verifier; preserve seven original failures and independent review.
 - [ ] Qualify native Windows and final-head full/platform gates; assess cumulative advisory I/O separately.
+
+
+### [PILOT-CVRF-COMBINED-20261118]
+
+- [x] Combine the retained CVRF bridge, shared freshness/report checks and independently reviewed SQLite type/complete-row budget repairs; retain all original red evidence.
+- [x] Run the exact combined affected selection: 1,924 passed, zero skips, including unchanged root probes and separate history/report controls.
+- [ ] Complete real-source/native analyst journey and final exact-head Linux/Windows/Qt/package/security qualification.

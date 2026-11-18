@@ -200,3 +200,8 @@ for source/receipt mapping, native fixture limits and next assignments.
 ## Reviewed advisory read-bound follow-on — 2026-11-18
 
 A separate append-only branch on published #307 `58fc1306` carries spec/tests `7d0e8bac` and independently accepted source `06f5b210`, with reviewer receipt `8a89c219`. The existing reader enforces bounded held reads and preserves verified-cache recovery. 140 affected and 16 disjoint independent/backup cases pass. No main merge, branch deletion, older PR closure or native acceptance follows. [Receipt](../../qa/advisory-read-bounds-20261118.md).
+
+
+## Retained-CVE combined review — 2026-11-18
+
+The staleness/report, CVRF bridge and freshness-hook chains are combined with the actual published advisory-bound PR #313 head `a4061979547ef88855fbdb085228a42c3be21603`. Tested source `ac789497597fba3cb87696990d171a7a27024fca` passes 1,924 cases, zero skips, after two further SQLite fixes. Original code/evidence attribution and failed controls remain committed; no main promotion or superseded closure occurs while mandatory gates are unresolved. [Checkpoint](../../qa/pilot-cvrf-reviewed-20261118/README.md).
