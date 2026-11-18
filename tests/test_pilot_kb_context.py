@@ -13,6 +13,7 @@ import subprocess
 import sys
 import threading
 import uuid
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
 import pytest
@@ -99,24 +100,26 @@ def gathered(service, **kwargs):
                            unified=False, **kwargs)
 
 
-def native_bundle(service):
+def native_bundle(service, *, cve=CVE, additional=(), month='2099-Mar', cwe='CWE-125',
+                  title='Authored out-of-bounds read'):
     value = {
         'DocumentType': {'Value': 'Security Update'},
-        'DocumentTracking': {'Identification': {'ID': {'Value': '2099-Mar'}}, 'Status': 2, 'Version': '1'},
+        'DocumentTracking': {'Identification': {'ID': {'Value': month}}, 'Status': 2, 'Version': '1'},
         'ProductTree': {'FullProductName': [{'ProductID': 'P1', 'Value': 'Authored Server 2099 x64'}]},
-        'Vulnerability': [{'CVE': CVE, 'Title': {'Value': 'Authored out-of-bounds read'},
-                           'CWE': [{'ID': 'CWE-125'}],
+        'Vulnerability': [{'CVE': cve, 'Title': {'Value': title},
+                           'CWE': [{'ID': cwe}] if cwe else [],
                            'ProductStatuses': [{'Type': 3, 'ProductID': ['P1']}],
                            'Remediations': [{'Type': 2, 'Description': {'Value': '5099001'},
                                              'ProductID': ['P1']}]}]}
+    value['Vulnerability'] += [dict(value['Vulnerability'][0], CVE=other) for other in additional]
     raw = json.dumps(value).encode()
     doc = import_bytes(raw, now=NOW)
     index = ReverseIndex()
     index.add(doc)
     sides = {a.side: a.sha256 for a in service.project.artifacts}
     bundle = context.build_bundle(
-        investigation_id=str(uuid.uuid4()), base_revision=1, lead=Lead(kind='cve', value=CVE, raw=CVE),
-        cves=(CVE,), index=index, rules=wiring.IntelligenceRules(), now=NOW, coverage=(),
+        investigation_id=str(uuid.uuid4()), base_revision=1, lead=Lead(kind='cve', value=cve, raw=cve),
+        cves=(cve, *additional), index=index, rules=wiring.IntelligenceRules(), now=NOW, coverage=(),
         scope_id=None, pair_id=None, older_sha=sides['older'], newer_sha=sides['newer'])
     return bundle, raw
 
@@ -127,14 +130,17 @@ def import_csaf(service, *, gate='applies', withdrawn=False):
     vuln['cve'] = CVE
     if gate == 'not-applicable':
         vuln['product_status']['known_not_affected'] = vuln['product_status'].pop('known_affected')
-    elif gate == 'conflict':
-        vuln['product_status']['known_not_affected'] = list(vuln['product_status']['known_affected'])
     target = AdvisoryStore(service.root, EnrichmentStore(service.store), service.project.id,
                            service.project.revision)
     target.add(json.dumps(value).encode(), origin='local-import', uri=None, file_name='authored.json',
                retrieved_at=NOW)
+    if gate == 'conflict':
+        value['document']['tracking']['id'] += '-CONFLICT'
+        vuln['product_status']['known_not_affected'] = vuln['product_status'].pop('known_affected')
+        target.add(json.dumps(value).encode(), origin='local-import', uri=None, file_name='conflict.json',
+                   retrieved_at=NOW)
     if withdrawn:
-        value['vulnerabilities'] = []
+        value['vulnerabilities'][0]['cve'] = OTHER
         tracking = value['document']['tracking']
         tracking.update(version='2', current_release_date='2099-02-14T08:00:00.000Z')
         tracking['revision_history'].append({'number': '2', 'date': tracking['current_release_date'],
@@ -168,7 +174,7 @@ def test_real_kb_journey_reaches_pilot_and_retains_uncertainty(case, capsys, mon
 
 def test_native_pointers_and_raw_digest_survive_without_fabricated_csaf(case):
     with ProjectService.open(case) as service:
-        service.store._db.execute("DELETE FROM enrichment_entries WHERE kind='kb-context'")
+        service.store.connection.execute("DELETE FROM enrichment_entries WHERE kind='kb-context'")
         bundle, raw = native_bundle(service)
         publish(service, bundle)
         inputs = gathered(service, named=(CVE,))
@@ -212,6 +218,124 @@ def test_csaf_gates_and_withdrawing_revision_take_precedence(case, gate, withdra
         assert not any(o.ref.kind == 'cvrf-card-fact' for o in inputs.advisory_observations[CVE])
 
 
+def test_unreadable_csaf_universe_does_not_authorize_cvrf_fallback(case):
+    from patchtrace.intelligence.storage import FACTS_DIR, SOURCES_DIR
+    with ProjectService.open(case) as service:
+        import_csaf(service, gate='not-applicable')
+        for directory in (SOURCES_DIR, FACTS_DIR):
+            for path in (service.root / directory).glob('*.json'):
+                path.write_text('{}')
+        docs, warnings = AdvisoryStore(service.root, EnrichmentStore(service.store), service.project.id,
+                                       service.project.revision).advisories()
+        assert not docs and warnings  # intact derived facts would still preserve the negative CSAF gate
+        with pytest.raises(PilotError) as error:
+            gathered(service, named=(CVE,))
+        assert error.value.code == 'PT-PILOT-STALE'
+
+
+def test_invalid_cvrf_does_not_erase_valid_csaf(case):
+    with ProjectService.open(case) as service:
+        bundle = original(service)
+        publish(service, revised(bundle), status='failed')
+        import_csaf(service, gate='not-applicable')
+        inputs = gathered(service, named=(CVE,))
+        assert inputs.contexts[0].gate == 'not-applicable'
+        assert inputs.advisory.status().state == 'partial'
+        assert not any(obs.ref.kind == 'cvrf-card-fact' for obs in inputs.advisory_observations[CVE])
+
+
+@pytest.mark.parametrize('title,expected', [('Authored out-of-bounds read', True), ('Authored item context', False)])
+def test_missing_cwe_uses_only_current_title_rules_and_exact_native_location(case, title, expected):
+    with ProjectService.open(case) as service:
+        service.store.connection.execute("DELETE FROM enrichment_entries WHERE kind='kb-context'")
+        bundle, raw = native_bundle(service, title=title, cwe=None)
+        assert bundle.context.cards[0].stated_cwe is None
+        publish(service, bundle)
+        inputs = gathered(service, named=(CVE,))
+        view = inputs.advisory.report(CVE)
+        assert bool(view.hypotheses.hypotheses) is expected
+        observations = inputs.advisory_observations[CVE]
+        assert bool(observations) is expected
+        if expected:
+            assert {obs.ref.pointer for obs in observations} == {'/Vulnerability/0/Title/Value'}
+            assert {obs.ref.sha256 for obs in observations} == {hashlib.sha256(raw).hexdigest()}
+            assert all(obs.verification == 'rule-hypothesis' for obs in observations)
+        else:
+            assert view.hypotheses.unknowns
+
+
+def test_named_subset_above_64_cves_keeps_shared_source_and_context_identity(case):
+    from patchtrace.pilot.sources.kb_context import fallback_facts_ids
+    cves = tuple(f'CVE-2099-{80000 + i}' for i in range(65))
+    selected = cves[0], cves[-1]
+    with ProjectService.open(case) as service:
+        service.store.connection.execute("DELETE FROM enrichment_entries WHERE kind='kb-context'")
+        bundle, raw = native_bundle(service, cve=cves[0], additional=cves[1:])
+        publish(service, bundle)
+        snapshot = captured(service)
+        assert snapshot.cves == cves
+        with pytest.raises(PilotError) as error:
+            gathered(service)
+        assert error.value.reason == 'too-many-cves'
+        inputs = gathered(service, named=selected)
+        assert tuple(c.cve for c in inputs.contexts) == selected
+        assert inputs.advisory.kb_link_digest == snapshot.digest
+        assert inputs.advisory.facts_ids() == fallback_facts_ids(snapshot, (), selected) == (
+            hashlib.sha256(raw).hexdigest(),)
+
+
+def test_unordered_monthly_revision_is_withheld_and_never_picked_by_hash(case):
+    with ProjectService.open(case) as service:
+        service.store.connection.execute("DELETE FROM enrichment_entries WHERE kind='kb-context'")
+        publish(service, native_bundle(service)[0])
+        publish(service, native_bundle(service, title='Another authored out-of-bounds read')[0])
+        snapshot = captured(service)
+        assert not snapshot.cves and snapshot.unavailable
+
+
+def test_agreeing_sources_keep_exact_refs_but_one_origin_and_enforce_source_cap(case, monkeypatch):
+    from patchtrace.pilot.origins import components
+    from patchtrace.pilot.sources import kb_context
+    with ProjectService.open(case) as service:
+        service.store.connection.execute("DELETE FROM enrichment_entries WHERE kind='kb-context'")
+        a, raw_a = native_bundle(service, month='2099-Mar')
+        b, raw_b = native_bundle(service, month='2099-Apr')
+        publish(service, a)
+        one = gathered(service)
+        publish(service, b)
+        both = gathered(service)
+        observations = both.advisory_observations[CVE]
+        assert {obs.ref.sha256 for obs in observations} == {
+            hashlib.sha256(raw_a).hexdigest(), hashlib.sha256(raw_b).hexdigest()}
+        assert len(components([obs.origins for obs in observations])) == 1
+        assert one.advisory.report(CVE).hypotheses == both.advisory.report(CVE).hypotheses
+        snapshot = captured(service)
+        monkeypatch.setattr(kb_context, 'MAX_SOURCES', 1)
+        with pytest.raises(PilotError) as error:
+            kb_context.fallback_facts_ids(snapshot, (), (CVE,))
+        assert error.value.code == 'PT-PILOT-LIMIT' and error.value.reason == 'advisory-sources'
+
+
+def test_captured_adapter_can_run_off_owner_thread_without_store_access(case, monkeypatch):
+    with ProjectService.open(case) as service:
+        inputs = gathered(service)
+        monkeypatch.setattr(EnrichmentStore, 'entries', denied)
+        monkeypatch.setattr(ProjectService, 'open', denied)
+        with ThreadPoolExecutor(max_workers=1) as pool:
+            result = pool.submit(localize, inputs, keys.default_config(), threading.Event()).result(timeout=10)
+        assert result.cves[0].gate == 'unverified'
+
+
+def test_explicit_assumption_is_recorded_without_inventing_applicability(case):
+    with ProjectService.open(case) as service:
+        inputs = gathered(service, named=(CVE,), assume=(CVE,))
+        result = localize(inputs, keys.default_config(), threading.Event())
+        assert result.cves[0].gate == 'asserted'
+        assert result.cves[0].applicability.older == 'unknown'
+        assert result.inputs.asserted_gates == (CVE,)
+        assert any('analyst assumed' in note for note in result.cves[0].limitations)
+
+
 def test_duplicate_context_does_not_add_rules_origins_or_lead_strength(case):
     with ProjectService.open(case) as service:
         a = gathered(service)
@@ -223,8 +347,9 @@ def test_duplicate_context_does_not_add_rules_origins_or_lead_strength(case):
         assert a.advisory_observations == b.advisory_observations
         assert a.advisory.facts_ids() == b.advisory.facts_ids()
         assert a.advisory.report(CVE).hypotheses == b.advisory.report(CVE).hypotheses
-        assert [(l.cve, l.candidate_key, l.rank, l.mechanism, l.components) for l in before.leads] == [
-            (l.cve, l.candidate_key, l.rank, l.mechanism, l.components) for l in after.leads]
+        assert [(lead.cve, lead.candidate_key, lead.rank, lead.mechanism, lead.components)
+                for lead in before.leads] == [
+            (lead.cve, lead.candidate_key, lead.rank, lead.mechanism, lead.components) for lead in after.leads]
 
 
 def test_current_rules_are_recomputed_from_fields(case):
@@ -271,7 +396,7 @@ def test_newest_invalid_context_never_resurrects_older_cards(case, damage):
             body = bundle.model_dump(mode='json')
         entry_id = publish(service, bundle, body=body, **kwargs)
         if damage == 'corrupt':
-            service.store._db.execute('UPDATE enrichment_entries SET body=? WHERE id=?', ('{}', entry_id))
+            service.store.connection.execute('UPDATE enrichment_entries SET body=? WHERE id=?', ('{}', entry_id))
         snapshot = captured(service)
         assert not snapshot.cves and snapshot.warnings
         with pytest.raises(PilotError) as error:
@@ -285,19 +410,21 @@ def test_withdrawal_changes_identity_without_reviving_another_old_copy(case):
         before = captured(service)
         publish(service, revised(bundle, investigation_id=str(uuid.uuid4()), base_revision=1))
         publish(service, only(bundle, (OTHER,)))
+        publish(service, native_bundle(service, cve=OTHER)[0])
         after = captured(service)
         assert CVE not in after.cves and before.digest != after.digest
         assert OTHER in after.cves
-        with pytest.raises(PilotError):
+        with pytest.raises(PilotError) as error:
             gathered(service, named=(CVE,))
+        assert 'withdrew' in error.value.message and 'historical' in error.value.message
 
 
 def test_revisions_are_ordered_within_investigation_not_globally(case):
     with ProjectService.open(case) as service:
         bundle = original(service)
-        service.store._db.execute("DELETE FROM enrichment_entries WHERE kind='kb-context'")
+        service.store.connection.execute("DELETE FROM enrichment_entries WHERE kind='kb-context'")
         publish(service, revised(only(bundle, (CVE,)), base_revision=90))
-        publish(service, revised(only(bundle, (OTHER,)), investigation_id=str(uuid.uuid4()), base_revision=1))
+        publish(service, native_bundle(service, cve=OTHER)[0])
         assert captured(service).cves == (CVE, OTHER)
 
 
@@ -368,6 +495,6 @@ def test_identity_matches_stored_inputs_and_changes_on_removal(case):
         inputs = gathered(service)
         result = localize(inputs, keys.default_config(), threading.Event())
         assert result.inputs.kb_link_digest == captured(service).digest
-        service.store._db.execute("DELETE FROM enrichment_entries WHERE kind='kb-context'")
+        service.store.connection.execute("DELETE FROM enrichment_entries WHERE kind='kb-context'")
         assert captured(service).digest is None
         assert store._changed(result.inputs, {'kb_link_digest': None}) == ('kb_link_digest',)

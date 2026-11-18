@@ -22,13 +22,16 @@ freshness were not reverified. Imported authenticity remains unestablished.
 
 `pilot/sources/kb_context.py` owns bounded capture and a pure adapter:
 
-- `capture(service, enrichment, budget=...) -> ContextSnapshot`: reads only the
+- `capture(service, enrichment, project=None, budget=...) -> ContextSnapshot`: reads only the
   already-owned project store. The result contains immutable validated current heads,
   plain warnings, and `digest: str | None` for the retained context state.
 - `ContextSnapshot.cves`: sorted eligible CVRF CVEs. An unavailable snapshot supplies
   none; unavailable evidence is unknown, never a negative assertion.
 - `fallback_facts_ids(snapshot, csaf_cves, selected)`: exact recorded source SHA-256
   values behind selected CVRF fallback cards. CSAF overlap contributes no CVRF vote.
+- `available_cves(snapshot, csaf_cves, csaf_readable=...)`: shared pure universe for
+  collection and stored-result comparison. Both helpers accept `csaf_readable=False`
+  to suppress fallback when the CSAF universe could not be fully read.
 - `ProjectAdvisorySource`: composes the existing `StoredAdvisorySource` with the
   captured fallback; offers `context(cve, assume_applies=False)`, the existing source
   methods, and optional `kb_link_digest` for the localization identity.
@@ -61,6 +64,8 @@ conflicting retained monthly source revisions, or different current card values 
 the same CVE are ambiguous and withheld. A withdrawn CVE is not revived by an older
 retained copy in another investigation. Where corruption prevents safe grouping,
 withhold the CVRF channel and retain a plain reason; valid CSAF remains usable.
+An explicitly named withdrawn CVE keeps the existing not-found exit code but says
+that a newer context withdrew the card and the older records remain historical.
 
 Legacy contexts without exact field bindings remain readable elsewhere but cannot
 be promoted into pilot source evidence. Recompute CWE profiles and hypotheses using
@@ -74,8 +79,10 @@ CSAF takes precedence whenever its retained document universe lists the CVE,
 including a superseded revision whose later revision withdrew it. Its applicability,
 negative/conflict gates, hypotheses and observations stay authoritative for this
 adapter. A retained CVRF overlap is disclosed; it cannot override CSAF or supply
-extra independent support. CVRF-only cards have unknown mapping and applicability
-on both sides, no code-locality anchors, and gate `unverified`. The existing explicit
+extra independent support. An unreadable CSAF store leaves its overlap universe
+unknown and cannot authorize CVRF fallback; independently usable CSAF results remain
+available. CVRF-only cards have unknown mapping and applicability on both sides,
+no code-locality anchors, and gate `unverified`. The existing explicit
 analyst assumption may produce `asserted`, with its normal recorded limitation.
 
 Every CVRF observation is vendor text (`D_vendor_text`, `E-TEXT`, context role),
