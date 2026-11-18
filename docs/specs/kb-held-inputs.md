@@ -41,7 +41,11 @@ than 1 MiB. A returned value must be exactly `bytes` and no longer than the
 requested chunk. Nonbytes, oversized or otherwise invalid results raise the
 existing fixed `InputReadError('invalid')` before digest/size progress is recorded;
 they must not silently compare equal to the EOF sentinel, spin or be credited.
-Empty bytes is EOF. Full hashes and ordinary inspection-prefix behavior remain.
+Empty bytes is EOF. Short successful reads are valid: inspection accumulates the
+first at most 4096 bytes across blocks, while hashing and counting the complete
+input. The existing 4096-byte inspection limit does not increase; a PE header
+beyond that prefix is still refused. Ordinary inspection and held inspection of
+the same bytes must retain the same basename, architecture, hash and size.
 
 The provider alone accounts positive held-read byte counts. KB boundary checks
 use zero, and the unchanged core accounts its project-owned verification reads.
