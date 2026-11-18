@@ -95,3 +95,17 @@ The adjacent manifest enumerates every retained payload and SHA-256 in `pilot-st
 Scratch originals are under `/workspace/scratch/c7a9e8d98848/qa/pilot-stage-ownership`; the original external probe
 and first red results remain unchanged under `/workspace/scratch/c7a9e8d98848/qa/security-boundaries-review`.
 Root owns independent replay/review and integration; no remote mutation occurred.
+
+## Independent root acceptance addendum
+
+Root reviewed the complete source/spec/test diff at exact `43ac4829f4e196d7001714bff3622229f5c64d00` and ran
+an independent affected gate: **140 passed in 13.66s**, zero skips. It includes both unchanged external controls,
+PIL/store/current-input/CLI/report and UI freshness neighbors. The earlier combined-root reproduction remains
+**1 failed / 1 healthy positive in 0.47s**. Root found no blocking source issue and accepted only the documented
+failed-creation/cooperative-filesystem guarantee.
+
+The seven unmodified root command, exit, log and JUnit receipts are in the separate adjacent
+`pilot-stage-root-review-20261118.evidence.zip` and manifest. The source-pinned green command records the isolated
+`pilot-stage-review` tree and absolute `PYTHONPATH`. The earlier red command retains its different combined
+source identity. The original 26-payload author archive remains byte-identical; this addendum does not rewrite
+or blend those historical runs.
