@@ -400,8 +400,8 @@ A GUI local-pair approval supplies `expected_pair_id` from its dry-run preview t
 ### Saved advisory search scope (2026-11-18)
 
 An investigation whose lead is a KB or CVE has exactly one saved search coverage
-reference. Before deriving products, components, pair candidates, plans or a new
-attachment, validate the reference against the coverage row's body identity and
+reference. Before deriving products, components, pair candidates, plans, an inventory
+selection or a new attachment, validate the reference against the coverage row's body identity and
 recomputed `kbc.coverage/1` identity. Reject missing, malformed or contradictory
 coverage with `PT-KBC-SCOPE` and repeat-search guidance. Check coherent scope fields,
 requested/inspected membership, the cached corpus digest and source readability.
@@ -411,6 +411,12 @@ revision and every selected journal revision before generic recovery may mark an
 attempt interrupted. Refusal leaves workspace revisions, decisions, attempts,
 journals, project rows and sidecars unchanged. The recovery module's general policy
 is not changed by this boundary.
+
+Inventory selection validates against the full index and unreadable-source results
+already captured for that operation. Its source-snapshot and revision compare-and-swap
+guards still apply. A newly inspected requested month or unreadable current source
+refuses before a selection decision or revision can be published; an unchanged
+partial month scope remains usable without widening its recorded coverage.
 
 `cached_corpus.doc_ids` is a finite selection, including the empty tuple. Reopening
 the service or importing another document cannot expand that selection. Provided
