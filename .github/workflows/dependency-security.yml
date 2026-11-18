@@ -76,3 +76,4 @@ jobs:
             build/security-static/*.json
             build/security-static/*.stdout
             build/security-static/*.stderr
+            build/security-static/*.txt
