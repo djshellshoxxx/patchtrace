@@ -841,6 +841,73 @@ def test_normalized_member_alias_collision_is_rejected(tmp_path, kind):
     assert linked_archive(tmp_path, kind, [], files=('alias/file', 'alias/./file')).problems
 
 
+BAD_WINDOWS_COMPONENTS = {
+    'trailing-dot': 'PatchTrace.exe.', 'trailing-space': 'PatchTrace.exe ',
+    'device-lowercase': 'con', 'device-extension': 'NUL.txt', 'device-spaced-extension': 'AuX .log',
+    'printer': 'PRN', 'console-input': 'conin$.txt', 'console-output': 'CONOUT$',
+    'com-extension': 'cOm1.log', 'lpt': 'lpt9', 'com-superscript': 'COM\u00b9.dat',
+    'lpt-superscript': 'LPT\u00b2', 'com-superscript-three': 'com\u00b3',
+    'alternate-stream': 'PatchTrace.exe:alternate', 'data-stream': 'PatchTrace.exe::$DATA',
+    'less': 'a<b', 'greater': 'a>b', 'quote': 'a"b', 'pipe': 'a|b', 'question': 'a?b', 'star': 'a*b',
+    'control': 'a\x01b', 'tab': 'a\tb', 'newline': 'a\nb',
+    'long-ascii': 'a' * 256, 'long-utf16': '\U0001f600' * 128,
+}
+
+
+@pytest.mark.parametrize('case', BAD_WINDOWS_COMPONENTS, ids=BAD_WINDOWS_COMPONENTS)
+@pytest.mark.parametrize('as_parent', [False, True], ids=['member', 'parent'])
+def test_windows_zip_rejects_unsafe_component_in_any_position(release, case, as_parent):
+    component = BAD_WINDOWS_COMPONENTS[case]
+    name = f'PatchTrace/{component}' + ('/child.bin' if as_parent else '')
+    use_windows_zip(release, zip_bytes(windows_members(**{name: b'alternate bytes'})))
+    code, document, _ = run(release)
+    assert code == 3 and failures(document) == {'archive:windows-zip': 'PT-REL-ARCHIVE-CONTENT'}
+
+
+@pytest.mark.parametrize('case', ['trailing-dot', 'device-extension', 'alternate-stream', 'control'])
+def test_windows_zip_rejects_unsafe_link_target_component(release, case):
+    use_windows_zip(release, zip_with_links((('PatchTrace/alias', BAD_WINDOWS_COMPONENTS[case]),)))
+    code, document, _ = run(release)
+    assert code == 3 and failures(document) == {'archive:windows-zip': 'PT-REL-ARCHIVE-CONTENT'}
+
+
+def test_windows_zip_rejects_nul_truncated_member_name(release):
+    literal = b'PatchTrace/nul?hidden'
+    data = zip_bytes(windows_members(**{literal.decode(): b'alternate bytes'}))
+    assert data.count(literal) == 2
+    use_windows_zip(release, data.replace(literal, literal.replace(b'?', b'\0')))
+    code, document, _ = run(release)
+    assert code == 3 and failures(document) == {'archive:windows-zip': 'PT-REL-ARCHIVE-CONTENT'}
+
+
+@pytest.mark.parametrize('aliases', [
+    ('PatchTrace/caf\u00e9.dll', 'PatchTrace/cafe\u0301.dll'),
+    ('PatchTrace/Name.dll', 'patchtrace/name.DLL'),
+    ('PatchTrace/alias.dll', 'PatchTrace/./alias.dll'),
+    ('PatchTrace/alias.dll', 'PatchTrace//alias.dll'),
+    ('PatchTrace/alias.dll', 'PatchTrace\\alias.dll'),
+], ids=['nfc', 'case', 'dot', 'slash', 'backslash'])
+def test_windows_zip_rejects_normalized_colliding_names(tmp_path, aliases):
+    assert linked_archive(tmp_path, 'zip', [], files=aliases).problems
+
+
+@pytest.mark.parametrize('component', ['COM0', 'LPT10', 'CONSOLE.txt', 'normal name.dll', 'a' * 255,
+                                       '\U0001f600' * 127],
+                         ids=['com0', 'lpt10', 'non-device', 'space', 'max-ascii', 'valid-utf16'])
+def test_windows_zip_preserves_valid_components(tmp_path, component):
+    assert linked_archive(tmp_path, 'zip', [], files=(f'PatchTrace/{component}',)).problems == []
+
+
+def test_windows_zip_preserves_relative_parent_link_inside_archive(tmp_path):
+    assert linked_archive(tmp_path, 'zip', [('PatchTrace/sub/alias', '../real.dll', False)],
+                          files=('PatchTrace/real.dll',)).problems == []
+
+
+def test_linux_tar_names_keep_linux_component_rules(tmp_path):
+    assert linked_archive(tmp_path, 'tar', [], files=('PatchTrace/name.', 'PatchTrace/CON',
+                                                     'PatchTrace/name:stream')).problems == []
+
+
 @pytest.mark.parametrize('kind', [tarfile.FIFOTYPE, tarfile.CHRTYPE, tarfile.BLKTYPE])
 def test_tar_special_members_are_rejected(tmp_path, kind):
     path = tmp_path / 'special.tar.gz'
