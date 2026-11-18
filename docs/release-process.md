@@ -27,6 +27,15 @@ A **milestone** is a first-parent commit on `main` after the commit of the lates
 
 The gate prints `publish=`, `milestones=` and `reason=`; the reason and the counted merges are copied into the release notes.
 
+### Integrate without publishing
+
+Put `[no release]` in the merge commit message when integration is authorized but
+publication is not. The publishing job checks the current push's head message
+case-insensitively and stays skipped even if the cadence gate says yes or fails
+open. QA, repeated Qt tests, native checks, package builds, smoke tests and
+Actions artifacts still run. The hold applies only to that push; it does not
+change the cadence for later unmarked commits. This marker is not a CI skip.
+
 ### Skip-marker hazard
 
 A commit whose whole message (subject and body) contains a marker GitHub honours (`[skip ci]`, `[ci skip]`, `[no ci]`, `[skip actions]`, `[actions skip]`) produces no CI run, hence no build, so the gate does not count it. The head commit is always counted because its run exists. Hazards:

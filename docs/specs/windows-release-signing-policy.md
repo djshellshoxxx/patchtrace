@@ -6,6 +6,26 @@ Source-access note: `learn.microsoft.com`, `docs.github.com`, `signpath.org`, `a
 
 ## 1. Verdict and scope
 
+### Per-push publication hold (2026-11-18)
+
+When the owner authorizes integration without a release, put `[no release]` in
+the merge commit message. The `release` job in `qa-windows.yml` must refuse
+publication when the push event's head-commit message contains that marker,
+case-insensitively. Check it at the publishing job, after grouping the existing
+tag-or-cadence condition, so neither a positive cadence decision nor its fail-open
+fallback can override the hold. Do not interpolate the message into a shell.
+
+This is a per-push hold, not a change to the normal release cadence. The marker
+does not skip QA, repeated Qt tests, native checks, package creation, smoke tests,
+or Actions artifact uploads. Their required dependency gates stay in place.
+The marker on an older commit does not hold a later unmarked push. Tag pushes
+without a head-commit message retain the explicit-tag policy. This task creates
+no tags and uses the hold on every integration merge it performs.
+
+Expression semantics follow GitHub's documented case-insensitive `contains`
+function and implicit success gate:
+https://docs.github.com/en/actions/reference/workflows-and-actions/expressions
+
 Decisions:
 
 1. **Alpha and beta prereleases stay unsigned**, and every release note, README line and the Setup help say so in plain words, including that Windows SmartScreen and antivirus may warn. No wording implies a publisher identity.
