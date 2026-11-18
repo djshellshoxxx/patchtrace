@@ -69,16 +69,16 @@ anchors_from(handle, cve):                       # runs on the OWNER thread up t
 ```
 Rules: (a) the anchor value is always a quoted phrase (`_phrase`), so no advisory character acts as query syntax; (b) kind filter is a UNION of binary-evidence kinds, see section 5.1; (c) changed scope first, then indexed; a miss is `none` only if every group of both runs is `indexed` or `not-applicable`, otherwise `unknown`; (d) nothing is scored, summed or averaged across anchors; (e) no anchor is dropped: an unusable one is `not-searchable` with its reason (value over 400 characters, empty after folding).
 
-### 5.1 Circularity guard (NEW, found by reading; UNVERIFIED by a running repro)
+### 5.1 Circularity guard (IMPLEMENTED; repro verified by `tests/test_search_anchors_real.py`)
 
-Today `plan_for` filters only `pdb` -> `kind:build` and `string` -> `kind:string`. Once the advisory groups are indexed (section 7), a `module`, `feature`, `component` or `api` anchor derived from advisory TEXT would match the advisory document it came from in the `indexed` scope and report `indexed-only` with `hits >= 1`, a false positive that says nothing about the binary. Fix: `KIND_FILTER` becomes a closed allow-list of binary-evidence kinds for every anchor kind except `string`/`pdb` overrides:
+Before this guard, `plan_for` filtered only `pdb` -> `kind:build` and `string` -> `kind:string`. Once the advisory groups are indexed (section 7), a `module`, `feature`, `component` or `api` anchor derived from advisory TEXT would match the advisory document it came from in the `indexed` scope and report `indexed-only` with `hits >= 1`, a false positive that says nothing about the binary. Fix (now in `search/anchors.py` as `kinds_for`/`BINARY_KINDS`): `KIND_FILTER` becomes a closed allow-list of binary-evidence kinds for every anchor kind except `string`/`pdb` overrides:
 
 ```
 BINARY_KINDS = ('function', 'code', 'asm', 'string', 'import', 'export', 'capability', 'rule', 'build')
 query_text(anchor) = ' '.join(['kind:' + k for k in kinds_for(anchor.kind)] + [scope] + [phrase])
 kinds_for('pdb') = ('build',); kinds_for('string') = ('string',); otherwise BINARY_KINDS
 ```
-(`advisory`, `cve`, `cwe`, `kb`, `note`, `finding` are excluded: they are the analyst's and the vendor's words.) Multiple `kind:` tokens are a union (`parse_query` sorts the set). Red test: a real `SearchService` over a synthetic project with a CSAF advisory whose title names `clfs.sys` and a binary with no such name: expected status `none`, not `indexed-only`.
+(`advisory`, `cve`, `cwe`, `kb`, `note`, `finding` are excluded: they are the analyst's and the vendor's words.) Multiple `kind:` tokens are a union (`parse_query` sorts the set). Red test (now `tests/test_search_anchors_real.py`): a real `SearchService` over a synthetic project with a CSAF advisory whose title names `clfs.sys` and a binary with no such name — the module anchor is never `indexed-only` (no advisory match); with every binary group indexed it is `none`, and with the IR group unavailable it is the honest `unknown` (absence unproven), never a false hit.
 
 ## 6. Where CVRF-only CVEs get anchors
 

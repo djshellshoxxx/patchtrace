@@ -38,11 +38,16 @@ def fake_search(changed=0, indexed=0, missing=()):
     return search
 
 
+# Section 5.1 circularity guard: every anchor kind except the string/pdb overrides is restricted to this closed union
+# of binary-evidence kinds, so a hint derived from advisory text can never match the advisory document it came from.
+BINARY = 'kind:function kind:code kind:asm kind:string kind:import kind:export kind:capability kind:rule kind:build'
+
+
 @pytest.mark.parametrize(('kind', 'value', 'expected'), [
-    ('module', 'clfs.sys', 'scope:changed "clfs.sys"'),
-    ('feature', 'IPv6', 'scope:changed "IPv6"'),
-    ('component', 'Common Log File System', 'scope:changed "Common Log File System"'),
-    ('api', 'ExAllocatePool', 'scope:changed "ExAllocatePool"'),
+    ('module', 'clfs.sys', f'{BINARY} scope:changed "clfs.sys"'),
+    ('feature', 'IPv6', f'{BINARY} scope:changed "IPv6"'),
+    ('component', 'Common Log File System', f'{BINARY} scope:changed "Common Log File System"'),
+    ('api', 'ExAllocatePool', f'{BINARY} scope:changed "ExAllocatePool"'),
     ('string', 'Invalid  length "x"', 'kind:string scope:changed "Invalid length x"'),
     ('pdb', 'clfs.pdb', 'kind:build scope:changed "clfs.pdb"'),
 ], ids=['module', 'feature', 'component', 'api', 'string', 'pdb'])
