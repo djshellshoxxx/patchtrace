@@ -1955,3 +1955,20 @@ PR #304 at `bb4277ae` failed the hosted Windows publication boundary: **15 faile
 ## [CURRENT302-INTEGRATION-20261118]
 
 Fresh REST inspection found eleven new #302 commits at `121ffb0b`; six repairs match earlier #304 patch IDs, while four behavior commits repair additional ZIP/lineage/selection/budget defects. Actual merge parents preserve both that head and #304 `6cc6b6b7`. Independent review verified all forty #304-only paths remain unchanged. A copied-target chronology-cache regression was reproduced and fixed; four stale test-double failures were preserved and repaired through fixture flags only. Disjoint affected selections total **1,650 passed, 2 native Windows skips**, with separate independent controls, whole Ruff and schema checks passing. Final code/tree is local `3693ca3b` / published `34c06d9e`, tree `42327753`. Hosted exact-head acceptance and guarded merge remain pending; no PR closure or accuracy promotion follows from local checks. [Evidence and limits](qa/current302-integration-20261118.md).
+
+## [RAW-ALIGNMENT-DESKTOP-20261118]
+
+Selective #168 recovery adds the bounded paired physical-offset desktop workflow
+at source `e4506666`, following spec/test-first `640baa22` on integration baseline
+`ed455725`. The original missing-controller red and subsequent subprocess
+import-path failure are preserved. Final affected Qt/backend selection:
+**182 passed in 32.74 s**; separate current-source headless CLI guard:
+**1 passed in 0.71 s**. Whole Ruff and whitespace checks pass. Global tooltip
+coverage and the unchanged host seam pass; `ui.py` is 3,071 lines under its
+unchanged 3,077-line ceiling. Actual offscreen minimum-width rendering was
+inspected. Independent review and combined actual-head, hosted, native Windows
+and manual acceptance remain open. [Scope, commands and preserved evidence](qa/raw-alignment-workflow-20261118.md).
+
+## [RAW-ALIGNMENT-INDEPENDENT-INTEGRATION-20261118]
+
+Independent source review found no blocking defect, with 183 affected passes and six additional adversarial controls. The focused port onto published #307 `58fc1306` passed the same 183 affected checks in 31.01 s with explicit source-pinned children; required Ruff and whitespace checks pass. All earlier failure receipts remain. Published #307 separately passed 355 boundary checks with three native Windows skips. These are overlapping, scope-specific local results; hosted/full/native/manual acceptance remains open. [Complete review, exact identities and raw receipts](qa/raw-alignment-reviewed-20261118/README.md).
