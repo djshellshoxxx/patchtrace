@@ -111,6 +111,27 @@ Then compare the digest with the Actions artifact of the same run (`gh run downl
 
 ---
 
+### 1.4 Offline verifier archive safety amendment (2026-11-18 UTC)
+
+`tools/verify_release.py` inspects archive metadata and bounded metadata members;
+it never extracts archives or executes their contents. Required ZIP members must
+be regular files: an absent Unix type field is compatible with conventional ZIP
+writers, but explicit directory, symlink, FIFO, device or socket kinds cannot
+stand in for a required file. Unsupported special members anywhere in ZIP or tar
+are archive-content failures.
+
+Member identities normalize dot and redundant separator aliases, treating both
+slash spellings as separators; Windows ZIP identities also fold case. Colliding
+member identities fail. No member may be located below a symbolic or hard link,
+irrespective of archive order. Link targets are resolved component by component
+against the complete declared link map, so a link followed by `..` cannot hide
+an escape through lexical normalization. Symbolic targets start at their
+member's parent; hard-link targets start at archive root. Absolute targets,
+root escapes, targets over 4,096 bytes and chains exceeding 64 link expansions
+fail. Ordinary relative links that stay inside the archive remain supported;
+their target need not be present for this structural check. This is not evidence
+of successful extraction or execution on Windows or Linux.
+
 ## 2. Automated Windows acceptance additions
 
 Existing: `tools/build_windows.py` runs the frozen `--self-test` and `rank --help` after freezing. Windows-only Job Object tests in `tests/test_jobs.py` are skipped on Linux. The native Ghidriff matrix covers the known DLL patch and raw cache hit.

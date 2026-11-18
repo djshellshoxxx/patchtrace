@@ -20,8 +20,8 @@ Checks (a failure names its code):
                                                                                       PT-REL-HASH-MISMATCH
   archive:*           the ZIP holds PatchTrace/PatchTrace.exe, file-inventory.json and dependency-versions.json;
                       the tar holds PatchTrace/PatchTrace with an executable bit (required members are regular
-                      files, not links); no absolute, '..', duplicate or escaping-link member (tar symlinks and
-                      hard links, ZIP Unix symlink entries)                           PT-REL-ARCHIVE-CONTENT
+                      files, not links); no special files, absolute, '..', aliased/duplicate or escaping-link
+                      member, including composed links and link-valued parents       PT-REL-ARCHIVE-CONTENT
 The Linux package records no commit yet (tools/build_linux.py), so commit:linux-tar is not-checked until its
 dependency-versions.json carries one; not-checked is never a pass. Notes come from --notes, else the release body.
 
@@ -40,7 +40,7 @@ import sys
 import tarfile
 import zipfile
 import zlib
-from collections import Counter
+from collections import Counter, deque
 from collections.abc import Callable, Mapping, Sequence
 from pathlib import Path
 from typing import IO, NamedTuple, NoReturn
@@ -61,6 +61,7 @@ MAX_MEMBERS = 100_000
 MAX_INPUT_BYTES = 8 << 20  # release JSON, notes and ls-remote listing
 MAX_SIDECAR_BYTES = 4096
 MAX_LINK_BYTES = 4096  # a ZIP symlink's target is its data
+MAX_LINK_EXPANSIONS = 64
 DETAIL_LIMIT = 300
 LISTED_PROBLEMS = 3
 
@@ -393,26 +394,81 @@ def escapes(name: str) -> bool:
     return name.startswith(('/', '\\')) or bool(DRIVE.match(name)) or '..' in re.split(r'[\\/]', name)
 
 
-def member_problems(names: Sequence[str]) -> list[str]:
-    counts = Counter(names)
+def member_key(name: str, *, fold_case: bool = False) -> str:
+    path = posixpath.normpath(name.replace('\\', '/'))
+    return path.casefold() if fold_case else path
+
+
+def member_problems(names: Sequence[str], *, fold_case: bool = False) -> list[str]:
+    counts = Counter(member_key(name, fold_case=fold_case) for name in names)
     bad = [f'unsafe member {shown(name)}' for name in names if escapes(name)]
     bad += [f'duplicate member {shown(name)}' for name, count in counts.items() if count > 1]
     return bad
 
 
-def link_escapes(member: str, target: str, *, hard: bool = False) -> bool:
-    """True when a link target is absolute or resolves above the archive root, reading either separator. A symlink
-    resolves from its member's directory, a tar hard link from the archive root."""
-    if target.startswith(('/', '\\')) or DRIVE.match(target):
-        return True
-    base = '' if hard else posixpath.dirname(member.replace('\\', '/'))
-    resolved = posixpath.normpath(posixpath.join(base, target.replace('\\', '/')))
-    return resolved == '..' or resolved.startswith('../')
+def resolved_link_problem(member: str, target: str, hard: bool,
+                          links: Mapping[str, tuple[str, bool]], *, fold_case: bool) -> str | None:
+    """Follow declared links before resolving `..`, without touching the filesystem."""
+    stack = [] if hard else member_key(member).split('/')[:-1]
+    pending: deque[str] = deque()
+    expansions = 0
+    while True:
+        if len(target) > MAX_LINK_BYTES or len(target.encode('utf-8', 'surrogatepass')) > MAX_LINK_BYTES:
+            return f'has a target longer than {MAX_LINK_BYTES} bytes'
+        if target.startswith(('/', '\\')) or DRIVE.match(target):
+            return 'escapes the archive'
+        pending.extendleft(reversed(target.replace('\\', '/').split('/')))
+        while pending:
+            part = pending.popleft()
+            if part in ('', '.'):
+                continue
+            if part == '..':
+                if not stack:
+                    return 'escapes the archive'
+                stack.pop()
+                continue
+            stack.append(part)
+            key = '/'.join(stack)
+            linked = links.get(key.casefold() if fold_case else key)
+            if linked is not None:
+                expansions += 1
+                if expansions > MAX_LINK_EXPANSIONS:
+                    return f'exceeds {MAX_LINK_EXPANSIONS} link expansions (cycle or excessive chain)'
+                target, hard = linked
+                stack = [] if hard else stack[:-1]
+                break
+        else:
+            return None
+
+
+def archive_link_problems(names: Sequence[str], targets: Sequence[tuple[str, str, bool]], *,
+                          fold_case: bool = False) -> list[str]:
+    """Reject link-valued parents and composed target escapes, independently of archive order."""
+    links = {member_key(name, fold_case=fold_case): (target, hard) for name, target, hard in targets
+             if not escapes(name)}
+    bad = []
+    for name in names:
+        if escapes(name):  # member_problems already rejected it; never traverse an absolute parent chain
+            continue
+        parent = posixpath.dirname(member_key(name, fold_case=fold_case))
+        while parent:
+            if parent in links:
+                bad.append(f'member {shown(name)} is below a link member')
+                break
+            parent = posixpath.dirname(parent)
+    for name, target, hard in targets:
+        if escapes(name):
+            continue
+        problem = resolved_link_problem(name, target, hard, links, fold_case=fold_case)
+        if problem is not None:
+            bad.append(f'link {shown(name)} {problem}')
+    return bad
 
 
 def link_problems(members: Sequence[tarfile.TarInfo]) -> list[str]:
-    return [f'link {shown(member.name)} escapes the archive' for member in members
-            if (member.issym() or member.islnk()) and link_escapes(member.name, member.linkname, hard=member.islnk())]
+    return archive_link_problems([member.name for member in members],
+                                 [(member.name, member.linkname, member.islnk()) for member in members
+                                  if member.issym() or member.islnk()])
 
 
 def zip_is_link(info: zipfile.ZipInfo) -> bool:
@@ -421,20 +477,24 @@ def zip_is_link(info: zipfile.ZipInfo) -> bool:
 
 
 def zip_is_regular(info: zipfile.ZipInfo) -> bool:
-    return not info.is_dir() and not zip_is_link(info)
+    return not info.is_dir() and not info.external_attr & 0x10 \
+        and stat.S_IFMT(info.external_attr >> 16) in (0, stat.S_IFREG)
 
 
-def zip_link_problems(archive: zipfile.ZipFile, links: Sequence[zipfile.ZipInfo]) -> list[str]:
+def zip_link_problems(archive: zipfile.ZipFile, infos: Sequence[zipfile.ZipInfo]) -> list[str]:
     """Each symlink entry's target is its data, read bounded; never followed or extracted."""
-    bad = []
-    for info in links:
+    bad, targets = [], []
+    for info in infos:
+        if not zip_is_link(info):
+            continue
         with archive.open(info) as stream:
             target = stream.read(MAX_LINK_BYTES + 1)
         if len(target) > MAX_LINK_BYTES:
             bad.append(f'link {shown(info.filename)} has a target longer than {MAX_LINK_BYTES} bytes')
-        elif link_escapes(info.filename, target.decode('utf-8', 'surrogateescape')):
-            bad.append(f'link {shown(info.filename)} escapes the archive')
-    return bad
+            targets.append((info.filename, '', False))  # still treat this member as a link-valued parent
+        else:
+            targets.append((info.filename, target.decode('utf-8', 'surrogateescape'), False))
+    return bad + archive_link_problems([info.filename for info in infos], targets, fold_case=True)
 
 
 def read_versions(size: int, opener: Callable[[], IO[bytes] | None]) -> tuple[Mapping[str, object] | None, str]:
@@ -461,8 +521,11 @@ def read_zip(path: Path) -> Archive:
             if len(infos) > MAX_MEMBERS:
                 return Archive([f'more than {MAX_MEMBERS} members'], None, 'not read: member cap')
             names = [info.filename for info in infos]
-            problems = member_problems(names)
-            problems += zip_link_problems(archive, [info for info in infos if zip_is_link(info)])
+            problems = member_problems(names, fold_case=True)
+            problems += [f'unsupported member type {shown(info.filename)}' for info in infos
+                         if stat.S_IFMT(info.external_attr >> 16) not in
+                         (0, stat.S_IFREG, stat.S_IFDIR, stat.S_IFLNK)]
+            problems += zip_link_problems(archive, infos)
             by_name = {info.filename: info for info in infos}
             problems += [f'{member} missing' if member not in by_name else f'{member} is not a regular file'
                          for member in ZIP_REQUIRED if member not in by_name or not zip_is_regular(by_name[member])]
@@ -490,6 +553,8 @@ def read_tar(path: Path) -> Archive:
                     return Archive([f'more than {MAX_MEMBERS} members'], None, 'not read: member cap')
                 members.append(member)
             problems = member_problems([member.name for member in members]) + link_problems(members)
+            problems += [f'unsupported member type {shown(member.name)}' for member in members
+                         if not (member.isreg() or member.isdir() or member.issym() or member.islnk())]
             by_name = {member.name: member for member in members}
             executable = by_name.get(LINUX_EXE)
             if executable is None or not executable.isreg():
