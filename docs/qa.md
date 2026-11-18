@@ -2349,3 +2349,15 @@ fixture/preflight corrections and all preceding source-specific receipts remain.
 [Complete checkpoint](qa/worker-core-navigation-20261118/README.md).
 Main remains `9c411ca3d7b47f950be5f0c6f01b3c54184554c6`; PR316 is open, PR304/307 blocked by final gates.
 No merge/closure/tag/release/deployment or branch deletion occurred.
+
+
+## 2026-11-18 — KB held-reader propagation design
+
+Read-only proposal pinned to integrated `bca79c2371dc674e1b66177e0396f10332dcf198`
+and the exact reviewed core `97408609`/worker `7259f868` APIs. The
+[72-member evidence packet](qa/kb-held-reader-propagation-design-20261118.md)
+verifies 40 Git snapshots, 51 symbol spans, complete production caller searches
+and unchanged prior observations. No fresh product test or production edit.
+The proposed three-file reader plumbing preserves ordinary injection and saved
+full-index admission; durable package recovery and postcommit checkpoint
+extensions remain separate. Root specification/ownership review is pending.

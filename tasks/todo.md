@@ -1775,3 +1775,11 @@ See the [immutable continuation checkpoint](../docs/qa/verified-continuation-202
 - [ ] Complete focused Windows inventory UTF-8 fix and bounded native diagnostic source; obtain actual hosted evidence.
 - [ ] Propagate held readers through existing KB services, then qualify native stage/FDI/process transfer, durable package linkage and complete frozen journey.
 - [ ] Complete actual-candidate full/platform/native/package/security/reproducibility gates and remaining analyst/CVE-to-function workflows; main/beta acceptance remains blocked.
+
+
+### KB held-reader propagation design (2026-11-18)
+
+- [x] Reconcile the current integrated KB callers with reviewed core/worker interfaces and preserve exact source/caller proofs.
+- [x] Propose bounded service/wiring/attachment ownership, ordinary call compatibility, typed-stop preservation and test-first acceptance.
+- [ ] Root approve production scope; specify and record genuine reds before implementing the three-file propagation.
+- [ ] Keep native adapter/FDI, durable provenance/lease recovery, postcommit checkpoint coverage and frozen/native acceptance separately owned and unqualified.
