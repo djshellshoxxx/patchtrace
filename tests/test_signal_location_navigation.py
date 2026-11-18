@@ -21,6 +21,12 @@ def _rows(service):
     return service.store.connection.execute('SELECT * FROM enrichment_entries ORDER BY id').fetchall()
 
 
+def _item(window, signal_id):
+    # Display-mode changes rebuild the list and destroy its previous C++ items.
+    return next(window.signal_list.item(i) for i in range(window.signal_list.count())
+                if window.signal_list.item(i).data(Qt.ItemDataRole.UserRole) == signal_id)
+
+
 def _window(tmp_path, qtbot, monkeypatch, field=None, *, zero_address=False):
     service = ProjectService.sample(tmp_path / 'authored-project')
     if zero_address:
@@ -60,8 +66,6 @@ def _window(tmp_path, qtbot, monkeypatch, field=None, *, zero_address=False):
     target = next(window.navigator.item(i) for i in range(window.navigator.count())
                   if window.navigator.item(i).data(Qt.ItemDataRole.UserRole) == signal_set.match_id)
     window.navigator.setCurrentItem(target)
-    item = next(window.signal_list.item(i) for i in range(window.signal_list.count())
-                if window.signal_list.item(i).data(Qt.ItemDataRole.UserRole) == signal.signal_id)
     errors, revealed = [], []
     real_reveal = window.reveal_lines
 
@@ -71,7 +75,7 @@ def _window(tmp_path, qtbot, monkeypatch, field=None, *, zero_address=False):
 
     monkeypatch.setattr(window, 'show_error', errors.append)
     monkeypatch.setattr(window, 'reveal_lines', reveal)
-    return window, item, location, errors, revealed
+    return window, signal.signal_id, location, errors, revealed
 
 
 @pytest.mark.parametrize('field,code', [
@@ -84,7 +88,7 @@ def _window(tmp_path, qtbot, monkeypatch, field=None, *, zero_address=False):
     ('end_line', 'PT-ENRICH-STALE'),
 ])
 def test_invalid_stored_location_refuses_before_mode_or_cursor_change(tmp_path, qtbot, monkeypatch, field, code):
-    window, item, _location, errors, revealed = _window(tmp_path, qtbot, monkeypatch, field)
+    window, signal_id, _location, errors, revealed = _window(tmp_path, qtbot, monkeypatch, field)
     try:
         window.mode.setCurrentIndex(1)
         before_project = window.project.model_dump_json()
@@ -92,7 +96,7 @@ def test_invalid_stored_location_refuses_before_mode_or_cursor_change(tmp_path, 
         before_rows = _rows(window.service)
         before_cursors = {side: (pane.textCursor().position(), pane.textCursor().anchor())
                           for side, pane in window.views.items()}
-        window.jump_signal(item)
+        window.jump_signal(_item(window, signal_id))
         assert not revealed
         assert window.mode.currentIndex() == 1
         assert {side: (pane.textCursor().position(), pane.textCursor().anchor())
@@ -107,11 +111,11 @@ def test_invalid_stored_location_refuses_before_mode_or_cursor_change(tmp_path, 
 
 @pytest.mark.parametrize('mode,zero_address', [(0, False), (1, False), (1, True)])
 def test_valid_signal_keeps_actual_navigation_and_zero_address(tmp_path, qtbot, monkeypatch, mode, zero_address):
-    window, item, location, errors, revealed = _window(tmp_path, qtbot, monkeypatch, zero_address=zero_address)
+    window, signal_id, location, errors, revealed = _window(tmp_path, qtbot, monkeypatch, zero_address=zero_address)
     try:
         window.mode.setCurrentIndex(mode)
         before_rows = _rows(window.service)
-        window.jump_signal(item)
+        window.jump_signal(_item(window, signal_id))
         assert not errors
         assert revealed == [(location.function_id, location.start_line, location.end_line)]
         assert window.mode.currentIndex() == 0
@@ -124,11 +128,11 @@ def test_valid_signal_keeps_actual_navigation_and_zero_address(tmp_path, qtbot, 
 
 
 def test_repeat_activation_rechecks_live_excerpt_after_project_change(tmp_path, qtbot, monkeypatch):
-    window, item, location, errors, revealed = _window(tmp_path, qtbot, monkeypatch)
+    window, signal_id, location, errors, revealed = _window(tmp_path, qtbot, monkeypatch)
     try:
-        window.jump_signal(item)
+        window.jump_signal(_item(window, signal_id))
         assert revealed and not errors
-        project = window.project
+        project = window.project.model_copy(deep=True)
         matches = []
         for match in project.matches:
             newer = [function.model_copy(update={'code': function.code + '\n// appended'})
@@ -137,10 +141,12 @@ def test_repeat_activation_rechecks_live_excerpt_after_project_change(tmp_path, 
                 newer = [function.model_copy(update={'code': function.code.replace('buffer == NULL', 'buffer != NULL')})
                          if function.id == location.function_id else function for function in newer]
             matches.append(match.model_copy(update={'newer': newer}))
-        window.service._commit(project.model_copy(update={'matches': matches}))
+        candidate = project.model_copy(update={'matches': matches})
+        window.service._invalidate(candidate)
+        window.service._commit(candidate)
         revealed.clear()
         before_rows = _rows(window.service)
-        window.jump_signal(item)
+        window.jump_signal(_item(window, signal_id))
         assert not revealed
         assert len(errors) == 1 and 'PT-ENRICH-STALE' in errors[0]
         assert _rows(window.service) == before_rows
