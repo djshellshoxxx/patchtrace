@@ -107,6 +107,31 @@ malformed release build while the original row and its identities remain intact.
 Malformed release-build or heading-build claims also leave the fix boundary
 unverified, including a mix of malformed and otherwise valid matching claims.
 
+Partial-order and explicit-choice follow-up (2026-11-18): equal UTC instants
+permit numeric build ordering only when both rows state the same build-family
+prefix. A missing build, a different family, or equal builds remain unordered;
+an intervening sortable row cannot hide such an observation. The change claim
+stays unknown when another observation cannot be ordered against the target.
+For each target variant, search demonstrably earlier rows for the predecessor.
+Retain observations unordered against either endpoint in the confounding window,
+regardless of where KB or hash display tie-breakers place them, so they cannot
+support a fix boundary. Unordered predecessor alternatives also require an
+explicit choice, even when every possible older byte identity differs from the
+target and the target's change claim is therefore still `yes`.
+If no ordered predecessor exists, an otherwise eligible displayed predecessor
+may remain as a diagnostic proposal with `ORDER_UNVERIFIED` and grade X.
+Same-time variants must never become each other's asserted older version.
+
+The derived resolution carries an `ambiguous` flag before candidate filtering
+or truncation. Multiple target byte identities and unresolved endpoint chronology
+set it, including when another variant is unavailable. A truncated resolution
+also requires an explicit choice. Planning and acquisition without `--pair`
+must refuse any remaining viable automatic choice when either condition holds;
+an explicit unique pair prefix may still select an otherwise valid alternative.
+The JSON resolution exposes `ambiguous` alongside `truncated`, and the human
+listing explains the need for an explicit choice. Neither an explicit choice
+nor a candidate's availability upgrades the evidence or removes hard blocks.
+
 Direct index mappings may omit `other_versions`; a present value must be a list
 or tuple of nonempty string keys. A malformed collection or member rejects that
 entire mapping once, without raising, discarding bad members silently, or

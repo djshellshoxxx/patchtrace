@@ -58,6 +58,7 @@ class Resolution:
     note: str
     skipped_rows: int
     truncated: bool = False
+    ambiguous: bool = False
 
 
 def binary_ref(row: IndexRow) -> BinaryRef:
@@ -175,14 +176,20 @@ def resolve(rows: Sequence[IndexRow], *, kb: str, scope: ProductScope, file_name
                           skipped_rows)
         return _empty(kb, file_name, scope, scope.winbindex_key, ('NO_NEWER',), NOT_IN_INDEX, skipped_rows)
     pairs: dict[str, PairProposal] = {}
+    ambiguous = change.reason in ('variants', 'order-unverified')
     for target in {r.sha256: r for r in reversed(change.target_rows)}.values():
         older, between = predecessor(line, target, same_class_only=same_class_only)
         if older is not None:
+            ambiguous |= any(not chronologically_before(older, row) or not chronologically_before(row, target)
+                             for row in between)
             pair = propose_index_pair(older, target, scope_id=scope.scope_id, intervening=between,
                                       fixed_build=fixed_build, skipped_rows=skipped_rows, tier=tier)
             pairs.setdefault(pair.pair_id, pair)
     ordered = sorted(pairs.values(), key=lambda p: rank_key(p, change.state))
     blockers = () if ordered else ('NO_OLDER',)
+    truncated = len(ordered) > limit
+    note = '' if ordered else reason_text('NO_OLDER')
+    if ordered and (ambiguous or truncated):
+        note = 'Variants, unresolved chronology or a truncated list remain; select an explicit pair with --pair.'
     return Resolution(kb, file_name, scope.scope_id, scope.winbindex_key, change.state, change.last_changed_in,
-                      tuple(ordered[:limit]), blockers, '' if ordered else reason_text('NO_OLDER'), skipped_rows,
-                      len(ordered) > limit)
+                      tuple(ordered[:limit]), blockers, note, skipped_rows, truncated, ambiguous)

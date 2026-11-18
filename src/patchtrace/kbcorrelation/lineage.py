@@ -103,7 +103,14 @@ def chronologically_before(older: IndexRow, newer: IndexRow) -> bool:
     if old_date != new_date:
         return old_date < new_date
     return (bool(_UBR.fullmatch(old.release_version or '')) and bool(_UBR.fullmatch(new.release_version or ''))
+            and ubr_key(old.release_version)[0] == ubr_key(new.release_version)[0]
             and ubr_key(old.release_version) < ubr_key(new.release_version))
+
+
+def _unordered_rows(line: Sequence[IndexRow], target: IndexRow) -> tuple[IndexRow, ...]:
+    """Observations which display tie-breakers cannot place before or after the target."""
+    return tuple(row for row in line if row != target and row.build.version_key == target.build.version_key
+                 and not chronologically_before(row, target) and not chronologically_before(target, row))
 
 
 def _availability(download: object, variant: str) -> Availability:
@@ -213,8 +220,7 @@ def change_in_kb(line: Sequence[IndexRow], kb: str) -> ChangeInfo:
         return ChangeInfo('unknown', 'variants', None, targets)  # several SHAs for one KB: never auto-pick
     index = line.index(targets[0])
     target = targets[0]
-    if (_release_instant(target.build.release_date) is None
-            or any(r.sha256 != target.sha256 and order_key(r)[:2] == order_key(target)[:2] for r in line)):
+    if _release_instant(target.build.release_date) is None or _unordered_rows(line, target):
         return ChangeInfo('unknown', 'order-unverified', None, targets)
     if index > 0 and not chronologically_before(line[index - 1], target):
         return ChangeInfo('unknown', 'order-unverified', None, targets)
@@ -242,7 +248,24 @@ def predecessor(line: Sequence[IndexRow], target: IndexRow, *,
     The older row never carries ``target``'s own bytes (spec 31-C C4, audit KBA-06): when a build reverted across a
     row of another class, the earlier rows with those bytes are passed over and stay in the window, and the nearest
     earlier build with other bytes is returned. No such build is ``(None, ())``, never a byte-identical pair.
+
+    Unordered peers cannot become predecessors merely by KB/hash order. They stay in the confounding window.
+    If no established predecessor exists, preserve the display-derived proposal for its grade-X diagnostic.
     """
+    eligible = tuple(row for row in line if row == target or chronologically_before(row, target))
+    older, between = _display_predecessor(eligible, target, same_class_only=same_class_only)
+    if older is None:
+        older, between = _display_predecessor(line, target, same_class_only=same_class_only)
+    if older is None:
+        return None, ()
+    included = {id(row) for row in (older, target, *between)}
+    unplaced = {id(row): row for endpoint in (older, target) for row in _unordered_rows(line, endpoint)
+                if id(row) not in included}
+    return older, tuple(sorted((*between, *unplaced.values()), key=order_key))
+
+
+def _display_predecessor(line: Sequence[IndexRow], target: IndexRow, *,
+                         same_class_only: bool) -> tuple[IndexRow | None, tuple[IndexRow, ...]]:
     index = start = line.index(target)
     while start > 0 and line[start - 1].sha256 == target.sha256:
         start -= 1
