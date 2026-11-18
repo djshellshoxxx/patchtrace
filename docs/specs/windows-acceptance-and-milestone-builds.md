@@ -78,6 +78,72 @@ Naming:
 - Acceptance candidates use an **annotated** tag on the reviewed SHA: `v0.1.0-alpha.<n>` (n starts at 1 and never reuses a number).
 - **(recovered from PR #281 on 2026-11-16)** A `v*` tag names its release `PatchTrace <tag> (Windows x64, Linux x86-64)`; the notes title already derives from the tag (`tools/milestone_notes.py --tag`, "tagged build"). Automatic main builds keep `PatchTrace beta <run_number>`. `tests/test_release_gate.py` pins both names.
 
+### 1.2a Exact-source publication qualification amendment (2026-11-18)
+
+Both the desktop release job and backend-bundle publisher must run the shared
+`tools/release_qualification.py` guard immediately before any release/tag/asset
+mutation. Cadence decides whether publication is due; it does not establish
+qualification. Its existing fail-open cadence behavior stays unchanged. The
+guard itself fails closed on absent, queued, skipped, failed, stale, ambiguous,
+malformed or unreadable evidence. It never triggers a workflow or publishes.
+
+The checked-out commit must equal the requested full SHA. The actual commit
+message, read independently of the event payload, must not contain the literal
+`[no release]`; that hold applies to tags, manual runs and backend bundles too.
+Only exact-source `push`, `workflow_dispatch` or scheduled runs from this same
+repository can supply acceptance. PR merge previews and foreign/fork runs cannot
+qualify canonical release bytes. The latest eligible run and its latest attempt
+must own every required job; recheck selections/attempts before returning a pass.
+Current publisher-run prerequisites may be complete while its overall run is
+still in progress. An unrelated in-progress workflow cannot supply acceptance.
+
+Required existing lanes are QA on Linux/Windows (including Windows frozen ZIP,
+installer and full tests), all Qt repeat shards, Linux package/smoke legs, all
+native Ghidriff variants, Rizin on both platforms, BinDiff on both platforms,
+unified extraction on both platforms, optional-wheel imports, and bounded parser
+fuzzing. Their named critical steps must actually complete successfully. A
+successful advisory job or a test that only reports blocked acceptance is not a
+pass. BinDiff additionally requires its exact run's named, nonexpired status
+artifact, created within the selected job's latest-attempt execution interval,
+with unmocked `passed` status and passed native subchecks. ZIP/JSON reads are
+bounded and never extracted or executed.
+
+Dependency vulnerability auditing and static security scanning are mandatory
+categories, reserved under `dependency-security.yml` jobs `dependency-audit` and
+`security-scan` with explicit audit steps. No such lane is qualified by this
+amendment. Its absence is a recorded publication blocker until a separately
+reviewed scanner/triage policy and exact-source execution exist. The available
+Ruff security-rule findings remain untriaged evidence, not confirmed
+vulnerabilities or a clean scan. No finding may be suppressed merely to clear the
+publication guard.
+
+For a backend bundle, the selected platforms must additionally have successful
+build and disconnected acceptance jobs in the current bundle run. Before either
+publisher uses an existing release, the tag must peel through a bounded chain of
+annotated tag objects to the exact target SHA, and the release must already be a
+published prerelease. Existing asset-name collisions are refused before upload;
+neither publisher may overwrite existing assets. API errors never mean that a
+release or tag is absent. A later concurrent authorized ref mutation is outside
+this read-only point-in-time check; upload still uses no-replacement semantics.
+
+The guard emits bounded machine-readable reasons and exact run/job/attempt
+references. API calls, pagination, artifact sizes and tag peeling have fixed
+limits. Missing or late-running lanes leave publication blocked; they are not
+automatically dispatched or polled indefinitely. The desktop/NSIS build artifacts
+remain available independently of a publication hold. GitHub Pages is a separate
+site deployment workflow and is not invoked or changed by this release repair.
+
+Independent-review clarification (2026-11-18): source identity requires the actual
+tracked file bytes and modes to match the canonical commit tree. Do not trust Git
+replacement objects, index flags/stat caches, external diff drivers or clean
+filters as evidence of those bytes. Verify bounded regular-file/symlink content
+against canonical blob identities and refuse unsupported or changing entries.
+The two publishers run on Linux with canonical checkout bytes; a filtered
+checkout whose bytes differ must be refused, without changing product platform
+support. All parsed JSON numbers must remain finite, including exponent overflow
+inside otherwise unused metadata. Distinct platform artifacts must have distinct
+artifact IDs; one archive cannot qualify two platform results.
+
 ### 1.3 Verification after each release
 
 Replace `<TAG>` and `<SHA>`. Use an empty directory for downloads.
