@@ -30,6 +30,7 @@ MAX_JSON = 16 * 1024 * 1024
 MAX_ITEMS = 5000
 MAX_DEPTH = 64
 PINS = {'pip-audit': '2.10.1', 'ruff': '0.17.5'}
+PYTHON_OPTIONS = ('-I', '-X', 'utf8')
 BOOTSTRAP_PIP = '26.3'
 BOOTSTRAP_WHEEL_SHA256 = 'f3b60b20ffaadd4415ed7957212a38ac63fa4c5fa375bd0f4a797777940fad13'
 BOOTSTRAP_WHEEL_URL = (
@@ -414,20 +415,20 @@ def python_path(out, name):
 
 
 def pip_install(python, report, requirements):
-    return [python, '-I', '-m', 'pip', 'install', '--disable-pip-version-check', '--no-input',
+    return [python, *PYTHON_OPTIONS, '-m', 'pip', 'install', '--disable-pip-version-check', '--no-input',
             '--only-binary=:all:', '--index-url', 'https://pypi.org/simple', '--timeout', '15', '--retries', '1',
             '--report', str(report), *requirements]
 
 
 def audit_argv(python, out):
-    return [python, '-I', '-m', 'pip_audit', '-r', str(out / 'audit-requirements.txt'),
+    return [python, *PYTHON_OPTIONS, '-m', 'pip_audit', '-r', str(out / 'audit-requirements.txt'),
             '--strict', '--no-deps', '--disable-pip', '--vulnerability-service', 'pypi',
             '--format', 'json', '--progress-spinner', 'off', '--timeout', '15',
             '--cache-dir', str(out / 'advisory-cache')]
 
 
 def static_argv(python, root):
-    return [python, '-I', '-m', 'ruff', 'check', str(root / 'src'), '--isolated', '--select', 'S',
+    return [python, *PYTHON_OPTIONS, '-m', 'ruff', 'check', str(root / 'src'), '--isolated', '--select', 'S',
             '--ignore-noqa', '--no-cache', '--no-respect-gitignore', '--output-format', 'json']
 
 
@@ -439,13 +440,13 @@ def bootstrap_commands(out, label):
     require(label in {'scanner', 'profile'}, 'unknown bootstrap environment')
     python = python_path(out, f'{label}-env')
     return {
-        f'{label}-venv': [sys.executable, '-I', '-m', 'venv', str(out / f'{label}-env')],
-        f'{label}-bootstrap-identity': [python, '-I', '-c', IDENTITY_CODE],
-        f'{label}-bootstrap-inspect': [python, '-I', '-m', 'pip', 'inspect', '--local'],
-        f'{label}-bootstrap-check': [python, '-I', '-m', 'pip', 'check'],
+        f'{label}-venv': [sys.executable, *PYTHON_OPTIONS, '-m', 'venv', str(out / f'{label}-env')],
+        f'{label}-bootstrap-identity': [python, *PYTHON_OPTIONS, '-c', IDENTITY_CODE],
+        f'{label}-bootstrap-inspect': [python, *PYTHON_OPTIONS, '-m', 'pip', 'inspect', '--local'],
+        f'{label}-bootstrap-check': [python, *PYTHON_OPTIONS, '-m', 'pip', 'check'],
         f'{label}-bootstrap-install': pip_install(python, out / f'{label}-bootstrap-install.json',
             ['--upgrade', '--force-reinstall', '--no-deps', '--require-hashes', '-r', str(out / 'bootstrap-pip.txt')]),
-        f'{label}-prepared-inspect': [python, '-I', '-m', 'pip', 'inspect', '--local'],
+        f'{label}-prepared-inspect': [python, *PYTHON_OPTIONS, '-m', 'pip', 'inspect', '--local'],
     }
 
 
@@ -458,9 +459,9 @@ def commands(out, root, project, profile):
     result = {
         **bootstrap_commands(out, 'scanner'),
         'scanner-install': pip_install(scanner, out / 'scanner-install.json', pins),
-        'scanner-identity': [scanner, '-I', '-c', IDENTITY_CODE],
-        'scanner-inspect': [scanner, '-I', '-m', 'pip', 'inspect', '--local'],
-        'scanner-check': [scanner, '-I', '-m', 'pip', 'check'],
+        'scanner-identity': [scanner, *PYTHON_OPTIONS, '-c', IDENTITY_CODE],
+        'scanner-inspect': [scanner, *PYTHON_OPTIONS, '-m', 'pip', 'inspect', '--local'],
+        'scanner-check': [scanner, *PYTHON_OPTIONS, '-m', 'pip', 'check'],
     }
     if profile == 'static':
         result['static'] = static_argv(scanner, root)
@@ -470,9 +471,9 @@ def commands(out, root, project, profile):
             'build-install': pip_install(product, out / 'build-install.json', project['build-system']['requires']),
             'profile-install': pip_install(product, out / 'profile-install.json',
                 ['--no-build-isolation', '-e', f'{root}[{",".join(EXTRAS[profile])}]']),
-            'profile-identity': [product, '-I', '-c', IDENTITY_CODE],
-            'profile-inspect': [product, '-I', '-m', 'pip', 'inspect', '--local'],
-            'profile-check': [product, '-I', '-m', 'pip', 'check'],
+            'profile-identity': [product, *PYTHON_OPTIONS, '-c', IDENTITY_CODE],
+            'profile-inspect': [product, *PYTHON_OPTIONS, '-m', 'pip', 'inspect', '--local'],
+            'profile-check': [product, *PYTHON_OPTIONS, '-m', 'pip', 'check'],
             'audit': audit_argv(scanner, out),
         })
     return result
