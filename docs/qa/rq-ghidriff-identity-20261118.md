@@ -54,7 +54,8 @@ native report generation, corpus rescore or network source acquisition ran.
 | First repaired adapters/scorerun/scoring/parity selection | 176 passed | Intermediate source, before the Markdown decoration repair |
 | Markdown decoration controls before repair | 2 failed, 67 deselected | Original two normalization failures |
 | Final candidate selection including Rizin and production normalization controls | 308 passed | Candidate files subsequently committed as `5936896e` |
-| Exact-source research qualification family plus production normalization controls | 621 passed, 3 skipped | Executed with HEAD `5936896e452789a565e656ab8491620f78c55705`; native Windows checks remain unverified |
+| Initial research qualification family plus production normalization controls | 621 passed, 3 skipped | Executed with HEAD `5936896e452789a565e656ab8491620f78c55705`; subprocess imports were not explicitly pinned, so this is not exact-source subprocess qualification |
+| Repeated research family with absolute subprocess source pin | 621 passed, 3 skipped in 10.14 s | Detached HEAD `5936896e452789a565e656ab8491620f78c55705`; absolute `PYTHONPATH` identifies this source for child processes; native Windows checks remain unverified |
 | Whole repository Ruff and `git diff --check` | Passed | Current candidate source |
 
 The final 308-test command was:
@@ -80,7 +81,7 @@ The three skips were two native Windows publication/handle controls and the
 optional `psutil` resource-peak measurement check. Resource peaks were therefore
 not measured by that check; no skipped result is acceptance.
 
-The exact-source integration command was:
+The initial integration command was:
 
 ```bash
 QT_QPA_PLATFORM=offscreen python -m pytest -q \
@@ -89,6 +90,36 @@ QT_QPA_PLATFORM=offscreen python -m pytest -q \
   tests/test_normalization_address_identity.py --tb=short
 ```
 
+### Source-pinning correction (2026-11-18)
+
+The shared virtual environment has an editable install referring to an older
+checkout at `/workspace/scratch/3a6632a6e5ff/patchtrace`. Pytest's parent process
+used its current checkout through the repository's `pythonpath` configuration,
+but an unqualified Python subprocess could resolve the older installation.
+The earlier logs are retained unchanged and are not evidence that every child
+process imported the repair source. This limitation also applies to the earlier
+overlapping selections wherever they launched such a child process.
+
+The entire 624-item research/production-control selection was therefore repeated
+once from a clean detached checkout of the repair source, with the explicit
+environment below. It completed with **621 passed and the same 3 skipped**.
+The source-pin context records the interpreter, exact commit, relevant source
+hashes and paths imported by an actual child process. This repeat replaces the
+earlier selection's exact-source qualification; counts are not additive.
+
+```bash
+cd /workspace/scratch/c7a9e8d98848/report-review-pinned
+QT_QPA_PLATFORM=offscreen \
+PYTHONPATH=/workspace/scratch/c7a9e8d98848/report-review-pinned/src \
+/workspace/scratch/3a6632a6e5ff/venv/bin/python -m pytest -q \
+  tests/test_research_qualification*.py \
+  tests/test_evalcore_ghidriff_one_to_many.py \
+  tests/test_normalization_address_identity.py --tb=short \
+  --junitxml=/workspace/scratch/c7a9e8d98848/qa/ghidriff-identity/exact-source-pinned.xml
+```
+
 Original logs and JUnit files are retained in
 `rq-ghidriff-identity-20261118/evidence.zip`; `manifest.json` records each input
-filename, size and SHA-256 plus the archive digest.
+filename, size and SHA-256 plus the archive digest. The source-pin repeat adds
+`exact-source-pinned.log`, `exact-source-pinned.xml` and
+`exact-source-pinned-context.json` without removing any earlier file.

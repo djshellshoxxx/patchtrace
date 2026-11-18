@@ -3,6 +3,21 @@
   "source_commit": "5936896e452789a565e656ab8491620f78c55705",
   "contents": [
     {
+      "name": "exact-source-pinned-context.json",
+      "bytes": 1003,
+      "sha256": "18a5e63abbb4743b79a5fa0c18f7561fda152cc28ebea4d31c9577b09c3c776a"
+    },
+    {
+      "name": "exact-source-pinned.log",
+      "bytes": 752,
+      "sha256": "4a122262a521f25af9f3b7879b126b4fcbe5c37328e6328e8b06ce725834d7c9"
+    },
+    {
+      "name": "exact-source-pinned.xml",
+      "bytes": 91270,
+      "sha256": "c0d37317d7865577a4e4c60609830d2ab387945b34c0527a65f0d2ff416a550c"
+    },
+    {
       "name": "exact-source.log",
       "bytes": 751,
       "sha256": "baa9deb690122d98623d838d677568bb28b3a89a27ef2b1441b3118ac8aed53f"
@@ -53,6 +68,14 @@
       "sha256": "9ade8dfd199d8bf167719d7923a42556e140261941ca4143cda10ade9b39edc0"
     }
   ],
-  "archive_sha256": "cec83889aa1bfdf45a7e209f1fb90bfbef220634af16b6ffb29e5c9dc61cefdb",
-  "archive_bytes": 21676
+  "archive_sha256": "e649800d6faa963a536d2c3c6521605c4fa20b7b462c5340762c956bdb7e901d",
+  "archive_bytes": 32154,
+  "source_pin_correction": {
+    "initial_receipt_limitation": "Prior pytest parent used the current checkout; Python subprocesses did not have an explicit PYTHONPATH and may have used the older editable install.",
+    "replacement_receipt": "exact-source-pinned.log",
+    "context": "exact-source-pinned-context.json",
+    "source_commit": "5936896e452789a565e656ab8491620f78c55705",
+    "result": "621 passed, 3 skipped in 10.14s",
+    "prior_inputs_preserved": true
+  }
 }
