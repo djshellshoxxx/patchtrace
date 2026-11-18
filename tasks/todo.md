@@ -1673,3 +1673,10 @@ See the [immutable continuation checkpoint](../docs/qa/verified-continuation-202
 - [ ] Reproduce CODEX1/5/6/14 on the approved current candidate before narrowly reviewed repairs; map dependency lock coverage before installer changes.
 - [ ] Reconcile the unretained Phase2 reference package after still-reachable runtime/workflow defects; no silent contract reinterpretation.
 - [ ] Root independent review/selective docs integration; broad native/research/platform/hosted/manual obligations remain open.
+
+
+### [WINDOWS-SOURCE-OBSERVATIONS-20261118]
+
+- [x] Preserve supported-semantics source evidence and all original author/reviewer failures.
+- [x] Specify/test then repair compatible comparisons, both final tree consumers and receipt reads; independently review exact source.
+- [ ] Integrate and run actual combined/candidate Windows, native, dependency and package gates; all eight Windows skips remain unverified.

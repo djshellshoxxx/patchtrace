@@ -2227,3 +2227,8 @@ Twenty focal records; fresh 173 passed/2 compiler deselections across 29 files. 
 ### Semantic disposition final batch7 (2026-11-18, frozen 55f3)
 
 Eleven focal records finish the exact original 131 partition. Fresh 100 passed / 4 known xfails / 1 explicit real-launcher deselection; original audit 19 pass/5 classified failures, deadline 2 pass, reference 23 pass, initial missing-jsonschema collection error retained. No native/package/network/manual acceptance. See [receipt](qa/semantic-disposition-batch7-20261118.md).
+
+
+## [WINDOWS-SOURCE-OBSERVATIONS-20261118]
+
+Exact source `80df2735` repairs compatible path/descriptor observations, final Windows ChangeTime rechecks in both source consumers and dependency receipt reads. Original independent failures remain. Author240/8native skips, independent44/0 and252/8; no native Windows or scanner acceptance. [Complete sealed evidence](qa/windows-source-stat-20261118/README.md).
