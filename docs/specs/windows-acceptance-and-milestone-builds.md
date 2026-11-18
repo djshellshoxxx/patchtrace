@@ -302,3 +302,13 @@ Within that version block, require one StringFileInfo language/codepage and uniq
 ## WIN-1 build-output staging amendment (2026-10-30)
 
 The version-info and ICO generators keep their caller-selected `--out` destinations; these are build-tool output paths, not application/model instructions. Each writer must exclusively create a random adjacent staging file, write through its owned handle, close it before atomic replacement, and remove its stage after a write or replacement failure. Existing predictable `<out>.tmp` files or symlinks, and their targets, must remain untouched. Normal output bytes and replacement of the explicitly selected destination remain supported. This bounded repair does not claim hostile-parent-directory confinement or resolve the separate Sonar quality finding without fresh evidence.
+
+### Early native publication controls (2026-11-18)
+
+Run the ordinary, integrity and owned-handle research pair-publication regression
+files on both QA operating systems before the full suite. This makes Windows
+handle/rename and reparse failures visible before the longer suite and package
+build, without replacing or reducing either gate. Retain their JUnit receipt in
+the existing per-OS QA artifact even if a later stage fails. These authored-byte
+checks exercise native filesystem operations; they do not execute target binaries
+or qualify a real Windows vulnerability pair.
