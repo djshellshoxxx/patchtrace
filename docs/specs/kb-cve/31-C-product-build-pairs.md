@@ -73,8 +73,13 @@ Chronology certainty amendment (2026-11-18): index-row orientation requires an
 explicit release date on both rows. Distinct dates establish the order; equal
 dates additionally require both stated numeric release builds and a strictly
 increasing build/UBR. Missing dates and builds remain unknown, never artificial
-earliest values. Display ordering may still use the existing stable keys, but an
-unestablished proposal order carries `ORDER_UNVERIFIED`, incompatible lineage,
+earliest values. Dates must be real calendar days, including leap-year rules;
+an impossible date in a raw index mapping becomes missing date evidence. Direct
+typed rows also require valid timestamp values; source timezone offsets are
+compared as UTC instants with all nine fractional digits retained, and equal
+instants cannot be separated by their textual spelling. Display ordering may
+still use the existing stable keys, but an unestablished proposal order carries
+`ORDER_UNVERIFIED`, incompatible lineage,
 grade X and an unverified fix boundary. The `changed_in_kb` assessment also stays
 unknown when its predecessor is not demonstrably earlier, different bytes share
 the target's chronological position, or the claimed unchanged run lacks an

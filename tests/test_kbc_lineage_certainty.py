@@ -122,3 +122,80 @@ def test_an_unchanged_run_with_unknown_first_date_does_not_claim_a_last_change_k
     older = replace(older, build=older.build.model_copy(update={'sha256': newer.sha256}))
     result = ln.change_in_kb(ln.timeline((older, newer), '11-24H2'), newer.kb)
     assert (result.state, result.reason, result.last_changed_in) == ('unknown', 'order-unverified', None)
+
+
+@pytest.mark.parametrize('date', ['2099-13-01', '2099-02-30', '2100-02-29', '0000-01-01'])
+@pytest.mark.parametrize('side', ['older', 'newer'])
+def test_impossible_index_dates_remain_unknown_instead_of_establishing_order(date, side):
+    older, newer = rows(**{f'{side}_date': date})
+    invalid = older if side == 'older' else newer
+    assert invalid.build.release_date is None
+    pair = proposal(older, newer)
+    assert pair.grade == 'X' and pair.fix_boundary == 'unverified'
+    assert 'ORDER_UNVERIFIED' in pair.reason_codes
+    result = ln.change_in_kb(ln.timeline((older, newer), '11-24H2'), newer.kb)
+    assert result.state == 'unknown'
+
+
+def typed_timestamp(row, text):
+    # The shared persisted Timestamp contract checks shape only. Validate normally;
+    # this exercises the direct IndexRow seam without bypassing model validation.
+    return replace(row, build=type(row.build).model_validate(row.build.model_dump() | {'release_date': text}))
+
+
+@pytest.mark.parametrize('stamp', ['2099-13-01T00:00:00Z', '2099-02-30T00:00:00Z',
+                                  '2100-02-29T00:00:00Z', '2099-01-01T25:00:00Z',
+                                  '2099-02-01T00:00:00+00:99'])
+@pytest.mark.parametrize('side', ['older', 'newer'])
+def test_direct_typed_rows_cannot_claim_order_from_impossible_timestamps(stamp, side):
+    older, newer = rows()
+    older, newer = (typed_timestamp(older, stamp), newer) if side == 'older' else (
+        older, typed_timestamp(newer, stamp))
+    assert not ln.chronologically_before(older, newer)
+    pair = proposal(older, newer)
+    assert pair.grade == 'X' and pair.fix_boundary == 'unverified'
+    assert ln.change_in_kb(ln.timeline((older, newer), '11-24H2'), newer.kb).state == 'unknown'
+
+
+@pytest.mark.parametrize(('older_date', 'newer_date'), [('2000-02-28', '2000-02-29'),
+                                                       ('2000-02-29', '2000-03-01')])
+def test_valid_century_leap_day_retains_the_supported_pair(older_date, newer_date):
+    older, newer = rows(older_date=older_date, newer_date=newer_date)
+    assert older.build.release_date is not None and newer.build.release_date is not None
+    pair = proposal(older, newer)
+    assert pair.grade == 'A' and pair.fix_boundary == 'source-supported'
+    assert ln.change_in_kb(ln.timeline((older, newer), '11-24H2'), newer.kb).state == 'yes'
+
+
+def test_direct_timestamp_offsets_order_by_instant_instead_of_text():
+    older, newer = rows()
+    older = typed_timestamp(older, '2099-02-01T01:00:00+02:00')
+    newer = typed_timestamp(newer, '2099-02-01T00:30:00Z')
+    line = ln.timeline((newer, older), '11-24H2')
+    assert line == (older, newer) and ln.chronologically_before(older, newer)
+    assert proposal(older, newer).fix_boundary == 'source-supported'
+    assert ln.change_in_kb(line, newer.kb).state == 'yes'
+
+
+@pytest.mark.parametrize('forward', [False, True])
+def test_direct_timestamp_order_retains_all_nine_fractional_digits(forward):
+    older, newer = rows()
+    small, large = '2099-02-01T00:00:00.000000001Z', '2099-02-01T00:00:00.000000002Z'
+    older = typed_timestamp(older, small if forward else large)
+    newer = typed_timestamp(newer, large if forward else small)
+    assert ln.chronologically_before(older, newer) is forward
+    assert (ln.order_key(older) < ln.order_key(newer)) is forward
+    assert proposal(older, newer).grade == ('A' if forward else 'X')
+
+
+@pytest.mark.parametrize('target', ['KB5000000', 'KB5000001'])
+def test_equal_instants_with_different_offset_spellings_cannot_resolve_competing_bytes(target):
+    older, newer = rows(older_build='26100.200')
+    older = typed_timestamp(older, '2099-02-01T01:00:00+01:00')
+    newer = typed_timestamp(newer, '2099-02-01T00:00:00Z')
+    earlier, _ = rows(older_date='2099-01-01', older_build='26100.50')
+    earlier = replace(earlier, build=type(earlier.build).model_validate(
+        earlier.build.model_dump() | {'kb': 'KB4999999', 'sha256': 'c' * 64}))
+    assert not ln.chronologically_before(older, newer)
+    result = ln.change_in_kb(ln.timeline((older, earlier, newer), '11-24H2'), target)
+    assert (result.state, result.reason) == ('unknown', 'order-unverified')
