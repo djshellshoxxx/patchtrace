@@ -1,0 +1,209 @@
+{
+  "baseline_commit": "58fc130631f602b6e907bb054d30c21d810551d4",
+  "spec_tests_commit": "8dff299266c2892cbdae34ee45af935ff2d81ec5",
+  "implementation_commit": "353902677e6d59961e808a90b2a3dd96d2b43269",
+  "scope": "Bounded project-retained CVRF fallback, CSAF precedence, exact recorded fields and current rules; no schema, freshness hook or acquisition changes.",
+  "archive": {
+    "path": "raw-evidence.zip",
+    "sha256": "26f60ca01c60eaa662648488bca7f1ded84809b52be9c1a2e4fecb8c0b28c0a3",
+    "bytes": 108947
+  },
+  "raw_receipts": {
+    "affected-files.json": {
+      "sha256": "81af1420f437b280bd7be48e7525cbd10d98ea5990a193aa3196b3d014ffeba5",
+      "bytes": 880
+    },
+    "affected-final.log": {
+      "sha256": "aaa4fa46548662a971f94682b72c85178e643a7e393a1a02f9b77b4a46c88228",
+      "bytes": 1782
+    },
+    "affected-final.xml": {
+      "sha256": "5f86fb8dd1825326e95f388f53a1ab278303327d80fccc25feca7e4212c44346",
+      "bytes": 208743
+    },
+    "affected-initial.log": {
+      "sha256": "9b045b364b50c78bbde01f010d011b6e9dec00fa28fc29a1eea50cf5436bee2c",
+      "bytes": 1485
+    },
+    "affected-initial.xml": {
+      "sha256": "3900ce9b5fa164aab0be98b99d939e7b06cd2d5179ef0429cf29b8ddad754133",
+      "bytes": 64813
+    },
+    "baseline-red.log": {
+      "sha256": "bdc609ee50a6219f8adb42bdcdabd9bbd6326593c8bf1018955281977ffa5004",
+      "bytes": 52758
+    },
+    "baseline-red.xml": {
+      "sha256": "10071ddea78b9d27165eb37205540be5931846d40573f43cff298e03d8746576",
+      "bytes": 56318
+    },
+    "capture-first-cli-leads.json": {
+      "sha256": "b9b9f2b9b18da93fb5e2585c7646bdd2f0492d51dcb3aa103bd800bbc59b6945",
+      "bytes": 19123
+    },
+    "capture-first-cli-why.json": {
+      "sha256": "8c0c75032d40bc8bdac7f19214a0f034bf3260199b8c1658d824d0af37aa7dd2",
+      "bytes": 4051
+    },
+    "capture-formatting-failure.log": {
+      "sha256": "6f03fd59649f2cd2981b573a645ab0a23514d47e2f1b22db3bcd50bd1a7e9486",
+      "bytes": 535
+    },
+    "capture_cli.py": {
+      "sha256": "afa0b4e1969203a67dceac7ce966d35e92eb9528dbde6358ed42ce970a8eda48",
+      "bytes": 4021
+    },
+    "cli-journey-receipt.json": {
+      "sha256": "0412a4a127fc6446cecf10dffedc44717af0c26b99a48dd3ea5d103949a40584",
+      "bytes": 1469
+    },
+    "cli-leads.json": {
+      "sha256": "b8c5fb0e6e0b7aadbbccabb5631f6bc7f8b7864bad6aa1ed61fc830bccd32b4e",
+      "bytes": 19123
+    },
+    "cli-leads.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "cli-why.json": {
+      "sha256": "8c0c75032d40bc8bdac7f19214a0f034bf3260199b8c1658d824d0af37aa7dd2",
+      "bytes": 4051
+    },
+    "cli-why.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "corrected-csaf-negative-control.log": {
+      "sha256": "fe8278e30082bd257c2b17ef76468d44dbc2768db23df0fdad0bfe00f397976c",
+      "bytes": 1459
+    },
+    "corrected-csaf-negative-control.xml": {
+      "sha256": "ea7d0d3671c43eafa7e3515d49e53d7b3b1e41197201559ee108c7c62ebb0a01",
+      "bytes": 1456
+    },
+    "corrected-harness-red.log": {
+      "sha256": "73d5f79f324c2b88fae138f9182f9a4881ed1be79871d2e19bbd5932b10cdd4a",
+      "bytes": 54146
+    },
+    "corrected-harness-red.xml": {
+      "sha256": "6eaa9a1e6d37640162ec27ea6fb53b7288613710ee9f50461e2d351bcbc09678",
+      "bytes": 57767
+    },
+    "csaf-unreadable-negative-control.patch": {
+      "sha256": "13c50798c79132dc9957a0ce4f55306bbef9743dc20acfcdd7922d188d69340a",
+      "bytes": 1695
+    },
+    "initial-implementation.log": {
+      "sha256": "4d782ba01cfb247a6500f515e30f8bce4a78877cb67d61b5ea0a9717a8825861",
+      "bytes": 2488
+    },
+    "initial-implementation.xml": {
+      "sha256": "acd0b900d94edd9f95a24e0686835bf55368bbe953b481acab5f66af1ea32c3c",
+      "bytes": 6833
+    },
+    "ruff.log": {
+      "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+      "bytes": 19
+    },
+    "source-final.log": {
+      "sha256": "70b63613d2b1ec026f7382b6e4cdb6b4ea1d6420206ad3654ab5a9d8041196ba",
+      "bytes": 1782
+    },
+    "source-final.xml": {
+      "sha256": "3438ebed4c11179438798d3c3af34ea35eca8b6f3ca74e609f571f25f0cb063a",
+      "bytes": 208739
+    },
+    "transcript-checks.json": {
+      "sha256": "96322b980c70ab426bac793ad00cdf376bda2b8c11fd279844855ea7494f749c",
+      "bytes": 1035
+    },
+    "unreadable-csaf-red.log": {
+      "sha256": "0fbdda6a0f765871f7a0d4adfc5ecad5291cf6707e6a67278e462cba43b7d9db",
+      "bytes": 1087
+    },
+    "unreadable-csaf-red.xml": {
+      "sha256": "67eca8efc89c744b3a6cb768006a2cddf95a22ffaeb003dea5a4312bd7996ad1",
+      "bytes": 1084
+    },
+    "withdrawal-message-red.log": {
+      "sha256": "32eeab2594fc68fcae7eda1fb1dba8c54edfe13b01277b62219f74cbb6358b6e",
+      "bytes": 1846
+    },
+    "withdrawal-message-red.xml": {
+      "sha256": "717ca4f7d0fd33a59e4f69b8f15e42c8250bd2bb97af9163467fb2309399f4df",
+      "bytes": 2262
+    }
+  },
+  "source_sha256": {
+    "src/patchtrace/pilot/sources/kb_context.py": "0a685e92dac7365b34eea4ceb4dedc5377b9e3969add6eea4aa27f0c4c49e9b4",
+    "src/patchtrace/pilot/collect.py": "4a4b297311903636888da3d38e14e1ea209f1d00228f9ca285065f1f83f207d6",
+    "src/patchtrace/pilot/ports.py": "fdfbe30a271bd45581d48d4a5f144c66b61fbe44f35f221596e562d4179fda35",
+    "src/patchtrace/pilot/service.py": "094bfcdae61c330e69780a351c7a3f020c27c580e0c5818b7dc3842e6bb69401",
+    "tests/test_pilot_kb_context.py": "0469c82e4d9c46500c11b42093464f0ed3beb73ffecb770c0b171d08aad93d86",
+    "tests/test_pilot_keys.py": "5d707da8a9f0ae7e5392e5fc1daeecb431051b7375a5a45cc9f5fbcd4cb2b07a",
+    "docs/specs/program-e/pilot-retained-cvrf-context.md": "c796a267278b30524f03bec2e531b76f8f78065e43caf68560767a8b8e655444",
+    "docs/modules.md": "2f7aae6515396511fa750ff629e264f15031b719316b198a199dd7f96bdfd96c"
+  },
+  "unchanged_from_baseline": {
+    "src/patchtrace/pilot/contracts.py": "e7287f3fbdcbb3c7311f60e4077408ff325b6a619312fd9297ece02a58d83712",
+    "src/patchtrace/pilot/store.py": "a51e36b784b7597e234779a561782a41cef6059babfe69157f55151304b4481d",
+    "src/patchtrace/pilot/cli.py": "31c3e60c65de1cf257db424cc593a39c577b64ce89af240c15987ffd071f6669",
+    "src/patchtrace/ui_leads.py": "203e2c274f13c66dec83e1119c6c772d75216ed6380e17523a8d75aa78e68ca0",
+    "src/patchtrace/kbcorrelation/context.py": "7732ca0ff05b4f0c1c929045506dbf83ee64eb437292769b1b33f8e916922628",
+    "src/patchtrace/kbcorrelation/wiring.py": "f38103aa9d8edd824bc15d3d9f74536078f20e5208ab7b5ee5bb945da8afb851",
+    "src/patchtrace/enrichment/storage.py": "e908d0ca8651a87e23281f92b006bfe17a6d3aa8752f4bf46817e8d75f8c9321"
+  },
+  "results": {
+    "original_authored_red": "31 failed in 2.98 s; includes fixture API/dialect mistakes corrected in next red",
+    "corrected_harness_red": "31 failed in 2.48 s",
+    "initial_implementation": "29 passed, 2 failed in 2.73 s; fixture only contained one CVE, corrected with separate authored native context",
+    "initial_protocol_selection": "389 passed, 1 failed in 18.49 s; exact protocol inventory updated",
+    "initial_unreadable_csaf_control": "1 failed in 0.66 s; raw-only damage still leaves verified derived facts usable",
+    "affected_initial": "395 passed, 1 failed in 17.99 s; same unreadable-CSAF control setup corrected",
+    "corrected_csaf_guard_removal_negative_control": "1 expected failure in 0.65 s; exact temporary patch retained and restored",
+    "affected_before_withdrawal_copy": "1533 passed in 38.72 s",
+    "withdrawal_message_red": "1 failed in 0.73 s; existing generic absence message omitted the retained history",
+    "final_exact_source": "1533 passed in 35.49 s",
+    "whole_ruff": "passed",
+    "whitespace": "passed",
+    "direct_cli_receipt": "2 successful guarded headless child commands, 5 CVE leads, gate unverified"
+  },
+  "test_selection": [
+    "tests/test_pilot_cli.py",
+    "tests/test_pilot_contracts.py",
+    "tests/test_pilot_eval_gate.py",
+    "tests/test_pilot_eval_metrics.py",
+    "tests/test_pilot_eval_workflow.py",
+    "tests/test_pilot_fusion.py",
+    "tests/test_pilot_kb_context.py",
+    "tests/test_pilot_keys.py",
+    "tests/test_pilot_properties.py",
+    "tests/test_pilot_ranking.py",
+    "tests/test_pilot_read_model.py",
+    "tests/test_pilot_report.py",
+    "tests/test_pilot_rules.py",
+    "tests/test_pilot_sample_e2e.py",
+    "tests/test_pilot_sources_advisory.py",
+    "tests/test_pilot_sources_code.py",
+    "tests/test_pilot_store.py",
+    "tests/test_pilot_store_durability.py",
+    "tests/test_pilot_synergy.py",
+    "tests/test_kbc_card_field_provenance.py",
+    "tests/test_source_lineage_counts_once.py",
+    "tests/test_ui_leads.py",
+    "tests/test_intel_explain.py",
+    "tests/test_intel_cli.py",
+    "tests/test_fabric_adopt.py"
+  ],
+  "qualification": {
+    "independent_combined_review": "pending root",
+    "freshness_on_read_and_publish": "separate current_inputs hook owned by report_evidence_review; not included in this standalone source",
+    "raw_source_or_upstream_reverification": "not performed or claimed",
+    "native_manual_windows_provider": "not performed",
+    "target_execution_acquisition_network": "none"
+  },
+  "commands": {
+    "pytest_prefix": "QT_QPA_PLATFORM=offscreen PYTHONPATH=/workspace/scratch/c7a9e8d98848/cvrf-pilot/src /workspace/scratch/3a6632a6e5ff/venv/bin/python -m pytest -q",
+    "receipt": "/workspace/scratch/3a6632a6e5ff/venv/bin/python /workspace/scratch/c7a9e8d98848/qa/cvrf-pilot-context/capture_cli.py"
+  }
+}
