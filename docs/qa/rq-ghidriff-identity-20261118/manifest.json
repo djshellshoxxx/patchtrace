@@ -1,0 +1,58 @@
+{
+  "baseline_sha": "1418617a80d6057de11f985488cfe6043a7787a2",
+  "source_commit": "5936896e452789a565e656ab8491620f78c55705",
+  "contents": [
+    {
+      "name": "exact-source.log",
+      "bytes": 751,
+      "sha256": "baa9deb690122d98623d838d677568bb28b3a89a27ef2b1441b3118ac8aed53f"
+    },
+    {
+      "name": "exact-source.xml",
+      "bytes": 91248,
+      "sha256": "1aa668eefbdb625f2e90680dd6726cc834806c687051b6a37f3af7cd32ffd953"
+    },
+    {
+      "name": "final-green.log",
+      "bytes": 420,
+      "sha256": "5befbc984a17f592af9ed557afed109e23d6f178d2f57e8abbbb35d6e584e646"
+    },
+    {
+      "name": "final-green.xml",
+      "bytes": 45289,
+      "sha256": "c64083b9595022f36214a92c8f20ce2379d5e1cdffd4ad6a5b0807ec77dbb132"
+    },
+    {
+      "name": "green.log",
+      "bytes": 260,
+      "sha256": "49727bb8908b1fa7372c7212ffbb32166b64bd4e24921722eab3ad1c726a94a7"
+    },
+    {
+      "name": "green.xml",
+      "bytes": 24915,
+      "sha256": "adde2c54a880ca94256ae8a1707469edb828123be59905f8a373b32989c3a5f0"
+    },
+    {
+      "name": "markdown-red.log",
+      "bytes": 1379,
+      "sha256": "e981f45b0a79c9f700388c333e353c4c0dce96be4f76962e96a825c477f709fb"
+    },
+    {
+      "name": "markdown-red.xml",
+      "bytes": 1555,
+      "sha256": "b9db75100f4acd48aea1aaa2daf27c4efe68568d641efc817a0989eaa643a734"
+    },
+    {
+      "name": "red.log",
+      "bytes": 26596,
+      "sha256": "b6b7578f96bad8e2ae9b4cf2b1378db917b655c01f6e2fbb92141fb97df09108"
+    },
+    {
+      "name": "red.xml",
+      "bytes": 29145,
+      "sha256": "9ade8dfd199d8bf167719d7923a42556e140261941ca4143cda10ade9b39edc0"
+    }
+  ],
+  "archive_sha256": "cec83889aa1bfdf45a7e209f1fb90bfbef220634af16b6ffb29e5c9dc61cefdb",
+  "archive_bytes": 21676
+}
