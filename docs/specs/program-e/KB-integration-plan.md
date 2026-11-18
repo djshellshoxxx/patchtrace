@@ -421,6 +421,12 @@ passing alone does not rewrite saved coverage. Month-only coverage does not reco
 each historical document digest, so this is not an immutable historical-snapshot
 claim. An explicit new search may widen or refresh the scope.
 
+For cached coverage accounting, reconstruct logical revision heads within the saved
+document population, preserving the existing month/tracking-group counting rules.
+For example, an existing CSAF receipt may name two retained snapshot IDs and count
+only one inspected logical revision. An unchanged valid receipt remains usable.
+This reconstruction only describes inspected bytes; it is never an admission index.
+
 All advisory admission still uses the full loaded index. A selected old source
 remains superseded when a newer source withdraws or contradicts its claim. Native
 unknown/tied revision conflicts are evaluated across the current source group before
@@ -434,6 +440,10 @@ including a caller-supplied scope that contradicts saved coverage. Its edge dige
 retains `kbc.edgeset/1` and canonical sorted edge IDs, projected to selected documents
 intersected with the full index's active set. That single digest feeds both the
 bundle and its context key; an unrelated cached document cannot change the key.
+The digest uses each selected active edge's admitted identity. A native edge made
+disputed by a current global tied/unknown counterexample uses its existing derived
+disputed edge ID. Both lookup and digest use the same global conflict calculation,
+so changed admission cannot leave a different context under the same context key.
 Persisted context bundles remain readable as recorded without revalidation or a
 schema migration. File/pair-only flows keep their existing product/provenance
 contracts and do not need a fictional KB/CVE search.

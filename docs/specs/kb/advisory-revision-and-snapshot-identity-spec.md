@@ -115,10 +115,17 @@ ambiguous admission before selection. Never reconstruct an advisory subset index
 to restore an older claim. Unreadable current source inputs prevent establishing
 that admission set. Pair/file-only product contexts keep their existing contract.
 
+Cached coverage may reconstruct the selected population's logical revision heads
+solely for inspection bookkeeping, retaining valid existing receipts that count one
+CSAF logical revision while retaining multiple snapshot IDs. This does not determine
+current claims: source admission still uses the complete index.
+
 For newly built contexts, `edge_set_digest` is the existing `kbc.edgeset/1` digest
 over canonical edge IDs of selected, globally active source documents. Reuse that
 same digest in the bundle and context key. Unrelated readable source additions do
-not change a saved context's key. This changes new derivation only: legacy bundle
+not change a saved context's key. A current global native revision conflict substitutes
+the existing disputed edge identity in both lookup and digest; a change in admission
+must not alias two different contexts under the same key. This changes new derivation only: legacy bundle
 deserialization and recorded JSON exports remain unchanged, with no schema migration
 or automatic historical rewrite. See the saved-scope acceptance in the KB integration
 plan. The earlier draft's independent freshness proposals are not accepted or closed
