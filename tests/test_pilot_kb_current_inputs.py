@@ -80,10 +80,11 @@ def change_context(service, change):
     elif change == 'withdrawal':
         publish(service, only(bundle, ()))
     elif change == 'removal':
-        service.store.connection.execute("DELETE FROM enrichment_entries WHERE kind='kb-context'")
+        with service.store.connection as db:
+            db.execute("DELETE FROM enrichment_entries WHERE kind='kb-context'")
     elif change == 'corruption':
-        service.store.connection.execute("UPDATE enrichment_entries SET body_sha256=? WHERE kind='kb-context'",
-                                         ('0' * 64,))
+        with service.store.connection as db:
+            db.execute("UPDATE enrichment_entries SET body_sha256=? WHERE kind='kb-context'", ('0' * 64,))
     else:
         raise AssertionError(change)
 
@@ -206,7 +207,7 @@ def test_report_export_uses_current_retained_context_identity(overlap, change):
             assert sections.leads and not any(u.startswith('leads:') for u in sections.unknowns)
         else:
             assert sections.leads is None
-            assert any('stored pilot result is stale' in u and 'kb_link_digest' in u and
+            assert any('stored pilot result is stale' in u and 'inputs-changed' in u and
                        'leads omitted' in u for u in sections.unknowns)
         assert sidecar_bytes(service) == before
 
