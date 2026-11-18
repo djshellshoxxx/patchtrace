@@ -24,6 +24,46 @@ Notes:
   BinDiff files are opened `mode=ro` with `query_only`.
 - `bindiff.parse` refuses a plain `str` (ambiguous between path and content): pass a `Path` or bytes.
 
+## Ghidriff report identity gate (2026-11-18)
+
+The research adapter projects functions to names, which cannot represent two
+distinct endpoints sharing a label. Before dropping unchanged rows, it must
+inspect both reported sides and every added/deleted row. A normalized label may
+occur on both sides of one pairing, but cannot identify different report records.
+Known addresses are side-relative; multiple records at the same side/address,
+different counterpart mappings, repeated labels after calling-convention
+normalization, and changed/unchanged conflicts are refused. Exactly repeated
+JSON records may contribute once only when their complete canonical JSON and
+collection agree. Unrecognized or malformed supplied addresses are refused;
+missing/null/blank addresses remain unknown. The report-visible guard cannot
+verify omitted functions, source truth, input hashes or independent ground truth.
+
+JSON object keys must be unique at every depth. All reported name/fullname fields
+must be bounded text or null, and each present side needs a nonblank effective
+label. Validate both sides, diff-type strings and every provided ranking ratio
+before filtering unchanged rows. Preserve supported name-only JSON, including
+legacy old-only modified rows, without claiming those rows prove native identity.
+The three required function collections remain modified/added/deleted; unknown
+function collections are refused rather than silently hiding identities. Count
+all input records against the shared 500,000-function limit, including unchanged
+and exact repeated records.
+
+Markdown reports retain their existing ranking, but repeated normalized function
+headings across modified, unchanged, added or deleted sections are ambiguous and
+must be refused. An unchanged heading participates in identity validation while
+remaining excluded from changed-function output. Markdown has no equivalent
+verified endpoint identity and remains a textual report interpretation.
+Match each diff subsection to its original reported function heading before name
+normalization: a valid `_Target@8` heading and `_Target@8 Diff` block must still
+emit the normalized `Target` candidate instead of losing its code changes.
+
+Refusal raises `ValueError` before returning candidates. Existing adapters CLI
+exit 2 and scorerun `BLOCKED: unparseable_report` handling apply, so malformed or
+ambiguous reports cannot receive function or no-change credit. Production
+normalization, case/scoring contracts, pins and frozen outcomes are unchanged.
+Authored parser tests establish these mechanics only; real native qualification
+and source-backed attribution remain separate.
+
 ## Native Rizin report identity gate (2026-11-18)
 
 This gate protects the research adapter's lossy projection to function names. It checks only conflicts visible
