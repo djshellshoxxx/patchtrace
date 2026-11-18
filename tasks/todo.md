@@ -1762,3 +1762,16 @@ See the [immutable continuation checkpoint](../docs/qa/verified-continuation-202
 - [x] Record exact-source 175-pass affected gate, unchanged 7-case original and 2-case root probes, full Ruff, and 150-member verified archive.
 - [ ] Root independently review/replay and selectively integrate the source and QA chain.
 - [ ] Retain separate native Windows, packaged/frozen, manual desktop and broader Phase2 reference obligations; no release or whole-project closure.
+
+
+### Worker/core/navigation checkpoint — 2026-11-18
+
+- [x] Verify preceding13-commit e787 PR316 publication and unchanged main/readback.
+- [x] Independently review and port worker/core/navigation corrections and all original red evidence.
+- [x] Pass exact207eea9d combined51-file gate:1,103 passes/one native skip;498 modules/23 owner paths exact; all28 independent cases unchanged.
+- [x] Preserve normal lint/schema success and unchanged strict80 failure; retain preflight/fixture mistakes without changing assertions.
+- [x] Verify reference/native/dependency/KB design evidence and append-only documentation reconciliations.
+- [ ] Publish this checkpoint append-only with exact remote tree/parent/ref/preview readback.
+- [ ] Complete focused Windows inventory UTF-8 fix and bounded native diagnostic source; obtain actual hosted evidence.
+- [ ] Propagate held readers through existing KB services, then qualify native stage/FDI/process transfer, durable package linkage and complete frozen journey.
+- [ ] Complete actual-candidate full/platform/native/package/security/reproducibility gates and remaining analyst/CVE-to-function workflows; main/beta acceptance remains blocked.

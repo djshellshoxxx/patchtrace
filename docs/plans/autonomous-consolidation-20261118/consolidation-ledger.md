@@ -412,3 +412,16 @@ match Git bytes. Normal Ruff passes; strict S remains80 unchanged findings and
 fails. The preceding PR316 f3 checkpoint was published with a verified non-force
 lease; main remains `9c411ca3d7b47f950be5f0c6f01b3c54184554c6`. No merge/release/platform acceptance follows.
 [Source-specific checkpoint](../../qa/ci-followup-20261118/README.md).
+
+
+## Worker, core and navigation milestone — 2026-11-18, source207eea9d
+
+Exact source `207eea9d4e125ac1d371139d4db803ddbc2b4c8a` passes **1,103 tests, one native Windows skip**,
+zero failures/errors/xfails,44.57s. The51-file gate preserves all28 unchanged
+independent cases,23 reviewed owner paths and498 exact Git-pinned imports.
+Normal Ruff and generated schemas pass; strict S remains80 unchanged findings.
+Original terminal-counter, cleanup-primary-error and assembly-navigation reds,
+fixture/preflight corrections and all preceding source-specific receipts remain.
+[Complete checkpoint](../../qa/worker-core-navigation-20261118/README.md).
+Main remains `9c411ca3d7b47f950be5f0c6f01b3c54184554c6`; PR316 is open, PR304/307 blocked by final gates.
+No merge/closure/tag/release/deployment or branch deletion occurred.

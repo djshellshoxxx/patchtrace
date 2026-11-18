@@ -391,3 +391,31 @@ This is a source-qualified candidate awaiting root independent final review,
 not native Windows, packaged/frozen or manual analyst acceptance. Original
 failures and fixture corrections stay visible; the overlapping test counts
 do not define a completion percentage or discharge broader reference/research work.
+
+
+## Worker, core and navigation milestone — 2026-11-18, source207eea9d
+
+Exact source `207eea9d4e125ac1d371139d4db803ddbc2b4c8a` passes **1,103 tests, one native Windows skip**,
+zero failures/errors/xfails,44.57s. The51-file gate preserves all28 unchanged
+independent cases,23 reviewed owner paths and498 exact Git-pinned imports.
+Normal Ruff and generated schemas pass; strict S remains80 unchanged findings.
+Original terminal-counter, cleanup-primary-error and assembly-navigation reds,
+fixture/preflight corrections and all preceding source-specific receipts remain.
+[Complete checkpoint](../qa/worker-core-navigation-20261118/README.md).
+Main remains `9c411ca3d7b47f950be5f0c6f01b3c54184554c6`; PR316 is open, PR304/307 blocked by final gates.
+No merge/closure/tag/release/deployment or branch deletion occurred.
+
+
+| Feature / bounded scope | Current state | Completion | Remaining work | Source | Dependencies | Tests | Security | Owner | Acceptance |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Portable serial worker accounting | Implemented and independently reviewed | D,R:50% for this slice | Native handoff/worker composition and final applicable gates |7259f868,PR316|Existing package contracts and original parent budget|Author/corrected/original-red receipts plus exact combined gate|No terminal mutation, refunds or resumed failed worker|CI + root|Native and whole package journey remain separate|
+| Neutral held-input core API | Implemented and independently reviewed | D,R:50% for this slice | Existing KB propagation, real native provider, durable package linkage, final gates |97408609,PR316|Core ingestion/store ownership; provider lease|Author318,independent52,exact combined with original14 cases|No path fallback; bounded reads; original error survives cleanup; before-COMMIT checkpoint|Core + root|Real caller/native/journey and final G|
+| Live signal navigation validation | Implemented and independently reviewed | D,R:50% for bounded action | Native/manual/frozen analyst acceptance and broader Phase2 work |9592f8b3,PR316|Unchanged live validator and persisted evidence|Author175,unchanged7+2 probes,exact combined|Refuse stale/unsupported locations before mode/cursor changes|GUI + root|Current decompiled action preserved; no assembly support claim|
+| Whole local package fallback PW02 | Partial; no package-to-project route | None:0% of whole-feature milestones | Native stage/FDI/process transfer, KB adapter, read ledger, durable provenance and frozen journey |Portable slice plus retained designs|Qualified Windows lane and existing KB/core service|Portable authored scopes only|Lease/lifetime/original budget/durable project ownership remain required|CI + KB + core|Whole-feature D/R/J/G requires complete specified journey|
+
+The Phase2 reference disposition and installer/native/KB designs are now reviewed
+records. They do not implement hash locks, reference interchange or native
+support. Completion is based on the existing D/R/J/G milestones, not test counts.
+Windows inventory encoding and native descendant diagnostics are active focused
+workstreams. Final full/platform/native/package/security/reproducibility gates,
+real CVE/KB journeys and frozen research limitations remain open.
