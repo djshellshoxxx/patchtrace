@@ -43,7 +43,10 @@ int profile(int argc, wchar_t **argv) {
 
 BOOL write_record(HANDLE file, const char *text) {
     DWORD written = 0, size = (DWORD)strlen(text);
-    return WriteFile(file, text, size, &written, NULL) && written == size && FlushFileBuffers(file);
+    if (!WriteFile(file, text, size, &written, NULL)) { pt_diag_win32(PT_DG_RECEIPT_WRITE, 0); return FALSE; }
+    if (written != size) { pt_diag_validation(PT_DG_RECEIPT_WRITE, 0); return FALSE; }
+    if (!FlushFileBuffers(file)) { pt_diag_win32(PT_DG_RECEIPT_FLUSH, 0); return FALSE; }
+    return TRUE;
 }
 
 int alive(int argc, wchar_t **argv) {
@@ -82,24 +85,30 @@ int wmain(int argc, wchar_t **argv) {
     PT_CHILD child;
     HANDLE receipt = INVALID_HANDLE_VALUE;
     wchar_t *end = NULL;
-    DWORD timeout, code = 125;
-    BOOL expired = FALSE, empty;
+    DWORD timeout, code = 125, child_pid;
+    BOOL expired = FALSE, empty, recorded;
     char record[4096];
     if (argc >= 2 && (wcscmp(argv[1], L"profile-create") == 0 ||
                       wcscmp(argv[1], L"profile-delete") == 0)) return profile(argc, argv);
     if (argc >= 3 && wcscmp(argv[1], L"alive") == 0) return alive(argc, argv);
-    if (argc < 7 || wcscmp(argv[1], L"launch") != 0 || wcscmp(argv[5], L"--") != 0) return 125;
+    if (argc < 7 || wcscmp(argv[1], L"launch") != 0 || wcscmp(argv[5], L"--") != 0) {
+        pt_diag_validation(PT_DG_ARGUMENT_BOUND, 0); return 125;
+    }
     timeout = wcstoul(argv[4], &end, 10);
-    if (*end || timeout < 1 || timeout > 120000 || !ConvertStringSidToSidW(argv[2], &sid)) return 125;
+    if (*end || timeout < 1 || timeout > 120000) { pt_diag_validation(PT_DG_ARGUMENT_BOUND, 0); return 125; }
+    if (!ConvertStringSidToSidW(argv[2], &sid)) { pt_diag_win32(PT_DG_SID_TEXT, 0); return 125; }
     receipt = CreateFileW(argv[3], GENERIC_WRITE, FILE_SHARE_READ, NULL, CREATE_NEW,
                           FILE_ATTRIBUTE_NORMAL, NULL);
-    if (receipt == INVALID_HANDLE_VALUE) { LocalFree(sid); return 125; }
+    if (receipt == INVALID_HANDLE_VALUE) { pt_diag_win32(PT_DG_RECEIPT_OPEN, 0); LocalFree(sid); return 125; }
     if (!pt_spawn(argc - 6, argv + 6, sid, &child)) {
+        pt_diag_win32(PT_DG_CHILD_SPAWN, 0);
         snprintf(record, sizeof(record), "{\"phase\":\"refused\",\"error\":%lu}\n", GetLastError());
         write_record(receipt, record);
-        CloseHandle(receipt); LocalFree(sid); return 125;
+        if (!CloseHandle(receipt)) pt_diag_win32(PT_DG_HANDLE_CLOSE, 0);
+        LocalFree(sid); return 125;
     }
     LocalFree(sid);
+    child_pid = child.identity.pid;
     snprintf(record, sizeof(record),
              "{\"phase\":\"started\",\"owner_pid\":%lu,\"pid\":%lu,\"created\":\"%llu\",\"sid\":\"%ls\","
              "\"appcontainer\":true,\"capability_count\":%lu,\"suspended\":true,"
@@ -107,17 +116,22 @@ int wmain(int argc, wchar_t **argv) {
              "\"handles\":[\"nul\",\"pipe\",\"pipe\"]}\n",
              GetCurrentProcessId(), child.identity.pid, child.identity.created, child.identity.sid,
              child.identity.capabilities);
-    if (!write_record(receipt, record) || ResumeThread(child.process.hThread) == (DWORD)-1) {
-        TerminateJobObject(child.job, 125);
+    recorded = write_record(receipt, record);
+    if (!recorded || ResumeThread(child.process.hThread) == (DWORD)-1) {
+        if (recorded) pt_diag_win32(PT_DG_CHILD_RESUME, child_pid);
+        if (!TerminateJobObject(child.job, 125)) pt_diag_win32(PT_DG_JOB_TERMINATE, child_pid);
         pt_finish(&child, 5000, &code, &expired);
-        CloseHandle(receipt);
+        if (!CloseHandle(receipt)) pt_diag_win32(PT_DG_HANDLE_CLOSE, 0);
         return 125;
     }
     empty = pt_finish(&child, timeout, &code, &expired);
+    if (!empty || expired || code)
+        pt_diag_value(PT_DG_CHILD_FINISH, expired ? PT_DK_TIMEOUT : code ? PT_DK_CHILD_EXIT : PT_DK_VALIDATION,
+                      child_pid, code);
     snprintf(record, sizeof(record), "{\"phase\":\"finished\",\"tree_empty\":%s,"
              "\"returncode\":%lu,\"timed_out\":%s}\n", empty ? "true" : "false", code,
              expired ? "true" : "false");
     if (!write_record(receipt, record)) empty = FALSE;
-    CloseHandle(receipt);
+    if (!CloseHandle(receipt)) pt_diag_win32(PT_DG_HANDLE_CLOSE, 0);
     return empty ? (int)code : 125;
 }

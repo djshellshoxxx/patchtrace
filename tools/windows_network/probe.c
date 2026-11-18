@@ -2,12 +2,13 @@
 
 /* Only authored loopback echo listeners and this fixed public TCP endpoint.
    No DNS, HTTP request, target-file content or ambient proxy configuration. */
-int wait_socket(SOCKET stream, BOOL writing, ULONGLONG deadline) {
+int wait_socket(SOCKET stream, BOOL writing, ULONGLONG deadline, PT_DIAG_KIND *kind) {
     fd_set ready, errors;
     struct timeval timeout;
     ULONGLONG now = GetTickCount64(), left;
     int result;
-    if (now >= deadline) return WSAETIMEDOUT;
+    *kind = PT_DK_WINSOCK;
+    if (now >= deadline) { *kind = PT_DK_TIMEOUT; return WSAETIMEDOUT; }
     left = deadline - now;
     timeout.tv_sec = (long)(left / 1000);
     timeout.tv_usec = (long)((left % 1000) * 1000);
@@ -15,7 +16,7 @@ int wait_socket(SOCKET stream, BOOL writing, ULONGLONG deadline) {
     FD_ZERO(&errors); FD_SET(stream, &errors);
     result = select(0, writing ? NULL : &ready, writing ? &ready : NULL, &errors, &timeout);
     if (result == SOCKET_ERROR) return WSAGetLastError();
-    if (!result) return WSAETIMEDOUT;
+    if (!result) { *kind = PT_DK_TIMEOUT; return WSAETIMEDOUT; }
     return 0;
 }
 
@@ -24,7 +25,10 @@ int socket_case(int family, BOOL udp, BOOL external, unsigned short port, const 
     SOCKADDR_STORAGE storage;
     SOCKADDR_IN *v4 = (SOCKADDR_IN *)&storage;
     SOCKADDR_IN6 *v6 = (SOCKADDR_IN6 *)&storage;
-    int size, error = 0, length, result, sent = 0, received = 0;
+    int size, error = 0, diagnostic_error = 0, length, result, sent = 0, received = 0;
+    PT_DIAG_STAGE stage = PT_DG_SOCKET_ADDRESS;
+    PT_DIAG_KIND kind = PT_DK_WINSOCK;
+    uint32_t index = external ? 4 : udp ? (family == AF_INET6 ? 3 : 2) : (family == AF_INET6 ? 1 : 0);
     char echo[32];
     u_long nonblocking = 1;
     ULONGLONG deadline = GetTickCount64() + 4000;
@@ -32,51 +36,82 @@ int socket_case(int family, BOOL udp, BOOL external, unsigned short port, const 
     if (family == AF_INET) {
         v4->sin_family = AF_INET;
         v4->sin_port = htons(external ? 443 : port);
-        if (InetPtonW(AF_INET, external ? L"1.1.1.1" : L"127.0.0.1", &v4->sin_addr) != 1) return WSAEINVAL;
+        result = InetPtonW(AF_INET, external ? L"1.1.1.1" : L"127.0.0.1", &v4->sin_addr);
+        if (result != 1) {
+            if (result == SOCKET_ERROR) diagnostic_error = WSAGetLastError();
+            else kind = PT_DK_VALIDATION;
+            error = WSAEINVAL; goto done; /* Preserve the original case return. */
+        }
         size = sizeof(*v4);
     } else {
         v6->sin6_family = AF_INET6;
         v6->sin6_port = htons(port);
-        if (InetPtonW(AF_INET6, L"::1", &v6->sin6_addr) != 1) return WSAEINVAL;
+        result = InetPtonW(AF_INET6, L"::1", &v6->sin6_addr);
+        if (result != 1) {
+            if (result == SOCKET_ERROR) diagnostic_error = WSAGetLastError();
+            else kind = PT_DK_VALIDATION;
+            error = WSAEINVAL; goto done;
+        }
         size = sizeof(*v6);
     }
+    stage = PT_DG_SOCKET_CREATE;
     stream = socket(family, udp ? SOCK_DGRAM : SOCK_STREAM, udp ? IPPROTO_UDP : IPPROTO_TCP);
-    if (stream == INVALID_SOCKET) return WSAGetLastError();
+    if (stream == INVALID_SOCKET) { error = WSAGetLastError(); goto done; }
+    stage = PT_DG_SOCKET_NONBLOCK;
     if (ioctlsocket(stream, FIONBIO, &nonblocking) == SOCKET_ERROR) { error = WSAGetLastError(); goto done; }
+    stage = PT_DG_SOCKET_CONNECT;
     if (connect(stream, (SOCKADDR *)&storage, size) == SOCKET_ERROR) {
         error = WSAGetLastError();
         if (error != WSAEWOULDBLOCK && error != WSAEINPROGRESS) goto done;
-        error = wait_socket(stream, TRUE, deadline);
+        stage = PT_DG_SOCKET_CONNECT_WAIT;
+        error = wait_socket(stream, TRUE, deadline, &kind);
         if (error) goto done;
         length = sizeof(error);
+        stage = PT_DG_SOCKET_ERROR;
         if (getsockopt(stream, SOL_SOCKET, SO_ERROR, (char *)&error, &length) == SOCKET_ERROR)
             error = WSAGetLastError();
         if (error) goto done;
     }
     if (external) goto done;
     while (sent < 32) {
+        stage = PT_DG_SOCKET_SEND; kind = PT_DK_WINSOCK;
         result = send(stream, nonce + sent, 32 - sent, 0);
         if (result == SOCKET_ERROR) {
             error = WSAGetLastError();
             if (error != WSAEWOULDBLOCK) goto done;
-            error = wait_socket(stream, TRUE, deadline);
+            stage = PT_DG_SOCKET_SEND_WAIT;
+            error = wait_socket(stream, TRUE, deadline, &kind);
             if (error) goto done;
-        } else if (result <= 0) { error = WSAECONNRESET; goto done; }
+        } else if (result <= 0) { kind = PT_DK_VALIDATION; error = WSAECONNRESET; goto done; }
         else sent += result;
     }
     while (received < 32) {
+        stage = PT_DG_SOCKET_RECEIVE; kind = PT_DK_WINSOCK;
         result = recv(stream, echo + received, 32 - received, 0);
         if (result == SOCKET_ERROR) {
             error = WSAGetLastError();
             if (error != WSAEWOULDBLOCK) goto done;
-            error = wait_socket(stream, FALSE, deadline);
+            stage = PT_DG_SOCKET_RECEIVE_WAIT;
+            error = wait_socket(stream, FALSE, deadline, &kind);
             if (error) goto done;
-        } else if (result <= 0) { error = WSAECONNRESET; goto done; }
+        } else if (result <= 0) { kind = PT_DK_VALIDATION; error = WSAECONNRESET; goto done; }
         else received += result;
     }
-    if (memcmp(echo, nonce, 32) != 0) error = WSAEINVAL;
+    if (memcmp(echo, nonce, 32) != 0) {
+        stage = PT_DG_SOCKET_ECHO; kind = PT_DK_VALIDATION; error = WSAEINVAL;
+    }
 done:
-    closesocket(stream);
+    if (error) {
+        DWORD saved = GetLastError();
+        pt_diag_emit(stage, kind, GetCurrentProcessId(), 0,
+                     (uint32_t)(diagnostic_error ? diagnostic_error : error), index,
+                     (uint32_t)sent, (uint32_t)received);
+        SetLastError(saved);
+    }
+    if (stream != INVALID_SOCKET && closesocket(stream) == SOCKET_ERROR) {
+        int close_error = WSAGetLastError();
+        pt_diag_value(PT_DG_SOCKET_CLOSE, PT_DK_WINSOCK, 0, (DWORD)close_error);
+    }
     return error;
 }
 
@@ -90,27 +125,36 @@ int wmain(int argc, wchar_t **argv) {
     unsigned long depth, ports[4];
     char nonce[33];
     BOOL lifetime, expired;
-    DWORD code;
+    DWORD code, child_pid;
     int i, error;
-    if (argc != 10 || (wcscmp(argv[1], L"chain") != 0 && wcscmp(argv[1], L"lifetime") != 0)) return 125;
+    if (argc != 10 || (wcscmp(argv[1], L"chain") != 0 && wcscmp(argv[1], L"lifetime") != 0)) {
+        pt_diag_validation(PT_DG_PROBE_ARGUMENTS, 0); return 125;
+    }
     lifetime = wcscmp(argv[1], L"lifetime") == 0;
-    if (wcslen(argv[2]) != 32) return 125;
+    if (wcslen(argv[2]) != 32) { pt_diag_validation(PT_DG_PROBE_ARGUMENTS, 0); return 125; }
     for (i = 0; i < 32; ++i) {
         if (!((argv[2][i] >= L'0' && argv[2][i] <= L'9') ||
-              (argv[2][i] >= L'a' && argv[2][i] <= L'f'))) return 125;
+              (argv[2][i] >= L'a' && argv[2][i] <= L'f'))) {
+            pt_diag_validation(PT_DG_PROBE_ARGUMENTS, 0); return 125;
+        }
         nonce[i] = (char)argv[2][i];
     }
     nonce[32] = 0;
     depth = wcstoul(argv[3], &end, 10);
-    if (*end || depth > 2) return 125;
+    if (*end || depth > 2) { pt_diag_validation(PT_DG_PROBE_ARGUMENTS, 0); return 125; }
     for (i = 0; i < 4; ++i) {
         ports[i] = wcstoul(argv[i + 4], &end, 10);
-        if (*end || !ports[i] || ports[i] > 65535) return 125;
+        if (*end || !ports[i] || ports[i] > 65535) {
+            pt_diag_validation(PT_DG_PROBE_ARGUMENTS, 0); return 125;
+        }
     }
     if (!pt_identity(GetCurrentProcess(), &identity)) return 125;
     identity.parent = pt_parent(identity.pid);
-    if (!identity.parent) return 125;
-    if (!lifetime && WSAStartup(MAKEWORD(2, 2), &winsock) != 0) return 125;
+    if (!identity.parent) { pt_diag_validation(PT_DG_PROCESS_PARENT, identity.pid); return 125; }
+    if (!lifetime) {
+        error = WSAStartup(MAKEWORD(2, 2), &winsock);
+        if (error != 0) { pt_diag_value(PT_DG_WINSOCK_STARTUP, PT_DK_WINSOCK, identity.pid, (DWORD)error); return 125; }
+    }
     printf("{\"pid\":%lu,\"parent_pid\":%lu,\"created\":\"%llu\",\"depth\":%lu,"
            "\"nonce\":\"%s\",\"appcontainer\":%s,\"sid\":\"%ls\","
            "\"capability_count\":%lu,\"cases\":[",
@@ -123,7 +167,10 @@ int wmain(int argc, wchar_t **argv) {
             printf("%s{\"case\":\"%s\",\"status\":\"%s\",\"error\":%d}", i ? "," : "",
                    names[i], !error ? "connected" : error == WSAEACCES ? "denied" : "error", error);
         }
-        WSACleanup();
+        if (WSACleanup() == SOCKET_ERROR) {
+            error = WSAGetLastError();
+            pt_diag_value(PT_DG_WINSOCK_CLEANUP, PT_DK_WINSOCK, identity.pid, (DWORD)error);
+        }
     }
     printf("]}\n");
     fflush(stdout);
@@ -134,14 +181,20 @@ int wmain(int argc, wchar_t **argv) {
         child_args[3] = depth_text;
         /* No security-capability override: this child must inherit its actual
            parent's AppContainer token, even from a different executable path. */
-        if (!pt_spawn(10, child_args, NULL, &child)) return 125;
+        if (!pt_spawn(10, child_args, NULL, &child)) { pt_diag_win32(PT_DG_CHILD_SPAWN, 0); return 125; }
+        child_pid = child.identity.pid;
         if (ResumeThread(child.process.hThread) == (DWORD)-1) {
-            TerminateJobObject(child.job, 125);
+            pt_diag_win32(PT_DG_CHILD_RESUME, child_pid);
+            if (!TerminateJobObject(child.job, 125)) pt_diag_win32(PT_DG_JOB_TERMINATE, child_pid);
             pt_finish(&child, 5000, &code, &expired);
             return 125;
         }
         if (!lifetime) {
-            if (!pt_finish(&child, 120000, &code, &expired) || expired || code) return 125;
+            if (!pt_finish(&child, 120000, &code, &expired) || expired || code) {
+                pt_diag_value(PT_DG_CHILD_FINISH, expired ? PT_DK_TIMEOUT : code ? PT_DK_CHILD_EXIT : PT_DK_VALIDATION,
+                              child_pid, code);
+                return 125;
+            }
         }
     }
     if (lifetime) for (;;) Sleep(50);  /* Bounded externally; proves descendant termination. */
