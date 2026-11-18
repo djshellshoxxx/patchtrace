@@ -46,12 +46,20 @@ These are explicit analyst context, not authenticated claims from a file header.
 
 Defaults: raw bytes <=16 MiB, decoded characters <=16 MiB, fields <=65,536
 characters, a logical record <=262,144 characters, <=32 columns, <=100,000
-logical records, <=5,000 retained entries, <=1,000 retained diagnostics, <=1,000
+logical records, <=50,000 retained v1 entries, <=1,000 retained diagnostics, <=1,000
 sections, parser wall time <=10 seconds with cooperative checks between bounded
 records. Hard byte/text/field/record/column/section limits are fatal. Entry and
 logical-record limits return explicitly partial/truncated results; diagnostic
 omissions are counted. Limits must be positive and cannot exceed hard ceilings.
 Raw bytes are bounded before decoding; no global csv.field_size_limit mutation.
+
+The 50,000-entry v1 default and hard ceiling preserve the published capacity
+correction. Earlier v1 records captured a 5,000-entry budget; replay always uses
+the exact serialized limits, including caller-lowered budgets, without rewriting
+their inventory/import/entry identities. A default change is not permission to
+reinterpret an existing record. The separate v2 source-page ceiling remains 5,000.
+The 16 MiB raw/text and 64 MiB serialized import ceilings remain unchanged; they
+are admission limits, not bounds on process memory during parsing or replay.
 
 Accept UTF-8 with or without BOM, and BOM-marked UTF-16 LE/BE. Reject malformed
 encoding, UTF-32 and unmarked UTF-16. Delimiters are explicit, not guessed. Use
@@ -136,8 +144,9 @@ receipt, including acquisition time; a local import's timestamp is not identity.
 
 ### 3.1 Explicit retained source pages (2026-11-18)
 
-The existing v1 parser, serialized records, default limits, identities and replay
-remain unchanged. A separate offline action can retain a source page from the
+The v1 parser's captured semantics, serialized records, identities and replay
+remain unchanged, including both published 5,000- and 50,000-entry budgets. A
+separate offline action can retain a source page from the
 complete immutable raw bytes of an existing import. It appends a new import;
 it never rewrites a source, changes an investigation revision or selects a row.
 The original SourceDoc, asserted source and retrieval receipt remain exact.
@@ -153,8 +162,15 @@ architecture includes rows resolved to that architecture plus unknown/conflicted
 architecture rows for review; all includes every accepted row. Existing context
 assertions, unsafe-filename rejection and selection eligibility are unchanged.
 
+`InventoryPageLimits` has the same serialized fields as `InventoryLimits`, but
+its `max_entries` default and hard ceiling are 5,000. `DEFAULT_PAGE_LIMITS` is
+independent of the v1 default. V2 parsing and saved-record validation reject a
+budget above 5,000 even when the actual retained population is smaller. Existing
+v2 bodies and identities remain byte-for-byte valid with their captured budgets;
+the Python limits type adds no serialized discriminator or new identity field.
+
 `inventory_csv.parse_inventory_page(raw, context, retention, *,
-limits=DEFAULT_LIMITS, cancel=None) -> CsvInventoryPage` scans once to EOF or the
+limits=DEFAULT_PAGE_LIMITS, cancel=None) -> CsvInventoryPage` scans once to EOF or the
 captured logical-record ceiling. A page contains up to `limits.max_entries`
 matching accepted rows in original logical-record order. Blank/header/banner and
 rejected rows do not consume page positions; duplicates and conflicts do. No
@@ -179,8 +195,10 @@ every matching source claim remains independently reachable on its own page.
 `CsvInventoryPage` is a separately versioned parsed record, with
 contract='kb-file-inventory/2', parser_version=2, the existing inventory fields,
 retention, scan_complete, matching_count, excluded_count, omitted_count and
-conflict_witnesses (at most 5000, one per retained conflicting scope). Accepted,
-duplicate and conflict counts still describe retained entries. Rejected counts
+conflict_witnesses (at most 5000, one per retained conflicting scope). Entries and
+the accepted, duplicate and conflict counts each have an explicit 5,000 hard
+ceiling, independent of v1's larger population. These counts still describe
+retained entries. Rejected counts
 cover scanned rejected data. Matching/excluded counts cover scanned accepted
 rows inside/outside the architecture filter; omitted_count is matching_count
 minus accepted_count. Counts are exact only if scan_complete is true, otherwise
@@ -199,7 +217,12 @@ policy, witness or observed count cannot bypass deterministic raw replay.
 
 `inventory_store.retain_inventory(ws, import_id, retention, *, cancel=None)`
 returns `(InventoryImport, added)` after verifying the parent import and its raw
-source. It reuses the parent's exact context, limits and source provenance.
+source. It reuses the parent's exact context and source provenance. New page
+limits preserve every captured parent budget except `max_entries`, which is
+`min(parent.parsed.limits.max_entries, 5000)`. A parent budget of 1 or 2 therefore
+remains 1 or 2, while a 50,000-entry v1 parent produces pages of at most 5,000.
+Page offsets and the new v2 identity use those effective limits. The parent and
+all historical records remain immutable.
 Repeated retention of the same policy is idempotent, including requests made
 from another page of that source. No fresh acquisition time is invented.
 Unknown imports use PT-KBC-INPUT; corrupt stored evidence uses PT-KBC-VERIFY.
