@@ -72,6 +72,10 @@ def _parse_json(text: str) -> list[str]:
             if key in ('original', 'modified'):
                 native = True
             obj[key] = value
+        # Missing both side keys must not downgrade a recognizable native record to unnamed legacy output.
+        if (isinstance(obj.get('type'), str) and obj['type'] in _TYPES
+                and 'name' not in obj and 'name2' not in obj):
+            native = True
         return obj
 
     try:

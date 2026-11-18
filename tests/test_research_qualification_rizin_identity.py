@@ -248,3 +248,49 @@ def test_scorerun_ambiguous_report_is_blocked_not_scored(tmp_path, no_change):
     assert result['development']['scored'] == result['development']['pass'] == result['development']['fail'] == 0
     assert result['development']['blocked'] == 1
     assert scorerun.exit_for(result) == 2
+
+
+@pytest.mark.parametrize('kind', ['COMPLETE', 'PARTIAL', 'UNLIKE'])
+def test_orphan_native_type_requires_both_side_keys(kind):
+    with pytest.raises(ValueError):
+        rizin.parse(json.dumps([{'type': kind, 'similarity': 1.0}]))
+
+
+def test_orphan_native_cli_is_clean_error(tmp_path, capsys):
+    report = tmp_path / 'orphan.json'
+    report.write_text('[{"similarity":1.0,"type":"COMPLETE"}]')
+    assert main(['adapters', 'rizin', str(report)]) == 2
+    output = capsys.readouterr()
+    assert output.out == ''
+    assert 'error:' in output.err and 'Traceback' not in output.err
+
+
+def test_orphan_native_scorerun_cannot_credit_no_change(tmp_path):
+    case = {'id': 'orphan', 'layer': 'L3', 'project': 'authored', 'stratum': 'synthetic',
+            'holdout': False, 'facts': 'verified', 'older': {'sha256': 'a' * 64},
+            'newer': {'sha256': 'b' * 64}, 'expected': {'no_change': True}}
+    pair = {'id': 'orphan', 'status': 'found',
+            'older': {'path': 'orphan/older/a.sys', 'sha256': 'a' * 64},
+            'newer': {'path': 'orphan/newer/a.sys', 'sha256': 'b' * 64}}
+    report_dir = tmp_path / 'orphan'
+    report_dir.mkdir()
+    (report_dir / 'orphan.ghidriff.json').write_text('[{"similarity":1.0,"type":"COMPLETE"}]')
+    result = scorerun.score_all({'orphan': pair}, {'cases': [case], 'schema': 'rq-case-manifest/1'},
+                               tmp_path, 5, 'rizin')
+    assert result['rows'][0]['verdict'] == 'BLOCKED'
+    assert result['rows'][0]['reason'] == 'unparseable_report'
+    assert result['development']['scored'] == 0
+    assert scorerun.exit_for(result) == 2
+
+
+@pytest.mark.parametrize('kind', ['COMPLETE', 'PARTIAL', 'UNLIKE'])
+def test_orphan_recognizer_preserves_named_flat_legacy(kind):
+    assert rizin.parse(json.dumps([{'type': kind, 'similarity': 0.25, 'name': 'legacy'}])) == ['legacy']
+    assert rizin.parse(json.dumps([{'type': kind, 'similarity': 0.25, 'name2': 'legacy'}])) == ['legacy']
+
+
+def test_orphan_recognizer_does_not_promote_legacy_unnamed_rows():
+    # Compatibility only: these legacy shapes have no verified native identity and cannot bypass the
+    # production strict normalizer in a verified pilot.
+    assert rizin.parse('[{}]') == []
+    assert rizin.parse('[{"name":"","similarity":1.0,"type":"COMPLETE"}]') == []
