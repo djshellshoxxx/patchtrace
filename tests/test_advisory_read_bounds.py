@@ -4,7 +4,6 @@ from __future__ import annotations
 import hashlib
 import io
 import os
-from pathlib import Path
 
 import pytest
 from test_intel_storage import REV1, add, store_for
