@@ -28,6 +28,10 @@ MAX_ROWS = 1000
 MAX_BYTES = 16 * 1024 * 1024
 MAX_NODES, MAX_DEPTH = 100_000, 32
 MAX_CARDS, MAX_REFS = 4096, 16_384
+_TEXT_COLUMNS = ('id', 'kind', 'project_id', 'run_id', 'raw_sha256', 'input_digest',
+                 'status', 'created', 'body', 'body_sha256')
+_INTEGER_COLUMNS = ('project_revision', 'stale')
+_STORAGE_CLASSES = ('text',) * len(_TEXT_COLUMNS) + ('integer',) * len(_INTEGER_COLUMNS)
 _SHA = re.compile(r'[0-9a-f]{64}')
 _CVE_POINTER = re.compile(r'(/Vulnerability/[0-9]+)/CVE|(/vulnerabilities/[0-9]+)/cve')
 RECORDED = ('Raw source bytes and upstream freshness were not reverified; this is retained documentary context. '
@@ -55,6 +59,17 @@ class ContextSnapshot:
             return ()
         return tuple(sorted({card.cve for bundle in self.bundles for card in bundle.context.cards
                              if card.source_kind == 'cvrf'} - set(self.withdrawn)))
+
+
+def _metadata_value(value):
+    """Only bounded SQLite metadata reaches identity encoding, including on refusal."""
+    if value is None or type(value) in (str, int):
+        return value
+    if type(value) is bytes:
+        return {'storage': 'blob', 'hex': value.hex()}
+    if type(value) is float:
+        return {'storage': 'real', 'hex': value.hex()}
+    return {'storage': 'unsupported'}
 
 
 def _bounded(entries, budget: Budget) -> None:
@@ -190,13 +205,21 @@ def capture(service, enrichment, *, project=None, budget: Budget | None = None) 
     try:
         if 'enrichment_entries' not in enrichment._tables():
             return ContextSnapshot()
+        types = ','.join(f'typeof({column})' for column in (*_TEXT_COLUMNS, *_INTEGER_COLUMNS))
         metadata = enrichment._db.execute(
-            'SELECT substr(id,1,160),length(id),length(CAST(body AS BLOB)),substr(body_sha256,1,65) '
+            f'SELECT substr(id,1,160),length(id),length(CAST(body AS BLOB)),substr(body_sha256,1,65),{types} '
             'FROM enrichment_entries WHERE kind=? ORDER BY id LIMIT ?', ('kb-context', MAX_ROWS + 1)).fetchall()
         if not metadata:
             return ContextSnapshot()
-        identity['rows'] = metadata
-        if len(metadata) > MAX_ROWS or sum(row[2] for row in metadata) > MAX_BYTES:
+        # Preserve valid-row identity; never pass BLOB/real/NULL type accidents into
+        # the shared body reader or an exception-path identity payload.
+        identity['rows'] = [tuple(_metadata_value(value) for value in row[:4]) for row in metadata]
+        if len(metadata) > MAX_ROWS:
+            raise _Unavailable('retained context exceeds the row or byte limit')
+        if any(row[4:] != _STORAGE_CLASSES or type(row[0]) is not str or type(row[1]) is not int
+               or type(row[2]) is not int or type(row[3]) is not str for row in metadata):
+            raise _Unavailable('a retained context has invalid SQLite storage classes; older cards are withheld')
+        if sum(row[2] for row in metadata) > MAX_BYTES:
             raise _Unavailable('retained context exceeds the row or byte limit')
         corrupt = []
         entries = enrichment.entries('kb-context', on_corrupt=corrupt.append)
