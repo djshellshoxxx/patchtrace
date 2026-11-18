@@ -2388,3 +2388,16 @@ unchanged independent probe: 5 passed. Full required Ruff and diff check pass.
 Root independent review/integration remains pending. This is internal capability
 propagation only; durable held-origin recovery, postcommit checkpoint coverage,
 native Windows/FDI and the complete package journey remain unqualified.
+
+## [PW02-CORE-ADMISSION-DESIGN-20261118]
+
+Read-only core identity/reopen investigation at frozen `9ad2ec5c`: ten bounded
+current-behavior controls pass, zero skips, with 60 pinned imports and no drift,
+network or child attempts. Existing preallocated-ID storage, ordered-pair/foreign
+identity distinctions, recovery=false preservation, the postcommit callback gap
+and committed-error retention are observed with authored PE bytes and real SQLite.
+The unchanged public after-create journal gap remains explicit. The
+[proposal and sealed source spans](qa/pw02-core-admission-design-20261118.md)
+recommend only existing create/open/load hooks; production and repository tests
+are unchanged. Implementation needs spec/test-first review, and durable package
+intent/held-origin/provenance/reconciliation plus native acceptance remain separate.

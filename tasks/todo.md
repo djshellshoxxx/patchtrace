@@ -1799,3 +1799,11 @@ See the [immutable continuation checkpoint](../docs/qa/verified-continuation-202
 - [x] Seal exact-source 300-pass affected gate, unchanged 5-case peer replay, required full Ruff and all earlier reds; see `docs/qa/kb-held-input-propagation-20261118.md`.
 - [ ] Root independently review and replay the final three-file candidate before selective integration.
 - [ ] Keep held-origin CLI/GUI/package routes unavailable until a separate durable facade prevents reader-less package-path recovery; native worker/FDI, expected project identity and postcommit read-checkpoint limits remain separate gates.
+
+### [PW02-CORE-ADMISSION-DESIGN-20261118]
+
+- [x] Freeze `9ad2ec5c`, map 43 core/admission source spans and retain 74 canonical snapshots plus the approved KB propagation design.
+- [x] Preserve ten current-behavior observations with 60 exact imports, including the unchanged public after-create gap; no production/test/tool/workflow edits.
+- [ ] Root review the proposed preallocated-ID and explicit open/load recovery/checkpoint seams in `docs/plans/package-core-admission-seams-20261118.md` before implementation.
+- [ ] Commit meaningful failing integration controls and specification before the approved core source slice; these current-behavior passes are not implementation acceptance.
+- [ ] Separately bind durable package intent, held-origin marker, expected identity and idempotent provenance/reconciliation before exposing a package route; preserve unknown/foreign/committed projects.
