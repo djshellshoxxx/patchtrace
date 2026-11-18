@@ -1,5 +1,20 @@
 # QA and audit record
 
+## 2026-11-18 full branch consolidation (PR #301)
+
+Reviewed all 299 remote branches; carried #297 and ported eight never-merged
+items (release verifier, parser fuzz harness, KB scope retention #118 P1a, R8
+typed-literal canon/2 with EH-EQ, Windows batch-launch hardening, saved
+searches, RD-F03 alignment core, A-32 Ghidriff one-to-many abstention).
+Local Linux, Python 3.13, pytest-xdist `-n 3 --dist loadfile`, CI extras
+installed: `main` + #297 baseline **21,692 passed, 7 failed** (6 need the
+`rapidfuzz` extra, 1 xdist ordering; all 7 pass with extras installed); head
+`a59891cf` (before A-32) **22,348 passed, 48 skipped, 5 xfailed, 0 failed**;
+A-32 affected selection **2,918 passed** plus UI and seam tests. Whole Ruff
+passed. Hosted CI, native Ghidriff/RB-01 reruns, Windows desktop and release
+acceptance remain open. See
+[consolidation record](qa/branch-consolidation-20261118.md).
+
 ## 2026-11-16 local KEV CLI context completion
 
 Completed the remaining K4 context wiring through verified local catalogs,

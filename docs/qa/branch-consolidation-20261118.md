@@ -30,15 +30,15 @@ Containment is evidence that content exists, not proof of identical behaviour; e
 
 | Category | Branches | Delete safe | Meaning |
 |---|---:|---|---|
-| merged-into-main | 103 | yes | tip is an ancestor of `main` |
+| merged-into-main | 102 | yes | tip is an ancestor of `main` |
 | content-in-main | 90 | yes | ≥97% of added lines (or ≤20 lines absent) already in `main` |
 | superseded | 12 | yes | merging changes no file of `main` |
 | pre-squash-integrated | 14 | yes | pre-2026-10-14 history, integrated by the squash and evolved since |
 | contained-in-kept-branch | 18 | yes | tip is an ancestor of a branch that is kept (chain intermediates) |
-| close-pr-first | 13 | after closing the PR | as above, but an open draft PR still uses the branch |
+| close-pr-first | (13 of the rows above) | after closing the PR | an open draft PR still uses the branch |
 | contained-in-#297 / content-in-#297 | 12 | after this PR merges | #290–#295, #298, #299, #283, #268 and #297 itself |
-| partly-ported | 7 | no | useful parts ported here; a listed remainder stays |
-| held | 36 | no | owner decision, research, docs or a behaviour change needing a spec |
+| partly-ported | 8 | no | useful parts ported here; a listed remainder stays |
+| held | 35 | no | owner decision, research, docs or a behaviour change needing a spec |
 | review | 8 | no | small doc/CI residues not reviewed in depth |
 | this-consolidation | 1 | no | this branch |
 
@@ -56,17 +56,16 @@ Containment is evidence that content exists, not proof of identical behaviour; e
 | `jobs: refuse cmd.exe metacharacters ...` | #289 `0483db36` | Windows `.bat/.cmd` launch injection guard, env-block validation, Job flags |
 | `search: port saved searches and recent queries` | `claude/instance-b-features` `06b26d83` | WB1 S7 pure stores; duplicate model replaced by the frozen contract |
 | `representations: port RD-F03 ...` | #168 chain `953c0e9a`, `51a9b4af` | bounded raw-offset alignment core and Qt-free paired-row model (desktop wiring pending) |
+| `fix(normalization): Ghidriff one-to-many abstains ...` | #289 `685ac689`, `f58f0029`, `5f2afa7d`, `9e852a42` (same work on #174) | SPEC-31 **A-32** (renumbered from A-28): a repeated upstream function abstains per group instead of failing the whole comparison (RB-01 lua pair); live rerun still open |
 
 ## Held, with the reason (owner decisions marked)
 
-* **A-28 Ghidriff 1:N abstention** (#174, #289): real bug (RB-01 lua 5.4.6→5.4.7 -O2 is rejected whole); it changes
-  the ingestion contract and the id A-28 is already used, so it needs a renumbered spec amendment first.
 * **Paid-API automation** (#167, #170, #171, #186) — *owner decision*: #170 and #171 run on a schedule and would spend
   API credit automatically; nothing merged.
 * **Skills** (#61; `haiku/skills-manifest-import-20261027`) — *owner decision*: #61's Caveman skill is Apache-2.0 with
   NOTICE; the manifest import lists two CC-BY-SA-4.0 entries, a blocker for bundling.
 * **Devcontainer** (#279, open, non-draft): small and self-contained; review on its own.
-* **Remaining quarries**: #289 (bundle-acceptance fixes, rz-diff stdout flood, UE-R7 arbiter cut, BinDiff row caps,
+* **Remaining quarries**: #174 (rz-diff producer research workflow only), #289 (bundle-acceptance fixes, rz-diff stdout flood, UE-R7 arbiter cut, BinDiff row caps,
   GUI accessibility and KB slices, Tier W runner), #144 (R2 D-32 corroboration witness + `matching/2`, a behaviour
   change), #168 chain (RD-F03 desktop controls, GUI creation-retry acceptance test), #176 (table header tooltips and
   keyboard sort; Alt+Up/Down collides with diff navigation), `instance-b-features` (call-graph ego layout, capa
