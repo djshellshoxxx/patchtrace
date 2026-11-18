@@ -5,8 +5,8 @@ import hashlib
 import importlib
 import json
 import os
-from pathlib import Path
 import stat
+from pathlib import Path
 from types import SimpleNamespace
 
 import pytest
