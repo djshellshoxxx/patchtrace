@@ -46,12 +46,20 @@ These are explicit analyst context, not authenticated claims from a file header.
 
 Defaults: raw bytes <=16 MiB, decoded characters <=16 MiB, fields <=65,536
 characters, a logical record <=262,144 characters, <=32 columns, <=100,000
-logical records, <=5,000 retained entries, <=1,000 retained diagnostics, <=1,000
+logical records, <=50,000 retained entries, <=1,000 retained diagnostics, <=1,000
 sections, parser wall time <=10 seconds with cooperative checks between bounded
 records. Hard byte/text/field/record/column/section limits are fatal. Entry and
 logical-record limits return explicitly partial/truncated results; diagnostic
 omissions are counted. Limits must be positive and cannot exceed hard ceilings.
 Raw bytes are bounded before decoding; no global csv.field_size_limit mutation.
+
+The 50,000-entry ceiling admits the observed 42,845-record KB5036893 source,
+whose x64 section starts at logical record 21,261. The initial 5,000-entry
+ceiling truncated that source inside ARM64. This capacity correction does not
+raise the byte, logical-record, diagnostic, time, stored-record, UI-page or
+selection limits. Previously captured 5,000-entry budgets remain part of their
+immutable identities and replay unchanged; reimporting under the current
+default creates a distinct contextual import over the same raw source.
 
 Accept UTF-8 with or without BOM, and BOM-marked UTF-16 LE/BE. Reject malformed
 encoding, UTF-32 and unmarked UTF-16. Delimiters are explicit, not guessed. Use

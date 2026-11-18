@@ -108,13 +108,17 @@ Size locale is `en-US` by default, with `de-DE` and `invariant` available.
 Dates/times retain their original text and do not establish chronology.
 
 Default bounds include 16 MiB of CSV bytes, 100,000 scanned logical records,
-5,000 retained entries and 1,000 retained diagnostics. A logical quoted record
+50,000 retained entries and 1,000 retained diagnostics. A logical quoted record
 can span multiple physical lines. Result references report both explicitly.
 Rejected rows and omitted diagnostics remain counted. A partial or truncated
 inventory cannot claim complete coverage, including coverage of later
 architecture sections. Directory paths, formulas, reserved names and control
 characters are refused as eligible filenames; safe non-PE names are descriptive
 metadata only.
+
+Imports saved with the earlier 5,000-entry budget keep that original budget and
+result. Reimport the same source to inspect later sections under the current
+default; the new import has its own ID and preserves the earlier record.
 
 `list --limit N --offset N` pages summaries, with a default page size of 20 and a
 maximum of 100. `list --kind support-page` lists saved HTML sources.
