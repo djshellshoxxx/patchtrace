@@ -2184,3 +2184,15 @@ contract mismatch/134 passed; R3/R8: 44 passed; valid-domain CFG oracle: 60 pass
 No additive counting, source edit, native/network run, remote mutation or whole-
 branch closure. Cumulative selected scope: 80 of 131; 51 unselected plus broader
 residue. [Source pins, original bytes, commands and archive](qa/semantic-disposition-batch4-20261118.md).
+
+
+## [CONTINUATION-R2-20261118]
+
+Exact source `ae0b1660e0cc71c51698d70a685ceeb646619184`, 108 selected files:
+3,528 passed/nine explicit skips/zero failures/errors in 282.90s. All 522 project
+imports are pinned; all 31 changed owner paths are preserved. Normal Ruff passes;
+isolated strict S remains 80 identical sites and fails. R2 independent 59-pass review,
+batch4 proof and hosted55 receipt review retain original contrary evidence.
+[Sealed checkpoint](qa/continuation-r2-20261118/README.md) and
+[older-source hosted evidence](qa/hosted-pr316-55f3-20261118/README.md).
+No final native/package/full/security qualification, main merge or release credit.

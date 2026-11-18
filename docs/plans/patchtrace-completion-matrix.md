@@ -258,3 +258,21 @@ The known directory publication, UI diagnostics, named-source, highlighter and F
 follow-ons remain separately attributed. [Detailed ledger](autonomous-consolidation-20261118/semantic-disposition-batch4.md)
 and [QA packet](../qa/semantic-disposition-batch4-20261118.md) preserve all original
 failures, explicit deselections, current contract mismatches and scope limits.
+
+
+## Reviewed R2 continuation and hosted55 evidence — 2026-11-18
+
+Source `ae0b1660e0cc71c51698d70a685ceeb646619184` passes 3,528 selected checks with
+nine explicit skips, all 31 changed source/test/tool/workflow paths equal to reviewed
+owners. [Complete source-specific checkpoint](../qa/continuation-r2-20261118/README.md).
+R2 witness retention/manual attribution adds the defined D/R milestones (50% for
+this bounded slice); representative native/manual J and final G remain open.
+Support semantics and old evidence stay intact. Batch4 reaches 80/131 selected
+original scopes, 51 remaining plus broader residue; no whole-branch percentage.
+
+Hosted55 results establish limited authored native fixtures and one runtime audit
+at that older tree. Strict81 diagnostics and missing static bootstrap text remain
+failed/incomplete; the current source's separate strict scan remains 80 unchanged
+sites. These results add no final candidate G credit. Saved advisory-scope repair,
+remaining branch dispositions, PW-02 local package intake, full/platform/package
+qualification and main integration remain unfinished. No beta/release readiness.

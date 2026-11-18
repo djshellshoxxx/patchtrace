@@ -1,0 +1,1048 @@
+{
+  "artifacts": [
+    {
+      "artifact_id": 14455712791,
+      "bytes": 6461,
+      "github_digest_and_crc_verified": true,
+      "name": "live-bindiff-linux",
+      "run_id": 44355795341,
+      "sha256": "a65e345bd86553639c596cc038cd26baccf15ec09c6f3bd4f7aed9d5c39349b0"
+    },
+    {
+      "artifact_id": 14458335539,
+      "bytes": 96428,
+      "github_digest_and_crc_verified": true,
+      "name": "native-static-acceptance-patchtrace-seeded-store",
+      "run_id": 44355795281,
+      "sha256": "dffd9dd7a5007c051afe79a0e5fb4a73e0d2dc6a534432c8d548b6b685377873"
+    },
+    {
+      "artifact_id": 14457495243,
+      "bytes": 623,
+      "github_digest_and_crc_verified": true,
+      "name": "live-rzdiff-Linux",
+      "run_id": 44355795273,
+      "sha256": "0e351b8ffc1646d738d2317db3ecf51f4022b8501b6845b5af413f7a8a9fda2d"
+    },
+    {
+      "artifact_id": 14458535146,
+      "bytes": 329152,
+      "github_digest_and_crc_verified": true,
+      "name": "dependency-security-ubuntu-latest-runtime-872947fd8edead1f3269700375c05149fa71e9ef-1",
+      "run_id": 44355795241,
+      "sha256": "1f7f3e90e90fa3f5c8867d6d3e53a422887e8cb0803096f9c1891bf7c7cb2111"
+    },
+    {
+      "artifact_id": 14454649231,
+      "bytes": 215905,
+      "github_digest_and_crc_verified": true,
+      "name": "live-unified-windows",
+      "run_id": 44355710739,
+      "sha256": "b00dc10e927692d37b3fc283b6937daa5fa7cff822ad7649d82988229ce3ff17"
+    },
+    {
+      "artifact_id": 14458849599,
+      "bytes": 2341,
+      "github_digest_and_crc_verified": true,
+      "name": "live-unified-linux",
+      "run_id": 44355710739,
+      "sha256": "0c3f790c50d5f50dcd7b6923479a4070b34e06ceee521b7db4fd494c802ca5f8"
+    },
+    {
+      "artifact_id": 14459695622,
+      "bytes": 35628,
+      "github_digest_and_crc_verified": true,
+      "name": "security-static-872947fd8edead1f3269700375c05149fa71e9ef-1",
+      "run_id": 44355795241,
+      "sha256": "75edfdea10a0e71dbf252d69e3aab967398b00499222611d0b2d8fcdda4c921c"
+    }
+  ],
+  "backend_windows_seeded_store": {
+    "both_pdb_seeds_observed": true,
+    "execution": {
+      "contract": "patchtrace-backend-execution/1",
+      "elapsed_seconds": 112.39000000000004,
+      "last_observed_stage": "enhancing function/symbol details",
+      "last_output_age_seconds": 0.5780000000000314,
+      "process_state": "stopped",
+      "returncode": 0,
+      "run_id": "d739f4f6-1851-4e02-bb20-29aaf7587273",
+      "runtime_versions": {
+        "ghidra": "12.0.4",
+        "ghidriff": "1.0.0",
+        "jvm": "unverified",
+        "patchtrace": "0.1.0",
+        "pyghidra": "3.2.0",
+        "python": "3.12.10"
+      },
+      "started_at": "2026-11-18T18:12:50.663301+00:00",
+      "stop_reason": "exited",
+      "stopped_at": "2026-11-18T18:14:43.056536+00:00",
+      "timeout_seconds": 900
+    },
+    "known_bounds_check_accepted": true,
+    "limit": "patchtrace-seeded-store Windows scenario only; other four matrix scenarios uncredited",
+    "raw_json_keys": [
+      "functions",
+      "html_credits",
+      "matches",
+      "md_credits",
+      "new_meta",
+      "old_meta",
+      "program_options",
+      "stats",
+      "strings",
+      "symbols"
+    ]
+  },
+  "bindiff_linux": {
+    "archive_pin_bytes": 62663460,
+    "extracted_file_bytes": 110275568,
+    "limit": "authored synthetic fixture; original source compares counts under unshare, no complete semantic fingerprint in this receipt",
+    "matches": 20,
+    "pin_trust_note": "trust-on-first-use: upstream publishes no per-asset digest and the GitHub release API returned HTTP 403 through the egress proxy, so these values were computed from downloads of the official release assets, twice on 2026-10-14 (research session and C4 follow-up session, same egress proxy, identical results). Not independently verified: re-hash from an independent network path and verify the .asc before beta.",
+    "raw_database_digest_matches": true,
+    "subchecks": {
+      "cancel_at_first_output": "passed",
+      "end_to_end": "passed",
+      "no_network": "passed",
+      "pinned_version": "passed",
+      "probe": "passed",
+      "reversed_refused": "passed",
+      "timeout_mid_run": "passed"
+    }
+  },
+  "hosted_jobs": [
+    {
+      "conclusion": "success",
+      "event": "pull_request",
+      "job_id": 134983436284,
+      "name": "live BinDiff (ubuntu-22.04)",
+      "run_attempt": 1,
+      "run_id": 44355795341,
+      "steps": [
+        {
+          "conclusion": "success",
+          "name": "Set up job"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run actions/checkout@v4"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run actions/setup-python@v5"
+        },
+        {
+          "conclusion": "success",
+          "name": "Qt runtime libraries (the pytest-qt plugin imports Qt even for this non-GUI test)"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run python -m pip install -e .[dev]"
+        },
+        {
+          "conclusion": "success",
+          "name": "Pin digest for the cache key"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run actions/cache@v4"
+        },
+        {
+          "conclusion": "success",
+          "name": "Provision pinned BinDiff (download + verify + extract; never executes it)"
+        },
+        {
+          "conclusion": "success",
+          "name": "Live BinDiff tests (records passed / failed / blocked)"
+        },
+        {
+          "conclusion": "success",
+          "name": "Live status summary"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run actions/upload-artifact@v4"
+        },
+        {
+          "conclusion": "success",
+          "name": "Post Run actions/cache@v4"
+        },
+        {
+          "conclusion": "success",
+          "name": "Post Run actions/setup-python@v5"
+        },
+        {
+          "conclusion": "success",
+          "name": "Post Run actions/checkout@v4"
+        },
+        {
+          "conclusion": "success",
+          "name": "Complete job"
+        }
+      ],
+      "workflow": ".github/workflows/live-bindiff.yml"
+    },
+    {
+      "conclusion": "success",
+      "event": "pull_request",
+      "job_id": 134983435670,
+      "name": "native (patchtrace-seeded-store)",
+      "run_attempt": 1,
+      "run_id": 44355795281,
+      "steps": [
+        {
+          "conclusion": "success",
+          "name": "Set up job"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run actions/checkout@v4"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run actions/setup-python@v5"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run actions/setup-java@v4"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run ilammy/msvc-dev-cmd@v1"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run cl /nologo /LD /Od /GS- /Zi tests\\fixtures\\old.c /Fdtests\\fixtures\\ /link /DEBUG /INCREMENTAL:NO /OUT:tests\\fixtures\\old.dll /PDB:tests\\fixtures\\old.pdb"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run Invoke-WebRequest 'https://github.com/NationalSecurityAgency/ghidra/releases/download/Ghidra_12.0.4_build/ghidra_12.0.4_PUBLIC_20260303.zip' -OutFile ghidra.zip"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run python -m pip install -e . 'ghidriff @ git+https://github.com/clearbluejar/ghidriff.git@4f5d895fcbb1eacd65efd81145922c15bb7e741d'"
+        },
+        {
+          "conclusion": "success",
+          "name": "Persist a symbol store in global Ghidra preferences (symbol-enabled plain Ghidriff run)"
+        },
+        {
+          "conclusion": "skipped",
+          "name": "Reproduce cached-PDB FileExistsError with plain Ghidriff --no-symbols"
+        },
+        {
+          "conclusion": "skipped",
+          "name": "Remove PDBs at the path embedded in the fixture DLLs"
+        },
+        {
+          "conclusion": "skipped",
+          "name": "Native raw-output cache hit is byte-identical"
+        },
+        {
+          "conclusion": "success",
+          "name": "PatchTrace offline analysis succeeds despite persisted symbol store"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run actions/upload-artifact@v4"
+        },
+        {
+          "conclusion": "success",
+          "name": "Post Run actions/setup-java@v4"
+        },
+        {
+          "conclusion": "success",
+          "name": "Post Run actions/setup-python@v5"
+        },
+        {
+          "conclusion": "success",
+          "name": "Post Run actions/checkout@v4"
+        },
+        {
+          "conclusion": "success",
+          "name": "Complete job"
+        }
+      ],
+      "workflow": ".github/workflows/live-backend.yml"
+    },
+    {
+      "conclusion": "success",
+      "event": "pull_request",
+      "job_id": 134983435605,
+      "name": "probe (ubuntu-latest)",
+      "run_attempt": 1,
+      "run_id": 44355795413,
+      "steps": [
+        {
+          "conclusion": "success",
+          "name": "Set up job"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run actions/checkout@v4"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run actions/setup-python@v5"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run python -m pip install --only-binary=:all: -e '.[search,rules]'"
+        },
+        {
+          "conclusion": "success",
+          "name": "every optional dependency imports"
+        },
+        {
+          "conclusion": "success",
+          "name": "Post Run actions/setup-python@v5"
+        },
+        {
+          "conclusion": "success",
+          "name": "Post Run actions/checkout@v4"
+        },
+        {
+          "conclusion": "success",
+          "name": "Complete job"
+        }
+      ],
+      "workflow": ".github/workflows/optional-deps.yml"
+    },
+    {
+      "conclusion": "success",
+      "event": "pull_request",
+      "job_id": 134983435271,
+      "name": "live rz-diff (ubuntu-latest)",
+      "run_attempt": 1,
+      "run_id": 44355795273,
+      "steps": [
+        {
+          "conclusion": "success",
+          "name": "Set up job"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run actions/checkout@v4"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run actions/setup-python@v5"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run python -m pip install -e ."
+        },
+        {
+          "conclusion": "success",
+          "name": "Install pinned rizin (fail closed on missing or mismatched SHA-256)"
+        },
+        {
+          "conclusion": "skipped",
+          "name": "Install pinned rizin (fail closed on missing or mismatched SHA-256)"
+        },
+        {
+          "conclusion": "success",
+          "name": "Build PE pair (MinGW)"
+        },
+        {
+          "conclusion": "skipped",
+          "name": "Run ilammy/msvc-dev-cmd@v1"
+        },
+        {
+          "conclusion": "skipped",
+          "name": "Build PE pair (MSVC)"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run live rz-diff check"
+        },
+        {
+          "conclusion": "success",
+          "name": "Step summary"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run actions/upload-artifact@v4"
+        },
+        {
+          "conclusion": "success",
+          "name": "Post Run actions/setup-python@v5"
+        },
+        {
+          "conclusion": "success",
+          "name": "Post Run actions/checkout@v4"
+        },
+        {
+          "conclusion": "success",
+          "name": "Complete job"
+        }
+      ],
+      "workflow": ".github/workflows/live-rizin.yml"
+    },
+    {
+      "conclusion": "success",
+      "event": "pull_request",
+      "job_id": 134983435409,
+      "name": "dependency-audit (ubuntu-latest, runtime)",
+      "run_attempt": 1,
+      "run_id": 44355795241,
+      "steps": [
+        {
+          "conclusion": "success",
+          "name": "Set up job"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065"
+        },
+        {
+          "conclusion": "success",
+          "name": "Audit installed dependencies"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02"
+        },
+        {
+          "conclusion": "success",
+          "name": "Post Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065"
+        },
+        {
+          "conclusion": "success",
+          "name": "Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683"
+        },
+        {
+          "conclusion": "success",
+          "name": "Complete job"
+        }
+      ],
+      "workflow": ".github/workflows/dependency-security.yml"
+    },
+    {
+      "conclusion": "failure",
+      "event": "pull_request",
+      "job_id": 134983436211,
+      "name": "security-scan",
+      "run_attempt": 1,
+      "run_id": 44355795241,
+      "steps": [
+        {
+          "conclusion": "success",
+          "name": "Set up job"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065"
+        },
+        {
+          "conclusion": "failure",
+          "name": "Static security scan"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02"
+        },
+        {
+          "conclusion": "skipped",
+          "name": "Post Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065"
+        },
+        {
+          "conclusion": "success",
+          "name": "Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683"
+        },
+        {
+          "conclusion": "success",
+          "name": "Complete job"
+        }
+      ],
+      "workflow": ".github/workflows/dependency-security.yml"
+    },
+    {
+      "conclusion": "success",
+      "event": "push",
+      "job_id": 134983127993,
+      "name": "windows",
+      "run_attempt": 1,
+      "run_id": 44355710739,
+      "steps": [
+        {
+          "conclusion": "success",
+          "name": "Set up job"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run actions/checkout@v4"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run actions/setup-python@v5"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run actions/setup-java@v4"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run ilammy/msvc-dev-cmd@v1"
+        },
+        {
+          "conclusion": "success",
+          "name": "Build the fixture DLLs with MSVC"
+        },
+        {
+          "conclusion": "success",
+          "name": "Install Ghidra 12.0.4 with a pinned digest"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run python -m pip install -e . \"pyghidra==3.0.2\" \"$env:GHIDRIFF_PIN\""
+        },
+        {
+          "conclusion": "success",
+          "name": "Live extraction, CI fixture pair"
+        },
+        {
+          "conclusion": "success",
+          "name": "Live extraction, probe pair"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run actions/upload-artifact@v4"
+        },
+        {
+          "conclusion": "success",
+          "name": "Post Run actions/setup-java@v4"
+        },
+        {
+          "conclusion": "success",
+          "name": "Post Run actions/setup-python@v5"
+        },
+        {
+          "conclusion": "success",
+          "name": "Post Run actions/checkout@v4"
+        },
+        {
+          "conclusion": "success",
+          "name": "Complete job"
+        }
+      ],
+      "workflow": ".github/workflows/live-unified.yml"
+    },
+    {
+      "conclusion": "success",
+      "event": "push",
+      "job_id": 135015211489,
+      "name": "linux",
+      "run_attempt": 1,
+      "run_id": 44355710739,
+      "steps": [
+        {
+          "conclusion": "success",
+          "name": "Set up job"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run actions/checkout@v4"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run actions/setup-python@v5"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run actions/setup-java@v4"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run actions/download-artifact@v4"
+        },
+        {
+          "conclusion": "success",
+          "name": "Install Ghidra 12.0.4 with a pinned digest"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run python -m pip install -e . \"pyghidra==3.0.2\" \"$GHIDRIFF_PIN\""
+        },
+        {
+          "conclusion": "success",
+          "name": "Live extraction on the Windows-built DLLs, CI fixture pair"
+        },
+        {
+          "conclusion": "success",
+          "name": "Live extraction on the Windows-built DLLs, probe pair"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run actions/upload-artifact@v4"
+        },
+        {
+          "conclusion": "success",
+          "name": "Post Run actions/setup-java@v4"
+        },
+        {
+          "conclusion": "success",
+          "name": "Post Run actions/setup-python@v5"
+        },
+        {
+          "conclusion": "success",
+          "name": "Post Run actions/checkout@v4"
+        },
+        {
+          "conclusion": "success",
+          "name": "Complete job"
+        }
+      ],
+      "workflow": ".github/workflows/live-unified.yml"
+    }
+  ],
+  "job_checkouts": [
+    {
+      "checkout_sha": "55f3d0742f7d4cf32357a42b8b1cc76d85875e71",
+      "decoded_log_utf8_sha256": "dcd2710d604078b30e8b6c55252ddfe74eaef924b31f9ce893a957d915904842",
+      "job_id": 134983127993,
+      "source_kind": "canonical push head"
+    },
+    {
+      "checkout_sha": "872947fd8edead1f3269700375c05149fa71e9ef",
+      "decoded_log_utf8_sha256": "9938d6f00482a79aa465deba89941b9cadc78cd0b7e8af2bf1d7099f68d1ac7f",
+      "job_id": 134983435271,
+      "source_kind": "PR merge preview"
+    },
+    {
+      "checkout_sha": "872947fd8edead1f3269700375c05149fa71e9ef",
+      "decoded_log_utf8_sha256": "4a84ada79ae0fdcd4323b0b6c0a6a2cf7367d17bcfd91c37828581c663fd8fe3",
+      "job_id": 134983435409,
+      "source_kind": "PR merge preview"
+    },
+    {
+      "checkout_sha": "872947fd8edead1f3269700375c05149fa71e9ef",
+      "decoded_log_utf8_sha256": "fbda0aa396f73a67c4bae99b40e07e5a6b21b26cbdea25f0e211ac7352b02263",
+      "job_id": 134983435605,
+      "source_kind": "PR merge preview"
+    },
+    {
+      "checkout_sha": "872947fd8edead1f3269700375c05149fa71e9ef",
+      "decoded_log_utf8_sha256": "3e9933a15f7a16a21be3d5628fa56113918f71339709e3bf5f5944d390287b7f",
+      "job_id": 134983435670,
+      "source_kind": "PR merge preview"
+    },
+    {
+      "checkout_sha": "872947fd8edead1f3269700375c05149fa71e9ef",
+      "decoded_log_utf8_sha256": "df9fab733a6b1dd7aca29adca6148bd3751318786b0357c7838be1492796a22e",
+      "job_id": 134983436211,
+      "source_kind": "PR merge preview"
+    },
+    {
+      "checkout_sha": "872947fd8edead1f3269700375c05149fa71e9ef",
+      "decoded_log_utf8_sha256": "0c7fa7e5faecf989ced4278b89dbdb6c556b31cdb77944de70443a92a3409eb6",
+      "job_id": 134983436284,
+      "source_kind": "PR merge preview"
+    },
+    {
+      "checkout_sha": "55f3d0742f7d4cf32357a42b8b1cc76d85875e71",
+      "decoded_log_utf8_sha256": "1b61054b4ab87fb9d6cc3fbe1d2c84d7e6fe8159f5aff6cc5a842c6871366f52",
+      "job_id": 135015211489,
+      "source_kind": "canonical push head"
+    }
+  ],
+  "merge_preview": "872947fd8edead1f3269700375c05149fa71e9ef",
+  "no_later_source_qualification": true,
+  "no_release_qualification": true,
+  "preview_tree_equals_head": true,
+  "receipt_review_process_or_network_attempts": [],
+  "rizin_linux": {
+    "archive_sha256": "9102249a9f0b6319c5334a2e5cf8d9cc3f2035e1d3def027c41f6a90f647e8cf",
+    "duration_seconds": 5.98,
+    "engine_run": {
+      "argv_digest": "b7165fe711c2d7d25febc57cb9af3a1d3a55404045d66a54c7b6ba3b89e9da19",
+      "error_code": null,
+      "status": "ok"
+    },
+    "errors": [],
+    "fixture_sha256": {
+      "newer": "f872faa2dee92ae58be6cdc8805450f4b33772de75152f814eca15493d225efc",
+      "older": "e3b4de7d69c47f81cd6f655373cf21e366f758dc83b05557866f1d77e5f7fe08"
+    },
+    "help_flags": {
+      "-C": true,
+      "-j": true,
+      "-t": true
+    },
+    "kind": "live-rzdiff",
+    "match_count": 30,
+    "mocked": false,
+    "os": "Linux",
+    "output_sha256": "be34eee2d2f489268e4c417f6175120d2ed1f2a2c79df3ebf1b543a80fa38f9b",
+    "pin": "0.9.1",
+    "rizin_version": "0.9.1",
+    "status": "passed"
+  },
+  "scan_reviews": [
+    {
+      "artifact_id": 14458535146,
+      "audited_distributions": 17,
+      "context": {
+        "checkout": "/home/runner/work/patchtrace/patchtrace",
+        "controller_python": {
+          "executable": "/opt/hostedtoolcache/Python/3.12.16/x64/bin/python",
+          "implementation": "CPython",
+          "version": "3.12.16"
+        },
+        "event": "pull_request",
+        "origin": "github-actions",
+        "platform": "ubuntu-latest",
+        "profile": "runtime",
+        "repository": "djshellshoxxx/patchtrace",
+        "run_attempt": 1,
+        "run_id": 44355795241,
+        "schema": 1,
+        "source_sha": "872947fd8edead1f3269700375c05149fa71e9ef",
+        "source_tree": "11a0c1598764ebd3fd8d3b540377aa52e949f88a",
+        "workflow": ".github/workflows/dependency-security.yml"
+      },
+      "fixes": 0,
+      "installed_inventory": {
+        "auditable": [
+          {
+            "name": "annotated-types",
+            "version": "0.8.0"
+          },
+          {
+            "name": "iced-x86",
+            "version": "1.21.0"
+          },
+          {
+            "name": "pip",
+            "version": "26.3"
+          },
+          {
+            "name": "protobuf",
+            "version": "7.36.2"
+          },
+          {
+            "name": "pydantic",
+            "version": "2.13.5"
+          },
+          {
+            "name": "pydantic-core",
+            "version": "2.46.5"
+          },
+          {
+            "name": "pyside6",
+            "version": "6.12.0"
+          },
+          {
+            "name": "pyside6-addons",
+            "version": "6.12.0"
+          },
+          {
+            "name": "pyside6-essentials",
+            "version": "6.12.0"
+          },
+          {
+            "name": "pyside6-pdf",
+            "version": "6.12.0.140"
+          },
+          {
+            "name": "pyside6-webengine",
+            "version": "6.12.0.140"
+          },
+          {
+            "name": "rapidfuzz",
+            "version": "3.14.6"
+          },
+          {
+            "name": "setuptools",
+            "version": "84.2.1"
+          },
+          {
+            "name": "shiboken6",
+            "version": "6.12.0"
+          },
+          {
+            "name": "typing-extensions",
+            "version": "4.16.0"
+          },
+          {
+            "name": "typing-inspection",
+            "version": "0.4.5"
+          },
+          {
+            "name": "yara-x",
+            "version": "1.21.0"
+          }
+        ],
+        "repository_owned": {
+          "name": "patchtrace",
+          "origin": "file:///home/runner/work/patchtrace/patchtrace",
+          "version": "0.1.0"
+        },
+        "selected_extras": [
+          "search",
+          "rules"
+        ]
+      },
+      "limitation": "Remote checkout existence cannot be re-observed locally. Hosted validation proves that check; this offline review verifies recorded origin, canonical tree, commands, installation/identity crosschecks and exact audit closure without rehoming receipts.",
+      "missing_captured_input_receipts": [],
+      "profile": "runtime",
+      "profile_bootstrap": {
+        "from_version": "25.0.1",
+        "to_version": "26.3",
+        "wheel_sha256": "f3b60b20ffaadd4415ed7957212a38ac63fa4c5fa375bd0f4a797777940fad13"
+      },
+      "scanner_bootstrap": {
+        "from_version": "25.0.1",
+        "to_version": "26.3",
+        "wheel_sha256": "f3b60b20ffaadd4415ed7957212a38ac63fa4c5fa375bd0f4a797777940fad13"
+      },
+      "scanner_identity": {
+        "base_prefix": "/opt/hostedtoolcache/Python/3.12.16/x64",
+        "ensurepip": "25.0.1",
+        "executable": "/home/runner/work/patchtrace/patchtrace/build/dependency-security/scanner-env/bin/python",
+        "implementation": "CPython",
+        "machine": "x86_64",
+        "prefix": "/home/runner/work/patchtrace/patchtrace/build/dependency-security/scanner-env",
+        "system": "Linux",
+        "version": "3.12.16"
+      },
+      "scanner_pins": {
+        "pip-audit": "2.10.1",
+        "ruff": "0.17.5"
+      },
+      "skips": 0,
+      "status": "passed",
+      "verified_process_receipts": 22,
+      "vulnerabilities": 0
+    },
+    {
+      "artifact_id": 14459695622,
+      "context": {
+        "checkout": "/home/runner/work/patchtrace/patchtrace",
+        "controller_python": {
+          "executable": "/opt/hostedtoolcache/Python/3.12.16/x64/bin/python",
+          "implementation": "CPython",
+          "version": "3.12.16"
+        },
+        "event": "pull_request",
+        "origin": "github-actions",
+        "platform": "ubuntu-latest",
+        "profile": "static",
+        "repository": "djshellshoxxx/patchtrace",
+        "run_attempt": 1,
+        "run_id": 44355795241,
+        "schema": 1,
+        "source_sha": "872947fd8edead1f3269700375c05149fa71e9ef",
+        "source_tree": "11a0c1598764ebd3fd8d3b540377aa52e949f88a",
+        "workflow": ".github/workflows/dependency-security.yml"
+      },
+      "correctly_refused": "static scanner did not exit successfully",
+      "findings": 81,
+      "findings_by_rule": {
+        "S101": 9,
+        "S105": 14,
+        "S108": 1,
+        "S110": 13,
+        "S310": 6,
+        "S314": 2,
+        "S603": 1,
+        "S608": 35
+      },
+      "missing_captured_input_receipts": [
+        "bootstrap-pip.txt"
+      ],
+      "no_finding_suppression": true,
+      "profile": "static",
+      "scanner_bootstrap": {
+        "from_version": "25.0.1",
+        "to_version": "26.3",
+        "wheel_sha256": "f3b60b20ffaadd4415ed7957212a38ac63fa4c5fa375bd0f4a797777940fad13"
+      },
+      "scanner_identity": {
+        "base_prefix": "/opt/hostedtoolcache/Python/3.12.16/x64",
+        "ensurepip": "25.0.1",
+        "executable": "/home/runner/work/patchtrace/patchtrace/build/security-static/scanner-env/bin/python",
+        "implementation": "CPython",
+        "machine": "x86_64",
+        "prefix": "/home/runner/work/patchtrace/patchtrace/build/security-static/scanner-env",
+        "system": "Linux",
+        "version": "3.12.16"
+      },
+      "scanner_pins": {
+        "ruff": "0.17.5"
+      },
+      "static_exit_code": 1,
+      "status": "failed",
+      "verified_process_receipts": 10
+    }
+  ],
+  "source_files": [
+    {
+      "blob": "298160671271c86d4739f43306ad048d9a45a5c4",
+      "bytes": 40181,
+      "path": "tools/dependency_security.py",
+      "sha256": "4f2a8a1c095efe8a92074a16ea972b6f0e2a4b8868efa9d2fee50cd8af361641"
+    },
+    {
+      "blob": "9c0c4c9ad3abcc7d10df8fb253c68a586c4426f8",
+      "bytes": 33861,
+      "path": "tools/release_qualification.py",
+      "sha256": "a9ca1af6393b9f2a88af156f78b50afc6b5b5f66e622a8bfe9a4530273674ed7"
+    },
+    {
+      "blob": "da9de4ccad519f3686c07fa9c1f477b0e75b6efd",
+      "bytes": 1442,
+      "path": "tools/live_backend_check.py",
+      "sha256": "f497f65fc43881d021efafcd4b3f0c08e34614b37f3d7bb589547b6b33785700"
+    },
+    {
+      "blob": "affb02ee94164a37249656786eaac1c484bfdef6",
+      "bytes": 1410,
+      "path": "tools/seed_symbol_cache.py",
+      "sha256": "bdcb3759340702f4bb4dcd1cb4cad9b57d9c8e56e9e36d11c4b9f91dc453515c"
+    },
+    {
+      "blob": "e47ee177e0eb5541273a943eb38bb39c98ed09c8",
+      "bytes": 31597,
+      "path": "tools/live_unified_check.py",
+      "sha256": "1c84fce3e63208dd926fafe5c55e119de215bd216e29438a9825f543ad933e94"
+    },
+    {
+      "blob": "266f72b28360de99415163a8e5da4e1f8d7801ca",
+      "bytes": 5326,
+      "path": "tools/live_rzdiff_check.py",
+      "sha256": "ffa4d43017813e0aa48a7cb958fdafbfefb6e968a6ff577c2197ceb70272666d"
+    },
+    {
+      "blob": "9dcd6d468f607861f117fc5a6b2f538938cb3ef6",
+      "bytes": 2270,
+      "path": "tools/bindiff_pin.json",
+      "sha256": "7926ff4ae20b5302ba9d04ba44620ae7a4752fa20c25efbfd2959e8250a913d8"
+    },
+    {
+      "blob": "ba25e3b7e4ca3caca365482f58f4ba1b38c8212e",
+      "bytes": 18314,
+      "path": "tools/provision_bindiff.py",
+      "sha256": "f91c44a1664c95d859bdd74c220184c72dcbfbb1f4581a1a117a3b5d62d203c1"
+    },
+    {
+      "blob": "6fcc2f063679c71bb6287dbb6da54159ac58ea6d",
+      "bytes": 16371,
+      "path": "tests/test_live_bindiff.py",
+      "sha256": "4f441257dbb3796312b96ea0d46dab8d1edc17df60a9fe2e5b4220e469e3fc97"
+    },
+    {
+      "blob": "7d619559d3d94364c2b81e8700fbc5268a417da6",
+      "bytes": 1452,
+      "path": "pyproject.toml",
+      "sha256": "afb1b89ba00132c09a564a3dc4d4e6db7f4c441b6bb1b558df6786cfd0474ed9"
+    },
+    {
+      "blob": "5c92e7dd3bc901ef29fc8c75331e01c003e1c47a",
+      "bytes": 42411,
+      "path": "src/patchtrace/unified/extract/ghidra_script.py",
+      "sha256": "3901f3a8c369b3350b98566a46666258f9b2c79a1704f7fcdad2a64c502de49e"
+    },
+    {
+      "blob": "011cca180db77385d9d17340a52293ebe7130fc6",
+      "bytes": 4545,
+      "path": ".github/workflows/live-backend.yml",
+      "sha256": "98ba11cedc7b7819881530285a9a16434fd43c8777a771aebe669debd98125bd"
+    },
+    {
+      "blob": "da6093e284d6635f9891b546955bf88a9b44827a",
+      "bytes": 5348,
+      "path": ".github/workflows/live-unified.yml",
+      "sha256": "3aeec6629f659a25b54c6b54236a177ad04dd32a310f24e59a4572849936cc90"
+    },
+    {
+      "blob": "bfa2f2ce24c10a189ef2e2b625f362fb014700af",
+      "bytes": 3495,
+      "path": ".github/workflows/live-bindiff.yml",
+      "sha256": "651233282e943bc22687dd56e40c6f2649452e96cc9b6740ee79790c81af1870"
+    },
+    {
+      "blob": "90e0880cc66c1e8c950b2b5145ef8d251eb212a5",
+      "bytes": 4778,
+      "path": ".github/workflows/live-rizin.yml",
+      "sha256": "cfa41bfe85eed903cd93ac028a2414a2bc4a1864548f553734f595c70a511769"
+    },
+    {
+      "blob": "2b11d73db353e55aa843c370a47d3cc08b6dd9de",
+      "bytes": 874,
+      "path": ".github/workflows/optional-deps.yml",
+      "sha256": "12e4646c5d194192ff2b9543eb107c8979ad04c92224c8edde39e6653f614115"
+    },
+    {
+      "blob": "ba615362136bac7180903859b77acf81d41e7bf0",
+      "bytes": 3267,
+      "path": ".github/workflows/dependency-security.yml",
+      "sha256": "dc67ff5eb5e6c43be987f057998251f335a8de0f2e74060f470b69273e0dcd39"
+    },
+    {
+      "blob": "c1d25348a4ed424df1c4c03ea1ad7d48fd59ca1c",
+      "bytes": 14080,
+      "path": ".github/workflows/qa-windows.yml",
+      "sha256": "41c7fb866ff5ef6f8d2abc8ecdfa7709165853bc871e010c565bcceb80847e45"
+    }
+  ],
+  "source_head": "55f3d0742f7d4cf32357a42b8b1cc76d85875e71",
+  "source_tree": "11a0c1598764ebd3fd8d3b540377aa52e949f88a",
+  "unified_cross_os": [
+    {
+      "artifact_sha256": "cc2dd5c2b62ef5042f422703b887c2c2aa077b494412832324e5e2c6d59bbbfe",
+      "content_digest": "509c002f2a3cffaba5b2c1aab7e075cab3bbdc91b282aa1572cf9f5060174aa4",
+      "functions": 377,
+      "ghidriff_gzf_equals_own_analysis_both_os": true,
+      "hm_equal_windows": false,
+      "hm_refinement_both_os": true,
+      "pair": "ci-pair",
+      "side": "older",
+      "windows_linux_equal": true
+    },
+    {
+      "artifact_sha256": "e92da3d4698103a5edfbfbb480420dd9dda1b1492fc6fa40c139b3e210aa16f4",
+      "content_digest": "548088e0b54e2c47b45d3e0b61780884ef9d8dd04d92f53318184eff3fec173d",
+      "functions": 377,
+      "ghidriff_gzf_equals_own_analysis_both_os": true,
+      "hm_equal_windows": false,
+      "hm_refinement_both_os": true,
+      "pair": "ci-pair",
+      "side": "newer",
+      "windows_linux_equal": true
+    },
+    {
+      "artifact_sha256": "c6f69ac99eae46105f806084843401ae4f293273eea3c0f6eaa922a88c5828c1",
+      "content_digest": "27214932a2dbf4c52443255e49b73c944167447a7b41612f99e9a20eaf7b6ca2",
+      "functions": 383,
+      "ghidriff_gzf_equals_own_analysis_both_os": true,
+      "hm_equal_windows": false,
+      "hm_refinement_both_os": true,
+      "pair": "probe-pair",
+      "side": "older",
+      "windows_linux_equal": true
+    },
+    {
+      "artifact_sha256": "d2e019933e4eb6e9823fd8c0559d9278ac5e29a00376b66a28ec64e6afcd48cb",
+      "content_digest": "a658ef9f00c21c74bac115a68414f8188206258c051a9c3ea9c484e0d0e65c0c",
+      "functions": 383,
+      "ghidriff_gzf_equals_own_analysis_both_os": true,
+      "hm_equal_windows": false,
+      "hm_refinement_both_os": true,
+      "pair": "probe-pair",
+      "side": "newer",
+      "windows_linux_equal": true
+    }
+  ],
+  "unified_script_sha256": "3901f3a8c369b3350b98566a46666258f9b2c79a1704f7fcdad2a64c502de49e"
+}

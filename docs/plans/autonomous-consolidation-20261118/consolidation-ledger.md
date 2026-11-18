@@ -327,3 +327,15 @@ Already known directory/UI/named-source/highlighter/F8 repairs belong to later
 continuation source and are not relabeled as new findings or baseline fixes.
 [Exact-tip ledger](semantic-disposition-batch4.md), [complete JSON](semantic-disposition-batch4.json),
 and [sealed QA](../../qa/semantic-disposition-batch4-20261118.md) retain the evidence.
+
+
+## R2 continuation independently reviewed — 2026-11-18
+
+Batch4 and the R2 source chain were selectively appended after independent review.
+Clean candidate `ae0b1660e0cc71c51698d70a685ceeb646619184` retains all 31 reviewed
+owner paths and passes 3,528 selected checks/nine explicit skips. No production
+conflict resolution occurred. The batch4 document append preserves both histories.
+Main remains 9c411ca3; all PRs remain unmerged/open where previously open. Exact
+hosted55 receipts remain attributed to55 or its equal-tree PR preview, with their
+failures and queued states. [Checkpoint](../../qa/continuation-r2-20261118/README.md).
+Saved-scope and remaining branch work continue separately; no branch closure.

@@ -1630,3 +1630,14 @@ See the [immutable continuation checkpoint](../docs/qa/verified-continuation-202
 - [ ] Design and qualify any future Tier W saved-plan/CLI and R1 research-runner recovery using current ownership/contracts.
 - [ ] Inspect the remaining 51 original tips and broader checkpoint/research/native/package residue.
 - [ ] Complete actual final-source full/platform/native/package/manual gates; synthetic source checks are not that acceptance.
+
+
+### [CONTINUATION-R2-20261118]
+
+- [x] Independently review/port batch4 and R2 source/spec/test/QA history; preserve Support and frozen outcomes.
+- [x] Verify 31 owner paths and exact-source 108-file combined gate: 3,528 passed/nine skips; retain 522 import identities.
+- [x] Retain unchanged strict 80 findings and independently verify older-source hosted native/runtime/static receipts.
+- [x] Seal combined commands/results, original observation hashes and append-only conflict records.
+- [ ] Complete append-only PR316 publication and verify remote head/tree/parents without main merge.
+- [ ] Repair saved advisory-scope admission before mutations; review remaining 51 original tips and broader residue.
+- [ ] Qualify PW-02 local package extraction, static artifact retention, current full/platform/native/package/security gates.
