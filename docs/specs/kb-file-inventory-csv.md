@@ -271,6 +271,9 @@ Add an inventory dialog/module opened from the existing KB panel, usable for
 import/inspection without a project. Provide product/KB context, file chooser,
 counts, filters, explicit row selection, plain-text details, named keyboard-accessible
 controls/tooltips, progress and cancel, and stale-result/revision guards. Use the
+visible selected row as the explicit filename choice; keyboard focus or a current
+cell left after deselection is not a selection and must disable the Select action.
+Use the
 same service, and a fresh worker-owned store per operation. Do not grow ui.py or
 raise seam caps. Preserve existing KB and #300 navigation shortcuts.
 

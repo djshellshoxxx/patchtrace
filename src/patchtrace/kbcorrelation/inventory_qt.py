@@ -492,15 +492,19 @@ class InventoryDialog(QDialog):
                                   'architecture': self.combos['filter_architecture'].currentData(),
                                   'state': self.combos['filter_state'].currentData(), 'offset': offset})
 
+    def _selected_row(self):
+        selected = self.rows.selectionModel().selectedRows()
+        return selected[0].row() if len(selected) == 1 else -1
+
     def _selected_entry(self):
-        row = self.rows.currentRow()
+        row = self._selected_row()
         entries = self._shown.get('entries', []) if self._shown else []
         return entries[row] if 0 <= row < len(entries) else None
 
     def _row_changed(self):
         entry = self._selected_entry()
         if entry is not None:
-            row = self.rows.currentRow()
+            row = self._selected_row()
             if row < len(self._entry_texts):
                 self.details.setPlainText(self._entry_texts[row])
         self._enable()

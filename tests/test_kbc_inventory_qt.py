@@ -78,6 +78,25 @@ def imported(qtbot, tmp_path, dialog):
     assert dialog.rows.rowCount() == 2
 
 
+@pytest.mark.parametrize('gesture', ['clear', 'control-space'])
+def test_deselecting_current_row_disables_explicit_inventory_selection(qtbot, tmp_path, gesture):
+    dialog = make(qtbot, tmp_path, investigation='a' * 64, product='b' * 64, expected_revision=1)
+    imported(qtbot, tmp_path, dialog)
+    dialog.rows.selectRow(0)
+    assert dialog.rows.selectedIndexes() and dialog.buttons['select'].isEnabled()
+    if gesture == 'clear':
+        dialog.rows.clearSelection()
+    else:
+        dialog.rows.setFocus()
+        qtbot.keyClick(dialog.rows, Qt.Key.Key_Space, modifier=Qt.KeyboardModifier.ControlModifier)
+    assert not dialog.rows.selectedIndexes()
+    assert dialog._selected_entry() is None
+    assert not dialog.buttons['select'].isEnabled()
+    dialog._select()
+    assert dialog._pending is None
+    dialog.reject()
+
+
 def test_real_offline_import_inspect_filter_and_scoped_selection(qtbot, tmp_path):
     workspace = tmp_path / 'ws'
     with WorkspaceStore(workspace) as ws:
