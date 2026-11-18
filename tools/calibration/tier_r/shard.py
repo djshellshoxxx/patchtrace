@@ -244,6 +244,8 @@ def failure_reason(rc: int | None, reason: str | None, summary: dict | None, std
     """One-line, bounded reason for a failed or BLOCKED step: runner reason, the command's own error, or stderr."""
     if reason:
         text = reason
+    elif rc in (0, 1) and summary and summary.get('command') == 'aa' and summary.get('not_byte_identical'):
+        text = f'exit {rc}: A/A rebuild is not byte-identical'
     else:
         text = ''
         for key in ('error', 'reason'):
@@ -353,6 +355,8 @@ def _classify(rc: int | None, reason: str | None, summary: dict | None = None) -
     if rc is None:
         return 'timeout'
     status = {0: 'ok', 1: 'findings', 3: 'blocked'}.get(rc, 'failed')
+    if status in ('ok', 'findings') and summary and summary.get('command') == 'aa' and summary.get('not_byte_identical'):
+        return 'failed'
     if status == 'ok' and summary and summary.get('status') == 'skipped':
         return 'skipped'
     return status
