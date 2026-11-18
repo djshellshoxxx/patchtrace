@@ -111,7 +111,8 @@ class RzDiffAdapter:
         self._attempt.notes = notes
         result = job.runner(argv, cwd=job.workdir, env=job.env, cancel=job.cancel,
                             timeout_seconds=job.deadline_seconds, log_limit=job.stdout_limit + 1,
-                            separate_streams=True, stderr_limit=rzdiff.STDERR_TAIL)
+                            separate_streams=True, stderr_limit=rzdiff.STDERR_TAIL,
+                            max_output_bytes=job.stdout_limit)  # stop a flood at the limit (SPEC-28 s9.3, H-C)
         stdout = rzdiff.captured_stdout(result)
         lossy = isinstance(stdout, str)
         return RawResult(result.returncode, stdout.encode('utf-8') if lossy else stdout, result.stderr_tail,
