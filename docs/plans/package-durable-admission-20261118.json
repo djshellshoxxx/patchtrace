@@ -210,5 +210,28 @@
     "source_equalities": 11,
     "prior_files_preserved": 16,
     "caller_searches": 5
+  },
+  "independent_review_addendum": {
+    "preserved_design": "efe68b18654459e704d358d64423fbc1820afc0a",
+    "preserved_qa": "988ce3f746fe65bc022b4f3a6c1f2234989ec985",
+    "reviewer": "report_evidence_review",
+    "source": "195e04af27f7a724c6a2037363b7fe68df418a6b",
+    "finding": "create=False initializes existing zero-byte/unrelated version-zero databases; it does not enforce the proposed capture precondition",
+    "probe_sha256": "823117ef4d6886ceebe747020aece47cc07f4758c7c94217cbdec31394a8e2d3",
+    "result": {
+      "failed": 2,
+      "passed": 2,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 0.34,
+      "verified_imports": 31,
+      "prohibited_attempts": []
+    },
+    "archive_sha256": "ab2e7ecb8e44f6c78c0f8af76c7bdb6bdf1f93a8ca41c23f20f680d86a49c2af",
+    "verified_payloads": 45,
+    "correction": "Explicit existing WorkspaceStore non-initializing mode, validation on actual connection before _create/WAL; ordinary defaults unchanged",
+    "original_probe_role": "Immutable design counterexample; not forced green or routed through an injected new-mode wrapper",
+    "production_changes": false,
+    "metadata_api_note": "Charge actual serialized bytes before retention only outside an outstanding or failed grant; no reset/refund on CAS reuse"
   }
 }

@@ -535,3 +535,53 @@ Native Windows original-lock sharing, independent rooted name-to-object reopen,
 actual FileIdInfo/rename/cleanup, FDI ABI and callbacks, Job/process handoff and
 the frozen full package journey remain separate mandatory gates. Neither this
 design nor a future portable facade pass completes PW-02 or authorizes release.
+
+## 13. Independent capture correction after the sealed proposal
+
+This attributed addendum follows immutable design `efe68b18654459e704d358d64423fbc1820afc0a`
+and QA `988ce3f746fe65bc022b4f3a6c1f2234989ec985`. Their original archive and
+seven observations remain unchanged. Independent review by
+`report_evidence_review` confirmed one prerequisite missing from §5 step 1:
+**`WorkspaceStore(create=False)` is not a non-initializing open.**
+
+At frozen `195e04af`, the flag rejects a missing database. An existing zero-byte
+file or unrelated SQLite database with `user_version=0` still reaches `_create`
+on the actual connection, installs KB tables, stamps version 1 and enables WAL.
+The unchanged independent probe produced **2 failures / 2 positives**, no
+errors/skips, in 0.34 seconds, with 31 exact project imports and no network or
+child attempts. The zero-byte and unrelated-v0 database bytes changed; analyst
+files were preserved. Healthy initialized-v1 and missing-database controls passed.
+
+Probe SHA-256:
+`823117ef4d6886ceebe747020aece47cc07f4758c7c94217cbdec31394a8e2d3`.
+The [independent receipt](../qa/package-durable-admission-capture-addendum-20261118.md)
+preserves the exact original probe, command, logs/XML, observations and review.
+
+Correct §5 step 1 to require an **explicit existing, non-initializing mode on
+WorkspaceStore**, validated on the actual opened connection before `_create`,
+version changes or WAL setup. An earlier pathname/version check followed by
+the ordinary constructor is insufficient. The narrow mode must preserve all
+ordinary defaults; it is a prerequisite for later captured admission and does
+not implement package storage or expose an entry point. The accepted writer
+transaction must still recheck its own actual workspace/version/schema and
+current/captured admission state.
+
+The old probe asserts the proposed capture precondition through the ordinary
+`create=False` call. Its two failures remain a valid counterexample to the old
+design assumption. They must not be made green by changing ordinary defaults,
+rewriting assertions, injecting a wrapper or silently routing the probe to the
+new mode. New spec-first acceptance calls the explicit mode; ordinary zero/v0
+initialization is a required separate compatibility positive.
+
+The independent reviewer found no second confirmed design blocker. Canonical
+preimages must remain acyclic (exclude the intent's derived ID, attachment ID
+derived from it and mutable progress); indexed phase alone cannot bypass bounded
+body/digest/flag validation; and capture/progress/source comparisons must run
+inside the accepting transaction. These are implementation constraints, not
+additional reproduced defects.
+
+The CI owner also checked the existing `charge_metadata` API at `7259f868`:
+the proposed conservative per-object cap is compatible only if actual serialized
+bytes are charged before retention, after valid once-only worker reconciliation
+(or before any grant), with no outstanding/failed grant and no reset/refund on
+CAS reuse. This is a bounded API observation, not full proposal or native review.
