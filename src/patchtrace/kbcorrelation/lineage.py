@@ -102,7 +102,7 @@ def chronologically_before(older: IndexRow, newer: IndexRow) -> bool:
         return False
     if old_date != new_date:
         return old_date < new_date
-    return (old.release_version is not None and new.release_version is not None
+    return (bool(_UBR.fullmatch(old.release_version or '')) and bool(_UBR.fullmatch(new.release_version or ''))
             and ubr_key(old.release_version) < ubr_key(new.release_version))
 
 
@@ -148,8 +148,10 @@ def _expanded(item: Mapping) -> Iterable[dict]:
     key = item.get('version_key')
     if not isinstance(key, str) or not key:
         return
-    for version_key, shared_from in [(key, None)] + [
-            (other, key) for other in (item.get('other_versions') or ()) if isinstance(other, str) and other]:
+    others = item.get('other_versions', ())
+    if not isinstance(others, (list, tuple)) or any(not isinstance(other, str) or not other for other in others):
+        return
+    for version_key, shared_from in [(key, None)] + [(other, key) for other in others]:
         fields = _row_fields(item, version_key, shared_from)
         if fields is not None:
             yield fields

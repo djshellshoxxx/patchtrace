@@ -62,8 +62,9 @@ class Resolution:
 
 def binary_ref(row: IndexRow) -> BinaryRef:
     build = row.build
+    release = build.release_version if _UBR.fullmatch(build.release_version or '') else None
     return BinaryRef(sha256=build.sha256, size=row.size, basename=build.file_name, machine=row.machine,
-                     file_version=row.file_version, build_ubr=build.release_version, origin='index-row',
+                     file_version=row.file_version, build_ubr=release, origin='index-row',
                      availability=row.availability, authenticity='signature-unknown')
 
 
@@ -72,13 +73,16 @@ def fix_boundary(older: IndexRow, newer: IndexRow, fixed_build: str | None,
     """Compare only with a build stated by the row itself (UBR or heading), never file version or timestamp."""
     if fixed_build is None or not _UBR.fullmatch(fixed_build) or not chronologically_before(older, newer):
         return 'unverified'
+    old_builds, new_builds = _builds(older), _builds(newer)
+    if any(not isinstance(build, str) or not _UBR.fullmatch(build) for build in old_builds | new_builds):
+        return 'unverified'
     fixed = ubr_key(fixed_build)
     # Compare numeric components; a spelling variant cannot conceal a contradiction.
-    older_same = [ubr_key(b) for b in _builds(older) if ubr_key(b)[0] == fixed[0]]
+    older_same = [ubr_key(b) for b in old_builds if ubr_key(b)[0] == fixed[0]]
     past_boundary = [b >= fixed for b in older_same]
     if any(past_boundary):
         return 'contradicted' if all(past_boundary) else 'unverified'
-    newer_same = {ubr_key(b) for b in _builds(newer) if ubr_key(b)[0] == fixed[0]}
+    newer_same = {ubr_key(b) for b in new_builds if ubr_key(b)[0] == fixed[0]}
     if newer_same == {fixed} and not intervening:
         return 'source-supported'
     return 'unverified'

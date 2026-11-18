@@ -199,3 +199,51 @@ def test_equal_instants_with_different_offset_spellings_cannot_resolve_competing
     assert not ln.chronologically_before(older, newer)
     result = ln.change_in_kb(ln.timeline((older, earlier, newer), '11-24H2'), target)
     assert (result.state, result.reason) == ('unknown', 'order-unverified')
+
+
+def typed_release_version(row, value):
+    return replace(row, build=type(row.build).model_validate(row.build.model_dump() | {'release_version': value}))
+
+
+@pytest.mark.parametrize('value', ['unknown', '26100', '26100.100.1', '٢٦١٠٠.١٠٠'])
+@pytest.mark.parametrize('side', ['older', 'newer'])
+def test_malformed_direct_builds_cannot_order_equal_instants_or_claim_a_change(value, side):
+    older, newer = rows(older_date='2099-02-01')
+    older, newer = (typed_release_version(older, value), newer) if side == 'older' else (
+        older, typed_release_version(newer, value))
+    original = (older.build.model_dump_json(), newer.build.model_dump_json())
+    assert not ln.chronologically_before(older, newer)
+    assert not ln.chronologically_before(newer, older)
+    line = ln.timeline((older, newer), '11-24H2')
+    assert all(ln.change_in_kb(line, row.kb).state == 'unknown' for row in line)
+    pair = proposal(older, newer)
+    assert (pair.grade, pair.lineage_state, pair.fix_boundary) == ('X', 'incompatible', 'unverified')
+    assert 'ORDER_UNVERIFIED' in pair.reason_codes and getattr(pair, side).build_ubr is None
+    assert (older.build.model_dump_json(), newer.build.model_dump_json()) == original
+
+
+@pytest.mark.parametrize('value', [None, 'unknown'])
+@pytest.mark.parametrize('side', ['older', 'newer'])
+def test_distinct_dates_still_orient_direct_proposals_when_a_numeric_build_is_unknown(value, side):
+    older, newer = rows()
+    older, newer = (typed_release_version(older, value), newer) if side == 'older' else (
+        older, typed_release_version(newer, value))
+    original = (older.build.model_dump_json(), newer.build.model_dump_json())
+    assert ln.chronologically_before(older, newer)
+    pair = proposal(older, newer)
+    assert pair.grade == 'A' and pair.lineage_state == 'index-adjacent'
+    assert 'ORDER_UNVERIFIED' not in pair.reason_codes and getattr(pair, side).build_ubr is None
+    if value is not None:
+        assert pair.fix_boundary == 'unverified'
+    assert ln.change_in_kb(ln.timeline((older, newer), '11-24H2'), newer.kb).state == 'yes'
+    assert (older.build.model_dump_json(), newer.build.model_dump_json()) == original
+
+
+@pytest.mark.parametrize('side', ['older', 'newer'])
+def test_mixed_valid_and_malformed_build_claims_cannot_establish_a_fix_boundary(side):
+    older, newer = rows()
+    older, newer = (replace(older, heading_builds=('26100.100', 'unknown')), newer) if side == 'older' else (
+        older, replace(newer, heading_builds=('26100.200', 'unknown')))
+    pair = proposal(older, newer)
+    assert pair.grade == 'A' and pair.fix_boundary == 'unverified'
+    assert (older if side == 'older' else newer).heading_builds[-1] == 'unknown'
