@@ -113,4 +113,3 @@ def dispatch(args, cancel) -> int:
         return OK if match_set.matches else NO_RESULTS
     finally:
         service.close()
-

@@ -313,5 +313,3 @@ def test_csv_claim_provenance_is_exact_and_never_a_binary_hash_or_cve_claim(tmp_
     }]
     assert 'sha256' not in hint and 'cve' not in hint
     assert hint['inventory_refs'] == selected.result['hint']['inventory_refs']
-
-

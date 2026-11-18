@@ -8,6 +8,10 @@ dialog. Independent parser/source, selection and interface reviews reproduced
 and verified repairs for input grouping, HTTP framing, product/build scope,
 failure preservation and keyboard deselection. The combined focused selection
 passes **816 tests**, including a later-architecture capacity regression.
+After normally merging repaired consolidation `121ffb0b`, the combined selection
+passes **1,016 tests**; fresh independent review repeats those tests and passes
+four additional socket-denied integration controls. The feature still supplies
+metadata-only selection and retains exact acquisition consent.
 Schemas, whole-tree Ruff, dependency compatibility and protobuf runtime checks
 pass. Full local and hosted runs are tracked against
 their own exact trees in [PW-01 evidence](qa/pw01-20261118.md).
