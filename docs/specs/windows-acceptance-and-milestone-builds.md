@@ -76,7 +76,7 @@ Naming:
 
 - `v0.1.0-beta.<run_number>` remains the automatic integration build from `main`. It is not an acceptance statement.
 - Acceptance candidates use an **annotated** tag on the reviewed SHA: `v0.1.0-alpha.<n>` (n starts at 1 and never reuses a number).
-- **(new)** The workflow currently hard-codes the release name `PatchTrace beta <run_number>` and the beta body for every tag. Before the first alpha tag, change the release name and body to derive from `github.ref_name`. Until then, a tag push publishes under a misleading name and must not be advertised as alpha.
+- **(done 2026-11-11)** A `v*` tag names its release `PatchTrace <tag> (Windows x64, Linux x86-64)`; the notes title already derives from the tag (`tools/milestone_notes.py --tag`, "tagged build"). Automatic main builds keep `PatchTrace beta <run_number>`. `tests/test_release_gate.py` pins both names.
 
 ### 1.3 Verification after each release
 
