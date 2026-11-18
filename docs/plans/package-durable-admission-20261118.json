@@ -1,0 +1,214 @@
+{
+  "record_kind": "read-only-design-index/1",
+  "title": "Durable admission for held local-package inputs",
+  "status": "proposed; root review and later ownership required",
+  "implemented": false,
+  "base": "195e04af27f7a724c6a2037363b7fe68df418a6b",
+  "base_tree": "b976c61b0ac4ffb55b7b0e78d7a2b206742c00b1",
+  "branch": "codex/package-durable-admission-design-20261118",
+  "document": "docs/plans/package-durable-admission-20261118.md",
+  "current_authorities": {
+    "core": "9740860928c7911e6fa975528db1f7fa5ca1940b",
+    "kb_propagation": "d9a939911f39f3641bd5eed97a2ce067d618856b",
+    "worker_terminal": "7259f86838c2181d6bdbcabe98c7a294a4499e8d",
+    "workspace_schema": 1,
+    "durable_package_table": null,
+    "public_package_entry": false
+  },
+  "separate_core_candidate": {
+    "source": "441c47c2262603555aa77c11e63fedcce11ba502",
+    "status": "owner-reported source pending independent acceptance/integration; absent at frozen base",
+    "new_interfaces": [
+      "ProjectService.create(project_id=None)",
+      "ProjectService.open(recover_interrupted=True, checkpoint=None)",
+      "ProjectStore.load(checkpoint=None)"
+    ],
+    "no_facade_or_expected_id_adoption_authority": true,
+    "subsequent_constructor_source": "63ebc42746fbfbded311084288a339f26ed08d8c",
+    "subsequent_status": "Root reports independently reviewed constructor cleanup extension and porting the chain; absent at frozen195, no facade authority",
+    "author_tests_reported_by_root": 562
+  },
+  "proposal": {
+    "workspace_base_version": 1,
+    "workspace_max_supported_version": 2,
+    "upgrade_trigger": "First accepted package-intent transaction only",
+    "table": "package_admissions",
+    "legacy_journal_contains_package_operations": false,
+    "core_project_schema_change": false,
+    "models": [
+      "PackageAdmissionIntent",
+      "PackageAdmissionProgress",
+      "PackageProjectProvenance"
+    ],
+    "contract": "package-admission/1",
+    "input_mode": "held-package",
+    "expected_project_id": "New canonical UUID before core create; actual ID plus exact side-keyed hashes/sizes required",
+    "new_enrichment_kind": "package-provenance",
+    "reconcile_scope": "One explicitly selected committed project; no source reopen/extraction/approval/create",
+    "first_capture_requires_existing_workspace_and_destination_parent": true,
+    "generic_recovery": "Bounded refusal before mark_interrupted for any unresolved package state; direct helper guards too",
+    "scope_preflight": "Full current index, current and all selected captured revisions, prebuilt context before writes",
+    "association": "Verified existing ProjectService scope/lock before sidecars and rows; reverify every fresh open",
+    "project_row_idempotence": "Exact selected row compare/reuse; conflicts retained, no unchecked overwrite",
+    "progress": "CAS generation/digest and permitted investigation revision; immutable intent",
+    "limits_are_proposed_not_current_product_contracts": true,
+    "limits": {
+      "intent_bytes": 1048576,
+      "progress_bytes": 1048576,
+      "workspace_package_records": 500,
+      "workspace_package_record_bytes": 33554432,
+      "metadata_object_count": 6,
+      "metadata_object_bytes": "min(existing object ceiling, captured max_json_bytes, captured max_xml_bytes)",
+      "metadata_aggregate": "Original remaining PackageBudget.max_metadata_bytes plus existing workspace total",
+      "reconcile_intents": 1
+    }
+  },
+  "compatibility": {
+    "fresh_frozen_v1_reader_of_v2": "Known rows readable; public writes fail nonrecoverable PT-KBC-STORAGE",
+    "preopened_frozen_v1_handle": "Cached read_only=False permits ordinary writes after stamp; no universal barrier",
+    "unknown_journal_fields": "Ignored by frozen legacy marking; cannot protect held operations",
+    "isolated_package_table": "Not enumerated by frozen legacy recovery; new explicit guards still required",
+    "legacy_journal": "Unchanged; never upgraded by path heuristic or missing marker",
+    "arbitrary_old_clients_and_database_editors": "Not qualified or excluded by this observation"
+  },
+  "required_acceptance_groups": [
+    "strict metadata primitive types/lengths/identities before loading",
+    "lazy transactional schema/intent upgrade and rollback/unknown commit",
+    "fresh and preopened frozen-client compatibility",
+    "generic/direct recovery before-mutation refusal",
+    "unchanged full-global source/finite-saved-scope and file/pair admission",
+    "actual complete first-COMMIT identity and retained uncertain result",
+    "repeat-open and pre-sidecar identity validation with foreign preservation",
+    "exact provenance idempotence and split-commit recovery",
+    "source-free committed-project reconciliation",
+    "original checkpoint/accounting and truthful postcommit stop",
+    "investigation/progress CAS and current/captured revision races",
+    "ordinary injection, owner-thread SQLite and no target/network/child work"
+  ],
+  "ownership_proposal": [
+    {
+      "path": "src/patchtrace/kbcorrelation/package_contracts.py",
+      "new": true,
+      "scope": "Strict durable intent/progress/provenance; no native authority"
+    },
+    {
+      "path": "src/patchtrace/kbcorrelation/package_store.py",
+      "new": true,
+      "scope": "One typed workspace table, bounded codec, immutable identity and progress CAS"
+    },
+    {
+      "path": "src/patchtrace/kbcorrelation/package_service.py",
+      "new": true,
+      "scope": "Compose existing admission; explicit one-intent committed reconciliation"
+    },
+    {
+      "path": "src/patchtrace/kbcorrelation/store.py",
+      "new": false,
+      "scope": "Base/supported version split, package transaction participant, package attachment mode, shared accounting/references"
+    },
+    {
+      "path": "src/patchtrace/kbcorrelation/service.py",
+      "new": false,
+      "scope": "Internal optional binding and existing pre-approval/recovery saved-scope checks"
+    },
+    {
+      "path": "src/patchtrace/kbcorrelation/wiring.py",
+      "new": false,
+      "scope": "Strict actual creation identity and repeated verified association before sidecars/rows"
+    },
+    {
+      "path": "src/patchtrace/kbcorrelation/recovery.py",
+      "new": false,
+      "scope": "Package refusal before marking or ordinary resume"
+    },
+    {
+      "path": "src/patchtrace/kbcorrelation/inventory_store.py",
+      "new": false,
+      "scope": "Coordinated common workspace byte-accounting helper only"
+    },
+    {
+      "path": "src/patchtrace/enrichment/storage.py",
+      "new": false,
+      "scope": "Coordinated non-derived package-provenance kind only; no generic retention/publication change"
+    },
+    {
+      "path": "tools/generate_kbc_schemas.py",
+      "new": false,
+      "scope": "Generate new durable KB model schemas after specification/model review"
+    },
+    {
+      "path": "docs/schemas/kbcorrelation/",
+      "new": false,
+      "scope": "Three additive proposed intent/progress/provenance schemas; existing meanings preserved"
+    }
+  ],
+  "still_unqualified": [
+    "all proposed durable contracts/storage/facade/reconciliation",
+    "separate core candidate independent acceptance/integration",
+    "native stage and original locks plus independently rooted name/file verification",
+    "FDI ABI/callbacks and authored actual CAB/MSU handling",
+    "suspended-child handoff/Job containment/termination and cleanup",
+    "actual Windows and frozen full package journey",
+    "arbitrary noncooperating filesystem/database replacement",
+    "package authenticity, upstream freshness and CVE/code-locality conclusions"
+  ],
+  "current_observation_receipt": {
+    "tests": 7,
+    "passed": 7,
+    "failed": 0,
+    "skipped": 0,
+    "seconds": 0.35,
+    "verified_project_imports": 32,
+    "forbidden_attempts": [],
+    "classification": "Frozen-current Linux SQLite observations; no implementation acceptance",
+    "results": {
+      "authored_transaction_rollback": {
+        "journal_empty_before_positive_write": true,
+        "ordinary_write_after_rollback": "succeeded",
+        "package_table_present": false,
+        "production_migration_implemented": false,
+        "version": 1
+      },
+      "fresh_v1": {
+        "journal_write": "succeeded",
+        "read_only": false
+      },
+      "fresh_v2": {
+        "direct_sql_write": "readonly",
+        "legacy_row_read": "succeeded",
+        "public_write": "PT-KBC-STORAGE/nonrecoverable",
+        "quiescent_database_unchanged": true,
+        "read_only": true
+      },
+      "fresh_v2_repair": {
+        "attempts": 0,
+        "error": "PT-KBC-STORAGE",
+        "journal_unchanged": true,
+        "project_calls": 0
+      },
+      "preopened_v1": {
+        "actual_version": 2,
+        "cached_read_only": false,
+        "journal_write_after_upgrade": "succeeded"
+      },
+      "separate_table": {
+        "attempts": 0,
+        "legacy_enumerated_rows": 0,
+        "not_a_general_legacy_write_barrier": true,
+        "package_rows_unchanged": true
+      },
+      "unknown_fields": {
+        "attempts": 1,
+        "legacy_mark_interrupted": "succeeded",
+        "new_fields_not_enforced": true
+      }
+    }
+  },
+  "evidence_counts": {
+    "git_snapshots": 42,
+    "source_spans": 56,
+    "source_equalities": 11,
+    "prior_files_preserved": 16,
+    "caller_searches": 5
+  }
+}
