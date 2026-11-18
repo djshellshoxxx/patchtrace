@@ -1,0 +1,169 @@
+{
+  "archive": {
+    "member_count": 28,
+    "path": "evidence.zip",
+    "sha256": "55f71086f4870f60771f4adcb5ab3b67971671cf93b3d06ee4df89dc368edaa3",
+    "size": 56121
+  },
+  "members": [
+    {
+      "path": "README.md",
+      "sha256": "dbd0a20338c68be6a08437b88c51897a93460e59d22400b3021b95466128c21f",
+      "size": 4536
+    },
+    {
+      "path": "receipts/affected-green-command.json",
+      "sha256": "32ec3b2b4f511b1a106bfdf4ead6fd9e5c979626dd3d54220b0bba0400e4fa45",
+      "size": 1540
+    },
+    {
+      "path": "receipts/affected-green-result.json",
+      "sha256": "73d07219dc8da73100bab5fc18303d5f1f936d15ec2c1756b27d2d3f296ea7b3",
+      "size": 1593
+    },
+    {
+      "path": "receipts/affected-green.log",
+      "sha256": "6cf35ff406877e712bfa0fe99cca6509455d82d9d3eb5c4b522f10a9aac53757",
+      "size": 99
+    },
+    {
+      "path": "receipts/affected-green.xml",
+      "sha256": "72324e26fbd012b624a8d2a1a456688ce792b0e582c68ce47135cfdb717b33d1",
+      "size": 3429
+    },
+    {
+      "path": "receipts/baseline-interception.json",
+      "sha256": "1eccdf958ccd041f9f7bda1265b5200da60e68432e7faa390b77ceb808ce7df2",
+      "size": 937
+    },
+    {
+      "path": "receipts/baseline-protected-red-command.json",
+      "sha256": "4c5ca62e23bdf4cee167969a5293e3acbf7d6411fdb0021fc925267f230d33a3",
+      "size": 988
+    },
+    {
+      "path": "receipts/baseline-protected-red-result.json",
+      "sha256": "a0b429f3c90d46fe345832ef10b1d17f930957f74126a3556e2123d1f5aef8cc",
+      "size": 1040
+    },
+    {
+      "path": "receipts/baseline-protected-red.log",
+      "sha256": "bf54c54b0dcb4cdf73be81f375af8493009d77964f4c2cb77d1f288b56a7dbad",
+      "size": 2953
+    },
+    {
+      "path": "receipts/baseline-protected-red.xml",
+      "sha256": "515d11e4ca9365fe0636c9d86982f2c82e40d6c9ac82c2f4838ffc6a6dde19dd",
+      "size": 3236
+    },
+    {
+      "path": "receipts/guard-red-command-result.json",
+      "sha256": "7cb3dabfa52270ef3bfb6ec4f83c3eddb97adbd25cbea01ec9b37324e3510fd6",
+      "size": 761
+    },
+    {
+      "path": "receipts/guard-red.log",
+      "sha256": "a8a27e955e568396f5d658e97db2787c0594037753d49449b13c246c71e946c5",
+      "size": 2489
+    },
+    {
+      "path": "receipts/guard-red.xml",
+      "sha256": "3018808c2baaca14bb0e5121a8d6816216c73e697fb51b6efcbc120040ce8ae2",
+      "size": 2549
+    },
+    {
+      "path": "receipts/local-process-receipt.json",
+      "sha256": "b4df90fe46da8bd659c0bc9171e0cd6ffaa420fb1bb4dfa4c47984f2cd7e2e8a",
+      "size": 27997
+    },
+    {
+      "path": "receipts/local_process_guard.py",
+      "sha256": "43bc5d9130bbbb09aa45085cff535bccb960a2aa0581670342d83c84e15f42af",
+      "size": 1950
+    },
+    {
+      "path": "receipts/repaired-interception.json",
+      "sha256": "51a6a665047c43e3b6ffd17abd68ad00c7564cc8f96d1fcc993008856b424a70",
+      "size": 153
+    },
+    {
+      "path": "receipts/ruff-command-result.json",
+      "sha256": "f6f47b51602fd973a6ba25d2bbbde88e69a99ac701e46fa144638c6247f6a12b",
+      "size": 294
+    },
+    {
+      "path": "receipts/ruff.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0
+    },
+    {
+      "path": "receipts/ruff.stdout",
+      "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+      "size": 19
+    },
+    {
+      "path": "receipts/source-identities.json",
+      "sha256": "8f9384d215858ae145f51e6e72449bc6b507fd1d1d25ef1c102298324f75b39b",
+      "size": 488
+    },
+    {
+      "path": "receipts/test_fixture_no_process.py",
+      "sha256": "dd63bb0f602a7fe579fc4b563f8d144a983558a5ed1bc4cab867aa4981a89941",
+      "size": 2413
+    },
+    {
+      "path": "source/3faf436a3b11c69220641a167cf424e7f4060839/docs/specs/program-e/BUNDLE-pin-digest-and-upgrade-spec.md",
+      "sha256": "768cfc54d8fb1f1cd08b5a28f031666edf92f994d437a05a5d60f22424c16ad7",
+      "size": 14920
+    },
+    {
+      "path": "source/3faf436a3b11c69220641a167cf424e7f4060839/tests/test_verify_backend_pins.py",
+      "sha256": "5948c7ac05b3bc613e454e89bbea360a5cbf9e029621817325cbf8b9634a8b46",
+      "size": 11463
+    },
+    {
+      "path": "source/42f063a7de4a4ca15dd40d1ab5c820662d5ec809/docs/specs/program-e/BUNDLE-pin-digest-and-upgrade-spec.md",
+      "sha256": "7969ba17ff344130973a90701548d55448b8bdf3b6d2baa25ee9bea229cebfdf",
+      "size": 15737
+    },
+    {
+      "path": "source/42f063a7de4a4ca15dd40d1ab5c820662d5ec809/tests/test_verify_backend_pins.py",
+      "sha256": "b66936ebc939cebd95dbcec8a76588060e480ef9b327d4b99089723206233e13",
+      "size": 11659
+    },
+    {
+      "path": "source/e4ee7ca4b8178db159b0edf16e2afbf59363b4a8/docs/specs/program-e/BUNDLE-pin-digest-and-upgrade-spec.md",
+      "sha256": "7969ba17ff344130973a90701548d55448b8bdf3b6d2baa25ee9bea229cebfdf",
+      "size": 15737
+    },
+    {
+      "path": "source/e4ee7ca4b8178db159b0edf16e2afbf59363b4a8/tests/test_verify_backend_pins.py",
+      "sha256": "9561d11458bd877bd2170da32b16adbb971a2a17009e16bded3ae4dc16deb671",
+      "size": 13208
+    },
+    {
+      "path": "source/e4ee7ca4b8178db159b0edf16e2afbf59363b4a8/tools/verify_backend_pins.py",
+      "sha256": "ed1a02bb539f0f24574eb839056a284b2f18d51a13131495714ecdd5b36e703d",
+      "size": 19736
+    }
+  ],
+  "results": {
+    "failed": 0,
+    "passed": 26,
+    "ruff_exit": 0,
+    "skipped": 0
+  },
+  "schema_version": 1,
+  "source": {
+    "baseline": "3faf436a3b11c69220641a167cf424e7f4060839",
+    "external_probe_sha256": "dd63bb0f602a7fe579fc4b563f8d144a983558a5ed1bc4cab867aa4981a89941",
+    "production_delta": [],
+    "scoped_paths": [
+      "docs/specs/program-e/BUNDLE-pin-digest-and-upgrade-spec.md",
+      "tests/test_verify_backend_pins.py"
+    ],
+    "source": "e4ee7ca4b8178db159b0edf16e2afbf59363b4a8",
+    "source_tree": "1bb8d332a196b270fae5e20ef605928bb0e825a2",
+    "spec_red": "42f063a7de4a4ca15dd40d1ab5c820662d5ec809"
+  }
+}
