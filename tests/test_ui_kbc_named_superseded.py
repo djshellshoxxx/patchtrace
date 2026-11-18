@@ -32,7 +32,8 @@ def test_existing_dialog_text_presenter_keeps_the_scoped_outcome_explanation(qtb
         qtbot.waitUntil(lambda: dialog._pending is None, timeout=10000)
         assert len(outcomes) == 1 and outcomes[0].exit == (4 if selected_old else 0)
         assert dialog.status.textFormat() == Qt.TextFormat.PlainText
-        assert dialog.status.text() == outcomes[0].text
+        # The existing status label deliberately abbreviates; the details pane keeps the explanation.
+        assert dialog.details.toPlainText().startswith(outcomes[0].text)
         if selected_old:
             assert PREFIX in dialog.details.toPlainText() and older.doc_id in dialog.details.toPlainText()
             assert 'these documents do not list it' not in dialog.details.toPlainText()

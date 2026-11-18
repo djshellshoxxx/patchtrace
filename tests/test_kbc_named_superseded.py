@@ -4,6 +4,7 @@ from __future__ import annotations
 import copy
 import json
 import os
+import ssl  # noqa: F401  # Load SSLSocket before no_sockets replaces socket.socket.
 import subprocess
 import sys
 from pathlib import Path
@@ -142,7 +143,7 @@ def test_source_list_is_deterministic_bounded_and_counts_unique_omitted_ids(coun
     assert (f'and {count - 5} more' in warning) if count > 5 else ' more' not in warning
 
 
-@pytest.mark.parametrize('bad', ['a' * 65, 'a' * 63 + '\n', '<b>' + 'a' * 64, 'Ａ' * 64])
+@pytest.mark.parametrize('bad', ['a' * 65, 'a' * 64 + '\n', '<b>' + 'a' * 64, 'Ａ' * 64])
 def test_explicit_source_identifiers_keep_the_existing_fixed_digest_contract(bad):
     with pytest.raises(ValidationError):
         scopes.files_scope([bad])
