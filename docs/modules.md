@@ -16,7 +16,7 @@ Native Windows, frozen CLI and project-admission acceptance are separate gates.
 The next pure worker-accounting slice is `acquisition/package_worker_contracts.py`
 (`local-package-worker/1` binding, grant, receipt, strict 1 MiB parser and grant
 identity) plus serial grant issuance/derivation/reconciliation in the existing
-`package_budget.py`. Focused `test_package_worker_{contracts,grants,edges}.py` controls
+`package_budget.py`. Focused `test_package_worker_{contracts,grants,edges,terminal}.py` controls
 cover ownership, original deadline, remaining allowance, once-only consumption
 and permanent refusal after incomplete/missing receipts. The package schema
 generator owns the three additive worker schemas. These records and authored

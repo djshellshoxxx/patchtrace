@@ -171,6 +171,12 @@ reserved/confirmed output, and a nonfailed usage state. Failed requires a failed
 usage state and retains known partial counters. `worker_receipt()` produces one
 terminal record from a derived worker budget; unfinished work becomes failed.
 No further work or second receipt is permitted, except owned allocation cleanup.
+In particular, completing or failing an outstanding output token after receipt
+emission refuses before changing confirmed bytes, consuming the token or changing
+pending-entry counts. The original failure remains the reason. Before a terminal
+receipt exists, a completed write still records its known bytes even when the
+original cancellation/deadline was already observed; terminal immutability must
+not erase that earlier completion evidence.
 
 `reconcile_worker(parent_grant, raw)` validates the entire receipt before changing
 counts: exact grant/source/operation/request/attempt, captured resource ceilings,
