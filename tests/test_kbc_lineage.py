@@ -1,6 +1,7 @@
 """K5: file-index lineage (plan 6 traps, RK2 s2.3). Pure; synthetic records."""
 from __future__ import annotations
 
+import copy
 import json
 
 import pytest
@@ -120,6 +121,34 @@ def test_hostile_mappings_are_counted_not_guessed():
     bad = [{'sha256': 'zz', 'version_key': '11-24H2'}, 'not a mapping', dict(good, kb='kb12')]
     rows, rejected = ln.index_rows([good, *bad], file_name='exampledrv.sys')
     assert len(rows) == 1 and rejected == 3
+
+
+@pytest.mark.parametrize('others', [7, 0, False, None, '', '11-25H2', b'11-25H2', {'11-25H2': True},
+                                   {'11-25H2'}, ['11-25H2', 7], ('11-25H2', None), ['']],
+                         ids=['integer', 'zero', 'boolean', 'null', 'empty-text', 'text', 'bytes', 'mapping',
+                              'set', 'mixed-list', 'mixed-tuple', 'empty-key'])
+def test_malformed_other_versions_rejects_one_mapping_and_preserves_valid_rows(others):
+    good = next(iter(mappings()))
+    bad = good | {'other_versions': others}
+    original = copy.deepcopy(bad)
+    expected, _ = ln.index_rows((good,), file_name='exampledrv.sys')
+    rows, rejected = ln.index_rows((bad, good), file_name='exampledrv.sys')
+    assert (rows, rejected) == (expected, 1)
+    assert bad == original
+
+
+@pytest.mark.parametrize('others', [[], (), ['11-25H2'], ('11-25H2',)],
+                         ids=['empty-list', 'empty-tuple', 'list', 'tuple'])
+def test_valid_other_versions_containers_preserve_sharing_and_source_identities(others):
+    mapping = next(iter(mappings())) | {'version_key': '11-24H2', 'other_versions': others}
+    original = copy.deepcopy(mapping)
+    rows, rejected = ln.index_rows((mapping,), file_name='exampledrv.sys')
+    assert rejected == 0
+    assert {row.build.version_key for row in rows} == {'11-24H2', *others}
+    for row in rows:
+        assert row.sha256 == mapping['sha256'] and row.build.record_sha256 == mapping['record_sha256']
+        assert row.shared_from == (None if row.build.version_key == '11-24H2' else '11-24H2')
+    assert mapping == original
 
 
 def mappings():

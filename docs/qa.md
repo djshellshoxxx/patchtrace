@@ -22,6 +22,20 @@ failed with PT-KBC-ACQUIRE because this runner cannot resolve the approved hosts
 No proxy or injected transport substituted for that live gate. PW-02 and native
 Windows/manual/release/accuracy acceptance remain separate.
 
+## 2026-11-18 current consolidation correctness follow-up
+
+The #302 continuation selectively incorporates six independently reviewed
+correctness fixes from concurrent #304, then repairs ZIP separator handling,
+ambiguous chronology/change provenance and unbounded variant evaluation.
+Independent final core review at `bce67e93`: **239 passed** (225 project cases
+plus 14 independent controls). Separate verifier/L1/schema selection: **242
+passed**. Whole Ruff, schema regeneration and whitespace checks pass. A broader
+combined local process ended 137 without a summary and is not a passing run.
+Exact source/continuation trees, old-head hosted counts and remaining gates are
+in [the follow-up record](qa/consolidation-correctness-20261118.md). Existing
+automatic prerelease policy is unchanged; fresh published-head CI remains the
+merge gate. PRs #304, #305 and #306 retain their separate remaining scope.
+
 ## 2026-11-18 independently reviewed consolidation successor
 
 `codex/consolidation-reviewed-20261118` directly continues #301, preserving #297

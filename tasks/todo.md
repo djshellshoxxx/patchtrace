@@ -5,6 +5,8 @@
 - [x] Refresh full branch history and all REST PR pages; correct the 300-topic inventory, ancestry counts and unsupported supersession/deletion claims.
 - [x] Independently review #301's full consolidation; repair reproduced normalization, mirror-cap, JSON-ingress and release-verifier defects; exclude unsafe archive/delete tooling.
 - [x] Preserve every remote branch and separately track unresolved or deferred UI, research, matching and environment work.
+- [x] Independently review six narrow correctness ports from concurrent #304 and repair ZIP normalization, ambiguous change provenance and bounded pair enumeration; preserve its separate remaining scope and existing release policy.
+- [ ] Keep concurrent #305/#306 and the pre-existing mixed Windows 10 source-key issue separately tracked; do not turn their remaining scope into a completed-consolidation claim.
 - [ ] Qualify and merge `codex/consolidation-reviewed-20261118` on current-head/base hosted gates; then close only exactly accounted-for PRs with replacement references.
 - [x] Implement and independently review PW-01 bounded CSV parsing, support links/retrieval, provenance/store, CLI and KB panel; register contracts and regenerate schemas. Combined focused gate: 816 passed, including later-section capacity while preserving old-budget replay. See [PW-01 evidence](../docs/qa/pw01-20261118.md).
 - [ ] Qualify and merge PW-01 on current-head hosted Linux/Windows/package gates; complete production Microsoft retrieval on a runner with direct DNS/TLS access. Both exact-plan attempts here returned PT-KBC-ACQUIRE after DNS failure; the saved real capture is offline evidence only.

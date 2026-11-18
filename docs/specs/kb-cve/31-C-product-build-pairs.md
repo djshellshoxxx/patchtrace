@@ -57,6 +57,20 @@ Phase 1 hard filters for AUTO_VERIFIED pairs:
 
 Failing a hard filter emits reason codes instead of dropping row. USER_ASSERTED is allowed as separate lower-assurance mode for offline investigations: record full reason and never call it AUTO_VERIFIED. No auto-pick with more than one equally valid top pair. A SHA match against Winbindex record is a metadata consistency check only.
 
+Architecture-separated timeline amendment (2026-11-18): a Winbindex record can
+contain both native AMD64 and WoW64/x86 files under the same version key and KB.
+The selected product's supported machine partitions the timeline before change
+detection, variant detection and predecessor selection. An x86, ARM64 or unknown
+machine row must never interrupt an AMD64 SHA run, become its predecessor, or
+make distinct machine rows look like ambiguous variants of the selected file.
+All raw source records and parsed rows remain intact. A target KB listed only
+under other or unknown machines returns explicit `ARCH`; an AMD64 target with
+no earlier AMD64 observation returns `NO_OLDER`. Directly proposed mismatched
+pairs still carry grade X and `ARCH`. Multiple SHA variants within the selected
+machine remain ambiguous, and unchanged bytes already shipped in a preview
+remain unchanged in a later cumulative update. This does not widen supported
+architectures or establish a vulnerability fix boundary.
+
 Phase 2 stable preference tuple for compatible candidates:
 1. directly bracket target patch release with no known intervening updates;
 2. source-backed narrower build window;
@@ -68,6 +82,87 @@ Phase 2 stable preference tuple for compatible candidates:
 This ordering must not be exposed as a vulnerability probability. If a newer version is shared across multiple KBs, attribution window is ambiguous even if the pair is otherwise compatible.
 
 The existing index-row proposal seam must enforce the component and orientation checks even when called directly, outside the filename-filtered resolver. Distinct normalized basenames carry the existing NAME_MISMATCH hard block. The timeline's KB identifier, SHA-256 and BASE-row ordering are deterministic display tie-breakers only; they cannot establish temporal order when both rows have equal release date and numeric build/UBR. Such proposals retain their rows with ORDER_UNVERIFIED, incompatible lineage and grade X. This does not change manual pair selection or imply verified product mapping, complete update coverage or a vulnerability probability.
+
+Chronology certainty amendment (2026-11-18): index-row orientation requires an
+explicit release date on both rows. Distinct dates establish the order; equal
+dates additionally require both stated numeric release builds and a strictly
+increasing build/UBR. Missing dates and builds remain unknown, never artificial
+earliest values. Dates must be real calendar days, including leap-year rules;
+an impossible date in a raw index mapping becomes missing date evidence. Direct
+typed rows also require valid timestamp values; source timezone offsets are
+compared as UTC instants with all nine fractional digits retained, and equal
+instants cannot be separated by their textual spelling. Display ordering may
+still use the existing stable keys, but an unestablished proposal order carries
+`ORDER_UNVERIFIED`, incompatible lineage,
+grade X and an unverified fix boundary. The `changed_in_kb` assessment also stays
+unknown when its predecessor is not demonstrably earlier, different bytes share
+the target's chronological position, or the claimed unchanged run lacks an
+ordered provenance path. Existing local/manual assertion workflows are unchanged.
+
+At the direct typed-row boundary, a missing or malformed numeric release build
+has no build-ordering value. It must never become an artificial `(0, 0)` for
+chronology. Distinct valid UTC release instants still establish order when either
+build is unknown. A derived binary reference carries `build_ubr=None` for a
+malformed release build while the original row and its identities remain intact.
+Malformed release-build or heading-build claims also leave the fix boundary
+unverified, including a mix of malformed and otherwise valid matching claims.
+
+Partial-order and explicit-choice follow-up (2026-11-18): equal UTC instants
+permit numeric build ordering only when both rows state the same build-family
+prefix. A missing build, a different family, or equal builds remain unordered;
+an intervening sortable row cannot hide such an observation. The change claim
+stays unknown when another observation cannot be ordered against the target.
+For each target variant, search demonstrably earlier rows for the predecessor.
+Retain observations unordered against either endpoint in the confounding window,
+regardless of where KB or hash display tie-breakers place them, so they cannot
+support a fix boundary. Unordered predecessor alternatives also require an
+explicit choice, even when every possible older byte identity differs from the
+target and the target's change claim is therefore still `yes`.
+When unordered observations at the asserted change or unchanged-run frontier
+disagree about whether they already contain the target bytes, both
+`changed_in_kb` and the claimed first-change KB remain unknown. A hash tie-breaker
+must not switch the answer between `yes` and `no` or invent `last_changed_in`.
+If no ordered predecessor exists, an otherwise eligible displayed predecessor
+may remain as a diagnostic proposal with `ORDER_UNVERIFIED` and grade X.
+Same-time variants must never become each other's asserted older version.
+
+The derived resolution carries an `ambiguous` flag before candidate filtering
+or truncation. Multiple target byte identities and unresolved endpoint chronology
+set it, including when another variant is unavailable. A truncated resolution
+also requires an explicit choice. Planning and acquisition without `--pair`
+must refuse any remaining viable automatic choice when either condition holds;
+an explicit unique pair prefix may still select an otherwise valid alternative.
+The JSON resolution exposes `ambiguous` alongside `truncated`, and the human
+listing explains the need for an explicit choice. Neither an explicit choice
+nor a candidate's availability upgrades the evidence or removes hard blocks.
+
+The pair limit is an enumeration limit, not only an output slice: it must be an
+integer from 1 through 1,000. Precompute chronology facts for repeated scans once
+per resolution, retain their local cache only for that calculation, and cap the product of the selected
+timeline's row count and enumerated target count at 1,000,000. Before evaluating
+pairs, visit target identities in stable availability/display order within those
+budgets. Rank the evaluated proposals normally. A truncated result does not
+promise the globally best pair; preserve the full-source ambiguity flag and
+explain incomplete enumeration even if no evaluated target has a predecessor.
+In that case report `INDEX_GAP`, not a false `NO_OLDER` conclusion.
+
+Direct index mappings may omit `other_versions`; a present value must be a list
+or tuple of nonempty string keys. A malformed collection or member rejects that
+entire mapping once, without raising, discarding bad members silently, or
+interpreting scalar text as a sequence of sibling keys. Other valid mappings
+still produce their rows, and source mappings and raw record identities remain
+unchanged.
+
+Fix-boundary certainty amendment (2026-11-18): a newer row naming the advisory's
+fixed build does not override contradictory older-row evidence. If all older
+stated builds in that same numeric build family are already at or beyond the
+fixed build, the boundary is `contradicted`. If older claims straddle that
+boundary, or the newer row carries conflicting builds within the fixed build's
+family, it is `unverified`. Different build-family prefixes in an explicitly
+shared update heading remain separate; a sibling prefix alone cannot contradict
+the selected fixed build. An unconfounded newer match with no such contradiction
+remains `source-supported`, an index/advisory relationship rather than proof of
+vulnerability repair in the binary or any function.
 
 ## C4. Formal interval algorithm
 

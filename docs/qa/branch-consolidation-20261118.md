@@ -8,6 +8,12 @@ authorized by this record.
 
 ## Reviewed references
 
+Current continuation: the [correctness follow-up](consolidation-correctness-20261118.md)
+records the selective #304 ports, independent red/green review, exact local/REST
+tree mappings and current merge gates. #304 is retained for its remaining work;
+the newly concurrent #305 and #306 also remain open. The original 300-topic TSV
+is a fixed evidence snapshot, not the present live branch count.
+
 | Reference | Exact commit |
 |---|---|
 | Starting `main` | `9c411ca3d7b47f950be5f0c6f01b3c54184554c6` |

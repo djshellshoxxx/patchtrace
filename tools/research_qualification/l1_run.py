@@ -112,6 +112,7 @@ class ProductJoin:
         self._root = root
         self._home: dict[str, Path] = {}
         self._unusable: set[str] = set()  # months whose import raised: no question is answered from them
+        self._unattributed_rejection = False  # a rejected source may revise any otherwise loaded month
         self._records: dict[tuple[Path, str], str] = {}
 
     def _kb(self, argv: list[str]) -> tuple[int, dict]:
@@ -136,6 +137,7 @@ class ProductJoin:
         try:
             entry = {'file': path.name, 'sha256': R.sha256_file(path)}
         except OSError:
+            self._unattributed_rejection = True
             return {'file': path.name, 'sha256': None, 'status': 'rejected', 'reason': 'the file cannot be read'}
         probe = self._root / f'doc{index:04d}'
         release = None
@@ -143,9 +145,13 @@ class ProductJoin:
             code, doc = self._kb(['index', 'import', '--json', '--workspace', str(probe), str(path)])
             documents = (doc.get('result') or {}).get('documents') or []
             if code != 0 or len(documents) != 1:
+                self._unattributed_rejection = True
                 return {**entry, 'status': 'rejected', 'reason': self._failure(doc)}
             info = documents[0]
             release = info.get('release_id')
+            if not release:
+                self._unattributed_rejection = True
+                return {**entry, 'status': 'rejected', 'reason': 'the document has no validated release month'}
             if release:
                 home = self._home.setdefault(release, probe)
                 if home != probe:  # another revision of the same month: both go to one workspace, the product picks
@@ -156,6 +162,8 @@ class ProductJoin:
         except Exception as exc:  # a join that raises: the month is not answered, its cases are BLOCKED, not a traceback
             if release:
                 self._unusable.add(release)  # a half-loaded month must not answer any question
+            else:
+                self._unattributed_rejection = True
             return {**entry, 'status': 'rejected', 'reason': self.describe(exc)}
         return {**entry, 'status': 'loaded', 'release_id': release, 'kind': info.get('kind'),
                 'doc_id': info.get('doc_id'), 'edges': info.get('edges'), 'problems': info.get('problems')}
@@ -163,7 +171,7 @@ class ProductJoin:
     def search(self, cve: str, month: str) -> dict | None:
         """`kb search CVE --months MONTH`; None when no loaded document belongs to that month."""
         home = self._home.get(month)
-        if month in self._unusable:
+        if self._unattributed_rejection or month in self._unusable:
             return None
         return None if home is None else self._service(home, self._env).search(cve, months=month).result
 
@@ -351,7 +359,8 @@ def run_case(case: dict, join: ProductJoin, records: dict[str, Path] | None, dat
     except Exception as exc:  # an unanswered case is BLOCKED, never a miss and never a traceback
         return _row(case, 'BLOCKED', join.describe(exc))
     if result is None:
-        return _row(case, 'BLOCKED', f'month {case["month"]} is not present in --months')
+        return _row(case, 'BLOCKED', f'month {case["month"]} has no qualified source set in --months; '
+                    'a document is missing or a supplied import was rejected')
     coverage = result['coverage']['state']
     if coverage != 'complete_in_scope':
         return _row(case, 'BLOCKED', f'month {case["month"]} was not fully checked (coverage {coverage})')
