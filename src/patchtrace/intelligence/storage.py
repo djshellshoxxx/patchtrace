@@ -25,6 +25,8 @@ from pydantic import ValidationError
 from ..enrichment.contracts import EnrichmentError
 from ..enrichment.storage import EnrichmentStore, Guard
 from ..ingestion import safe_path
+from ..owned_publication import OwnedPublicationError
+from ..owned_publication import read_bytes as read_owned_bytes
 from .contracts import AdvisoryFacts, AdvisorySource, ApplicabilityReport, ArtifactIdentity, IntelError
 from .csaf import normalize as norm
 from .csaf.applicability import resolve, supersession
@@ -35,6 +37,7 @@ FACTS_KIND = 'advisory-facts'
 GUARD_RUN = 'intelligence'
 SOURCES_DIR = 'intelligence/csaf/sources'
 FACTS_DIR = 'intelligence/csaf/facts'
+MAX_SIDECAR_BYTES = 64 * 1024 * 1024
 
 
 @dataclass(frozen=True)
@@ -68,8 +71,13 @@ class AdvisoryStore:
         path = self._path(relative)
         digest = hashlib.sha256(data).hexdigest()
         try:
-            if path.is_file() and hashlib.sha256(path.read_bytes()).hexdigest() == digest:
-                return
+            if path.is_file():
+                try:
+                    self.read_verified(relative, digest, maximum=len(data))
+                except IntelError:
+                    pass  # existing damaged-cache repair; never allocate an oversized prior file
+                else:
+                    return
             path.parent.mkdir(parents=True, exist_ok=True)
             fd, name = tempfile.mkstemp(prefix='.partial-', dir=path.parent)
             try:
@@ -84,14 +92,19 @@ class AdvisoryStore:
         except OSError as exc:
             raise IntelError('PT-INTEL-STORAGE', f'cannot write {relative}: {exc.strerror or exc}') from None
 
-    def read_verified(self, relative: str, sha256: str) -> bytes:
+    def read_verified(self, relative: str, sha256: str, *, maximum: int | None = None) -> bytes:
+        cap = MAX_SIDECAR_BYTES if maximum is None else maximum
+        if type(cap) is not int or not 0 < cap <= MAX_SIDECAR_BYTES:
+            raise IntelError('PT-INTEL-LIMIT', 'advisory sidecar read exceeds the permitted byte budget')
+
+        def verify(data: bytes) -> None:
+            if hashlib.sha256(data).hexdigest() != sha256:
+                raise IntelError('PT-INTEL-INTEGRITY', f'{relative} does not match its recorded SHA-256')
+
         try:
-            data = self._path(relative).read_bytes()
-        except OSError:
-            raise IntelError('PT-INTEL-INTEGRITY', f'{relative} is missing or unreadable') from None
-        if hashlib.sha256(data).hexdigest() != sha256:
-            raise IntelError('PT-INTEL-INTEGRITY', f'{relative} does not match its recorded SHA-256')
-        return data
+            return read_owned_bytes(self._path(relative), maximum=cap, validate=verify)
+        except (OSError, OwnedPublicationError):
+            raise IntelError('PT-INTEL-INTEGRITY', f'{relative} is missing, changed, or outside its byte budget') from None
 
     # ------------------------------------------------------------------ rows
     def _guard(self, sha256: str, digest: str) -> Guard:
@@ -117,6 +130,8 @@ class AdvisoryStore:
         source = norm.make_source(doc, raw, origin=origin, uri=uri, file_name=file_name, retrieved_at=retrieved_at,
                                   authenticity_state=authenticity_state)
         facts_bytes = facts.model_dump_json().encode('utf-8')
+        if len(facts_bytes) > MAX_SIDECAR_BYTES:
+            raise IntelError('PT-INTEL-LIMIT', 'normalized advisory facts exceed the sidecar byte budget')
         facts_sha = hashlib.sha256(facts_bytes).hexdigest()
         if cancel is not None and cancel.is_set():
             raise IntelError('PT-INTEL-CANCEL', 'import cancelled before anything was written', recoverable=True)
@@ -147,7 +162,7 @@ class AdvisoryStore:
             except (IntelError, ValidationError, KeyError, TypeError):
                 warnings.append(f'{source.tracking_id} r{source.revision}: stored facts unusable; recomputed from '
                                 'the verified source bytes')
-        raw = self.read_verified(source.raw_path, source.sha256)
+        raw = self.read_verified(source.raw_path, source.sha256, maximum=source.size)
         doc, report = load_document(raw)
         return norm.normalize(doc, report, source.sha256)
 

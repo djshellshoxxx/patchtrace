@@ -195,3 +195,8 @@ saved/recent search are separate focused follow-on slices; neither historical
 #168 nor #289 is eligible for blanket closure from that selective work.
 See the [complete repair checkpoint](../../qa/autonomous-consolidation-20261118/checkpoint/README.md)
 for source/receipt mapping, native fixture limits and next assignments.
+
+
+## Reviewed advisory read-bound follow-on — 2026-11-18
+
+A separate append-only branch on published #307 `58fc1306` carries spec/tests `7d0e8bac` and independently accepted source `06f5b210`, with reviewer receipt `8a89c219`. The existing reader enforces bounded held reads and preserves verified-cache recovery. 140 affected and 16 disjoint independent/backup cases pass. No main merge, branch deletion, older PR closure or native acceptance follows. [Receipt](../../qa/advisory-read-bounds-20261118.md).
