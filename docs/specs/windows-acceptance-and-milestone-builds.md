@@ -121,8 +121,16 @@ stand in for a required file. Unsupported special members anywhere in ZIP or tar
 are archive-content failures.
 
 Member identities normalize dot and redundant separator aliases, treating both
-slash spellings as separators; Windows ZIP identities also fold case. Colliding
-member identities fail. No member may be located below a symbolic or hard link,
+slash spellings as separators; Windows ZIP identities also normalize Unicode to
+NFC and fold case. Colliding member identities fail. Windows ZIP member names
+and link targets reject components with trailing dots or spaces, reserved device
+names (case-insensitive, including extensions and the superscript COM/LPT forms),
+colon/alternate streams, Win32 forbidden characters or controls, invalid Unicode,
+and more than 255 UTF-16 code units. Dot and parent components in link targets
+retain their normal relative-path meaning and must still resolve inside the
+archive. ZIP names truncated at NUL by the ZIP reader fail rather than validating
+only their visible prefix. These Windows rules do not restrict Linux tar names.
+No member may be located below a symbolic or hard link,
 irrespective of archive order. Link targets are resolved component by component
 against the complete declared link map, so a link followed by `..` cannot hide
 an escape through lexical normalization. Symbolic targets start at their

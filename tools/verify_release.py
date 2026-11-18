@@ -38,6 +38,7 @@ import re
 import stat
 import sys
 import tarfile
+import unicodedata
 import zipfile
 import zlib
 from collections import Counter, deque
@@ -81,6 +82,10 @@ SIDECAR_LINE = re.compile(rb'([0-9a-f]{64})  ([^\r\n]+)\n')
 SIDECAR_HASH = re.compile(rb'([0-9a-fA-F]{64}) [ *]')
 HEX64 = re.compile(r'(?<![0-9A-Fa-f])[0-9A-Fa-f]{64}(?![0-9A-Fa-f])')
 DRIVE = re.compile(r'[A-Za-z]:')
+WINDOWS_RESERVED = {'CON', 'PRN', 'AUX', 'NUL', 'CONIN$', 'CONOUT$'} | {
+    f'{kind}{index}' for kind in ('COM', 'LPT') for index in (*range(1, 10), '\u00b9', '\u00b2', '\u00b3')
+}
+WINDOWS_FORBIDDEN = frozenset('<>:"|?*')
 NAME_IN_NOTES = {name: re.compile(rf'(?<![\w.-]){re.escape(name)}(?![\w-]|\.[\w-])') for name in ASSETS}
 
 # ValueError: zipfile raises UnicodeDecodeError for a name flagged UTF-8 (0x800) that is not, and tarfile raises a
@@ -396,12 +401,33 @@ def escapes(name: str) -> bool:
 
 def member_key(name: str, *, fold_case: bool = False) -> str:
     path = posixpath.normpath(name.replace('\\', '/'))
-    return path.casefold() if fold_case else path
+    return unicodedata.normalize('NFC', path).casefold() if fold_case else path
+
+
+def windows_unsafe_path(name: str) -> bool:
+    """Win32 components must retain their declared identity; never strip an unsafe alias into a valid name.
+
+    Empty/dot components are existing normalized aliases. Parent components are checked by the member escape
+    guard or the component-wise link resolver, where a contained relative `..` remains valid.
+    """
+    for part in re.split(r'[\\/]', name):
+        if part in ('', '.', '..'):
+            continue
+        try:
+            too_long = len(part.encode('utf-16-le')) > 510
+        except UnicodeEncodeError:
+            return True
+        if (too_long or part.endswith((' ', '.')) or WINDOWS_FORBIDDEN.intersection(part)
+                or any(ord(char) < 32 for char in part)
+                or part.split('.')[0].rstrip(' ').upper() in WINDOWS_RESERVED):
+            return True
+    return False
 
 
 def member_problems(names: Sequence[str], *, fold_case: bool = False) -> list[str]:
     counts = Counter(member_key(name, fold_case=fold_case) for name in names)
-    bad = [f'unsafe member {shown(name)}' for name in names if escapes(name)]
+    bad = [f'unsafe member {shown(name)}' for name in names
+           if escapes(name) or (fold_case and windows_unsafe_path(name))]
     bad += [f'duplicate member {shown(name)}' for name, count in counts.items() if count > 1]
     return bad
 
@@ -417,6 +443,8 @@ def resolved_link_problem(member: str, target: str, hard: bool,
             return f'has a target longer than {MAX_LINK_BYTES} bytes'
         if target.startswith(('/', '\\')) or DRIVE.match(target):
             return 'escapes the archive'
+        if fold_case and windows_unsafe_path(target):
+            return 'has an unsafe Windows target'
         pending.extendleft(reversed(target.replace('\\', '/').split('/')))
         while pending:
             part = pending.popleft()
@@ -429,7 +457,7 @@ def resolved_link_problem(member: str, target: str, hard: bool,
                 continue
             stack.append(part)
             key = '/'.join(stack)
-            linked = links.get(key.casefold() if fold_case else key)
+            linked = links.get(member_key(key, fold_case=fold_case))
             if linked is not None:
                 expansions += 1
                 if expansions > MAX_LINK_EXPANSIONS:
@@ -522,6 +550,8 @@ def read_zip(path: Path) -> Archive:
                 return Archive([f'more than {MAX_MEMBERS} members'], None, 'not read: member cap')
             names = [info.filename for info in infos]
             problems = member_problems(names, fold_case=True)
+            problems += [f'truncated member name {shown(info.orig_filename)}' for info in infos
+                         if info.orig_filename != info.filename]
             problems += [f'unsupported member type {shown(info.filename)}' for info in infos
                          if stat.S_IFMT(info.external_attr >> 16) not in
                          (0, stat.S_IFREG, stat.S_IFDIR, stat.S_IFLNK)]
