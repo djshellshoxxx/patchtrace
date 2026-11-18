@@ -96,6 +96,36 @@ of integrity. No rows means `None`. Current source SHA values join
 `advisory_facts_ids`; the existing 64-source maximum is enforced, never truncated.
 Global context invalidation is deliberately conservative in this first slice.
 
+### Current assessment comparison (2026-11-18 combined follow-up)
+
+The shared owner-thread `pilot/current_inputs.py` capture must call this module's
+`capture` with the exact project snapshot being checked. Compare its digest with
+the stored `kb_link_digest` on CLI reads/publication, desktop reads/publication
+and action-time navigation, and report lead export through their existing shared
+check. Replacement, withdrawal, removal, corruption and an unavailable context
+change that identity even when CSAF covers every selected CVE. The result and its
+source evidence remain readable as historical data; those reads rewrite neither.
+
+Use `available_cves` for the same combined universe as collection and
+`fallback_facts_ids` for selected CVRF-only source identities. Preserve CSAF's
+tracking-group revision identities and precedence. At or below P-03 the assessment
+must cover the complete admitted universe; above P-03 its recorded explicit subset
+is valid, but the context digest still covers all retained context. A named subset
+must not conceal drift in another card or investigation.
+
+Distinguish complete verified CSAF identity recovery from permission to fall back
+to CVRF. A missing derived facts cache may be recovered from verified source bytes
+and keep a CSAF-only receipt current. Any AdvisoryStore warning suppresses CVRF
+fallback, matching collection, so such recovery cannot authorize an uncertain
+negative/overlap decision. Missing/unreadable required CSAF remains stale under
+the existing current-input policy. With no retained rows, `kb_link_digest` remains
+`None` and existing CSAF-only identities keep their behavior.
+
+The capture returns immutable data. Per-assessment comparison may run after the
+store closes and must not read SQLite, reopen a project, import Qt, consult a
+workspace or fetch a source. Source limits stay those of the existing bridge and
+advisory readers; this follow-up makes no total store responsiveness claim.
+
 ## Budgets and lifecycle
 
 Before body loading, cap the metadata scan at 1,001 rows and refuse more than 1,000

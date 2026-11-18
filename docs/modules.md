@@ -1065,6 +1065,14 @@ stale results are omitted with an explicit unknown. Verification also includes
 `tests/test_pilot_current_inputs.py`, `tests/test_ui_leads_freshness.py`, existing
 PIL store/CLI/desktop suites. These are authored-data controls, not native accuracy.
 
+The 2026-11-18 retained-CVRF follow-up extends that capture with the existing
+`pilot/sources/kb_context.py` immutable snapshot, `kb_link_digest`, combined CVE
+universe and selected fallback source IDs. CSAF tracking-group precedence and
+verified cache recovery remain intact; any advisory read warning suppresses CVRF
+fallback. No-store per-assessment comparison also covers recorded subsets above
+P-03. Tests: `tests/test_pilot_kb_current_inputs.py` plus the existing freshness,
+retained-context, CLI/desktop and report suites. No schema or UI module is added.
+
 ### [PIL-C1:store-report-cli] Patch-intent localization: result store, review events, report and the `pilot` verb (2026-10-14; contract `pilot/1`; plan `docs/specs/program-e/PIL-integration-plan.md` s7 "Store and keys", s8 CLI, s9 PIL-C1)
 | Module | Files | Responsibility | Depends on | Verification |
 |---|---|---|---|---|
