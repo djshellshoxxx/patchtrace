@@ -85,6 +85,21 @@ unknown when its predecessor is not demonstrably earlier, different bytes share
 the target's chronological position, or the claimed unchanged run lacks an
 ordered provenance path. Existing local/manual assertion workflows are unchanged.
 
+At the direct typed-row boundary, a missing or malformed numeric release build
+has no build-ordering value. It must never become an artificial `(0, 0)` for
+chronology. Distinct valid UTC release instants still establish order when either
+build is unknown. A derived binary reference carries `build_ubr=None` for a
+malformed release build while the original row and its identities remain intact.
+Malformed release-build or heading-build claims also leave the fix boundary
+unverified, including a mix of malformed and otherwise valid matching claims.
+
+Direct index mappings may omit `other_versions`; a present value must be a list
+or tuple of nonempty string keys. A malformed collection or member rejects that
+entire mapping once, without raising, discarding bad members silently, or
+interpreting scalar text as a sequence of sibling keys. Other valid mappings
+still produce their rows, and source mappings and raw record identities remain
+unchanged.
+
 Fix-boundary certainty amendment (2026-11-18): a newer row naming the advisory's
 fixed build does not override contradictory older-row evidence. If all older
 stated builds in that same numeric build family are already at or beyond the
