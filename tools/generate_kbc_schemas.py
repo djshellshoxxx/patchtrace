@@ -5,8 +5,10 @@ Run from the repository root:
     PYTHONPATH=src python tools/generate_kbc_schemas.py          # write
     PYTHONPATH=src python tools/generate_kbc_schemas.py --check  # exit 1 on drift
 
-Outputs, deterministic and offline, in ``docs/schemas/kbcorrelation/``: one JSON Schema per contract plus
-``examples.json`` (one valid and several invalid examples per contract, all SYNTHETIC: KB5099001, Example OS).
+Outputs, deterministic and offline, in ``docs/schemas/kbcorrelation/``: one JSON Schema per record plus
+``examples.json`` and ``inventory-examples.json`` (valid and invalid examples, all SYNTHETIC:
+KB5099001, Example OS). Inventory examples include an authored CSV and saved HTML. Their future-dated
+retrieval receipt is synthetic contract data; this generator never retrieves a source or writes a workspace.
 """
 from __future__ import annotations
 
@@ -25,6 +27,14 @@ ERRORS_MODULE = frozenset({'KbcIssue', 'OperationResult'})
 A, B, C, D = 'a' * 64, 'b' * 64, 'c' * 64, 'd' * 64
 STAMP = '2099-03-01T00:00:00Z'
 UUID = '12345678-1234-4234-8234-123456789abc'
+INVENTORY_CSV = (b'Example OS 24H2 for x64-based Systems\r\n'
+                 b'File name,File version,File size,Date,Time\r\n'
+                 b'ExampleSvc.dll,10.0.26100.5001,"1,024","2099-03-\r\n01",12:00\r\n'
+                 b'ExampleData.dll,10.0.26100.5001,unknown,2099-03-01,12:00\r\n')
+SUPPORT_HTML = (b'<h2>File information</h2><p>Download the file information for the cumulative update '
+                b'<a href="https://go.microsoft.com/fwlink/?linkid=20995099001">'
+                b'Download file information for KB5099001</a></p>')
+SUPPORT_URL = 'https://support.microsoft.com/help/5099001'
 
 
 def _did(domain: str, payload) -> str:
@@ -127,12 +137,105 @@ def build_examples() -> dict:
     return out
 
 
-def render_contract_schemas() -> dict[str, str]:
-    from patchtrace.kbcorrelation import context, contracts, errors
+def inventory_models() -> dict:
+    """PW-01 value records and separately versioned contracts, not kbcorrelation/1 contracts."""
+    from patchtrace.kbcorrelation import inventory_contracts as inventory
+    from patchtrace.kbcorrelation import inventory_store as store
+    from patchtrace.kbcorrelation.contracts import InventoryClaimRef
+    from patchtrace.kbcorrelation.inventory_selection import InventorySelection
+    return {'InventoryClaimRef': InventoryClaimRef,
+            **{name: getattr(inventory, name) for name in
+               ('InventoryLimits', 'InventoryContext', 'CsvRecordRef', 'CsvDiagnostic',
+                'InventorySection', 'InventoryEntry', 'CsvInventory')},
+            **{name: getattr(store, name) for name in
+               ('InventoryImport', 'SupportImport', 'RetrievalProvenance')},
+            'InventorySelection': InventorySelection}
+
+
+def valid_inventory_records() -> dict:
+    """Authored examples bind exact raw bytes and context; no I/O or authenticity inference."""
+    from patchtrace.kbcorrelation import inventory_store as store
+    from patchtrace.kbcorrelation.contracts import InventoryClaimRef
+    from patchtrace.kbcorrelation.inventory_contracts import InventoryContext
+    from patchtrace.kbcorrelation.inventory_csv import parse_inventory
+    from patchtrace.kbcorrelation.inventory_selection import InventorySelection
+    from patchtrace.kbcorrelation.sources.inventory_fetch import build_plan
+
+    context = InventoryContext(kb='KB5099001', product_scope_id=C, product='Example OS',
+                               release='24H2', build='26100.5001')
+    parsed = parse_inventory(INVENTORY_CSV, context)
+    source = store._source(INVENTORY_CSV, 'kb-file-csv', 'csv-file-inventory/1', STAMP, None)
+    asserted = 'https://example.invalid/KB5099001.csv'
+    inventory = store.InventoryImport(import_id=store._inventory_id(source, parsed, asserted, None),
+                                       source=source, parsed=parsed, asserted_source=asserted)
+    entry = parsed.entries[0]
+    claim = InventoryClaimRef(import_id=inventory.import_id, entry_id=entry.entry_id,
+                              **entry.reference.model_dump())
+    html_source = store._source(SUPPORT_HTML, 'kb-support-html', 'support-html/1', STAMP, None)
+    extraction = store._extraction_digest(SUPPORT_HTML, SUPPORT_URL, None)
+    support = store.SupportImport(import_id=store._support_id(html_source, SUPPORT_URL, extraction, None),
+                                   source=html_source, page_url=SUPPORT_URL, extraction_sha256=extraction)
+    plan = build_plan('https://go.microsoft.com/fwlink/?linkid=20995099001', redirects=(
+        'https://download.microsoft.com/download/synthetic/KB5099001.csv',))
+    receipt = store.RetrievalProvenance(kind='file-inventory', original_url=plan.urls[0],
+                                       final_url=plan.urls[-1], redirect_chain=plan.urls,
+                                       sha256=parsed.raw_sha256, size=len(INVENTORY_CSV),
+                                       retrieved_at=STAMP, plan_sha=plan.plan_sha)
+    selection = InventorySelection(import_id=inventory.import_id, entry_id=entry.entry_id,
+                                    scope_id=C, coverage_sha256=B, asserted_scope=False)
+    return {'InventoryClaimRef': claim, 'InventoryLimits': parsed.limits, 'InventoryContext': context,
+            'CsvRecordRef': entry.reference, 'CsvDiagnostic': parsed.diagnostics[0],
+            'InventorySection': parsed.sections[0], 'InventoryEntry': entry, 'CsvInventory': parsed,
+            'InventoryImport': inventory, 'SupportImport': support, 'RetrievalProvenance': receipt,
+            'InventorySelection': selection}
+
+
+INVENTORY_INVALID = {
+    'InventoryClaimRef': (({'line_end': 1}, 'a physical line span cannot run backwards'),),
+    'InventoryLimits': (({'max_bytes': 16 * 1024 * 1024 + 1}, 'callers cannot raise the hard byte ceiling'),
+                        ({'max_records': True}, 'integer budgets do not coerce booleans')),
+    'InventoryContext': (({'architecture': 'x64'}, 'context uses the canonical amd64 architecture'),),
+    'CsvRecordRef': (({'logical_record': 0}, 'logical CSV records are one-based'),),
+    'CsvDiagnostic': (({'code': 'ARBITRARY_CODE'}, 'diagnostics use the documented code vocabulary'),),
+    'InventorySection': (({'index': 999}, 'section index must agree with its source reference'),),
+    'InventoryEntry': (({'basename': '../evil.dll'}, 'normalized names cannot be source paths'),
+                       ({'version_components': [10, 0, 26100]}, 'known versions retain exactly four integers')),
+    'CsvInventory': (({'accepted_count': 0}, 'accepted count must match retained entries'),
+                     ({'inventory_id': A}, 'identity binds exact bytes, context and parsing budgets'),
+                     ({'parser_version': True}, 'parser version does not coerce a boolean literal')),
+    'InventoryImport': (({'import_id': A}, 'import identity binds parser identity and source provenance'),),
+    'SupportImport': (({'import_id': A}, 'support identity binds source, explicit page and link digest'),
+                      ({'parser_version': True}, 'parser version does not coerce a boolean literal')),
+    'RetrievalProvenance': (({'plan_sha': A}, 'receipt digest binds the exact ordered request plan'),),
+    'InventorySelection': (({'asserted_scope': 'false'}, 'an explicit scope assertion is a strict boolean'),),
+}
+
+
+def build_inventory_examples() -> dict:
     out = {}
+    for name, record in valid_inventory_records().items():
+        valid = json.loads(record.model_dump_json())
+        invalid = [{'example': valid | {'unexpected_field': 1}, 'reason': 'extra fields are forbidden'}]
+        if 'contract' in valid:
+            invalid.append({'example': valid | {'contract': valid['contract'].removesuffix('/1') + '/2'},
+                            'reason': 'unsupported future contract version'})
+        invalid.extend({'example': valid | patch, 'reason': reason} for patch, reason in INVENTORY_INVALID[name])
+        out[name] = {'valid': valid, 'invalid': invalid}
+    return out
+
+
+def schema_models() -> dict:
+    from patchtrace.kbcorrelation import context, contracts, errors
+    models = {}
     for name in (*CONTRACTS, 'ContextBundle'):
         module = context if name == 'ContextBundle' else errors if name in ERRORS_MODULE else contracts
-        model = getattr(module, name)
+        models[name] = getattr(module, name)
+    return models | inventory_models()
+
+
+def render_contract_schemas() -> dict[str, str]:
+    out = {}
+    for name, model in schema_models().items():
         schema = model.model_json_schema()
         schema['$id'] = f'https://patchtrace.local/schemas/kbcorrelation/1/{name}.json'
         schema['$schema'] = 'https://json-schema.org/draft/2020-12/schema'
@@ -144,6 +247,8 @@ def render() -> dict[Path, str]:
     """Every generated file and its exact text (a pure function of the repository contents)."""
     files = {OUT / name: text for name, text in render_contract_schemas().items()}
     files[OUT / 'examples.json'] = json.dumps(build_examples(), indent=2, sort_keys=True, ensure_ascii=False) + '\n'
+    files[OUT / 'inventory-examples.json'] = json.dumps(build_inventory_examples(), indent=2, sort_keys=True,
+                                                       ensure_ascii=False) + '\n'
     return files
 
 
