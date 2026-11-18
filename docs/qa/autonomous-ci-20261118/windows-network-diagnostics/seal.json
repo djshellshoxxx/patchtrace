@@ -1,0 +1,11 @@
+{
+  "archive": "evidence.zip",
+  "bytes": 723365,
+  "manifest_sha256": "5a597bfe829fa183bb424e1bb193ce673f0fe83c036d016e5d86cd33a8512dd1",
+  "members": 89,
+  "production_commit": "9ca3c078c1e14ba4895a5e10c00234985a0b3fc2",
+  "sha256": "aedb078f695e36f45c942c5f7878cd37e89b38d0c88e91edd61565a71c843230",
+  "tested_commit": "ace5db8b3f5c300e0afb9f3dffd2978672514545",
+  "verified_git_sources": 28,
+  "verified_payloads": 88
+}
