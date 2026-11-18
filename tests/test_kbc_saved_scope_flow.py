@@ -13,7 +13,7 @@ import kbc_helpers as h
 import pytest
 from kbc_k1_support import no_sockets  # noqa: F401
 from kbc_k3_support import NOW, FixedClock, write_pair
-from kbc_saved_scope_support import add, bundle, document, refused_without_writes, saved, seeded
+from kbc_saved_scope_support import add, bundle, contents, document, refused_without_writes, saved, seeded
 
 from patchtrace.kbcorrelation import wiring
 from patchtrace.kbcorrelation.context import ContextBundle, build_bundle
@@ -21,10 +21,23 @@ from patchtrace.kbcorrelation.contracts import domain_id
 from patchtrace.kbcorrelation.index import ReverseIndex
 from patchtrace.kbcorrelation.sources.importer import import_bytes
 from patchtrace.kbcorrelation.sources.scope import corpus_scope, files_scope
-from patchtrace.kbcorrelation.store import WorkspaceStore
+from patchtrace.kbcorrelation.store import KbcStoreError, WorkspaceStore
 
 pytestmark = pytest.mark.usefixtures('no_sockets')
 ROOT = Path(__file__).resolve().parents[1]
+
+
+def cli_explain(service, project):
+    guard = ('import pathlib,socket,sys; '
+             'socket.create_connection=lambda *a,**k: (_ for _ in ()).throw(AssertionError("network")); '
+             'import patchtrace; '
+             f'assert pathlib.Path(patchtrace.__file__).resolve()==pathlib.Path({str(ROOT / "src/patchtrace/__init__.py")!r}); '
+             'from patchtrace.cli import main; code=main(sys.argv[1:]); '
+             'assert not any(n.startswith("PySide6") for n in sys.modules); sys.exit(code)')
+    return subprocess.run([sys.executable, '-c', guard, 'kb', 'explain', str(project),
+                           '--workspace', str(service.root), '--json'], cwd=ROOT,
+                          env=dict(os.environ, PYTHONPATH=str(ROOT / 'src'), QT_QPA_PLATFORM='offscreen'),
+                          capture_output=True, text=True, timeout=30)
 
 
 @pytest.mark.parametrize('mode', ['cached', 'files', 'months', 'mixed'])
@@ -48,16 +61,7 @@ def test_saved_scope_survives_cache_growth_reopen_import_export_and_actual_cli(t
     assert [source.doc_id for source in attached.sources] == [jan.doc_id]
     assert attached.edge_set_digest == before.edge_set_digest
     assert {p.name for p in (project / 'kb/sources').glob('*.gz')} == {jan.source.sha256 + '.json.gz'}
-    guard = ('import pathlib,socket,sys; '
-             'socket.create_connection=lambda *a,**k: (_ for _ in ()).throw(AssertionError("network")); '
-             'import patchtrace; '
-             f'assert pathlib.Path(patchtrace.__file__).resolve()==pathlib.Path({str(ROOT / "src/patchtrace/__init__.py")!r}); '
-             'from patchtrace.cli import main; code=main(sys.argv[1:]); '
-             'assert not any(n.startswith("PySide6") for n in sys.modules); sys.exit(code)')
-    result = subprocess.run([sys.executable, '-c', guard, 'kb', 'explain', str(project),
-                             '--workspace', str(service.root), '--json'], cwd=ROOT,
-                            env=dict(os.environ, PYTHONPATH=str(ROOT / 'src'), QT_QPA_PLATFORM='offscreen'),
-                            capture_output=True, text=True, timeout=30)
+    result = cli_explain(service, project)
     assert result.returncode == 0 and result.stderr == '', result.stderr
     explained = json.loads(result.stdout)['result']
     assert {row['cve'] for row in explained['cves']} == {h.CVE_A}
@@ -75,6 +79,35 @@ def test_empty_cached_scope_remains_empty_until_explicit_repeat_search(tmp_path)
     assert before.edge_set_digest == ReverseIndex().edge_set_digest()
     service.search(h.KB_CLIENT, investigation=investigation)
     assert {card.cve for card in bundle(service, investigation).context.cards} == {h.CVE_A}
+
+
+@pytest.mark.parametrize('product_given', [False, True])
+def test_empty_saved_scope_stays_empty_through_components_import_export_and_cli(tmp_path, product_given):
+    service = wiring.build_service(tmp_path / 'workspace', clock=FixedClock())
+    investigation = service.search(h.KB_CLIENT).result['investigation_id']
+    initial, coverage = saved(service, investigation)
+    doc = add(service, document())
+    product = doc.edges[0].scope_id if product_given else None
+    before = contents(service.root)
+    with pytest.raises(KbcStoreError) as caught:
+        service.components(investigation, product=product, files=['user.sys'])
+    assert caught.value.code == 'PT-KBC-INPUT'  # No product was in the empty saved search.
+    assert contents(service.root) == before
+    assert saved(service, investigation) == (initial, coverage)
+    older, newer = write_pair(tmp_path)
+    project = tmp_path / 'empty-context-project'
+    assert service.import_pair(investigation, str(older), str(newer), str(project)).exit == 0
+    exported = tmp_path / 'empty-context.json'
+    assert service.export(str(project), str(exported), overwrite=False).exit == 0
+    attached = ContextBundle.model_validate_json(exported.read_bytes())
+    assert not attached.context.cards and not attached.sources and not attached.card_facts
+    assert attached.context.coverage == coverage and coverage[0].scope.doc_ids == ()
+    assert attached.edge_set_digest == ReverseIndex().edge_set_digest()
+    assert not list((project / 'kb/sources').glob('*.gz'))
+    result = cli_explain(wiring.build_service(service.root, clock=FixedClock()), project)
+    assert result.returncode == 4 and result.stderr == '', result.stderr
+    explained = json.loads(result.stdout)['result']
+    assert explained['cves'] == [] and explained['coverage'] == [coverage[0].model_dump(mode='json')]
 
 
 def test_direct_builder_infers_saved_scope_and_uses_one_scoped_edge_digest(tmp_path):

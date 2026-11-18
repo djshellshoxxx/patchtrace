@@ -144,12 +144,31 @@ def test_noop_selection_refuses_concurrent_revision_without_discarding_it(tmp_pa
 
 def test_preexisting_competing_source_is_a_real_eligibility_conflict(tmp_path):
     svc = s.service(tmp_path)
+    competing_source(svc)
     state = s.start(svc)
     identity = s.inventory(svc, tmp_path)
-    competing_source(svc)
     before = s.snapshot(svc, state[0])
     with pytest.raises(KbcStoreError) as raised:
         s.select(svc, state, identity)
     assert raised.value.code == 'PT-KBC-INPUT'
     assert 'advisory builds conflict' in raised.value.message
     assert s.snapshot(svc, state[0]) == before
+
+
+def test_later_month_does_not_expand_recorded_cached_inventory_scope(tmp_path):
+    svc = s.service(tmp_path)
+    state = s.start(svc)
+    identity = s.inventory(svc, tmp_path)
+    before = s.snapshot(svc, state[0])
+    competing_source(svc)
+    first = s.select(svc, state, identity)
+    assert first.exit == 0
+    state = state[0], state[1], first.result['revision']
+    after = s.snapshot(svc, state[0])
+    assert after[0].coverage_ids == before[0].coverage_ids
+    with WorkspaceStore(svc.root) as store:
+        coverage, = (store.get_coverage(key) for key in after[0].coverage_ids)
+        assert coverage.inspected_ids == ('2099-Feb',)
+        assert len(coverage.scope.doc_ids) == 1 and len(store.sources()) == 2
+    assert s.select(svc, state, identity).exit == 0
+    assert s.snapshot(svc, state[0]) == after

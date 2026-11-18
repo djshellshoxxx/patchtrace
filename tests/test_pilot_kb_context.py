@@ -119,7 +119,8 @@ def native_bundle(service, *, cve=CVE, additional=(), month='2099-Mar', cwe='CWE
     sides = {a.side: a.sha256 for a in service.project.artifacts}
     bundle = context.build_bundle(
         investigation_id=str(uuid.uuid4()), base_revision=1, lead=Lead(kind='cve', value=cve, raw=cve),
-        cves=(cve, *additional), index=index, rules=wiring.IntelligenceRules(), now=NOW, coverage=(),
+        cves=(cve, *additional), index=index, rules=wiring.IntelligenceRules(), now=NOW,
+        coverage=(index.coverage(now=NOW),),
         scope_id=None, pair_id=None, older_sha=sides['older'], newer_sha=sides['newer'])
     return bundle, raw
 

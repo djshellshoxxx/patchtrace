@@ -12,6 +12,7 @@ from kbc_saved_scope_support import add, document, file_index, refused_without_w
 
 from patchtrace.kbcorrelation import wiring
 from patchtrace.kbcorrelation.context import build_bundle
+from patchtrace.kbcorrelation.contracts import Lead
 from patchtrace.kbcorrelation.sources.scope import build_coverage, months_scope
 from patchtrace.kbcorrelation.store import WorkspaceStore
 from patchtrace.kbcorrelation.workflow import Event
@@ -139,6 +140,31 @@ def test_repair_preflights_every_selected_journal_before_resuming_the_first(tmp_
                            service, project, monkeypatch)
 
 
+def test_captured_advisory_still_needs_full_source_admission_when_current_lead_is_pair_only(tmp_path, monkeypatch):
+    def interrupt(point):
+        if point == 'after_sidecar_write':
+            raise RuntimeError('authored interruption')
+
+    service, _doc, investigation, _product = seeded(tmp_path, mode='files', fault=interrupt)
+    older, newer = write_pair(tmp_path)
+    project = tmp_path / 'project'
+    with pytest.raises(RuntimeError, match='authored interruption'):
+        service.import_pair(investigation, str(older), str(newer), str(project))
+    service = wiring.build_service(service.root, clock=FixedClock())
+    withdrawn = document(date='2099-02-14')
+    withdrawn['vulnerabilities'] = []
+    latest = add(service, withdrawn)
+    (service.root / latest.source.object_path).unlink()
+    with WorkspaceStore(service.root) as store:
+        current = store.current_revision(investigation)
+        changed = current.model_copy(update={'revision': current.revision + 1, 'parent': current.revision,
+            'lead': Lead(kind='pair', value=older.name, raw=older.name), 'coverage_ids': ()})
+        store.append_revision(changed, expected_current=current.revision)
+        assert store.journal_ops()[0][2]['revision']['lead']['kind'] == 'kb'
+    refused_without_writes(lambda: service.attach(str(project), investigation, repair_it=True),
+                           service, project, monkeypatch)
+
+
 @pytest.mark.parametrize('change', ['missing-month-arrives', 'month-watermark-changes', 'source-disappears'])
 def test_detectable_month_drift_requires_explicit_repeat_search_before_writes(tmp_path, monkeypatch, change):
     service, doc, investigation, product = seeded(tmp_path)
@@ -153,7 +179,8 @@ def test_detectable_month_drift_requires_explicit_repeat_search_before_writes(tm
                            service, tmp_path / 'not-created', monkeypatch)
 
 
-@pytest.mark.parametrize('damage', ['none', 'multiple', 'different-scope', 'incoherent-scope', 'wrong-id'])
+@pytest.mark.parametrize('damage', ['none', 'multiple', 'different-scope', 'incoherent-scope', 'wrong-id',
+                                   'text-record', 'mapping-record'])
 def test_direct_builder_requires_one_consistent_saved_advisory_scope(tmp_path, damage):
     service, _doc, investigation, _product = seeded(tmp_path)
     rev, coverage = saved(service, investigation)
@@ -169,6 +196,9 @@ def test_direct_builder_requires_one_consistent_saved_advisory_scope(tmp_path, d
         coverage = (build_coverage(source_kind=first.source_kind, scope=months_scope(('2099-Feb',)),
                                   requested=first.requested_ids, inspected=first.inspected_ids,
                                   retrieved_at=first.retrieved_at),)
+    elif damage in {'text-record', 'mapping-record'}:
+        coverage = (coverage[0].model_dump_json() if damage == 'text-record' else
+                    coverage[0].model_dump(mode='json'),)
     else:
         coverage = (coverage[0].model_copy(update={'coverage_id': 'f' * 64}),)
     with WorkspaceStore(service.root) as store, pytest.raises(ValueError, match='saved search coverage'):
