@@ -1446,3 +1446,7 @@ and `test_ui_kb_inventory_retention.py`, plus the existing inventory adapter sui
 | `kbcorrelation/sources/support_links.py`, `inventory_fetch.py`, `inventory_http.py` | Inert support HTML links, exact consented retrieval and DNS-pinned TLS transport | Offline parser, injected transport, URL/DNS/redirect/cancellation tests |
 | `kbcorrelation/inventory_store.py`, `inventory_service.py`, `inventory_selection.py` | Content-addressed raw retention, immutable contextual imports, source-snapshot and revision-guarded scoped selection | Real workspace rollback/replay, selection and concurrent source-admission tests |
 | `kbcorrelation/cli_inventory.py`, `inventory_qt.py` | Shared-service CLI and desktop inventory controls | CLI envelope and offscreen Qt lifecycle tests |
+
+## Advisory sidecar read bounds — 2026-11-18
+
+`intelligence/storage.py` reuses `owned_publication.read_bytes` for bounded SHA-verified regular-file reads and expected-length idempotent reuse. Cached normalized facts have a64MiB cap; raw recovery uses the retained source length. Import checks derived size before any write. The existing cache-recovery and damaged-cache replacement policies remain; total store I/O and publication races are separate. Tests: `test_advisory_read_bounds.py`, `test_intel_storage.py`, shared owned-publication controls and adjacent CSAF/pilot readers.

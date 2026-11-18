@@ -1438,3 +1438,9 @@ Full `QT_QPA_PLATFORM=offscreen python -m pytest -q` for this isolated native sl
 - [x] Qualify exact source: 1,533 affected checks passed; guarded CLI lead/why receipt retained.
 - [ ] Combine report agent current-input hook and verify stored-read/publication identity.
 - [ ] Root independent combined review and integration/hosted/native gates.
+
+
+### [ADVISORY-READ-BOUNDS-20261118]
+
+- [x] Bound individual advisory sidecar reads through the shared held-file verifier; preserve seven original failures and independent review.
+- [ ] Qualify native Windows and final-head full/platform gates; assess cumulative advisory I/O separately.

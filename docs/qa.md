@@ -1964,3 +1964,8 @@ Exact-source affected qualification: 1,533 passed in 35.49 s; whole Ruff/diff pa
 Original red runs, corrected negative controls and a guarded real CLI journey are
 retained in [the QA receipt](qa/pilot-retained-cvrf-context-20261118.md). Separate
 current-input hook, combined independent review and native/manual gates remain open.
+
+
+## [ADVISORY-READ-BOUNDS-20261118]
+
+Seven unbounded-read/byte-limit failures reproduced and repaired; exact source independently passes 140 affected plus 16 filesystem/backup controls. Native Windows and cumulative store budgets remain unverified. [Evidence](qa/advisory-read-bounds-20261118.md).
