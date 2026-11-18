@@ -118,3 +118,21 @@ Current-source subprocess CLI output and desktop stored-result reading are check
 separately. No fixture or offscreen test is native/manual or live-provider acceptance.
 Retain failed runs and qualification receipts; independent combined review precedes
 remote publication.
+
+## Corrupt SQLite storage classes — 2026-11-18 review amendment
+
+SQLite's retained column declarations are not proof of the primitive values returned
+by a read. Before loading bodies through the shared enrichment service, the bounded
+metadata scan validates text/integer storage classes for every selected context row,
+including ID, body, checksum, guards, revision, status and stale flag. BLOB, NULL or
+numeric values in incompatible fields withhold the complete CVRF fallback with a
+plain warning; they must not raise an uncaught decoding or identity-encoding error.
+Body loading is not attempted after this preflight refusal.
+
+Unavailable-state identity includes only normalized, bounded metadata primitives;
+BLOB or real values are represented with explicit type tags and deterministic textual
+encodings. Untrusted database objects never pass directly to the identity encoder.
+No malformed row becomes evidence, and older cards remain withheld. Existing valid
+context identities and the shared enrichment schema/reader remain unchanged. Controls
+retain the independent BLOB failures and exercise real SQL NULL/numeric neighbors,
+deterministic refusal, no named leads, and restoration of unchanged valid context.
