@@ -25,7 +25,7 @@ A tier orders *how much file association is documented*. It is NOT a patch attri
 SourceComponentClaim {claim_id, product_scope_id?, kb?, cve?, original_component_text, explicit_basename?, source_document_id, source_pointer, source_kind, mapping_kind, claimed_release?, revision?}.
 FileCandidateHint {id, canonical_basename, original_spelling, product_scope_id, linked_cve_ids[], linked_kb_ids[], evidence_tier A..E, reasons[], source_claim_ids[], first_seen_build?, last_seen_build?, availability, validated_extension}.
 ComponentSearchResult {requested_kb/cve/product, candidates[], descriptive_only_claims[], rejected[], status, coverage_ids[], blockers[]}.
-Reject basenames containing directory separator, drive/UNC/ADS, path traversal, trailing dot/space, reserved Windows device name, NUL/control characters; normalize to lowercase ASCII where compatible with existing acquisition.validate_file_name. Use existing allowed PE extensions for automatic symbol-server search: exe, dll, sys, efi, drv, ocx, cpl, scr. Non-PE types remain descriptive leads; no Ghidriff input.
+Reject basenames containing directory separator, drive/UNC/ADS, path traversal, trailing dot/space, reserved Windows device name, NUL/control characters; normalize to lowercase ASCII where compatible with existing acquisition.validate_file_name. Use existing allowed PE extensions for automatic symbol-server search: exe, dll, sys, efi, drv, ocx, cpl, scr, tsp. Non-PE types remain descriptive leads; no Ghidriff input.
 
 ## G4. Pipeline design
 
@@ -57,3 +57,12 @@ Sample F: local file named exampledrv.sys is ARM64 despite selected x64; reject 
 Test dozens of malicious filenames, Unicode homoglyphs, path traversal, duplicate basenames under different package identities, product mismatch, case-insensitive collisions, empty official component, multiple CVEs to one DLL, one CVE to many DLLs, partial Winbindex availability, cache replay determinism. For giant package inventory, index by lower basename+scope, cap 5,000 visible hints per query with explicit truncated status and page cursor; no silent truncation. No network or Qt imports in component_hints.py; all source claims cite exact immutable source bytes.
 
 Interface: discover_components(request:ComponentRequest, claims:tuple[SourceComponentClaim,...], inventory:PackageInventory|None, metadata_index:FilenameIndex|None)->ComponentSearchResult. Service layer performs all fetching and passes validated input.
+
+### Telephony filename hints (2026-11-18)
+
+Use the shared acquisition `.tsp` allowance for explicit analyst filenames. An
+exact `.tsp` basename in an advisory title is only a contextual tier-D hint; it
+cannot select a file or assert a fix. Explicit analyst selection remains tier E
+and preserves unknown change status until the existing index checks run. The
+frozen L1 manifest remains unchanged; expanding supported input names is an
+implementation change and requires a new exact-code receipt.
