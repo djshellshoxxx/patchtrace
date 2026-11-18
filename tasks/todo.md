@@ -1874,3 +1874,10 @@ See the [immutable continuation checkpoint](../docs/qa/verified-continuation-202
 - [x] Seal 344 affected passes, 112 pinned imports, zero skips/prohibited attempts, full Ruff/diff success and exact normal-body/nonowned-source proofs in the 216-member packet.
 - [ ] Root independently review/replay the complete ownership handoff, including the proposed final-assignment interrupt boundary, before integration; preserve any confirmed follow-up separately.
 - [ ] Implement separately approved durable intent/provenance/recovery and package/native boundaries before any held-origin package route; this mode alone grants no admission authority.
+
+### [KB-WORKSPACE-HANDOFF-CLEANUP-20261118]
+
+- [x] Preserve root’s original 2-red/1-positive handoff probe and the complete c470/d31 216-member packet without relabeling prior passes.
+- [x] Specify the protected-region/post-return limit and retain six authored failures plus one positive before the one-statement handoff relocation at `a7a4fb16`.
+- [x] Replay the unchanged original probe with fresh observations alongside all 344 prior cases and seven new controls: 354 pass, 113 pinned imports, no skips/prohibited attempts; seal the separate 213-member correction packet with full Ruff/diff success.
+- [ ] Root independently review/replay and integrate the corrected chain; keep ordinary defaults, post-return interruption limits, package exposure and durable/native prerequisites distinct.
