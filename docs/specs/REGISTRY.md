@@ -195,4 +195,4 @@ These supporting contracts are cited by path; no numeric SPEC alias is allocated
 | Path | Scope | Status | Owner |
 |---|---|---|---|
 | `docs/specs/dependency-security-qualification.md` | Exact-source dependency and security qualification | Implemented; external scanner and hosted acceptance remain separate gates | Dependency/security qualification tooling |
-| `docs/specs/directory-publication.md` | Atomic no-replacement publication of complete private directories | Implemented candidate; independent review and native Windows acceptance pending | Shared directory publisher, project backup and offline runtime installer |
+| `docs/specs/directory-publication.md` | Atomic no-replacement publication of complete private directories | Implemented and independently reviewed; native Windows acceptance pending | Shared directory publisher, project backup and offline runtime installer |
