@@ -109,7 +109,10 @@ def test_real_formatter_has_fixed_vocabulary_and_safe_unknown_indices(formatter)
     assert len(names) == len(stages)
     assert {'process-create', 'job-assign', 'child-spawn', 'child-resume', 'child-finish',
             'socket-connect-wait', 'socket-send-wait', 'socket-receive-wait',
-            'startup-terminate', 'startup-wait', 'diagnostic-limit'} <= names
+            'startup-terminate', 'startup-wait', 'diagnostic-limit',
+            'stdin-mode', 'stdin-startup', 'stdin-type', 'stdin-flags', 'stdin-module',
+            'stdin-export', 'stdin-identity', 'stdin-capture', 'stdin-duplicate',
+            'stdin-close', 'stdin-module-close'} <= names
     kinds, _ = formatter('kinds')
     assert {row['kind'] for row in kinds} == {
         'unknown', 'win32', 'winsock', 'validation', 'timeout', 'child-exit', 'wait-result', 'truncated'}

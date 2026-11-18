@@ -175,6 +175,100 @@ controls continue to refuse incomplete chains, code 125 and non-access-denied
 socket results even when diagnostic text is present. Windows compilation and
 actual error-path/runtime behavior remain a separate hosted requirement.
 
+### 5.2 Parent-created stdin and descendant identity
+
+At head `771e5a775f5bf60a8d9094232b51dcdbb47d6389`, preview
+`ac6632ad6de486ba16343f0eeb4a2b5a446e4ac1`, run `44409973491` / job
+`135175184142`, artifact `14475538670` records `nul-open` Win32 error 5 followed
+by `child-spawn` error 5 and exit 125. The failing NUL open occurs in the
+restricted depth-zero process before `CreateProcessW`. That original result
+remains failed. Its loopback timeouts remain separate inconclusive socket
+evidence and never qualify as access denial.
+
+The controlled ordinary parent creates read-only NUL stdin. The restricted
+launcher passes it through the existing three-entry explicit handle list.
+Each probe owns a non-inheritable duplicate of its inherited stdin for its
+complete lifetime. Descendant launch uses a fresh same-access inheritable
+duplicate of that held object in the existing stdin slot. A missing or invalid
+held reference is refusal; no descendant pathname reopen or other fallback is
+permitted. No cross-process duplicate authority is granted to the child.
+
+Native checks require valid startup/current stdin handles, the startup standard
+handle flag, character-device type, correct inheritance flags, and positive
+same-object comparisons of the startup/current/held/outbound references. A
+numeric handle value is not an object identity. A type classification is not
+NUL-origin proof. NUL origin depends on the inspected creator paths and exact
+controlled invocation; arbitrary external invocations are outside that claim.
+Retaining an owned reference detects post-capture object replacement but does
+not authenticate a pre-capture caller or independently reopen a device name.
+
+The comparison mechanism requires the documented `CompareObjectHandles`
+Windows API and its actual ABI. The acceptance runtime floor for this mechanism
+is Windows 10 / Server 2016. Resolve the exact export through an owned,
+System32-constrained loader reference and the exact `BOOL (WINAPI *)(HANDLE,
+HANDLE)` function type. Keep the current compiler warnings, target macro and
+link flags. Missing SDK/runtime functionality, failed lookup or comparison,
+unsupported ABI or unverified cleanup causes refusal. There is no type-only,
+numeric-identity, API-substitution or privilege-expansion fallback.
+
+The private keeper is never inherited. Only the same-access outbound stdin
+duplicate and the existing stdout/stderr pipe duplicates enter the existing
+handle list. The image lock, zero capabilities, suspended start, token checks,
+Job containment, cancellation and resume rules remain required. The ordinary
+Python supervisor's existing inheritable-stdio behavior is not broadened or
+claimed to acquire a new explicit-list guarantee in this change.
+
+Close the parent's owned outbound stdin reference while the child is still
+suspended and before returning successful startup. If that close fails, refuse
+and follow existing termination/wait handling; do not resume. Attribute-list
+storage remains alive until its documented destruction point. Consume
+ownership before each close and never retry a possibly stale handle value.
+Borrowed standard/startup handles are not closed. The private keeper and one
+owned module reference are released on every ordinary probe return; both
+cleanup attempts occur even if one fails. A successful body cannot remain
+successful after uncertain release. A failed operation keeps its first failure
+as primary and records later cleanup errors separately.
+
+Fixed stderr-only stages report new API, validation and cleanup failures under
+the existing per-process total record/byte budget. Capture OS errors before
+logging/cleanup. Object/type mismatch is validation, not an invented API error.
+No raw handles, paths, argv, nonce or token values enter diagnostics. The
+successful stdout schema and 10013-only denial policy are unchanged.
+
+Portable scripted API controls qualify only helper decisions, bounded resource
+ownership and error precedence. Static integration checks are not native
+execution. Actual SDK compilation, runtime export availability, handle
+inheritance and object identity inside the zero-capability process, full
+descendant controls, lifecycle cleanup and real BinDiff output require a new
+exact-source hosted receipt. The earlier failed artifact is never rewritten.
+
+
+The private selection helper has two explicit modes: a non-null AppContainer
+SID with no inherited lease creates the fresh parent NUL; no SID with a valid
+lease forwards the held object. Both-present and both-absent combinations are
+invalid. This does not change the subsequent existing SID/token comparison.
+Owned keeper flags must be zero; outbound stdin flags must be exactly
+`HANDLE_FLAG_INHERIT`. No close-protection or unknown bits are accepted, and no
+borrowed flags are modified. New validation refusals set `ERROR_INVALID_DATA`
+as a deterministic primary error. API errors are captured before cleanup;
+secondary cleanup errors cannot replace the failed operation's first error.
+
+The portable stdin controls execute extracted authored helper code with
+scripted Win32 API behavior. They also retain a baseline behavioral control
+that executes the original stdin-selection fragment with a valid held input
+and a denied NUL open. These controls do not execute Windows APIs or qualify
+native inheritance/permissions/ABI. The earlier formatter controls retain their
+separate standard-C/no-Windows-stub scope.
+
+Primary references for this addition (reviewed 2026-11-18):
+
+- [DuplicateHandle](https://learn.microsoft.com/en-us/windows/win32/api/handleapi/nf-handleapi-duplicatehandle).
+- [GetFileType](https://learn.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-getfiletype).
+- [GetHandleInformation](https://learn.microsoft.com/en-us/windows/win32/api/handleapi/nf-handleapi-gethandleinformation).
+- [CompareObjectHandles](https://learn.microsoft.com/en-us/windows/win32/api/handleapi/nf-handleapi-compareobjecthandles): Windows 10 / Server 2016; Kernelbase DLL/import library.
+- [GetStartupInfoW](https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-getstartupinfow) and [GetStdHandle](https://learn.microsoft.com/en-us/windows/console/getstdhandle).
+- [LoadLibraryExW](https://learn.microsoft.com/en-us/windows/win32/api/libloaderapi/nf-libloaderapi-loadlibraryexw), [GetProcAddress](https://learn.microsoft.com/en-us/windows/win32/api/libloaderapi/nf-libloaderapi-getprocaddress), and [FreeLibrary](https://learn.microsoft.com/en-us/windows/win32/api/libloaderapi/nf-libloaderapi-freelibrary).
+
 ## 6. Budgets and workflow
 
 Per socket attempt: at most 5 seconds. Three processes per control chain, depth
