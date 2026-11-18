@@ -469,17 +469,21 @@ class ProjectStore:
                     raise ValueError('PT-STORAGE: project database contains views or triggers; refusing to open')
                 if self.connection.execute('PRAGMA quick_check').fetchone()[0] != 'ok':
                     raise ValueError('PT-STORAGE: database integrity check failed')
-        except Exception as exc:
+        except BaseException as exc:
+            failure = ValueError('PT-STORAGE: project database cannot be opened') if isinstance(exc, sqlite3.Error) else exc
             try:
-                if self.connection is not None:
-                    self.connection.close()
-                    self.connection = None
-                if self.created_database is not None:
-                    _discard_created_database(path, self.created_database)
-            finally:
-                self.close()
-            if isinstance(exc, sqlite3.Error):
-                raise ValueError('PT-STORAGE: project database cannot be opened') from exc
+                try:
+                    if self.connection is not None:
+                        self.connection.close()
+                        self.connection = None
+                    if self.created_database is not None:
+                        _discard_created_database(path, self.created_database)
+                finally:
+                    self.close()
+            except BaseException:
+                failure.add_note('PT-STORAGE: project initialization cleanup failed; resources or files may remain')
+            if failure is not exc:
+                raise failure from exc
             raise
 
     def _check_open(self):
