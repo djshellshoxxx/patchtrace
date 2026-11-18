@@ -485,6 +485,17 @@ def source_state(info):
     return (info.st_dev, info.st_ino, info.st_mode, info.st_size, info.st_mtime_ns, info.st_ctime_ns)
 
 
+def source_open_state(info):
+    """Comparable path/descriptor facts; their complete states are checked separately."""
+    if os.name != 'nt':
+        return source_state(info)
+    birth, attributes = getattr(info, 'st_birthtime_ns', None), getattr(info, 'st_file_attributes', None)
+    require(type(birth) is int and type(attributes) is int, 'Windows source observation is unavailable')
+    # CPython path stat uses creation time for ctime and adds suffix-derived execute
+    # bits; fstat uses change time and physical mode. Keep both full same-API checks.
+    return (info.st_dev, info.st_ino, info.st_mode & ~0o111, info.st_size, info.st_mtime_ns, birth, attributes)
+
+
 def source_blob(path, mode, size):
     """Hash actual bytes in Git's blob format, independent of the index and filters."""
     before = path.lstat()
@@ -502,14 +513,15 @@ def source_blob(path, mode, size):
             require(bool(before.st_mode & stat.S_IXUSR) == (mode == b'100755'), 'tracked executable mode changed')
         flags = os.O_RDONLY | getattr(os, 'O_NOFOLLOW', 0) | getattr(os, 'O_NONBLOCK', 0)
         with os.fdopen(os.open(path, flags), 'rb') as stream:
-            require(source_state(os.fstat(stream.fileno())) == source_state(before), 'tracked file changed at open')
+            opened = os.fstat(stream.fileno())
+            require(source_open_state(opened) == source_open_state(before), 'tracked file changed at open')
             remaining = size
             while remaining:
                 chunk = stream.read(min(remaining, 1024 * 1024))
                 require(bool(chunk), 'tracked file shortened during verification')
                 remaining -= len(chunk)
                 digest.update(chunk)
-            require(not stream.read(1) and source_state(os.fstat(stream.fileno())) == source_state(before),
+            require(not stream.read(1) and source_state(os.fstat(stream.fileno())) == source_state(opened),
                     'tracked file changed during verification')
     require(source_state(path.lstat()) == source_state(before), 'tracked source entry was replaced')
     return digest.hexdigest().encode('ascii'), source_state(before)
