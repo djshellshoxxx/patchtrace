@@ -2143,3 +2143,15 @@ historical highlighter behavior. No production/test/workflow edit, native run,
 fresh hosted observation or whole-branch closure. Cumulative selected scopes:
 60 of the original 131, with 71 still unselected and broader residue open.
 [Exact sources, commands, archive and limits](qa/semantic-disposition-batch3-20261118.md).
+
+## [CODETEXT-WINDOW-DISPATCH-20261118]
+
+Source `2bf86c883d4d9185f1fb845a7083f73c5541f342` adds the missing early
+highlighter model/session/window guard, inside the existing failure boundary.
+Spec/tests precede source; the original six failing/one positive and unchanged
+historical one failing/two positive controls remain. The same nine-file affected
+gate passes 804 with one optional colorspacious skip at normal scale and at actual
+2x offscreen scale; unchanged historical replay passes three separately. Whole Ruff/diff pass. These are
+overlapping source/Qt checks, not additive or native/package acceptance. Root
+review and actual combined/full/platform gates remain separate.
+[Source and sealed evidence](qa/codetext-window-guard-20261118.md).

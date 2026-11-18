@@ -1594,3 +1594,12 @@ Current evidence and assigned work: [checkpoint](../docs/qa/verified-followup-in
 - [ ] Propose, spec/test and independently qualify the one-file highlighter guard slice; retain unchanged historical test bytes.
 - [ ] Inspect the remaining 71 original tips and broader checkpoint/package/research residue; no blanket closure.
 - [ ] Complete actual final-source full/platform/native/package/manual gates; source/offscreen tests are not that acceptance.
+
+### [CODETEXT-WINDOW-DISPATCH-20261118]
+
+- [x] Specify the dispatch boundary and preserve original current/historical failing controls before source changes.
+- [x] Repair only CodeHighlighter.highlightBlock, keeping the fail-closed boundary and controller validation.
+- [x] Pin source 2bf86c88; run identical normal/2x nine-file gates (804 passed/one optional skip each), unchanged historical three-node replay and whole Ruff/diff.
+- [x] Seal exact source snapshots, failure/positive receipts, actual device-pixel ratios and archive hashes.
+- [ ] Root independent review and selective integration with attributed source history.
+- [ ] Final combined/full/platform/native/manual/package gates; separate F8 tooltip collision remains owned by its author.
