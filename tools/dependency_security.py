@@ -70,15 +70,17 @@ def dump_new(path, value):
 def read_bytes(path, limit=MAX_JSON):
     try:
         info = path.lstat()
+        open_state = gate.source_open_state(info)
         require(stat.S_ISREG(info.st_mode) and not getattr(info, 'st_file_attributes', 0) & 0x400,
                 f'{path.name}: evidence must be a regular file')
         require(info.st_size <= limit, f'{path.name}: evidence size limit exceeded')
         flags = os.O_RDONLY | getattr(os, 'O_NOFOLLOW', 0) | getattr(os, 'O_NONBLOCK', 0)
         with os.fdopen(os.open(path, flags), 'rb') as stream:
-            require(gate.source_state(os.fstat(stream.fileno())) == gate.source_state(info),
+            opened = os.fstat(stream.fileno())
+            require(gate.source_open_state(opened) == open_state,
                     f'{path.name}: evidence changed at open')
             raw = stream.read(limit + 1)
-            require(gate.source_state(os.fstat(stream.fileno())) == gate.source_state(info),
+            require(gate.source_state(os.fstat(stream.fileno())) == gate.source_state(opened),
                     f'{path.name}: evidence changed during read')
         require(gate.source_state(path.lstat()) == gate.source_state(info), f'{path.name}: evidence was replaced')
         require(len(raw) <= limit, f'{path.name}: evidence size limit exceeded')
@@ -289,7 +291,7 @@ def checked_tree(root, sha):
         actual, state = gate.source_blob(path, mode, size)
         require(actual == oid, 'actual source bytes differ from canonical commit')
         files[path] = state
-    require(all(gate.source_state(path.lstat()) == state for path, state in files.items()),
+    require(all(gate.source_unchanged(path, state) for path, state in files.items()),
             'source bytes changed during verification')
     for parent, identity in parents.items():
         info = parent.lstat()

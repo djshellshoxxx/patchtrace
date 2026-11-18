@@ -497,8 +497,9 @@ def source_open_state(info):
 
 
 def source_blob(path, mode, size):
-    """Hash actual bytes in Git's blob format, independent of the index and filters."""
+    """Hash actual Git blob bytes; retain an opaque path/descriptor observation."""
     before = path.lstat()
+    open_state, descriptor_state = None, None
     # SHA-1 is the repository's Git object format, not a new security digest choice.
     digest = hashlib.sha1(b'blob ' + str(size).encode('ascii') + b'\0', usedforsecurity=False)
     if mode == b'120000':
@@ -507,6 +508,7 @@ def source_blob(path, mode, size):
         require(len(target) == size, 'tracked symlink bytes changed')
         digest.update(target)
     else:
+        open_state = source_open_state(before)
         require(stat.S_ISREG(before.st_mode) and before.st_size == size and
                 not getattr(before, 'st_file_attributes', 0) & 0x400, 'tracked file type or size changed')
         if os.name != 'nt':
@@ -514,17 +516,36 @@ def source_blob(path, mode, size):
         flags = os.O_RDONLY | getattr(os, 'O_NOFOLLOW', 0) | getattr(os, 'O_NONBLOCK', 0)
         with os.fdopen(os.open(path, flags), 'rb') as stream:
             opened = os.fstat(stream.fileno())
-            require(source_open_state(opened) == source_open_state(before), 'tracked file changed at open')
+            require(source_open_state(opened) == open_state, 'tracked file changed at open')
+            descriptor_state = source_state(opened)
             remaining = size
             while remaining:
                 chunk = stream.read(min(remaining, 1024 * 1024))
                 require(bool(chunk), 'tracked file shortened during verification')
                 remaining -= len(chunk)
                 digest.update(chunk)
-            require(not stream.read(1) and source_state(os.fstat(stream.fileno())) == source_state(opened),
+            require(not stream.read(1) and source_state(os.fstat(stream.fileno())) == descriptor_state,
                     'tracked file changed during verification')
     require(source_state(path.lstat()) == source_state(before), 'tracked source entry was replaced')
-    return digest.hexdigest().encode('ascii'), source_state(before)
+    return digest.hexdigest().encode('ascii'), (source_state(before), open_state, descriptor_state)
+
+
+def source_unchanged(path, snapshot):
+    """Final point-in-time observation, with at most one Windows descriptor open."""
+    path_state, open_state, descriptor_state = snapshot
+    before = path.lstat()
+    if source_state(before) != path_state:
+        return False
+    if os.name == 'nt' and descriptor_state is not None:
+        if source_open_state(before) != open_state:
+            return False
+        flags = os.O_RDONLY | getattr(os, 'O_NOFOLLOW', 0) | getattr(os, 'O_NONBLOCK', 0)
+        with os.fdopen(os.open(path, flags), 'rb') as stream:
+            opened = os.fstat(stream.fileno())
+            if source_open_state(opened) != open_state or source_state(opened) != descriptor_state:
+                return False
+        return source_state(path.lstat()) == path_state
+    return True
 
 
 def checked_source(root, sha):
@@ -564,7 +585,7 @@ def checked_source(root, sha):
             actual, state = source_blob(path, mode, size)
             require(actual == oid, 'tracked source bytes differ from canonical commit')
             files[path] = state
-        require(all(source_state(path.lstat()) == state for path, state in files.items()),
+        require(all(source_unchanged(path, state) for path, state in files.items()),
                 'tracked source changed before verification finished')
         for parent, identity in directories.items():
             info = parent.lstat()

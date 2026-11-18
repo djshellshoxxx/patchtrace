@@ -175,7 +175,7 @@ source changes. Both publication and dependency-tree checks use the same boundar
 
 Dependency receipt reads use the same compatible path/descriptor comparison at
 open and retain complete descriptor checks across the read plus the final path
-check. Windows observation fields must be integers before their attribute bits
+check. Regular-file Windows observation fields must be integers before their attribute bits
 are interpreted; unavailable or malformed observations yield a typed refusal.
 
 Authored observation tests qualify this compatibility rule only. Native Windows
