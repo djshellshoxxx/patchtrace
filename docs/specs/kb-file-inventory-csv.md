@@ -169,7 +169,9 @@ Preserve original/final URLs and actual redirect chain in a fetched receipt.
 No automatic link follow-up occurs during HTML parsing or after page retrieval.
 The returned source must have complete HTTP framing: reject malformed or
 duplicated Content-Length, ambiguous Content-Length/Transfer-Encoding, unsupported
-transfer/content encodings and an unexpected Content-Range. If Content-Length is
+transfer/content encodings and an unexpected Content-Range. A chunked transfer
+value must exactly match the reader's case-insensitive `chunked` token; do not
+trim padding into a token the underlying reader would fail to decode. If Content-Length is
 present, the received byte count must equal it before a fetch receipt is published.
 A well-formed CSV prefix from a prematurely closed response is never complete.
 

@@ -198,7 +198,9 @@ def _framing(response, cap):
     length, transfer, encoding, content_range = (fields[name] for name in fields)
     if content_range or (length and transfer):
         raise SourceError('PT-KBC-SOURCE', 'inventory response has partial or ambiguous framing')
-    if transfer and transfer[0].strip().casefold() != 'chunked':
+    # Match HTTPResponse's decoder predicate: trimming padding here could accept
+    # a header that the reader treats as an unchunked EOF-delimited body.
+    if transfer and transfer[0].lower() != 'chunked':
         raise SourceError('PT-KBC-SOURCE', 'inventory response uses an unsupported transfer encoding')
     if encoding and encoding[0].strip().casefold() != 'identity':
         raise SourceError('PT-KBC-SOURCE', 'inventory source used an unrequested content encoding')

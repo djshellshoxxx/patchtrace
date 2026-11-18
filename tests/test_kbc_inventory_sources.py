@@ -61,6 +61,22 @@ def test_real_http_response_rejects_ambiguous_or_partial_framing(headers):
     error('PT-KBC-SOURCE', lambda: run(plan, lambda *_: _Response(response)))
 
 
+@pytest.mark.parametrize('value', [b'chunked', b'chunked ', b'chunked\t'])
+def test_real_http_response_never_publishes_unchunked_wire_body_claiming_chunked(value):
+    from patchtrace.acquisition.transport import _Response
+
+    class Socket:
+        def makefile(self, *_args):
+            return io.BytesIO(b'HTTP/1.1 200 OK\r\nTransfer-Encoding: ' + value +
+                              b'\r\n\r\n<p>File information</p>')
+
+    response = HTTPResponse(Socket())
+    response.begin()
+    plan = fetch.build_plan(PAGE, kind='support-page')
+    with pytest.raises(SourceError):
+        run(plan, lambda *_: _Response(response))
+
+
 @pytest.mark.parametrize('chunked', [False, True])
 def test_real_http_response_accepts_complete_bounded_framing(chunked):
     from patchtrace.acquisition.transport import _Response
