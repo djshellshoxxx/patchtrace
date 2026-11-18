@@ -106,4 +106,4 @@ Listing of every file under `docs/specs/`, 2026-10-14. SPEC number and status co
 | [workbench/04-quickwins.md](workbench/04-quickwins.md) | PT-WB-04 | draft | PT-WB-QW: Additional Very-Low-Effort, High-Value Integrations |
 | [workbench/README.md](workbench/README.md) | PT-WB (index) | approved | PatchTrace Workbench: Three Reusable Integrations and Easy-Win Addenda |
 
-| [kb-file-inventory-csv.md](kb-file-inventory-csv.md) | PW-01 | approved implementation contract | Bounded KB file inventory CSV and support links |
+| [kb-file-inventory-csv.md](kb-file-inventory-csv.md) | PW-01 | implemented; acceptance tracked in QA | Bounded KB file inventory CSV and support links |

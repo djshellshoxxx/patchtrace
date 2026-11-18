@@ -348,9 +348,18 @@ repair has **130 passing tests**; the lead inspected its complete diff and ran
 the original independent reproducers with the verifier suite: **133 passed,
 1 unrelated case deselected**. The inventory generator has **7 passing tests**.
 Whole-tree Ruff, dependency compatibility, protobuf runtime and whitespace checks
-passed before this documentation update. Full local QA and exact-successor hosted
-Linux/Windows/package/native checks are still required and will be recorded by
-their own SHA; historical #301 green checks are not reused for the successor.
+passed before this documentation update. Full local QA completed with **22,461
+passed, 137 skipped, 6 xfailed and 1 failed in 1,794.23 seconds**. The failure is
+the existing `test_a_local_unix_socket_is_not_network`: `_socket.socket(AF_UNIX)`
+raises `PermissionError: [Errno 1] Operation not permitted` in this executor.
+The test was neither changed nor skipped. Additional native/LLVM capability
+skips remain explicit. The run began on local code `64f05310` (published as
+`ca76368c`); only documentation changed during that run. Current successor
+head `f7e075480999e2f5a3681ddd429dca0fd9cac986`, tree
+`61882fa5630ba5cc32b300e802fb6738d758c94f`, has its own hosted qualification in
+[PR #302](https://github.com/djshellshoxxx/patchtrace/pull/302). Exact-successor
+Linux/Windows/package/native checks are recorded separately; historical #301
+green checks are not reused for the successor.
 
 Retained historical native manifests and receipts were checked against their raw
 digests and recorded semantics. That is artifact review, not a new native run.

@@ -1,5 +1,23 @@
 # QA and audit record
 
+## 2026-11-18 PW-01 KB file inventories
+
+Implemented the registered bounded CSV/support-link contract, immutable source
+store, atomic scoped selection, seven CLI verbs and a separate KB inventory
+dialog. Independent parser/source, selection and interface reviews reproduced
+and verified repairs for input grouping, HTTP framing, product/build scope,
+failure preservation and keyboard deselection. The combined focused selection
+passes **815 tests**. Schemas, whole-tree Ruff, dependency compatibility and
+protobuf runtime checks pass. Full local and hosted runs are tracked against
+their own exact trees in [PW-01 evidence](qa/pw01-20261118.md).
+
+The real saved KB5036893 capture imports through the actual CLI with explicit
+partial coverage: 5,000 retained ARM64 rows, 259 rejected, 1,912 conflicting,
+and truncation before later sections. Both production support/CSV fetch attempts
+failed with PT-KBC-ACQUIRE because this runner cannot resolve the approved hosts.
+No proxy or injected transport substituted for that live gate. PW-02 and native
+Windows/manual/release/accuracy acceptance remain separate.
+
 ## 2026-11-18 independently reviewed consolidation successor
 
 `codex/consolidation-reviewed-20261118` directly continues #301, preserving #297
@@ -10,8 +28,11 @@ reproduced and repaired zero-address normalization, L-39 cap asymmetry,
 recent-query JSON ingress, and release archive type/link validation. The unsafe
 archive/delete helper is excluded. See the exact references, scope, focused test
 counts and deferred work in the [decision log](qa/branch-consolidation-20261118.md).
-Current-successor full QA and hosted gates remain pending until recorded against
-their exact commit; the historical section below is not current qualification.
+The successor full local run finished with **22,461 passed, 137 skipped,
+6 xfailed and 1 failed** in 1,794.23 seconds. The existing Unix-socket test fails
+because this executor denies AF_UNIX creation; no test was weakened or skipped.
+Exact-head hosted gates remain pending until their own results are recorded;
+the historical section below is not current qualification.
 
 ## 2026-11-18 full branch consolidation (PR #301)
 

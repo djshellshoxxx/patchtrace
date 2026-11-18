@@ -186,4 +186,4 @@ This later draft registration does not refresh the historical tables or approve 
 
 | Path | Canonical alias | Status | Owner |
 |---|---|---|---|
-| `docs/specs/kb-file-inventory-csv.md` | PW-01 | approved implementation contract; acceptance pending | kbcorrelation inventory modules |
+| `docs/specs/kb-file-inventory-csv.md` | PW-01 | implemented and independently reviewed; hosted/live acceptance tracked in QA | kbcorrelation inventory modules |

@@ -165,6 +165,32 @@ Do not reuse the previous plan digest. Fetched source records retain original
 and final URLs, actual redirect chain, acquisition time and byte digest.
 `tls-allowlisted-host` describes transport provenance, not a digital signature.
 
+## Desktop workflow
+
+Open **KB and CVE** (`Ctrl+Shift+K`), then **File inventories…**. The inventory
+dialog is available without an open comparison project.
+
+- **Saved CSV** accepts a local file and explicit KB, product, architecture,
+  delimiter and numeric-locale context. **Import saved CSV** retains its bytes.
+- **Retained inventories** lists sources and verifies an explicitly chosen
+  source. Filters and pages apply to retained rows. Row details expose the
+  original values, source status, logical record and physical line span.
+- To use a filename, supply an existing investigation ID, its exact product
+  scope ID and current revision from `kb products`. Select a visible eligible
+  row and press **Select this filename for the investigation**. An unmapped
+  inventory also needs the explicit scope assertion. Deselecting the row,
+  including with Ctrl+Space, disables selection; focus alone is insufficient.
+- **Support sources** inspects saved HTML, copies an explicitly chosen accepted
+  link without following it, and previews exact requests. Fetch consent starts
+  unchecked, applies once, and is invalidated by input changes. A changed server
+  chain needs a revised preview and fresh consent.
+
+Operations run in workers with progress and **Cancel operation**. Closing the
+dialog or changing inputs rejects late displayed results. Previous committed
+imports remain available. A project change clears the selection target so a
+filename cannot silently carry into another investigation. Native Windows
+screen-reader and high-DPI acceptance are tracked separately from offscreen tests.
+
 ## Exit codes and recovery
 
 | Exit | Meaning |
