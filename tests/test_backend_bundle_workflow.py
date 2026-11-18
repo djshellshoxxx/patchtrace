@@ -55,7 +55,7 @@ def test_least_privilege_permissions(doc):
     assert doc['permissions'] == {'contents': 'read'}
     writers = [j for j, job in doc['jobs'].items() if 'permissions' in job]
     assert writers == ['pub']
-    assert doc['jobs']['pub']['permissions'] == {'contents': 'write'}
+    assert doc['jobs']['pub']['permissions'] == {'contents': 'write', 'actions': 'read'}
 
 
 def test_actions_pinned_like_other_workflows(doc):
@@ -151,9 +151,13 @@ def test_publish_is_prerelease_only_and_fails_loudly(doc):
     assert "needs.acc-win.result == 'success'" in condition and "needs.acc-lin.result == 'success'" in condition
     assert '!cancelled()' in condition
     text = all_run_text(pub)
-    assert '--prerelease' in text and 'isPrerelease' in text
+    assert '--prerelease' in text and 'release_qualification.py' in text
     assert 'refusing to touch it' in text  # an existing final release is never modified
-    assert '--clobber' in text and 'Nothing' in text
+    assert '--clobber' not in text and 'publication completion is unverified' in text
+    publisher = next(s for s in steps(pub) if 'gh release create' in s.get('run', ''))
+    assert publisher['env']['RELEASE_EXISTS'] == '${{ steps.qualification.outputs.release_exists }}'
+    assert 'if [ "$RELEASE_EXISTS" = false ]' in publisher['run']
+    assert 'elif [ "$RELEASE_EXISTS" != true ]' in publisher['run']
     assert 'secrets.GITHUB_TOKEN' in WORKFLOW.read_text(encoding='utf-8')
     assert 'gh release create' in text and 'make_latest' not in text and '--latest' not in text
     assert 'echo "$GH_TOKEN' not in text

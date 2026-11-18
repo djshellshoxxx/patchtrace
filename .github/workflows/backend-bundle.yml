@@ -476,6 +476,7 @@ jobs:
     timeout-minutes: 60
     permissions:
       contents: write
+      actions: read
     env:
       TAG: ${{ needs.pin.outputs.tag }}
       VERSION: ${{ needs.pin.outputs.version }}
@@ -483,6 +484,13 @@ jobs:
       TARGET_SHA: ${{ github.sha }}
       RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
     steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
       - uses: actions/download-artifact@v4
         with:
           pattern: bundle-*-assets
@@ -493,23 +501,49 @@ jobs:
           find staged -type f -exec cp -n {} release/ \;
           ls -l release
           test -n "$(ls release)"
+      - name: Require exact-source publication qualification
+        id: qualification
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SELECTED_WINDOWS: ${{ needs.pin.outputs.win }}
+          SELECTED_LINUX: ${{ needs.pin.outputs.lin }}
+        run: |
+          case "$SELECTED_WINDOWS,$SELECTED_LINUX" in
+            true,true) platforms=both ;;
+            true,false) platforms=windows ;;
+            false,true) platforms=linux ;;
+            *) echo "::error::invalid accepted platform selection"; exit 1 ;;
+          esac
+          python tools/release_qualification.py --repo "$GH_REPO" --head "$TARGET_SHA" \
+            --run-id "$GITHUB_RUN_ID" --attempt "$GITHUB_RUN_ATTEMPT" --profile bundle \
+            --platforms "$platforms" --tag "$TAG" --assets-dir release \
+            --report "$RUNNER_TEMP/release-qualification.json" --github-output "$GITHUB_OUTPUT"
       - name: Create or reuse the PRERELEASE and attach assets
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RELEASE_EXISTS: ${{ steps.qualification.outputs.release_exists }}
         run: |
           fail() { echo "::error::$1"; exit 1; }
-          if gh release view "$TAG" --json isPrerelease,isDraft -q '[.isPrerelease,.isDraft]|@csv' > state.txt 2> state.err; then
-            [ "$(cat state.txt)" = "true,false" ] || fail "release $TAG exists but is not a published prerelease; refusing to touch it"
-          else
+          # Absence comes only from the guard's successful bounded REST listing, never an API error.
+          if [ "$RELEASE_EXISTS" = false ]; then
             gh release create "$TAG" --prerelease --target "$TARGET_SHA" \
               --title "PatchTrace full bundle $VERSION (prerelease)" \
               --notes "Automated full-bundle assets from $RUN_URL. Prerelease only; acceptance evidence is attached to that run." \
-              || fail "could not create prerelease $TAG; the workflow token lacks contents write permission or the tag is invalid. Nothing was published."
+              || fail "could not create prerelease $TAG; asset upload stopped"
+          elif [ "$RELEASE_EXISTS" != true ]; then
+            fail "missing qualified prerelease state; refusing to touch it"
           fi
-          gh release upload "$TAG" release/* --clobber \
-            || fail "asset upload to $TAG failed (token permission or asset limit). Nothing is claimed as published."
+          gh release upload "$TAG" release/* \
+            || fail "asset upload to $TAG failed; publication completion is unverified"
           gh release view "$TAG" --json assets -q '.assets[].name' | sort > remote.txt
           ls release | sort > local.txt
           missing=$(comm -13 remote.txt local.txt)
           [ -z "$missing" ] || fail "assets missing on the release after upload"
           echo "Attached $(wc -l < local.txt) assets to prerelease $TAG"
+      - name: Preserve publication qualification receipt
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: bundle-release-qualification-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/release-qualification.json
+          if-no-files-found: warn
