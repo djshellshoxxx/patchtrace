@@ -5,9 +5,10 @@ import os
 import subprocess
 import sys
 import threading
+from pathlib import Path
 
 import pytest
-from PySide6.QtCore import QCoreApplication, QEvent, QPoint, QSettings, Qt
+from PySide6.QtCore import QCoreApplication, QPoint, QSettings, Qt
 from PySide6.QtGui import QContextMenuEvent
 from PySide6.QtWidgets import QApplication
 from shiboken6 import isValid
@@ -249,7 +250,8 @@ window.close()
 print('actual QApplication.quit cancellation passed')
 '''
     result = subprocess.run([sys.executable, '-c', script, str(tmp_path)], capture_output=True, text=True,
-                            timeout=20, env={**os.environ, 'QT_QPA_PLATFORM': 'offscreen'})
+                            timeout=20, env={**os.environ, 'QT_QPA_PLATFORM': 'offscreen',
+                                             'PYTHONPATH': str(Path(__file__).resolve().parents[1] / 'src')})
     assert result.returncode == 0, result.stdout + result.stderr
     assert 'actual QApplication.quit cancellation passed' in result.stdout
 
