@@ -19,6 +19,7 @@ from pilot_freshness_support import CVE, add_advisory, loaded, sidecar_bytes, wi
 
 from patchtrace import cli
 from patchtrace.enrichment.storage import EnrichmentStore
+from patchtrace.intelligence.storage import AdvisoryStore
 from patchtrace.kev import store as kev_store
 from patchtrace.pilot import collect, keys, review, store
 from patchtrace.pilot.limits import PilotError
@@ -131,6 +132,35 @@ def test_unreadable_required_advisory_keeps_history_but_never_current(localized,
 
 
 @pytest.mark.parametrize('route', ['cli', 'desktop'])
+def test_verified_source_recovery_of_a_missing_facts_cache_remains_current(localized, route):
+    root, _result = localized
+    with ProjectService.open(root) as service:
+        for path in (service.root / 'intelligence' / 'csaf' / 'facts').glob('*.json'):
+            path.unlink()
+        before = sidecar_bytes(service)
+        after = loaded(service, route)
+        assert (after.state, after.changed) == ('current', ())
+        assert sidecar_bytes(service) == before
+        assert list((service.root / 'intelligence' / 'csaf' / 'facts').glob('*.json')) == []
+
+
+@pytest.mark.parametrize('route', ['cli', 'desktop'])
+def test_corrupt_superseding_source_cannot_resurrect_an_older_advisory(localized, route):
+    root, result = localized
+    with ProjectService.open(root) as service:
+        revised = add_advisory(service, revision=2)
+        with service.store.connection as db:
+            db.execute("UPDATE enrichment_entries SET body_sha256=? WHERE kind='advisory-source' AND raw_sha256=?",
+                       ('0' * 64, revised.source.sha256))
+        documents, warnings = AdvisoryStore(service.root, EnrichmentStore(service.store), service.project.id,
+                                             service.project.revision).advisories()
+        assert len(documents) == 1 and warnings  # the source reader can now serve only the earlier revision
+        after = loaded(service, route)
+        assert after.assessment.result_id == result['result_id']
+        assert after.state == 'stale' and 'advisory_facts_ids' in after.changed
+
+
+@pytest.mark.parametrize('route', ['cli', 'desktop'])
 def test_local_kev_changes_are_shared_by_cli_and_desktop(localized, tmp_path, route):
     root, _result = localized
     raw = render(document([entry(cveID=CVE)]))
@@ -150,6 +180,31 @@ def test_unreadable_kev_is_not_the_same_as_an_intentionally_absent_catalog(local
         after = loaded(service, route)
         assert after.assessment.inputs.kev_snapshot_id is None
         assert after.state == 'stale' and 'kev_snapshot_id' in after.changed
+
+
+@pytest.mark.parametrize('route', ['cli', 'desktop'])
+def test_missing_required_catalog_remains_historical(localized, tmp_path, capsys, route):
+    root, _result = localized
+    folder = tmp_path / 'catalog'
+    raw = render(document([entry(cveID=CVE)]))
+    kev_store.KevStore(folder).install(raw, parse_bytes(raw), now='2099-03-02T00:00:00Z')
+    result = compute(root, capsys)
+    for path in (folder / 'snapshots').iterdir():
+        path.unlink()
+    with ProjectService.open(root) as service:
+        after = loaded(service, route)
+        assert after.assessment.result_id == result['result_id']
+        assert after.state == 'stale' and 'kev_snapshot_id' in after.changed
+
+
+@pytest.mark.parametrize('route', ['cli', 'desktop'])
+def test_missing_required_run_identity_is_not_silently_unchecked(localized, route):
+    root, _result = localized
+    with ProjectService.open(root) as service:
+        service.project = service.project.model_copy(deep=True)
+        service.project.runs[-1].status = 'failed'
+        after = loaded(service, route)
+        assert after.state == 'stale' and {'ghidriff_run_id', 'raw_sha256'} <= set(after.changed)
 
 
 @pytest.mark.parametrize('route', ['cli', 'desktop'])
@@ -202,6 +257,26 @@ def test_a_late_same_id_old_revision_cannot_replace_the_current_receipt(localize
             store.publish(enrichment, old, keys.default_config(),
                           current=store.current_guard(service.project, old.result_id))
         assert sidecar_bytes(service) == before and loaded(service, 'cli').assessment == fresh
+
+
+@pytest.mark.parametrize('route', ['cli', 'desktop'])
+def test_production_publication_rechecks_sources_even_without_a_revision_change(localized, route):
+    root, _result = localized
+    with ProjectService.open(root) as service:
+        enrichment = EnrichmentStore(service.store)
+        old = loaded(service, route).assessment
+        add_advisory(service, revision=2)
+        assert service.project.revision == old.revision
+        if route == 'cli':
+            from patchtrace.pilot.cli import _persist
+            warnings = []
+            assert _persist(enrichment, service, old, warnings).entry.stale
+            assert warnings
+        else:
+            from patchtrace.ui_leads import publish_result
+            publish_result(service, old, None)
+        assert store.load(enrichment).entry.stale
+        assert loaded(service, route).state == 'stale'
 
 
 @pytest.mark.parametrize('route', ['cli', 'desktop'])
