@@ -1557,3 +1557,12 @@ Full `QT_QPA_PLATFORM=offscreen python -m pytest -q` for this isolated native sl
 - [ ] Preserve frozen L1/L2 failures and L3 unverified status; qualify separate experiments without editing original outcomes.
 
 Current evidence and assigned work: [checkpoint](../docs/qa/verified-followup-integration-20261118/README.md). Earlier unchecked milestones remain historical observations; this dated append records completed narrow integrations without claiming final production acceptance.
+
+### [STATIC-OWNERSHIP-FOLLOWUP-20261118]
+
+- [x] Independently reproduce and repair failed staging mkdir deleting an unowned directory; preserve original red/positive evidence and 140-pass review.
+- [x] Retain original 43-site static dispositions and independently replay all eight control groups with/without Python assertions on combined source.
+- [x] Re-run complete strict static detection; retain all 81 current findings and explicitly map the two additions to original 79.
+- [ ] Complete source-specific residual/extra-site review; retain raw findings and repair only reproduced defects.
+- [ ] Repair and independently review failed engine-attempt persistence diagnostics through final UI aggregation.
+- [ ] Obtain actual final candidate full/platform/native/package/dependency/security gates before canonical integration.
