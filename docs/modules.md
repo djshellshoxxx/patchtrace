@@ -1058,6 +1058,9 @@ production load/publication, while `pilot/store.py` retains its low-level integr
 API and rejects same-id revision downgrades. Historical reads and review records
 remain available; stale desktop navigation is disabled. No Qt, new project open,
 network or analyzer call belongs in the capture. Verification:
+`report2/adapters.py` uses the same check before exporting PIL lead records;
+stale results are omitted with an explicit unknown. Verification also includes
+`tests/test_report2_current_leads.py`.
 `tests/test_pilot_current_inputs.py`, `tests/test_ui_leads_freshness.py`, existing
 PIL store/CLI/desktop suites. These are authored-data controls, not native accuracy.
 

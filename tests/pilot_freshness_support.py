@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import copy
 import json
+import threading
 from pathlib import Path
 
 from patchtrace.enrichment.storage import EnrichmentStore
@@ -54,3 +55,15 @@ def loaded(service, route):
 def sidecar_bytes(service):
     return {p.relative_to(service.root).as_posix(): p.read_bytes()
             for p in (service.root / 'intelligence' / 'pilot').rglob('*') if p.is_file()}
+
+
+def put_current(service):
+    from patchtrace.pilot import collect, keys, store
+    from patchtrace.pilot.service import localize
+
+    enrichment = EnrichmentStore(service.store)
+    assessment = localize(collect.collect(service, enrichment, cancel=threading.Event()), keys.default_config(),
+                          threading.Event())
+    store.publish(enrichment, assessment, keys.default_config(),
+                  current=store.current_guard(service.project, assessment.result_id))
+    return assessment
