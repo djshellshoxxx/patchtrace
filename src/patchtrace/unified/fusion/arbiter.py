@@ -296,10 +296,24 @@ def _prefix(ranked: Sequence[Atom], room: int, rank: Callable) -> list[Atom]:
     return list(ranked[:end])
 
 
+def _acceptance_witness(chosen: Sequence[Atom], component: Callable) -> tuple[Atom, ...]:
+    """First B+B witness in the caller's mirror order. Repeated observations of one component/class cannot
+    change its representative or make the pair search quadratic in the number of observations."""
+    representatives: dict[tuple[str, str], Atom] = {}
+    for a in chosen:
+        if a.tier == 'B' and a.cls != 'E-UNKNOWN':
+            representatives.setdefault((component(a), a.cls), a)
+    for (left, x), (right, y) in combinations(representatives.items(), 2):
+        if left[0] != right[0] and left[1] != right[1]:
+            return x, y
+    return ()
+
+
 def _assemble(older, newer, decision, chosen_atoms, against_atoms, extra_atoms, hints, pair, key: Callable,
               mirror_key: Callable, component: Callable, limits: UnifiedLimits, supported: bool = True) -> Decided:
     """Beyond L-39 the chosen atoms keep priority (the strongest of each component always), the strongest against-atom
-    keeps its slot, then the other against-atoms and the observations fill what is left. Every cut ranks by
+    keeps its slot, and a matched base decision keeps its B+B witness when needed. Other atoms fill what is left.
+    Support remains the component max-pool inventory. Every cut ranks by
     `mirror_key` and never separates two atoms of one rank, so the swapped input keeps the mirror image of what the
     forward input keeps (audit U7-08); the row stays sorted by `key`."""
     cap = limits.l39_atoms_per_row
@@ -313,7 +327,14 @@ def _assemble(older, newer, decision, chosen_atoms, against_atoms, extra_atoms, 
     strongest: dict[str, tuple] = {}
     for a in chosen:  # `chosen` is sorted by (component, tier desc), so the first per component is the strongest
         strongest.setdefault(component(a), mirror_key(a))
-    must = [a for a in chosen if strongest[component(a)] == mirror_key(a)]
+    required = set(strongest.values())
+    matched_base = decision == 'matched' or (decision == 'contested' and 'uncontested:matched' in hints)
+    if supported and pair is not None and matched_base and not any(a.tier in ('M', 'A') for a in chosen):
+        required.update(mirror_key(a) for a in _acceptance_witness(chosen, component))
+    must = [a for a in chosen if mirror_key(a) in required]  # whole mirror groups, including witness twins
+    if len(must) + reserve > cap:
+        raise UnifiedError('PT-UNIFIED-LIMIT', 'L-39 cannot retain the required pairing and contest evidence',
+                           reason='atoms-cap')
     rest = sorted((a for a in chosen if a not in must), key=ranked)
     keep_rest = _prefix(rest, cap - reserve - len(must), ranked)
     keep_chosen = must + keep_rest
