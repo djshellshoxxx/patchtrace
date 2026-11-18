@@ -22,8 +22,8 @@ from typing import TYPE_CHECKING, Protocol, runtime_checkable
 from ..fabric.ports import AnchorSink, OriginRegistry  # noqa: F401 - re-exported
 from .contracts import Candidate, ChannelStatus, Kev, Nav, Observation, ToolKey
 
-if TYPE_CHECKING:  # annotation only: the K contract is the canonical advisory model (intelligence/1)
-    from ..intelligence.contracts import IntelligenceReport
+if TYPE_CHECKING:
+    from ..intelligence.contracts import AnchorSet, HypothesisSet
 
 
 @runtime_checkable
@@ -40,15 +40,30 @@ class Navigator(Protocol):
 
 
 @runtime_checkable
+class AdvisoryRuleView(Protocol):
+    """The rule inputs used by pilot; a CSAF IntelligenceReport also satisfies this view.
+
+    Retained CVRF context supplies these fields without inventing CSAF source metadata.
+    Applicability and field observations travel through the existing AdvisoryContext.
+    """
+
+    @property
+    def hypotheses(self) -> HypothesisSet: ...
+
+    @property
+    def anchors(self) -> AnchorSet: ...
+
+
+@runtime_checkable
 class AdvisorySource(Protocol):
-    """Advisory facts per CVE as the K contract states them (intelligence/1); other sources adapt into it."""
+    """Source-bound advisory rule inputs per CVE, with exact source identities."""
 
     def cves(self) -> Sequence[str]:
         """CVE ids with stored advisory facts, sorted."""
         ...
 
-    def report(self, cve: str) -> IntelligenceReport | None:
-        """Facts, applicability, CWE profile, hypotheses and anchors for one CVE; None when nothing is stored."""
+    def report(self, cve: str) -> AdvisoryRuleView | None:
+        """Hypotheses and anchors for one CVE; None when nothing usable is stored."""
         ...
 
     def facts_ids(self) -> Sequence[str]:

@@ -1956,7 +1956,21 @@ PR #304 at `bb4277ae` failed the hosted Windows publication boundary: **15 faile
 
 Fresh REST inspection found eleven new #302 commits at `121ffb0b`; six repairs match earlier #304 patch IDs, while four behavior commits repair additional ZIP/lineage/selection/budget defects. Actual merge parents preserve both that head and #304 `6cc6b6b7`. Independent review verified all forty #304-only paths remain unchanged. A copied-target chronology-cache regression was reproduced and fixed; four stale test-double failures were preserved and repaired through fixture flags only. Disjoint affected selections total **1,650 passed, 2 native Windows skips**, with separate independent controls, whole Ruff and schema checks passing. Final code/tree is local `3693ca3b` / published `34c06d9e`, tree `42327753`. Hosted exact-head acceptance and guarded merge remain pending; no PR closure or accuracy promotion follows from local checks. [Evidence and limits](qa/current302-integration-20261118.md).
 
+### 2026-11-18 retained CVRF context fallback
+
+Source `35390267` admits bounded project-retained CVRF fields with CSAF precedence,
+unknown applicability, native pointers and existing context/source identity fields.
+Exact-source affected qualification: 1,533 passed in 35.49 s; whole Ruff/diff passed.
+Original red runs, corrected negative controls and a guarded real CLI journey are
+retained in [the QA receipt](qa/pilot-retained-cvrf-context-20261118.md). Separate
+current-input hook, combined independent review and native/manual gates remain open.
+
 
 ## [ADVISORY-READ-BOUNDS-20261118]
 
 Seven unbounded-read/byte-limit failures reproduced and repaired; exact source independently passes 140 affected plus 16 filesystem/backup controls. Native Windows and cumulative store budgets remain unverified. [Evidence](qa/advisory-read-bounds-20261118.md).
+
+
+## [PILOT-CVRF-COMBINED-20261118]
+
+Retained-context bridge, current-input/report hook and independent SQLite repairs pass 1,924 checks on combined source `ac789497`. No skips. The six root reproducers pass unchanged, with six additional corruption/history/export controls. Full/native/platform gates and real CVE attribution remain open. [Receipt](qa/pilot-cvrf-reviewed-20261118/README.md).

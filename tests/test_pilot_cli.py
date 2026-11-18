@@ -447,7 +447,8 @@ def test_a_stored_result_after_an_orientation_swap_is_shown_as_out_of_date(advis
     assert code == 0 and document['result']['stale'] is True
     assert set(document['result']['changed']) >= {'older_sha256', 'newer_sha256'}
     code, text, err = call(['pilot', 'why', advised, '--candidate', key], capsys)
-    assert code == 0 and 'These leads are out of date (the older build, the newer build changed)' in err
+    assert code == 0 and ('These leads are out of date (the older build, the newer build, '
+                          'the project revision changed)') in err
     assert 'Summary' in text
 
 

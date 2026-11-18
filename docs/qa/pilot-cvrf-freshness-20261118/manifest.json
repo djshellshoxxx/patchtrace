@@ -1,0 +1,162 @@
+{
+  "schema": 1,
+  "created_at": "2026-11-18T15:32:06.818365+00:00",
+  "source_sha": "3207f9624536ad88af4066a846490abfd0194a9d",
+  "pre_hook_source": "33f746ad2d96ecf4021a95082ad417087a8148a5",
+  "red_spec_test_sha": "78472c5f437c178e1baebfcbd9af76dc31c0e48d",
+  "original_bridge_source": "353902677e6d59961e808a90b2a3dd96d2b43269",
+  "qualification_credit": "Authored local data, source-pinned CLI and offscreen controls only; no native accuracy or combined acceptance.",
+  "open_combined_findings": "Root independently reproduced three malformed SQLite storage-class bridge failures; bridge author repair and combined review remain required.",
+  "members": [
+    {
+      "name": "baseline-current_inputs.py",
+      "bytes": 6073,
+      "sha256": "19bccbe2fba4418bad820c5b904a5b69820ed05247347dbb578cd7f42e5c976a"
+    },
+    {
+      "name": "baseline-kb_context.py",
+      "bytes": 19103,
+      "sha256": "0a685e92dac7365b34eea4ceb4dedc5377b9e3969add6eea4aa27f0c4c49e9b4"
+    },
+    {
+      "name": "bridge-source-equality.json",
+      "bytes": 601,
+      "sha256": "ee986e48bdaffd19b5574cc681d109d3a10e16bd52422a9d1238bf07107b0403"
+    },
+    {
+      "name": "checkpoint.md",
+      "bytes": 8721,
+      "sha256": "2c490eeec2234726b522371f564ae33ac25c68f04a4b694f85ed7535bd29ebd5"
+    },
+    {
+      "name": "current_inputs.py",
+      "bytes": 6843,
+      "sha256": "0fd645d57f87e2843b65791ed3ad5247fbd8d15f65cf48d613149965183bf378"
+    },
+    {
+      "name": "final-affected.log",
+      "bytes": 2022,
+      "sha256": "62cc70ab637f262979684ef43299d7ed10cddd5ec82386e9545e604d059521a2"
+    },
+    {
+      "name": "final-affected.xml",
+      "bytes": 240289,
+      "sha256": "46b4e8764aa34de60e02ba3dba9cc838b18438c5f643c51b74443c86dfa18265"
+    },
+    {
+      "name": "final-context.json",
+      "bytes": 2233,
+      "sha256": "a859abd171dc7a9f2cdd24d3cc443e525fb88555e82127d999e157cd2e705818"
+    },
+    {
+      "name": "final-ruff.log",
+      "bytes": 19,
+      "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+    },
+    {
+      "name": "focused-green-context.json",
+      "bytes": 1031,
+      "sha256": "ff6b327f13f1bb2a1e15c57ae75b43c1fb5137a6f2e9136087909105c3e5e32d"
+    },
+    {
+      "name": "focused-green.log",
+      "bytes": 99,
+      "sha256": "d107bb7139c80df0faf42d573237dcd2ccc9d3c4f97e2060efa8a3ffe4200c30"
+    },
+    {
+      "name": "focused-green.xml",
+      "bytes": 3726,
+      "sha256": "d9b846c070d89872fadfacb2658496c507a716561a63c1bfb1cc303ca29b0f4e"
+    },
+    {
+      "name": "hook.patch",
+      "bytes": 21906,
+      "sha256": "b62f67562fae38094ac796fe9bb12fe5b22f1c7834fdedc36d2a5d7bab6c34da"
+    },
+    {
+      "name": "initial-red-context.json",
+      "bytes": 925,
+      "sha256": "ebd8ce4af928e8709743060b5db007fb1fe357fb909278dd358b11b2b568bc74"
+    },
+    {
+      "name": "initial-red.log",
+      "bytes": 14321,
+      "sha256": "ee603d358046076ba73cebbbec1c73dd035cc21f02473c3955a262762697d133"
+    },
+    {
+      "name": "initial-red.xml",
+      "bytes": 16915,
+      "sha256": "5d7920d38a5924e56152c4a362ae418a19c13425bf41e6846bd9afe358326af0"
+    },
+    {
+      "name": "intermediate-first.log",
+      "bytes": 1738,
+      "sha256": "818693461cfb8c34af2e8a7f28b6036d39aa01193441fa9162766485458d36cb"
+    },
+    {
+      "name": "intermediate-first.xml",
+      "bytes": 5114,
+      "sha256": "bbedb4a348e46ad8cd83a733f18706c1782e4f3d18a09e599438ec5f9c80d3fe"
+    },
+    {
+      "name": "intermediate-source.patch",
+      "bytes": 6018,
+      "sha256": "ba53ec891b2a6f7bacec9e76239775704b76ef7a3ce43959aa30734283c9bf56"
+    },
+    {
+      "name": "pre-correction-red-context.json",
+      "bytes": 991,
+      "sha256": "0b0a1fc51ce0773c085c3226350cb5d97905e9b0ae169a7847c0cd6d337f76a6"
+    },
+    {
+      "name": "pre-correction-red.log",
+      "bytes": 14321,
+      "sha256": "53abbf9b022e6111be996798d10406ece7356f39382b6b2b382d6f2bab0bd283"
+    },
+    {
+      "name": "pre-correction-red.xml",
+      "bytes": 16915,
+      "sha256": "a526e961bd41412bab3460f577c7e36e0e93d4e2b2633f2aef15168f24eb7d49"
+    },
+    {
+      "name": "pre-correction-tests.py",
+      "bytes": 11500,
+      "sha256": "94d94424931f3065d02106a9c994b78ce1806dcde9357e9f687202d367d34ec3"
+    },
+    {
+      "name": "red-authored-tests.py",
+      "bytes": 11500,
+      "sha256": "b0197712e7f6d78569f1c0822eee4006877032607d91c5a0c0fdc449560c0929"
+    },
+    {
+      "name": "red-context.json",
+      "bytes": 986,
+      "sha256": "91df0ea385419aa1f4c2d0e3b295438be78cb69f082bf3f82edfaf381b8084e3"
+    },
+    {
+      "name": "red.log",
+      "bytes": 14321,
+      "sha256": "e1e09ada0de50b60f9664bb9881bad367746fc422505286ace8a2b185e07ff04"
+    },
+    {
+      "name": "red.xml",
+      "bytes": 16915,
+      "sha256": "b1e1c292eae07758148d87c9fdd2f2604303bb2e7fed09f5ac5d2e6675412cd2"
+    },
+    {
+      "name": "specification.md",
+      "bytes": 9622,
+      "sha256": "690b12b84d3589b540d31c5a87fe3dd07e3d741261efe02d227fbf428bfeafa6"
+    },
+    {
+      "name": "test_pilot_kb_current_inputs.py",
+      "bytes": 11513,
+      "sha256": "abfab527af39239851ff4b8b1ba3b5836961c8dc899e10651fce97e74e441bb5"
+    }
+  ],
+  "archive": {
+    "name": "evidence.zip",
+    "bytes": 89934,
+    "sha256": "acc0250a7eb20dcd0b0eea4c9c7ac5fe3c4ad26c58950163657b2a5560e4e128"
+  }
+}

@@ -25,6 +25,12 @@ Check the product and architecture before you read an association. An advisory m
 See [KB file inventories](kb-file-inventory.md) for the saved-source workflow,
 logical/physical row provenance, partial coverage and the separate fetch consent.
 
+After attaching context and completing a comparison, continue with
+[retained KB/CVE patch-intent leads](70-cli-pilot.md#continue-a-retained-kbcve-investigation).
+Eligible CVRF fields retain their source bindings and unknown applicability;
+overlapping CSAF statements take precedence. Saved leads and report exports
+check for changed evidence before presenting them as current.
+
 `search --kev-dir DIR` uses a local KEV catalogue (the default is the catalogue
 used by `patchtrace kev`). Search JSON includes CVE-level status, listing date,
 snapshot identity and catalogue provenance. No catalogue means not loaded;

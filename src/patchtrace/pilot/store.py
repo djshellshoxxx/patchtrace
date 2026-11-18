@@ -25,7 +25,7 @@ import sqlite3
 import stat
 import time
 import zlib
-from collections.abc import Iterable, Mapping
+from collections.abc import Callable, Iterable, Mapping
 from dataclasses import dataclass
 from datetime import UTC, datetime
 from pathlib import Path
@@ -50,6 +50,7 @@ _STAGING = re.compile(r'tmp-[0-9a-f]{16}')
 _RESULT_DIR = re.compile(r'[0-9a-f]{16}')
 _PILOT_ROWS = "SELECT id, body_sha256 FROM enrichment_entries WHERE kind='patch-intent' ORDER BY id"
 _CHUNK = 400  # ids per SQL statement (SQLite's variable limit)
+FreshnessCheck = Callable[[PilotAssessment], tuple[str, ...]]
 
 
 @dataclass(frozen=True, slots=True)
@@ -233,6 +234,16 @@ def project_facts(enrichment: EnrichmentStore) -> tuple[str | None, dict[str, st
     return row[0], runs, shas
 
 
+def project_owner(enrichment: EnrichmentStore) -> tuple[str | None, int | None]:
+    """Saved ownership/revision on this connection; enrichment publication does not advance it."""
+    row = enrichment.store.connection.execute(
+        "SELECT json_extract(payload, '$.id'), json_extract(payload, '$.revision') "
+        'FROM current_snapshot WHERE singleton=1').fetchone()
+    if row is None or not isinstance(row[0], str) or type(row[1]) is not int or row[1] < 0:
+        return None, None
+    return row[0], row[1]
+
+
 def _mismatch(message: str, reason: str) -> PilotError:
     return _error('PT-PILOT-MISMATCH', message, reason)
 
@@ -287,47 +298,50 @@ def _changed(inputs: PilotInputs, known: Mapping[str, object] | None) -> tuple[s
     return tuple(name for name in PilotInputs.model_fields if known and name in known and stored[name] != known[name])
 
 
-def load(enrichment: EnrichmentStore, known: Mapping[str, object] | None = None) -> Loaded:
-    """The newest result that verifies, current results first. `known` holds what is known now about the `PilotInputs`
-    names (a project can name its pair, run and raw output without computing anything; the Leads dock names them all):
-    a stored result that differs in any of them is `stale` and says which. A damaged sidecar is skipped, so it never
-    hides an intact older result; nothing verifying at all is `invalid`, never a crash."""
+def load(enrichment: EnrichmentStore, known: Mapping[str, object] | None = None, *,
+         check_current: FreshnessCheck | None = None) -> Loaded:
+    """Newest verifying current result, else newest verifying history. `known` is the legacy partial-input API;
+    production readers also supply a shared per-assessment current-input check. Missing/corrupt sidecars cannot hide
+    an intact older result. Reading never edits the assessment, its sources or review events."""
     _owner(enrichment)
     rows, skipped = _pointers(enrichment)
     if not rows:
         return Loaded('none', 'no-result', skipped=tuple(skipped))
-    root, failure, candidates = enrichment.store.root, None, []
+    root, failure, historical = enrichment.store.root, None, None
     for entry, pointer in rows:  # newest first
         try:
             manifest = _manifest_of(root, pointer)
-        except PilotError as exc:
-            failure = failure or exc.reason or 'unreadable'
-            continue
-        changed = _changed(manifest.inputs, known)
-        candidates.append((bool(entry.stale or changed), entry, pointer, manifest, changed))
-    for stale, entry, pointer, manifest, changed in sorted(candidates, key=lambda item: item[0]):
-        try:
             assessment = read_assessment(root / pointer.relative_dir, manifest)
         except PilotError as exc:
             failure = failure or exc.reason or 'unreadable'
             continue
+        changed = tuple(dict.fromkeys((*_changed(manifest.inputs, known),
+                                       *(check_current(assessment) if check_current else ()))))
+        stale = bool(entry.stale or changed)
         reason = None if not stale else 'inputs-changed' if changed else 'guard-moved'
-        return Loaded('stale' if stale else 'current', reason, entry, pointer, manifest, assessment, changed,
-                      tuple(skipped))
-    return Loaded('invalid', failure or 'unreadable', skipped=tuple(skipped))
+        loaded = Loaded('stale' if stale else 'current', reason, entry, pointer, manifest, assessment, changed,
+                        tuple(skipped))
+        if not stale:
+            return loaded
+        historical = historical or loaded
+    return historical or Loaded('invalid', failure or 'unreadable', skipped=tuple(skipped))
 
 
-def _install(root: Path, staged: Path, result: str) -> tuple[Path, PilotManifest, bool]:
+def _install(root: Path, staged: Path, assessment: PilotAssessment) -> tuple[Path, PilotManifest, bool]:
     """Move the staged directory to its final place. A verified copy with the same content is kept (idempotent); other
     content under the same id, or a damaged copy, is replaced: the result is derived and the newest copy counts.
     Returns the directory, its manifest and whether `staged` was moved in."""
-    final = _safe(root, keys.relative_dir(result))
+    final = _safe(root, keys.relative_dir(assessment.result_id))
     fresh = read_manifest(staged)
     if final.exists():
         try:
-            kept = read_sidecar(final)[0]
+            kept, previous = read_sidecar(final)
         except PilotError:
             kept = None
+        else:
+            if previous.project_id == assessment.project_id and previous.revision > assessment.revision:
+                raise _error('PT-PILOT-STALE', 'A newer project revision already has this result; older work was not '
+                             'stored', 'newer-assessment')
         if kept is not None and kept.model_copy(update={'created_utc': fresh.created_utc}) == fresh:
             _rmtree(staged)
             return final, kept, False
@@ -339,7 +353,8 @@ def _install(root: Path, staged: Path, result: str) -> tuple[Path, PilotManifest
 
 
 def publish(enrichment: EnrichmentStore, assessment: PilotAssessment, config: PilotConfig, *, current: Guard,
-            created_utc: str | None = None, limits: PilotLimits = DEFAULT_LIMITS) -> Published:
+            created_utc: str | None = None, limits: PilotLimits = DEFAULT_LIMITS,
+            check_current: FreshnessCheck | None = None) -> Published:
     """Verify that the project owns the result, stage and install its directory, then write the pointer row (stored
     stale when `current`, the guard recomputed from the live project, no longer equals the result's). Any failure before
     the row leaves the previous rows as they were. Retention and the orphan sweep follow, best effort: they never fail a
@@ -349,10 +364,15 @@ def publish(enrichment: EnrichmentStore, assessment: PilotAssessment, config: Pi
         raise _error('PT-PILOT-STALE', 'Project enrichment data was written by a newer PatchTrace', 'read-only-store')
     keys.verify_assessment(assessment)
     _require_owned(enrichment, assessment)
+    if (assessment.project_id, assessment.revision) != project_owner(enrichment) or (
+            check_current is not None and check_current(assessment)):
+        # The existing Guard omits revision. A mismatching live digest preserves
+        # its persisted identity while marking this late publication stale.
+        current = Guard(current.project_id, current.run_id, current.raw_sha256, '')
     root = enrichment.store.root
     staged = stage(root, assessment, config, created_utc=created_utc, limits=limits)
     try:
-        final, manifest, installed = _install(root, staged, assessment.result_id)
+        final, manifest, installed = _install(root, staged, assessment)
     except BaseException:
         shutil.rmtree(staged, ignore_errors=True)
         raise

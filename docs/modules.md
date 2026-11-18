@@ -638,6 +638,7 @@ S10 notes: no Itanium, Rust or RTTI names are derived (kind only). Readable name
 | kev | src/patchtrace/pilot/sources/kev.py | KEV as CVE context: `CatalogKev` (a `ports.KevSource` over a snapshot id and the date each CVE was added; absent = `not-in-snapshot`, malformed id = `unknown`), `kev_context` (no catalog = unknown; an answer from another snapshot is refused), `kev_rank` / `order_cves` (listed first, absence ranks as unknown; never function evidence) | pilot contracts/limits | same |
 | window | src/patchtrace/pilot/sources/window.py | confounded-window count: CVEs whose gate is `applies` or `asserted`, plus the KB port `KbWindowSource` / `KbWindow`; `yes` at the threshold, `no` only from a complete KB window, else `unknown` | pilot contracts/limits | same |
 | snapshot | src/patchtrace/pilot/sources/snapshot.py | B3 `CveSnapshot` or a CVE-record excerpt `{cve, cwe, description, title?}` -> K `CVEFact` (English text as notes, one agreed CWE as the explicit field, several kept as claims in a note, no product data) and `snapshot_limitations`; the path PIL-D1 reads | enrichment contracts/identity, intelligence contracts/lexicon, pilot contracts/limits | same |
+| retained CVRF context | src/patchtrace/pilot/sources/kb_context.py | Bounded owner-thread capture of project-owned `kb-context`, revision/withdrawal and exact field admission, current rule interpretation, conservative CSAF-first advisory composition and existing `kb_link_digest` identity; no raw-source freshness or applicability claim. Internal rule view in ports, collector/service hooks; spec `program-e/pilot-retained-cvrf-context.md` | kbcorrelation context/card provenance/IntelligenceRules, existing advisory adapter, enrichment store | `tests/test_pilot_kb_context.py`; authored real-store journey and current-source headless CLI, no acquisition or target execution |
 ### [PIL-A2:advisory-sources] decisions beyond plan s7 and s9
 - Gate precedence, strongest statement first: conflict (any contradiction, also one on products mapped to neither side, as the table says; or a side that resolves contradictory), then not-applicable (older not affected, newer still affected, or both sides fixed or not affected), then unverified, then applies. A contradiction is never settled by suppressing leads. The analyst's `--assume-applies` only turns `unverified` into `asserted`; a conflict or not-applicable gate stays and the context says the assumption was not used.
 - Window: the imported CSAF documents are a partial list, so they can establish `yes` (the threshold is `PilotConfig.confounded_min_cves`) but never `no`; fewer CVEs leave the window `unknown` (no cap, the caption says so). `no` needs a complete KB window. More than 1,024 CVEs in a window is `PT-PILOT-LIMIT`, not a cut list.
@@ -1048,6 +1049,30 @@ WBQ-S8 notes (for S9 and the integration owner):
 ### [UE-WIRE:S3-S5-S4a] Unified engine wiring (A43)
 - `unified/ir/ladder_port.py` (IrReader -> ladder `IrSide`/`MnemonicSource`), `unified/sources/ladder.py` (`Correspondence.atoms()` -> `pt-ladder`/`pt-bytes` atoms), `compute.py` (`IrInputs`, ladder stage, `IrSides` facts, `refacts_stage`), `exchange.py` (`WorkerIr`, `refacts`, `unified-refacts/1`), `pipeline.py` (`PlacedIr`, mode `ir`/`s0`, decompile stage in the owner thread: the capped worker never spawns the JVM), `store.py` (`part_lines`/`parse_line` public, `add_limitations`, `publish_result(upgrade=)`).
 - Decisions: B-07 is a flag (`--no-residual`, default residual on) and part of `config_digest` (another id). IR mode is the default when matching sidecars are placed; `--no-extract` is B-00 (S0). The result id does not depend on the decompile: a refresh that decompiled replaces the same-id directory (`upgrade`), any other differing publish is still `result-drift`. Single-use data without neighbours stays unmapped. An import stub is kind `external`.
+### [PIL-current:assessment-freshness] Shared current-input capture (2026-11-18)
+
+`src/patchtrace/pilot/current_inputs.py` captures saved project ownership/revision,
+ordered pair/run/raw identities, stored advisory tracking groups, local KEV
+availability and the current static ranking digests on the existing store's owner
+thread. Its per-assessment check is shared by `pilot/cli.py` and `ui_leads.py` for
+production load/publication, while `pilot/store.py` retains its low-level integrity
+API and rejects same-id revision downgrades. Historical reads and review records
+remain available; stale desktop navigation is disabled. No Qt, new project open,
+network or analyzer call belongs in the capture. Verification:
+`report2/adapters.py` uses the same check before exporting PIL lead records;
+stale results are omitted with an explicit unknown. Verification also includes
+`tests/test_report2_current_leads.py`.
+`tests/test_pilot_current_inputs.py`, `tests/test_ui_leads_freshness.py`, existing
+PIL store/CLI/desktop suites. These are authored-data controls, not native accuracy.
+
+The 2026-11-18 retained-CVRF follow-up extends that capture with the existing
+`pilot/sources/kb_context.py` immutable snapshot, `kb_link_digest`, combined CVE
+universe and selected fallback source IDs. CSAF tracking-group precedence and
+verified cache recovery remain intact; any advisory read warning suppresses CVRF
+fallback. No-store per-assessment comparison also covers recorded subsets above
+P-03. Tests: `tests/test_pilot_kb_current_inputs.py` plus the existing freshness,
+retained-context, CLI/desktop and report suites. No schema or UI module is added.
+
 ### [PIL-C1:store-report-cli] Patch-intent localization: result store, review events, report and the `pilot` verb (2026-10-14; contract `pilot/1`; plan `docs/specs/program-e/PIL-integration-plan.md` s7 "Store and keys", s8 CLI, s9 PIL-C1)
 | Module | Files | Responsibility | Depends on | Verification |
 |---|---|---|---|---|
