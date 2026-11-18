@@ -1048,6 +1048,19 @@ WBQ-S8 notes (for S9 and the integration owner):
 ### [UE-WIRE:S3-S5-S4a] Unified engine wiring (A43)
 - `unified/ir/ladder_port.py` (IrReader -> ladder `IrSide`/`MnemonicSource`), `unified/sources/ladder.py` (`Correspondence.atoms()` -> `pt-ladder`/`pt-bytes` atoms), `compute.py` (`IrInputs`, ladder stage, `IrSides` facts, `refacts_stage`), `exchange.py` (`WorkerIr`, `refacts`, `unified-refacts/1`), `pipeline.py` (`PlacedIr`, mode `ir`/`s0`, decompile stage in the owner thread: the capped worker never spawns the JVM), `store.py` (`part_lines`/`parse_line` public, `add_limitations`, `publish_result(upgrade=)`).
 - Decisions: B-07 is a flag (`--no-residual`, default residual on) and part of `config_digest` (another id). IR mode is the default when matching sidecars are placed; `--no-extract` is B-00 (S0). The result id does not depend on the decompile: a refresh that decompiled replaces the same-id directory (`upgrade`), any other differing publish is still `result-drift`. Single-use data without neighbours stays unmapped. An import stub is kind `external`.
+### [PIL-current:assessment-freshness] Shared current-input capture (2026-11-18)
+
+`src/patchtrace/pilot/current_inputs.py` captures saved project ownership/revision,
+ordered pair/run/raw identities, stored advisory tracking groups, local KEV
+availability and the current static ranking digests on the existing store's owner
+thread. Its per-assessment check is shared by `pilot/cli.py` and `ui_leads.py` for
+production load/publication, while `pilot/store.py` retains its low-level integrity
+API and rejects same-id revision downgrades. Historical reads and review records
+remain available; stale desktop navigation is disabled. No Qt, new project open,
+network or analyzer call belongs in the capture. Verification:
+`tests/test_pilot_current_inputs.py`, `tests/test_ui_leads_freshness.py`, existing
+PIL store/CLI/desktop suites. These are authored-data controls, not native accuracy.
+
 ### [PIL-C1:store-report-cli] Patch-intent localization: result store, review events, report and the `pilot` verb (2026-10-14; contract `pilot/1`; plan `docs/specs/program-e/PIL-integration-plan.md` s7 "Store and keys", s8 CLI, s9 PIL-C1)
 | Module | Files | Responsibility | Depends on | Verification |
 |---|---|---|---|---|
