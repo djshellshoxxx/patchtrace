@@ -1,0 +1,41 @@
+FFFFF                                                                    [100%]
+=================================== FAILURES ===================================
+______________ test_destination_created_during_sync_is_preserved _______________
+tests/test_strings_export_publication.py:21: in test_destination_created_during_sync_is_preserved
+    with pytest.raises(StringsError) as caught:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: DID NOT RAISE StringsError
+__________ test_dangling_destination_link_is_preserved_without_force ___________
+tests/test_strings_export_publication.py:32: in test_dangling_destination_link_is_preserved_without_force
+    with pytest.raises(StringsError) as caught:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: DID NOT RAISE StringsError
+________ test_predictable_stage_link_never_receives_export_bytes[False] ________
+tests/test_strings_export_publication.py:48: in test_predictable_stage_link_never_receives_export_bytes
+    assert outside.read_bytes() == b'preserve prior evidence'
+E   AssertionError: assert b'new export' == b'preserve prior evidence'
+E     
+E     At index 0 diff: b'n' != b'p'
+E     Use -v to get more diff
+________ test_predictable_stage_link_never_receives_export_bytes[True] _________
+tests/test_strings_export_publication.py:48: in test_predictable_stage_link_never_receives_export_bytes
+    assert outside.read_bytes() == b'preserve prior evidence'
+E   AssertionError: assert b'new export' == b'preserve prior evidence'
+E     
+E     At index 0 diff: b'n' != b'p'
+E     Use -v to get more diff
+___________________ test_interruption_removes_only_its_stage ___________________
+tests/test_strings_export_publication.py:65: in test_interruption_removes_only_its_stage
+    assert set(tmp_path.iterdir()) == {prior}
+E   AssertionError: assert {PosixPath('/...report.json')} == {PosixPath('/...report.json')}
+E     
+E     Extra items in the left set:
+E     PosixPath('/tmp/pytest-of-agent/pytest-259/test_interruption_removes_only0/.report.json.6.tmp')
+E     Use -v to get more diff
+=========================== short test summary info ============================
+FAILED tests/test_strings_export_publication.py::test_destination_created_during_sync_is_preserved
+FAILED tests/test_strings_export_publication.py::test_dangling_destination_link_is_preserved_without_force
+FAILED tests/test_strings_export_publication.py::test_predictable_stage_link_never_receives_export_bytes[False]
+FAILED tests/test_strings_export_publication.py::test_predictable_stage_link_never_receives_export_bytes[True]
+FAILED tests/test_strings_export_publication.py::test_interruption_removes_only_its_stage
+5 failed in 0.48s

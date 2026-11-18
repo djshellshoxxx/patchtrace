@@ -1,8 +1,8 @@
 """Export of a strings delta as JSON or CSV (spec WB3 s8, WB3-S6). Pure but for the final file write.
 
 Redacted unless the caller passes the revealed values; the document records the basis digests, the harmonized
-settings and the lineage groups, so a file can be traced to the extraction it came from. The write is atomic (a
-temporary file in the same folder, then a rename) and never replaces an existing file without `force`.
+settings and the lineage groups, so a file can be traced to the extraction it came from. The write is atomic (an
+exclusive temporary file, then exclusive publication or an explicitly forced replace).
 """
 from __future__ import annotations
 
@@ -11,7 +11,9 @@ import hashlib
 import io
 import json
 import os
+import tempfile
 from collections.abc import Mapping
+from contextlib import suppress
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Literal
@@ -94,19 +96,37 @@ def render(doc: dict, fmt: Format) -> bytes:
 
 
 def write_atomic(path: Path, data: bytes, *, force: bool) -> None:
-    if path.exists() and not force:
+    if (path.exists() or path.is_symlink()) and not force:
         raise _fail(f'{path.name} already exists; pass --force to replace it')
     if path.is_dir():
         raise _fail(f'{path.name} is a folder')
-    temp = path.with_name(f'.{path.name}.{os.getpid()}.tmp')
     try:
-        with open(temp, 'wb') as stream:
-            stream.write(data)
-            stream.flush()
-            os.fsync(stream.fileno())
-        os.replace(temp, path)
+        descriptor, temporary = tempfile.mkstemp(prefix=f'.{path.name}.', suffix='.tmp', dir=path.parent)
+        stage = Path(temporary)
+        try:
+            stream = os.fdopen(descriptor, 'wb')
+            descriptor = None  # transfer ownership only after fdopen succeeds
+            with stream:
+                stream.write(data)
+                stream.flush()
+                os.fsync(stream.fileno())
+            if force:
+                os.replace(stage, path)
+            else:
+                # An initial exists() check is not authority to overwrite a later arrival.
+                # If exclusive publication is unsupported, fail rather than fall back to replace.
+                os.link(stage, path, follow_symlinks=False)
+                stage.unlink()
+        except BaseException:
+            if descriptor is not None:
+                with suppress(OSError):
+                    os.close(descriptor)
+            with suppress(OSError):
+                stage.unlink(missing_ok=True)
+            raise
+    except FileExistsError:
+        raise _fail(f'{path.name} already exists; pass --force to replace it') from None
     except OSError as exc:
-        temp.unlink(missing_ok=True)
         raise _fail(f'could not write {path.name}: {exc.strerror or type(exc).__name__}') from None
 
 
