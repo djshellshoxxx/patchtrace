@@ -103,3 +103,7 @@ initial 307-branch/297-PR mechanical inventory. Empty GitHub review collections
 are not review approval. Four fresh #304 native fixture receipts are narrowly
 credited at their recorded source tree; full/Qt/Windows/package/security remain
 unverified. The local incomplete full-suite attempt is preserved, not counted.
+
+## Paired raw-window independent integration checkpoint — 2026-11-18
+
+The paired raw-offset desktop slice now has independent source review (183 affected plus six additional controls) and 183 source-pinned combined passes on published #307, source `21552835`. D/R coverage remains **50%**: the implementation and regressions are verified locally, while representative native/manual J and exact-head full/platform/security G remain open. The original author receipt and failure history are retained; this entry does not promote the historical #168 research content or claim beta readiness. [Review and evidence](../qa/raw-alignment-reviewed-20261118/README.md).

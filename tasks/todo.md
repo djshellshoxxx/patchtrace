@@ -1437,3 +1437,9 @@ Full `QT_QPA_PLATFORM=offscreen python -m pytest -q` for this isolated native sl
 - [x] Recover independent physical offsets, exact-window copy provenance, span navigation and cancellation/context guards through the existing pure backend and TaskRunner; retain the original failing control.
 - [x] Pass the 182-test affected selection, current-source headless CLI guard, complete tooltip sweep, unchanged host-seam limits and whole Ruff; retain the subprocess environment failure and correction.
 - [ ] Independently review and integrate source `e4506666` with spec/test-first `640baa22`; complete actual-head full/hosted/native/manual gates before broader acceptance. [Qualification receipt](../docs/qa/raw-alignment-workflow-20261118.md).
+
+### [RAW-ALIGNMENT-INDEPENDENT-INTEGRATION-20261118]
+
+- [x] Independently inspect source `e4506666`, verify its nine authored receipts and seven source hashes, and execute 183 affected plus six adversarial controls.
+- [x] Port the reviewed source onto published #307 `58fc1306` and execute 183 source-pinned affected checks; preserve original author history through commit provenance and receipts.
+- [ ] Publish the focused reviewed branch; obtain all exact-head applicable hosted/full/native/manual gates and promote only after the #304 → #307 chain qualifies. [Evidence](../docs/qa/raw-alignment-reviewed-20261118/README.md).

@@ -1968,3 +1968,7 @@ coverage and the unchanged host seam pass; `ui.py` is 3,071 lines under its
 unchanged 3,077-line ceiling. Actual offscreen minimum-width rendering was
 inspected. Independent review and combined actual-head, hosted, native Windows
 and manual acceptance remain open. [Scope, commands and preserved evidence](qa/raw-alignment-workflow-20261118.md).
+
+## [RAW-ALIGNMENT-INDEPENDENT-INTEGRATION-20261118]
+
+Independent source review found no blocking defect, with 183 affected passes and six additional adversarial controls. The focused port onto published #307 `58fc1306` passed the same 183 affected checks in 31.01 s with explicit source-pinned children; required Ruff and whitespace checks pass. All earlier failure receipts remain. Published #307 separately passed 355 boundary checks with three native Windows skips. These are overlapping, scope-specific local results; hosted/full/native/manual acceptance remains open. [Complete review, exact identities and raw receipts](qa/raw-alignment-reviewed-20261118/README.md).
