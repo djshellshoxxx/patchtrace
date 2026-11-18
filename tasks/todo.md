@@ -1680,3 +1680,14 @@ See the [immutable continuation checkpoint](../docs/qa/verified-continuation-202
 - [x] Preserve supported-semantics source evidence and all original author/reviewer failures.
 - [x] Specify/test then repair compatible comparisons, both final tree consumers and receipt reads; independently review exact source.
 - [ ] Integrate and run actual combined/candidate Windows, native, dependency and package gates; all eight Windows skips remain unverified.
+
+### 2026-11-18 — Current workflow audit follow-on
+
+- [x] Implement the bounded CODEX-1 action-pin candidate, preserving the original
+  probe and strict neighboring workflow policies (source `2d8ef3f5`, final tests
+  `3b3c3d63`; sealed `docs/qa/workflow-action-pins-20261118.md`). Root independent
+  integration review remains separate.
+- [ ] Complete separately reviewed corpus archive verification (CODEX-6), Linux
+  full frozen CLI smoke wiring (CODEX-14), and an approved platform/closure hash
+  design followed by implementation (CODEX-5). The action receipt credits none
+  of these unresolved scopes or any hosted/native acceptance.

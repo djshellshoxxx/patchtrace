@@ -2232,3 +2232,15 @@ Eleven focal records finish the exact original 131 partition. Fresh 100 passed /
 ## [WINDOWS-SOURCE-OBSERVATIONS-20261118]
 
 Exact source `80df2735` repairs compatible path/descriptor observations, final Windows ChangeTime rechecks in both source consumers and dependency receipt reads. Original independent failures remain. Author240/8native skips, independent44/0 and252/8; no native Windows or scanner acceptance. [Complete sealed evidence](qa/windows-source-stat-20261118/README.md).
+
+## 2026-11-18 — Immutable remote action references
+
+Exact qualified test tree `3b3c3d6346c644f04a2e69d9835f147652436535`
+(workflow-only source `2d8ef3f5`) replaces 178 movable references in 21 workflows
+with 11 canonically resolved commits and preserves all 8 existing immutable uses.
+The original action probe and current policy gate pass; the same 13-file gate is
+430 passed / 3 retained CODEX expected failures. The original baseline four-red,
+spec one-red, ten obsolete-tag policy failures and corrected run are all retained.
+Raw/YAML equivalence and exact 23-object API provenance are sealed in
+`docs/qa/workflow-action-pins-20261118.md` and its 98-member archive. No hosted,
+native, package or release qualification follows from this local static slice.
