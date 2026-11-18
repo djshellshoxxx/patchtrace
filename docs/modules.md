@@ -13,6 +13,15 @@ handles; KB package composition remains outside the worker. Contract:
 under `docs/schemas/local-package/` from `tools/generate_package_schemas.py`.
 Native Windows, frozen CLI and project-admission acceptance are separate gates.
 
+The next pure worker-accounting slice is `acquisition/package_worker_contracts.py`
+(`local-package-worker/1` binding, grant, receipt, strict 1 MiB parser and grant
+identity) plus serial grant issuance/derivation/reconciliation in the existing
+`package_budget.py`. Focused `test_package_worker_{contracts,grants}.py` controls
+cover ownership, original deadline, remaining allowance, once-only consumption
+and permanent refusal after incomplete/missing receipts. The package schema
+generator owns the three additive worker schemas. These records and authored
+controls provide no native I/O, decoder, containment or project-admission credit.
+
 ## Exclusive directory publication (2026-11-18)
 
 `directory_publication.py` owns the shared native no-replacement move for complete

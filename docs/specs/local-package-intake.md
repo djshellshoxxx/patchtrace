@@ -126,6 +126,73 @@ Before materialization and during writes, the native stage must enforce at least
 twice the conservative outstanding scratch estimate; no short/failed write can
 produce an accepted inventory or project.
 
+### 4.1 Portable serial worker grants and receipts
+
+The worker accounting boundary is pure metadata and in-process accounting. It
+does not start a worker, open a package, establish native handle identity, qualify
+a decoder or admit a project. `local-package-worker/1` records are frozen and
+strict, reject additional fields/coercion/nonfinite or duplicate-key JSON, and
+have a hard 1 MiB wire ceiling. A grant/receipt also obeys the captured operation's
+lower JSON ceiling. The existing package/source/member/inventory models remain
+authoritative; worker records do not introduce alternate identities.
+
+`PackageWorkerBinding` contains exact SHA-256-shaped operation, request and attempt
+IDs and the complete captured PackageSource. `PackageWorkerGrant` contains that
+binding, a fresh opaque parent nonce, captured PackageLimits, original start and
+absolute deadline, issuance time, quiescent cumulative PackageUsage baseline and
+a canonical grant digest over those fields. The deadline is exactly the original
+start plus captured duration; issuance precedes it. Source size and every baseline
+counter obey captured limits. No pending entry/write or live allocation crosses
+the parent-to-worker boundary. Grant creation consumes one original callback/work
+unit, so empty serial grants cannot evade the work ceiling. The first grant binds
+the parent's operation ID; later grants cannot change it. Attempt IDs cannot repeat.
+
+`PackageBudget.issue_worker(binding)` returns the exact parent-owned active grant.
+Only one grant may be outstanding. Parent counter mutation while it is outstanding
+refuses; clock/cancellation checks and snapshots remain available. A foreign or
+copied grant object cannot act as that owner's control token. Nonce and digest
+also bind the wire response, including otherwise identical operations. The caller
+keeps the exact parent token; parsing a grant does not confer parent authority.
+
+`PackageBudget.from_worker_grant(raw)` strictly parses a bounded grant and derives
+the worker budget from its original start/deadline and cumulative baseline. It
+does not call the ordinary fresh-budget path or reset any allowance. Its clock
+cannot precede issuance. Worker budgets cannot issue another worker grant.
+
+`PackageWorkerReceipt` repeats the exact grant digest and complete binding and
+records cumulative usage, its last observed monotonic time, open-entry/pending-
+write counts, and complete/failed status. Observation time is not a process-exit
+claim. Complete requires zero pending entries/writes/live allocations, equal
+reserved/confirmed output, and a nonfailed usage state. Failed requires a failed
+usage state and retains known partial counters. `worker_receipt()` produces one
+terminal record from a derived worker budget; unfinished work becomes failed.
+No further work or second receipt is permitted, except owned allocation cleanup.
+
+`reconcile_worker(parent_grant, raw)` validates the entire receipt before changing
+counts: exact grant/source/operation/request/attempt, captured resource ceilings,
+monotone cumulative counters and peak, original elapsed-time basis, issuance and
+parent-observed time bounds. A successful receipt must have observed completion
+before the original deadline. Reconciliation is once-only. A validated complete
+or failed receipt's known consumption is retained before a later parent cancel/
+deadline is surfaced; it cannot erase work already reported as completed. The
+parent keeps its own current clock and original deadline for subsequent hashing
+or another side, rather than adopting a child's earlier clock observation.
+
+Malformed, oversized, mismatched, replayed, future-dated or overspent receipts
+permanently fail the operation without partial counter mutation. A valid failed
+receipt also permanently fails after retaining its known consumption. No later
+grant or retry can recover remaining allowance. `abandon_worker(parent_grant)`
+does the same for a missing receipt: retain known parent counters and mark worker
+consumption unavailable, not zero or a fabricated complete reservation. The
+`worker_pending` and sticky `worker_usage_unknown` properties distinguish an
+outstanding grant and lost/unusable consumption from known usage. A rejected
+replay after an already reconciled grant does not relabel its known usage unknown.
+
+Reported JSON usage is protocol/accounting evidence only. Later native source,
+sink, process and full-byte checks remain mandatory before content admission.
+Core read-work checkpoint accounting is a separate later seam; it must not
+silently redefine hashed-input bytes or consume decompressor output reservations.
+
 ## 5. Subsequent native and service slices
 
 Native source and output handles stay anchored with no-reparse and identity
