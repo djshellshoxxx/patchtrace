@@ -7,13 +7,26 @@ store, atomic scoped selection, seven CLI verbs and a separate KB inventory
 dialog. Independent parser/source, selection and interface reviews reproduced
 and verified repairs for input grouping, HTTP framing, product/build scope,
 failure preservation and keyboard deselection. The combined focused selection
-passes **815 tests**. Schemas, whole-tree Ruff, dependency compatibility and
-protobuf runtime checks pass. Full local and hosted runs are tracked against
+passes **816 tests**, including a later-architecture capacity regression.
+After normally merging repaired consolidation `121ffb0b`, the combined selection
+passes **1,016 tests**; fresh independent review repeats those tests and passes
+four additional socket-denied integration controls. The feature still supplies
+metadata-only selection and retains exact acquisition consent.
+A final independent source-admission review reproduced five races before the
+repair at `433440a3`. The repaired combined gate passes **1,023 tests**, and the
+independent reviewer passes all seven admission controls. Selection now checks
+the evaluated advisory snapshot inside admission, including repeated no-op
+selection; stale source or revision changes preserve prior decisions.
+Schemas, whole-tree Ruff, dependency compatibility and protobuf runtime checks
+pass. Full local and hosted runs are tracked against
 their own exact trees in [PW-01 evidence](qa/pw01-20261118.md).
 
-The real saved KB5036893 capture imports through the actual CLI with explicit
-partial coverage: 5,000 retained ARM64 rows, 259 rejected, 1,912 conflicting,
-and truncation before later sections. Both production support/CSV fetch attempts
+The original 5,000-entry budget truncated the real saved KB5036893 capture before
+its x64 section. The independently checked 50,000-entry correction scans all
+42,845 records and retains 37,595 rows across ARM64 and AMD64, including 2,020
+AMD64 metadata-only claims. Rejections and conflicts remain explicit; the CLI
+still returns partial / exit 3. Old captured budgets replay unchanged, and all
+other limits remain in force. Both production support/CSV fetch attempts
 failed with PT-KBC-ACQUIRE because this runner cannot resolve the approved hosts.
 No proxy or injected transport substituted for that live gate. PW-02 and native
 Windows/manual/release/accuracy acceptance remain separate.

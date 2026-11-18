@@ -61,13 +61,13 @@
       "additionalProperties": false,
       "properties": {
         "accepted_count": {
-          "maximum": 5000,
+          "maximum": 50000,
           "minimum": 0,
           "title": "Accepted Count",
           "type": "integer"
         },
         "conflict_count": {
-          "maximum": 5000,
+          "maximum": 50000,
           "minimum": 0,
           "title": "Conflict Count",
           "type": "integer"
@@ -95,7 +95,7 @@
           "type": "integer"
         },
         "duplicate_count": {
-          "maximum": 5000,
+          "maximum": 50000,
           "minimum": 0,
           "title": "Duplicate Count",
           "type": "integer"
@@ -114,7 +114,7 @@
           "items": {
             "$ref": "#/$defs/InventoryEntry"
           },
-          "maxItems": 5000,
+          "maxItems": 50000,
           "title": "Entries",
           "type": "array"
         },
@@ -129,7 +129,7 @@
             "max_bytes": 16777216,
             "max_columns": 32,
             "max_diagnostics": 1000,
-            "max_entries": 5000,
+            "max_entries": 50000,
             "max_field_chars": 65536,
             "max_record_chars": 262144,
             "max_records": 100000,
@@ -291,7 +291,7 @@
           "type": "string"
         },
         "limits": {
-          "$ref": "#/$defs/InventoryLimits",
+          "$ref": "#/$defs/InventoryPageLimits",
           "default": {
             "max_bytes": 16777216,
             "max_columns": 32,
@@ -878,8 +878,8 @@
           "type": "integer"
         },
         "max_entries": {
-          "default": 5000,
-          "maximum": 5000,
+          "default": 50000,
+          "maximum": 50000,
           "minimum": 1,
           "title": "Max Entries",
           "type": "integer"
@@ -1200,6 +1200,84 @@
         "state"
       ],
       "title": "InventoryPageEntry",
+      "type": "object"
+    },
+    "InventoryPageLimits": {
+      "additionalProperties": false,
+      "description": "Source pages retain a smaller population without changing serialized budget fields.",
+      "properties": {
+        "max_bytes": {
+          "default": 16777216,
+          "maximum": 16777216,
+          "minimum": 1,
+          "title": "Max Bytes",
+          "type": "integer"
+        },
+        "max_columns": {
+          "default": 32,
+          "maximum": 32,
+          "minimum": 1,
+          "title": "Max Columns",
+          "type": "integer"
+        },
+        "max_diagnostics": {
+          "default": 1000,
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Max Diagnostics",
+          "type": "integer"
+        },
+        "max_entries": {
+          "default": 5000,
+          "maximum": 5000,
+          "minimum": 1,
+          "title": "Max Entries",
+          "type": "integer"
+        },
+        "max_field_chars": {
+          "default": 65536,
+          "maximum": 65536,
+          "minimum": 1,
+          "title": "Max Field Chars",
+          "type": "integer"
+        },
+        "max_record_chars": {
+          "default": 262144,
+          "maximum": 262144,
+          "minimum": 1,
+          "title": "Max Record Chars",
+          "type": "integer"
+        },
+        "max_records": {
+          "default": 100000,
+          "maximum": 100000,
+          "minimum": 1,
+          "title": "Max Records",
+          "type": "integer"
+        },
+        "max_seconds": {
+          "default": 10.0,
+          "exclusiveMinimum": 0,
+          "maximum": 10,
+          "title": "Max Seconds",
+          "type": "number"
+        },
+        "max_sections": {
+          "default": 1000,
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Max Sections",
+          "type": "integer"
+        },
+        "max_text_chars": {
+          "default": 16777216,
+          "maximum": 16777216,
+          "minimum": 1,
+          "title": "Max Text Chars",
+          "type": "integer"
+        }
+      },
+      "title": "InventoryPageLimits",
       "type": "object"
     },
     "InventoryRetention": {

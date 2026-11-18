@@ -61,6 +61,14 @@ reinterpret an existing record. The separate v2 source-page ceiling remains 5,00
 The 16 MiB raw/text and 64 MiB serialized import ceilings remain unchanged; they
 are admission limits, not bounds on process memory during parsing or replay.
 
+The 50,000-entry ceiling admits the observed 42,845-record KB5036893 source,
+whose x64 section starts at logical record 21,261. The initial 5,000-entry
+ceiling truncated that source inside ARM64. This capacity correction does not
+raise the byte, logical-record, diagnostic, time, stored-record, UI-page or
+selection limits. Previously captured 5,000-entry budgets remain part of their
+immutable identities and replay unchanged; reimporting under the current
+default creates a distinct contextual import over the same raw source.
+
 Accept UTF-8 with or without BOM, and BOM-marked UTF-16 LE/BE. Reject malformed
 encoding, UTF-32 and unmarked UTF-16. Delimiters are explicit, not guessed. Use
 strict quoting, accept quoted delimiters/newlines and LF/CRLF, reject malformed
@@ -354,6 +362,14 @@ belong to the lead within its recorded search/document scope. Changing the recor
 inventory selection into the new scope: each decision binds the scope ID and coverage IDs. Persist decision and
 the resulting COMPONENTS_READY revision atomically through the existing revision
 compare-and-swap; stale or cancelled work leaves both unchanged.
+Capture the ordered advisory source metadata before rebuilding the eligibility
+index and verify it is unchanged afterward. Before publishing a selection, check
+that same snapshot and cancellation inside the short revision transaction; a
+source import or metadata change during validation is PT-KBC-STALE, even if the
+investigation revision has not changed. Repeated selections that need no new
+decision or revision still check both the exact current revision and source
+snapshot together in a short guarded transaction before returning success.
+Keep source parsing and inventory replay outside these write transactions.
 Existing component discovery must verify selected inventory evidence before
 publishing a product change or newly entered filenames. A failed raw replay
 therefore preserves the previous product, revision and analyst decisions.

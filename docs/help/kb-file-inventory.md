@@ -91,7 +91,8 @@ values returned by your workspace; do not treat the example placeholders as IDs.
    product, release or build conflict. Selection requires an eligible AMD64 PE
    basename with a known version and no metadata conflict. ARM64/x86 metadata
    remains inspectable; it does not expand supported analysis architectures.
-   A stale revision fails without changing the recorded selection or revision.
+   A stale revision or advisory-source change during validation fails without
+   changing the recorded selection or revision, including repeated selections.
 
 5. Continue through saved file-index candidate selection:
 
@@ -122,13 +123,18 @@ Size locale is `en-US` by default, with `de-DE` and `invariant` available.
 Dates/times retain their original text and do not establish chronology.
 
 Default bounds include 16 MiB of CSV bytes, 100,000 scanned logical records,
-5,000 retained entries and 1,000 retained diagnostics. A logical quoted record
+50,000 retained v1 entries and 1,000 retained diagnostics. A logical quoted record
 can span multiple physical lines. Result references report both explicitly.
 Rejected rows and omitted diagnostics remain counted. A partial or truncated
 inventory cannot claim complete coverage, including coverage of later
 architecture sections. Directory paths, formulas, reserved names and control
 characters are refused as eligible filenames; safe non-PE names are descriptive
 metadata only.
+
+Imports saved with the earlier 5,000-entry budget keep that original budget and
+result. Retain an explicit source page to inspect later sections, or reimport
+the same source under the current v1 default. Each new import has its own ID and
+preserves the earlier record.
 
 `list --limit N --offset N` pages summaries, with a default page size of 20 and a
 maximum of 100. `list --kind support-page` lists saved HTML sources.
@@ -141,8 +147,10 @@ also retains unknown or conflicted architecture rows for review. It is a filter,
 not a new assertion about the CSV's product or architecture.
 
 Source pages are one-based, in original matching-record order, with capacity
-taken from the source's captured entry limit (at most 5,000). Use `--page 2` for
-the next source page. The page number is bounded to 1..100000; a page confirmed
+taken from the smaller of the source's captured entry limit and 5,000. Lowered
+budgets stay lowered; a v1 source captured at 50,000 still produces pages of at
+most 5,000. Use `--page 2` for the next source page. The page number is bounded
+to 1..100000; a page confirmed
 empty at the end of the source is refused without appending an import.
 `show --limit/--offset` only pages the entries in one already retained source
 page. It does not change that page's retention policy.
@@ -249,12 +257,13 @@ screen-reader and high-DPI acceptance are tracked separately from offscreen test
 |---:|---|
 | 0 | Operation completed. |
 | 2 | Invalid arguments/context, rejected local CSV/HTML, unsupported input or missing/mismatched consent. |
-| 3 | Partial retained results, runtime/storage/verification failure, or stale revision. Inspect the envelope and counts. |
+| 3 | Partial retained results, runtime/storage/verification failure, or stale revision/source snapshot. Inspect the envelope and counts. |
 | 4 | No retained matching results. This does not establish source-wide absence after truncation. |
 | 5 | Cancelled. Prior committed results are preserved. |
 
-For a stale selection, inspect the investigation again and supply its current
-revision. For a damaged source, preserve it for diagnosis and restore the
+For a stale selection, inspect the investigation and advisory scope again and
+supply its current revision. Resolve any newly reported source conflict before
+retrying. For a damaged source, preserve it for diagnosis and restore the
 original bytes; verification does not silently rewrite a prior claim. For
 missing/conflicting product context, inspect the source and select or assert
 only a scope supported by that context.

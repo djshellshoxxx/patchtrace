@@ -26,8 +26,8 @@
       "type": "integer"
     },
     "max_entries": {
-      "default": 5000,
-      "maximum": 5000,
+      "default": 50000,
+      "maximum": 50000,
       "minimum": 1,
       "title": "Max Entries",
       "type": "integer"

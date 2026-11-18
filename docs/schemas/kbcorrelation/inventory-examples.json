@@ -90,7 +90,7 @@
               "date_text": "2099-03-\r\n01",
               "diagnostics": [],
               "duplicate_of": null,
-              "entry_id": "db31b0da900d9648fb4056864489bc28a74436343ee552f9042970050cb55b4d",
+              "entry_id": "b0ad9b1cfb111ac9b233e646bc1d5303b3a4edcfccb044c40b8124dbbc18085e",
               "original_fields": [
                 "ExampleSvc.dll",
                 "10.0.26100.5001",
@@ -131,7 +131,7 @@
                 "INVALID_SIZE"
               ],
               "duplicate_of": null,
-              "entry_id": "ee9916455856f6f6817db1049701c3e5ba3f4fcf8c37d40588210971bcf026c9",
+              "entry_id": "127320fdd4f8c292ad8b9643a1bb3efdfb09bfdc31b6705ca21e49089a68edb3",
               "original_fields": [
                 "ExampleData.dll",
                 "10.0.26100.5001",
@@ -162,12 +162,12 @@
               ]
             }
           ],
-          "inventory_id": "e4e8cd6dd985040e895dce8cd258288d6eaaec443c27d779a8db8770200ecf82",
+          "inventory_id": "a2711d24ba5cdb9b50af3e5fad99851092ff41e3ad33c680f8cd572c09414d6e",
           "limits": {
             "max_bytes": 16777216,
             "max_columns": 32,
             "max_diagnostics": 1000,
-            "max_entries": 5000,
+            "max_entries": 50000,
             "max_field_chars": 65536,
             "max_record_chars": 262144,
             "max_records": 100000,
@@ -242,7 +242,7 @@
               "date_text": "2099-03-\r\n01",
               "diagnostics": [],
               "duplicate_of": null,
-              "entry_id": "db31b0da900d9648fb4056864489bc28a74436343ee552f9042970050cb55b4d",
+              "entry_id": "b0ad9b1cfb111ac9b233e646bc1d5303b3a4edcfccb044c40b8124dbbc18085e",
               "original_fields": [
                 "ExampleSvc.dll",
                 "10.0.26100.5001",
@@ -283,7 +283,7 @@
                 "INVALID_SIZE"
               ],
               "duplicate_of": null,
-              "entry_id": "ee9916455856f6f6817db1049701c3e5ba3f4fcf8c37d40588210971bcf026c9",
+              "entry_id": "127320fdd4f8c292ad8b9643a1bb3efdfb09bfdc31b6705ca21e49089a68edb3",
               "original_fields": [
                 "ExampleData.dll",
                 "10.0.26100.5001",
@@ -314,12 +314,12 @@
               ]
             }
           ],
-          "inventory_id": "e4e8cd6dd985040e895dce8cd258288d6eaaec443c27d779a8db8770200ecf82",
+          "inventory_id": "a2711d24ba5cdb9b50af3e5fad99851092ff41e3ad33c680f8cd572c09414d6e",
           "limits": {
             "max_bytes": 16777216,
             "max_columns": 32,
             "max_diagnostics": 1000,
-            "max_entries": 5000,
+            "max_entries": 50000,
             "max_field_chars": 65536,
             "max_record_chars": 262144,
             "max_records": 100000,
@@ -393,7 +393,7 @@
               "date_text": "2099-03-\r\n01",
               "diagnostics": [],
               "duplicate_of": null,
-              "entry_id": "db31b0da900d9648fb4056864489bc28a74436343ee552f9042970050cb55b4d",
+              "entry_id": "b0ad9b1cfb111ac9b233e646bc1d5303b3a4edcfccb044c40b8124dbbc18085e",
               "original_fields": [
                 "ExampleSvc.dll",
                 "10.0.26100.5001",
@@ -434,7 +434,7 @@
                 "INVALID_SIZE"
               ],
               "duplicate_of": null,
-              "entry_id": "ee9916455856f6f6817db1049701c3e5ba3f4fcf8c37d40588210971bcf026c9",
+              "entry_id": "127320fdd4f8c292ad8b9643a1bb3efdfb09bfdc31b6705ca21e49089a68edb3",
               "original_fields": [
                 "ExampleData.dll",
                 "10.0.26100.5001",
@@ -465,12 +465,12 @@
               ]
             }
           ],
-          "inventory_id": "e4e8cd6dd985040e895dce8cd258288d6eaaec443c27d779a8db8770200ecf82",
+          "inventory_id": "a2711d24ba5cdb9b50af3e5fad99851092ff41e3ad33c680f8cd572c09414d6e",
           "limits": {
             "max_bytes": 16777216,
             "max_columns": 32,
             "max_diagnostics": 1000,
-            "max_entries": 5000,
+            "max_entries": 50000,
             "max_field_chars": 65536,
             "max_record_chars": 262144,
             "max_records": 100000,
@@ -544,7 +544,7 @@
               "date_text": "2099-03-\r\n01",
               "diagnostics": [],
               "duplicate_of": null,
-              "entry_id": "db31b0da900d9648fb4056864489bc28a74436343ee552f9042970050cb55b4d",
+              "entry_id": "b0ad9b1cfb111ac9b233e646bc1d5303b3a4edcfccb044c40b8124dbbc18085e",
               "original_fields": [
                 "ExampleSvc.dll",
                 "10.0.26100.5001",
@@ -585,7 +585,7 @@
                 "INVALID_SIZE"
               ],
               "duplicate_of": null,
-              "entry_id": "ee9916455856f6f6817db1049701c3e5ba3f4fcf8c37d40588210971bcf026c9",
+              "entry_id": "127320fdd4f8c292ad8b9643a1bb3efdfb09bfdc31b6705ca21e49089a68edb3",
               "original_fields": [
                 "ExampleData.dll",
                 "10.0.26100.5001",
@@ -621,7 +621,7 @@
             "max_bytes": 16777216,
             "max_columns": 32,
             "max_diagnostics": 1000,
-            "max_entries": 5000,
+            "max_entries": 50000,
             "max_field_chars": 65536,
             "max_record_chars": 262144,
             "max_records": 100000,
@@ -695,7 +695,7 @@
               "date_text": "2099-03-\r\n01",
               "diagnostics": [],
               "duplicate_of": null,
-              "entry_id": "db31b0da900d9648fb4056864489bc28a74436343ee552f9042970050cb55b4d",
+              "entry_id": "b0ad9b1cfb111ac9b233e646bc1d5303b3a4edcfccb044c40b8124dbbc18085e",
               "original_fields": [
                 "ExampleSvc.dll",
                 "10.0.26100.5001",
@@ -736,7 +736,7 @@
                 "INVALID_SIZE"
               ],
               "duplicate_of": null,
-              "entry_id": "ee9916455856f6f6817db1049701c3e5ba3f4fcf8c37d40588210971bcf026c9",
+              "entry_id": "127320fdd4f8c292ad8b9643a1bb3efdfb09bfdc31b6705ca21e49089a68edb3",
               "original_fields": [
                 "ExampleData.dll",
                 "10.0.26100.5001",
@@ -767,12 +767,12 @@
               ]
             }
           ],
-          "inventory_id": "e4e8cd6dd985040e895dce8cd258288d6eaaec443c27d779a8db8770200ecf82",
+          "inventory_id": "a2711d24ba5cdb9b50af3e5fad99851092ff41e3ad33c680f8cd572c09414d6e",
           "limits": {
             "max_bytes": 16777216,
             "max_columns": 32,
             "max_diagnostics": 1000,
-            "max_entries": 5000,
+            "max_entries": 50000,
             "max_field_chars": 65536,
             "max_record_chars": 262144,
             "max_records": 100000,
@@ -846,7 +846,7 @@
           "date_text": "2099-03-\r\n01",
           "diagnostics": [],
           "duplicate_of": null,
-          "entry_id": "db31b0da900d9648fb4056864489bc28a74436343ee552f9042970050cb55b4d",
+          "entry_id": "b0ad9b1cfb111ac9b233e646bc1d5303b3a4edcfccb044c40b8124dbbc18085e",
           "original_fields": [
             "ExampleSvc.dll",
             "10.0.26100.5001",
@@ -887,7 +887,7 @@
             "INVALID_SIZE"
           ],
           "duplicate_of": null,
-          "entry_id": "ee9916455856f6f6817db1049701c3e5ba3f4fcf8c37d40588210971bcf026c9",
+          "entry_id": "127320fdd4f8c292ad8b9643a1bb3efdfb09bfdc31b6705ca21e49089a68edb3",
           "original_fields": [
             "ExampleData.dll",
             "10.0.26100.5001",
@@ -918,12 +918,12 @@
           ]
         }
       ],
-      "inventory_id": "e4e8cd6dd985040e895dce8cd258288d6eaaec443c27d779a8db8770200ecf82",
+      "inventory_id": "a2711d24ba5cdb9b50af3e5fad99851092ff41e3ad33c680f8cd572c09414d6e",
       "limits": {
         "max_bytes": 16777216,
         "max_columns": 32,
         "max_diagnostics": 1000,
-        "max_entries": 5000,
+        "max_entries": 50000,
         "max_field_chars": 65536,
         "max_record_chars": 262144,
         "max_records": 100000,
@@ -2212,8 +2212,8 @@
     "invalid": [
       {
         "example": {
-          "entry_id": "db31b0da900d9648fb4056864489bc28a74436343ee552f9042970050cb55b4d",
-          "import_id": "79276c1e50f38e0d77e431fc2b595d7d470abdd783f672b03623af9ab121a9b6",
+          "entry_id": "b0ad9b1cfb111ac9b233e646bc1d5303b3a4edcfccb044c40b8124dbbc18085e",
+          "import_id": "01364bd19ea70c51e75354a9f0166edd33fe1abee70d0a9aa564523aedf69dae",
           "line_end": 4,
           "line_start": 3,
           "logical_record": 3,
@@ -2225,8 +2225,8 @@
       },
       {
         "example": {
-          "entry_id": "db31b0da900d9648fb4056864489bc28a74436343ee552f9042970050cb55b4d",
-          "import_id": "79276c1e50f38e0d77e431fc2b595d7d470abdd783f672b03623af9ab121a9b6",
+          "entry_id": "b0ad9b1cfb111ac9b233e646bc1d5303b3a4edcfccb044c40b8124dbbc18085e",
+          "import_id": "01364bd19ea70c51e75354a9f0166edd33fe1abee70d0a9aa564523aedf69dae",
           "line_end": 1,
           "line_start": 3,
           "logical_record": 3,
@@ -2237,8 +2237,8 @@
       }
     ],
     "valid": {
-      "entry_id": "db31b0da900d9648fb4056864489bc28a74436343ee552f9042970050cb55b4d",
-      "import_id": "79276c1e50f38e0d77e431fc2b595d7d470abdd783f672b03623af9ab121a9b6",
+      "entry_id": "b0ad9b1cfb111ac9b233e646bc1d5303b3a4edcfccb044c40b8124dbbc18085e",
+      "import_id": "01364bd19ea70c51e75354a9f0166edd33fe1abee70d0a9aa564523aedf69dae",
       "line_end": 4,
       "line_start": 3,
       "logical_record": 3,
@@ -2364,7 +2364,7 @@
           "date_text": "2099-03-\r\n01",
           "diagnostics": [],
           "duplicate_of": null,
-          "entry_id": "db31b0da900d9648fb4056864489bc28a74436343ee552f9042970050cb55b4d",
+          "entry_id": "b0ad9b1cfb111ac9b233e646bc1d5303b3a4edcfccb044c40b8124dbbc18085e",
           "original_fields": [
             "ExampleSvc.dll",
             "10.0.26100.5001",
@@ -2407,7 +2407,7 @@
           "date_text": "2099-03-\r\n01",
           "diagnostics": [],
           "duplicate_of": null,
-          "entry_id": "db31b0da900d9648fb4056864489bc28a74436343ee552f9042970050cb55b4d",
+          "entry_id": "b0ad9b1cfb111ac9b233e646bc1d5303b3a4edcfccb044c40b8124dbbc18085e",
           "original_fields": [
             "ExampleSvc.dll",
             "10.0.26100.5001",
@@ -2449,7 +2449,7 @@
           "date_text": "2099-03-\r\n01",
           "diagnostics": [],
           "duplicate_of": null,
-          "entry_id": "db31b0da900d9648fb4056864489bc28a74436343ee552f9042970050cb55b4d",
+          "entry_id": "b0ad9b1cfb111ac9b233e646bc1d5303b3a4edcfccb044c40b8124dbbc18085e",
           "original_fields": [
             "ExampleSvc.dll",
             "10.0.26100.5001",
@@ -2490,7 +2490,7 @@
       "date_text": "2099-03-\r\n01",
       "diagnostics": [],
       "duplicate_of": null,
-      "entry_id": "db31b0da900d9648fb4056864489bc28a74436343ee552f9042970050cb55b4d",
+      "entry_id": "b0ad9b1cfb111ac9b233e646bc1d5303b3a4edcfccb044c40b8124dbbc18085e",
       "original_fields": [
         "ExampleSvc.dll",
         "10.0.26100.5001",
@@ -2527,7 +2527,7 @@
         "example": {
           "asserted_source": "https://example.invalid/KB5099001.csv",
           "contract": "kb-inventory-import/1",
-          "import_id": "79276c1e50f38e0d77e431fc2b595d7d470abdd783f672b03623af9ab121a9b6",
+          "import_id": "01364bd19ea70c51e75354a9f0166edd33fe1abee70d0a9aa564523aedf69dae",
           "parsed": {
             "accepted_count": 2,
             "conflict_count": 0,
@@ -2569,7 +2569,7 @@
                 "date_text": "2099-03-\r\n01",
                 "diagnostics": [],
                 "duplicate_of": null,
-                "entry_id": "db31b0da900d9648fb4056864489bc28a74436343ee552f9042970050cb55b4d",
+                "entry_id": "b0ad9b1cfb111ac9b233e646bc1d5303b3a4edcfccb044c40b8124dbbc18085e",
                 "original_fields": [
                   "ExampleSvc.dll",
                   "10.0.26100.5001",
@@ -2610,7 +2610,7 @@
                   "INVALID_SIZE"
                 ],
                 "duplicate_of": null,
-                "entry_id": "ee9916455856f6f6817db1049701c3e5ba3f4fcf8c37d40588210971bcf026c9",
+                "entry_id": "127320fdd4f8c292ad8b9643a1bb3efdfb09bfdc31b6705ca21e49089a68edb3",
                 "original_fields": [
                   "ExampleData.dll",
                   "10.0.26100.5001",
@@ -2641,12 +2641,12 @@
                 ]
               }
             ],
-            "inventory_id": "e4e8cd6dd985040e895dce8cd258288d6eaaec443c27d779a8db8770200ecf82",
+            "inventory_id": "a2711d24ba5cdb9b50af3e5fad99851092ff41e3ad33c680f8cd572c09414d6e",
             "limits": {
               "max_bytes": 16777216,
               "max_columns": 32,
               "max_diagnostics": 1000,
-              "max_entries": 5000,
+              "max_entries": 50000,
               "max_field_chars": 65536,
               "max_record_chars": 262144,
               "max_records": 100000,
@@ -2702,7 +2702,7 @@
         "example": {
           "asserted_source": "https://example.invalid/KB5099001.csv",
           "contract": "kb-inventory-import/2",
-          "import_id": "79276c1e50f38e0d77e431fc2b595d7d470abdd783f672b03623af9ab121a9b6",
+          "import_id": "01364bd19ea70c51e75354a9f0166edd33fe1abee70d0a9aa564523aedf69dae",
           "parsed": {
             "accepted_count": 2,
             "conflict_count": 0,
@@ -2744,7 +2744,7 @@
                 "date_text": "2099-03-\r\n01",
                 "diagnostics": [],
                 "duplicate_of": null,
-                "entry_id": "db31b0da900d9648fb4056864489bc28a74436343ee552f9042970050cb55b4d",
+                "entry_id": "b0ad9b1cfb111ac9b233e646bc1d5303b3a4edcfccb044c40b8124dbbc18085e",
                 "original_fields": [
                   "ExampleSvc.dll",
                   "10.0.26100.5001",
@@ -2785,7 +2785,7 @@
                   "INVALID_SIZE"
                 ],
                 "duplicate_of": null,
-                "entry_id": "ee9916455856f6f6817db1049701c3e5ba3f4fcf8c37d40588210971bcf026c9",
+                "entry_id": "127320fdd4f8c292ad8b9643a1bb3efdfb09bfdc31b6705ca21e49089a68edb3",
                 "original_fields": [
                   "ExampleData.dll",
                   "10.0.26100.5001",
@@ -2816,12 +2816,12 @@
                 ]
               }
             ],
-            "inventory_id": "e4e8cd6dd985040e895dce8cd258288d6eaaec443c27d779a8db8770200ecf82",
+            "inventory_id": "a2711d24ba5cdb9b50af3e5fad99851092ff41e3ad33c680f8cd572c09414d6e",
             "limits": {
               "max_bytes": 16777216,
               "max_columns": 32,
               "max_diagnostics": 1000,
-              "max_entries": 5000,
+              "max_entries": 50000,
               "max_field_chars": 65536,
               "max_record_chars": 262144,
               "max_records": 100000,
@@ -2918,7 +2918,7 @@
                 "date_text": "2099-03-\r\n01",
                 "diagnostics": [],
                 "duplicate_of": null,
-                "entry_id": "db31b0da900d9648fb4056864489bc28a74436343ee552f9042970050cb55b4d",
+                "entry_id": "b0ad9b1cfb111ac9b233e646bc1d5303b3a4edcfccb044c40b8124dbbc18085e",
                 "original_fields": [
                   "ExampleSvc.dll",
                   "10.0.26100.5001",
@@ -2959,7 +2959,7 @@
                   "INVALID_SIZE"
                 ],
                 "duplicate_of": null,
-                "entry_id": "ee9916455856f6f6817db1049701c3e5ba3f4fcf8c37d40588210971bcf026c9",
+                "entry_id": "127320fdd4f8c292ad8b9643a1bb3efdfb09bfdc31b6705ca21e49089a68edb3",
                 "original_fields": [
                   "ExampleData.dll",
                   "10.0.26100.5001",
@@ -2990,12 +2990,12 @@
                 ]
               }
             ],
-            "inventory_id": "e4e8cd6dd985040e895dce8cd258288d6eaaec443c27d779a8db8770200ecf82",
+            "inventory_id": "a2711d24ba5cdb9b50af3e5fad99851092ff41e3ad33c680f8cd572c09414d6e",
             "limits": {
               "max_bytes": 16777216,
               "max_columns": 32,
               "max_diagnostics": 1000,
-              "max_entries": 5000,
+              "max_entries": 50000,
               "max_field_chars": 65536,
               "max_record_chars": 262144,
               "max_records": 100000,
@@ -3050,7 +3050,7 @@
     "valid": {
       "asserted_source": "https://example.invalid/KB5099001.csv",
       "contract": "kb-inventory-import/1",
-      "import_id": "79276c1e50f38e0d77e431fc2b595d7d470abdd783f672b03623af9ab121a9b6",
+      "import_id": "01364bd19ea70c51e75354a9f0166edd33fe1abee70d0a9aa564523aedf69dae",
       "parsed": {
         "accepted_count": 2,
         "conflict_count": 0,
@@ -3092,7 +3092,7 @@
             "date_text": "2099-03-\r\n01",
             "diagnostics": [],
             "duplicate_of": null,
-            "entry_id": "db31b0da900d9648fb4056864489bc28a74436343ee552f9042970050cb55b4d",
+            "entry_id": "b0ad9b1cfb111ac9b233e646bc1d5303b3a4edcfccb044c40b8124dbbc18085e",
             "original_fields": [
               "ExampleSvc.dll",
               "10.0.26100.5001",
@@ -3133,7 +3133,7 @@
               "INVALID_SIZE"
             ],
             "duplicate_of": null,
-            "entry_id": "ee9916455856f6f6817db1049701c3e5ba3f4fcf8c37d40588210971bcf026c9",
+            "entry_id": "127320fdd4f8c292ad8b9643a1bb3efdfb09bfdc31b6705ca21e49089a68edb3",
             "original_fields": [
               "ExampleData.dll",
               "10.0.26100.5001",
@@ -3164,12 +3164,12 @@
             ]
           }
         ],
-        "inventory_id": "e4e8cd6dd985040e895dce8cd258288d6eaaec443c27d779a8db8770200ecf82",
+        "inventory_id": "a2711d24ba5cdb9b50af3e5fad99851092ff41e3ad33c680f8cd572c09414d6e",
         "limits": {
           "max_bytes": 16777216,
           "max_columns": 32,
           "max_diagnostics": 1000,
-          "max_entries": 5000,
+          "max_entries": 50000,
           "max_field_chars": 65536,
           "max_record_chars": 262144,
           "max_records": 100000,
@@ -3226,7 +3226,7 @@
           "max_bytes": 16777216,
           "max_columns": 32,
           "max_diagnostics": 1000,
-          "max_entries": 5000,
+          "max_entries": 50000,
           "max_field_chars": 65536,
           "max_record_chars": 262144,
           "max_records": 100000,
@@ -3242,7 +3242,7 @@
           "max_bytes": 16777217,
           "max_columns": 32,
           "max_diagnostics": 1000,
-          "max_entries": 5000,
+          "max_entries": 50000,
           "max_field_chars": 65536,
           "max_record_chars": 262144,
           "max_records": 100000,
@@ -3257,7 +3257,22 @@
           "max_bytes": 16777216,
           "max_columns": 32,
           "max_diagnostics": 1000,
-          "max_entries": 5000,
+          "max_entries": 50001,
+          "max_field_chars": 65536,
+          "max_record_chars": 262144,
+          "max_records": 100000,
+          "max_seconds": 10.0,
+          "max_sections": 1000,
+          "max_text_chars": 16777216
+        },
+        "reason": "v1 inventories retain at most 50,000 entries"
+      },
+      {
+        "example": {
+          "max_bytes": 16777216,
+          "max_columns": 32,
+          "max_diagnostics": 1000,
+          "max_entries": 50000,
           "max_field_chars": 65536,
           "max_record_chars": 262144,
           "max_records": true,
@@ -3272,7 +3287,7 @@
       "max_bytes": 16777216,
       "max_columns": 32,
       "max_diagnostics": 1000,
-      "max_entries": 5000,
+      "max_entries": 50000,
       "max_field_chars": 65536,
       "max_record_chars": 262144,
       "max_records": 100000,
@@ -3406,6 +3421,68 @@
       ]
     }
   },
+  "InventoryPageLimits": {
+    "invalid": [
+      {
+        "example": {
+          "max_bytes": 16777216,
+          "max_columns": 32,
+          "max_diagnostics": 1000,
+          "max_entries": 2,
+          "max_field_chars": 65536,
+          "max_record_chars": 262144,
+          "max_records": 100000,
+          "max_seconds": 10.0,
+          "max_sections": 1000,
+          "max_text_chars": 16777216,
+          "unexpected_field": 1
+        },
+        "reason": "extra fields are forbidden"
+      },
+      {
+        "example": {
+          "max_bytes": 16777216,
+          "max_columns": 32,
+          "max_diagnostics": 1000,
+          "max_entries": 5001,
+          "max_field_chars": 65536,
+          "max_record_chars": 262144,
+          "max_records": 100000,
+          "max_seconds": 10.0,
+          "max_sections": 1000,
+          "max_text_chars": 16777216
+        },
+        "reason": "v2 pages retain at most 5,000 entries"
+      },
+      {
+        "example": {
+          "max_bytes": 16777216,
+          "max_columns": 32,
+          "max_diagnostics": 1000,
+          "max_entries": true,
+          "max_field_chars": 65536,
+          "max_record_chars": 262144,
+          "max_records": 100000,
+          "max_seconds": 10.0,
+          "max_sections": 1000,
+          "max_text_chars": 16777216
+        },
+        "reason": "integer page budgets do not coerce booleans"
+      }
+    ],
+    "valid": {
+      "max_bytes": 16777216,
+      "max_columns": 32,
+      "max_diagnostics": 1000,
+      "max_entries": 2,
+      "max_field_chars": 65536,
+      "max_record_chars": 262144,
+      "max_records": 100000,
+      "max_seconds": 10.0,
+      "max_sections": 1000,
+      "max_text_chars": 16777216
+    }
+  },
   "InventoryRetention": {
     "invalid": [
       {
@@ -3496,8 +3573,8 @@
         "example": {
           "asserted_scope": false,
           "coverage_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
-          "entry_id": "db31b0da900d9648fb4056864489bc28a74436343ee552f9042970050cb55b4d",
-          "import_id": "79276c1e50f38e0d77e431fc2b595d7d470abdd783f672b03623af9ab121a9b6",
+          "entry_id": "b0ad9b1cfb111ac9b233e646bc1d5303b3a4edcfccb044c40b8124dbbc18085e",
+          "import_id": "01364bd19ea70c51e75354a9f0166edd33fe1abee70d0a9aa564523aedf69dae",
           "scope_id": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
           "unexpected_field": 1
         },
@@ -3507,8 +3584,8 @@
         "example": {
           "asserted_scope": "false",
           "coverage_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
-          "entry_id": "db31b0da900d9648fb4056864489bc28a74436343ee552f9042970050cb55b4d",
-          "import_id": "79276c1e50f38e0d77e431fc2b595d7d470abdd783f672b03623af9ab121a9b6",
+          "entry_id": "b0ad9b1cfb111ac9b233e646bc1d5303b3a4edcfccb044c40b8124dbbc18085e",
+          "import_id": "01364bd19ea70c51e75354a9f0166edd33fe1abee70d0a9aa564523aedf69dae",
           "scope_id": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
         },
         "reason": "an explicit scope assertion is a strict boolean"
@@ -3517,8 +3594,8 @@
     "valid": {
       "asserted_scope": false,
       "coverage_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
-      "entry_id": "db31b0da900d9648fb4056864489bc28a74436343ee552f9042970050cb55b4d",
-      "import_id": "79276c1e50f38e0d77e431fc2b595d7d470abdd783f672b03623af9ab121a9b6",
+      "entry_id": "b0ad9b1cfb111ac9b233e646bc1d5303b3a4edcfccb044c40b8124dbbc18085e",
+      "import_id": "01364bd19ea70c51e75354a9f0166edd33fe1abee70d0a9aa564523aedf69dae",
       "scope_id": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
     }
   },

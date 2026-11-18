@@ -49,6 +49,15 @@ def _coverage(rev, scope_id):
     })
 
 
+def _source_snapshot(ws):
+    return tuple(source.model_dump_json() for source in ws.sources())
+
+
+def _require_sources(ws, snapshot):
+    if _source_snapshot(ws) != snapshot:
+        raise KbcStoreError('PT-KBC-STALE', 'the advisory sources changed; inspect the scope and select again')
+
+
 def _decisions(ws, investigation):
     # All writers use canonical model_dump_json. Restrict allocation before JSON
     # decoding, including multibyte and NUL-containing TEXT. Non-TEXT rows
@@ -135,7 +144,9 @@ def _scope(svc, ws, rev, scope_id):
 
     if scope_id not in rev.scope_ids:
         raise KbcStoreError('PT-KBC-INPUT', 'that product is not listed for the recorded lead')
+    snapshot = _source_snapshot(ws)
     index, _ = load_index(ws, svc.ports)
+    _require_sources(ws, snapshot)
     scope = next((item for item in index.scopes() if item.scope_id == scope_id), None)
     if scope is None:
         raise KbcStoreError('PT-KBC-INPUT', 'repeat the search; the selected product mapping is no longer available')
@@ -152,7 +163,7 @@ def _scope(svc, ws, rev, scope_id):
     kbs = {kb: frozenset(normal_name(edge.fixed_build) for edge in lookup.edges
                          if edge.kb == kb and edge.fixed_build)
            for kb in {edge.kb for edge in lookup.edges}}
-    return scope, kbs
+    return scope, kbs, snapshot
 
 
 def _entry(record, entry_id):
@@ -183,7 +194,7 @@ def selected_hints(svc, ws, rev, scope_id, *, cancel=None):
     matching = [item for item in decisions if item.scope_id == scope_id and item.coverage_sha256 == key]
     if not matching:
         return ()
-    scope, kbs = _scope(svc, ws, rev, scope_id)
+    scope, kbs, _ = _scope(svc, ws, rev, scope_id)
     deadline, cached_id, record, hints = time.monotonic() + 60.0, None, None, []
     for selected in sorted(matching, key=lambda item: item.import_id):
         _check(cancel, deadline)
@@ -209,7 +220,7 @@ def select(svc, investigation, import_id, entry_id, *, product, expected_revisio
         rev = svc._get(ws, investigation)
         if rev.revision != expected_revision:
             raise KbcStoreError('PT-KBC-STALE', 'the investigation moved on; inspect it and select again')
-        scope, kbs = _scope(svc, ws, rev, product)
+        scope, kbs, source_snapshot = _scope(svc, ws, rev, product)
         record = get_inventory(ws, import_id, verify=True, cancel=cancel)
         if record is None:
             raise KbcStoreError('PT-KBC-INPUT', 'there is no inventory with that exact import ID')
@@ -219,6 +230,12 @@ def select(svc, investigation, import_id, entry_id, *, product, expected_revisio
                                       coverage_sha256=_coverage(rev, product), asserted_scope=assert_scope)
         existing = _decisions(ws, investigation)
         new = selected not in existing
+
+        def guard():
+            _check(cancel)
+            _require_sources(ws, source_snapshot)
+            _check(cancel)
+
         if new or rev.selected_scope_id != product or rev.state != 'COMPONENTS_READY':
             if new and len(existing) >= MAX_SELECTIONS:
                 raise KbcStoreError('PT-KBC-LIMIT', 'this investigation reached the inventory selection limit')
@@ -236,10 +253,23 @@ def select(svc, investigation, import_id, entry_id, *, product, expected_revisio
             _check(cancel)
             try:
                 ws.append_revision(proposed, expected_current=rev.revision, decisions=(decision,) if new else (),
-                                   guard=lambda: _check(cancel))
+                                   guard=guard)
             except sqlite3.Error:
                 raise KbcStoreError('PT-KBC-STORAGE', 'inventory selection could not be committed') from None
             rev = proposed
+        else:
+            # An idempotent result still needs one admission point for the exact
+            # revision and source corpus. All parsing and replay finished above.
+            def admit_unchanged(_db):
+                current = ws.current_revision(investigation)
+                if current is None or current.revision != rev.revision:
+                    raise KbcStoreError('PT-KBC-STALE', 'the investigation moved on; inspect it and select again')
+                guard()
+
+            try:
+                ws._transaction(admit_unchanged)
+            except sqlite3.Error:
+                raise KbcStoreError('PT-KBC-STORAGE', 'inventory selection could not be checked') from None
         hint = _hint(record, entry, selected)
     result = {'contract': 'kbcorrelation/1', 'investigation_id': investigation, 'revision': rev.revision,
               'scope_id': product, 'state': rev.state, 'selection': selected.model_dump(mode='json'),

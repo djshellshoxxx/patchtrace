@@ -189,4 +189,3 @@ The final documentation commit follows these objects. Branch publication uses
 an expected-head fast-forward guard against `f7e07548`, followed by a fetched
 tree comparison. Exact final PR head, base and tested merge identities belong in
 the current PR and final integration record.
-

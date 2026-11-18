@@ -91,7 +91,7 @@ def test_inventory_contract_roundtrip_and_frozen_fields():
         InventoryContext(kb='KB1234567', source_url='https://example.invalid')
 
 
-@pytest.mark.parametrize('changes', [{'max_bytes': 0}, {'max_entries': 5001}, {'max_seconds': 11.0},
+@pytest.mark.parametrize('changes', [{'max_bytes': 0}, {'max_entries': 50_001}, {'max_seconds': 11.0},
                                    {'max_seconds': float('inf')}, {'max_records': True}])
 def test_inventory_contract_limits_have_hard_ceilings(changes):
     with pytest.raises(ValidationError):
@@ -103,6 +103,29 @@ def test_inventory_contract_identity_binds_full_configured_limits():
     assert inventory_identity(sha, CONTEXT) != inventory_identity(sha, CONTEXT, InventoryLimits(max_entries=1))
     assert inventory_identity(sha, CONTEXT) != inventory_identity(sha, CONTEXT, InventoryLimits(max_seconds=5.0))
     assert inventory_identity(sha, CONTEXT) != inventory_identity(sha, InventoryContext(kb='KB7654321'))
+
+
+def test_default_capacity_reaches_later_architecture_and_preserves_captured_legacy_budget():
+    # A real observed source puts x64 after more than 21,000 ARM64 records. This
+    # authored counterexample keeps only the old ceiling needed to expose it.
+    raw = ('Windows example arm64-based\n' + HEADER
+           + ''.join(f'arm{i}.dll,1.2.3.4\n' for i in range(5_000))
+           + 'Windows example x64-based\n' + HEADER + 'later.dll,1.2.3.4\n').encode()
+    legacy = parse_inventory(raw, CONTEXT, limits=InventoryLimits(max_entries=5_000))
+    assert legacy.truncated and legacy.accepted_count == 5_000
+    assert legacy.records_scanned == 5_002
+    assert {entry.architecture for entry in legacy.entries} == {'arm64'}
+
+    current = parse_inventory(raw, CONTEXT)
+    assert not current.truncated
+    assert current.status == 'complete'
+    assert current.accepted_count == 5_001 and current.records_scanned == 5_005
+    assert current.entries[-1].basename == 'later.dll'
+    assert current.entries[-1].architecture == 'amd64'
+    assert current.entries[-1].reference.logical_record == 5_005
+    assert current.inventory_id != legacy.inventory_id
+    assert current.raw_sha256 == legacy.raw_sha256
+    assert parse_inventory(raw, CONTEXT, limits=legacy.limits) == legacy
 
 
 @pytest.mark.parametrize('edit', ['identity', 'foreign-ref', 'line-span', 'count', 'missing-duplicate', 'hidden-partial'])

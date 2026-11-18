@@ -150,7 +150,7 @@ def inventory_models() -> dict:
     from patchtrace.kbcorrelation.inventory_selection import InventorySelection
     return {'InventoryClaimRef': InventoryClaimRef,
             **{name: getattr(inventory, name) for name in
-               ('InventoryLimits', 'InventoryContext', 'CsvRecordRef', 'CsvDiagnostic',
+               ('InventoryLimits', 'InventoryPageLimits', 'InventoryContext', 'CsvRecordRef', 'CsvDiagnostic',
                 'InventorySection', 'InventoryEntry', 'CsvInventory', 'InventoryPageEntry',
                 'InventoryRetention', 'InventoryConflictWitness', 'CsvInventoryPage')},
             **{name: getattr(store, name) for name in
@@ -164,7 +164,7 @@ def valid_inventory_records() -> dict:
     from patchtrace.kbcorrelation.contracts import InventoryClaimRef
     from patchtrace.kbcorrelation.inventory_contracts import (
         InventoryContext,
-        InventoryLimits,
+        InventoryPageLimits,
         InventoryRetention,
     )
     from patchtrace.kbcorrelation.inventory_csv import parse_inventory, parse_inventory_page
@@ -194,8 +194,9 @@ def valid_inventory_records() -> dict:
     selection = InventorySelection(import_id=inventory.import_id, entry_id=entry.entry_id,
                                     scope_id=C, coverage_sha256=B, asserted_scope=False)
     page = parse_inventory_page(INVENTORY_PAGE_CSV, context, InventoryRetention(architecture='amd64'),
-                                limits=InventoryLimits(max_entries=2))
-    return {'InventoryClaimRef': claim, 'InventoryLimits': parsed.limits, 'InventoryContext': context,
+                                limits=InventoryPageLimits(max_entries=2))
+    return {'InventoryClaimRef': claim, 'InventoryLimits': parsed.limits, 'InventoryPageLimits': page.limits,
+            'InventoryContext': context,
             'CsvRecordRef': entry.reference, 'CsvDiagnostic': parsed.diagnostics[0],
             'InventorySection': parsed.sections[0], 'InventoryEntry': entry, 'CsvInventory': parsed,
             'InventoryPageEntry': page.entries[1], 'InventoryRetention': page.retention,
@@ -207,7 +208,10 @@ def valid_inventory_records() -> dict:
 INVENTORY_INVALID = {
     'InventoryClaimRef': (({'line_end': 1}, 'a physical line span cannot run backwards'),),
     'InventoryLimits': (({'max_bytes': 16 * 1024 * 1024 + 1}, 'callers cannot raise the hard byte ceiling'),
+                        ({'max_entries': 50_001}, 'v1 inventories retain at most 50,000 entries'),
                         ({'max_records': True}, 'integer budgets do not coerce booleans')),
+    'InventoryPageLimits': (({'max_entries': 5_001}, 'v2 pages retain at most 5,000 entries'),
+                            ({'max_entries': True}, 'integer page budgets do not coerce booleans')),
     'InventoryContext': (({'architecture': 'x64'}, 'context uses the canonical amd64 architecture'),),
     'CsvRecordRef': (({'logical_record': 0}, 'logical CSV records are one-based'),),
     'CsvDiagnostic': (({'code': 'ARBITRARY_CODE'}, 'diagnostics use the documented code vocabulary'),),

@@ -1401,7 +1401,7 @@ and `test_ui_kb_inventory_retention.py`, plus the existing inventory adapter sui
 
 | Module | Responsibility | Verification seam |
 |---|---|---|
-| `kbcorrelation/inventory_contracts.py`, `inventory_csv.py` | Frozen CSV record/provenance contracts and pure bounded parser | Authored CSV, hostile input, replay/property tests |
+| `kbcorrelation/inventory_contracts.py`, `inventory_csv.py` | Frozen CSV record/provenance contracts and pure parser; independent v1 50,000-entry and v2 5,000-entry budget profiles | Authored CSV, hostile input, captured-budget replay/property tests |
 | `kbcorrelation/sources/support_links.py`, `inventory_fetch.py`, `inventory_http.py` | Inert support HTML links, exact consented retrieval and DNS-pinned TLS transport | Offline parser, injected transport, URL/DNS/redirect/cancellation tests |
-| `kbcorrelation/inventory_store.py`, `inventory_service.py`, `inventory_selection.py` | Content-addressed raw retention, immutable contextual imports, scoped selection | Real workspace rollback/replay and selection tests |
+| `kbcorrelation/inventory_store.py`, `inventory_service.py`, `inventory_selection.py` | Content-addressed raw retention, immutable contextual imports, source-snapshot and revision-guarded scoped selection | Real workspace rollback/replay, selection and concurrent source-admission tests |
 | `kbcorrelation/cli_inventory.py`, `inventory_qt.py` | Shared-service CLI and desktop inventory controls | CLI envelope and offscreen Qt lifecycle tests |

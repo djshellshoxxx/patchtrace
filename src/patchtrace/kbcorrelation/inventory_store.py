@@ -24,10 +24,12 @@ from .contracts import Record, Sha256, SourceDoc, Timestamp, domain_id, https_ho
 from .inventory_contracts import (
     DEFAULT_LIMITS,
     MAX_BYTES,
+    MAX_PAGE_ENTRIES,
     CsvInventory,
     CsvInventoryPage,
     InventoryContext,
     InventoryLimits,
+    InventoryPageLimits,
     InventoryRetention,
 )
 from .sources.cvrf import SourceError
@@ -463,7 +465,10 @@ def retain_inventory(ws: WorkspaceStore, import_id: str, retention: InventoryRet
     if parent is None:
         raise KbcStoreError('PT-KBC-INPUT', 'there is no inventory with that exact import ID')
     raw = _read_raw(ws, parent.source)
-    parsed = parse_inventory_page(raw, parent.parsed.context, retention, limits=parent.parsed.limits, cancel=cancel)
+    limits = InventoryPageLimits.model_validate(parent.parsed.limits.model_dump() | {
+        'max_entries': min(parent.parsed.limits.max_entries, MAX_PAGE_ENTRIES),
+    })
+    parsed = parse_inventory_page(raw, parent.parsed.context, retention, limits=limits, cancel=cancel)
     record = InventoryImport(import_id=_inventory_id(parent.source, parsed, parent.asserted_source, parent.retrieval),
                              source=parent.source, parsed=parsed, asserted_source=parent.asserted_source,
                              retrieval=parent.retrieval)

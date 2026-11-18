@@ -499,8 +499,8 @@
           "type": "integer"
         },
         "max_entries": {
-          "default": 5000,
-          "maximum": 5000,
+          "default": 50000,
+          "maximum": 50000,
           "minimum": 1,
           "title": "Max Entries",
           "type": "integer"
@@ -594,13 +594,13 @@
   "additionalProperties": false,
   "properties": {
     "accepted_count": {
-      "maximum": 5000,
+      "maximum": 50000,
       "minimum": 0,
       "title": "Accepted Count",
       "type": "integer"
     },
     "conflict_count": {
-      "maximum": 5000,
+      "maximum": 50000,
       "minimum": 0,
       "title": "Conflict Count",
       "type": "integer"
@@ -628,7 +628,7 @@
       "type": "integer"
     },
     "duplicate_count": {
-      "maximum": 5000,
+      "maximum": 50000,
       "minimum": 0,
       "title": "Duplicate Count",
       "type": "integer"
@@ -647,7 +647,7 @@
       "items": {
         "$ref": "#/$defs/InventoryEntry"
       },
-      "maxItems": 5000,
+      "maxItems": 50000,
       "title": "Entries",
       "type": "array"
     },
@@ -662,7 +662,7 @@
         "max_bytes": 16777216,
         "max_columns": 32,
         "max_diagnostics": 1000,
-        "max_entries": 5000,
+        "max_entries": 50000,
         "max_field_chars": 65536,
         "max_record_chars": 262144,
         "max_records": 100000,

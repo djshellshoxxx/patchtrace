@@ -44,7 +44,8 @@ def frozen_v1():
 def test_published_v1_tsp_classification_and_serialization_are_frozen():
     fixture = frozen_v1()
     expected = json.loads(fixture['record_json'])['parsed']
-    parsed = csv.parse_inventory(fixture['raw_utf8'].encode(), contracts.InventoryContext(kb='KB5036893'))
+    parsed = csv.parse_inventory(fixture['raw_utf8'].encode(), contracts.InventoryContext(kb='KB5036893'),
+                                 limits=contracts.InventoryLimits.model_validate(expected['limits']))
     assert parsed.model_dump(mode='json') == expected
     assert parsed.inventory_id == 'f5418e5b760c38e3788eb27213fd792faa909c023413891c31cabac2c48f5c6d'
     assert parsed.entries[0].entry_id == 'abf4283d53148c82b03dd99e0a44a55588a1876d3cdb892bc7067c796373eeda'
@@ -99,7 +100,7 @@ def test_architecture_filter_keeps_unknown_and_conflicted_claims_visible(archite
     raw = (b'Windows x64-based\r\n' + HEADER.encode() +
            b'one.sys,1.2.3.4,20,x64\r\nunknown.sys,1.2.3.4,20,mystery\r\n'
            b'conflict.sys,1.2.3.4,20,arm64\r\n')
-    result = parse(raw, architecture=architecture, limits=contracts.DEFAULT_LIMITS)
+    result = parse(raw, architecture=architecture, limits=contracts.DEFAULT_PAGE_LIMITS)
     assert {'unknown.sys', 'conflict.sys'} <= {entry.basename for entry in result.entries}
     assert next(entry for entry in result.entries if entry.basename == 'conflict.sys').state == 'conflicted'
     assert ('one.sys' in {entry.basename for entry in result.entries}) == (architecture == 'amd64')

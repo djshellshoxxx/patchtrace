@@ -21,7 +21,8 @@ MAX_FIELD_CHARS = 65_536
 MAX_RECORD_CHARS = 262_144
 MAX_COLUMNS = 32
 MAX_RECORDS = 100_000
-MAX_ENTRIES = 5_000
+MAX_ENTRIES = 50_000
+MAX_PAGE_ENTRIES = 5_000
 MAX_DIAGNOSTICS = 1_000
 MAX_SECTIONS = 1_000
 UINT64_MAX = 2**64 - 1
@@ -76,6 +77,14 @@ class InventoryLimits(Record):
 
 
 DEFAULT_LIMITS = InventoryLimits()
+
+
+class InventoryPageLimits(InventoryLimits):
+    """Source pages retain a smaller population without changing serialized budget fields."""
+    max_entries: int = Field(default=MAX_PAGE_ENTRIES, ge=1, le=MAX_PAGE_ENTRIES)
+
+
+DEFAULT_PAGE_LIMITS = InventoryPageLimits()
 
 
 class InventoryContext(Record):
@@ -215,7 +224,7 @@ def inventory_identity(raw_sha256: str, context: InventoryContext,
 
 
 def inventory_page_identity(raw_sha256: str, context: InventoryContext, retention: InventoryRetention,
-                            limits: InventoryLimits = DEFAULT_LIMITS) -> str:
+                            limits: InventoryLimits = DEFAULT_PAGE_LIMITS) -> str:
     limits_json = json.dumps(limits.model_dump(mode='json'), sort_keys=True, separators=(',', ':'), allow_nan=False)
     return domain_id('kbc.csv-inventory', 2, {'parser_version': 2, 'raw_sha256': raw_sha256,
                                             'context': context.model_dump(mode='json'), 'limits_json': limits_json,
@@ -303,13 +312,17 @@ class CsvInventory(Record):
 class CsvInventoryPage(CsvInventory):
     contract: Literal['kb-file-inventory/2'] = 'kb-file-inventory/2'
     parser_version: Literal[2] = 2
-    entries: tuple[InventoryPageEntry, ...] = Field(max_length=MAX_ENTRIES)
+    limits: InventoryPageLimits = DEFAULT_PAGE_LIMITS
+    entries: tuple[InventoryPageEntry, ...] = Field(max_length=MAX_PAGE_ENTRIES)
+    accepted_count: int = Field(ge=0, le=MAX_PAGE_ENTRIES)
+    duplicate_count: int = Field(ge=0, le=MAX_PAGE_ENTRIES)
+    conflict_count: int = Field(ge=0, le=MAX_PAGE_ENTRIES)
     retention: InventoryRetention
     scan_complete: bool
     matching_count: int = Field(ge=0, le=MAX_RECORDS)
     excluded_count: int = Field(ge=0, le=MAX_RECORDS)
     omitted_count: int = Field(ge=0, le=MAX_RECORDS)
-    conflict_witnesses: tuple[InventoryConflictWitness, ...] = Field(max_length=MAX_ENTRIES)
+    conflict_witnesses: tuple[InventoryConflictWitness, ...] = Field(max_length=MAX_PAGE_ENTRIES)
 
     def _expected_identity(self):
         return inventory_page_identity(self.raw_sha256, self.context, self.retention, self.limits)

@@ -30,15 +30,23 @@ def imported(service, tmp_path, raw):
     return service.import_inventory(path, context_for('KB5099001')).result['import_id']
 
 
-def test_retention_reaches_later_native_section_without_changing_v1_or_investigation(tmp_path):
+@pytest.mark.parametrize('parent_budget', [5_000, 50_000])
+def test_retention_reaches_later_native_section_without_changing_v1_or_investigation(tmp_path, parent_budget):
     service = wiring.build_service(tmp_path / 'ws', clock=FixedClock())
     with WorkspaceStore(service.root) as ws:
         ws.add_document(import_fixture('cvrf-2099-Feb.json'), h.read_fixture_bytes('cvrf-2099-Feb.json'))
     investigation = service.search('KB5099001').result['investigation_id']
-    source_id = imported(service, tmp_path, late_native_csv())
+    if parent_budget == 50_000:
+        source_id = imported(service, tmp_path, late_native_csv())
+    else:
+        with WorkspaceStore(service.root) as ws:
+            original, _ = add_inventory(ws, late_native_csv(), context_for('KB5099001'),
+                                        now='2099-01-01T00:00:00Z',
+                                        limits=InventoryLimits(max_entries=parent_budget))
+            source_id = original.import_id
     before = service.inventory_details(source_id).result
-    assert before['inventory']['accepted_count'] == 5000
-    assert before['inventory']['truncated']
+    assert before['inventory']['accepted_count'] == min(parent_budget, 5002)
+    assert before['inventory']['truncated'] is (parent_budget < 5002)
     with WorkspaceStore(service.root) as ws:
         revision, decisions = ws.current_revision(investigation), ws.decisions(investigation)
 
@@ -119,7 +127,8 @@ def test_cli_retention_and_show_keep_distinct_source_and_display_pagination(tmp_
     path = tmp_path / 'source.csv'
     path.write_bytes(late_native_csv())
     code, original, _ = kb('inventory', 'import', str(path), '--kb', 'KB5099001')
-    assert code == 3
+    assert code == 0 and original['result']['inventory']['accepted_count'] == 5002
+    assert not original['result']['inventory']['truncated']
     source = original['result']['import_id']
     code, retained, error = kb('inventory', 'retain', source, '--architecture', 'amd64', '--page', '1')
     assert code == 3 and not error and retained['command'] == 'kb inventory retain'

@@ -18,6 +18,7 @@ from ..hostile_text import replace_hostile
 from .contracts import domain_id
 from .inventory_contracts import (
     DEFAULT_LIMITS,
+    DEFAULT_PAGE_LIMITS,
     UINT64_MAX,
     CsvDiagnostic,
     CsvInventory,
@@ -28,6 +29,7 @@ from .inventory_contracts import (
     InventoryEntry,
     InventoryLimits,
     InventoryPageEntry,
+    InventoryPageLimits,
     InventoryRetention,
     InventorySection,
     entry_identity,
@@ -500,14 +502,14 @@ def _page_claims(parser: _Parser, entries: list[InventoryPageEntry], summaries: 
 
 
 def parse_inventory_page(raw: bytes, context: InventoryContext, retention: InventoryRetention, *,
-                         limits: InventoryLimits = DEFAULT_LIMITS, cancel=None) -> CsvInventoryPage:
+                         limits: InventoryLimits = DEFAULT_PAGE_LIMITS, cancel=None) -> CsvInventoryPage:
     """Retain an explicit page while checking all bounded source claims for contradictions."""
     if (type(raw) is not bytes or not isinstance(context, InventoryContext)
             or not isinstance(limits, InventoryLimits) or not isinstance(retention, InventoryRetention)):
         raise SourceError('PT-KBC-INPUT', 'CSV pages need exact bytes, context, retention policy and limits.')
     try:
         context = InventoryContext.model_validate(context.model_dump())
-        limits = InventoryLimits.model_validate(limits.model_dump())
+        limits = InventoryPageLimits.model_validate(limits.model_dump())
         retention = InventoryRetention.model_validate(retention.model_dump())
     except ValidationError:
         raise SourceError('PT-KBC-INPUT', 'CSV page context, policy or budgets failed validation.') from None
