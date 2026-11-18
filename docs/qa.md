@@ -2223,3 +2223,7 @@ No compiler/native/accuracy/frozen-result or release credit. [Full QA](qa/aa-sha
 ### Semantic disposition batch6 (2026-11-18, frozen 55f3 source)
 
 Twenty focal records; fresh 173 passed/2 compiler deselections across 29 files. Exact historical Java 6 pass; unified originals 1 fail/6 pass/1 setup error and 7 pass/1 setup error, all classified as retained controls or fixture defects. Prior same-source observations are referenced separately. See [receipt](qa/semantic-disposition-batch6-20261118.md). No native/compiler/target/network/Windows/manual gate.
+
+### Semantic disposition final batch7 (2026-11-18, frozen 55f3)
+
+Eleven focal records finish the exact original 131 partition. Fresh 100 passed / 4 known xfails / 1 explicit real-launcher deselection; original audit 19 pass/5 classified failures, deadline 2 pass, reference 23 pass, initial missing-jsonschema collection error retained. No native/package/network/manual acceptance. See [receipt](qa/semantic-disposition-batch7-20261118.md).

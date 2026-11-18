@@ -1665,3 +1665,11 @@ See the [immutable continuation checkpoint](../docs/qa/verified-continuation-202
 - [x] Preserve 22 original historical outcomes and the 173-pass bounded current gate with two compiler deselections.
 - [ ] Complete the remaining 11 original focal dispositions; keep broad research/native/platform obligations open.
 - [ ] Root independent review and selective docs integration; no whole-branch closure or remote changes.
+
+### Semantic disposition final batch7 (2026-11-18)
+
+- [x] Inspect the final 11 original focal scopes at frozen 55f3; verify the exact 131-name/tip union without whole-branch closure.
+- [x] Retain current and every executed original historical outcome, dependency error and explicit policy mismatch.
+- [ ] Reproduce CODEX1/5/6/14 on the approved current candidate before narrowly reviewed repairs; map dependency lock coverage before installer changes.
+- [ ] Reconcile the unretained Phase2 reference package after still-reachable runtime/workflow defects; no silent contract reinterpretation.
+- [ ] Root independent review/selective docs integration; broad native/research/platform/hosted/manual obligations remain open.

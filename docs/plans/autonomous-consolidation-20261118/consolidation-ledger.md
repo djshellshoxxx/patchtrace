@@ -371,3 +371,19 @@ current canonical controls pass without relaxing lineage or parser requirements.
 Prior exact 55f3 receipts for inherited scopes are referenced, never counted twice.
 Broad 79/85-path consolidation/research/native/platform residue remains open.
 See [batch6](semantic-disposition-batch6.md).
+
+## Semantic disposition batch7 — final original focal partition
+
+The final 11 original tips have bounded workflow/test/documentation dispositions
+against actual PR316 source 55f3. All 131 original reconciliation branch names now
+have one focal record; zero remain unselected. Exact original tips and the known
+alias are checked. This is not whole-branch closure or a product percentage.
+
+The fresh gate passed 100 cases, with four known CODEX xfails and one explicit
+real-launcher deselection. Original audit 19 pass/5 classified failures, deadline 2
+pass, Phase2 reference 23 pass, and its initial missing-dependency collection error
+are preserved. CODEX1/5/6/14 remain open; the old license-policy assertion is
+superseded by explicit enforced current policy. The unretained reference package
+needs contract reconciliation, and xdist/memory-isolation proposals remain
+unqualified. Broad research/native/platform/hosted/manual residue remains open.
+See [batch7](semantic-disposition-batch7.md).
