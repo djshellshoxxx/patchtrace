@@ -2244,3 +2244,13 @@ spec one-red, ten obsolete-tag policy failures and corrected run are all retaine
 Raw/YAML equivalence and exact 23-object API provenance are sealed in
 `docs/qa/workflow-action-pins-20261118.md` and its 98-member archive. No hosted,
 native, package or release qualification follows from this local static slice.
+
+
+## [CONTINUATION-TAIL-20261118]
+
+Exact source `068513a72e8a1412ce3960d3024c462d68d51376`:215 files,6,356 passed,18 skipped,three known CODEX
+expected failures,zero unexpected failures/errors in385.72s.552 project imports
+pinned;101 owner paths exact; original observations unchanged. Normal Ruff passes;
+strict S remains80 identical sites and fails. Main merge/native/platform/package/
+full final acceptance remains blocked. [Sealed checkpoint](qa/continuation-tail-20261118/README.md)
+and [older-source hosted14ef](qa/hosted-pr316-14ef-20261118/README.md).

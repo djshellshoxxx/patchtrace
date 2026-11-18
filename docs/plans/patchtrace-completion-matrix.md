@@ -324,3 +324,27 @@ superseded by explicit enforced current policy. The unretained reference package
 needs contract reconciliation, and xdist/memory-isolation proposals remain
 unqualified. Broad research/native/platform/hosted/manual residue remains open.
 See [batch7](autonomous-consolidation-20261118/semantic-disposition-batch7.md).
+
+
+## Verified continuation tail — 2026-11-18, source068513a7
+
+Actual source `068513a72e8a1412ce3960d3024c462d68d51376` passes6,356 selected tests,18 explicit skips and three
+known CODEX expected failures (215 files,385.72s). All552 imported project modules
+and101 changed owner paths are pinned. Strict S remains80 unchanged findings;
+full/platform/native/package/security final G remains open. Main stays `9c411ca3d7b47f950be5f0c6f01b3c54184554c6`.
+[Complete checkpoint](../qa/continuation-tail-20261118/README.md).
+
+| Feature / bounded scope | Current state | Completion | Concrete remaining work | Source | Dependencies | Tests | Security | Owner | Acceptance |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Saved advisory-scope admission | Implemented and independently reviewed on candidate | D,R:50% | Representative real-source/native journey and final gates; preserve current documented recovery limits | a7f6c9c4, PR316 | Existing global index, coverage identity, caller-thread SQLite | Original failures, author2604/one native skip, root99, actual combined gate | Scope validation before approvals, inventory and all selected recovery writes | CVE/KB + root | Stable finite scope and admission-sensitive context after reopen; J/G |
+| Local-package pure contracts and budgets | Bounded preparatory slice implemented; no native intake caller | D,R:50% for this slice | Serial worker grants, native stage/FDI, held reader and durable provenance composition |64583964, PR316| Existing acquisition errors; generated schemas | Original157/6 boundary failures and Kelvin red retained; corrected284 and independent281+19 per-source invocations; actual combined | ASCII-only selection, graph ownership, reserve-before-write, bounded names/counts/time | CI + security | Native and representative journey separate; no capability claim from records |
+| Whole local MSU/CAB fallback (PW02) | Partial implementation; no working package-to-project route | None:0% of whole-feature milestones | Implement and qualify native decoder/worker/stage, existing KB/core path, durable linkage and frozen journey | Current contracts + separate joint design | Qualified Windows lane and explicit local inputs | Portable contracts only; native/frozen route absent | No target execution, retained locks, deadline and committed-project preservation required | CI + CVE/KB | Full specified package-to-project route before whole-feature D/R/J/G credit |
+| A/A classification and optional COFF compatibility | Reviewed developer/research mechanics | D,R:50% for each bounded slice | Native compiler/rebuild/accuracy qualification and final applicable gates |9bd17bbe,ce093ec5| Existing shard/store/merge and optional source-layer check | Original public failures and actual combined regression | Preserve other statuses, full counterevidence and optional-caller boundary | Research + root | No frozen-outcome or product-accuracy credit from authored fixtures |
+| Immutable workflow action references | Implemented reference-only repair | D,R:50% | Exact-source hosted behavior; dependency lock closure; other CI defects and final gates |3b3c3d63,f6cc9a18|23 canonical API objects; existing workflow policy|430/three known xfails at owner source; actual combined|178 mutable uses pinned; triggers/permissions/secrets/scripts unchanged|CI + root|Hosted and final qualification, not static checks alone |
+| Windows source observation guards | Portable source repair independently reviewed | D,R:50% | Eight native Windows observations, actual scanner/BinDiff/package reruns |80df2735|CPython path/descriptor semantics; existing source verification|240/8 native skips, independent44 and252/8; actual combined|Final same-view ChangeTime and complete receipt checks retained|CI + root|Native Windows and final-source G; old hosted generic failure cause remains inferred |
+
+All131 original reconciliation branch names now have a focal disposition; zero
+remain unselected in that original partition. Whole-branch residue and research/
+native/platform work remain. This count is not a feature percentage. The separate
+cache/smoke/purity handoffs and next package work are absent from this frozen
+candidate. Historical rows above remain attributed to their own dates/sources.

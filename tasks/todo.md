@@ -1691,3 +1691,16 @@ See the [immutable continuation checkpoint](../docs/qa/verified-continuation-202
   full frozen CLI smoke wiring (CODEX-14), and an approved platform/closure hash
   design followed by implementation (CODEX-5). The action receipt credits none
   of these unresolved scopes or any hosted/native acceptance.
+
+
+### [CONTINUATION-TAIL-20261118]
+
+- [x] Independently verify and integrate semantic batches5/6/7; all131 original focal tips dispositioned, broader residue explicit.
+- [x] Port reviewed saved-scope, A/A, optional COFF, artifact retention, Windows observations, PW02 pure contracts and immutable action references.
+- [x] Verify101 owner paths and215-file current gate:6,356 pass/18 skips/three known expected failures;552 source imports; preserve original failures and observations.
+- [x] Retain unchanged strict80 diagnostics, primary Windows semantics and independently checked older-source hosted14ef packet.
+- [ ] Finish append-only PR316 publication with exact remote tree/parent/ref readback; no main merge.
+- [ ] Independently review/integrate cache verification, full Linux smoke and directory-publication import-purity handoffs.
+- [ ] Complete portable worker-grant and neutral core reader/checkpoint slices, then native stage/FDI/supervisor and existing KB propagation/durable package linkage.
+- [ ] Reconcile Phase2 reference contracts and complete approved platform/profile dependency hash-lock design and implementation.
+- [ ] Obtain complete actual-candidate full/Linux/Windows/Qt/native/frozen/package/security/reproducibility gates; no beta/release readiness yet.
