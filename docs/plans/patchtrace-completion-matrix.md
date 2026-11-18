@@ -173,3 +173,24 @@ The fresh #304 full suites, repeated Qt and package receipts do not provide G to
 ## Staging and static boundary continuation — 2026-11-18
 
 Source `2c0d51cb3cd237dfd6ef8740f36404cd15abe1bc` retains the independently accepted failed-mkdir ownership repair (`43ac4829`, root 140/author 219 overlapping passes). The narrow staging slice has D/R evidence; broader persistence J/G remain open. Forty-three original assertion/SQL sites have source-specific dispositions and 16 combined-source normal/-O child controls; the current complete strict scan still fails 81 diagnostics, including two later source additions. No whole-security milestone is earned. Failed/cancelled/timeout attempt persistence can omit a storage diagnostic in the desktop; the reproduced separate repair is assigned. [Current receipt and remaining scope](../qa/static-ownership-followup-20261118/README.md).
+
+## Semantic branch review batch 2 — 2026-11-18
+
+[Batch 2](autonomous-consolidation-20261118/semantic-disposition-batch2.md)
+adds scoped evidence for 20 original tips at
+`3be3af166897fc2376dc64850edc66485273dea1`: 18 focal behaviors retained,
+two overlapping tips with one missing selected-source explanation. The original
+mechanical set remains 131; 40 scopes have been selected across two batches,
+leaving 91 unselected original tips plus documented broad-tip residue.
+
+| Criterion | Current evidence | Remaining boundary |
+|---|---|---|
+| Selected enrichment/acquisition/rule/n-way behaviors | Source comparisons, replacement ancestry and current controls retained | No whole-branch closure; native/provider/empirical gates separate |
+| Selected superseded advisory explanation | Original warning control is red; actual CLI JSON/text reproduces the missing explanation; source withholding is correct | Separate bounded warning/presentation repair and independent review |
+| Historical controls | Original files and failures preserved with explicit contract/fixture diagnoses | Historical trees are not freshly qualified |
+| Native platform acceptance | WinVerifyTrust and msdelta skipped on Linux | Windows execution and package/manual gates remain open |
+
+This documentation does not add D/R/J/G percentage credit or change a feature
+readiness estimate. Branch/test counts do not measure completed requirements.
+The separately reviewed creation and two callgraph repairs now present in the
+comparison tree retain their own acceptance receipts and original failure history.

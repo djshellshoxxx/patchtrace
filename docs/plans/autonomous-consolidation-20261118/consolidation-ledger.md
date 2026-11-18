@@ -242,3 +242,22 @@ The first semantic batch's three reproduced gaps now have accepted narrow source
 ## Static/staging source follow-on — 2026-11-18
 
 Candidate `2c0d51cb3cd237dfd6ef8740f36404cd15abe1bc` adds accepted stage spec/source/QA with exact original SHA attribution. Production/test/tool/workflow bytes equal reviewed source 43ac4829 and 76 changed paths retain reviewed owners. Root 140 staging checks and 16 normal/optimized static controls are source-scoped; the prior 1,770 combined gate is not relabeled. Current strict scan fails 81 findings; a separate GUI attempt-retention error is assigned. Main remains unchanged and no old PR is closed. [Source/evidence](../../qa/static-ownership-followup-20261118/README.md).
+
+## Semantic reconciliation batch 2 — 2026-11-18
+
+The [second bounded batch](semantic-disposition-batch2.md) compares 20 additional
+original reconciliation tips against `3be3af166897fc2376dc64850edc66485273dea1`.
+Eighteen focal source scopes are retained; two overlapping coordinator tips share
+one confirmed missing selected-superseded-source explanation. Status and trusted
+edge withholding remain correct. A warning-only follow-on is proposed; no source
+port, branch closure, deletion or remote mutation occurs in this batch.
+
+Current gates pass 955 cases with two native Windows skips, then 139 additional
+audit cases. Original historical replays and their failures are preserved and
+classified: a replaced internal-helper expectation, an obsolete fixture shape,
+and the real warning omission. Actual headless CLI JSON/text shows the presentation
+effect. [Complete records](semantic-disposition-batch2.json) and the
+[sealed QA receipt](../../qa/semantic-disposition-batch2-20261118.md) retain exact
+source/commands/hashes. The original 131-tip denominator now has 40 selected
+scopes and 91 unselected tips; broad residue and qualification are still open.
+No completion percentage is inferred from these counts.

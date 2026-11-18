@@ -1566,3 +1566,11 @@ Current evidence and assigned work: [checkpoint](../docs/qa/verified-followup-in
 - [ ] Complete source-specific residual/extra-site review; retain raw findings and repair only reproduced defects.
 - [ ] Repair and independently review failed engine-attempt persistence diagnostics through final UI aggregation.
 - [ ] Obtain actual final candidate full/platform/native/package/dependency/security gates before canonical integration.
+
+### [SEMANTIC-DISPOSITION-BATCH2-20261118]
+
+- [x] Compare 20 additional original tips against exact source `3be3af16`; retain patches, source/symbol evidence, replacement provenance and scoped decisions.
+- [x] Preserve current and unchanged historical controls, original failures, command records and actual headless CLI output in the sealed evidence packet.
+- [x] Distinguish 18 retained focal scopes from two overlapping tips sharing the one missing selected-superseded-source explanation; preserve correct evidence withholding.
+- [ ] Propose and independently review a separate warning/presentation repair without altering source admission, status, ambiguity or conflicts.
+- [ ] Continue 91 unselected original tips plus broad residue from earlier selected scopes; no blanket branch closures or completion credit. [Receipt](../docs/qa/semantic-disposition-batch2-20261118.md).

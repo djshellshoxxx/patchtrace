@@ -2103,3 +2103,18 @@ Combined source `3be3af166897fc2376dc64850edc66485273dea1` preserves actual publ
 ## [STATIC-OWNERSHIP-FOLLOWUP-20261118]
 
 At `2c0d51cb3cd237dfd6ef8740f36404cd15abe1bc`, the accepted two-line pilot stage ownership repair and 43-site assertion/SQL review are integrated. Root independently reproduces the original staging loss and passes 140 repaired-source checks; eight static probe groups pass in both normal and optimized Python on the combined predecessor. Current strict scan remains failed with **81 findings** (original 79 plus one parser and one metadata-SQL diagnostic), all retained. A separate failed-attempt persistence-diagnostic defect is reproduced and assigned. Actual final-source/platform/native/package gates remain open. [Evidence and precise source limits](qa/static-ownership-followup-20261118/README.md).
+
+## [SEMANTIC-DISPOSITION-BATCH2-20261118]
+
+Evidence-only comparison at `3be3af166897fc2376dc64850edc66485273dea1` examines
+20 more original reconciliation tips: 18 retain the focal behavior reviewed;
+two overlapping tips share one missing selected-superseded-source explanation.
+Current replacement gates report 955 passed / 2 native Windows skips, then 139
+additional audit cases passed. Unchanged historical controls preserve the real
+warning failure, a replaced internal-helper expectation and an obsolete fixture
+shape; their overlapping results are reported separately. Five actual headless
+CLI calls confirm correct evidence withholding and the missing explanation.
+Source/tests/tools are unchanged. [Complete source-pinned ledger and raw receipt](qa/semantic-disposition-batch2-20261118.md).
+The original 131-tip set now has 40 selected scopes and 91 unselected tips;
+broad residue, native/manual/package and independent source-repair gates remain
+open. No whole branch is closed and no completion percentage is inferred.
