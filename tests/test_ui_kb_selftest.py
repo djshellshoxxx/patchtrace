@@ -259,3 +259,48 @@ def test_temporary_workspace_cleans_only_its_owned_tree_after_failure(tmp_path):
             root = workspace.root
             raise ValueError('forced failure')
     assert not root.exists() and sibling.read_bytes() == b'preserve sibling'
+
+
+def test_worker_that_exceeds_join_budget_prevents_temporary_cleanup(qtbot, qapp, tmp_path, monkeypatch, offline):
+    journey, loop = modules()
+    started, release = threading.Event(), threading.Event()
+    runners = []
+
+    def worker(_cancel, _report):
+        started.set()
+        release.wait(3)
+
+    def fail_with_pending_work(window):
+        runner = window.panels.tasks
+        shutdown = runner.shutdown
+        runners.append(shutdown)
+        monkeypatch.setattr(runner, 'shutdown', lambda: shutdown(timeout=0.01))
+        runner.submit('selftest-uncooperative-control', worker)
+        yield loop.Wait(started.is_set, 'worker startup')
+        raise RuntimeError('controlled pending work failure')
+
+    monkeypatch.setattr(journey, '_candidate', fail_with_pending_work)
+    try:
+        with pytest.raises(RuntimeError, match='controlled pending work failure') as failure:
+            with loop.temporary_workspace(directory=tmp_path) as workspace:
+                root = workspace.root
+                journey.run_journey(qapp, workspace)
+        assert root.is_dir() and workspace.retain
+        assert any('cleanup' in note and 'RuntimeError' in note for note in failure.value.__notes__)
+    finally:
+        release.set()
+        for shutdown in runners:
+            assert shutdown(timeout=2) == []
+
+
+def test_inventory_and_investigation_registry_what_texts_are_distinct(qapp, tmp_path):
+    from patchtrace.kbcorrelation.investigation_qt import InvestigationDialog
+    from patchtrace.kbcorrelation.inventory_qt import register_inventory_tips
+    from patchtrace.tooltips import REGISTRY
+
+    register_inventory_tips()
+    dialog = InvestigationDialog(workspace=tmp_path)
+    try:
+        assert REGISTRY['kb.inventory.browse_workspace'].what != REGISTRY['kb.investigation.browse_workspace'].what
+    finally:
+        dialog.reject()

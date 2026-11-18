@@ -127,6 +127,9 @@ supporting binary applicability. It exports the project and advisory context,
 checks exact content-addressed source copies, reopens the same project/run,
 imports a superseding source revision and reopens again with explicit stale
 reasons and disabled candidate navigation. Paths include non-ASCII characters.
+Investigation and inventory workspace-picker tooltips must describe their distinct
+roles when both controllers are registered; the existing global unique-What
+registry check remains mandatory.
 
 All windows, dialogs, task runners and project services owned by this control
 must be closed on success or failure, with original failures retained if cleanup
