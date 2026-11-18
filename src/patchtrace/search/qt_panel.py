@@ -347,6 +347,7 @@ class SearchController(ControllerBase):
 
     def build(self) -> None:
         service, builder, epoch = self.service(), self.builder, self.epoch
+        generation = self.generation
         if self.key is None or service is None:
             return
         self.cancelled = False
@@ -355,14 +356,15 @@ class SearchController(ControllerBase):
         def work(token, report):
             return _guarded(lambda: builder(service, token, lambda group, done, total: report(group, done, total)))
 
-        self.tasks.submit('search.build', work, lambda out: self._built(epoch, out), self._failed, self._build_progress)
+        self.tasks.submit('search.build', work, lambda out: self._built(epoch, generation, out),
+                          self._failed, self._build_progress)
         self._render()
 
     def _build_progress(self, progress: TaskProgress) -> None:
         self.progress = vm.Progress(progress.stage, progress.done, progress.total or 1)
         self._render()
 
-    def _built(self, epoch: int, outcome: Outcome) -> None:
+    def _built(self, epoch: int, generation: int, outcome: Outcome) -> None:
         if epoch != self.epoch:
             return
         self.progress = None
@@ -371,7 +373,7 @@ class SearchController(ControllerBase):
             self.failure = vm.Failure(outcome.code, outcome.message)
             return self._render()
         self._probe_index()
-        if self.panel.query.text().strip():
+        if generation == self.generation and self.panel.query.text().strip():
             self.submit()
         else:
             self._render()

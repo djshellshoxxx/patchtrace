@@ -1,11 +1,12 @@
 """Actual saved-search stores under Qt: project ownership and no implicit query execution."""
 from __future__ import annotations
 
+from threading import Event
 from types import SimpleNamespace
 
 import pytest
 from leads_support import FakeNav, FakeProject, FakeShell
-from PySide6.QtCore import QSettings
+from PySide6.QtCore import QSettings, Qt
 from PySide6.QtWidgets import QDialog
 
 from patchtrace.enrichment.storage import EnrichmentStore
@@ -130,6 +131,46 @@ def test_failed_recent_clear_does_not_claim_history_was_deleted(rig, monkeypatch
     saved.clear_recent()
     assert saved.recent.items() == ('read_item',)
     assert 'could not' in saved.widgets.note.text().lower()
+
+
+@pytest.mark.parametrize('recall', [False, True])
+def test_delayed_build_only_submits_its_original_query_generation(rig, qtbot, recall):
+    """Retained independent review race, with normal Build and explicit Enter controls."""
+    c = rig.controller
+    prepare(c, 'old_query')
+    c.saved.remember('new_query')
+    started, release = Event(), Event()
+    coverage_calls = []
+
+    def build(_service, _cancel, _progress):
+        started.set()
+        if not release.wait(5):
+            raise RuntimeError('test build was not released')
+
+    def coverage(_service):
+        coverage_calls.append(True)
+        return ()
+
+    c.builder, c.coverage = build, coverage
+    c.build()
+    try:
+        qtbot.waitUntil(started.is_set)
+        if recall:
+            c.saved.recall_recent(1)
+            assert c.panel.query.text() == 'new_query'
+        release.set()
+        qtbot.waitUntil(lambda: not rig.shell.tasks.busy(), timeout=7000)
+        qtbot.wait(350)
+        assert coverage_calls == [True] and c.progress is None
+        if recall:
+            assert rig.calls == [], 'an older build executed recalled text without Enter'
+            qtbot.keyClick(c.panel.query, Qt.Key.Key_Return)
+            qtbot.waitUntil(lambda: len(rig.calls) == 1 and not rig.shell.tasks.busy())
+            assert rig.calls[0].plan.text == 'new_query'
+        else:
+            assert len(rig.calls) == 1 and rig.calls[0].plan.terms[0].nfc == 'old_query'
+    finally:
+        release.set()
 
 
 def test_real_default_search_build_save_run_and_reopen_without_extra_owner(qtbot, tmp_path, monkeypatch):

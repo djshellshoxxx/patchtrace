@@ -35,6 +35,10 @@ adapter; neither introduces a project schema, store owner or index implementatio
 - Recent history is **per-user query text**, explicitly labelled in the desktop,
   distinct from project-owned saved queries. Recalling recent text fills the
   editor without submitting; Enter remains the explicit execution action.
+  A build already in flight may finish and refresh index coverage after recall,
+  but may auto-submit only the query generation that started that build. A
+  changed generation leaves recalled text inert; ordinary explicit Build keeps
+  its existing automatic submission when that generation is unchanged.
   Recall restores filters parsed from the text and uses `auto` mode because
   recent history stores no mode. Only successfully parsed submissions are added.
   Clear history touches only this user's recent list.
