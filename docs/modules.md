@@ -1,5 +1,21 @@
 # Module index
 
+## Owned immutable file publication (2026-11-18)
+
+`src/patchtrace/owned_publication.py` is the shared stdlib publication boundary for
+immutable files. It holds destination directories and the exact source object,
+refuses reparse/identity uncertainty, and never replaces a destination. Optional
+existing-content reuse requires a bounded read and a caller-supplied validator.
+An expected root anchor binds workspace object operations to the directory
+identity captured when its SQLite owner opened, including final revalidation.
+`WorkspaceStore.write_object` supplies bounded gzip/digest validation; the research
+winpairs helper reuses the same platform machinery without admitting existing
+files. Windows uses rooted native handles; Linux uses anonymous descriptor-backed
+staging. Tests: `test_kbc_object_publication.py` and the existing winpairs boundary
+modules, plus `test_owned_publication.py`. Portable tests do not certify Windows
+filesystem behavior; the QA publication prerequisite runs these controls on both
+Linux and Windows before the full suite.
+
 | Module | Responsibility | Verification seam |
 |---|---|---|
 | `tools/branch_inventory.py` | Read-only full-history branch ancestry, patch evidence and exact-tip inventory replay; no ref mutation or deletion authorization | Real authored Git graphs and atomic report preservation in `tests/test_branch_inventory.py` |

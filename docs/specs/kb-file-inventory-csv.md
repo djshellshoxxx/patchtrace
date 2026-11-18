@@ -310,6 +310,49 @@ row insertion; failure can leave only an unreferenced object, never half a recor
 On replay verify raw digest/size, reparse with captured context/version, and compare
 the deterministic parsed record. Reject damaged state without overwriting it.
 
+### Immutable object publication amendment (2026-11-18)
+
+All advisory and inventory object writes use the existing WorkspaceStore facade
+and one shared owned-publication primitive. Verify the supplied raw SHA-256 before
+any write. Hold ordinary destination-parent objects throughout staging, flush,
+verification and exclusive publication. Never replace a pre-existing path, whether
+it is valid, damaged, a link, a directory or a concurrently published file.
+Existing regular files may be reused only after a bounded read through an owned
+handle, bounded single-member gzip decompression, and exact raw digest/length
+validation. Their original compressed bytes and filesystem identity stay intact.
+Inventory imports continue to reject missing objects already referenced by earlier
+records; a new import is not a repair operation.
+The named `store.py` adapter may import only `OwnedPublicationError`,
+`directory_anchor`, `verify_anchor`, `publish_bytes`, and `read_bytes` from the
+stdlib-only shared `owned_publication` module. Pure inventory domain modules
+retain their existing sibling-import restrictions.
+
+The caller-selected workspace root may be resolved once; child object directories
+and leaves must not follow symlinks or Windows reparse points. Linux publication
+uses an anonymous source linked from its exact descriptor into an anchored parent.
+Windows publication uses rooted opens, no-delete-sharing directory guards and a
+read-shared-only source, then a no-replace rename of that exact source handle.
+The Windows source and parent identities remain held through the operation.
+Unavailable platform capabilities or observed identity changes fail closed with
+the existing storage/verification errors, before import-row admission.
+Capture the resolved workspace root's filesystem identity before opening SQLite,
+recheck it after opening, and require that same identity on the held root during
+every object read/write and final parent revalidation. Renaming and replacing the
+workspace pathname cannot redirect object work away from the open database owner.
+SQLite opens (including a newer-schema read-only reopen), returned object paths,
+and orphan-object discovery use that captured resolved root, not the original
+caller alias. Retargeting an allowed root symlink cannot split database and object
+ownership between two workspaces.
+
+Failure and cancellation preserve all previous and concurrently written evidence.
+Cleanup closes/discards only the owned source; it must never unlink a pathname
+which could identify a replacement file. A successful object can remain orphaned
+if a later transaction fails, as already specified. This is not a cross-filesystem
+and SQLite transaction and does not promise to prevent external mutation after
+the completed operation; every later read must still verify its recorded bytes.
+The persisted schemas and import/source identities are unchanged. Native Windows
+tests remain a separate required acceptance lane.
+
 ## 6. KB service, selection, CLI and desktop
 
 Keep storage/parser logic outside Qt. KbService delegates to inventory_service.py:

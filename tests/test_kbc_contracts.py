@@ -385,6 +385,10 @@ ALLOWED_SIBLINGS = {'contracts.py': {'acquisition', 'enrichment', 'intelligence'
                     # `clean_text` applies the one hostile-character rule; that module is stdlib-only and pure
                     'products.py': {'hostile_text'}}
 INVENTORY_SIBLING_SYMBOLS = {
+    # The named workspace adapter shares only the stdlib owned-publication boundary.
+    'store.py': {'persistence': {'creation_directory_available'},
+                 'owned_publication': {'OwnedPublicationError', 'directory_anchor', 'verify_anchor',
+                                        'publish_bytes', 'read_bytes'}},
     'inventory_contracts.py': {'acquisition.contracts': {'PE_EXTENSIONS', 'AcquisitionError', 'validate_file_name'},
                                'hostile_text': {'replace_hostile'}},
     'inventory_csv.py': {'hostile_text': {'replace_hostile'}},
