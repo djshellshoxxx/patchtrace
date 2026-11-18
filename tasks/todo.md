@@ -1650,3 +1650,11 @@ See the [immutable continuation checkpoint](../docs/qa/verified-continuation-202
 - [ ] Independently review and selectively retain the docs-only batch5 checkpoint (root-owned).
 - [ ] Continue the 31 unselected original tips; no whole-branch closure or native/manual/package acceptance is implied.
 - [ ] Track separate COFF/saved-scope repairs and proposed A/A-only failure propagation; retain configuration/final-run/recipe/transfer/Windows-CI residue.
+
+
+### [AA-SHARD-CLASSIFICATION-20261118]
+
+- [x] Reproduce both omitted A/A failure outcomes through unchanged public persisted-shard controls.
+- [x] Specify/test before the four-line classification/reason repair; preserve generic findings and prior error precedence.
+- [x] Retain exact-source author and independent controls, original fixture correction, raw outcomes and source hashes.
+- [ ] Selectively integrate attributed commits and verify the combined source; no frozen/native/accuracy or main-merge credit.

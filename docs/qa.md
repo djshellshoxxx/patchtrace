@@ -2207,3 +2207,15 @@ remain red at this source; separate repairs are not credited here. Every origina
 historical mismatch is classified. 100/131 original tips now have selected scopes;
 31 remain unselected, with broad/native/package residue explicit. No source edits,
 remote mutation, merge, whole-branch closure or native/manual acceptance.
+
+
+## [AA-SHARD-CLASSIFICATION-20261118]
+
+Exact source `9bd17bbecb54f5a3de05d235a1617a3d2f196883` retains nonidentical A/A
+rebuilds in failed shard cases, merged provenance and CLI status. Spec/tests
+precede the four-line production change. Original public 2-fail/1-positive and
+spec-first 5-fail/59-positive receipts remain. Author gate: 67 passed; independent
+gate: 71 passed, zero skips. The independent fixture-budget correction is retained
+with its original 1-fail/69-pass result; no product change followed it. Source
+imports, old observations, exact Git snapshots and archive members are verified.
+No compiler/native/accuracy/frozen-result or release credit. [Full QA](qa/aa-shard-classification-20261118/README.md).
