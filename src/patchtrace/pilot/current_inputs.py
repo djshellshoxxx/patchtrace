@@ -23,9 +23,10 @@ from ..kev import store as kev_store
 from ..kev.contracts import KevError
 from . import store
 from .contracts import PilotAssessment
-from .limits import DEFAULT_LIMITS
+from .limits import DEFAULT_LIMITS, PilotError
 from .origins import DefaultOriginRegistry
 from .rules.data import pilot_rules_digest
+from .sources import kb_context
 from .tiers import TIERS_VERSION
 
 
@@ -44,6 +45,8 @@ class CurrentInputs:
     known: tuple[tuple[str, object], ...]
     advisories: tuple[AdvisoryIdentity, ...] | None
     kev_available: bool
+    retained: kb_context.ContextSnapshot
+    csaf_readable: bool
 
     def changed(self, assessment: PilotAssessment) -> tuple[str, ...]:
         """Pure check: names of changed or unverifiable required inputs, without changing history."""
@@ -61,7 +64,8 @@ class CurrentInputs:
     def _same_advisories(self, assessment: PilotAssessment) -> bool:
         if self.advisories is None:
             return False
-        have = {cve for advisory in self.advisories for cve in advisory.cves}
+        csaf = {cve for advisory in self.advisories for cve in advisory.cves}
+        have = set(kb_context.available_cves(self.retained, csaf, csaf_readable=self.csaf_readable))
         selected = {context.cve for context in assessment.cves}
         if len(have) <= DEFAULT_LIMITS.p03_cves:
             if selected != have:
@@ -71,34 +75,39 @@ class CurrentInputs:
         # Match StoredAdvisorySource.facts_ids: a later revision may withdraw all
         # selected CVEs and must still invalidate its earlier tracking-group facts.
         groups = {item.group for item in self.advisories if item.cves & selected}
-        facts = tuple(sorted({item.facts_id for item in self.advisories if item.group in groups}))
-        return assessment.inputs.advisory_facts_ids == facts
+        facts = {item.facts_id for item in self.advisories if item.group in groups}
+        try:
+            facts.update(kb_context.fallback_facts_ids(self.retained, csaf, selected,
+                                                      csaf_readable=self.csaf_readable))
+        except PilotError:
+            return False  # a current source limit cannot certify an earlier subset of the evidence
+        return assessment.inputs.advisory_facts_ids == tuple(sorted(facts))
 
 
-def _advisories(service, enrichment: EnrichmentStore, project) -> tuple[AdvisoryIdentity, ...] | None:
-    """Require every retained source to be accounted for; verified facts-cache recovery is allowed."""
+def _advisories(service, enrichment: EnrichmentStore, project) -> tuple[tuple[AdvisoryIdentity, ...] | None, bool]:
+    """Verify every source; cache recovery is allowed for CSAF but warnings withhold CVRF fallback."""
     try:
         corrupt = []
         rows = enrichment.entries(SOURCE_KIND, on_corrupt=corrupt.append)
         expected = set()
         for entry in rows:
             if not isinstance(entry.body, dict) or entry.guard.project_id != project.id:
-                return None
+                return None, False
             source = AdvisorySource.model_validate_json(json.dumps(entry.body.get('source')))
             if entry.guard.raw_sha256 != source.sha256:
-                return None
+                return None, False
             expected.add(source.sha256)
         if corrupt:
-            return None
-        advisories, _warnings = AdvisoryStore(service.root, enrichment, project.id, project.revision).advisories()
+            return None, False
+        advisories, warnings = AdvisoryStore(service.root, enrichment, project.id, project.revision).advisories()
         if expected != {item.source.sha256 for item in advisories}:
-            return None  # a source was skipped; an old revision cannot silently become current again
+            return None, False  # an old revision cannot silently become current after a source was skipped
         return tuple(AdvisoryIdentity(item.facts.facts_id,
                                      (item.facts.publisher_namespace, item.facts.tracking_id),
-                                     frozenset(item.facts.cves())) for item in advisories)
+                                     frozenset(item.facts.cves())) for item in advisories), not warnings
     except (IntelError, EnrichmentError, ValidationError, sqlite3.Error, OSError, ValueError, TypeError,
             AttributeError):
-        return None
+        return None, False
 
 
 def _kev() -> tuple[str | None, bool]:
@@ -118,11 +127,14 @@ def capture(service, enrichment: EnrichmentStore, project=None) -> CurrentInputs
     sides = {artifact.side: artifact.sha256 for artifact in project.artifacts}
     run = store.completed_run(project)
     kev_id, kev_available = _kev()
+    advisories, csaf_readable = _advisories(service, enrichment, project)
+    retained = kb_context.capture(service, enrichment, project=project)
     known = (
         ('older_sha256', sides.get('older')), ('newer_sha256', sides.get('newer')),
         ('ghidriff_run_id', run.id if run else None), ('raw_sha256', run.raw_sha256 if run else None),
-        ('kev_snapshot_id', kev_id), ('lexicon_digest', lexicon_digest()), ('rules_digest', rules_digest()),
+        ('kev_snapshot_id', kev_id), ('kb_link_digest', retained.digest),
+        ('lexicon_digest', lexicon_digest()), ('rules_digest', rules_digest()),
         ('pilot_rules_digest', pilot_rules_digest()), ('origins_digest', DefaultOriginRegistry().digest()),
         ('tiers_version', TIERS_VERSION))
     return CurrentInputs(project_id, revision, (project.id, project.revision) == (project_id, revision), known,
-                         _advisories(service, enrichment, project), kev_available)
+                         advisories, kev_available, retained, csaf_readable)
