@@ -54,6 +54,26 @@ def normalize(raw, pure):
     return normalize_ghidriff(raw, *pure)
 
 
+@pytest.mark.parametrize('flip', [False, True])
+@pytest.mark.parametrize('reverse_entries', [False, True])
+def test_same_name_zero_nonzero_and_unknown_addresses_abstain(pure, flip, reverse_entries):
+    members = [upstream('alias', value) for value in ('0', '10', None)]
+    common = upstream('shared', '20')
+    pairs = [{'old': common if flip else member, 'new': member if flip else common}
+             for member in members]
+    raw = sample_diff(pure[0])
+    raw['functions'] = {'added': [], 'deleted': [], 'modified': pairs[::-1] if reverse_entries else pairs}
+    result = normalize(raw, pure)
+    assert len(result) == 4 and all(match.category == 'ambiguous' for match in result)
+    functions = [function for match in result for function in match.older + match.newer]
+    assert [function.address for function in functions if function.name == 'alias'] == ['0', '10', None]
+    groups = {function.metadata['upstream_one_to_many']['group'] for function in functions}
+    raw['functions']['modified'].reverse()
+    replay = normalize(raw, pure)
+    assert groups == {function.metadata['upstream_one_to_many']['group'] for match in replay
+                      for function in match.older + match.newer}
+
+
 # --- the synthetic documents ---------------------------------------------------------------------------------------
 
 def d1(project):

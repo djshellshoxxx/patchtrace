@@ -56,7 +56,7 @@ def _canonical(value) -> str:
 
 def _identity_key(identity: Identity) -> tuple:
     side, name, address = identity
-    return side != 'older', name, address is None, address or ''
+    return side != 'older', name, address is None, address if address is not None else 0
 
 
 def normalize_ghidriff(raw: dict, project: ComparisonProject, run_id: str) -> list[FunctionMatch]:

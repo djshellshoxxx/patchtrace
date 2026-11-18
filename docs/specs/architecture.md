@@ -1,5 +1,11 @@
 # PatchTrace beta architecture (SPEC-01, schema v1)
 
+Normalization review amendment (2026-11-18 UTC): address zero is a known numeric
+address, distinct from an unavailable address. Within a one-to-many conflict
+group, ordering compares known addresses numerically, then unavailable addresses.
+Same-named functions at zero, nonzero and unavailable addresses must not cause
+mixed-type comparisons. Reversing input entries preserves the group identity.
+
 > **SPEC-31 status amendments (2026-11-04, documentation only; rows A-01 and A-01b of `unified-engine/10-amendments.md`):**
 > - **A-01** (section "Objective and decisions", DEC-02) reads: "Never fork or patch Ghidriff; an in-house DERIVED engine (SPEC-31) may match independently; Ghidriff stays primary and its results are never overwritten." This line is the reworded DEC-02 for SPEC-31.
 > - **A-01b** (section "Interfaces and ownership"): "one active analysis job per window" covers the unified run (extraction and worker); the project directory adds `runs/<run_id>/unified/` (IR, results, transient GZFs).

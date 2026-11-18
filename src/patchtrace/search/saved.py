@@ -42,6 +42,7 @@ GUARD_RUN = 'search'
 SAVED_DOMAIN = 'search-saved'
 NAME_MAX = 64
 RECENT_MAX = 20
+RECENT_INPUT_CHARS = 64 * 1024
 # Rows this module writes; the contract (`search.contracts.SavedSearch`, the only `search-saved/1` model) accepts
 # any short id, so a row whose id does not have this shape, or a delete naming itself, is skipped on read.
 _ROW_ID = re.compile(r'search-saved:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}')
@@ -290,9 +291,11 @@ def dump_recent(recent: tuple[str, ...]) -> str:
 def load_recent(text: str | None) -> tuple[str, ...]:
     """The stored list, read leniently: unknown fields are ignored, an entry that is not usable text is dropped, and a
     value that is not a `search-recent/1` document reads as empty."""
+    if not isinstance(text, str) or len(text) > RECENT_INPUT_CHARS:
+        return ()
     try:
-        doc = json.loads(text) if isinstance(text, str) else None
-    except ValueError:
+        doc = json.loads(text)
+    except (ValueError, RecursionError):
         return ()
     if not isinstance(doc, dict) or doc.get('contract') != RECENT_CONTRACT or not isinstance(doc.get('queries'), list):
         return ()

@@ -728,3 +728,128 @@ def test_an_unsearchable_download_dir_exits_2(release, monkeypatch):
     monkeypatch.setattr(Path, 'is_dir', guarded)
     code, document, err = run(release)
     assert code == 2 and document == {} and 'verify_release: error' in err
+
+
+# ---------------------------------------------------------------- declared member kinds and composed links
+
+@pytest.mark.parametrize('kind', [stat.S_IFIFO, stat.S_IFCHR, stat.S_IFBLK, stat.S_IFSOCK])
+@pytest.mark.parametrize('member', [*vr.ZIP_REQUIRED, 'PatchTrace/extra'])
+def test_zip_special_members_cannot_pass_as_regular_files(release, kind, member):
+    buffer = io.BytesIO()
+    with zipfile.ZipFile(buffer, 'w') as archive:
+        for name, data in windows_members(**{member: b'{}'}).items():
+            info = zipfile.ZipInfo(name)
+            info.create_system = 3
+            info.external_attr = ((kind if name == member else stat.S_IFREG) | 0o600) << 16
+            archive.writestr(info, data)
+    use_windows_zip(release, buffer.getvalue())
+    code, document, _ = run(release)
+    assert code == 3 and failures(document)['archive:windows-zip'] == 'PT-REL-ARCHIVE-CONTENT'
+
+
+def test_zip_dos_directory_attribute_cannot_pass_as_regular_file(release):
+    buffer = io.BytesIO()
+    with zipfile.ZipFile(buffer, 'w') as archive:
+        for name, data in windows_members().items():
+            info = zipfile.ZipInfo(name)
+            info.create_system = 0
+            info.external_attr = 0x10 if name.endswith('.exe') else 0x20
+            archive.writestr(info, data)
+    use_windows_zip(release, buffer.getvalue())
+    code, document, _ = run(release)
+    assert code == 3 and failures(document)['archive:windows-zip'] == 'PT-REL-ARCHIVE-CONTENT'
+
+
+def linked_archive(tmp_path, kind, links, *, files=()):
+    """Authored metadata only. Targets are (name, target, is_hard_link); nothing is extracted."""
+    path = tmp_path / ('links.zip' if kind == 'zip' else 'links.tar.gz')
+    if kind == 'zip':
+        assert not any(hard for _, _, hard in links)
+        path.write_bytes(zip_with_links(tuple((name, target) for name, target, _ in links),
+                                       **dict.fromkeys(files, b'ordinary')))
+        return vr.read_zip(path)
+    with tarfile.open(path, 'w:gz') as archive:
+        for name, data, mode in [*LINUX_MEMBERS, *((name, b'ordinary', 0o644) for name in files)]:
+            info = tarfile.TarInfo(name)
+            info.size, info.mode = len(data), mode
+            archive.addfile(info, io.BytesIO(data))
+        for name, target, hard in links:
+            info = tarfile.TarInfo(name)
+            info.type, info.linkname = (tarfile.LNKTYPE if hard else tarfile.SYMTYPE), target
+            archive.addfile(info)
+    return vr.read_tar(path)
+
+
+@pytest.mark.parametrize('kind', ['zip', 'tar'])
+@pytest.mark.parametrize('reverse', [False, True])
+@pytest.mark.parametrize('child', ['A/B', 'A/./B', 'A//B', 'A\\B'])
+def test_member_below_linked_parent_is_rejected_in_either_order(tmp_path, kind, reverse, child):
+    links = [('A', '.', False), (child, '../escape', False)]
+    assert linked_archive(tmp_path, kind, links[::-1] if reverse else links).problems
+
+
+def test_windows_zip_link_parent_comparison_is_case_insensitive(tmp_path):
+    assert linked_archive(tmp_path, 'zip', [('A', '.', False), ('a/B', '../escape', False)]).problems
+
+
+@pytest.mark.parametrize('kind', ['zip', 'tar'])
+def test_link_target_parent_is_resolved_after_following_link(tmp_path, kind):
+    # B is not below A: checking member ancestors alone cannot catch this escape.
+    assert linked_archive(tmp_path, kind, [('A', '.', False), ('B', 'A/../escape', False)]).problems
+
+
+def test_hardlink_target_parent_is_resolved_after_following_link(tmp_path):
+    assert linked_archive(tmp_path, 'tar', [('A', '.', False), ('B', 'A/../escape', True)]).problems
+
+
+@pytest.mark.parametrize('kind', ['zip', 'tar'])
+def test_regular_member_below_link_is_rejected(tmp_path, kind):
+    assert linked_archive(tmp_path, kind, [('A', '.', False)], files=('A/file',)).problems
+
+
+@pytest.mark.parametrize('kind', ['zip', 'tar'])
+def test_internal_link_chain_remains_supported(tmp_path, kind):
+    links = [('PatchTrace/libalias', 'libfirst', False), ('PatchTrace/libfirst', 'libreal', False)]
+    assert linked_archive(tmp_path, kind, links, files=('PatchTrace/libreal',)).problems == []
+
+
+def test_internal_hardlink_chain_remains_supported(tmp_path):
+    links = [('PatchTrace/hard1', 'PatchTrace/libreal', True), ('PatchTrace/hard2', 'PatchTrace/hard1', True)]
+    assert linked_archive(tmp_path, 'tar', links, files=('PatchTrace/libreal',)).problems == []
+
+
+@pytest.mark.parametrize('kind', ['zip', 'tar'])
+@pytest.mark.parametrize('expansions', [64, 65])
+def test_link_expansion_limit_has_a_working_boundary(tmp_path, kind, expansions):
+    links = [(f'link{index}', f'link{index + 1}', False) for index in range(expansions + 1)]
+    result = linked_archive(tmp_path, kind, links)
+    assert bool(result.problems) == (expansions > 64)
+
+
+@pytest.mark.parametrize('kind', ['zip', 'tar'])
+def test_cyclic_link_chain_is_bounded_and_rejected(tmp_path, kind):
+    assert linked_archive(tmp_path, kind, [('A', 'B', False), ('B', 'A', False)]).problems
+
+
+@pytest.mark.parametrize('kind', ['zip', 'tar'])
+def test_link_target_size_is_bounded(tmp_path, kind):
+    assert linked_archive(tmp_path, kind, [('A', 'x' * 4097, False)]).problems
+
+
+@pytest.mark.parametrize('kind', ['zip', 'tar'])
+def test_normalized_member_alias_collision_is_rejected(tmp_path, kind):
+    assert linked_archive(tmp_path, kind, [], files=('alias/file', 'alias/./file')).problems
+
+
+@pytest.mark.parametrize('kind', [tarfile.FIFOTYPE, tarfile.CHRTYPE, tarfile.BLKTYPE])
+def test_tar_special_members_are_rejected(tmp_path, kind):
+    path = tmp_path / 'special.tar.gz'
+    with tarfile.open(path, 'w:gz') as archive:
+        for name, data, mode in LINUX_MEMBERS:
+            info = tarfile.TarInfo(name)
+            info.size, info.mode = len(data), mode
+            archive.addfile(info, io.BytesIO(data))
+        info = tarfile.TarInfo('PatchTrace/special')
+        info.type = kind
+        archive.addfile(info)
+    assert vr.read_tar(path).problems

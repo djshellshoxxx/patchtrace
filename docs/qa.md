@@ -1,8 +1,22 @@
 # QA and audit record
 
+## 2026-11-18 independently reviewed consolidation successor
+
+`codex/consolidation-reviewed-20261118` directly continues #301, preserving #297
+and its source ancestry. The corrected full-clone inventory contains **300 topic
+branches**, of which **113** are ancestors of starting main; all 300 have a merge
+base. All remote branches remain intact. Independent core and security review
+reproduced and repaired zero-address normalization, L-39 cap asymmetry,
+recent-query JSON ingress, and release archive type/link validation. The unsafe
+archive/delete helper is excluded. See the exact references, scope, focused test
+counts and deferred work in the [decision log](qa/branch-consolidation-20261118.md).
+Current-successor full QA and hosted gates remain pending until recorded against
+their exact commit; the historical section below is not current qualification.
+
 ## 2026-11-18 full branch consolidation (PR #301)
 
-Reviewed all 299 remote branches; carried #297 and ported eight never-merged
+Historical author report (branch-count claims corrected by the decision log):
+carried #297 and ported eight initially listed never-merged
 items (release verifier, parser fuzz harness, KB scope retention #118 P1a, R8
 typed-literal canon/2 with EH-EQ, Windows batch-launch hardening, saved
 searches, RD-F03 alignment core, A-32 Ghidriff one-to-many abstention).
@@ -13,8 +27,9 @@ installed: `main` + #297 baseline **21,692 passed, 7 failed** (6 need the
 A-32 affected selection **2,918 passed** plus UI and seam tests; final code
 head `4534b763` (all ports, including A-32, rz-diff flood stop and
 bundle-acceptance fixes) **22,477 passed, 48 skipped, 5 xfailed, 0 failed**.
-Whole Ruff passed. Hosted CI, native Ghidriff/RB-01 reruns, Windows desktop and release
-acceptance remain open. See
+Whole Ruff passed. Exact-head #301 hosted results were subsequently refreshed in
+the decision log; they do not qualify the successor. Targeted native RB-01,
+Windows desktop and release acceptance remain open. See
 [consolidation record](qa/branch-consolidation-20261118.md).
 
 ## 2026-11-16 local KEV CLI context completion
