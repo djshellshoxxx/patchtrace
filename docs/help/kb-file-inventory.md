@@ -15,6 +15,7 @@ authenticity, product context, conflicts and unknown values remain visible.
 | Command | Purpose |
 |---|---|
 | `kb inventory import FILE --kb KB` | Import one saved CSV and retain its exact bytes and parsing context. |
+| `kb inventory retain IMPORT_ID --architecture amd64 --page 1` | Retain an architecture-filtered source page from saved raw bytes, including later CSV sections. |
 | `kb inventory list` | List saved inventory summaries and import IDs. |
 | `kb inventory show IMPORT_ID` | Verify a saved source and inspect rows, original metadata and row references. |
 | `kb inventory select IMPORT_ID ENTRY_ID --investigation ID --product ID --expected-revision N` | Select one eligible row for the current investigation revision. |
@@ -53,6 +54,19 @@ values returned by your workspace; do not treat the example placeholders as IDs.
    `unknown`, `conflicted` or `descriptive-only`. `show` uses `--limit 200` by
    default, up to 500, and a zero-based `--offset`. Filters inspect retained
    rows; they do not recover records beyond a parser truncation limit.
+
+   To reach a later architecture section, retain a new source page explicitly:
+
+   ```text
+   patchtrace kb inventory retain "IMPORT_ID" --architecture amd64 --page 1 --workspace kb-workspace --json
+   patchtrace kb inventory show "NEW_IMPORT_ID" --workspace kb-workspace --json
+   ```
+
+   Use the new `import_id` returned by `retain`. This offline operation rereads
+   the saved raw CSV with its original context and limits; it needs no file path,
+   network consent or investigation revision. It appends a versioned retained
+   page and preserves the earlier import, exact source provenance and selections.
+   Repeating the same policy returns the same retained import.
 
 3. Use the existing advisory workflow to obtain an investigation and product:
 
@@ -119,6 +133,33 @@ metadata only.
 `list --limit N --offset N` pages summaries, with a default page size of 20 and a
 maximum of 100. `list --kind support-page` lists saved HTML sources.
 
+### Source pages versus displayed rows
+
+`retain` defaults to architecture `amd64` and source page `1`. Its architecture
+choices are `all`, `amd64`, `arm64`, `x86` and `unknown`. A named architecture
+also retains unknown or conflicted architecture rows for review. It is a filter,
+not a new assertion about the CSV's product or architecture.
+
+Source pages are one-based, in original matching-record order, with capacity
+taken from the source's captured entry limit (at most 5,000). Use `--page 2` for
+the next source page. The page number is bounded to 1..100000; a page confirmed
+empty at the end of the source is refused without appending an import.
+`show --limit/--offset` only pages the entries in one already retained source
+page. It does not change that page's retention policy.
+
+The result reports the retention policy, page capacity, source scan status and
+matching, excluded and omitted counts. These counts cover the complete source
+only when `scan_complete` is true; otherwise they cover the observed prefix.
+Duplicate/conflict counts describe retained entries. Conflicts also consider
+scanned rows outside the retained page, and `show` exposes their source-record
+witnesses. Unknowns and conflicts stay visible.
+
+A retained page with omitted rows or other partial conditions keeps exit code
+3 even when the source scan reached its end. An incomplete source scan cannot
+feed filename selection: unscanned records could contradict the retained rows.
+Original v1 imports and their identities remain available unchanged. Retention
+does not select a filename or change any investigation revision.
+
 ## Support links and optional retrieval
 
 Inspect saved HTML with the URL of the page from which it was saved:
@@ -175,6 +216,13 @@ dialog is available without an open comparison project.
 - **Retained inventories** lists sources and verifies an explicitly chosen
   source. Filters and pages apply to retained rows. Row details expose the
   original values, source status, logical record and physical line span.
+- To recover a later CSV section, choose the saved source, set **Retain
+  architecture** and **Source page**, then press **Retain source page**. The
+  resulting source is available in the chooser; press **Inspect source** to
+  review its rows. These controls are separate from **Previous rows** and
+  **Next rows**. No filename is selected automatically. Changing retention
+  inputs cancels pending work and prevents its late result from replacing the
+  current view; any completed retained import remains saved.
 - To use a filename, supply an existing investigation ID, its exact product
   scope ID and current revision from `kb products`. Select a visible eligible
   row and press **Select this filename for the investigation**. An unmapped

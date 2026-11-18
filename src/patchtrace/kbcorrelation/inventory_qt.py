@@ -61,6 +61,9 @@ DESCRIPTIONS = {
     'inspect': 'Verify and inspect the chosen retained inventory.',
     'list_previous': 'Show the previous page of retained inventory sources.',
     'list_next': 'Show the next page of retained inventory sources.',
+    'retain_architecture': 'Architecture to retain from the saved source; unknown and conflicted rows remain included.',
+    'source_page': 'One-based source page to retain; separate from pagination over rows already retained.',
+    'retain': 'Retain this source page offline without selecting a filename or changing an investigation.',
     'filter_name': 'Filter retained entries by basename text.',
     'filter_architecture': 'Filter retained entries by architecture, including unknown.',
     'filter_state': 'Filter retained entries by metadata state.',
@@ -143,6 +146,16 @@ def _bounded_details(text, limit=65536):
     return text if len(text) <= limit else text[:limit - len(suffix)] + suffix
 
 
+def _source_label(item):
+    context, source = item.get('context', {}), item.get('source', {})
+    label = (f'{context.get("kb", "Unknown KB")} · {item["import_id"][:12]} · '
+             f'{item.get("accepted_count", 0)} rows · {source.get("authenticity", "unknown")}')
+    retention = item.get('retention')
+    if isinstance(retention, dict):
+        label += f' · {retention.get("architecture", "unknown")} source page {retention.get("page", "unknown")}'
+    return sanitize_text(label, 500)
+
+
 def execute_inventory(request: InventoryRequest, token, *, service_factory=_service) -> InventoryReply:
     """Worker-only facade dispatch. No widget, live project or SQLite handle crosses in."""
     data = json.loads(request.payload)
@@ -153,6 +166,9 @@ def execute_inventory(request: InventoryRequest, token, *, service_factory=_serv
         if op == 'import':
             out = service.import_inventory(Path(data['path']), _context(data['context']),
                                            asserted_source=data['asserted_source'] or None, cancel=token)
+        elif op == 'retain':
+            out = service.retain_inventory(data['import_id'], architecture=data['architecture'], page=data['page'],
+                                           cancel=token)
         elif op == 'list':
             out = service.inventories(limit=20, offset=data['offset'], cancel=token)
         elif op == 'show':
@@ -181,7 +197,9 @@ def execute_inventory(request: InventoryRequest, token, *, service_factory=_serv
         # Do not repeat the source's full section/diagnostic arrays for every row.
         source_text = _bounded_details(json.dumps({key: source.get(key) for key in
                                                   ('import_id', 'source', 'context', 'retrieval', 'asserted_source',
-                                                   'status', 'truncated')}, ensure_ascii=False, indent=2), 16384)
+                                                   'status', 'truncated', 'retention', 'scan_complete',
+                                                   'matching_count', 'excluded_count', 'omitted_count',
+                                                   'conflict_witness_count')}, ensure_ascii=False, indent=2), 16384)
         row_texts = tuple(_bounded_details(source_text + '\n\nEntry:\n' +
                                            json.dumps(entry, ensure_ascii=False, indent=2)) for entry in entries)
         return InventoryReply(outcome=out, display_text=_bounded_details(display), entry_texts=row_texts)
@@ -315,6 +333,29 @@ class InventoryDialog(QDialog):
             ('list_next', 'Next sources', partial(self._list_page, 1))):
             source_row.addWidget(self._button(key, label, action))
         layout.addLayout(source_row)
+        retention = QHBoxLayout()
+        architecture = self._combo('retain_architecture', [('AMD64 / x64', 'amd64'), ('ARM64', 'arm64'),
+                                                           ('x86', 'x86'), ('Unknown', 'unknown'),
+                                                           ('All architectures', 'all')])
+        architecture_label = PlainLabel('Retain &architecture', elide=False)
+        architecture_label.setBuddy(architecture)
+        retention.addWidget(architecture_label)
+        retention.addWidget(architecture)
+        self.source_page = QSpinBox()
+        self._tip(self.source_page, 'source_page')
+        self.source_page.setRange(1, 100000)
+        self.source_page.lineEdit().setAccessibleName(DESCRIPTIONS['source_page'])
+        self.source_page.lineEdit().setToolTip(self.source_page.toolTip())
+        self.source_page.valueChanged.connect(partial(self._edited, 'source_page'))
+        page_label = PlainLabel('&Source page', elide=False)
+        page_label.setBuddy(self.source_page)
+        retention.addWidget(page_label)
+        retention.addWidget(self.source_page)
+        retention.addWidget(self._button('retain', 'Retain source page', self._retain))
+        retention.addStretch()
+        layout.addLayout(retention)
+        layout.addWidget(PlainLabel('Retain a page from the chosen saved CSV, including later architecture sections. '
+                                   'Then inspect the resulting source before selecting a filename.', wrap=True))
         filters = QHBoxLayout()
         name = self.fields['filter_name'] = QLineEdit()
         name.setMaxLength(128)
@@ -457,6 +498,7 @@ class InventoryDialog(QDialog):
                                    json.dumps(payload, ensure_ascii=True, separators=(',', ':')))
         self._pending = request
         self.status.setText({'import': 'Importing saved CSV…', 'list': 'Listing saved inventories…',
+                             'retain': 'Retaining a page from the saved source; no request is sent…',
                              'show': 'Verifying and reading saved inventory…', 'select': 'Recording scoped filename selection…',
                              'links': 'Inspecting saved HTML; no request is sent…',
                              'plan': 'Preparing exact request preview; no request is sent…',
@@ -472,6 +514,12 @@ class InventoryDialog(QDialog):
     def _import(self):
         self._submit('import', {'path': self._text('csv'), 'context': self._context_values(),
                                 'asserted_source': self._text('asserted_source')})
+
+    def _retain(self):
+        if self.imports.currentData():
+            self._submit('retain', {'import_id': self.imports.currentData(),
+                                    'architecture': self.combos['retain_architecture'].currentData(),
+                                    'page': self.source_page.value()})
 
     def _list(self):
         self._list_offset = 0
@@ -511,7 +559,7 @@ class InventoryDialog(QDialog):
 
     def _select(self):
         entry = self._selected_entry()
-        if entry is None:
+        if entry is None or (self._shown or {}).get('inventory', {}).get('scan_complete') is False:
             return
         self._submit('select', {'import_id': self.imports.currentData(), 'entry_id': entry['entry_id'],
                                 'investigation': self._text('investigation'), 'product': self._text('target_product'),
@@ -592,13 +640,21 @@ class InventoryDialog(QDialog):
             self.imports.clear()
             self.imports.addItem('Choose an inventory explicitly', None)
             for item in result.get('inventories', ()):
-                context, source = item.get('context', {}), item.get('source', {})
-                label = (f'{context.get("kb", "Unknown KB")} · {item["import_id"][:12]} · '
-                         f'{item.get("accepted_count", 0)} rows · {source.get("authenticity", "unknown")}')
-                self.imports.addItem(sanitize_text(label, 500), item['import_id'])
+                self.imports.addItem(_source_label(item), item['import_id'])
             self.imports.setCurrentIndex(max(0, self.imports.findData(current)))
             self.imports.blockSignals(False)
             self._source_changed()
+        elif op == 'retain':
+            item = result.get('inventory', {})
+            if item.get('import_id') == result.get('import_id') and item.get('import_id'):
+                self.imports.blockSignals(True)
+                index = self.imports.findData(item['import_id'])
+                if index < 0:
+                    self.imports.addItem(_source_label(item), item['import_id'])
+                    index = self.imports.count() - 1
+                self.imports.setCurrentIndex(index)
+                self.imports.blockSignals(False)
+                self._source_changed()  # choosing a source never chooses a filename
         elif op == 'show':
             self._shown = result
             self._entry_texts = reply.entry_texts
@@ -652,7 +708,7 @@ class InventoryDialog(QDialog):
             button.setEnabled(idle or key == 'close')
         self.buttons['cancel'].setEnabled(not idle and not self._closed)
         have_source = bool(self.imports.currentData())
-        for key in ('inspect', 'filter'):
+        for key in ('inspect', 'filter', 'retain'):
             self.buttons[key].setEnabled(idle and have_source)
         self.buttons['list_previous'].setEnabled(idle and self._list_offset > 0)
         self.buttons['list_next'].setEnabled(idle and self._list_offset + 20 < self._list_total)
@@ -660,7 +716,8 @@ class InventoryDialog(QDialog):
         self.buttons['next'].setEnabled(idle and have_source and self._entry_offset + PAGE_SIZE < self._entry_total)
         entry = self._selected_entry()
         eligible = bool(entry and entry.get('basename') and entry.get('architecture') == 'amd64'
-                        and entry.get('version_components') and entry.get('state') not in {'conflicted', 'descriptive-only'})
+                        and entry.get('version_components') and entry.get('state') not in {'conflicted', 'descriptive-only'}
+                        and (self._shown or {}).get('inventory', {}).get('scan_complete') is not False)
         self.buttons['select'].setEnabled(idle and eligible and bool(self._text('investigation'))
                                           and bool(self._text('target_product')) and self.revision.value() > 0)
         link = self.candidates.currentData()

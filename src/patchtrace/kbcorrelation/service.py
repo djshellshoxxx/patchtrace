@@ -180,6 +180,10 @@ class KbService:
         from .inventory_service import import_inventory
         return import_inventory(self, path, context, **kwargs)
 
+    def retain_inventory(self, import_id, *, architecture='amd64', page=1, cancel=None) -> Outcome:
+        from .inventory_service import retain_inventory
+        return retain_inventory(self, import_id, architecture=architecture, page=page, cancel=cancel)
+
     def inventories(self, **kwargs) -> Outcome:
         from .inventory_service import inventories
         return inventories(self, **kwargs)

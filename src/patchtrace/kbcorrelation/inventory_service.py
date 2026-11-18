@@ -97,22 +97,40 @@ def _out(result, text, *, partial=False, empty=False, warnings=()):
 
 def _summary(record):
     parsed = record.parsed
-    return {'import_id': record.import_id, 'source': record.source.model_dump(mode='json'),
-            'asserted_source': record.asserted_source,
-            'retrieval': record.retrieval.model_dump(mode='json') if record.retrieval else None,
-            'context': parsed.context.model_dump(mode='json'), 'inventory_id': parsed.inventory_id,
-            **{name: getattr(parsed, name) for name in ('accepted_count', 'rejected_count', 'duplicate_count',
-                                                      'conflict_count', 'records_scanned', 'truncated', 'status',
-                                                      'diagnostics_omitted')}}
+    result = {'import_id': record.import_id, 'source': record.source.model_dump(mode='json'),
+              'asserted_source': record.asserted_source,
+              'retrieval': record.retrieval.model_dump(mode='json') if record.retrieval else None,
+              'context': parsed.context.model_dump(mode='json'), 'inventory_id': parsed.inventory_id,
+              **{name: getattr(parsed, name) for name in ('accepted_count', 'rejected_count', 'duplicate_count',
+                                                        'conflict_count', 'records_scanned', 'truncated', 'status',
+                                                        'diagnostics_omitted')}}
+    if parsed.contract == 'kb-file-inventory/2':
+        result.update(contract=parsed.contract, parser_version=parsed.parser_version,
+                      retention=parsed.retention.model_dump(mode='json'), page_capacity=parsed.limits.max_entries,
+                      scan_complete=parsed.scan_complete, matching_count=parsed.matching_count,
+                      excluded_count=parsed.excluded_count, omitted_count=parsed.omitted_count,
+                      conflict_witness_count=len(parsed.conflict_witnesses))
+    return result
 
 
 def _import_out(record, added):
     p = record.parsed
-    text = (f'{p.context.kb}: retained {p.accepted_count} rows; rejected {p.rejected_count}; '
+    page_text = ''
+    next_step = 'Inspect entries with kb inventory show, then explicitly select an eligible row for an investigation.'
+    if p.contract == 'kb-file-inventory/2':
+        scan = 'complete' if p.scan_complete else 'incomplete; counts cover only the observed source prefix'
+        page_text = (f'Source page {p.retention.page}, architecture {p.retention.architecture}, '
+                     f'capacity {p.limits.max_entries}. Source scan: {scan}.\n'
+                     f'Matching {p.matching_count}; excluded {p.excluded_count}; omitted {p.omitted_count}; '
+                     f'cross-row conflict witnesses {len(p.conflict_witnesses)}.\n')
+        if not p.scan_complete:
+            next_step = ('Inspect entries with kb inventory show. Filename selection is unavailable because '
+                         'the source scan is incomplete.')
+    text = (page_text + f'{p.context.kb}: retained {p.accepted_count} rows; rejected {p.rejected_count}; '
             f'duplicates {p.duplicate_count}; conflicts {p.conflict_count}; '
             f'truncated {str(p.truncated).lower()}. Source: {record.source.authenticity}.\n'
             f'Inventory import: {record.import_id}\n'
-            'Inspect entries with kb inventory show, then explicitly select an eligible row for an investigation.')
+            + next_step)
     return _out({'import_id': record.import_id, 'inventory': _summary(record), 'already_present': not added}, text,
                 partial=p.status == 'partial', empty=not p.entries and p.status == 'complete')
 
@@ -127,6 +145,23 @@ def import_inventory(svc, path, context, *, asserted_source=None, cancel=None):
     with svc._open() as ws:
         record, added = add_inventory(ws, raw, context, now=svc._now(), asserted_source=asserted_source, cancel=cancel)
     return _import_out(record, added)
+
+
+def retain_inventory(svc, import_id, *, architecture='amd64', page=1, cancel=None):
+    """Explicit offline retention from an immutable saved source; no investigation or filename selection."""
+    _check(cancel)
+    from .inventory_contracts import InventoryRetention
+    from .inventory_store import retain_inventory as retain_source
+
+    try:
+        retention = InventoryRetention(architecture=architecture, page=page)
+    except ValidationError:
+        raise SourceError('PT-KBC-INPUT', 'choose all/amd64/arm64/x86/unknown and a source page in 1..100000') from None
+    with svc._open(create=False) as ws:
+        record, added = retain_source(ws, import_id, retention, cancel=cancel)
+    outcome = _import_out(record, added)
+    outcome.result['source_import_id'] = import_id
+    return outcome
 
 
 def _page(limit, offset, maximum):

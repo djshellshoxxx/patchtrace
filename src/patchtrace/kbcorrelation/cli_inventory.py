@@ -47,6 +47,13 @@ def build_parser() -> Parser:
     imp.add_argument('--asserted-source', metavar='URL', help='optional source assertion; local bytes stay unverified')
     imp.add_argument('--offline', action='store_true', help='accepted for clarity; import never fetches')
 
+    retain = add_common(sub.add_parser('retain', help='retain a source page from saved raw CSV bytes; no fetching'))
+    retain.add_argument('import_id', metavar='IMPORT_ID')
+    retain.add_argument('--architecture', choices=('all', *ARCHITECTURES), default='amd64',
+                        help='retention filter (default: amd64), including unknown/conflicted rows; not a context assertion')
+    retain.add_argument('--page', type=int, default=1, metavar='N',
+                        help='one-based source page, 1..100000 (default: 1); separate from show limit/offset')
+
     listing = add_common(sub.add_parser('list', help='list saved inventory or support-page summaries'))
     listing.add_argument('--kind', choices=KINDS, default='file-inventory')
     listing.add_argument('--limit', type=int, default=20, metavar='N', help='page size, 1..100 (default: 20)')
@@ -123,6 +130,11 @@ def cmd_import(args, ports, out):
         args.file, _inventory_context(args), asserted_source=args.asserted_source))
 
 
+def cmd_retain(args, ports, out):
+    return _present(out, args, ports, ports.service(args).retain_inventory(
+        args.import_id, architecture=args.architecture, page=args.page))
+
+
 def cmd_list(args, ports, out):
     return _present(out, args, ports, ports.service(args).inventories(
         kind=args.kind, limit=args.limit, offset=args.offset))
@@ -179,7 +191,7 @@ def _guard(handler):
 
 
 HANDLERS = {name: _guard(handler) for name, handler in (
-    ('import', cmd_import), ('list', cmd_list), ('show', cmd_show), ('select', cmd_select),
+    ('import', cmd_import), ('retain', cmd_retain), ('list', cmd_list), ('show', cmd_show), ('select', cmd_select),
     ('links', cmd_links), ('plan', cmd_plan), ('fetch', cmd_fetch))}
 
 

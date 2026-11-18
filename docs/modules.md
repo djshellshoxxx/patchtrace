@@ -1380,6 +1380,17 @@ unchanged. Tests: `test_kb_product_start_20261106.py`,
 
 ## PW-01 KB file inventory extension
 
+Retained-source page adapters (2026-11-18): `inventory_service.retain_inventory`
+and the `KbService` delegate validate a strict architecture/page policy and call
+the existing inventory store offline. `cli_inventory.py` exposes `retain
+IMPORT_ID --architecture amd64 --page 1`; `inventory_qt.py` captures that explicit
+saved-source request through its existing worker/cancel boundary. Source-page
+controls are separate from table pagination. Summaries expose v2 retention policy,
+scan completeness, observed counts and conflict-witness counts; incomplete source
+scans cannot enable UI filename selection. Existing v1 imports and investigation
+revisions are preserved. Verification: `test_kbc_inventory_retention_adapters.py`
+and `test_ui_kb_inventory_retention.py`, plus the existing inventory adapter suites.
+
 | Module | Responsibility | Verification seam |
 |---|---|---|
 | `kbcorrelation/inventory_contracts.py`, `inventory_csv.py` | Frozen CSV record/provenance contracts and pure bounded parser | Authored CSV, hostile input, replay/property tests |
