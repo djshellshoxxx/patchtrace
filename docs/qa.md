@@ -1,5 +1,18 @@
 # QA and audit record
 
+## 2026-11-18 CVE consolidation successor and real L1 replay
+
+The second independent review repaired Windows ZIP path identity, uncertain
+chronology/fix boundaries, rejected advisory source scoring and pair-output
+ownership. A real source replay exposed mixed-architecture predecessor selection,
+now repaired, and supported `.tsp` inputs were added. Combined local verification:
+**2,089 passed, 3 skipped** at `06c8ca0c`. Frozen source-backed L1 expected-file
+replay: **73 PASS, 6 FAIL, 8 excluded**; no percentage/bound and no L2/L3 claim.
+Four Server coverage cases and two unchanged-preview cases remain failures.
+Exact-head hosted Windows/full/package gates remain mandatory. See the
+[source, repair and continuation record](qa/cve-consolidation-20261118.md).
+
+
 ## 2026-11-18 independently reviewed consolidation successor
 
 `codex/consolidation-reviewed-20261118` directly continues #301, preserving #297

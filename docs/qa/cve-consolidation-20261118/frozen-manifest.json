@@ -1,0 +1,2155 @@
+{
+ "cases": [
+  {
+   "cve": "CVE-2022-21849",
+   "expected_files": [
+    "ikeext.dll"
+   ],
+   "facts": "verified",
+   "id": "l1-2022-01-cve-2022-21849-kb5009543",
+   "kb": "KB5009543",
+   "month": "2022-Jan",
+   "notes": "File from: Starlabs OnlyPatch ghidriff section. MSRC lists KB5009543 for this CVE (Supercedence KB5008212). Winbindex x64 20H2: 10.0.19041.488 (BASE) -> 10.0.19041.1466 (KB5009543).",
+   "oracle_urls": [
+    "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2022-Jan",
+    "https://onlyfm252.starlabs.sg/patch-tuesday/2022-01/cve-2022-21849/",
+    "https://winbindex.m417z.com/data/by_filename_compressed/ikeext.dll.json.gz",
+    "https://support.microsoft.com/help/5009543"
+   ],
+   "product": "Windows 10 Version 21H1 for x64-based Systems",
+   "products_for_kb": [
+    "Windows 10 Version 20H2 for 32-bit Systems",
+    "Windows 10 Version 20H2 for ARM64-based Systems",
+    "Windows 10 Version 21H1 for 32-bit Systems",
+    "Windows 10 Version 21H1 for ARM64-based Systems",
+    "Windows 10 Version 21H1 for x64-based Systems",
+    "Windows 10 Version 21H2 for 32-bit Systems",
+    "Windows 10 Version 21H2 for ARM64-based Systems",
+    "Windows 10 Version 21H2 for x64-based Systems",
+    "Windows Server, version 20H2 (Server Core Installation)"
+   ],
+   "stratum": "baseline-usermode"
+  },
+  {
+   "cve": "CVE-2022-21877",
+   "expected_files": [
+    "spaceport.sys"
+   ],
+   "facts": "verified",
+   "id": "l1-2022-01-cve-2022-21877-kb5009543",
+   "kb": "KB5009543",
+   "month": "2022-Jan",
+   "notes": "File from: Starlabs OnlyPatch ghidriff section. MSRC lists KB5009543 for this CVE (Supercedence KB5008212). Winbindex x64 20H2: 10.0.19041.423 (BASE) -> 10.0.19041.1466 (KB5009543).",
+   "oracle_urls": [
+    "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2022-Jan",
+    "https://onlyfm252.starlabs.sg/patch-tuesday/2022-01/cve-2022-21877/",
+    "https://winbindex.m417z.com/data/by_filename_compressed/spaceport.sys.json.gz",
+    "https://support.microsoft.com/help/5009543"
+   ],
+   "product": "Windows 10 Version 21H1 for x64-based Systems",
+   "products_for_kb": [
+    "Windows 10 Version 20H2 for 32-bit Systems",
+    "Windows 10 Version 20H2 for ARM64-based Systems",
+    "Windows 10 Version 21H1 for 32-bit Systems",
+    "Windows 10 Version 21H1 for ARM64-based Systems",
+    "Windows 10 Version 21H1 for x64-based Systems",
+    "Windows 10 Version 21H2 for 32-bit Systems",
+    "Windows 10 Version 21H2 for ARM64-based Systems",
+    "Windows 10 Version 21H2 for x64-based Systems",
+    "Windows Server, version 20H2 (Server Core Installation)"
+   ],
+   "stratum": "baseline-driver"
+  },
+  {
+   "cve": "CVE-2022-21882",
+   "expected_files": [],
+   "facts": "unverified",
+   "id": "l1-2022-01-cve-2022-21882-kb5009543",
+   "kb": "KB5009543",
+   "month": "2022-Jan",
+   "notes": "Project Zero RCA calls it a Win32k window object type confusion but names no patched file; no page read states one. KB and product read from MSRC CVRF only. expected_files left empty on purpose: the file must be established by a later diff before this case can be scored.",
+   "oracle_urls": [
+    "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2022-Jan",
+    "https://googleprojectzero.github.io/0days-in-the-wild/0day-RCAs/2022/CVE-2022-21882.md",
+    "https://support.microsoft.com/help/5009543"
+   ],
+   "product": "Windows 10 Version 21H1 for x64-based Systems",
+   "products_for_kb": [
+    "Windows 10 Version 20H2 for 32-bit Systems",
+    "Windows 10 Version 20H2 for ARM64-based Systems",
+    "Windows 10 Version 21H1 for 32-bit Systems",
+    "Windows 10 Version 21H1 for ARM64-based Systems",
+    "Windows 10 Version 21H1 for x64-based Systems",
+    "Windows 10 Version 21H2 for 32-bit Systems",
+    "Windows 10 Version 21H2 for ARM64-based Systems",
+    "Windows 10 Version 21H2 for x64-based Systems",
+    "Windows Server, version 20H2 (Server Core Installation)"
+   ],
+   "stratum": "file-unstated"
+  },
+  {
+   "cve": "CVE-2022-21910",
+   "expected_files": [
+    "clusport.sys"
+   ],
+   "facts": "verified",
+   "id": "l1-2022-01-cve-2022-21910-kb5009557",
+   "kb": "KB5009557",
+   "month": "2022-Jan",
+   "notes": "File from: Starlabs OnlyPatch ghidriff section. MSRC lists KB5009557 for this CVE (Supercedence KB5008218). Winbindex x64 1809: 10.0.17763.1192 (KB5010196) -> 10.0.17763.2452 (KB5009557).",
+   "oracle_urls": [
+    "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2022-Jan",
+    "https://onlyfm252.starlabs.sg/patch-tuesday/2022-01/cve-2022-21910/",
+    "https://winbindex.m417z.com/data/by_filename_compressed/clusport.sys.json.gz",
+    "https://support.microsoft.com/help/5009557"
+   ],
+   "product": "Windows Server 2019",
+   "products_for_kb": [
+    "Windows Server 2019",
+    "Windows Server 2019 (Server Core installation)"
+   ],
+   "stratum": "baseline-driver"
+  },
+  {
+   "cve": "CVE-2022-22715",
+   "expected_files": [
+    "npfs.sys"
+   ],
+   "facts": "verified",
+   "id": "l1-2022-02-cve-2022-22715-kb5010342",
+   "kb": "KB5010342",
+   "month": "2022-Feb",
+   "notes": "File from: Starlabs OnlyPatch ghidriff section. MSRC lists KB5010342 for this CVE (Supercedence KB5009543). Winbindex x64 20H2: 10.0.19041.1 (BASE) -> 10.0.19041.1526 (KB5010342).",
+   "oracle_urls": [
+    "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2022-Feb",
+    "https://onlyfm252.starlabs.sg/patch-tuesday/2022-02/cve-2022-22715/",
+    "https://winbindex.m417z.com/data/by_filename_compressed/npfs.sys.json.gz",
+    "https://support.microsoft.com/help/5010342"
+   ],
+   "product": "Windows 10 Version 21H1 for x64-based Systems",
+   "products_for_kb": [
+    "Windows 10 Version 20H2 for 32-bit Systems",
+    "Windows 10 Version 20H2 for ARM64-based Systems",
+    "Windows 10 Version 21H1 for 32-bit Systems",
+    "Windows 10 Version 21H1 for ARM64-based Systems",
+    "Windows 10 Version 21H1 for x64-based Systems",
+    "Windows 10 Version 21H2 for 32-bit Systems",
+    "Windows 10 Version 21H2 for ARM64-based Systems",
+    "Windows 10 Version 21H2 for x64-based Systems",
+    "Windows Server, version 20H2 (Server Core Installation)"
+   ],
+   "stratum": "baseline-driver"
+  },
+  {
+   "cve": "CVE-2022-21967",
+   "expected_files": [
+    "XblAuthManagerProxy.dll"
+   ],
+   "facts": "verified",
+   "id": "l1-2022-03-cve-2022-21967-kb5011487",
+   "kb": "KB5011487",
+   "month": "2022-Mar",
+   "notes": "File from: Starlabs OnlyPatch ghidriff section. MSRC lists KB5011487 for this CVE (Supercedence KB5010342). Winbindex x64 20H2: 10.0.19041.746 (KB5010415) -> 10.0.19041.1586 (KB5011487).",
+   "oracle_urls": [
+    "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2022-Mar",
+    "https://onlyfm252.starlabs.sg/patch-tuesday/2022-03/cve-2022-21967/",
+    "https://winbindex.m417z.com/data/by_filename_compressed/xblauthmanagerproxy.dll.json.gz",
+    "https://support.microsoft.com/help/5011487"
+   ],
+   "product": "Windows 10 Version 21H1 for x64-based Systems",
+   "products_for_kb": [
+    "Windows 10 Version 20H2 for 32-bit Systems",
+    "Windows 10 Version 20H2 for ARM64-based Systems",
+    "Windows 10 Version 21H1 for 32-bit Systems",
+    "Windows 10 Version 21H1 for ARM64-based Systems",
+    "Windows 10 Version 21H1 for x64-based Systems",
+    "Windows 10 Version 21H2 for 32-bit Systems",
+    "Windows 10 Version 21H2 for ARM64-based Systems",
+    "Windows 10 Version 21H2 for x64-based Systems"
+   ],
+   "stratum": "baseline-usermode"
+  },
+  {
+   "cve": "CVE-2022-24521",
+   "expected_files": [
+    "clfs.sys"
+   ],
+   "facts": "verified",
+   "id": "l1-2022-04-cve-2022-24521-kb5012592",
+   "kb": "KB5012592",
+   "month": "2022-Apr",
+   "notes": "File from: Starlabs OnlyPatch ghidriff section; Project Zero 0-day RCA names the file. MSRC lists KB5012592 for this CVE (Supercedence KB5011493). Winbindex x64 11-21H2: 10.0.22000.556 (KB5011563) -> 10.0.22000.613 (KB5012592).",
+   "oracle_urls": [
+    "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2022-Apr",
+    "https://onlyfm252.starlabs.sg/patch-tuesday/2022-04/cve-2022-24521/",
+    "https://googleprojectzero.github.io/0days-in-the-wild/0day-RCAs/2022/CVE-2022-24521.md",
+    "https://winbindex.m417z.com/data/by_filename_compressed/clfs.sys.json.gz",
+    "https://support.microsoft.com/help/5012592"
+   ],
+   "product": "Windows 11 version 21H2 for x64-based Systems",
+   "products_for_kb": [
+    "Windows 11 version 21H2 for ARM64-based Systems",
+    "Windows 11 version 21H2 for x64-based Systems"
+   ],
+   "stratum": "baseline-driver"
+  },
+  {
+   "cve": "CVE-2022-21972",
+   "expected_files": [
+    "raspptp.sys"
+   ],
+   "facts": "verified",
+   "id": "l1-2022-05-cve-2022-21972-kb5013941",
+   "kb": "KB5013941",
+   "month": "2022-May",
+   "notes": "File from: Starlabs OnlyPatch ghidriff section. MSRC lists KB5013941 for this CVE (Supercedence KB5012647). Winbindex x64 1809: 10.0.17763.2686 (KB5012636) -> 10.0.17763.2928 (KB5013941).",
+   "oracle_urls": [
+    "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2022-May",
+    "https://onlyfm252.starlabs.sg/patch-tuesday/2022-05/cve-2022-21972/",
+    "https://winbindex.m417z.com/data/by_filename_compressed/raspptp.sys.json.gz",
+    "https://support.microsoft.com/help/5013941"
+   ],
+   "product": "Windows 10 Version 1809 for x64-based Systems",
+   "products_for_kb": [
+    "Windows 10 Version 1809 for 32-bit Systems",
+    "Windows 10 Version 1809 for ARM64-based Systems",
+    "Windows 10 Version 1809 for x64-based Systems",
+    "Windows Server 2019",
+    "Windows Server 2019 (Server Core installation)"
+   ],
+   "stratum": "shared-file-kb"
+  },
+  {
+   "cve": "CVE-2022-23270",
+   "expected_files": [
+    "raspptp.sys"
+   ],
+   "facts": "verified",
+   "id": "l1-2022-05-cve-2022-23270-kb5013941",
+   "kb": "KB5013941",
+   "month": "2022-May",
+   "notes": "File from: Starlabs OnlyPatch ghidriff section. MSRC lists KB5013941 for this CVE (Supercedence KB5012647). Winbindex x64 1809: 10.0.17763.2686 (KB5012636) -> 10.0.17763.2928 (KB5013941).",
+   "oracle_urls": [
+    "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2022-May",
+    "https://onlyfm252.starlabs.sg/patch-tuesday/2022-05/cve-2022-23270/",
+    "https://winbindex.m417z.com/data/by_filename_compressed/raspptp.sys.json.gz",
+    "https://support.microsoft.com/help/5013941"
+   ],
+   "product": "Windows 10 Version 1809 for x64-based Systems",
+   "products_for_kb": [
+    "Windows 10 Version 1809 for 32-bit Systems",
+    "Windows 10 Version 1809 for ARM64-based Systems",
+    "Windows 10 Version 1809 for x64-based Systems",
+    "Windows Server 2019",
+    "Windows Server 2019 (Server Core installation)"
+   ],
+   "stratum": "shared-file-kb"
+  },
+  {
+   "cve": "CVE-2022-26926",
+   "expected_files": [
+    "wab32.dll"
+   ],
+   "facts": "verified",
+   "id": "l1-2022-05-cve-2022-26926-kb5013943",
+   "kb": "KB5013943",
+   "month": "2022-May",
+   "notes": "File from: Starlabs OnlyPatch ghidriff section. MSRC lists KB5013943 for this CVE (Supercedence KB5012592). Winbindex x64 11-21H2: 10.0.22000.652 (KB5012643) -> 10.0.22000.675 (KB5013943).",
+   "oracle_urls": [
+    "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2022-May",
+    "https://onlyfm252.starlabs.sg/patch-tuesday/2022-05/cve-2022-26926/",
+    "https://winbindex.m417z.com/data/by_filename_compressed/wab32.dll.json.gz",
+    "https://support.microsoft.com/help/5013943"
+   ],
+   "product": "Windows 11 version 21H2 for x64-based Systems",
+   "products_for_kb": [
+    "Windows 11 version 21H2 for ARM64-based Systems",
+    "Windows 11 version 21H2 for x64-based Systems"
+   ],
+   "stratum": "baseline-usermode"
+  },
+  {
+   "cve": "CVE-2022-30225",
+   "expected_files": [
+    "wmpnetwk.exe"
+   ],
+   "facts": "verified",
+   "id": "l1-2022-07-cve-2022-30225-kb5015807",
+   "kb": "KB5015807",
+   "month": "2022-Jul",
+   "notes": "File from: Starlabs OnlyPatch ghidriff section. MSRC lists KB5015807 for this CVE (Supercedence KB5014699). Winbindex x64 20H2: 12.0.19041.746 (KB5014666) -> 12.0.19041.1826 (KB5015807).",
+   "oracle_urls": [
+    "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2022-Jul",
+    "https://onlyfm252.starlabs.sg/patch-tuesday/2022-07/cve-2022-30225/",
+    "https://winbindex.m417z.com/data/by_filename_compressed/wmpnetwk.exe.json.gz",
+    "https://support.microsoft.com/help/5015807"
+   ],
+   "product": "Windows 10 Version 21H1 for x64-based Systems",
+   "products_for_kb": [
+    "Windows 10 Version 20H2 for 32-bit Systems",
+    "Windows 10 Version 20H2 for ARM64-based Systems",
+    "Windows 10 Version 21H1 for 32-bit Systems",
+    "Windows 10 Version 21H1 for ARM64-based Systems",
+    "Windows 10 Version 21H1 for x64-based Systems",
+    "Windows 10 Version 21H2 for 32-bit Systems",
+    "Windows 10 Version 21H2 for ARM64-based Systems",
+    "Windows 10 Version 21H2 for x64-based Systems",
+    "Windows Server, version 20H2 (Server Core Installation)"
+   ],
+   "stratum": "baseline-usermode"
+  },
+  {
+   "cve": "CVE-2022-35820",
+   "expected_files": [
+    "bthport.sys"
+   ],
+   "facts": "verified",
+   "id": "l1-2022-08-cve-2022-35820-kb5016616",
+   "kb": "KB5016616",
+   "month": "2022-Aug",
+   "notes": "File from: Starlabs OnlyPatch ghidriff section. MSRC lists KB5016616 for this CVE (Supercedence KB5015807). Winbindex x64 20H2: 10.0.19041.1682 (KB5015878) -> 10.0.19041.1889 (KB5016616).",
+   "oracle_urls": [
+    "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2022-Aug",
+    "https://onlyfm252.starlabs.sg/patch-tuesday/2022-08/cve-2022-35820/",
+    "https://winbindex.m417z.com/data/by_filename_compressed/bthport.sys.json.gz",
+    "https://support.microsoft.com/help/5016616"
+   ],
+   "product": "Windows 10 Version 21H1 for x64-based Systems",
+   "products_for_kb": [
+    "Windows 10 Version 20H2 for 32-bit Systems",
+    "Windows 10 Version 20H2 for ARM64-based Systems",
+    "Windows 10 Version 21H1 for 32-bit Systems",
+    "Windows 10 Version 21H1 for ARM64-based Systems",
+    "Windows 10 Version 21H1 for x64-based Systems",
+    "Windows 10 Version 21H2 for 32-bit Systems",
+    "Windows 10 Version 21H2 for ARM64-based Systems",
+    "Windows 10 Version 21H2 for x64-based Systems",
+    "Windows Server, version 20H2 (Server Core Installation)"
+   ],
+   "stratum": "baseline-driver"
+  },
+  {
+   "cve": "CVE-2022-34721",
+   "expected_files": [
+    "ikeext.dll"
+   ],
+   "facts": "verified",
+   "id": "l1-2022-09-cve-2022-34721-kb5017305",
+   "kb": "KB5017305",
+   "month": "2022-Sep",
+   "notes": "File from: Starlabs OnlyPatch ghidriff section. MSRC lists KB5017305 for this CVE (Supercedence KB5016622). Winbindex x64 1607: 10.0.14393.5127 (KB5016622) -> 10.0.14393.5356 (KB5017305).",
+   "oracle_urls": [
+    "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2022-Sep",
+    "https://onlyfm252.starlabs.sg/patch-tuesday/2022-09/cve-2022-34721/",
+    "https://winbindex.m417z.com/data/by_filename_compressed/ikeext.dll.json.gz",
+    "https://support.microsoft.com/help/5017305"
+   ],
+   "product": "Windows 10 Version 1607 for x64-based Systems",
+   "products_for_kb": [
+    "Windows 10 Version 1607 for 32-bit Systems",
+    "Windows 10 Version 1607 for x64-based Systems",
+    "Windows Server 2016",
+    "Windows Server 2016 (Server Core installation)"
+   ],
+   "stratum": "baseline-usermode"
+  },
+  {
+   "cve": "CVE-2022-37969",
+   "expected_files": [
+    "clfs.sys"
+   ],
+   "facts": "verified",
+   "id": "l1-2022-09-cve-2022-37969-kb5017328",
+   "kb": "KB5017328",
+   "month": "2022-Sep",
+   "notes": "File from: Starlabs OnlyPatch ghidriff section. MSRC lists KB5017328 for this CVE (Supercedence KB5016629). Winbindex x64 11-21H2: 10.0.22000.918 (KB5016691) -> 10.0.22000.978 (KB5017328).",
+   "oracle_urls": [
+    "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2022-Sep",
+    "https://onlyfm252.starlabs.sg/patch-tuesday/2022-09/cve-2022-37969/",
+    "https://winbindex.m417z.com/data/by_filename_compressed/clfs.sys.json.gz",
+    "https://support.microsoft.com/help/5017328"
+   ],
+   "product": "Windows 11 version 21H2 for x64-based Systems",
+   "products_for_kb": [
+    "Windows 11 version 21H2 for ARM64-based Systems",
+    "Windows 11 version 21H2 for x64-based Systems"
+   ],
+   "stratum": "baseline-driver"
+  },
+  {
+   "cve": "CVE-2022-41033",
+   "expected_files": [
+    "es.dll"
+   ],
+   "facts": "verified",
+   "id": "l1-2022-10-cve-2022-41033-kb5018410",
+   "kb": "KB5018410",
+   "month": "2022-Oct",
+   "notes": "File from: Starlabs OnlyPatch ghidriff section; Project Zero 0-day RCA names the file. MSRC lists KB5018410 for this CVE (Supercedence KB5017308). Winbindex x64 20H2: new 2001.12.10941.16384 (KB5018410); no earlier version listed.",
+   "oracle_urls": [
+    "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2022-Oct",
+    "https://onlyfm252.starlabs.sg/patch-tuesday/2022-10/cve-2022-41033/",
+    "https://googleprojectzero.github.io/0days-in-the-wild/0day-RCAs/2022/CVE-2022-41033.md",
+    "https://winbindex.m417z.com/data/by_filename_compressed/es.dll.json.gz",
+    "https://support.microsoft.com/help/5018410"
+   ],
+   "product": "Windows 10 Version 21H1 for x64-based Systems",
+   "products_for_kb": [
+    "Windows 10 Version 20H2 for 32-bit Systems",
+    "Windows 10 Version 20H2 for ARM64-based Systems",
+    "Windows 10 Version 21H1 for 32-bit Systems",
+    "Windows 10 Version 21H1 for ARM64-based Systems",
+    "Windows 10 Version 21H1 for x64-based Systems",
+    "Windows 10 Version 21H2 for 32-bit Systems",
+    "Windows 10 Version 21H2 for ARM64-based Systems",
+    "Windows 10 Version 21H2 for x64-based Systems"
+   ],
+   "stratum": "baseline-usermode"
+  },
+  {
+   "cve": "CVE-2022-3910",
+   "expected_files": [],
+   "facts": "verified",
+   "id": "l1-2022-11-cve-2022-3910-nokb",
+   "kb": "",
+   "month": "2022-Nov",
+   "notes": "MSRC lists no KB remediation for this CVE (open-source component in Azure Linux / CBL Mariner, title: Use after free in io_uring in the Linux Kernel). NVD record read, describes an upstream open-source issue. Expected join outcome: no KB, no Windows file pair.",
+   "oracle_urls": [
+    "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2022-Nov",
+    "https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2022-3910"
+   ],
+   "product": "cbl2 kernel 5.15.82.1-1 on CBL Mariner 2.0",
+   "products_for_kb": [],
+   "stratum": "no-kb"
+  },
+  {
+   "cve": "CVE-2022-41062",
+   "expected_files": [],
+   "facts": "verified",
+   "id": "l1-2022-11-cve-2022-41062-kb5002305",
+   "kb": "KB5002305",
+   "month": "2022-Nov",
+   "notes": "MSRC lists this KB for a non-Windows-OS product (SharePoint Enterprise Server 2016); the support page title read for the KB confirms it is a SharePoint Enterprise Server 2016 update. A Windows-binary join must not emit a Windows pair for it. Expected join outcome: no Windows file.",
+   "oracle_urls": [
+    "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2022-Nov",
+    "https://support.microsoft.com/help/5002305"
+   ],
+   "product": "Microsoft SharePoint Enterprise Server 2016",
+   "products_for_kb": [
+    "Microsoft SharePoint Enterprise Server 2016"
+   ],
+   "stratum": "non-windows-kb"
+  },
+  {
+   "cve": "CVE-2022-41073",
+   "expected_files": [
+    "winspool.drv"
+   ],
+   "facts": "verified",
+   "id": "l1-2022-11-cve-2022-41073-kb5019959",
+   "kb": "KB5019959",
+   "month": "2022-Nov",
+   "notes": "Project Zero RCA states the November 2022 patch changed winspool.drv (not spoolsv.exe, which the page names only as a process using a later mitigation). MSRC Supercedence for this KB: KB5018410. Winbindex x64 20H2: 10.0.19041.2075 (KB5020953) -> 10.0.19041.2251 (KB5019959).",
+   "oracle_urls": [
+    "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2022-Nov",
+    "https://googleprojectzero.github.io/0days-in-the-wild/0day-RCAs/2022/CVE-2022-41073.md",
+    "https://winbindex.m417z.com/data/by_filename_compressed/winspool.drv.json.gz",
+    "https://support.microsoft.com/help/5019959"
+   ],
+   "product": "Windows 10 Version 21H1 for x64-based Systems",
+   "products_for_kb": [
+    "Windows 10 Version 20H2 for 32-bit Systems",
+    "Windows 10 Version 20H2 for ARM64-based Systems",
+    "Windows 10 Version 21H1 for 32-bit Systems",
+    "Windows 10 Version 21H1 for ARM64-based Systems",
+    "Windows 10 Version 21H1 for x64-based Systems",
+    "Windows 10 Version 21H2 for 32-bit Systems",
+    "Windows 10 Version 21H2 for ARM64-based Systems",
+    "Windows 10 Version 21H2 for x64-based Systems",
+    "Windows 10 Version 22H2 for 32-bit Systems",
+    "Windows 10 Version 22H2 for ARM64-based Systems",
+    "Windows 10 Version 22H2 for x64-based Systems"
+   ],
+   "stratum": "supersedence"
+  },
+  {
+   "cve": "CVE-2022-41073",
+   "expected_files": [
+    "winspool.drv"
+   ],
+   "facts": "verified",
+   "id": "l1-2022-11-cve-2022-41073-kb5019980",
+   "kb": "KB5019980",
+   "month": "2022-Nov",
+   "notes": "Project Zero RCA states the November 2022 patch changed winspool.drv (not spoolsv.exe, which the page names only as a process using a later mitigation). MSRC Supercedence for this KB: KB5018427. Winbindex x64 11-22H2: 10.0.22621.608 (KB5018496) -> 10.0.22621.819 (KB5019980).",
+   "oracle_urls": [
+    "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2022-Nov",
+    "https://googleprojectzero.github.io/0days-in-the-wild/0day-RCAs/2022/CVE-2022-41073.md",
+    "https://winbindex.m417z.com/data/by_filename_compressed/winspool.drv.json.gz",
+    "https://support.microsoft.com/help/5019980"
+   ],
+   "product": "Windows 11 Version 22H2 for x64-based Systems",
+   "products_for_kb": [
+    "Windows 11 Version 22H2 for ARM64-based Systems",
+    "Windows 11 Version 22H2 for x64-based Systems"
+   ],
+   "stratum": "multi-product-kb"
+  },
+  {
+   "cve": "CVE-2022-41073",
+   "expected_files": [],
+   "facts": "unverified",
+   "id": "l1-2022-11-cve-2022-41073-kb5020000",
+   "kb": "KB5020000",
+   "month": "2022-Nov",
+   "notes": "Windows 7 SP1: MSRC lists both KB5020000 (support page title: Monthly Rollup) and KB5020013 (Security-only update) for the same product strings. Winbindex has no winspool.drv entry for either KB, and no page read states the Windows 7 file, so expected_files is empty. A correct join must emit both KBs for this product, never merge them.",
+   "oracle_urls": [
+    "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2022-Nov",
+    "https://support.microsoft.com/help/5020000"
+   ],
+   "product": "Windows 7 for x64-based Systems Service Pack 1",
+   "products_for_kb": [
+    "Windows 7 for 32-bit Systems Service Pack 1",
+    "Windows 7 for x64-based Systems Service Pack 1",
+    "Windows Server 2008 R2 for x64-based Systems Service Pack 1",
+    "Windows Server 2008 R2 for x64-based Systems Service Pack 1 (Server Core installation)"
+   ],
+   "stratum": "rollup-vs-security-only"
+  },
+  {
+   "cve": "CVE-2022-41073",
+   "expected_files": [],
+   "facts": "unverified",
+   "id": "l1-2022-11-cve-2022-41073-kb5020013",
+   "kb": "KB5020013",
+   "month": "2022-Nov",
+   "notes": "Windows 7 SP1: MSRC lists both KB5020000 (support page title: Monthly Rollup) and KB5020013 (Security-only update) for the same product strings. Winbindex has no winspool.drv entry for either KB, and no page read states the Windows 7 file, so expected_files is empty. A correct join must emit both KBs for this product, never merge them.",
+   "oracle_urls": [
+    "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2022-Nov",
+    "https://support.microsoft.com/help/5020013"
+   ],
+   "product": "Windows 7 for x64-based Systems Service Pack 1",
+   "products_for_kb": [
+    "Windows 7 for 32-bit Systems Service Pack 1",
+    "Windows 7 for x64-based Systems Service Pack 1",
+    "Windows Server 2008 R2 for x64-based Systems Service Pack 1",
+    "Windows Server 2008 R2 for x64-based Systems Service Pack 1 (Server Core installation)"
+   ],
+   "stratum": "rollup-vs-security-only"
+  },
+  {
+   "cve": "CVE-2022-41078",
+   "expected_files": [],
+   "facts": "verified",
+   "id": "l1-2022-11-cve-2022-41078-kb5019758",
+   "kb": "KB5019758",
+   "month": "2022-Nov",
+   "notes": "MSRC lists this KB for a non-Windows-OS product (Exchange Server); the support page title read for the KB confirms it is a Exchange Server update. A Windows-binary join must not emit a Windows pair for it. Expected join outcome: no Windows file.",
+   "oracle_urls": [
+    "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2022-Nov",
+    "https://support.microsoft.com/help/5019758"
+   ],
+   "product": "Microsoft Exchange Server 2013 Cumulative Update 23",
+   "products_for_kb": [
+    "Microsoft Exchange Server 2013 Cumulative Update 23",
+    "Microsoft Exchange Server 2016 Cumulative Update 22",
+    "Microsoft Exchange Server 2016 Cumulative Update 23",
+    "Microsoft Exchange Server 2019 Cumulative Update 11",
+    "Microsoft Exchange Server 2019 Cumulative Update 12"
+   ],
+   "stratum": "non-windows-kb"
+  },
+  {
+   "cve": "CVE-2022-41104",
+   "expected_files": [],
+   "facts": "verified",
+   "id": "l1-2022-11-cve-2022-41104-kb5002253",
+   "kb": "KB5002253",
+   "month": "2022-Nov",
+   "notes": "MSRC lists this KB for a non-Windows-OS product (Excel 2016); the support page title read for the KB confirms it is a Excel 2016 update. A Windows-binary join must not emit a Windows pair for it. Expected join outcome: no Windows file.",
+   "oracle_urls": [
+    "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2022-Nov",
+    "https://support.microsoft.com/help/5002253"
+   ],
+   "product": "Microsoft Excel 2016 (32-bit edition)",
+   "products_for_kb": [
+    "Microsoft Excel 2016 (32-bit edition)",
+    "Microsoft Excel 2016 (64-bit edition)"
+   ],
+   "stratum": "non-windows-kb"
+  },
+  {
+   "cve": "CVE-2022-41128",
+   "expected_files": [
+    "jscript9.dll"
+   ],
+   "facts": "unverified",
+   "id": "l1-2022-11-cve-2022-41128-kb5019959",
+   "kb": "KB5019959",
+   "month": "2022-Nov",
+   "notes": "Project Zero RCA names jscript9.dll as the vulnerable engine but does not state which file the patch changed. Winbindex lists jscript9.dll in this KB. MSRC title: Windows Scripting Languages Remote Code Execution. Winbindex x64 20H2: 11.00.19041.1566 (KB5020953) -> 11.00.19041.2251 (KB5019959).",
+   "oracle_urls": [
+    "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2022-Nov",
+    "https://googleprojectzero.github.io/0days-in-the-wild/0day-RCAs/2022/CVE-2022-41128.md",
+    "https://winbindex.m417z.com/data/by_filename_compressed/jscript9.dll.json.gz",
+    "https://support.microsoft.com/help/5019959"
+   ],
+   "product": "Windows 10 Version 21H1 for x64-based Systems",
+   "products_for_kb": [
+    "Windows 10 Version 20H2 for 32-bit Systems",
+    "Windows 10 Version 20H2 for ARM64-based Systems",
+    "Windows 10 Version 21H1 for 32-bit Systems",
+    "Windows 10 Version 21H1 for ARM64-based Systems",
+    "Windows 10 Version 21H1 for x64-based Systems",
+    "Windows 10 Version 21H2 for 32-bit Systems",
+    "Windows 10 Version 21H2 for ARM64-based Systems",
+    "Windows 10 Version 21H2 for x64-based Systems",
+    "Windows 10 Version 22H2 for 32-bit Systems",
+    "Windows 10 Version 22H2 for ARM64-based Systems",
+    "Windows 10 Version 22H2 for x64-based Systems"
+   ],
+   "stratum": "baseline-usermode"
+  },
+  {
+   "cve": "CVE-2023-21768",
+   "expected_files": [
+    "afd.sys"
+   ],
+   "facts": "verified",
+   "id": "l1-2023-01-cve-2023-21768-kb5022303",
+   "kb": "KB5022303",
+   "month": "2023-Jan",
+   "notes": "File from: Starlabs OnlyPatch ghidriff section. MSRC lists KB5022303 for this CVE (Supercedence KB5021255). Winbindex x64 11-22H2: 10.0.22621.608 (KB5021255) -> 10.0.22621.1105 (KB5022303).",
+   "oracle_urls": [
+    "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2023-Jan",
+    "https://onlyfm252.starlabs.sg/patch-tuesday/2023-01/cve-2023-21768/",
+    "https://winbindex.m417z.com/data/by_filename_compressed/afd.sys.json.gz",
+    "https://support.microsoft.com/help/5022303"
+   ],
+   "product": "Windows 11 Version 22H2 for x64-based Systems",
+   "products_for_kb": [
+    "Windows 11 Version 22H2 for ARM64-based Systems",
+    "Windows 11 Version 22H2 for x64-based Systems"
+   ],
+   "stratum": "baseline-driver"
+  },
+  {
+   "cve": "CVE-2023-21554",
+   "expected_files": [
+    "mqqm.dll"
+   ],
+   "facts": "verified",
+   "id": "l1-2023-04-cve-2023-21554-kb5025239",
+   "kb": "KB5025239",
+   "month": "2023-Apr",
+   "notes": "File from: Starlabs OnlyPatch ghidriff section. MSRC lists KB5025239 for this CVE (Supercedence KB5023706). Winbindex x64 11-22H2: 10.0.22621.963 (KB5023778) -> 10.0.22621.1555 (KB5025239).",
+   "oracle_urls": [
+    "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2023-Apr",
+    "https://onlyfm252.starlabs.sg/patch-tuesday/2023-04/cve-2023-21554/",
+    "https://winbindex.m417z.com/data/by_filename_compressed/mqqm.dll.json.gz",
+    "https://support.microsoft.com/help/5025239"
+   ],
+   "product": "Windows 11 Version 22H2 for x64-based Systems",
+   "products_for_kb": [
+    "Windows 11 Version 22H2 for ARM64-based Systems",
+    "Windows 11 Version 22H2 for x64-based Systems"
+   ],
+   "stratum": "baseline-usermode"
+  },
+  {
+   "cve": "CVE-2023-28229",
+   "expected_files": [
+    "keyiso.dll"
+   ],
+   "facts": "verified",
+   "id": "l1-2023-04-cve-2023-28229-kb5025239",
+   "kb": "KB5025239",
+   "month": "2023-Apr",
+   "notes": "File from: Starlabs OnlyPatch ghidriff section. MSRC lists KB5025239 for this CVE (Supercedence KB5023706). Winbindex x64 11-22H2: 10.0.22621.1485 (KB5023778) -> 10.0.22621.1555 (KB5025239).",
+   "oracle_urls": [
+    "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2023-Apr",
+    "https://onlyfm252.starlabs.sg/patch-tuesday/2023-04/cve-2023-28229/",
+    "https://winbindex.m417z.com/data/by_filename_compressed/keyiso.dll.json.gz",
+    "https://support.microsoft.com/help/5025239"
+   ],
+   "product": "Windows 11 Version 22H2 for x64-based Systems",
+   "products_for_kb": [
+    "Windows 11 Version 22H2 for ARM64-based Systems",
+    "Windows 11 Version 22H2 for x64-based Systems"
+   ],
+   "stratum": "baseline-usermode"
+  },
+  {
+   "cve": "CVE-2023-28231",
+   "expected_files": [
+    "dhcpssvc.dll"
+   ],
+   "facts": "verified",
+   "id": "l1-2023-04-cve-2023-28231-kb5025229",
+   "kb": "KB5025229",
+   "month": "2023-Apr",
+   "notes": "File from: Starlabs OnlyPatch ghidriff section. MSRC lists KB5025229 for this CVE (Supercedence KB5023702). Winbindex x64 1809: 10.0.17763.3469 (KB5023702) -> 10.0.17763.4252 (KB5025229).",
+   "oracle_urls": [
+    "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2023-Apr",
+    "https://onlyfm252.starlabs.sg/patch-tuesday/2023-04/cve-2023-28231/",
+    "https://winbindex.m417z.com/data/by_filename_compressed/dhcpssvc.dll.json.gz",
+    "https://support.microsoft.com/help/5025229"
+   ],
+   "product": "Windows Server 2019",
+   "products_for_kb": [
+    "Windows Server 2019",
+    "Windows Server 2019 (Server Core installation)"
+   ],
+   "stratum": "baseline-usermode"
+  },
+  {
+   "cve": "CVE-2023-28252",
+   "expected_files": [
+    "clfs.sys"
+   ],
+   "facts": "verified",
+   "id": "l1-2023-04-cve-2023-28252-kb5025239",
+   "kb": "KB5025239",
+   "month": "2023-Apr",
+   "notes": "File from: Starlabs OnlyPatch ghidriff section; Project Zero 0-day RCA names the file. MSRC lists KB5025239 for this CVE (Supercedence KB5023706). Winbindex x64 11-22H2: 10.0.22621.1265 (KB5023778) -> 10.0.22621.1555 (KB5025239).",
+   "oracle_urls": [
+    "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2023-Apr",
+    "https://onlyfm252.starlabs.sg/patch-tuesday/2023-04/cve-2023-28252/",
+    "https://googleprojectzero.github.io/0days-in-the-wild/0day-RCAs/2023/CVE-2023-28252.md",
+    "https://winbindex.m417z.com/data/by_filename_compressed/clfs.sys.json.gz",
+    "https://support.microsoft.com/help/5025239"
+   ],
+   "product": "Windows 11 Version 22H2 for x64-based Systems",
+   "products_for_kb": [
+    "Windows 11 Version 22H2 for ARM64-based Systems",
+    "Windows 11 Version 22H2 for x64-based Systems"
+   ],
+   "stratum": "baseline-driver"
+  },
+  {
+   "cve": "CVE-2023-29360",
+   "expected_files": [
+    "mskssrv.sys"
+   ],
+   "facts": "verified",
+   "id": "l1-2023-06-cve-2023-29360-kb5027231",
+   "kb": "KB5027231",
+   "month": "2023-Jun",
+   "notes": "File from: Starlabs OnlyPatch ghidriff section. MSRC lists KB5027231 for this CVE (Supercedence KB5026372). Winbindex x64 11-22H2: 10.0.22621.1 (BASE) -> 10.0.22621.1848 (KB5027231).",
+   "oracle_urls": [
+    "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2023-Jun",
+    "https://onlyfm252.starlabs.sg/patch-tuesday/2023-06/cve-2023-29360/",
+    "https://winbindex.m417z.com/data/by_filename_compressed/mskssrv.sys.json.gz",
+    "https://support.microsoft.com/help/5027231"
+   ],
+   "product": "Windows 11 Version 22H2 for x64-based Systems",
+   "products_for_kb": [
+    "Windows 11 Version 22H2 for ARM64-based Systems",
+    "Windows 11 Version 22H2 for x64-based Systems"
+   ],
+   "stratum": "baseline-driver"
+  },
+  {
+   "cve": "CVE-2023-36906",
+   "expected_files": [
+    "ncryptprov.dll"
+   ],
+   "facts": "verified",
+   "id": "l1-2023-08-cve-2023-36906-kb5029263",
+   "kb": "KB5029263",
+   "month": "2023-Aug",
+   "notes": "File from: Starlabs OnlyPatch ghidriff section. MSRC lists KB5029263 for this CVE (Supercedence KB5028185). Winbindex x64 11-22H2: 10.0.22621.1928 (KB5028254) -> 10.0.22621.2134 (KB5029263).",
+   "oracle_urls": [
+    "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2023-Aug",
+    "https://onlyfm252.starlabs.sg/patch-tuesday/2023-08/cve-2023-36906/",
+    "https://winbindex.m417z.com/data/by_filename_compressed/ncryptprov.dll.json.gz",
+    "https://support.microsoft.com/help/5029263"
+   ],
+   "product": "Windows 11 Version 22H2 for x64-based Systems",
+   "products_for_kb": [
+    "Windows 11 Version 22H2 for ARM64-based Systems",
+    "Windows 11 Version 22H2 for x64-based Systems"
+   ],
+   "stratum": "baseline-usermode"
+  },
+  {
+   "cve": "CVE-2023-36802",
+   "expected_files": [
+    "mskssrv.sys"
+   ],
+   "facts": "verified",
+   "id": "l1-2023-09-cve-2023-36802-kb5030211",
+   "kb": "KB5030211",
+   "month": "2023-Sep",
+   "notes": "File from: Starlabs OnlyPatch (diff shown for KB5030219, a different product) and Project Zero RCA. MSRC lists this KB for this CVE (Supercedence KB5029244). Winbindex lists mskssrv.sys in this KB. Winbindex x64 21H2: 10.0.19041.3086 (KB5029244) -> 10.0.19041.3448 (KB5030211).",
+   "oracle_urls": [
+    "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2023-Sep",
+    "https://onlyfm252.starlabs.sg/patch-tuesday/2023-09/cve-2023-36802/",
+    "https://googleprojectzero.github.io/0days-in-the-wild/0day-RCAs/2023/CVE-2023-36802.md",
+    "https://winbindex.m417z.com/data/by_filename_compressed/mskssrv.sys.json.gz",
+    "https://support.microsoft.com/help/5030211"
+   ],
+   "product": "Windows 10 Version 21H2 for x64-based Systems",
+   "products_for_kb": [
+    "Windows 10 Version 21H2 for 32-bit Systems",
+    "Windows 10 Version 21H2 for ARM64-based Systems",
+    "Windows 10 Version 21H2 for x64-based Systems",
+    "Windows 10 Version 22H2 for 32-bit Systems",
+    "Windows 10 Version 22H2 for ARM64-based Systems",
+    "Windows 10 Version 22H2 for x64-based Systems"
+   ],
+   "stratum": "multi-product-kb"
+  },
+  {
+   "cve": "CVE-2023-36802",
+   "expected_files": [
+    "mskssrv.sys"
+   ],
+   "facts": "verified",
+   "id": "l1-2023-09-cve-2023-36802-kb5030214",
+   "kb": "KB5030214",
+   "month": "2023-Sep",
+   "notes": "File from: Starlabs OnlyPatch (diff shown for KB5030219, a different product) and Project Zero RCA. MSRC lists this KB for this CVE (Supercedence KB5029247). Winbindex lists mskssrv.sys in this KB. Winbindex x64 1809: 10.0.17763.4492 (KB5029247) -> 10.0.17763.4851 (KB5030214).",
+   "oracle_urls": [
+    "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2023-Sep",
+    "https://onlyfm252.starlabs.sg/patch-tuesday/2023-09/cve-2023-36802/",
+    "https://googleprojectzero.github.io/0days-in-the-wild/0day-RCAs/2023/CVE-2023-36802.md",
+    "https://winbindex.m417z.com/data/by_filename_compressed/mskssrv.sys.json.gz",
+    "https://support.microsoft.com/help/5030214"
+   ],
+   "product": "Windows 10 Version 1809 for x64-based Systems",
+   "products_for_kb": [
+    "Windows 10 Version 1809 for 32-bit Systems",
+    "Windows 10 Version 1809 for ARM64-based Systems",
+    "Windows 10 Version 1809 for x64-based Systems",
+    "Windows Server 2019",
+    "Windows Server 2019 (Server Core installation)"
+   ],
+   "stratum": "multi-product-kb"
+  },
+  {
+   "cve": "CVE-2023-36802",
+   "expected_files": [
+    "mskssrv.sys"
+   ],
+   "facts": "verified",
+   "id": "l1-2023-09-cve-2023-36802-kb5030219",
+   "kb": "KB5030219",
+   "month": "2023-Sep",
+   "notes": "File from: Starlabs OnlyPatch ghidriff section; Project Zero 0-day RCA names the file. MSRC lists KB5030219 for this CVE (Supercedence KB5029263). Winbindex x64 11-22H2: 10.0.22621.1848 (KB5029351) -> 10.0.22621.2283 (KB5030219).",
+   "oracle_urls": [
+    "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2023-Sep",
+    "https://onlyfm252.starlabs.sg/patch-tuesday/2023-09/cve-2023-36802/",
+    "https://googleprojectzero.github.io/0days-in-the-wild/0day-RCAs/2023/CVE-2023-36802.md",
+    "https://winbindex.m417z.com/data/by_filename_compressed/mskssrv.sys.json.gz",
+    "https://support.microsoft.com/help/5030219"
+   ],
+   "product": "Windows 11 Version 22H2 for x64-based Systems",
+   "products_for_kb": [
+    "Windows 11 Version 22H2 for ARM64-based Systems",
+    "Windows 11 Version 22H2 for x64-based Systems"
+   ],
+   "stratum": "multi-product-kb"
+  },
+  {
+   "cve": "CVE-2023-38148",
+   "expected_files": [
+    "ipnathlp.dll"
+   ],
+   "facts": "verified",
+   "id": "l1-2023-09-cve-2023-38148-kb5030219",
+   "kb": "KB5030219",
+   "month": "2023-Sep",
+   "notes": "File from: Starlabs OnlyPatch ghidriff section. MSRC lists KB5030219 for this CVE (Supercedence KB5029263). Winbindex x64 11-22H2: 10.0.22621.963 (KB5029351) -> 10.0.22621.2283 (KB5030219).",
+   "oracle_urls": [
+    "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2023-Sep",
+    "https://onlyfm252.starlabs.sg/patch-tuesday/2023-09/cve-2023-38148/",
+    "https://winbindex.m417z.com/data/by_filename_compressed/ipnathlp.dll.json.gz",
+    "https://support.microsoft.com/help/5030219"
+   ],
+   "product": "Windows 11 Version 22H2 for x64-based Systems",
+   "products_for_kb": [
+    "Windows 11 Version 22H2 for ARM64-based Systems",
+    "Windows 11 Version 22H2 for x64-based Systems"
+   ],
+   "stratum": "baseline-usermode"
+  },
+  {
+   "cve": "CVE-2023-22032",
+   "expected_files": [],
+   "facts": "verified",
+   "id": "l1-2023-10-cve-2023-22032-nokb",
+   "kb": "",
+   "month": "2023-Oct",
+   "notes": "MSRC lists no KB remediation for this CVE (open-source component in Azure Linux / CBL Mariner, title: Vulnerability in the MySQL Server product of Oracle MySQL (c). NVD record read, describes an upstream open-source issue. Expected join outcome: no KB, no Windows file pair.",
+   "oracle_urls": [
+    "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2023-Oct",
+    "https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2023-22032"
+   ],
+   "product": "unresolved MSRC product id 18286-16823",
+   "products_for_kb": [],
+   "stratum": "no-kb"
+  },
+  {
+   "cve": "CVE-2023-36728",
+   "expected_files": [],
+   "facts": "verified",
+   "id": "l1-2023-10-cve-2023-36728-kb5029378",
+   "kb": "KB5029378",
+   "month": "2023-Oct",
+   "notes": "MSRC lists this KB for a non-Windows-OS product (SQL Server 2019); the support page title read for the KB confirms it is a SQL Server 2019 update. A Windows-binary join must not emit a Windows pair for it. Expected join outcome: no Windows file.",
+   "oracle_urls": [
+    "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2023-Oct",
+    "https://support.microsoft.com/help/5029378"
+   ],
+   "product": "Microsoft SQL Server 2019 for x64-based Systems (CU 22)",
+   "products_for_kb": [
+    "Microsoft SQL Server 2019 for x64-based Systems (CU 22)"
+   ],
+   "stratum": "non-windows-kb"
+  },
+  {
+   "cve": "CVE-2023-36033",
+   "expected_files": [
+    "dwmcore.dll"
+   ],
+   "facts": "verified",
+   "id": "l1-2023-11-cve-2023-36033-kb5032190",
+   "kb": "KB5032190",
+   "month": "2023-Nov",
+   "notes": "File from: Starlabs OnlyPatch ghidriff section; Project Zero 0-day RCA names the file. MSRC lists KB5032190 for this CVE (Supercedence KB5031354). Winbindex x64 11-22H2: 10.0.22621.2506 (KB5031455) -> 10.0.22621.2715 (KB5032190).",
+   "oracle_urls": [
+    "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2023-Nov",
+    "https://onlyfm252.starlabs.sg/patch-tuesday/2023-11/cve-2023-36033/",
+    "https://googleprojectzero.github.io/0days-in-the-wild/0day-RCAs/2023/CVE-2023-36033.md",
+    "https://winbindex.m417z.com/data/by_filename_compressed/dwmcore.dll.json.gz",
+    "https://support.microsoft.com/help/5032190"
+   ],
+   "product": "Windows 11 Version 22H2 for x64-based Systems",
+   "products_for_kb": [
+    "Windows 11 Version 22H2 for ARM64-based Systems",
+    "Windows 11 Version 22H2 for x64-based Systems",
+    "Windows 11 Version 23H2 for ARM64-based Systems",
+    "Windows 11 Version 23H2 for x64-based Systems"
+   ],
+   "stratum": "baseline-usermode"
+  },
+  {
+   "cve": "CVE-2024-21338",
+   "expected_files": [
+    "appid.sys"
+   ],
+   "facts": "verified",
+   "id": "l1-2024-02-cve-2024-21338-kb5034765",
+   "kb": "KB5034765",
+   "month": "2024-Feb",
+   "notes": "File from: Starlabs OnlyPatch ghidriff section. MSRC lists KB5034765 for this CVE (Supercedence KB5034123). Winbindex x64 11-22H2: 10.0.22621.2506 (KB5034204) -> 10.0.22621.3155 (KB5034765).",
+   "oracle_urls": [
+    "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2024-Feb",
+    "https://onlyfm252.starlabs.sg/patch-tuesday/2024-02/cve-2024-21338/",
+    "https://winbindex.m417z.com/data/by_filename_compressed/appid.sys.json.gz",
+    "https://support.microsoft.com/help/5034765"
+   ],
+   "product": "Windows 11 Version 22H2 for x64-based Systems",
+   "products_for_kb": [
+    "Windows 11 Version 22H2 for ARM64-based Systems",
+    "Windows 11 Version 22H2 for x64-based Systems",
+    "Windows 11 Version 23H2 for ARM64-based Systems",
+    "Windows 11 Version 23H2 for x64-based Systems"
+   ],
+   "stratum": "baseline-driver"
+  },
+  {
+   "cve": "CVE-2024-26230",
+   "expected_files": [
+    "tapisrv.dll"
+   ],
+   "facts": "verified",
+   "id": "l1-2024-04-cve-2024-26230-kb5036892",
+   "kb": "KB5036892",
+   "month": "2024-Apr",
+   "notes": "File from: Starlabs OnlyPatch ghidriff section. MSRC lists KB5036892 for this CVE (Supercedence KB5035845). Winbindex x64 21H2: 10.0.19041.4170 (KB5035845) -> 10.0.19041.4291 (KB5036892).",
+   "oracle_urls": [
+    "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2024-Apr",
+    "https://onlyfm252.starlabs.sg/patch-tuesday/2024-04/cve-2024-26230/",
+    "https://winbindex.m417z.com/data/by_filename_compressed/tapisrv.dll.json.gz",
+    "https://support.microsoft.com/help/5036892"
+   ],
+   "product": "Windows 10 Version 21H2 for x64-based Systems",
+   "products_for_kb": [
+    "Windows 10 Version 21H2 for 32-bit Systems",
+    "Windows 10 Version 21H2 for ARM64-based Systems",
+    "Windows 10 Version 21H2 for x64-based Systems",
+    "Windows 10 Version 22H2 for 32-bit Systems",
+    "Windows 10 Version 22H2 for ARM64-based Systems",
+    "Windows 10 Version 22H2 for x64-based Systems"
+   ],
+   "stratum": "baseline-usermode"
+  },
+  {
+   "cve": "CVE-2024-30051",
+   "expected_files": [
+    "dwmcore.dll"
+   ],
+   "facts": "verified",
+   "id": "l1-2024-05-cve-2024-30051-kb5037771",
+   "kb": "KB5037771",
+   "month": "2024-May",
+   "notes": "File from: Starlabs OnlyPatch ghidriff section. MSRC lists KB5037771 for this CVE (Supercedence KB5036893). Winbindex x64 11-22H2: 10.0.22621.3527 (KB5036980) -> 10.0.22621.3593 (KB5037771).",
+   "oracle_urls": [
+    "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2024-May",
+    "https://onlyfm252.starlabs.sg/patch-tuesday/2024-05/cve-2024-30051/",
+    "https://winbindex.m417z.com/data/by_filename_compressed/dwmcore.dll.json.gz",
+    "https://support.microsoft.com/help/5037771"
+   ],
+   "product": "Windows 11 Version 22H2 for x64-based Systems",
+   "products_for_kb": [
+    "Windows 11 Version 22H2 for ARM64-based Systems",
+    "Windows 11 Version 22H2 for x64-based Systems",
+    "Windows 11 Version 23H2 for ARM64-based Systems",
+    "Windows 11 Version 23H2 for x64-based Systems"
+   ],
+   "stratum": "baseline-usermode"
+  },
+  {
+   "cve": "CVE-2024-30078",
+   "expected_files": [
+    "nwifi.sys"
+   ],
+   "facts": "verified",
+   "id": "l1-2024-06-cve-2024-30078-kb5039212",
+   "kb": "KB5039212",
+   "month": "2024-Jun",
+   "notes": "File from: Starlabs OnlyPatch ghidriff section. MSRC lists KB5039212 for this CVE (Supercedence KB5037771). Winbindex x64 11-22H2: 10.0.22621.3672 (KB5037853) -> 10.0.22621.3733 (KB5039212).",
+   "oracle_urls": [
+    "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2024-Jun",
+    "https://onlyfm252.starlabs.sg/patch-tuesday/2024-06/cve-2024-30078/",
+    "https://winbindex.m417z.com/data/by_filename_compressed/nwifi.sys.json.gz",
+    "https://support.microsoft.com/help/5039212"
+   ],
+   "product": "Windows 11 Version 22H2 for x64-based Systems",
+   "products_for_kb": [
+    "Windows 11 Version 22H2 for ARM64-based Systems",
+    "Windows 11 Version 22H2 for x64-based Systems",
+    "Windows 11 Version 23H2 for ARM64-based Systems",
+    "Windows 11 Version 23H2 for x64-based Systems"
+   ],
+   "stratum": "baseline-driver"
+  },
+  {
+   "cve": "CVE-2024-30085",
+   "expected_files": [
+    "cldflt.sys"
+   ],
+   "facts": "verified",
+   "id": "l1-2024-06-cve-2024-30085-kb5039211",
+   "kb": "KB5039211",
+   "month": "2024-Jun",
+   "notes": "File from: Starlabs OnlyPatch ghidriff section. MSRC lists KB5039211 for this CVE (Supercedence KB5037768). Winbindex x64 21H2: 10.0.19041.4412 (KB5037768) -> 10.0.19041.4522 (KB5039211).",
+   "oracle_urls": [
+    "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2024-Jun",
+    "https://onlyfm252.starlabs.sg/patch-tuesday/2024-06/cve-2024-30085/",
+    "https://winbindex.m417z.com/data/by_filename_compressed/cldflt.sys.json.gz",
+    "https://support.microsoft.com/help/5039211"
+   ],
+   "product": "Windows 10 Version 21H2 for x64-based Systems",
+   "products_for_kb": [
+    "Windows 10 Version 21H2 for 32-bit Systems",
+    "Windows 10 Version 21H2 for ARM64-based Systems",
+    "Windows 10 Version 21H2 for x64-based Systems",
+    "Windows 10 Version 22H2 for 32-bit Systems",
+    "Windows 10 Version 22H2 for ARM64-based Systems",
+    "Windows 10 Version 22H2 for x64-based Systems"
+   ],
+   "stratum": "baseline-driver"
+  },
+  {
+   "cve": "CVE-2024-38077",
+   "expected_files": [
+    "lserver.dll"
+   ],
+   "facts": "verified",
+   "id": "l1-2024-07-cve-2024-38077-kb5040430",
+   "kb": "KB5040430",
+   "month": "2024-Jul",
+   "notes": "File from: Starlabs OnlyPatch ghidriff section. MSRC lists KB5040430 for this CVE (Supercedence KB5039217). Winbindex x64 1809: 10.0.17763.5830 (KB5039217) -> 10.0.17763.6054 (KB5040430).",
+   "oracle_urls": [
+    "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2024-Jul",
+    "https://onlyfm252.starlabs.sg/patch-tuesday/2024-07/cve-2024-38077/",
+    "https://winbindex.m417z.com/data/by_filename_compressed/lserver.dll.json.gz",
+    "https://support.microsoft.com/help/5040430"
+   ],
+   "product": "Windows Server 2019",
+   "products_for_kb": [
+    "Windows Server 2019",
+    "Windows Server 2019 (Server Core installation)"
+   ],
+   "stratum": "baseline-usermode"
+  },
+  {
+   "cve": "CVE-2022-48893",
+   "expected_files": [],
+   "facts": "verified",
+   "id": "l1-2024-08-cve-2022-48893-nokb",
+   "kb": "",
+   "month": "2024-Aug",
+   "notes": "MSRC lists no KB remediation for this CVE (open-source component in Azure Linux / CBL Mariner, title: drm/i915/gt: Cleanup partial engine discovery failures). NVD record read, describes an upstream open-source issue. Expected join outcome: no KB, no Windows file pair.",
+   "oracle_urls": [
+    "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2024-Aug",
+    "https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2022-48893"
+   ],
+   "product": "cbl2 kernel 5.15.180.1-1 on CBL Mariner 2.0",
+   "products_for_kb": [],
+   "stratum": "no-kb"
+  },
+  {
+   "cve": "CVE-2024-38063",
+   "expected_files": [
+    "tcpip.sys"
+   ],
+   "facts": "verified",
+   "id": "l1-2024-08-cve-2024-38063-kb5041580",
+   "kb": "KB5041580",
+   "month": "2024-Aug",
+   "notes": "File from: bi.zone analysis states the flaw is in the tcpip.sys driver (IPv6 handling). It does not name a KB. MSRC lists this KB for this CVE (Supercedence KB5040427). Winbindex x64 21H2: 10.0.19041.4648 (KB5040427) -> 10.0.19041.4780 (KB5041580).",
+   "oracle_urls": [
+    "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2024-Aug",
+    "https://bi.zone/eng/expertise/blog/analiz-kriticheskoy-uyazvimosti-windows-cve-2024-38063/",
+    "https://winbindex.m417z.com/data/by_filename_compressed/tcpip.sys.json.gz",
+    "https://support.microsoft.com/help/5041580"
+   ],
+   "product": "Windows 10 Version 21H2 for x64-based Systems",
+   "products_for_kb": [
+    "Windows 10 Version 21H2 for 32-bit Systems",
+    "Windows 10 Version 21H2 for ARM64-based Systems",
+    "Windows 10 Version 21H2 for x64-based Systems",
+    "Windows 10 Version 22H2 for 32-bit Systems",
+    "Windows 10 Version 22H2 for ARM64-based Systems",
+    "Windows 10 Version 22H2 for x64-based Systems"
+   ],
+   "stratum": "multi-product-kb"
+  },
+  {
+   "cve": "CVE-2024-38063",
+   "expected_files": [
+    "tcpip.sys"
+   ],
+   "facts": "verified",
+   "id": "l1-2024-08-cve-2024-38063-kb5041585",
+   "kb": "KB5041585",
+   "month": "2024-Aug",
+   "notes": "File from: bi.zone analysis states the flaw is in the tcpip.sys driver (IPv6 handling). It does not name a KB. MSRC lists this KB for this CVE (Supercedence KB5040442). Winbindex x64 11-22H2: 10.0.22621.3958 (KB5040527) -> 10.0.22621.4036 (KB5041585).",
+   "oracle_urls": [
+    "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2024-Aug",
+    "https://bi.zone/eng/expertise/blog/analiz-kriticheskoy-uyazvimosti-windows-cve-2024-38063/",
+    "https://winbindex.m417z.com/data/by_filename_compressed/tcpip.sys.json.gz",
+    "https://support.microsoft.com/help/5041585"
+   ],
+   "product": "Windows 11 Version 22H2 for x64-based Systems",
+   "products_for_kb": [
+    "Windows 11 Version 22H2 for ARM64-based Systems",
+    "Windows 11 Version 22H2 for x64-based Systems",
+    "Windows 11 Version 23H2 for ARM64-based Systems",
+    "Windows 11 Version 23H2 for x64-based Systems"
+   ],
+   "stratum": "multi-product-kb"
+  },
+  {
+   "cve": "CVE-2024-38063",
+   "expected_files": [
+    "tcpip.sys"
+   ],
+   "facts": "verified",
+   "id": "l1-2024-08-cve-2024-38063-kb5043050",
+   "kb": "KB5043050",
+   "month": "2024-Aug",
+   "notes": "File from: bi.zone analysis states the flaw is in the tcpip.sys driver (IPv6 handling). It does not name a KB. MSRC lists this KB for this CVE (Supercedence KB5041578). Winbindex x64 1809: 10.0.17763.6189 (KB5041578) -> 10.0.17763.6292 (KB5043050).",
+   "oracle_urls": [
+    "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2024-Aug",
+    "https://bi.zone/eng/expertise/blog/analiz-kriticheskoy-uyazvimosti-windows-cve-2024-38063/",
+    "https://winbindex.m417z.com/data/by_filename_compressed/tcpip.sys.json.gz",
+    "https://support.microsoft.com/help/5043050"
+   ],
+   "product": "Windows 10 Version 1809 for x64-based Systems",
+   "products_for_kb": [
+    "Windows 10 Version 1809 for 32-bit Systems",
+    "Windows 10 Version 1809 for x64-based Systems",
+    "Windows Server 2019",
+    "Windows Server 2019 (Server Core installation)"
+   ],
+   "stratum": "multi-product-kb"
+  },
+  {
+   "cve": "CVE-2024-38107",
+   "expected_files": [
+    "pdc.sys"
+   ],
+   "facts": "verified",
+   "id": "l1-2024-08-cve-2024-38107-kb5041571",
+   "kb": "KB5041571",
+   "month": "2024-Aug",
+   "notes": "File from: Starlabs OnlyPatch ghidriff section. MSRC lists KB5041571 for this CVE (Supercedence KB5040435). Winbindex x64 11-24H2: 10.0.26100.1301 (KB5040529) -> 10.0.26100.1455 (KB5041571).",
+   "oracle_urls": [
+    "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2024-Aug",
+    "https://onlyfm252.starlabs.sg/patch-tuesday/2024-08/cve-2024-38107/",
+    "https://winbindex.m417z.com/data/by_filename_compressed/pdc.sys.json.gz",
+    "https://support.microsoft.com/help/5041571"
+   ],
+   "product": "Windows 11 Version 24H2 for x64-based Systems",
+   "products_for_kb": [
+    "Windows 11 Version 24H2 for ARM64-based Systems",
+    "Windows 11 Version 24H2 for x64-based Systems"
+   ],
+   "stratum": "baseline-driver"
+  },
+  {
+   "cve": "CVE-2024-38167",
+   "expected_files": [],
+   "facts": "verified",
+   "id": "l1-2024-08-cve-2024-38167-kb5042132",
+   "kb": "KB5042132",
+   "month": "2024-Aug",
+   "notes": "MSRC lists this KB for a non-Windows-OS product (.NET 8.0); the support page title read for the KB confirms it is a .NET 8.0 update. A Windows-binary join must not emit a Windows pair for it. Expected join outcome: no Windows file.",
+   "oracle_urls": [
+    "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2024-Aug",
+    "https://support.microsoft.com/help/5042132"
+   ],
+   "product": ".NET 8.0",
+   "products_for_kb": [
+    ".NET 8.0"
+   ],
+   "stratum": "non-windows-kb"
+  },
+  {
+   "cve": "CVE-2024-38173",
+   "expected_files": [],
+   "facts": "verified",
+   "id": "l1-2024-08-cve-2024-38173-kb5002626",
+   "kb": "KB5002626",
+   "month": "2024-Aug",
+   "notes": "MSRC lists this KB for a non-Windows-OS product (Outlook 2016); the support page title read for the KB confirms it is a Outlook 2016 update. A Windows-binary join must not emit a Windows pair for it. Expected join outcome: no Windows file.",
+   "oracle_urls": [
+    "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2024-Aug",
+    "https://support.microsoft.com/help/5002626"
+   ],
+   "product": "Microsoft Outlook 2016 (32-bit edition)",
+   "products_for_kb": [
+    "Microsoft Outlook 2016 (32-bit edition)",
+    "Microsoft Outlook 2016 (64-bit edition)"
+   ],
+   "stratum": "non-windows-kb"
+  },
+  {
+   "cve": "CVE-2024-38193",
+   "expected_files": [],
+   "facts": "unverified",
+   "id": "l1-2024-08-cve-2024-38193-kb5041580",
+   "kb": "KB5041580",
+   "month": "2024-Aug",
+   "notes": "MSRC title names the Ancillary Function Driver for WinSock and the Starlabs page lists no diffed file; no page read states the patched file. KB and product read from MSRC CVRF only. expected_files left empty on purpose: the file must be established by a later diff before this case can be scored.",
+   "oracle_urls": [
+    "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2024-Aug",
+    "https://onlyfm252.starlabs.sg/patch-tuesday/2024-08/cve-2024-38193/",
+    "https://support.microsoft.com/help/5041580"
+   ],
+   "product": "Windows 10 Version 21H2 for x64-based Systems",
+   "products_for_kb": [
+    "Windows 10 Version 21H2 for 32-bit Systems",
+    "Windows 10 Version 21H2 for ARM64-based Systems",
+    "Windows 10 Version 21H2 for x64-based Systems",
+    "Windows 10 Version 22H2 for 32-bit Systems",
+    "Windows 10 Version 22H2 for ARM64-based Systems",
+    "Windows 10 Version 22H2 for x64-based Systems"
+   ],
+   "stratum": "file-unstated"
+  },
+  {
+   "cve": "CVE-2024-38196",
+   "expected_files": [
+    "clfs.sys"
+   ],
+   "facts": "verified",
+   "id": "l1-2024-08-cve-2024-38196-kb5041571",
+   "kb": "KB5041571",
+   "month": "2024-Aug",
+   "notes": "File from: Starlabs OnlyPatch ghidriff section. MSRC lists KB5041571 for this CVE (Supercedence KB5040435). Winbindex x64 11-24H2: 10.0.26100.1301 (KB5040529) -> 10.0.26100.1455 (KB5041571).",
+   "oracle_urls": [
+    "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2024-Aug",
+    "https://onlyfm252.starlabs.sg/patch-tuesday/2024-08/cve-2024-38196/",
+    "https://winbindex.m417z.com/data/by_filename_compressed/clfs.sys.json.gz",
+    "https://support.microsoft.com/help/5041571"
+   ],
+   "product": "Windows 11 Version 24H2 for x64-based Systems",
+   "products_for_kb": [
+    "Windows 11 Version 24H2 for ARM64-based Systems",
+    "Windows 11 Version 24H2 for x64-based Systems"
+   ],
+   "stratum": "baseline-driver"
+  },
+  {
+   "cve": "CVE-2024-38215",
+   "expected_files": [
+    "cldflt.sys"
+   ],
+   "facts": "verified",
+   "id": "l1-2024-08-cve-2024-38215-kb5041571",
+   "kb": "KB5041571",
+   "month": "2024-Aug",
+   "notes": "File from: Starlabs OnlyPatch ghidriff section. MSRC lists KB5041571 for this CVE (Supercedence KB5040435). Winbindex x64 11-24H2: 10.0.26100.1301 (KB5040529) -> 10.0.26100.1455 (KB5041571).",
+   "oracle_urls": [
+    "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2024-Aug",
+    "https://onlyfm252.starlabs.sg/patch-tuesday/2024-08/cve-2024-38215/",
+    "https://winbindex.m417z.com/data/by_filename_compressed/cldflt.sys.json.gz",
+    "https://support.microsoft.com/help/5041571"
+   ],
+   "product": "Windows 11 Version 24H2 for x64-based Systems",
+   "products_for_kb": [
+    "Windows 11 Version 24H2 for ARM64-based Systems",
+    "Windows 11 Version 24H2 for x64-based Systems"
+   ],
+   "stratum": "baseline-driver"
+  },
+  {
+   "cve": "CVE-2024-43518",
+   "expected_files": [
+    "tapi32.dll"
+   ],
+   "facts": "verified",
+   "id": "l1-2024-10-cve-2024-43518-kb5044273",
+   "kb": "KB5044273",
+   "month": "2024-Oct",
+   "notes": "File from: Starlabs OnlyPatch ghidriff section. MSRC lists KB5044273 for this CVE (Supercedence KB5043064). Winbindex x64 21H2: 10.0.19041.3636 (KB5043064) -> 10.0.19041.5007 (KB5044273).",
+   "oracle_urls": [
+    "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2024-Oct",
+    "https://onlyfm252.starlabs.sg/patch-tuesday/2024-10/cve-2024-43518/",
+    "https://winbindex.m417z.com/data/by_filename_compressed/tapi32.dll.json.gz",
+    "https://support.microsoft.com/help/5044273"
+   ],
+   "product": "Windows 10 Version 21H2 for x64-based Systems",
+   "products_for_kb": [
+    "Windows 10 Version 21H2 for 32-bit Systems",
+    "Windows 10 Version 21H2 for ARM64-based Systems",
+    "Windows 10 Version 21H2 for x64-based Systems",
+    "Windows 10 Version 22H2 for 32-bit Systems",
+    "Windows 10 Version 22H2 for ARM64-based Systems",
+    "Windows 10 Version 22H2 for x64-based Systems"
+   ],
+   "stratum": "baseline-usermode"
+  },
+  {
+   "cve": "CVE-2024-49114",
+   "expected_files": [
+    "cldflt.sys"
+   ],
+   "facts": "verified",
+   "id": "l1-2024-12-cve-2024-49114-kb5048667",
+   "kb": "KB5048667",
+   "month": "2024-Dec",
+   "notes": "File from: Starlabs OnlyPatch ghidriff section. MSRC lists KB5048667 for this CVE (Supercedence KB5046617). Winbindex x64 11-24H2: 10.0.26100.2161 (KB5046740) -> 10.0.26100.2605 (KB5048667).",
+   "oracle_urls": [
+    "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2024-Dec",
+    "https://onlyfm252.starlabs.sg/patch-tuesday/2024-12/cve-2024-49114/",
+    "https://winbindex.m417z.com/data/by_filename_compressed/cldflt.sys.json.gz",
+    "https://support.microsoft.com/help/5048667"
+   ],
+   "product": "Windows 11 Version 24H2 for x64-based Systems",
+   "products_for_kb": [
+    "Windows 11 Version 24H2 for ARM64-based Systems",
+    "Windows 11 Version 24H2 for x64-based Systems",
+    "Windows Server 2025",
+    "Windows Server 2025 (Server Core installation)"
+   ],
+   "stratum": "baseline-driver"
+  },
+  {
+   "cve": "CVE-2025-21315",
+   "expected_files": [
+    "bfs.sys"
+   ],
+   "facts": "verified",
+   "id": "l1-2025-01-cve-2025-21315-kb5050009",
+   "kb": "KB5050009",
+   "month": "2025-Jan",
+   "notes": "File from: Starlabs OnlyPatch ghidriff section. MSRC lists KB5050009 for this CVE (Supercedence KB5048667). Winbindex x64 11-24H2: 10.0.26100.2454 (KB5048667) -> 10.0.26100.2894 (KB5050009).",
+   "oracle_urls": [
+    "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2025-Jan",
+    "https://onlyfm252.starlabs.sg/patch-tuesday/2025-01/cve-2025-21315/",
+    "https://winbindex.m417z.com/data/by_filename_compressed/bfs.sys.json.gz",
+    "https://support.microsoft.com/help/5050009"
+   ],
+   "product": "Windows 11 Version 24H2 for x64-based Systems",
+   "products_for_kb": [
+    "Windows 11 Version 24H2 for ARM64-based Systems",
+    "Windows 11 Version 24H2 for x64-based Systems",
+    "Windows Server 2025",
+    "Windows Server 2025 (Server Core installation)"
+   ],
+   "stratum": "shared-file-kb"
+  },
+  {
+   "cve": "CVE-2025-21372",
+   "expected_files": [
+    "bfs.sys"
+   ],
+   "facts": "verified",
+   "id": "l1-2025-01-cve-2025-21372-kb5050009",
+   "kb": "KB5050009",
+   "month": "2025-Jan",
+   "notes": "File from: Starlabs OnlyPatch ghidriff section. MSRC lists KB5050009 for this CVE (Supercedence KB5048667). Winbindex x64 11-24H2: 10.0.26100.2454 (KB5048667) -> 10.0.26100.2894 (KB5050009).",
+   "oracle_urls": [
+    "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2025-Jan",
+    "https://onlyfm252.starlabs.sg/patch-tuesday/2025-01/cve-2025-21372/",
+    "https://winbindex.m417z.com/data/by_filename_compressed/bfs.sys.json.gz",
+    "https://support.microsoft.com/help/5050009"
+   ],
+   "product": "Windows 11 Version 24H2 for x64-based Systems",
+   "products_for_kb": [
+    "Windows 11 Version 24H2 for ARM64-based Systems",
+    "Windows 11 Version 24H2 for x64-based Systems",
+    "Windows Server 2025",
+    "Windows Server 2025 (Server Core installation)"
+   ],
+   "stratum": "shared-file-kb"
+  },
+  {
+   "cve": "CVE-2025-21201",
+   "expected_files": [
+    "remotesp.tsp"
+   ],
+   "facts": "verified",
+   "id": "l1-2025-02-cve-2025-21201-kb5051987",
+   "kb": "KB5051987",
+   "month": "2025-Feb",
+   "notes": "File from: Starlabs OnlyPatch ghidriff section. MSRC lists KB5051987 for this CVE (Supercedence KB5050009). Winbindex x64 11-24H2: 10.0.26100.2894 (KB5050094) -> 10.0.26100.3194 (KB5051987).",
+   "oracle_urls": [
+    "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2025-Feb",
+    "https://onlyfm252.starlabs.sg/patch-tuesday/2025-02/cve-2025-21201/",
+    "https://winbindex.m417z.com/data/by_filename_compressed/remotesp.tsp.json.gz",
+    "https://support.microsoft.com/help/5051987"
+   ],
+   "product": "Windows 11 Version 24H2 for x64-based Systems",
+   "products_for_kb": [
+    "Windows 11 Version 24H2 for ARM64-based Systems",
+    "Windows 11 Version 24H2 for x64-based Systems",
+    "Windows Server 2025",
+    "Windows Server 2025 (Server Core installation)"
+   ],
+   "stratum": "baseline-usermode"
+  },
+  {
+   "cve": "CVE-2025-21420",
+   "expected_files": [
+    "cleanmgr.exe"
+   ],
+   "facts": "verified",
+   "id": "l1-2025-02-cve-2025-21420-kb5051987",
+   "kb": "KB5051987",
+   "month": "2025-Feb",
+   "notes": "File from: Starlabs OnlyPatch ghidriff section. MSRC lists KB5051987 for this CVE (Supercedence KB5050009). Winbindex x64 11-24H2: 10.0.26100.1882 (KB5050094) -> 10.0.26100.3194 (KB5051987).",
+   "oracle_urls": [
+    "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2025-Feb",
+    "https://onlyfm252.starlabs.sg/patch-tuesday/2025-02/cve-2025-21420/",
+    "https://winbindex.m417z.com/data/by_filename_compressed/cleanmgr.exe.json.gz",
+    "https://support.microsoft.com/help/5051987"
+   ],
+   "product": "Windows 11 Version 24H2 for x64-based Systems",
+   "products_for_kb": [
+    "Windows 11 Version 24H2 for ARM64-based Systems",
+    "Windows 11 Version 24H2 for x64-based Systems",
+    "Windows Server 2025",
+    "Windows Server 2025 (Server Core installation)"
+   ],
+   "stratum": "baseline-usermode"
+  },
+  {
+   "cve": "CVE-2025-21180",
+   "expected_files": [
+    "exfat.sys"
+   ],
+   "facts": "verified",
+   "id": "l1-2025-03-cve-2025-21180-kb5053598",
+   "kb": "KB5053598",
+   "month": "2025-Mar",
+   "notes": "File from: Starlabs OnlyPatch ghidriff section. MSRC lists KB5053598 for this CVE (Supercedence KB5051987). Winbindex x64 11-24H2: 10.0.26100.2454 (KB5052093) -> 10.0.26100.3470 (KB5053598).",
+   "oracle_urls": [
+    "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2025-Mar",
+    "https://onlyfm252.starlabs.sg/patch-tuesday/2025-03/cve-2025-21180/",
+    "https://winbindex.m417z.com/data/by_filename_compressed/exfat.sys.json.gz",
+    "https://support.microsoft.com/help/5053598"
+   ],
+   "product": "Windows 11 Version 24H2 for x64-based Systems",
+   "products_for_kb": [
+    "Windows 11 Version 24H2 for ARM64-based Systems",
+    "Windows 11 Version 24H2 for x64-based Systems",
+    "Windows Server 2025",
+    "Windows Server 2025 (Server Core installation)"
+   ],
+   "stratum": "baseline-driver"
+  },
+  {
+   "cve": "CVE-2025-24056",
+   "expected_files": [
+    "tapisrv.dll"
+   ],
+   "facts": "verified",
+   "id": "l1-2025-03-cve-2025-24056-kb5053598",
+   "kb": "KB5053598",
+   "month": "2025-Mar",
+   "notes": "File from: Starlabs OnlyPatch ghidriff section. MSRC lists KB5053598 for this CVE (Supercedence KB5051987). Winbindex x64 11-24H2: 10.0.26100.3037 (KB5051987) -> 10.0.26100.3323 (KB5053598).",
+   "oracle_urls": [
+    "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2025-Mar",
+    "https://onlyfm252.starlabs.sg/patch-tuesday/2025-03/cve-2025-24056/",
+    "https://winbindex.m417z.com/data/by_filename_compressed/tapisrv.dll.json.gz",
+    "https://support.microsoft.com/help/5053598"
+   ],
+   "product": "Windows 11 Version 24H2 for x64-based Systems",
+   "products_for_kb": [
+    "Windows 11 Version 24H2 for ARM64-based Systems",
+    "Windows 11 Version 24H2 for x64-based Systems",
+    "Windows Server 2025",
+    "Windows Server 2025 (Server Core installation)"
+   ],
+   "stratum": "baseline-usermode"
+  },
+  {
+   "cve": "CVE-2025-24985",
+   "expected_files": [
+    "fastfat.sys"
+   ],
+   "facts": "verified",
+   "id": "l1-2025-03-cve-2025-24985-kb5053598",
+   "kb": "KB5053598",
+   "month": "2025-Mar",
+   "notes": "File from: Starlabs OnlyPatch ghidriff section. MSRC lists KB5053598 for this CVE (Supercedence KB5051987). Winbindex x64 11-24H2: 10.0.26100.1150 (KB5043080) -> 10.0.26100.3470 (KB5053598).",
+   "oracle_urls": [
+    "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2025-Mar",
+    "https://onlyfm252.starlabs.sg/patch-tuesday/2025-03/cve-2025-24985/",
+    "https://winbindex.m417z.com/data/by_filename_compressed/fastfat.sys.json.gz",
+    "https://support.microsoft.com/help/5053598"
+   ],
+   "product": "Windows 11 Version 24H2 for x64-based Systems",
+   "products_for_kb": [
+    "Windows 11 Version 24H2 for ARM64-based Systems",
+    "Windows 11 Version 24H2 for x64-based Systems",
+    "Windows Server 2025",
+    "Windows Server 2025 (Server Core installation)"
+   ],
+   "stratum": "baseline-driver"
+  },
+  {
+   "cve": "CVE-2025-26633",
+   "expected_files": [
+    "mmc.exe"
+   ],
+   "facts": "verified",
+   "id": "l1-2025-03-cve-2025-26633-kb5053598",
+   "kb": "KB5053598",
+   "month": "2025-Mar",
+   "notes": "File from: Starlabs OnlyPatch ghidriff section. MSRC lists KB5053598 for this CVE (Supercedence KB5051987). Winbindex x64 11-24H2: 10.0.26100.3323 (KB5052093) -> 10.0.26100.3476 (KB5053598).",
+   "oracle_urls": [
+    "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2025-Mar",
+    "https://onlyfm252.starlabs.sg/patch-tuesday/2025-03/cve-2025-26633/",
+    "https://winbindex.m417z.com/data/by_filename_compressed/mmc.exe.json.gz",
+    "https://support.microsoft.com/help/5053598"
+   ],
+   "product": "Windows 11 Version 24H2 for x64-based Systems",
+   "products_for_kb": [
+    "Windows 11 Version 24H2 for ARM64-based Systems",
+    "Windows 11 Version 24H2 for x64-based Systems",
+    "Windows Server 2025",
+    "Windows Server 2025 (Server Core installation)"
+   ],
+   "stratum": "baseline-usermode"
+  },
+  {
+   "cve": "CVE-2025-29824",
+   "expected_files": [
+    "clfs.sys"
+   ],
+   "facts": "verified",
+   "id": "l1-2025-04-cve-2025-29824-kb5055523",
+   "kb": "KB5055523",
+   "month": "2025-Apr",
+   "notes": "File from: Starlabs OnlyPatch ghidriff section. MSRC lists KB5055523 for this CVE (Supercedence KB5053598). Winbindex x64 11-24H2: 10.0.26100.3624 (KB5053656) -> 10.0.26100.3775 (KB5055523).",
+   "oracle_urls": [
+    "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2025-Apr",
+    "https://onlyfm252.starlabs.sg/patch-tuesday/2025-04/cve-2025-29824/",
+    "https://winbindex.m417z.com/data/by_filename_compressed/clfs.sys.json.gz",
+    "https://support.microsoft.com/help/5055523"
+   ],
+   "product": "Windows 11 Version 24H2 for x64-based Systems",
+   "products_for_kb": [
+    "Windows 11 Version 24H2 for ARM64-based Systems",
+    "Windows 11 Version 24H2 for x64-based Systems",
+    "Windows Server 2025",
+    "Windows Server 2025 (Server Core installation)"
+   ],
+   "stratum": "baseline-driver"
+  },
+  {
+   "cve": "CVE-2025-29970",
+   "expected_files": [
+    "bfs.sys"
+   ],
+   "facts": "verified",
+   "id": "l1-2025-05-cve-2025-29970-kb5058411",
+   "kb": "KB5058411",
+   "month": "2025-May",
+   "notes": "File from: Starlabs OnlyPatch ghidriff section. MSRC lists KB5058411 for this CVE (Supercedence KB5055523). Winbindex x64 11-24H2: 10.0.26100.3624 (KB5055627) -> 10.0.26100.4061 (KB5058411).",
+   "oracle_urls": [
+    "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2025-May",
+    "https://onlyfm252.starlabs.sg/patch-tuesday/2025-05/cve-2025-29970/",
+    "https://winbindex.m417z.com/data/by_filename_compressed/bfs.sys.json.gz",
+    "https://support.microsoft.com/help/5058411"
+   ],
+   "product": "Windows 11 Version 24H2 for x64-based Systems",
+   "products_for_kb": [
+    "Windows 11 Version 24H2 for ARM64-based Systems",
+    "Windows 11 Version 24H2 for x64-based Systems",
+    "Windows Server 2025",
+    "Windows Server 2025 (Server Core installation)"
+   ],
+   "stratum": "baseline-driver"
+  },
+  {
+   "cve": "CVE-2025-32713",
+   "expected_files": [
+    "clfs.sys"
+   ],
+   "facts": "verified",
+   "id": "l1-2025-06-cve-2025-32713-kb5060842",
+   "kb": "KB5060842",
+   "month": "2025-Jun",
+   "notes": "File from: Starlabs OnlyPatch ghidriff section. MSRC lists KB5060842 for this CVE (Supercedence KB5058411). Winbindex x64 11-24H2: 10.0.26100.4061 (KB5058499) -> 10.0.26100.4343 (KB5060842).",
+   "oracle_urls": [
+    "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2025-Jun",
+    "https://onlyfm252.starlabs.sg/patch-tuesday/2025-06/cve-2025-32713/",
+    "https://winbindex.m417z.com/data/by_filename_compressed/clfs.sys.json.gz",
+    "https://support.microsoft.com/help/5060842"
+   ],
+   "product": "Windows 11 Version 24H2 for x64-based Systems",
+   "products_for_kb": [
+    "Windows 11 Version 24H2 for ARM64-based Systems",
+    "Windows 11 Version 24H2 for x64-based Systems",
+    "Windows Server 2025",
+    "Windows Server 2025 (Server Core installation)"
+   ],
+   "stratum": "baseline-driver"
+  },
+  {
+   "cve": "CVE-2025-32722",
+   "expected_files": [
+    "storport.sys"
+   ],
+   "facts": "verified",
+   "id": "l1-2025-06-cve-2025-32722-kb5060999",
+   "kb": "KB5060999",
+   "month": "2025-Jun",
+   "notes": "File from: Starlabs OnlyPatch ghidriff section. MSRC lists KB5060999 for this CVE (Supercedence KB5058405). Winbindex x64 11-22H2: 10.0.22621.5415 (KB5062170) -> 10.0.22621.5471 (KB5060999).",
+   "oracle_urls": [
+    "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2025-Jun",
+    "https://onlyfm252.starlabs.sg/patch-tuesday/2025-06/cve-2025-32722/",
+    "https://winbindex.m417z.com/data/by_filename_compressed/storport.sys.json.gz",
+    "https://support.microsoft.com/help/5060999"
+   ],
+   "product": "Windows 11 Version 22H2 for x64-based Systems",
+   "products_for_kb": [
+    "Windows 11 Version 22H2 for ARM64-based Systems",
+    "Windows 11 Version 22H2 for x64-based Systems",
+    "Windows 11 Version 23H2 for ARM64-based Systems",
+    "Windows 11 Version 23H2 for x64-based Systems"
+   ],
+   "stratum": "baseline-driver"
+  },
+  {
+   "cve": "CVE-2025-33071",
+   "expected_files": [
+    "kpssvc.dll"
+   ],
+   "facts": "verified",
+   "id": "l1-2025-06-cve-2025-33071-kb5060842",
+   "kb": "KB5060842",
+   "month": "2025-Jun",
+   "notes": "File from: Starlabs OnlyPatch ghidriff section. MSRC lists KB5060842 for this CVE (Supercedence KB5058411). Winbindex x64 11-24H2: 10.0.26100.3912 (KB5058499) -> 10.0.26100.4343 (KB5060842).",
+   "oracle_urls": [
+    "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2025-Jun",
+    "https://onlyfm252.starlabs.sg/patch-tuesday/2025-06/cve-2025-33071/",
+    "https://winbindex.m417z.com/data/by_filename_compressed/kpssvc.dll.json.gz",
+    "https://support.microsoft.com/help/5060842"
+   ],
+   "product": "Windows Server 2025",
+   "products_for_kb": [
+    "Windows Server 2025",
+    "Windows Server 2025 (Server Core installation)"
+   ],
+   "stratum": "baseline-usermode"
+  },
+  {
+   "cve": "CVE-2025-49677",
+   "expected_files": [
+    "bfs.sys"
+   ],
+   "facts": "unverified",
+   "id": "l1-2025-07-cve-2025-49677-kb5062552",
+   "kb": "KB5062552",
+   "month": "2025-Jul",
+   "notes": "Starlabs OnlyPatch page states bfs.sys (KB5062553) but MSRC CVRF does not list KB5062553 for this CVE; MSRC lists KB5062552. Case uses the MSRC KB KB5062552. File name comes from the Starlabs page only. Winbindex x64 11-22H2: 10.0.22621.5415 (KB5060826) -> 10.0.22621.5624 (KB5062552)",
+   "oracle_urls": [
+    "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2025-Jul",
+    "https://onlyfm252.starlabs.sg/patch-tuesday/2025-07/cve-2025-49677/",
+    "https://winbindex.m417z.com/data/by_filename_compressed/bfs.sys.json.gz"
+   ],
+   "product": "Windows 11 Version 22H2 for x64-based Systems",
+   "products_for_kb": [
+    "Windows 11 Version 22H2 for ARM64-based Systems",
+    "Windows 11 Version 22H2 for x64-based Systems"
+   ],
+   "stratum": "oracle-disagreement"
+  },
+  {
+   "cve": "CVE-2025-49693",
+   "expected_files": [
+    "bfs.sys"
+   ],
+   "facts": "verified",
+   "id": "l1-2025-07-cve-2025-49693-kb5062553",
+   "kb": "KB5062553",
+   "month": "2025-Jul",
+   "notes": "File from: Starlabs OnlyPatch ghidriff section. MSRC lists KB5062553 for this CVE (Supercedence KB5060842). Winbindex x64 11-24H2: 10.0.26100.4484 (KB5060829) -> 10.0.26100.4652 (KB5062553).",
+   "oracle_urls": [
+    "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2025-Jul",
+    "https://onlyfm252.starlabs.sg/patch-tuesday/2025-07/cve-2025-49693/",
+    "https://winbindex.m417z.com/data/by_filename_compressed/bfs.sys.json.gz",
+    "https://support.microsoft.com/help/5062553"
+   ],
+   "product": "Windows 11 Version 24H2 for x64-based Systems",
+   "products_for_kb": [
+    "Windows 11 Version 24H2 for ARM64-based Systems",
+    "Windows 11 Version 24H2 for x64-based Systems",
+    "Windows Server 2025",
+    "Windows Server 2025 (Server Core installation)"
+   ],
+   "stratum": "baseline-driver"
+  },
+  {
+   "cve": "CVE-2025-50165",
+   "expected_files": [
+    "windowscodecs.dll"
+   ],
+   "facts": "verified",
+   "id": "l1-2025-08-cve-2025-50165-kb5063878",
+   "kb": "KB5063878",
+   "month": "2025-Aug",
+   "notes": "File from: Starlabs OnlyPatch ghidriff section. MSRC lists KB5063878 for this CVE (Supercedence KB5062553). Winbindex x64 11-24H2: 10.0.26100.4768 (KB5062660) -> 10.0.26100.4946 (KB5063878).",
+   "oracle_urls": [
+    "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2025-Aug",
+    "https://onlyfm252.starlabs.sg/patch-tuesday/2025-08/cve-2025-50165/",
+    "https://winbindex.m417z.com/data/by_filename_compressed/windowscodecs.dll.json.gz",
+    "https://support.microsoft.com/help/5063878"
+   ],
+   "product": "Windows 11 Version 24H2 for x64-based Systems",
+   "products_for_kb": [
+    "Windows 11 Version 24H2 for ARM64-based Systems",
+    "Windows 11 Version 24H2 for x64-based Systems",
+    "Windows Server 2025",
+    "Windows Server 2025 (Server Core installation)"
+   ],
+   "stratum": "baseline-usermode"
+  },
+  {
+   "cve": "CVE-2025-50170",
+   "expected_files": [
+    "cldflt.sys"
+   ],
+   "facts": "verified",
+   "id": "l1-2025-08-cve-2025-50170-kb5063878",
+   "kb": "KB5063878",
+   "month": "2025-Aug",
+   "notes": "File from: Starlabs OnlyPatch ghidriff section. MSRC lists KB5063878 for this CVE (Supercedence KB5062553). Winbindex x64 11-24H2: 10.0.26100.4768 (KB5062660) -> 10.0.26100.4946 (KB5063878).",
+   "oracle_urls": [
+    "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2025-Aug",
+    "https://onlyfm252.starlabs.sg/patch-tuesday/2025-08/cve-2025-50170/",
+    "https://winbindex.m417z.com/data/by_filename_compressed/cldflt.sys.json.gz",
+    "https://support.microsoft.com/help/5063878"
+   ],
+   "product": "Windows 11 Version 24H2 for x64-based Systems",
+   "products_for_kb": [
+    "Windows 11 Version 24H2 for ARM64-based Systems",
+    "Windows 11 Version 24H2 for x64-based Systems",
+    "Windows Server 2025",
+    "Windows Server 2025 (Server Core installation)"
+   ],
+   "stratum": "baseline-driver"
+  },
+  {
+   "cve": "CVE-2025-53149",
+   "expected_files": [
+    "ksthunk.sys"
+   ],
+   "facts": "verified",
+   "id": "l1-2025-08-cve-2025-53149-kb5063878",
+   "kb": "KB5063878",
+   "month": "2025-Aug",
+   "notes": "File from: Starlabs OnlyPatch ghidriff section. MSRC lists KB5063878 for this CVE (Supercedence KB5062553). Winbindex x64 11-24H2: 10.0.26100.4768 (KB5062660) -> 10.0.26100.4946 (KB5063878).",
+   "oracle_urls": [
+    "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2025-Aug",
+    "https://onlyfm252.starlabs.sg/patch-tuesday/2025-08/cve-2025-53149/",
+    "https://winbindex.m417z.com/data/by_filename_compressed/ksthunk.sys.json.gz",
+    "https://support.microsoft.com/help/5063878"
+   ],
+   "product": "Windows 11 Version 24H2 for x64-based Systems",
+   "products_for_kb": [
+    "Windows 11 Version 24H2 for ARM64-based Systems",
+    "Windows 11 Version 24H2 for x64-based Systems",
+    "Windows Server 2025",
+    "Windows Server 2025 (Server Core installation)"
+   ],
+   "stratum": "baseline-driver"
+  },
+  {
+   "cve": "CVE-2025-54103",
+   "expected_files": [
+    "windows.management.service.dll"
+   ],
+   "facts": "verified",
+   "id": "l1-2025-09-cve-2025-54103-kb5065426",
+   "kb": "KB5065426",
+   "month": "2025-Sep",
+   "notes": "File from: Starlabs OnlyPatch ghidriff section. MSRC lists KB5065426 for this CVE (Supercedence KB5063878). Winbindex x64 11-24H2: 10.0.26100.5074 (KB5064081) -> 10.0.26100.6584 (KB5065426).",
+   "oracle_urls": [
+    "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2025-Sep",
+    "https://onlyfm252.starlabs.sg/patch-tuesday/2025-09/cve-2025-54103/",
+    "https://winbindex.m417z.com/data/by_filename_compressed/windows.management.service.dll.json.gz",
+    "https://support.microsoft.com/help/5065426"
+   ],
+   "product": "Windows 11 Version 24H2 for x64-based Systems",
+   "products_for_kb": [
+    "Windows 11 Version 24H2 for ARM64-based Systems",
+    "Windows 11 Version 24H2 for x64-based Systems",
+    "Windows Server 2025",
+    "Windows Server 2025 (Server Core installation)"
+   ],
+   "stratum": "baseline-usermode"
+  },
+  {
+   "cve": "CVE-2025-54105",
+   "expected_files": [
+    "bfs.sys"
+   ],
+   "facts": "verified",
+   "id": "l1-2025-09-cve-2025-54105-kb5065426",
+   "kb": "KB5065426",
+   "month": "2025-Sep",
+   "notes": "File from: Starlabs OnlyPatch ghidriff section. MSRC lists KB5065426 for this CVE (Supercedence KB5063878). Winbindex x64 11-24H2: 10.0.26100.4946 (KB5064081) -> 10.0.26100.6584 (KB5065426).",
+   "oracle_urls": [
+    "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2025-Sep",
+    "https://onlyfm252.starlabs.sg/patch-tuesday/2025-09/cve-2025-54105/",
+    "https://winbindex.m417z.com/data/by_filename_compressed/bfs.sys.json.gz",
+    "https://support.microsoft.com/help/5065426"
+   ],
+   "product": "Windows 11 Version 24H2 for x64-based Systems",
+   "products_for_kb": [
+    "Windows 11 Version 24H2 for ARM64-based Systems",
+    "Windows 11 Version 24H2 for x64-based Systems",
+    "Windows Server 2025",
+    "Windows Server 2025 (Server Core installation)"
+   ],
+   "stratum": "baseline-driver"
+  },
+  {
+   "cve": "CVE-2025-50174",
+   "expected_files": [
+    "das.dll"
+   ],
+   "facts": "verified",
+   "id": "l1-2025-10-cve-2025-50174-kb5066835",
+   "kb": "KB5066835",
+   "month": "2025-Oct",
+   "notes": "File from: Starlabs OnlyPatch ghidriff section. MSRC lists KB5066835 for this CVE (Supercedence KB5065426). Winbindex x64 11-24H2: 10.0.26100.5074 (KB5068221) -> 10.0.26100.6725 (KB5066835).",
+   "oracle_urls": [
+    "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2025-Oct",
+    "https://onlyfm252.starlabs.sg/patch-tuesday/2025-10/cve-2025-50174/",
+    "https://winbindex.m417z.com/data/by_filename_compressed/das.dll.json.gz",
+    "https://support.microsoft.com/help/5066835"
+   ],
+   "product": "Windows 11 Version 24H2 for x64-based Systems",
+   "products_for_kb": [
+    "Windows 11 Version 24H2 for ARM64-based Systems",
+    "Windows 11 Version 24H2 for x64-based Systems",
+    "Windows 11 Version 25H2 for ARM64-based Systems",
+    "Windows 11 Version 25H2 for x64-based Systems",
+    "Windows Server 2025",
+    "Windows Server 2025 (Server Core installation)"
+   ],
+   "stratum": "baseline-usermode"
+  },
+  {
+   "cve": "CVE-2025-55692",
+   "expected_files": [
+    "wersvc.dll"
+   ],
+   "facts": "verified",
+   "id": "l1-2025-10-cve-2025-55692-kb5066835",
+   "kb": "KB5066835",
+   "month": "2025-Oct",
+   "notes": "File from: Starlabs OnlyPatch ghidriff section. MSRC lists KB5066835 for this CVE (Supercedence KB5065426). Winbindex x64 11-24H2: 10.0.26100.5074 (KB5065789) -> 10.0.26100.6899 (KB5066835).",
+   "oracle_urls": [
+    "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2025-Oct",
+    "https://onlyfm252.starlabs.sg/patch-tuesday/2025-10/cve-2025-55692/",
+    "https://winbindex.m417z.com/data/by_filename_compressed/wersvc.dll.json.gz",
+    "https://support.microsoft.com/help/5066835"
+   ],
+   "product": "Windows 11 Version 24H2 for x64-based Systems",
+   "products_for_kb": [
+    "Windows 11 Version 24H2 for ARM64-based Systems",
+    "Windows 11 Version 24H2 for x64-based Systems",
+    "Windows 11 Version 25H2 for ARM64-based Systems",
+    "Windows 11 Version 25H2 for x64-based Systems",
+    "Windows Server 2025",
+    "Windows Server 2025 (Server Core installation)"
+   ],
+   "stratum": "baseline-usermode"
+  },
+  {
+   "cve": "CVE-2025-58727",
+   "expected_files": [
+    "cdpsvc.dll"
+   ],
+   "facts": "verified",
+   "id": "l1-2025-10-cve-2025-58727-kb5066835",
+   "kb": "KB5066835",
+   "month": "2025-Oct",
+   "notes": "File from: Starlabs OnlyPatch ghidriff section. MSRC lists KB5066835 for this CVE (Supercedence KB5065426). Winbindex x64 11-24H2: 10.0.26100.6725 (KB5065789) -> 10.0.26100.6899 (KB5066835).",
+   "oracle_urls": [
+    "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2025-Oct",
+    "https://onlyfm252.starlabs.sg/patch-tuesday/2025-10/cve-2025-58727/",
+    "https://winbindex.m417z.com/data/by_filename_compressed/cdpsvc.dll.json.gz",
+    "https://support.microsoft.com/help/5066835"
+   ],
+   "product": "Windows 11 Version 24H2 for x64-based Systems",
+   "products_for_kb": [
+    "Windows 11 Version 24H2 for ARM64-based Systems",
+    "Windows 11 Version 24H2 for x64-based Systems",
+    "Windows 11 Version 25H2 for ARM64-based Systems",
+    "Windows 11 Version 25H2 for x64-based Systems",
+    "Windows Server 2025",
+    "Windows Server 2025 (Server Core installation)"
+   ],
+   "stratum": "baseline-usermode"
+  },
+  {
+   "cve": "CVE-2025-59196",
+   "expected_files": [
+    "ssdpsrv.dll"
+   ],
+   "facts": "verified",
+   "id": "l1-2025-10-cve-2025-59196-kb5066835",
+   "kb": "KB5066835",
+   "month": "2025-Oct",
+   "notes": "File from: Starlabs OnlyPatch ghidriff section. MSRC lists KB5066835 for this CVE (Supercedence KB5065426). Winbindex x64 11-24H2: 10.0.26100.6725 (KB5065789) -> 10.0.26100.6899 (KB5066835).",
+   "oracle_urls": [
+    "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2025-Oct",
+    "https://onlyfm252.starlabs.sg/patch-tuesday/2025-10/cve-2025-59196/",
+    "https://winbindex.m417z.com/data/by_filename_compressed/ssdpsrv.dll.json.gz",
+    "https://support.microsoft.com/help/5066835"
+   ],
+   "product": "Windows 11 Version 24H2 for x64-based Systems",
+   "products_for_kb": [
+    "Windows 11 Version 24H2 for ARM64-based Systems",
+    "Windows 11 Version 24H2 for x64-based Systems",
+    "Windows 11 Version 25H2 for ARM64-based Systems",
+    "Windows 11 Version 25H2 for x64-based Systems",
+    "Windows Server 2025",
+    "Windows Server 2025 (Server Core installation)"
+   ],
+   "stratum": "baseline-usermode"
+  },
+  {
+   "cve": "CVE-2025-59512",
+   "expected_files": [
+    "wsqmcons.exe"
+   ],
+   "facts": "verified",
+   "id": "l1-2025-11-cve-2025-59512-kb5068861",
+   "kb": "KB5068861",
+   "month": "2025-Nov",
+   "notes": "File from: Starlabs OnlyPatch ghidriff section. MSRC lists KB5068861 for this CVE (Supercedence KB5066835). Winbindex x64 11-24H2: 10.0.26100.1 (BASE) -> 10.0.26100.7171 (KB5068861).",
+   "oracle_urls": [
+    "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2025-Nov",
+    "https://onlyfm252.starlabs.sg/patch-tuesday/2025-11/cve-2025-59512/",
+    "https://winbindex.m417z.com/data/by_filename_compressed/wsqmcons.exe.json.gz",
+    "https://support.microsoft.com/help/5068861"
+   ],
+   "product": "Windows 11 Version 24H2 for x64-based Systems",
+   "products_for_kb": [
+    "Windows 11 Version 24H2 for ARM64-based Systems",
+    "Windows 11 Version 24H2 for x64-based Systems",
+    "Windows 11 Version 25H2 for ARM64-based Systems",
+    "Windows 11 Version 25H2 for x64-based Systems",
+    "Windows Server 2025",
+    "Windows Server 2025 (Server Core installation)"
+   ],
+   "stratum": "baseline-usermode"
+  },
+  {
+   "cve": "CVE-2025-59514",
+   "expected_files": [
+    "mskssrv.sys"
+   ],
+   "facts": "verified",
+   "id": "l1-2025-11-cve-2025-59514-kb5068861",
+   "kb": "KB5068861",
+   "month": "2025-Nov",
+   "notes": "File from: Starlabs OnlyPatch ghidriff section. MSRC lists KB5068861 for this CVE (Supercedence KB5066835). Winbindex x64 11-24H2: 10.0.26100.7019 (KB5067036) -> 10.0.26100.7171 (KB5068861).",
+   "oracle_urls": [
+    "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2025-Nov",
+    "https://onlyfm252.starlabs.sg/patch-tuesday/2025-11/cve-2025-59514/",
+    "https://winbindex.m417z.com/data/by_filename_compressed/mskssrv.sys.json.gz",
+    "https://support.microsoft.com/help/5068861"
+   ],
+   "product": "Windows 11 Version 24H2 for x64-based Systems",
+   "products_for_kb": [
+    "Windows 11 Version 24H2 for ARM64-based Systems",
+    "Windows 11 Version 24H2 for x64-based Systems",
+    "Windows 11 Version 25H2 for ARM64-based Systems",
+    "Windows 11 Version 25H2 for x64-based Systems",
+    "Windows Server 2025",
+    "Windows Server 2025 (Server Core installation)"
+   ],
+   "stratum": "baseline-driver"
+  },
+  {
+   "cve": "CVE-2025-60709",
+   "expected_files": [
+    "clfs.sys"
+   ],
+   "facts": "verified",
+   "id": "l1-2025-11-cve-2025-60709-kb5068861",
+   "kb": "KB5068861",
+   "month": "2025-Nov",
+   "notes": "File from: Starlabs OnlyPatch ghidriff section. MSRC lists KB5068861 for this CVE (Supercedence KB5066835). Winbindex x64 11-24H2: 10.0.26100.7019 (KB5067036) -> 10.0.26100.7171 (KB5068861).",
+   "oracle_urls": [
+    "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2025-Nov",
+    "https://onlyfm252.starlabs.sg/patch-tuesday/2025-11/cve-2025-60709/",
+    "https://winbindex.m417z.com/data/by_filename_compressed/clfs.sys.json.gz",
+    "https://support.microsoft.com/help/5068861"
+   ],
+   "product": "Windows 11 Version 24H2 for x64-based Systems",
+   "products_for_kb": [
+    "Windows 11 Version 24H2 for ARM64-based Systems",
+    "Windows 11 Version 24H2 for x64-based Systems",
+    "Windows 11 Version 25H2 for ARM64-based Systems",
+    "Windows 11 Version 25H2 for x64-based Systems",
+    "Windows Server 2025",
+    "Windows Server 2025 (Server Core installation)"
+   ],
+   "stratum": "baseline-driver"
+  },
+  {
+   "cve": "CVE-2025-59516",
+   "expected_files": [
+    "storvsp.sys"
+   ],
+   "facts": "unverified",
+   "id": "l1-2025-12-cve-2025-59516-kb5072014",
+   "kb": "KB5072014",
+   "month": "2025-Dec",
+   "notes": "Starlabs OnlyPatch page states storvsp.sys (KB5068861) but MSRC CVRF does not list KB5068861 for this CVE; MSRC lists KB5071413, KB5071417, KB5071542, KB5071544, KB5071546, KB5071547, KB5072014, KB5072033. Case uses the MSRC KB KB5072014. File name comes from the Starlabs page only. Winbindex pair not read for this KB.",
+   "oracle_urls": [
+    "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2025-Dec",
+    "https://onlyfm252.starlabs.sg/patch-tuesday/2025-12/cve-2025-59516/"
+   ],
+   "product": "Windows 11 Version 24H2 for x64-based Systems",
+   "products_for_kb": [
+    "Windows 11 Version 24H2 for ARM64-based Systems",
+    "Windows 11 Version 24H2 for x64-based Systems",
+    "Windows 11 Version 25H2 for ARM64-based Systems",
+    "Windows 11 Version 25H2 for x64-based Systems",
+    "Windows Server 2025",
+    "Windows Server 2025 (Server Core installation)"
+   ],
+   "stratum": "oracle-disagreement"
+  },
+  {
+   "cve": "CVE-2025-59517",
+   "expected_files": [
+    "storvsp.sys"
+   ],
+   "facts": "unverified",
+   "id": "l1-2025-12-cve-2025-59517-kb5072014",
+   "kb": "KB5072014",
+   "month": "2025-Dec",
+   "notes": "Starlabs OnlyPatch page states storvsp.sys (KB5068861) but MSRC CVRF does not list KB5068861 for this CVE; MSRC lists KB5071413, KB5071417, KB5071542, KB5071543, KB5071544, KB5071546, KB5071547, KB5072014, KB5072033. Case uses the MSRC KB KB5072014. File name comes from the Starlabs page only. Winbindex pair not read for this KB.",
+   "oracle_urls": [
+    "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2025-Dec",
+    "https://onlyfm252.starlabs.sg/patch-tuesday/2025-12/cve-2025-59517/"
+   ],
+   "product": "Windows 11 Version 24H2 for x64-based Systems",
+   "products_for_kb": [
+    "Windows 11 Version 24H2 for ARM64-based Systems",
+    "Windows 11 Version 24H2 for x64-based Systems",
+    "Windows 11 Version 25H2 for ARM64-based Systems",
+    "Windows 11 Version 25H2 for x64-based Systems",
+    "Windows Server 2025",
+    "Windows Server 2025 (Server Core installation)"
+   ],
+   "stratum": "oracle-disagreement"
+  },
+  {
+   "cve": "CVE-2025-62462",
+   "expected_files": [
+    "prjflt.sys"
+   ],
+   "facts": "verified",
+   "id": "l1-2025-12-cve-2025-62462-kb5072033",
+   "kb": "KB5072033",
+   "month": "2025-Dec",
+   "notes": "File from: Starlabs OnlyPatch ghidriff section. MSRC lists KB5072033 for this CVE (Supercedence KB5068861). Winbindex x64 11-24H2: 10.0.26100.7309 (KB5070311) -> 10.0.26100.7462 (KB5072033).",
+   "oracle_urls": [
+    "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2025-Dec",
+    "https://onlyfm252.starlabs.sg/patch-tuesday/2025-12/cve-2025-62462/",
+    "https://winbindex.m417z.com/data/by_filename_compressed/prjflt.sys.json.gz",
+    "https://support.microsoft.com/help/5072033"
+   ],
+   "product": "Windows 11 Version 24H2 for x64-based Systems",
+   "products_for_kb": [
+    "Windows 11 Version 24H2 for ARM64-based Systems",
+    "Windows 11 Version 24H2 for x64-based Systems",
+    "Windows 11 Version 25H2 for ARM64-based Systems",
+    "Windows 11 Version 25H2 for x64-based Systems",
+    "Windows Server 2025",
+    "Windows Server 2025 (Server Core installation)"
+   ],
+   "stratum": "shared-file-kb"
+  },
+  {
+   "cve": "CVE-2025-62464",
+   "expected_files": [
+    "prjflt.sys"
+   ],
+   "facts": "verified",
+   "id": "l1-2025-12-cve-2025-62464-kb5072033",
+   "kb": "KB5072033",
+   "month": "2025-Dec",
+   "notes": "File from: Starlabs OnlyPatch ghidriff section. MSRC lists KB5072033 for this CVE (Supercedence KB5068861). Winbindex x64 11-24H2: 10.0.26100.7309 (KB5070311) -> 10.0.26100.7462 (KB5072033).",
+   "oracle_urls": [
+    "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2025-Dec",
+    "https://onlyfm252.starlabs.sg/patch-tuesday/2025-12/cve-2025-62464/",
+    "https://winbindex.m417z.com/data/by_filename_compressed/prjflt.sys.json.gz",
+    "https://support.microsoft.com/help/5072033"
+   ],
+   "product": "Windows 11 Version 24H2 for x64-based Systems",
+   "products_for_kb": [
+    "Windows 11 Version 24H2 for ARM64-based Systems",
+    "Windows 11 Version 24H2 for x64-based Systems",
+    "Windows 11 Version 25H2 for ARM64-based Systems",
+    "Windows 11 Version 25H2 for x64-based Systems",
+    "Windows Server 2025",
+    "Windows Server 2025 (Server Core installation)"
+   ],
+   "stratum": "shared-file-kb"
+  }
+ ],
+ "generated": "2026-11-07",
+ "schema": "rq-l1-manifest/1"
+}

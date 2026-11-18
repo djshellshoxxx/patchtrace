@@ -1,5 +1,21 @@
 # PatchTrace delivery tracker
 
+## 2026-11-18 CVE consolidation qualification
+
+- [x] Independently review #302 and repair reproduced archive, chronology, source-rejection and pair-evidence defects.
+- [x] Capture 37 real MSRC months and 45 Winbindex metadata records with exact raw hashes; preserve original failure receipts and frozen facts.
+- [x] Repair mixed-architecture timelines and support validated `.tsp` names; replay frozen L1 through actual service APIs: 73 PASS/6 FAIL/8 excluded.
+- [x] Pass combined local 2089-test selection with 3 platform/native skips; retain incomplete full-suite exit 137 separately.
+- [ ] Publish and qualify successor on exact-head Linux/Windows/full/package/native gates; SHA-guard merge with `[no release]`.
+- [ ] Verify main ancestry, then account for/close only fully replaced PRs, preserving source branches.
+- [ ] Resolve Server file-source coverage and version the preview-versus-first-change expectation separately; do not rewrite frozen failures.
+- [ ] Finish recovered PW01 real-CSV usability, production fetch and native UI gates; follow with separate PW02.
+- [ ] Make generic research receipt Git identity worktree-aware; retain current exact run-context sidecars.
+- [ ] Establish independent L2 projects and verified L3 function labels/pairs before scored accuracy claims.
+
+[Evidence and handoff](../docs/qa/cve-consolidation-20261118.md).
+
+
 ## 2026-11-18 branch consolidation and PW-01 continuation
 
 - [x] Refresh full branch history and all REST PR pages; correct the 300-topic inventory, ancestry counts and unsupported supersession/deletion claims.
