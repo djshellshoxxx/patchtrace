@@ -1,0 +1,75 @@
+{
+  "checks": [
+    {
+      "name": "adjacent",
+      "argv": [
+        "/workspace/scratch/3a6632a6e5ff/venv/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/test_search_anchor_compatibility.py",
+        "tests/test_search_anchors.py",
+        "tests/test_search_anchors_real.py",
+        "tests/test_search_build.py",
+        "tests/test_search_capability.py",
+        "tests/test_search_cli.py",
+        "tests/test_search_contracts.py",
+        "tests/test_search_expand.py",
+        "tests/test_search_fuzzy.py",
+        "tests/test_search_normalize.py",
+        "tests/test_search_paths.py",
+        "tests/test_search_pilot_buildenv_bugfixes_20261111.py",
+        "tests/test_search_query.py",
+        "tests/test_search_rank.py",
+        "tests/test_search_saved.py",
+        "tests/test_search_segment.py",
+        "tests/test_search_sources.py",
+        "tests/test_search_sources_tools.py",
+        "tests/test_search_sources_unified.py",
+        "tests/test_search_synergy.py",
+        "tests/test_search_view_model.py",
+        "tests/test_kbf04_false_positive_control.py",
+        "tests/test_kbf04_kb_lineage.py",
+        "tests/test_no_worker_opens_project.py",
+        "tests/test_osv_not_wired.py",
+        "tests/test_source_lineage_counts_once.py",
+        "tests/test_intel_anchors.py",
+        "tests/test_intel_text_anchors.py",
+        "tests/test_kbc_leads.py",
+        "tests/test_kbc_synergy.py",
+        "tests/test_pilot_fusion.py",
+        "--junitxml=/workspace/scratch/e83fbf4505c3/search-anchor-integration-evidence-20261118/adjacent.xml"
+      ],
+      "source_sha": "b9fac06b0d9a487acff65fa51c4a98ce53943ab2",
+      "tree_sha": "4508e191f09d815ba15a81458739abd4f0b8295f",
+      "started_at": "2026-11-18T09:55:17.938912+00:00",
+      "seconds": 16.508,
+      "returncode": 0,
+      "environment": {
+        "PYTHONPATH": "src",
+        "QT_QPA_PLATFORM": "offscreen"
+      }
+    },
+    {
+      "name": "ruff",
+      "argv": [
+        "/workspace/scratch/3a6632a6e5ff/venv/bin/python",
+        "-m",
+        "ruff",
+        "check",
+        "src",
+        "tests",
+        "tools"
+      ],
+      "source_sha": "b9fac06b0d9a487acff65fa51c4a98ce53943ab2",
+      "tree_sha": "4508e191f09d815ba15a81458739abd4f0b8295f",
+      "started_at": "2026-11-18T09:55:34.446858+00:00",
+      "seconds": 0.12,
+      "returncode": 0,
+      "environment": {
+        "PYTHONPATH": "src",
+        "QT_QPA_PLATFORM": "offscreen"
+      }
+    }
+  ]
+}

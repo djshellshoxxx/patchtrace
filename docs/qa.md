@@ -1,5 +1,18 @@
 # QA and audit record
 
+## 2026-11-18 advisory anchor compatibility and final frozen L1 evidence
+
+The current successor preserves actual #305/#306 heads and repairs the reproduced
+long-anchor budget regression and default stored-advisory CLI owner mismatch.
+Seven new controls failed before repair; the broader frozen-source selection at
+`b9fac06b` passed **942 tests**. Independent 85-test and three-head boundary/digest/
+cursor checks passed; these overlapping invocations are not summed. Whole Ruff
+and whitespace passed. The preserved source-specific L1 replay at `f69614fa` is
+**73 PASS, 6 FAIL, 8 excluded**, exit 1; the six expected failures and all frozen
+inputs remain intact. Final-head hosted full/Windows/Qt/package/native gates are
+still mandatory. See [the integration and evidence record](qa/search-anchor-integration-20261118.md).
+
+
 ## 2026-11-18 CVE consolidation successor and real L1 replay
 
 The second independent review repaired Windows ZIP path identity, uncertain
