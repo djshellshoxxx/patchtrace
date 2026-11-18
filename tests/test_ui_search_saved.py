@@ -121,3 +121,53 @@ def test_recent_settings_failures_do_not_break_a_query(rig, qtbot, monkeypatch):
     rig.controller.submit()
     qtbot.waitUntil(lambda: len(rig.calls) == 1)
     assert rig.calls[0].plan.mode == 'exact'
+
+
+def test_failed_recent_clear_does_not_claim_history_was_deleted(rig, monkeypatch):
+    saved = rig.controller.saved
+    saved.remember('read_item')
+    monkeypatch.setattr(rig.shell.settings, 'set', lambda *_: (_ for _ in ()).throw(OSError('settings unavailable')))
+    saved.clear_recent()
+    assert saved.recent.items() == ('read_item',)
+    assert 'could not' in saved.widgets.note.text().lower()
+
+
+def test_real_default_search_build_save_run_and_reopen_without_extra_owner(qtbot, tmp_path, monkeypatch):
+    from patchtrace.search import paths
+    from patchtrace.ui import MainWindow
+
+    cache = tmp_path / 'search-cache'
+    monkeypatch.setattr(paths, 'default_cache_root', lambda: cache)
+    service = ProjectService.sample(tmp_path / 'real-project')
+    root = service.root
+    window = MainWindow(service, QSettings(str(tmp_path / 'real.ini'), QSettings.Format.IniFormat))
+    qtbot.addWidget(window)
+    window.show()
+    window.panels.show_panel('search')
+    c = window.panels.controller('search')
+    qtbot.waitUntil(lambda: not window.panels.tasks.busy())
+    prepare(c, side='newer')
+    before = tuple(sorted(path.relative_to(cache) for path in cache.rglob('*') if path.is_file()))
+    original_open = ProjectService.open
+
+    def forbidden(_path):
+        pytest.fail('GUI saved action opened another project service')
+
+    monkeypatch.setattr(ProjectService, 'open', forbidden)
+    c.saved.save_current('Real exact query')
+    assert c.result is None
+    assert tuple(sorted(path.relative_to(cache) for path in cache.rglob('*') if path.is_file())) == before
+    c.build()  # explicit normal search action; only this action may build the local index
+    qtbot.waitUntil(lambda: c.result is not None and not window.panels.tasks.busy(), timeout=10000)
+    c.saved.run_selected()
+    qtbot.waitUntil(lambda: c.result is not None and not window.panels.tasks.busy(), timeout=10000)
+    assert c.result.hits and c.request.plan.mode == 'exact' and c.request.plan.sides == ('newer',)
+    assert all(evidence.side == 'newer' for hit in c.result.hits for evidence in hit.evidence)
+    window.close()
+    monkeypatch.setattr(ProjectService, 'open', original_open)
+    reopened = ProjectService.open(root)
+    try:
+        items = EnrichmentSavedStore(EnrichmentStore(reopened.store), reopened.project.id).list().items
+        assert len(items) == 1 and items[0].mode == 'exact'
+    finally:
+        reopened.close()
