@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="5" skipped="0" tests="5" time="0.391" timestamp="2026-11-18T06:01:01.394719-08:00" hostname="d05d1fa33505"><testcase classname="tests.test_strings_export_publication" name="test_destination_created_during_sync_is_preserved" time="0.164"><failure message="Failed: DID NOT RAISE StringsError">tests/test_strings_export_publication.py:21: in test_destination_created_during_sync_is_preserved
+    with pytest.raises(StringsError) as caught:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: DID NOT RAISE StringsError</failure></testcase><testcase classname="tests.test_strings_export_publication" name="test_dangling_destination_link_is_preserved_without_force" time="0.001"><failure message="Failed: DID NOT RAISE StringsError">tests/test_strings_export_publication.py:32: in test_dangling_destination_link_is_preserved_without_force
+    with pytest.raises(StringsError) as caught:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: DID NOT RAISE StringsError</failure></testcase><testcase classname="tests.test_strings_export_publication" name="test_predictable_stage_link_never_receives_export_bytes[False]" time="0.001"><failure message="AssertionError: assert b'new export' == b'preserve prior evidence'&#10;  &#10;  At index 0 diff: b'n' != b'p'&#10;  Use -v to get more diff">tests/test_strings_export_publication.py:48: in test_predictable_stage_link_never_receives_export_bytes
+    assert outside.read_bytes() == b'preserve prior evidence'
+E   AssertionError: assert b'new export' == b'preserve prior evidence'
+E     
+E     At index 0 diff: b'n' != b'p'
+E     Use -v to get more diff</failure></testcase><testcase classname="tests.test_strings_export_publication" name="test_predictable_stage_link_never_receives_export_bytes[True]" time="0.001"><failure message="AssertionError: assert b'new export' == b'preserve prior evidence'&#10;  &#10;  At index 0 diff: b'n' != b'p'&#10;  Use -v to get more diff">tests/test_strings_export_publication.py:48: in test_predictable_stage_link_never_receives_export_bytes
+    assert outside.read_bytes() == b'preserve prior evidence'
+E   AssertionError: assert b'new export' == b'preserve prior evidence'
+E     
+E     At index 0 diff: b'n' != b'p'
+E     Use -v to get more diff</failure></testcase><testcase classname="tests.test_strings_export_publication" name="test_interruption_removes_only_its_stage" time="0.001"><failure message="AssertionError: assert {PosixPath('/...report.json')} == {PosixPath('/...report.json')}&#10;  &#10;  Extra items in the left set:&#10;  PosixPath('/tmp/pytest-of-agent/pytest-259/test_interruption_removes_only0/.report.json.6.tmp')&#10;  Use -v to get more diff">tests/test_strings_export_publication.py:65: in test_interruption_removes_only_its_stage
+    assert set(tmp_path.iterdir()) == {prior}
+E   AssertionError: assert {PosixPath('/...report.json')} == {PosixPath('/...report.json')}
+E     
+E     Extra items in the left set:
+E     PosixPath('/tmp/pytest-of-agent/pytest-259/test_interruption_removes_only0/.report.json.6.tmp')
+E     Use -v to get more diff</failure></testcase></testsuite></testsuites>

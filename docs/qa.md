@@ -1,5 +1,13 @@
 # QA and audit record
 
+## 2026-11-18 strings export publication
+
+The focused publication repair at `922af3b8` preserves concurrent destinations,
+uses exclusive unpredictable staging and retains interruption cleanup. Five
+baseline failures became 34 passing exporter/CLI checks; nine independent
+controls also passed. Native Windows and full-head qualification remain open.
+See [source, failures, review and scope](qa/strings-export-publication-20261118.md).
+
 ## 2026-11-11 SPEC-31 unified-engine soundness follow-up (PR #259 open defects) — Linux, synthetic only
 
 Branch `claude/funny-feynman-d2m0b5` (`main` `882d1ca0` + #259's five commits merged cleanly + four fixes). Plan and worker briefs: [unified-soundness-swarm-prompt-20261111](plans/unified-soundness-swarm-prompt-20261111.md); spec amendments A-28..A-31 in `docs/specs/unified-engine/10-amendments.md`. Each defect had a red test before its fix (counts in the commit messages `78c0c544`, `3bf12d61`, `c0bf3d05`, `a28676c8`).

@@ -1,5 +1,14 @@
 # PatchTrace delivery tracker
 
+## Strings publication continuation — 2026-11-18
+
+- [x] Implement and independently review concurrent-destination preservation,
+  exclusive unpredictable staging and interruption cleanup in strings export.
+  Source `922af3b8`; [QA evidence](../docs/qa/strings-export-publication-20261118.md).
+- [ ] Complete exact-head hosted Linux/Windows/package qualification before merge.
+- [ ] Complete compatible document-level extraction/truncation/redaction metadata,
+  including empty CSV exports; the focused publication repair does not close this scope.
+
 ## P1 — Recurring Windows comparison timeout (reported 2026-11-06)
 
 **OPEN / high priority.** The owner's usual two-file test failed with `PT-BACKEND: analysis timed out`. Both Ghidra analyses completed; `StructuralGraphHash` then reported **2,161,955 entries**, followed by a **28m 41.755s** quiet interval after "Sorting functions". Later `72/72` progress was only an enhanced-symbol (`esym`) substage. The configured timeout and actual termination time are absent from the supplied logs; the source default of 3,600 seconds is not proof of the value used in this run.
