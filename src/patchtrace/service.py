@@ -10,6 +10,7 @@ from dataclasses import dataclass
 from pathlib import Path
 
 from .ingestion import display_text, inspect_artifact, safe_path
+from .input_readers import PairInputReaders
 from .models import AnalysisRun, AnalystAnnotation, ComparisonProject, FunctionMatch, InterpretationRun
 from .normalization import normalize_ghidriff, verify_diff_identity
 from .persistence import ProjectStore, strict_json
@@ -84,21 +85,35 @@ class ProjectService:
                                         tuple[tuple[Path, os.stat_result], ...]]] = {}
 
     @classmethod
-    def create(cls, older: Path, newer: Path, name: str, root: Path) -> ProjectService:
+    def create(cls, older: Path, newer: Path, name: str, root: Path, *,
+               input_readers: PairInputReaders | None = None) -> ProjectService:
         root = Path(root).resolve()
+        options = ({}, {})
+        save_options = {}
+        if input_readers is not None:
+            input_readers.checkpoint(0)
+            input_readers.older.check(Path(older))
+            input_readers.newer.check(Path(newer))
+            options = tuple({'reader': reader, 'checkpoint': input_readers.checkpoint}
+                            for reader in (input_readers.older, input_readers.newer))
+            save_options = {'checkpoint': input_readers.checkpoint}
         store = ProjectStore(root, create=True)
         database = None
         created: list[tuple[Path, os.stat_result]] = []
         try:
             database = store.created_database
-            artifacts = [inspect_artifact(older, 'older', root, created=created),
-                         inspect_artifact(newer, 'newer', root, created=created)]
+            artifacts = [inspect_artifact(older, 'older', root, created=created, **options[0]),
+                         inspect_artifact(newer, 'newer', root, created=created, **options[1])]
             project = ComparisonProject(name=display_text(name.strip()) or 'Untitled comparison',
                                         artifacts=artifacts)
             if artifacts[0].sha256 == artifacts[1].sha256:
                 project.runs.append(AnalysisRun(status='identical', backend='none', backend_version='none',
                                                 settings={'reason': 'Input SHA-256 hashes are identical'}))
-            project = store.save(project)
+            if input_readers is not None:
+                input_readers.older.check(Path(older))
+                input_readers.newer.check(Path(newer))
+            project = store.save(project, **save_options)
+            # The snapshot is committed. No operation checkpoint may enter rollback from here.
             return cls(root, project, store)
         except BaseException:  # Ctrl+C and SystemExit must not leave a snapshot-less database behind either
             _rollback_creation(store, database, created)

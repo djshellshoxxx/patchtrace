@@ -26,6 +26,7 @@ from pydantic import ValidationError
 from . import verified_backup
 from .directory_publication import publish_directory_no_replace as _publish_no_replace
 from .ingestion import file_fingerprint, safe_path, sha256_file, verify_artifact
+from .input_readers import ReadCheckpoint
 from .models import ComparisonProject, now
 
 SCHEMA_VERSION = 1
@@ -494,43 +495,58 @@ class ProjectStore:
             raise ValueError('PT-STORAGE: immutable file changed during verification')
         self._verified[str(path)] = (fingerprint, sha256)
 
-    def _verify_files(self, project: ComparisonProject) -> None:
+    def _verify_files(self, project: ComparisonProject, *, checkpoint: ReadCheckpoint | None = None) -> None:
+        options = {'checkpoint': checkpoint} if checkpoint is not None else {}
+        if checkpoint is not None:
+            checkpoint(0)
         for artifact in project.artifacts:
             path = safe_path(self.root, artifact.relative_path)
+            if checkpoint is not None:
+                checkpoint(0)
             try:
                 fingerprint = self.file_fingerprint(path)
             except OSError as exc:
                 raise ValueError('PT-STORAGE: immutable input is missing') from exc
             if self._verified.get(str(path)) != (fingerprint, artifact.sha256):
-                verify_artifact(artifact, self.root)
+                verify_artifact(artifact, self.root, **options)
                 self.remember_verified(path, artifact.sha256, fingerprint)
             elif artifact.relative_path != f'artifacts/{artifact.sha256}.bin' or fingerprint[2] != artifact.size:
                 raise ValueError('PT-STORAGE: artifact path/size does not match its hash')
+            if checkpoint is not None:
+                checkpoint(0)
         for run in project.runs:
             if (run.raw_path is None) != (run.raw_sha256 is None):
                 raise ValueError('PT-SCHEMA: raw path and hash must be present together')
             if run.raw_path:
                 raw = safe_path(self.root, run.raw_path)
+                if checkpoint is not None:
+                    checkpoint(0)
                 try:
                     fingerprint = self.file_fingerprint(raw)
                     if self._verified.get(str(raw)) != (fingerprint, run.raw_sha256):
-                        if not raw.is_file() or sha256_file(raw) != run.raw_sha256:
+                        if not raw.is_file() or sha256_file(raw, **options) != run.raw_sha256:
                             raise ValueError('PT-STORAGE: preserved raw output changed or is missing')
                         self.remember_verified(raw, run.raw_sha256, fingerprint)
                 except OSError as exc:
                     raise ValueError('PT-STORAGE: preserved raw output is unreadable') from exc
+                if checkpoint is not None:
+                    checkpoint(0)
 
-    def save(self, project: ComparisonProject) -> ComparisonProject:
+    def save(self, project: ComparisonProject, *, checkpoint: ReadCheckpoint | None = None) -> ComparisonProject:
         import hashlib
         self._check_open()
+        if checkpoint is not None:
+            checkpoint(0)
         validated = validate_project(project)
-        self._verify_files(validated)
+        self._verify_files(validated, **({'checkpoint': checkpoint} if checkpoint is not None else {}))
         payload = validated.model_dump_json()
         if len(payload.encode()) > MAX_SNAPSHOT_BYTES:
             raise ValueError('PT-STORAGE: project snapshot exceeds 256 MiB')
         self._assert_reloadable(payload)
         sha = hashlib.sha256(payload.encode()).hexdigest()
         self._prune_deferred = False
+        if checkpoint is not None:
+            checkpoint(0)
         try:
             with self.connection:
                 if not (self._creation_transaction and self.connection.in_transaction):
@@ -551,6 +567,8 @@ class ProjectStore:
                                         'ON CONFLICT(singleton) DO UPDATE SET payload=excluded.payload, '
                                         'sha256=excluded.sha256', (payload, sha))
                 self._prune_history(sha, validated.id)
+                if checkpoint is not None:
+                    checkpoint(0)  # Still in the transaction: failure rolls back every snapshot write.
         except sqlite3.Error as exc:
             raise ValueError('PT-STORAGE: project save failed; prior snapshot retained') from exc
         self.project_id = validated.id
