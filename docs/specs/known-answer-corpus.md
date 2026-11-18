@@ -129,6 +129,26 @@ writing a volatile sink so it works in freestanding code. Determinism: candidate
 seed, target (file, function), site (line, column, before/after text), attempts and rejections, so it is reproducible
 byte for byte. A mutant that does not compile is rejected and the next site is tried (bounded attempts).
 
+### Optional source-checker COFF compatibility (2026-11-18)
+
+`mutations.engine.make_masked_body_check` is the optional source-layer form of
+the section 7 rule, passed explicitly as `apply_case(extra_check=...)`. Its
+RIP-relative address normalization accepts quoted names and unquoted COFF-style
+names containing `?`, including the complete literal-dependent `??_C@...` name.
+The existing optional signed decimal addend and immediate `(%rip)` anchoring
+remain unchanged. A symbol spelling or address addend alone must not make the
+normalized bodies differ. Opcode, register, ordinary immediate, non-RIP memory
+offset and base-register differences remain observable. Existing local-label,
+branch/call-target and function/body-boundary handling remains unchanged; in
+particular `jmp emit` normalizes to `jmp T`.
+
+The semantic branch rejects equal bodies; the cosmetic branch requires equal
+bodies; an unavailable body remains rejected. Tests use authored assembly and
+the real optional checker/apply-case path without executing a compiler or
+target. Unquoted names are compatibility inputs, not evidence that the exact
+configured Clang emits that spelling. This does not wire the optional checker
+into the factory, alter image-level body hashing or relabel any frozen corpus.
+
 ## 9. A/A and toolchain noise (M4)
 (a) Rebuild the same source twice in two different scratch directories with the same flags: the pair must be byte-identical
 (reproducibility check lists differing sections otherwise) and labels are all `unchanged`. (b) Same source at O0/O1/O2/O3/Os
