@@ -100,10 +100,12 @@ def test_selected_old_sources_do_not_regain_admission_when_new_revision_is_outsi
     if replacement == 'withdrawn':
         value['vulnerabilities'] = []
     elif replacement == 'negative':
-        value['vulnerabilities'][0]['product_statuses'] = {'NotAffected': [h.PRODUCT_CLIENT]}
+        value['vulnerabilities'][0]['product_statuses'] = {'known_not_affected': [h.PRODUCT_CLIENT]}
     else:
         value['vulnerabilities'][0]['remediations'][0]['description'] = h.KB_SERVER
     newer = add(service, value)
+    if replacement == 'negative':
+        assert newer.edges and {edge.relation for edge in newer.edges} == {'disputed'}
     with WorkspaceStore(service.root) as store:
         index = store.load_index()
         assert index.active_ids() == {newer.doc_id}
