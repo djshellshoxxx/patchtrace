@@ -2038,3 +2038,18 @@ Shared publisher guard and independent repairs: root combined 458 passed / 3 exi
 ## [MANIFEST-DTD-REVIEWED-20261118]
 
 Encoding-dependent DTD-policy bypass repaired and independently reviewed; root 384 affected/external passes, zero skips. Original red evidence and remaining native/security gates retained. [Evidence](qa/manifest-dtd-reviewed-20261118/README.md).
+
+## [DEPENDENCY-SECURITY-CANDIDATE-20261118]
+
+The strict scanner candidate at `b61e1593` adds four native OS/profile dependency
+jobs plus an unsuppressed static-security job and matching release requirements.
+Independent interpreter/install provenance defects were reproduced and repaired;
+the exact affected gate reports **599 passed / 3 existing expected failures**,
+with a separate **128-pass** root review and normal Ruff pass. Actual Linux
+runtime/packaging audits cover 17/32 non-owned distributions and both fail on
+bootstrap pip 25.0.1: six distinct advisory IDs across twelve preserved raw
+service records. Static scanning fails with 79 untriaged findings. Original and
+repaired-source failures remain unchanged. An unsharded full attempt ended137
+after fourteen progress dots without JUnit; no cause or pass is inferred.
+Native Windows scans, integrated qualification and substantive remediation are
+still required. [Full receipts and limits](qa/autonomous-ci-20261118/dependency-security/README.md).

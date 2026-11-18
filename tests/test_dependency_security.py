@@ -246,7 +246,8 @@ def test_missing_evidence_cannot_qualify_even_with_a_passed_verdict(scan, tmp_pa
 
 
 def test_raw_command_failure_and_output_are_preserved(scan, tmp_path):
-    argv = [sys.executable, '-I', '-c', 'import sys; print("raw"); print("failure", file=sys.stderr); sys.exit(3)']
+    argv = [sys.executable, '-I', '-c',
+            'import sys; sys.stdout.buffer.write(b"raw\\n"); sys.stderr.buffer.write(b"failure\\n"); sys.exit(3)']
     result = scan.run_logged(argv, tmp_path, 'authored', timeout=10)
     assert result['exit_code'] == 3
     assert result['argv'] == argv

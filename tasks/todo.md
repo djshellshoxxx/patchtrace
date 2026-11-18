@@ -1512,3 +1512,10 @@ Full `QT_QPA_PLATFORM=offscreen python -m pytest -q` for this isolated native sl
 
 - [x] Refuse parser-recognized manifest doctypes across accepted encodings; preserve original reproductions and independent 384-pass verification.
 - [ ] Finish final exact-head parser/platform/package gates and substantive security-scan triage.
+
+## Dependency/security qualification candidate (2026-11-18)
+
+- [x] Implement strict native OS/profile scan jobs, full installed inventories and bounded source-owned receipts; preserve red controls and independently repair interpreter/install provenance contradictions.
+- [x] Run actual Linux runtime/packaging/static scans and retain all failures, duplicate advisory rows, original source identities and unaudited categories. These are failing scans, not release qualification.
+- [ ] Substantively address the six distinct bootstrap pip advisories and 79 untriaged static findings; keep the original failing inventories immutable and do not suppress them into a pass.
+- [ ] Obtain exact-source native Windows inventories, hosted scan jobs and complete integrated qualification. Local full attempt137 remains incomplete. [Evidence](../docs/qa/autonomous-ci-20261118/dependency-security/README.md).
