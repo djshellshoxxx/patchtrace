@@ -353,7 +353,10 @@ def select_member(inventory: PackageInventory, selection: PackageSelection) -> P
     member = matches[0]
     if not member.eligible_full_pe:
         raise AcquisitionError('PT-ACQ-UNSUPPORTED', 'selected member is not a reverified AMD64 full PE')
-    name = validate_file_name(member.logical_path.rsplit('/', 1)[-1].lower())
+    basename = member.logical_path.rsplit('/', 1)[-1]
+    if not basename.isascii():
+        raise AcquisitionError('PT-ACQ-INPUT', 'selected PE basename must contain only ASCII characters')
+    name = validate_file_name(basename.lower())
     if (name != selection.expected_basename or selection.expected_sha256 is not None
             and member.observed_sha256 != selection.expected_sha256):
         raise AcquisitionError('PT-ACQ-VERIFY', 'selected full-file identity disagrees with expected bytes or name')
