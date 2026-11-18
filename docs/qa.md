@@ -2416,3 +2416,19 @@ Fresh316-branch/63-open-PR refresh preserves all131 focal tips and verifies all1
 changed/new tips as ancestors of fb09. Main remains `9c411ca3d7b47f950be5f0c6f01b3c54184554c6`; no main merge,
 closure, force-push, deletion, tag, release or deployment occurs. Current fb09
 Windows native/dependency failures and pending full/Qt jobs remain source-specific.
+
+## [CORE-ADMISSION-CHECKPOINTS-20261118]
+
+Exact source `441c47c2262603555aa77c11e63fedcce11ba502` passes 512 affected
+checks with no skips and 462 source-pinned parent imports. The
+[136-payload packet](qa/core-admission-checkpoints-20261118.md) preserves the
+original 4-red/1-positive acquired-open probe, committed 41-red/6-positive
+controls, first-green source/import-format correction, and the first affected
+runner's 510 passes plus two headless-command policy refusals. The corrected
+runner executes all five inspected children with absolute source pins; product
+source and assertions are unchanged. Full normal Ruff and diff checks pass.
+Only creation ID validation/forwarding and explicit open/load recovery/checkpoint
+options change. Root separately reproduced an existing constructor interrupt
+cleanup gap before open receives the store; its authorized test-first follow-up
+is pending. This packet remains immutable and does not claim native/package
+admission or complete cleanup acceptance.

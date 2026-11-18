@@ -1820,3 +1820,11 @@ See the [immutable continuation checkpoint](../docs/qa/verified-continuation-202
 - [ ] Independently review expected-ID/reopen checkpoint and owned-open failure handling before integration.
 - [ ] Implement/qualify durable held-origin intent, actual project identity, provenance and idempotent reconciliation before package exposure.
 - [ ] Qualify actual new-source Windows diagnostics/dependency fix, native stage/FDI/handoff, full platform/Qt/packaging/security/reproducibility gates and complete analyst/CVE journeys.
+
+### [CORE-ADMISSION-CHECKPOINTS-20261118]
+
+- [x] Specify and record meaningful failures before the approved create/open/load hooks, preserving the original acquired-open cleanup probe.
+- [x] Implement optional strict creation ID and exact read checkpoint forwarding without changing default call shapes, schema, ownership or after-commit retention.
+- [x] Seal unchanged source `441c47c2`: 512 affected checks, zero skips, 462 pinned parent imports; retain original runner/lint failures and normal Ruff/diff success. See `docs/qa/core-admission-checkpoints-20261118.md`.
+- [ ] Correct root's separately reproduced store-constructor interrupt cleanup boundary after an additional specification/regression commit; preserve the original 441c packet and independent probe.
+- [ ] Obtain independent final review/replay before integration. Durable package intent/provenance/recovery, held-origin exposure and native/frozen acceptance remain separate.
