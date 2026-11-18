@@ -195,3 +195,8 @@ saved/recent search are separate focused follow-on slices; neither historical
 #168 nor #289 is eligible for blanket closure from that selective work.
 See the [complete repair checkpoint](../../qa/autonomous-consolidation-20261118/checkpoint/README.md)
 for source/receipt mapping, native fixture limits and next assignments.
+
+
+## Reviewed release-guard follow-on — 2026-11-18
+
+A focused branch on #307 `58fc1306` integrates reviewed release guard source `05176698` through combined source `ef0398577c97b926259b533c5776e88146244b24`. Root 458-pass/3-xfail results and independent 19-control acceptance are retained with all original failures. This does not merge #304/#307, close old work, qualify a release or waive missing gates. The scan lane is assigned separately; Windows BinDiff network refusal remains blocked. [Evidence](../../qa/release-qualification-reviewed-20261118/README.md).
