@@ -1,0 +1,160 @@
+{
+  "blob_preservation": {
+    "src/patchtrace/kbcorrelation/resolver.py": {
+      "expected_blob": "17bdcfceb21b4ac7e6ed7ae9cdf6f26b0163e5cd",
+      "expected_ref": "121ffb0b",
+      "identical": true,
+      "integrated_blob": "17bdcfceb21b4ac7e6ed7ae9cdf6f26b0163e5cd"
+    },
+    "src/patchtrace/kbcorrelation/service.py": {
+      "expected_blob": "fea8d13fe5e3fb6e4295992b2cce80ec1fc8390e",
+      "expected_ref": "121ffb0b",
+      "identical": true,
+      "integrated_blob": "fea8d13fe5e3fb6e4295992b2cce80ec1fc8390e"
+    },
+    "tests/test_research_qualification_l1_run.py": {
+      "expected_blob": "163a59087779608cff6c3627ab33e678ba1835c1",
+      "expected_ref": "6cc6b6b7",
+      "identical": true,
+      "integrated_blob": "163a59087779608cff6c3627ab33e678ba1835c1"
+    },
+    "tools/research_qualification/winpairs.py": {
+      "expected_blob": "42c5c4a3029311b142d0856da419a72d8c8e42c3",
+      "expected_ref": "6cc6b6b7",
+      "identical": true,
+      "integrated_blob": "42c5c4a3029311b142d0856da419a72d8c8e42c3"
+    }
+  },
+  "comparisons": {
+    "all_eight_incoming_vs_integrated_cases_identical_except_elapsed_seconds": true,
+    "unambiguous_pair_and_choice_unchanged_from_previous_304": true
+  },
+  "merge": {
+    "head": "22aa4e8f58f69b7d8c90c15b263c732c8c6bdeac",
+    "parents": [
+      "6cc6b6b77564e12eaec2917877d94525a69c7102",
+      "121ffb0bcdd6af4f24e5035389d4709dffddf263"
+    ]
+  },
+  "reviewed_source_sha256": {
+    "docs/specs/kb-cve/31-C-product-build-pairs.md": "82530facbefcd230c4af9f0225cd44cae4fb46c16e5973c86fd098078fde74cd",
+    "src/patchtrace/kbcorrelation/lineage.py": "9a4e191d486f63d30b4b8fcfee046bca8f22bb9c764cece7367d19a5138c9879",
+    "src/patchtrace/kbcorrelation/resolver.py": "76f2b09c2133ca7371840afcfcabd404ccd2fa683fa23060f36b6612aa6a7e71",
+    "src/patchtrace/kbcorrelation/service.py": "54d3fc7afa09e376453cc7cf5c47a51e98ee3130801bebc0c623d08b3097071e",
+    "tests/test_kbc_lineage_ambiguity.py": "4613479460ea15e4a2f289731f57d1b58ae7c0f07f4b0288e2434060a6b1f2ad",
+    "tests/test_kbc_resolver_bounds.py": "ad4ffaeecfdae754725172d6e282d35378c8c6b535f2cb64644f0165dfed4139"
+  },
+  "scope": "Independent read-only source review and synthetic metadata controls; no network, binary acquisition, or target execution",
+  "source_heads": {
+    "incoming_302": {
+      "clean": true,
+      "head": "121ffb0bcdd6af4f24e5035389d4709dffddf263",
+      "parents": [
+        "7d80aee7b92eb9fe83c818cdfec7527f19efc252"
+      ],
+      "tree": "a42e1900fd049aa2f6d8efc4512a1b364ef50f98",
+      "worktree": "/workspace/scratch/e83fbf4505c3/review-302-lineage-121ffb0b"
+    },
+    "integrated": {
+      "clean": true,
+      "head": "237d216f0784d429bfc5c61103100346576e0831",
+      "parents": [
+        "22aa4e8f58f69b7d8c90c15b263c732c8c6bdeac"
+      ],
+      "tree": "e5b934d1438d9298a1695645e48b9e46c02ee0af",
+      "worktree": "/workspace/scratch/e83fbf4505c3/review-integrated-237d216f"
+    },
+    "previous_304": {
+      "clean": true,
+      "head": "6cc6b6b77564e12eaec2917877d94525a69c7102",
+      "parents": [
+        "540c7df771e721148fba94a0ec707fe591aba875"
+      ],
+      "tree": "45a8b6a6b7d90b397ee8790933ca76a1444297ae",
+      "worktree": "/workspace/scratch/e83fbf4505c3/review-304-lineage-6cc6b6b7"
+    }
+  },
+  "test_invocations": {
+    "237d-corrected-fixtures-green.xml": [
+      {
+        "errors": "0",
+        "failures": "0",
+        "skipped": "0",
+        "tests": "4",
+        "time": "0.344"
+      }
+    ],
+    "237d-cross-head-and-compat.xml": [
+      {
+        "errors": "0",
+        "failures": "0",
+        "skipped": "0",
+        "tests": "27",
+        "time": "0.277"
+      }
+    ],
+    "237d-focused.xml": [
+      {
+        "errors": "0",
+        "failures": "0",
+        "skipped": "0",
+        "tests": "397",
+        "time": "2.904"
+      }
+    ],
+    "237d-stale-fixtures-red.xml": [
+      {
+        "errors": "0",
+        "failures": "4",
+        "skipped": "0",
+        "tests": "4",
+        "time": "0.524"
+      }
+    ],
+    "302-cross-head.xml": [
+      {
+        "errors": "0",
+        "failures": "0",
+        "skipped": "0",
+        "tests": "25",
+        "time": "0.311"
+      }
+    ],
+    "302-focused.xml": [
+      {
+        "errors": "0",
+        "failures": "0",
+        "skipped": "0",
+        "tests": "393",
+        "time": "2.972"
+      }
+    ],
+    "302-value-compat.xml": [
+      {
+        "errors": "0",
+        "failures": "2",
+        "skipped": "0",
+        "tests": "2",
+        "time": "0.158"
+      }
+    ],
+    "304-cross-head.xml": [
+      {
+        "errors": "0",
+        "failures": "22",
+        "skipped": "0",
+        "tests": "25",
+        "time": "0.317"
+      }
+    ],
+    "304-value-compat.xml": [
+      {
+        "errors": "0",
+        "failures": "0",
+        "skipped": "0",
+        "tests": "2",
+        "time": "0.151"
+      }
+    ]
+  }
+}

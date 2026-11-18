@@ -1,0 +1,160 @@
+FFFF                                                                     [100%]
+=================================== FAILURES ===================================
+_ test_predecessor_accepts_equal_copied_target_with_local_chronology_cache[False] _
+
+cached = False
+
+    @pytest.mark.parametrize('cached', [False, True])
+    def test_predecessor_accepts_equal_copied_target_with_local_chronology_cache(cached):
+        rows, rejected = lineage.index_rows([
+            mapping('a', 'KB5000001', '26100.100', day='2099-01-01'),
+            mapping('b', 'KB5000003', '26100.200'),
+        ], file_name=FILE_NAME)
+        assert rejected == 0
+        line = lineage.timeline(rows, '11-24H2')
+        target = replace(line[-1])
+        assert target == line[-1] and target is not line[-1]
+        order = lineage.LineageOrder(line) if cached else None
+>       older, between = lineage.predecessor(line, target, order=order)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_kbc_lineage_ambiguity.py:174: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/patchtrace/kbcorrelation/lineage.py:288: in predecessor
+    eligible = tuple(row for row in line if row == target or order.before(row, target))
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/patchtrace/kbcorrelation/lineage.py:288: in <genexpr>
+    eligible = tuple(row for row in line if row == target or order.before(row, target))
+                                                             ^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <patchtrace.kbcorrelation.lineage.LineageOrder object at 0x7f3e0f8314f0>
+older = IndexRow(build=BuildRow(contract='kbcorrelation/1', file_name='example.sys', sha256='aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa..._date=None), size=8192, machine='amd64', file_version=None, availability='direct', heading_builds=(), shared_from=None)
+newer = IndexRow(build=BuildRow(contract='kbcorrelation/1', file_name='example.sys', sha256='bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb..._date=None), size=8192, machine='amd64', file_version=None, availability='direct', heading_builds=(), shared_from=None)
+
+    def before(self, older: IndexRow, newer: IndexRow) -> bool:
+>       return _before(self._facts[id(older)], self._facts[id(newer)])
+                                               ^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 139904524948624
+
+src/patchtrace/kbcorrelation/lineage.py:127: KeyError
+_ test_predecessor_accepts_equal_copied_target_with_local_chronology_cache[True] _
+
+cached = True
+
+    @pytest.mark.parametrize('cached', [False, True])
+    def test_predecessor_accepts_equal_copied_target_with_local_chronology_cache(cached):
+        rows, rejected = lineage.index_rows([
+            mapping('a', 'KB5000001', '26100.100', day='2099-01-01'),
+            mapping('b', 'KB5000003', '26100.200'),
+        ], file_name=FILE_NAME)
+        assert rejected == 0
+        line = lineage.timeline(rows, '11-24H2')
+        target = replace(line[-1])
+        assert target == line[-1] and target is not line[-1]
+        order = lineage.LineageOrder(line) if cached else None
+>       older, between = lineage.predecessor(line, target, order=order)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_kbc_lineage_ambiguity.py:174: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/patchtrace/kbcorrelation/lineage.py:288: in predecessor
+    eligible = tuple(row for row in line if row == target or order.before(row, target))
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/patchtrace/kbcorrelation/lineage.py:288: in <genexpr>
+    eligible = tuple(row for row in line if row == target or order.before(row, target))
+                                                             ^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <patchtrace.kbcorrelation.lineage.LineageOrder object at 0x7f3e0f833230>
+older = IndexRow(build=BuildRow(contract='kbcorrelation/1', file_name='example.sys', sha256='aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa..._date=None), size=8192, machine='amd64', file_version=None, availability='direct', heading_builds=(), shared_from=None)
+newer = IndexRow(build=BuildRow(contract='kbcorrelation/1', file_name='example.sys', sha256='bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb..._date=None), size=8192, machine='amd64', file_version=None, availability='direct', heading_builds=(), shared_from=None)
+
+    def before(self, older: IndexRow, newer: IndexRow) -> bool:
+>       return _before(self._facts[id(older)], self._facts[id(newer)])
+                                               ^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 139904524958416
+
+src/patchtrace/kbcorrelation/lineage.py:127: KeyError
+_________ test_predecessor_absent_target_preserves_value_error[False] __________
+
+cached = False
+
+    @pytest.mark.parametrize('cached', [False, True])
+    def test_predecessor_absent_target_preserves_value_error(cached):
+        rows, rejected = lineage.index_rows([
+            mapping('a', 'KB5000001', '26100.100', day='2099-01-01'),
+            mapping('b', 'KB5000003', '26100.200'),
+        ], file_name=FILE_NAME)
+        assert rejected == 0
+        line = lineage.timeline(rows, '11-24H2')
+        absent = replace(line[-1], availability='local')
+        assert absent not in line
+        order = lineage.LineageOrder(line) if cached else None
+        with pytest.raises(ValueError):
+>           lineage.predecessor(line, absent, order=order)
+
+tests/test_kbc_lineage_ambiguity.py:190: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/patchtrace/kbcorrelation/lineage.py:288: in predecessor
+    eligible = tuple(row for row in line if row == target or order.before(row, target))
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/patchtrace/kbcorrelation/lineage.py:288: in <genexpr>
+    eligible = tuple(row for row in line if row == target or order.before(row, target))
+                                                             ^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <patchtrace.kbcorrelation.lineage.LineageOrder object at 0x7f3e0f833e60>
+older = IndexRow(build=BuildRow(contract='kbcorrelation/1', file_name='example.sys', sha256='aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa..._date=None), size=8192, machine='amd64', file_version=None, availability='direct', heading_builds=(), shared_from=None)
+newer = IndexRow(build=BuildRow(contract='kbcorrelation/1', file_name='example.sys', sha256='bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb...a_date=None), size=8192, machine='amd64', file_version=None, availability='local', heading_builds=(), shared_from=None)
+
+    def before(self, older: IndexRow, newer: IndexRow) -> bool:
+>       return _before(self._facts[id(older)], self._facts[id(newer)])
+                                               ^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 139904524958992
+
+src/patchtrace/kbcorrelation/lineage.py:127: KeyError
+__________ test_predecessor_absent_target_preserves_value_error[True] __________
+
+cached = True
+
+    @pytest.mark.parametrize('cached', [False, True])
+    def test_predecessor_absent_target_preserves_value_error(cached):
+        rows, rejected = lineage.index_rows([
+            mapping('a', 'KB5000001', '26100.100', day='2099-01-01'),
+            mapping('b', 'KB5000003', '26100.200'),
+        ], file_name=FILE_NAME)
+        assert rejected == 0
+        line = lineage.timeline(rows, '11-24H2')
+        absent = replace(line[-1], availability='local')
+        assert absent not in line
+        order = lineage.LineageOrder(line) if cached else None
+        with pytest.raises(ValueError):
+>           lineage.predecessor(line, absent, order=order)
+
+tests/test_kbc_lineage_ambiguity.py:190: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/patchtrace/kbcorrelation/lineage.py:288: in predecessor
+    eligible = tuple(row for row in line if row == target or order.before(row, target))
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/patchtrace/kbcorrelation/lineage.py:288: in <genexpr>
+    eligible = tuple(row for row in line if row == target or order.before(row, target))
+                                                             ^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <patchtrace.kbcorrelation.lineage.LineageOrder object at 0x7f3e0f63c0e0>
+older = IndexRow(build=BuildRow(contract='kbcorrelation/1', file_name='example.sys', sha256='aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa..._date=None), size=8192, machine='amd64', file_version=None, availability='direct', heading_builds=(), shared_from=None)
+newer = IndexRow(build=BuildRow(contract='kbcorrelation/1', file_name='example.sys', sha256='bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb...a_date=None), size=8192, machine='amd64', file_version=None, availability='local', heading_builds=(), shared_from=None)
+
+    def before(self, older: IndexRow, newer: IndexRow) -> bool:
+>       return _before(self._facts[id(older)], self._facts[id(newer)])
+                                               ^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 139904522907296
+
+src/patchtrace/kbcorrelation/lineage.py:127: KeyError
+=========================== short test summary info ============================
+FAILED tests/test_kbc_lineage_ambiguity.py::test_predecessor_accepts_equal_copied_target_with_local_chronology_cache[False]
+FAILED tests/test_kbc_lineage_ambiguity.py::test_predecessor_accepts_equal_copied_target_with_local_chronology_cache[True]
+FAILED tests/test_kbc_lineage_ambiguity.py::test_predecessor_absent_target_preserves_value_error[False]
+FAILED tests/test_kbc_lineage_ambiguity.py::test_predecessor_absent_target_preserves_value_error[True]
+4 failed, 15 deselected in 0.52s

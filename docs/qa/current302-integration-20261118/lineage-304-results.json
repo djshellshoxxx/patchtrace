@@ -1,0 +1,266 @@
+{
+  "cases": {
+    "bounded_enumeration": {
+      "ambiguous": "FIELD_ABSENT",
+      "blockers": [],
+      "changed_in_kb": "unknown",
+      "default_choice": {
+        "grade": "A",
+        "newer": "0",
+        "older": "a"
+      },
+      "elapsed_seconds": 0.008018222000828246,
+      "last_changed_in": null,
+      "note": "",
+      "pairs": [
+        {
+          "fix_boundary": "source-supported",
+          "grade": "A",
+          "id": "ee7a450096b40242fde31a09c5aad9b06269dc91733199fafc7719b8ab93b4ce",
+          "newer": "0",
+          "older": "a",
+          "reason_codes": []
+        },
+        {
+          "fix_boundary": "unverified",
+          "grade": "X",
+          "id": "ab5d50403c99eb89e69368fa9158e255207340a087d0e175ef87a9e0d0a78f8e",
+          "newer": "0",
+          "older": "0",
+          "reason_codes": [
+            "ORDER_UNVERIFIED"
+          ]
+        },
+        {
+          "fix_boundary": "unverified",
+          "grade": "X",
+          "id": "8afa8c7c034f30b654f9bc701f5c160e2bfe521b69c169254e2597241c6c6b8f",
+          "newer": "0",
+          "older": "0",
+          "reason_codes": [
+            "ORDER_UNVERIFIED"
+          ]
+        },
+        {
+          "fix_boundary": "unverified",
+          "grade": "X",
+          "id": "523234bc2bcdb4b2569a9e17c2f8ff0742435ba2be203fcd92567ea55128c45c",
+          "newer": "0",
+          "older": "0",
+          "reason_codes": [
+            "ORDER_UNVERIFIED"
+          ]
+        },
+        {
+          "fix_boundary": "unverified",
+          "grade": "X",
+          "id": "d75fb7db3263379378c21f6b20cde69096560e4f033b6dd2e417864952bb392f",
+          "newer": "0",
+          "older": "0",
+          "reason_codes": [
+            "ORDER_UNVERIFIED"
+          ]
+        },
+        {
+          "fix_boundary": "unverified",
+          "grade": "X",
+          "id": "2f62ef9ba52fc97c7825404ae22f70631d2619c80cf36a023241747bbca67087",
+          "newer": "0",
+          "older": "0",
+          "reason_codes": [
+            "ORDER_UNVERIFIED"
+          ]
+        },
+        {
+          "fix_boundary": "unverified",
+          "grade": "X",
+          "id": "0a45de90bfcd9e51833a85569069fa1b65825974e68f2239e5f4a4ef66d5fac9",
+          "newer": "0",
+          "older": "0",
+          "reason_codes": [
+            "ORDER_UNVERIFIED"
+          ]
+        }
+      ],
+      "proposals_evaluated": 100,
+      "truncated": true
+    },
+    "different_build_families_equal_time": {
+      "ambiguous": "FIELD_ABSENT",
+      "blockers": [],
+      "changed_in_kb": "yes",
+      "default_choice": {
+        "grade": "A",
+        "newer": "b",
+        "older": "a"
+      },
+      "last_changed_in": null,
+      "note": "",
+      "pairs": [
+        {
+          "fix_boundary": "source-supported",
+          "grade": "A",
+          "id": "3a501436e021796703c8d4c248766c914acf68eac1bb1cfcf93b0fa1dd41d31a",
+          "newer": "b",
+          "older": "a",
+          "reason_codes": []
+        }
+      ],
+      "truncated": false
+    },
+    "hidden_missing_build_same_time": {
+      "ambiguous": "FIELD_ABSENT",
+      "blockers": [],
+      "changed_in_kb": "yes",
+      "default_choice": {
+        "grade": "A",
+        "newer": "b",
+        "older": "a"
+      },
+      "last_changed_in": null,
+      "note": "",
+      "pairs": [
+        {
+          "fix_boundary": "source-supported",
+          "grade": "A",
+          "id": "3a501436e021796703c8d4c248766c914acf68eac1bb1cfcf93b0fa1dd41d31a",
+          "newer": "b",
+          "older": "a",
+          "reason_codes": []
+        }
+      ],
+      "truncated": false
+    },
+    "one_target_variant_unavailable": {
+      "ambiguous": "FIELD_ABSENT",
+      "blockers": [],
+      "changed_in_kb": "unknown",
+      "default_choice": {
+        "grade": "A",
+        "newer": "b",
+        "older": "a"
+      },
+      "last_changed_in": null,
+      "note": "",
+      "pairs": [
+        {
+          "fix_boundary": "source-supported",
+          "grade": "A",
+          "id": "3a501436e021796703c8d4c248766c914acf68eac1bb1cfcf93b0fa1dd41d31a",
+          "newer": "b",
+          "older": "a",
+          "reason_codes": []
+        },
+        {
+          "fix_boundary": "unverified",
+          "grade": "X",
+          "id": "a1e8eeb9b2316338dd91aa3ed4b45ac980487f7f369a6a1a986d78be5732fc8d",
+          "newer": "c",
+          "older": "b",
+          "reason_codes": [
+            "DELTA_ONLY",
+            "ORDER_UNVERIFIED"
+          ]
+        }
+      ],
+      "truncated": false
+    },
+    "prior_variant_sorts_after": {
+      "ambiguous": "FIELD_ABSENT",
+      "blockers": [],
+      "changed_in_kb": "yes",
+      "default_choice": {
+        "grade": "A",
+        "newer": "b",
+        "older": "c"
+      },
+      "last_changed_in": null,
+      "note": "",
+      "pairs": [
+        {
+          "fix_boundary": "source-supported",
+          "grade": "A",
+          "id": "108ca0864805d6bba4fd56e72d1b7f01537bf67789d586b1fd1a1f45ecc42bca",
+          "newer": "b",
+          "older": "c",
+          "reason_codes": []
+        }
+      ],
+      "truncated": false
+    },
+    "prior_variant_sorts_before": {
+      "ambiguous": "FIELD_ABSENT",
+      "blockers": [],
+      "changed_in_kb": "no",
+      "default_choice": {
+        "grade": "A",
+        "newer": "b",
+        "older": "a"
+      },
+      "last_changed_in": "KB5000001",
+      "note": "",
+      "pairs": [
+        {
+          "fix_boundary": "unverified",
+          "grade": "A",
+          "id": "3a501436e021796703c8d4c248766c914acf68eac1bb1cfcf93b0fa1dd41d31a",
+          "newer": "b",
+          "older": "a",
+          "reason_codes": [
+            "WINDOW_CONFOUNDED"
+          ]
+        }
+      ],
+      "truncated": false
+    },
+    "truncated_choices": {
+      "ambiguous": "FIELD_ABSENT",
+      "blockers": [],
+      "changed_in_kb": "unknown",
+      "default_choice": {
+        "grade": "A",
+        "newer": "b",
+        "older": "a"
+      },
+      "last_changed_in": null,
+      "note": "",
+      "pairs": [
+        {
+          "fix_boundary": "source-supported",
+          "grade": "A",
+          "id": "3a501436e021796703c8d4c248766c914acf68eac1bb1cfcf93b0fa1dd41d31a",
+          "newer": "b",
+          "older": "a",
+          "reason_codes": []
+        }
+      ],
+      "truncated": true
+    },
+    "unambiguous_control": {
+      "ambiguous": "FIELD_ABSENT",
+      "blockers": [],
+      "changed_in_kb": "yes",
+      "default_choice": {
+        "grade": "A",
+        "newer": "b",
+        "older": "a"
+      },
+      "last_changed_in": null,
+      "note": "",
+      "pairs": [
+        {
+          "fix_boundary": "source-supported",
+          "grade": "A",
+          "id": "3a501436e021796703c8d4c248766c914acf68eac1bb1cfcf93b0fa1dd41d31a",
+          "newer": "b",
+          "older": "a",
+          "reason_codes": []
+        }
+      ],
+      "truncated": false
+    }
+  },
+  "resolver_module": "/workspace/scratch/e83fbf4505c3/review-304-lineage-6cc6b6b7/src/patchtrace/kbcorrelation/resolver.py",
+  "source_module": "/workspace/scratch/e83fbf4505c3/review-304-lineage-6cc6b6b7/src/patchtrace/kbcorrelation/lineage.py",
+  "target_bytes": false
+}

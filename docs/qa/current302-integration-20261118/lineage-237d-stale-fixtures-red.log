@@ -1,0 +1,107 @@
+FFFF                                                                     [100%]
+=================================== FAILURES ===================================
+____________ test_kbc9_pair_prefixes_must_be_unique_and_long_enough ____________
+
+    def test_kbc9_pair_prefixes_must_be_unique_and_long_enough():
+        found = [SimpleNamespace(pairs=tuple(SimpleNamespace(pair_id=pid, grade='A')
+                                             for pid in ('ab' + '1' * 62, 'ab' + '2' * 62, 'cd' + '3' * 62)))]
+        for prefix in ('', 'a', 'ab', 'ab111'):
+            with pytest.raises(KbcStoreError):
+                KbService._pick_pair(found, prefix)
+        assert KbService._pick_pair(found, 'ab111111').pair_id == 'ab' + '1' * 62
+        with pytest.raises(KbcStoreError, match='select one with --pair'):
+>           KbService._pick_pair(found, None)
+
+tests/test_kbc_bugfixes_20261029.py:178: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/patchtrace/kbcorrelation/service.py:561: in _pick_pair
+    if viable and any(res.ambiguous or res.truncated for res in found):
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+.0 = <list_iterator object at 0x7f2a8f80cdf0>
+
+>   if viable and any(res.ambiguous or res.truncated for res in found):
+                      ^^^^^^^^^^^^^
+E   AttributeError: 'types.SimpleNamespace' object has no attribute 'ambiguous'
+
+src/patchtrace/kbcorrelation/service.py:561: AttributeError
+________ test_ambiguous_viable_pairs_require_explicit_selection[False] _________
+
+reverse = False
+
+    @pytest.mark.parametrize('reverse', [False, True])
+    def test_ambiguous_viable_pairs_require_explicit_selection(reverse):
+        rows = [pair('a'), pair('b')]
+        if reverse:
+            rows.reverse()
+        with pytest.raises(KbcStoreError, match='select one with --pair') as caught:
+>           KbService._pick_pair(candidates(*rows), None)
+
+tests/test_kbc_selection_guard.py:29: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/patchtrace/kbcorrelation/service.py:561: in _pick_pair
+    if viable and any(res.ambiguous or res.truncated for res in found):
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+.0 = <list_iterator object at 0x7f2a8f80d9c0>
+
+>   if viable and any(res.ambiguous or res.truncated for res in found):
+                      ^^^^^^^^^^^^^
+E   AttributeError: 'types.SimpleNamespace' object has no attribute 'ambiguous'
+
+src/patchtrace/kbcorrelation/service.py:561: AttributeError
+_________ test_ambiguous_viable_pairs_require_explicit_selection[True] _________
+
+reverse = True
+
+    @pytest.mark.parametrize('reverse', [False, True])
+    def test_ambiguous_viable_pairs_require_explicit_selection(reverse):
+        rows = [pair('a'), pair('b')]
+        if reverse:
+            rows.reverse()
+        with pytest.raises(KbcStoreError, match='select one with --pair') as caught:
+>           KbService._pick_pair(candidates(*rows), None)
+
+tests/test_kbc_selection_guard.py:29: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/patchtrace/kbcorrelation/service.py:561: in _pick_pair
+    if viable and any(res.ambiguous or res.truncated for res in found):
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+.0 = <list_iterator object at 0x7f2a8f80ea10>
+
+>   if viable and any(res.ambiguous or res.truncated for res in found):
+                      ^^^^^^^^^^^^^
+E   AttributeError: 'types.SimpleNamespace' object has no attribute 'ambiguous'
+
+src/patchtrace/kbcorrelation/service.py:561: AttributeError
+_ test_duplicate_observations_and_blocked_pairs_do_not_create_false_ambiguity __
+
+    def test_duplicate_observations_and_blocked_pairs_do_not_create_false_ambiguity():
+        selected = pair('a')
+>       assert KbService._pick_pair(candidates(selected, selected, pair('b', 'X')), None) is selected
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_kbc_selection_guard.py:36: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/patchtrace/kbcorrelation/service.py:561: in _pick_pair
+    if viable and any(res.ambiguous or res.truncated for res in found):
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+.0 = <list_iterator object at 0x7f2a8f80f6d0>
+
+>   if viable and any(res.ambiguous or res.truncated for res in found):
+                      ^^^^^^^^^^^^^
+E   AttributeError: 'types.SimpleNamespace' object has no attribute 'ambiguous'
+
+src/patchtrace/kbcorrelation/service.py:561: AttributeError
+=========================== short test summary info ============================
+FAILED ../lineage302-review-20261118::test_kbc9_pair_prefixes_must_be_unique_and_long_enough
+FAILED ../lineage302-review-20261118::test_ambiguous_viable_pairs_require_explicit_selection[False]
+FAILED ../lineage302-review-20261118::test_ambiguous_viable_pairs_require_explicit_selection[True]
+FAILED ../lineage302-review-20261118::test_duplicate_observations_and_blocked_pairs_do_not_create_false_ambiguity
+4 failed in 0.57s

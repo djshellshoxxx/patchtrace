@@ -1,5 +1,16 @@
 # PatchTrace delivery tracker
 
+## 2026-11-18 refreshed #302 integration
+
+- [x] Refresh thirteen candidate PRs/main/settings; detect #302's eleven new commits and preserve all other current heads.
+- [x] Verify six duplicate patch IDs and independently reproduce four unique ZIP/lineage/selection/budget corrections; merge actual #302 `121ffb0b` and #304 `6cc6b6b7` parents.
+- [x] Preserve all forty #304-only paths and repair the reproduced copied-target chronology-cache regression without weakening evidence checks.
+- [x] Pass disjoint local selections totaling 1,650 tests with two native Windows skips; retain original red/failed receipts, independent controls, Ruff and schema verification.
+- [ ] Qualify final published head on hosted full/Qt/Windows/package/native gates before SHA-guarded REST merge with `[no release]`.
+- [ ] Recheck all current heads after main integration before accounting for any superseded PR; preserve every remote branch.
+
+[Current-head integration record](../docs/qa/current302-integration-20261118.md).
+
 ## 2026-11-18 Windows publication acceptance blocker
 
 - [x] Preserve #304 `bb4277ae` Windows failure: 15 failed/61 passed/3 skipped; full suite and package did not start.
