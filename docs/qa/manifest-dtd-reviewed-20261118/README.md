@@ -1,0 +1,11 @@
+# Independently reviewed PE manifest refusal — 2026-11-18
+
+The minimal repair at `e1c5006e51606caedd773bf079c20c145d290861` prevents the reproduced decoded-text-screen bypass. A 318-byte authored UTF-16BE document with leading whitespace previously expanded a harmless internal entity into an identity fact, including through the actual PE metadata reader. The original 4 failed / 3 passed external controls and 8 failed / 11 passed author regressions remain in the preceding packet.
+
+Root inspected the full parser boundary and tests, checked the documented TreeBuilder and Expat callbacks, and read the actual installed Python fallback implementation. The accelerated parser uses a target doctype refusal; the Python fallback's exposed Expat parser receives the same callback because its higher-level dispatcher omits internal-only declarations. The existing early screen, normal decoder, resource budgets and warning vocabulary remain intact. No dependency or suppression change was added.
+
+In a separate detached checkout of the exact source, root ran the 377 affected tests plus all seven unchanged external controls: **384 passed in 7.42 s**, with no skips. The command, absolute import paths, source hash, raw log and JUnit are retained here. The pure-Python fallback is exercised in a headless child. Root then verified that the integration port's source, specification and test bytes match the reviewed commit. All 26 author archive members, sizes, CRC and SHA-256 were independently checked.
+
+No blocker remains in this bounded source review. The confirmed issue is DTD-policy bypass/internal entity expansion; the evidence does not establish external-file or network XXE, a large-expansion exploit, native Windows behavior or complete parser safety. Required exact-head platform/full/Qt/package/security gates remain open. The unsuppressed S314 detector result remains in the original packet; normal Ruff passing does not imply a clean security scan. [Original evidence](../manifest-dtd-20261118.md).
+
+This focused branch is based on published #307 `58fc130631f602b6e907bb054d30c21d810551d4`. Canonical main remains at the last observed `9c411ca3d7b47f950be5f0c6f01b3c54184554c6`. No main merge, release, tag, deployment, target execution or research-outcome change occurred.

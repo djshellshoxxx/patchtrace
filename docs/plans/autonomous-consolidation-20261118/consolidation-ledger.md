@@ -195,3 +195,8 @@ saved/recent search are separate focused follow-on slices; neither historical
 #168 nor #289 is eligible for blanket closure from that selective work.
 See the [complete repair checkpoint](../../qa/autonomous-consolidation-20261118/checkpoint/README.md)
 for source/receipt mapping, native fixture limits and next assignments.
+
+
+## Manifest parser security follow-on — 2026-11-18
+
+Focused source `e1c5006e` on published #307 now refuses parser-recognized doctypes independently of the decoded-text screen. Root independently reviewed and replayed 384 affected/external cases with no skips. Original internal-entity failures remain intact; no full/native acceptance or closure is implied. [Receipt](../../qa/manifest-dtd-reviewed-20261118/README.md).

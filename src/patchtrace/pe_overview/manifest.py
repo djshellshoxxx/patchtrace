@@ -1,17 +1,15 @@
 """Application manifest (RT_MANIFEST) facts, parsed without entity expansion, files or network (WBQ S2).
 
-A manifest is untrusted XML. The stdlib parser is used under the rules defusedxml enforces, without the dependency:
+A manifest is untrusted XML. The stdlib parser is used with these controls:
 
 1. Size: leaves over `max_manifest_bytes` (2 MiB) are reported, not read or parsed; the manifests of one file may
    read at most `max_hash_bytes` in total.
 2. Encoding: UTF-8 (BOM optional) and UTF-16 (BOM, or the NUL pattern of a leading '<') only. The bytes are decoded
-   strictly here and the document is handed to the parser as text, which makes the parser ignore any encoding
-   declaration inside it. What is scanned is therefore exactly what is parsed. UTF-32 and other encodings are
-   unsupported, not guessed.
-3. DTDs: any '<!DOCTYPE' or '<!ENTITY' (case-insensitive, anywhere in the text, comments and CDATA included) refuses
-   the manifest before the parser sees it. ElementTree does expand entities declared in a DTD (measured on expat
-   2.6.1: three declarations expand to 100,000 characters), and CPython documents entity expansion and large-token
-   denial of service as live on older or system libexpat. A manifest never needs a DTD, so none is ever parsed.
+   strictly here before parsing. ElementTree can reinterpret NUL-bearing text as UTF-16, so a decoded-text screen
+   alone cannot establish what declarations the parser will recognize. UTF-32 and other encodings are unsupported.
+3. DTDs: the conservative '<!DOCTYPE'/'<!ENTITY' screen (case-insensitive, including comments and CDATA) refuses
+   early. A parser-level doctype callback independently refuses every recognized DTD before its processing. The
+   pure-Python ElementTree fallback needs the same callback on its exposed Expat parser for internal-only DTDs.
 4. No network, no files: ElementTree resolves no external entity, schema or include; a schemaLocation or XInclude
    href stays inert text. An undefined entity reference is a parse error, not an expansion.
 5. One-shot parse of one string, which avoids the quadratic re-parse of large tokens split over buffer fills.
@@ -64,6 +62,15 @@ _MESSAGES = {
     'manifest_encoding_unsupported': 'a manifest is not UTF-8 or UTF-16 text; not parsed',
     'manifest_xml_invalid': 'a manifest is not well-formed XML or its data is not backed by file bytes',
 }
+
+
+class _DtdRejected(ValueError):
+    """A parser-recognized doctype, independent of the decoded-text screen."""
+
+
+class _ManifestBuilder(ET.TreeBuilder):
+    def doctype(self, *_args):
+        raise _DtdRejected
 
 
 @dataclass(frozen=True, slots=True)
@@ -145,7 +152,15 @@ def observe_manifest(leaf: ResourceLeaf, raw: bytes, *, complete: bool = True,
     if '<!doctype' in lowered or '<!entity' in lowered:
         return ManifestObservation(leaf, digest, warnings=('manifest_dtd_rejected',))
     try:
-        root = ET.fromstring(text)
+        target = _ManifestBuilder()
+        parser = ET.XMLParser(target=target)
+        # The C parser forwards all doctypes to the target. The Python fallback
+        # exposes Expat but forwards only external SYSTEM/PUBLIC doctypes itself.
+        if (expat_parser := getattr(parser, 'parser', None)) is not None:
+            expat_parser.StartDoctypeDeclHandler = target.doctype
+        root = ET.fromstring(text, parser=parser)
+    except _DtdRejected:
+        return ManifestObservation(leaf, digest, warnings=('manifest_dtd_rejected',))
     except (ET.ParseError, ValueError):
         return ManifestObservation(leaf, digest, warnings=('manifest_xml_invalid',))
     if _qname(root.tag) != (_ASM_V1_URI, 'assembly'):
