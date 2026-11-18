@@ -2,8 +2,12 @@
 from __future__ import annotations
 
 import copy
+import datetime as dt
+import hashlib
 import importlib
 import json
+import os
+import subprocess
 import sys
 from pathlib import Path
 
@@ -275,3 +279,195 @@ def test_scanner_commands_are_pinned_strict_and_have_no_suppression(scan, tmp_pa
     assert static[static.index('--select') + 1] == 'S'
     assert not {'--ignore', '--per-file-ignores', '--exit-zero', '--fix', '--unsafe-fixes'}.intersection(static)
     assert scan.PINS == {'pip-audit': '2.10.1', 'ruff': '0.17.5'}
+
+
+def test_identity_does_not_accept_boolean_or_float_as_integer(scan):
+    for changed in (True, 1.0):
+        with pytest.raises(scan.EvidenceError):
+            scan.validate_context({'run_attempt': changed}, {'run_attempt': 1})
+
+
+def test_missing_command_timing_cannot_be_fabricated_as_a_pass(scan, tmp_path):
+    argv = [sys.executable, '-I', '-c', 'pass']
+    scan.run_logged(argv, tmp_path, 'authored', timeout=10)
+    path = tmp_path / 'authored.process.json'
+    receipt = scan.read_json(path)
+    receipt.pop('elapsed_s')
+    path.write_text(json.dumps(receipt))
+    with pytest.raises(scan.EvidenceError):
+        scan.process_receipt(tmp_path, 'authored', argv)
+
+
+def test_stale_command_receipt_cannot_be_counted_as_current(scan, tmp_path):
+    argv = [sys.executable, '-I', '-c', 'pass']
+    scan.run_logged(argv, tmp_path, 'authored', timeout=10)
+    path = tmp_path / 'authored.process.json'
+    receipt = scan.read_json(path)
+    receipt['started_at'] = (dt.datetime.now(dt.UTC) - dt.timedelta(days=2)).isoformat()
+    path.write_text(json.dumps(receipt))
+    with pytest.raises(scan.EvidenceError):
+        scan.process_receipt(tmp_path, 'authored', argv)
+
+
+def test_changed_command_raw_output_is_not_a_pass(scan, tmp_path):
+    argv = [sys.executable, '-I', '-c', 'pass']
+    scan.run_logged(argv, tmp_path, 'authored', timeout=10)
+    (tmp_path / 'authored.stdout').write_bytes(b'changed')
+    with pytest.raises(scan.EvidenceError):
+        scan.process_receipt(tmp_path, 'authored', argv)
+
+
+def installation_report(packages, root):
+    rows = []
+    for name, version in packages:
+        info = ({'url': root.as_uri(), 'dir_info': {'editable': True}} if name == 'patchtrace' else
+                {'url': f'https://files.pythonhosted.org/packages/{name}-{version}-py3-none-any.whl',
+                 'archive_info': {'hashes': {'sha256': 'f' * 64}}})
+        rows.append({'metadata': {'name': name, 'version': version}, 'download_info': info, 'is_yanked': False})
+    return {'version': '1', 'pip_version': '26.0', 'install': rows}
+
+
+def authored_evidence(scan, out, root, project, *, static=False):
+    """Complete positive schema fixture; it is explicitly not an executed scan."""
+    expected = {'profile': 'static' if static else 'runtime', 'platform': 'ubuntu-latest', 'source_sha': SHA}
+    plan = scan.commands(out, root, project, expected['profile'])
+    for name, argv in plan.items():
+        stdout, stderr = out / f'{name}.stdout', out / f'{name}.stderr'
+        stdout.write_bytes(b'')
+        stderr.write_bytes(b'')
+        receipt = {'argv': argv, 'exit_code': 0, 'timed_out': False, 'output_limited': False, 'error': None,
+                   'started_at': dt.datetime.now(dt.UTC).isoformat(), 'timeout_s': 600, 'elapsed_s': 0.1}
+        (out / f'{name}.process.json').write_text(json.dumps(receipt))
+    tooling = {'version': '1', 'pip_version': '26.0',
+               'environment': {'platform_system': 'Linux', 'python_version': '3.12'},
+               'installed': [{'metadata': {'name': name, 'version': version}}
+                             for name, version in [('pip', '26.0'), ('ruff', '0.17.5'), ('pip-audit', '2.10.1')]]}
+    (out / 'scanner-inspect.stdout').write_bytes(encoded(tooling))
+    (out / 'scanner-install.json').write_bytes(encoded(installation_report(
+        [('ruff', '0.17.5'), ('pip-audit', '2.10.1')], root)))
+    (out / 'unaudited.json').write_bytes(encoded(scan.UNAUDITED))
+    (out / 'context.json').write_bytes(encoded(expected))
+    environments = ['scanner'] if static else ['scanner', 'profile']
+    for label in environments:
+        identity = {'executable': scan.python_path(out, f'{label}-env'), 'version': '3.12.14',
+                    'prefix': str(out / f'{label}-env'), 'base_prefix': str(out / 'controller'),
+                    'implementation': 'CPython', 'system': 'Linux', 'ensurepip': '26.0'}
+        (out / f'{label}-identity.stdout').write_bytes(encoded(identity))
+    if static:
+        (out / 'static.stdout').write_bytes(b'[]')
+    else:
+        inspect = inspected(root)
+        inventory = scan.validate_inventory(inspect, root, project, 'runtime', 'Linux', 0)
+        (out / 'profile-inspect.stdout').write_bytes(encoded(inspect))
+        (out / 'inventory.json').write_bytes(encoded(inventory))
+        (out / 'audit-requirements.txt').write_text(scan.requirements_text(inventory))
+        (out / 'build-install.json').write_bytes(encoded(installation_report([('setuptools', '85.0')], root)))
+        pairs = [(row['metadata']['name'], row['metadata']['version']) for row in inspect['installed']
+                 if row['metadata']['name'] not in {'setuptools', 'pip'}]
+        (out / 'profile-install.json').write_bytes(encoded(installation_report(pairs, root)))
+        (out / 'audit.stdout').write_bytes(encoded({'dependencies': [dict(row, vulns=[])
+                                                                    for row in inventory['auditable']], 'fixes': []}))
+    for name in plan:
+        path = out / f'{name}.process.json'
+        receipt = json.loads(path.read_text())
+        receipt.update({f'{stream}_sha256': hashlib.sha256((out / f'{name}.{stream}').read_bytes()).hexdigest()
+                        for stream in ('stdout', 'stderr')})
+        path.write_bytes(encoded(receipt))
+    return expected
+
+
+@pytest.mark.parametrize('static', [False, True])
+def test_independent_validation_requires_all_raw_evidence(scan, tmp_path, project, static):
+    out = tmp_path / 'evidence'
+    out.mkdir()
+    expected = authored_evidence(scan, out, tmp_path, project, static=static)
+    assert scan.validate_evidence(out, expected, tmp_path, project)['kind'] == ('static' if static else 'dependency')
+    (out / 'scanner-install.json').unlink()
+    with pytest.raises(scan.EvidenceError):
+        scan.validate_evidence(out, expected, tmp_path, project)
+
+
+@pytest.mark.parametrize('mutation', ['missing', 'different-version', 'yanked', 'foreign-origin', 'no-hash',
+                                     'bootstrap', 'duplicate', 'wrong-owner'])
+def test_installation_proof_refuses_incomplete_or_foreign_origins(scan, tmp_path, project, mutation):
+    out = tmp_path / 'evidence'
+    out.mkdir()
+    expected = authored_evidence(scan, out, tmp_path, project)
+    path = out / 'profile-install.json'
+    report = json.loads(path.read_text())
+    if mutation == 'missing':
+        report['install'].pop()
+    elif mutation == 'different-version':
+        report['install'][-1]['metadata']['version'] = '999'
+    elif mutation == 'yanked':
+        report['install'][-1]['is_yanked'] = True
+    elif mutation == 'foreign-origin':
+        report['install'][-1]['download_info']['url'] = 'https://example.invalid/foreign.whl'
+    elif mutation == 'no-hash':
+        report['install'][-1]['download_info']['archive_info']['hashes'].clear()
+    elif mutation == 'bootstrap':
+        report['install'].append(installation_report([('pip', '25.0')], tmp_path)['install'][0])
+    elif mutation == 'duplicate':
+        report['install'].append(copy.deepcopy(report['install'][-1]))
+    elif mutation == 'wrong-owner':
+        report['install'][0]['download_info']['url'] = (tmp_path / 'foreign').as_uri()
+    path.write_bytes(encoded(report))
+    with pytest.raises(scan.EvidenceError):
+        scan.validate_evidence(out, expected, tmp_path, project)
+
+
+def authored_repository(root):
+    def git(*args):
+        return subprocess.run(['git', '-C', str(root), *args], check=True, capture_output=True).stdout.decode().strip()
+
+    root.mkdir()
+    git('init', '-q')
+    git('config', 'user.name', 'Authored control')
+    git('config', 'user.email', 'authored@example.invalid')
+    (root / 'src').mkdir()
+    (root / 'src' / 'example.py').write_text('VALUE = 1\n')
+    git('add', 'src')
+    git('commit', '-qm', 'Authored scan source [no release]')
+    return git, git('rev-parse', 'HEAD')
+
+
+def test_scanning_a_held_commit_does_not_change_publication_hold(scan, tmp_path):
+    root = tmp_path / 'repo'
+    git, sha = authored_repository(root)
+    assert scan.checked_tree(root, sha) == git('rev-parse', 'HEAD^{tree}')
+    with pytest.raises(scan.EvidenceError, match=r'\[no release\]'):
+        importlib.import_module('tools.release_qualification').checked_source(root, sha)
+
+
+@pytest.mark.parametrize('hide', ['assume-unchanged', 'skip-worktree', 'replace', 'untracked'])
+def test_source_identity_never_uses_hidden_index_or_replacement_bytes(scan, tmp_path, hide):
+    root = tmp_path / 'repo'
+    git, sha = authored_repository(root)
+    if hide in {'assume-unchanged', 'skip-worktree'}:
+        git('update-index', f'--{hide}', 'src/example.py')
+    if hide == 'untracked':
+        (root / 'src' / 'extra.py').write_text('EXTRA = True\n')
+    else:
+        (root / 'src' / 'example.py').write_text('VALUE = 2\n')
+    if hide == 'replace':
+        git('add', 'src')
+        git('commit', '-qm', 'Different authored source')
+        replacement = git('rev-parse', 'HEAD')
+        git('update-ref', 'HEAD', sha)
+        git('replace', sha, replacement)
+    with pytest.raises(scan.EvidenceError):
+        scan.checked_tree(root, sha)
+
+
+@pytest.mark.skipif(os.name == 'nt', reason='POSIX-created symlink control; native Windows inventory remains required')
+def test_source_scanner_does_not_follow_tracked_outside_symlink(scan, tmp_path):
+    root = tmp_path / 'repo'
+    git, _ = authored_repository(root)
+    external = tmp_path / 'outside.py'
+    external.write_text('VALUE = 1\n')
+    (root / 'src' / 'example.py').unlink()
+    (root / 'src' / 'example.py').symlink_to(external)
+    git('add', 'src')
+    git('commit', '-qm', 'Authored external symlink')
+    with pytest.raises(scan.EvidenceError):
+        scan.checked_tree(root, git('rev-parse', 'HEAD'))

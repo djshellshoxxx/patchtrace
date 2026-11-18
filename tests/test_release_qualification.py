@@ -430,9 +430,6 @@ def test_policy_critical_names_match_actual_source_workflows(gate):
 
     for path, expected in gate.requirements('bundle', ('windows', 'linux')).items():
         source = ROOT / path
-        if path.endswith('/dependency-security.yml'):
-            assert not source.exists()  # explicit missing category, no invented qualifying scan
-            continue
         jobs = yaml.safe_load(source.read_text())['jobs']
         actual = {}
         for key, job in jobs.items():

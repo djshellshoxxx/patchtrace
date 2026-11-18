@@ -21,6 +21,14 @@ profile. Local executions are explicitly local and cannot be counted as hosted
 acceptance. PR merge-preview results cannot qualify canonical publication.
 Preserve initial context and raw receipts on failures.
 
+Identity fields retain their exact JSON types. Verify literal committed source
+bytes independently of Git's index flags/replacement objects. Application source
+may not gain untracked Python modules or tracked links to external source. Each
+command receipt includes its actual argv, bounded duration, start time, exit,
+timeout/output-limit state, and raw-output digests. Missing timing or receipts
+older than 24 hours cannot supply current qualification; historical evidence
+remains available for review without being counted as a current pass.
+
 ## Actual installed Python dependency closure
 
 Create a fresh isolated environment per native OS/profile. Runtime installs

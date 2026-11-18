@@ -1,6 +1,5 @@
 """Read-only, exact-source publication qualification; no trigger or publish operation.
 
-The policy deliberately reserves dependency/security gates which do not yet exist.
 A missing lane is a blocker, never a substitute scan or an approval bypass.
 """
 from __future__ import annotations
@@ -103,9 +102,10 @@ def requirements(profile, platforms):
             'fuzz': ('Fuzz inspect_bytes (seeded mutation loop; findings are saved under build/fuzz-crashes)',),
             'parsers': ('Fuzz every untrusted-input parser (findings saved under build/parser-fuzz-crashes)',),
         },
-        # Reserved policy, not a claim that these jobs or a qualifying scanner currently exist.
+        # Each native installed closure and the static scan is independently mandatory.
         'dependency-security.yml': {
-            'dependency-audit': ('Audit installed dependencies',),
+            **{f'dependency-audit ({platform}, {inventory})': ('Audit installed dependencies',)
+               for platform in ('ubuntu-latest', 'windows-latest') for inventory in ('runtime', 'packaging')},
             'security-scan': ('Static security scan',),
         },
     }
