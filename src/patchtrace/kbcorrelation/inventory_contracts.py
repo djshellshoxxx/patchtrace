@@ -6,10 +6,12 @@ physical line spans are deliberately not represented as JSON Pointers.
 from __future__ import annotations
 
 import json
+import re
 from typing import Annotated, Literal
 
 from pydantic import Field, field_validator, model_validator
 
+from ..acquisition.contracts import PE_EXTENSIONS, AcquisitionError, validate_file_name
 from ..hostile_text import replace_hostile
 from .contracts import Arch, KbId, Record, Sha256, domain_id
 
@@ -29,6 +31,23 @@ Code = Literal['UNKNOWN_ARCHITECTURE', 'ARCHITECTURE_CONFLICT', 'UNKNOWN_VERSION
                'INVALID_FILENAME', 'COLUMN_COUNT', 'PRODUCT_CONFLICT', 'RELEASE_CONFLICT', 'BUILD_CONFLICT',
                'INVALID_METADATA', 'CONFLICTING_METADATA', 'UNKNOWN_SECTION', 'RESULT_LIMIT', 'RECORD_LIMIT']
 VersionComponent = Annotated[int, Field(ge=0, le=UINT64_MAX)]
+_BASENAME = re.compile(r'[A-Za-z0-9._-]{1,128}')
+_DEVICE = re.compile(r'(?:con|prn|aux|nul|com[1-9]|lpt[1-9])(?:\..*)?', re.IGNORECASE)
+
+
+def normalize_inventory_filename(value: str) -> tuple[str, bool] | None:
+    """One basename rule for parsed rows and independently validated records."""
+    if (not _BASENAME.fullmatch(value) or value.endswith('.') or value.startswith(('.', '-'))
+            or _DEVICE.fullmatch(value)):
+        return None
+    name = value.lower()
+    is_pe = '.' in name and name.rsplit('.', 1)[1] in PE_EXTENSIONS
+    if is_pe:
+        try:
+            validate_file_name(name)
+        except AcquisitionError:
+            return None
+    return name, is_pe
 
 
 class InventoryLimits(Record):
@@ -124,8 +143,12 @@ class InventoryEntry(Record):
 
     @model_validator(mode='after')
     def _consistent(self):
-        if self.basename is not None and self.basename != self.basename.lower():
-            raise ValueError('normalized basenames must be lowercase')
+        filename = normalize_inventory_filename(self.basename) if self.basename is not None else None
+        if self.basename is not None and (filename is None or filename[0] != self.basename):
+            raise ValueError('normalized basenames must be safe lowercase filenames')
+        if any(value is not None and (not value.strip() or replace_hostile(value) != value)
+               for value in (self.product, self.release, self.build)):
+            raise ValueError('normalized product metadata must be nonempty plain text')
         if len(self.diagnostics) != len(set(self.diagnostics)):
             raise ValueError('entry diagnostics must be unique')
         if self.architecture_basis == 'conflicted' and (self.architecture != 'unknown'
@@ -133,6 +156,13 @@ class InventoryEntry(Record):
             raise ValueError('a conflicting architecture is unknown and the entry remains conflicted')
         if self.architecture_basis == 'unknown' and self.architecture != 'unknown':
             raise ValueError('unknown architecture basis cannot assert an architecture')
+        if self.architecture_basis in ('column', 'section', 'context') and self.architecture == 'unknown':
+            raise ValueError('a known architecture basis must identify an architecture')
+        if self.state == 'metadata-only' and (filename is None or not filename[1]
+                                              or self.architecture == 'unknown' or self.version_components is None):
+            raise ValueError('metadata-only PE entries need a safe PE basename, known architecture and version')
+        if self.state == 'descriptive-only' and (filename is None or filename[1]):
+            raise ValueError('descriptive-only entries need a safe non-PE basename')
         if self.conflict_group is not None and self.state != 'conflicted':
             raise ValueError('a conflicting metadata group cannot be hidden')
         return self
@@ -169,6 +199,13 @@ class CsvInventory(Record):
     diagnostics_omitted: int = Field(ge=0)
     truncated: bool
     status: Literal['complete', 'partial']
+
+    @field_validator('parser_version', mode='before')
+    @classmethod
+    def _strict_version(cls, value):
+        if type(value) is not int:
+            raise ValueError('parser version must be an integer, not a coerced literal')
+        return value
 
     @model_validator(mode='after')
     def _consistent(self):
