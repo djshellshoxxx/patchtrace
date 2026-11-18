@@ -1,4 +1,6 @@
 """Independent chronology and explicit variant-choice counterexamples; offline synthetic metadata."""
+from dataclasses import replace
+
 import pytest
 
 from patchtrace.kbcorrelation import lineage, resolver
@@ -156,3 +158,33 @@ def test_strictly_ordered_different_bytes_between_observations_keep_reversion():
         mapping('b', 'KB5000003', '26100.200'),
     ])
     assert (result.changed_in_kb, result.last_changed_in, result.ambiguous) == ('yes', None, False)
+
+
+@pytest.mark.parametrize('cached', [False, True])
+def test_predecessor_accepts_equal_copied_target_with_local_chronology_cache(cached):
+    rows, rejected = lineage.index_rows([
+        mapping('a', 'KB5000001', '26100.100', day='2099-01-01'),
+        mapping('b', 'KB5000003', '26100.200'),
+    ], file_name=FILE_NAME)
+    assert rejected == 0
+    line = lineage.timeline(rows, '11-24H2')
+    target = replace(line[-1])
+    assert target == line[-1] and target is not line[-1]
+    order = lineage.LineageOrder(line) if cached else None
+    older, between = lineage.predecessor(line, target, order=order)
+    assert older is line[0] and between == ()
+
+
+@pytest.mark.parametrize('cached', [False, True])
+def test_predecessor_absent_target_preserves_value_error(cached):
+    rows, rejected = lineage.index_rows([
+        mapping('a', 'KB5000001', '26100.100', day='2099-01-01'),
+        mapping('b', 'KB5000003', '26100.200'),
+    ], file_name=FILE_NAME)
+    assert rejected == 0
+    line = lineage.timeline(rows, '11-24H2')
+    absent = replace(line[-1], availability='local')
+    assert absent not in line
+    order = lineage.LineageOrder(line) if cached else None
+    with pytest.raises(ValueError):
+        lineage.predecessor(line, absent, order=order)

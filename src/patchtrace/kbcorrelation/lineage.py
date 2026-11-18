@@ -284,6 +284,8 @@ def predecessor(line: Sequence[IndexRow], target: IndexRow, *,
     Unordered peers cannot become predecessors merely by KB/hash order. They stay in the confounding window.
     If no established predecessor exists, preserve the display-derived proposal for its grade-X diagnostic.
     """
+    # Keep the public value-based target contract while the local cache uses row identities.
+    target = line[line.index(target)]
     order = order or LineageOrder(line)
     eligible = tuple(row for row in line if row == target or order.before(row, target))
     older, between = _display_predecessor(eligible, target, same_class_only=same_class_only)

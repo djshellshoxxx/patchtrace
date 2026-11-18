@@ -146,6 +146,11 @@ promise the globally best pair; preserve the full-source ambiguity flag and
 explain incomplete enumeration even if no evaluated target has a predecessor.
 In that case report `INDEX_GAP`, not a false `NO_OLDER` conclusion.
 
+The pure predecessor helper preserves its value-based target contract when
+chronology facts are cached: a target equal to an input row resolves to that
+row's local identity before cached lookups. A target absent from the supplied
+timeline raises `ValueError`, as before; it must not expose a cache `KeyError`.
+
 Direct index mappings may omit `other_versions`; a present value must be a list
 or tuple of nonempty string keys. A malformed collection or member rejects that
 entire mapping once, without raising, discarding bad members silently, or
