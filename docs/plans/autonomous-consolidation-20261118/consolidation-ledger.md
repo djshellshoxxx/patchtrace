@@ -303,3 +303,27 @@ separate guarded 61-case path recovery, independent reviews and exact-source
 capability limits. Neither a main merge nor whole-branch closure follows. Main
 remains `9c411ca3`. Batch 4/R2 work, 71 unselected original tips, broader residue and
 full/native/package/security acceptance remain outside this checkpoint.
+
+## Semantic reconciliation batch 4 — 2026-11-18
+
+The fourth scoped batch compares 20 further original source-bearing tips with actual
+PR316 55f3d0742f7d4cf32357a42b8b1cc76d85875e71. Fifteen focal scopes are retained,
+one research prototype is retained, one old adapter relaxation is superseded by
+stricter current admission, and two developer/research workflows remain incomplete.
+The R2 branch has a confirmed lost B+B atom witness and incorrect manual group
+Decision attribution; root assigned the separate narrow repair to report_evidence_review.
+
+The current 42-file source-pinned offline gate passes 1,017 cases, with zero skips
+and two explicitly deselected compiler-backed controls. Original R2 74-fail/6-pass
+results remain fully classified; only four directly assert the confirmed omissions.
+Current per-component Support, A-29 leftovers and mirror-safe policy must survive.
+Actual persisted/view-model and reopened CLI probes confirm the bounded omissions.
+The original UE-R3 one-fail/134-pass mismatch preserves a current failed-side status.
+
+Eighty of 131 original reconciliation tips now have selected-scope entries; 51
+remain unselected, and broader branch/native/package/research residue stays open.
+These are selection counts, not a feature percentage or whole-branch closure.
+Already known directory/UI/named-source/highlighter/F8 repairs belong to later
+continuation source and are not relabeled as new findings or baseline fixes.
+[Exact-tip ledger](semantic-disposition-batch4.md), [complete JSON](semantic-disposition-batch4.json),
+and [sealed QA](../../qa/semantic-disposition-batch4-20261118.md) retain the evidence.

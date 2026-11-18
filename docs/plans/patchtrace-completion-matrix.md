@@ -239,3 +239,22 @@ reviews select 60/131 original unresolved tips; 71 and broader residue remain at
 this snapshot. R2 acceptance-witness/manual-attribution repair is still separate
 active work and is absent from this source. Native/frozen L1/L2/L3 boundaries and
 the no-release hold remain intact.
+
+## Semantic batch 4 scope update — 2026-11-18
+
+This read-only assessment is pinned to published PR316 55f3d074. Twenty further
+selected scopes bring the original branch-tip denominator to 80 selected / 51
+unselected out of 131; no feature percentage or completed-branch credit follows.
+
+| Scope | Evidence at the frozen source | Remaining acceptance |
+|---|---|---|
+| Fifteen retained focal scopes and one stricter adapter replacement | Actual patch/caller/source proof; shared 42-file gate, 1,017 passed, zero skipped | Broader branch residue and final native/platform/package/manual gates |
+| R2 witness and manual attribution | Original failures plus strict persisted detail and reopened CLI controls; four v3 failures/one positive | Separately owned mirror-safe cap/manual explanation repair and independent acceptance; preserve current Support semantics |
+| Tier W acquisition developer workflow | Bounded exact-consent fetch library and explicit missing-CLI BLOCKED path | Saved plan and CLI orchestration, current contracts, real local-only corpus acceptance |
+| R1 research orchestration | Immutable build receipts/session identity/truth guards retained | Four missing research runners; full matrix/holdout review and real native ground truth |
+| R7 prototype | Three exact tool files and bounded pure controls | Production extractor/analyst bridge, verified control dependence and native accuracy remain unbuilt/unqualified |
+
+The known directory publication, UI diagnostics, named-source, highlighter and F8
+follow-ons remain separately attributed. [Detailed ledger](autonomous-consolidation-20261118/semantic-disposition-batch4.md)
+and [QA packet](../qa/semantic-disposition-batch4-20261118.md) preserve all original
+failures, explicit deselections, current contract mismatches and scope limits.

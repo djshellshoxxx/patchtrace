@@ -1618,3 +1618,15 @@ Current evidence and assigned work: [checkpoint](../docs/qa/verified-followup-in
 - [ ] Complete final full Linux/Windows, repeated Qt, native, frozen package/installer, dependency/security and reproducibility gates; treat skipped/blocked/stale evidence as unverified.
 
 See the [immutable continuation checkpoint](../docs/qa/verified-continuation-20261118/README.md).
+
+### [SEMANTIC-DISPOSITION-BATCH4-20261118]
+
+- [x] Inspect 20 more exact original source-bearing tips at published PR316 55f3d074 with source/caller/contract/ancestry proof.
+- [x] Retain exact historical tests and every failure; run bounded current 42-file gate (1,017 passed, two compiler deselections, zero skips).
+- [x] Confirm the R2 witness/manual-attribution omission through strict persistence, desktop view model and actual reopened CLI; hand off to separately assigned repair owner.
+- [x] Distinguish historical Support, A-29, invalid-entry and cache-token expectations from admitted product behavior; preserve originals unchanged.
+- [ ] Independently review/selectively retain this docs checkpoint; no whole-branch closure or remote changes.
+- [ ] Complete separate mirror-safe R2 witness/manual attribution repair and independent acceptance without broad historical policy rollback.
+- [ ] Design and qualify any future Tier W saved-plan/CLI and R1 research-runner recovery using current ownership/contracts.
+- [ ] Inspect the remaining 51 original tips and broader checkpoint/research/native/package residue.
+- [ ] Complete actual final-source full/platform/native/package/manual gates; synthetic source checks are not that acceptance.

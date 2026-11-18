@@ -2169,3 +2169,18 @@ selection; no assertion was weakened or test deselected. Original broad-run
 failures and partial receipts, guarded path recheck, native/live blockers and all
 exact skip reasons remain in the [sealed checkpoint](qa/verified-continuation-20261118/README.md).
 Full/platform/native/package/scanner gates and main merge remain open.
+
+## [SEMANTIC-DISPOSITION-BATCH4-20261118]
+
+Read-only 20-tip batch at actual PR316 55f3d074: 15 retained focal scopes, one
+confirmed selective R2 omission, one stricter adapter replacement, one retained
+research prototype and two incomplete developer/research workflows. Current gate:
+42 files, 1,017 passed, zero failures/errors/skips, two explicit compiler-case
+deselections, 27.27 s. Separate historical R2 replay: 74 failed/6 passed; every
+failure classified, with no old Support/CFG/cache policy relaxation. Final external
+public/persisted R2 controls: four failed/one positive. Original probe setup and
+assertion corrections remain transparent. UE-R3 historical replay: one changed-
+contract mismatch/134 passed; R3/R8: 44 passed; valid-domain CFG oracle: 60 passed.
+No additive counting, source edit, native/network run, remote mutation or whole-
+branch closure. Cumulative selected scope: 80 of 131; 51 unselected plus broader
+residue. [Source pins, original bytes, commands and archive](qa/semantic-disposition-batch4-20261118.md).
