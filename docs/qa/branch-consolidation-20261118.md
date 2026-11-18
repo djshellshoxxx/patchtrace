@@ -57,6 +57,8 @@ Containment is evidence that content exists, not proof of identical behaviour; e
 | `search: port saved searches and recent queries` | `claude/instance-b-features` `06b26d83` | WB1 S7 pure stores; duplicate model replaced by the frozen contract |
 | `representations: port RD-F03 ...` | #168 chain `953c0e9a`, `51a9b4af` | bounded raw-offset alignment core and Qt-free paired-row model (desktop wiring pending) |
 | `fix(normalization): Ghidriff one-to-many abstains ...` | #289 `685ac689`, `f58f0029`, `5f2afa7d`, `9e852a42` (same work on #174) | SPEC-31 **A-32** (renumbered from A-28): a repeated upstream function abstains per group instead of failing the whole comparison (RB-01 lua pair); live rerun still open |
+| `secondary: stop rz-diff stdout floods ...` | #289 `a1a98af4` | `max_output_bytes` on rz-diff runs; `PT-SECONDARY-LIMIT`; AST child-launch policy inventory test |
+| `fix(bundle-acceptance): always write complete evidence ...` | #289 `0ad36225`, `3256c0d7` | evidence JSON always written, narrowed Windows deny, cleanup argv recorded |
 
 ## Held, with the reason (owner decisions marked)
 
@@ -65,7 +67,7 @@ Containment is evidence that content exists, not proof of identical behaviour; e
 * **Skills** (#61; `haiku/skills-manifest-import-20261027`) — *owner decision*: #61's Caveman skill is Apache-2.0 with
   NOTICE; the manifest import lists two CC-BY-SA-4.0 entries, a blocker for bundling.
 * **Devcontainer** (#279, open, non-draft): small and self-contained; review on its own.
-* **Remaining quarries**: #174 (rz-diff producer research workflow only), #289 (bundle-acceptance fixes, rz-diff stdout flood, UE-R7 arbiter cut, BinDiff row caps,
+* **Remaining quarries**: #174 (rz-diff producer research workflow only), #289 (UE-R7 arbiter cut, BinDiff row caps,
   GUI accessibility and KB slices, Tier W runner), #144 (R2 D-32 corroboration witness + `matching/2`, a behaviour
   change), #168 chain (RD-F03 desktop controls, GUI creation-retry acceptance test), #176 (table header tooltips and
   keyboard sort; Alt+Up/Down collides with diff navigation), `instance-b-features` (call-graph ego layout, capa
