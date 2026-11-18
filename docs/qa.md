@@ -2155,3 +2155,17 @@ gate passes 804 with one optional colorspacious skip at normal scale and at actu
 overlapping source/Qt checks, not additive or native/package acceptance. Root
 review and actual combined/full/platform gates remain separate.
 [Source and sealed evidence](qa/codetext-window-guard-20261118.md).
+
+
+## [VERIFIED-CONTINUATION-20261118]
+
+Clean source `5bbb925694b89ddc77e2aae1ea36c9f563c7760d` passes **2,764 selected checks / nine explicit skips**
+in 215.13 seconds; all 26 changed code/test/tool/workflow paths match independently
+reviewed owners. Normal Ruff passes; isolated ignore-noqa strict security remains
+**80 findings, exit 1**, with the same path/code/statement multiset as `3faf436a`.
+All 517 imported project modules are source-pinned. An inherited process-local
+network-denial guard and local-only Git transport protect this inspected offline
+selection; no assertion was weakened or test deselected. Original broad-run
+failures and partial receipts, guarded path recheck, native/live blockers and all
+exact skip reasons remain in the [sealed checkpoint](qa/verified-continuation-20261118/README.md).
+Full/platform/native/package/scanner gates and main merge remain open.

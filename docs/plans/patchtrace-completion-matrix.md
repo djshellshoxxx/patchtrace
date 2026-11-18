@@ -213,3 +213,29 @@ unselected and broad-tip residue remains open.
 [Detailed exact-tip disposition](autonomous-consolidation-20261118/semantic-disposition-batch3.md)
 and [raw QA receipt](../qa/semantic-disposition-batch3-20261118.md) preserve the
 historical failures and current-source limits. No whole-branch closure follows.
+
+
+## Reviewed continuation source — 2026-11-18
+
+Source `5bbb925694b89ddc77e2aae1ea36c9f563c7760d` (tree `0ba373d19098c4c469dc3bfb9a0a0f75c573dd8c`) preserves actual PR #316 as its ancestor and
+passes 2,764 selected checks with nine explicit skips. All 26 changed source/test/
+tool/workflow files match reviewed owner bytes. This is scoped regression
+evidence; final full/platform/native/package/security G remains open. Main is
+unchanged. The [complete checkpoint](../qa/verified-continuation-20261118/README.md)
+retains original failures, per-source results, capability limits and archive hashes.
+
+| Feature/slice | Current state | Milestones | Concrete remaining acceptance |
+|---|---|---|---|
+| Failed-attempt diagnostics and named superseded-source explanations | Reviewed repairs integrated locally | D/R: 50% | Representative native/manual J; actual final G; unchanged evidence withholding/publication semantics |
+| Backup/offline-runtime directory publication | Reviewed no-replacement helper and reparse admission integrated | D/R: 50% | Native Windows filesystem/junction checks, representative recovery J and final G |
+| Highlighter dispatch | Narrow model/session/window guard integrated; current/historical positives retained | D/R: 50% | Native/manual scaling and complete investigation J; final G |
+| Packaged KB self-test | Synthetic current-service journey, source snapshots and failure cleanup implemented | D/R: 50% | Extracted Windows/Linux packages and real-source/native/manual J; final G; no accuracy credit from authored fixtures |
+| Windows BinDiff effective denial | Acceptance candidate plus canonical process identities integrated in tooling | D/R: 50% for portable validator/tooling slice | Windows SDK build, effective socket/token/descendant/lifecycle observations and actual adapter semantic equality; native J/G open |
+| Broad suite and strict security | Original broad run incomplete; guarded path recheck and hermetic fixture repaired; strict 80 findings remain | No new G credit | Complete exact-source full/platform/scanner gates; all skips/blocked receipts unverified |
+| PW-02 local MSU/CAB intake | Planned separate product slice | None: 0% | Bounded native extraction contract/implementation, independent review and Windows journey |
+
+The seven named fixes add no aggregate product percentage. Batch 2/3 source
+reviews select 60/131 original unresolved tips; 71 and broader residue remain at
+this snapshot. R2 acceptance-witness/manual-attribution repair is still separate
+active work and is absent from this source. Native/frozen L1/L2/L3 boundaries and
+the no-release hold remain intact.

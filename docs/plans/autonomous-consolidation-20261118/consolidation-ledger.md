@@ -285,3 +285,21 @@ unchanged and no fresh GitHub state/remote action is claimed. Batch 2 is read fr
 its separate `1a07861f` checkpoint, not retroactively inserted into this baseline.
 [Exact tips, source proof and remaining list](semantic-disposition-batch3.json);
 [sealed receipt](../../qa/semantic-disposition-batch3-20261118.md).
+
+
+## Independently reviewed continuation checkpoint — 2026-11-18
+
+Local source `5bbb925694b89ddc77e2aae1ea36c9f563c7760d` appends 37 attributed commits to actual PR #316 `55f3d074`.
+All 26 changed production/test/tool/workflow paths match reviewed owner snapshots;
+the combined selected gate passes 2,764 with nine explicit skips. Source/QA ports
+cover failed-attempt diagnostics, selected-superseded explanations, directory
+publication, highlighter dispatch, hermetic pin fixture, synthetic F8 and native
+BinDiff acceptance tooling with canonical creation identities. Batch 2/3 and the
+residual security ledger are preserved; strict scanning still fails 80 sites.
+
+The [checkpoint](../../qa/verified-continuation-20261118/README.md) retains all
+original broad-run receipts (97 completed batches, 63 failures, partial 98), the
+separate guarded 61-case path recovery, independent reviews and exact-source
+capability limits. Neither a main merge nor whole-branch closure follows. Main
+remains `9c411ca3`. Batch 4/R2 work, 71 unselected original tips, broader residue and
+full/native/package/security acceptance remain outside this checkpoint.

@@ -1603,3 +1603,18 @@ Current evidence and assigned work: [checkpoint](../docs/qa/verified-followup-in
 - [x] Seal exact source snapshots, failure/positive receipts, actual device-pixel ratios and archive hashes.
 - [ ] Root independent review and selective integration with attributed source history.
 - [ ] Final combined/full/platform/native/manual/package gates; separate F8 tooltip collision remains owned by its author.
+
+
+### [VERIFIED-CONTINUATION-20261118]
+
+- [x] Independently review and selectively port the seven bounded source/tooling repairs; preserve original red evidence, authorship and all branch references.
+- [x] Retain semantic batches 2/3 and the source-specific residual security dispositions without converting strict findings to a scanner pass.
+- [x] Verify all 26 changed source/test/tool/workflow paths against exact reviewed owners at `5bbb925694b89ddc77e2aae1ea36c9f563c7760d`; preserve append-only documentation conflict bodies.
+- [x] Run the 87-file combined offline gate: 2,764 passed, nine skips, zero failures/errors; retain all 517 imported-source identities, normal Ruff and strict 80 findings.
+- [x] Preserve incomplete original broad run and automatic-review rejection; separately verify 61 path-related original failures and the hermetic no-input fixture repair.
+- [ ] Publish the reviewable continuation append-only to existing PR #316, verify every remote tree/parent and fresh main/PR state; no main merge or release implied.
+- [ ] Finish R2 acceptance-witness/manual-attribution repair and remaining semantic branch batches, with independent review and exact-source gates.
+- [ ] Implement/qualify separate PW-02 acquisition slice; complete representative CVE/KB/native/manual journeys.
+- [ ] Complete final full Linux/Windows, repeated Qt, native, frozen package/installer, dependency/security and reproducibility gates; treat skipped/blocked/stale evidence as unverified.
+
+See the [immutable continuation checkpoint](../docs/qa/verified-continuation-20261118/README.md).
