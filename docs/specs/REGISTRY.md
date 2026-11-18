@@ -187,3 +187,12 @@ This later draft registration does not refresh the historical tables or approve 
 | Path | Canonical alias | Status | Owner |
 |---|---|---|---|
 | `docs/specs/kb-file-inventory-csv.md` | PW-01 | implemented and independently reviewed; hosted/live acceptance tracked in QA | kbcorrelation inventory modules |
+
+## Supporting qualification and publication contracts, 2026-11-18
+
+These supporting contracts are cited by path; no numeric SPEC alias is allocated.
+
+| Path | Scope | Status | Owner |
+|---|---|---|---|
+| `docs/specs/dependency-security-qualification.md` | Exact-source dependency and security qualification | Implemented; external scanner and hosted acceptance remain separate gates | Dependency/security qualification tooling |
+| `docs/specs/directory-publication.md` | Atomic no-replacement publication of complete private directories | Implemented candidate; independent review and native Windows acceptance pending | Shared directory publisher, project backup and offline runtime installer |
