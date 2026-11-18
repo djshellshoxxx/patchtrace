@@ -8,6 +8,7 @@ import gzip
 import hashlib
 import json
 import socket
+import sqlite3
 import threading
 
 import kbc_helpers as h
@@ -313,5 +314,64 @@ def test_csv_claim_provenance_is_exact_and_never_a_binary_hash_or_cve_claim(tmp_
     }]
     assert 'sha256' not in hint and 'cve' not in hint
     assert hint['inventory_refs'] == selected.result['hint']['inventory_refs']
+
+
+@pytest.mark.parametrize('suffix', ['x' * 8_193, '\u3042' * 3_000, '\x00' + 'x' * 8_193],
+                         ids=['ascii', 'multibyte', 'embedded-nul'])
+def test_oversized_selection_body_is_refused_before_sqlite_returns_it_to_python(tmp_path, suffix):
+    from patchtrace.kbcorrelation.inventory_selection import _decisions
+
+    svc = service(tmp_path)
+    state = start(svc)
+    body = '{"op":"inventory-select","extra":"' + suffix + '"}'
+    assert len(body.encode('utf-8')) > 8_192
+    observed = []
+
+    def bounded_decode(raw):
+        observed.append(len(raw))
+        assert len(raw) <= 8_192, 'SQLite returned the oversized decision body before rejecting it'
+        return raw.decode('utf-8')
+
+    with WorkspaceStore(svc.root) as ws:
+        ws.db.execute('INSERT INTO decisions(investigation_id,body) VALUES (?,?)', (state[0], body))
+        ws.db.text_factory = bounded_decode
+        with pytest.raises(KbcStoreError) as raised:
+            _decisions(ws, state[0])
+        assert raised.value.code == 'PT-KBC-VERIFY'
+        assert not observed or max(observed) <= 8_192
+
+
+@pytest.mark.parametrize('body_kind', ['blob', 'integer', 'invalid-encoding'])
+def test_invalid_decision_storage_preserves_prior_selection_and_component_state(tmp_path, body_kind):
+    svc = service(tmp_path)
+    state = start(svc)
+    identity = inventory(svc, tmp_path)
+    selected = select(svc, state, identity)
+    with WorkspaceStore(svc.root) as ws:
+        valid = ws.db.execute('SELECT body FROM decisions WHERE investigation_id=?', (state[0],)).fetchone()[0]
+        if body_kind == 'blob':
+            # Valid JSON is still the wrong persisted SQLite storage type.
+            ws.db.execute('INSERT INTO decisions(investigation_id,body) VALUES (?,?)',
+                          (state[0], sqlite3.Binary(valid.encode('utf-8'))))
+        elif body_kind == 'integer':
+            # TEXT affinity coerces ordinary numeric input, so a corrupt table
+            # fixture is needed to represent an unexpected storage type.
+            ws.db.execute('ALTER TABLE decisions RENAME TO saved_decisions')
+            ws.db.execute('CREATE TABLE decisions(seq INTEGER PRIMARY KEY, investigation_id TEXT, body)')
+            ws.db.execute('INSERT INTO decisions SELECT * FROM saved_decisions')
+            ws.db.execute('INSERT INTO decisions(investigation_id,body) VALUES (?,?)', (state[0], 7))
+        else:
+            ws.db.execute('INSERT INTO decisions(investigation_id,body) VALUES (?,CAST(? AS TEXT))',
+                          (state[0], sqlite3.Binary(b'{"op":"inventory-select","bad":"\xff"}')))
+        before = tuple(ws.db.execute('SELECT seq,CAST(body AS BLOB) FROM decisions ORDER BY seq'))
+        revision = ws.current_revision(state[0])
+    with pytest.raises(KbcStoreError) as raised:
+        svc.components(state[0], product=state[1], files=['other.sys'])
+    assert raised.value.code == 'PT-KBC-VERIFY'
+    with WorkspaceStore(svc.root) as ws:
+        assert tuple(ws.db.execute('SELECT seq,CAST(body AS BLOB) FROM decisions ORDER BY seq')) == before
+        assert ws.current_revision(state[0]) == revision
+        assert revision.revision == selected.result['revision']
+    assert svc.inventory_details(identity[0]).result['inventory']['import_id'] == identity[0]
 
 

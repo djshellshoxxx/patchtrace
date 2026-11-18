@@ -264,6 +264,14 @@ per investigation; stale selections stay recorded but cannot feed pair lookup.
 Replay groups claims by import and retains at most one parsed inventory between
 groups, rather than accumulating up to 5,000 full bounded source records in memory.
 
+Stored selection decisions must be SQLite TEXT of at most 8,192 encoded bytes.
+Apply that type and encoded-byte bound in the SQL projection before returning
+the body to Python or decoding JSON. SQLite character length alone is insufficient
+because embedded NUL and multibyte text can conceal a larger encoded body. Reject
+non-TEXT decision rows for the investigation and invalid text encoding with
+`PT-KBC-VERIFY`; an unreadable decision cannot silently erase a prior selection.
+Failed replay preserves existing revisions, decisions and raw inventory objects.
+
 Eligible selected basenames feed the existing component and saved-Winbindex pair
 workflow. CSV metadata never becomes BuildCandidate, binary SHA-256, verified PE
 identity, chronology, or evidence that a file contains a CVE fix. Inventory ARM64

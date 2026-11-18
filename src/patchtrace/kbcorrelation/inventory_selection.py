@@ -22,6 +22,7 @@ from .store import KbcStoreError
 from .workflow import Event, reduce
 
 MAX_SELECTIONS = 5_000
+MAX_SELECTION_BODY_BYTES = 8_192
 SELECTION_OP = 'inventory-select'
 
 
@@ -49,24 +50,29 @@ def _coverage(rev, scope_id):
 
 def _decisions(ws, investigation):
     # All writers use canonical model_dump_json. Restrict allocation before JSON
-    # decoding; malformed cache data never becomes a candidate selection.
-    rows = ws.db.execute(
-        'SELECT body, length(body) FROM decisions WHERE investigation_id=? '
-        'AND instr(body, ?) > 0 ORDER BY seq LIMIT ?',
-        (investigation, '"op":"inventory-select"', MAX_SELECTIONS + 1))
+    # decoding, including multibyte and NUL-containing TEXT. Non-TEXT rows
+    # cannot be trusted to identify their operation and must not silently vanish.
     selections = []
-    for body, size in rows:
-        if size > 8_192:
-            raise KbcStoreError('PT-KBC-VERIFY', 'a stored inventory selection exceeds its bounds')
-        try:
-            decision = AnalystDecision.model_validate_json(body)
-            if decision.op != SELECTION_OP:
-                continue
-            value = load_json(decision.next.encode('utf-8'))
-            selected = InventorySelection.model_validate_json(json.dumps(value))
-        except (ValidationError, SourceError, ValueError, RecursionError):
-            raise KbcStoreError('PT-KBC-VERIFY', 'a stored inventory selection is invalid') from None
-        selections.append(selected)
+    try:
+        rows = ws.db.execute(
+            "SELECT CASE WHEN typeof(body)='text' AND length(CAST(body AS BLOB))<=? THEN body END "
+            'FROM decisions WHERE investigation_id=? '
+            "AND (typeof(body)!='text' OR instr(body, ?) > 0) ORDER BY seq LIMIT ?",
+            (MAX_SELECTION_BODY_BYTES, investigation, '"op":"inventory-select"', MAX_SELECTIONS + 1))
+        for (body,) in rows:
+            if type(body) is not str:
+                raise KbcStoreError('PT-KBC-VERIFY', 'a stored inventory selection is invalid or exceeds its bounds')
+            try:
+                decision = AnalystDecision.model_validate_json(body)
+                if decision.op != SELECTION_OP:
+                    continue
+                value = load_json(decision.next.encode('utf-8'))
+                selected = InventorySelection.model_validate_json(json.dumps(value))
+            except (ValidationError, SourceError, ValueError, RecursionError):
+                raise KbcStoreError('PT-KBC-VERIFY', 'a stored inventory selection is invalid') from None
+            selections.append(selected)
+    except (sqlite3.Error, UnicodeError):
+        raise KbcStoreError('PT-KBC-VERIFY', 'stored inventory selections could not be read safely') from None
     if len(selections) > MAX_SELECTIONS:
         raise KbcStoreError('PT-KBC-LIMIT', 'this investigation exceeds the inventory selection limit')
     return tuple(selections)
