@@ -15,7 +15,16 @@ from dataclasses import dataclass
 from .contracts import HARD_BLOCKS, BinaryRef, FixBoundary, PairProposal, ProductScope, domain_id
 from .ids import is_canonical_kb
 from .limits import DEFAULT_LIMITS
-from .lineage import ChangeInfo, IndexRow, change_in_kb, order_key, predecessor, timeline, ubr_key
+from .lineage import (
+    ChangeInfo,
+    IndexRow,
+    change_in_kb,
+    chronologically_before,
+    order_key,
+    predecessor,
+    timeline,
+    ubr_key,
+)
 from .pairs import SUPPORTED_ARCH, reason_text
 
 _UBR = re.compile(r'[0-9]{1,6}\.[0-9]{1,6}')
@@ -61,14 +70,17 @@ def binary_ref(row: IndexRow) -> BinaryRef:
 def fix_boundary(older: IndexRow, newer: IndexRow, fixed_build: str | None,
                  intervening: Sequence[IndexRow]) -> FixBoundary:
     """Compare only with a build stated by the row itself (UBR or heading), never file version or timestamp."""
-    if fixed_build is None or not _UBR.fullmatch(fixed_build):
+    if fixed_build is None or not _UBR.fullmatch(fixed_build) or not chronologically_before(older, newer):
         return 'unverified'
-    if fixed_build in _builds(newer) and not intervening:
+    fixed = ubr_key(fixed_build)
+    # Compare numeric components; a spelling variant cannot conceal a contradiction.
+    older_same = [ubr_key(b) for b in _builds(older) if ubr_key(b)[0] == fixed[0]]
+    past_boundary = [b >= fixed for b in older_same]
+    if any(past_boundary):
+        return 'contradicted' if all(past_boundary) else 'unverified'
+    newer_same = {ubr_key(b) for b in _builds(newer) if ubr_key(b)[0] == fixed[0]}
+    if newer_same == {fixed} and not intervening:
         return 'source-supported'
-    major = fixed_build.split('.')[0]
-    older_same = [b for b in _builds(older) if b.split('.')[0] == major]  # a sibling's prefix proves nothing
-    if older_same and all(ubr_key(b) >= ubr_key(fixed_build) for b in older_same):
-        return 'contradicted'
     return 'unverified'
 
 
@@ -88,7 +100,7 @@ def _reasons(older: IndexRow, newer: IndexRow, intervening: Sequence[IndexRow], 
     if older.build.version_key != newer.build.version_key:
         reasons.add('CROSS_PRODUCT')
     # KB/SHA/BASE tie-breakers keep display order stable; they are not chronology evidence.
-    if order_key(older)[:2] >= order_key(newer)[:2]:
+    if not chronologically_before(older, newer):
         reasons.add('ORDER_UNVERIFIED')
     if {older.availability, newer.availability} & {'delta-only', 'unavailable'}:
         reasons.add('DELTA_ONLY')

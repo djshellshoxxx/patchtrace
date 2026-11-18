@@ -53,7 +53,7 @@ class IndexRow:
 
 @dataclass(frozen=True)
 class ChangeInfo:
-    """``reason`` is one of no-row, variants, first-row, new-build, unchanged."""
+    """``reason`` is no-row, variants, first-row, order-unverified, new-build or unchanged."""
     state: Change
     reason: str
     last_changed_in: str | None = None
@@ -70,6 +70,17 @@ def order_key(row: IndexRow) -> tuple:
     build = row.build
     return (build.release_date or '', ubr_key(build.release_version), build.kb is not None,
             kb_sort_key(build.kb) if build.kb else (0, ''), build.sha256)
+
+
+def chronologically_before(older: IndexRow, newer: IndexRow) -> bool:
+    """Whether stated source dates/builds establish order, without display-key defaults."""
+    old, new = older.build, newer.build
+    if old.version_key != new.version_key or old.release_date is None or new.release_date is None:
+        return False
+    if old.release_date != new.release_date:
+        return old.release_date < new.release_date
+    return (old.release_version is not None and new.release_version is not None
+            and ubr_key(old.release_version) < ubr_key(new.release_version))
 
 
 def _availability(download: object, variant: str) -> Availability:
@@ -173,10 +184,18 @@ def change_in_kb(line: Sequence[IndexRow], kb: str) -> ChangeInfo:
     if len({r.sha256 for r in targets}) > 1:
         return ChangeInfo('unknown', 'variants', None, targets)  # several SHAs for one KB: never auto-pick
     index = line.index(targets[0])
+    target = targets[0]
+    if (target.build.release_date is None
+            or any(r.sha256 != target.sha256 and order_key(r)[:2] == order_key(target)[:2] for r in line)):
+        return ChangeInfo('unknown', 'order-unverified', None, targets)
+    if index > 0 and not chronologically_before(line[index - 1], target):
+        return ChangeInfo('unknown', 'order-unverified', None, targets)
     start = index
     while start > 0 and line[start - 1].sha256 == targets[0].sha256:
         start -= 1
     if start < index:
+        if any(not chronologically_before(line[i], line[i + 1]) for i in range(start, index)):
+            return ChangeInfo('unknown', 'order-unverified', None, targets)
         return ChangeInfo('no', 'unchanged', line[start].kb, targets)
     if index == 0:
         return ChangeInfo('unknown', 'first-row', None, targets)
