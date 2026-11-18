@@ -1,0 +1,324 @@
+{
+  "source": "ce093ec56260944869fa28e12c26c79eb1dd4c78",
+  "baseline": "d5d995d6f5c76d4cb2cba7424a997ac9850c6135",
+  "archive": "coff-mask-compatibility-20261118.evidence.zip",
+  "archive_bytes": 98166,
+  "archive_sha256": "b90a8f21079cd873527cb6a104bb606319d3f9c50bc6176b94789f413f02bfa4",
+  "payloads": [
+    {
+      "path": "README.md",
+      "bytes": 6697,
+      "sha256": "f8ec7c40c3c9bb1832455c3ee09017bded74cff83fb63508b2275b8ba05cb8bf"
+    },
+    {
+      "path": "original-peer/coff-mask-public.command.json",
+      "bytes": 1296,
+      "sha256": "c83720cf4b99d06029538a26e9e1f442f04d6874c6d22409578b2793b96936ec"
+    },
+    {
+      "path": "original-peer/coff-mask-public.log",
+      "bytes": 2516,
+      "sha256": "dad40d1f4f35d1b7db19501e1f3eb17c8e4f73d97e8751fdbf2c4719ab8b6734"
+    },
+    {
+      "path": "original-peer/coff-mask-public.xml",
+      "bytes": 3026,
+      "sha256": "a852bdd18f5190d24f2e3ba40add1c92e142440cb3f9b06c90fcf58d5fa8143f"
+    },
+    {
+      "path": "original-peer/coff-mask-public/quoted-False-code-False.json",
+      "bytes": 452,
+      "sha256": "771bf8ec24250affe049741bf8a3d179c0589b9ee2946f247538668013ec1041"
+    },
+    {
+      "path": "original-peer/coff-mask-public/quoted-False-code-True.json",
+      "bytes": 451,
+      "sha256": "86e640b51027e2a90d458e058b8f7b68d553a778212c066e5df8fa9bc37d2150"
+    },
+    {
+      "path": "original-peer/coff-mask-public/quoted-True-code-False.json",
+      "bytes": 478,
+      "sha256": "941bdf0863fedaf5a66269a3d6438ca19314b2c2c52c307f1af8593d1649c822"
+    },
+    {
+      "path": "original-peer/historical-coff.command.json",
+      "bytes": 2178,
+      "sha256": "ef2306a3f7e46dc986fa0c835438fe7196c0c11bf9683a8922d5d09f06a58ca6"
+    },
+    {
+      "path": "original-peer/historical-coff.log",
+      "bytes": 3803,
+      "sha256": "7bce1e5a84cb8a039fefdbcd891d928445d2c1653bf582c2473dd3f7645a5c52"
+    },
+    {
+      "path": "original-peer/historical-coff.xml",
+      "bytes": 5252,
+      "sha256": "a380d6ed81ed3f7459b431a27ee5260f61f7e2a5b25cc29159ea0aa065513799"
+    },
+    {
+      "path": "original-peer/historical/coff/tests/test_mutations_more.py",
+      "bytes": 15577,
+      "sha256": "719d8466a5269f5b7ef368e00e9bd98d25e67afe9329f83a2d6269d7d0c5d44f"
+    },
+    {
+      "path": "original-peer/test_coff_masking_public.py",
+      "bytes": 2490,
+      "sha256": "2de761cb9e3b57eae2f2a39ebec9c7a540ce3fdc3d8449afbf68407f939be44c"
+    },
+    {
+      "path": "review/boundary-harness-note.md",
+      "bytes": 471,
+      "sha256": "7d9a065a5bb068b26676744eb5b529383e67c4c9b796b00c96fcdd2935f40216"
+    },
+    {
+      "path": "review/build_packet.py",
+      "bytes": 2920,
+      "sha256": "a21c9e33858185210eae506d436a171353378dc9a3af2b45bac1f3a424c65c57"
+    },
+    {
+      "path": "review/coff-mask-public/quoted-False-code-False.json",
+      "bytes": 452,
+      "sha256": "771bf8ec24250affe049741bf8a3d179c0589b9ee2946f247538668013ec1041"
+    },
+    {
+      "path": "review/coff-mask-public/quoted-False-code-True.json",
+      "bytes": 451,
+      "sha256": "86e640b51027e2a90d458e058b8f7b68d553a778212c066e5df8fa9bc37d2150"
+    },
+    {
+      "path": "review/coff-mask-public/quoted-True-code-False.json",
+      "bytes": 478,
+      "sha256": "941bdf0863fedaf5a66269a3d6438ca19314b2c2c52c307f1af8593d1649c822"
+    },
+    {
+      "path": "review/commit-chain.txt",
+      "bytes": 209,
+      "sha256": "871e56572d462c845436e57eb05e47bf4875afcfa805122a48175c7739580577"
+    },
+    {
+      "path": "review/committed-affected-context.json",
+      "bytes": 2763,
+      "sha256": "6bd40de920cfe182d07fca521fe5730422f72efe35a6bdcb9bc8fd61542174d7"
+    },
+    {
+      "path": "review/committed-affected-exit.json",
+      "bytes": 788,
+      "sha256": "84db071cbb600cfa33c70aa5e133c562a23a8fd9e8e90bff38515038f6826695"
+    },
+    {
+      "path": "review/committed-affected.log",
+      "bytes": 179,
+      "sha256": "51904eb5bb65a70e7274848b558fc570035fdcc1ac690793213c5c29703e811f"
+    },
+    {
+      "path": "review/committed-affected.xml",
+      "bytes": 12203,
+      "sha256": "b1b033bdcd9d1170bdd5bb48a67becdf96cb486ff36947d9d085c8536265b058"
+    },
+    {
+      "path": "review/committed-style.json",
+      "bytes": 502,
+      "sha256": "2b18c7dbed965d285a7abf2e9bc99bfc41539cd89a218e48e96b62361526e379"
+    },
+    {
+      "path": "review/external-green/coff-mask-public/quoted-False-code-False.json",
+      "bytes": 471,
+      "sha256": "d5cccf9eecbe1e4c9a85a7b7855eb441fcb2d1fb842e0b04996d7117d6439f9b"
+    },
+    {
+      "path": "review/external-green/coff-mask-public/quoted-False-code-True.json",
+      "bytes": 451,
+      "sha256": "86e640b51027e2a90d458e058b8f7b68d553a778212c066e5df8fa9bc37d2150"
+    },
+    {
+      "path": "review/external-green/coff-mask-public/quoted-True-code-False.json",
+      "bytes": 478,
+      "sha256": "941bdf0863fedaf5a66269a3d6438ca19314b2c2c52c307f1af8593d1649c822"
+    },
+    {
+      "path": "review/external-green/test_coff_masking_public.py",
+      "bytes": 2490,
+      "sha256": "2de761cb9e3b57eae2f2a39ebec9c7a540ce3fdc3d8449afbf68407f939be44c"
+    },
+    {
+      "path": "review/historical-after-context.json",
+      "bytes": 1642,
+      "sha256": "e23fb122876a9b1300f32967991cbc0f89ccdc3142638c08794eb8e5695015e7"
+    },
+    {
+      "path": "review/historical-after-exit.json",
+      "bytes": 788,
+      "sha256": "d68b2f447e450ad4f1801118e0f42455474b27dc1017888e7298a43e1bf06e6f"
+    },
+    {
+      "path": "review/historical-after.log",
+      "bytes": 3653,
+      "sha256": "ac980f3729aca97f10d39ae87a435b6ff4c8f0ad087c82bc81a731d2db4f39aa"
+    },
+    {
+      "path": "review/historical-after.xml",
+      "bytes": 4878,
+      "sha256": "7494f1a687682a19d948c1a17fcdb2f9959fa39a99398f7a489248d9c3db109a"
+    },
+    {
+      "path": "review/historical-before-context.json",
+      "bytes": 1643,
+      "sha256": "2cf6cf51dfa9f3562ae917c64bb445742c1e5bccefbb5c0578cd4770be257088"
+    },
+    {
+      "path": "review/historical-before-exit.json",
+      "bytes": 788,
+      "sha256": "6fb05bbfb13b9aa209959157b34cce57882079b4fe348e8353ea36b991005b56"
+    },
+    {
+      "path": "review/historical-before.log",
+      "bytes": 3730,
+      "sha256": "cf6391b26c3b6acdba15635f4c28f5bac45674381f2d7bc112fd363352aa1030"
+    },
+    {
+      "path": "review/historical-before.xml",
+      "bytes": 5032,
+      "sha256": "0325a4298bbec9a5cac9123ba0530f9c8dc0377dd2d536820c290f763e379d8c"
+    },
+    {
+      "path": "review/historical_test_mutations_more.py",
+      "bytes": 15577,
+      "sha256": "719d8466a5269f5b7ef368e00e9bd98d25e67afe9329f83a2d6269d7d0c5d44f"
+    },
+    {
+      "path": "review/original-observations-before.json",
+      "bytes": 547,
+      "sha256": "9a565e941751bca6f0d127cc53b2c6e4ece52b2a689c8c0b00fe73627d756bba"
+    },
+    {
+      "path": "review/original-observations-unchanged.json",
+      "bytes": 1159,
+      "sha256": "553704f7cb2341860f015c802cd2de638258b7c20691124fa9c8b268980da8c3"
+    },
+    {
+      "path": "review/portable-independent-context.json",
+      "bytes": 1686,
+      "sha256": "45599a716f3c2f28f7b04dac1d21d07f45fb0aac1f7238704cedab2223efe9b4"
+    },
+    {
+      "path": "review/portable-independent-exit.json",
+      "bytes": 788,
+      "sha256": "d37cbf56f9ebea04acf73922cdf5febb945e04bacb0bf30a61a559a783c38771"
+    },
+    {
+      "path": "review/portable-independent.log",
+      "bytes": 99,
+      "sha256": "d488e24a23ad8c117e2ab3edabec56c75dda46800f54a4e3938b9790348de926"
+    },
+    {
+      "path": "review/portable-independent.xml",
+      "bytes": 5689,
+      "sha256": "0cfc3e617b134650b9af67f229db71e2f50069a2993c868b9067f86740864cd5"
+    },
+    {
+      "path": "review/public-and-boundaries-red-context.json",
+      "bytes": 1464,
+      "sha256": "1b467d9e18159d7d5ef06361493aac72d80ab603b6d6e771de6f4fc473beaf77"
+    },
+    {
+      "path": "review/public-and-boundaries-red-exit.json",
+      "bytes": 170,
+      "sha256": "7d5e4aa5173e2456405c2b7b0b81ef762517c50260bba3ebb8aee0a6b29f7497"
+    },
+    {
+      "path": "review/public-and-boundaries-red.log",
+      "bytes": 11502,
+      "sha256": "de3e82d5e4e5f6ed22c5351e0351f5aafdb1b384dc679b169c13427f7c14eb13"
+    },
+    {
+      "path": "review/public-and-boundaries-red.xml",
+      "bytes": 14842,
+      "sha256": "9b8e859c63149bd1b7429aa231cda5a0f6ca29fe5b1df40b6cad55197be467bc"
+    },
+    {
+      "path": "review/run_checks.py",
+      "bytes": 2804,
+      "sha256": "b98f0edc6d72cc012c943721319d1448db610776de7e52226812cbc41b707194"
+    },
+    {
+      "path": "review/runtime.json",
+      "bytes": 91,
+      "sha256": "1a300d4fbf08127d5abe9b2cee5a4dea287a34046d96af8338f95a21b9c658ca"
+    },
+    {
+      "path": "review/source-and-test.diff",
+      "bytes": 8673,
+      "sha256": "05d17349618ea8b5740820030585787530b10498db220c697fcad3a1461dc7ab"
+    },
+    {
+      "path": "review/source-comparison.json",
+      "bytes": 1852,
+      "sha256": "b15a1eee25d19fb4a8984daffa6ca0e480a68dde36550cd86ac488fbba5f0c57"
+    },
+    {
+      "path": "review/source-manifest.json",
+      "bytes": 791,
+      "sha256": "f9fe90f6d000449c02bcc6124f7f7dbb6c7cf3f441e0f1ec67fed8e248563d28"
+    },
+    {
+      "path": "review/spec-tests-red-context.json",
+      "bytes": 1497,
+      "sha256": "1a8aa69f61d6bade01c8c9d25eb410b9a3a644647ce75c4c82a0615456fe2253"
+    },
+    {
+      "path": "review/spec-tests-red-exit.json",
+      "bytes": 788,
+      "sha256": "36d4f5bb1508ac9be5a64ea2a38742834e60b4973fe07a42b14b015c2108032a"
+    },
+    {
+      "path": "review/spec-tests-red.log",
+      "bytes": 7147,
+      "sha256": "d81ca4b15ccc160447f0d21768b8545c28abd5e44c92156dfe0af462f3c4b112"
+    },
+    {
+      "path": "review/spec-tests-red.xml",
+      "bytes": 10750,
+      "sha256": "6d7803e0d0def2860517743a24fd06fee09759580883ff53316f05481c2604e2"
+    },
+    {
+      "path": "review/test_coff_boundaries.py",
+      "bytes": 3968,
+      "sha256": "9837834d2c647d15b54ad04a3d4ffd4ff3037f9717ad1a8b91ccaebf4dbda89f"
+    },
+    {
+      "path": "review/test_coff_boundaries_portable.py",
+      "bytes": 3975,
+      "sha256": "4d4331dec65e06ec8527be5e14175ab79857e0ce6be46fe885cb6287b5968602"
+    },
+    {
+      "path": "review/test_coff_masking_public.py",
+      "bytes": 2490,
+      "sha256": "2de761cb9e3b57eae2f2a39ebec9c7a540ce3fdc3d8449afbf68407f939be44c"
+    },
+    {
+      "path": "source/docs/specs/known-answer-corpus.md",
+      "bytes": 40074,
+      "sha256": "82497c88eebfdb2a0d5e3d1e8350174951bf6fa49c731a2a571789d5fc3246f1"
+    },
+    {
+      "path": "source/tests/test_mutations_coff_compatibility.py",
+      "bytes": 5412,
+      "sha256": "a4c567cff430699eb54b169678137d73d18b42092b68072888053ac220f48d0f"
+    },
+    {
+      "path": "source/tools/calibration/mutations/engine.py",
+      "bytes": 14007,
+      "sha256": "ead6316f3be9f4aa2eb02e8866c699076125c7ddb0070077542e14002abbe2b3"
+    },
+    {
+      "path": "source/tools/calibration/tier_r/bodyhash.py",
+      "bytes": 4808,
+      "sha256": "d0abfd1efb57606a0e3e7117a322e125e982396c15399c83e8e619cbfc671e88"
+    },
+    {
+      "path": "source/tools/calibration/tier_r/factory.py",
+      "bytes": 23119,
+      "sha256": "f854363a3e70f629c43fd5da2db4cfb3f047133407f5ffc3b87faa24aba6e1c7"
+    }
+  ]
+}
