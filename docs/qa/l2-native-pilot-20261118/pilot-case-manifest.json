@@ -1,0 +1,28 @@
+{
+  "cases": [
+    {
+      "expected": {
+        "cve": "CVE-2020-8287",
+        "function": "http_parser_execute"
+      },
+      "facts": "verified",
+      "holdout": false,
+      "id": "l2-node-http-parser-cve-2020-8287",
+      "layer": "L2",
+      "licence": "MIT",
+      "newer": {
+        "ref": "Node commit fc70ce08f5818a286fb5899a1bc3aff5965a745e; GCC14.2 ELF64 shared http-parser",
+        "sha256": "96bcb8a0b8f9201d12c81e30090d933e13e7679125c26d5d604ebb0f02028df0"
+      },
+      "notes": "Facts verified for this approved ELF/GCC pilot only. Source oracle reviewed before native analysis. This is not Windows/MSVC qualification or a corpus-level accuracy claim. No extra accepted aliases.",
+      "older": {
+        "ref": "Node commit 323a6f114a93a534da70f61dd5a1f5e600c11406; GCC14.2 ELF64 shared http-parser",
+        "sha256": "c3914b7f5f70b88dbfc25677211347ffa86ab38a833e065a5e51a0445c26133b"
+      },
+      "project": "nodejs-http-parser",
+      "source_url": "https://github.com/nodejs/node/commit/fc70ce08f5818a286fb5899a1bc3aff5965a745e",
+      "stratum": "duplicate-transfer-encoding-state"
+    }
+  ],
+  "schema": "rq-case-manifest/1"
+}

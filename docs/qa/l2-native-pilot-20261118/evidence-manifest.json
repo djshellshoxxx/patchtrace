@@ -1,0 +1,88 @@
+{
+  "files": [
+    {
+      "bytes": 5611,
+      "path": "README.md",
+      "sha256": "5e7658a77bb810a723af71b9c73f803bcea4af5df87c0f30cf5048b57b021978"
+    },
+    {
+      "bytes": 1434,
+      "path": "approval.json",
+      "sha256": "6dbc275d170f5c1eb5b67216466d0664189b9af7c9ede9d71e1bd47a640fd5ec"
+    },
+    {
+      "bytes": 1213,
+      "path": "engine-run.json",
+      "sha256": "e72da8ecaa4711971d31f65e42c74b00dbda057a67a560400a0c5ba65ea58c0e"
+    },
+    {
+      "bytes": 1159,
+      "path": "pilot-case-manifest.json",
+      "sha256": "02cb4bccf152646912a7bfe211fe53a1a3bb3e73fbf902873deba40c3235d131"
+    },
+    {
+      "bytes": 3672,
+      "path": "pilot-plan.json",
+      "sha256": "d6a2dc2b5a1dc59304fc2a8279b6c186537be267448cf9bd0d700e6617e6dbef"
+    },
+    {
+      "bytes": 1275,
+      "path": "pilot-result.json",
+      "sha256": "6d95d0b857d2a2cdb61ceecf6a69d05133dd852677aa6889b10fbd4544de339e"
+    },
+    {
+      "bytes": 0,
+      "path": "raw/00-probe.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 78,
+      "path": "raw/00-probe.stdout",
+      "sha256": "58bc26af2200fd35b39248f09ffa655df0b50a3ccb3219cdb91696b72516efa2"
+    },
+    {
+      "bytes": 108,
+      "path": "raw/01-analysis.stderr",
+      "sha256": "545d5ce5a474fbd397e64832256bccdea1e1e7d238fc68def7e2d4720788c0fc"
+    },
+    {
+      "bytes": 834,
+      "path": "raw/01-analysis.stdout",
+      "sha256": "52a42e2045d1c4d3368ed319eaf8be4ad40b5c1087806ed643a3be1e4ae7dbb2"
+    },
+    {
+      "bytes": 1329,
+      "path": "receipts/00-probe.json",
+      "sha256": "ba8060bd26bc081bbebb8ed11ebf06b599aa1195ebf868ed0ad1dac7097e444a"
+    },
+    {
+      "bytes": 1951,
+      "path": "receipts/01-analysis.json",
+      "sha256": "e943b05683dbc4a643d2e8249325a6f24a098c6071012e6da8e48f5978377bd7"
+    },
+    {
+      "bytes": 232,
+      "path": "receipts/preflight-capability.json",
+      "sha256": "f9d4e1c14db739ced2074b3ec0d0249b0d28c4e66038ab116082f7aa4c55ea78"
+    },
+    {
+      "bytes": 2938,
+      "path": "rq-l2-native-pilot-11dab64f1a054d61-20261118T082952699329Z.json",
+      "sha256": "40a72c15fae9e8c74919963b6288d813f141f7b9cd25dbdd0b489fd202c770c2"
+    },
+    {
+      "bytes": 10510,
+      "path": "run_pilot.py",
+      "sha256": "cfebead09860c3ea7fa3cd23ba55c6678dec6ad6d5697e9078aa013626458471"
+    },
+    {
+      "bytes": 3094,
+      "path": "secondary-match-set.json",
+      "sha256": "0c4fa4e971062d45c40bf4ad168d60b74332aeb53c28b37101764cbf2ba5509e"
+    }
+  ],
+  "first_result": "MISS",
+  "kind": "first-native-pilot-artifact-manifest/1",
+  "result_unchanged": true,
+  "sealed_utc": "2026-11-18T08:34:53.720874+00:00"
+}

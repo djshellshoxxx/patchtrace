@@ -1,0 +1,492 @@
+{
+  "candidate_reruns": 0,
+  "phase": "post-measurement diagnosis",
+  "product_edits": false,
+  "results": [
+    {
+      "error_code": null,
+      "events": [
+        {
+          "engine": "rz-diff",
+          "phase": "started",
+          "status": null
+        },
+        {
+          "engine": "rz-diff",
+          "phase": "finished",
+          "status": "ok"
+        }
+      ],
+      "existing_ranked_names": [],
+      "files": {
+        "newer": "/workspace/scratch/e83fbf4505c3/l2-postmeasurement-diagnosis/20261118T083739Z-rizin-discovery/build/shared/newer/control.so",
+        "older": "/workspace/scratch/e83fbf4505c3/l2-postmeasurement-diagnosis/20261118T083739Z-rizin-discovery/build/shared/older/control.so"
+      },
+      "fixture": "shared",
+      "independent_inventory_count": 14,
+      "independent_inventory_names": [
+        "sym._init",
+        "fcn.00001030",
+        "fcn.00001040",
+        "fcn.00001050",
+        "loc.imp.__cxa_finalize",
+        "entry0",
+        "sym.register_tm_clones",
+        "sym.__do_global_dtors_aux",
+        "entry.init0",
+        "sym.diag_stable_add",
+        "sym.diag_stable_xor",
+        "sym.diag_changed",
+        "sym.diag_dispatch",
+        "sym._fini"
+      ],
+      "match_count": 5,
+      "native_rows": [
+        {
+          "modified": {
+            "addr": 4144,
+            "name": "fcn.00001030",
+            "size": 6
+          },
+          "original": {
+            "addr": 4144,
+            "name": "fcn.00001030",
+            "size": 6
+          },
+          "similarity": 1.0,
+          "type": "COMPLETE"
+        },
+        {
+          "modified": {
+            "addr": 4160,
+            "name": "fcn.00001040",
+            "size": 6
+          },
+          "original": {
+            "addr": 4160,
+            "name": "fcn.00001040",
+            "size": 6
+          },
+          "similarity": 1.0,
+          "type": "COMPLETE"
+        },
+        {
+          "modified": {
+            "addr": 4176,
+            "name": "fcn.00001050",
+            "size": 6
+          },
+          "original": {
+            "addr": 4176,
+            "name": "fcn.00001050",
+            "size": 6
+          },
+          "similarity": 1.0,
+          "type": "COMPLETE"
+        },
+        {
+          "modified": {
+            "addr": 4192,
+            "name": "loc.imp.__cxa_finalize",
+            "size": 6
+          },
+          "original": {
+            "addr": 4192,
+            "name": "loc.imp.__cxa_finalize",
+            "size": 6
+          },
+          "similarity": 1.0,
+          "type": "COMPLETE"
+        },
+        {
+          "modified": {
+            "addr": 4208,
+            "name": "entry0",
+            "size": 34
+          },
+          "original": {
+            "addr": 4208,
+            "name": "entry0",
+            "size": 34
+          },
+          "similarity": 1.0,
+          "type": "COMPLETE"
+        }
+      ],
+      "phase": "post-measurement diagnosis, not scored",
+      "production_status": "ok",
+      "sha256": {
+        "newer": "d3b73651874bfaccc4f3455e74f31e085b94bf45a0a340a741d9dbb3f3a8c8c2",
+        "older": "e229bdc6e83e66f09ca0c415ac43d9b97ef19d223c0daa8c2b7528d64fd64aff"
+      }
+    },
+    {
+      "error_code": null,
+      "events": [
+        {
+          "engine": "rz-diff",
+          "phase": "started",
+          "status": null
+        },
+        {
+          "engine": "rz-diff",
+          "phase": "finished",
+          "status": "ok"
+        }
+      ],
+      "existing_ranked_names": [
+        "sym.diag_changed"
+      ],
+      "files": {
+        "newer": "/workspace/scratch/e83fbf4505c3/l2-postmeasurement-diagnosis/20261118T083739Z-rizin-discovery/build/executable/newer/control.elf",
+        "older": "/workspace/scratch/e83fbf4505c3/l2-postmeasurement-diagnosis/20261118T083739Z-rizin-discovery/build/executable/older/control.elf"
+      },
+      "fixture": "executable",
+      "independent_inventory_count": 13,
+      "independent_inventory_names": [
+        "sym._init",
+        "sym.imp.__cxa_finalize",
+        "main",
+        "entry0",
+        "sym.deregister_tm_clones",
+        "sym.register_tm_clones",
+        "sym.__do_global_dtors_aux",
+        "entry.init0",
+        "sym.diag_stable_add",
+        "sym.diag_stable_xor",
+        "sym.diag_changed",
+        "sym.diag_dispatch",
+        "sym._fini"
+      ],
+      "match_count": 5,
+      "native_rows": [
+        {
+          "modified": {
+            "addr": 4144,
+            "name": "sym.imp.__cxa_finalize",
+            "size": 6
+          },
+          "original": {
+            "addr": 4144,
+            "name": "sym.imp.__cxa_finalize",
+            "size": 6
+          },
+          "similarity": 1.0,
+          "type": "COMPLETE"
+        },
+        {
+          "modified": {
+            "addr": 4224,
+            "name": "sym.deregister_tm_clones",
+            "size": 34
+          },
+          "original": {
+            "addr": 4224,
+            "name": "sym.deregister_tm_clones",
+            "size": 34
+          },
+          "similarity": 1.0,
+          "type": "COMPLETE"
+        },
+        {
+          "modified": {
+            "addr": 4416,
+            "name": "sym.diag_stable_add",
+            "size": 4
+          },
+          "original": {
+            "addr": 4416,
+            "name": "sym.diag_stable_add",
+            "size": 4
+          },
+          "similarity": 1.0,
+          "type": "COMPLETE"
+        },
+        {
+          "modified": {
+            "addr": 4432,
+            "name": "sym.diag_stable_xor",
+            "size": 6
+          },
+          "original": {
+            "addr": 4432,
+            "name": "sym.diag_stable_xor",
+            "size": 6
+          },
+          "similarity": 1.0,
+          "type": "COMPLETE"
+        },
+        {
+          "modified": {
+            "addr": 4448,
+            "name": "sym.diag_changed",
+            "size": 4
+          },
+          "original": {
+            "addr": 4448,
+            "name": "sym.diag_changed",
+            "size": 4
+          },
+          "similarity": 0.75,
+          "type": "PARTIAL"
+        }
+      ],
+      "phase": "post-measurement diagnosis, not scored",
+      "production_status": "ok",
+      "sha256": {
+        "newer": "b5aa048f04bf788eecf0d912c46b1658c56acfa2918d04aefe0f5bf81dd7ca9f",
+        "older": "a81ae9251aa512e0ea6c6c2fd1cabbfafaecad7cd90ff0e83b5f6cd1faa5c24e"
+      }
+    },
+    {
+      "error_code": null,
+      "events": [
+        {
+          "engine": "rz-diff",
+          "phase": "started",
+          "status": null
+        },
+        {
+          "engine": "rz-diff",
+          "phase": "finished",
+          "status": "ok"
+        }
+      ],
+      "existing_ranked_names": [
+        "fcn.1800013c0",
+        "fcn.180001450",
+        "fcn.1800013a0",
+        "fcn.180001460",
+        "fcn.1800014d0"
+      ],
+      "files": {
+        "newer": "/workspace/scratch/e83fbf4505c3/repair-receipt-identity/tests/fixtures/tier_w/tiny_v2.pe",
+        "older": "/workspace/scratch/e83fbf4505c3/repair-receipt-identity/tests/fixtures/tier_w/tiny_v1.pe"
+      },
+      "fixture": "authored-pe",
+      "independent_inventory_count": 20,
+      "independent_inventory_names": [
+        "entry0",
+        "sym.tiny_v1.dll_memset",
+        "fcn.180001250",
+        "sym.tiny_v1.dll_checksum",
+        "sym.tiny_v1.dll_parse_header",
+        "fcn.1800013a0",
+        "fcn.1800013c0",
+        "fcn.180001450",
+        "fcn.180001460",
+        "fcn.180001470",
+        "fcn.180001480",
+        "sym.tiny_v1.dll_run_all",
+        "fcn.180001520",
+        "fcn.180001530",
+        "fcn.180001540",
+        "sym.tiny_v1.dll_cpp_entry",
+        "sym.tiny_v1.dll_util_mix",
+        "fcn.1800015a0",
+        "sym.tiny_v1.dll_util2_mix",
+        "fcn.1800015c0"
+      ],
+      "match_count": 14,
+      "native_rows": [
+        {
+          "modified": {
+            "addr": 6442455632,
+            "name": "fcn.180001250",
+            "size": 12
+          },
+          "original": {
+            "addr": 6442455632,
+            "name": "fcn.180001250",
+            "size": 12
+          },
+          "similarity": 1.0,
+          "type": "COMPLETE"
+        },
+        {
+          "modified": {
+            "addr": 6442455968,
+            "name": "fcn.1800013a0",
+            "size": 19
+          },
+          "original": {
+            "addr": 6442455968,
+            "name": "fcn.1800013a0",
+            "size": 19
+          },
+          "similarity": 0.947368,
+          "type": "PARTIAL"
+        },
+        {
+          "modified": {
+            "addr": 6442456288,
+            "name": "fcn.1800014e0",
+            "size": 246
+          },
+          "original": {
+            "addr": 6442456000,
+            "name": "fcn.1800013c0",
+            "size": 140
+          },
+          "similarity": 0.138211,
+          "type": "UNLIKE"
+        },
+        {
+          "modified": {
+            "addr": 6442456480,
+            "name": "fcn.1800015a0",
+            "size": 8
+          },
+          "original": {
+            "addr": 6442456144,
+            "name": "fcn.180001450",
+            "size": 13
+          },
+          "similarity": 0.461538,
+          "type": "UNLIKE"
+        },
+        {
+          "modified": {
+            "addr": 6442456288,
+            "name": "fcn.1800014e0",
+            "size": 246
+          },
+          "original": {
+            "addr": 6442456160,
+            "name": "fcn.180001460",
+            "size": 246
+          },
+          "similarity": 0.99187,
+          "type": "PARTIAL"
+        },
+        {
+          "modified": {
+            "addr": 6442456304,
+            "name": "fcn.1800014f0",
+            "size": 12
+          },
+          "original": {
+            "addr": 6442456176,
+            "name": "fcn.180001470",
+            "size": 12
+          },
+          "similarity": 1.0,
+          "type": "COMPLETE"
+        },
+        {
+          "modified": {
+            "addr": 6442456320,
+            "name": "fcn.180001500",
+            "size": 6
+          },
+          "original": {
+            "addr": 6442456192,
+            "name": "fcn.180001480",
+            "size": 6
+          },
+          "similarity": 1.0,
+          "type": "COMPLETE"
+        },
+        {
+          "modified": {
+            "addr": 6442456480,
+            "name": "fcn.1800015a0",
+            "size": 8
+          },
+          "original": {
+            "addr": 6442456352,
+            "name": "fcn.180001520",
+            "size": 8
+          },
+          "similarity": 1.0,
+          "type": "COMPLETE"
+        },
+        {
+          "modified": {
+            "addr": 6442456496,
+            "name": "fcn.1800015b0",
+            "size": 8
+          },
+          "original": {
+            "addr": 6442456368,
+            "name": "fcn.180001530",
+            "size": 8
+          },
+          "similarity": 1.0,
+          "type": "COMPLETE"
+        },
+        {
+          "modified": {
+            "addr": 6442456512,
+            "name": "fcn.1800015c0",
+            "size": 7
+          },
+          "original": {
+            "addr": 6442456384,
+            "name": "fcn.180001540",
+            "size": 7
+          },
+          "similarity": 1.0,
+          "type": "COMPLETE"
+        },
+        {
+          "modified": {
+            "addr": 6442456608,
+            "name": "fcn.180001620",
+            "size": 11
+          },
+          "original": {
+            "addr": 6442456480,
+            "name": "fcn.1800015a0",
+            "size": 11
+          },
+          "similarity": 1.0,
+          "type": "COMPLETE"
+        },
+        {
+          "modified": {
+            "addr": 6442456640,
+            "name": "fcn.180001640",
+            "size": 4
+          },
+          "original": {
+            "addr": 6442456512,
+            "name": "fcn.1800015c0",
+            "size": 4
+          },
+          "similarity": 1.0,
+          "type": "COMPLETE"
+        },
+        {
+          "modified": {
+            "addr": 6442456000,
+            "name": "fcn.1800013c0",
+            "size": 260
+          },
+          "original": null,
+          "similarity": 0.0,
+          "type": "UNLIKE"
+        },
+        {
+          "modified": {
+            "addr": 6442456272,
+            "name": "fcn.1800014d0",
+            "size": 10
+          },
+          "original": null,
+          "similarity": 0.0,
+          "type": "UNLIKE"
+        }
+      ],
+      "phase": "post-measurement diagnosis, not scored",
+      "production_status": "ok",
+      "sha256": {
+        "newer": "c2e70030a16b5b9b075b9686ebfa9c7bda389743222e98a373369865e0e015ea",
+        "older": "b69e9b090dd6406eadc734f005513432503652b55cbd70bb2370b10ea018cd41"
+      }
+    }
+  ],
+  "source_commit": "9ac9cbeb8ba1947b5e0889e03dccad769a6d155b",
+  "source_tree": "eba3ca64508f9989c63dcbe0f42a90cd668ffebd",
+  "target_execution": false
+}

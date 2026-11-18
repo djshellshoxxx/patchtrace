@@ -1817,3 +1817,31 @@ At 09:29:12 UTC, #246 merged normally into main as `dc53b529560453e84cf45e356a40
 ## [CONTINUATION-WINDOWS-20261106:product-start-build]
 
 Frozen #247 Windows QA passed **20,331 tests, 94 skipped, 5 xfailed, 19 warnings in 2675.35s**, plus standalone/frozen/portable/installer checks. Artifact `13492805458`, source `37b77130`, contains the stored-product starting route. API/upload digest and tested/source tree identity agree. The 09:43–09:44 snapshot still has Linux packaging/smokes outstanding; original local failures and release/live/manual gates remain preserved. [Windows candidate and evidence](qa/continuation-windows-20261106.md).
+
+## 2026-11-18 retained source pages and first native L2 pilot
+
+Reviewed combined source `c023dec36a464c3e7e1a8689f52a22263f0c24c5` is published
+as `be9b168cf24620ad86d04be474660b5d31f655b9`, preserving PR303 and PR304 ancestry.
+Independent combined gate: 1076 passed, 2 native Windows skips; 10 independent
+service/CLI/Qt probes and a real 13-operation CLI journey passed. The saved
+KB5036893 CSV exposes all 18761 accepted AMD64 claims across four bounded pages
+with full-source conflict witnesses and unchanged original evidence. V1 replay
+compatibility and Qt witness truncation defects were reproduced and repaired.
+The whole-process local suite ended137 without a summary. Sequential full-file
+qualification also remains INCOMPLETE: four completed batches report 5308pass,
+1fail and31skip; eight other batches were killed without completed JUnit.
+Hosted exact-head acceptance remains separate. Production direct
+CSV fetching remains DNS-blocked here; proxy capture is offline evidence only.
+See [retained-page qualification](qa/pw01-retained-pages-20261118.md).
+
+The first independent source-backed ELF/GCC native pilot produced a preserved
+MISS/FAIL: Rizin emitted five unchanged matches and omitted the frozen expected
+http_parser_execute function. No target binary was executed, no expectation
+changed, and no aggregate bound claimed. See [first native pilot](qa/l2-native-pilot-20261118.md).
+
+
+## 2026-11-18 Rizin discovery diagnosis and pending native publication
+
+The sealed L2 MISS was followed by independently authored shared-library, executable and PE controls, without rerunning the candidate. Pinned Rizin source and retained native output show that the functions-mode diff path omits the symbol/entry seed pass used by ordinary automatic analysis. Operational success does not establish exhaustive discovery. A native repair and a separate source-oracle naming contract remain unqualified; no measured label or accuracy result changed. [Diagnosis and controls](qa/l2-rizin-discovery-20261118.md).
+
+PR304 now includes independently reviewed Windows publication repair at `6cc6b6b77564e12eaec2917877d94525a69c7102` (code540c7df, exact reviewed treeaa7749). The former bb4277 Windows failure remains retained; fresh hosted gates are pending. The continuation must integrate that exact ancestor before promotion.

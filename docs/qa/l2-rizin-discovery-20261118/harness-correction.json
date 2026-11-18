@@ -1,0 +1,9 @@
+{
+  "candidate_reruns": 0,
+  "kind": "pre-execution-harness-correction/1",
+  "new_script_sha256": "08fdbb0ebb2016a9effbc90114b51506f7709bc6c18ef067b97fa9c6424b17d0",
+  "old_script_sha256": "34517d9d24ad50eb947ca36f208ce6a1d7d8c49d6ffc007d196d452e92db4519",
+  "plan_sha256": "51b132d76f0f82edb45c2ba4f82f0f637c63f76f0b43941a13d41739ddba2169",
+  "reason": "Source inspection of jobs.ProcessResult confirms reason is None on normal completion; completed was an incorrect harness assertion. Neither harness version has executed; frozen compiler/native flags and authored sources unchanged.",
+  "utc": "2026-11-18T08:59:27.447975+00:00"
+}

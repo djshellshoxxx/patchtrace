@@ -1,0 +1,49 @@
+{
+  "archive_files_verified_against_disk": 43,
+  "archive_sha256": "cdbf61d69fd198029c3e88f7acd208ee8575939c97d36b679654ae683165a66d",
+  "batch_count": 12,
+  "completed_batch_file_arguments": 282,
+  "completed_batches": [
+    "batch-01",
+    "batch-02",
+    "batch-09",
+    "batch-11"
+  ],
+  "config_files_verified_against_source": [
+    "pyproject.toml",
+    "tests/conftest.py",
+    "tests/stress/conftest.py"
+  ],
+  "evidence_payload_hashes_verified": 42,
+  "failures": [
+    {
+      "batch": "batch-02",
+      "classname": "tests.test_binexport_isolation",
+      "name": "test_run_process_memory_cap_is_enforced"
+    }
+  ],
+  "finding": "No discrepancy in coverage manifest, argv/environment receipts, archive contents, payload hashes or completed-report JUnit aggregation. Partial execution is not whole-suite qualification.",
+  "incomplete_batch_file_arguments": 563,
+  "incomplete_batches": [
+    "batch-03",
+    "batch-04",
+    "batch-05",
+    "batch-06",
+    "batch-07",
+    "batch-08",
+    "batch-10",
+    "batch-12"
+  ],
+  "independently_counted_junit_outcomes": {
+    "errors": 0,
+    "failures": 1,
+    "passed": 5308,
+    "skipped": 31,
+    "tests": 5340
+  },
+  "overall_status": "INCOMPLETE",
+  "scope": "read-only evidence consistency review; no pytest or other gates rerun",
+  "source_sha": "c023dec36a464c3e7e1a8689f52a22263f0c24c5",
+  "tracked_test_file_coverage": 845,
+  "unique_attempted_file_arguments": 845
+}

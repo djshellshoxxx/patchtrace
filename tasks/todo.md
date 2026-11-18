@@ -1,5 +1,25 @@
 # PatchTrace delivery tracker
 
+## 2026-11-18 retained inventory pages and native pilot
+
+- [x] Preserve exact published #303 and #304 histories in the inventory continuation; keep every remote branch.
+- [x] Retain explicitly chosen source architecture/pages without raising input/entry budgets, changing v1 identities or mutating investigations; full-source conflict witnesses and incomplete-scan selection refusal are verified.
+- [x] Reproduce and repair legacy `.tsp` replay drift and bounded Qt conflict-witness visibility; preserve original failure receipts.
+- [x] Qualify the actual saved KB5036893 CSV through backend replay and 13 shipped-CLI operations: four AMD64 pages expose 18,761 accepted claims; source, original import and provenance remain unchanged.
+- [x] Independently review combined code `c023dec3` / published `be9b168c`: 1,076 focused passes, 2 native Windows skips and 10 external probes; Ruff and schema checks pass.
+- [x] Repair bounded linked-worktree Git identity in future research receipts without editing earlier receipts.
+- [x] Freeze and independently review one real open-source patch oracle, compile both sides identically, run native Rizin once and retain the MISS / FAIL outcome; no target execution or accuracy bound.
+- [ ] Complete current-head hosted consolidation gates, SHA-guard merge with `[no release]`, then reconcile only demonstrably replaced PRs.
+- [ ] Complete the separate inventory continuation's full/Qt/Windows/package/native gates and merge after its consolidation prerequisite.
+- [ ] Complete production CSV retrieval on a host with working direct DNS/TLS; saved proxy capture is not that acceptance.
+- [x] Diagnose the L2 function-discovery miss with pinned source and authored shared/executable/PE controls; preserve the scored pilot and separate source-only options review.
+- [ ] Separately specify/build/qualify native symbol-seeding repair and a prospective source-oracle naming contract; no rescoring or accuracy promotion from diagnosis.
+- [ ] Complete reviewed real Windows pair provenance/consent and L3 labels before acquisition/scoring; no implicit target downloads.
+
+[Inventory evidence and handoff](../docs/qa/pw01-retained-pages-20261118.md);
+[native L2 pilot](../docs/qa/l2-native-pilot-20261118.md);
+[post-measurement discovery diagnosis](../docs/qa/l2-rizin-discovery-20261118.md).
+
 ## 2026-11-18 CVE consolidation qualification
 
 - [x] Independently review #302 and repair reproduced archive, chronology, source-rejection and pair-evidence defects.

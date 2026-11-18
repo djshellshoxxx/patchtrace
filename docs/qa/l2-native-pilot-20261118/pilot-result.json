@@ -1,0 +1,38 @@
+{
+  "aggregate_accuracy_or_bound": null,
+  "analysis_operation_count": 1,
+  "blocked_reasons": [],
+  "candidate_specific_tuning": false,
+  "case_manifest_canonical_sha256": "6167e3d3ff06f0d67ba1ceef4468dbecaeeab20556d75336459dd0bcc3d4471f",
+  "duration_seconds": 2.12,
+  "events": [
+    {
+      "engine": "rz-diff",
+      "phase": "started",
+      "status": null
+    },
+    {
+      "engine": "rz-diff",
+      "phase": "finished",
+      "status": "ok"
+    }
+  ],
+  "existing_exact_name_comparison": {
+    "id": "l2-node-http-parser-cve-2020-8287",
+    "outcome": "MISS",
+    "rank": null
+  },
+  "expected_function": "http_parser_execute",
+  "k": 5,
+  "kind": "scoped-native-l2-pilot-result/1",
+  "match_count": 5,
+  "network_during_analysis": "No network operation requested by the harness",
+  "oracle_sha256": "bbd619b791a64d39ec48740eebe8aeed84b0bff3dbd561b61bc0ce9aaed941d1",
+  "production_error_code": null,
+  "production_status": "ok",
+  "ranked_names": [],
+  "scope": "One independent ELF/GCC source-backed matching pilot; not Windows/MSVC acceptance, desktop acquisition, vulnerability attribution accuracy, or L3",
+  "source_commit": "9ac9cbeb8ba1947b5e0889e03dccad769a6d155b",
+  "source_tree": "eba3ca64508f9989c63dcbe0f42a90cd668ffebd",
+  "target_executed": false
+}

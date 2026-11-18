@@ -1,0 +1,119 @@
+[
+  {
+    "fixture": "shared",
+    "inventory_functions": 14,
+    "inventory_names": [
+      "sym._init",
+      "fcn.00001030",
+      "fcn.00001040",
+      "fcn.00001050",
+      "loc.imp.__cxa_finalize",
+      "entry0",
+      "sym.register_tm_clones",
+      "sym.__do_global_dtors_aux",
+      "entry.init0",
+      "sym.diag_stable_add",
+      "sym.diag_stable_xor",
+      "sym.diag_changed",
+      "sym.diag_dispatch",
+      "sym._fini"
+    ],
+    "native_names": [
+      "entry0",
+      "fcn.00001030",
+      "fcn.00001040",
+      "fcn.00001050",
+      "loc.imp.__cxa_finalize"
+    ],
+    "native_rows": 5,
+    "production_status": "ok",
+    "ranked_names": []
+  },
+  {
+    "fixture": "executable",
+    "inventory_functions": 13,
+    "inventory_names": [
+      "sym._init",
+      "sym.imp.__cxa_finalize",
+      "main",
+      "entry0",
+      "sym.deregister_tm_clones",
+      "sym.register_tm_clones",
+      "sym.__do_global_dtors_aux",
+      "entry.init0",
+      "sym.diag_stable_add",
+      "sym.diag_stable_xor",
+      "sym.diag_changed",
+      "sym.diag_dispatch",
+      "sym._fini"
+    ],
+    "native_names": [
+      "sym.deregister_tm_clones",
+      "sym.diag_changed",
+      "sym.diag_stable_add",
+      "sym.diag_stable_xor",
+      "sym.imp.__cxa_finalize"
+    ],
+    "native_rows": 5,
+    "production_status": "ok",
+    "ranked_names": [
+      "sym.diag_changed"
+    ]
+  },
+  {
+    "fixture": "authored-pe",
+    "inventory_functions": 20,
+    "inventory_names": [
+      "entry0",
+      "sym.tiny_v1.dll_memset",
+      "fcn.180001250",
+      "sym.tiny_v1.dll_checksum",
+      "sym.tiny_v1.dll_parse_header",
+      "fcn.1800013a0",
+      "fcn.1800013c0",
+      "fcn.180001450",
+      "fcn.180001460",
+      "fcn.180001470",
+      "fcn.180001480",
+      "sym.tiny_v1.dll_run_all",
+      "fcn.180001520",
+      "fcn.180001530",
+      "fcn.180001540",
+      "sym.tiny_v1.dll_cpp_entry",
+      "sym.tiny_v1.dll_util_mix",
+      "fcn.1800015a0",
+      "sym.tiny_v1.dll_util2_mix",
+      "fcn.1800015c0"
+    ],
+    "native_names": [
+      "fcn.180001250",
+      "fcn.1800013a0",
+      "fcn.1800013c0",
+      "fcn.180001450",
+      "fcn.180001460",
+      "fcn.180001470",
+      "fcn.180001480",
+      "fcn.1800014d0",
+      "fcn.1800014e0",
+      "fcn.1800014f0",
+      "fcn.180001500",
+      "fcn.180001520",
+      "fcn.180001530",
+      "fcn.180001540",
+      "fcn.1800015a0",
+      "fcn.1800015b0",
+      "fcn.1800015c0",
+      "fcn.180001620",
+      "fcn.180001640"
+    ],
+    "native_rows": 14,
+    "production_status": "ok",
+    "ranked_names": [
+      "fcn.1800013c0",
+      "fcn.180001450",
+      "fcn.1800013a0",
+      "fcn.180001460",
+      "fcn.1800014d0"
+    ]
+  }
+]
