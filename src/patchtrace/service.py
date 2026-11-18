@@ -10,8 +10,15 @@ from dataclasses import dataclass
 from pathlib import Path
 
 from .ingestion import display_text, inspect_artifact, safe_path
-from .input_readers import PairInputReaders
-from .models import AnalysisRun, AnalystAnnotation, ComparisonProject, FunctionMatch, InterpretationRun
+from .input_readers import PairInputReaders, ReadCheckpoint
+from .models import (
+    AnalysisRun,
+    AnalystAnnotation,
+    ComparisonProject,
+    FunctionMatch,
+    InterpretationRun,
+    Record,
+)
 from .normalization import normalize_ghidriff, verify_diff_identity
 from .persistence import ProjectStore, strict_json
 
@@ -86,7 +93,8 @@ class ProjectService:
 
     @classmethod
     def create(cls, older: Path, newer: Path, name: str, root: Path, *,
-               input_readers: PairInputReaders | None = None) -> ProjectService:
+               input_readers: PairInputReaders | None = None, project_id: str | None = None) -> ProjectService:
+        identity = {'id': Record(id=project_id).id} if project_id is not None else {}
         root = Path(root).resolve()
         options = ({}, {})
         save_options = {}
@@ -105,7 +113,7 @@ class ProjectService:
             artifacts = [inspect_artifact(older, 'older', root, created=created, **options[0]),
                          inspect_artifact(newer, 'newer', root, created=created, **options[1])]
             project = ComparisonProject(name=display_text(name.strip()) or 'Untitled comparison',
-                                        artifacts=artifacts)
+                                        artifacts=artifacts, **identity)
             if artifacts[0].sha256 == artifacts[1].sha256:
                 project.runs.append(AnalysisRun(status='identical', backend='none', backend_version='none',
                                                 settings={'reason': 'Input SHA-256 hashes are identical'}))
@@ -120,13 +128,21 @@ class ProjectService:
             raise
 
     @classmethod
-    def open(cls, root: Path, *, maintenance: bool = True) -> ProjectService:
-        """`maintenance=False` for read-only readers (series): skips the H8 legacy raw cleanup."""
+    def open(cls, root: Path, *, maintenance: bool = True, recover_interrupted: bool = True,
+             checkpoint: ReadCheckpoint | None = None) -> ProjectService:
+        """Disable both maintenance and recovery for committed reads without application mutations."""
+        options = {} if recover_interrupted else {'recover_interrupted': False}
+        if checkpoint is not None:
+            checkpoint(0)
+            options['checkpoint'] = checkpoint
         store = ProjectStore(root)
         try:
-            service = cls(store.root, store.load(), store)
-        except Exception:
-            store.close()
+            service = cls(store.root, store.load(**options), store)
+        except BaseException as exc:
+            try:
+                store.close()
+            except BaseException:
+                exc.add_note('PT-STORAGE: project close failed; resources may remain open')
             raise
         if maintenance:  # SPEC-07h H8: journalled, verified, best effort; never raises
             from .raw_cleanup import cleanup_legacy_raw_duplicates

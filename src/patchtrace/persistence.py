@@ -649,14 +649,20 @@ class ProjectStore:
             chunk = delete[start:start + 500]
             self.connection.execute(f'DELETE FROM history WHERE sequence IN ({",".join("?" * len(chunk))})', chunk)
 
-    def load(self, *, recover_interrupted: bool = True) -> ComparisonProject:
+    def load(self, *, recover_interrupted: bool = True,
+             checkpoint: ReadCheckpoint | None = None) -> ComparisonProject:
         import hashlib
         self._check_open()
+        options = {'checkpoint': checkpoint} if checkpoint is not None else {}
+        if checkpoint is not None:
+            checkpoint(0)
         try:
             row = self.connection.execute('SELECT payload,sha256 FROM current_snapshot WHERE singleton=1').fetchone()
             if row is None:
                 raise ValueError('PT-STORAGE: project snapshot is missing')
             payload, sha = row
+            if checkpoint is not None:
+                checkpoint(0)
             if len(payload.encode()) > MAX_SNAPSHOT_BYTES or hashlib.sha256(payload.encode()).hexdigest() != sha:
                 raise ValueError('PT-STORAGE: project snapshot hash failed')
             try:
@@ -664,14 +670,18 @@ class ProjectStore:
             except ValidationError as exc:
                 raise ValueError('PT-SCHEMA: stored project snapshot violates the v1 contract '
                                  f'(at {_error_location(exc)})') from None
-            self._verify_files(project)
+            if checkpoint is not None:
+                checkpoint(0)
+            self._verify_files(project, **options)
+            if checkpoint is not None:
+                checkpoint(0)
             self.project_id = project.id
             interrupted = [run for run in project.runs if recover_interrupted and run.status in {'queued', 'running'}]
             for run in interrupted:
                 run.status = 'failed'
                 run.error = 'Analysis was interrupted before a terminal result was saved'
             if interrupted:
-                project = self.save(project)
+                project = self.save(project, **options)
             return project
         except sqlite3.Error as exc:
             raise ValueError('PT-STORAGE: project snapshot cannot be read') from exc
