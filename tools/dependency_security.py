@@ -30,6 +30,11 @@ MAX_JSON = 16 * 1024 * 1024
 MAX_ITEMS = 5000
 MAX_DEPTH = 64
 PINS = {'pip-audit': '2.10.1', 'ruff': '0.17.5'}
+BOOTSTRAP_PIP = '26.3'
+BOOTSTRAP_WHEEL_SHA256 = 'f3b60b20ffaadd4415ed7957212a38ac63fa4c5fa375bd0f4a797777940fad13'
+BOOTSTRAP_WHEEL_URL = (
+    'https://files.pythonhosted.org/packages/07/25/'
+    'ee8c38ae72d66b844ce8eb9711ba905dba21ca1a8a0c960057c41cd23337/pip-26.3-py3-none-any.whl')
 WORKFLOW = '.github/workflows/dependency-security.yml'
 PLATFORMS = {'ubuntu-latest': 'Linux', 'windows-latest': 'Windows'}
 EXTRAS = {'runtime': ['search', 'rules'], 'packaging': ['dev', 'search', 'rules']}
@@ -424,6 +429,24 @@ def static_argv(python, root):
             '--ignore-noqa', '--no-cache', '--no-respect-gitignore', '--output-format', 'json']
 
 
+def bootstrap_requirements_text():
+    return f'pip=={BOOTSTRAP_PIP} --hash=sha256:{BOOTSTRAP_WHEEL_SHA256}\n'
+
+
+def bootstrap_commands(out, label):
+    require(label in {'scanner', 'profile'}, 'unknown bootstrap environment')
+    python = python_path(out, f'{label}-env')
+    return {
+        f'{label}-venv': [sys.executable, '-I', '-m', 'venv', str(out / f'{label}-env')],
+        f'{label}-bootstrap-identity': [python, '-I', '-c', IDENTITY_CODE],
+        f'{label}-bootstrap-inspect': [python, '-I', '-m', 'pip', 'inspect', '--local'],
+        f'{label}-bootstrap-check': [python, '-I', '-m', 'pip', 'check'],
+        f'{label}-bootstrap-install': pip_install(python, out / f'{label}-bootstrap-install.json',
+            ['--upgrade', '--force-reinstall', '--no-deps', '--require-hashes', '-r', str(out / 'bootstrap-pip.txt')]),
+        f'{label}-prepared-inspect': [python, '-I', '-m', 'pip', 'inspect', '--local'],
+    }
+
+
 def commands(out, root, project, profile):
     if profile != 'static':
         for requirement in selected_requirements(project, profile):
@@ -431,7 +454,7 @@ def commands(out, root, project, profile):
     scanner, product = python_path(out, 'scanner-env'), python_path(out, 'profile-env')
     pins = [f'{name}=={version}' for name, version in PINS.items() if profile != 'static' or name == 'ruff']
     result = {
-        'scanner-venv': [sys.executable, '-I', '-m', 'venv', str(out / 'scanner-env')],
+        **bootstrap_commands(out, 'scanner'),
         'scanner-install': pip_install(scanner, out / 'scanner-install.json', pins),
         'scanner-identity': [scanner, '-I', '-c', IDENTITY_CODE],
         'scanner-inspect': [scanner, '-I', '-m', 'pip', 'inspect', '--local'],
@@ -441,7 +464,7 @@ def commands(out, root, project, profile):
         result['static'] = static_argv(scanner, root)
     else:
         result.update({
-            'profile-venv': [sys.executable, '-I', '-m', 'venv', str(out / 'profile-env')],
+            **bootstrap_commands(out, 'profile'),
             'build-install': pip_install(product, out / 'build-install.json', project['build-system']['requires']),
             'profile-install': pip_install(product, out / 'profile-install.json',
                 ['--no-build-isolation', '-e', f'{root}[{",".join(EXTRAS[profile])}]']),
@@ -477,12 +500,68 @@ def validate_interpreter(identity, python, system, inspect):
             'pip inspect interpreter metadata differs')
 
 
-def validate_installation(inspect, identity, reports, root, *, owned=False):
+def validate_bootstrap_start(identity, before):
+    installed = distributions(before)
+    require(isinstance(identity, dict), 'missing bootstrap interpreter identity')
+    validate_interpreter(identity, identity.get('executable'), identity.get('system'), before)
+    require(set(installed) == {'pip'} and before['pip_version'] == installed['pip'][0] == identity['ensurepip'] and
+            'direct_url' not in installed['pip'][1], 'initial inventory is not the fresh ensurepip bootstrap')
+    require_selected(installed, [f'pip<={BOOTSTRAP_PIP}'])
+    return installed['pip'][0]
+
+
+def validate_bootstrap(record, final_identity):
+    require(isinstance(record, dict) and set(record) == {'identity', 'before', 'installation', 'after'},
+            'missing bootstrap transition evidence')
+    identity, before, report, after = (record[key] for key in ('identity', 'before', 'installation', 'after'))
+    original = validate_bootstrap_start(identity, before)
+    require(identity == final_identity, 'bootstrap and final interpreter identities differ')
+    prepared = distributions(after)
+    validate_interpreter(identity, identity['executable'], identity['system'], after)
+    require(set(prepared) == {'pip'} and after['pip_version'] == prepared['pip'][0] == BOOTSTRAP_PIP and
+            'direct_url' not in prepared['pip'][1] and after['environment'] == before['environment'],
+            'prepared bootstrap inventory differs from the pinned transition')
+    require(isinstance(report, dict) and report.get('version') == '1' and
+            report.get('pip_version') == original and report.get('environment') == before['environment'],
+            'bootstrap installation issuer/environment differs')
+    rows = report.get('install')
+    require(isinstance(rows, list) and len(rows) == 1 and isinstance(rows[0], dict),
+            'bootstrap installation must record exactly one target')
+    row = rows[0]
+    require(package_id(row.get('metadata')) == ('pip', BOOTSTRAP_PIP) and row.get('is_yanked') is False and
+            row.get('requested') is True and row.get('is_direct') is False, 'unapproved bootstrap installation target')
+    origin = row.get('download_info')
+    require(isinstance(origin, dict) and origin.get('url') == BOOTSTRAP_WHEEL_URL and
+            isinstance(origin.get('archive_info'), dict) and
+            isinstance(origin['archive_info'].get('hashes'), dict) and
+            origin['archive_info'].get('hashes', {}).get('sha256') == BOOTSTRAP_WHEEL_SHA256,
+            'bootstrap wheel origin/digest differs from the reviewed pin')
+    return {'from_version': original, 'to_version': BOOTSTRAP_PIP, 'wheel_sha256': BOOTSTRAP_WHEEL_SHA256}
+
+
+def bootstrap_record(out, label):
+    return {'identity': read_json(out / f'{label}-bootstrap-identity.stdout'),
+            'before': read_json(out / f'{label}-bootstrap-inspect.stdout'),
+            'installation': read_json(out / f'{label}-bootstrap-install.json'),
+            'after': read_json(out / f'{label}-prepared-inspect.stdout')}
+
+
+def validate_installation(inspect, identity, reports, root, *, owned=False, bootstrap=None):
+    """No transition means the predecessor ensurepip-only contract, never the current pipeline."""
     installed, reported = distributions(inspect), {}
     require(isinstance(identity, dict), 'missing or malformed interpreter identity')
     validate_interpreter(identity, identity.get('executable'), identity.get('system'), inspect)
-    require('pip' in installed and inspect['pip_version'] == installed['pip'][0] == identity['ensurepip'],
-            'inspect/installed/bootstrap pip identities differ')
+    require('pip' in installed and inspect['pip_version'] == installed['pip'][0],
+            'inspect and installed pip identities differ')
+    if bootstrap is None:
+        require(installed['pip'][0] == identity['ensurepip'], 'unproved change from the original ensurepip bootstrap')
+        unreported = {'pip'}
+    else:
+        proof = validate_bootstrap(bootstrap, identity)
+        require(installed['pip'][0] == proof['to_version'] and
+                inspect['environment'] == bootstrap['after']['environment'], 'final environment differs after bootstrap')
+        reported['pip'] = proof['to_version']
+        unreported = set()
     for report in reports:
         require(isinstance(report, dict) and report.get('version') == '1' and
                 report.get('pip_version') == inspect['pip_version'] and
@@ -506,7 +585,7 @@ def validate_installation(inspect, identity, reports, root, *, owned=False):
                 require(isinstance(hashes, dict) and isinstance(hashes.get('sha256'), str) and
                         SHA256.fullmatch(hashes['sha256']), 'missing installed wheel digest')
             reported[name] = version
-    require(set(installed) == set(reported) | {'pip'}, 'installed distribution has no build/install origin receipt')
+    require(set(installed) == set(reported) | unreported, 'installed distribution has no build/install origin receipt')
 
 
 def requirements_text(inventory):
@@ -515,6 +594,8 @@ def requirements_text(inventory):
 
 def validate_evidence(out, expected, root, project):
     validate_context(read_json(out / 'context.json'), expected)
+    require(read_bytes(out / 'bootstrap-pip.txt') == bootstrap_requirements_text().encode(),
+            'missing or changed reviewed bootstrap requirements')
     profile, system = expected['profile'], PLATFORMS[expected['platform']]
     plan = commands(out, root, project, profile)
     for name, argv in plan.items():
@@ -526,33 +607,46 @@ def validate_evidence(out, expected, root, project):
     for name, version in PINS.items():
         if profile != 'static' or name == 'ruff':
             require(name in tooling and tooling[name][0] == version, 'scanner version differs from pinned policy')
-    validate_installation(inspect, identity, [read_json(out / 'scanner-install.json')], root)
+    scanner_bootstrap = bootstrap_record(out, 'scanner')
+    validate_installation(inspect, identity, [read_json(out / 'scanner-install.json')], root,
+                          bootstrap=scanner_bootstrap)
     require(read_json(out / 'unaudited.json') == UNAUDITED, 'unaudited categories missing or changed')
     if profile == 'static':
         validate_static(read_json(out / 'static.stdout'), read_json(out / 'static.process.json')['exit_code'])
-        return {'kind': 'static', 'finding_count': 0}
+        return {'kind': 'static', 'finding_count': 0,
+                'bootstrap_pip': {'scanner': validate_bootstrap(scanner_bootstrap, identity)}}
     inspect = read_json(out / 'profile-inspect.stdout')
     identity = read_json(out / 'profile-identity.stdout')
     validate_interpreter(identity, python_path(out, 'profile-env'), system, inspect)
     inventory = validate_inventory(inspect, root, project, profile, system,
                                    read_json(out / 'profile-check.process.json')['exit_code'])
+    profile_bootstrap = bootstrap_record(out, 'profile')
     validate_installation(inspect, identity, [read_json(out / 'build-install.json'),
-                                             read_json(out / 'profile-install.json')], root, owned=True)
+                                             read_json(out / 'profile-install.json')], root, owned=True,
+                          bootstrap=profile_bootstrap)
     require(read_json(out / 'inventory.json') == inventory, 'derived inventory differs from raw installed evidence')
     require(read_bytes(out / 'audit-requirements.txt') == requirements_text(inventory).encode(),
             'audit requirements differ from complete installed closure')
     coverage = validate_audit(read_json(out / 'audit.stdout'), inventory['auditable'],
                               read_json(out / 'audit.process.json')['exit_code'])
     return {'kind': 'dependency', 'audited_distributions': coverage,
-            'repository_owned': inventory['repository_owned']}
+            'repository_owned': inventory['repository_owned'],
+            'bootstrap_pip': {'scanner': validate_bootstrap(scanner_bootstrap, scanner_bootstrap['identity']),
+                              'profile': validate_bootstrap(profile_bootstrap, identity)}}
 
 
 def execute_scan(out, expected, root, project):
     dump_new(out / 'context.json', expected)
     dump_new(out / 'unaudited.json', UNAUDITED)
+    with (out / 'bootstrap-pip.txt').open('x', encoding='utf-8', newline='\n') as stream:
+        stream.write(bootstrap_requirements_text())
     profile = expected['profile']
     plan = commands(out, root, project, profile)
     for name, argv in plan.items():
+        if name.endswith('-bootstrap-install'):
+            label = name.split('-', 1)[0]
+            validate_bootstrap_start(read_json(out / f'{label}-bootstrap-identity.stdout'),
+                                     read_json(out / f'{label}-bootstrap-inspect.stdout'))
         if name == 'audit':
             inspect = read_json(out / 'profile-inspect.stdout')
             inventory = validate_inventory(inspect, root, project, profile, PLATFORMS[expected['platform']],
@@ -562,6 +656,9 @@ def execute_scan(out, expected, root, project):
                 stream.write(requirements_text(inventory))
         record = run_logged(argv, out, name)
         successful(record)
+        if name.endswith('-prepared-inspect'):
+            prepared = bootstrap_record(out, name.split('-', 1)[0])
+            validate_bootstrap(prepared, prepared['identity'])
     return validate_evidence(out, expected, root, project)
 
 

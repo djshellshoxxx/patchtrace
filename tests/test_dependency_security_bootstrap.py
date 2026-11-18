@@ -5,7 +5,6 @@ import copy
 import importlib
 
 import pytest
-
 from test_dependency_security import authored_evidence, native_environment
 from test_dependency_security import project as project
 
@@ -46,6 +45,7 @@ def test_transition_preserves_original_issuer_and_pinned_target(scan, tmp_path):
     (('installation', 'pip_version'), '26.3'),
     (('installation', 'install', 0, 'metadata', 'version'), '26.2'),
     (('installation', 'install', 0, 'download_info', 'archive_info', 'hashes', 'sha256'), '0' * 64),
+    (('installation', 'install', 0, 'download_info', 'archive_info', 'hashes'), None),
     (('installation', 'install', 0, 'download_info', 'url'), 'https://example.invalid/pip.whl'),
     (('installation', 'install', 0, 'is_yanked'), True),
     (('installation', 'install', 0, 'requested'), False),

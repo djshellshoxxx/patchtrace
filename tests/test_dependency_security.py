@@ -323,14 +323,28 @@ def test_changed_command_raw_output_is_not_a_pass(scan, tmp_path):
         scan.process_receipt(tmp_path, 'authored', argv)
 
 
-def installation_report(packages, root):
+def installation_report(packages, root, *, pip_version='26.0'):
     rows = []
     for name, version in packages:
         info = ({'url': root.as_uri(), 'dir_info': {'editable': True}} if name == 'patchtrace' else
                 {'url': f'https://files.pythonhosted.org/packages/{name}-{version}-py3-none-any.whl',
                  'archive_info': {'hashes': {'sha256': 'f' * 64}}})
         rows.append({'metadata': {'name': name, 'version': version}, 'download_info': info, 'is_yanked': False})
-    return {'version': '1', 'pip_version': '26.0', 'environment': native_environment(), 'install': rows}
+    return {'version': '1', 'pip_version': pip_version, 'environment': native_environment(), 'install': rows}
+
+
+def authored_bootstrap(scan, out, label, identity):
+    before = {'version': '1', 'pip_version': identity['ensurepip'], 'environment': native_environment(),
+              'installed': [{'metadata': {'name': 'pip', 'version': identity['ensurepip']}}]}
+    after = copy.deepcopy(before)
+    after['pip_version'] = after['installed'][0]['metadata']['version'] = scan.BOOTSTRAP_PIP
+    report = installation_report([('pip', scan.BOOTSTRAP_PIP)], out, pip_version=identity['ensurepip'])
+    report['install'][0].update({'requested': True, 'is_direct': False, 'download_info': {
+        'url': scan.BOOTSTRAP_WHEEL_URL, 'archive_info': {'hashes': {'sha256': scan.BOOTSTRAP_WHEEL_SHA256}}}})
+    (out / f'{label}-bootstrap-identity.stdout').write_bytes(encoded(identity))
+    (out / f'{label}-bootstrap-inspect.stdout').write_bytes(encoded(before))
+    (out / f'{label}-bootstrap-install.json').write_bytes(encoded(report))
+    (out / f'{label}-prepared-inspect.stdout').write_bytes(encoded(after))
 
 
 def authored_evidence(scan, out, root, project, *, static=False):
@@ -344,32 +358,40 @@ def authored_evidence(scan, out, root, project, *, static=False):
         receipt = {'argv': argv, 'exit_code': 0, 'timed_out': False, 'output_limited': False, 'error': None,
                    'started_at': dt.datetime.now(dt.UTC).isoformat(), 'timeout_s': 600, 'elapsed_s': 0.1}
         (out / f'{name}.process.json').write_text(json.dumps(receipt))
-    tooling = {'version': '1', 'pip_version': '26.0', 'environment': native_environment(),
+    tooling = {'version': '1', 'pip_version': scan.BOOTSTRAP_PIP, 'environment': native_environment(),
                'installed': [{'metadata': {'name': name, 'version': version}}
-                             for name, version in [('pip', '26.0'), ('ruff', '0.17.5'), ('pip-audit', '2.10.1')]]}
+                             for name, version in [('pip', scan.BOOTSTRAP_PIP), ('ruff', '0.17.5'),
+                                                   ('pip-audit', '2.10.1')]]}
     (out / 'scanner-inspect.stdout').write_bytes(encoded(tooling))
     (out / 'scanner-install.json').write_bytes(encoded(installation_report(
-        [('ruff', '0.17.5'), ('pip-audit', '2.10.1')], root)))
+        [('ruff', '0.17.5'), ('pip-audit', '2.10.1')], root, pip_version=scan.BOOTSTRAP_PIP)))
     (out / 'unaudited.json').write_bytes(encoded(scan.UNAUDITED))
     (out / 'context.json').write_bytes(encoded(expected))
+    (out / 'bootstrap-pip.txt').write_text(scan.bootstrap_requirements_text())
     environments = ['scanner'] if static else ['scanner', 'profile']
     for label in environments:
         identity = {'executable': scan.python_path(out, f'{label}-env'), 'version': '3.12.14',
                     'prefix': str(out / f'{label}-env'), 'base_prefix': str(out / 'controller'),
                     'implementation': 'CPython', 'system': 'Linux', 'machine': 'x86_64', 'ensurepip': '26.0'}
         (out / f'{label}-identity.stdout').write_bytes(encoded(identity))
+        authored_bootstrap(scan, out, label, identity)
     if static:
         (out / 'static.stdout').write_bytes(b'[]')
     else:
         inspect = inspected(root)
+        inspect['pip_version'] = scan.BOOTSTRAP_PIP
+        next(row for row in inspect['installed'] if row['metadata']['name'] == 'pip')['metadata']['version'] = (
+            scan.BOOTSTRAP_PIP)
         inventory = scan.validate_inventory(inspect, root, project, 'runtime', 'Linux', 0)
         (out / 'profile-inspect.stdout').write_bytes(encoded(inspect))
         (out / 'inventory.json').write_bytes(encoded(inventory))
         (out / 'audit-requirements.txt').write_text(scan.requirements_text(inventory))
-        (out / 'build-install.json').write_bytes(encoded(installation_report([('setuptools', '85.0')], root)))
+        (out / 'build-install.json').write_bytes(encoded(installation_report(
+            [('setuptools', '85.0')], root, pip_version=scan.BOOTSTRAP_PIP)))
         pairs = [(row['metadata']['name'], row['metadata']['version']) for row in inspect['installed']
                  if row['metadata']['name'] not in {'setuptools', 'pip'}]
-        (out / 'profile-install.json').write_bytes(encoded(installation_report(pairs, root)))
+        (out / 'profile-install.json').write_bytes(encoded(installation_report(
+            pairs, root, pip_version=scan.BOOTSTRAP_PIP)))
         (out / 'audit.stdout').write_bytes(encoded({'dependencies': [dict(row, vulns=[])
                                                                     for row in inventory['auditable']], 'fixes': []}))
     for name in plan:
@@ -519,6 +541,8 @@ def test_installation_requires_same_pip_and_complete_environment(scan, tmp_path,
     inspect = scan.read_json(out / 'profile-inspect.stdout')
     identity = scan.read_json(out / 'profile-identity.stdout')
     reports = [scan.read_json(out / 'build-install.json'), scan.read_json(out / 'profile-install.json')]
+    bootstrap = scan.bootstrap_record(out, 'profile')
+    scan.validate_installation(inspect, identity, reports, tmp_path, owned=True, bootstrap=bootstrap)
     if where == 'inspect-pip':
         inspect['pip_version'] = '27.0'
     elif where == 'report-pip':
@@ -535,7 +559,7 @@ def test_installation_requires_same_pip_and_complete_environment(scan, tmp_path,
     else:
         reports[0]['environment']['platform_system'] = 'Windows'
     with pytest.raises(scan.EvidenceError):
-        scan.validate_installation(inspect, identity, reports, tmp_path, owned=True)
+        scan.validate_installation(inspect, identity, reports, tmp_path, owned=True, bootstrap=bootstrap)
 
 
 @pytest.mark.parametrize('requirement', ['--prefix=/unrelated', 'tool @ https://example.invalid/tool.whl',
