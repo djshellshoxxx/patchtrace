@@ -125,3 +125,7 @@ Saved/recent search advances to **D/R:50%** for the named slice: project-owned S
 ## Primary environment default repair checkpoint — 2026-11-18
 
 The default primary-child environment slice has specification, reproduced failure, minimal repair and independent regression evidence at `1f9ad863` (370 independent affected/additional passes,3 native Windows skips). D/R scope is50%; real native/manual J and exact-head full/platform/security G remain open. Explicit legacy full inheritance remains a documented analyst compatibility choice; default minimization is not a network sandbox. The broader primary resource-bound/security work remains incomplete. [Evidence](../qa/primary-environment-20261118/README.md).
+
+## Reviewed release-qualification continuation — 2026-11-18
+
+Combined source `ef0398577c97b926259b533c5776e88146244b24` on published #307 carries the independent repair of `05176698`: canonical-byte checks, finite evidence and unique artifact ownership. Root affected verification is 458 passed / 3 existing expected failures, with 19 independent controls passing. This completes the guard slice's D/R evidence only; the package/release row remains D/R = 50%. No J/G credit is added. Missing scan evidence, blocked Windows BinDiff disconnected acceptance, native/package/full exact-head gates and the literal commit hold continue to prevent publication. [Checkpoint](../qa/release-qualification-reviewed-20261118/README.md).

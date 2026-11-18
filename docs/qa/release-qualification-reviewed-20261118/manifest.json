@@ -1,0 +1,83 @@
+{
+  "schema": 1,
+  "created_at": "2026-11-18T15:33:23.113388+00:00",
+  "source_sha": "ef0398577c97b926259b533c5776e88146244b24",
+  "source_tree": "8676423272357d6abfcb019a782cd1b60c39bece",
+  "members": [
+    {
+      "name": "affected.log",
+      "bytes": 591,
+      "sha256": "d80206c4471c5024ed1b1693550dd59be83908493ff45bb2d9409b4813ec48c8"
+    },
+    {
+      "name": "affected.xml",
+      "bytes": 63241,
+      "sha256": "4a459949df660d400e342223a12ddb959888e95e2885532c458d292611525c90"
+    },
+    {
+      "name": "archive-verification.json",
+      "bytes": 809,
+      "sha256": "ed0da15d4d8757535edc7869b4f67e0bef209f659bbb50810fb045787142be33"
+    },
+    {
+      "name": "checkpoint-preparation.txt",
+      "bytes": 474,
+      "sha256": "7571ee739b019e673886e3b9e0df42b27cc35c1a7dbba826c20019f14d83e4f5"
+    },
+    {
+      "name": "independent/evidence.zip",
+      "bytes": 34138,
+      "sha256": "83c4033002309b1987708a253ec3a05cddce4a7e77fe2ea780fc72fbc2fefbab"
+    },
+    {
+      "name": "independent/final-review.md",
+      "bytes": 6568,
+      "sha256": "68d53047f4dc9c363465d5610d88a5cfc3aa53e76c74b8e4566108949c35e443"
+    },
+    {
+      "name": "independent/manifest.json",
+      "bytes": 3922,
+      "sha256": "836fad5d5718e5a63d9ec0ea94759cd6cbf5015d43720d1e723f1bdd06c68296"
+    },
+    {
+      "name": "independent/original-review.md",
+      "bytes": 4944,
+      "sha256": "3deb49e8ff8cfae33fb6f150096dd35f2d425ab58ae7719752d35b0cf682ab93"
+    },
+    {
+      "name": "initial-unresolved-affected.log",
+      "bytes": 591,
+      "sha256": "0d29fa5945052fab069133830bf1cdb303213cc0064d5f8ce7861d4a1bb02d1a"
+    },
+    {
+      "name": "initial-unresolved-affected.xml",
+      "bytes": 61983,
+      "sha256": "b51082c124ac374601af529108a9fa3c7985bed5c1d4680daad19c96398d1050"
+    },
+    {
+      "name": "initial-unresolved-context.txt",
+      "bytes": 348,
+      "sha256": "bcd1d86e99aee68ee0bcde393d8d9b5220852a54152a649cf7db62b13c73a537"
+    },
+    {
+      "name": "initial-unresolved-ruff.log",
+      "bytes": 19,
+      "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+    },
+    {
+      "name": "ruff.log",
+      "bytes": 19,
+      "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+    },
+    {
+      "name": "source-context.json",
+      "bytes": 1748,
+      "sha256": "5a5eb0b786377d378c91a762c777b58a7bbdb5ea64b9ea4e2bfc1d600448024e"
+    }
+  ],
+  "archive": {
+    "name": "evidence.zip",
+    "bytes": 56081,
+    "sha256": "ff1c246959653d9c07969cd2e42ffea659d5d93bebd18db1ac2f14ded7610644"
+  }
+}

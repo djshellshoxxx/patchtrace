@@ -205,3 +205,7 @@ A separate append-only branch on published #307 `58fc1306` carries spec/tests `7
 ## Retained-CVE combined review — 2026-11-18
 
 The staleness/report, CVRF bridge and freshness-hook chains are combined with the actual published advisory-bound PR #313 head `a4061979547ef88855fbdb085228a42c3be21603`. Tested source `ac789497597fba3cb87696990d171a7a27024fca` passes 1,924 cases, zero skips, after two further SQLite fixes. Original code/evidence attribution and failed controls remain committed; no main promotion or superseded closure occurs while mandatory gates are unresolved. [Checkpoint](../../qa/pilot-cvrf-reviewed-20261118/README.md).
+
+## Reviewed release-guard follow-on — 2026-11-18
+
+A focused branch on #307 `58fc1306` integrates reviewed release guard source `05176698` through combined source `ef0398577c97b926259b533c5776e88146244b24`. Root 458-pass/3-xfail results and independent 19-control acceptance are retained with all original failures. This does not merge #304/#307, close old work, qualify a release or waive missing gates. The scan lane is assigned separately; Windows BinDiff network refusal remains blocked. [Evidence](../../qa/release-qualification-reviewed-20261118/README.md).

@@ -1,0 +1,83 @@
+{
+  "schema": 1,
+  "created_at": "2026-11-18T15:18:40.215747+00:00",
+  "implementation_sha": "05176698d0265e4e1e577e06fa38bb52d7bbcf43",
+  "prior_code_sha": "0bb63363ed675266ec4572a85ee0c0861aa714b7",
+  "qualification_credit": "Local authored regression/independent controls only; exact-source hosted and native acceptance remains pending.",
+  "members": [
+    {
+      "name": "command.json",
+      "bytes": 1601,
+      "sha256": "30d7750ac752d9f0ba6e0d17d61926073a4e914f850cdae680584d10f7a2ae28"
+    },
+    {
+      "name": "exact-source-affected.log",
+      "bytes": 591,
+      "sha256": "6d3a6f929705bdc3e05bbacdbacf0331d7f7406a7c349464f5051e4ab412f23f"
+    },
+    {
+      "name": "exact-source-affected.xml",
+      "bytes": 64574,
+      "sha256": "eea5e0521a58dd702b2383203a858c29ac5d70d3e3807af9cac2c87c205d3cc9"
+    },
+    {
+      "name": "original-reviewer-adversarial-red.log",
+      "bytes": 3569,
+      "sha256": "763139125a1fa50e6973b564f05ef4e1d43cfeac20cd56fe3b16cfbd713ec401"
+    },
+    {
+      "name": "original-reviewer-adversarial-red.xml",
+      "bytes": 4308,
+      "sha256": "2b90809fa6f57944e8190ff9dc4ecb85f16038f47a3707117fbbe0c641e7732a"
+    },
+    {
+      "name": "original-reviewer-test_release_adversarial.py",
+      "bytes": 5657,
+      "sha256": "1367a4acff162a691290375a30447473a40531f283773dc1e074ad4da1f174e4"
+    },
+    {
+      "name": "release-review-repair-affected.log",
+      "bytes": 591,
+      "sha256": "1e2c1218b577cf178ef54770212d5ce95ccb206e8512d96ae88068ec3746dea1"
+    },
+    {
+      "name": "release-review-repair-affected.xml",
+      "bytes": 64574,
+      "sha256": "add8dbd83a785a7e6c29eb296529d8a036c138473d981a07bcc960f24a2e945e"
+    },
+    {
+      "name": "release-review-repair-focused.log",
+      "bytes": 179,
+      "sha256": "7104bf2612bb03ac8461343dab97ead187743c20b32efe5b4beedd5981e20ffa"
+    },
+    {
+      "name": "release-review-repair-focused.xml",
+      "bytes": 13227,
+      "sha256": "eb7d818d3a3f7b993e63eb9793158a3ebd9deb0ed58c7371ed78e486d8d04ef6"
+    },
+    {
+      "name": "release-review-repair-red.log",
+      "bytes": 18692,
+      "sha256": "0cdbc080a84134afd5012a2c716c25308bcbde6148cdafd4dd8f1ede38adb04a"
+    },
+    {
+      "name": "release-review-repair-red.xml",
+      "bytes": 19239,
+      "sha256": "f15c273b07782bd0c81409037c490f4ce5fa69bcea21c5b4ded3e979aefd1905"
+    },
+    {
+      "name": "release-review-repair-ruff.log",
+      "bytes": 19,
+      "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+    },
+    {
+      "name": "ruff-exact-source.log",
+      "bytes": 19,
+      "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+    }
+  ],
+  "archive": {
+    "bytes": 26298,
+    "sha256": "74cf24d02a6e27565e569c8692a7671397ccfd811ebfb924e5b5fadb5c593537"
+  }
+}

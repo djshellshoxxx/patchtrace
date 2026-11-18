@@ -2028,3 +2028,8 @@ Root independently reproduced an old Build completion executing recent text with
 ## [PRIMARY-ENVIRONMENT-DEFAULTS-20261118]
 
 Nine failing regressions reproduced default external child inheritance of authored dummy credentials and injection variables. Reviewed implementation `1f9ad863` enables the existing allowlist by default in backend/CLI and both fresh desktop readers, retaining explicit compatibility settings and mandatory bundle isolation. Independent detached qualification:370 passed,3 existing native Windows skips; required Ruff/whitespace pass. All intermediate fixture and invocation failures remain. Native H7/full/platform/security acceptance and primary memory/output limits remain open. [Exact source, repair, review and raw evidence](qa/primary-environment-20261118/README.md).
+
+
+## [RELEASE-QUALIFICATION-REVIEWED-20261118]
+
+Shared publisher guard and independent repairs: root combined 458 passed / 3 existing xfails; 19 independent controls pass. Native/scanner/publication holds remain explicit. [Receipt](qa/release-qualification-reviewed-20261118/README.md).

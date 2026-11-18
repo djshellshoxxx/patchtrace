@@ -16,6 +16,18 @@ modules, plus `test_owned_publication.py`. Portable tests do not certify Windows
 filesystem behavior; the QA publication prerequisite runs these controls on both
 Linux and Windows before the full suite.
 
+## Exact-source release qualification (2026-11-18)
+
+`tools/release_qualification.py` is the stdlib, read-only publication guard shared
+by desktop and backend-bundle publishing jobs. It checks the actual checkout and
+commit hold, exact repository/SHA/workflow/latest-attempt ownership, mandatory job
+and critical-step outcomes, bounded unmocked native status artifacts, and existing
+tag/asset identity. It never creates tags/releases or uploads/removes assets.
+Cadence remains in `release_gate.py`. Missing dependency/security scan evidence
+blocks publication; no scanner pass is synthesized. Hermetic verification lives
+in `tests/test_release_qualification.py` and the existing release/bundle workflow
+contract tests. Native and hosted qualification remain separate from these tests.
+
 | Module | Responsibility | Verification seam |
 |---|---|---|
 | `tools/branch_inventory.py` | Read-only full-history branch ancestry, patch evidence and exact-tip inventory replay; no ref mutation or deletion authorization | Real authored Git graphs and atomic report preservation in `tests/test_branch_inventory.py` |

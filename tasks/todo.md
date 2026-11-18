@@ -1500,3 +1500,9 @@ Full `QT_QPA_PLATFORM=offscreen python -m pytest -q` for this isolated native sl
 - [x] Enable the existing allowlist by default consistently for backend/CLI and fresh desktop settings; preserve explicit compatibility choices and forced bundle isolation.
 - [x] Obtain independent review and370 affected/additional passes with3 native Windows skips, without weakening redaction or process-tree assertions.
 - [ ] Complete native H7 Linux/Windows, full exact-head/platform/package/security gates before promotion; separately repair primary memory/total-output budgets. [Receipt](../docs/qa/primary-environment-20261118/README.md).
+
+
+### [RELEASE-QUALIFICATION-REVIEWED-20261118]
+
+- [x] Implement and independently repair bounded exact-source publisher qualification; retain original red evidence and combined 458-pass / 3-xfail receipt.
+- [ ] Qualify the separate dependency/security lane and actual exact-source native/package/full gates; Windows BinDiff disconnected check remains blocked. No release is authorized.
