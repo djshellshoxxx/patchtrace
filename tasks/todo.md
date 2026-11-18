@@ -1709,3 +1709,9 @@ See the [immutable continuation checkpoint](../docs/qa/verified-continuation-202
   (`693d0bc7`, tests `451e463d`); root independent review/hosted execution remains
   pending. Dependency hashes and Linux full frozen smoke remain separately open
   in this exact receipt; see `docs/qa/corpus-archive-cache-20261118.md`.
+
+- [x] Implement CODEX-14 Linux full frozen smoke wiring (`dd0ad00b`), preserving
+  six original/spec reds and the actual490-pass/one-baseline-failure gate.
+- [ ] Independently qualify that source, repair the separately confirmed IR
+  import-purity reachability, and obtain actual frozen/native hosted evidence.
+  See `docs/qa/linux-full-frozen-smoke-20261118.md`; CODEX-5 remains open.

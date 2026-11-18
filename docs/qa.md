@@ -2263,3 +2263,13 @@ verify every cold/restored archive before fresh extraction. Fifteen-file gate:
 11-red/2-positive, four type-refusal reds and the missed action-tag neighbor are
 retained in `docs/qa/corpus-archive-cache-20261118.md` and its sealed archive.
 This does not qualify hosted cache restoration or native engines/packages.
+
+## 2026-11-18 — Linux full frozen CLI smoke candidate
+
+Production `dd0ad00b` runs the existing full harness before archive publication.
+Six spec-first failures are retained; exact ten-file gate490 passed/1 existing
+import-purity failure (also reproduced unchanged at c7d3f258). This is not a green
+combined gate or native frozen acceptance. Source-CLI and five builder boundary
+controls pass; required Ruff passes after an unused test-import cleanup. Complete
+receipts: `docs/qa/linux-full-frozen-smoke-20261118.md`. Root owns independent
+review and the separate directory-publication import-boundary repair.
