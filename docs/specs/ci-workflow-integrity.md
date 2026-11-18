@@ -51,6 +51,30 @@ a cooperative CI workspace boundary; it does not claim resistance to an active
 local writer swapping an archive between the hash tool and extractor, nor does
 it replace hosted/native engine acceptance.
 
+## Linux full frozen CLI smoke (2026-11-18)
+
+After preparing the Linux onedir package and checking its existing resource,
+license and inventory prerequisites, run the same `tools/frozen_smoke.py`
+harness used by Windows acceptance against the exact staged executable. It
+enumerates the current command registry and covers headless help/error paths,
+the self-test, owned synthetic project/series paths and existing BinExport,
+intelligence and unified packaging controls. No analysis target is executed.
+
+The host interpreter invokes this harness with an argv list, the source checkout
+as cwd, the executable as one separate path argument and the existing Qt
+environment (offscreen by default). Bound the complete invocation to at most
+900 seconds and require a successful exit. A missing CLI, failed check or timeout
+must stop before writing any new lite/full archive or digest sidecar. Do not
+replace this with one command's help output, suppress an individual failure, or
+create a second command registry. Full backend/disconnected acceptance and the
+existing unpacked Linux platform smokes retain their independent scopes.
+
+Behavioral tests drive the builder's actual pre-archive path using inert owned
+files and a recorded subprocess seam; no PyInstaller build or executable launch
+is inferred from them. The existing real source-CLI smoke verifies the reused
+harness separately. Hosted execution of the actual frozen Linux package remains
+required before any frozen compatibility claim.
+
 ## Dependency-hash scope
 
 The historical dependency-hash finding is separate from action pinning. The

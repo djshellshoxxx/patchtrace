@@ -2,7 +2,8 @@
 
 2026-11-18 CI input-integrity amendment: `docs/specs/ci-workflow-integrity.md`
 (`CI-INT`, approved repair; hosted qualification remains separate) owns immutable
-remote action references and the separately scoped dependency-hash design.
+remote action references, corpus archive checks, Linux frozen CLI smoke wiring,
+and the separately scoped dependency-hash design.
 
 Canonical alias for every spec file under `docs/specs/`: the number each file's own text declares, its canonical alias, its status, and the code that owns it. Read this before you cite a spec number. Source files are not edited here. Where a title or prose uses another number, the alias in this file wins.
 
