@@ -1754,3 +1754,11 @@ See the [immutable continuation checkpoint](../docs/qa/verified-continuation-202
 - [x] Specify and test then preserve the primary error plus a bounded retention note; no extra cleanup scope.
 - [x] Verify exact source `97408609`: 318 passed, no skips, 301 source-pinned modules; normal Ruff/diff pass.
 - [ ] Independently replay the corrected source and integrate only after review; keep Windows/native/KB/package gates separate.
+
+### P2-NAV-1 signal navigation validation (2026-11-18)
+
+- [x] Preserve original persisted-row/reopen failures and all initial fixture/ceiling corrections.
+- [x] Specify and test current ownership/excerpt validation and unsupported-representation refusal before the narrow UI helper.
+- [x] Record exact-source 175-pass affected gate, unchanged 7-case original and 2-case root probes, full Ruff, and 150-member verified archive.
+- [ ] Root independently review/replay and selectively integrate the source and QA chain.
+- [ ] Retain separate native Windows, packaged/frozen, manual desktop and broader Phase2 reference obligations; no release or whole-project closure.

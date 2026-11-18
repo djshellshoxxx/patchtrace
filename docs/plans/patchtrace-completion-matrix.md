@@ -377,3 +377,17 @@ navigation are separate candidates under review, absent from this source.
 ### Phase 2 reference disposition supplement (frozen 068513a7)
 
 All nine historical reference record families now have an explicit producer/consumer and incompatible-field disposition in [the follow-up](phase2-reference-contract-disposition-20261118.md). This adds no whole-branch closure or product-completion percentage. Current enrichment/1 and pilot/1 remain separate. The documented UI live-location validation omission has a real saved-row/reopen/navigation reproduction (3 failed / 4 positives) and is assigned as a separate repair; 697 passing neighboring checks do not close it. Native/provider/calibration and broader reference-only gaps remain stated in the receipt.
+
+## P2-NAV-1 bounded navigation candidate — 2026-11-18
+
+Pinned source `9592f8b362537c0545010d4499e35770a248297e` from `068513a7`;
+[sealed QA](../qa/signal-navigation-validation-20261118.md). Current run/artifact/
+function/side/address and line/excerpt validation, unsupported representation
+refusal, unchanged valid decompiled navigation, repeated live-data checking,
+and refusal without project/ranking/store mutation are covered by authored
+persisted/reopened offscreen controls. The shared validator and scoring/storage
+implementations remain byte-identical. The host seam and global tooltip gate pass.
+This is a source-qualified candidate awaiting root independent final review,
+not native Windows, packaged/frozen or manual analyst acceptance. Original
+failures and fixture corrections stay visible; the overlapping test counts
+do not define a completion percentage or discharge broader reference/research work.

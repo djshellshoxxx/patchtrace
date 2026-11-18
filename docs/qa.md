@@ -2321,3 +2321,18 @@ cleanup failures remain observable. Exact source passes 318 checks with no skips
 1-failed/51-passed and new 6-failed/15-passed receipts remain.
 [Complete correction receipt](qa/core-held-inputs-cleanup-20261118.md).
 Corrected independent review and native/package composition remain separate.
+
+## 2026-11-18 — P2-NAV-1 signal navigation validation
+
+Final source `9592f8b362537c0545010d4499e35770a248297e` delegates only the
+existing signal-location action to a 19-line presentation helper. It refuses
+unsupported representations and validates current ownership/excerpt identity
+before any reveal. The unchanged host ceiling passes at 3069/3077 lines.
+Ten-file author gate: 175 passed, zero failures/skips; unchanged original
+location probe: 7 passed; unchanged root representation probe: 2 passed.
+Required full Ruff passes. Original 3-red/4-positive, initial fixture failures,
+corrected 8-red/3-positive, one-line ceiling failure and representation
+1-red/1-positive plus 4-red/11-positive are preserved in
+[the sealed receipt](qa/signal-navigation-validation-20261118.md). Counts are
+not additive coverage; root independent final review and native/manual/package
+acceptance remain separate. No detector, score, schema or stored evidence change.
