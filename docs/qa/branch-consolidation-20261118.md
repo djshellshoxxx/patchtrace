@@ -72,6 +72,7 @@ Containment is evidence that content exists, not proof of identical behaviour; e
   change), #168 chain (RD-F03 desktop controls, GUI creation-retry acceptance test), #176 (table header tooltips and
   keyboard sort; Alt+Up/Down collides with diff navigation), `instance-b-features` (call-graph ego layout, capa
   raw cache).
+* **Checked and not needed from #289:** `d9ec26e8` BinDiff per-table row caps (main already bounds the algorithm and function reads it performs and only schema-checks `basicblock`/`instruction`), `a698dadd` rz-diff reversed-side guard (superseded by the singleton-ownership refusal from #293, carried by #297).
 * **Docs and research** (#183, #129–#135, R1/R2 research branches): not imported; their numbers predate the merged
   unified-soundness and accuracy-program work and need a stale-claims review first.
 * `claude/patchtrace-cli-dotpath-spec-er6hha`: keep; cited as CLI-DRAFT-05 by the spec-gaps audit.
@@ -93,6 +94,13 @@ prints the plan. With `--apply` it re-checks that each branch still points at th
 skipped), pushes `archive/20261118/<branch>` at that SHA and deletes the branch. Restore with
 `git push origin archive/20261118/<branch>:refs/heads/<branch>`. Rows marked `close-pr-first`, `after-merge`,
 `review` or `no` are never touched.
+
+## Next slices
+
+1. Hosted CI green on this PR, then owner merge; close the superseded PRs listed above and run the archiver.
+2. RD-F03 desktop controls (`ui_raw_alignment.py` on the #168 chain). `ui.py` is at 3,074 of its 3,077-line seam budget (`tests/test_gui_host_seam.py`), so extract an existing block from `ui.py` first, then wire the controller.
+3. A-32 live acceptance: dispatch `unified-live-gates.yml` and confirm the RB-01 lua pair normalizes with abstention on Linux and Windows.
+4. From #289: UE-R7 orientation-free L-39 arbiter cut (`7237c55c`, `arbiter` version 2) against the post-#287 arbiter, red test first.
 
 ## Verification limits
 
