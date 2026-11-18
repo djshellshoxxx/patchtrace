@@ -487,8 +487,9 @@ def _row_checks(row: dict) -> list[dict]:
                        and counts.get('right', 0) >= 0.99 * counts.get('truth', 0),
                        f'right {counts.get("right")} of {counts.get("truth")}, wrong {counts.get("wrong")}, '
                        f'spurious {counts.get("spurious")} (a property of the generator, not an accuracy claim)'),
-                _check('ticks-per-function', counts.get('ticks', 0) <= TICKS_PER_FUNCTION * n,
-                       f'{counts.get("ticks")} ticks for {n} functions')]
+                _check('ticks-per-function',
+                       isinstance(counts.get('ticks'), int) and counts['ticks'] <= TICKS_PER_FUNCTION * n,
+                       f'{counts.get("ticks", "missing")} ticks for {n} functions')]
     if row['stage'] == 'ingest':
         ok = all(k in counts for k in ('generated_functions', 'generated_instructions')) \
             and counts.get('functions') == counts.get('generated_functions') \
@@ -523,10 +524,12 @@ def evaluate(rows: Sequence[dict]) -> list[dict]:
         row['checks'] = _row_checks(row)
     ladder = {r['n']: r for r in out if r['stage'] == 'ladder' and r['status'] == 'measured'}
     if 10_000 in ladder and 60_000 in ladder:
-        small, large = ladder[10_000]['counts'].get('ticks', 0), ladder[60_000]['counts'].get('ticks', 0)
-        ratio = large / small if small else float('inf')
-        ladder[60_000]['checks'].append(_check('work-linear', ratio < MAX_LINEAR_RATIO,
-                                               f'60k costs {ratio:.2f}x the budget ticks of 10k (limit {MAX_LINEAR_RATIO}x)'))
+        small, large = ladder[10_000]['counts'].get('ticks'), ladder[60_000]['counts'].get('ticks')
+        present = isinstance(small, int) and isinstance(large, int)  # a missing count must fail, never read as 0
+        ratio = large / small if present and small else float('inf')
+        detail = (f'60k costs {ratio:.2f}x the budget ticks of 10k (limit {MAX_LINEAR_RATIO}x)' if present
+                  else 'ticks missing from a ladder row')
+        ladder[60_000]['checks'].append(_check('work-linear', present and ratio < MAX_LINEAR_RATIO, detail))
     calls = sorted((r for r in out if r['stage'] == 'ui_calls' and r['status'] == 'measured'), key=lambda r: r['n'])
     shape = ('visible_rows', 'columns', 'first_paint_calls', 'sort_calls', 'filter_calls')
     for big in calls[1:]:
