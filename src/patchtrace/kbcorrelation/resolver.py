@@ -162,9 +162,17 @@ def resolve(rows: Sequence[IndexRow], *, kb: str, scope: ProductScope, file_name
     if scope.winbindex_key is None:
         return _empty(kb, file_name, scope, None, ('NO_NEWER',), NO_KEY, skipped_rows)
     named = [r for r in rows if r.build.file_name == file_name]
-    line = tuple(sorted((r for key in index_keys(scope.winbindex_key) for r in timeline(named, key)), key=order_key))
+    product_rows = tuple(r for key in index_keys(scope.winbindex_key) for r in timeline(named, key))
+    # Winbindex includes native and WoW64 rows in one version key. Other machines are not predecessors or variants
+    # of the selected file; keep the source rows intact and scope only this derived timeline.
+    line = tuple(sorted((r for r in product_rows if r.machine == scope.architecture), key=order_key))
     change: ChangeInfo = change_in_kb(line, kb)
     if not change.target_rows:
+        machines = sorted({r.machine for r in product_rows if r.kb == kb})
+        if machines:
+            return _empty(kb, file_name, scope, scope.winbindex_key, ('ARCH',),
+                          f'File-index rows for this KB are {", ".join(machines)}; selected product requires AMD64.',
+                          skipped_rows)
         return _empty(kb, file_name, scope, scope.winbindex_key, ('NO_NEWER',), NOT_IN_INDEX, skipped_rows)
     pairs: dict[str, PairProposal] = {}
     for target in {r.sha256: r for r in reversed(change.target_rows)}.values():

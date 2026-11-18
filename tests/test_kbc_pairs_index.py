@@ -2,6 +2,7 @@
 (KB-integration-plan 7.2 pair rules, 8.1). Synthetic records; sockets denied; nothing is fetched."""
 from __future__ import annotations
 
+import copy
 import dataclasses
 import gzip
 import json
@@ -73,6 +74,25 @@ def test_changed_in_kb_gives_a_grade_a_pending_pair_and_skipped_entries_make_it_
     assert (pair['grade'], pair['bytes_state'], pair['lineage_state']) == ('A', 'pending', 'index-adjacent')
     assert pair['older_sha256'] == 'c' * 64 and pair['newer_sha256'] == 'd' * 64
     assert 'INDEX_GAP' in pair['reason_codes'] and doc['warnings']
+
+
+def test_mixed_native_wow64_rows_keep_native_pair_and_raw_record(ready):
+    kb, inv, scopes = ready
+    document = record(DRV)
+    for native, wow in [('c' * 64, '0' * 64), ('d' * 64, '1' * 64)]:
+        document[wow] = copy.deepcopy(document[native])
+        document[wow]['fileInfo'].update(sha256=wow, machineType=0x14C)
+    save_record(kb, DRV, doc=document)
+    source = kb.workspace / wiring.INDEX_DIR / f'{DRV}@2099-02-12.json'
+    before = source.read_bytes()
+    code, out, _ = kb('pairs', inv, '--product', scopes['client'], '--file', DRV)
+    (pair,) = out['result']['pairs']
+    assert code == 3 and out['result']['skipped_rows'] == 2
+    assert pair['grade'] == 'A' and pair['changed_in_kb'] == 'yes'
+    assert (pair['older_sha256'], pair['newer_sha256']) == ('c' * 64, 'd' * 64)
+    assert source.read_bytes() == before
+    rows, _ = wiring.WorkspaceFileIndex(kb.workspace).rows(DRV, '11-24H2')
+    assert any(row.sha256 == '1' * 64 and row.machine == 'x86' for row in rows)
 
 
 def test_a_clean_record_is_complete_and_names_the_confounding_window(ready):
@@ -272,14 +292,29 @@ def test_plan_accepts_a_pair_id_prefix_and_rejects_an_unknown_one(ready):
 def test_plan_of_a_blocked_pair_is_exit_2_with_the_reason_text(ready):
     kb, inv, scopes = ready
     doc = record(DRV)
-    for entry in doc.values():
-        entry['fileInfo']['machineType'] = ARM64
+    del doc['d' * 64]['fileInfo']['lastSectionVirtualAddress']
     save_record(kb, DRV, doc=doc)
     flags = ('--product', scopes['client'], '--file', DRV)
     pair_id = kb('pairs', inv, *flags)[1]['result']['pairs'][0]['pair_id']
     code, out, _ = kb('plan', inv, '--pair', pair_id, *flags)
     assert code == 2 and out['result']['pair']['grade'] == 'X' and out['result']['plan'] is None
-    assert 'compares AMD64 PE files' in out['error']
+    assert 'Only a delta payload' in out['error']
+
+
+def test_only_other_machine_rows_report_arch_and_cannot_be_planned(ready):
+    kb, inv, scopes = ready
+    document = record(DRV)
+    for entry in document.values():
+        entry['fileInfo']['machineType'] = ARM64
+    save_record(kb, DRV, doc=document)
+    flags = ('--product', scopes['client'], '--file', DRV)
+    _, out, _ = kb('pairs', inv, *flags)
+    assert out['result']['pairs'] == []
+    (resolution,) = out['result']['resolutions']
+    assert resolution['blockers'] == ['ARCH'] and resolution['changed_in_kb'] == 'unknown'
+    assert 'arm64' in resolution['note']
+    code, out, _ = kb('plan', inv, *flags)
+    assert code == 4 and out['result']['plan'] is None
 
 
 def test_plan_without_candidates_is_unavailable(ready):
