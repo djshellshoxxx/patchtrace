@@ -2068,3 +2068,16 @@ Root's independent exact-source replay passes the same 464 cases in 19.35 s
 and the six unchanged historical cap controls in a separate invocation; the
 receipts are retained without adding overlapping coverage counts. Path
 budgets/lazy CSR and native/manual/full/platform acceptance remain separate open gates.
+
+## [SCANNER-BOOTSTRAP-REMEDIATION-20261118]
+
+Reviewed source `0c004b68` explicitly records the fresh ensurepip bootstrap and
+hash-pinned pip 26.3 installation before scanner/product dependencies. The exact
+affected gate reports **631 passed / 3 existing expected failures**, with a
+separate **160-pass** root review. Actual Linux runtime and packaging audits
+include all 17/32 distributions, including pip, and report zero vulnerabilities,
+skips or fixes; independent CLI/root validation agrees. Pip is the only changed
+package version versus the preserved failed predecessors. Static still refuses
+79 diagnostics. Windows/native/integrated publication holds remain; no full-suite
+rerun or overall clean-security claim follows.
+[Source, primary pins and complete transition receipts](qa/autonomous-ci-20261118/pip-bootstrap/README.md).
