@@ -110,5 +110,10 @@
     "Three native Windows subprocess checks skipped and unverified",
     "Native H7 Linux/Windows, exact-head full/package/security/manual acceptance open",
     "Existing explicit external full-inheritance and named passthrough choices remain"
-  ]
+  ],
+  "independent_review_document": {
+    "path": "independent-review.md",
+    "bytes": 3320,
+    "sha256": "543a52e2c45142e5907a232d90b7c9d7ff5f90dc9676a56b4af22ede0f5c8c0f"
+  }
 }
