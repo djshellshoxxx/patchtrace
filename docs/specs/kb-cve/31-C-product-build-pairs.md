@@ -69,6 +69,28 @@ This ordering must not be exposed as a vulnerability probability. If a newer ver
 
 The existing index-row proposal seam must enforce the component and orientation checks even when called directly, outside the filename-filtered resolver. Distinct normalized basenames carry the existing NAME_MISMATCH hard block. The timeline's KB identifier, SHA-256 and BASE-row ordering are deterministic display tie-breakers only; they cannot establish temporal order when both rows have equal release date and numeric build/UBR. Such proposals retain their rows with ORDER_UNVERIFIED, incompatible lineage and grade X. This does not change manual pair selection or imply verified product mapping, complete update coverage or a vulnerability probability.
 
+Chronology certainty amendment (2026-11-18): index-row orientation requires an
+explicit release date on both rows. Distinct dates establish the order; equal
+dates additionally require both stated numeric release builds and a strictly
+increasing build/UBR. Missing dates and builds remain unknown, never artificial
+earliest values. Display ordering may still use the existing stable keys, but an
+unestablished proposal order carries `ORDER_UNVERIFIED`, incompatible lineage,
+grade X and an unverified fix boundary. The `changed_in_kb` assessment also stays
+unknown when its predecessor is not demonstrably earlier, different bytes share
+the target's chronological position, or the claimed unchanged run lacks an
+ordered provenance path. Existing local/manual assertion workflows are unchanged.
+
+Fix-boundary certainty amendment (2026-11-18): a newer row naming the advisory's
+fixed build does not override contradictory older-row evidence. If all older
+stated builds in that same numeric build family are already at or beyond the
+fixed build, the boundary is `contradicted`. If older claims straddle that
+boundary, or the newer row carries conflicting builds within the fixed build's
+family, it is `unverified`. Different build-family prefixes in an explicitly
+shared update heading remain separate; a sibling prefix alone cannot contradict
+the selected fixed build. An unconfounded newer match with no such contradiction
+remains `source-supported`, an index/advisory relationship rather than proof of
+vulnerability repair in the binary or any function.
+
 ## C4. Formal interval algorithm
 
 Target update T on the selected product lineage; let valid old/new build observations o,n have o < n. Seek the nearest verified predecessor o to T and earliest verified new build n at/after T with no known intermediate security or preview updates. A cumulative update may include other fixes even at one step: indicate multi-CVE-confounded. If any build branch changes across T, do not treat it as an adjacent pair. Unknown intervening releases result in coverage_unknown=true and do not qualify the label 'isolates target update'.
