@@ -28,6 +28,11 @@ from .ingestion import file_fingerprint, safe_path, sha256_file, verify_artifact
 from .models import ComparisonProject, now
 
 SCHEMA_VERSION = 1
+MAX_RETRY_DATABASE_BYTES = 1024 * 1024
+_CURRENT_SNAPSHOT_SQL = ('CREATE TABLE current_snapshot (singleton INTEGER PRIMARY KEY CHECK(singleton=1), '
+                         'payload TEXT NOT NULL, sha256 TEXT NOT NULL)')
+_HISTORY_SQL = ('CREATE TABLE history (sequence INTEGER PRIMARY KEY AUTOINCREMENT, revision INTEGER NOT NULL, '
+                'created TEXT NOT NULL, payload TEXT NOT NULL, sha256 TEXT NOT NULL)')
 MAX_SNAPSHOT_BYTES = 256 * 1024 * 1024
 HISTORY_KEEP = 100
 HISTORY_MAX_BYTES = 512 * 1024 * 1024
@@ -224,26 +229,50 @@ def _error_location(exc: ValidationError) -> str:
 
 
 def _abandoned_creation(path: Path) -> bool:
-    """True for the database a creation leaves when it died before committing its first snapshot.
-
-    The caller holds the exclusive project lock, so no live creator owns the file. A database that holds
-    a snapshot, a history row or any foreign table is never treated as abandoned."""
+    """Recognize only a bounded, exact current empty schema under the caller's project lock."""
     try:
-        if path.stat().st_size == 0:
+        info = path.lstat()
+        if not stat.S_ISREG(info.st_mode) or info.st_nlink != 1 or info.st_size > MAX_RETRY_DATABASE_BYTES:
+            return False
+        # Immutable reads ignore companions; never erase possibly retained data or
+        # let SQLite recovery modify it during this admission check.
+        for suffix in ('-journal', '-wal', '-shm'):
+            try:
+                Path(f'{path}{suffix}').lstat()
+            except FileNotFoundError:
+                continue
+            return False
+        if info.st_size == 0:
             return True
-        probe = sqlite3.connect(path, timeout=5)
+        probe = sqlite3.connect(path.resolve().as_uri() + '?mode=ro&immutable=1', uri=True, timeout=0)
+        steps = 0
+
+        def progress():
+            nonlocal steps
+            steps += 1000
+            return int(steps >= 100_000)
+
         try:
-            if probe.execute('PRAGMA user_version').fetchone()[0] not in (0, SCHEMA_VERSION):
+            probe.set_progress_handler(progress, 1000)
+            probe.setlimit(sqlite3.SQLITE_LIMIT_LENGTH, MAX_RETRY_DATABASE_BYTES)
+            probe.setlimit(sqlite3.SQLITE_LIMIT_SQL_LENGTH, 4096)
+            probe.execute('PRAGMA trusted_schema=OFF')
+            if probe.execute('PRAGMA user_version').fetchone()[0] != SCHEMA_VERSION:
                 return False
-            tables = {row[0] for row in probe.execute("SELECT name FROM sqlite_master WHERE type='table'")
-                      if not row[0].startswith('sqlite_')}
-            if not tables:
-                return True
-            return tables == {'current_snapshot', 'history'} and not probe.execute(
-                'SELECT EXISTS(SELECT 1 FROM current_snapshot) OR EXISTS(SELECT 1 FROM history)').fetchone()[0]
+            schema = probe.execute('SELECT type,name,tbl_name,sql FROM sqlite_schema LIMIT 4').fetchall()
+            expected = {('table', 'current_snapshot', 'current_snapshot', _CURRENT_SNAPSHOT_SQL),
+                        ('table', 'history', 'history', _HISTORY_SQL),
+                        ('table', 'sqlite_sequence', 'sqlite_sequence', 'CREATE TABLE sqlite_sequence(name,seq)')}
+            if len(schema) != len(expected) or set(schema) != expected:
+                return False
+            if probe.execute('PRAGMA quick_check(1)').fetchall() != [('ok',)]:
+                return False
+            return not probe.execute('SELECT EXISTS(SELECT 1 FROM current_snapshot) '
+                                     'OR EXISTS(SELECT 1 FROM history) '
+                                     'OR EXISTS(SELECT 1 FROM sqlite_sequence)').fetchone()[0]
         finally:
             probe.close()
-    except (sqlite3.Error, OSError):
+    except (sqlite3.Error, OSError, ValueError):
         return False
 
 
@@ -373,11 +402,8 @@ class ProjectStore:
                     # Legacy sqlite3 mode does not BEGIN before PRAGMA/DDL; make initialization atomic.
                     self.connection.execute('BEGIN IMMEDIATE')
                     self.connection.execute(f'PRAGMA user_version={SCHEMA_VERSION}')
-                    self.connection.execute('CREATE TABLE current_snapshot (singleton INTEGER PRIMARY KEY '
-                                            'CHECK(singleton=1), payload TEXT NOT NULL, sha256 TEXT NOT NULL)')
-                    self.connection.execute('CREATE TABLE history (sequence INTEGER PRIMARY KEY AUTOINCREMENT, '
-                                            'revision INTEGER NOT NULL, created TEXT NOT NULL, payload TEXT '
-                                            'NOT NULL, sha256 TEXT NOT NULL)')
+                    self.connection.execute(_CURRENT_SNAPSHOT_SQL)
+                    self.connection.execute(_HISTORY_SQL)
             else:
                 version = self.connection.execute('PRAGMA user_version').fetchone()[0]
                 if version != SCHEMA_VERSION:
