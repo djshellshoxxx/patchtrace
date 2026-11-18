@@ -185,7 +185,8 @@ def test_acceptance_witness_retention_rekeys_only_the_arbiter_channel():
     assert dict(REGISTRY.channel_versions)['arbiter'] == 3 and ENGINE_VERSION == 'ude/2'
     assert [(old, new) for old, new in zip(before.channel_versions, REGISTRY.channel_versions, strict=True)
             if old != new] == [(('arbiter', 2), ('arbiter', 3))]
-    assert before.proof_versions == REGISTRY.proof_versions and before.digest() == REGISTRY.digest()
+    assert before.proof_versions == REGISTRY.proof_versions
+    assert before.digest() != REGISTRY.digest()  # channel versions also participate in registry_digest
     assert before.pass_table_digest() == REGISTRY.pass_table_digest()
     assert compute_config_digest(before) != compute_config_digest(REGISTRY)
 
