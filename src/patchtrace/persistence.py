@@ -24,6 +24,7 @@ from uuid import uuid4
 from pydantic import ValidationError
 
 from . import verified_backup
+from .directory_publication import publish_directory_no_replace as _publish_no_replace
 from .ingestion import file_fingerprint, safe_path, sha256_file, verify_artifact
 from .models import ComparisonProject, now
 
@@ -208,19 +209,6 @@ def _clear_readonly_and_retry(function, path, _exc):
     # Copied artifacts/raw outputs are read-only; Windows refuses to delete them otherwise.
     os.chmod(path, stat.S_IWRITE | stat.S_IREAD)
     function(path)
-
-
-def _publish_no_replace(stage: Path, destination: Path) -> None:
-    """Move stage to an absent destination. POSIX os.replace would replace an empty dir."""
-    if os.name == 'nt':
-        os.replace(stage, destination)  # Windows refuses to replace an existing directory.
-        return
-    os.mkdir(destination)  # reservation: fails if anything appeared at destination
-    try:
-        os.rename(stage, destination)
-    except OSError:
-        os.rmdir(destination)
-        raise
 
 
 def _error_location(exc: ValidationError) -> str:
