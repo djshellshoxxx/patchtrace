@@ -196,7 +196,7 @@ def test_main_window_every_action_and_control_has_a_registry_tooltip(window):
 
 PANEL_BATCH_PENDING_TIPS = {
     'capabilities.retry', 'capabilities.tabs', 'graph.diagram',
-    'graph.status', 'graph.tabs', 'kb.footer', 'rules.tabs', 'search.kinds', 'search.save', 'search.saved',
+    'graph.status', 'graph.tabs', 'kb.footer', 'rules.tabs', 'search.kinds',
 }
 
 

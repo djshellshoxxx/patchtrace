@@ -103,3 +103,7 @@ initial 307-branch/297-PR mechanical inventory. Empty GitHub review collections
 are not review approval. Four fresh #304 native fixture receipts are narrowly
 credited at their recorded source tree; full/Qt/Windows/package/security remain
 unverified. The local incomplete full-suite attempt is preserved, not counted.
+
+## Saved-search independent integration checkpoint — 2026-11-18
+
+Saved/recent search advances to **D/R:50%** for the named slice: project-owned Save/Run/Delete and CLI operations, compatible mode/filter replay, and bounded per-user recent text are implemented and independently reviewed. The delayed Build execution-intent defect was reproduced and repaired at `c30c7911`; the combined published #307 base passed376 affected checks at `f021f2d0`. Real/native/manual J and exact-head full/platform/security G remain unverified. Original receipts and research boundaries remain unchanged. [Review and scope](../qa/saved-search-reviewed-20261118/README.md).
