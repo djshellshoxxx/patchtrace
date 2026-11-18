@@ -118,6 +118,38 @@ preflights retain their existing stricter behavior; this amendment changes only
 the store's authoritative retry decision. The established cooperative-lock and
 noncooperating pathname-race limits above remain in force.
 
+Follow-up ownership requirement (2026-11-18): a successful read-only admission
+does not authorize unlinking whatever later occupies `project.sqlite3` or its
+companion names. If the candidate is replaced after admission, during connection
+opening or before initialization, creation must refuse and preserve the
+replacement database and any companion evidence. Initialization failure must
+not delete a preexisting file reached through a reused pathname. The implementation
+must bind mutation to a validated owned database, or conservatively retain an
+uncertain captured file; a final pathname-stat check followed by unlink is not
+an ownership mechanism. Healthy empty-current and zero-byte retries remain
+required. The earlier schema-only QA checkpoint does not establish this guarantee.
+
+The retry strategy reuses the admitted file in place. Recheck candidate identity,
+metadata and companion absence before and immediately after opening the writable
+connection, then validate schema/emptiness on that actual connection within the
+initial transaction. Existing empty tables are not recreated. For a preexisting
+zero-byte file, schema creation remains uncommitted until the first snapshot
+succeeds; cancellation, ingestion/save failure or close rolls it back. Retry
+rollback must retain the original database bytes and inode and remove only
+artifacts positively published by the failed attempt.
+
+New database creation reserves its file exclusively and records that owned file
+separately from reused candidates. Only that ownership record can authorize
+initialization/service rollback cleanup; observing a pathname later does not
+create ownership. Refuse an observed replacement before accessing schema or
+initializing the database, preserving it and any newly observed companions.
+These checks and the SQLite transaction address the reproduced admission/open/
+initialization seams. They do not make arbitrary noncooperating filesystem
+renames or journal creation between checks race-free: SQLite recovery on first
+database access and final owned-file cleanup retain the established cooperative
+filesystem assumption. No namespace-race immunity or native filesystem
+qualification is claimed.
+
 ### Normalizer derived metadata boundary (2026-11-05)
 
 Enhanced upstream function records may not supply PatchTrace-reserved derived metadata keys `upstream_similarity`, `diff_types`, `upstream_name`, `instructions_hash`, `assembly_unavailable`, or `upstream_one_to_many`. The normalizer rejects their presence with `PT-SCHEMA` instead of accepting forged provenance, even when the supplied value is null. Ordinary upstream metadata remains preserved. Rejected imports preserve raw source bytes and prior committed results. This boundary does not introduce one-to-many normalization or change the stored schema.
