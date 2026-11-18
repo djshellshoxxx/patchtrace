@@ -129,7 +129,12 @@ advisory readers; this follow-up makes no total store responsiveness claim.
 ## Budgets and lifecycle
 
 Before body loading, cap the metadata scan at 1,001 rows and refuse more than 1,000
-retained rows or 16 MiB total body bytes. Bound decoded structure to 100,000 nodes,
+retained rows or 16 MiB combined stored-field bytes across all selected rows. This
+stricter combined limit includes bodies and every text/metadata column, measured as
+`length(CAST(column AS BLOB))`, including UTF-8 and bytes following embedded NULs.
+Integer metadata contributes its SQLite text-form byte length. The limit is checked
+using scalar SQL lengths before the shared reader loads any full row; individual
+rows do not receive independent budgets. Bound decoded structure to 100,000 nodes,
 depth 32, 4,096 cards and 16,384 field refs across the captured rows. These bounds
 limit admission, not completeness claims. Exceeding them leaves CVRF unavailable
 with a limit reason; it does not select a convenient prefix. Check cooperative
@@ -166,3 +171,12 @@ No malformed row becomes evidence, and older cards remain withheld. Existing val
 context identities and the shared enrichment schema/reader remain unchanged. Controls
 retain the independent BLOB failures and exercise real SQL NULL/numeric neighbors,
 deterministic refusal, no named leads, and restoration of unchanged valid context.
+
+The follow-up metadata-budget review confirmed that the original body-only byte
+limit did not constrain other full-row fields. The combined budget above replaces
+that body-only allowance; a valid body near 16 MiB may now be refused once its row
+metadata is counted. Valid admitted context identities remain unchanged. Controls
+cover each variable text column, UTF-8/NUL byte accounting, aggregate multiple rows,
+and acceptance exactly at the complete selected-row budget with refusal one byte
+below it. Preserve the independent metadata-budget failures separately from the
+earlier storage-class qualification.
