@@ -134,6 +134,86 @@ Timestamp, elapsed time, random UUID and filesystem path never influence
 parser/entry identity. A fetched import separately binds its exact retrieval
 receipt, including acquisition time; a local import's timestamp is not identity.
 
+### 3.1 Explicit retained source pages (2026-11-18)
+
+The existing v1 parser, serialized records, default limits, identities and replay
+remain unchanged. A separate offline action can retain a source page from the
+complete immutable raw bytes of an existing import. It appends a new import;
+it never rewrites a source, changes an investigation revision or selects a row.
+The original SourceDoc, asserted source and retrieval receipt remain exact.
+V1 PE classification is pinned to its original eight suffixes: exe, dll, sys,
+efi, drv, ocx, cpl and scr. Shared acquisition-policy additions cannot change a
+saved v1 row's state. V2 `InventoryPageEntry` additionally recognizes tsp; a v1
+tsp claim remains descriptive-only under its original inventory/entry IDs.
+
+`InventoryRetention` is a strict frozen record with `architecture` equal to
+all/amd64/arm64/x86/unknown (default all) and one-based `page` in 1..100000
+(default 1). This architecture is a retention filter, not an assertion. A named
+architecture includes rows resolved to that architecture plus unknown/conflicted
+architecture rows for review; all includes every accepted row. Existing context
+assertions, unsafe-filename rejection and selection eligibility are unchanged.
+
+`inventory_csv.parse_inventory_page(raw, context, retention, *,
+limits=DEFAULT_LIMITS, cancel=None) -> CsvInventoryPage` scans once to EOF or the
+captured logical-record ceiling. A page contains up to `limits.max_entries`
+matching accepted rows in original logical-record order. Blank/header/banner and
+rejected rows do not consume page positions; duplicates and conflicts do. No
+hard ceiling or caller-lowered limit is raised. All normal lexical, metadata,
+section, cancellation and wall-time checks apply outside the retained page too.
+Fatal parsing, resource and cancellation errors publish nothing. An EOF-confirmed
+page with no matching rows raises PT-KBC-INPUT and appends nothing.
+
+Compact per-scope conflict summaries cover every accepted scanned row, including
+rows before and after the page. Their count is bounded by `max_records`; full
+InventoryEntry objects are retained only for the selected page. Grouping uses
+the existing normalized basename/architecture/product/release/build scope and
+known-value contradiction rules. A conflict elsewhere in that scope marks every
+retained member conflicted, so page boundaries cannot hide contrary evidence.
+For each retained group with a cross-row metadata conflict, retain one
+`InventoryConflictWitness`: conflict_group, field (version_components/size_bytes/
+date_text/time_text), first and second CsvRecordRef. The two distinct source
+records witness the contradiction; witnesses remain present independently of
+diagnostic truncation. Duplicate links name earlier retained entries only;
+every matching source claim remains independently reachable on its own page.
+
+`CsvInventoryPage` is a separately versioned parsed record, with
+contract='kb-file-inventory/2', parser_version=2, the existing inventory fields,
+retention, scan_complete, matching_count, excluded_count, omitted_count and
+conflict_witnesses (at most 5000, one per retained conflicting scope). Accepted,
+duplicate and conflict counts still describe retained entries. Rejected counts
+cover scanned rejected data. Matching/excluded counts cover scanned accepted
+rows inside/outside the architecture filter; omitted_count is matching_count
+minus accepted_count. Counts are exact only if scan_complete is true, otherwise
+they describe the observed prefix. Truncated means scanning stopped before EOF;
+deliberate page/architecture omissions are separately counted. Any omission,
+incomplete scan, conflict or existing partial condition gives status partial.
+
+The v2 inventory identity binds raw digest, canonical context, exact limits and
+retention policy in a separate identity version. Entry identities still bind
+that inventory identity and the original logical record. Source and row
+references retain their original raw digest, fields, logical record, physical
+line span and section. A new page never rebinds a prior selection or v1 ID.
+InventoryImport keeps its outer contract/table and accepts either parsed
+version. Verification dispatches to the captured parser/policy; altering a
+policy, witness or observed count cannot bypass deterministic raw replay.
+
+`inventory_store.retain_inventory(ws, import_id, retention, *, cancel=None)`
+returns `(InventoryImport, added)` after verifying the parent import and its raw
+source. It reuses the parent's exact context, limits and source provenance.
+Repeated retention of the same policy is idempotent, including requests made
+from another page of that source. No fresh acquisition time is invented.
+Unknown imports use PT-KBC-INPUT; corrupt stored evidence uses PT-KBC-VERIFY.
+SourceError/KbcStoreError cancellation remains PT-KBC-CANCEL.
+
+`kb inventory retain IMPORT_ID --architecture amd64 --page 1` invokes this
+offline action. Architecture/page controls in the retained-source UI are
+separate from filters and pagination over an already retained page. The shared
+service displays the policy, scan status and observed counts. An incomplete v2
+source scan cannot feed filename selection or replayed hints because unseen
+records may contradict retained claims; the refusal preserves earlier results.
+Existing v1 selection/replay behavior is unchanged. Import/fetch request plans
+and exact network consent are unchanged.
+
 ## 4. Saved HTML and exact network plans
 
 `sources/support_links.py` accepts bounded saved HTML bytes and an explicit

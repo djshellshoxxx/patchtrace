@@ -31,6 +31,11 @@ INVENTORY_CSV = (b'Example OS 24H2 for x64-based Systems\r\n'
                  b'File name,File version,File size,Date,Time\r\n'
                  b'ExampleSvc.dll,10.0.26100.5001,"1,024","2099-03-\r\n01",12:00\r\n'
                  b'ExampleData.dll,10.0.26100.5001,unknown,2099-03-01,12:00\r\n')
+INVENTORY_PAGE_CSV = (b'File name,File version,File size,Architecture\r\n'
+                     b'ExampleSvc.dll,10.0.26100.5001,1024,arm64\r\n'
+                     b'ExampleSvc.dll,10.0.26100.5001,1024,x64\r\n'
+                     b'ExampleData.tsp,10.0.26100.5001,1024,x64\r\n'
+                     b'ExampleSvc.dll,10.0.26100.5002,1024,x64\r\n')
 SUPPORT_HTML = (b'<h2>File information</h2><p>Download the file information for the cumulative update '
                 b'<a href="https://go.microsoft.com/fwlink/?linkid=20995099001">'
                 b'Download file information for KB5099001</a></p>')
@@ -146,7 +151,8 @@ def inventory_models() -> dict:
     return {'InventoryClaimRef': InventoryClaimRef,
             **{name: getattr(inventory, name) for name in
                ('InventoryLimits', 'InventoryContext', 'CsvRecordRef', 'CsvDiagnostic',
-                'InventorySection', 'InventoryEntry', 'CsvInventory')},
+                'InventorySection', 'InventoryEntry', 'CsvInventory', 'InventoryPageEntry',
+                'InventoryRetention', 'InventoryConflictWitness', 'CsvInventoryPage')},
             **{name: getattr(store, name) for name in
                ('InventoryImport', 'SupportImport', 'RetrievalProvenance')},
             'InventorySelection': InventorySelection}
@@ -156,8 +162,12 @@ def valid_inventory_records() -> dict:
     """Authored examples bind exact raw bytes and context; no I/O or authenticity inference."""
     from patchtrace.kbcorrelation import inventory_store as store
     from patchtrace.kbcorrelation.contracts import InventoryClaimRef
-    from patchtrace.kbcorrelation.inventory_contracts import InventoryContext
-    from patchtrace.kbcorrelation.inventory_csv import parse_inventory
+    from patchtrace.kbcorrelation.inventory_contracts import (
+        InventoryContext,
+        InventoryLimits,
+        InventoryRetention,
+    )
+    from patchtrace.kbcorrelation.inventory_csv import parse_inventory, parse_inventory_page
     from patchtrace.kbcorrelation.inventory_selection import InventorySelection
     from patchtrace.kbcorrelation.sources.inventory_fetch import build_plan
 
@@ -183,9 +193,13 @@ def valid_inventory_records() -> dict:
                                        retrieved_at=STAMP, plan_sha=plan.plan_sha)
     selection = InventorySelection(import_id=inventory.import_id, entry_id=entry.entry_id,
                                     scope_id=C, coverage_sha256=B, asserted_scope=False)
+    page = parse_inventory_page(INVENTORY_PAGE_CSV, context, InventoryRetention(architecture='amd64'),
+                                limits=InventoryLimits(max_entries=2))
     return {'InventoryClaimRef': claim, 'InventoryLimits': parsed.limits, 'InventoryContext': context,
             'CsvRecordRef': entry.reference, 'CsvDiagnostic': parsed.diagnostics[0],
             'InventorySection': parsed.sections[0], 'InventoryEntry': entry, 'CsvInventory': parsed,
+            'InventoryPageEntry': page.entries[1], 'InventoryRetention': page.retention,
+            'InventoryConflictWitness': page.conflict_witnesses[0], 'CsvInventoryPage': page,
             'InventoryImport': inventory, 'SupportImport': support, 'RetrievalProvenance': receipt,
             'InventorySelection': selection}
 
@@ -203,6 +217,15 @@ INVENTORY_INVALID = {
     'CsvInventory': (({'accepted_count': 0}, 'accepted count must match retained entries'),
                      ({'inventory_id': A}, 'identity binds exact bytes, context and parsing budgets'),
                      ({'parser_version': True}, 'parser version does not coerce a boolean literal')),
+    'InventoryPageEntry': (({'state': 'descriptive-only'}, 'v2 recognizes the TSP PE suffix'),),
+    'InventoryRetention': (({'page': True}, 'source page numbers do not coerce booleans'),
+                           ({'page': 0}, 'source pages are one-based'),
+                           ({'architecture': 'x64'}, 'retention uses canonical architecture names')),
+    'InventoryConflictWitness': (({'field': 'architecture'}, 'a witness names one known metadata contradiction'),),
+    'CsvInventoryPage': (({'omitted_count': 0}, 'omitted count includes matching rows outside the retained page'),
+                         ({'conflict_witnesses': []}, 'cross-page conflicts retain a source-wide witness'),
+                         ({'scan_complete': False}, 'an incomplete scan must explicitly mark truncation'),
+                         ({'parser_version': True}, 'parser version does not coerce a boolean literal')),
     'InventoryImport': (({'import_id': A}, 'import identity binds parser identity and source provenance'),),
     'SupportImport': (({'import_id': A}, 'support identity binds source, explicit page and link digest'),
                       ({'parser_version': True}, 'parser version does not coerce a boolean literal')),
@@ -217,7 +240,8 @@ def build_inventory_examples() -> dict:
         valid = json.loads(record.model_dump_json())
         invalid = [{'example': valid | {'unexpected_field': 1}, 'reason': 'extra fields are forbidden'}]
         if 'contract' in valid:
-            invalid.append({'example': valid | {'contract': valid['contract'].removesuffix('/1') + '/2'},
+            prefix, version = valid['contract'].rsplit('/', 1)
+            invalid.append({'example': valid | {'contract': f'{prefix}/{int(version) + 1}'},
                             'reason': 'unsupported future contract version'})
         invalid.extend({'example': valid | patch, 'reason': reason} for patch, reason in INVENTORY_INVALID[name])
         out[name] = {'valid': valid, 'invalid': invalid}

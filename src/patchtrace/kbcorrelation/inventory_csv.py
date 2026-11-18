@@ -10,7 +10,7 @@ import re
 import time
 from collections import defaultdict
 from collections.abc import Callable, Iterator
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 from pydantic import ValidationError
 
@@ -21,14 +21,20 @@ from .inventory_contracts import (
     UINT64_MAX,
     CsvDiagnostic,
     CsvInventory,
+    CsvInventoryPage,
     CsvRecordRef,
+    InventoryConflictWitness,
     InventoryContext,
     InventoryEntry,
     InventoryLimits,
+    InventoryPageEntry,
+    InventoryRetention,
     InventorySection,
     entry_identity,
     inventory_identity,
+    inventory_page_identity,
     normalize_inventory_filename,
+    normalize_inventory_page_filename,
 )
 from .sources.cvrf import SourceError
 
@@ -229,7 +235,7 @@ def _contradicts(entries: list[InventoryEntry]) -> bool:
 
 
 class _Parser:
-    def __init__(self, raw_sha: str, context: InventoryContext, limits: InventoryLimits):
+    def __init__(self, raw_sha: str, context: InventoryContext, limits: InventoryLimits, *, page: bool = False):
         self.sha, self.context, self.limits = raw_sha, context, limits
         self.identity = inventory_identity(raw_sha, context, limits)
         self.entries: list[InventoryEntry] = []
@@ -239,6 +245,8 @@ class _Parser:
         self.header: dict[str, int] | None = None
         self.had_header = False
         self.section_conflict = False
+        self.filename = normalize_inventory_page_filename if page else normalize_inventory_filename
+        self.entry_type = InventoryPageEntry if page else InventoryEntry
 
     def ref(self, row: _Row) -> CsvRecordRef:
         return CsvRecordRef(raw_sha256=self.sha, logical_record=row.number, line_start=row.start_line,
@@ -296,7 +304,7 @@ class _Parser:
             self.note('COLUMN_COUNT', 'The data row does not match its section header column count.', ref, error=True)
             return
         values = {name: row.fields[index] for name, index in self.header.items()}
-        filename = normalize_inventory_filename(values['file name'])
+        filename = self.filename(values['file name'])
         if filename is None:
             self.rejected += 1
             self.note('INVALID_FILENAME', 'The filename is unsafe or is not a supported plain basename.', ref, error=True)
@@ -351,7 +359,7 @@ class _Parser:
         state = ('conflicted' if conflicts else 'descriptive-only' if not is_pe else
                  'unknown' if architecture == 'unknown' or version is None or 'INVALID_METADATA' in codes
                  or 'INVALID_SIZE' in codes else 'metadata-only')
-        self.entries.append(InventoryEntry(
+        self.entries.append(self.entry_type(
             entry_id=entry_identity(self.identity, row.number), reference=ref, original_fields=row.fields,
             original_filename=values['file name'], basename=name, original_version=values['file version'],
             version_components=version, original_size=original_size, size_bytes=size, date_text=values.get('date'),
@@ -444,5 +452,122 @@ def parse_inventory(raw: bytes, context: InventoryContext, *, limits: InventoryL
                           duplicate_count=duplicate_count, conflict_count=conflict_count,
                           diagnostics_omitted=parser.omitted, truncated=truncated,
                           status='partial' if partial else 'complete')
+    check()
+    return result
+
+
+@dataclass(slots=True)
+class _ClaimSummary:
+    """At most four known values and one contradiction, never a full source entry."""
+    known: dict = field(default_factory=dict)
+    witness: tuple[str, CsvRecordRef, CsvRecordRef] | None = None
+
+    def observe(self, entry: InventoryEntry):
+        if self.witness is not None:
+            return
+        for name in ('version_components', 'size_bytes', 'date_text', 'time_text'):
+            value = getattr(entry, name)
+            if value in (None, ''):
+                continue
+            previous, reference = self.known.setdefault(name, (value, entry.reference))
+            if value != previous:
+                self.witness = name, reference, entry.reference
+                self.known.clear()
+                return
+
+
+def _page_claims(parser: _Parser, entries: list[InventoryPageEntry], summaries: dict, check):
+    duplicates, witnesses = {}, {}
+    for index, entry in enumerate(entries):
+        check()
+        scope = _scope(entry)
+        first = duplicates.setdefault((scope, _metadata(entry)), entry.entry_id)
+        changes = {'duplicate_of': first if first != entry.entry_id else None}
+        witness = summaries[scope].witness
+        if witness is not None or entry.state == 'conflicted':
+            group_id = domain_id('kbc.csv-conflict', 1, {'inventory_id': parser.identity, 'scope': scope})
+            changes.update(state='conflicted', conflict_group=group_id)
+            if witness is not None:
+                name, older, newer = witness
+                witnesses[group_id] = InventoryConflictWitness(conflict_group=group_id, field=name,
+                                                                first=older, second=newer)
+                changes['diagnostics'] = tuple(dict.fromkeys((*entry.diagnostics, 'CONFLICTING_METADATA')))
+                parser.note('CONFLICTING_METADATA',
+                            f'Source records {older.logical_record} and {newer.logical_record} contradict '
+                            f'this filename/scope in {name}.', entry.reference)
+        entries[index] = entry.model_copy(update=changes)
+    return tuple(witnesses[key] for key in sorted(witnesses))
+
+
+def parse_inventory_page(raw: bytes, context: InventoryContext, retention: InventoryRetention, *,
+                         limits: InventoryLimits = DEFAULT_LIMITS, cancel=None) -> CsvInventoryPage:
+    """Retain an explicit page while checking all bounded source claims for contradictions."""
+    if (type(raw) is not bytes or not isinstance(context, InventoryContext)
+            or not isinstance(limits, InventoryLimits) or not isinstance(retention, InventoryRetention)):
+        raise SourceError('PT-KBC-INPUT', 'CSV pages need exact bytes, context, retention policy and limits.')
+    try:
+        context = InventoryContext.model_validate(context.model_dump())
+        limits = InventoryLimits.model_validate(limits.model_dump())
+        retention = InventoryRetention.model_validate(retention.model_dump())
+    except ValidationError:
+        raise SourceError('PT-KBC-INPUT', 'CSV page context, policy or budgets failed validation.') from None
+    if cancel is not None and not callable(getattr(cancel, 'is_set', None)):
+        raise SourceError('PT-KBC-INPUT', 'The CSV cancellation token must expose is_set().')
+    deadline = time.monotonic() + limits.max_seconds
+
+    def check():
+        if cancel is not None and cancel.is_set():
+            raise SourceError('PT-KBC-CANCEL', 'CSV page parsing was cancelled; no result was published.')
+        if time.monotonic() >= deadline:
+            raise SourceError('PT-KBC-LIMIT', 'The CSV parsing time budget was exhausted; no result was published.')
+
+    check()
+    if len(raw) > limits.max_bytes:
+        raise _fail('The CSV exceeds its raw byte budget.', limit=True)
+    text, encoding = _decode(raw, limits)
+    parser = _Parser(hashlib.sha256(raw).hexdigest(), context, limits, page=True)
+    parser.identity = inventory_page_identity(parser.sha, context, retention, limits)
+    delimiter = _DELIMITERS[context.delimiter]
+    start = (retention.page - 1) * limits.max_entries
+    entries: list[InventoryPageEntry] = []
+    summaries: dict[tuple, _ClaimSummary] = {}
+    scanned = matching = excluded = 0
+    complete = True
+    for row in _rows(text, delimiter, limits, check):
+        check()
+        scanned = row.number
+        parser.consume(row, delimiter)
+        if parser.entries:
+            entry = parser.entries.pop()  # only the current normalized row is held outside the retained page
+            summaries.setdefault(_scope(entry), _ClaimSummary()).observe(entry)
+            if retention.architecture == 'all' or entry.architecture in (retention.architecture, 'unknown'):
+                if start <= matching < start + limits.max_entries:
+                    entries.append(entry)
+                matching += 1
+            else:
+                excluded += 1
+        if scanned == limits.max_records and row.end_offset < len(text):
+            parser.note('RECORD_LIMIT', 'The record limit was reached; unscanned records may remain.', parser.ref(row))
+            complete = False
+            break
+    if not parser.had_header or complete and parser.header is None:
+        raise _fail('The CSV does not finish with a supported section header and data layout.')
+    if complete and not entries:
+        raise SourceError('PT-KBC-INPUT', f'Source page {retention.page} has no matching rows; '
+                          f'the complete scan found {matching} matching rows.')
+    witnesses = _page_claims(parser, entries, summaries, check)
+    check()
+    duplicates = sum(entry.duplicate_of is not None for entry in entries)
+    conflicts = sum(entry.state == 'conflicted' for entry in entries)
+    omitted = matching - len(entries)
+    partial = not complete or omitted or excluded or parser.rejected or parser.diagnostics or parser.omitted or conflicts
+    result = CsvInventoryPage(
+        inventory_id=parser.identity, raw_sha256=parser.sha, raw_size=len(raw), encoding=encoding,
+        context=context, limits=limits, entries=tuple(entries), sections=tuple(parser.sections),
+        diagnostics=tuple(parser.diagnostics), records_scanned=scanned, accepted_count=len(entries),
+        rejected_count=parser.rejected, duplicate_count=duplicates, conflict_count=conflicts,
+        diagnostics_omitted=parser.omitted, truncated=not complete, status='partial' if partial else 'complete',
+        retention=retention, scan_complete=complete, matching_count=matching, excluded_count=excluded,
+        omitted_count=omitted, conflict_witnesses=witnesses)
     check()
     return result

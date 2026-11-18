@@ -11,7 +11,7 @@ from typing import Annotated, Literal
 
 from pydantic import Field, field_validator, model_validator
 
-from ..acquisition.contracts import PE_EXTENSIONS, AcquisitionError, validate_file_name
+from ..acquisition.contracts import AcquisitionError, validate_file_name
 from ..hostile_text import replace_hostile
 from .contracts import Arch, KbId, Record, Sha256, domain_id
 
@@ -33,21 +33,32 @@ Code = Literal['UNKNOWN_ARCHITECTURE', 'ARCHITECTURE_CONFLICT', 'UNKNOWN_VERSION
 VersionComponent = Annotated[int, Field(ge=0, le=UINT64_MAX)]
 _BASENAME = re.compile(r'[A-Za-z0-9._-]{1,128}')
 _DEVICE = re.compile(r'(?:con|prn|aux|nul|com[1-9]|lpt[1-9])(?:\..*)?', re.IGNORECASE)
+_PE_V1 = frozenset({'exe', 'dll', 'sys', 'efi', 'drv', 'ocx', 'cpl', 'scr'})
+_PE_V2 = _PE_V1 | {'tsp'}
 
 
-def normalize_inventory_filename(value: str) -> tuple[str, bool] | None:
-    """One basename rule for parsed rows and independently validated records."""
+def _normalize_filename(value: str, extensions: frozenset[str]) -> tuple[str, bool] | None:
     if (not _BASENAME.fullmatch(value) or value.endswith('.') or value.startswith(('.', '-'))
             or _DEVICE.fullmatch(value)):
         return None
     name = value.lower()
-    is_pe = '.' in name and name.rsplit('.', 1)[1] in PE_EXTENSIONS
+    is_pe = '.' in name and name.rsplit('.', 1)[1] in extensions
     if is_pe:
         try:
             validate_file_name(name)
         except AcquisitionError:
             return None
     return name, is_pe
+
+
+def normalize_inventory_filename(value: str) -> tuple[str, bool] | None:
+    """Frozen v1 classification; shared acquisition additions cannot reinterpret saved evidence."""
+    return _normalize_filename(value, _PE_V1)
+
+
+def normalize_inventory_page_filename(value: str) -> tuple[str, bool] | None:
+    """The explicitly versioned page parser also supports the TSP PE suffix."""
+    return _normalize_filename(value, _PE_V2)
 
 
 class InventoryLimits(Record):
@@ -141,9 +152,13 @@ class InventoryEntry(Record):
     conflict_group: Sha256 | None = None
     diagnostics: tuple[Code, ...] = Field(default=(), max_length=32)
 
+    @staticmethod
+    def _filename(value):
+        return normalize_inventory_filename(value)
+
     @model_validator(mode='after')
     def _consistent(self):
-        filename = normalize_inventory_filename(self.basename) if self.basename is not None else None
+        filename = self._filename(self.basename) if self.basename is not None else None
         if self.basename is not None and (filename is None or filename[0] != self.basename):
             raise ValueError('normalized basenames must be safe lowercase filenames')
         if any(value is not None and (not value.strip() or replace_hostile(value) != value)
@@ -168,11 +183,43 @@ class InventoryEntry(Record):
         return self
 
 
+class InventoryPageEntry(InventoryEntry):
+    @staticmethod
+    def _filename(value):
+        return normalize_inventory_page_filename(value)
+
+
+class InventoryRetention(Record):
+    architecture: Literal['all', 'amd64', 'arm64', 'x86', 'unknown'] = 'all'
+    page: int = Field(default=1, ge=1, le=MAX_RECORDS)
+
+
+class InventoryConflictWitness(Record):
+    conflict_group: Sha256
+    field: Literal['version_components', 'size_bytes', 'date_text', 'time_text']
+    first: CsvRecordRef
+    second: CsvRecordRef
+
+    @model_validator(mode='after')
+    def _ordered(self):
+        if self.first.raw_sha256 != self.second.raw_sha256 or self.first.logical_record >= self.second.logical_record:
+            raise ValueError('a contradiction needs two ordered records from the same raw source')
+        return self
+
+
 def inventory_identity(raw_sha256: str, context: InventoryContext,
                        limits: InventoryLimits = DEFAULT_LIMITS) -> str:
     limits_json = json.dumps(limits.model_dump(mode='json'), sort_keys=True, separators=(',', ':'), allow_nan=False)
     return domain_id('kbc.csv-inventory', 1, {'parser_version': PARSER_VERSION, 'raw_sha256': raw_sha256,
                                             'context': context.model_dump(mode='json'), 'limits_json': limits_json})
+
+
+def inventory_page_identity(raw_sha256: str, context: InventoryContext, retention: InventoryRetention,
+                            limits: InventoryLimits = DEFAULT_LIMITS) -> str:
+    limits_json = json.dumps(limits.model_dump(mode='json'), sort_keys=True, separators=(',', ':'), allow_nan=False)
+    return domain_id('kbc.csv-inventory', 2, {'parser_version': 2, 'raw_sha256': raw_sha256,
+                                            'context': context.model_dump(mode='json'), 'limits_json': limits_json,
+                                            'retention': retention.model_dump(mode='json')})
 
 
 def entry_identity(inventory_id: str, logical_record: int) -> str:
@@ -207,9 +254,12 @@ class CsvInventory(Record):
             raise ValueError('parser version must be an integer, not a coerced literal')
         return value
 
+    def _expected_identity(self):
+        return inventory_identity(self.raw_sha256, self.context, self.limits)
+
     @model_validator(mode='after')
     def _consistent(self):
-        if self.inventory_id != inventory_identity(self.raw_sha256, self.context, self.limits):
+        if self.inventory_id != self._expected_identity():
             raise ValueError('inventory identity does not match raw bytes, context, limits and parser')
         if (self.raw_size > self.limits.max_bytes or self.records_scanned > self.limits.max_records
                 or len(self.entries) > self.limits.max_entries or len(self.sections) > self.limits.max_sections
@@ -247,4 +297,45 @@ class CsvInventory(Record):
                 raise ValueError('section or diagnostic reference does not belong to the captured CSV')
         if sum(len(value) for entry in self.entries for value in entry.original_fields) > MAX_BYTES:
             raise ValueError('retained original fields exceed the source text budget')
+        return self
+
+
+class CsvInventoryPage(CsvInventory):
+    contract: Literal['kb-file-inventory/2'] = 'kb-file-inventory/2'
+    parser_version: Literal[2] = 2
+    entries: tuple[InventoryPageEntry, ...] = Field(max_length=MAX_ENTRIES)
+    retention: InventoryRetention
+    scan_complete: bool
+    matching_count: int = Field(ge=0, le=MAX_RECORDS)
+    excluded_count: int = Field(ge=0, le=MAX_RECORDS)
+    omitted_count: int = Field(ge=0, le=MAX_RECORDS)
+    conflict_witnesses: tuple[InventoryConflictWitness, ...] = Field(max_length=MAX_ENTRIES)
+
+    def _expected_identity(self):
+        return inventory_page_identity(self.raw_sha256, self.context, self.retention, self.limits)
+
+    @model_validator(mode='after')
+    def _page_consistent(self):
+        start = (self.retention.page - 1) * self.limits.max_entries
+        if self.accepted_count != min(self.limits.max_entries, max(0, self.matching_count - start)):
+            raise ValueError('retained count does not match the requested source page')
+        if (self.matching_count + self.excluded_count + self.rejected_count > self.records_scanned
+                or self.omitted_count != self.matching_count - self.accepted_count):
+            raise ValueError('page counters disagree with scanned and retained records')
+        if self.scan_complete == self.truncated or self.scan_complete and not self.entries:
+            raise ValueError('a complete scan cannot be truncated or retain an empty page')
+        if (self.omitted_count or self.excluded_count or not self.scan_complete) and self.status != 'partial':
+            raise ValueError('omitted or unscanned claims cannot imply a complete inventory')
+        if self.retention.architecture != 'all' and any(
+                entry.architecture not in (self.retention.architecture, 'unknown') for entry in self.entries):
+            raise ValueError('retained entries do not match the captured architecture filter')
+        groups = {entry.conflict_group for entry in self.entries if 'CONFLICTING_METADATA' in entry.diagnostics}
+        keys = tuple(witness.conflict_group for witness in self.conflict_witnesses)
+        if None in groups or keys != tuple(sorted(groups)) or len(keys) != len(set(keys)):
+            raise ValueError('each retained metadata-conflict group needs exactly one canonical witness')
+        for witness in self.conflict_witnesses:
+            for ref in (witness.first, witness.second):
+                if (ref.raw_sha256 != self.raw_sha256 or ref.logical_record > self.records_scanned
+                        or ref.section_index >= len(self.sections)):
+                    raise ValueError('conflict witness does not belong to the scanned raw source')
         return self

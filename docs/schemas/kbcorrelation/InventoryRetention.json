@@ -1,0 +1,28 @@
+{
+  "$id": "https://patchtrace.local/schemas/kbcorrelation/1/InventoryRetention.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "architecture": {
+      "default": "all",
+      "enum": [
+        "all",
+        "amd64",
+        "arm64",
+        "x86",
+        "unknown"
+      ],
+      "title": "Architecture",
+      "type": "string"
+    },
+    "page": {
+      "default": 1,
+      "maximum": 100000,
+      "minimum": 1,
+      "title": "Page",
+      "type": "integer"
+    }
+  },
+  "title": "InventoryRetention",
+  "type": "object"
+}

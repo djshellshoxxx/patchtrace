@@ -17,7 +17,7 @@ from pydantic import ValidationError
 
 from patchtrace.kbcorrelation import inventory_contracts, inventory_selection, inventory_store
 from patchtrace.kbcorrelation.contracts import InventoryClaimRef, Record
-from patchtrace.kbcorrelation.inventory_csv import parse_inventory
+from patchtrace.kbcorrelation.inventory_csv import parse_inventory, parse_inventory_page
 from patchtrace.kbcorrelation.sources.inventory_fetch import build_plan
 from patchtrace.kbcorrelation.sources.support_links import extract_links
 
@@ -50,7 +50,7 @@ def test_all_public_inventory_records_have_schemas_and_examples():
     assert {name: model.model_fields['contract'].default for name, model in MODELS.items()
             if 'contract' in model.model_fields} == {
                 'CsvInventory': 'kb-file-inventory/1', 'InventoryImport': 'kb-inventory-import/1',
-                'SupportImport': 'kb-support-import/1'}
+                'SupportImport': 'kb-support-import/1', 'CsvInventoryPage': 'kb-file-inventory/2'}
 
 
 @pytest.mark.parametrize('name', MODELS)
@@ -87,6 +87,21 @@ def test_inventory_example_replays_exact_raw_bytes_and_multiline_claim():
     assert selection.scope_id == parsed.context.product_scope_id
     assert entry.state == 'metadata-only'
     assert not {'sha256', 'binary_sha256', 'cve'} & set(type(entry).model_fields)
+
+
+def test_inventory_page_example_keeps_an_off_page_conflict_witness_and_versioned_tsp_state():
+    records = GEN.valid_inventory_records()
+    page = records['CsvInventoryPage']
+    replay = parse_inventory_page(GEN.INVENTORY_PAGE_CSV, page.context, records['InventoryRetention'],
+                                  limits=page.limits)
+    assert replay == page and page.scan_complete
+    assert (page.matching_count, page.excluded_count, page.omitted_count) == (3, 1, 1)
+    assert [entry.reference.logical_record for entry in page.entries] == [3, 4]
+    witness = records['InventoryConflictWitness']
+    assert page.conflict_witnesses == (witness,)
+    assert (witness.first.logical_record, witness.second.logical_record) == (3, 5)
+    assert page.entries[0].state == 'conflicted'
+    assert records['InventoryPageEntry'].state == page.entries[1].state == 'metadata-only'
 
 
 @pytest.mark.parametrize('name', ['InventoryImport', 'SupportImport'])

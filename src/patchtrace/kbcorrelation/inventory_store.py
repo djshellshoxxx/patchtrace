@@ -21,7 +21,15 @@ from pydantic import Field, field_validator, model_validator
 from ..hostile_text import replace_hostile
 from ..persistence import strict_json
 from .contracts import Record, Sha256, SourceDoc, Timestamp, domain_id, https_host
-from .inventory_contracts import DEFAULT_LIMITS, MAX_BYTES, CsvInventory, InventoryContext, InventoryLimits
+from .inventory_contracts import (
+    DEFAULT_LIMITS,
+    MAX_BYTES,
+    CsvInventory,
+    CsvInventoryPage,
+    InventoryContext,
+    InventoryLimits,
+    InventoryRetention,
+)
 from .sources.cvrf import SourceError
 from .sources.importer import gunzip_bounded
 from .store import KbcStoreError, WorkspaceStore
@@ -120,7 +128,7 @@ class InventoryImport(Record):
     contract: Literal['kb-inventory-import/1'] = 'kb-inventory-import/1'
     import_id: Sha256
     source: SourceDoc
-    parsed: CsvInventory
+    parsed: Annotated[CsvInventory | CsvInventoryPage, Field(discriminator='contract')]
     asserted_source: Url | None = None
     retrieval: RetrievalProvenance | None = None
 
@@ -346,8 +354,12 @@ def _verify(ws: WorkspaceStore, record: InventoryImport | SupportImport, cancel)
     raw = _read_raw(ws, record.source)
     try:
         if isinstance(record, InventoryImport):
-            from .inventory_csv import parse_inventory
-            expected = parse_inventory(raw, record.parsed.context, limits=record.parsed.limits, cancel=cancel)
+            from .inventory_csv import parse_inventory, parse_inventory_page
+            if isinstance(record.parsed, CsvInventoryPage):
+                expected = parse_inventory_page(raw, record.parsed.context, record.parsed.retention,
+                                                limits=record.parsed.limits, cancel=cancel)
+            else:
+                expected = parse_inventory(raw, record.parsed.context, limits=record.parsed.limits, cancel=cancel)
             same = expected == record.parsed
         else:
             same = _extraction_digest(raw, record.page_url, cancel) == record.extraction_sha256
@@ -437,6 +449,24 @@ def add_inventory(ws: WorkspaceStore, raw: bytes, context: InventoryContext, *, 
                                  parsed=parsed, asserted_source=asserted_source, retrieval=receipt)
     except (ValueError, TypeError) as exc:
         raise KbcStoreError('PT-KBC-INPUT', 'the inventory import context or provenance is invalid') from exc
+    return _add(ws, raw, record, INVENTORY_TABLE, InventoryImport, 'inventory', cancel)
+
+
+def retain_inventory(ws: WorkspaceStore, import_id: str, retention: InventoryRetention, *,
+                     cancel=None) -> tuple[InventoryImport, bool]:
+    """Append a page from verified retained bytes without changing source provenance or investigations."""
+    from .inventory_csv import parse_inventory_page
+
+    ws._writable()
+    _check_cancel(cancel)
+    parent = get_inventory(ws, import_id, verify=True, cancel=cancel)
+    if parent is None:
+        raise KbcStoreError('PT-KBC-INPUT', 'there is no inventory with that exact import ID')
+    raw = _read_raw(ws, parent.source)
+    parsed = parse_inventory_page(raw, parent.parsed.context, retention, limits=parent.parsed.limits, cancel=cancel)
+    record = InventoryImport(import_id=_inventory_id(parent.source, parsed, parent.asserted_source, parent.retrieval),
+                             source=parent.source, parsed=parsed, asserted_source=parent.asserted_source,
+                             retrieval=parent.retrieval)
     return _add(ws, raw, record, INVENTORY_TABLE, InventoryImport, 'inventory', cancel)
 
 

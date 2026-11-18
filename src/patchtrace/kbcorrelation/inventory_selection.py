@@ -15,6 +15,7 @@ from pydantic import ValidationError
 from .alias_catalog import CLIENT_VERSION_PATTERN
 from .contracts import AnalystDecision, ComponentHint, InventoryClaimRef, Record, Sha256, domain_id
 from .errors import KbcIssue
+from .inventory_contracts import CsvInventoryPage
 from .inventory_store import get_inventory
 from .products import derive, normal_name
 from .sources.cvrf import SourceError, load_json
@@ -99,6 +100,8 @@ def _product_agrees(entry, scope, *, asserted):
 
 
 def _eligible(record, entry, scope, kb_builds, *, asserted):
+    if isinstance(record.parsed, CsvInventoryPage) and not record.parsed.scan_complete:
+        raise KbcStoreError('PT-KBC-LIMIT', 'this source page has an incomplete scan; unseen rows may contradict it')
     if record.parsed.context.kb not in kb_builds:
         raise KbcStoreError('PT-KBC-SCOPE', 'the inventory KB is outside this lead and its recorded search scope')
     claimed_scope = record.parsed.context.product_scope_id
