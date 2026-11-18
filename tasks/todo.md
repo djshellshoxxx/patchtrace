@@ -1519,3 +1519,13 @@ Full `QT_QPA_PLATFORM=offscreen python -m pytest -q` for this isolated native sl
 - [x] Run actual Linux runtime/packaging/static scans and retain all failures, duplicate advisory rows, original source identities and unaudited categories. These are failing scans, not release qualification.
 - [ ] Substantively address the six distinct bootstrap pip advisories and 79 untriaged static findings; keep the original failing inventories immutable and do not suppress them into a pass.
 - [ ] Obtain exact-source native Windows inventories, hosted scan jobs and complete integrated qualification. Local full attempt137 remains incomplete. [Evidence](../docs/qa/autonomous-ci-20261118/dependency-security/README.md).
+
+### [CALLGRAPH-CAP-TRUTH-20261118]
+
+- [x] Preserve unchanged historical cap/path failures and specify the first narrow cap-truth slice.
+- [x] Retain per-origin omission counts; deduplicate roots before caps; propagate partial reasons through CLI/JSON/DOT and desktop state.
+- [x] Qualify exact source/test head `2c69c4ad`: 464 affected cases, whole Ruff/diff, real headless CLI and MainWindow journey; preserve all original failures.
+- [x] Complete root's independent final-tree/external-controls review: 464 affected and six unchanged historical cap controls pass; no blocking finding.
+- [ ] Focused integration by root.
+- [ ] Implement and independently qualify shared path budgets/lazy CSR as a separate slice; original 202-versus-40 budget failure remains open.
+- [ ] Native/manual/Windows/frozen and final full-repository qualification.

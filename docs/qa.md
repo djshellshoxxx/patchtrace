@@ -2053,3 +2053,18 @@ repaired-source failures remain unchanged. An unsharded full attempt ended137
 after fourteen progress dots without JUnit; no cause or pass is inferred.
 Native Windows scans, integrated qualification and substantive remediation are
 still required. [Full receipts and limits](qa/autonomous-ci-20261118/dependency-security/README.md).
+
+## [CALLGRAPH-CAP-TRUTH-20261118]
+
+Source/test head `2c69c4ad1c08112e29aa2403b036ae66dc1c650d` preserves per-origin
+omission truth through query, CLI/JSON/DOT and Calls state. The exact 24-file
+graph/GUI/schema/tooltip gate passes 464 cases, zero skips, in 19.83 s; whole
+Ruff/diff pass. Five headless CLI commands with Qt imports forbidden and three
+real MainWindow states pass on an authored project whose database hash stays
+unchanged. Original 11-fail/3-positive new controls and the obsolete snapshot
+expectation failure are retained, along with the original historical red.
+[Source and QA receipt](qa/callgraph-cap-truth-20261118.md).
+Root's independent exact-source replay passes the same 464 cases in 19.35 s
+and the six unchanged historical cap controls in a separate invocation; the
+receipts are retained without adding overlapping coverage counts. Path
+budgets/lazy CSR and native/manual/full/platform acceptance remain separate open gates.
