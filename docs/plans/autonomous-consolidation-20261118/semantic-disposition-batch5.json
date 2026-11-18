@@ -1098,8 +1098,8 @@
       "classification": "partially_retained_confirmed_omission",
       "focus": "Normalized output retention, COFF masking and default sorting",
       "historical_behavior": "LBL31 bundles exclusive normalized output retention, shard artifact transfer/training orchestration, whole quoted/unquoted RIP-reference masking, function-boundary stops and a fast default sort. The old sort patch contains a duplicated fast-path block and must not be copied indiscriminately.",
-      "current_behavior": "Current OutputStore/evaluate/CLI/train use stronger bounded strict report-credit retention and managed replay. Function boundaries and quoted symbols are retained. Unquoted COFF question-mark symbol prefixes remain unmasked: the exact historical test and independent public acceptance probe reproduce a false semantic-change acceptance. The special default sort fast path is absent, but both original stable-order and 100k-row budget controls pass on current source. training_artifacts.py and the shard train-job transfer workflow are absent.",
-      "caller_evidence": "make_masked_body_check is the apply_case extra acceptance check; the fake producer supplies actual assembly to it without executing a compiler. evaluate retains each normalized result before credit; train.load_outputs verifies managed reports. Read-model sort_rows is used by desktop row selection; original sort control tests current behavior rather than AST equality.",
+      "current_behavior": "Current OutputStore/evaluate/CLI/train use stronger bounded strict report-credit retention and managed replay. Function boundaries and quoted symbols are retained. Unquoted COFF question-mark symbol prefixes remain unmasked: the exact historical test and independent direct optional-API probe reproduce a false semantic-change acceptance in that check. The special default sort fast path is absent, but both original stable-order and 100k-row budget controls pass on current source. training_artifacts.py and the shard train-job transfer workflow are absent.",
+      "caller_evidence": "make_masked_body_check is an optional apply_case extra acceptance API. The fake producer supplies authored assembly to that API directly. The current factory calls apply_case without extra_check, and no non-test caller of make_masked_body_check was found in the exact tracked Python source. This confirms optional-API behavior, without compiler execution or normal factory/CLI wiring. evaluate retains each normalized result before credit; train.load_outputs verifies managed reports. Read-model sort_rows is used by desktop row selection; original sort control tests current behavior rather than AST equality.",
       "current_paths": [
         "tools/calibration/mutations/engine.py",
         "tools/calibration/tier_r/output_store.py",
@@ -2720,7 +2720,7 @@
       "focus": "Quoted COFF RIP symbols and function-body boundaries",
       "historical_behavior": "This branch implements a combined whole quoted RIP-symbol regex while retaining local-label and branch-target normalization and explicit COFF function/data boundary stops. Both historical variants still use the restricted unquoted symbol class.",
       "current_behavior": "Current _ASM_SYMBOL accepts the whole quoted operand, and _masked_function_asm stops at .Lfunc_end, .seh_endproc, .cfi_endproc, .def, .section, .data, .text or a subsequent function label. An absent private helper in one variant is a refactoring difference. Quoted data-only masking, five original boundary controls, unavailable-body refusal and real-immediate-change positive are exercised. The separate unquoted omission belongs to the broader LBL31 source above, not a newly lost behavior from these quoted-only leaves.",
-      "caller_evidence": "The current factory passes make_masked_body_check into semantic mutation acceptance. The unchanged original controls plus authored fake-producer public check reach this boundary without a compiler.",
+      "caller_evidence": "make_masked_body_check is an exported optional developer API for apply_case(extra_check=...). At frozen 55f3, factory.run_mutation calls apply_case with seed, base and tools only; it does not install this check. The tracked-Python search finds no non-test caller. The original controls and authored fake producer exercise the optional check directly, without a compiler; they do not prove normal factory or CLI acceptance wiring.",
       "current_paths": [
         "tools/calibration/mutations/engine.py",
         "tools/calibration/tier_r/factory.py",
@@ -3326,7 +3326,7 @@
       "focus": "Quoted COFF RIP symbols and function-body boundaries",
       "historical_behavior": "This branch implements a separate quoted-symbol normalization helper while retaining local-label and branch-target normalization and explicit COFF function/data boundary stops. Both historical variants still use the restricted unquoted symbol class.",
       "current_behavior": "Current _ASM_SYMBOL accepts the whole quoted operand, and _masked_function_asm stops at .Lfunc_end, .seh_endproc, .cfi_endproc, .def, .section, .data, .text or a subsequent function label. An absent private helper in one variant is a refactoring difference. Quoted data-only masking, five original boundary controls, unavailable-body refusal and real-immediate-change positive are exercised. The separate unquoted omission belongs to the broader LBL31 source above, not a newly lost behavior from these quoted-only leaves.",
-      "caller_evidence": "The current factory passes make_masked_body_check into semantic mutation acceptance. The unchanged original controls plus authored fake-producer public check reach this boundary without a compiler.",
+      "caller_evidence": "make_masked_body_check is an exported optional developer API for apply_case(extra_check=...). At frozen 55f3, factory.run_mutation calls apply_case with seed, base and tools only; it does not install this check. The tracked-Python search finds no non-test caller. The original controls and authored fake producer exercise the optional check directly, without a compiler; they do not prove normal factory or CLI acceptance wiring.",
       "current_paths": [
         "tools/calibration/mutations/engine.py",
         "tools/calibration/tier_r/factory.py",
@@ -16209,6 +16209,22 @@
     {
       "branch": "integration/kb-fixtures-pr69-20261030",
       "tip": "2fcd627e52a6d784d5c2e5b4ea8105e90b8589b3"
+    }
+  ],
+  "post_checkpoint_corrections": [
+    {
+      "kind": "caller-attribution",
+      "original_checkpoint": "82d4ea017cd936b793dd8adfd50343a05df5629a",
+      "comparison_source": "55f3d0742f7d4cf32357a42b8b1cc76d85875e71",
+      "sections": [
+        3,
+        5,
+        6
+      ],
+      "claim": "The factory does not pass make_masked_body_check or extra_check to apply_case. The COFF controls exercise the exported optional developer API directly; they do not establish normal factory/CLI wiring.",
+      "proof": "docs/qa/semantic-disposition-batch5-caller-erratum-20261118.json",
+      "original_packet_preserved": true,
+      "execution_results_changed": false
     }
   ]
 }

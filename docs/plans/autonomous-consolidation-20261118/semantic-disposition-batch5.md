@@ -2,7 +2,7 @@
 
 Frozen comparison: **`55f3d0742f7d4cf32357a42b8b1cc76d85875e71`**, tree `11a0c1598764ebd3fd8d3b540377aa52e949f88a`; actual PR316.
 
-This docs-only batch inspects 20 distinct source-bearing original tips selected from the 51 left after batch4. It confirms three narrow omissions through public current interfaces: saved advisory scope, unquoted COFF mutation acceptance and A/A failure propagation. Related/inherited branches are not counted as separate defects. Typed configuration, research final-run/recipe/transfer orchestration and part of the Windows CI proposal remain incomplete scopes.
+This docs-only batch inspects 20 distinct source-bearing original tips selected from the 51 left after batch4. It confirms three narrow omissions: saved advisory scope and A/A failure propagation through their current public flows, plus unquoted COFF masking through an exported optional developer acceptance API. The current factory does not install that optional check. Related/inherited branches are not counted as separate defects. Typed configuration, research final-run/recipe/transfer orchestration and part of the Windows CI proposal remain incomplete scopes.
 
 [Complete machine-readable ledger](semantic-disposition-batch5.json) · [Sealed exact source and QA](../../qa/semantic-disposition-batch5-20261118.md).
 
@@ -89,9 +89,9 @@ Current test map: `tests/test_tier_r_csrc.py`, `tests/test_tier_r_eval_cli.py`. 
 
 **Historical delta:** LBL31 bundles exclusive normalized output retention, shard artifact transfer/training orchestration, whole quoted/unquoted RIP-reference masking, function-boundary stops and a fast default sort. The old sort patch contains a duplicated fast-path block and must not be copied indiscriminately.
 
-**Current behavior:** Current OutputStore/evaluate/CLI/train use stronger bounded strict report-credit retention and managed replay. Function boundaries and quoted symbols are retained. Unquoted COFF question-mark symbol prefixes remain unmasked: the exact historical test and independent public acceptance probe reproduce a false semantic-change acceptance. The special default sort fast path is absent, but both original stable-order and 100k-row budget controls pass on current source. training_artifacts.py and the shard train-job transfer workflow are absent.
+**Current behavior:** Current OutputStore/evaluate/CLI/train use stronger bounded strict report-credit retention and managed replay. Function boundaries and quoted symbols are retained. Unquoted COFF question-mark symbol prefixes remain unmasked: the exact historical test and independent direct optional-API probe reproduce a false semantic-change acceptance in that check. The special default sort fast path is absent, but both original stable-order and 100k-row budget controls pass on current source. training_artifacts.py and the shard train-job transfer workflow are absent.
 
-**Reachable caller evidence:** make_masked_body_check is the apply_case extra acceptance check; the fake producer supplies actual assembly to it without executing a compiler. evaluate retains each normalized result before credit; train.load_outputs verifies managed reports. Read-model sort_rows is used by desktop row selection; original sort control tests current behavior rather than AST equality.
+**Reachable caller evidence:** make_masked_body_check is an optional apply_case extra acceptance API. The fake producer supplies authored assembly to that API directly. The current factory calls apply_case without extra_check, and no non-test caller of make_masked_body_check was found in the exact tracked Python source. This confirms optional-API behavior, without compiler execution or normal factory/CLI wiring. evaluate retains each normalized result before credit; train.load_outputs verifies managed reports. Read-model sort_rows is used by desktop row selection; original sort control tests current behavior rather than AST equality.
 
 Current source: `tools/calibration/mutations/engine.py`, `tools/calibration/tier_r/output_store.py`, `tools/calibration/tier_r/evaluate.py`, `tools/calibration/tier_r/cli.py`, `tools/calibration/tier_r/shard.py`, `tools/calibration/train.py`, `src/patchtrace/unified/read_model.py`.
 
@@ -135,7 +135,7 @@ Current test map: `tests/test_train_prereg_selection.py`, `tests/test_tier_r_cre
 
 **Current behavior:** Current _ASM_SYMBOL accepts the whole quoted operand, and _masked_function_asm stops at .Lfunc_end, .seh_endproc, .cfi_endproc, .def, .section, .data, .text or a subsequent function label. An absent private helper in one variant is a refactoring difference. Quoted data-only masking, five original boundary controls, unavailable-body refusal and real-immediate-change positive are exercised. The separate unquoted omission belongs to the broader LBL31 source above, not a newly lost behavior from these quoted-only leaves.
 
-**Reachable caller evidence:** The current factory passes make_masked_body_check into semantic mutation acceptance. The unchanged original controls plus authored fake-producer public check reach this boundary without a compiler.
+**Reachable caller evidence:** make_masked_body_check is an exported optional developer API for apply_case(extra_check=...). At frozen 55f3, factory.run_mutation calls apply_case with seed, base and tools only; it does not install this check. The tracked-Python search finds no non-test caller. The original controls and authored fake producer exercise the optional check directly, without a compiler; they do not prove normal factory or CLI acceptance wiring.
 
 Current source: `tools/calibration/mutations/engine.py`, `tools/calibration/tier_r/factory.py`, `tools/calibration/tier_r/output_store.py`.
 
@@ -157,7 +157,7 @@ Current test map: `tests/test_tier_r_output_persistence.py`, `tests/test_tier_r_
 
 **Current behavior:** Current _ASM_SYMBOL accepts the whole quoted operand, and _masked_function_asm stops at .Lfunc_end, .seh_endproc, .cfi_endproc, .def, .section, .data, .text or a subsequent function label. An absent private helper in one variant is a refactoring difference. Quoted data-only masking, five original boundary controls, unavailable-body refusal and real-immediate-change positive are exercised. The separate unquoted omission belongs to the broader LBL31 source above, not a newly lost behavior from these quoted-only leaves.
 
-**Reachable caller evidence:** The current factory passes make_masked_body_check into semantic mutation acceptance. The unchanged original controls plus authored fake-producer public check reach this boundary without a compiler.
+**Reachable caller evidence:** make_masked_body_check is an exported optional developer API for apply_case(extra_check=...). At frozen 55f3, factory.run_mutation calls apply_case with seed, base and tools only; it does not install this check. The tracked-Python search finds no non-test caller. The original controls and authored fake producer exercise the optional check directly, without a compiler; they do not prove normal factory or CLI acceptance wiring.
 
 Current source: `tools/calibration/mutations/engine.py`, `tools/calibration/tier_r/factory.py`, `tools/calibration/tier_r/output_store.py`.
 
@@ -509,3 +509,7 @@ The old preregistration file retains 17 failures/3 positives; eleven fail on an 
 The current 34-file gate has four explicit compiler/native/toolchain deselections, a Windows-only runtime-path skip and the existing CODEX-14 Linux full-CLI xfail. Six warnings are deliberate unverified legacy replay observations. No uninjected backend-pin network fixture was selected. Normal system temporary fixtures and absolute frozen-source PYTHONPATH were used. All historical originals remain byte-identical; repeated branch maps and overlapping historical positives are not additive totals.
 
 No native/compiler/target/network/provider/acquisition, Windows package, hosted CI, manual GUI, full integrated suite, merge, deletion or remote mutation was performed. Independent docs review and selective integration remain root-owned.
+
+## Attributed caller correction after the sealed checkpoint
+
+The original `82d4ea017cd936b793dd8adfd50343a05df5629a` packet and its archive remain unchanged. Root review identified an incorrect factory-call claim in sections 5 and 6; section 3 and shared summaries are now explicit about direct optional-API coverage. See the [caller erratum](../../qa/semantic-disposition-batch5-caller-erratum-20261118.md) and exact-source JSON proof. No original test outcome, branch disposition or comparison baseline changed.

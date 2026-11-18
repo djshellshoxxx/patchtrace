@@ -59,7 +59,7 @@ new derived edge digests, preserve old serialized contexts and global active/
 withdrawn/ambiguity admission. Month-only coverage cannot reconstruct exact old
 revision IDs. Pair/file-only behavior remains compatible.
 
-COFF: the authored fake producer reaches actual masked-body acceptance. Unquoted
+COFF: the authored fake producer directly exercises the exported optional masked-body acceptance API. The current factory does not install it, and no non-test caller was found in the frozen tracked Python source. Unquoted
 question-mark symbol prefixes survive masking; quoted/no-body/immediate-change
 neighbors pass. Public SHA256:
 `2de761cb9e3b57eae2f2a39ebec9c7a540ce3fdc3d8449afbf68407f939be44c`.

@@ -1,0 +1,50 @@
+{
+  "schema": "patchtrace-caller-correction/1",
+  "comparison_source": "55f3d0742f7d4cf32357a42b8b1cc76d85875e71",
+  "comparison_tree": "11a0c1598764ebd3fd8d3b540377aa52e949f88a",
+  "corrected_checkpoint": "82d4ea017cd936b793dd8adfd50343a05df5629a",
+  "immutable_archive_sha256": "e6b63e2b7f39b85bb18790761fe8ff8ce11f65fdc82626590bf2c67cc1f02b16",
+  "finding": "The factory does not pass make_masked_body_check or extra_check to apply_case. The COFF controls exercise the exported optional developer API directly; they do not establish normal factory/CLI wiring.",
+  "sources": {
+    "tools/calibration/tier_r/factory.py": {
+      "git_blob": "6031a93227b3562296fd35eb89548a8331f47984",
+      "sha256": "f854363a3e70f629c43fd5da2db4cfb3f047133407f5ffc3b87faa24aba6e1c7",
+      "bytes": 23119
+    },
+    "tools/calibration/mutations/engine.py": {
+      "git_blob": "7020f19ed6ce7faa22d23d267fafafe005e28480",
+      "sha256": "7f968cd5f64b3d5b7d9d7969744833a83b412fa75af6d57245d5a459ab443d01",
+      "bytes": 13921
+    }
+  },
+  "factory_call": {
+    "line": 397,
+    "end_line": 397,
+    "source": "M.apply_case(files, operator, seed=seed, base=ref, tools=session.tools)",
+    "keyword_arguments": [
+      "seed",
+      "base",
+      "tools"
+    ]
+  },
+  "tracked_python_reference_command": [
+    "git",
+    "grep",
+    "-n",
+    "make_masked_body_check",
+    "55f3d0742f7d4cf32357a42b8b1cc76d85875e71",
+    "--",
+    "*.py"
+  ],
+  "tracked_python_reference_matches": [
+    "55f3d0742f7d4cf32357a42b8b1cc76d85875e71:tests/test_mutations_more.py:263:    return E.make_masked_body_check(FILES, clang)",
+    "55f3d0742f7d4cf32357a42b8b1cc76d85875e71:tools/calibration/mutations/engine.py:23:           'make_compile_checker', 'make_masked_body_check', 'plan_mutants', 'replay_case']",
+    "55f3d0742f7d4cf32357a42b8b1cc76d85875e71:tools/calibration/mutations/engine.py:182:def make_masked_body_check(files: Mapping[str, str], tools: Toolchain | None = None, *, flags: Sequence[str] = (),"
+  ],
+  "non_test_matches": [
+    "55f3d0742f7d4cf32357a42b8b1cc76d85875e71:tools/calibration/mutations/engine.py:23:           'make_compile_checker', 'make_masked_body_check', 'plan_mutants', 'replay_case']",
+    "55f3d0742f7d4cf32357a42b8b1cc76d85875e71:tools/calibration/mutations/engine.py:182:def make_masked_body_check(files: Mapping[str, str], tools: Toolchain | None = None, *, flags: Sequence[str] = (),"
+  ],
+  "qualification": "Exact tracked Python reference search and factory AST inspection. No compiler, target, native engine, network, or execution gate was run for this documentation correction. No non-test caller was found; dynamic external users of the exported API are outside this search.",
+  "preserved_preflight": "The first read used nonexistent tools/calibration/mutations/factory.py and git returned 128 before any edit. The corrected exact path tools/calibration/tier_r/factory.py is pinned above."
+}

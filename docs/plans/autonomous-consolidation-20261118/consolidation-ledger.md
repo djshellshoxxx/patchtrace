@@ -348,7 +348,7 @@ one Windows-only skip, one existing CODEX-14 xfail, four explicit compiler/nativ
 deselections. Original historical failures are retained and individually classified.
 
 Confirmed narrow omissions: saved advisory scope/digest (public reopened CLI and
-actual missing-coverage mutation), unquoted COFF false-change acceptance (fake
+actual missing-coverage mutation), unquoted COFF false-change acceptance in an optional developer API (fake
 producer) and A/A failures omitted from merged shard provenance (persisted public
 flow). COFF and saved-scope repairs have separate root-assigned ownership; no
 repair credit is included here. Typed config, final-run/recipe/transfer research
