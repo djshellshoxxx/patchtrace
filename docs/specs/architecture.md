@@ -1,5 +1,13 @@
 # PatchTrace beta architecture (SPEC-01, schema v1)
 
+Backup directory publication amendment (2026-11-18): complete project backups
+use the shared [exclusive directory-publication contract](directory-publication.md).
+Publication atomically refuses an existing destination leaf, including a newly
+created empty directory; there is no public placeholder or destination cleanup.
+Unsupported platform/filesystem primitives refuse rather than fall back to an
+overwriting rename. Existing private-stage cleanup, project layout, verified
+sidecars and controlled parent/source ownership assumptions remain unchanged.
+
 Normalization review amendment (2026-11-18 UTC): address zero is a known numeric
 address, distinct from an unavailable address. Within a one-to-many conflict
 group, ordering compares known addresses numerically, then unavailable addresses.

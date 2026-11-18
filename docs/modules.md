@@ -1,5 +1,16 @@
 # Module index
 
+## Exclusive directory publication (2026-11-18)
+
+`directory_publication.py` owns the shared native no-replacement move for complete
+project backups and verified offline runtime directories. The two existing
+private publisher names in `persistence.py` and `offline_bundle.py` delegate here.
+It creates/removes no destination entry and refuses unsupported primitives.
+Contract: `docs/specs/directory-publication.md`; regression proof:
+`tests/test_directory_publication.py`. The existing stronger immutable-file
+`owned_publication.py` API is unchanged; parent/private-stage ownership and
+native platform qualification remain separate boundaries.
+
 ## Owned immutable file publication (2026-11-18)
 
 `src/patchtrace/owned_publication.py` is the shared stdlib publication boundary for
