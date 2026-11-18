@@ -129,3 +129,7 @@ The default primary-child environment slice has specification, reproduced failur
 ## Reviewed release-qualification continuation — 2026-11-18
 
 Combined source `ef0398577c97b926259b533c5776e88146244b24` on published #307 carries the independent repair of `05176698`: canonical-byte checks, finite evidence and unique artifact ownership. Root affected verification is 458 passed / 3 existing expected failures, with 19 independent controls passing. This completes the guard slice's D/R evidence only; the package/release row remains D/R = 50%. No J/G credit is added. Missing scan evidence, blocked Windows BinDiff disconnected acceptance, native/package/full exact-head gates and the literal commit hold continue to prevent publication. [Checkpoint](../qa/release-qualification-reviewed-20261118/README.md).
+
+## Reviewed PE manifest boundary — 2026-11-18
+
+Source `e1c5006e51606caedd773bf079c20c145d290861` repairs an independently reproduced encoding-dependent DTD-policy bypass. Root exact-source gate passes 384 cases, including unchanged external probes; original failures remain retained. This supplies D/R for the narrow parser boundary and does not add native/platform J/G credit to PE inspection. Strict static scan findings and complete gates remain open. [Evidence](../qa/manifest-dtd-reviewed-20261118/README.md).

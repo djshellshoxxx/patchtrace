@@ -2033,3 +2033,8 @@ Nine failing regressions reproduced default external child inheritance of author
 ## [RELEASE-QUALIFICATION-REVIEWED-20261118]
 
 Shared publisher guard and independent repairs: root combined 458 passed / 3 existing xfails; 19 independent controls pass. Native/scanner/publication holds remain explicit. [Receipt](qa/release-qualification-reviewed-20261118/README.md).
+
+
+## [MANIFEST-DTD-REVIEWED-20261118]
+
+Encoding-dependent DTD-policy bypass repaired and independently reviewed; root 384 affected/external passes, zero skips. Original red evidence and remaining native/security gates retained. [Evidence](qa/manifest-dtd-reviewed-20261118/README.md).

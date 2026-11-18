@@ -209,3 +209,7 @@ The staleness/report, CVRF bridge and freshness-hook chains are combined with th
 ## Reviewed release-guard follow-on — 2026-11-18
 
 A focused branch on #307 `58fc1306` integrates reviewed release guard source `05176698` through combined source `ef0398577c97b926259b533c5776e88146244b24`. Root 458-pass/3-xfail results and independent 19-control acceptance are retained with all original failures. This does not merge #304/#307, close old work, qualify a release or waive missing gates. The scan lane is assigned separately; Windows BinDiff network refusal remains blocked. [Evidence](../../qa/release-qualification-reviewed-20261118/README.md).
+
+## Manifest parser security follow-on — 2026-11-18
+
+Focused source `e1c5006e` on published #307 now refuses parser-recognized doctypes independently of the decoded-text screen. Root independently reviewed and replayed 384 affected/external cases with no skips. Original internal-entity failures remain intact; no full/native acceptance or closure is implied. [Receipt](../../qa/manifest-dtd-reviewed-20261118/README.md).

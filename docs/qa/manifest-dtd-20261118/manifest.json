@@ -1,0 +1,140 @@
+{
+  "source_sha": "e1c5006e51606caedd773bf079c20c145d290861",
+  "spec_test_sha": "a2a724056664135984248c9a75a985c432a33c50",
+  "baseline_sha": "58fc130631f602b6e907bb054d30c21d810551d4",
+  "archive": "evidence.zip",
+  "archive_bytes": 42813,
+  "archive_sha256": "554b27ff7d62a9a79128933bd905e84eb52cc9e08c94db2ee0f4f812ddbf7b1c",
+  "members": [
+    {
+      "path": "original/original-ruff-s.json",
+      "bytes": 41697,
+      "sha256": "6553eb16970030198d33edcdf219b598c8775bb78af1407144e8729fbcfc868b"
+    },
+    {
+      "path": "original/test_manifest_dtd_external.py",
+      "bytes": 2260,
+      "sha256": "960bf6d3a1449452277ebe96021d618924e1363566022469b3be0010cd3075f1"
+    },
+    {
+      "path": "original/xml-encoding-probe.json",
+      "bytes": 5930,
+      "sha256": "9a6a2b821cf276b7f68de15885c02ab76228b611ebae70ae859896f54ea55e41"
+    },
+    {
+      "path": "original/xml-external-red.log",
+      "bytes": 3660,
+      "sha256": "c575e58e5a0b9513ea4e97a7d4695653fb06a2fdbe5cd84ddc9e265df7604a3a"
+    },
+    {
+      "path": "original/xml-external-red.xml",
+      "bytes": 6039,
+      "sha256": "548934650977ccf4e120ca398fc76e5befc149880836450514c4c86b809c620a"
+    },
+    {
+      "path": "original/xml-source-context.json",
+      "bytes": 857,
+      "sha256": "b395b924d507da72cc1e64c02062f476b570eb30983b7d061ddcd71ab2142981"
+    },
+    {
+      "path": "repair/affected-context.json",
+      "bytes": 1358,
+      "sha256": "d7c1d8ef3c7e2c7f5f1fa26e078c760d397a98d0be74483fe8b7752f1bed6be6"
+    },
+    {
+      "path": "repair/affected.log",
+      "bytes": 500,
+      "sha256": "7e36f3111385720c3f9b2a05dae65344e0afc5a07765679acec2a83968ce3c3b"
+    },
+    {
+      "path": "repair/affected.xml",
+      "bytes": 52750,
+      "sha256": "e2872710bedea6a217226fee7f4a2d0132e63b4557774b9b1983827e6f3ac4a3"
+    },
+    {
+      "path": "repair/diff-check.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "repair/exact-external.log",
+      "bytes": 98,
+      "sha256": "bf57a87e7fe91a0d8a8815a680d416938ba682dee7e8a176a4973cb35e527edc"
+    },
+    {
+      "path": "repair/exact-external.xml",
+      "bytes": 1347,
+      "sha256": "472b90ebf4e0f2eb3e17ec30649c95dd0cb1316df397ed138344187155320a43"
+    },
+    {
+      "path": "repair/external-green.log",
+      "bytes": 98,
+      "sha256": "2b097a827890edea87e568af0ca855016c4fd0a75fa0335018aaef97a93007d7"
+    },
+    {
+      "path": "repair/external-green.xml",
+      "bytes": 1347,
+      "sha256": "cf435ffd932b28936a6a9a9c91fb5d367e4408217b8c6d7e0fe73cb8d89aa21c"
+    },
+    {
+      "path": "repair/external-replay-context.json",
+      "bytes": 1128,
+      "sha256": "1140d7f7391914475aab39d7bfa4a1c4de4f8028d7ac2ed62970c1e5819551ad"
+    },
+    {
+      "path": "repair/focused.log",
+      "bytes": 260,
+      "sha256": "e3ec41729ebed33686bc6d9e479c5323defee513fb0bdd492654b96278668835"
+    },
+    {
+      "path": "repair/focused.xml",
+      "bytes": 24036,
+      "sha256": "2d4401ee2cb89957eaa1c819d5e3b7fd622ff067a174a8df1993106ca22d23fa"
+    },
+    {
+      "path": "repair/parser-reference-notes.txt",
+      "bytes": 1090,
+      "sha256": "13997af5d8d347d28fbfa888d9f645672ae1cf68fb6f525c30ac5d10903a4017"
+    },
+    {
+      "path": "repair/red-context.json",
+      "bytes": 656,
+      "sha256": "9ac6ebc3711f4bc264241d3717879b10cc0e2de8f66acb924423841e643f1b80"
+    },
+    {
+      "path": "repair/red.log",
+      "bytes": 6270,
+      "sha256": "a66e07456f18d3205b728a53fd2a5f2b9b2e02b072d58bf08ccce1a8942385a8"
+    },
+    {
+      "path": "repair/red.xml",
+      "bytes": 11271,
+      "sha256": "ad12becf5e892d3c8914ef313b22892d0be1bf078dc0a0f105c80b9ae4c23995"
+    },
+    {
+      "path": "repair/ruff-s314.json",
+      "bytes": 1194,
+      "sha256": "c72cbc424b1b133f0d091f1524cedad6c011d88024132f441d65384f113891a0"
+    },
+    {
+      "path": "repair/ruff.log",
+      "bytes": 19,
+      "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+    },
+    {
+      "path": "source/manifest.py",
+      "bytes": 13435,
+      "sha256": "b1e83c0dbb9fb04fa9b2439433b4a2192364e684a1f9db1073b6f47b97f13aa9"
+    },
+    {
+      "path": "source/pe-version-authenticode.md",
+      "bytes": 27709,
+      "sha256": "fb81cd8c25dbf292ec18656692298b36f741332751c36ea8e0d6f5d47e57fb21"
+    },
+    {
+      "path": "source/test_pe_manifest_dtd_boundary.py",
+      "bytes": 4581,
+      "sha256": "65c590fcb8f0e8144b2eb1a81f1fade170ecb2da881f3ff244a77a66c1c88c5e"
+    }
+  ]
+}

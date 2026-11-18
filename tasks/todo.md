@@ -1506,3 +1506,9 @@ Full `QT_QPA_PLATFORM=offscreen python -m pytest -q` for this isolated native sl
 
 - [x] Implement and independently repair bounded exact-source publisher qualification; retain original red evidence and combined 458-pass / 3-xfail receipt.
 - [ ] Qualify the separate dependency/security lane and actual exact-source native/package/full gates; Windows BinDiff disconnected check remains blocked. No release is authorized.
+
+
+### [MANIFEST-DTD-REVIEWED-20261118]
+
+- [x] Refuse parser-recognized manifest doctypes across accepted encodings; preserve original reproductions and independent 384-pass verification.
+- [ ] Finish final exact-head parser/platform/package gates and substantive security-scan triage.
