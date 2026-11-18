@@ -22,6 +22,13 @@ KEYS = {'diagnostic', 'sequence', 'stage', 'kind', 'owner_pid', 'subject_pid',
 HARNESS = r'''
 int main(int argc, char **argv) {
     unsigned int i;
+    if (argc == 3 && strcmp(argv[1], "failed-write") == 0) {
+        /* A valid read-only FILE rejects real stdio writes without a fake sink. */
+        if (!freopen(argv[2], "r", stderr)) return 3;
+        for (i = 0; i < 1000; ++i)
+            pt_diag_emit(PT_DG_CHILD_SPAWN, PT_DK_WIN32, 1, 2, 5, UINT32_MAX, 0, 0);
+        return pt_diag_count == 16 && ferror(stderr) ? 0 : 4;
+    }
     if (argc != 2) return 2;
     if (strcmp(argv[1], "max") == 0) {
         pt_diag_emit(PT_DG_SOCKET_RECEIVE_WAIT, PT_DK_WINSOCK, UINT32_MAX, UINT32_MAX,
@@ -69,7 +76,8 @@ def formatter(tmp_path_factory):
     assert result.returncode == 0, result.stderr.decode('utf-8', errors='replace')[:4000]
 
     def invoke(mode):
-        result = subprocess.run([str(binary), mode], capture_output=True, timeout=5, env=env, check=False)
+        argv = [str(binary), mode, *([str(source)] if mode == 'failed-write' else [])]
+        result = subprocess.run(argv, capture_output=True, timeout=5, env=env, check=False)
         assert result.returncode == 0 and not result.stdout
         assert len(result.stderr) < 65536
         lines = result.stderr.splitlines()
@@ -115,6 +123,11 @@ def test_real_formatter_caps_total_records_and_marks_truncation_once(formatter):
     assert [row['sequence'] for row in rows] == list(range(1, 17))
     assert all(row['stage'] == 'child-spawn' for row in rows[:-1])
     assert rows[-1]['stage'] == 'diagnostic-limit' and rows[-1]['kind'] == 'truncated'
+
+
+def test_real_formatter_consumes_budget_when_stdio_writes_fail(formatter):
+    rows, raw = formatter('failed-write')
+    assert rows == [] and raw == b''
 
 
 def test_static_win32_diagnostic_boundary_captures_and_restores_last_error():

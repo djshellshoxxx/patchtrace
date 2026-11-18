@@ -149,7 +149,7 @@ path, environment, nonce, SID or token information is emitted. Diagnostic PIDs
 are context for an existing captured launch, not an independent identity proof.
 
 The shared C formatter permits at most 16 attempted records per process, each
-strictly below 512 bytes. The sixteenth record is a fixed diagnostic-budget /
+strictly below 512 bytes. The sixteenth record is a fixed `diagnostic-limit` /
 truncated marker and further calls emit nothing, even if writes fail. Thus one
 helper/probe process attempts fewer than 8 KiB of diagnostic output. The bounded
 three-process probe chain plus its launcher permits fewer than 32 KiB; existing
@@ -169,7 +169,8 @@ cleanup attempts, cancellation behavior and return values remain unchanged.
 Portable tests compile and run only the extracted authored standard-C formatter,
 without Windows API stubs or downloaded native images. They exercise actual
 formatted JSON, finite vocabulary, maximum numeric values, and the total
-record/byte bound. Source-order checks are explicitly static; existing evidence
+record/byte bound, including actual stdio write failure against a valid read-only
+stream. Source-order checks are explicitly static; existing evidence
 controls continue to refuse incomplete chains, code 125 and non-access-denied
 socket results even when diagnostic text is present. Windows compilation and
 actual error-path/runtime behavior remain a separate hosted requirement.
