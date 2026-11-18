@@ -202,6 +202,14 @@ the deterministic parsed record. Reject damaged state without overwriting it.
 ## 6. KB service, selection, CLI and desktop
 
 Keep storage/parser logic outside Qt. KbService delegates to inventory_service.py:
+`inventory_store.py` and `inventory_selection.py` are named SQLite adapters;
+`inventory_qt.py` is the named Qt adapter and may use the existing GUI/tooltip
+helpers. The parser and contract modules remain free of Qt, networking and
+database imports. Their sibling reuse is limited to the shared hostile-text
+helper and the acquisition contract's PE extensions and filename validator.
+The inventory store reuses only `persistence.strict_json` from that sibling.
+
+The facade exposes:
 import_inventory(path, context, ...), inventories(...), inventory_details(id,...),
 select_inventory(investigation, import_id, entry_id, product, expected_revision,...),
 support_links(path,page_url), inventory_plan(...), fetch_inventory(...).
