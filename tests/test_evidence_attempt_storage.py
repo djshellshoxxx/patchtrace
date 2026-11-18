@@ -230,7 +230,11 @@ def test_project_change_clears_unsaved_details(main_window, qtbot, tmp_path, swi
     readonly_delivery(main_window, controller, outcome)
     finish(controller, [outcome], qtbot)
     assert 'not saved' in copied(controller).lower()
-    main_window.set_service(ProjectService.sample(tmp_path / 'other') if switch else None)
+    if switch:
+        main_window.set_service(ProjectService.sample(tmp_path / 'other'))
+    else:
+        main_window.service.close()
+        main_window.service = None
     # Hidden panels defer host refresh; exercise the same lifecycle hook explicitly.
     controller.project_changed(controller.port.key())
     assert 'not saved' not in controller.panel.run_status.text().lower()
