@@ -1,5 +1,18 @@
 # Module index
 
+## PW-02 local package candidate (2026-11-18)
+
+`acquisition/package_contracts.py`, `package_paths.py`, `package_budget.py` and
+`package_platform.py` own strict local-package records/IDs, logical member names,
+one shared operation budget/deadline, and the Windows AMD64 prerequisite. These
+pure boundaries do not advertise an extractor or native qualification. The
+subsequent `package_fdi.py`, `package_stage.py`, `package_worker.py` and
+`packages.py` will reuse the existing process supervisor and anchored native
+handles; KB package composition remains outside the worker. Contract:
+`docs/specs/local-package-intake.md`; focused `tests/test_package_*.py`; schemas
+under `docs/schemas/local-package/` from `tools/generate_package_schemas.py`.
+Native Windows, frozen CLI and project-admission acceptance are separate gates.
+
 ## Exclusive directory publication (2026-11-18)
 
 `directory_publication.py` owns the shared native no-replacement move for complete

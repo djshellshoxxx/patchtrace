@@ -188,6 +188,12 @@ This later draft registration does not refresh the historical tables or approve 
 |---|---|---|---|
 | `docs/specs/kb-file-inventory-csv.md` | PW-01 | implemented and independently reviewed; hosted/live acceptance tracked in QA | kbcorrelation inventory modules |
 
+## PW-02 local package extension
+
+| Path | Canonical alias | Status | Owner |
+|---|---|---|---|
+| `docs/specs/local-package-intake.md` | PW-02 | implementation candidate; native Windows and frozen journey pending | acquisition package modules and KB package facade |
+
 ## Supporting qualification and publication contracts, 2026-11-18
 
 These supporting contracts are cited by path; no numeric SPEC alias is allocated.
