@@ -1,0 +1,8 @@
+{
+  "src/patchtrace/search/cli.py": "ea05dd1986407ab8765848f950ace4dd012f374de52dbbeac2033e708c280a74",
+  "src/patchtrace/search/panel.py": "51f9f9db67f62011adabca393a4663d381953f73d6f5c8201d1135475d8a943c",
+  "src/patchtrace/search/qt_panel.py": "d4d6db88c7cf6b9330d09df63696da5b1c1ef62490c164eccca716d6bbd96b14",
+  "src/patchtrace/search/wiring.py": "25efb069b2d7ee51212e2618671dde75092dea357441b60d5647c7583c891237",
+  "tests/test_search_wiring.py": "8f040fc9e5e7e9326cf0464e05b1e9e72c574e965cfde1c04783b2788afbf1e1",
+  "tests/test_search_current_sources.py": "33bd3cfc72fffb7b1907a9d1224eb6f2a5c303d80ca75d38070a403b0d4f72d6"
+}

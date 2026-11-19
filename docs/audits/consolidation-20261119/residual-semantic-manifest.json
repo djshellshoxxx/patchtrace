@@ -1,0 +1,78 @@
+{
+  "base_main": "fdc2696c23bdbfe7668348f25e3b336ce33039f7",
+  "reviewed_candidate": "ac3a98150bd17bbbd973c7e7dcadb7edcf551934",
+  "scope": "46 previously unreviewed focal heads; not whole-branch approval",
+  "members": [
+    {
+      "path": "residual-semantic-evidence.json",
+      "bytes": 1453036,
+      "sha256": "e2de305a93d773809db5ba6277b314ae30ce5d5a938d330e7ef75968dba97062"
+    },
+    {
+      "path": "residual-runtime-content-proof.json",
+      "bytes": 42148,
+      "sha256": "21295be2334afdafc3b8e72eee6993cec7d3f9e0a7f35a570796b9a154496645"
+    },
+    {
+      "path": "residual-nonruntime-content-proof.json",
+      "bytes": 97978,
+      "sha256": "6dc2288ec0d4cc8ddd1dcdff860192243d099b5baf531a4c3cb48b9243b079fb"
+    },
+    {
+      "path": "docs-residue-semantic-review-20261119.json",
+      "bytes": 10695,
+      "sha256": "12257f1c29c5858857085019b3edf6888b14803b2e94c72a4fe6177b9fa791c0"
+    },
+    {
+      "path": "docs-residue-content-proof.json",
+      "bytes": 52850,
+      "sha256": "9c959ec08153ee57921cf9e994248d6e43b0a6c82d148f053ca6996d13d3e748"
+    },
+    {
+      "path": "ws-p-gui-focal-semantic-review-20261119.json",
+      "bytes": 5037,
+      "sha256": "f0ead531de172d02cb9fb3909b55e3928b1fff0e89b567442b6aabdf9eeea37a"
+    },
+    {
+      "path": "residual_missing_behavior_probe.py",
+      "bytes": 4873,
+      "sha256": "232303429d62133e1ea50295f97c5f143995eb3ab8d761dae21ab5dedb182a9e"
+    },
+    {
+      "path": "residual-missing-behavior.log",
+      "bytes": 6807,
+      "sha256": "b8ff3f109c1c6dd3cb075402719e54557a1d4e4d35011b38eb4095e927cfefbc"
+    },
+    {
+      "path": "residual-missing-behavior-result.json",
+      "bytes": 340,
+      "sha256": "cf417af579b09f2f6522b27fb9575d757d58d34f8c35ed4907f36ef398726139"
+    },
+    {
+      "path": "reviewed-memory-cap-focused-result.json",
+      "bytes": 666,
+      "sha256": "d9d556e5c87d1da9b506ee1e68edc17d7acc1fe227b2d9e43a3ff76b1b98b6b3"
+    },
+    {
+      "path": "reviewed-full-exit137-diagnosis.json",
+      "bytes": 1928,
+      "sha256": "a762a06c2be7c4a96b8c113f2ad687fd6270fb596d53529eeecd9169ffacb3f5"
+    },
+    {
+      "path": "reviewed-full-exit137-resources.json",
+      "bytes": 1571,
+      "sha256": "7f4933a7072da7ac956efddeb27d471fa0c80414f538c64a830b0c6541f9dde5"
+    },
+    {
+      "path": "residual-semantic-review-20261119.json",
+      "bytes": 70871,
+      "sha256": "ea80d8562c58cf5dbdc80d2e9171867c8854a5ea3340b9087a566f3b1176dfc3"
+    },
+    {
+      "path": "residual-semantic-review-20261119.md",
+      "bytes": 40920,
+      "sha256": "546a4a5d738e0ca1be45b807517d9db3fb9533b5f80f0bc5656ec9c996e5c2ea"
+    }
+  ],
+  "archive_sha256": "75fe6a6e89c01f915f1d1f05efb5225a8a72c222eb93ed56f31696a3b328c404"
+}

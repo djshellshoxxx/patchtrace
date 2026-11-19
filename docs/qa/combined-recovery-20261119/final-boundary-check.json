@@ -1,0 +1,24 @@
+{
+  "runtime": "9335e7dcadc6d0337243f894e8f234ccc74bc62e",
+  "checked_head": "61605c965eba751dcba2e52e70943eecc86b60e4",
+  "only_later_non_document_change": [
+    "tests/test_tier_r_shard.py"
+  ],
+  "test_blob": "41d36b118f24ac98194393123e078eb18542bba4",
+  "packets": [
+    {
+      "folder": "combined-recovery-20261119",
+      "members": 25,
+      "sha256": "da67bd6754fe4986a2fe521e26911ea7a9f2ec00bb2b3ccaef3e34911d94b413"
+    },
+    {
+      "folder": "tier-r-cache-pin-20261119",
+      "members": 21,
+      "sha256": "75d15247d0d4ed3c2f03b42805786bbd06f404a2d0bc809cf25b1a0b949addfd"
+    }
+  ],
+  "local_links_verified": 48,
+  "whitespace": "passed",
+  "untracked_paths_at_check": [],
+  "verifier_format_note": "The first final-packet check stopped because it assumed a flat archive_sha256 key. The new CI packet uses archive.sha256. Its exact archive, README and all21 member hashes were verified with the correct declared schema; no packet bytes changed."
+}

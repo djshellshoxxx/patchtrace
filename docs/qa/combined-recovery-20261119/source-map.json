@@ -1,0 +1,237 @@
+{
+  "recorded_utc": "2026-11-19T11:26:32.615317+00:00",
+  "runtime_source": "9335e7dcadc6d0337243f894e8f234ccc74bc62e",
+  "runtime_tree": "05509de7d8038a9079fe80b08fa97da8cb61b7fd",
+  "core_local_base": "ac3a98150bd17bbbd973c7e7dcadb7edcf551934",
+  "core_remote_base": "a56ab13aaf9916fc12bea70ba1494075991b7f09",
+  "publication_parent": "976dddfbbcdf9a320e48813d8cf2c3c6540aac81",
+  "qa_head": "2ff86a96752bde9718460206c5e4b679bdad9cd4",
+  "runtime_tests_configuration_unchanged": true,
+  "runtime_files": [
+    {
+      "path": "src/patchtrace/gui/qt/table.py",
+      "git_blob": "e90b3acd981fa7045b370a080b7e27694f4e01d9",
+      "sha256": "c8ff60f1623852435dd9d11519b10356999ce8dd8efd2d5eebb006467b3228dc",
+      "bytes": 17951
+    },
+    {
+      "path": "src/patchtrace/gui/table_spec.py",
+      "git_blob": "4bab0fb8013bbb32a3e5c0b58ac5bc02d8fade89",
+      "sha256": "474cf5217e456ab64b75d98155e7580013a34ffc02508a5d79bcf0efcca7e862",
+      "bytes": 6209
+    },
+    {
+      "path": "src/patchtrace/intelligence/tools/admission.py",
+      "git_blob": "ae64016dc65d575d649aafae1264d15d6d434e3c",
+      "sha256": "7a06f5087927e263b2433e820ed1b1f5c3c80a6c517d445a342523685c77c373",
+      "bytes": 6964
+    },
+    {
+      "path": "src/patchtrace/kbcorrelation/cli.py",
+      "git_blob": "9f01d2b5c3bbe2bd5934ec28d3ed00b8ae338eae",
+      "sha256": "6c22a211cc3f801810d1574ed5b04c20b5987f44458e341b9991ee32972ad1b6",
+      "bytes": 7968
+    },
+    {
+      "path": "src/patchtrace/kbcorrelation/cli_inventory.py",
+      "git_blob": "f75fe05009c7445bb02ac01827cc258ff430661c",
+      "sha256": "af1d0e35f7a5df0c4c84151edc4f7444d5067289f0a3e7cd7bd7428a43df9741",
+      "bytes": 11920
+    },
+    {
+      "path": "src/patchtrace/kbcorrelation/components.py",
+      "git_blob": "db86042b68008c7fe1fd918676edb6eb64e08d85",
+      "sha256": "0c70da5dbfac2606aa4c5134760a06b3880e84813656de252834c02f8f4ad6e8",
+      "bytes": 5141
+    },
+    {
+      "path": "src/patchtrace/kbcorrelation/contracts.py",
+      "git_blob": "a6f6f279dbaf09a543f456a6d40a829fb10f922d",
+      "sha256": "876b99a439309d7f4ff305f299eae28a008a0acd237ca13c2968c496706aee65",
+      "bytes": 24754
+    },
+    {
+      "path": "src/patchtrace/kbcorrelation/inventory_contracts.py",
+      "git_blob": "a1b19a0d0d89537f126e0d9ebcbfa61bf6eed53e",
+      "sha256": "0b1ffc324da034bcc9021bc8d33f30d9ce5e8388ad6b0d99833fe1700c983277",
+      "bytes": 17882
+    },
+    {
+      "path": "src/patchtrace/kbcorrelation/inventory_csv.py",
+      "git_blob": "a3cbd45c051f34068c15f62741ce21f2a28af76a",
+      "sha256": "6ad6c92957304df45d2c94b60105c689183f7394e33f063e66c37175a62411d8",
+      "bytes": 29123
+    },
+    {
+      "path": "src/patchtrace/kbcorrelation/inventory_qt.py",
+      "git_blob": "69fe31d23a4a6a4cc1895b679f0eeb49dd97d6d8",
+      "sha256": "8dea0a327c67c2b9a479792eac02e842b251cc3c8075a1934bd668d822cec50a",
+      "bytes": 41215
+    },
+    {
+      "path": "src/patchtrace/kbcorrelation/inventory_selection.py",
+      "git_blob": "c5e44e5c427005318a5efda96fca70a81e687270",
+      "sha256": "c91a6b8bef949259edbf41f498cf5c6244b3067c0b5845c5f9948cd72db5d680",
+      "bytes": 19957
+    },
+    {
+      "path": "src/patchtrace/kbcorrelation/inventory_service.py",
+      "git_blob": "44757c9c85f8f79c13f248fef44258d540482564",
+      "sha256": "c2b9c912036a836559eb409627c6a1f266c3adfc1ab31759c10477d0109090b8",
+      "bytes": 16226
+    },
+    {
+      "path": "src/patchtrace/kbcorrelation/inventory_store.py",
+      "git_blob": "287cb37d2163ea6b35c1a36d8b3a113c5ecfca6f",
+      "sha256": "bbd462564abeb5a7ba0076e5b3597604bb8090a720d25522eabe302d141ec418",
+      "bytes": 27495
+    },
+    {
+      "path": "src/patchtrace/kbcorrelation/investigation_qt.py",
+      "git_blob": "c1f2ba4674e064bddee92056a34aeebe7dec3701",
+      "sha256": "0664dc79a174bcec000f52eee57c5461c368065875a880cb9730092a3c0b6961",
+      "bytes": 37802
+    },
+    {
+      "path": "src/patchtrace/kbcorrelation/panel_qt.py",
+      "git_blob": "0b6c51b285e3cca740e009b48322fe18419087b8",
+      "sha256": "d4262a185f9b1f43758dc43531b8444702910a0c0cc90a5a5d193b3d03a4a10b",
+      "bytes": 16702
+    },
+    {
+      "path": "src/patchtrace/kbcorrelation/service.py",
+      "git_blob": "fc687d1f02fdc1bff414c9fca32785f744e3c636",
+      "sha256": "b58832187c6918909867fbc9489a2a1c90d9d95392646d229e184c499d2a0095",
+      "bytes": 64548
+    },
+    {
+      "path": "src/patchtrace/kbcorrelation/sources/inventory_fetch.py",
+      "git_blob": "5c457eb7c63df2b75b8b71552ca2ea37d045d348",
+      "sha256": "9c7a601d605814a55ded02dd2a9c538a61c1e72abf6eb27058c0a7cc356141ca",
+      "bytes": 13778
+    },
+    {
+      "path": "src/patchtrace/kbcorrelation/sources/inventory_http.py",
+      "git_blob": "2c426ed77c1a9496a9f99de47fd0c08198913208",
+      "sha256": "8947c6e38df73a41bf2462dd664a6145ded60eb96ed9d9502318935d41491046",
+      "bytes": 11774
+    },
+    {
+      "path": "src/patchtrace/kbcorrelation/sources/support_links.py",
+      "git_blob": "4c204e93221f67df716d1d0bc6633a792cfd70b3",
+      "sha256": "0e4a835e508b3545e3f8e4b0becdf326266dd9e14c42668be536fc43d877512a",
+      "bytes": 12299
+    },
+    {
+      "path": "src/patchtrace/kbcorrelation/store.py",
+      "git_blob": "041ecc6e819759e5255489abdace418975fde76e",
+      "sha256": "df07391848ebaafd6a175888877f89de2f09bf506760f2e19f1eba1c5e3d93da",
+      "bytes": 40513
+    },
+    {
+      "path": "src/patchtrace/search/cli.py",
+      "git_blob": "fdacc8d8bb5709a29e19a482df0c78bb2624d2d8",
+      "sha256": "ea05dd1986407ab8765848f950ace4dd012f374de52dbbeac2033e708c280a74",
+      "bytes": 14628
+    },
+    {
+      "path": "src/patchtrace/search/panel.py",
+      "git_blob": "731d7b320efc10a9d639d707d8ae09acebda19c6",
+      "sha256": "51f9f9db67f62011adabca393a4663d381953f73d6f5c8201d1135475d8a943c",
+      "bytes": 977
+    },
+    {
+      "path": "src/patchtrace/search/qt_panel.py",
+      "git_blob": "bb792e6f2b8a7776b1fb1c8e4fbdda19c05074e6",
+      "sha256": "3e36f65b19a01d1e4b3a11bd63c29081e84a2d1507250ba7f21436903179dcc3",
+      "bytes": 24158
+    },
+    {
+      "path": "src/patchtrace/search/wiring.py",
+      "git_blob": "58837168de5c6a5d4db7f0da24739e642d8271c2",
+      "sha256": "e28b718c619efa3d5877fdb32abcc13e234290dc49ad2b34c6038464074bee18",
+      "bytes": 9719
+    },
+    {
+      "path": "src/patchtrace/strings/cli.py",
+      "git_blob": "d7a7f54873914b1e70c055a9c23b7a63dee129ca",
+      "sha256": "b7dd07c7ead90198e33025eee0c600d6e6ad7df7c441af9ff490c41efc7f6f40",
+      "bytes": 15535
+    },
+    {
+      "path": "src/patchtrace/strings/compose.py",
+      "git_blob": "5ed4151a7513f952376b444fee85f9246b159ac9",
+      "sha256": "f7688fc4e47b5c44aad195da3b55d467b8690de661c0973d4bd3c0232f1114a1",
+      "bytes": 5763
+    },
+    {
+      "path": "src/patchtrace/strings/copy.py",
+      "git_blob": "c12434652f2af1d6599609cc0e7a657949d4c0ca",
+      "sha256": "9f283cbdb40d610843571bb08409619f65983c6365945fa2d9a8f03aff0402fb",
+      "bytes": 12425
+    },
+    {
+      "path": "src/patchtrace/strings/qt_panel.py",
+      "git_blob": "9e47c309c13eaa16670af69dec2e7a55e97d929c",
+      "sha256": "6a61576067cb79891f048b961be22b7f304c47b1fdb74ef48dc0a1cb0a17c937",
+      "bytes": 28907
+    },
+    {
+      "path": "src/patchtrace/strings/tooltip_entries.py",
+      "git_blob": "d98d7513b507ff7c3ab7cb1e85748d9c160424c8",
+      "sha256": "93ffb7c49b538311e9be88099d1954ec864357c6efa680059b6e6a5c025bf401",
+      "bytes": 8956
+    },
+    {
+      "path": "src/patchtrace/ui_evidence.py",
+      "git_blob": "bc1117ddeaeca20e2afb95f315f1ec50b9a7a26c",
+      "sha256": "ae0a4c0a0ce24a2f05060b3c3712df1f9ff0388f7bd2ada542b40baeb2651ae2",
+      "bytes": 63906
+    }
+  ],
+  "local_history": [
+    "d122920cb40d3da7b3fade47a57e4a3887cc624e docs(audit): seal residual review and second incomplete full run [no release]",
+    "50c715c17162b37592685a15562fe2c35e07ca67 spec(gui): recover header help and evidence state announcements [no release]",
+    "7ac051fe861e2a99a37f07b1529906b1468ea554 fix(gui): recover header help and evidence announcements [no release]",
+    "0a945d0c6e5614806132055d35e49b399ce0b8ac docs(qa): retain selective GUI recovery controls and source proof [no release]",
+    "1f7b2cee6736b78fa222584dde27e4136b187dc5 docs(spec): recover bounded inventory contracts [no release]",
+    "a36dc7d48a523231de8b6e154436fcb1cf18c5b3 feat(kb): recover scoped inventory workflow and owned publication [no release]",
+    "fe69d3b41bfd0d375e7e34dbd22e7837bd692505 test(kb): order recovered tooltip regression imports [no release]",
+    "d2cb7f015b1365f4c274f1db751d5b77ac4ab3f5 test(kb): specify bounded semantic decision admission [no release]",
+    "22cce3ad2c657875ee7ffe531e30d5cb0a269eee fix(kb): admit bounded inventory decisions by parsed operation [no release]",
+    "d0fc344b7c2d4df06718f26de3106df8bf30cae8 docs(kb): recover inventory help referenced by the CLI [no release]",
+    "c4b4e06db7a2334c79abffd9e3e6c259bc53a10a test(kb): preserve decision compatibility during inventory replay [no release]",
+    "3ed70a8fc5b33633d11494920f404c3a93e41132 docs(spec): preserve general decision compatibility during inventory admission [no release]",
+    "c3e0c0da15ea4e277051f5d06c2352ce24365804 fix(kb): classify stored decisions through bounded semantic fields [no release]",
+    "54fb30cbef2c8b8ec672987d50584b629a2d5c44 docs(help): explain local inventory and explicit source fetch [no release]",
+    "3c320e650f5ae6ea74fa91625a33147a79d61e04 docs(qa): retain scoped inventory recovery and blocked gates [no release]",
+    "a24065970b3393426e901f72ae33c2f66b062076 test(ci): admit the required Windows toolchain metadata receipt [no release]",
+    "afad686eb43f285b924d4dbf25de51e44c10d0b9 docs(qa): retain failed full run and artifact assertion correction [no release]",
+    "80385bcef7b9655c6a9bce241d2a2d7c932d4e69 docs: preserve consolidation checkpoint and remaining admission blockers [no release]",
+    "0d4445674f29a500697332bf37d5c821da2ad912 spec(tools): admit stored evidence ownership for search and strings [no release]",
+    "74dd687791e9dc02954f4f27fef161d2fee110b9 spec(tools): clarify cache selection and recorded raw provenance [no release]",
+    "5e9a2cf4fdc6d8c2d8a8416114cb5cb238b5fbe4 fix(tools): admit stored evidence metadata for opt-in consumers [no release]",
+    "62a25821313b77938907a0c037014e5fa42d4fd8 docs(qa): retain stored-tool admission controls and review [no release]",
+    "5bc49afc606629a589be14eb80d776bc14846654 docs(qa): correct persisted Search evidence and retain replay [no release]",
+    "5764ea548ea156481cd9857b32b4650157cf3fcd docs(strings): define shared comparison and source choice recovery [no release]",
+    "8211dececbb2ce5b07dafd1a9c04dc470e4a6c6d fix(strings): share source composition between CLI and dock [no release]",
+    "ee55eb57f39bdbcc8515370851e6c795018361dd test(strings): require current artifact identity after orientation swap [no release]",
+    "9b038ea70ea8ee81fb5c4e0f6832141c080ab597 fix(strings): bind stored sources to current artifact identity [no release]",
+    "b6fd846089fb8a452268eaff40416abadaf930b1 docs(qa): retain Strings parity and artifact identity evidence [no release]",
+    "02812f3d7b2d634560baecf7b5183badb05be991 test(strings): preserve current artifact refusal with stored sources [no release]",
+    "8b548357efa0c12276a3d0327d5501126ee74ca5 fix(strings): refuse changed artifacts when reading stored evidence [no release]",
+    "bf78cc144550539531fabed8bef4fc2098512d68 test(strings): require stored metadata admission and real cache provenance [no release]",
+    "95e3f6b80bbfa7a48ac09f7884f3f7f527a0fde3 test(strings): mutate actual stored body and its integrity receipt [no release]",
+    "667baf52084fdab654eaf87bb176af3a32508eb6 fix(strings): admit stored metadata and retain real cache provenance [no release]",
+    "39aeda14037e62a407d672a086bbe024696ee90d spec(search): bind stored sources to current artifacts before indexing",
+    "a43b163585acdab6fcdcdfbe5a5bcd297d675542 fix(search): bind stored sources to current artifacts and isolated workers",
+    "ecc0845907f283e4f253be3fa1e16f89e9457553 docs(search): preserve source binding qualification and guard blocker",
+    "a6a1ff14a5fb19e61e8be4e983fbfb7946819438 spec(search): require selected-row refusal through cached CLI queries",
+    "2152696a9fde03c32772acc6278c1951a873b7a8 test(search): persist selected-row corruption across CLI reopen",
+    "9335e7dcadc6d0337243f894e8f234ccc74bc62e fix(search): consume selected-row tool admission before indexing",
+    "0810fadaf39bd5dcf97466b8721f409ed897dd2f docs(search): preserve admission proof and corrected CLI fixtures",
+    "a7ca5164423001675ed1b4233a7ec930a2fca908 docs(qa): seal real Strings admission and cache evidence",
+    "2ff86a96752bde9718460206c5e4b679bdad9cd4 docs(qa): retain combined source audit and strict diagnostic delta [no release]"
+  ],
+  "qualification": "Linux/offscreen and authored fixtures only; hosted/native/full/release gates separate."
+}

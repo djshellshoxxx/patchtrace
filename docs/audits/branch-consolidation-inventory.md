@@ -1,5 +1,164 @@
 # PatchTrace branch consolidation inventory
 
+## Published outcome — 2026-11-19 11:56:58 UTC
+
+The reviewed continuation source and evidence were published in draft
+[PR #321](https://github.com/djshellshoxxx/PatchTrace/pull/321) at
+**2042e24dc7f3eac265e0eb183c738527852b22cf**, tree
+**8e5327e9348c41496a029cb090337e1308d3ce5b**. The tree equals verified local
+**e8a6592c02544d8186416be64f9df78f31078a52**. The expected-head guard preserved
+checkpoint **976dddfbbcdf9a320e48813d8cf2c3c6540aac81** as first parent and
+updated core **8d130aefe1be6e737cff1d90d2a5b1658d60a3a6** as second parent. All 212 changed-file blobs,
+both parents, the exact tree, branch ref and PR head/base were read back.
+
+This later receipt revision changes documentation only. It records completed
+publication, superseding the earlier preparation instructions below. The
+reviewed runtime remains 9335e7dc and the sole later test change remains the
+approved cache-pin assertion 5575af79. Main remains **fdc2696c23bdbfe7668348f25e3b336ce33039f7**;
+there has been no additional main merge, branch deletion, force push, release,
+tag or deployment.
+
+[Guarded publication receipt](consolidation-20261119/continuation-publication.json),
+[core correction receipt](consolidation-20261119/core-cache-pin-publication.json),
+[combined QA](../qa/combined-recovery-20261119/README.md).
+
+### Final complete census
+
+The post-publication observation at **11:51:48–11:51:51 UTC** contains
+**323 branches, 56 open PRs and ten open non-PR issues**. Branch pages were
+100/100/100/23/0; PR pages 56/0; issue pages 66/0, including the same 56 PRs.
+Every open PR head matches its branch; no duplicate page entries were found.
+
+| Current topic disposition | Count |
+| --- | ---: |
+| Already integrated; later cleanup candidates only |144 |
+| Dependency blocked |11 |
+| Retained / requiring review or qualification |167 |
+| Total topics, excluding main |322 |
+
+All 144 integrated heads and all 11 dependency-blocked heads remain unchanged.
+The additional topic since the 322-branch observation is external draft PR #322,
+codex/patchtrace-completion-20261119-81e4 at
+32cc4b04cf1f5b9e69d1d0e8691db7083c7a45a7. It extends the retained checkpoint bdc929eb;
+ancestry to that unmerged checkpoint does not establish integration into main.
+External PR #320 advanced from bc7eb632 to 087f50aae76f815dc013fb65e304eef8e21596c1.
+Both remain distinct active work with their own qualification requirements.
+
+The initial 317-branch census, post-foundation 318-branch partition and later 322
+snapshot remain separate historical observations. The all-branch mapping and
+bounded focal-review limits are unchanged; no every-commit approval is claimed.
+[Post-publication census](consolidation-20261119/post-publication-census.json),
+[external delta review](consolidation-20261119/external-publication-delta-20261119.md),
+[complete parsed REST pages and gate receipts](consolidation-20261119/post-publication-evidence.zip).
+
+
+## Earlier preparation checkpoint — 2026-11-19 11:34: 21 UTC
+
+This current section supersedes the dated interruption status below. Original
+source records and failed/incomplete evidence remain preserved. The execution
+workspace recovered; the previously unpublished inventory, GUI, Strings,
+Search and shared-admission source is now assembled locally for guarded publication to the continuation
+candidate [PR #321](https://github.com/djshellshoxxx/PatchTrace/pull/321).
+At preparation, remote #321 still has documentation checkpoint 976dddfb; the
+actual guarded publication is established by its later PR receipt. This is a
+candidate, not an additional main merge or release acceptance.
+
+Reviewed runtime: **9335e7dcadc6d0337243f894e8f234ccc74bc62e**, tree
+**05509de7d8038a9079fe80b08fa97da8cb61b7fd**. Main remains **fdc2696c23bdbfe7668348f25e3b336ce33039f7**.
+The [resumed checkpoint](consolidation-20261119/resumed-checkpoint.md) distinguishes
+the tested source, later CI-test correction, publication guard, exact component
+pins and remaining gates. The final guarded publication SHA belongs to the PR
+operation receipt; local and REST-created commit IDs are not assumed equal.
+
+The complete 11:22:32–11:22:34 UTC census contains **322 branches including
+main, 55 open PRs and ten open non-PR issues**. Pages were 100/100/100/22/0,
+55/0 and 65/0 respectively; the issue endpoint includes the same 55 PRs. Every
+open PR head matched its branch, with no duplicate page records.
+
+| Current topic disposition | Branches | Evidence boundary |
+| --- | ---: | --- |
+| Already integrated / later cleanup candidates | 144 | 128 exact ancestors and 16 patch-equivalent heads; all 144 heads unchanged |
+| Dependency blocked | 11 | Existing dependency classifications and exact heads unchanged |
+| Retained / requiring review or qualification | 166 | 161 unchanged historical heads, updated #318 and four new refs |
+| Total topics | 321 | Main excluded; all remote branches retained |
+
+The frozen post-foundation partition remains 144 + 11 + 162 = 317 topics.
+Its 162 review heads all have focal dispositions: 116 prior exact-head receipts
+plus 46 fresh reviews, including 32 source/tooling/research and 14 documentation
+reviews. All 13 priority families are pinned. This is not exhaustive semantic
+approval of every unmatched commit or a whole-branch merge recommendation.
+The residual archive has 14 payload members plus its original source-hash
+manifest; its bytes and all member hashes are preserved.
+
+One guarded main merge, #317, also closed twelve contained PRs; it was not thirteen
+merge operations. Three repair/recovery PRs have been advanced in this pass:
+#318 for the broad stack, #319 for the selective core recovery, and #321 for the
+bounded continuation. These operational counts overlap the disposition table.
+Seven standalone PR slices (#308–#311 and #313–#315) were recovered into #319;
+#307 inventory and additional scoped GUI/Strings/Search work were selectively
+reconstructed for #321. No mixed source branch was declared wholly integrated
+because one slice was recovered.
+
+The four new refs are the reviewed core branch (#319), continuation branch (#321),
+external integration (#320) and external checkpoint81e4. The external integration
+is pinned at bc7eb6328b477e2ff19cfe36317279eaf5856fb6. The checkpoint moved from
+main-equal to bdc929ebd3c6aaa2563c758936beb315a10eeea0, so it is **not** a 145th
+integrated topic. Both retain distinct active work. #320 lacks this continuation's
+shared admission, Strings composition, Search wiring and semantic inventory JSON
+repair; the checkpoint adds other parser/metadata/scoring/adapter changes.
+
+The latest census is a timestamped observation, not a repository lock. #321's
+976dddfb documentation checkpoint in that census is the guarded publication
+starting point; the later runtime update does not add a branch. The original
+164-conflict/153-clean simulations remain historical, not a new all-322 simulation.
+
+[Complete current census](consolidation-20261119/final-remote-census-20261119.md),
+[external focal review](consolidation-20261119/external-branch-focal-review-20261119.md),
+[raw pages and normalized all-branch records](consolidation-20261119/resumed-remote-evidence.zip),
+[hash manifest](consolidation-20261119/resumed-remote-manifest.json).
+
+### Completed core CI correction and publication
+
+Core PR #319 was guarded forward from a56ab13a to **8d130aefe1be6e737cff1d90d2a5b1658d60a3a6**.
+Its tree **ce0399940c5fa24ea017498f9e4cf80b0ee6d2de** equals local
+**e9be6e009ff0aee69ca7be78d47c5b740b62fd00**. The four changed files are
+one test assertion and three QA files; runtime and workflows are unchanged.
+One red control precedes 21 related passes and six independent guard controls.
+The old 23,268-pass/one-failure full run remains failed; the new head needs its
+own hosted qualification. [Source and QA](../qa/tier-r-cache-pin-20261119/README.md),
+[guard, exact tree/parent/ref and PR readback](consolidation-20261119/core-cache-pin-publication.json).
+The continuation publication is prepared with original checkpoint 976dddfb as
+first parent and this fresh core head as second parent. Its actual ref update
+is established by the subsequent PR #321 publication receipt.
+
+## Historical interruption checkpoint — 2026-11-19 10:31:52 UTC
+
+This section supersedes current-status statements in the earlier source-pinned history below. The history is retained verbatim. See the [continuation checkpoint](consolidation-20261119/continuation-checkpoint.md) and [complete remote snapshot](consolidation-20261119/continuation-checkpoint.json) for evidence, source identities and exact continuation.
+
+The latest complete pre-publication census is **319 branches including main and 53 open PRs** (branch pages 100/100/100/19/0; PR pages 53/0). Main remains **fdc2696c23bdbfe7668348f25e3b336ce33039f7** after the one guarded #317 merge. No branch was deleted.
+
+The **318-branch post-foundation** snapshot has 317 topics: **144 integrated** (128 ancestors + 16 patch-equivalent without unique merge commits), **11 dependency blocked**, and **162 requiring review**. Those 162 now all have focal dispositions: 116 unchanged historical exact-head receipts and 46 fresh reviews (32 source/tooling/research, 14 documentation); all 13 priority families are pinned. This is not every-commit or whole-branch approval. The sealed 14-member residual review archive is still local and unpublished because the execution workspace became unavailable again.
+
+#319 is now a56ab13aaf9916fc12bea70ba1494075991b7f09; #318 is c4ace2088ce8dc9ce78a0bf3036b81096accbdb5. Both were guarded CI-test/receipt-only updates, with verified trees and parents. This documentation checkpoint adds its own retained branch/PR after the snapshot; the post-publication census belongs in its PR receipt and must not be confused with the historical partition.
+
+
+## Additional focal semantic coverage after foundation integration
+
+The [residual semantic review](consolidation-20261119/residual-semantic-review.md)
+covers the 46 post-foundation heads without a prior exact-head focal receipt.
+Together with 116 previously recorded unchanged-head reviews, all 162 heads in
+the post-foundation mechanical REQUIRES REVIEW category now have a focal
+semantic disposition. This does not certify every unmatched commit or approve
+whole branches. The complete source/commit map, independent documentation review
+and reproducible missing-behavior probes are retained in the
+[archive](consolidation-20261119/residual-semantic-evidence.zip) and
+[manifest](consolidation-20261119/residual-semantic-manifest.json). All 13 named
+priority families are explicitly pinned there. New recoveries and their
+qualification must be read from the later operation record, not inferred from
+this historical review snapshot.
+
+## Frozen initial census
+
 Observed UTC: 2026-11-19T07:48:47.853100+00:00. All comparisons are pinned; refresh after any merge or source movement.
 
 Main: `9c411ca3d7b47f950be5f0c6f01b3c54184554c6`. Foundation #317: `88b0b52281dd314aa72f93819145a73135618bc4`. Follow-up #316: `f2b6827fc6270b96fb241b0722f2878de5a17361`.

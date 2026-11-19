@@ -10,7 +10,9 @@ revalidates the parent and leaf before returning bytes. Windows uses rooted nati
 handles with write/delete exclusion; Linux uses no-follow descriptor opens.
 Unavailable ownership primitives fail closed. Its existing immutable publication
 and root-anchor entrypoints remain available as defined by that source; this
-selective integration does not change KB workspace or winpairs call sites.
+initial advisory-only integration did not change KB workspace or winpairs call
+sites. The PW-01 recovery below adds the KB workspace callers; the research
+winpairs callers remain outside that recovery.
 Tests: `test_owned_publication.py`, `test_advisory_read_bounds.py`, and the existing
 winpairs publication boundary suite. Portable native-call controls do not certify
 Windows filesystem behavior; exact-candidate hosted Windows tests remain required.
@@ -191,6 +193,7 @@ Every substantial future module must be added here before implementation. UI mus
 | normalize | intelligence/tools/normalize.py | verified PE map, canonical RVA, offset verification, function attribution, set validation (binding, contract, stale), comparability | pe_overview, common | `tests/test_intel_tools_audit.py` |
 | delta | intelligence/tools/delta.py | capability/string/environment deltas, newly-introduced vs newly-detectable, unlocalized, quality flags (value gate unvalidated) | normalize | `tests/test_intel_tools_delta_wb3.py` |
 | runner + store | intelligence/tools/runner.py, intelligence/tools/store.py | profiles basic/context/full, job scheduler (cap 2), cache key reuse, error isolation; `tool-run`/`tool-evidence` rows, content-addressed sidecars | jobs, enrichment.storage | `tests/test_intel_tools_runner.py` |
+| stored-tool admission | intelligence/tools/admission.py | SPEC-36 T14 opt-in `latest_admitted`: preserve Entry metadata, validate selected run/evidence/current guard, resolve admitted cache origin for raw provenance; no writes or tool execution; existing ToolStore API unchanged | tools.common, tools.store, enrichment.storage, persistence.strict_json | `tests/test_intel_tools_admission.py`; real stores and authored fake-tool fresh/cache producer |
 | CLI | intelligence/tools/cli.py (+ 6-line hook in cli.py) | `intel-tools probe|run|delta`, `enrichment-cli/1`, exit codes 0/2/3/4/5, redaction by default | runner, delta, service | `tests/test_intel_tools_cli.py` |
 | provisioning + live | tools/provision_intel_tools.py, tools/intel_tools_pin.json, tools/generate_intel_tools_schemas.py, docs/schemas/intel-tools/, tests/test_live_intel_tools.py, .github/workflows/live-intel-tools.yml | pinned download/verify/extract without executing; never-silent live status | - | `tests/test_provision_intel_tools.py`, `tests/test_intel_tools_schemas.py` |
 ### [T:core] build status (2026-10-14)
@@ -546,7 +549,7 @@ explicit pair when either ambiguity or truncation remains. Regression coverage:
 |---|---|---|---|
 | tool groups | src/patchtrace/search/sources/tools.py | `tool_specs(port)` -> six groups `tool:<engine>:<side>` (floss `string`, capa `capability`, diec `build`) from `ToolEvidencePort.latest(engine, side)` (the `ToolStore.latest` shape). A group exists only for a produced run (`ok`/`none-found`); no store, no run or a failed run is `unavailable`, so presence can never read "absent" from a missing run. Strings: subject = project function id (else tool function id, else hash prefix), `value_sha` = value hash, secrets as `[redacted: kind]` + hash. Capability docs are name-like (rule id) with namespace and ATT&CK/MBC text; library and limitation items are not indexed. Truncated output is stated in the coverage reason. Digest = `cache_key` | tests/test_search_sources_tools.py |
 | advisory groups | src/patchtrace/search/sources/advisory.py | `advisory_specs(advisories, snapshots)` -> `adv` (one doc per stored advisory revision, plus `cwe` and `kb` docs; superseded flagged in `extra`, markup stripped, <=64 KiB) and `cve` (one doc per snapshot, older snapshots and conflicts flagged, plus `cwe`). Ports `AdvisoryPort.advisories()` and `CveSnapshotPort.snapshots()`. Digests = facts ids / snapshot ids |  |
-S8 notes: integrator wires `SearchService(extra_specs=lambda req: tool_specs(ToolStore) + advisory_specs(AdvisoryStore, <cve snapshot reader>))` and `comparable(engine)` from the tools delta comparability. No store reader for `cve-snapshot` rows exists yet; the port is `snapshots() -> Sequence[CveSnapshot]`.
+S8 production binding: `search/wiring.py` snapshots stored tool/advisory/CVE values on the store owner thread, validates current artifact/run identity, and connects `SearchService` extra source and comparability ports. Workers receive a deep project copy and store-free source snapshot; current saved-query APIs remain intact. Metadata admission and unavailable-source behavior follow the 2026-11-19 amendment below.
 ### [K7v:kb-acquire-cli]
 `kbcorrelation/cli_acquire.py` (`kb acquire INV --project DIR [--pair ID] [--product ID] [--file NAME] [--name N] [--consent-hosts H] [--consent-plan SHA] [--offline]`) over `KbService.acquire`: resolves the pair offline, `row_for` over `WorkspaceFileIndex.rows_for`, `acquire.build_plan`; without consent equal to the planned hosts and `plan_sha` it returns the exact plan with exit 2 and makes no request; with it `acquire.acquire_pair` downloads, verifies and imports through `import_pair` (download provenance in `result.acquisition`). `wiring.build_env(acquirer=)` binds `acquisition.workflow.Acquirer` (`Env.acquirer`). `kb index import --winbindex NAME [--data-date D] FILE` validates one record with `winbindex.parse_rows` (64 MiB compressed / 256 MiB decompressed bounds) and stores it as `<workspace>/winbindex/<name>@D.json[.gz]` via `wiring.save_winbindex_record`; a rejected record writes nothing. Tests: tests/test_kbc_acquire_cli.py.
 ### [K1a:kev-core]
@@ -799,10 +802,10 @@ S5 notes (for the integration owner, S0b and S1):
 |---|---|---|---|---|
 | table spec | src/patchtrace/gui/table_spec.py | Qt-free `ColumnSpec`, `TableSpec`, `PreparedTable`, `prepare_table(spec, columns, rows, token)` (worker side: sanitized strings, search keys, sort keys, default order, `Cancelled`, more than 100,000 rows = `too_large` without rows), `order_by` (stable, None last), `build_tsv` (16 KiB cap with notice) | gui/text | tests/test_gui_table_spec.py, test_gui_core_isolation.py (no-Qt subprocess) |
 | virtual table | src/patchtrace/gui/qt/table.py | `VirtualTableModel` (pointer swap, model-owned filter and sort over an index list, early-return `data()`, `KEY_ROLE`, `ROW_ROLE`, `CHIP_ROLE`, `SORT_ROLE`) and `VirtualTable` (fixed row height from `Metrics`, hidden vertical header, selection and current row kept by `row_key`, Enter or double-click `activated_key`, Space `detail_requested`, Ctrl+C TSV) | table_spec, qt/metrics | tests/test_gui_table.py |
-F4 notes: `prepare_table` takes `columns` because they may change with every table (the card's signature had none). Measured (Linux, offscreen, 6 columns, 900x420): 10k rows reset 10 ms, sort 7, filter 8; 100k rows reset 14, sort 31, filter 39; 462 `data()` calls for each at both sizes; worker prepare 62 ms and 702 ms. Tooltips are the cell text (elided cells); `tip_id` and `tip_prefix` are carried for the panel, `tooltips.py` is untouched. Selection is kept for rows still visible; a selection above 5,000 rows is dropped on refresh (the current row stays). Sorting has no keyboard path on the header itself: panels should offer a sort command (`VirtualTableModel.sort`).
+F4 notes: `prepare_table` takes `columns` because they may change with every table (the card's signature had none). Measured (Linux, offscreen, 6 columns, 900x420): 10k rows reset 10 ms, sort 7, filter 8; 100k rows reset 14, sort 31, filter 39; 462 `data()` calls for each at both sizes; worker prepare 62 ms and 702 ms. Cell tooltips default to the cell text (elided cells). `ColumnSpec.tip_id` optionally serves the registered header tooltip, with title/unit fallback for an empty or unknown id; accessible header text stays plain title/unit. `tip_prefix` remains panel metadata; `tooltips.py` is untouched. Selection is kept for rows still visible; a selection above 5,000 rows is dropped on refresh (the current row stays). Sorting has no keyboard path on the header itself: panels should offer a sort command (`VirtualTableModel.sort`).
 ### [GUI-F3:widgets] GUI framework F3: shared Qt widgets (2026-10-14; plan specs/program-e/GUI-integration-plan.md 8.4, 8.6, 8.7, 8.11)
 - gui/qt/labels.py: PlainLabel (PlainText, links off, sanitize_text on every set, 200 chars, middle elision with an escaped tooltip, wrap option, selectable only by flag), SafeTextView (4,000 chars, read-only), labelled(field, text) (sibling label, buddy, explicit accessible name).
-- gui/qt/state_view.py: StateView (12 kinds from gui.state, dominant() precedence via show_conditions, content shown only where results exist, Retry/Copy details/Open setup/Refresh buttons built eagerly and named per panel, empty-name status label, announcements through an injected announcer, errors assertive) and NoticeStrip (one wrapped line, Details toggle, Dismiss, project or session scope, returns when its text changes).
+- gui/qt/state_view.py: StateView (12 kinds from gui.state, dominant() precedence via show_conditions, content shown only where results exist, Retry/Copy details/Open setup/Refresh buttons built eagerly and named per panel, empty-name status label, announcements through an injected announcer, errors assertive) and NoticeStrip (one wrapped line, Details toggle, Dismiss, project or session scope, returns when its text changes). The evidence controller supplies its shell port to this StateView through the panel’s optional announcer (2026-11-19 recovery); host-call tests do not qualify native screen-reader output.
 - gui/qt/chips.py: paint_chip (shape, glyph, text; fill from tokens), ChipLabel (accessible name Prefix: words), ChipDelegate (CHIP_ROLE). High-contrast drawing is F7.
 - gui/qt/theme.py: ThemeTokens, DARK, build_stylesheet(DARK) == ui.DARK_STYLE (golden), contrast_problems(tokens). System and high-contrast variants are F7.
 - gui/tips.py (pure): register_tips (idempotent, conflict is PT-GUI-TIPS), gui_tips()/register_gui_tips() (gui.state_*, gui.notice*), apply_tip(accessible='what'|'full', name=) = apply_tooltip + What-line description + UIA identifier. The host (F5) must call register_gui_tips() before panels are built.
@@ -1209,7 +1212,15 @@ Calls panel (id graph): `callgraph/panel.py` (PanelSpec), `panel_qt.py` (widgets
 
 ### [WB3-S7b:strings-panel]
 
-`strings/panel.py` declares the Strings `PanelSpec`; `strings/qt_panel.py` is the Qt controller (StateView states, VirtualTable, TaskRunner channels `strings-scan` and `strings-view`, generation and project-key guard). The default loader is the built-in scan with no function pairing; FLOSS, probe, export, rescan and settings are not built yet.
+Selective S7c recovery (2026-11-19): `strings/compose.py` is the Qt-free shared
+CLI/dock comparison and stored-source selection seam. It retains import/export
+cues, project links, section regions and optional CLI anchors. The dock captures
+stored FLOSS evidence on the GUI owner thread and sends immutable source data to
+its existing worker. `tests/test_strings_compose.py` and
+`tests/test_ui_strings_source.py` verify shared results, source choice, refusal,
+cancellation and retained display state. Export publication is unchanged.
+
+`strings/panel.py` declares the Strings `PanelSpec`; `strings/qt_panel.py` is the Qt controller (StateView states, VirtualTable, TaskRunner channels `strings-scan` and `strings-view`, generation and project-key guard). The recovered loader shares the CLI comparison, uses the selected stored source or built-in scan, and retains supported project function pairing. Running FLOSS, probe, dock export, rescan and settings remain separate work.
 
 ### [CAP-6:capabilities-panel]
 | Part | Files | Notes |
@@ -1434,3 +1445,47 @@ unchanged. Tests: `test_kb_product_start_20261106.py`,
 ## Advisory sidecar read bounds — 2026-11-18
 
 `intelligence/storage.py` reuses `owned_publication.read_bytes` for bounded SHA-verified regular-file reads and expected-length idempotent reuse. Cached normalized facts have a64MiB cap; raw recovery uses the retained source length. Import checks derived size before any write. The existing cache-recovery and damaged-cache replacement policies remain; total store I/O and publication races are separate. Tests: `test_advisory_read_bounds.py`, `test_intel_storage.py`, shared owned-publication controls and adjacent CSAF/pilot readers.
+
+## PW-01 KB file inventory extension
+
+Retained-source page adapters (2026-11-18): `inventory_service.retain_inventory`
+and the `KbService` delegate validate a strict architecture/page policy and call
+the existing inventory store offline. `cli_inventory.py` exposes `retain
+IMPORT_ID --architecture amd64 --page 1`; `inventory_qt.py` captures that explicit
+saved-source request through its existing worker/cancel boundary. Source-page
+controls are separate from table pagination. Summaries expose v2 retention policy,
+scan completeness, observed counts and conflict-witness counts; incomplete source
+scans cannot enable UI filename selection. Existing v1 imports and investigation
+revisions are preserved. Verification: `test_kbc_inventory_retention_adapters.py`
+and `test_ui_kb_inventory_retention.py`, plus the existing inventory adapter suites.
+
+| Module | Responsibility | Verification seam |
+|---|---|---|
+| `kbcorrelation/inventory_contracts.py`, `inventory_csv.py` | Frozen CSV record/provenance contracts and pure parser; independent v1 50,000-entry and v2 5,000-entry budget profiles | Authored CSV, hostile input, captured-budget replay/property tests |
+| `kbcorrelation/sources/support_links.py`, `inventory_fetch.py`, `inventory_http.py` | Inert support HTML links, exact consented retrieval and DNS-pinned TLS transport | Offline parser, injected transport, URL/DNS/redirect/cancellation tests |
+| `kbcorrelation/inventory_store.py`, `inventory_service.py`, `inventory_selection.py` | Content-addressed raw retention, immutable contextual imports, source-snapshot and revision-guarded scoped selection | Real workspace rollback/replay, selection and concurrent source-admission tests |
+| `kbcorrelation/cli_inventory.py`, `inventory_qt.py` | Shared-service CLI and desktop inventory controls | CLI envelope and offscreen Qt lifecycle tests |
+
+Recovery boundary (2026-11-19): the KB store and inventory callers now reuse the already recovered owned-publication helper. The native research and held-input/package stacks are outside this port. Saved-scope preflight remains the current foundation contract. Qualification is recorded separately for this source and each platform.
+
+`inventory_selection._decisions` admits strict decision records through a bounded
+SQLite JSON field projection, validating the small header and one SourceRef at a
+time. Valid unrelated bodies may exceed 8 KiB and keep their unbounded refs tuple;
+actual inventory bodies retain their 8 KiB cap. Its temporary SQLite progress
+guard and shared replay deadline cover execution and iteration.
+`tests/test_kbc_inventory_decision_admission.py` and the independently authored
+`test_kbc_inventory_decision_compatibility.py` check equivalent JSON, large valid
+unrelated decisions, corrupt-row refusal before service mutations, pre-row
+cancellation/deadline interruption and callback cleanup.
+
+
+## S8 production source binding recovery (2026-11-19)
+
+`search/wiring.py` captures tool/advisory/CVE source ports on the project-store
+owner thread, validates tool rows against the current artifact and run identity,
+and supplies a frozen snapshot and copied project/root to search workers.
+`search/cli.py`, `search/panel.py` and `search/qt_panel.py` connect this bridge while
+preserving injected ports and named/recent saved-query behavior. Source metadata
+admission is capped at10,000 rows; current advisory reader bounds remain unchanged.
+Tests: `test_search_wiring.py` and focused current-source binding controls. No
+persisted model, native execution or shared store implementation changes.

@@ -1,5 +1,255 @@
 # Consolidation report — active source-pinned checkpoint
 
+## Published outcome — 2026-11-19 11:56:58 UTC
+
+The reviewed continuation source and evidence were published in draft
+[PR #321](https://github.com/djshellshoxxx/PatchTrace/pull/321) at
+**2042e24dc7f3eac265e0eb183c738527852b22cf**, tree
+**8e5327e9348c41496a029cb090337e1308d3ce5b**. The tree equals verified local
+**e8a6592c02544d8186416be64f9df78f31078a52**. The expected-head guard preserved
+checkpoint **976dddfbbcdf9a320e48813d8cf2c3c6540aac81** as first parent and
+updated core **8d130aefe1be6e737cff1d90d2a5b1658d60a3a6** as second parent. All 212 changed-file blobs,
+both parents, the exact tree, branch ref and PR head/base were read back.
+
+This later receipt revision changes documentation only. It records completed
+publication, superseding the earlier preparation instructions below. The
+reviewed runtime remains 9335e7dc and the sole later test change remains the
+approved cache-pin assertion 5575af79. Main remains **fdc2696c23bdbfe7668348f25e3b336ce33039f7**;
+there has been no additional main merge, branch deletion, force push, release,
+tag or deployment.
+
+[Guarded publication receipt](consolidation-20261119/continuation-publication.json),
+[core correction receipt](consolidation-20261119/core-cache-pin-publication.json),
+[combined QA](../qa/combined-recovery-20261119/README.md).
+
+### Completed operations
+
+- One guarded main merge: #317 at fdc2696c, with its exact tested tree and
+  [no release] retained; twelve contained PRs closed automatically.
+- Three repair/recovery PRs advanced: broad #318 at c4ace208, core #319 at 8d130aef,
+  and continuation #321 at 2042e24d. The last two remain draft; none is represented
+  as an additional main merge.
+- Seven standalone feature slices were recovered into the core, then the mixed
+  inventory and scoped GUI/Strings/Search recovery were assembled with their
+  real-caller correctness repairs and one shared admission implementation.
+- All five requested audit records, the complete census, original failures,
+  interrupted-run evidence and source/QA manifests are preserved and published.
+- Independent assembly review verified 30 runtime component blobs. Combined
+  affected verification passed 1,199 with one native Windows skip and one explicit
+  timing deselection; ordinary Ruff and relevant schema/help checks passed.
+- The newly completed core Linux run's sole stale pin assertion was repaired;
+  one red precedes 21 related passes and six independent guard controls. The old
+  full failure remains historical and new-head full/native gates remain pending.
+
+Publication is complete; the remaining continuation is qualification and scoped
+blocker resolution. No permission request or execution-workspace outage is
+blocking the published work. No further main merge is justified by the actual
+current gate state.
+
+### Final complete census
+
+The post-publication observation at **11:51:48–11:51:51 UTC** contains
+**323 branches, 56 open PRs and ten open non-PR issues**. Branch pages were
+100/100/100/23/0; PR pages 56/0; issue pages 66/0, including the same 56 PRs.
+Every open PR head matches its branch; no duplicate page entries were found.
+
+| Current topic disposition | Count |
+| --- | ---: |
+| Already integrated; later cleanup candidates only |144 |
+| Dependency blocked |11 |
+| Retained / requiring review or qualification |167 |
+| Total topics, excluding main |322 |
+
+All 144 integrated heads and all 11 dependency-blocked heads remain unchanged.
+The additional topic since the 322-branch observation is external draft PR #322,
+codex/patchtrace-completion-20261119-81e4 at
+32cc4b04cf1f5b9e69d1d0e8691db7083c7a45a7. It extends the retained checkpoint bdc929eb;
+ancestry to that unmerged checkpoint does not establish integration into main.
+External PR #320 advanced from bc7eb632 to 087f50aae76f815dc013fb65e304eef8e21596c1.
+Both remain distinct active work with their own qualification requirements.
+
+The initial 317-branch census, post-foundation 318-branch partition and later 322
+snapshot remain separate historical observations. The all-branch mapping and
+bounded focal-review limits are unchanged; no every-commit approval is claimed.
+[Post-publication census](consolidation-20261119/post-publication-census.json),
+[external delta review](consolidation-20261119/external-publication-delta-20261119.md),
+[complete parsed REST pages and gate receipts](consolidation-20261119/post-publication-evidence.zip).
+
+### Current qualification boundary
+
+**No additional main merge is qualified.** The complete 11:53:11 UTC gate snapshot
+is tied to the published runtime heads. The documentation receipt revision needs
+its own current-head check readback; no pending job is converted to a pass.
+
+| Scope | Source | Observed checks |
+| --- | --- | --- |
+| pulls/318 | `c4ace2088ce8` | 2 queued; 2 skipped; 16 success; 6 in progress; 2 failure |
+| pulls/319 | `8d130aefe1be` | 1 skipped; 13 queued |
+| pulls/320 | `087f50aae76f` | 28 queued; 3 skipped |
+| pulls/321 | `2042e24dc7f3` | 2 skipped; 14 queued |
+| pulls/322 | `32cc4b04cf1f` | 21 queued; 1 skipped |
+| branches/main | `fdc2696c23bd` | 5 queued; 2 skipped; 22 success |
+
+Main's scheduled/non-gating runs are included in that same-head snapshot; they
+are separate from the completed foundation PR qualification. No submitted GitHub
+reviews were returned for the candidate heads. Independent source reviews are
+recorded separately. The new core/continuation and external candidates remain
+draft; #318 retains two actual strict-security failures.
+
+Strict runtime scan results remain red: 68 core, 80 broad and 82 combined. Their
+trust-boundary review is not a waiver. Inherited forced Strings publication and
+ordinary OSError cleanup ownership remain P2. Fresh applicable full/native,
+Windows sharing, packaging/lifecycle, manual/macOS/assistive-technology and
+separate L1/L2/L3 accuracy gates remain open.
+
+[Exact gate/status/workflow/review receipt](consolidation-20261119/post-publication-gates.json).
+
+
+## Earlier preparation checkpoint — 2026-11-19 11:34: 21 UTC
+
+This current section supersedes the dated interruption status below. Original
+source records and failed/incomplete evidence remain preserved. The execution
+workspace recovered; the previously unpublished inventory, GUI, Strings,
+Search and shared-admission source is now assembled locally for guarded publication to the continuation
+candidate [PR #321](https://github.com/djshellshoxxx/PatchTrace/pull/321).
+At preparation, remote #321 still has documentation checkpoint 976dddfb; the
+actual guarded publication is established by its later PR receipt. This is a
+candidate, not an additional main merge or release acceptance.
+
+Reviewed runtime: **9335e7dcadc6d0337243f894e8f234ccc74bc62e**, tree
+**05509de7d8038a9079fe80b08fa97da8cb61b7fd**. Main remains **fdc2696c23bdbfe7668348f25e3b336ce33039f7**.
+The [resumed checkpoint](consolidation-20261119/resumed-checkpoint.md) distinguishes
+the tested source, later CI-test correction, publication guard, exact component
+pins and remaining gates. The final guarded publication SHA belongs to the PR
+operation receipt; local and REST-created commit IDs are not assumed equal.
+
+## Completed integration and repair work
+
+**One direct main merge is complete: #317.** Its expected-head guard and
+[no release] marker were used; the resulting main tree af464108 exactly equals
+the tested 88b0b522 foundation. GitHub closed twelve contained PRs:
+#290, #291, #292, #293, #294, #295, #297, #301, #302, #304, #305, #306. No remote branch
+was deleted or force-pushed; no tag, release or deployment was created.
+
+The core recovery is isolated in draft #319; the broad-stack repair is in#318.
+The locally assembled continuation for draft #321 selectively adds the inventory, bounded GUI,
+Strings, Search and shared-admission recovery. All source/failed/raw evidence
+previously left local by the interruption is included in this prepared tree, including the residual
+semantic archive, second incomplete full-run packet, Windows 11-case receipt and
+broad Linux 25,705-pass/one-failure receipt.
+
+The continuation preserves the original documentation checkpoint 976dddfb and
+all earlier audit history. The planned guarded publication will fast-forward
+the existing continuation branch, not another new branch. The updated core
+CI-only correction must be incorporated as an explicit parent when publishing
+the final tree, with actual parent/tree/blob identity verified through REST.
+
+The complete 11:22:32–11:22:34 UTC census contains **322 branches including
+main, 55 open PRs and ten open non-PR issues**. Pages were 100/100/100/22/0,
+55/0 and 65/0 respectively; the issue endpoint includes the same 55 PRs. Every
+open PR head matched its branch, with no duplicate page records.
+
+| Current topic disposition | Branches | Evidence boundary |
+| --- | ---: | --- |
+| Already integrated / later cleanup candidates | 144 | 128 exact ancestors and 16 patch-equivalent heads; all 144 heads unchanged |
+| Dependency blocked | 11 | Existing dependency classifications and exact heads unchanged |
+| Retained / requiring review or qualification | 166 | 161 unchanged historical heads, updated #318 and four new refs |
+| Total topics | 321 | Main excluded; all remote branches retained |
+
+The frozen post-foundation partition remains 144 + 11 + 162 = 317 topics.
+Its 162 review heads all have focal dispositions: 116 prior exact-head receipts
+plus 46 fresh reviews, including 32 source/tooling/research and 14 documentation
+reviews. All 13 priority families are pinned. This is not exhaustive semantic
+approval of every unmatched commit or a whole-branch merge recommendation.
+The residual archive has 14 payload members plus its original source-hash
+manifest; its bytes and all member hashes are preserved.
+
+## Fresh verification
+
+| Scope | Actual outcome | Boundary |
+| --- | --- | --- |
+| Foundation Linux full suite |22,955 passed, 50 skipped, 6 expected failures | Tested#317 source; main tree proved identical |
+| Foundation Windows full suite |22,877 passed, 129 skipped, 5 expected failures | Tested#317 source; Windows package/ZIP/NSIS lifecycle also passed |
+| Final combined affected selection |1,199 passed, 1 native Windows skip, 1 explicit deselection;213.79 s | Runtime 9335; not full suite; unchanged50,001-row timing control excluded and prior results retained |
+| Independent combined GUI seams |10 passed;8.85 s | All30 runtime component blobs equal reviewed pins; actual saved-search/worker/announcement boundaries |
+| Frozen Strings/UI/helper/help/spec |889 passed;61.12 s |2f8f69c2, actual authored cache/metadata/artifact caller probes separate; no native FLOSS claim |
+| Corrected Search focused/adjacent |60 and 418 passed |b5aace25; overlap, not summed; committed/reopened corrupt rows verified before caller |
+| Shared admission |33 author controls; independent original metadata/BLOB/selection controls passed |41af7c7e; selected/origin-only admission, no public-store contract change |
+| Inventory |183 author, 48 overlapping independent, 8 ordering controls |0afd6f54; broader1189-pass/one-timing-failure/one-skip history retained |
+| Prior broad Linux full suite |25,705 passed, 1 failed, 60 skipped, 3 expected failures |2e301a74; report allowlist later repaired, original failed run remains failed |
+| Latest core Linux full suite |23,268 passed, 1 failed, 50 skipped, 6 expected failures |a56ab13a; stale immutable-action pin assertion was repaired in 8d130aef; new-head full QA remains required |
+| Prior broad Windows advisory |11 cases, 0 failed, 0 blocked |2e301a74; exact newer-source native qualification remains separate |
+| Ordinary Ruff / relevant schemas/help / whitespace |Passed | Combined affected source; security scan is a separate red check |
+
+These test selections overlap and must not be added into a fabricated suite
+total. The two local full-suite exit 137 attempts remain incomplete, with no
+established host/OOM/product cause. No native Windows or macOS result is inferred
+from Linux, authored fixtures or offscreen Qt.
+
+## Evidence corrections and open work
+
+The earlier Search reopened-CLI claim used an uncommitted SQLite mutation. It
+was explicitly withdrawn and corrected with commit/reopen assertions; both old
+and corrected artifacts are retained. Independent source review and the real
+red/green caller proof support the final repair. No merge relied on the invalid
+claim. Inventory48 independent controls overlap the 183 author controls.
+
+The strict scanner remains red: 80 on broad#318,68 on core 319,82 on this combined
+source. Hosted#318 reports confirm normal scanner failure with identical output
+for push and merge trees. Source-boundary review is not a waiver. The inherited
+forced Strings publication/OSError cleanup ownership races remain P2. Actual
+current hosted full/native/package acceptance, macOS/manual/assistive-technology
+qualification and layer-specific accuracy gates remain open.
+
+External#320 at bc7eb632 and checkpoint81e4 at bdc929eb retain active distinct work.
+Their focal review is recorded without editing, executing or merging their
+source. Their earlier reported local results are not attributed to later heads.
+The checkpoint's initial main-equal state is historical, not an extra cleanup
+candidate.
+
+## Continuation after this candidate
+
+Read the exact published heads and all applicable checks/reviews first. Qualify
+the corrected core head 8d130aef and the final
+continuation head. Resolve strict/platform/ownership blockers explicitly before
+promoting any affected scope. Merge only a freshly qualified candidate through
+the REST expected-head guard, retain [no release], then refresh main and the full
+branch census. Preserve every retained source branch and keep the 144 proven
+integrated heads as cleanup recommendations only.
+
+[Full current census](consolidation-20261119/final-remote-census-20261119.md),
+[external branch review](consolidation-20261119/external-branch-focal-review-20261119.md),
+[combined test/source evidence](../qa/combined-recovery-20261119/README.md),
+[strict/source review](../qa/assembly-source-20261119/README.md),
+[remaining blockers](merge-blockers.md).
+
+### Completed core CI correction and publication
+
+Core PR #319 was guarded forward from a56ab13a to **8d130aefe1be6e737cff1d90d2a5b1658d60a3a6**.
+Its tree **ce0399940c5fa24ea017498f9e4cf80b0ee6d2de** equals local
+**e9be6e009ff0aee69ca7be78d47c5b740b62fd00**. The four changed files are
+one test assertion and three QA files; runtime and workflows are unchanged.
+One red control precedes 21 related passes and six independent guard controls.
+The old 23,268-pass/one-failure full run remains failed; the new head needs its
+own hosted qualification. [Source and QA](../qa/tier-r-cache-pin-20261119/README.md),
+[guard, exact tree/parent/ref and PR readback](consolidation-20261119/core-cache-pin-publication.json).
+The continuation publication is prepared with original checkpoint 976dddfb as
+first parent and this fresh core head as second parent. Its actual ref update
+is established by the subsequent PR #321 publication receipt.
+
+## Historical interruption checkpoint — 2026-11-19 10:31:52 UTC
+
+This section supersedes current-status statements in the earlier source-pinned history below. The history is retained verbatim. See the [continuation checkpoint](consolidation-20261119/continuation-checkpoint.md) and [complete remote snapshot](consolidation-20261119/continuation-checkpoint.json) for evidence, source identities and exact continuation.
+
+**Completed: one guarded main merge (#317), twelve contained PRs closed, all branches retained.** Main is fdc2696c23bdbfe7668348f25e3b336ce33039f7, with the exact tree qualified by #317. The complete current pre-checkpoint census is 319 branches, 53 open PRs and 10 open non-PR issues. The 144 integrated-topic classification belongs to the post-foundation snapshot; all 162 review heads now have focal dispositions, without a whole-branch approval claim.
+
+Published product work is in #318 at c4ace2088ce8dc9ce78a0bf3036b81096accbdb5 and draft #319 at a56ab13aaf9916fc12bea70ba1494075991b7f09. Their latest guarded updates correct only the required toolchain receipt allowlist and add its QA evidence; exact trees/parents were read back. The previous broad Linux suite retained 25,705 passes and one failure; the previous Windows advisory run passed 11 cases. New-head checks remain queued, and broad strict gates remain unresolved.
+
+Inventory and bounded GUI recovery were assembled locally with independent scoped review. Additional actual-caller probes found Strings real-cache/metadata admission defects and Search stale/foreign-row admission; the shared repair is drafted but has no final implementation commit or passing caller qualification. The unavailable execution workspace is the current external blocker. No unqualified runtime source was merged.
+
+This documentation-only checkpoint preserves the five requested records, a fresh complete remote snapshot, exact full runtime pins where available, explicitly marked local abbreviations, the interruption/test ledger and continuation steps. Local runtime code and raw archives listed in the checkpoint have **not** been uploaded by this documentation change. Earlier source-pinned sections below remain historical evidence; their older pending/current statements are superseded by this section.
+
+
 Recorded 2026-11-19 UTC. This is the durable operation record for the execution
 pass; unfinished gates are listed explicitly. It is not a release acceptance
 statement. Later verified operations are appended rather than changing the
@@ -277,3 +527,29 @@ ABORTED; this isolated result does not assign a host or product cause. Exact
 source comparisons, core controls and stalled-progress/heartbeat observations
 are preserved in the [core and stall archive](consolidation-20261119/core-review-and-stall-evidence.zip)
 and [manifest](consolidation-20261119/core-review-and-stall-manifest.json).
+
+## Published core candidate and second incomplete full run
+
+The reviewed combination is published as draft [#319](https://github.com/djshellshoxxx/patchtrace/pull/319),
+head `f6c4b0844e5973ba054d58490628e77492d57ec0`, parent main
+`fdc2696c23bdbfe7668348f25e3b336ce33039f7`. Its tree
+`f137d4f19285a6667a9b97d774657118479f2db0` exactly equals reviewed local
+`ac3a98150bd17bbbd973c7e7dcadb7edcf551934`. All 91 new blobs, the final tree
+and the remote parent were verified during REST publication. The five requested
+audit records are therefore remotely reviewable; publication is not a main merge.
+
+A second full suite used the candidate-specific interpreter, whose normal and
+isolated imports both resolve the reviewed source, with a 60 s faulthandler
+diagnostic interval. It exited **137 without an interrupt request**, after
+1,344 progress outcomes (1,343 dots and one skip), without a final JUnit report
+or faulthandler dump. The active memory-cap control subsequently passed alone,
+unchanged: **1 passed in 2.97 s** (3.58 s wall); its 60 s outer deadline did not
+fire. The executor did not expose cgroup memory-event counters. Post-exit free
+memory is not a measurement of the process's earlier peak or proof of OOM.
+The cause remains unestablished, and both full attempts remain incomplete.
+
+Raw termination observations and the bounded focused control are retained in
+the [second full-run evidence](consolidation-20261119/second-full-run-evidence.zip)
+and [manifest](consolidation-20261119/second-full-run-manifest.json). Fresh hosted
+full suites, repeated Qt, native H7 and packaging gates remain required. No
+further unbounded local full-suite repetition is used to replace those gates.

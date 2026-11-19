@@ -1,0 +1,39 @@
+{
+  "source_publication": "2042e24dc7f3eac265e0eb183c738527852b22cf",
+  "census_window": "2026-11-19T11:51:48.552Z through 2026-11-19T11:51:51.022Z",
+  "gates_observed": "2026-11-19T11:53:11.000Z",
+  "archive_sha256": "3ef89b83fded9ea89dcc27a52a970b44483c02f13c992ed461daf6b255072d93",
+  "archive_bytes": 279614,
+  "members": [
+    {
+      "path": "post-publication-census-raw-20261119.json",
+      "bytes": 2287510,
+      "sha256": "c717ebb985e0430f53c93840b7d7fde87edc683d372d9276233b317a1297ee7e"
+    },
+    {
+      "path": "post-publication-census-20261119.json",
+      "bytes": 68297,
+      "sha256": "d5dff53335abe7088870f44e9a504df39c3dbd4fada1949168552c9463ccb18b"
+    },
+    {
+      "path": "post-publication-gates-20261119.json",
+      "bytes": 84827,
+      "sha256": "c9349dd9fca662560ec96c900963677b1e00ebe45cf92f0bdce7bf5b0c30d9e0"
+    },
+    {
+      "path": "external-publication-delta-20261119.md",
+      "bytes": 5954,
+      "sha256": "b9ffad609367fd21b8c4bb8481860610ca86eacfb83693e25890215d7e04ae27"
+    },
+    {
+      "path": "external-publication-delta-20261119.json",
+      "bytes": 56617,
+      "sha256": "9e9275b363056a82c464560929c3e3138d5e865033cdbc45655d7ed0ed2ddb76"
+    },
+    {
+      "path": "external-publication-delta-manifest-20261119.json",
+      "bytes": 485,
+      "sha256": "c75fad29cbc3b8370ff007215ca1957de54f53ddaad6176e4a8fb1c101dfdc9a"
+    }
+  ]
+}

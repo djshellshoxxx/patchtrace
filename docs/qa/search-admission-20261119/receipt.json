@@ -1,0 +1,357 @@
+{
+  "baseline_wiring_blob": "929389a31f4d864303ddf02c59622ab3b5586459",
+  "caller_only_sequence": [
+    "01611af60e886ffb53e3e4d097698c03933be198",
+    "ebdb8cd044f3296291f6ab236e9920d1d8826980",
+    "b5aace25a36809ae7e4ab044e692c12015772a7d"
+  ],
+  "copied_inputs": {
+    "probe_original.json": {
+      "original": "/workspace/scratch/80dddc5347b2/search-stale-guard-independent.json",
+      "sha256": "5ebc930b2812c416b64b350f23c8ee929ac2aa487f7051055d6fe573cd3c990b"
+    },
+    "probe_original.py": {
+      "original": "/workspace/scratch/80dddc5347b2/search-stale-guard-independent.py",
+      "sha256": "79d2e61cb61bbab6d995b76843e151365270df3802508e8ca802563f76c8b74a"
+    },
+    "probe_persisted-green.json": {
+      "original": "/workspace/scratch/80dddc5347b2/search-stale-guard-persisted-green.json",
+      "sha256": "b1820803a49debd2d695a2fe3e2e70d6c66a32bf97d01cef86c1d156a46dae66"
+    },
+    "probe_persisted-green.stderr": {
+      "original": "/workspace/scratch/80dddc5347b2/search-stale-guard-persisted-green.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "probe_persisted-red.json": {
+      "original": "/workspace/scratch/80dddc5347b2/search-stale-guard-persisted-red.json",
+      "sha256": "ca9b8729758d8e33687cde3a72293bbd1f3a3f3137483045c4b2ec2874746a77"
+    },
+    "probe_persisted-red.stderr": {
+      "original": "/workspace/scratch/80dddc5347b2/search-stale-guard-persisted-red.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "probe_persisted.py": {
+      "original": "/workspace/scratch/80dddc5347b2/search-stale-guard-persisted.py",
+      "sha256": "a9b34ac0f9838727a34efa6be4e5483215d7be1db4b2778f02b99b225e27e931"
+    },
+    "ruff.log": {
+      "original": "/workspace/scratch/80dddc5347b2/search-admission-ruff.log",
+      "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+    }
+  },
+  "corrected_red_baseline": "ebdb8cd044f3296291f6ab236e9920d1d8826980",
+  "counts": "60 focused and 418 adjacent cases are separate selections. They overlap earlier historical and helper-author controls; do not sum across receipts.",
+  "date": "2026-11-19",
+  "fixture_correction": "Original independent probe and first new caller controls omitted commit before close. Within-owner snapshot acceptance is valid; reopened CLI mutation was rolled back. Corrected controls commit, reopen and assert the row before invoking CLI.",
+  "limits": [
+    "Authored fake tools and synthetic project data; no target binaries executed.",
+    "Owner-thread Entry admission; public ToolStore unchanged.",
+    "Recorded raw provenance is not a new verification of current raw-file bytes.",
+    "Existing normalized-sidecar reader and broader I/O budgets unchanged.",
+    "Search optional metadata row admission remains 10000; ordinary base groups remain usable.",
+    "No full suite, actual native tools, Windows/frozen build or exact combined-candidate qualification in this packet.",
+    "No schema or persisted model changed."
+  ],
+  "ordinary_ruff": {
+    "command": "/workspace/scratch/80dddc5347b2/patchtrace-reviewed-venv/bin/python -m ruff check src tests tools",
+    "exit_code": 0
+  },
+  "probe_green": {
+    "cases": [
+      {
+        "admission_after": {
+          "buildable": false,
+          "comparable": false,
+          "snapshot_rebuilt": true,
+          "status": "unavailable"
+        },
+        "after": {
+          "exit": 0,
+          "newer_capa_hits": 0,
+          "newer_coverage": {
+            "built_utc": null,
+            "digest16": null,
+            "docs": 0,
+            "group": "tool:capa:newer",
+            "kinds": [
+              "capability"
+            ],
+            "reason": "The stored capa results for the newer build could not be read (PT-TOOL-STALE). Run capa again.",
+            "side": "newer",
+            "status": "unavailable"
+          }
+        },
+        "before": {
+          "exit": 0,
+          "newer_capa_hits": 1,
+          "newer_coverage": {
+            "built_utc": "2026-11-19T10:57:14Z",
+            "digest16": "15b3fdcc5e909047",
+            "docs": 6,
+            "group": "tool:capa:newer",
+            "kinds": [
+              "capability"
+            ],
+            "reason": "",
+            "side": "newer",
+            "status": "indexed"
+          }
+        },
+        "case": "stale-run",
+        "persisted_after_close": true
+      },
+      {
+        "admission_after": {
+          "buildable": false,
+          "comparable": false,
+          "snapshot_rebuilt": true,
+          "status": "unavailable"
+        },
+        "after": {
+          "exit": 0,
+          "newer_capa_hits": 0,
+          "newer_coverage": {
+            "built_utc": null,
+            "digest16": null,
+            "docs": 0,
+            "group": "tool:capa:newer",
+            "kinds": [
+              "capability"
+            ],
+            "reason": "The stored capa results for the newer build could not be read (PT-TOOL-STALE). Run capa again.",
+            "side": "newer",
+            "status": "unavailable"
+          }
+        },
+        "before": {
+          "exit": 0,
+          "newer_capa_hits": 1,
+          "newer_coverage": {
+            "built_utc": "2026-11-19T10:57:15Z",
+            "digest16": "15b3fdcc5e909047",
+            "docs": 6,
+            "group": "tool:capa:newer",
+            "kinds": [
+              "capability"
+            ],
+            "reason": "",
+            "side": "newer",
+            "status": "indexed"
+          }
+        },
+        "case": "foreign-run-project",
+        "persisted_after_close": true
+      }
+    ],
+    "source": "b5aace25a36809ae7e4ab044e692c12015772a7d",
+    "wiring_source": "/workspace/scratch/80dddc5347b2/PatchTrace-search-sources/src/patchtrace/search/wiring.py"
+  },
+  "probe_original_valid_scope": "Within-owner snapshot stale/foreign admission only; reopened CLI result does not prove that mutation was present.",
+  "probe_red": {
+    "cases": [
+      {
+        "admission_after": {
+          "buildable": true,
+          "comparable": true,
+          "snapshot_rebuilt": true,
+          "status": "indexed"
+        },
+        "after": {
+          "exit": 0,
+          "newer_capa_hits": 1,
+          "newer_coverage": {
+            "built_utc": "2026-11-19T10:54:57Z",
+            "digest16": "15b3fdcc5e909047",
+            "docs": 6,
+            "group": "tool:capa:newer",
+            "kinds": [
+              "capability"
+            ],
+            "reason": "",
+            "side": "newer",
+            "status": "indexed"
+          }
+        },
+        "before": {
+          "exit": 0,
+          "newer_capa_hits": 1,
+          "newer_coverage": {
+            "built_utc": "2026-11-19T10:54:57Z",
+            "digest16": "15b3fdcc5e909047",
+            "docs": 6,
+            "group": "tool:capa:newer",
+            "kinds": [
+              "capability"
+            ],
+            "reason": "",
+            "side": "newer",
+            "status": "indexed"
+          }
+        },
+        "case": "stale-run",
+        "persisted_after_close": true
+      },
+      {
+        "admission_after": {
+          "buildable": true,
+          "comparable": true,
+          "snapshot_rebuilt": true,
+          "status": "indexed"
+        },
+        "after": {
+          "exit": 0,
+          "newer_capa_hits": 1,
+          "newer_coverage": {
+            "built_utc": "2026-11-19T10:54:58Z",
+            "digest16": "15b3fdcc5e909047",
+            "docs": 6,
+            "group": "tool:capa:newer",
+            "kinds": [
+              "capability"
+            ],
+            "reason": "",
+            "side": "newer",
+            "status": "indexed"
+          }
+        },
+        "before": {
+          "exit": 0,
+          "newer_capa_hits": 1,
+          "newer_coverage": {
+            "built_utc": "2026-11-19T10:54:57Z",
+            "digest16": "15b3fdcc5e909047",
+            "docs": 6,
+            "group": "tool:capa:newer",
+            "kinds": [
+              "capability"
+            ],
+            "reason": "",
+            "side": "newer",
+            "status": "indexed"
+          }
+        },
+        "case": "foreign-run-project",
+        "persisted_after_close": true
+      }
+    ],
+    "source": "ebdb8cd044f3296291f6ab236e9920d1d8826980",
+    "wiring_source": "/workspace/scratch/80dddc5347b2/PatchTrace-search-admission-red/src/patchtrace/search/wiring.py"
+  },
+  "runtime_changes_after_stage_one": [
+    "src/patchtrace/intelligence/tools/admission.py",
+    "src/patchtrace/search/wiring.py"
+  ],
+  "schema": "patchtrace-search-admission-receipt/1",
+  "shared_dependency": [
+    {
+      "local": "61bc3064012099bf3e6ab3970a6b5ccdf3889b5d",
+      "original": "9bdde026ea6b3be1d79a04284c402d2e9c9e70df"
+    },
+    {
+      "local": "847c8e19d5318a5e230acb6dd1f894d2c9a29db8",
+      "original": "8eae07d390c3ab74e1f90f863793ea4ab521e14d"
+    },
+    {
+      "local": "de0943f000fd542218097cb2131361f3c2a5f35f",
+      "original": "41af7c7e3f3bd5e50c49b86bc061fdef834b4daf"
+    }
+  ],
+  "source": "b5aace25a36809ae7e4ab044e692c12015772a7d",
+  "source_tree": "825fbe5fca606c0c19ae43a74c1ef1d77a2ca845",
+  "source_wiring_blob": "58837168de5c6a5d4db7f0da24739e642d8271c2",
+  "stage_one_qa": "efcc2462b777e55946f0e55c088341595869ce46",
+  "stage_one_source": "c14c836fd9fee3e054ae2294122f818ce45b1062",
+  "status": "LOCAL_SCOPED_PASS_PENDING_INDEPENDENT_AND_COMBINED_PLATFORM_QUALIFICATION",
+  "tests": [
+    {
+      "exit_code": 1,
+      "junit": {
+        "errors": "0",
+        "failures": "4",
+        "hostname": "b148a722dc6d",
+        "name": "pytest",
+        "skipped": "0",
+        "tests": "4",
+        "time": "4.402",
+        "timestamp": "2026-11-19T02:50:34.407163-08:00"
+      },
+      "meaning": "Four failures with uncommitted fixture mutations; not valid reopened-CLI defect evidence.",
+      "name": "initial-rolled-back-red",
+      "raw_log_sha256": "630f73544e30bbc3848869894189d580e5de005ad188be53685ae8938034c3c0",
+      "raw_xml_sha256": "04122e9f7339f15477e7c3e87cdbf8bf9be032f41312bef60ad3bd6d9cd3c001",
+      "summary": "4 failed in 4.53s"
+    },
+    {
+      "exit_code": 1,
+      "junit": {
+        "errors": "0",
+        "failures": "4",
+        "hostname": "b148a722dc6d",
+        "name": "pytest",
+        "skipped": "0",
+        "tests": "60",
+        "time": "13.692",
+        "timestamp": "2026-11-19T02:51:47.947045-08:00"
+      },
+      "meaning": "56 passes and four same fixture failures after caller adaptation; not a new product defect.",
+      "name": "initial-rolled-back-focused",
+      "raw_log_sha256": "6b7624db2561ab2b7209dbd8c871edde0eefef3e9388612c34819666b5bcc97f",
+      "raw_xml_sha256": "0cb050ba6e8c70ed771dd6c3f8c90e0c369c5ffc39b25d8afd38a6edabdedb95",
+      "summary": "4 failed, 56 passed in 13.87s"
+    },
+    {
+      "exit_code": 1,
+      "junit": {
+        "errors": "0",
+        "failures": "4",
+        "hostname": "b148a722dc6d",
+        "name": "pytest",
+        "skipped": "0",
+        "tests": "4",
+        "time": "3.795",
+        "timestamp": "2026-11-19T02:54:56.397989-08:00"
+      },
+      "meaning": "Four corrected normal-CLI failures at the committed baseline; mutations commit and are re-read.",
+      "name": "persisted-red",
+      "raw_log_sha256": "4f3bf5621e4fef61447ebc48f2fdf0451631619ca8dcc4d54d07d49bbafff8c3",
+      "raw_xml_sha256": "d54a0ded7ee27fda29abd81ca9ae9618cfc5c32c5c2bd92d47ad1dd8d7cd6146",
+      "summary": "4 failed in 3.94s"
+    },
+    {
+      "exit_code": 0,
+      "junit": {
+        "errors": "0",
+        "failures": "0",
+        "hostname": "b148a722dc6d",
+        "name": "pytest",
+        "skipped": "0",
+        "tests": "60",
+        "time": "36.392",
+        "timestamp": "2026-11-19T02:55:42.081590-08:00"
+      },
+      "meaning": "60 source-binding/shared-admission controls; runtime/tests identical to the subsequent source commit.",
+      "name": "focused-green",
+      "raw_log_sha256": "00bf260c79ea74f04e9db8fc7add1c1771c3872c34926edf8472179b897612f4",
+      "raw_xml_sha256": "af24fcba5bc4cccb7c51f18ce96eb3ea889dd27ce3758ca75e49d6023c1b7596",
+      "summary": "60 passed in 36.51s"
+    },
+    {
+      "exit_code": 0,
+      "junit": {
+        "errors": "0",
+        "failures": "0",
+        "hostname": "b148a722dc6d",
+        "name": "pytest",
+        "skipped": "0",
+        "tests": "418",
+        "time": "28.996",
+        "timestamp": "2026-11-19T02:57:12.984504-08:00"
+      },
+      "meaning": "418 CLI/saved/Qt/source/help controls on the exact committed source.",
+      "name": "adjacent-green",
+      "raw_log_sha256": "96c571adc1dca7dc7ac4228da00b45190716cb07262c753b15634decfa994cc4",
+      "raw_xml_sha256": "7340a9185e37ed4cb07017a907fe870c21d950e157b7de2f94b63ad1b750eca2",
+      "summary": "418 passed in 29.89s"
+    }
+  ]
+}

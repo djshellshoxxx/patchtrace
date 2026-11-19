@@ -1438,3 +1438,42 @@ Full `QT_QPA_PLATFORM=offscreen python -m pytest -q` for this isolated native sl
   Linux/Windows, native H7 and package gates before merging the reviewed candidate.
 - [ ] Keep inherited forced-export ownership, broad-stack scanner findings,
   inventory/native qualification and release/manual/accuracy gaps explicit.
+
+
+- [ ] SEARCH-SOURCES-20261119: integrate shared selected-row guard/provenance admission for production Search/Strings, then rerun independent real-store red controls. Stage-onec14c836f and its927+237 overlapping local passes are preserved; stale/foreign row admission remains a concrete blocker. Hosted full/Windows/native gates stay separate.
+
+
+## Search selected-row admission — 2026-11-19
+
+- [x] Connect Search to the pinned shared admission helper without changing public
+  ToolStore, saved-query, advisory-reader or owner-thread snapshot contracts.
+- [x] Correct the rolled-back CLI corruption fixture; preserve old attempts and
+  prove committed/reopened stale and foreign rows fail on c14 wiring and refuse on
+  b5aace25. Completed 60 focused and 418 adjacent controls plus corrected real CLI
+  probe and ordinary Ruff; evidence in `docs/qa/search-admission-20261119/README.md`.
+- [ ] Independently review and assemble the exact Search/Strings/shared-helper
+  source, then obtain exact-candidate hosted full/platform/native gates. Historical
+  stage-one records and failed/incomplete full suites remain preserved.
+
+
+## Resumed combined recovery — 2026-11-19
+
+- [x] Finish shared admission and both real callers; retain actual cache-origin,
+  Entry ownership, strict JSON, current-artifact and saved-query behavior.
+- [x] Correct the original Search rolled-back CLI probe and preserve both versions.
+- [x] Independently review30 exact assembled runtime blobs and run the bounded
+  combined 1199-pass/one-native-skip/one-deselection selection without relaxing tests.
+- [x] Preserve previously unuploaded runtime/QA/residual evidence and all five
+  current audit records; refresh every branch/PR/issue page through empty pages.
+- [x] Complete the narrow core immutable-action pin test repair and publish
+  core 8d130aef with expected-head guard and exact tree/parent/ref/PR readback.
+- [x] Publish continuation 2042e24d with original 976dddfb and fresh core 8d130aef
+  as parents; verify all 212 file blobs, exact tree/parents/ref/PR and retain
+  docs/audits/consolidation-20261119/continuation-publication.json.
+- [ ] Obtain passing applicable exact-head full/platform/native/package/security
+  gates before additional main merge; do not count queued/skipped/incomplete work.
+- [ ] Keep inherited forced-export ownership, strict scanner diagnostics,
+  macOS/manual/assistive-technology and separate accuracy gates open.
+
+Historical unchecked items above are source-pinned history. Current scoped
+completion and remaining gates are in docs/audits/final-consolidation-report.md.

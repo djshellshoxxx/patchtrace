@@ -1,0 +1,27 @@
+{
+  "assembly_source": "9335e7dcadc6d0337243f894e8f234ccc74bc62e",
+  "assembly_tree": "05509de7d8038a9079fe80b08fa97da8cb61b7fd",
+  "archive_sha256": "7a752b01e24f824d8a453fd501603a07cedbec84271568fcde37776ef67ea90b",
+  "members": [
+    {
+      "name": "consolidation-followup-9335-source-audit.json",
+      "bytes": 48869,
+      "sha256": "3ffb82c108d4fda4d44fec97cff1966672102125f92277c2420255e7ffb3016e"
+    },
+    {
+      "name": "security-followup-9335-baseline.json",
+      "bytes": 37114,
+      "sha256": "49146a94ed47b12bd540733d88cc1c50f28dd9e64bbf2161c774d6021fa07b05"
+    },
+    {
+      "name": "security-followup-9335-current.json",
+      "bytes": 45096,
+      "sha256": "d623e4bac2da0f8e4d9b3e1eff965c84e75f1132b3428a71a0f7205cb8b7def3"
+    },
+    {
+      "name": "security-followup-9335-delta.json",
+      "bytes": 4560,
+      "sha256": "5d943433b458906f4b11bf8ede4f249d0ec27f18c2e47590bfdbbd561590f10b"
+    }
+  ]
+}

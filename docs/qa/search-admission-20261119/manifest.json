@@ -1,0 +1,121 @@
+{
+  "members": [
+    {
+      "bytes": 7984,
+      "name": "README.md",
+      "sha256": "7f6dfe909f9aefe2a7883eff87ef62d566ad67bfb78158cb7ccfbb5517c86826"
+    },
+    {
+      "bytes": 83,
+      "name": "adjacent-green.log.gz",
+      "sha256": "ba2ceaed5ad5ce6ffc777e09e60e9cbe476529872d6c1b8639fb177e05702f9b"
+    },
+    {
+      "bytes": 5663,
+      "name": "adjacent-green.xml.gz",
+      "sha256": "804ea3bb97aa2aa3bbfda3f75e1d946cacc88cd7ab943aae00e459d798b1a3c9"
+    },
+    {
+      "bytes": 3893,
+      "name": "caller-source.patch.gz",
+      "sha256": "954f7ce8786f2a13805f847b1f33694a0d2cdca857b1ed9863f92e95855098d4"
+    },
+    {
+      "bytes": 53,
+      "name": "focused-green.log.gz",
+      "sha256": "8461f5ff5f83d006e254a6f624131dd98ffe88308a0b6aca4a0704981ffce01f"
+    },
+    {
+      "bytes": 1437,
+      "name": "focused-green.xml.gz",
+      "sha256": "a462a5ba64831687c6504523962d0efcaf9846310497da759d014b7546a8a23b"
+    },
+    {
+      "bytes": 1226,
+      "name": "initial-rolled-back-focused.log.gz",
+      "sha256": "ed6531628754c78cbdf7784fea6d1f401df6d2349a633b4282ecc17afa7a9c69"
+    },
+    {
+      "bytes": 2455,
+      "name": "initial-rolled-back-focused.xml.gz",
+      "sha256": "52a33a398f1434913a81ca16ea07feef156c8eafc817a1a9c607602de9824b45"
+    },
+    {
+      "bytes": 1217,
+      "name": "initial-rolled-back-red.log.gz",
+      "sha256": "bf9ed5ff96c1ffd5d1e91082efbf6bea988f45ea503c3a29f92379806a0e62d2"
+    },
+    {
+      "bytes": 1333,
+      "name": "initial-rolled-back-red.xml.gz",
+      "sha256": "0be8be705b2afd997951f4c9162adbae0b0ee5633c899a471e667e02a11e7110"
+    },
+    {
+      "bytes": 1296,
+      "name": "persisted-red.log.gz",
+      "sha256": "566ca8d06814bdc290d3ee8be69a4f40c167c91a96e9fcb4d366f22171b8b622"
+    },
+    {
+      "bytes": 1423,
+      "name": "persisted-red.xml.gz",
+      "sha256": "309a3a74a96a14840ca11b02a6104ff00516a5a16c8a78d6dc73da3abe7f9f99"
+    },
+    {
+      "bytes": 1458,
+      "name": "probe-fixture-correction.patch",
+      "sha256": "10e8e1a44419a8f48633a1bc79d408ec2ef200e9ce04807f36d240b98ba1d439"
+    },
+    {
+      "bytes": 2188,
+      "name": "probe_original.json",
+      "sha256": "5ebc930b2812c416b64b350f23c8ee929ac2aa487f7051055d6fe573cd3c990b"
+    },
+    {
+      "bytes": 2851,
+      "name": "probe_original.py",
+      "sha256": "79d2e61cb61bbab6d995b76843e151365270df3802508e8ca802563f76c8b74a"
+    },
+    {
+      "bytes": 2406,
+      "name": "probe_persisted-green.json",
+      "sha256": "b1820803a49debd2d695a2fe3e2e70d6c66a32bf97d01cef86c1d156a46dae66"
+    },
+    {
+      "bytes": 0,
+      "name": "probe_persisted-green.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 2268,
+      "name": "probe_persisted-red.json",
+      "sha256": "ca9b8729758d8e33687cde3a72293bbd1f3a3f3137483045c4b2ec2874746a77"
+    },
+    {
+      "bytes": 0,
+      "name": "probe_persisted-red.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 3245,
+      "name": "probe_persisted.py",
+      "sha256": "a9b34ac0f9838727a34efa6be4e5483215d7be1db4b2778f02b99b225e27e931"
+    },
+    {
+      "bytes": 12829,
+      "name": "receipt.json",
+      "sha256": "7b44193fdcb442705065fdcb72e8b1db211c1e27288cade340c0d41790f2d06e"
+    },
+    {
+      "bytes": 19,
+      "name": "ruff.log",
+      "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+    },
+    {
+      "bytes": 1901,
+      "name": "source-manifest.json",
+      "sha256": "dfb6b9f9cba7bcf467c2bf93a362aa6d01e89cd63ebb07ac97c456610439a3a0"
+    }
+  ],
+  "schema": "patchtrace-qa-manifest/1",
+  "source": "b5aace25a36809ae7e4ab044e692c12015772a7d"
+}

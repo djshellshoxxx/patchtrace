@@ -1,0 +1,103 @@
+{
+  "$id": "https://patchtrace.local/schemas/kbcorrelation/1/InventoryContext.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "architecture": {
+      "default": "unknown",
+      "enum": [
+        "amd64",
+        "arm64",
+        "x86",
+        "unknown"
+      ],
+      "title": "Architecture",
+      "type": "string"
+    },
+    "build": {
+      "anyOf": [
+        {
+          "maxLength": 1000,
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Build"
+    },
+    "delimiter": {
+      "default": "comma",
+      "enum": [
+        "comma",
+        "semicolon",
+        "tab"
+      ],
+      "title": "Delimiter",
+      "type": "string"
+    },
+    "kb": {
+      "pattern": "^KB[0-9]{4,10}$",
+      "title": "Kb",
+      "type": "string"
+    },
+    "locale": {
+      "default": "en-US",
+      "enum": [
+        "invariant",
+        "en-US",
+        "de-DE"
+      ],
+      "title": "Locale",
+      "type": "string"
+    },
+    "product": {
+      "anyOf": [
+        {
+          "maxLength": 1000,
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Product"
+    },
+    "product_scope_id": {
+      "anyOf": [
+        {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Product Scope Id"
+    },
+    "release": {
+      "anyOf": [
+        {
+          "maxLength": 1000,
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Release"
+    }
+  },
+  "required": [
+    "kb"
+  ],
+  "title": "InventoryContext",
+  "type": "object"
+}

@@ -1,0 +1,22 @@
+--- probe_original.py
++++ probe_persisted.py
+@@ -1,4 +1,4 @@
+-"""Actual-store search probe; authored fake engine only, no target binary execution."""
++"""Persisted-row correction of the independent search probe; original file is preserved."""
+ from contextlib import redirect_stderr, redirect_stdout
+ from io import StringIO
+ import json
+@@ -48,6 +48,12 @@
+             selected=next(s for s in after.extra_specs() if s.group=='tool:capa:newer')
+             admission={'snapshot_rebuilt':after is not original,'buildable':selected.buildable,
+                        'status':selected.status,'comparable':after.comparable('capa')}
+-        cases.append({'case':name,'before':before,'admission_after':admission,'after':search(root,folder/'cache')})
++            service.store.connection.commit()
++        with ProjectService.open(root) as reopened:
++            persisted = reopened.store.connection.execute(
++                f'SELECT {column} FROM enrichment_entries WHERE id=?', (run.run_id,)).fetchone()
++            assert persisted == (value,), (name, persisted, value)
++        cases.append({'case':name,'before':before,'persisted_after_close':persisted == (value,),
++                      'admission_after':admission,'after':search(root,folder/'cache')})
+ print(json.dumps({'source':subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip(),
+                   'wiring_source':str(Path(wiring.__file__).resolve()),'cases':cases},indent=2))

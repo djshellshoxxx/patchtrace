@@ -1,0 +1,86 @@
+{
+  "recorded_utc": "2026-11-19T11:41:36.809204+00:00",
+  "worktree": "/workspace/scratch/80dddc5347b2/PatchTrace-consolidation-followup",
+  "head_at_review": "81842b8df3d5bc5339bd516505611cdd7daabaf7",
+  "runtime_pin": "9335e7dcadc6d0337243f894e8f234ccc74bc62e",
+  "disposition": "Scoped current-section review approved; pending hosted/publication status must be refreshed on actual resulting head.",
+  "verified": [
+    "Combined archived log/XML agree:1199 passed,1 native Windows skip,1 explicit deselection,pytest213.79s; wrapper215.443s is distinct.",
+    "Current runtime/tools/workflows/pyproject equal9335; sole subsequent test change is approved immutable-action assertion.",
+    "Strict counts68 core/80 broad/82 combined are separate source scopes and stay red.",
+    "Original uncommitted Search CLI claim explicitly withdrawn; corrected persisted-row evidence retained.",
+    "Authored/native/raw-provenance/full-suite boundaries and overlapping counts stated.",
+    "All five preambles describe local guarded-publication preparation rather than completed remote source publication."
+  ],
+  "remaining_updates": [
+    "Root will record completed CI-only correction and fresh core remote head/receipt before freezing.",
+    "Exact-head hosted gates, native/platform/full-suite acceptance, forced export ownership and strict scan remain open."
+  ],
+  "review_limits": [
+    "No new broad/native suite run.",
+    "Census and source-family classifications use their separate owner records; this scoped review is not a fresh all-branch census.",
+    "Historical sections and original archives were not edited."
+  ],
+  "files": [
+    {
+      "path": "docs/audits/branch-consolidation-inventory.md",
+      "reviewed_scope": "current section before historical interruption checkpoint",
+      "reviewed_bytes": 4359,
+      "reviewed_sha256": "a5c7ac861d0c59f4c463255ee2a9d4624833cd70a105018fccecf5cb2c039fb6"
+    },
+    {
+      "path": "docs/audits/feature-completion-status.md",
+      "reviewed_scope": "current section before historical interruption checkpoint",
+      "reviewed_bytes": 4224,
+      "reviewed_sha256": "dde80caa4f343bcfbb39e872628b320c975e3177f5ad3b1259208eba877c14c4"
+    },
+    {
+      "path": "docs/audits/final-consolidation-report.md",
+      "reviewed_scope": "current section before historical interruption checkpoint",
+      "reviewed_bytes": 8227,
+      "reviewed_sha256": "76d8f2671be80b946e156998aa9bf3977feb9b04898e57302e262858fa440eca"
+    },
+    {
+      "path": "docs/audits/merge-blockers.md",
+      "reviewed_scope": "current section before historical interruption checkpoint",
+      "reviewed_bytes": 4924,
+      "reviewed_sha256": "65864ae1ebcec72c7e6ef8ef2dee2748615a5610e26cff343338687f0713b943"
+    },
+    {
+      "path": "docs/audits/outstanding-bugs.md",
+      "reviewed_scope": "current section before historical interruption checkpoint",
+      "reviewed_bytes": 5657,
+      "reviewed_sha256": "c7875c9a9e0b3e0e4a6858f488ef28e3a9d9ff2b417f39728ecd8ef832d76ca6"
+    },
+    {
+      "path": "docs/audits/consolidation-20261119/resumed-checkpoint.md",
+      "reviewed_scope": "complete file",
+      "reviewed_bytes": 4257,
+      "reviewed_sha256": "4258e82fa9d2879b817ae3d914309c265adcbb5bd50d800a6eba9e24eba6991f"
+    },
+    {
+      "path": "docs/audits/consolidation-20261119/resumed-checkpoint.json",
+      "reviewed_scope": "complete file",
+      "reviewed_bytes": 2504,
+      "reviewed_sha256": "210b3ec7b5252700074e53bfb9f116bc4533911c8f75eca5af5033f84697fca7"
+    },
+    {
+      "path": "docs/qa/combined-recovery-20261119/README.md",
+      "reviewed_scope": "complete file",
+      "reviewed_bytes": 6062,
+      "reviewed_sha256": "90afb5012249d36fc7b53508796ce423fe903b86c31415bf4282d2de4315b8d6"
+    },
+    {
+      "path": "docs/qa/combined-recovery-20261119/result.json",
+      "reviewed_scope": "complete file",
+      "reviewed_bytes": 7534,
+      "reviewed_sha256": "8246cfc9dfe4395cd346303554fdfb39c4f8df4ff27a076751db1de66c23b911"
+    },
+    {
+      "path": "docs/qa/combined-recovery-20261119/source-map.json",
+      "reviewed_scope": "complete file",
+      "reviewed_bytes": 12964,
+      "reviewed_sha256": "ebba8ab1f059c064d7a7f284d39002912d725e93d93e59964110f4d3a0fe2769"
+    }
+  ]
+}

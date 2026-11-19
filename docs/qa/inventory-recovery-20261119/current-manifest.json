@@ -1,0 +1,287 @@
+{
+  "contract": "patchtrace-inventory-recovery-evidence/1",
+  "date": "2026-11-19",
+  "base_sha": "4cdee5a26837802bd90b8b50c11696b039ac9335",
+  "source_sha": "0afd6f5410f8a527d697f79e415b31efcc84407a",
+  "source_tree": "cdc99d564293d484e9bf9ecb91857988cc03beb9",
+  "archive": "current-evidence.zip",
+  "archive_bytes": 549438,
+  "archive_sha256": "655cb54a2a624e0a60e2cba518ef78e625556944be7f4d4142358e4b426cf39e",
+  "files": [
+    {
+      "path": "inventory-7439549f-source.patch",
+      "bytes": 873,
+      "sha256": "09ddcea2cda26d8899e5a8448897457a5acd8c8b9c57c89d8c59876a74ee3f7b"
+    },
+    {
+      "path": "inventory-a07fc1cf-tests.patch",
+      "bytes": 1709,
+      "sha256": "73e6a7a065708e152f5155cdcdbf9772ecc0b559865a7bbb9d3577d8bbfedd1d"
+    },
+    {
+      "path": "inventory-candidate.patch",
+      "bytes": 862452,
+      "sha256": "8b90ac7e140d2f7de8107cb6b7ed0a175b5f5e6da7a3e3bd97d0064dd908ba26"
+    },
+    {
+      "path": "inventory-commit-order.txt",
+      "bytes": 1037,
+      "sha256": "e125060a7a2094d9d0ab0c82ea83f6f0395d949b9581590aae8756ef51aade6f"
+    },
+    {
+      "path": "inventory-d909ec5b-source.patch",
+      "bytes": 2153,
+      "sha256": "f889aa4030f09e87275f05574a6f85d6566c61ef330b3eefd2a13f820eb4136f"
+    },
+    {
+      "path": "inventory-fea6d6ef-tests.patch",
+      "bytes": 2905,
+      "sha256": "1960460d100981e28d3a8430aebcda80e441ca3e642eea444943556b30e215e4"
+    },
+    {
+      "path": "inventory-independent-compatibility-capped.log",
+      "bytes": 10370,
+      "sha256": "8031de4504a636b472d36f71b7e7a1fbe6c7d4891bca2e10afb8bbdf1263f2ec"
+    },
+    {
+      "path": "inventory-independent-compatibility-capped.xml",
+      "bytes": 10792,
+      "sha256": "192493f342914bb51c5004eb022be48c1ff568fd2f94d16cb815948a89055d18"
+    },
+    {
+      "path": "inventory-independent-compatibility-original.log",
+      "bytes": 6612,
+      "sha256": "3fcd8daf33288939cdca8a2b687de514907ddd6fa4c4ed6888f85b61d18264b8"
+    },
+    {
+      "path": "inventory-independent-compatibility-original.xml",
+      "bytes": 7532,
+      "sha256": "0ba9941226c7f5a3d23e1c42941af15c298182e7c242b92fa34f21f4d5d40d70"
+    },
+    {
+      "path": "inventory-independent-focused.log",
+      "bytes": 99,
+      "sha256": "ba87532a77b6f9d9da334260bb80e3ef4b7502b143c7a2b12e951211b26eb1cd"
+    },
+    {
+      "path": "inventory-independent-focused.xml",
+      "bytes": 3337,
+      "sha256": "a19ab555515e50b77bdbf1351deec47b2250766c177b791d4befd995143ab8e5"
+    },
+    {
+      "path": "inventory-integration-red.patch",
+      "bytes": 774201,
+      "sha256": "d90561436309fc2aa25a6927f1305c2ea81f591bda1d044c8b3096e8bc1b80df"
+    },
+    {
+      "path": "inventory-json-order-independent.json",
+      "bytes": 4295,
+      "sha256": "a486ec41e2ebfb391aa39a20ef41994b91810c355c3a3eca24e94ab12fd5bf9a"
+    },
+    {
+      "path": "inventory-json-order-independent.py",
+      "bytes": 4620,
+      "sha256": "3e9c8f7088e4dfe0cbe241565c5c90616c8d581f4bf4e8944783e6eafcb55bd2"
+    },
+    {
+      "path": "inventory-port-code.patch",
+      "bytes": 770561,
+      "sha256": "665dea916f4fdd14b9e9b6ac8f1ef5b9f64a1dbfe2378c25982d1cf589ba9bac"
+    },
+    {
+      "path": "inventory-port-spec.patch",
+      "bytes": 33850,
+      "sha256": "6582fa03dacb79c739d8f7e734e86cb63cd61d4a56898698b2cdd84294e0450e"
+    },
+    {
+      "path": "inventory-review-decision-token-repaired.json",
+      "bytes": 388,
+      "sha256": "32c2211fdb7234ee10c19388d653935fac0164ffe4fae0d30aee5d4842e94515"
+    },
+    {
+      "path": "inventory-review-decision-token.json",
+      "bytes": 386,
+      "sha256": "887ba494f4d4a516b1f6baa6aeb5edb97395607d940f523e75e47bfbab3f37d7"
+    },
+    {
+      "path": "inventory-review-decision-token.py",
+      "bytes": 2155,
+      "sha256": "9393263e8c0c3ea9daef182e2bff3bb7789a95ebbd89d8bfa57f07dd32fda30e"
+    },
+    {
+      "path": "inventory-scope-spec.patch",
+      "bytes": 1952,
+      "sha256": "e730f2ef494a923109389f9c97ed40fa9fe52ce107f12fed741d4bbc8daf3649"
+    },
+    {
+      "path": "inventory-semantic-independent.log",
+      "bytes": 99,
+      "sha256": "93a01f7c21fa673ed46f093e39a73adfa5ada3a95b19aeaf989779285935670a"
+    },
+    {
+      "path": "inventory-semantic-independent.xml",
+      "bytes": 8721,
+      "sha256": "415f41313f286d11977f9561d43d6ad085987cbad3ee06eefab6690184f6eed5"
+    },
+    {
+      "path": "security-inventory-base-strict.json",
+      "bytes": 36094,
+      "sha256": "d5781960097063aee6de134a64a639ca2b9962eec21a5473540e2fd7a170d4c8"
+    },
+    {
+      "path": "security-inventory-capacity-recheck.log",
+      "bytes": 98,
+      "sha256": "9a87fbbc96ab01e2698de12badbe926f93fd4f632bcefc1654e2b929f5c17513"
+    },
+    {
+      "path": "security-inventory-capacity-recheck.xml",
+      "bytes": 377,
+      "sha256": "9bfa4d8f04eb47e8ec6ce255b858cca3c8cb862932857f91dd7983b456525c1f"
+    },
+    {
+      "path": "security-inventory-compatibility-red.log",
+      "bytes": 14270,
+      "sha256": "7c9c924552b6bb08f57229b62864e7e21768d972d05e4d59ceb19f4e36585f63"
+    },
+    {
+      "path": "security-inventory-compatibility-red.xml",
+      "bytes": 14892,
+      "sha256": "c6b5d460fd505eaff394f1ef32e8f8f2d6ed1f241a95517c1cc6540bd3980fdb"
+    },
+    {
+      "path": "security-inventory-decision-final.log",
+      "bytes": 2575,
+      "sha256": "c6e73a77791cbb2617859ae0cf6da99b1d8da265dda4baad19ecc260fb69eefa"
+    },
+    {
+      "path": "security-inventory-decision-final.xml",
+      "bytes": 26250,
+      "sha256": "e31ab971a31f40e5f3ebe575d0157e5d5e2bad12ce28a8e14d5161eeea2f6904"
+    },
+    {
+      "path": "security-inventory-decision-green.log",
+      "bytes": 99,
+      "sha256": "3d3b06e904ccbdcc983c6f7fab227d3e0682b390e1589534f43be87caad35cea"
+    },
+    {
+      "path": "security-inventory-decision-green.xml",
+      "bytes": 11074,
+      "sha256": "23cf5cd808220a299d4f93111ad71b0cc14832c18852f9f6aa818bc0e2ff2c79"
+    },
+    {
+      "path": "security-inventory-decision-red.log",
+      "bytes": 32443,
+      "sha256": "cc4bd46bb6167fa7d6274da6928d96e402cd62d8b8907a450f03c6ad8fee84b6"
+    },
+    {
+      "path": "security-inventory-decision-red.xml",
+      "bytes": 34281,
+      "sha256": "45cab104df1980dee43af3aec305d88f40560177fe5946cdc4aa72533e098bf6"
+    },
+    {
+      "path": "security-inventory-gui.log",
+      "bytes": 13895,
+      "sha256": "9db3fbae45b599285cc2df9332a6619dcf8a583881b1751fcac6bf871290094b"
+    },
+    {
+      "path": "security-inventory-gui.xml",
+      "bytes": 16752,
+      "sha256": "2f466d4b399d4044ad2d31f1575e4c28da833042cdbadd4b9b09f6fe668f612f"
+    },
+    {
+      "path": "security-inventory-integration-red.log",
+      "bytes": 15412,
+      "sha256": "f00349f113b32559b281e164d2529370638cab4d049b672a1513abf7ae5ca2e4"
+    },
+    {
+      "path": "security-inventory-integration-red.xml",
+      "bytes": 16419,
+      "sha256": "030152b770a7676be5d973a4161eeb3e61bd3b53d26f1de86fe9c601be5a8fab"
+    },
+    {
+      "path": "security-inventory-portable.log",
+      "bytes": 2822,
+      "sha256": "3aae2b448a021d739e79bc0963ab3d80b9e091b94eb2bee4c09b43449a909ffd"
+    },
+    {
+      "path": "security-inventory-portable.xml",
+      "bytes": 173520,
+      "sha256": "6fde516a913021f0d9bd4f9b33871ba292fddc0c72d50346b6ee02c64ea08ccc"
+    },
+    {
+      "path": "security-inventory-ruff-complete.log",
+      "bytes": 19,
+      "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+    },
+    {
+      "path": "security-inventory-ruff-final.log",
+      "bytes": 19,
+      "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+    },
+    {
+      "path": "security-inventory-ruff.log",
+      "bytes": 1095,
+      "sha256": "188f5396a29544c91b83c7d627d1748524b0ef2861a7c12b2d27f91f15289a48"
+    },
+    {
+      "path": "security-inventory-semantic-final.log",
+      "bytes": 260,
+      "sha256": "82e694499d8265dd44dabdf88d06a7da7187f8a446e73236141a95d36120ddc4"
+    },
+    {
+      "path": "security-inventory-semantic-final.xml",
+      "bytes": 28815,
+      "sha256": "0663968298ec6c25f62e937d4afed6f89a6af81d337e7c511bab9bb66c57bf64"
+    },
+    {
+      "path": "security-inventory-semantic-first.log",
+      "bytes": 179,
+      "sha256": "1ebfbbd32b3038fa60bd9bbc8ef2b3a833faaaf55110c046482d37eabed94b22"
+    },
+    {
+      "path": "security-inventory-semantic-first.xml",
+      "bytes": 15100,
+      "sha256": "8e6d6019501ae48d497f1fa3d5b4bead46ab1de6e6711c3a079575087117af2f"
+    },
+    {
+      "path": "security-inventory-semantic-ruff.log",
+      "bytes": 19,
+      "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+    },
+    {
+      "path": "security-inventory-semantic-strict-delta.json",
+      "bytes": 714,
+      "sha256": "9d1e50185cd9a06706d2c36336a410b8085d37c3daa6d761e4c27dd31009c559"
+    },
+    {
+      "path": "security-inventory-semantic-strict.json",
+      "bytes": 43324,
+      "sha256": "7d21f616a96cb26b5d1f085a20debbf31b458e79b450c172ad2be23278b6ffce"
+    },
+    {
+      "path": "security-inventory-source-proof.json",
+      "bytes": 1216,
+      "sha256": "9e912755df21e0a28639bf2b4d63cceb3a81112f3aa2bab7ac59380076c59ee9"
+    },
+    {
+      "path": "security-inventory-strict-delta.json",
+      "bytes": 8018,
+      "sha256": "026d613c27adc8e53abc413518ae4487903f886086866170709905fe047fff09"
+    },
+    {
+      "path": "security-inventory-strict.json",
+      "bytes": 43324,
+      "sha256": "7d21f616a96cb26b5d1f085a20debbf31b458e79b450c172ad2be23278b6ffce"
+    },
+    {
+      "path": "standalone-followup-dependencies.json",
+      "bytes": 11189,
+      "sha256": "24ae267cd6d545925b27a08b85c944c44cf37daea1153b3abe7d8d22d9c94aab"
+    },
+    {
+      "path": "standalone-followup-dependencies.md",
+      "bytes": 10088,
+      "sha256": "f321487c0475cbe9466a54418e5f8dafbc304dec0d147941ff60de04c6b0ae3b"
+    }
+  ]
+}

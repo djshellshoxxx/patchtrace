@@ -1,0 +1,19 @@
+{
+  "head": "2e301a74649e59e27b19a83bc283d646109ccd09",
+  "run_id": 44488945487,
+  "job_id": 135441373926,
+  "result": "success",
+  "cases": 11,
+  "failed": [],
+  "blocked": [],
+  "shard_sha256": "7e1fccb9a304eacc4ccbf4ceff55b8cb92fd55c8dab2fd564322eba194a82f20",
+  "artifact_id": 14516176060,
+  "members": [
+    {
+      "path": "318-windows-advisory-current-head.log",
+      "bytes": 50625,
+      "sha256": "a66d76d2d5d0962a292035e45830727d3a4fb7794eca14a29ce2930dd926424c"
+    }
+  ],
+  "archive_sha256": "f7b9c6b86511ecde1c3765daaba0180ee34267c331f92577b1e7742483d1bb63"
+}

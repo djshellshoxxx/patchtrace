@@ -1,0 +1,88 @@
+{
+  "source": "c14c836fd9fee3e054ae2294122f818ce45b1062",
+  "wiring_source": "/workspace/scratch/80dddc5347b2/PatchTrace-search-sources/src/patchtrace/search/wiring.py",
+  "cases": [
+    {
+      "case": "stale-run",
+      "before": {
+        "exit": 0,
+        "newer_capa_hits": 1,
+        "newer_coverage": {
+          "built_utc": "2026-11-19T09:52:46Z",
+          "digest16": "15b3fdcc5e909047",
+          "docs": 6,
+          "group": "tool:capa:newer",
+          "kinds": [
+            "capability"
+          ],
+          "reason": "",
+          "side": "newer",
+          "status": "indexed"
+        }
+      },
+      "admission_after": {
+        "snapshot_rebuilt": true,
+        "buildable": true,
+        "status": "indexed",
+        "comparable": true
+      },
+      "after": {
+        "exit": 0,
+        "newer_capa_hits": 1,
+        "newer_coverage": {
+          "built_utc": "2026-11-19T09:52:46Z",
+          "digest16": "15b3fdcc5e909047",
+          "docs": 6,
+          "group": "tool:capa:newer",
+          "kinds": [
+            "capability"
+          ],
+          "reason": "",
+          "side": "newer",
+          "status": "indexed"
+        }
+      }
+    },
+    {
+      "case": "foreign-run-project",
+      "before": {
+        "exit": 0,
+        "newer_capa_hits": 1,
+        "newer_coverage": {
+          "built_utc": "2026-11-19T09:52:46Z",
+          "digest16": "15b3fdcc5e909047",
+          "docs": 6,
+          "group": "tool:capa:newer",
+          "kinds": [
+            "capability"
+          ],
+          "reason": "",
+          "side": "newer",
+          "status": "indexed"
+        }
+      },
+      "admission_after": {
+        "snapshot_rebuilt": true,
+        "buildable": true,
+        "status": "indexed",
+        "comparable": true
+      },
+      "after": {
+        "exit": 0,
+        "newer_capa_hits": 1,
+        "newer_coverage": {
+          "built_utc": "2026-11-19T09:52:47Z",
+          "digest16": "15b3fdcc5e909047",
+          "docs": 6,
+          "group": "tool:capa:newer",
+          "kinds": [
+            "capability"
+          ],
+          "reason": "",
+          "side": "newer",
+          "status": "indexed"
+        }
+      }
+    }
+  ]
+}

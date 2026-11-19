@@ -1,0 +1,105 @@
+{
+  "schema": "patchtrace.resumed-checkpoint/1",
+  "recorded_utc": "2026-11-19 11:34:21 UTC",
+  "main": "fdc2696c23bdbfe7668348f25e3b336ce33039f7",
+  "main_tree": "af464108043aaa42b527a473985350a4daadc0d2",
+  "main_merge": {
+    "pr": 317,
+    "expected_head": "88b0b52281dd314aa72f93819145a73135618bc4",
+    "contained_prs_closed": [
+      290,
+      291,
+      292,
+      293,
+      294,
+      295,
+      297,
+      301,
+      302,
+      304,
+      305,
+      306
+    ]
+  },
+  "publication": {
+    "pr": 321,
+    "branch": "consolidation/patchtrace-continuation-20261119",
+    "expected_old_head": "976dddfbbcdf9a320e48813d8cf2c3c6540aac81",
+    "base_pr": 319,
+    "force": false,
+    "receipt": "continuation-publication.json",
+    "additional_parent": "8d130aefe1be6e737cff1d90d2a5b1658d60a3a6",
+    "core_head": "8d130aefe1be6e737cff1d90d2a5b1658d60a3a6",
+    "status": "runtime and evidence published; this followup is documentation only",
+    "published_runtime_head": "2042e24dc7f3eac265e0eb183c738527852b22cf",
+    "published_runtime_tree": "8e5327e9348c41496a029cb090337e1308d3ce5b",
+    "readback_verified": true,
+    "files_verified": 212
+  },
+  "runtime": {
+    "commit": "9335e7dcadc6d0337243f894e8f234ccc74bc62e",
+    "tree": "05509de7d8038a9079fe80b08fa97da8cb61b7fd",
+    "components": {
+      "inventory": "0afd6f5410f8a527d697f79e415b31efcc84407a",
+      "gui": "dc841095307c486ad8397e6e44ccea2c98b4e7d1",
+      "shared_admission": "41af7c7e3f3bd5e50c49b86bc061fdef834b4daf",
+      "strings": "2f8f69c268dcc03750596114ef891ad651c59506",
+      "search": "b5aace25a36809ae7e4ab044e692c12015772a7d"
+    },
+    "independent_runtime_files_equal": 30
+  },
+  "census": {
+    "observed_utc": "2026-11-19 11:22:32\u201311:22:34 UTC",
+    "branches": 322,
+    "topics": 321,
+    "open_prs": 55,
+    "open_issues": 10,
+    "integrated": 144,
+    "dependency_blocked": 11,
+    "retained_review_active": 166,
+    "archive": "resumed-remote-evidence.zip"
+  },
+  "combined_tests": {
+    "passed": 1199,
+    "skipped": 1,
+    "deselected": 1,
+    "elapsed_seconds": 213.79,
+    "native_skip": "Windows existing-object sharing acceptance",
+    "explicit_deselection": "test_default_entry_and_logical_record_caps_are_enforced",
+    "ordinary_ruff": "passed",
+    "source": "9335e7dcadc6d0337243f894e8f234ccc74bc62e"
+  },
+  "strict_scan": {
+    "core319": 68,
+    "combined": 82,
+    "broad318": 80,
+    "status": "red; no waiver"
+  },
+  "limits": [
+    "Not full-suite or native/platform qualification.",
+    "Corrected Search persisted-row proof supersedes original rolled-back CLI claim.",
+    "Historical test selections overlap and cannot be summed.",
+    "Inherited forced Strings publication and OSError cleanup ownership races remain open.",
+    "The a56 hosted workflow-pin failure was repaired in8d130aef; its fresh hosted full/native gates remain required."
+  ],
+  "core_update": {
+    "published_head": "8d130aefe1be6e737cff1d90d2a5b1658d60a3a6",
+    "tree": "ce0399940c5fa24ea017498f9e4cf80b0ee6d2de",
+    "parent": "a56ab13aaf9916fc12bea70ba1494075991b7f09",
+    "local_counterpart": "e9be6e009ff0aee69ca7be78d47c5b740b62fd00",
+    "readback_verified": true,
+    "source_change": "One test assertion plus three QA files; no runtime/workflow change.",
+    "receipt": "core-cache-pin-publication.json"
+  },
+  "census_after_publication": {
+    "observed_utc": "2026-11-19T11:51:51.022Z",
+    "branches": 323,
+    "topics": 322,
+    "open_prs": 56,
+    "open_issues": 10,
+    "integrated": 144,
+    "dependency_blocked": 11,
+    "retained_review_active": 167,
+    "receipt": "post-publication-census.json"
+  }
+}

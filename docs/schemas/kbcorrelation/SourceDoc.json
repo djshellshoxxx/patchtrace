@@ -51,7 +51,9 @@
         "sug-cve",
         "winbindex-file",
         "kev",
-        "local-note"
+        "local-note",
+        "kb-file-csv",
+        "kb-support-html"
       ],
       "title": "Kind",
       "type": "string"
@@ -62,7 +64,8 @@
         "winbindex",
         "nvd",
         "cisa",
-        "analyst"
+        "analyst",
+        "microsoft-support"
       ],
       "title": "Lineage",
       "type": "string"

@@ -1899,3 +1899,59 @@ progress stall near authored BinDiff timeout controls; no completed full-suite
 PASS is claimed. The two adjacent cases then passed unchanged in an isolated
 bounded run. Seven isolated import checks passed with the dedicated interpreter.
 Actual native and full hosted candidate gates remain required.
+
+
+## [SEARCH-SOURCES-20261119-STAGE1]
+
+Selective production binding from33e7e338 is preserved atc14c836f:927 affected controls passed, followed by237 current-source/Qt/help controls and clean Ruff. Original13-failure red, the corrected optional-group fixture failure and all raw receipts remain. Independent real-store/CLI probes then reproduced stale and foreign-project selected tool rows still indexed; this source is BLOCKED pending a shared admission seam. See [the stage-one receipt](qa/search-sources-20261119/README.md). No full/native/release pass is implied.
+
+
+## [SEARCH-ADMISSION-20261119]
+
+Search caller source `b5aace25a36809ae7e4ab044e692c12015772a7d` uses the shared
+selected-row admission helper. Corrected persisted/reopened-row controls reproduce
+four normal-CLI failures on original c14 wiring, then 60 focused and 418 adjacent
+controls pass; ordinary Ruff and whitespace pass. The corrected standalone probe
+shows stale/foreign rows persist but no longer produce newer capa hits. Earlier
+independent/new CLI fixtures omitted commit before close: their in-owner snapshot
+proof remains valid, but their reopened CLI claim is disqualified. Original bytes
+and both fixture-failure runs are preserved. See the
+[source, correction and scoped receipt](qa/search-admission-20261119/README.md).
+Independent/combined hosted Windows/native qualification remains separate; no full
+suite or release-ready claim is made.
+
+
+## [COMBINED-RECOVERY-20261119]
+
+Runtime 9335e7dc combines reviewed inventory, GUI, helper, Strings and Search.
+Independent source reviews verify 30 runtime blobs and protected core repairs.
+The bounded combined selection passed 1199, skipped one native Windows control
+and explicitly deselected the unchanged50,001-row timing case;213.79 s, exit 0.
+Ordinary Ruff, relevant help/spec/schema and whitespace checks passed. Original
+timing failures, both incomplete full runs and the corrected Search SQLite
+commit/reopen evidence remain. Strict runtime scan is red82 versus core 68.
+The latest core hosted full run on a56 has23,268 passes and one stale workflow-pin
+assertion failure; its narrow test-only correction and current-source rerun remain
+separate. [Combined receipt](qa/combined-recovery-20261119/README.md),
+[current audit](audits/final-consolidation-report.md).
+
+
+## [TIER-R-CACHE-PIN-20261119]
+
+The core Linux full job on a56 completed 23,268 passes and one failure caused
+by a stale workflow action assertion. Test-only source 5575af79 preserves tagged
+actions and the exact MSVC pin, adding only the existing approved immutable
+cache reference. One reproduced failure precedes 21 related passes and six
+independent guard controls; ordinary Ruff passed. Guarded core publication
+8d130aefe1be6e737cff1d90d2a5b1658d60a3a6 has exact verified tree ce039994.
+Runtime/workflows are unchanged. The original full failure is retained and
+fresh exact-head acceptance remains required. [Evidence](qa/tier-r-cache-pin-20261119/README.md).
+
+
+## [GUARDED-CONTINUATION-PUBLICATION-20261119]
+
+Published runtime/evidence **2042e24dc7f3eac265e0eb183c738527852b22cf**, exact tree 8e5327e9348c41496a029cb090337e1308d3ce5b, equals local e8a6592c.
+The expected-head fast-forward retains checkpoint 976dddfb and corrected core 8d130aef as parents; all 212 changed-file blobs and commit/ref/PR readback match.
+This receipt followup changes documentation only. Runtime 9335 and the separately
+qualified CI test correction 5575 remain unchanged. Full/native/strict gates remain
+open; no additional main merge is claimed. [Publication and current gates](audits/final-consolidation-report.md).

@@ -2,6 +2,8 @@
 
 The **Search** panel finds text across the saved names, strings, APIs, code, notes and advisories of a project. It is a bottom dock. Open it from the **View** menu or with `Ctrl+Shift+F`. It needs an open project. Search is offline: nothing is uploaded and no target runs.
 
+Stored FLOSS strings, capa capabilities, Detect It Easy build information, imported advisories and existing CVE snapshots join the search when available. Tool results must describe the current artifact and side; after swapping builds, older stored results may be unavailable until fresh matching results exist. Search does not run these tools. Coverage explains unavailable groups, while other indexed project groups remain searchable.
+
 Controls, as labelled in the panel:
 
 - **Search box.** Type the text to find.

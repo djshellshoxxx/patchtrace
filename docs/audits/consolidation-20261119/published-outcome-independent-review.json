@@ -1,0 +1,175 @@
+{
+  "files": 212,
+  "unique_file_paths": 212,
+  "mismatches": [],
+  "local_tree": "8e5327e9348c41496a029cb090337e1308d3ce5b",
+  "receipt_tree": "8e5327e9348c41496a029cb090337e1308d3ce5b",
+  "readback_parents": [
+    "976dddfbbcdf9a320e48813d8cf2c3c6540aac81",
+    "8d130aefe1be6e737cff1d90d2a5b1658d60a3a6"
+  ],
+  "recorded_parents": [
+    "976dddfbbcdf9a320e48813d8cf2c3c6540aac81",
+    "8d130aefe1be6e737cff1d90d2a5b1658d60a3a6"
+  ],
+  "guard": {
+    "expected_sha": "976dddfbbcdf9a320e48813d8cf2c3c6540aac81",
+    "force": false,
+    "success": true
+  },
+  "main": "fdc2696c23bdbfe7668348f25e3b336ce33039f7",
+  "changed_paths": [
+    "docs/audits/branch-consolidation-inventory.md",
+    "docs/audits/consolidation-20261119/resumed-checkpoint.json",
+    "docs/audits/consolidation-20261119/resumed-checkpoint.md",
+    "docs/audits/feature-completion-status.md",
+    "docs/audits/final-consolidation-report.md",
+    "docs/audits/merge-blockers.md",
+    "docs/audits/outstanding-bugs.md",
+    "docs/qa.md",
+    "tasks/todo.md",
+    "docs/audits/consolidation-20261119/continuation-publication.json",
+    "docs/audits/consolidation-20261119/post-publication-census.json",
+    "docs/audits/consolidation-20261119/post-publication-gates.json"
+  ],
+  "outside_docs_tasks": [],
+  "runtime_test_workflow_diff": "",
+  "census": {
+    "counts": {
+      "branches": 323,
+      "topics": 322,
+      "open_prs": 56,
+      "open_issues": 10
+    },
+    "page_sizes": {
+      "branches": [
+        100,
+        100,
+        100,
+        23,
+        0
+      ],
+      "pulls": [
+        56,
+        0
+      ],
+      "issues": [
+        66,
+        0
+      ]
+    },
+    "unique_branch_count": 323,
+    "unique_pr_count": 56,
+    "unique_issue_count": 10,
+    "pr_branch_mismatches": [],
+    "main": "fdc2696c23bdbfe7668348f25e3b336ce33039f7"
+  },
+  "gate_observed_utc": "2026-11-19T11:53:11.000Z",
+  "gates": [
+    {
+      "path": "pulls/318",
+      "sha": "c4ace2088ce8dc9ce78a0bf3036b81096accbdb5",
+      "counts": {
+        "queued": 2,
+        "skipped": 2,
+        "success": 16,
+        "in_progress": 6,
+        "failure": 2
+      },
+      "total_count": 28,
+      "actual_rows": 28,
+      "wrong_heads": [],
+      "reviews": 0
+    },
+    {
+      "path": "pulls/319",
+      "sha": "8d130aefe1be6e737cff1d90d2a5b1658d60a3a6",
+      "counts": {
+        "skipped": 1,
+        "queued": 13
+      },
+      "total_count": 14,
+      "actual_rows": 14,
+      "wrong_heads": [],
+      "reviews": 0
+    },
+    {
+      "path": "pulls/320",
+      "sha": "087f50aae76f815dc013fb65e304eef8e21596c1",
+      "counts": {
+        "queued": 28,
+        "skipped": 3
+      },
+      "total_count": 31,
+      "actual_rows": 31,
+      "wrong_heads": [],
+      "reviews": 0
+    },
+    {
+      "path": "pulls/321",
+      "sha": "2042e24dc7f3eac265e0eb183c738527852b22cf",
+      "counts": {
+        "skipped": 2,
+        "queued": 14
+      },
+      "total_count": 16,
+      "actual_rows": 16,
+      "wrong_heads": [],
+      "reviews": 0
+    },
+    {
+      "path": "pulls/322",
+      "sha": "32cc4b04cf1f5b9e69d1d0e8691db7083c7a45a7",
+      "counts": {
+        "queued": 21,
+        "skipped": 1
+      },
+      "total_count": 22,
+      "actual_rows": 22,
+      "wrong_heads": [],
+      "reviews": 0
+    },
+    {
+      "path": "branches/main",
+      "sha": "fdc2696c23bdbfe7668348f25e3b336ce33039f7",
+      "counts": {
+        "queued": 5,
+        "skipped": 2,
+        "success": 22
+      },
+      "total_count": 29,
+      "actual_rows": 29,
+      "wrong_heads": [],
+      "reviews": 0
+    }
+  ],
+  "reviewed_sections": [
+    {
+      "path": "docs/audits/branch-consolidation-inventory.md",
+      "sha256": "b4f547a6713ab1ba89ec12771ffed5416b0a25b587dc3ec5f067489a6cc3a2c6",
+      "bytes": 2954
+    },
+    {
+      "path": "docs/audits/feature-completion-status.md",
+      "sha256": "3abf148ba2a2c087f2c2362dfdcf14ff09ecda4cf563e4e457f7cc32013a8fee",
+      "bytes": 3524
+    },
+    {
+      "path": "docs/audits/final-consolidation-report.md",
+      "sha256": "6a652a9f1ebf09eee0919515b8ea9e39e74d37866e6efeae3e3577610c7192f8",
+      "bytes": 5998
+    },
+    {
+      "path": "docs/audits/merge-blockers.md",
+      "sha256": "1528fb018cb03f6e7e0b50a8b6a39fbf56d718eb4b7477a9e805aacce3989e75",
+      "bytes": 2904
+    },
+    {
+      "path": "docs/audits/outstanding-bugs.md",
+      "sha256": "082ad28a5ce094a9139b3583000956f2190ad8bbf6278cf66aa09b74a1009f14",
+      "bytes": 3534
+    }
+  ],
+  "recorded_utc": "2026-11-19T11:58:50.992603+00:00",
+  "disposition": "Scoped documentation/publication-receipt consistency approved; external-delta addendum/archive still pending at read. No remote re-fetch or test rerun."
+}
