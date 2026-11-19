@@ -430,7 +430,7 @@ def main(argv: list[str] | None = None) -> None:
                     shutil.copy2(source, target)
     shutil.copy2(python_license(), notices / 'Python-LICENSE.txt')
     (package / 'dependency-versions.json').write_text(json.dumps(versions, indent=2), encoding='utf-8')
-    inventory = sorted(str(p.relative_to(package)) for p in package.rglob('*') if p.is_file())
+    inventory = sorted(p.relative_to(package).as_posix() for p in package.rglob('*') if p.is_file())
     unexpected = [item for item in inventory if Path(item).name.lower().startswith(
         ('libqt6webengine', 'libqt6pdf', 'libqt6quick', 'libqt6qml'))]
     if unexpected:

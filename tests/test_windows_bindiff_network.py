@@ -424,8 +424,8 @@ def test_malformed_observations_refuse_with_controlled_error(net, change):
 
 def test_untracked_acceptance_implementation_cannot_claim_an_older_tree(net, tmp_path, monkeypatch):
     """A clean unrelated Git tree is not proof for newly added helper code."""
-    (tmp_path / 'README').write_text('authored source ownership control\n')
-    for args in (['init', '-q'], ['add', 'README'],
+    (tmp_path / 'README').write_bytes(b'authored source ownership control\n')
+    for args in (['init', '-q'], ['config', 'core.autocrlf', 'false'], ['add', 'README'],
                  ['-c', 'user.name=Authored Control', '-c', 'user.email=control@example.invalid',
                   'commit', '-qm', 'authored source [no release]']):
         subprocess.run(['git', *args], cwd=tmp_path, check=True, capture_output=True, timeout=15)

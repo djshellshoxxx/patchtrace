@@ -360,7 +360,7 @@ def authored_checkout(tmp_path, message='Authored qualification fixture'):
     env = {**__import__('os').environ, 'GIT_CONFIG_NOSYSTEM': '1'}
     commands = [['init', '-q'], ['config', 'core.autocrlf', 'false'], ['config', 'user.name', 'Authored fixture'],
                 ['config', 'user.email', 'fixture@example.invalid']]
-    (root / 'sample.txt').write_text('authored data\n')
+    (root / 'sample.txt').write_bytes(b'authored data\n')
     commands += [['add', 'sample.txt'], ['commit', '-q', '-m', message]]
     for args in commands:
         subprocess.run(['git', *args], cwd=root, env=env, check=True, capture_output=True)

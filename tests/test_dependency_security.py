@@ -367,7 +367,7 @@ def authored_evidence(scan, out, root, project, *, static=False):
         [('ruff', '0.17.5'), ('pip-audit', '2.10.1')], root, pip_version=scan.BOOTSTRAP_PIP)))
     (out / 'unaudited.json').write_bytes(encoded(scan.UNAUDITED))
     (out / 'context.json').write_bytes(encoded(expected))
-    (out / 'bootstrap-pip.txt').write_text(scan.bootstrap_requirements_text())
+    (out / 'bootstrap-pip.txt').write_bytes(scan.bootstrap_requirements_text().encode('utf-8'))
     environments = ['scanner'] if static else ['scanner', 'profile']
     for label in environments:
         identity = {'executable': scan.python_path(out, f'{label}-env'), 'version': '3.12.14',
@@ -385,7 +385,7 @@ def authored_evidence(scan, out, root, project, *, static=False):
         inventory = scan.validate_inventory(inspect, root, project, 'runtime', 'Linux', 0)
         (out / 'profile-inspect.stdout').write_bytes(encoded(inspect))
         (out / 'inventory.json').write_bytes(encoded(inventory))
-        (out / 'audit-requirements.txt').write_text(scan.requirements_text(inventory))
+        (out / 'audit-requirements.txt').write_bytes(scan.requirements_text(inventory).encode('utf-8'))
         (out / 'build-install.json').write_bytes(encoded(installation_report(
             [('setuptools', '85.0')], root, pip_version=scan.BOOTSTRAP_PIP)))
         pairs = [(row['metadata']['name'], row['metadata']['version']) for row in inspect['installed']
@@ -449,10 +449,11 @@ def authored_repository(root):
 
     root.mkdir()
     git('init', '-q')
+    git('config', 'core.autocrlf', 'false')
     git('config', 'user.name', 'Authored control')
     git('config', 'user.email', 'authored@example.invalid')
     (root / 'src').mkdir()
-    (root / 'src' / 'example.py').write_text('VALUE = 1\n')
+    (root / 'src' / 'example.py').write_bytes(b'VALUE = 1\n')
     git('add', 'src')
     git('commit', '-qm', 'Authored scan source [no release]')
     return git, git('rev-parse', 'HEAD')
