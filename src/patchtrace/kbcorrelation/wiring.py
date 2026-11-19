@@ -22,13 +22,22 @@ from collections.abc import Mapping, Sequence
 from pathlib import Path
 from typing import Any
 
+from ..input_readers import HeldInput, PairInputReaders
 from .card_provenance import FIELDS, CardFactRef
 from .components import normalise_name
 from .contracts import Arch, CveCard
 from .lineage import IndexRow, index_rows
 from .pairs import LocalFile
 from .service import Env, KbService
-from .store import Fault, KbcStoreError, SystemClock, WorkspaceStore, atomic_write
+from .store import (
+    Fault,
+    KbcStoreError,
+    SystemClock,
+    WorkspaceStore,
+    _check_input_readers,
+    _input_block,
+    atomic_write,
+)
 
 INDEX_DIR = 'winbindex'
 INDEX_RECORD = re.compile(r'(?P<name>[a-z0-9._-]+)@(?P<date>\d{4}-\d{2}-\d{2})\.json(?P<gz>\.gz)?')
@@ -211,7 +220,7 @@ def _merge_profiles(profiles):
         'limitations': tuple(sorted({d for p in profiles for d in p.limitations}))})
 
 
-def inspect_local_file(path: str, *, basename: str | None = None) -> LocalFile:
+def inspect_local_file(path: str, *, basename: str | None = None, reader: HeldInput | None = None) -> LocalFile:
     """Inspect bytes, using an explicit captured Artifact name only as a manual basename hint.
 
     The optional name is not PE OriginalFilename authority; ordinary local/CLI callers use the path name.
@@ -221,12 +230,16 @@ def inspect_local_file(path: str, *, basename: str | None = None) -> LocalFile:
     head = b''
     size = 0
     try:
-        with open(target, 'rb') as handle:
-            for block in iter(lambda: handle.read(1 << 20), b''):
-                if not head:
-                    head = block[:HEADER_BYTES]
+        if reader is not None:
+            reader.check(target)
+        with (open(target, 'rb') if reader is None else reader.open_reader(target)) as handle:
+            for block in iter(lambda: _input_block(handle, held=reader is not None), b''):
+                if len(head) < HEADER_BYTES:
+                    head += block[:HEADER_BYTES - len(head)]
                 digest.update(block)
                 size += len(block)
+        if reader is not None:
+            reader.check(target)
     except OSError:
         raise KbcStoreError('PT-KBC-INPUT', 'an input file cannot be read') from None
     return LocalFile(sha256=digest.hexdigest(), size=size, basename=normalise_file(target.name if basename is None else basename),
@@ -254,9 +267,10 @@ class RealProjectPort:
     call opens, uses and closes it)."""
 
     def __init__(self, workspace: WorkspaceStore | None = None, name: str = 'KB comparison', *,
-                 reuse_existing: bool = True):
+                 reuse_existing: bool = True, input_readers: PairInputReaders | None = None):
         self.name = name
         self.reuse_existing = reuse_existing
+        self._input_readers = input_readers
         self._dirs: dict[str, Path] = {}
         self._workspace = workspace
 
@@ -271,11 +285,13 @@ class RealProjectPort:
 
     def create_project(self, older_path: str, newer_path: str, *, directory: str) -> Mapping[str, Any]:
         from ..service import ProjectService
+        _check_input_readers(self._input_readers, older_path, newer_path)
         root = Path(directory)
         if self.reuse_existing and (root / 'project.sqlite3').is_file():
             service = ProjectService.open(root, maintenance=False)
         else:
-            service = ProjectService.create(Path(older_path), Path(newer_path), self.name, root)
+            options = {'input_readers': self._input_readers} if self._input_readers is not None else {}
+            service = ProjectService.create(Path(older_path), Path(newer_path), self.name, root, **options)
         try:
             side = {a.side: a.sha256 for a in service.project.artifacts}
             project_id = service.store.project_id
@@ -360,16 +376,19 @@ def escape_markdown(text: str) -> str:
     return escape_md(text)
 
 
-def _project_factory(workspace: WorkspaceStore | None, name: str) -> RealProjectPort:
-    return RealProjectPort(workspace, name)
+def _project_factory(workspace: WorkspaceStore | None, name: str, *,
+                     input_readers: PairInputReaders | None = None) -> RealProjectPort:
+    return RealProjectPort(workspace, name, **({'input_readers': input_readers} if input_readers is not None else {}))
 
 
-def new_project_factory(workspace: WorkspaceStore | None, name: str) -> RealProjectPort:
+def new_project_factory(workspace: WorkspaceStore | None, name: str, *,
+                        input_readers: PairInputReaders | None = None) -> RealProjectPort:
     """Desktop create-only route; ProjectService.create refuses a concurrently existing database.
 
     The normal CLI factory retains its journal-resume behavior.
     """
-    return RealProjectPort(workspace, name, reuse_existing=False)
+    return RealProjectPort(workspace, name, reuse_existing=False,
+                           **({'input_readers': input_readers} if input_readers is not None else {}))
 
 
 def build_env(*, clock=None, fault: Fault | None = None, advisory=None, acquirer=None) -> Env:

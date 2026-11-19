@@ -63,7 +63,7 @@ DESCRIPTIONS = {
     'close': 'Close the investigation without replacing the currently open project.',
     'details': 'Plain-text coverage, source evidence, pair hashes and operation results.',
     'status': 'Current local investigation status.',
-    'browse_workspace': 'Choose the local advisory workspace directory.',
+    'browse_workspace': 'Choose the advisory workspace used by this investigation.',
     'browse_source': 'Choose a local advisory JSON or compressed JSON file.',
     'browse_older': 'Choose the older local binary.',
     'browse_newer': 'Choose the newer local binary.',

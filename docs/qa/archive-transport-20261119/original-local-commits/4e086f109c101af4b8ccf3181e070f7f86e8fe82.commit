@@ -1,0 +1,6 @@
+tree bff31a06ef2fccd980e50928724d35a99dfa3c18
+parent a28c37ebb0d2d08e80512ba227c4ed04559ff8ed
+author Codex <codex@openai.com> 1795044263 -0800
+committer Codex <codex@openai.com> 1795044905 -0800
+
+Normalize stdin test imports without changing controls [no release]

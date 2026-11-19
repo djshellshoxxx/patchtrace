@@ -751,6 +751,13 @@ class EvidencePanel(QWidget):
         self.engine_logs[engine] = text
         if error:
             self.engine_errors[engine] = error
+        else:
+            self.engine_errors.pop(engine, None)
+        self._show_engine_log()
+
+    def clear_engine_logs(self) -> None:
+        self.engine_logs.clear()
+        self.engine_errors.clear()
         self._show_engine_log()
 
     def _selected_engine(self) -> str | None:
@@ -898,6 +905,8 @@ class EvidenceController(ControllerBase):
         self.probed = False
         self._legacy_geometry_done = False
         self.outcomes: dict[str, EngineOutcomeView] = {}
+        self._unsaved_attempts: dict[str, str] = {}  # one bounded diagnostic per secondary engine
+        self._stored_results: set[str] = set()  # successful publication in this request, not transient status
         self.capabilities: dict[str, object] = {}
         self.engine_states: dict[str, str] = {}
         self._status = ctx.shell.status
@@ -950,6 +959,7 @@ class EvidenceController(ControllerBase):
             self._invalidate()
             self.loaded_key = None
             self.outcomes.clear()
+            self._reset_run_feedback()
             self.panel.set_project(False)
             self._refresh_engine_rows()
             self.update_controls()
@@ -958,6 +968,7 @@ class EvidenceController(ControllerBase):
             self.cancel_run()  # project switched: never store a result into the wrong project
             self.run_generation += 1  # and drop any outcome still queued for the old project
             self.outcomes.clear()
+            self._reset_run_feedback()
             self.probed = False
         self.panel.has_project = True
         if key != self.loaded_key or self.dirty:
@@ -1131,6 +1142,18 @@ class EvidenceController(ControllerBase):
                 self.dirty = True
 
     # -- runs --
+    def _reset_run_feedback(self) -> None:
+        self._unsaved_attempts.clear()
+        self._stored_results.clear()
+        self.panel.clear_engine_logs()
+        self.panel.set_run_status('')
+        self._refresh_engine_rows()
+
+    def _set_run_status(self, message: str) -> None:
+        names = ', '.join(ENGINE_NAMES[e] for e in self._unsaved_attempts)
+        warning = f'Attempt records not saved: {names}. ' if names else ''
+        self.panel.set_run_status(warning + message)
+
     def start_run(self, options: dict) -> None:
         project = self.port.project()
         if self.run_token is not None or project is None or self.port.busy():
@@ -1150,6 +1173,7 @@ class EvidenceController(ControllerBase):
         except Exception as exc:  # noqa: BLE001
             self.panel.set_run_status(sanitize_text(f'Engine run not started: {exc}', 400))
             return
+        self._reset_run_feedback()
         self.run_request = request
         for engine in request.engines:
             self.engine_states[engine] = 'queued'
@@ -1213,51 +1237,57 @@ class EvidenceController(ControllerBase):
         if generation != self.run_generation or self.run_request is None:
             return
         self.engine_states.pop(view.engine, None)
-        message = ''
-        if view.status in ('ok', 'cached'):
-            try:
-                stale = service_api.persist_outcome(self.port.service, self.run_request, view)
-            except Exception as exc:  # noqa: BLE001
-                stale = f'could not store the result: {type(exc).__name__}'
-            if stale:
-                message = f'{ENGINE_NAMES.get(view.engine, view.engine)} result discarded: {stale}.'
-                self.panel.set_stale(stale)
+        successful = view.status in ('ok', 'cached')
+        refused = None
+        try:
+            attempt = view if successful else dataclasses.replace(view, match_set=None)
+            refused = service_api.persist_outcome(self.port.service, self.run_request, attempt)
+            problem = refused
+        except Exception as exc:  # noqa: BLE001
+            problem = f'could not store the result: {sanitize_text(type(exc).__name__, 60)}'
+        if problem:
+            self._unsaved_attempts[view.engine] = sanitize_text(f'Attempt not saved: {problem}', 100)
         else:
-            try:  # failed/cancelled attempts keep their run record; no match set is stored
-                service_api.persist_outcome(self.port.service, self.run_request, dataclasses.replace(
-                    view, match_set=None))
-            except Exception:  # noqa: BLE001
-                pass
+            self._unsaved_attempts.pop(view.engine, None)
+            if successful and view.run is not None and view.match_set is not None:
+                self._stored_results.add(view.engine)
+        message = ''
+        if successful:
+            if problem:
+                message = f'{ENGINE_NAMES[view.engine]}: could not confirm stored result: {problem}.'
+                self.panel.set_stale(problem)
+        else:
             first = f'{view.error_code or view.status}: {view.message}'.strip(': ')
             message = f'{ENGINE_NAMES.get(view.engine, view.engine)} {view.status} ({sanitize_text(first, 200)}).'
-            kept = [ENGINE_NAMES.get(e, e) for e, o in self.outcomes.items() if o.status in ('ok', 'cached')
-                    and e != view.engine]
+            kept = [ENGINE_NAMES[e] for e in sorted(self._stored_results) if e != view.engine and not refused]
             if kept:
                 message += f' {", ".join(kept)} result kept.'
         self.outcomes[view.engine] = dataclasses.replace(view, match_set=None, run=None)
         error = ''
-        if view.status not in ('ok', 'cached'):
+        if not successful or problem:
             error = '\n'.join([f'Engine: {ENGINE_NAMES.get(view.engine, view.engine)}',
                                f'Status: {view.status}', f'Error code: {view.error_code or "-"}',
                                f'Message: {view.message or "-"}', f'Version: {view.version or "-"}',
                                f'Older SHA-256: {self.run_request.older_sha256}',
                                f'Newer SHA-256: {self.run_request.newer_sha256}',
                                f'Started: {view.started_utc or "-"}', f'Duration: {view.duration_ms} ms'])
+            if problem:
+                error += '\n' + self._unsaved_attempts[view.engine]
         self.panel.set_engine_log(view.engine, view.stderr_tail, error)
         if message:
-            self.panel.set_run_status(message)
+            self._set_run_status(message)
         self._refresh_engine_rows()
 
     def _all_finished(self, views: tuple, generation: int) -> None:
         if generation != self.run_generation:
             return
         statuses = ', '.join(f'{ENGINE_NAMES.get(v.engine, v.engine)} {v.status}' for v in views)
-        self.panel.set_run_status(f'Engine run finished: {statuses}.')
+        self._set_run_status(f'Engine run finished: {statuses}.')
 
     def _run_failed(self, message: str, generation: int) -> None:
         if generation != self.run_generation:
             return
-        self.panel.set_run_status(f'Engine run failed: {sanitize_text(message, 200)}')
+        self._set_run_status(f'Engine run failed: {sanitize_text(message, 200)}')
 
     def _run_finished(self) -> None:
         self.run_token = None
@@ -1320,6 +1350,8 @@ class EvidenceController(ControllerBase):
             if cap is not None and not getattr(cap, 'supported', True) and state == 'not run':
                 state = 'unsupported'
                 detail = sanitize_text(getattr(cap, 'reason', '') or 'unsupported', 200)
+            if warning := self._unsaved_attempts.get(engine):
+                detail = f'{warning}. {detail}'
             hashes = full = ''
             if info and info.file_sha256:
                 hashes = f'set {info.file_sha256[:12]}'

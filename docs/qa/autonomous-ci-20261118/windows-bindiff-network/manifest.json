@@ -1,0 +1,285 @@
+{
+  "archive": {
+    "member_count": 53,
+    "path": "evidence.zip",
+    "sha256": "0a51508e9e81ecd8320313f0f8d404dac674401a611afb970aa84ce98db5cda7",
+    "size": 433703
+  },
+  "baseline_sha": "7023c3ad0ce727eb9c8b94c082b55ca9779bd6bb",
+  "implementation_sha": "8800bef2c2ec5b425d6e3e3ea7d4c0033cc07c17",
+  "implementation_tree": "24013a4da0c2aa715d7ff546d1933ce4468ec9a1",
+  "members": [
+    {
+      "path": "README.md",
+      "sha256": "e83a00f765df9c37bc31eb41fff066915b7806c0bc83dda2beee7ea298200e69",
+      "size": 8218
+    },
+    {
+      "path": "initial-spec-red/docs/modules.md",
+      "sha256": "5c729b72b7c6edffc6c1e2a97e451a21dc65358f529f87ebe2558ceca3274e8f",
+      "size": 361667
+    },
+    {
+      "path": "initial-spec-red/docs/specs/bindiff-execution.md",
+      "sha256": "6e4191d6e9f52d50576710720d3651f6d924b0552e395b6bbcbd6a0068abdcb4",
+      "size": 66485
+    },
+    {
+      "path": "initial-spec-red/docs/specs/windows-bindiff-network-acceptance.md",
+      "sha256": "0e365d70595bed1114147d24501a58101525cb7d806270d716bf6970fec56803",
+      "size": 9759
+    },
+    {
+      "path": "initial-spec-red/tests/test_windows_bindiff_network.py",
+      "sha256": "f38b3ae0f576d673423bc8f019f5f620a5d4719740af98d8584012172d18d5cc",
+      "size": 10973
+    },
+    {
+      "path": "original-native/job-134854104769.log",
+      "sha256": "909408a34834c5b60fe64ba0d1c55e9c174ecf6ef76e89a056301ea15dd3199c",
+      "size": 40593
+    },
+    {
+      "path": "original-native/native-14438536883.zip",
+      "sha256": "01a48208cb6f024f65ad76d35134d6b76623d6c966141baec2fb92212b64816e",
+      "size": 6490
+    },
+    {
+      "path": "receipts/affected-8800bef2.log",
+      "sha256": "0ca65d0e201f54aacab558811a2ba94eee556b6703b0a3d49bafaf832ad96e93",
+      "size": 951
+    },
+    {
+      "path": "receipts/affected-8800bef2.xml",
+      "sha256": "721c797243bfce720f867f9c8bd71220f47fd36074a6b25a0066faf4a09d0142",
+      "size": 86929
+    },
+    {
+      "path": "receipts/affected-command.json",
+      "sha256": "a37d9ae62b784ea97d38fc8f88b8a904ea39337adbca528ecf3ade00299b4af9",
+      "size": 1367
+    },
+    {
+      "path": "receipts/affected-result.json",
+      "sha256": "bf357e6b73149d1ad34008af2f3b3546524df6171f1d0100c1d51d075a74a6a2",
+      "size": 1420
+    },
+    {
+      "path": "receipts/environment.json",
+      "sha256": "70c332bae62653991f8e2c66e0568d10984d8182e90fc18cef909fd93f10b7df",
+      "size": 345
+    },
+    {
+      "path": "receipts/linux-build-refusal-command.json",
+      "sha256": "b8f554064d4a22df0ee389b9834ad4883d972fb280696128ca85f168e4e560ec",
+      "size": 385
+    },
+    {
+      "path": "receipts/linux-build-refusal.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0
+    },
+    {
+      "path": "receipts/linux-build-refusal.stdout",
+      "sha256": "890685e68274cc78c78838d43f562c1736aaaf02cf90c48141242a7983560485",
+      "size": 99
+    },
+    {
+      "path": "receipts/linux-build-refusal/build.json",
+      "sha256": "59402eebc62e238b5e9a49ac7bbe6784fdcd32c4be94a04431abf2c391b9bac9",
+      "size": 94
+    },
+    {
+      "path": "receipts/orchestration-red.log",
+      "sha256": "dec7ead249ca43de3d7f7aefa9a8c07d46c56fff41198758825d86acc8ccf6b5",
+      "size": 5072
+    },
+    {
+      "path": "receipts/orchestration-red.xml",
+      "sha256": "5ff3d4807f1c9148d4108020b7e01aab8e90ee13630e8e950d1daed82e797b8b",
+      "size": 5261
+    },
+    {
+      "path": "receipts/original-artifact-api.json",
+      "sha256": "f071554361a859360da81b45010ba785e70209a60a6541cbcc71be7c4d798dd1",
+      "size": 1937
+    },
+    {
+      "path": "receipts/original-artifact-review.json",
+      "sha256": "74b9709b68b5da8d93c0bfaa26c1094a63b2afad3bfbbd92e211c9e1e1a99ed2",
+      "size": 741
+    },
+    {
+      "path": "receipts/ownership-red.log",
+      "sha256": "2b5511757ef358ea27b173726300878a5c0a6e3b3285e6940a0a02ac61ad763a",
+      "size": 5130
+    },
+    {
+      "path": "receipts/ownership-red.xml",
+      "sha256": "639c125e268301c208b91388f0bb06a7d7ca7fe62a02c4d850cf953b597f5cd8",
+      "size": 5423
+    },
+    {
+      "path": "receipts/pin-red.log",
+      "sha256": "7d1f5ebd77059c601ecc1294797512c11c11b3b770438bc97ba8c9079d4b1e86",
+      "size": 5676
+    },
+    {
+      "path": "receipts/pin-red.xml",
+      "sha256": "ce64f767dd044f676e45fafbba624646499b23ba6c7cd3d204049c23a4766394",
+      "size": 6032
+    },
+    {
+      "path": "receipts/primary-reference-notes.json",
+      "sha256": "a56fa81efee86a1465813c990df3690f63789d782c9a61f2b24022ee7a1c973b",
+      "size": 1476
+    },
+    {
+      "path": "receipts/receipt-boundaries-corrected-red.log",
+      "sha256": "6bacd2de4c83abacd8203c3f14538ca7c235567e1c57c9aaa912b2e667df6c9b",
+      "size": 4532
+    },
+    {
+      "path": "receipts/receipt-boundaries-corrected-red.xml",
+      "sha256": "f8fd9f7896e3bda95f25fc8ed794cb92f6a2d733e261837bfda22ddd8588478d",
+      "size": 4815
+    },
+    {
+      "path": "receipts/receipt-boundaries-red.log",
+      "sha256": "7177ca1d7920c74e687b8c7e62503b61bfab1a89c6aa93af249c9523d26ff9ec",
+      "size": 6248
+    },
+    {
+      "path": "receipts/receipt-boundaries-red.xml",
+      "sha256": "a1f8385cce909740888b53c773cb99e85dcb492e90d485e16a104a26c1057222",
+      "size": 6537
+    },
+    {
+      "path": "receipts/red.log",
+      "sha256": "d52ac20ff7512a7d887029b37995e0aeb6446fa072dcd83b3dbb3b6ac58c8f2b",
+      "size": 108816
+    },
+    {
+      "path": "receipts/red.xml",
+      "sha256": "b65805c5e6fbaec32b76eb5897396eb95b44828d2827464c6b3871a44000e016",
+      "size": 119070
+    },
+    {
+      "path": "receipts/ruff-8800bef2.log",
+      "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+      "size": 19
+    },
+    {
+      "path": "receipts/ruff-final-command.json",
+      "sha256": "c718071f1c1d5d0a568b3a4e99f1b530d1fa15b8a5e2ed06b3a9dae55c59aa03",
+      "size": 292
+    },
+    {
+      "path": "receipts/ruff-final.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0
+    },
+    {
+      "path": "receipts/ruff-final.stdout",
+      "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+      "size": 19
+    },
+    {
+      "path": "receipts/skips-8800bef2.json",
+      "sha256": "2a54f2c1ca036b801e10e1503036d30937c49433a705dfd22109d80e44ee286d",
+      "size": 1957
+    },
+    {
+      "path": "receipts/source-red.log",
+      "sha256": "a6fbc5f6fe5b2f9c4f25eadc26d118df36667113ebb60b4bf3e24ee4d60f8ba2",
+      "size": 1638
+    },
+    {
+      "path": "receipts/source-red.xml",
+      "sha256": "9b95d83cc667c189d4aeb07e06d9a86c17bde7c60bf9353cd70bdad6ddbddc9d",
+      "size": 1656
+    },
+    {
+      "path": "receipts/source-verification-8800bef2.json",
+      "sha256": "4e615870afe9eef5dc4ff01e4bce83fc15e28b21b3e4ab438e977fe68876575c",
+      "size": 381
+    },
+    {
+      "path": "receipts/stream-api-red.log",
+      "sha256": "5a34df9347be355a151b007dd5d9e607deb26d2b629998345815bc26d744289f",
+      "size": 2734
+    },
+    {
+      "path": "receipts/stream-api-red.xml",
+      "sha256": "8a88069056f1b28e0a388ab41566c084c3926d3df5365b1cba5b380d0c8adc28",
+      "size": 2814
+    },
+    {
+      "path": "receipts/test-receipt-index.json",
+      "sha256": "eca705a8575388219aac125d5fc42296bea1621e487fa42878d1f4a0e21b65f8",
+      "size": 1179
+    },
+    {
+      "path": "source-identities.json",
+      "sha256": "659adabff38cd3ae4b0a1ea3844c62443e016ef697b7bc28ff48a50c5d9ff6fd",
+      "size": 1447
+    },
+    {
+      "path": "source/.github/workflows/live-bindiff.yml",
+      "sha256": "bfe5e5cf3e12319eb7232c9fd65e0cd1d4799248d56468a1cda6df44cb266e2d",
+      "size": 4348
+    },
+    {
+      "path": "source/docs/modules.md",
+      "sha256": "3f9c6a3bbd33d5fa936238b6d36fdf98bc7242fdadd3d3f5b8c09063999e4161",
+      "size": 361699
+    },
+    {
+      "path": "source/docs/specs/bindiff-execution.md",
+      "sha256": "6e4191d6e9f52d50576710720d3651f6d924b0552e395b6bbcbd6a0068abdcb4",
+      "size": 66485
+    },
+    {
+      "path": "source/docs/specs/windows-bindiff-network-acceptance.md",
+      "sha256": "8b8cfa50ca1dd5f9d987cfb6f9927163bc6cc3267b27c0550c8986a3b40c7718",
+      "size": 10020
+    },
+    {
+      "path": "source/tests/test_live_bindiff.py",
+      "sha256": "92346c721ab7e05d152c86de46f2e50baa3553b67c6396498454d6b365686aeb",
+      "size": 17264
+    },
+    {
+      "path": "source/tests/test_windows_bindiff_network.py",
+      "sha256": "255f4beddc07368bd353bbdc7a2c14e5ee28d396e7a7bcf9ec9953b560c1d622",
+      "size": 22619
+    },
+    {
+      "path": "source/tools/windows_bindiff_network.py",
+      "sha256": "af4c201625aa872318816216f54fc95d70b48fdfc6028856fc2a363fccea504f",
+      "size": 51666
+    },
+    {
+      "path": "source/tools/windows_network/common.h",
+      "sha256": "74ada1531449c16c323e4771a95141534c3de4611fb85b26557c70bce921b752",
+      "size": 10968
+    },
+    {
+      "path": "source/tools/windows_network/launcher.c",
+      "sha256": "83f3c2b634851862779112b193ad3440e573586688195210349d9e619a1200c4",
+      "size": 5786
+    },
+    {
+      "path": "source/tools/windows_network/probe.c",
+      "sha256": "c5e6e41ebac7cdc379b31b76925d7f548c7ca6b22345a503389e96214d577b69",
+      "size": 6517
+    }
+  ],
+  "qualification": {
+    "native_windows": "pending",
+    "original_native_artifact": "blocked",
+    "portable": "passed"
+  },
+  "schema_version": 1,
+  "spec_red_sha": "b7b2d53be0d5ad27613cc078b5ced035b76afa59"
+}

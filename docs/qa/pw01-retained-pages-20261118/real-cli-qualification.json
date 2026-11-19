@@ -1,0 +1,394 @@
+{
+  "kind": "pw01-real-cli-qualification/1",
+  "source_commit": "c023dec36a464c3e7e1a8689f52a22263f0c24c5",
+  "source_tree": "d390d0f2f77b34cdb0a265b9bfb33e06d4428e09",
+  "raw_sha256": "b327eb5d0f8d7a0d6a9c8c2d1a7af1df134bc2a54c3e0da2eff0fb335547a627",
+  "operations": [
+    {
+      "label": "01-import",
+      "argv": [
+        "/workspace/scratch/3a6632a6e5ff/venv/bin/python",
+        "-m",
+        "patchtrace",
+        "kb",
+        "inventory",
+        "import",
+        "/workspace/scratch/e83fbf4505c3/pw01-live-evidence/20261118T074241Z-e077563/proxy-csv-raw.csv",
+        "--kb",
+        "KB5036893",
+        "--offline",
+        "--workspace",
+        "/workspace/scratch/e83fbf4505c3/pw01-cli-real-wskaczoz/ws",
+        "--json"
+      ],
+      "exit_code": 3,
+      "expected_exit_code": 3,
+      "seconds": 1.175,
+      "stdout_sha256": "1ca902bfd9569aa2f8d3e558eed23cf000f675f03432173f57647811ba15049f",
+      "stdout_bytes": 1424
+    },
+    {
+      "label": "02-original-show",
+      "argv": [
+        "/workspace/scratch/3a6632a6e5ff/venv/bin/python",
+        "-m",
+        "patchtrace",
+        "kb",
+        "inventory",
+        "show",
+        "aa4036cfaa3e9503ccbb2547deedc7191200e4057bc58765093b564672223e0b",
+        "--limit",
+        "1",
+        "--workspace",
+        "/workspace/scratch/e83fbf4505c3/pw01-cli-real-wskaczoz/ws",
+        "--json"
+      ],
+      "exit_code": 3,
+      "expected_exit_code": 3,
+      "seconds": 0.786,
+      "stdout_sha256": "4828e0bf1185e1433aecc1414b944440752ba773885fb6545c37c519f99a59c9",
+      "stdout_bytes": 314640
+    },
+    {
+      "label": "03-retain-1",
+      "argv": [
+        "/workspace/scratch/3a6632a6e5ff/venv/bin/python",
+        "-m",
+        "patchtrace",
+        "kb",
+        "inventory",
+        "retain",
+        "aa4036cfaa3e9503ccbb2547deedc7191200e4057bc58765093b564672223e0b",
+        "--architecture",
+        "amd64",
+        "--page",
+        "1",
+        "--workspace",
+        "/workspace/scratch/e83fbf4505c3/pw01-cli-real-wskaczoz/ws",
+        "--json"
+      ],
+      "exit_code": 3,
+      "expected_exit_code": 3,
+      "seconds": 2.374,
+      "stdout_sha256": "4952b4f29690a1a3a3d4ad8dccf6b13698e833337427af833338518f7e9c2c47",
+      "stdout_bytes": 1774
+    },
+    {
+      "label": "07-show-1",
+      "argv": [
+        "/workspace/scratch/3a6632a6e5ff/venv/bin/python",
+        "-m",
+        "patchtrace",
+        "kb",
+        "inventory",
+        "show",
+        "78fc4468dcb6c1766939491037f2bb7fdea013a60794becff9e44c0d90bdb3b8",
+        "--limit",
+        "1",
+        "--name",
+        "aarsvc.dll",
+        "--workspace",
+        "/workspace/scratch/e83fbf4505c3/pw01-cli-real-wskaczoz/ws",
+        "--json"
+      ],
+      "exit_code": 3,
+      "expected_exit_code": 3,
+      "seconds": 2.023,
+      "stdout_sha256": "e1b9dd488d314bfa873bc56770bfe2c27cfe9cf429b25eefa630f248b636a697",
+      "stdout_bytes": 566773
+    },
+    {
+      "label": "04-retain-2",
+      "argv": [
+        "/workspace/scratch/3a6632a6e5ff/venv/bin/python",
+        "-m",
+        "patchtrace",
+        "kb",
+        "inventory",
+        "retain",
+        "aa4036cfaa3e9503ccbb2547deedc7191200e4057bc58765093b564672223e0b",
+        "--architecture",
+        "amd64",
+        "--page",
+        "2",
+        "--workspace",
+        "/workspace/scratch/e83fbf4505c3/pw01-cli-real-wskaczoz/ws",
+        "--json"
+      ],
+      "exit_code": 3,
+      "expected_exit_code": 3,
+      "seconds": 2.222,
+      "stdout_sha256": "e76ae9348e2f7284333381144c686674498a6295d2a1319c2a9b1e7b07c510ef",
+      "stdout_bytes": 1774
+    },
+    {
+      "label": "08-show-2",
+      "argv": [
+        "/workspace/scratch/3a6632a6e5ff/venv/bin/python",
+        "-m",
+        "patchtrace",
+        "kb",
+        "inventory",
+        "show",
+        "beaf23e27e70d343cf65cb88f09bdf12ab751cf6c162a93fec92fcf5903b6a85",
+        "--limit",
+        "1",
+        "--workspace",
+        "/workspace/scratch/e83fbf4505c3/pw01-cli-real-wskaczoz/ws",
+        "--json"
+      ],
+      "exit_code": 3,
+      "expected_exit_code": 3,
+      "seconds": 1.926,
+      "stdout_sha256": "efc3e9cb75e438dd05aa8e5d87578fffcca8b3bc1eaebe1480a244b978a4d6d6",
+      "stdout_bytes": 674481
+    },
+    {
+      "label": "05-retain-3",
+      "argv": [
+        "/workspace/scratch/3a6632a6e5ff/venv/bin/python",
+        "-m",
+        "patchtrace",
+        "kb",
+        "inventory",
+        "retain",
+        "aa4036cfaa3e9503ccbb2547deedc7191200e4057bc58765093b564672223e0b",
+        "--architecture",
+        "amd64",
+        "--page",
+        "3",
+        "--workspace",
+        "/workspace/scratch/e83fbf4505c3/pw01-cli-real-wskaczoz/ws",
+        "--json"
+      ],
+      "exit_code": 3,
+      "expected_exit_code": 3,
+      "seconds": 2.334,
+      "stdout_sha256": "00413b53d3dc2e7eb7eb98a7fcf209b5c580fe15e60f06ce9673cb7ef5ba4dc5",
+      "stdout_bytes": 1774
+    },
+    {
+      "label": "09-show-3",
+      "argv": [
+        "/workspace/scratch/3a6632a6e5ff/venv/bin/python",
+        "-m",
+        "patchtrace",
+        "kb",
+        "inventory",
+        "show",
+        "6d97dc566d83b7ce190a941fe358810c0e3bb317832674ccedaf542453ada864",
+        "--limit",
+        "1",
+        "--workspace",
+        "/workspace/scratch/e83fbf4505c3/pw01-cli-real-wskaczoz/ws",
+        "--json"
+      ],
+      "exit_code": 3,
+      "expected_exit_code": 3,
+      "seconds": 1.869,
+      "stdout_sha256": "783821d662953cec924f4da4055de6815ebf6822b19143e119860f9468076612",
+      "stdout_bytes": 602061
+    },
+    {
+      "label": "06-retain-4",
+      "argv": [
+        "/workspace/scratch/3a6632a6e5ff/venv/bin/python",
+        "-m",
+        "patchtrace",
+        "kb",
+        "inventory",
+        "retain",
+        "aa4036cfaa3e9503ccbb2547deedc7191200e4057bc58765093b564672223e0b",
+        "--architecture",
+        "amd64",
+        "--page",
+        "4",
+        "--workspace",
+        "/workspace/scratch/e83fbf4505c3/pw01-cli-real-wskaczoz/ws",
+        "--json"
+      ],
+      "exit_code": 3,
+      "expected_exit_code": 3,
+      "seconds": 2.22,
+      "stdout_sha256": "f2b786a32ca8e763fd3e50ca05483b12775441affabd73301a896303e343a424",
+      "stdout_bytes": 1775
+    },
+    {
+      "label": "10-show-4",
+      "argv": [
+        "/workspace/scratch/3a6632a6e5ff/venv/bin/python",
+        "-m",
+        "patchtrace",
+        "kb",
+        "inventory",
+        "show",
+        "3275af0de990b931ffcbfbac185c4fd9d6893ee0eeeb9bb82f9c09f4be68d3c6",
+        "--limit",
+        "1",
+        "--name",
+        "aarsvc.dll",
+        "--workspace",
+        "/workspace/scratch/e83fbf4505c3/pw01-cli-real-wskaczoz/ws",
+        "--json"
+      ],
+      "exit_code": 3,
+      "expected_exit_code": 3,
+      "seconds": 1.818,
+      "stdout_sha256": "a3edbafad4dc2eb1c5cbbd8b329aef9b303900fa2e449bb1a9a9c15554cb6559",
+      "stdout_bytes": 1051674
+    },
+    {
+      "label": "11-original-show-again",
+      "argv": [
+        "/workspace/scratch/3a6632a6e5ff/venv/bin/python",
+        "-m",
+        "patchtrace",
+        "kb",
+        "inventory",
+        "show",
+        "aa4036cfaa3e9503ccbb2547deedc7191200e4057bc58765093b564672223e0b",
+        "--limit",
+        "1",
+        "--workspace",
+        "/workspace/scratch/e83fbf4505c3/pw01-cli-real-wskaczoz/ws",
+        "--json"
+      ],
+      "exit_code": 3,
+      "expected_exit_code": 3,
+      "seconds": 0.716,
+      "stdout_sha256": "4828e0bf1185e1433aecc1414b944440752ba773885fb6545c37c519f99a59c9",
+      "stdout_bytes": 314640
+    },
+    {
+      "label": "12-repeat-page1-from-page4",
+      "argv": [
+        "/workspace/scratch/3a6632a6e5ff/venv/bin/python",
+        "-m",
+        "patchtrace",
+        "kb",
+        "inventory",
+        "retain",
+        "3275af0de990b931ffcbfbac185c4fd9d6893ee0eeeb9bb82f9c09f4be68d3c6",
+        "--architecture",
+        "amd64",
+        "--page",
+        "1",
+        "--workspace",
+        "/workspace/scratch/e83fbf4505c3/pw01-cli-real-wskaczoz/ws",
+        "--json"
+      ],
+      "exit_code": 3,
+      "expected_exit_code": 3,
+      "seconds": 4.724,
+      "stdout_sha256": "26c2db9d241ba88d075b91957e02d60ce2031972fa23465b2df031af59e1fcb0",
+      "stdout_bytes": 1773
+    },
+    {
+      "label": "13-list",
+      "argv": [
+        "/workspace/scratch/3a6632a6e5ff/venv/bin/python",
+        "-m",
+        "patchtrace",
+        "kb",
+        "inventory",
+        "list",
+        "--workspace",
+        "/workspace/scratch/e83fbf4505c3/pw01-cli-real-wskaczoz/ws",
+        "--json"
+      ],
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "seconds": 1.016,
+      "stdout_sha256": "075daa1f1b51085958f691dc0fb9f0795cb62c371319a686883f5398d0b52535",
+      "stdout_bytes": 7061
+    }
+  ],
+  "pages": [
+    {
+      "page": 1,
+      "import_id": "78fc4468dcb6c1766939491037f2bb7fdea013a60794becff9e44c0d90bdb3b8",
+      "inventory_id": "8dd1635ee4e79e16fa99f1b70db432b09bb6d2c4dc874d021b87f0d95f6dbf0c",
+      "retained": 5000,
+      "matching": 18761,
+      "excluded": 18834,
+      "omitted": 13761,
+      "scan_complete": true,
+      "witness": {
+        "conflict_group": "4bf9e93738147fc72683a424925cae97576e5174431c5489471f1c7a3bbd58e6",
+        "field": "size_bytes",
+        "first": {
+          "line_end": 24355,
+          "line_start": 24355,
+          "logical_record": 24355,
+          "raw_sha256": "b327eb5d0f8d7a0d6a9c8c2d1a7af1df134bc2a54c3e0da2eff0fb335547a627",
+          "section_index": 1
+        },
+        "second": {
+          "line_end": 41380,
+          "line_start": 41380,
+          "logical_record": 41380,
+          "raw_sha256": "b327eb5d0f8d7a0d6a9c8c2d1a7af1df134bc2a54c3e0da2eff0fb335547a627",
+          "section_index": 1
+        }
+      }
+    },
+    {
+      "page": 2,
+      "import_id": "beaf23e27e70d343cf65cb88f09bdf12ab751cf6c162a93fec92fcf5903b6a85",
+      "inventory_id": "56e8f1cf36ed3bcbfed1e153ceddd210c8a3015bef8de2efa9155e24eafea8cf",
+      "retained": 5000,
+      "matching": 18761,
+      "excluded": 18834,
+      "omitted": 13761,
+      "scan_complete": true,
+      "witness": null
+    },
+    {
+      "page": 3,
+      "import_id": "6d97dc566d83b7ce190a941fe358810c0e3bb317832674ccedaf542453ada864",
+      "inventory_id": "f5cb4dbab5cadfc11901415752680c7a341c04e44a819dc0602667d59cd936d5",
+      "retained": 5000,
+      "matching": 18761,
+      "excluded": 18834,
+      "omitted": 13761,
+      "scan_complete": true,
+      "witness": null
+    },
+    {
+      "page": 4,
+      "import_id": "3275af0de990b931ffcbfbac185c4fd9d6893ee0eeeb9bb82f9c09f4be68d3c6",
+      "inventory_id": "456215bb42db78c617149fb9ccd6e880adb1e7784ad7fc672663d34914455ce2",
+      "retained": 3761,
+      "matching": 18761,
+      "excluded": 18834,
+      "omitted": 15000,
+      "scan_complete": true,
+      "witness": {
+        "conflict_group": "f67784e5c83221ca39bca46b9ab3b108670a3af6f4f10000c283fa344cb2da8a",
+        "field": "size_bytes",
+        "first": {
+          "line_end": 24355,
+          "line_start": 24355,
+          "logical_record": 24355,
+          "raw_sha256": "b327eb5d0f8d7a0d6a9c8c2d1a7af1df134bc2a54c3e0da2eff0fb335547a627",
+          "section_index": 1
+        },
+        "second": {
+          "line_end": 41380,
+          "line_start": 41380,
+          "logical_record": 41380,
+          "raw_sha256": "b327eb5d0f8d7a0d6a9c8c2d1a7af1df134bc2a54c3e0da2eff0fb335547a627",
+          "section_index": 1
+        }
+      }
+    }
+  ],
+  "target_executed": false,
+  "network_requested": false,
+  "status": "PASS",
+  "original_import_unchanged": true,
+  "source_provenance_unchanged": true,
+  "idempotent": true,
+  "total_imports": 5,
+  "raw_unchanged": true
+}

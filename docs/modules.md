@@ -14,6 +14,94 @@ selective integration does not change KB workspace or winpairs call sites.
 Tests: `test_owned_publication.py`, `test_advisory_read_bounds.py`, and the existing
 winpairs publication boundary suite. Portable native-call controls do not certify
 Windows filesystem behavior; exact-candidate hosted Windows tests remain required.
+## PW-02 local package candidate (2026-11-18)
+
+`acquisition/package_contracts.py`, `package_paths.py`, `package_budget.py` and
+`package_platform.py` own strict local-package records/IDs, logical member names,
+one shared operation budget/deadline, and the Windows AMD64 prerequisite. These
+pure boundaries do not advertise an extractor or native qualification. The
+subsequent `package_fdi.py`, `package_stage.py`, `package_worker.py` and
+`packages.py` will reuse the existing process supervisor and anchored native
+handles; KB package composition remains outside the worker. Contract:
+`docs/specs/local-package-intake.md`; focused `tests/test_package_*.py`; schemas
+under `docs/schemas/local-package/` from `tools/generate_package_schemas.py`.
+Native Windows, frozen CLI and project-admission acceptance are separate gates.
+
+The next pure worker-accounting slice is `acquisition/package_worker_contracts.py`
+(`local-package-worker/1` binding, grant, receipt, strict 1 MiB parser and grant
+identity) plus serial grant issuance/derivation/reconciliation in the existing
+`package_budget.py`. Focused `test_package_worker_{contracts,grants,edges,terminal}.py` controls
+cover ownership, original deadline, remaining allowance, once-only consumption
+and permanent refusal after incomplete/missing receipts. The package schema
+generator owns the three additive worker schemas. These records and authored
+controls provide no native I/O, decoder, containment or project-admission credit.
+
+## Exclusive directory publication (2026-11-18)
+
+`directory_publication.py` owns the shared native no-replacement move for complete
+project backups and verified offline runtime directories. The two existing
+private publisher names in `persistence.py` and `offline_bundle.py` delegate here.
+It creates/removes no destination entry and refuses unsupported primitives.
+Contract: `docs/specs/directory-publication.md`; regression proof:
+`tests/test_directory_publication.py`. The existing stronger immutable-file
+`owned_publication.py` API is unchanged; parent/private-stage ownership and
+native platform qualification remain separate boundaries.
+
+## Owned immutable file publication (2026-11-18)
+
+`src/patchtrace/owned_publication.py` is the shared stdlib publication boundary for
+immutable files. It holds destination directories and the exact source object,
+refuses reparse/identity uncertainty, and never replaces a destination. Optional
+existing-content reuse requires a bounded read and a caller-supplied validator.
+An expected root anchor binds workspace object operations to the directory
+identity captured when its SQLite owner opened, including final revalidation.
+`WorkspaceStore.write_object` supplies bounded gzip/digest validation; the research
+winpairs helper reuses the same platform machinery without admitting existing
+files. Windows uses rooted native handles; Linux uses anonymous descriptor-backed
+staging. Tests: `test_kbc_object_publication.py` and the existing winpairs boundary
+modules, plus `test_owned_publication.py`. Portable tests do not certify Windows
+filesystem behavior; the QA publication prerequisite runs these controls on both
+Linux and Windows before the full suite.
+
+## Dependency/security qualification candidate (2026-11-18)
+
+`tools/dependency_security.py` records actual isolated runtime/packaging Python
+inventories, runs pinned dependency/static scanners, and validates bounded
+source-owned receipts. `.github/workflows/dependency-security.yml` supplies four
+native OS/profile dependency jobs plus the static-security job; failures retain
+raw artifacts and remain failures. Repository-owned source is distinguished from
+auditable external distributions and explicitly unaudited native categories.
+Contract: `docs/specs/dependency-security-qualification.md`; authored tests in
+`tests/test_dependency_security.py`. No scan pass or native qualification follows
+from those tests. The shared release policy requires every named native profile.
+The separate reviewed-bootstrap follow-on records the original ensurepip
+inventory, hash-pinned pip 26.3 transition and final complete audited closure;
+`tests/test_dependency_security_bootstrap.py` verifies that transition without
+removing the original failing inventories or changing static/native gates.
+
+## Exact-source release qualification (2026-11-18)
+
+`tools/release_qualification.py` is the stdlib, read-only publication guard shared
+by desktop and backend-bundle publishing jobs. It checks the actual checkout and
+commit hold, exact repository/SHA/workflow/latest-attempt ownership, mandatory job
+and critical-step outcomes, bounded unmocked native status artifacts, and existing
+tag/asset identity. It never creates tags/releases or uploads/removes assets.
+Cadence remains in `release_gate.py`. Missing dependency/security scan evidence
+blocks publication; no scanner pass is synthesized. Hermetic verification lives
+in `tests/test_release_qualification.py` and the existing release/bundle workflow
+contract tests. Native and hosted qualification remain separate from these tests.
+
+## Cross-platform CI fixture construction (2026-11-19)
+
+`tests/test_release_qualification.py`, `test_release_source_stat.py`,
+`test_dependency_security.py` and `test_windows_bindiff_network.py` author exact
+LF fixture bytes and isolated local Git normalization settings while preserving
+the real source/receipt validators. `tools/build_linux.py` projects enumerated
+inventory names to slash-separated relative strings; `test_linux_frozen_smoke.py`
+exercises that path with inert files, modeled Windows relative paths and the
+existing injected runner. Contract: `docs/specs/ci-workflow-integrity.md`.
+Portable reproduction and fixture correction do not relabel original hosted
+failures or qualify a native/frozen package.
 
 | Module | Responsibility | Verification seam |
 |---|---|---|
@@ -64,6 +152,7 @@ Stable IDs are independent of filenames. Public interfaces in SPEC-01 and schema
 |---|---|---|---|---|
 | contracts | models.py | Versioned validated artifact/project/run/function/match/evidence/context/finding/job/export records | pydantic | Pure data; schema and invariant tests |
 | ingestion | ingestion.py | inspect_artifact and immutable copies; PE AMD64 validation | contracts | Disk staging; synthetic PE fixtures |
+| operation input readers | input_readers.py; ingestion.py; service.ProjectService.create; persistence.ProjectStore | Optional held-source reader pair and neutral read-work checkpoint through complete copy/PE/hash verification and pre-COMMIT; ordinary path/ownership/cache behavior retained. Contract: specs/core-held-inputs.md. KB/native/package propagation remains separate. | stdlib only for protocols; existing ingestion/store | tests/test_input_readers.py, test_ingestion_held_inputs.py, test_creation_operation_checkpoint.py; authored PE/SQLite, no native sharing claim |
 | persistence | persistence.py | create/load/save project, lock, backups, revision history | contracts | SQLite connection confined to its creating thread; temp roots |
 | normalization | normalization.py | normalize_ghidriff, preserve unavailable fields; A-32 (2026-11-18): two-pass validate-then-emit, a function repeated with identical content across distinct `modified` pairs abstains per connected 1:N/N:1/N:M group (one-sided non-manual `ambiguous` rows with `upstream_one_to_many`, `is_abstention`) instead of rejecting the document; exact pair repeats, conflicting content, one-sided-plus-paired and planted reserved keys still reject | contracts, enrichment.identity | Pure conversion; upstream JSON fixtures; `tests/test_normalization_one_to_many.py`, `test_unified_ghidriff_one_to_many.py`, `test_evalcore_ghidriff_one_to_many.py` |
 | alignment | alignment.py | Bounded line alignment and hunks; large-input fallback | contracts | Pure lines; unequal/empty fixtures |
@@ -79,6 +168,8 @@ Stable IDs are independent of filenames. Public interfaces in SPEC-01 and schema
 | findings | service.py | Reviews, manual matches, notes, stale invalidation | contracts/persistence | Service owns project aggregate; transaction tests |
 | desktop | ui.py | Wizard/workspace/settings/context preview/evidence navigation | service/jobs | Main thread Qt; pytest-qt |
 | desktop profile navigation | ui_profiles.py | Profile storage selection, signal-safe list refresh and explicit dirty-draft Save/Discard/Cancel decisions | Qt, enrichment.profiles | Offscreen real profile-store navigation, rename and failed-write controls |
+| signal navigation | ui_signal_navigation.py | SPEC-07 P2-NAV-1: refuse representations unsupported by the decompiled signal action, validate the live location before mode/cursor changes, and show a bounded diagnosis without persistence changes | enrichment.views/contracts; existing desktop presentation | Real stored/reopened offscreen controls in `tests/test_signal_location_navigation.py`; existing host seam and tooltip gates |
+| internal KB held inputs | kbcorrelation/{service,wiring,store}.py | `kb-held-inputs.md`: optionally carry the same operation-owned pair through inspection, both existing attachment hashes and core create; ordinary injected calls and full-index/saved-scope admission remain unchanged. Internal only until separately reviewed durable protection exists; no held-origin CLI/GUI/package entry point | neutral input_readers; existing ProjectService/ProjectAttachment | `tests/test_kbc_held_input_admission.py`; real portable PE/SQLite controls, no native Windows/FDI acceptance |
 | desktop job events | ui_job_events.py | Main-thread event relay bound to the exact active worker; reject stale queued events | PySide6.QtCore | Offscreen Qt progress/lifecycle tests; keep the existing ui.py seam limit |
 | reports | reports.py | JSON/Markdown/self-contained HTML and manifests | contracts | Atomic exports; injection fixtures |
 | diagnostics | diagnostics.py | Dependency status, bounded redacted logs and pure fixed-text Ghidriff exit classification | stdlib | No credentials; redaction tests |
@@ -136,6 +227,7 @@ Every substantial future module must be added here before implementation. UI mus
 | engine env | secondary/engine_env.py | single child-env allow-list for secondary engines (rz-diff via `backend.build_child_env`, BinDiff from scratch) | backend | `tests/test_engine_env.py`, `tests/test_live_rzdiff_check.py` |
 | bindiff CLI | secondary/cli_bindiff.py | `--older/--newer-binexport`, `--accept-unbound-binexport`, `PATCHTRACE_BINDIFF`, C3 acceptor wrapper | registry | `tests/test_cli_bindiff.py` |
 | live harness | tests/conftest.py, tests/test_live_bindiff.py, tools/{provision_bindiff,check_live_status,make_bindiff_fixtures}.py, tools/bindiff_pin.json, .github/workflows/live-bindiff.yml | never-silent live status (`passed/failed/blocked`), fail-closed pinned provisioning, synthetic goldens | - | `tests/test_live_harness.py`, `tests/test_bindiff_golden.py` |
+| Windows BinDiff network acceptance | tools/windows_bindiff_network.py, tools/windows_network/{launcher,probe}.c, tools/windows_network/common.h | Fresh zero-capability AppContainer for native probe/diff descendants; bounded effective-denial and cleanup receipts with canonical process creation identities; shared semantic-match fingerprint, bounded stderr-only diagnostics and held parent-created stdin forwarding (specs/windows-bindiff-network-acceptance.md) | Windows SDK, existing adapter/runner seams; test tooling only | `tests/test_windows_bindiff_network.py`, `tests/test_windows_network_diagnostics.py`, `tests/test_windows_network_stdin.py`; standalone failed-write predicate observations preserve failure; portable formatter and scripted stdin/source controls do not replace native Windows qualification |
 | live pair + real golden (C4 follow-up) | tests/bindiff_live_pair.py, tests/fixtures/secondary/bindiff-v8-real-on-synthetic.* , bindiff-8-help.txt | stdlib BinExport2 encoder for the SYNTHETIC live pair; real v8 output/help used as goldens; provisioning now extracts the `.deb` with stdlib ar+tar and verifies the pinned executable | patchtrace.sample | `tests/test_bindiff_live_pair.py`, `tests/test_bindiff_real_golden.py`, `tests/test_provision_bindiff.py` |
 ### C9 calibration (2026-10-14; synthetic validation only)
 | Module | Files | Responsibility | Depends on | Verification |
@@ -202,6 +294,7 @@ Built: common, process, capa, floss, diec, normalize, delta (tests: `tests/test_
 | C locator | tools/calibration/tier_r/csrc.py | comment/string/preprocessor-aware tokenizer, ANSI/K&R/macro-wrapped definitions, span comparison | - | tests/test_tier_r_csrc.py |
 | builds + truth | tools/calibration/tier_r/{toolchain,build,pe,debuginfo,bodyhash,fetch}.py | allow-listed tool runner via jobs.run_process; reproducible msvc-free (clang + lld-link + PDB) and mingw-gcc/mingw-clang (DWARF) builds; stripped engine image with RVA check; PDB/DWARF/COFF inventory; raw + address-masked body hashes; pinned HTTPS git fetch with licence hash | patchtrace.jobs | tests/test_tier_r_factory.py (compiles synthetic C; BLOCKED when tools are missing) |
 | labeller + factory | tools/calibration/tier_r/{labeler,factory}.py, catalogue/{recipes,releases}.json | identity join, SPEC-32 s7 decision table, authored-truth cross-check; suites, case cards, A/A rebuild/layout, toolchain noise | all above | tests/test_tier_r_{factory,catalogue}.py |
+| Tier R shard reporting | tools/calibration/tier_r/shard.py | SPEC-32 s13 deterministic plan/run/merge; A/A failure precedence; exit-1 command-summary recognition and bounded failure/stderr retention in case and evaluation lanes; aggregate-only artifacts | tier_r.contracts, calibration.common | `tests/test_tier_r_shard.py`, `tests/test_tier_r_aa_failures.py`, `tests/test_tier_r_exit1_diagnostics.py`; injected runners, no native acceptance |
 ### [B:hardening] Phase D track B modules (2026-10-14)
 | Module | File | Responsibility | Depends on | Tests |
 |---|---|---|---|---|
@@ -345,7 +438,7 @@ S2 notes (for S0b, S1, S5 and the integration owner):
 | unified registry | src/patchtrace/unified/registry.py | `Registry`: independence families (joining D-tags), source rows, Ghidriff and BinDiff step -> (tier, class), pass rows P00-P19, channel/proof versions, digests (delivered by S0b, deferred by S0a) | contracts | tests/test_unified_registry.py |
 | unified addressing | src/patchtrace/unified/addressing.py | VA/RVA per engine SET with C3's `detect_address_basis`, `EXTERNAL:` keys, PE layout from the verified artifact bytes | secondary.binexport_identity, pe_overview | tests/test_unified_addressing.py |
 | unified sources | src/patchtrace/unified/sources/{__init__,ghidriff,secondary,manual,ladder}.py | pure adapters over LOADED inputs: Ghidriff (+ raw `address_matches`, read in the project's current orientation from the document's own `old_meta`/`new_meta` identity, A-28; failure kinds `missing`/`hash-mismatch`/`unparsable`/`identity-mismatch`), BinDiff/rz-diff, analyst corrections, ladder pairs AND leftovers (one-sided `pt-ladder` tier-W atoms, A-29) -> tier-labelled atoms, groups, nodes, limitations; `s0-match/1` snapshot lines | addressing, contracts, registry | tests/test_unified_sources.py, tests/test_unified_followup_orientation.py, tests/test_unified_followup_ironly.py |
-| unified fusion | src/patchtrace/unified/fusion/{components,arbiter}.py | independence components (union-find over D-tags), evidence classes, claims, contests, groups, deterministic row order; one-sided rows carry `one-sided-by:<source>` from their own observations (never a contest); no averaging, no numbers | registry, sources | tests/test_unified_fusion.py, tests/test_unified_fus_orientation.py |
+| unified fusion | src/patchtrace/unified/fusion/{components,arbiter}.py | independence components (union-find over D-tags), evidence classes, claims, contests, groups, deterministic row order; L-39 retains required B+B acceptance evidence and whole mirror groups while Support stays max-pool; insufficient mandatory-evidence caps refuse; one-sided observations never contest; no averaging | registry, sources | tests/test_unified_fusion.py, tests/test_unified_fus_orientation.py, tests/test_unified_fusion_mirror.py, tests/test_unified_evidence_retention.py |
 | unified S0 facts | src/patchtrace/unified/facts/{__init__,pseudo,channels,verdict}.py | canon/1 pseudo-code, channels C4n/C5t/C6/C8, COS-PSEUDO/1 and anchored-second-channel verdicts | fusion, sources | tests/test_unified_facts.py |
 | unified IR facts: alignment | src/patchtrace/unified/facts/{align,layout}.py | positional / unique-key / CFG-position block pairing, patience + bounded LCS instruction alignment, COS-ADDR/1 and COS-LAYOUT/1 CFG proofs; tie-breaks deterministic AND orientation-symmetric (`align(newer, older)` mirrors `align(older, newer)`, A-31, `align` version 2) | fnview, operands | tests/test_unified_facts_align.py, tests/test_unified_fct_layout.py, tests/test_unified_followup_align.py (mirror property) |
 | unified IR facts: DATA-MAP/1 | src/patchtrace/unified/facts/datamap.py | `TargetMap`: data/function target consistency from the votes of equal-`h1` matched pairs; raw consensus (strict majority, >= 2 voters) plus the A-30 competing-claim block (a coordinated retarget to an existing global never maps), leave-one-out per judged row (r never tips its own majority), symmetric call-operand voting and region shift (p11), `datamap-cap`; `datamap` version 3 | ir.reader, fnview | tests/test_unified_datamap.py, tests/test_unified_fct_datamap.py, tests/test_unified_followup_datamap.py (mirror property) |
@@ -362,13 +455,14 @@ S2 notes (for S0b, S1, S5 and the integration owner):
 | unified IR read side | src/patchtrace/unified/ir/{schema,reader,place}.py | hardened read-only SQLite (authorizer, immutable), bounded blob decoders, content digest, verified columnar reader, content-addressed placement | contracts, limits, ingestion | tests/test_unified_ir_reader.py |
 | unified PE tables | src/patchtrace/unified/ir/pe_tables.py | sections, `.pdata` primaries and chunks with padding-tolerant extent confirmation, EH signature, DIR64 relocations, caps; hostile tables degrade, never fail | artifact_bytes, pe_overview | tests/test_unified_ir_pe_tables.py |
 | unified packaging | tools/pyinstaller_hooks/hook-patchtrace.unified.extract.py, third_party/notices/bindiff-v8-aecc14d/, tools/build_{windows,linux}.py, tools/frozen_smoke.py | extractor script as a frozen data file, BinDiff notice gates, frozen-smoke U1 / U2 | PyInstaller | tests/test_unified_packaging.py; frozen probe on Linux (docs/qa.md) |
-| unified live acceptance | tools/live_unified_check.py, .github/workflows/live-unified.yml | determinism, gzf == analyze, Ghidriff retention, Ghidra hasher classes, cross-OS digests, fixture recorder | runner, ir, backend | tests/test_unified_live_tool.py; the workflow itself |
+| unified live acceptance | tools/live_unified_check.py, .github/workflows/live-unified.yml | determinism, gzf == analyze, Ghidriff retention, Ghidra hasher classes, cross-OS digests, fixture recorder; bounded per-analyze diagnostics preserve both L1 runs without changing acceptance | runner, ir, backend | tests/test_unified_live_tool.py, tests/test_unified_live_diagnostics.py (authored capture/quotas only); the workflow itself |
 ### [K1:kbcorrelation-sources] KB-CVE correlator K1: CVRF/CSAF edges, scope, index, import and plan verbs (2026-10-14)
 | Module | Files | Responsibility | Depends on | Tests |
 |---|---|---|---|---|
 | sources | src/patchtrace/kbcorrelation/sources/{__init__ (empty),cvrf,csaf_bridge,scope,importer,net_plan}.py | `cvrf`: strict, bounded, offline parse of synthetic `cvrf-json/0` and `cvrf-xml/0`, dispatch to native `msrc-cvrf-json/1` (bounded adapter below; unknown dialect = `PT-KBC-SOURCE`; XML markup declarations refused, no entity expansion) into product-scoped edges (Type 2 lines only, Type 5 = mention-only, negative status = disputed); `csaf_bridge`: validated `AdvisoryFacts` dump -> `vendor-association` edges (KB token or support URL, group expansion, known_not_affected = disputed); `scope`: finite scope, five-state `Coverage`, two axes (document id, revision watermark), coverage words; `importer`: bytes (gzip bounded, 32 MiB cap) -> `SourceDoc` (always `unverified-local-file`) + edges; `net_plan`: pure request preview + `plan_sha` + consent check | K0 contracts/ids/limits/ports | tests/test_kbc_{cvrf,csaf_bridge,scope,net_plan}.py |
 | products | src/patchtrace/kbcorrelation/{products,alias_catalog}.py | name -> `ProductScope` (candidate/unknown/conflicted, never verified), scope ids, merge/find, catalog digest; text hygiene (`clean_text`) | K0 | tests/test_kbc_products.py |
 | index + verbs | src/patchtrace/kbcorrelation/{index,cli_index}.py | in-memory `ReverseIndex` (lookups by KB/CVE with coverage, active vs superseded revisions, timeline); `kb index import|status|verify|plan` own dispatcher (`main(argv, ports=)`, NOT hooked into cli.py; K3 hooks it); interim workspace `kbc-index.json` + `objects/<sha[:2]>/<sha>.gz`, replaced by K2's store | K0, sources | tests/test_kbc_index.py |
+| saved advisory scope | src/patchtrace/kbcorrelation/saved_scope.py | Pure validation of one KB/CVE search coverage identity, coherent finite selection and detectable current coverage drift; shared service/context boundary. Full-index admission remains in `index.py`; cached coverage bookkeeping does not determine claims. No storage, schema, Qt or network ownership. | contracts, sources.scope, index | tests/test_kbc_saved_scope_validation.py, test_kbc_saved_scope_flow.py, test_kbc_saved_scope_revision_identity.py |
 | native MSRC CVRF | src/patchtrace/kbcorrelation/sources/cvrf_msrc.py | Pure native monthly JSON adapter (`msrc-cvrf-json/1`), factual capture provenance, original pointers, verified Type 3 affected status only, conservative unknown status/revision handling; synthetic dialects retained | K0, sources.cvrf, products | tests/test_kbc_msrc_cvrf.py; tests/fixtures/kbcve/msrc/2024-Aug-CVE-2024-38193.* |
 K1 notes: plan 10.1 "4 edges, 1 mention-only" = 4 vendor-remediation edges + 1 mention-only (5 rows). K0 contract note: `SearchScope.months` / `Coverage.*_ids` must be sorted as strings, so month lists are alphabetical in those records (chronology via `release_ordinal`). K0f `csaf-kb.json` fails the real CSAF validator (6.1.6); K1 added `csaf-kb-valid.json`. At K1, CVRF/CSAF shapes and the MSRC URL were unverified pending probes L1/L4; the bounded native JSON acceptance below supersedes only that CVRF JSON assumption, not CSAF or wider coverage.
 ### [T:core] SPEC-29 tools core (2026-10-14; spec `specs/three-tool-evidence-adapters.md` T11-T12, audit TA-1..TA-12)
@@ -514,6 +608,25 @@ K3 notes: `workflow.py` now also allows `pair_proposed` from the searched states
 | view model | src/patchtrace/search/{view_model,tooltip_data}.py | Pure panel state Q0-Q12, `ResultRowView` rows, capped `ResultsBuffer` (generation guard, 5,000 rows), detail sections, copy text, suggestion rows; tooltip entries as plain data for the integrator to merge into `tooltips`. No Qt widgets (ui_search belongs to instance D) | search.{contracts,limits,normalize} | tests/test_search_view_model.py |
 ### [G4:callgraph-cli]
 | callgraph.cli / cli_ports / dot / export_json | Qt-free `patchtrace graph neighbours, delta, leads, paths, export, series` dispatcher (`register(sub, common, handlers)`, `dispatch(args, cancel)`; `enrichment-cli/1`, exits 0/2/3/4/5; project opened read-only). `cli_ports` is the composition root: injects `nway.series.read_raw_matches`, `RuleHints` over `intelligence.hypotheses.RULES`, `DeltaContext` with `diff_types_by_match`, and a PE `EntryPort` (label `entry`, entry-point VA, export names). `export_json.build_export` gives the paired neighbourhood (`workbench-graph-export/1`, correspondence never a call) and `write_export` (temp file + `os.replace` retry, no overwrite without flag, default `callgraph-<sha12>`). `dot.render_dot`: 7.6 rules (positional `n<k>` ids, box only, attribute whitelist, `\\` then `"` escaping, clusters, dotted correspondence). Schemas: `tools/generate_callgraph_schemas.py` -> `docs/schemas/callgraph/`. Hook into `cli.py` is pending (integrator). | `tests/test_callgraph_{cli,dot,schemas}.py` |
+
+2026-11-18 cap-truth amendment: existing `callgraph/query.py` preserves duplicate
+focus and per-origin omission semantics; `export_json.py` and `dot.py` carry the
+partial reason into paired/visible exports; `view_model.py` and `panel_qt.py`
+combine current query/Changes limits without claiming a known global omitted
+count. Tests: `test_callgraph_cap_truth.py`, `test_callgraph_cap_boundaries.py`,
+`test_ui_callgraph_cap_truth.py`, `test_ui_callgraph_cap_boundaries.py`, and the
+existing graph/tooltip suites. No new runtime module or persisted contract;
+shared path budgets/lazy CSR remain a separate slice.
+
+2026-11-18 separate path-budget slice: `callgraph/csr.py` exposes lazy forward
+and reverse row iterators; `algo.py` shares charged adjacency work across all
+path phases and can retain a completed canonical shortest witness on later
+exhaustion; `paths.py` reuses the existing CSR/listed membership and carries
+partial-work wording. `limits.py` retains the 200,000-adjacency default and
+existing cancellation interval. Tests: unchanged historical
+`test_callgraph_path_budget.py`, independent finite-oracle and boundary controls
+in `test_callgraph_path_boundaries.py`, and existing algorithm/CLI/GUI suites.
+The cap-truth slice above remains separate; no new module or stored schema.
 
 ### [K5:kbc-lineage-resolver] KB-CVE correlator K5: Winbindex rows, lineage, pair resolver (2026-10-14)
 | part | files | what it does | tests |
@@ -721,7 +834,7 @@ R2 contract notes: the compile policy fixes the metadata keys a generated rule m
 ### [WBQ-S2:pe-manifest] WBQ S2 built: RT_MANIFEST reader (2026-10-14; plan `docs/specs/program-e/WBQ-integration-plan.md` s6 and s9; not wired into `inspect_pe` until S5)
 | Module | Files | Responsibility | Depends on | Tests |
 |---|---|---|---|---|
-| pe manifest | src/patchtrace/pe_overview/manifest.py | `ManifestObservation` per RT_MANIFEST leaf (execution level, uiAccess, supportedOS GUIDs, DPI, longPathAware, activeCodePage, identity, dependencies, files, SHA-256 of the stored bytes); stdlib XML under defusedxml-style rules (2 MiB cap, strict UTF-8/UTF-16 decode here, any `<!DOCTYPE` or `<!ENTITY` refused before parsing, no network or files, one-shot parse); facts only from documented paths and namespaces; `observe_manifest` (bytes in) and `parse_manifests` (PE stage) | pe_overview resources, `Ctx` | tests/test_pe_manifest.py |
+| pe manifest | src/patchtrace/pe_overview/manifest.py | `ManifestObservation` per RT_MANIFEST leaf (execution level, uiAccess, supportedOS GUIDs, DPI, longPathAware, activeCodePage, identity, dependencies, files, SHA-256 of the stored bytes); stdlib XML with a 2 MiB cap, strict UTF-8/UTF-16 decode, conservative declaration screen and parser-level DTD refusal for accelerated and Python fallback implementations; no external entity resolution, one-shot parse; facts only from documented paths and namespaces; `observe_manifest` (bytes in) and `parse_manifests` (PE stage) | pe_overview resources, `Ctx` | tests/test_pe_manifest.py, tests/test_pe_manifest_dtd_boundary.py |
 ### [FAB-0:fabric-core] Anchor fabric pure core (2026-10-14; contract `fabric/1`, errors `PT-FAB-*`; plan `docs/specs/program-e/FAB-integration-plan.md` s4, s7, s9)
 | Module | Files | Responsibility | Depends on | Verification |
 |---|---|---|---|---|
@@ -910,7 +1023,7 @@ S3b notes (for the integration owner):
 |---|---|---|---|---|
 | unified read text | src/patchtrace/unified/read_text.py | vocabulary of the Unified view (decision, change, tier and evidence-class words, ASCII glyphs, meanings), plain-text detail with fixed sections, clipboard provenance (identity first, whole rows, 16 KiB, 200 rows), `ContextFragment` for the existing context preview, evidence-class breakdown, `SidecarRecords` (lazy, validated, one pass over the part, uses `store._lines` / `store._parse`) | contracts, limits, store, keys, registry, secondary.evidence_view | tests/test_unified_read_model.py |
 | unified read model | src/patchtrace/unified/read_model.py | `UnifiedLoadRequest` + `request_from_service` (owner thread), `load_unified` (any thread; states U0-U6, notices incl. U7, never raises for data problems), `UnifiedViewModel` / `UnifiedRowView` / `SourceCell` (about 750 bytes per row, flyweights), default order and the U-03 collapse count, `filter_rows` / `sort_rows` / `column_sort_key` over indices, `columns` / `cell_text` / `cell_spoken` / `rows_tsv`, `evidence_summary`, edit groups (F10), library (F16) and trace-argument (F17) ordering, decision / change / tier chips and the tooltip ids as data | read_text, store, contracts, limits, registry, secondary.evidence_view; compute, keys and pipeline are imported lazily, `service` only for typing | tests/test_unified_read_model.py, tests/test_unified_import_dag.py |
-| unified CLI polish | src/patchtrace/unified/cli.py (edited), tests/test_unified_cli_show.py, tests/unified_read_support.py | `show`: review order, badges, one column per source in its own words, `--source`, `--search`, `--all`, collapsed-row count, additive JSON keys (incl. `evidence_classes`); `explain`: the Unified tab's section text; both through the read model | read_model, read_text | tests/test_unified_cli.py, tests/test_unified_cli_show.py |
+| unified CLI polish | src/patchtrace/unified/cli.py (edited), tests/test_unified_cli_show.py, tests/unified_read_support.py | `show`: review order, badges, one column per source in its own words, `--source`, `--search`, `--all`, collapsed-row count, additive JSON keys (incl. `evidence_classes`); `explain`: the Unified tab's section text, including explicit analyst attribution for manual groups in read_text; both through the read model | read_model, read_text | tests/test_unified_cli.py, tests/test_unified_cli_show.py, tests/test_unified_evidence_retention.py |
 S4a notes: spec `docs/specs/unified-engine/07-ui-and-cli.md` s13 lists the deviations (the module split, the extra fields, the order and U-03 readings). Nothing here registers a tooltip, edits `ui.py` or builds a widget; `ui_unified.py` is S4b.
 
 ### [S6a:corpus-gates] SPEC-31 S6a built: Tier R corpus, planted mutants, G-U5 bench, gate-report skeleton, advisory workflow (2026-10-14; open-source test builds and synthetic data only)
@@ -1114,7 +1227,7 @@ R5 contract notes: no persisted contract changed. Deviations from the card, all 
 | pemeta_view | src/patchtrace/pemeta_view.py | Qt-free view-model of the PE "Build facts" tab: `SideMeta`/`PeMetaSnapshot` in, `FactRow`s, notes, `StateModel` and worker-side `prepare_meta` (`PreparedTable`s) out; plan section 8 copy; unknown is `unavailable`, never changed | tests/test_ui_pemeta.py |
 | ui_pemeta | src/patchtrace/ui_pemeta.py | `PeMetaWidget`: `StateView` over a facts `VirtualTable` and an imported-API `VirtualTable` with filter; Enter emits `show_callers(dll, name)`; exports `TIPS` | tests/test_ui_pemeta.py |
 | codetext_view | src/patchtrace/codetext_view.py | Qt-free: settings keys, copy, tips, `model_for_pair(PairText)`, `window_bounds`, `look` (palette role + mark with the contrast guard) | tests/test_ui_codetext.py |
-| ui_codetext | src/patchtrace/ui_codetext.py | `CodeTextController` + `CodeHighlighter`: windowed `QSyntaxHighlighter` per pane (window = visible +/- 80, model installed before the text), "Line changes" label, F8 walk (`step_change`), fail-closed notice, `set_suppress_colors` | tests/test_ui_codetext.py |
+| ui_codetext | src/patchtrace/ui_codetext.py | `CodeTextController` + `CodeHighlighter`: windowed `QSyntaxHighlighter` per pane (window = visible +/- 80, model installed before the text); Qt bulk-load callbacks refuse span dispatch outside the active model/session/window before doing model work; "Line changes" label, F8 walk (`step_change`), fail-closed notice, `set_suppress_colors` | tests/test_ui_codetext.py, tests/test_codetext_window_dispatch.py |
 ### [UE-S4b:ui-unified] Unified panel (2026-10-15; spec unified-engine/07 s3-s9)
 - unified/panel.py (pure): `PANEL` (id `unified`, right, tabbed with `evidence`, Ctrl+Shift+U, requires `project`), `TIPS` (dock, action, every id of `read_model.TOOLTIP_IDS`, one `unified.source.<id>` per registry source), `TEMPLATES` (`unified.row|cell|badge|delta`).
 - ui_unified.py: `UnifiedTableModel` (index list over the read model, model-owned sort, O(1) `data`), `UnifiedPanel` (all controls built eagerly, states U0-U8 as banner/status/table visibility, debounced search, multi-select filters), `UnifiedController(ControllerBase)` (TaskRunner channels `unified-load`, `unified-run`, `unified-detail`; `pipeline.prepare` and `publish` on the GUI thread, `execute` on the worker; results for another project are dropped; `unified/enabled` flag, default off), `ExplainDialog` (preview only).
@@ -1205,7 +1318,18 @@ Audit of `unified/` and `tools/unified/` (`docs/audits/20261015-unified-audit.md
 `search/panel.py` (pure `PANEL`, factory loads Qt lazily), `search/qt_panel.py` (`SearchController`: query, side/scope/mode/sort, paged rows over `view_model.ResultsBuffer`, detail, Go to code, Other side, Copy, index build, cancel), `search/tooltip_entries.py` (`TooltipEntry` form of `tooltip_data` plus panel controls). `search/qt_saved.py` uses the existing GUI-thread project store for named save/run/delete actions and adapts per-user recent settings; recent recall resets the query generation, so an earlier build can refresh coverage without submitting recalled text. `search/saved_actions.py` shares canonical filter preparation and storage-only CLI actions without constructing a search service. Tests: `tests/test_ui_search_panel.py`, `tests/test_ui_search_saved.py`, `tests/test_search_saved_workflow.py`. User workflows: `docs/help/23-search-panel.md`, `docs/help/72-cli-search.md`.
 
 ### [WB2-G5G6:calls-panel]
-Calls panel (id graph): `callgraph/panel.py` (PanelSpec), `panel_qt.py` (widgets and controller), `panel_data.py` (Qt-free worker side), `tooltip_entries.py`. Tests `tests/test_ui_graph_panel.py`. Not built yet: DOT export, call-site reveal, settings persistence, minimap.
+Calls panel (id graph): `callgraph/panel.py` (PanelSpec), `panel_qt.py` (widgets and controller), `panel_data.py` (Qt-free worker side), `tooltip_entries.py`. DOT export, call-site reveal and the minimap are covered by `tests/test_ui_graph_inspection.py`; panel lifecycle is covered by `tests/test_ui_graph_panel.py`. Settings persistence remains a separate slice.
+
+### [WB2-G6:bounded-layout]
+
+`callgraph/layout.py` provides deterministic signed-hop layout, bounded crossing
+reduction and explicit omission records. `panel_data.query` computes the layout
+on the existing worker; `panel_qt` scales its coordinates to font metrics and
+updates the existing canvas and minimap. The table and DOT export preserve the
+complete bounded query when layout is limited. Input, output and cancellation
+contracts are in `docs/specs/panels/graph-inspection.md` section 5. Tests:
+`tests/test_callgraph_layout.py`, `tests/test_callgraph_layout_boundaries.py` and
+`tests/test_ui_graph_layout.py`. No new persistence format or runtime dependency.
 
 ### [WB3-S7b:strings-panel]
 
@@ -1327,6 +1451,14 @@ Calls panel (id graph): `callgraph/panel.py` (PanelSpec), `panel_qt.py` (widgets
 
 - `gui/qt/project_adoption.py`: `adopt_project(window, service)` owns the generic GUI transaction for service/render/preferences adoption and rollback; MainWindow.set_service stays a thin facade. Existing real-service entry regressions cover rollback and lock release.
 
+### [KB-F8:synthetic-packaged-control] Offline packaged investigation control (2026-11-18)
+
+| Module | Responsibility | Verification |
+|---|---|---|
+| `gui/qt/kb_selftest.py` | Package-authored sample and KB/CVE journey through current dialog, host adoption, rank/candidate, export and stale-reopen contracts; exclusive Unicode child, source-copy checks, synthetic receipt. Imported only by the explicit desktop self-test hook. | `tests/test_ui_kb_selftest.py`, `tests/test_kb_selftest_entry.py`; authored source/offscreen evidence only |
+| `gui/qt/selftest_loop.py` | One owning-thread Qt event loop with cooperative deadlines, exception propagation and cleanup; identity-checked temporary workspace ownership. No feature decisions or normal application-flow changes. | Same tests, including failure/cancel, early quit and foreign-root retention |
+| `__main__.py` self-test branch | Preserve icon/dependency checks, delegate packaged sample/journey, emit success only after owned temporary cleanup. Headless CLI dispatch remains before Qt imports. | Existing desktop audit and headless entry controls plus the source-pinned self-test child |
+
 ### [AF-0:wave1-ports] Autonomous finish wave 1 ports (2026-11-04)
 
 | Module | Files | Responsibility | Verification |
@@ -1430,7 +1562,36 @@ unchanged. Tests: `test_kb_product_start_20261106.py`,
 | timeout setup UI | src/patchtrace/ui_timeout.py | Preserved-text 10..86400-second validation, explicit 1h/2h/4h presets and inline errors for Setup; no backend execution or settings writes | PySide6, tooltip registry | tests/test_ui_timeout.py; SPEC-01a docs/specs/ghidriff-timeout-progress.md |
 
 | saved advisory scope | src/patchtrace/kbcorrelation/saved_scope.py | Pure validation of one KB/CVE search coverage identity, coherent finite selection and detectable current coverage drift; shared service/context boundary. Full-index admission remains in `index.py`; cached coverage bookkeeping does not determine claims. No storage, schema, Qt or network ownership. | contracts, sources.scope, index | tests/test_kbc_saved_scope_validation.py, test_kbc_saved_scope_flow.py, test_kbc_saved_scope_revision_identity.py |
+## PW-01 KB file inventory extension
+
+Retained-source page adapters (2026-11-18): `inventory_service.retain_inventory`
+and the `KbService` delegate validate a strict architecture/page policy and call
+the existing inventory store offline. `cli_inventory.py` exposes `retain
+IMPORT_ID --architecture amd64 --page 1`; `inventory_qt.py` captures that explicit
+saved-source request through its existing worker/cancel boundary. Source-page
+controls are separate from table pagination. Summaries expose v2 retention policy,
+scan completeness, observed counts and conflict-witness counts; incomplete source
+scans cannot enable UI filename selection. Existing v1 imports and investigation
+revisions are preserved. Verification: `test_kbc_inventory_retention_adapters.py`
+and `test_ui_kb_inventory_retention.py`, plus the existing inventory adapter suites.
+
+| Module | Responsibility | Verification seam |
+|---|---|---|
+| `kbcorrelation/inventory_contracts.py`, `inventory_csv.py` | Frozen CSV record/provenance contracts and pure parser; independent v1 50,000-entry and v2 5,000-entry budget profiles | Authored CSV, hostile input, captured-budget replay/property tests |
+| `kbcorrelation/sources/support_links.py`, `inventory_fetch.py`, `inventory_http.py` | Inert support HTML links, exact consented retrieval and DNS-pinned TLS transport | Offline parser, injected transport, URL/DNS/redirect/cancellation tests |
+| `kbcorrelation/inventory_store.py`, `inventory_service.py`, `inventory_selection.py` | Content-addressed raw retention, immutable contextual imports, source-snapshot and revision-guarded scoped selection | Real workspace rollback/replay, selection and concurrent source-admission tests |
+| `kbcorrelation/cli_inventory.py`, `inventory_qt.py` | Shared-service CLI and desktop inventory controls | CLI envelope and offscreen Qt lifecycle tests |
 
 ## Advisory sidecar read bounds — 2026-11-18
 
 `intelligence/storage.py` reuses `owned_publication.read_bytes` for bounded SHA-verified regular-file reads and expected-length idempotent reuse. Cached normalized facts have a64MiB cap; raw recovery uses the retained source length. Import checks derived size before any write. The existing cache-recovery and damaged-cache replacement policies remain; total store I/O and publication races are separate. Tests: `test_advisory_read_bounds.py`, `test_intel_storage.py`, shared owned-publication controls and adjacent CSAF/pilot readers.
+
+## Explicitly selected superseded sources (2026-11-18)
+
+`kbcorrelation/index.py` derives a bounded named-source explanation only from
+explicit provided/mixed source IDs and already product-filtered superseded rows.
+`kbcorrelation/service.py` carries the selected product's explanation into JSON
+and shared plain text without changing admission/status/exit behavior. Existing
+CLI and desktop presenters are reused. Tests: `test_kbc_named_superseded.py`,
+`test_ui_kbc_named_superseded.py`; [source/QA](qa/kb-named-superseded-20261118.md).
+No new module, persisted contract, source-scope UI or network operation.

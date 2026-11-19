@@ -58,6 +58,25 @@ Timestamps, display preferences and absolute paths are never hashed. Existing pr
 
 `SourceLocation`: `side`, `artifact_id`, `run_id`, `function_id`, `representation` (`decompiled|assembly|metadata`), `start_line`, `end_line` (1-based inclusive, `end >= start`), `excerpt_sha256` (SHA-256 of the exact UTF-8 lines joined by `\n`), optional `address` (int ≥ 0; 0 is valid; null = unknown). Before navigation or save, `validate_location(project, loc)` checks artifact/run/function ownership, side, line bounds and excerpt hash. Implemented as `views.validate_location(project_or_run_view, loc)` (`PT-ENRICH-OWNERSHIP` / `PT-ENRICH-STALE`; SPEC-07h Phase D amendment).
 
+Desktop navigation amendment (2026-11-18, P2-NAV-1): each supported signal activation must
+call that existing validator against the live project before switching display
+mode or revealing any code. A schema-valid or checksum-valid stored row is not
+authorization to navigate. A mismatched function/run/artifact/side/address or
+stale line range/excerpt produces a plain, bounded diagnosis (at most 300
+characters, including the typed code) through the existing error presentation;
+the current mode and selections stay unchanged. Valid activation keeps the
+existing decompiled-code navigation, including address zero, and may switch
+from another display mode. Repeat activations recheck live data. Refusal writes
+no project, ranking, signal or derived-store data. This repairs the deferred
+desktop call site without changing detector, score, confidence, schema,
+publication or cache behavior. The signal action supports only decompiled
+locations: a stored `assembly` or `metadata` location must be refused with a
+fixed `PT-ENRICH-INPUT` diagnosis before changing mode or selection, even when
+the existing shared validator accepts that representation's excerpt. The
+action must never substitute decompiled text for a validated assembly or
+metadata excerpt. `ui_signal_navigation.py` owns this presentation boundary;
+`views.validate_location` retains its existing broader semantics.
+
 ## 5. B1 change signals (`signals.py`)
 
 Input: `MatchView` (immutable): pairing id, match id, category, older/newer function views (id, artifact id, run id, code lines, assembly lines or None), diff hunks from `alignment.diff_hunks`. Detectors only inspect lines inside changed hunks plus a bounded 6-line window of context for linkage.

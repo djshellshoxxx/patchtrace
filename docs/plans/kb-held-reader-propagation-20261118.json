@@ -1,0 +1,46 @@
+{
+  "source": "bca79c2371dc674e1b66177e0396f10332dcf198",
+  "source_tree": "aa51e77cc9946305592866a6385b63dfb7bcdc3c",
+  "production_edits": 0,
+  "proposed_files": [
+    "src/patchtrace/kbcorrelation/service.py",
+    "src/patchtrace/kbcorrelation/wiring.py",
+    "src/patchtrace/kbcorrelation/store.py"
+  ],
+  "preserve": [
+    "ordinary injected positional call shapes",
+    "full global index admission",
+    "finite saved document scope including empty",
+    "current revision and ordered source snapshot",
+    "default reuse and desktop create-only policies",
+    "original InputReadError object/reason",
+    "one original checkpoint and provider-owned held-read charging",
+    "committed project and creation ownership ledger",
+    "unchanged serialized journal/request/context shapes"
+  ],
+  "no_edits": [
+    "input_readers.py",
+    "ingestion.py",
+    "ProjectService",
+    "ProjectStore",
+    "package worker and native modules",
+    "saved_scope.py",
+    "index.py",
+    "context.py",
+    "recovery.py",
+    "desktop/controller",
+    "CLI grammar"
+  ],
+  "remaining": [
+    "no durable lost-lease reconstruction or held-origin marker",
+    "no package intent/project identity reconciliation",
+    "postcommit copy reopen verification not covered by creation checkpoint",
+    "native Windows locking and FDI",
+    "frozen package journey"
+  ],
+  "runtime_tests_executed_for_this_design": 0,
+  "source_snapshots": 40,
+  "symbol_proofs": 51,
+  "prior_source_equality_checks": 16,
+  "root_implementation_approval_pending": true
+}

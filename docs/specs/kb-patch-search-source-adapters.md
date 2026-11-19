@@ -38,6 +38,9 @@ SearchScope:
 - ScopeKind is explicit: selected_months | cached_corpus | provided_files | mixed.
 - SearchCompleteness is explicit: COMPLETE_WITHIN_DECLARED_SCOPE / PARTIAL_SOURCE_FAILURE / SCOPE_UNKNOWN / STALE_CACHE / NOT_SEARCHED.
 - A negative match is never "no CVEs for this KB" without showing exactly which documents/revisions were searched.
+- For `provided_files` and `mixed` scopes, a KB/CVE lookup that withholds matching rows from an explicitly named superseded source emits one `NAMED_SUPERSEDED` explanation. Its source IDs come only from the already product-filtered superseded rows intersected with the explicit `doc_ids`; a month selection or cached-corpus document list alone is not an explicit file selection. Active rows, status, exit codes, coverage, card consensus, native revision ambiguity and conflict handling remain unchanged.
+- The explanation lists the first five unique source IDs in lexical order and the exact remaining count. IDs retain the existing 64-character lowercase SHA-256 contract; the complete explanation is at most 500 characters, including its prefix. It describes supersedence within the loaded index and exclusion from active results, without asserting upstream freshness, authenticity, applicability or an order for ambiguous native revisions.
+- Search JSON and the shared `Outcome.text` presentation include this same explanation for the displayed product scope. An old hit for another product does not add a named-source explanation to the selected product. When a named superseded hit explains a negative result, plain output must not say the checked documents do not list it. Ordinary active, unnamed, unrelated and missing-source results retain their existing behavior. This change does not add a document-scope control to the desktop dialog.
 - A provider plan contains exact host, method, URL and estimated requests; implicit fallback to a different host is denied.
 - Source network consent is per operation/plan, does not persist silently and may be revoked by cancellation.
 - All HTTP parsers use injected clients with explicit content byte/deadline caps, redirect checks and Retry-After; never rely on ambient environment proxies.
@@ -275,6 +278,7 @@ S17: Offline search has no DNS/network calls even if cache missing.
 S18: Negative result includes searched document IDs and last retrieved date.
 S19: Malicious source string is rendered plain and not used to construct a URL.
 S20: Golden official fixture from captured opt-in response matches expected exact pointer and product scope.
+S21: Explicitly named superseded KB/CVE hits remain withheld and receive a bounded, deterministic selected-source explanation in pure lookup, service JSON/text, actual headless CLI and the existing desktop text presenter. Include provided/mixed scopes, product filtering, active/unselected/absent positives, duplicate rows, more than five named sources and ambiguous native revisions. Original historical controls and their initial failures remain retained separately.
 
 ## 7. Research and validation checklist
 

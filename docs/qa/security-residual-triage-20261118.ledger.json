@@ -1,0 +1,1679 @@
+{
+  "source": "3faf436a3b11c69220641a167cf424e7f4060839",
+  "original_strict_source": "95bf8f5e71a4704befbf0e79f75ba64afe886cbc",
+  "snapshots": [
+    {
+      "label": "configured-original-78",
+      "source": "9e5a5303da6e9a745e604979932f814de8eca4b0",
+      "path": "/workspace/scratch/c7a9e8d98848/release-security-static-audit.json",
+      "bytes": 41697,
+      "sha256": "6553eb16970030198d33edcdf219b598c8775bb78af1407144e8729fbcfc868b",
+      "count": 78,
+      "codes": {
+        "S310": 6,
+        "S101": 9,
+        "S608": 33,
+        "S105": 14,
+        "S603": 1,
+        "S110": 13,
+        "S314": 1,
+        "S108": 1
+      },
+      "exit": 1
+    },
+    {
+      "label": "strict-original-79",
+      "source": "95bf8f5e71a4704befbf0e79f75ba64afe886cbc",
+      "path": "/workspace/scratch/c7a9e8d98848/dependency-security-evidence/linux-static-95bf8f5e/static.stdout",
+      "bytes": 42088,
+      "sha256": "04a73cac7bec53991ac378a8898fab7c15cdad8160be220ad133bf05e3aa8877",
+      "count": 79,
+      "codes": {
+        "S310": 6,
+        "S101": 9,
+        "S608": 34,
+        "S105": 14,
+        "S603": 1,
+        "S110": 13,
+        "S314": 1,
+        "S108": 1
+      },
+      "exit": 1
+    },
+    {
+      "label": "strict-before-ui-81",
+      "source": "cdeada1b1bcc8078f31e6627e3a00b3bb8146542",
+      "path": "/workspace/scratch/c7a9e8d98848/qa/static-root-review/combined-strict-all.json",
+      "bytes": 43324,
+      "sha256": "e2b3df557f13fd59cd6ff12c6612619e958f650df93391f6532265888ab5bb20",
+      "count": 81,
+      "codes": {
+        "S310": 6,
+        "S101": 9,
+        "S608": 35,
+        "S105": 14,
+        "S603": 1,
+        "S110": 13,
+        "S314": 2,
+        "S108": 1
+      },
+      "exit": 1
+    },
+    {
+      "label": "strict-current-80",
+      "source": "3faf436a3b11c69220641a167cf424e7f4060839",
+      "path": "/workspace/scratch/c7a9e8d98848/qa/continuation-integration/ruff-strict-3faf436a.stdout",
+      "bytes": 43126,
+      "sha256": "be1a0d3968892fc12b6ef7dc613cccf37284f6aa2467ec7f1786fda6b14de4dc",
+      "count": 80,
+      "codes": {
+        "S310": 6,
+        "S101": 9,
+        "S608": 35,
+        "S105": 14,
+        "S603": 1,
+        "S110": 12,
+        "S314": 2,
+        "S108": 1
+      },
+      "exit": 1
+    }
+  ],
+  "original_rows": [
+    {
+      "rule": "S101",
+      "path": "src/patchtrace/callgraph/delta.py",
+      "original_line": 71,
+      "function": "_change",
+      "current_sites": [
+        {
+          "line": 71,
+          "column": 5,
+          "message": "Use of `assert` detected",
+          "statement": "assert label is not None"
+        }
+      ],
+      "current_file_sha256": "328fb9ddffee384c1a1ed7655a7cd072c2fc2b077e5b32a3df22169a95882bb7",
+      "classification": "false-positive-at-reviewed-production-boundary",
+      "evidence_level": "previous independent 43-site packet",
+      "basis": "Previously reviewed exact caller/identifier/optimization boundary; retain the full per-site guard ledger and normal/-O external controls in docs/qa/security-contract-triage-20261118.md.",
+      "controls": "prior 1,012-check gate and root 16 source-pinned child replays",
+      "limits": "This row is referenced, not silently counted as a new residual investigation."
+    },
+    {
+      "rule": "S101",
+      "path": "src/patchtrace/callgraph/minimap_qt.py",
+      "original_line": 51,
+      "function": "model",
+      "current_sites": [
+        {
+          "line": 51,
+          "column": 9,
+          "message": "Use of `assert` detected",
+          "statement": "assert self._model is not None"
+        }
+      ],
+      "current_file_sha256": "1c529035e19f64aa686c5fa2d926acc69e1a13e7a01e1ffa6e30d9e8b0dbb8e5",
+      "classification": "false-positive-at-reviewed-production-boundary",
+      "evidence_level": "previous independent 43-site packet",
+      "basis": "Previously reviewed exact caller/identifier/optimization boundary; retain the full per-site guard ledger and normal/-O external controls in docs/qa/security-contract-triage-20261118.md.",
+      "controls": "prior 1,012-check gate and root 16 source-pinned child replays",
+      "limits": "This row is referenced, not silently counted as a new residual investigation."
+    },
+    {
+      "rule": "S101",
+      "path": "src/patchtrace/enrichment/wil.py",
+      "original_line": 209,
+      "function": "_region",
+      "current_sites": [
+        {
+          "line": 209,
+          "column": 5,
+          "message": "Use of `assert` detected",
+          "statement": "assert gate.body is not None"
+        }
+      ],
+      "current_file_sha256": "c35e5251f04ed113e0e1b4722346bc81824e4dae8fd32eb26085acedcc4a694a",
+      "classification": "false-positive-at-reviewed-production-boundary",
+      "evidence_level": "previous independent 43-site packet",
+      "basis": "Previously reviewed exact caller/identifier/optimization boundary; retain the full per-site guard ledger and normal/-O external controls in docs/qa/security-contract-triage-20261118.md.",
+      "controls": "prior 1,012-check gate and root 16 source-pinned child replays",
+      "limits": "This row is referenced, not silently counted as a new residual investigation."
+    },
+    {
+      "rule": "S101",
+      "path": "src/patchtrace/kbcorrelation/panel_qt.py",
+      "original_line": 52,
+      "function": null,
+      "current_sites": [
+        {
+          "line": 52,
+          "column": 1,
+          "message": "Use of `assert` detected",
+          "statement": "assert len(COLUMNS) == len(COLUMN_NAMES)"
+        }
+      ],
+      "current_file_sha256": "d4262a185f9b1f43758dc43531b8444702910a0c0cc90a5a5d193b3d03a4a10b",
+      "classification": "false-positive-at-reviewed-production-boundary",
+      "evidence_level": "previous independent 43-site packet",
+      "basis": "Previously reviewed exact caller/identifier/optimization boundary; retain the full per-site guard ledger and normal/-O external controls in docs/qa/security-contract-triage-20261118.md.",
+      "controls": "prior 1,012-check gate and root 16 source-pinned child replays",
+      "limits": "This row is referenced, not silently counted as a new residual investigation."
+    },
+    {
+      "rule": "S101",
+      "path": "src/patchtrace/kbcorrelation/store.py",
+      "original_line": 643,
+      "function": "_cas",
+      "current_sites": [
+        {
+          "line": 681,
+          "column": 9,
+          "message": "Use of `assert` detected",
+          "statement": "assert current is not None  # created by the caller before attach"
+        }
+      ],
+      "current_file_sha256": "df07391848ebaafd6a175888877f89de2f09bf506760f2e19f1eba1c5e3d93da",
+      "classification": "false-positive-at-reviewed-production-boundary",
+      "evidence_level": "previous independent 43-site packet",
+      "basis": "Previously reviewed exact caller/identifier/optimization boundary; retain the full per-site guard ledger and normal/-O external controls in docs/qa/security-contract-triage-20261118.md.",
+      "controls": "prior 1,012-check gate and root 16 source-pinned child replays",
+      "limits": "This row is referenced, not silently counted as a new residual investigation."
+    },
+    {
+      "rule": "S101",
+      "path": "src/patchtrace/secondary/bindiff_probe.py",
+      "original_line": 146,
+      "function": "probe_report",
+      "current_sites": [
+        {
+          "line": 146,
+          "column": 5,
+          "message": "Use of `assert` detected",
+          "statement": "assert resolved is not None"
+        }
+      ],
+      "current_file_sha256": "eb71fb20f8a33b845cc32aef3f9b9f4ce0d6d72157dc730723d180a6a8b3262e",
+      "classification": "false-positive-at-reviewed-production-boundary",
+      "evidence_level": "previous independent 43-site packet",
+      "basis": "Previously reviewed exact caller/identifier/optimization boundary; retain the full per-site guard ledger and normal/-O external controls in docs/qa/security-contract-triage-20261118.md.",
+      "controls": "prior 1,012-check gate and root 16 source-pinned child replays",
+      "limits": "This row is referenced, not silently counted as a new residual investigation."
+    },
+    {
+      "rule": "S101",
+      "path": "src/patchtrace/secondary/bindiff_run.py",
+      "original_line": 316,
+      "function": "run_bindiff",
+      "current_sites": [
+        {
+          "line": 316,
+          "column": 5,
+          "message": "Use of `assert` detected",
+          "statement": "assert raw.kept_path is not None and raw.output_sha256 is not None"
+        }
+      ],
+      "current_file_sha256": "70778abf735bb978ada54996edbde438c9177a481c45afa1a8a50fa32b8aab7c",
+      "classification": "false-positive-at-reviewed-production-boundary",
+      "evidence_level": "previous independent 43-site packet",
+      "basis": "Previously reviewed exact caller/identifier/optimization boundary; retain the full per-site guard ledger and normal/-O external controls in docs/qa/security-contract-triage-20261118.md.",
+      "controls": "prior 1,012-check gate and root 16 source-pinned child replays",
+      "limits": "This row is referenced, not silently counted as a new residual investigation."
+    },
+    {
+      "rule": "S101",
+      "path": "src/patchtrace/ui_series.py",
+      "original_line": 334,
+      "function": "_show_view",
+      "current_sites": [
+        {
+          "line": 334,
+          "column": 9,
+          "message": "Use of `assert` detected",
+          "statement": "assert loaded is not None"
+        }
+      ],
+      "current_file_sha256": "b798dfde227d332198db5117375a0614bdebc43af919710920805dd9f9209a3d",
+      "classification": "false-positive-at-reviewed-production-boundary",
+      "evidence_level": "previous independent 43-site packet",
+      "basis": "Previously reviewed exact caller/identifier/optimization boundary; retain the full per-site guard ledger and normal/-O external controls in docs/qa/security-contract-triage-20261118.md.",
+      "controls": "prior 1,012-check gate and root 16 source-pinned child replays",
+      "limits": "This row is referenced, not silently counted as a new residual investigation."
+    },
+    {
+      "rule": "S101",
+      "path": "src/patchtrace/unified/ladder/passes.py",
+      "original_line": 381,
+      "function": null,
+      "current_sites": [
+        {
+          "line": 381,
+          "column": 1,
+          "message": "Use of `assert` detected",
+          "statement": "assert all(PASS_BY_ID[p.id] is p for p in PASSES)"
+        }
+      ],
+      "current_file_sha256": "b95970211589cce792e2b4229717b7afa09ee9c00066a56f5efe5531dcb32b19",
+      "classification": "false-positive-at-reviewed-production-boundary",
+      "evidence_level": "previous independent 43-site packet",
+      "basis": "Previously reviewed exact caller/identifier/optimization boundary; retain the full per-site guard ledger and normal/-O external controls in docs/qa/security-contract-triage-20261118.md.",
+      "controls": "prior 1,012-check gate and root 16 source-pinned child replays",
+      "limits": "This row is referenced, not silently counted as a new residual investigation."
+    },
+    {
+      "rule": "S105",
+      "path": "src/patchtrace/enrichment/signals.py",
+      "original_line": 573,
+      "function": "_indexed_uses",
+      "current_sites": [
+        {
+          "line": 573,
+          "column": 21,
+          "message": "Possible hardcoded password assigned to: \"token\"",
+          "statement": "if token in '([':"
+        }
+      ],
+      "current_file_sha256": "869a47ea92bdd6e5991d3d7841f4e304b2e61dffc5c8048dbdbc51a81f051bbe",
+      "classification": "false-positive-at-reviewed-production-boundary",
+      "evidence_level": "literal/data-flow source trace",
+      "basis": "Lexical parentheses/bracket/operator token comparison in source-code analysis; not a credential.",
+      "controls": "current gate: enrichment signals, GUI chips/theme and rule-contract suites; P00 identity also traced in the previously reviewed ladder contract",
+      "limits": "No secret scan policy change, token renaming or general credential-exposure conclusion."
+    },
+    {
+      "rule": "S105",
+      "path": "src/patchtrace/enrichment/signals.py",
+      "original_line": 574,
+      "function": "_indexed_uses",
+      "current_sites": [
+        {
+          "line": 574,
+          "column": 43,
+          "message": "Possible hardcoded password assigned to: \"token\"",
+          "statement": "stack.append((token, token == '(' and i > 0 and tokens[i - 1] == '*', False))"
+        }
+      ],
+      "current_file_sha256": "869a47ea92bdd6e5991d3d7841f4e304b2e61dffc5c8048dbdbc51a81f051bbe",
+      "classification": "false-positive-at-reviewed-production-boundary",
+      "evidence_level": "literal/data-flow source trace",
+      "basis": "Lexical parentheses/bracket/operator token comparison in source-code analysis; not a credential.",
+      "controls": "current gate: enrichment signals, GUI chips/theme and rule-contract suites; P00 identity also traced in the previously reviewed ladder contract",
+      "limits": "No secret scan policy change, token renaming or general credential-exposure conclusion."
+    },
+    {
+      "rule": "S105",
+      "path": "src/patchtrace/enrichment/signals.py",
+      "original_line": 575,
+      "function": "_indexed_uses",
+      "current_sites": [
+        {
+          "line": 575,
+          "column": 23,
+          "message": "Possible hardcoded password assigned to: \"token\"",
+          "statement": "elif token in ')]':"
+        }
+      ],
+      "current_file_sha256": "869a47ea92bdd6e5991d3d7841f4e304b2e61dffc5c8048dbdbc51a81f051bbe",
+      "classification": "false-positive-at-reviewed-production-boundary",
+      "evidence_level": "literal/data-flow source trace",
+      "basis": "Lexical parentheses/bracket/operator token comparison in source-code analysis; not a credential.",
+      "controls": "current gate: enrichment signals, GUI chips/theme and rule-contract suites; P00 identity also traced in the previously reviewed ladder contract",
+      "limits": "No secret scan policy change, token renaming or general credential-exposure conclusion."
+    },
+    {
+      "rule": "S105",
+      "path": "src/patchtrace/enrichment/signals.py",
+      "original_line": 242,
+      "function": "_split_top",
+      "current_sites": [
+        {
+          "line": 242,
+          "column": 21,
+          "message": "Possible hardcoded password assigned to: \"token\"",
+          "statement": "if token in '([':"
+        }
+      ],
+      "current_file_sha256": "869a47ea92bdd6e5991d3d7841f4e304b2e61dffc5c8048dbdbc51a81f051bbe",
+      "classification": "false-positive-at-reviewed-production-boundary",
+      "evidence_level": "literal/data-flow source trace",
+      "basis": "Lexical parentheses/bracket/operator token comparison in source-code analysis; not a credential.",
+      "controls": "current gate: enrichment signals, GUI chips/theme and rule-contract suites; P00 identity also traced in the previously reviewed ladder contract",
+      "limits": "No secret scan policy change, token renaming or general credential-exposure conclusion."
+    },
+    {
+      "rule": "S105",
+      "path": "src/patchtrace/enrichment/signals.py",
+      "original_line": 244,
+      "function": "_split_top",
+      "current_sites": [
+        {
+          "line": 244,
+          "column": 23,
+          "message": "Possible hardcoded password assigned to: \"token\"",
+          "statement": "elif token in ')]':"
+        }
+      ],
+      "current_file_sha256": "869a47ea92bdd6e5991d3d7841f4e304b2e61dffc5c8048dbdbc51a81f051bbe",
+      "classification": "false-positive-at-reviewed-production-boundary",
+      "evidence_level": "literal/data-flow source trace",
+      "basis": "Lexical parentheses/bracket/operator token comparison in source-code analysis; not a credential.",
+      "controls": "current gate: enrichment signals, GUI chips/theme and rule-contract suites; P00 identity also traced in the previously reviewed ladder contract",
+      "limits": "No secret scan policy change, token renaming or general credential-exposure conclusion."
+    },
+    {
+      "rule": "S105",
+      "path": "src/patchtrace/enrichment/signals.py",
+      "original_line": 172,
+      "function": "_wrapped",
+      "current_sites": [
+        {
+          "line": 172,
+          "column": 27,
+          "message": "Possible hardcoded password assigned to: \"token\"",
+          "statement": "depth += token == '('"
+        }
+      ],
+      "current_file_sha256": "869a47ea92bdd6e5991d3d7841f4e304b2e61dffc5c8048dbdbc51a81f051bbe",
+      "classification": "false-positive-at-reviewed-production-boundary",
+      "evidence_level": "literal/data-flow source trace",
+      "basis": "Lexical parentheses/bracket/operator token comparison in source-code analysis; not a credential.",
+      "controls": "current gate: enrichment signals, GUI chips/theme and rule-contract suites; P00 identity also traced in the previously reviewed ladder contract",
+      "limits": "No secret scan policy change, token renaming or general credential-exposure conclusion."
+    },
+    {
+      "rule": "S105",
+      "path": "src/patchtrace/enrichment/signals.py",
+      "original_line": 173,
+      "function": "_wrapped",
+      "current_sites": [
+        {
+          "line": 173,
+          "column": 27,
+          "message": "Possible hardcoded password assigned to: \"token\"",
+          "statement": "depth -= token == ')'"
+        }
+      ],
+      "current_file_sha256": "869a47ea92bdd6e5991d3d7841f4e304b2e61dffc5c8048dbdbc51a81f051bbe",
+      "classification": "false-positive-at-reviewed-production-boundary",
+      "evidence_level": "literal/data-flow source trace",
+      "basis": "Lexical parentheses/bracket/operator token comparison in source-code analysis; not a credential.",
+      "controls": "current gate: enrichment signals, GUI chips/theme and rule-contract suites; P00 identity also traced in the previously reviewed ladder contract",
+      "limits": "No secret scan policy change, token renaming or general credential-exposure conclusion."
+    },
+    {
+      "rule": "S105",
+      "path": "src/patchtrace/gui/qt/chips.py",
+      "original_line": 46,
+      "function": "_font_for",
+      "current_sites": [
+        {
+          "line": 46,
+          "column": 57,
+          "message": "Possible hardcoded password assigned to: \"token\"",
+          "statement": "chip_font.setBold(chip_font.bold() or spec.token == 'plain')  # the KEV badge: bold text carries the emphasis"
+        }
+      ],
+      "current_file_sha256": "6935b593cbd2e2ab699d6c9cbb43ea5e5f2bc50b3786eb715f243484bec7d746",
+      "classification": "false-positive-at-reviewed-production-boundary",
+      "evidence_level": "literal/data-flow source trace",
+      "basis": "The plain visual-style token selects chip/theme rendering; not a credential.",
+      "controls": "current gate: enrichment signals, GUI chips/theme and rule-contract suites; P00 identity also traced in the previously reviewed ladder contract",
+      "limits": "No secret scan policy change, token renaming or general credential-exposure conclusion."
+    },
+    {
+      "rule": "S105",
+      "path": "src/patchtrace/gui/qt/chips.py",
+      "original_line": 85,
+      "function": "paint_chip",
+      "current_sites": [
+        {
+          "line": 85,
+          "column": 22,
+          "message": "Possible hardcoded password assigned to: \"token\"",
+          "statement": "if spec.token != 'plain' and not tokens.high_contrast:"
+        }
+      ],
+      "current_file_sha256": "6935b593cbd2e2ab699d6c9cbb43ea5e5f2bc50b3786eb715f243484bec7d746",
+      "classification": "false-positive-at-reviewed-production-boundary",
+      "evidence_level": "literal/data-flow source trace",
+      "basis": "The plain visual-style token selects chip/theme rendering; not a credential.",
+      "controls": "current gate: enrichment signals, GUI chips/theme and rule-contract suites; P00 identity also traced in the previously reviewed ladder contract",
+      "limits": "No secret scan policy change, token renaming or general credential-exposure conclusion."
+    },
+    {
+      "rule": "S105",
+      "path": "src/patchtrace/gui/qt/chips.py",
+      "original_line": 93,
+      "function": "paint_chip",
+      "current_sites": [
+        {
+          "line": 93,
+          "column": 32,
+          "message": "Possible hardcoded password assigned to: \"token\"",
+          "statement": "plain_text = spec.token == 'plain' or tokens.high_contrast"
+        }
+      ],
+      "current_file_sha256": "6935b593cbd2e2ab699d6c9cbb43ea5e5f2bc50b3786eb715f243484bec7d746",
+      "classification": "false-positive-at-reviewed-production-boundary",
+      "evidence_level": "literal/data-flow source trace",
+      "basis": "The plain visual-style token selects chip/theme rendering; not a credential.",
+      "controls": "current gate: enrichment signals, GUI chips/theme and rule-contract suites; P00 identity also traced in the previously reviewed ladder contract",
+      "limits": "No secret scan policy change, token renaming or general credential-exposure conclusion."
+    },
+    {
+      "rule": "S105",
+      "path": "src/patchtrace/gui/qt/theme.py",
+      "original_line": 51,
+      "function": "chip",
+      "current_sites": [
+        {
+          "line": 51,
+          "column": 21,
+          "message": "Possible hardcoded password assigned to: \"token\"",
+          "statement": "if token == 'plain':"
+        }
+      ],
+      "current_file_sha256": "90237075bbc1c5c196345b743316619a989578b4ae7b1fec380b7a54c1f25f8f",
+      "classification": "false-positive-at-reviewed-production-boundary",
+      "evidence_level": "literal/data-flow source trace",
+      "basis": "The plain visual-style token selects chip/theme rendering; not a credential.",
+      "controls": "current gate: enrichment signals, GUI chips/theme and rule-contract suites; P00 identity also traced in the previously reviewed ladder contract",
+      "limits": "No secret scan policy change, token renaming or general credential-exposure conclusion."
+    },
+    {
+      "rule": "S105",
+      "path": "src/patchtrace/rules/contracts.py",
+      "original_line": 152,
+      "function": null,
+      "current_sites": [
+        {
+          "line": 152,
+          "column": 14,
+          "message": "Possible hardcoded password assigned to: \"_HEX_TOKEN\"",
+          "statement": "_HEX_TOKEN = r'(?:[0-9A-F]{2}|\\?\\?)'"
+        }
+      ],
+      "current_file_sha256": "a34e7ebf83194505d0dccb6ab197569c18faafdf42709a1b2aaf20b5c9bc0668",
+      "classification": "false-positive-at-reviewed-production-boundary",
+      "evidence_level": "literal/data-flow source trace",
+      "basis": "Hex-byte/wildcard grammar and metrics token; not a credential.",
+      "controls": "current gate: enrichment signals, GUI chips/theme and rule-contract suites; P00 identity also traced in the previously reviewed ladder contract",
+      "limits": "No secret scan policy change, token renaming or general credential-exposure conclusion."
+    },
+    {
+      "rule": "S105",
+      "path": "src/patchtrace/rules/contracts.py",
+      "original_line": 220,
+      "function": "pattern_metrics",
+      "current_sites": [
+        {
+          "line": 220,
+          "column": 29,
+          "message": "Possible hardcoded password assigned to: \"token\"",
+          "statement": "run = 0 if token == '??' else run + 1"
+        }
+      ],
+      "current_file_sha256": "a34e7ebf83194505d0dccb6ab197569c18faafdf42709a1b2aaf20b5c9bc0668",
+      "classification": "false-positive-at-reviewed-production-boundary",
+      "evidence_level": "literal/data-flow source trace",
+      "basis": "Hex-byte/wildcard grammar and metrics token; not a credential.",
+      "controls": "current gate: enrichment signals, GUI chips/theme and rule-contract suites; P00 identity also traced in the previously reviewed ladder contract",
+      "limits": "No secret scan policy change, token renaming or general credential-exposure conclusion."
+    },
+    {
+      "rule": "S105",
+      "path": "src/patchtrace/unified/ladder/types.py",
+      "original_line": 104,
+      "function": "atoms",
+      "current_sites": [
+        {
+          "line": 104,
+          "column": 32,
+          "message": "Possible hardcoded password assigned to: \"pass_id\"",
+          "statement": "if pair.pass_id == 'P00' and not include_anchors:"
+        }
+      ],
+      "current_file_sha256": "b59e1f5d9dec4915b65fff3e357bd91af52cbaecd2390a7477178ecfee311699",
+      "classification": "false-positive-at-reviewed-production-boundary",
+      "evidence_level": "literal/data-flow source trace",
+      "basis": "P00 is the manual-anchor pass identifier used to avoid duplicating manual atoms; not a credential.",
+      "controls": "current gate: enrichment signals, GUI chips/theme and rule-contract suites; P00 identity also traced in the previously reviewed ladder contract",
+      "limits": "No secret scan policy change, token renaming or general credential-exposure conclusion."
+    },
+    {
+      "rule": "S108",
+      "path": "src/patchtrace/pilot/store.py",
+      "original_line": 146,
+      "function": "stage",
+      "current_sites": [
+        {
+          "line": 147,
+          "column": 54,
+          "message": "Probable insecure usage of temporary file or directory: \"/tmp-\"",
+          "statement": "staged = _safe(Path(root), f'{keys.RELATIVE_ROOT}/tmp-{secrets.token_hex(8)}')"
+        }
+      ],
+      "current_file_sha256": "ba4f77be586854c6db947f26b34c2a53859e0d23b93c96b22b2cc88918029577",
+      "classification": "adjacent-confirmed-ownership-defect-repaired",
+      "evidence_level": "real authored filesystem red/green",
+      "basis": "The string is a project-relative staging name under safe_path, not a hardcoded shared /tmp destination. Independent review nevertheless reproduced deletion of a preexisting stage when mkdir failed. Source 43ac4829 moves exclusive creation before the owned-cleanup try.",
+      "controls": "original collision 1 red/1 positive; source 219-pass gate and root 140-pass gate; unchanged collision probe passes on continuation",
+      "limits": "The S108 diagnostic remains. No nonce-prediction or arbitrary same-user namespace-race immunity; owned cleanup begins only after successful exclusive creation."
+    },
+    {
+      "rule": "S110",
+      "path": "src/patchtrace/jobs.py",
+      "original_line": 413,
+      "function": "notify_progress",
+      "current_sites": [
+        {
+          "line": 413,
+          "column": 9,
+          "message": "`try`-`except`-`pass` detected, consider logging the exception",
+          "statement": "except Exception:"
+        }
+      ],
+      "current_file_sha256": "807abdfb8d22016eecb5d37bff802b233a2c1bb340e82abc14f11f87c8de7821",
+      "classification": "false-positive-at-reviewed-production-boundary",
+      "evidence_level": "independent source guard trace",
+      "basis": "Observational progress callback only; primary ProcessResult, output collection and child supervision do not depend on observer success.",
+      "controls": "security-s110-independent/review.md and receipt.json; no native cleanup execution",
+      "limits": "No claim that an observer retained its own log or that it is prompt."
+    },
+    {
+      "rule": "S110",
+      "path": "src/patchtrace/netutil.py",
+      "original_line": 68,
+      "function": "worker",
+      "current_sites": [
+        {
+          "line": 68,
+          "column": 13,
+          "message": "`try`-`except`-`pass` detected, consider logging the exception",
+          "statement": "except Exception:  # noqa: BLE001 - best effort close"
+        }
+      ],
+      "current_file_sha256": "2238ef445b6dde1f99b8167f1be77bd1326e5e16e807dfc18ca199b54d82db16",
+      "classification": "false-positive-at-reviewed-production-boundary",
+      "evidence_level": "independent source guard trace",
+      "basis": "Close of a response that arrived after abandonment. Caller already received cancellation; the late value is not returned as successful evidence.",
+      "controls": "security-s110-independent/review.md and receipt.json; no native cleanup execution",
+      "limits": "A failing close may leave resources. Native cleanup/resource completeness was not qualified."
+    },
+    {
+      "rule": "S110",
+      "path": "src/patchtrace/secondary/scheduler.py",
+      "original_line": 99,
+      "function": "emit",
+      "current_sites": [
+        {
+          "line": 99,
+          "column": 13,
+          "message": "`try`-`except`-`pass` detected, consider logging the exception",
+          "statement": "except Exception:  # a faulty observer must not fail an engine"
+        }
+      ],
+      "current_file_sha256": "5fb82a26aeedfc332990a1a15a9029690430e37c851d555a941cbdcbb06a7d1f",
+      "classification": "false-positive-at-reviewed-production-boundary",
+      "evidence_level": "independent source guard trace",
+      "basis": "EngineEvent observation only. The typed EngineOutcome is returned independently; ordinary on_outcome publication exceptions propagate.",
+      "controls": "security-s110-independent/review.md and receipt.json; no native cleanup execution",
+      "limits": "An observer may lose progress events; no atomic durable delivery claim."
+    },
+    {
+      "rule": "S110",
+      "path": "src/patchtrace/secondary/scheduler.py",
+      "original_line": 239,
+      "function": "run_engines",
+      "current_sites": [
+        {
+          "line": 239,
+          "column": 21,
+          "message": "`try`-`except`-`pass` detected, consider logging the exception",
+          "statement": "except Exception:  # best effort while already unwinding"
+        }
+      ],
+      "current_file_sha256": "5fb82a26aeedfc332990a1a15a9029690430e37c851d555a941cbdcbb06a7d1f",
+      "classification": "false-positive-at-reviewed-production-boundary",
+      "evidence_level": "independent source guard trace",
+      "basis": "Best-effort delivery of completed outcomes while an existing BaseException is already unwinding; the primary exception is reraised and cannot become a successful overall return.",
+      "controls": "security-s110-independent/review.md and receipt.json; no native cleanup execution",
+      "limits": "An additional delivery failure can remain unpersisted. This is not a guarantee of durable attempts on interruption."
+    },
+    {
+      "rule": "S110",
+      "path": "src/patchtrace/service.py",
+      "original_line": 64,
+      "function": "_rollback_creation",
+      "current_sites": [
+        {
+          "line": 69,
+          "column": 5,
+          "message": "`try`-`except`-`pass` detected, consider logging the exception",
+          "statement": "except Exception:"
+        }
+      ],
+      "current_file_sha256": "4833ea5b9a3e876081e04b86dbd89b2828ecccd6bc8c80f7e2192b65b180d550",
+      "classification": "false-positive-at-reviewed-production-boundary",
+      "evidence_level": "independent source guard trace",
+      "basis": "Only entered after creation failed. Rollback checks the actual snapshot and ownership ledger; uncertain state is retained and the original creation exception propagates.",
+      "controls": "security-s110-independent/review.md and receipt.json; no native cleanup execution",
+      "limits": "Cleanup may leave files/locks; accepted creation repair claims cooperative observed seams only."
+    },
+    {
+      "rule": "S110",
+      "path": "src/patchtrace/service.py",
+      "original_line": 69,
+      "function": "_rollback_creation",
+      "current_sites": [
+        {
+          "line": 74,
+          "column": 9,
+          "message": "`try`-`except`-`pass` detected, consider logging the exception",
+          "statement": "except Exception:"
+        }
+      ],
+      "current_file_sha256": "4833ea5b9a3e876081e04b86dbd89b2828ecccd6bc8c80f7e2192b65b180d550",
+      "classification": "false-positive-at-reviewed-production-boundary",
+      "evidence_level": "independent source guard trace",
+      "basis": "Best-effort store close in the failed-creation rollback finally; cannot make failed creation succeed.",
+      "controls": "security-s110-independent/review.md and receipt.json; no native cleanup execution",
+      "limits": "No guarantee of cleanup when close itself fails; original bytes/unknown ownership are retained."
+    },
+    {
+      "rule": "S110",
+      "path": "src/patchtrace/ui_engine_setup.py",
+      "original_line": 137,
+      "function": "_save",
+      "current_sites": [
+        {
+          "line": 137,
+          "column": 5,
+          "message": "`try`-`except`-`pass` detected, consider logging the exception",
+          "statement": "except Exception:  # noqa: BLE001"
+        }
+      ],
+      "current_file_sha256": "ecb823dd4498783a38fdecbe2f9977cf3fca247af784271f1825705770a93a9c",
+      "classification": "false-positive-at-reviewed-production-boundary",
+      "evidence_level": "independent source guard trace",
+      "basis": "Optional executable-path/setup preference persistence; no admission of validated exports, engine result or network consent happens in this catch.",
+      "controls": "security-s110-independent/review.md and receipt.json; no native cleanup execution",
+      "limits": "Reopen may not remember the unsaved preference."
+    },
+    {
+      "rule": "S110",
+      "path": "src/patchtrace/ui_evidence.py",
+      "original_line": 1229,
+      "function": "_engine_finished",
+      "current_sites": [],
+      "current_file_sha256": "d72a7c806750abe131b545b339cfe0ce66bc370390d81c181c3f2ba3421108cf",
+      "classification": "confirmed-defect-repaired",
+      "evidence_level": "actual SQLite/Qt red and green controls",
+      "basis": "Failed/cancelled/timeout attempt storage exceptions were silently lost; a second reproduced path falsely said an unstored successful result was kept. Source 7b4402a0 now retains bounded class-only/refusal diagnostics in rows, copied details and final summaries, and bases kept wording on successful publication.",
+      "controls": "original test_failed_attempt_retention.py 3 red/1 positive; test_result_kept_external.py 1 red/1 positive; author and root exact-source 156-pass gates; unchanged current replay",
+      "limits": "UI evidence remains transient, no automatic publication retry, no full run/set object retention, no atomic multi-write or native matching claim."
+    },
+    {
+      "rule": "S110",
+      "path": "src/patchtrace/ui_evidence.py",
+      "original_line": 579,
+      "function": "_save",
+      "current_sites": [
+        {
+          "line": 579,
+          "column": 9,
+          "message": "`try`-`except`-`pass` detected, consider logging the exception",
+          "statement": "except Exception:  # noqa: BLE001"
+        }
+      ],
+      "current_file_sha256": "d72a7c806750abe131b545b339cfe0ce66bc370390d81c181c3f2ba3421108cf",
+      "classification": "false-positive-at-reviewed-production-boundary",
+      "evidence_level": "independent source guard trace",
+      "basis": "Optional filter/hide-agreed/show-index preferences only; no matching result or attempt record is published.",
+      "controls": "security-s110-independent/review.md and receipt.json; no native cleanup execution",
+      "limits": "Reopen may not remember presentation preferences."
+    },
+    {
+      "rule": "S110",
+      "path": "src/patchtrace/unified/extract/ghidra_script.py",
+      "original_line": 853,
+      "function": "_write_decomp",
+      "current_sites": [
+        {
+          "line": 853,
+          "column": 9,
+          "message": "`try`-`except`-`pass` detected, consider logging the exception",
+          "statement": "except Exception:  # noqa: BLE001 - cleanup must not mask the primary failure"
+        }
+      ],
+      "current_file_sha256": "3901f3a8c369b3350b98566a46666258f9b2c79a1704f7fcdad2a64c502de49e",
+      "classification": "false-positive-at-reviewed-production-boundary",
+      "evidence_level": "independent source guard trace",
+      "basis": "Decompiler.dispose is cleanup after per-function code/status collection. Output write failures outside the cleanup catch still propagate.",
+      "controls": "security-s110-independent/review.md and receipt.json; no native cleanup execution",
+      "limits": "Native disposal/resource behavior was not executed; no lossless native cleanup claim."
+    },
+    {
+      "rule": "S110",
+      "path": "src/patchtrace/unified/extract/ghidra_script.py",
+      "original_line": 320,
+      "function": "probe_versions",
+      "current_sites": [
+        {
+          "line": 320,
+          "column": 9,
+          "message": "`try`-`except`-`pass` detected, consider logging the exception",
+          "statement": "except Exception:  # noqa: BLE001"
+        }
+      ],
+      "current_file_sha256": "3901f3a8c369b3350b98566a46666258f9b2c79a1704f7fcdad2a64c502de49e",
+      "classification": "false-positive-at-reviewed-production-boundary",
+      "evidence_level": "independent source guard trace",
+      "basis": "Optional Ghidra version observation leaves the initialized value unknown if the native getter fails.",
+      "controls": "security-s110-independent/review.md and receipt.json; no native cleanup execution",
+      "limits": "Native version probing was not executed or qualified."
+    },
+    {
+      "rule": "S110",
+      "path": "src/patchtrace/unified/extract/ghidra_script.py",
+      "original_line": 324,
+      "function": "probe_versions",
+      "current_sites": [
+        {
+          "line": 324,
+          "column": 9,
+          "message": "`try`-`except`-`pass` detected, consider logging the exception",
+          "statement": "except Exception:  # noqa: BLE001"
+        }
+      ],
+      "current_file_sha256": "3901f3a8c369b3350b98566a46666258f9b2c79a1704f7fcdad2a64c502de49e",
+      "classification": "false-positive-at-reviewed-production-boundary",
+      "evidence_level": "independent source guard trace",
+      "basis": "Optional Java version observation leaves the initialized value unknown if the native getter fails.",
+      "controls": "security-s110-independent/review.md and receipt.json; no native cleanup execution",
+      "limits": "Native version probing was not executed or qualified."
+    },
+    {
+      "rule": "S110",
+      "path": "src/patchtrace/unified/extract/ghidra_script.py",
+      "original_line": 783,
+      "function": "run",
+      "current_sites": [
+        {
+          "line": 783,
+          "column": 9,
+          "message": "`try`-`except`-`pass` detected, consider logging the exception",
+          "statement": "except Exception:  # noqa: BLE001 - cleanup must not mask the primary failure"
+        }
+      ],
+      "current_file_sha256": "3901f3a8c369b3350b98566a46666258f9b2c79a1704f7fcdad2a64c502de49e",
+      "classification": "false-positive-at-reviewed-production-boundary",
+      "evidence_level": "independent source guard trace",
+      "basis": "Project.close occurs in finally after the program-hash and extraction result/error path. It does not bypass those primary decisions.",
+      "controls": "security-s110-independent/review.md and receipt.json; no native cleanup execution",
+      "limits": "Native cleanup and retained-handle/resource behavior need native evidence; no such completeness claim is made."
+    },
+    {
+      "rule": "S310",
+      "path": "src/patchtrace/acquisition/transport.py",
+      "original_line": 149,
+      "function": "urllib_open",
+      "current_sites": [
+        {
+          "line": 149,
+          "column": 38,
+          "message": "Audit URL open for permitted schemes. Allowing use of `file:` or custom schemes is often unexpected.",
+          "statement": "return _Response(opener.open(urllib.request.Request(url, headers=dict(headers), method=method),"
+        }
+      ],
+      "current_file_sha256": "ff6f9cc3e24cc2acf7a3b0775bf5589c89194d8826dbb7f296efdc637e3959f0",
+      "classification": "false-positive-at-reviewed-production-boundary",
+      "evidence_level": "source trace and independent local controls",
+      "basis": "File-name-derived Winbindex metadata URL or explicitly planned symbol-server URL; exact consent checked by _consented before Transport._open. _check limits HTTPS, fixed hosts, port 443 and no userinfo/control text. Metadata redirects are refused; downloads permit one checked Azure blob redirect and verify planned size/SHA.",
+      "controls": "test_network_boundaries_external.py::test_acquisition_*",
+      "limits": "The generic urllib_open helper relies on its production Transport callers. No actual download, DNS or TLS was exercised; arbitrary approved blob-account trust is not expanded by this review."
+    },
+    {
+      "rule": "S310",
+      "path": "src/patchtrace/enrichment/intelligence.py",
+      "original_line": 166,
+      "function": "urllib_open",
+      "current_sites": [
+        {
+          "line": 166,
+          "column": 15,
+          "message": "Audit URL open for permitted schemes. Allowing use of `file:` or custom schemes is often unexpected.",
+          "statement": "request = urllib.request.Request(url, headers=dict(headers), method='GET')"
+        }
+      ],
+      "current_file_sha256": "a1bc961503e6d0ea2ea81966dd84fa61fba08fa36f95a70595067663a96fcdd8",
+      "classification": "false-positive-at-reviewed-production-boundary",
+      "evidence_level": "source trace and independent local controls",
+      "basis": "CVE IDs and provider choice are normalized into a fixed plan. _validate rederives every PlannedRequest including URL/headers/key-header and checks exact consent. _attempt checks every redirect against fixed HTTPS provider hosts and strips the NVD session key when the host changes.",
+      "controls": "test_network_boundaries_external.py::test_cve_*",
+      "limits": "The established contract permits a redirect between allowlisted provider hosts. This is not an arbitrary destination API. No live response provenance, DNS or TLS claim; lower-level helpers require validated callers."
+    },
+    {
+      "rule": "S310",
+      "path": "src/patchtrace/intelligence/csaf/transport.py",
+      "original_line": 111,
+      "function": "urllib_open",
+      "current_sites": [
+        {
+          "line": 111,
+          "column": 15,
+          "message": "Audit URL open for permitted schemes. Allowing use of `file:` or custom schemes is often unexpected.",
+          "statement": "request = urllib.request.Request(url, headers=dict(headers), method='GET')"
+        }
+      ],
+      "current_file_sha256": "8ec8d4f6227ebe0186784e325e89bf55757ff9dcb2aa34a7a36fb5d8065f9d30",
+      "classification": "false-positive-at-reviewed-production-boundary",
+      "evidence_level": "source trace and independent local controls",
+      "basis": "CsafTransport requires explicit host consent except cache-only offline mode. get and every _attempt hop call check_url: exact Microsoft host, HTTPS/443, fixed CSAF path prefixes, no userinfo/query/fragment, encoded or dot-segment path spelling, or control text. Default opener disables proxies and auto redirects.",
+      "controls": "test_network_boundaries_external.py::test_csaf_*",
+      "limits": "Only fake responses and caller-level policy were exercised. No live CSAF server, DNS/TLS or aggregate store/resource qualification; the low-level urllib helper relies on the checked caller."
+    },
+    {
+      "rule": "S310",
+      "path": "src/patchtrace/kbcorrelation/sources/inventory_http.py",
+      "original_line": 259,
+      "function": "urllib_open",
+      "current_sites": [
+        {
+          "line": 259,
+          "column": 32,
+          "message": "Audit URL open for permitted schemes. Allowing use of `file:` or custom schemes is often unexpected.",
+          "statement": "response = opener.open(urllib.request.Request(url, headers=dict(headers), method=method), timeout=timeout)"
+        }
+      ],
+      "current_file_sha256": "8947c6e38df73a41bf2462dd664a6145ded60eb96ed9d9502318935d41491046",
+      "classification": "false-positive-at-reviewed-production-boundary",
+      "evidence_level": "source trace and independent local controls",
+      "basis": "fetch_source rederives the complete ordered plan, exact host set and plan digest before any request. Redirect drift requires a new preview without contacting the target. urllib_open validates raw URL spelling, scheme/host/path/kind and GET again. connect_public validates the whole bounded DNS answer then connects to those numeric addresses; certificate/hostname verification remains required.",
+      "controls": "test_network_boundaries_external.py::test_inventory_*; tests/test_kbc_inventory_sources.py",
+      "limits": "DNS and sockets were injected data; no real connection, certificate server, resolver race or arbitrary address-space exhaustion was tested. Header/body framing and ordinary bounds have existing local controls."
+    },
+    {
+      "rule": "S310",
+      "path": "src/patchtrace/kev/transport.py",
+      "original_line": 99,
+      "function": "urllib_open",
+      "current_sites": [
+        {
+          "line": 99,
+          "column": 15,
+          "message": "Audit URL open for permitted schemes. Allowing use of `file:` or custom schemes is often unexpected.",
+          "statement": "request = urllib.request.Request(url, headers=dict(headers), method='GET')"
+        }
+      ],
+      "current_file_sha256": "6890a4f77d9a7002b8c4bd84e9154757772e0800cb15ee951b6cc7633888adc7",
+      "classification": "false-positive-at-reviewed-production-boundary",
+      "evidence_level": "source trace and independent local controls",
+      "basis": "A strict KevPlan and KevConsent name one fixed catalog URL; check_request enforces the exact initial URL. Each redirect is checked for plain HTTPS on the same approved host before opening. Requests use fixed headers, no proxy inheritance or automatic redirects, bounded reads and explicit cancellation.",
+      "controls": "test_network_boundaries_external.py::test_kev_*",
+      "limits": "Same-host path redirects are intentionally admitted. Live-socket tests were explicitly deselected. No actual catalog, network freshness, DNS/TLS or server compatibility was qualified."
+    },
+    {
+      "rule": "S310",
+      "path": "src/patchtrace/providers.py",
+      "original_line": 126,
+      "function": "_build_request",
+      "current_sites": [
+        {
+          "line": 126,
+          "column": 12,
+          "message": "Audit URL open for permitted schemes. Allowing use of `file:` or custom schemes is often unexpected.",
+          "statement": "return urllib.request.Request(endpoint, json.dumps(payload).encode(), headers, method='POST')"
+        }
+      ],
+      "current_file_sha256": "d60b53a5b2ebecd0fe7c5251130d935b8d923abbebd3a8d402ff5e842d51db15",
+      "classification": "false-positive-at-reviewed-production-boundary",
+      "evidence_level": "source trace and independent local controls",
+      "basis": "User-configured endpoint from the explicit Send context dialog. interpretation.interpret validates the exact context/digest; desktop refusal returns before starting a job. ProviderConfig and request_completion validate HTTPS remote or loopback local endpoints and reject userinfo/query/fragment/control text. _exchange has an empty proxy map and refuses redirect followups, preserving POST destination/body/key.",
+      "controls": "test_provider_s310_boundary.py (19 controls); tests/test_ui.py::test_interpretation_preview_cancel_sends_nothing; tests/test_ui.py::test_context_dialog_exact_preview_and_secret_is_session_only",
+      "limits": "Explicit user-configured HTTPS/self-hosted endpoints are intentional. The lower-level callable API does not itself implement GUI consent. No generic SSRF, live-provider or DNS/TLS conclusion."
+    },
+    {
+      "rule": "S314",
+      "path": "src/patchtrace/pe_overview/manifest.py",
+      "original_line": 148,
+      "function": "observe_manifest",
+      "current_sites": [
+        {
+          "line": 156,
+          "column": 18,
+          "message": "Using `xml` to parse untrusted data is known to be vulnerable to XML attacks; use `defusedxml` equivalents",
+          "statement": "parser = ET.XMLParser(target=target)"
+        },
+        {
+          "line": 161,
+          "column": 16,
+          "message": "Using `xml` to parse untrusted data is known to be vulnerable to XML attacks; use `defusedxml` equivalents",
+          "statement": "root = ET.fromstring(text, parser=parser)"
+        }
+      ],
+      "current_file_sha256": "b1e83c0dbb9fb04fa9b2439433b4a2192364e684a1f9db1073b6f47b97f13aa9",
+      "classification": "confirmed-encoding-policy-defect-repaired",
+      "evidence_level": "authored XML and PE-resource red/green",
+      "basis": "BOM-less UTF-16BE with leading whitespace bypassed an encoding-sensitive DTD screen and expanded an internal entity. Source e1c5006e refuses DTD at the parser callback, including the pure-Python fallback. Current XMLParser and fromstring sites are both still reported.",
+      "controls": "unchanged test_manifest_dtd_external.py: original 4 red/3 positive, fixed/current 7 pass; normal encodings/DOCTYPE/entity controls in test_pe_manifest_dtd_boundary.py",
+      "limits": "No external-file/network XXE or large expansion attack was claimed or executed. Two current S314 warnings map to this one original warning; neither is removed from raw scans."
+    },
+    {
+      "rule": "S603",
+      "path": "src/patchtrace/jobs.py",
+      "original_line": 346,
+      "function": "run_process",
+      "current_sites": [
+        {
+          "line": 346,
+          "column": 17,
+          "message": "`subprocess` call: check for execution of untrusted input",
+          "statement": "child = subprocess.Popen(list(argv), cwd=cwd, env=dict(env), shell=False,"
+        }
+      ],
+      "current_file_sha256": "807abdfb8d22016eecb5d37bff802b233a2c1bb340e82abc14f11f87c8de7821",
+      "classification": "false-positive-at-reviewed-production-boundary",
+      "evidence_level": "source trace and one harmless Python child",
+      "basis": "run_process requires an absolute executable, refuses NUL argv and malformed explicit env, and uses a list of arguments with shell=False and DEVNULL stdin. Configured tool executables are trusted inputs; target paths remain arguments. The original inherited-environment defect was repaired separately and is not reintroduced here.",
+      "controls": "test_process_boundary_external.py (7 controls), exact argv/metacharacters/explicit env; pure Windows batch policy only",
+      "limits": "No target or native helper was executed. Windows process creation, safety of arbitrary configured executables, and primary total-output/memory ceilings remain separate qualifications."
+    },
+    {
+      "rule": "S608",
+      "path": "src/patchtrace/diaphora/sqlite_guard.py",
+      "original_line": 54,
+      "function": "count",
+      "current_sites": [
+        {
+          "line": 54,
+          "column": 38,
+          "message": "Possible SQL injection vector through string-based query construction",
+          "statement": "return self.conn.execute(f'SELECT COUNT(*) FROM \"{table}\"').fetchone()[0]"
+        }
+      ],
+      "current_file_sha256": "9ad1764a994c3fc7e2a1015701bca327f4ded442c61409e8ec14f4c0096dd696",
+      "classification": "false-positive-at-reviewed-production-boundary",
+      "evidence_level": "previous independent 43-site packet",
+      "basis": "Previously reviewed exact caller/identifier/optimization boundary; retain the full per-site guard ledger and normal/-O external controls in docs/qa/security-contract-triage-20261118.md.",
+      "controls": "prior 1,012-check gate and root 16 source-pinned child replays",
+      "limits": "This row is referenced, not silently counted as a new residual investigation."
+    },
+    {
+      "rule": "S608",
+      "path": "src/patchtrace/diaphora/sqlite_guard.py",
+      "original_line": 66,
+      "function": "rows",
+      "current_sites": [
+        {
+          "line": 66,
+          "column": 40,
+          "message": "Possible SQL injection vector through string-based query construction",
+          "statement": "cursor = self.conn.execute(f'SELECT rowid, {columns} FROM \"{table}\" ORDER BY rowid LIMIT ?', (limit,))"
+        }
+      ],
+      "current_file_sha256": "9ad1764a994c3fc7e2a1015701bca327f4ded442c61409e8ec14f4c0096dd696",
+      "classification": "false-positive-at-reviewed-production-boundary",
+      "evidence_level": "previous independent 43-site packet",
+      "basis": "Previously reviewed exact caller/identifier/optimization boundary; retain the full per-site guard ledger and normal/-O external controls in docs/qa/security-contract-triage-20261118.md.",
+      "controls": "prior 1,012-check gate and root 16 source-pinned child replays",
+      "limits": "This row is referenced, not silently counted as a new residual investigation."
+    },
+    {
+      "rule": "S608",
+      "path": "src/patchtrace/enrichment/storage.py",
+      "original_line": 362,
+      "function": "_delete",
+      "current_sites": [
+        {
+          "line": 362,
+          "column": 28,
+          "message": "Possible SQL injection vector through string-based query construction",
+          "statement": "db.execute(f'DELETE FROM enrichment_entries WHERE id IN ({\",\".join(\"?\" * len(chunk))}) '"
+        }
+      ],
+      "current_file_sha256": "e908d0ca8651a87e23281f92b006bfe17a6d3aa8752f4bf46817e8d75f8c9321",
+      "classification": "false-positive-at-reviewed-production-boundary",
+      "evidence_level": "previous independent 43-site packet",
+      "basis": "Previously reviewed exact caller/identifier/optimization boundary; retain the full per-site guard ledger and normal/-O external controls in docs/qa/security-contract-triage-20261118.md.",
+      "controls": "prior 1,012-check gate and root 16 source-pinned child replays",
+      "limits": "This row is referenced, not silently counted as a new residual investigation."
+    },
+    {
+      "rule": "S608",
+      "path": "src/patchtrace/enrichment/storage.py",
+      "original_line": 311,
+      "function": "_derived_rows",
+      "current_sites": [
+        {
+          "line": 311,
+          "column": 13,
+          "message": "Possible SQL injection vector through string-based query construction",
+          "statement": "f'SELECT id, created, LENGTH(CAST(body AS BLOB)) FROM enrichment_entries WHERE kind IN ({marks})',"
+        }
+      ],
+      "current_file_sha256": "e908d0ca8651a87e23281f92b006bfe17a6d3aa8752f4bf46817e8d75f8c9321",
+      "classification": "false-positive-at-reviewed-production-boundary",
+      "evidence_level": "previous independent 43-site packet",
+      "basis": "Previously reviewed exact caller/identifier/optimization boundary; retain the full per-site guard ledger and normal/-O external controls in docs/qa/security-contract-triage-20261118.md.",
+      "controls": "prior 1,012-check gate and root 16 source-pinned child replays",
+      "limits": "This row is referenced, not silently counted as a new residual investigation."
+    },
+    {
+      "rule": "S608",
+      "path": "src/patchtrace/kbcorrelation/inventory_store.py",
+      "original_line": 382,
+      "function": "_budget",
+      "current_sites": [
+        {
+          "line": 335,
+          "column": 30,
+          "message": "Possible SQL injection vector through string-based query construction",
+          "statement": "invalid = _query(ws, f\"SELECT 1 FROM {table} WHERE typeof(size)!='integer' OR size<0 OR \""
+        }
+      ],
+      "current_file_sha256": "bbd462564abeb5a7ba0076e5b3597604bb8090a720d25522eabe302d141ec418",
+      "classification": "false-positive-at-reviewed-production-boundary",
+      "evidence_level": "previous independent 43-site packet",
+      "basis": "Previously reviewed exact caller/identifier/optimization boundary; retain the full per-site guard ledger and normal/-O external controls in docs/qa/security-contract-triage-20261118.md.",
+      "controls": "prior 1,012-check gate and root 16 source-pinned child replays",
+      "limits": "This row is referenced, not silently counted as a new residual investigation."
+    },
+    {
+      "rule": "S608",
+      "path": "src/patchtrace/kbcorrelation/inventory_store.py",
+      "original_line": 387,
+      "function": "_budget",
+      "current_sites": [
+        {
+          "line": 340,
+          "column": 23,
+          "message": "Possible SQL injection vector through string-based query construction",
+          "statement": "if _query(ws, f\"SELECT 1 FROM {table} WHERE typeof(body)!='text' OR length(CAST(body AS BLOB))>? LIMIT 1\","
+        }
+      ],
+      "current_file_sha256": "bbd462564abeb5a7ba0076e5b3597604bb8090a720d25522eabe302d141ec418",
+      "classification": "false-positive-at-reviewed-production-boundary",
+      "evidence_level": "previous independent 43-site packet",
+      "basis": "Previously reviewed exact caller/identifier/optimization boundary; retain the full per-site guard ledger and normal/-O external controls in docs/qa/security-contract-triage-20261118.md.",
+      "controls": "prior 1,012-check gate and root 16 source-pinned child replays",
+      "limits": "This row is referenced, not silently counted as a new residual investigation."
+    },
+    {
+      "rule": "S608",
+      "path": "src/patchtrace/kbcorrelation/inventory_store.py",
+      "original_line": 390,
+      "function": "_budget",
+      "current_sites": [
+        {
+          "line": 343,
+          "column": 54,
+          "message": "Possible SQL injection vector through string-based query construction",
+          "statement": "raw_queries = ['SELECT sha256,size FROM docs', *(f'SELECT sha256,size FROM {table}' for table in tables)]"
+        }
+      ],
+      "current_file_sha256": "bbd462564abeb5a7ba0076e5b3597604bb8090a720d25522eabe302d141ec418",
+      "classification": "false-positive-at-reviewed-production-boundary",
+      "evidence_level": "previous independent 43-site packet",
+      "basis": "Previously reviewed exact caller/identifier/optimization boundary; retain the full per-site guard ledger and normal/-O external controls in docs/qa/security-contract-triage-20261118.md.",
+      "controls": "prior 1,012-check gate and root 16 source-pinned child replays",
+      "limits": "This row is referenced, not silently counted as a new residual investigation."
+    },
+    {
+      "rule": "S608",
+      "path": "src/patchtrace/kbcorrelation/inventory_store.py",
+      "original_line": 392,
+      "function": "_budget",
+      "current_sites": [
+        {
+          "line": 345,
+          "column": 27,
+          "message": "Possible SQL injection vector through string-based query construction",
+          "statement": "raw_used = _query(ws, 'SELECT COALESCE(SUM(size),0) FROM (SELECT sha256,MAX(size) AS size FROM ('"
+        }
+      ],
+      "current_file_sha256": "bbd462564abeb5a7ba0076e5b3597604bb8090a720d25522eabe302d141ec418",
+      "classification": "false-positive-at-reviewed-production-boundary",
+      "evidence_level": "previous independent 43-site packet",
+      "basis": "Previously reviewed exact caller/identifier/optimization boundary; retain the full per-site guard ledger and normal/-O external controls in docs/qa/security-contract-triage-20261118.md.",
+      "controls": "prior 1,012-check gate and root 16 source-pinned child replays",
+      "limits": "This row is referenced, not silently counted as a new residual investigation."
+    },
+    {
+      "rule": "S608",
+      "path": "src/patchtrace/kbcorrelation/inventory_store.py",
+      "original_line": 395,
+      "function": "_budget",
+      "current_sites": [
+        {
+          "line": 348,
+          "column": 36,
+          "message": "Possible SQL injection vector through string-based query construction",
+          "statement": "metadata_used = sum(_query(ws, f'SELECT COALESCE(SUM(length(CAST(body AS BLOB))),0) FROM {table}')"
+        }
+      ],
+      "current_file_sha256": "bbd462564abeb5a7ba0076e5b3597604bb8090a720d25522eabe302d141ec418",
+      "classification": "false-positive-at-reviewed-production-boundary",
+      "evidence_level": "previous independent 43-site packet",
+      "basis": "Previously reviewed exact caller/identifier/optimization boundary; retain the full per-site guard ledger and normal/-O external controls in docs/qa/security-contract-triage-20261118.md.",
+      "controls": "prior 1,012-check gate and root 16 source-pinned child replays",
+      "limits": "This row is referenced, not silently counted as a new residual investigation."
+    },
+    {
+      "rule": "S608",
+      "path": "src/patchtrace/kbcorrelation/inventory_store.py",
+      "original_line": 539,
+      "function": "_list",
+      "current_sites": [
+        {
+          "line": 492,
+          "column": 27,
+          "message": "Possible SQL injection vector through string-based query construction",
+          "statement": "rows = list(_rows(ws, 'SELECT CASE WHEN length(import_id)=64 THEN import_id END,'"
+        }
+      ],
+      "current_file_sha256": "bbd462564abeb5a7ba0076e5b3597604bb8090a720d25522eabe302d141ec418",
+      "classification": "false-positive-at-reviewed-production-boundary",
+      "evidence_level": "previous independent 43-site packet",
+      "basis": "Previously reviewed exact caller/identifier/optimization boundary; retain the full per-site guard ledger and normal/-O external controls in docs/qa/security-contract-triage-20261118.md.",
+      "controls": "prior 1,012-check gate and root 16 source-pinned child replays",
+      "limits": "This row is referenced, not silently counted as a new residual investigation."
+    },
+    {
+      "rule": "S608",
+      "path": "src/patchtrace/kbcorrelation/inventory_store.py",
+      "original_line": 230,
+      "function": "_read_record",
+      "current_sites": [
+        {
+          "line": 227,
+          "column": 26,
+          "message": "Possible SQL injection vector through string-based query construction",
+          "statement": "row = next(_rows(ws, \"SELECT CASE WHEN typeof(schema_version)='integer' THEN schema_version END,\""
+        }
+      ],
+      "current_file_sha256": "bbd462564abeb5a7ba0076e5b3597604bb8090a720d25522eabe302d141ec418",
+      "classification": "false-positive-at-reviewed-production-boundary",
+      "evidence_level": "previous independent 43-site packet",
+      "basis": "Previously reviewed exact caller/identifier/optimization boundary; retain the full per-site guard ledger and normal/-O external controls in docs/qa/security-contract-triage-20261118.md.",
+      "controls": "prior 1,012-check gate and root 16 source-pinned child replays",
+      "limits": "This row is referenced, not silently counted as a new residual investigation."
+    },
+    {
+      "rule": "S608",
+      "path": "src/patchtrace/kbcorrelation/inventory_store.py",
+      "original_line": 303,
+      "function": "_write_raw",
+      "current_sites": [
+        {
+          "line": 259,
+          "column": 33,
+          "message": "Possible SQL injection vector through string-based query construction",
+          "statement": "referenced = any(_query(ws, f'SELECT 1 FROM {table} WHERE sha256=? LIMIT 1', (source.sha256,))"
+        }
+      ],
+      "current_file_sha256": "bbd462564abeb5a7ba0076e5b3597604bb8090a720d25522eabe302d141ec418",
+      "classification": "false-positive-at-reviewed-production-boundary",
+      "evidence_level": "previous independent 43-site packet",
+      "basis": "Previously reviewed exact caller/identifier/optimization boundary; retain the full per-site guard ledger and normal/-O external controls in docs/qa/security-contract-triage-20261118.md.",
+      "controls": "prior 1,012-check gate and root 16 source-pinned child replays",
+      "limits": "This row is referenced, not silently counted as a new residual investigation."
+    },
+    {
+      "rule": "S608",
+      "path": "src/patchtrace/kbcorrelation/inventory_store.py",
+      "original_line": 568,
+      "function": "inventory_count",
+      "current_sites": [
+        {
+          "line": 521,
+          "column": 23,
+          "message": "Possible SQL injection vector through string-based query construction",
+          "statement": "return _query(ws, f'SELECT COUNT(*) FROM {INVENTORY_TABLE}').fetchone()[0] if _exists(ws, INVENTORY_TABLE) else 0"
+        }
+      ],
+      "current_file_sha256": "bbd462564abeb5a7ba0076e5b3597604bb8090a720d25522eabe302d141ec418",
+      "classification": "false-positive-at-reviewed-production-boundary",
+      "evidence_level": "previous independent 43-site packet",
+      "basis": "Previously reviewed exact caller/identifier/optimization boundary; retain the full per-site guard ledger and normal/-O external controls in docs/qa/security-contract-triage-20261118.md.",
+      "controls": "prior 1,012-check gate and root 16 source-pinned child replays",
+      "limits": "This row is referenced, not silently counted as a new residual investigation."
+    },
+    {
+      "rule": "S608",
+      "path": "src/patchtrace/kbcorrelation/inventory_store.py",
+      "original_line": 580,
+      "function": "referenced_raw_hashes",
+      "current_sites": [
+        {
+          "line": 533,
+          "column": 37,
+          "message": "Possible SQL injection vector through string-based query construction",
+          "statement": "for (sha,) in _rows(ws, f'SELECT DISTINCT CASE WHEN length(sha256)=64 THEN sha256 END FROM {table}'):"
+        }
+      ],
+      "current_file_sha256": "bbd462564abeb5a7ba0076e5b3597604bb8090a720d25522eabe302d141ec418",
+      "classification": "false-positive-at-reviewed-production-boundary",
+      "evidence_level": "previous independent 43-site packet",
+      "basis": "Previously reviewed exact caller/identifier/optimization boundary; retain the full per-site guard ledger and normal/-O external controls in docs/qa/security-contract-triage-20261118.md.",
+      "controls": "prior 1,012-check gate and root 16 source-pinned child replays",
+      "limits": "This row is referenced, not silently counted as a new residual investigation."
+    },
+    {
+      "rule": "S608",
+      "path": "src/patchtrace/kbcorrelation/inventory_store.py",
+      "original_line": 572,
+      "function": "support_count",
+      "current_sites": [
+        {
+          "line": 525,
+          "column": 23,
+          "message": "Possible SQL injection vector through string-based query construction",
+          "statement": "return _query(ws, f'SELECT COUNT(*) FROM {SUPPORT_TABLE}').fetchone()[0] if _exists(ws, SUPPORT_TABLE) else 0"
+        }
+      ],
+      "current_file_sha256": "bbd462564abeb5a7ba0076e5b3597604bb8090a720d25522eabe302d141ec418",
+      "classification": "false-positive-at-reviewed-production-boundary",
+      "evidence_level": "previous independent 43-site packet",
+      "basis": "Previously reviewed exact caller/identifier/optimization boundary; retain the full per-site guard ledger and normal/-O external controls in docs/qa/security-contract-triage-20261118.md.",
+      "controls": "prior 1,012-check gate and root 16 source-pinned child replays",
+      "limits": "This row is referenced, not silently counted as a new residual investigation."
+    },
+    {
+      "rule": "S608",
+      "path": "src/patchtrace/kbcorrelation/inventory_store.py",
+      "original_line": 426,
+      "function": "work",
+      "current_sites": [
+        {
+          "line": 379,
+          "column": 20,
+          "message": "Possible SQL injection vector through string-based query construction",
+          "statement": "_query(ws, f'INSERT INTO {table} VALUES (?,?,?,?,?,?)',"
+        }
+      ],
+      "current_file_sha256": "bbd462564abeb5a7ba0076e5b3597604bb8090a720d25522eabe302d141ec418",
+      "classification": "false-positive-at-reviewed-production-boundary",
+      "evidence_level": "previous independent 43-site packet",
+      "basis": "Previously reviewed exact caller/identifier/optimization boundary; retain the full per-site guard ledger and normal/-O external controls in docs/qa/security-contract-triage-20261118.md.",
+      "controls": "prior 1,012-check gate and root 16 source-pinned child replays",
+      "limits": "This row is referenced, not silently counted as a new residual investigation."
+    },
+    {
+      "rule": "S608",
+      "path": "src/patchtrace/kbcorrelation/store.py",
+      "original_line": 305,
+      "function": "_dictionary",
+      "current_sites": [
+        {
+          "line": 343,
+          "column": 24,
+          "message": "Possible SQL injection vector through string-based query construction",
+          "statement": "db.executemany(f'INSERT OR IGNORE INTO {table}(name) VALUES (?)', [(n,) for n in sorted(names)])"
+        }
+      ],
+      "current_file_sha256": "df07391848ebaafd6a175888877f89de2f09bf506760f2e19f1eba1c5e3d93da",
+      "classification": "false-positive-at-reviewed-production-boundary",
+      "evidence_level": "previous independent 43-site packet",
+      "basis": "Previously reviewed exact caller/identifier/optimization boundary; retain the full per-site guard ledger and normal/-O external controls in docs/qa/security-contract-triage-20261118.md.",
+      "controls": "prior 1,012-check gate and root 16 source-pinned child replays",
+      "limits": "This row is referenced, not silently counted as a new residual investigation."
+    },
+    {
+      "rule": "S608",
+      "path": "src/patchtrace/kbcorrelation/store.py",
+      "original_line": 306,
+      "function": "_dictionary",
+      "current_sites": [
+        {
+          "line": 344,
+          "column": 45,
+          "message": "Possible SQL injection vector through string-based query construction",
+          "statement": "return {n: i for i, n in db.execute(f'SELECT id, name FROM {table}')}  # noqa: S608 (fixed table names)"
+        }
+      ],
+      "current_file_sha256": "df07391848ebaafd6a175888877f89de2f09bf506760f2e19f1eba1c5e3d93da",
+      "classification": "false-positive-at-reviewed-production-boundary",
+      "evidence_level": "previous independent 43-site packet",
+      "basis": "Previously reviewed exact caller/identifier/optimization boundary; retain the full per-site guard ledger and normal/-O external controls in docs/qa/security-contract-triage-20261118.md.",
+      "controls": "prior 1,012-check gate and root 16 source-pinned child replays",
+      "limits": "This row is referenced, not silently counted as a new residual investigation."
+    },
+    {
+      "rule": "S608",
+      "path": "src/patchtrace/kbcorrelation/store.py",
+      "original_line": 323,
+      "function": "_edges",
+      "current_sites": [
+        {
+          "line": 361,
+          "column": 13,
+          "message": "Possible SQL injection vector through string-based query construction",
+          "statement": "'SELECT kbs.name, cves.name, products.name, edges.doc, edges.ptr, edges.rel, edges.fixed_build '"
+        }
+      ],
+      "current_file_sha256": "df07391848ebaafd6a175888877f89de2f09bf506760f2e19f1eba1c5e3d93da",
+      "classification": "false-positive-at-reviewed-production-boundary",
+      "evidence_level": "previous independent 43-site packet",
+      "basis": "Previously reviewed exact caller/identifier/optimization boundary; retain the full per-site guard ledger and normal/-O external controls in docs/qa/security-contract-triage-20261118.md.",
+      "controls": "prior 1,012-check gate and root 16 source-pinned child replays",
+      "limits": "This row is referenced, not silently counted as a new residual investigation."
+    },
+    {
+      "rule": "S608",
+      "path": "src/patchtrace/persistence.py",
+      "original_line": 546,
+      "function": "_prune_history",
+      "current_sites": [
+        {
+          "line": 644,
+          "column": 37,
+          "message": "Possible SQL injection vector through string-based query construction",
+          "statement": "self.connection.execute(f'DELETE FROM history WHERE sequence IN ({\",\".join(\"?\" * len(chunk))})', chunk)"
+        }
+      ],
+      "current_file_sha256": "148f30ebf736923177db43114d10277246fabd35f6c8be1366082ec4955ce9be",
+      "classification": "false-positive-at-reviewed-production-boundary",
+      "evidence_level": "previous independent 43-site packet",
+      "basis": "Previously reviewed exact caller/identifier/optimization boundary; retain the full per-site guard ledger and normal/-O external controls in docs/qa/security-contract-triage-20261118.md.",
+      "controls": "prior 1,012-check gate and root 16 source-pinned child replays",
+      "limits": "This row is referenced, not silently counted as a new residual investigation."
+    },
+    {
+      "rule": "S608",
+      "path": "src/patchtrace/pilot/store.py",
+      "original_line": 387,
+      "function": "_holds",
+      "current_sites": [
+        {
+          "line": 408,
+          "column": 37,
+          "message": "Possible SQL injection vector through string-based query construction",
+          "statement": "return all(copy.execute(f'SELECT COUNT(*) FROM enrichment_entries WHERE id IN ({\",\".join(\"?\" * len(c))})',"
+        }
+      ],
+      "current_file_sha256": "ba4f77be586854c6db947f26b34c2a53859e0d23b93c96b22b2cc88918029577",
+      "classification": "false-positive-at-reviewed-production-boundary",
+      "evidence_level": "previous independent 43-site packet",
+      "basis": "Previously reviewed exact caller/identifier/optimization boundary; retain the full per-site guard ledger and normal/-O external controls in docs/qa/security-contract-triage-20261118.md.",
+      "controls": "prior 1,012-check gate and root 16 source-pinned child replays",
+      "limits": "This row is referenced, not silently counted as a new residual investigation."
+    },
+    {
+      "rule": "S608",
+      "path": "src/patchtrace/pilot/store.py",
+      "original_line": 427,
+      "function": "delete_results",
+      "current_sites": [
+        {
+          "line": 448,
+          "column": 35,
+          "message": "Possible SQL injection vector through string-based query construction",
+          "statement": "deleted += db.execute(f'DELETE FROM enrichment_entries WHERE id IN ({\",\".join(\"?\" * len(chunk))}) '"
+        }
+      ],
+      "current_file_sha256": "ba4f77be586854c6db947f26b34c2a53859e0d23b93c96b22b2cc88918029577",
+      "classification": "false-positive-at-reviewed-production-boundary",
+      "evidence_level": "previous independent 43-site packet",
+      "basis": "Previously reviewed exact caller/identifier/optimization boundary; retain the full per-site guard ledger and normal/-O external controls in docs/qa/security-contract-triage-20261118.md.",
+      "controls": "prior 1,012-check gate and root 16 source-pinned child replays",
+      "limits": "This row is referenced, not silently counted as a new residual investigation."
+    },
+    {
+      "rule": "S608",
+      "path": "src/patchtrace/project_cli.py",
+      "original_line": 198,
+      "function": "_derived",
+      "current_sites": [
+        {
+          "line": 198,
+          "column": 35,
+          "message": "Possible SQL injection vector through string-based query construction",
+          "statement": "rows = connection.execute('SELECT kind, COUNT(*), SUM(stale) FROM enrichment_entries GROUP BY kind '"
+        }
+      ],
+      "current_file_sha256": "f6e6df6be7f3222554246595a0cea8c0a92ac7a4c1e1c7f8a36eba3e130f5219",
+      "classification": "false-positive-at-reviewed-production-boundary",
+      "evidence_level": "previous independent 43-site packet",
+      "basis": "Previously reviewed exact caller/identifier/optimization boundary; retain the full per-site guard ledger and normal/-O external controls in docs/qa/security-contract-triage-20261118.md.",
+      "controls": "prior 1,012-check gate and root 16 source-pinned child replays",
+      "limits": "This row is referenced, not silently counted as a new residual investigation."
+    },
+    {
+      "rule": "S608",
+      "path": "src/patchtrace/search/segment.py",
+      "original_line": 199,
+      "function": "_insert",
+      "current_sites": [
+        {
+          "line": 199,
+          "column": 28,
+          "message": "Possible SQL injection vector through string-based query construction",
+          "statement": "db.executemany(f'INSERT INTO {table}(rowid, {columns[table]}) VALUES (?,{marks})', values)"
+        }
+      ],
+      "current_file_sha256": "8b77e7282dd006521b21a80563cdebb34a7c10ba118c2e00da7d21e98e884736",
+      "classification": "false-positive-at-reviewed-production-boundary",
+      "evidence_level": "previous independent 43-site packet",
+      "basis": "Previously reviewed exact caller/identifier/optimization boundary; retain the full per-site guard ledger and normal/-O external controls in docs/qa/security-contract-triage-20261118.md.",
+      "controls": "prior 1,012-check gate and root 16 source-pinned child replays",
+      "limits": "This row is referenced, not silently counted as a new residual investigation."
+    },
+    {
+      "rule": "S608",
+      "path": "src/patchtrace/search/service.py",
+      "original_line": 196,
+      "function": "_browse",
+      "current_sites": [
+        {
+          "line": 196,
+          "column": 42,
+          "message": "Possible SQL injection vector through string-based query construction",
+          "statement": "rows = self.segment.conn.execute(f'SELECT {DOC_COLUMNS}, 0.0 FROM doc d WHERE 1 = 1{kinds}{self.filters} '"
+        }
+      ],
+      "current_file_sha256": "ece03506fd7e85a0489c3de194d98a30c5f89b5973eb4da35e1766ab808c456b",
+      "classification": "false-positive-at-reviewed-production-boundary",
+      "evidence_level": "previous independent 43-site packet",
+      "basis": "Previously reviewed exact caller/identifier/optimization boundary; retain the full per-site guard ledger and normal/-O external controls in docs/qa/security-contract-triage-20261118.md.",
+      "controls": "prior 1,012-check gate and root 16 source-pinned child replays",
+      "limits": "This row is referenced, not silently counted as a new residual investigation."
+    },
+    {
+      "rule": "S608",
+      "path": "src/patchtrace/search/service.py",
+      "original_line": 140,
+      "function": "_fetch",
+      "current_sites": [
+        {
+          "line": 140,
+          "column": 30,
+          "message": "Possible SQL injection vector through string-based query construction",
+          "statement": "count = conn.execute(f'SELECT count(*) FROM (SELECT 1 {base} LIMIT ?)', (*params, cap + 1)).fetchone()[0]"
+        }
+      ],
+      "current_file_sha256": "ece03506fd7e85a0489c3de194d98a30c5f89b5973eb4da35e1766ab808c456b",
+      "classification": "false-positive-at-reviewed-production-boundary",
+      "evidence_level": "previous independent 43-site packet",
+      "basis": "Previously reviewed exact caller/identifier/optimization boundary; retain the full per-site guard ledger and normal/-O external controls in docs/qa/security-contract-triage-20261118.md.",
+      "controls": "prior 1,012-check gate and root 16 source-pinned child replays",
+      "limits": "This row is referenced, not silently counted as a new residual investigation."
+    },
+    {
+      "rule": "S608",
+      "path": "src/patchtrace/search/service.py",
+      "original_line": 229,
+      "function": "_lookup",
+      "current_sites": [
+        {
+          "line": 229,
+          "column": 42,
+          "message": "Possible SQL injection vector through string-based query construction",
+          "statement": "rows = self.segment.conn.execute(f'SELECT {DOC_COLUMNS}, 0.0 FROM doc d WHERE {where}{self.filters} '"
+        }
+      ],
+      "current_file_sha256": "ece03506fd7e85a0489c3de194d98a30c5f89b5973eb4da35e1766ab808c456b",
+      "classification": "false-positive-at-reviewed-production-boundary",
+      "evidence_level": "previous independent 43-site packet",
+      "basis": "Previously reviewed exact caller/identifier/optimization boundary; retain the full per-site guard ledger and normal/-O external controls in docs/qa/security-contract-triage-20261118.md.",
+      "controls": "prior 1,012-check gate and root 16 source-pinned child replays",
+      "limits": "This row is referenced, not silently counted as a new residual investigation."
+    },
+    {
+      "rule": "S608",
+      "path": "src/patchtrace/search/service.py",
+      "original_line": 186,
+      "function": "_signatures",
+      "current_sites": [
+        {
+          "line": 186,
+          "column": 13,
+          "message": "Possible SQL injection vector through string-based query construction",
+          "statement": "f\"SELECT {DOC_COLUMNS}, 0.0 FROM doc d WHERE d.kind = 'function' AND d.extra != ''{self.filters} \""
+        }
+      ],
+      "current_file_sha256": "ece03506fd7e85a0489c3de194d98a30c5f89b5973eb4da35e1766ab808c456b",
+      "classification": "false-positive-at-reviewed-production-boundary",
+      "evidence_level": "previous independent 43-site packet",
+      "basis": "Previously reviewed exact caller/identifier/optimization boundary; retain the full per-site guard ledger and normal/-O external controls in docs/qa/security-contract-triage-20261118.md.",
+      "controls": "prior 1,012-check gate and root 16 source-pinned child replays",
+      "limits": "This row is referenced, not silently counted as a new residual investigation."
+    },
+    {
+      "rule": "S608",
+      "path": "src/patchtrace/search/service.py",
+      "original_line": 238,
+      "function": "names",
+      "current_sites": [
+        {
+          "line": 238,
+          "column": 13,
+          "message": "Possible SQL injection vector through string-based query construction",
+          "statement": "f'SELECT {DOC_COLUMNS}, 0.0 FROM doc d WHERE d.kind IN ({marks}) AND (d.flags & ?) = 0 '"
+        }
+      ],
+      "current_file_sha256": "ece03506fd7e85a0489c3de194d98a30c5f89b5973eb4da35e1766ab808c456b",
+      "classification": "false-positive-at-reviewed-production-boundary",
+      "evidence_level": "previous independent 43-site packet",
+      "basis": "Previously reviewed exact caller/identifier/optimization boundary; retain the full per-site guard ledger and normal/-O external controls in docs/qa/security-contract-triage-20261118.md.",
+      "controls": "prior 1,012-check gate and root 16 source-pinned child replays",
+      "limits": "This row is referenced, not silently counted as a new residual investigation."
+    },
+    {
+      "rule": "S608",
+      "path": "src/patchtrace/unified/ir/ingest.py",
+      "original_line": 160,
+      "function": "flush",
+      "current_sites": [
+        {
+          "line": 160,
+          "column": 37,
+          "message": "Possible SQL injection vector through string-based query construction",
+          "statement": "self.db.executemany(f'INSERT INTO {table} VALUES ({marks})', rows)"
+        }
+      ],
+      "current_file_sha256": "11d5367304365d00d9e9c330d279671cac1b49e390dda12e9e4629da0ff0ea4e",
+      "classification": "false-positive-at-reviewed-production-boundary",
+      "evidence_level": "previous independent 43-site packet",
+      "basis": "Previously reviewed exact caller/identifier/optimization boundary; retain the full per-site guard ledger and normal/-O external controls in docs/qa/security-contract-triage-20261118.md.",
+      "controls": "prior 1,012-check gate and root 16 source-pinned child replays",
+      "limits": "This row is referenced, not silently counted as a new residual investigation."
+    },
+    {
+      "rule": "S608",
+      "path": "src/patchtrace/unified/ir/reader.py",
+      "original_line": 297,
+      "function": "_load_functions",
+      "current_sites": [
+        {
+          "line": 297,
+          "column": 27,
+          "message": "Possible SQL injection vector through string-based query construction",
+          "statement": "for row in db.execute(f'SELECT {select} FROM fn ORDER BY fid'):"
+        }
+      ],
+      "current_file_sha256": "24182ba5b3cec9aa946697f642889d9a0c117e2cda4d117cefb0e754cb08c0d6",
+      "classification": "false-positive-at-reviewed-production-boundary",
+      "evidence_level": "previous independent 43-site packet",
+      "basis": "Previously reviewed exact caller/identifier/optimization boundary; retain the full per-site guard ledger and normal/-O external controls in docs/qa/security-contract-triage-20261118.md.",
+      "controls": "prior 1,012-check gate and root 16 source-pinned child replays",
+      "limits": "This row is referenced, not silently counted as a new residual investigation."
+    },
+    {
+      "rule": "S608",
+      "path": "src/patchtrace/unified/ir/schema.py",
+      "original_line": 173,
+      "function": "table_rows",
+      "current_sites": [
+        {
+          "line": 173,
+          "column": 35,
+          "message": "Possible SQL injection vector through string-based query construction",
+          "statement": "for row in connection.execute(f'SELECT {columns} FROM {table} ORDER BY {_ORDER[table]}'):"
+        }
+      ],
+      "current_file_sha256": "a6a17a5f1218f400fbcae223a1352041e01168cf76c8a21c5f3015c45869afe3",
+      "classification": "false-positive-at-reviewed-production-boundary",
+      "evidence_level": "previous independent 43-site packet",
+      "basis": "Previously reviewed exact caller/identifier/optimization boundary; retain the full per-site guard ledger and normal/-O external controls in docs/qa/security-contract-triage-20261118.md.",
+      "controls": "prior 1,012-check gate and root 16 source-pinned child replays",
+      "limits": "This row is referenced, not silently counted as a new residual investigation."
+    },
+    {
+      "rule": "S608",
+      "path": "src/patchtrace/unified/store.py",
+      "original_line": 770,
+      "function": "_trusted",
+      "current_sites": [
+        {
+          "line": 770,
+          "column": 30,
+          "message": "Possible SQL injection vector through string-based query construction",
+          "statement": "copy.execute(f'SELECT COUNT(*) FROM enrichment_entries WHERE id IN ({\",\".join(\"?\" * len(chunk))})',"
+        }
+      ],
+      "current_file_sha256": "ed4b12f1cee9b53cbb9c8be335c02740075cce43b05df48fd19d064aab670477",
+      "classification": "false-positive-at-reviewed-production-boundary",
+      "evidence_level": "previous independent 43-site packet",
+      "basis": "Previously reviewed exact caller/identifier/optimization boundary; retain the full per-site guard ledger and normal/-O external controls in docs/qa/security-contract-triage-20261118.md.",
+      "controls": "prior 1,012-check gate and root 16 source-pinned child replays",
+      "limits": "This row is referenced, not silently counted as a new residual investigation."
+    },
+    {
+      "rule": "S608",
+      "path": "src/patchtrace/unified/store.py",
+      "original_line": 844,
+      "function": "delete_own",
+      "current_sites": [
+        {
+          "line": 844,
+          "column": 35,
+          "message": "Possible SQL injection vector through string-based query construction",
+          "statement": "deleted += db.execute(f'DELETE FROM enrichment_entries WHERE id IN ({\",\".join(\"?\" * len(chunk))}) '"
+        }
+      ],
+      "current_file_sha256": "ed4b12f1cee9b53cbb9c8be335c02740075cce43b05df48fd19d064aab670477",
+      "classification": "false-positive-at-reviewed-production-boundary",
+      "evidence_level": "previous independent 43-site packet",
+      "basis": "Previously reviewed exact caller/identifier/optimization boundary; retain the full per-site guard ledger and normal/-O external controls in docs/qa/security-contract-triage-20261118.md.",
+      "controls": "prior 1,012-check gate and root 16 source-pinned child replays",
+      "limits": "This row is referenced, not silently counted as a new residual investigation."
+    }
+  ],
+  "additional_current_rows": [
+    {
+      "rule": "S608",
+      "path": "src/patchtrace/pilot/sources/kb_context.py",
+      "line": 212,
+      "column": 13,
+      "function": "capture",
+      "current_file_sha256": "1a092df304919c8bd5c21790a8ff19fb46df85627c00cb14cddbab38a93672dc",
+      "classification": "false-positive-at-reviewed-production-boundary",
+      "basis": "Only the ten literal _TEXT_COLUMNS and two literal _INTEGER_COLUMNS generate typeof/length expressions. FROM/ORDER BY clauses are fixed; kind and LIMIT use ? bindings. Row/body/CLI text never becomes SQL syntax. The metadata read preflights storage types and total row bytes.",
+      "controls": "test_context_metadata_sql_external.py: 4 actual SQLite controls; independent exact-source additional-s608-review.md trace and preserved source bytes",
+      "limits": "Added after original strict79 and outside the prior43-site packet. No arbitrary hostile-schema, all-store I/O or publication-race claim."
+    }
+  ],
+  "mapping": "43 prior sites + original36 residual; XML one-to-two, UI one-to-zero, plus one new S608 = current80",
+  "security_lane": "still failing; these dispositions do not modify detector results, suppressions or acceptance policy"
+}

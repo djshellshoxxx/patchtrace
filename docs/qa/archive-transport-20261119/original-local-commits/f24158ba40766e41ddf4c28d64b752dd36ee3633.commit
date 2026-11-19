@@ -1,0 +1,6 @@
+tree 7a6f5fcff9193c4c076833fccfa1fc384a364b5b
+parent 4c1f8d42dba0315965be0ed17c08c2823337ea5b
+author Codex <codex@openai.com> 1795045100 -0800
+committer Codex <codex@openai.com> 1795045652 -0800
+
+Distinguish caller failures from fresh diagnostic interrupts [no release]

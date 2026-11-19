@@ -1,0 +1,19 @@
+{
+  "sealed_utc": "2026-11-19T00:50:29.133931+00:00",
+  "archive": "evidence.zip",
+  "archive_bytes": 1731293,
+  "archive_sha256": "f34ae4fc89a7cdafa947287f5d7993fd1c9781130c1b7cc2d008d6d5177bde65",
+  "manifest_sha256": "316476e28cab108e09de570f9774658f99a995e0d83f30e08c5359443d927705",
+  "payloads": 127,
+  "members": 128,
+  "payload_bytes": 5774009,
+  "verified_git_source_snapshots": 74,
+  "baseline": "f16d41062a5d558d889ef6a6bda922004e0ac3b4",
+  "source": "81590f936b3f01555720221e55f99ec0611ec4a1",
+  "focused": "20 passed, no skips",
+  "affected": "678 passed, 8 explicit native Windows skips",
+  "original_hosted_result": "failed, unchanged",
+  "recorder_errors_preserved": 2,
+  "native_windows_qualified": false,
+  "remote_mutations": false
+}

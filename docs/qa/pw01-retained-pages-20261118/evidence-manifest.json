@@ -1,0 +1,174 @@
+{
+  "kind": "pw01-retention-evidence/1",
+  "backend_commit": "302eaa6d812038c77b513c9533cd7420903b1622",
+  "root_reference_commit": "9d931737068abf424dec7b911dac41e5f43555ad",
+  "final_reviewed_local_commit": "c023dec36a464c3e7e1a8689f52a22263f0c24c5",
+  "final_reviewed_published_commit": "be9b168cf24620ad86d04be474660b5d31f655b9",
+  "files": [
+    {
+      "path": "final-external.log",
+      "bytes": 99,
+      "sha256": "f0f0648dcd5e4f5027c4a307d4cf8e69a4e69aefd37689bd65b972820e2861d2"
+    },
+    {
+      "path": "final-focused.log",
+      "bytes": 1233,
+      "sha256": "693e268ed0914bc2f19d78f3f92d66cf96bf91f7ee8879b187288656989240f9"
+    },
+    {
+      "path": "full-batched-c023dec3/independent-review.json",
+      "bytes": 1432,
+      "sha256": "10e23b4fd168904701f54a12f0dbd532311e253d963e79283e74ca143887c4ac"
+    },
+    {
+      "path": "full-batched-c023dec3/qualification-report.md",
+      "bytes": 4613,
+      "sha256": "5c47a54c1d9b868b489eb4ed0b080a4cdcb361f530cc8ebd50839541a4423403"
+    },
+    {
+      "path": "full-batched-c023dec3/run.py",
+      "bytes": 9573,
+      "sha256": "30b200054aa9d11112d7bc802132bf7177877365baf900c99fed180e1c15a437"
+    },
+    {
+      "path": "full-batched-c023dec3/summary.json",
+      "bytes": 95812,
+      "sha256": "ee780ee7cbcc929294ec3d39c9c3bd611b268321780dfb9312cfe7b99cd34560"
+    },
+    {
+      "path": "full-run-termination-a6996fd0.json",
+      "bytes": 421,
+      "sha256": "f17edd5edcee674fbb4048b97e6f049b9363e8945692ea737bbd99ef7ad2bb25"
+    },
+    {
+      "path": "l3-cve-2022-34718/download-plan.json",
+      "bytes": 775,
+      "sha256": "210ce0bc4fc972bfccacc83e5ee1aea49d0c593c0beb253dc4feda33607110b7"
+    },
+    {
+      "path": "l3-cve-2022-34718/ibm-image-receipt.json",
+      "bytes": 633,
+      "sha256": "3c9a5d62b46d66c7694eb92c06cc5d81424a36261e0a9de553fd27c374d9f8da"
+    },
+    {
+      "path": "l3-cve-2022-34718/offline-review.log",
+      "bytes": 1060,
+      "sha256": "644b7efa2dabb80d42598937528b58eef0d61593922d6a900f5abd82a76b34f7"
+    },
+    {
+      "path": "l3-cve-2022-34718/offline-review.py",
+      "bytes": 7487,
+      "sha256": "9e3d5ea7ae9add8a91e217ba9a0922edb7c9d5bac46419ea4817c8c3663224a9"
+    },
+    {
+      "path": "l3-cve-2022-34718/provenance-review.md",
+      "bytes": 8582,
+      "sha256": "16f72f629478fc1428565923b572407266d5063c74effeb25a4af0471d125a91"
+    },
+    {
+      "path": "l3-cve-2022-34718/source-review.json",
+      "bytes": 13834,
+      "sha256": "5e0c341d1cd9692238652f805e4fea456e550fdb1c517d3ed7b240b402518edb"
+    },
+    {
+      "path": "original-real-cli-check.py",
+      "bytes": 4401,
+      "sha256": "902b14520da5877def0e81ec7aa88ec7ad3d0221f3bc9566383898d6ca9f86e1"
+    },
+    {
+      "path": "original-real-retention-check.py",
+      "bytes": 5148,
+      "sha256": "5bb0635bbaf8152ae1cda00538e00f770b02b758ad1b5c285d99828b61fbc209"
+    },
+    {
+      "path": "production-direct-csv-attempt-receipt.json",
+      "bytes": 2468,
+      "sha256": "622f01745c857758e21824fce27829daee2bf66f9f321728d22bdbb2234ebac3"
+    },
+    {
+      "path": "production-exact-chain-attempt-receipt.json",
+      "bytes": 2577,
+      "sha256": "46dee06db4ae1bea8b76d5f7643fa09ba657eafbb2ffc8b7470f73028dd0c983"
+    },
+    {
+      "path": "production-exact-chain-plan.json",
+      "bytes": 572,
+      "sha256": "abe28e444e79a49e74d29cd20a9d6af38c0d539d253e4ec09447147a2f440c01"
+    },
+    {
+      "path": "production-fwlink-attempt-receipt.json",
+      "bytes": 2401,
+      "sha256": "735c73429073ac6a787aaecfe587d6cbe768ce652ca672bc11b6eecf1ab7c07b"
+    },
+    {
+      "path": "proxy-csv-receipt.json",
+      "bytes": 2403,
+      "sha256": "6a9c0e65b63328cc9c047cf8826c8d3c530056de87f71a0bb1f6b8d8f0431f69"
+    },
+    {
+      "path": "proxy-fwlink-receipt.json",
+      "bytes": 2264,
+      "sha256": "541ddca5b935d5c04981b9e0a428d1c9c27c0577581df0dbe6e99bb86781fe39"
+    },
+    {
+      "path": "proxy-support-receipt.json",
+      "bytes": 2714,
+      "sha256": "d9992a32c15445bc660dcba206b1d42cac8607055447c589803b455807b2cae2"
+    },
+    {
+      "path": "publication-code-mappings.json",
+      "bytes": 1583,
+      "sha256": "05c9f8dbc99025d924411cfb4d501efa4456bde09fbff14cc165ee39c33c09c7"
+    },
+    {
+      "path": "real-cli-qualification.json",
+      "bytes": 11600,
+      "sha256": "ebed886b9215efc20a186bf1d3b2396cf70bcecf459efbb3ca356de10d7afe29"
+    },
+    {
+      "path": "real-retention-result.json",
+      "bytes": 4006,
+      "sha256": "ccd63d2531279779df67cd301f340cf98fe7698ee81651e5345753f9f8adc21c"
+    },
+    {
+      "path": "root-reference-oracle.log",
+      "bytes": 173,
+      "sha256": "c14286bee6a8abfd82208725c95e6ddd3359e738595a382351a82d68b8b67ce0"
+    },
+    {
+      "path": "root-reference-oracle.py",
+      "bytes": 3191,
+      "sha256": "0000373699340d59d32b88602c09a6698609e66f765316877c786a9d1ef670aa"
+    },
+    {
+      "path": "saved-csv-format-profile.json",
+      "bytes": 2317,
+      "sha256": "5709fb3a1167eb3086801f38a162099326fb01537453fddf7972c15ac5b5229d"
+    },
+    {
+      "path": "windows-pr304-bb4277/failure-excerpt.log",
+      "bytes": 13031,
+      "sha256": "61b9159c0e43b3e8a48ffcad0c72745865aa1350e4afcd2f197851346930d46b"
+    },
+    {
+      "path": "windows-pr304-bb4277/receipt.json",
+      "bytes": 1800,
+      "sha256": "adab6650378009d4c78f9778c1bd3a5ce4b29e50a8a453512d93cc0bbf79b078"
+    },
+    {
+      "path": "witness-green-5960cfbe.json",
+      "bytes": 4160,
+      "sha256": "be55129188c4ce56b853282d7113cede08f86a7e4ac23bbf79b667a7316eb2b8"
+    },
+    {
+      "path": "witness-integrated-c023dec3.json",
+      "bytes": 4160,
+      "sha256": "921c591c47deac976b5a9f44905ae354e71c3ca78e6131cb4e67ed7c2d7c348d"
+    },
+    {
+      "path": "witness-red-5c9cd30d.json",
+      "bytes": 3561,
+      "sha256": "0d2ab4abd7fca44d608da8a844837c1765c486bc43f03fbf289d0fbee74144ac"
+    }
+  ]
+}

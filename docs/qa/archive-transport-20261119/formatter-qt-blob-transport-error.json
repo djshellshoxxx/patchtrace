@@ -1,0 +1,10 @@
+{
+  "operation": "create_blob for checkpoint29192f78 evidence archive",
+  "result": "HTTP400 MCP request body invalid or exceeds16MiB",
+  "archive_bytes": 13132985,
+  "archive_sha256": "ab11b8c014d5fdf0cfe94b2e29f661bd20974019f7c4f9a91151b7593dce4ece",
+  "prepared_commit_count_before": 33,
+  "ref_updated": false,
+  "approval_rejection": false,
+  "next": "read-only canonical Git fetch feasibility; preserve exact history and archive"
+}

@@ -6,7 +6,8 @@ takes a bounded snapshot of stored rows, including integrity checks (store-threa
 4a). Checking the stored ranking against the comparison, reading the advisory workspace, building the leads and
 building the table happen on the `TaskRunner` from that snapshot; a worker never opens or touches the project. A
 project switch cancels the request and a late result is dropped. The panel reads stored results only: it opens no
-network connection, runs no tool and creates no window.
+network connection and runs no tool. Its explicit file-inventory action opens a
+separate dialog with local import and separately consented source retrieval.
 """
 from __future__ import annotations
 
@@ -81,6 +82,8 @@ class KbPanel(QWidget):
 
     def __init__(self) -> None:
         super().__init__()
+        from .inventory_qt import register_inventory_tips
+        register_inventory_tips()
         self.setObjectName('kb.panel')
         self.state_view = StateView('kb.leads', NOUN, text_limit=VIEW_LIMIT, multiline=True)
         self.group = QComboBox()
@@ -93,7 +96,8 @@ class KbPanel(QWidget):
         self.buttons = {name: self._button(name, text, accessible) for name, text, accessible in (
             ('refresh', 'Refresh', 'Refresh the stored KB and CVE leads'),
             ('goto', 'Go to function', 'Go to the selected function in the code panes'),
-            ('copy', 'Copy evidence', 'Copy the evidence of the selected row'))}
+            ('copy', 'Copy evidence', 'Copy the evidence of the selected row'),
+            ('inventory', 'File inventories…', 'Open KB file inventories, including without a project'))}
         self.table = VirtualTable('KB and CVE leads table')
         self.table.setObjectName('kb.table')
         self.detail = SafeTextView('Evidence of the selected row', wrap=True)
@@ -118,6 +122,7 @@ class KbPanel(QWidget):
         column.addWidget(self.footer)
         root = QVBoxLayout(self)
         root.setContentsMargins(4, 4, 4, 4)
+        root.addWidget(self.buttons['inventory'])
         root.addWidget(self.state_view, 1)
         self.state_view.set_content(self.content)
         self.group.view().setAccessibleName('CVE group of the leads options')
@@ -150,6 +155,7 @@ class KbController(ControllerBase):
         self.model: LeadsViewModel | None = None
         self.group = ALL_GROUPS
         self.loading = False
+        self._inventory_dialog = None
         self._wire()
         self._render({'idle': {'hint': 'Open a project to read its KB and CVE leads.'}}, False)
 
@@ -160,6 +166,7 @@ class KbController(ControllerBase):
         panel.buttons['refresh'].clicked.connect(self.reload)
         panel.buttons['goto'].clicked.connect(self.go)
         panel.buttons['copy'].clicked.connect(self.copy_evidence)
+        panel.buttons['inventory'].clicked.connect(self.open_inventory)
         panel.state_view.retry_requested.connect(self.reload)
         panel.state_view.refresh_requested.connect(self.reload)
         panel.state_view.copy_requested.connect(self.ctx.shell.copy_text)
@@ -170,6 +177,8 @@ class KbController(ControllerBase):
     # ---- host hooks ----------------------------------------------------------------------------------
 
     def project_changed(self, key) -> None:
+        if self._inventory_dialog is not None:
+            self._inventory_dialog.clear_selection_target()
         self.tasks.cancel(CHANNEL)
         self.tasks.cancel(ROWS_CHANNEL)
         self.key, self.model, self.group, self.loading = key, None, ALL_GROUPS, False
@@ -185,6 +194,8 @@ class KbController(ControllerBase):
         self._enable()
 
     def shutdown(self) -> None:
+        if self._inventory_dialog is not None:
+            self._inventory_dialog.reject()
         self.tasks.cancel(CHANNEL)
         self.tasks.cancel(ROWS_CHANNEL)
 
@@ -311,6 +322,20 @@ class KbController(ControllerBase):
         row = self.current_row()
         if row is not None and row.kind == 'lead':
             self.ctx.shell.copy_text(row.copy_text[:COPY_LIMIT])
+
+    def open_inventory(self) -> None:
+        from .inventory_qt import InventoryDialog
+        if self._inventory_dialog is None:
+            dialog = InventoryDialog(self.panel, workspace=self.workspace or _default_workspace(), tasks=self.tasks)
+            dialog.setAttribute(Qt.WidgetAttribute.WA_DeleteOnClose)
+            dialog.finished.connect(self._inventory_finished)
+            self._inventory_dialog = dialog
+        self._inventory_dialog.show()
+        self._inventory_dialog.raise_()
+        self._inventory_dialog.activateWindow()
+
+    def _inventory_finished(self, _result) -> None:
+        self._inventory_dialog = None
 
 
 def _default_workspace() -> Path:

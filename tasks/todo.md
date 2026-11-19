@@ -1,5 +1,70 @@
 # PatchTrace delivery tracker
 
+## 2026-11-19 Windows QA fixture portability
+
+- [x] Preserve exact `771e5a77` Windows full QA: 51 failed, 25,155 passed, 150 skipped, two expected failures; separate publication subset 133 passed/four skips.
+- [x] Repair exact authored source/requirements bytes and isolated Git fixtures with retained portable red controls; preserve source/receipt validators and all original refusal assertions.
+- [x] Canonicalize only Linux inventory relative-name spelling; prove required resources and smoke failures still block archive creation in authored portable controls.
+- [ ] Independently review corrected source and qualify the resulting exact head on Windows. Original hosted failures, unresolved formatter observations and core ownership groups stay separate.
+
+## 2026-11-18 autonomous consolidation checkpoint
+
+- [x] Refresh all 307 original branch tips and 297 PR records; retain exact ancestry/patch/conflict inventory without claiming exhaustive semantic review.
+- [x] Publish reviewed Windows/chronology repairs to #304 `d8c02cae` with a SHA guard; preserve all source history and `[no release]`.
+- [x] Independently review and combine immutable KB object publication, fixture/tooltip repair and Ghidriff ranking identity refusal at `9002a1f4`; 2,866 affected passes, four explicit skips; whole Ruff/whitespace pass.
+- [x] Refresh reviews, inline review comments and actual-head check runs for all 55 then-open PRs; all review/comment collections are empty, independent evidence remains separately recorded.
+- [x] Publish reviewed non-clobber strings export as #308; complete source-reviewed paired raw-window desktop slice for a focused follow-on PR.
+- [ ] Finish saved/recent search independent review; complete shared CVE assessment staleness, release qualification and primary environment-isolation repairs.
+- [ ] Complete full exact-head Linux/Windows/Qt/native/package/security qualification; the local full-suite attempt ended incomplete and must not count as a pass.
+- [ ] Merge qualified #304 into main, retarget/requalify #307, then close only proved replacements; never delete branches or publish/tag a release.
+- [ ] Complete real CVE/KB-to-function source/native journeys, approved acquisition, PW-02, CVRF-to-pilot bridge and remaining audit/feature dispositions.
+
+[Checkpoint and raw evidence](../docs/qa/autonomous-consolidation-20261118/checkpoint/README.md).
+
+## 2026-11-18 current PW-01 and search continuation
+
+- [x] Preserve actual current #303 and #304 histories, including 50,000-entry v1 compatibility, strict 5,000-entry v2 pages, source admission and advisory-search repairs.
+- [x] Pass the exact combined 63-file selection: 2,121 tests, 2 native Windows skips; whole Ruff/schema checks pass. Independently verify merge preservation and archived raw evidence.
+- [x] Preserve the actual CSV replays, immutable first L2 MISS and source-specific L1 FAIL receipt without new accuracy claims.
+- [x] Build an isolated pinned Rizin discovery correction, prove unchanged-rebuild equivalence, and retain native authored controls plus an independent shared-pair rerun; keep production selection and scoring unchanged.
+- [x] Refuse observable native Rizin endpoint/name ambiguity before research ranking; preserve red controls and the orphan-record follow-up. Final source `61b7cfb4` passes 202 focused tests and 114 plus 18 independent controls; native-record replay is separate from accuracy scoring. See [identity evidence](../docs/qa/rq-rizin-identity-20261118.md).
+- [ ] Propose a separately pinned tool update with Windows/native/cancellation/ownership qualification and a prospective symbol-identity contract before production adoption or new scored claims.
+- [ ] Qualify and merge #304 with the exact-head REST SHA guard and `[no release]`; then retarget this inventory continuation to canonical main and re-evaluate its exact-head/base gates before merging.
+- [ ] Verify main integration and fresh PR heads before superseded closures; preserve every remote branch and remaining partial scope.
+- [ ] Complete production source retrieval, native/manual UI acceptance, separate PW-02, prospective ranking/label contracts and explicitly approved L3 acquisition.
+
+[Current handoff and feature matrix](../docs/qa/pw01-current-integration-20261118.md).
+
+
+## 2026-11-18 current PW-01 capacity compatibility
+
+- [x] Preserve fresh #303 `2b697222` as an actual parent, including its independently reviewed source-admission repair.
+- [x] Keep v1 default/hard 50,000 and separate v2 default/hard 5,000; replay captured 5,000/50,000 v1 and existing v2 bytes/IDs exactly.
+- [x] Preserve raw red receipts; pass 581 focused tests, independent 44 controls, Ruff/schema checks, and nine sequential offline real-CSV CLI operations at source `0be3b9eb`.
+- [ ] Integrate the current consolidation parent and qualify the resulting exact head on all required hosted/native/package gates before merge completion.
+
+[Source, scope and archived evidence](../docs/qa/pw01-capacity-compat-20261118.md).
+
+## 2026-11-18 retained inventory pages and native pilot
+
+- [x] Preserve exact published #303 and #304 histories in the inventory continuation; keep every remote branch.
+- [x] Retain explicitly chosen source architecture/pages without raising input/entry budgets, changing v1 identities or mutating investigations; full-source conflict witnesses and incomplete-scan selection refusal are verified.
+- [x] Reproduce and repair legacy `.tsp` replay drift and bounded Qt conflict-witness visibility; preserve original failure receipts.
+- [x] Qualify the actual saved KB5036893 CSV through backend replay and 13 shipped-CLI operations: four AMD64 pages expose 18,761 accepted claims; source, original import and provenance remain unchanged.
+- [x] Independently review combined code `c023dec3` / published `be9b168c`: 1,076 focused passes, 2 native Windows skips and 10 external probes; Ruff and schema checks pass.
+- [x] Repair bounded linked-worktree Git identity in future research receipts without editing earlier receipts.
+- [x] Freeze and independently review one real open-source patch oracle, compile both sides identically, run native Rizin once and retain the MISS / FAIL outcome; no target execution or accuracy bound.
+- [ ] Complete current-head hosted consolidation gates, SHA-guard merge with `[no release]`, then reconcile only demonstrably replaced PRs.
+- [ ] Complete the separate inventory continuation's full/Qt/Windows/package/native gates and merge after its consolidation prerequisite.
+- [ ] Complete production CSV retrieval on a host with working direct DNS/TLS; saved proxy capture is not that acceptance.
+- [x] Diagnose the L2 function-discovery miss with pinned source and authored shared/executable/PE controls; preserve the scored pilot and separate source-only options review.
+- [ ] Separately specify/build/qualify native symbol-seeding repair and a prospective source-oracle naming contract; no rescoring or accuracy promotion from diagnosis.
+- [ ] Complete reviewed real Windows pair provenance/consent and L3 labels before acquisition/scoring; no implicit target downloads.
+
+[Inventory evidence and handoff](../docs/qa/pw01-retained-pages-20261118.md);
+[native L2 pilot](../docs/qa/l2-native-pilot-20261118.md);
+[post-measurement discovery diagnosis](../docs/qa/l2-rizin-discovery-20261118.md).
+
 ## 2026-11-18 advisory anchor integration
 
 - [x] Independently review #305/#306 and preserve both actual heads in successor history.
@@ -11,7 +76,6 @@
 - [ ] Verify main and fresh PR heads before any superseded closure; keep every remote branch and partial/unresolved scope.
 
 [Search integration and source-specific L1 evidence](../docs/qa/search-anchor-integration-20261118.md).
-
 
 ## 2026-11-18 refreshed #302 integration
 
@@ -59,7 +123,10 @@
 - [x] Independently review six narrow correctness ports from concurrent #304 and repair ZIP normalization, ambiguous change provenance and bounded pair enumeration; preserve its separate remaining scope and existing release policy.
 - [ ] Keep concurrent #305/#306 and the pre-existing mixed Windows 10 source-key issue separately tracked; do not turn their remaining scope into a completed-consolidation claim.
 - [ ] Qualify and merge `codex/consolidation-reviewed-20261118` on current-head/base hosted gates; then close only exactly accounted-for PRs with replacement references.
-- [ ] Implement and independently verify PW-01 bounded CSV parsing, support links/retrieval, provenance/store, CLI and KB panel; keep its registered spec and schemas current.
+- [x] Implement and independently review PW-01 bounded CSV parsing, support links/retrieval, provenance/store, CLI and KB panel; register contracts and regenerate schemas. Combined focused gate: 816 passed, including later-section capacity while preserving old-budget replay. See [PW-01 evidence](../docs/qa/pw01-20261118.md).
+- [ ] Qualify and merge PW-01 on current-head hosted Linux/Windows/package gates; complete production Microsoft retrieval on a runner with direct DNS/TLS access. Both exact-plan attempts here returned PT-KBC-ACQUIRE after DNS failure; the saved real capture is offline evidence only.
+- [x] Normally merge corrected consolidation `121ffb0b` into PW-01, retain both QA sections, and independently verify 1,016 combined project tests plus four socket-denied integration controls. Current published-head hosted gates remain separate.
+- [x] Reproduce and independently review the PW-01 source-admission race repair at `433440a3`: current source-snapshot and no-op revision guards; 1,023 combined tests and seven independent admission controls pass. Current-head hosted qualification remains pending.
 - [ ] Follow PW-01 with the separate bounded local MSU/CAB PW-02 slice; native Windows extraction remains a distinct acceptance gate.
 - [ ] Keep manual desktop/accessibility, RB-01 targeted live, original timeout-pair, clean-machine release and L1/L2/L3 acceptance open until evidenced.
 - [ ] Separate strings-export follow-ups: race-safe no-clobber publication and compatible document-level extraction/truncation/redaction metadata, including empty exports.
@@ -112,6 +179,15 @@ Current integration: `codex/release-integration-20261116`; see
 on the integration branch. Hosted CI, further historical semantic review and
 native/release acceptance remain open; full local verification hit environment
 and worker-termination blockers documented in the checkpoint.
+
+## Strings publication continuation — 2026-11-18
+
+- [x] Implement and independently review concurrent-destination preservation,
+  exclusive unpredictable staging and interruption cleanup in strings export.
+  Source `922af3b8`; [QA evidence](../docs/qa/strings-export-publication-20261118.md).
+- [ ] Complete exact-head hosted Linux/Windows/package qualification before merge.
+- [ ] Complete compatible document-level extraction/truncation/redaction metadata,
+  including empty CSV exports; the focused publication repair does not close this scope.
 
 ## P1 — Recurring Windows comparison timeout (reported 2026-11-06)
 
@@ -1438,3 +1514,491 @@ Full `QT_QPA_PLATFORM=offscreen python -m pytest -q` for this isolated native sl
   Linux/Windows, native H7 and package gates before merging the reviewed candidate.
 - [ ] Keep inherited forced-export ownership, broad-stack scanner findings,
   inventory/native qualification and release/manual/accuracy gaps explicit.
+### 2026-11-18 CVRF → pilot retained-context bridge
+
+- [x] Spec/test-first bounded fallback and exact field/source admission (`8dff2992`, `35390267`).
+- [x] Preserve CSAF precedence, vendor origin, unknown applicability and retained-history wording.
+- [x] Qualify exact source: 1,533 affected checks passed; guarded CLI lead/why receipt retained.
+- [ ] Combine report agent current-input hook and verify stored-read/publication identity.
+- [ ] Root independent combined review and integration/hosted/native gates.
+
+
+### [ADVISORY-READ-BOUNDS-20261118]
+
+- [x] Bound individual advisory sidecar reads through the shared held-file verifier; preserve seven original failures and independent review.
+- [ ] Qualify native Windows and final-head full/platform gates; assess cumulative advisory I/O separately.
+
+
+### [PILOT-CVRF-COMBINED-20261118]
+
+- [x] Combine the retained CVRF bridge, shared freshness/report checks and independently reviewed SQLite type/complete-row budget repairs; retain all original red evidence.
+- [x] Run the exact combined affected selection: 1,924 passed, zero skips, including unchanged root probes and separate history/report controls.
+- [ ] Complete real-source/native analyst journey and final exact-head Linux/Windows/Qt/package/security qualification.
+
+### [RAW-ALIGNMENT-DESKTOP-20261118]
+
+- [x] Compare #168 against current inspection/raw infrastructure and define the bounded paired-window desktop contract before implementation.
+- [x] Recover independent physical offsets, exact-window copy provenance, span navigation and cancellation/context guards through the existing pure backend and TaskRunner; retain the original failing control.
+- [x] Pass the 182-test affected selection, current-source headless CLI guard, complete tooltip sweep, unchanged host-seam limits and whole Ruff; retain the subprocess environment failure and correction.
+- [ ] Independently review and integrate source `e4506666` with spec/test-first `640baa22`; complete actual-head full/hosted/native/manual gates before broader acceptance. [Qualification receipt](../docs/qa/raw-alignment-workflow-20261118.md).
+
+### [RAW-ALIGNMENT-INDEPENDENT-INTEGRATION-20261118]
+
+- [x] Independently inspect source `e4506666`, verify its nine authored receipts and seven source hashes, and execute 183 affected plus six adversarial controls.
+- [x] Port the reviewed source onto published #307 `58fc1306` and execute 183 source-pinned affected checks; preserve original author history through commit provenance and receipts.
+- [ ] Publish the focused reviewed branch; obtain all exact-head applicable hosted/full/native/manual gates and promote only after the #304 → #307 chain qualifies. [Evidence](../docs/qa/raw-alignment-reviewed-20261118/README.md).
+
+### [SAVED-SEARCH-WORKFLOW-20261118]
+
+- [x] Define saved/recent desktop and CLI ownership, replay, bounds and no-execution contracts before source changes; preserve the 14-failure baseline.
+- [x] Wire the existing stores with compatible mode/filter replay, project/epoch guards, bounded per-user text recall and explicit saved run/delete actions; preserve and correct both self-review defects.
+- [x] Pass the 374-test affected selection, actual default GUI and current-source headless CLI journeys, global tooltip coverage and whole Ruff without changing generic settings, project schemas or the UI host.
+- [ ] Independently review source `e705974b` with spec/test-first `ada1a164`; publish as a focused follow-on to the retained integration and complete actual-head/hosted/native/manual gates. [QA receipt](../docs/qa/saved-search-workflow-20261118.md).
+
+### 2026-11-18 saved-search review follow-up
+
+- [x] Repair delayed Build autosubmit after recent recall; preserve coverage and normal Build behavior (`c30c7911`).
+- [x] Preserve independent red and authored red/green receipts; affected selection 376 passed.
+- [ ] Root independent recheck and combined qualification/publication.
+
+### [SAVED-SEARCH-INDEPENDENT-INTEGRATION-20261118]
+
+- [x] Independently review saved event replay, CLI lifecycle, Qt ownership and bounded recent settings.
+- [x] Reproduce and repair delayed Build auto-submission of recalled text; preserve red and independent green plus positive execution-intent controls.
+- [x] Integrate onto published #307 and execute376 affected checks, required Ruff and whitespace.
+- [ ] Publish focused candidate and complete all exact-head/full/platform/manual gates before promotion. [Evidence](../docs/qa/saved-search-reviewed-20261118/README.md).
+
+### [PRIMARY-ENVIRONMENT-DEFAULTS-20261118]
+
+- [x] Reproduce default external-child credential/injection exposure with dummy values and specification-first controls.
+- [x] Enable the existing allowlist by default consistently for backend/CLI and fresh desktop settings; preserve explicit compatibility choices and forced bundle isolation.
+- [x] Obtain independent review and370 affected/additional passes with3 native Windows skips, without weakening redaction or process-tree assertions.
+- [ ] Complete native H7 Linux/Windows, full exact-head/platform/package/security gates before promotion; separately repair primary memory/total-output budgets. [Receipt](../docs/qa/primary-environment-20261118/README.md).
+
+
+### [RELEASE-QUALIFICATION-REVIEWED-20261118]
+
+- [x] Implement and independently repair bounded exact-source publisher qualification; retain original red evidence and combined 458-pass / 3-xfail receipt.
+- [ ] Qualify the separate dependency/security lane and actual exact-source native/package/full gates; Windows BinDiff disconnected check remains blocked. No release is authorized.
+
+
+### [MANIFEST-DTD-REVIEWED-20261118]
+
+- [x] Refuse parser-recognized manifest doctypes across accepted encodings; preserve original reproductions and independent 384-pass verification.
+- [ ] Finish final exact-head parser/platform/package gates and substantive security-scan triage.
+
+## Dependency/security qualification candidate (2026-11-18)
+
+- [x] Implement strict native OS/profile scan jobs, full installed inventories and bounded source-owned receipts; preserve red controls and independently repair interpreter/install provenance contradictions.
+- [x] Run actual Linux runtime/packaging/static scans and retain all failures, duplicate advisory rows, original source identities and unaudited categories. These are failing scans, not release qualification.
+- [ ] Substantively address the six distinct bootstrap pip advisories and 79 untriaged static findings; keep the original failing inventories immutable and do not suppress them into a pass.
+- [ ] Obtain exact-source native Windows inventories, hosted scan jobs and complete integrated qualification. Local full attempt137 remains incomplete. [Evidence](../docs/qa/autonomous-ci-20261118/dependency-security/README.md).
+
+### [CALLGRAPH-CAP-TRUTH-20261118]
+
+- [x] Preserve unchanged historical cap/path failures and specify the first narrow cap-truth slice.
+- [x] Retain per-origin omission counts; deduplicate roots before caps; propagate partial reasons through CLI/JSON/DOT and desktop state.
+- [x] Qualify exact source/test head `2c69c4ad`: 464 affected cases, whole Ruff/diff, real headless CLI and MainWindow journey; preserve all original failures.
+- [x] Complete root's independent final-tree/external-controls review: 464 affected and six unchanged historical cap controls pass; no blocking finding.
+- [ ] Focused integration by root.
+- [ ] Implement and independently qualify shared path budgets/lazy CSR as a separate slice; original 202-versus-40 budget failure remains open.
+- [ ] Native/manual/Windows/frozen and final full-repository qualification.
+
+### Explicit bootstrap follow-on
+
+- [x] Verify primary-source pip 26.3 compatibility/fix/pin evidence and record the original bootstrap, exact hash-pinned pip-only installation, prepared inventory and final complete closure.
+- [x] Independently review the transition and preserve actual Linux runtime17/packaging32 zero-advisory results with pip included; retain the original six failing snapshots unchanged.
+- [ ] Complete native Windows profiles, substantive static remediation and integrated gates; static remains79 and publication remains blocked. [Evidence](../docs/qa/autonomous-ci-20261118/pip-bootstrap/README.md).
+
+### [CALLGRAPH-PATH-BUDGET-20261118]
+
+- [x] Spec/test first; preserve original accounting/copy/cancellation failures and historical controls.
+- [x] Implement shared adjacency budget, lazy CSR membership, canonical completed-witness retention and truthful partial wording in four owned files.
+- [x] Qualify exact source `f0b0eb02`: 489 affected cases, actual headless CLI journey, whole Ruff/diff; source-pinned receipts retained.
+- [x] Root independent review: 490 affected/oracle cases and 17 unchanged historical cases pass separately; no blocking finding.
+- [ ] Focused integration by root; final full/platform/native/manual/package gates remain open.
+
+### [VERIFIED-FOLLOWUP-INTEGRATION-20261118]
+
+- [x] Combine actual reviewed #308–#315 heads with the preserved #304/#307 chain, preserving append-only attribution and all prior evidence.
+- [x] Integrate independently accepted scanner provenance/bootstrap, schema/replacement refusal, callgraph cap truth and shared path budget repairs; 1,770 selected combined checks pass with three existing expected failures.
+- [x] Verify all 75 changed source/test/tool/workflow file owners and independently verify sealed evidence archives; record and correct the initial documentation-conflict error append-only.
+- [x] Inspect actual #304 Linux/Windows full QA, repeated Qt, native and package receipts; distinguish green checks from blocked/partial native outcomes.
+- [ ] Publish reviewed follow-up candidate and obtain its own complete exact-head full/platform/native/package/dependency/security gates before main integration.
+- [ ] Complete the remaining 111 semantic tip reviews and broad checkpoint residue; do not close older PRs before canonical proof.
+- [ ] Complete Windows BinDiff effective network denial, substantive static triage, compiler/native limitations and primary resource bounds.
+- [ ] Finish representative CVE/KB acquisition/analyst journeys, PW-02, packaged F8/recovery surfaces and manual/native acceptance.
+- [ ] Preserve frozen L1/L2 failures and L3 unverified status; qualify separate experiments without editing original outcomes.
+
+Current evidence and assigned work: [checkpoint](../docs/qa/verified-followup-integration-20261118/README.md). Earlier unchecked milestones remain historical observations; this dated append records completed narrow integrations without claiming final production acceptance.
+
+### [STATIC-OWNERSHIP-FOLLOWUP-20261118]
+
+- [x] Independently reproduce and repair failed staging mkdir deleting an unowned directory; preserve original red/positive evidence and 140-pass review.
+- [x] Retain original 43-site static dispositions and independently replay all eight control groups with/without Python assertions on combined source.
+- [x] Re-run complete strict static detection; retain all 81 current findings and explicitly map the two additions to original 79.
+- [ ] Complete source-specific residual/extra-site review; retain raw findings and repair only reproduced defects.
+- [ ] Repair and independently review failed engine-attempt persistence diagnostics through final UI aggregation.
+- [ ] Obtain actual final candidate full/platform/native/package/dependency/security gates before canonical integration.
+
+### [SEMANTIC-DISPOSITION-BATCH2-20261118]
+
+- [x] Compare 20 additional original tips against exact source `3be3af16`; retain patches, source/symbol evidence, replacement provenance and scoped decisions.
+- [x] Preserve current and unchanged historical controls, original failures, command records and actual headless CLI output in the sealed evidence packet.
+- [x] Distinguish 18 retained focal scopes from two overlapping tips sharing the one missing selected-superseded-source explanation; preserve correct evidence withholding.
+- [ ] Propose and independently review a separate warning/presentation repair without altering source admission, status, ambiguity or conflicts.
+- [ ] Continue 91 unselected original tips plus broad residue from earlier selected scopes; no blanket branch closures or completion credit. [Receipt](../docs/qa/semantic-disposition-batch2-20261118.md).
+
+### [KB-NAMED-SUPERSEDED-20261118]
+
+- [x] Retain the unchanged historical omission/control and specify bounded selected-source explanations before source edits.
+- [x] Preserve corrected baseline18-fail/14-positive controls and all initial fixture failures; implement only the two approved index/presentation methods.
+- [x] Qualify exact source51f33d5a with411 affected cases, the original historical control, eight actual headless CLI calls, real offscreen presenter controls, whole Ruff and whitespace.
+- [ ] Root independent review, selective integration and exact combined/hosted qualification; no release or whole-branch closure credit.
+- [ ] Continue the next20 original semantic tips from the91 remaining, using published PR #31655f3 as the comparison baseline. [QA](../docs/qa/kb-named-superseded-20261118.md).
+
+### [SEMANTIC-DISPOSITION-BATCH3-20261118]
+
+
+- [x] Inspect 20 further exact source-bearing tips against actual #316 `55f3d074`; preserve real patch, caller, replacement and ancestry evidence.
+- [x] Run source-pinned 36-file current gate (666 passed, four Windows skips), preserving global tooltip coverage and all original contrary controls.
+- [x] Record two narrow candidates without source edits: retained backup ownership defect (root-owned follow-on) and missing code-highlighter dispatch guard.
+- [ ] Independently review and selectively retain this docs-only batch; preserve all branches and original mechanical inventory.
+- [ ] Design/repair/independently qualify backup directory publication in its separately assigned scope.
+- [ ] Propose, spec/test and independently qualify the one-file highlighter guard slice; retain unchanged historical test bytes.
+- [ ] Inspect the remaining 71 original tips and broader checkpoint/package/research residue; no blanket closure.
+- [ ] Complete actual final-source full/platform/native/package/manual gates; source/offscreen tests are not that acceptance.
+
+### [CODETEXT-WINDOW-DISPATCH-20261118]
+
+- [x] Specify the dispatch boundary and preserve original current/historical failing controls before source changes.
+- [x] Repair only CodeHighlighter.highlightBlock, keeping the fail-closed boundary and controller validation.
+- [x] Pin source 2bf86c88; run identical normal/2x nine-file gates (804 passed/one optional skip each), unchanged historical three-node replay and whole Ruff/diff.
+- [x] Seal exact source snapshots, failure/positive receipts, actual device-pixel ratios and archive hashes.
+- [ ] Root independent review and selective integration with attributed source history.
+- [ ] Final combined/full/platform/native/manual/package gates; separate F8 tooltip collision remains owned by its author.
+
+
+### [VERIFIED-CONTINUATION-20261118]
+
+- [x] Independently review and selectively port the seven bounded source/tooling repairs; preserve original red evidence, authorship and all branch references.
+- [x] Retain semantic batches 2/3 and the source-specific residual security dispositions without converting strict findings to a scanner pass.
+- [x] Verify all 26 changed source/test/tool/workflow paths against exact reviewed owners at `5bbb925694b89ddc77e2aae1ea36c9f563c7760d`; preserve append-only documentation conflict bodies.
+- [x] Run the 87-file combined offline gate: 2,764 passed, nine skips, zero failures/errors; retain all 517 imported-source identities, normal Ruff and strict 80 findings.
+- [x] Preserve incomplete original broad run and automatic-review rejection; separately verify 61 path-related original failures and the hermetic no-input fixture repair.
+- [ ] Publish the reviewable continuation append-only to existing PR #316, verify every remote tree/parent and fresh main/PR state; no main merge or release implied.
+- [ ] Finish R2 acceptance-witness/manual-attribution repair and remaining semantic branch batches, with independent review and exact-source gates.
+- [ ] Implement/qualify separate PW-02 acquisition slice; complete representative CVE/KB/native/manual journeys.
+- [ ] Complete final full Linux/Windows, repeated Qt, native, frozen package/installer, dependency/security and reproducibility gates; treat skipped/blocked/stale evidence as unverified.
+
+See the [immutable continuation checkpoint](../docs/qa/verified-continuation-20261118/README.md).
+
+### [SEMANTIC-DISPOSITION-BATCH4-20261118]
+
+- [x] Inspect 20 more exact original source-bearing tips at published PR316 55f3d074 with source/caller/contract/ancestry proof.
+- [x] Retain exact historical tests and every failure; run bounded current 42-file gate (1,017 passed, two compiler deselections, zero skips).
+- [x] Confirm the R2 witness/manual-attribution omission through strict persistence, desktop view model and actual reopened CLI; hand off to separately assigned repair owner.
+- [x] Distinguish historical Support, A-29, invalid-entry and cache-token expectations from admitted product behavior; preserve originals unchanged.
+- [ ] Independently review/selectively retain this docs checkpoint; no whole-branch closure or remote changes.
+- [ ] Complete separate mirror-safe R2 witness/manual attribution repair and independent acceptance without broad historical policy rollback.
+- [ ] Design and qualify any future Tier W saved-plan/CLI and R1 research-runner recovery using current ownership/contracts.
+- [ ] Inspect the remaining 51 original tips and broader checkpoint/research/native/package residue.
+- [ ] Complete actual final-source full/platform/native/package/manual gates; synthetic source checks are not that acceptance.
+
+
+### [CONTINUATION-R2-20261118]
+
+- [x] Independently review/port batch4 and R2 source/spec/test/QA history; preserve Support and frozen outcomes.
+- [x] Verify 31 owner paths and exact-source 108-file combined gate: 3,528 passed/nine skips; retain 522 import identities.
+- [x] Retain unchanged strict 80 findings and independently verify older-source hosted native/runtime/static receipts.
+- [x] Seal combined commands/results, original observation hashes and append-only conflict records.
+- [ ] Complete append-only PR316 publication and verify remote head/tree/parents without main merge.
+- [ ] Repair saved advisory-scope admission before mutations; review remaining 51 original tips and broader residue.
+- [ ] Qualify PW-02 local package extraction, static artifact retention, current full/platform/native/package/security gates.
+
+## Semantic disposition batch 5 — 2026-11-18
+
+- [x] Inspect 20 further exact original source tips against frozen PR316 55f3; retain original probes, failures, source/ancestry proofs and broad residue.
+- [x] Classify all 44 historical saved-scope nodes and hand approved narrow design/evidence to its separate owner.
+- [x] Record current 34-file gate: 1,129 pass, one Windows-only skip, one CODEX-14 xfail, four explicit native/compiler deselections.
+- [ ] Independently review and selectively retain the docs-only batch5 checkpoint (root-owned).
+- [ ] Continue the 31 unselected original tips; no whole-branch closure or native/manual/package acceptance is implied.
+- [ ] Track separate COFF/saved-scope repairs and proposed A/A-only failure propagation; retain configuration/final-run/recipe/transfer/Windows-CI residue.
+
+
+### [AA-SHARD-CLASSIFICATION-20261118]
+
+- [x] Reproduce both omitted A/A failure outcomes through unchanged public persisted-shard controls.
+- [x] Specify/test before the four-line classification/reason repair; preserve generic findings and prior error precedence.
+- [x] Retain exact-source author and independent controls, original fixture correction, raw outcomes and source hashes.
+- [ ] Selectively integrate attributed commits and verify the combined source; no frozen/native/accuracy or main-merge credit.
+
+### Semantic disposition batch6 (2026-11-18)
+
+- [x] Inspect 20 distinct original tips against frozen 55f3, preserving exact source/ancestry/caller and fixture evidence.
+- [x] Preserve 22 original historical outcomes and the 173-pass bounded current gate with two compiler deselections.
+- [ ] Complete the remaining 11 original focal dispositions; keep broad research/native/platform obligations open.
+- [ ] Root independent review and selective docs integration; no whole-branch closure or remote changes.
+
+### Semantic disposition final batch7 (2026-11-18)
+
+- [x] Inspect the final 11 original focal scopes at frozen 55f3; verify the exact 131-name/tip union without whole-branch closure.
+- [x] Retain current and every executed original historical outcome, dependency error and explicit policy mismatch.
+- [ ] Reproduce CODEX1/5/6/14 on the approved current candidate before narrowly reviewed repairs; map dependency lock coverage before installer changes.
+- [ ] Reconcile the unretained Phase2 reference package after still-reachable runtime/workflow defects; no silent contract reinterpretation.
+- [ ] Root independent review/selective docs integration; broad native/research/platform/hosted/manual obligations remain open.
+
+
+### [WINDOWS-SOURCE-OBSERVATIONS-20261118]
+
+- [x] Preserve supported-semantics source evidence and all original author/reviewer failures.
+- [x] Specify/test then repair compatible comparisons, both final tree consumers and receipt reads; independently review exact source.
+- [ ] Integrate and run actual combined/candidate Windows, native, dependency and package gates; all eight Windows skips remain unverified.
+
+### 2026-11-18 — Current workflow audit follow-on
+
+- [x] Implement the bounded CODEX-1 action-pin candidate, preserving the original
+  probe and strict neighboring workflow policies (source `2d8ef3f5`, final tests
+  `3b3c3d63`; sealed `docs/qa/workflow-action-pins-20261118.md`). Root independent
+  integration review remains separate.
+- [ ] Complete separately reviewed corpus archive verification (CODEX-6), Linux
+  full frozen CLI smoke wiring (CODEX-14), and an approved platform/closure hash
+  design followed by implementation (CODEX-5). The action receipt credits none
+  of these unresolved scopes or any hosted/native acceptance.
+
+
+### [CONTINUATION-TAIL-20261118]
+
+- [x] Independently verify and integrate semantic batches5/6/7; all131 original focal tips dispositioned, broader residue explicit.
+- [x] Port reviewed saved-scope, A/A, optional COFF, artifact retention, Windows observations, PW02 pure contracts and immutable action references.
+- [x] Verify101 owner paths and215-file current gate:6,356 pass/18 skips/three known expected failures;552 source imports; preserve original failures and observations.
+- [x] Retain unchanged strict80 diagnostics, primary Windows semantics and independently checked older-source hosted14ef packet.
+- [ ] Finish append-only PR316 publication with exact remote tree/parent/ref readback; no main merge.
+- [ ] Independently review/integrate cache verification, full Linux smoke and directory-publication import-purity handoffs.
+- [ ] Complete portable worker-grant and neutral core reader/checkpoint slices, then native stage/FDI/supervisor and existing KB propagation/durable package linkage.
+- [ ] Reconcile Phase2 reference contracts and complete approved platform/profile dependency hash-lock design and implementation.
+- [ ] Obtain complete actual-candidate full/Linux/Windows/Qt/native/frozen/package/security/reproducibility gates; no beta/release readiness yet.
+
+- [x] Implement and locally qualify the separate CODEX-6 archive-cache candidate
+  (`693d0bc7`, tests `451e463d`); root independent review/hosted execution remains
+  pending. Dependency hashes and Linux full frozen smoke remain separately open
+  in this exact receipt; see `docs/qa/corpus-archive-cache-20261118.md`.
+
+- [x] Implement CODEX-14 Linux full frozen smoke wiring (`dd0ad00b`), preserving
+  six original/spec reds and the actual490-pass/one-baseline-failure gate.
+- [ ] Independently qualify that source, repair the separately confirmed IR
+  import-purity reachability, and obtain actual frozen/native hosted evidence.
+  See `docs/qa/linux-full-frozen-smoke-20261118.md`; CODEX-5 remains open.
+
+- [x] Implement the separate directory-publication import-boundary candidate
+  (`73bd7ead`) without changing native publication semantics. Original pure IR
+  import test passes unchanged;442 affected passes, native Windows junction
+  remains unrun here. See `docs/qa/directory-publication-import-purity-20261118.md`.
+
+
+### CI follow-up checkpoint — 2026-11-18
+
+- [x] Verify preceding45-commit append-only PR316 publication and main/preview readback.
+- [x] Independently review/port cache, full smoke and import-purity fixes; exact30-file gate1,028pass/two skips/one CODEX5 xfail.
+- [x] Preserve ten owner paths,221 Git-pinned imports,unchanged strict80 findings and original probes.
+- [x] Retain API-hash-verified prior-f3 Windows dependency/BinDiff/static artifacts, including actual failures despite job success.
+- [ ] Publish this reviewed checkpoint append-only with exact object/ref/preview readback.
+- [ ] Finish independent worker/core/navigation reviews and integrate eligible repairs.
+- [ ] Diagnose and fix Windows pip inspection encoding and restricted-control exit125 without weakening gates.
+- [ ] Complete dependency hash closure, native intake/KB/durable provenance and all actual-candidate final acceptance.
+
+## Phase 2 reference follow-up, 2026-11-18
+
+- [x] Reconcile all nine reference record families against exact 068513a7 producers/consumers and preserve original 4522030f files/tests/outcomes; see `docs/plans/phase2-reference-contract-disposition-20261118.md`. This does not change the original 131-tip denominator or close whole branches.
+- [ ] P2-NAV-1: wire the existing live SourceLocation validator into actual signal navigation with bounded stale/invalid feedback. Original persisted/reopened desktop proof: 3 failed / 4 positive controls. Approved separate spec/test-first slice; source unchanged in this disposition.
+- [ ] Any reference interchange adapter, typed WIL/dataflow claim, richer B3 desktop/report projection or calibration change needs its own explicit contract and evidence; none is implied by reference JSON Schema validation.
+
+### [CORE-HELD-INPUTS-20261118]
+
+- [x] Specify and test optional neutral held-input capabilities and operation checkpoints before source.
+- [x] Preserve complete copy/hash/PE/ownership checks and ordinary call shapes; checkpoint inside the first-save transaction before COMMIT.
+- [x] Retain original red/setup-error receipts and the exact 297-pass, zero-skip affected gate with 301 source-pinned modules.
+- [ ] Root independent review and selective integration of `f3456f92` / `b85a0cf7` plus QA.
+- [ ] Separately implement and review KB propagation, durable package provenance/reconciliation and native Windows readers; no expired-lease recovery or native/package acceptance is credited here.
+
+
+### [CORE-HELD-INPUT-CLEANUP-20261118]
+
+- [x] Retain the original independent cleanup/error-precedence failure and unchanged probe.
+- [x] Specify and test then preserve the primary error plus a bounded retention note; no extra cleanup scope.
+- [x] Verify exact source `97408609`: 318 passed, no skips, 301 source-pinned modules; normal Ruff/diff pass.
+- [ ] Independently replay the corrected source and integrate only after review; keep Windows/native/KB/package gates separate.
+
+### P2-NAV-1 signal navigation validation (2026-11-18)
+
+- [x] Preserve original persisted-row/reopen failures and all initial fixture/ceiling corrections.
+- [x] Specify and test current ownership/excerpt validation and unsupported-representation refusal before the narrow UI helper.
+- [x] Record exact-source 175-pass affected gate, unchanged 7-case original and 2-case root probes, full Ruff, and 150-member verified archive.
+- [ ] Root independently review/replay and selectively integrate the source and QA chain.
+- [ ] Retain separate native Windows, packaged/frozen, manual desktop and broader Phase2 reference obligations; no release or whole-project closure.
+
+
+### Worker/core/navigation checkpoint — 2026-11-18
+
+- [x] Verify preceding13-commit e787 PR316 publication and unchanged main/readback.
+- [x] Independently review and port worker/core/navigation corrections and all original red evidence.
+- [x] Pass exact207eea9d combined51-file gate:1,103 passes/one native skip;498 modules/23 owner paths exact; all28 independent cases unchanged.
+- [x] Preserve normal lint/schema success and unchanged strict80 failure; retain preflight/fixture mistakes without changing assertions.
+- [x] Verify reference/native/dependency/KB design evidence and append-only documentation reconciliations.
+- [ ] Publish this checkpoint append-only with exact remote tree/parent/ref/preview readback.
+- [ ] Complete focused Windows inventory UTF-8 fix and bounded native diagnostic source; obtain actual hosted evidence.
+- [ ] Propagate held readers through existing KB services, then qualify native stage/FDI/process transfer, durable package linkage and complete frozen journey.
+- [ ] Complete actual-candidate full/platform/native/package/security/reproducibility gates and remaining analyst/CVE-to-function workflows; main/beta acceptance remains blocked.
+
+
+### KB held-reader propagation design (2026-11-18)
+
+- [x] Reconcile the current integrated KB callers with reviewed core/worker interfaces and preserve exact source/caller proofs.
+- [x] Propose bounded service/wiring/attachment ownership, ordinary call compatibility, typed-stop preservation and test-first acceptance.
+- [ ] Root approve production scope; specify and record genuine reds before implementing the three-file propagation.
+- [ ] Keep native adapter/FDI, durable provenance/lease recovery, postcommit checkpoint coverage and frozen/native acceptance separately owned and unqualified.
+
+### [DEPENDENCY-UTF8-20261118]
+
+- [x] Preserve both actual hosted Windows CP1252 failures and the original portable diagnostic/probe failures, with their distinct source limits.
+- [x] Commit the explicit isolated UTF-8 contract and meaningful failing controls before the 14-site canonical-prefix repair.
+- [x] Verify exact source `6dea194a`: 167 passed, no skips, 41 pinned imports; all other command arguments/order preserved, normal Ruff and diff checks pass. See `docs/qa/windows-dependency-encoding-20261118.md`.
+- [ ] Independently review/replay and selectively integrate the source and sealed QA chain.
+- [ ] Obtain corrected actual-candidate Windows installation, inventory, closure and audit evidence. Portable simulations provide no native or clean-security acceptance.
+
+### Internal KB held-input propagation candidate (2026-11-18)
+
+- [x] Implement root-approved internal reader plumbing in exactly service/wiring/store after contract and genuine failing regressions; preserve ordinary calls, full admission and original operation lifetime/accounting.
+- [x] Retain root's short-read PE-prefix failure unchanged; specify and correct accumulation within the existing 4096-byte bound.
+- [x] Seal exact-source 300-pass affected gate, unchanged 5-case peer replay, required full Ruff and all earlier reds; see `docs/qa/kb-held-input-propagation-20261118.md`.
+- [ ] Root independently review and replay the final three-file candidate before selective integration.
+- [ ] Keep held-origin CLI/GUI/package routes unavailable until a separate durable facade prevents reader-less package-path recovery; native worker/FDI, expected project identity and postcommit read-checkpoint limits remain separate gates.
+
+### [PW02-CORE-ADMISSION-DESIGN-20261118]
+
+- [x] Freeze `9ad2ec5c`, map 43 core/admission source spans and retain 74 canonical snapshots plus the approved KB propagation design.
+- [x] Preserve ten current-behavior observations with 60 exact imports, including the unchanged public after-create gap; no production/test/tool/workflow edits.
+- [ ] Root review the proposed preallocated-ID and explicit open/load recovery/checkpoint seams in `docs/plans/package-core-admission-seams-20261118.md` before implementation.
+- [ ] Commit meaningful failing integration controls and specification before the approved core source slice; these current-behavior passes are not implementation acceptance.
+- [ ] Separately bind durable package intent, held-origin marker, expected identity and idempotent provenance/reconciliation before exposing a package route; preserve unknown/foreign/committed projects.
+
+
+### KB / encoding / native diagnostic checkpoint — 2026-11-18
+
+- [x] Independently review and port UTF-8 invocation, three-file KB propagation/short-read correction and bounded diagnostic source; retain original failures and fixture corrections.
+- [x] Pass the exact7b5f558f combined23-file gate:803 passes/0skips,118 canonical imports,14 owner paths and unchanged original probes. Preserve the prior802/1 registry red and path-only verifier mistake.
+- [x] Preserve full normal lint success and unchanged unsuppressed strict80 failure.
+- [x] Verify316-branch/63-PR delta, original131 focal heads, prior25-commit fb09 publication and fresh source-bound hosted evidence.
+- [x] Review and approve the bounded existing-core admission design; assign spec/test-first implementation and separate durable KB design.
+- [ ] Publish this checkpoint append-only with exact remote tree/parent/ref/preview verification.
+- [ ] Independently review expected-ID/reopen checkpoint and owned-open failure handling before integration.
+- [ ] Implement/qualify durable held-origin intent, actual project identity, provenance and idempotent reconciliation before package exposure.
+- [ ] Qualify actual new-source Windows diagnostics/dependency fix, native stage/FDI/handoff, full platform/Qt/packaging/security/reproducibility gates and complete analyst/CVE journeys.
+
+### [CORE-ADMISSION-CHECKPOINTS-20261118]
+
+- [x] Specify and record meaningful failures before the approved create/open/load hooks, preserving the original acquired-open cleanup probe.
+- [x] Implement optional strict creation ID and exact read checkpoint forwarding without changing default call shapes, schema, ownership or after-commit retention.
+- [x] Seal unchanged source `441c47c2`: 512 affected checks, zero skips, 462 pinned parent imports; retain original runner/lint failures and normal Ruff/diff success. See `docs/qa/core-admission-checkpoints-20261118.md`.
+- [ ] Correct root's separately reproduced store-constructor interrupt cleanup boundary after an additional specification/regression commit; preserve the original 441c packet and independent probe.
+- [ ] Obtain independent final review/replay before integration. Durable package intent/provenance/recovery, held-origin exposure and native/frozen acceptance remain separate.
+
+### [CORE-CONSTRUCTOR-CLEANUP-20261118]
+
+- [x] Preserve the unchanged root constructor interrupt probe and reproduce secondary cleanup masking with actual SQLite connections before source edits.
+- [x] Commit the additional specification and 41 meaningful controls; retain 31 failures/19 positives before the narrowly owned handler correction.
+- [x] Verify exact source `63ebc427`: 50 focused and 562 affected passes, zero skips, 463 pinned parent imports, normal Ruff/diff success; seal the separate append packet without modifying the original checkpoint packet.
+- [ ] Root independently review/replay the corrected full core chain before integration; retain uncertainty when cleanup itself fails and keep partial lock acquisition/native/durable package work outside this receipt.
+
+### [PW02-DURABLE-ADMISSION-DESIGN-20261118]
+
+- [x] Freeze `195e04af` and read current package/native/core/KB contracts, attachment/recovery, real port, saved-scope and enrichment/object publication callers.
+- [x] Retain seven exact-source SQLite observations, including already-open v1 behavior, unknown-field marking, isolated-table visibility and authored transaction rollback; 32 pinned imports, no prohibited attempts.
+- [x] Commit the bounded proposal/machine index at `efe68b18` and seal 93 evidence members, preserving original prior observations and the artifact-verifier order correction.
+- [ ] Root independently review lazy v2 plus package-table isolation, exact new ownership/schema/caps, strict actual identity, association-before-sidecars, provenance idempotence and one-intent reconciliation before any source changes.
+- [ ] After approval, specify and retain genuine reds for each separate contract/storage, bound-admission and committed-reconciliation source slice; preserve ordinary and saved-scope positives.
+- [ ] Keep all package/CLI/UI exposure unavailable until accepted core hooks, durable safeguards, native stage/FDI/worker and actual Windows/frozen journey gates are complete; no lease reconstruction or cleanup from persisted evidence.
+
+
+### Core admission / hosted Windows evidence checkpoint — 2026-11-18
+
+- [x] Independently verify and port the specification-first create/open/load hooks and constructor follow-up; preserve both immutable author packets and original probes.
+- [x] Pass the exact a8f698f6 45-file gate: 1,200 checks, zero skips, 434 canonical imports and 21 owner paths. Preserve normal lint success and strict 80-site failure unchanged.
+- [x] Verify prior 18-commit publication to771e, fresh main/priority heads, actual Windows UTF-8 inventories/audits and exact native error-path source.
+- [x] Retain new unified Windows repeated-analysis failure and separate pending QA snapshot, without changing digests/acceptance or executing retained images.
+- [x] Review the durable design and preserve its already-open legacy-client and non-initializing capture counterexamples; keep ordinary default behavior distinct.
+- [ ] Publish this checkpoint append-only with exact remote tree/parent/ref/preview/body verification.
+- [ ] Specify, implement and independently qualify the actual-connection non-initializing workspace seam, then strict durable package contracts/storage/association/reconciliation.
+- [ ] Complete trusted stdin handoff and bounded first/second unified diagnostic retention, preserving native failures until actual-source acceptance.
+- [ ] Repair the independently reproduced TierR exit1 diagnostic loss; original native causes and frozen outcomes remain separate.
+- [ ] Complete full platform/Qt/native/frozen/package/dependency/security/reproducibility gates and real CVE/KB/analyst journeys; leave main and release blocked until qualified.
+
+
+### Shared-reader architecture guard — 2026-11-18
+
+- [x] Retain the exact 771e Linux full-QA failure and original artifact/log/source evidence.
+- [x] Specify seven exact file/symbol permissions, preserve 13-red/234-positive baseline and all prior assertions, and pass 247 cases independently.
+- [x] Preserve normal lint success and strict 80-site failure without suppression or waiver.
+- [ ] Publish the reviewed candidate append-only and require a new exact-head full/platform gate; do not relabel the historical hosted failure.
+
+### [KB-WORKSPACE-EXISTING-OPEN-20261118]
+
+- [x] Preserve the ordinary `create=False` initialization counterexample and specify a separate actual-connection existing-only mode before implementation.
+- [x] Retain 44 failures/2 positives before source, including the original recorder failure and unchanged corrected replay; implement only `kbcorrelation/store.py` at `c470a31a`.
+- [x] Seal 344 affected passes, 112 pinned imports, zero skips/prohibited attempts, full Ruff/diff success and exact normal-body/nonowned-source proofs in the 216-member packet.
+- [ ] Root independently review/replay the complete ownership handoff, including the proposed final-assignment interrupt boundary, before integration; preserve any confirmed follow-up separately.
+- [ ] Implement separately approved durable intent/provenance/recovery and package/native boundaries before any held-origin package route; this mode alone grants no admission authority.
+
+### [KB-WORKSPACE-HANDOFF-CLEANUP-20261118]
+
+- [x] Preserve root’s original 2-red/1-positive handoff probe and the complete c470/d31 216-member packet without relabeling prior passes.
+- [x] Specify the protected-region/post-return limit and retain six authored failures plus one positive before the one-statement handoff relocation at `a7a4fb16`.
+- [x] Replay the unchanged original probe with fresh observations alongside all 344 prior cases and seven new controls: 354 pass, 113 pinned imports, no skips/prohibited attempts; seal the separate 213-member correction packet with full Ruff/diff success.
+- [ ] Root independently review/replay and integrate the corrected chain; keep ordinary defaults, post-return interruption limits, package exposure and durable/native prerequisites distinct.
+
+
+### Admission and diagnostic checkpoint — 2026-11-19
+
+- [x] Independently review/integrate workspace existing-open/handoff, stdin, Tier R and unified retention; preserve every original failure and author packet.
+- [x] Pass exact1a9942a5 bounded2043-case replay; verify480imports/32owners/10unchangedprobes, normal lint and unchanged strict80-site failure.
+- [x] Refresh all316heads/63openPRs, recompute main relationships, preserve131focaldispositions and priority discussion history.
+- [x] Prepare/read back33append-only remote objects without moving the branch ref.
+- [x] Retain and independently verify actual771e Windows51-failure result, full node table and source/log/artifact ownership.
+- [x] Approve bounded pure-contract and native-file designs with explicit independent corrections; preserve zero-core-revision observation separately.
+- [ ] Complete fresh-lease append publication and verify exact ref/tree/parents/preview/PR body.
+- [ ] Implement/review strict pure package roots and schemas; storage/CAS/provenance/recovery remain later work.
+- [ ] Repair Windows byte/path/Git fixture boundaries and actual core creation/file-ownership defects; diagnose unresolved formatter predicate without weakening its cap.
+- [ ] Complete queued native leaf/reader, private directories, source capture, worker transfer/FDI and complete package journey.
+- [ ] Complete full platform/Qt/native/frozen/package/dependency/security/reproducibility gates and real CVE/KB/analyst journeys; main and release remain blocked.
+
+
+### Formatter and Qt observation checkpoint — 2026-11-19
+
+- [x] Preserve W51 failure and both original predicate operands; add bounded failing observations, obtain independent static review and pass the exact-source nine-test gate.
+- [x] Retain final old-head Qt cancellation logs, API metadata, runner/workflow identity and same-tree timing context without attributing an unobserved cause.
+- [ ] Obtain actual Windows formatter observations; keep its cap/assertion intact.
+- [ ] Diagnose and complete the full Qt repeat gates without reducing repeat coverage.
+- [ ] Complete the append-only PR publication, then continue Windows repairs, pure contracts and queued native ownership work; require new exact-head platform gates.
+
+
+### Windows portability integration — 2026-11-19
+
+- [x] Verify and integrate original19-red/1-positive fixture repair, preserving144 assertions/110 test identities and both recorder errors.
+- [x] Pass142 exact integrated portability/formatter/registry cases, verify42 imports/69 unchanged author imports and full normal lint.
+- [x] Preserve all420 original checkpoint payloads as lossless archive parts; preserve original branch/history and transport/layout errors.
+- [ ] Complete expected-head PR append and read back the exact ref, tree, parents and body.
+- [ ] Complete actual Windows fixture/core/formatter gates and full Qt repeats; original failed/cancelled/skipped outcomes remain unverified.
+- [ ] Continue pure admission contracts, core metadata-family correction and native leaf/reader work with independent review before further integration.
+# 2026-11-19: Windows creation metadata
+
+- [x] Reproduce and repair cross-API change-time comparisons during exclusive
+  new-database admission; retain descriptor/path stability and replacement guards.
+- [x] Focused actual SQLite and offscreen GUI controls: 117 passed.
+- [ ] Verify the integrated source on native Windows CI; other PR #316 failures
+  are separate and remain tracked in the consolidation record.
+
+### Restricted Tier-R corpus-root repair — 2026-11-19
+
+- [x] Reproduce import-time home lookup failure with an explicit corpus root and repair lazy fallback selection; four red controls become green.
+- [x] Run the affected calibration, shard and factory selection: 73 passed, five native-toolchain skips remain BLOCKED.
+- [ ] Rerun the exact repaired source on Windows advisory CI; this portable repair does not qualify native comparison or accuracy.

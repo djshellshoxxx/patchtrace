@@ -1,0 +1,6 @@
+tree 9b8ef6e1ed9c895780ee7f564fbeee91040ef4a0
+parent d5ecd2963abbbfacb40ab31a2214bbd86ca71a40
+author Codex <codex@openai.com> 1795044601 -0800
+committer Codex <codex@openai.com> 1795045652 -0800
+
+Pin diagnostic omission counts and final byte refusal [no release]

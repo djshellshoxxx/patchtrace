@@ -7,8 +7,6 @@ import re
 import tomllib
 from pathlib import Path
 
-import pytest
-
 ROOT = Path(__file__).resolve().parents[1]
 
 
@@ -90,7 +88,6 @@ def test_full_payload_validation_parses_manifest():
     assert validates, 'Backend attachment checks presence but never parses/verifies the manifest'
 
 
-@pytest.mark.xfail(strict=True, reason='CODEX-14')
 def test_linux_package_runs_full_cli_smoke():
     workflow = source('.github/workflows/qa-windows.yml')
     linux = workflow.split('  linux-package:\n', 1)[1].split('  # Decides', 1)[0]

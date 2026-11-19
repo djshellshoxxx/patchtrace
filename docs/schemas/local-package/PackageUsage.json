@@ -1,0 +1,104 @@
+{
+  "$id": "https://patchtrace.local/schemas/local-package/1/PackageUsage.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "callbacks": {
+      "maximum": 2000000,
+      "minimum": 0,
+      "title": "Callbacks",
+      "type": "integer"
+    },
+    "confirmed_output_bytes": {
+      "maximum": 8589934592,
+      "minimum": 0,
+      "title": "Confirmed Output Bytes",
+      "type": "integer"
+    },
+    "containers": {
+      "maximum": 256,
+      "minimum": 0,
+      "title": "Containers",
+      "type": "integer"
+    },
+    "elapsed_ns": {
+      "maximum": 18446744073709551615,
+      "minimum": 0,
+      "title": "Elapsed Ns",
+      "type": "integer"
+    },
+    "entries": {
+      "maximum": 50000,
+      "minimum": 0,
+      "title": "Entries",
+      "type": "integer"
+    },
+    "failed": {
+      "title": "Failed",
+      "type": "boolean"
+    },
+    "failure_code": {
+      "anyOf": [
+        {
+          "enum": [
+            "PT-ACQ-INPUT",
+            "PT-ACQ-LIMIT",
+            "PT-ACQ-CANCEL",
+            "PT-ACQ-VERIFY"
+          ],
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Failure Code"
+    },
+    "hashed_input_bytes": {
+      "maximum": 18446744073709551615,
+      "minimum": 0,
+      "title": "Hashed Input Bytes",
+      "type": "integer"
+    },
+    "live_allocated_bytes": {
+      "maximum": 536870912,
+      "minimum": 0,
+      "title": "Live Allocated Bytes",
+      "type": "integer"
+    },
+    "metadata_bytes": {
+      "maximum": 33554432,
+      "minimum": 0,
+      "title": "Metadata Bytes",
+      "type": "integer"
+    },
+    "peak_allocated_bytes": {
+      "maximum": 536870912,
+      "minimum": 0,
+      "title": "Peak Allocated Bytes",
+      "type": "integer"
+    },
+    "reserved_output_bytes": {
+      "maximum": 8589934592,
+      "minimum": 0,
+      "title": "Reserved Output Bytes",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "reserved_output_bytes",
+    "confirmed_output_bytes",
+    "entries",
+    "containers",
+    "callbacks",
+    "live_allocated_bytes",
+    "peak_allocated_bytes",
+    "hashed_input_bytes",
+    "metadata_bytes",
+    "elapsed_ns",
+    "failed",
+    "failure_code"
+  ],
+  "title": "PackageUsage",
+  "type": "object"
+}

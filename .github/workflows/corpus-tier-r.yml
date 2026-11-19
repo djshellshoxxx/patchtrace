@@ -52,8 +52,8 @@ jobs:
       matrix: ${{ steps.plan.outputs.matrix }}
       plan_sha256: ${{ steps.plan.outputs.plan_sha256 }}
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
         with:
           python-version: '3.12'
       - run: python -m pip install -e .
@@ -62,7 +62,7 @@ jobs:
         run: >-
           python -m tools.calibration.tier_r.shard plan
           --seed "$SEED" --shards "$SHARDS" --engines "$ENGINES" --subset "$SUBSET" --plan-out plan.json
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
           name: tier-r-plan
           path: plan.json
@@ -78,8 +78,8 @@ jobs:
     env:
       SHARD_CASES: ${{ toJSON(matrix.cases) }}
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
         with:
           python-version: '3.12'
       - run: python -m pip install -e .
@@ -89,48 +89,54 @@ jobs:
           sudo apt-get install -y gcc-mingw-w64-x86-64 llvm lld clang
       - name: Restore pinned rizin
         id: rizin-cache
-        uses: actions/cache@v4
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830
         with:
-          path: rizin
-          key: rizin-${{ env.RIZIN_SHA256 }}
+          path: .engine-archives/rizin.tar.xz
+          key: rizin-archive-v1-${{ env.RIZIN_SHA256 }}
       - name: Install pinned rizin (fail closed on missing or mismatched SHA-256)
-        if: steps.rizin-cache.outputs.cache-hit != 'true'
         shell: bash
         run: |
           set -euo pipefail
           [[ "$RIZIN_SHA256" =~ ^[0-9a-f]{64}$ ]] || { echo "::error::missing or malformed pinned SHA-256"; exit 1; }
-          curl -fsSL -o "$RIZIN_ASSET" "https://github.com/rizinorg/rizin/releases/download/v${RIZIN_VERSION}/${RIZIN_ASSET}"
-          echo "${RIZIN_SHA256}  ${RIZIN_ASSET}" | sha256sum -c -
-          mkdir -p rizin
-          tar -xJf "$RIZIN_ASSET" -C rizin
-          rm -f "$RIZIN_ASSET"
+          archive=.engine-archives/rizin.tar.xz
+          [[ ! -L "$archive" && ( ! -e "$archive" || -f "$archive" ) ]] || { echo "::error::invalid archive file type"; exit 1; }
+          mkdir -p .engine-archives
+          if [ ! -f "$archive" ]; then
+            curl -fsSL -o "$archive" "https://github.com/rizinorg/rizin/releases/download/v${RIZIN_VERSION}/${RIZIN_ASSET}"
+          fi
+          printf '%s  %s\n' "$RIZIN_SHA256" "$archive" | sha256sum -c -
+          mkdir rizin
+          tar -xJf "$archive" -C rizin
       - name: Point at rizin
         run: echo "RZ_DIFF=$PWD/rizin/bin/rz-diff" >> "$GITHUB_ENV"
       - name: Java for Ghidra (only when ghidriff is requested)
         if: contains(env.ENGINES, 'ghidriff')
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@cf277c60eb25467037889841efdb72551f06f6c3
         with:
           distribution: temurin
           java-version: '25'
       - name: Restore Ghidra
         id: ghidra-cache
         if: contains(env.ENGINES, 'ghidriff')
-        uses: actions/cache@v4
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830
         with:
-          path: ghidra-runtime
-          key: ghidra-${{ env.GHIDRA_SHA256 }}
+          path: .engine-archives/ghidra.zip
+          key: ghidra-archive-v1-${{ env.GHIDRA_SHA256 }}
       - name: Install Ghidra and Ghidriff (fail closed on digest mismatch)
         if: contains(env.ENGINES, 'ghidriff')
         shell: bash
         run: |
           set -euo pipefail
-          if [ "${{ steps.ghidra-cache.outputs.cache-hit }}" != "true" ]; then
-            curl -fsSL -o ghidra.zip "$GHIDRA_URL"
-            echo "${GHIDRA_SHA256}  ghidra.zip" | sha256sum -c -
-            mkdir -p ghidra-runtime
-            unzip -q ghidra.zip -d ghidra-runtime
-            rm -f ghidra.zip
+          [[ "$GHIDRA_SHA256" =~ ^[0-9a-f]{64}$ ]] || { echo "::error::missing or malformed pinned SHA-256"; exit 1; }
+          archive=.engine-archives/ghidra.zip
+          [[ ! -L "$archive" && ( ! -e "$archive" || -f "$archive" ) ]] || { echo "::error::invalid archive file type"; exit 1; }
+          mkdir -p .engine-archives
+          if [ ! -f "$archive" ]; then
+            curl -fsSL -o "$archive" "$GHIDRA_URL"
           fi
+          printf '%s  %s\n' "$GHIDRA_SHA256" "$archive" | sha256sum -c -
+          mkdir ghidra-runtime
+          unzip -q "$archive" -d ghidra-runtime
           echo "GHIDRA_INSTALL_DIR=$(find "$PWD/ghidra-runtime" -mindepth 1 -maxdepth 1 -type d | head -n 1)" >> "$GITHUB_ENV"
           python -m pip install "$GHIDRIFF_PIN"
       - name: Run shard
@@ -144,7 +150,7 @@ jobs:
         shell: bash
         run: |
           { echo "### Tier R shard ${{ matrix.shard }} of ${{ matrix.of }}"; echo '```'; ls -l shard-out 2>/dev/null || echo "no shard file"; echo '```'; } >> "$GITHUB_STEP_SUMMARY"
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         if: always()
         with:
           name: tier-r-shard-${{ matrix.shard }}
@@ -157,17 +163,17 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
         with:
           python-version: '3.12'
       - run: python -m pip install -e .
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
         with:
           pattern: tier-r-shard-*
           path: shards
           merge-multiple: true
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
         with:
           name: tier-r-plan
           path: plan
@@ -189,7 +195,7 @@ jobs:
         if: always()
         run: |
           if [ -f merged/tier-r-report.md ]; then cat merged/tier-r-report.md >> "$GITHUB_STEP_SUMMARY"; else echo "merge produced no report" >> "$GITHUB_STEP_SUMMARY"; fi
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         if: always()
         with:
           name: tier-r-aggregate
@@ -212,8 +218,8 @@ jobs:
       LLVM_WINDOWS_ROOT: clang+llvm-20.1.8-x86_64-pc-windows-msvc
       LLVM_WINDOWS_SHA256: f229769f11d6a6edc8ada599c0cda964b7dee6ab1a08c6cf9dd7f513e85b107f
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
         with:
           python-version: '3.12'
       - run: python -m pip install -e .
@@ -279,7 +285,7 @@ jobs:
         run: |
           python -m tools.calibration.tier_r.shard plan --seed "$SEED" --shards 1 --subset smoke --plan-out plan.json
           python -m tools.calibration.tier_r.shard run-shard --plan plan.json --shard 0 --out shard-out --timeout 1200
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         if: always()
         with:
           name: tier-r-windows-advisory
@@ -299,8 +305,8 @@ jobs:
       PATCHTRACE_REQUIRE_MSVC: '1'
       PATCHTRACE_LIVE_STATUS_DIR: msvc-status
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
         with:
           python-version: '3.12'
       - run: 'python -m pip install --only-binary=:all: -e .[dev]'
@@ -313,7 +319,7 @@ jobs:
       - name: Run the MSVC tests
         shell: bash
         run: python -m pytest tests/test_tier_r_msvc.py -q -p no:cacheprovider
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         if: always()
         with:
           name: tier-r-msvc-advisory

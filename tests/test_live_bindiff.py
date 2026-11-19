@@ -40,6 +40,7 @@ from patchtrace.secondary.cli_bindiff import c3_acceptor
 from patchtrace.secondary.contracts import SecondaryError
 from patchtrace.secondary.registry import BinDiffAdapter
 from patchtrace.secondary.scheduler import ProjectRef, run_engines
+from tools.windows_bindiff_network import semantic_fingerprint, windows_no_network
 
 pytestmark = pytest.mark.live_bindiff
 LARGE_FUNCTIONS = 50_000  # real v8: output appears after about 2 s and the write phase lasts about 1 s (measured)
@@ -113,20 +114,25 @@ def _reversed_refused(inputs: Inputs) -> dict:
     return _check('failed', 'reversed .BinExport pair was not rejected')
 
 
-def _end_to_end(exe: str, inputs: Inputs, tmp_path: Path, expected_version: str | None) -> dict:
+def _end_to_end(exe: str, inputs: Inputs, tmp_path: Path, expected_version: str | None, *,
+                runner=run_process, evidence_dir: Path | None = None) -> dict:
     raw_dir = tmp_path / 'raw'
     older, newer = inputs.paths if inputs.paths else (inputs.older, inputs.newer)
-    adapter = BinDiffAdapter(exe, older=older, newer=newer, raw_dir=raw_dir, acceptor=inputs.acceptor)
+    if runner is not run_process:
+        bindiff_probe.clear_probe_cache()  # restricted acceptance needs actual probe launches
+    adapter = BinDiffAdapter(exe, older=older, newer=newer, raw_dir=raw_dir, acceptor=inputs.acceptor,
+                             probe_runner=runner)
     project = ProjectRef(inputs.older_artifact, inputs.newer_artifact, inputs.older_sha256, inputs.newer_sha256)
     (out,) = run_engines(project, ['bindiff'], cancel=threading.Event(), env={}, registry={'bindiff': adapter},
-                         per_engine_timeout={'bindiff': 1800.0})
+                         per_engine_timeout={'bindiff': 1800.0}, runner=runner)
     if out.run.status != 'ok':
         error = out.error
         return _check('failed', f'{out.run.status}: {error.code} ({error.kind}): {error.message}' if error
                       else out.run.status, provenance=out.run.provenance)
     match_set = out.match_set
     kept = sorted(raw_dir.glob('bindiff-*.BinDiff'))
-    details = {'matches': len(match_set.matches), 'engine_version': match_set.engine_version,
+    details = {'matches': len(match_set.matches), 'semantic_sha256': semantic_fingerprint(match_set),
+               'engine_version': match_set.engine_version,
                'output_sha256': out.run.output_sha256, 'duration_ms': out.run.duration_ms,
                'bindiff_summary': out.run.provenance.get('bindiff_summary'),
                'algorithms': sorted({m.algorithm for m in match_set.matches})[:6]}
@@ -144,7 +150,7 @@ def _end_to_end(exe: str, inputs: Inputs, tmp_path: Path, expected_version: str 
     if expected_version and match_set.engine_version != expected_version:
         problems.append(f'metadata.version {match_set.engine_version!r} is not the pinned {expected_version!r}')
     if kept:
-        status_dir = live_status_dir()
+        status_dir = evidence_dir if evidence_dir is not None else live_status_dir()
         status_dir.mkdir(parents=True, exist_ok=True)
         shutil.copyfile(kept[0], status_dir / 'bindiff-live.BinDiff')
         (status_dir / 'bindiff-live-stdout.txt').write_text(adapter._raw.stdout if adapter._raw else '',
@@ -194,9 +200,13 @@ def _stopped_run(cap, pair, tmp_path: Path, name: str, *, timeout: float, cancel
     return _check('passed', f'{expected} discarded the partial output unread and removed the workdir', **details)
 
 
-def _no_network(cap, pair, inputs: Inputs, tmp_path: Path, matches: int | None) -> dict:
+def _no_network(cap, pair, inputs: Inputs, tmp_path: Path, matches: int | None,
+                baseline_semantic: str | None = None) -> dict:
+    if matches is None or baseline_semantic is None:
+        return _check('blocked', 'a successful complete semantic baseline is required')
     if os.name == 'nt':
-        return _check('blocked', 'Linux-only check (unshare -rn); Windows network behaviour is live-only (manual)')
+        return windows_no_network(cap.path, inputs, matches, baseline_semantic, cap.version,
+                                   live_status_dir() / 'network')
     unshare = shutil.which('unshare', path='/usr/bin:/bin')
     if not unshare:
         return _check('blocked', 'unshare is not installed')
@@ -210,16 +220,18 @@ def _no_network(cap, pair, inputs: Inputs, tmp_path: Path, matches: int | None) 
         return run_process([unshare, '-rn', '--', *argv], **kwargs)
 
     try:
-        raw = bindiff_run.execute(cap, pair, tmp_path / 'raw-nonet', cancel=threading.Event(), timeout_seconds=600,
-                                  runner=runner, parent_dir=tmp_path)
-        match_set = bindiff_run.import_output(raw.kept_path, raw.output_sha256, pair, inputs.older_sha256,
-                                              inputs.newer_sha256, raw.summary)
+        accepted = _end_to_end(cap.path, inputs, tmp_path / 'adapter', cap.version, runner=runner,
+                               evidence_dir=live_status_dir() / 'network-linux')
     except SecondaryError as exc:
         return _check('failed', f'run in an empty network namespace failed: {exc.code} ({exc.kind}): {exc.message}')
-    if matches is not None and len(match_set.matches) != matches:
-        return _check('failed', f'{len(match_set.matches)} matches without network vs {matches} with')
-    return _check('passed', 'identical result inside unshare -rn (no network namespace access)',
-                  matches=len(match_set.matches))
+    if accepted['status'] != 'passed':
+        return _check('failed', 'adapter in the empty network namespace failed: ' + accepted['reason'])
+    if accepted['matches'] != matches:
+        return _check('failed', f'{accepted["matches"]} matches without network vs {matches} with')
+    if accepted['semantic_sha256'] != baseline_semantic:
+        return _check('failed', 'complete imported match semantics differ without network')
+    return _check('passed', 'complete imported match semantics agree inside unshare -rn',
+                  matches=accepted['matches'], semantic_sha256=accepted['semantic_sha256'])
 
 
 def _overall(checks: dict) -> str:
@@ -281,7 +293,8 @@ def test_live_bindiff_status(record_live_status, tmp_path):
             checks['cancel_at_first_output'] = _check('blocked', reason)
             checks['timeout_mid_run'] = _check('blocked', reason)
         checks['no_network'] = _no_network(cap, pair, inputs, tmp_path / 'nonet',
-                                           checks['end_to_end'].get('matches'))
+                                           checks['end_to_end'].get('matches'),
+                                           checks['end_to_end'].get('semantic_sha256'))
     overall = _overall(checks)
     blocked = [f'{name}: {c["reason"]}' for name, c in checks.items() if c['status'] == 'blocked']
     failed = [f'{name}: {c["reason"]}' for name, c in checks.items() if c['status'] == 'failed']

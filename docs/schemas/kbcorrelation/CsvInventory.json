@@ -1,0 +1,745 @@
+{
+  "$defs": {
+    "CsvDiagnostic": {
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "enum": [
+            "UNKNOWN_ARCHITECTURE",
+            "ARCHITECTURE_CONFLICT",
+            "UNKNOWN_VERSION",
+            "INVALID_SIZE",
+            "INVALID_FILENAME",
+            "COLUMN_COUNT",
+            "PRODUCT_CONFLICT",
+            "RELEASE_CONFLICT",
+            "BUILD_CONFLICT",
+            "INVALID_METADATA",
+            "CONFLICTING_METADATA",
+            "UNKNOWN_SECTION",
+            "RESULT_LIMIT",
+            "RECORD_LIMIT"
+          ],
+          "title": "Code",
+          "type": "string"
+        },
+        "level": {
+          "enum": [
+            "warning",
+            "error"
+          ],
+          "title": "Level",
+          "type": "string"
+        },
+        "message": {
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Message",
+          "type": "string"
+        },
+        "reference": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CsvRecordRef"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "code",
+        "message",
+        "level"
+      ],
+      "title": "CsvDiagnostic",
+      "type": "object"
+    },
+    "CsvRecordRef": {
+      "additionalProperties": false,
+      "properties": {
+        "line_end": {
+          "maximum": 16777217,
+          "minimum": 1,
+          "title": "Line End",
+          "type": "integer"
+        },
+        "line_start": {
+          "maximum": 16777217,
+          "minimum": 1,
+          "title": "Line Start",
+          "type": "integer"
+        },
+        "logical_record": {
+          "maximum": 100000,
+          "minimum": 1,
+          "title": "Logical Record",
+          "type": "integer"
+        },
+        "raw_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Raw Sha256",
+          "type": "string"
+        },
+        "section_index": {
+          "exclusiveMaximum": 1000,
+          "minimum": 0,
+          "title": "Section Index",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "raw_sha256",
+        "logical_record",
+        "line_start",
+        "line_end",
+        "section_index"
+      ],
+      "title": "CsvRecordRef",
+      "type": "object"
+    },
+    "InventoryContext": {
+      "additionalProperties": false,
+      "properties": {
+        "architecture": {
+          "default": "unknown",
+          "enum": [
+            "amd64",
+            "arm64",
+            "x86",
+            "unknown"
+          ],
+          "title": "Architecture",
+          "type": "string"
+        },
+        "build": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Build"
+        },
+        "delimiter": {
+          "default": "comma",
+          "enum": [
+            "comma",
+            "semicolon",
+            "tab"
+          ],
+          "title": "Delimiter",
+          "type": "string"
+        },
+        "kb": {
+          "pattern": "^KB[0-9]{4,10}$",
+          "title": "Kb",
+          "type": "string"
+        },
+        "locale": {
+          "default": "en-US",
+          "enum": [
+            "invariant",
+            "en-US",
+            "de-DE"
+          ],
+          "title": "Locale",
+          "type": "string"
+        },
+        "product": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Product"
+        },
+        "product_scope_id": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Product Scope Id"
+        },
+        "release": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Release"
+        }
+      },
+      "required": [
+        "kb"
+      ],
+      "title": "InventoryContext",
+      "type": "object"
+    },
+    "InventoryEntry": {
+      "additionalProperties": false,
+      "properties": {
+        "architecture": {
+          "enum": [
+            "amd64",
+            "arm64",
+            "x86",
+            "unknown"
+          ],
+          "title": "Architecture",
+          "type": "string"
+        },
+        "architecture_basis": {
+          "enum": [
+            "column",
+            "section",
+            "context",
+            "unknown",
+            "conflicted"
+          ],
+          "title": "Architecture Basis",
+          "type": "string"
+        },
+        "basename": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Basename"
+        },
+        "build": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Build"
+        },
+        "conflict_group": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Conflict Group"
+        },
+        "date_text": {
+          "anyOf": [
+            {
+              "maxLength": 65536,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Date Text"
+        },
+        "diagnostics": {
+          "default": [],
+          "items": {
+            "enum": [
+              "UNKNOWN_ARCHITECTURE",
+              "ARCHITECTURE_CONFLICT",
+              "UNKNOWN_VERSION",
+              "INVALID_SIZE",
+              "INVALID_FILENAME",
+              "COLUMN_COUNT",
+              "PRODUCT_CONFLICT",
+              "RELEASE_CONFLICT",
+              "BUILD_CONFLICT",
+              "INVALID_METADATA",
+              "CONFLICTING_METADATA",
+              "UNKNOWN_SECTION",
+              "RESULT_LIMIT",
+              "RECORD_LIMIT"
+            ],
+            "type": "string"
+          },
+          "maxItems": 32,
+          "title": "Diagnostics",
+          "type": "array"
+        },
+        "duplicate_of": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Duplicate Of"
+        },
+        "entry_id": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Entry Id",
+          "type": "string"
+        },
+        "original_fields": {
+          "items": {
+            "maxLength": 65536,
+            "type": "string"
+          },
+          "maxItems": 32,
+          "minItems": 1,
+          "title": "Original Fields",
+          "type": "array"
+        },
+        "original_filename": {
+          "maxLength": 65536,
+          "title": "Original Filename",
+          "type": "string"
+        },
+        "original_size": {
+          "anyOf": [
+            {
+              "maxLength": 65536,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Original Size"
+        },
+        "original_version": {
+          "maxLength": 65536,
+          "title": "Original Version",
+          "type": "string"
+        },
+        "product": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Product"
+        },
+        "reference": {
+          "$ref": "#/$defs/CsvRecordRef"
+        },
+        "release": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Release"
+        },
+        "size_bytes": {
+          "anyOf": [
+            {
+              "maximum": 18446744073709551615,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Size Bytes"
+        },
+        "state": {
+          "enum": [
+            "metadata-only",
+            "unknown",
+            "conflicted",
+            "descriptive-only"
+          ],
+          "title": "State",
+          "type": "string"
+        },
+        "time_text": {
+          "anyOf": [
+            {
+              "maxLength": 65536,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Time Text"
+        },
+        "version_components": {
+          "anyOf": [
+            {
+              "maxItems": 4,
+              "minItems": 4,
+              "prefixItems": [
+                {
+                  "maximum": 18446744073709551615,
+                  "minimum": 0,
+                  "type": "integer"
+                },
+                {
+                  "maximum": 18446744073709551615,
+                  "minimum": 0,
+                  "type": "integer"
+                },
+                {
+                  "maximum": 18446744073709551615,
+                  "minimum": 0,
+                  "type": "integer"
+                },
+                {
+                  "maximum": 18446744073709551615,
+                  "minimum": 0,
+                  "type": "integer"
+                }
+              ],
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Version Components"
+        }
+      },
+      "required": [
+        "entry_id",
+        "reference",
+        "original_fields",
+        "original_filename",
+        "basename",
+        "original_version",
+        "version_components",
+        "original_size",
+        "size_bytes",
+        "date_text",
+        "time_text",
+        "architecture",
+        "architecture_basis",
+        "product",
+        "release",
+        "build",
+        "state"
+      ],
+      "title": "InventoryEntry",
+      "type": "object"
+    },
+    "InventoryLimits": {
+      "additionalProperties": false,
+      "description": "Callers may lower a budget, never raise a hard ceiling.",
+      "properties": {
+        "max_bytes": {
+          "default": 16777216,
+          "maximum": 16777216,
+          "minimum": 1,
+          "title": "Max Bytes",
+          "type": "integer"
+        },
+        "max_columns": {
+          "default": 32,
+          "maximum": 32,
+          "minimum": 1,
+          "title": "Max Columns",
+          "type": "integer"
+        },
+        "max_diagnostics": {
+          "default": 1000,
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Max Diagnostics",
+          "type": "integer"
+        },
+        "max_entries": {
+          "default": 50000,
+          "maximum": 50000,
+          "minimum": 1,
+          "title": "Max Entries",
+          "type": "integer"
+        },
+        "max_field_chars": {
+          "default": 65536,
+          "maximum": 65536,
+          "minimum": 1,
+          "title": "Max Field Chars",
+          "type": "integer"
+        },
+        "max_record_chars": {
+          "default": 262144,
+          "maximum": 262144,
+          "minimum": 1,
+          "title": "Max Record Chars",
+          "type": "integer"
+        },
+        "max_records": {
+          "default": 100000,
+          "maximum": 100000,
+          "minimum": 1,
+          "title": "Max Records",
+          "type": "integer"
+        },
+        "max_seconds": {
+          "default": 10.0,
+          "exclusiveMinimum": 0,
+          "maximum": 10,
+          "title": "Max Seconds",
+          "type": "number"
+        },
+        "max_sections": {
+          "default": 1000,
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Max Sections",
+          "type": "integer"
+        },
+        "max_text_chars": {
+          "default": 16777216,
+          "maximum": 16777216,
+          "minimum": 1,
+          "title": "Max Text Chars",
+          "type": "integer"
+        }
+      },
+      "title": "InventoryLimits",
+      "type": "object"
+    },
+    "InventorySection": {
+      "additionalProperties": false,
+      "properties": {
+        "architecture": {
+          "enum": [
+            "amd64",
+            "arm64",
+            "x86",
+            "unknown"
+          ],
+          "title": "Architecture",
+          "type": "string"
+        },
+        "banner": {
+          "maxLength": 262144,
+          "title": "Banner",
+          "type": "string"
+        },
+        "index": {
+          "exclusiveMaximum": 1000,
+          "minimum": 0,
+          "title": "Index",
+          "type": "integer"
+        },
+        "reference": {
+          "$ref": "#/$defs/CsvRecordRef"
+        }
+      },
+      "required": [
+        "index",
+        "banner",
+        "architecture",
+        "reference"
+      ],
+      "title": "InventorySection",
+      "type": "object"
+    }
+  },
+  "$id": "https://patchtrace.local/schemas/kbcorrelation/1/CsvInventory.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "accepted_count": {
+      "maximum": 50000,
+      "minimum": 0,
+      "title": "Accepted Count",
+      "type": "integer"
+    },
+    "conflict_count": {
+      "maximum": 50000,
+      "minimum": 0,
+      "title": "Conflict Count",
+      "type": "integer"
+    },
+    "context": {
+      "$ref": "#/$defs/InventoryContext"
+    },
+    "contract": {
+      "const": "kb-file-inventory/1",
+      "default": "kb-file-inventory/1",
+      "title": "Contract",
+      "type": "string"
+    },
+    "diagnostics": {
+      "items": {
+        "$ref": "#/$defs/CsvDiagnostic"
+      },
+      "maxItems": 1000,
+      "title": "Diagnostics",
+      "type": "array"
+    },
+    "diagnostics_omitted": {
+      "minimum": 0,
+      "title": "Diagnostics Omitted",
+      "type": "integer"
+    },
+    "duplicate_count": {
+      "maximum": 50000,
+      "minimum": 0,
+      "title": "Duplicate Count",
+      "type": "integer"
+    },
+    "encoding": {
+      "enum": [
+        "utf-8",
+        "utf-8-sig",
+        "utf-16-le",
+        "utf-16-be"
+      ],
+      "title": "Encoding",
+      "type": "string"
+    },
+    "entries": {
+      "items": {
+        "$ref": "#/$defs/InventoryEntry"
+      },
+      "maxItems": 50000,
+      "title": "Entries",
+      "type": "array"
+    },
+    "inventory_id": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Inventory Id",
+      "type": "string"
+    },
+    "limits": {
+      "$ref": "#/$defs/InventoryLimits",
+      "default": {
+        "max_bytes": 16777216,
+        "max_columns": 32,
+        "max_diagnostics": 1000,
+        "max_entries": 50000,
+        "max_field_chars": 65536,
+        "max_record_chars": 262144,
+        "max_records": 100000,
+        "max_seconds": 10.0,
+        "max_sections": 1000,
+        "max_text_chars": 16777216
+      }
+    },
+    "parser_version": {
+      "const": 1,
+      "default": 1,
+      "title": "Parser Version",
+      "type": "integer"
+    },
+    "raw_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Raw Sha256",
+      "type": "string"
+    },
+    "raw_size": {
+      "maximum": 16777216,
+      "minimum": 0,
+      "title": "Raw Size",
+      "type": "integer"
+    },
+    "records_scanned": {
+      "maximum": 100000,
+      "minimum": 1,
+      "title": "Records Scanned",
+      "type": "integer"
+    },
+    "rejected_count": {
+      "maximum": 100000,
+      "minimum": 0,
+      "title": "Rejected Count",
+      "type": "integer"
+    },
+    "sections": {
+      "items": {
+        "$ref": "#/$defs/InventorySection"
+      },
+      "maxItems": 1000,
+      "minItems": 1,
+      "title": "Sections",
+      "type": "array"
+    },
+    "status": {
+      "enum": [
+        "complete",
+        "partial"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "truncated": {
+      "title": "Truncated",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "inventory_id",
+    "raw_sha256",
+    "raw_size",
+    "encoding",
+    "context",
+    "entries",
+    "sections",
+    "diagnostics",
+    "records_scanned",
+    "accepted_count",
+    "rejected_count",
+    "duplicate_count",
+    "conflict_count",
+    "diagnostics_omitted",
+    "truncated",
+    "status"
+  ],
+  "title": "CsvInventory",
+  "type": "object"
+}

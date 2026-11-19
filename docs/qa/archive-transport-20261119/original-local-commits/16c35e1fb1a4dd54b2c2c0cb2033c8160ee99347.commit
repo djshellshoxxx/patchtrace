@@ -1,0 +1,6 @@
+tree 4486ee96d36b844c4cfa819a7743f17a9347ae10
+parent fdc1f606dd0b8a3ce94ae2db94f4fb6984a02b69
+author Codex <codex@openai.com> 1795048151 -0800
+committer Codex <codex@openai.com> 1795048151 -0800
+
+Retain formatter attempt and stream-error values on failure [no release]

@@ -1,0 +1,12 @@
+{
+  "archive": "evidence.zip",
+  "bytes": 266334,
+  "sha256": "498317e50cbd5097f527d6085b2f031de9207581956eedf56ee2ea7d27447e6a",
+  "archive_prefix": "l2-rizin-discovery-patch-20261118/",
+  "payloads": 140,
+  "all_payloads_verified": true,
+  "separate_source_archive_sha256": "d1be8173ccd26de0d1e56d8d5a309ee4e11187e75f4b6c70e2183100c64e6a2a",
+  "readable_report": "Adjacent report and command copy remove trailing whitespace only; original bytes are archived.",
+  "source_patch": "Exact unified diff remains at source/discovery-seed.patch inside evidence.zip; no direct text copy is necessary.",
+  "packaging_note": "The standard unified-diff context prefix before upstream tabs triggered text-whitespace checks in the optional adjacent copy. Preserve the valid patch byte-for-byte in the archive and omit that redundant copy; no source patch or test assertion is altered."
+}

@@ -1,0 +1,43 @@
+{
+  "source": "068513a72e8a1412ce3960d3024c462d68d51376",
+  "recorded_utc": "2026-11-18T21:00:58.822870+00:00",
+  "meaning": "Optional external-probe lint initially ran outside the repository and used default import grouping, yielding two I001 diagnostics. This same invocation is replayed here to retain raw output. Explicit pinned project configuration passes without changing any probe bytes. This supplemental receipt does not rewrite the already sealed 118-member source/test archive.",
+  "runs": [
+    {
+      "label": "outside-project-default-config-replay",
+      "argv": [
+        "/workspace/scratch/3a6632a6e5ff/venv/bin/python",
+        "-m",
+        "ruff",
+        "check",
+        "/workspace/scratch/c7a9e8d98848/qa/phase2-contract-disposition/test_phase2_navigation_boundary.py",
+        "/workspace/scratch/c7a9e8d98848/qa/phase2-contract-disposition/test_phase2_wire_boundary.py",
+        "/workspace/scratch/c7a9e8d98848/qa/phase2-contract-disposition/reference_offline.py",
+        "/workspace/scratch/c7a9e8d98848/qa/phase2-contract-disposition/phase2_observation_redirect.py"
+      ],
+      "cwd": "/workspace/scratch/c7a9e8d98848",
+      "returncode": 1,
+      "stdout": "I001 [*] Import block is un-sorted or un-formatted\n  --> qa/phase2-contract-disposition/test_phase2_navigation_boundary.py:8:1\n   |\n 6 |   it is not evidence that a normal detector emits that row or that a checksum is authorization.\n 7 |   \"\"\"\n 8 | / from __future__ import annotations\n 9 | |\n10 | | import dataclasses\n11 | | import hashlib\n12 | | import json\n13 | | from pathlib import Path\n14 | |\n15 | | import pytest\n16 | | from PySide6.QtCore import QSettings, Qt\n17 | |\n18 | | from patchtrace.enrichment import pipeline, views\n19 | | from patchtrace.enrichment.contracts import EnrichmentError, SourceLocation\n20 | | from patchtrace.enrichment.storage import EnrichmentStore\n21 | | from patchtrace.service import ProjectService\n22 | | from patchtrace.ui import MainWindow\n   | |____________________________________^\n23 |\n24 |   OBSERVATIONS = Path(__file__).parent / 'navigation-observations'\n   |\nhelp: Organize imports\n   |\n15 | import pytest\n   - from PySide6.QtCore import QSettings, Qt\n   -\n16 | from patchtrace.enrichment import pipeline, views\n--------------------------------------------------------------------------------\n20 | from patchtrace.ui import MainWindow\n21 + from PySide6.QtCore import QSettings, Qt\n22 |\n   |\n\nI001 [*] Import block is un-sorted or un-formatted\n  --> qa/phase2-contract-disposition/test_phase2_wire_boundary.py:2:1\n   |\n 1 |   \"\"\"The supplied wire objects are references, never an implicit enrichment/1 import format.\"\"\"\n 2 | / import json\n 3 | | from pathlib import Path\n 4 | |\n 5 | | import pytest\n 6 | | from pydantic import ValidationError\n 7 | |\n 8 | | from patchtrace.enrichment import contracts, cve\n   | |________________________________________________^\n 9 |\n10 |   EXAMPLES = json.loads((Path(__file__).parent / 'reference/docs/schemas/phase2/'\n   |\nhelp: Organize imports\n  |\n5 | import pytest\n  - from pydantic import ValidationError\n  -\n6 | from patchtrace.enrichment import contracts, cve\n7 + from pydantic import ValidationError\n8 |\n  |\n\nFound 2 errors.\n[*] 2 fixable with `--fix`.\n",
+      "stderr": ""
+    },
+    {
+      "label": "explicit-pinned-project-config",
+      "argv": [
+        "/workspace/scratch/3a6632a6e5ff/venv/bin/python",
+        "-m",
+        "ruff",
+        "check",
+        "--config",
+        "/workspace/scratch/c7a9e8d98848/semantic-disposition-batch4/pyproject.toml",
+        "/workspace/scratch/c7a9e8d98848/qa/phase2-contract-disposition/test_phase2_navigation_boundary.py",
+        "/workspace/scratch/c7a9e8d98848/qa/phase2-contract-disposition/test_phase2_wire_boundary.py",
+        "/workspace/scratch/c7a9e8d98848/qa/phase2-contract-disposition/reference_offline.py",
+        "/workspace/scratch/c7a9e8d98848/qa/phase2-contract-disposition/phase2_observation_redirect.py"
+      ],
+      "cwd": "/workspace/scratch/c7a9e8d98848/semantic-disposition-batch4",
+      "returncode": 0,
+      "stdout": "All checks passed!\n",
+      "stderr": ""
+    }
+  ]
+}

@@ -144,7 +144,8 @@ def make_compile_checker(tools: Toolchain | None = None, *, flags: Sequence[str]
 _ASM_LABEL = re.compile(r'\.L[\w.$]+')
 # Clang/COFF quotes MSVC-decorated string constants ("??_C@...") unlike ELF labels.
 # The complete RIP-relative symbol is address metadata even when its spelling or length changes.
-_ASM_SYMBOL = re.compile(r'(?:"[^"]+"|[\w.$@]+)(?:[+-]\d+)?(?=\(%rip\))')
+# Accept unquoted COFF-style names as compatibility input without truncating at '?'.
+_ASM_SYMBOL = re.compile(r'(?:"[^"]+"|[\w.$@?]+)(?:[+-]\d+)?(?=\(%rip\))')
 _ASM_BRANCH = re.compile(r'^(call\w*|j\w+)\s+\S+$')
 
 

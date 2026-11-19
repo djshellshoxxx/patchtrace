@@ -199,6 +199,14 @@ def facts_lines(facts: ChangeFacts | None) -> list[str]:
 def reason_text(match: UnifiedMatch) -> str:
     """Why the row has its decision, from the row alone (fixed templates, no numbers about confidence)."""
     decision = match.decision
+    groups = [h.removeprefix('manual-group:') for h in match.hints if h.startswith('manual-group:')]
+    group_decisions = {'split': 'matched', 'merged': 'matched', 'ambiguous': 'ambiguous'}
+    if len(groups) == 1 and group_decisions.get(groups[0]) == decision and not match.support:
+        older, newer = {s.rva for s in match.older}, {s.rva for s in match.newer}
+        if any(a.source == 'manual' and a.tier == 'M' and a.cls == 'E-MANUAL'
+               and a.older_rva in older and a.newer_rva in newer for a in match.atoms):
+            return (f'Set by an analyst correction ({groups[0]} group)'
+                    + ('; the contest is listed below.' if match.contest else '.'))
     if decision == 'matched':
         if any(s.tier == 'M' for s in match.support):
             return 'Set by an analyst correction' + ('; the contest is listed below.' if match.contest else '.')

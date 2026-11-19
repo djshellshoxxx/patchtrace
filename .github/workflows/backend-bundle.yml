@@ -89,10 +89,10 @@ jobs:
       report: ${{ steps.plan.outputs.report }}
       verify: ${{ steps.plan.outputs.verify }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
           persist-credentials: false
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
         with:
           python-version: '3.12'
       - id: plan
@@ -180,7 +180,7 @@ jobs:
               print(where, digest.hexdigest(), size)
           json.dump(report, open('pin-report.json', 'w', encoding='utf-8'), indent=2)
           PY
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         if: steps.plan.outputs.report == 'true'
         with:
           name: pin-report
@@ -198,10 +198,10 @@ jobs:
       IN_ISSUER: ${{ inputs.sigstore_issuer }}
       IN_FPR: ${{ inputs.gpg_fingerprint }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
           persist-credentials: false
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
         with:
           python-version: '3.12'
       - name: Install the Sigstore client (pinned)
@@ -214,7 +214,7 @@ jobs:
         if: always()
         run: |
           if [ -f pin-verify.json ]; then cat pin-verify.json; else echo "no pin-verify.json was written"; fi
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         if: always()
         with:
           name: pin-verify
@@ -232,15 +232,15 @@ jobs:
       QT_QPA_PLATFORM: offscreen
       VERSION: ${{ needs.pin.outputs.version }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
           persist-credentials: false
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
         with:
           python-version: '3.12'
       - run: "python -m pip install --only-binary=:all: -e '.[dev,search,rules]'"
       - run: python tools/check_protobuf_runtime.py
-      - uses: actions/cache@v4
+      - uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830
         with:
           path: .bundle-cache
           key: bundle-dl-windows-${{ hashFiles('tools/backend_pin.json') }}
@@ -271,14 +271,14 @@ jobs:
             echo "::error::an asset exceeds the 2 GiB release limit"; exit 1
           fi
           ls -l assets
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         if: always()
         with:
           name: evidence-windows
           if-no-files-found: ignore
           path: evidence
           retention-days: 7
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
           name: bundle-windows-assets
           path: assets
@@ -293,17 +293,17 @@ jobs:
     env:
       VERSION: ${{ needs.pin.outputs.version }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
           persist-credentials: false
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
         with:
           python-version: '3.12'
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
         with:
           name: bundle-windows-assets
           path: assets
-      - uses: ilammy/msvc-dev-cmd@v1
+      - uses: ilammy/msvc-dev-cmd@0b201ec74fa43914dc39ae48a89fd1d8cb592756
       - name: Compile the benign sample pair (never executed)
         shell: cmd
         run: |
@@ -330,7 +330,7 @@ jobs:
                             '--expect-function', 'read_item', '--launcher', str(root / 'PatchTrace.exe'),
                             '--evidence', 'acceptance-windows.json']))
           PY
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         if: always()
         with:
           name: acceptance-windows
@@ -348,16 +348,16 @@ jobs:
       QT_QPA_PLATFORM: offscreen
       VERSION: ${{ needs.pin.outputs.version }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
           persist-credentials: false
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
         with:
           python-version: '3.12'
       - run: sudo apt-get update && sudo apt-get install -y libegl1 libopengl0 libgl1 libxcb-cursor0 libxkbcommon-x11-0 xvfb
       - run: "python -m pip install --only-binary=:all: -e '.[dev,search,rules]'"
       - run: python tools/check_protobuf_runtime.py
-      - uses: actions/cache@v4
+      - uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830
         with:
           path: .bundle-cache
           key: bundle-dl-linux-${{ hashFiles('tools/backend_pin.json') }}
@@ -387,14 +387,14 @@ jobs:
             echo "::error::an asset exceeds the 2 GiB release limit"; exit 1
           fi
           ls -l assets
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         if: always()
         with:
           name: evidence-linux
           if-no-files-found: ignore
           path: evidence
           retention-days: 7
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
           name: bundle-linux-assets
           path: assets
@@ -413,13 +413,13 @@ jobs:
     env:
       VERSION: ${{ needs.pin.outputs.version }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
           persist-credentials: false
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
         with:
           python-version: '3.12'
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
         with:
           name: bundle-linux-assets
           path: assets
@@ -457,7 +457,7 @@ jobs:
                             '--run-uid', '65534', '--run-gid', '65534',
                             '--evidence', 'acceptance-linux.json']))
           PY
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         if: always()
         with:
           name: acceptance-linux-${{ matrix.os }}
@@ -476,6 +476,7 @@ jobs:
     timeout-minutes: 60
     permissions:
       contents: write
+      actions: read
     env:
       TAG: ${{ needs.pin.outputs.tag }}
       VERSION: ${{ needs.pin.outputs.version }}
@@ -483,7 +484,14 @@ jobs:
       TARGET_SHA: ${{ github.sha }}
       RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
     steps:
-      - uses: actions/download-artifact@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: '3.12'
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
         with:
           pattern: bundle-*-assets
           path: staged
@@ -493,23 +501,49 @@ jobs:
           find staged -type f -exec cp -n {} release/ \;
           ls -l release
           test -n "$(ls release)"
+      - name: Require exact-source publication qualification
+        id: qualification
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SELECTED_WINDOWS: ${{ needs.pin.outputs.win }}
+          SELECTED_LINUX: ${{ needs.pin.outputs.lin }}
+        run: |
+          case "$SELECTED_WINDOWS,$SELECTED_LINUX" in
+            true,true) platforms=both ;;
+            true,false) platforms=windows ;;
+            false,true) platforms=linux ;;
+            *) echo "::error::invalid accepted platform selection"; exit 1 ;;
+          esac
+          python tools/release_qualification.py --repo "$GH_REPO" --head "$TARGET_SHA" \
+            --run-id "$GITHUB_RUN_ID" --attempt "$GITHUB_RUN_ATTEMPT" --profile bundle \
+            --platforms "$platforms" --tag "$TAG" --assets-dir release \
+            --report "$RUNNER_TEMP/release-qualification.json" --github-output "$GITHUB_OUTPUT"
       - name: Create or reuse the PRERELEASE and attach assets
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RELEASE_EXISTS: ${{ steps.qualification.outputs.release_exists }}
         run: |
           fail() { echo "::error::$1"; exit 1; }
-          if gh release view "$TAG" --json isPrerelease,isDraft -q '[.isPrerelease,.isDraft]|@csv' > state.txt 2> state.err; then
-            [ "$(cat state.txt)" = "true,false" ] || fail "release $TAG exists but is not a published prerelease; refusing to touch it"
-          else
+          # Absence comes only from the guard's successful bounded REST listing, never an API error.
+          if [ "$RELEASE_EXISTS" = false ]; then
             gh release create "$TAG" --prerelease --target "$TARGET_SHA" \
               --title "PatchTrace full bundle $VERSION (prerelease)" \
               --notes "Automated full-bundle assets from $RUN_URL. Prerelease only; acceptance evidence is attached to that run." \
-              || fail "could not create prerelease $TAG; the workflow token lacks contents write permission or the tag is invalid. Nothing was published."
+              || fail "could not create prerelease $TAG; asset upload stopped"
+          elif [ "$RELEASE_EXISTS" != true ]; then
+            fail "missing qualified prerelease state; refusing to touch it"
           fi
-          gh release upload "$TAG" release/* --clobber \
-            || fail "asset upload to $TAG failed (token permission or asset limit). Nothing is claimed as published."
+          gh release upload "$TAG" release/* \
+            || fail "asset upload to $TAG failed; publication completion is unverified"
           gh release view "$TAG" --json assets -q '.assets[].name' | sort > remote.txt
           ls release | sort > local.txt
           missing=$(comm -13 remote.txt local.txt)
           [ -z "$missing" ] || fail "assets missing on the release after upload"
           echo "Attached $(wc -l < local.txt) assets to prerelease $TAG"
+      - name: Preserve publication qualification receipt
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: bundle-release-qualification-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/release-qualification.json
+          if-no-files-found: warn

@@ -1,0 +1,6 @@
+tree b988c8ff9ca82ea07d41f9db9334713dde7e4109
+parent 29192f7837ebdb268d5c47e0a2536c67148cbe9f
+author Codex <codex@openai.com> 1795048120 -0800
+committer Codex <codex@openai.com> 1795048120 -0800
+
+Specify bounded observations of failed formatter predicates [no release]

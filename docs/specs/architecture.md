@@ -1,5 +1,13 @@
 # PatchTrace beta architecture (SPEC-01, schema v1)
 
+Backup directory publication amendment (2026-11-18): complete project backups
+use the shared [exclusive directory-publication contract](directory-publication.md).
+Publication atomically refuses an existing destination leaf, including a newly
+created empty directory; there is no public placeholder or destination cleanup.
+Unsupported platform/filesystem primitives refuse rather than fall back to an
+overwriting rename. Existing private-stage cleanup, project layout, verified
+sidecars and controlled parent/source ownership assumptions remain unchanged.
+
 Normalization review amendment (2026-11-18 UTC): address zero is a known numeric
 address, distinct from an unavailable address. Within a one-to-many conflict
 group, ordering compares known addresses numerically, then unavailable addresses.
@@ -80,12 +88,94 @@ Project-backed report writes use `ProjectService.export_report` and pass `projec
 
 Committed report reads are non-mutating: `ProjectStore.load(*, recover_interrupted=True)` retains existing default startup recovery, while service export uses `recover_interrupted=False`. Export must neither mark queued/running records failed nor publish recovery/history changes, including when a destination is refused; normal reopen recovery remains unchanged.
 
+The optional core admission identity/checkpoint extension is specified in
+`core-held-inputs.md`. A supplied `ProjectService.create(..., project_id=...)`
+uses the existing strict bounded ID field and first-save transaction, with
+validation before store/source I/O and no additional reuse/deletion authority.
+`ProjectService.open` can explicitly forward `recover_interrupted=False` and the
+original read checkpoint; callers requiring a non-mutating read also select
+`maintenance=False`. Defaults preserve current startup behavior. Failed owned
+opens close their resources and preserve the primary failure if close also fails;
+committed or uncertain project data is never creation-rolled-back by this path.
+
 
 ## Failed initial project creation ownership (2026-11-05)
 
 Before a first snapshot commits, `ProjectService.create` rolls back only files positively recorded as published by that attempt, while retaining the exclusive project lock until cleanup finishes. Ingestion has an optional Python-only `created` ledger of `(Path, os.stat_result)` values for newly created artifact directories and published files; it never records a reused content-addressed file. Publication links the validated same-directory stage exclusively into the content-addressed destination, never overwriting a concurrent destination. An existing destination must still match exact bytes before reuse. New artifact publication requires a hardlink-capable project filesystem (for example NTFS); unsupported filesystems fail closed with PT-INPUT rather than fall back to a non-atomic overwrite. Native Windows/filesystem compatibility remains a separate acceptance gate. The ledger records the staged inode before read-only chmod so a failure after publication remains recoverable.
 
 Cleanup verifies the recorded file identity, size and modification time and refuses observed symlinks/replacements; it may clear read-only only on those owned files. It removes recorded directories only when empty. It never recursively walks or deletes unfamiliar paths. The SQLite connection closes before deleting this attempt's matching database, with the project lock held; already committed first snapshots are retained even if the caller receives a later failure. Uncertain ownership or cleanup errors retain files and preserve the original exception. The persistent `.patchtrace.lock` file is deliberately retained: kernel lock release permits retry, and unlinking a lock inode can split ownership between concurrent writers. Existing/prior files, reused artifacts and foreign paths observed before the final ownership check retain their bytes and permissions. This follows the existing cooperative project kernel-lock model, not an OS filesystem sandbox: metadata checks are not an atomically conditional unlink. A noncooperating process can replace an owned pathname between its last check and unlink/chmod; that residual race is explicitly outside this bounded guarantee. A quarantine or native handle-based hardening design remains open. No wire/schema changes.
+
+### Admission of an incomplete database for creation retry (2026-11-18)
+
+`ProjectStore(create=True)` may recycle an existing database only after a bounded,
+read-only check under the existing exclusive project lock. A nonempty file must
+be a regular, singly linked file no larger than 1 MiB, have the current
+`user_version`, and contain exactly the canonical `current_snapshot`, `history`
+and SQLite `sqlite_sequence` table definitions produced by current initialization.
+All three tables must be empty and the SQLite integrity check must succeed.
+Additional views, triggers, indexes, tables, columns or altered constraints are
+unrecognized schema and refuse reuse, even when both project tables have no rows.
+Nonempty databases with no schema, a changed version, retained sequence metadata,
+unreadable or damaged content, or exceeded validation budgets also refuse reuse.
+
+Retain the existing zero-byte regular-file retry when there are no SQLite
+companions. Any `-journal`, `-wal` or `-shm` entry refuses reuse before opening the
+database: an immutable read must not overlook data in a companion or cause
+recovery to mutate it. Validation opens only a read-only immutable connection,
+disables trusted schema, limits SQLite values to 1 MiB and SQL to 4 KiB, and bounds
+VM execution to 100,000 instructions with a 1,000-instruction callback interval.
+These are admission bounds, not a schema migration or a generic database repair.
+
+Refusal uses the existing `PT-STORAGE: project database already exists` result,
+releases the held lock, and preserves the original database, companion files and
+other project entries byte-for-byte. The lock holder record may change through
+ordinary lock acquisition, but its persistent inode remains. Positive checks
+must create and reopen a project through the real service using an exact current
+empty database and a zero-byte leftover. The current desktop and CLI destination
+preflights retain their existing stricter behavior; this amendment changes only
+the store's authoritative retry decision. The established cooperative-lock and
+noncooperating pathname-race limits above remain in force.
+
+Follow-up ownership requirement (2026-11-18): a successful read-only admission
+does not authorize unlinking whatever later occupies `project.sqlite3` or its
+companion names. If the candidate is replaced after admission, during connection
+opening or before initialization, creation must refuse and preserve the
+replacement database and any companion evidence. Initialization failure must
+not delete a preexisting file reached through a reused pathname. The implementation
+must bind mutation to a validated owned database, or conservatively retain an
+uncertain captured file; a final pathname-stat check followed by unlink is not
+an ownership mechanism. Healthy empty-current and zero-byte retries remain
+required. The earlier schema-only QA checkpoint does not establish this guarantee.
+
+The retry strategy reuses the admitted file in place. Recheck candidate identity,
+metadata and companion absence before and immediately after opening the writable
+connection, then validate schema/emptiness on that actual connection within the
+initial transaction. Existing empty tables are not recreated. For a preexisting
+zero-byte file, schema creation remains uncommitted until the first snapshot
+succeeds; cancellation, ingestion/save failure or close rolls it back. Retry
+rollback must retain the original database bytes and inode and remove only
+artifacts positively published by the failed attempt.
+
+New database creation reserves its file exclusively and records that owned file
+separately from reused candidates. Only that ownership record can authorize
+initialization/service rollback cleanup; observing a pathname later does not
+create ownership. Refuse an observed replacement before accessing schema or
+initializing the database, preserving it and any newly observed companions.
+The reservation descriptor and pathname are separate metadata observations.
+While the descriptor remains open, bind their regular-file identity, link count,
+size and modification time and require the descriptor metadata (including its
+change time) to remain unchanged around the pathname observation. Retain that
+pathname snapshot for subsequent pathname checks, including its own change time.
+Do not compare descriptor change time to pathname change time: Windows Python
+can expose different timestamp meanings through those APIs. Neither timestamp
+check is removed; comparisons remain within the same observation API. Portable
+observation controls supplement, but do not replace, native Windows acceptance.
+These checks and the SQLite transaction address the reproduced admission/open/
+initialization seams. They do not make arbitrary noncooperating filesystem
+renames or journal creation between checks race-free: SQLite recovery on first
+database access and final owned-file cleanup retain the established cooperative
+filesystem assumption. No namespace-race immunity or native filesystem
+qualification is claimed.
 
 ### Normalizer derived metadata boundary (2026-11-05)
 

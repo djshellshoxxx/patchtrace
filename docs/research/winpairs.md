@@ -26,6 +26,11 @@ fails. These are separate immutable artifacts, not an all-files transaction.
 
 ### Open-file publication amendment (2026-11-18)
 
+The stdlib platform machinery lives in `src/patchtrace/owned_publication.py` and
+is shared with workspace objects. This research tool retains its public seams,
+error classification and strict refusal to adopt any existing destination. Only
+the store opts into bounded validation of reusable existing content.
+
 Path checks alone do not establish ownership. Publication must bind both its
 source and destination parent to open filesystem objects. A renamed/replaced
 parent must never redirect publication or cleanup into the replacement directory.

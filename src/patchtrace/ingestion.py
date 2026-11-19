@@ -5,11 +5,14 @@ import hashlib
 import os
 import stat
 import struct
+import sys
 import tempfile
+from contextlib import contextmanager
 from itertools import chain
 from pathlib import Path
 
 from .hostile_text import is_hostile
+from .input_readers import HeldInput, InputReadError, ReadCheckpoint
 from .models import Artifact
 from .offline_bundle import windows_unsafe_component
 
@@ -78,28 +81,61 @@ def file_fingerprint(path: Path) -> tuple:
     return stat.st_dev, stat.st_ino, stat.st_size, stat.st_mtime_ns, stat.st_ctime_ns
 
 
-def sha256_file(path: Path) -> str:
+def _read(stream, size: int, checkpoint: ReadCheckpoint | None = None) -> bytes:
+    if checkpoint is not None:
+        checkpoint(0)
+    data = stream.read(size)
+    if type(data) is not bytes or len(data) > size:
+        raise InputReadError('invalid')
+    if checkpoint is not None:
+        checkpoint(len(data))
+    return data
+
+
+def _exact_read(stream, size: int, checkpoint: ReadCheckpoint | None) -> bytes:
+    data = _read(stream, size, checkpoint)
+    if len(data) != size:
+        raise ValueError('PT-INPUT: PE header or section data is truncated')
+    return data
+
+
+def sha256_file(path: Path, *, checkpoint: ReadCheckpoint | None = None) -> str:
     digest = hashlib.sha256()
+    if checkpoint is not None:
+        checkpoint(0)
     with Path(path).open('rb') as stream:
-        for chunk in iter(lambda: stream.read(CHUNK_SIZE), b''):
+        for chunk in iter(lambda: _read(stream, CHUNK_SIZE, checkpoint), b''):
             digest.update(chunk)
+    if checkpoint is not None:
+        checkpoint(0)
     return digest.hexdigest()
 
 
-def validate_pe(path: Path) -> None:
+def validate_pe(path: Path, *, reader: HeldInput | None = None,
+                checkpoint: ReadCheckpoint | None = None) -> None:
     """Validate bounded DOS/PE headers; never load or execute the input."""
-    with Path(path).open('rb') as stream:
-        size = os.fstat(stream.fileno()).st_size
+    path = Path(path)
+    if checkpoint is not None:
+        checkpoint(0)
+    if reader is not None:
+        reader.check(path)
+    with (path.open('rb') if reader is None else reader.open_reader(path)) as stream:
+        before = os.fstat(stream.fileno())
+        if reader is not None and not stat.S_ISREG(before.st_mode):
+            raise ValueError('PT-INPUT: input must be a regular file')
+        size = before.st_size
         if size < 64 or size > MAX_ARTIFACT_BYTES:
             raise ValueError('PT-INPUT: PE input size is invalid (maximum 1 GiB)')
-        header = stream.read(64)
+        # The provider already accounts held reads. Only ordinary path reads charge here.
+        charge = checkpoint if reader is None else None
+        header = _exact_read(stream, 64, charge)
         if header[:2] != b'MZ':
             raise ValueError('PT-INPUT: missing DOS MZ header')
         offset = struct.unpack_from('<I', header, 0x3C)[0]
         if offset < 64 or offset > size - 26:
             raise ValueError('PT-INPUT: PE header offset is out of bounds')
         stream.seek(offset)
-        pe = stream.read(26)
+        pe = _exact_read(stream, 26, charge)
         if pe[:4] != b'PE\0\0':
             raise ValueError('PT-INPUT: missing PE signature')
         if struct.unpack_from('<H', pe, 4)[0] != 0x8664:
@@ -114,15 +150,21 @@ def validate_pe(path: Path) -> None:
         if section_count < 1 or section_offset + section_count * 40 > size:
             raise ValueError('PT-INPUT: PE section table is truncated or empty')
         stream.seek(offset + 24 + 108)
-        directories = struct.unpack('<I', stream.read(4))[0]
+        directories = struct.unpack('<I', _exact_read(stream, 4, charge))[0]
         if directories > (optional_size - 112) // 8:
             raise ValueError('PT-INPUT: PE data directory count exceeds optional header')
         stream.seek(section_offset)
         for _ in range(section_count):
-            section = stream.read(40)
+            section = _exact_read(stream, 40, charge)
             raw_size, raw_offset = struct.unpack_from('<II', section, 16)
             if raw_size and (raw_offset > size or raw_size > size - raw_offset):
                 raise ValueError('PT-INPUT: PE section raw data is out of bounds')
+        if reader is not None and _file_state(before) != _file_state(os.fstat(stream.fileno())):
+            raise InputReadError('changed')
+    if reader is not None:
+        reader.check(path)
+    if checkpoint is not None:
+        checkpoint(0)
 
 
 def _validate_pe_prefix(header: bytes, size: int) -> None:
@@ -151,68 +193,98 @@ def _validate_pe_prefix(header: bytes, size: int) -> None:
         raise ValueError('PT-INPUT: PE section table is truncated or empty')
 
 
-def inspect_artifact(path: Path, side: str, root: Path, *,
-                     created: list[tuple[Path, os.stat_result]] | None = None) -> Artifact:
-    if side not in {'older', 'newer'}:
-        raise ValueError('PT-INPUT: explicit older/newer side required')
-    source = Path(path)
-    root = Path(root).resolve()
-    stage: Path | None = None
-    try:
+def _file_state(info) -> tuple:
+    return info.st_dev, info.st_ino, info.st_size, info.st_mtime_ns, info.st_ctime_ns
+
+
+@contextmanager
+def _source_stream(source: Path, reader: HeldInput | None, checkpoint: ReadCheckpoint | None):
+    if checkpoint is not None:
+        checkpoint(0)
+    before = before_fingerprint = None
+    if reader is None:
         before = source.stat()
         if not stat.S_ISREG(before.st_mode):
             raise ValueError('PT-INPUT: input must be a regular file')
         before_fingerprint = file_fingerprint(source)
         if not 1 <= before.st_size <= MAX_ARTIFACT_BYTES:
             raise ValueError('PT-INPUT: input exceeds 1 GiB or is empty')
-        destdir = safe_path(root, 'artifacts')
-        destdir.parent.mkdir(parents=True, exist_ok=True)
-        try:
-            destdir.mkdir()
-        except FileExistsError:
-            pass
-        else:
-            if created is not None:
-                created.append((destdir, destdir.stat()))
-        fd, temporary = tempfile.mkstemp(prefix='.input-', dir=destdir)
-        stage = Path(temporary)
-        digest = hashlib.sha256()
-        copied = 0
-        with os.fdopen(fd, 'wb') as target, source.open('rb') as original:
-            opened = os.fstat(original.fileno())
-            if (opened.st_dev, opened.st_ino, opened.st_size, opened.st_mtime_ns) != (
-                before.st_dev, before.st_ino, before.st_size, before.st_mtime_ns
-            ):
-                raise ValueError('PT-INPUT: source changed before copying')
-            header = original.read(65536)
-            _validate_pe_prefix(header, opened.st_size)
-            for chunk in chain((header,), iter(lambda: original.read(CHUNK_SIZE), b'')):
-                copied += len(chunk)
-                if copied > MAX_ARTIFACT_BYTES:
-                    raise ValueError('PT-INPUT: source grew beyond 1 GiB while copying')
-                digest.update(chunk)
-                target.write(chunk)
-            target.flush()
-            os.fsync(target.fileno())
-            after_open = os.fstat(original.fileno())
-        after = source.stat()
-        def fingerprint(s):
-            return s.st_dev, s.st_ino, s.st_size, s.st_mtime_ns, s.st_ctime_ns
-        if (fingerprint(before) != fingerprint(after) or fingerprint(opened) != fingerprint(after_open)
+    else:
+        reader.check(source)
+    with (source.open('rb') if reader is None else reader.open_reader(source)) as original:
+        opened = os.fstat(original.fileno())
+        if not stat.S_ISREG(opened.st_mode):
+            raise ValueError('PT-INPUT: input must be a regular file')
+        if not 1 <= opened.st_size <= MAX_ARTIFACT_BYTES:
+            raise ValueError('PT-INPUT: input exceeds 1 GiB or is empty')
+        if before is not None and _file_state(opened)[:4] != _file_state(before)[:4]:
+            raise ValueError('PT-INPUT: source changed before copying')
+        yield original, opened.st_size
+        after_open = os.fstat(original.fileno())
+    if _file_state(opened) != _file_state(after_open):
+        raise ValueError('PT-INPUT: source changed while copying; try again')
+    if reader is None:
+        if (_file_state(before) != _file_state(source.stat())
                 or before_fingerprint != file_fingerprint(source)):
             raise ValueError('PT-INPUT: source changed while copying; try again')
-        if copied != before.st_size:
+    else:
+        reader.check(source)
+    if checkpoint is not None:
+        checkpoint(0)
+
+
+def inspect_artifact(path: Path, side: str, root: Path, *,
+                     created: list[tuple[Path, os.stat_result]] | None = None,
+                     reader: HeldInput | None = None, checkpoint: ReadCheckpoint | None = None) -> Artifact:
+    if side not in {'older', 'newer'}:
+        raise ValueError('PT-INPUT: explicit older/newer side required')
+    source = Path(path)
+    root = Path(root).resolve()
+    stage: Path | None = None
+    try:
+        with _source_stream(source, reader, checkpoint) as (original, size):
+            destdir = safe_path(root, 'artifacts')
+            destdir.parent.mkdir(parents=True, exist_ok=True)
+            try:
+                destdir.mkdir()
+            except FileExistsError:
+                pass
+            else:
+                if created is not None:
+                    created.append((destdir, destdir.stat()))
+            fd, temporary = tempfile.mkstemp(prefix='.input-', dir=destdir)
+            stage = Path(temporary)
+            digest = hashlib.sha256()
+            copied = 0
+            charge = checkpoint if reader is None else None
+            with os.fdopen(fd, 'wb') as target:
+                header = _read(original, 65536, charge)
+                _validate_pe_prefix(header, size)
+                for chunk in chain((header,), iter(lambda: _read(original, CHUNK_SIZE, charge), b'')):
+                    copied += len(chunk)
+                    if copied > MAX_ARTIFACT_BYTES:
+                        raise ValueError('PT-INPUT: source grew beyond 1 GiB while copying')
+                    digest.update(chunk)
+                    target.write(chunk)
+                target.flush()
+                if checkpoint is not None:
+                    checkpoint(0)
+                os.fsync(target.fileno())
+        if copied != size:
             raise ValueError('PT-INPUT: incomplete input copy')
-        validate_pe(stage)
+        validate_pe(stage, **({'checkpoint': checkpoint} if checkpoint is not None else {}))
         sha = digest.hexdigest()
         relative = f'artifacts/{sha}.bin'
         destination = safe_path(root, relative)
         published = stage.stat()
+        if checkpoint is not None:
+            checkpoint(0)
         try:
             os.link(stage, destination)  # exclusive publication; never replace a concurrent file
         except FileExistsError:
             destination = safe_path(root, relative)
-            if destination.stat().st_size != copied or sha256_file(destination) != sha:
+            if destination.stat().st_size != copied or sha256_file(
+                    destination, **({'checkpoint': checkpoint} if checkpoint is not None else {})) != sha:
                 raise ValueError('PT-STORAGE: existing immutable artifact has changed') from None
             stage.unlink()
         else:
@@ -227,16 +299,25 @@ def inspect_artifact(path: Path, side: str, root: Path, *,
         raise ValueError(f'PT-INPUT: cannot read or preserve input: {exc.strerror or exc}') from exc
     finally:
         if stage is not None:
-            stage.unlink(missing_ok=True)
+            primary = sys.exception()
+            try:
+                stage.unlink(missing_ok=True)
+            except OSError:
+                if primary is None:
+                    raise
+                primary.add_note('PT-STORAGE: input staging cleanup failed; temporary bytes may remain')
 
 
-def verify_artifact(artifact: Artifact, root: Path) -> None:
+def verify_artifact(artifact: Artifact, root: Path, *, checkpoint: ReadCheckpoint | None = None) -> None:
+    if checkpoint is not None:
+        checkpoint(0)
     path = safe_path(root, artifact.relative_path)
     if artifact.relative_path != f'artifacts/{artifact.sha256}.bin':
         raise ValueError('PT-STORAGE: artifact path does not match its content hash')
     try:
-        if not path.is_file() or path.stat().st_size != artifact.size or sha256_file(path) != artifact.sha256:
+        options = {'checkpoint': checkpoint} if checkpoint is not None else {}
+        if not path.is_file() or path.stat().st_size != artifact.size or sha256_file(path, **options) != artifact.sha256:
             raise ValueError('PT-STORAGE: immutable input is missing or has changed')
-        validate_pe(path)
+        validate_pe(path, **options)
     except OSError as exc:
         raise ValueError('PT-STORAGE: immutable input is not readable') from exc

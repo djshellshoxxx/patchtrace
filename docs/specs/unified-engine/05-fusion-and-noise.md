@@ -92,6 +92,35 @@ selected support atom can name either member of an indistinguishable mirror
 twin pair; support component and strength are invariant. Regression coverage
 includes the real 64-atom cap and bounded dense mirror properties.
 
+L-39 acceptance-evidence amendment (2026-11-18 UTC, R2 recovery): after the
+existing admission and greedy choice, the cap must retain the evidence required
+by the chosen decision. A 1:1 `matched` row without chosen tier M/A evidence
+reserves one deterministic pair of chosen tier B atoms with different
+independence components and different non-unknown classes. A `contested` row
+with `uncontested:matched` needs the same witness in addition to its opposing
+evidence. Tentative/candidate rows (including their contested forms), one-sided
+rows and inferred or analyst groups do not depend on this B+B acceptance rule.
+M/A acceptance retains the existing strongest-component reservation.
+
+Select the witness in orientation-independent atom order; retain every member
+of each selected mirror-key group. Union it with the strongest-per-component
+groups, then reserve the strongest opposing group, before filling the remaining
+space by the existing prefix policy. `Support` remains the max-pool inventory
+of s1.1: its indices may both name E-BODY atoms while the retained atom list
+contains the cross-class witness. No native confidence value affects admission
+or that inventory. If a custom L-39 cap cannot hold all mandatory groups, refuse
+with `PT-UNIFIED-LIMIT` / `atoms-cap` in both orientations, before writing a
+result; never exceed the cap or erase the witness or contest. Custom limits are
+the pure/in-process API seam, not a new CLI option. The default cap remains 64.
+
+Register `arbiter=3`; only that channel version changes. Orientation version 2,
+other current channel/proof policies and `ude/2` remain intact. A version-2
+result receives a different current key but stays verifiable and readable as
+historical evidence, including rows whose stored atoms reflect the old
+omission. Authored atom, strict store, shared desktop-detail and headless CLI
+controls establish these mechanics; they do not establish native accuracy or
+change frozen qualification outcomes.
+
 Never averages, sums or ranks native scores across sources; never treats a missing atom as a vote (absent sources leave `support` shorter, nothing else); never converts counts of agreeing sources into a number shown to users; never lets a model override `contested` (SPEC-28 calibration s9.5). Display level is read from `calibration.policy.display_level()` and is `'ordinal'` today; a future validated artifact for a unified profile may add bands through the read model only (C-09). Tests: `test_fusion_never_emits_numbers`, `test_absent_source_is_not_a_vote`, `test_weak_contest_still_contested`, `test_two_ghidra_derived_sources_are_one_component`, `test_same_class_never_corroborates_across_components` (Ghidriff ExactMnemonics + `pt-bytes` P08 -> `tentative`), `test_manual_row_accepted_with_contest_shown`, `test_greedy_matching_keeps_every_against_atom`, `test_one_sided_observation_never_contests`.
 
 ### 1.5 How the L1 false-positive rate is bounded

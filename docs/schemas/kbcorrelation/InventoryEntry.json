@@ -1,0 +1,319 @@
+{
+  "$defs": {
+    "CsvRecordRef": {
+      "additionalProperties": false,
+      "properties": {
+        "line_end": {
+          "maximum": 16777217,
+          "minimum": 1,
+          "title": "Line End",
+          "type": "integer"
+        },
+        "line_start": {
+          "maximum": 16777217,
+          "minimum": 1,
+          "title": "Line Start",
+          "type": "integer"
+        },
+        "logical_record": {
+          "maximum": 100000,
+          "minimum": 1,
+          "title": "Logical Record",
+          "type": "integer"
+        },
+        "raw_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Raw Sha256",
+          "type": "string"
+        },
+        "section_index": {
+          "exclusiveMaximum": 1000,
+          "minimum": 0,
+          "title": "Section Index",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "raw_sha256",
+        "logical_record",
+        "line_start",
+        "line_end",
+        "section_index"
+      ],
+      "title": "CsvRecordRef",
+      "type": "object"
+    }
+  },
+  "$id": "https://patchtrace.local/schemas/kbcorrelation/1/InventoryEntry.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "architecture": {
+      "enum": [
+        "amd64",
+        "arm64",
+        "x86",
+        "unknown"
+      ],
+      "title": "Architecture",
+      "type": "string"
+    },
+    "architecture_basis": {
+      "enum": [
+        "column",
+        "section",
+        "context",
+        "unknown",
+        "conflicted"
+      ],
+      "title": "Architecture Basis",
+      "type": "string"
+    },
+    "basename": {
+      "anyOf": [
+        {
+          "maxLength": 128,
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Basename"
+    },
+    "build": {
+      "anyOf": [
+        {
+          "maxLength": 1000,
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Build"
+    },
+    "conflict_group": {
+      "anyOf": [
+        {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Conflict Group"
+    },
+    "date_text": {
+      "anyOf": [
+        {
+          "maxLength": 65536,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Date Text"
+    },
+    "diagnostics": {
+      "default": [],
+      "items": {
+        "enum": [
+          "UNKNOWN_ARCHITECTURE",
+          "ARCHITECTURE_CONFLICT",
+          "UNKNOWN_VERSION",
+          "INVALID_SIZE",
+          "INVALID_FILENAME",
+          "COLUMN_COUNT",
+          "PRODUCT_CONFLICT",
+          "RELEASE_CONFLICT",
+          "BUILD_CONFLICT",
+          "INVALID_METADATA",
+          "CONFLICTING_METADATA",
+          "UNKNOWN_SECTION",
+          "RESULT_LIMIT",
+          "RECORD_LIMIT"
+        ],
+        "type": "string"
+      },
+      "maxItems": 32,
+      "title": "Diagnostics",
+      "type": "array"
+    },
+    "duplicate_of": {
+      "anyOf": [
+        {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Duplicate Of"
+    },
+    "entry_id": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Entry Id",
+      "type": "string"
+    },
+    "original_fields": {
+      "items": {
+        "maxLength": 65536,
+        "type": "string"
+      },
+      "maxItems": 32,
+      "minItems": 1,
+      "title": "Original Fields",
+      "type": "array"
+    },
+    "original_filename": {
+      "maxLength": 65536,
+      "title": "Original Filename",
+      "type": "string"
+    },
+    "original_size": {
+      "anyOf": [
+        {
+          "maxLength": 65536,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Original Size"
+    },
+    "original_version": {
+      "maxLength": 65536,
+      "title": "Original Version",
+      "type": "string"
+    },
+    "product": {
+      "anyOf": [
+        {
+          "maxLength": 1000,
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Product"
+    },
+    "reference": {
+      "$ref": "#/$defs/CsvRecordRef"
+    },
+    "release": {
+      "anyOf": [
+        {
+          "maxLength": 1000,
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Release"
+    },
+    "size_bytes": {
+      "anyOf": [
+        {
+          "maximum": 18446744073709551615,
+          "minimum": 0,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Size Bytes"
+    },
+    "state": {
+      "enum": [
+        "metadata-only",
+        "unknown",
+        "conflicted",
+        "descriptive-only"
+      ],
+      "title": "State",
+      "type": "string"
+    },
+    "time_text": {
+      "anyOf": [
+        {
+          "maxLength": 65536,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Time Text"
+    },
+    "version_components": {
+      "anyOf": [
+        {
+          "maxItems": 4,
+          "minItems": 4,
+          "prefixItems": [
+            {
+              "maximum": 18446744073709551615,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "maximum": 18446744073709551615,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "maximum": 18446744073709551615,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "maximum": 18446744073709551615,
+              "minimum": 0,
+              "type": "integer"
+            }
+          ],
+          "type": "array"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Version Components"
+    }
+  },
+  "required": [
+    "entry_id",
+    "reference",
+    "original_fields",
+    "original_filename",
+    "basename",
+    "original_version",
+    "version_components",
+    "original_size",
+    "size_bytes",
+    "date_text",
+    "time_text",
+    "architecture",
+    "architecture_basis",
+    "product",
+    "release",
+    "build",
+    "state"
+  ],
+  "title": "InventoryEntry",
+  "type": "object"
+}

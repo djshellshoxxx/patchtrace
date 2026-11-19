@@ -51,3 +51,57 @@ Status: implemented contract for `graph.export_dot`, `graph.callsite` and `graph
 
 All three use the panel's `StateView` (no project, no run, loading, cancelled, error, stale, partial). No-graph
 disables Export DOT, hides the minimap and empties the call-site tables.
+
+### Capped views (2026-11-18 amendment)
+
+The visible neighbourhood's query cap remains a partial state when an independent
+Changes-table task completes. The controller recomputes its capped state from
+both current results; narrowing to an uncapped neighbourhood removes the old
+query warning only when the Changes result is also uncapped. Query truncation
+uses `The view is capped; some nodes or edges may be omitted.` followed by a
+narrowing suggestion. It must not present a displayed-table count such as
+`64 of 64` as the total of an incomplete graph.
+
+Export DOT preserves the visible view's truncation and limitations and renders
+the fixed partial warning as a DOT comment and graph label. A subsequent uncapped
+view/export has no stale cap warning. Existing navigation, project epochs,
+failure retention, output size limits and tooltip coverage remain in force.
+## 5 Bounded ego layout (2026-11-19 recovery)
+
+The Diagram tab uses the recovered pure `callgraph.layout` engine. The existing
+`graph-query` worker computes positions before publishing its immutable result;
+the GUI thread only scales positions to the current font metrics and creates Qt
+items. A cancelled or superseded query cannot replace the current view.
+
+Callers occupy negative hop layers, the seed occupies layer zero, and callees
+occupy positive layers. Cyclic and same-layer edges retain their original
+direction. Shared-neighbour nodes use the first deterministic reachable layer.
+Ordering and tie breaks use node identity, never labels or input iteration order.
+Up to eight barycentre sweeps reduce edge crossings. Dummy nodes participate in
+ordering only; the shared canvas continues to draw the original directed edge
+endpoints as straight lines. Node spacing is scaled to the canvas font metrics.
+
+Limits are enforced before unbounded materialization: at most 10,000 node items
+and 40,000 edge items are consumed, including duplicates and dangling edges.
+Node identities must be strings of at most 512 characters. Invalid input fails
+with `PT-GRAPH-INPUT`; excess input fails with `PT-GRAPH-LIMIT`. Boolean and
+negative layout budgets are invalid. Requested positive node budgets clamp to
+2,000, with a default of 500; dummy nodes clamp to 20,000, sweeps to eight, and
+absolute depth to four. Zero is allowed for dummy, sweep and depth budgets.
+Cancellation is checked before input iteration and periodically during input,
+traversal, edge routing, crossing counts and coordinate placement.
+
+Nodes beyond the layout node/depth limits and disconnected nodes are omitted
+with exact counts. Long edges are omitted from the diagram when their dummy
+cost would exceed the layout budget, with the count shown. The Neighbours table,
+Tree, call-site evidence and DOT export retain the complete bounded query;
+diagram omissions do not remove evidence from those views. A layout refusal
+clears the diagram and states its error while leaving those textual views usable.
+The existing minimap and shared keyboard navigation consume the recovered node
+positions; duplicate historical minimap and keyboard implementations are not
+introduced.
+
+Verification covers deterministic input permutations, cycles, spacing, strict
+input/work limits, cancellation during iteration, crossing reduction, worker
+delivery to the real offscreen Calls panel, and table retention on layout failure.
+These authored graph controls do not establish native binary-analysis accuracy.

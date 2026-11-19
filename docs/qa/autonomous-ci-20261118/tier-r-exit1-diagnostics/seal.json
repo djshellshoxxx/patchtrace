@@ -1,0 +1,15 @@
+{
+  "archive": {
+    "bytes": 900095,
+    "members": 60,
+    "path": "evidence.zip",
+    "payloads": 59,
+    "sha256": "e1ddea77dfde14fe9c6a8ee43b909cc373bad8dbf483dbb1a5f915ea853fc925"
+  },
+  "contract": "bounded-qa-seal/1",
+  "manifest_sha256": "9b3db9d936895b48a399e525c8b08048a41ee7c65eadeff37db18253fc6b2df4",
+  "original_packet_preserved": true,
+  "scope": "Authored injected runners only; no compiler, engine, target or network execution. Native acceptance remains pending.",
+  "source_commit": "4cdd463fa8d903c8b2ea6d2149d5003d23978122",
+  "verified_git_source_snapshots": 18
+}

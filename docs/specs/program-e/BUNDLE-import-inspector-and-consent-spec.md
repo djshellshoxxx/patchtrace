@@ -94,10 +94,18 @@ lock = root/.runtime-<id>.lock created O_CREAT|O_EXCL (stale lock -> error, neve
 stage = mkdtemp('.install-', dir=root)
 for each file: Windows path length of the final target must be < 248; open target 'xb'; stream, verify size+sha256 while writing
 write manifest.json; re-hash the archive once more; destination must still be absent
-_publish_no_replace(stage, destination)     # Windows: os.replace to an absent dir; POSIX: mkdir reservation then rename
+_publish_no_replace(stage, destination)     # shared exclusive native directory publication; never a public mkdir reservation
 finally: remove only our stage; on cleanup failure report the exact stage path; remove our lock
 ```
 The result `InstalledRuntime` exposes paths for Setup: python, ghidra, java home. Nothing is run. Cancellation raises `PT-CANCEL: installation cancelled; existing runtimes were preserved`.
+
+Directory publication amendment (2026-11-18): the shared
+[`directory-publication.md`](../directory-publication.md) contract requires one
+native no-replacement operation. An empty destination created by another owner
+is preserved even if it appears immediately before the move. Unsupported native
+primitives/filesystems fail without a copy/replace fallback, and the publisher
+never removes the destination during cleanup. Controlled parent/stage ownership
+and the existing installer cleanup boundary remain explicit.
 
 ## 5. Consent dialog (implemented, VERIFIED)
 

@@ -368,8 +368,10 @@ def test_ports_are_protocols_without_default_behaviour():
 FORBIDDEN = {'PySide6', 'PyQt5', 'PyQt6', 'urllib', 'http', 'socket', 'sqlite3', 'requests', 'ssl'}
 SIBLINGS = {'acquisition', 'enrichment', 'intelligence', 'unified', 'secondary', 'ui', 'backend', 'cli', 'jobs'}
 ALLOWED_FORBIDDEN = {'store.py': {'sqlite3'}, 'recovery.py': {'sqlite3'},
+                     'inventory_store.py': {'sqlite3'}, 'inventory_selection.py': {'sqlite3'},
                      'panel_qt.py': {'PySide6'},
-                     'investigation_qt.py': {'PySide6'}}  # Explicit UI adapters; all domain modules stay Qt-free.
+                     'investigation_qt.py': {'PySide6'},
+                     'inventory_qt.py': {'PySide6'}}  # Named adapters; domain modules stay Qt/network/database-free.
 # context.py reads the reused intelligence contract types (CweProfile, HypothesisSet); wiring.py is the composition root
 # and the only module that binds sibling behaviour (plan section 9).
 ALLOWED_SIBLINGS = {'contracts.py': {'acquisition', 'enrichment', 'intelligence'}, 'context.py': {'intelligence'},
@@ -378,9 +380,26 @@ ALLOWED_SIBLINGS = {'contracts.py': {'acquisition', 'enrichment', 'intelligence'
                     # the Leads dock: PanelSpec, state notices, tooltip entries and the Qt view use the GUI framework
                     'panel.py': {'gui'}, 'panel_state.py': {'gui'}, 'tooltip_entries.py': {'tooltips'},
                     'panel_qt.py': {'gui'}, 'investigation_qt.py': {'gui', 'tooltips'},
+                    'inventory_qt.py': {'gui', 'tooltips'},
                     'investigation_service.py': {'models', 'artifact_bytes'},
                     # `clean_text` applies the one hostile-character rule; that module is stdlib-only and pure
                     'products.py': {'hostile_text'}}
+INVENTORY_SIBLING_SYMBOLS = {
+    # The named workspace adapter shares only the stdlib owned-publication boundary.
+    'store.py': {'persistence': {'creation_directory_available'},
+                 'owned_publication': {'OwnedPublicationError', 'directory_anchor', 'verify_anchor',
+                                        'publish_bytes', 'read_bytes'}},
+    'inventory_contracts.py': {'acquisition.contracts': {'PE_EXTENSIONS', 'AcquisitionError', 'validate_file_name'},
+                               'hostile_text': {'replace_hostile'}},
+    'inventory_csv.py': {'hostile_text': {'replace_hostile'}},
+    'inventory_store.py': {'hostile_text': {'replace_hostile'}, 'persistence': {'strict_json'}},
+}
+HELD_INPUT_SIBLING_SYMBOLS = {
+    # kb-held-inputs.md: only these neutral capability declarations cross the boundary.
+    'service.py': {'HeldInput', 'PairInputReaders'},
+    'store.py': {'HeldInput', 'InputReadError', 'PairInputReaders'},
+    'wiring.py': {'HeldInput', 'PairInputReaders'},
+}
 
 
 def _imports(path):
@@ -402,7 +421,21 @@ def test_domain_modules_import_no_qt_network_or_database(path):
             assert top not in FORBIDDEN - ALLOWED_FORBIDDEN.get(path.name, set()), f'{path.name} imports {module}'
             assert top != 'patchtrace', f'{path.name} must use relative imports'
         elif level == 2:  # `..x` is a sibling package
-            if path.name in {'investigation_service.py', 'store.py'} and module == 'persistence':
+            if module == 'input_readers':
+                symbols = HELD_INPUT_SIBLING_SYMBOLS.get(path.name)
+                assert symbols is not None, f'{path.name} imports sibling {module}'
+                nodes = [n for n in ast.walk(ast.parse(path.read_text(encoding='utf-8')))
+                         if isinstance(n, ast.ImportFrom) and n.level == 2 and n.module == module]
+                assert all(a.name in symbols and a.asname is None for n in nodes for a in n.names), (
+                    f'{path.name} imports sibling {module} forbidden symbols')
+            elif path.name in INVENTORY_SIBLING_SYMBOLS:
+                symbols = INVENTORY_SIBLING_SYMBOLS[path.name].get(module)
+                assert symbols is not None, f'{path.name} imports sibling {module}'
+                nodes = [n for n in ast.walk(ast.parse(path.read_text(encoding='utf-8')))
+                         if isinstance(n, ast.ImportFrom) and n.level == 2 and n.module == module]
+                assert all(a.name in symbols and a.asname is None for n in nodes for a in n.names), (
+                    f'{path.name} imports sibling {module} forbidden symbols')
+            elif path.name in {'investigation_service.py', 'store.py'} and module == 'persistence':
                 nodes = [n for n in ast.walk(ast.parse(path.read_text(encoding='utf-8')))
                          if isinstance(n, ast.ImportFrom) and n.level == 2 and n.module == 'persistence']
                 assert all([(a.name, a.asname) for a in n.names] == [('creation_directory_available', None)]
@@ -422,6 +455,47 @@ def test_init_is_empty_and_ports_and_ids_import_no_sibling():
     assert (PKG / '__init__.py').read_text(encoding='utf-8') == ''
     for name in ('ports.py', 'ids.py', 'limits.py', 'errors.py'):
         assert not [m for lvl, m in _imports(PKG / name) if lvl == 2], name
+
+
+@pytest.mark.parametrize('name,module,allowed', [
+    ('inventory_qt.py', 'PySide6.QtWidgets', True),
+    ('inventory_qt.py', 'sqlite3', False),
+    ('inventory_qt.py', 'urllib.request', False),
+    ('inventory_service.py', 'sqlite3', False),
+    ('inventory_selection.py', 'sqlite3', True),
+    ('inventory_selection.py', 'socket', False),
+    ('inventory_store.py', 'sqlite3', True),
+    ('inventory_store.py', 'PySide6.QtWidgets', False),
+    ('inventory_csv.py', 'socket', False),
+    ('inventory_contracts.py', 'sqlite3', False),
+])
+def test_named_inventory_adapter_import_boundaries(tmp_path, name, module, allowed):
+    path = tmp_path / name
+    path.write_text(f'import {module}\n', encoding='utf-8')
+    if allowed:
+        test_domain_modules_import_no_qt_network_or_database(path)
+    else:
+        with pytest.raises(AssertionError, match='imports'):
+            test_domain_modules_import_no_qt_network_or_database(path)
+
+
+@pytest.mark.parametrize('name,module,symbol,allowed', [
+    ('inventory_contracts.py', 'acquisition.contracts', 'validate_file_name', True),
+    ('inventory_contracts.py', 'acquisition.service', 'AcquireService', False),
+    ('inventory_csv.py', 'hostile_text', 'replace_hostile', True),
+    ('inventory_csv.py', 'acquisition.transport', 'Transport', False),
+    ('inventory_store.py', 'persistence', 'strict_json', True),
+    ('inventory_store.py', 'persistence', 'ProjectStore', False),
+    ('inventory_store.py', 'persistence', '*', False),
+])
+def test_inventory_sibling_reuse_is_limited_to_documented_symbols(tmp_path, name, module, symbol, allowed):
+    path = tmp_path / name
+    path.write_text(f'from ..{module} import {symbol}\n', encoding='utf-8')
+    if allowed:
+        test_domain_modules_import_no_qt_network_or_database(path)
+    else:
+        with pytest.raises(AssertionError, match='imports'):
+            test_domain_modules_import_no_qt_network_or_database(path)
 
 
 @pytest.mark.parametrize('name,module,allowed', [
@@ -495,3 +569,65 @@ def test_workspace_destination_preflight_is_exact_helper_import(tmp_path, source
     else:
         with pytest.raises(AssertionError):
             test_domain_modules_import_no_qt_network_or_database(path)
+
+
+@pytest.mark.parametrize('name,symbols', [
+    ('service.py', 'HeldInput'),
+    ('service.py', 'PairInputReaders'),
+    ('store.py', 'HeldInput'),
+    ('store.py', 'InputReadError'),
+    ('store.py', 'PairInputReaders'),
+    ('wiring.py', 'HeldInput'),
+    ('wiring.py', 'PairInputReaders'),
+    ('service.py', 'HeldInput, PairInputReaders'),
+    ('store.py', 'HeldInput, InputReadError, PairInputReaders'),
+    ('wiring.py', 'HeldInput, PairInputReaders'),
+])
+def test_named_held_reader_imports_match_the_internal_capability(tmp_path, name, symbols):
+    path = tmp_path / name
+    path.write_text(f'from ..input_readers import {symbols}\n', encoding='utf-8')
+    test_domain_modules_import_no_qt_network_or_database(path)
+
+
+@pytest.mark.parametrize('name', ['service.py', 'store.py', 'wiring.py'])
+@pytest.mark.parametrize('source', [
+    'from ..input_readers import *',
+    'from ..input_readers import HeldInput as Reader',
+    'from ..input_readers import PairInputReaders as HeldInput',
+    'from ..input_readers import HeldInput, ReadCheckpoint',
+    'from ..input_readers import ReadCheckpoint',
+    'from ..input_readers import Path',
+    'from .. import input_readers',
+    'from .. import input_readers as readers',
+    'import patchtrace.input_readers',
+    'from patchtrace.input_readers import HeldInput',
+    'from ..input_readers.capabilities import HeldInput',
+    'from ..input_readers import HeldInput\nimport socket',
+    'from ..input_readers import HeldInput\nimport PySide6',
+    'from ..input_readers import HeldInput\nfrom ..persistence import ProjectStore',
+    'from ..input_readers import HeldInput\nfrom ..input_readers import PairInputReaders as readers',
+])
+def test_held_reader_exception_cannot_expand_import_authority(tmp_path, name, source):
+    path = tmp_path / name
+    path.write_text(source + '\n', encoding='utf-8')
+    with pytest.raises(AssertionError, match='imports'):
+        test_domain_modules_import_no_qt_network_or_database(path)
+
+
+@pytest.mark.parametrize('name', ['service.py', 'wiring.py'])
+def test_held_reader_error_import_remains_specific_to_store(tmp_path, name):
+    path = tmp_path / name
+    path.write_text('from ..input_readers import InputReadError\n', encoding='utf-8')
+    with pytest.raises(AssertionError, match='imports'):
+        test_domain_modules_import_no_qt_network_or_database(path)
+
+
+@pytest.mark.parametrize('name', [
+    'ports.py', 'contracts.py', 'investigation_service.py', 'inventory_service.py', 'inventory_store.py',
+])
+@pytest.mark.parametrize('symbol', ['HeldInput', 'PairInputReaders'])
+def test_other_domain_modules_do_not_gain_reader_imports(tmp_path, name, symbol):
+    path = tmp_path / name
+    path.write_text(f'from ..input_readers import {symbol}\n', encoding='utf-8')
+    with pytest.raises(AssertionError, match='imports'):
+        test_domain_modules_import_no_qt_network_or_database(path)
