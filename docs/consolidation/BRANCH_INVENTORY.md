@@ -2,18 +2,24 @@
 
 ## Later recovery checkpoint
 
-Code through `cb1b508c` additionally recovers training transfer, paired runner
+Code through `7e610c03` additionally recovers training transfer, paired runner
 publication, accessible controls, research workflow, offline Tier-W review/run,
 Search/shared stored sources, Strings comparison/source choice, strict fetch
-plans/stream transport, version observations and project creation lifecycle.
+plans/stream transport, version observations, project creation and explicit retry,
+digest-bound saved-plan execution, packaged build records, the PE metadata cache
+and seven bounded/typed parser corrections.
 Exact source/review evidence is in `RECOVERED_WORK.md`.
 
 A new fetch observed `consolidation/patchtrace-reviewed-20261119` advancing
 from `a56ab13a` to `8d130aef` and new refs `consolidation/patchtrace-continuation-20261119`,
 `codex/patchtrace-checkpoint-20261119-81e4` and
 `codex/patchtrace-completion-20261119-81e4`. These active heads are being inspected
-in isolation. Main remains `fdc2696c`. They are additions to the frozen census below;
-no refreshed all-page count or complete semantic disposition is claimed yet.
+in isolation. Main remains `fdc2696c`. The refreshed all-page census is committed
+as `4966840b`: **323 branches, 312 PRs and 59 tags**, with 415 distinct recorded
+targets resolving locally. See [the refresh](CENSUS_REFRESH_20261119.md) and its
+hashed machine records. It adds to the frozen inventory below; it does not
+silently extend the older semantic dispositions. Source deltas for the new heads
+are frozen at `ecfd5960`, and complete semantic exhaustion remains open.
 
 ## Scope and baseline
 

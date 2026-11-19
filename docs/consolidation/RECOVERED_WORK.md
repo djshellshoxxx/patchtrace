@@ -4,12 +4,13 @@
 
 Integration branch: `integration/exhaustive-patchtrace-consolidation-20261119`.
 Draft review: [PR #320](https://github.com/djshellshoxxx/patchtrace/pull/320).
-This record describes code through `cb1b508ca8fe07b06145308d28e637a3480d779d`. The latest verified remote
-checkpoint is `087f50aae76f815dc013fb65e304eef8e21596c1`, tree
-`bf90c3f862d144fc11adc471a84a51076987ba2f`, exactly equal to local `bb4f8310`.
-The preceding checkpoint `bc7eb632` equals local `11bc7014`, and the first
+This record describes code through `7e610c03043b4d2b3ba4893b133993fd7b020109`.
+The latest verified remote checkpoint before this record is
+`1341dc217b32081b3a9652642106d8680deba8a3`, tree
+`39402d93f3a704dbcf841175dc52c9c695d182f2`, exactly equal to local `65043fe8`.
+The preceding `087f50aa` equals local `bb4f8310`, `bc7eb632` equals `11bc7014`, and the first
 `188b4962` equals local `edb6f20f`. Named local checkpoint branches retain the
-source histories. Changes newer than `087f50aa` await the next guarded publication.
+source histories. Changes newer than `1341dc21` await this record's guarded publication.
 
 ## Accepted contributions
 
@@ -63,8 +64,18 @@ expected-head guard and prove exact tree equality again.
 
 ## Still actionable
 
-The explicit incomplete-project retry flow, saved-plan execution and consent CLI,
-remaining branch/documentation/research residue, package build-info production and
-complete final-candidate qualification remain active. Fresh fetch also discovered
-three new branches and an advanced reviewed source; their immutable heads are
-under review. No full semantic exhaustion or release readiness is claimed.
+The saved-plan consent CLI, bounded analyst journey gate, remaining new-head and
+historical branch/research residue, full platform packages and final-candidate
+qualification remain active. No full semantic exhaustion or release readiness
+is claimed.
+
+## Reviewed recoveries after remote 1341dc21
+
+| Contribution | Source and integration | Behavior and evidence |
+|---|---|---|
+| Refreshed complete census | `8c89a488` → `4966840b` | 323 branches, 312 PRs (56 open, 84 closed unmerged, 172 merged), 59 tags; complete pagination and five verified evidence-file hashes. All 415 distinct recorded targets resolve locally. Supplemental census does not replace old semantic decisions. |
+| Explicit incomplete-project retry | `72255922`, `fd6861d2` → `bf8aa467`, `8f4ef7a8` | Current exact-schema/in-place SQLite admission, selected artifact verification, retained kernel-lock identity and bounded reads. Real private-stage substitution deletion was reproduced and repaired; finalizer detached and uncertain replacements retained. Independent 57 initial plus two correction controls; integrated retry/lifecycle 74 passed. Final check-to-removal interval remains qualified. |
+| Saved fetch executor and PDB byte receipts | `f60424fc` → `189edc47` | Fresh exact saved-plan/host confirmation, all-target preflight, bounded verified stages, immutable attempt events and retained outcomes. Reuse requires strict per-PDB URL/GUID/age/SHA/size receipts; modified same-GUID bytes and blind adoption refuse. Author 204 passed/one native skip, independent 57 passed, integrated 179 passed. CLI wiring remains a separate reviewed slice. |
+| Build record production and source-root binding | `4af75c62`, `442e3961` | Both existing builders produce the strict record and verify the frozen command before archiving. Real enclosing-repository attribution was reproduced and repaired with exact root observations. Author 233 adjacent passes, correction 70, independent correction 43. Actual Linux PyInstaller consumer probe at `7e610c03` passed record round-trip and tamper refusal; full desktop/Windows packaging remains open. |
+| Offline PE metadata cache and worker integration | Historical #322 `2511301f`/`bdc929eb`; source `e59e9fce` → `6d0f1509` | Bounded exact rows and frozen metadata, full guard/revision protection at SQL write, no retention eviction, current verified artifacts and shared inspection-worker handoff. Sixteen actual source/boundary failures repaired; 214 disjoint author passes, independent read review, integrated 85 passes. OS trust is re-evaluated separately. |
+| Typed and bounded parser observations | Historical #322 `2511301f`; source `03c120e4` → `7e610c03` | Winbindex pre-decode cap, exact CVSS decimals/UTC bounds, typed CSAF redirects and N-way pair-path failures, missing BinExport text limits, bounded/surrogate-safe rz-diff diagnostics. Original 89 failures and seven additional rz-diff failures retained. Author 602 disjoint passes, independent read reviews, integrated boundaries/executor 191 passes. No native engine or real-data accuracy claim. |

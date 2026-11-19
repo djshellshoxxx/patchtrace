@@ -141,6 +141,13 @@ class ProjectService:
             raise
 
     @classmethod
+    def retry_create(cls, older: Path, newer: Path, name: str, root: Path, *,
+                     checkpoint: ReadCheckpoint | None = None) -> ProjectService:
+        from .project_retry import retry_project
+
+        return retry_project(cls, older, newer, name, root, checkpoint=checkpoint)
+
+    @classmethod
     def open(cls, root: Path, *, maintenance: bool = True, recover_interrupted: bool = True,
              checkpoint: ReadCheckpoint | None = None) -> ProjectService:
         """Disable both maintenance and recovery for committed reads without application mutations."""

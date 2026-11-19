@@ -1,0 +1,35 @@
+FF                                                                       [100%]
+=================================== FAILURES ===================================
+_______ test_existing_inspection_delivers_metadata_before_reader_handoff _______
+
+service = <patchtrace.service.ProjectService object at 0x7fefa2c538f0>
+
+    def test_existing_inspection_delivers_metadata_before_reader_handoff(service):
+        result = inspect(service)
+        try:
+            for side in ('older', 'newer'):
+                metadata = getattr(result.sides[side], 'metadata', None)
+>               assert metadata is not None and metadata.status == 'ok'
+E               assert (None is not None)
+
+tests/test_pe_metadata_cache_recovery.py:34: AssertionError
+______ test_missing_signing_metadata_is_unavailable_not_an_absent_version ______
+
+qtbot = <pytestqt.qtbot.QtBot object at 0x7fefa2b20620>
+
+    def test_missing_signing_metadata_is_unavailable_not_an_absent_version(qtbot):
+        from patchtrace.ui_inspection import SigningTab
+        tab = SigningTab()
+        qtbot.addWidget(tab)
+        tab.set_result({'older': None, 'newer': PeMetadata('ok')})
+>       assert 'PT-PE-INPUT' in tab.status.full_text()
+E       assert 'PT-PE-INPUT' in 'This file has no version resource.'
+E        +  where 'This file has no version resource.' = full_text()
+E        +    where full_text = <patchtrace.gui.qt.labels.PlainLabel(0x13b49f80) at 0x7fefa2b89c00>.full_text
+E        +      where <patchtrace.gui.qt.labels.PlainLabel(0x13b49f80) at 0x7fefa2b89c00> = <patchtrace.ui_inspection.SigningTab(0x14188a50, name="pe.version.tab") at 0x7fefa2b89bc0>.status
+
+tests/test_pe_metadata_cache_recovery.py:45: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_pe_metadata_cache_recovery.py::test_existing_inspection_delivers_metadata_before_reader_handoff
+FAILED tests/test_pe_metadata_cache_recovery.py::test_missing_signing_metadata_is_unavailable_not_an_absent_version
+2 failed in 1.50s

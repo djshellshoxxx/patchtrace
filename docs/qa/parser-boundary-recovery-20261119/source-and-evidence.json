@@ -1,0 +1,186 @@
+{
+  "baseline": "e59e9fce81416c543aa09117e620f7db45b5effd",
+  "evidence": {
+    "parser-boundaries-red.log": {
+      "bytes": 69778,
+      "sha256": "0b950857e6a18e1faedef100c832041fd2b82d57c81a976d5bfaf772ed1c4293"
+    },
+    "parser-final-acquisition.log": {
+      "bytes": 99,
+      "sha256": "57892a23254dfce7d8bde6dbfe64d14ad7d1a18796fbc59b2df5da6651f3d336"
+    },
+    "parser-final-acquisition.xml": {
+      "bytes": 4605,
+      "sha256": "4567cbd0d4e261b5fa8d66d40195cf48979fc34efdc50b2ea388ed5c54f60644"
+    },
+    "parser-final-binexport-check.log": {
+      "bytes": 99,
+      "sha256": "8ca314cf44b1247594962372952a9bb9322dd7d8c937a936b87b6dd1891dc016"
+    },
+    "parser-final-binexport-check.xml": {
+      "bytes": 6236,
+      "sha256": "9239373e1102d499a99d2d80bdfd4bc087503e08d3c11dad00dfc0c39eb7efd0"
+    },
+    "parser-final-binexport-pipeline.log": {
+      "bytes": 99,
+      "sha256": "56cda04cce5c4d6c243c165e1c4b04e27115c123762d7e9a76ed932a095e7b97"
+    },
+    "parser-final-binexport-pipeline.xml": {
+      "bytes": 3347,
+      "sha256": "023e3c0ee5b528d431c94fafcded07510c3e2f2f91e9e3fa37a7dce8011d5a1e"
+    },
+    "parser-final-boundaries.log": {
+      "bytes": 180,
+      "sha256": "28ef95c9b23a62cc69e905de80adce21116f00116f8feab9b7f54f357b5ef89a"
+    },
+    "parser-final-boundaries.xml": {
+      "bytes": 23010,
+      "sha256": "f8b482b29cfd054cc8490ba7825d9f15dfb535516d352823fb72b837c222cc84"
+    },
+    "parser-final-cve.log": {
+      "bytes": 179,
+      "sha256": "75287e52da00d40f4fb33f2241a30916beeeff54e4358bc087bced46eabb3249"
+    },
+    "parser-final-cve.xml": {
+      "bytes": 9464,
+      "sha256": "44275b8665b93f55a12f23a986feeecd56777b9cdbbb2a03b09b110735210dfd"
+    },
+    "parser-final-groups.json": {
+      "bytes": 1726,
+      "sha256": "40a5b5263b7f877df968f66f0ed47def3ae242010def96bca58da84e72273118"
+    },
+    "parser-final-nway-view.log": {
+      "bytes": 99,
+      "sha256": "2932154676eaae758edcd0b6c30b8802d65e9d2ea5f2d493cd960881eb105bd8"
+    },
+    "parser-final-nway-view.xml": {
+      "bytes": 4648,
+      "sha256": "139725feb6fbf619d85d0be2cc545fd64882cac1224b27cd2dfba5fdfac7b36d"
+    },
+    "parser-final-rzdiff.log": {
+      "bytes": 260,
+      "sha256": "bcfd0fef15b66b00eb47be9c9a742c3cd3357cf60e803863c12f734663167299"
+    },
+    "parser-final-rzdiff.xml": {
+      "bytes": 26855,
+      "sha256": "1241ab452f112c8a05ed47edaed8663980ea641261fafca877ce212e13a29961"
+    },
+    "parser-final-series.log": {
+      "bytes": 99,
+      "sha256": "f12312a4c81a80b3512f449a2bf86d01a850c0270427be3f4151f18b1155df26"
+    },
+    "parser-final-series.xml": {
+      "bytes": 3699,
+      "sha256": "d22a7615fa95342a93b178ed3c211ae12f9d146a103d8ea6ac973fcd9537d735"
+    },
+    "parser-final-transport.log": {
+      "bytes": 99,
+      "sha256": "5504b278ab9b7e96203dad86c36000e66842b7591f56de778d1e3d55ea4902ad"
+    },
+    "parser-final-transport.xml": {
+      "bytes": 3595,
+      "sha256": "f1cf3704f2d940b9422ea882344ba01c0593f17d42eecc35dabe1e2cd6ed8186"
+    },
+    "rzdiff-tail-allocation-red.log": {
+      "bytes": 5532,
+      "sha256": "3e0c2e9aac6b29dd07406ed41ac6157607fa13f6f91e3cec8a300e58dfcfd833"
+    }
+  },
+  "final_checks": [
+    {
+      "errors": 0,
+      "failures": 0,
+      "group": "boundaries",
+      "skipped": 0,
+      "tests": 134
+    },
+    {
+      "errors": 0,
+      "failures": 0,
+      "group": "acquisition",
+      "skipped": 0,
+      "tests": 35
+    },
+    {
+      "errors": 0,
+      "failures": 0,
+      "group": "cve",
+      "skipped": 0,
+      "tests": 75
+    },
+    {
+      "errors": 0,
+      "failures": 0,
+      "group": "transport",
+      "skipped": 0,
+      "tests": 23
+    },
+    {
+      "errors": 0,
+      "failures": 0,
+      "group": "series",
+      "skipped": 0,
+      "tests": 29
+    },
+    {
+      "errors": 0,
+      "failures": 0,
+      "group": "nway-view",
+      "skipped": 0,
+      "tests": 33
+    },
+    {
+      "errors": 0,
+      "failures": 0,
+      "group": "binexport-check",
+      "skipped": 0,
+      "tests": 48
+    },
+    {
+      "errors": 0,
+      "failures": 0,
+      "group": "binexport-pipeline",
+      "skipped": 0,
+      "tests": 26
+    },
+    {
+      "errors": 0,
+      "failures": 0,
+      "group": "rzdiff",
+      "skipped": 0,
+      "tests": 199
+    }
+  ],
+  "qualifications": [
+    "Nine bounded subprocess groups select disjoint test files.",
+    "The complete baseline summary was recovered after transport loss; parser source still matched the recorded baseline then.",
+    "Initial127-pass port and red-run passes overlap final checks; no counts are added.",
+    "Authored provider/SQLite/Protobuf/process fixtures are not native-engine or provider-accuracy qualification."
+  ],
+  "schema": "patchtrace-scoped-recovery-evidence/1",
+  "scope": "Existing parser admission and typed error boundaries; no new backend or consent",
+  "source_head": "2511301fc26bf0e039f54828959c422b4ff761a2",
+  "source_sha256": {
+    "docs/modules.md": "fc0ccb5f814c59f08b5d514435c98568120aa707c1eb6d5eb59325473c3c54de",
+    "docs/specs/acquisition.md": "0488395f13eba9e7b62f416d3cd5766bed076ed0a26b09ef409a1402ec086b7b",
+    "docs/specs/binexport2-support.md": "652d44f7f7a8bab11af641226b0b9df43dd050104b94ecaba4144f3b64ad62a0",
+    "docs/specs/csaf-cve-interpretation-engine.md": "d7498f9925a769aee8e17a4cf8cd83eac4cd9ab50b9a2a405842d87520cb4b3a",
+    "docs/specs/enrichment.md": "7ee59b89cc6418d2d9dd15866dac78a0b872f69506de825f9c40f9fec8e20768",
+    "docs/specs/secondary-engine.md": "9fea7c166542895873682faf3efc1902ef430bd09aad67fb1528a6c3e980f5d3",
+    "docs/specs/series-window.md": "97a3e259bc64663810ce2c38eb40e6c13e11c2ca6a60313e6ad865a342095753",
+    "src/patchtrace/acquisition/winbindex.py": "9b5a9e667a2371314e5f3608b5a7d4ad35b398d1977e1746bce1ad804fcb27b1",
+    "src/patchtrace/enrichment/cve.py": "5f369f6a2abe0612693d17402ef8c0911a176f5b93695bbd30bc6885b4ab9357",
+    "src/patchtrace/intelligence/csaf/transport.py": "c569796d5f17634764cafdf64b6c9d256bac9b504db47c13a7bae3e224fe16f7",
+    "src/patchtrace/nway/pair_access.py": "c8924b1bcd3aa88c8d928600de4f07716278cc03f867303f84bd622144724aa4",
+    "src/patchtrace/nway/series.py": "5673cc1624462c71de39c03dee861037e735eea271f3c9a73c270c820ce8c646",
+    "src/patchtrace/secondary/binexport_check.py": "ae7503613133bdb6110c81494f3caa2e7d45f04a34ffe149c0fc13bf8e58420d",
+    "src/patchtrace/secondary/rzdiff.py": "20ddb688c4d04408c4f5c60de7eddd5ea58016d13dac3874108257db6284d102",
+    "tests/test_binexport_text_boundaries.py": "fb1721da2fc07fd65696f874f282712ba9c78a37da87550710f8885efc0ea444",
+    "tests/test_csaf_redirect_integrity.py": "47bd1d8861b1277a1d351e75a315364ebb512b1d89645baa80c992d4546ca3f0",
+    "tests/test_enrichment_numeric_boundaries.py": "f5c8c0e92b8257e114597bae572def0b6fa91baaf464ecc93146900f3632e637",
+    "tests/test_nway_path_failures.py": "f0eee7f3180201ec129f110c7d8d7568abe16c3e52ae6130fc2f507c7069bd24",
+    "tests/test_nway_recovery_copy_20261105.py": "e01a3ca0b055fc16308340dde06e334e0db26be9f1324893d1d937b25f6a3d18",
+    "tests/test_rzdiff_text_boundaries.py": "755a7c97c4d015ee553f571de5bb47ad366c4c7033b2488cda09d69e7f2d7859",
+    "tests/test_winbindex_parser_bounds.py": "30d078b089b45cdee86fb08ff63ca8bf531c174c30f346306a230648968d6e25"
+  }
+}

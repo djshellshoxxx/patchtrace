@@ -1,0 +1,364 @@
+..FFFFFFFFFFF                                                            [100%]
+=================================== FAILURES ===================================
+__________ test_cache_refuses_invalid_or_future_row_revision[future] ___________
+
+service = <patchtrace.service.ProjectService object at 0x7fe6c9c4c770>
+revision = 'future'
+
+    @pytest.mark.parametrize('revision', ['future', 'negative', 'text'])
+    def test_cache_refuses_invalid_or_future_row_revision(service, revision):
+        from patchtrace.pe_overview.cache_store import publish_metadata_cache, snapshot_metadata_cache
+        result = inspect(service)
+        try:
+            entry = stored(service, result)[0]
+            value = {'future': service.project.revision + 1, 'negative': -1, 'text': 'invalid'}[revision]
+            db = service.store.connection
+            with db:
+                db.execute('UPDATE enrichment_entries SET project_revision=? WHERE id=?', (value, entry.id))
+            before = db.execute('SELECT * FROM enrichment_entries WHERE id=?', (entry.id,)).fetchone()
+>           assert entry.guard.raw_sha256 not in snapshot_metadata_cache(service)
+E           AssertionError: assert '71e50009d118dc32644dbe690a17b9641601beb494506e3b2fb55413a3c68b1b' not in {'01d58aac67cf594d88ed59b263db2701daed2120f515b629c521409e5ec384c3': PeMetadata(status='ok', resources=ResourceInvento...amps=(), signature_math='not_evaluated', chain='not_evaluated', revocation='not_checked', warnings=()),), warnings=())}
+E            +  where '71e50009d118dc32644dbe690a17b9641601beb494506e3b2fb55413a3c68b1b' = Guard(project_id='d7da07ea-a6b0-4bc7-984a-40d3afa852cc', run_id='pe-metadata', raw_sha256='71e50009d118dc32644dbe690a17b9641601beb494506e3b2fb55413a3c68b1b', input_digest='d93b3bf1bd2b4869500c8f64b0fd3104783ad234843e12aebaf639988493a460').raw_sha256
+E            +    where Guard(project_id='d7da07ea-a6b0-4bc7-984a-40d3afa852cc', run_id='pe-metadata', raw_sha256='71e50009d118dc32644dbe690a17b9641601beb494506e3b2fb55413a3c68b1b', input_digest='d93b3bf1bd2b4869500c8f64b0fd3104783ad234843e12aebaf639988493a460') = Entry(id='pe-metadata:d93b3bf1bd2b4869500c8f64b0fd3104783ad234843e12aebaf639988493a460', kind='pe-metadata', guard=Gua...04B0'], 'warnings': []}], 'contradictions': [], 'primary_index': 0}, 'warnings': []}, 'trust_fingerprint': 'portable'}).guard
+E            +  and   {'01d58aac67cf594d88ed59b263db2701daed2120f515b629c521409e5ec384c3': PeMetadata(status='ok', resources=ResourceInvento...amps=(), signature_math='not_evaluated', chain='not_evaluated', revocation='not_checked', warnings=()),), warnings=())} = <function snapshot_metadata_cache at 0x7fe6c85a2d40>(<patchtrace.service.ProjectService object at 0x7fe6c9c4c770>)
+
+tests/test_pe_metadata_cache_recovery.py:67: AssertionError
+_________ test_cache_refuses_invalid_or_future_row_revision[negative] __________
+
+service = <patchtrace.service.ProjectService object at 0x7fe6c9c4ccb0>
+revision = 'negative'
+
+    @pytest.mark.parametrize('revision', ['future', 'negative', 'text'])
+    def test_cache_refuses_invalid_or_future_row_revision(service, revision):
+        from patchtrace.pe_overview.cache_store import publish_metadata_cache, snapshot_metadata_cache
+        result = inspect(service)
+        try:
+            entry = stored(service, result)[0]
+            value = {'future': service.project.revision + 1, 'negative': -1, 'text': 'invalid'}[revision]
+            db = service.store.connection
+            with db:
+                db.execute('UPDATE enrichment_entries SET project_revision=? WHERE id=?', (value, entry.id))
+            before = db.execute('SELECT * FROM enrichment_entries WHERE id=?', (entry.id,)).fetchone()
+>           assert entry.guard.raw_sha256 not in snapshot_metadata_cache(service)
+E           AssertionError: assert '71e50009d118dc32644dbe690a17b9641601beb494506e3b2fb55413a3c68b1b' not in {'01d58aac67cf594d88ed59b263db2701daed2120f515b629c521409e5ec384c3': PeMetadata(status='ok', resources=ResourceInvento...amps=(), signature_math='not_evaluated', chain='not_evaluated', revocation='not_checked', warnings=()),), warnings=())}
+E            +  where '71e50009d118dc32644dbe690a17b9641601beb494506e3b2fb55413a3c68b1b' = Guard(project_id='0c3962a9-d980-4790-bb4e-91550bdfdcc7', run_id='pe-metadata', raw_sha256='71e50009d118dc32644dbe690a17b9641601beb494506e3b2fb55413a3c68b1b', input_digest='d93b3bf1bd2b4869500c8f64b0fd3104783ad234843e12aebaf639988493a460').raw_sha256
+E            +    where Guard(project_id='0c3962a9-d980-4790-bb4e-91550bdfdcc7', run_id='pe-metadata', raw_sha256='71e50009d118dc32644dbe690a17b9641601beb494506e3b2fb55413a3c68b1b', input_digest='d93b3bf1bd2b4869500c8f64b0fd3104783ad234843e12aebaf639988493a460') = Entry(id='pe-metadata:d93b3bf1bd2b4869500c8f64b0fd3104783ad234843e12aebaf639988493a460', kind='pe-metadata', guard=Gua...04B0'], 'warnings': []}], 'contradictions': [], 'primary_index': 0}, 'warnings': []}, 'trust_fingerprint': 'portable'}).guard
+E            +  and   {'01d58aac67cf594d88ed59b263db2701daed2120f515b629c521409e5ec384c3': PeMetadata(status='ok', resources=ResourceInvento...amps=(), signature_math='not_evaluated', chain='not_evaluated', revocation='not_checked', warnings=()),), warnings=())} = <function snapshot_metadata_cache at 0x7fe6c85a2d40>(<patchtrace.service.ProjectService object at 0x7fe6c9c4ccb0>)
+
+tests/test_pe_metadata_cache_recovery.py:67: AssertionError
+___________ test_cache_refuses_invalid_or_future_row_revision[text] ____________
+
+service = <patchtrace.service.ProjectService object at 0x7fe6cc423e00>
+revision = 'text'
+
+    @pytest.mark.parametrize('revision', ['future', 'negative', 'text'])
+    def test_cache_refuses_invalid_or_future_row_revision(service, revision):
+        from patchtrace.pe_overview.cache_store import publish_metadata_cache, snapshot_metadata_cache
+        result = inspect(service)
+        try:
+            entry = stored(service, result)[0]
+            value = {'future': service.project.revision + 1, 'negative': -1, 'text': 'invalid'}[revision]
+            db = service.store.connection
+            with db:
+                db.execute('UPDATE enrichment_entries SET project_revision=? WHERE id=?', (value, entry.id))
+            before = db.execute('SELECT * FROM enrichment_entries WHERE id=?', (entry.id,)).fetchone()
+>           assert entry.guard.raw_sha256 not in snapshot_metadata_cache(service)
+E           AssertionError: assert '71e50009d118dc32644dbe690a17b9641601beb494506e3b2fb55413a3c68b1b' not in {'01d58aac67cf594d88ed59b263db2701daed2120f515b629c521409e5ec384c3': PeMetadata(status='ok', resources=ResourceInvento...amps=(), signature_math='not_evaluated', chain='not_evaluated', revocation='not_checked', warnings=()),), warnings=())}
+E            +  where '71e50009d118dc32644dbe690a17b9641601beb494506e3b2fb55413a3c68b1b' = Guard(project_id='a466d1d7-660b-4b14-8b3d-b54115b369f0', run_id='pe-metadata', raw_sha256='71e50009d118dc32644dbe690a17b9641601beb494506e3b2fb55413a3c68b1b', input_digest='d93b3bf1bd2b4869500c8f64b0fd3104783ad234843e12aebaf639988493a460').raw_sha256
+E            +    where Guard(project_id='a466d1d7-660b-4b14-8b3d-b54115b369f0', run_id='pe-metadata', raw_sha256='71e50009d118dc32644dbe690a17b9641601beb494506e3b2fb55413a3c68b1b', input_digest='d93b3bf1bd2b4869500c8f64b0fd3104783ad234843e12aebaf639988493a460') = Entry(id='pe-metadata:d93b3bf1bd2b4869500c8f64b0fd3104783ad234843e12aebaf639988493a460', kind='pe-metadata', guard=Gua...04B0'], 'warnings': []}], 'contradictions': [], 'primary_index': 0}, 'warnings': []}, 'trust_fingerprint': 'portable'}).guard
+E            +  and   {'01d58aac67cf594d88ed59b263db2701daed2120f515b629c521409e5ec384c3': PeMetadata(status='ok', resources=ResourceInvento...amps=(), signature_math='not_evaluated', chain='not_evaluated', revocation='not_checked', warnings=()),), warnings=())} = <function snapshot_metadata_cache at 0x7fe6c85a2d40>(<patchtrace.service.ProjectService object at 0x7fe6cc423e00>)
+
+tests/test_pe_metadata_cache_recovery.py:67: AssertionError
+_____ test_cache_publication_refuses_changed_owner_at_write[kind-ranking] ______
+
+service = <patchtrace.service.ProjectService object at 0x7fe6c866ad20>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fe6cc423560>
+column = 'kind', value = 'ranking'
+
+    @pytest.mark.parametrize('column,value', [
+        ('kind', 'ranking'), ('project_id', 'another-project'), ('run_id', 'another-run'),
+        ('raw_sha256', '0' * 64), ('input_digest', '1' * 64), ('project_revision', 'future'),
+    ])
+    def test_cache_publication_refuses_changed_owner_at_write(service, monkeypatch, column, value):
+        from patchtrace.enrichment.storage import EnrichmentStore
+        from patchtrace.pe_overview.cache_store import publish_metadata_cache
+        result = inspect(service)
+        try:
+            entry = stored(service, result)[0]
+            db = service.store.connection
+            with db:
+                db.execute("UPDATE enrichment_entries SET status='failed' WHERE id=?", (entry.id,))
+            real_publish = EnrichmentStore.publish
+            changed = []
+    
+            def replace_before_write(store, kind, guard, current, revision, status, body, entry_id, *args, **kwargs):
+                if entry_id == entry.id:
+                    replacement = service.project.revision + 1 if value == 'future' else value
+                    with db:
+                        db.execute(f'UPDATE enrichment_entries SET {column}=? WHERE id=?', (replacement, entry_id))
+                    changed.append(db.execute('SELECT * FROM enrichment_entries WHERE id=?', (entry_id,)).fetchone())
+                return real_publish(store, kind, guard, current, revision, status, body, entry_id, *args, **kwargs)
+    
+            monkeypatch.setattr(EnrichmentStore, 'publish', replace_before_write)
+>           assert publish_metadata_cache(service, result) == 1
+E           AssertionError: assert 2 == 1
+E            +  where 2 = <function publish_metadata_cache at 0x7fe6c85a31a0>(<patchtrace.service.ProjectService object at 0x7fe6c866ad20>, ProjectInspection(project_id='ff2e092a-edce-42be-be08-9b8200ffeab4', sides={'older': SideInspection(side='older', arti...eader object at 0x7fe6cc4403b0>, 'newer': <patchtrace.artifact_bytes.VerifiedArtifactReader object at 0x7fe6c9c56810>}))
+
+tests/test_pe_metadata_cache_recovery.py:99: AssertionError
+_ test_cache_publication_refuses_changed_owner_at_write[project_id-another-project] _
+
+service = <patchtrace.service.ProjectService object at 0x7fe6c9c568d0>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fe6cc440860>
+column = 'project_id', value = 'another-project'
+
+    @pytest.mark.parametrize('column,value', [
+        ('kind', 'ranking'), ('project_id', 'another-project'), ('run_id', 'another-run'),
+        ('raw_sha256', '0' * 64), ('input_digest', '1' * 64), ('project_revision', 'future'),
+    ])
+    def test_cache_publication_refuses_changed_owner_at_write(service, monkeypatch, column, value):
+        from patchtrace.enrichment.storage import EnrichmentStore
+        from patchtrace.pe_overview.cache_store import publish_metadata_cache
+        result = inspect(service)
+        try:
+            entry = stored(service, result)[0]
+            db = service.store.connection
+            with db:
+                db.execute("UPDATE enrichment_entries SET status='failed' WHERE id=?", (entry.id,))
+            real_publish = EnrichmentStore.publish
+            changed = []
+    
+            def replace_before_write(store, kind, guard, current, revision, status, body, entry_id, *args, **kwargs):
+                if entry_id == entry.id:
+                    replacement = service.project.revision + 1 if value == 'future' else value
+                    with db:
+                        db.execute(f'UPDATE enrichment_entries SET {column}=? WHERE id=?', (replacement, entry_id))
+                    changed.append(db.execute('SELECT * FROM enrichment_entries WHERE id=?', (entry_id,)).fetchone())
+                return real_publish(store, kind, guard, current, revision, status, body, entry_id, *args, **kwargs)
+    
+            monkeypatch.setattr(EnrichmentStore, 'publish', replace_before_write)
+>           assert publish_metadata_cache(service, result) == 1
+E           AssertionError: assert 2 == 1
+E            +  where 2 = <function publish_metadata_cache at 0x7fe6c85a31a0>(<patchtrace.service.ProjectService object at 0x7fe6c9c568d0>, ProjectInspection(project_id='955a546f-0f44-4faa-928a-069d126bd4fd', sides={'older': SideInspection(side='older', arti...eader object at 0x7fe6cc446690>, 'newer': <patchtrace.artifact_bytes.VerifiedArtifactReader object at 0x7fe6cc4434d0>}))
+
+tests/test_pe_metadata_cache_recovery.py:99: AssertionError
+__ test_cache_publication_refuses_changed_owner_at_write[run_id-another-run] ___
+
+service = <patchtrace.service.ProjectService object at 0x7fe6c89eea20>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fe6cc4453a0>
+column = 'run_id', value = 'another-run'
+
+    @pytest.mark.parametrize('column,value', [
+        ('kind', 'ranking'), ('project_id', 'another-project'), ('run_id', 'another-run'),
+        ('raw_sha256', '0' * 64), ('input_digest', '1' * 64), ('project_revision', 'future'),
+    ])
+    def test_cache_publication_refuses_changed_owner_at_write(service, monkeypatch, column, value):
+        from patchtrace.enrichment.storage import EnrichmentStore
+        from patchtrace.pe_overview.cache_store import publish_metadata_cache
+        result = inspect(service)
+        try:
+            entry = stored(service, result)[0]
+            db = service.store.connection
+            with db:
+                db.execute("UPDATE enrichment_entries SET status='failed' WHERE id=?", (entry.id,))
+            real_publish = EnrichmentStore.publish
+            changed = []
+    
+            def replace_before_write(store, kind, guard, current, revision, status, body, entry_id, *args, **kwargs):
+                if entry_id == entry.id:
+                    replacement = service.project.revision + 1 if value == 'future' else value
+                    with db:
+                        db.execute(f'UPDATE enrichment_entries SET {column}=? WHERE id=?', (replacement, entry_id))
+                    changed.append(db.execute('SELECT * FROM enrichment_entries WHERE id=?', (entry_id,)).fetchone())
+                return real_publish(store, kind, guard, current, revision, status, body, entry_id, *args, **kwargs)
+    
+            monkeypatch.setattr(EnrichmentStore, 'publish', replace_before_write)
+>           assert publish_metadata_cache(service, result) == 1
+E           AssertionError: assert 2 == 1
+E            +  where 2 = <function publish_metadata_cache at 0x7fe6c85a31a0>(<patchtrace.service.ProjectService object at 0x7fe6c89eea20>, ProjectInspection(project_id='aefb36f9-6838-4ad2-9487-76302c53f471', sides={'older': SideInspection(side='older', arti...eader object at 0x7fe6cc443bc0>, 'newer': <patchtrace.artifact_bytes.VerifiedArtifactReader object at 0x7fe6cc441970>}))
+
+tests/test_pe_metadata_cache_recovery.py:99: AssertionError
+_ test_cache_publication_refuses_changed_owner_at_write[raw_sha256-0000000000000000000000000000000000000000000000000000000000000000] _
+
+service = <patchtrace.service.ProjectService object at 0x7fe6cc4228d0>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fe6cc4457c0>
+column = 'raw_sha256'
+value = '0000000000000000000000000000000000000000000000000000000000000000'
+
+    @pytest.mark.parametrize('column,value', [
+        ('kind', 'ranking'), ('project_id', 'another-project'), ('run_id', 'another-run'),
+        ('raw_sha256', '0' * 64), ('input_digest', '1' * 64), ('project_revision', 'future'),
+    ])
+    def test_cache_publication_refuses_changed_owner_at_write(service, monkeypatch, column, value):
+        from patchtrace.enrichment.storage import EnrichmentStore
+        from patchtrace.pe_overview.cache_store import publish_metadata_cache
+        result = inspect(service)
+        try:
+            entry = stored(service, result)[0]
+            db = service.store.connection
+            with db:
+                db.execute("UPDATE enrichment_entries SET status='failed' WHERE id=?", (entry.id,))
+            real_publish = EnrichmentStore.publish
+            changed = []
+    
+            def replace_before_write(store, kind, guard, current, revision, status, body, entry_id, *args, **kwargs):
+                if entry_id == entry.id:
+                    replacement = service.project.revision + 1 if value == 'future' else value
+                    with db:
+                        db.execute(f'UPDATE enrichment_entries SET {column}=? WHERE id=?', (replacement, entry_id))
+                    changed.append(db.execute('SELECT * FROM enrichment_entries WHERE id=?', (entry_id,)).fetchone())
+                return real_publish(store, kind, guard, current, revision, status, body, entry_id, *args, **kwargs)
+    
+            monkeypatch.setattr(EnrichmentStore, 'publish', replace_before_write)
+>           assert publish_metadata_cache(service, result) == 1
+E           AssertionError: assert 2 == 1
+E            +  where 2 = <function publish_metadata_cache at 0x7fe6c85a31a0>(<patchtrace.service.ProjectService object at 0x7fe6cc4228d0>, ProjectInspection(project_id='b3989b9f-1f1e-43c1-a02c-8c7376d1b778', sides={'older': SideInspection(side='older', arti...eader object at 0x7fe6cc4447a0>, 'newer': <patchtrace.artifact_bytes.VerifiedArtifactReader object at 0x7fe6cc4433e0>}))
+
+tests/test_pe_metadata_cache_recovery.py:99: AssertionError
+_ test_cache_publication_refuses_changed_owner_at_write[input_digest-1111111111111111111111111111111111111111111111111111111111111111] _
+
+service = <patchtrace.service.ProjectService object at 0x7fe6cc423830>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fe6cc4445f0>
+column = 'input_digest'
+value = '1111111111111111111111111111111111111111111111111111111111111111'
+
+    @pytest.mark.parametrize('column,value', [
+        ('kind', 'ranking'), ('project_id', 'another-project'), ('run_id', 'another-run'),
+        ('raw_sha256', '0' * 64), ('input_digest', '1' * 64), ('project_revision', 'future'),
+    ])
+    def test_cache_publication_refuses_changed_owner_at_write(service, monkeypatch, column, value):
+        from patchtrace.enrichment.storage import EnrichmentStore
+        from patchtrace.pe_overview.cache_store import publish_metadata_cache
+        result = inspect(service)
+        try:
+            entry = stored(service, result)[0]
+            db = service.store.connection
+            with db:
+                db.execute("UPDATE enrichment_entries SET status='failed' WHERE id=?", (entry.id,))
+            real_publish = EnrichmentStore.publish
+            changed = []
+    
+            def replace_before_write(store, kind, guard, current, revision, status, body, entry_id, *args, **kwargs):
+                if entry_id == entry.id:
+                    replacement = service.project.revision + 1 if value == 'future' else value
+                    with db:
+                        db.execute(f'UPDATE enrichment_entries SET {column}=? WHERE id=?', (replacement, entry_id))
+                    changed.append(db.execute('SELECT * FROM enrichment_entries WHERE id=?', (entry_id,)).fetchone())
+                return real_publish(store, kind, guard, current, revision, status, body, entry_id, *args, **kwargs)
+    
+            monkeypatch.setattr(EnrichmentStore, 'publish', replace_before_write)
+>           assert publish_metadata_cache(service, result) == 1
+E           AssertionError: assert 2 == 1
+E            +  where 2 = <function publish_metadata_cache at 0x7fe6c85a31a0>(<patchtrace.service.ProjectService object at 0x7fe6cc423830>, ProjectInspection(project_id='11ed0534-6e6f-4c58-932b-64539a98d8a9', sides={'older': SideInspection(side='older', arti...eader object at 0x7fe6cc4686b0>, 'newer': <patchtrace.artifact_bytes.VerifiedArtifactReader object at 0x7fe6cc422750>}))
+
+tests/test_pe_metadata_cache_recovery.py:99: AssertionError
+_ test_cache_publication_refuses_changed_owner_at_write[project_revision-future] _
+
+service = <patchtrace.service.ProjectService object at 0x7fe6cc46e1b0>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fe6c9c4b9e0>
+column = 'project_revision', value = 'future'
+
+    @pytest.mark.parametrize('column,value', [
+        ('kind', 'ranking'), ('project_id', 'another-project'), ('run_id', 'another-run'),
+        ('raw_sha256', '0' * 64), ('input_digest', '1' * 64), ('project_revision', 'future'),
+    ])
+    def test_cache_publication_refuses_changed_owner_at_write(service, monkeypatch, column, value):
+        from patchtrace.enrichment.storage import EnrichmentStore
+        from patchtrace.pe_overview.cache_store import publish_metadata_cache
+        result = inspect(service)
+        try:
+            entry = stored(service, result)[0]
+            db = service.store.connection
+            with db:
+                db.execute("UPDATE enrichment_entries SET status='failed' WHERE id=?", (entry.id,))
+            real_publish = EnrichmentStore.publish
+            changed = []
+    
+            def replace_before_write(store, kind, guard, current, revision, status, body, entry_id, *args, **kwargs):
+                if entry_id == entry.id:
+                    replacement = service.project.revision + 1 if value == 'future' else value
+                    with db:
+                        db.execute(f'UPDATE enrichment_entries SET {column}=? WHERE id=?', (replacement, entry_id))
+                    changed.append(db.execute('SELECT * FROM enrichment_entries WHERE id=?', (entry_id,)).fetchone())
+                return real_publish(store, kind, guard, current, revision, status, body, entry_id, *args, **kwargs)
+    
+            monkeypatch.setattr(EnrichmentStore, 'publish', replace_before_write)
+>           assert publish_metadata_cache(service, result) == 1
+E           AssertionError: assert 2 == 1
+E            +  where 2 = <function publish_metadata_cache at 0x7fe6c85a31a0>(<patchtrace.service.ProjectService object at 0x7fe6cc46e1b0>, ProjectInspection(project_id='feb972c3-d15b-418b-81f6-492cf355737d', sides={'older': SideInspection(side='older', arti...eader object at 0x7fe6c9c5b770>, 'newer': <patchtrace.artifact_bytes.VerifiedArtifactReader object at 0x7fe6cc440830>}))
+
+tests/test_pe_metadata_cache_recovery.py:99: AssertionError
+___________ test_cache_full_store_does_not_request_history_eviction ____________
+
+service = <patchtrace.service.ProjectService object at 0x7fe6c9c59820>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fe6c9c5a630>
+
+    def test_cache_full_store_does_not_request_history_eviction(service, monkeypatch):
+        from patchtrace.enrichment import storage
+        from patchtrace.pe_overview.cache_store import publish_metadata_cache
+        result = inspect(service)
+        try:
+            enrichment = storage.EnrichmentStore(service.store)
+            guard = storage.Guard(service.project.id, 'run', 'raw', 'inputs')
+            enrichment.publish('pipeline', guard, guard, service.project.revision, 'complete',
+                               {'historical': 'retained derived result'}, 'retained-history')
+            db = service.store.connection
+            before = db.execute('SELECT * FROM enrichment_entries').fetchall()
+            monkeypatch.setattr(storage, 'MAX_TOTAL', 1)
+            evictions = []
+            monkeypatch.setattr(storage.EnrichmentStore, 'make_room', lambda *args, **kwargs: evictions.append(True))
+            assert publish_metadata_cache(service, result) == 0
+>           assert evictions == []
+E           assert [True, True] == []
+E             
+E             Left contains 2 more items, first extra item: True
+E             Use -v to get more diff
+
+tests/test_pe_metadata_cache_recovery.py:121: AssertionError
+________________ test_pair_snapshot_refuses_after_third_record _________________
+
+    def test_pair_snapshot_refuses_after_third_record():
+        from patchtrace.pe_overview.cache_store import _pair
+    
+        class NeverEnds:
+            def __iter__(self):
+                from types import SimpleNamespace
+                for side in ('older', 'newer', 'older'):
+                    yield SimpleNamespace(side=side, sha256='0' * 64)
+                pytest.fail('pair admission consumed more than three records')
+    
+        with pytest.raises(ValueError, match='oriented artifact pair'):
+>           _pair(NeverEnds())
+
+tests/test_pe_metadata_cache_recovery.py:138: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/patchtrace/pe_overview/cache_store.py:28: in _pair
+    pair = tuple(sorted((artifact.side, artifact.sha256) for artifact in artifacts))
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/patchtrace/pe_overview/cache_store.py:28: in <genexpr>
+    pair = tuple(sorted((artifact.side, artifact.sha256) for artifact in artifacts))
+                                                                         ^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <test_pe_metadata_cache_recovery.test_pair_snapshot_refuses_after_third_record.<locals>.NeverEnds object at 0x7fe6c9c5c8f0>
+
+    def __iter__(self):
+        from types import SimpleNamespace
+        for side in ('older', 'newer', 'older'):
+            yield SimpleNamespace(side=side, sha256='0' * 64)
+>       pytest.fail('pair admission consumed more than three records')
+E       Failed: pair admission consumed more than three records
+
+tests/test_pe_metadata_cache_recovery.py:135: Failed
+=========================== short test summary info ============================
+FAILED tests/test_pe_metadata_cache_recovery.py::test_cache_refuses_invalid_or_future_row_revision[future]
+FAILED tests/test_pe_metadata_cache_recovery.py::test_cache_refuses_invalid_or_future_row_revision[negative]
+FAILED tests/test_pe_metadata_cache_recovery.py::test_cache_refuses_invalid_or_future_row_revision[text]
+FAILED tests/test_pe_metadata_cache_recovery.py::test_cache_publication_refuses_changed_owner_at_write[kind-ranking]
+FAILED tests/test_pe_metadata_cache_recovery.py::test_cache_publication_refuses_changed_owner_at_write[project_id-another-project]
+FAILED tests/test_pe_metadata_cache_recovery.py::test_cache_publication_refuses_changed_owner_at_write[run_id-another-run]
+FAILED tests/test_pe_metadata_cache_recovery.py::test_cache_publication_refuses_changed_owner_at_write[raw_sha256-0000000000000000000000000000000000000000000000000000000000000000]
+FAILED tests/test_pe_metadata_cache_recovery.py::test_cache_publication_refuses_changed_owner_at_write[input_digest-1111111111111111111111111111111111111111111111111111111111111111]
+FAILED tests/test_pe_metadata_cache_recovery.py::test_cache_publication_refuses_changed_owner_at_write[project_revision-future]
+FAILED tests/test_pe_metadata_cache_recovery.py::test_cache_full_store_does_not_request_history_eviction
+FAILED tests/test_pe_metadata_cache_recovery.py::test_pair_snapshot_refuses_after_third_record
+11 failed, 2 passed in 1.80s

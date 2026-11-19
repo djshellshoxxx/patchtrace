@@ -400,7 +400,8 @@ REGISTRY: dict[str, TooltipEntry] = {
     'new_project.root': _e(
         'Folder that will hold the new project, for example D:\\work\\patchtrace-project.',
         'Everything PatchTrace stores for this comparison lives there.',
-        'The folder is created and filled on creation.', availability='Must be absent or empty.'),
+        'The folder is created and filled on creation.',
+        availability='Create needs an absent or empty folder; Retry validates an incomplete project directory.'),
     'new_project.older_browse': _e(
         'Choose the older PE file in a file picker.', 'Avoids typing a long path.',
         'Fills the older path field.'),
@@ -417,6 +418,11 @@ REGISTRY: dict[str, TooltipEntry] = {
         'Create the project from the entered files.', 'Finishes setup of a new comparison.',
         'Validates the inputs, copies the files and opens the new project.',
         availability='Needs a name, two existing files and an absent or empty folder.'),
+    'new_project.retry': _e(
+        'Validate and retry an incomplete project directory using the selected files.',
+        'Recovers a stopped creation while retaining verified files.',
+        'Checks the existing lock, empty database and exact input copies in the background; unknown data is refused.',
+        availability='Needs a name, two existing files and an incomplete project directory. Only validated leftovers are reused.'),
     'new_project.cancel': _e(
         'Close this dialog without creating a project.', 'Backs out safely.', 'Nothing is created.'),
     # ---- Acquisition dialog ----------------------------------------------------------------

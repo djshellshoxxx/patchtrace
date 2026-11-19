@@ -1,0 +1,22 @@
+{
+  "plan_sha256": "069df9c514e57e261ad489508e7228f1f377ed63a2143a47a285d1294cf3718b",
+  "first_status": "partial",
+  "first_item_status": "fetched",
+  "original_sha256": "a06cd2e297c9b027afc78c9ed055011b5f0846fbe830a39f7def7a6100900573",
+  "modified_sha256": "314725fb747f06f64c5434ee2d5077b44456d63da89a63380e5814da60552a40",
+  "same_guid_age": true,
+  "symbols_changed": true,
+  "removed_names": [
+    "checksum",
+    "j_checksum"
+  ],
+  "added_names": [
+    "j_xhecksum",
+    "xhecksum"
+  ],
+  "second_status": "partial",
+  "second_item_status": "reused",
+  "second_origin": "local-verified",
+  "second_requested": false,
+  "network_calls": []
+}

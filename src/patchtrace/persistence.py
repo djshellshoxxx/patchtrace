@@ -350,15 +350,17 @@ class ProjectLock:
                 or not os.path.samestat(opened, current)):
             raise OSError('Project lock is not one unchanged regular file')
 
-    def __init__(self, root: Path):
+    def __init__(self, root: Path, *, _preserve_existing: bool = False):
         self.path = safe_path(root, '.patchtrace.lock')
         self.stream = None
         descriptor = None
         try:
-            flags = (os.O_RDWR | os.O_CREAT | getattr(os, 'O_NOFOLLOW', 0)
+            flags = (os.O_RDWR | (0 if _preserve_existing else os.O_CREAT) | getattr(os, 'O_NOFOLLOW', 0)
                      | getattr(os, 'O_NONBLOCK', 0))
             descriptor = os.open(self.path, flags, 0o600)
             self._check_identity(descriptor)
+            if _preserve_existing and os.fstat(descriptor).st_size != 4096:
+                raise OSError('Retry requires the existing complete project lock file')
             self.stream = os.fdopen(descriptor, 'r+b')
             descriptor = None  # the buffered stream now owns this handle
             fd = self.stream.fileno()
@@ -373,11 +375,12 @@ class ProjectLock:
                 import fcntl
                 fcntl.flock(fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
             self._check_identity(fd)
-            payload = json.dumps({'pid': os.getpid(), 'host': socket.gethostname(),
-                                  'token': str(uuid4()), 'opened': now()}).encode()
-            self.stream.seek(0)
-            self.stream.write(payload.ljust(4096, b' '))
-            self.stream.flush()
+            if not _preserve_existing:
+                payload = json.dumps({'pid': os.getpid(), 'host': socket.gethostname(),
+                                      'token': str(uuid4()), 'opened': now()}).encode()
+                self.stream.seek(0)
+                self.stream.write(payload.ljust(4096, b' '))
+                self.stream.flush()
         except OSError as exc:
             if descriptor is not None:
                 os.close(descriptor)
@@ -400,7 +403,9 @@ class ProjectLock:
 
 
 class ProjectStore:
-    def __init__(self, root: Path, create: bool = False):
+    def __init__(self, root: Path, create: bool = False, *, _creation_validator=None):
+        if _creation_validator is not None and (not create or not callable(_creation_validator)):
+            raise ValueError('PT-STORAGE: invalid explicit creation validator')
         self.root = Path(root).resolve()
         self.closed = False
         self.connection = None
@@ -411,7 +416,7 @@ class ProjectStore:
         self.project_id: str | None = None  # known after the first load/save; never changes for a database
         self._prune_deferred = False
         self._prune_blocked = False  # a pre-prune backup failed in this session: keep every row
-        if create:
+        if create and _creation_validator is None:
             try:
                 self.root.mkdir(parents=True, exist_ok=True)
             except OSError as exc:
@@ -419,9 +424,15 @@ class ProjectStore:
         if not self.root.is_dir():
             raise ValueError('PT-STORAGE: project path is not a directory' if self.root.exists()
                              else 'PT-STORAGE: project directory does not exist')
-        self.lock = ProjectLock(self.root)
+        self.lock = (ProjectLock(self.root) if _creation_validator is None else
+                     ProjectLock(self.root, _preserve_existing=True))
         try:
             path = safe_path(self.root, 'project.sqlite3')
+            if _creation_validator is not None:
+                recheck = _creation_validator(self)
+                if not callable(recheck):
+                    raise ValueError('PT-STORAGE: invalid explicit creation recheck')
+                recheck()  # The same kernel lock remains held through current database admission.
             retry = create and path.exists()
             admitted = None
             if create:

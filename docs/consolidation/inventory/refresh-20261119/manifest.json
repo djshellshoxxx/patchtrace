@@ -1,0 +1,68 @@
+{
+  "counts": {
+    "branches": 323,
+    "pull_request_states": {
+      "closed-unmerged": 84,
+      "merged": 172,
+      "open": 56
+    },
+    "pull_requests": 312,
+    "tags": 59
+  },
+  "endpoints": {
+    "branches": "https://api.github.com/repos/djshellshoxxx/PatchTrace/branches?per_page=100&page={1..4}",
+    "pull_requests": "https://api.github.com/repos/djshellshoxxx/PatchTrace/pulls?state=all&per_page=100&page={1..4}",
+    "tags": "https://api.github.com/repos/djshellshoxxx/PatchTrace/git/matching-refs/tags/"
+  },
+  "files": {
+    "branches.json": {
+      "bytes": 44111,
+      "sha256": "cf6bb0dcce12de0a196ce8512017b192acd27904864de8a4dbf6cd6ec9a52081"
+    },
+    "new-head-source-deltas.json": {
+      "bytes": 17225,
+      "sha256": "15b76d842ed95d8c946a1a9e0154cc908a14a9da6b7c2410b8ac6d24253e5a1c"
+    },
+    "pages.json": {
+      "bytes": 124,
+      "sha256": "d27b8cb6a748faad7eebef2cb039665f4c30fb8bdbe64c256218c9caaecaf2c1"
+    },
+    "pull_requests.json": {
+      "bytes": 173704,
+      "sha256": "3f9e6da9ad9c91d59b6fb7d44f517e15c9e42a9e4bc3a845a5cb6899181c9be4"
+    },
+    "tags.json": {
+      "bytes": 25854,
+      "sha256": "e017d07459055a515062dc4133e2237ce5e98d9be7ec37236b4f111f151652d5"
+    }
+  },
+  "generated_utc": "2026-11-19T12:29:16.507342+00:00",
+  "local_commit_objects_verified": 415,
+  "main_sha": "fdc2696c23bdbfe7668348f25e3b336ce33039f7",
+  "page_sizes": {
+    "branches": [
+      100,
+      100,
+      100,
+      23
+    ],
+    "pulls": [
+      100,
+      100,
+      100,
+      12
+    ],
+    "tags": 59
+  },
+  "qualifications": [
+    "This is a dated API census, not a lock on mutable branch references.",
+    "Source-delta states compare immutable blob identities against ecfd5960; neither equal blobs nor different blobs alone prove semantic completeness.",
+    "No branch, tag or pull request was mutated.",
+    "The original 319-branch inventory is retained; its semantic decisions are not silently extended to new or advanced heads.",
+    "PR merge_commit_sha on an open PR can be a provider-generated preview and is not treated as a merged commit."
+  ],
+  "repository": "djshellshoxxx/PatchTrace",
+  "retrieval_scope": "GitHub connector API, all branch and all-state pull-request pages; complete matching-refs/tags response",
+  "schema": "patchtrace-ref-census-refresh/1",
+  "source_delta_candidate": "ecfd596093802f75bd6aacfae6c3c0dca3ce7619"
+}

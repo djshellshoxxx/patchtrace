@@ -1,0 +1,29 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+___________ test_nested_source_does_not_inherit_enclosing_git_commit ___________
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-3/test_nested_source_does_not_in0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f64c6f583b0>
+
+    def test_nested_source_does_not_inherit_enclosing_git_commit(tmp_path, monkeypatch):
+        outer = tmp_path / 'outer'
+        outer.mkdir()
+        git(outer, 'init', '-q')
+        (outer / 'unrelated.txt').write_bytes(b'unrelated repository')
+        head = commit(outer)
+        nested = outer / 'untracked-source'
+        package = source(nested)
+        monkeypatch.setattr(b, '__file__', str(package / 'buildinfo.py'))
+        assert git(nested, 'rev-parse', 'HEAD') == head  # The actual inherited-discovery negative.
+        assert not (nested / '.git').exists()
+        record = json.loads(producer.prepare_record(nested))
+>       assert record['git_commit'] == 'unknown' and record['git_describe'] == 'unknown'
+E       AssertionError: assert ('23670ea62ae5...7437721e2c360' == 'unknown'
+E         
+E         - unknown
+E         + 23670ea62ae5642f8359d95e0117437721e2c360)
+
+tests/test_buildinfo_git_root.py:52: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_buildinfo_git_root.py::test_nested_source_does_not_inherit_enclosing_git_commit
+1 failed in 1.80s

@@ -187,3 +187,20 @@ After a completed native run, if `RuntimeFingerprint.eligible()` (all versions k
 ## 14. Acceptance
 
 See tests `tests/test_enrichment_*.py`. Golden arithmetic, invariants (property-based where useful), negatives listed per detector, ownership forgery, side reversal, stable ordering, CLI/GUI/report value agreement, storage compatibility with v1 code paths. Performance objectives: 10,000 pairs / 100,000 lines in 10 s / 512 MiB — measured 6.6 s / 240 MiB (synthetic, Linux, `tools/bench_enrichment.py`); derived-cache hit 500 ms — measured 3.1 s, **not met** (input hashing and ownership revalidation dominate; both are correctness requirements). Phase D track B (same synthetic workload, best of 3 on one shared Linux host): 4.49 s before, 1.79 s after; still **not met** (`docs/qa.md` `[B:hardening]`). UI responsiveness at that scale and Windows timings are unmeasured.
+
+### B3 numeric and UTC boundary recovery (2026-11-19)
+
+The CVE normalizer accepts only finite scores exactly representable in tenths from
+0.0 through 10.0. Its decimal context is local and deterministic: the caller's
+precision, rounding mode, traps and flags cannot round an invalid provider value
+into an accepted score or change a valid one. Redundant trailing zeroes remain
+eligible. Unsupported exponents, sub-tenth fractions and decimal failures become
+`PT-ENRICH-PROVIDER`, so one invalid provider does not discard an independently
+usable response. This preserves existing normalized score identities.
+
+Retrieval and freshness times must be timezone-aware and representable in UTC.
+A valid local ISO timestamp whose offset would cross the datetime range becomes
+`PT-ENRICH-INPUT` before contextual ranking or freshness comparison. Valid extreme
+UTC dates retain their original provenance spelling. Recovery controls use authored
+mutations of existing redacted fixtures; they establish parser behavior, not new
+provider accuracy or native analysis evidence.

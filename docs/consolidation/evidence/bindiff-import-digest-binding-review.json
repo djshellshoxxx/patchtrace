@@ -1,0 +1,7 @@
+{
+  "baseline_file_sha256": "ac066364252552dfa4974b94745653bca8a73b3e45f8ddd4ff1b3328d7871133",
+  "actual_parsed_file_sha256": "990f50800fac27692fe8cea15b9ca745843a49536679db48ce8de968b018b285",
+  "reported_file_sha256": "ac066364252552dfa4974b94745653bca8a73b3e45f8ddd4ff1b3328d7871133",
+  "parsed_changed_name": "changed-after-digest",
+  "digest_binds_parsed_bytes": false
+}

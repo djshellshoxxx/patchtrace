@@ -143,15 +143,21 @@ def git_info(repo_root: Path, *, cancel: Event | None = None) -> dict:
         return unknown
     try:
         repo_root = Path(os.path.abspath(repo_root))
+        anchor = owned.directory_anchor(repo_root)
+        top = _git(repo_root, executable, cancel, 'rev-parse', '--show-toplevel')
+        if top is None or not Path(top).is_absolute() or Path(top) != repo_root:
+            return unknown
         commit = _git(repo_root, executable, cancel, 'rev-parse', '--verify', 'HEAD^{commit}')
         if commit is None or re.fullmatch(r'[0-9a-f]{40}|[0-9a-f]{64}', commit) is None:
             return unknown
         describe = _git(repo_root, executable, cancel, 'describe', '--always', '--tags')
         after = _git(repo_root, executable, cancel, 'rev-parse', '--verify', 'HEAD^{commit}')
-        if after != commit:
+        final_top = _git(repo_root, executable, cancel, 'rev-parse', '--show-toplevel')
+        owned.verify_anchor(anchor)
+        if after != commit or final_top is None or Path(final_top) != repo_root:
             return unknown
         return {'commit': commit, 'describe': describe or UNKNOWN, 'dirty': None}
-    except (OSError, ValueError):
+    except (OSError, ValueError, owned.OwnedPublicationError):
         return unknown
 
 

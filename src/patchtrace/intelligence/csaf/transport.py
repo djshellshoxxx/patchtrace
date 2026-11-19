@@ -344,7 +344,10 @@ class CsafTransport:
                     location = response.headers.get('Location')
                     if not location:
                         raise IntelError('PT-INTEL-PROVIDER', 'redirect without Location')
-                    current = urllib.parse.urljoin(current, location)
+                    try:
+                        current = urllib.parse.urljoin(current, location)
+                    except ValueError:
+                        raise IntelError('PT-INTEL-CONFIG', 'invalid URL refused') from None
                     continue
                 if status in RETRYABLE_STATUS:
                     raise _Retry(_retry_after(response.headers.get('Retry-After'), self.now()))

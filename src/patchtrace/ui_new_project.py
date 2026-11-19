@@ -5,10 +5,14 @@ from dataclasses import dataclass
 from pathlib import Path
 from threading import Event
 
-from PySide6.QtWidgets import QDialog
+from PySide6.QtWidgets import QDialog, QPushButton
 
 from .input_readers import InputReadError
+from .persistence import creation_directory_available
 from .service import ProjectService
+from .tooltips import apply_tooltip
+
+RETRY_INCOMPLETE = 2
 
 
 @dataclass(frozen=True)
@@ -17,17 +21,43 @@ class CreationOutcome:
     cancel: Event
 
 
+def add_retry_action(dialog, layout):
+    dialog.retry_button = QPushButton('Retry incomplete project', dialog)
+    dialog.retry_button.setObjectName('new_project.retry')
+    apply_tooltip(dialog.retry_button, 'new_project.retry')
+    dialog.retry_button.clicked.connect(lambda: accept_creation(dialog, retry=True))
+    layout.addWidget(dialog.retry_button)
+
+
+def accept_creation(dialog, *, retry=False):
+    if not dialog.name.text().strip() or not dialog.root.text().strip():
+        dialog.error.setText('Enter a project name and a project directory.')
+        return
+    if not all(Path(edit.text()).is_file() for edit in (dialog.older, dialog.newer)):
+        dialog.error.setText('Choose two existing binary files. PE format and architecture are validated on creation.')
+        return
+    if not retry and not creation_directory_available(Path(dialog.root.text())):
+        dialog.error.setText('The project directory must be absent or empty. Use Retry incomplete project for verified leftovers.')
+        return
+    if retry:
+        dialog.done(RETRY_INCOMPLETE)
+    else:
+        QDialog.accept(dialog)
+
+
 def start_project_creation(window, dialog_type):
     if window.worker is not None or window._close_requested:
         return
     dialog = dialog_type(window)
-    if dialog.exec() != QDialog.DialogCode.Accepted:
+    choice = dialog.exec()
+    if choice not in (QDialog.DialogCode.Accepted, RETRY_INCOMPLETE):
         return
     if window.worker is not None or window._close_requested:
         return
     args = (Path(dialog.older.text()), Path(dialog.newer.text()), dialog.name.text().strip(),
             Path(dialog.root.text()))
     origin_service, origin_key = window.service, window.panels.port.key()
+    creator = ProjectService.retry_create if choice == RETRY_INCOMPLETE else ProjectService.create
 
     def create(cancel, event):
         def checkpoint(_count):
@@ -35,7 +65,7 @@ def start_project_creation(window, dialog_type):
                 raise InputReadError('cancelled')
 
         try:
-            service = ProjectService.create(*args, checkpoint=checkpoint)
+            service = creator(*args, checkpoint=checkpoint)
         except InputReadError as exc:
             if exc.reason == 'cancelled':
                 return CreationOutcome(None, cancel)
@@ -58,4 +88,4 @@ def start_project_creation(window, dialog_type):
             return
         window.set_service(ProjectService.open(outcome.root))
 
-    window.start_job('Creating project', create, adopt)
+    window.start_job('Retrying incomplete project' if choice == RETRY_INCOMPLETE else 'Creating project', create, adopt)

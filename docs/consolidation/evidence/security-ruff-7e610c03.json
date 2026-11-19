@@ -1,0 +1,1522 @@
+[
+  {
+    "cell": null,
+    "code": "S310",
+    "end_location": {
+      "column": 103,
+      "row": 149
+    },
+    "filename": "/workspace/scratch/792fd5ca6555/PatchTrace/src/patchtrace/acquisition/transport.py",
+    "fix": null,
+    "location": {
+      "column": 38,
+      "row": 149
+    },
+    "message": "Audit URL open for permitted schemes. Allowing use of `file:` or custom schemes is often unexpected.",
+    "name": "suspicious-url-open-usage",
+    "noqa_row": 149,
+    "severity": "error",
+    "url": "https://docs.astral.sh/ruff/rules/suspicious-url-open-usage"
+  },
+  {
+    "cell": null,
+    "code": "S101",
+    "end_location": {
+      "column": 11,
+      "row": 71
+    },
+    "filename": "/workspace/scratch/792fd5ca6555/PatchTrace/src/patchtrace/callgraph/delta.py",
+    "fix": null,
+    "location": {
+      "column": 5,
+      "row": 71
+    },
+    "message": "Use of `assert` detected",
+    "name": "assert",
+    "noqa_row": 71,
+    "severity": "error",
+    "url": "https://docs.astral.sh/ruff/rules/assert"
+  },
+  {
+    "cell": null,
+    "code": "S101",
+    "end_location": {
+      "column": 15,
+      "row": 51
+    },
+    "filename": "/workspace/scratch/792fd5ca6555/PatchTrace/src/patchtrace/callgraph/minimap_qt.py",
+    "fix": null,
+    "location": {
+      "column": 9,
+      "row": 51
+    },
+    "message": "Use of `assert` detected",
+    "name": "assert",
+    "noqa_row": 51,
+    "severity": "error",
+    "url": "https://docs.astral.sh/ruff/rules/assert"
+  },
+  {
+    "cell": null,
+    "code": "S608",
+    "end_location": {
+      "column": 71,
+      "row": 54
+    },
+    "filename": "/workspace/scratch/792fd5ca6555/PatchTrace/src/patchtrace/diaphora/sqlite_guard.py",
+    "fix": null,
+    "location": {
+      "column": 38,
+      "row": 54
+    },
+    "message": "Possible SQL injection vector through string-based query construction",
+    "name": "hardcoded-sql-expression",
+    "noqa_row": 54,
+    "severity": "error",
+    "url": "https://docs.astral.sh/ruff/rules/hardcoded-sql-expression"
+  },
+  {
+    "cell": null,
+    "code": "S608",
+    "end_location": {
+      "column": 104,
+      "row": 66
+    },
+    "filename": "/workspace/scratch/792fd5ca6555/PatchTrace/src/patchtrace/diaphora/sqlite_guard.py",
+    "fix": null,
+    "location": {
+      "column": 40,
+      "row": 66
+    },
+    "message": "Possible SQL injection vector through string-based query construction",
+    "name": "hardcoded-sql-expression",
+    "noqa_row": 66,
+    "severity": "error",
+    "url": "https://docs.astral.sh/ruff/rules/hardcoded-sql-expression"
+  },
+  {
+    "cell": null,
+    "code": "S310",
+    "end_location": {
+      "column": 79,
+      "row": 166
+    },
+    "filename": "/workspace/scratch/792fd5ca6555/PatchTrace/src/patchtrace/enrichment/intelligence.py",
+    "fix": null,
+    "location": {
+      "column": 15,
+      "row": 166
+    },
+    "message": "Audit URL open for permitted schemes. Allowing use of `file:` or custom schemes is often unexpected.",
+    "name": "suspicious-url-open-usage",
+    "noqa_row": 166,
+    "severity": "error",
+    "url": "https://docs.astral.sh/ruff/rules/suspicious-url-open-usage"
+  },
+  {
+    "cell": null,
+    "code": "S105",
+    "end_location": {
+      "column": 30,
+      "row": 172
+    },
+    "filename": "/workspace/scratch/792fd5ca6555/PatchTrace/src/patchtrace/enrichment/signals.py",
+    "fix": null,
+    "location": {
+      "column": 27,
+      "row": 172
+    },
+    "message": "Possible hardcoded password assigned to: \"token\"",
+    "name": "hardcoded-password-string",
+    "noqa_row": 172,
+    "severity": "error",
+    "url": "https://docs.astral.sh/ruff/rules/hardcoded-password-string"
+  },
+  {
+    "cell": null,
+    "code": "S105",
+    "end_location": {
+      "column": 30,
+      "row": 173
+    },
+    "filename": "/workspace/scratch/792fd5ca6555/PatchTrace/src/patchtrace/enrichment/signals.py",
+    "fix": null,
+    "location": {
+      "column": 27,
+      "row": 173
+    },
+    "message": "Possible hardcoded password assigned to: \"token\"",
+    "name": "hardcoded-password-string",
+    "noqa_row": 173,
+    "severity": "error",
+    "url": "https://docs.astral.sh/ruff/rules/hardcoded-password-string"
+  },
+  {
+    "cell": null,
+    "code": "S105",
+    "end_location": {
+      "column": 25,
+      "row": 242
+    },
+    "filename": "/workspace/scratch/792fd5ca6555/PatchTrace/src/patchtrace/enrichment/signals.py",
+    "fix": null,
+    "location": {
+      "column": 21,
+      "row": 242
+    },
+    "message": "Possible hardcoded password assigned to: \"token\"",
+    "name": "hardcoded-password-string",
+    "noqa_row": 242,
+    "severity": "error",
+    "url": "https://docs.astral.sh/ruff/rules/hardcoded-password-string"
+  },
+  {
+    "cell": null,
+    "code": "S105",
+    "end_location": {
+      "column": 27,
+      "row": 244
+    },
+    "filename": "/workspace/scratch/792fd5ca6555/PatchTrace/src/patchtrace/enrichment/signals.py",
+    "fix": null,
+    "location": {
+      "column": 23,
+      "row": 244
+    },
+    "message": "Possible hardcoded password assigned to: \"token\"",
+    "name": "hardcoded-password-string",
+    "noqa_row": 244,
+    "severity": "error",
+    "url": "https://docs.astral.sh/ruff/rules/hardcoded-password-string"
+  },
+  {
+    "cell": null,
+    "code": "S105",
+    "end_location": {
+      "column": 25,
+      "row": 573
+    },
+    "filename": "/workspace/scratch/792fd5ca6555/PatchTrace/src/patchtrace/enrichment/signals.py",
+    "fix": null,
+    "location": {
+      "column": 21,
+      "row": 573
+    },
+    "message": "Possible hardcoded password assigned to: \"token\"",
+    "name": "hardcoded-password-string",
+    "noqa_row": 573,
+    "severity": "error",
+    "url": "https://docs.astral.sh/ruff/rules/hardcoded-password-string"
+  },
+  {
+    "cell": null,
+    "code": "S105",
+    "end_location": {
+      "column": 46,
+      "row": 574
+    },
+    "filename": "/workspace/scratch/792fd5ca6555/PatchTrace/src/patchtrace/enrichment/signals.py",
+    "fix": null,
+    "location": {
+      "column": 43,
+      "row": 574
+    },
+    "message": "Possible hardcoded password assigned to: \"token\"",
+    "name": "hardcoded-password-string",
+    "noqa_row": 574,
+    "severity": "error",
+    "url": "https://docs.astral.sh/ruff/rules/hardcoded-password-string"
+  },
+  {
+    "cell": null,
+    "code": "S105",
+    "end_location": {
+      "column": 27,
+      "row": 575
+    },
+    "filename": "/workspace/scratch/792fd5ca6555/PatchTrace/src/patchtrace/enrichment/signals.py",
+    "fix": null,
+    "location": {
+      "column": 23,
+      "row": 575
+    },
+    "message": "Possible hardcoded password assigned to: \"token\"",
+    "name": "hardcoded-password-string",
+    "noqa_row": 575,
+    "severity": "error",
+    "url": "https://docs.astral.sh/ruff/rules/hardcoded-password-string"
+  },
+  {
+    "cell": null,
+    "code": "S608",
+    "end_location": {
+      "column": 64,
+      "row": 335
+    },
+    "filename": "/workspace/scratch/792fd5ca6555/PatchTrace/src/patchtrace/enrichment/storage.py",
+    "fix": null,
+    "location": {
+      "column": 13,
+      "row": 332
+    },
+    "message": "Possible SQL injection vector through string-based query construction",
+    "name": "hardcoded-sql-expression",
+    "noqa_row": 332,
+    "severity": "error",
+    "url": "https://docs.astral.sh/ruff/rules/hardcoded-sql-expression"
+  },
+  {
+    "cell": null,
+    "code": "S608",
+    "end_location": {
+      "column": 110,
+      "row": 373
+    },
+    "filename": "/workspace/scratch/792fd5ca6555/PatchTrace/src/patchtrace/enrichment/storage.py",
+    "fix": null,
+    "location": {
+      "column": 13,
+      "row": 373
+    },
+    "message": "Possible SQL injection vector through string-based query construction",
+    "name": "hardcoded-sql-expression",
+    "noqa_row": 373,
+    "severity": "error",
+    "url": "https://docs.astral.sh/ruff/rules/hardcoded-sql-expression"
+  },
+  {
+    "cell": null,
+    "code": "S608",
+    "end_location": {
+      "column": 52,
+      "row": 425
+    },
+    "filename": "/workspace/scratch/792fd5ca6555/PatchTrace/src/patchtrace/enrichment/storage.py",
+    "fix": null,
+    "location": {
+      "column": 28,
+      "row": 424
+    },
+    "message": "Possible SQL injection vector through string-based query construction",
+    "name": "hardcoded-sql-expression",
+    "noqa_row": 424,
+    "severity": "error",
+    "url": "https://docs.astral.sh/ruff/rules/hardcoded-sql-expression"
+  },
+  {
+    "cell": null,
+    "code": "S101",
+    "end_location": {
+      "column": 11,
+      "row": 209
+    },
+    "filename": "/workspace/scratch/792fd5ca6555/PatchTrace/src/patchtrace/enrichment/wil.py",
+    "fix": null,
+    "location": {
+      "column": 5,
+      "row": 209
+    },
+    "message": "Use of `assert` detected",
+    "name": "assert",
+    "noqa_row": 209,
+    "severity": "error",
+    "url": "https://docs.astral.sh/ruff/rules/assert"
+  },
+  {
+    "cell": null,
+    "code": "S105",
+    "end_location": {
+      "column": 64,
+      "row": 46
+    },
+    "filename": "/workspace/scratch/792fd5ca6555/PatchTrace/src/patchtrace/gui/qt/chips.py",
+    "fix": null,
+    "location": {
+      "column": 57,
+      "row": 46
+    },
+    "message": "Possible hardcoded password assigned to: \"token\"",
+    "name": "hardcoded-password-string",
+    "noqa_row": 46,
+    "severity": "error",
+    "url": "https://docs.astral.sh/ruff/rules/hardcoded-password-string"
+  },
+  {
+    "cell": null,
+    "code": "S105",
+    "end_location": {
+      "column": 29,
+      "row": 85
+    },
+    "filename": "/workspace/scratch/792fd5ca6555/PatchTrace/src/patchtrace/gui/qt/chips.py",
+    "fix": null,
+    "location": {
+      "column": 22,
+      "row": 85
+    },
+    "message": "Possible hardcoded password assigned to: \"token\"",
+    "name": "hardcoded-password-string",
+    "noqa_row": 85,
+    "severity": "error",
+    "url": "https://docs.astral.sh/ruff/rules/hardcoded-password-string"
+  },
+  {
+    "cell": null,
+    "code": "S105",
+    "end_location": {
+      "column": 39,
+      "row": 93
+    },
+    "filename": "/workspace/scratch/792fd5ca6555/PatchTrace/src/patchtrace/gui/qt/chips.py",
+    "fix": null,
+    "location": {
+      "column": 32,
+      "row": 93
+    },
+    "message": "Possible hardcoded password assigned to: \"token\"",
+    "name": "hardcoded-password-string",
+    "noqa_row": 93,
+    "severity": "error",
+    "url": "https://docs.astral.sh/ruff/rules/hardcoded-password-string"
+  },
+  {
+    "cell": null,
+    "code": "S105",
+    "end_location": {
+      "column": 28,
+      "row": 51
+    },
+    "filename": "/workspace/scratch/792fd5ca6555/PatchTrace/src/patchtrace/gui/qt/theme.py",
+    "fix": null,
+    "location": {
+      "column": 21,
+      "row": 51
+    },
+    "message": "Possible hardcoded password assigned to: \"token\"",
+    "name": "hardcoded-password-string",
+    "noqa_row": 51,
+    "severity": "error",
+    "url": "https://docs.astral.sh/ruff/rules/hardcoded-password-string"
+  },
+  {
+    "cell": null,
+    "code": "S310",
+    "end_location": {
+      "column": 79,
+      "row": 111
+    },
+    "filename": "/workspace/scratch/792fd5ca6555/PatchTrace/src/patchtrace/intelligence/csaf/transport.py",
+    "fix": null,
+    "location": {
+      "column": 15,
+      "row": 111
+    },
+    "message": "Audit URL open for permitted schemes. Allowing use of `file:` or custom schemes is often unexpected.",
+    "name": "suspicious-url-open-usage",
+    "noqa_row": 111,
+    "severity": "error",
+    "url": "https://docs.astral.sh/ruff/rules/suspicious-url-open-usage"
+  },
+  {
+    "cell": null,
+    "code": "S608",
+    "end_location": {
+      "column": 85,
+      "row": 67
+    },
+    "filename": "/workspace/scratch/792fd5ca6555/PatchTrace/src/patchtrace/intelligence/tools/snapshot.py",
+    "fix": null,
+    "location": {
+      "column": 27,
+      "row": 66
+    },
+    "message": "Possible SQL injection vector through string-based query construction",
+    "name": "hardcoded-sql-expression",
+    "noqa_row": 66,
+    "severity": "error",
+    "url": "https://docs.astral.sh/ruff/rules/hardcoded-sql-expression"
+  },
+  {
+    "cell": null,
+    "code": "S603",
+    "end_location": {
+      "column": 33,
+      "row": 346
+    },
+    "filename": "/workspace/scratch/792fd5ca6555/PatchTrace/src/patchtrace/jobs.py",
+    "fix": null,
+    "location": {
+      "column": 17,
+      "row": 346
+    },
+    "message": "`subprocess` call: check for execution of untrusted input",
+    "name": "subprocess-without-shell-equals-true",
+    "noqa_row": 346,
+    "severity": "error",
+    "url": "https://docs.astral.sh/ruff/rules/subprocess-without-shell-equals-true"
+  },
+  {
+    "cell": null,
+    "code": "S110",
+    "end_location": {
+      "column": 17,
+      "row": 414
+    },
+    "filename": "/workspace/scratch/792fd5ca6555/PatchTrace/src/patchtrace/jobs.py",
+    "fix": null,
+    "location": {
+      "column": 9,
+      "row": 413
+    },
+    "message": "`try`-`except`-`pass` detected, consider logging the exception",
+    "name": "try-except-pass",
+    "noqa_row": 413,
+    "severity": "error",
+    "url": "https://docs.astral.sh/ruff/rules/try-except-pass"
+  },
+  {
+    "cell": null,
+    "code": "S608",
+    "end_location": {
+      "column": 41,
+      "row": 233
+    },
+    "filename": "/workspace/scratch/792fd5ca6555/PatchTrace/src/patchtrace/kbcorrelation/inventory_store.py",
+    "fix": null,
+    "location": {
+      "column": 26,
+      "row": 227
+    },
+    "message": "Possible SQL injection vector through string-based query construction",
+    "name": "hardcoded-sql-expression",
+    "noqa_row": 227,
+    "severity": "error",
+    "url": "https://docs.astral.sh/ruff/rules/hardcoded-sql-expression"
+  },
+  {
+    "cell": null,
+    "code": "S608",
+    "end_location": {
+      "column": 80,
+      "row": 259
+    },
+    "filename": "/workspace/scratch/792fd5ca6555/PatchTrace/src/patchtrace/kbcorrelation/inventory_store.py",
+    "fix": null,
+    "location": {
+      "column": 33,
+      "row": 259
+    },
+    "message": "Possible SQL injection vector through string-based query construction",
+    "name": "hardcoded-sql-expression",
+    "noqa_row": 259,
+    "severity": "error",
+    "url": "https://docs.astral.sh/ruff/rules/hardcoded-sql-expression"
+  },
+  {
+    "cell": null,
+    "code": "S608",
+    "end_location": {
+      "column": 109,
+      "row": 336
+    },
+    "filename": "/workspace/scratch/792fd5ca6555/PatchTrace/src/patchtrace/kbcorrelation/inventory_store.py",
+    "fix": null,
+    "location": {
+      "column": 30,
+      "row": 335
+    },
+    "message": "Possible SQL injection vector through string-based query construction",
+    "name": "hardcoded-sql-expression",
+    "noqa_row": 335,
+    "severity": "error",
+    "url": "https://docs.astral.sh/ruff/rules/hardcoded-sql-expression"
+  },
+  {
+    "cell": null,
+    "code": "S608",
+    "end_location": {
+      "column": 114,
+      "row": 340
+    },
+    "filename": "/workspace/scratch/792fd5ca6555/PatchTrace/src/patchtrace/kbcorrelation/inventory_store.py",
+    "fix": null,
+    "location": {
+      "column": 23,
+      "row": 340
+    },
+    "message": "Possible SQL injection vector through string-based query construction",
+    "name": "hardcoded-sql-expression",
+    "noqa_row": 340,
+    "severity": "error",
+    "url": "https://docs.astral.sh/ruff/rules/hardcoded-sql-expression"
+  },
+  {
+    "cell": null,
+    "code": "S608",
+    "end_location": {
+      "column": 88,
+      "row": 343
+    },
+    "filename": "/workspace/scratch/792fd5ca6555/PatchTrace/src/patchtrace/kbcorrelation/inventory_store.py",
+    "fix": null,
+    "location": {
+      "column": 54,
+      "row": 343
+    },
+    "message": "Possible SQL injection vector through string-based query construction",
+    "name": "hardcoded-sql-expression",
+    "noqa_row": 343,
+    "severity": "error",
+    "url": "https://docs.astral.sh/ruff/rules/hardcoded-sql-expression"
+  },
+  {
+    "cell": null,
+    "code": "S608",
+    "end_location": {
+      "column": 79,
+      "row": 346
+    },
+    "filename": "/workspace/scratch/792fd5ca6555/PatchTrace/src/patchtrace/kbcorrelation/inventory_store.py",
+    "fix": null,
+    "location": {
+      "column": 27,
+      "row": 345
+    },
+    "message": "Possible SQL injection vector through string-based query construction",
+    "name": "hardcoded-sql-expression",
+    "noqa_row": 345,
+    "severity": "error",
+    "url": "https://docs.astral.sh/ruff/rules/hardcoded-sql-expression"
+  },
+  {
+    "cell": null,
+    "code": "S608",
+    "end_location": {
+      "column": 102,
+      "row": 348
+    },
+    "filename": "/workspace/scratch/792fd5ca6555/PatchTrace/src/patchtrace/kbcorrelation/inventory_store.py",
+    "fix": null,
+    "location": {
+      "column": 36,
+      "row": 348
+    },
+    "message": "Possible SQL injection vector through string-based query construction",
+    "name": "hardcoded-sql-expression",
+    "noqa_row": 348,
+    "severity": "error",
+    "url": "https://docs.astral.sh/ruff/rules/hardcoded-sql-expression"
+  },
+  {
+    "cell": null,
+    "code": "S608",
+    "end_location": {
+      "column": 63,
+      "row": 379
+    },
+    "filename": "/workspace/scratch/792fd5ca6555/PatchTrace/src/patchtrace/kbcorrelation/inventory_store.py",
+    "fix": null,
+    "location": {
+      "column": 20,
+      "row": 379
+    },
+    "message": "Possible SQL injection vector through string-based query construction",
+    "name": "hardcoded-sql-expression",
+    "noqa_row": 379,
+    "severity": "error",
+    "url": "https://docs.astral.sh/ruff/rules/hardcoded-sql-expression"
+  },
+  {
+    "cell": null,
+    "code": "S608",
+    "end_location": {
+      "column": 60,
+      "row": 494
+    },
+    "filename": "/workspace/scratch/792fd5ca6555/PatchTrace/src/patchtrace/kbcorrelation/inventory_store.py",
+    "fix": null,
+    "location": {
+      "column": 27,
+      "row": 492
+    },
+    "message": "Possible SQL injection vector through string-based query construction",
+    "name": "hardcoded-sql-expression",
+    "noqa_row": 492,
+    "severity": "error",
+    "url": "https://docs.astral.sh/ruff/rules/hardcoded-sql-expression"
+  },
+  {
+    "cell": null,
+    "code": "S608",
+    "end_location": {
+      "column": 64,
+      "row": 521
+    },
+    "filename": "/workspace/scratch/792fd5ca6555/PatchTrace/src/patchtrace/kbcorrelation/inventory_store.py",
+    "fix": null,
+    "location": {
+      "column": 23,
+      "row": 521
+    },
+    "message": "Possible SQL injection vector through string-based query construction",
+    "name": "hardcoded-sql-expression",
+    "noqa_row": 521,
+    "severity": "error",
+    "url": "https://docs.astral.sh/ruff/rules/hardcoded-sql-expression"
+  },
+  {
+    "cell": null,
+    "code": "S608",
+    "end_location": {
+      "column": 62,
+      "row": 525
+    },
+    "filename": "/workspace/scratch/792fd5ca6555/PatchTrace/src/patchtrace/kbcorrelation/inventory_store.py",
+    "fix": null,
+    "location": {
+      "column": 23,
+      "row": 525
+    },
+    "message": "Possible SQL injection vector through string-based query construction",
+    "name": "hardcoded-sql-expression",
+    "noqa_row": 525,
+    "severity": "error",
+    "url": "https://docs.astral.sh/ruff/rules/hardcoded-sql-expression"
+  },
+  {
+    "cell": null,
+    "code": "S608",
+    "end_location": {
+      "column": 112,
+      "row": 533
+    },
+    "filename": "/workspace/scratch/792fd5ca6555/PatchTrace/src/patchtrace/kbcorrelation/inventory_store.py",
+    "fix": null,
+    "location": {
+      "column": 37,
+      "row": 533
+    },
+    "message": "Possible SQL injection vector through string-based query construction",
+    "name": "hardcoded-sql-expression",
+    "noqa_row": 533,
+    "severity": "error",
+    "url": "https://docs.astral.sh/ruff/rules/hardcoded-sql-expression"
+  },
+  {
+    "cell": null,
+    "code": "S101",
+    "end_location": {
+      "column": 7,
+      "row": 52
+    },
+    "filename": "/workspace/scratch/792fd5ca6555/PatchTrace/src/patchtrace/kbcorrelation/panel_qt.py",
+    "fix": null,
+    "location": {
+      "column": 1,
+      "row": 52
+    },
+    "message": "Use of `assert` detected",
+    "name": "assert",
+    "noqa_row": 52,
+    "severity": "error",
+    "url": "https://docs.astral.sh/ruff/rules/assert"
+  },
+  {
+    "cell": null,
+    "code": "S310",
+    "end_location": {
+      "column": 97,
+      "row": 259
+    },
+    "filename": "/workspace/scratch/792fd5ca6555/PatchTrace/src/patchtrace/kbcorrelation/sources/inventory_http.py",
+    "fix": null,
+    "location": {
+      "column": 32,
+      "row": 259
+    },
+    "message": "Audit URL open for permitted schemes. Allowing use of `file:` or custom schemes is often unexpected.",
+    "name": "suspicious-url-open-usage",
+    "noqa_row": 259,
+    "severity": "error",
+    "url": "https://docs.astral.sh/ruff/rules/suspicious-url-open-usage"
+  },
+  {
+    "cell": null,
+    "code": "S608",
+    "end_location": {
+      "column": 73,
+      "row": 451
+    },
+    "filename": "/workspace/scratch/792fd5ca6555/PatchTrace/src/patchtrace/kbcorrelation/store.py",
+    "fix": null,
+    "location": {
+      "column": 24,
+      "row": 451
+    },
+    "message": "Possible SQL injection vector through string-based query construction",
+    "name": "hardcoded-sql-expression",
+    "noqa_row": 451,
+    "severity": "error",
+    "url": "https://docs.astral.sh/ruff/rules/hardcoded-sql-expression"
+  },
+  {
+    "cell": null,
+    "code": "S608",
+    "end_location": {
+      "column": 76,
+      "row": 452
+    },
+    "filename": "/workspace/scratch/792fd5ca6555/PatchTrace/src/patchtrace/kbcorrelation/store.py",
+    "fix": null,
+    "location": {
+      "column": 45,
+      "row": 452
+    },
+    "message": "Possible SQL injection vector through string-based query construction",
+    "name": "hardcoded-sql-expression",
+    "noqa_row": 452,
+    "severity": "error",
+    "url": "https://docs.astral.sh/ruff/rules/hardcoded-sql-expression"
+  },
+  {
+    "cell": null,
+    "code": "S608",
+    "end_location": {
+      "column": 91,
+      "row": 472
+    },
+    "filename": "/workspace/scratch/792fd5ca6555/PatchTrace/src/patchtrace/kbcorrelation/store.py",
+    "fix": null,
+    "location": {
+      "column": 13,
+      "row": 469
+    },
+    "message": "Possible SQL injection vector through string-based query construction",
+    "name": "hardcoded-sql-expression",
+    "noqa_row": 469,
+    "severity": "error",
+    "url": "https://docs.astral.sh/ruff/rules/hardcoded-sql-expression"
+  },
+  {
+    "cell": null,
+    "code": "S101",
+    "end_location": {
+      "column": 15,
+      "row": 821
+    },
+    "filename": "/workspace/scratch/792fd5ca6555/PatchTrace/src/patchtrace/kbcorrelation/store.py",
+    "fix": null,
+    "location": {
+      "column": 9,
+      "row": 821
+    },
+    "message": "Use of `assert` detected",
+    "name": "assert",
+    "noqa_row": 821,
+    "severity": "error",
+    "url": "https://docs.astral.sh/ruff/rules/assert"
+  },
+  {
+    "cell": null,
+    "code": "S310",
+    "end_location": {
+      "column": 79,
+      "row": 99
+    },
+    "filename": "/workspace/scratch/792fd5ca6555/PatchTrace/src/patchtrace/kev/transport.py",
+    "fix": null,
+    "location": {
+      "column": 15,
+      "row": 99
+    },
+    "message": "Audit URL open for permitted schemes. Allowing use of `file:` or custom schemes is often unexpected.",
+    "name": "suspicious-url-open-usage",
+    "noqa_row": 99,
+    "severity": "error",
+    "url": "https://docs.astral.sh/ruff/rules/suspicious-url-open-usage"
+  },
+  {
+    "cell": null,
+    "code": "S110",
+    "end_location": {
+      "column": 21,
+      "row": 69
+    },
+    "filename": "/workspace/scratch/792fd5ca6555/PatchTrace/src/patchtrace/netutil.py",
+    "fix": null,
+    "location": {
+      "column": 13,
+      "row": 68
+    },
+    "message": "`try`-`except`-`pass` detected, consider logging the exception",
+    "name": "try-except-pass",
+    "noqa_row": 68,
+    "severity": "error",
+    "url": "https://docs.astral.sh/ruff/rules/try-except-pass"
+  },
+  {
+    "cell": null,
+    "code": "S314",
+    "end_location": {
+      "column": 45,
+      "row": 156
+    },
+    "filename": "/workspace/scratch/792fd5ca6555/PatchTrace/src/patchtrace/pe_overview/manifest.py",
+    "fix": null,
+    "location": {
+      "column": 18,
+      "row": 156
+    },
+    "message": "Using `xml` to parse untrusted data is known to be vulnerable to XML attacks; use `defusedxml` equivalents",
+    "name": "suspicious-xml-element-tree-usage",
+    "noqa_row": 156,
+    "severity": "error",
+    "url": "https://docs.astral.sh/ruff/rules/suspicious-xml-element-tree-usage"
+  },
+  {
+    "cell": null,
+    "code": "S314",
+    "end_location": {
+      "column": 50,
+      "row": 161
+    },
+    "filename": "/workspace/scratch/792fd5ca6555/PatchTrace/src/patchtrace/pe_overview/manifest.py",
+    "fix": null,
+    "location": {
+      "column": 16,
+      "row": 161
+    },
+    "message": "Using `xml` to parse untrusted data is known to be vulnerable to XML attacks; use `defusedxml` equivalents",
+    "name": "suspicious-xml-element-tree-usage",
+    "noqa_row": 161,
+    "severity": "error",
+    "url": "https://docs.astral.sh/ruff/rules/suspicious-xml-element-tree-usage"
+  },
+  {
+    "cell": null,
+    "code": "S608",
+    "end_location": {
+      "column": 108,
+      "row": 675
+    },
+    "filename": "/workspace/scratch/792fd5ca6555/PatchTrace/src/patchtrace/persistence.py",
+    "fix": null,
+    "location": {
+      "column": 37,
+      "row": 675
+    },
+    "message": "Possible SQL injection vector through string-based query construction",
+    "name": "hardcoded-sql-expression",
+    "noqa_row": 675,
+    "severity": "error",
+    "url": "https://docs.astral.sh/ruff/rules/hardcoded-sql-expression"
+  },
+  {
+    "cell": null,
+    "code": "S608",
+    "end_location": {
+      "column": 71,
+      "row": 214
+    },
+    "filename": "/workspace/scratch/792fd5ca6555/PatchTrace/src/patchtrace/pilot/sources/kb_context.py",
+    "fix": null,
+    "location": {
+      "column": 13,
+      "row": 212
+    },
+    "message": "Possible SQL injection vector through string-based query construction",
+    "name": "hardcoded-sql-expression",
+    "noqa_row": 212,
+    "severity": "error",
+    "url": "https://docs.astral.sh/ruff/rules/hardcoded-sql-expression"
+  },
+  {
+    "cell": null,
+    "code": "S108",
+    "end_location": {
+      "column": 59,
+      "row": 147
+    },
+    "filename": "/workspace/scratch/792fd5ca6555/PatchTrace/src/patchtrace/pilot/store.py",
+    "fix": null,
+    "location": {
+      "column": 54,
+      "row": 147
+    },
+    "message": "Probable insecure usage of temporary file or directory: \"/tmp-\"",
+    "name": "hardcoded-temp-file",
+    "noqa_row": 147,
+    "severity": "error",
+    "url": "https://docs.astral.sh/ruff/rules/hardcoded-temp-file"
+  },
+  {
+    "cell": null,
+    "code": "S608",
+    "end_location": {
+      "column": 118,
+      "row": 408
+    },
+    "filename": "/workspace/scratch/792fd5ca6555/PatchTrace/src/patchtrace/pilot/store.py",
+    "fix": null,
+    "location": {
+      "column": 37,
+      "row": 408
+    },
+    "message": "Possible SQL injection vector through string-based query construction",
+    "name": "hardcoded-sql-expression",
+    "noqa_row": 408,
+    "severity": "error",
+    "url": "https://docs.astral.sh/ruff/rules/hardcoded-sql-expression"
+  },
+  {
+    "cell": null,
+    "code": "S608",
+    "end_location": {
+      "column": 61,
+      "row": 449
+    },
+    "filename": "/workspace/scratch/792fd5ca6555/PatchTrace/src/patchtrace/pilot/store.py",
+    "fix": null,
+    "location": {
+      "column": 35,
+      "row": 448
+    },
+    "message": "Possible SQL injection vector through string-based query construction",
+    "name": "hardcoded-sql-expression",
+    "noqa_row": 448,
+    "severity": "error",
+    "url": "https://docs.astral.sh/ruff/rules/hardcoded-sql-expression"
+  },
+  {
+    "cell": null,
+    "code": "S608",
+    "end_location": {
+      "column": 78,
+      "row": 199
+    },
+    "filename": "/workspace/scratch/792fd5ca6555/PatchTrace/src/patchtrace/project_cli.py",
+    "fix": null,
+    "location": {
+      "column": 35,
+      "row": 198
+    },
+    "message": "Possible SQL injection vector through string-based query construction",
+    "name": "hardcoded-sql-expression",
+    "noqa_row": 198,
+    "severity": "error",
+    "url": "https://docs.astral.sh/ruff/rules/hardcoded-sql-expression"
+  },
+  {
+    "cell": null,
+    "code": "S310",
+    "end_location": {
+      "column": 98,
+      "row": 126
+    },
+    "filename": "/workspace/scratch/792fd5ca6555/PatchTrace/src/patchtrace/providers.py",
+    "fix": null,
+    "location": {
+      "column": 12,
+      "row": 126
+    },
+    "message": "Audit URL open for permitted schemes. Allowing use of `file:` or custom schemes is often unexpected.",
+    "name": "suspicious-url-open-usage",
+    "noqa_row": 126,
+    "severity": "error",
+    "url": "https://docs.astral.sh/ruff/rules/suspicious-url-open-usage"
+  },
+  {
+    "cell": null,
+    "code": "S105",
+    "end_location": {
+      "column": 37,
+      "row": 152
+    },
+    "filename": "/workspace/scratch/792fd5ca6555/PatchTrace/src/patchtrace/rules/contracts.py",
+    "fix": null,
+    "location": {
+      "column": 14,
+      "row": 152
+    },
+    "message": "Possible hardcoded password assigned to: \"_HEX_TOKEN\"",
+    "name": "hardcoded-password-string",
+    "noqa_row": 152,
+    "severity": "error",
+    "url": "https://docs.astral.sh/ruff/rules/hardcoded-password-string"
+  },
+  {
+    "cell": null,
+    "code": "S105",
+    "end_location": {
+      "column": 33,
+      "row": 220
+    },
+    "filename": "/workspace/scratch/792fd5ca6555/PatchTrace/src/patchtrace/rules/contracts.py",
+    "fix": null,
+    "location": {
+      "column": 29,
+      "row": 220
+    },
+    "message": "Possible hardcoded password assigned to: \"token\"",
+    "name": "hardcoded-password-string",
+    "noqa_row": 220,
+    "severity": "error",
+    "url": "https://docs.astral.sh/ruff/rules/hardcoded-password-string"
+  },
+  {
+    "cell": null,
+    "code": "S608",
+    "end_location": {
+      "column": 94,
+      "row": 199
+    },
+    "filename": "/workspace/scratch/792fd5ca6555/PatchTrace/src/patchtrace/search/segment.py",
+    "fix": null,
+    "location": {
+      "column": 28,
+      "row": 199
+    },
+    "message": "Possible SQL injection vector through string-based query construction",
+    "name": "hardcoded-sql-expression",
+    "noqa_row": 199,
+    "severity": "error",
+    "url": "https://docs.astral.sh/ruff/rules/hardcoded-sql-expression"
+  },
+  {
+    "cell": null,
+    "code": "S608",
+    "end_location": {
+      "column": 79,
+      "row": 140
+    },
+    "filename": "/workspace/scratch/792fd5ca6555/PatchTrace/src/patchtrace/search/service.py",
+    "fix": null,
+    "location": {
+      "column": 30,
+      "row": 140
+    },
+    "message": "Possible SQL injection vector through string-based query construction",
+    "name": "hardcoded-sql-expression",
+    "noqa_row": 140,
+    "severity": "error",
+    "url": "https://docs.astral.sh/ruff/rules/hardcoded-sql-expression"
+  },
+  {
+    "cell": null,
+    "code": "S608",
+    "end_location": {
+      "column": 36,
+      "row": 187
+    },
+    "filename": "/workspace/scratch/792fd5ca6555/PatchTrace/src/patchtrace/search/service.py",
+    "fix": null,
+    "location": {
+      "column": 13,
+      "row": 186
+    },
+    "message": "Possible SQL injection vector through string-based query construction",
+    "name": "hardcoded-sql-expression",
+    "noqa_row": 186,
+    "severity": "error",
+    "url": "https://docs.astral.sh/ruff/rules/hardcoded-sql-expression"
+  },
+  {
+    "cell": null,
+    "code": "S608",
+    "end_location": {
+      "column": 65,
+      "row": 197
+    },
+    "filename": "/workspace/scratch/792fd5ca6555/PatchTrace/src/patchtrace/search/service.py",
+    "fix": null,
+    "location": {
+      "column": 42,
+      "row": 196
+    },
+    "message": "Possible SQL injection vector through string-based query construction",
+    "name": "hardcoded-sql-expression",
+    "noqa_row": 196,
+    "severity": "error",
+    "url": "https://docs.astral.sh/ruff/rules/hardcoded-sql-expression"
+  },
+  {
+    "cell": null,
+    "code": "S608",
+    "end_location": {
+      "column": 65,
+      "row": 230
+    },
+    "filename": "/workspace/scratch/792fd5ca6555/PatchTrace/src/patchtrace/search/service.py",
+    "fix": null,
+    "location": {
+      "column": 42,
+      "row": 229
+    },
+    "message": "Possible SQL injection vector through string-based query construction",
+    "name": "hardcoded-sql-expression",
+    "noqa_row": 229,
+    "severity": "error",
+    "url": "https://docs.astral.sh/ruff/rules/hardcoded-sql-expression"
+  },
+  {
+    "cell": null,
+    "code": "S608",
+    "end_location": {
+      "column": 36,
+      "row": 239
+    },
+    "filename": "/workspace/scratch/792fd5ca6555/PatchTrace/src/patchtrace/search/service.py",
+    "fix": null,
+    "location": {
+      "column": 13,
+      "row": 238
+    },
+    "message": "Possible SQL injection vector through string-based query construction",
+    "name": "hardcoded-sql-expression",
+    "noqa_row": 238,
+    "severity": "error",
+    "url": "https://docs.astral.sh/ruff/rules/hardcoded-sql-expression"
+  },
+  {
+    "cell": null,
+    "code": "S101",
+    "end_location": {
+      "column": 11,
+      "row": 146
+    },
+    "filename": "/workspace/scratch/792fd5ca6555/PatchTrace/src/patchtrace/secondary/bindiff_probe.py",
+    "fix": null,
+    "location": {
+      "column": 5,
+      "row": 146
+    },
+    "message": "Use of `assert` detected",
+    "name": "assert",
+    "noqa_row": 146,
+    "severity": "error",
+    "url": "https://docs.astral.sh/ruff/rules/assert"
+  },
+  {
+    "cell": null,
+    "code": "S101",
+    "end_location": {
+      "column": 11,
+      "row": 316
+    },
+    "filename": "/workspace/scratch/792fd5ca6555/PatchTrace/src/patchtrace/secondary/bindiff_run.py",
+    "fix": null,
+    "location": {
+      "column": 5,
+      "row": 316
+    },
+    "message": "Use of `assert` detected",
+    "name": "assert",
+    "noqa_row": 316,
+    "severity": "error",
+    "url": "https://docs.astral.sh/ruff/rules/assert"
+  },
+  {
+    "cell": null,
+    "code": "S110",
+    "end_location": {
+      "column": 21,
+      "row": 100
+    },
+    "filename": "/workspace/scratch/792fd5ca6555/PatchTrace/src/patchtrace/secondary/scheduler.py",
+    "fix": null,
+    "location": {
+      "column": 13,
+      "row": 99
+    },
+    "message": "`try`-`except`-`pass` detected, consider logging the exception",
+    "name": "try-except-pass",
+    "noqa_row": 99,
+    "severity": "error",
+    "url": "https://docs.astral.sh/ruff/rules/try-except-pass"
+  },
+  {
+    "cell": null,
+    "code": "S110",
+    "end_location": {
+      "column": 29,
+      "row": 240
+    },
+    "filename": "/workspace/scratch/792fd5ca6555/PatchTrace/src/patchtrace/secondary/scheduler.py",
+    "fix": null,
+    "location": {
+      "column": 21,
+      "row": 239
+    },
+    "message": "`try`-`except`-`pass` detected, consider logging the exception",
+    "name": "try-except-pass",
+    "noqa_row": 239,
+    "severity": "error",
+    "url": "https://docs.astral.sh/ruff/rules/try-except-pass"
+  },
+  {
+    "cell": null,
+    "code": "S110",
+    "end_location": {
+      "column": 13,
+      "row": 138
+    },
+    "filename": "/workspace/scratch/792fd5ca6555/PatchTrace/src/patchtrace/ui_engine_setup.py",
+    "fix": null,
+    "location": {
+      "column": 5,
+      "row": 137
+    },
+    "message": "`try`-`except`-`pass` detected, consider logging the exception",
+    "name": "try-except-pass",
+    "noqa_row": 137,
+    "severity": "error",
+    "url": "https://docs.astral.sh/ruff/rules/try-except-pass"
+  },
+  {
+    "cell": null,
+    "code": "S110",
+    "end_location": {
+      "column": 17,
+      "row": 583
+    },
+    "filename": "/workspace/scratch/792fd5ca6555/PatchTrace/src/patchtrace/ui_evidence.py",
+    "fix": null,
+    "location": {
+      "column": 9,
+      "row": 582
+    },
+    "message": "`try`-`except`-`pass` detected, consider logging the exception",
+    "name": "try-except-pass",
+    "noqa_row": 582,
+    "severity": "error",
+    "url": "https://docs.astral.sh/ruff/rules/try-except-pass"
+  },
+  {
+    "cell": null,
+    "code": "S101",
+    "end_location": {
+      "column": 15,
+      "row": 334
+    },
+    "filename": "/workspace/scratch/792fd5ca6555/PatchTrace/src/patchtrace/ui_series.py",
+    "fix": null,
+    "location": {
+      "column": 9,
+      "row": 334
+    },
+    "message": "Use of `assert` detected",
+    "name": "assert",
+    "noqa_row": 334,
+    "severity": "error",
+    "url": "https://docs.astral.sh/ruff/rules/assert"
+  },
+  {
+    "cell": null,
+    "code": "S110",
+    "end_location": {
+      "column": 17,
+      "row": 321
+    },
+    "filename": "/workspace/scratch/792fd5ca6555/PatchTrace/src/patchtrace/unified/extract/ghidra_script.py",
+    "fix": null,
+    "location": {
+      "column": 9,
+      "row": 320
+    },
+    "message": "`try`-`except`-`pass` detected, consider logging the exception",
+    "name": "try-except-pass",
+    "noqa_row": 320,
+    "severity": "error",
+    "url": "https://docs.astral.sh/ruff/rules/try-except-pass"
+  },
+  {
+    "cell": null,
+    "code": "S110",
+    "end_location": {
+      "column": 17,
+      "row": 325
+    },
+    "filename": "/workspace/scratch/792fd5ca6555/PatchTrace/src/patchtrace/unified/extract/ghidra_script.py",
+    "fix": null,
+    "location": {
+      "column": 9,
+      "row": 324
+    },
+    "message": "`try`-`except`-`pass` detected, consider logging the exception",
+    "name": "try-except-pass",
+    "noqa_row": 324,
+    "severity": "error",
+    "url": "https://docs.astral.sh/ruff/rules/try-except-pass"
+  },
+  {
+    "cell": null,
+    "code": "S110",
+    "end_location": {
+      "column": 17,
+      "row": 784
+    },
+    "filename": "/workspace/scratch/792fd5ca6555/PatchTrace/src/patchtrace/unified/extract/ghidra_script.py",
+    "fix": null,
+    "location": {
+      "column": 9,
+      "row": 783
+    },
+    "message": "`try`-`except`-`pass` detected, consider logging the exception",
+    "name": "try-except-pass",
+    "noqa_row": 783,
+    "severity": "error",
+    "url": "https://docs.astral.sh/ruff/rules/try-except-pass"
+  },
+  {
+    "cell": null,
+    "code": "S110",
+    "end_location": {
+      "column": 17,
+      "row": 854
+    },
+    "filename": "/workspace/scratch/792fd5ca6555/PatchTrace/src/patchtrace/unified/extract/ghidra_script.py",
+    "fix": null,
+    "location": {
+      "column": 9,
+      "row": 853
+    },
+    "message": "`try`-`except`-`pass` detected, consider logging the exception",
+    "name": "try-except-pass",
+    "noqa_row": 853,
+    "severity": "error",
+    "url": "https://docs.astral.sh/ruff/rules/try-except-pass"
+  },
+  {
+    "cell": null,
+    "code": "S608",
+    "end_location": {
+      "column": 76,
+      "row": 160
+    },
+    "filename": "/workspace/scratch/792fd5ca6555/PatchTrace/src/patchtrace/unified/ir/ingest.py",
+    "fix": null,
+    "location": {
+      "column": 37,
+      "row": 160
+    },
+    "message": "Possible SQL injection vector through string-based query construction",
+    "name": "hardcoded-sql-expression",
+    "noqa_row": 160,
+    "severity": "error",
+    "url": "https://docs.astral.sh/ruff/rules/hardcoded-sql-expression"
+  },
+  {
+    "cell": null,
+    "code": "S608",
+    "end_location": {
+      "column": 66,
+      "row": 297
+    },
+    "filename": "/workspace/scratch/792fd5ca6555/PatchTrace/src/patchtrace/unified/ir/reader.py",
+    "fix": null,
+    "location": {
+      "column": 27,
+      "row": 297
+    },
+    "message": "Possible SQL injection vector through string-based query construction",
+    "name": "hardcoded-sql-expression",
+    "noqa_row": 297,
+    "severity": "error",
+    "url": "https://docs.astral.sh/ruff/rules/hardcoded-sql-expression"
+  },
+  {
+    "cell": null,
+    "code": "S608",
+    "end_location": {
+      "column": 92,
+      "row": 173
+    },
+    "filename": "/workspace/scratch/792fd5ca6555/PatchTrace/src/patchtrace/unified/ir/schema.py",
+    "fix": null,
+    "location": {
+      "column": 35,
+      "row": 173
+    },
+    "message": "Possible SQL injection vector through string-based query construction",
+    "name": "hardcoded-sql-expression",
+    "noqa_row": 173,
+    "severity": "error",
+    "url": "https://docs.astral.sh/ruff/rules/hardcoded-sql-expression"
+  },
+  {
+    "cell": null,
+    "code": "S101",
+    "end_location": {
+      "column": 7,
+      "row": 381
+    },
+    "filename": "/workspace/scratch/792fd5ca6555/PatchTrace/src/patchtrace/unified/ladder/passes.py",
+    "fix": null,
+    "location": {
+      "column": 1,
+      "row": 381
+    },
+    "message": "Use of `assert` detected",
+    "name": "assert",
+    "noqa_row": 381,
+    "severity": "error",
+    "url": "https://docs.astral.sh/ruff/rules/assert"
+  },
+  {
+    "cell": null,
+    "code": "S105",
+    "end_location": {
+      "column": 37,
+      "row": 104
+    },
+    "filename": "/workspace/scratch/792fd5ca6555/PatchTrace/src/patchtrace/unified/ladder/types.py",
+    "fix": null,
+    "location": {
+      "column": 32,
+      "row": 104
+    },
+    "message": "Possible hardcoded password assigned to: \"pass_id\"",
+    "name": "hardcoded-password-string",
+    "noqa_row": 104,
+    "severity": "error",
+    "url": "https://docs.astral.sh/ruff/rules/hardcoded-password-string"
+  },
+  {
+    "cell": null,
+    "code": "S608",
+    "end_location": {
+      "column": 115,
+      "row": 770
+    },
+    "filename": "/workspace/scratch/792fd5ca6555/PatchTrace/src/patchtrace/unified/store.py",
+    "fix": null,
+    "location": {
+      "column": 30,
+      "row": 770
+    },
+    "message": "Possible SQL injection vector through string-based query construction",
+    "name": "hardcoded-sql-expression",
+    "noqa_row": 770,
+    "severity": "error",
+    "url": "https://docs.astral.sh/ruff/rules/hardcoded-sql-expression"
+  },
+  {
+    "cell": null,
+    "code": "S608",
+    "end_location": {
+      "column": 59,
+      "row": 845
+    },
+    "filename": "/workspace/scratch/792fd5ca6555/PatchTrace/src/patchtrace/unified/store.py",
+    "fix": null,
+    "location": {
+      "column": 35,
+      "row": 844
+    },
+    "message": "Possible SQL injection vector through string-based query construction",
+    "name": "hardcoded-sql-expression",
+    "noqa_row": 844,
+    "severity": "error",
+    "url": "https://docs.astral.sh/ruff/rules/hardcoded-sql-expression"
+  }
+]

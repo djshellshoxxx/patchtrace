@@ -85,6 +85,10 @@ def _finite_float(literal: str) -> float:
 
 
 def strict_json(text: bytes):
+    # Offline/raw imports bypass gzip, so the decoded-document cap belongs here
+    # as well as in the inflater. Refuse before decoding or allocating JSON objects.
+    if len(text) > MAX_DECOMPRESSED:
+        raise AcquisitionError('PT-ACQ-LIMIT', 'Winbindex record exceeds 256 MiB decompressed')
     try:
         # Syntax is document-wide; entry-specific Unicode is checked when hashing each record,
         # so one bad Winbindex entry does not discard unrelated valid builds.

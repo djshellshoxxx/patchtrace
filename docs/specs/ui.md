@@ -46,3 +46,11 @@ cooperative cancellation preserves the current project and uses the core's
 owned rollback; it is not shown as a generic failure dialog. Existing
 transactional project adoption and original-service preservation remain the
 authority if opening or refreshing the new project fails.
+
+New Project also offers an explicit **Retry incomplete project** action,
+separate from ordinary Create. It dispatches `ProjectService.retry_create` on
+the same worker/adoption adapter after basic field validation. The strict
+layout, unchanged lock bytes, current database reuse, input binding and failure
+preservation contract is specified in [project-retry.md](project-retry.md).
+Hashing, preparation, SQLite admission and publication remain off the GUI
+thread; refused retry keeps the current project active.

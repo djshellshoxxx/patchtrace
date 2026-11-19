@@ -263,6 +263,33 @@ class FetchPlan(_Strict):
         return self
 
 
+class PdbFetchReceipt(_Strict):
+    """An immutable byte binding from a verified download, separate from attempt provenance."""
+    contract: Literal['tier-w-pdb-receipt/1']
+    tier: Literal['W']
+    destination: str = Field(min_length=1, max_length=512)
+    file_name: str = Field(min_length=1, max_length=128)
+    source_url: str = Field(min_length=1, max_length=2048)
+    guid: Guid = Field(min_length=36, max_length=36)
+    age: U32
+    file_sha256: Sha256 = Field(min_length=64, max_length=64)
+    size: int = Field(ge=1, le=2**31)
+
+    @model_validator(mode='after')
+    def _bound_target(self):
+        from patchtrace.acquisition.contracts import SYMBOL_SERVER
+        from patchtrace.offline_bundle import windows_unsafe_component
+
+        if (not re.fullmatch(r'[a-z0-9._-]+', self.file_name) or windows_unsafe_component(self.file_name)
+                or not self.file_name.endswith('.pdb') or self.file_name == '.pdb'):
+            raise ValueError('PDB receipt filename is invalid or aliased')
+        key = self.guid.replace('-', '').upper() + f'{self.age:X}'
+        if (self.source_url != f'{SYMBOL_SERVER}/{self.file_name}/{key}/{self.file_name}' or
+                self.destination != f'tier-w/pdbs/{self.file_name}/{key}/{self.file_name}'):
+            raise ValueError('PDB receipt target and URL must match its pinned identity')
+        return self
+
+
 # ---- Ghidra raw output (s5.2) and symbol-map/1 (s5.3) ---------------------------------------------------------
 
 def _check_ranges(ranges: Sequence[Sequence[int]]) -> int:
@@ -468,6 +495,10 @@ def _load(model: type[BaseModel], data: bytes, limit: int, what: str):
 
 def load_fetch_plan(data: bytes) -> FetchPlan:
     return _load(FetchPlan, data, DOC_LIMIT, 'Tier-W fetch plan')
+
+
+def load_pdb_fetch_receipt(data: bytes) -> PdbFetchReceipt:
+    return _load(PdbFetchReceipt, data, 64 * 1024, 'PDB fetch receipt')
 
 
 def load_catalogue(data: bytes) -> Catalogue:

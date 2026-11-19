@@ -96,10 +96,23 @@ canonical sorted JSON bytes with their final newline. Execution checks the
 displayed file digest, a fresh offline recomputation and exact host/URL consent
 before a request. Binary and PDB operations require independent confirmation.
 
-The saved-plan executor uses the current throttled transport, checks the local
-`CANCEL` switch and the caller's event, repeats disk preflight before each item,
-and records the plan digest, public source URL, redirect host only, observed
-size/digest and result in the existing hash-chained ledger. Publication is
+`fetch_saved_plan` is the separately gated library executor. It requires an
+existing ordinary corpus root outside the repository, the saved file's displayed
+SHA-256, a fresh offline recomputation callback and the exact consent-host set.
+The callback is trusted application composition and must re-read current source
+documents; passing a previously cached plan is not a replacement for a reviewed
+CLI adapter. Original lexical parent components are checked before normalization
+and `..` components are refused, so linked parents cannot select a different
+output root through normalization.
+
+The executor uses the current throttled transport, checks the local `CANCEL`
+switch and both caller/transport events, and revalidates every existing selected
+destination before any request. It repeats disk preflight before each download.
+Because verified stages are retained, this saved-plan path reserves twice the
+remaining binary sizes or PDB caps, plus the existing 1 GiB margin; the legacy
+API's estimate is unchanged. A conflicting existing destination stops admission
+before HTTP. An observed race after admission refuses promotion or reuse and
+preserves the other writer's file. Publication is
 exclusive through `owned_publication`; an existing destination is reused only
 after bounded exact-byte and format/identity verification. An observed invalid
 or conflicting destination is preserved and refused. This stronger saved-plan
@@ -107,6 +120,41 @@ policy does not change the legacy single-file API's explicit refetch behavior.
 Verified staging files may remain after a failure, because cleanup must not
 unlink a pathname that another writer may have replaced. Permission flags are
 not an integrity receipt; every reuse revalidates the actual bytes.
+
+Binary reuse is bound directly to the plan's SHA-256. PDB reuse additionally
+requires an ordinary, singly linked, bounded sibling
+`<pdb>.fetch-receipt.json` with the strict `tier-w-pdb-receipt/1` profile. It binds
+the exact relative target, public URL, name, GUID, DBI age, SHA-256 and byte
+length. GUID/age alone cannot authorize changed symbol contents. Only a
+verified downloaded stage can create this receipt; existing PDB bytes cannot
+backfill missing evidence. Missing, conflicting, linked or changed receipt
+evidence refuses reuse before any request. A receipt's identity fields must
+also match the current plan and its recorded size must fit the current cap.
+
+Receipt publication precedes PDB artifact publication, and the receipt stays
+held and revalidated while the artifact is published. The two files are not
+an atomic pair. A valid receipt with a missing artifact may be completed by a
+new verified download only when its bytes match the retained SHA/size. A
+conflicting artifact or receipt remains untouched. A same-byte concurrent
+artifact creator may be reused using evidence from this actual verified
+download, after the immutable receipt binding succeeds. Receipt fields omit
+attempt timestamps; byte-identical bindings can be reused across plans, while
+each attempt ledger records its own actual retrieval provenance.
+
+Saved-plan attempts retain the existing `tier-w-fetch/1` hash-chain event
+envelope in numbered immutable one-line files at
+`tier-w/ledger/<corpus_id>.fetch/<plan_sha256>/<attempt>/<seq>.jsonl`.
+Every event binds the plan digest and operation; fetched/reused outcomes include
+the verified local size/digest, expected public URL and redirect hostname only.
+Reuse is explicitly local identity verification and does not invent retrieval
+provenance. Events are capped at 64 KiB each and 64 MiB per attempt. Each event
+is published exclusively before the next item, with no append or replacement
+of the legacy corpus ledger. Cancellation leaves the completed prefix and
+reports how many plan entries were not attempted. A receipt-publication failure
+raises a typed error and leaves prior events, artifacts and staging evidence
+intact. A hard interruption preserves the original exception even if its final
+interruption record cannot be written. No success receipt implies that a hostile
+writer cannot change a file after the final verification point.
 
 Transport recovery keeps the existing exact-URL consent, host allowlist,
 single blob redirect, retries, per-attempt deadline and request throttle. It

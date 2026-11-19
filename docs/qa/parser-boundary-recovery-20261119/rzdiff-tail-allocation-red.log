@@ -1,0 +1,72 @@
+FFFFFFF                                                                  [100%]
+=================================== FAILURES ===================================
+__ test_diagnostic_tail_cannot_expand_past_byte_budget_at_a_utf8_boundary[1] ___
+tests/test_rzdiff_text_boundaries.py:85: in test_diagnostic_tail_cannot_expand_past_byte_budget_at_a_utf8_boundary
+    assert len(tail.encode('utf-8')) <= limit
+E   AssertionError: assert 3 <= 1
+E    +  where 3 = len(b'\xef\xbf\xbd')
+E    +    where b'\xef\xbf\xbd' = <built-in method encode of str object at 0x7f6ee48443b0>('utf-8')
+E    +      where <built-in method encode of str object at 0x7f6ee48443b0> = '�'.encode
+__ test_diagnostic_tail_cannot_expand_past_byte_budget_at_a_utf8_boundary[2] ___
+tests/test_rzdiff_text_boundaries.py:85: in test_diagnostic_tail_cannot_expand_past_byte_budget_at_a_utf8_boundary
+    assert len(tail.encode('utf-8')) <= limit
+E   AssertionError: assert 6 <= 2
+E    +  where 6 = len(b'\xef\xbf\xbd\xef\xbf\xbd')
+E    +    where b'\xef\xbf\xbd\xef\xbf\xbd' = <built-in method encode of str object at 0x7f6ee48a6c30>('utf-8')
+E    +      where <built-in method encode of str object at 0x7f6ee48a6c30> = '��'.encode
+__ test_diagnostic_tail_cannot_expand_past_byte_budget_at_a_utf8_boundary[4] ___
+tests/test_rzdiff_text_boundaries.py:85: in test_diagnostic_tail_cannot_expand_past_byte_budget_at_a_utf8_boundary
+    assert len(tail.encode('utf-8')) <= limit
+E   AssertionError: assert 6 <= 4
+E    +  where 6 = len(b'\xef\xbf\xbd\xe2\x82\xac')
+E    +    where b'\xef\xbf\xbd\xe2\x82\xac' = <built-in method encode of str object at 0x7f6ee4498130>('utf-8')
+E    +      where <built-in method encode of str object at 0x7f6ee4498130> = '�€'.encode
+__ test_diagnostic_tail_cannot_expand_past_byte_budget_at_a_utf8_boundary[5] ___
+tests/test_rzdiff_text_boundaries.py:85: in test_diagnostic_tail_cannot_expand_past_byte_budget_at_a_utf8_boundary
+    assert len(tail.encode('utf-8')) <= limit
+E   AssertionError: assert 9 <= 5
+E    +  where 9 = len(b'\xef\xbf\xbd\xef\xbf\xbd\xe2\x82\xac')
+E    +    where b'\xef\xbf\xbd\xef\xbf\xbd\xe2\x82\xac' = <built-in method encode of str object at 0x7f6ee4442730>('utf-8')
+E    +      where <built-in method encode of str object at 0x7f6ee4442730> = '��€'.encode
+__________ test_failed_process_bounds_text_before_diagnostic_encoding __________
+tests/test_rzdiff_text_boundaries.py:96: in test_failed_process_bounds_text_before_diagnostic_encoding
+    _interpret('', code=1, stderr=FullText('unneeded prefix ' * 20 + 'last'))
+tests/test_rzdiff_text_boundaries.py:18: in _interpret
+    return rzdiff.interpret(code, output, stderr, '0.9.1', OLD, NEW)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/patchtrace/secondary/rzdiff.py:218: in interpret
+    tail = shown.encode('utf-8', errors='replace')[-STDERR_TAIL:].decode('utf-8', errors='replace')
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/test_rzdiff_text_boundaries.py:93: in encode
+    pytest.fail('the complete oversized diagnostic reached encoding')
+E   Failed: the complete oversized diagnostic reached encoding
+_________ test_failed_process_bounds_bytes_before_diagnostic_decoding __________
+tests/test_rzdiff_text_boundaries.py:109: in test_failed_process_bounds_bytes_before_diagnostic_decoding
+    _interpret(FullBytes(b'unneeded prefix ' * 20 + b'last'), code=1)
+tests/test_rzdiff_text_boundaries.py:18: in _interpret
+    return rzdiff.interpret(code, output, stderr, '0.9.1', OLD, NEW)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/patchtrace/secondary/rzdiff.py:217: in interpret
+    shown = stderr_tail or (output.decode('utf-8', errors='replace') if exact else output)
+                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/test_rzdiff_text_boundaries.py:106: in decode
+    pytest.fail('the complete oversized stdout reached decoding')
+E   Failed: the complete oversized stdout reached decoding
+__________ test_oversized_successful_text_is_refused_before_encoding ___________
+tests/test_rzdiff_text_boundaries.py:120: in test_oversized_successful_text_is_refused_before_encoding
+    rzdiff.interpret(0, FullText('x' * 17), '', '0.9.1', OLD, NEW, stdout_limit=16)
+src/patchtrace/secondary/rzdiff.py:221: in interpret
+    size = len(output if exact else output.encode('utf-8'))
+                                    ^^^^^^^^^^^^^^^^^^^^^^
+tests/test_rzdiff_text_boundaries.py:117: in encode
+    pytest.fail('oversized stdout reached encoding before its lower-bound size check')
+E   Failed: oversized stdout reached encoding before its lower-bound size check
+=========================== short test summary info ============================
+FAILED tests/test_rzdiff_text_boundaries.py::test_diagnostic_tail_cannot_expand_past_byte_budget_at_a_utf8_boundary[1]
+FAILED tests/test_rzdiff_text_boundaries.py::test_diagnostic_tail_cannot_expand_past_byte_budget_at_a_utf8_boundary[2]
+FAILED tests/test_rzdiff_text_boundaries.py::test_diagnostic_tail_cannot_expand_past_byte_budget_at_a_utf8_boundary[4]
+FAILED tests/test_rzdiff_text_boundaries.py::test_diagnostic_tail_cannot_expand_past_byte_budget_at_a_utf8_boundary[5]
+FAILED tests/test_rzdiff_text_boundaries.py::test_failed_process_bounds_text_before_diagnostic_encoding
+FAILED tests/test_rzdiff_text_boundaries.py::test_failed_process_bounds_bytes_before_diagnostic_decoding
+FAILED tests/test_rzdiff_text_boundaries.py::test_oversized_successful_text_is_refused_before_encoding
+7 failed, 12 deselected in 0.97s

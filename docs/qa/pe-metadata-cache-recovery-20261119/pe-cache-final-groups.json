@@ -1,0 +1,46 @@
+[
+  {
+    "group": "cache",
+    "files": [
+      "tests/test_pe_metadata_cache.py",
+      "tests/test_pe_metadata_cache_qt.py",
+      "tests/test_pe_metadata_cache_recovery.py"
+    ],
+    "returncode": 0,
+    "seconds": 8.053,
+    "log": "/workspace/scratch/792fd5ca6555/pe-cache-final-cache.log"
+  },
+  {
+    "group": "storage",
+    "files": [
+      "tests/test_enrichment_storage.py",
+      "tests/test_enrichment_retention.py"
+    ],
+    "returncode": 0,
+    "seconds": 2.676,
+    "log": "/workspace/scratch/792fd5ca6555/pe-cache-final-storage.log"
+  },
+  {
+    "group": "inspection",
+    "files": [
+      "tests/test_ui_inspection_signing.py",
+      "tests/test_alpha_integration.py",
+      "tests/test_audit116_stale_inspection_failure.py",
+      "tests/test_files_announcements.py",
+      "tests/test_gui_host_seam.py"
+    ],
+    "returncode": 0,
+    "seconds": 18.538,
+    "log": "/workspace/scratch/792fd5ca6555/pe-cache-final-inspection.log"
+  },
+  {
+    "group": "metadata-cli",
+    "files": [
+      "tests/test_pe_meta_compare.py",
+      "tests/test_pe_inspect_cli.py"
+    ],
+    "returncode": 0,
+    "seconds": 2.658,
+    "log": "/workspace/scratch/792fd5ca6555/pe-cache-final-metadata-cli.log"
+  }
+]

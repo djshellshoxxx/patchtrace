@@ -1,7 +1,8 @@
 # Consolidation verification
 
 Branch: `integration/exhaustive-patchtrace-consolidation-20261119`.
-Current recorded code: `cb1b508c`; latest verified remote source: `087f50aa` (local tree equivalent `bb4f8310`).
+Current recorded code: `7e610c03`; prior verified remote source: `1341dc21`
+(local tree equivalent `65043fe8`).
 Counts below overlap and must not be added as distinct test coverage.
 
 ## Focused results
@@ -111,7 +112,30 @@ acceptance, real-data accuracy, fresh-profile dependency audits and Windows stan
 qualification remain separate required checks. Skips, mocked engines, fixtures
 and historical receipts are never promoted to those claims.
 
-## Reproduction
+## Additional reviewed integration results
+
+| Change/source | Observed result | Scope |
+|---|---|---|
+| Retry `72255922` plus stage cleanup `fd6861d2` | Author 255 initial and 74 correction controls; independent 57 plus two correction controls; root 74 passed 9.78 s | Counts overlap. Real stage replacement and garbage-collection negatives retained; cooperative final-check interval remains explicit. |
+| Saved executor `f60424fc` / root `189edc47` | Author 204 passed/one native skip 9.54 s; independent 57 passed 3.04 s; root 179 passed 9.08 s | Binary/PDB plan, byte-receipt, publication, schema and offline CLI controls. No live network or native Windows credit. |
+| Build producer `4af75c62` | Author 233 passed 7.98 s; independent 39 passed 1.77 s, with a separate actual Git-root provenance blocker | Original negative JSON and regression retained; this initial result alone is not approval. |
+| Git-root correction `442e3961` | Author 70 passed 5.55 s; independent 43 passed 2.85 s | Real unrelated parent repository, valid detached worktree, changed top-level and replaced root; approved scoped correction. |
+| Linux frozen consumer at `7e610c03` | Actual PyInstaller 6.22.3 round-trip and modified-record refusal, 7.99 s | Qt/UI excluded. Exact entry/command/source/tree/digests retained; not a full desktop/Windows package or release receipt. |
+| PE cache `e59e9fce` / root `6d0f1509` | Author 214 disjoint passes; independent read review; root 85 passed 14.55 s | Real SQLite, authored PE and offscreen Qt; no native trust claim. An interrupted broader author attempt remains uncredited. |
+| Parser slice `03c120e4` / root `7e610c03` | Author 602 disjoint passes; independent read reviews; root 191 passed 6.64 s | Includes current saved-executor interaction; original 89 failures and seven later rz-diff failures are retained. |
+
+Normal full Ruff passes at `7e610c03`. Strict source scan at the same source exits
+1 with 80 findings: S310=6, S101=9, S608=37, S105=14, S603=1, S110=10, S314=2,
+S108=1. This differs from the earlier 80/81 finding sets and remains a failed
+gate. Raw JSON is retained as `evidence/security-ruff-7e610c03.json`.
+
+Latest inspected hosted snapshot on `1341dc21`: 31 checks, 28 queued and three
+skipped. It supplies no new passing acceptance evidence. Historical `087f50aa`
+Rizin/static artifacts above remain bound to their original tree. A third
+executor interruption occurred during the schema cherry-pick; persistent Git
+and evidence survived, and only the interrupted reads were retried after recovery.
+
+## Reproduction commands
 
 From a disposable checkout of the named source, install project dev/search/rules
 extras, then run:

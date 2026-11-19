@@ -1,0 +1,75 @@
+{
+  "additionalProperties": false,
+  "description": "An immutable byte binding from a verified download, separate from attempt provenance.",
+  "properties": {
+    "contract": {
+      "const": "tier-w-pdb-receipt/1",
+      "title": "Contract",
+      "type": "string"
+    },
+    "tier": {
+      "const": "W",
+      "title": "Tier",
+      "type": "string"
+    },
+    "destination": {
+      "maxLength": 512,
+      "minLength": 1,
+      "title": "Destination",
+      "type": "string"
+    },
+    "file_name": {
+      "maxLength": 128,
+      "minLength": 1,
+      "title": "File Name",
+      "type": "string"
+    },
+    "source_url": {
+      "maxLength": 2048,
+      "minLength": 1,
+      "title": "Source Url",
+      "type": "string"
+    },
+    "guid": {
+      "maxLength": 36,
+      "minLength": 36,
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+      "title": "Guid",
+      "type": "string"
+    },
+    "age": {
+      "maximum": 4294967295,
+      "minimum": 0,
+      "title": "Age",
+      "type": "integer"
+    },
+    "file_sha256": {
+      "maxLength": 64,
+      "minLength": 64,
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "File Sha256",
+      "type": "string"
+    },
+    "size": {
+      "maximum": 2147483648,
+      "minimum": 1,
+      "title": "Size",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "contract",
+    "tier",
+    "destination",
+    "file_name",
+    "source_url",
+    "guid",
+    "age",
+    "file_sha256",
+    "size"
+  ],
+  "title": "PdbFetchReceipt",
+  "type": "object",
+  "$id": "https://patchtrace.local/schemas/tier-w-pdb-receipt/1/PdbFetchReceipt.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
+}

@@ -5,7 +5,7 @@ Main baseline: `fdc2696c23bdbfe7668348f25e3b336ce33039f7`.
 Original local merge: `a9e40d27d4b2ef9a7166f5127039d4837e9448f3`.
 Parents: reviewed #319 `a56ab13aaf9916fc12bea70ba1494075991b7f09` and
 #318 (including #316) `c4ace2088ce8dc9ce78a0bf3036b81096accbdb5`.
-Current code checkpoint source: `cb1b508c`; no unresolved Git conflicts.
+Current code checkpoint source: `7e610c03`; no unresolved Git conflicts.
 
 The eleven original conflicts are reproducible with
 `git merge-tree --write-tree --name-only --no-messages a56ab13a c4ace208`.
@@ -61,3 +61,15 @@ digest preserves traceability without inventing raw bytes; null omission preserv
 legacy raw-backed serialization and basis digests. Full affected selection passed
 1464 tests and independent review approved 49 controls. Newer export ownership
 was retained throughout. No unresolved Git conflict remains.
+
+The saved-plan executor introduced the same two schema-registration conflicts in
+`tools/calibration/schemas.py` and `tests/test_calibration_tools.py`. The resolution
+adds `PdbFetchReceipt` while preserving FetchPlan, RunRecord and all three review
+schemas; the separate TrainingManifest generator is unchanged. Schemas were
+regenerated, and 179 integrated executor/plan/schema/offline-CLI checks passed.
+
+The PE metadata cache port merged its narrow inspection hooks with the current
+creation/retry UI changes. It keeps stale/context adoption, accessible controls
+and current cleanup semantics. The cache/Qt/retry/lifecycle selection passed 85
+checks. Module-index changes retain both packaged provenance and recovered cache
+and parser entries. No active development branch was rewritten.

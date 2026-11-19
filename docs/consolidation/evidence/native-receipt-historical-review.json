@@ -1,0 +1,21 @@
+{
+  "source_commit": "8451e93f",
+  "evidence": "authored offline converter controls; no native run",
+  "same_status_bytes": true,
+  "first": {
+    "head": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "outcome": "PASS",
+    "validation": []
+  },
+  "relabeled": {
+    "head": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    "outcome": "PASS",
+    "validation": []
+  },
+  "missing_digests": {
+    "tool_sha256": null,
+    "output_sha256": null,
+    "outcome": "PASS",
+    "validation": []
+  }
+}

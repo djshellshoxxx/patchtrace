@@ -2683,3 +2683,26 @@ See [source-bound QA](qa/version-provenance-recovery-20261119.md): 220 passed, 1
 ## Consolidation checkpoint after source cb1b508c (2026-11-19)
 
 Strings/Search: 1464 passes and independent 49. Version filter correction: 27 passes and independent 27. Integrated lifecycle: 57 passes. Frozen historical suite covers 953 files with 25,943 passes; failures, skips and three killed benchmark cases remain explicit. Hosted historical Linux Rizin control is real and source-bound; strict static gate still fails. See [consolidation verification](consolidation/TEST_RESULTS.md) for exact identities, overlapping counts and artifacts.
+
+## Packaged build-info producer (2026-11-19)
+
+Author selection: 233 passed, no skips; full normal Ruff passed. The bounded
+producer, exclusive installation and frozen command comparison complete the
+current builders' metadata path. [Source-bound QA](qa/package-buildinfo-recovery-20261119.md)
+keeps independent review and actual platform builds separate.
+
+## Consolidation checkpoint after source 7e610c03 (2026-11-19)
+
+Integrated retry/lifecycle controls pass 74; saved execution/plan/schema/offline
+CLI pass 179; PE cache/Qt/retry pass 85; parser boundaries/current executor pass
+191. Counts overlap and belong to the recorded selections. The corrected package
+producer Git-root selection passes 70 and independently 43. An actual small Linux
+PyInstaller consumer round-trip and changed-metadata refusal pass on 7e610c03;
+this excludes Qt/UI and does not qualify a complete desktop or Windows package.
+
+The refreshed census records 323 branches, 312 PRs and 59 tags. Original local
+source history is retained in a verified 318,278-byte Git bundle. Strict security
+still reports 80 findings with the exact current category counts retained. New
+BinDiff digest/parser and proposed journey index-flag counterexamples remain
+explicit open repairs; the unsafe historical native receipt converter is
+excluded. [Current source, raw evidence and limits](consolidation/HANDOFF.md).

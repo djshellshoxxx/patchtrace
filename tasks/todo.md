@@ -2029,3 +2029,26 @@ See the [immutable continuation checkpoint](../docs/qa/verified-continuation-202
 - [x] Integrate current project creation cancellation/adoption and primary-error cleanup; explicit incomplete-root retry remains separate in-progress work.
 - [x] Preserve complete frozen broad-test attempts and actual hosted historical Rizin/security artifacts, with exact source/tree and honest omissions.
 - [ ] Finish saved-plan executor/consent CLI, explicit retry, refreshed semantic census/new active heads and current-source qualification.
+
+- [x] Integrate explicit incomplete-project retry and the independently reproduced
+  private-stage substitution cleanup repair; combined root selection: 74 passed.
+- [x] Implement strict build-info production in both existing desktop builders;
+  author boundary/adjacent packaging selection: 233 passed. Independent review
+  and actual frozen platform packages remain separate open gates.
+
+### Consolidation checkpoint after source 7e610c03 — 2026-11-19
+
+- [x] Refresh all branch/PR/tag pages; retain 323 branches, 312 PRs, 59 tags and
+  all 415 locally resolved recorded targets without claiming semantic exhaustion.
+- [x] Independently review and integrate retry stage ownership, saved executor
+  PDB digest receipts, exact-root packaged provenance, PE metadata cache and seven
+  bounded parser paths; retain integrated focused results and original negatives.
+- [x] Verify the real small Linux frozen metadata consumer and modified-record
+  refusal; preserve its exact source/tree/digests and limited package scope.
+- [x] Preserve recorded original local source commits in a verified Git bundle.
+- [ ] Publish this checkpoint with expected-head and exact-tree verification.
+- [ ] Integrate approved saved-plan consent CLI and reviewed BinDiff schema/key
+  work; finish digest/parser ownership, canonical journey source admission,
+  research facts gate and selected-series-root corrections.
+- [ ] Continue semantic recovery and qualify current-source full/platform/native/
+  package/security/accuracy gates before any default-branch merge or release.

@@ -160,8 +160,8 @@ def test_git_observes_real_commit_without_claiming_cleanliness_and_ignores_git_d
 
 def test_git_missing_description_cannot_imply_clean_and_moving_head_refuses(tmp_path, monkeypatch):
     monkeypatch.setattr(b.shutil, 'which', lambda name: '/local/git')
-    answers = iter(['a' * 40, None, 'a' * 40])
+    answers = iter([str(tmp_path), 'a' * 40, None, 'a' * 40, str(tmp_path)])
     monkeypatch.setattr(b, '_git', lambda *args: next(answers))
     assert b.git_info(tmp_path)['dirty'] is None
-    answers = iter(['a' * 40, 'tag', 'b' * 40])
+    answers = iter([str(tmp_path), 'a' * 40, 'tag', 'b' * 40, str(tmp_path)])
     assert b.git_info(tmp_path) == {'commit': 'unknown', 'describe': 'unknown', 'dirty': None}

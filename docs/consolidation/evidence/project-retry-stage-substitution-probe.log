@@ -1,0 +1,1 @@
+RED on72255922: replacing the private-stage directory at the end of destination copy (before cleanup begins) caused recursive deletion of foreign replacement evidence and retry returned success.

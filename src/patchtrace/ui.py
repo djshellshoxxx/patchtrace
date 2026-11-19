@@ -71,7 +71,7 @@ from .service import ProjectService
 from .tooltips import apply_tooltip, apply_tooltips
 from .ui_bundle_setup import BundleSetup
 from .ui_help import WORKFLOW_HELP_TEXT
-from .ui_inspection import InspectionThread, side_summary
+from .ui_inspection import make_inspection_thread, publish_metadata_cache, side_summary
 from .ui_job_events import JobEventRelay
 from .ui_persistence import commit_and_report
 from .ui_profiles import PROFILE_SETTING, profiles_dir, selected_profile
@@ -268,6 +268,8 @@ class NewProjectDialog(QDialog):
         apply_tooltips(self, {'name': 'new_project.name', 'older': 'new_project.older',
                               'newer': 'new_project.newer', 'root': 'new_project.root'})
         apply_tooltip(swap, 'new_project.swap')
+        from .ui_new_project import add_retry_action
+        add_retry_action(self, layout)
         layout.addWidget(dialog_buttons(self, 'Create project', 'new_project'))
 
     def browse(self, edit, directory):
@@ -286,17 +288,8 @@ class NewProjectDialog(QDialog):
         self.newer.setText(old)
 
     def accept(self):
-        if not self.name.text().strip() or not self.root.text().strip():
-            self.error.setText('Enter a project name and a new project directory.')
-            return
-        if not all(Path(edit.text()).is_file() for edit in [self.older, self.newer]):
-            self.error.setText('Choose two existing binary files. PE format and architecture are validated on creation.')
-            return
-        root = Path(self.root.text())
-        if not creation_directory_available(root):
-            self.error.setText('The project directory must be absent or empty.')
-            return
-        super().accept()
+        from .ui_new_project import accept_creation
+        accept_creation(self)
 
 
 class AcquisitionDialog(QDialog):
@@ -2672,7 +2665,7 @@ class MainWindow(QMainWindow):
             if thread.key == key:
                 return
             thread.cancel.set()
-        thread = InspectionThread(self.project.id, self.project.artifacts, self.service.root, self, key)
+        thread = make_inspection_thread(self.service, self, key)
         queued = Qt.ConnectionType.QueuedConnection  # bound-method slots, always delivered on the GUI thread
         thread.inspection_ready.connect(self._inspection_ready, queued)
         thread.inspection_failed.connect(self._inspection_failed, queued)
@@ -2687,6 +2680,7 @@ class MainWindow(QMainWindow):
             return
         self._clear_inspection()
         self._inspection, self._inspection_key = result, key
+        publish_metadata_cache(self.service, result)
         self.inspection_status.emit('File inspection complete · ' + side_summary(result))
         if self._raw_mode():
             self.render_match()

@@ -1,0 +1,83 @@
+FF                                                                       [100%]
+=================================== FAILURES ===================================
+_ test_private_stage_replaced_before_cleanup_is_retained_and_never_finalized[False] _
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-99/test_private_stage_replaced_be0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f5102810e90>
+cancelled = False
+
+    @pytest.mark.parametrize('cancelled', [False, True])
+    def test_private_stage_replaced_before_cleanup_is_retained_and_never_finalized(tmp_path, monkeypatch, cancelled):
+        import gc
+    
+        from patchtrace import project_retry as module
+    
+        pair, root = partial(tmp_path)
+        before, inspect, stages = contents(root), module.inspect_artifact, []
+        primary = InputReadError('cancelled')
+        foreign = b'authored replacement owned by another writer'
+    
+        def substitute(path, side, folder, **kwargs):
+            result = inspect(path, side, folder, **kwargs)
+            if Path(folder) == root and side == 'newer':
+                temporary = Path(path).parents[2]
+                displaced = temporary.with_name(temporary.name + '-displaced')
+                temporary.rename(displaced)
+                temporary.mkdir()
+                (temporary / 'foreign-proof.txt').write_bytes(foreign)
+                stages.extend((temporary, displaced))
+                if cancelled:
+                    raise primary
+            return result
+    
+        monkeypatch.setattr(module, 'inspect_artifact', substitute)
+        try:
+>           with pytest.raises(InputReadError if cancelled else ValueError) as caught:
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           Failed: DID NOT RAISE ValueError
+
+tests/test_project_retry_recovery.py:491: Failed
+_ test_private_stage_replaced_before_cleanup_is_retained_and_never_finalized[True] _
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-99/test_private_stage_replaced_be1')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f5102412e70>
+cancelled = True
+
+    @pytest.mark.parametrize('cancelled', [False, True])
+    def test_private_stage_replaced_before_cleanup_is_retained_and_never_finalized(tmp_path, monkeypatch, cancelled):
+        import gc
+    
+        from patchtrace import project_retry as module
+    
+        pair, root = partial(tmp_path)
+        before, inspect, stages = contents(root), module.inspect_artifact, []
+        primary = InputReadError('cancelled')
+        foreign = b'authored replacement owned by another writer'
+    
+        def substitute(path, side, folder, **kwargs):
+            result = inspect(path, side, folder, **kwargs)
+            if Path(folder) == root and side == 'newer':
+                temporary = Path(path).parents[2]
+                displaced = temporary.with_name(temporary.name + '-displaced')
+                temporary.rename(displaced)
+                temporary.mkdir()
+                (temporary / 'foreign-proof.txt').write_bytes(foreign)
+                stages.extend((temporary, displaced))
+                if cancelled:
+                    raise primary
+            return result
+    
+        monkeypatch.setattr(module, 'inspect_artifact', substitute)
+        try:
+            with pytest.raises(InputReadError if cancelled else ValueError) as caught:
+                ProjectService.retry_create(*pair, 'substituted private stage', root)
+            if cancelled:
+>               assert caught.value is primary and primary.__notes__
+                                                   ^^^^^^^^^^^^^^^^^
+E               AttributeError: 'InputReadError' object has no attribute '__notes__'. Did you mean: '__ne__'?
+
+tests/test_project_retry_recovery.py:494: AttributeError
+=========================== short test summary info ============================
+FAILED tests/test_project_retry_recovery.py::test_private_stage_replaced_before_cleanup_is_retained_and_never_finalized[False]
+FAILED tests/test_project_retry_recovery.py::test_private_stage_replaced_before_cleanup_is_retained_and_never_finalized[True]
+2 failed in 1.29s

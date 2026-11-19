@@ -1516,11 +1516,11 @@ Wiring: `exchange.ALL_SOURCES`, `--sources diaphora`, `pipeline.capture_plan` (o
 |---|---|---|---|---|
 | der reader | pe_overview/der.py | Bounded DER reader (definite lengths only; depth, node and byte caps of 7.3); typed `signature_der_*` warnings | stdlib | `tests/test_pe_der.py` |
 | embedded signature | pe_overview/signature.py | `verify_embedded(reader, overview, cancel)`: `WIN_CERTIFICATE` entries, PKCS#7 SignedData, SpcIndirectDataContent digest, signer and certificate identity, timestamp claims, nested signatures, the recomputed PE Authenticode digest (1 MiB reads, cancel polling, skipped above 256 MiB) | der | `tests/test_pe_signature.py` (DER-writing builder, tamper and dual-signature fixtures) |
-| labels, compare, cache | pe_overview/labels.py, compare.py, metadata.py, cache.py | closed label set (never "valid", "verified publisher", "safe"); old/new `FieldComparison` rows; cache key `sha256(artifact | OVERVIEW_VERSION | limits | trust mode | trust fingerprint)` behind a `SidecarPort` (store binding not wired yet) | models | `tests/test_pe_meta_compare.py` |
+| labels, compare, cache | pe_overview/labels.py, compare.py, metadata.py, cache.py, cache_codec.py, cache_store.py | Closed labels and old/new metadata rows; bounded offline metadata cache keyed by artifact, parser limits and platform; owner-thread exact row admission and guarded publication, immutable inspection-worker snapshots | models, enrichment.storage | `tests/test_pe_meta_compare.py`, `tests/test_pe_metadata_cache.py`, `tests/test_pe_metadata_cache_qt.py`, `tests/test_pe_metadata_cache_recovery.py` |
 | inspect CLI | pe_overview/cli.py, cli_commands/inspect.py | `patchtrace inspect <project> --side older|newer|both [--trust offline|cache|online --consent-online] --json`; `--trust online` without consent exits 2 `PT-PE-CONSENT-REQUIRED` | pe_overview | `tests/test_pe_inspect_cli.py` |
 | catalog (Windows) | pe_overview/catalog_win.py | catalog signature and consented revocation modes through the existing WinVerifyTrust probe; fakes only here, real acceptance BLOCKED until Windows CI | ctypes (Windows) | `tests/test_pe_catalog_win.py` |
 | RSA check | pe_overview/rsa_verify.py | RSA PKCS#1 v1.5 signature math with `pow()`; the label stays "signature math ok, chain not evaluated" | stdlib | `tests/test_pe_rsa.py` (known-answer vectors) |
-| signing tab | pe_overview/signing_view.py, ui_inspection.py | "Version and signing" tab of File overview: comparison table, manifest text, signature tree with node tips; plain text everywhere | Qt adapter | `tests/test_ui_inspection_signing.py` |
+| signing tab | pe_overview/signing_view.py, ui_inspection.py | Version and signing comparison table, manifest text and signature tree; plain text and current accessibility IDs; consumes metadata from the existing inspection worker without a second thread sharing raw-view readers | Qt adapter | `tests/test_ui_inspection_signing.py`, `tests/test_pe_metadata_cache_qt.py` |
 
 ### [RPT2:export-dialog] Report v2 controls of the Export dialog (2026-11-04, PR #180)
 
@@ -1646,6 +1646,14 @@ No new module, persisted contract, source-scope UI or network operation.
 release qualification receipt. The existing doctor and package builders keep
 their own contracts.
 
+`tools/package_buildinfo.py` completes the existing desktop builders' packaged
+record production: bounded source observations before/after freezing, exclusive
+metadata installation before inventory, and a bounded frozen `version --json`
+identity check before archiving. It reuses `buildinfo` and `owned_publication`;
+no Qt import or new dependency. Contract: `specs/version-provenance.md` producer
+amendment. Verification: `tests/test_package_buildinfo.py`; actual platform
+packages remain separate acceptance gates.
+
 ### Ordinary project creation lifecycle recovery (2026-11-19)
 
 `ui_new_project.py` is the small background creation/adoption adapter; the dialog
@@ -1664,3 +1672,18 @@ an optional admissible empty database and exact selected artifacts; unknown
 entries and links are refusals. This is an adapter over current ownership rules,
 not the historical database recycling implementation. Source/Qt refusal and
 cancellation controls accompany the recovery before acceptance.
+
+### [RECOVERY:input-boundaries] Scoped parser recovery (2026-11-19)
+
+Source: immutable completion head `2511301fc26bf0e039f54828959c422b4ff761a2`.
+These additions repair existing consumers; they do not enable new native engines
+or enlarge provider/transport consent.
+
+| Module | Recovered behavior | Focused controls |
+| --- | --- | --- |
+| acquisition/winbindex.py | Enforce the decoded byte cap before raw JSON decoding, including uncompressed imports | test_winbindex_parser_bounds.py |
+| enrichment/cve.py | Exact tenths independent of ambient Decimal context; typed unsupported numbers and UTC overflow | test_enrichment_numeric_boundaries.py |
+| intelligence/csaf/transport.py | Typed malformed redirect refusal, response closure and no cache publication | test_csaf_redirect_integrity.py |
+| nway/pair_access.py, nway/series.py | Isolate unreadable pair path resolution/stat failures while preserving healthy hops | test_nway_path_failures.py |
+| secondary/binexport_check.py | Validate omitted expression, mnemonic, library and module text fields under existing byte/work budgets | test_binexport_text_boundaries.py |
+| secondary/rzdiff.py | Typed invalid fallback UTF-8; bounded display diagnostics preserve nonzero exit classification | test_rzdiff_text_boundaries.py |

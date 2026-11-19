@@ -1,68 +1,76 @@
 # Remaining consolidation work
 
 Branch: `integration/exhaustive-patchtrace-consolidation-20261119`.
-Recorded code: `cb1b508c`; draft PR #320. No unresolved Git conflict. Consolidation
-is in progress and is not qualified for default-branch merge.
+Recorded code: `7e610c03`; draft PR #320. No unresolved Git conflict.
+Consolidation is active and is not qualified for default-branch merge.
 
 ## Immediate actionable work
 
-1. Review and integrate the explicit incomplete-project retry workflow. Ordinary
-   creation cancellation, context-bound adoption and primary-error cleanup are
-   already integrated; reuse the current exact-schema and ownership mechanisms.
-2. Complete independently reviewed saved FetchPlan execution and its explicit
-   consent CLI. Offline plans and bounded streamed transport are integrated;
-   the executor must revalidate current inputs, exact plan digest/hosts and
-   existing destinations before requests and preserve completed outcomes.
-3. Refresh the all-page remote census and semantic residue against the new
-   candidate, including the newly observed active branches. Original census:
-   319 branches, 59 tags, 309 PRs; semantic baseline 77204ef5. The 43 branches
-   lacking historical focal receipts still require bounded source/doc review.
-4. Inspect native-receipt/journey tools, research probes and cloud automation
-   residue. Current inspection lifecycle replaces the old TaskRunner helper's
-   analyst behavior, while bench_workloads has narrower active-harness additions
-   worth assessing. Historical config.py was an unwired tested proposal, not a
-   lost working settings flow; assess a current consumer before importing it.
-5. Add reviewed package producers for the strict build-info consumer and qualify
-   native frozen packages. The new version command deliberately reports source
-   cleanliness as unknown, avoiding Git clean-filter execution.
-6. Resolve the open Linux forced-publication source-name race or explicitly
-   narrow the supported guarantee. Continue current-source parser/publication,
-   dependency and strict-security review without relaxing acceptance thresholds.
-7. Qualify the final integrated candidate. The frozen `7dfba50f` run covers 953 files
-   but retains nine later-fixed KEV errors, one host-denied AF_UNIX failure and
-   three killed 60k benchmark cases. Completed counts: 25,943 passed, 150 skipped,
-   three expected failures. Keep source scopes and omissions explicit. Reattempt
-   high-memory cases only when the environment can support them.
-8. Publish coherent reviewed checkpoints to draft #320 using expected-head updates
-   and exact local/remote tree equivalence; retain source history. Inspect hosted
-   receipts, including actual source trees, before crediting any native result.
+1. Integrate the independently approved explicit saved-plan consent CLI. The
+   executor, strict immutable plans and bounded transport are integrated. The
+   adapter must preserve offline defaults, require saved path/displayed digest/
+   exact hosts, and recompute sources before requests. Approved sources
+   `883cc6b7` and `b8bf47a1` retain the independently reproduced unknown-tilde-user
+   error and its typed admission repair.
+2. Integrate the bounded analyst journey gate and BinDiff schema/key recovery
+   after their immutable reviews; continue the research facts gate and selected
+   series-root error follow-up. PE cache and seven parser paths from new #322
+   are already integrated. The journey gate's Git index-flag admission defect
+   and the separately reproduced BinDiff digest/parser binding defect must be
+   repaired before their corresponding acceptance. Preserve active branches
+   and exact negative evidence.
+3. Continue semantic residue review against the refreshed candidate. The new
+   census has 323 branches, 312 PRs and 59 tags; source deltas are frozen at
+   `ecfd5960`. The original 319-branch classifications describe `77204ef5`.
+   Enumeration is not semantic exhaustion. The original 43 branches without
+   historical focal receipts still need bounded source/document review.
+4. Inspect remaining benchmark, research-probe and cloud-automation contributions,
+   checking current consumers before recovering obsolete helpers. Historical
+   config.py was an unwired tested proposal. Native receipt conversion first
+   needs producer-bound source/digest evidence; its demonstrated false-PASS
+   behavior cannot be imported unchanged. Revisit #321 against current replacements.
+5. Qualify desktop packages on their actual platforms. The strict build-info
+   producer and Git-root correction are reviewed; the small actual Linux frozen
+   consumer passed. Full desktop/Windows package production and acceptance remain
+   separate. Source cleanliness stays unknown; no Git clean filters run.
+6. Resolve or narrow the Linux forced-publication source-name guarantee. Continue
+   parser, publication, dependency and strict-security repair without suppressing
+   findings or relaxing thresholds. Current strict scan has 80 findings on
+   `7e610c03`, with categories different from earlier same-count observations.
+7. Qualify the final integrated source. The frozen `7dfba50f` run attempted 953
+   files and recorded 25,943 passes, 150 skips, three expected failures, nine
+   later-fixed KEV errors and one host-denied AF_UNIX failure. Three 60k benchmark
+   cases were killed without results. Preserve source scopes and omissions;
+   reattempt high-memory cases only after a concrete resource change.
+8. Publish reviewed checkpoints to draft #320 with expected-head guards and exact
+   tree equivalence. Preserve original local histories and raw evidence. Inspect
+   actual hosted source/receipts before native credit; queued/skipped checks do
+   not qualify anything.
 
 ## Open engineering and external gates
 
-- Linux forced publication detects a bad final source-name race but cannot promise
-  restoration of prior bytes. Shared immutable no-replace stream publication has
-  a stronger separate contract; do not conflate them.
-- Tier-W multi-file outputs are not filesystem transactions; retained attempts
-  and explicit concurrent-writer limits remain part of the contract.
-- Strict security Ruff reports 81 findings at ecfd5960; the original 80 are also
-  reproduced in the hosted `087f` artifact. The extra query construction uses fixed
-  identifiers/caps and bound SQLite values; the gate still fails.
-- Fresh dependency profiles, native Windows ownership, actual Ghidra/Ghidriff/
-  BinDiff/capa compatibility, repeated Qt acceptance and Windows standalone
-  packaging still need actual evidence at the accepted source. Historical Linux
-  rz-diff 0.9.1 passed a real 30-match control on 087f's tree; it does not qualify
-  a newer candidate or other engines/platforms.
-- Accuracy needs verified corpus facts and separate L1/L2/L3 results. No authored
-  fixture or mocked tool result satisfies that gate.
+- Linux force mode detects a bad final source-name race but cannot guarantee
+  restoration of prior bytes. Immutable no-replace publication is a separate,
+  stronger contract.
+- Retry and Tier-W multi-file publication retain explicit noncooperating-writer
+  and partial-publication limits; they are not filesystem transactions.
+- Strict source security remains failed. Fresh dependency profiles, actual Windows
+  ownership, repeated Qt acceptance, Ghidra/Ghidriff/BinDiff/capa compatibility and
+  Windows standalone packaging require actual evidence at the accepted source.
+- Historical Linux Rizin 0.9.1 passed a real 30-match control on the `087f50aa`
+  tree. The small frozen consumer passed on `7e610c03`. Neither qualifies a newer
+  source, another platform/engine or the complete application.
+- Accuracy requires verified corpus facts and separate L1/L2/L3 results. Fixtures,
+  authored backends and historical converter output cannot satisfy that gate.
 
 ## Resource continuity
 
-Two executor outages lost home/tmp state while workspace Git survived. The actual
-virtualenv is `/workspace/scratch/792fd5ca6555/.venv`. Bounded test attempts and
-raw failures are archived; the full-file manifest contains no duplicate credited
-cases. Workspace disk is constrained. Only identical immutable historical
-archives were deduplicated within this task's own worktrees. Do not edit those
-archives in place or remove another task's data.
+Three executor interruptions lost home/tmp state while workspace Git survived.
+The actual persistent virtualenv is `/workspace/scratch/792fd5ca6555/.venv`.
+Completed bounded attempts and original failures are retained; do not restart
+finished groups or credit interrupted runs. Disk is constrained. Only identical
+immutable archives in this task's own worktrees were deduplicated; do not edit
+those archives in place or remove another task's data.
 
-No source-branch rewrite/deletion, default-branch merge, release or deployment has
-been performed. Further safely actionable work remains authorized.
+No source branch was rewritten/deleted. No default-branch merge, release or
+deployment occurred. Further safe actionable work remains authorized.

@@ -1,0 +1,25 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+__ test_pdb_symbol_bytes_changed_without_guid_or_age_change_cannot_be_reused ___
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-98/test_pdb_symbol_bytes_changed_0')
+
+    def test_pdb_symbol_bytes_changed_without_guid_or_age_change_cannot_be_reused(tmp_path):
+        plan, path, digest, options, _ = setup(tmp_path, 'pdb', max_files=1)
+        F.fetch_saved_plan(path, digest, **options)
+        target = F._destination(options['root'], plan.entries[0])
+        identity = F.msf.read_identity(target)
+        original = target.read_bytes()
+        assert b'checksum' in original
+        changed = original.replace(b'checksum', b'xhecksum', 1)
+        target.write_bytes(changed)
+        assert F.msf.read_identity(target) == identity
+        options['transport'].opener = Opener()
+>       with pytest.raises(TierWError) as caught:
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE TierWError
+
+tests/test_tier_w_fetch_execute.py:104: Failed
+=========================== short test summary info ============================
+FAILED tests/test_tier_w_fetch_execute.py::test_pdb_symbol_bytes_changed_without_guid_or_age_change_cannot_be_reused
+1 failed, 35 deselected in 1.58s
