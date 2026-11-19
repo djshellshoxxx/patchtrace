@@ -2097,3 +2097,24 @@ The original `8efb7a45` diagnostic stopped at its storage reserve after groups 0
 A subsequent executor outage removed `/tmp`; all saved logs/XML/manifests and committed source survived. At 13:59:05 UTC the frozen `8efb7a45` worktree and lightweight interpreter were restored, with identical Python, dependency versions, source path/hash and source/test/tool fingerprint `b34db9a597ddc8c3074bea1d017ddf5702b7ed438146b55eec5e9e61a12efdc1`. Only this task's untracked Python bytecode caches were removed to recover 55,900,712 bytes. The separate continuation is running original groups 026–111 without changed assertions or exclusions. Its `continuation-manifest.json` binds the unchanged original and setup-replay manifests; no terminal continuation result is claimed here.
 
 The original collection remains 866 files/23,529 nodes. Coverage reconciliation treats parameter text containing `::` as opaque; that corrects diagnostic bookkeeping for 48 IDs without changing pytest selection. The first 200 files account for 4,655 distinct XML cases, with no extra IDs. Original storage stop, setup errors, ASM timing failure, environment restoration and continuation keep separate identities under `verification/combined-current-20261119/`.
+
+## ASM lexer budget investigation — 2026-11-19
+
+The [scoped investigation](consolidation/ASM_LEXER_PERFORMANCE_20261119.md) retains
+group 021's original 156.169465 ms failure against the strict 150 ms gate. Both
+lexer and gate are byte-identical between PR #322's base `fdc2696c` and head
+`f2458aae`. On that existing head's merge reference `ded94401`, the exact ASM
+test passes in hosted Linux and Windows JUnit artifacts. Whole-testcase durations
+are not individual lexer timings. A separate unchanged-source local replay passes
+all 218 tokenizer tests in 5.04 seconds.
+
+Profiling identifies per-token scanning and allocation as the hot path. Two
+controlled candidate changes were rejected for inconsistent or negative gains;
+their raw timings and semantic comparisons are retained. Present-process GC
+observations demonstrate a material collection cost but do not establish the
+historical failure's cause. Production lexer code and the strict gate remain
+unchanged. The test now includes all five raw samples in failure messages, with
+an independently reviewed synthetic red/green diagnostic control. Configured
+whole-tree Ruff and dependency checks pass; the report records the separate
+current aggregate run as pending at its checkpoint, not a completed aggregate
+result.
