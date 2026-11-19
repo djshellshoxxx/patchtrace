@@ -254,6 +254,86 @@ Field location, per operand with a mask (`field` = (offset, length) inside the i
 6. Packaging: the hook adds the script from its own repository path instead of `collect_data_files`, which imports the package in an isolated child process and silently collects nothing when a stale editable install elsewhere shadows the source tree (observed in the build container); an absent script aborts the build. `backend.py` imports `patchtrace.unified.extract.retain` lazily inside `run_comparison`; PyInstaller's analysis follows that import, so the hook fires without a hidden import (verified with a frozen probe on Linux).
 7. Live tool: `tools/live_unified_check.py` re-records the committed fixtures (`--record DIR NAME_OLD NAME_NEW`) together with `tests/fixtures/unified/PROVENANCE.json`, so no scratch scripts are needed to refresh them.
 
+### 12.8a Bounded L1 diagnostic retention
+
+The live acceptance tool retains each of the two successfully ingested `analyze`
+runs for each ordered side immediately after it returns, before starting the
+next analysis or any later gate. These diagnostics are observations only: the
+existing content digest, IR key, L1 assertion, result summary, fixture recorder,
+native call count and acceptance exit behavior stay unchanged. A later failure
+still propagates its original error; already completed captures survive private
+work cleanup. A failed extraction is never represented as a completed run.
+
+Each invocation has one random UUID and at most four attempted diagnostic
+slots, `(older|newer, analyze ordinal 1|2)`. A slot is spent before capture or
+publication and is never retried or refunded. Each attempt reserves 12 MiB from
+the 48 MiB pair allowance, including attempts that fail. Filenames are fixed
+ASCII `live-unified-diagnostics-<uuid>-<side>-analyze-<ordinal>.json`, created
+exclusively in the existing output directory. Existing files are never replaced.
+Repeated invocations have distinct identities. This is a per-invocation budget,
+not a retention policy for an indefinitely reused output directory.
+
+The `live-unified-diagnostics/1` JSON envelope binds the invocation/side/ordinal
+to the ordered artifact hashes, complete validated manifest, bounded tag/runtime
+context and tool/extractor/schema/ingest source hashes. It contains exact JSONL
+and exact IR database bytes encoded as base64, with observed byte counts/hashes,
+plus a readable full-column `fn` projection using the existing canonical row
+helper. The IR file hash must equal its manifest. The SQLite byte hash is not a
+replacement for canonical `content_digest`; all eight tables and instruction/text
+values remain available in a complete IR snapshot for offline investigation.
+No DLL, GZF, unrestricted environment or stderr payload is added.
+
+| Resource | Per run | Per pair (four attempts) |
+| --- | ---: | ---: |
+| Encoded diagnostic JSON | 12 MiB | 48 MiB |
+| Decoded exact JSONL | 4 MiB; 4,098 records including header/footer | 16 MiB; 16,392 records |
+| Decoded IR database | 4 MiB; 32,768 rows across the eight fixed tables | 16 MiB; 131,072 rows |
+| Readable function projection | 4,096 rows; 512 KiB encoded | 16,384 rows; 2 MiB |
+| One encoded function row | 16 KiB | Same per-row bound |
+| Encoded metadata/status | 128 KiB | 512 KiB |
+| Cooperative diagnostic time | 2 seconds | 8 seconds |
+| SQLite progress steps after reader opening | 2,000,000 | 8,000,000 |
+
+MiB/KiB use powers of 1024. Bounds apply before base64 expansion/row accumulation
+and again to actual encoded UTF-8 output. Oversize metadata/rows do not authorize
+an unbounded dump. File reads use finite chunks and at most the byte cap plus
+one detection byte; a size stat alone is insufficient. Nonregular/symlink inputs
+are refused. JSONL is already held by the existing tool, whose earlier full read
+is outside this diagnostic slice.
+
+Capture the bounded IR bytes into an exclusively owned private snapshot, verify
+its hash, and query that same snapshot. The existing `schema.open_readonly`
+performs initial metadata SQL before a progress handler can be installed. The
+2M-step limit covers only subsequent fixed-table count/projection queries;
+bounded snapshot size and deadline checks around opening constrain the earlier
+helper without changing its API. Deadlines are cooperative, not preemptive OS
+I/O limits. Diagnostic capture does not decompress instruction blobs.
+
+Every component reports complete, prefix, omitted or error status, its retained
+counts, and a fixed bounded reason where incomplete. A function prefix is never
+presented as the complete row set. A capped/unreadable binary payload has no
+fabricated observed digest. The envelope is complete only when all its declared
+components are complete. Count/query/deadline failures cannot label the IR
+snapshot complete. Preserve independently complete components when another is
+unavailable. A bounded failure envelope is attempted when possible.
+
+Ordinary diagnostic read, serialization or write failure is reported separately
+and cannot enter `Checks.failures`, change L1/acceptance, mask a primary failure,
+or delete earlier evidence. Reporting is itself bounded and best effort,
+including a failing stderr sink. A partial write is not announced as saved;
+retain failed-write bytes rather than gaining new deletion authority. Captures
+are saved outside private work and never from a cleanup `finally` that could
+mask the original exception. This assumes the existing cooperative private-work
+ownership boundary; no arbitrary same-user namespace immunity is claimed.
+
+Tests in `test_unified_live_diagnostics.py` cover real authored ingestion with
+second-run/later-failure retention, complete IR/JSONL round trips, differences
+outside the readable projection, exact quota boundaries, prefix/omission states,
+same-tag uniqueness/collision preservation, bounded reads/query stops and failed
+reporting. Portable controls are not a native rerun or an explanation/repair of
+the preserved Windows nondeterminism. Existing top-level JSON upload globs and
+explicit cross-OS summary paths require no workflow change.
+
 ### 12.9 S3b: the `decompile` mode as built (2026-10-14)
 - Request: `ir-extract-request/1` is unchanged (the S0a `ExtractRequest` already carried the mode). One child per side: `mode = decompile`, `gzf_path` / `gzf_sha256` of the GZF retained by the run that produced the IR (`out/program.gzf` of an `analyze` run, or the GZF Ghidriff left with `retain_gzf`), 1..L-41 `decompile_rvas` (sorted, unique), empty `analysis_options`, `limits` = `l29_pseudo_chars`, `l29_pseudo_lines`, `l41_decompile_fn_s`, `l41_decompile_run_s`. Deviation from 05 s2.8's "ONE extractor session": the frozen request names one side, so a run is two sequential children and pays the JVM start, the GZF import and the decompiler start twice (22.7 s for two pairs on both sides, measured live).
 - Script: the hash and language checks of `gzf` mode (artifact, GZF, program SHA-256, `x86:LE:64`, `isAnalyzed`), then `DecompInterface()`, `openProgram(program)` and, for each requested RVA, `getFunctionAt(imageBase + rva)`, `decompileFunction(function, seconds, TaskMonitor.DUMMY)`, `getDecompiledFunction().getC()` (what `FlatDecompilerAPI.decompile` does, no options set), never a function outside the request. `seconds` = the smaller of L-41 per function and what is left of the L-41 run budget; once the budget is spent the remaining RVAs are `timeout` and are not attempted. Status `ok` (with the text), `timeout` (the decompiler's or the budget's), `failed` (no function at the RVA, an external function, a decompiler error or exception, no text or an empty one, a text over L-29). The text is cleaned (CRLF to LF, TAB and LF kept, other controls, bidi controls and lone surrogates become `?`). `out/decomp.jsonl` holds one line `{"side","rva","status","code"}` per RVA in ascending order (`code` is null unless `ok`) and nothing else is written; `progress.json` uses the phase `decompile`. New slug `decompiler-unavailable` (exit 4, `PT-UNIFIED-UNSUPPORTED`): the class is missing or `openProgram` is false; `--self-check` lists a missing decompiler class too, the analysis modes never ask for it.
