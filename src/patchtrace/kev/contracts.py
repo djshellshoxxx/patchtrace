@@ -70,7 +70,7 @@ def clean_text(value: object, limit: int | None) -> str:
 
 
 def _plain_line(value: str) -> str:
-    if value != value.strip() or _UNSAFE.search(value):
+    if value != value.strip() or (not (value.isascii() and value.isprintable()) and _UNSAFE.search(value)):
         raise ValueError('text must be one line of plain text without surrounding space or control characters')
     return value
 

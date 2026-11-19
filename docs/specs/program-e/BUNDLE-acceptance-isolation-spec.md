@@ -21,6 +21,16 @@ Non-goals: proof of absence of all side channels, malware sandboxing, GUI testin
 
 **Wording rule** (`Evidence.wording`): the phrase "passed with OS network block (positive control proven)" is emitted only if `ok` and the `control-after` step passed; dry runs say "dry run with fake bundle: harness logic only, not release evidence". No document may say "air-gapped" or "verified offline" without a linked run whose JSON carries that wording.
 
+**Connection observation amendment (2026-11-19):** `polls` continues to count attempted samples. The
+`no-external-connections` step also records `successful_polls`, `sample_errors`, `unavailable_polls`, and the
+sorted `seen` endpoints. Only a completed observation may increment `successful_polls`; an exception is a
+sample error, while a child that has not entered its private network namespace or has already exited is
+unavailable. Unreadable connection tables and a failed or timed-out Windows sampler must never become an
+empty successful observation. The step passes only after at least three successful observations and with
+no external endpoint observed. Intermittent errors and unavailable attempts remain visible even when
+enough successful observations exist. Sampling is supplementary, incomplete observation; it does not
+replace the separate OS network-block positive control or prove that every connection was observable.
+
 **Additions defined by this spec** (additive; built 2026-11-04, VERIFIED in code and by `tests/test_bundle_acceptance_isolation.py`):
 - `exec-before-readonly`, `exec-after-readonly`: the bundle's `python -I -c "print(1)"` under the scrubbed environment, right before and right after the lock; ok only if exit 0 and stdout `1`. A spawn error (for example `PermissionError: [WinError 5]`) is that step's failure, not a crash. A failure stops the run.
 - `readonly-effective` (Windows), right after `exec-after-readonly`: ok only if the `icacls` deny exited 0 and `writable_probe(backend)` is false; it records the deny argv.
@@ -89,4 +99,4 @@ To add: `test_reuse_run_id_is_numeric_and_env_only` (in `tests/test_backend_bund
 
 ## 11. Acceptance
 
-For each OS one run whose evidence JSON has `ok: true`, `wording` "passed with OS network block (positive control proven)", `digest-before == digest-after`, `ghidriff-compare` with a result file, `no-external-connections` with at least 3 polls and `seen=[]`; the run URL is in `docs/qa.md` BUNDLE-3/BUNDLE-4.
+For each OS one run whose evidence JSON has `ok: true`, `wording` "passed with OS network block (positive control proven)", `digest-before == digest-after`, `ghidriff-compare` with a result file, `no-external-connections` with at least 3 successful polls and `seen=[]`; the run URL is in `docs/qa.md` BUNDLE-3/BUNDLE-4. Historical evidence that records only attempted polls does not establish sampler health.

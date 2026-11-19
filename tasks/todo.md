@@ -1446,10 +1446,10 @@ Full `QT_QPA_PLATFORM=offscreen python -m pytest -q` for this isolated native sl
 - [x] Complete and archive the frozen diagnostic: all 856 files reached through 59 terminal processes; 23,110 passed, 139 skipped, 6 xfailed, 4 failed, 8 teardown errors. FAILED; original kill/reserve stops and all errors preserved.
 - [x] Integrate separate backup-test lifetime repair `5aebd98f`; 3 passes/3 teardown errors before correction, then 41 passes in 2.62s. Production code and assertions unchanged.
 - [x] Preserve verified 41/82/27/132/6-payload archives and exact advisory report in `e430309a` and backup-test commit. Frozen census text/counts/JSON remain unchanged apart from subsequent observations.
-- [ ] Qualify combined current 859-file source/new dependencies independently of failed frozen/old-dependency results and overlapping focused slices. External AF_UNIX constructor EPERM remains an acceptance block.
+- [ ] Qualify combined current source/new dependencies independently of failed frozen/old-dependency results and overlapping focused slices. Phase 6's 859 files are superseded by Phase 7's 866-file running diagnostic; original setup errors remain recorded. External AF_UNIX constructor EPERM remains an acceptance block.
 - [ ] Resolve seven assessed native Qt findings through a supported qualified artifact or evidenced disposition. Official 6.12.1 binding wheels were unavailable; 6.11.3 is not a complete fix.
-- [ ] Review separate 70-finding tools scan; original source classifications do not classify all 134 combined results. Fresh source64 multiset has no additions/removals versus `520b524b`.
-- [ ] Finish separately owned strings-export recovery and build-tool HTTPS redirect triage; ongoing work is not credited as accepted Phase 6 source.
+- [x] Classify all 70 baseline tools findings in Phase 7. The fresh 134-finding scan remains non-clean: 64 source plus 70 tools, with one added guarded HTTPS S310 and one removed swallowed-sampler S110.
+- [x] Accept the scoped Phase 7 strings publication/failure-cleanup and build-tool HTTPS repairs with independent review; successful-force ownership remains open below. Do not attribute these changes to Phase 6.
 - [ ] Publish accepted source with exact local/remote tree equality; obtain actual final-head Linux/Windows/Qt/package/native/live checks, resolve REST-only draft readiness, then use expected-head merge and verify main.
 
 [Current handoff](../docs/consolidation/HANDOFF.md), [retention scope](../docs/consolidation/RECOVERY_BATCH_6.md),
@@ -1457,3 +1457,31 @@ Full `QT_QPA_PLATFORM=offscreen python -m pytest -q` for this isolated native sl
 and [dependency findings](../docs/consolidation/DEPENDENCY_ADVISORY_AUDIT_20261119.md)
 retain exact evidence and limits. Main/native/release/manual and separate L1/L2/L3
 obligations remain open; no main merge or release is recorded.
+
+### Phase 7 accepted source and current qualification
+
+- [x] Record accepted local source `8efb7a45`, with 866 tracked test files, separately from published Phase 6 `eb94510b` (tree-equal to local `0ed53876`, 93 changed files, ahead 4/behind 0).
+- [x] Integrate strings source `397abd44` through `cf554155`: 74 focused and 115 integrated CLI/UI passes; held-source no-force publication and foreign-stage-preserving failure cleanup. Keep successful-force source/parent substitution open.
+- [x] Integrate observation/JUnit source `45828168` through `541bf83c`: 111 passes/3 existing unshare skips; three successful observations and partial endpoint retention, bounded per-body XML admission.
+- [x] Integrate HTTPS `7d4aead2`: 289 passes/1 historical wheel skip, then exact wheel test passes. Preserve original redirect and independent Host/authority failures.
+- [x] Integrate KEV `c84ca5a2` through `8efb7a45`: 386 passes/77 new semantic cases; paired local gains, unchanged digest and strict one-second budget. No Windows-fix claim.
+- [x] Pass configured whole-tree Ruff, pip check and all 16 generators at `8efb7a45`; 301 schemas plus generated CSAF table unchanged. Preserve the current non-clean supplemental scan and all 70 baseline tools dispositions.
+- [x] Preserve verified Phase 7 source-review, gate and CI archives without rewriting original outcomes. [Exact evidence](../docs/consolidation/TEST_RESULTS.md).
+- [ ] Finish the running 111-group diagnostic on frozen `8efb7a45`, after successful 866-file/23,529-node collection. Preserve original group 001 (181 passes/70 setup errors) and group 002 (65 passes/9 setup errors), then record their separate replay after the temporary-parent correction. No full result yet.
+- [ ] Triage group 021's unchanged ASM tokenization performance failure (best-of-five 0.156169465s versus strict 0.150s) and record isolated unchanged-source replay after the primary run. Preserve its original 1 failure/727 passes/1 skip/4 xfails; no threshold or assertion relaxation.
+- [ ] Publish Phase 7 with exact source/tree verification and obtain its actual hosted gates. Observed Phase 6 PR322 has six queued runs/23 runner-zero jobs; no queue cause is proven.
+- [ ] Repair successful forced source/parent replacement or provide an evidenced disposition. Partial/revealed stage residue, empty-export metadata and native publication qualification remain explicit.
+- [ ] Resolve seven native Qt findings, full index provenance, native/clean-machine/manual acceptance and separate L1/L2/L3 obligations. Retain the frozen 320-head/309-PR census and its 139 semantic-review dispositions.
+- [ ] Resolve all applicable blockers, refresh final-head checks and main, perform only the normal expected-head REST merge, and verify the resulting tree. Main remains `fdc2696c`; no main merge or release is recorded.
+
+[Current handoff](../docs/consolidation/HANDOFF.md) and
+[timestamped CI review](../docs/consolidation/CI_QUEUE_REVIEW_20261119.md) distinguish
+PR318's Windows Qt success, Linux Qt cancellation and Windows QA failure from
+the queued aggregate and current PR319 `8d130aef` native results.
+
+### Current diagnostic recovery — 2026-11-19
+
+- [x] Preserve the 25-group `8efb7a45` storage stop and original ASM timing failure; complete the separate 251/74-case setup replays unchanged.
+- [x] Restore exact source/Python/dependency identities after executor reset; remove only this task's reproducible bytecode caches.
+- [ ] Complete original groups 026–111 and node-ID reconciliation; obtain actual final-head hosted/native qualification.
+- [ ] Qualify the separately reproduced WinPairs malformed-URL/error-routing correction before accepting its source.

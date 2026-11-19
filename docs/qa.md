@@ -1944,10 +1944,10 @@ At the Phase 5 checkpoint, groups 1–34 stopped at reserve: JUnit 15,971 tests,
 Draft PR #322 is published; its initial queued workflows are a historical observation. Phase 6 below records the later publication, accepted retention/dependency changes, final diagnostic and remaining gates. [Current handoff](consolidation/HANDOFF.md).
 ## [CONTINUATION-PHASE6-20261119]
 
-Accepted source/test checkpoint is `5aebd98f362e7cc5f01a0c96878860b04835cea4`,
+At the Phase 6 observation, accepted source/test was `5aebd98f362e7cc5f01a0c96878860b04835cea4`,
 tree `1b4fdd985ccea86e436172ee52ad3b5ab51b8877`: 859 tracked test files, after
 runtime/dependency integration `5208c758`. Evidence checkpoint `e430309a`
-preserves the new archives and exact advisory report. Last published PR #322
+preserves the new archives and exact advisory report. The then-published PR #322
 head `2511301f` has tree `f2366be08a4951880692b56ecbbefbe92a3611dd`, equal to
 local `7093ee68`; 78 changed files, ahead 3/behind 0 against main `fdc2696c`.
 That publication predates the new source. No main merge/release is recorded.
@@ -2035,5 +2035,65 @@ Scheduling cause is unestablished; earlier heads do not qualify later accepted
 source. Actual final-head Linux/Windows/Qt/package/native/live checks, Qt
 remediation, manual acceptance and separate L1/L2/L3 evidence remain open.
 REST-only readiness and the all-jobs-green/no-blocker expected-head merge gate
-remain. Strings-export recovery and build-tool HTTPS redirect triage are ongoing
-separate work, excluded from this checkpoint's accepted-source claims.
+remain. Strings-export recovery and build-tool HTTPS redirect triage were still
+separate pending work at this checkpoint; their accepted Phase 7 scope follows.
+
+## [CONTINUATION-PHASE7-20261119]
+
+Accepted local source is `8efb7a4501bdcea77f6aca68f92c5459af47a838`, tree
+`41bf19c6321f88134959df8122b26930ee4deaf7`, with **866 tracked test files**.
+Published Phase 6 draft PR322 is `eb94510bda73935b1b5b99d00acde879d6474d14`, tree
+`62665b03d9c2c7431ceaa1d181505d28105ccb93`, equal to local `0ed53876`: 93 changed
+files, ahead 4/behind 0. It predates the following local-only source changes.
+
+| Accepted scope | Verification and limits |
+| --- | --- |
+| Strings `397abd44` / `cf554155` | 74 focused passes and 115 integrated CLI/UI passes. Held-source no-force publication, anchor creation and forced-failure cleanup repaired; successful-force source/parent substitution remains open. Failures can retain partial/revealed stage bytes. [Batch 7](consolidation/RECOVERY_BATCH_7.md). |
+| Sampler/JUnit `45828168` / `541bf83c` | 111 passes/3 existing unshare skips. Three successful observations required, partial endpoints retained through failure, XML bodies bounded to 8 MiB plus sentinel before parse. Positive OS-block controls unchanged. [Batch 8](consolidation/RECOVERY_BATCH_8.md). |
+| Build-tool HTTPS `7d4aead2` | 289 passes/1 historical wheel skip; later exact wheel test passed. Per-dispatch HTTPS, manual bounded redirects, response closure, Host/credential handling and typed malformed-URL refusal. [Review](consolidation/BUILD_HTTPS_REVIEW_20261119.md). |
+| KEV `c84ca5a2` / `8efb7a45` | 386 passes and 77 added semantic cases; mixed paired local measurements support the small printable-ASCII optimization. Digest behavior and strict one-second budget unchanged; no Windows-fix claim. [Report](consolidation/KEV_TEXT_VALIDATION_PERFORMANCE_20261119.md). |
+
+At `8efb7a45`, configured whole-tree Ruff and pip check pass. All 16 schema
+generator commands exit 0, leaving 301 schemas plus the generated CSAF table
+byte-identical. The supplemental scan remains non-clean: **134 findings, 64 source
+plus 70 tools**. All 70 baseline tools findings are classified; a guarded shared
+HTTPS S310 is added and swallowed-sampler S110 removed. Independent red/green
+reviews cover those changed sites. These checks do not qualify the aggregate.
+
+The new frozen-source diagnostic collected **866 files/23,529 nodes in 210.705s**,
+exit 0, and is running through 111 groups. Group 001 recorded **181 passes/70 setup
+errors in 30.59s** and group 002 **65 passes/9 setup errors in 35.18s** because
+the orchestrator omitted pytest's temporary parent. The parent was created at
+13:42:18 UTC; original log/XML/source/runner identity and the correction receipt
+remain preserved. No production test/assertion changed. Affected-group replay
+is separate and pending. The earlier 856-file diagnostic remains FAILED; neither
+it nor overlapping focused checks supply a full Phase 7 result.
+
+Group 021 subsequently records **1 failed, 727 passed, 1 skipped and 4 xfailed**:
+the existing ASM 200,000-character tokenization control measured best-of-five
+0.156169465s against strict 0.150s. Cause and unchanged-source replay remain
+under review; no threshold/assertion change or host-load explanation is claimed.
+The primary run continues and retains this failed gate.
+
+The [timestamped CI review](consolidation/CI_QUEUE_REVIEW_20261119.md) covers
+13:33:41–13:37:31 UTC. Phase 6 PR322 has six queued runs/23 runner-zero substantive
+jobs and no executed steps; cause unproven. PR318's Windows Qt passed, Linux Qt
+shard 3/4 was cancelled without proven actor/cause, and Windows QA failed the
+unchanged KEV budget at 1.4662241s on older dependencies. PR319's fresh `8d130aef`
+head and native results are distinct from retained `a56ab13a` and this aggregate.
+Main remains `fdc2696c` at 13:37:30 UTC; no main merge or release is recorded.
+
+Verified strings, HTTPS, tools evidence/dispositions, KEV, final-source gates and
+CI archives are linked with exact payload counts, sizes and hashes in
+[TEST_RESULTS.md](consolidation/TEST_RESULTS.md). Earlier red receipts, failed
+diagnostics and frozen manifests are preserved. Successful forced replacement,
+seven native Qt findings, full index provenance, 139 retained semantic-review
+branches, native/manual acceptance and separate L1/L2/L3 obligations remain open.
+
+## Diagnostic continuation after reserve stop and environment recovery
+
+The original `8efb7a45` diagnostic stopped at its storage reserve after groups 001–025 at 13:50:15 UTC; it did not reach the remaining 86 groups. Its raw pytest summaries are **4,558 passed, 79 setup errors, 13 skipped, 4 xfailed and one failed ASM timing gate**. Both setup-only groups then completed separately on the unchanged source: **251 passed in 41.52 seconds** and **74 passed in 46.80 seconds**. Selecting those two replay receipts gives 4,637 passed, 13 skipped, 4 xfailed and one failed across the first 200 files; the original errors are retained. This is partial coverage, not a passing aggregate.
+
+A subsequent executor outage removed `/tmp`; all saved logs/XML/manifests and committed source survived. At 13:59:05 UTC the frozen `8efb7a45` worktree and lightweight interpreter were restored, with identical Python, dependency versions, source path/hash and source/test/tool fingerprint `b34db9a597ddc8c3074bea1d017ddf5702b7ed438146b55eec5e9e61a12efdc1`. Only this task's untracked Python bytecode caches were removed to recover 55,900,712 bytes. The separate continuation is running original groups 026–111 without changed assertions or exclusions. Its `continuation-manifest.json` binds the unchanged original and setup-replay manifests; no terminal continuation result is claimed here.
+
+The original collection remains 866 files/23,529 nodes. Coverage reconciliation treats parameter text containing `::` as opaque; that corrects diagnostic bookkeeping for 48 IDs without changing pytest selection. The first 200 files account for 4,655 distinct XML cases, with no extra IDs. Original storage stop, setup errors, ASM timing failure, environment restoration and continuation keep separate identities under `verification/combined-current-20261119/`.

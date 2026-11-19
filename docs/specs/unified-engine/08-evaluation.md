@@ -94,3 +94,11 @@ Strict pydantic models, deterministic JSON (sorted keys, LF, no timestamps), nev
 | `gate-report/1` | `tools/unified/gates_u.py` | one row per gate with a status, reasons, what it needs and observed facts; statuses: `pass` and `fail` are verdicts on data, `insufficient-data` means the data cannot decide, `pending` means a slice that is not built, `blocked` means something outside the code (a pinned BinDiff, a Windows runner); inputs with their SHA-256; `flag.decision_ready` is true only when G-U1..G-U6 pass (U-05); `report_sha256` |
 
 Rules: a gate that cannot run is never `pass`; a skipped required test is `blocked`, not a pass; G-U8 maps each of its checks to named tests (the tool's test keeps the names real); the planted-mutant classes are `tools/unified/mutations/classes.py`, tied to the G-U2 row by a test; the report is advisory (exit 0) unless `--strict`. JSON Schemas for these four contracts are not generated.
+
+JUnit ingress amendment (2026-11-19): each JUnit file is limited to the existing 8 MiB parser budget.
+The CLI reads at most that budget plus one sentinel byte before parsing, including files discovered by
+`--inputs`; oversize input is a `ContractError` and publishes no replacement report. Files are read and
+parsed one at a time, so repeated `--junit` arguments do not retain all raw XML bodies together. The
+strict UTF-8, NUL, DTD/entity-declaration, XML-root and outcome checks remain in force for direct parser
+callers as well. This is a per-file admission limit, not a bound on the total number of input files or
+the merged outcome map. Other artifact input limits are unchanged.

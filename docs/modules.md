@@ -3,6 +3,8 @@
 | Module | Responsibility | Verification seam |
 |---|---|---|
 | `tools/branch_inventory.py` | Read-only full-history branch ancestry, patch evidence and exact-tip inventory replay; no ref mutation or deletion authorization | Real authored Git graphs and atomic report preservation in `tests/test_branch_inventory.py` |
+| `owned_publication.py` (recovered, 2026-11-19) | Reusable held-source, parent-bound exclusive publication from PW-01; strings no-force export refuses collisions and unsupported capabilities. Does not implement forced replacement. | `test_owned_publication.py`, strings source/parent ownership and capability-refusal controls; native Windows qualification remains separate |
+| `tools/verify_backend_pins.py:open_https`, `tools/build_backend_bundle.py:download` | Shared pre-dispatch HTTPS redirect checks, bounded hops, response closure and target-specific headers; payload/signature/pin rules unchanged | `test_backend_https_redirects.py` plus existing verifier/builder/pin tests; authored transports, no live vendor qualification |
 
 ### November 2026 continuation interfaces
 

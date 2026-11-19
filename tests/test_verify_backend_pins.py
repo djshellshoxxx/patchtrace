@@ -202,9 +202,13 @@ def test_verify_without_inputs_records_nothing(tmp_path, monkeypatch):
         raise OSError('offline')
 
     monkeypatch.setattr(rec, '_fetch', offline)
+
+    def offline_run(argv, cwd):
+        return subprocess.CompletedProcess(argv, 1, '', 'offline')
+
     args = argparse.Namespace(pin=ROOT / 'tools' / 'backend_pin.json', workdir=tmp_path / 'w', sigstore_identity='',
                               sigstore_issuer='', gpg_fingerprint='')
-    evidence, problems = rec.verify_all(args)
+    evidence, problems = rec.verify_all(args, run=offline_run)
     assert problems and evidence['result'] == 'FAILED' and evidence['record_in_pin'] is None
     assert evidence['schema'] == rec.SCHEMA and 'sigstore' in evidence['tools']
 
@@ -239,10 +243,9 @@ class _FakeResponse:
 @pytest.mark.parametrize('encoding', ['', 'gzip'], ids=['plain', 'gzip'])
 def test_fetch_decodes_gzip_page_bodies(monkeypatch, encoding):
     import gzip as gz
-    import urllib.request
 
     html = b'<html><body>Sigstore identity: release-manager@python.org</body></html>'
     body = gz.compress(html) if encoding else html
-    monkeypatch.setattr(urllib.request, 'urlopen', lambda request, timeout=0: _FakeResponse(body, encoding))
+    monkeypatch.setattr(rec, 'open_https', lambda request, timeout=0: _FakeResponse(body, encoding))
     assert rec._fetch('https://www.python.org/downloads/', limit=1 << 20) == html
     assert 'Sigstore identity' in rec._page_text('https://www.python.org/downloads/')

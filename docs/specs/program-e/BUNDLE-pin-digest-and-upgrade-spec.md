@@ -55,6 +55,26 @@ fetch_verified(entry, cache_dir, fetcher, label):
 ```
 Cache keys never trust a file name; the hash is recomputed on every use.
 
+HTTPS enforcement applies before every network dispatch, including redirects;
+checking only the final response URL is insufficient. The builder and pin
+verifier share the stdlib `verify_backend_pins.open_https` boundary. It disables
+automatic redirects, accepts relative and cross-host HTTPS redirects, and
+follows at most ten redirects. Every joined target must have an HTTPS scheme
+and a valid authority before a new request is sent. Malformed targets, missing
+redirect locations and exhausted redirect budgets fail through the existing
+builder `PT-BUNDLE-FETCH` / verifier `VerifyError` boundaries. Redirect and error
+responses are closed without draining an unbounded response body. Final payload
+size limits, gzip expansion limits, hashes, signature checks and committed pins
+retain their existing contracts. This is an offline-testable transport policy;
+injected transport tests do not qualify live vendor/CDN compatibility.
+Decoded authority controls/whitespace are refused before dispatch, and a concrete
+transport `InvalidURL` is normalized. Redirected requests recompute the target
+Host instead of copying urllib's generated Host; content/proxy authorization
+headers are not forwarded, and Authorization/Cookie headers are removed on an
+origin change. Current builder/verifier callers supply only public User-Agent
+and Accept-Encoding headers. Connection timeouts remain per request; this
+amendment does not introduce a total-chain wall-clock deadline.
+
 ### 4.2 Pin gate (`gate_pin` / `check_backend_pin.py --release`)
 
 Both pin entry points (`check_backend_pin.py` and producer `gate_pin`) first use the checker's shared stdlib `parse_pin(bytes)` to require UTF-8 JSON with unique object keys at every level, finite numbers and encodable Unicode strings. Duplicate escaped keys count as duplicates. Invalid text or parser recursion exhaustion is a malformed pin (checker exit 1; producer `PT-BUNDLE-PIN`) before output/cache creation, download or subprocess work. This parsing gate does not change pin bytes, versions or digest/approval policy.

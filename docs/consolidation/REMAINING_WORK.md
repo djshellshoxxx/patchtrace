@@ -2,8 +2,10 @@
 
 The reviewed N-way, installer-receipt, parser, PE-cache, facts-eligibility, adapter-text and CSAF slices are integrated
 locally on `codex/patchtrace-completion-20261119-81e4`, recorded through
-`5aebd98f`, including reviewed CVE numeric/time, digest-fixture, acquisition,
-history/retention, Pydantic and test-fixture repairs. They do not complete the feature backlog or main qualification.
+Phase 7 source `8efb7a45`, with 866 tracked test files. This includes reviewed
+CVE numeric/time, digest-fixture, acquisition, history/retention, Pydantic,
+test-fixture, strings publication, sampler/JUnit, HTTPS and KEV changes. These
+slices do not complete the feature backlog or main qualification.
 The [feature matrix](FEATURE_MATRIX.md) identifies implemented scope;
 [test results](TEST_RESULTS.md) separates completed evidence from pending gates.
 
@@ -17,8 +19,8 @@ The [feature matrix](FEATURE_MATRIX.md) identifies implemented scope;
 
 - [x] Integrate facts-eligibility source `d87af037` through `69fa6b8b`: 11 base failures, 33 focused passes and 140 final scoped/caller passes. Retain the intermediate 106-pass/1-fail caller receipt and its fixture-metadata correction.
 - [x] Accept and integrate CVE source `93c9e395` through `a4d6dd9b`: exact-tenth, caller-context, UTC-boundary and CLI controls; final 124 passed in 6.70s.
-- [ ] Qualify the final source. The first full attempt at `69fa6b8b` ended 137/SIGKILL with no summary or JUnit; retain that incomplete result. Smaller sequential groups can provide scoped coverage, not an unsplit full pass.
-- [ ] Run whole-tree Ruff, dependency checks and schema regeneration on the final aggregate; review any generated differences.
+- [ ] Complete qualification of `8efb7a45`. Its running 111-group diagnostic collected 866 files/23,529 nodes; group 001 has 181 passes/70 orchestration setup errors, preserved before the temporary-parent correction and any separate replay. The first full attempt at `69fa6b8b` ended 137/SIGKILL without a summary/JUnit; the later original 856-file diagnostic FAILED. Grouped coverage is not an unsplit full pass.
+- [x] Run configured whole-tree Ruff, pip check and all 16 schema generators at `8efb7a45`; all pass, and 301 schemas plus the generated CSAF table are unchanged. [Gate evidence](evidence/phase7-gates-20261119.zip).
 - [x] Create and verify the [focused evidence archive](evidence/continuation-20261119-focused.zip): 94 payloads, manifest hashes checked, red/green and interrupted-run limits retained. Preserve later partition results separately.
 - [ ] Obtain required hosted Linux/Windows, repeated Qt, package and other applicable checks on the actual candidate head and base. Existing main or PR319 results do not qualify this aggregate.
 - [ ] Resolve blockers, refresh refs, perform the normal expected-head REST merge, and verify the resulting main tree. Keep `[no release]` on this repair/integration work.
@@ -29,12 +31,14 @@ there has been no main merge or release from this continuation.
 
 ## Confirmed unresolved behavior
 
-**Forced strings export ownership:** reproduce and repair the source-substitution
-and OSError cleanup races retained in the PR319 audit. A cancellation correction
-does not cover those schedules. Verify failure preservation and foreign-file
-ownership before any replacement or cleanup. Keep the existing no-clobber race
-and compatible document-level extraction/truncation/redaction metadata, including
-empty exports, as explicit follow-up scope.
+**Successful forced strings replacement:** fresh source and parent substitution
+schedules remain reproduced after the accepted publication repair. Establish
+ownership at successful replacement without claiming an unqualified native
+primitive. [Batch 7](RECOVERY_BATCH_7.md) repairs held-source no-force publication,
+collisions, unsupported-capability refusal and foreign-stage deletion during
+forced failure. Such failures can retain partial or revealed stage bytes. Keep
+compatible document-level extraction/truncation/redaction metadata, including
+empty exports, as separate follow-up scope.
 
 **Native PE trust:** run catalog and WinVerifyTrust acceptance on Windows with
 source-pinned receipts. Keep cached offline metadata separate from current OS
@@ -86,7 +90,7 @@ in [the delivery tracker](../../tasks/todo.md) remain open unless a later entry
 provides a specific accepted replacement. This checkpoint does not silently close
 older tasks.
 
-## Phase 5 current priorities
+## Phase 5 priorities and subsequent dispositions
 
 - [x] Publish the initial reviewed candidate as draft PR #322 and verify its tree equals local `3cde10ae`.
 - [x] Review and integrate the downstream stage pin correction, acquisition plan/product binding, four-file harness repair and symbol scanner fixture correction through `bc485a66`.
@@ -97,7 +101,8 @@ older tasks.
 - [ ] Publish later accepted source with exact local/remote tree equality; obtain actual final-head Linux/Windows/Qt/package/native/live evidence.
 - [ ] Resolve draft readiness through an allowed REST-only route after qualification, then perform a head-guarded main merge and verify the result.
 
-These are active follow-ups, not completed main integration. The broad branch, release, native and separate L1/L2/L3 obligations above remain open.
+The later publication and accepted slices are recorded below. Main integration,
+broad branch, release, native and separate L1/L2/L3 obligations remain open.
 
 ## Phase 6 completed evidence and remaining gates
 
@@ -108,14 +113,38 @@ These are active follow-ups, not completed main integration. The broad branch, r
 - [x] Complete and archive original 856-file coverage: 59 terminal processes, 23,110 passed, 139 skipped, 6 xfailed, 4 failed, 8 teardown errors. Frozen diagnostic FAILED; original kill and reserve stops preserved.
 - [x] Correct final backup-test mock lifetime at `5aebd98f`: 3 passes/3 teardown errors before repair, then 41 affected passes. Production source and assertions unchanged; original errors remain recorded.
 - [x] Preserve verified 41/82/27/132/6-payload archives and exact report in evidence checkpoint `e430309a` and backup-test commit.
-- [ ] Qualify combined current 859-file source and Pydantic 2.14.2 separately from old frozen-source results and overlapping focused checks. External AF_UNIX constructor EPERM remains an unchanged acceptance block.
+- [ ] Qualify combined current source separately from old frozen-source results and overlapping focused checks. Phase 6 had 859 files; Phase 7 now has 866 and its diagnostic is running. External AF_UNIX constructor EPERM remains an unchanged acceptance block.
 - [ ] Resolve seven assessed native Qt findings using a supported qualified artifact or evidenced disposition. No official 6.12.1 binding wheels were available; 6.11.3 is not a complete fix.
-- [ ] Review the separate 70-finding tools scan; original source classifications do not cover all 134 combined findings. Preserve the demonstrated PyPI/OSV coverage gap for old Pydantic.
+- [x] Classify the separate 70 baseline tools findings in Phase 7; [the review archive](evidence/tools-static-review-20261119.zip) preserves the dispositions. Current supplemental scanning remains non-clean. Preserve the demonstrated PyPI/OSV coverage gap for old Pydantic.
 - [ ] Publish accepted source with exact local/remote tree equality, obtain actual final-head Linux/Windows/Qt/package/native/live gates, resolve REST-only draft readiness, then use expected-head merge and verify main.
 
-Strings-export recovery and build-tool HTTPS redirect triage are ongoing separate
-work, not completed Phase 6 source. Full index proposal/window/source-entry
+Strings-export recovery and build-tool HTTPS redirect triage were still pending
+at Phase 6; their accepted Phase 7 scope is recorded below. Full index proposal/window/source-entry
 persistence remains separate from recovered acquisition binding. Retention does
 not make saves atomic or establish general hostile-database budgets. Broad
 branches, release/manual obligations and separate L1/L2/L3 evidence remain open.
 [Current handoff](HANDOFF.md), [test results](TEST_RESULTS.md), [dependency audit](DEPENDENCY_ADVISORY_AUDIT_20261119.md).
+
+## Phase 7 accepted scope and pending gates
+
+- [x] Publish Phase 6 as `eb94510b`, tree-equal to local `0ed53876`, with 93 changed files and ahead 4/behind 0. This publication predates Phase 7.
+- [x] Accept strings source `397abd44` through `cf554155`: 74 focused passes and 115 integrated CLI/UI passes; retain successful-force source/parent ownership defects.
+- [x] Accept observation-health/JUnit source `45828168` through `541bf83c`: 111 passes/3 existing unshare skips; partial endpoint evidence survives failed observations.
+- [x] Accept build-tool HTTPS `7d4aead2`: 289 passes/1 historical wheel skip, followed by a pass of that exact wheel test; bounded per-hop validation and header controls remain.
+- [x] Accept KEV source `c84ca5a2` through `8efb7a45`: 386 passes and 77 new semantic cases; measured local gains do not establish a Windows fix or change the strict one-second budget.
+- [x] Preserve Phase 7 review/gate archives and classify all 70 baseline tools findings. Fresh scan: 134 findings, 64 source plus 70 tools, with one added guarded S310 and one removed swallowed-sampler S110.
+- [ ] Finish the running combined diagnostic and record affected-group replay separately from original setup errors. Group 021 also fails the existing ASM tokenization budget, 0.156169465s against strict 0.150s; triage and unchanged-source replay remain pending. Keep source/test identity and every failure receipt.
+- [ ] Publish Phase 7 with exact tree equality and obtain its own hosted checks. The observed Phase 6 head has six queued runs/23 runner-zero jobs; that is not a qualification result.
+- [ ] Resolve successful forced replacement, seven native Qt findings, full index provenance, native/manual acceptance, retained semantic recovery and separate L1/L2/L3 gates before applicable promotion claims.
+
+Main remains `fdc2696c` at the 13:37:30 UTC observation. No main merge or release
+is recorded; the frozen census remains 320 heads/309 PRs with 139 semantic-review
+dispositions, irrespective of later PR319/320/321/322 movement.
+
+### Restored current-source diagnostic
+
+- [x] Preserve original groups 001–025 and the storage-reserve stop, including 79 orchestration setup errors and one unchanged ASM timing failure.
+- [x] Complete the two setup-only replays on the same source: 251 and 74 passed. No original receipt changed.
+- [x] Restore frozen `8efb7a45` and verify identical source/dependency identities after the executor reset.
+- [ ] Finish original groups 026–111, reconcile every collected node ID, and separately qualify the unchanged ASM timing gate. Current continuation is running; no full pass is recorded.
+- [ ] Review newly reproduced WinPairs malformed-URL/error-boundary behavior and qualify its separate proposed repair. No network request or contacted unallowlisted destination was demonstrated.

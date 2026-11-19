@@ -2,10 +2,13 @@
 
 The results here are completed slice runs from the continuation based on
 `fdc2696c23bdbfe7668348f25e3b336ce33039f7`. Reviewed source is integrated locally
-on `codex/patchtrace-completion-20261119-81e4`. **The full combined attempt at
-`69fa6b8b` ended with exit 137 before a pytest summary or JUnit report. It is
-incomplete; hosted CI of the aggregate remains pending.** A passing slice is
-not evidence that the aggregate or a native release passed.
+on `codex/patchtrace-completion-20261119-81e4`. Current accepted Phase 7 source is
+`8efb7a4501bdcea77f6aca68f92c5459af47a838`, with 866 tracked test files. Its new
+combined diagnostic is running with original orchestration setup errors preserved;
+there is no full current-source pass. **The first combined attempt at `69fa6b8b`
+ended 137 without summary/JUnit; the later original 856-file diagnostic FAILED.**
+Hosted final-source qualification remains pending. A passing slice is not evidence
+that the aggregate or a native release passed.
 
 Raw receipt names in the original **Completed runs** table are preserved in the
 [focused evidence archive](evidence/continuation-20261119-focused.zip), together
@@ -73,9 +76,10 @@ accessibility.
 Whole-tree Ruff passed for the final parser and PE slices. The PE slice's schema
 regeneration completed without schema changes, and its whitespace check passed.
 The installer and facts-guard slices have scoped Ruff and whitespace passes.
-The corresponding aggregate checks remain required on the frozen source.
+Phase 7 repeats the aggregate lint/dependency/schema gates below; native and
+full-suite qualification remain separate.
 
-## Aggregate and remote status at handoff
+## Historical aggregate and remote observations through Phase 6
 
 | Gate | State at this checkpoint |
 | --- | --- |
@@ -92,38 +96,46 @@ The corresponding aggregate checks remain required on the frozen source.
 | Later PR320 / PR321 | Observed after the frozen census; retained separately. PR320 is a draft broad aggregate with incomplete full-suite evidence; PR321 is a documentation checkpoint atop PR319. Neither qualifies this local source. |
 | Main merge / release | Neither performed by this continuation. |
 
-Remote states are the coordinator's observed snapshot, not a new network poll by
-the documentation worker. Recheck heads and every required job before promotion.
+These rows retain earlier observations; Phase 7's source and remote snapshot are
+recorded below. They are not a new network poll by the documentation worker.
+Recheck heads and every required job before promotion.
 
-## Current run and reproducible next commands
+## Recorded runs and future replay commands
 
 The first full process has ended. Its kill cause is not established: shared disk
 pressure and low available memory were separately observed, but no causal OOM
 event record was available. The later frozen diagnostic reached all original
 files across separate processes and FAILED. Its original reserve stops and kill
 remain preserved; partitioned coverage is distinct from an unsplit full pass.
-Use a new receipt prefix and keep the actual exit status and output for every
-command. The interpreter must resolve this root checkout, not a worker worktree.
+The current Phase 7 grouped diagnostic is already running; do not start a duplicate.
+For a later deliberate unsplit replay, use a new receipt prefix and preserve the
+actual exit status and output. The interpreter must resolve the intended root
+checkout, not a worker worktree; record that checkout's exact source first.
 
 ```bash
 cd /workspace/scratch/81e4938f4a3a/PatchTrace
 PT_PYTHON=/workspace/scratch/81e4938f4a3a/.venv-main/bin/python
 PT_VERIFY=/workspace/scratch/81e4938f4a3a/verification
-PT_RUN=full-batch1-rerun1
+PT_RUN=phase7-unsplit-8efb7a45
 git rev-parse HEAD > "$PT_VERIFY/$PT_RUN-source.sha"
 "$PT_PYTHON" -I -c 'import patchtrace; print(patchtrace.__file__)'
-"$PT_PYTHON" -m pip check > "$PT_VERIFY/combined-pip-check.log" 2>&1
-QT_QPA_PLATFORM=offscreen "$PT_PYTHON" -m pytest -q \
+"$PT_PYTHON" -m pip check > "$PT_VERIFY/$PT_RUN-pip-check.log" 2>&1
+QT_QPA_PLATFORM=offscreen "$PT_PYTHON" -m pytest -q -p no:cacheprovider \
   --basetemp="/tmp/pt81-$PT_RUN" -o tmp_path_retention_policy=failed \
   --junitxml="$PT_VERIFY/$PT_RUN.xml" \
   > "$PT_VERIFY/$PT_RUN.log" 2>&1
+PT_PYTEST_STATUS=$?
+printf '%s\n' "$PT_PYTEST_STATUS" > "$PT_VERIFY/$PT_RUN-exit.txt"
 "$PT_PYTHON" -m ruff check src tests tools \
-  > "$PT_VERIFY/combined-ruff.log" 2>&1
-"$PT_PYTHON" tools/generate_schemas.py \
-  > "$PT_VERIFY/combined-schemas.log" 2>&1
+  > "$PT_VERIFY/$PT_RUN-ruff.log" 2>&1
 git diff --check
 git status --short
 ```
+
+The exact 16 schema commands already executed at Phase 7, their statuses and the
+302-file comparison are preserved in `integrated-phase7-schemas.json` and its log
+inside the [gate archive](evidence/phase7-gates-20261119.zip). A single generator
+is not a substitute for that full set. Later commands need their own receipts.
 
 For a focused replay of the final cache selection, the exact file selection is:
 
@@ -175,12 +187,12 @@ The four initial failures were two contextual stage pins, one forbidden AF_UNIX 
 
 The frozen checkout was relocated across filesystems after verifying all 3,946 tracked-file hashes. Its interpreter was repointed and verified using `-I`; source/test/tool fingerprint `9ecd20b2dd0f83047551f8a9f85e28c34a34236f65d77b74e46483eecf33a2b2` is unchanged. Only inactive task-owned environments were removed. No other's workspace or shared dependency environment was modified.
 
-Initial-head hosted gates remain queued. In addition to successful job conclusions, live BinDiff JSON receipts require review because Windows steps can be advisory or report blocked while the job remains green. No full-suite, current-head CI, native, release or main-merge pass is claimed.
+Initial-head hosted gates were queued at that observation; the later CI archive records those superseded runs as terminal/cancelled. In addition to successful job conclusions, live BinDiff JSON receipts require review because Windows steps can be advisory or report blocked while the job remains green. No full-suite, current-head CI, native, release or main-merge pass is claimed.
 
 ## Phase 6 — accepted source and final frozen diagnostic
 
-Accepted source/test checkpoint: `5aebd98f362e7cc5f01a0c96878860b04835cea4`, a
-test-only follow-up to runtime/dependency integration `5208c758`. There are
+At Phase 6, accepted source/test was `5aebd98f362e7cc5f01a0c96878860b04835cea4`, a
+test-only follow-up to runtime/dependency integration `5208c758`. There were
 859 tracked test files, with Pydantic 2.14.2/core 2.50.2. Evidence checkpoint
 `e430309a` preserves the archives. Later phase receipts below are not members of
 the original 94-payload focused archive.
@@ -210,7 +222,8 @@ Teardown errors coexist with passing test bodies; do not subtract errors from
 pytest passes. The diagnostic **FAILED** on frozen source `520b524b` (documentation
 head `3cde10ae`), old Pydantic 2.13.5 and unchanged fingerprint
 `9ecd20b2dd0f83047551f8a9f85e28c34a34236f65d77b74e46483eecf33a2b2`.
-It is not an unsplit pass or qualification of current 859-file source/dependencies.
+It is not an unsplit pass or qualification of Phase 6's 859-file source or the
+newer Phase 7 source/dependencies.
 The external AF_UNIX constructor EPERM before product imports remains unchanged.
 
 Final subpartition 53-2 reported 346 pytest passes and three teardown errors:
@@ -278,9 +291,9 @@ assessed native Qt findings remain open; official 6.12.1 binding wheels were
 unavailable at retrieval, and 6.11.3 is not a complete fix. [Advisory audit](DEPENDENCY_ADVISORY_AUDIT_20261119.md)
 retains exact graphs and the demonstrated coverage gap, not a clean-security claim.
 
-Fresh source scan at `5208c758`: 64 findings with no normalized additions/removals
-versus `520b524b`. The separate 70-finding tools expansion requires review;
-existing source dispositions do not classify all 134 combined results.
+At `5208c758`, the source scan had 64 findings with no normalized additions/removals
+versus `520b524b`. The separate 70-finding tools expansion still required review
+then; Phase 7's completed dispositions and changed-site comparison follow.
 
 ### Verified Phase 6 archives
 
@@ -304,4 +317,114 @@ payloads include that manifest. The copied report exactly matches the original
 raw report, SHA-256 `370248accabe83d60cfa0f6b153da0c3752b1b3cb90d44d82d444a260acc1bf3`.
 The backup archive preserves `backup-scandir-{red,green}.{log,xml}` and both result
 JSON files. No full current-head suite, native acceptance, release or main merge
-is claimed. Future strings-export and build-tool HTTPS work remains separate.
+is claimed. Strings-export and build-tool HTTPS changes were still separate work
+at Phase 6; their later accepted evidence follows.
+
+## Phase 7 — accepted source, scoped results and ongoing diagnostic
+
+Accepted source is `8efb7a4501bdcea77f6aca68f92c5459af47a838`, tree
+`41bf19c6321f88134959df8122b26930ee4deaf7`, with 866 tracked test files. Published
+Phase 6 is `eb94510bda73935b1b5b99d00acde879d6474d14`, tree
+`62665b03d9c2c7431ceaa1d181505d28105ccb93`, equal to local `0ed53876`: 93 changed
+files, ahead 4/behind 0. Phase 7 remains local-only at this observation.
+
+| Source/scope | Actual outcome | Receipt or reviewed report |
+| --- | --- | --- |
+| Strings retained-source negative controls | 11 failed, 3 passed | [Batch 7](RECOVERY_BATCH_7.md), original receipts in strings archive |
+| Corrected strings `397abd44` / `cf554155` | 74 passed in 3.56s | `strings-ownership-peer-batch7-focused-green` log/XML/result |
+| Integrated strings CLI/UI | 115 passed in 10.95s | `integrated-strings-phase7` log/XML/result |
+| HTTPS original controls | 17 failed, 11 passed in 1.97s | `backend-https-red` receipts in HTTPS archive |
+| HTTPS peer controls before correction | 28 failed, 2 passed in 1.37s | `backend-https-peer-red` log/XML |
+| Corrected HTTPS, five files | 289 passed, 1 historical setuptools/wheel skip in 8.20s | `backend-https-final` log/XML; [review](BUILD_HTTPS_REVIEW_20261119.md) |
+| Later exact wheel check | 1 passed | `integrated-phase7-followups.json`; original skip remains a skip |
+| Sampler/JUnit initial controls | 21 failed, 26 passed in 3.93s, then 47 passed in 3.21s | `tools-evidence-{red,green}-20261119` log/XML |
+| Windows partial-output peer controls | 3 failed in 0.78s before correction | `tools-partial-output-red-20261119` log/XML |
+| Final Batch 8, four files | 111 passed, 3 existing unshare skips in 4.48s | `tools-evidence-qualified-20261119` log/XML; [Batch 8](RECOVERY_BATCH_8.md) |
+| KEV contract/parser/schema selection | 386 passed in 5.55s, including 77 added semantic cases | `kev-text-performance-final-functional-20261119` log/XML/result; [report](KEV_TEXT_VALIDATION_PERFORMANCE_20261119.md) |
+| Configured whole-tree Ruff / pip check | Both pass at `8efb7a45` | `integrated-phase7-gates.json` and gate logs |
+| Complete schema regeneration | All 16 commands exit 0; 301 schemas plus generated CSAF table unchanged, 302 files total | `integrated-phase7-schemas.json` and log |
+
+These selections overlap and are not summed. Batch 8's three skips are
+`test_dry_run_with_fake_bundle_proves_denial_and_equal_digest`,
+`test_dry_run_fails_when_control_has_no_baseline`, and
+`test_dry_run_detects_launcher_mutating_the_tree`; each requires Linux
+`unshare --net`. Observation health does not prove OS blocking or whole-process-tree
+coverage. The successful-force source/parent substitutions remain open after
+strings failure cleanup. KEV measurements retain mixed blocks: fresh-process
+median wall/CPU reductions 4.91%/10.15%, same-process 12.43%/11.96%. Independent
+semantic review preserves digest checks and the strict one-second assertion;
+these Linux measurements do not resolve the earlier Windows failure.
+
+Fresh supplemental scan: 134 findings, 64 source plus 70 tools. All 70 baseline
+tools findings are classified; one guarded opener S310 was added and one swallowed
+sampler S110 removed. Configured lint passing does not make this scan clean.
+[Static scope](STATIC_AUDIT.md).
+
+### Current combined run and preserved orchestration errors
+
+`verification/run_combined_current_suite.py` runs frozen
+`/tmp/pt81-combined-candidate` at `8efb7a45`, using its own interpreter and
+receipts under `verification/combined-current-20261119`. Collection completed
+successfully: **866 files, 23,529 nodes, exit 0 in 210.705 seconds**. The plan has
+111 groups, generally eight files per group, with residual-performance six cases
+and the dense case split separately. **The diagnostic is still running; there is
+no full outcome.**
+
+Original group 001 recorded **181 passed/70 setup errors in 30.59s**; group 002
+recorded **65 passed/9 setup errors in 35.18s**. The orchestrator omitted the parent
+of pytest's basetemp; pytest's directory creation does not create that parent.
+The owner created `/tmp/pt81-combined-test-bases` at 13:42:18 UTC. Original logs,
+XML and source/runner identity are retained, with
+`combined-current-20261119/basetemp-parent-correction.json`. This is a setup
+failure rather than a production regression; no test/assertion changed. Subsequent
+groups continue, and the affected groups' separate replays remain pending. The
+original errors must remain even if a later replay passes.
+
+Group 021 subsequently recorded **1 failed, 727 passed, 1 skipped and 4 xfailed**.
+`tests/test_codetext_tokens.py::test_200k_characters_tokenize_within_the_budget[asm]`
+measured best-of-five **0.156169465s**, above the unchanged strict **0.150s**
+limit. This is an observed performance-gate failure; no host-load explanation is
+established and no source, threshold or assertion was changed. Read-only triage
+is pending, with an isolated unchanged-source replay planned after the primary
+run. The primary diagnostic continues; its original result remains preserved.
+
+### Timestamped hosted observation
+
+The [CI review](CI_QUEUE_REVIEW_20261119.md) records 13:33:41–13:36:55 UTC reads,
+followed by main/PR319 metadata at 13:37:30–13:37:31 UTC. Published Phase 6 PR322
+had six queued runs and 23 substantive jobs with runner ID zero, blank names and
+no steps; the release gate was skipped. Queue cause remains unproven. PR318
+finished failure: Windows Qt succeeded, Linux Qt shard 3/4 was cancelled with no
+proven actor/cause, and Windows QA retained the 1.4662241-second KEV failure.
+PR319 `8d130aef` had four successful native variants and a running raw-cache-hit
+job; that head is distinct from retained source `a56ab13a` and this aggregate.
+Main remains `fdc2696c`; no main merge or release is recorded.
+
+### Verified Phase 7 archives
+
+Counts exclude the new archive manifest/index; embedded original manifests remain
+payloads. These archives exist and were CRC/hash checked by their owners. Earlier
+archives, failed results and original manifests remain unchanged.
+
+| Archive | Payloads | Bytes | SHA-256 |
+| --- | ---: | ---: | --- |
+| [Strings ownership](evidence/strings-ownership-20261119.zip) | 57 | 176,067 | `7bcc199cab4c9f681ae20d6bbe9654edd0fa7ad7caa2053d4cad355e2c80cd40` |
+| [Build-tool HTTPS](evidence/backend-https-20261119.zip) | 30 | 46,533 | `5018d97cd016bdec458c34a4010f4c432512a71260a9967f3b0e08449d6cc3e0` |
+| [Tools evidence](evidence/tools-evidence-20261119.zip) | 20 | 36,945 | `562beb72e39c12a3208142ba281a516e3cd28984788164d47d612f3857816c9e` |
+| [Tools static dispositions](evidence/tools-static-review-20261119.zip) | 4 | 45,933 | `2c54df05af8ea3ffda68fdfd1978c0392aad0a18c599c0fe12087724b16b7a43` |
+| [KEV performance and independent review](evidence/kev-text-performance-20261119.zip) | 43 | 139,595 | `20701bf98f9c5e271be7ca6b4bfef6aa549faa66233b59996b6ef65d95ae98bd` |
+| [Final-source gates](evidence/phase7-gates-20261119.zip) | 8 | 39,359 | `deaa77990bad3e9770321935522d4da097d10bf93c9485e9c97a0b83b0519ff3` |
+| [CI queue and platform results](evidence/ci-queue-review-20261119.zip) | 22 | 67,680 | `6c355229b91abfbb8d7fe89923f929b370c215c19fd5f286ebfca888be88606e` |
+
+The running combined diagnostic is not included as a finished result in these
+archives. Its eventual terminal outcomes and any replay must receive separate
+source-bound evidence. Seven native Qt findings, force-success ownership,
+full index provenance, native/manual acceptance and L1/L2/L3 obligations remain.
+
+## Diagnostic continuation after reserve stop and environment recovery
+
+The original `8efb7a45` diagnostic stopped at its storage reserve after groups 001–025 at 13:50:15 UTC; it did not reach the remaining 86 groups. Its raw pytest summaries are **4,558 passed, 79 setup errors, 13 skipped, 4 xfailed and one failed ASM timing gate**. Both setup-only groups then completed separately on the unchanged source: **251 passed in 41.52 seconds** and **74 passed in 46.80 seconds**. Selecting those two replay receipts gives 4,637 passed, 13 skipped, 4 xfailed and one failed across the first 200 files; the original errors are retained. This is partial coverage, not a passing aggregate.
+
+A subsequent executor outage removed `/tmp`; all saved logs/XML/manifests and committed source survived. At 13:59:05 UTC the frozen `8efb7a45` worktree and lightweight interpreter were restored, with identical Python, dependency versions, source path/hash and source/test/tool fingerprint `b34db9a597ddc8c3074bea1d017ddf5702b7ed438146b55eec5e9e61a12efdc1`. Only this task's untracked Python bytecode caches were removed to recover 55,900,712 bytes. The separate continuation is running original groups 026–111 without changed assertions or exclusions. Its `continuation-manifest.json` binds the unchanged original and setup-replay manifests; no terminal continuation result is claimed here.
+
+The original collection remains 866 files/23,529 nodes. Coverage reconciliation treats parameter text containing `::` as opaque; that corrects diagnostic bookkeeping for 48 IDs without changing pytest selection. The first 200 files account for 4,655 distinct XML cases, with no extra IDs. Original storage stop, setup errors, ASM timing failure, environment restoration and continuation keep separate identities under `verification/combined-current-20261119/`.

@@ -9,9 +9,11 @@ admission repair merge. That baseline merge predates this continuation.
 ## Local continuation history
 
 Branch: `codex/patchtrace-completion-20261119-81e4`.
-Recorded accepted source/test checkpoint: `5aebd98f362e7cc5f01a0c96878860b04835cea4`,
-a test-only follow-up to runtime/dependency integration `5208c758`. Evidence
-checkpoint `e430309a` preserves the Phase 6 archives and advisory report.
+Recorded Phase 7 accepted source: `8efb7a4501bdcea77f6aca68f92c5459af47a838`,
+tree `41bf19c6321f88134959df8122b26930ee4deaf7`, with 866 tracked test files.
+Phase 6 source/test `5aebd98f`, runtime/dependencies `5208c758` and evidence
+checkpoint `e430309a` remain historical entries. Phase 7 is local-only at this
+observation; the published Phase 6 identity and current pending gates follow.
 
 | Source or local event | Exact identity | Disposition |
 | --- | --- | --- |
@@ -40,7 +42,7 @@ See [test results](TEST_RESULTS.md) for executed outcomes and retained failures.
 
 The full census pins PR319 at
 `a56ab13aaf9916fc12bea70ba1494075991b7f09` and broad PR318 at
-`c4ace2088ce8dc9ce78a0bf3036b81096accbdb5`. At the coordinator's latest observed
+`c4ace2088ce8dc9ce78a0bf3036b81096accbdb5`. At that earlier observed
 snapshot, PR319 was queued; main's Linux/Windows QA and all Qt checks were green,
 while Linux packaging was queued. These are earlier heads' states and
 must not be credited to the new local aggregate.
@@ -65,7 +67,8 @@ none of those issues. Main remains pinned at `fdc2696c` in that observation.
 ## Required promotion record
 
 - [x] Integrate the reviewed facts-eligibility caller repair and record its exact head (`69fa6b8b`).
-- [ ] Complete the full combined suite and final-source lint, dependency and schema checks.
+- [x] Complete final-source configured Ruff, pip check and all 16 schema generators at `8efb7a45`; 302 generated files unchanged.
+- [ ] Complete the full combined suite and resolve observed gates without rewriting original failures.
 - [x] Preserve focused logs/JUnit, discovery inputs and their identities in the verified 94-payload [archive](evidence/continuation-20261119-focused.zip). Later partition outcomes remain separate.
 - [ ] Publish the reviewed aggregate and obtain all required hosted checks on its actual head/base.
 - [ ] Resolve blocking findings without changing frozen facts or weakening assertions.
@@ -130,7 +133,7 @@ The original 856-file diagnostic reached all files through 59 terminal processes
 and FAILED: 23,110 passed, 139 skipped, 6 xfailed, 4 failed, 8 teardown errors.
 Both reserve stops and original group-51 kill remain preserved. The final four
 groups' 1,396 collected node IDs match XML exactly; complete coverage does not
-make this an unsplit pass or qualify current 859-file source/new dependencies.
+make this an unsplit pass or qualify the then-current 859-file source/new dependencies.
 Later fixture repairs are separate; external AF_UNIX constructor EPERM remains.
 
 Both actual 15-package Python graphs completed PyPI and OSV audits with zero
@@ -138,11 +141,43 @@ returned advisories, but direct API cross-checks also miss four upstream finding
 for old Pydantic 2.13.5. The new pin clears those ranges. Seven native Qt findings
 remain open; no 6.12.1 binding wheels were available at official-index retrieval,
 and 6.11.3 is not a complete fix. [Advisory audit](DEPENDENCY_ADVISORY_AUDIT_20261119.md).
-Fresh source scan: 64 findings, unchanged normalized multiset versus `520b524b`;
-the separate 70-finding tools expansion requires review.
+Phase 6 source scan: 64 findings, unchanged normalized multiset versus `520b524b`;
+the separate 70-finding tools expansion still required review at that checkpoint.
 
 [TEST_RESULTS.md](TEST_RESULTS.md) records verified archive identities for
 retention/integration, Pydantic, advisory audit, complete failed diagnostic and
 backup-test correction. Source branches remain preserved. Strings-export recovery
-and build-tool HTTPS redirect triage are ongoing separate work, excluded from
-this accepted checkpoint. Main promotion and release gates remain open.
+and build-tool HTTPS redirect triage were pending at that checkpoint; their later
+accepted scope follows. Main promotion and release gates remain open.
+
+## Phase 7 — accepted local source and current publication boundary
+
+| Event | Exact source or integration | Evidence and disposition |
+| --- | --- | --- |
+| Published Phase 6 | `eb94510bda73935b1b5b99d00acde879d6474d14` | Tree `62665b03d9c2c7431ceaa1d181505d28105ccb93` equals local `0ed53876c0460edafdb089121744c167493fb8ff`; 93 changed files, ahead 4/behind 0. Predates Phase 7. |
+| Strings source / integration | `397abd44325ccf6d37aa1f95c86383e305fb3b0e` / `cf55415587f996f54a9d957a48d57818ebe9ff42` | 74 focused and 115 integrated CLI/UI passes. No-force publication and forced-failure cleanup repaired; successful-force source/parent substitution remains open. [Batch 7](RECOVERY_BATCH_7.md). |
+| Sampler/JUnit source / integration | `45828168056e67a3ca419483d9582b9b0660f651` / `541bf83c1894e8111e6f35da7c14f3e04c5e71a2` | 111 passes/3 existing unshare skips; failed observations and partial endpoint evidence remain explicit. [Batch 8](RECOVERY_BATCH_8.md). |
+| Build-tool HTTPS | `7d4aead2` | 289 passes/1 historical wheel skip, then that exact test passes. Independent Host/authority red controls retained. [Review](BUILD_HTTPS_REVIEW_20261119.md). |
+| KEV source / integration | `c84ca5a28b54d696dca58b24d29931c32a9ad093` / `8efb7a4501bdcea77f6aca68f92c5459af47a838` | 386 passes/77 added semantic cases and paired local gains; no Windows-fix claim or timing-budget relaxation. [Report](KEV_TEXT_VALIDATION_PERFORMANCE_20261119.md). |
+| Accepted-source gates | `8efb7a45` | Configured Ruff and pip check pass; all 16 generators exit 0, with 301 schemas plus the CSAF table byte-identical. Supplemental scan remains at 134 findings; 70 baseline tools findings classified. |
+
+The new frozen `8efb7a45` diagnostic collected 866 files/23,529 nodes in 210.705s
+and is running through 111 groups. Original group 001 recorded 181 passes/70 setup
+errors; group 002 recorded 65 passes/9 setup errors from the same omitted temporary
+parent. Its correction and any later replay remain separate from these originals.
+Group 021 subsequently records one failure in the unchanged ASM tokenization
+budget: best-of-five 0.156169465s against strict 0.150s, with 727 passes, one skip
+and four xfails. The primary run continues; cause/replay are under review. No
+full current-source pass or unsplit result is recorded.
+
+At the 13:33:41–13:36:55 UTC refresh, Phase 6 PR322 had six queued runs and 23
+substantive jobs with runner ID zero/no steps; queue cause is unproven. PR318's
+Windows Qt passed, Linux Qt shard 3/4 was cancelled with no proven actor/cause,
+and Windows QA retained its 1.4662241-second KEV failure. PR319 was observed at
+`8d130aef` at 13:37:31 UTC; its native results belong to that head, not retained
+source `a56ab13a` or this aggregate. [CI review](CI_QUEUE_REVIEW_20261119.md).
+
+Main was freshly read as `fdc2696c` at 13:37:30 UTC. Publication of Phase 7,
+actual final-head CI/native/manual gates, blocker resolution and a normal
+expected-head REST merge remain pending. No main integration or release is
+declared by local source acceptance, evidence preservation or queued workflows.

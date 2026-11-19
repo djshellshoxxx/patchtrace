@@ -4,6 +4,7 @@ Pure and hermetic: bench reports, manifests and JUnit files are built in the tes
 about real data is deliberately not asserted here: those stay `pending`, which is the behaviour under test."""
 from __future__ import annotations
 
+import io
 import json
 import re
 import sys
@@ -235,6 +236,83 @@ def test_junit_files_are_parsed_defensively():
                 b'<testsuites>\x00</testsuites>'):
         with pytest.raises(ContractError):
             gates_u.parse_junit(bad)
+
+
+@pytest.mark.parametrize('discovered', [False, True])
+def test_junit_cli_admission_is_bounded_before_parse(tmp_path, monkeypatch, discovered):
+    path = tmp_path / 'junit-authored.xml'
+    path.write_bytes(b'placeholder')
+    report, markdown = tmp_path / 'report.json', tmp_path / 'report.md'
+    report.write_bytes(b'prior report')
+    markdown.write_bytes(b'prior markdown')
+    monkeypatch.setattr(gates_u, 'MAX_JUNIT_BYTES', 64)
+    real_open = Path.open
+    requests = []
+
+    class VirtualOversizeFile(io.BytesIO):
+        def read(self, size=-1):
+            requests.append(size)
+            assert 0 < size <= 65, 'JUnit ingress attempted an unbounded read'
+            return b'x' * size
+
+    def open_file(file, *args, **kwargs):
+        return VirtualOversizeFile() if file == path else real_open(file, *args, **kwargs)
+
+    monkeypatch.setattr(Path, 'open', open_file)
+    monkeypatch.setattr(gates_u, 'parse_junit', lambda data: pytest.fail('oversize XML reached the parser'))
+    options = ['--inputs', str(tmp_path)] if discovered else ['--junit', str(path)]
+    assert gates_u.main([*options, '--out', str(report), '--markdown', str(markdown)]) == 2
+    assert requests and report.read_bytes() == b'prior report' and markdown.read_bytes() == b'prior markdown'
+
+
+def test_junit_cli_exact_limit_is_accepted_and_next_byte_refused(tmp_path, monkeypatch):
+    monkeypatch.setattr(gates_u, 'MAX_JUNIT_BYTES', 64)
+    path, report = tmp_path / 'junit.xml', tmp_path / 'report.json'
+    xml = b'<testsuites/>'
+    path.write_bytes(xml + b' ' * (64 - len(xml)))
+    assert gates_u.main(['--junit', str(path), '--out', str(report)]) == 0
+    prior = report.read_bytes()
+    path.write_bytes(path.read_bytes() + b' ')
+    assert gates_u.main(['--junit', str(path), '--out', str(report)]) == 2
+    assert report.read_bytes() == prior
+
+
+def test_junit_cli_parses_each_file_before_opening_the_next(tmp_path, monkeypatch):
+    files = [tmp_path / 'junit-one.xml', tmp_path / 'junit-two.xml']
+    bodies = [junit(passed=[('test_authored', 'test_one')]), junit(skipped=[('test_authored', 'test_two')])]
+    for file, body in zip(files, bodies, strict=True):
+        file.write_bytes(body)
+    events = []
+    real_open, real_parse = Path.open, gates_u.parse_junit
+
+    def open_file(file, *args, **kwargs):
+        if file in files:
+            events.append(('open', files.index(file)))
+        return real_open(file, *args, **kwargs)
+
+    def parse(data):
+        events.append(('parse', bodies.index(data)))
+        return real_parse(data)
+
+    monkeypatch.setattr(Path, 'open', open_file)
+    monkeypatch.setattr(gates_u, 'parse_junit', parse)
+    assert gates_u.main(['--junit', str(files[0]), '--junit', str(files[1])]) == 0
+    assert events == [('open', 0), ('parse', 0), ('open', 1), ('parse', 1)]
+
+
+def test_junit_cli_read_error_preserves_previous_report(tmp_path, monkeypatch):
+    path, report = tmp_path / 'junit.xml', tmp_path / 'report.json'
+    report.write_bytes(b'prior report')
+    real_open = Path.open
+
+    def open_file(file, *args, **kwargs):
+        if file == path:
+            raise OSError('authored read failure')
+        return real_open(file, *args, **kwargs)
+
+    monkeypatch.setattr(Path, 'open', open_file)
+    assert gates_u.main(['--junit', str(path), '--out', str(report)]) == 2
+    assert report.read_bytes() == b'prior report'
 
 
 # ---- report -----------------------------------------------------------------------------------------------------------------------

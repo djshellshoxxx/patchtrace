@@ -392,8 +392,30 @@ passes and independent NULL/BLOB preservation controls do not close the containi
 branches or their unreviewed scope; 139 semantic-review dispositions retain their
 original meaning.
 
-Subsequent runtime/dependency integration `5208c758` and test-only follow-up
-`5aebd98f` have 859 tracked test files. Evidence checkpoint `e430309a` preserves
+At Phase 6, runtime/dependency integration `5208c758` and test-only follow-up
+`5aebd98f` had 859 tracked test files. Evidence checkpoint `e430309a` preserves
 new receipts; the separate original 856-file diagnostic reached all files and
 FAILED. None of these later observations changes this census, establishes final
 CI/main promotion, or completes semantic recovery. [Handoff](HANDOFF.md).
+
+### Phase 7 observations outside the frozen census
+
+Accepted local source `8efb7a4501bdcea77f6aca68f92c5459af47a838` now has 866 test
+files. Published Phase 6 draft PR #322 is `eb94510b`, tree
+`62665b03d9c2c7431ceaa1d181505d28105ccb93`, equal to local `0ed53876`, with 93
+changed files and ahead 4/behind 0. Phase 7 is local-only at this observation;
+its combined diagnostic is running, with original orchestration setup errors
+preserved. No source publication or result changes the frozen rows above.
+
+[Batch 7](RECOVERY_BATCH_7.md) recovers only the reviewed held-source publication
+approach from retained PR319 `a56ab13a`, with new anchor/capability and forced-failure
+cleanup corrections (`397abd44` / `cf554155`). Successful-force source and parent
+substitution remain open. Batch 8, HTTPS and KEV additions are new scoped work,
+not evidence that all behavior in a historical branch was recovered.
+
+At 13:37:31 UTC, PR319 was open/draft at
+`8d130aefe1be6e737cff1d90d2a5b1658d60a3a6`, based on unchanged main `fdc2696c`.
+This newer head, later PR320/321 and PR322 publication are separate observations;
+the census remains **320 heads/309 PRs, including 139 semantic-review dispositions**.
+Broad PR316/318 holds, source-branch preservation and unreviewed scope remain.
+[Timestamped CI review](CI_QUEUE_REVIEW_20261119.md) records the later remote snapshot.

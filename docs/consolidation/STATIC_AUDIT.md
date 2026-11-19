@@ -9,6 +9,10 @@ their callers; it is not a claim that the scanner is clean or the source secure.
 The normal configured Ruff gate and this supplemental rule selection are
 different checks.
 
+The tables below remain the frozen 65-site baseline. Phase 7's source-specific
+amendment at the end records the completed tools review and the current non-clean
+134-finding source/tools scan at `8efb7a45`; it does not rewrite historical counts.
+
 The baseline `fdc2696c` and current receipts contain the same **multiset** of
 normalized `(source path, rule, message)` findings, including repeated findings.
 That establishes no added findings under this comparison, not absence of defects.
@@ -201,10 +205,12 @@ was not exercised by this classification.
 
 1. Qualify the final integration head with the normal repository gates and the
    required hosted/platform checks. These scoped probes do not replace them.
-2. Audit resolved dependency versions and packaged interpreter/Expat/Qt/native
-   components against vulnerability advisories; that work is still unperformed.
+2. Retain the completed Phase 6 audits of the actual Python runtime/search/rules
+   graphs and the seven unresolved native Qt findings. Broader packaged
+   interpreter/Expat/native SBOM and supported-artifact qualification remain open.
 3. The Phase 4 diagnostic recovery and real post-write controls are complete;
-   retain malformed-row retention and the underlying post-write exception as open work.
+   the accepted Phase 6 retention repair fixes the reproduced malformed-row cause.
+   Generic post-write uncertainty and wider database/atomicity limits remain.
 4. Retain URL/parser negative controls on supported runtimes, and re-audit SQL
    helpers if new callers can supply identifiers or SQL fragments.
 
@@ -252,9 +258,9 @@ Fresh source scan at `5208c758`: **64 findings**, SHA-256
 S105 14, S110 12, S101 9, S310 5, S603 1, S314 1 and S108 1. Configured
 whole-tree Ruff and pip check separately pass at `5208c758`.
 
-The expanded source/tools scan records **70 additional findings in tools**;
-those require their own review. Existing source dispositions do not classify
-all 134 combined results. No warnings were suppressed. Raw scans, comparison
+The expanded source/tools scan recorded **70 additional findings in tools**;
+at that checkpoint they still required their own review. The Phase 7 amendment
+below records the completed dispositions. No warnings were suppressed. Raw scans, comparison
 and gate receipts are in the verified [retention/integrated archive](evidence/attempt-retention-20261119.zip).
 
 Pydantic 2.14.2/core 2.50.2 is separately qualified at `b28f6971` / `5208c758`.
@@ -263,3 +269,50 @@ old-pin upstream advisories. Seven assessed native Qt findings remain unresolved
 [Advisory audit](DEPENDENCY_ADVISORY_AUDIT_20261119.md) and [upgrade qualification](PYDANTIC_SECURITY_UPGRADE_20261119.md)
 retain exact scope. Lint, supplemental rules, advisory lookup and runtime checks
 establish different facts; none alone establishes clean security or acceptance.
+
+## Phase 7 tools dispositions and final-source comparison
+
+All **70 original tools findings** are classified in the verified
+[tools review archive](evidence/tools-static-review-20261119.zip), containing four
+payloads plus its manifest. Classification records fixed inputs, public behavior,
+retained risks and specific repairs; it does not establish a clean tools tree.
+The archive SHA-256 is
+`2c54df05af8ea3ffda68fdfd1978c0392aad0a18c599c0fe12087724b16b7a43`.
+
+Fresh supplemental scanning at accepted source `8efb7a45` yields **134 findings:
+64 in source and 70 in tools**. Relative to `5208c758`, the normalized comparison
+adds one S310 site in `tools/verify_backend_pins.py` and removes one S110 site in
+`tools/bundle_acceptance.py`. No warning was suppressed; scan exit 1 records the
+remaining findings. Raw `security-static-phase7.json` has SHA-256
+`e511c964668c70c5c54f84a9e498903abeb690f54b00438761f07d188bf78856`;
+`security-static-phase7-comparison.json` preserves the exact comparison in the
+[Phase 7 gates archive](evidence/phase7-gates-20261119.zip).
+
+The new S310 is the shared manually redirected HTTPS opener. Per-dispatch scheme
+and authority validation, bounded follow count, response closure, Host rebuild
+and cross-origin credential removal were checked against original and peer red
+controls. The [HTTPS review](BUILD_HTTPS_REVIEW_20261119.md) records 289 passes and
+one historical wheel skip, followed separately by that exact wheel test passing.
+Its static warning remains visible despite the reviewed guard.
+
+The removed S110 swallowed failed connection samples, allowing attempted polls
+to appear healthy. [Batch 8](RECOVERY_BATCH_8.md) requires three successful
+observations and preserves partial endpoints even through nonzero/timeout output.
+Independent Windows partial-output false passes preceded three added negative
+controls. Final evidence is 111 passes/3 existing unshare skips. Sampling is not
+OS-block proof; the positive block control is unchanged. The same batch bounds
+each JUnit body before parsing at 8 MiB plus a sentinel byte, without claiming an
+aggregate input-count bound.
+
+Configured whole-tree Ruff and pip check pass at `8efb7a45`; all 16 generators
+leave 301 schemas and the CSAF table unchanged. The 866-file combined diagnostic
+is still running with its original orchestration setup errors preserved. Native
+Qt, platform/manual acceptance and broader historical review remain separate
+gates. No aggregate test, clean-security or native qualification follows from
+these dispositions.
+
+### Subsequent bounded WinPairs URL finding
+
+Read-only authored probes against the unchanged `8efb7a45` helper (Git blob `d55f02578680f0234da6ebdbcd4b456182169d06`) confirmed remaining gaps at the previously qualified-as-limited caller-guarded S310 site. Malformed ports/brackets/NFKC authorities escape as `ValueError`; empty userinfo passes the truthiness check; raw controls and whitespace can be accepted or normalized before dispatch. Local stdlib request validation raises `http.client.InvalidURL` outside the actual CLI for the reproduced empty-userinfo and invalid-path cases. Normal relative, query-only and signed-query controls preserve their exact bytes.
+
+The controls use authored responses and local request construction only: no socket, network request, real download, target execution or unallowlisted contacted destination is claimed. A separate narrow correction is in progress and is **not part of accepted Phase 7 source**. Original scripts/results and the six-file manifest are preserved under `verification/winpairs-url-peer-*` (manifest SHA-256 `031bd386e3c5041e89c59115ff7d23f2626b66ecf0abc982e77e8330506dc8f2`). The baseline static table remains a historical classification with stated limits; this finding supplies later evidence, not a rewritten clean scan.

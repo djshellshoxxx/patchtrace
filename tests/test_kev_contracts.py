@@ -147,6 +147,52 @@ def test_entry_keeps_visible_unusual_text():
     assert make_entry(short_description=text).short_description == text
 
 
+@pytest.mark.parametrize('text', [
+    '', 'ordinary ASCII text', 'punctuation !"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~',
+    'café', 'cafe\u0301', 'Ελληνικά', 'emoji \U0001f642', 'replacement \ufffd',
+    'internal\u00a0space', 'internal\u202fspace'],
+    ids=['empty', 'ascii', 'punctuation', 'accent', 'combining-accent', 'greek', 'emoji',
+         'replacement', 'internal-nbsp', 'internal-narrow-space'])
+def test_entry_text_preserves_accepted_characters_exactly(text):
+    entry = make_entry(notes=text)
+    assert entry.notes == text and entry.model_dump()['notes'] == text
+
+
+@pytest.mark.parametrize('codepoint', [
+    *range(0x20), 0x7f, 0x80, 0x9f, 0xad, 0x61c, 0x180e, 0x200b, 0x200f,
+    0x2028, 0x2029, 0x202a, 0x202e, 0x2060, 0x206f, 0xfeff,
+    0xfff9, 0xfffb, 0xe0000, 0xe007f], ids=lambda value: f'U+{value:04X}')
+def test_entry_text_rejects_embedded_controls_and_unsafe_unicode(codepoint):
+    fields = entry_fields(notes=f'before{chr(codepoint)}after')
+    with pytest.raises(ValidationError) as caught:
+        KevEntry(**fields, entry_digest=SHA_A)
+    errors = caught.value.errors()
+    assert len(errors) == 1 and errors[0]['loc'] == ('notes',) and errors[0]['type'] == 'value_error'
+    assert str(errors[0]['ctx']['error']) == (
+        'text must be one line of plain text without surrounding space or control characters')
+
+
+@pytest.mark.parametrize('codepoint', [0xd800, 0xdfff], ids=['high-surrogate', 'low-surrogate'])
+def test_entry_text_rejects_lone_surrogates_at_the_string_boundary(codepoint):
+    with pytest.raises(ValidationError) as caught:
+        KevEntry(**entry_fields(notes=f'before{chr(codepoint)}after'), entry_digest=SHA_A)
+    errors = caught.value.errors()
+    assert len(errors) == 1 and errors[0]['loc'] == ('notes',) and errors[0]['type'] == 'string_unicode'
+
+
+@pytest.mark.parametrize('padding', [' ', '\t', '\n', '\r', '\u00a0', '\u2007', '\u202f'],
+                         ids=['space', 'tab', 'lf', 'cr', 'nbsp', 'figure-space', 'narrow-space'])
+@pytest.mark.parametrize('side', ['leading', 'trailing'])
+def test_entry_text_rejects_surrounding_ascii_and_unicode_whitespace(padding, side):
+    text = padding + 'visible text' if side == 'leading' else 'visible text' + padding
+    with pytest.raises(ValidationError) as caught:
+        KevEntry(**entry_fields(notes=text), entry_digest=SHA_A)
+    errors = caught.value.errors()
+    assert len(errors) == 1 and errors[0]['loc'] == ('notes',) and errors[0]['type'] == 'value_error'
+    assert str(errors[0]['ctx']['error']) == (
+        'text must be one line of plain text without surrounding space or control characters')
+
+
 # --- clean_text ---------------------------------------------------------------------------------------------
 
 @pytest.mark.parametrize(('raw', 'expected'), [

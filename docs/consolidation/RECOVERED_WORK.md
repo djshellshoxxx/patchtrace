@@ -6,6 +6,11 @@ fetched branch and records the pinned comparison baselines. No branch deletion,
 PR closure, release, deployment or remote ref mutation is authorized by this
 record.
 
+Phase 7 accepted local source is `8efb7a45`, with 866 tracked test files.
+Published Phase 6 remains `eb94510b`; the new combined diagnostic is running.
+The source-specific additions below do not revise the frozen census or establish
+main integration. [Current handoff](HANDOFF.md).
+
 ## Installer receipt in milestone notes
 
 **Original source:** `claude/awesome-ramanujan-o3pxx3-ci`, commit
@@ -61,7 +66,7 @@ holds continue to govern integration.
 
 | Priority | Scope | Concrete evidence | Next action |
 |---|---|---|---|
-| High | Forced strings-export ownership | The retained PR319 audit records source substitution and OSError cleanup races; its cancellation correction closes a different boundary. | Reproduce and repair in the exclusively owned security worktree, with current-source controls. |
+| High | Successful forced strings replacement | Fresh source and parent substitution remain reproduced. Phase 7 repairs no-force held-source publication and forced-failure foreign-stage cleanup. | Establish force-success ownership separately; preserve partial/revealed-stage and native limits. [Batch 7](RECOVERY_BATCH_7.md). |
 | Medium | SPEC-51 PE metadata caching | The historical missing-cache finding was implemented at `0bc41f6b` and integrated by `6bf57557`; 840 affected passes and two native Windows skips are recorded. | Retain native WinVerifyTrust and aggregate acceptance as separate remaining gates. |
 | Medium | Broad PR316/318 consolidation | The broad branch carries inventory, package admission, native diagnostics and qualification work beyond PR319. | Preserve the mixed stack; resolve actual current failures and recover compatible slices with independent review. |
 | Deferred pending evidence | Historical research and native behavior | Patch equivalence and source-path comparisons do not establish real adapter accuracy, Windows acceptance or current contracts. | Continue scoped semantic comparison and maintain the original source identities and failure evidence. |
@@ -129,3 +134,39 @@ and later 254 affected passes on combined `5208c758` with Pydantic 2.14.2/core
 2.50.2. These overlapping selections are not summed. [Exact results and archive
 identities](TEST_RESULTS.md). Pydantic and test-only backup cleanup follow-ups
 have separate sources and do not imply further historical-branch closure.
+
+## Phase 7 — narrow retained-source recovery and new repairs
+
+[Batch 7](RECOVERY_BATCH_7.md) recovers the reusable owned-publication approach
+from retained PR319 `a56ab13aaf9916fc12bea70ba1494075991b7f09`. Current-source and
+retained-source controls distinguish the no-force improvement from the force
+defects that both versions retained. The reviewed port also prevents creation
+above an unverified anchor on Linux and Windows traversal paths, types unsupported
+capability failures including `NotImplementedError`, and removes forced-failure
+pathname unlink. Source `397abd44325ccf6d37aa1f95c86383e305fb3b0e`, integrated by
+`cf55415587f996f54a9d957a48d57818ebe9ff42`, passes 74 focused and 115 integrated
+CLI/UI checks. Fresh successful-force source and parent substitution failures
+remain preserved; native Windows and empty-export metadata are not qualified.
+The [strings archive](evidence/strings-ownership-20261119.zip) binds the original
+sources, failed controls, final review and explicit limits.
+
+The following additions are new scoped repairs or an optimization, not recovery
+of an already-correct historical implementation:
+
+| Accepted source / integration | Reviewed scope and evidence |
+| --- | --- |
+| `45828168` / `541bf83c` | [Batch 8](RECOVERY_BATCH_8.md): sampler success/error/unavailable accounting, three successful observations, retained partial endpoints and bounded JUnit body admission. Final 111 passes/3 existing unshare skips follow the original false pass and independent partial-Windows-output finding. |
+| `7d4aead2` | [Build-tool HTTPS](BUILD_HTTPS_REVIEW_20261119.md): per-dispatch validation, bounded redirects, response closure and correct header/error handling. Final 289 passes/1 historical wheel skip; that exact wheel test subsequently passes. |
+| `c84ca5a2` / `8efb7a45` | [KEV printable-ASCII fast path](KEV_TEXT_VALIDATION_PERFORMANCE_20261119.md): 386 passes/77 new semantic cases and mixed but positive paired local medians. Digest behavior and the strict one-second budget remain unchanged; no Windows-fix claim. |
+
+All 70 baseline tools findings are classified in the
+[tools review archive](evidence/tools-static-review-20261119.zip). The current
+134-finding scan remains non-clean, with an added guarded HTTPS S310 and removed
+swallowed-sampler S110. Focused selections overlap and are not an aggregate count.
+
+The frozen 320-head/309-PR census and its 139 semantic-review dispositions remain
+unchanged. Later PR319 `8d130aef` is a separately observed head, not the retained
+source `a56ab13a` reviewed for this recovery. Neither the narrow port nor the new
+repairs close their parent branches, adopt broad PR316/318/320 scope, or qualify
+main. [Promotion history](MAIN_MERGE_LOG.md) and [actual test results](TEST_RESULTS.md)
+retain these distinctions.

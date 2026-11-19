@@ -268,9 +268,9 @@ def download(url: str, destination: Path, max_bytes: int) -> None:
     """The only network access in the builder: HTTPS GET into `destination`, bounded by `max_bytes`."""
     if not url.startswith('https://'):
         _fail('PT-BUNDLE-FETCH', f'refusing non-HTTPS URL {url}')
-    request = urllib.request.Request(url, headers={'User-Agent': 'patchtrace-backend-builder/1'})
     try:
-        with urllib.request.urlopen(request, timeout=120) as response:  # noqa: S310 (https checked above)
+        request = urllib.request.Request(url, headers={'User-Agent': 'patchtrace-backend-builder/1'})
+        with _load_sibling('verify_backend_pins').open_https(request, timeout=120) as response:
             if not response.geturl().startswith('https://'):
                 _fail('PT-BUNDLE-FETCH', f'redirect left HTTPS for {url}')
             total = 0
@@ -280,7 +280,7 @@ def download(url: str, destination: Path, max_bytes: int) -> None:
                     if total > max_bytes:
                         _fail('PT-BUNDLE-PIN-MISMATCH', f'{url} is larger than the pinned size')
                     output.write(chunk)
-    except (urllib.error.URLError, TimeoutError, OSError) as error:
+    except (urllib.error.URLError, TimeoutError, OSError, ValueError) as error:
         raise BundleBuildError('PT-BUNDLE-FETCH', f'cannot download {url}: {error}') from None
 
 

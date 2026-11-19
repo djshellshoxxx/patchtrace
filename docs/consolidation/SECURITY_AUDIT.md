@@ -1,8 +1,9 @@
 # Continuation security and integrity review — 2026-11-19
 
 This is a scoped review of the continuation from main `fdc2696c`, with reviewed
-runtime/dependencies integrated through `5208c758`, with test-only follow-up
-`5aebd98f` and evidence checkpoint `e430309a`. It records concrete findings,
+runtime/dependencies integrated through Phase 7 source `8efb7a45`, with 866 test
+files. Phase 6's `5208c758`, test-only `5aebd98f` and evidence checkpoint
+`e430309a` remain historical records. This document records concrete findings,
 repairs and limits. It is not a completed audit of all retained branches or a
 native Windows qualification. No target binary was executed for these authored
 parser/cache controls.
@@ -35,10 +36,12 @@ See [parser details](parser-integrity-20261119.md) and
 
 ## Open security and integrity work
 
-The [supplemental static audit](STATIC_AUDIT.md) classifies the original 65 Ruff
-security warnings, including 21 SQL sites. That historical baseline comparison
-matched; later Phase 4 and Phase 6 source scans each have 64 findings. None of
-those observations establishes absence of defects. No suppression was added. Actual dependency advisory auditing is recorded separately in Phase 6 below. The attempt-history observability
+The [supplemental static audit](STATIC_AUDIT.md) retains the original 65 Ruff
+security warnings, including 21 SQL sites. Later Phase 4 and Phase 6 source scans
+each have 64 findings. All 70 baseline tools findings are now classified; the
+fresh Phase 7 combined scan still has 134 findings, 64 source plus 70 tools, with
+one added guarded S310 and one removed swallowed-sampler S110. These observations
+do not establish absence of defects. No suppression was added. Actual dependency advisory auditing is recorded separately in Phase 6 below. The attempt-history observability
 slice is corrected in Phase 4 below; the later bounded retention repair is accepted in Phase 6. The first complete-suite attempt ended 137/SIGKILL without
 a final report, so focused repairs do not yet qualify the aggregate.
 
@@ -51,13 +54,13 @@ unrepresentable UTC instants while preserving original timestamp text. Initial
 20 failures/10 controls and a further 10 exactness failures precede 124 final
 passes in 6.70s. See [source, caller and issue evidence](RECOVERY_BATCH_3.md).
 
-**Forced strings export remains open.** The retained PR319 audit records source
-substitution and OSError cleanup races. Its cancellation correction addresses a
-different boundary; neither the parser nor cache commits close these races.
-Reproduce the current failure schedules, establish ownership of any file being
-published or removed, and verify that cleanup cannot replace or remove a foreign
-file. Retain the separate no-clobber and empty-export metadata work recorded in
-[the prior consolidation review](../qa/branch-consolidation-20261118.md).
+**Successful forced strings replacement remains open.** Fresh source and parent
+substitution schedules still publish foreign bytes. Phase 7 repairs no-force
+held-source publication and forced-failure cleanup, including preservation of a
+foreign replacement stage; it does not establish force-success ownership. Failed
+force operations can retain partial or revealed stage bytes. Empty-export
+metadata remains separate from this publication repair. [Batch 7](RECOVERY_BATCH_7.md)
+preserves the fixed and unresolved schedules and native qualification limits.
 
 **Research eligibility is repaired locally; aggregate acceptance is pending.**
 The shared scorer now admits only `facts: verified`, with other values BLOCKED
@@ -157,9 +160,10 @@ artifact SBOM. Dev/build/all-platform and native transitive graphs remain outsid
 this audit. Qualify a supported patched artifact or another evidenced disposition
 before closing the native dependency blocker.
 
-Fresh supplemental source findings remain 64 with no normalized additions/removals
-versus frozen `520b524b`; the separate 70 tools findings require review. Prior
-source classifications do not cover all 134 combined results. [Static record](STATIC_AUDIT.md).
+At Phase 6, supplemental source findings remained 64 with no normalized additions/removals
+versus frozen `520b524b`; the separate 70 tools findings still required review.
+Phase 7 dispositions and the later changed-site comparison are recorded below.
+[Static record](STATIC_AUDIT.md).
 The verified [retention archive](evidence/attempt-retention-20261119.zip) preserves
 these raw scans and the independent/integrated checks.
 
@@ -168,5 +172,38 @@ The final three backup-test teardown errors were independently reproduced on
 current dependencies, then fixed only through mock lifetime at `5aebd98f`; 41
 checks pass. [Separate harness receipt](evidence/backup-scandir-harness-20261119.zip).
 No frozen result is rewritten; external AF_UNIX constructor EPERM remains.
-Strings-export recovery and build-tool HTTPS redirect triage are ongoing separate
-work, not completed repairs credited by this checkpoint.
+Strings-export recovery and build-tool HTTPS redirect triage were separate pending
+work at that checkpoint; their accepted Phase 7 boundaries follow.
+
+## Phase 7 — reviewed publication and observation boundaries
+
+Accepted local source is `8efb7a45`; published draft PR #322 remains the earlier
+Phase 6 `eb94510b`. No remote result for that earlier head qualifies these repairs.
+
+| Boundary | Accepted correction and evidence | Retained limit |
+| --- | --- | --- |
+| Strings publication | `397abd44` / `cf554155`: held-source no-force publication, verified-anchor creation on both traversal paths and typed unsupported-capability refusal; forced failure no longer unlinks a pathname it cannot own. 74 focused and 115 integrated CLI/UI passes. [Batch 7](RECOVERY_BATCH_7.md). | Successful forced source/parent substitution remains reproduced. Failure residue and native Windows qualification remain explicit. |
+| Connection observation | `45828168` / `541bf83c`: require three successful observations, count failed/unavailable attempts and preserve observed endpoints, including Windows stdout on nonzero/timeout failures. Independent false-pass probes preceded three added regressions. [Batch 8](RECOVERY_BATCH_8.md). | Sampling is incomplete; named-PID observation is not process-tree proof. Positive OS-block controls and unshare/native gates are unchanged. |
+| JUnit admission | The same Batch 8 reads at most 8 MiB plus one sentinel byte per body before XML parsing, preserving prior reports on admission failure. Final four-file selection: 111 passed/3 existing unshare skips. | This is a per-body bound; aggregate file counts/outcome maps and broader parser/runtime limits are separate. |
+| Build-tool HTTPS | `7d4aead2`: validate every dispatch, bound redirects, close responses without draining, rebuild Host and remove credentials across origins; normalize malformed authority/InvalidURL failures. 289 passed/1 historical wheel skip, then that exact wheel test passed. [Review](BUILD_HTTPS_REVIEW_20261119.md). | Live vendor/CDN and native acceptance remain unqualified; existing pins and payload budgets were not loosened. |
+| KEV text validation | `c84ca5a2` / `8efb7a45`: only printable ASCII bypasses the unchanged unsafe-Unicode scan after the existing strip rejection. 386 passes/77 added semantic cases and independent parity/public-model checks. [Report](KEV_TEXT_VALIDATION_PERFORMANCE_20261119.md). | Digest checks and strict one-second budget remain; local gains do not establish a Windows fix. |
+
+The [tools dispositions](evidence/tools-static-review-20261119.zip) classify all
+70 baseline findings. The fresh scan remains non-clean at 134 findings: one shared
+HTTPS opener S310 is added and the swallowed sampler S110 is removed. The changed
+sites have independent red/green review; there is no blanket clean-security claim.
+Configured Ruff, pip check and all 16 generators pass at the same source; all 301
+schemas plus the CSAF table are unchanged. [Gate evidence](evidence/phase7-gates-20261119.zip).
+
+The new combined diagnostic collected 866 files/23,529 nodes and is running.
+Group 001's 181 passes/70 setup errors came from an omitted temporary parent;
+the correction and original result are preserved separately. The earlier
+856-file diagnostic remains FAILED. Neither run supplies a full current-source
+pass. Seven native Qt findings, native trust/packages, full index provenance,
+manual acceptance and the 139 retained semantic-review dispositions remain open.
+
+### Subsequent bounded WinPairs URL finding
+
+Read-only authored probes against the unchanged `8efb7a45` helper (Git blob `d55f02578680f0234da6ebdbcd4b456182169d06`) confirmed remaining gaps at the previously qualified-as-limited caller-guarded S310 site. Malformed ports/brackets/NFKC authorities escape as `ValueError`; empty userinfo passes the truthiness check; raw controls and whitespace can be accepted or normalized before dispatch. Local stdlib request validation raises `http.client.InvalidURL` outside the actual CLI for the reproduced empty-userinfo and invalid-path cases. Normal relative, query-only and signed-query controls preserve their exact bytes.
+
+The controls use authored responses and local request construction only: no socket, network request, real download, target execution or unallowlisted contacted destination is claimed. A separate narrow correction is in progress and is **not part of accepted Phase 7 source**. Original scripts/results and the six-file manifest are preserved under `verification/winpairs-url-peer-*` (manifest SHA-256 `031bd386e3c5041e89c59115ff7d23f2626b66ecf0abc982e77e8330506dc8f2`). The baseline static table remains a historical classification with stated limits; this finding supplies later evidence, not a rewritten clean scan.

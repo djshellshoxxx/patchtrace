@@ -178,7 +178,28 @@ patchtrace strings explain PROJECT --id STRING_ID --json                        
 patchtrace strings scan    PROJECT --builtin [--min-length N] --json            # in-process scan, no FLOSS
 patchtrace strings export  PROJECT --out FILE --format json|csv [--scope changed|all] [--show-secrets] [--force]
 ```
-Export is atomic, redacted by default, never overwrites without `--force`, and records basis and lineage.
+Export is redacted by default and records basis and lineage. Publication has two explicit paths:
+
+- Without `--force`, the selected parent must already exist. Publication holds the source bytes and
+  the selected parent identity, creates the destination exclusively, and refuses any existing or
+  concurrently arriving destination, including one containing identical bytes. An unavailable
+  platform or filesystem capability returns `PT-STR-EXPORT`; there is no pathname-replacement
+  fallback. The reusable runtime boundary is `owned_publication.py`, recovered from the existing
+  PW-01 publication design. Linux and Windows implementations require their own qualification;
+  Linux results do not qualify Windows.
+- With `--force`, create an exclusive random stage, write and flush its bytes, then perform the
+  existing pathname-based replacement. This is atomic namespace replacement under stable path
+  ownership, but it does not bind the successful replacement to the originally opened source or
+  parent if another actor substitutes those names. That forced-replacement guarantee remains
+  unresolved and must not be inferred from the no-force implementation.
+- On forced failure, close only handles owned by the attempt. Do not unlink the stage through its
+  mutable pathname: it may name a foreign entry by then. A complete or partial stage can remain
+  for inspection. Ordinary I/O failures retain `PT-STR-EXPORT`; cancellation and other non-I/O
+  exceptions propagate unchanged. Successful replacement normally consumes its stage.
+
+These publication rules leave the JSON/CSV formats, redaction, basis, lineage and export digest
+unchanged. Verification includes concurrent destinations, substituted source/parent names,
+unsupported capabilities, descriptor-transfer failures and primary-exception preservation.
 
 GUI (`ui_strings.py`, Qt only; logic in `strings/view_model.py`). **Where**: dock `strings.dock` (objectName), tabified with the Evidence dock on the right (`tabifyDockWidget`), action in the Analysis menu, `Ctrl+Shift+T` (free: used are Ctrl+N O I E S R, Ctrl+Shift+E, planned Ctrl+Shift+F/G); uses the E-2 panel registry when merged, else the `EvidenceController` pattern (own controller, generation counters, unparented registered threads, `WindowPort` for project and `select_match`).
 **Widgets**: source bar (source combo Built-in scan/FLOSS, Scan, FLOSS path + Browse + Probe + pin status, "Run with emulation..." opening a consent dialog that defaults to Cancel, Cancel, elapsed indicator); basis banner (PlainLabel with harmonizations or the block reason and "Re-scan older with newer's settings"); filter bar (change, type buttons, side, cue, min length, text filter, function chip set from the navigator, scope Differences (diff view, default) / All strings (inventory), "Hide noise-like strings (N hidden)"); `QTableView` with columns Change, String, Type, Older, Newer, Function, Cues, Source; detail tabs Summary / Links / Provenance in read-only `QPlainTextEdit` (an Edited row shows both values with plain markers `[-old-]` and `{+new+}`, a look-alike row lists the differing code points with their Unicode names); buttons Open function (needs `match_id`), Open in hex (older/newer), Copy safe, Copy exact...; status line with coverage. The navigator gets a context action "Strings in this function" (A5) that sets the function chip (W4).
