@@ -3,8 +3,8 @@
 ## 2026-11-19 Windows QA fixture portability
 
 - [x] Preserve exact `771e5a77` Windows full QA: 51 failed, 25,155 passed, 150 skipped, two expected failures; separate publication subset 133 passed/four skips.
-- [ ] Repair exact authored source/requirements bytes and isolated Git fixtures with retained portable red controls; preserve source/receipt validators and all original refusal assertions.
-- [ ] Canonicalize only Linux inventory relative-name spelling; prove required resources and smoke failures still block archive creation.
+- [x] Repair exact authored source/requirements bytes and isolated Git fixtures with retained portable red controls; preserve source/receipt validators and all original refusal assertions.
+- [x] Canonicalize only Linux inventory relative-name spelling; prove required resources and smoke failures still block archive creation in authored portable controls.
 - [ ] Independently review corrected source and qualify the resulting exact head on Windows. Original hosted failures, unresolved formatter observations and core ownership groups stay separate.
 
 ## 2026-11-18 autonomous consolidation checkpoint
