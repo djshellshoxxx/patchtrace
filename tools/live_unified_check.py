@@ -28,16 +28,20 @@ The recorded test fixtures (tests/fixtures/unified/*.ir.jsonl, *.pe.json, PROVEN
 from __future__ import annotations
 
 import argparse
+import base64
 import collections
 import hashlib
+import io
 import json
 import os
 import platform
 import shutil
+import stat
 import sys
 import tempfile
 import threading
 import time
+import uuid
 from collections.abc import Callable, Sequence
 from datetime import UTC, datetime
 from pathlib import Path
@@ -55,6 +59,19 @@ from patchtrace.unified.ir.ingest import ExpectedSide, ingest
 from patchtrace.unified.ir.pe_tables import read_pe_tables
 
 EXTRACT_TIMEOUT_S = 1200
+DIAGNOSTIC_FILE_BYTES = 12 * 1024 ** 2
+DIAGNOSTIC_PAIR_BYTES = 48 * 1024 ** 2
+DIAGNOSTIC_ATTEMPTS = 4
+DIAGNOSTIC_JSONL_BYTES = 4 * 1024 ** 2
+DIAGNOSTIC_JSONL_RECORDS = 4098
+DIAGNOSTIC_IR_BYTES = 4 * 1024 ** 2
+DIAGNOSTIC_IR_ROWS = 32768
+DIAGNOSTIC_FN_ROWS = 4096
+DIAGNOSTIC_FN_BYTES = 512 * 1024
+DIAGNOSTIC_ROW_BYTES = 16 * 1024
+DIAGNOSTIC_META_BYTES = 128 * 1024
+DIAGNOSTIC_SECONDS = 2
+DIAGNOSTIC_SQL_STEPS = 2_000_000
 
 # Runs inside the external Python (pyghidra + Ghidra); stdlib otherwise. Hashes every non-external function of a GZF with
 # Ghidra's own function hashers and writes {rva: {name, bytes, insns, mnem}}.
@@ -296,6 +313,256 @@ def write_json(path: Path, document: object, *, sort: bool = True, indent: int |
         handle.write('\n')
 
 
+class _DiagnosticStop(Exception):
+    def __init__(self, reason: str):
+        self.reason = reason
+        super().__init__(reason)
+
+
+def _diagnostic_report(reason: str, name: str = '') -> None:
+    """Diagnostics and their reporting must never replace the original gate result."""
+    try:
+        sys.stderr.write(f'INFO diagnostic {reason[:40]} {name[:120]}\n')
+    except BaseException:
+        return
+
+
+def _diagnostic_json(value, limit: int) -> bytes:
+    result = bytearray()
+    encoder = json.JSONEncoder(sort_keys=True, ensure_ascii=False, allow_nan=False, separators=(',', ':'))
+    for text in encoder.iterencode(value):
+        remaining = limit - len(result)
+        if len(text) > remaining:
+            raise _DiagnosticStop('byte-cap')
+        chunk = text.encode('utf-8')
+        if len(chunk) > remaining:
+            raise _DiagnosticStop('byte-cap')
+        result.extend(chunk)
+    return bytes(result)
+
+
+def _diagnostic_read(path: Path, limit: int, check) -> bytes:
+    check()
+    if not stat.S_ISREG(path.lstat().st_mode):
+        raise _DiagnosticStop('nonregular')
+    result = bytearray()
+    with path.open('rb') as stream:
+        while True:
+            check()
+            chunk = stream.read(min(65536, limit + 1 - len(result)))
+            if not chunk:
+                break
+            result.extend(chunk)
+            if len(result) > limit:
+                raise _DiagnosticStop('byte-cap')
+    check()
+    return bytes(result)
+
+
+def _diagnostic_write(path: Path, data: bytes, check=None) -> None:
+    with path.open('xb') as stream:
+        for offset in range(0, len(data), 65536):
+            if check is not None:
+                check()
+            chunk = data[offset:offset + 65536]
+            if stream.write(chunk) != len(chunk):
+                raise OSError('incomplete diagnostic write')
+
+
+def _diagnostic_blob(raw: bytes) -> dict:
+    return {'status': 'complete', 'bytes': len(raw), 'sha256': hashlib.sha256(raw).hexdigest(),
+            'encoding': 'base64', 'data_base64': base64.b64encode(raw).decode('ascii')}
+
+
+def _diagnostic_refusal(reason: str, *, error: bool = False) -> dict:
+    return {'status': 'error' if error else 'omitted', 'reason': reason}
+
+
+class _RunDiagnostics:
+    """Four nonretryable observation slots. No native calls or changes to Checks/acceptance."""
+
+    def __init__(self, out: Path, work: Path, tag: str, *, clock=time.monotonic) -> None:
+        self.out, self.work, self.tag, self.clock = out, work, tag, clock
+        self.invocation = uuid.uuid4().hex
+        self.attempts: set[tuple[str, int]] = set()
+        self.remaining = DIAGNOSTIC_PAIR_BYTES
+
+    def _metadata(self, side, result, check) -> dict:
+        try:
+            check()
+            manifest = result['manifest']
+            if manifest.artifact_sha256 != side.sha256 or manifest.producer.mode != 'analyze':
+                return _diagnostic_refusal('artifact-identity', error=True)
+            pair = ({'older': side.sha256, 'newer': side.other_sha256} if side.label == 'older'
+                    else {'older': side.other_sha256, 'newer': side.sha256})
+            sources = {}
+            for name, path in [('tool', __file__), ('schema', schema.__file__), ('ingest', ingest.__code__.co_filename)]:
+                sources[name + '_sha256'] = hashlib.sha256(
+                    _diagnostic_read(Path(path), 256 * 1024, check)).hexdigest()
+            metadata = {'status': 'complete', 'pair': pair, 'tag': self.tag, 'os': platform.system(),
+                        'python': platform.python_version(), 'source': sources,
+                        'script_sha256': manifest.producer.script_sha256,
+                        'manifest': manifest.model_dump(mode='json')}
+            _diagnostic_json(metadata, DIAGNOSTIC_META_BYTES)
+            return metadata
+        except _DiagnosticStop as exc:
+            return _diagnostic_refusal('metadata-cap' if exc.reason == 'byte-cap' else exc.reason)
+        except Exception:
+            return _diagnostic_refusal('metadata-error', error=True)
+
+    def _jsonl(self, result, check) -> dict:
+        check()
+        raw = result['jsonl']
+        if type(raw) is not bytes:
+            return _diagnostic_refusal('invalid-jsonl', error=True)
+        if len(raw) > DIAGNOSTIC_JSONL_BYTES:
+            return _diagnostic_refusal('byte-cap')
+        count = 0
+        for _line in io.BytesIO(raw):
+            check()
+            count += 1
+            if count > DIAGNOSTIC_JSONL_RECORDS:
+                return _diagnostic_refusal('record-cap')
+        return {**_diagnostic_blob(raw), 'records': count}
+
+    def _functions(self, connection, total: int, check) -> dict:
+        projection = {'status': 'complete', 'columns': list(schema.COLUMNS['fn']), 'source_rows': total,
+                      'retained_rows': 0, 'rows': []}
+        # Reserve fixed status/reason/count growth; retained rows are accumulated only inside the remaining allowance.
+        allowance = DIAGNOSTIC_FN_BYTES - len(_diagnostic_json(projection, DIAGNOSTIC_FN_BYTES)) - 128
+        used, reason = 0, None
+        for row in schema.table_rows(connection, 'fn'):
+            check()
+            if len(projection['rows']) >= DIAGNOSTIC_FN_ROWS:
+                reason = 'row-cap'
+                break
+            try:
+                encoded = _diagnostic_json(row, DIAGNOSTIC_ROW_BYTES)
+            except _DiagnosticStop:
+                reason = 'row-byte-cap'
+                break
+            cost = len(encoded) + int(bool(projection['rows']))
+            if used + cost > allowance:
+                reason = 'projection-byte-cap'
+                break
+            projection['rows'].append(row)
+            used += cost
+        projection['retained_rows'] = len(projection['rows'])
+        if reason is not None:
+            projection.update(status='prefix' if projection['rows'] else 'omitted', reason=reason)
+        _diagnostic_json(projection, DIAGNOSTIC_FN_BYTES)
+        return projection
+
+    def _ir(self, side, ordinal: int, result, check) -> tuple[dict, dict]:
+        connection = None
+        progress_reason = None
+        try:
+            raw = _diagnostic_read(result['directory'] / schema.DB_NAME, DIAGNOSTIC_IR_BYTES, check)
+            if hashlib.sha256(raw).hexdigest() != result['manifest'].file_sha256:
+                raise _DiagnosticStop('hash-mismatch')
+            snapshot = self.work / f'diagnostic-{self.invocation}-{side.label}-{ordinal}.sqlite3'
+            _diagnostic_write(snapshot, raw, check)
+            check()
+            # Initial metadata SQL belongs to the unchanged helper; our progress scope starts only after it returns.
+            connection = schema.open_readonly(snapshot)
+            check()
+            steps, quantum = 0, min(1000, max(1, DIAGNOSTIC_SQL_STEPS))
+
+            def progress():
+                nonlocal steps, progress_reason
+                steps += quantum
+                try:
+                    check()
+                except _DiagnosticStop:
+                    progress_reason = 'deadline'
+                if steps >= DIAGNOSTIC_SQL_STEPS:
+                    progress_reason = progress_reason or 'query-cap'
+                return int(progress_reason is not None)
+
+            connection.set_progress_handler(progress, quantum)
+            counts = {}
+            total = 0
+            for table in schema.TABLES:
+                check()
+                counts[table] = connection.execute(f'SELECT COUNT(*) FROM {table}').fetchone()[0]
+                total += counts[table]
+                if total > DIAGNOSTIC_IR_ROWS:
+                    raise _DiagnosticStop('row-cap')
+            functions = self._functions(connection, counts['fn'], check)
+            check()
+            return {**_diagnostic_blob(raw), 'row_counts': counts}, functions
+        except _DiagnosticStop as exc:
+            error = exc.reason not in {'byte-cap', 'row-cap'}
+            return _diagnostic_refusal(exc.reason, error=error), _diagnostic_refusal(exc.reason, error=error)
+        except Exception:
+            reason = progress_reason or 'snapshot-error'
+            return _diagnostic_refusal(reason, error=True), _diagnostic_refusal(reason, error=True)
+        finally:
+            if connection is not None:
+                try:
+                    connection.close()
+                except Exception:
+                    _diagnostic_report('snapshot-close-error')
+
+    def capture(self, side, ordinal: int, result) -> None:
+        name = ''
+        try:
+            slot = (side.label, ordinal)
+            if side.label not in {'older', 'newer'} or type(ordinal) is not int or ordinal not in {1, 2}:
+                _diagnostic_report('invalid-slot')
+                return
+            if slot in self.attempts or len(self.attempts) >= DIAGNOSTIC_ATTEMPTS:
+                _diagnostic_report('attempt-limit')
+                return
+            self.attempts.add(slot)
+            if self.remaining < DIAGNOSTIC_FILE_BYTES:
+                _diagnostic_report('pair-byte-cap')
+                return
+            self.remaining -= DIAGNOSTIC_FILE_BYTES
+            name = f'live-unified-diagnostics-{self.invocation}-{side.label}-analyze-{ordinal}.json'
+            deadline = self.clock() + DIAGNOSTIC_SECONDS
+
+            def check():
+                if self.clock() >= deadline:
+                    raise _DiagnosticStop('deadline')
+
+            doc = {'contract': 'live-unified-diagnostics/1', 'invocation_id': self.invocation,
+                   'side': side.label, 'analyze_ordinal': ordinal, 'complete': False}
+            doc['metadata'] = self._metadata(side, result, check)
+            try:
+                doc['jsonl'] = self._jsonl(result, check)
+            except _DiagnosticStop as exc:
+                doc['jsonl'] = _diagnostic_refusal(exc.reason)
+            doc['ir'], doc['functions'] = self._ir(side, ordinal, result, check)
+            expired = self.clock() >= deadline
+            if expired:
+                # Once exhausted, attempt only a small failure envelope, never another payload/query/expansion.
+                for key in ('jsonl', 'ir', 'functions'):
+                    if doc[key]['status'] in {'complete', 'prefix'}:
+                        doc[key] = _diagnostic_refusal('deadline')
+            metadata_view = {**doc, 'jsonl': {k: v for k, v in doc['jsonl'].items() if k != 'data_base64'},
+                             'ir': {k: v for k, v in doc['ir'].items() if k != 'data_base64'},
+                             'functions': {'status': doc['functions']['status']}}
+            try:
+                _diagnostic_json(metadata_view, DIAGNOSTIC_META_BYTES)
+            except _DiagnosticStop:
+                doc['metadata'] = _diagnostic_refusal('metadata-cap')
+                metadata_view['metadata'] = doc['metadata']
+                _diagnostic_json(metadata_view, DIAGNOSTIC_META_BYTES)
+            doc['complete'] = all(doc[key]['status'] == 'complete' for key in ('metadata', 'jsonl', 'ir', 'functions'))
+            data = _diagnostic_json(doc, DIAGNOSTIC_FILE_BYTES - 1) + b'\n'
+            try:
+                _diagnostic_write(self.out / name, data, None if expired else check)
+            except FileExistsError:
+                _diagnostic_report('file-collision', name)
+            except Exception:
+                _diagnostic_report('write-error', name)
+            else:
+                _diagnostic_report('saved' if doc['complete'] else 'saved-incomplete', name)
+        except Exception:
+            _diagnostic_report('capture-error', name)
+
+
 class Side:
     """One DLL: verified bytes, PE tables, and the helpers that extract + ingest it."""
 
@@ -352,11 +619,15 @@ def function_lines(jsonl: bytes) -> list[dict]:
     return [json.loads(line) for line in jsonl.decode('utf-8').splitlines()[1:-1]]
 
 
-def check_side(side: Side, checks: Checks, args: argparse.Namespace) -> tuple[dict, dict]:
+def check_side(side: Side, checks: Checks, args: argparse.Namespace, *, diagnostics=None) -> tuple[dict, dict]:
     """(public result for the JSON file, the first analyze run with its files for later steps)."""
     label = side.label
     first = side.run('analyze')
+    if diagnostics is not None:
+        diagnostics.capture(side, 1, first)
     second = side.run('analyze')
+    if diagnostics is not None:
+        diagnostics.capture(side, 2, second)
     manifest = first['manifest']
     checks.check(f'L1 {label}: two analyze runs give the same content_digest',
                  manifest.content_digest == second['manifest'].content_digest,
@@ -506,12 +777,17 @@ def main(argv: Sequence[str] | None = None) -> int:
     results: dict = {'os': platform.system(), 'machine': platform.machine(), 'python': platform.python_version(),
                      'script_sha256': extract.script_sha256(), 'sides': {}}
     try:
+        try:
+            diagnostics = _RunDiagnostics(args.out, work, args.tag)
+        except Exception:
+            _diagnostic_report('initialization-error')
+            diagnostics = None
         sides['older'] = Side('older', args.old.resolve(), file_sha256(args.new), backend, work)
         sides['newer'] = Side('newer', args.new.resolve(), file_sha256(args.old), backend, work)
         checks.check('L0 the self-check finds every Ghidra class the script needs',
                      runner.self_check(backend).get('ok') is True)
         for name, side in sides.items():
-            results['sides'][name], firsts[name] = check_side(side, checks, args)
+            results['sides'][name], firsts[name] = check_side(side, checks, args, diagnostics=diagnostics)
         if not args.no_ghidriff:
             ghidriff_check(args, backend, sides, results, checks, work)
         if args.other_results:
