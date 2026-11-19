@@ -1,8 +1,8 @@
 """Export of a strings delta as JSON or CSV (spec WB3 s8, WB3-S6). Pure but for the final file write.
 
 Redacted unless the caller passes the revealed values; the document records the basis digests, the harmonized
-settings and the lineage groups, so a file can be traced to the extraction it came from. The write is atomic (a
-temporary file in the same folder, then a rename) and never replaces an existing file without `force`.
+settings and the lineage groups, so a file can be traced to the extraction it came from. No-force publication
+binds the held source and parent. Linux forced replacement retains an explicit final pathname race.
 """
 from __future__ import annotations
 
@@ -11,11 +11,26 @@ import hashlib
 import io
 import json
 import os
+import secrets
+import stat
+import sys
 from collections.abc import Mapping
+from contextlib import ExitStack
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Literal
 
+from ..owned_publication import (
+    OwnedPublicationError,
+    check_linux_parent,
+    directory_anchor,
+    file_identity,
+    linux_directory,
+    publish_bytes,
+    publish_windows,
+    verify_stage,
+    write_stage,
+)
 from .contracts import StringChange, StringsDelta, StringsError
 
 EXPORT_CONTRACT = 'strings-export/1'
@@ -93,21 +108,79 @@ def render(doc: dict, fmt: Format) -> bytes:
     return out.getvalue().encode('utf-8')
 
 
+def _write_new(path: Path, data: bytes) -> None:
+    """No stage pathname can substitute bytes or become an unsafe cleanup target."""
+    try:
+        target = Path(os.path.abspath(path))
+        anchor = directory_anchor(target.parent)  # the selected parent must already exist
+        publish_bytes(target, data, anchor=anchor)  # no reuse: identical content still refuses
+    except FileExistsError:
+        raise _fail(f'{path.name} already exists; pass --force to replace it') from None
+    except (OSError, OwnedPublicationError) as exc:
+        reason = (exc.strerror or type(exc).__name__) if isinstance(exc, OSError) else str(exc)
+        raise _fail(f'could not write {path.name}: {reason}') from None
+
+
+def _close_owned(descriptor: int, primary: BaseException | None) -> None:
+    """Close exactly this descriptor without replacing a primary failure."""
+    try:
+        os.close(descriptor)
+    except BaseException as exc:
+        if primary is None:
+            raise
+        primary.add_note(f'Export descriptor cleanup also failed: {type(exc).__name__}'[:160])
+
+
+def _replace_linux(target: Path, data: bytes) -> None:
+    anchor = directory_anchor(target.parent)
+    with ExitStack() as stack:
+        parent = linux_directory(target.parent, create=False, anchor=anchor)
+        stack.push(lambda _type, error, _trace: _close_owned(parent, error))
+        if not hasattr(os, 'O_TMPFILE'):
+            raise OwnedPublicationError('forced export requires Linux anonymous staging support')
+        descriptor = os.open('.', os.O_TMPFILE | os.O_RDWR | os.O_CLOEXEC, 0o600, dir_fd=parent)
+        stack.push(lambda _type, error, _trace: _close_owned(descriptor, error))
+        identity = write_stage(descriptor, data)
+        check_linux_parent(target.parent, parent, anchor=anchor)
+        stage = f'.{target.name}.{secrets.token_hex(16)}.tmp'
+        os.link(f'/proc/self/fd/{descriptor}', stage, dst_dir_fd=parent, follow_symlinks=True)
+        # A failed linked-stage admission or rename retains the named entry. No
+        # pathname unlink can prove that it still denotes our source atomically.
+        held = verify_stage(descriptor, data, identity)
+        named = os.stat(stage, dir_fd=parent, follow_symlinks=False)
+        if (not stat.S_ISREG(named.st_mode) or file_identity(named) != identity or
+                (named.st_size, named.st_mtime_ns, named.st_ctime_ns) !=
+                (held.st_size, held.st_mtime_ns, held.st_ctime_ns)):
+            raise OwnedPublicationError('forced export staging identity changed')
+        check_linux_parent(target.parent, parent, anchor=anchor)
+        # Linux has no rename-by-fd here. A source substitution after the final
+        # check remains possible; the check below refuses a false success receipt
+        # but does not undo foreign bytes that the rename may have published.
+        os.replace(stage, target.name, src_dir_fd=parent, dst_dir_fd=parent)
+        verify_stage(descriptor, data, identity)
+        if file_identity(os.stat(target.name, dir_fd=parent, follow_symlinks=False)) != identity:
+            raise OwnedPublicationError('forced export destination identity changed')
+        check_linux_parent(target.parent, parent, anchor=anchor)
+
+
 def write_atomic(path: Path, data: bytes, *, force: bool) -> None:
-    if path.exists() and not force:
-        raise _fail(f'{path.name} already exists; pass --force to replace it')
+    if not force:
+        return _write_new(path, data)
     if path.is_dir():
         raise _fail(f'{path.name} is a folder')
-    temp = path.with_name(f'.{path.name}.{os.getpid()}.tmp')
     try:
-        with open(temp, 'wb') as stream:
-            stream.write(data)
-            stream.flush()
-            os.fsync(stream.fileno())
-        os.replace(temp, path)
-    except OSError as exc:
-        temp.unlink(missing_ok=True)
-        raise _fail(f'could not write {path.name}: {exc.strerror or type(exc).__name__}') from None
+        target = Path(os.path.abspath(path))
+        if sys.platform.startswith('linux'):
+            _replace_linux(target, data)
+        elif os.name == 'nt':
+            publish_windows(target, data, anchor=directory_anchor(target.parent), replace=True)
+        else:
+            raise OwnedPublicationError('forced export is unsupported on this platform')
+    except FileExistsError:
+        raise _fail(f'{path.name} already exists; pass --force to replace it') from None
+    except (OSError, OwnedPublicationError) as exc:
+        reason = (exc.strerror or type(exc).__name__) if isinstance(exc, OSError) else str(exc)
+        raise _fail(f'could not write {path.name}: {reason}') from None
 
 
 def export_delta(delta: StringsDelta, path: Path, *, fmt: Format, scope: Scope = 'changed',

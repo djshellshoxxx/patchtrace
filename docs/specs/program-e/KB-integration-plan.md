@@ -197,6 +197,94 @@ Name map: EvidenceOrigin / SourceDocument / SourceSnapshot / SourceReference -> 
 - Project side: enrichment rows `kb-investigation:<inv>:<rev>` (append-only) and `kb-context:<context_key>` (derived, Guard-stale), both new KINDS outside `DERIVED_KINDS`; sidecars `kb/sources/<sha>.json.gz` and `kb/investigations/<inv>-<rev>.json`. CSAF documents go through `AdvisoryStore.add` (standard `advisory-*` rows) and are not copied twice.
 - Attach is two-phase: verify both files -> write the journal intent (plan_sha, project directory, ordered SHAs) -> `ProjectService.create` -> record project id and revision in the journal -> sidecars -> rows -> mark the attempt done. An interruption before create removes only operation-owned staging; after create it leaves `CONTEXT_PENDING`; `kb attach --repair` is idempotent and never deletes the project or a user file.
 
+#### Existing workspace open mode (2026-11-18)
+
+`WorkspaceStore(..., open_mode='normal')` keeps the ordinary behavior. In
+particular, `create=False` rejects a missing database but may initialize an
+existing version-zero database; higher versions still open read-only through
+that ordinary path. Existing callers omit the new optional keyword.
+
+`open_mode='existing'` requires an initialized supported workspace. The first
+SQLite connection uses a canonically encoded file URI with `mode=rw`, so it
+cannot create a missing database after a pathname check. URI encoding preserves
+literal `?`, `#`, `%`, spaces and Unicode in platform-valid path names. On the
+actual returned connection, require supported `user_version=1` and the current
+writer's base table layout before returning. This mode never creates directories,
+calls `_create`, stamps a version or configures WAL. The `create` flag does not
+authorize creation in this explicit mode.
+
+The bounded format check requires ordinary main-schema tables with the current
+column order, declared types, NOT NULL flags, primary-key ordinals, WITHOUT ROWID
+and STRICT flags. It inspects the full column list, including hidden/generated
+columns, and rejects extra, missing or contradictory base columns. Legitimate
+additional tables outside the known base names remain allowed. It does not
+certify CHECK/UNIQUE/foreign-key expressions, collations/default expressions,
+indexes/triggers, every row's integrity, database authenticity or namespace
+exclusion. Existing strict record/object checks remain necessary when data is
+used. No whole-database integrity scan is introduced.
+
+Existing mode is writable after successful format admission. Later writes still
+require their existing explicit transaction/admission checks; constructor success
+does not approve package capture, project attachment, recovery or a schema upgrade.
+Current/captured identity, revision, source and scope must be checked inside any
+later accepting transaction.
+
+Invalid new-mode type/value returns fixed nonrecoverable `PT-KBC-INPUT` before
+path/connect work. An unknown higher version returns fixed nonrecoverable
+`PT-KBC-UNSUPPORTED` in existing mode only. Zero/uninitialized or contradictory
+layout returns fixed nonrecoverable `PT-KBC-STORAGE`; missing/unavailable I/O
+retains bounded storage-error mapping. No raw SQLite/schema text or untrusted
+path enters the public message.
+
+The protected new-mode admission region includes version/layout/root checks
+and the final assignment of the acquired connection to `self.db`. A refusal or
+BaseException in that region closes the owned connection, including an interrupt
+immediately before that final assignment. A secondary close failure preserves
+the primary typed or mapped error, including the original interrupt, and adds
+one fixed bounded note that resources may remain. No file/directory is deleted,
+and ordinary cleanup policy is unchanged. Protection starts when the opener
+acquires the returned connection; it does not cover a partial failure inside
+SQLite connect. Nor does this make Python construction universally atomic:
+asynchronous interruption after the protected region returns, during later
+constructor/caller handoff, remains outside this guarantee.
+
+The ordinary constructor also owns every SQLite connection it acquires until
+successful return. Failure during initialization, WAL configuration, the
+higher-version read-only reopen, or root verification closes the current owned
+connection, including for `KeyboardInterrupt` and `SystemExit`. Preserve the
+existing SQLite-to-storage error mapping and original cause; other primary
+exceptions retain their identity. A secondary close failure adds only a fixed
+bounded note that resources may remain. Do not delete any workspace file or
+silently replace a failed constructor with an apparently usable store. This
+cleanup guarantee does not alter ordinary initialization, higher-version
+read-only behavior, or the existing-mode format-admission contract.
+
+If initialization fails inside its schema transaction, a failed rollback must
+not replace that original exception. Attempt rollback only while the connection
+still reports an active transaction, append a fixed bounded note on secondary
+rollback failure, and let the constructor close its owned connection. Preserve
+preexisting database contents; cleanup does not authorize deletion or claim
+that an uncertain commit was undone.
+
+The same error precedence applies to ordinary workspace write transactions.
+A rollback failure cannot replace the original write, validation or cancellation
+exception. Add a fixed bounded note requiring closure before reuse; do not hide
+an active transaction, retry the callback, delete rows outside the transaction,
+or claim rollback succeeded. An error observed after a completed COMMIT must not
+trigger rollback or erase the committed operation. The workspace owner retains
+its normal connection-close responsibility.
+
+The guarantee is absence of application initialization/version writes/WAL setup.
+SQLite's own hot-journal recovery and lock/shared-memory activity remain possible
+with `mode=rw`; quiescent byte-equality tests do not establish forensic zero
+filesystem mutation. No immutable/read-only bypass hides required engine work.
+This internal seam adds no package tables, facade, native or CLI/UI route.
+
+Spec-first controls call the explicit mode and preserve ordinary zero/v0
+initialization positives. The unchanged independent `create=False` probe remains
+the 2-red/2-positive counterexample to an earlier capture assumption; it is not
+rewritten or wrapped to appear green after this additive mode is implemented.
+
 ### 7.4 Errors, limits, keys, versioning
 - Codes: `PT-KBC-INPUT, SCOPE, CONSENT, SOURCE, PRODUCT, LINEAGE, ACQUIRE, VERIFY, UNSUPPORTED, STALE, STATE, STORAGE, LIMIT, CANCEL, INTERNAL`; acquisition and enrichment codes are nested in `details`, never re-mapped.
 - `KbcLimits` (provisional until live probe L1): CVRF document 32 MiB raw, depth 64, 5,000,000 JSON nodes, 500,000 edges per document; 24 documents per plan, 60 months in the index, fetch concurrency 1, request 60 s, plan 15 min, 3 attempts, Retry-After <=60 s; text field 64 KiB; hints 5,000 (paged); pairs 1,000 per file (truncation flagged); 20 files per investigation; 500 investigations; project sources 256 MiB; workspace objects 4 GiB (evict only unreferenced objects after a verified listing).
@@ -400,8 +488,8 @@ A GUI local-pair approval supplies `expected_pair_id` from its dry-run preview t
 ### Saved advisory search scope (2026-11-18)
 
 An investigation whose lead is a KB or CVE has exactly one saved search coverage
-reference. Before deriving products, components, pair candidates, plans or a new
-attachment, validate the reference against the coverage row's body identity and
+reference. Before deriving products, components, pair candidates, plans, an inventory
+selection or a new attachment, validate the reference against the coverage row's body identity and
 recomputed `kbc.coverage/1` identity. Reject missing, malformed or contradictory
 coverage with `PT-KBC-SCOPE` and repeat-search guidance. Check coherent scope fields,
 requested/inspected membership, the cached corpus digest and source readability.
@@ -411,6 +499,12 @@ revision and every selected journal revision before generic recovery may mark an
 attempt interrupted. Refusal leaves workspace revisions, decisions, attempts,
 journals, project rows and sidecars unchanged. The recovery module's general policy
 is not changed by this boundary.
+
+Inventory selection validates against the full index and unreadable-source results
+already captured for that operation. Its source-snapshot and revision compare-and-swap
+guards still apply. A newly inspected requested month or unreadable current source
+refuses before a selection decision or revision can be published; an unchanged
+partial month scope remains usable without widening its recorded coverage.
 
 `cached_corpus.doc_ids` is a finite selection, including the empty tuple. Reopening
 the service or importing another document cannot expand that selection. Provided

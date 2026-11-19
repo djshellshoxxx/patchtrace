@@ -6,6 +6,75 @@ as an empty recent list. This limit admits every serialized 20-query list under
 the existing 256-character query limit, including JSON escaping. Saved-search
 records and append-only project persistence are unchanged.
 
+## Saved and recent workflow amendment (2026-11-18)
+
+`search/saved_actions.py` supplies shared query preparation and existing-store
+actions. `search/qt_saved.py` owns desktop controls and a bounded settings
+adapter; neither introduces a project schema, store owner or index implementation.
+
+- Saving preserves the effective query mode and side/scope filters. The current
+  grammar reparses canonical query text with the validated mode. Stored clauses,
+  SQL expressions, terms and digests are never trusted for execution. Existing
+  `search-saved/1` rows remain unchanged; the `SavedQuery` read DTO adds a mode
+  defaulting to `auto`. Legacy rows without an explicit mode remain readable.
+- One shared helper canonicalizes explicit side/scope overrides outside quoted
+  phrases. Query length and grammar limits still apply after canonicalization.
+  CLI flags override corresponding textual filters only when supplied; absent
+  flags retain textual filters. Desktop side/scope controls retain their current
+  effective behavior and are restored when running a saved query.
+- The desktop exposes Save, project-owned Saved query selection, Run saved and
+  Delete saved. A name dialog writes only after acceptance against its captured
+  project/epoch. Merely selecting or listing a saved query does not execute it.
+  Every run/delete rechecks that the row is still live in the current project.
+  Project/revision changes invalidate captured actions, dismiss the name dialog,
+  clear prior selections and rebind the existing owner-thread store.
+- Saved operations use the already-open GUI service or the CLI's single existing
+  opener/finally-close path. List/save/delete never instantiate the search
+  service, build an index, execute a query, run a target or open the network.
+  Deletion appends the existing tombstone; no history row is rewritten.
+- Recent history is **per-user query text**, explicitly labelled in the desktop,
+  distinct from project-owned saved queries. Recalling recent text fills the
+  editor without submitting; Enter remains the explicit execution action.
+  A build already in flight may finish and refresh index coverage after recall,
+  but may auto-submit only the query generation that started that build. A
+  changed generation leaves recalled text inert; ordinary explicit Build keeps
+  its existing automatic submission when that generation is unchanged.
+  Recall restores filters parsed from the text and uses `auto` mode because
+  recent history stores no mode. Only successfully parsed submissions are added.
+  Clear history touches only this user's recent list.
+- The GUI settings adapter uses the existing bounded string-list API at
+  `search/recent`: at most 20 entries of at most 256 characters, and at most
+  8,192 UTF-8 bytes for their `search-recent/1` JSON representation. It removes
+  whole oldest entries until both bounds hold. Corrupt settings read as empty
+  or validated entries; settings failures do not interrupt searching. Generic
+  `PanelSettings` limits are unchanged.
+- All controls, including the actual name dialog, have registered tooltips and
+  accessible names/descriptions. No tooltip exemptions are introduced.
+
+Additional mutually exclusive CLI operations are:
+
+```text
+patchtrace search PROJECT --saved-list [--json]
+patchtrace search PROJECT --save NAME --query TEXT [--kind K]... [--side older|newer|both] [--scope indexed|changed] [--mode MODE] [--json]
+patchtrace search PROJECT --saved-run ID [normal result/paging/index options] [--json]
+patchtrace search PROJECT --saved-delete ID [--json]
+```
+
+They retain the `enrichment-cli/1`, `command: search` envelope. List/save/delete
+return an `operation` discriminator, saved item(s) or deletion boolean, and the
+unreadable-row count where applicable. A missing run target or invalid argument
+combination exits 2; store failures exit 3. Delete is idempotent and reports
+`deleted: false` when the row is already absent. Saved run returns the ordinary
+`SearchResult` and existing search exit codes. Query/filter flags cannot silently
+override a saved run. Listing or editing saved data does not require FTS5.
+
+Acceptance requires mode/filter round trips, legacy/corrupt rows, actual
+owner-thread project save/reopen, stale-dialog and deleted-selection refusal,
+bounded long-query settings/clear, no accidental execution, a current-source
+headless CLI journey, and the existing global tooltip/search regression checks.
+Native Windows/manual accessibility and combined actual-head gates remain
+separate from local offscreen acceptance.
+
 Research output, 2026-10-14, base `d972125` (`prep/program-e`). Reviewed: `workbench/01`, `workbench/04` (QW1, QW2, QW5), `plans/workbench-search-graph-floss-implementation.md` and the code they name. "Probe" = scratch scripts run in this session on a 4 vCPU Xeon 2.1 GHz, CPython 3.12.3, SQLite 3.45.1 (nothing committed; slice S0 ships `tools/bench_search.py` to reproduce them). `[F#]` points into the facts table.
 
 ## 1. Verdict and scope
@@ -325,3 +394,70 @@ Windows pitfalls (roadmap checklist plus search-specific): CRLF in goldens (`.gi
 8. Group leads by pairing by default? Default yes; `--no-group` and a toggle show raw evidence rows.
 9. Strings beyond 256 chars (tool evidence stores only `display_value`)? Default: search the stored prefix and flag `truncated`.
 10. Search for N-way series projects? Default: per pair project only; chain position appears in `PairExpansion.series` when `series.json` is present.
+
+## Stored-source integration recovery (November 19, 2026)
+
+The production CLI and dock connect the existing S8 source factories through
+`search/wiring.py`, recovered from `33e7e338` with the following current
+boundaries. The six stored tool groups (FLOSS, capa and Detect It Easy, each
+side), advisories and CVE snapshots appear in coverage even when unavailable.
+No source is fetched and no tool or target is run by search. Explicitly injected
+source ports retain their existing path, including saved-query callers.
+
+The Qt-free row and tool-evidence admission lives in the shared
+`intelligence/tools/snapshot.py` module. Its public
+`capture_tool_sources(service, engines=(...))` entry point returns `ToolSources`:
+`latest(engine, side)` returns the validated run and evidence, returns `None`
+when no produced run exists, and raises `ToolError` for unreadable or foreign
+newest evidence. It holds no service, store or connection. Search adds its own
+advisory/CVE groups; Strings may turn captured FLOSS values into its worker input
+without duplicating the admission or reaching the store from a worker.
+Requesting a tool omitted from the captured engine selection is refused; an
+unread source cannot masquerade as missing output.
+
+Stored rows are captured on the project's owning thread before dispatch. The
+capture bounds row metadata before loading bodies: at most 1000 rows and 16 MiB
+of serialized bodies across the selected source kinds. Each fetched body must
+match its recorded byte count, SHA-256 and project guard; malformed, duplicate-
+key, nonfinite or excessively nested JSON is unavailable evidence. The copied
+project is independently bounded to 100,000 nodes, depth 64 and a conservative
+16 MiB text/byte budget before a deep copy. A worker receives only the copied
+project, root and immutable source values, never a service, store or SQLite
+connection. Existing saved-query storage and service ownership remain on the
+owner thread.
+
+Stored tool sidecars use the current owned regular-file reader, require their
+canonical content-addressed path, byte count and SHA-256, and share a 64 MiB
+sidecar read budget with advisory reads in one capture. Current artifact hashes,
+engine, side, cache key and configuration must bind a produced run to its
+evidence. A corrupt newest produced run is unavailable rather than falling back
+to an older run and implying current absence. Advisory warnings make that
+source group unavailable rather than presenting a partial retained set as
+complete. Other independently readable groups remain usable.
+Evidence collections are admitted before model construction under the current
+tool producer limits: 200,000 strings, 20,000 capabilities and 512 environment
+records per set. Unknown top-level fields are refused before model allocation.
+A recorded raw-output path must be the canonical engine/digest filename for the
+run's `stdout_digest`. This is a consistency check on recorded provenance, not
+a re-read or native-execution attestation of raw stdout. Cache-hit runs and empty
+FLOSS output may lack raw-output metadata; no new raw digest is invented for them.
+
+The stored run row's id, reserved guard, artifact hash, cache key and status must
+agree with its typed body. Evidence rows must have their recomputed content id,
+matching guard and successful publication status. Stale rows and rows from a
+future project revision are refused. Configuration and cache digests are
+recomputed from the retained manifest and options using the current producer
+identity functions; matching declared digests alone are insufficient. A sidecar
+pointer's complete producer header and counts must match its verified inner
+document. Run status and evidence counts must agree with the retained set.
+Ordinary output binds the exact producing run id. A cache hit may retain an
+earlier set only when its original non-cache producing run remains present and
+has compatible artifact, side, engine, manifest identity, options, status and
+counts. These are consistency checks on retained records; they do not attest
+that an external executable ran or authenticate a deliberately rewritten store.
+
+An inline-only successful snapshot may be reused while the project identity,
+revision and SQLite modification counters remain unchanged. Sidecar-dependent
+or failed captures are revalidated, so external file mutation or repair cannot
+be hidden by a row-metadata cache. These bounds make allocation finite; native
+Windows accessibility and large-project responsiveness remain separate gates.

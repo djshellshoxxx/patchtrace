@@ -1,0 +1,95 @@
+FFFFF                                                                    [100%]
+=================================== FAILURES ===================================
+____________ test_run_row_guard_and_identity_are_bound[raw_sha256] _____________
+
+captured = (<patchtrace.service.ProjectService object at 0x7fde545904d0>, <patchtrace.intelligence.tools.store.ToolStore object at 0x7fde54681d00>)
+field = 'raw_sha256'
+
+    @pytest.mark.parametrize('field', ['raw_sha256','input_digest','id'])
+    def test_run_row_guard_and_identity_are_bound(captured, field):
+        service, store=captured
+        entry=next(e for e in EnrichmentStore(service.store).entries(RUN_KIND) if e.body['side']=='older')
+        service.store.connection.execute(f'UPDATE enrichment_entries SET {field}=? WHERE id=?',('f'*64,entry.id))
+>       with pytest.raises(ToolError): S.capture_tool_sources(service,engines=('capa',)).latest('capa','older')
+             ^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE ToolError
+
+../test_snapshot_independent_identity.py:25: Failed
+---------------------------- Captured stdout setup -----------------------------
+{"command": "intel-tools run", "contract": "enrichment-cli/1", "result": {"profile": "basic", "runs": [{"cache_hit": false, "elapsed_ms": 51, "engine": "capa", "error": null, "error_code": null, "evidence": 5, "executable": "capa", "pin_status": "unpinned", "run_id": "e7d9d050cc8764d5a0499785f424fdf1f263cab87a5d276a022524bab243db79", "side": "older", "status": "ok"}, {"cache_hit": false, "elapsed_ms": 51, "engine": "capa", "error": null, "error_code": null, "evidence": 7, "executable": "capa", "pin_status": "unpinned", "run_id": "8b34a41faf1b32646c5bb6e82eb47dfcd49e7110fee34a95191bb514954377ff", "side": "newer", "status": "ok"}]}, "status": "complete", "warnings": []}
+___________ test_run_row_guard_and_identity_are_bound[input_digest] ____________
+
+captured = (<patchtrace.service.ProjectService object at 0x7fde545aee70>, <patchtrace.intelligence.tools.store.ToolStore object at 0x7fde5460cf20>)
+field = 'input_digest'
+
+    @pytest.mark.parametrize('field', ['raw_sha256','input_digest','id'])
+    def test_run_row_guard_and_identity_are_bound(captured, field):
+        service, store=captured
+        entry=next(e for e in EnrichmentStore(service.store).entries(RUN_KIND) if e.body['side']=='older')
+        service.store.connection.execute(f'UPDATE enrichment_entries SET {field}=? WHERE id=?',('f'*64,entry.id))
+>       with pytest.raises(ToolError): S.capture_tool_sources(service,engines=('capa',)).latest('capa','older')
+             ^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE ToolError
+
+../test_snapshot_independent_identity.py:25: Failed
+---------------------------- Captured stdout setup -----------------------------
+{"command": "intel-tools run", "contract": "enrichment-cli/1", "result": {"profile": "basic", "runs": [{"cache_hit": false, "elapsed_ms": 53, "engine": "capa", "error": null, "error_code": null, "evidence": 5, "executable": "capa", "pin_status": "unpinned", "run_id": "427e4188f50a2167bc00affbc5e8fea0afa8016ddb8ee9e72fb27af67e4510df", "side": "older", "status": "ok"}, {"cache_hit": false, "elapsed_ms": 79, "engine": "capa", "error": null, "error_code": null, "evidence": 7, "executable": "capa", "pin_status": "unpinned", "run_id": "943af5045f942097ba9a33e1d9314f02ab07daed5cbf74e57f22848dbbb9f1f8", "side": "newer", "status": "ok"}]}, "status": "complete", "warnings": []}
+________________ test_run_row_guard_and_identity_are_bound[id] _________________
+
+captured = (<patchtrace.service.ProjectService object at 0x7fde52a54ce0>, <patchtrace.intelligence.tools.store.ToolStore object at 0x7fde52a56840>)
+field = 'id'
+
+    @pytest.mark.parametrize('field', ['raw_sha256','input_digest','id'])
+    def test_run_row_guard_and_identity_are_bound(captured, field):
+        service, store=captured
+        entry=next(e for e in EnrichmentStore(service.store).entries(RUN_KIND) if e.body['side']=='older')
+        service.store.connection.execute(f'UPDATE enrichment_entries SET {field}=? WHERE id=?',('f'*64,entry.id))
+>       with pytest.raises(ToolError): S.capture_tool_sources(service,engines=('capa',)).latest('capa','older')
+             ^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE ToolError
+
+../test_snapshot_independent_identity.py:25: Failed
+---------------------------- Captured stdout setup -----------------------------
+{"command": "intel-tools run", "contract": "enrichment-cli/1", "result": {"profile": "basic", "runs": [{"cache_hit": false, "elapsed_ms": 55, "engine": "capa", "error": null, "error_code": null, "evidence": 5, "executable": "capa", "pin_status": "unpinned", "run_id": "ce798ff492d5241e4afa67c750baebe76d58ab93cc2848a64ecda86b2a505166", "side": "older", "status": "ok"}, {"cache_hit": false, "elapsed_ms": 54, "engine": "capa", "error": null, "error_code": null, "evidence": 7, "executable": "capa", "pin_status": "unpinned", "run_id": "e1e0f0f0184ec3e6f5206793702199e4ecaede251909e0e5902cb96b00ed6694", "side": "newer", "status": "ok"}]}, "status": "complete", "warnings": []}
+_________________ test_run_configuration_digest_binds_manifest _________________
+
+captured = (<patchtrace.service.ProjectService object at 0x7fde54681b50>, <patchtrace.intelligence.tools.store.ToolStore object at 0x7fde52a57bc0>)
+
+    def test_run_configuration_digest_binds_manifest(captured):
+        service,store=captured
+        entry=next(e for e in EnrichmentStore(service.store).entries(RUN_KIND) if e.body['side']=='older')
+        body=dict(entry.body);body['manifest']={**body['manifest'],'executable_sha256':'f'*64};rewrite(service,entry,body)
+>       with pytest.raises(ToolError): S.capture_tool_sources(service,engines=('capa',)).latest('capa','older')
+             ^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE ToolError
+
+../test_snapshot_independent_identity.py:32: Failed
+---------------------------- Captured stdout setup -----------------------------
+{"command": "intel-tools run", "contract": "enrichment-cli/1", "result": {"profile": "basic", "runs": [{"cache_hit": false, "elapsed_ms": 51, "engine": "capa", "error": null, "error_code": null, "evidence": 5, "executable": "capa", "pin_status": "unpinned", "run_id": "549987e00041bf3da3ae8d83019a876b033a391af3e6cd87c270e7075ea3bbc5", "side": "older", "status": "ok"}, {"cache_hit": false, "elapsed_ms": 53, "engine": "capa", "error": null, "error_code": null, "evidence": 7, "executable": "capa", "pin_status": "unpinned", "run_id": "8da8b94b2367dc7fd7a261ed10c5dabeca2720adce2cb6490e591671ff780c76", "side": "newer", "status": "ok"}]}, "status": "complete", "warnings": []}
+_______________ test_non_cached_sidecar_cannot_rebind_prior_run ________________
+
+captured = (<patchtrace.service.ProjectService object at 0x7fde5460cf20>, <patchtrace.intelligence.tools.store.ToolStore object at 0x7fde52ac3440>)
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fde52a95100>
+
+    def test_non_cached_sidecar_cannot_rebind_prior_run(captured,monkeypatch):
+        service,store=captured
+        run,evidence=store.latest('capa','older')
+        monkeypatch.setattr(TS,'INLINE_LIMIT',1);store.publish_evidence(evidence)
+        newer=run.model_copy(update={'run_id':'newer-unrelated-run'})
+        store.publish_run(newer)
+        entry=next(e for e in EnrichmentStore(service.store).entries(EVIDENCE_KIND) if e.body['side']=='older')
+        body={**entry.body,'run_id':newer.run_id};rewrite(service,entry,body)
+>       with pytest.raises(ToolError): S.capture_tool_sources(service,engines=('capa',)).latest('capa','older')
+             ^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE ToolError
+
+../test_snapshot_independent_identity.py:43: Failed
+---------------------------- Captured stdout setup -----------------------------
+{"command": "intel-tools run", "contract": "enrichment-cli/1", "result": {"profile": "basic", "runs": [{"cache_hit": false, "elapsed_ms": 51, "engine": "capa", "error": null, "error_code": null, "evidence": 5, "executable": "capa", "pin_status": "unpinned", "run_id": "31c008ac9dcc5ec3af77e21ed4eaef759ac86f5c7744bf1ad3407677bec7c0e1", "side": "older", "status": "ok"}, {"cache_hit": false, "elapsed_ms": 53, "engine": "capa", "error": null, "error_code": null, "evidence": 7, "executable": "capa", "pin_status": "unpinned", "run_id": "cec96849bdafa8c9c52fd91f1884def401707b7e67b1657341824abc67aebc0f", "side": "newer", "status": "ok"}]}, "status": "complete", "warnings": []}
+=========================== short test summary info ============================
+FAILED ../test_snapshot_independent_identity.py::test_run_row_guard_and_identity_are_bound[raw_sha256]
+FAILED ../test_snapshot_independent_identity.py::test_run_row_guard_and_identity_are_bound[input_digest]
+FAILED ../test_snapshot_independent_identity.py::test_run_row_guard_and_identity_are_bound[id]
+FAILED ../test_snapshot_independent_identity.py::test_run_configuration_digest_binds_manifest
+FAILED ../test_snapshot_independent_identity.py::test_non_cached_sidecar_cannot_rebind_prior_run
+5 failed in 2.53s

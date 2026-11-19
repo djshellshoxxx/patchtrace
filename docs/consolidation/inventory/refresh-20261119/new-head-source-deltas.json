@@ -1,0 +1,404 @@
+[
+  {
+    "label": "completion",
+    "head": "2511301fc26bf0e039f54828959c422b4ff761a2",
+    "base": "fdc2696c23bdbfe7668348f25e3b336ce33039f7",
+    "candidate": "ecfd596093802f75bd6aacfae6c3c0dca3ce7619",
+    "paths": [
+      {
+        "path": "src/patchtrace/acquisition/winbindex.py",
+        "base_blob": "4510489fb04e6fe680358657b0c5534960350e63",
+        "source_blob": "a9f7d2ef630586f278a31c465733cd03cc02b949",
+        "candidate_blob": "4510489fb04e6fe680358657b0c5534960350e63",
+        "state": "candidate-unchanged-from-source-base"
+      },
+      {
+        "path": "src/patchtrace/artifact_inspection.py",
+        "base_blob": "3773470bca52082a9ce65e954cd58f0bbc3b25e5",
+        "source_blob": "4aa5a261b55a18a8203d4036fc75ab0974e0e728",
+        "candidate_blob": "3773470bca52082a9ce65e954cd58f0bbc3b25e5",
+        "state": "candidate-unchanged-from-source-base"
+      },
+      {
+        "path": "src/patchtrace/enrichment/cve.py",
+        "base_blob": "98f42bee911f8b68a2bbe4d7054efe1a3c190078",
+        "source_blob": "a3dc4a194efcc07aaec58b057301bc7190b73c77",
+        "candidate_blob": "98f42bee911f8b68a2bbe4d7054efe1a3c190078",
+        "state": "candidate-unchanged-from-source-base"
+      },
+      {
+        "path": "src/patchtrace/enrichment/storage.py",
+        "base_blob": "419b518a9cc19f112513359bab5c7cb3f8b208d5",
+        "source_blob": "dbb7158af9b659518a018427634d1f19b18800fc",
+        "candidate_blob": "419b518a9cc19f112513359bab5c7cb3f8b208d5",
+        "state": "candidate-unchanged-from-source-base"
+      },
+      {
+        "path": "src/patchtrace/intelligence/csaf/transport.py",
+        "base_blob": "363a241c24ee391a802dd4204420f48c34fc8b05",
+        "source_blob": "3f1c14f53e77b2a70eab1d0050b35037bc91fc29",
+        "candidate_blob": "363a241c24ee391a802dd4204420f48c34fc8b05",
+        "state": "candidate-unchanged-from-source-base"
+      },
+      {
+        "path": "src/patchtrace/kbcorrelation/service.py",
+        "base_blob": "d40b4b2a12c24275604611eae6b97c34495376e1",
+        "source_blob": "bf574cdc825706dcdb26fc5c639744d22930c62b",
+        "candidate_blob": "44f187d5cd50a39ced5084de8f4b668d0792521f",
+        "state": "both-changed"
+      },
+      {
+        "path": "src/patchtrace/nway/pair_access.py",
+        "base_blob": "192b141fe83bcbe02a4af345fbf2a62f5f6cf2b9",
+        "source_blob": "260c6642b58ca5984f40e8f06b07b354549ea27d",
+        "candidate_blob": "192b141fe83bcbe02a4af345fbf2a62f5f6cf2b9",
+        "state": "candidate-unchanged-from-source-base"
+      },
+      {
+        "path": "src/patchtrace/nway/series.py",
+        "base_blob": "99953cee69be48e529d486be307b9909ed1caebf",
+        "source_blob": "e7d12ce3952c090a112649b26438b908ab2a2fc9",
+        "candidate_blob": "99953cee69be48e529d486be307b9909ed1caebf",
+        "state": "candidate-unchanged-from-source-base"
+      },
+      {
+        "path": "src/patchtrace/pe_overview/cache.py",
+        "base_blob": "cdf8a4db5bba3e337522e81ec3695bcb24ac6dab",
+        "source_blob": "b7dcb149f3776a97b8ea0105d7548911a9bd470d",
+        "candidate_blob": "cdf8a4db5bba3e337522e81ec3695bcb24ac6dab",
+        "state": "candidate-unchanged-from-source-base"
+      },
+      {
+        "path": "src/patchtrace/pe_overview/cache_codec.py",
+        "base_blob": null,
+        "source_blob": "52ec366c06b537c89f4f5a95ae60b8792b095bb7",
+        "candidate_blob": null,
+        "state": "missing-in-candidate"
+      },
+      {
+        "path": "src/patchtrace/pe_overview/cache_store.py",
+        "base_blob": null,
+        "source_blob": "a00eeb1d2153ac46a541a4c1e29ef05c3b26f008",
+        "candidate_blob": null,
+        "state": "missing-in-candidate"
+      },
+      {
+        "path": "src/patchtrace/pe_overview/signing_view.py",
+        "base_blob": "6bcdaa5039cc73fc9e1bc505a99234a0f2295c45",
+        "source_blob": "dfec9af7dd45bf225178b80ca6946ad08f679bd6",
+        "candidate_blob": "6bcdaa5039cc73fc9e1bc505a99234a0f2295c45",
+        "state": "candidate-unchanged-from-source-base"
+      },
+      {
+        "path": "src/patchtrace/secondary/bindiff.py",
+        "base_blob": "3d2946a96eb98816d43c7fac66baad40d025d5e5",
+        "source_blob": "c374f609dda5fa7a730208a25aa27e688fdcc960",
+        "candidate_blob": "3d2946a96eb98816d43c7fac66baad40d025d5e5",
+        "state": "candidate-unchanged-from-source-base"
+      },
+      {
+        "path": "src/patchtrace/secondary/binexport_check.py",
+        "base_blob": "da11e5ea020ab5e3dc6602a62d44ed42b4777e72",
+        "source_blob": "1bb9e81585d3fb716def4d36bbb61996f5176460",
+        "candidate_blob": "da11e5ea020ab5e3dc6602a62d44ed42b4777e72",
+        "state": "candidate-unchanged-from-source-base"
+      },
+      {
+        "path": "src/patchtrace/secondary/rzdiff.py",
+        "base_blob": "394ba7be3d88c5bf8a006e778c1d4be3e4a7850e",
+        "source_blob": "908d31b8ca805dc192a336b906ca3bfdaa69d39e",
+        "candidate_blob": "394ba7be3d88c5bf8a006e778c1d4be3e4a7850e",
+        "state": "candidate-unchanged-from-source-base"
+      },
+      {
+        "path": "src/patchtrace/ui.py",
+        "base_blob": "b8ef858e4bd69fd9be7f2242c4a3ed05db455f1b",
+        "source_blob": "0e0d84f490011cd617eb41af1fb7acb87f5c7ce5",
+        "candidate_blob": "7eb18eb7729b0802d8a38f5fe7fb30fe38cf2e44",
+        "state": "both-changed"
+      },
+      {
+        "path": "src/patchtrace/ui_evidence.py",
+        "base_blob": "b54162c5b2c14a20f6dc49fb90858107e5dca544",
+        "source_blob": "72c8cb12fe4f6144dd23f637f2ab69431b7b2d34",
+        "candidate_blob": "ad246a7320c0cf16d2c117b408abe8a610a43a17",
+        "state": "both-changed"
+      },
+      {
+        "path": "src/patchtrace/ui_inspection.py",
+        "base_blob": "44fd767876daa2a44ed2ba69a8f6d3f0ac8865fa",
+        "source_blob": "533b04da31cf23b39e32c426657d5e637cdf531e",
+        "candidate_blob": "543a228be5029da41fe1d43d5c9615b059680e79",
+        "state": "both-changed"
+      },
+      {
+        "path": "tools/milestone_notes.py",
+        "base_blob": "cbbc3ff89634cec2da08a783106449bb108981d7",
+        "source_blob": "21747c0182f45ab6e3d8ae39be595e2bf1600f59",
+        "candidate_blob": "cbbc3ff89634cec2da08a783106449bb108981d7",
+        "state": "candidate-unchanged-from-source-base"
+      },
+      {
+        "path": "tools/research_qualification/scoring.py",
+        "base_blob": "ee6cca8b7af882112da63bae5276470244114c32",
+        "source_blob": "db4c29f1b0e1264a851cfc08fb0c17aec03bfe35",
+        "candidate_blob": "ee6cca8b7af882112da63bae5276470244114c32",
+        "state": "candidate-unchanged-from-source-base"
+      }
+    ]
+  },
+  {
+    "label": "continuation",
+    "head": "f851d74d134a09cb9b12013d2c1adba1fde0c24f",
+    "base": "a56ab13aaf9916fc12bea70ba1494075991b7f09",
+    "candidate": "ecfd596093802f75bd6aacfae6c3c0dca3ce7619",
+    "paths": [
+      {
+        "path": ".github/workflows/qa-windows.yml",
+        "base_blob": "4f40db05893e436230d2f739efe2d3ca87e5e8aa",
+        "source_blob": "1f1bb1d01a2d5bb63bb30d5274790d1135b4301f",
+        "candidate_blob": "21431a31414505871cc28ad72d3bfdb7684087d7",
+        "state": "both-changed"
+      },
+      {
+        "path": "src/patchtrace/gui/qt/table.py",
+        "base_blob": "94a97c73bb518e4d5c70b259bb9beafe3b399fb7",
+        "source_blob": "e90b3acd981fa7045b370a080b7e27694f4e01d9",
+        "candidate_blob": "94a97c73bb518e4d5c70b259bb9beafe3b399fb7",
+        "state": "candidate-unchanged-from-source-base"
+      },
+      {
+        "path": "src/patchtrace/gui/table_spec.py",
+        "base_blob": "9617938d25fc9483f3c29b99c4371963d85be6c7",
+        "source_blob": "4bab0fb8013bbb32a3e5c0b58ac5bc02d8fade89",
+        "candidate_blob": "9617938d25fc9483f3c29b99c4371963d85be6c7",
+        "state": "candidate-unchanged-from-source-base"
+      },
+      {
+        "path": "src/patchtrace/intelligence/tools/admission.py",
+        "base_blob": null,
+        "source_blob": "ae64016dc65d575d649aafae1264d15d6d434e3c",
+        "candidate_blob": null,
+        "state": "missing-in-candidate"
+      },
+      {
+        "path": "src/patchtrace/kbcorrelation/cli.py",
+        "base_blob": "a390dc527e0e857568fe86edab1eefb424886da7",
+        "source_blob": "9f01d2b5c3bbe2bd5934ec28d3ed00b8ae338eae",
+        "candidate_blob": "9f01d2b5c3bbe2bd5934ec28d3ed00b8ae338eae",
+        "state": "identical-in-candidate"
+      },
+      {
+        "path": "src/patchtrace/kbcorrelation/cli_inventory.py",
+        "base_blob": null,
+        "source_blob": "f75fe05009c7445bb02ac01827cc258ff430661c",
+        "candidate_blob": "f75fe05009c7445bb02ac01827cc258ff430661c",
+        "state": "identical-in-candidate"
+      },
+      {
+        "path": "src/patchtrace/kbcorrelation/components.py",
+        "base_blob": "3b4151a3081fa2d0247d285c663496a3e7d141a3",
+        "source_blob": "db86042b68008c7fe1fd918676edb6eb64e08d85",
+        "candidate_blob": "db86042b68008c7fe1fd918676edb6eb64e08d85",
+        "state": "identical-in-candidate"
+      },
+      {
+        "path": "src/patchtrace/kbcorrelation/contracts.py",
+        "base_blob": "356be7e49278ff65b4fef0c67c85fbaa5b0dba85",
+        "source_blob": "a6f6f279dbaf09a543f456a6d40a829fb10f922d",
+        "candidate_blob": "a6f6f279dbaf09a543f456a6d40a829fb10f922d",
+        "state": "identical-in-candidate"
+      },
+      {
+        "path": "src/patchtrace/kbcorrelation/inventory_contracts.py",
+        "base_blob": null,
+        "source_blob": "a1b19a0d0d89537f126e0d9ebcbfa61bf6eed53e",
+        "candidate_blob": "a1b19a0d0d89537f126e0d9ebcbfa61bf6eed53e",
+        "state": "identical-in-candidate"
+      },
+      {
+        "path": "src/patchtrace/kbcorrelation/inventory_csv.py",
+        "base_blob": null,
+        "source_blob": "a3cbd45c051f34068c15f62741ce21f2a28af76a",
+        "candidate_blob": "a3cbd45c051f34068c15f62741ce21f2a28af76a",
+        "state": "identical-in-candidate"
+      },
+      {
+        "path": "src/patchtrace/kbcorrelation/inventory_qt.py",
+        "base_blob": null,
+        "source_blob": "69fe31d23a4a6a4cc1895b679f0eeb49dd97d6d8",
+        "candidate_blob": "69fe31d23a4a6a4cc1895b679f0eeb49dd97d6d8",
+        "state": "identical-in-candidate"
+      },
+      {
+        "path": "src/patchtrace/kbcorrelation/inventory_selection.py",
+        "base_blob": null,
+        "source_blob": "c5e44e5c427005318a5efda96fca70a81e687270",
+        "candidate_blob": "12d931d3ce918fba442dec658b045a9a48c81d7a",
+        "state": "both-changed"
+      },
+      {
+        "path": "src/patchtrace/kbcorrelation/inventory_service.py",
+        "base_blob": null,
+        "source_blob": "44757c9c85f8f79c13f248fef44258d540482564",
+        "candidate_blob": "44757c9c85f8f79c13f248fef44258d540482564",
+        "state": "identical-in-candidate"
+      },
+      {
+        "path": "src/patchtrace/kbcorrelation/inventory_store.py",
+        "base_blob": null,
+        "source_blob": "287cb37d2163ea6b35c1a36d8b3a113c5ecfca6f",
+        "candidate_blob": "287cb37d2163ea6b35c1a36d8b3a113c5ecfca6f",
+        "state": "identical-in-candidate"
+      },
+      {
+        "path": "src/patchtrace/kbcorrelation/investigation_qt.py",
+        "base_blob": "4f0bfeae3599cd2e23962462d69777d5e7e08ed6",
+        "source_blob": "c1f2ba4674e064bddee92056a34aeebe7dec3701",
+        "candidate_blob": "c1f2ba4674e064bddee92056a34aeebe7dec3701",
+        "state": "identical-in-candidate"
+      },
+      {
+        "path": "src/patchtrace/kbcorrelation/panel_qt.py",
+        "base_blob": "ff2756180575dd88c23e30072b6e647060899164",
+        "source_blob": "0b6c51b285e3cca740e009b48322fe18419087b8",
+        "candidate_blob": "0b6c51b285e3cca740e009b48322fe18419087b8",
+        "state": "identical-in-candidate"
+      },
+      {
+        "path": "src/patchtrace/kbcorrelation/service.py",
+        "base_blob": "d40b4b2a12c24275604611eae6b97c34495376e1",
+        "source_blob": "fc687d1f02fdc1bff414c9fca32785f744e3c636",
+        "candidate_blob": "44f187d5cd50a39ced5084de8f4b668d0792521f",
+        "state": "both-changed"
+      },
+      {
+        "path": "src/patchtrace/kbcorrelation/sources/inventory_fetch.py",
+        "base_blob": null,
+        "source_blob": "5c457eb7c63df2b75b8b71552ca2ea37d045d348",
+        "candidate_blob": "5c457eb7c63df2b75b8b71552ca2ea37d045d348",
+        "state": "identical-in-candidate"
+      },
+      {
+        "path": "src/patchtrace/kbcorrelation/sources/inventory_http.py",
+        "base_blob": null,
+        "source_blob": "2c426ed77c1a9496a9f99de47fd0c08198913208",
+        "candidate_blob": "2c426ed77c1a9496a9f99de47fd0c08198913208",
+        "state": "identical-in-candidate"
+      },
+      {
+        "path": "src/patchtrace/kbcorrelation/sources/support_links.py",
+        "base_blob": null,
+        "source_blob": "4c204e93221f67df716d1d0bc6633a792cfd70b3",
+        "candidate_blob": "4c204e93221f67df716d1d0bc6633a792cfd70b3",
+        "state": "identical-in-candidate"
+      },
+      {
+        "path": "src/patchtrace/kbcorrelation/store.py",
+        "base_blob": "b5c27a2aee319269be746804025b055b0bc680f2",
+        "source_blob": "041ecc6e819759e5255489abdace418975fde76e",
+        "candidate_blob": "95e67d8816b288b5af06e1659a8b2101bb2137c8",
+        "state": "both-changed"
+      },
+      {
+        "path": "src/patchtrace/search/cli.py",
+        "base_blob": "11d723074a14794f90106568097ce8ae71176df2",
+        "source_blob": "fdacc8d8bb5709a29e19a482df0c78bb2624d2d8",
+        "candidate_blob": "8ffcaceaa1e5c83170c830e057cc870570e71392",
+        "state": "both-changed"
+      },
+      {
+        "path": "src/patchtrace/search/panel.py",
+        "base_blob": "0fcd70e0454bda7345de22da1b6c4ed46a84aecf",
+        "source_blob": "731d7b320efc10a9d639d707d8ae09acebda19c6",
+        "candidate_blob": "f6972b2171cdd254d3360c96a17c0171907fe7bb",
+        "state": "both-changed"
+      },
+      {
+        "path": "src/patchtrace/search/qt_panel.py",
+        "base_blob": "9db399694552835d11614de971b0a67c70e6246c",
+        "source_blob": "bb792e6f2b8a7776b1fb1c8e4fbdda19c05074e6",
+        "candidate_blob": "fe7cc8a53f4320089c160708e4989c0d4272530d",
+        "state": "both-changed"
+      },
+      {
+        "path": "src/patchtrace/search/wiring.py",
+        "base_blob": null,
+        "source_blob": "58837168de5c6a5d4db7f0da24739e642d8271c2",
+        "candidate_blob": "f79fb80d829b296eaf3c1343ce4e3409eee9935e",
+        "state": "both-changed"
+      },
+      {
+        "path": "src/patchtrace/strings/cli.py",
+        "base_blob": "77a106455d4c438a78b702a992bc2c285717d764",
+        "source_blob": "d7a7f54873914b1e70c055a9c23b7a63dee129ca",
+        "candidate_blob": "7be526f116fd94fa4616d2619be2e0c4520dd83d",
+        "state": "both-changed"
+      },
+      {
+        "path": "src/patchtrace/strings/compose.py",
+        "base_blob": null,
+        "source_blob": "5ed4151a7513f952376b444fee85f9246b159ac9",
+        "candidate_blob": "6a8cd97f42923aa70e84e3ff3bdd1212ca755b0c",
+        "state": "both-changed"
+      },
+      {
+        "path": "src/patchtrace/strings/copy.py",
+        "base_blob": "900741caafe2c8c8d9c4675a0528b421834b0df5",
+        "source_blob": "c12434652f2af1d6599609cc0e7a657949d4c0ca",
+        "candidate_blob": "3c737a16d7660be499e540a7eacd4a5a3b9ee3c9",
+        "state": "both-changed"
+      },
+      {
+        "path": "src/patchtrace/strings/qt_panel.py",
+        "base_blob": "2dd795690813cab99fcffb92ea742bd993137a30",
+        "source_blob": "9e47c309c13eaa16670af69dec2e7a55e97d929c",
+        "candidate_blob": "500f0a30ba775ef4b18b1eca8d2408581cab3f57",
+        "state": "both-changed"
+      },
+      {
+        "path": "src/patchtrace/strings/tooltip_entries.py",
+        "base_blob": "2120aa0d1a2a3fa4a4c152b4dee96ddff04eeb54",
+        "source_blob": "d98d7513b507ff7c3ab7cb1e85748d9c160424c8",
+        "candidate_blob": "96871d9314cd63cc6a35b310fd05ed972cbebc1b",
+        "state": "both-changed"
+      },
+      {
+        "path": "src/patchtrace/ui_evidence.py",
+        "base_blob": "b54162c5b2c14a20f6dc49fb90858107e5dca544",
+        "source_blob": "bc1117ddeaeca20e2afb95f315f1ec50b9a7a26c",
+        "candidate_blob": "ad246a7320c0cf16d2c117b408abe8a610a43a17",
+        "state": "both-changed"
+      },
+      {
+        "path": "tests/test_tier_r_shard.py",
+        "base_blob": "9c0214db46e69506be4b34efa50ee1b7bbb82655",
+        "source_blob": "41d36b118f24ac98194393123e078eb18542bba4",
+        "candidate_blob": "3fd76162a0dd6e8dd330608bf2c3dd97c322f9cf",
+        "state": "both-changed"
+      },
+      {
+        "path": "tools/generate_kbc_schemas.py",
+        "base_blob": "9ceb4c486d2aba17ca19a81916f883e8d453b85c",
+        "source_blob": "a1e8494b1da4f612ce7681bb82064603f7d6cc5f",
+        "candidate_blob": "a1e8494b1da4f612ce7681bb82064603f7d6cc5f",
+        "state": "identical-in-candidate"
+      }
+    ]
+  },
+  {
+    "label": "advanced-review",
+    "head": "8d130aefe1be6e737cff1d90d2a5b1658d60a3a6",
+    "base": "a56ab13aaf9916fc12bea70ba1494075991b7f09",
+    "candidate": "ecfd596093802f75bd6aacfae6c3c0dca3ce7619",
+    "paths": [
+      {
+        "path": "tests/test_tier_r_shard.py",
+        "base_blob": "9c0214db46e69506be4b34efa50ee1b7bbb82655",
+        "source_blob": "41d36b118f24ac98194393123e078eb18542bba4",
+        "candidate_blob": "3fd76162a0dd6e8dd330608bf2c3dd97c322f9cf",
+        "state": "both-changed"
+      }
+    ]
+  }
+]

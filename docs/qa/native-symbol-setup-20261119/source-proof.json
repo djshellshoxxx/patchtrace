@@ -1,0 +1,37 @@
+{
+  "baseline": "4cdee5a26837802bd90b8b50c11696b039ac9335",
+  "tested_source": "eb65f7fe9991167fb77c6f620240c46edc6ac702",
+  "baseline_workflow_blob": "851e90b83a73d4c971bf3128bab9fb6c13b96015",
+  "baseline_seed_blob": "affb02ee94164a37249656786eaac1c484bfdef6",
+  "all_other_steps_identical": true,
+  "intentional_negative_step_sha256": "d2a87b8f2bfba49e2230447086a5adb88e12a7bdddfcbb87a51f94aea586329c",
+  "upstream_commit": "4f5d895fcbb1eacd65efd81145922c15bb7e741d",
+  "upstream_path": "ghidriff/ghidra_diff_engine.py",
+  "upstream_source_sha256": "0a0d531eac959d1662aec9d1c7a46f69d2b86060f116788a7e4c683709260a7c",
+  "upstream_review": {
+    "setup_project_no_symbols_cached_pdb_branch": [
+      638,
+      644
+    ],
+    "setup_symbol_server_global_preferences_save": 876
+  },
+  "native_windows_result": "NOT RUN; PowerShell and native Ghidriff/Ghidra unavailable locally",
+  "archive_members": {
+    "red.log": {
+      "bytes": 832,
+      "sha256": "3cc65cdce51bbad895fd3ebe65fb32d91f9df437a5651877fa4fdf72b173919c"
+    },
+    "red.xml": {
+      "bytes": 992,
+      "sha256": "299ecb35db48b7b0ce45ad005147afe0c50a4255f86b529b6840406bbfa7f14d"
+    },
+    "baseline-live-backend.yml": {
+      "bytes": 5010,
+      "sha256": "44eeaadce8ea4d3d74816ed70a4a1800db8f222e86d82adfb06d06607f726055"
+    },
+    "baseline-seed_symbol_cache.py": {
+      "bytes": 1410,
+      "sha256": "bdcb3759340702f4bb4dcd1cb4cad9b57d9c8e56e9e36d11c4b9f91dc453515c"
+    }
+  }
+}

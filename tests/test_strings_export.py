@@ -4,6 +4,7 @@ from __future__ import annotations
 import csv
 import io
 import json
+import os
 
 import pytest
 from test_strings_delta import PAIRING, sha, table
@@ -72,15 +73,28 @@ def test_never_overwrites_without_force(delta, tmp_path):
     assert json.loads(read(target))['contract'] == 'strings-export/1'
 
 
-def test_failed_write_leaves_no_partial_file(delta, tmp_path, monkeypatch):
+@pytest.mark.parametrize('force', [False, True])
+def test_failed_publication_preserves_destination_and_owned_cleanup(delta, tmp_path, monkeypatch, force):
     target = tmp_path / 'out.json'
 
-    def broken(src, dst):
+    def broken(*args, **kwargs):
         raise OSError(13, 'denied')
-    monkeypatch.setattr(export.os, 'replace', broken)
+    if os.name == 'nt':
+        from patchtrace.owned_publication import WindowsPublication
+        monkeypatch.setattr(WindowsPublication, 'rename', broken)
+    else:
+        monkeypatch.setattr(export.os, 'replace' if force else 'link', broken)
     with pytest.raises(StringsError) as raised:
-        export.export_delta(delta, target, fmt='json')
-    assert raised.value.code == 'PT-STR-EXPORT' and list(tmp_path.iterdir()) == []
+        export.export_delta(delta, target, fmt='json', force=force)
+    assert raised.value.code == 'PT-STR-EXPORT' and not target.exists()
+    retained = list(tmp_path.iterdir())
+    if force and os.name != 'nt':
+        # Linux cannot conditionally unlink the final mutable stage name. Retain
+        # it after rename failure; never risk deleting a foreign substitution.
+        assert len(retained) == 1 and retained[0].suffix == '.tmp'
+        assert json.loads(read(retained[0]))['contract'] == 'strings-export/1'
+    else:
+        assert retained == []
 
 
 def test_missing_folder_and_folder_target_are_typed_errors(delta, tmp_path):

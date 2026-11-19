@@ -423,7 +423,7 @@ def test_components_partition_the_tags_and_contain_every_input_set(sets):
 
 # --- ports: Protocols only -----------------------------------------------------------------------------------------
 
-PORT_NAMES = ('OriginRegistry', 'AnchorSink', 'Navigator', 'AdvisorySource', 'ChangeEvidenceSource',
+PORT_NAMES = ('OriginRegistry', 'AnchorSink', 'Navigator', 'AdvisoryRuleView', 'AdvisorySource', 'ChangeEvidenceSource',
               'ToolEvidenceSource', 'KevSource', 'CallDeltaSource', 'PairingSource')
 FABRIC_PORT_NAMES = ('OriginRegistry', 'AnchorSink')  # owned by the fabric since FAB-3; re-exported here
 

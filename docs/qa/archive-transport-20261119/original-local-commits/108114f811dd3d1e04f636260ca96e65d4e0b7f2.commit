@@ -1,0 +1,8 @@
+tree 1ae4ca8c821311c1a5bd5b488a6d624f381dd29d
+parent a8f698f6a1d075b673bc6ec94c991141113d2b30
+author Codex <codex@openai.com> 1795041171 -0800
+committer Codex <codex@openai.com> 1795041269 -0800
+
+Retain constructor interruption cleanup evidence [no release]
+
+(cherry picked from commit 0201a4c8a1ab715af8136d166bc29eb2985d13c7)

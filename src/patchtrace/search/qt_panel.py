@@ -2,7 +2,7 @@
 
 Responsibility: let the analyst query the project's local search index, read why a lead matched and go to the code.
 What is said (state copy, rows, detail, clipboard text) lives in the Qt-free `view_model`; this module moves it to
-widgets. The GUI thread captures an immutable request and the project service; workers only run the injected
+widgets. The GUI thread captures an immutable request and bounded project/source values; workers only run the injected
 `searcher`, `builder` and `coverage` callables. Every result is checked against the project epoch and the query
 generation before it is published, so a late result of a previous project or query is dropped. The panel opens no
 window of its own and no network connection.
@@ -31,8 +31,10 @@ from ..gui.tips import apply_tip, register_gui_tips, register_tips
 from . import view_model as vm
 from .contracts import CoverageEntry, SearchRequest, SearchResult
 from .errors import SearchError
-from .query import parse_query
+from .qt_saved import SavedController
+from .saved_actions import effective_plan
 from .tooltip_entries import TEMPLATES, TIPS
+from .wiring import BoundService, copy_project
 
 DEBOUNCE_MS = 250
 PAGE = 200
@@ -68,22 +70,24 @@ def _guarded(call: Callable[[], object]) -> Outcome:
         return Outcome(code=exc.code, message=exc.message)
 
 
-def default_search(service, request: SearchRequest, cancel) -> SearchResult:
+def _search_service(service):
     from .paths import default_cache_root
     from .service import SearchService
-    return SearchService(service, default_cache_root()).search(request, build=False, cancel=cancel)
+    sources = getattr(service, 'sources', None)
+    ports = {} if sources is None else {'extra_specs': sources.extra_specs, 'comparable': sources.comparable}
+    return SearchService(service, default_cache_root(), **ports)
+
+
+def default_search(service, request: SearchRequest, cancel) -> SearchResult:
+    return _search_service(service).search(request, build=False, cancel=cancel)
 
 
 def default_build(service, cancel, progress) -> None:
-    from .paths import default_cache_root
-    from .service import SearchService
-    SearchService(service, default_cache_root()).build(cancel=cancel, progress=progress)
+    _search_service(service).build(cancel=cancel, progress=progress)
 
 
 def default_coverage(service) -> tuple[CoverageEntry, ...]:
-    from .paths import default_cache_root
-    from .service import SearchService
-    return SearchService(service, default_cache_root()).coverage()
+    return _search_service(service).coverage()
 
 
 class SearchWidgets(QWidget):
@@ -128,7 +132,7 @@ class SearchWidgets(QWidget):
         column = QVBoxLayout(self.content)
         column.setContentsMargins(0, 0, 0, 0)
         column.addWidget(self.body, 1)
-        self.state = StateView('search', 'Search', text_limit=vm.QUERY_ECHO * 8)
+        self.state = StateView('search.body', 'Search', text_limit=vm.QUERY_ECHO * 8)
         self.state.set_content(self.content)
         root = QVBoxLayout(self)
         root.setContentsMargins(4, 4, 4, 4)
@@ -172,13 +176,14 @@ class SearchController(ControllerBase):
     """Owns the query, the rows of the current generation and the requests in flight. Hooks run on the GUI thread."""
 
     def __init__(self, ctx: PanelContext, *, searcher: Callable = default_search, builder: Callable = default_build,
-                 coverage: Callable = default_coverage) -> None:
+                 coverage: Callable = default_coverage, sources: Callable | None = None) -> None:
         register_gui_tips()  # idempotent: the host has done it, a test or a bare embed has not
         register_tips(TIPS, TEMPLATES)
         panel = SearchWidgets()
         super().__init__(panel)
         self.panel, self.ctx, self.port, self.tasks = panel, ctx, ctx.project, ctx.tasks
         self.searcher, self.builder, self.coverage = searcher, builder, coverage
+        self.sources, self.snapshot = sources, None
         self.key = None
         self.epoch = 0
         self.generation = 0
@@ -196,6 +201,7 @@ class SearchController(ControllerBase):
         self.debounce.setSingleShot(True)
         self.debounce.setInterval(DEBOUNCE_MS)
         self._wire()
+        self.saved = SavedController(self)
         self._render()
 
     # ---- wiring --------------------------------------------------------------------------------------
@@ -230,8 +236,10 @@ class SearchController(ControllerBase):
         self._cancel_all()
         self.epoch += 1
         self.key = key
+        self.snapshot = None
         self.indexed, self.fetching, self.cancelled = True, False, False
         self._reset_results()
+        self.saved.project_changed()
         if key is not None:
             self._probe_index()
         self._render()
@@ -243,6 +251,7 @@ class SearchController(ControllerBase):
         return self.panel.query
 
     def shutdown(self) -> None:
+        self.saved.shutdown()
         self.debounce.stop()
         self._cancel_all()
         self.epoch += 1
@@ -253,18 +262,34 @@ class SearchController(ControllerBase):
     # ---- query ---------------------------------------------------------------------------------------
 
     def _typed(self, _text: str) -> None:
+        self.saved.enable()
         self.debounce.start()
 
     def service(self):
         return getattr(self.port, 'service', None)
 
+    def bound(self) -> BoundService | None:
+        """Owner thread: copy the project and source values, leaving the saved-query service here."""
+        service = self.service()
+        if service is None:
+            return None
+        try:
+            current = self.port.project()
+            if current is None:
+                return None
+            project = copy_project(current)
+            if self.sources is not None:
+                self.snapshot = self.sources(service, self.snapshot)
+        except SearchError as exc:
+            self.failure = vm.Failure(exc.code, exc.message)
+            self._render()
+            return None
+        return BoundService(project, service.root, self.snapshot)
+
     def _plan(self):
         panel = self.panel
-        plan = parse_query(panel.query.text(), mode=panel.mode.currentData())
-        update = {'scope': panel.scope.currentData()}
-        if (side := panel.side.currentData()) is not None:
-            update['sides'] = (side,)
-        return plan.model_copy(update=update)
+        return effective_plan(panel.query.text(), mode=panel.mode.currentData(),
+                              side=panel.side.currentData(), scope=panel.scope.currentData())
 
     def submit(self) -> None:
         """Parse the query (the only grammar entry) and search the first page under a new generation."""
@@ -282,6 +307,7 @@ class SearchController(ControllerBase):
         except SearchError as exc:
             self.invalid = f'Search query is invalid: {sanitize_text(exc.message, 200)}. {_QUERY_HINT}'
             return self._render()
+        self.saved.remember(plan.text)
         self.generation += 1
         self.cancelled = False
         self.failure = None
@@ -302,7 +328,10 @@ class SearchController(ControllerBase):
             self.fetch_more()
 
     def _run(self, request: SearchRequest) -> None:
-        service, searcher = self.service(), self.searcher
+        service, searcher = self.bound(), self.searcher
+        if service is None:
+            self.fetching = False
+            return
         epoch, generation = self.epoch, request.generation
         self.tasks.submit('search.query', lambda token, _report: _guarded(lambda: searcher(service, request, token)),
                           lambda out: self._arrived(epoch, generation, out), self._failed)
@@ -331,7 +360,7 @@ class SearchController(ControllerBase):
     # ---- index ---------------------------------------------------------------------------------------
 
     def _probe_index(self) -> None:
-        service, coverage, epoch = self.service(), self.coverage, self.epoch
+        service, coverage, epoch = self.bound(), self.coverage, self.epoch
         if service is None:
             return
         self.tasks.submit('search.coverage', lambda _token, _report: coverage(service),
@@ -343,7 +372,8 @@ class SearchController(ControllerBase):
             self._render()
 
     def build(self) -> None:
-        service, builder, epoch = self.service(), self.builder, self.epoch
+        service, builder, epoch = self.bound(), self.builder, self.epoch
+        generation = self.generation
         if self.key is None or service is None:
             return
         self.cancelled = False
@@ -352,14 +382,15 @@ class SearchController(ControllerBase):
         def work(token, report):
             return _guarded(lambda: builder(service, token, lambda group, done, total: report(group, done, total)))
 
-        self.tasks.submit('search.build', work, lambda out: self._built(epoch, out), self._failed, self._build_progress)
+        self.tasks.submit('search.build', work, lambda out: self._built(epoch, generation, out),
+                          self._failed, self._build_progress)
         self._render()
 
     def _build_progress(self, progress: TaskProgress) -> None:
         self.progress = vm.Progress(progress.stage, progress.done, progress.total or 1)
         self._render()
 
-    def _built(self, epoch: int, outcome: Outcome) -> None:
+    def _built(self, epoch: int, generation: int, outcome: Outcome) -> None:
         if epoch != self.epoch:
             return
         self.progress = None
@@ -368,7 +399,7 @@ class SearchController(ControllerBase):
             self.failure = vm.Failure(outcome.code, outcome.message)
             return self._render()
         self._probe_index()
-        if self.panel.query.text().strip():
+        if generation == self.generation and self.panel.query.text().strip():
             self.submit()
         else:
             self._render()
@@ -488,6 +519,7 @@ class SearchController(ControllerBase):
         self._enable()
 
     def _enable(self) -> None:
+        self.saved.enable()
         buttons = self.panel.buttons
         working = self.tasks.busy('search.query') or self.tasks.busy('search.build')
         has_project = self.key is not None

@@ -1,0 +1,8 @@
+tree b6607d044ea3fcb27f15bf7da5a56b34374a24fa
+parent 0da5c66d5b394e75bdb82583fb3fe7393656fb9a
+author Codex <codex@openai.com> 1795040217 -0800
+committer Codex <codex@openai.com> 1795041034 -0800
+
+Preserve core creation identity and checkpointed reopen failures [no release]
+
+(cherry picked from commit 441c47c2262603555aa77c11e63fedcce11ba502)

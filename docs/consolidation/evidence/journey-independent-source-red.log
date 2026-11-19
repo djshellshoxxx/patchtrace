@@ -1,0 +1,16 @@
+FF                                                                       [100%]
+=================================== FAILURES ===================================
+_ test_static_consumed_source_change_cannot_retain_same_clean_identity[--assume-unchanged] _
+../test_journey_independent_source.py:43: in test_static_consumed_source_change_cannot_retain_same_clean_identity
+    assert after != before, 'changed production source is admitted under the same clean source identity'
+E   AssertionError: changed production source is admitted under the same clean source identity
+E   assert {'head_sha': 'd2bce0781f5d4629e714a5f2f981a570e8749dc7', 'tree_sha': '56e10064b8960588da91c13f349444173afb6a18', 'clea...f4d71dd661fdac380', 'src/patchtrace/jobs.py': '4a5abd953e8f3e256e9d135648234c5148210119eaecc4bf4d71dd661fdac380', ...}} != {'head_sha': 'd2bce0781f5d4629e714a5f2f981a570e8749dc7', 'tree_sha': '56e10064b8960588da91c13f349444173afb6a18', 'clea...f4d71dd661fdac380', 'src/patchtrace/jobs.py': '4a5abd953e8f3e256e9d135648234c5148210119eaecc4bf4d71dd661fdac380', ...}}
+_ test_static_consumed_source_change_cannot_retain_same_clean_identity[--skip-worktree] _
+../test_journey_independent_source.py:43: in test_static_consumed_source_change_cannot_retain_same_clean_identity
+    assert after != before, 'changed production source is admitted under the same clean source identity'
+E   AssertionError: changed production source is admitted under the same clean source identity
+E   assert {'head_sha': 'e6ab2ffc0d260c6ea9bcf0d9031c379b19ec0a03', 'tree_sha': '56e10064b8960588da91c13f349444173afb6a18', 'clea...f4d71dd661fdac380', 'src/patchtrace/jobs.py': '4a5abd953e8f3e256e9d135648234c5148210119eaecc4bf4d71dd661fdac380', ...}} != {'head_sha': 'e6ab2ffc0d260c6ea9bcf0d9031c379b19ec0a03', 'tree_sha': '56e10064b8960588da91c13f349444173afb6a18', 'clea...f4d71dd661fdac380', 'src/patchtrace/jobs.py': '4a5abd953e8f3e256e9d135648234c5148210119eaecc4bf4d71dd661fdac380', ...}}
+=========================== short test summary info ============================
+FAILED ../test_journey_independent_source.py::test_static_consumed_source_change_cannot_retain_same_clean_identity[--assume-unchanged]
+FAILED ../test_journey_independent_source.py::test_static_consumed_source_change_cannot_retain_same_clean_identity[--skip-worktree]
+2 failed in 1.98s

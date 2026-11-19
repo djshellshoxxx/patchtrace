@@ -258,10 +258,11 @@ def test_new_copy_descriptor_closed_on_setup_failure(tmp_path, monkeypatch, fail
         original = original_stat if failing_call == 'fstat' else original_fdopen
         return original(fd, *args, **kwargs)
 
-    monkeypatch.setattr(store.os, 'open', capture_open)
-    monkeypatch.setattr(store.os, failing_call, fail)
-    with pytest.raises(store.NwayError, match='PT-NWAY-STORAGE'):
-        store._keep_corrupt_copy(path)
+    with monkeypatch.context() as patch:
+        patch.setattr(store.os, 'open', capture_open)
+        patch.setattr(store.os, failing_call, fail)
+        with pytest.raises(store.NwayError, match='PT-NWAY-STORAGE'):
+            store._keep_corrupt_copy(path)
     assert len(created) == 1
     with pytest.raises(OSError):
         original_stat(created[0])  # descriptor is closed even before its identity could be recorded

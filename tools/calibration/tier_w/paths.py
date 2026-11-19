@@ -113,6 +113,9 @@ class Layout:
         return self.base / 'runs' / check_corpus_id(corpus_id) / pair_id / {'symbols-hidden': 'h',
                                                                            'symbols-visible': 'v'}[condition]
 
+    def matches(self, corpus_id: str) -> Path:
+        return self.base / 'runs' / check_corpus_id(corpus_id) / 'matches.jsonl'
+
     def report(self, corpus_id: str) -> Path:
         return self.base / 'reports' / f'{check_corpus_id(corpus_id)}.evaluation.json'
 
@@ -163,12 +166,42 @@ def write_jsonl(path: Path, records) -> Path:
 
 
 def read_bytes(path: Path, limit: int) -> bytes:
-    """Bounded read: refuse files larger than `limit` before reading them."""
+    """Read an unchanged regular file through one descriptor within the caller's byte budget."""
+    if type(limit) is not int or limit < 0:
+        raise TierWError('PT-TIERW-INPUT', 'the byte limit must be a nonnegative integer')
     path = Path(path)
+    descriptor = None
     try:
-        size = path.stat().st_size
+        # Nonblocking admission refuses FIFOs before any read can wait for a writer.
+        flags = os.O_RDONLY | getattr(os, 'O_NONBLOCK', 0) | getattr(os, 'O_BINARY', 0)
+        descriptor = os.open(path, flags)
+        stream = os.fdopen(descriptor, 'rb', buffering=0)
+        descriptor = None  # FileIO now owns exactly this descriptor.
+        with stream:
+            before = os.fstat(stream.fileno())
+            if not stat.S_ISREG(before.st_mode):
+                raise TierWError('PT-TIERW-INPUT', f'{path.name} is not a regular file')
+            if before.st_size > limit:
+                raise TierWError('PT-TIERW-LIMIT', f'{path.name} exceeds the {limit}-byte cap')
+            remaining = min(before.st_size, limit) + 1
+            parts = []
+            while remaining:
+                part = os.read(stream.fileno(), min(remaining, 64 * 1024))
+                if not part:
+                    break
+                parts.append(part)
+                remaining -= len(part)
+            data = b''.join(parts)
+            after = os.fstat(stream.fileno())
+            if len(data) > limit or after.st_size > limit:
+                raise TierWError('PT-TIERW-LIMIT', f'{path.name} exceeds the {limit}-byte cap')
+            fields = ('st_dev', 'st_ino', 'st_size', 'st_mtime_ns', 'st_ctime_ns')
+            if (len(data) != before.st_size
+                    or any(getattr(before, field) != getattr(after, field) for field in fields)):
+                raise TierWError('PT-TIERW-INPUT', f'{path.name} changed while it was read')
+            return data
     except OSError as exc:
         raise TierWError('PT-TIERW-INPUT', f'cannot read {path.name}: {exc.strerror or exc}') from None
-    if size > limit:
-        raise TierWError('PT-TIERW-LIMIT', f'{path.name} is {size} bytes, over the {limit}-byte cap')
-    return path.read_bytes()
+    finally:
+        if descriptor is not None:
+            os.close(descriptor)

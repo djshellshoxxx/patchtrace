@@ -1,0 +1,56 @@
+{
+  "argv": [
+    "/workspace/scratch/e83fbf4505c3/l2-tool-preparation/20261118T080830Z-rizin091/tool/rizin-0.9.1/bin/rz-diff",
+    "-C",
+    "-j",
+    "-t",
+    "functions",
+    "/tmp/patchtrace-engine-l501xggx/older.bin",
+    "/tmp/patchtrace-engine-l501xggx/newer.bin"
+  ],
+  "cwd": "/tmp/patchtrace-engine-l501xggx",
+  "delegation": "calls jobs.run_process with unchanged argv/kwargs; returns the same ProcessResult object",
+  "elapsed_seconds": 1.9091231989987136,
+  "environment_fingerprint": "fa5f627ecdef37be0c292950c5af63043495448346e869c1a56d1892ca6e0359",
+  "environment_keys": [
+    "HOME",
+    "LANG",
+    "LC_ALL",
+    "LC_CTYPE",
+    "PATH",
+    "TMPDIR",
+    "XDG_CACHE_HOME",
+    "XDG_DATA_HOME",
+    "XDG_RUNTIME_DIR"
+  ],
+  "kind": "production-runner-observation/1",
+  "label": "01-analysis",
+  "last_output_elapsed_seconds": 1.8672222739987774,
+  "prepared_input_sha256": {
+    "newer": "96bcb8a0b8f9201d12c81e30090d933e13e7679125c26d5d604ebb0f02028df0",
+    "older": "c3914b7f5f70b88dbfc25677211347ffa86ab38a833e065a5e51a0445c26133b"
+  },
+  "prepared_input_sha256_after": {
+    "newer": "96bcb8a0b8f9201d12c81e30090d933e13e7679125c26d5d604ebb0f02028df0",
+    "older": "c3914b7f5f70b88dbfc25677211347ffa86ab38a833e065a5e51a0445c26133b"
+  },
+  "reason": null,
+  "returncode": 0,
+  "settings": {
+    "log_limit": 67108865,
+    "max_output_bytes": 67108864,
+    "separate_streams": true,
+    "stderr_limit": 2097152,
+    "timeout_seconds": 119.99977060499805
+  },
+  "stderr_kept": 108,
+  "stderr_path": "raw/01-analysis.stderr",
+  "stderr_sha256": "545d5ce5a474fbd397e64832256bccdea1e1e7d238fc68def7e2d4720788c0fc",
+  "stderr_total": 108,
+  "stdout_kept": 834,
+  "stdout_path": "raw/01-analysis.stdout",
+  "stdout_sha256": "52a42e2045d1c4d3368ed319eaf8be4ad40b5c1087806ed643a3be1e4ae7dbb2",
+  "stdout_total": 834,
+  "streams_complete": true,
+  "tool_sha256_after": "536987d5d0e5d2a35689f653502dc10f8be8751a46ef2ffd888e8d514ed9712e"
+}

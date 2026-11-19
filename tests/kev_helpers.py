@@ -26,7 +26,10 @@ def socket_guard():
         raise AssertionError('KEV tests must not open sockets')
 
     with pytest.MonkeyPatch.context() as patch:
-        for name in ('socket', 'create_connection', 'getaddrinfo'):
+        # SSL derives its socket wrapper lazily. Keep the actual type available
+        # while refusing construction, including aliases imported before this guard.
+        patch.setattr(socket.socket, '__init__', refuse)
+        for name in ('create_connection', 'getaddrinfo'):
             patch.setattr(socket, name, refuse)
         yield
 

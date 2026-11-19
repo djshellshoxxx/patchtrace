@@ -1,0 +1,22 @@
+{
+  "constraints": [
+    "Use supported production scheduler/adapter and existing ranking if applicable",
+    "Retain raw outputs/settings/timeouts/errors; identical flags",
+    "No target execution",
+    "ELF/GCC source-backed matching evidence only; not formal Windows/MSVC L2 acceptance, desktop acquisition, vulnerability attribution accuracy, or L3",
+    "One case/project; no percentage or bound",
+    "Do not tune code/settings based on this candidate then call it held-out",
+    "If production rejects ELF, record BLOCKED without bypassing",
+    "Use reviewed receipt helper from 9ac9cbeb with exact source/tree recorded"
+  ],
+  "decision": "APPROVED_SCOPED_NATIVE_L2_PILOT",
+  "expected_function": "http_parser_execute",
+  "kind": "received-root-oracle-review/1",
+  "oracle_path": "/workspace/scratch/e83fbf4505c3/l2-tool-preparation/20261118T080830Z-rizin091/source-oracle-proposal.json",
+  "oracle_sha256": "bbd619b791a64d39ec48740eebe8aeed84b0bff3dbd561b61bc0ce9aaed941d1",
+  "record_type": "Worker transcription of received delegation; not a cryptographic signature",
+  "recorded_by": "/root/cve_workflow_review",
+  "recorded_utc": "2026-11-18T08:27:42.524838+00:00",
+  "root_review_evidence": "Root independently fetched Node fix commit via GitHub REST, verified sole parent, sole production function change, all six source SHA-256/Git blob identities, source diff and official Jan2021 advisory.",
+  "sender": "/root"
+}

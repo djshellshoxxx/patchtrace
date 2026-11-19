@@ -1,0 +1,9 @@
+{
+  "archive": "evidence.zip",
+  "bytes": 100206,
+  "sha256": "a639219856dc03fcd87d3adc6f458c25450d35eda79a4d441b0882954b8e743c",
+  "payloads": 27,
+  "archive_members": 28,
+  "manifest_paths": "All paths in manifest.json are members of evidence.zip.",
+  "readable_copy": "independent-review.md removes trailing whitespace only; exact original is archived."
+}

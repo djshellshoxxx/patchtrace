@@ -1,0 +1,50 @@
+{
+  "kind": "pw01-windows-publication-gate/1",
+  "observation_date_utc": "2026-11-18",
+  "source_commit": "bb4277aed685d485b57ffe7a718e70bab3e34467",
+  "pull_request": 304,
+  "qa_run_id": 44263225792,
+  "job_id": 134661411666,
+  "job_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44263225792/job/134661411666",
+  "scope": "native Windows focused winpairs publication gate, three test modules",
+  "results": {
+    "failed": 15,
+    "passed": 61,
+    "skipped": 3,
+    "duration_seconds": 3.68
+  },
+  "reported_error": "PublicationBlocked: safe publication unavailable: OSError (OS error 87)",
+  "subsequent_steps": {
+    "full_suite": "skipped",
+    "packaging": "skipped"
+  },
+  "exact_head_merge_status": "blocked; integration owner repairing",
+  "cause_status": "unestablished; cleanup can mask a primary failure; RootDirectory and BOOLEAN hypotheses are not proven defects",
+  "observation_basis": {
+    "counts_error_and_test_command": "retained raw job log, independently inspected",
+    "head_run_job_and_skipped_steps": "integration owner report",
+    "network_query_performed_for_this_update": false
+  },
+  "source_log": {
+    "original_path": "/workspace/scratch/e83fbf4505c3/pr304-windows-boundary-failure.log",
+    "bytes": 85864,
+    "sha256": "a3c06a20a70fc31af0ef6c63515289b4e22026afeef2229701df7fe1a7893a04"
+  },
+  "excerpt": {
+    "path": "failure-excerpt.log",
+    "bytes": 13031,
+    "sha256": "61b9159c0e43b3e8a48ffcad0c72745865aa1350e4afcd2f197851346930d46b",
+    "source_line_ranges_inclusive_1_based": [
+      [
+        304,
+        305
+      ],
+      [
+        722,
+        779
+      ]
+    ],
+    "method": "concatenate the exact original bytes from the listed ranges, in order, without labels or text changes"
+  },
+  "target_acquisition_authorized": false
+}

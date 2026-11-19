@@ -1,0 +1,100 @@
+{
+  "baseline_published_pr307": "58fc130631f602b6e907bb054d30c21d810551d4",
+  "combined_tested_commit": "21552835fe40c5e3bb7245ca7c64404d030e5fa0",
+  "combined_tested_tree": "d58eaecb0ef41b0d2690c9d640de2b36380c5a61",
+  "source_commits": {
+    "spec_test_first": "640baa22103dbedbdde7016a8180bea804e5a2b4",
+    "implementation": "e4506666edefbbc22419ff97874e3edc599f94e7",
+    "author_qa": "413cd6cc14c9d75212c6552b23fe76bce304d9c5"
+  },
+  "integration_commits": [
+    "020c8df4adb459ba5eabc50484e0a5d9d0a05ebb",
+    "5784eff3fe1478e3986f99e883bafc8701257cc8",
+    "21552835fe40c5e3bb7245ca7c64404d030e5fa0"
+  ],
+  "reviewer": "Independent report_evidence_review worker; root source and integration review",
+  "python": "/workspace/scratch/3a6632a6e5ff/venv/bin/python",
+  "environment": {
+    "PYTHONPATH": "/workspace/scratch/c7a9e8d98848/raw-integration/src",
+    "QT_QPA_PLATFORM": "offscreen"
+  },
+  "combined_junit": {
+    "tests": 183,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "published_base_boundary_junit": {
+    "tests": 358,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 3
+  },
+  "evidence": {
+    "independent/affected.log": {
+      "bytes": 261,
+      "sha256": "c44051c03ce3f940e72b12a31045819120ec921c7041b1c5fb600c93f074fd81"
+    },
+    "independent/affected.xml": {
+      "bytes": 22806,
+      "sha256": "7496477059b83ec77fa56e5135dfcfd37a9558c50e66bbb7b79e45f310372686"
+    },
+    "independent/independent.log": {
+      "bytes": 98,
+      "sha256": "173ec50a6c0f89d093592d56402f59daf06de8cc1333f63ef4d981d153972adb"
+    },
+    "independent/independent.xml": {
+      "bytes": 1274,
+      "sha256": "be06f6db88343c6fdb291ea792b86edca120ba52278ef2d9ad234aec869312d5"
+    },
+    "independent/manifest.json": {
+      "bytes": 1173,
+      "sha256": "abf331447858c083d063b5ecad827d097bc2c1a5f159a7ef323ad03586e163c3"
+    },
+    "independent/review.md": {
+      "bytes": 6974,
+      "sha256": "d87ad7d0ceb700ba01615febaa3333dc53d967c684821a622e6528dc5702b7ab"
+    },
+    "independent/ruff.log": {
+      "bytes": 19,
+      "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+    },
+    "independent/source-context.json": {
+      "bytes": 2811,
+      "sha256": "752b563e9e839ce19c27ff1fae7cf347438aa9c7f998b2d65a36d9f4c178148d"
+    },
+    "independent/test_independent_raw_alignment.py": {
+      "bytes": 6278,
+      "sha256": "e55b18cacd38d7bc0de3a9b958c0b08f68c165c868bd141b5967e0f0e2ed1e6f"
+    },
+    "combined/affected.log": {
+      "bytes": 261,
+      "sha256": "1b4be264c72cfdc159f954c5e37b8ecbda9688dc21dcbfb0ffb06edef8b1f1e3"
+    },
+    "combined/affected.xml": {
+      "bytes": 22806,
+      "sha256": "fd05ea4b8f6278305846e8414a06eede499ef1a872ba67046c9d6d53f2812b05"
+    },
+    "combined/ruff.log": {
+      "bytes": 19,
+      "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+    },
+    "published-base/pr307-published.log": {
+      "bytes": 431,
+      "sha256": "93d93ddefd5db68047ccef34612ab04ac54e1b66644f7d50d2859f3ed1689ea5"
+    },
+    "published-base/pr307-published.xml": {
+      "bytes": 53021,
+      "sha256": "3ed7fcacc62506c51fb7e1bf0ece96608328113b7921f5386b97b3f458e6fa0c"
+    }
+  },
+  "archive": {
+    "bytes": 22767,
+    "sha256": "6ef417992670a5abc59de69d8942982ed0b5eb05a60e98da561cb7406c658cac"
+  },
+  "limits": [
+    "Offscreen authored fixtures; no native/manual/accuracy acceptance",
+    "Combined actual-head full Linux/Windows/Qt/package/security gates remain unverified",
+    "No merge, release, tag, deployment or branch deletion"
+  ]
+}

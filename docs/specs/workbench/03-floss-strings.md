@@ -1,5 +1,36 @@
 # PT-WB-03: FLOSS Versioned String Extraction and Side-by-Side Investigation
 
+## Stored-source recovery amendment (2026-11-19)
+
+The CLI and dock use `strings.compose` for source selection, pairing, cues and
+regions. Auto/FLOSS obtain only the owner-thread `capture_tool_sources` snapshot:
+bounded SQLite metadata/body capture, strict row/guard/config/cache provenance,
+held content-addressed sidecars and an exact retained producing run. Unreadable
+selected evidence is an error; it is not an absent source and cannot silently
+fall back to the built-in scan or an older result. Built-in selection does not
+capture or inspect stored tool evidence. Workers receive detached project/source
+values, never a service or SQLite handle.
+
+Successful empty evidence and a verified cache hit may lack a new raw sidecar.
+They remain valid FLOSS sources; the basis keeps the producing evidence's run ID
+and reports null raw digest when no raw sidecar is recorded. When a canonical raw
+pointer is present, the basis uses the validated run stdout digest. This is
+normalized evidence/provenance admission; raw tool stdout is not replayed by this
+consumer. Both current artifact digests must still verify before comparison,
+including when both sides use stored FLOSS evidence. Cancellation precedes
+artifact reads, and a refused newer request invalidates prior in-flight results
+while preserving the last completed view.
+
+`BasisPart.normalized_evidence_sha256` is an additive optional provenance field.
+When no raw digest is available, it is
+`domain_id('strings-normalized-evidence', 1, evidence.model_dump(mode='json'))`
+over the validated `ToolEvidenceSet`, including its producing run. FLOSS still
+requires a run ID and at least one of raw or normalized evidence digest; no
+untraceable source is admitted. The built-in source admits neither. The new field
+is omitted entirely when null, preserving the serialized legacy basis and its
+digest. Existing raw-backed basis fields and meanings are unchanged. A normalized
+digest is explicitly distinct from a raw stdout digest.
+
 **Status:** Developer-ready integration spec; WB3-S0 (contracts and table) implemented in `patchtrace.strings`. **Contract:** `workbench-strings/1`. **Parent:** [integration index](README.md). **External project:** https://github.com/mandiant/flare-floss (Apache-2.0). **Depends on:** existing verified artifact reader, supervised subprocess, optional PT-WB-01 Search, PT-WB-02 graph. **Date:** 2026-10-14.
 
 ## 1. Goals

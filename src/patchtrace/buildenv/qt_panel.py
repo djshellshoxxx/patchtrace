@@ -73,7 +73,7 @@ class BuildEnvController(ControllerBase):
         root = self._widget
         root.setObjectName('build_env.card')
         root.setAccessibleName('Build environment')
-        self.view = StateView('build_env', 'Build environment', self.ctx.shell, text_limit=600)
+        self.view = StateView('build_env.body', 'Build environment', self.ctx.shell, text_limit=600)
         self.view.setAccessibleName('Build environment state')
         self.table = VirtualTable('Build facts table')
         self.table.setObjectName('build_env.table')

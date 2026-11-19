@@ -78,6 +78,124 @@ Naming:
 - Acceptance candidates use an **annotated** tag on the reviewed SHA: `v0.1.0-alpha.<n>` (n starts at 1 and never reuses a number).
 - **(recovered from PR #281 on 2026-11-16)** A `v*` tag names its release `PatchTrace <tag> (Windows x64, Linux x86-64)`; the notes title already derives from the tag (`tools/milestone_notes.py --tag`, "tagged build"). Automatic main builds keep `PatchTrace beta <run_number>`. `tests/test_release_gate.py` pins both names.
 
+### 1.2a Exact-source publication qualification amendment (2026-11-18)
+
+Both the desktop release job and backend-bundle publisher must run the shared
+`tools/release_qualification.py` guard immediately before any release/tag/asset
+mutation. Cadence decides whether publication is due; it does not establish
+qualification. Its existing fail-open cadence behavior stays unchanged. The
+guard itself fails closed on absent, queued, skipped, failed, stale, ambiguous,
+malformed or unreadable evidence. It never triggers a workflow or publishes.
+
+The checked-out commit must equal the requested full SHA. The actual commit
+message, read independently of the event payload, must not contain the literal
+`[no release]`; that hold applies to tags, manual runs and backend bundles too.
+Only exact-source `push`, `workflow_dispatch` or scheduled runs from this same
+repository can supply acceptance. PR merge previews and foreign/fork runs cannot
+qualify canonical release bytes. The latest eligible run and its latest attempt
+must own every required job; recheck selections/attempts before returning a pass.
+Current publisher-run prerequisites may be complete while its overall run is
+still in progress. An unrelated in-progress workflow cannot supply acceptance.
+
+Required existing lanes are QA on Linux/Windows (including Windows frozen ZIP,
+installer and full tests), all Qt repeat shards, Linux package/smoke legs, all
+native Ghidriff variants, Rizin on both platforms, BinDiff on both platforms,
+unified extraction on both platforms, optional-wheel imports, and bounded parser
+fuzzing. Their named critical steps must actually complete successfully. A
+successful advisory job or a test that only reports blocked acceptance is not a
+pass. BinDiff additionally requires its exact run's named, nonexpired status
+artifact, created within the selected job's latest-attempt execution interval,
+with unmocked `passed` status and passed native subchecks. ZIP/JSON reads are
+bounded and never extracted or executed.
+
+Dependency vulnerability auditing and static security scanning are mandatory
+categories, reserved under `dependency-security.yml` jobs `dependency-audit` and
+`security-scan` with explicit audit steps. No such lane is qualified by this
+amendment. Its absence is a recorded publication blocker until a separately
+reviewed scanner/triage policy and exact-source execution exist. The available
+Ruff security-rule findings remain untriaged evidence, not confirmed
+vulnerabilities or a clean scan. No finding may be suppressed merely to clear the
+publication guard.
+
+For a backend bundle, the selected platforms must additionally have successful
+build and disconnected acceptance jobs in the current bundle run. Before either
+publisher uses an existing release, the tag must peel through a bounded chain of
+annotated tag objects to the exact target SHA, and the release must already be a
+published prerelease. Existing asset-name collisions are refused before upload;
+neither publisher may overwrite existing assets. API errors never mean that a
+release or tag is absent. A later concurrent authorized ref mutation is outside
+this read-only point-in-time check; upload still uses no-replacement semantics.
+
+The guard emits bounded machine-readable reasons and exact run/job/attempt
+references. API calls, pagination, artifact sizes and tag peeling have fixed
+limits. Missing or late-running lanes leave publication blocked; they are not
+automatically dispatched or polled indefinitely. The desktop/NSIS build artifacts
+remain available independently of a publication hold. GitHub Pages is a separate
+site deployment workflow and is not invoked or changed by this release repair.
+
+Independent-review clarification (2026-11-18): source identity requires the actual
+tracked file bytes and modes to match the canonical commit tree. Do not trust Git
+replacement objects, index flags/stat caches, external diff drivers or clean
+filters as evidence of those bytes. Verify bounded regular-file/symlink content
+against canonical blob identities and refuse unsupported or changing entries.
+The two publishers run on Linux with canonical checkout bytes; a filtered
+checkout whose bytes differ must be refused, without changing product platform
+support. All parsed JSON numbers must remain finite, including exponent overflow
+inside otherwise unused metadata. Distinct platform artifacts must have distinct
+artifact IDs; one archive cannot qualify two platform results.
+
+Windows source-observation amendment (2026-11-18): the same byte guard is also
+used by native acceptance and dependency-profile producers. On supported
+CPython 3.12 Windows, a path stat reports creation time in `st_ctime_ns`, while
+the descriptor stat reports metadata change time. Path stat also synthesizes
+execute bits from `.exe`, `.com`, `.bat` and `.cmd` suffixes; descriptor stat
+does not. These observations are not interchangeable proof of a changed file.
+The inspected primary implementations are CPython v3.12.10
+[`win32_xstat` / `update_st_mode_from_path`](https://github.com/python/cpython/blob/v3.12.10/Modules/posixmodule.c)
+and [`_Py_fstat_noraise` / `_Py_attribute_data_to_stat`](https://github.com/python/cpython/blob/v3.12.10/Python/fileutils.c).
+
+Keep complete path state stable across path observations and complete descriptor
+state stable across descriptor observations. The Windows cross-view comparison
+must still bind device, file identity, physical mode without suffix-derived
+execute bits, size, modification time, explicit creation time and file attributes.
+Missing Windows observation fields are an unsupported source-verification error.
+Retain the full existing cross-view state comparison on other platforms. Continue
+hashing actual bytes against canonical Git blobs, checking parent identities and
+the final path states, and honoring the commit hold before any remote access.
+Do not remove change-time checks, trust index caches, or skip validation on Windows.
+
+The final all-files pass must also observe Windows descriptor change time after
+each file's hashing handle has closed. Retain the original path, compatible-open
+and descriptor observations in an opaque snapshot. Reopen one regular file at a
+time, bind it to the captured pathname identity and compare its full descriptor
+state, then check the pathname again. A same-inode, same-size rewrite with restored
+modification time must refuse before that final check finishes. Do not retain one
+descriptor per tracked file or claim that this point-in-time check locks future
+source changes. Both publication and dependency-tree checks use the same boundary.
+
+Dependency receipt reads use the same compatible path/descriptor comparison at
+open and retain complete descriptor checks across the read plus the final path
+check. Regular-file Windows observation fields must be integers before their attribute bits
+are interpreted; unavailable or malformed observations yield a typed refusal.
+
+Authored observation tests qualify this compatibility rule only. Native Windows
+tests must hash inert rewritten `.txt`, `.cmd` and `.exe` fixtures and retain
+both stat views; those filenames never authorize execution. A successful test
+does not supply BinDiff, dependency-scan, package or release acceptance. The
+historical hosted failure has no offending-path/stat-field diagnostics, so its
+precise field mismatch remains unobserved until a source-pinned native replay.
+Native Windows controls also cover the final post-hash rewrite and inert receipt
+reading; portable observations alone do not establish those native results.
+
+Dependency/security lane candidate (2026-11-18): the reserved dependency audit
+job expands to four exact native OS/profile jobs, covering runtime and packaging
+inventories on ubuntu-latest and windows-latest. The critical audit step and
+security-scan job/step names stay explicit. The bounded receipt and actual scan
+contract is `dependency-security-qualification.md`. Its existence grants no
+qualification; all four audits and the unsuppressed static scan must actually
+succeed on the canonical source. Missing, failed or unaudited results retain
+their stated limits.
+
 ### 1.3 Verification after each release
 
 Replace `<TAG>` and `<SHA>`. Use an empty directory for downloads.

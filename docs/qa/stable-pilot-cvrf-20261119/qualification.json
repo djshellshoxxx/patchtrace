@@ -1,0 +1,106 @@
+{
+  "recorded_utc": "2026-11-19T08:22:09.474839+00:00",
+  "status": "LOCAL_AFFECTED_SUITE_PASS_PLATFORM_QUALIFICATION_PENDING",
+  "base": "d436a7ec571efa75dcd627ca9835c65f60e09c74",
+  "code_head": "cd96aa9183d1c28c0d08da0198b515f9ab87f29e",
+  "code_tree": "f83652cbc189ab02867410e072c8d8c771b4f083",
+  "runtime": {
+    "observed_utc": "2026-11-19T08:20:13.926106+00:00",
+    "python": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+    "executable": "/workspace/scratch/80dddc5347b2/patchtrace-venv/bin/python",
+    "platform": "Linux-6.18.57-x86_64-with-glibc2.41",
+    "machine": "x86_64",
+    "packages": {
+      "pytest": "9.2.0",
+      "PySide6": "6.12.0",
+      "pydantic": "2.13.5",
+      "ruff": "0.17.5"
+    },
+    "module_paths": {
+      "patchtrace": "/workspace/scratch/80dddc5347b2/PatchTrace-pilot-cvrf/src/patchtrace/__init__.py",
+      "current_inputs": "/workspace/scratch/80dddc5347b2/PatchTrace-pilot-cvrf/src/patchtrace/pilot/current_inputs.py"
+    },
+    "environment": {
+      "PYTHONPATH": "src",
+      "QT_QPA_PLATFORM": "offscreen"
+    },
+    "worktree": "/workspace/scratch/80dddc5347b2/PatchTrace-pilot-cvrf"
+  },
+  "checks": [
+    {
+      "name": "Affected pilot, Leads, report2, advisory reader and saved-scope suite",
+      "command": "QT_QPA_PLATFORM=offscreen PYTHONPATH=src /workspace/scratch/80dddc5347b2/patchtrace-venv/bin/python -m pytest -q tests/test_pilot*.py tests/test_ui_leads*.py tests/test_report2*.py tests/test_advisory_read_bounds.py tests/test_intel_storage.py tests/test_intel_cli.py tests/test_intel_explain.py tests/test_kbc_saved_scope*.py tests/test_kbc_card_context_sources.py tests/test_owned_publication.py --junitxml=/workspace/scratch/80dddc5347b2/pilot-cvrf-targeted.xml",
+      "exit_code": 0,
+      "counts": {
+        "tests": 2009,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "pytest_summary": "2009 passed in 168.63s (0:02:48)",
+      "log": "pilot-cvrf-targeted.log",
+      "junit": "pilot-cvrf-targeted.xml"
+    },
+    {
+      "name": "Full Ruff",
+      "command": "PYTHONPATH=src /workspace/scratch/80dddc5347b2/patchtrace-venv/bin/python -m ruff check src tests tools",
+      "exit_code": 0,
+      "log": "pilot-cvrf-ruff.log"
+    },
+    {
+      "name": "Persisted pilot schema drift check",
+      "command": "PYTHONPATH=src /workspace/scratch/80dddc5347b2/patchtrace-venv/bin/python tools/generate_pilot_schemas.py --check",
+      "exit_code": 0,
+      "log": "pilot-cvrf-schema-check.log"
+    },
+    {
+      "name": "Whitespace",
+      "command": "git diff --check d436a7ec571efa75dcd627ca9835c65f60e09c74 HEAD",
+      "exit_code": 0
+    }
+  ],
+  "artifacts": [
+    {
+      "file": "pilot-cvrf-targeted.log",
+      "bytes": 2273,
+      "sha256": "20319c80b0149c408afa0ef3fcf5c5166ac603ae40a2fd29109bccc9f2ea56d5"
+    },
+    {
+      "file": "pilot-cvrf-targeted.xml",
+      "bytes": 276093,
+      "sha256": "afed3b66e4944fdc10ef69c6926dfbe878435c7ff62c60eb3826952305be0235"
+    },
+    {
+      "file": "pilot-cvrf-ruff.log",
+      "bytes": 19,
+      "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+    },
+    {
+      "file": "pilot-cvrf-schema-check.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "file": "pilot-cvrf-runtime.json",
+      "bytes": 795,
+      "sha256": "cbdfbd02618de1db4c7d51af199eb1f6f1b16be3999ea92569f941d4100bc942"
+    },
+    {
+      "file": "pilot-cvrf-source-map.json",
+      "bytes": 12575,
+      "sha256": "6429180d5b1b898d7bf1076cbacc454f85360162e2e9a50c7a66268a294b6c34"
+    }
+  ],
+  "limits": [
+    "No full application pytest run in this worktree; parent requested bounded focused validation and owns combined qualification.",
+    "Qt controls are offscreen Linux; no current-candidate 20x Qt repeat performed here.",
+    "No native Windows packaging or filesystem qualification, live provider retrieval, real CVE attribution, native engine accuracy, or release acceptance claim.",
+    "Historical source receipts remain historical; they are not substituted for fresh candidate checks.",
+    "No broad #307 inventory/native caller integration or #316 whole-stack integration."
+  ],
+  "source_integrity": {
+    "nine_runtime_files_equal_original_source": true,
+    "five_protected_baseline_files_unchanged": true
+  },
+  "documentation_note": "Historical evidence and help were added while the affected run was in progress; runtime and test files stayed at the recorded code head."
+}

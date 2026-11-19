@@ -1,0 +1,114 @@
+{
+  "observations": [
+    {
+      "error": null,
+      "failure": "none",
+      "foreign_replacement_preserved": false,
+      "owned_source": "expected export bytes",
+      "ref": "9c411ca3d7b47f950be5f0c6f01b3c54184554c6",
+      "source_sha256": "837b511a9ea4b2c5b6edf0543655df0d78b2e076b68ab54a27d8018cbbf40ccc",
+      "target": "foreign replacement bytes"
+    },
+    {
+      "error": "StringsError",
+      "failure": "io",
+      "foreign_replacement_preserved": false,
+      "owned_source": "expected export bytes",
+      "ref": "9c411ca3d7b47f950be5f0c6f01b3c54184554c6",
+      "source_sha256": "837b511a9ea4b2c5b6edf0543655df0d78b2e076b68ab54a27d8018cbbf40ccc",
+      "target": "prior complete export"
+    },
+    {
+      "error": "KeyboardInterrupt",
+      "failure": "cancel",
+      "foreign_replacement_preserved": true,
+      "owned_source": "expected export bytes",
+      "ref": "9c411ca3d7b47f950be5f0c6f01b3c54184554c6",
+      "source_sha256": "837b511a9ea4b2c5b6edf0543655df0d78b2e076b68ab54a27d8018cbbf40ccc",
+      "target": "prior complete export"
+    },
+    {
+      "error": null,
+      "failure": "none",
+      "foreign_replacement_preserved": false,
+      "owned_source": "expected export bytes",
+      "ref": "88b0b52281dd314aa72f93819145a73135618bc4",
+      "source_sha256": "837b511a9ea4b2c5b6edf0543655df0d78b2e076b68ab54a27d8018cbbf40ccc",
+      "target": "foreign replacement bytes"
+    },
+    {
+      "error": "StringsError",
+      "failure": "io",
+      "foreign_replacement_preserved": false,
+      "owned_source": "expected export bytes",
+      "ref": "88b0b52281dd314aa72f93819145a73135618bc4",
+      "source_sha256": "837b511a9ea4b2c5b6edf0543655df0d78b2e076b68ab54a27d8018cbbf40ccc",
+      "target": "prior complete export"
+    },
+    {
+      "error": "KeyboardInterrupt",
+      "failure": "cancel",
+      "foreign_replacement_preserved": true,
+      "owned_source": "expected export bytes",
+      "ref": "88b0b52281dd314aa72f93819145a73135618bc4",
+      "source_sha256": "837b511a9ea4b2c5b6edf0543655df0d78b2e076b68ab54a27d8018cbbf40ccc",
+      "target": "prior complete export"
+    },
+    {
+      "error": null,
+      "failure": "none",
+      "foreign_replacement_preserved": false,
+      "owned_source": "expected export bytes",
+      "ref": "d436a7ec571efa75dcd627ca9835c65f60e09c74",
+      "source_sha256": "cdb82bb6c1ed649baf5b5a6a51521ef1c2fa38ce6be0a5abcdcc523e68ef21b7",
+      "target": "foreign replacement bytes"
+    },
+    {
+      "error": "StringsError",
+      "failure": "io",
+      "foreign_replacement_preserved": false,
+      "owned_source": "expected export bytes",
+      "ref": "d436a7ec571efa75dcd627ca9835c65f60e09c74",
+      "source_sha256": "cdb82bb6c1ed649baf5b5a6a51521ef1c2fa38ce6be0a5abcdcc523e68ef21b7",
+      "target": "prior complete export"
+    },
+    {
+      "error": "KeyboardInterrupt",
+      "failure": "cancel",
+      "foreign_replacement_preserved": false,
+      "owned_source": "expected export bytes",
+      "ref": "d436a7ec571efa75dcd627ca9835c65f60e09c74",
+      "source_sha256": "cdb82bb6c1ed649baf5b5a6a51521ef1c2fa38ce6be0a5abcdcc523e68ef21b7",
+      "target": "prior complete export"
+    },
+    {
+      "error": null,
+      "failure": "none",
+      "foreign_replacement_preserved": false,
+      "owned_source": "expected export bytes",
+      "ref": "current-worktree",
+      "source_sha256": "a22301c33ffcd4e7b16fff8ceb42b9a4eb8376a2722a17f372a4b1dd821dc821",
+      "target": "foreign replacement bytes"
+    },
+    {
+      "error": "StringsError",
+      "failure": "io",
+      "foreign_replacement_preserved": false,
+      "owned_source": "expected export bytes",
+      "ref": "current-worktree",
+      "source_sha256": "a22301c33ffcd4e7b16fff8ceb42b9a4eb8376a2722a17f372a4b1dd821dc821",
+      "target": "prior complete export"
+    },
+    {
+      "error": "KeyboardInterrupt",
+      "failure": "cancel",
+      "foreign_replacement_preserved": false,
+      "owned_source": "expected export bytes",
+      "ref": "current-worktree",
+      "source_sha256": "a22301c33ffcd4e7b16fff8ceb42b9a4eb8376a2722a17f372a4b1dd821dc821",
+      "target": "prior complete export"
+    }
+  ],
+  "scope": "forced export source ownership",
+  "status": "BLOCKED"
+}

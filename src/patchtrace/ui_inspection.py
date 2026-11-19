@@ -11,6 +11,7 @@ import logging
 import threading
 from dataclasses import dataclass
 from pathlib import Path
+from types import MappingProxyType
 
 from PySide6.QtCore import QAbstractItemModel, QAbstractTableModel, QModelIndex, Qt, QThread, Signal
 from PySide6.QtGui import QFont, QGuiApplication, QKeySequence
@@ -33,6 +34,8 @@ from .gui.qt.labels import PlainLabel
 from .gui.registry import PanelContext
 from .gui.tips import register_tips
 from .pe_overview import signing_view as sv
+from .pe_overview.cache_store import publish_metadata_cache as publish_metadata_cache
+from .pe_overview.cache_store import snapshot_metadata_cache
 from .pe_overview.compare import compare_metadata
 from .pe_overview.metadata import PeMetadata, inspect_metadata
 from .preflight import overview_rows
@@ -64,17 +67,20 @@ class InspectionThread(QThread):
     inspection_ready = Signal(object, object)
     inspection_failed = Signal(str, object)
 
-    def __init__(self, project_id: str, artifacts, root: Path, parent=None, key=None):
+    def __init__(self, project_id: str, artifacts, root: Path, parent=None, key=None, *, metadata_cache=None):
         super().__init__(parent)
         self.key = key
         self.project_id = project_id
         self.artifacts = tuple(artifacts)
         self.root = Path(root)
+        self.metadata_cache = MappingProxyType(dict(metadata_cache or {}))
         self.cancel = threading.Event()
 
     def run(self):
         try:
-            result = inspect_project_artifacts(self.project_id, self.artifacts, self.root, self.cancel.is_set)
+            options = {'metadata_cache': self.metadata_cache} if self.metadata_cache else {}
+            result = inspect_project_artifacts(self.project_id, self.artifacts, self.root, self.cancel.is_set,
+                                               **options)
         except Exception as exc:  # noqa: BLE001 - only the class crosses the thread boundary (GUI plan 8.5)
             logging.getLogger(__name__).warning('File inspection failed', exc_info=True)
             self.inspection_failed.emit(type(exc).__name__, self.key)
@@ -83,6 +89,12 @@ class InspectionThread(QThread):
             result.close()
             return
         self.inspection_ready.emit(result, self.key)
+
+
+def make_inspection_thread(service, parent, key) -> InspectionThread:
+    """Snapshot the optional cache on the owner thread before starting a reader."""
+    return InspectionThread(service.project.id, service.project.artifacts, service.root, parent, key,
+                            metadata_cache=snapshot_metadata_cache(service))
 
 
 def side_summary(inspection: ProjectInspection) -> str:
@@ -210,6 +222,8 @@ def rows_view(model: RowsModel, widths_em: tuple[int, ...], tip_id: str, name: s
     view.setSelectionBehavior(QAbstractItemView.SelectionBehavior.SelectRows)
     view.verticalHeader().hide()  # row headers are exposed to UI Automation as accessibles
     view.horizontalHeader().setStretchLastSection(True)
+    view.horizontalHeader().setAccessibleName(f'{name} column headers')
+    view.verticalHeader().setAccessibleName(f'{name} row headers')
     em = view.fontMetrics().horizontalAdvance('M')
     for column, width in enumerate(widths_em):
         view.setColumnWidth(column, width * em)
@@ -402,6 +416,7 @@ class SigningTab(QWidget):
         self.tree = CopyTreeView()
         self.tree.setObjectName('pe.signature.tree')
         self.tree.setAccessibleName('Signature, signer and certificate details')
+        self.tree.header().setAccessibleName('Signature, signer and certificate column headers')
         self.tree.setModel(self.tree_model)
         self.tree.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
         self.tree.setUniformRowHeights(True)
@@ -434,7 +449,12 @@ class SigningTab(QWidget):
         rows = tuple(TableRow((r.field, r.older, r.newer, r.status, r.provenance),
                               template('overview.pe_row', field=r.field, provenance=r.provenance, reason=r.reason),
                               r.status == 'changed') for r in comparison)
-        self.status.setText('' if sv.has_version(metas) else sv.EMPTY)
+        if any(metas.get(side) is None for side in sv.SIDES):
+            self.status.setText(sv.error_text('PT-PE-INPUT'))
+        elif any(meta.status != 'ok' for meta in metas.values()):
+            self.status.setText(sv.PARTIAL)
+        else:
+            self.status.setText('' if sv.has_version(metas) else sv.EMPTY)
         self._show(rows, sv.manifest_text(metas), sv.signature_tree(metas, trust))
 
     def _show(self, rows: tuple[TableRow, ...], manifest: str, tree: tuple[sv.TreeNode, ...]) -> None:
@@ -500,6 +520,7 @@ class FilesController(ControllerBase):
         self.pe.set_rows(())
         if inspection is None:
             self._stop_signing()
+            self.signing.set_loading()
         if inspection is not None:
             self._inspection_status('File inspection complete · ' + side_summary(inspection))
         elif project:
@@ -512,9 +533,11 @@ class FilesController(ControllerBase):
             else:
                 self.status.setText(RUNNING_STATUS)
                 self._announce_state('inspection', RUNNING_STATUS)
+                self._announce_state('signing', sv.LOADING)
                 self.window.start_inspection()
         else:
             self.status.setText(IDLE_STATUS)
+            self.signing.status.setText(IDLE_STATUS)
 
     def _announce_state(self, section: str, text: str, *, assertive: bool = False) -> None:
         state = (text, assertive)
@@ -535,19 +558,17 @@ class FilesController(ControllerBase):
         if inspection is not None:
             self.pe.set_rows(pe_rows(inspection))
             self._start_signing(inspection)
+        elif failed:
+            self.signing.set_error('PT-PE-INPUT')
 
     def _start_signing(self, inspection: ProjectInspection) -> None:
         if inspection is self._signing_for:
             return
         self._stop_signing()
         self._signing_for = inspection
-        self.signing.set_loading()
-        self._announce_state('signing', sv.LOADING)
-        thread = MetadataThread(inspection, inspection)
-        thread.metadata_ready.connect(self._signing_ready)
-        thread.metadata_failed.connect(self._signing_failed)
-        self._signing_thread = thread
-        thread.start()
+        # Metadata is computed on the existing inspection worker before its readers
+        # reach the GUI. Never start a second thread on the raw view's held handles.
+        self._signing_ready({side: info.metadata for side, info in inspection.sides.items()}, inspection)
 
     def _stop_signing(self, wait: bool = False) -> None:
         thread, self._signing_thread, self._signing_for = self._signing_thread, None, None

@@ -1,0 +1,59 @@
+Negative control uses stored_floss loaded unchanged from fcae8183; corrected empty fixture.
+F                                                                        [100%]
+=================================== FAILURES ===================================
+___ test_stored_cache_and_empty_results_do_not_require_a_new_raw_file[True] ____
+
+qtbot = <pytestqt.qtbot.QtBot object at 0x7f359577bad0>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-87/test_stored_cache_and_empty_re0')
+empty = True
+
+    @pytest.mark.parametrize('empty', [False, True])
+    def test_stored_cache_and_empty_results_do_not_require_a_new_raw_file(qtbot, tmp_path, empty):
+        service = make_project(tmp_path, 'floss-static')
+        try:
+            store_floss(tmp_path, service, 'older', 'newer')
+            store = tool_store(service)
+            for side in ('older', 'newer'):
+                run, evidence = store.latest('floss', side)
+                if empty:
+                    run = run.model_copy(update={'run_id': f'empty-{side}', 'status': 'none-found', 'evidence_count': 0,
+                                                 'raw_sidecar': None, 'stdout_digest': None})
+                    evidence = ToolEvidenceSet(run_id=run.run_id, engine='floss', side=side,
+                                               artifact_sha256=run.input_artifact_hash,
+                                               cache_key=run.cache_key, config_digest=run.config_digest,
+                                               analysis={'types': 'static', 'min_length': 4, 'empty_output': 1})
+                    store.publish_run(run)
+                    store.publish_evidence(evidence)
+                cached = run.model_copy(update={'run_id': f'cached-{side}', 'cache_hit': True,
+                                                'raw_sidecar': None, 'stdout_digest': None})
+                store.publish_run(cached)
+>           computed = compute(args(), service, threading.Event())
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_strings_stored_admission.py:42: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+args = namespace(source='floss', anchors=None, min_length=4)
+service = <patchtrace.service.ProjectService object at 0x7f359542f260>
+cancel = <threading.Event at 0x7f35953d74d0: unset>
+
+    def compute(args, service, cancel: threading.Event) -> Computed:
+        """`--source` per side (stored FLOSS evidence or the built-in scan), then `compose.compare`."""
+        from ..intelligence.tools.snapshot import capture_tool_sources
+        from .compose import NO_FLOSS, _cancelled, builtin_source, compare, missing_floss, stored_sources
+        from .pairing import inspect_image
+        _cancelled(cancel)
+        artifacts = _artifacts(service)
+        anchors = _load_anchors(args.anchors)
+        _cancelled(cancel)
+        store = None if args.source == 'builtin' else capture_tool_sources(service, engines=('floss',))
+        found = stored_sources(args.source, store, artifacts)
+        missing = missing_floss(args.source, found)
+        if missing is not None:
+>           raise _fail(NO_FLOSS.format(side=missing))
+E           patchtrace.strings.contracts.StringsError: PT-STR-INPUT: no stored FLOSS evidence for the older artifact: run `intel-tools run` first
+
+src/patchtrace/strings/cli.py:149: StringsError
+=========================== short test summary info ============================
+FAILED tests/test_strings_stored_admission.py::test_stored_cache_and_empty_results_do_not_require_a_new_raw_file[True]
+1 failed in 3.10s

@@ -25,6 +25,16 @@ class CSRGraph:
     def predecessors(self, node: int) -> array:
         return self._in_adj[self._in_off[node]:self._in_off[node + 1]]
 
+    def iter_successors(self, node: int) -> Iterator[int]:
+        """Ascending neighbours read lazily from the existing CSR, without copying a row."""
+        for position in range(self._out_off[node], self._out_off[node + 1]):
+            yield self._out_adj[position]
+
+    def iter_predecessors(self, node: int) -> Iterator[int]:
+        """Ascending incoming neighbours, with the same no-copy traversal contract."""
+        for position in range(self._in_off[node], self._in_off[node + 1]):
+            yield self._in_adj[position]
+
     def out_degree(self, node: int) -> int:
         return self._out_off[node + 1] - self._out_off[node]
 

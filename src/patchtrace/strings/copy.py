@@ -39,13 +39,16 @@ STATES: dict[str, str] = {
                   'text, compressed or encrypted data) is not covered.',
     'blocked': "These two scans used different settings, so differences would be misleading: {reason}. Re-scan the "
                "older build with the newer build's settings.",
-    'incomplete': "The {side} scan stopped at the {limit} string limit. Added and removed marks are shown as '?' "
+    'incomplete': "The {side} results are incomplete ({limit} strings retained). Added and removed marks are shown as '?' "
                   'because strings may be missing from that side.',
     'failed': 'String extraction stopped: {code}. {message} Earlier results were not changed.',
     'stale': 'The project changed after these strings were loaded. Reload to see the current results.',
     'floss-missing': 'FLOSS is not set up. You do not need it for plain strings. It is only needed for stack, '
                      'tight and decoded strings.',
     'floss-unsupported': 'This FLOSS build is not supported: {reason}. PatchTrace is tested with FLOSS 3.1.1.',
+    'floss-not-stored': 'No FLOSS results are stored for the {side} build, so the comparison did not run. Run FLOSS on both '
+                        'builds first (patchtrace intel-tools run --engines floss), or choose Auto or Built-in scan. '
+                        'Earlier results are unchanged.',
 }
 # Button labels. The card's "Copy safe" is "Copy escaped" here: the banned-word sweep rejects "safe".
 ACTIONS: dict[str, str] = {
@@ -53,6 +56,9 @@ ACTIONS: dict[str, str] = {
     'copy-exact': 'Copy exact...', 'open-function': 'Open function', 'open-hex': 'Open in hex',
     'hide-noise': 'Hide noise-like strings ({n} hidden)'}
 SCOPES: dict[str, str] = {'differences': 'Differences', 'all': 'All strings'}
+# The Source choice (values of `strings --source`) and the Source column label of each stored source name.
+SOURCE_CHOICES: dict[str, str] = {'auto': 'Auto', 'builtin': 'Built-in scan', 'floss': 'FLOSS results'}
+SOURCE_LABELS: dict[str, str] = {'builtin-scan': 'Built-in scan', 'floss': 'FLOSS'}
 
 _CUE_TEACH = {
     'message': ('A message is readable text a program shows or logs.',
@@ -148,6 +154,9 @@ _STATE_TEACH = {
     'stale': ('The project changed after loading.', 'Reload the results.'),
     'floss-missing': ('FLOSS is optional.', 'Set its path only if you need stack, tight or decoded strings.'),
     'floss-unsupported': ('This FLOSS build is not one PatchTrace tests.', 'Use the pinned build.'),
+    'floss-not-stored': ('FLOSS results were chosen, but a build has none stored.',
+                         'Run FLOSS on both builds, or choose Auto to read a build without them with the built-in '
+                         'scan.'),
 }
 TEACH: dict[str, tuple[str, str]] = {
     **{f'strings.cue.{key}': value for key, value in _CUE_TEACH.items()},

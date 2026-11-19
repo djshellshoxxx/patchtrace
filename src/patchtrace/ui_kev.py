@@ -97,8 +97,8 @@ class KevPanel(QWidget):
         super().__init__()
         self.setObjectName('kev.panel')
         self.buttons: dict[str, QPushButton] = {}
-        self.state = StateView('kev', 'Exploitation context', announcer, text_limit=700)
-        self.notices = NoticeStrip(announcer)
+        self.state = StateView('kev.body', 'Exploitation context', announcer, text_limit=700)
+        self.notices = NoticeStrip(announcer, id_prefix='kev.notice')
         self.status = PlainLabel(wrap=True, limit=400)
         self.status.setObjectName('kev.status')
         toolbar = QHBoxLayout()

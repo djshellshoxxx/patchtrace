@@ -1,0 +1,62 @@
+{
+  "schema": "patchtrace/post-foundation-evidence/1",
+  "main": "fdc2696c23bdbfe7668348f25e3b336ce33039f7",
+  "observed_at": "2026-11-19 08:39:01 UTC",
+  "members": [
+    {
+      "path": "post-foundation-remote.json",
+      "bytes": 1314928,
+      "sha256": "5e6e068f753379f9e5f1013623613627ddd3ace25335289e658ef6ed8b86b937"
+    },
+    {
+      "path": "post-foundation-ancestry.json",
+      "bytes": 140591,
+      "sha256": "660fba31aadf800986ba11cc348c1f6d29171574699fcc1b5bf71e0d83c0c421"
+    },
+    {
+      "path": "post-foundation-residue.json",
+      "bytes": 1128064,
+      "sha256": "5516f4b9fb4603de76286188c314343fe162756019a76e79fe7de9e1a09e2d1a"
+    },
+    {
+      "path": "post-foundation-merge-simulations.json",
+      "bytes": 153956,
+      "sha256": "cab9c0ddf97886b7894013e44619886ac838696d2ba3ee6efd3a7c14b7c561f1"
+    },
+    {
+      "path": "post-foundation-prs-for-analysis.json",
+      "bytes": 165193,
+      "sha256": "125003a414d64681f42c405478a723c6dde2a8f1ed4a04039a23d02956221df9"
+    },
+    {
+      "path": "post-foundation-inventory-summary.json",
+      "bytes": 20053,
+      "sha256": "b2303ff2c5858e37b7631623cda30a289cb4a8267ba4fc997e6b9c167e56fb00"
+    },
+    {
+      "path": "post-foundation-inventory-run.log",
+      "bytes": 204,
+      "sha256": "d62f76fdf9c291aa2f55b8529ddf5cae4a6ba6bf5cf1a42e4259ba8a6d85ab4a"
+    },
+    {
+      "path": "stable-venv-import-proof.json",
+      "bytes": 11708,
+      "sha256": "b031013350a0982e51934d1f3b07be2249fea8784c727c2590e75eea0db7b1f3"
+    },
+    {
+      "path": "stable-isolated-import-tests.log",
+      "bytes": 98,
+      "sha256": "5d4f52b28732d1bd4aff970c14646d8a07e877e2a70eee66afefe17ae442e491"
+    },
+    {
+      "path": "stable-isolated-import-tests.xml",
+      "bytes": 989,
+      "sha256": "fa627f04678702b6b4669980acd40ca51c9e7e2a5d923d122afacdc22ab7c262"
+    }
+  ],
+  "archive": {
+    "path": "post-foundation-evidence.zip",
+    "bytes": 340031,
+    "sha256": "b6e6dfe39655f049a14c9cb1f9e289809d80990490a4792f9ec1d252e8823043"
+  }
+}

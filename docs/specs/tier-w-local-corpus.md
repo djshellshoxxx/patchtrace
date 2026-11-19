@@ -3,7 +3,8 @@
 Status (2026-10-14, wave W1, synthetic and self-made validation only):
 - **Built:** s2 layout and strict contracts; s3 catalogue, `resolve` and pair/manifest builder (library API, no CLI yet); s5.4 MSF reader; s6.3 relocation-masked body hash plus `.pdata` and export tables; s12 guard with its `corpus.py` hook; s13 self-made fixtures.
 - **Built (2026-10-15, LBL-20/21, fixture tests only):** s4 fetch library (`fetch.py`, `transport.py`); s5.3 symbol-map builder, s5.5 llvm-pdbutil adapter, s5.2 headless Ghidra script and driver. Still open: `pyghidra` mode, PDB-forcing pre-script and live Ghidra/msdl runs (owner or Windows runner).
-- **Deferred to the next wave:** s6.1/6.2/6.4 labels and tags, s7 audit, s9 runner, s10 evaluation, s11 CLI, and the runbook.
+- **Built (2026-11-04, G-TW-CLI, self-made fixtures only):** s11 CLI `python -m tools.calibration.tier_w` (`cli.py`, `__main__.py`), one strict-JSON line per command. Wired offline: `catalogue --from-file`, `pairs`, `fetch-plan` (counts, bytes, URLs), `symbols --producer msf`, `labels` (a pair whose export table cannot be read is left unlabelled, exit 1), `evaluate` (report plus `<root>/tier-w/export/aggregate.{json,md}`; no match for this corpus's pairs gives exit 1 and writes nothing), `status`, `guard`. Explicit exits: network `catalogue`, `resolve` and `fetch` exit 2 without consent for their host, else 3 (not wired); `audit`, `review`, `audit-report`, `run` and the `ghidra`/`llvm-pdbutil` producers exit 3.
+- **Deferred to the next wave:** s9 runner (LBL-23), transport wiring for the s11 network subcommands, and the s7 `audit`/`review`/`audit-report` subcommands (library `audit.py` exists).
 - **Manual evidence:** one Ghidra 12.0.4 headless trial (Jython 2.7.4) force-loaded a self-made PDB with no symbol-server access. The function body sizes equalled the PDB code sizes. The trial was run by hand and is not a committed test.
 
 Winbindex and msdl.microsoft.com were unreachable from the build sandbox (egress proxy: CONNECT 403). No Microsoft file was fetched, parsed or labelled. Refines `calibration-corpus-and-model.md` (SPEC-28/C9) sections 3.1 Tier W, 3.2-3.4, 4.2, 5.2-5.5 and 14 (C9-2, C9-10). If the two documents disagree on Tier W, this file wins for tooling and C9 wins for methodology. Never shipped: `tools/` is excluded from every package.
@@ -60,6 +61,120 @@ Lineage roles come from `lineage.assign_roles`. Recomputing lineages with body-h
 - Disk preflight: free space must be at least the missing binary bytes, plus a PDB estimate of max(4 MiB, 2 x binary size) capped at the PDB cap, plus 1 GiB of margin. The check runs again before each file.
 - Cancel: Ctrl-C or the `CANCEL` file. A watcher thread sets the transport's cancel event, so partial temporary files are removed and the ledger records `cancelled`.
 - Exit codes: 0 done, 1 some files failed, 2 configuration/consent/disk, 5 cancelled.
+
+### 4.5 Saved-plan library recovery (2026-11-19)
+
+`fetch_plan.py` selectively recovers the exact-preview design from commits
+`c0255b78`, `f44454ad` and `5b7b2591`. Existing single-file fetch APIs and the
+throttled `SymbolTransport` remain available. The network CLI adapters remain
+BLOCKED until separately implemented and reviewed; a saved library plan does
+not implicitly enable a command or grant network consent.
+
+The strict `tier-w-fetch-plan/1` contract contains only public file identity,
+selected pair ids, source-document digests, exact symbol-server URLs, per-file
+budgets and exclusions. Binary entries bind filename, size, SHA-256, Winbindex
+record digest, timestamp and SizeOfImage. PDB entries additionally bind their
+source binary digest and size, CodeView GUID/age and byte cap. Mixed identity
+fields, noncanonical URLs, unknown fields, duplicate identities, foreign pair
+references, device filenames and malformed bounds are refused. A binary cap is
+its exact expected size and cannot exceed the current 512 MiB acquisition cap;
+PDB caps remain at most 2048 MiB. Plans have a 64 MiB serialized limit, at most
+100,000 entries and at most 1,000,000 aggregate pair references.
+
+Offline binary planning revalidates current pairs/catalogues, requires unique
+binary and pair identities, checks every selected binary against its catalogue
+record, and records unavailable, unresolved, wrong-machine, oversized and
+deferred entries. PDB planning reads only the selected verified local binary
+bytes and derives CodeView requests from that same immutable byte snapshot.
+The PDB plan binds the exact canonical binary-plan digest. No remote PDB URL is
+guessed before a local PE has passed digest, size and AMD64 PE checks.
+
+Plan saving uses exclusive, source-owned publication outside the repository;
+an existing byte-identical plan may be reused, but conflicting bytes are
+preserved. Reading uses a held, bounded ordinary file and accepts only the
+canonical sorted JSON bytes with their final newline. Execution checks the
+displayed file digest, a fresh offline recomputation and exact host/URL consent
+before a request. Binary and PDB operations require independent confirmation.
+
+`fetch_saved_plan` is the separately gated library executor. It requires an
+existing ordinary corpus root outside the repository, the saved file's displayed
+SHA-256, a fresh offline recomputation callback and the exact consent-host set.
+The callback is trusted application composition and must re-read current source
+documents; passing a previously cached plan is not a replacement for a reviewed
+CLI adapter. Original lexical parent components are checked before normalization
+and `..` components are refused, so linked parents cannot select a different
+output root through normalization.
+
+The executor uses the current throttled transport, checks the local `CANCEL`
+switch and both caller/transport events, and revalidates every existing selected
+destination before any request. It repeats disk preflight before each download.
+Because verified stages are retained, this saved-plan path reserves twice the
+remaining binary sizes or PDB caps, plus the existing 1 GiB margin; the legacy
+API's estimate is unchanged. A conflicting existing destination stops admission
+before HTTP. An observed race after admission refuses promotion or reuse and
+preserves the other writer's file. Publication is
+exclusive through `owned_publication`; an existing destination is reused only
+after bounded exact-byte and format/identity verification. An observed invalid
+or conflicting destination is preserved and refused. This stronger saved-plan
+policy does not change the legacy single-file API's explicit refetch behavior.
+Verified staging files may remain after a failure, because cleanup must not
+unlink a pathname that another writer may have replaced. Permission flags are
+not an integrity receipt; every reuse revalidates the actual bytes.
+
+Binary reuse is bound directly to the plan's SHA-256. PDB reuse additionally
+requires an ordinary, singly linked, bounded sibling
+`<pdb>.fetch-receipt.json` with the strict `tier-w-pdb-receipt/1` profile. It binds
+the exact relative target, public URL, name, GUID, DBI age, SHA-256 and byte
+length. GUID/age alone cannot authorize changed symbol contents. Only a
+verified downloaded stage can create this receipt; existing PDB bytes cannot
+backfill missing evidence. Missing, conflicting, linked or changed receipt
+evidence refuses reuse before any request. A receipt's identity fields must
+also match the current plan and its recorded size must fit the current cap.
+
+Receipt publication precedes PDB artifact publication, and the receipt stays
+held and revalidated while the artifact is published. The two files are not
+an atomic pair. A valid receipt with a missing artifact may be completed by a
+new verified download only when its bytes match the retained SHA/size. A
+conflicting artifact or receipt remains untouched. A same-byte concurrent
+artifact creator may be reused using evidence from this actual verified
+download, after the immutable receipt binding succeeds. Receipt fields omit
+attempt timestamps; byte-identical bindings can be reused across plans, while
+each attempt ledger records its own actual retrieval provenance.
+
+Saved-plan attempts retain the existing `tier-w-fetch/1` hash-chain event
+envelope in numbered immutable one-line files at
+`tier-w/ledger/<corpus_id>.fetch/<plan_sha256>/<attempt>/<seq>.jsonl`.
+Every event binds the plan digest and operation; fetched/reused outcomes include
+the verified local size/digest, expected public URL and redirect hostname only.
+Reuse is explicitly local identity verification and does not invent retrieval
+provenance. Events are capped at 64 KiB each and 64 MiB per attempt. Each event
+is published exclusively before the next item, with no append or replacement
+of the legacy corpus ledger. Cancellation leaves the completed prefix and
+reports how many plan entries were not attempted. A receipt-publication failure
+raises a typed error and leaves prior events, artifacts and staging evidence
+intact. A hard interruption preserves the original exception even if its final
+interruption record cannot be written. No success receipt implies that a hostile
+writer cannot change a file after the final verification point.
+
+Transport recovery keeps the existing exact-URL consent, host allowlist,
+single blob redirect, retries, per-attempt deadline and request throttle. It
+rejects invalid cap/interval values before requests, streams into an owned
+temporary handle, verifies the held bytes, and publishes the completed stage
+exclusively. The existing 512 MiB binary and 2048 MiB PDB admission limits do
+not authorize whole-file memory allocations. The shared `owned_publication`
+stream API hashes/copies in chunks of at most 1 MiB and retains one 32-byte
+digest per 64 KiB verification block (at most 1 MiB of digests for a 2 GiB
+file). A snapshot range read verifies every intersecting block before returning
+data and is capped at 16 MiB. Source identity, size and change metadata remain
+bound to the held descriptor. The destination's complete digest is rechecked
+before a successful publication receipt; existing byte-oriented callers retain
+their previous API and behavior. Optional expected PDB GUID/age checks parse
+those same verified blocks, with bounded identity-header/module reads rather
+than materializing entire PDB or DBI streams. MSF directory/stream-count limits
+remain separate parser budgets.
+Interrupted or failed cleanup preserves the primary failure and never deletes
+a replacement staging pathname. Tests use fake responses and self-made local
+PE/PDB fixtures only; no live download or native compatibility is implied.
 
 ## 5. Symbol export (decision and contracts)
 5.1 Options evaluated (decision: (a) is primary; (d) supplies the PDB-level facts; (b) is optional; (c) is rejected):
@@ -159,6 +274,74 @@ Secondary engines (`--engine rz-diff`) run once per pair in the `h` project thro
 
 The engine invoker is a Protocol, so tests run without Ghidra.
 
+### Runner admission and resume evidence (2026-11-19)
+
+Library entry revalidates the strict pairs document and requires unique binary
+ids, valid binary references and at least one selected engine/condition. Before
+creating projects or invoking an engine, the matches file and its sibling
+`run.json` must be distinct ordinary output paths under the corpus root. They
+must not alias each other, any input binary (including hard links), the binary
+tree, a selected project directory or the cancellation switch. Existing parent
+components must be ordinary directories; links and Windows reparse points are
+refused before lexical `..` components are collapsed. Retained output history
+is reserved, including differently cased spellings. This is observed local-path
+admission, not an atomic filesystem sandbox against later hostile path changes.
+
+A completed project is reusable only when its run records identify the
+`ghidriff` backend, exact older/newer input hashes and requested symbol policy:
+`disabled` plus boolean `allow_symbol_downloads=False` for hidden, `online`
+plus boolean `True` for visible. An optional `symbol_mode` must agree. A
+directory called `h` or `v`, or a bare completed status, is not provenance.
+Existing completed runs with missing or conflicting evidence are BLOCKED and
+retained without invoking an engine over them. A fresh invoker that returns
+unqualified completed data fails without credited rows. Among eligible runs,
+only the latest in persisted run order supplies matches and its exact engine
+version; historical engine generations are never pooled. Demonstration projects
+are not research evidence. A genuine equal-input `identical` marker produces
+zero engine rows and does not launch an engine.
+
+Synthetic test invokers record the same input and policy fields as the real
+backend. These controls verify admission mechanics only; they do not establish
+native Ghidriff compatibility, correct symbol loading or Tier-W accuracy.
+
+### Output generations and cancellation (2026-11-19)
+
+Before engine work, an existing matches file and `run.json` must both be absent
+or form a readable, digest-bound pair for the selected corpus. Incomplete,
+linked, foreign-corpus or mismatched pairs are refused without replacement.
+Reads use held ordinary files, with a 1 GiB matches budget and a 64 MiB run-record
+budget. The runner serializes and validates the complete next output before
+changing either selected filename; the receipt hashes those exact bytes.
+
+Every output generation is retained below the selected files' parent at
+`.tier-w-run-history/<sha256-of-exact-run.json>/matches.jsonl` and `run.json`.
+These files use verified, exclusive publication; exact existing bytes may be
+reused, and conflicting files are never replaced. The run record is published
+last and binds the matches bytes. Before replacing a legacy selected pair, the
+runner retains its exact bytes by the same procedure. The returned `RunRecord`
+describes the current attempt, whose retained directory can be derived from its
+canonical JSON. A cancelled rerun retains this attempt without changing the
+previous selected pair. A first, cancelled run may select its partial results,
+so work completed before cancellation remains available.
+
+Updating the usual matches and run-record filenames uses separately staged
+replacements, with observed source, destination and parent identity checks.
+Any exception, including cancellation, triggers restoration of the prior pair
+only where the destination is still absent or belongs to this attempt. Cleanup
+never unlinks an ambiguous pathname, and a restoration failure cannot mask the
+original exception. Prior and attempted generations remain retained even when
+restoration fails. An observed foreign replacement is left untouched.
+
+Two filename replacements are not an atomic two-file commit. Concurrent readers
+must verify the run-record digest, and may observe a temporary mismatch. Process
+termination or a second filesystem failure can leave the selected pair needing
+recovery from history; a mismatched pair is refused on the next run. Path checks
+also do not close the final check-to-replace race on a hostile writable directory.
+Postpublication content checks prevent a success receipt for observed changes,
+but do not promise that foreign bytes were never briefly visible or that a
+later external writer cannot mutate evidence. Native filesystem qualification
+and the blocked CLI execution adapter remain separate acceptance work.
+
 ## 10. Evaluation interface (shared with Tier R)
 ```python
 class TruthLabelLike(Protocol):  pair: str; older_rva: int | None; newer_rva: int | None; answer: str; source: str; tags: tuple[str, ...]
@@ -181,6 +364,116 @@ Reported: precision, recall over the truth pairs, F1, counts, and item-level Wil
 - 5: cancelled.
 
 The only network commands are `catalogue` (without `--from-file`), `resolve` and `fetch`, and each requires `--consent-hosts`.
+
+### CLI input admission (2026-11-19 consolidation)
+
+The recovered CLI validates calendar dates, the requested corpus identity of
+both the pairs sidecar and manifest, and each symbol map's exact binary digest,
+file name, producer and Tier-W/test marker before deriving labels. It preflights
+all selected symbol maps before the first label write. Evaluation validates its
+optional audit report and constructs aggregate bytes before publishing results.
+A foreign or malformed input discovered in that admission pass is an input
+error, never an empty successful result; previous output files remain unchanged.
+This does not make a multi-file output set transactional against concurrent
+input changes or publication failures.
+
+Tier-W document reads admit a regular file through its opened descriptor. The
+caller-supplied nonnegative integer byte limit is enforced before reading and
+again against the returned bytes and final descriptor size. Reads consume at
+most the initially admitted size plus one byte, capped at the limit plus one.
+Descriptor identity, size and modification observations must remain stable.
+Nonregular files are refused without waiting for FIFO input. These checks bound
+individual input reads; they do not certify a global corpus memory budget.
+
+### Offline audit and human review adapters (2026-11-19)
+
+`audit` uses the existing sampler with `--seed` (default `1`), `--rate` (default
+0.05), `--size-change` (default 0.40) and `--producer` (default `msf`). Parameters
+are finite and bounded before reading inputs. The adapter validates the selected
+corpus, pair/binary identities and label-detail ownership before sampling. It
+deduplicates identical candidate identities across engines and refuses conflicting
+labels or sides. Candidates take precedence; truth is used only when no labelled
+candidates exist. Missing label files are counted, never treated as negative labels.
+The complete set of label-detail input bytes has a 64 MiB admission budget.
+
+The new adapter module is `tier_w/review_cli.py`; the pure `audit.py` sampler and
+error-rate calculation remain the authority. Selected symbol maps must identify
+the exact binary and producer. Body hashes and capped previews come from verified
+local PE readers and the recorded body ranges; no target is executed. All input
+admission and queue construction finish before publication. Key and queue each
+have a 64 MiB byte budget. Publication is exclusive; an identical audit can be
+resumed, while changed parameters or inputs cannot overwrite a prior audit.
+An incomplete key/queue pair cannot be reviewed or scored.
+
+The CLI queue header adds `audit_sha256`, the exact hidden-key byte digest,
+`pairs_sha256` over the canonical typed pairs document, and `labels_sha256` over
+the ordered pair ids and exact label-detail digests (including missing files).
+Review and report revalidate these inputs and recompute the seeded sample before
+admitting a saved key. A changed population or binary identity cannot reuse the
+old audit merely because its corpus and pair ids stayed the same. The header
+also records the symbol-map producer. Queue sides are recomputed from that
+producer and verified images before review or scoring: edited addresses, sizes,
+body hashes or previews cannot be adopted just by retaining a valid item id. The
+queue has the seeded order, exact selected item set and strata, and only the
+existing blind side fields. Unknown fields, duplicate identities, foreign corpus
+or pair ownership and inconsistent population counts are input errors. Readers
+require this binding; an older unbound queue is not silently admitted.
+The strict CLI profiles `AuditQueueHeader`, `AuditQueueItem` and
+`AuditAnnotation` have generated JSON schemas under `docs/schemas/calibration/`;
+the existing `python -m tools.calibration.schemas` generator reproduces them.
+
+`review --annotator NAME` requires an interactive input terminal. It calls the
+existing `label.run_terminal`; preview and prompts go to stderr and stdout still
+contains exactly one JSON summary. Only an actual human response creates an
+annotation. Quit/EOF leaves remaining items pending; cancellation preserves
+completed annotations. One annotator is admitted per audit, matching the existing
+single-annotator report. Hash-chained events additionally bind the Tier-W marker,
+corpus id, exact audit-key digest and exact queue digest. Events use bounded strict
+JSON, exact field/answer validation and unique item ownership before appending or
+reporting; altered chains and foreign events are refused. The 64 MiB log budget is
+checked before each append; individual events have a 1 MiB admission limit. This
+adapter refuses observed hard-linked or nonordinary annotation/report write
+targets. This is a local single-writer workflow, not an
+authenticity signature or a concurrent-writer transaction.
+
+`audit-report` computes the existing population-weighted report from that key and
+verified human log. Zero or incomplete review remains `insufficient`; `weak` and
+`insufficient` return partial exit 1. It never fabricates answers or promotes a
+native result. Evaluation checks corpus ownership and refuses a saved managed
+audit report that no longer matches its key/queue/annotations. Invalid inputs
+leave earlier reports unchanged; an existing report with foreign corpus ownership
+or malformed data is not adopted for replacement. File replacement and multi-file crash recovery
+retain the existing local publication limitations.
+Cancellation is checked between key and queue publication; a completed key is
+retained and an exact rerun can finish its missing queue after cancellation is
+cleared. No incomplete pair is reported as reviewable.
+
+### Offline runner CLI adapter (2026-11-19)
+
+`run` now calls the reviewed runner in section 9 for `symbols-hidden` only.
+It requires explicit `--python` and `--ghidra-dir` configuration, checked using
+the backend's filesystem-only admission before any project is created. The
+per-pair `--timeout` is an integer from 60 through 86,400 seconds. Missing tool
+configuration returns BLOCKED; invalid configuration returns exit 2. An empty
+pairs document returns partial without selecting a new output generation.
+Direct native CLI execution is refused in CI, as in `run-local`; synthetic
+library and CLI adapter tests remain admission tests without native credit.
+
+`--condition symbols-visible` remains explicitly BLOCKED in this adapter: its
+online symbol policy needs a separately reviewed consent path. No secondary
+invoker is silently selected. The admitted hidden configuration disables symbol
+downloads, while the existing backend performs static analysis and never runs a
+target image. Existing input ownership, project provenance, cancellation and
+paired output checks remain in the runner.
+
+The CLI maps the actual returned run status to exits 0/1/3/5, reports cell counts
+and a root-relative `attempt_record` path in retained history, and redirects
+Python progress output to stderr. It always emits one JSON summary on stdout.
+The history path identifies this attempt, including cancellation; it does not
+claim that a cancelled rerun replaced the usual selected `run.json`. A Ctrl-C
+that escapes before a complete retained record reports cancellation without
+inventing an attempt receipt. Native tool compatibility and filesystem
+qualification remain separate acceptance gates.
 
 ## 12. Repository guard (hook in `tools.calibration.corpus.guard`, logic in `tier_w/guard.py`)
 `guard` fails (and so does `tests/test_calibration_tools.py::test_repository_contains_no_executable_images_outside_fixtures`, plus the Tier-W repository test) when a tracked or untracked-not-ignored file is any of the following:

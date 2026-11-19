@@ -1,0 +1,533 @@
+[
+  {
+    "ref": "refs/tags/v0.1.0-beta.101",
+    "sha": "4d9fa9f06b1f744fc948413167a97f4241313666",
+    "object_type": "commit",
+    "available_locally": true,
+    "main_ancestor": true,
+    "candidate_ancestor": true,
+    "qualification": "Tag retention and ancestry only; no release qualification inferred."
+  },
+  {
+    "ref": "refs/tags/v0.1.0-beta.103",
+    "sha": "0a4bc09bb0f658a8b39a799e489b0239620504f0",
+    "object_type": "commit",
+    "available_locally": true,
+    "main_ancestor": true,
+    "candidate_ancestor": true,
+    "qualification": "Tag retention and ancestry only; no release qualification inferred."
+  },
+  {
+    "ref": "refs/tags/v0.1.0-beta.1035",
+    "sha": "1836eb120571bb3c3a09fd3014447498621e2103",
+    "object_type": "commit",
+    "available_locally": true,
+    "main_ancestor": true,
+    "candidate_ancestor": true,
+    "qualification": "Tag retention and ancestry only; no release qualification inferred."
+  },
+  {
+    "ref": "refs/tags/v0.1.0-beta.109",
+    "sha": "3c1e81cb29ed99bc152f3a8d2e1faf45d373a2f5",
+    "object_type": "commit",
+    "available_locally": true,
+    "main_ancestor": true,
+    "candidate_ancestor": true,
+    "qualification": "Tag retention and ancestry only; no release qualification inferred."
+  },
+  {
+    "ref": "refs/tags/v0.1.0-beta.110",
+    "sha": "f0086f797556afca5848c2b68a3819be5c0c0064",
+    "object_type": "commit",
+    "available_locally": true,
+    "main_ancestor": true,
+    "candidate_ancestor": true,
+    "qualification": "Tag retention and ancestry only; no release qualification inferred."
+  },
+  {
+    "ref": "refs/tags/v0.1.0-beta.112",
+    "sha": "0ec471016d2838a90753e014a0d647dd90168e87",
+    "object_type": "commit",
+    "available_locally": true,
+    "main_ancestor": true,
+    "candidate_ancestor": true,
+    "qualification": "Tag retention and ancestry only; no release qualification inferred."
+  },
+  {
+    "ref": "refs/tags/v0.1.0-beta.116",
+    "sha": "f1d95e154738e8cfc99f91d6f2bc06615f7bf1b1",
+    "object_type": "commit",
+    "available_locally": true,
+    "main_ancestor": true,
+    "candidate_ancestor": true,
+    "qualification": "Tag retention and ancestry only; no release qualification inferred."
+  },
+  {
+    "ref": "refs/tags/v0.1.0-beta.117",
+    "sha": "34d2b480921769fa699997993265e2b4d10ce15e",
+    "object_type": "commit",
+    "available_locally": true,
+    "main_ancestor": true,
+    "candidate_ancestor": true,
+    "qualification": "Tag retention and ancestry only; no release qualification inferred."
+  },
+  {
+    "ref": "refs/tags/v0.1.0-beta.118",
+    "sha": "1e6703a81c068201758179f5ac884e4fd5375eb7",
+    "object_type": "commit",
+    "available_locally": true,
+    "main_ancestor": true,
+    "candidate_ancestor": true,
+    "qualification": "Tag retention and ancestry only; no release qualification inferred."
+  },
+  {
+    "ref": "refs/tags/v0.1.0-beta.120",
+    "sha": "58578e176ff420f0e80eb1d41c740d43bd01ea4a",
+    "object_type": "commit",
+    "available_locally": true,
+    "main_ancestor": true,
+    "candidate_ancestor": true,
+    "qualification": "Tag retention and ancestry only; no release qualification inferred."
+  },
+  {
+    "ref": "refs/tags/v0.1.0-beta.127",
+    "sha": "7cdb12053dd053e6a4a444a2a70e24a06ce0b4ed",
+    "object_type": "commit",
+    "available_locally": true,
+    "main_ancestor": true,
+    "candidate_ancestor": true,
+    "qualification": "Tag retention and ancestry only; no release qualification inferred."
+  },
+  {
+    "ref": "refs/tags/v0.1.0-beta.129",
+    "sha": "df6004ffb1eac44d12c58bc987d8ee694680306f",
+    "object_type": "commit",
+    "available_locally": true,
+    "main_ancestor": true,
+    "candidate_ancestor": true,
+    "qualification": "Tag retention and ancestry only; no release qualification inferred."
+  },
+  {
+    "ref": "refs/tags/v0.1.0-beta.13",
+    "sha": "5667b759f553e946885d0998953c301666907de6",
+    "object_type": "commit",
+    "available_locally": true,
+    "main_ancestor": true,
+    "candidate_ancestor": true,
+    "qualification": "Tag retention and ancestry only; no release qualification inferred."
+  },
+  {
+    "ref": "refs/tags/v0.1.0-beta.131",
+    "sha": "b7e819a3b4ff580654d37a666117f1b3305a051b",
+    "object_type": "commit",
+    "available_locally": true,
+    "main_ancestor": true,
+    "candidate_ancestor": true,
+    "qualification": "Tag retention and ancestry only; no release qualification inferred."
+  },
+  {
+    "ref": "refs/tags/v0.1.0-beta.142",
+    "sha": "ac97541bc88582745e268df6101d71c5b07efa69",
+    "object_type": "commit",
+    "available_locally": true,
+    "main_ancestor": true,
+    "candidate_ancestor": true,
+    "qualification": "Tag retention and ancestry only; no release qualification inferred."
+  },
+  {
+    "ref": "refs/tags/v0.1.0-beta.144",
+    "sha": "f689d33f506c8ce37e626712c042f8560523e02c",
+    "object_type": "commit",
+    "available_locally": true,
+    "main_ancestor": true,
+    "candidate_ancestor": true,
+    "qualification": "Tag retention and ancestry only; no release qualification inferred."
+  },
+  {
+    "ref": "refs/tags/v0.1.0-beta.146",
+    "sha": "cda7fe8630a76ff321f9cbd114b4a69fe7d9a71a",
+    "object_type": "commit",
+    "available_locally": true,
+    "main_ancestor": true,
+    "candidate_ancestor": true,
+    "qualification": "Tag retention and ancestry only; no release qualification inferred."
+  },
+  {
+    "ref": "refs/tags/v0.1.0-beta.148",
+    "sha": "29a4d3f3a76ac398fe53b9f47dd5d2fa7341cf99",
+    "object_type": "commit",
+    "available_locally": true,
+    "main_ancestor": true,
+    "candidate_ancestor": true,
+    "qualification": "Tag retention and ancestry only; no release qualification inferred."
+  },
+  {
+    "ref": "refs/tags/v0.1.0-beta.158",
+    "sha": "011e20c36e307717e5a32fe790ce0030631751b6",
+    "object_type": "commit",
+    "available_locally": true,
+    "main_ancestor": true,
+    "candidate_ancestor": true,
+    "qualification": "Tag retention and ancestry only; no release qualification inferred."
+  },
+  {
+    "ref": "refs/tags/v0.1.0-beta.162",
+    "sha": "b38ad2bc35fa670398a85c25e349a6b8d64f30c0",
+    "object_type": "commit",
+    "available_locally": true,
+    "main_ancestor": true,
+    "candidate_ancestor": true,
+    "qualification": "Tag retention and ancestry only; no release qualification inferred."
+  },
+  {
+    "ref": "refs/tags/v0.1.0-beta.163",
+    "sha": "4fa554a05a5051f0ae2da749ad12e2ec92e094dd",
+    "object_type": "commit",
+    "available_locally": true,
+    "main_ancestor": true,
+    "candidate_ancestor": true,
+    "qualification": "Tag retention and ancestry only; no release qualification inferred."
+  },
+  {
+    "ref": "refs/tags/v0.1.0-beta.167",
+    "sha": "cb25132b0ebd12abb2f15bdc60324b8d177bef25",
+    "object_type": "commit",
+    "available_locally": true,
+    "main_ancestor": true,
+    "candidate_ancestor": true,
+    "qualification": "Tag retention and ancestry only; no release qualification inferred."
+  },
+  {
+    "ref": "refs/tags/v0.1.0-beta.176",
+    "sha": "9403d1dc92537cee4341db21b3b48cb4a5ac183f",
+    "object_type": "commit",
+    "available_locally": true,
+    "main_ancestor": true,
+    "candidate_ancestor": true,
+    "qualification": "Tag retention and ancestry only; no release qualification inferred."
+  },
+  {
+    "ref": "refs/tags/v0.1.0-beta.177",
+    "sha": "1560531c7522b10fa5d18ef744ac5a068936ef31",
+    "object_type": "commit",
+    "available_locally": true,
+    "main_ancestor": true,
+    "candidate_ancestor": true,
+    "qualification": "Tag retention and ancestry only; no release qualification inferred."
+  },
+  {
+    "ref": "refs/tags/v0.1.0-beta.202",
+    "sha": "67e5a6c6919ee711c99d334ed58e3e91298c3038",
+    "object_type": "commit",
+    "available_locally": true,
+    "main_ancestor": true,
+    "candidate_ancestor": true,
+    "qualification": "Tag retention and ancestry only; no release qualification inferred."
+  },
+  {
+    "ref": "refs/tags/v0.1.0-beta.21",
+    "sha": "97dda86615fd21a74ad0568301b24368e9efd070",
+    "object_type": "commit",
+    "available_locally": true,
+    "main_ancestor": true,
+    "candidate_ancestor": true,
+    "qualification": "Tag retention and ancestry only; no release qualification inferred."
+  },
+  {
+    "ref": "refs/tags/v0.1.0-beta.211",
+    "sha": "46dfac1751a2d7d1fe9d296a53535c2ed95e3c6c",
+    "object_type": "commit",
+    "available_locally": true,
+    "main_ancestor": true,
+    "candidate_ancestor": true,
+    "qualification": "Tag retention and ancestry only; no release qualification inferred."
+  },
+  {
+    "ref": "refs/tags/v0.1.0-beta.220",
+    "sha": "ea5be5ea5a2c3db75eac176ed7b4303df07624b3",
+    "object_type": "commit",
+    "available_locally": true,
+    "main_ancestor": true,
+    "candidate_ancestor": true,
+    "qualification": "Tag retention and ancestry only; no release qualification inferred."
+  },
+  {
+    "ref": "refs/tags/v0.1.0-beta.222",
+    "sha": "0142c5de8081d3d017eca4b6b727c128533e304f",
+    "object_type": "commit",
+    "available_locally": true,
+    "main_ancestor": true,
+    "candidate_ancestor": true,
+    "qualification": "Tag retention and ancestry only; no release qualification inferred."
+  },
+  {
+    "ref": "refs/tags/v0.1.0-beta.225",
+    "sha": "98182e514c0fe6fd5840634358905c6df23f7f1c",
+    "object_type": "commit",
+    "available_locally": true,
+    "main_ancestor": true,
+    "candidate_ancestor": true,
+    "qualification": "Tag retention and ancestry only; no release qualification inferred."
+  },
+  {
+    "ref": "refs/tags/v0.1.0-beta.243",
+    "sha": "c2070cf8b4e7b0ade76cb000a5805009754eec55",
+    "object_type": "commit",
+    "available_locally": true,
+    "main_ancestor": true,
+    "candidate_ancestor": true,
+    "qualification": "Tag retention and ancestry only; no release qualification inferred."
+  },
+  {
+    "ref": "refs/tags/v0.1.0-beta.281",
+    "sha": "21a005e242177f07a984937a7cd924e826c17b9f",
+    "object_type": "commit",
+    "available_locally": true,
+    "main_ancestor": true,
+    "candidate_ancestor": true,
+    "qualification": "Tag retention and ancestry only; no release qualification inferred."
+  },
+  {
+    "ref": "refs/tags/v0.1.0-beta.29",
+    "sha": "0f1b4ce5a0b51526fdceb5533f0553321899fd2a",
+    "object_type": "commit",
+    "available_locally": true,
+    "main_ancestor": true,
+    "candidate_ancestor": true,
+    "qualification": "Tag retention and ancestry only; no release qualification inferred."
+  },
+  {
+    "ref": "refs/tags/v0.1.0-beta.36",
+    "sha": "736332cf63d3c7927f5c17f4aea5150f624bf957",
+    "object_type": "commit",
+    "available_locally": true,
+    "main_ancestor": true,
+    "candidate_ancestor": true,
+    "qualification": "Tag retention and ancestry only; no release qualification inferred."
+  },
+  {
+    "ref": "refs/tags/v0.1.0-beta.372",
+    "sha": "eb0960710216bb0ebb4053597f6f12d1cbd183fc",
+    "object_type": "commit",
+    "available_locally": true,
+    "main_ancestor": true,
+    "candidate_ancestor": true,
+    "qualification": "Tag retention and ancestry only; no release qualification inferred."
+  },
+  {
+    "ref": "refs/tags/v0.1.0-beta.402",
+    "sha": "70e33fd77570329ba23afc58a38616270636d37c",
+    "object_type": "commit",
+    "available_locally": true,
+    "main_ancestor": true,
+    "candidate_ancestor": true,
+    "qualification": "Tag retention and ancestry only; no release qualification inferred."
+  },
+  {
+    "ref": "refs/tags/v0.1.0-beta.505",
+    "sha": "08f6a5ff5bb4304287aec2ab30546d841c63665a",
+    "object_type": "commit",
+    "available_locally": true,
+    "main_ancestor": true,
+    "candidate_ancestor": true,
+    "qualification": "Tag retention and ancestry only; no release qualification inferred."
+  },
+  {
+    "ref": "refs/tags/v0.1.0-beta.541",
+    "sha": "94bd6a41ca309d7110e077c3a3d7a6fca07bdaf2",
+    "object_type": "commit",
+    "available_locally": true,
+    "main_ancestor": true,
+    "candidate_ancestor": true,
+    "qualification": "Tag retention and ancestry only; no release qualification inferred."
+  },
+  {
+    "ref": "refs/tags/v0.1.0-beta.543",
+    "sha": "f4063c3cc7e0c9d02d972e798699ad206628a5f1",
+    "object_type": "commit",
+    "available_locally": true,
+    "main_ancestor": true,
+    "candidate_ancestor": true,
+    "qualification": "Tag retention and ancestry only; no release qualification inferred."
+  },
+  {
+    "ref": "refs/tags/v0.1.0-beta.62",
+    "sha": "4848c5479658a68fbf16bb6caebf369476472e56",
+    "object_type": "commit",
+    "available_locally": true,
+    "main_ancestor": true,
+    "candidate_ancestor": true,
+    "qualification": "Tag retention and ancestry only; no release qualification inferred."
+  },
+  {
+    "ref": "refs/tags/v0.1.0-beta.63",
+    "sha": "615b9354fe8b5a8954d71f212ecf76f5a8d08c0e",
+    "object_type": "commit",
+    "available_locally": true,
+    "main_ancestor": true,
+    "candidate_ancestor": true,
+    "qualification": "Tag retention and ancestry only; no release qualification inferred."
+  },
+  {
+    "ref": "refs/tags/v0.1.0-beta.698",
+    "sha": "6579ed83211b7ff2039e3152728ac1cddc3e93d6",
+    "object_type": "commit",
+    "available_locally": true,
+    "main_ancestor": true,
+    "candidate_ancestor": true,
+    "qualification": "Tag retention and ancestry only; no release qualification inferred."
+  },
+  {
+    "ref": "refs/tags/v0.1.0-beta.70",
+    "sha": "2148a3fba9d41a11cd0d60215b4c7926196bf4fc",
+    "object_type": "commit",
+    "available_locally": true,
+    "main_ancestor": true,
+    "candidate_ancestor": true,
+    "qualification": "Tag retention and ancestry only; no release qualification inferred."
+  },
+  {
+    "ref": "refs/tags/v0.1.0-beta.72",
+    "sha": "2d889417ed2e43d28485dac267d0da1ce2b29e6c",
+    "object_type": "commit",
+    "available_locally": true,
+    "main_ancestor": true,
+    "candidate_ancestor": true,
+    "qualification": "Tag retention and ancestry only; no release qualification inferred."
+  },
+  {
+    "ref": "refs/tags/v0.1.0-beta.736",
+    "sha": "ce8c65bf41541cf6adb52289d2a530ce2817a53a",
+    "object_type": "commit",
+    "available_locally": true,
+    "main_ancestor": true,
+    "candidate_ancestor": true,
+    "qualification": "Tag retention and ancestry only; no release qualification inferred."
+  },
+  {
+    "ref": "refs/tags/v0.1.0-beta.751",
+    "sha": "b77d84e5decf736b031f0a24094001274de41178",
+    "object_type": "commit",
+    "available_locally": true,
+    "main_ancestor": true,
+    "candidate_ancestor": true,
+    "qualification": "Tag retention and ancestry only; no release qualification inferred."
+  },
+  {
+    "ref": "refs/tags/v0.1.0-beta.8",
+    "sha": "e7bd3dd4ac908adea3442056852f916ee3ea0b38",
+    "object_type": "commit",
+    "available_locally": true,
+    "main_ancestor": true,
+    "candidate_ancestor": true,
+    "qualification": "Tag retention and ancestry only; no release qualification inferred."
+  },
+  {
+    "ref": "refs/tags/v0.1.0-beta.80",
+    "sha": "0d22e9cdd833528e7b355051613c9deceb929f52",
+    "object_type": "commit",
+    "available_locally": true,
+    "main_ancestor": true,
+    "candidate_ancestor": true,
+    "qualification": "Tag retention and ancestry only; no release qualification inferred."
+  },
+  {
+    "ref": "refs/tags/v0.1.0-beta.82",
+    "sha": "1223cdd5517c2d49423210a6c7a35b5946679a07",
+    "object_type": "commit",
+    "available_locally": true,
+    "main_ancestor": true,
+    "candidate_ancestor": true,
+    "qualification": "Tag retention and ancestry only; no release qualification inferred."
+  },
+  {
+    "ref": "refs/tags/v0.1.0-beta.85",
+    "sha": "20a843348dc125346af346ec32c815c469c67283",
+    "object_type": "commit",
+    "available_locally": true,
+    "main_ancestor": true,
+    "candidate_ancestor": true,
+    "qualification": "Tag retention and ancestry only; no release qualification inferred."
+  },
+  {
+    "ref": "refs/tags/v0.1.0-beta.90",
+    "sha": "7eea00147d2c9c898725c973aa2854aabcdeff9a",
+    "object_type": "commit",
+    "available_locally": true,
+    "main_ancestor": true,
+    "candidate_ancestor": true,
+    "qualification": "Tag retention and ancestry only; no release qualification inferred."
+  },
+  {
+    "ref": "refs/tags/v0.1.0-beta.907",
+    "sha": "d02b94bcedb29dae201941f01f2c94d42ebbb297",
+    "object_type": "commit",
+    "available_locally": true,
+    "main_ancestor": true,
+    "candidate_ancestor": true,
+    "qualification": "Tag retention and ancestry only; no release qualification inferred."
+  },
+  {
+    "ref": "refs/tags/v0.1.0-beta.926",
+    "sha": "365bf1f20f481d7c49c4d15bd90a3bde4b697038",
+    "object_type": "commit",
+    "available_locally": true,
+    "main_ancestor": true,
+    "candidate_ancestor": true,
+    "qualification": "Tag retention and ancestry only; no release qualification inferred."
+  },
+  {
+    "ref": "refs/tags/v0.1.0-beta.95",
+    "sha": "cae86740db7ba7d1fbe33212997a782ddf5df08c",
+    "object_type": "commit",
+    "available_locally": true,
+    "main_ancestor": true,
+    "candidate_ancestor": true,
+    "qualification": "Tag retention and ancestry only; no release qualification inferred."
+  },
+  {
+    "ref": "refs/tags/v0.1.0-beta.96",
+    "sha": "6764acb5dc99e39c94655188a1548225c10ac656",
+    "object_type": "commit",
+    "available_locally": true,
+    "main_ancestor": true,
+    "candidate_ancestor": true,
+    "qualification": "Tag retention and ancestry only; no release qualification inferred."
+  },
+  {
+    "ref": "refs/tags/v0.1.0-beta.97",
+    "sha": "e43611651c3a08ba47d9d66cb0d77f4d40fca818",
+    "object_type": "commit",
+    "available_locally": true,
+    "main_ancestor": true,
+    "candidate_ancestor": true,
+    "qualification": "Tag retention and ancestry only; no release qualification inferred."
+  },
+  {
+    "ref": "refs/tags/v0.1.0-beta.972",
+    "sha": "a6f6eb1169208b253e4f7fac7bf034443447fcd2",
+    "object_type": "commit",
+    "available_locally": true,
+    "main_ancestor": true,
+    "candidate_ancestor": true,
+    "qualification": "Tag retention and ancestry only; no release qualification inferred."
+  },
+  {
+    "ref": "refs/tags/v0.1.0-beta.98",
+    "sha": "be8577c0344023a0c2f7e3a43aeed2daa2c5d950",
+    "object_type": "commit",
+    "available_locally": true,
+    "main_ancestor": true,
+    "candidate_ancestor": true,
+    "qualification": "Tag retention and ancestry only; no release qualification inferred."
+  },
+  {
+    "ref": "refs/tags/v0.1.0-beta.991",
+    "sha": "77055d4f0f435a457ae6d7d9e9a1d78f4ef8601b",
+    "object_type": "commit",
+    "available_locally": true,
+    "main_ancestor": true,
+    "candidate_ancestor": true,
+    "qualification": "Tag retention and ancestry only; no release qualification inferred."
+  }
+]

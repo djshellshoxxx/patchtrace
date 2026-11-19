@@ -1,0 +1,783 @@
+{
+  "baseline": "c7d3f25858cfefbacbd8ea4022b3d13e1e2aed2a",
+  "scope": "Every direct Python install script in all 22 workflows plus repository Python installer/generator helpers at the baseline; action and cache changes do not alter dependency inputs.",
+  "direct_script_count": 41,
+  "direct_workflow_count": 20,
+  "installers": [
+    {
+      "workflow": ".github/workflows/backend-bundle.yml",
+      "job": "vrfy",
+      "step": 2,
+      "name": "Install the Sigstore client (pinned)",
+      "profile": "signature-verify",
+      "runs_on": "ubuntu-latest",
+      "matrix": null,
+      "script": "python -m pip install 'sigstore==4.5.0'",
+      "baseline_workflow_blob": "4011b2bd4c2bb790f6975a89d2858ebcf4491d36"
+    },
+    {
+      "workflow": ".github/workflows/backend-bundle.yml",
+      "job": "bld-win",
+      "step": 2,
+      "name": null,
+      "profile": "qa-packaging-extras",
+      "runs_on": "windows-latest",
+      "matrix": null,
+      "script": "python -m pip install --only-binary=:all: -e '.[dev,search,rules]'",
+      "baseline_workflow_blob": "4011b2bd4c2bb790f6975a89d2858ebcf4491d36"
+    },
+    {
+      "workflow": ".github/workflows/backend-bundle.yml",
+      "job": "bld-lin",
+      "step": 3,
+      "name": null,
+      "profile": "qa-packaging-extras",
+      "runs_on": "ubuntu-22.04",
+      "matrix": null,
+      "script": "python -m pip install --only-binary=:all: -e '.[dev,search,rules]'",
+      "baseline_workflow_blob": "4011b2bd4c2bb790f6975a89d2858ebcf4491d36"
+    },
+    {
+      "workflow": ".github/workflows/corpus-tier-r.yml",
+      "job": "plan",
+      "step": 2,
+      "name": null,
+      "profile": "app-core",
+      "runs_on": "ubuntu-24.04",
+      "matrix": null,
+      "script": "python -m pip install -e .",
+      "baseline_workflow_blob": "76fc866fd58b677ac2dac5aee549638bafbf5c2e"
+    },
+    {
+      "workflow": ".github/workflows/corpus-tier-r.yml",
+      "job": "shard",
+      "step": 2,
+      "name": null,
+      "profile": "app-core",
+      "runs_on": "ubuntu-24.04",
+      "matrix": "${{ fromJSON(needs.plan.outputs.matrix) }}",
+      "script": "python -m pip install -e .",
+      "baseline_workflow_blob": "76fc866fd58b677ac2dac5aee549638bafbf5c2e"
+    },
+    {
+      "workflow": ".github/workflows/corpus-tier-r.yml",
+      "job": "shard",
+      "step": 9,
+      "name": "Install Ghidra and Ghidriff (fail closed on digest mismatch)",
+      "profile": "pinned-ghidriff-addition",
+      "runs_on": "ubuntu-24.04",
+      "matrix": "${{ fromJSON(needs.plan.outputs.matrix) }}",
+      "script": "set -euo pipefail\nif [ \"${{ steps.ghidra-cache.outputs.cache-hit }}\" != \"true\" ]; then\n  curl -fsSL -o ghidra.zip \"$GHIDRA_URL\"\n  echo \"${GHIDRA_SHA256}  ghidra.zip\" | sha256sum -c -\n  mkdir -p ghidra-runtime\n  unzip -q ghidra.zip -d ghidra-runtime\n  rm -f ghidra.zip\nfi\necho \"GHIDRA_INSTALL_DIR=$(find \"$PWD/ghidra-runtime\" -mindepth 1 -maxdepth 1 -type d | head -n 1)\" >> \"$GITHUB_ENV\"\npython -m pip install \"$GHIDRIFF_PIN\"\n",
+      "baseline_workflow_blob": "76fc866fd58b677ac2dac5aee549638bafbf5c2e"
+    },
+    {
+      "workflow": ".github/workflows/corpus-tier-r.yml",
+      "job": "merge",
+      "step": 2,
+      "name": null,
+      "profile": "app-core",
+      "runs_on": "ubuntu-24.04",
+      "matrix": null,
+      "script": "python -m pip install -e .",
+      "baseline_workflow_blob": "76fc866fd58b677ac2dac5aee549638bafbf5c2e"
+    },
+    {
+      "workflow": ".github/workflows/corpus-tier-r.yml",
+      "job": "windows-advisory",
+      "step": 2,
+      "name": null,
+      "profile": "app-core",
+      "runs_on": "windows-latest",
+      "matrix": null,
+      "script": "python -m pip install -e .",
+      "baseline_workflow_blob": "76fc866fd58b677ac2dac5aee549638bafbf5c2e"
+    },
+    {
+      "workflow": ".github/workflows/corpus-tier-r.yml",
+      "job": "msvc-advisory",
+      "step": 2,
+      "name": null,
+      "profile": "qa-core",
+      "runs_on": "windows-2022",
+      "matrix": null,
+      "script": "python -m pip install --only-binary=:all: -e .[dev]",
+      "baseline_workflow_blob": "76fc866fd58b677ac2dac5aee549638bafbf5c2e"
+    },
+    {
+      "workflow": ".github/workflows/diff-and-score.yml",
+      "job": "diff",
+      "step": 4,
+      "name": "Install ghidriff",
+      "profile": "dispatch-ghidriff-version",
+      "runs_on": "ubuntu-latest",
+      "matrix": "${{ fromJSON(needs.plan.outputs.matrix) }}",
+      "script": "python -m pip install \"ghidriff==${GHIDRIFF_VERSION}\"",
+      "baseline_workflow_blob": "38d443f99ff55a82a809ef262d4a5428912ce7bc"
+    },
+    {
+      "workflow": ".github/workflows/live-backend.yml",
+      "job": "native",
+      "step": 6,
+      "name": null,
+      "profile": "app-core-plus-pinned-ghidriff",
+      "runs_on": "windows-latest",
+      "matrix": {
+        "variant": [
+          "repro-plain-ghidriff",
+          "patchtrace-clean",
+          "patchtrace-seeded-store",
+          "patchtrace-seeded-store-no-adjacent-pdb",
+          "raw-cache-hit"
+        ]
+      },
+      "script": "python -m pip install -e . 'ghidriff @ git+https://github.com/clearbluejar/ghidriff.git@4f5d895fcbb1eacd65efd81145922c15bb7e741d'",
+      "baseline_workflow_blob": "011cca180db77385d9d17340a52293ebe7130fc6"
+    },
+    {
+      "workflow": ".github/workflows/live-bindiff.yml",
+      "job": "live-bindiff",
+      "step": 3,
+      "name": null,
+      "profile": "qa-core",
+      "runs_on": "${{ matrix.os }}",
+      "matrix": {
+        "include": [
+          {
+            "os": "ubuntu-22.04",
+            "pin_os": "linux",
+            "advisory": false,
+            "provision_flags": ""
+          },
+          {
+            "os": "windows-latest",
+            "pin_os": "windows",
+            "advisory": true,
+            "provision_flags": "--advisory"
+          }
+        ]
+      },
+      "script": "python -m pip install -e .[dev]",
+      "baseline_workflow_blob": "45735fc193672d2ead897d6a1141118fb50d61c2"
+    },
+    {
+      "workflow": ".github/workflows/live-capa.yml",
+      "job": "live-capa",
+      "step": 3,
+      "name": null,
+      "profile": "qa-core",
+      "runs_on": "${{ matrix.os }}",
+      "matrix": {
+        "include": [
+          {
+            "os": "ubuntu-22.04",
+            "pin_os": "linux",
+            "advisory": false,
+            "provision_flags": ""
+          },
+          {
+            "os": "windows-latest",
+            "pin_os": "windows",
+            "advisory": true,
+            "provision_flags": "--advisory"
+          }
+        ]
+      },
+      "script": "python -m pip install -e .[dev]",
+      "baseline_workflow_blob": "3479d2c2732bc4b28dc80a795f3deae56f84df82"
+    },
+    {
+      "workflow": ".github/workflows/live-intel-tools.yml",
+      "job": "live-intel-tools",
+      "step": 3,
+      "name": null,
+      "profile": "qa-core",
+      "runs_on": "${{ matrix.os }}",
+      "matrix": {
+        "include": [
+          {
+            "os": "ubuntu-22.04",
+            "pin_os": "linux",
+            "advisory": false,
+            "provision_flags": ""
+          },
+          {
+            "os": "windows-latest",
+            "pin_os": "windows",
+            "advisory": true,
+            "provision_flags": "--advisory"
+          }
+        ]
+      },
+      "script": "python -m pip install -e .[dev]",
+      "baseline_workflow_blob": "8f10c05e12a2f164bed9d4a7e7e6dc2c601728ca"
+    },
+    {
+      "workflow": ".github/workflows/live-intel-tools.yml",
+      "job": "live-buildenv",
+      "step": 3,
+      "name": null,
+      "profile": "qa-core",
+      "runs_on": "ubuntu-22.04",
+      "matrix": null,
+      "script": "python -m pip install -e .[dev]",
+      "baseline_workflow_blob": "8f10c05e12a2f164bed9d4a7e7e6dc2c601728ca"
+    },
+    {
+      "workflow": ".github/workflows/live-kbc.yml",
+      "job": "live-kbc",
+      "step": 2,
+      "name": null,
+      "profile": "app-core",
+      "runs_on": "ubuntu-latest",
+      "matrix": null,
+      "script": "python -m pip install --only-binary=:all: -e .",
+      "baseline_workflow_blob": "e072c5fa1df139efec3b3251ed646f3e551ed42c"
+    },
+    {
+      "workflow": ".github/workflows/live-kev.yml",
+      "job": "live-kev",
+      "step": 2,
+      "name": null,
+      "profile": "app-core",
+      "runs_on": "ubuntu-latest",
+      "matrix": null,
+      "script": "python -m pip install --only-binary=:all: -e .",
+      "baseline_workflow_blob": "292aa3e5ddbba557f2921db5eb818c85f9d77fa0"
+    },
+    {
+      "workflow": ".github/workflows/live-nvd.yml",
+      "job": "live-nvd",
+      "step": 2,
+      "name": null,
+      "profile": "app-core",
+      "runs_on": "ubuntu-latest",
+      "matrix": null,
+      "script": "python -m pip install -e .",
+      "baseline_workflow_blob": "7fd9068a58b766b6bebddd886202ab00b54ff6ff"
+    },
+    {
+      "workflow": ".github/workflows/live-rizin.yml",
+      "job": "live-rizin",
+      "step": 2,
+      "name": null,
+      "profile": "app-core",
+      "runs_on": "${{ matrix.os }}",
+      "matrix": {
+        "include": [
+          {
+            "os": "ubuntu-latest",
+            "asset": "rizin-v0.9.1-static-x86_64.tar.xz",
+            "sha256": "9102249a9f0b6319c5334a2e5cf8d9cc3f2035e1d3def027c41f6a90f647e8cf"
+          },
+          {
+            "os": "windows-latest",
+            "asset": "rizin-windows-static-v0.9.1.zip",
+            "sha256": "2d14e0a6ecba1196dcd742d63de83bbaffed2a7a78ef5a0a9b4e92a0f73d1d28"
+          }
+        ]
+      },
+      "script": "python -m pip install -e .",
+      "baseline_workflow_blob": "90e0880cc66c1e8c950b2b5145ef8d251eb212a5"
+    },
+    {
+      "workflow": ".github/workflows/live-unified.yml",
+      "job": "windows",
+      "step": 6,
+      "name": null,
+      "profile": "app-core-plus-pinned-native",
+      "runs_on": "windows-latest",
+      "matrix": null,
+      "script": "python -m pip install -e . \"pyghidra==3.0.2\" \"$env:GHIDRIFF_PIN\"",
+      "baseline_workflow_blob": "da6093e284d6635f9891b546955bf88a9b44827a"
+    },
+    {
+      "workflow": ".github/workflows/live-unified.yml",
+      "job": "linux",
+      "step": 5,
+      "name": null,
+      "profile": "app-core-plus-pinned-native",
+      "runs_on": "ubuntu-latest",
+      "matrix": null,
+      "script": "python -m pip install -e . \"pyghidra==3.0.2\" \"$GHIDRIFF_PIN\"",
+      "baseline_workflow_blob": "da6093e284d6635f9891b546955bf88a9b44827a"
+    },
+    {
+      "workflow": ".github/workflows/nightly-fuzz.yml",
+      "job": "fuzz",
+      "step": 2,
+      "name": null,
+      "profile": "qa-core",
+      "runs_on": "ubuntu-22.04",
+      "matrix": null,
+      "script": "python -m pip install --only-binary=:all: -e '.[dev]'",
+      "baseline_workflow_blob": "3ee258ef20b6fbe3fc20271d84bf587cb16ee192"
+    },
+    {
+      "workflow": ".github/workflows/nightly-fuzz.yml",
+      "job": "parsers",
+      "step": 2,
+      "name": null,
+      "profile": "qa-core",
+      "runs_on": "ubuntu-22.04",
+      "matrix": null,
+      "script": "python -m pip install --only-binary=:all: -e '.[dev]'",
+      "baseline_workflow_blob": "3ee258ef20b6fbe3fc20271d84bf587cb16ee192"
+    },
+    {
+      "workflow": ".github/workflows/optional-deps.yml",
+      "job": "probe",
+      "step": 2,
+      "name": null,
+      "profile": "app-extras",
+      "runs_on": "${{ matrix.os }}",
+      "matrix": {
+        "os": [
+          "ubuntu-latest",
+          "windows-latest"
+        ]
+      },
+      "script": "python -m pip install --only-binary=:all: -e '.[search,rules]'",
+      "baseline_workflow_blob": "2b11d73db353e55aa843c370a47d3cc08b6dd9de"
+    },
+    {
+      "workflow": ".github/workflows/pages.yml",
+      "job": "build",
+      "step": 2,
+      "name": "Install the site build tools (never the app dependencies)",
+      "profile": "site-build-test",
+      "runs_on": "ubuntu-latest",
+      "matrix": null,
+      "script": "python -m pip install --only-binary=:all: -r tools/site/requirements.txt pytest",
+      "baseline_workflow_blob": "c7b722b631a46e90f8d0934bf4cbc7d731bba652"
+    },
+    {
+      "workflow": ".github/workflows/pilot-eval.yml",
+      "job": "evaluate",
+      "step": 2,
+      "name": null,
+      "profile": "pilot-test-additions",
+      "runs_on": "ubuntu-latest",
+      "matrix": null,
+      "script": "python -m pip install --only-binary :all: pytest hypothesis",
+      "baseline_workflow_blob": "e53660b93912e6cab1b17e2e8f5a64614949762b"
+    },
+    {
+      "workflow": ".github/workflows/pilot-eval.yml",
+      "job": "evaluate",
+      "step": 3,
+      "name": null,
+      "profile": "app-core",
+      "runs_on": "ubuntu-latest",
+      "matrix": null,
+      "script": "python -m pip install -e .",
+      "baseline_workflow_blob": "e53660b93912e6cab1b17e2e8f5a64614949762b"
+    },
+    {
+      "workflow": ".github/workflows/qa-windows.yml",
+      "job": "qa",
+      "step": 3,
+      "name": null,
+      "profile": "qa-packaging-extras",
+      "runs_on": "${{ matrix.os }}",
+      "matrix": {
+        "os": [
+          "ubuntu-latest",
+          "windows-latest"
+        ]
+      },
+      "script": "python -m pip install --only-binary=:all: -e '.[dev,search,rules]'",
+      "baseline_workflow_blob": "c1d25348a4ed424df1c4c03ea1ad7d48fd59ca1c"
+    },
+    {
+      "workflow": ".github/workflows/qa-windows.yml",
+      "job": "qt-gate",
+      "step": 3,
+      "name": null,
+      "profile": "qa-packaging-extras",
+      "runs_on": "${{ matrix.os }}",
+      "matrix": {
+        "include": [
+          {
+            "os": "ubuntu-latest",
+            "repeat": 20,
+            "shard": "1/4"
+          },
+          {
+            "os": "ubuntu-latest",
+            "repeat": 20,
+            "shard": "2/4"
+          },
+          {
+            "os": "ubuntu-latest",
+            "repeat": 20,
+            "shard": "3/4"
+          },
+          {
+            "os": "ubuntu-latest",
+            "repeat": 20,
+            "shard": "4/4"
+          },
+          {
+            "os": "windows-latest",
+            "repeat": 5,
+            "shard": "1/1"
+          }
+        ]
+      },
+      "script": "python -m pip install --only-binary=:all: -e '.[dev,search,rules]'",
+      "baseline_workflow_blob": "c1d25348a4ed424df1c4c03ea1ad7d48fd59ca1c"
+    },
+    {
+      "workflow": ".github/workflows/qa-windows.yml",
+      "job": "linux-package",
+      "step": 3,
+      "name": null,
+      "profile": "qa-packaging-extras",
+      "runs_on": "ubuntu-22.04",
+      "matrix": null,
+      "script": "python -m pip install --only-binary=:all: -e '.[dev,search,rules]'",
+      "baseline_workflow_blob": "c1d25348a4ed424df1c4c03ea1ad7d48fd59ca1c"
+    },
+    {
+      "workflow": ".github/workflows/unified-corpus.yml",
+      "job": "corpus",
+      "step": 4,
+      "name": null,
+      "profile": "qa-core",
+      "runs_on": "ubuntu-latest",
+      "matrix": null,
+      "script": "python -m pip install --only-binary=:all: -e '.[dev]'",
+      "baseline_workflow_blob": "72b7d297cdc423ecf08badc100d35484b9041337"
+    },
+    {
+      "workflow": ".github/workflows/unified-corpus.yml",
+      "job": "bench-windows",
+      "step": 2,
+      "name": null,
+      "profile": "qa-core",
+      "runs_on": "windows-latest",
+      "matrix": null,
+      "script": "python -m pip install --only-binary=:all: -e '.[dev]'",
+      "baseline_workflow_blob": "72b7d297cdc423ecf08badc100d35484b9041337"
+    },
+    {
+      "workflow": ".github/workflows/unified-corpus.yml",
+      "job": "report",
+      "step": 2,
+      "name": null,
+      "profile": "qa-core",
+      "runs_on": "ubuntu-latest",
+      "matrix": null,
+      "script": "python -m pip install --only-binary=:all: -e '.[dev]'",
+      "baseline_workflow_blob": "72b7d297cdc423ecf08badc100d35484b9041337"
+    },
+    {
+      "workflow": ".github/workflows/unified-live-gates.yml",
+      "job": "build",
+      "step": 4,
+      "name": null,
+      "profile": "qa-core",
+      "runs_on": "ubuntu-latest",
+      "matrix": null,
+      "script": "python -m pip install --only-binary=:all: -e '.[dev]'",
+      "baseline_workflow_blob": "81b6bc76d8d0a89bb459edc27d4935bd797f5edf"
+    },
+    {
+      "workflow": ".github/workflows/unified-live-gates.yml",
+      "job": "pairs",
+      "step": 6,
+      "name": null,
+      "profile": "app-core-plus-pyghidra",
+      "runs_on": "${{ matrix.os }}",
+      "matrix": {
+        "os": [
+          "ubuntu-latest",
+          "windows-latest"
+        ]
+      },
+      "script": "python -m pip install --only-binary=:all: -e . pyghidra==3.0.2",
+      "baseline_workflow_blob": "81b6bc76d8d0a89bb459edc27d4935bd797f5edf"
+    },
+    {
+      "workflow": ".github/workflows/unified-live-gates.yml",
+      "job": "pairs",
+      "step": 7,
+      "name": "Install the pinned Ghidriff, a source revision built like live-unified does",
+      "profile": "pinned-ghidriff-addition",
+      "runs_on": "${{ matrix.os }}",
+      "matrix": {
+        "os": [
+          "ubuntu-latest",
+          "windows-latest"
+        ]
+      },
+      "script": "python -m pip install \"$GHIDRIFF_PIN\"",
+      "baseline_workflow_blob": "81b6bc76d8d0a89bb459edc27d4935bd797f5edf"
+    },
+    {
+      "workflow": ".github/workflows/unified-live-gates.yml",
+      "job": "mutants",
+      "step": 6,
+      "name": null,
+      "profile": "app-core-plus-pyghidra",
+      "runs_on": "${{ matrix.os }}",
+      "matrix": {
+        "os": [
+          "ubuntu-latest",
+          "windows-latest"
+        ],
+        "cls": [
+          "constant",
+          "comparison",
+          "bound",
+          "signedness",
+          "removed-check",
+          "callee-swap",
+          "field-offset",
+          "added-block",
+          "global-swap",
+          "index-swap",
+          "branch-swap",
+          "buf-resize"
+        ]
+      },
+      "script": "python -m pip install --only-binary=:all: -e . pyghidra==3.0.2",
+      "baseline_workflow_blob": "81b6bc76d8d0a89bb459edc27d4935bd797f5edf"
+    },
+    {
+      "workflow": ".github/workflows/unified-live-gates.yml",
+      "job": "mutants",
+      "step": 7,
+      "name": "Install the pinned Ghidriff, a source revision built like live-unified does",
+      "profile": "pinned-ghidriff-addition",
+      "runs_on": "${{ matrix.os }}",
+      "matrix": {
+        "os": [
+          "ubuntu-latest",
+          "windows-latest"
+        ],
+        "cls": [
+          "constant",
+          "comparison",
+          "bound",
+          "signedness",
+          "removed-check",
+          "callee-swap",
+          "field-offset",
+          "added-block",
+          "global-swap",
+          "index-swap",
+          "branch-swap",
+          "buf-resize"
+        ]
+      },
+      "script": "python -m pip install \"$GHIDRIFF_PIN\"",
+      "baseline_workflow_blob": "81b6bc76d8d0a89bb459edc27d4935bd797f5edf"
+    },
+    {
+      "workflow": ".github/workflows/unified-live-gates.yml",
+      "job": "integrity",
+      "step": 3,
+      "name": null,
+      "profile": "qa-core",
+      "runs_on": "${{ matrix.os }}",
+      "matrix": {
+        "os": [
+          "ubuntu-latest",
+          "windows-latest"
+        ]
+      },
+      "script": "python -m pip install --only-binary=:all: -e '.[dev]'",
+      "baseline_workflow_blob": "81b6bc76d8d0a89bb459edc27d4935bd797f5edf"
+    },
+    {
+      "workflow": ".github/workflows/unified-live-gates.yml",
+      "job": "report",
+      "step": 2,
+      "name": null,
+      "profile": "qa-core",
+      "runs_on": "ubuntu-latest",
+      "matrix": null,
+      "script": "python -m pip install --only-binary=:all: -e '.[dev]'",
+      "baseline_workflow_blob": "81b6bc76d8d0a89bb459edc27d4935bd797f5edf"
+    },
+    {
+      "workflow": ".github/workflows/winbindex-pairs.yml",
+      "job": "fetch-pairs",
+      "step": 3,
+      "name": "Optional ghidriff",
+      "profile": "unversioned-ghidriff-advisory",
+      "runs_on": "ubuntu-latest",
+      "matrix": null,
+      "script": "if ! python -m pip install --only-binary=:all: ghidriff; then\n  echo 'ghidriff did not install with pip on this runner: skipped' | tee -a \"$GITHUB_STEP_SUMMARY\"\n  exit 0\nfi\nif [ -z \"${GHIDRA_INSTALL_DIR:-}\" ] || [ ! -d \"${GHIDRA_INSTALL_DIR:-/nonexistent}\" ]; then\n  echo 'ghidriff installed but no Ghidra (GHIDRA_INSTALL_DIR) on this runner: skipped' | tee -a \"$GITHUB_STEP_SUMMARY\"\n  exit 0\nfi\npython - <<'PY'\nimport json, subprocess\nd = json.load(open('build/winpairs/manifest/pair-manifest.json'))\nfor c in d['cases']:\n    if c['status'] != 'found':\n        continue\n    old, new = (f\"build/winpairs/binaries/{c['older']['path']}\", f\"build/winpairs/binaries/{c['newer']['path']}\")\n    subprocess.run(['ghidriff', old, new, '--output-path', f\"build/winpairs/ghidriff/{c['id']}\"], check=False)\nPY\n",
+      "baseline_workflow_blob": "817ab8740ced86ffec55b3dfa85ba0dbd9212d1d"
+    }
+  ],
+  "helpers": [
+    {
+      "path": "tools/dependency_security.py",
+      "entrypoints": [
+        "bootstrap_requirements_text",
+        "bootstrap_commands",
+        "commands",
+        "pip_install",
+        "requirements_text"
+      ],
+      "inputs": [
+        "pyproject.toml",
+        "PINS",
+        "BOOTSTRAP_PIP",
+        "BOOTSTRAP_WHEEL_SHA256"
+      ],
+      "current_guarantee": "Reviewed pip26.3 bootstrap hash; complete post-install closure/provenance auditing; external scanner/build/profile resolution is not a pre-install hash lock.",
+      "prospective_profiles": [
+        "scanner-audit",
+        "scanner-static",
+        "build-tools",
+        "audit-runtime",
+        "audit-packaging"
+      ],
+      "baseline_git_blob": "298160671271c86d4739f43306ad048d9a45a5c4",
+      "baseline_sha256": "4f2a8a1c095efe8a92074a16ea972b6f0e2a4b8868efa9d2fee50cd8af361641",
+      "definitions": {
+        "bootstrap_requirements_text": {
+          "start": 432,
+          "end": 433
+        },
+        "bootstrap_commands": {
+          "start": 436,
+          "end": 447
+        },
+        "commands": {
+          "start": 450,
+          "end": 476
+        },
+        "pip_install": {
+          "start": 414,
+          "end": 417
+        },
+        "requirements_text": {
+          "start": 591,
+          "end": 592
+        }
+      }
+    },
+    {
+      "path": "tools/build_backend_bundle.py",
+      "entrypoints": [
+        "write_requirements",
+        "install_wheels",
+        "pip_install_argv",
+        "build_wheel_from_source"
+      ],
+      "inputs": [
+        "tools/backend_pin.json"
+      ],
+      "current_guarantee": "Platform/any pinned downloads, offline wheel build, per-wheel hash install with no-index/no-deps/no-build-isolation and byte comparison to source. Host build-tool provenance is a separate input.",
+      "prospective_profiles": [
+        "backend-existing-wheelhouse",
+        "backend-build-tools"
+      ],
+      "baseline_git_blob": "5a58ee45c1b88da1386174f2a5c3240940c9e3eb",
+      "baseline_sha256": "5614e77984a324a1edfdb3f92300778afe7ed2343a76fd6e94c6fe4c8a32b5ad",
+      "definitions": {
+        "write_requirements": {
+          "start": 660,
+          "end": 662
+        },
+        "install_wheels": {
+          "start": 665,
+          "end": 681
+        },
+        "pip_install_argv": {
+          "start": 652,
+          "end": 657
+        },
+        "build_wheel_from_source": {
+          "start": 730,
+          "end": 744
+        }
+      }
+    },
+    {
+      "path": "tools/check_backend_pin.py",
+      "entrypoints": [
+        "validate_pin",
+        "release_problems"
+      ],
+      "inputs": [
+        "tools/backend_pin.json"
+      ],
+      "current_guarantee": "Validates pinned lanes and dependency policy; not an installer or general CI lock generator.",
+      "baseline_git_blob": "a023e05451b25e3f0297c81f8ca4ae626ca1ef89",
+      "baseline_sha256": "911c0d9cbc7792bc98a238c04a6d67db4e28dad3eb8c0f99de826ffc0d493c17",
+      "definitions": {
+        "validate_pin": {
+          "start": 218,
+          "end": 343
+        },
+        "release_problems": {
+          "start": 358,
+          "end": 362
+        }
+      }
+    },
+    {
+      "path": "tools/verify_backend_pins.py",
+      "entrypoints": [
+        "rebuild_tarball",
+        "main"
+      ],
+      "inputs": [
+        "tools/backend_pin.json"
+      ],
+      "current_guarantee": "Generates attributed proposed source/runtime digest evidence; no automatic pin replacement or approval. Sigstore verifier install is a separate workflow route.",
+      "baseline_git_blob": "474e0e9124c2b5b35fc34a9e22ab9ed45ada538c",
+      "baseline_sha256": "ed1a02bb539f0f24574eb839056a284b2f18d51a13131495714ecdd5b36e703d",
+      "definitions": {
+        "rebuild_tarball": {
+          "start": 157,
+          "end": 167
+        },
+        "main": {
+          "start": 354,
+          "end": 387
+        }
+      }
+    },
+    {
+      "path": "tools/site/requirements.txt",
+      "entrypoints": [],
+      "inputs": [
+        "segno==1.6.6",
+        "pillow==12.3.0"
+      ],
+      "current_guarantee": "Direct versions only; transitive closure, pytest and artifact hashes are not locked.",
+      "baseline_git_blob": "bb065a99392029d465b624cfb4fcff8e043d4471",
+      "baseline_sha256": "d63aed7d7bdd7fb3282adf4732a90b90eba0c77836e112d17f48b6a4eed46f6a"
+    },
+    {
+      "path": "pyproject.toml",
+      "entrypoints": [],
+      "inputs": [
+        "build-system.requires",
+        "project.dependencies",
+        "project.optional-dependencies"
+      ],
+      "current_guarantee": "Exact direct runtime/optional pins and bounded dev/build ranges; no general resolved platform artifact lock. calibration-dev is declared but not installed by the current workflows.",
+      "baseline_git_blob": "7d619559d3d94364c2b81e8700fbc5268a417da6",
+      "baseline_sha256": "afb1b89ba00132c09a564a3dc4d4e6db7f4c441b6bb1b558df6786cfd0474ed9"
+    }
+  ],
+  "native_runtime_selection": {
+    "setup_python": "All installed workflow jobs use moving 3.12 patch selection.",
+    "setup_java": "Several native-engine workflows select Temurin21 or25; separate from Python package closure.",
+    "host_packages": "apt/runner compiler packages and choco NSIS remain outside a Python-wheel reproducibility claim."
+  },
+  "not_installer_calls": [
+    "tools/build_linux.py and tools/build_windows.py report versions and invoke PyInstaller; their pip strings are diagnostic text.",
+    "tools/site Python pip strings and src optional_deps/doctor pip suggestions are help text, not execution.",
+    "No general committed Python platform lock generator was found; the backend wheelhouse and scanner bootstrap are the existing bounded generators."
+  ],
+  "additional_source_search": "No installer matches in other repository Python/PowerShell/shell/YAML/TOML/text files outside src/tools/workflows, excluding docs/tests/reference help; rg exit1 recorded as no matches, not an execution failure."
+}

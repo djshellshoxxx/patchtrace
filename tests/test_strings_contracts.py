@@ -45,6 +45,21 @@ def test_builtin_scan_part_has_no_tool_run():
                     run_id='r')
 
 
+def test_normalized_evidence_is_explicit_and_does_not_change_legacy_serialization():
+    legacy = floss_part()
+    assert 'normalized_evidence_sha256' not in legacy.model_dump(mode='json')
+    before = basis().model_dump(mode='json')
+    assert 'normalized_evidence_sha256' not in before['parts'][0]
+    part = floss_part(raw_sha256=None, normalized_evidence_sha256=A)
+    assert part.model_dump(mode='json')['normalized_evidence_sha256'] == A
+    assert basis(parts=(part,)).digest() != basis().digest()
+    with pytest.raises(ValidationError):
+        floss_part(run_id=None, raw_sha256=None, normalized_evidence_sha256=A)
+    with pytest.raises(ValidationError):
+        c.BasisPart(source='builtin-scan', semantics_id=c.STATIC_SEMANTICS_ID, types=('static',),
+                    config_digest=C, normalized_evidence_sha256=A)
+
+
 def test_basis_rejects_two_parts_of_one_source_and_inconsistent_counts():
     with pytest.raises(ValidationError):
         basis(parts=(floss_part(), floss_part(types=('stack',))))

@@ -1,0 +1,182 @@
+FFFFF                                                                    [100%]
+=================================== FAILURES ===================================
+___ test_stored_cache_and_empty_results_do_not_require_a_new_raw_file[False] ___
+
+qtbot = <pytestqt.qtbot.QtBot object at 0x7fe8b162fe90>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-79/test_stored_cache_and_empty_re0')
+empty = False
+
+    @pytest.mark.parametrize('empty', [False, True])
+    def test_stored_cache_and_empty_results_do_not_require_a_new_raw_file(qtbot, tmp_path, empty):
+        service = make_project(tmp_path, 'floss-static')
+        try:
+            store_floss(tmp_path, service, 'older', 'newer')
+            store = tool_store(service)
+            for side in ('older', 'newer'):
+                run, evidence = store.latest('floss', side)
+                if empty:
+                    run = run.model_copy(update={'run_id': f'empty-{side}', 'status': 'none-found', 'evidence_count': 0,
+                                                 'raw_sidecar': None, 'stdout_digest': None})
+                    evidence = ToolEvidenceSet(run_id=run.run_id, engine='floss', side=side,
+                                               artifact_sha256=run.input_artifact_hash,
+                                               cache_key=run.cache_key, config_digest=run.config_digest,
+                                               analysis={'types': 'static', 'min_length': 4, 'empty_output': True})
+                    store.publish_run(run)
+                    store.publish_evidence(evidence)
+                cached = run.model_copy(update={'run_id': f'cached-{side}', 'cache_hit': True,
+                                                'raw_sidecar': None, 'stdout_digest': None})
+                store.publish_run(cached)
+>           computed = compute(args(), service, threading.Event())
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_strings_stored_admission.py:42: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+args = namespace(source='floss', anchors=None, min_length=4)
+service = <patchtrace.service.ProjectService object at 0x7fe8b108a900>
+cancel = <threading.Event at 0x7fe8abfc2ea0: unset>
+
+    def compute(args, service, cancel: threading.Event) -> Computed:
+        """`--source` per side (stored FLOSS evidence or the built-in scan), then `compose.compare`."""
+        from ..enrichment.storage import EnrichmentStore
+        from ..intelligence.tools.store import ToolStore
+        from .compose import NO_FLOSS, builtin_source, compare, missing_floss, stored_sources
+        from .pairing import inspect_image
+        artifacts = _artifacts(service)
+        anchors = _load_anchors(args.anchors)
+        store = ToolStore(EnrichmentStore(service.store), service.root, service.project.id, service.project.revision)
+        images = {side: inspect_image(service.root / a.relative_path, a.sha256) for side, a in artifacts.items()}
+        found = stored_sources(args.source, store, artifacts)
+        missing = missing_floss(args.source, found)
+        if missing is not None:
+>           raise _fail(NO_FLOSS.format(side=missing))
+E           patchtrace.strings.contracts.StringsError: PT-STR-INPUT: no stored FLOSS evidence for the older artifact: run `intel-tools run` first
+
+src/patchtrace/strings/cli.py:148: StringsError
+___ test_stored_cache_and_empty_results_do_not_require_a_new_raw_file[True] ____
+
+qtbot = <pytestqt.qtbot.QtBot object at 0x7fe8b2cc8b00>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-79/test_stored_cache_and_empty_re1')
+empty = True
+
+    @pytest.mark.parametrize('empty', [False, True])
+    def test_stored_cache_and_empty_results_do_not_require_a_new_raw_file(qtbot, tmp_path, empty):
+        service = make_project(tmp_path, 'floss-static')
+        try:
+            store_floss(tmp_path, service, 'older', 'newer')
+            store = tool_store(service)
+            for side in ('older', 'newer'):
+                run, evidence = store.latest('floss', side)
+                if empty:
+                    run = run.model_copy(update={'run_id': f'empty-{side}', 'status': 'none-found', 'evidence_count': 0,
+                                                 'raw_sidecar': None, 'stdout_digest': None})
+>                   evidence = ToolEvidenceSet(run_id=run.run_id, engine='floss', side=side,
+                                               artifact_sha256=run.input_artifact_hash,
+                                               cache_key=run.cache_key, config_digest=run.config_digest,
+                                               analysis={'types': 'static', 'min_length': 4, 'empty_output': True})
+E                                              pydantic_core._pydantic_core.ValidationError: 2 validation errors for ToolEvidenceSet
+E                                              analysis.empty_output.str
+E                                                Input should be a valid string [type=string_type, input_value=True, input_type=bool]
+E                                                  For further information visit https://errors.pydantic.dev/2.13/v/string_type
+E                                              analysis.empty_output.int
+E                                                Input should be a valid integer [type=int_type, input_value=True, input_type=bool]
+E                                                  For further information visit https://errors.pydantic.dev/2.13/v/int_type
+
+tests/test_strings_stored_admission.py:33: ValidationError
+______ test_corrupt_selected_row_is_not_builtin_fallback_or_a_false_empty ______
+
+qtbot = <pytestqt.qtbot.QtBot object at 0x7fe8b10db410>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-79/test_corrupt_selected_row_is_n0')
+
+    def test_corrupt_selected_row_is_not_builtin_fallback_or_a_false_empty(qtbot, tmp_path):
+        service = make_project(tmp_path, 'floss-static')
+        try:
+            store_floss(tmp_path, service, 'older', 'newer')
+            controller = start(qtbot, service)
+            scan(qtbot, controller)
+            prior = controller.loaded
+            run = next(entry for entry in EnrichmentStore(service.store).entries(RUN_KIND)
+                       if entry.body['side'] == 'older')
+            service.store.connection.execute('UPDATE enrichment_entries SET raw_sha256=? WHERE id=?', ('f' * 64, run.id))
+>           with pytest.raises(ToolError):
+                 ^^^^^^^^^^^^^^^^^^^^^^^^
+E           Failed: DID NOT RAISE ToolError
+
+tests/test_strings_stored_admission.py:65: Failed
+----------------------------- Captured Qt messages -----------------------------
+QtWarningMsg: This plugin does not support propagateSizeHints()
+QtWarningMsg: This plugin does not support propagateSizeHints()
+QtWarningMsg: This plugin does not support propagateSizeHints()
+QtWarningMsg: This plugin does not support propagateSizeHints()
+________ test_builtin_consumers_never_construct_or_capture_a_tool_store ________
+
+qtbot = <pytestqt.qtbot.QtBot object at 0x7fe8b2cca420>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-79/test_builtin_consumers_never_c0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fe8b2cc8590>
+
+    def test_builtin_consumers_never_construct_or_capture_a_tool_store(qtbot, tmp_path, monkeypatch):
+        from patchtrace.intelligence.tools.store import ToolStore
+        service = make_project(tmp_path, 'floss-static')
+        try:
+            def forbidden(*a, **kw):
+                pytest.fail('built-in selection must not inspect stored tool evidence')
+            monkeypatch.setattr(shared, 'capture_tool_sources', forbidden)
+            monkeypatch.setattr(ToolStore, '__init__', forbidden)
+>           computed = compute(args('builtin'), service, threading.Event())
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_strings_stored_admission.py:81: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/patchtrace/strings/cli.py:143: in compute
+    store = ToolStore(EnrichmentStore(service.store), service.root, service.project.id, service.project.revision)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+a = (<patchtrace.intelligence.tools.store.ToolStore object at 0x7fe8b2cc8140>, <patchtrace.enrichment.storage.EnrichmentSt...Path('/tmp/pytest-of-agent/pytest-79/test_builtin_consumers_never_c0/case'), 'aeefda11-dcc5-4b57-a694-725e185fde34', 0)
+kw = {}
+
+    def forbidden(*a, **kw):
+>       pytest.fail('built-in selection must not inspect stored tool evidence')
+E       Failed: built-in selection must not inspect stored tool evidence
+
+tests/test_strings_stored_admission.py:78: Failed
+__ test_precancelled_cli_composition_does_not_read_artifacts_or_tool_evidence __
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-79/test_precancelled_cli_composit0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fe8b2cc9730>
+
+    def test_precancelled_cli_composition_does_not_read_artifacts_or_tool_evidence(tmp_path, monkeypatch):
+        from patchtrace.strings import pairing
+        service = make_project(tmp_path, 'floss-static')
+        try:
+            def forbidden(*a, **kw):
+                pytest.fail('cancelled composition must not inspect artifacts or evidence')
+            monkeypatch.setattr(shared, 'capture_tool_sources', forbidden)
+            monkeypatch.setattr(pairing, 'inspect_image', forbidden)
+            cancel = threading.Event()
+            cancel.set()
+            with pytest.raises(StringsError) as caught:
+>               compute(args(), service, cancel)
+
+tests/test_strings_stored_admission.py:100: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/patchtrace/strings/cli.py:144: in compute
+    images = {side: inspect_image(service.root / a.relative_path, a.sha256) for side, a in artifacts.items()}
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+a = (PosixPath('/tmp/pytest-of-agent/pytest-79/test_precancelled_cli_composit0/case/artifacts/3271263489d95559dde44805e55c471c8ed4a60423fcf90c3e841e6537ef915f.bin'), '3271263489d95559dde44805e55c471c8ed4a60423fcf90c3e841e6537ef915f')
+kw = {}
+
+    def forbidden(*a, **kw):
+>       pytest.fail('cancelled composition must not inspect artifacts or evidence')
+E       Failed: cancelled composition must not inspect artifacts or evidence
+
+tests/test_strings_stored_admission.py:94: Failed
+=========================== short test summary info ============================
+FAILED tests/test_strings_stored_admission.py::test_stored_cache_and_empty_results_do_not_require_a_new_raw_file[False]
+FAILED tests/test_strings_stored_admission.py::test_stored_cache_and_empty_results_do_not_require_a_new_raw_file[True]
+FAILED tests/test_strings_stored_admission.py::test_corrupt_selected_row_is_not_builtin_fallback_or_a_false_empty
+FAILED tests/test_strings_stored_admission.py::test_builtin_consumers_never_construct_or_capture_a_tool_store
+FAILED tests/test_strings_stored_admission.py::test_precancelled_cli_composition_does_not_read_artifacts_or_tool_evidence
+5 failed in 2.84s

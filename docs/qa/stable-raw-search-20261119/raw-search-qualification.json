@@ -1,0 +1,35 @@
+{
+  "source_sha": "7daebd699ed942d9a7982bcb72f648e8843cb5f4",
+  "source_tree": "556c83dcb15e771284b7660c04a06ec8dc0386bb",
+  "python": "3.12.14",
+  "platform": "Linux-6.18.57-x86_64-with-glibc2.41",
+  "pytest": "9.2.0",
+  "PySide6": "6.12.0",
+  "pydantic": "2.13.5",
+  "ruff": "ruff 0.17.5",
+  "foundation": "88b0b52281dd314aa72f93819145a73135618bc4",
+  "historical_sources": {
+    "raw": "3c9d3f074481b2f609330fa49ab9019eb6637849",
+    "saved_search": "26558cd0723aa5fa6d883f2935ad3c43cef94a86"
+  },
+  "qt_repeat": {
+    "status": "BLOCKED",
+    "wrapper_exit_code": 1,
+    "child_returncode": -9,
+    "completed_summary": false,
+    "junit_written": false,
+    "termination_origin": "Not established; wrapper log reports SIGKILL during executor stalls and owned-session interruption."
+  },
+  "targeted_suite": {
+    "passed": 1060,
+    "failed": 1,
+    "failure": "tests/test_gui_host_seam.py::test_building_the_host_is_cheap",
+    "seconds": 304.41
+  },
+  "baseline_control": {
+    "source_sha": "88b0b52281dd314aa72f93819145a73135618bc4",
+    "test": "tests/test_gui_host_seam.py::test_building_the_host_is_cheap",
+    "result": "failed",
+    "host_wall_seconds": 38.348389528
+  }
+}

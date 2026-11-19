@@ -1,0 +1,84 @@
+[
+  {
+    "group": "boundaries",
+    "files": [
+      "tests/test_winbindex_parser_bounds.py",
+      "tests/test_enrichment_numeric_boundaries.py",
+      "tests/test_csaf_redirect_integrity.py",
+      "tests/test_nway_path_failures.py",
+      "tests/test_binexport_text_boundaries.py",
+      "tests/test_rzdiff_text_boundaries.py"
+    ],
+    "returncode": 0,
+    "seconds": 5.339
+  },
+  {
+    "group": "acquisition",
+    "files": [
+      "tests/test_acquisition_winbindex.py",
+      "tests/test_acquisition_winbindex_rows.py"
+    ],
+    "returncode": 0,
+    "seconds": 4.28
+  },
+  {
+    "group": "cve",
+    "files": [
+      "tests/test_enrichment_cve.py",
+      "tests/test_intel_audit_c_enrichment.py"
+    ],
+    "returncode": 0,
+    "seconds": 4.564
+  },
+  {
+    "group": "transport",
+    "files": [
+      "tests/test_intel_transport.py"
+    ],
+    "returncode": 0,
+    "seconds": 1.862
+  },
+  {
+    "group": "series",
+    "files": [
+      "tests/test_nway_series.py",
+      "tests/test_nway_series_tolerance.py"
+    ],
+    "returncode": 0,
+    "seconds": 5.24
+  },
+  {
+    "group": "nway-view",
+    "files": [
+      "tests/test_nway_view_model.py",
+      "tests/test_nway_recovery_copy_20261105.py"
+    ],
+    "returncode": 0,
+    "seconds": 3.548
+  },
+  {
+    "group": "binexport-check",
+    "files": [
+      "tests/test_binexport_check.py"
+    ],
+    "returncode": 0,
+    "seconds": 2.056
+  },
+  {
+    "group": "binexport-pipeline",
+    "files": [
+      "tests/test_binexport_pipeline.py"
+    ],
+    "returncode": 0,
+    "seconds": 2.162
+  },
+  {
+    "group": "rzdiff",
+    "files": [
+      "tests/test_secondary_rzdiff.py",
+      "tests/test_rzdiff_io_evidence.py"
+    ],
+    "returncode": 0,
+    "seconds": 4.344
+  }
+]

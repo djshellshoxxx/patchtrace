@@ -27,9 +27,10 @@ from PySide6.QtWidgets import (
 
 from ..gui.anchors import AnchorRef, NavResult
 from ..gui.graph_view import GraphEdgeView, GraphNodeView, GraphTooLargeError
-from ..gui.qt.canvas import GraphCanvas
+from ..gui.qt.canvas import NODE_WIDTH_EM, GraphCanvas
 from ..gui.qt.docks import ControllerBase
 from ..gui.qt.labels import PlainLabel, SafeTextView
+from ..gui.qt.metrics import Metrics
 from ..gui.qt.state_view import StateView
 from ..gui.qt.table import ROW_ROLE, VirtualTable
 from ..gui.registry import PanelContext
@@ -51,6 +52,7 @@ from .call_sites import (
     function_code,
 )
 from .export_json import write_export
+from .layout import NODE_H, NODE_W, Layout
 from .limits import GraphError
 from .minimap_qt import MinimapWidget
 from .tooltip_entries import TEMPLATES, TIPS
@@ -241,9 +243,9 @@ class CallsPanel(QWidget):
         for widget, tip in ((self.tabs, 'graph.tabs'), (self.changes, 'graph.changes_table'),
                             (self.neighbours, 'graph.table'), (self.tree, 'graph.tree'),
                             (self.canvas, 'graph.diagram'), (self.edges, 'graph.edges'),
-                            (self.sites, 'graph.callsites'), (self.minimap_toggle, 'graph.minimap'),
-                            (self.minimap, 'graph.minimap')):
+                            (self.sites, 'graph.callsites'), (self.minimap_toggle, 'graph.minimap')):
             apply_tip(widget, tip)
+        apply_tip(self.minimap, 'graph.minimap', name='graph.minimap_view')  # the toggle holds 'graph.minimap'
         self.detail = SafeTextView(ACCESSIBLE_NAMES['detail'], limit=DETAIL_LIMIT, wrap=True)
         self.detail.setObjectName('graph.detail')
         apply_tip(self.detail, 'graph.detail')
@@ -276,7 +278,7 @@ class CallsPanel(QWidget):
         inner.addWidget(split, 1)
         inner.addLayout(actions)
         inner.addWidget(self.footer)
-        self.state = StateView('graph', 'Calls', announcer, text_limit=1_200)
+        self.state = StateView('graph.body', 'Calls', announcer, text_limit=1_200)
         self.state.set_content(self.content)
         root = QVBoxLayout(self)
         root.setContentsMargins(4, 4, 4, 4)
@@ -464,7 +466,7 @@ class CallsController(ControllerBase):
         if not self._current(epoch):
             return
         self.rows = rows.view
-        (self.flags.add if rows.view.capped else self.flags.discard)('capped')
+        self._update_capped()
         self.panel.changes.set_prepared(rows.table)
         self._render()
 
@@ -515,11 +517,16 @@ class CallsController(ControllerBase):
             self._apply_found(result)
             if not result.rows:
                 self.flags.add('no-lists')
-            if result.total > len(result.rows) or result.view.truncated:
-                self.flags.add('capped')
         if self.found is None:
             self._clear_views(keep_changes=True)
+        self._update_capped()
         self._render()
+
+    def _update_capped(self) -> None:
+        found = self.found
+        capped = ((self.rows is not None and self.rows.capped)
+                  or (found is not None and (found.total > len(found.rows) or found.view.truncated)))
+        (self.flags.add if capped else self.flags.discard)('capped')
 
     def _apply_found(self, found: pd.Neighbourhood) -> None:
         panel = self.panel
@@ -559,17 +566,30 @@ class CallsController(ControllerBase):
     def _fill_diagram(self, found: pd.Neighbourhood) -> None:
         panel = self.panel
         from .view_model import STATE_TEXT
+        if not isinstance(found.diagram, Layout):
+            panel.canvas.set_graph([], [])
+            panel.minimap.clear()
+            panel.diagram_note.setText(pd.layout_notice(found.diagram))
+            panel.diagram_note.setVisible(True)
+            self._sync_minimap()
+            return
         place = pd.positions(found)
         layer = pd.layers(found)
-        nodes = [GraphNodeView(n.id, n.label, *place.get(n.id, (0.0, 0.0)),
+        metrics = Metrics.of(panel.canvas)
+        scale_x = max(1.0, metrics.em * NODE_WIDTH_EM / NODE_W)
+        scale_y = max(1.0, metrics.row_height / NODE_H)
+        nodes = [GraphNodeView(n.id, n.label, place[n.id][0] * scale_x, place[n.id][1] * scale_y,
                                chip='info' if n.id == found.focus_id else 'plain',
-                               description=f'{n.kind}, layer {layer.get(n.id, 0)}') for n in found.view.nodes]
-        edges = [GraphEdgeView(e.src, e.dst, 'call') for e in found.view.edges]
+                               description=f'{n.kind}, layer {layer[n.id]}')
+                 for n in found.view.nodes if n.id in place]
+        edges = [GraphEdgeView(e.src, e.dst, 'call') for e in found.diagram.edges]
         try:
             panel.canvas.set_graph(nodes, edges)
             panel.minimap.set_points({n.key: (n.x, n.y) for n in nodes}, found.focus_id)
-            panel.diagram_note.setText('')
+            panel.diagram_note.setText(pd.layout_notice(found.diagram))
         except GraphTooLargeError:
+            panel.canvas.set_graph([], [])
+            panel.minimap.clear()
             panel.diagram_note.setText(STATE_TEXT['E11'].format(n=f'{len(nodes):,}'))
             self.flags.add('too-large')
         panel.diagram_note.setVisible(bool(panel.diagram_note.full_text()))
@@ -837,7 +857,8 @@ class CallsController(ControllerBase):
         found, total = self.found, self.found.total if self.found else 0
         shown = len(found.rows) if found else 0
         lines = status_lines(PanelState(frozenset(self.flags), shown=shown, total=total,
-                                        nodes=len(found.view.nodes) if found else 0))
+                                        nodes=len(found.view.nodes) if found else 0,
+                                        query_capped=bool(found and found.view.truncated)))
         if lines:
             return StateModel('partial', ' '.join(lines))
         if self.data is None:

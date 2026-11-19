@@ -1,0 +1,10 @@
+.....F.............................................                      [100%]
+=================================== FAILURES ===================================
+_________________ test_every_registry_id_is_applied_somewhere __________________
+tests/test_tooltips.py:277: in test_every_registry_id_is_applied_somewhere
+    assert not missing, sorted(missing)
+E   AssertionError: ['kb.inventory.tabs']
+E   assert not {'kb.inventory.tabs'}
+=========================== short test summary info ============================
+FAILED tests/test_tooltips.py::test_every_registry_id_is_applied_somewhere - ...
+1 failed, 50 passed in 9.69s

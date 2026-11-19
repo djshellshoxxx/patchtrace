@@ -1,0 +1,27 @@
+{
+  "tested_base": "ac3a98150bd17bbbd973c7e7dcadb7edcf551934",
+  "unchanged_test_blob_on_318_and_319": "dcbb2a70a5593f7c32ce10b5b616a0beac1e8fb2",
+  "members": [
+    {
+      "path": "toolchain-artifact-allowlist-red.log",
+      "bytes": 1445,
+      "sha256": "38ff245fad519af1f95b88e660f63adfcbee04aa5609a4a012c19139901360c7"
+    },
+    {
+      "path": "toolchain-artifact-allowlist-red.xml",
+      "bytes": 1651,
+      "sha256": "57268a27bab550b9c31bf2aa927ba3c9da35281e75caabaead8642c99356f8f7"
+    },
+    {
+      "path": "toolchain-artifact-allowlist-green.log",
+      "bytes": 99,
+      "sha256": "d72e921a81b23e09b77754321c995d3e5bb6af8a9d02f6b9c3d57add7f0e8554"
+    },
+    {
+      "path": "toolchain-artifact-allowlist-green.xml",
+      "bytes": 2824,
+      "sha256": "5962af0c906c640d94053990ff35408511d23983586e85dafef4a1149dcf27cd"
+    }
+  ],
+  "archive_sha256": "8a4ac498ebca986a5758e10f2101a3088f3ba2ae2a7212048b8d65b7255cb35f"
+}

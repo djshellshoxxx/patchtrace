@@ -1,0 +1,119 @@
+{
+  "baseline_published_pr307": "58fc130631f602b6e907bb054d30c21d810551d4",
+  "spec_red_commit": "2e3678a28a5086e7382b56a88254cdaa77d46900",
+  "implementation_commit": "1f9ad8635d2952e2f65d752fe4f7df3faca8f49a",
+  "implementation_tree": "ad43ac3dbcee546c58689e996cee44512f09adb6",
+  "source_hashes": {
+    "src/patchtrace/backend.py": "86e704549dee90dd6f24408d8a5eadbb09f7b755676ad20395d854b4a5130e7f",
+    "src/patchtrace/tooltips.py": "cb72b802e82cfdb07b90e59758dba97a0d665a541d98f4c94544dd4dc2b8fadd",
+    "src/patchtrace/ui.py": "4a2f8982c45c807db8b1a00c8b7713fb970b86545e10f9e7bdba3cb8c82c80bb",
+    "tests/test_child_env.py": "545afb7097e6f110f016f416047b9d5588f71562158c298f53d640976a87b388",
+    "tests/test_network_consent_secrets.py": "0a7f01becdeade5c6d36111479fb37b112d60babd0aae152cf950551ee324afa",
+    "tests/test_primary_environment_defaults.py": "e2cfc4b3444d517b2d3c2b3c0c88efe148bdcd8e4975636c56a84aebd2ee2d9e",
+    "tests/test_unified_extract_runner.py": "76ee76ea9055e9e8b8a55f32442fb98e2729c957780ef8239fe3b54f46814bcd"
+  },
+  "independent_reviewer": "ci_qualification",
+  "python": "/workspace/scratch/3a6632a6e5ff/venv/bin/python",
+  "author_environment": {
+    "PYTHONPATH": "/workspace/scratch/c7a9e8d98848/primary-environment/src",
+    "QT_QPA_PLATFORM": "offscreen"
+  },
+  "independent_reproduction_environment": {
+    "PYTHONPATH": "/workspace/scratch/c7a9e8d98848/primary-environment-review/src",
+    "QT_QPA_PLATFORM": "offscreen",
+    "H7_REVIEW_ROOT": "/workspace/scratch/c7a9e8d98848/primary-environment-review"
+  },
+  "evidence": {
+    "author/affected.log": {
+      "bytes": 512,
+      "sha256": "39f8cb51f90e3840473e9eae0699514c3db4b1c2d056f9e1a3ae871b3b993cc5"
+    },
+    "author/affected.xml": {
+      "bytes": 45817,
+      "sha256": "22766ce3d0ee010711f132c7bb1a91c6df719acf76c9020ed343f19f404c7805"
+    },
+    "author/final-defaults.log": {
+      "bytes": 99,
+      "sha256": "9d5f47988a591a1d6bc9093d54b1b96c9f8d9546d8f6c099cc0a40d0e213a02f"
+    },
+    "author/final-defaults.xml": {
+      "bytes": 2242,
+      "sha256": "9f42b044344c15e247f566f54864b0c581b6f86f25e25df9f6667daffa295a0d"
+    },
+    "author/initial-affected.log": {
+      "bytes": 3757,
+      "sha256": "c6182f7dfd225fad87b01488ec2f15c4f06c1e99b4052aa0f2352c1d642ffd75"
+    },
+    "author/initial-affected.xml": {
+      "bytes": 48705,
+      "sha256": "d3e2447c182f9e5529202ce94f75553a0f6e9057f7f06309f0631ed175a7a081"
+    },
+    "author/initial-invocation-error.log": {
+      "bytes": 88,
+      "sha256": "940908a858b215440db4070659860293e6ed5a9303b95ca1a4f8e9900533e87f"
+    },
+    "author/red.log": {
+      "bytes": 13835,
+      "sha256": "f17a9de049edbfee2df7098bf8df50457e01286f439979a8f93c663ac0c8d1b0"
+    },
+    "author/red.xml": {
+      "bytes": 18313,
+      "sha256": "dca62904f6c66d9ab6691bf92d772af3e4d514d487ced0504fa5986e1d51151d"
+    },
+    "author/ruff-initial.log": {
+      "bytes": 885,
+      "sha256": "b94fa786e19d38e7d76ffc3f8a3fbd80b7c4085542cc74069415d8b37f9a4cea"
+    },
+    "author/ruff.log": {
+      "bytes": 19,
+      "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+    },
+    "independent/command.json": {
+      "bytes": 1432,
+      "sha256": "543b2b83210a29ce2999b851258475b8344361cee24360bbbddf209c4041784a"
+    },
+    "independent/independent-affected.log": {
+      "bytes": 522,
+      "sha256": "4704583ee31d708eaced582d950946b5452bcb0be7719c91e493c9af0ade84dd"
+    },
+    "independent/independent-affected.xml": {
+      "bytes": 47083,
+      "sha256": "641a864c2863748111e4f97a2dbfc7bed2ce1827e54ea00775fb11959e452291"
+    },
+    "independent/review.md": {
+      "bytes": 3320,
+      "sha256": "543a52e2c45142e5907a232d90b7c9d7ff5f90dc9676a56b4af22ede0f5c8c0f"
+    },
+    "independent/test_independent_primary_env.py": {
+      "bytes": 5096,
+      "sha256": "8ac904e3fceebe608f92a1c041aa5c7b2cc592f18b5b59857d2cc095fc6744e4"
+    },
+    "original-review/test_flow_gaps.py": {
+      "bytes": 6751,
+      "sha256": "95b72882c1ce1adfdd9703b322b2ff6eb76f0a300393d1b70f01baab522bba44"
+    },
+    "original-review/flow-red.log": {
+      "bytes": 4683,
+      "sha256": "d1b5ee11eb5884444eca73462ad91f20b6e7390d9c96f5c6af0a0ab01f80adee"
+    },
+    "original-review/flow-red.xml": {
+      "bytes": 5677,
+      "sha256": "a58b6895c64584362b876ff3c84092501ca842d21c5f86001dd305fab69a2ee5"
+    }
+  },
+  "archive": {
+    "bytes": 40854,
+    "sha256": "bbd72e2bcebda9142e07bb3cd4688857ec02a7c051e89206af02d2e0e78387d0"
+  },
+  "limits": [
+    "Local fake-engine/offscreen execution only",
+    "Three native Windows subprocess checks skipped and unverified",
+    "Native H7 Linux/Windows, exact-head full/package/security/manual acceptance open",
+    "Existing explicit external full-inheritance and named passthrough choices remain"
+  ],
+  "independent_review_document": {
+    "path": "independent-review.md",
+    "bytes": 3320,
+    "sha256": "543a52e2c45142e5907a232d90b7c9d7ff5f90dc9676a56b4af22ede0f5c8c0f"
+  }
+}

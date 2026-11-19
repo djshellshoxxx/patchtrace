@@ -1,0 +1,143 @@
+{
+  "all_member_names_sizes_hashes_and_crc_verified": true,
+  "archive_bytes": 221309,
+  "archive_sha256": "3fc519a8cde7ab882907ba0d79af9ad4303a30b622507dba8413da5055a2d617",
+  "member_count": 26,
+  "members": [
+    {
+      "bytes": 5652,
+      "path": "README.md",
+      "sha256": "dca24045a048a63dffbaee34a39d92322a9e35f743a28eb731742b9f24d00d04"
+    },
+    {
+      "bytes": 9314,
+      "path": "affected-audit.json",
+      "sha256": "f26381e3d1f5c65c93dfe43d1e1eaf306ee894080b9ca6d4ab7ca6aa9c81913e"
+    },
+    {
+      "bytes": 260,
+      "path": "affected.log",
+      "sha256": "395d69655afa7e4d8cacd70755be26dd1fc182c31485a8d3cbbd7a4dfaaf4380"
+    },
+    {
+      "bytes": 32322,
+      "path": "affected.xml",
+      "sha256": "78466061450010ab08fbc84c691e046e4b72a6e9ae128d0aeb6b4416f802ff09"
+    },
+    {
+      "bytes": 2474,
+      "path": "commands.json",
+      "sha256": "a1491b341cd79aff8fc7f30d4abce6086d83fd24c18d2f66ad6c15bd641f92e5"
+    },
+    {
+      "bytes": 2854,
+      "path": "guarded_pytest.py",
+      "sha256": "f52dd79ee8ac0510cd7a5cfd5e1841e1b1a01235062384663a499795e925e0db"
+    },
+    {
+      "bytes": 15802,
+      "path": "network_filter_source.py",
+      "sha256": "381298968b20c80f76e210ffeb98f33769ec2d14580c56a7934ff9cef7c71744"
+    },
+    {
+      "bytes": 2691,
+      "path": "original-creation-identity-red.log",
+      "sha256": "0af952be322786ba4c886eaf8788f95d2dabd26359ac5f24f4c88d72430d6da5"
+    },
+    {
+      "bytes": 3073,
+      "path": "original-creation-identity-red.xml",
+      "sha256": "692a87985035ed47f3545597302583a081664ea8b81f116cd73d255ae388172e"
+    },
+    {
+      "bytes": 1413,
+      "path": "original-test_creation_identity_review.py",
+      "sha256": "edc0549b646b3ad714295598951efa8ca19897dcac3e4853d23aa5fe11bc1870"
+    },
+    {
+      "bytes": 1195,
+      "path": "preserved-inputs.json",
+      "sha256": "421ef0ac90dc0f47abf524f4613e18b6355283e8b547130a6e98105669459ea4"
+    },
+    {
+      "bytes": 2370,
+      "path": "red-audit.json",
+      "sha256": "60b1b52cff1732fc185e7a1f8fc4fc1f98c3871285eb773c82b3abb48311ed93"
+    },
+    {
+      "bytes": 89135,
+      "path": "red.log",
+      "sha256": "f2f5939e9b3e57f8615eee4df10f73ed8ab1fdcba29280d7e0e75b50572225e3"
+    },
+    {
+      "bytes": 94397,
+      "path": "red.xml",
+      "sha256": "547aedd5145d9cb774bb5e441a6b2543eb1e45369fa59596d021056bb90ca22b"
+    },
+    {
+      "bytes": 19,
+      "path": "ruff.log",
+      "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+    },
+    {
+      "bytes": 51666,
+      "path": "source-8800bef2/tools/windows_bindiff_network.py",
+      "sha256": "af4c201625aa872318816216f54fc95d70b48fdfc6028856fc2a363fccea504f"
+    },
+    {
+      "bytes": 10935,
+      "path": "source-95e12e8b/docs/specs/windows-bindiff-network-acceptance.md",
+      "sha256": "815af1bbd740442801fb3956323fb25057162e69f793f68587ebbcfd25697f18"
+    },
+    {
+      "bytes": 27656,
+      "path": "source-95e12e8b/tests/test_windows_bindiff_network.py",
+      "sha256": "f5fea1e5dd63b0abd39089339c3b8530f26d392c79e29dc30adfd72bd8b9567a"
+    },
+    {
+      "bytes": 361742,
+      "path": "source-final/docs/modules.md",
+      "sha256": "40330f767f262262620fc99dee9afccd49d95c071a38ebad3012c175208d8e15"
+    },
+    {
+      "bytes": 10935,
+      "path": "source-final/docs/specs/windows-bindiff-network-acceptance.md",
+      "sha256": "815af1bbd740442801fb3956323fb25057162e69f793f68587ebbcfd25697f18"
+    },
+    {
+      "bytes": 27656,
+      "path": "source-final/tests/test_windows_bindiff_network.py",
+      "sha256": "f5fea1e5dd63b0abd39089339c3b8530f26d392c79e29dc30adfd72bd8b9567a"
+    },
+    {
+      "bytes": 51808,
+      "path": "source-final/tools/windows_bindiff_network.py",
+      "sha256": "7f3b82f4d0c702790cf48a97d6e608b3dbd56aef5f77ffc75434489dfd936328"
+    },
+    {
+      "bytes": 10968,
+      "path": "source-final/tools/windows_network/common.h",
+      "sha256": "74ada1531449c16c323e4771a95141534c3de4611fb85b26557c70bce921b752"
+    },
+    {
+      "bytes": 5786,
+      "path": "source-final/tools/windows_network/launcher.c",
+      "sha256": "83f3c2b634851862779112b193ad3440e573586688195210349d9e619a1200c4"
+    },
+    {
+      "bytes": 6517,
+      "path": "source-final/tools/windows_network/probe.c",
+      "sha256": "c5e6e41ebac7cdc379b31b76925d7f548c7ca6b22345a503389e96214d577b69"
+    },
+    {
+      "bytes": 2923,
+      "path": "source-proof.json",
+      "sha256": "a2e404da699bfb995661c8735c8d3979fac87a0b7fb123307d13c8da3e5f4698"
+    }
+  ],
+  "sealed_utc": "2026-11-18T18:24:45.293849+00:00",
+  "source": "857a78e93dd8072c8517c58a31ff14941ce16e8b",
+  "spec_red_source": "95e12e8b54ab0b158f518275af50d9e134907967",
+  "tree": "0de13c20de0101c96260b6fd44c342f3d1846f3c",
+  "uncompressed_bytes": 831563
+}

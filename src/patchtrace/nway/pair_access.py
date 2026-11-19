@@ -63,10 +63,14 @@ class DiskPairReader:
     def read(self, root: Path, ref: PairRef, older_sha: str, newer_sha: str,
              wanted_match_ids: frozenset[str]) -> PairSnapshot:
         from ..service import ProjectService
-        root = Path(root).resolve()
-        target = (root / ref.path).resolve()
-        if not target.is_relative_to(root) or not (target / PROJECT_FILE).is_file():
-            return PairSnapshot('missing', 'pair project is missing')
+        try:
+            root = Path(root).resolve()
+            target = (root / ref.path).resolve()
+            if not target.is_relative_to(root) or not (target / PROJECT_FILE).is_file():
+                return PairSnapshot('missing', 'pair project is missing')
+        except (OSError, RuntimeError, ValueError):
+            # Path.resolve raises RuntimeError for symlink loops on Python 3.12.
+            return PairSnapshot('unreadable', 'pair project path cannot be read')
         try:
             service = ProjectService.open(target, maintenance=False)
         except ValueError as exc:

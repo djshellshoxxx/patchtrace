@@ -180,11 +180,17 @@ def check_message(msg, limits: BinExportLimits | None = None, budget: Budget | N
             raise _input('string_total_bytes', f'string_table exceeds {L.max_string_total} bytes')
         tick()
 
+    for table in ('mnemonic', 'library', 'module'):
+        for item in tables[table]:
+            _text_bytes(_opt(item, 'name', ''), f'{table}.name', max_name)
+            tick()
+
     # --- expressions: parent bounds, self-parent, cycles, depth (iterative, memoised, O(n)) ---
     exprs = tables['expression']
     ne = n['expression']
     parent = array('i', [-1]) * ne
     for i, e in enumerate(exprs):
+        _text_bytes(_opt(e, 'symbol', ''), 'expression.symbol', max_name)
         if _has(e, 'parent_index'):
             p = e.parent_index
             _one(p, ne, 'expression.parent')

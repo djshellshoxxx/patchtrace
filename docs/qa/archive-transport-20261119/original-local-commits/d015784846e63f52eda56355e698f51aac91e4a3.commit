@@ -1,0 +1,8 @@
+tree 2f546dc0350f973e6870287d9a9f46dc521b4444
+parent 100597061a4465cf62563980b45b9dd55997e96a
+author Codex <codex@openai.com> 1795040917 -0800
+committer Codex <codex@openai.com> 1795041047 -0800
+
+Specify constructor interruption and cleanup precedence [no release]
+
+(cherry picked from commit f40d14c1970bf45efba4de448c00c8c49b463ae7)

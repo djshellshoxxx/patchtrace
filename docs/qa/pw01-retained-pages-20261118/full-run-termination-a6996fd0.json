@@ -1,0 +1,9 @@
+{
+  "source_commit": "a6996fd0372b74add6779f6351c336ef5d0473c7",
+  "command": "PYTHONPATH=src QT_QPA_PLATFORM=offscreen python -m pytest -q --junitxml=/workspace/scratch/e83fbf4505c3/pw01-full-a6996fd0.xml",
+  "exit_code": 137,
+  "status": "INCOMPLETE",
+  "pytest_log_bytes": 0,
+  "junit_exists": false,
+  "reason": "Process killed; no completed pytest summary. Termination code does not by itself identify the cause."
+}

@@ -1,0 +1,121 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "tier": {
+      "const": "W",
+      "title": "Tier",
+      "type": "string"
+    },
+    "corpus_id": {
+      "maxLength": 64,
+      "title": "Corpus Id",
+      "type": "string"
+    },
+    "audit_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Audit Sha256",
+      "type": "string"
+    },
+    "queue_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Queue Sha256",
+      "type": "string"
+    },
+    "pair": {
+      "pattern": "^[A-Za-z0-9._-]{1,64}$",
+      "title": "Pair",
+      "type": "string"
+    },
+    "match_id": {
+      "maxLength": 200,
+      "minLength": 1,
+      "title": "Match Id",
+      "type": "string"
+    },
+    "annotator": {
+      "maxLength": 64,
+      "minLength": 1,
+      "title": "Annotator",
+      "type": "string"
+    },
+    "phase": {
+      "const": "blind",
+      "title": "Phase",
+      "type": "string"
+    },
+    "A": {
+      "enum": [
+        "same",
+        "different",
+        "no-counterpart",
+        "indeterminate"
+      ],
+      "title": "A",
+      "type": "string"
+    },
+    "subtype": {
+      "anyOf": [
+        {
+          "pattern": "^N(?:[1-9]|1[0-2])$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Subtype"
+    },
+    "guideline": {
+      "const": "g1",
+      "title": "Guideline",
+      "type": "string"
+    },
+    "ts": {
+      "maxLength": 40,
+      "title": "Ts",
+      "type": "string"
+    },
+    "time_spent_s": {
+      "minimum": 0,
+      "title": "Time Spent S",
+      "type": "number"
+    },
+    "seq": {
+      "minimum": 1,
+      "title": "Seq",
+      "type": "integer"
+    },
+    "prev_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Prev Sha256",
+      "type": "string"
+    },
+    "sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Sha256",
+      "type": "string"
+    }
+  },
+  "required": [
+    "tier",
+    "corpus_id",
+    "audit_sha256",
+    "queue_sha256",
+    "pair",
+    "match_id",
+    "annotator",
+    "phase",
+    "A",
+    "subtype",
+    "guideline",
+    "ts",
+    "time_spent_s",
+    "seq",
+    "prev_sha256",
+    "sha256"
+  ],
+  "title": "AuditAnnotation",
+  "type": "object",
+  "$id": "https://patchtrace.local/schemas/tier-w-review/1/AuditAnnotation.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
+}

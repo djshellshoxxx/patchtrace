@@ -1,0 +1,6 @@
+tree 3ea53ed008d2b1cf18f7ae7dece59c59d6d069ce
+parent cffad127e338cdcadd0791da3612aceeb0c95d84
+author Codex <codex@openai.com> 1795044131 -0800
+committer Codex <codex@openai.com> 1795044736 -0800
+
+Keep workspace connection handoff inside protected admission [no release]

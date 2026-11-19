@@ -207,6 +207,16 @@ def rzdiff_argv(executable: str, older: Path, newer: Path) -> tuple[str, ...]:
     return (executable, '-C', '-j', '-t', 'functions', str(older), str(newer))
 
 
+def _diagnostic_tail(value: str | bytes) -> str:
+    if STDERR_TAIL <= 0:
+        return ''
+    value = value[-STDERR_TAIL:]  # bound allocation before decoding or encoding display text
+    shown = value.decode('utf-8', errors='replace') if isinstance(value, bytes) else value
+    encoded = shown.encode('utf-8', errors='replace')[-STDERR_TAIL:]
+    # A partial code point at the truncation boundary must not expand into a replacement sequence.
+    return encoded.decode('utf-8', errors='ignore')
+
+
 def interpret(returncode: int, output: str | bytes, stderr_tail: str, version: str, older_sha256: str,
               newer_sha256: str, stdout_limit: int = STDOUT_LIMIT) -> SecondaryMatchSet:
     """Turn a finished rz-diff process (no cancel/timeout) into a strict match set.
@@ -214,10 +224,15 @@ def interpret(returncode: int, output: str | bytes, stderr_tail: str, version: s
     `output` is the captured stdout bytes, or the lossy text of a runner that kept no bytes."""
     exact = isinstance(output, bytes)
     if returncode != 0:
-        shown = stderr_tail or (output.decode('utf-8', errors='replace') if exact else output)
-        tail = shown.encode('utf-8')[-STDERR_TAIL:].decode('utf-8', errors='replace')
+        tail = _diagnostic_tail(stderr_tail or output)
         raise SecondaryError('PT-SECONDARY-RUN', f'rz-diff exited with {returncode}: {tail}')
-    if len(output if exact else output.encode('utf-8')) > stdout_limit:
+    if len(output) > stdout_limit:  # Unicode code points are a lower bound on their UTF-8 byte length
+        raise SecondaryError('PT-SECONDARY-LIMIT', 'rz-diff output exceeds 64 MiB')
+    try:
+        size = len(output if exact else output.encode('utf-8'))
+    except UnicodeEncodeError:
+        raise _fail('rz-diff output is not valid UTF-8') from None
+    if size > stdout_limit:
         raise SecondaryError('PT-SECONDARY-LIMIT', 'rz-diff output exceeds 64 MiB')
     if not exact and '\ufffd' in output:  # lossy text: this may stand for a byte that was replaced
         raise SecondaryError('PT-SECONDARY-INPUT', 'rz-diff output is not valid UTF-8')

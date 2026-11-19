@@ -1,0 +1,22 @@
+{
+  "observed_utc": "2026-11-19T08:20:13.926106+00:00",
+  "python": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+  "executable": "/workspace/scratch/80dddc5347b2/patchtrace-venv/bin/python",
+  "platform": "Linux-6.18.57-x86_64-with-glibc2.41",
+  "machine": "x86_64",
+  "packages": {
+    "pytest": "9.2.0",
+    "PySide6": "6.12.0",
+    "pydantic": "2.13.5",
+    "ruff": "0.17.5"
+  },
+  "module_paths": {
+    "patchtrace": "/workspace/scratch/80dddc5347b2/PatchTrace-pilot-cvrf/src/patchtrace/__init__.py",
+    "current_inputs": "/workspace/scratch/80dddc5347b2/PatchTrace-pilot-cvrf/src/patchtrace/pilot/current_inputs.py"
+  },
+  "environment": {
+    "PYTHONPATH": "src",
+    "QT_QPA_PLATFORM": "offscreen"
+  },
+  "worktree": "/workspace/scratch/80dddc5347b2/PatchTrace-pilot-cvrf"
+}

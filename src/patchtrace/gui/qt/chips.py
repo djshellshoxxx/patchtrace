@@ -129,9 +129,10 @@ class ChipLabel(QWidget):
         self._tokens = tokens
         self.update()
 
-    def set_tip(self, tip_id: str, **values: object) -> None:
-        """The tooltip through a registered template, so untrusted values are escaped."""
-        apply_tip(self, tip_id, **values)
+    def set_tip(self, tip_id: str, *, name: str | None = None, **values: object) -> None:
+        """The tooltip through a registered template, so untrusted values are escaped. Several chips that share a tip
+        pass a per-chip `name`, their accessible id, which must be unique in the window."""
+        apply_tip(self, tip_id, name=name, **values)
 
     def sizeHint(self) -> QSize:  # noqa: N802
         return chip_size(self.font(), self._spec)

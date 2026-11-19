@@ -1,0 +1,100 @@
+{
+  "$defs": {
+    "AuditQueueSide": {
+      "additionalProperties": false,
+      "properties": {
+        "rva": {
+          "anyOf": [
+            {
+              "maximum": 4294967295,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Rva"
+        },
+        "size": {
+          "anyOf": [
+            {
+              "maximum": 4294967295,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Size"
+        },
+        "body_sha256": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Body Sha256"
+        },
+        "preview_hex": {
+          "maxLength": 256,
+          "pattern": "^(?:[0-9a-f]{2})*$",
+          "title": "Preview Hex",
+          "type": "string"
+        }
+      },
+      "required": [
+        "rva",
+        "size",
+        "body_sha256",
+        "preview_hex"
+      ],
+      "title": "AuditQueueSide",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "pair": {
+      "pattern": "^[A-Za-z0-9._-]{1,64}$",
+      "title": "Pair",
+      "type": "string"
+    },
+    "match_id": {
+      "maxLength": 200,
+      "minLength": 1,
+      "title": "Match Id",
+      "type": "string"
+    },
+    "stratum": {
+      "enum": [
+        "census",
+        "random"
+      ],
+      "title": "Stratum",
+      "type": "string"
+    },
+    "older": {
+      "$ref": "#/$defs/AuditQueueSide"
+    },
+    "newer": {
+      "$ref": "#/$defs/AuditQueueSide"
+    }
+  },
+  "required": [
+    "pair",
+    "match_id",
+    "stratum",
+    "older",
+    "newer"
+  ],
+  "title": "AuditQueueItem",
+  "type": "object",
+  "$id": "https://patchtrace.local/schemas/tier-w-review/1/AuditQueueItem.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
+}

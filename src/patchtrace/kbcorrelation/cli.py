@@ -1,6 +1,7 @@
 """`kb` command assembler (KB-integration-plan 8.1; slice K3). Qt-free; offline.
 
-``main(argv)`` takes the arguments after ``kb``. ``kb index ...`` goes to ``cli_index``; the pair verbs live in
+``main(argv)`` takes the arguments after ``kb``. ``kb index ...`` goes to ``cli_index``; ``inventory`` delegates to
+``cli_inventory`` for PW-01 source operations. The pair verbs live in
 ``cli_pairs``; this module adds ``search``, ``attach``, ``explain`` and ``export``; ``cli_leads`` adds ``leads`` (slice K4a).
 
 Hook for ``patchtrace/cli.py`` (A-8; 4 lines, applied by the integrator; ``kb`` parses its own arguments, so no
@@ -19,7 +20,7 @@ import sys
 from dataclasses import dataclass
 from pathlib import Path
 
-from . import cli_acquire, cli_index, cli_leads, cli_online, cli_pairs
+from . import cli_acquire, cli_index, cli_inventory, cli_leads, cli_online, cli_pairs
 from .cli_index import IndexPorts, Parser, add_common, present, run_cli, workspace_root
 
 
@@ -56,6 +57,7 @@ class Context:
 
 def _register_core(sub) -> None:
     sub.add_parser('index', help='index: offline import/status/verify/plan; consented sync (see "kb index --help")')
+    sub.add_parser('inventory', help='KB file CSV and support links: offline inspection and exact consented retrieval')
     search = add_common(sub.add_parser('search', help='find the CVEs and products of a KB or CVE in loaded documents'))
     search.add_argument('lead', metavar='KB|CVE', help='KB5012345, 5012345 or CVE-2024-12345')
     scope = search.add_mutually_exclusive_group()
@@ -111,8 +113,9 @@ REGISTRARS = [_register_core, cli_pairs.register, cli_leads.register, cli_acquir
 
 
 def build_parser() -> Parser:
-    parser = Parser(prog='patchtrace kb', description='KB / CVE advisory correlation: offline, never fetches, never '
-                    'runs a target. Coverage is stated for every answer.')
+    parser = Parser(prog='patchtrace kb', description='KB / CVE advisory correlation: offline by default, with '
+                    'separately consented source and pair retrieval. Never runs a target. '
+                    'Coverage is stated for every answer.')
     sub = parser.add_subparsers(dest='action', required=True, parser_class=Parser)
     for register in REGISTRARS:
         register(sub)
@@ -123,6 +126,8 @@ def main(argv: list[str] | None = None, *, env=None, engine=None, kev=None, stdo
     """Run ``kb <verb> ...``. ``env``, ``engine`` and ``kev`` replace the production ports (tests)."""
     argv = list(sys.argv[1:] if argv is None else argv)
     context = Context(env, engine, kev)
+    if argv[:1] == ['inventory']:
+        return cli_inventory.main(argv[1:], context=context, stdout=stdout, stderr=stderr)
     if argv[:2] == ['index', 'sync']:
         ports = None if {'-h', '--help'} & set(argv[2:]) else cli_online.OnlinePorts(context.index_ports())
         return cli_online.main(argv[2:], ports=ports, stdout=stdout, stderr=stderr)

@@ -81,15 +81,18 @@ class BasisPart(_Strict):
     executable_sha256: Sha256 | None = None
     run_id: str | None = Field(default=None, min_length=1, max_length=128)
     raw_sha256: Sha256 | None = None
+    normalized_evidence_sha256: Sha256 | None = Field(default=None, exclude_if=lambda value: value is None)
     types: tuple[StringType, ...] = Field(min_length=1, max_length=5)
     config_digest: Sha256
     consent_sha256: Sha256 | None = None
 
     @model_validator(mode='after')
     def _floss_is_traceable(self):
-        if self.source == 'floss' and (self.run_id is None or self.raw_sha256 is None):
-            raise ValueError('a floss part names its run and raw output')
-        if self.source == 'builtin-scan' and (self.run_id or self.raw_sha256 or self.consent_sha256):
+        if self.source == 'floss' and (self.run_id is None or (self.raw_sha256 is None
+                                                              and self.normalized_evidence_sha256 is None)):
+            raise ValueError('a floss part names its run and raw or normalized evidence')
+        if self.source == 'builtin-scan' and (self.run_id or self.raw_sha256 or self.normalized_evidence_sha256
+                                              or self.consent_sha256):
             raise ValueError('the built-in scan has no tool run')
         if len(set(self.types)) != len(self.types):
             raise ValueError('duplicate types')

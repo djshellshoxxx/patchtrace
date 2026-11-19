@@ -1,0 +1,60 @@
+{
+  "schema": "patchtrace/windows-corpus-prerequisites/1",
+  "source_commit": "47378084f59bf2844af35bbc506ab4ecb737a5ab",
+  "source_tree": "396a9bf6e62be5108896fba06305f7f843f4c635",
+  "archive": {
+    "name": "evidence.zip",
+    "bytes": 18777,
+    "sha256": "d1346ff002504c665e346689d8ba524132451fd0ddf2e9d45d94de79301e88c3"
+  },
+  "members": {
+    "provenance.json": {
+      "bytes": 2291,
+      "sha256": "f28541ee202177a7ca2b28974af4156a50bf155913eeba5c61f67be2a39ef274"
+    },
+    "security-windows-deps-final.log": {
+      "bytes": 180,
+      "sha256": "c634ee0ef494670c4c1dfaa2ac0254c9cd8d5a807c2530068b043a167f827ce5"
+    },
+    "security-windows-deps-final.xml": {
+      "bytes": 14731,
+      "sha256": "aa739fae8587c2e26fbdf5c0777028923b9aafca0c05adb4f6fd959bbb7fd62d"
+    },
+    "security-windows-deps-green.log": {
+      "bytes": 180,
+      "sha256": "87590b3b2e919d8591971432ac39b60607ea44678d1d19f1a186fe88a992d849"
+    },
+    "security-windows-deps-green.xml": {
+      "bytes": 14584,
+      "sha256": "f9497bbba9ddc3c37e7b70b4a10fd702cba28736c7c1505b84ac788d1c2b8888"
+    },
+    "security-windows-deps-red.log": {
+      "bytes": 3433,
+      "sha256": "2c05b77fca08fbd9f3a39a9055385bac8a15d3d71c6289eef8caa3c88b740417"
+    },
+    "security-windows-deps-red.xml": {
+      "bytes": 3488,
+      "sha256": "a48a8f9fa32bb2bba93dcd4fa8575468d6efdcadf614c4372936624fede5f078"
+    },
+    "security-windows-deps-ruff.log": {
+      "bytes": 19,
+      "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+    },
+    "security-windows-deps-upstream.json": {
+      "bytes": 1886,
+      "sha256": "3a06926e4ef226880827cfa4af7db12efdc60bb75d780e57e39e74cb725b7e44"
+    },
+    "security-windows-resources-red.log": {
+      "bytes": 1094,
+      "sha256": "c354ad82155247be13f3fc981c48d632bf6b047d5ff1cac9c1906749c1e2d76e"
+    },
+    "security-windows-resources-red.xml": {
+      "bytes": 1185,
+      "sha256": "372986b902c01a861bc81264b909ad5bbdb166972ecef73d8e5286fcd8e356b4"
+    },
+    "security-windows318-advisory.log": {
+      "bytes": 33819,
+      "sha256": "967f16bb0bfc9198c1c95174a8729738e7775d00b641c01d464e96f9459bc67a"
+    }
+  }
+}

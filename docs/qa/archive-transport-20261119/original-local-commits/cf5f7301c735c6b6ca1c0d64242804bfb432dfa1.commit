@@ -1,0 +1,8 @@
+tree 3463162263140b5dc03a928a0a8c84008e8be1c7
+parent 7c679a63cedd6b393ed738e048ba4a5289ba602b
+author Codex <codex@openai.com> 1795041358 -0800
+committer Codex <codex@openai.com> 1795041835 -0800
+
+Seal durable package design and legacy-client observations [no release]
+
+(cherry picked from commit 988ce3f746fe65bc022b4f3a6c1f2234989ec985)

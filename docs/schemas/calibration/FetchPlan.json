@@ -1,0 +1,337 @@
+{
+  "$defs": {
+    "FetchExclusion": {
+      "additionalProperties": false,
+      "properties": {
+        "file_name": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[a-z0-9._-]+$",
+          "title": "File Name",
+          "type": "string"
+        },
+        "sha256": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sha256"
+        },
+        "reason": {
+          "enum": [
+            "unavailable",
+            "unresolved-size",
+            "no-codeview",
+            "not-x64",
+            "oversized",
+            "deferred"
+          ],
+          "title": "Reason",
+          "type": "string"
+        }
+      },
+      "required": [
+        "file_name",
+        "reason"
+      ],
+      "title": "FetchExclusion",
+      "type": "object"
+    },
+    "FetchInput": {
+      "additionalProperties": false,
+      "properties": {
+        "source": {
+          "maxLength": 160,
+          "pattern": "^(?:pairs|binary-plan|catalogue:[a-z0-9._-]{1,128}|binary:[0-9a-f]{64})$",
+          "title": "Source",
+          "type": "string"
+        },
+        "sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Sha256",
+          "type": "string"
+        }
+      },
+      "required": [
+        "source",
+        "sha256"
+      ],
+      "title": "FetchInput",
+      "type": "object"
+    },
+    "FetchItem": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "enum": [
+            "binary",
+            "pdb"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "file_name": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[a-z0-9._-]+$",
+          "title": "File Name",
+          "type": "string"
+        },
+        "source_url": {
+          "maxLength": 2048,
+          "minLength": 1,
+          "title": "Source Url",
+          "type": "string"
+        },
+        "sha256": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sha256"
+        },
+        "record_sha256": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Record Sha256"
+        },
+        "size": {
+          "anyOf": [
+            {
+              "maximum": 4294967295,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Size"
+        },
+        "binary_size": {
+          "anyOf": [
+            {
+              "maximum": 536870912,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Binary Size"
+        },
+        "cap_bytes": {
+          "maximum": 2147483648,
+          "minimum": 1,
+          "title": "Cap Bytes",
+          "type": "integer"
+        },
+        "binary_sha256": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Binary Sha256"
+        },
+        "guid": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Guid"
+        },
+        "age": {
+          "anyOf": [
+            {
+              "maximum": 4294967295,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Age"
+        },
+        "timestamp": {
+          "anyOf": [
+            {
+              "maximum": 4294967295,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Timestamp"
+        },
+        "size_of_image": {
+          "anyOf": [
+            {
+              "maximum": 4294967295,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Size Of Image"
+        },
+        "pair_ids": {
+          "items": {
+            "pattern": "^[A-Za-z0-9._-]{1,64}$",
+            "type": "string"
+          },
+          "maxItems": 100000,
+          "minItems": 1,
+          "title": "Pair Ids",
+          "type": "array"
+        }
+      },
+      "required": [
+        "kind",
+        "file_name",
+        "source_url",
+        "cap_bytes",
+        "pair_ids"
+      ],
+      "title": "FetchItem",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "contract": {
+      "const": "tier-w-fetch-plan/1",
+      "title": "Contract",
+      "type": "string"
+    },
+    "tier": {
+      "const": "W",
+      "title": "Tier",
+      "type": "string"
+    },
+    "operation": {
+      "enum": [
+        "binary",
+        "pdb"
+      ],
+      "title": "Operation",
+      "type": "string"
+    },
+    "corpus_id": {
+      "pattern": "^tier-w-[A-Za-z0-9._-]{1,57}$",
+      "title": "Corpus Id",
+      "type": "string"
+    },
+    "selected_pairs": {
+      "items": {
+        "pattern": "^[A-Za-z0-9._-]{1,64}$",
+        "type": "string"
+      },
+      "maxItems": 100000,
+      "minItems": 1,
+      "title": "Selected Pairs",
+      "type": "array"
+    },
+    "max_files": {
+      "maximum": 100000,
+      "minimum": 1,
+      "title": "Max Files",
+      "type": "integer"
+    },
+    "source_digests": {
+      "items": {
+        "$ref": "#/$defs/FetchInput"
+      },
+      "maxItems": 100001,
+      "minItems": 1,
+      "title": "Source Digests",
+      "type": "array"
+    },
+    "input_plan_sha256": {
+      "anyOf": [
+        {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Input Plan Sha256"
+    },
+    "entries": {
+      "items": {
+        "$ref": "#/$defs/FetchItem"
+      },
+      "maxItems": 100000,
+      "title": "Entries",
+      "type": "array"
+    },
+    "exclusions": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/FetchExclusion"
+      },
+      "maxItems": 100000,
+      "title": "Exclusions",
+      "type": "array"
+    }
+  },
+  "required": [
+    "contract",
+    "tier",
+    "operation",
+    "corpus_id",
+    "selected_pairs",
+    "max_files",
+    "source_digests",
+    "entries"
+  ],
+  "title": "FetchPlan",
+  "type": "object",
+  "$id": "https://patchtrace.local/schemas/tier-w-fetch-plan/1/FetchPlan.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
+}

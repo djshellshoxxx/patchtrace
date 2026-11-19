@@ -1,0 +1,6 @@
+tree 921057c8d20fa7f5faa07c3aad6b051387c9ea7c
+parent 4c5cb0919e58a0485ea286a56de96fd8b4e46dd1
+author Codex <codex@openai.com> 1795045428 -0800
+committer Codex <codex@openai.com> 1795045491 -0800
+
+Preserve Tier R diagnostic repair red and exact-source qualification [no release]

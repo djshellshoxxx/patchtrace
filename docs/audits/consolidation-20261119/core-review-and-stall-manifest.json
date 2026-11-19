@@ -1,0 +1,66 @@
+{
+  "schema": "patchtrace/core-review-and-stall/1",
+  "main": "fdc2696c23bdbfe7668348f25e3b336ce33039f7",
+  "members": [
+    {
+      "path": "issues-120-121-current-review.md",
+      "bytes": 18253,
+      "sha256": "7fa8094c24881c78e067cc830c4682b18ffdc2e89e7d36cd7754d0dd53ecb2f3"
+    },
+    {
+      "path": "issues-120-121-current-review.json",
+      "bytes": 22458,
+      "sha256": "b2010b1abcac9275328dab1ee3aa10b1ef83892a2b1805e7f0de925412cc04b4"
+    },
+    {
+      "path": "issues-120-121-source-comparison.json",
+      "bytes": 3209,
+      "sha256": "a9ad880caa8d0f853e7d05ea1c546897a7c2bb329573b9d6d7d66afb2355f61c"
+    },
+    {
+      "path": "issues-120-121-current-core.log",
+      "bytes": 181,
+      "sha256": "55032e5ac6777f9145630bd36360bb9b14408de3c703b7ffdb277edd1ce232d1"
+    },
+    {
+      "path": "issues-120-121-current-core.xml",
+      "bytes": 19957,
+      "sha256": "ce8ee23d725f1228c7ccb333de114b7472010ba0fa62c6fc1c7881781c286de3"
+    },
+    {
+      "path": "stable-full-stall-diagnosis.md",
+      "bytes": 4089,
+      "sha256": "5b79ff113dd7baad08657f0ed5d7daded7a9f38f964a335d2472a53ef07e2516"
+    },
+    {
+      "path": "stable-full-stall-diagnosis.json",
+      "bytes": 5662,
+      "sha256": "0a190dbebda521d363ffefcbd576505b3c65dd666a2fbf79713f5ebd43fbfcd8"
+    },
+    {
+      "path": "stable-full-stall-progress-snapshot.log",
+      "bytes": 1368,
+      "sha256": "7d3328140f5c518fac0168ba3d7364fe26d035b3eca7becd4817d47691612c45"
+    },
+    {
+      "path": "stable-stall-focused.log",
+      "bytes": 782,
+      "sha256": "6a93ffeb2765e26ea74f0aac436ead5f1ddb11b0e4e472ab8e047e68f3c2b918"
+    },
+    {
+      "path": "stable-stall-focused.xml",
+      "bytes": 441,
+      "sha256": "317d8b8ed673e71808f6dbb859ed323316b8a847d65b9a244e548b85957c440c"
+    },
+    {
+      "path": "stable-stall-focused-result.json",
+      "bytes": 732,
+      "sha256": "939970ef6c06669b8cf2621e3f7bf6ca2848458c9661cf79d40d8b78f8a39bf0"
+    }
+  ],
+  "archive": {
+    "path": "core-review-and-stall-evidence.zip",
+    "bytes": 23762,
+    "sha256": "5a02a64679640acd21e32a290aa1c064706d75aa0181904a839e34d7bb7e2d7c"
+  }
+}

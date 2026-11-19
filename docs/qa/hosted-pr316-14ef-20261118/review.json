@@ -1,0 +1,287 @@
+{
+  "source_sha": "14efc52369146f4a638b7d688208736a05321bc0",
+  "preview_sha": "5ed108355f2626c9867782832c76b1c438c51281",
+  "tree": "b93fb18a7412fb31aab5516903bc300a9ad797e4",
+  "local_tree_equivalent_commit": "740869debb111f8edbef33899316e4c75e6fdf7a",
+  "sources": [
+    {
+      "path": "tools/release_qualification.py",
+      "sha256": "a9ca1af6393b9f2a88af156f78b50afc6b5b5f66e622a8bfe9a4530273674ed7",
+      "blob": "9c0c4c9ad3abcc7d10df8fb253c68a586c4426f8"
+    },
+    {
+      "path": "tools/windows_bindiff_network.py",
+      "sha256": "7f3b82f4d0c702790cf48a97d6e608b3dbd56aef5f77ffc75434489dfd936328",
+      "blob": "e04615371afa5c1c0b04ff500ad7122d132c414c"
+    },
+    {
+      "path": "tools/dependency_security.py",
+      "sha256": "4f2a8a1c095efe8a92074a16ea972b6f0e2a4b8868efa9d2fee50cd8af361641",
+      "blob": "298160671271c86d4739f43306ad048d9a45a5c4"
+    },
+    {
+      "path": ".github/workflows/live-bindiff.yml",
+      "sha256": "bfe5e5cf3e12319eb7232c9fd65e0cd1d4799248d56468a1cda6df44cb266e2d",
+      "blob": "45735fc193672d2ead897d6a1141118fb50d61c2"
+    },
+    {
+      "path": ".github/workflows/dependency-security.yml",
+      "sha256": "dc67ff5eb5e6c43be987f057998251f335a8de0f2e74060f470b69273e0dcd39",
+      "blob": "ba615362136bac7180903859b77acf81d41e7bf0"
+    }
+  ],
+  "logs": [
+    {
+      "job_id": 135059882415,
+      "bytes": 19638,
+      "sha256": "e1ac8dbd30cc7a8c6b24cd91097ad90a16906aad8bc386557ee5771024b5b0dd",
+      "checkout": "5ed108355f2626c9867782832c76b1c438c51281"
+    },
+    {
+      "job_id": 135059882502,
+      "bytes": 18393,
+      "sha256": "402df942cd321f862e10a9206930dd47172600e7f71b8af7f1bde899095f4662",
+      "checkout": "5ed108355f2626c9867782832c76b1c438c51281"
+    },
+    {
+      "job_id": 135059883163,
+      "bytes": 19053,
+      "sha256": "c0faa9b4c216700e4d3e3ef541070a4fb544a15b8c8404b42d20f596198016f5",
+      "checkout": "5ed108355f2626c9867782832c76b1c438c51281"
+    },
+    {
+      "job_id": 135059889017,
+      "bytes": 45694,
+      "sha256": "2beda875525920a7275bd87e32c4e4dd9b086f991436d9dc6d31b53386f8bbca",
+      "checkout": "5ed108355f2626c9867782832c76b1c438c51281"
+    },
+    {
+      "job_id": 135059889495,
+      "bytes": 50810,
+      "sha256": "9e787edee139cb66a4eabec754480ca293bc8ee154619cbc3171c9c424d2572b",
+      "checkout": "5ed108355f2626c9867782832c76b1c438c51281"
+    }
+  ],
+  "artifacts": [
+    {
+      "id": 14461004899,
+      "bytes": 35614,
+      "sha256": "f3bd20e73bd007b36d13528151ab1649ea6cd15551d6ff9960123cf1fa2bc0d8",
+      "members": [
+        "context.json",
+        "scanner-bootstrap-check.process.json",
+        "scanner-bootstrap-check.stderr",
+        "scanner-bootstrap-check.stdout",
+        "scanner-bootstrap-identity.process.json",
+        "scanner-bootstrap-identity.stderr",
+        "scanner-bootstrap-identity.stdout",
+        "scanner-bootstrap-inspect.process.json",
+        "scanner-bootstrap-inspect.stderr",
+        "scanner-bootstrap-inspect.stdout",
+        "scanner-bootstrap-install.json",
+        "scanner-bootstrap-install.process.json",
+        "scanner-bootstrap-install.stderr",
+        "scanner-bootstrap-install.stdout",
+        "scanner-check.process.json",
+        "scanner-check.stderr",
+        "scanner-check.stdout",
+        "scanner-identity.process.json",
+        "scanner-identity.stderr",
+        "scanner-identity.stdout",
+        "scanner-inspect.process.json",
+        "scanner-inspect.stderr",
+        "scanner-inspect.stdout",
+        "scanner-install.json",
+        "scanner-install.process.json",
+        "scanner-install.stderr",
+        "scanner-prepared-inspect.process.json",
+        "scanner-install.stdout",
+        "scanner-prepared-inspect.stderr",
+        "scanner-prepared-inspect.stdout",
+        "scanner-venv.process.json",
+        "scanner-venv.stderr",
+        "scanner-venv.stdout",
+        "static.process.json",
+        "static.stderr",
+        "static.stdout",
+        "unaudited.json",
+        "verdict.json"
+      ],
+      "verdict": {
+        "blockers": [
+          "required command failed, timed out or exceeded evidence bounds"
+        ],
+        "platform": "ubuntu-latest",
+        "profile": "static",
+        "qualification": "local/unverified until hosted review",
+        "schema": 1,
+        "source_sha": "5ed108355f2626c9867782832c76b1c438c51281",
+        "status": "failed"
+      },
+      "static": {
+        "count": 80,
+        "codes": {
+          "S310": 6,
+          "S101": 9,
+          "S608": 35,
+          "S105": 14,
+          "S603": 1,
+          "S110": 12,
+          "S314": 2,
+          "S108": 1
+        },
+        "process": {
+          "argv": [
+            "/home/runner/work/patchtrace/patchtrace/build/security-static/scanner-env/bin/python",
+            "-I",
+            "-m",
+            "ruff",
+            "check",
+            "/home/runner/work/patchtrace/patchtrace/src",
+            "--isolated",
+            "--select",
+            "S",
+            "--ignore-noqa",
+            "--no-cache",
+            "--no-respect-gitignore",
+            "--output-format",
+            "json"
+          ],
+          "elapsed_s": 0.116554,
+          "error": null,
+          "exit_code": 1,
+          "output_limited": false,
+          "started_at": "2026-11-18T19:13:41.242150+00:00",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stdout_sha256": "a4e233bc7d4c77c3ab6a6e8ca3f4a5d1f0bd569fa133e5ca7830242140623a91",
+          "timed_out": false,
+          "timeout_s": 600
+        },
+        "bootstrap_text_present": false
+      }
+    },
+    {
+      "id": 14461897989,
+      "bytes": 11329,
+      "sha256": "635e53057430808b5e3d1f2c6ec3cc0af8a37230d25a94ad1d4e3970e0f603af",
+      "members": [
+        "bindiff-live-stdout.txt",
+        "bindiff-live.BinDiff",
+        "bindiff-provision.json",
+        "bindiff.json",
+        "network-linux/bindiff-live-stdout.txt",
+        "network-linux/bindiff-live.BinDiff"
+      ],
+      "bindiff_report": {
+        "acceptance": "C3 accept_binexport inside BinDiffAdapter (production path)",
+        "checks": {
+          "cancel_at_first_output": {
+            "out_at_stop": {
+              "older_vs_newer.BinDiff": 20480,
+              "older_vs_newer.BinDiff-journal": 4616
+            },
+            "preserved": [],
+            "reason": "cancelled discarded the partial output unread and removed the workdir",
+            "status": "passed",
+            "workdir_left": []
+          },
+          "end_to_end": {
+            "algorithms": [
+              "function: name hash matching"
+            ],
+            "bindiff_summary": "confidence=99.2608;matched=20;primary_functions=20;secondary_functions=21;similarity=97.1948",
+            "duration_ms": 713,
+            "engine_version": "8 (@568181968, Sep 25 2023)",
+            "matches": 20,
+            "output_sha256": "fbd81a2e3997860d068b4b69605ff0437f17ec9b48bd092946f3916da6763ed7",
+            "reason": "end-to-end run imported and validated",
+            "semantic_sha256": "77f36f7aac14a6e321c2c6aba9e0c7e3ca6cdba3f690fc18d188ca987b88e181",
+            "status": "passed"
+          },
+          "no_network": {
+            "matches": 20,
+            "reason": "complete imported match semantics agree inside unshare -rn",
+            "semantic_sha256": "77f36f7aac14a6e321c2c6aba9e0c7e3ca6cdba3f690fc18d188ca987b88e181",
+            "status": "passed"
+          },
+          "pinned_version": {
+            "reason": "probe version '8 (@568181968, Sep 25 2023)', pin '8 (@568181968, Sep 25 2023)'",
+            "status": "passed"
+          },
+          "probe": {
+            "executable_sha256": "eb0a88eb6518e000bc3c4eef66c22db7ace197173eb933ea5d1c8ac3f7d8d0fb",
+            "reason": "supported",
+            "status": "passed",
+            "untested_version": false,
+            "version": "8 (@568181968, Sep 25 2023)"
+          },
+          "reversed_refused": {
+            "reason": "reversed .BinExport pair refused before any spawn",
+            "status": "passed"
+          },
+          "timeout_mid_run": {
+            "out_at_stop": null,
+            "preserved": [],
+            "reason": "timeout discarded the partial output unread and removed the workdir",
+            "status": "passed",
+            "workdir_left": []
+          }
+        },
+        "engine": "bindiff",
+        "input": "SYNTHETIC tests/bindiff_live_pair.py (20/21 functions; not real-driver evidence)",
+        "mocked": false,
+        "reason": "all live checks passed",
+        "status": "passed"
+      }
+    },
+    {
+      "id": 14462077720,
+      "bytes": 764,
+      "sha256": "1254ef16f3029be8e4f8a2f5021fc614e3e5cfcfe79bf32346519f473799c4b1",
+      "members": [
+        "bindiff-provision.json"
+      ]
+    },
+    {
+      "id": 14462856244,
+      "bytes": 333,
+      "sha256": "78c18fd22110e4ce67c54ff5bb465727d52a73e6d907d3f0fb32159bac99fee1",
+      "members": [
+        "verdict.json"
+      ],
+      "verdict": {
+        "blockers": [
+          "tracked file changed at open"
+        ],
+        "platform": "windows-latest",
+        "profile": "runtime",
+        "qualification": "local/unverified until hosted review",
+        "schema": 1,
+        "source_sha": "5ed108355f2626c9867782832c76b1c438c51281",
+        "status": "failed"
+      }
+    },
+    {
+      "id": 14463320440,
+      "bytes": 335,
+      "sha256": "517af54b296ffdeb6d31959242c110abe87a165f9fb762129d5077225cbbab93",
+      "members": [
+        "verdict.json"
+      ],
+      "verdict": {
+        "blockers": [
+          "tracked file changed at open"
+        ],
+        "platform": "windows-latest",
+        "profile": "packaging",
+        "qualification": "local/unverified until hosted review",
+        "schema": 1,
+        "source_sha": "5ed108355f2626c9867782832c76b1c438c51281",
+        "status": "failed"
+      }
+    }
+  ],
+  "qualification": "Blocked; PR preview evidence is not canonical release evidence",
+  "windows_cause": "Generic tracked-file changed-at-open guard refusal; path/stat fields not logged",
+  "scope": "Bounded read-only snapshot; no native target or scanner run locally"
+}

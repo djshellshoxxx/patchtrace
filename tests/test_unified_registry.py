@@ -167,9 +167,27 @@ def test_the_orientation_free_l39_cut_moves_config_digest():
     by the earlier order get a new config_digest (the current `ude/2` engine contract is preserved)."""
     from patchtrace.unified.compute import compute_config_digest
     from patchtrace.unified.keys import ENGINE_VERSION
-    assert dict(REGISTRY.channel_versions)['arbiter'] == 2 and ENGINE_VERSION == 'ude/2'
+    assert dict(REGISTRY.channel_versions)['arbiter'] == 3 and ENGINE_VERSION == 'ude/2'
     before = dataclasses.replace(REGISTRY, channel_versions=tuple(
         row for row in REGISTRY.channel_versions if row[0] != 'arbiter'))
+    orientation = dataclasses.replace(REGISTRY, channel_versions=tuple(
+        (name, 2 if name == 'arbiter' else version) for name, version in REGISTRY.channel_versions))
+    assert len({compute_config_digest(before), compute_config_digest(orientation),
+                compute_config_digest(REGISTRY)}) == 3
+
+
+def test_acceptance_witness_retention_rekeys_only_the_arbiter_channel():
+    """R2: version 2 keeps the orientation policy but can omit the B+B acceptance witness at L-39."""
+    from patchtrace.unified.compute import compute_config_digest
+    from patchtrace.unified.keys import ENGINE_VERSION
+    before = dataclasses.replace(REGISTRY, channel_versions=tuple(
+        (name, 2 if name == 'arbiter' else version) for name, version in REGISTRY.channel_versions))
+    assert dict(REGISTRY.channel_versions)['arbiter'] == 3 and ENGINE_VERSION == 'ude/2'
+    assert [(old, new) for old, new in zip(before.channel_versions, REGISTRY.channel_versions, strict=True)
+            if old != new] == [(('arbiter', 2), ('arbiter', 3))]
+    assert before.proof_versions == REGISTRY.proof_versions
+    assert before.digest() != REGISTRY.digest()  # channel versions also participate in registry_digest
+    assert before.pass_table_digest() == REGISTRY.pass_table_digest()
     assert compute_config_digest(before) != compute_config_digest(REGISTRY)
 
 

@@ -1,0 +1,142 @@
+FFF                                                                      [100%]
+=================================== FAILURES ===================================
+_ test_exact_entry_bounds_guard_metadata_before_python_row_materialization[project_id] _
+
+service = <patchtrace.service.ProjectService object at 0x7f9277a1f6e0>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f9277e64980>
+column = 'project_id'
+
+    @pytest.mark.parametrize('column', ['project_id', 'created', 'raw_sha256'])
+    def test_exact_entry_bounds_guard_metadata_before_python_row_materialization(service, monkeypatch, column):
+        from patchtrace.enrichment import storage
+        from patchtrace.enrichment.contracts import EnrichmentError
+        from patchtrace.pe_overview.cache import KIND
+        result = inspect(service)
+        try:
+            entry = stored(service, result)[0]
+        finally:
+            result.close()
+        real = service.store.connection
+        monkeypatch.setattr(storage, 'MAX_ENTRY_METADATA_BYTES', 512, raising=False)
+        with real:
+            real.execute(f'UPDATE enrichment_entries SET {column}=? WHERE id=?', ('x' * 513, entry.id))
+        returned = []
+    
+        class ObservedCursor:
+            def __init__(self, cursor):
+                self.cursor = cursor
+    
+            def fetchone(self):
+                row = self.cursor.fetchone()
+                returned.append(row is not None)
+                return row
+    
+        class ObservedConnection:
+            def __getattr__(self, name):
+                return getattr(real, name)
+    
+            def execute(self, sql, values=()):
+                cursor = real.execute(sql, values)
+                return ObservedCursor(cursor) if sql.startswith('SELECT id,kind,project_id') else cursor
+    
+        monkeypatch.setattr(service.store, 'connection', ObservedConnection())
+>       with pytest.raises(EnrichmentError):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE EnrichmentError
+
+tests/test_pe_metadata_cache_recovery.py:175: Failed
+_ test_exact_entry_bounds_guard_metadata_before_python_row_materialization[created] _
+
+service = <patchtrace.service.ProjectService object at 0x7f9277e649e0>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f9277e64920>
+column = 'created'
+
+    @pytest.mark.parametrize('column', ['project_id', 'created', 'raw_sha256'])
+    def test_exact_entry_bounds_guard_metadata_before_python_row_materialization(service, monkeypatch, column):
+        from patchtrace.enrichment import storage
+        from patchtrace.enrichment.contracts import EnrichmentError
+        from patchtrace.pe_overview.cache import KIND
+        result = inspect(service)
+        try:
+            entry = stored(service, result)[0]
+        finally:
+            result.close()
+        real = service.store.connection
+        monkeypatch.setattr(storage, 'MAX_ENTRY_METADATA_BYTES', 512, raising=False)
+        with real:
+            real.execute(f'UPDATE enrichment_entries SET {column}=? WHERE id=?', ('x' * 513, entry.id))
+        returned = []
+    
+        class ObservedCursor:
+            def __init__(self, cursor):
+                self.cursor = cursor
+    
+            def fetchone(self):
+                row = self.cursor.fetchone()
+                returned.append(row is not None)
+                return row
+    
+        class ObservedConnection:
+            def __getattr__(self, name):
+                return getattr(real, name)
+    
+            def execute(self, sql, values=()):
+                cursor = real.execute(sql, values)
+                return ObservedCursor(cursor) if sql.startswith('SELECT id,kind,project_id') else cursor
+    
+        monkeypatch.setattr(service.store, 'connection', ObservedConnection())
+>       with pytest.raises(EnrichmentError):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE EnrichmentError
+
+tests/test_pe_metadata_cache_recovery.py:175: Failed
+_ test_exact_entry_bounds_guard_metadata_before_python_row_materialization[raw_sha256] _
+
+service = <patchtrace.service.ProjectService object at 0x7f92779d7d70>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f9277947ef0>
+column = 'raw_sha256'
+
+    @pytest.mark.parametrize('column', ['project_id', 'created', 'raw_sha256'])
+    def test_exact_entry_bounds_guard_metadata_before_python_row_materialization(service, monkeypatch, column):
+        from patchtrace.enrichment import storage
+        from patchtrace.enrichment.contracts import EnrichmentError
+        from patchtrace.pe_overview.cache import KIND
+        result = inspect(service)
+        try:
+            entry = stored(service, result)[0]
+        finally:
+            result.close()
+        real = service.store.connection
+        monkeypatch.setattr(storage, 'MAX_ENTRY_METADATA_BYTES', 512, raising=False)
+        with real:
+            real.execute(f'UPDATE enrichment_entries SET {column}=? WHERE id=?', ('x' * 513, entry.id))
+        returned = []
+    
+        class ObservedCursor:
+            def __init__(self, cursor):
+                self.cursor = cursor
+    
+            def fetchone(self):
+                row = self.cursor.fetchone()
+                returned.append(row is not None)
+                return row
+    
+        class ObservedConnection:
+            def __getattr__(self, name):
+                return getattr(real, name)
+    
+            def execute(self, sql, values=()):
+                cursor = real.execute(sql, values)
+                return ObservedCursor(cursor) if sql.startswith('SELECT id,kind,project_id') else cursor
+    
+        monkeypatch.setattr(service.store, 'connection', ObservedConnection())
+>       with pytest.raises(EnrichmentError):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE EnrichmentError
+
+tests/test_pe_metadata_cache_recovery.py:175: Failed
+=========================== short test summary info ============================
+FAILED tests/test_pe_metadata_cache_recovery.py::test_exact_entry_bounds_guard_metadata_before_python_row_materialization[project_id]
+FAILED tests/test_pe_metadata_cache_recovery.py::test_exact_entry_bounds_guard_metadata_before_python_row_materialization[created]
+FAILED tests/test_pe_metadata_cache_recovery.py::test_exact_entry_bounds_guard_metadata_before_python_row_materialization[raw_sha256]
+3 failed, 13 deselected in 1.19s

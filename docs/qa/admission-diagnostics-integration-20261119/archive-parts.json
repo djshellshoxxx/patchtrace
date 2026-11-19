@@ -1,0 +1,24 @@
+{
+  "schema": "patchtrace-lossless-archive-parts/1",
+  "original_checkpoint": "29192f7837ebdb268d5c47e0a2536c67148cbe9f",
+  "original_local_head": "b2b170e343ab4da680b3629b3ab2e89ce6f42774",
+  "preserved_branch": "codex/verified-continuation-20261118",
+  "archive": "evidence.zip",
+  "archive_bytes": 13132985,
+  "archive_sha256": "ab11b8c014d5fdf0cfe94b2e29f661bd20974019f7c4f9a91151b7593dce4ece",
+  "parts": [
+    {
+      "path": "evidence.zip.part-001",
+      "bytes": 8388608,
+      "sha256": "2a3b888547dd31be42d8606e19fa80f66b4d97623d1cc3b7fa7bbd607fae7485"
+    },
+    {
+      "path": "evidence.zip.part-002",
+      "bytes": 4744377,
+      "sha256": "56d3693ee6b726e88f45c0bbe467b26b2d71ca7af620e5f141d9d6cd639f9b5f"
+    }
+  ],
+  "original_manifest": "original-checkpoint/manifest.json",
+  "original_readme": "original-checkpoint/README.md",
+  "reason": "The connector rejects requests over16MiB; base64 of this archive exceeds that limit. Canonical Git fetch works but push has no credentials. No remote ref moved during either failed transport attempt."
+}

@@ -1,0 +1,435 @@
+....FFFFFFFFFFFFFFF.F                                                    [100%]
+=================================== FAILURES ===================================
+____________ test_foreign_corpus_document_is_refused[pairs-status] _____________
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-23/test_foreign_corpus_document_i0')
+capsys = <_pytest.capture.CaptureFixture object at 0x7fa81d2dc3e0>
+kind = 'pairs', command = 'status'
+
+    @pytest.mark.parametrize('kind,command', [('pairs', 'status'), ('pairs', 'labels'),
+                                             ('manifest', 'fetch-plan')])
+    def test_foreign_corpus_document_is_refused(tmp_path, capsys, kind, command):
+        root = tmp_path / 'ptcal'
+        prepare(tmp_path, capsys, root)
+        layout = Layout(root)
+        path = layout.pairs(CID) if kind == 'pairs' else layout.manifest(CID)
+        document = json.loads(path.read_bytes())
+        document['corpus_id'] = 'tier-w-foreign'
+        path.write_text(json.dumps(document), encoding='utf-8')
+        before = {p: p.read_bytes() for p in root.rglob('*') if p.is_file()}
+        code, result = invoke(capsys, root, command, '--corpus-id', CID)
+>       assert code == 2 and result['code'] == 'PT-TIERW-INPUT'
+E       assert (0 == 2)
+
+tests/test_tier_w_cli_admission.py:35: AssertionError
+____________ test_foreign_corpus_document_is_refused[pairs-labels] _____________
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-23/test_foreign_corpus_document_i1')
+capsys = <_pytest.capture.CaptureFixture object at 0x7fa81d1e00e0>
+kind = 'pairs', command = 'labels'
+
+    @pytest.mark.parametrize('kind,command', [('pairs', 'status'), ('pairs', 'labels'),
+                                             ('manifest', 'fetch-plan')])
+    def test_foreign_corpus_document_is_refused(tmp_path, capsys, kind, command):
+        root = tmp_path / 'ptcal'
+        prepare(tmp_path, capsys, root)
+        layout = Layout(root)
+        path = layout.pairs(CID) if kind == 'pairs' else layout.manifest(CID)
+        document = json.loads(path.read_bytes())
+        document['corpus_id'] = 'tier-w-foreign'
+        path.write_text(json.dumps(document), encoding='utf-8')
+        before = {p: p.read_bytes() for p in root.rglob('*') if p.is_file()}
+        code, result = invoke(capsys, root, command, '--corpus-id', CID)
+>       assert code == 2 and result['code'] == 'PT-TIERW-INPUT'
+E       assert (1 == 2)
+
+tests/test_tier_w_cli_admission.py:35: AssertionError
+_________ test_foreign_corpus_document_is_refused[manifest-fetch-plan] _________
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-23/test_foreign_corpus_document_i2')
+capsys = <_pytest.capture.CaptureFixture object at 0x7fa81d1cab70>
+kind = 'manifest', command = 'fetch-plan'
+
+    @pytest.mark.parametrize('kind,command', [('pairs', 'status'), ('pairs', 'labels'),
+                                             ('manifest', 'fetch-plan')])
+    def test_foreign_corpus_document_is_refused(tmp_path, capsys, kind, command):
+        root = tmp_path / 'ptcal'
+        prepare(tmp_path, capsys, root)
+        layout = Layout(root)
+        path = layout.pairs(CID) if kind == 'pairs' else layout.manifest(CID)
+        document = json.loads(path.read_bytes())
+        document['corpus_id'] = 'tier-w-foreign'
+        path.write_text(json.dumps(document), encoding='utf-8')
+        before = {p: p.read_bytes() for p in root.rglob('*') if p.is_file()}
+        code, result = invoke(capsys, root, command, '--corpus-id', CID)
+>       assert code == 2 and result['code'] == 'PT-TIERW-INPUT'
+E       assert (0 == 2)
+
+tests/test_tier_w_cli_admission.py:35: AssertionError
+_ test_foreign_symbol_map_never_replaces_existing_labels[sha256-ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff] _
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-23/test_foreign_symbol_map_never_0')
+capsys = <_pytest.capture.CaptureFixture object at 0x7fa81d1e3110>
+field = 'sha256'
+value = 'ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff'
+
+    @pytest.mark.parametrize('field,value', [('sha256', 'f' * 64), ('file_name', 'foreign.dll'),
+                                            ('producer', 'ghidra'), ('tier', 'R')])
+    def test_foreign_symbol_map_never_replaces_existing_labels(tmp_path, capsys, field, value):
+        root = tmp_path / 'ptcal'
+        prepare(tmp_path, capsys, root)
+        place(root)
+        step(capsys, root, 'symbols')
+        step(capsys, root, 'labels')
+        layout = Layout(root)
+        binary = load_pairs(layout.pairs(CID).read_bytes()).binaries[0]
+        path = layout.symbols(binary.sha256, 'msf')
+        document = json.loads(path.read_bytes())
+        if field in {'sha256', 'file_name'}:
+            document['image'][field] = value
+        elif field == 'producer':
+            document['producer']['tool'] = value
+        else:
+            document[field] = value
+        path.write_text(json.dumps(document), encoding='utf-8')
+        folder = layout.labels_dir(CID)
+        before = {p.name: p.read_bytes() for p in folder.iterdir()}
+        code, result = invoke(capsys, root, 'labels', '--corpus-id', CID)
+>       assert code == 2 and result['code'] == 'PT-TIERW-INPUT'
+E       assert (0 == 2)
+
+tests/test_tier_w_cli_admission.py:61: AssertionError
+_ test_foreign_symbol_map_never_replaces_existing_labels[file_name-foreign.dll] _
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-23/test_foreign_symbol_map_never_1')
+capsys = <_pytest.capture.CaptureFixture object at 0x7fa81d074c50>
+field = 'file_name', value = 'foreign.dll'
+
+    @pytest.mark.parametrize('field,value', [('sha256', 'f' * 64), ('file_name', 'foreign.dll'),
+                                            ('producer', 'ghidra'), ('tier', 'R')])
+    def test_foreign_symbol_map_never_replaces_existing_labels(tmp_path, capsys, field, value):
+        root = tmp_path / 'ptcal'
+        prepare(tmp_path, capsys, root)
+        place(root)
+        step(capsys, root, 'symbols')
+        step(capsys, root, 'labels')
+        layout = Layout(root)
+        binary = load_pairs(layout.pairs(CID).read_bytes()).binaries[0]
+        path = layout.symbols(binary.sha256, 'msf')
+        document = json.loads(path.read_bytes())
+        if field in {'sha256', 'file_name'}:
+            document['image'][field] = value
+        elif field == 'producer':
+            document['producer']['tool'] = value
+        else:
+            document[field] = value
+        path.write_text(json.dumps(document), encoding='utf-8')
+        folder = layout.labels_dir(CID)
+        before = {p.name: p.read_bytes() for p in folder.iterdir()}
+        code, result = invoke(capsys, root, 'labels', '--corpus-id', CID)
+>       assert code == 2 and result['code'] == 'PT-TIERW-INPUT'
+E       assert (0 == 2)
+
+tests/test_tier_w_cli_admission.py:61: AssertionError
+___ test_foreign_symbol_map_never_replaces_existing_labels[producer-ghidra] ____
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-23/test_foreign_symbol_map_never_2')
+capsys = <_pytest.capture.CaptureFixture object at 0x7fa81d202150>
+field = 'producer', value = 'ghidra'
+
+    @pytest.mark.parametrize('field,value', [('sha256', 'f' * 64), ('file_name', 'foreign.dll'),
+                                            ('producer', 'ghidra'), ('tier', 'R')])
+    def test_foreign_symbol_map_never_replaces_existing_labels(tmp_path, capsys, field, value):
+        root = tmp_path / 'ptcal'
+        prepare(tmp_path, capsys, root)
+        place(root)
+        step(capsys, root, 'symbols')
+        step(capsys, root, 'labels')
+        layout = Layout(root)
+        binary = load_pairs(layout.pairs(CID).read_bytes()).binaries[0]
+        path = layout.symbols(binary.sha256, 'msf')
+        document = json.loads(path.read_bytes())
+        if field in {'sha256', 'file_name'}:
+            document['image'][field] = value
+        elif field == 'producer':
+            document['producer']['tool'] = value
+        else:
+            document[field] = value
+        path.write_text(json.dumps(document), encoding='utf-8')
+        folder = layout.labels_dir(CID)
+        before = {p.name: p.read_bytes() for p in folder.iterdir()}
+        code, result = invoke(capsys, root, 'labels', '--corpus-id', CID)
+>       assert code == 2 and result['code'] == 'PT-TIERW-INPUT'
+E       assert (0 == 2)
+
+tests/test_tier_w_cli_admission.py:61: AssertionError
+________ test_foreign_symbol_map_never_replaces_existing_labels[tier-R] ________
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-23/test_foreign_symbol_map_never_3')
+capsys = <_pytest.capture.CaptureFixture object at 0x7fa81d1e2810>
+field = 'tier', value = 'R'
+
+    @pytest.mark.parametrize('field,value', [('sha256', 'f' * 64), ('file_name', 'foreign.dll'),
+                                            ('producer', 'ghidra'), ('tier', 'R')])
+    def test_foreign_symbol_map_never_replaces_existing_labels(tmp_path, capsys, field, value):
+        root = tmp_path / 'ptcal'
+        prepare(tmp_path, capsys, root)
+        place(root)
+        step(capsys, root, 'symbols')
+        step(capsys, root, 'labels')
+        layout = Layout(root)
+        binary = load_pairs(layout.pairs(CID).read_bytes()).binaries[0]
+        path = layout.symbols(binary.sha256, 'msf')
+        document = json.loads(path.read_bytes())
+        if field in {'sha256', 'file_name'}:
+            document['image'][field] = value
+        elif field == 'producer':
+            document['producer']['tool'] = value
+        else:
+            document[field] = value
+        path.write_text(json.dumps(document), encoding='utf-8')
+        folder = layout.labels_dir(CID)
+        before = {p.name: p.read_bytes() for p in folder.iterdir()}
+        code, result = invoke(capsys, root, 'labels', '--corpus-id', CID)
+>       assert code == 2 and result['code'] == 'PT-TIERW-INPUT'
+E       assert (0 == 2)
+
+tests/test_tier_w_cli_admission.py:61: AssertionError
+_______________ test_invalid_byte_limit_is_typed_input_error[-1] _______________
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-23/test_invalid_byte_limit_is_typ0')
+limit = -1
+
+    @pytest.mark.parametrize('limit', [-1, True, False, 1.5, '8', None])
+    def test_invalid_byte_limit_is_typed_input_error(tmp_path, limit):
+        path = tmp_path / 'input.json'
+        path.write_bytes(b'{}')
+>       with pytest.raises(paths.TierWError, match='PT-TIERW-INPUT'):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AssertionError: Regex pattern did not match.
+E         Expected regex: 'PT-TIERW-INPUT'
+E         Actual message: 'PT-TIERW-LIMIT: input.json is 2 bytes, over the -1-byte cap'
+
+tests/test_tier_w_read_bounds.py:16: AssertionError
+______________ test_invalid_byte_limit_is_typed_input_error[True] ______________
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-23/test_invalid_byte_limit_is_typ1')
+limit = True
+
+    @pytest.mark.parametrize('limit', [-1, True, False, 1.5, '8', None])
+    def test_invalid_byte_limit_is_typed_input_error(tmp_path, limit):
+        path = tmp_path / 'input.json'
+        path.write_bytes(b'{}')
+>       with pytest.raises(paths.TierWError, match='PT-TIERW-INPUT'):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AssertionError: Regex pattern did not match.
+E         Expected regex: 'PT-TIERW-INPUT'
+E         Actual message: 'PT-TIERW-LIMIT: input.json is 2 bytes, over the True-byte cap'
+
+tests/test_tier_w_read_bounds.py:16: AssertionError
+_____________ test_invalid_byte_limit_is_typed_input_error[False] ______________
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-23/test_invalid_byte_limit_is_typ2')
+limit = False
+
+    @pytest.mark.parametrize('limit', [-1, True, False, 1.5, '8', None])
+    def test_invalid_byte_limit_is_typed_input_error(tmp_path, limit):
+        path = tmp_path / 'input.json'
+        path.write_bytes(b'{}')
+>       with pytest.raises(paths.TierWError, match='PT-TIERW-INPUT'):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AssertionError: Regex pattern did not match.
+E         Expected regex: 'PT-TIERW-INPUT'
+E         Actual message: 'PT-TIERW-LIMIT: input.json is 2 bytes, over the False-byte cap'
+
+tests/test_tier_w_read_bounds.py:16: AssertionError
+______________ test_invalid_byte_limit_is_typed_input_error[1.5] _______________
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-23/test_invalid_byte_limit_is_typ3')
+limit = 1.5
+
+    @pytest.mark.parametrize('limit', [-1, True, False, 1.5, '8', None])
+    def test_invalid_byte_limit_is_typed_input_error(tmp_path, limit):
+        path = tmp_path / 'input.json'
+        path.write_bytes(b'{}')
+>       with pytest.raises(paths.TierWError, match='PT-TIERW-INPUT'):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AssertionError: Regex pattern did not match.
+E         Expected regex: 'PT-TIERW-INPUT'
+E         Actual message: 'PT-TIERW-LIMIT: input.json is 2 bytes, over the 1.5-byte cap'
+
+tests/test_tier_w_read_bounds.py:16: AssertionError
+_______________ test_invalid_byte_limit_is_typed_input_error[8] ________________
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-23/test_invalid_byte_limit_is_typ4')
+limit = '8'
+
+    @pytest.mark.parametrize('limit', [-1, True, False, 1.5, '8', None])
+    def test_invalid_byte_limit_is_typed_input_error(tmp_path, limit):
+        path = tmp_path / 'input.json'
+        path.write_bytes(b'{}')
+        with pytest.raises(paths.TierWError, match='PT-TIERW-INPUT'):
+>           paths.read_bytes(path, limit)
+
+tests/test_tier_w_read_bounds.py:17: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+path = PosixPath('/tmp/pytest-of-agent/pytest-23/test_invalid_byte_limit_is_typ4/input.json')
+limit = '8'
+
+    def read_bytes(path: Path, limit: int) -> bytes:
+        """Bounded read: refuse files larger than `limit` before reading them."""
+        path = Path(path)
+        try:
+            size = path.stat().st_size
+        except OSError as exc:
+            raise TierWError('PT-TIERW-INPUT', f'cannot read {path.name}: {exc.strerror or exc}') from None
+>       if size > limit:
+           ^^^^^^^^^^^^
+E       TypeError: '>' not supported between instances of 'int' and 'str'
+
+tools/calibration/tier_w/paths.py:175: TypeError
+______________ test_invalid_byte_limit_is_typed_input_error[None] ______________
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-23/test_invalid_byte_limit_is_typ5')
+limit = None
+
+    @pytest.mark.parametrize('limit', [-1, True, False, 1.5, '8', None])
+    def test_invalid_byte_limit_is_typed_input_error(tmp_path, limit):
+        path = tmp_path / 'input.json'
+        path.write_bytes(b'{}')
+        with pytest.raises(paths.TierWError, match='PT-TIERW-INPUT'):
+>           paths.read_bytes(path, limit)
+
+tests/test_tier_w_read_bounds.py:17: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+path = PosixPath('/tmp/pytest-of-agent/pytest-23/test_invalid_byte_limit_is_typ5/input.json')
+limit = None
+
+    def read_bytes(path: Path, limit: int) -> bytes:
+        """Bounded read: refuse files larger than `limit` before reading them."""
+        path = Path(path)
+        try:
+            size = path.stat().st_size
+        except OSError as exc:
+            raise TierWError('PT-TIERW-INPUT', f'cannot read {path.name}: {exc.strerror or exc}') from None
+>       if size > limit:
+           ^^^^^^^^^^^^
+E       TypeError: '>' not supported between instances of 'int' and 'NoneType'
+
+tools/calibration/tier_w/paths.py:175: TypeError
+______________ test_document_read_never_uses_unbounded_path_read _______________
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-23/test_document_read_never_uses_0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fa81d046c60>
+
+    def test_document_read_never_uses_unbounded_path_read(tmp_path, monkeypatch):
+        path = tmp_path / 'input.json'
+        path.write_bytes(b'{"ok":true}')
+    
+        def forbidden(*args, **kwargs):
+            pytest.fail('bounded reader used unbounded Path.read_bytes')
+    
+        monkeypatch.setattr(Path, 'read_bytes', forbidden)
+>       assert paths.read_bytes(path, 64) == b'{"ok":true}'
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_tier_w_read_bounds.py:28: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tools/calibration/tier_w/paths.py:177: in read_bytes
+    return path.read_bytes()
+           ^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+args = (PosixPath('/tmp/pytest-of-agent/pytest-23/test_document_read_never_uses_0/input.json'),)
+kwargs = {}
+
+    def forbidden(*args, **kwargs):
+>       pytest.fail('bounded reader used unbounded Path.read_bytes')
+E       Failed: bounded reader used unbounded Path.read_bytes
+
+tests/test_tier_w_read_bounds.py:25: Failed
+______________ test_growth_after_descriptor_admission_is_refused _______________
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-23/test_growth_after_descriptor_a0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fa81d0453d0>
+
+    def test_growth_after_descriptor_admission_is_refused(tmp_path, monkeypatch):
+        path = tmp_path / 'input.json'
+        path.write_bytes(b'{}')
+        real_stat, real_read = os.fstat, os.read
+        calls, reads = [], []
+    
+        def changed(fd):
+            value = real_stat(fd)
+            calls.append(fd)
+            if len(calls) == 1:
+                with path.open('ab') as out:
+                    out.write(b'x' * 128)
+            return value
+    
+        def bounded(fd, count):
+            reads.append(count)
+            assert 0 <= count <= 65
+            return real_read(fd, count)
+    
+        monkeypatch.setattr(paths.os, 'fstat', changed)
+        monkeypatch.setattr(paths.os, 'read', bounded)
+>       with pytest.raises(paths.TierWError, match='PT-TIERW-(LIMIT|INPUT)'):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE TierWError
+
+tests/test_tier_w_read_bounds.py:52: Failed
+___________________ test_directory_is_refused_as_typed_input ___________________
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-23/test_directory_is_refused_as_t0')
+
+    def test_directory_is_refused_as_typed_input(tmp_path):
+        with pytest.raises(paths.TierWError, match='PT-TIERW-INPUT'):
+>           paths.read_bytes(tmp_path, 64)
+
+tests/test_tier_w_read_bounds.py:69: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tools/calibration/tier_w/paths.py:177: in read_bytes
+    return path.read_bytes()
+           ^^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1019: in read_bytes
+    with self.open(mode='rb') as f:
+         ^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/tmp/pytest-of-agent/pytest-23/test_directory_is_refused_as_t0')
+mode = 'rb', buffering = -1, encoding = None, errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed to by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+>       return io.open(self, mode, buffering, encoding, errors, newline)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       IsADirectoryError: [Errno 21] Is a directory: '/tmp/pytest-of-agent/pytest-23/test_directory_is_refused_as_t0'
+
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1013: IsADirectoryError
+=========================== short test summary info ============================
+FAILED tests/test_tier_w_cli_admission.py::test_foreign_corpus_document_is_refused[pairs-status]
+FAILED tests/test_tier_w_cli_admission.py::test_foreign_corpus_document_is_refused[pairs-labels]
+FAILED tests/test_tier_w_cli_admission.py::test_foreign_corpus_document_is_refused[manifest-fetch-plan]
+FAILED tests/test_tier_w_cli_admission.py::test_foreign_symbol_map_never_replaces_existing_labels[sha256-ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff]
+FAILED tests/test_tier_w_cli_admission.py::test_foreign_symbol_map_never_replaces_existing_labels[file_name-foreign.dll]
+FAILED tests/test_tier_w_cli_admission.py::test_foreign_symbol_map_never_replaces_existing_labels[producer-ghidra]
+FAILED tests/test_tier_w_cli_admission.py::test_foreign_symbol_map_never_replaces_existing_labels[tier-R]
+FAILED tests/test_tier_w_read_bounds.py::test_invalid_byte_limit_is_typed_input_error[-1]
+FAILED tests/test_tier_w_read_bounds.py::test_invalid_byte_limit_is_typed_input_error[True]
+FAILED tests/test_tier_w_read_bounds.py::test_invalid_byte_limit_is_typed_input_error[False]
+FAILED tests/test_tier_w_read_bounds.py::test_invalid_byte_limit_is_typed_input_error[1.5]
+FAILED tests/test_tier_w_read_bounds.py::test_invalid_byte_limit_is_typed_input_error[8]
+FAILED tests/test_tier_w_read_bounds.py::test_invalid_byte_limit_is_typed_input_error[None]
+FAILED tests/test_tier_w_read_bounds.py::test_document_read_never_uses_unbounded_path_read
+FAILED tests/test_tier_w_read_bounds.py::test_growth_after_descriptor_admission_is_refused
+FAILED tests/test_tier_w_read_bounds.py::test_directory_is_refused_as_typed_input
+16 failed, 5 passed in 2.74s

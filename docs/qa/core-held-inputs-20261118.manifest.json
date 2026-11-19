@@ -1,0 +1,291 @@
+{
+  "format": "patchtrace.qa-manifest/1",
+  "source_commit": "b85a0cf7bf135e9431677737613000707553b192",
+  "archive": "core-held-inputs-20261118.zip",
+  "archive_bytes": 463879,
+  "archive_sha256": "2d6f638bfec1887188aa15c94a0305dac0efb5b13d2ccff725f3d55566816f4d",
+  "payload_count": 56,
+  "payload_bytes": 1549497,
+  "files": [
+    {
+      "path": "README.md",
+      "bytes": 7795,
+      "sha256": "1179973ddca0f1363a4e9887c41d0749bb19e35aacce342686004a8144cecd39"
+    },
+    {
+      "path": "affected-v2.command.json",
+      "bytes": 2164,
+      "sha256": "aac30a223381678663ebabda3b3ba8eaea76f07dbb26a2b3d7d215a8a9e69d49"
+    },
+    {
+      "path": "affected-v2.exit.json",
+      "bytes": 208,
+      "sha256": "448e0bb65bde6d81e1256b9d52a12ab7ece678355aa1ab7a11de22d60b573c51"
+    },
+    {
+      "path": "affected-v2.imports.json",
+      "bytes": 121586,
+      "sha256": "b7eae9a9877fe20fcf34c3f96d8acb7e17fdfe518f6305d60cf67deb1983eac2"
+    },
+    {
+      "path": "affected-v2.log",
+      "bytes": 420,
+      "sha256": "7257604de4f68e42ef317cb680ababb63a201028589173efc1d9214384cba348"
+    },
+    {
+      "path": "affected-v2.xml",
+      "bytes": 40037,
+      "sha256": "984e490cc95130141d3a6be75ff4ee885f0b74f86ae858ddc06e646c34f2762b"
+    },
+    {
+      "path": "affected.command.json",
+      "bytes": 2155,
+      "sha256": "4491e004285eab768d158d752c1d71814f346959e9d6c980b466b1edea91ca74"
+    },
+    {
+      "path": "affected.exit.json",
+      "bytes": 209,
+      "sha256": "eb7f86b896c3949f3aaa2c671e1c81f31e7a619bac31dd599684d4f263c27374"
+    },
+    {
+      "path": "affected.imports.json",
+      "bytes": 81845,
+      "sha256": "90fda65ab96696b06e2fb6a47c034efefaab00c553687aa477fbb99dc6bfd19a"
+    },
+    {
+      "path": "affected.log",
+      "bytes": 994,
+      "sha256": "2331b5a08bb75a72b0e74e072c09542f56798580867d05a0249235d3991acab4"
+    },
+    {
+      "path": "affected.xml",
+      "bytes": 994,
+      "sha256": "19c5d4ac54d4358108e638a78688732bb78a1df83a6670ea85fa5058269b72b4"
+    },
+    {
+      "path": "committed-source/docs/modules.md",
+      "bytes": 367166,
+      "sha256": "0ec1bdf801c96ae4e38baad05045168480c40e628e6ad4d5b8810968f5ac965e"
+    },
+    {
+      "path": "committed-source/docs/specs/REGISTRY.md",
+      "bytes": 38219,
+      "sha256": "d4983ce045fc75f1765fcf2ea7445e49c5357af2b60b36470ea07712deb32664"
+    },
+    {
+      "path": "committed-source/docs/specs/core-held-inputs.md",
+      "bytes": 5514,
+      "sha256": "290271cb96fc4f2ba6161576572d02074cd8d2f5c8c94f71965b7e059f9cde96"
+    },
+    {
+      "path": "committed-source/src/patchtrace/ingestion.py",
+      "bytes": 15134,
+      "sha256": "e9235c9b00ace1f4fa4ca0fe5653458b3ab114e63e5316c579211748740727e4"
+    },
+    {
+      "path": "committed-source/src/patchtrace/input_readers.py",
+      "bytes": 2109,
+      "sha256": "c0919761c32a9e8ca572476de7eade8541a7e22f5f640c3b691b99f01219d991"
+    },
+    {
+      "path": "committed-source/src/patchtrace/persistence.py",
+      "bytes": 37554,
+      "sha256": "b934c8cc36eaf346cdae5b8c6972c418e187e35f9d7d199b7fdf45953006295a"
+    },
+    {
+      "path": "committed-source/src/patchtrace/service.py",
+      "bytes": 26548,
+      "sha256": "5f984caf943db41d13c70ea8c9b8e588a0b4db51294af0c60b6b280ce9c4dadf"
+    },
+    {
+      "path": "committed-source/tests/held_input_support.py",
+      "bytes": 4349,
+      "sha256": "e253e4ba15c7173caceb24a762c3c92b5861982f3cbabb77b1aa06e865a954b5"
+    },
+    {
+      "path": "committed-source/tests/test_creation_operation_checkpoint.py",
+      "bytes": 9220,
+      "sha256": "8138c70b504cedf138105b938524ff60334924f9f88705e7764e554f2b87dd0d"
+    },
+    {
+      "path": "committed-source/tests/test_ingestion_held_inputs.py",
+      "bytes": 7307,
+      "sha256": "e952cda11146488e3ee2d72dbc75ed3b0e1f35077ba0c08bafbca781f2acf24a"
+    },
+    {
+      "path": "committed-source/tests/test_input_readers.py",
+      "bytes": 1808,
+      "sha256": "1f353cace2b5ab6d98ac4ea31c497914a32de908a62289d1d7283cc9bce7a4b2"
+    },
+    {
+      "path": "diff-check.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "first-green-source/src/patchtrace/ingestion.py",
+      "bytes": 15134,
+      "sha256": "e9235c9b00ace1f4fa4ca0fe5653458b3ab114e63e5316c579211748740727e4"
+    },
+    {
+      "path": "first-green-source/src/patchtrace/input_readers.py",
+      "bytes": 2109,
+      "sha256": "c0919761c32a9e8ca572476de7eade8541a7e22f5f640c3b691b99f01219d991"
+    },
+    {
+      "path": "first-green-source/src/patchtrace/persistence.py",
+      "bytes": 37554,
+      "sha256": "b934c8cc36eaf346cdae5b8c6972c418e187e35f9d7d199b7fdf45953006295a"
+    },
+    {
+      "path": "first-green-source/src/patchtrace/service.py",
+      "bytes": 26548,
+      "sha256": "5f984caf943db41d13c70ea8c9b8e588a0b4db51294af0c60b6b280ce9c4dadf"
+    },
+    {
+      "path": "first-green.command.json",
+      "bytes": 1382,
+      "sha256": "571aa694811abc4b5879a320a4410e07325c6df6b55b0a1d6a89411c7441f35f"
+    },
+    {
+      "path": "first-green.log",
+      "bytes": 99,
+      "sha256": "365545766d35cccbff1d7bb98b23d9f4ad4b4a5ffa2e299be8335a85d279f9e3"
+    },
+    {
+      "path": "first-green.xml",
+      "bytes": 5774,
+      "sha256": "e82d88f757c9555b5f5b2ab7de3a635c59423ea3f7ce5b2c1b6f3f8a96274272"
+    },
+    {
+      "path": "implementation.patch",
+      "bytes": 22996,
+      "sha256": "1e44e85ecefc1e7f781ec6460fded0f5f84a1e2e9787f2ae86c07967698bdcb2"
+    },
+    {
+      "path": "junit-recount.json",
+      "bytes": 881,
+      "sha256": "45b33371ce85ea79ad1f0d0254e1e27d7e01c019904cbd6525e0aa4d676861b7"
+    },
+    {
+      "path": "original-receipts.json",
+      "bytes": 1819,
+      "sha256": "4db2f72f69e83adade4c5a51d1e0bfdcfcfe39fcd4280c041db46f17f6bfd46d"
+    },
+    {
+      "path": "peer-interface-review.json",
+      "bytes": 498,
+      "sha256": "ac7486d78067df6639ec0f8e885a0d7b706019288d449488d1966dbc2f6827e4"
+    },
+    {
+      "path": "red-source/docs/modules.md",
+      "bytes": 367166,
+      "sha256": "0ec1bdf801c96ae4e38baad05045168480c40e628e6ad4d5b8810968f5ac965e"
+    },
+    {
+      "path": "red-source/docs/specs/REGISTRY.md",
+      "bytes": 38219,
+      "sha256": "d4983ce045fc75f1765fcf2ea7445e49c5357af2b60b36470ea07712deb32664"
+    },
+    {
+      "path": "red-source/docs/specs/core-held-inputs.md",
+      "bytes": 5514,
+      "sha256": "290271cb96fc4f2ba6161576572d02074cd8d2f5c8c94f71965b7e059f9cde96"
+    },
+    {
+      "path": "red-source/src/patchtrace/ingestion.py",
+      "bytes": 11882,
+      "sha256": "b5e677f3c803e6e0e35481ccfe8fb65ede75e61b94872b6e40cdfb75efc33ef4"
+    },
+    {
+      "path": "red-source/src/patchtrace/persistence.py",
+      "bytes": 36633,
+      "sha256": "1e2a73fa1073764cef425327a521c04d8cc07fd748a8c6dfae05693f550516de"
+    },
+    {
+      "path": "red-source/src/patchtrace/service.py",
+      "bytes": 25674,
+      "sha256": "4833ea5b9a3e876081e04b86dbd89b2828ecccd6bc8c80f7e2192b65b180d550"
+    },
+    {
+      "path": "red-source/tests/held_input_support.py",
+      "bytes": 4349,
+      "sha256": "e253e4ba15c7173caceb24a762c3c92b5861982f3cbabb77b1aa06e865a954b5"
+    },
+    {
+      "path": "red-source/tests/test_creation_operation_checkpoint.py",
+      "bytes": 9220,
+      "sha256": "8138c70b504cedf138105b938524ff60334924f9f88705e7764e554f2b87dd0d"
+    },
+    {
+      "path": "red-source/tests/test_ingestion_held_inputs.py",
+      "bytes": 7307,
+      "sha256": "e952cda11146488e3ee2d72dbc75ed3b0e1f35077ba0c08bafbca781f2acf24a"
+    },
+    {
+      "path": "red-source/tests/test_input_readers.py",
+      "bytes": 1808,
+      "sha256": "1f353cace2b5ab6d98ac4ea31c497914a32de908a62289d1d7283cc9bce7a4b2"
+    },
+    {
+      "path": "red.command.json",
+      "bytes": 3132,
+      "sha256": "bb813e225f0cb161feebadafecf248d6d2a788f69877fc1fc42f4f050f562dfa"
+    },
+    {
+      "path": "red.log",
+      "bytes": 50856,
+      "sha256": "6ff3818452a3e77992b2e2c5fd317070bdba40c786d1a367d473bbbaa05bdea1"
+    },
+    {
+      "path": "red.xml",
+      "bytes": 53862,
+      "sha256": "1f4b47d32611445f019c1b07342477fa8b36615c800689b7cd3c195a0e189494"
+    },
+    {
+      "path": "review-receipt.json",
+      "bytes": 1236,
+      "sha256": "091b25bf4d490984d7fc0805f4acd76595a27495f6b465f0fb4063bd8fecef40"
+    },
+    {
+      "path": "review-spec-precision.patch",
+      "bytes": 881,
+      "sha256": "881915c9f005ced007eead2ef1903c97da3e6ea0d0ae0f16b6266f6a06e501e7"
+    },
+    {
+      "path": "ruff.log",
+      "bytes": 19,
+      "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+    },
+    {
+      "path": "run_pinned.py",
+      "bytes": 2361,
+      "sha256": "95c2d1c6e546582bf453a7831977ebf79f18b75864fb83696da7531a27820ec5"
+    },
+    {
+      "path": "run_pinned_v2.py",
+      "bytes": 2390,
+      "sha256": "7065f07a6297ca134cda8cf570b829e41c7d1bc309206723103f6f8e34a8fdfc"
+    },
+    {
+      "path": "runner-correction.json",
+      "bytes": 757,
+      "sha256": "f728183791fe414198fd295ea0ff7bdadd6a9d76367acd6f86e2de9849a5d6df"
+    },
+    {
+      "path": "source-chain.json",
+      "bytes": 4097,
+      "sha256": "97319bcda110fe8f8d468eb86301a0caeb04b4ad76699c77f57c0b2e128a8616"
+    },
+    {
+      "path": "spec-tests.patch",
+      "bytes": 33285,
+      "sha256": "915e7cf41b66f763a157468defe267d5450dbf4830b17443d03dbc0abe690b6f"
+    },
+    {
+      "path": "static-checks.json",
+      "bytes": 720,
+      "sha256": "b0828a4284071d68579a85704e34ce421577c2615fda6017d15bc3a3aca0a107"
+    }
+  ]
+}

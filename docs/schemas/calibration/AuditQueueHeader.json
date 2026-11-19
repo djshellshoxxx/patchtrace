@@ -1,0 +1,78 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "contract": {
+      "const": "tier-w-review/1",
+      "title": "Contract",
+      "type": "string"
+    },
+    "tier": {
+      "const": "W",
+      "title": "Tier",
+      "type": "string"
+    },
+    "corpus_id": {
+      "maxLength": 64,
+      "title": "Corpus Id",
+      "type": "string"
+    },
+    "population": {
+      "enum": [
+        "candidates",
+        "truth"
+      ],
+      "title": "Population",
+      "type": "string"
+    },
+    "items": {
+      "minimum": 0,
+      "title": "Items",
+      "type": "integer"
+    },
+    "single_annotator": {
+      "const": true,
+      "title": "Single Annotator",
+      "type": "boolean"
+    },
+    "audit_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Audit Sha256",
+      "type": "string"
+    },
+    "pairs_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Pairs Sha256",
+      "type": "string"
+    },
+    "labels_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Labels Sha256",
+      "type": "string"
+    },
+    "producer": {
+      "enum": [
+        "msf",
+        "ghidra",
+        "llvm-pdbutil"
+      ],
+      "title": "Producer",
+      "type": "string"
+    }
+  },
+  "required": [
+    "contract",
+    "tier",
+    "corpus_id",
+    "population",
+    "items",
+    "single_annotator",
+    "audit_sha256",
+    "pairs_sha256",
+    "labels_sha256",
+    "producer"
+  ],
+  "title": "AuditQueueHeader",
+  "type": "object",
+  "$id": "https://patchtrace.local/schemas/tier-w-review/1/AuditQueueHeader.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
+}

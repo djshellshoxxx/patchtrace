@@ -332,8 +332,8 @@ class BinDiffSetupPanel(QGroupBox):
         self._update_enabled()
 
     def _control(self, widget, key: str):
-        apply_tooltip(widget, f'engine_setup.{key}')
         widget.setAccessibleName(ACCESSIBLE_NAMES[key])
+        apply_tooltip(widget, f'engine_setup.{key}')  # after the name: it names the combo's line edit and list from it
         return widget
 
     def focus_chain(self) -> list[QWidget]:

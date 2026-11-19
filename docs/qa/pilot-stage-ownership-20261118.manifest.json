@@ -1,0 +1,138 @@
+{
+  "source": "43ac4829f4e196d7001714bff3622229f5c64d00",
+  "archive": "pilot-stage-ownership-20261118.evidence.zip",
+  "archive_bytes": 27341,
+  "archive_sha256": "8e8b922ba29507c03fccc08475d03b5f25765b982b433a3f6923f1c52fb239a2",
+  "payloads": [
+    {
+      "path": "diff-check.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "diff-check.process.json",
+      "bytes": 79,
+      "sha256": "e46af26ae1f9ad84dd430cd23ecc25ffbe101b6f3fa488b3eea86829a14eca7d"
+    },
+    {
+      "path": "exact-affected.context.json",
+      "bytes": 1527,
+      "sha256": "bb11a729e53404a2042f61eb0b35e8b192ef340969e72fa8f47340cad1e85a05"
+    },
+    {
+      "path": "exact-affected.log",
+      "bytes": 341,
+      "sha256": "bd94b0d308bdc25181847a0569f9ede8f34c8c76dfe74a14ce943e0141f79969"
+    },
+    {
+      "path": "exact-affected.process.json",
+      "bytes": 64,
+      "sha256": "478a88a616dd95a9454e31a1e1a7eb8f0b54af36d8f4f19b747bb097a6e1fa71"
+    },
+    {
+      "path": "exact-affected.xml",
+      "bytes": 29309,
+      "sha256": "9f1145daca08e01d9c2a222ddf3d3736a04b3a13c55f785fcacaa840452ba5b7"
+    },
+    {
+      "path": "final-context.json",
+      "bytes": 371,
+      "sha256": "3f41592237b9c310d6b6dcfc83dbd29c0c6c636fe7ae4224c4db10eff26185bb"
+    },
+    {
+      "path": "focused-green.context.json",
+      "bytes": 1680,
+      "sha256": "53ff80f3423a940ee44f4c65fa96832cc4355501fbe6c92916ee5e395d25efa0"
+    },
+    {
+      "path": "focused-green.log",
+      "bytes": 99,
+      "sha256": "3d9a1f5c15957cb8ad88af5451108ce6db6a5a067159137955e00daf865e5d9a"
+    },
+    {
+      "path": "focused-green.xml",
+      "bytes": 8869,
+      "sha256": "7860cbc9be38edd6bc43db0d9059e05951f12a56e8d9a872d828e2fbcd76d218"
+    },
+    {
+      "path": "normal-ruff.log",
+      "bytes": 19,
+      "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+    },
+    {
+      "path": "normal-ruff.process.json",
+      "bytes": 168,
+      "sha256": "fb7409b0dd1a21d3d95d86a880670c9ec17aaa0197158a059aea00a299139d05"
+    },
+    {
+      "path": "owned-red.context.json",
+      "bytes": 737,
+      "sha256": "67fef6fbb45824ad08b9def4ba176f6d01c706e0a6187a0fb94620286a2dfab7"
+    },
+    {
+      "path": "owned-red.log",
+      "bytes": 4333,
+      "sha256": "ba34991cd5967712abd4e53456641ea23d298576f3c0476c00d6615e5657c4e4"
+    },
+    {
+      "path": "owned-red.xml",
+      "bytes": 6183,
+      "sha256": "a7d5e6d0a79393a353bccf295205ba75f46e4a812dde2b222b5b2f4f80c4e9e0"
+    },
+    {
+      "path": "pilot-stage-collision-red.context.json",
+      "bytes": 656,
+      "sha256": "9b5ad5873c3f68cc47c7e715feac170d36615fadc42e1040148bfb38c61a89fe"
+    },
+    {
+      "path": "pilot-stage-collision-red.log",
+      "bytes": 1899,
+      "sha256": "c494318514dcd62a8f2df641f5ef5efa2e1d188068662ee2202b505e8afbd98f"
+    },
+    {
+      "path": "pilot-stage-collision-red.xml",
+      "bytes": 2316,
+      "sha256": "120bd19bf4b80fab3e36dcf4bfbbbfdc6bcd8660104f864b3c9471770c63571f"
+    },
+    {
+      "path": "residual-current-scan.stdout.json",
+      "bytes": 20140,
+      "sha256": "f63e92cb706a72b6f942185d7c14dfb8c33e6a4e9c696ed1398bc5bc504bf823"
+    },
+    {
+      "path": "residual-diagnostic-map.json",
+      "bytes": 17652,
+      "sha256": "93dd93d4863ece37126bb4a7ebdd152516a023b8fca41cdd0335aef30dac5490"
+    },
+    {
+      "path": "residual-scan-context.json",
+      "bytes": 464,
+      "sha256": "3d9094e15ec3956a2f1ad85c0cedd36f3f3934735a74be3bcb85d7ee5ca46132"
+    },
+    {
+      "path": "residual-source-map.json",
+      "bytes": 13489,
+      "sha256": "eac048729370403822558654e4407dd03ef2f6689783503f98c0ff87ee897b52"
+    },
+    {
+      "path": "residual-strict-original-79.json",
+      "bytes": 42088,
+      "sha256": "04a73cac7bec53991ac378a8898fab7c15cdad8160be220ad133bf05e3aa8877"
+    },
+    {
+      "path": "strict-s108.context.json",
+      "bytes": 318,
+      "sha256": "5b4a256e0da43bf690de6cc801b80a433b3d5806c387ac5f951d1ef0275a944a"
+    },
+    {
+      "path": "strict-s108.stdout.json",
+      "bytes": 529,
+      "sha256": "33043af8b0b94b99d462e5d02679bdcb83e5a81e117223c5b3002271df4d02e1"
+    },
+    {
+      "path": "test_pilot_stage_collision_external.py",
+      "bytes": 2349,
+      "sha256": "064fb025945aea8dc5ca2c6797cdd2ef3d4a94558afad520db9cab6fdcc71986"
+    }
+  ]
+}

@@ -1,6 +1,6 @@
 # `patchtrace kb`
 
-Correlates Microsoft KB numbers and CVE identifiers with advisory documents and file pairs. `index sync` fetches monthly advisory metadata with consent for the exact hosts and request plan. `acquire` downloads file pairs with consent for the exact hosts. Other verbs use local data. Coverage is stated with every answer: a "not found" applies only to the documents that were checked.
+Correlates Microsoft KB numbers and CVE identifiers with advisory documents and file pairs. `index sync` fetches monthly advisory metadata with consent for the exact hosts and request plan. `acquire` downloads file pairs with consent for the exact hosts. `inventory fetch` retrieves one support page or CSV using its separately approved exact plan. Other verbs use local data. Coverage is stated with every answer: a "not found" applies only to the documents that were checked.
 
 ```
 patchtrace kb index ...         # offline index: import, status, verify, plan (see "kb index --help")
@@ -12,6 +12,7 @@ patchtrace kb export ...        # write the advisory context as JSON or escaped 
 patchtrace kb products ...      # list the product scopes of an investigation
 patchtrace kb products --all --query 24H2 # browse active stored products without creating an investigation
 patchtrace kb components ...    # component hints (analyst names and advisory title names)
+patchtrace kb inventory ...     # saved CSV, support links, scoped filename selection and explicit source fetch
 patchtrace kb pairs ...         # pair candidates from the saved Winbindex records
 patchtrace kb import-pair ...   # compare two files you hold: create and attach a project
 patchtrace kb plan ...          # preview what a file-index pair needs; makes no request
@@ -20,6 +21,15 @@ patchtrace kb acquire ...       # download, verify and compare a file-index pair
 ```
 
 Check the product and architecture before you read an association. An advisory mention, a vendor remediation statement and a disputed applicability are different things.
+
+See [KB file inventories](kb-file-inventory.md) for the saved-source workflow,
+logical/physical row provenance, partial coverage and the separate fetch consent.
+
+After attaching context and completing a comparison, continue with
+[retained KB/CVE patch-intent leads](70-cli-pilot.md#continue-a-retained-kbcve-investigation).
+Eligible CVRF fields retain their source bindings and unknown applicability;
+overlapping CSAF statements take precedence. Saved leads and report exports
+check for changed evidence before presenting them as current.
 
 `search --kev-dir DIR` uses a local KEV catalogue (the default is the catalogue
 used by `patchtrace kev`). Search JSON includes CVE-level status, listing date,

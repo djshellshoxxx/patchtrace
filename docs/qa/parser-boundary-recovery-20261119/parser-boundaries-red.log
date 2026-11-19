@@ -1,0 +1,982 @@
+FFF...FFFFFFFFFFFF........FFFFFFFFFFF.FFFFFFFF....FFFFFFFFF......FFFFFFF [ 56%]
+FFFFFFFFFFFFFFFFFFFFFFFFFFFF.............FFFFFFFFF.FF..                  [100%]
+=================================== FAILURES ===================================
+__ test_oversized_raw_document_is_refused_before_json_allocation[strict_json] __
+tests/test_winbindex_parser_bounds.py:32: in test_oversized_raw_document_is_refused_before_json_allocation
+    _parse(parser, b'{}' + b' ' * 15)
+tests/test_winbindex_parser_bounds.py:19: in _parse
+    return wb.strict_json(data)
+           ^^^^^^^^^^^^^^^^^^^^
+src/patchtrace/acquisition/winbindex.py:91: in strict_json
+    return json.loads(text.decode('utf-8'), object_pairs_hook=_no_duplicates,
+tests/test_winbindex_parser_bounds.py:28: in forbidden
+    pytest.fail('oversized metadata reached JSON decoding')
+E   Failed: oversized metadata reached JSON decoding
+_____ test_oversized_raw_document_is_refused_before_json_allocation[parse] _____
+tests/test_winbindex_parser_bounds.py:32: in test_oversized_raw_document_is_refused_before_json_allocation
+    _parse(parser, b'{}' + b' ' * 15)
+tests/test_winbindex_parser_bounds.py:20: in _parse
+    return getattr(wb, parser)(data, 'example.sys', '2026-11-19', compressed=compressed)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/patchtrace/acquisition/winbindex.py:158: in parse
+    document = strict_json(decompress(data) if compressed else data)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/patchtrace/acquisition/winbindex.py:91: in strict_json
+    return json.loads(text.decode('utf-8'), object_pairs_hook=_no_duplicates,
+tests/test_winbindex_parser_bounds.py:28: in forbidden
+    pytest.fail('oversized metadata reached JSON decoding')
+E   Failed: oversized metadata reached JSON decoding
+__ test_oversized_raw_document_is_refused_before_json_allocation[parse_rows] ___
+tests/test_winbindex_parser_bounds.py:32: in test_oversized_raw_document_is_refused_before_json_allocation
+    _parse(parser, b'{}' + b' ' * 15)
+tests/test_winbindex_parser_bounds.py:20: in _parse
+    return getattr(wb, parser)(data, 'example.sys', '2026-11-19', compressed=compressed)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/patchtrace/acquisition/winbindex.py:387: in parse_rows
+    document = strict_json(decompress(data) if compressed else data)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/patchtrace/acquisition/winbindex.py:91: in strict_json
+    return json.loads(text.decode('utf-8'), object_pairs_hook=_no_duplicates,
+tests/test_winbindex_parser_bounds.py:28: in forbidden
+    pytest.fail('oversized metadata reached JSON decoding')
+E   Failed: oversized metadata reached JSON decoding
+________ test_limit_is_bytes_and_precedes_utf8_validation[strict_json] _________
+tests/test_winbindex_parser_bounds.py:51: in test_limit_is_bytes_and_precedes_utf8_validation
+    with pytest.raises(AcquisitionError) as error:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: DID NOT RAISE AcquisitionError
+___________ test_limit_is_bytes_and_precedes_utf8_validation[parse] ____________
+tests/test_winbindex_parser_bounds.py:51: in test_limit_is_bytes_and_precedes_utf8_validation
+    with pytest.raises(AcquisitionError) as error:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: DID NOT RAISE AcquisitionError
+_________ test_limit_is_bytes_and_precedes_utf8_validation[parse_rows] _________
+tests/test_winbindex_parser_bounds.py:51: in test_limit_is_bytes_and_precedes_utf8_validation
+    with pytest.raises(AcquisitionError) as error:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: DID NOT RAISE AcquisitionError
+_______________ test_gzip_and_raw_share_decoded_boundary[parse] ________________
+tests/test_winbindex_parser_bounds.py:63: in test_gzip_and_raw_share_decoded_boundary
+    with pytest.raises(AcquisitionError) as error:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: DID NOT RAISE AcquisitionError
+_____________ test_gzip_and_raw_share_decoded_boundary[parse_rows] _____________
+tests/test_winbindex_parser_bounds.py:63: in test_gzip_and_raw_share_decoded_boundary
+    with pytest.raises(AcquisitionError) as error:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: DID NOT RAISE AcquisitionError
+________________________ test_raw_byte_budget_property _________________________
+tests/test_winbindex_parser_bounds.py:69: in test_raw_byte_budget_property
+    @given(padding=st.integers(0, 512), limit=st.integers(2, 514))
+                   ^^^^^^^^^^^^^^
+tests/test_winbindex_parser_bounds.py:75: in test_raw_byte_budget_property
+    with pytest.raises(AcquisitionError) as error:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: DID NOT RAISE AcquisitionError
+E   Failing test case: test_raw_byte_budget_property(
+E       monkeypatch=<_pytest.monkeypatch.MonkeyPatch object at 0x7f63f4144350>,
+E       padding=1,
+E       limit=2,
+E   )
+E   Explanation:
+E       These lines were always and only run by failing test cases:
+E           /workspace/scratch/792fd5ca6555/pt-inventory/tests/test_winbindex_parser_bounds.py:75
+_ test_unrepresentable_provider_numbers_are_typed_provider_errors[1e99999999999999999999-nvd] _
+tests/test_enrichment_numeric_boundaries.py:43: in test_unrepresentable_provider_numbers_are_typed_provider_errors
+    cve.normalize(CVE_ID, {provider: _score_body(provider, number)}, WHEN)
+src/patchtrace/enrichment/cve.py:360: in normalize
+    return _snapshot(cve_id, responses, retrieved_at)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/patchtrace/enrichment/cve.py:366: in _snapshot
+    parsed = {p: _PARSERS[p](cve_id, _strict_json(responses[p], p)) for p in sorted(responses)}
+                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/patchtrace/enrichment/cve.py:138: in _strict_json
+    return _parse_strict(data, Decimal)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/patchtrace/enrichment/cve.py:125: in _parse_strict
+    value = json.loads(text, parse_float=parse_float, parse_constant=_reject_constant, object_pairs_hook=_pairs)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/json/__init__.py:359: in loads
+    return cls(**kw).decode(s)
+           ^^^^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/json/decoder.py:338: in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/json/decoder.py:354: in raw_decode
+    obj, end = self.scan_once(s, idx)
+               ^^^^^^^^^^^^^^^^^^^^^^
+E   decimal.InvalidOperation: [<class 'decimal.InvalidOperation'>]
+_ test_unrepresentable_provider_numbers_are_typed_provider_errors[1e99999999999999999999-msrc] _
+tests/test_enrichment_numeric_boundaries.py:43: in test_unrepresentable_provider_numbers_are_typed_provider_errors
+    cve.normalize(CVE_ID, {provider: _score_body(provider, number)}, WHEN)
+src/patchtrace/enrichment/cve.py:360: in normalize
+    return _snapshot(cve_id, responses, retrieved_at)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/patchtrace/enrichment/cve.py:366: in _snapshot
+    parsed = {p: _PARSERS[p](cve_id, _strict_json(responses[p], p)) for p in sorted(responses)}
+                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/patchtrace/enrichment/cve.py:138: in _strict_json
+    return _parse_strict(data, Decimal)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/patchtrace/enrichment/cve.py:125: in _parse_strict
+    value = json.loads(text, parse_float=parse_float, parse_constant=_reject_constant, object_pairs_hook=_pairs)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/json/__init__.py:359: in loads
+    return cls(**kw).decode(s)
+           ^^^^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/json/decoder.py:338: in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/json/decoder.py:354: in raw_decode
+    obj, end = self.scan_once(s, idx)
+               ^^^^^^^^^^^^^^^^^^^^^^
+E   decimal.InvalidOperation: [<class 'decimal.InvalidOperation'>]
+_ test_unrepresentable_provider_numbers_are_typed_provider_errors[1e-99999999999999999999-nvd] _
+tests/test_enrichment_numeric_boundaries.py:43: in test_unrepresentable_provider_numbers_are_typed_provider_errors
+    cve.normalize(CVE_ID, {provider: _score_body(provider, number)}, WHEN)
+src/patchtrace/enrichment/cve.py:360: in normalize
+    return _snapshot(cve_id, responses, retrieved_at)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/patchtrace/enrichment/cve.py:366: in _snapshot
+    parsed = {p: _PARSERS[p](cve_id, _strict_json(responses[p], p)) for p in sorted(responses)}
+                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/patchtrace/enrichment/cve.py:138: in _strict_json
+    return _parse_strict(data, Decimal)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/patchtrace/enrichment/cve.py:125: in _parse_strict
+    value = json.loads(text, parse_float=parse_float, parse_constant=_reject_constant, object_pairs_hook=_pairs)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/json/__init__.py:359: in loads
+    return cls(**kw).decode(s)
+           ^^^^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/json/decoder.py:338: in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/json/decoder.py:354: in raw_decode
+    obj, end = self.scan_once(s, idx)
+               ^^^^^^^^^^^^^^^^^^^^^^
+E   decimal.InvalidOperation: [<class 'decimal.InvalidOperation'>]
+_ test_unrepresentable_provider_numbers_are_typed_provider_errors[1e-99999999999999999999-msrc] _
+tests/test_enrichment_numeric_boundaries.py:43: in test_unrepresentable_provider_numbers_are_typed_provider_errors
+    cve.normalize(CVE_ID, {provider: _score_body(provider, number)}, WHEN)
+src/patchtrace/enrichment/cve.py:360: in normalize
+    return _snapshot(cve_id, responses, retrieved_at)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/patchtrace/enrichment/cve.py:366: in _snapshot
+    parsed = {p: _PARSERS[p](cve_id, _strict_json(responses[p], p)) for p in sorted(responses)}
+                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/patchtrace/enrichment/cve.py:138: in _strict_json
+    return _parse_strict(data, Decimal)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/patchtrace/enrichment/cve.py:125: in _parse_strict
+    value = json.loads(text, parse_float=parse_float, parse_constant=_reject_constant, object_pairs_hook=_pairs)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/json/__init__.py:359: in loads
+    return cls(**kw).decode(s)
+           ^^^^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/json/decoder.py:338: in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/json/decoder.py:354: in raw_decode
+    obj, end = self.scan_once(s, idx)
+               ^^^^^^^^^^^^^^^^^^^^^^
+E   decimal.InvalidOperation: [<class 'decimal.InvalidOperation'>]
+_ test_unrepresentable_provider_numbers_are_typed_provider_errors[1e1000000-nvd] _
+tests/test_enrichment_numeric_boundaries.py:43: in test_unrepresentable_provider_numbers_are_typed_provider_errors
+    cve.normalize(CVE_ID, {provider: _score_body(provider, number)}, WHEN)
+src/patchtrace/enrichment/cve.py:360: in normalize
+    return _snapshot(cve_id, responses, retrieved_at)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/patchtrace/enrichment/cve.py:366: in _snapshot
+    parsed = {p: _PARSERS[p](cve_id, _strict_json(responses[p], p)) for p in sorted(responses)}
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/patchtrace/enrichment/cve.py:259: in _parse_nvd
+    base_score_tenths=_tenths(data.get('baseScore')),
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/patchtrace/enrichment/cve.py:194: in _tenths
+    number = Decimal(value) * 10
+             ^^^^^^^^^^^^^^^^^^^
+E   decimal.Overflow: [<class 'decimal.Overflow'>]
+_ test_unrepresentable_provider_numbers_are_typed_provider_errors[1e1000000-msrc] _
+tests/test_enrichment_numeric_boundaries.py:43: in test_unrepresentable_provider_numbers_are_typed_provider_errors
+    cve.normalize(CVE_ID, {provider: _score_body(provider, number)}, WHEN)
+src/patchtrace/enrichment/cve.py:360: in normalize
+    return _snapshot(cve_id, responses, retrieved_at)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/patchtrace/enrichment/cve.py:366: in _snapshot
+    parsed = {p: _PARSERS[p](cve_id, _strict_json(responses[p], p)) for p in sorted(responses)}
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/patchtrace/enrichment/cve.py:296: in _parse_msrc
+    base_score_tenths=_tenths(score) if score not in (None, '') else None,
+                      ^^^^^^^^^^^^^^
+src/patchtrace/enrichment/cve.py:194: in _tenths
+    number = Decimal(value) * 10
+             ^^^^^^^^^^^^^^^^^^^
+E   decimal.Overflow: [<class 'decimal.Overflow'>]
+_ test_non_tenth_scores_cannot_round_or_underflow_into_valid_scores[1e-1000100-nvd] _
+tests/test_enrichment_numeric_boundaries.py:58: in test_non_tenth_scores_cannot_round_or_underflow_into_valid_scores
+    with pytest.raises(EnrichmentError) as exc:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: DID NOT RAISE EnrichmentError
+_ test_non_tenth_scores_cannot_round_or_underflow_into_valid_scores[1e-1000100-msrc] _
+tests/test_enrichment_numeric_boundaries.py:58: in test_non_tenth_scores_cannot_round_or_underflow_into_valid_scores
+    with pytest.raises(EnrichmentError) as exc:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: DID NOT RAISE EnrichmentError
+_ test_non_tenth_scores_cannot_round_or_underflow_into_valid_scores[9.80000000000000000000000000000001-nvd] _
+tests/test_enrichment_numeric_boundaries.py:58: in test_non_tenth_scores_cannot_round_or_underflow_into_valid_scores
+    with pytest.raises(EnrichmentError) as exc:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: DID NOT RAISE EnrichmentError
+_ test_non_tenth_scores_cannot_round_or_underflow_into_valid_scores[9.80000000000000000000000000000001-msrc] _
+tests/test_enrichment_numeric_boundaries.py:58: in test_non_tenth_scores_cannot_round_or_underflow_into_valid_scores
+    with pytest.raises(EnrichmentError) as exc:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: DID NOT RAISE EnrichmentError
+_ test_valid_tenths_do_not_depend_on_the_callers_precision_or_traps[ROUND_HALF_EVEN-False-nvd] _
+tests/test_enrichment_numeric_boundaries.py:74: in test_valid_tenths_do_not_depend_on_the_callers_precision_or_traps
+    assert {record.base_score_tenths for record in result.cvss} == {98}
+E   assert {100} == {98}
+E     
+E     Extra items in the left set:
+E     100
+E     Extra items in the right set:
+E     98
+E     Use -v to get more diff
+_ test_valid_tenths_do_not_depend_on_the_callers_precision_or_traps[ROUND_HALF_EVEN-False-msrc] _
+tests/test_enrichment_numeric_boundaries.py:74: in test_valid_tenths_do_not_depend_on_the_callers_precision_or_traps
+    assert {record.base_score_tenths for record in result.cvss} == {98}
+E   assert {100} == {98}
+E     
+E     Extra items in the left set:
+E     100
+E     Extra items in the right set:
+E     98
+E     Use -v to get more diff
+_ test_valid_tenths_do_not_depend_on_the_callers_precision_or_traps[ROUND_DOWN-False-nvd] _
+tests/test_enrichment_numeric_boundaries.py:74: in test_valid_tenths_do_not_depend_on_the_callers_precision_or_traps
+    assert {record.base_score_tenths for record in result.cvss} == {98}
+E   assert {90} == {98}
+E     
+E     Extra items in the left set:
+E     90
+E     Extra items in the right set:
+E     98
+E     Use -v to get more diff
+_ test_valid_tenths_do_not_depend_on_the_callers_precision_or_traps[ROUND_DOWN-False-msrc] _
+tests/test_enrichment_numeric_boundaries.py:74: in test_valid_tenths_do_not_depend_on_the_callers_precision_or_traps
+    assert {record.base_score_tenths for record in result.cvss} == {98}
+E   assert {90} == {98}
+E     
+E     Extra items in the left set:
+E     90
+E     Extra items in the right set:
+E     98
+E     Use -v to get more diff
+_ test_valid_tenths_do_not_depend_on_the_callers_precision_or_traps[ROUND_DOWN-True-nvd] _
+tests/test_enrichment_numeric_boundaries.py:73: in test_valid_tenths_do_not_depend_on_the_callers_precision_or_traps
+    result = cve.normalize(CVE_ID, {provider: _score_body(provider, '9.80000000')}, WHEN)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/patchtrace/enrichment/cve.py:360: in normalize
+    return _snapshot(cve_id, responses, retrieved_at)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/patchtrace/enrichment/cve.py:366: in _snapshot
+    parsed = {p: _PARSERS[p](cve_id, _strict_json(responses[p], p)) for p in sorted(responses)}
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/patchtrace/enrichment/cve.py:259: in _parse_nvd
+    base_score_tenths=_tenths(data.get('baseScore')),
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/patchtrace/enrichment/cve.py:194: in _tenths
+    number = Decimal(value) * 10
+             ^^^^^^^^^^^^^^^^^^^
+E   decimal.Rounded: [<class 'decimal.Rounded'>]
+_ test_valid_tenths_do_not_depend_on_the_callers_precision_or_traps[ROUND_DOWN-True-msrc] _
+tests/test_enrichment_numeric_boundaries.py:73: in test_valid_tenths_do_not_depend_on_the_callers_precision_or_traps
+    result = cve.normalize(CVE_ID, {provider: _score_body(provider, '9.80000000')}, WHEN)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/patchtrace/enrichment/cve.py:360: in normalize
+    return _snapshot(cve_id, responses, retrieved_at)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/patchtrace/enrichment/cve.py:366: in _snapshot
+    parsed = {p: _PARSERS[p](cve_id, _strict_json(responses[p], p)) for p in sorted(responses)}
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/patchtrace/enrichment/cve.py:296: in _parse_msrc
+    base_score_tenths=_tenths(score) if score not in (None, '') else None,
+                      ^^^^^^^^^^^^^^
+src/patchtrace/enrichment/cve.py:194: in _tenths
+    number = Decimal(value) * 10
+             ^^^^^^^^^^^^^^^^^^^
+E   decimal.Rounded: [<class 'decimal.Rounded'>]
+_ test_provider_parsing_preserves_the_callers_decimal_context[1e99999999999999999999] _
+tests/test_enrichment_numeric_boundaries.py:87: in test_provider_parsing_preserves_the_callers_decimal_context
+    cve.normalize(CVE_ID, {'nvd': _score_body('nvd', number)}, WHEN)
+src/patchtrace/enrichment/cve.py:360: in normalize
+    return _snapshot(cve_id, responses, retrieved_at)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/patchtrace/enrichment/cve.py:366: in _snapshot
+    parsed = {p: _PARSERS[p](cve_id, _strict_json(responses[p], p)) for p in sorted(responses)}
+                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/patchtrace/enrichment/cve.py:138: in _strict_json
+    return _parse_strict(data, Decimal)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/patchtrace/enrichment/cve.py:125: in _parse_strict
+    value = json.loads(text, parse_float=parse_float, parse_constant=_reject_constant, object_pairs_hook=_pairs)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/json/__init__.py:359: in loads
+    return cls(**kw).decode(s)
+           ^^^^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/json/decoder.py:338: in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/json/decoder.py:354: in raw_decode
+    obj, end = self.scan_once(s, idx)
+               ^^^^^^^^^^^^^^^^^^^^^^
+E   decimal.InvalidOperation: [<class 'decimal.InvalidOperation'>]
+_ test_retrieval_times_outside_utc_range_are_typed_input_errors[normalize-9999-12-31T23:59:59-05:00] _
+tests/test_enrichment_numeric_boundaries.py:98: in test_retrieval_times_outside_utc_range_are_typed_input_errors
+    with pytest.raises(EnrichmentError) as exc:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: DID NOT RAISE EnrichmentError
+_ test_retrieval_times_outside_utc_range_are_typed_input_errors[normalize-0001-01-01T00:00:00+05:00] _
+tests/test_enrichment_numeric_boundaries.py:98: in test_retrieval_times_outside_utc_range_are_typed_input_errors
+    with pytest.raises(EnrichmentError) as exc:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: DID NOT RAISE EnrichmentError
+_ test_retrieval_times_outside_utc_range_are_typed_input_errors[parse_snapshots-9999-12-31T23:59:59-05:00] _
+tests/test_enrichment_numeric_boundaries.py:98: in test_retrieval_times_outside_utc_range_are_typed_input_errors
+    with pytest.raises(EnrichmentError) as exc:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: DID NOT RAISE EnrichmentError
+_ test_retrieval_times_outside_utc_range_are_typed_input_errors[parse_snapshots-0001-01-01T00:00:00+05:00] _
+tests/test_enrichment_numeric_boundaries.py:98: in test_retrieval_times_outside_utc_range_are_typed_input_errors
+    with pytest.raises(EnrichmentError) as exc:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: DID NOT RAISE EnrichmentError
+_ test_retrieval_times_outside_utc_range_are_typed_input_errors[is_stale-9999-12-31T23:59:59-05:00] _
+tests/test_enrichment_numeric_boundaries.py:104: in test_retrieval_times_outside_utc_range_are_typed_input_errors
+    cve.is_stale(snapshot, datetime(2026, 10, 12, tzinfo=UTC), 30)
+src/patchtrace/enrichment/cve.py:394: in is_stale
+    age = now.astimezone(UTC) - _timestamp(snapshot.retrieved_at).astimezone(UTC)
+                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   OverflowError: date value out of range
+_ test_retrieval_times_outside_utc_range_are_typed_input_errors[is_stale-0001-01-01T00:00:00+05:00] _
+tests/test_enrichment_numeric_boundaries.py:104: in test_retrieval_times_outside_utc_range_are_typed_input_errors
+    cve.is_stale(snapshot, datetime(2026, 10, 12, tzinfo=UTC), 30)
+src/patchtrace/enrichment/cve.py:394: in is_stale
+    age = now.astimezone(UTC) - _timestamp(snapshot.retrieved_at).astimezone(UTC)
+                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   OverflowError: date value out of range
+_ test_retrieval_times_outside_utc_range_are_typed_input_errors[select_latest-9999-12-31T23:59:59-05:00] _
+tests/test_enrichment_numeric_boundaries.py:98: in test_retrieval_times_outside_utc_range_are_typed_input_errors
+    with pytest.raises(EnrichmentError) as exc:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: DID NOT RAISE EnrichmentError
+_ test_retrieval_times_outside_utc_range_are_typed_input_errors[select_latest-0001-01-01T00:00:00+05:00] _
+tests/test_enrichment_numeric_boundaries.py:98: in test_retrieval_times_outside_utc_range_are_typed_input_errors
+    with pytest.raises(EnrichmentError) as exc:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: DID NOT RAISE EnrichmentError
+_ test_unrepresentable_freshness_clock_is_a_typed_input_error[9999-12-31T23:59:59-05:00] _
+tests/test_enrichment_numeric_boundaries.py:124: in test_unrepresentable_freshness_clock_is_a_typed_input_error
+    cve.is_stale(_snapshot(), datetime.fromisoformat(timestamp), 30)
+src/patchtrace/enrichment/cve.py:394: in is_stale
+    age = now.astimezone(UTC) - _timestamp(snapshot.retrieved_at).astimezone(UTC)
+          ^^^^^^^^^^^^^^^^^^^
+E   OverflowError: date value out of range
+_ test_unrepresentable_freshness_clock_is_a_typed_input_error[0001-01-01T00:00:00+05:00] _
+tests/test_enrichment_numeric_boundaries.py:124: in test_unrepresentable_freshness_clock_is_a_typed_input_error
+    cve.is_stale(_snapshot(), datetime.fromisoformat(timestamp), 30)
+src/patchtrace/enrichment/cve.py:394: in is_stale
+    age = now.astimezone(UTC) - _timestamp(snapshot.retrieved_at).astimezone(UTC)
+          ^^^^^^^^^^^^^^^^^^^
+E   OverflowError: date value out of range
+__ test_cli_keeps_valid_provider_when_another_has_an_unrepresentable_decimal ___
+tests/test_enrichment_numeric_boundaries.py:142: in test_cli_keeps_valid_provider_when_another_has_an_unrepresentable_decimal
+    assert result == 0 and output['status'] == 'partial'
+E   assert (3 == 0)
+_ test_cli_refuses_invalid_snapshot_time_before_contextual_ranking[9999-12-31T23:59:59-05:00] _
+tests/test_enrichment_numeric_boundaries.py:159: in test_cli_refuses_invalid_snapshot_time_before_contextual_ranking
+    assert result == 2 and output['status'] == 'failed'
+E   assert (3 == 2)
+_ test_cli_refuses_invalid_snapshot_time_before_contextual_ranking[0001-01-01T00:00:00+05:00] _
+tests/test_enrichment_numeric_boundaries.py:159: in test_cli_refuses_invalid_snapshot_time_before_contextual_ranking
+    assert result == 2 and output['status'] == 'failed'
+E   assert (3 == 2)
+______ test_malformed_redirect_is_typed_closed_and_not_cached[https://[] _______
+tests/test_csaf_redirect_integrity.py:43: in test_malformed_redirect_is_typed_closed_and_not_cached
+    client.get(URL, 'document')
+src/patchtrace/intelligence/csaf/transport.py:291: in get
+    result = self._attempt(url, kind, allow_404)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/patchtrace/intelligence/csaf/transport.py:347: in _attempt
+    current = urllib.parse.urljoin(current, location)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/urllib/parse.py:571: in urljoin
+    urlparse(url, bscheme, allow_fragments)
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/urllib/parse.py:395: in urlparse
+    splitresult = urlsplit(url, scheme, allow_fragments)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/urllib/parse.py:514: in urlsplit
+    raise ValueError("Invalid IPv6 URL")
+E   ValueError: Invalid IPv6 URL
+________ test_malformed_redirect_is_typed_closed_and_not_cached[//[::1] ________
+tests/test_csaf_redirect_integrity.py:43: in test_malformed_redirect_is_typed_closed_and_not_cached
+    client.get(URL, 'document')
+src/patchtrace/intelligence/csaf/transport.py:291: in get
+    result = self._attempt(url, kind, allow_404)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/patchtrace/intelligence/csaf/transport.py:347: in _attempt
+    current = urllib.parse.urljoin(current, location)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/urllib/parse.py:571: in urljoin
+    urlparse(url, bscheme, allow_fragments)
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/urllib/parse.py:395: in urlparse
+    splitresult = urlsplit(url, scheme, allow_fragments)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/urllib/parse.py:514: in urlsplit
+    raise ValueError("Invalid IPv6 URL")
+E   ValueError: Invalid IPv6 URL
+_ test_malformed_redirect_is_typed_closed_and_not_cached[https://[not-an-ip]/csaf/x] _
+tests/test_csaf_redirect_integrity.py:43: in test_malformed_redirect_is_typed_closed_and_not_cached
+    client.get(URL, 'document')
+src/patchtrace/intelligence/csaf/transport.py:291: in get
+    result = self._attempt(url, kind, allow_404)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/patchtrace/intelligence/csaf/transport.py:347: in _attempt
+    current = urllib.parse.urljoin(current, location)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/urllib/parse.py:571: in urljoin
+    urlparse(url, bscheme, allow_fragments)
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/urllib/parse.py:395: in urlparse
+    splitresult = urlsplit(url, scheme, allow_fragments)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/urllib/parse.py:516: in urlsplit
+    _check_bracketed_netloc(netloc)
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/urllib/parse.py:454: in _check_bracketed_netloc
+    _check_bracketed_host(hostname)
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/urllib/parse.py:463: in _check_bracketed_host
+    ip = ipaddress.ip_address(hostname) # Throws Value Error if not IPv6 or IPv4
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/ipaddress.py:54: in ip_address
+    raise ValueError(f'{address!r} does not appear to be an IPv4 or IPv6 address')
+E   ValueError: 'not-an-ip' does not appear to be an IPv4 or IPv6 address
+_ test_malformed_redirect_is_typed_closed_and_not_cached[https://[127.0.0.1]/csaf/x] _
+tests/test_csaf_redirect_integrity.py:43: in test_malformed_redirect_is_typed_closed_and_not_cached
+    client.get(URL, 'document')
+src/patchtrace/intelligence/csaf/transport.py:291: in get
+    result = self._attempt(url, kind, allow_404)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/patchtrace/intelligence/csaf/transport.py:347: in _attempt
+    current = urllib.parse.urljoin(current, location)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/urllib/parse.py:571: in urljoin
+    urlparse(url, bscheme, allow_fragments)
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/urllib/parse.py:395: in urlparse
+    splitresult = urlsplit(url, scheme, allow_fragments)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/urllib/parse.py:516: in urlsplit
+    _check_bracketed_netloc(netloc)
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/urllib/parse.py:454: in _check_bracketed_netloc
+    _check_bracketed_host(hostname)
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/urllib/parse.py:465: in _check_bracketed_host
+    raise ValueError(f"An IPv4 address cannot be in brackets")
+E   ValueError: An IPv4 address cannot be in brackets
+_________ test_pair_reader_classifies_path_resolution_errors[OSError] __________
+tests/test_nway_path_failures.py:30: in test_pair_reader_classifies_path_resolution_errors
+    snapshot = DiskPairReader().read(tmp_path, _ref(), '0' * 64, '1' * 64, frozenset())
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/patchtrace/nway/pair_access.py:67: in read
+    target = (root / ref.path).resolve()
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/test_nway_path_failures.py:26: in fail_one
+    raise error_type(f'untrusted path details: {target}')
+E   OSError: untrusted path details: /home/agent/pt-parser-boundaries-red/test_pair_reader_classifies_pa0/pair
+_______ test_pair_reader_classifies_path_resolution_errors[RuntimeError] _______
+tests/test_nway_path_failures.py:30: in test_pair_reader_classifies_path_resolution_errors
+    snapshot = DiskPairReader().read(tmp_path, _ref(), '0' * 64, '1' * 64, frozenset())
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/patchtrace/nway/pair_access.py:67: in read
+    target = (root / ref.path).resolve()
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/test_nway_path_failures.py:26: in fail_one
+    raise error_type(f'untrusted path details: {target}')
+E   RuntimeError: untrusted path details: /home/agent/pt-parser-boundaries-red/test_pair_reader_classifies_pa1/pair
+________ test_pair_reader_classifies_path_resolution_errors[ValueError] ________
+tests/test_nway_path_failures.py:30: in test_pair_reader_classifies_path_resolution_errors
+    snapshot = DiskPairReader().read(tmp_path, _ref(), '0' * 64, '1' * 64, frozenset())
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/patchtrace/nway/pair_access.py:67: in read
+    target = (root / ref.path).resolve()
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/test_nway_path_failures.py:26: in fail_one
+    raise error_type(f'untrusted path details: {target}')
+E   ValueError: untrusted path details: /home/agent/pt-parser-boundaries-red/test_pair_reader_classifies_pa2/pair
+_______________ test_pair_reader_classifies_project_stat_failure _______________
+tests/test_nway_path_failures.py:46: in test_pair_reader_classifies_project_stat_failure
+    snapshot = DiskPairReader().read(tmp_path, _ref(), '0' * 64, '1' * 64, frozenset())
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/patchtrace/nway/pair_access.py:68: in read
+    if not target.is_relative_to(root) or not (target / PROJECT_FILE).is_file():
+                                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/test_nway_path_failures.py:42: in fail_one
+    raise PermissionError(f'private path: {target}')
+E   PermissionError: private path: /home/agent/pt-parser-boundaries-red/test_pair_reader_classifies_pr0/pair/project.sqlite3
+______ test_series_retains_healthy_hop_after_path_error[OSError-resolve] _______
+tests/test_nway_path_failures.py:69: in test_series_retains_healthy_hop_after_path_error
+    staleness = store.staleness(series, series_path)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/patchtrace/nway/series.py:409: in staleness
+    target = (root / ref.path).resolve()
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/test_nway_path_failures.py:64: in fail_one
+    raise error_type(f'private path: {target}')
+E   OSError: private path: /home/agent/pt-parser-boundaries-red/test_series_retains_healthy_ho0/series/pair-0-1-dc71b8420acc-4af23bcb7730
+______ test_series_retains_healthy_hop_after_path_error[OSError-is_file] _______
+tests/test_nway_path_failures.py:69: in test_series_retains_healthy_hop_after_path_error
+    staleness = store.staleness(series, series_path)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/patchtrace/nway/series.py:411: in staleness
+    if not target.is_relative_to(root) or not (target / PROJECT_FILE).is_file():
+                                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/test_nway_path_failures.py:64: in fail_one
+    raise error_type(f'private path: {target}')
+E   OSError: private path: /home/agent/pt-parser-boundaries-red/test_series_retains_healthy_ho1/series/pair-0-1-dc71b8420acc-4af23bcb7730/project.sqlite3
+____ test_series_retains_healthy_hop_after_path_error[RuntimeError-resolve] ____
+tests/test_nway_path_failures.py:69: in test_series_retains_healthy_hop_after_path_error
+    staleness = store.staleness(series, series_path)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/patchtrace/nway/series.py:409: in staleness
+    target = (root / ref.path).resolve()
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/test_nway_path_failures.py:64: in fail_one
+    raise error_type(f'private path: {target}')
+E   RuntimeError: private path: /home/agent/pt-parser-boundaries-red/test_series_retains_healthy_ho2/series/pair-0-1-dc71b8420acc-4af23bcb7730
+____ test_series_retains_healthy_hop_after_path_error[RuntimeError-is_file] ____
+tests/test_nway_path_failures.py:69: in test_series_retains_healthy_hop_after_path_error
+    staleness = store.staleness(series, series_path)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/patchtrace/nway/series.py:411: in staleness
+    if not target.is_relative_to(root) or not (target / PROJECT_FILE).is_file():
+                                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/test_nway_path_failures.py:64: in fail_one
+    raise error_type(f'private path: {target}')
+E   RuntimeError: private path: /home/agent/pt-parser-boundaries-red/test_series_retains_healthy_ho3/series/pair-0-1-dc71b8420acc-4af23bcb7730/project.sqlite3
+_____ test_series_retains_healthy_hop_after_path_error[ValueError-resolve] _____
+tests/test_nway_path_failures.py:69: in test_series_retains_healthy_hop_after_path_error
+    staleness = store.staleness(series, series_path)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/patchtrace/nway/series.py:409: in staleness
+    target = (root / ref.path).resolve()
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/test_nway_path_failures.py:64: in fail_one
+    raise error_type(f'private path: {target}')
+E   ValueError: private path: /home/agent/pt-parser-boundaries-red/test_series_retains_healthy_ho4/series/pair-0-1-dc71b8420acc-4af23bcb7730
+_____ test_series_retains_healthy_hop_after_path_error[ValueError-is_file] _____
+tests/test_nway_path_failures.py:69: in test_series_retains_healthy_hop_after_path_error
+    staleness = store.staleness(series, series_path)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/patchtrace/nway/series.py:411: in staleness
+    if not target.is_relative_to(root) or not (target / PROJECT_FILE).is_file():
+                                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/test_nway_path_failures.py:64: in fail_one
+    raise error_type(f'private path: {target}')
+E   ValueError: private path: /home/agent/pt-parser-boundaries-red/test_series_retains_healthy_ho5/series/pair-0-1-dc71b8420acc-4af23bcb7730/project.sqlite3
+________________ test_pair_reader_classifies_real_symlink_loop _________________
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1250: in resolve
+    p.stat()
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:840: in stat
+    return os.stat(self, follow_symlinks=follow_symlinks)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   OSError: [Errno 40] Too many levels of symbolic links: '/home/agent/pt-parser-boundaries-red/test_pair_reader_classifies_re0/pair'
+
+During handling of the above exception, another exception occurred:
+tests/test_nway_path_failures.py:87: in test_pair_reader_classifies_real_symlink_loop
+    snapshot = DiskPairReader().read(tmp_path, _ref(), '0' * 64, '1' * 64, frozenset())
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/patchtrace/nway/pair_access.py:67: in read
+    target = (root / ref.path).resolve()
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1252: in resolve
+    check_eloop(e)
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1237: in check_eloop
+    raise RuntimeError("Symlink loop from %r" % e.filename)
+E   RuntimeError: Symlink loop from '/home/agent/pt-parser-boundaries-red/test_pair_reader_classifies_re0/pair'
+_ test_nested_invalid_utf8_is_rejected_after_upb_accepts_wire[invalid-start-expression.symbol] _
+tests/test_binexport_text_boundaries.py:62: in test_nested_invalid_utf8_is_rejected_after_upb_accepts_wire
+    _reject(data, 'utf8_invalid')
+tests/test_binexport_text_boundaries.py:48: in _reject
+    with pytest.raises(SecondaryError) as info:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: DID NOT RAISE SecondaryError
+_ test_nested_invalid_utf8_is_rejected_after_upb_accepts_wire[invalid-start-mnemonic.name] _
+tests/test_binexport_text_boundaries.py:62: in test_nested_invalid_utf8_is_rejected_after_upb_accepts_wire
+    _reject(data, 'utf8_invalid')
+tests/test_binexport_text_boundaries.py:48: in _reject
+    with pytest.raises(SecondaryError) as info:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: DID NOT RAISE SecondaryError
+_ test_nested_invalid_utf8_is_rejected_after_upb_accepts_wire[invalid-start-library.name] _
+tests/test_binexport_text_boundaries.py:62: in test_nested_invalid_utf8_is_rejected_after_upb_accepts_wire
+    _reject(data, 'utf8_invalid')
+tests/test_binexport_text_boundaries.py:48: in _reject
+    with pytest.raises(SecondaryError) as info:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: DID NOT RAISE SecondaryError
+_ test_nested_invalid_utf8_is_rejected_after_upb_accepts_wire[invalid-start-module.name] _
+tests/test_binexport_text_boundaries.py:62: in test_nested_invalid_utf8_is_rejected_after_upb_accepts_wire
+    _reject(data, 'utf8_invalid')
+tests/test_binexport_text_boundaries.py:48: in _reject
+    with pytest.raises(SecondaryError) as info:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: DID NOT RAISE SecondaryError
+_ test_nested_invalid_utf8_is_rejected_after_upb_accepts_wire[overlong-expression.symbol] _
+tests/test_binexport_text_boundaries.py:62: in test_nested_invalid_utf8_is_rejected_after_upb_accepts_wire
+    _reject(data, 'utf8_invalid')
+tests/test_binexport_text_boundaries.py:48: in _reject
+    with pytest.raises(SecondaryError) as info:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: DID NOT RAISE SecondaryError
+_ test_nested_invalid_utf8_is_rejected_after_upb_accepts_wire[overlong-mnemonic.name] _
+tests/test_binexport_text_boundaries.py:62: in test_nested_invalid_utf8_is_rejected_after_upb_accepts_wire
+    _reject(data, 'utf8_invalid')
+tests/test_binexport_text_boundaries.py:48: in _reject
+    with pytest.raises(SecondaryError) as info:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: DID NOT RAISE SecondaryError
+_ test_nested_invalid_utf8_is_rejected_after_upb_accepts_wire[overlong-library.name] _
+tests/test_binexport_text_boundaries.py:62: in test_nested_invalid_utf8_is_rejected_after_upb_accepts_wire
+    _reject(data, 'utf8_invalid')
+tests/test_binexport_text_boundaries.py:48: in _reject
+    with pytest.raises(SecondaryError) as info:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: DID NOT RAISE SecondaryError
+_ test_nested_invalid_utf8_is_rejected_after_upb_accepts_wire[overlong-module.name] _
+tests/test_binexport_text_boundaries.py:62: in test_nested_invalid_utf8_is_rejected_after_upb_accepts_wire
+    _reject(data, 'utf8_invalid')
+tests/test_binexport_text_boundaries.py:48: in _reject
+    with pytest.raises(SecondaryError) as info:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: DID NOT RAISE SecondaryError
+_ test_nested_invalid_utf8_is_rejected_after_upb_accepts_wire[truncated-expression.symbol] _
+tests/test_binexport_text_boundaries.py:62: in test_nested_invalid_utf8_is_rejected_after_upb_accepts_wire
+    _reject(data, 'utf8_invalid')
+tests/test_binexport_text_boundaries.py:48: in _reject
+    with pytest.raises(SecondaryError) as info:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: DID NOT RAISE SecondaryError
+_ test_nested_invalid_utf8_is_rejected_after_upb_accepts_wire[truncated-mnemonic.name] _
+tests/test_binexport_text_boundaries.py:62: in test_nested_invalid_utf8_is_rejected_after_upb_accepts_wire
+    _reject(data, 'utf8_invalid')
+tests/test_binexport_text_boundaries.py:48: in _reject
+    with pytest.raises(SecondaryError) as info:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: DID NOT RAISE SecondaryError
+_ test_nested_invalid_utf8_is_rejected_after_upb_accepts_wire[truncated-library.name] _
+tests/test_binexport_text_boundaries.py:62: in test_nested_invalid_utf8_is_rejected_after_upb_accepts_wire
+    _reject(data, 'utf8_invalid')
+tests/test_binexport_text_boundaries.py:48: in _reject
+    with pytest.raises(SecondaryError) as info:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: DID NOT RAISE SecondaryError
+_ test_nested_invalid_utf8_is_rejected_after_upb_accepts_wire[truncated-module.name] _
+tests/test_binexport_text_boundaries.py:62: in test_nested_invalid_utf8_is_rejected_after_upb_accepts_wire
+    _reject(data, 'utf8_invalid')
+tests/test_binexport_text_boundaries.py:48: in _reject
+    with pytest.raises(SecondaryError) as info:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: DID NOT RAISE SecondaryError
+_ test_nested_invalid_utf8_is_rejected_after_upb_accepts_wire[surrogate-expression.symbol] _
+tests/test_binexport_text_boundaries.py:62: in test_nested_invalid_utf8_is_rejected_after_upb_accepts_wire
+    _reject(data, 'utf8_invalid')
+tests/test_binexport_text_boundaries.py:48: in _reject
+    with pytest.raises(SecondaryError) as info:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: DID NOT RAISE SecondaryError
+_ test_nested_invalid_utf8_is_rejected_after_upb_accepts_wire[surrogate-mnemonic.name] _
+tests/test_binexport_text_boundaries.py:62: in test_nested_invalid_utf8_is_rejected_after_upb_accepts_wire
+    _reject(data, 'utf8_invalid')
+tests/test_binexport_text_boundaries.py:48: in _reject
+    with pytest.raises(SecondaryError) as info:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: DID NOT RAISE SecondaryError
+_ test_nested_invalid_utf8_is_rejected_after_upb_accepts_wire[surrogate-library.name] _
+tests/test_binexport_text_boundaries.py:62: in test_nested_invalid_utf8_is_rejected_after_upb_accepts_wire
+    _reject(data, 'utf8_invalid')
+tests/test_binexport_text_boundaries.py:48: in _reject
+    with pytest.raises(SecondaryError) as info:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: DID NOT RAISE SecondaryError
+_ test_nested_invalid_utf8_is_rejected_after_upb_accepts_wire[surrogate-module.name] _
+tests/test_binexport_text_boundaries.py:62: in test_nested_invalid_utf8_is_rejected_after_upb_accepts_wire
+    _reject(data, 'utf8_invalid')
+tests/test_binexport_text_boundaries.py:48: in _reject
+    with pytest.raises(SecondaryError) as info:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: DID NOT RAISE SecondaryError
+_____ test_nested_string_limit_counts_utf8_bytes[ascii-expression.symbol] ______
+tests/test_binexport_text_boundaries.py:69: in test_nested_string_limit_counts_utf8_bytes
+    _reject(_data(field, text.encode('utf-8')), 'string_too_long', BinExportLimits(max_string_bytes=64))
+tests/test_binexport_text_boundaries.py:48: in _reject
+    with pytest.raises(SecondaryError) as info:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: DID NOT RAISE SecondaryError
+_______ test_nested_string_limit_counts_utf8_bytes[ascii-mnemonic.name] ________
+tests/test_binexport_text_boundaries.py:69: in test_nested_string_limit_counts_utf8_bytes
+    _reject(_data(field, text.encode('utf-8')), 'string_too_long', BinExportLimits(max_string_bytes=64))
+tests/test_binexport_text_boundaries.py:48: in _reject
+    with pytest.raises(SecondaryError) as info:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: DID NOT RAISE SecondaryError
+________ test_nested_string_limit_counts_utf8_bytes[ascii-library.name] ________
+tests/test_binexport_text_boundaries.py:69: in test_nested_string_limit_counts_utf8_bytes
+    _reject(_data(field, text.encode('utf-8')), 'string_too_long', BinExportLimits(max_string_bytes=64))
+tests/test_binexport_text_boundaries.py:48: in _reject
+    with pytest.raises(SecondaryError) as info:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: DID NOT RAISE SecondaryError
+________ test_nested_string_limit_counts_utf8_bytes[ascii-module.name] _________
+tests/test_binexport_text_boundaries.py:69: in test_nested_string_limit_counts_utf8_bytes
+    _reject(_data(field, text.encode('utf-8')), 'string_too_long', BinExportLimits(max_string_bytes=64))
+tests/test_binexport_text_boundaries.py:48: in _reject
+    with pytest.raises(SecondaryError) as info:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: DID NOT RAISE SecondaryError
+___ test_nested_string_limit_counts_utf8_bytes[utf8-bytes-expression.symbol] ___
+tests/test_binexport_text_boundaries.py:69: in test_nested_string_limit_counts_utf8_bytes
+    _reject(_data(field, text.encode('utf-8')), 'string_too_long', BinExportLimits(max_string_bytes=64))
+tests/test_binexport_text_boundaries.py:48: in _reject
+    with pytest.raises(SecondaryError) as info:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: DID NOT RAISE SecondaryError
+_____ test_nested_string_limit_counts_utf8_bytes[utf8-bytes-mnemonic.name] _____
+tests/test_binexport_text_boundaries.py:69: in test_nested_string_limit_counts_utf8_bytes
+    _reject(_data(field, text.encode('utf-8')), 'string_too_long', BinExportLimits(max_string_bytes=64))
+tests/test_binexport_text_boundaries.py:48: in _reject
+    with pytest.raises(SecondaryError) as info:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: DID NOT RAISE SecondaryError
+_____ test_nested_string_limit_counts_utf8_bytes[utf8-bytes-library.name] ______
+tests/test_binexport_text_boundaries.py:69: in test_nested_string_limit_counts_utf8_bytes
+    _reject(_data(field, text.encode('utf-8')), 'string_too_long', BinExportLimits(max_string_bytes=64))
+tests/test_binexport_text_boundaries.py:48: in _reject
+    with pytest.raises(SecondaryError) as info:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: DID NOT RAISE SecondaryError
+______ test_nested_string_limit_counts_utf8_bytes[utf8-bytes-module.name] ______
+tests/test_binexport_text_boundaries.py:69: in test_nested_string_limit_counts_utf8_bytes
+    _reject(_data(field, text.encode('utf-8')), 'string_too_long', BinExportLimits(max_string_bytes=64))
+tests/test_binexport_text_boundaries.py:48: in _reject
+    with pytest.raises(SecondaryError) as info:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: DID NOT RAISE SecondaryError
+___________ test_invalid_byte_between_valid_utf8_is_always_rejected ____________
+tests/test_binexport_text_boundaries.py:90: in test_invalid_byte_between_valid_utf8_is_always_rejected
+    @given(st.sampled_from(FIELDS), st.text(max_size=32), st.text(max_size=32))
+                   ^^^
+tests/test_binexport_text_boundaries.py:92: in test_invalid_byte_between_valid_utf8_is_always_rejected
+    _reject(_data(field, before.encode('utf-8') + b'\xff' + after.encode('utf-8')), 'utf8_invalid')
+tests/test_binexport_text_boundaries.py:48: in _reject
+    with pytest.raises(SecondaryError) as info:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: DID NOT RAISE SecondaryError
+E   Failing test case: test_invalid_byte_between_valid_utf8_is_always_rejected(
+E       # The test always failed when commented parts were varied together.
+E       field=('expression', 2, 'symbol', 2),  # or any other generated value
+E       before='',  # or any other generated value
+E       after='',  # or any other generated value
+E   )
+______ test_real_worker_rejects_invalid_library_text_and_preserves_source ______
+tests/test_binexport_text_boundaries.py:101: in test_real_worker_rejects_invalid_library_text_and_preserves_source
+    with pytest.raises(SecondaryError) as info:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: DID NOT RAISE SecondaryError
+_ test_successful_exit_with_invalid_fallback_utf8_is_a_typed_input_error[high-surrogate] _
+tests/test_rzdiff_text_boundaries.py:25: in test_successful_exit_with_invalid_fallback_utf8_is_a_typed_input_error
+    _interpret(output)
+tests/test_rzdiff_text_boundaries.py:18: in _interpret
+    return rzdiff.interpret(code, output, stderr, '0.9.1', OLD, NEW)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/patchtrace/secondary/rzdiff.py:220: in interpret
+    if len(output if exact else output.encode('utf-8')) > stdout_limit:
+                                ^^^^^^^^^^^^^^^^^^^^^^
+E   UnicodeEncodeError: 'utf-8' codec can't encode character '\ud800' in position 0: surrogates not allowed
+_ test_successful_exit_with_invalid_fallback_utf8_is_a_typed_input_error[low-surrogate] _
+tests/test_rzdiff_text_boundaries.py:25: in test_successful_exit_with_invalid_fallback_utf8_is_a_typed_input_error
+    _interpret(output)
+tests/test_rzdiff_text_boundaries.py:18: in _interpret
+    return rzdiff.interpret(code, output, stderr, '0.9.1', OLD, NEW)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/patchtrace/secondary/rzdiff.py:220: in interpret
+    if len(output if exact else output.encode('utf-8')) > stdout_limit:
+                                ^^^^^^^^^^^^^^^^^^^^^^
+E   UnicodeEncodeError: 'utf-8' codec can't encode character '\udfff' in position 0: surrogates not allowed
+_ test_successful_exit_with_invalid_fallback_utf8_is_a_typed_input_error[in-json] _
+tests/test_rzdiff_text_boundaries.py:25: in test_successful_exit_with_invalid_fallback_utf8_is_a_typed_input_error
+    _interpret(output)
+tests/test_rzdiff_text_boundaries.py:18: in _interpret
+    return rzdiff.interpret(code, output, stderr, '0.9.1', OLD, NEW)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/patchtrace/secondary/rzdiff.py:220: in interpret
+    if len(output if exact else output.encode('utf-8')) > stdout_limit:
+                                ^^^^^^^^^^^^^^^^^^^^^^
+E   UnicodeEncodeError: 'utf-8' codec can't encode character '\ud800' in position 2: surrogates not allowed
+_ test_successful_exit_with_invalid_fallback_utf8_is_a_typed_input_error[after-json] _
+tests/test_rzdiff_text_boundaries.py:25: in test_successful_exit_with_invalid_fallback_utf8_is_a_typed_input_error
+    _interpret(output)
+tests/test_rzdiff_text_boundaries.py:18: in _interpret
+    return rzdiff.interpret(code, output, stderr, '0.9.1', OLD, NEW)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/patchtrace/secondary/rzdiff.py:220: in interpret
+    if len(output if exact else output.encode('utf-8')) > stdout_limit:
+                                ^^^^^^^^^^^^^^^^^^^^^^
+E   UnicodeEncodeError: 'utf-8' codec can't encode character '\udc80' in position 2: surrogates not allowed
+_ test_nonzero_exit_keeps_run_failure_and_encodable_diagnostics[fallback-stdout] _
+tests/test_rzdiff_text_boundaries.py:35: in test_nonzero_exit_keeps_run_failure_and_encodable_diagnostics
+    _interpret(stdout, code=7, stderr=stderr)
+tests/test_rzdiff_text_boundaries.py:18: in _interpret
+    return rzdiff.interpret(code, output, stderr, '0.9.1', OLD, NEW)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/patchtrace/secondary/rzdiff.py:218: in interpret
+    tail = shown.encode('utf-8')[-STDERR_TAIL:].decode('utf-8', errors='replace')
+           ^^^^^^^^^^^^^^^^^^^^^
+E   UnicodeEncodeError: 'utf-8' codec can't encode character '\ud800' in position 0: surrogates not allowed
+____ test_nonzero_exit_keeps_run_failure_and_encodable_diagnostics[stderr] _____
+tests/test_rzdiff_text_boundaries.py:35: in test_nonzero_exit_keeps_run_failure_and_encodable_diagnostics
+    _interpret(stdout, code=7, stderr=stderr)
+tests/test_rzdiff_text_boundaries.py:18: in _interpret
+    return rzdiff.interpret(code, output, stderr, '0.9.1', OLD, NEW)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/patchtrace/secondary/rzdiff.py:218: in interpret
+    tail = shown.encode('utf-8')[-STDERR_TAIL:].decode('utf-8', errors='replace')
+           ^^^^^^^^^^^^^^^^^^^^^
+E   UnicodeEncodeError: 'utf-8' codec can't encode character '\ud800' in position 0: surrogates not allowed
+_ test_nonzero_exit_keeps_run_failure_and_encodable_diagnostics[bytes-with-bad-stderr] _
+tests/test_rzdiff_text_boundaries.py:35: in test_nonzero_exit_keeps_run_failure_and_encodable_diagnostics
+    _interpret(stdout, code=7, stderr=stderr)
+tests/test_rzdiff_text_boundaries.py:18: in _interpret
+    return rzdiff.interpret(code, output, stderr, '0.9.1', OLD, NEW)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/patchtrace/secondary/rzdiff.py:218: in interpret
+    tail = shown.encode('utf-8')[-STDERR_TAIL:].decode('utf-8', errors='replace')
+           ^^^^^^^^^^^^^^^^^^^^^
+E   UnicodeEncodeError: 'utf-8' codec can't encode character '\udfff' in position 0: surrogates not allowed
+__________________ test_invalid_diagnostic_tail_stays_bounded __________________
+tests/test_rzdiff_text_boundaries.py:46: in test_invalid_diagnostic_tail_stays_bounded
+    _interpret('', code=1, stderr='discarded-prefix' + '\ud800' * 100)
+tests/test_rzdiff_text_boundaries.py:18: in _interpret
+    return rzdiff.interpret(code, output, stderr, '0.9.1', OLD, NEW)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/patchtrace/secondary/rzdiff.py:218: in interpret
+    tail = shown.encode('utf-8')[-STDERR_TAIL:].decode('utf-8', errors='replace')
+           ^^^^^^^^^^^^^^^^^^^^^
+E   UnicodeEncodeError: 'utf-8' codec can't encode characters in position 16-115: surrogates not allowed
+_ test_any_raw_surrogate_in_successful_fallback_output_is_a_typed_input_error __
+tests/test_rzdiff_text_boundaries.py:55: in test_any_raw_surrogate_in_successful_fallback_output_is_a_typed_input_error
+    @given(st.integers(0xD800, 0xDFFF), st.text(max_size=32), st.text(max_size=32))
+                   ^^^
+tests/test_rzdiff_text_boundaries.py:58: in test_any_raw_surrogate_in_successful_fallback_output_is_a_typed_input_error
+    _interpret(before + chr(codepoint) + after)
+tests/test_rzdiff_text_boundaries.py:18: in _interpret
+    return rzdiff.interpret(code, output, stderr, '0.9.1', OLD, NEW)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/patchtrace/secondary/rzdiff.py:220: in interpret
+    if len(output if exact else output.encode('utf-8')) > stdout_limit:
+                                ^^^^^^^^^^^^^^^^^^^^^^
+E   UnicodeEncodeError: 'utf-8' codec can't encode character '\ud800' in position 0: surrogates not allowed
+E   Failing test case: test_any_raw_surrogate_in_successful_fallback_output_is_a_typed_input_error(
+E       # The test always failed when commented parts were varied together.
+E       codepoint=55296,  # or any other generated value
+E       before='',  # or any other generated value
+E       after='',  # or any other generated value
+E   )
+=========================== short test summary info ============================
+FAILED tests/test_winbindex_parser_bounds.py::test_oversized_raw_document_is_refused_before_json_allocation[strict_json]
+FAILED tests/test_winbindex_parser_bounds.py::test_oversized_raw_document_is_refused_before_json_allocation[parse]
+FAILED tests/test_winbindex_parser_bounds.py::test_oversized_raw_document_is_refused_before_json_allocation[parse_rows]
+FAILED tests/test_winbindex_parser_bounds.py::test_limit_is_bytes_and_precedes_utf8_validation[strict_json]
+FAILED tests/test_winbindex_parser_bounds.py::test_limit_is_bytes_and_precedes_utf8_validation[parse]
+FAILED tests/test_winbindex_parser_bounds.py::test_limit_is_bytes_and_precedes_utf8_validation[parse_rows]
+FAILED tests/test_winbindex_parser_bounds.py::test_gzip_and_raw_share_decoded_boundary[parse]
+FAILED tests/test_winbindex_parser_bounds.py::test_gzip_and_raw_share_decoded_boundary[parse_rows]
+FAILED tests/test_winbindex_parser_bounds.py::test_raw_byte_budget_property
+FAILED tests/test_enrichment_numeric_boundaries.py::test_unrepresentable_provider_numbers_are_typed_provider_errors[1e99999999999999999999-nvd]
+FAILED tests/test_enrichment_numeric_boundaries.py::test_unrepresentable_provider_numbers_are_typed_provider_errors[1e99999999999999999999-msrc]
+FAILED tests/test_enrichment_numeric_boundaries.py::test_unrepresentable_provider_numbers_are_typed_provider_errors[1e-99999999999999999999-nvd]
+FAILED tests/test_enrichment_numeric_boundaries.py::test_unrepresentable_provider_numbers_are_typed_provider_errors[1e-99999999999999999999-msrc]
+FAILED tests/test_enrichment_numeric_boundaries.py::test_unrepresentable_provider_numbers_are_typed_provider_errors[1e1000000-nvd]
+FAILED tests/test_enrichment_numeric_boundaries.py::test_unrepresentable_provider_numbers_are_typed_provider_errors[1e1000000-msrc]
+FAILED tests/test_enrichment_numeric_boundaries.py::test_non_tenth_scores_cannot_round_or_underflow_into_valid_scores[1e-1000100-nvd]
+FAILED tests/test_enrichment_numeric_boundaries.py::test_non_tenth_scores_cannot_round_or_underflow_into_valid_scores[1e-1000100-msrc]
+FAILED tests/test_enrichment_numeric_boundaries.py::test_non_tenth_scores_cannot_round_or_underflow_into_valid_scores[9.80000000000000000000000000000001-nvd]
+FAILED tests/test_enrichment_numeric_boundaries.py::test_non_tenth_scores_cannot_round_or_underflow_into_valid_scores[9.80000000000000000000000000000001-msrc]
+FAILED tests/test_enrichment_numeric_boundaries.py::test_valid_tenths_do_not_depend_on_the_callers_precision_or_traps[ROUND_HALF_EVEN-False-nvd]
+FAILED tests/test_enrichment_numeric_boundaries.py::test_valid_tenths_do_not_depend_on_the_callers_precision_or_traps[ROUND_HALF_EVEN-False-msrc]
+FAILED tests/test_enrichment_numeric_boundaries.py::test_valid_tenths_do_not_depend_on_the_callers_precision_or_traps[ROUND_DOWN-False-nvd]
+FAILED tests/test_enrichment_numeric_boundaries.py::test_valid_tenths_do_not_depend_on_the_callers_precision_or_traps[ROUND_DOWN-False-msrc]
+FAILED tests/test_enrichment_numeric_boundaries.py::test_valid_tenths_do_not_depend_on_the_callers_precision_or_traps[ROUND_DOWN-True-nvd]
+FAILED tests/test_enrichment_numeric_boundaries.py::test_valid_tenths_do_not_depend_on_the_callers_precision_or_traps[ROUND_DOWN-True-msrc]
+FAILED tests/test_enrichment_numeric_boundaries.py::test_provider_parsing_preserves_the_callers_decimal_context[1e99999999999999999999]
+FAILED tests/test_enrichment_numeric_boundaries.py::test_retrieval_times_outside_utc_range_are_typed_input_errors[normalize-9999-12-31T23:59:59-05:00]
+FAILED tests/test_enrichment_numeric_boundaries.py::test_retrieval_times_outside_utc_range_are_typed_input_errors[normalize-0001-01-01T00:00:00+05:00]
+FAILED tests/test_enrichment_numeric_boundaries.py::test_retrieval_times_outside_utc_range_are_typed_input_errors[parse_snapshots-9999-12-31T23:59:59-05:00]
+FAILED tests/test_enrichment_numeric_boundaries.py::test_retrieval_times_outside_utc_range_are_typed_input_errors[parse_snapshots-0001-01-01T00:00:00+05:00]
+FAILED tests/test_enrichment_numeric_boundaries.py::test_retrieval_times_outside_utc_range_are_typed_input_errors[is_stale-9999-12-31T23:59:59-05:00]
+FAILED tests/test_enrichment_numeric_boundaries.py::test_retrieval_times_outside_utc_range_are_typed_input_errors[is_stale-0001-01-01T00:00:00+05:00]
+FAILED tests/test_enrichment_numeric_boundaries.py::test_retrieval_times_outside_utc_range_are_typed_input_errors[select_latest-9999-12-31T23:59:59-05:00]
+FAILED tests/test_enrichment_numeric_boundaries.py::test_retrieval_times_outside_utc_range_are_typed_input_errors[select_latest-0001-01-01T00:00:00+05:00]
+FAILED tests/test_enrichment_numeric_boundaries.py::test_unrepresentable_freshness_clock_is_a_typed_input_error[9999-12-31T23:59:59-05:00]
+FAILED tests/test_enrichment_numeric_boundaries.py::test_unrepresentable_freshness_clock_is_a_typed_input_error[0001-01-01T00:00:00+05:00]
+FAILED tests/test_enrichment_numeric_boundaries.py::test_cli_keeps_valid_provider_when_another_has_an_unrepresentable_decimal
+FAILED tests/test_enrichment_numeric_boundaries.py::test_cli_refuses_invalid_snapshot_time_before_contextual_ranking[9999-12-31T23:59:59-05:00]
+FAILED tests/test_enrichment_numeric_boundaries.py::test_cli_refuses_invalid_snapshot_time_before_contextual_ranking[0001-01-01T00:00:00+05:00]
+FAILED tests/test_csaf_redirect_integrity.py::test_malformed_redirect_is_typed_closed_and_not_cached[https://[]
+FAILED tests/test_csaf_redirect_integrity.py::test_malformed_redirect_is_typed_closed_and_not_cached[//[::1]
+FAILED tests/test_csaf_redirect_integrity.py::test_malformed_redirect_is_typed_closed_and_not_cached[https://[not-an-ip]/csaf/x]
+FAILED tests/test_csaf_redirect_integrity.py::test_malformed_redirect_is_typed_closed_and_not_cached[https://[127.0.0.1]/csaf/x]
+FAILED tests/test_nway_path_failures.py::test_pair_reader_classifies_path_resolution_errors[OSError]
+FAILED tests/test_nway_path_failures.py::test_pair_reader_classifies_path_resolution_errors[RuntimeError]
+FAILED tests/test_nway_path_failures.py::test_pair_reader_classifies_path_resolution_errors[ValueError]
+FAILED tests/test_nway_path_failures.py::test_pair_reader_classifies_project_stat_failure
+FAILED tests/test_nway_path_failures.py::test_series_retains_healthy_hop_after_path_error[OSError-resolve]
+FAILED tests/test_nway_path_failures.py::test_series_retains_healthy_hop_after_path_error[OSError-is_file]
+FAILED tests/test_nway_path_failures.py::test_series_retains_healthy_hop_after_path_error[RuntimeError-resolve]
+FAILED tests/test_nway_path_failures.py::test_series_retains_healthy_hop_after_path_error[RuntimeError-is_file]
+FAILED tests/test_nway_path_failures.py::test_series_retains_healthy_hop_after_path_error[ValueError-resolve]
+FAILED tests/test_nway_path_failures.py::test_series_retains_healthy_hop_after_path_error[ValueError-is_file]
+FAILED tests/test_nway_path_failures.py::test_pair_reader_classifies_real_symlink_loop
+FAILED tests/test_binexport_text_boundaries.py::test_nested_invalid_utf8_is_rejected_after_upb_accepts_wire[invalid-start-expression.symbol]
+FAILED tests/test_binexport_text_boundaries.py::test_nested_invalid_utf8_is_rejected_after_upb_accepts_wire[invalid-start-mnemonic.name]
+FAILED tests/test_binexport_text_boundaries.py::test_nested_invalid_utf8_is_rejected_after_upb_accepts_wire[invalid-start-library.name]
+FAILED tests/test_binexport_text_boundaries.py::test_nested_invalid_utf8_is_rejected_after_upb_accepts_wire[invalid-start-module.name]
+FAILED tests/test_binexport_text_boundaries.py::test_nested_invalid_utf8_is_rejected_after_upb_accepts_wire[overlong-expression.symbol]
+FAILED tests/test_binexport_text_boundaries.py::test_nested_invalid_utf8_is_rejected_after_upb_accepts_wire[overlong-mnemonic.name]
+FAILED tests/test_binexport_text_boundaries.py::test_nested_invalid_utf8_is_rejected_after_upb_accepts_wire[overlong-library.name]
+FAILED tests/test_binexport_text_boundaries.py::test_nested_invalid_utf8_is_rejected_after_upb_accepts_wire[overlong-module.name]
+FAILED tests/test_binexport_text_boundaries.py::test_nested_invalid_utf8_is_rejected_after_upb_accepts_wire[truncated-expression.symbol]
+FAILED tests/test_binexport_text_boundaries.py::test_nested_invalid_utf8_is_rejected_after_upb_accepts_wire[truncated-mnemonic.name]
+FAILED tests/test_binexport_text_boundaries.py::test_nested_invalid_utf8_is_rejected_after_upb_accepts_wire[truncated-library.name]
+FAILED tests/test_binexport_text_boundaries.py::test_nested_invalid_utf8_is_rejected_after_upb_accepts_wire[truncated-module.name]
+FAILED tests/test_binexport_text_boundaries.py::test_nested_invalid_utf8_is_rejected_after_upb_accepts_wire[surrogate-expression.symbol]
+FAILED tests/test_binexport_text_boundaries.py::test_nested_invalid_utf8_is_rejected_after_upb_accepts_wire[surrogate-mnemonic.name]
+FAILED tests/test_binexport_text_boundaries.py::test_nested_invalid_utf8_is_rejected_after_upb_accepts_wire[surrogate-library.name]
+FAILED tests/test_binexport_text_boundaries.py::test_nested_invalid_utf8_is_rejected_after_upb_accepts_wire[surrogate-module.name]
+FAILED tests/test_binexport_text_boundaries.py::test_nested_string_limit_counts_utf8_bytes[ascii-expression.symbol]
+FAILED tests/test_binexport_text_boundaries.py::test_nested_string_limit_counts_utf8_bytes[ascii-mnemonic.name]
+FAILED tests/test_binexport_text_boundaries.py::test_nested_string_limit_counts_utf8_bytes[ascii-library.name]
+FAILED tests/test_binexport_text_boundaries.py::test_nested_string_limit_counts_utf8_bytes[ascii-module.name]
+FAILED tests/test_binexport_text_boundaries.py::test_nested_string_limit_counts_utf8_bytes[utf8-bytes-expression.symbol]
+FAILED tests/test_binexport_text_boundaries.py::test_nested_string_limit_counts_utf8_bytes[utf8-bytes-mnemonic.name]
+FAILED tests/test_binexport_text_boundaries.py::test_nested_string_limit_counts_utf8_bytes[utf8-bytes-library.name]
+FAILED tests/test_binexport_text_boundaries.py::test_nested_string_limit_counts_utf8_bytes[utf8-bytes-module.name]
+FAILED tests/test_binexport_text_boundaries.py::test_invalid_byte_between_valid_utf8_is_always_rejected
+FAILED tests/test_binexport_text_boundaries.py::test_real_worker_rejects_invalid_library_text_and_preserves_source
+FAILED tests/test_rzdiff_text_boundaries.py::test_successful_exit_with_invalid_fallback_utf8_is_a_typed_input_error[high-surrogate]
+FAILED tests/test_rzdiff_text_boundaries.py::test_successful_exit_with_invalid_fallback_utf8_is_a_typed_input_error[low-surrogate]
+FAILED tests/test_rzdiff_text_boundaries.py::test_successful_exit_with_invalid_fallback_utf8_is_a_typed_input_error[in-json]
+FAILED tests/test_rzdiff_text_boundaries.py::test_successful_exit_with_invalid_fallback_utf8_is_a_typed_input_error[after-json]
+FAILED tests/test_rzdiff_text_boundaries.py::test_nonzero_exit_keeps_run_failure_and_encodable_diagnostics[fallback-stdout]
+FAILED tests/test_rzdiff_text_boundaries.py::test_nonzero_exit_keeps_run_failure_and_encodable_diagnostics[stderr]
+FAILED tests/test_rzdiff_text_boundaries.py::test_nonzero_exit_keeps_run_failure_and_encodable_diagnostics[bytes-with-bad-stderr]
+FAILED tests/test_rzdiff_text_boundaries.py::test_invalid_diagnostic_tail_stays_bounded
+FAILED tests/test_rzdiff_text_boundaries.py::test_any_raw_surrogate_in_successful_fallback_output_is_a_typed_input_error
+89 failed, 38 passed in 10.30s

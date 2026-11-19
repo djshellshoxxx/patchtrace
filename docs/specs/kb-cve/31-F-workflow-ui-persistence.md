@@ -98,6 +98,57 @@ Tests: quit while network pending, close dialog and reopen before worker respons
 
 On Windows release ZIP: login-free metadata-only/offline replay, documented consented sources, search with ambiguity and partial data, import known old/new PE, create normal project, load and reopen, compare via configured supported engine or import fixture, show candidate view and export. Smoke includes dependency metadata, tooltip registry coverage, content-addressed snapshot copies, stale-state persistence, DPI and non-ASCII filesystem paths. Separate tests for Windows DLL/signature behavior and PA30 reconstruction; do not label them validated from Linux unit tests alone.
 
+### Packaged synthetic offline control (2026-11-18)
+
+The existing `--self-test` entry retains the application-icon, optional-dependency,
+visible synthetic sample and panel-registry checks, including offending panel IDs
+and error classes on registry failure. It also executes a bounded authored KB/CVE
+investigation through the current desktop controllers, using one
+normal `QApplication.exec()` event loop on its owning thread. Calls from another
+thread or an already running event loop are refused before workspace creation.
+Timer continuations must propagate exceptions to the entry caller; premature
+event-loop exit, a ten-second readiness timeout or a 45-second overall deadline
+is failure. These are cooperative deadlines around small fixed fixtures and
+existing bounded operations, not interruption of arbitrary stalled filesystem
+I/O. Build/test process timeouts remain the outer limit.
+
+The fixture is explicitly synthetic: two authored product scopes, two small PE
+byte strings from the packaged sample module, and a package-authored comparison
+import. No target, analysis engine, provider, DNS lookup or network request is
+executed. One UTC date is captured for the two advisory revisions so the existing
+default monthly search sees them consistently; the actual source digest is
+reported. No test-tree fixture or private replacement service is required in a
+frozen package.
+
+The journey verifies missing coverage, local import, KB and CVE search, ambiguous
+unselected products, explicit AMD64 selection, ordered pair hashes, preview
+cancellation/retry, create/adopt through the existing host, fixture import,
+stored ranking and candidate rows. Documentary association must not become
+supporting binary applicability. It exports the project and advisory context,
+checks exact content-addressed source copies, reopens the same project/run,
+imports a superseding source revision and reopens again with explicit stale
+reasons and disabled candidate navigation. Paths include non-ASCII characters.
+Investigation and inventory workspace-picker tooltips must describe their distinct
+roles when both controllers are registered; the existing global unique-What
+registry check remains mandatory.
+
+All windows, dialogs, task runners and project services owned by this control
+must be closed on success or failure, with original failures retained if cleanup
+also fails. Environment and application quit policy are restored. A supplied
+parent directory retains its authored artifacts for inspection; its fixed child
+is created exclusively and an existing child is never reused or removed. The
+entry owns a separate temporary parent and removes it only after resources close
+and its parent/child identities still match. Observed replacement or collision
+retains both paths and fails the control. This is a cooperative filesystem
+ownership boundary, not arbitrary same-user namespace-race immunity.
+
+Only successful resource and temporary-directory cleanup permits the marker
+`offline-investigation: synthetic F8 journey passed` and the structured
+`patchtrace-kb-selftest/1` receipt. Failed checks keep the existing nonzero entry
+failure behavior. The source/offscreen receipt proves this authored integration
+control only. Actual extracted Windows/Linux frozen packages, native UI/DPI,
+native engine accuracy and live-source acceptance remain separate pending gates.
+
 ## Offline desktop implementation seam (2026-11-05)
 
 The bounded first desktop journey imports a supported local advisory, searches a stored KB/CVE, requires explicit product selection, previews two analyst-selected AMD64 PE files, then creates and opens a separate project. Product-only starts use the separate local catalogue route below; binary-only manual pair starts also have the explicit desktop route below; online discovery/download remains the existing consented acquisition route. The offline dialog never starts downloads or analysis. Pair previews retain advisory source references, hashes, lineage and attribution limitations.

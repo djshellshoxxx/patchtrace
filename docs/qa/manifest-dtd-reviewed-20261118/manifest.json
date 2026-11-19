@@ -1,0 +1,32 @@
+{
+  "schema": 1,
+  "source_sha": "e1c5006e51606caedd773bf079c20c145d290861",
+  "created_at": "2026-11-18T15:58:33.158568+00:00",
+  "members": [
+    {
+      "name": "source-context.json",
+      "bytes": 1577,
+      "sha256": "68231258429aeda819e925b367fe71959268b8f9b452633c99ff1b079aa7af15"
+    },
+    {
+      "name": "test_manifest_dtd_external.py",
+      "bytes": 2260,
+      "sha256": "960bf6d3a1449452277ebe96021d618924e1363566022469b3be0010cd3075f1"
+    },
+    {
+      "name": "manifest-root-affected.log",
+      "bytes": 500,
+      "sha256": "e95db8d3f12145518e3dad16f1bfa85e4ed295464dccfa7cf4834bcf183ad3ec"
+    },
+    {
+      "name": "manifest-root-affected.xml",
+      "bytes": 53542,
+      "sha256": "d9d7ba40b01fe7c5de53310c0ee7becdf5409523e0bd4b36d8300310bdc9e7ce"
+    }
+  ],
+  "archive": {
+    "name": "evidence.zip",
+    "bytes": 9591,
+    "sha256": "2a756a48b31fe7c92a28efa1cf914d273953aa70e5af64cd212c529feffb7da7"
+  }
+}

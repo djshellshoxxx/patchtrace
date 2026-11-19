@@ -1,0 +1,41 @@
+{
+  "argv": [
+    "/workspace/scratch/e83fbf4505c3/l2-tool-preparation/20261118T080830Z-rizin091/tool/rizin-0.9.1/bin/rz-diff",
+    "-v"
+  ],
+  "cwd": "/tmp/patchtrace-rzprobe-90l_5hl7",
+  "delegation": "calls jobs.run_process with unchanged argv/kwargs; returns the same ProcessResult object",
+  "elapsed_seconds": 0.05020424099711818,
+  "environment_fingerprint": "fa5f627ecdef37be0c292950c5af63043495448346e869c1a56d1892ca6e0359",
+  "environment_keys": [
+    "HOME",
+    "LANG",
+    "LC_ALL",
+    "LC_CTYPE",
+    "PATH",
+    "TMPDIR",
+    "XDG_CACHE_HOME",
+    "XDG_DATA_HOME",
+    "XDG_RUNTIME_DIR"
+  ],
+  "kind": "production-runner-observation/1",
+  "label": "00-probe",
+  "last_output_elapsed_seconds": 8.346499816980213e-05,
+  "prepared_input_sha256": {},
+  "reason": null,
+  "returncode": 0,
+  "settings": {
+    "log_limit": 65536,
+    "timeout_seconds": 30
+  },
+  "stderr_kept": 0,
+  "stderr_path": "raw/00-probe.stderr",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stderr_total": 0,
+  "stdout_kept": 78,
+  "stdout_path": "raw/00-probe.stdout",
+  "stdout_sha256": "58bc26af2200fd35b39248f09ffa655df0b50a3ccb3219cdb91696b72516efa2",
+  "stdout_total": 78,
+  "streams_complete": true,
+  "tool_sha256_after": "536987d5d0e5d2a35689f653502dc10f8be8751a46ef2ffd888e8d514ed9712e"
+}

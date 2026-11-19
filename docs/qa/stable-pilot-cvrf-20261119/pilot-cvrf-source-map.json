@@ -1,0 +1,184 @@
+{
+  "base": "d436a7ec571efa75dcd627ca9835c65f60e09c74",
+  "code_head": "cd96aa9183d1c28c0d08da0198b515f9ab87f29e",
+  "code_tree": "f83652cbc189ab02867410e072c8d8c771b4f083",
+  "runtime_blob_comparisons": [
+    {
+      "path": "src/patchtrace/pilot/cli.py",
+      "source_ref": "b41d6631e679ad2777d248fa087ea71582a5bf63",
+      "source_blob": "e85aabd11b2dada0ad9c08f17239ea741c0fba8c",
+      "port_blob": "e85aabd11b2dada0ad9c08f17239ea741c0fba8c",
+      "identical": true
+    },
+    {
+      "path": "src/patchtrace/pilot/collect.py",
+      "source_ref": "b41d6631e679ad2777d248fa087ea71582a5bf63",
+      "source_blob": "58df6c917cc35ce4178315332d936edc46886cde",
+      "port_blob": "58df6c917cc35ce4178315332d936edc46886cde",
+      "identical": true
+    },
+    {
+      "path": "src/patchtrace/pilot/current_inputs.py",
+      "source_ref": "b41d6631e679ad2777d248fa087ea71582a5bf63",
+      "source_blob": "83b672aa03427cf6022427d6009e0bd6bdfd6981",
+      "port_blob": "83b672aa03427cf6022427d6009e0bd6bdfd6981",
+      "identical": true
+    },
+    {
+      "path": "src/patchtrace/pilot/ports.py",
+      "source_ref": "b41d6631e679ad2777d248fa087ea71582a5bf63",
+      "source_blob": "efbb0224a60e3f089d9ad2de469ed1e8645502f9",
+      "port_blob": "efbb0224a60e3f089d9ad2de469ed1e8645502f9",
+      "identical": true
+    },
+    {
+      "path": "src/patchtrace/pilot/service.py",
+      "source_ref": "b41d6631e679ad2777d248fa087ea71582a5bf63",
+      "source_blob": "3939318e1c109c8ef270dfa42fab214835af113f",
+      "port_blob": "3939318e1c109c8ef270dfa42fab214835af113f",
+      "identical": true
+    },
+    {
+      "path": "src/patchtrace/pilot/store.py",
+      "source_ref": "028a67abc5c1a48ef27f9d218179ce095bead798",
+      "source_blob": "96a318c13195f953f4a9b557a56803dac3436768",
+      "port_blob": "96a318c13195f953f4a9b557a56803dac3436768",
+      "identical": true
+    },
+    {
+      "path": "src/patchtrace/pilot/sources/kb_context.py",
+      "source_ref": "b41d6631e679ad2777d248fa087ea71582a5bf63",
+      "source_blob": "ebd0fe5677358d9c2408acfec22260b8f4695014",
+      "port_blob": "ebd0fe5677358d9c2408acfec22260b8f4695014",
+      "identical": true
+    },
+    {
+      "path": "src/patchtrace/report2/adapters.py",
+      "source_ref": "b41d6631e679ad2777d248fa087ea71582a5bf63",
+      "source_blob": "29cd2fb28ee63fe490d3f94421c2dca81d890f47",
+      "port_blob": "29cd2fb28ee63fe490d3f94421c2dca81d890f47",
+      "identical": true
+    },
+    {
+      "path": "src/patchtrace/ui_leads.py",
+      "source_ref": "b41d6631e679ad2777d248fa087ea71582a5bf63",
+      "source_blob": "a51be8d30ac12080cfd64e6d9fe10f74344099de",
+      "port_blob": "a51be8d30ac12080cfd64e6d9fe10f74344099de",
+      "identical": true
+    }
+  ],
+  "protected_baseline_files": [
+    {
+      "path": "src/patchtrace/kbcorrelation/context.py",
+      "base_blob": "cee3b741af97bc50c000f1ae6314e77b72042525",
+      "port_blob": "cee3b741af97bc50c000f1ae6314e77b72042525",
+      "unchanged": true
+    },
+    {
+      "path": "src/patchtrace/kbcorrelation/saved_scope.py",
+      "base_blob": "3effdb36c00e456efe3dd98a11ad8125fd2cd047",
+      "port_blob": "3effdb36c00e456efe3dd98a11ad8125fd2cd047",
+      "unchanged": true
+    },
+    {
+      "path": "src/patchtrace/kbcorrelation/service.py",
+      "base_blob": "d40b4b2a12c24275604611eae6b97c34495376e1",
+      "port_blob": "d40b4b2a12c24275604611eae6b97c34495376e1",
+      "unchanged": true
+    },
+    {
+      "path": "src/patchtrace/intelligence/storage.py",
+      "base_blob": "66dd7d1caada74c6ee8654686e072ff26f36c1dc",
+      "port_blob": "66dd7d1caada74c6ee8654686e072ff26f36c1dc",
+      "unchanged": true
+    },
+    {
+      "path": "src/patchtrace/owned_publication.py",
+      "base_blob": "71f3bbd5b74fb8ddfa212001e50ade82e4340354",
+      "port_blob": "71f3bbd5b74fb8ddfa212001e50ade82e4340354",
+      "unchanged": true
+    }
+  ],
+  "commits": [
+    {
+      "sha": "9b7c27cb41f5772125328690544e653a4b6f1287",
+      "subject": "test(pilot): specify current assessment ownership and staleness [no release]",
+      "body": "test(pilot): specify current assessment ownership and staleness [no release]\n\n(cherry picked from commit a2531d390a0e35a5cb4d8c0080767598eaa923e4)\n\nLocal-Review-Commit: 59f1983ddbeb05d98d57742d253cf0ba3b6a96a9\nOriginal source and independent evidence are retained in committed QA records.\n\n(cherry picked from commit f3cf68dbfecd254e5e5acefb02f82922f4091bf5)"
+    },
+    {
+      "sha": "2e3983ecbec1d77c521739dafb8f522d53812007",
+      "subject": "fix(pilot): recheck assessment ownership and current evidence [no release]",
+      "body": "fix(pilot): recheck assessment ownership and current evidence [no release]\n\n(cherry picked from commit f47d212a876e0df78e79cb23a4fec2b75b647a54)\n\nLocal-Review-Commit: 160ef58b1245c9d0b10e5238c54d19aedab26425\nOriginal source and independent evidence are retained in committed QA records.\n\n(cherry picked from commit 328a3a363cfe6ffe2334eccfab71c72dc456eea7)"
+    },
+    {
+      "sha": "59b93c7a857d19fbced11260a2c8b74ef08d4817",
+      "subject": "test(report): require current pilot evidence at export [no release]",
+      "body": "test(report): require current pilot evidence at export [no release]\n\n(cherry picked from commit 2cc95278003942654a3ae5d35a6bf75056d4d91f)\n\nLocal-Review-Commit: f8b1cc9cda927e65b90cab973a7aa16839ddb544\nOriginal source and independent evidence are retained in committed QA records.\n\n(cherry picked from commit 8ace1999ff6e83369963e0c3bc9690f7f16ff2f9)"
+    },
+    {
+      "sha": "13a88a7457d5b81302bfbd728366fa1afc7f792a",
+      "subject": "fix(report): share pilot current-evidence checks [no release]",
+      "body": "fix(report): share pilot current-evidence checks [no release]\n\n(cherry picked from commit ade0f32a0e18e578516b58482b29212579c524ba)\n\nLocal-Review-Commit: ef49758fb237aec6c3f9578acff9778a849020f6\nOriginal source and independent evidence are retained in committed QA records.\n\n(cherry picked from commit c3a09b43175bcd023596c1dcd7c083be5d5434b9)"
+    },
+    {
+      "sha": "7b19299e69a7e9b7cc9341c7b4de190c36423db3",
+      "subject": "spec(pilot): define retained CVRF fallback and refusal controls [no release]",
+      "body": "spec(pilot): define retained CVRF fallback and refusal controls [no release]\n\n(cherry picked from commit 8dff299266c2892cbdae34ee45af935ff2d81ec5)\n\nLocal-Review-Commit: 6513e710587ef07a3e79ea68f20099fe39d7c36d\nOriginal source and independent evidence are retained in committed QA records.\n\n(cherry picked from commit 8291396f92a1b577027270c88c43c90bcdc393c9)"
+    },
+    {
+      "sha": "01cd27c148afcf4ecd1e80b95ebefe641803ea8d",
+      "subject": "feat(pilot): consume bounded retained CVRF context with CSAF precedence [no release]",
+      "body": "feat(pilot): consume bounded retained CVRF context with CSAF precedence [no release]\n\n(cherry picked from commit 353902677e6d59961e808a90b2a3dd96d2b43269)\n\nLocal-Review-Commit: 62517abbe2f398ee5920021b69b8d09dffb82ccd\nOriginal source and independent evidence are retained in committed QA records.\n\n(cherry picked from commit 35a0dd44dedb56019d9fc93ee652c692b12a2b0a)"
+    },
+    {
+      "sha": "31a8d45dbdc704fa101e889d8a027a13075aaa91",
+      "subject": "spec(pilot): refuse malformed retained SQLite row types [no release]",
+      "body": "spec(pilot): refuse malformed retained SQLite row types [no release]\n\n(cherry picked from commit e1b161fdd1dd64a09379f9ca98bfdec4cc1ca428)\n\nLocal-Review-Commit: 02fc0ef70f66ae8b1bf4b0c2cc995b66d262e8c8\nOriginal source and independent evidence are retained in committed QA records.\n\n(cherry picked from commit 4c231c558c6fe4ea62dfc0df98454e109ce19b02)"
+    },
+    {
+      "sha": "e22ee86de1ce630b15c3c635f7a6e429bea85e2d",
+      "subject": "fix(pilot): withhold malformed retained SQLite primitives [no release]",
+      "body": "fix(pilot): withhold malformed retained SQLite primitives [no release]\n\n(cherry picked from commit 423a4fc00599cd085ac4a3b95db3e164071f4d79)\n\nLocal-Review-Commit: 0b8292d5c57e51ec8949888560f8c1664e2b7a50\nOriginal source and independent evidence are retained in committed QA records.\n\n(cherry picked from commit 870287f2f54fbf9e5715cc256ea5a98ea2646319)"
+    },
+    {
+      "sha": "50b642b67bea566c335c4853184edb38d90ed433",
+      "subject": "test(pilot): require retained CVRF identities on current assessment reads [no release]",
+      "body": "test(pilot): require retained CVRF identities on current assessment reads [no release]\n\n(cherry picked from commit d42c29d0370ddd92fb901e98c96afdc50f64e7d4)\n\nLocal-Review-Commit: 903e02e6ad13f1ee2ceb4ef776031ed35ceaddd7\nOriginal source and independent evidence are retained in committed QA records.\n\n(cherry picked from commit 2b197589da370be204499c02c69b4545d115527f)"
+    },
+    {
+      "sha": "a04a336446d776ba2611e519736add48c5b0ea4c",
+      "subject": "test(pilot): persist context withdrawal for independent child reads [no release]",
+      "body": "test(pilot): persist context withdrawal for independent child reads [no release]\n\n(cherry picked from commit 78472c5f437c178e1baebfcbd9af76dc31c0e48d)\n\nLocal-Review-Commit: 41a00f99b04780616afe9b09a7d7ecab15fca6fb\nOriginal source and independent evidence are retained in committed QA records.\n\n(cherry picked from commit dfa0be3f4c99dcae8ff16bd6635d4b89114c0565)"
+    },
+    {
+      "sha": "9d86d9fa7dcbeb37decc6757caaa79ac9dc69dee",
+      "subject": "fix(pilot): compare retained CVRF identity in current assessment capture [no release]",
+      "body": "fix(pilot): compare retained CVRF identity in current assessment capture [no release]\n\n(cherry picked from commit 3207f9624536ad88af4066a846490abfd0194a9d)\n\nLocal-Review-Commit: eeb718026f9e1b4bb36687c2cd63f862d1a1af41\nOriginal source and independent evidence are retained in committed QA records.\n\n(cherry picked from commit d1a7998ac520d1a77eef09303d1e83e3d2eadde2)"
+    },
+    {
+      "sha": "2ac68a800b8a336cc3db897e3270f06c5ca51af1",
+      "subject": "spec(pilot): cap all retained context fields before loading [no release]",
+      "body": "spec(pilot): cap all retained context fields before loading [no release]\n\n(cherry picked from commit 91a96acdf9f2c610d650af1a238e46ace5d0d2c3)\n\nLocal-Review-Commit: dc42a43f0ac00cf143cb9cad397ff2ab71e3a538\nOriginal source and independent evidence are retained in committed QA records.\n\n(cherry picked from commit c6723e64cffb5210eafd2ec449baff82a088d4c8)"
+    },
+    {
+      "sha": "94d3a864348316901f09504ae2944d44a8c2f529",
+      "subject": "fix(pilot): include retained row metadata in capture budget [no release]",
+      "body": "fix(pilot): include retained row metadata in capture budget [no release]\n\n(cherry picked from commit 8e368dd88c3ad65726d84701219942ff38c6c2cd)\n\nLocal-Review-Commit: ac789497597fba3cb87696990d171a7a27024fca\nOriginal source and independent evidence are retained in committed QA records.\n\n(cherry picked from commit 402d47eeedb3628ed22ad9aa18d5c2d2cdafd03c)"
+    },
+    {
+      "sha": "e605fb76aea6fc56d4502fffbc685e9d4688d344",
+      "subject": "test(pilot): require staging creation ownership before cleanup [no release]",
+      "body": "test(pilot): require staging creation ownership before cleanup [no release]\n\n(cherry picked from commit e6e6ca13ec64f05b33edf6adea1286655d4ca25c)\n\nLocal-Review-Commit: c24aff3613f64870d49fdb09f4e50d1d757260bb\nOriginal source and independent evidence are retained in committed QA records.\n\n(cherry picked from commit fbd47d097a9fdf6ba22a023ab2ba5fe0fb08a373)"
+    },
+    {
+      "sha": "add9fc9deb453f0df71afed40f5eeec6641679d7",
+      "subject": "fix(pilot): preserve unowned staging paths on failed creation [no release]",
+      "body": "fix(pilot): preserve unowned staging paths on failed creation [no release]\n\n(cherry picked from commit 43ac4829f4e196d7001714bff3622229f5c64d00)\n\nLocal-Review-Commit: fb529d900bca551751903bb275189d4dca090d1f\nOriginal source and independent evidence are retained in committed QA records.\n\n(cherry picked from commit 028a67abc5c1a48ef27f9d218179ce095bead798)"
+    },
+    {
+      "sha": "cd96aa9183d1c28c0d08da0198b515f9ab87f29e",
+      "subject": "test(pilot): retain saved-scope coverage in CVRF fixture",
+      "body": "test(pilot): retain saved-scope coverage in CVRF fixture\n\nRecover only the tests/test_pilot_kb_context.py fixture correction from a07fc1cf1c8d618d8d4b451888c286815a4e02de. Keep the stable candidate finite saved-scope production contract and existing advisory read bounds unchanged. Other inventory and KB fixtures remain outside this port."
+    }
+  ]
+}

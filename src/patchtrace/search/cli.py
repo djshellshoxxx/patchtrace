@@ -53,9 +53,9 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument('project', nargs='?', type=Path, metavar='PROJECT')
     parser.add_argument('--query', metavar='TEXT')
     parser.add_argument('--kind', action='append', default=[], choices=KINDS, metavar='K')
-    parser.add_argument('--side', choices=('older', 'newer', 'both'), default='both')
-    parser.add_argument('--scope', choices=('indexed', 'changed'), default='indexed')
-    parser.add_argument('--mode', choices=MODES, default='auto')
+    parser.add_argument('--side', choices=('older', 'newer', 'both'))
+    parser.add_argument('--scope', choices=('indexed', 'changed'))
+    parser.add_argument('--mode', choices=MODES)
     parser.add_argument('--sort', choices=SORTS, default='relevance')
     parser.add_argument('--limit', type=_limit, default=50, metavar='N')
     parser.add_argument('--cursor', metavar='C')
@@ -69,6 +69,11 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument('--anchors-from', metavar='CVE-ID', help='search the anchors of a stored advisory for this CVE '
                         'and report per-anchor coverage (offline; run `intelligence import` first)')
     parser.add_argument('--json', action='store_true', help='emit exactly one JSON document on stdout')
+    saved = parser.add_mutually_exclusive_group()
+    saved.add_argument('--saved-list', action='store_true', help='list project-owned saved queries; no index work')
+    saved.add_argument('--save', metavar='NAME', help='save the effective query only; do not execute it')
+    saved.add_argument('--saved-run', metavar='ID', help='reparse and execute a current saved query')
+    saved.add_argument('--saved-delete', metavar='ID', help='append a deletion tombstone; no index work')
     return parser
 
 
@@ -93,13 +98,31 @@ def _open_project(path: Path) -> tuple[object, object]:
     return service, lambda project: load_default(store, project)
 
 
-def _query_text(args) -> str:
-    parts = [args.query or '', *(f'kind:{k}' for k in dict.fromkeys(args.kind))]
-    if args.side != 'both':
-        parts.append(f'side:{args.side}')
-    if args.scope == 'changed':
-        parts.append('scope:changed')
-    return ' '.join(p for p in parts if p)
+def _plan(args):
+    from .saved_actions import effective_plan
+    return effective_plan(args.query or '', mode=args.mode or 'auto', side=args.side, scope=args.scope,
+                          kinds=tuple(args.kind))
+
+
+def _saved_operation(args) -> str | None:
+    return next((name for name, value in (('list', args.saved_list), ('save', args.save),
+                                         ('run', args.saved_run), ('delete', args.saved_delete)) if value is not None
+                 and value is not False), None)
+
+
+def _validate_saved(args, operation) -> None:
+    if operation is None:
+        return
+    if args.probe or args.status or args.anchors_from:
+        raise SearchUsage('saved-query operations cannot be combined with probe, status or advisory anchors')
+    if operation != 'save' and any(value is not None and value != [] for value in
+                                   (args.query, args.kind, args.side, args.scope, args.mode)):
+        raise SearchUsage('query and filter options cannot override this saved-query operation')
+    if operation != 'run' and (args.cursor or args.rebuild or args.no_index_build or args.no_group or args.no_expand
+                               or args.sort != 'relevance' or args.limit != 50):
+        raise SearchUsage('result and index options apply only when running a query')
+    if operation == 'save':
+        _plan(args)  # invalid query data must not open the project
 
 
 # --------------------------------------------------------------------------------------------- verbs
@@ -169,17 +192,16 @@ def _text(result) -> str:
     return '\n'.join(lines)
 
 
-def _search(args, out, err, service, anchors=None) -> int:
+def _search(args, out, err, service, anchors=None, plan=None) -> int:
     from patchtrace.search.contracts import SearchRequest
     from patchtrace.search.errors import SearchError
-    from patchtrace.search.query import parse_query
     if args.anchors_from:  # the S10 bridge: per-anchor coverage from the stored advisories
         from patchtrace.search import anchor_cli
         from patchtrace.search.normalize import sanitize_text
         return anchor_cli.run(args, out, service, anchors, _emit, lambda value: sanitize_text(value, 200))
-    if not (args.query or args.kind):
+    if plan is None and not (args.query or args.kind):
         raise SearchError('PT-SEARCH-QUERY', 'give --query, or browse with --kind')
-    plan = parse_query(_query_text(args), mode=args.mode)
+    plan = plan or _plan(args)
     request = SearchRequest(plan=plan, sort=args.sort, limit=args.limit, cursor=args.cursor,
                             group=not args.no_group, expand=not args.no_expand)
     if args.rebuild and not args.no_index_build:
@@ -195,6 +217,8 @@ def _search(args, out, err, service, anchors=None) -> int:
 def _run(args, out, err, opener: Opener, extra_specs, anchors=None) -> int:
     from patchtrace.search import paths
     from patchtrace.search.service import SearchService
+    operation = _saved_operation(args)
+    _validate_saved(args, operation)
     if args.probe:
         return _probe(args, out)
     if args.project is None:
@@ -203,10 +227,27 @@ def _run(args, out, err, opener: Opener, extra_specs, anchors=None) -> int:
         raise SearchUsage('--status takes no query')
     handle, attention = opener(args.project)
     try:
+        if operation in ('list', 'save', 'delete'):
+            from .saved_actions import storage_result
+            result = storage_result(handle, operation, value=args.save if operation == 'save' else args.saved_delete,
+                                    plan=_plan(args) if operation == 'save' else None)
+            warnings = [f'{result["skipped"]} stored query rows could not be read.'] if result.get('skipped') else ()
+            _emit(out, args, 'ok', result, warnings, json.dumps(result, ensure_ascii=False, sort_keys=True))
+            return OK
+        plan = None
+        if operation == 'run':
+            from .saved import rerun_plan
+            from .saved_actions import find_saved, project_store
+            plan = rerun_plan(find_saved(project_store(handle), args.saved_run))
         cache = (paths.validate_cache_root(args.cache_dir.resolve(), Path(handle.root)) if args.cache_dir
                  else paths.default_cache_root())
-        service = SearchService(handle, cache, attention=attention, extra_specs=extra_specs)
-        return _status(args, out, service) if args.status else _search(args, out, err, service, anchors)
+        ports = {}
+        if extra_specs is None:
+            from .wiring import snapshot_sources
+            sources = snapshot_sources(handle)
+            extra_specs, ports = sources.extra_specs, {'comparable': sources.comparable}
+        service = SearchService(handle, cache, attention=attention, extra_specs=extra_specs, **ports)
+        return _status(args, out, service) if args.status else _search(args, out, err, service, anchors, plan)
     finally:
         close = getattr(handle, 'close', None)
         if close is not None:

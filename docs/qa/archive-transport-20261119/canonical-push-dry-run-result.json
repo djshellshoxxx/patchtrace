@@ -1,0 +1,18 @@
+{
+  "argv": [
+    "git",
+    "-C",
+    "/workspace/scratch/c7a9e8d98848/continuation-integration",
+    "-c",
+    "core.hooksPath=/dev/null",
+    "push",
+    "--dry-run",
+    "--porcelain",
+    "origin",
+    "f1634bd6dfdce5dcbe4d73a482f46763e6f9abf8:refs/heads/codex/verified-followup-integration-20261118"
+  ],
+  "exit": 128,
+  "timeout": false,
+  "dry_run": true,
+  "ref_updated": false
+}

@@ -1,0 +1,643 @@
+{
+  "contract": "authored-qualification-evidence/1",
+  "source": "81590f936b3f01555720221e55f99ec0611ec4a1",
+  "baseline": "f16d41062a5d558d889ef6a6bda922004e0ac3b4",
+  "scope": "Portable fixture and Linux inventory correction; native Windows remains unverified.",
+  "payloads": [
+    {
+      "path": "README.md",
+      "bytes": 9466,
+      "sha256": "cde4990f43aa89ede8fd6b8ec562685dcd5cc2f95513285332f21e40d859d7a7"
+    },
+    {
+      "path": "affected-runner.py",
+      "bytes": 13446,
+      "sha256": "25d79f8dea666a0c9b0a5c0eb150c9d123bdfff797e34734996f31abdfd75ebd"
+    },
+    {
+      "path": "affected-source/docs/modules.md",
+      "bytes": 370319,
+      "sha256": "7e72417df9b5be1b75d213edc5ce40338f4366e854fe5a20cb4d3dc35711f13b"
+    },
+    {
+      "path": "affected-source/docs/specs/ci-workflow-integrity.md",
+      "bytes": 7748,
+      "sha256": "76fd90c7d9c0a4ce3ffacc54d384a933043be2277a0a8d42f442a3652bbabe57"
+    },
+    {
+      "path": "affected-source/tasks/todo.md",
+      "bytes": 267471,
+      "sha256": "480d5466df2f31f975ee47f9243a41a4f5724478510d2ea2bfcf5b5c86ef7f6b"
+    },
+    {
+      "path": "affected-source/tests/bindiff_builder.py",
+      "bytes": 2794,
+      "sha256": "11315cd585f0015f42517a97c68d21d1c6d0f91d36d16d87f3b8fb4d4d667120"
+    },
+    {
+      "path": "affected-source/tests/fake_bindiff.py",
+      "bytes": 6662,
+      "sha256": "65e907b2a8c9583644fb4da260076c058368786822901badfcacc4ccdf86bfd3"
+    },
+    {
+      "path": "affected-source/tests/fake_exe.py",
+      "bytes": 965,
+      "sha256": "0f97d10757699aef6058c35220e8184d7694ea8258928c4d8073d404cc1161e8"
+    },
+    {
+      "path": "affected-source/tests/fixtures/secondary/bindiff-8-help.txt",
+      "bytes": 2196,
+      "sha256": "b96074acf3cc7b6103c0cec850edd3429c7dc44870d3665ed68f27a32bb5be83"
+    },
+    {
+      "path": "affected-source/tests/test_build_full_variants.py",
+      "bytes": 17990,
+      "sha256": "e6259dc869451dbb490da4db092476739a8a0717102b5ae3e72fb7717520605b"
+    },
+    {
+      "path": "affected-source/tests/test_dependency_security.py",
+      "bytes": 31972,
+      "sha256": "6faa1288952dad7ad89566a1e664e92d1163bd17faa2d189054e0eefbf3d5dbf"
+    },
+    {
+      "path": "affected-source/tests/test_dependency_security_bootstrap.py",
+      "bytes": 7681,
+      "sha256": "241ad62f21858004fe59bf48d5be5a077e9ebb1362f377a67b77e5e60d1d0026"
+    },
+    {
+      "path": "affected-source/tests/test_linux_frozen_smoke.py",
+      "bytes": 7845,
+      "sha256": "61b27d6787fb39e054367fd40d17038d538cc322cc644e603521122e845b7ddc"
+    },
+    {
+      "path": "affected-source/tests/test_release_qualification.py",
+      "bytes": 22861,
+      "sha256": "3e76aae3f3bf2b1e3081bad5b68cc6776d3ab260b6bb5cc199b89dc6a4113017"
+    },
+    {
+      "path": "affected-source/tests/test_release_source_stat.py",
+      "bytes": 13844,
+      "sha256": "995fc72851f4ec485c07dc57d8333764437758fdf9f5d73332f0d618160042a7"
+    },
+    {
+      "path": "affected-source/tests/test_spec_registry.py",
+      "bytes": 1272,
+      "sha256": "84c2b4a0ff350db9a23c35337ebfefb59fcc3c4af4821cd26e4c5d43f07452e1"
+    },
+    {
+      "path": "affected-source/tests/test_windows_bindiff_network.py",
+      "bytes": 28817,
+      "sha256": "ccbe51bf6a23dcbad19879426b6989b0c23a4ada77b9928e10e9debebd23a860"
+    },
+    {
+      "path": "affected-source/tools/build_linux.py",
+      "bytes": 25186,
+      "sha256": "4001152c8123d383471e188a859e20a148bb933beabafbee45d421a917df18ad"
+    },
+    {
+      "path": "affected-source/tools/dependency_security.py",
+      "bytes": 40439,
+      "sha256": "3ec55ab67feb599c23d27d7441021747661506df1a0d04b1e9146e66de02bc17"
+    },
+    {
+      "path": "affected-source/tools/release_qualification.py",
+      "bytes": 35525,
+      "sha256": "e4b05ef6d7989412ae3f00874dda97cf3807e2fd68ee06c07ecf25cf7731a236"
+    },
+    {
+      "path": "affected-source/tools/windows_bindiff_network.py",
+      "bytes": 51808,
+      "sha256": "7f3b82f4d0c702790cf48a97d6e608b3dbd56aef5f77ffc75434489dfd936328"
+    },
+    {
+      "path": "affected-v2-runner.py",
+      "bytes": 13758,
+      "sha256": "5de15367aa768a1d05ef2c3d4fc7a14b45edbdfed91a831429bc86b77892677d"
+    },
+    {
+      "path": "affected-v2-source/docs/modules.md",
+      "bytes": 370319,
+      "sha256": "7e72417df9b5be1b75d213edc5ce40338f4366e854fe5a20cb4d3dc35711f13b"
+    },
+    {
+      "path": "affected-v2-source/docs/specs/ci-workflow-integrity.md",
+      "bytes": 7748,
+      "sha256": "76fd90c7d9c0a4ce3ffacc54d384a933043be2277a0a8d42f442a3652bbabe57"
+    },
+    {
+      "path": "affected-v2-source/tasks/todo.md",
+      "bytes": 267471,
+      "sha256": "480d5466df2f31f975ee47f9243a41a4f5724478510d2ea2bfcf5b5c86ef7f6b"
+    },
+    {
+      "path": "affected-v2-source/tests/bindiff_builder.py",
+      "bytes": 2794,
+      "sha256": "11315cd585f0015f42517a97c68d21d1c6d0f91d36d16d87f3b8fb4d4d667120"
+    },
+    {
+      "path": "affected-v2-source/tests/fake_bindiff.py",
+      "bytes": 6662,
+      "sha256": "65e907b2a8c9583644fb4da260076c058368786822901badfcacc4ccdf86bfd3"
+    },
+    {
+      "path": "affected-v2-source/tests/fake_exe.py",
+      "bytes": 965,
+      "sha256": "0f97d10757699aef6058c35220e8184d7694ea8258928c4d8073d404cc1161e8"
+    },
+    {
+      "path": "affected-v2-source/tests/fixtures/secondary/bindiff-8-help.txt",
+      "bytes": 2196,
+      "sha256": "b96074acf3cc7b6103c0cec850edd3429c7dc44870d3665ed68f27a32bb5be83"
+    },
+    {
+      "path": "affected-v2-source/tests/test_build_full_variants.py",
+      "bytes": 17990,
+      "sha256": "e6259dc869451dbb490da4db092476739a8a0717102b5ae3e72fb7717520605b"
+    },
+    {
+      "path": "affected-v2-source/tests/test_dependency_security.py",
+      "bytes": 31972,
+      "sha256": "6faa1288952dad7ad89566a1e664e92d1163bd17faa2d189054e0eefbf3d5dbf"
+    },
+    {
+      "path": "affected-v2-source/tests/test_dependency_security_bootstrap.py",
+      "bytes": 7681,
+      "sha256": "241ad62f21858004fe59bf48d5be5a077e9ebb1362f377a67b77e5e60d1d0026"
+    },
+    {
+      "path": "affected-v2-source/tests/test_linux_frozen_smoke.py",
+      "bytes": 7845,
+      "sha256": "61b27d6787fb39e054367fd40d17038d538cc322cc644e603521122e845b7ddc"
+    },
+    {
+      "path": "affected-v2-source/tests/test_release_qualification.py",
+      "bytes": 22861,
+      "sha256": "3e76aae3f3bf2b1e3081bad5b68cc6776d3ab260b6bb5cc199b89dc6a4113017"
+    },
+    {
+      "path": "affected-v2-source/tests/test_release_source_stat.py",
+      "bytes": 13844,
+      "sha256": "995fc72851f4ec485c07dc57d8333764437758fdf9f5d73332f0d618160042a7"
+    },
+    {
+      "path": "affected-v2-source/tests/test_spec_registry.py",
+      "bytes": 1272,
+      "sha256": "84c2b4a0ff350db9a23c35337ebfefb59fcc3c4af4821cd26e4c5d43f07452e1"
+    },
+    {
+      "path": "affected-v2-source/tests/test_windows_bindiff_network.py",
+      "bytes": 28817,
+      "sha256": "ccbe51bf6a23dcbad19879426b6989b0c23a4ada77b9928e10e9debebd23a860"
+    },
+    {
+      "path": "affected-v2-source/tools/build_linux.py",
+      "bytes": 25186,
+      "sha256": "4001152c8123d383471e188a859e20a148bb933beabafbee45d421a917df18ad"
+    },
+    {
+      "path": "affected-v2-source/tools/dependency_security.py",
+      "bytes": 40439,
+      "sha256": "3ec55ab67feb599c23d27d7441021747661506df1a0d04b1e9146e66de02bc17"
+    },
+    {
+      "path": "affected-v2-source/tools/release_qualification.py",
+      "bytes": 35525,
+      "sha256": "e4b05ef6d7989412ae3f00874dda97cf3807e2fd68ee06c07ecf25cf7731a236"
+    },
+    {
+      "path": "affected-v2-source/tools/windows_bindiff_network.py",
+      "bytes": 51808,
+      "sha256": "7f3b82f4d0c702790cf48a97d6e608b3dbd56aef5f77ffc75434489dfd936328"
+    },
+    {
+      "path": "affected-v2.command.json",
+      "bytes": 5191,
+      "sha256": "d6f8854bf512bf61cd374183609af5a532207280e3e5186f3e2883616ed5b645"
+    },
+    {
+      "path": "affected-v2.exit.json",
+      "bytes": 183243,
+      "sha256": "de51a362c1401b5891ef1c1df1acdf07478907adb5d9d8eba55cd60676196865"
+    },
+    {
+      "path": "affected-v2.fixtures.json",
+      "bytes": 22954,
+      "sha256": "45affd14ef7e23cd9146deecac068d3e222a14b557911dfa15888faa1833316a"
+    },
+    {
+      "path": "affected-v2.imports.json",
+      "bytes": 30760,
+      "sha256": "d6fa6a51f35760e834ac778c3d1f07fc6cf8fdac0f58b92ccb5dc9b9d5576686"
+    },
+    {
+      "path": "affected-v2.log",
+      "bytes": 831,
+      "sha256": "844e9bcd20076d886d8dd933cf3eb51f56ba15aca04ead1920952e45c090fbd1"
+    },
+    {
+      "path": "affected-v2.xml",
+      "bytes": 103113,
+      "sha256": "c73dd0c99f65cf12cd0fb9f61f6de9f76c4c4416b5b0a88ac8e48d9483b1aaaa"
+    },
+    {
+      "path": "affected.command.json",
+      "bytes": 5185,
+      "sha256": "1ccc9faea63b388ffcbd4aeef983d9bd83714432381bb59364058b7ebfec1b17"
+    },
+    {
+      "path": "affected.exit.json",
+      "bytes": 180946,
+      "sha256": "f008d383f403161edc7e82dad0ec883c8bd1b19764b934634df8cbd33d6ac9c7"
+    },
+    {
+      "path": "affected.fixtures.json",
+      "bytes": 22954,
+      "sha256": "45affd14ef7e23cd9146deecac068d3e222a14b557911dfa15888faa1833316a"
+    },
+    {
+      "path": "affected.imports.json",
+      "bytes": 30760,
+      "sha256": "d6fa6a51f35760e834ac778c3d1f07fc6cf8fdac0f58b92ccb5dc9b9d5576686"
+    },
+    {
+      "path": "affected.log",
+      "bytes": 3903,
+      "sha256": "9c42867ca9dc141a2062b183af7a929ebc40f91c7d39e56f9bfb72736a3f3a7f"
+    },
+    {
+      "path": "affected.xml",
+      "bytes": 105947,
+      "sha256": "fad62d1ee87fb1f1b4e86a50b61a67309098e90398c4b615c2360bdc806e649c"
+    },
+    {
+      "path": "git/24651bf5d85c42c65cf207991258ce5d3fe4825e.patch",
+      "bytes": 16645,
+      "sha256": "f4b6a8bc83f8d18af475af885c56efea5e2df559d363bc03d86dd7f19c5dcb1a"
+    },
+    {
+      "path": "git/24651bf5d85c42c65cf207991258ce5d3fe4825e.show",
+      "bytes": 787,
+      "sha256": "39cf038d465449d6ff851017bb3dd4e529fe70ebbcc41011ad302df66cec6612"
+    },
+    {
+      "path": "git/81590f936b3f01555720221e55f99ec0611ec4a1.patch",
+      "bytes": 5208,
+      "sha256": "c9821b94e02f6bc424c8fc5bab2991b312f3de7be339434f9f32e8e407471ab2"
+    },
+    {
+      "path": "git/81590f936b3f01555720221e55f99ec0611ec4a1.show",
+      "bytes": 537,
+      "sha256": "282eb74d08de41912b400d850effc8cb3ca2b1b3b174edb1b0aebf1c90be02bc"
+    },
+    {
+      "path": "git/f16d41062a5d558d889ef6a6bda922004e0ac3b4.show",
+      "bytes": 541,
+      "sha256": "9af9b5b4cf4e2298d9a5f475029666c2c7103df3809f9421a893ea06e4424274"
+    },
+    {
+      "path": "green-runner.py",
+      "bytes": 8880,
+      "sha256": "59402107a40e970b53ec5b97ddea22d5fc77640a21107824a2a4e6456bed2fc2"
+    },
+    {
+      "path": "green-source/docs/modules.md",
+      "bytes": 370319,
+      "sha256": "7e72417df9b5be1b75d213edc5ce40338f4366e854fe5a20cb4d3dc35711f13b"
+    },
+    {
+      "path": "green-source/docs/specs/ci-workflow-integrity.md",
+      "bytes": 7748,
+      "sha256": "76fd90c7d9c0a4ce3ffacc54d384a933043be2277a0a8d42f442a3652bbabe57"
+    },
+    {
+      "path": "green-source/tasks/todo.md",
+      "bytes": 267471,
+      "sha256": "480d5466df2f31f975ee47f9243a41a4f5724478510d2ea2bfcf5b5c86ef7f6b"
+    },
+    {
+      "path": "green-source/tests/test_dependency_security.py",
+      "bytes": 31972,
+      "sha256": "6faa1288952dad7ad89566a1e664e92d1163bd17faa2d189054e0eefbf3d5dbf"
+    },
+    {
+      "path": "green-source/tests/test_linux_frozen_smoke.py",
+      "bytes": 7845,
+      "sha256": "61b27d6787fb39e054367fd40d17038d538cc322cc644e603521122e845b7ddc"
+    },
+    {
+      "path": "green-source/tests/test_release_qualification.py",
+      "bytes": 22861,
+      "sha256": "3e76aae3f3bf2b1e3081bad5b68cc6776d3ab260b6bb5cc199b89dc6a4113017"
+    },
+    {
+      "path": "green-source/tests/test_release_source_stat.py",
+      "bytes": 13844,
+      "sha256": "995fc72851f4ec485c07dc57d8333764437758fdf9f5d73332f0d618160042a7"
+    },
+    {
+      "path": "green-source/tests/test_windows_bindiff_network.py",
+      "bytes": 28817,
+      "sha256": "ccbe51bf6a23dcbad19879426b6989b0c23a4ada77b9928e10e9debebd23a860"
+    },
+    {
+      "path": "green-source/tools/build_linux.py",
+      "bytes": 25186,
+      "sha256": "4001152c8123d383471e188a859e20a148bb933beabafbee45d421a917df18ad"
+    },
+    {
+      "path": "green-source/tools/dependency_security.py",
+      "bytes": 40439,
+      "sha256": "3ec55ab67feb599c23d27d7441021747661506df1a0d04b1e9146e66de02bc17"
+    },
+    {
+      "path": "green-source/tools/release_qualification.py",
+      "bytes": 35525,
+      "sha256": "e4b05ef6d7989412ae3f00874dda97cf3807e2fd68ee06c07ecf25cf7731a236"
+    },
+    {
+      "path": "green-source/tools/windows_bindiff_network.py",
+      "bytes": 51808,
+      "sha256": "7f3b82f4d0c702790cf48a97d6e608b3dbd56aef5f77ffc75434489dfd936328"
+    },
+    {
+      "path": "green-v2-runner.py",
+      "bytes": 8916,
+      "sha256": "9db5dc77ffb3e425ed136d190d8b11a64c7a63f6aa47e08fe4b502fabbaff72a"
+    },
+    {
+      "path": "green-v2-source/docs/modules.md",
+      "bytes": 370319,
+      "sha256": "7e72417df9b5be1b75d213edc5ce40338f4366e854fe5a20cb4d3dc35711f13b"
+    },
+    {
+      "path": "green-v2-source/docs/specs/ci-workflow-integrity.md",
+      "bytes": 7748,
+      "sha256": "76fd90c7d9c0a4ce3ffacc54d384a933043be2277a0a8d42f442a3652bbabe57"
+    },
+    {
+      "path": "green-v2-source/tasks/todo.md",
+      "bytes": 267471,
+      "sha256": "480d5466df2f31f975ee47f9243a41a4f5724478510d2ea2bfcf5b5c86ef7f6b"
+    },
+    {
+      "path": "green-v2-source/tests/test_dependency_security.py",
+      "bytes": 31972,
+      "sha256": "6faa1288952dad7ad89566a1e664e92d1163bd17faa2d189054e0eefbf3d5dbf"
+    },
+    {
+      "path": "green-v2-source/tests/test_linux_frozen_smoke.py",
+      "bytes": 7845,
+      "sha256": "61b27d6787fb39e054367fd40d17038d538cc322cc644e603521122e845b7ddc"
+    },
+    {
+      "path": "green-v2-source/tests/test_release_qualification.py",
+      "bytes": 22861,
+      "sha256": "3e76aae3f3bf2b1e3081bad5b68cc6776d3ab260b6bb5cc199b89dc6a4113017"
+    },
+    {
+      "path": "green-v2-source/tests/test_release_source_stat.py",
+      "bytes": 13844,
+      "sha256": "995fc72851f4ec485c07dc57d8333764437758fdf9f5d73332f0d618160042a7"
+    },
+    {
+      "path": "green-v2-source/tests/test_windows_bindiff_network.py",
+      "bytes": 28817,
+      "sha256": "ccbe51bf6a23dcbad19879426b6989b0c23a4ada77b9928e10e9debebd23a860"
+    },
+    {
+      "path": "green-v2-source/tools/build_linux.py",
+      "bytes": 25186,
+      "sha256": "4001152c8123d383471e188a859e20a148bb933beabafbee45d421a917df18ad"
+    },
+    {
+      "path": "green-v2-source/tools/dependency_security.py",
+      "bytes": 40439,
+      "sha256": "3ec55ab67feb599c23d27d7441021747661506df1a0d04b1e9146e66de02bc17"
+    },
+    {
+      "path": "green-v2-source/tools/release_qualification.py",
+      "bytes": 35525,
+      "sha256": "e4b05ef6d7989412ae3f00874dda97cf3807e2fd68ee06c07ecf25cf7731a236"
+    },
+    {
+      "path": "green-v2-source/tools/windows_bindiff_network.py",
+      "bytes": 51808,
+      "sha256": "7f3b82f4d0c702790cf48a97d6e608b3dbd56aef5f77ffc75434489dfd936328"
+    },
+    {
+      "path": "green-v2.command.json",
+      "bytes": 3633,
+      "sha256": "339a0b820d33814ca898e8ffa901f2ed0e5a9920cd986244ddcb64f99c57489a"
+    },
+    {
+      "path": "green-v2.exit.json",
+      "bytes": 47452,
+      "sha256": "e670629a617b71b309ac4f2194f9f72ea862c5475dfa8445eab316aefb05d015"
+    },
+    {
+      "path": "green-v2.fixtures.json",
+      "bytes": 4655,
+      "sha256": "66e147912ff3c46bc187641b1b1866a1b606399a8649992772a3771ac927e903"
+    },
+    {
+      "path": "green-v2.imports.json",
+      "bytes": 18913,
+      "sha256": "9f2ba5c843803d3845f62c9a2437fee90cfbfcbcfdc9e2f48b2455024f08cbce"
+    },
+    {
+      "path": "green-v2.log",
+      "bytes": 115,
+      "sha256": "4978dcc21bf9f28baf06154cdc8ba8d4c275b478044a4ad6580b2330b904340e"
+    },
+    {
+      "path": "green-v2.xml",
+      "bytes": 3211,
+      "sha256": "4eb386c8eda85f0961274b7ea865ece8085fce369ff6e3741f2c8784186aaa4a"
+    },
+    {
+      "path": "green.command.json",
+      "bytes": 3627,
+      "sha256": "93912e6b00510b4d258632247e4540a7ff2df70d84db05716ef4fffc2f7f3b94"
+    },
+    {
+      "path": "green.exit.json",
+      "bytes": 46434,
+      "sha256": "8ded134d7d1582bf191e00fc4954c783f7d2c81b1c3032244f13d6d433c78396"
+    },
+    {
+      "path": "green.fixtures.json",
+      "bytes": 4655,
+      "sha256": "66e147912ff3c46bc187641b1b1866a1b606399a8649992772a3771ac927e903"
+    },
+    {
+      "path": "green.imports.json",
+      "bytes": 18913,
+      "sha256": "9f2ba5c843803d3845f62c9a2437fee90cfbfcbcfdc9e2f48b2455024f08cbce"
+    },
+    {
+      "path": "green.log",
+      "bytes": 3371,
+      "sha256": "b6dfcee59fb74a7e377ed6e8fe07c9b12ccea0f5a766f7f0a35d2af076e43371"
+    },
+    {
+      "path": "green.xml",
+      "bytes": 6244,
+      "sha256": "a1613939e945db9e2b99c188f6ee8cbf52f6589d0cfd2a08381bed8325778e2d"
+    },
+    {
+      "path": "hosted-original-preservation.json",
+      "bytes": 743,
+      "sha256": "4c02db95c368f1ab7f7d5acf04554c5700213b1d56cc786c9620a9499f0091cf"
+    },
+    {
+      "path": "inspection-notes.json",
+      "bytes": 774,
+      "sha256": "d0134675613e836f8ca42a70076a56cae575ad050076ebe624eb9c73c5fd4307"
+    },
+    {
+      "path": "modeled-git-normalization.json",
+      "bytes": 7668,
+      "sha256": "d15c86e52f7823d2f3f6c78c41c778c4b4efdad7ec036d461cdb16101d5da574"
+    },
+    {
+      "path": "red-runner.py",
+      "bytes": 8880,
+      "sha256": "59402107a40e970b53ec5b97ddea22d5fc77640a21107824a2a4e6456bed2fc2"
+    },
+    {
+      "path": "red-source/docs/modules.md",
+      "bytes": 370319,
+      "sha256": "7e72417df9b5be1b75d213edc5ce40338f4366e854fe5a20cb4d3dc35711f13b"
+    },
+    {
+      "path": "red-source/docs/specs/ci-workflow-integrity.md",
+      "bytes": 7748,
+      "sha256": "76fd90c7d9c0a4ce3ffacc54d384a933043be2277a0a8d42f442a3652bbabe57"
+    },
+    {
+      "path": "red-source/tasks/todo.md",
+      "bytes": 267471,
+      "sha256": "480d5466df2f31f975ee47f9243a41a4f5724478510d2ea2bfcf5b5c86ef7f6b"
+    },
+    {
+      "path": "red-source/tests/test_dependency_security.py",
+      "bytes": 31892,
+      "sha256": "fdaa01181365d4017f000922295ea5c6ae1258a98f4b398efc7ab3b784f0557a"
+    },
+    {
+      "path": "red-source/tests/test_linux_frozen_smoke.py",
+      "bytes": 7845,
+      "sha256": "61b27d6787fb39e054367fd40d17038d538cc322cc644e603521122e845b7ddc"
+    },
+    {
+      "path": "red-source/tests/test_release_qualification.py",
+      "bytes": 22859,
+      "sha256": "b31cb2d9c3201eb0480d2b0bb45bde26af91fb432fe9820d6c85f82b402a0840"
+    },
+    {
+      "path": "red-source/tests/test_release_source_stat.py",
+      "bytes": 13844,
+      "sha256": "995fc72851f4ec485c07dc57d8333764437758fdf9f5d73332f0d618160042a7"
+    },
+    {
+      "path": "red-source/tests/test_windows_bindiff_network.py",
+      "bytes": 28777,
+      "sha256": "4155098697e20b0250874d4ed6925e2442a86a12401f9358834d6e0fc8939917"
+    },
+    {
+      "path": "red-source/tools/build_linux.py",
+      "bytes": 25180,
+      "sha256": "e1e29adf6702eb4ef49fc46d36973902136c0ec9ec5598e2fc98376daded21c8"
+    },
+    {
+      "path": "red-source/tools/dependency_security.py",
+      "bytes": 40439,
+      "sha256": "3ec55ab67feb599c23d27d7441021747661506df1a0d04b1e9146e66de02bc17"
+    },
+    {
+      "path": "red-source/tools/release_qualification.py",
+      "bytes": 35525,
+      "sha256": "e4b05ef6d7989412ae3f00874dda97cf3807e2fd68ee06c07ecf25cf7731a236"
+    },
+    {
+      "path": "red-source/tools/windows_bindiff_network.py",
+      "bytes": 51808,
+      "sha256": "7f3b82f4d0c702790cf48a97d6e608b3dbd56aef5f77ffc75434489dfd936328"
+    },
+    {
+      "path": "red.command.json",
+      "bytes": 3623,
+      "sha256": "f5e8f976d9d223ff9e7807ac8b9aa709582848b8b079dd203a3ece28ac0ba99e"
+    },
+    {
+      "path": "red.exit.json",
+      "bytes": 34931,
+      "sha256": "4c5e3603127b656c1f1bceb792b1875934dfff77a749a81d030f004602eb443c"
+    },
+    {
+      "path": "red.fixtures.json",
+      "bytes": 4693,
+      "sha256": "7811ec770a8c3031cc123e58392c71c65b3c99cee5cc2cc06bbfc543a5cda57f"
+    },
+    {
+      "path": "red.imports.json",
+      "bytes": 18913,
+      "sha256": "afa304cf75faa41901ca96225fa75a005027930f4f3fb922e6229f3bb29ef3b3"
+    },
+    {
+      "path": "red.log",
+      "bytes": 52136,
+      "sha256": "a0977682f624c6217281a09fab5cb3ab2dcca01502a45fc957d1d6e43f6d84af"
+    },
+    {
+      "path": "red.xml",
+      "bytes": 55304,
+      "sha256": "7a4bf86571eb58ca1d3378befdcdb76d7c2cf2f06ccd328a9161d053061c969a"
+    },
+    {
+      "path": "ruff.command.json",
+      "bytes": 315,
+      "sha256": "124c15b50c5c98b962de15de28e5e7b6eb530ed48b3f58151187e6cfa0531ba6"
+    },
+    {
+      "path": "ruff.log",
+      "bytes": 19,
+      "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+    },
+    {
+      "path": "runner.py",
+      "bytes": 13758,
+      "sha256": "5de15367aa768a1d05ef2c3d4fc7a14b45edbdfed91a831429bc86b77892677d"
+    },
+    {
+      "path": "seal.py",
+      "bytes": 3977,
+      "sha256": "51b00c9b77c44d39ec0e4652faef2c2ec6777acfe06b93ba1bf7c1836eed9beb"
+    },
+    {
+      "path": "source-boundary.json",
+      "bytes": 1972,
+      "sha256": "bf1c8971f75057cf0f604298f87a0b4594ed3ed41a14ad2a4cb54b98fda5ad67"
+    },
+    {
+      "path": "source-chain.json",
+      "bytes": 763,
+      "sha256": "d07f1523e02e2d97e52a272e1cda048e0299c37ae8d7ffff7360ee742b747c9b"
+    },
+    {
+      "path": "test-results.json",
+      "bytes": 6446,
+      "sha256": "9bb1c7d3b31132e7278f64829bf99017864472c84b3643e5d521f526ab097181"
+    },
+    {
+      "path": "verified-source-snapshots.json",
+      "bytes": 22007,
+      "sha256": "56fac2aa2a79476162958bf875b30a2b8f44ca788c667f8bff7fb1ade498869d"
+    },
+    {
+      "path": "verify_source_boundary.py",
+      "bytes": 3726,
+      "sha256": "3fd0ccce608f1854db87bd0cdddff2f7fe640aec1abfd760867b43824c7ffa95"
+    }
+  ]
+}

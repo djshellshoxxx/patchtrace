@@ -158,3 +158,7 @@ X6. Four defaults are duplicated (D3). Planned keys have no registry entry (N5).
 2. Keep `cache_dir` in shareable profiles? Default: yes, with a warning on share, because it is a local path.
 3. Should Reset preferences clear engine paths? Default: yes, after the confirmation lists them.
 4. macOS profile directory (X4)? Default: align the GUI with `default_profiles_dir` when settings are native. macOS is not a target platform.
+
+## Primary environment default amendment — 2026-11-18
+
+For the reviewed default-isolation candidate, the absent-key default for `backend/restrict_env` changes from the historical table's `False` to `True`, consistently in Setup and `MainWindow.backend_config`. The key still means the same policy; existing explicit Boolean values remain authoritative and no migration writes occur. CLI/backend callers obtain the same default from `BackendConfig`. The tooltip describes enabled-by-default restriction, named passthrough and the external compatibility opt-out. Native exact-candidate qualification remains required before merge; it is not inferred from default-read or fake-engine tests.

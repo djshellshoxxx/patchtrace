@@ -1,0 +1,30 @@
+{
+  "adapter_sha": "5960cfbe65fce22fe702673238549211d6860a80",
+  "raw_sha256": "b327eb5d0f8d7a0d6a9c8c2d1a7af1df134bc2a54c3e0da2eff0fb335547a627",
+  "entry_id": "9bba64068d7f8f193c67a2115c89e63006cc3ea188bebd886778ddc4839991bf",
+  "witness": {
+    "conflict_group": "4bf9e93738147fc72683a424925cae97576e5174431c5489471f1c7a3bbd58e6",
+    "field": "size_bytes",
+    "first": {
+      "raw_sha256": "b327eb5d0f8d7a0d6a9c8c2d1a7af1df134bc2a54c3e0da2eff0fb335547a627",
+      "logical_record": 24355,
+      "line_start": 24355,
+      "line_end": 24355,
+      "section_index": 1
+    },
+    "second": {
+      "raw_sha256": "b327eb5d0f8d7a0d6a9c8c2d1a7af1df134bc2a54c3e0da2eff0fb335547a627",
+      "logical_record": 41380,
+      "line_start": 41380,
+      "line_end": 41380,
+      "section_index": 1
+    }
+  },
+  "overall_display_chars": 65536,
+  "row_display_chars": 2789,
+  "overall_truncated": true,
+  "overall_contains_second_record": false,
+  "row_contains_first_record": true,
+  "row_contains_second_record": true,
+  "row_details": "{\n  \"import_id\": \"78fc4468dcb6c1766939491037f2bb7fdea013a60794becff9e44c0d90bdb3b8\",\n  \"source\": {\n    \"contract\": \"kbcorrelation/1\",\n    \"doc_id\": \"c129d5043526661f036c20d99b98c7d7f4d9dd348684a1f25bdfe2dd071226bb\",\n    \"kind\": \"kb-file-csv\",\n    \"sha256\": \"b327eb5d0f8d7a0d6a9c8c2d1a7af1df134bc2a54c3e0da2eff0fb335547a627\",\n    \"size\": 3300683,\n    \"origin\": \"local-import\",\n    \"uri\": null,\n    \"retrieved_at\": \"2099-01-01T00:00:00Z\",\n    \"release_id\": null,\n    \"current_release_date\": null,\n    \"dialect\": \"csv-file-inventory/1\",\n    \"parser_version\": 1,\n    \"authenticity\": \"unverified-local-file\",\n    \"lineage\": \"analyst\",\n    \"object_path\": \"objects/b3/b327eb5d0f8d7a0d6a9c8c2d1a7af1df134bc2a54c3e0da2eff0fb335547a627.gz\"\n  },\n  \"context\": {\n    \"kb\": \"KB5036893\",\n    \"product_scope_id\": null,\n    \"product\": null,\n    \"release\": null,\n    \"build\": null,\n    \"architecture\": \"unknown\",\n    \"delimiter\": \"comma\",\n    \"locale\": \"en-US\"\n  },\n  \"retrieval\": null,\n  \"asserted_source\": null,\n  \"status\": \"partial\",\n  \"truncated\": false,\n  \"retention\": {\n    \"architecture\": \"amd64\",\n    \"page\": 1\n  },\n  \"scan_complete\": true,\n  \"matching_count\": 18761,\n  \"excluded_count\": 18834,\n  \"omitted_count\": 13761,\n  \"conflict_witness_count\": 537\n}\n\nConflict witness:\n{\n  \"conflict_group\": \"4bf9e93738147fc72683a424925cae97576e5174431c5489471f1c7a3bbd58e6\",\n  \"field\": \"size_bytes\",\n  \"first\": {\n    \"raw_sha256\": \"b327eb5d0f8d7a0d6a9c8c2d1a7af1df134bc2a54c3e0da2eff0fb335547a627\",\n    \"logical_record\": 24355,\n    \"line_start\": 24355,\n    \"line_end\": 24355,\n    \"section_index\": 1\n  },\n  \"second\": {\n    \"raw_sha256\": \"b327eb5d0f8d7a0d6a9c8c2d1a7af1df134bc2a54c3e0da2eff0fb335547a627\",\n    \"logical_record\": 41380,\n    \"line_start\": 41380,\n    \"line_end\": 41380,\n    \"section_index\": 1\n  }\n}\n\nEntry:\n{\n  \"entry_id\": \"9bba64068d7f8f193c67a2115c89e63006cc3ea188bebd886778ddc4839991bf\",\n  \"reference\": {\n    \"raw_sha256\": \"b327eb5d0f8d7a0d6a9c8c2d1a7af1df134bc2a54c3e0da2eff0fb335547a627\",\n    \"logical_record\": 24355,\n    \"line_start\": 24355,\n    \"line_end\": 24355,\n    \"section_index\": 1\n  },\n  \"original_fields\": [\n    \"AarSvc.dll\",\n    \"10.0.22621.2506\",\n    \"05-Apr-2024\",\n    \"17:29\",\n    \"716,800\"\n  ],\n  \"original_filename\": \"AarSvc.dll\",\n  \"basename\": \"aarsvc.dll\",\n  \"original_version\": \"10.0.22621.2506\",\n  \"version_components\": [\n    10,\n    0,\n    22621,\n    2506\n  ],\n  \"original_size\": \"716,800\",\n  \"size_bytes\": 716800,\n  \"date_text\": \"05-Apr-2024\",\n  \"time_text\": \"17:29\",\n  \"architecture\": \"amd64\",\n  \"architecture_basis\": \"section\",\n  \"product\": null,\n  \"release\": null,\n  \"build\": null,\n  \"state\": \"conflicted\",\n  \"duplicate_of\": null,\n  \"conflict_group\": \"4bf9e93738147fc72683a424925cae97576e5174431c5489471f1c7a3bbd58e6\",\n  \"diagnostics\": [\n    \"CONFLICTING_METADATA\"\n  ]\n}"
+}

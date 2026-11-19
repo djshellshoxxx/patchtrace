@@ -27,8 +27,16 @@ from collections.abc import Callable, Iterable, Mapping
 from dataclasses import dataclass
 from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any
+from typing import Any, Literal
 
+from ..input_readers import HeldInput, InputReadError, PairInputReaders
+from ..owned_publication import (
+    OwnedPublicationError,
+    directory_anchor,
+    publish_bytes,
+    read_bytes,
+    verify_anchor,
+)
 from ..persistence import creation_directory_available
 from .contracts import (
     AnalystDecision,
@@ -77,6 +85,37 @@ _DDL = (
     *(f'CREATE TRIGGER {t}_{op.lower()} BEFORE {op} ON {t} BEGIN SELECT RAISE(ABORT, \'append-only\'); END'
       for t in ('revisions', 'attempts', 'decisions') for op in ('UPDATE', 'DELETE')),
 )
+
+# Supported v1 base format: WITHOUT ROWID flag and full table_xinfo columns
+# (name, declared type, NOT NULL, primary-key ordinal, hidden/generated flag).
+# This is format admission, not a certification of constraints, triggers or rows.
+_BASE_LAYOUT = {
+    'meta': (0, (('key', 'TEXT', 0, 1, 0), ('value', 'TEXT', 1, 0, 0))),
+    'docs': (0, (('doc_id', 'TEXT', 0, 1, 0), ('kind', 'TEXT', 1, 0, 0),
+                 ('sha256', 'TEXT', 1, 0, 0), ('release_id', 'TEXT', 0, 0, 0),
+                 ('current_release_date', 'TEXT', 0, 0, 0), ('retrieved_at', 'TEXT', 1, 0, 0),
+                 ('size', 'INTEGER', 1, 0, 0), ('body', 'TEXT', 1, 0, 0))),
+    'segments': (1, (('doc_id', 'TEXT', 1, 1, 0), ('name', 'TEXT', 1, 2, 0),
+                     ('rows', 'INTEGER', 1, 0, 0))),
+    'coverage': (0, (('coverage_id', 'TEXT', 0, 1, 0), ('body', 'TEXT', 1, 0, 0))),
+    'kbs': (0, (('id', 'INTEGER', 0, 1, 0), ('name', 'TEXT', 1, 0, 0))),
+    'cves': (0, (('id', 'INTEGER', 0, 1, 0), ('name', 'TEXT', 1, 0, 0))),
+    'products': (0, (('id', 'INTEGER', 0, 1, 0), ('name', 'TEXT', 1, 0, 0))),
+    'edges': (1, (('kb', 'INTEGER', 1, 1, 0), ('cve', 'INTEGER', 1, 2, 0),
+                  ('product', 'INTEGER', 1, 3, 0), ('doc', 'TEXT', 1, 4, 0),
+                  ('ptr', 'TEXT', 1, 5, 0), ('rel', 'TEXT', 1, 6, 0), ('fixed_build', 'TEXT', 0, 0, 0))),
+    'investigations': (0, (('investigation_id', 'TEXT', 0, 1, 0), ('created', 'TEXT', 1, 0, 0),
+                          ('current_revision', 'INTEGER', 1, 0, 0))),
+    'revisions': (1, (('investigation_id', 'TEXT', 1, 1, 0), ('revision', 'INTEGER', 1, 2, 0),
+                      ('body', 'TEXT', 1, 0, 0), ('body_sha256', 'TEXT', 1, 0, 0),
+                      ('created', 'TEXT', 1, 0, 0))),
+    'attempts': (0, (('seq', 'INTEGER', 0, 1, 0), ('investigation_id', 'TEXT', 1, 0, 0),
+                     ('body', 'TEXT', 1, 0, 0))),
+    'decisions': (0, (('seq', 'INTEGER', 0, 1, 0), ('investigation_id', 'TEXT', 1, 0, 0),
+                      ('body', 'TEXT', 1, 0, 0))),
+    'journal': (0, (('op_id', 'TEXT', 0, 1, 0), ('state', 'TEXT', 1, 0, 0),
+                    ('body', 'TEXT', 1, 0, 0), ('updated', 'TEXT', 1, 0, 0))),
+}
 
 
 class KbcStoreError(Exception):
@@ -138,25 +177,52 @@ def _json(model: Contract) -> str:
     return model.model_dump_json()
 
 
+def _check_existing_layout(db: sqlite3.Connection) -> None:
+    for name, (without_rowid, columns) in _BASE_LAYOUT.items():
+        table = db.execute("SELECT type,ncol,wr,strict FROM pragma_table_list(?) "
+                           "WHERE schema='main' LIMIT 2", (name,)).fetchall()
+        actual = db.execute('SELECT name,type,"notnull",pk,hidden FROM pragma_table_xinfo(?, \'main\') '
+                            'ORDER BY cid LIMIT ?', (name, len(columns) + 1)).fetchall()
+        if table != [('table', len(columns), without_rowid, 0)] or actual != list(columns):
+            raise KbcStoreError('PT-KBC-STORAGE', 'the workspace database has an unsupported base layout',
+                                recoverable=False)
+
+
 class WorkspaceStore:
     def __init__(self, root: Path, *, create: bool = True, limits: KbcLimits = DEFAULT_LIMITS,
-                 fault: Fault | None = None, clock: ClockPort | None = None):
+                 fault: Fault | None = None, clock: ClockPort | None = None,
+                 open_mode: Literal['normal', 'existing'] = 'normal'):
+        if type(open_mode) is not str or open_mode not in ('normal', 'existing'):
+            raise KbcStoreError('PT-KBC-INPUT', 'the workspace open mode is invalid', recoverable=False)
         self.root = Path(root)
         self.limits = limits
         self.fault = fault or (lambda point: None)
         self.clock: ClockPort = clock or SystemClock()
         self.read_only = False
+        if open_mode == 'existing':
+            self._open_existing()
+            return
         path = self.root / DB_NAME
         if not path.is_file():
             if not create:
                 raise KbcStoreError('PT-KBC-STORAGE', 'the workspace has no kbc.sqlite3')
             self.root.mkdir(parents=True, exist_ok=True)
+        # Resolve the caller's selected root once. Object children are opened
+        # relative to held ordinary directories, never resolved through links.
+        self._object_root = self.root.resolve(strict=True)
+        path = self._object_root / DB_NAME
+        try:
+            self._object_anchor = directory_anchor(self._object_root)
+        except (OSError, OwnedPublicationError) as exc:
+            raise KbcStoreError('PT-KBC-STORAGE', 'the workspace root cannot be held and verified') from exc
+        self.db = None
         try:
             self.db = sqlite3.connect(path, timeout=5, isolation_level=None)
             self.db.execute('PRAGMA busy_timeout=5000')
             version = self.db.execute('PRAGMA user_version').fetchone()[0]
             if version > SCHEMA_VERSION:
                 self.db.close()
+                self.db = None
                 self.db = sqlite3.connect(f'{path.resolve().as_uri()}?mode=ro', uri=True, timeout=5,
                                           isolation_level=None)   # resolve: a relative root has no file URI (#105)
                 self.read_only = True
@@ -164,9 +230,64 @@ class WorkspaceStore:
                 self._create()
             if not self.read_only:
                 self.db.execute('PRAGMA journal_mode=WAL')
-        except sqlite3.Error as exc:
-            raise KbcStoreError('PT-KBC-STORAGE', 'the workspace database cannot be opened',
-                                details={'sqlite': type(exc).__name__}) from exc
+            try:
+                verify_anchor(self._object_anchor)
+            except (OSError, OwnedPublicationError) as exc:
+                raise KbcStoreError('PT-KBC-STORAGE',
+                                    'the workspace root changed while opening its database') from exc
+        except BaseException as exc:
+            failure = exc
+            if isinstance(exc, sqlite3.Error):
+                failure = KbcStoreError('PT-KBC-STORAGE', 'the workspace database cannot be opened',
+                                        details={'sqlite': type(exc).__name__})
+            if self.db is not None:
+                try:
+                    self.db.close()
+                except BaseException:
+                    failure.add_note('Workspace connection cleanup failed; resources may remain.')
+            if failure is not exc:
+                raise failure from exc
+            raise
+
+    def _open_existing(self) -> None:
+        try:
+            self._object_root = self.root.resolve(strict=True)
+            self._object_anchor = directory_anchor(self._object_root)
+        except (OSError, OwnedPublicationError) as exc:
+            raise KbcStoreError('PT-KBC-STORAGE', 'the workspace root cannot be held and verified') from exc
+        db = None
+        try:
+            # The first connection cannot create a replacement after a path check.
+            uri = (self._object_root / DB_NAME).as_uri() + '?mode=rw'
+            db = sqlite3.connect(uri, uri=True, timeout=5, isolation_level=None)
+            db.execute('PRAGMA busy_timeout=5000')
+            version = db.execute('PRAGMA user_version').fetchone()[0]
+            if version > SCHEMA_VERSION:
+                raise KbcStoreError('PT-KBC-UNSUPPORTED', 'the workspace database version is unsupported',
+                                    recoverable=False)
+            if version != SCHEMA_VERSION:
+                raise KbcStoreError('PT-KBC-STORAGE', 'the workspace database is not initialized',
+                                    recoverable=False)
+            _check_existing_layout(db)
+            try:
+                verify_anchor(self._object_anchor)
+            except (OSError, OwnedPublicationError) as exc:
+                raise KbcStoreError('PT-KBC-STORAGE',
+                                    'the workspace root changed while opening its database') from exc
+            self.db = db
+        except BaseException as exc:
+            failure = exc
+            if isinstance(exc, sqlite3.Error):
+                failure = KbcStoreError('PT-KBC-STORAGE', 'the workspace database cannot be opened',
+                                        details={'sqlite': type(exc).__name__})
+            if db is not None:
+                try:
+                    db.close()
+                except BaseException:
+                    failure.add_note('Workspace connection cleanup failed; resources may remain.')
+            if failure is not exc:
+                raise failure from exc
+            raise
 
     def _create(self) -> None:
         self.db.execute('BEGIN IMMEDIATE')
@@ -176,8 +297,12 @@ class WorkspaceStore:
                     self.db.execute(statement)
                 self.db.execute(f'PRAGMA user_version={SCHEMA_VERSION}')
             self.db.execute('COMMIT')
-        except BaseException:
-            self.db.execute('ROLLBACK')
+        except BaseException as exc:
+            try:
+                if self.db.in_transaction:
+                    self.db.execute('ROLLBACK')
+            except BaseException:
+                exc.add_note('Workspace initialization rollback failed; resources may remain.')
             raise
 
     def close(self) -> None:
@@ -195,6 +320,10 @@ class WorkspaceStore:
         if self.read_only:
             raise KbcStoreError('PT-KBC-STORAGE', 'the workspace was written by a newer PatchTrace and is read-only',
                                 recoverable=False)
+        try:
+            verify_anchor(self._object_anchor)
+        except (OSError, OwnedPublicationError) as exc:
+            raise KbcStoreError('PT-KBC-VERIFY', 'the open workspace root identity changed') from exc
 
     def _transaction(self, work: Callable[[sqlite3.Connection], Any]) -> Any:
         self._writable()
@@ -206,49 +335,69 @@ class WorkspaceStore:
             result = work(self.db)
             self.db.execute('COMMIT')
             return result
-        except BaseException:
-            if self.db.in_transaction:
-                self.db.execute('ROLLBACK')
+        except BaseException as exc:
+            try:
+                if self.db.in_transaction:
+                    self.db.execute('ROLLBACK')
+            except BaseException:
+                exc.add_note('Workspace transaction rollback failed; close the workspace before reuse.')
             raise
 
     # ------------------------------------------------------------------------------------------ objects
 
     def object_path(self, sha: str) -> Path:
-        return self.root / 'objects' / sha[:2] / f'{sha}.gz'
+        return self._object_root / 'objects' / sha[:2] / f'{sha}.gz'
 
-    def write_object(self, sha: str, raw: bytes) -> None:
+    def write_object(self, sha: str, raw: bytes, *, require_existing: bool = False) -> None:
+        self._writable()
         if _sha(raw) != sha:
             raise KbcStoreError('PT-KBC-VERIFY', 'the document bytes do not match their SHA-256')
-        path = self.object_path(sha)
+
+        def validate(compressed: bytes) -> None:
+            self._decode_object(compressed, sha, maximum=len(raw), expected_size=len(raw))
+
         try:
-            if path.is_file() and self._object_ok(path, sha):
-                return
-            atomic_write(path, _gz(raw))
-        except OSError as exc:
+            publish_bytes(self.object_path(sha), _gz(raw), validate_existing=validate,
+                          maximum=len(raw) + 65_536, require_existing=require_existing, anchor=self._object_anchor)
+        except OwnedPublicationError as exc:
+            raise KbcStoreError('PT-KBC-VERIFY', 'workspace object ownership or bytes cannot be verified') from exc
+        except (OSError, NotImplementedError, AttributeError) as exc:
             raise KbcStoreError('PT-KBC-STORAGE', 'a workspace object cannot be written',
-                                details={'errno': exc.errno}) from exc
+                                details={'errno': getattr(exc, 'errno', None)}) from exc
 
-    def _object_ok(self, path: Path, sha: str) -> bool:
+    @staticmethod
+    def _decode_object(compressed: bytes, sha: str, *, maximum: int, expected_size: int | None = None) -> bytes:
         try:
-            return _sha(gunzip_bounded(path.read_bytes(), self.limits.cvrf_doc_bytes)) == sha
-        except Exception:  # noqa: BLE001 (a damaged object is simply not ok; the caller rewrites it)
-            return False
-
-    def read_object(self, sha: str) -> bytes:
-        try:
-            raw = gunzip_bounded(self.object_path(sha).read_bytes(), self.limits.cvrf_doc_bytes)
-        except OSError as exc:
-            raise KbcStoreError('PT-KBC-STORAGE', 'a workspace object is missing or unreadable') from exc
+            raw = gunzip_bounded(compressed, maximum)
         except Exception as exc:
             raise KbcStoreError('PT-KBC-VERIFY', 'a workspace object is damaged') from exc
-        if _sha(raw) != sha:
-            raise KbcStoreError('PT-KBC-VERIFY', 'a workspace object does not match its SHA-256')
+        if _sha(raw) != sha or (expected_size is not None and len(raw) != expected_size):
+            raise KbcStoreError('PT-KBC-VERIFY', 'a workspace object does not match its recorded bytes')
         return raw
+
+    def read_object(self, sha: str, *, maximum: int | None = None, expected_size: int | None = None) -> bytes:
+        limit = self.limits.cvrf_doc_bytes if maximum is None else maximum
+        decoded: list[bytes] = []
+
+        def validate(compressed: bytes) -> None:
+            decoded.append(self._decode_object(compressed, sha, maximum=limit, expected_size=expected_size))
+
+        try:
+            read_bytes(self.object_path(sha), maximum=limit + 65_536, validate=validate,
+                       anchor=self._object_anchor)
+        except OwnedPublicationError as exc:
+            raise KbcStoreError('PT-KBC-VERIFY', 'workspace object ownership or bytes cannot be verified') from exc
+        except (OSError, NotImplementedError, AttributeError) as exc:
+            raise KbcStoreError('PT-KBC-STORAGE', 'a workspace object is missing or unreadable') from exc
+        return decoded[0]
 
     def unreferenced_objects(self) -> tuple[str, ...]:
         """SHA-256 of objects no document row refers to (crash leftovers); eviction is the caller's choice."""
+        from .inventory_store import referenced_raw_hashes
+
         known = {r[0] for r in self.db.execute('SELECT sha256 FROM docs')}
-        base = self.root / 'objects'
+        known.update(referenced_raw_hashes(self))
+        base = self._object_root / 'objects'
         found = {p.stem for p in base.glob('*/*.gz')} if base.is_dir() else set()
         return tuple(sorted(found - known))
 
@@ -371,7 +520,9 @@ class WorkspaceStore:
                    (rev.investigation_id, rev.revision, body, _sha(body.encode()), now))
 
     def append_revision(self, rev: InvestigationRevision, *, expected_current: int,
-                        journal: tuple[str, str, dict] | None = None) -> None:
+                        journal: tuple[str, str, dict] | None = None,
+                        decisions: tuple[AnalystDecision, ...] = (),
+                        guard: Callable[[], None] | None = None) -> None:
         """Compare-and-swap: commits only if the current revision is ``expected_current``. An optional journal
         update (op_id, state, body) lands in the same transaction, so the step and its record cannot diverge."""
         if rev.revision != expected_current + 1 or rev.parent != expected_current:
@@ -380,14 +531,23 @@ class WorkspaceStore:
         self.fault('before_cas')
 
         def work(db: sqlite3.Connection) -> None:
+            if guard is not None:
+                guard()
             now = self.clock.now_utc()
             changed = db.execute('UPDATE investigations SET current_revision=? WHERE investigation_id=? '
                                  'AND current_revision=?', (rev.revision, rev.investigation_id, expected_current))
             if changed.rowcount != 1:
                 raise KbcStoreError('PT-KBC-STALE', 'the investigation moved on; reload it')
             self._insert_revision(db, rev, now)
+            for decision in decisions:
+                db.execute('INSERT INTO decisions(investigation_id, body) VALUES (?,?)',
+                           (rev.investigation_id, _json(decision)))
+            if decisions:
+                self.fault('after_revision_decisions')
             if journal is not None:
                 self._journal_write(db, *journal, now=now)
+            if guard is not None:
+                guard()
 
         self._transaction(work)
 
@@ -475,12 +635,36 @@ class AttachRequest:
     selected_product: ProductScope | None = None
 
 
-def _file_sha(path: str) -> str:
+def _check_input_readers(readers: PairInputReaders | None, older: str, newer: str) -> None:
+    if readers is not None:
+        readers.checkpoint(0)
+        readers.older.check(Path(older))
+        readers.newer.check(Path(newer))
+        readers.checkpoint(0)
+
+
+def _reader_options(readers: PairInputReaders | None) -> tuple[dict, dict]:
+    return ({}, {}) if readers is None else ({'reader': readers.older}, {'reader': readers.newer})
+
+
+def _input_block(handle, *, held: bool) -> bytes:
+    block = handle.read(1 << 20)
+    if held and (type(block) is not bytes or len(block) > 1 << 20):
+        raise InputReadError('invalid')
+    return block
+
+
+def _file_sha(path: str, *, reader: HeldInput | None = None) -> str:
     digest = hashlib.sha256()
+    target = Path(path)
     try:
-        with open(path, 'rb') as handle:
-            for block in iter(lambda: handle.read(1 << 20), b''):
+        if reader is not None:
+            reader.check(target)
+        with (open(path, 'rb') if reader is None else reader.open_reader(target)) as handle:
+            for block in iter(lambda: _input_block(handle, held=reader is not None), b''):
                 digest.update(block)
+        if reader is not None:
+            reader.check(target)
     except OSError as exc:
         raise KbcStoreError('PT-KBC-VERIFY', 'an input file cannot be read', details={'errno': exc.errno}) from exc
     return digest.hexdigest()
@@ -493,9 +677,11 @@ def _revision_of(body: dict) -> InvestigationRevision:
 class ProjectAttachment:
     """Two-phase, journalled attach of an investigation to a new project; ``attach`` and ``resume`` share one path."""
 
-    def __init__(self, workspace: WorkspaceStore, project: ProjectPort):
+    def __init__(self, workspace: WorkspaceStore, project: ProjectPort, *,
+                 input_readers: PairInputReaders | None = None):
         self.ws = workspace
         self.project = project
+        self._input_readers = input_readers
         self.fault = workspace.fault
         self.clock = workspace.clock
 
@@ -540,6 +726,7 @@ class ProjectAttachment:
             'newer': request.newer_sha, 'directory': Path(request.directory).resolve().as_posix()})
 
     def _begin(self, op_id: str, request: AttachRequest) -> None:
+        _check_input_readers(self._input_readers, request.older_path, request.newer_path)
         current = self.ws.current_revision(request.revision.investigation_id)
         if current is None or current.revision != request.revision.revision or current.state != 'BYTES_VERIFIED':
             raise KbcStoreError('PT-KBC-STALE', 'attach needs the current BYTES_VERIFIED revision')
@@ -549,14 +736,16 @@ class ProjectAttachment:
             raise KbcStoreError('PT-KBC-INPUT', 'the captured product must match the product-only investigation')
         if request.older_sha == request.newer_sha:
             raise KbcStoreError('PT-KBC-VERIFY', 'the two sides are the same bytes')
-        for path, sha in ((request.older_path, request.older_sha), (request.newer_path, request.newer_sha)):
-            if _file_sha(path) != sha:
+        files = ((request.older_path, request.older_sha), (request.newer_path, request.newer_sha))
+        for (path, sha), options in zip(files, _reader_options(self._input_readers), strict=True):
+            if _file_sha(path, **options) != sha:
                 raise KbcStoreError('PT-KBC-VERIFY', 'an input file does not match its verified SHA-256')
         directory = Path(request.directory)
         if not creation_directory_available(directory):
             raise KbcStoreError('PT-KBC-STORAGE', 'the project directory exists and is not empty')
         for sha in request.source_shas:
             self.ws.read_object(sha)  # fail before any side effect if a source object is damaged
+        _check_input_readers(self._input_readers, request.older_path, request.newer_path)
         self.ws.journal_put(op_id, 'intent', {
             'state': 'intent', 'directory': directory.resolve().as_posix(), 'older_path': request.older_path,
             'newer_path': request.newer_path, 'older_sha': request.older_sha, 'newer_sha': request.newer_sha,
@@ -569,12 +758,15 @@ class ProjectAttachment:
 
     def _create(self, op_id: str, body: dict) -> dict:
         # Re-verify: a resume may run long after the intent was written.
-        for path, sha in ((body['older_path'], body['older_sha']), (body['newer_path'], body['newer_sha'])):
-            if _file_sha(path) != sha:
+        _check_input_readers(self._input_readers, body['older_path'], body['newer_path'])
+        files = ((body['older_path'], body['older_sha']), (body['newer_path'], body['newer_sha']))
+        for (path, sha), options in zip(files, _reader_options(self._input_readers), strict=True):
+            if _file_sha(path, **options) != sha:
                 raise KbcStoreError('PT-KBC-VERIFY', 'an input file changed since it was verified')
+        _check_input_readers(self._input_readers, body['older_path'], body['newer_path'])
         try:
             made = self.project.create_project(body['older_path'], body['newer_path'], directory=body['directory'])
-        except KbcStoreError:
+        except (KbcStoreError, InputReadError):
             raise
         except Exception as exc:
             raise KbcStoreError('PT-KBC-STORAGE', 'the project could not be created',

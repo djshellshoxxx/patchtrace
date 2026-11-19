@@ -62,6 +62,15 @@ PackagePart (kind msu|cab|cat|mum|manifest|delta|fullfile|unknown, inner_path, c
 PackageInventory (package_id, parts, selected_product_scope_id?, applicability, manifest_evidence, component_claims, warnings, complete boolean)
 All member paths are logical archive paths; physical extraction stays under private root.
 
+PW-02 amendment (2026-11-18): the bounded implementation contract is
+[local-package-intake.md](../local-package-intake.md). Per-member compressed size
+may be unknown for shared CAB folders. `complete` describes enumeration of the
+requested scope, not verification of all member bytes; header-only records carry
+no invented observed hash. Initial Windows FDI input is limited to `2**31 - 1`
+bytes per container because its seek callback uses signed `long`; the wider D6
+ceiling does not imply this first capability can accept 4 GiB CABs. Native Windows
+and frozen journey qualification remain required before PW-02 completion.
+
 For Windows servicing, catalog-provided MSUs on 24H2 and Server 2025+ may depend on previous checkpoint updates. Graph prerequisites come from independently sourced metadata; do not infer dependencies solely from naming or KB order. DISM image servicing, if offered in a later separate milestone, MUST operate only on an explicitly supplied disposable offline image, never /Online or the analyst workstation. Different servicing baselines, optional features and languages may yield different outputs.
 
 ## D6. Extraction threat model and budgets

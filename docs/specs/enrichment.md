@@ -58,6 +58,25 @@ Timestamps, display preferences and absolute paths are never hashed. Existing pr
 
 `SourceLocation`: `side`, `artifact_id`, `run_id`, `function_id`, `representation` (`decompiled|assembly|metadata`), `start_line`, `end_line` (1-based inclusive, `end >= start`), `excerpt_sha256` (SHA-256 of the exact UTF-8 lines joined by `\n`), optional `address` (int ≥ 0; 0 is valid; null = unknown). Before navigation or save, `validate_location(project, loc)` checks artifact/run/function ownership, side, line bounds and excerpt hash. Implemented as `views.validate_location(project_or_run_view, loc)` (`PT-ENRICH-OWNERSHIP` / `PT-ENRICH-STALE`; SPEC-07h Phase D amendment).
 
+Desktop navigation amendment (2026-11-18, P2-NAV-1): each supported signal activation must
+call that existing validator against the live project before switching display
+mode or revealing any code. A schema-valid or checksum-valid stored row is not
+authorization to navigate. A mismatched function/run/artifact/side/address or
+stale line range/excerpt produces a plain, bounded diagnosis (at most 300
+characters, including the typed code) through the existing error presentation;
+the current mode and selections stay unchanged. Valid activation keeps the
+existing decompiled-code navigation, including address zero, and may switch
+from another display mode. Repeat activations recheck live data. Refusal writes
+no project, ranking, signal or derived-store data. This repairs the deferred
+desktop call site without changing detector, score, confidence, schema,
+publication or cache behavior. The signal action supports only decompiled
+locations: a stored `assembly` or `metadata` location must be refused with a
+fixed `PT-ENRICH-INPUT` diagnosis before changing mode or selection, even when
+the existing shared validator accepts that representation's excerpt. The
+action must never substitute decompiled text for a validated assembly or
+metadata excerpt. `ui_signal_navigation.py` owns this presentation boundary;
+`views.validate_location` retains its existing broader semantics.
+
 ## 5. B1 change signals (`signals.py`)
 
 Input: `MatchView` (immutable): pairing id, match id, category, older/newer function views (id, artifact id, run id, code lines, assembly lines or None), diff hunks from `alignment.diff_hunks`. Detectors only inspect lines inside changed hunks plus a bounded 6-line window of context for linkage.
@@ -148,6 +167,17 @@ Status: implemented 2026-10-12 and extended 2026-10-22 (`enrichment/profiles.py`
 
 Behavior: Setup gains a Profiles tab (create/duplicate/edit/delete non-default; validation errors shown inline; incompatible combinations — e.g. all detectors disabled — rejected). Rank changes uses the selected profile; when it is not `default` the navigator header shows the profile name and the ranking rows are published under their own stage IDs, so `load_default` remains correct; the desktop loads the selected profile's rows by `config_digest`. CLI gains `--profile NAME|FILE` (mutually exclusive with `--weights`/`--disable`). Exports record the profile digest and name. Acceptance: round-trip, strict rejection (bools, extra keys, unknown IDs), digest invariance under presentation edits, GUI/CLI/report agreement for a non-default profile, no secret persisted.
 
+Dirty profile navigation amendment (2026-11-19 UTC, audit #116): selecting another
+profile or creating/duplicating one must resolve the current editable draft with
+Save, Discard or Cancel. Save validates and commits before continuing; validation
+or storage failure retains the draft, previous selection and inline error. Cancel
+retains the draft and selection without writing. Discard is the explicit choice
+to continue without committing the draft. A save that renames the current profile
+must still navigate to the originally requested destination. Internal successful
+save/reload does not re-enter the navigation prompt. Unchanged/read-only profiles
+navigate without a prompt. Existing Setup acceptance and delete confirmations
+retain their separate semantics. No profile/schema or provider-consent change.
+
 ## 13. Raw output cache integration
 
 Status: implemented 2026-10-12 in `backend.run_comparison`; enabled only when the selected profile sets `cache_dir`. Java is now probed (`java -version` on the child's JDK); any unparseable version makes the run ineligible. Fingerprint `adapter_version` is `patchtrace-ghidriff-adapter/1` and must change whenever PatchTrace changes Ghidriff argv/options. Hits are labelled in the match tooltip.
@@ -157,3 +187,20 @@ After a completed native run, if `RuntimeFingerprint.eligible()` (all versions k
 ## 14. Acceptance
 
 See tests `tests/test_enrichment_*.py`. Golden arithmetic, invariants (property-based where useful), negatives listed per detector, ownership forgery, side reversal, stable ordering, CLI/GUI/report value agreement, storage compatibility with v1 code paths. Performance objectives: 10,000 pairs / 100,000 lines in 10 s / 512 MiB — measured 6.6 s / 240 MiB (synthetic, Linux, `tools/bench_enrichment.py`); derived-cache hit 500 ms — measured 3.1 s, **not met** (input hashing and ownership revalidation dominate; both are correctness requirements). Phase D track B (same synthetic workload, best of 3 on one shared Linux host): 4.49 s before, 1.79 s after; still **not met** (`docs/qa.md` `[B:hardening]`). UI responsiveness at that scale and Windows timings are unmeasured.
+
+### B3 numeric and UTC boundary recovery (2026-11-19)
+
+The CVE normalizer accepts only finite scores exactly representable in tenths from
+0.0 through 10.0. Its decimal context is local and deterministic: the caller's
+precision, rounding mode, traps and flags cannot round an invalid provider value
+into an accepted score or change a valid one. Redundant trailing zeroes remain
+eligible. Unsupported exponents, sub-tenth fractions and decimal failures become
+`PT-ENRICH-PROVIDER`, so one invalid provider does not discard an independently
+usable response. This preserves existing normalized score identities.
+
+Retrieval and freshness times must be timezone-aware and representable in UTC.
+A valid local ISO timestamp whose offset would cross the datetime range becomes
+`PT-ENRICH-INPUT` before contextual ranking or freshness comparison. Valid extreme
+UTC dates retain their original provenance spelling. Recovery controls use authored
+mutations of existing redacted fixtures; they establish parser behavior, not new
+provider accuracy or native analysis evidence.

@@ -29,6 +29,14 @@ Assumption: Microsoft binaries and PDBs cannot be redistributed. The repository,
 3.1 Two tiers.
 - Tier R (redistributable, CI-runnable): PE/ELF-free small corpus built from permissively licensed open source (zlib, libpng, sqlite, lua, mbedTLS/others chosen by license check) compiled by a pinned toolchain (clang-cl/mingw-w64 or MSVC on Windows runners) at several versions x optimisation profiles x stripped/with-PDB. Distributed as source pins + build recipe + expected SHA-256 of outputs; outputs themselves may be cached as CI artifacts. Ground truth is exact (debug info/source names) and legal to publish. Weakness: not MSVC-Windows-system-code-like. Used for pipeline CI, regression, ablation, and a labelled public benchmark.
 - Tier W (local-only Windows): binaries obtained via Winbindex acquisition already in `src/patchtrace/acquisition/winbindex.py`, stored under a git-ignored root (`PATCHTRACE_CALIB_ROOT`, default `~/.patchtrace-calibration/`). Repo carries only manifests (hashes + identity + fetch recipe) and optionally label files in the reduced form of 3.3.
+
+Corpus-root resolution is lazy: importing the corpus tools or Tier-R command parser
+does not look up the user's home. An explicit `PATCHTRACE_CALIB_ROOT` works in a
+restricted worker without `USERPROFILE` or another home setting. Only requesting
+the default root resolves the home directory; an unavailable home remains an error,
+never a silent fallback into the checkout. Existing child-environment allowlists
+and the outside-worktree corpus guard remain unchanged.
+
 3.2 Manifest `calibration-corpus/1` (strict JSON, same loader discipline as `acquisition.winbindex.strict_json`: duplicate keys and NaN rejected, pydantic strict `extra=forbid`). Key fields:
 ```
 { "contract":"calibration-corpus/1","corpus_id":"...","created":"2026-..","tool_git":"<sha>",

@@ -1,0 +1,117 @@
+{
+  "baseline": "8c89a488a22a9317aa4fe593f602536f46853944",
+  "evidence": {
+    "pe-cache-final-cache.log": {
+      "bytes": 179,
+      "sha256": "6920b1e9d1012cff85d955e291619f1c35637332f6d7bc68307ede656ea81e34"
+    },
+    "pe-cache-final-cache.xml": {
+      "bytes": 12546,
+      "sha256": "fb0db4378c2bda6674d235ab63940abceb6c9f29ba6447be4d4375f2a6c84019"
+    },
+    "pe-cache-final-groups.json": {
+      "bytes": 1213,
+      "sha256": "819913b0eba70d5ad343b5dc0b6853d823c9e684b27f5232ba420589106b25c5"
+    },
+    "pe-cache-final-inspection.log": {
+      "bytes": 180,
+      "sha256": "3e42c88caac19952963c796cb6dea1db410d34ca24cb508a52beb74dad1f5f60"
+    },
+    "pe-cache-final-inspection.xml": {
+      "bytes": 10056,
+      "sha256": "d66cf75a00248721fc43380a13c2466ba360c40a6d4926ff4aa2424125bad899"
+    },
+    "pe-cache-final-metadata-cli.log": {
+      "bytes": 99,
+      "sha256": "a324effc8dacd457d8c1cc582b77ed84dd4c6ba7147b26a3f8d14a013243a061"
+    },
+    "pe-cache-final-metadata-cli.xml": {
+      "bytes": 4473,
+      "sha256": "f156a0c9610a345519c911c7267e9c9c3ad436d66b45ab888d73edde393600fd"
+    },
+    "pe-cache-final-storage.log": {
+      "bytes": 99,
+      "sha256": "3816e2cda93c87ca60f44038cd3caf2bffaa3ac2613309520c494d34cf60d8cf"
+    },
+    "pe-cache-final-storage.xml": {
+      "bytes": 2751,
+      "sha256": "130fe04f5055fb26355459125fe579407bdd6e53c08f8ffeb07ad44374c67bc4"
+    },
+    "pe-cache-integration-announcement-red.log": {
+      "bytes": 7355,
+      "sha256": "3a0d7d4ca2a99acc4fbd0b963a6ec3d27abffa8b431fc26b7fc6ca7497e0e3b8"
+    },
+    "pe-cache-recovery-baseline-red.log": {
+      "bytes": 2021,
+      "sha256": "8e3167660dc02dfbc38ceade3ab04c9c04d1eccbed8ba59b904c81674b79c0eb"
+    },
+    "pe-cache-regression.log": {
+      "bytes": 695,
+      "sha256": "ef485e122e413b08cc8e20bc64eb72cb6550f59e244239001f95c7ab3c6a8176"
+    },
+    "pe-cache-row-metadata-red.log": {
+      "bytes": 6377,
+      "sha256": "7bd0ad28c67aa87294a391317eb91b53f133ce93926d72db827dd52d43d7cdc1"
+    },
+    "pe-cache-source-boundary-red.log": {
+      "bytes": 27172,
+      "sha256": "a4de4146034fda1b3247133b0beb693a216b0c3b2896cf3d1dcf60d9eeb1ec5e"
+    }
+  },
+  "final_checks": [
+    {
+      "errors": 0,
+      "failures": 0,
+      "group": "cache",
+      "skipped": 0,
+      "tests": 75
+    },
+    {
+      "errors": 0,
+      "failures": 0,
+      "group": "storage",
+      "skipped": 0,
+      "tests": 20
+    },
+    {
+      "errors": 0,
+      "failures": 0,
+      "group": "inspection",
+      "skipped": 0,
+      "tests": 81
+    },
+    {
+      "errors": 0,
+      "failures": 0,
+      "group": "metadata-cli",
+      "skipped": 0,
+      "tests": 38
+    }
+  ],
+  "qualifications": [
+    "Four bounded subprocess groups are disjoint by selected test file.",
+    "Prior 72-pass intermediate results and red-run passes overlap the final gate and are not added.",
+    "The broad PE wildcard attempt was killed without a pytest summary or XML; its partial progress receives no pass credit.",
+    "Synthetic PE and offscreen Qt tests do not qualify Windows trust, native engines or assistive technologies."
+  ],
+  "schema": "patchtrace-scoped-recovery-evidence/1",
+  "scope": "SPEC-51 offline PE metadata cache and existing inspection-worker integration",
+  "source_cache_commit": "bdc929ebd3c6aaa2563c758936beb315a10eeea0",
+  "source_head": "2511301fc26bf0e039f54828959c422b4ff761a2",
+  "source_sha256": {
+    "docs/modules.md": "3884b245e215e11ff9368b87f377359e4a10fec12ae9f5d065372bb525a2d12d",
+    "docs/specs/pe-version-authenticode.md": "2df383ced2aa4671f2ecb0a08bfe57a713859eba0d11a7d97cce798247dc2cc4",
+    "src/patchtrace/artifact_inspection.py": "6b307502a114a9f28f9b6fe3173bf57689b798b548e0cb39c6701b39a7217142",
+    "src/patchtrace/enrichment/storage.py": "3191946443df1d285a7e366115abec2a912c07b9f061cac711c6690193c9de54",
+    "src/patchtrace/pe_overview/cache.py": "4dfbd859546c2f76d736edb34fc6859d914e35a91a655d745a1366a900718b27",
+    "src/patchtrace/pe_overview/cache_codec.py": "e550b5b2f557575632d69e22abcfaef90a93d8f824efca5f2d80d0920f6be4cf",
+    "src/patchtrace/pe_overview/cache_store.py": "4aa38bededf181411d1615862a06add04707b68be9d180e1eff801c4932bbe47",
+    "src/patchtrace/pe_overview/signing_view.py": "7d3d2c89c146d3a89b78025c3d295f75777d73ec5c1270809fd855482d66dede",
+    "src/patchtrace/ui.py": "773a229c0f3f616cae130ec5fc5529c640d1bb6ccd5f6f896391c423d323b08b",
+    "src/patchtrace/ui_inspection.py": "73677870a70360aed0ae72e58cd7d88121f27b9d1ad9d59643fecace1aa5aa9d",
+    "tests/test_files_announcements.py": "f9002592e71fdf5238e98748c0de8b093b0782b5602939126245d6b4b68098bf",
+    "tests/test_pe_metadata_cache.py": "f6415968d3c89ad137ca3cabceee60e7318638d38e3ece3ee92c4624a9a9a911",
+    "tests/test_pe_metadata_cache_qt.py": "1f79d0fd127b6c4962bef518885cd917426a843b8ef068648988980dc623ff62",
+    "tests/test_pe_metadata_cache_recovery.py": "9b7c042d62830a4f2f2d89e02ae10427cf5ed9a0174acfd1300225a583a3d244"
+  }
+}

@@ -16,7 +16,7 @@ Nothing here mutates the project, executes artifacts or touches the network.
 """
 from __future__ import annotations
 
-from collections.abc import Callable, Iterable
+from collections.abc import Callable, Iterable, Mapping
 from dataclasses import dataclass, field
 from pathlib import Path
 
@@ -25,6 +25,7 @@ from .ingestion import safe_path
 from .models import Artifact
 from .pe_overview import FieldComparison, PeOverview, compare_overviews, inspect_pe
 from .pe_overview.authenticode import TrustResult, verify_authenticode
+from .pe_overview.metadata import PeMetadata, inspect_metadata
 
 SIDES = ('older', 'newer')
 
@@ -37,6 +38,7 @@ class SideInspection:
     error_code: str | None = None
     error: str | None = None
     trust: TrustResult | None = None
+    metadata: PeMetadata | None = None
 
 
 @dataclass(slots=True)
@@ -59,6 +61,7 @@ class ProjectInspection:
 def inspect_project_artifacts(project_id: str, artifacts: Iterable[Artifact], root: Path,
                               cancel: Callable[[], bool] | None = None,
                               verify_trust: Callable[[Path], TrustResult] = verify_authenticode,
+                              *, metadata_cache: Mapping[str, PeMetadata] | None = None,
                               ) -> ProjectInspection:
     """Inspect both sides. ``verify_trust`` is the platform Authenticode probe (Windows only,
     embedded signatures, no revocation, no network); it runs only on hash-verified copies."""
@@ -69,14 +72,14 @@ def inspect_project_artifacts(project_id: str, artifacts: Iterable[Artifact], ro
     sides: dict[str, SideInspection] = {}
     readers: dict[str, VerifiedArtifactReader] = {}
     try:
-        return _inspect_sides(project_id, by_side, root, cancel, verify_trust, sides, readers)
+        return _inspect_sides(project_id, by_side, root, cancel, verify_trust, sides, readers, metadata_cache or {})
     except BaseException:
         for reader in readers.values():
             reader.close()  # the caller never receives them, so nothing else can
         raise
 
 
-def _inspect_sides(project_id, by_side, root, cancel, verify_trust, sides, readers) -> ProjectInspection:
+def _inspect_sides(project_id, by_side, root, cancel, verify_trust, sides, readers, metadata_cache) -> ProjectInspection:
     cancelled = False
     for side in SIDES:
         artifact = by_side[side]
@@ -107,7 +110,20 @@ def _inspect_sides(project_id, by_side, root, cancel, verify_trust, sides, reade
                 trust = verify_trust(safe_path(Path(root), artifact.relative_path))
             except Exception as exc:  # noqa: BLE001 - trust probe failure is reported, never fatal
                 trust = TrustResult('unavailable', None, f'Authenticode probe failed: {type(exc).__name__}')
-        sides[side] = SideInspection(side, artifact.sha256, overview=overview, trust=trust)
+        metadata = None
+        if not cancelled and overview.status != 'not_pe':
+            try:
+                # The reader was freshly hash-verified even when its metadata is cached.
+                metadata = metadata_cache.get(artifact.sha256)
+                if metadata is None:
+                    metadata = inspect_metadata(reader, overview, cancel)
+                cancelled = cancelled or metadata.status == 'cancelled'
+            except Exception:  # a metadata defect must not hide the basic overview or the other side
+                metadata = None
+        sides[side] = SideInspection(side, artifact.sha256, overview=overview, trust=trust, metadata=metadata)
+    # Cancellation may arrive during the final metadata stage or a cache hit.
+    # There is no next loop iteration to observe it in that case.
+    cancelled = cancelled or (cancel is not None and cancel())
     older, newer = sides['older'].overview, sides['newer'].overview
     comparisons = compare_overviews(older, newer) if older is not None and newer is not None else ()
     return ProjectInspection(project_id, sides, comparisons, cancelled, readers)

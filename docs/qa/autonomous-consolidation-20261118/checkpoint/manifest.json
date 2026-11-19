@@ -1,0 +1,186 @@
+{
+  "schema": "patchtrace-autonomous-repair-checkpoint/1",
+  "source_commit": "9002a1f44c6aebcf2c49b29d631aacf20e7ce9e3",
+  "source_tree": "9f38ab7cd074469238851aadb19536d1d366d9da",
+  "main_sha": "9c411ca3d7b47f950be5f0c6f01b3c54184554c6",
+  "pr304_published_sha": "d8c02caea407f6d323eecd636735849c1eb31a2d",
+  "pr307_previous_published_sha": "1418617a80d6057de11f985488cfe6043a7787a2",
+  "source_files": [
+    {
+      "path": "src/patchtrace/owned_publication.py",
+      "sha256": "5903c6b9b568e20267880ffdf1ab47f02c35590b6ead6cddb3f5bfaf9b546e7b"
+    },
+    {
+      "path": "src/patchtrace/kbcorrelation/store.py",
+      "sha256": "df07391848ebaafd6a175888877f89de2f09bf506760f2e19f1eba1c5e3d93da"
+    },
+    {
+      "path": "src/patchtrace/kbcorrelation/inventory_store.py",
+      "sha256": "bbd462564abeb5a7ba0076e5b3597604bb8090a720d25522eabe302d141ec418"
+    },
+    {
+      "path": "tools/research_qualification/winpairs.py",
+      "sha256": "a46d86edb6aadbd955c6d8f898da6ad69923a60c9f2b52496956498a99167acd"
+    },
+    {
+      "path": "tools/research_qualification/adapters/ghidriff.py",
+      "sha256": "352ff06bce58b4397eddb78513500a02a529cb1666c8cff665f8a9ed3cf06988"
+    },
+    {
+      "path": "tests/test_kbc_object_publication.py",
+      "sha256": "c8486164904aeec06e32bad3305b050b3f7687c11dc32dac3849711f63736247"
+    },
+    {
+      "path": "tests/test_owned_publication.py",
+      "sha256": "717a82d6e39649cf900dacba6696234005eb950d3145d9f582020b98d781a7be"
+    },
+    {
+      "path": "tests/test_research_qualification_ghidriff_identity.py",
+      "sha256": "e9ee6ee74cfa4b8dc134e239e5dcf473515542708957ccb46917cb5a4e45a270"
+    },
+    {
+      "path": "tests/test_tooltips.py",
+      "sha256": "46783fabe2ea4785cdfec74867a7f0a3930d6d628d82455ec36a89280ffc00ab"
+    },
+    {
+      "path": "tests/test_kbc_contracts.py",
+      "sha256": "6d89b255108976b8fc0dc012f07ffeb6f8be28155f42353285dbb0d2b8793a69"
+    },
+    {
+      "path": ".github/workflows/qa-windows.yml",
+      "sha256": "db5ad8bca023838fd1a7df381fac9afcd9fc4985c9be5b6457eb41e14b128643"
+    }
+  ],
+  "entries": [
+    {
+      "path": "combined/affected.log",
+      "bytes": 3243,
+      "sha256": "e14abd258cdc40349337dd78a19ab4e6b5bf58f9342160937b7e189d443853e9"
+    },
+    {
+      "path": "combined/affected.xml",
+      "bytes": 407832,
+      "sha256": "06dfba6c90c8932b1668d7903021c9239ab88e077905dc86eb58e2a30a95ccae"
+    },
+    {
+      "path": "combined/source-head.txt",
+      "bytes": 41,
+      "sha256": "420086c4b1edc4a3323873a93ff2f8330977ba11b454c08b082472a89acd653b"
+    },
+    {
+      "path": "current-native/ghidriff-clean-d8c02cae.zip",
+      "bytes": 96596,
+      "sha256": "d2ad8ac8d0a5edc423bee009c53e919e9b3274b40dafec865227d1e70bb57e2e"
+    },
+    {
+      "path": "current-native/job-134854104185.log",
+      "bytes": 48897,
+      "sha256": "1107ffc980c15cefeaf12af9e980296c21098e0cd34cfd204a6b0425d7834972"
+    },
+    {
+      "path": "current-native/job-134854114336.log",
+      "bytes": 43547,
+      "sha256": "45e5269ffd1f0ecc32d4b3bd7e825a2e9026ad03c3f92e29c75d06030284145e"
+    },
+    {
+      "path": "current-native/job-134854114854.log",
+      "bytes": 89771,
+      "sha256": "2e45053d8861728eab497647100d2b6097fd003219fa9f92b79cc59817b83097"
+    },
+    {
+      "path": "current-native/job-134854121881.log",
+      "bytes": 137165,
+      "sha256": "f7bda4af75e0b630feaa6562e6fd853e2fbc7031ab91fd6c778386dccf4292e9"
+    },
+    {
+      "path": "current-native/source-proof.json",
+      "bytes": 606,
+      "sha256": "4148ce7c04e1c8b3df1e3ee59afd1c0c255afaf4275690715d073cb658b54eb4"
+    },
+    {
+      "path": "ghidriff-independent/results.log",
+      "bytes": 98,
+      "sha256": "cf3877f5a0006b0cfe5842a91c99c70d59a6ac6d7e439551f7f664fc7cfe8886"
+    },
+    {
+      "path": "ghidriff-independent/results.xml",
+      "bytes": 1417,
+      "sha256": "227beae3ac3133beba8b7aae2559d167ba6bb29ad998e2e6c231176e3e567baa"
+    },
+    {
+      "path": "ghidriff-independent/test_rank_controls.py",
+      "bytes": 3955,
+      "sha256": "28d730f2b958d45d1d62693f3c1b6a1b3671289c53b0958689fae77e4310968c"
+    },
+    {
+      "path": "object-independent/integrated.log",
+      "bytes": 98,
+      "sha256": "28dc6d5399d1981687db3d419b9bcba5286cae926208993213af8e03278ceb43"
+    },
+    {
+      "path": "object-independent/integrated.xml",
+      "bytes": 1403,
+      "sha256": "61bfe29f49920e493fc8928a9a99639546bf23cf3db6b14a43590b6930de26a8"
+    },
+    {
+      "path": "object-independent/results.log",
+      "bytes": 98,
+      "sha256": "4a372a72e53f28381843e889ad3a76589427dc59ea165e4a96185878899503a9"
+    },
+    {
+      "path": "object-independent/results.xml",
+      "bytes": 1403,
+      "sha256": "4598fb42480af9c52740061bff36dc1f48433f48282383371a26385396d040bf"
+    },
+    {
+      "path": "object-independent/test_owned_controls.py",
+      "bytes": 5058,
+      "sha256": "e89f3827290661dcc2562ce1aa05e3a17f090865e474d4782f9845ad400f9ad4"
+    },
+    {
+      "path": "qualification/open-pr-review-checks-20261118.json",
+      "bytes": 460979,
+      "sha256": "53889e456e698045efd16120cc3c06d3772af621d7287864172f81abbc91a339"
+    },
+    {
+      "path": "qualification/pr304-focused-corrected.log",
+      "bytes": 271,
+      "sha256": "4d3af9cb6b883091023429189d9ec4d0abcb511754bfbe920ba96c5097d8d7f3"
+    },
+    {
+      "path": "qualification/pr304-focused-corrected.xml",
+      "bytes": 26283,
+      "sha256": "d89606dfe20e2796707af3752672dd5e9601eb9c9a4a8e3d2d98b45c1431460b"
+    },
+    {
+      "path": "qualification/pr304-focused.log",
+      "bytes": 115,
+      "sha256": "89f986854249d8e2e5acf008dd9ca0894294c740aa0d32dc8e6a8cd8cef22f1f"
+    },
+    {
+      "path": "qualification/pr304-full.log",
+      "bytes": 1292,
+      "sha256": "c605310bf4aa74bc66811edaa18607ea75e434c570ab4bf3738a436a09f08f0e"
+    },
+    {
+      "path": "qualification/pr304-published.log",
+      "bytes": 271,
+      "sha256": "eedbad85670e80957a452a9c512ff701ce58db5731d7889ec709e6ea67856b18"
+    },
+    {
+      "path": "qualification/pr304-published.xml",
+      "bytes": 26283,
+      "sha256": "8a9f3c6d2ceb61f58f7f19c12b5a24fa0b37a59217085cfd6830ce8ae228db9d"
+    }
+  ],
+  "archive": {
+    "path": "evidence.zip",
+    "bytes": 241103,
+    "sha256": "1ddb8c6b4d9114f1ef12cd90ed286e68aa54349442ea0577bbad2fc94f542de1"
+  },
+  "limits": [
+    "Focused Linux/offscreen evidence is not full/native/package acceptance.",
+    "Native receipts apply only to their recorded #304 source tree and authored fixtures.",
+    "No frozen research outcome, target acquisition, branch deletion, merge or release occurred."
+  ]
+}

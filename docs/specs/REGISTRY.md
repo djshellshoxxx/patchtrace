@@ -1,5 +1,18 @@
 # Spec registry
 
+2026-11-19 additive recovery: `docs/specs/version-provenance.md` owns bounded
+headless source/build observations and the `version` CLI; it grants no release
+or native qualification credit.
+
+2026-11-19 research recovery: `docs/specs/research-pilot.md` owns the offline
+synthetic build/audit/review/pilot receipt workflow; authored controls do not
+qualify native tools or accuracy.
+
+2026-11-18 CI input-integrity amendment: `docs/specs/ci-workflow-integrity.md`
+(`CI-INT`, approved repair; hosted qualification remains separate) owns immutable
+remote action references, corpus archive checks, Linux frozen CLI smoke wiring,
+and the separately scoped dependency-hash design.
+
 Canonical alias for every spec file under `docs/specs/`: the number each file's own text declares, its canonical alias, its status, and the code that owns it. Read this before you cite a spec number. Source files are not edited here. Where a title or prose uses another number, the alias in this file wins.
 
 **Status refresh, 2026-10-14 (branch `work/a`, 430d690).** Statuses and basis columns of Tables A and B were re-checked against code for SPEC-07h, 10, 10b, 11, 30, 31 (README and parts 02 to 08), 34, 35, 36 and the Table B rows (ledger findings F2 to F5 and F10 in `docs/specs/program-e/OUTSTANDING-specs-ledger.md`); SPEC-37 is not started. File lists and PR numbers in the snapshot below are historical.
@@ -181,3 +194,27 @@ This later draft registration does not refresh the historical tables or approve 
 | File | Proposed canonical alias | Status | Basis |
 |---|---|---|---|
 | `docs/specs/DOCKABLE-WORKSPACE-SPEC.md` | SPEC-DW-01 (proposed; cite by path) | draft | Compact adaptation of #183 at `ed70e6ddac449a42f843f1c60aa878416ab31727`; source baseline rechecked at candidate #235 `ccfe175d44a70947203c75bbd033a9a9e2633f0f`. Existing feature docks are present; independently dockable core sections, presets and durable workspace migration remain proposed. No runtime or release acceptance. |
+
+## PW-01 KB inventory extension
+
+| Path | Canonical alias | Status | Owner |
+|---|---|---|---|
+| `docs/specs/kb-file-inventory-csv.md` | PW-01 | implemented and independently reviewed; hosted/live acceptance tracked in QA | kbcorrelation inventory modules |
+
+## PW-02 local package extension
+
+| Path | Canonical alias | Status | Owner |
+|---|---|---|---|
+| `docs/specs/local-package-intake.md` | PW-02 | implementation candidate; native Windows and frozen journey pending | acquisition package modules and KB package facade |
+
+## Supporting qualification and publication contracts, 2026-11-18
+
+These supporting contracts are cited by path; no numeric SPEC alias is allocated.
+
+| Path | Scope | Status | Owner |
+|---|---|---|---|
+| `docs/specs/dependency-security-qualification.md` | Exact-source dependency and security qualification | Implemented; external scanner and hosted acceptance remain separate gates | Dependency/security qualification tooling |
+| `docs/specs/directory-publication.md` | Atomic no-replacement publication of complete private directories | Implemented and independently reviewed; native Windows acceptance pending | Shared directory publisher, project backup and offline runtime installer |
+| `docs/specs/core-held-inputs.md` | Optional operation-held input readers and precommit read checkpoints | Neutral core candidate; KB/native/package composition and Windows qualification remain separate | Input reader protocols, ingestion and project creation/verification |
+| `docs/specs/kb-held-inputs.md` | Internal propagation of held readers through existing KB admission | Candidate independently reviewed; durable held-origin recovery, postcommit read checkpoints and exposed package routes remain separate gates | Existing KB service, wiring and project attachment |
+| `docs/specs/windows-bindiff-network-acceptance.md` | Source-bound native BinDiff network-denial and process-ownership evidence | Portable validation independently reviewed; Windows build, containment and actual BinDiff acceptance pending | Windows native acceptance tooling and live BinDiff workflow |

@@ -1,0 +1,6 @@
+tree 5d99e0191562a89c57e860f7d5ba48e6bac92cb8
+parent ab20d71ce9b1595bff42f31a5913f8a2944b72c3
+author Codex <codex@openai.com> 1795045090 -0800
+committer Codex <codex@openai.com> 1795045491 -0800
+
+Specify Tier R exit-one summary recognition and failure diagnostics [no release]

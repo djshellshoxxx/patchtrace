@@ -21,6 +21,8 @@ from collections.abc import Callable, Mapping
 from dataclasses import dataclass
 from pathlib import Path
 
+from .directory_publication import publish_directory_no_replace as _publish_no_replace
+
 FORMAT = 'patchtrace-offline-runtime'
 MAX_MANIFEST = 16 * 1024 * 1024  # 60,000 records at ~190 bytes need ~11 MiB (SPEC-06 amended)
 MAX_MEMBERS = 60_000
@@ -449,19 +451,6 @@ def _validated_root(runtimes_root: Path) -> Path:
             resolved == system or resolved.is_relative_to(system) for system in _system_directories()):
         _fail('installation root must not be a filesystem root or operating-system directory')
     return raw
-
-
-def _publish_no_replace(stage: Path, destination: Path) -> None:
-    """Move stage to an absent destination. POSIX os.replace would replace an empty dir."""
-    if os.name == 'nt':
-        os.replace(stage, destination)  # Windows refuses to replace an existing directory.
-        return
-    os.mkdir(destination)  # reservation: fails if anything appeared at destination
-    try:
-        os.rename(stage, destination)  # rename over our own empty reservation
-    except OSError:
-        os.rmdir(destination)
-        raise
 
 
 def install_offline_bundle(plan: OfflineBundlePlan, runtimes_root: Path, *,

@@ -180,6 +180,72 @@ patchtrace strings export  PROJECT --out FILE --format json|csv [--scope changed
 ```
 Export is atomic, redacted by default, never overwrites without `--force`, and records basis and lineage.
 
+Publication clarification (2026-11-18): `--force` is the only authorization to
+replace a destination. A destination created after initial validation, including
+a dangling symlink, must remain unchanged without that flag. Stage each export
+in an exclusively created, unpredictable file beside the destination; a
+pre-existing temporary filename or symlink must never receive export bytes.
+Flush and sync the stage before atomic publication. If the filesystem cannot
+provide an atomic exclusive publication primitive, fail with `PT-STR-EXPORT`
+instead of falling back to replacement. Without `--force`, failure or cancellation
+cleans up the owned stage without removing an existing destination. Preserve JSON/CSV
+bytes, redaction defaults, digest results and CLI exit conventions.
+
+No-force ownership amendment (2026-11-19): without `--force`, publication and
+cleanup must bind the exact owned source even if a writer substitutes a staging
+pathname or moves its parent. Random names alone are insufficient. Use the
+shared owned publisher with an existing, ordinary destination-parent anchor:
+Linux anonymous staging or Windows held native directory/source handles.
+Never remove a foreign replacement stage or publish its bytes. Do not create
+missing parent folders, adopt existing same-content files, follow parent links,
+or fall back to pathname publication when the ownership primitive is unavailable.
+Existing destinations, including dangling links, remain no-clobber failures.
+
+Forced ownership amendment (2026-11-19, exhaustive consolidation): `--force`
+continues to authorize atomic replacement of the selected destination. Windows
+uses the same rooted, held-source publisher with explicit native
+`ReplaceIfExists=True`; the immutable-evidence publisher's default remains
+no-replace, and forced replacement cannot be combined with content reuse. Source
+failure cleanup targets only the held native source handle. Native Windows
+filesystem qualification is still required separately from portable call tests.
+
+On Linux, write, flush, sync and verify through an anonymous staging descriptor
+in the existing selected directory. After verifying the parent, link that exact
+source to an unpredictable, exclusively created name for the final atomic rename.
+Check the named source's identity, type, size and change metadata against the
+held descriptor immediately before rename. Use directory-relative operations
+on the held parent and reject an observed replacement parent. After rename,
+verify destination identity before returning an export receipt. At linked-stage
+admission and again after rename, compare the held source's digest with the
+intended bytes using reads bounded by the expected length plus one byte and
+stable before/after size and change metadata. Same-inode edits must not produce
+a successful receipt containing a digest of bytes that were not published.
+The shared no-replace Linux publisher performs the same bounded verification
+after linking, before crediting new immutable evidence. Initial stage validation
+uses the same verifier so externally extended sources cannot cause unbounded
+digest reads. This detects observed edits before the receipt; it does not lock
+published Linux files against subsequent external mutation.
+
+No I/O failure, cancellation or other exception may unlink a mutable staging pathname. Anonymous
+failures leave no staged name; a failure after the link retains any surviving
+named entry for inspection, including a foreign substitute. Always close owned
+descriptors, and preserve the primary operation exception if close also fails.
+Cleanup takes the active operation exception explicitly from the exit stack;
+an unrelated exception being handled by the caller must not hide a new close
+failure, interruption or process exit, or receive this operation's cleanup note.
+
+The Linux final check-to-rename source substitution race remains **OPEN**. Linux
+does not provide a rename-by-held-descriptor operation here. A replacement after
+the final source check can become visible at the destination before the
+post-rename identity check reports failure. Do not claim a rollback, guaranteed
+prior-destination preservation for that adversarial interval, or complete
+held-source ownership for Linux forced replacement. Ordinary successful
+replacement remains supported; no-force publication retains its stronger
+held-source contract. Platforms without a supported primitive fail closed.
+JSON/CSV bytes, redaction defaults, digest results and CLI exit conventions
+remain unchanged. Native Windows no-force publication qualification is separate
+from Linux or portable-call checks.
+
 GUI (`ui_strings.py`, Qt only; logic in `strings/view_model.py`). **Where**: dock `strings.dock` (objectName), tabified with the Evidence dock on the right (`tabifyDockWidget`), action in the Analysis menu, `Ctrl+Shift+T` (free: used are Ctrl+N O I E S R, Ctrl+Shift+E, planned Ctrl+Shift+F/G); uses the E-2 panel registry when merged, else the `EvidenceController` pattern (own controller, generation counters, unparented registered threads, `WindowPort` for project and `select_match`).
 **Widgets**: source bar (source combo Built-in scan/FLOSS, Scan, FLOSS path + Browse + Probe + pin status, "Run with emulation..." opening a consent dialog that defaults to Cancel, Cancel, elapsed indicator); basis banner (PlainLabel with harmonizations or the block reason and "Re-scan older with newer's settings"); filter bar (change, type buttons, side, cue, min length, text filter, function chip set from the navigator, scope Differences (diff view, default) / All strings (inventory), "Hide noise-like strings (N hidden)"); `QTableView` with columns Change, String, Type, Older, Newer, Function, Cues, Source; detail tabs Summary / Links / Provenance in read-only `QPlainTextEdit` (an Edited row shows both values with plain markers `[-old-]` and `{+new+}`, a look-alike row lists the differing code points with their Unicode names); buttons Open function (needs `match_id`), Open in hex (older/newer), Copy safe, Copy exact...; status line with coverage. The navigator gets a context action "Strings in this function" (A5) that sets the function chip (W4).
 **Model/view**: `StringsTableModel(QAbstractTableModel)` over immutable view-model rows plus a Python index list for filter and sort (no `QSortFilterProxyModel`, as `EvidenceTableModel`); `data()` returns precomputed strings; one regular grid with header items (an Edited pair is one row, no merged cells; F16); the Change column carries a glyph and a word (`+ Only in newer`, `- Only in older`, `~ Edited`, `= In both`, `? Not compared`), never colour alone; AccessibleTextRole = row sentence ("Only in newer. Static string, 26 characters. Function ParseHeader, modified. Message with format specifier."), AccessibleDescriptionRole = reasons and link tier; ToolTipRole through `tooltips.template` (escaped, <= 300 chars). The default scope shows only changed strings (hundreds); All strings is a virtualized inventory (200k rows) with `resizeContentsPrecision(0)`, fixed header sections and font-metric row height (F16). Selection survives reloads by (value hash, side).
@@ -259,3 +325,11 @@ Blocked external acceptance, reported separately and never counted as done: pinn
 | Q12 master/3.2 adapter | wait for a tagged release; HEAD-probe monthly |
 | Q13 shortcut and who applies A5/A7/A8 | `Ctrl+Shift+T`; A5 is in the F5 seam, A7 is `PANEL.tips`, A8 stays with the track as its adapter file |
 | Q14 series lifelines | later slice S11 |
+
+## Shared comparison recovery — 2026-11-19
+
+The Strings dock and CLI must use one Qt-free comparison for the same selected sources. Imported/exported API-name cues, section regions, project function pairing, anchor context when supplied, and review order must agree. The dock offers Auto, Built-in scan, and stored FLOSS results; none runs a tool or a target. Auto may use a built-in scan only when no produced FLOSS record exists for a side. An unreadable or foreign newest record is unavailable, never a silent older-result fallback. Explicit FLOSS requires both sides; refusal keeps the previous view.
+
+Capture bounded stored rows on the SQLite owner's thread, validate the current artifact/side/run/config/cache ownership, and detach evidence before passing it to a worker. Built-in selection never consults stored tool evidence. A refused new request cancels any earlier pending request so a late result cannot replace the retained view. GUI result publication remains guarded by project key and request generation. Existing stronger export/publication contracts are unchanged.
+
+A local `--anchors` document is a bounded ordinary file (at most 4 MiB), read through a held parent and leaf without following links. Reject duplicate keys and non-finite numbers before validating AnchorSet; a preceding path-size observation is not the byte budget. Missing/unreadable inputs retain typed path-free CLI errors.

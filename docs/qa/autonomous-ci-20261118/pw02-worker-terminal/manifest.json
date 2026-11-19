@@ -1,0 +1,146 @@
+{
+  "source": "7259f86838c2181d6bdbcabe98c7a294a4499e8d",
+  "tree": "59f2ff4633bfb7b1e89cee39d564cbddfa43d6e3",
+  "spec_tests": "dcd2653fc7d79e457a02569edb8e461960f47080",
+  "base": "f427186b9a9e3ba70dbdf90e18b63a5d90315313",
+  "tests": {
+    "passed": 451,
+    "failed": 0,
+    "skipped": 0,
+    "seconds": 1.63
+  },
+  "archive": {
+    "path": "evidence.zip",
+    "bytes": 324657,
+    "sha256": "da48cb2e51680d15e9ebad8ca71195c733a8b3d00a5e3b647059b3ec3076db0f",
+    "members": 25
+  },
+  "qualification": "portable terminal-accounting correction only",
+  "files": [
+    {
+      "path": "README.md",
+      "bytes": 4646,
+      "sha256": "2b3908cca820f6e2d8065e203f761f050440e18fa856c26d2c21d86d13cb5bf0"
+    },
+    {
+      "path": "checks.json",
+      "bytes": 2096,
+      "sha256": "6a74e0b068e07f6097720813cda313e175c80817a586845a98d3e374ede11cdc"
+    },
+    {
+      "path": "diff-check.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "final-provenance.json",
+      "bytes": 8107,
+      "sha256": "63805a282a81b16268243ece5f79f1b97fb7f1d0f56349c7fa368a70add117bf"
+    },
+    {
+      "path": "final-source/docs/modules.md",
+      "bytes": 367243,
+      "sha256": "5c7b0cd1ced1968c19f684d68144777de2fa0ea170130e7c37e95b478dcfa28a"
+    },
+    {
+      "path": "final-source/docs/specs/local-package-intake.md",
+      "bytes": 17598,
+      "sha256": "b4a24a3dffc85c3288aa3db188435d787d13f34746dedac3e53327e846c3fe08"
+    },
+    {
+      "path": "final-source/external/test_terminal_accounting.py",
+      "bytes": 4377,
+      "sha256": "5396faa2c3934dbabc4b889949c10695efe490fa318ecaa235643f7d3a4dcc29"
+    },
+    {
+      "path": "final-source/src/patchtrace/acquisition/package_budget.py",
+      "bytes": 17892,
+      "sha256": "f1bdeb7a2dce6437e1b583939dbca13ceb3abf1cfa9ce8dc23b65069b592b7b7"
+    },
+    {
+      "path": "final-source/src/patchtrace/acquisition/package_worker_contracts.py",
+      "bytes": 5949,
+      "sha256": "1a2365a56b2ca6c0b9be6bf1c966fa58b6901403f4f092fab67b0125d0c5e1d6"
+    },
+    {
+      "path": "final-source/tests/test_package_worker_terminal.py",
+      "bytes": 2734,
+      "sha256": "4412e13dac2cc2277f93e1148398231e7a14cff5d2340b29c8745bea660d2379"
+    },
+    {
+      "path": "final.log",
+      "bytes": 580,
+      "sha256": "63535f4b0eb658e1ab14c8b8fc55377707cb1c2119fe936d4301aa12383631e5"
+    },
+    {
+      "path": "final.xml",
+      "bytes": 66921,
+      "sha256": "bbe74962ead9b9e049b913945075c7d619b656c670f3d45414230144d9bccce5"
+    },
+    {
+      "path": "red-provenance.json",
+      "bytes": 7514,
+      "sha256": "6b8061182cc4d62c5017e8904f136bf18d40071a9edaf00224defb012ff8197e"
+    },
+    {
+      "path": "red-source/docs/modules.md",
+      "bytes": 367243,
+      "sha256": "5c7b0cd1ced1968c19f684d68144777de2fa0ea170130e7c37e95b478dcfa28a"
+    },
+    {
+      "path": "red-source/docs/specs/local-package-intake.md",
+      "bytes": 17598,
+      "sha256": "b4a24a3dffc85c3288aa3db188435d787d13f34746dedac3e53327e846c3fe08"
+    },
+    {
+      "path": "red-source/external/test_terminal_accounting.py",
+      "bytes": 4377,
+      "sha256": "5396faa2c3934dbabc4b889949c10695efe490fa318ecaa235643f7d3a4dcc29"
+    },
+    {
+      "path": "red-source/src/patchtrace/acquisition/package_budget.py",
+      "bytes": 17625,
+      "sha256": "12c51f8010ecd2ffe4e8d08b3cec39aecb9802524fae2b5cdc41eaf275e26253"
+    },
+    {
+      "path": "red-source/src/patchtrace/acquisition/package_worker_contracts.py",
+      "bytes": 5949,
+      "sha256": "1a2365a56b2ca6c0b9be6bf1c966fa58b6901403f4f092fab67b0125d0c5e1d6"
+    },
+    {
+      "path": "red-source/tests/test_package_worker_terminal.py",
+      "bytes": 2734,
+      "sha256": "4412e13dac2cc2277f93e1148398231e7a14cff5d2340b29c8745bea660d2379"
+    },
+    {
+      "path": "red.log",
+      "bytes": 9146,
+      "sha256": "6636e2e5e931806aed82fd17d094df6777383b3ea30374f7121f1fa6d4ef273b"
+    },
+    {
+      "path": "red.xml",
+      "bytes": 10962,
+      "sha256": "19ec936c10a8eebc5c16c21382d3617836a708d04525584f48477d5d9ad7aa2e"
+    },
+    {
+      "path": "ruff.log",
+      "bytes": 19,
+      "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+    },
+    {
+      "path": "run_terminal.py",
+      "bytes": 4681,
+      "sha256": "1ec1b3c6605e7f98a4b4c8630a153a25d2d6647f21079cd9c87b26dbc30f132d"
+    },
+    {
+      "path": "schemas.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "seal_terminal.py",
+      "bytes": 5935,
+      "sha256": "cd0c6d7bb8a31959952f158ec0dda865507f398a173935fc75ec4e26e1ba6f73"
+    }
+  ]
+}
