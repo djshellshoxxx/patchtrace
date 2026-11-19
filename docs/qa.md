@@ -2582,3 +2582,19 @@ original checkpoint is losslessly split for transport; old local branches and
 commit history remain intact. Fresh expected-head PR publication is next.
 Main/platform/native/package/security/beta remain blocked. [Complete review
 and exact-source evidence](qa/windows-portability-integration-20261119/README.md).
+# Project creation metadata follow-up (2026-11-19 UTC)
+
+PR #316's Windows creation-admission failure is reproduced with separate
+descriptor/path change-time observations and repaired without dropping either
+same-observation guard. Focused actual SQLite/GUI tests: **117 passed**; original
+regression: **1 failed, 8 passed**. See [source and limits](qa/windows-creation-stat-20261119.md).
+Native Windows and integrated full-suite acceptance remain pending.
+
+### Restricted Tier-R corpus-root repair — 2026-11-19
+
+Windows advisory job `135257238250` fails during eager home-directory lookup even
+with an explicit corpus root. Deferred fallback resolution preserves the restricted
+environment. Four regression controls fail before repair; the affected selection
+passes 73 with five explicitly blocked native-toolchain skips afterward. Actual
+Windows rerun remains required. Separate unmodified PR #317 source review and 91
+saved-scope/card-provenance controls pass. [Evidence and limits](qa/corpus-home-resolution-20261119.md).

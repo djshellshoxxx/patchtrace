@@ -1922,3 +1922,16 @@ See the [immutable continuation checkpoint](../docs/qa/verified-continuation-202
 - [ ] Complete expected-head PR append and read back the exact ref, tree, parents and body.
 - [ ] Complete actual Windows fixture/core/formatter gates and full Qt repeats; original failed/cancelled/skipped outcomes remain unverified.
 - [ ] Continue pure admission contracts, core metadata-family correction and native leaf/reader work with independent review before further integration.
+# 2026-11-19: Windows creation metadata
+
+- [x] Reproduce and repair cross-API change-time comparisons during exclusive
+  new-database admission; retain descriptor/path stability and replacement guards.
+- [x] Focused actual SQLite and offscreen GUI controls: 117 passed.
+- [ ] Verify the integrated source on native Windows CI; other PR #316 failures
+  are separate and remain tracked in the consolidation record.
+
+### Restricted Tier-R corpus-root repair — 2026-11-19
+
+- [x] Reproduce import-time home lookup failure with an explicit corpus root and repair lazy fallback selection; four red controls become green.
+- [x] Run the affected calibration, shard and factory selection: 73 passed, five native-toolchain skips remain BLOCKED.
+- [ ] Rerun the exact repaired source on Windows advisory CI; this portable repair does not qualify native comparison or accuracy.

@@ -6,6 +6,25 @@ product's process-launch contract or the release qualification policy.
 
 ## 1. Observed gap and boundary
 
+### Portable harness correction — 2026-11-19
+
+The exact Windows QA run 44433724017 at source `f2b6827f` recorded 45 stdin
+fixture setup errors because its scripted `GetLastError` collided with the
+MinGW CRT's imported symbol. The authored surrogate functions now have private
+test names through preprocessor aliases. The extracted production block and
+every ownership, cleanup, refusal and error assertion remain unchanged. This
+repairs the portable test harness, not the Windows ABI qualification.
+
+The same run recorded formatter `attempted=16` and `stream_error=0` after
+`freopen(..., "r", stderr)`. A read-only stdio mode does not supply the intended
+cross-CRT write-error fixture. The harness instead attaches a real read-only
+file descriptor to a writable stdio stream before the first formatter call.
+Its writes therefore reach an OS-backed refusal. The unchanged success
+predicate still requires 16 consumed attempts and a nonzero stdio error flag.
+No formatter code, diagnostic budget, failure expectation or native acceptance
+requirement changes. The inert source bytes are checked after the invocation.
+Windows execution of this corrected fixture remains required.
+
 At source `d8c02caea407f6d323eecd636735849c1eb31a2d`, workflow run
 44319417801, job 134854104769 produced artifact 14438536883. Its ZIP is 6,490
 bytes, SHA-256

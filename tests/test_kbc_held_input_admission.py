@@ -87,10 +87,10 @@ def test_public_route_uses_held_reads_and_same_accounting_then_reopens_copies(tm
             [(unused_op, state, body)] = ws.journal_ops()
             assert state == 'done'
             assert not {'input_readers', 'checkpoint', 'reader', 'handle'} & body.keys()
-        for path in paths:
-            path.unlink()
-        with ProjectService.open(root, maintenance=False) as reopened:
-            assert [artifact.sha256 for artifact in reopened.project.artifacts] == expected
+    for path in paths:
+        path.unlink()
+    with ProjectService.open(root, maintenance=False) as reopened:
+        assert [artifact.sha256 for artifact in reopened.project.artifacts] == expected
     assert connection_threads and set(connection_threads) == {threading.get_ident()}
 
 
@@ -343,10 +343,10 @@ def test_existing_after_create_fault_retains_project_and_intent(tmp_path):
         with WorkspaceStore(svc.root) as ws:
             [(unused_op, state, body)] = ws.journal_ops()
             assert state == 'intent' and body['project_id'] is None
-        for path in paths:
-            path.unlink()
-        with ProjectService.open(root, maintenance=False) as reopened:
-            assert len(reopened.project.artifacts) == 2
+    for path in paths:
+        path.unlink()
+    with ProjectService.open(root, maintenance=False) as reopened:
+        assert len(reopened.project.artifacts) == 2
 
 
 @pytest.mark.parametrize('target', ['inspect', 'hash'])

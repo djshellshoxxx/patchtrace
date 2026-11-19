@@ -435,7 +435,17 @@ class ProjectStore:
                     except FileExistsError:
                         raise ValueError('PT-STORAGE: project database already exists') from None
                     try:
-                        admitted = self.created_database = os.fstat(fd)
+                        owned = self.created_database = os.fstat(fd)
+                        admitted = _creation_file(path)
+                        after = os.fstat(fd)
+                        physical = ('st_dev', 'st_ino', 'st_size', 'st_mtime_ns')
+                        observed = (*physical, 'st_ctime_ns', 'st_mode', 'st_nlink')
+                        # Windows pathname/descriptor ctime can represent different clocks.
+                        # Bind the held inode, then compare each API to its own snapshot.
+                        if (admitted is None or not stat.S_ISREG(owned.st_mode) or owned.st_nlink != 1
+                                or any(getattr(owned, field) != getattr(admitted, field) for field in physical)
+                                or any(getattr(owned, field) != getattr(after, field) for field in observed)):
+                            raise ValueError('PT-STORAGE: project database changed during creation admission')
                     finally:
                         os.close(fd)
                 if not _same_creation_file(path, admitted):

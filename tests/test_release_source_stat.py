@@ -268,11 +268,12 @@ def test_native_windows_rewritten_inert_dependency_receipt_is_readable(tmp_path)
 
 
 @pytest.mark.parametrize('changed', [False, True])
+@pytest.mark.usefixtures('host_crlf_text')
 def test_canonical_checkout_guard_keeps_actual_byte_check_with_windows_views(gate, tmp_path, monkeypatch, changed):
     root, source = authored_checkout(tmp_path)
     path = root / 'sample.txt'
     if changed:
-        path.write_text('modified data\n')  # Same length; actual canonical blob must still refuse.
+        path.write_bytes(b'modified data\n')  # Same length on every host; the canonical blob must still refuse.
     observations(gate, monkeypatch, path)
     if changed:
         with pytest.raises(gate.QualificationError, match='source bytes differ from canonical commit'):

@@ -29,10 +29,11 @@ def test_dangling_destination_link_is_preserved_without_force(tmp_path):
     target = tmp_path / 'report.json'
     absent = tmp_path / 'absent.json'
     target.symlink_to(absent)
+    stored_target = target.readlink()
     with pytest.raises(StringsError) as caught:
         export.write_atomic(target, b'new export', force=False)
     assert caught.value.code == 'PT-STR-EXPORT'
-    assert target.is_symlink() and target.readlink() == absent
+    assert target.is_symlink() and target.readlink() == stored_target
     assert not absent.exists()
     assert list(tmp_path.iterdir()) == [target]
 
