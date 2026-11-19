@@ -1,5 +1,24 @@
 # Outstanding bugs and verified repairs — consolidation pass
 
+## Latest continuation checkpoint — 2026-11-19 10:31:52 UTC
+
+This section supersedes current-status statements in the earlier source-pinned history below. The history is retained verbatim. See the [continuation checkpoint](consolidation-20261119/continuation-checkpoint.md) and [complete remote snapshot](consolidation-20261119/continuation-checkpoint.json) for evidence, source identities and exact continuation.
+
+Main remains fdc2696c23bdbfe7668348f25e3b336ce33039f7. Source-reviewed repairs in draft #319 are not yet main repairs. Additional findings and candidate states are:
+
+| Finding | Priority / reproduction | Current disposition |
+| --- | --- | --- |
+| Stored tool Entry ownership and stale state ignored by new callers | P2 evidence correctness: change only selected run stale/project metadata; unchanged evidence is still used by actual Strings composition and returned by the new Search CLI bridge | Confirmed. Shared opt-in admission draft exists; final helper and both callers remain unqualified and unpublished. |
+| Real cache-hit FLOSS evidence discarded | P2 feature/provenance: run actual producer twice; cache attempt has no new raw_sidecar, causing Auto fallback and explicit FLOSS refusal | Confirmed inherited CLI behavior, also exposed by recovered dock. Resolve admitted original evidence run; do not invent raw provenance. Not yet fixed in caller. |
+| Stored FLOSS hides dock artifact-read/hash refusal | P2; remove or replace current artifact after capture | Fixed locally at 76734261d2c9a5c998612275ace712f3d4952fc0; unchanged independent probe and two GUI controls passed. Not published in #319. |
+| Valid inventory decision JSON lost | P2; pretty/escaped valid reference is missed by compact substring prefilter | Fixed locally at 0afd6f5410f8a527d697f79e415b31efcc84407a. Rejected global byte cap removed; unrelated valid decision payloads preserved. Scoped review passed; combined/Windows qualification pending. |
+| SQLite BLOB body bypasses typed admission refusal | P2 error handling; identical JSON bytes stored with BLOB type escape as AttributeError | Independently reproduced. Mapping exists in latest saved helper draft but has no final passing replay or implementation commit. |
+| Required Windows toolchain receipt absent from exact CI allowlist | CI blocker; previous #318 full Linux suite had 25,705 passes and one failure | Corrected on remote #318 c4ace208 and #319 a56ab13a; 20 related local controls and independent exact-test control passed. New-head full suites pending. |
+| Forced Strings publication/ordinary OSError cleanup ownership | P2; substitute foreign staging object during force publication or cleanup | Inherited defect remains open. No-force and introduced force-cancellation fixes do not close it. |
+
+The initial new Strings test run also contained eight fixture-column failures and one authored version-probe timeout; these are not additional product findings. The corrected attempt ended at its 120-second outer bound with no complete verdict. Earlier full-suite exit-137 attempts remain incomplete and unattributed. All original failure evidence is retained locally for upload.
+
+
 Observed 2026-11-19 UTC. Baseline main is
 `9c411ca3d7b47f950be5f0c6f01b3c54184554c6`; foundation [#317](https://github.com/djshellshoxxx/patchtrace/pull/317)
 is `88b0b52281dd314aa72f93819145a73135618bc4`; broad follow-up

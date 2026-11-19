@@ -1,5 +1,18 @@
 # Merge and release blockers — source-pinned checkpoint
 
+## Latest continuation checkpoint — 2026-11-19 10:31:52 UTC
+
+This section supersedes current-status statements in the earlier source-pinned history below. The history is retained verbatim. See the [continuation checkpoint](consolidation-20261119/continuation-checkpoint.md) and [complete remote snapshot](consolidation-20261119/continuation-checkpoint.json) for evidence, source identities and exact continuation.
+
+**No additional main merge is currently qualified.** At the snapshot, #319 head a56ab13aaf9916fc12bea70ba1494075991b7f09 had one successful check, two skipped and 16 queued; #318 head c4ace2088ce8dc9ce78a0bf3036b81096accbdb5 had one skipped and 22 queued. Separate main push checks were 18 successful, one skipped and four in progress. Check/workflow completion and reviews must be refreshed; queued jobs are not passes.
+
+The previous #318 Windows advisory run completed all 11 cases with zero failed/blocked, but its preceding source differs from the current head. The previous Linux full run retained 25,705 passes, one allowlist failure, 60 skips and three expected failures. The narrow test correction has passed focused review; neither historical run qualifies the new heads. Broad strict S-scan failures remain open.
+
+The execution workspace is **unavailable again** after a brief recovery and delayed read-only commands. Shared admission refinements, Strings/Search callers, combined followup source and native/platform gates cannot be qualified while execution is unavailable. Inventory and bounded GUI source reviews are complete at their limited scope, but their runtime code remains local. The helper's 24-pass initial result predates later changes and is not a current-source pass. A corrected Strings red attempt exited 124 at an outer 120-second bound; no complete verdict was observed.
+
+Both earlier local full runs are incomplete (exit 137); the second was not manually interrupted. Isolated controls passed unchanged without establishing an OOM/host/product cause. Do not rerun the whole suite unbounded or weaken assertions to obtain a green badge. Preserve current-source native H7/cache, full hosted, package/lifecycle, strict/resource, macOS/manual and separate accuracy gates.
+
+
 Observed 2026-11-19 UTC. This file distinguishes merge qualification for a
 particular change from the broader release and research program. Exact current
 heads and completed actions are in [the operation record](final-consolidation-report.md).

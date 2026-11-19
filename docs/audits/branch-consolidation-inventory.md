@@ -1,5 +1,16 @@
 # PatchTrace branch consolidation inventory
 
+## Latest continuation checkpoint — 2026-11-19 10:31:52 UTC
+
+This section supersedes current-status statements in the earlier source-pinned history below. The history is retained verbatim. See the [continuation checkpoint](consolidation-20261119/continuation-checkpoint.md) and [complete remote snapshot](consolidation-20261119/continuation-checkpoint.json) for evidence, source identities and exact continuation.
+
+The latest complete pre-publication census is **319 branches including main and 53 open PRs** (branch pages 100/100/100/19/0; PR pages 53/0). Main remains **fdc2696c23bdbfe7668348f25e3b336ce33039f7** after the one guarded #317 merge. No branch was deleted.
+
+The **318-branch post-foundation** snapshot has 317 topics: **144 integrated** (128 ancestors + 16 patch-equivalent without unique merge commits), **11 dependency blocked**, and **162 requiring review**. Those 162 now all have focal dispositions: 116 unchanged historical exact-head receipts and 46 fresh reviews (32 source/tooling/research, 14 documentation); all 13 priority families are pinned. This is not every-commit or whole-branch approval. The sealed 14-member residual review archive is still local and unpublished because the execution workspace became unavailable again.
+
+#319 is now a56ab13aaf9916fc12bea70ba1494075991b7f09; #318 is c4ace2088ce8dc9ce78a0bf3036b81096accbdb5. Both were guarded CI-test/receipt-only updates, with verified trees and parents. This documentation checkpoint adds its own retained branch/PR after the snapshot; the post-publication census belongs in its PR receipt and must not be confused with the historical partition.
+
+
 Observed UTC: 2026-11-19T07:48:47.853100+00:00. All comparisons are pinned; refresh after any merge or source movement.
 
 Main: `9c411ca3d7b47f950be5f0c6f01b3c54184554c6`. Foundation #317: `88b0b52281dd314aa72f93819145a73135618bc4`. Follow-up #316: `f2b6827fc6270b96fb241b0722f2878de5a17361`.

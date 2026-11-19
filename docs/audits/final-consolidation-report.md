@@ -1,5 +1,18 @@
 # Consolidation report — active source-pinned checkpoint
 
+## Latest continuation checkpoint — 2026-11-19 10:31:52 UTC
+
+This section supersedes current-status statements in the earlier source-pinned history below. The history is retained verbatim. See the [continuation checkpoint](consolidation-20261119/continuation-checkpoint.md) and [complete remote snapshot](consolidation-20261119/continuation-checkpoint.json) for evidence, source identities and exact continuation.
+
+**Completed: one guarded main merge (#317), twelve contained PRs closed, all branches retained.** Main is fdc2696c23bdbfe7668348f25e3b336ce33039f7, with the exact tree qualified by #317. The complete current pre-checkpoint census is 319 branches, 53 open PRs and 10 open non-PR issues. The 144 integrated-topic classification belongs to the post-foundation snapshot; all 162 review heads now have focal dispositions, without a whole-branch approval claim.
+
+Published product work is in #318 at c4ace2088ce8dc9ce78a0bf3036b81096accbdb5 and draft #319 at a56ab13aaf9916fc12bea70ba1494075991b7f09. Their latest guarded updates correct only the required toolchain receipt allowlist and add its QA evidence; exact trees/parents were read back. The previous broad Linux suite retained 25,705 passes and one failure; the previous Windows advisory run passed 11 cases. New-head checks remain queued, and broad strict gates remain unresolved.
+
+Inventory and bounded GUI recovery were assembled locally with independent scoped review. Additional actual-caller probes found Strings real-cache/metadata admission defects and Search stale/foreign-row admission; the shared repair is drafted but has no final implementation commit or passing caller qualification. The unavailable execution workspace is the current external blocker. No unqualified runtime source was merged.
+
+This documentation-only checkpoint preserves the five requested records, a fresh complete remote snapshot, exact full runtime pins where available, explicitly marked local abbreviations, the interruption/test ledger and continuation steps. Local runtime code and raw archives listed in the checkpoint have **not** been uploaded by this documentation change. Earlier source-pinned sections below remain historical evidence; their older pending/current statements are superseded by this section.
+
+
 Recorded 2026-11-19 UTC. This is the durable operation record for the execution
 pass; unfinished gates are listed explicitly. It is not a release acceptance
 statement. Later verified operations are appended rather than changing the

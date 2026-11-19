@@ -1,5 +1,23 @@
 # Feature completion and integration status
 
+## Latest continuation checkpoint — 2026-11-19 10:31:52 UTC
+
+This section supersedes current-status statements in the earlier source-pinned history below. The history is retained verbatim. See the [continuation checkpoint](consolidation-20261119/continuation-checkpoint.md) and [complete remote snapshot](consolidation-20261119/continuation-checkpoint.json) for evidence, source identities and exact continuation.
+
+The foundation is integrated into main fdc2696c23bdbfe7668348f25e3b336ce33039f7. The reviewed product recovery is published only in draft #319 at a56ab13aaf9916fc12bea70ba1494075991b7f09. Its current-source hosted qualification is pending.
+
+| Feature slice | Completed work | Remaining boundary |
+| --- | --- | --- |
+| Inventory CSV and selection workflow | Selective CLI/service/Qt recovery plus current-index/unreadable-source preflight; decision JSON compatibility repair; scoped 183 author/48 independent and 8 ordering controls | Local only; exact combined and Windows/native gates pending; no hard SQLite allocation/preemption guarantee |
+| Column-header help and evidence announcements | Bounded GUI recovery; 189 author and 15 independent root controls passed | Local only; actual assistive-technology/native acceptance unqualified; conflicting shortcuts/palette expansion excluded |
+| Shared Strings CLI/dock composition | Common import/export cues, links, sections, source choice; orientation and artifact-refusal fixes | Local only; real cache provenance and row-ownership admission remain blocked; earlier mock cache pass was insufficient |
+| Production optional Search sources | Owner-thread stored-source capture, current-artifact metadata, optional-source budget and base-search fallback; saved queries retained | Local only; selected stale/foreign rows still returned by actual CLI until shared admission is integrated |
+| Shared opt-in tool admission | Spec/index committed; initial actual metadata refusal and 24-control draft checks completed | Current draft uncommitted and unqualified after strict/BLOB/side-selection refinements; both caller adaptations pending |
+| Windows advisory provisioning | Previous #318 head passed 11 actual Windows cases after LLVM resources/Rizin repair | New heads need their own gates; broad strict failures remain; no complete release acceptance |
+
+The worktree/source table in the continuation checkpoint distinguishes published, local reviewed, drafted and unqualified work. It also retains optional raw-capa cache/recorded-rz-diff fixture work, research dependencies and automation proposals without activating unrelated features or schedules.
+
+
 Source-pinned 2026-11-19 UTC. Main baseline:
 `9c411ca3d7b47f950be5f0c6f01b3c54184554c6`. Foundation #317:
 `88b0b52281dd314aa72f93819145a73135618bc4`. Broad follow-up #316:
