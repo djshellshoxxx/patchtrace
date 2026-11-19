@@ -1838,3 +1838,64 @@ Fresh REST inspection found eleven new #302 commits at `121ffb0b`; six repairs m
 ## [FOUNDATION-SAVED-SCOPE-20261119]
 
 Independent controls blocked intact #304: scoped native revision conflicts could resurrect 43 positive edges. A narrow provenance-preserving port from #316 restores global admission and finite saved-scope validation. Dedicated regressions changed from **73 failed, 7 passed** to **80 passed**; both independent date variants now pass. Initial broader commands ran zero tests because a later-only path was included; corrected broad, Qt, hosted and independent review remain pending. Raw failures and limits are preserved in [the repair receipt](qa/foundation-saved-scope-20261119.md). No release or native qualification is claimed.
+# Profile draft navigation repair (2026-11-19 UTC)
+
+Historical #116 profile switching still discarded drafts on PR #317. New Qt
+controls reproduced **8 failed, 1 passed**. Explicit Save/Discard/Cancel and
+signal-safe refresh now pass **71 profile/Setup/accessibility tests**; existing
+#116 failure/report/status controls add **9 passes**. Whole-tree Ruff passed.
+See [commands, failed attempts and limits](qa/profile-navigation-20261119.md).
+Integrated cross-platform qualification remains pending.
+
+
+## Stable raw/search source recovery — 2026-11-19 UTC
+
+Selective #309/#310 ports on #317 were tested at `7daebd699ed942d9a7982bcb72f648e8843cb5f4`: 1060 passed and one unchanged host wall-clock test failed. Full Ruff passed. The same isolated timing gate fails on untouched #317; no threshold was relaxed. Original logs, source pins, comparison observations and historical receipts are retained in [the recovery record](qa/stable-raw-search-20261119/README.md). Hosted platform, full integrated and release qualification remain open.
+
+The slice's local 20-repeat Qt wrapper aborted with child status -9 during executor stalls. Its incomplete output is retained as BLOCKED, with no completed-repeat claim. No Git process or test threshold was changed during recovery.
+
+
+## Stable pilot/CVRF recovery — 2026-11-19
+
+Recovered PR #314 source/spec/tests onto stable `d436a7ec571efa75dcd627ca9835c65f60e09c74`, with later staging ownership regression/repair and only the CVRF fixture coverage adjustment. Tested source `cd96aa9183d1c28c0d08da0198b515f9ab87f29e`: 2,009 affected tests passed in 168.63 s with no failures, errors or skips; full Ruff, pilot schema drift and whitespace checks passed. Existing finite saved-scope and bounded advisory-reader files remain byte-identical. Original failed/source receipts are retained separately from this fresh local result. Full combined hosted gates, Qt repeats and native Windows/package acceptance remain pending. See [source map, commands and qualification limits](qa/stable-pilot-cvrf-20261119/README.md).
+
+## Strings no-force source ownership — 2026-11-19 UTC
+
+Independent combined-source review reproduced publication of substituted bytes
+and deletion of a foreign replacement stage in the selected #308 export writer.
+The no-force path now delegates to the reviewed held-source publisher, refuses
+same-content destinations, and requires an existing anchored parent. Initial
+regressions: **2 failed, 2 passed**; expanded export/CLI/publication checks:
+**47 passed** on Linux; whole-tree Ruff passed. See
+[source pins, receipts and retained force proof](qa/strings-source-ownership-20261119/README.md).
+Forced replacement remains available and **BLOCKED for source ownership**;
+native Windows and integrated hosted acceptance are not claimed.
+
+
+## Forced strings cancellation boundary — 2026-11-19
+
+Independent controls reproduced six introduced non-I/O staging cleanup failures on the selected #308 force path. Source `14f0e2c973dc5a9f6025aa6fa98138b1efe07023` restores the original OSError-only pathname cleanup boundary while preserving unpredictable staging and Linux forced replacement. All 53 export/CLI/shared-publication controls pass in 4.36 s; full Ruff and whitespace checks pass. The retained baseline proof still reproduces inherited force success-substitution and ordinary OSError cleanup races, both BLOCKED. No full force or native Windows ownership qualification is claimed. Evidence: [regression, exact source and remaining blockers](qa/strings-force-cancellation-20261119/README.md).
+
+## Native symbol-store setup prerequisite — 2026-11-19
+
+The Windows matrix's positive setup cleared failed seed/engine status before
+the seeded-store checks. The new CI-only checked runner at `eb65f7fe` stops on
+either failure while retaining the original matrix and intentional negative
+cached-PDB reproduction. One baseline configuration control failed; 97 focused
+process/harness/workflow controls and whole-tree ordinary Ruff pass after repair.
+PowerShell and actual Windows Ghidriff/Ghidra setup were not run locally; native
+qualification remains required. See [original source, controls and limits](qa/native-symbol-setup-20261119/README.md).
+
+
+## Reviewed consolidation publication — 2026-11-19
+
+Foundation #317 merged as `fdc2696c` with 33 successful checks and three intentional
+skips across eight successful workflows; its tested tree and parents were verified.
+All 318 remote heads were refreshed: 144 topic heads are integrated, and 12 contained
+PRs closed automatically. The reviewed candidate retains all five audit records.
+New CI setup and Windows dependency controls: 33 passed on `1eb86dee`; ordinary
+Ruff passed. The frozen stable full suite was interrupted with exit 137 after a
+progress stall near authored BinDiff timeout controls; no completed full-suite
+PASS is claimed. The two adjacent cases then passed unchanged in an isolated
+bounded run. Seven isolated import checks passed with the dedicated interpreter.
+Actual native and full hosted candidate gates remain required.

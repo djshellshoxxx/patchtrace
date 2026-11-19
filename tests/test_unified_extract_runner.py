@@ -495,8 +495,10 @@ def test_cancel_and_timeout_kill_tree_and_remove_private_dir(tmp_path, monkeypat
     else:
         budget, expected = Budget.after(3.0), ('PT-UNIFIED-TIMEOUT', 'timeout')
     started = time.monotonic()
+    job = job_for(tmp_path, 'grandchild')
+    job = dataclasses.replace(job, backend=dataclasses.replace(job.backend, env_passthrough=('PT_TEST_BEAT',)))
     with pytest.raises(BudgetExhausted) as caught:
-        runner.extract_side(job_for(tmp_path, 'grandchild'), budget)
+        runner.extract_side(job, budget)
     assert (caught.value.code, caught.value.reason) == expected
     assert time.monotonic() - started < 60 and leftovers(private_tempdir) == []
     assert heartbeat_stopped(beat, settle=0.6, start_timeout=15), 'the grandchild never started or survived'

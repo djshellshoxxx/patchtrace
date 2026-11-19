@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="2" skipped="0" tests="4" time="1.172" timestamp="2026-11-19T00:18:58.105732-08:00" hostname="b148a722dc6d"><testcase classname="tests.test_strings_export_source_ownership" name="test_stage_substitution_never_publishes_or_removes_foreign_bytes" time="0.444"><failure message="AssertionError: assert b'foreign replacement bytes' == b'expected export bytes'&#10;  &#10;  At index 0 diff: b'f' != b'e'&#10;  Use -v to get more diff">tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-68/test_stage_substitution_never_0')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7f0c6f144140&gt;
+
+    def test_stage_substitution_never_publishes_or_removes_foreign_bytes(tmp_path, monkeypatch):
+        target = tmp_path / 'report.json'
+        replaced = _substitute_during_sync(tmp_path, monkeypatch)
+        export.write_atomic(target, b'expected export bytes', force=False)
+&gt;       assert target.read_bytes() == b'expected export bytes'
+E       AssertionError: assert b'foreign replacement bytes' == b'expected export bytes'
+E         
+E         At index 0 diff: b'f' != b'e'
+E         Use -v to get more diff
+
+tests/test_strings_export_source_ownership.py:45: AssertionError</failure></testcase><testcase classname="tests.test_strings_export_source_ownership" name="test_cancel_never_removes_a_foreign_stage_replacement" time="0.003"><failure message="FileNotFoundError: [Errno 2] No such file or directory: '/tmp/pytest-of-agent/pytest-68/test_cancel_never_removes_a_fo0/.report.json.jlibm0ht.tmp'">tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-68/test_cancel_never_removes_a_fo0')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7f0c6ee0fa40&gt;
+
+    def test_cancel_never_removes_a_foreign_stage_replacement(tmp_path, monkeypatch):
+        target = tmp_path / 'report.json'
+        replaced = _substitute_during_sync(tmp_path, monkeypatch, cancel=True)
+        with pytest.raises(KeyboardInterrupt, match='controlled export cancellation'):
+            export.write_atomic(target, b'expected export bytes', force=False)
+        assert not target.exists()
+        for stage in replaced:
+&gt;           assert stage.read_bytes() == b'foreign replacement bytes'
+                   ^^^^^^^^^^^^^^^^^^
+
+tests/test_strings_export_source_ownership.py:57: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1019: in read_bytes
+    with self.open(mode='rb') as f:
+         ^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/tmp/pytest-of-agent/pytest-68/test_cancel_never_removes_a_fo0/.report.json.jlibm0ht.tmp')
+mode = 'rb', buffering = -1, encoding = None, errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed to by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+&gt;       return io.open(self, mode, buffering, encoding, errors, newline)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/tmp/pytest-of-agent/pytest-68/test_cancel_never_removes_a_fo0/.report.json.jlibm0ht.tmp'
+
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1013: FileNotFoundError</failure></testcase><testcase classname="tests.test_strings_export_source_ownership" name="test_no_force_same_content_is_not_adopted" time="0.002" /><testcase classname="tests.test_strings_export_source_ownership" name="test_no_force_missing_parent_remains_missing" time="0.001" /></testsuite></testsuites>

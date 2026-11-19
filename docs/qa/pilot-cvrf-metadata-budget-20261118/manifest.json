@@ -1,0 +1,111 @@
+{
+  "source_commit": "8e368dd88c3ad65726d84701219942ff38c6c2cd",
+  "source_tree": "ab751b5ae29a69cb8bbf100c6efefda935bd9ca8",
+  "archive": {
+    "path": "raw-evidence.zip",
+    "bytes": 44526,
+    "sha256": "22ff6b1660ba36568a9bac3824cad68c16dcac24eaae99e6d01fefb0bdce5695"
+  },
+  "members": [
+    {
+      "path": "affected.log",
+      "bytes": 1782,
+      "sha256": "7b5f2c58e042e909b346e9dd2d56e373a0cae9b071917ba2854909394245e4aa"
+    },
+    {
+      "path": "affected.xml",
+      "bytes": 215081,
+      "sha256": "efef67b3d6de582f95c609df24262608f4dc04fcbb7b38b01e1d3597e6d2524b"
+    },
+    {
+      "path": "capture_compatibility.py",
+      "bytes": 910,
+      "sha256": "c82ca092b80134440478c6142e5e88a0c2d6b2b3f6ab2810de9e8729fedc8626"
+    },
+    {
+      "path": "diff-check.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "focused.log",
+      "bytes": 99,
+      "sha256": "46b82418af54c8799636506e0ceee38e6f791c057bd291935fdedd2fd8170224"
+    },
+    {
+      "path": "focused.xml",
+      "bytes": 6583,
+      "sha256": "ac16108120e90410983bdbf1efa394275d2de7569912504b5da29adf8f8c58a2"
+    },
+    {
+      "path": "independent-original-red.log",
+      "bytes": 2959,
+      "sha256": "febe066a55eb76e4c127d84f770d0be0aecd40cdc5af488285a1dd89e55c1a99"
+    },
+    {
+      "path": "independent-original-red.xml",
+      "bytes": 3151,
+      "sha256": "7f518cd22a33af6b0d82d11bff151be028158a87920b16446cf49ce6cc5d8e7e"
+    },
+    {
+      "path": "independent-original-test.py",
+      "bytes": 1323,
+      "sha256": "bf029a07f77ba82bab659c7c6fad1d7f97f3128ab02299763b6a00af40200bf1"
+    },
+    {
+      "path": "independent-row-types-test.py",
+      "bytes": 910,
+      "sha256": "70986d7e40395d22faedecbfc66ed64cdc6839df5fd66e2fff5d7398920bbf9d"
+    },
+    {
+      "path": "provenance.json",
+      "bytes": 6230,
+      "sha256": "152128589ef5c23d50786fed065c142b966e1f4fc65b0dd7d243627b5ca965b2"
+    },
+    {
+      "path": "red.log",
+      "bytes": 14284,
+      "sha256": "058e0431c2efe2a3e71c68da82a9c3727ed128b9fe6ebaa735f2ec71d91b4c4b"
+    },
+    {
+      "path": "red.xml",
+      "bytes": 15362,
+      "sha256": "682f03e7892b52ca99ce199168ac68d45e526e958cc6b6d08b891c5fb6acc1e3"
+    },
+    {
+      "path": "retain_receipt.py",
+      "bytes": 6853,
+      "sha256": "e08f0ebf7267aeb8f90bf5df04ab43b5212764bceac206b44ad19fc74ac7864d"
+    },
+    {
+      "path": "ruff-initial.log",
+      "bytes": 19,
+      "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+    },
+    {
+      "path": "ruff.log",
+      "bytes": 19,
+      "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+    },
+    {
+      "path": "valid-after.json",
+      "bytes": 8695,
+      "sha256": "882aaf57d36a0ed8fd541fef29384600953e5dcf412341b34641e09d12167cd0"
+    },
+    {
+      "path": "valid-after.log",
+      "bytes": 65,
+      "sha256": "fe6821b90a583be8a3033cdd373fc0d8da2ae2b069f17b57557d8b89e9df8657"
+    },
+    {
+      "path": "valid-before.json",
+      "bytes": 8695,
+      "sha256": "882aaf57d36a0ed8fd541fef29384600953e5dcf412341b34641e09d12167cd0"
+    },
+    {
+      "path": "valid-before.log",
+      "bytes": 65,
+      "sha256": "fe6821b90a583be8a3033cdd373fc0d8da2ae2b069f17b57557d8b89e9df8657"
+    }
+  ]
+}

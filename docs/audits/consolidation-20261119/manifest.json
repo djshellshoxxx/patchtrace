@@ -1,0 +1,78 @@
+{
+  "schema": "patchtrace/consolidation-evidence/1",
+  "baseline_main": "9c411ca3d7b47f950be5f0c6f01b3c54184554c6",
+  "foundation_317": "88b0b52281dd314aa72f93819145a73135618bc4",
+  "followup_316": "f2b6827fc6270b96fb241b0722f2878de5a17361",
+  "members": [
+    {
+      "path": "branch-inventory-remote.json",
+      "bytes": 330114,
+      "sha256": "9ed9d2cb5561fa9cc51d112478f516b53edb9a7b7b006987304237880af71b11"
+    },
+    {
+      "path": "branch-all-prs.json",
+      "bytes": 165941,
+      "sha256": "4b1afc7c9fc7b2bb46ecad04cd90d0a9fc857e4d8de17e12cd957e40186ed76d"
+    },
+    {
+      "path": "branch-residue.json",
+      "bytes": 1210172,
+      "sha256": "8d152b08f99bc013cb07341e62fe9f44af1f724ede4f8030a7cc570197d14806"
+    },
+    {
+      "path": "branch-merge-simulations.json",
+      "bytes": 139058,
+      "sha256": "e95fcbcafe2cba95e523f28b907c7c4cf70e1b7e3213514ad215741edb7815e0"
+    },
+    {
+      "path": "branch-pr-gates.json",
+      "bytes": 573994,
+      "sha256": "3aee92ceaabed00023c60b83b65c06a03ed81ae5dcbdb525fb3a0180623e7d41"
+    },
+    {
+      "path": "historical-semantic-summary.json",
+      "bytes": 97012,
+      "sha256": "1d616cc64f834dcc8f8e4f0e972a0144e2768edbc7cff4c2dafdde366f66d603"
+    },
+    {
+      "path": "standalone-pr-slice-map.json",
+      "bytes": 76333,
+      "sha256": "3354cbd44568118c99d99020750f5a4c01781726b9946e77ae853a5d4d06b95b"
+    },
+    {
+      "path": "standalone-followup-dependencies.json",
+      "bytes": 11189,
+      "sha256": "24ae267cd6d545925b27a08b85c944c44cf37daea1153b3abe7d8d22d9c94aab"
+    },
+    {
+      "path": "patchtrace-remote-baseline.json",
+      "bytes": 392635,
+      "sha256": "8feb507d4a29dacb4cbab720e1316249811d863195cf44c1d3a823632c0f7e56"
+    },
+    {
+      "path": "current-source-todos.txt",
+      "bytes": 910,
+      "sha256": "10332e539be2abee74ac8921ddd985e5b00bd3196c5db72f2d627d02597b1a43"
+    },
+    {
+      "path": "stable-combined.log",
+      "bytes": 271,
+      "sha256": "19677ed159196d9ba471ec5109669f8169e1f03571142404ccdb1be2b0e7f4d5"
+    },
+    {
+      "path": "stable-combined.xml",
+      "bytes": 19847,
+      "sha256": "3aeed1d682e823de84546fb6f09161f1e68b2108edfb4726cea77c5ae13ab758"
+    },
+    {
+      "path": "native-harness-independent.xml",
+      "bytes": 3641,
+      "sha256": "f815137b14e6d364e224d6d6181db7da55c80dd37d373a844181458cc8390a7d"
+    }
+  ],
+  "archive": {
+    "path": "inventory-and-integration-evidence.zip",
+    "bytes": 495047,
+    "sha256": "44fe59139b0dc26f7a87783ad2ccde460e43c264b12c73a70265efbf26516169"
+  }
+}

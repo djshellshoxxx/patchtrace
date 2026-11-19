@@ -1,0 +1,29 @@
+{
+  "schema": "patchtrace/candidate-qualification/1",
+  "workflow_source": "1eb86dee",
+  "frozen_product_source": "4cdee5a26837802bd90b8b50c11696b039ac9335",
+  "full_suite_status": "ABORTED",
+  "full_suite_exit": 137,
+  "members": [
+    {
+      "path": "reviewed-workflow-controls.log",
+      "bytes": 99,
+      "sha256": "0fc8285ffc3f37e3159a484289a96889bc82e505742dc2ae6b2515f2b065c1c4"
+    },
+    {
+      "path": "reviewed-workflow-controls.xml",
+      "bytes": 5319,
+      "sha256": "6d25c9af40e0c51261be588a79a8ece40eeb9fd24029b973af72270b6953d57d"
+    },
+    {
+      "path": "stable-full.log",
+      "bytes": 1368,
+      "sha256": "7d3328140f5c518fac0168ba3d7364fe26d035b3eca7becd4817d47691612c45"
+    }
+  ],
+  "archive": {
+    "path": "candidate-workflow-and-incomplete-full-evidence.zip",
+    "bytes": 1566,
+    "sha256": "cf2eed0edc2de1bc35354f1a83afb3d37158bb207b48e607348d6714b27befcc"
+  }
+}

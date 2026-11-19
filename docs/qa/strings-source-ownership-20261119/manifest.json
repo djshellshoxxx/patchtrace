@@ -1,0 +1,20 @@
+{
+  "base": "d436a7ec571efa75dcd627ca9835c65f60e09c74",
+  "files": {
+    "docs/qa/strings-source-ownership-20261119/README.md": "ace4a9b72cabb7ce967cf05376041a12f7ed427990e6b8f38caaaaf73b6892f8",
+    "docs/qa/strings-source-ownership-20261119/force-source-proof.json": "210093a239e29c595c0c9e441b65d678146ec1ecb86f7f18c6f7244878f25f1f",
+    "docs/qa/strings-source-ownership-20261119/force_source_probe.py": "6275f80c2496a5264b816dae2b6272973a7e8af06e49cf67c3bda3c3a98412af",
+    "docs/qa/strings-source-ownership-20261119/green.log": "a06e8475bf62e828bb1c218207fbfad75500b9dcd64e4d2f14a5161b48186ae5",
+    "docs/qa/strings-source-ownership-20261119/green.xml": "5f28242029e081b2bc80f80fd1905df91f9db537e52d7bf7e6fff1c43d49b554",
+    "docs/qa/strings-source-ownership-20261119/red.log": "504f18f97f6450f25f526c354cb99af8985f2787d4ecaa335127a32ed4a13736",
+    "docs/qa/strings-source-ownership-20261119/red.xml": "12ae37815be32e4351cd12283637414a8bc1a2778a8aae020f2987a59893fa52",
+    "docs/qa/strings-source-ownership-20261119/ruff.log": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+    "docs/specs/program-e/WB3-integration-plan.md": "b3b183e941d265dc5fb3255ea28f1ab43198f2970854fef967e4cfa2164f6beb",
+    "src/patchtrace/owned_publication.py": "5903c6b9b568e20267880ffdf1ab47f02c35590b6ead6cddb3f5bfaf9b546e7b",
+    "src/patchtrace/strings/export.py": "a22301c33ffcd4e7b16fff8ceb42b9a4eb8376a2722a17f372a4b1dd821dc821",
+    "tests/test_strings_export_source_ownership.py": "a4d2ffb00def344576ffd51db07809625f1058305bb9ba985986a301fb0bf83e"
+  },
+  "forced_replacement": "BLOCKED: retained proof; behavior unchanged",
+  "native_windows": "BLOCKED: not executed on Linux",
+  "scope": "no-force source ownership only"
+}

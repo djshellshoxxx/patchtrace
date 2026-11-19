@@ -1,0 +1,44 @@
+{
+  "schema": "patchtrace/h7-harness-review/1",
+  "source_commit": "f6c0146f29c90a85ba4165d55ba06799b9da0680",
+  "source_tree": "658d95d4c471bb26ed3444f3a9a21d146f0c9613",
+  "archive": {
+    "name": "evidence.zip",
+    "bytes": 5523,
+    "sha256": "305774176b3b0c82b38a4e8aed18b118cc34c07a28a1f66638f0ab5c9548770a"
+  },
+  "members": {
+    "independent_profile_navigation.py": {
+      "bytes": 3679,
+      "sha256": "ce7f902a262c99953f594c426e6167aaace4b2264eff0afb22536b896630493a"
+    },
+    "provenance.json": {
+      "bytes": 2578,
+      "sha256": "840131428a064baa3b5c9755743c00b36d54bade56a865840e026d34e119b6d0"
+    },
+    "security-native-h7-green.log": {
+      "bytes": 99,
+      "sha256": "27c3cd2d51edbdfc014f47d6cc21a47e2dcf2bb1400c482b3e3c6e7769effce3"
+    },
+    "security-native-h7-green.xml": {
+      "bytes": 9545,
+      "sha256": "f1007ae4c28e82ecadb6f110eae86d45b2dcb108823135f39fc804af04b986ec"
+    },
+    "security-native-h7-red.log": {
+      "bytes": 1136,
+      "sha256": "36618559b019cd274a6f8308b6f4533e501909d1c1daabecd87c0933340bb415"
+    },
+    "security-native-h7-red.xml": {
+      "bytes": 1136,
+      "sha256": "c762af6ada360545781faa90d471c8c80cbaf07b9e124214bf7d6f6aed643be6"
+    },
+    "security-native-h7-ruff.log": {
+      "bytes": 19,
+      "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+    },
+    "security-profile-navigation-review.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  }
+}

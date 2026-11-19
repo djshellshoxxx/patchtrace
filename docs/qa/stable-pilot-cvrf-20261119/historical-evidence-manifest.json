@@ -1,0 +1,173 @@
+{
+  "status": "HISTORICAL_SOURCE_RECEIPTS_NOT_CURRENT_CANDIDATE_QUALIFICATION",
+  "files": [
+    {
+      "path": "docs/qa/pilot-cvrf-freshness-20261118.md",
+      "source_ref": "b41d6631e679ad2777d248fa087ea71582a5bf63",
+      "git_blob": "d4f4b2114e967b4381e38daa09c81745aa91ee50",
+      "bytes": 8721,
+      "sha256": "2c490eeec2234726b522371f564ae33ac25c68f04a4b694f85ed7535bd29ebd5"
+    },
+    {
+      "path": "docs/qa/pilot-cvrf-freshness-20261118/evidence.zip",
+      "source_ref": "b41d6631e679ad2777d248fa087ea71582a5bf63",
+      "git_blob": "fcf7b241fc14232706faa826aff9075a9fb3d42b",
+      "bytes": 89934,
+      "sha256": "acc0250a7eb20dcd0b0eea4c9c7ac5fe3c4ad26c58950163657b2a5560e4e128"
+    },
+    {
+      "path": "docs/qa/pilot-cvrf-freshness-20261118/manifest.json",
+      "source_ref": "b41d6631e679ad2777d248fa087ea71582a5bf63",
+      "git_blob": "b8546b1648626ca31a87f34fd6de91ab6b937f8d",
+      "bytes": 5297,
+      "sha256": "bf8d8b3080dfe0985b650c10ae946e55830f6fb1d823d8ffe1f17651060d63fa"
+    },
+    {
+      "path": "docs/qa/pilot-cvrf-metadata-budget-20261118.md",
+      "source_ref": "b41d6631e679ad2777d248fa087ea71582a5bf63",
+      "git_blob": "36a939651b552134ba96887d55d0362c2d03b891",
+      "bytes": 6274,
+      "sha256": "a0b9d9f819749ee795ac9874a975fbb4b26877fdd28a68eeaadf28d25d307c3f"
+    },
+    {
+      "path": "docs/qa/pilot-cvrf-metadata-budget-20261118/manifest.json",
+      "source_ref": "b41d6631e679ad2777d248fa087ea71582a5bf63",
+      "git_blob": "0739c3ebf5c1a24e0ad11e467291ac8620e79534",
+      "bytes": 3319,
+      "sha256": "b2f374f8a2383b2e2403b810a2233dba86ad7c0110a677d69ac834700e25f6e1"
+    },
+    {
+      "path": "docs/qa/pilot-cvrf-metadata-budget-20261118/raw-evidence.zip",
+      "source_ref": "b41d6631e679ad2777d248fa087ea71582a5bf63",
+      "git_blob": "11e5b2019268e6e0cf37347d76be472408089829",
+      "bytes": 44526,
+      "sha256": "22ff6b1660ba36568a9bac3824cad68c16dcac24eaae99e6d01fefb0bdce5695"
+    },
+    {
+      "path": "docs/qa/pilot-cvrf-reviewed-20261118/README.md",
+      "source_ref": "b41d6631e679ad2777d248fa087ea71582a5bf63",
+      "git_blob": "f61bd1c115edc4b56cfca18e459f489cc3ea4ade",
+      "bytes": 7816,
+      "sha256": "07c15e4f49fa06eef806918b6237a1f4d46b6dbed5ab769513438a45b5ccf513"
+    },
+    {
+      "path": "docs/qa/pilot-cvrf-reviewed-20261118/evidence.zip",
+      "source_ref": "b41d6631e679ad2777d248fa087ea71582a5bf63",
+      "git_blob": "ea4bf2e71cff971fd86d2614d574f191f860e6eb",
+      "bytes": 43228,
+      "sha256": "4d70507ffa0d838318ba341bcbebb4b6059518d43fa7cf706d9b52cc2664e336"
+    },
+    {
+      "path": "docs/qa/pilot-cvrf-reviewed-20261118/independent-review.md",
+      "source_ref": "b41d6631e679ad2777d248fa087ea71582a5bf63",
+      "git_blob": "a173bec2d52614bc2d9e6455c35ea6ecaf7ef340",
+      "bytes": 2234,
+      "sha256": "a888284c354b1865fa22d876ebfcad598cddbb0300ea8d86f8092b9fcebaeee3"
+    },
+    {
+      "path": "docs/qa/pilot-cvrf-reviewed-20261118/manifest.json",
+      "source_ref": "b41d6631e679ad2777d248fa087ea71582a5bf63",
+      "git_blob": "6f75e7684a95ca346e3ac4346357ca8f15e65c57",
+      "bytes": 3878,
+      "sha256": "bd4d4690d25a04bd72b1904c2803f54accb2f5a84bdffaf30396b762a931f9f0"
+    },
+    {
+      "path": "docs/qa/pilot-cvrf-storage-classes-20261118.md",
+      "source_ref": "b41d6631e679ad2777d248fa087ea71582a5bf63",
+      "git_blob": "ec2ada499d52d712477aed64bcff2ad9d1a41986",
+      "bytes": 6093,
+      "sha256": "c38086bf9f01dd52a5e6fb893838d2c26092749d8e7473034972040265c8835a"
+    },
+    {
+      "path": "docs/qa/pilot-cvrf-storage-classes-20261118/manifest.json",
+      "source_ref": "b41d6631e679ad2777d248fa087ea71582a5bf63",
+      "git_blob": "4d71977c86fe959a72ab6cffc00248d7d029ab13",
+      "bytes": 3155,
+      "sha256": "5e65dca5094215cad6db96539b4b87ea7ebcf1f35f790c32a69ea7ba459dd69d"
+    },
+    {
+      "path": "docs/qa/pilot-cvrf-storage-classes-20261118/raw-evidence.zip",
+      "source_ref": "b41d6631e679ad2777d248fa087ea71582a5bf63",
+      "git_blob": "409d7ce79b2863501254b8c38394c3604128004c",
+      "bytes": 45328,
+      "sha256": "e0c3e45738e5a3cd7b5910c38a1a009f29058aca0e3df37be484ba54f57effdf"
+    },
+    {
+      "path": "docs/qa/pilot-retained-cvrf-context-20261118.md",
+      "source_ref": "b41d6631e679ad2777d248fa087ea71582a5bf63",
+      "git_blob": "1e1d8ed364238264f3a5a2c0812b1f71a695ded3",
+      "bytes": 7898,
+      "sha256": "3acb2156cad6235346b937532fba32b71784b287915292ba3d5184e7cc9c7395"
+    },
+    {
+      "path": "docs/qa/pilot-retained-cvrf-context-20261118/manifest.json",
+      "source_ref": "b41d6631e679ad2777d248fa087ea71582a5bf63",
+      "git_blob": "7f8518de3abd0dd2f7ed2b4b71a9b39143a5028d",
+      "bytes": 9507,
+      "sha256": "afd34968fbc1fd4e4c48d157db9340524d355e178eca6c39fd49ec122d1abb7b"
+    },
+    {
+      "path": "docs/qa/pilot-retained-cvrf-context-20261118/raw-evidence.zip",
+      "source_ref": "b41d6631e679ad2777d248fa087ea71582a5bf63",
+      "git_blob": "8ffa3290e58902aaaac3ca4238fb85c7b9e1d302",
+      "bytes": 108947,
+      "sha256": "26f60ca01c60eaa662648488bca7f1ded84809b52be9c1a2e4fecb8c0b28c0a3"
+    },
+    {
+      "path": "docs/qa/pilot-stage-ownership-20261118.evidence.zip",
+      "source_ref": "f2b6827fc6270b96fb241b0722f2878de5a17361",
+      "git_blob": "d26654c432fd0f6185a283b4ab373d344e21a556",
+      "bytes": 27341,
+      "sha256": "8e8b922ba29507c03fccc08475d03b5f25765b982b433a3f6923f1c52fb239a2"
+    },
+    {
+      "path": "docs/qa/pilot-stage-ownership-20261118.manifest.json",
+      "source_ref": "f2b6827fc6270b96fb241b0722f2878de5a17361",
+      "git_blob": "30050d7a9c31877e9afaff6401cd46947e471561",
+      "bytes": 4365,
+      "sha256": "6567b6e3c1d59ae3fbe2b054a297184146d20db3c3c7273d7d564d9d68e076ef"
+    },
+    {
+      "path": "docs/qa/pilot-stage-ownership-20261118.md",
+      "source_ref": "f2b6827fc6270b96fb241b0722f2878de5a17361",
+      "git_blob": "a9674ac57bd5e9c82cea8a16a5fa8a92d0afed53",
+      "bytes": 7663,
+      "sha256": "4647fcdeb24ec0e09f9af6bc455409707fd824584473d505af6ba64a844f21ee"
+    },
+    {
+      "path": "docs/qa/pilot-stage-root-review-20261118.evidence.zip",
+      "source_ref": "f2b6827fc6270b96fb241b0722f2878de5a17361",
+      "git_blob": "201e107e1edf858243307cdca6ea0cc1f851ab4c",
+      "bytes": 6063,
+      "sha256": "c34e472f4419a544151116a0ea0c966a23e7b55f49d69dd56d6f5db4996a990e"
+    },
+    {
+      "path": "docs/qa/pilot-stage-root-review-20261118.manifest.json",
+      "source_ref": "f2b6827fc6270b96fb241b0722f2878de5a17361",
+      "git_blob": "640a24ffc692a42ba15c05ac900a9d70961396ac",
+      "bytes": 1394,
+      "sha256": "5625e3f5305a4cf7a175bff887fe6595bb579e8cd482b22437220a323fe8f957"
+    },
+    {
+      "path": "docs/qa/pilot-staleness-20261118.md",
+      "source_ref": "b41d6631e679ad2777d248fa087ea71582a5bf63",
+      "git_blob": "ca0a611bca39d01b763fe86a30e583759da2e969",
+      "bytes": 9187,
+      "sha256": "35cfd7c336ddbd019019a209ef0fece396685e1c6e0f57becdaebc1063d1afbe"
+    },
+    {
+      "path": "docs/qa/pilot-staleness-20261118/evidence.zip",
+      "source_ref": "b41d6631e679ad2777d248fa087ea71582a5bf63",
+      "git_blob": "5f334c5410015be93499e97b663968006493ed8d",
+      "bytes": 69379,
+      "sha256": "74cf31afd5b832ee9d7f0fa422d792488869f2a58976bfcda12a4d8112c35301"
+    },
+    {
+      "path": "docs/qa/pilot-staleness-20261118/manifest.json",
+      "source_ref": "b41d6631e679ad2777d248fa087ea71582a5bf63",
+      "git_blob": "a14e52cd469e1027699daa88ba316b9e1c4382e4",
+      "bytes": 11156,
+      "sha256": "864b45eb229dfc67343db280bfcd58a895d7bffedea4144e6c9dba0742960ae0"
+    }
+  ]
+}

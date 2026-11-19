@@ -1,0 +1,57 @@
+{
+  "schema": "patchtrace/final-review-evidence/1",
+  "combined_selection_source": "96f2f103afa87c251d015e886cd742b7184b1698",
+  "force_followup_source": "4cdee5a26837802bd90b8b50c11696b039ac9335",
+  "members": [
+    {
+      "path": "stable-final-focused.log",
+      "bytes": 271,
+      "sha256": "16fb1b309c6f8af37787c57898457ae0b60896a05ad14cf6f6193d54e469533b"
+    },
+    {
+      "path": "stable-final-focused.xml",
+      "bytes": 29792,
+      "sha256": "9ae64fb7cb9b7e971aaf04797d440791171a686034f513e5b4386857fee0e8ef"
+    },
+    {
+      "path": "strings-final-independent.xml",
+      "bytes": 2306,
+      "sha256": "8ed63fa2b6063948a5f881c3ca15c4b1d7c0dad67ce910c68a72850e53662ab2"
+    },
+    {
+      "path": "security-scan-boundary-review.json",
+      "bytes": 3109,
+      "sha256": "c073a60a27039969cd91d1402f3e9cb14400c009f0c103b2b957b411e82d89fd"
+    },
+    {
+      "path": "security-scan-boundary-review.log",
+      "bytes": 261,
+      "sha256": "c7d3811d0cafafbf0e82e12182864cb96b9ba79e0cb8a79814abb9bdfd7c7351"
+    },
+    {
+      "path": "security-scan-boundary-review.xml",
+      "bytes": 29516,
+      "sha256": "385c7f95ed715049c6f9fdf710cb279fa3a59322a23422cb9f51d9aaac8fba27"
+    },
+    {
+      "path": "stable-runtime-security-findings.json",
+      "bytes": 35822,
+      "sha256": "3e6c95fbc6e3925a283097dd26f76890f6dd9ff7af836e6a48de884ce5bbb4e9"
+    },
+    {
+      "path": "foundation-runtime-security-findings.json",
+      "bytes": 35133,
+      "sha256": "cf507128c2eb4ce4fe28112a61bbfc35587814cbd103759e981858a2bd2f6e5f"
+    },
+    {
+      "path": "stable-strict-findings.json",
+      "bytes": 78988,
+      "sha256": "5de266ea73b3e085620bfa23b3cf6e7c8bb477378a86bec319be9c9f2d44aefe"
+    }
+  ],
+  "archive": {
+    "path": "final-review-evidence.zip",
+    "bytes": 21477,
+    "sha256": "05acb2fd0d8e32fdebd9b78afa5f25bd0b3aeee64188bcb476e6fafffcf8e307"
+  }
+}

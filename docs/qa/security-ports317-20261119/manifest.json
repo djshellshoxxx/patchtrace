@@ -1,0 +1,52 @@
+{
+  "schema": "patchtrace/security-ports-review/1",
+  "tested_source": "2d0fe17de977f2a0d7a346556aa8b8080abea8dd",
+  "tested_tree": "552c6ccc1a9318abd77b61399c3f95337fef493f",
+  "archive": {
+    "name": "evidence.zip",
+    "bytes": 20479,
+    "sha256": "fed2f72905e9367b0551d020110c34705e3ca39d4cba56f3ad0bcc686f75c43a"
+  },
+  "members": {
+    "provenance.json": {
+      "bytes": 10294,
+      "sha256": "75ba4cc885a822f0a5dd67811dffb2dc333c1bedcafb2104905e2cf71de6f0e0"
+    },
+    "security-foundation317.log": {
+      "bytes": 180,
+      "sha256": "6fc840512412c0697e15ab68a6722a1be224123e39dfeb422b7b400f54671c25"
+    },
+    "security-foundation317.xml": {
+      "bytes": 15499,
+      "sha256": "a61a1ab7892b75b520919d373c37ae1783b00e78cce7e572f085c9b2c4c4d455"
+    },
+    "security-persistence-stat-review.log": {
+      "bytes": 98,
+      "sha256": "4eb286e6a8168f1981e3428733fbde90b8fe7022eb2b6812fc235143633bbb7b"
+    },
+    "security-persistence-stat-review.xml": {
+      "bytes": 1563,
+      "sha256": "4e1573b89663d898b55e8012b141317cdf70a1d6edc40f5897080e308399cc7d"
+    },
+    "security-ports-focused.log": {
+      "bytes": 763,
+      "sha256": "cf082fde8a05ca07c9df4d207ea4081e3e8368ee6634366baff138e5a6191bff"
+    },
+    "security-ports-focused.xml": {
+      "bytes": 86188,
+      "sha256": "1d51e13813a1de8c0ba0afcace7c672cdb0e3ce1d917300cf037447e2b88fc8d"
+    },
+    "security-ports-ruff.log": {
+      "bytes": 19,
+      "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+    },
+    "security-root-fixture-review.log": {
+      "bytes": 100,
+      "sha256": "7ea8881c96a4d74fb3dae3a5bab4ae818cb8383d868466ff33295482f98f657a"
+    },
+    "security-root-fixture-review.xml": {
+      "bytes": 9261,
+      "sha256": "8100ac43a77e3a204d99a7d3541a7c16e8757e706459eceb8521ad47e3bfcd1d"
+    }
+  }
+}

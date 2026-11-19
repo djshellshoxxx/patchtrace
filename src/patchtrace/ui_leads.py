@@ -12,7 +12,7 @@ from __future__ import annotations
 
 import sqlite3
 from collections.abc import Callable, Mapping
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from pathlib import Path
 
 from PySide6.QtCore import Qt, QTimer, Signal
@@ -41,7 +41,7 @@ from .gui.registry import PanelContext
 from .gui.table_spec import ColumnSpec, PreparedTable, TableSpec, prepare_table
 from .gui.text import sanitize_text
 from .gui.tips import apply_tip, escaped_tip, register_tips
-from .pilot import review, store
+from .pilot import current_inputs, review, store
 from .pilot.limits import PilotError
 from .pilot.panel import TEMPLATES, TIPS
 from .pilot.read_model import (
@@ -107,16 +107,8 @@ def snapshot_of(project) -> Snapshot:
 def load_stored(service, project) -> Stored:
     """GUI thread: the stored result and the review events (both read the project database)."""
     enrichment = EnrichmentStore(service.store)
-    loaded = store.load(enrichment, known_inputs(project))
+    loaded = store.load(enrichment, check_current=current_inputs.capture(service, enrichment, project).changed)
     return Stored(loaded, review.fold(review.read(enrichment).events))
-
-
-def known_inputs(project) -> dict[str, object]:
-    """What can be told about a result's inputs without recomputing it (the pair and the analysis run)."""
-    sides = {a.side: a.sha256 for a in project.artifacts}
-    run = store.completed_run(project)
-    return {'older_sha256': sides.get('older'), 'newer_sha256': sides.get('newer'),
-            'ghidriff_run_id': run.id if run else None, 'raw_sha256': run.raw_sha256 if run else None}
 
 
 def collect_inputs(service, cancel):
@@ -136,8 +128,10 @@ def rank_inputs(collected, cancel, report):
 def publish_result(service, assessment, _cancel) -> None:
     """GUI thread: store the result as the newest one of the project."""
     from .pilot import keys
-    store.publish(EnrichmentStore(service.store), assessment, keys.default_config(),
-                  current=store.current_guard(service.project, assessment.result_id))
+    enrichment = EnrichmentStore(service.store)
+    store.publish(enrichment, assessment, keys.default_config(),
+                  current=store.current_guard(service.project, assessment.result_id),
+                  check_current=current_inputs.capture(service, enrichment).changed)
 
 
 def resolve_matches(root: Path, snapshot: Snapshot, cancel) -> Mapping[str, str]:
@@ -598,9 +592,34 @@ class LeadsController(ControllerBase):
         """Why Go to function is off for this lead, or None. Nothing is guessed from a name."""
         if row is None:
             return 'Select a lead first.'
+        if reason := self._stale_navigation_reason():
+            return reason
         if row.lead.candidate_key not in self.matches:
             return 'This lead is not tied to a row of the comparison, so there is no function to show.'
         return None
+
+    def _stale_navigation_reason(self) -> str | None:
+        if self.stored is not None and self.stored.loaded.state == 'stale':
+            return 'These leads are out of date. Prepare leads again before opening their locations.'
+        return None
+
+    def _navigation_current(self) -> str | None:
+        """Activation only: evidence can change after the last refresh without changing the project key."""
+        service, project = self.service(), self.port.project()
+        loaded = self.stored.loaded if self.stored else None
+        if self._stale_navigation_reason() or loaded is None or loaded.assessment is None:
+            return self._stale_navigation_reason()
+        if service is not None and getattr(service, 'store', None) is not None:
+            try:
+                changed = current_inputs.capture(service, EnrichmentStore(service.store), project).changed(
+                    loaded.assessment) if project is not None else ('project_id',)
+            except (PilotError, EnrichmentError, sqlite3.Error, OSError):
+                changed = ('project_id',)
+            if changed:
+                self.stored = Stored(replace(loaded, state='stale', reason='inputs-changed', changed=changed),
+                                     self.stored.reviews)
+                self._render()
+        return self._stale_navigation_reason()
 
     # ---- actions -------------------------------------------------------------------------------------
 
@@ -683,7 +702,7 @@ class LeadsController(ControllerBase):
     def go(self) -> None:
         """Show the selected lead's comparison row; the port has no side-specific call, so both panes show."""
         row = self.current_row()
-        reason = self._goto_reason(row)
+        reason = self._navigation_current() or self._goto_reason(row)
         if reason is not None:
             return self.ctx.announce(reason)
         match_id = self.matches[row.lead.candidate_key]
@@ -703,6 +722,8 @@ class LeadsController(ControllerBase):
         return tuple(table.row_at(i) for i in range(table.rowCount()))
 
     def _reveal(self, found: ObservationRow) -> None:
+        if reason := self._navigation_current():
+            return self.ctx.announce(reason)
         row, nav = self.current_row(), found.nav
         project = self.port.project()
         match_id = self.matches.get(row.lead.candidate_key) if row else None
@@ -716,6 +737,8 @@ class LeadsController(ControllerBase):
             self.ctx.announce('This evidence has a location, but its function is not tied to a comparison row.')
 
     def _open_anchor(self, found: ObservationRow) -> None:
+        if reason := self._navigation_current():
+            return self.ctx.announce(reason)
         obs = self.model.pool.get(found.obs_id) if self.model else None
         for anchor_id in (obs.anchor_ids if obs else ()):
             kind, _, value = anchor_id.partition(':')
