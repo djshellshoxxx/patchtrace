@@ -322,6 +322,70 @@ Removing all managed metadata by the filesystem
 owner is outside the local integrity/authenticity claim. No signature, hostile
 same-user lock, model change or final-run permission is implied.
 
+### Verified shard transfer (recovery, November 19, 2026)
+
+`shard run-shard --collect-artifacts` exports a separate completed bundle at
+`<out>/training/shard-<index>/`. `manifest.json` (`tier-r-training/1`) is published
+last and exclusively, after exact source reports, report-referenced labels and
+successful managed outputs have been validated and copied. It binds the plan,
+shard diagnostic digest, planned cases, each label's producing case, semantic
+label/report digests, and SHA-256 of every transferred byte stream, including
+the managed marker and credit manifest. Reports are named by their semantic
+digest; labels and output filenames are derived from validated pair/engine IDs.
+Case ownership comes only from explicit successful builder `written` summaries;
+files found by scanning scratch are never adopted. Repeated pair ownership is
+refused, even if the bytes agree. Only `status=ok` report references earn output
+credit; failed files remain in their original run and are not transferred.
+The diagnostic shard binds `pair_cases` before its own digest is calculated.
+Both shard and merged manifests must exactly match those recorded assignments;
+merged ownership names the source shard and its completed producing case.
+The strict generated `TrainingManifest.json` schema caps a manifest at 10,000
+reports, 200,000 pair assignments and 400,000 fixed file references; its encoded
+bytes are additionally capped at 8 MiB. Existing 64 MiB label/output/managed
+credit limits remain in force, including merged credit manifests. Exceeding a
+limit preserves partial destination evidence without transfer completion.
+Inventory checks consume at most the expected directory entries plus one:
+reject an unknown or repeated name immediately, and reject any expected name
+still absent at the end. Never materialize arbitrary extra directory contents
+before refusing a malformed bundle.
+For verified transfers, all report and output metadata is already available:
+the writer calls the shared credit-manifest preflight before creating its
+destination. Known aggregate-credit overflow therefore creates no destination;
+later IO/finalization failures still preserve partial uncredited evidence.
+
+`shard merge --artifacts <download-root>/training` requires the fixed
+`shard-<index>` bundle for every diagnostic shard, verifies all ownership and
+exact bytes before writing, and creates `<out>/training/` with exact reports,
+labels, a managed `outputs/` run and its own final manifest. The actual training
+reader can consume `<out>/training/outputs` with `allow_legacy=False`.
+Every source and target parent and leaf is checked without following links,
+including Windows reparse points; changed identities and incomplete bundles
+are refused. Existing destinations are never replaced. Publication failures
+preserve partial files for diagnosis, without a completed transfer manifest.
+Diagnostic shard files produced with transfer are also published exclusively:
+a refused rerun must preserve the earlier diagnostic and its completed bundle's
+ownership binding. Legacy runs without transfer keep their existing behavior.
+Producer containment checks inspect both original lexical paths before resolving
+nonlinked filesystem aliases (including Windows short/long names), then verify
+canonical containment, unchanged leaf identities and unchanged original parents.
+Normalization must never hide a linked component before `..`. Generated training
+schema bytes use UTF-8 with LF line endings on every platform; CLI path strings
+continue to use forward slashes.
+This is bounded local integrity verification, not an authenticity signature or
+a lock against arbitrary same-user concurrent filesystem mutation.
+
+Actions uploads diagnostics unconditionally and a completed training bundle
+only when the producing step emits the fixed boolean `verified_training=true`.
+The payload names fixed visible JSON locations and the exact hidden managed
+marker; it never uploads scratch, images, binaries, Tier W or unknown hidden
+files. Within the opt-in `--collect-artifacts` path, builder and evaluator summaries
+declaring `failed` or `error` remain failed even with exit 0 or 1; they cannot
+qualify as completed producing cases. Without transfer, the existing exit-1
+summary recognition policy remains unchanged. A/A non-byte-identical failures,
+blocked results and timeout precedence remain intact in either mode. This does
+not change metric thresholds or training gates.
+
+
 ## 11. Lineage, roles and existing tooling
 Lineage = project (`L-<project>`; suites `L-ours-<suite>-<project>`); mutants, A/A and noise pairs inherit the lineage of
 their base source so grouped CV (SPEC-28 s4) never splits a function identity across folds; `family` comes from the recipe.

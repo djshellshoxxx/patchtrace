@@ -123,7 +123,7 @@ class ChangesPage(QWidget):
 
     def __init__(self, ctx: PanelContext) -> None:
         super().__init__()
-        self.state = StateView('capabilities', 'Capabilities', ctx.shell, text_limit=600)
+        self.state = StateView('capabilities.body', 'Capabilities', ctx.shell, text_limit=600)
         self.banner = PlainLabel(wrap=True, limit=1_200, multiline=True)
         self.banner.setObjectName('capabilities.banner')
         self.filter, self.group = QComboBox(), QComboBox()

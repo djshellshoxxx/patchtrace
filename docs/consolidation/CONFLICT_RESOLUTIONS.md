@@ -5,7 +5,7 @@ Main baseline: `fdc2696c23bdbfe7668348f25e3b336ce33039f7`.
 Original local merge: `a9e40d27d4b2ef9a7166f5127039d4837e9448f3`.
 Parents: reviewed #319 `a56ab13aaf9916fc12bea70ba1494075991b7f09` and
 #318 (including #316) `c4ace2088ce8dc9ce78a0bf3036b81096accbdb5`.
-Current checkpoint source: `7dfba50f`; no unresolved Git conflicts.
+Current checkpoint source: `eb595b82`; no unresolved Git conflicts.
 
 The eleven original conflicts are reproducible with
 `git merge-tree --write-tree --name-only --no-messages a56ab13a c4ace208`.
@@ -39,3 +39,10 @@ current action pins and Windows gates.
 
 Static compilation and normal Ruff passed after the initial merge. Focused and
 broader results, including failures, are recorded in `TEST_RESULTS.md`.
+
+The managed training transfer port retained the current legacy diagnostic exit
+semantics and isolated strict transfer behavior behind explicit opt-in. Runner
+publication, GUI accessibility and research modules were integrated by selective
+commits; no unresolved conflict remains. Research source was adapted to current
+manifest/output-store interfaces. Shared module index edits were coordinated
+before workers created Search wiring, offline review and strict fetch modules.

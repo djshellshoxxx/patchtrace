@@ -11,6 +11,10 @@ polls it). Engines sit behind Protocols, so tests need no Ghidra; nothing here o
 from __future__ import annotations
 
 import hashlib
+import json
+import os
+import stat
+import tempfile
 import threading
 from collections import Counter
 from collections.abc import Callable, Iterable, Mapping, Sequence
@@ -20,14 +24,25 @@ from typing import Protocol, get_args
 
 from pydantic import ValidationError
 
+from patchtrace import owned_publication as owned
 from patchtrace.enrichment.identity import parse_address
 from patchtrace.hostile_text import escape_text
 from patchtrace.secondary.contracts import Engine, SecondaryMatchSet
 
-from .contracts import MatchLine, PairBinary, PairEntry, PairsDoc, RunCell, RunProblem, RunRecord
+from .contracts import (
+    DOC_LIMIT,
+    MatchLine,
+    PairBinary,
+    PairEntry,
+    PairsDoc,
+    RunCell,
+    RunProblem,
+    RunRecord,
+    load_run_record,
+)
 from .fetch import cancelled
 from .labels import match_id
-from .paths import TIER, Layout, TierWError, check_corpus_id, inside, tool_safe_path, write_json, write_jsonl
+from .paths import TIER, Layout, TierWError, check_corpus_id, dumps, inside, tool_safe_path
 from .pe_tables import PeTableError, PeView
 
 GHIDRIFF = 'ghidriff'
@@ -40,6 +55,8 @@ RUN_RECORD = 'run.json'
 MESSAGE_LIMIT = 300
 VERSION_LIMIT = 200
 ADDRESS_TEXT_LIMIT = 40
+MATCHES_LIMIT = 1024 * 1024 * 1024
+HISTORY = '.tier-w-run-history'
 
 
 class Cancel(Protocol):
@@ -342,10 +359,29 @@ def _validated(doc: PairsDoc, corpus_id: str, conditions: Sequence[str],
     return out
 
 
+def _ordinary_output_parent(path: Path) -> None:
+    # Preserve lexical components: collapsing link/../leaf before checking a link can select another directory.
+    absolute = path if path.is_absolute() else Path.cwd() / path
+    current = Path(absolute.anchor)
+    for part in absolute.parts[1:-1]:
+        current /= part
+        try:
+            info = current.lstat()
+        except FileNotFoundError:
+            continue
+        except OSError:
+            raise TierWError('PT-TIERW-CONFIG', 'runner output parent is unreadable') from None
+        if (not stat.S_ISDIR(info.st_mode) or stat.S_ISLNK(info.st_mode) or
+                getattr(info, 'st_file_attributes', 0) & 0x400):
+            raise TierWError('PT-TIERW-CONFIG', 'runner output parent is linked, reparse or not a directory')
+
+
 def _output_admission(layout: Layout, corpus_id: str, pairs: Sequence, conditions: set[str],
                       matches_path: Path) -> None:
+    _ordinary_output_parent(matches_path)
     outputs = (matches_path, matches_path.with_name(RUN_RECORD))
-    if not inside(matches_path.parent, layout.root) or matches_path.name.casefold() == RUN_RECORD:
+    if (not inside(matches_path.parent, layout.root) or matches_path.name.casefold() == RUN_RECORD or
+            HISTORY in (part.casefold() for part in matches_path.parts)):
         raise TierWError('PT-TIERW-CONFIG', 'matches and run.json must be distinct files under the corpus root')
     inputs = [layout.root / 'binaries' / binary.sha256 / binary.file_name
               for _pair, older, newer in pairs for binary in (older, newer)]
@@ -353,7 +389,7 @@ def _output_admission(layout: Layout, corpus_id: str, pairs: Sequence, condition
                 for pair, _older, _newer in pairs for condition in conditions]
     for output in outputs:
         if (output.is_symlink() or output.is_dir() or inside(output, layout.root / 'binaries') or
-                any(inside(output, project) for project in projects)):
+                output.resolve() == layout.cancel_file.resolve() or any(inside(output, project) for project in projects)):
             raise TierWError('PT-TIERW-CONFIG', 'runner output aliases a protected input, project or linked path')
         if output.exists() and any(source.exists() and output.samefile(source) for source in inputs):
             raise TierWError('PT-TIERW-CONFIG', 'runner output aliases an input binary')
@@ -361,18 +397,182 @@ def _output_admission(layout: Layout, corpus_id: str, pairs: Sequence, condition
         raise TierWError('PT-TIERW-CONFIG', 'matches and run.json alias the same file')
 
 
+@dataclass(frozen=True)
+class _OutputFile:
+    path: Path
+    raw: bytes
+    identity: tuple[int, int]
+
+
+class _PublicationCancelled(Exception):
+    pass
+
+
+def _capture_output(path: Path, maximum: int) -> _OutputFile | None:
+    try:
+        before = path.lstat()
+    except FileNotFoundError:
+        return None
+    raw = owned.read_bytes(path, maximum=maximum)
+    after = path.lstat()
+    if ((before.st_dev, before.st_ino, before.st_size, before.st_mtime_ns, before.st_ctime_ns) !=
+            (after.st_dev, after.st_ino, after.st_size, after.st_mtime_ns, after.st_ctime_ns)):
+        raise TierWError('PT-TIERW-VERIFY', 'runner output changed while reading')
+    return _OutputFile(path, raw, owned.file_identity(after))
+
+
+def _prior_outputs(matches: Path, corpus_id: str) -> dict[Path, _OutputFile | None]:
+    paths = (matches, matches.with_name(RUN_RECORD))
+    try:
+        previous = {path: _capture_output(path, maximum) for path, maximum in
+                    zip(paths, (MATCHES_LIMIT, DOC_LIMIT), strict=True)}
+        rows, summary = previous.values()
+        if rows is None and summary is None:
+            return previous
+        if rows is None or summary is None:
+            raise TierWError('PT-TIERW-VERIFY', 'runner outputs are incomplete; preserve and recover the prior pair')
+        record = load_run_record(summary.raw)
+        if record.corpus_id != corpus_id or record.matches_sha256 != hashlib.sha256(rows.raw).hexdigest():
+            raise TierWError('PT-TIERW-VERIFY', 'runner outputs have foreign corpus ownership or a mismatched digest')
+        for path, expected in previous.items():
+            _assert_output(path, expected)
+        return previous
+    except (OSError, owned.OwnedPublicationError):
+        raise TierWError('PT-TIERW-VERIFY', 'prior runner outputs are unreadable or changed') from None
+
+
+def _assert_output(path: Path, expected: _OutputFile | None) -> None:
+    observed = _capture_output(path, len(expected.raw) if expected is not None else 0)
+    if observed != expected:
+        raise TierWError('PT-TIERW-VERIFY', 'runner output identity or bytes changed before publication')
+
+
+def _exact_bytes(expected: bytes):
+    def validate(raw: bytes) -> None:
+        if raw != expected:
+            raise TierWError('PT-TIERW-VERIFY', 'retained runner output has conflicting bytes')
+    return validate
+
+
+def _retain_outputs(anchor: owned.DirectoryAnchor, rows: bytes, summary: bytes) -> None:
+    folder = anchor.path / HISTORY / hashlib.sha256(summary).hexdigest()
+    for name, raw in (('matches.jsonl', rows), (RUN_RECORD, summary)):
+        owned.publish_bytes(folder / name, raw, maximum=len(raw), validate_existing=_exact_bytes(raw), anchor=anchor)
+    # A receipt is usable only while both retained names still carry the intended bytes.
+    for name, raw in (('matches.jsonl', rows), (RUN_RECORD, summary)):
+        owned.read_bytes(folder / name, maximum=len(raw), validate=_exact_bytes(raw), anchor=anchor)
+
+
+def _stage_output(path: Path, raw: bytes, anchor: owned.DirectoryAnchor) -> _OutputFile:
+    owned.publish_bytes(path, raw, anchor=anchor)
+    result = _capture_output(path, len(raw))
+    if result is None or result.raw != raw:
+        raise TierWError('PT-TIERW-VERIFY', 'runner output staging bytes changed')
+    return result
+
+
+def _replace_output(stage: _OutputFile, target: Path, previous: _OutputFile | None) -> None:
+    _assert_output(target, previous)
+    _assert_output(stage.path, stage)
+    os.replace(stage.path, target)
+    _assert_output(target, _OutputFile(target, stage.raw, stage.identity))
+
+
+def _restore_outputs(previous: dict[Path, _OutputFile | None], planned: dict[Path, _OutputFile],
+                     pending: owned.DirectoryAnchor, anchor: owned.DirectoryAnchor, primary: BaseException) -> bool:
+    restored = True
+    for index, (target, old) in enumerate(previous.items()):
+        if old is None:
+            continue  # No prior artifact to restore; never unlink an ambiguous failed publication.
+        try:
+            owned.verify_anchor(anchor)
+            current = _capture_output(target, max(len(old.raw), len(planned[target].raw)))
+            if current == old:
+                continue
+            if current is None:
+                owned.publish_bytes(target, old.raw, anchor=anchor)
+            elif current == planned[target]:
+                owned.verify_anchor(pending)
+                restore = _stage_output(pending.path / f'restore-{index}', old.raw, pending)
+                _replace_output(restore, target, current)
+            else:
+                raise TierWError('PT-TIERW-VERIFY', 'runner output changed outside this publication attempt')
+        except BaseException:
+            restored = False
+    if restored:
+        try:
+            for target, old in previous.items():
+                if old is not None:
+                    owned.read_bytes(target, maximum=len(old.raw), validate=_exact_bytes(old.raw), anchor=anchor)
+        except BaseException:
+            restored = False
+    if not restored:
+        primary.add_note('Tier-W output restoration failed; the previous pair is retained in .tier-w-run-history.')
+    return restored
+
+
+def _select_outputs(previous: dict[Path, _OutputFile | None], rows: bytes, summary: bytes,
+                    anchor: owned.DirectoryAnchor, stop: _Stop) -> None:
+    for path, expected in previous.items():
+        _assert_output(path, expected)
+    if not any(previous.values()):
+        published = [_stage_output(path, raw, anchor)
+                     for path, raw in zip(previous, (rows, summary), strict=True)]
+        for output in published:
+            _assert_output(output.path, output)
+        owned.verify_anchor(anchor)
+        return
+    pending = Path(tempfile.mkdtemp(prefix='.tier-w-pending-', dir=anchor.path))
+    pending_anchor = owned.directory_anchor(pending)
+    stages = {path: _stage_output(pending / str(index), raw, pending_anchor)
+              for index, (path, raw) in enumerate(zip(previous, (rows, summary), strict=True))}
+    planned = {path: _OutputFile(path, stage.raw, stage.identity) for path, stage in stages.items()}
+    try:
+        for path, stage in stages.items():
+            if stop.is_set():
+                raise _PublicationCancelled
+            owned.verify_anchor(anchor)
+            owned.verify_anchor(pending_anchor)
+            _replace_output(stage, path, previous[path])
+        if stop.is_set():
+            raise _PublicationCancelled
+        for path, expected in planned.items():
+            _assert_output(path, expected)
+        owned.verify_anchor(anchor)
+    except BaseException as exc:
+        restored = _restore_outputs(previous, planned, pending_anchor, anchor, exc)
+        if not restored and isinstance(exc, _PublicationCancelled):
+            raise TierWError('PT-TIERW-VERIFY', 'cancelled output publication needs recovery from retained history') from exc
+        raise
+
+
+def _matches_bytes(state: _Run) -> bytes:
+    result = bytearray()
+    for key in sorted(state.lines):
+        line = (json.dumps(state.lines[key].model_dump(mode='json'), sort_keys=True, ensure_ascii=False,
+                           allow_nan=False) + '\n').encode()
+        if len(result) + len(line) > MATCHES_LIMIT:
+            raise TierWError('PT-TIERW-LIMIT', 'runner matches exceed the 1 GiB output budget')
+        result.extend(line)
+    return bytes(result)
+
+
 def run_corpus(layout: Layout, pairs_doc: PairsDoc, *, corpus_id: str, conditions: Sequence[str] = (HIDDEN,),
                secondary_engines: Sequence[str] = (), config_factory: ConfigFactory,
                factory: ProjectFactory = create_project, invoker: PairInvoker = run_pair,
                secondary: Mapping[str, SecondaryInvoker] | None = None, matches_path: Path,
                cancel: threading.Event | None = None) -> RunRecord:
-    """Run every pair, write `matches_path` (sorted `tier-w-matches/1` lines) and `run.json` beside it, both
-    atomically, and return the `tier-w-run/1` record. Inputs are checked before any work starts."""
+    """Run pairs and retain a complete generation before selecting matches and run.json.
+
+    The returned record describes this attempt; a cancelled rerun leaves the previous selected pair intact.
+    Selected filenames are individually replaced, with bounded ownership checks and recoverable prior evidence.
+    """
     pairs = _validated(pairs_doc, corpus_id, conditions, secondary_engines)
     matches_path = Path(matches_path)
     keys = [(GHIDRIFF, c) for c in CONDITIONS if c in conditions] + [(e, NA) for e in sorted(set(secondary_engines))]
     used = set(conditions) | ({HIDDEN} if secondary_engines else set())
     _output_admission(layout, corpus_id, pairs, used, matches_path)
+    previous = _prior_outputs(matches_path, corpus_id)
     for pair, _older, _newer in pairs:
         for condition in sorted(used):
             if problems := tool_safe_path(layout.run_dir(corpus_id, pair.id, condition) / 'project'):
@@ -381,10 +581,36 @@ def run_corpus(layout: Layout, pairs_doc: PairsDoc, *, corpus_id: str, condition
                  invoker, secondary or {})
     for pair, older, newer in pairs:
         state.pair(pair, older, newer)
-    write_jsonl(matches_path, [state.lines[k].model_dump(mode='json') for k in sorted(state.lines)])
+    rows = _matches_bytes(state)
     cells = state.cells()
-    record = RunRecord(contract='tier-w-run/1', tier=TIER, corpus_id=corpus_id, status=_status(cells),
-                       pairs=len(pairs), matches_sha256=hashlib.sha256(matches_path.read_bytes()).hexdigest(),
+    record = RunRecord(contract='tier-w-run/1', tier=TIER, corpus_id=corpus_id,
+                       status='cancelled' if state.stop.is_set() else _status(cells),
+                       pairs=len(pairs), matches_sha256=hashlib.sha256(rows).hexdigest(),
                        cells=cells, problems=tuple(state.problems))
-    write_json(matches_path.with_name(RUN_RECORD), record.model_dump(mode='json'))
+    summary = dumps(record.model_dump(mode='json'))
+    if len(summary) > DOC_LIMIT:
+        raise TierWError('PT-TIERW-LIMIT', 'runner summary exceeds the 64 MiB output budget')
+    matches_path.parent.mkdir(parents=True, exist_ok=True)
+    anchor = owned.directory_anchor(matches_path.parent)
+    for path, expected in previous.items():
+        _assert_output(path, expected)
+    prior_rows, prior_summary = previous.values()
+    if prior_rows is not None and prior_summary is not None:
+        _retain_outputs(anchor, prior_rows.raw, prior_summary.raw)
+    _retain_outputs(anchor, rows, summary)
+    for path, expected in previous.items():
+        _assert_output(path, expected)
+    if state.stop.is_set() and record.status != 'cancelled':
+        record = record.model_copy(update={'status': 'cancelled'})
+        summary = dumps(record.model_dump(mode='json'))
+        _retain_outputs(anchor, rows, summary)
+    if record.status == 'cancelled' and prior_rows is not None:
+        return record
+    if prior_rows is not None and prior_summary is not None and (rows, summary) == (prior_rows.raw, prior_summary.raw):
+        return record
+    try:
+        _select_outputs(previous, rows, summary, anchor, state.stop)
+    except _PublicationCancelled:
+        record = record.model_copy(update={'status': 'cancelled'})
+        _retain_outputs(anchor, rows, dumps(record.model_dump(mode='json')))
     return record

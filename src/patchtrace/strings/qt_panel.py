@@ -229,7 +229,7 @@ class StringsController(ControllerBase):
         register_gui_tips()  # the state buttons use them; the host does this too and it is idempotent
         register_tips(TIPS)
         self.panel = StringsPanel()
-        self.view = StateView('strings', 'Strings', ctx.shell, text_limit=600)
+        self.view = StateView('strings.body', 'Strings', ctx.shell, text_limit=600)
         self.view.set_content(self.panel)
         super().__init__(self.view)
         self.ctx, self.port, self.tasks, self.loader, self.clock = ctx, ctx.project, ctx.tasks, loader, clock

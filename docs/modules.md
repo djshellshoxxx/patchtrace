@@ -269,6 +269,8 @@ Every substantial future module must be added here before implementation. UI mus
 |---|---|---|---|---|
 | tier-w foundations | tools/calibration/tier_w/{paths,contracts}.py | local layout under PATCHTRACE_CALIB_ROOT (refused in-tree), `tier: W` markers, strict bounded contracts | tools.calibration | tests/test_tier_w_corpus.py |
 | tier-w offline CLI and runner | tools/calibration/tier_w/{cli,__main__,runner}.py; docs/schemas/calibration/RunRecord.json | Offline catalogue/pairs/fetch preview, symbols, labels, evaluation, status and guard; bounded document admission with corpus/binary ownership. Library runner records per-engine/condition outcomes; CLI execution remains blocked until its provenance and publication gates pass. | tier_w contracts, fetch, labels, evaluate; patchtrace backends | tests/test_tier_w_{cli,cli_admission,read_bounds,runner}.py |
+| tier-w offline review adapters | tools/calibration/tier_w/review_cli.py | Bounded audit sampling, terminal review and audit-report adapters; exact queue/key/corpus binding and human-event provenance; hidden answers never enter the review display. | tier_w.audit, calibration.label, tier_w.paths | dedicated offline CLI review ownership and preservation controls |
+| tier-w saved fetch plans | tools/calibration/tier_w/fetch_plan.py; docs/schemas/calibration/FetchPlan.json | Strict bounded binary/PDB plans, canonical digest and exact source recomputation; explicit host consent, no-replace publication and verified reuse. Existing fetch/transport throttling stays authoritative. | tier_w contracts, fetch, transport; shared owned publication | saved-plan ownership, bounds, consent and failure-preservation controls |
 | tier-w catalogue + pairs | tier_w/{catalogue,pairs}.py | Winbindex per-line KB catalogue, optional HEAD `resolve`, adjacent + cross-version pairs, `calibration-corpus/1` manifest + `tier-w-pairs/1` | acquisition.winbindex, lineage | afd.sys fixture + synthetic documents |
 | tier-w PDB/PE readers | tier_w/{msf,pe_tables}.py | stdlib MSF 7.00 reader (identity, publics, procs, OMAP); `.pdata`, base relocations, export RVAs, relocation-masked body hash | pe_overview, artifact_bytes | real self-made DLL+PDB fixtures, synthetic MSF/PE, hypothesis fuzz |
 | tier-w guard | tier_w/guard.py (+4-line hook in corpus.guard) | O1: blocks Microsoft images, PDBs (except SHA-listed self-made fixtures), Tier-W manifests/derived files/labels in git | corpus, msf | tests/test_tier_w_guard.py (repository-wide on every run) |
@@ -1548,6 +1550,31 @@ Wiring: `exchange.ALL_SOURCES`, `--sources diaphora`, `pipeline.capture_plan` (o
 |---|---|---|---|---|
 | training artifact transfer | tools/calibration/tier_r/training_artifacts.py | Explicit builder/evaluator-owned Tier R transfer; managed credit preflight and finalization; exact bounded JSON and manifest-last shard/merge bundles. No automatic Tier W adoption. | tier_r.contracts, tier_r.output_store, calibration.common | tests/test_tier_r_training_artifacts.py |
 | training transfer schema | docs/schemas/corpus/TrainingManifest.json | Strict manifest for the verified builder/evaluator transfer; generated from the owning contract. | tier_r.training_artifacts | schema drift and transfer ownership controls |
+
+### [R1:research-pilot-recovery]
+
+| Part | Files | Contract and ownership | Dependencies | Verification |
+|---|---|---|---|---|
+| local research pilot | tools/calibration/tier_r/research_{audit,observers,build,pilot}.py | Explicit opt-in local research entry points; bounded suite discovery, matrix size, label/review reads and exclusive labels. Exact builder/output/receipt ownership is required; no native or accuracy credit from constructed controls. | tier_r factory, build, output_store; calibration.common | tests/test_tier_r_research_{audit,observers,build,pilot}.py |
+| research receipts | tools/calibration/tier_r/receipts.py | Exact-byte receipt identity and parent-directory ownership for research artifacts. | strict JSON and bounded filesystem helpers | tests/test_tier_r_receipt_parent_race.py |
+| authored pilot suite | corpus/ours/r1-pilot/defined/{suite.json,v1/r1.c,v2/r1.c,README.md} | Source-only local research fixtures with explicit suite metadata; target binaries are never run. | opt-in research builder | research build/pilot fixture controls |
+
+### [F-gui-1:accessible-control-names]
+
+`src/patchtrace/gui/access_names.py` holds the short names of registry-backed
+main-window controls and combo popups. `gui.tips` applies defaults only to unnamed
+controls and preserves explicit names and dynamic labels. Panel rows, state
+buttons and retained popups use distinct accessible identifiers. Verification:
+`tests/test_gui_a11y_window.py` plus existing tooltip/state/Qt panel controls;
+native screen-reader acceptance remains separate.
+
+### [WB1:stored-search-source-wiring]
+
+`src/patchtrace/search/wiring.py` snapshots stored tool, advisory and CVE sources
+on the SQLite owner thread and supplies immutable bound inputs to GUI workers
+and CLI search. Bounded rows/sidecars, exact artifact/run/evidence ownership and
+unavailable-group diagnostics precede source adoption. Verification:
+`tests/test_search_wiring.py` and snapshot admission/worker-boundary controls.
 
 ### [KB-PRODUCT-START-20261106:local-product-catalogue]
 

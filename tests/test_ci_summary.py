@@ -174,8 +174,16 @@ def test_merge_job_runs_determinism_and_the_never_silent_summary(wf):
 
 
 def test_artifacts_hold_only_labels_and_reports(wf):
-    paths = [s['with']['path'] for j in wf['jobs'].values() for s in j['steps']
-             if str(s.get('uses', '')).startswith('actions/upload-artifact')]
+    uploads = [s for j in wf['jobs'].values() for s in j['steps']
+               if str(s.get('uses', '')).startswith('actions/upload-artifact')]
+    training = [s for s in uploads if s['with']['name'].startswith('tier-r-training-')]
+    assert {s['with']['name'] for s in training} == {
+        'tier-r-training-${{ matrix.shard }}', 'tier-r-training-merged'}
+    assert all("verified_training == 'true'" in s['if'] for s in training)
+    paths = [s['with']['path'] for s in uploads if s not in training]
     # Advisory legs upload their toolchain metadata/status receipts, never executables.
-    assert sorted(paths) == ['merged/', 'msvc-toolchain.json\nmsvc-status/\n', 'plan.json', 'shard-out/shard-*.json',
-                             'shard-out/shard-*.json\nwindows-toolchain.json\n']
+    assert sorted(paths) == [
+        'merged/tier-r-aggregate.json\nmerged/tier-r-merge.json\nmerged/tier-r-report.md\n'
+        'merged/ci-summary.json\nmerged/ci-summary.md\n',
+        'msvc-toolchain.json\nmsvc-status/\n', 'plan.json', 'shard-out/shard-*.json',
+        'shard-out/shard-*.json\nwindows-toolchain.json\n']

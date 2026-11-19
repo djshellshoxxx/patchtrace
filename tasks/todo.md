@@ -1,5 +1,16 @@
 # PatchTrace delivery tracker
 
+## 2026-11-19 exhaustive integration continuation
+
+- [x] Preserve #319 and complete #316/#318 ancestry in draft #320; verify exact-tree remote checkpoints without default-branch mutation.
+- [x] Recover managed training transfer, paired runner output retention, GUI accessible control identity and research workflow receipts with retained negative controls and independent reviews.
+- [x] Verify current research/transfer selection (189 passed, 14 native skips), GUI selection (145 passed) and installed Linux dependency advisory scan (32 distributions, zero findings after pinned pip upgrade).
+- [ ] Finish Search source wiring, Strings comparison parity, offline Tier-W review/run and strict saved-fetch adapters.
+- [ ] Repair KEV test-fixture import-order failure; finish frozen bounded broad QA and qualify subsequent source. Preserve environmental AF_UNIX refusal as unverified.
+- [ ] Refresh all remote/semantic residue; complete strict security, native/platform/package/accuracy gates before any default-branch merge.
+
+[Current exhaustive handoff](../docs/consolidation/HANDOFF.md).
+
 ## 2026-11-19 Windows QA fixture portability
 
 - [x] Preserve exact `771e5a77` Windows full QA: 51 failed, 25,155 passed, 150 skipped, two expected failures; separate publication subset 133 passed/four skips.

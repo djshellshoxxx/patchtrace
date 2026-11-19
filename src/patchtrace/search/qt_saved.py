@@ -52,8 +52,10 @@ class NameDialog(QDialog):
         self.name.setAccessibleName('Saved query name')
         apply_tip(self.name, 'search.saved_name')
         buttons = QDialogButtonBox(QDialogButtonBox.StandardButton.Save | QDialogButtonBox.StandardButton.Cancel)
-        apply_tip(buttons.button(QDialogButtonBox.StandardButton.Save), 'search.save')
-        apply_tip(buttons.button(QDialogButtonBox.StandardButton.Cancel), 'confirm.no')
+        apply_tip(buttons.button(QDialogButtonBox.StandardButton.Save), 'search.save',
+                  name='search.saved_name.save')
+        apply_tip(buttons.button(QDialogButtonBox.StandardButton.Cancel), 'confirm.no',
+                  name='search.saved_name.cancel')
         buttons.accepted.connect(self.accept)
         buttons.rejected.connect(self.reject)
         layout = QVBoxLayout(self)

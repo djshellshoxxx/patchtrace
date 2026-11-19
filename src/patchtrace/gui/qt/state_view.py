@@ -144,14 +144,17 @@ class NoticeStrip(QWidget):
 
     dismissed = Signal(str)  # the notice key
 
-    def __init__(self, announcer: Announcer | None = None, parent: QWidget | None = None) -> None:
+    def __init__(self, announcer: Announcer | None = None, parent: QWidget | None = None, *,
+                 id_prefix: str = 'gui.notice') -> None:
+        """`id_prefix` starts the object names and accessible ids; a panel's own strip passes its own (`kev.notice`)
+        so that the ids stay unique in the window. The tips are the shared `gui.notice*` entries either way."""
         super().__init__(parent)
         self._announcer = announcer
         self._notices: dict[str, NoticeModel] = {}
         self._dismissed: dict[str, tuple[str, str]] = {}  # key -> (scope, text that was dismissed)
         self._current: NoticeModel | None = None
         self._announced: tuple[str, str] | None = None
-        self.setObjectName('gui.notice')
+        self.setObjectName(id_prefix)
         self.setAccessibleName('Notices')
         self._label = PlainLabel(wrap=True, limit=NOTICE_CHARS + 16)
         self._label.setAccessibleName('')
@@ -160,11 +163,11 @@ class NoticeStrip(QWidget):
         self._details_button.setAccessibleName('Show notice details')
         self._dismiss_button = QPushButton('Dismiss')
         self._dismiss_button.setAccessibleName('Dismiss notice')
-        apply_tip(self, 'gui.notice')
-        apply_tip(self._details_button, 'gui.notice_details', name='gui.notice_details')
-        apply_tip(self._dismiss_button, 'gui.notice_dismiss', name='gui.notice_dismiss')
+        apply_tip(self, 'gui.notice', name=id_prefix)
+        apply_tip(self._details_button, 'gui.notice_details', name=f'{id_prefix}_details')
+        apply_tip(self._dismiss_button, 'gui.notice_dismiss', name=f'{id_prefix}_dismiss')
         self._details = SafeTextView('Notice details', wrap=True)
-        apply_tip(self._details, 'gui.notice_text', name='gui.notice_text')
+        apply_tip(self._details, 'gui.notice_text', name=f'{id_prefix}_text')
         self._details.setMaximumHeight(self.fontMetrics().lineSpacing() * 8)
         self._details.hide()
         top = QHBoxLayout()

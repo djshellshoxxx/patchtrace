@@ -64,3 +64,24 @@ Owner decisions first (HO s4). Then, in order: LBL-30 and LBL-31 merged; R1 reco
 2. Upload `labels/` documents as artifacts (open-source function tables) or rebuild them in the training job from the same pins? Default: upload; the data are not binaries and contain no Microsoft material. Owner may veto.
 3. Undefined-resample refusal threshold 5% (proposal). Default: 5%, frozen in the lock commit.
 4. Is the nested-tau redesign (C-5) required before the lock? Default: no; label the number dev-selected, because Learn-then-Test already controls the family error and the lock must not wait on a statistics rewrite.
+
+
+## Verified transfer recovery amendment — November 19, 2026
+
+The section 2 transfer seam is recovered from preserved checkpoint `c13d3257`,
+which already adapts the original PR #78/LBL-31 intent to the current managed
+output-credit contract. The controlling bounded-transfer requirements are now
+in `known-answer-corpus.md`, “Verified shard transfer”. The module is
+`tools/calibration/tier_r/training_artifacts.py`, generated schema
+`docs/schemas/corpus/TrainingManifest.json`, and authored integration controls
+`tests/test_tier_r_training_artifacts.py`.
+
+The current evaluator retention implementation remains the producer. Shards
+copy only explicitly owned completed reports, builder labels and credited
+outputs; merge revalidates per-shard bundles into one fresh managed output run.
+The workflow preserves its existing triggers, matrix, timeouts and action/tool
+pins, adds explicit JSON transfer payloads, and publishes diagnostics separately.
+The optional training dispatch/job proposed in section 2 remains outside this
+recovery; no fit, locked evaluation, native engine or probability promotion is
+performed or inferred. Actual Actions archive round-trip and native Windows
+path controls still require runner verification.

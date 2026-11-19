@@ -1,5 +1,15 @@
 # PatchTrace branch, tag and pull-request inventory
 
+## Later recovery checkpoint
+
+Source `eb595b82` additionally recovers managed training transfer, paired runner
+publication, GUI accessible control identities and five research workflow
+modules. See `RECOVERED_WORK.md` for source hashes and review evidence. The
+machine census and classifications below remain explicitly frozen at their
+original comparison (`77204ef5`); they have not been relabeled as a refreshed
+full semantic review. Search and Strings parity are active recovery queues.
+
+
 ## Scope and baseline
 
 This record covers the frozen 2026-11-19 census of **319 branches, 59 tags and 309 pull requests**. The comparison main is `fdc2696c23bdbfe7668348f25e3b336ce33039f7` and the isolated candidate is `77204ef5c9623545d81b0eb73d5cd14f80b2d0e7` (tree `fb5d56464b9a951add6fddbe4731dcd7388a9a27`). Session-created publication branches are outside this frozen census.

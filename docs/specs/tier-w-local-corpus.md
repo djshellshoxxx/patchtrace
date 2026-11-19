@@ -167,8 +167,11 @@ ids, valid binary references and at least one selected engine/condition. Before
 creating projects or invoking an engine, the matches file and its sibling
 `run.json` must be distinct ordinary output paths under the corpus root. They
 must not alias each other, any input binary (including hard links), the binary
-tree or a selected project directory. This is observed local-path admission,
-not an atomic filesystem sandbox against later hostile path changes.
+tree, a selected project directory or the cancellation switch. Existing parent
+components must be ordinary directories; links and Windows reparse points are
+refused before lexical `..` components are collapsed. Retained output history
+is reserved, including differently cased spellings. This is observed local-path
+admission, not an atomic filesystem sandbox against later hostile path changes.
 
 A completed project is reusable only when its run records identify the
 `ghidriff` backend, exact older/newer input hashes and requested symbol policy:
@@ -186,6 +189,44 @@ zero engine rows and does not launch an engine.
 Synthetic test invokers record the same input and policy fields as the real
 backend. These controls verify admission mechanics only; they do not establish
 native Ghidriff compatibility, correct symbol loading or Tier-W accuracy.
+
+### Output generations and cancellation (2026-11-19)
+
+Before engine work, an existing matches file and `run.json` must both be absent
+or form a readable, digest-bound pair for the selected corpus. Incomplete,
+linked, foreign-corpus or mismatched pairs are refused without replacement.
+Reads use held ordinary files, with a 1 GiB matches budget and a 64 MiB run-record
+budget. The runner serializes and validates the complete next output before
+changing either selected filename; the receipt hashes those exact bytes.
+
+Every output generation is retained below the selected files' parent at
+`.tier-w-run-history/<sha256-of-exact-run.json>/matches.jsonl` and `run.json`.
+These files use verified, exclusive publication; exact existing bytes may be
+reused, and conflicting files are never replaced. The run record is published
+last and binds the matches bytes. Before replacing a legacy selected pair, the
+runner retains its exact bytes by the same procedure. The returned `RunRecord`
+describes the current attempt, whose retained directory can be derived from its
+canonical JSON. A cancelled rerun retains this attempt without changing the
+previous selected pair. A first, cancelled run may select its partial results,
+so work completed before cancellation remains available.
+
+Updating the usual matches and run-record filenames uses separately staged
+replacements, with observed source, destination and parent identity checks.
+Any exception, including cancellation, triggers restoration of the prior pair
+only where the destination is still absent or belongs to this attempt. Cleanup
+never unlinks an ambiguous pathname, and a restoration failure cannot mask the
+original exception. Prior and attempted generations remain retained even when
+restoration fails. An observed foreign replacement is left untouched.
+
+Two filename replacements are not an atomic two-file commit. Concurrent readers
+must verify the run-record digest, and may observe a temporary mismatch. Process
+termination or a second filesystem failure can leave the selected pair needing
+recovery from history; a mismatched pair is refused on the next run. Path checks
+also do not close the final check-to-replace race on a hostile writable directory.
+Postpublication content checks prevent a success receipt for observed changes,
+but do not promise that foreign bytes were never briefly visible or that a
+later external writer cannot mutate evidence. Native filesystem qualification
+and the blocked CLI execution adapter remain separate acceptance work.
 
 ## 10. Evaluation interface (shared with Tier R)
 ```python
